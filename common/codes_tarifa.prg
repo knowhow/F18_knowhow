@@ -615,7 +615,7 @@ do while !eof()
         @ m_x+1, col()+2 SAY cTekIdTarifa
 
         REPLACE IdTarifa with cTekIdTarifa
-	REPLSQL IdTarifa with cTekIdTarifa
+	    //REPLSQL IdTarifa with cTekIdTarifa
       endif
     endif
   endif

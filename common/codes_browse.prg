@@ -1762,17 +1762,17 @@ if sifk->Veza="N"
     sql_append()
     replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
     sql_azur(.t.);Scatter()
-    replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
+    //replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
     xValue_i:=token(xValue,",",i)
     if sifk->tip=="C"
         replace naz with xValue_i
-        replsql naz with xValue_i
+        //replsql naz with xValue_i
     elseif sifk->tip=="N"
         replace naz with str(xValue_i,sifk->duzina,sifk->decimal)
-        replsql naz with str(xValue_i,sifk->duzina,sifk->decimal)
+        //replsql naz with str(xValue_i,sifk->duzina,sifk->decimal)
     elseif sifk->tip=="D"
      	replace naz with DTOS(xValue_i)
-     	replsql naz with DTOS(xValue_i)
+     	//replsql naz with DTOS(xValue_i)
     endif
   next
 
@@ -1786,7 +1786,7 @@ else
      append blank
      sql_append()
      replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-     replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
+     //replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
     else    // ne dodaji prazne vrijednosti
       PopWa()
       return
@@ -1798,13 +1798,13 @@ else
    sql_azur(.t.);Scatter()
    if sifk->tip=="C"
      replace naz with xValue
-     replsql naz with xValue
+     //replsql naz with xValue
    elseif sifk->tip=="N"
      replace naz with str(xValue,sifk->duzina,sifk->decimal)
-     replsql naz with str(xValue,sifk->duzina,sifk->decimal)
+     //replsql naz with str(xValue,sifk->duzina,sifk->decimal)
    elseif sifk->tip=="D"
      replace naz with DTOS(xValue)
-     replsql naz with DTOS(xValue)
+     //replsql naz with DTOS(xValue)
    endif
 
  endif
@@ -1873,7 +1873,7 @@ if IzFmkIni('Svi','SifAuto','N')=='D'
     sql_azur(.t.)
     Scatter()
     replace ID with NoviID_A()
-    replsql ID with NoviID_A()
+    //replsql ID with NoviID_A()
 endif
 endif
 
@@ -2120,12 +2120,12 @@ do while !eof()
   sql_azur(.t.);Scatter()
   if empty(cFilt) .or. &cFilt
     replace _M1_ with "*"
-    replsql _M1_ with "*"
+    //replsql _M1_ with "*"
     ++nCount2
   else
     if !fOrNaPost
       replace _M1_ with " "
-      replsql _M1_ with " "
+      //replsql _M1_ with " "
     endif
   endif
   ++nCount

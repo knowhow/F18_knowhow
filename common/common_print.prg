@@ -1061,9 +1061,9 @@ LOCAL nArr:=SELECT()
   SELECT 0
   create ("TEMP") from struct
   IF !EMPTY(cFilter)
-    AP52 FROM (ALIAS(nArr)) FOR &cFilter
+    APPEND FROM (ALIAS(nArr)) FOR &cFilter
   ELSE
-    AP52 FROM (ALIAS(nArr))
+    APPEND FROM (ALIAS(nArr))
   ENDIF
   USE
   COPY FILE ("TEMP.DBF") TO (ccExt)

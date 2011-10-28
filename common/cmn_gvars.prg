@@ -10,18 +10,7 @@
  */
 
 
-<<<<<<< HEAD:fmk_roba/gvars.prg
 #include "fmk.ch"
-=======
-#include "sc.ch"
->>>>>>> clipper:roba/gvars.prg
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
-
 
 
 /*! \ingroup ini

@@ -236,13 +236,14 @@ do while len(cPom)<>0
 	  	sql_azur(.t.)
 		NextAkcija(@cAkcija)
 
+        /*
 		replsql TYPE cAkcija Fh with chistory,;
 			Fsec with cSection,;
 		  	Fvar with cImeVar,;
 		  	tip with clTip,;
 		  	rBr with cRbr,;
 		  	Fv   with left(cPom,15)
-
+        */
 	endif
 
 	cPom:=substr(cPom,16)

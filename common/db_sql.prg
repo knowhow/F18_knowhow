@@ -71,7 +71,7 @@ endif
 
 if cTip=="DBF"
   	// setuj polje brisano
-	replsql BRISANO with "1"
+	//replsql BRISANO with "1"
 endif
 Gw(cSQL, @nHandle, cAkcija )
 return .t.

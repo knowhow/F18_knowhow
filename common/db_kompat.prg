@@ -54,9 +54,9 @@ if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
      ferase(cImeDBF+".FPT")
      create (cImeDBF) from struct  VIA RDDENGINE
      close all
-     usexv (PRIVPATH+"TEMP") VIA "DBFNTX"   NEW
+     USE (PRIVPATH+"TEMP") VIA "DBFNTX" EXCLUSIVE NEW
      set order to 0
-     usexv (cImeDBF)  VIA  RDDENGINE NEW alias novi
+     USE (cImeDBF)  VIA  RDDENGINE NEW EXCLUSIVE alias novi
      set order to 0
      select temp
      go top

@@ -517,7 +517,7 @@ DO CASE
              do while !eof()
                if &cKolona==cStVr
                    replace &cKolona with cNovVr
-                   replsql &cKolona with cNovVr
+                   //replsql &cKolona with cNovVr
                endif
 
                if valtype(cStVr)=="C" // samo za karaktere
@@ -525,7 +525,7 @@ DO CASE
                 cDio2:=left(cNovVr,len(trim(cNovVr))-2)
                 if right(trim(cStVr),2)=="**" .and. cDio1 $ &cKolona
                    replace &cKolona with strtran(&cKolona,cDio1,cDio2)
-                   replsql &cKolona with strtran(&cKolona,cDio1,cDio2)
+                   //replsql &cKolona with strtran(&cKolona,cDio1,cDio2)
                 endif
                endif
 
@@ -574,7 +574,7 @@ DO CASE
                  IF EMPTY(cUslov77) .or. &cUslov77
                    replace &cKolona with cVrijednost
                    sql_azur(.t.)
-                   replsql &cKolona with cVrijednost
+                   //replsql &cKolona with cVrijednost
                  ENDIF
                  skip
                enddo
@@ -781,7 +781,7 @@ static function EditPolja( nX, nY, xIni, cNazPolja, ;
      // azuriraj samo ako nije zadan when blok !!!
      REPLACE &cPom77I WITH &cPom77U
      sql_azur(.t.)
-     REPLSQL &cPom77I WITH &cPom77U
+     //REPLSQL &cPom77I WITH &cPom77U
     else
      IF LASTKEY()!=K_ESC .and. cPom77I<>cPom77U  // field varijabla
        Gather()

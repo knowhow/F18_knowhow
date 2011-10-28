@@ -1027,7 +1027,7 @@ cPom:=cField
 if ((&cPom<>xValue) .or. (lReplAlways == .t.))
 	REPLACE &cPom WITH xValue
 	if (gSql=="D")
-		REPLSQL &cPom WITH xValue
+		//REPLSQL &cPom WITH xValue
 	endif
 endif
 

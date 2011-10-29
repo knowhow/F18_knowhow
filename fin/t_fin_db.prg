@@ -173,7 +173,7 @@ return
 
 method setgaDBFs()
 
-? "prebaceno u F18.prg"
+//? "prebaceno u F18.prg"
 
 return
 

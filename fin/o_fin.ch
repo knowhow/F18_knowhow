@@ -11,28 +11,28 @@
 
 
 #xcommand O_PRIPR     => select (F_PRIPR);   usex (PRIVPATH + "PRIPR") ; set order to tag "1"
-#xcommand O_PRIPRRP   => select (F_PRIPRRP); usex (strtran(cDirPriv, goModul:oDataBase:cSezonDir, SLASH) + "PRIPR", "priprrp"); set order to 1
+#xcommand O_PRIPRRP   => select (F_PRIPRRP); usex (strtran(cDirPriv, goModul:oDataBase:cSezonDir, SLASH) + "PRIPR", "priprrp"); set order to tag "1"
 
-#xcommand O_SUBAN    => OKumul(F_SUBAN,KUMPATH,"SUBAN", 5); set order to tag 1
+#xcommand O_SUBAN    => SELECT (F_SUBAN); my_use("suban"); set order to tag "1"
 #xcommand O_KUF      => OKumul(F_KUF  ,KUMPATH,"KUF"  , 2); set order to tag "ID"
 #xcommand O_KIF      => OKumul(F_KIF  ,KUMPATH,"KIF"  , 2); set order to tag "ID"
-#xcommand O_ANAL    =>  OKumul(F_ANAL,KUMPATH,"ANAL", 3)  ; set order to tag 1
-#xcommand O_SINT    =>  OKumul(F_SINT,KUMPATH,"SINT", 2)  ; set order to tag 1
-#xcommand O_NALOG    => OKumul(F_NALOG,KUMPATH,"NALOG", 2); set order to tag 1
+#xcommand O_ANAL    =>  OKumul(F_ANAL,KUMPATH,"ANAL", 3)  ; set order to tag "1"
+#xcommand O_SINT    =>  OKumul(F_SINT,KUMPATH,"SINT", 2)  ; set order to tag "1"
+#xcommand O_NALOG    => OKumul(F_NALOG,KUMPATH,"NALOG", 2); set order to tag "1"
 
-#xcommand O_RSUBAN    => select (F_SUBAN);  user (KUMPATH + "SUBAN"); set order to 1
-#xcommand O_RANAL    => select (F_ANAL);    user (KUMPATH + "ANAL") ; set order to 1
-#xcommand O_SINTSUB => select (F_SUBAN);    MY_USE  (KUMPATH + "SUBAN"); set order to 1
-#xcommand O_BUDZET   => select (F_BUDZET);    MY_USE  (KUMPATH + "BUDZET") ; set order to 1
-#xcommand O_PAREK   => select (F_PAREK);    MY_USE  (KUMPATH + "PAREK")   ; set order to 1
+#xcommand O_RSUBAN    => select (F_SUBAN);  user (KUMPATH + "SUBAN"); set order to tag "1"
+#xcommand O_RANAL    => select (F_ANAL);    user (KUMPATH + "ANAL") ; set order to tag "1"
+#xcommand O_SINTSUB => select (F_SUBAN);    MY_USE  (KUMPATH + "SUBAN"); set order to tag "1"
+#xcommand O_BUDZET   => select (F_BUDZET);    MY_USE  (KUMPATH + "BUDZET") ; set order to tag "1"
+#xcommand O_PAREK   => select (F_PAREK);    MY_USE  (KUMPATH + "PAREK")   ; set order to tag "1"
 
-#xcommand O_BBKLAS    => O_POMDB(F_BBKLAS,"BBKLAS"); set order to 1
-#xcommand O_IOS    =>   O_POMDB(F_IOS,"IOS"); set order to 1
+#xcommand O_BBKLAS    => O_POMDB(F_BBKLAS,"BBKLAS"); set order to tag "1"
+#xcommand O_IOS    =>   O_POMDB(F_IOS,"IOS"); set order to tag "1"
 
-#xcommand O_PNALOG   => select (F_PNALOG); usex (PRIVPATH + "PNALOG"); set order to 1
-#xcommand O_PSUBAN   => select (F_PSUBAN); usex (PRIVPATH + "PSUBAN"); set order to 1
-#xcommand O_PANAL   => select (F_PANAL); usex (PRIVPATH + "PANAL")   ; set order to 1
-#xcommand O_PSINT   => select (F_PSINT); usex (PRIVPATH + "PSINT")   ; set order to 1
+#xcommand O_PNALOG   => select (F_PNALOG); usex (PRIVPATH + "PNALOG"); set order to tag "1"
+#xcommand O_PSUBAN   => select (F_PSUBAN); usex (PRIVPATH + "PSUBAN"); set order to tag "1"
+#xcommand O_PANAL   => select (F_PANAL); usex (PRIVPATH + "PANAL")   ; set order to tag "1"
+#xcommand O_PSINT   => select (F_PSINT); usex (PRIVPATH + "PSINT")   ; set order to tag "1"
 
 #xcommand O_RJ   => select (F_RJ);          MY_USE  (KUMPATH + "RJ")    ; set order to tag "ID"
 #xcommand O_FUNK   => select (F_FUNK);    MY_USE  (KUMPATH+"FUNK") ; set order to tag "ID"
@@ -69,7 +69,7 @@
 #xcommand O_TRFP2    => select(F_TRFP2);   MY_USE  (SIFPATH+"trfp2")       ; set order to tag "ID"
 #xcommand O_TRFP3    => select(F_TRFP3);   MY_USE  (SIFPATH+"trfp3")       ; set order to tag "ID"
 #xcommand O_KONCIJ => select(F_KONCIJ);  MY_USE  (SIFPATH+"KONCIJ")     ; set order to tag "ID"
-#xcommand O_FINMAT  => select(F_FINMAT); usex (PRIVPATH+"FINMAT")    ; set order to 1
+#xcommand O_FINMAT  => select(F_FINMAT); usex (PRIVPATH+"FINMAT")    ; set order to tag "1"
 
 #xcommand O__KONTO => select(F__KONTO); MY_USE  (PRIVPATH+"_KONTO")
 #xcommand O__PARTN => select(F__PARTN); MY_USE  (PRIVPATH+"_PARTN")

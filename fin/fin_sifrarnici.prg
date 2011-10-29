@@ -220,7 +220,7 @@ if Ch==K_CTRL_T .and. gSKSif=="D"
  PopWA()
  IF !(cSif==cSif2)
    // ako nije dupla provjerimo da li postoji u kumulativu
-   if ImaUSuban(cSif,"7")
+   if ImaUSuban(cSif, "7")
      Beep(1)
      Msg("Stavka partnera se ne moze brisati jer se vec nalazi u knjizenjima!")
      return 7

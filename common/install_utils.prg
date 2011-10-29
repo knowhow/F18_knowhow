@@ -11,6 +11,6 @@
 
 function install_start(goModul, lSilent)
 
-? "install start skeleton"
+//? "install start skeleton"
 
 return 

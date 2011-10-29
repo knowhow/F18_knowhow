@@ -16,7 +16,6 @@
  
 function KontrZbNal()
 
-
 PushWa()
 
 Box("kzb",12,70,.f.,"Kontrola zbira naloga")

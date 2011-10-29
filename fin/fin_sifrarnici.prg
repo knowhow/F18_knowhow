@@ -259,25 +259,6 @@ return PostojiSifra(F_TNAL,1,10,60,"Lista: Vrste naloga",@cId,dx,dy)
 
 
 
-/*! \fn P_TipDok(cId,dx,dy)
- *  \brief Otvara sifrarnik tipova dokumenata
- *  \param cId
- *  \param dx
- *  \param dy
- */
- 
-function P_TipDok(cId,dx,dy)
-
-PRIVATE ImeKol,Kol
-ImeKol:={ { "ID  ",  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
-          { "Naziv", {|| naz},     "naz"  };
-        }
-Kol:={1,2}
-private gTBDir:="N"
-return PostojiSifra(F_TDOK,1,10,60,"Lista: Tipovi dokumenata",@cId,dx,dy)
-
-
-
 /*! \fn P_KontoFin(cId,dx,dy,lBlag)
  *  \brief Otvara sifrarnik konta spec. za FIN
  *  \param cId
@@ -285,7 +266,6 @@ return PostojiSifra(F_TDOK,1,10,60,"Lista: Tipovi dokumenata",@cId,dx,dy)
  *  \param dy
  *  \param lBlag
  */
- 
 function P_KontoFin(cId,dx,dy,lBlag)
 
 private ImeKol:={}
@@ -538,25 +518,6 @@ endif
 //private gTBDir:="N"
 //return PostojiSifra(F_VALUTE,1,10,77,"Valute",@cid,dx,dy)
 //*}
-
-
-/*! \fn P_Rj(cId,dx,dy)
- *  \brief Otvara sifrarnik radnih jedinica
- *  \param cId
- *  \param dx
- *  \param dy
- */
- 
-function P_RJ(cId,dx,dy)
-
-private imekol,kol
-
-ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",35), {||  naz}, "naz" }                       ;
-       }
-Kol:={1,2}
-private gTBDir:="N"
-return PostojiSifra(F_RJ,1,10,55,"Lista radnih jedinica",@cId,dx,dy)
 
 
 
@@ -949,126 +910,6 @@ LOCAL GetList:={}
   ENDIF
   USE
 RETURN
-
-
-
-/*! \fn SifkFill(cSifk,cSifv,cSifrarnik,cIdSif)
- *  \brief Puni pomocne tabele radi prenosa
- *  \param cSifk
- *  \param cSifv
- *  \param cSifrarnik
- *  \param cIdSif
- */
- 
-function SifkFill(cSifk,cSifv,cSifrarnik,cIDSif)
-
-PushWa()
-
-use (cSifK) new   alias _SIFK
-use (cSifV) new   alias _SIFV
-
-altd()
-select _SIFK
-if reccount2()==0  // nisu upisane karakteristike, ovo se radi samo jednom
-select sifk; set order to tag "ID";  seek padr(cSifrarnik,8)
-// uzmi iz sifk sve karakteristike ID="ROBA"
-
-do while !eof() .and. ID=padr(cSifrarnik,8)
-   Scatter()
-   select _Sifk; append blank
-   Gather()
-   select sifK
-   skip
-enddo
-endif // reccount()
-
-// uzmi iz sifv sve one kod kojih je ID=ROBA, idsif=2MON0002
-
-select sifv; set order to tag "IDIDSIF"
-seek padr(cSifrarnik,8) + cidsif
-do while !eof() .and. ID=padr(cSifrarnik,8) .and. idsif= padr(cidsif,len(cIdSif))
- Scatter()
- select _SifV; append blank
- Gather()
- select sifv
- skip
-enddo
-
-select _sifv ;use
-select _sifk ;use
-
-PopWa()
-return
-
-
-/*! \fn SifkOsv(cSifk,cSifv,cSifrarnik,cIdSif)
- *  \brief Osvjezava sifk i sifv iz pomocnih tabela
- *  \param cSifk
- *  \param cSifv
- *  \param cSifrarnik
- *  \param cIdSif
- */
-
-function SifkOsv(cSifk,cSifv,cSifrarnik,cIdSif)
-
-PushWa()
-
-use (cSifK) new   alias _SIFK
-use (cSifV) new   alias _SIFV
-
-select sifk; set order to tag "ID2" // id + oznaka
-select _sifk
-do while !eof()
- scatter()
- select sifk; seek _SIFK->(ID+OZNAKA)
- if !found()
-  append blank
- endif
- Gather()
- select _SIFK
- skip
-enddo
-
-select sifV; set order to tag "ID"  //"ID","id+oznaka+IdSif",SIFPATH+"SIFV"
-select _SIFV
-do while !eof()
- scatter()
- select SIFV; seek _SIFV->(ID+OZNAKA+IDSIF)
- if !found()
-  append blank
- endif
- Gather()
- select _SIFV
- skip
-enddo
-
-select _SIFK; use
-select _SIFV; use
-
-PopWa()
-return
-
-
-
-/*! \fn DaUSifv(cBaza,cIdKar,cId,cVrKar)
- *  \brief 
- *  \param cBaza
- *  \param cIdKar
- *  \param cId
- *  \param cVrKar
- */
- 
-function DaUSifV(cBaza,cIdKar,cId,cVrKar)
-
-LOCAL nArr:=SELECT(), lVrati:=.f.
- SELECT SIFV
- SEEK PADR(cBaza,8)+PADR(cIdKar,4)+PADR(cId,15)+cVrKar
- IF FOUND()
-   lVrati:=.t.
- ENDIF
- SELECT (nArr)
-RETURN lVrati
-
 
 
 /*! \fn P_Kuf(cId,dx,dy)

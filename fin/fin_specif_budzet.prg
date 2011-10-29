@@ -1463,7 +1463,7 @@ RETURN
  *  \param nBrRed  - broj redova
  */
  
-function Razmak(nBrRed)
+static function Razmak(nBrRed)
 
 private i
 

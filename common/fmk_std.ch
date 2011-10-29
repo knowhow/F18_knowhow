@@ -1,4 +1,3 @@
-
 #command DO WHILE <exp>         =>  while <exp>
 
 #command END <x>                => end
@@ -1062,10 +1061,7 @@
 
 
 
-#command APPEND BLANKS           => appblank2()
-
 #command APPEND BLANK    =>  appblank2()
-#command APPEND NCNL    =>  appblank2(.f.,.f.)
 
 
 

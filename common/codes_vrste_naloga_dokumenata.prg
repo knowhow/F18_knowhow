@@ -60,3 +60,15 @@ select (nTArea)
 return PostojiSifra(F_TDOK,1,10,32,"Lista: Tipovi dokumenata",@cId,dx,dy)
 
 
+/* iz fin
+function P_TipDok(cId,dx,dy)
+
+PRIVATE ImeKol,Kol
+ImeKol:={ { "ID  ",  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
+          { "Naziv", {|| naz},     "naz"  };
+        }
+Kol:={1,2}
+private gTBDir:="N"
+return PostojiSifra(F_TDOK,1,10,60,"Lista: Tipovi dokumenata",@cId,dx,dy)
+*/
+

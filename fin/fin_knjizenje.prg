@@ -139,13 +139,15 @@ if gRj=="D" .and. pripr->(FIELDPOS("IDRJ")) <> 0
 ENDIF
 
 
-Alert(MaxRow())
-Box( , MaxRow() - 4, MaxCol() - 3)
-@ m_x + MaxRow() - 6, m_y+2 SAY "<c-N>  Nove Stavke    ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku         "
-@ m_x + MaxRow() - 5, m_y+2 SAY "<c-A>  Ispravka Naloga³ <c-P> Stampa Naloga    ³ <a-A> Azuriranje           "
-@ m_x + MaxRow() - 4, m_y+2 SAY "<c-F9> Brisi pripremu ³ <F5>  KZB, <a-F5> PrDat³ <a-B> Blagajna,<F10> Ostalo"
+//Alert(MAXROWS())
+Box( , MAXROWS() - 4, MAXCOLS() - 3)
 
-ObjDbedit("PNal", MaxRow() - 4, MaxCol() - 3,  {|| EdPRIPR()}, "", "Priprema...", , , , ,3)
+@ m_x + MAXROWS() - 4-2, m_y+2 SAY "<c-N>  Nove Stavke    ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku         "
+@ m_x + MAXROWS() - 4-1, m_y+2 SAY "<c-A>  Ispravka Naloga³ <c-P> Stampa Naloga    ³ <a-A> Azuriranje           "
+@ m_x + MAXROWS() - 4,   m_y+2 SAY "<c-F9> Brisi pripremu ³ <F5>  KZB, <a-F5> PrDat³ <a-B> Blagajna,<F10> Ostalo"
+
+
+ObjDbedit("PN2", MaxRows() - 4, MaxCols() - 3,  {|| EdPRIPR()}, "", "Priprema...", , , , ,3)
 BoxC()
 closeret
 return
@@ -646,7 +648,7 @@ case Ch==K_ALT_F5
         PushWA()
         select PRIPR
         //go top
-        Box("anal", MaxRow() - 4, MaxCol() - 5,.f.,"Ispravka naloga")
+        Box("anal", MAXROWS() - 4, MAXCOLS() - 5,.f.,"Ispravka naloga")
         nDug:=0
 	nPot:=0
         do while !eof()
@@ -695,7 +697,7 @@ case Ch==K_ALT_F5
         enddo
         go bottom
 	
-	Box("knjn", MaxRow() - 4, MaxCol() - 3,.f.,"Knjizenje naloga - nove stavke")
+	Box("knjn", MAXROWS() - 4, MAXCOLS() - 3, .f., "Knjizenje naloga - nove stavke")
         do while .t.
            Scatter()
 	   
@@ -717,10 +719,10 @@ case Ch==K_ALT_F5
 	   else
 	   	nPot+=_IznosBHD
 	   endif
-           @ m_x+19,m_y+1 SAY "ZBIR NALOGA:"
-           @ m_x+19,m_y+14 SAY nDug PICTURE '9 999 999 999.99'
-           @ m_x+19,m_y+35 SAY nPot PICTURE '9 999 999 999.99'
-           @ m_x+19,m_y+56 SAY nDug-nPot PICTURE '9 999 999 999.99'
+           @ m_x+19, m_y+1 SAY "ZBIR NALOGA:"
+           @ m_x+19, m_y+14 SAY nDug PICTURE '9 999 999 999.99'
+           @ m_x+19, m_y+35 SAY nPot PICTURE '9 999 999 999.99'
+           @ m_x+19, m_y+56 SAY nDug-nPot PICTURE '9 999 999 999.99'
            inkey(10)
 	   select PRIPR
 	   //SrediRbr(.t.)

@@ -332,7 +332,7 @@ function v_fkomp()
 private cKom := "q "+ PRIVPATH + gFKomp
 if Pitanje(,"Zelite li izvrsiti ispravku obrasca kompenzacije ?","N")=="D"
 	if !empty(gFKomp)
-   		Box(,25,80)
+   		Box(, MAXROWS(), MAXCOLS())
    			run &ckom
    		BoxC()
  	endif

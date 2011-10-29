@@ -842,10 +842,10 @@
 #command RESTORE SCREEN         => __XRestScreen()
 
 #command SAVE SCREEN TO <var>                                           ;
-      => <var> := SaveScreen( 0, 0, Maxrow(), Maxcol() )
+      => <var> := SaveScreen( 0, 0, Maxrows(), Maxcols() )
 
 #command RESTORE SCREEN FROM <c>                                        ;
-      => RestScreen( 0, 0, Maxrow(), Maxcol(), <c> )
+      => RestScreen( 0, 0, Maxrows(), Maxcols(), <c> )
 
 
 

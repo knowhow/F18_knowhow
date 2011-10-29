@@ -75,9 +75,9 @@ if cTekst<>NIL
  if Len(cTekst)>80
    nCol:=0
  else
-   nCol:=INT((80-LEN(cTekst))/2)
+   nCol:=INT((MAXCOLS()-LEN(cTekst))/2)
  endif
- @ nRow,0 SAY REPLICATE(Chr(32),80)
+ @ nRow,0 SAY REPLICATE(Chr(32), MAXCOLS())
  @ nRow,nCol SAY cTekst
 endif
 
@@ -136,7 +136,7 @@ return cIzbor
 
 
 method showSezona(cSezona)
-@ 3,70 SAY "Sez: "+cSezona COLOR INVERT
+@ 3, MAXCOLS()-10 SAY "Sez: "+cSezona COLOR INVERT
 return
 
 
@@ -153,13 +153,13 @@ endif
 
 @ 0,2 SAY '<ESC> Izlaz' COLOR INVERT
 @ 0,COL()+2 SAY DATE()  COLOR INVERT
-@ 24,64  SAY fmklibver()
+@ MAXROWS()-1, MAXCOLS()-16  SAY fmklibver()
 
-DispBox(2,0,4,79,B_DOUBLE+' ',NORMAL)
+DispBox(2, 0, 4, MAXCOLS()-1, B_DOUBLE+' ',NORMAL)
 if lClear
-	DispBox(5,0,24,79,B_DOUBLE+"±",INVERT)
+	DispBox(5,0,MAXROWS()-1, MAXCOLS()-1, B_DOUBLE+"±", INVERT)
 endif
 
-@ 3,1 SAY PADC(gNaslov+' Ver.'+gVerzija,72) COLOR NORMAL
+@ 3,1 SAY PADC(gNaslov+' Ver.'+ gVerzija, MAXCOLS()-8) COLOR NORMAL
 
 return

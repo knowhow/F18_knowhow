@@ -20,8 +20,6 @@
  *   Funkcije za prikaz i obradu tabelarnih podataka
  */
 
-
-
 /*! \fn function ObjDBedit(cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
  * \brief Glavna funkcija tabelarnog prikaza podataka
  * \param cImeBoxa - ime box-a
@@ -128,8 +126,8 @@ endif
 
 PRIVATE aParametri:={}
 AADD(aParametri,cImeBoxa)            //  1
-AADD(aParametri,xw)                  //  2
-AADD(aParametri,yw)                  //  3
+AADD(aParametri, xw)                  //  2
+AADD(aParametri, yw)                  //  3
 AADD(aParametri,lInvert)             //  4
 AADD(aParametri,aMessage)            //  5
 AADD(aParametri,nFreeze)             //  6
@@ -175,7 +173,7 @@ DO WHILE .T.
          xcpos:=ROW()
          ycpos:=COL()
          Eval(bUserF)
-         @ xcpos,ycpos SAY ""
+         @ xcpos, ycpos SAY ""
       endif
 
          //nBroji2:=seconds()
@@ -360,11 +358,11 @@ if aParametri[9]==0
     BoxC()
  ENDIF
 
- Box(aParametri[1],aParametri[2],aParametri[3],aParametri[4],aParametri[5])
+ Box(aParametri[1], aParametri[2], aParametri[3], aParametri[4], aParametri[5])
 
 else
 
-@ m_x+aParametri[2]-aParametri[9],m_y+1 SAY replicate("Ä",aParametri[3])
+@ m_x + aParametri[2] - aParametri[9], m_y+1 SAY replicate("Ä",aParametri[3])
 
 endif
 
@@ -373,12 +371,17 @@ IF !lIzOBJDB
   Kol:=azKol
 ENDIF
 
-  @ m_x,m_y+2 SAY aParametri[8]+IF(!lIzOBJDB,REPL("Í",42),"")
-  @ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7] COLOR "GR+/B"
-  @ m_x+aParametri[2]+1,col()+1 SAY IF(!lIzOBJDB,REPL("Í",42),"")
+  @ m_x,m_y+2 SAY aParametri[8]+IF(!lIzOBJDB, REPL("Í",42),"")
+  @ m_x + aParametri[2]+1, m_y+2 SAY aParametri[7] COLOR "GR+/B"
+  @ m_x + aParametri[2]+1, col()+1 SAY IF(!lIzOBJDB, REPL("Í",42),"")
   @ m_x+1,m_y+aParametri[3]-6 SAY STR(RecCount2(),5)
 
-  TB:=TBRowseDB(m_x+2+aParametri[10],m_y+1,m_x+aParametri[2]-aParametri[9]-iif(aParametri[9]<>0,1,0),m_y+aParametri[3])
+  // hernad
+  //? "tbrowsedb"
+  //? m_x + 2 + aParametri[10], m_y + 1, m_x + aParametri[2]-aParametri[9]-iif(aParametri[9]<>0,1 , 0), m_y + aParametri[3]
+  //inkey(20)
+
+  TB:=TBRowseDB( m_x + 2 + aParametri[10], m_y + 1, m_x + aParametri[2]-aParametri[9]-iif(aParametri[9]<>0,1 , 0), m_y + aParametri[3])
 
   if TBSkipBlock<>NIL
      Tb:skipBlock := TBSkipBlock
@@ -751,6 +754,7 @@ static function EditPolja( nX, nY, xIni, cNazPolja, ;
   if cPict<>NIL
      nSirina:=len(transform(&cPom77U,cPict))
   endif
+
   //@ nX, nY GET &cPom77U VALID EVAL(bValid) WHEN EVAL(bWhen) COLOR "W+/BG,W+/B" pict cPict
   if len(ImeKol[TB:Colpos])>=8  // ima joç getova
     aPom:=ImeKol[TB:Colpos,8]  // matrica
@@ -764,7 +768,7 @@ static function EditPolja( nX, nY, xIni, cNazPolja, ;
       AADD(aTBGets,Get)
     next
 
-    if nY+nsirina>78
+    if nY + nsirina > MAXCOLS()-2
 
        for i:=1 to len(aTBGets)
           aTBGets[i]:Col:= aTBGets[i]:Col   - (nY+nSirina-78)
@@ -805,7 +809,7 @@ function TBPomjeranje(TB, cPomjeranje)
 local cPomTB
 
 if (cPomjeranje)=">"
-   cPomTb:=substr(cPomjeranje,2,1)
+   cPomTb:=substr(cPomjeranje, 2, 1)
    TB:Right()
    if !empty(cPomTB)
      for i:=1 to val(cPomTB)

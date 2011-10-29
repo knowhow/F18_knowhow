@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch" 
 
 #include "dbstruct.ch"
@@ -287,12 +286,12 @@ __A_SIFV__[__PSIF_NIVO__,2]:= recno()
 
 if dx<>NIL .and. dy<>nil
 	if (nDbf)->(fieldpos("naz")) <> 0
-		@ m_x+dx,m_y+dy SAY PADR(TRIM((nDbf)->naz), 70-dy)
+		@ m_x+dx,m_y+dy SAY PADR(TRIM((nDbf)->naz), MAXCOLS()-10-dy)
 	endif
 	if (nDbf)->(fieldpos("naziv")) <> 0
-		@ m_x+dx,m_y+dy SAY PADR(TRIM((nDbf)->naziv), 70-dy)
+		@ m_x+dx,m_y+dy SAY PADR(TRIM((nDbf)->naziv), MAXCOLS()-10-dy)
 	endif
-elseif dx<>NIL .and. dx>0 .and. dx<25
+elseif dx<>NIL .and. dx>0 .and. dx< MAXROWS()
 	if (nDbf)->(fieldpos("naz")) <> 0
   		CentrTxt(trim((nDbf)->naz),dx)
 	endif

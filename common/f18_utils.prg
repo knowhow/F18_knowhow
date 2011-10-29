@@ -59,6 +59,13 @@ local oServer
 
  HB_CDPSELECT("SL852")
 
+ if setmode(MAXROWS(), MAXCOLS())
+   ? "hej mogu setovati povecani ekran !"
+ else
+   ? "ne mogu setovati povecani ekran !"
+   QUIT
+ endif
+
  public gRj := "N"
  public gReadOnly := .f.
  public gSQL := "N"

@@ -20,8 +20,6 @@ function CreSystemDb(nArea)
 *{
 local lShowMsg
 
-? "cresystemdb"
-
 lShowMsg:=.f.
 
 if (nArea==nil)
@@ -49,8 +47,6 @@ return
 function CreParams(nArea)
 *{
 close all
-
-? "CreParams"
 
 if gReadOnly
 	return

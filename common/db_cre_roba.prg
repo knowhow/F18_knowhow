@@ -72,34 +72,38 @@ AADD(aDBf,{ 'Opis'                , 'M' ,  10 ,  0 })
 // omoguciti editovanje opisa
 AADD(aDBf,{ 'BARKOD'                , 'C' ,  13 ,  0 })
 
-if !file(SIFPATH+"roba.dbf")
+if !file(f18_ime_dbf("roba"))
         dbcreate2(SIFPATH+'roba.dbf', aDbf)
 	
 endif
 
-if !file(PRIVPATH+"_roba.dbf")
+if !file(f18_ime_dbf("_roba"))
         dbcreate2(PRIVPATH+'_roba.dbf',aDbf)
 endif
 
-CREATE_INDEX("ID","id",SIFPATH+"roba") 
+CREATE_INDEX("ID", "ID", "roba") 
+
 index_mcode(SIFPATH, "roba")
 CREATE_INDEX("NAZ","LEFT(naz,40)", SIFPATH+"roba")
 CREATE_INDEX("ID","id", PRIVPATH+"_roba") 
-O_ROBA
 
+close all
+O_ROBA
 if fieldpos("KATBR")<>0
   select (F_ROBA)
   use
   CREATE_INDEX("KATBR","KATBR",SIFPATH+"roba") // roba, artikli
 endif
 
+close all
 O_ROBA
 if fieldpos("BARKOD")<>0
   select (F_ROBA)
   use
-  CREATE_INDEX("BARKOD","BARKOD",SIFPATH+"roba") // roba, artikli
+  CREATE_INDEX("BARKOD","BARKOD", "roba") // roba, artikli
 endif
 
+close all
 O_ROBA
 if fieldpos("SIFRADOB")<>0
   select (F_ROBA)
@@ -116,7 +120,7 @@ endif
 
 
 // TARIFA
-if !file(SIFPATH+"tarifa.dbf")
+if !file(f18_ime_dbf("tarifa"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
         add_f_mcode(@aDbf)
@@ -134,7 +138,7 @@ CREATE_INDEX("naz","naz", SIFPATH+"TARIFA")
 index_mcode(SIFPATH, "TARIFA")
 
 // KONCIJ
-if !file(SIFPATH+"koncij.dbf")
+if !file(f18_ime_dbf("koncij"))
    aDbf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
    add_f_mcode(@aDbf)
@@ -148,7 +152,7 @@ CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
 index_mcode(SIFPATH, "KONCIJ")
 
 // TRFP
-if !file(SIFPATH+"trfp.dbf")
+if !file(f18_ime_dbf("trfp"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
         add_f_mcode(@aDbf)
@@ -169,7 +173,7 @@ index_mcode(SIFPATH, "TRFP")
 
 
 // SAST
-if !file(SIFPATH + "sast.dbf")
+if !file(f18_ime_dbf("sast"))
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
    AADD(aDBf,{ 'R_BR'                , 'N' ,    4 ,  0 })
@@ -179,10 +183,12 @@ if !file(SIFPATH + "sast.dbf")
    AADD(aDBf,{ 'K2'                  , 'C' ,    1 ,  0 })
    AADD(aDBf,{ 'N1'                  , 'N' ,   20 ,  5 })
    AADD(aDBf,{ 'N2'                  , 'N' ,   20 ,  5 })
-   dbcreate2(SIFPATH+'SAST.DBF',aDbf)
+   dbcreate2('SAST', aDbf)
 endif
 
 CREATE_INDEX("ID", "ID+ID2", SIFPATH + "SAST")
+
+close all
 O_SAST
 if sast->(fieldpos("R_BR"))<>0
 	use
@@ -192,7 +198,7 @@ use
 CREATE_INDEX("NAZ", "ID2+ID", SIFPATH + "SAST")
 
 
-if !file(PRIVPATH+"barkod.dbf")
+if !file(f18_ime_dbf("barkod"))
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
    AADD(aDBf,{ 'BARKOD'              , 'C' ,   13 ,  0 })

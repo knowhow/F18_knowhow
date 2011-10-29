@@ -9,10 +9,11 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-// common/gen_ugovori_2.prg:       cNBrDok := FaNoviBroj( cIdFirma, cGenTipDok)
+
 
 function fanovibroj()
 
+// common/gen_ugovori_2.prg:       cNBrDok := FaNoviBroj( cIdFirma, cGenTipDok
 ? "dummy fanovibroj"
 
 return

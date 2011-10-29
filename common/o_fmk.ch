@@ -10,7 +10,7 @@
  */
 
 
-#xcommand O_KORISN    => select (F_KORISN);  my_use ( ToUnix (CURDIR + "korisn" ) ) ; set order to tag "IME"
+//#xcommand O_KORISN    => select (F_KORISN);  my_use ( ToUnix (CURDIR + "korisn" ) ) ; set order to tag "IME"
 #xcommand O_PARAMS    => select (F_PARAMS);  my_use ( "params"); set order to tag  "ID"
 #xcommand O_GPARAMS   => select (F_GPARAMS); my_use ( ToUnix( SLASH + "gparams") )  ;   set order to tag  "ID"
 #xcommand O_GPARAMSP  => select (F_GPARAMSP); my_use ( PRIVPATH + "gparams" )  ; set order to tag  "ID"
@@ -32,7 +32,7 @@
 #xcommand O_KOLIZ  => select (F_KOLIZ);    my_use  (KUMPATH + "KOLIZ") ; set order to tag "ID"
 
 
-#xcommand O_ROBA   => select(F_ROBA);  my_use  (SIFPATH + "roba")  ; set order to tag "ID"
+#xcommand O_ROBA   => select(F_ROBA);    my_use ("roba")  ; set order to tag "ID"
 #xcommand O_TARIFA   => select(F_TARIFA);  my_use  (SIFPATH + "tarifa" )  ; set order to tag "ID"
 #xcommand O_KONTO   => select(F_KONTO);  my_use  (SIFPATH + "konto" ) ; set order to tag "ID"
 #xcommand O_TRFP    => select(F_TRFP);   my_use  (SIFPATH + "trfp")       ; set order to tag "ID"

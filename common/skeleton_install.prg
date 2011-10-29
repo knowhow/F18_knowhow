@@ -20,32 +20,6 @@ function KorPreg()
 
 local nSir
 
-O_KORISN
-
-IF System .or. (KLevel='0' .and. Right(trim(ImeKorisn),1)='1')  // potpuni prioritet
-  PRIVATE ImeKol,Kol
-  Kol:={1,2,3,4,5,6}
-  ImeKol:={ {'Ime'  , {|| korisn->ime}  },;
-            {'Sifra', {|| CryptSC(korisn->sif)}  } ,;
-            {'Level', {|| korisn->level}  } ,;
-            {'Radni.dir', {|| korisn->dirrad}  } ,;
-            {'Priv.dir',  {|| korisn->dirpriv}  } ,;
-            {'Sif.dir',  {|| korisn->dirsif}  } ,;
-           }
-  nSir:=60
-ELSE
- PRIVATE ImeKol[1,2],Kol[2]
- Kol:={1}
- ImeKol:={ {'Ime'  , {|| korisn->ime}  };
-         }
- nSir:=12
-END IF
-
-GO TOP
-
-ObjDbEdit ('ks',10,nSir,{|| EdKorisn() },"",iif(System .or. (KLevel='0' .and. Right(trim(ImeKorisn),1)='1'),"<F2> Edit, <c-N> Novi, <c-T> Brisi",""),.f.,"Pregled korisnika programa")
-
-closeret
 return
 
 

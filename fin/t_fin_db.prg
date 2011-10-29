@@ -14,7 +14,7 @@
 #include "hbclass.ch"
 CLASS TDbFin INHERIT TDB 
 	method New
-        method skloniSezonu	
+    method skloniSezonu	
 	method install	
 	method setgaDBFs	
 	method ostalef	
@@ -32,6 +32,8 @@ method New()
 
  ::cName:="FIN"
  ::lAdmin:=.f.
+
+ ::kreiraj()
 
 return self
 
@@ -207,6 +209,9 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
+cDirRad := my_home()
+cDirSif := my_home()
+cDirPriv := my_home()
 
 CreFmkSvi()
 CreRoba()

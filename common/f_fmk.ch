@@ -60,6 +60,7 @@
 #define F_VPRIH    55
 
 #define F_TOKVAL   56
+#define F_P_UPDATE   57
 
 //FMK ROBA
 #define F_TARIFA    60 

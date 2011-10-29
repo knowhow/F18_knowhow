@@ -52,7 +52,7 @@ function OKumul(nArea, cStaza, cIme, nIndexa, cDefault)
 
 select (nArea)
  
-my_use  (cIme)
+my_use (cIme)
 return NIL
 
 

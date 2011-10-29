@@ -29,8 +29,6 @@ return cHome
 function f18_ime_dbf(cImeDbf)
 local nPos
 
-? "ime dbf in", cImeDBf
-
 cImeDbf:=ToUnix(cImeDbf)
 cImeDbf := FILEBASE(cImeDbf)
 nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cImeDbf)} )
@@ -61,6 +59,8 @@ local oServer
 
  HB_CDPSELECT("SL852")
 
+ public gRj := "N"
+
  public gaDBFs:={ ;
 { F_PARAMS  ,  "PARAMS"   , "params"  },;
 { F_GPARAMS , "GPARAMS"  , "gparams"  },;
@@ -79,9 +79,12 @@ local oServer
 { F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  },;
 { F_RELATION , "RELATION"  , "relation"  },;
 { F_FMKRULES , "FMKRULES"  , "f18_rules"  },;
+{ F_RULES , "RULES"  , "rules"  },;
+{ F_P_UPDATE , "P_UPDATE"  , "p_update"  },;
 { F__ROBA , "_ROBA"  , "_roba"  },;
 { F_TRFP , "TRFP"  , "trfp"  },;
 { F_SAST , "SAST"  , "sast"  },;
+{ F_VRSTEP , "VRSTEP"  , "vrstep"  },;
 { F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
 { F_FIPRIPR , "PRIPR"   , "fin_pripr"  },;
 { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  },;

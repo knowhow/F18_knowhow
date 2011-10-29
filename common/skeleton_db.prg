@@ -303,13 +303,10 @@ endif
 
 // setuj i globalnu varijablu dok ne eliminisemo sve pozive na tu varijablu
 
-/*! \todo Eliminsati ovu nepotrebnu dvojnost cDirRad, cDirKum -> sve prebaciti na cDirKum !
- */
-
 cDirKum:=::cDirKum
 cDirRad:=::cDirKum
 
-SET(_SET_DEFAULT,trim(cDir))
+SET(_SET_DEFAULT, trim(cDir))
 
 return cPom
 

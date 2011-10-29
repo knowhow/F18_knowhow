@@ -353,9 +353,9 @@ if (!("U"$TYPE("gSecurity")) .and. gSecurity=="D")
 	CreSecurity(nArea)
 endif
 
-if IsRabati()
-	CreRabDB()
-endif
+//if IsRabati()
+//	CreRabDB()
+//endif
 
 // kreiraj lokal tabelu : LOKAL
 cre_lokal(F_LOKAL)

@@ -26,12 +26,9 @@ if lNew == NIL
 endif
 
 /*
-PUBLIC gaDBFs:={ ;
 { F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
 ...
 */
-
-? cTable
 
 // /home/test/suban.dbf => suban
 cTable := FILEBASE(cTable)

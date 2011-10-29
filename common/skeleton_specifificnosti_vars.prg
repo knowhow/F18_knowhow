@@ -19,7 +19,7 @@
  *  \sa IsSigmaCom
  */
 *bool 
-static lSigmaCom
+static lSigmaCom := .f.
 *;
 
 
@@ -28,7 +28,7 @@ static lSigmaCom
  *  \sa IsRobaGroup
  */
 *bool 
-static lRobaGroup
+static lRobaGroup := .f.
 *;
 
 
@@ -38,7 +38,7 @@ static lRobaGroup
  *  \sa IsVindija
  */
 *bool
-static lVindija
+static lVindija := .f.
 *;
 
 
@@ -47,7 +47,7 @@ static lVindija
  *  \sa IsZips
  */
 *bool
-static lZips
+static lZips := .f.
 *;
 
 
@@ -57,7 +57,7 @@ static lZips
  *  \sa IsUgovori
  */
 *bool
-static lUgovori
+static lUgovori := .f.
 *;
 
 
@@ -66,7 +66,7 @@ static lUgovori
  *  \sa IsRamaGlas
  */
 *bool
-static lRamaGlas
+static lRamaGlas := .f.
 *;
 
 
@@ -75,7 +75,7 @@ static lRamaGlas
  *  \sa IsLdFin
  */
 *bool
-static lLdFin
+static lLdFin := .f.
 *;
 
 /*! \var lMupZeDo
@@ -83,7 +83,7 @@ static lLdFin
  *  \sa IsMupZeDo
  */
 *bool
-static lMupZeDo
+static lMupZeDo := .f.
 *;
 
 
@@ -92,7 +92,7 @@ static lMupZeDo
  *  \sa IsDomZdr
  */
 *bool
-static lDomZdr
+static lDomZdr := .f.
 *;
 
 
@@ -101,7 +101,7 @@ static lDomZdr
  *  \sa IsRabati
  */
 *bool
-static lRabati
+static lRabati := .f.
 *;
 
 

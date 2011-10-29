@@ -1305,41 +1305,6 @@ return fret
 
 function KorLoz()
 
-if !system
-  cSecur:=SecurR(kLevel,"PromSif")
-  if ImaSlovo("X",cSecur)
-     MsgBeep("Opcija nedostupna!")
-     return
-  endif
-endif
-
-O_KORISN
-
-m_kor=SPACE(10)
-m_sif=SPACE(6)
-m_sif2=SPACE(6)
-
-Box("pl",2,31,.F.,"Izmjena vase sifre")
-SET CURSOR ON
-@ m_x+1,m_y+2 SAY "Stara sifra........"  GET m_sif PICTURE "@!"
-@ m_x+2,m_y+2 SAY "Nova sifra........."  GET m_sif2 PICTURE "@!"
-READ; ESC_BCR
-BoxC()
-
-
-locate for alltrim(ImeKorisn)==alltrim(ime) .and. SifraKorisn=sif
-IF FOUND()
-  IF !gReadonly .and. sif==CRYPT(m_sif)
-    REPLACE sif WITH CRYPT(m_sif2)
-    SifraKorisn:=CRYPT(m_sif2)
-  ELSE
-
-  Msg("Sifra nije ispravna!",5)
-
-  END IF
-END IF
-
-closeret
 return
 
 

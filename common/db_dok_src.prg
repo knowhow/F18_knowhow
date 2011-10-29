@@ -23,14 +23,14 @@ local cDokSrcName := "DOKSRC"
 local cPDokSrcName := "P_" + cDokSrcName
 local nBrDokLen := 8
 
-if goModul:oDataBase:cName == "POS"
-	nBrDokLen := 6
-endif
+//if (goModul:oDataBase:cName <> NIL) .and. (goModul:oDatabase:cName == "POS")
+//	nBrDokLen := 6
+//endif
 
 // ako nije jedan od ponudjenih modula preskoci
-if !(goModul:oDataBase:cName $ "FIN#KALK#FAKT#POS")
-	return
-endif
+//if !(goModul:oDataBase:cName $ "FIN#KALK#FAKT#POS")
+//	return
+//endif
 
 AADD(aDBf,{ "idfirma"             , "C" ,   2 ,  0 })
 AADD(aDBf,{ "idvd"                , "C" ,   2 ,  0 })
@@ -434,9 +434,9 @@ function cre_p_update()
 local aDBF := {}
 local cDbfName := "P_UPDATE"
 
-if goModul:oDataBase:cName <> "KALK"
-	return
-endif
+//if goModul:oDataBase:cName <> "KALK"
+//	return
+//endif
 
 AADD(aDBf,{ "modul"               , "C" ,  10 ,  0 })
 AADD(aDBf,{ "idkonto"             , "C" ,   7 ,  0 })

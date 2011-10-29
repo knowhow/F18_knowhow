@@ -225,18 +225,16 @@ if (lVratiseURP==nil)
   lVratiseURP:=.t.
 endif
 
-O_KORISN
-LOCATE FOR (ALLTRIM(ImeKorisn)==ALLTRIM(korisn->ime) .and. SifraKorisn==korisn->sif)
-
 SETCOLOR(StaraBoja)
 
+/*
 if lVratiseURP // zatvori korisnika
   if !empty(goModul:oDataBase:cSezonDir)
     // prebaci se u radno podrucje, ali nemoj to zapisati
     URadPodr(.f.)  
   endif
 endif
-
+*/
 
 ::lTerminate:=.t.
 

@@ -71,20 +71,4 @@ endif
 CLOSERET
 *}
 
-// prikaz idroba
-// nalazim se u tabeli koja sadrzi IDROBA, IDROBA_J
-function StIdROBA()
-*{
-static cPrikIdRoba:=""
 
-if cPrikIdroba == ""
-  cPrikIdRoba:=IzFmkIni('SIFROBA','PrikID','ID',SIFPATH)
-endif
-
-if cPrikIdRoba="ID_J"
-  return IDROBA_J
-else
-  return IDROBA
-endif
-return
-*}

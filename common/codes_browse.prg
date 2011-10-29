@@ -2151,23 +2151,6 @@ go top
 
 return
 
-
-// prikaz idroba
-// nalazim se u tabeli koja sadrzi IDROBA, IDROBA_J
-function StIdROBA()
-
-static cPrikIdRoba:=""
-
-if cPrikIdroba == ""
-  cPrikIdRoba:=IzFmkIni('SIFROBA','PrikID','ID',SIFPATH)
-endif
-
-if cPrikIdRoba="ID_J"
-  return IDROBA_J
-else
-  return IDROBA
-endif
-
 function aTacno(aUsl)
 local i
 for i=1 to len(aUsl)
@@ -2665,5 +2648,18 @@ if lNFGR .and. !FOUND()
 endif
 return
 
+// prikaz idroba
+// nalazim se u tabeli koja sadrzi IDROBA, IDROBA_J
+function StIdROBA()
 
+static cPrikIdRoba:=""
 
+if cPrikIdroba == ""
+  cPrikIdRoba:=IzFmkIni('SIFROBA','PrikID','ID',SIFPATH)
+endif
+
+if cPrikIdRoba="ID_J"
+  return IDROBA_J
+else
+  return IDROBA
+endif

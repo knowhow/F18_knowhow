@@ -104,11 +104,11 @@ function CreFmkSvi()
 cIme := f18_ime_dbf("rj")
 if !file(cIme)
    	aDBf:={}
-   	if goModul:oDataBase:cName == "LD"
-   		AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-   	else
+   	//if goModul:oDataBase:cName == "LD"
+   	//	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+   	//else
    		AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-   	endif
+   	//endif
 	add_f_mcode(@aDbf)
 	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
 

@@ -60,6 +60,9 @@ local oServer
  HB_CDPSELECT("SL852")
 
  public gRj := "N"
+ public gReadOnly := .f.
+ public gSQL := "N"
+ public Invert := .f.
 
  public gaDBFs:={ ;
 { F_PARAMS  ,  "PARAMS"   , "params"  },;

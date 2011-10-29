@@ -487,22 +487,24 @@ if (nArea==-1 .or. nArea==(F_SUBAN))
 	//SUBAN.DBF
 
 	if !FILE(f18_ime_dbf("suban"))
-        	DBCREATE2(KUMPATH+"SUBAN.DBF",aDbf)
+        	DBCREATE2("SUBAN", aDbf)
 	endif
 	
-	CREATE_INDEX("1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr",KUMPATH+"SUBAN") 
-	CREATE_INDEX("2","IdFirma+IdPartner+IdKonto",KUMPATH+"SUBAN")
-	CREATE_INDEX("3","IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)",KUMPATH+"SUBAN")
-	CREATE_INDEX("4","idFirma+IdVN+BrNal+Rbr",KUMPATH+"SUBAN")
-	CREATE_INDEX("5","idFirma+IdKonto+dtos(DatDok)+idpartner",KUMPATH+"SUBAN")
-	CREATE_INDEX("6","IdKonto",KUMPATH+"SUBAN")
-	CREATE_INDEX("7","Idpartner",KUMPATH+"SUBAN")
-	CREATE_INDEX("8","Datdok",KUMPATH+"SUBAN")
+	CREATE_INDEX("1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", "SUBAN") 
+	CREATE_INDEX("2","IdFirma+IdPartner+IdKonto", "SUBAN")
+	CREATE_INDEX("3","IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)","SUBAN")
+	CREATE_INDEX("4","idFirma+IdVN+BrNal+Rbr", "SUBAN")
+	CREATE_INDEX("5","idFirma+IdKonto+dtos(DatDok)+idpartner", "SUBAN")
+
+	CREATE_INDEX("6","IdKonto", "SUBAN")
+
+	CREATE_INDEX("7","Idpartner", "SUBAN")
+	CREATE_INDEX("8","Datdok", "SUBAN")
 	
-	CREATE_INDEX("10","idFirma+IdVN+BrNal+idkonto+DTOS(datdok)",KUMPATH+"SUBAN")
+	CREATE_INDEX("10","idFirma+IdVN+BrNal+idkonto+DTOS(datdok)", "SUBAN")
 	
 	if gRJ=="D"
-		CREATE_INDEX("9","idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+rbr",KUMPATH+"SUBAN")
+		CREATE_INDEX("9","idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+rbr", "SUBAN")
 	endif
 endif
 

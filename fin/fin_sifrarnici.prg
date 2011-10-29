@@ -344,7 +344,7 @@ if Ch==K_CTRL_T .and. gSKSif=="D"
  cSif2:=KONTO->id
  PopWA()
  IF !(cSif==cSif2)
-   if ImaUSuban(KONTO->id,"6")
+   if ImaUSuban(KONTO->id, "6")
      Beep(1)
      Msg("Stavka konta se ne moze brisati jer se vec nalazi u knjizenjima!")
      return 7
@@ -705,6 +705,7 @@ return
 function ImaUSuban(cKljuc,cTag)
 
 LOCAL lVrati:=.f., lUsed:=.t., nArr:=SELECT()
+
   SELECT (F_SUBAN)
   IF !USED()
     lUsed:=.f.
@@ -712,8 +713,9 @@ LOCAL lVrati:=.f., lUsed:=.t., nArr:=SELECT()
   ELSE
     PushWA()
   ENDIF
+
   SET ORDER TO TAG (cTag)
-  seek cKljuc
+  SEEK cKljuc
   lVrati:=found()
   IF !lUsed
     USE

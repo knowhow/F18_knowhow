@@ -108,11 +108,10 @@ SetNaslov(oApp)
 
 SET DELETED ON
 
-
-if mpar37("/INSTALL",oApp)
+//if mpar37("/INSTALL",oApp)
   oApp:oDatabase:lAdmin:=.t.
   CreGParam()
-endif
+//endif
 
 set_global_vars_0_prije_prijave()
 
@@ -126,9 +125,9 @@ endif
 
 oApp:oDatabase:setgaDbfs()
 
-if mpar37("/INSTALL",oApp)
+//if mpar37("/INSTALL",oApp)
   oApp:oDatabase:install()
-endif
+//endif
 
 //IniGparam2()
 
@@ -144,9 +143,6 @@ if lSezone
     oApp:srv()
   endif
     oApp:oDatabase:radiUSezonskomPodrucju(mpar37("/XN",oApp))
-  if !mpar37("/XN",oApp)
-    ArhSigma() 
-  endif
   gProcPrenos:="D"
 
 else
@@ -207,10 +203,9 @@ RDDSETDEFAULT(RDDENGINE)
 
 set exclusive on
 oApp:oDatabase:lAdmin:=.t.
-CreKorisn()
 @ 10,30 SAY ""
 
-SetDirs(oApp)
+//SetDirs(oApp)
 CreSystemDB()
     
 set_global_vars_0_nakon_prijave(.f.)
@@ -302,7 +297,6 @@ endif
 
 if mpar37("/B",oApp)
        BrisipaK(.t.)
-       CreKorisn()
        CreSystemDb()
        oApp:oDatabase:kreiraj()
 endif
@@ -538,96 +532,6 @@ if lScreen==nil
   lScreen:=.t.
 endif
 
-if FILE(EXEPATH+'scshell.ini')
-        ScShellIni()
-endif
-
-if goModul:oDatabase:lAdmin
-  CreKorisn()
-endif
-
-O_KORISN   
-do while .t.
-  if oApp:cKorisn<>nil .and. oApp:cSifra<>nil
-     oApp:cKorisn:=ALLTRIM(upper(oApp:cKorisn))
-     oApp:cSifra:=CryptSC(upper(PADR(oApp:cSifra,6)) )
-     LOCATE FOR oApp:cSifra==korisn->sif
-     // Postoji korisnik, sifra
-     if FOUND()                 
-        exit
-     endif
-  endif
-
-  m_ime:=Space(10)
-  m_sif:=Space(6)
-  GetSifra(oApp, @m_ime, @m_sif)
-  if oApp:lTerminate
-    return
-  endif
-  SetColor(Normal)
-  if m_sif="APPSRV"
-    // aplikacijski server
-    private cKom:="{|| RunAppSrv()}"
-    EVAL (&cKom)
-  endif
-  if LEFT(m_sif,1)=="I"
-    if (cKom==nil)
-      cKom:=""
-    endif
-    PrijRunInstall(m_sif, @cKom)
-  endif
-
-  m_sif:=CryptSC(upper(m_sif))
-  if (m_ime=="SIGMAX" .or. m_sif=="SIGMAX")
-    Imekorisn:="SYSTEM"
-    SifraKorisn:=m_sif
-    KLevel:="0"
-    exit
-  endif
-  
-  oApp:cSifra:=m_sif
-  LOCATE FOR oApp:cSifra==korisn->sif
-  // Postoji korisnik, sifra
-  if FOUND() 
-    exit
-  endif
-
-enddo
-
-LOCATE FOR oApp:cSifra==korisn->sif
-CONTINUE
-
-if FOUND()
-  
-  // postoji vise od jedne sifre
-  if (oApp:cKorisn==NIL)
-    oApp:cKorisn:=space(10)
-  else
-    oApp:cKorisn:=padr(oApp:cKorisn,10)
-  endif
-  
-  LOCATE FOR oApp:cSifra==korisn->sif .and. korisn->ime==oApp:cKorisn
-  if !FOUND()
-    do while .t. // oznaka preduzeca
-      Box(,2,30)
-      @ m_x+1,m_y+2 SAY "Oznaka preduzeca:" GET oApp:cKorisn
-      READ
-      BoxC()
-      if LASTKEY()==K_ESC
-        CLEAR 
-        oApp:quit()
-      endif
-      LOCATE FOR oApp:cSifra==korisn->sif .and. korisn->ime==oApp:cKorisn
-      if found()
-        exit
-      endif
-    enddo
-  endif 
-else  
-  // samo jedna sifra
-  LOCATE FOR oApp:cSifra==korisn->sif
-  oApp:cKorisn:=korisn->ime
-endif
 
 @ 3,4 SAY ""
 if (gfKolor=="D" .and. ISCOLOR())
@@ -651,141 +555,8 @@ else
   Normal:="W/N,N/W,,,N/W"
 endif
 
-if (ImeKorisn=="SYSTEM")
-
-  oApp:oDatabase:setDirKum(".")
-  oApp:oDatabase:setDirSif(".")
-  oApp:oDatabase:setDirPriv(".")
-else
-  SELECT korisn
-  LOCATE FOR oApp:cSifra==field->sif .and. field->ime==oApp:cKorisn
-
-  // eliminsati i ove globalne varijable
-  ImeKorisn:=korisn->ime
-  SifraKorisn:=korisn->sif
-
-  oApp:oDatabase:setDirKum(korisn->dirRad)
-  oApp:oDatabase:setDirSif(korisn->dirSif)
-  oApp:oDatabase:setDirPriv(korisn->dirPriv)
-
-  // KLevel ... ubaciti u TAppMod klasu
-  KLevel := level
-
-  if !gReadonly
-    REPLACE dat WITH DATE()
-    REPLACE time WITH TIME()
-    REPLACE nk WITH .t.
-  endif
-
-endif
-// eliminisati System globalnu varijablu
-
-System := (Trim(ImeKorisn)=="SYSTEM")
-USE
-
-// silent
-SetDirs(oApp, .f.) 
-
 CLOSERET
 return nil
-
-
-
-function ScShellIni(oApp)
-
-local cPPSaMr
-local cBazniDir
-local cMrRs
-local cBrojLok
-
-cPPSaMr:=""
-cPPSaMr:=R_IniRead ( 'TekucaLokacija','PrivPodSaMrezeU',  "",EXEPATH+'scshell.INI' )
-// u ovu varijablu staviti direktorij npr C:\SIGMA
-cBazniDir:=R_IniRead ( 'TekucaLokacija','BazniDir',  "",EXEPATH+'scshell.INI' )
-cMrRS:=R_IniRead ( 'TekucaLokacija','RS',  "",EXEPATH+'scshell.INI' )
-cBrojLok:=R_IniRead ( 'TekucaLokacija','Broj',  "",EXEPATH+'scshell.INI' )
-// Mrezna radna stanica
-
-
-if goModul:oDatabase:lAdmin
-  CreKorisn()
-endif
-
-O_KORISN 
-// napravi u korisn ovog korisnika
-if !EMPTY(cPPSaMr) 
-  LOCATE FOR field->ime==padr(oApp:cKorisn,6)
-  if !FOUND()
-    LOCATE FOR korisn->ime==PADR(LEFT(oApp:cKorisn,LEN(oApp:cKorisn)-1)+'1',6)
-    // mora postojata korisnik 1 !!! na osnovu kojeg se formira novi korisnik
-    // cKorisn = 501, cMRRs=5 -> 505
-    if FOUND()
-      cPom:=strtran(trim(DirPriv),LEFT(trim(DirPriv),len(cPPSaMr)),cPPSaMr)
-      // K:\SIGMA\FIN\11  ->  C:\SIGMA\FIN\11
-      cPom:=left(cPom,len(cPom)-1)+cMRRs
-      // cMRS=8  =>  cPom:=C:\SIGMA\FIN\18
-      // pravim direktorij, kopiram privatne fajlove za korisnika
-      save screen to cScr
-      cls
-      ? "Kopiram privatne fajlova za korisnika ..."
-      ?
-      DirMak2(cPom)
-      cPom2:=strtran(trim(DirPriv),LEFT(trim(DirPriv),len(cBazniDir)),cBazniDir)+SLASH
-      ?  cPom2
-      CopySve("*."+DBFEXT, cPom2, cPom+SLASH)
-      CopySve("*."+INDEXEXT, cPom2, cPom+SLASH)
-      CopySve("*."+MEMOEXT, cPom2, cPom+SLASH)
-      CopySve("*.TXT", cPom2, cPom+SLASH)
-      restore screen from cScr
-
-      oApp:oDatabase:setDirRad(STRTRAN(trim(DirRad), LEFT(trim(DirRad),len(cBazniDir)),cBazniDir))
-      oApp:oDatabase:setDirSif(STRTRAN(trim(DirSif), LEFT(trim(DirSif),len(cBazniDir)),cBazniDir))
-
-      ApndKorisn(cKorisn, cPom, oApp:cDirSif, oApp:cDirKum)
-      oApp:oDatabase:setDirPriv("")
-      oApp:oDatabase:setDirSif("")
-      oApp:oDatabase:setDirKum("")
-
-    else
-      MsgBeep("Mora postojati korisnik :"+LEFT(cKorisn, LEN(cKorisn)-1)+'1')
-      oApp:quit()
-    endif
-endif
-
-
-endif
-
-
-return
-
-
-static function GetSifra(oApp, m_ime, m_sif)
-
-
-@ 10,20 SAY ""
-m_ime:=Space(10)
-m_sif:=Space(6)
-
-Box("pas",3,30,.F.)
-
-SET CURSOR ON
-@ m_x+3,m_y+9 SAY "<ESC> Izlaz"
-@ m_x+1,m_y+2 SAY "Sifra         "
-
-m_sif:=upper(GETSECRET( m_sif ))
-
-if (LASTKEY()==K_ESC)
-  CLEAR 
-  oApp:quit()
-endif
-SET CURSOR OFF
-
-BoxC()
-
-m_ime:=ALLTRIM(UPPER(m_ime))
-
-return
-
 
 static function PrijRunInstall(m_sif, cKom)
 
@@ -813,97 +584,6 @@ RunInstall(cKom)
 return
 
 
-
-static function ApndKorisn(cKorisn, cDirPriv, cDirSif, cDirKum)
-
-
-APPEND BLANK
-REPLACE ime WITH cKorisn
-REPLACE sif WITH CRYPT(PADR(cKorisn,6))
-REPLACE dat WITH DATE() 
-REPLACE time WITH TIME() 
-REPLACE prov WITH 0
-REPLACE level WITH "0"
-REPLACE nk WITH .F.
-REPLACE level with "0"
-REPLACE dirPriv with cDirPriv
-REPLACE dirSif with cDirSif
-REPLACE dirRad with cDirKum
-
-return
-
-
-
-function SetDirs(oApp, lScreen)
-
-local cDN:="N"
-local cPom
-
-if lScreen==nil
-  lScreen:=.t.
-endif
-
-select (F_KORISN)
-use
-O_KORISN
-
-LOCATE FOR alltrim(ImeKorisn)==alltrim(korisn->ime) .and. SifraKorisn=korisn->sif
-Scatter()
-
-if lScreen
-  Box("radD",5,65,.f.,"Lokacije podataka")
-  SET CURSOR ON
-  @ m_x+1,m_y+2 SAY "Podesiti direktorije  "  GET cDN  picture "@!" valid cDN $ "DN"
-  @ m_x+3,m_y+2 SAY "Radni direktorij      "  GET _DirRad ;
-        VALID(DirExists(_DirRad)) when cDN=="D"
-
-  @ m_x+4,m_y+2 SAY "Direktorij sifrarnika "  GET _DirSif ;
-        VALID(DirExists(_DirSif)) when cDN=="D"
-
-  @ m_x+5,m_y+2 SAY "Privatni direktorij   "  GET _DirPriv ;
-        VALID(DirExists(_DirPriv))  when cDN=="D"
-  READ
-
-  ESC_BCR
-  BoxC()
-  
-  if !gReadOnly
-    Gather()
-  endif
-
-  @ 0,24 SAY PADR(trim(ImeKorisn)+":"+cDirPriv,25) COLOR INVERT
-endif
-
-USE
-
-oApp:oDatabase:setDirPriv(_DirPriv)
-oApp:oDatabase:setDirSif(_DirSif)
-oApp:oDatabase:setDirKum(_DirRad)
-
-if gReadOnly .and. (IzFmkIni('Svi','CitatiCD','N',EXEPATH) == "D")
-  cCD:=""
-    if file(EXEPATH+'scshell.ini')
-          cCD:=""
-          cCD:=R_IniRead ( 'TekucaLokacija', 'CD', "",EXEPATH+'scshell.INI' )
-    endif
-  if empty(cCD) .and. Pitanje(,"Citati podatke sa CD-a ?","N")=="D"
-       cCd:="E"
-       Box(,1,60)
-           @ m_x+1,m_y+2 SAY "CD UREDJAJ:" GET cCD pict "@!"
-           read
-      BoxC()
-    endif
-  if !empty(cCD)
-    cPom:=cCD+SUBSTR(oApp:oDatabase:cDirPriv,2)
-    oApp:oDatabase:setDirPriv(cPom)
-    cPom:=cCD+SUBSTR(oApp:oDatabase:cDirSif,2)
-    oApp:oDatabase:setDirSif(cPom)
-    cPom:=cCD+SUBSTR(oApp:oDatabase:cDirKum,2)
-    oApp:oDatabase:setDirKum(cPom)
-    endif
-endif
-
-
 function RunInstall(cKom)
 
 local lIB
@@ -925,6 +605,4 @@ if (lIB)
   goModul:cP7:=""
   lIB:=.f.
 endif
-
-
 

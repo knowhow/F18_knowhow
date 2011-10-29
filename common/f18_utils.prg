@@ -12,20 +12,43 @@
 #include "fmk.ch"
 
 // ---------------------------
+// ~/.F18/bringout1
+// ~/.F18/rg1
+// ~/.F18/test
 // ---------------------------
-function get_f18_home_dir()
+function get_f18_home_dir(cDatabase)
 local cHome
 
 cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
 cHome := hb_DirSepAdd(cHome + ".F18")
+cHome := hb_DirSepAdd(cHome + cDatabase)
 
 return cHome
+
+
+function f18_ime_dbf(cImeDbf)
+local nPos
+
+? "ime dbf in", cImeDBf
+
+cImeDbf:=ToUnix(cImeDbf)
+cImeDbf := FILEBASE(cImeDbf)
+nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cImeDbf)} )
+
+if nPos == 0
+   ? "ajjoooj nemas u gaDBFs ovu stavku:", cImeDBF
+   QUIT
+endif
+
+cImeDbf := my_home() + gaDBFs[nPos, 3] + ".dbf"
+
+return cImeDbf
 
 
 /* ------------------------
   Vraca postgresql oServer 
   ------------------------- */
-function init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cShema)
+function init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 local oServer
 
  REQUEST DBFCDX
@@ -38,6 +61,77 @@ local oServer
 
  HB_CDPSELECT("SL852")
 
+ public gaDBFs:={ ;
+{ F_PARAMS  ,  "PARAMS"   , "params"  },;
+{ F_GPARAMS , "GPARAMS"  , "gparams"  },;
+{ F_KPARAMS , "KPARAMS"  , "kparams"  },;
+{ F_SECUR  , "SECUR"  , "secur"  },;
+{ F_TOKVAL  , "TOKVAL"  , "tokval"  },;
+{ F_SIFK  , "SIFK"  , "sifk"  },;
+{ F_SIFV , "SIFV"  , "sifv"  },;
+{ F_OPS , "OPS"  , "opstine"  },;
+{ F_BANKE , "BANKE"  , "banke"  },;
+{ F_BARKOD , "BARKOD"  , "barkod"  },;
+{ F_STRINGS , "STRINGS"  , "strings"  },;
+{ F_RNAL , "RNAL"  , "rnal"  },;
+{ F_LOKAL , "LOKAL"  , "lokal"  },;
+{ F_DOKSRC , "DOKSRC"  , "doksrc"  },;
+{ F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  },;
+{ F_RELATION , "RELATION"  , "relation"  },;
+{ F_FMKRULES , "FMKRULES"  , "f18_rules"  },;
+{ F__ROBA , "_ROBA"  , "_roba"  },;
+{ F_TRFP , "TRFP"  , "trfp"  },;
+{ F_SAST , "SAST"  , "sast"  },;
+{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
+{ F_FIPRIPR , "PRIPR"   , "fin_pripr"  },;
+{ F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  },;
+{ F_IOS    ,  "IOS"     , "fin_ios"  },;
+{ F_PNALOG ,  "PNALOG"  , "fin_pnalog"  },;
+{ F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  },;
+{ F_PANAL  ,  "PANAL"   , "fin_panal"  },;
+{ F_PSINT  ,  "PSINT"   , "fin_psint"  },;
+{ F_PRIPRRP,  "PRIPRRP" , "fin_priprrp"  },;
+{ F_FAKT   ,  "FAKT"    , "fakt_fakt"  },;
+{ F_FINMAT ,  "FINMAT"  , "fin_mat"  },;
+{ F_OSTAV  ,  "OSTAV"   , "fin_ostav"  },;
+{ F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  },;
+{ F__KONTO ,  "_KONTO"  , "fin__konto"  },;
+{ F__PARTN ,  "_PARTN"  , "fin__partn"  },;
+{ F_POM    ,  "POM"     , "fin_pom"  },;
+{ F_POM2   ,  "POM2"    , "fin_pom2"  },;
+{ F_KUF    ,  "KUF"     , "fin_kuf"   },;
+{ F_KIF    ,  "KIF"     , "fin_kif"   },;
+{ F_SUBAN  ,  "SUBAN"   , "fin_suban"   },;
+{ F_ANAL   ,  "ANAL"    , "fin_anal"   },;
+{ F_SINT   ,  "SINT"    , "fin_sint"   },;
+{ F_NALOG  ,  "NALOG"   , "fin_nalog"  },;
+{ F_RJ     ,  "RJ"      , "fin_rj"   },;
+{ F_FUNK   ,  "FUNK"    , "fin_funk"  },;
+{ F_BUDZET ,  "BUDZET"  , "fin_budzet"  },;
+{ F_PAREK  ,  "PAREK"   , "fin_parek"   },;
+{ F_FOND   ,  "FOND"    , "fin_fond"   },;
+{ F_KONIZ  ,  "KONIZ"   , "fin_koniz"   },;
+{ F_IZVJE  ,  "IZVJE"   , "fin_izvje"   },;
+{ F_ZAGLI  ,  "ZAGLI"   , "fin_zagli"   },;
+{ F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   },;
+{ F_BUIZ   ,  "BUIZ"    , "fin_buiz"   },;
+{ F_TDOK   ,  "TDOK"    , "tdok"   },;
+{ F_KONTO  ,  "KONTO"   , "konto"  },;
+{ F_VPRIH  ,  "VPRIH"   , "vpprih"   },;
+{ F_PARTN  ,  "PARTN"   , "partn"   },;
+{ F_TNAL   ,  "TNAL"    , "tnal"   },;
+{ F_PKONTO ,  "PKONTO"  , "pkonto"   },;
+{ F_VALUTE ,  "VALUTE"  , "valute"   },;
+{ F_ROBA   ,  "ROBA"    , "roba"   },;
+{ F_TARIFA ,  "TARIFA"  , "tarifa"  },;
+{ F_KONCIJ ,  "KONCIJ"  , "koncij"   },;
+{ F_TRFP2  ,  "TRFP2"   , "trfp2"  },;
+{ F_TRFP3  ,  "TRFP3"   , "trfp3"   },;
+{ F_VKSG   ,  "VKSG"    , "vksg"   },;
+{ F_ULIMIT ,  "ULIMIT"  , "ulimit"  };
+}
+
+
  ? "PostgreSQL konekcija ..."
  oServer := TPQServer():New( cHostName, cDatabase, cUser, cPassWord, nPort, cSchema )
  IF oServer:NetErr()
@@ -47,9 +141,6 @@ local oServer
 
 
 return oServer 
-
-
-
 
 // ---------------------------------------
 // ---------------------------------------

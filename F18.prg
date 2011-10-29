@@ -22,7 +22,7 @@ static cF18Home := NIL
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 
 ? "hernad settings"
-cHostName :=  "localhsot"
+cHostName :=  "localhost"
 nPort := 5433
 cDatabase := "quick38"
 ? "------ brisi ovo na drugom racunaru !!!! ----"
@@ -32,10 +32,10 @@ cDatabase := "quick38"
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cShema)
+init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 
 // ~/.F18/
-cF18HomeDir := get_f18_home_dir()
+cF18HomeDir := get_f18_home_dir(cDatabase)
 
 /*
 PUBLIC gTabele:={ ;
@@ -46,7 +46,7 @@ PUBLIC gTabele:={ ;
 */
 
 
-MainFin(cKorisn, cSifra, p3, p4, p5, p6, p7)
+MainFin(cUser, cPassWord, p3, p4, p5, p6, p7)
 
 return
 

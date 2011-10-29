@@ -48,44 +48,11 @@ return NIL
  *  \param cDefault
  */
  
-function OKumul(nArea,cStaza,cIme,nIndexa,cDefault)
-
-local cPath,cScreen
-
-if cDefault==NIL
-  cDefault:="0"
-endif
+function OKumul(nArea, cStaza, cIme, nIndexa, cDefault)
 
 select (nArea)
-if gKesiraj $ "CD"
-  cPath:=strtran(cStaza,LEFT(cStaza,3),gKesiraj+":\")
-
-  DirMak2(cPath)  // napravi odredisni direktorij
-
-  if cDefault!="0"
-    if !file( cPath+cIme+".DBF") .or. Pitanje(,"Osvjeziti podatke za "+cIme, cDefault )=="D"
-     save screen to cScr
-     cls
-     ? "Molim sacekajte prenos podataka na vas racunar "
-     ? "radi brzeg pregleda podataka"
-     ?
-     ? "Ovaj racunar NE KORISTITE za unos novih podataka !"
-     ?
-     close all
-     Copysve(cIme+"*.DB?",cStaza,cPath)
-     Copysve(cIme+"*.CDX",cStaza,cPath)
-     ?
-     ? "pritisni nesto za nastavak ..."
-     inkey(10)
-     restore screen from cScr
-   endif
-  endif
-
-else
-  cPath:=cStaza
-endif
-cPath:=cPath+cIme
-use  (cPath)
+ 
+my_use  (cIme)
 return NIL
 
 

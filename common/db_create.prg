@@ -12,60 +12,6 @@
 
 #include "fmk.ch"
 
-function CreKorisn(nArea)
-*{
-local cImeDBF
-
-if nArea==nil
-	nArea:=-1
-endif
-
-if (nArea==-1 .or. nArea==F_KORISN)
-	
-	 cImeDbf:=  "." + SLASH + "korisn" 
-	 dbf_ext_na_kraju(@cImeDbf)
-
-         if !FILE(cImeDbf)
-
-	   aDbf:={}
-	   AADD(aDbf,{"ime","C",10,0})
-	   AADD(aDbf,{"sif","C",6,0})
-	   AADD(aDbf,{"dat","D",8,0})
-	   AADD(aDbf,{"time","C",8,0})
-	   AADD(aDbf,{"prov","N",4,0})  // brojac neispravnih pokusaja ulaza
-	   AADD(aDbf,{"nk","L",1,0})
-	   AADD(aDbf,{"level","C",1,0})
-	   AADD(aDbf,{"DirRad","C",40,0})
-	   AADD(aDbf,{"DirSif","C",40,0})
-	   AADD(aDbf,{"DirPriv","C",40,0})
-	  
-	   DBCREATE2(cImeDBF, aDbf)
-	  
-	  
-	   USE (cImeDBF)
-
-
-
-	   APPEND BLANK
-	   REPLACE ime WITH "SYSTEM"        ,  ;               && SYSTEM
-		  sif WITH CryptSC("SYSTEM") ,  ;
-		  dat WITH  Date()         ,  ;
-		  time WITH Time()         ,  ;
-		  prov WITH 0              ,  ;
-		  level WITH "0"           ,  ;
-		  nk WITH .F.              ,  ;
-		  level with "0"           ,  ;
-		  DirRad  with             '*'  ,;
-		  DirSif  with             '*'  ,;
-		  DirPriv with             '*'
-	   USE
-	 endif
-	 
-	 CREATE_INDEX("IME","ime", cImeDbf, .t.)
-endif
-
-return
-*}
 
 /*! \fn CreSystemDb()
  *  \brief Kreiraj sistemske tabele (gparams, params, adres, ...)
@@ -73,6 +19,8 @@ return
 function CreSystemDb(nArea)
 *{
 local lShowMsg
+
+? "cresystemdb"
 
 lShowMsg:=.f.
 
@@ -102,6 +50,8 @@ function CreParams(nArea)
 *{
 close all
 
+? "CreParams"
+
 if gReadOnly
 	return
 endif
@@ -120,7 +70,7 @@ AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
 if (nArea==-1 .or. nArea==F_PARAMS)
 
-	if !file(ToUnix(PRIVPATH+"params.dbf"))
+    if !file(f18_ime_dbf("params"))
 		DBCREATE2(PRIVPATH+"params.dbf",aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr",PRIVPATH+"params.dbf",.t.)
@@ -129,24 +79,24 @@ endif
 
 
 if (nArea==-1 .or. nArea==F_GPARAMS)
-	if !file(ToUnix(PRIVPATH+"gparams.dbf"))
+    if !file(f18_ime_dbf("gparams"))
 	 DBCREATE2(PRIVPATH+"gparams.dbf",aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr", PRIVPATH + "gparams.dbf",.t.)
 endif
 
 if (nArea==-1 .or. nArea==F_MPARAMS)
-	if !file(ToUnix(".\mparams.dbf"))
+    if !file(f18_ime_dbf("mparams"))
 	 DBCREATE2(TRUENAME(".\mparams.dbf"),aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr",".\mparams",.t.)
 endif
 
 if (nArea==-1 .or. nArea==F_KPARAMS)
-	if !file(ToUnix(KUMPATH+"KPARAMS.dbf"))
+    if !file(f18_ime_dbf("kparams"))
 	 DBCREATE2(KUMPATH+"KPARAMS.dbf",aDbf)
 	endif
-	CREATE_INDEX("ID","fsec+fh+fvar+rbr",KUMPATH+"kparams.dbf",.t.)
+	CREATE_INDEX("ID", "fsec+fh+fvar+rbr", KUMPATH+"kparams.dbf", .t.)
 endif
 
 
@@ -161,7 +111,7 @@ AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
 if (nArea==-1 .or. nArea==F_SECUR)
 	cImeDBf:=ToUnix(KUMPATH+"secur.dbf")
-	if !file(cImeDBF)
+    if !file(f18_ime_dbf(cImeDbF))
 	 DBCREATE2(cImeDBF,aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr", cImeDBF, .t.)
@@ -179,7 +129,7 @@ if (nArea==nil)
 endif
 
 if (nArea==-1 .or. nArea==F_KPARAMS)
-	if !file(ToUnix(SIFPATH+"ADRES.DBF"))
+    if !file(f18_ime_dbf("adres"))
 	  aDBF:={}
 	  AADD(aDBf,{ 'ID'    , 'C' ,  50 ,   0 })
 	  AADD(aDBf,{ 'RJ'    , 'C' ,  30 ,   0 })
@@ -228,13 +178,13 @@ AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
 if (nArea==-1 .or. nArea==F_GPARAMS)
 
-	cImeDBf:= ToUnix( SLASH + "GPARAMS") 
+	cImeDBf:= f18_ime_dbf("gparams")
 
 	if !file(cImeDbf)
 		DBCREATE2(cImeDbf, aDbf)
 	endif
 
-	CREATE_INDEX("ID","fsec+fh+fvar+rbr", cImeDBF )
+	CREATE_INDEX("ID", "fsec+fh+fvar+rbr", cImeDBF )
 endif
 
 return
@@ -243,7 +193,7 @@ return
 
 function KonvParams(cImeDBF)
 *{
-cImeDBF:=ToUnix(cImeDBF)
+cImeDBF:=f18_ime_dbf(cImeDBF)
 close  all
 if file(cImeDBF) // ako postoji
 use (cImeDbf)
@@ -274,7 +224,6 @@ if right(cIme,4)<>"." + DBFEXT
 endif
 
 
-
 // ------------------------------------------
 // ------------------------------------------
 function DBCREATE2(cIme, aDbf, cDriver)
@@ -283,7 +232,10 @@ local nPos
 local cCDX
 
 
-dbf_ext_na_kraju(@cIme)
+//dbf_ext_na_kraju(@cIme)
+
+cIme := f18_ime_dbf(cIme)
+
 
 nPos:=ASCAN(aDbf,  {|x| x[1]=="BRISANO"} )
 if nPos==0

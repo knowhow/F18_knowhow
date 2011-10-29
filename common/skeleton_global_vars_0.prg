@@ -129,11 +129,7 @@ public KLevel:="9"
 
 public gArhDir
 
-#ifdef __WINDOWS__
-gArhDir:=ToUnix("C:" + SLASH + "fmk_arhiva")
-#else
-gArhDir:=GetEnv("HOME")+"/fmk_arhiva"
-#endif
+gArhDir:=""
 
 public gPFont
 gPFont:="Arial"

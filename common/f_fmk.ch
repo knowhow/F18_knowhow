@@ -59,6 +59,8 @@
 #define F_G_UG_P   54
 #define F_VPRIH    55
 
+#define F_TOKVAL   56
+
 //FMK ROBA
 #define F_TARIFA    60 
 #define F_PARTN     61

@@ -26,35 +26,33 @@ if lNew == NIL
 endif
 
 /*
-method setgaDBFs()
 PUBLIC gaDBFs:={ ;
 { F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
 ...
 */
 
+? cTable
+
 // /home/test/suban.dbf => suban
 cTable := FILEBASE(cTable)
 
 // SUBAN
-nPos:=ASCAN(gaDBFs,  { |x|  x[2]==cTable} )
+nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cTable)} )
+
+if cAlias == NIL
+   cAlias := gaDBFs[nPos, 2]
+endif
 
 if lNew
    SELECT NEW
 endif
 
-if cAlias <> NIL
-   // mi otvaramo ovu tabelu ~/F18/fin_pripr
-   if cRDD <> NIL
-     USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) VIA (cRDD)
-   else
-     USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias)
-   endif
+// mi otvaramo ovu tabelu ~/.F18/bringout/fin_pripr
+if cRDD <> NIL
+     USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) VIA (cRDD) EXCLUSIVE
 else
-   if cRDD <> NIL
-       USE (my_home() + gaDBFs[nPos, 3]) VIA (cRDD)
-   else
-       USE (my_home() + gaDBFs[nPos, 3])
-   endif
+     //? "USE (" + my_home() + gaDBFs[nPos, 3] + ") ALIAS (" + cAlias + " ) EXCLUSIVE"
+     USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) EXCLUSIVE
 endif
 
 return

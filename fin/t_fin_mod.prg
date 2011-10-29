@@ -182,9 +182,6 @@ if (MPar37("/KONVERT", goModul))
 		if cKonvSez<>"RADP"
 			// prebaci se u sezonu cKonvSez
 			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
- 			goModul:oDataBase:setDirKum(trim(goModul:oDataBase:cDirKum)+SLASH+cKonvSez)
- 			goModul:oDataBase:setDirSif(trim(goModul:oDataBase:cDirSif)+SLASH+cKonvSez)
- 			goModul:oDataBase:setDirPriv(trim(goModul:oDataBase:cDirPriv)+SLASH+cKonvSez)
 		endif
 	endif
 	goModul:oDataBase:KonvZN()
@@ -199,9 +196,6 @@ if (MPar37("/MODSTRU", goModul))
 		if cKonvSez<>"RADP"
 			// prebaci se u sezonu cKonvSez
 			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
- 			goModul:oDataBase:setDirKum(trim(goModul:oDataBase:cDirKum)+SLASH+cSez)
- 			goModul:oDataBase:setDirSif(trim(goModul:oDataBase:cDirSif)+SLASH+cSez)
- 			goModul:oDataBase:setDirPriv(trim(goModul:oDataBase:cDirPriv)+SLASH+cSez)
 		endif
 	endif
 	cMsFile:=goModul:oDataBase:cName

@@ -170,55 +170,8 @@ return
 *void TDBFin::setgaDBFs()
 
 method setgaDBFs()
-PUBLIC gaDBFs:={ ;
-{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
-{ F_FIPRIPR , "PRIPR"   , "fin_pripr"  },;
-{ F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  },;
-{ F_IOS    ,  "IOS"     , "fin_ios"  },;
-{ F_PNALOG ,  "PNALOG"  , "fin_pnalog"  },;
-{ F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  },;
-{ F_PANAL  ,  "PANAL"   , "fin_panal"  },;
-{ F_PSINT  ,  "PSINT"   , "fin_psint"  },;
-{ F_PRIPRRP,  "PRIPRRP" , "fin_priprrp"  },;
-{ F_FAKT   ,  "FAKT"    , "fakt_fakt"  },;
-{ F_FINMAT ,  "FINMAT"  , "fin_mat"  },;
-{ F_OSTAV  ,  "OSTAV"   , "fin_ostav"  },;
-{ F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  },;
-{ F__KONTO ,  "_KONTO"  , "fin__konto"  },;
-{ F__PARTN ,  "_PARTN"  , "fin__partn"  },;
-{ F_POM    ,  "POM"     , "fin_pom"  },;
-{ F_POM2   ,  "POM2"    , "fin_pom2"  },;
-{ F_KUF    ,  "KUF"     , "fin_kuf"   },;
-{ F_KIF    ,  "KIF"     , "fin_kif"   },;
-{ F_SUBAN  ,  "SUBAN"   , "fin_suban"   },;
-{ F_ANAL   ,  "ANAL"    , "fin_anal"   },;
-{ F_SINT   ,  "SINT"    , "fin_sint"   },;
-{ F_NALOG  ,  "NALOG"   , "fin_nalog"  },;
-{ F_RJ     ,  "RJ"      , "fin_rj"   },;
-{ F_FUNK   ,  "FUNK"    , "fin_funk"  },;
-{ F_BUDZET ,  "BUDZET"  , "fin_budzet"  },;
-{ F_PAREK  ,  "PAREK"   , "fin_parek"   },;
-{ F_FOND   ,  "FOND"    , "fin_fond"   },;
-{ F_KONIZ  ,  "KONIZ"   , "fin_koniz"   },;
-{ F_IZVJE  ,  "IZVJE"   , "fin_izvje"   },;
-{ F_ZAGLI  ,  "ZAGLI"   , "fin_zagli"   },;
-{ F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   },;
-{ F_BUIZ   ,  "BUIZ"    , "fin_buiz"   },;
-{ F_TDOK   ,  "TDOK"    , "tdok"   },;
-{ F_KONTO  ,  "KONTO"   , "konto"  },;
-{ F_VPRIH  ,  "VPRIH"   , "vpprih"   },;
-{ F_PARTN  ,  "PARTN"   , "partn"   },;
-{ F_TNAL   ,  "TNAL"    , "tnal"   },;
-{ F_PKONTO ,  "PKONTO"  , "pkonto"   },;
-{ F_VALUTE ,  "VALUTE"  , "valute"   },;
-{ F_ROBA   ,  "ROBA"    , "roba"   },;
-{ F_TARIFA ,  "TARIFA"  , "tarifa"  },;
-{ F_KONCIJ ,  "KONCIJ"  , "koncij"   },;
-{ F_TRFP2  ,  "TRFP2"   , "trfp2"  },;
-{ F_TRFP3  ,  "TRFP3"   , "trfp3"   },;
-{ F_VKSG   ,  "VKSG"    , "vksg"   },;
-{ F_ULIMIT ,  "ULIMIT"  , "ulimit"  } ;
-}
+
+? "prebaceno u F18.prg"
 
 return
 
@@ -283,7 +236,7 @@ if (nArea==-1 .or. nArea==(F_FOND))
    	AADD(aDBf,{ "ID"      , "C" ,   3 ,  0 })
    	AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
 	
-	if !FILE(KUMPATH+"FOND.DBF")
+	if !FILE(f18_ime_dbf("FOND"))
 		DBcreate2(KUMPATH+"FOND.DBF",aDbf)
 	endif
 	
@@ -303,12 +256,12 @@ if (nArea==-1 .or. nArea==(F_BUDZET))
    	AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
    	AADD(aDBf,{ "REBIZNOS"            , "N" ,  20 ,  2 })
    		
-	if !FILE(KUMPATH+"BUDZET.DBF")
+	if !FILE(f18_ime_dbf("budzet"))
 		DBcreate2(KUMPATH+"BUDZET.DBF",aDbf)
 	endif
 	
 	SELECT F_BUDZET
-	USE (KUMPATH+"BUDZET")
+	MY_USE (KUMPATH+"BUDZET")
 	if FieldPos("IDKONTO")=0 // ne postoji polje "idkonto"
   		USE
   		save screen to cScr
@@ -332,7 +285,7 @@ if (nArea==-1 .or. nArea==(F_PAREK))
    	AADD(aDBf,{ "IDPARTIJA"           , "C" ,   6 ,  0 })
    	AADD(aDBf,{ "Idkonto"             , "C" ,   7 ,  0 })
    	
-	if !FILE(KUMPATH+"PAREK.DBF")
+	if !FILE(f18_ime_dbf("parek"))
 		DBcreate2(KUMPATH+"PAREK",aDbf)
 	endif
 
@@ -347,7 +300,7 @@ if (nArea==-1 .or. nArea==(F_BUIZ))
    	AADD(aDBf,{ "ID"        , "C" ,   7 ,  0 })
    	AADD(aDBf,{ "NAZ"       , "C" ,  10 ,  0 })
    	
-	if !FILE(KUMPATH+"BUIZ.DBF")
+	if !FILE(f18_ime_dbf("buiz"))
 		DBcreate2(KUMPATH+"BUIZ",aDbf)
 	endif
 
@@ -367,7 +320,7 @@ AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
 if (nArea==-1 .or. nArea==(F_KONTO))
 	//KONTO.DBF
 	
-	if !FILE(SIFPATH+"KONTO.DBF")
+	if !FILE(f18_ime_dbf("konto"))
    		DBcreate2(SIFPATH+"KONTO.DBF",aDbf)
 	endif
 
@@ -381,7 +334,7 @@ if (nArea==-1 .or. nArea==(F_RJ))
 	AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
    	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
 		
-	if !FILE(KUMPATH+"RJ.DBF")
+	if !FILE(f18_ime_dbf("rj"))
    		DBcreate2(KUMPATH+"RJ.DBF",aDbf)
 	endif
 	
@@ -394,7 +347,7 @@ endif
 if (nArea==-1 .or. nArea==(F__KONTO))
 	//_KONTO.DBF
 
-	if !FILE(PRIVPATH+"_KONTO.DBF")
+	if !FILE(f18_ime_dbf("_konto"))
    		DBcreate2(PRIVPATH+"_KONTO.DBF",aDbf)
 	endif
 endif
@@ -417,7 +370,7 @@ AADD(aDBf,{ "MOBTEL"              , "C" ,  20 ,  0 })
 if (nArea==-1 .or. nArea==(F_PARTN))
 	//PARTN.DBF
 
-	if !FILE(SIFPATH+"PARTN.DBF")
+	if !FILE(f18_ime_dbf("partn"))
         	DBcreate2(SIFPATH+"PARTN.DBF",aDbf)
 	endif
 
@@ -429,7 +382,7 @@ endif
 if (nArea==-1 .or. nArea==(F__PARTN))
 	//_PARTN.DBF
 
-	if !file(PRIVPATH+"_PARTN.DBF")
+	if !FILE(f18_ime_dbf("_partn"))
         	DBcreate2(PRIVPATH+"_PARTN.DBF",aDbf)
 	endif
 endif
@@ -441,7 +394,7 @@ if (nArea==-1 .or. nArea==(F_TNAL))
         AADD(aDBf,{ "ID"                  , "C" ,   2 ,  0 })
         AADD(aDBf,{ "NAZ"                 , "C" ,  29 ,  0 })
 
-	if !FILE(SIFPATH+"TNAL.DBF")
+	if !FILE(f18_ime_dbf("tnal"))
         	DBcreate2(SIFPATH+"TNAL.DBF",aDbf)	
 	endif
 	
@@ -453,7 +406,7 @@ endif
 if (nArea==-1 .or. nArea==(F_TDOK))
 	//TDOK.DBF
 
-	if !file(SIFPATH+"TDOK.dbf")
+	if !FILE(f18_ime_dbf("tdok"))
         aDbf:={}
         AADD(aDBf,{ "ID"                  , "C" ,   2 ,  0 })
         AADD(aDBf,{ "NAZ"                 , "C" ,  13 ,  0 })
@@ -479,7 +432,7 @@ AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 if (nArea==-1 .or. nArea==(F_NALOG))
 	//NALOG.DBF
 
-	if !FILE(KUMPATH+"NALOG.DBF")
+	if !FILE(f18_ime_dbf("nalog"))
         	DBcreate2(KUMPATH+"NALOG.DBF",aDbf)
 	endif
 	
@@ -493,7 +446,7 @@ endif
 if (nArea==-1 .or. nArea==(F_PNALOG))
 	//PNALOG.DBF
 
-	if !FILE(PRIVPATH+"PNALOG.DBF")
+	if !FILE(f18_ime_dbf("pnalog"))
         	DBcreate2(PRIVPATH+"PNALOG.DBF",aDbf)
 	endif
 
@@ -528,7 +481,7 @@ AADD(aDBf,{ "M2"               , "C" ,   1 ,  0 })
 if (nArea==-1 .or. nArea==(F_SUBAN))
 	//SUBAN.DBF
 
-	if !file(KUMPATH+"SUBAN.DBF")
+	if !FILE(f18_ime_dbf("suban"))
         	DBCREATE2(KUMPATH+"SUBAN.DBF",aDbf)
 	endif
 	
@@ -552,7 +505,7 @@ endif
 if (nArea==-1 .or. nArea==(F_PSUBAN))
 	//PSUBAN.DBF
 
-	if !FILE(PRIVPATH+"PSUBAN.DBF")
+	if !FILE(f18_ime_dbf("psuban"))
         	DBcreate2(PRIVPATH+"PSUBAN.DBF",aDbf)
 	endif
 	
@@ -564,7 +517,7 @@ endif
 if (nArea==-1 .or. nArea==(F_PRIPR))
 	//PRIPR.DBF
 
-	if !FILE(PRIVPATH+"PRIPR.DBF")
+	if !FILE(f18_ime_dbf("pripr"))
         	DBcreate2(PRIVPATH+"PRIPR.DBF",aDbf)
 	endif
 
@@ -589,7 +542,7 @@ AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 if (nArea==-1 .or. nArea==(F_ANAL))
 	//ANAL.DBF
 
-	if !FILE(KUMPATH+"ANAL.DBF")
+	if !FILE(f18_ime_dbf("anal"))
  		DBcreate2(KUMPATH+"ANAL.DBF",aDbf)
 	endif
 	
@@ -605,7 +558,7 @@ endif
 if (nArea==-1 .or. nArea==(F_PANAL))
 	//PANAL.DBF
 
-	if !FILE(PRIVPATH+"PANAL.DBF")
+	if !FILE(f18_ime_dbf("panal"))
         	DBCREATE2(PRIVPATH+"PANAL.DBF",aDbf)
 	endif
 
@@ -629,7 +582,7 @@ AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 if (nArea==-1 .or. nArea==(F_SINT))
 	//SINT.DBF
 
-	if !FILE(KUMPATH+"SINT.DBF")
+	if !FILE(f18_ime_dbf("sint"))
         	DBcreate2(KUMPATH+"SINT.DBF",aDbf)
 	endif
 	
@@ -642,7 +595,7 @@ endif
 if (nArea==-1 .or. nArea==(F_PSINT))
 	//PSINT.DBF
 
-	if !file(PRIVPATH+"PSINT.DBF")
+	if !FILE(f18_ime_dbf("psint"))
         	DBCREATE2(PRIVPATH+"PSINT.DBF",aDbf)
 	endif
 
@@ -664,7 +617,7 @@ if (nArea==-1 .or. nArea==(F_BBKLAS))
         AADD(aDBf,{ "SALPDUG"             , "N" ,  17 ,  2 })
         AADD(aDBf,{ "SALPPOT"             , "N" ,  17 ,  2 })
 	
-	if !FILE(PRIVPATH+"BBKLAS.DBF")
+	if !FILE(f18_ime_dbf("bbklas"))
         	DBcreate2(PRIVPATH+"BBKLAS.DBF",aDbf)
 	endif
 	
@@ -682,7 +635,7 @@ if (nArea==-1 .or. nArea==(F_IOS))
         AADD(aDBf,{ "IZNOSBHD"            , "N" ,  17 ,  2 })
         AADD(aDBf,{ "IZNOSDEM"            , "N" ,  15 ,  2 })
 	
-	if !FILE(PRIVPATH+"IOS.DBF")        
+	if !FILE(f18_ime_dbf("ios"))
         	DBcreate2(PRIVPATH+"IOS",aDbf)
 	endif
 
@@ -698,7 +651,7 @@ if (nArea==-1 .or. nArea==(F_PKONTO))
         AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
         AADD(aDBf,{ "TIP"                 , "C" ,  1 ,   0 })
 		
-	if !FILE(SIFPATH+"PKONTO.DBF")
+	if !FILE(f18_ime_dbf("pkonto"))
         	DBcreate2(SIFPATH+"PKONTO.DBF",aDbf)
 	endif
 	
@@ -709,7 +662,7 @@ endif
 if (nArea==-1 .or. nArea==(F_VALUTE))
 	//VALUTE.DBF
 
-	if !FILE(SIFPATH+"VALUTE.DBF")
+	if !FILE(f18_ime_dbf("valute"))
 	       	aDbf:={}
         	AADD(aDBf,{ "ID"                  , "C" ,   4 ,  0 })
         	AADD(aDBf,{ "NAZ"                 , "C" ,  30 ,  0 })
@@ -722,7 +675,7 @@ if (nArea==-1 .or. nArea==(F_VALUTE))
         	
 		DBcreate2(SIFPATH+"VALUTE.DBF",aDbf)
         	
-		USE (SIFPATH+"VALUTE.DBF")
+		my_USE (SIFPATH+"VALUTE.DBF")
         	append blank
         	replace id with "000", naz with "KONVERTIBILNA MARKA",NAZ2 WITH "KM", DATUM WITH CTOD("01.01.02"), TIP WITH "D",KURS1 WITH 1, KURS2 WITH 1, KURS3 WITH 1
         	append blank
@@ -780,7 +733,7 @@ AADD(aDBf,{ "UPOREZV"          , "N" ,  20 ,  8 })
 if (nArea==-1 .or. nArea==(F_FINMAT))
 	//FINMAT.DBF
 
-	if !FILE(PRIVPATH+"FINMAT.DBF")
+	if !FILE(f18_ime_dbf("finmat"))
     		DBcreate2(PRIVPATH+"FINMAT.DBF",aDbf)
 	endif
 	
@@ -804,7 +757,7 @@ if (nArea==-1 .or. nArea==(F_TRFP2))
         AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
         AADD(aDBf,{ "IDTARIFA"            , "C" ,   6 ,  0 })
 	
-	if !FILE(SIFPATH+"TRFP2.DBF")
+	if !FILE(f18_ime_dbf("trfp2"))
         	DBcreate2(SIFPATH+"TRFP2.DBF",aDbf)
 	endif
 
@@ -823,7 +776,7 @@ if (nArea==-1 .or. nArea==(F_TRFP3))
         AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
         AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
 	
-	if !FILE(SIFPATH+"TRFP3.DBF")
+	if !FILE(f18_ime_dbf("trfp3"))
         	DBcreate2(SIFPATH+"TRFP3.DBF",aDbf)
 	endif
 
@@ -840,7 +793,7 @@ if (nArea==-1 .or. nArea==(F_KONCIJ))
    	AADD(aDBf,{ "NAZ"                 , "C" ,   2 ,  0 })
    	AADD(aDBf,{ "IDPRODMJES"          , "C" ,   2 ,  0 })
    
-	if !FILE(SIFPATH+"KONCIJ.DBF")
+	if !FILE(f18_ime_dbf("koncij"))
       		DBcreate2(SIFPATH+"KONCIJ.DBF",aDbf)
 	endif
 
@@ -855,7 +808,7 @@ if (nArea==-1 .or. nArea==(F_VKSG))
 	AADD(aDBf,{ "GODINA"              , "C" ,   4 ,  0 })
 	AADD(aDBf,{ "IDS"                 , "C" ,   7 ,  0 })
 
-	if !FILE(SIFPATH+"VKSG.dbf")
+	if !FILE(f18_ime_dbf("vksg"))
    		DBcreate2(SIFPATH+"VKSG.DBF",aDbf)
 	endif
 
@@ -879,7 +832,7 @@ if (nArea==-1 .or. nArea==(F_KUF))
    	AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
    	AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
 
-	if !FILE(KUMPATH+"KUF.DBF")
+	if !FILE(f18_ime_dbf("kuf"))
    		DBcreate2(KUMPATH+"KUF.DBF",aDbf)
 	endif
 	
@@ -905,7 +858,7 @@ if (nArea==-1 .or. nArea==(F_KIF))
    	AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
    	AADD(aDBf,{ "IDVPRIH"             , "C" ,   3 ,  0 })
 
-	if !FILE(KUMPATH+"KIF.DBF")
+	if !FILE(f18_ime_dbf("kif"))
    		DBcreate2(KUMPATH+"KIF.DBF",aDbf)
 	endif
 	
@@ -918,7 +871,7 @@ endif
 if (nArea==-1 .or. nArea==(F_TNAL))
 	//VRSTEP.DBF
 
-	if !FILE(SIFPATH+"VRSTEP.DBF")
+	if !FILE(f18_ime_dbf("vrstep"))
    		aDbf:={{"ID",  "C",  2, 0}, ;
              	       {"NAZ", "C", 20, 0}}
    		DBcreate2(SIFPATH+"VRSTEP.DBF",aDbf)
@@ -931,7 +884,7 @@ endif
 if (nArea==-1 .or. nArea==(F_VPRIH))
 	//VPRIH.DBF
 
-	if !FILE(SIFPATH+"VPRIH.DBF")
+	if !FILE(f18_ime_dbf("vprih"))
    		aDbf:={{"ID",  "C",  3, 0}, ;
              	       {"NAZ", "C", 20, 0}}
    		DBcreate2(SIFPATH+"VPRIH.DBF",aDbf)	
@@ -944,7 +897,7 @@ endif
 if (nArea==-1 .or. nArea==(F_ULIMIT))
 	//ULIMIT.DBF
 
-	if !FILE(SIFPATH+"ULIMIT.DBF")
+	if !FILE(f18_ime_dbf("ulimit"))
    		aDbf:={{"ID"        , "C" ,  3 , 0 }, ;
         	       { "IDPARTNER" , "C" ,  6 , 0 }, ;
              	       { "LIMIT"     , "N" , 15 , 2 }}

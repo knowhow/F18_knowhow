@@ -96,11 +96,7 @@ local fURp:=.f.
 local cDanasnjaSezona
 private lURp:=.f.
 
-//ako sam u administratorskom rezimu, za svaki slucaj kreiraj
-//parametarske tabele
-if ::lAdmin
-	CreSystemDb()
-endif
+CreSystemDb()
 
 CLOSE ALL
 
@@ -590,7 +586,7 @@ return
 METHOD loadSezonaRadimUSezona() CLASS TDB
 local cPom
 
-
+CreParams(F_KPARAMS)
 O_KPARAMS
 public gSezona:="    "
 
@@ -638,9 +634,6 @@ return
 
 METHOD saveSezona(cValue) CLASS TDB
 
-#ifdef CLIP
-	? "save sezona ..."
-#endif
 O_KPARAMS
 private cSection:="1"
 private cHistory:=" "

@@ -12,8 +12,11 @@
 
 #include "fmk.ch"
 
-
+// -----------------------
+// -----------------------
 function set_global_vars()
+
+CreParams(F_PARAMS)
 
 SetSpecifVars()
 SetValuta()

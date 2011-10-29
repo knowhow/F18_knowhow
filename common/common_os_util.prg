@@ -266,6 +266,7 @@ RETURN
 // ----------------------------------------------
 function ToUnix(cFileName)
 
+/*
 local nPos
 
 cFileName:= LOWER(cFileName)
@@ -298,6 +299,8 @@ if HB_OSPATHSEPARATOR() == "/"
   endif
 
 endif
+
+*/
 
 return cFileName
 

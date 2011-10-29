@@ -169,26 +169,6 @@
                             ;return                     ;
                             ;endif
 
-#command USEX <(db)>                                                   ;
-             [VIA <rdd>]                                                ;
-             [ALIAS <a>]                                                ;
-             [<new: NEW>]                                               ;
-             [<ro: READONLY>]                                           ;
-             [INDEX <(index1)> [, <(indexn)>]]                          ;
-                                                                        ;
-      =>  PreUseEvent(<(db)>,.f.,gReadOnly)				;
-        ;  dbUseArea(                                                   ;
-                    <.new.>, <rdd>, ToUnix(<(db)>), <(a)>,              ;
-                     .f., gReadOnly       ;
-                  )                                                     ;
-                                                                        ;
-      [; dbSetIndex( <(index1)> )]                                      ;
-      [; dbSetIndex( <(indexn)> )]
-
-
-
-
-
 #DEFINE SLASH  HB_OSPATHSEPARATOR()
 #DEFINE INDEXEXTENS "cdx"
 #DEFINE INDEXEXT "cdx"
@@ -297,3 +277,4 @@
 #command MY_DELETE  =>    delete2()
 
 
+#define  MEMOEXTENS  "fpt"

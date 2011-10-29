@@ -17,5 +17,32 @@ fin/o_fin.ch:#xcommand O_DEST     => select(F_DEST);  MY_USE  (STRTRAN(KUMPATH,"
 
 function my_use(cTable)
 
-USE cTable
+USE (my_home() + cTable)
+
 return
+
+function usex(cTable)
+return my_use(cTable)
+
+
+/*
+#command USEX <(db)>                                                   ;
+             [VIA <rdd>]                                                ;
+             [ALIAS <a>]                                                ;
+             [<new: NEW>]                                               ;
+             [<ro: READONLY>]                                           ;
+             [INDEX <(index1)> [, <(indexn)>]]                          ;
+                                                                        ;
+      =>  PreUseEvent(<(db)>,.f.,gReadOnly)				;
+        ;  dbUseArea(                                                   ;
+                    <.new.>, <rdd>, ToUnix(<(db)>), <(a)>,              ;
+                     .f., gReadOnly       ;
+                  )                                                     ;
+                                                                        ;
+      [; dbSetIndex( <(index1)> )]                                      ;
+      [; dbSetIndex( <(indexn)> )]
+
+
+*/
+
+

@@ -112,7 +112,7 @@ endif
 
 IF lPrenos4 .or. lPrenos5 .or. lPrenos6
   select (F_SUBAN)
-  usex (cDirRad+"\suban")
+  usex (suban")
   if lPrenos4
     index on idfirma+idkonto+idpartner+idrj+funk+fond to SUBSUB
   endif

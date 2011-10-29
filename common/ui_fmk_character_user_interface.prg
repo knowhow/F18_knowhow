@@ -1785,12 +1785,10 @@ return
 
 
 function MAXROWS()
-
 return 25
 
 
 function MAXCOLS()
-
 return 80
 
 

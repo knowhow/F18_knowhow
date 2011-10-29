@@ -296,7 +296,7 @@ elseif cPrinter=="V"
 		gaKolFix:=NIL
 	ENDIF
 	//VidiFajl(cKom,gaZagFix,gaKolFix)
-        run ("gedit " + ToUnix(PRIVPATH + cFName)) 
+        run ("mvim " + ToUnix(PRIVPATH + cFName)) 
 
 	gaZagFix:=NIL
 	gaKolFix:=NIL

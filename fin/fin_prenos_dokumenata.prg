@@ -112,7 +112,7 @@ endif
 
 IF lPrenos4 .or. lPrenos5 .or. lPrenos6
   select (F_SUBAN)
-  usex (suban")
+  usex ("suban")
   if lPrenos4
     index on idfirma+idkonto+idpartner+idrj+funk+fond to SUBSUB
   endif
@@ -124,7 +124,7 @@ IF lPrenos4 .or. lPrenos5 .or. lPrenos6
   endif
   use
   select (F_SUBAN)
-  usex (cDirRad+"\suban")
+  usex ("suban")
   if lPrenos4
     SET INDEX TO SUBSUB
     SET ORDER TO TAG "SUBSUB"
@@ -139,7 +139,7 @@ IF lPrenos4 .or. lPrenos5 .or. lPrenos6
   endif
 ELSE
   select (F_SUBAN)
-  usex (cDirRad+"\suban"); set order to tag "3"
+  usex ("suban"); set order to tag "3"
   //IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
 ENDIF
 
@@ -149,7 +149,7 @@ IF !(cFilter==".t.")
 ENDIF
 
 select (F_PKONTO)
-usex (cDirSif+"\pkonto"); set order to tag "ID"
+usex ("pkonto"); set order to tag "ID"
 
 O_PRIPR
 if reccount2()<>0

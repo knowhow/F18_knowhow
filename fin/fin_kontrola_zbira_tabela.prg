@@ -19,6 +19,7 @@
 //              .f. ako nije
 // --------------------------------
 function KontrZb(bDat, lSilent)
+
 local lRet := .t.
 local nSaldo := 0
 local nSintD := 0
@@ -53,19 +54,16 @@ if lSilent
 endif
 
 select F_NALOG
-use nalog
+my_use("nalog")
 set order to
 select F_SUBAN
-use suban
+my_use("suban")
 set order to
-#ifdef CAX
-	AX_CacheRecords(20)
-#endif
 select F_ANAL
-use anal
+my_use("anal")
 set order to
 select F_SINT
-use sint 
+my_use("sint") 
 set order to
 
 if !lSilent

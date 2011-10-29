@@ -22,9 +22,10 @@ REQUEST DBFCDX
 //REQUEST HB_GT_WIN
 //REQUEST HB_GT_GTQTC_DEFAULT
 #else
-//REQUEST HB_GT_CRS
-// REQUEST HB_GT_XWC_DEFAULT
-? "TOD TOD TODO !!! setovati konzolu"
+
+//REQUEST HB_GT_CRS_DEFAULT
+REQUEST HB_GT_XWC_DEFAULT
+//? "TOD TOD TODO !!! setovati konzolu"
 #endif
 
 /*
@@ -326,7 +327,7 @@ function SetNaslov(oApp)
 
 
 
-gNaslov:= oApp:cName + " HB, " + oApp:cPeriod 
+gNaslov:= oApp:cName + " F18, " + oApp:cPeriod 
 
 #ifndef FMK_DEBUG
 SETCANCEL(.f.)

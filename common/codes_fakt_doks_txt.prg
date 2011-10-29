@@ -13,9 +13,6 @@
 #include "fmk.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/svi/dokstxt.prg,v $
  * $Author: sasa $ 
  * $Revision: 1.2 $

@@ -23,11 +23,11 @@ REQUEST DBFCDX
 //REQUEST HB_GT_GTQTC_DEFAULT
 #else
 //REQUEST HB_GT_CRS
-REQUEST HB_GT_XWC_DEFAULT
+// REQUEST HB_GT_XWC_DEFAULT
+? "TOD TOD TODO !!! setovati konzolu"
 #endif
 
 /*
-
     Inicijalizacija systema, bazne funkcije
     prebaciti u potpunosti na objektni model (ionako se koristi oApp)
 */
@@ -49,11 +49,8 @@ REQUEST HB_GT_XWC_DEFAULT
  * Inicijalizacija sclib sistema
  *
  */
- 
 function SC_START(oApp, lSezone)
-
 local cImeDbf
-
 public gAppSrv
 
   
@@ -64,8 +61,14 @@ if !oApp:lStarted
   ? "setujem default engine ..." + RDDENGINE
   RDDSETDEFAULT( RDDENGINE )
 
-#ifdef __PLATFORM__LINUX
+#ifdef __PLATFORM__WINDOWS
    
+  //REQUEST HB_CODEPAGE_SL852
+   //REQUEST HB_CODEPAGE_SLWIN
+
+   //hb_setCodePage( "SL852" )
+   //hb_setTermCP("SLWIN")
+
    REQUEST HB_CODEPAGE_SL852 
    REQUEST HB_CODEPAGE_SLISO
 
@@ -73,13 +76,12 @@ if !oApp:lStarted
    hb_setTermCP("SLISO")
 
 #else
+   // linux, macosx
+   REQUEST HB_CODEPAGE_SL852 
+   REQUEST HB_CODEPAGE_SLISO
 
-   //REQUEST HB_CODEPAGE_SL852
-   //REQUEST HB_CODEPAGE_SLWIN
-
-   //hb_setCodePage( "SL852" )
-   //hb_setTermCP("SLWIN")
-
+   hb_setCodePage( "SL852" )
+   hb_setTermCP("SLISO")
 #endif
 
   ? "startujem oApp:db()"

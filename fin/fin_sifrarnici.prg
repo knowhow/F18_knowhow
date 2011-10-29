@@ -238,27 +238,6 @@ endif
 
 RETURN DE_CONT
 
-
-
-/*! \fn P_VN(cId,dx,dy)
- *  \brief Otvara sifranik vrta naloga
- *  \param cId
- *  \param dx
- *  \param dy
- */
- 
-function P_VN(cId,dx,dy)
-
-PRIVATE ImeKol,Kol
-ImeKol:={ { "ID  ",  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
-          { "Naziv", {|| naz},     "naz"      };
-        }
-Kol:={1,2}
-private gTBDir:="N"
-return PostojiSifra(F_TNAL,1,10,60,"Lista: Vrste naloga",@cId,dx,dy)
-
-
-
 /*! \fn P_KontoFin(cId,dx,dy,lBlag)
  *  \brief Otvara sifrarnik konta spec. za FIN
  *  \param cId
@@ -744,21 +723,12 @@ LOCAL lVrati:=.f., lUsed:=.t., nArr:=SELECT()
   select (nArr)
 RETURN lVrati
 
-
-
-/*! \fn P_Roba(cId,dx,dy)
- *  \brief Otvara sifranik robe
- *  \param cId
- *  \param dx
- *  \param dy
- */
  
-function P_Roba(CId,dx,dy)
+function P_Roba_fin(CId,dx,dy)
 
 local cPrikazi
 
 //PRIVATE ImeKol,Kol:={}, xRet
-
 
 //ImeKol:={ }
 //AADD (ImeKol,{ padc("ID",10),  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wId)} })

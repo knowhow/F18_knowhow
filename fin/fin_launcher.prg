@@ -15,15 +15,6 @@ EXTERNAL DESCEND
 EXTERNAL RIGHT
 
 
-/*! \fn function Main(cKorisn, cSifra, p3, p4, p5, p6, p7)
- *  \brief Main fja za FIN.EXE
- */
-function Main(cKorisn, cSifra, p3, p4, p5, p6, p7)
-
-MainFin(cKorisn, cSifra, p3, p4, p5, p6, p7)
-
-return
-
 function TFileRead()
 return
 

@@ -1789,7 +1789,7 @@ return 40
 
 
 function MAXCOLS()
-return 120
+return 140
 
 
 function ToggleINS()

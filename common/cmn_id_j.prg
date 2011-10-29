@@ -13,17 +13,12 @@
 #include "fmk.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/roba/id_j.prg,v $
  * $Author: ernad $ 
  * $Revision: 1.2 $
  * $Log: id_j.prg,v $
  * Revision 1.2  2002/06/16 14:16:54  ernad
  * no message
- *
- *
  */
  
 function OsvjeziIDj()

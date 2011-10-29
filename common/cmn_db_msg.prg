@@ -11,7 +11,7 @@
 
 
 #include "fmk.ch"
-#include "msg.ch"
+#include "f18_msg.ch"
 
 
 /*! \fn CreDB_Message()

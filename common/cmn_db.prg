@@ -11,7 +11,7 @@
 
 
 #include "fmk.ch"
-#include "rabat.ch"
+#include "f18_rabat.ch"
 
 /*! \fn CreRabDB()
  *  \brief Kreira tabelu rabat u SIFPATH

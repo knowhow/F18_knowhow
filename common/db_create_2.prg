@@ -179,6 +179,7 @@ if !file(cIme)
         AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
         AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
         dbcreate2("valute", aDbf)
+        close all
         my_use ('valute')
         append blank
         replace id with "000", naz with "KONVERTIBILNA MARKA", ;

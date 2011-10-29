@@ -333,8 +333,8 @@ DO WHILE !eof()
 
    private cDN:="N"
    if !lAuto
-     Box(,2,55)
-       @ m_x+1,m_y+2 SAY "Stampanje analitike/sintetike za nalog "+cidfirma+"-"+cidvn+"-"+cbrnal+" ?"  GET cDN pict "@!" valid cDN $ "DN"
+     Box(, 2, 58)
+       @ m_x+1, m_y+2 SAY "Stampanje analitike/sintetike za nalog "+cidfirma+"-"+cidvn+"-"+cbrnal+" ?"  GET cDN pict "@!" valid cDN $ "DN"
        if gDatNal=="D"
         @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
        endif

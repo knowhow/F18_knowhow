@@ -666,7 +666,9 @@ if (nArea==-1 .or. nArea==(F_PKONTO))
 	CREATE_INDEX("NAZ","TIP",SIFPATH+"PKONTO")
 endif
 
+/*
 if (nArea==-1 .or. nArea==(F_VALUTE))
+
 	//VALUTE.DBF
 
 	if !FILE(f18_ime_dbf("valute"))
@@ -696,7 +698,7 @@ if (nArea==-1 .or. nArea==(F_VALUTE))
 	CREATE_INDEX("NAZ","tip+id", SIFPATH+"VALUTE")
 	CREATE_INDEX("ID2","id+dtos(datum)", SIFPATH+"VALUTE")
 endif
-
+*/
 
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"          , "C" ,   2 ,  0 })

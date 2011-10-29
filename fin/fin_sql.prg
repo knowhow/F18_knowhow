@@ -9,28 +9,16 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
-
-/*! \file fmk/fin/specif/ramaglas/rpt/1g/mnu_rpt.prg
- *  \brief Meni izvjestaja za rama glas - "pogonsko knjigovodstvo"
+/*! \file fmk/fin/sql/1g/sql.prg
+ *  \brief SQL operacije
  */
 
-/*! \fn Izvjestaji()
- *  \brief Glavni menij za izbor izvjestaja
- *  \param 
+/*! \fn O_Log()
+ *  \brief Otvara log fajl
  */
  
-function IzvjPogonK()
+function O_Log()
 
-private Izbor:=1
-private opc:={}
-private opcexe:={}
-
-AADD(opc,"1. specifikacija troskova po radnim nalozima")
-AADD(opcexe,{|| SpecTrosRN()})
-
-Menu_SC("izPK")
-
-return .f.
+return
 
 

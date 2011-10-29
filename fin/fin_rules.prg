@@ -1,5 +1,16 @@
-#include "fin.ch"
+/* 
+ * This file is part of the bring.out FMK, a free and open source 
+ * accounting software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
 
+
+#include "fin.ch"
 
 // -------------------------------------------
 // kreiraj index FIN rules....
@@ -10,8 +21,6 @@ CREATE_INDEX( "FINKNJ1", "MODUL_NAME+RULE_OBJ+STR(RULE_NO,5)", SIFPATH + "FMKRUL
 
 CREATE_INDEX( "ELBA1", "MODUL_NAME+RULE_OBJ+RULE_C3", SIFPATH + "FMKRULES" )
 return
-
-
 
 
 // --------------------------------------------

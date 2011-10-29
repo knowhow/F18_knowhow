@@ -767,7 +767,7 @@ if left(cLin,1)="*"
 
        if file( ToUnix(cPath + cDbf) )
            select 1
-           usex ( ToUnix(cPath + cDbf) ) alias olddbf
+           usex ( cPath + cDbf, "olddbf", .f.)
        else
            cDbf:="*"
            ?? "  Ne nalazi se u direktorijumu"

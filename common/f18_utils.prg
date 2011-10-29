@@ -10,7 +10,6 @@
  */
 
 #include "fmk.ch"
-#include "common.h"
 
 // ---------------------------
 // ---------------------------
@@ -94,7 +93,7 @@ DO WHILE i <= PCount()
     DO CASE
 
       CASE cTok == "--help"
-          help()
+          f18_help()
           QUIT
       CASE cTok == "-h"
          cHostName := hb_PValue( i++ )

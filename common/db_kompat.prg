@@ -25,21 +25,16 @@ function DBT2FPT(cImeDBF)
 cImeDbf:=strtran(ToUnix(cImeDBF),"."+DBFEXT,"")
 close all
 
-#ifdef CAX
-  ? "Konverziju vrsiti sa CDX verzijama"
-  return
-#endif
-
 if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
    if file(cimedbf+".FPT")
      MsgBeep("Ne smije postojati"+cImeDBF+".FPT ????#Prekidam operaciju !")
      return
    endif
-   use (cImeDBF) via "DBFNTX" NEW
+     MY_use (cImeDBF, nil, .t., "DBFNTX")
    MsgO("Konvertujem "+cImeDBF+" iz DBT u FPT")
      Beep(1)
      copy structure extended to struct
-     USEX STRUCT NEW
+     USEX("STRUCT", nil, .t.)
      dbappend()
      replace field_name with "BRISANO" , field_type with "C", ;
         field_len with 1, field_dec with 0
@@ -54,9 +49,9 @@ if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
      ferase(cImeDBF+".FPT")
      create (cImeDBF) from struct  VIA RDDENGINE
      close all
-     USE (PRIVPATH+"TEMP") VIA "DBFNTX" EXCLUSIVE NEW
+     MY_USE (PRIVPATH+"TEMP", nil, .t., "DBFNTX")
      set order to 0
-     USE (cImeDBF)  VIA  RDDENGINE NEW EXCLUSIVE alias novi
+     MY_USE (cImeDBF, "novi", .t., RDDENGINE)
      set order to 0
      select temp
      go top
@@ -128,7 +123,7 @@ if fProm
      ferase(cpath+cPath2+"tmp.cdx")
      dbcreate(cpath+cPath2+"tmp.tmp",aNStru)
      select 2
-     usex (cpath+cPath2+"tmp.tmp") alias tmp
+     usex (cPath+cPath2+"tmp.tmp", "tmp", .f.)
      select olddbf  //5.2
      ?
      nRow:=row()

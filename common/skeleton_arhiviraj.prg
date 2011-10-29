@@ -45,7 +45,7 @@ if !file(cDbfKontr)
     AADD(aDbf,{ "Tip"  , "C",  1, 0 })
     DBCREATE2(cDbfKontr,aDbf,RDDENGINE)
     select 120
-    use (cDbfKontr) via RDDENGINE
+    my_use (cDbfKontr, nil, .f.,  RDDENGINE)
     
     append blank
     return
@@ -53,14 +53,13 @@ endif
 
 
 select 120
-use (cDbfKontr) via RDDENGINE
+my_use (cDbfKontr, nil, .f.,  RDDENGINE)
 go top  
 dDatArh:=datum
 use
 
 if date()-dDatArh  > 3  // svaka tri dana
 
-#ifndef CLIP
    if !greadonly .and. pitanje(,"Izvrsiti formiranje pomocne arhive podataka ?","D")=="D"
        cScr:=""
        save screen to cScr
@@ -69,12 +68,11 @@ if date()-dDatArh  > 3  // svaka tri dana
        restore screen from cScr
 
        select 120
-       usex (cDbfKontr) via RDDENGINE
+       usex (cDbfKontr, nil, .f.,  RDDENGINE)
        replace datum with date()
        use
        // datum arhive
    endif  // pitanje
-#endif
 
 endif  // date
 return

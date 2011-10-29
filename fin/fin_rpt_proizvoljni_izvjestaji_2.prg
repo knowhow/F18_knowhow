@@ -1283,7 +1283,7 @@ cWinKonv:=IzFmkIni("DelphiRb","Konverzija","5")
 
 if cWinKonv>"0" // ima konverzije
 
-usex (cDBF) new
+usex (cDBF, NIL, .t.)
 beep(1)
 ordsetfocus(0)
 GO TOP

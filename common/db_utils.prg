@@ -13,17 +13,51 @@
 
 fin/o_fin.ch:#xcommand O_DEST     => select(F_DEST);  MY_USE  (STRTRAN(KUMPATH,"FIN","FAKT")+"DEST")     ; set order to tag "1"
 
+podrzati ovo: .t. - new
+USEX (PRIVPATH+"POM", "ANAL", .t.)
+
 */
 
-function my_use(cTable)
+function my_use(cTable, cAlias, lNew, cRDD)
+local nPos
 
-USE (my_home() + cTable)
+if lNew == NIL
+   lNew := .f.
+endif
+
+/*
+method setgaDBFs()
+PUBLIC gaDBFs:={ ;
+{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
+...
+*/
+
+// /home/test/suban.dbf => suban
+cTable := FILEBASE(cTable)
+
+// SUBAN
+nPos:=ASCAN(gaDBFs,  { |x|  x[2]==cTable} )
+
+if lNew
+   SELECT NEW
+endif
+
+if cAlias <> NIL
+   // mi otvaramo ovu tabelu ~/F18/fin_pripr
+   if cRDD <> NIL
+     USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) VIA (cRDD)
+   else
+     USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias)
+   endif
+else
+   if cRDD <> NIL
+       USE (my_home() + gaDBFs[nPos, 3]) VIA (cRDD)
+   else
+       USE (my_home() + gaDBFs[nPos, 3])
+   endif
+endif
 
 return
-
-function usex(cTable)
-return my_use(cTable)
-
 
 /*
 #command USEX <(db)>                                                   ;
@@ -45,4 +79,5 @@ return my_use(cTable)
 
 */
 
-
+function usex(cTable)
+return my_use(cTable)

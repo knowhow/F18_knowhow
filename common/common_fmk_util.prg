@@ -433,7 +433,7 @@ AADD(aDBf,{ 'K8'     , 'C' ,  2 ,   0 })
 AADD(aDBf,{ 'K9'     , 'C' ,  3 ,   0 })
 DBCREATE2(PRIVPATH+"koverte.DBF",aDBf)
 
-usex (PRIVPATH+"koverte") new
+usex (PRIVPATH+"koverte", NIL, .t.)
 zap
 index on  "id+naz"  TAG "ID"
 

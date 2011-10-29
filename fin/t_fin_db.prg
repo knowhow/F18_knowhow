@@ -11,7 +11,6 @@
 
 #include "fin.ch"
 
-
 #include "hbclass.ch"
 CLASS TDbFin INHERIT TDB 
 	method New
@@ -35,7 +34,6 @@ method New()
  ::lAdmin:=.f.
 
 return self
-
 
 
 /*! \fn *void TDBFin::skloniSez(string cSezona, bool finverse, bool fda, bool fnulirati, bool fRS)
@@ -173,53 +171,53 @@ return
 
 method setgaDBFs()
 PUBLIC gaDBFs:={ ;
-{ F_PRIPR  ,  "PRIPR"   , P_PRIVPATH  },;
-{ F_FIPRIPR , "PRIPR"   , P_PRIVPATH  },;
-{ F_BBKLAS ,  "BBKLAS"  , P_PRIVPATH  },;
-{ F_IOS    ,  "IOS"     , P_PRIVPATH  },;
-{ F_PNALOG ,  "PNALOG"  , P_PRIVPATH  },;
-{ F_PSUBAN ,  "PSUBAN"  , P_PRIVPATH  },;
-{ F_PANAL  ,  "PANAL"   , P_PRIVPATH  },;
-{ F_PSINT  ,  "PSINT"   , P_PRIVPATH  },;
-{ F_PRIPRRP,  "PRIPRRP" , P_PRIVPATH  },;
-{ F_FAKT   ,  "FAKT"    , P_PRIVPATH  },;
-{ F_FINMAT ,  "FINMAT"  , P_PRIVPATH  },;
-{ F_OSTAV  ,  "OSTAV"   , P_PRIVPATH  },;
-{ F_OSUBAN ,  "OSUBAN"  , P_PRIVPATH  },;
-{ F__KONTO ,  "_KONTO"  , P_PRIVPATH  },;
-{ F__PARTN ,  "_PARTN"  , P_PRIVPATH  },;
-{ F_POM    ,  "POM"     , P_PRIVPATH  },;
-{ F_POM2   ,  "POM2"    , P_PRIVPATH  },;
-{ F_KUF    ,  "KUF"     , P_KUMPATH   },;
-{ F_KIF    ,  "KIF"     , P_KUMPATH   },;
-{ F_SUBAN  ,  "SUBAN"   , P_KUMPATH   },;
-{ F_ANAL   ,  "ANAL"    , P_KUMPATH   },;
-{ F_SINT   ,  "SINT"    , P_KUMPATH   },;
-{ F_NALOG  ,  "NALOG"   , P_KUMPATH   },;
-{ F_RJ     ,  "RJ"      , P_KUMPATH   },;
-{ F_FUNK   ,  "FUNK"    , P_KUMPATH   },;
-{ F_BUDZET ,  "BUDZET"  , P_KUMPATH   },;
-{ F_PAREK  ,  "PAREK"   , P_KUMPATH   },;
-{ F_FOND   ,  "FOND"    , P_KUMPATH   },;
-{ F_KONIZ  ,  "KONIZ"   , P_KUMPATH   },;
-{ F_IZVJE  ,  "IZVJE"   , P_KUMPATH   },;
-{ F_ZAGLI  ,  "ZAGLI"   , P_KUMPATH   },;
-{ F_KOLIZ  ,  "KOLIZ"   , P_KUMPATH   },;
-{ F_BUIZ   ,  "BUIZ"    , P_KUMPATH   },;
-{ F_TDOK   ,  "TDOK"    , P_SIFPATH   },;
-{ F_KONTO  ,  "KONTO"   , P_SIFPATH   },;
-{ F_VPRIH  ,  "VPRIH"   , P_SIFPATH   },;
-{ F_PARTN  ,  "PARTN"   , P_SIFPATH   },;
-{ F_TNAL   ,  "TNAL"    , P_SIFPATH   },;
-{ F_PKONTO ,  "PKONTO"  , P_SIFPATH   },;
-{ F_VALUTE ,  "VALUTE"  , P_SIFPATH   },;
-{ F_ROBA   ,  "ROBA"    , P_SIFPATH   },;
-{ F_TARIFA ,  "TARIFA"  , P_SIFPATH   },;
-{ F_KONCIJ ,  "KONCIJ"  , P_SIFPATH   },;
-{ F_TRFP2  ,  "TRFP2"   , P_SIFPATH   },;
-{ F_TRFP3  ,  "TRFP3"   , P_SIFPATH   },;
-{ F_VKSG   ,  "VKSG"    , P_SIFPATH   },;
-{ F_ULIMIT ,  "ULIMIT"  , P_SIFPATH   } ;
+{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
+{ F_FIPRIPR , "PRIPR"   , "fin_pripr"  },;
+{ F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  },;
+{ F_IOS    ,  "IOS"     , "fin_ios"  },;
+{ F_PNALOG ,  "PNALOG"  , "fin_pnalog"  },;
+{ F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  },;
+{ F_PANAL  ,  "PANAL"   , "fin_panal"  },;
+{ F_PSINT  ,  "PSINT"   , "fin_psint"  },;
+{ F_PRIPRRP,  "PRIPRRP" , "fin_priprrp"  },;
+{ F_FAKT   ,  "FAKT"    , "fakt_fakt"  },;
+{ F_FINMAT ,  "FINMAT"  , "fin_mat"  },;
+{ F_OSTAV  ,  "OSTAV"   , "fin_ostav"  },;
+{ F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  },;
+{ F__KONTO ,  "_KONTO"  , "fin__konto"  },;
+{ F__PARTN ,  "_PARTN"  , "fin__partn"  },;
+{ F_POM    ,  "POM"     , "fin_pom"  },;
+{ F_POM2   ,  "POM2"    , "fin_pom2"  },;
+{ F_KUF    ,  "KUF"     , "fin_kuf"   },;
+{ F_KIF    ,  "KIF"     , "fin_kif"   },;
+{ F_SUBAN  ,  "SUBAN"   , "fin_suban"   },;
+{ F_ANAL   ,  "ANAL"    , "fin_anal"   },;
+{ F_SINT   ,  "SINT"    , "fin_sint"   },;
+{ F_NALOG  ,  "NALOG"   , "fin_nalog"  },;
+{ F_RJ     ,  "RJ"      , "fin_rj"   },;
+{ F_FUNK   ,  "FUNK"    , "fin_funk"  },;
+{ F_BUDZET ,  "BUDZET"  , "fin_budzet"  },;
+{ F_PAREK  ,  "PAREK"   , "fin_parek"   },;
+{ F_FOND   ,  "FOND"    , "fin_fond"   },;
+{ F_KONIZ  ,  "KONIZ"   , "fin_koniz"   },;
+{ F_IZVJE  ,  "IZVJE"   , "fin_izvje"   },;
+{ F_ZAGLI  ,  "ZAGLI"   , "fin_zagli"   },;
+{ F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   },;
+{ F_BUIZ   ,  "BUIZ"    , "fin_buiz"   },;
+{ F_TDOK   ,  "TDOK"    , "tdok"   },;
+{ F_KONTO  ,  "KONTO"   , "konto"  },;
+{ F_VPRIH  ,  "VPRIH"   , "vpprih"   },;
+{ F_PARTN  ,  "PARTN"   , "partn"   },;
+{ F_TNAL   ,  "TNAL"    , "tnal"   },;
+{ F_PKONTO ,  "PKONTO"  , "pkonto"   },;
+{ F_VALUTE ,  "VALUTE"  , "valute"   },;
+{ F_ROBA   ,  "ROBA"    , "roba"   },;
+{ F_TARIFA ,  "TARIFA"  , "tarifa"  },;
+{ F_KONCIJ ,  "KONCIJ"  , "koncij"   },;
+{ F_TRFP2  ,  "TRFP2"   , "trfp2"  },;
+{ F_TRFP3  ,  "TRFP3"   , "trfp3"   },;
+{ F_VKSG   ,  "VKSG"    , "vksg"   },;
+{ F_ULIMIT ,  "ULIMIT"  , "ulimit"  } ;
 }
 
 return

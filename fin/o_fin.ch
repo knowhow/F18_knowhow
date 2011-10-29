@@ -11,7 +11,7 @@
 
 
 #xcommand O_PRIPR     => select (F_PRIPR);   usex (PRIVPATH + "PRIPR") ; set order to tag "1"
-#xcommand O_PRIPRRP   => select (F_PRIPRRP); usex (strtran(cDirPriv, goModul:oDataBase:cSezonDir, SLASH) + "PRIPR") alias priprrp; set order to 1
+#xcommand O_PRIPRRP   => select (F_PRIPRRP); usex (strtran(cDirPriv, goModul:oDataBase:cSezonDir, SLASH) + "PRIPR", "priprrp"); set order to 1
 
 #xcommand O_SUBAN    => OKumul(F_SUBAN,KUMPATH,"SUBAN", 5); set order to tag 1
 #xcommand O_KUF      => OKumul(F_KUF  ,KUMPATH,"KUF"  , 2); set order to tag "ID"

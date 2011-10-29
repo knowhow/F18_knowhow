@@ -48,7 +48,7 @@ return cRet
  *  \return cFilePath
  */
  
-function FilePath( cFile )
+function My_FilePath( cFile )
 LOCAL nPos, cFilePath
 
 nPos := RAT(SLASH, cFile)

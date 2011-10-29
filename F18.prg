@@ -19,7 +19,7 @@ static cSchema := "public"
 static oServer := NIL
 static cF18Home := NIL
 
-function Main(...)
+function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 
 ? "hernad settings"
 cHostName :=  "localhsot"
@@ -30,7 +30,7 @@ cDatabase := "quick38"
 
 //function Main(cKorisn, cSifra, p3, p4, p5, p6, p7)
 
-set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 )
+set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cShema)
 

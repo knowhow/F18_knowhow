@@ -1295,7 +1295,7 @@ endif
 
 
            USE
-           USEX (cPath+cDBF) ALIAS novi NEW 
+           USEX (cPath+cDBF, "NOVI", .t.)
            select (nDBF)
            set order to 0; go top
            do while !eof()
@@ -1327,7 +1327,7 @@ endif
                ferase(strtran(cPath+cDbf,".DBF",".CDX"))
            endif
 
-           USEX (cPath+cDBF)  NEW alias CLIPB
+           USEX (cPath+cDBF, "CLIPB", .f.)
            select (nDBF)
            if reccount2()<>0
               if pitanje(,"Sifrarnik nije prazan, izbrisati postojece stavke ?"," ")=="D"

@@ -10,7 +10,6 @@
  */
 
 #include "fmk.ch"
-#include "common.h"
 
 // pomoćna funkcija za sql query izvršavanje
 function _sql_query( oServer, cQuery )

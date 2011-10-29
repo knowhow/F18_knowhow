@@ -950,9 +950,9 @@ IF lSint==NIL; lSint:=.f.; ENDIF
 
   DBCREATE2 (PRIVPATH+"POM", aDbf)
   IF !lSint
-    USEX (PRIVPATH+"POM") NEW ALIAS ANAL
+    USEX (PRIVPATH+"POM", "ANAL", .t.)
   ELSE
-    USEX (PRIVPATH+"POM") NEW ALIAS SINT
+    USEX (PRIVPATH+"POM", "SINT", .f.)
   ENDIF
   INDEX ON idFirma+IdVN+BrNal+IdKonto TAG "0"
   IF lSint

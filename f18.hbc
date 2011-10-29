@@ -15,7 +15,8 @@
 
 libs=hbvm hbrtl hblang hbrdd hbrtl hbmacro hbpp rddcdx rddfpt rddntx
 libs=hbsqlit3 sqlite3
-libs=hbcommon hbct
+libs=hbcommon hbct hbclipsm
+libs=hbpgsql
 
 {unix}libs=pq
 {!unix}libs=libpq

@@ -1408,7 +1408,7 @@ IF lIzgen .or. !FILE("TEMP12.DBF")
 ENDIF
 
 SELECT 77
-USEX TEMP12 ALIAS TEMP12
+USEX(TEMP12, TEMP12)
 index on brisano tag "BRISAN"
 //ZAP
 
@@ -1421,7 +1421,7 @@ IF lIzgen .or. !FILE("TEMP60.DBF")
 ENDIF
 
 SELECT 78
-USEX TEMP60 ALIAS TEMP60
+USEX(TEMP60, TEMP60)
 index on brisano tag "BRISAN"
 //ZAP
 
@@ -2418,7 +2418,7 @@ select suban
 use
 select osuban
 use
-usex (PRIVPATH+"osuban") alias suban
+usex ("osuban", "SUBAN", .f.) 
 
 select SUBAN
 set order to tag "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr

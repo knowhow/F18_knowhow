@@ -186,7 +186,7 @@ if cBuIz=="D"
 	INDEX ON idrj+BuIz(idkonto) TO IZBUD
 	set order to tag "IZBUD"
 else
-	set order to 1  //"1","IdRj+Idkonto"
+	set order to tag "1"  //"1","IdRj+Idkonto"
 endif
 
 SELECT suban
@@ -194,7 +194,7 @@ IF cBuIz=="D"
 	INDEX ON idFirma+BuIz(IdKonto)+dtos(DatDok)+idpartner TO IZSUB
 	set order to tag "IZSUB"
 ELSE
-	set order to 5
+	set order to tag "5"
 ENDIF
 
 nTotal:=0
@@ -256,7 +256,7 @@ if cI1=="D"
 		INDEX ON idFirma+BuIz(IdKonto)+dtos(DatDok)+idpartner TO IZSUB
 		set order to tag "IZSUB"
 	else
-		set order to 5
+		set order to tag "5"
 	endif
 
 	// izvjestaj 1
@@ -292,7 +292,7 @@ if cI1=="D"
 		INDEX ON BuIz(idkonto) TO IZBUD2
 		set order to tag "IZBUD2"
 	else
-		set order to 2    //"2", "Idkonto"
+		set order to tag "2"    //"2", "Idkonto"
 	endif
 
 	aSTKI1 := { 0, 0, 0, "" }
@@ -489,7 +489,7 @@ if ci2=="D"
 		INDEX ON idFirma+BuIz(IdKonto)+dtos(DatDok)+idpartner TO IZSUB
 		set order to tag "IZSUB"
 	else
-		set order to 5
+		set order to tag "5"
 	endif
 
 	seek cidfirma
@@ -587,7 +587,7 @@ if ci3=="D"
 		INDEX ON idrj+BuIz(idkonto) TO IZBUD
 		set order to tag "IZBUD"
 	else
-		set order to 1
+		set order to tag "1"
 	endif
 	//"1","IdRj+Idkonto",KUMPATH+"BUDZET"
 
@@ -743,7 +743,7 @@ if ci4=="D"
 		INDEX ON idrj+BuIz(idkonto) TO IZBUD
 		SET ORDER TO TAG "IZBUD"
 	else
-		SET ORDER TO 1
+		SET ORDER TO tag "1"
 	endif
 	//"1","IdRj+Idkonto",KUMPATH+"BUDZET"
 
@@ -1134,7 +1134,7 @@ IF !Empty (cFilter)
 EndIF
 
 SELECT SUBAN
-set order to 1
+set order to tag "1"
 //"1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr",KUMPATH+"SUBAN") //subanaliti
 GO TOP
 
@@ -1157,9 +1157,9 @@ EOF CRET
 START PRINT CRET
 
 SELECT BUDZET
-SET ORDER TO 1
+SET ORDER TO TAG "1"
 SELECT suban
-set order to 5
+set order to tag "5"
 GO TOP
 nTotal:=0
 nVanBudzeta:=0
@@ -1181,7 +1181,7 @@ nTotal:=nTotal-nVanBudzeta-nVanB2
 SELECT BUDZET
 SET ORDER TO TAG "2"
 SELECT SUBAN
-SET ORDER TO 1
+SET ORDER TO TAG "1"
 GO TOP
 
 INI

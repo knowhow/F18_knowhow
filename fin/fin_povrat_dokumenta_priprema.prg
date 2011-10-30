@@ -34,7 +34,7 @@ O_SINT
 O_NALOG
 
 SELECT SUBAN
-set order to 4
+set order to tag "4"
 
 cIdFirma:=gFirma
 cIdFirma2:=gFirma
@@ -241,7 +241,7 @@ USE
 MsgC()
 
 MsgO("ANAL")
-select ANAL; set order to 2
+select ANAL; set order to tag "2"
 
 if tbl_busy( F_ANAL ) = 0
 	msg("Datoteka je zauzeta ",3)
@@ -261,7 +261,7 @@ MsgC()
 
 
 MsgO("SINT")
-select sint;  set order to 2
+select sint;  set order to tag "2"
 
 if tbl_busy( F_SINT ) = 0
 	msg("Datoteka je zauzeta ",3)

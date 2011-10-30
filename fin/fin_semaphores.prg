@@ -30,7 +30,7 @@ return
 /* -----------------------------
  puni sql bazu fmk.fin_suban
  ------------------------------ */
-function sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatNal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
+function sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatDok, dDatVal, cOpis, cIdPartner, cKonto, cDP, nIznos)
 LOCAL oRet
 LOCAL nResult
 LOCAL cTmpQry
@@ -44,31 +44,45 @@ cWhere := "idfirma=" + _sql_quote(cIdFirma) + " and idvn=" + _sql_quote(cIdVn) +
 cTable := "fmk.fin_suban"
 
 cTmpQry := "INSERT INTO " + cTable + ;
-              "(idfirma, idvn, brnal, rbr, datnal, datdok, opis, idpartn, idkonto, d_P, iznosbhd) " + ;
+              "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd) " + ;
                "VALUES(" + _sql_quote(cIdFirma)  + "," +;
                          + _sql_quote(cIdVn) + "," +; 
                          + _sql_quote(cBrNal) + "," +; 
                          + _sql_quote(STR(nRbr, 4)) + "," +; 
-                         + _sql_quote(DTOS(dDaNal)) + "," +; 
-                         + _sql_quote(DTOS(dDatDok)) + "," +; 
+                         + _sql_quote(dDatDok) + "," +; 
+                         + _sql_quote(dDatVal) + "," +; 
                          + _sql_quote(cOpis) + "," +; 
-                         + _sql_quote(cIdPartn) + "," +; 
+                         + _sql_quote(cIdPartner) + "," +; 
                          + _sql_quote(cKonto) + "," +; 
                          + _sql_quote(cDP) + "," +; 
                          + STR(nIznos, 17, 2) + ")" 
 
-   oRet := _sql_query( oServer, cTmpQry)
+oRet := _sql_query( oServer, cTmpQry)
 
+if (gDebug > 5)
+   log_write(cTmpQry)
+   log_write("_sql_query VALTYPE(oRet) = " + VALTYPE(oRet))
+endif
+
+/* 
 cTmpQry := "SELECT count(*) from " + cTable + " WHERE " + cWhere
 oRet := _sql_query( oServer, cTmpQry )
 
 return oRet:Fieldget( oRet:Fieldpos("count") )
+*/
 
+if VALTYPE(oRet) == "L"
+   // u slucaju ERROR-a _sql_query vraca  .f.
+   return oRet
+else
+   return .t.
+endif
 
+ 
 // ------------------------------
 // koristi azur_sql
 // ------------------------------
-function update_fin_suban_from_sql(dDatDok)
+function update_fin_suban_from_sql(oServer, dDatDok)
 local oQuery
 local nCounter
 local nRec
@@ -76,9 +90,9 @@ local cQuery
 
    ? "updateujem fin_suban.dbf from sql stanja"
 
-   cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, opis, idpartn, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
+   cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
    if dDatDok != NIL
-      cQuery += " WHERE datdok>=" + _sql_quote(DTOS(dDatDok))
+      cQuery += " WHERE datdok>=" + _sql_quote(dDatDok)
    endif
  
    oQuery := oServer:Query(cQuery) 
@@ -111,14 +125,15 @@ local cQuery
    nCounter := 1
    DO WHILE ! oQuery:Eof()
       append blank
-      //cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, opis, idpartn, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
+      //cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartn, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
       replace idfirma with oQuery:FieldGet(1), ;
               idvn with oQuery:FieldGet(2), ;
               brnal with oQuery:FieldGet(3), ;
               rbr with oQuery:FieldGet(4), ;
               datdok with oQuery:FieldGet(5), ;
+              datval with oQuery:FieldGet(5), ;
               opis with oQuery:FieldGet(6), ;
-              idpartn with oQuery:FieldGet(7), ;
+              idpartner with oQuery:FieldGet(7), ;
               idkonto with oQuery:FieldGet(8), ;
               d_p with oQuery:FieldGet(9), ;
               iznosbhd with oQuery:FieldGet(10)
@@ -131,4 +146,4 @@ local cQuery
    USE
    oQuery:Destroy()
 
-return 
+return .t. 

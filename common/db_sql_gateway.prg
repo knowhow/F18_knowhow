@@ -14,26 +14,30 @@
 
  
 function sql_repl(cField, xxVar)
+/*
 local i, cSQL
 
 cSQL:= "update " + ALIAS() + " set " + cfield + "=" + SqlValue(xxVar) +;
       " where _OID_=" + SQLValue(Oid2Num(field->_OID_), 0)
 
 return cSQL
+*/
+return nil
 
 // ------------------------------------
 // ------------------------------------
 function sql_append()
+/*
 local i, cSQL
 
 cSQL:="insert into " + ALIAS() + " (_OID_) values(" + sqlvalue(oid2num(field->_OID_),0) + ")"
-
 return cSQL
+*/
+return nil
 
 function sql_delete(cTip)
-*{
+/*
 local i, cSQL
-
 if fieldpos("_SITE_")==0
    return .f.
 endif
@@ -56,11 +60,12 @@ if cTip=="DBF"
 	//replsql BRISANO with "1"
 endif
 return cSQL
-
-
+*/
+return nil
 
 function GathSQL(cZnak, fAppend)
-*{
+
+/*
 local i, j, aStruct
 private cVar
 
@@ -115,8 +120,8 @@ if !fAppend
 endif
 
 return cSQL
-*}
-
+*/
+return nil
 
 /*! \fn sql_azur(fLock)
  *  \brief
@@ -125,7 +130,8 @@ return cSQL
  */
  
 function sql_azur(fLock)
-*{
+
+/*
 if flock==nil
 	fLock:=.f.
 endif
@@ -144,11 +150,11 @@ field->_DATAZ_:=DATE()
 if fLock
    UNLOCK
 endif
+*/
 return .t.
 
 
 function SQLValue(xVar, nDec, cKonv)
-*{
 local cPom, cChar, cChar2, nStat,ilok
 
 if cKonv=NIL
@@ -166,9 +172,9 @@ if valtype(xVAR)="C"
            if nStat=0
              cPom:=cChar2
            elseif nStat=1
-             cPom:=cPom+"'+"+cChar2
+             cPom:=cPom + "'+" + cChar2
            elseif nStat=2
-             cPom:=cPom+"+"+cChar2
+             cPom:=cPom + "+" + cChar2
            endif
            nStat:=2
         else
@@ -178,11 +184,11 @@ if valtype(xVAR)="C"
 	   endif
 	   
 	   if nStat=0
-             cPom:="'"+cChar
+             cPom := "'" + cChar
            elseif nStat=1
 	     cPom:=cPom+cChar
            else
-             cPom:=cPom+"+'"+cChar
+             cPom:=cPom + "+'" + cChar
            endif
            
 	   nStat:=1
@@ -192,7 +198,7 @@ if valtype(xVAR)="C"
      if nStat=0
         cPom:="''"
      elseif nStat=1
-        cPom:=cPom+"'"
+        cPom := cPom + "'"
      elseif nStat=2
         // nista ... gotovo je
      endif
@@ -200,6 +206,7 @@ if valtype(xVAR)="C"
    return cPom
 
 elseif valtype(xVAR)="N"
+
    if nDec<>NIL
      return alltrim(str(xVar,25,nDec))
    else
@@ -207,6 +214,7 @@ elseif valtype(xVAR)="N"
    endif
 
 elseif valtype(xVar)="D"
+
    cPom:=dtos(xVar)
    if empty(cPom)
      cPom:=replicate('0',8)
@@ -214,6 +222,7 @@ elseif valtype(xVar)="D"
    //1234-56-78
    cPom:="'"+substr(cPom,1,4)+"-"+substr(cPom,5,2)+"-"+substr(cPom,7,2)+"'"
    return cPom
+
 else
    return "NULL"
 endif
@@ -225,7 +234,6 @@ endif
  */
  
 function New_OID()
-*{
 local nPom
 
 PushWa()
@@ -250,7 +258,6 @@ UNLOCK
 
 PopWa()
 return nPom
-*}
 
 function Last_OID()
 local nPom

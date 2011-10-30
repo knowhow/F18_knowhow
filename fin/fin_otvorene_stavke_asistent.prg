@@ -147,7 +147,7 @@ IF !USED()
 ENDIF
 
 select SUBAN
-set order to 1 // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
+set order to tag "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
 
 GO TOP
 
@@ -174,7 +174,7 @@ index on dtos(DatDok)+DTOS(iif(empty(datval),datdok,datval))+Brdok  tag "1"
 nUkDugBHD:=0
 nUkPotBHD:=0
 select suban
-set order to 3
+set order to tag "3"
 
 seek cidfirma+cidkonto+cidpartner
 
@@ -427,8 +427,8 @@ do case
           read
         BoxC()
         if lastkey()<>K_ESC
-           altd()
-           select suban; PushWa(); set order to 3
+           select suban; PushWa()
+           set order to tag "3"
            seek _idfirma+_idkonto+_idpartner+obrdok
            do while !eof() .and. _idfirma+_idkonto+_idpartner+obrdok==idfirma+idkonto+idpartner+brdok
              skip; nTrec:=recno(); skip -1

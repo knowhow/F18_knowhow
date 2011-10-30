@@ -116,7 +116,7 @@ nUkDugBHD:=0
 nUkPotBHD:=0
 
 select suban
-set order to 3
+set order to tag "3"
 
 seek cIdFirma+cIdKonto+cIdPartner
 

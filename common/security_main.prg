@@ -30,7 +30,7 @@ Box("#PRIJAVA KORISNIKA",5,70)
 		++ nPokusaj
 		
 		if (nPokusaj > 4)
-			MsgBeep("Odustanite molim Vas, nemate pravo pristupa!")
+			MsgBeep("Hajd' razguli, nemas pravo pristupa!")
 			clear screen
 			quit
 		endif

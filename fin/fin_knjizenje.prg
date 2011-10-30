@@ -170,7 +170,7 @@ do while !eof()
  replace idvn with _idvn, brnal with _brnal
  skip
 enddo
-set order to 1
+set order to tag "1"
 go top
 return .t.
 *}
@@ -231,7 +231,7 @@ if gTroskovi=="D"
 endif
 
 select PRIPR
-set order to 1
+set order to tag "1"
 go top
 
 // ulaz _IdFirma, _IdKonto, ...., nRBr (val(_RBr))

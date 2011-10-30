@@ -2081,7 +2081,7 @@ for i:=1 to n1
        endif
      endif
 
-     cTipVar:=  VALTYPE( &cVarijabla )
+     cTipVar :=VALTYPE( &cVarijabla )
      if j>2 ;  cFilt += ".or. " ; endif
 
      if cOperator="$"

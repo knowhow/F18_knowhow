@@ -70,6 +70,7 @@ local oServer
  public gReadOnly := .f.
  public gSQL := "N"
  public Invert := .f.
+ public gDebug := 0
 
  public gaDBFs:={ ;
 { F_PARAMS  ,  "PARAMS"   , "params"  },;

@@ -9,11 +9,11 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "fin.ch"
 
 /*! \fn KontrZbNal()
  *  \brief Kontrola zbira naloga
  */
- 
 function KontrZbNal()
 
 PushWa()

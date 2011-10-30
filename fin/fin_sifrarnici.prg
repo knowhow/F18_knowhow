@@ -44,7 +44,7 @@ if cOdg=="1"
   select suban
 
   //CREATE_INDEX("SUBANi2","IdFirma+IdPartner+IdKonto","SUBAN")
-  set order to 2
+  set order to tag "2"
   seek  gFirma+cNSif
   if !found() .or. Pitanje(,"Vec postoji u prometu sifra ?. Nastaviti ??","N")=="D"
     select suban ; set order to 0

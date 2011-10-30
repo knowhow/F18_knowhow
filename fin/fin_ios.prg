@@ -110,7 +110,8 @@ O_IOS
 
 SELECT IOS; ZAP
 
-SELECT SUBAN; set order to 1
+SELECT SUBAN
+set order to tag "1"
 
 SEEK cIdFirma+cIdKonto
 EOF CRET
@@ -625,11 +626,10 @@ nCol1:=62
 SELECT SUBAN
 
 if cKaoKartica=="D"
-	set order to 1
-     	altd()
+	set order to tag "1"
      //"IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
 else
-	set order to 3
+	set order to tag "3"
 endif
 
 SEEK cIdFirma+cIdKonto+cIdPartner

@@ -634,7 +634,7 @@ endif
 
 IF gNW=="N".and.cPTD=="D"
   m:=STUFF(m,30,0," -- ------------- ---------- --------------------")
-  O_SUBAN; SET ORDER TO 4
+  O_SUBAN; SET ORDER TO TAG 4
   O_TDOK
 ENDIF
 
@@ -648,11 +648,7 @@ O_KONTO
 select ANAL
 
 IF cBrza=="S"
-  #ifndef C50
   SET ORDER TO TAG "3"
-  #else
-  SET ORDER TO 3
-  #endif
 ENDIF
 
 cFilt1 := ".t." + IF( cBrza=="D" , "" , ".and."+aUsl1 )+;

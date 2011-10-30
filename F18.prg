@@ -18,6 +18,7 @@ static cDBFDataPath := ""
 static cSchema := "public"
 static oServer := NIL
 static cF18Home := NIL
+static nLogHandle := NIL
 
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 
@@ -32,10 +33,18 @@ cDatabase := "quick38"
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
+oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 
 // ~/.F18/
 cF18HomeDir := get_f18_home_dir(cDatabase)
+
+gDebug := 10
+IF ( nLogHandle :=  FCREATE(cF18HomeDir + "F18.log") ) == -1
+    ? "Cannot create log file: " +  cF18HomeDir + "F18.log"
+    QUIT
+ENDIF
+
+
 
 /*
 PUBLIC gTabele:={ ;
@@ -48,6 +57,7 @@ PUBLIC gTabele:={ ;
 
 MainFin(cUser, cPassWord, p3, p4, p5, p6, p7)
 
+FCLOSE(nLogHandle)
 return
 
 // ---------------
@@ -56,6 +66,9 @@ return
 function my_home()
 return cF18HomeDir
 
-functtion pg_server()
+function pg_server()
 return oServer
 
+function log_write(cMsg)
+FWRITE(nLogHandle, cMsg + hb_eol())
+return

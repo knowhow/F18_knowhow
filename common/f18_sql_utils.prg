@@ -13,18 +13,117 @@
 
 // pomoćna funkcija za sql query izvršavanje
 function _sql_query( oServer, cQuery )
-LOCAL oResult
+LOCAL oResult, cMsg
 oResult := oServer:Query( cQuery )
 IF oResult:NetErr()
-      ? oResult:ErrorMsg()
-      return NIL
+      cMsg := oResult:ErrorMsg()
+      if gDebug > 0 
+         log_write(cMsg)
+      endif
+      MsgBeep( cMsg )
+      return .f.
 ENDIF
 RETURN oResult
+/*
 
+function SQLValue(xVar, nDec, cKonv)
+local cPom, cChar, cChar2, nStat,ilok
+
+if cKonv=NIL
+  cKonv:="DBF"
+endif
+
+if valtype(xVAR)="C"
+   if cKonv=="DBF"
+     cPom:=""
+     nStat:=0
+     for ilok:=1 to len(xVar)
+        cChar:=substr(xVar,ilok,1)
+	cChar2:="CHAR("+alltrim(str(asc(cChar)))+")"
+        if ASC(cChar)=39 .or. ASC(cChar)>127 // "'"
+           if nStat=0
+             cPom:=cChar2
+           elseif nStat=1
+             cPom:=cPom + "'+" + cChar2
+           elseif nStat=2
+             cPom:=cPom + "+" + cChar2
+           endif
+           nStat:=2
+        else
+	   // debug NULNULNUL
+           if ASC(cChar) == 0
+	   	cChar := " "
+	   endif
+	   
+	   if nStat=0
+             cPom := "'" + cChar
+           elseif nStat=1
+	     cPom:=cPom+cChar
+           else
+             cPom:=cPom + "+'" + cChar
+           endif
+           
+	   nStat:=1
+	   
+        endif
+     next
+     if nStat=0
+        cPom:="''"
+     elseif nStat=1
+        cPom := cPom + "'"
+     elseif nStat=2
+        // nista ... gotovo je
+     endif
+   endif
+   return cPom
+
+elseif valtype(xVAR)="N"
+
+   if nDec<>NIL
+     return alltrim(str(xVar,25,nDec))
+   else
+     return alltrim(str(xVar))
+   endif
+
+elseif valtype(xVar)="D"
+
+   cPom:=dtos(xVar)
+   if empty(cPom)
+     cPom:=replicate('0',8)
+   endif
+   //1234-56-78
+   cPom:="'"+substr(cPom,1,4)+"-"+substr(cPom,5,2)+"-"+substr(cPom,7,2)+"'"
+   return cPom
+
+else
+   return "NULL"
+endif
+
+
+
+*/
 
 // ------------------------
 // ------------------------
-function _sql_quote(cVar)
-xVar := STRTRAN(cVar, "'","''")
-return "'" + cVar + "'"
+function _sql_quote(xVar)
+local cOut
 
+if VALTYPE(xVar) == "C"
+    cOut := STRTRAN(xVar, "'","''")
+    cOut := "'" + hb_strtoutf8(cOut) + "'"
+elseif VALTYPE(xVar) == "D"
+    if xVar == CTOD("")
+            cOut := "NULL"
+    else
+            cOut:=DTOS(xVar)
+            if EMPTY(cOut)
+                cPom:=replicate('0',8)
+            endif
+            //1234-56-78
+            cOut := "'" + substr(cOut,1,4) + "-" + substr(cOut,5,2) + "-" + substr(cOut,7,2) + "'"
+    endif
+else
+    cOut := "NULL"
+endif
+
+return cOut

@@ -4,9 +4,9 @@
 #include "box.ch"
 #include "dbedit.ch"
 
-#define SC_DEFINED
+#define F18_DEFINED
 
-#define FMK_LIB_VER  "0.1.0"
+#define FMK_LIB_VER  "0.2.0"
 
 
 #define EXEPATH   GetExePath(trim(cDirRad))

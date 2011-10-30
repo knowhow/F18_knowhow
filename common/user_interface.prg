@@ -9,16 +9,12 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch"
 #include "set.ch"
 
 static aBoxStack:={}
-
 static aPrStek:={}
-
 static aMenuStack:={}    
-
 static aMsgStack:={}
 
 /*! \fn Menu(MenuId,Items,ItemNo,Inv)
@@ -103,10 +99,12 @@ IF lFK
   @ m_x,m_y TO m_x+N+1,m_y+Length+3
 ELSE
   @ m_x,m_y TO m_x+N+1,m_y+Length+3 DOUBLE 
-  @ m_x+N+2,m_y+1 SAY REPLICATE(Chr(177),Length+4)
+  @ m_x+N+2,m_y+1 SAY REPLICATE(Chr(177), Length+4)
+
   FOR i:=1 TO N+1
     @ m_x+i,m_y+Length+4 SAY Chr(177)
   NEXT
+
 ENDIF
 
 SetColor(Invert)
@@ -243,8 +241,8 @@ return cAction
 */
 
 function Msg(text, sec, xPos)
+local l, msg_x1, msg_x2, msg_y1, msg_y2, cPom:=SET(_SET_DEVICE)
 
-local l,msg_x1,msg_x2,msg_y1,msg_y2,cPom:=SET(_SET_DEVICE)
 LOCAL nLen, nHashPos, aText := {}, nCnt, nBrRed := 0
 
 if gAppSrv
@@ -259,30 +257,37 @@ WHILE (nHashPos := AT ("#", Text)) > 0
    Text := SUBSTR (Text, nHashPos + 1)
    nBrRed ++
 END
+
 IF ! EMPTY (Text)
    AADD (aText, Text)
    nBrRed ++
 ENDIF
+
 l := 0
 FOR nCnt := 1 TO LEN (aText)
    IF LEN (aText [nCnt]) > l
       l := LEN (aText [nCnt])
    ENDIF
 NEXT
+
 // l:=Len(Text)
 IF xPos == NIL
-   msg_x1:=8 - INT (nBrRed / 2)
-   msg_x2:=13 + nBrRed - INT (nBrRed / 2)             // nBrRed >= 1
+   msg_x1:= 8 - INT (nBrRed / 2)
+   msg_x2:= 13 + nBrRed - INT (nBrRed / 2)             // nBrRed >= 1
 ELSE
    msg_x1 := xPos
    msg_x2 := xPos + 5 + nBrRed
 ENDIF
-msg_y1:=(79-l-7)/2
-msg_y2:=79 - msg_y1
-StackPush(aMsgStack,{if(setcursor()==0,0,iif(readinsert(),2,1)),setcolor(Invert),l,;
-          SaveScreen(msg_x1,msg_y1,msg_x2,msg_y2)})
-@ msg_x1,msg_y1 CLEAR TO msg_x2,msg_y2
+
+msg_y1:=(MAXCOLS() - l - 7 ) / 2
+msg_y2:= MAXCOLS() - msg_y1
+StackPush(aMsgStack, { if(setcursor()==0, 0, iif(readinsert(),2,1)), setcolor(Invert), l,;
+          SaveScreen(msg_x1, msg_y1, msg_x2, msg_y2)})
+
+@ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
+
 @ msg_x1+1,msg_y1+2 TO msg_x2-1,msg_y2-2 DOUBLE
+
 FOR nCnt := 1 TO nBrRed
    @ msg_x1+2+nCnt,msg_y1+4 SAY PADC (aText [nCnt], l)
 NEXT
@@ -290,10 +295,8 @@ Inkey(Sec)
 
 MsgC(msg_x1,msg_y1,msg_x2,msg_y2)
 SET(_SET_DEVICE,cPom)
+
 return
-
-
-
 
 function MsgO(cText, sec)
 
@@ -316,8 +319,12 @@ nLen := Len(cText)
 
 msg_x1:=8
 msg_x2:=14
-msg_y1:=( 79 - nLen - 7 )/2
-msg_y2:= 79 - msg_y1
+// hernad
+//msg_y1:=( MAXCOLS() - 1 - nLen - 7 )/2
+//msg_y2:= MAXCOLS() - 1 - msg_y1
+msg_y1:=( MAXCOLS()  - nLen - 7 )/2
+msg_y2:= MAXCOLS() - msg_y1
+
 
 StackPush( aMsgStack, ;
          {if(setcursor()==0, 0, iif(readinsert(),2,1)), setcolor(Invert), nLen, ;
@@ -329,25 +336,29 @@ StackPush( aMsgStack, ;
 @ msg_x1 + 3, msg_y1 + 4 SAY cText
 
 set cursor off
-SET(_SET_DEVICE,cPom)
+SET(_SET_DEVICE, cPom)
 return
 
 
 function MsgC(msg_x1,msg_y1,msg_x2,msg_y2)
 
 local aMsgPar
-local l
+local nLen
 
 if gAppSrv; return; endif
 
-if len(aMsgStack)>0
+if LEN(aMsgStack)>0
   aMsgPar:=StackPop(aMsgStack)
+
   IF msg_x1 == NIL
-     l:=aMsgPar[3]
-     RESTSCREEN(8,(79-l-7)/2,14,79-(79-l-7)/2,aMsgPar[4])
+     nLen:=aMsgPar[3]
+     //hernad
+     //RESTSCREEN(8, (MAXCOLS()-1-l-7)/2, 14, MAXCOLS()-1-(MAXCOLS()-l-7)/2,aMsgPar[4])
+     RESTSCREEN(8, (MAXCOLS()-nLen-7) / 2, 14, MAXCOLS()-(MAXCOLS()-nLen-7) / 2, aMsgPar[4])
   ELSE
-     RESTSCREEN (msg_x1,msg_y1,msg_x2,msg_y2, aMsgPar[4])
+     RESTSCREEN (msg_x1, msg_y1, msg_x2, msg_y2, aMsgPar[4])
   ENDIF
+
   setcursor(iif(aMsgPar[1]==0,0,iif(readinsert(),2,1)))
   SetColor(aMsgPar[2])
 endif
@@ -430,7 +441,9 @@ function BoxC()
 
 local aBoxPar[11], cPom
 
-if gAppSrv; return; endif
+if gAppSrv
+  return
+endif
 
 cPom:=SET(_SET_DEVICE)
 SET DEVICE TO SCREEN
@@ -886,15 +899,17 @@ function Postotak(nIndik,nUkupno,cTekst,cBNasl,cBOkv,lZvuk)
       cNas:=IF(cBNasl==NIL,"GR+/N",cBNasl)
       nCilj:=nUkupno
       cKraj:=cTekst+" zavrseno."
-      Prozor1(10,13,14,66,cTekst+" u toku...",cNas,,cOkv,"B/W",0)
+      Prozor1(10, 13, 14, 66, cTekst+" u toku...",cNas,,cOkv,"B/W",0)
       @ 12,15 SAY REPLICATE("°",50) COLOR "B/W"
-      IF lZvuk; TONE(1900,0); ENDIF
+      IF lZvuk
+          TONE(1900,0)
+      ENDIF
     CASE nIndik==2
       nKara=INT(50*nUkupno/nCilj)
-      @ 12,15 SAY REPLICATE("²",nKara) COLOR "B/BG"
-      @ 13,37 SAY STR(2*nKara,3)+" %" COLOR "B/W"
+      @ 12,15 SAY REPLICATE("²", nKara) COLOR "B/BG"
+      @ 13,37 SAY STR(2 * nKara, 3)+" %" COLOR "B/W"
     CASE nIndik<=0
-      @ 10,(78-LEN(cKraj))/2 SAY " "+cKraj+" " COLOR cNas
+      @ 10,(MAXCOLS() - 2 - LEN(cKraj))/2 SAY " "+cKraj+" " COLOR cNas
       IF lZvuk; TONE(2000,0); ENDIF
       IF nIndik==0
          @ 14,28 SAY "<pritisnite neku tipku>" COLOR IF(INT(SECONDS()*1.5)%2==0,"W/","W+/")+RIGHT(cOkv,1)
@@ -917,7 +932,6 @@ return
  * Ako nLin nije zadano ili je 0, nLin se formira prema duzini teksta
  *
  */
-
 function LomiGa(cTekst,nOrig,nLin,nDuz)
 
 
@@ -1239,12 +1253,14 @@ SET DEVICE TO SCREEN
     IF aNiz[i,3]==NIL .or. LEN(aNiz[i,3])==0; aNiz[i,3]:=".t."; ENDIF
     IF aNiz[i,4]==NIL .or. LEN(aNiz[i,4])==0; aNiz[i,4]:=""; ENDIF
     IF aNiz[i,5]==NIL .or. LEN(aNiz[i,5])==0; aNiz[i,5]:=".t."; ENDIF
+    
     IF "##" $ aNiz[i,3]
       nP:=AT("##",aNiz[i,3])
       pom3:="ValGeta(" + LEFT(aNiz[i,3],nP-1) + ",'" + SUBSTR(aNiz[i,3],nP+2) + "')"
     ELSE
       pom3:=aNiz[i,3]
     ENDIF
+
     pom1:=aNiz[i,1]; pom4:=aNiz[i,4]; pom5:=aNiz[i,5]
     @ x1+1+i,y1+2 SAY PADR(pom1,y2-y1-4-IF("S" $ pom4,DuzMaske(pom4), IF(EMPTY(pom4),LENx(&(cPom)),LEN(TRANSFORM(&cPom,pom4)))),".") GET &cPom WHEN &pom5 VALID &pom3 PICT pom4
    NEXT
@@ -1261,28 +1277,27 @@ function ValGeta(lUslov,cPoruka)
 IF !lUslov; Msg(cPoruka,3); ENDIF
 return lUslov
 
-
-
 function DuzMaske(cPicture)
 
 LOCAL nPozS:=AT("S",cPicture)
 return VAL(SUBSTR(cPicture,nPozS+1))
 
 
-
-function MsgBeep(cxx)
+function MsgBeep(cMsg)
 if !gAppSrv
 	Beep(2) 
 endif
-Msg(cxx,20)
+// poruke koje su duze od 70 znakova
+if LEN(cMsg) > 69 .and.  (AT(cMsg, "#") == 0) 
+  cMsg := SUBSTR(cMsg, 1, 69) + "#" + SUBSTR(cMsg, 70, 69) + "#..." 
+  //+ "#" + SUBSTR(cMsg, 140, 70)
+endif
+
+Msg(cMsg, 20)
 
 return
 
-
-
 function UGlavnomMeniju()
-
-
 local i
 local fRet:=.t.
 

@@ -120,7 +120,7 @@ Box(,5,60)
 close all
 select 1
 use nalog
-set order to 1
+set order to tag "1"
 select 2
 use suban
 set order to 0

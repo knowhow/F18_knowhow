@@ -102,7 +102,7 @@ select nalog
 set order to tag "1" // idFirma+IdVN+BrNal
 
 select suban
-set order to 4  // idFirma+IdVN+BrNal+RBr
+set order to tag "4"  // idFirma+IdVN+BrNal+RBr
 set relation to idfirma+idvn+brnal into nalog
 // -----------
 // koristim nalog->datNal tj. datum azuriranja za obuhvatanje naloga po datumu jer nema puno koristi od gledanja datuma stavke (suban->datDok), MS 04.04.2003

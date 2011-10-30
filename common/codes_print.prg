@@ -243,7 +243,7 @@ endif
  if !EMPTY(Zaglavlje)
    QQOUT(SPACE(gnLMarg))
    gP10CPI(); gPB_ON()
-   QQOUT(PADC(ALLTRIM(Zaglavlje),79*IF(gA43=="4",1,2)-gnLMarg))
+   QQOUT(PADC(ALLTRIM(Zaglavlje), 79 * IF(gA43=="4",1,2)-gnLMarg))
    gPB_OFF()
    QOUT()
  endif

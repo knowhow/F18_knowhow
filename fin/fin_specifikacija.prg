@@ -396,7 +396,7 @@ IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
   O_VRSTEP
 ENDIF
 
-O_SUBAN ; set order to 3
+O_SUBAN ; set order to tag "3"
 //"IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
 hseek cIdFirma+cIdKonto
 
@@ -720,7 +720,7 @@ ELSE
   O_ANAL
 ENDIF
 
-select ANAL; set order to 1
+select ANAL; set order to tag "1"
 
 altd()
 //cFilt1:="IdFirma=='"+cIdFirma+"'"
@@ -1066,7 +1066,7 @@ IF !EMPTY(cIdFirma) .and. gDUFRJ!="D"
 
  	ELSE
    		// IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
-   		SET ORDER TO 1
+   		SET ORDER TO tag "1"
  	ENDIF
 ELSE
 	IF cRasclaniti=="D"
@@ -1518,7 +1518,7 @@ else
 endif
 if ck4=="99"; ck4:=""; endif
 
-select SUBAN; set order to 1
+select SUBAN; set order to tag "1"
 
 if cSort=="1"
   cSort1:= "idfirma+idkonto+partn->telefon+idpartner"
@@ -1816,7 +1816,7 @@ CistiK1K4()
 
 select SUBAN
 //2: "IdFirma+IdPartner+IdKonto"
-set order to 2
+set order to tag "2"
 
 cFilt1:=".t."
 
@@ -2060,7 +2060,7 @@ nDugDEM:=nPotDEM:=nUKDugDEM:=nUkPotDEM:=0
 O_KONTO
 O_SUBAN
 
-SELECT SUBAN; set order to 2  // idfirma+idpartner+idkonto
+SELECT SUBAN; set order to tag "2"  // idfirma+idpartner+idkonto
 cIdFirma:=left(cIdFirma,2)
 
 if ausl1<>".t." .or. ausl2<>".t."
@@ -2228,7 +2228,7 @@ nDugDEM:=nPotDEM:=nUKDugDEM:=nUkPotDEM:=0
 O_KONTO
 O_SUBAN
 
-SELECT SUBAN; set order to 2  // idfirma+idpartner+idkonto
+SELECT SUBAN; set order to tag "2"  // idfirma+idpartner+idkonto
 cIdFirma:=left(cIdFirma,2)
 
 cFilt1:=aUsl+".and."+aUsl2
@@ -2927,7 +2927,7 @@ private cIdKonto := SPACE (7), cIdFirma := SPACE (LEN (gFirma)), ;
 
   nBrPartn := 0
   SELECT SUBAN
-  set order to 2
+  set order to tag "2"
 
   SELECT PARTN
   IF !Empty (aUsl)
@@ -3150,7 +3150,7 @@ nUkDugBHD:=0
 nUkPotBHD:=0
 
 select suban
-set order to 3
+set order to tag "3"
 
 if cSvi=="D"
 	seek cIdFirma + cIdKonto

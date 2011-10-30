@@ -70,7 +70,7 @@ O_TRFP3
 
 if file( cPath + "REKLD.DBF")
 	use (cPath + "REKLD.DBF") new
-	set order to 1
+	set order to tag "1"
 else
 	MsgBeep("Niste pokrenuli rekapitulaciju LD-a!")
 	close all
@@ -79,7 +79,7 @@ endif
 
 if file(cPath + "REKLDP.DBF")
 	use (cPath + "REKLDP.DBF") new
-	set order to 1
+	set order to tag "1"
 endif
 
 select trfp3

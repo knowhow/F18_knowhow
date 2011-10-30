@@ -117,7 +117,7 @@ CistiK1k4(.f.)
 
 select SUBAN
 //IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
-set order to 3   
+set order to tag "3"   
 
 cFilt1:="OTVST==' '"
 
@@ -367,7 +367,8 @@ cIdFirma:=left(cIdFirma,2)
 
 O_SUBAN
 
-select SUBAN; set order to 3
+select SUBAN
+set order to tag "3"
 // ORDER 3: SUBANi3: IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
 seek cidfirma+cidkonto
 EOF CRET
@@ -495,7 +496,7 @@ cIdFirma:=left(cIdFirma,2)
 O_SUBAN
 
 
-select SUBAN; set order to 1 // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
+select SUBAN; set order to tag "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
 
 IF gRJ=="D" .and. !EMPTY(cIdRJ)
   SET FILTER TO IDRJ==cIdRj
@@ -815,7 +816,7 @@ if !fTiho
 endif
 
 nUkDugBHD:=nUkPotBHD:=0
-select suban; set order to 3
+select suban; set order to tag "3"
 
 if cSvi=="D"
  seek cidfirma+cidkonto
@@ -1212,7 +1213,7 @@ else
 endif
 
 nUkDugBHD:=nUkPotBHD:=0
-select suban; set order to 3
+select suban; set order to tag "3"
 seek cidfirma+cidkonto+cidpartner+cBrDok
 
 
@@ -1433,7 +1434,7 @@ O_TDOK
 select SUBAN
 if cPoVezi=="D"
  //SUBANi3","IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)",KUMPATH+"SUBAN")
- set order to 3
+ set order to tag "3"
 endif
 
 private cFilter

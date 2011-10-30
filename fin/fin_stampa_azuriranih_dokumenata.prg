@@ -70,7 +70,7 @@ O_TNAL
 O_TDOK
 
 SELECT SUBAN
-set order to 4
+set order to tag "4"
 cIdVN:=space(2)
 cIdFirma:=gFirma
 cBrNal:=space(8)

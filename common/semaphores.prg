@@ -46,7 +46,7 @@ endif
 cTmpQry := "SELECT version FROM " + cTable + " WHERE user_code=" + _sql_quote(cUser)
 oTable := _sql_query( oServer, cTmpQry )
 IF oTable == NIL
-      ? "problem sa:", cTmpQry
+      MsgBeep( "problem sa:" + cTmpQry)
       QUIT
 ENDIF
 

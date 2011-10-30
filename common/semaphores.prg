@@ -28,22 +28,25 @@ return oRet:Fieldget( oRet:Fieldpos("val") )
   get_semaphore_version( "konto", "hernad" )
   -------------------------------------------
 */
-function get_semaphore_version(cTable, cUser)
+function get_semaphore_version(cTable)
 LOCAL oTable
 LOCAL nResult
 LOCAL cTmpQry
+LOCAL oServer
+
+oServer:= pg_server()
 
 cTable := "fmk.semaphores_" + cTable
 
-nResult := table_count(oServer, cTable, "user_code=" + _sql_quote(cUser)) 
+nResult := table_count(oServer, cTable, "user_code=" + _sql_quote(f18_user())) 
 
 if nResult <> 1
-  ? cTable, cUser, "count =", nResult
+  log_write( cTable + " " + f18_user() + "count =" + STR(nResult))
   return -1
 endif
 
 
-cTmpQry := "SELECT version FROM " + cTable + " WHERE user_code=" + _sql_quote(cUser)
+cTmpQry := "SELECT version FROM " + cTable + " WHERE user_code=" + _sql_quote(f18_user())
 oTable := _sql_query( oServer, cTmpQry )
 IF oTable == NIL
       MsgBeep( "problem sa:" + cTmpQry)
@@ -58,11 +61,13 @@ RETURN nResult
   update_semaphore_version( "konto", "hernad" )
   -------------------------------------------
 */
-function update_semaphore_version(cTable, cUser)
+function update_semaphore_version(cTable)
 LOCAL oRet
 LOCAL nResult
 LOCAL cTmpQry
 LOCAL cFullTable
+LOCAL cUser := f18_user()
+LOCAL oServer := pg_server()
 
 cFullTable := "fmk.semaphores_" + cTable
 ? "table=", cTable
@@ -100,17 +105,19 @@ return oRet:Fieldget( oRet:Fieldpos("version") )
   broj redova za tabelu
   --------------------------------
 */
-function table_count( oServer, cTable, cCondition)
+function table_count(cTable, cCondition)
 LOCAL oTable
 LOCAL nResult
 LOCAL cTmpQry
+LOCAL oServer := pg_server()
+
 
 // provjeri prvo da li postoji uopšte ovaj site zapis
 cTmpQry := "SELECT COUNT(*) FROM " + cTable + " WHERE " + cCondition
 
 oTable := _sql_query( oServer, cTmpQry )
 IF oTable:NetErr()
-      ? "problem sa query-jem: " + cTmpQry 
+      log_write( "problem sa query-jem: " + cTmpQry )
       QUIT
 ENDIF
 

@@ -69,6 +69,9 @@ return cF18HomeDir
 function pg_server()
 return oServer
 
+function f18_user()
+return cUser
+
 function log_write(cMsg)
 FWRITE(nLogHandle, cMsg + hb_eol())
 return

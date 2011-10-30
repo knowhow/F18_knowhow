@@ -30,33 +30,43 @@ return
 /* -----------------------------
  puni sql bazu fmk.fin_suban
  ------------------------------ */
-function sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatDok, dDatVal, cOpis, cIdPartner, cKonto, cDP, nIznos)
+function sql_fin_suban_update(cIdFirma, cIdVn, cBrNal, nRbr, dDatDok, dDatVal, cOpis, cIdPartner, cKonto, cDP, nIznos)
 LOCAL oRet
 LOCAL nResult
 LOCAL cTmpQry
 LOCAL cTable
 LOCAL cWhere
+LOCAL oServer := pg_server()
 
-cWhere := "idfirma=" + _sql_quote(cIdFirma) + " and idvn=" + _sql_quote(cIdVn) +;
-                      " and brnal=" + _sql_quote(cBrNal) +;
-                      " and rbr=" + _sql_quote(STR(nRbr,4)); 
+if cIdFirma == "BEGIN"
+    cTmpQry := "BEGIN;"
+elseif cIdFirma == "END"
+    cTmpQry := "COMMIT;"
+elseif cIdFirma == "ROLLBACK"
+    cTmpQry := "ROLLBACK;"
+else
+    cWhere := "idfirma=" + _sql_quote(cIdFirma) + " and idvn=" + _sql_quote(cIdVn) +;
+                        " and brnal=" + _sql_quote(cBrNal) +;
+                        " and rbr=" + _sql_quote(STR(nRbr,4)); 
 
-cTable := "fmk.fin_suban"
+    cTable := "fmk.fin_suban"
 
-cTmpQry := "INSERT INTO " + cTable + ;
-              "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd) " + ;
-               "VALUES(" + _sql_quote(cIdFirma)  + "," +;
-                         + _sql_quote(cIdVn) + "," +; 
-                         + _sql_quote(cBrNal) + "," +; 
-                         + _sql_quote(STR(nRbr, 4)) + "," +; 
-                         + _sql_quote(dDatDok) + "," +; 
-                         + _sql_quote(dDatVal) + "," +; 
-                         + _sql_quote(cOpis) + "," +; 
-                         + _sql_quote(cIdPartner) + "," +; 
-                         + _sql_quote(cKonto) + "," +; 
-                         + _sql_quote(cDP) + "," +; 
-                         + STR(nIznos, 17, 2) + ")" 
+    cTmpQry := "INSERT INTO " + cTable + ;
+                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd) " + ;
+                "VALUES(" + _sql_quote(cIdFirma)  + "," +;
+                            + _sql_quote(cIdVn) + "," +; 
+                            + _sql_quote(cBrNal) + "," +; 
+                            + _sql_quote(STR(nRbr, 4)) + "," +; 
+                            + _sql_quote(dDatDok) + "," +; 
+                            + _sql_quote(dDatVal) + "," +; 
+                            + _sql_quote(cOpis) + "," +; 
+                            + _sql_quote(cIdPartner) + "," +; 
+                            + _sql_quote(cKonto) + "," +; 
+                            + _sql_quote(cDP) + "," +; 
+                            + STR(nIznos, 17, 2) + ")" 
 
+endif
+   
 oRet := _sql_query( oServer, cTmpQry)
 
 if (gDebug > 5)

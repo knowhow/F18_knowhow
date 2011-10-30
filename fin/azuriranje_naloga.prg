@@ -89,12 +89,14 @@ function fin_azur_sql(oServer)
 local lOk
 
 MsgO("sql suban")
+
 SELECT PSUBAN
 GO TOP
 lOk := .t.
+sql_fin_suban_update("BEGIN")
 do while !eof()
    //sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatVal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
-    if !sql_fin_suban_update(oServer, field->IdFirma, field->IdVn, field->BrNal, VAL(field->Rbr), ;
+    if !sql_fin_suban_update(field->IdFirma, field->IdVn, field->BrNal, VAL(field->Rbr), ;
            field->DatVal, field->DatDok, field->opis, ;
            field->IdPartner, field->IdKonto, field->D_P, field->IZNOSBHD)
        lOk := .f.
@@ -102,8 +104,14 @@ do while !eof()
     endif
    SKIP
 enddo
-MsgC()
 
+if lOk
+  sql_fin_suban_update("END")
+else
+  sql_fin_suban_update("ROLLBACK")
+endif
+
+MsgC()
 return lOk
 
 // ---------------------------

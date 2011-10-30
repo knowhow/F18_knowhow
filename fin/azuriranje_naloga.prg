@@ -9,18 +9,392 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fin.ch"
 
-
-/*! \file fmk/fin/db/1g/db.prg
- *  \brief Funkcije za rad sa tabelama
+/*! \fn Azur(lAuto)
+ *  \brief Azuriranje knjizenja
+ *  \param lAuto - .t. azuriraj automatski, .f. azuriraj sa pitanjem
  */
+function Azur(lAuto)
+local bErrHan, nC
+local nTArea := SELECT()
+
+if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
+	lLogAzur:=.t.
+else
+	lLogAzur:=.f.
+endif
+
+if (lAuto==NIL)
+	lAuto:=.f.
+endif
+
+if !lAuto .and. Pitanje("pAz","Sigurno zelite izvrsiti azuriranje (D/N)?", "N") == "N"
+	return
+endif
+
+O_KONTO
+O_PARTN
+O_PRIPR
+O_SUBAN
+O_ANAL
+O_SINT
+O_NALOG
+
+O_PSUBAN
+O_PANAL
+O_PSINT
+O_PNALOG
+
+// provjeri da li se u pripremi nalazi vise dokumenata... razlicitih
+if _is_vise_dok() == .t.
+	// provjeri za duple stavke prilikom azuriranja...
+	if prov_duple_stavke() == 1 
+		return
+	endif
+	// nafiluj sve potrebne tabele
+	stnal( .t. )
+endif
+
+O_KONTO
+O_PARTN
+O_PRIPR
+O_SUBAN
+O_ANAL
+O_SINT
+O_NALOG
+
+O_PSUBAN
+O_PANAL
+O_PSINT
+O_PNALOG
+
+fAzur:=.t.
+select PSUBAN
+if reccount2()==0
+  fAzur:=.f.
+endif
+select PANAL
+if reccount2()==0
+  fAzur:=.f.
+endif
+select PSINT
+if reccount2()==0
+  fAzur:=.f.
+endif
+
+if !fAzur
+  Beep(3)
+  Msg("Niste izvrsili stampanje naloga ...",10)
+  closeret
+endif
+
+if lLogAzur
+	cOpis := pripr->idfirma + "-" + ;
+		pripr->idvn + "-" + ;
+		pripr->brnal
+
+	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", ;
+		nil, nil, nil, nil, ;
+		cOpis, "", "", pripr->datdok, Date(), ;
+		"", "Azuriranje dokumenta - poceo !")
+
+endif
+
+Box(,5,60)
+
+select PSUBAN
+set order to 1
+go top
+
+fIzgenerisi:=.f.
+if reccount2()>9999 .and. !lAuto
+  if Pitanje(,"Staviti na stanje bez provjere ?","N")=="D"
+    fizgenerisi:=.t.
+  endif
+endif
+
+
+do while !eof()
+// prodji kroz PSUBAN i vidi da li je nalog zatvoren
+// samo u tom slucaju proknjizi nalog u odgovarajuce datoteke
+
+cNal:=IDFirma+IdVn+BrNal
+IF "." $ cNal
+  MsgBeep("Nalog "+IdFirma+"-"+idvn+"-"+(brnal)+;
+          " sadrzi znak '.' i zato nece biti azuriran!")
+  DO WHILE !EOF() .and. cNal==IDFirma+IdVn+BrNal
+    SKIP 1
+  ENDDO
+  LOOP
+ENDIF
+
+@ m_x+1,m_y+2 SAY "Azuriram nalog: "+IdFirma+"-"+idvn+"-"+ALLTRIM(brnal)
+nSaldo:=0
+
+cEvIdFirma:=idfirma
+cEvVrBrNal:=idvn+"-"+brnal
+dDatNaloga:=datdok
+dDatValute:=datval
+do while !eof() .and. cNal==IdFirma+IdVn+BrNal
+
+    if !empty(psuban->idpartner)
+      select partn
+      hseek psuban->idpartner
+
+      if !found() .and. !fizgenerisi
+        Beep(1)
+        Msg("Stavka br."+psuban->rbr+": Nepostojeca sifra partnera!")
+        IF PSUBAN->idvn=="00" .and. Pitanje(,"Preuzeti nepostojecu sifru iz sezone?","N")=='D'
+          PreuzSezSPK("P")
+        ELSE
+          Boxc()
+          select PSUBAN
+	      zapp()
+          select PANAL
+	      zapp()
+          select PSINT
+	      zapp()
+          closeret
+        ENDIF
+      endif
+    endif
+    if !empty(psuban->idkonto)
+      select konto
+      hseek psuban->idkonto
+      if !found() .and. !fizgenerisi
+        Beep(1)
+        Msg("Stavka br."+psuban->rbr+": Nepostojeca sifra konta!")
+        IF PSUBAN->idvn=="00" .and. Pitanje(,"Preuzeti nepostojecu sifru iz sezone?","N")=='D'
+          PreuzSezSPK("K")
+        ELSE
+          Boxc()
+          select PSUBAN
+          zapp()
+          select PANAL
+          zapp()
+          select PSINT
+          zapp()
+          closeret
+        ENDIF
+      endif
+    endif
+    select psuban
+
+    if D_P=="1"
+       nSaldo+=IznosBHD
+    else
+       nSaldo-=IznosBHD
+    endif
+    skip
+enddo
+
+if round(nSaldo,4)<>0 .and. gRavnot=="D"
+  Beep(1)
+  Msg("Neophodna ravnoteza naloga, azuriranje nece biti izvrseno!")
+endif
+
+// nalog je uravnotezen, azuriraj ga !
+if round(nSaldo,4)==0  .or. gRavnot=="N" 
+
+   if !( SUBAN->(flock()) .and. ;
+   	ANAL->(flock()) .and.  ;
+	SINT->(flock()) .and.  ;
+	NALOG->(flock())  ) 
+ 	   
+	    if gAzurTimeOut == nil
+	    	nTime := 150
+	    else
+	        nTime := gAzurTimeOut
+	    endif
+	   
+	    Box(,1, 40)
+
+	    // daj mu vremena...
+	    do while nTime > 0
+        
+            -- nTime
+            @ m_x + 1, m_y + 2 SAY "timeout: " + ALLTRIM(STR(nTime))
+            
+            if ( SUBAN->(flock()) .and. ;
+                ANAL->(flock()) .and.  ;
+                SINT->(flock()) .and.  ;
+                NALOG->(flock())  ) 
+                exit
+            endif
+            
+		sleep(1)
+
+	    enddo
+	    
+	    BoxC()
+
+	    if nTime = 0 .and. !( SUBAN->(flock()) .and. ;
+			ANAL->(flock()) .and.  ;
+			SINT->(flock()) .and.  ;
+			NALOG->(flock())  ) 
+	
+	    	Beep(4) 
+ 	    	BoxC() 
+ 	    	Msg("Timeout za azuriranje istekao!#Ne mogu azuriranti nalog...") 
+ 	    	closeret 
+	
+	    endif
+   endif 
+
+  @ m_x+3, m_y+2 SAY "NALOZI         "
+  select  SUBAN
+  SET ORDER TO 4  //"4","idFirma+IdVN+BrNal+Rbr"
+  seek cNal
+  if found()
+  	BoxC()
+  	Msg("Vec postoji u suban ? "+IdFirma+"-"+IdVn+"-"+ALLTRIM(BrNal)+ "  !")
+  	closeret
+  endif
+
+  select  NALOG
+  seek cNal
+  if found()
+  	BoxC()
+	Msg("Vec postoji proknjizen nalog "+IdFirma+"-"+IdVn+"-"+ALLTRIM(BrNal)+ "  !")
+        closeret
+  endif // found()
+
+  select PNALOG
+  seek cNal
+  if found()
+    Scatter()
+    _Sifra:=sifrakorisn
+    select NALOG
+    append ncnl
+    sql_append()
+    Gather2()
+    GathSql()
+    sql_azur(.f.)
+  else
+    Beep(4)
+    Msg("Greska... ponovi stampu naloga ...")
+  endif
+
+  @ m_x+3,m_y+2 SAY "ANALITIKA       "
+  select PANAL
+  seek cNal
+  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
+    Scatter()
+    select ANAL
+    append ncnl
+    sql_append()
+    Gather2()
+    GathSql()
+    select PANAL
+    skip
+  enddo
+
+  @ m_x+3,m_y+2 SAY "SINTETIKA       "
+  select PSINT
+  seek cNal
+  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
+    Scatter()
+    select SINT
+    append ncnl
+    sql_append()
+    Gather2()
+    GathSql()
+    select PSINT
+    skip
+  enddo
+
+  @ m_x+3,m_y+2 SAY "SUBANALITIKA   "
+  select SUBAN
+  set order to tag "3"
+  select PSUBAN
+  seek cNal
+  nC:=0
+  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
+
+    @ m_x+3,m_y+25 SAY ++nC  pict "99999999999"
+
+    Scatter()
+    if _d_p=="1"; nSaldo:=_IznosBHD; else; nSaldo:= -_IznosBHD; endif
+    SELECT SUBAN
+    SEEK _IdFirma+_IdKonto+_IdPartner+_BrDok    // isti dokument
+    nRec:=recno()
+    do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok)== (IdFirma+IdKonto+IdPartner+BrDok)
+       if d_P=="1"; nSaldo+= IznosBHD; else; nSaldo -= IznosBHD; endif
+       skip
+    enddo
+
+    if abs(round(nSaldo,3))<=gnLOSt
+      go nRec
+      do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok)== (IdFirma+IdKonto+IdPartner+BrDok)
+        field->OtvSt:="9"
+        skip
+      enddo
+      _OtvSt:="9"
+    endif
+
+    // dodaj u suban
+    append ncnl
+    sql_append()
+    Gather2()
+    GathSql()
+
+    select PSUBAN
+    skip
+  enddo
+
+if lLogAzur
+	
+	cOpis := cEvIdFirma + "-" + cEvVrBrNal
+
+	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", ;
+		nSaldo, nil, nil, nil, ;
+		cOpis, "", "", dDatNaloga, dDatValute, ;
+		"", "Azuriranje dokumenta - zavrsio !!!")
+
+endif
+
+
+  // nalog je uravnotezen, moze se izbrisati iz PRIPR
+  select PRIPR
+  seek cNal
+  @ m_x+3,m_y+2 SAY "BRISEM PRIPREMU "
+  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
+    skip
+    ntRec:=RECNO()
+    skip -1
+    dbdelete2()
+    go ntRec
+  enddo
+
+endif // saldo == 0
+
+select PSUBAN
+enddo
+
+BoxC()
+
+
+select PRIPR
+__dbpack()
+
+select PSUBAN
+zap
+select PANAL
+zap
+select PSINT
+zap
+select PNALOG
+zap
+
+closeret
+return
+
+
  
 /*! \fn SifkPartnBank()
  *  \brief Dodaje u tabelu SifK stavke PARTN i BANK
  */
- 
 function SifkPartnBank()
 
 O_SIFK
@@ -36,18 +410,8 @@ endif
 use
 return NIL
 
-
-
-
 /*! \fn OKumul(nArea,cStaza,cIme,nIndexa,cDefault)
- *  \brief Kopira podatke sa mreze radi brzine pregleda dokumenata, sluzi samo za pregled
- *  \param nArea    - podrucje
- *  \param cStaza  
- *  \param cIme 
- *  \param nIndexa
- *  \param cDefault
  */
- 
 function OKumul(nArea, cStaza, cIme, nIndexa, cDefault)
 
 select (nArea)
@@ -75,13 +439,9 @@ do while !EOF()
 	cBrNal := field->brnal
 	
 	if  cBrNal == cTmpNal 
-		
-		
 		cTmpNal := cBrNal
-		
 		skip
 		loop
-	
 	else
 		lRet := .t.
 		exit
@@ -270,7 +630,6 @@ do while !EOF()
 		seek cSeek
 		if Found()
 			do while !EOF() .and. anal->(idfirma + idvn + brnal) == cSeek
-				
 				skip 1
 				nRec:=RecNo()
 				skip -1
@@ -304,396 +663,6 @@ if Found()
 	return .t.
 endif
 return .f.
-
-
-
-/*! \fn Azur(lAuto)
- *  \brief Azuriranje knjizenja
- *  \param lAuto - .t. azuriraj automatski, .f. azuriraj sa pitanjem
- */
- 
-function Azur(lAuto)
-local bErrHan, nC
-local nTArea := SELECT()
-
-if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
-	lLogAzur:=.t.
-else
-	lLogAzur:=.f.
-endif
-
-if (lAuto==NIL)
-	lAuto:=.f.
-endif
-
-if !lAuto .and. Pitanje("pAz","Sigurno zelite izvrsiti azuriranje (D/N)?","N")=="N"
-	return
-endif
-
-O_KONTO
-O_PARTN
-O_PRIPR
-O_SUBAN
-O_ANAL
-O_SINT
-O_NALOG
-
-O_PSUBAN
-O_PANAL
-O_PSINT
-O_PNALOG
-
-// provjeri da li se u pripremi nalazi vise dokumenata... razlicitih
-if _is_vise_dok() == .t.
-	
-	// provjeri za duple stavke prilikom azuriranja...
-	if prov_duple_stavke() == 1 
-		return
-	endif
-	
-	// nafiluj sve potrebne tabele
-	stnal( .t. )
-endif
-
-O_KONTO
-O_PARTN
-O_PRIPR
-O_SUBAN
-O_ANAL
-O_SINT
-O_NALOG
-
-O_PSUBAN
-O_PANAL
-O_PSINT
-O_PNALOG
-
-
-fAzur:=.t.
-select PSUBAN
-if reccount2()==0
-  fAzur:=.f.
-endif
-select PANAL
-if reccount2()==0
-  fAzur:=.f.
-endif
-select PSINT
-if reccount2()==0
-  fAzur:=.f.
-endif
-
-
-if !fAzur
-  Beep(3)
-  Msg("Niste izvrsili stampanje naloga ...",10)
-  closeret
-endif
-
-if lLogAzur
-	cOpis := pripr->idfirma + "-" + ;
-		pripr->idvn + "-" + ;
-		pripr->brnal
-
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", ;
-		nil, nil, nil, nil, ;
-		cOpis, "", "", pripr->datdok, Date(), ;
-		"", "Azuriranje dokumenta - poceo !")
-
-endif
-
-Box(,5,60)
-select PSUBAN
-set order to 1
-go top
-
-fIzgenerisi:=.f.
-if reccount2()>9999 .and. !lAuto
-  if Pitanje(,"Staviti na stanje bez provjere ?","N")=="D"
-    fizgenerisi:=.t.
-  endif
-endif
-
-
-do while !eof()
-// prodji kroz PSUBAN i vidi da li je nalog zatvoren
-// samo u tom slucaju proknjizi nalog u odgovarajuce datoteke
-
-cNal:=IDFirma+IdVn+BrNal
-IF "." $ cNal
-  MsgBeep("Nalog "+IdFirma+"-"+idvn+"-"+(brnal)+;
-          " sadrzi znak '.' i zato nece biti azuriran!")
-  DO WHILE !EOF() .and. cNal==IDFirma+IdVn+BrNal
-    SKIP 1
-  ENDDO
-  LOOP
-ENDIF
-
-@ m_x+1,m_y+2 SAY "Azuriram nalog: "+IdFirma+"-"+idvn+"-"+ALLTRIM(brnal)
-nSaldo:=0
-
-cEvIdFirma:=idfirma
-cEvVrBrNal:=idvn+"-"+brnal
-dDatNaloga:=datdok
-dDatValute:=datval
-
-do while !eof() .and. cNal==IdFirma+IdVn+BrNal
-
-    if !empty(psuban->idpartner)
-      select partn
-      hseek psuban->idpartner
-
-      if !found() .and. !fizgenerisi
-        Beep(1)
-        Msg("Stavka br."+psuban->rbr+": Nepostojeca sifra partnera!")
-        IF PSUBAN->idvn=="00" .and. Pitanje(,"Preuzeti nepostojecu sifru iz sezone?","N")=='D'
-          PreuzSezSPK("P")
-        ELSE
-          Boxc()
-          select PSUBAN
-	  zapp()
-          select PANAL
-	  zapp()
-          select PSINT
-	  zapp()
-          closeret
-        ENDIF
-      endif
-    endif
-    if !empty(psuban->idkonto)
-      select konto
-      hseek psuban->idkonto
-      if !found() .and. !fizgenerisi
-        Beep(1)
-        Msg("Stavka br."+psuban->rbr+": Nepostojeca sifra konta!")
-        IF PSUBAN->idvn=="00" .and. Pitanje(,"Preuzeti nepostojecu sifru iz sezone?","N")=='D'
-          PreuzSezSPK("K")
-        ELSE
-          Boxc()
-          select PSUBAN
-          zapp()
-          select PANAL
-          zapp()
-          select PSINT
-          zapp()
-          closeret
-        ENDIF
-      endif
-    endif
-    select psuban
-
-    if D_P=="1"
-       nSaldo+=IznosBHD
-    else
-       nSaldo-=IznosBHD
-    endif
-    skip
-enddo
-
-if round(nSaldo,4)<>0 .and. gRavnot=="D"
-  Beep(1)
-  Msg("Neophodna ravnoteza naloga, azuriranje nece biti izvrseno!")
-endif
-
-// nalog je uravnotezen, azuriraj ga !
-if round(nSaldo,4)==0  .or. gRavnot=="N" 
-
-   if !( SUBAN->(flock()) .and. ;
-   	ANAL->(flock()) .and.  ;
-	SINT->(flock()) .and.  ;
-	NALOG->(flock())  ) 
- 	   
-	    if gAzurTimeOut == nil
-	    	nTime := 150
-	    else
-	        nTime := gAzurTimeOut
-	    endif
-	   
-	    Box(,1, 40)
-
-	    // daj mu vremena...
-	    do while nTime > 0
-	
-		-- nTime
-
-		@ m_x + 1, m_y + 2 SAY "timeout: " + ALLTRIM(STR(nTime))
-		
-		if ( SUBAN->(flock()) .and. ;
-			ANAL->(flock()) .and.  ;
-			SINT->(flock()) .and.  ;
-			NALOG->(flock())  ) 
-			exit
-		endif
-	    
-		sleep(1)
-
-	    enddo
-	    
-	    BoxC()
-
-	    if nTime = 0 .and. !( SUBAN->(flock()) .and. ;
-			ANAL->(flock()) .and.  ;
-			SINT->(flock()) .and.  ;
-			NALOG->(flock())  ) 
-	
-	    	Beep(4) 
- 	    	BoxC() 
- 	    	Msg("Timeout za azuriranje istekao!#Ne mogu azuriranti nalog...") 
- 	    	closeret 
-	
-	endif
-   endif 
-
-
-  @ m_x+3,m_y+2 SAY "NALOZI         "
-  select  SUBAN; SET ORDER TO 4  //"4","idFirma+IdVN+BrNal+Rbr"
-  seek cNal
-  if found()
-  	BoxC()
-  	Msg("Vec postoji u suban ? "+IdFirma+"-"+IdVn+"-"+ALLTRIM(BrNal)+ "  !")
-  	closeret
-  endif
-
-
-  select  NALOG
-  seek cNal
-  if found()
-  	BoxC()
-	Msg("Vec postoji proknjizen nalog "+IdFirma+"-"+IdVn+"-"+ALLTRIM(BrNal)+ "  !")
-        closeret
-  endif // found()
-
-  select PNALOG
-  seek cNal
-  if found()
-    Scatter()
-    _Sifra:=sifrakorisn
-    select NALOG
-    append ncnl
-    sql_append()
-    Gather2()
-    GathSql()
-    sql_azur(.f.)
-  else
-    Beep(4)
-    Msg("Greska... ponovi stampu naloga ...")
-  endif
-
-  @ m_x+3,m_y+2 SAY "ANALITIKA       "
-  select PANAL
-  seek cNal
-  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
-    Scatter()
-    select ANAL
-    append ncnl
-    sql_append()
-    Gather2()
-    GathSql()
-    select PANAL
-    skip
-  enddo
-
-  @ m_x+3,m_y+2 SAY "SINTETIKA       "
-  select PSINT
-  seek cNal
-  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
-    Scatter()
-    select SINT
-    append ncnl
-    sql_append()
-    Gather2()
-    GathSql()
-    select PSINT
-    skip
-  enddo
-
-  @ m_x+3,m_y+2 SAY "SUBANALITIKA   "
-  select SUBAN
-  set order to tag "3"
-  select PSUBAN
-  seek cNal
-  nC:=0
-  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
-
-    @ m_x+3,m_y+25 SAY ++nC  pict "99999999999"
-
-    Scatter()
-    if _d_p=="1"; nSaldo:=_IznosBHD; else; nSaldo:= -_IznosBHD; endif
-    SELECT SUBAN
-    SEEK _IdFirma+_IdKonto+_IdPartner+_BrDok    // isti dokument
-    nRec:=recno()
-    do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok)== (IdFirma+IdKonto+IdPartner+BrDok)
-       if d_P=="1"; nSaldo+= IznosBHD; else; nSaldo -= IznosBHD; endif
-       skip
-    enddo
-
-    if abs(round(nSaldo,3))<=gnLOSt
-      go nRec
-      do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok)== (IdFirma+IdKonto+IdPartner+BrDok)
-        field->OtvSt:="9"
-        skip
-      enddo
-      _OtvSt:="9"
-    endif
-
-    // dodaj u suban
-    append ncnl
-    sql_append()
-    Gather2()
-    GathSql()
-
-    select PSUBAN
-    skip
-  enddo
-
-if lLogAzur
-	
-	cOpis := cEvIdFirma + "-" + cEvVrBrNal
-
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", ;
-		nSaldo, nil, nil, nil, ;
-		cOpis, "", "", dDatNaloga, dDatValute, ;
-		"", "Azuriranje dokumenta - zavrsio !!!")
-
-endif
-
-
-  // nalog je uravnotezen, moze se izbrisati iz PRIPR
-  
-  select PRIPR
-  seek cNal
-  @ m_x+3,m_y+2 SAY "BRISEM PRIPREMU "
-  do while !eof() .and. cNal==IdFirma+IdVn+BrNal
-    skip
-    ntRec:=RECNO()
-    skip -1
-    dbdelete2()
-    go ntRec
-  enddo
-
-endif // saldo == 0
-
-select PSUBAN
-enddo
-
-BoxC()
-
-
-select PRIPR
-__dbpack()
-
-select PSUBAN
-zap
-select PANAL
-zap
-select PSINT
-zap
-select PNALOG
-zap
-
-closeret
-return
-
 
 
 

@@ -13,44 +13,26 @@
 #include "fmk.ch"
 
  
-function sql_repl(cField, xxVar, nHandle, cAkcija )
+function sql_repl(cField, xxVar)
+local i, cSQL
+
+cSQL:= "update " + ALIAS() + " set " + cfield + "=" + SqlValue(xxVar) +;
+      " where _OID_=" + SQLValue(Oid2Num(field->_OID_), 0)
+
+return cSQL
+
+// ------------------------------------
+// ------------------------------------
+function sql_append()
+local i, cSQL
+
+cSQL:="insert into " + ALIAS() + " (_OID_) values(" + sqlvalue(oid2num(field->_OID_),0) + ")"
+
+return cSQL
+
+function sql_delete(cTip)
 *{
-local i,nh,cSQL
-
-if (gSQL=="N" .or. fieldpos("_OID_")==0)
-	return .f.
-endif
-if goModul:lSqlDirektno
-	cAkcija:="L"
-endif
-
-cSQL:="update "+alias()+" set "+cfield+"="+SqlValue(xxVar)+;
-      " where _OID_="+SQLValue(Oid2Num(field->_OID_),0)
-Gw(cSQL, @nHandle, cAkcija )
-return .t.
-*}
-
-function sql_append( nHandle, cAkcija )
-*{
-local i,nh, cSQL
-
-if (gSQL=="N" .or. fieldpos("_OID_")==0)
-	return .f.
-endif
-if goModul:lSqlDirektno
-	cAkcija:="L"
-endif
-
-cSQL:="insert into "+ALIAS()+" (_OID_) values("+sqlvalue(oid2num(field->_OID_),0)+")"
-
-Gw(cSQL, @nHandle, cAkcija )
-
-return .t.
-*}
-
-function sql_delete(cTip, nHandle, cAkcija)
-*{
-local i,nh, cSQL
+local i, cSQL
 
 if fieldpos("_SITE_")==0
    return .f.
@@ -63,9 +45,9 @@ if goModul:lSqlDirektno
 	cAkcija:="L"
 endif
 
-cSQL:="delete from "+alias()+" where _oid_="+sqlvalue(oid2num(field->_OID_))
+cSQL:="delete from " + alias() + " where _oid_=" + sqlvalue(oid2num(field->_OID_))
 
-if cTip==nil
+if cTip==NIL
 	cTIP:="DBF"
 endif
 
@@ -73,19 +55,14 @@ if cTip=="DBF"
   	// setuj polje brisano
 	//replsql BRISANO with "1"
 endif
-Gw(cSQL, @nHandle, cAkcija )
-return .t.
-*}
+return cSQL
 
 
-function GathSQL(cZnak,fAppend, nHandle, cAkcija)
+
+function GathSQL(cZnak, fAppend)
 *{
-local i,j,aStruct
+local i, j, aStruct
 private cVar
-
-if gSQL=="N" .or. fieldpos("_OID_")=0
-  return
-endif
 
 if cZnak==NIL
   cZnak:="_"
@@ -97,29 +74,33 @@ endif
 
 
 if fAppend
- cSQL:="insert into "+alias()
+ cSQL := "insert into " + alias()
 else
- cSQL:="update "+alias()
+ cSQL := "update " + alias()
 endif
 
 aStruct:=DBSTRUCT()
+
 nSet:=0
 
-for i:=1 to len(aStruct)
-  cImeP:=aStruct[i,1]
-  cVar:=cZnak+cImeP
+for i:=1 to LEN(aStruct)
   
+  cImeP:=aStruct[i, 1]
+
+  cVar:= cZnak + cImeP
+  
+  // brisano, _oid_, _commit_ polja preskoci
   if  !("#"+cImeP+"#" $ "#BRISANO#_OID_#_COMMIT_#")
     if cImeP=="_SITE_"
-      cSQL:=cSQL+iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(gSQLSite)
+      cSQL := cSQL + iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(gSQLSite)
     elseif cImeP=="_USER_"
-      cSQL:=cSQL+iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(gSQLUser)
+      cSQL := cSQL + iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(gSQLUser)
     elseif cImeP=="_TIMEAZ_"
-      cSQL:=cSQL+iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(Time())
+      cSQL := cSQL + iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(Time())
     elseif cImeP=="_DATAZ_"
-      cSQL:=cSQL+iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(Date())
+      cSQL := cSQL + iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(Date())
     else
-      cSQL:=cSQL+iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(&cVar)
+      cSQL := cSQL + iif(nSet=0," SET ",",")+cImeP+"="+SQLValue(&cVar)
     endif
     nSet++
   endif
@@ -133,13 +114,8 @@ if !fAppend
  cSQL:=cSql+" where _OID_="+SqlValue(field->_OID_)
 endif
 
-if goModul:lSqlDirektno
-	cAkcija:="L"
-endif
-Gw(cSQL, @nHandle, cAkcija)
-return
+return cSQL
 *}
-
 
 
 /*! \fn sql_azur(fLock)
@@ -150,14 +126,6 @@ return
  
 function sql_azur(fLock)
 *{
-if gSQL=="N"
-	return .f.
-endif
-
-if fieldpos("_SITE_")==0
-	return .f.
-endif
-
 if flock==nil
 	fLock:=.f.
 endif
@@ -180,7 +148,7 @@ return .t.
 *}
 
 
-function SQLValue(xVar,nDec, cKonv)
+function SQLValue(xVar, nDec, cKonv)
 *{
 local cPom, cChar, cChar2, nStat,ilok
 
@@ -231,12 +199,14 @@ if valtype(xVAR)="C"
      endif
    endif
    return cPom
+
 elseif valtype(xVAR)="N"
    if nDec<>NIL
      return alltrim(str(xVar,25,nDec))
    else
      return alltrim(str(xVar))
    endif
+
 elseif valtype(xVar)="D"
    cPom:=dtos(xVar)
    if empty(cPom)
@@ -248,7 +218,7 @@ elseif valtype(xVar)="D"
 else
    return "NULL"
 endif
-*}
+
 
 
 /*! \fn New_OID()
@@ -284,7 +254,6 @@ return nPom
 *}
 
 function Last_OID()
-*{
 local nPom
 PushWa()
 set order to tag "_OID_"
@@ -296,29 +265,19 @@ else
 endif
 PopWa()
 return Num2Oid(nPom+1) // novi OID
-*}
 
 /*! \fn Oid2Num(cOID)
  *  \todo izbaciti ovu funkciju - nepotrebna
  */
 function Oid2Num(cOID)
-*{
 local i,nPom
 return cOID
-*}
 
 /*! \fn Num2Oid(cOID)
  *  \todo izbaciti ovu funkciju - nepotrebna
  */
 function Num2Oid(nOid)
-*{
 return nOid
-*}
 
-function sql_log(cSQL, nHandle, cAkcija )
-*{
-local i
-i:=0
-Gw(cSQL, @nHandle, cAkcija )
+function sql_log(cSQL)
 return
-*}

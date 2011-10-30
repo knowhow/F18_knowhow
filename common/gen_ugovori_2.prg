@@ -319,7 +319,7 @@ BoxC()
 // prikazi info generacije
 s_gen_info( dDatObr )
 
-Azur(.t.)
+fin_azur(.t.)
 
 return
 

@@ -1794,7 +1794,7 @@ else
 
  if xValue<>NIL
 
-   sql_azur(.t.);Scatter()
+   sql_azur(.t.); Scatter()
    if sifk->tip=="C"
      replace naz with xValue
      //replsql naz with xValue

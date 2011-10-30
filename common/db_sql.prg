@@ -145,7 +145,6 @@ if fLock
    UNLOCK
 endif
 return .t.
-*}
 
 
 function SQLValue(xVar, nDec, cKonv)

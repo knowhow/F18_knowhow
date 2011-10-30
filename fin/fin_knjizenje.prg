@@ -82,7 +82,7 @@ if gNW=="N"
      case izbor == 2
          StNal()
      case izbor == 3
-         Azur()
+         fin_azur()
      case izbor == 4
        // prva vrijednost
        if KursLis=="1"  
@@ -785,13 +785,13 @@ case Ch==K_ALT_F5
 
      // pa azuriraj
      close all
-     Azur(.t.)
+     fin_azur(.t.)
      O_Edit()
      return DE_REFRESH
 
 
    case Ch==K_ALT_A
-     Azur()
+     fin_azur()
      O_Edit()
      return DE_REFRESH
 

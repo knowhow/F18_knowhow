@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch"
 #include "fileio.ch"
 
@@ -18,14 +17,12 @@
 static GW_STRING
 *;
 
-
 /*! \fn Gw(cStr, nHandle, cAkcija)
  *  \param cStr - string koji prosljedjujemo gateway-u
  *  \param nHandle - ne koristi se, izbaciti !
  *  \param cAkcija = A - azuriraj odmah, default value; P - pocetak; D - dodaj;  Z- zavrsi; L - upisi direktno u log fajl (ne salji gateway-u)
  */
 function Gw(cStr, nHandle, cAkcija)
-
 local nHgw
 local cBaza
 local cBazaInOut

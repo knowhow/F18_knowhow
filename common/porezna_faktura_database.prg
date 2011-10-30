@@ -506,6 +506,7 @@ SET ORDER TO TAG "1"
 if !USED(F_DRN)
 	O_DRN
 endif
+
 if !USED(F_DRNTEXT)
 	O_DRNTEXT
 endif

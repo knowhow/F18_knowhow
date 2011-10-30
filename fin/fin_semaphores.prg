@@ -30,7 +30,7 @@ return
 /* -----------------------------
  puni sql bazu fmk.fin_suban
  ------------------------------ */
-function sql_fin_suban_update(cIdFirma, cIdVn, cBrNal, nRbr, dDatNal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
+function sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatNal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
 LOCAL oRet
 LOCAL nResult
 LOCAL cTmpQry

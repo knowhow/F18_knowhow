@@ -54,5 +54,8 @@ return
 // ~/.F18/
 // ---------------
 function my_home()
-
 return cF18HomeDir
+
+functtion pg_server()
+return oServer
+

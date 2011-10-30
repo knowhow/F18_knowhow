@@ -11,8 +11,6 @@
 
 #include "fin.ch"
 
-// PostgreSQL server object
-static oServer
 static lIzgenerisi := .f.
 static cNal
 
@@ -21,6 +19,8 @@ static cNal
  *  \param lAuto - .t. azuriraj automatski, .f. azuriraj sa pitanjem
  */
 function fin_azur(lAuto)
+// PostgreSQL server object
+local oServer
 
 if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
 	lLogAzur:=.t.
@@ -51,14 +51,18 @@ O_PSINT
 O_PNALOG
 
 if !fin_azur_check(lAuto)
-   return
+   return .f.
 endif
 
-if fin_azur_sql()
-   fin_azur_dbf(lAuto)
+oServer := pg_server()
+
+if fin_azur_sql(oServer)
+   if !fin_azur_dbf(lAuto)
+       return .f.
+   endif
 endif
 
-return
+return .t.
 
 // ----------------------
 // ----------------------
@@ -68,8 +72,8 @@ MsgO("sql suban")
 SELECT PSUBAN
 GO TOP
 do while !eof()
-   //sql_fin_suban_update(cIdFirma, cIdVn, cBrNal, nRbr, dDatNal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
-   sql_fin_suban_update(field->IdFirma, field->IdVn, field->BrNal, VAL(field->Rbr), ;
+   //sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatNal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
+   sql_fin_suban_update(oServer, field->IdFirma, field->IdVn, field->BrNal, VAL(field->Rbr), ;
            field->DatNal, field->DatDok, field->opis, ;
            field->IdPartn, field->IdKonto, field->D_P, field->IZBNOSBHD)
    SKIP
@@ -232,9 +236,9 @@ select PSINT
 zap
 select PNALOG
 zap
-closeret
+close all
 
-return
+return .f.
 
 
 // ----------------------------------------

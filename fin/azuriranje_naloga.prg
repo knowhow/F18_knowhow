@@ -97,7 +97,7 @@ sql_fin_suban_update("BEGIN")
 do while !eof()
    //sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatVal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
     if !sql_fin_suban_update(field->IdFirma, field->IdVn, field->BrNal, VAL(field->Rbr), ;
-           field->DatVal, field->DatDok, field->opis, ;
+           field->DatDok, field->DatVal, field->opis, ;
            field->IdPartner, field->IdKonto, field->D_P, field->IZNOSBHD)
        lOk := .f.
        exit

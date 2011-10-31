@@ -28,8 +28,8 @@ nPort := 5432
 cSchema := "fmk"
 //cDatabase := "quick38"
 cDatabase := "test1"
-cUser := "admin"
-cPassWord := "admin"
+cUser := "vsasa"
+cPassWord := "vsasa"
 ? "------ brisi ovo na drugom racunaru !!!! ----"
 
 

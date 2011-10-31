@@ -11,6 +11,113 @@
 
 #include "fmk.ch"
 
+// ----------------------------------------------------------------
+// xSemaphoreParam se prosjedjuje eval funkciji ..from_sql_server
+// ----------------------------------------------------------------
+function my_use(cTable, cAlias, lNew, cRDD, xSemaphoreParam)
+local nPos
+local cF18Tbl
+local nVersion
+
+if lNew == NIL
+   lNew := .f.
+endif
+
+/*
+{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
+...
+*/
+
+// /home/test/suban.dbf => suban
+cTable := FILEBASE(cTable)
+
+// SUBAN
+nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cTable)} )
+
+if cAlias == NIL
+   cAlias := gaDBFs[nPos, 2]
+endif
+
+if cRDD == NIL
+  cRDD = "DBFCDX"
+endif
+
+if lNew
+   SELECT NEW
+endif
+
+
+// mi otvaramo ovu tabelu ~/.F18/bringout/fin_pripr
+//if gDebug > 9
+// log_write( "LEN gaDBFs[" + STR(nPos) + "]" + STR(LEN(gADBFs[nPos])) + " USE (" + my_home() + gaDBFs[nPos, 3]  + " ALIAS (" + cAlias + ") VIA (" + cRDD + ") EXCLUSIVE")
+//endif
+
+if  LEN(gaDBFs[nPos])>3 
+
+   if (cRDD != "SEMAPHORE")
+        cF18Tbl := gaDBFs[nPos, 3]
+
+        //if gDebug > 9
+        //    log_write("F18TBL =" + cF18Tbl)
+        //endif
+
+        nVersion :=  get_semaphore_version(cF18Tbl)
+        if gDebug > 9
+          log_write("Tabela:" + cF18Tbl + " semaphore nVersion=" + STR(nVersion) + " last_semaphore_version=" + STR(last_semaphore_version(cF18Tbl)))
+        endif
+
+        if (nVersion == -1)
+          // semafor je resetovan
+          //if gDebug > 9
+          //    log_write("prije eval from sql -1")
+          //endif
+          EVAL( gaDBFs[nPos, 4], NIL)
+
+          update_semaphore_version(cF18Tbl)
+        else
+            // moramo osvjeziti cache
+           if nVersion < last_semaphore_version(cF18Tbl)
+             //if gDebug > 9
+             // log_write("prije eval from sql < last_semaphore_version")
+             //endif
+             EVAL( gaDBFs[nPos, 4], NIL)
+             update_semaphore_version(cF18Tbl)
+           endif
+        endif
+   else
+      // poziv is update from sql server procedure
+      cRDD := "DBFCDX" 
+   endif
+
+endif
+
+USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) VIA (cRDD) EXCLUSIVE
+
+return
+
+/*
+#command USEX <(db)>                                                   ;
+             [VIA <rdd>]                                                ;
+             [ALIAS <a>]                                                ;
+             [<new: NEW>]                                               ;
+             [<ro: READONLY>]                                           ;
+             [INDEX <(index1)> [, <(indexn)>]]                          ;
+                                                                        ;
+      =>  PreUseEvent(<(db)>,.f.,gReadOnly)				;
+        ;  dbUseArea(                                                   ;
+                    <.new.>, <rdd>, ToUnix(<(db)>), <(a)>,              ;
+                     .f., gReadOnly       ;
+                  )                                                     ;
+                                                                        ;
+      [; dbSetIndex( <(index1)> )]                                      ;
+      [; dbSetIndex( <(indexn)> )]
+
+
+*/
+
+function usex(cTable)
+return my_use(cTable)
+
 // ---------------------------
 // ~/.F18/bringout1
 // ~/.F18/rg1
@@ -70,7 +177,7 @@ local oServer
  public gReadOnly := .f.
  public gSQL := "N"
  public Invert := .f.
- public gDebug := 0
+
 
  public gaDBFs:={ ;
 { F_PARAMS  ,  "PARAMS"   , "params"  },;
@@ -115,7 +222,7 @@ local oServer
 { F_POM2   ,  "POM2"    , "fin_pom2"  },;
 { F_KUF    ,  "KUF"     , "fin_kuf"   },;
 { F_KIF    ,  "KIF"     , "fin_kif"   },;
-{ F_SUBAN  ,  "SUBAN"   , "fin_suban"   },;
+{ F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|dDatDok| fin_suban_from_sql_server(dDatDok) } },;
 { F_ANAL   ,  "ANAL"    , "fin_anal"   },;
 { F_SINT   ,  "SINT"    , "fin_sint"   },;
 { F_NALOG  ,  "NALOG"   , "fin_nalog"  },;
@@ -145,13 +252,13 @@ local oServer
 { F_ULIMIT ,  "ULIMIT"  , "ulimit"  };
 }
 
+log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)
 
- ? "PostgreSQL konekcija ..."
- oServer := TPQServer():New( cHostName, cDatabase, cUser, cPassWord, nPort, cSchema )
- IF oServer:NetErr()
-      ? oServer:ErrorMsg()
+oServer := TPQServer():New( cHostName, cDatabase, cUser, cPassWord, nPort, cSchema )
+IF oServer:NetErr()
+      log_write( oServer:ErrorMsg() )
       QUIT
- ENDIF
+ENDIF
 
 
 return oServer 

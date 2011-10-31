@@ -410,7 +410,7 @@ StackPush(aBoxStack, ;
    m_y, ;
    N,   ;
    Length, ;
-   SaveScreen(m_x,m_y,m_x+N+1,m_Y+Length+2), ;
+   SaveScreen(m_x, m_y, m_x+N+1, m_Y+Length+2), ;
    IF(VALTYPE(chMsg)!="A","",BoxId), ;
    Row(), ;
    Col(), ;

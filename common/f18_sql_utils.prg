@@ -18,6 +18,7 @@ oResult := oServer:Query( cQuery )
 IF oResult:NetErr()
       cMsg := oResult:ErrorMsg()
       if gDebug > 0 
+         log_write(cQuery)
          log_write(cMsg)
       endif
       MsgBeep( cMsg )

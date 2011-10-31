@@ -106,6 +106,7 @@ do while !eof()
 enddo
 
 if lOk
+  update_semaphore_version("fin_suban")
   sql_fin_suban_update("END")
 else
   sql_fin_suban_update("ROLLBACK")

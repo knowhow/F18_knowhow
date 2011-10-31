@@ -17,12 +17,32 @@
 function last_semaphore_version(cTable)
 local cTmpQry
 local oRet
+local oServer:= pg_server()
 
-cTmpQry := "SELECT currval('fmk.sem_ver_" + cTable + "') as val"
+//cTmpQry := "SELECT currval('fmk.sem_ver_" + cTable + "')"
+
+cTmpQry := "SELECT last_trans_version FROM  fmk.semaphores_" + cTable + " WHERE user_code=" + _sql_quote(f18_user())
+
+if gDebug > 5  
+  log_write(cTmpQry)
+endif
 oRet := _sql_query( oServer, cTmpQry )
 
-return oRet:Fieldget( oRet:Fieldpos("val") )
+if VALTYPE(oRet) == "L"
+  // ERROR
+  // currval of sequence "sem_ver_fin_suban" is not yet defined in this session
+  cTmpQry := "SELECT nextval('fmk.sem_ver_" + cTable + "')"
+  log_write(cTmpQry)
+  oRet := _sql_query( oServer, cTmpQry )
+  if VALTYPE(oRet) == "L"
+      // ?? opet error ??
+      return -1
+  else   
+      return 1
+  endif
+endif
 
+return oRet:Fieldget( 1 )
 
 /* ------------------------------------------
   get_semaphore_version( "konto", "hernad" )
@@ -32,13 +52,11 @@ function get_semaphore_version(cTable)
 LOCAL oTable
 LOCAL nResult
 LOCAL cTmpQry
-LOCAL oServer
-
-oServer:= pg_server()
+local oServer:= pg_server()
 
 cTable := "fmk.semaphores_" + cTable
 
-nResult := table_count(oServer, cTable, "user_code=" + _sql_quote(f18_user())) 
+nResult := table_count(cTable, "user_code=" + _sql_quote(f18_user())) 
 
 if nResult <> 1
   log_write( cTable + " " + f18_user() + "count =" + STR(nResult))
@@ -57,11 +75,14 @@ nResult := oTable:Fieldget( oTable:Fieldpos("version") )
 
 RETURN nResult
 
+
+
 /* ------------------------------------------
-  update_semaphore_version( "konto", "hernad" )
+  reset_semaphore_version( "konto")
+  set version to -1
   -------------------------------------------
 */
-function update_semaphore_version(cTable)
+function reset_semaphore_version(cTable)
 LOCAL oRet
 LOCAL nResult
 LOCAL cTmpQry
@@ -72,22 +93,21 @@ LOCAL oServer := pg_server()
 cFullTable := "fmk.semaphores_" + cTable
 ? "table=", cTable
 
-nResult := table_count(oServer, cFullTable, "user_code=" + _sql_quote(cUser)) 
+nResult := table_count(cFullTable, "user_code=" + _sql_quote(cUser)) 
 
 if nResult == 0
 
    cTmpQry := "INSERT INTO " + cFullTable + ;
-              "(user_code, version) " + ;
-               "VALUES(" + _sql_quote(cUser)  + ", nextval('fmk.sem_ver_"+ cTable + "') )"
+              "(user_code, version, ) " + ;
+               "VALUES(" + _sql_quote(cUser)  + ", -1 )"
 
    oRet := _sql_query( oServer, cTmpQry)
 
 else
 
 cTmpQry := "UPDATE " + cFullTable + ;
-              " SET version=nextval('fmk.sem_ver_"+ cTable + "') " + ;
+              " SET version=-1" + ;
               " WHERE user_code =" + _sql_quote(cUser) 
-
 
 oRet := _sql_query( oServer, cTmpQry )
 
@@ -100,6 +120,77 @@ oRet := _sql_query( oServer, cTmpQry )
 return oRet:Fieldget( oRet:Fieldpos("version") )
 
 
+
+/* ------------------------------------------
+  update_semaphore_version( "konto")
+  -------------------------------------------
+*/
+function update_semaphore_version(cTable)
+LOCAL oRet
+LOCAL nResult
+LOCAL cTmpQry
+LOCAL cFullTable
+LOCAL cUser := f18_user()
+LOCAL oServer := pg_server()
+LOCAL nLast
+
+cFullTable := "fmk.semaphores_" + cTable
+? "table=", cTable
+
+nResult := table_count(cFullTable, "user_code=" + _sql_quote(cUser)) 
+
+if nResult == 0
+
+/*
+   cTmpQry := "INSERT INTO " + cFullTable + ;
+              "(user_code, version) " + ;
+               "VALUES(" + _sql_quote(cUser)  + ", nextval('fmk.sem_ver_"+ cTable + "') )"
+
+*/
+   cTmpQry := "INSERT INTO " + cFullTable + ;
+              "(user_code, version, last_trans_version) " + ;
+               "VALUES(" + _sql_quote(cUser)  + ", 1, 1 )"
+
+
+
+   oRet := _sql_query( oServer, cTmpQry)
+
+else
+
+/*
+cTmpQry := "UPDATE " + cFullTable + ;
+              " SET version=nextval('fmk.sem_ver_"+ cTable + "') " + ;
+              " WHERE user_code =" + _sql_quote(cUser) 
+*/
+
+nLast := get_semaphore_version(cTable)
+
+cTmpQry := "UPDATE " + cFullTable + ;
+              " SET version=" + STR(nLast+1) + ;
+              " WHERE user_code =" + _sql_quote(cUser) 
+oRet := _sql_query( oServer, cTmpQry )
+
+endif
+
+// svim setuj last_trans_version
+cTmpQry := "UPDATE " + cFullTable + ;
+              " SET last_trans_version=" + STR(nLast+1)  
+oRet := _sql_query( oServer, cTmpQry )
+
+// kod svih usera verzija ne moze biti veca od nLast + 1
+cTmpQry := "UPDATE " + cFullTable + ;
+              " SET version=" + STR(nLast+1) + ;
+              " WHERE version > " + STR(nLast+1)
+oRet := _sql_query( oServer, cTmpQry )
+
+
+
+
+cTmpQry := "SELECT version from " + cFullTable + ;
+           " WHERE user_code =" + _sql_quote(cUser) 
+oRet := _sql_query( oServer, cTmpQry )
+
+return oRet:Fieldget( oRet:Fieldpos("version") )
 
 /* ------------------------------  
   broj redova za tabelu

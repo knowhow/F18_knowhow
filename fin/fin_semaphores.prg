@@ -92,14 +92,18 @@ endif
 // ------------------------------
 // koristi azur_sql
 // ------------------------------
-function update_fin_suban_from_sql(oServer, dDatDok)
+function fin_suban_from_sql_server(dDatDok)
 local oQuery
 local nCounter
 local nRec
 local cQuery
+local oServer := pg_server()
+local nSeconds
 
-   ? "updateujem fin_suban.dbf from sql stanja"
+   //Box("SQ", 10, 60)
 
+   //@ m_x+1, m_y+2 SAY "updateujem fin_suban from SQL, algoritam: " + iif( dDatDok == NIL, "FULL", "DATE")
+   nSeconds := SECONDS()
    cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
    if dDatDok != NIL
       cQuery += " WHERE datdok>=" + _sql_quote(dDatDok)
@@ -107,16 +111,15 @@ local cQuery
  
    oQuery := oServer:Query(cQuery) 
    
-   ? "Fields: ", oQuery:Fcount()
-
-   my_use ("suban", "fin_suban", .t.)
-   SELECT fin_suban
+   SELECT F_SUBAN
+   my_use ("suban", "fin_suban", .f., "SEMAPHORE")
 
    if dDatDok == NIL
       // "full" algoritam
-      ZAP 
-
+      log_write("dDatDok = nil full algoritam") 
+      ZAP
    else
+      log_write("dDatDok <> ni date algoritam") 
       // "date" algoritam  - brisi sve vece od zadanog datuma
       SET ORDER TO TAG "8"
       // tag je "DatDok" nije DTOS(DatDok)
@@ -132,8 +135,10 @@ local cQuery
  
     endif
 
+   //@ m_x+4, m_y+2 SAY SECONDS() - nSeconds 
+
    nCounter := 1
-   DO WHILE ! oQuery:Eof()
+   DO WHILE !oQuery:Eof()
       append blank
       //cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartn, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
       replace idfirma with oQuery:FieldGet(1), ;
@@ -141,19 +146,29 @@ local cQuery
               brnal with oQuery:FieldGet(3), ;
               rbr with oQuery:FieldGet(4), ;
               datdok with oQuery:FieldGet(5), ;
-              datval with oQuery:FieldGet(5), ;
-              opis with oQuery:FieldGet(6), ;
-              idpartner with oQuery:FieldGet(7), ;
-              idkonto with oQuery:FieldGet(8), ;
-              d_p with oQuery:FieldGet(9), ;
-              iznosbhd with oQuery:FieldGet(10)
+              datval with oQuery:FieldGet(6), ;
+              opis with oQuery:FieldGet(7), ;
+              idpartner with oQuery:FieldGet(8), ;
+              idkonto with oQuery:FieldGet(9), ;
+              d_p with oQuery:FieldGet(10), ;
+              iznosbhd with oQuery:FieldGet(11)
 
       oQuery:Skip()
 
-      //? nCounter++
+      nCounter++
+
+      if nCounter % 5000 == 0
+         //@ m_x+4, m_y+2 SAY SECONDS() - nSeconds
+      endif 
    ENDDO
 
    USE
    oQuery:Destroy()
 
+   if (gDebug > 5)
+     log_write("fin_suban synchro cache:" + STR(SECONDS() - nSeconds))
+   endif
+
+   //BoxC()
+ 
 return .t. 

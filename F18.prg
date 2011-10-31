@@ -15,7 +15,7 @@ static cUser := "admin"
 static cPassWord := "admin"
 static cDataBase := "demo_db1"
 static cDBFDataPath := ""
-static cSchema := "public"
+static cSchema := "fmk"
 static oServer := NIL
 static cF18Home := NIL
 static nLogHandle := NIL
@@ -25,7 +25,10 @@ function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 ? "hernad settings"
 cHostName :=  "localhost"
 nPort := 5433
+cSchema := "fmk"
 cDatabase := "quick38"
+cUser := "hernad"
+cPassWord := "sarabon"
 ? "------ brisi ovo na drugom racunaru !!!! ----"
 
 
@@ -33,17 +36,16 @@ cDatabase := "quick38"
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
+public gDebug := 10
+IF ( nLogHandle :=  FCREATE("F18.log") ) == -1
+    ? "Cannot create log file: F18.log"
+    QUIT
+ENDIF
+
 oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 
 // ~/.F18/
 cF18HomeDir := get_f18_home_dir(cDatabase)
-
-gDebug := 10
-IF ( nLogHandle :=  FCREATE(cF18HomeDir + "F18.log") ) == -1
-    ? "Cannot create log file: " +  cF18HomeDir + "F18.log"
-    QUIT
-ENDIF
-
 
 
 /*

@@ -170,5 +170,6 @@ local nSeconds
    endif
 
    //BoxC()
+close all
  
 return .t. 

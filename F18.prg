@@ -23,12 +23,13 @@ static nLogHandle := NIL
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 
 ? "hernad settings"
-cHostName :=  "localhost"
-nPort := 5433
+cHostName :=  "knowhow-erp.bring.out.ba"
+nPort := 5432
 cSchema := "fmk"
-cDatabase := "quick38"
-cUser := "hernad"
-cPassWord := "sarabon"
+//cDatabase := "quick38"
+cDatabase := "test1"
+cUser := "admin"
+cPassWord := "admin"
 ? "------ brisi ovo na drugom racunaru !!!! ----"
 
 

@@ -98,7 +98,7 @@ nResult := table_count(cFullTable, "user_code=" + _sql_quote(cUser))
 if nResult == 0
 
    cTmpQry := "INSERT INTO " + cFullTable + ;
-              "(user_code, version, ) " + ;
+              "(user_code, version) " + ;
                "VALUES(" + _sql_quote(cUser)  + ", -1 )"
 
    oRet := _sql_query( oServer, cTmpQry)

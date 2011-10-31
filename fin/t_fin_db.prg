@@ -487,8 +487,10 @@ if (nArea==-1 .or. nArea==(F_SUBAN))
 	//SUBAN.DBF
 
 	if !FILE(f18_ime_dbf("suban"))
-            reset_semaphore_version("fin_suban")
         	DBCREATE2("SUBAN", aDbf)
+            reset_semaphore_version("fin_suban")
+            my_use("suban")
+            close all
 	endif
 	
 	CREATE_INDEX("1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", "SUBAN") 

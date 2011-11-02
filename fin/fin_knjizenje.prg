@@ -594,6 +594,16 @@ case Ch==K_ALT_F5
      endif
      return DE_CONT
 
+  case Ch==K_F8
+
+	// brisi stavke u pripremi od - do
+	if br_oddo() = 1
+		return DE_REFRESH
+	else
+		return DE_CONT
+	endif
+
+
   case Ch==K_F9
   	SrediRbr()
 	return DE_REFRESH
@@ -812,6 +822,56 @@ case Ch==K_ALT_F5
 endcase
 
 return DE_CONT
+
+
+// ----------------------------------------
+// brisi stavke iz pripreme od-do
+// ----------------------------------------
+static function br_oddo()
+local nRet := 1
+local GetList := {}
+local cOd := SPACE(4)
+local cDo := SPACE(4)
+local nOd
+local nDo
+
+Box(,1, 31)
+	@ m_x + 1, m_y + 2 SAY "Brisi stavke od:" GET cOd VALID _rbr_fix(@cOd)
+	@ m_x + 1, col()+1 SAY "do:" GET cDo VALID _rbr_fix(@cDo)
+	read
+BoxC()
+
+if LastKey() == K_ESC .or. ;
+	Pitanje(,"Sigurno zelite brisati zapise ?","N") == "N"
+	return 0
+endif
+
+go top
+
+do while !EOF()
+	
+	cRbr := field->rbr
+
+	if cRbr >= cOd .and. cRbr <= cDo
+		delete
+	endif
+
+	skip
+enddo
+
+go top
+
+return nRet
+
+
+// -----------------------------------------
+// fiksiranje rednog broja
+// -----------------------------------------
+static function _rbr_fix( cStr )
+
+cStr := PADL( ALLTRIM(cStr), 4 )
+
+return .t.
 
 
  
@@ -1089,7 +1149,8 @@ RETURN (NIL)
  */
  
 function OstaleOpcije()
-private opc[3]
+*{
+private opc[4]
   opc[1]:="1. novi datum->datum, stari datum->dat.valute "
   opc[2]:="2. podijeli nalog na vise dijelova"
   if IzFMKINI("FIN","IzvodBanke","N")=="D"
@@ -1097,7 +1158,8 @@ private opc[3]
   else
     opc[3]:="3. -------------------------------"
   endif
-  h[1]:=h[2]:=h[3]:=""
+  opc[4]:="4. konverzija partnera"
+  h[1]:=h[2]:=h[3]:=h[4]:=""
   private Izbor:=1
   private am_x:=m_x,am_y:=m_y
   close all
@@ -1114,12 +1176,17 @@ private opc[3]
            if IzFMKINI("FIN","IzvodBanke","N")=="D"
              IzvodBanke()
            endif
+       case izbor == 4
+          msgo("konverzija - polje partnera")
+	  O_PRIPR
+          mod_f_val("idpartner", "1", "0", 4, 2, .t. )
+	  go top
+	  msgc()
      endcase
   enddo
   m_x:=am_x; m_y:=am_y
   O_Edit()
 RETURN
-*}
 
 
 /*! \fn PodijeliN()
@@ -1854,32 +1921,34 @@ if !lUsed
 endif
 select (nArr)
 return
-*}
 
 
-/*! \fn GetTekucaRJ()
- *  \brief Daje tekucu radnu jedinicu
- */
 
 function GetTekucaRJ()
-*{
+
 local nArr
 local lUsed
 local cRJ
+local nLen
+
 nArr:=SELECT()
 lUsed:=.t.
+
 O_PRIPR
 if gRJ == "D" .and. pripr->(FIELDPOS("IDRJ")) <> 0
-	cRJ:=SPACE( LEN(pripr->idrj) )
+	nLen := LEN( pripr->idrj )
+	cRJ:=SPACE( nLen )
 else
-	cRj:=SPACE(6)
+	nLen := 6
+	cRj:=SPACE(nLen)
 endif
 select (F_PARAMS)
 if !used()
 	lUsed:=.f.
 	O_PARAMS
 endif
-Private cSection:="1",cHistory:=" ",aHistory:={}
+
+private cSection:="1",cHistory:=" ",aHistory:={}
 Params1()
 RPar("tj",@cRJ)
 if !lUsed
@@ -1887,7 +1956,7 @@ if !lUsed
 	use
 endif
 select (nArr)
-return (PADR(cRJ,4))
-*}
+return ( PADR( cRJ, nLen ) )
+
 
 

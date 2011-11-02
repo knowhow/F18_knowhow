@@ -56,7 +56,7 @@ LOCAL nRec:=0
     ?
     ? SPACE(gnLMONI)+"Broj: "; gPI_ON()
     ?? PADC(ALLTRIM(idpartner),54); gPI_OFF()
-    ?? SPACE(17)+"Dana"+SPACE(14)+"199   god."
+    ?? SPACE(17)+"Dana"+SPACE(14)+"      god."
     ? SPACE(gnLMONI)+"      "+REPL("-",54)+SPACE(21)+REPL("-",14)+"   "+"--"
     ? SPACE(gnLMONI)+"Zenica, "; gPI_ON()
     ?? PADC(SrediDat(datdok),52); gPI_OFF()

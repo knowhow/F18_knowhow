@@ -1,15 +1,17 @@
 /* 
  * This file is part of the bring.out FMK, a free and open source 
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * version 1.0, the full text of which (including FMK specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
+
 #include "fin.ch"
+
 
 // -----------------------------------------------
 // izvjestaj otvorenih stavki
@@ -23,7 +25,7 @@ picDEM:="@Z "+( R2:=FormPicL("9 "+gPicDEM,12) )
 R1:=R1+" "+ValDomaca()
 R2:=R2+" "+ValPomocna()
 
-private cMjesto:=PADR("ZENICA",20)
+private cMjesto:=PADR("SARAJEVO",20)
 
 O_PARAMS
 private cSection:="6",cHistory:=" "; aHistory:={}
@@ -71,7 +73,7 @@ DO WHILE .T.
    ENDCASE
 enddo
 return
-
+*}
 
 
 
@@ -80,6 +82,7 @@ return
  */
  
 procedure SpecIOS()
+local dDatDo := DATE()
 
 cIdFirma:=gFirma
 cIdKonto:=space(7)
@@ -99,6 +102,7 @@ else
   @ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
 endif
 @ m_x+4,m_y+2 SAY "Konto: " GET cIdKonto valid P_Konto(@cIdKonto)
+@ m_x+5,m_y+2 SAY "Datum do kojeg se generise  :" GET dDatDo 
 @ m_x+6,m_y+2 SAY "Prikaz partnera sa saldom 0 :" GET cPrik0 valid cPrik0 $ "DN" pict "@!"
 READ; ESC_BCR
 BoxC()
@@ -110,8 +114,7 @@ O_IOS
 
 SELECT IOS; ZAP
 
-SELECT SUBAN
-set order to tag "1"
+SELECT SUBAN; set order to 1
 
 SEEK cIdFirma+cIdKonto
 EOF CRET
@@ -131,6 +134,14 @@ DO WHILE !eof() .AND. cIdFirma==IdFirma .and. cIdKonto==IdKonto
 
    cIdPartner:=IdPartner
    DO WHILE  !eof() .AND. cIdFirma=IdFirma .and. cIdKonto=IdKonto .AND. cIdPartner==IdPartner
+      
+      // ako je datum veci od datuma do kojeg generisem
+      // preskoci
+      if field->datdok > dDatDo
+      	skip
+	loop
+      endif
+      
       IF OtvSt=" "
          IF D_P="1"
             nDugBHD+=IznosBHD
@@ -156,7 +167,7 @@ DO WHILE !eof() .AND. cIdFirma==IdFirma .and. cIdKonto==IdKonto
      @ prow()+1,0 SAY ++B PICTURE '9999'
      @ prow(),5 SAY cIdPartner
      SELECT PARTN; HSEEK cIdPartner
-     @ prow(),12 SAY ALLTRIM(naz)
+     @ prow(),12 SAY PADR( ALLTRIM(naz), 20 )
      @ prow(),37 SAY ALLTRIM(naz2) PICTURE 'XXXXXXXXXXXX'
      @ prow(),50 SAY PTT
      @ prow(),56 SAY Mjesto
@@ -233,7 +244,7 @@ FF
 END PRINT
 closeret
 return
-
+*}
 
 
 
@@ -242,7 +253,7 @@ return
  */
  
 function ZagSpecIOS()
-
+*{
 P_COND
 
 ??  "FIN: SPECIFIKACIJA IOS-a     NA DAN "
@@ -264,7 +275,7 @@ HSEEK cIdFirma
 
 SELECT SUBAN
 RETURN
-
+*}
 
 
 
@@ -277,6 +288,7 @@ local lExpDbf := .f.
 local cExpDbf := "N"
 local cLaunch 
 local aExpFields
+local dDatDo := DATE()
 
 close all
 cPrelomljeno:="N"
@@ -284,7 +296,7 @@ private cKaoKartica:="D"
 memvar->DATUM:=date()
 cDinDem:="1"
 
-Box("IOSS", 6, 60, .f.)
+Box("IOSS", 7, 60, .f.)
 	
 	@ m_x+1,m_y+8 SAY "I O S"
 	@ m_x+2,m_y+2 SAY "UKUCAJTE DATUM IOS-a:"  GET memvar->DATUM
@@ -293,7 +305,8 @@ Box("IOSS", 6, 60, .f.)
 	ENDIF
 	@ m_x+4,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
 	@ m_x+5,m_y+2 SAY "Prikaz identicno kartici " GET cKaoKartica valid cKaoKartica $ "DN" pict "@!"
-	@ m_x+6,m_y+2 SAY "Exportovati tabelu u dbf?" GET cExpDbf VALID cExpDbf$"DN" PICT "@!"
+	@ m_x+6,m_y+2 SAY "Gledati period do: " GET dDatDo
+	@ m_x+7,m_y+2 SAY "Exportovati tabelu u dbf?" GET cExpDbf VALID cExpDbf$"DN" PICT "@!"
 	READ
 BoxC()
 
@@ -334,7 +347,7 @@ DO WHILE !eof()
    	nIznosDEM:=IznosDEM
    	
 	// ispisi ios, exportuj ako treba
-	ZagIOSS( cDinDem, lExpDbf )
+	ZagIOSS( cDinDem, dDatDo, lExpDbf )
    	
 	SKIP
 	
@@ -358,17 +371,17 @@ return 1
  */
  
 function IOSPrekid()
+local dDatDo := DATE()
 memvar->DATUM=DATE()
 cIdFirma:=gFirma
 cIdKonto:=space(7)
 cIdPartner:=space(6)
-
 O_KONTO
 O_PARTN
 private cKaoKartica:="D"
 cPrelomljeno:="N"
 cDinDem:="1"
-Box("IOSPrek",8,60,.f.)
+Box("IOSPrek",9,60,.f.)
 @ m_x+1,m_y+2 SAY " I O S (NASTAVAK U SLUCAJU PREKIDA RADA)"
 @ m_x+2,m_y+2 SAY "Datum IOS-a:" GET memvar->DATUM
 if gNW=="D"
@@ -381,8 +394,9 @@ endif
 IF gVar1=="0"
  @ m_x+6,m_y+2 SAY "Prikaz "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+" (1/2)"  GET cDinDem valid cdindem $ "12"
 ENDIF
-@ m_x+7,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
-@ m_x+8,m_y+2 SAY "Prikaz identicno kartici " GET cKaoKartica valid cKaoKartica $ "DN" pict "@!"
+@ m_x+7,m_y+2 SAY "Gledati period do: " GET dDatDo
+@ m_x+8,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
+@ m_x+9,m_y+2 SAY "Prikaz identicno kartici " GET cKaoKartica valid cKaoKartica $ "DN" pict "@!"
 READ; ESC_BCR
 BoxC()
 nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
@@ -406,7 +420,7 @@ SELECT IOS
 DO WHILE !eof()
    cIdFirma=IdFirma; cIdKonto=IdKonto; cIdPartner=IdPartner
    nIznosbHD=IznosBHD; nIznosDEM:=IznosDEM
-   ZagIOSS()
+   ZagIOSS( cDinDem, dDatDo )
    SKIP
 ENDDO
 
@@ -414,7 +428,7 @@ FF
 END PRINT
 closeret
 return
-
+*}
 
 
 
@@ -423,7 +437,8 @@ return
  */
  
 function IOSPojed()
-
+*{
+local dDatDo := DATE()
 memvar->DATUM=date()
 cIdFirma:=gFirma
 cIdKonto:=space(7)
@@ -435,7 +450,7 @@ O_PARTN
 cDinDem:="1"
 private cKaoKartica:="D"
 cPrelomljeno:="N"
-Box("IOSPoj",8,60,.f.)
+Box("IOSPoj",9,60,.f.)
 @ m_x+1,m_y+2 SAY " I O S (POJEDINACAN)"
 @ m_x+2,m_y+2 SAY "Datum IOS-a :" GET memvar->DATUM
 if gNW=="D"
@@ -448,8 +463,10 @@ endif
 IF gVar1=="0"
  @ m_x+6,m_y+2 SAY "Prikaz "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+" (1/2)"  GET cDinDem valid cdindem $ "12"
 ENDIF
-@ m_x+7,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
-@ m_x+8,m_y+2 SAY "Prikaz identicno kartici " GET cKaoKartica valid cKaoKartica $ "DN" pict "@!"
+
+@ m_x+7,m_y+2 SAY "Datum do: " GET dDatDo
+@ m_x+8,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
+@ m_x+9,m_y+2 SAY "Prikaz identicno kartici " GET cKaoKartica valid cKaoKartica $ "DN" pict "@!"
 READ; ESC_BCR
 BoxC()
 nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
@@ -470,7 +487,7 @@ B:=0
 SELECT IOS
 DO WHILE !eof() .AND. cIdFirma=IdFirma .AND. cIdKonto=IdKonto .AND. cIdPartner=IdPartner
    nIznosBHD:=IznosBHD; nIznosDEM:=IznosDEM
-   ZagIOSS(cdindem)
+   ZagIOSS(cDinDem, dDatDo )
    SKIP
 ENDDO
 
@@ -527,7 +544,7 @@ return
 // -----------------------------------------
 // zaglavlje IOS-a ispisuje stavke ios-a
 // -----------------------------------------
-function ZagIOSS( cDinDem, lExpDbf )
+function ZagIOSS( cDinDem, dDatDo, lExpDbf )
 local nRbr
 local nCOpis:=0
 local cIdPar
@@ -626,10 +643,11 @@ nCol1:=62
 SELECT SUBAN
 
 if cKaoKartica=="D"
-	set order to tag "1"
+	set order to 1
+     	altd()
      //"IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
 else
-	set order to tag "3"
+	set order to 3
 endif
 
 SEEK cIdFirma+cIdKonto+cIdPartner
@@ -657,6 +675,11 @@ DO WHILE !eof() .AND. cIdFirma=IdFirma .AND. cIdKonto=IdKonto .AND. cIdPartner==
      
      	DO WHILE !eof() .AND. cIdFirma=IdFirma .AND. cIdKonto=IdKonto .AND. cIdPartner==IdPartner .and. (cKaoKartica=="D" .or. brdok==cBrdok)
          
+	 	if field->datdok > dDatDo
+			skip
+			loop
+		endif
+		
 		IF OtvSt = " "
             
 	    		if cKaoKartica=="D"
@@ -878,7 +901,8 @@ if prow()>58+gPStranica; FF; endif
 if prow()>52+gPStranica; FF; endif
 ?
 ?
-@ prow(),0 SAY "!! AKO U ROKU OD 15 DANA NE POTVRDITE, OVAJ IOS SMATRAEMO PRIHVAENIM !!"
+@ prow(),0 SAY "Po clanu 69. novog Zakona o racunovodstvu i reviziji u FBiH onaj ko ne odgovori na konfirmaciju" 
+@ prow()+1,0 SAY "u roku od 8 dana bit ce kaznjen za prekrsaj novcanom kaznom u iznosu od 5.000 do 15.000 KM."
 ?
 ?
 @ prow(),0 SAY "NAPOMENA: OSPORAVAMO ISKAZANO STANJE U CJELINI _______________ DJELIMI¬NO"
@@ -909,7 +933,7 @@ RETURN
  */
  
 function OstatakOpisa(cO,nCO,bUslov,nSir)
-
+*{
 IF nSir==NIL; nSir:=20; ENDIF
   DO WHILE LEN(cO)>nSir
     IF bUslov!=NIL; EVAL(bUslov); ENDIF
@@ -919,5 +943,7 @@ IF nSir==NIL; nSir:=20; ENDIF
     ENDIF
   ENDDO
 RETURN
+*}
+
 
 

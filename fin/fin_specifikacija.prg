@@ -951,7 +951,7 @@ O_PARTN
 __par_len := LEN(partn->id)
 
 cTip:="1"
-Box("",18,65)
+Box("",20,65)
 	set cursor on
 	private cK1:=cK2:="9"
 	private cK3:=cK4:="99"
@@ -1001,8 +1001,8 @@ Box("",18,65)
 		endif
 
 		@ m_x + 15, m_y + 2 SAY "Opcina (prazno-sve):" GET cOpcine
-		UpitK1k4(13)
- 		@ m_x+18,m_y+2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
+		UpitK1k4(15)
+ 		@ m_x+10,m_y+2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
 		
 		READ
 		ESC_BCR

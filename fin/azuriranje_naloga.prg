@@ -892,9 +892,16 @@ endif
 
 // otvori sve potrebne tabele
 O_SUBAN
+
+if LEN( suban->brnal ) = 4
+	msgbeep("potrebno odraditi modifikaciju FIN.CHS prvo !")
+	return
+endif
+
 O_NALOG
 O_ANAL
 O_SINT
+
 
 // pa idemo redom
 select suban

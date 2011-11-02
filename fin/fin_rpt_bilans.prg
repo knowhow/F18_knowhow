@@ -400,8 +400,10 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma   // idfirma
 	       @ prow()+1,0 SAY  ++B  PICTURE '9999'    // ; ?? "."
                @ prow(),pcol()+1 SAY cIdKonto
                @ prow(),pcol()+1 SAY cIdPartner       // IdPartner(cIdPartner)
-               SELECT PARTN; HSEEK cIdPartner
-               IF cFormat=="2"
+               SELECT PARTN
+				HSEEK cIdPartner
+              
+ 			 IF cFormat=="2"
                 @ prow(),pcol()+1 SAY PADR(naz,48-LEN (cidpartner))   // difidp
                ELSE
                 @ prow(),pcol()+1 SAY PADR(naz,20)

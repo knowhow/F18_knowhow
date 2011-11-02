@@ -253,6 +253,7 @@ public gPotpis:="N"
 public gnKZBDana:=0
 public gOAsDuPartn:="N"
 public gAzurTimeOut := 120
+public gMjRj := "N"
 
 public aRuleCols := g_rule_cols()
 public bRuleBlock := g_rule_block()

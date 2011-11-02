@@ -15,7 +15,6 @@ function MnuSpecif()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
-
 AADD(opc, "1. partnera na kontu                                        ")
 AADD(opcexe, {|| SpecDPK()})
 AADD(opc, "2. otvorene stavke preko-do odredjenog broja dana za konto")
@@ -50,8 +49,30 @@ AADD(opc, "E. rekapitulacija partnera po poslovnim godinama")
 AADD(opcexe, {|| RPPG()})
 AADD(opc, "F. pregled dugovanja partnera po rocnim intervalima ")
 AADD(opcexe, {|| SpecDugPartnera()})
+AADD(opc, "S. specifikacija troskova po gradilistima ")
+AADD(opcexe, {|| r_spec_tr()})
 
 Menu_SC("spc")
 return
+
+
+
+
+// --------------------------------------------------
+// specifikacije po godinama
+// --------------------------------------------------
+function MnuSpecGod()
+private opc:={}
+private opcexe:={}
+private Izbor:=1
+
+AADD(opc, "1. po analitickim kontima                   ")
+AADD(opcexe, {|| spec_an()})
+AADD(opc, "2. po subanalitickim kontima")
+AADD(opcexe, {|| spec_sub()})
+
+Menu_SC("spg")
+return
+
 
 

@@ -138,7 +138,7 @@ if fDa .or. !fInverse .and. (!File(cFull) .or. Pitanje( , cPath + cIme + " je ve
    	
 	if FileCOpen()
      		MsgBeep("Proces kopiranja nije dobro zavrsen !???##"+;
-             		"PREKINUTI RAD - ZOVI SIGMA-COM SERVIS!"+cKom)
+             		"PREKINUTI RAD - ZOVI bring.out SERVIS!"+cKom)
    	endif
    	? cKom, nKopirano
    	?
@@ -298,7 +298,7 @@ endif
 if (goModul:oDatabase:cRadimUSezona=="RADP")
 	if VAL(goModul:oDatabase:cSezona)<>YEAR(DATE()) 
 	// sezona razlicita od godine
-      		MsgBeep("Prema satu racunara tekuca sezona je "+STR(YEAR(Date()))+"##"+"Ukoliko vam je nejasno sta ciniti odgovorite sa 'N'##"+"i kontaktirajte servisera SIGMA-COMa ! ##"+"Ukoliko zelite zapoceti rad u novoj sezoni,#"+"na sljedece pitanje odgovorite sa 'D' ##"+"<Enter> nastavak")
+      		MsgBeep("Prema satu racunara tekuca sezona je "+STR(YEAR(Date()))+"##"+"Ukoliko vam je nejasno sta ciniti odgovorite sa 'N'##"+"i kontaktirajte servisera bring.out-a ! ##"+"Ukoliko zelite zapoceti rad u novoj sezoni,#"+"na sljedece pitanje odgovorite sa 'D' ##"+"<Enter> nastavak")
       		if Pitanje(,"Pohraniti stanje iz radnog podrucja u sezonsko podrucje - sezona " + goModul:oDataBase:cSezona + " ?","N")=="D"
          		ZaSvakiSlucaj()
          		private aFilesP:={}

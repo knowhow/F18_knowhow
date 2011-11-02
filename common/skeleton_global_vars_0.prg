@@ -190,6 +190,15 @@ public gPDFPAuto := "D"
 public gPDFViewer := SPACE(150)
 public gDefPrinter := SPACE(150)
 
+// windows parametri
+public gOOPath := PADR("c:\Program Files\OpenOffice.org 3\program\", 200)
+public gOOWriter := PADR("swriter.exe", 100)
+public gOOSpread := PADR("scalc.exe", 100)
+public gJavaPath := SPACE(200)
+public gJavaStart := PADR("java -Xmx128m -jar",200)
+public gJODRep := PADR("c:\bout\java\jodrep.jar", 200)
+public gJODTemplate := PADR("c:\", 200)
+
 return
 
 
@@ -247,6 +256,13 @@ if fsve
   Rpar("pV",@gPDFViewer)
   Rpar("pA",@gPDFPAuto)
   Rpar("dP",@gDefPrinter)
+  Rpar("oP",@gOOPath)
+  Rpar("oW",@gOOWriter)
+  Rpar("oS",@gOOSpread)
+  Rpar("oJ",@gJavaPath)
+  Rpar("jS",@gJavaStart)
+  Rpar("jR",@gJODRep)
+  Rpar("jT",@gJODTemplate)
 endif
 
 Rpar("FK",@gFKolor)
@@ -326,6 +342,12 @@ if (cPosebno=="D")
     Rpar("pV",@gPDFViewer)
     Rpar("pA",@gPDFPAuto)
     Rpar("dP",@gDefPrinter)
+	Rpar("oP",@gOOPath)
+	Rpar("oW",@gOOWriter)
+	Rpar("oS",@gOOSpread)
+	Rpar("oJ",@gJavaPath)
+	Rpar("jS",@gJavaStart)
+	Rpar("jR",@gJODRep)
   endif
   Rpar("kE",@gKesiraj)
   SELECT (F_GPARAMSP)
@@ -343,11 +365,12 @@ function IniPrinter()
 * procitaj gPrinter, gpini, itd..
 * postavi shift F2 kao hotkey
 
-
-if gModul $ "TOPS#HOPS"
-   public gPrinter:="0"
+if gModul $ "EPDV"
+	public gPrinter := "R"
+elseif gModul $ "TOPS#HOPS"
+   	public gPrinter:="0"
 else
-   public gPrinter:="R"
+   	public gPrinter:="R"
 endif
 
 InigEpson()

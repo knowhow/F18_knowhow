@@ -665,7 +665,7 @@ function ModStru (cImeF, cPath, fString)
 local oFile
 local cNewLine := HB_OSNewLine()
 
-? SPACE(40),"SIGMA-COM, 10.99-07.08, ver 02.5"
+? SPACE(40),"bring.out, 10.99-11.11, ver 02.6"
 ? SPACE(40),"-------------------------------"
 ?
 set deleted on  // ne kopiraj izbrisane zapise !!!

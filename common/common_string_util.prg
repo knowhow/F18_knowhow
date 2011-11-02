@@ -697,15 +697,10 @@ if EMPTY(cSifra)
    cSifra := STRTRAN(cSifra, " ", "0")
 endif
 
-//altd()
 for i := LEN(cSifra) TO 1 STEP -1
 
    if (cPom := substr(cSifra, i, 1)) < "9"
-     //if i==1
-     //  cSifra:=STUFF(cSifra, i, 1, novi_znak_extended(cPom))
-     //endif
        cSifra:=STUFF(cSifra, i, 1, CHR(ASC(cPom) + 1))
-     //endif
      exit
    endif
 

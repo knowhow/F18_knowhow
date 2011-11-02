@@ -183,6 +183,11 @@ do case
 		// poreski broj (130-160)
 		AADD( aRet, { "C", 31, 0 })
 
+	case cFileName == "POS_RN"
+		
+		// pos racun - stavke
+		AADD( aRet, { "C", 100, 0 } )
+		
 endcase
 
 return aRet
@@ -192,11 +197,25 @@ return aRet
 // ----------------------------------------------------------
 // upisi u fajl
 // ----------------------------------------------------------
-function _a_to_file( cFilePath, cFileName, aStruct, aData )
+function _a_to_file( cFilePath, cFileName, aStruct, aData, ;
+	cSeparator, lTrim, lLastSep )
 local i 
 local ii
 local cLine := ""
 local nCount := 0
+local cNumFill := "0"
+
+if cSeparator == nil
+	cSeparator := ""
+endif
+
+if lTrim == nil
+	lTrim := .f.
+endif
+
+if lLastSep == nil
+	lLastSep := .t.
+endif
 
 cFile := ALLTRIM( cFilePath ) + ALLTRIM( cFileName )
 
@@ -220,14 +239,34 @@ for i := 1 to LEN( aData )
 		if cType == "C"
 			xVal := PADR( aData[i, ii], nLen )
 		elseif cType == "N"
+			
 			if nDec > 0
-				xVal := PADL( ALLTRIM(STR(aData[i, ii], nLen, nDec)), nLen, "0" )
+				xVal := ALLTRIM(STR(aData[i, ii], nLen, nDec))
 			else
-				xVal := PADL( ALLTRIM(STR(aData[i, ii])), nLen, "0" )
+				xVal := ALLTRIM(STR(aData[i, ii]))
 			endif
+		
+			if lTrim == .f.	
+				xVal := PADL( xVal, nLen, cNumFill )
+			endif
+
+			if lTrim == .t.
+				// zamjeni "." sa ","
+				xVal := STRTRAN( xVal, ".", "," )
+			endif
+
 		endif
 
-		cLine += xVal
+		if lTrim == .t.
+			xVal := ALLTRIM( xVal )
+		endif
+		
+		if ii = LEN( aStruct ) .and. lLastSep == .f.
+			cLine += xVal
+		else
+			cLine += xVal + cSeparator
+		endif
+
 	next
 
 	?? cLine
@@ -244,5 +283,100 @@ set console on
 return
 
 
+// ----------------------------------------------------------
+// upisi u fajl iz DBF tabele
+// ----------------------------------------------------------
+function _dbf_to_file( cFilePath, cFileName, aStruct, cDBF, ;
+	cSeparator, lTrim, lLastSep )
+local i 
+local ii
+local cLine := ""
+local nCount := 0
+local cNumFill := "0"
 
+if cSeparator == nil
+	cSeparator := ""
+endif
+
+if lTrim == nil
+	lTrim := .f.
+endif
+
+if lLastSep == nil
+	lLastSep := .t.
+endif
+
+cFile := ALLTRIM( cFilePath ) + ALLTRIM( cFileName )
+
+set printer to (cFile)
+set printer on
+set console off
+
+// zakaci se na dbf
+select (249)
+use (PRIVPATH + cDBF) alias "exp"
+go top
+
+do while !EOF()
+
+	cLine := ""
+
+	// prodji kroz strukturu jednog zapisa u matrici
+	// i napuni liniju...
+	for ii := 1 to LEN( aStruct )
+		
+		cType := aStruct[ii, 1]
+		nLen := aStruct[ii, 2]
+		nDec := aStruct[ii, 3]
+
+		if cType == "C"
+			xVal := PADR( &(exp->(fieldname(ii))), nLen )
+		elseif cType == "N"
+			
+			if nDec > 0
+				xVal := ALLTRIM(STR( &(exp->(fieldname(ii))), nLen, nDec))
+			else
+				xVal := ALLTRIM(STR( &(exp->(fieldname(ii)))))
+			endif
+		
+			if lTrim == .f.	
+				xVal := PADL( xVal, nLen, cNumFill )
+			endif
+
+			if lTrim == .t.
+				// zamjeni "." sa ","
+				xVal := STRTRAN( xVal, ".", "," )
+			endif
+
+		endif
+
+		if lTrim == .t.
+			xVal := ALLTRIM( xVal )
+		endif
+		
+		if ii = LEN( aStruct ) .and. lLastSep == .f.
+			cLine += xVal
+		else
+			cLine += xVal + cSeparator
+		endif
+
+	next
+
+	?? cLine
+	? 
+	
+	++ nCount
+
+	skip
+
+enddo
+
+set printer to
+set printer off
+set console on
+
+select (249)
+use
+
+return
 

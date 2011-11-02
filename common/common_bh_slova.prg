@@ -272,4 +272,117 @@ function KSTo852(cStr)
 
 return cStr
 
+// ---------------------------------------------------
+// konverzija u utf-8
+// ---------------------------------------------------
+function strkznutf8( cInput, cIz )
+local aWin := {} 
+local aUTF := {}
+local a852 := {}
+local aTmp := {}
+
+// windows kodovi...
+AADD( aWin, "&" ) 
+AADD( aWin, "ä" )
+AADD( aWin, "–" )
+AADD( aWin, "∆" )
+AADD( aWin, "»" )
+AADD( aWin, "é" )
+AADD( aWin, "ö" )
+AADD( aWin, "" )
+AADD( aWin, "Ê" )
+AADD( aWin, "Ë" )
+AADD( aWin, "û" )
+AADD( aWin, "!" ) 
+AADD( aWin, '"' ) 
+AADD( aWin, "'" ) 
+AADD( aWin, "," ) 
+AADD( aWin, "-" ) 
+AADD( aWin, "." ) 
+AADD( aWin, "\" ) 
+AADD( aWin, "/" ) 
+AADD( aWin, "=" ) 
+AADD( aWin, "(" ) 
+AADD( aWin, ")" ) 
+AADD( aWin, "[" ) 
+AADD( aWin, "]" ) 
+AADD( aWin, "{" ) 
+AADD( aWin, "}" ) 
+AADD( aWin, "<" ) 
+AADD( aWin, ">" ) 
+
+// pandan 852 je...
+AADD( a852, "&" ) // feature
+AADD( a852, "Ê" ) // SS
+AADD( a852, "—" ) // DJ
+AADD( a852, "¨" ) // CC
+AADD( a852, "è" ) // CH
+AADD( a852, "¶" ) // ZZ
+AADD( a852, "Á" ) // ss
+AADD( a852, "–" ) // dj
+AADD( a852, "ü" ) // cc
+AADD( a852, "Ü" ) // ch
+AADD( a852, "ß" ) // zz
+AADD( a852, "!" ) // uzvicnik
+AADD( a852, '"' ) // navodnici
+AADD( a852, "'" ) // jedan navodnik
+AADD( a852, "," ) // zarez
+AADD( a852, "-" ) // minus
+AADD( a852, "." ) // tacka
+AADD( a852, "\" ) // b.slash
+AADD( a852, "/" ) // slash
+AADD( a852, "=" ) // jedanko
+AADD( a852, "(" ) // otv.zagrada
+AADD( a852, ")" ) // zatv.zagrada
+AADD( a852, "[" ) // otv.ugl.zagrada
+AADD( a852, "]" ) // zatv.ugl.zagrada
+AADD( a852, "{" ) // otv.vit.zagrada
+AADD( a852, "}" ) // zatv.vit.zagrada
+AADD( a852, "<" ) // manje
+AADD( a852, ">" ) // vece
+// itd...
+
+// pandan UTF je...
+AADD( aUTF, "&#38;" ) 
+AADD( aUTF, "&#352;" )
+AADD( aUTF, "&#272;" )
+AADD( aUTF, "&#268;" )
+AADD( aUTF, "&#262;" )
+AADD( aUTF, "&#381;" )
+AADD( aUTF, "&#353;" )
+AADD( aUTF, "&#273;" )
+AADD( aUTF, "&#269;" )
+AADD( aUTF, "&#263;" )
+AADD( aUTF, "&#382;" )
+AADD( aUTF, "&#33;" ) 
+AADD( aUTF, "&#34;" ) 
+AADD( aUTF, "&#39;" ) 
+AADD( aUTF, "&#44;" ) 
+AADD( aUTF, "&#45;" ) 
+AADD( aUTF, "&#46;" ) 
+//AADD( aUTF, "&#92;" ) 
+AADD( aUTF, "\" ) 
+//AADD( aUTF, "&#97;" ) 
+AADD( aUTF, "/" ) 
+AADD( aUTF, "&#8215;" ) 
+AADD( aUTF, "&#40;" ) 
+AADD( aUTF, "&#41;" ) 
+AADD( aUTF, "&#91;" ) 
+AADD( aUTF, "&#93;" ) 
+AADD( aUTF, "&#123;" ) 
+AADD( aUTF, "&#125;" ) 
+AADD( aUTF, "&#60;" ) 
+AADD( aUTF, "&#62;" ) 
+
+altd()
+
+if cIz == "8"
+	aTmp := a852
+elseif cIz == "W"
+	aTmp := aWin
+endif
+
+cRet := strkzn( cInput, cIz, "U", aTmp, aUtf )
+
+return cRet
 

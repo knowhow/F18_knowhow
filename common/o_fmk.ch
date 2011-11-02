@@ -56,6 +56,9 @@
 
 #xcommand O_RUGOV    => select(F_RUGOV); my_use  (KUMPATH + "rugov" )   ; set order to tag "ID"
 
+#xcommand O_FDEVICE     => select(F_FDEVICE);  my_use  (PRIVPATH + "fdevice") ; set order to tag "1"
+
+
 // KALK
 
 #xcommand O_PRIPR   => select(F_PRIPR); usex (PRIVPATH + "pripr") ; set order to tag "1"
@@ -70,6 +73,9 @@
 #xcommand O_FINMAT  => select(F_FINMAT); usex (PRIVPATH + "finmat")    ; set order to tag "1"
 
 #xcommand O_KALK   => select(F_KALK);  my_use  (KUMPATH + "kalk")  ; set order to tag "1"
+#xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  (KUMPATH+"2005"+SLASH+"KALK") alias kalksez ; set order to "1"
+#xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  (SIFPATH+"2005"+SLASH+"ROBA") alias robasez ; set order to tag "ID"
+
 #xcommand O_KALKX  => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
 
 #xcommand O_KALKS  => select(F_KALKS);  my_use  (KUMPATH + "kalks")  ; set order to tag "1"
@@ -153,7 +159,7 @@
 // grupe i karakteristike
 #xcommand O_STRINGS  => select(F_STRINGS);  my_use  (SIFPATH + "strings")   ; set order to tag "1"
 
-#xcommand O_LOKAL => select (F_LOKAL); usex ("lokal")
+#xcommand O_LOKAL => select (F_LOKAL); my_use ("lokal")
 
 
 // tabele DOK_SRC
@@ -161,6 +167,10 @@
 #xcommand O_P_DOKSRC => SELECT (F_P_DOKSRC); my_USE ("p_doksrc"); set order to tag "1"
 
 #xcommand O_RELATION => SELECT (F_RELATION); my_USE ("relation"); set order to tag "1"
+
+// R_EXPORT
+#xcommand O_R_EXP => select (F_R_EXP); my_use (PRIVPATH+"r_export")
+#xcommand O_TEMP => select (F_TEMP); my_use (PRIVPATH+"temp")
 
 // POS modul
 

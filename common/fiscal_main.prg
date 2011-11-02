@@ -44,6 +44,9 @@ static _F_FOBJ := "F_OBJ.TXT"
 static F_FOPER := "OPERATERI"
 static _F_FOPER := "F_OPER.TXT"
 
+// pos komande
+static F_POS_RN := "POS_RN"
+
 // komande semafora 
 // -------------------------------------------
 // 0 - stampanje racuna maloprodaje
@@ -129,39 +132,28 @@ aS_semafor := _g_f_struct( F_SEMAFOR )
 // broj racuna
 nInvoice := aItems[1, 1]
 
-cPom := _filename( _F_VRN_TXT, nInvoice )
+cPom := f_filename( _F_VRN_TXT, nInvoice )
 
 // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
 _a_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
 if LEN(aTxt) <> 0
 	
-	cPom := _filename( _F_VRN_MEM, nInvoice )
+	cPom := f_filename( _F_VRN_MEM, nInvoice )
 	// upisi zatim stavke u fajl "F_V_RACUN.MEM"
 	_a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
 endif
 	
-cPom := _filename( _F_VRN_PLA, nInvoice )
+cPom := f_filename( _F_VRN_PLA, nInvoice )
 // upisi zatim stavke u fajl "F_V_RACUN.PLA"
 _a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
 
-cPom := _filename( _F_SEMAFOR, nInvoice )
+cPom := f_filename( _F_SEMAFOR, nInvoice )
 // upisi i semafor "F_SEMAFOR.TXT"
 _a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
 
 
 return
-
-// ----------------------------------------------------
-// sredjuje naziv fajla za fiskalni stampac
-// ----------------------------------------------------
-static function _filename( cPattern, nInvoice )
-local cRet := ""
-
-cRet := STRTRAN( cPattern, "*", ALLTRIM(STR(nInvoice)) )
-
-return cRet
-
 
 
 // ---------------------------------
@@ -183,22 +175,22 @@ aS_semafor := _g_f_struct( F_SEMAFOR )
 nInvoice := aItems[1, 1]
 
 
-cPom := _filename( _F_MRN_TXT, nInvoice )
+cPom := f_filename( _F_MRN_TXT, nInvoice )
 // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
 _a_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
 if LEN(aTxt) <> 0
 
-	cPom := _filename( _F_MRN_MEM, nInvoice )
+	cPom := f_filename( _F_MRN_MEM, nInvoice )
 	// upisi zatim stavke u fajl "F_V_RACUN.MEM"
 	_a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
 endif
 
-cPom := _filename( _F_MRN_PLA, nInvoice )
+cPom := f_filename( _F_MRN_PLA, nInvoice )
 // upisi zatim stavke u fajl "F_V_RACUN.PLA"
 _a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
 
-cPom := _filename( _F_SEMAFOR, nInvoice )
+cPom := f_filename( _F_SEMAFOR, nInvoice )
 // upisi i semafor "F_SEMAFOR.TXT"
 _a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
 
@@ -219,11 +211,11 @@ aS_semafor := _g_f_struct( F_SEMAFOR )
 // broj nivelacije
 nInvoice := aSem_data[1, 1]
 
-cPom := _filename( _F_NIV, nInvoice )
+cPom := f_filename( _F_NIV, nInvoice )
 // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
 _a_to_file( cFPath, cPom, aS_nivel, aItems )
 
-cPom := _filename( _F_SEMAFOR, nInvoice )
+cPom := f_filename( _F_SEMAFOR, nInvoice )
 // upisi i semafor "F_SEMAFOR.TXT"
 _a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
 
@@ -262,6 +254,7 @@ _a_to_file( cFPath, _F_FOBJ, aS_obj, aObj )
 _a_to_file( cFPath, _F_FOPER, aS_oper, aOper ) 
 
 return
+
 
 
 

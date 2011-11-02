@@ -320,7 +320,10 @@ BoxC()
 // prikazi info generacije
 s_gen_info( dDatObr )
 
-Azur(.t.)
+// funkcija azuriranja modula FAKT
+// treba napraviti poziv u modulu FAKT a ne ovdje !
+// ovu iskljucujem
+//Azur(.t.)
 
 return
 

@@ -240,6 +240,7 @@ cFaktDo := ""
 // precesljaj ugovore u UGOV
 do while !EOF()
 
+	altd()
 
 	// da li ima stavki za fakturisanje ???
 	if !ima_u_rugov( ugov->id, cIdArt )
@@ -319,7 +320,7 @@ BoxC()
 // prikazi info generacije
 s_gen_info( dDatObr )
 
-fin_azur(.t.)
+Azur(.t.)
 
 return
 
@@ -364,6 +365,7 @@ local cNFakt
 if cDatLFakt == nil
 	cDatLFakt := "N"
 endif
+
 
 PushWa()
 
@@ -650,7 +652,6 @@ do while !EOF() .and. (id == cUId)
 	nCijena := rugov->cijena
 	nKolicina := rugov->kolicina
 	nRabat := rugov->rabat
-	nPorez := rugov->porez
 
 	// nastimaj destinaciju
 	if cDestin <> nil .and. !EMPTY( cDestin )
@@ -686,6 +687,11 @@ do while !EOF() .and. (id == cUId)
 	// nastimaj roba na rugov-idroba
 	n_roba(rugov->idroba)
 	
+	// uzmi porez na osnovu robe
+	select tarifa
+	seek roba->idtarifa
+	nPorez := tarifa->opp
+
 	select pripr
 	append blank
 	
@@ -832,7 +838,11 @@ do while !EOF() .and. (id == cUId)
 	endif
 		
 	_rabat := rugov->rabat
-   	_porez := rugov->porez
+	
+	// ne smije se setovati porez u tabeli pripreme,
+	// napravit ce kurslus !!
+   	//_porez := rugov->porez
+
    	_dindem := ugov->dindem
    		
 	nFaktIzn += nKolicina * nCijena

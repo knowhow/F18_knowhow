@@ -30,7 +30,7 @@ Box("#PRIJAVA KORISNIKA",5,70)
 		++ nPokusaj
 		
 		if (nPokusaj > 4)
-			MsgBeep("Hajd' razguli, nemas pravo pristupa!")
+			MsgBeep("Odustanite molim Vas, nemate pravo pristupa!")
 			clear screen
 			quit
 		endif
@@ -199,12 +199,16 @@ return lUGrupi
 
 
 function GetUserID()
+local nTArea := SELECT()
+local nRet := 0
 cUser:=goModul:oDataBase:cUser
 O_USERS
 select users
 set order to tag "NAZ"
 seek cUser
-return field->id
+nRet := field->id
+select (nTArea)
+return nRet
 
 
 // vraca username usera iz sec.systema
@@ -214,6 +218,7 @@ local cUserName := ""
 O_USERS
 select users
 set order to tag "ID"
+go top
 seek STR(user_id, 3)
 cUserName := ALLTRIM(field->naz)
 select (nTArea)
@@ -227,6 +232,7 @@ local cUserName := ""
 O_USERS
 select users
 set order to tag "ID"
+go top
 seek STR(user_id, 3)
 if users->(FIELDPOS("fullname")) <> 0
 	cUserName := ALLTRIM(field->fullname)
@@ -312,6 +318,24 @@ BoxC()
 MsgBeep("Migrate " + STR(nBrojac) + " rules for group " + cNewGroup + "##Migrate operation completed successful!!!")
 
 return
-*}
+
+
+
+// ----------------------------------
+// vraca naziv grupe
+// ----------------------------------
+function secgr_naz( nGrId )
+local nTArea := SELECT()
+local cRet := PADR("",15)
+
+O_GROUPS
+select groups
+set order to tag "ID"
+seek STR(nGrId,3)
+
+cRet := PADR( field->naz, 15 )
+
+select (nTArea)
+return cRet
 
 

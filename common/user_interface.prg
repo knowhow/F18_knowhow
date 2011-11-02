@@ -1489,12 +1489,6 @@ if TYPE("gFKolor")<>"C"
 	gFKolor:="D"
 endif
 
-#ifdef CLIP
-	Invert:="B/W,R/N+,,,R/B+"
-	Normal:="W/B,R/N+,,,N/W"
-	Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
-	Nevid:="W/W,N/N"
-#else
 if (gFKolor=="D" .and. ISCOLOR())
 
 	Invert:="B/W,R/N+,,,R/B+"
@@ -1508,7 +1502,6 @@ else
 	Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
 	Nevid:="W/W,N/N"
 endif
-#endif
 
 return nil
 
@@ -1524,12 +1517,6 @@ if TYPE("gFKolor")<>"C"
 	gFKolor:="D"
 endif
 
-#ifdef CLIP
-	Invert:="B/W,R/N+,,,R/B+"
-	Normal:="W/B,R/N+,,,N/W"
-	Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
-	Nevid:="W/W,N/N"
-#else
 if (gFKolor=="D" .and. ISCOLOR())
 
 	Invert:="B/W,R/N+,,,R/B+"
@@ -1543,7 +1530,6 @@ else
 	Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
 	Nevid:="W/W,N/N"
 endif
-#endif
 
 return nil
 

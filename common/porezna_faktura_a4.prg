@@ -221,6 +221,9 @@ do while !EOF()
 	// idroba, naziv robe, kolicina, jmj
 	?? PADR( aNazivDobra[1], LEN_NAZIV) 
 	?? " "
+
+	nQty := pcol()
+	
 	?? show_number(rn->kolicina, PIC_KOLICINA) 
 	?? " "
 	
@@ -288,6 +291,12 @@ if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PIC
 endif	
 
 ? cLine
+
+if lSamoKol
+	// prikazi ukupno kolicinu
+	?
+	@ prow(), nQty SAY show_number(drn->ukkol, PIC_KOLICINA)
+endif
 
 if !lSamoKol
 	print_total(cValuta, cLine)
@@ -504,6 +513,8 @@ cSLHead := REPLICATE("-", nSw3())
 nPRowsDelta := prow()
 // naziv
 cINaziv  := get_dtxt_opis("I01")
+// pomocni opis
+cIPNaziv  := get_dtxt_opis("I20")
 // adresa
 cIAdresa := get_dtxt_opis("I02")
 // idbroj
@@ -529,15 +540,31 @@ if "##" $ cIBanke
 else
         aIBanke  := SjeciStr(cIBanke, 68)
 endif
+
 cITelef  := get_dtxt_opis("I10") // telefoni
 cIWeb    := get_dtxt_opis("I11") // email-web
 cIText1  := get_dtxt_opis("I12") // sl.text 1
 cIText2  := get_dtxt_opis("I13") // sl.text 2
 cIText3  := get_dtxt_opis("I14") // sl.text 3
 
-
 p_line(cDLHead, 10, .t.)
-p_line(cINaziv, 10, .t.)
+
+cTmp := ALLTRIM( cINaziv )
+aTmp := SjeciStr( cTmp, 74 )
+// ispisi naziv firme u gornjem dijelu zaglavlja
+for i:=1 to LEN(aTmp)
+	p_line( aTmp[i], 10, .t.)
+next
+
+// ispisi dodatni tekst ispod naziva firme
+if !EMPTY( cIPNaziv )
+	cTmp := ALLTRIM( cIPNaziv )
+	aTmp := SjeciStr( cTmp, 74 )
+	i := 1
+	for i:=1 to LEN( aTmp )
+		p_line( aTmp[i], 10, .t. )
+	next
+endif
 
 if nSw2 == 1
 	// ako je 1 neka ima duzinu kao naziv firme
@@ -632,6 +659,7 @@ local cKTelFax
 local aKupac
 local cMjesto
 local cDatDok
+local cFiscal
 local cDatIsp
 local cDatVal
 local cTipDok := lokal("FAKTURA br. ")
@@ -639,6 +667,9 @@ local cBrDok
 local cBrNar
 local cBrOtp
 local cIdVd
+local cDokVeza
+local n
+local nLines
 local i
 local cLinijaNarOtp 
 
@@ -709,7 +740,17 @@ cKNaziv:=get_dtxt_opis("K01")
 cKAdresa:=get_dtxt_opis("K02")
 cKIdBroj:=get_dtxt_opis("K03")
 cDestinacija:=get_dtxt_opis("D08")
+cRNalID := get_dtxt_opis("O01")
+cRnalDesc := get_dtxt_opis("O02")
 cIdVd:=get_dtxt_opis("D09")
+cFiscal:=ALLTRIM( get_dtxt_opis("O10") )
+ 
+nLines := VAL( get_dtxt_opis("D30") )
+cDokVeza := ""
+nTmp := 30
+for n := 1 to nLines
+	cDokVeza += get_dtxt_opis("D" + ALLTRIM(STR( nTmp + n )))
+next
 
 if nShowRj == 1
 	cIdRj:=get_dtxt_opis("D10")
@@ -852,6 +893,31 @@ if !EMPTY(cKTelFax)
 	?? PADR(cKTelFax, LEN_KUPAC)
 endif
 
+if !EMPTY( cDokVeza ) .and. cDokVeza <> "-"
+	
+	// specificno za radni nalog
+	cDokVeza := "Veza: " + ALLTRIM(cDokVeza)	
+	
+	aDokVeza := SjeciStr( cDokVeza, 70 )
+	
+	for i := 1 to LEN( aDokVeza )
+		p_line(SPACE(2), 10, .f., .t.)
+		?? aDokVeza[ i ]
+	next
+endif
+
+if !EMPTY( cRNalId ) .and. cRNalId <> "-"
+	
+	cPom := " R.nal.: "
+	cPom += "(" + cRNalId + ") " + cRNalDesc
+	
+	if EMPTY( cDokVeza )
+		p_line(SPACE(2), 10, .f., .t.)
+	endif
+
+	?? ALLTRIM( cPom )
+endif
+
 if !EMPTY(cDestinacija)
 	
 	p_line( REPLICATE("-", LEN_KUPAC - 10) , 10, .f.)
@@ -868,6 +934,10 @@ if !EMPTY(cDestinacija)
 	B_OFF
 	
 	?
+endif
+
+if !EMPTY( cFiscal ) .and. cFiscal <> "0"
+	p_line( "   Broj fiskalnog racuna: " + ALLTRIM(cFiscal), 10, .f., .t.)
 endif
 
 P_10CPI
@@ -1014,10 +1084,10 @@ endif
 ?? show_number(drn->ukpdv, PIC_VRIJEDNOST)
     
 // zaokruzenje
-if ROUND(drn->zaokr,4) <> 0
+if ROUND(drn->zaokr,2) <> 0
 	? RAZMAK 
-	?? PADL(lokal("Zaokruzenje :"), LEN_UKUPNO)
-	?? show_number(drn->zaokr, PIC_VRIJEDNOST)
+	?? PADL(lokal("Zaokruzenje (+/-):"), LEN_UKUPNO)
+	?? show_number(ABS(drn->zaokr), PIC_VRIJEDNOST)
 endif
 	
 ? cLine

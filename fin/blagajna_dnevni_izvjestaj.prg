@@ -26,7 +26,7 @@ private pici:=FormPicL("9,"+gPicDEM,12)
 lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
 O_KONTO
 O_ANAL
-O_PRIPR
+O_FIN_PRIPR
 
 GO TOP
 _IDVN:=idvn; cIdfirma:=idfirma; cBrdok:=brnal
@@ -91,7 +91,7 @@ Box(,3,60)
  read
 BoxC()
 
-SELECT PRIPR
+select fin_pripr
 
 start print cret
 ?

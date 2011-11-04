@@ -175,7 +175,7 @@ endif
 
 // otvori i fakt
 O_FAKT
-O_PRIPR
+O_FAKT_PRIPR
 
 if RecCount2() <> 0
 	MsgBeep("U pripremi postoje dokumenti#Prekidam generaciju!")
@@ -939,7 +939,7 @@ if Pitanje(,"Obracun " + fakt_do(dDatObr) + " postoji, ponoviti (D/N)?", "D") ==
 	o_ugov()
 	// otvori i fakt
 	O_FAKT
-	O_PRIPR
+	O_FAKT_PRIPR
 	SELECT gen_ug
 	set order to tag "dat_obr"
 	seek DTOS(dDatObr)
@@ -979,7 +979,7 @@ if IsDocExists(cFirma, "10", gen_ug->brdok_od) .and. ;
 endif
 
 // izbrisi pripremu
-O_PRIPR
+O_FAKT_PRIPR
 BrisiPripr()
 
 return

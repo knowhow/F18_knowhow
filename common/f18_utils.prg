@@ -203,15 +203,15 @@ local oServer
 { F_TRFP , "TRFP"  , "trfp"  },;
 { F_SAST , "SAST"  , "sast"  },;
 { F_VRSTEP , "VRSTEP"  , "vrstep"  },;
-{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
-{ F_FIPRIPR , "PRIPR"   , "fin_pripr"  },;
+{ F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  },;
+{ F_FIN_FIPRIPR , "FIN_PRIPR"   , "fin_pripr"  },;
 { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  },;
 { F_IOS    ,  "IOS"     , "fin_ios"  },;
 { F_PNALOG ,  "PNALOG"  , "fin_pnalog"  },;
 { F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  },;
 { F_PANAL  ,  "PANAL"   , "fin_panal"  },;
 { F_PSINT  ,  "PSINT"   , "fin_psint"  },;
-{ F_PRIPRRP,  "PRIPRRP" , "fin_priprrp"  },;
+{ F_FIN_PRIPRRP,  "FIN_PRIPRRP" , "fin_priprrp"  },;
 { F_FAKT   ,  "FAKT"    , "fakt_fakt"  },;
 { F_FINMAT ,  "FINMAT"  , "fin_mat"  },;
 { F_OSTAV  ,  "OSTAV"   , "fin_ostav"  },;
@@ -226,7 +226,8 @@ local oServer
 { F_ANAL   ,  "ANAL"    , "fin_anal"   },;
 { F_SINT   ,  "SINT"    , "fin_sint"   },;
 { F_NALOG  ,  "NALOG"   , "fin_nalog"  },;
-{ F_RJ     ,  "RJ"      , "fin_rj"   },;
+{ F_RJ     ,  "RJ"      , "rj"   },;
+{ F_FIN_RJ ,  "FIN_RJ"  , "fin_rj"   },;
 { F_FUNK   ,  "FUNK"    , "fin_funk"  },;
 { F_BUDZET ,  "BUDZET"  , "fin_budzet"  },;
 { F_PAREK  ,  "PAREK"   , "fin_parek"   },;

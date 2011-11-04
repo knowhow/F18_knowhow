@@ -33,7 +33,7 @@ cHostName :=  "localhost"
 nPort := 5432
 cSchema := "fmk"
 //cDatabase := "quick38"
-cDatabase := "demo38"
+cDatabase := "empty38"
 cUser := "admin"
 cPassWord := "admin"
 ? "------ brisi ovo na drugom racunaru !!!! ----"

@@ -52,7 +52,7 @@ if pitanje(,"Zelite li izvrsiti prenos fin.naloga subanalitike na diskete ?","N"
 endif
 
 if Pitanje(,"Nulirati datoteke prenosa prije nastavka ?","D")=="D"
-  O_PRIPR
+  O_FIN_PRIPR
   copy structure extended to (PRIVPATH+"struct")
   use
   create (PRIVPATH+"PSUBAN") from (PRIVPATH+"struct")
@@ -316,7 +316,7 @@ ENDIF
 restore screen from cs
 
 O_PSUBAN
-O_PRIPR
+O_FIN_PRIPR
 
 SELECT PSUBAN; set order to 0  // idFirma+IdVN+BrNal+RBr
 

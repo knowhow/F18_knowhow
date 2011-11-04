@@ -42,7 +42,7 @@ if _get_params( @cTxt, @cImpView ) == 0
 	return
 endif
 
-O_PRIPR
+O_FIN_PRIPR
 O_NALOG
 
 // delimiter je TAB
@@ -73,8 +73,8 @@ return
 // -------------------------------------------------------
 static function __ck_pripr()
 local nReturn := 0
-O_PRIPR
-select pripr
+O_FIN_PRIPR
+select fin_pripr
 nReturn := RecCount2()
 return nReturn
 
@@ -238,7 +238,7 @@ for i:=1 to nFLines
 next
 
 // sada uzmi pravi broj naloga i broj veze
-select pripr
+select fin_pripr
 set order to tag "0"
 go top
 do while !EOF()
@@ -469,7 +469,7 @@ if cImpView == "D"
 
 endif
 
-select pripr
+select fin_pripr
 append blank
 
 replace idfirma with cFirma
@@ -519,7 +519,7 @@ if cImpView == "D"
 
 endif
 
-select pripr
+select fin_pripr
 append blank
 
 

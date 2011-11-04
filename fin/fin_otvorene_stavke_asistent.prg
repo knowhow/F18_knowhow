@@ -20,7 +20,7 @@ if gOAsDuPartn == "N"
 	return 0
 endif
 
-select pripr
+select fin_pripr
 go top
 nCnt := 0
 nSuma := 0
@@ -62,7 +62,7 @@ return nSuma
 static function _del_nal_xx()
 local nTArea := SELECT()
 local nTREC := RECNO()
-select pripr
+select fin_pripr
 set order to tag "1"
 go top
 

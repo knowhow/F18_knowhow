@@ -132,7 +132,7 @@ enddo
 
 MsgC()
 
-select pripr
+select fin_pripr
 go top
 
 if RecCount() > 0
@@ -153,7 +153,7 @@ static function Azur2Pripr(cBrojNal, dDatNal)
 local nArr
 nArr:=SELECT()
 
-select pripr
+select fin_pripr
 append blank
 replace idvn with trfp2->idvn
 replace	idfirma with gFirma
@@ -251,7 +251,7 @@ O_SUBAN
 O_KONTO
 O_RNAL
 O_NALOG
-O_PRIPR
+O_FIN_PRIPR
 O_TRFP2
 
 return

@@ -20,11 +20,15 @@
 
 //OVA ZAGLAVLJA NAPUSTITI!
 #define F_PRIPR     17
+#define F_FIN_PRIPR     17
+#define F_FAKT_PRIPR     17
+#define F_KALK_PRIPR     17
 #define F_DOKS      18
 #define F_DOKS2     19
 
 // FMK FIN
 #define F_FIPRIPR  20
+#define F_FIN_FIPRIPR  20
 #define F_SUBAN    21
 #define F_ANAL     22
 #define F_SINT     23
@@ -37,6 +41,9 @@
 #define F_PSINT    30
 #define F_PKONTO   31
 #define F_PRIPRRP  32
+#define F_FIN_PRIPRRP  32
+#define F_KALK_PRIPRRP  32
+#define F_FAKT_PRIPRRP  32
 
 // FMK FIN/BUDZET
 #define F_FUNK     33
@@ -77,6 +84,9 @@
 #define F_BARKOD    71
 #define F__VALUTE   72
 #define F_RJ        73
+#define F_FIN_RJ        73
+#define F_FAKT_RJ        73
+#define F_KALK_RJ        73
 #define F_OPS       74
 #define F_REFER     75
 #define F_STRINGS  180

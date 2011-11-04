@@ -151,7 +151,7 @@ ENDIF
 select (F_PKONTO)
 usex ("pkonto"); set order to tag "ID"
 
-O_PRIPR
+O_FIN_PRIPR
 if reccount2()<>0
   MsgBeep("Priprema mora biti prazna")
   closeret
@@ -228,7 +228,7 @@ do while !eof()
 
             if Otvst==" "
               Scatter()
-              select pripr
+              select fin_pripr
               append blank
               Gather()
               replace rbr with str(++nRbr,4),;
@@ -304,7 +304,7 @@ do while !eof()
 
              //if cOtvSt=="9"
               if round(nDin, 3) <> 0  // ako saldo nije 0
-               select pripr
+               select fin_pripr
                append blank
                replace  idfirma with cidfirma,;
                         idvn with "00",;
@@ -367,7 +367,7 @@ do while !eof()
              // ----------------------------------- petlja 6
 
               if round(nDin, 3) <> 0  // ako saldo nije 0
-               select pripr
+               select fin_pripr
                append blank
                replace  idfirma with cidfirma,;
                         idvn with "00",;
@@ -413,7 +413,7 @@ do while !eof()
              // ----------------------------------- petlja 6
 
               if round(nDin,3)<>0  // ako saldo nije 0
-               select pripr
+               select fin_pripr
                append blank
                replace  idfirma with cidfirma,;
                         idvn with "00",;
@@ -457,7 +457,7 @@ do while !eof()
              // ----------------------------------- petlja 6
 
               if round(nDin,3)<>0  // ako saldo nije 0
-               select pripr
+               select fin_pripr
                append blank
                replace  idfirma with cidfirma,;
                         idvn with "00",;
@@ -497,7 +497,7 @@ do while !eof()
 
         if cTipPr=="2"  // sabirem po konto+partner
           if (round(nDin,2) <> 0) .or. ((round(nDem, 2) <> 0 ) .and. lStranaBitna)
-            select pripr
+            select fin_pripr
             append blank
             replace rbr with  str(++nRbr,4),;
                     idkonto with cIdkonto,;
@@ -532,7 +532,7 @@ do while !eof()
 
       if cTipPr=="0"  // sabirem po konto bez obzira na partnera
        if (round(nDin,2) <> 0) .or. (round( nDem, 2 ) <> 0  .and. lStranaBitna)
-        select pripr
+        select fin_pripr
         append blank
         replace rbr with  str(++nRbr,4),;
                 idkonto with cIdkonto,;
@@ -571,11 +571,11 @@ end print
 close all
 
 if !empty(goModul:oDataBase:cSezona) .and. Pitanje(,"Prebaciti dokument u radno podrucje","D")=="D"
-  O_PRIPRRP
-  O_PRIPR
-  select priprrp
-  append from pripr
-  select pripr; zap
+  O_FIN_PRIPRRP
+  O_FIN_PRIPR
+  select fin_priprrp
+  append from fin_pripr
+  select fin_pripr; zap
   close all
   if Pitanje(,"Prebaciti se na rad sa radnim podrucjem ?","D")=="D"
       URadPodr()
@@ -961,7 +961,7 @@ function ZadnjiRBR()
 local nZRBR:=0
 local nObl:=SELECT()
 
-O_PRIPRRP
+O_FIN_PRIPRRP
 go bottom
 nZRBR:=VAL(rbr)
 use

@@ -28,7 +28,7 @@ else
 endif
 
 O_SUBAN
-O_PRIPR
+O_FIN_PRIPR
 O_ANAL
 O_SINT
 O_NALOG
@@ -102,7 +102,7 @@ if cBrNal="."
     go top
     do while !eof()
       select SUBAN; Scatter()
-      select PRIPR
+      select fin_pripr
       if lStorno
          _idfirma := cIdFirma2
             _idvn := cIdVn2
@@ -200,9 +200,9 @@ MsgO("SUBAN")
 select SUBAN
 seek cidfirma+cidvn+cbrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-   select PRIPR; Scatter()
+   select fin_pripr; Scatter()
    select SUBAN; Scatter()
-   select PRIPR
+   select fin_pripr
    if lStorno
       _idfirma := cIdFirma2
          _idvn := cIdVn2
@@ -491,7 +491,7 @@ BoxC()
 
 cIdFirma:=Left(cIdFirma,2)
 
-O_PRIPR
+O_FIN_PRIPR
 O_KONTO
 O_SUBAN
 
@@ -550,7 +550,7 @@ nUd2:=0
 nUp2:=0    // DEM
 nRbr:=0
 
-select pripr
+select fin_pripr
 go bottom
 nRbr:=VAL(rbr)
 select suban
@@ -590,7 +590,7 @@ do whileSC !eof()
        			skip
      		enddo    // partner
 
-     		select pripr
+     		select fin_pripr
          
     		// dodata opcija za preknjizenje saldo T
      		if cPreknjizi=="T"

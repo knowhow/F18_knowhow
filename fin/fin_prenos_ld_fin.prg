@@ -65,7 +65,7 @@ cPath := ALLTRIM(_ldpath)
 
 O_RNAL
 O_NALOG
-O_PRIPR
+O_FIN_PRIPR
 O_TRFP3
 
 if file( cPath + "REKLD.DBF")
@@ -108,7 +108,7 @@ do while !eof()
 			cPom:=STRTRAN(cPom,"#RN#",cBrDok)
 			nIznos:=&cPom
 			if round(nIznos,2)<>0
-				select pripr
+				select fin_pripr
 				append blank
 				replace idvn     with trfp3->idvn
 				replace	idfirma  with gFirma
@@ -143,7 +143,7 @@ do while !eof()
 		
 		if round(nIznos,2)<>0
 			
-			select pripr
+			select fin_pripr
 			append blank
 			
 			replace idvn     with trfp3->idvn
@@ -227,7 +227,7 @@ do while !EOF() .and. godina == STR(_godina, 4) .and. ;
 	// dodaj u pripremu
 	if ROUND(nIzn1, 2) <> 0
 		
-		select pripr
+		select fin_pripr
 		append blank
 			
 		replace idvn with trfp3->idvn

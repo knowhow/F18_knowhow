@@ -133,7 +133,7 @@ for i:=1 to 16
 	AADD(Kol,i)
 next
 
-if gRj=="D" .and. pripr->(FIELDPOS("IDRJ")) <> 0
+if gRj=="D" .and. fin_pripr->(FIELDPOS("IDRJ")) <> 0
 	AADD(ImeKol, { "RJ", {|| IdRj}, "IdRj" }  )
 	AADD(Kol, 17)
 ENDIF
@@ -212,7 +212,7 @@ O_PARTN
 O_TNAL
 O_TDOK
 
-O_PRIPR
+O_FIN_PRIPR
 
 
 O_NALOG
@@ -222,7 +222,7 @@ if (IsRamaGlas())
 endif
 
 if gRj=="D"
-	O_RJ
+	O_FIN_RJ
 endif
 
 if gTroskovi=="D"
@@ -230,7 +230,7 @@ if gTroskovi=="D"
 	O_FUNK
 endif
 
-select PRIPR
+select fin_pripr
 set order to tag "1"
 go top
 
@@ -332,7 +332,7 @@ if fk4=="D"
      	endif
 endif
 
-if gRj=="D" .and. pripr->(FIELDPOS("IDRJ")) <> 0
+if gRj=="D" .and. fin_pripr->(FIELDPOS("IDRJ")) <> 0
 	@  m_x+11,col()+2 SAY "RJ" GET _idrj valid empty(_idrj) .or. P_Rj(@_idrj) PICT "@!"
 	
 endif
@@ -484,7 +484,7 @@ if right(trim(cIdkonto),1)=="*"
 	select parek
    	hseek strtran(cIdkonto,"*","")+" "
    	cIdkonto:=idkonto
-   	select pripr
+   	select fin_pripr
 endif
 return .t.
 *}
@@ -564,7 +564,7 @@ if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
 	return DE_CONT
 endif
 
-select pripr
+select fin_pripr
 do case
 
 case Ch==K_ALT_F5
@@ -579,7 +579,7 @@ case Ch==K_ALT_F5
           read
         BoxC()
         if lastkey()<>K_ESC
-          select pripr
+          select fin_pripr
           go top
           do while !eof()
              if idkonto==cidkonto .and. empty(datval)
@@ -656,7 +656,7 @@ case Ch==K_ALT_F5
 
    case Ch==K_CTRL_A
         PushWA()
-        select PRIPR
+        select fin_pripr
         //go top
         Box("anal", MAXROWS() - 4, MAXCOLS() - 5,.f.,"Ispravka naloga")
         nDug:=0
@@ -683,7 +683,7 @@ case Ch==K_ALT_F5
            @ m_x+19,m_y+35 SAY nPot PICTURE '9 999 999 999.99'
            @ m_x+19,m_y+56 SAY nDug-nPot PICTURE '9 999 999 999.99'
            inkey(10)
-           select PRIPR
+           select fin_pripr
            Gather()
            go nTR2
          enddo
@@ -692,7 +692,7 @@ case Ch==K_ALT_F5
          return DE_REFRESH
 
      case Ch==K_CTRL_N  // nove stavke
-	select pripr
+	select fin_pripr
 	nDug:=0
 	nPot:=0
 	nPrvi:=0
@@ -734,18 +734,18 @@ case Ch==K_ALT_F5
            @ m_x+19, m_y+35 SAY nPot PICTURE '9 999 999 999.99'
            @ m_x+19, m_y+56 SAY nDug-nPot PICTURE '9 999 999 999.99'
            inkey(10)
-	   select PRIPR
+	   select fin_pripr
 	   //SrediRbr(.t.)
            APPEND BLANK
            Gather()
            
 	   if lLogUnos
 
-	   	  cOpis := pripr->idfirma + "-" + ;
-		  	pripr->idvn + "-" + ;
-			pripr->brnal
+	   	  cOpis := fin_pripr->idfirma + "-" + ;
+		  	fin_pripr->idvn + "-" + ;
+			fin_pripr->brnal
 
-      	          EventLog(nUser, goModul:oDataBase:cName, ;
+      	  EventLog(nUser, goModul:oDataBase:cName, ;
 		  	"DOK", "UNOS", ;
 		  	nil, nil, nil, nil,;
 		  	"nalog: " + cOpis, "duguje=" + STR(nDug) +;
@@ -762,14 +762,14 @@ case Ch==K_ALT_F5
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
              if lLogBrisanje
 
-	        cOpis := pripr->idfirma + "-" + ;
-			pripr->idvn + "-" + ;
-			pripr->brnal
+	        cOpis := fin_pripr->idfirma + "-" + ;
+			fin_pripr->idvn + "-" + ;
+			fin_pripr->brnal
 
 	     	EventLog(nUser, goModul:oDataBase:cName, ;
 			"DOK", "BRISANJE", ;
 			nil, nil, nil, nil, ;
-			cOpis, "", "", pripr->datdok, Date(), ;
+			cOpis, "", "", fin_pripr->datdok, Date(), ;
 			"", "Brisanje kompletne pripreme !")
 	     endif
 	     zap
@@ -1178,7 +1178,7 @@ private opc[4]
            endif
        case izbor == 4
           msgo("konverzija - polje partnera")
-	  O_PRIPR
+	  	  O_FIN_PRIPR
           mod_f_val("idpartner", "1", "0", 4, 2, .t. )
 	  go top
 	  msgc()
@@ -1201,11 +1201,11 @@ endif
 
 cPomKTO:="9999999"
 
-O_PRIPR
+O_FIN_PRIPR
 
 nRbr1:=nRbr2:=nRbr3:=nRbr4:=0
-cBRnal1:=cBrnal2:=cBrnal3:=cBrnal4:=cBrnal5:=pripr->brnal
-dDatDok:=pripr->datdok
+cBRnal1:=cBrnal2:=cBrnal3:=cBrnal4:=cBrnal5:=fin_pripr->brnal
+dDatDok:=fin_pripr->datdok
 
 Box(,10,60)
  @ m_x+1,m_y+2 SAY "Redni broj / 1 " get nRbr1
@@ -1244,13 +1244,13 @@ do while !eof()
     nPot+=iznosbhd
  endif
 
- if nRbr1<>0 .and. nRbr1==val(pripr->Rbr)
+ if nRbr1<>0 .and. nRbr1==val(fin_pripr->Rbr)
     nRbr:=nRbr1
- elseif nRbr2<>0 .and. nRbr2==val(pripr->Rbr)
+ elseif nRbr2<>0 .and. nRbr2==val(fin_pripr->Rbr)
     nRbr:=nRbr2
- elseif nRbr3<>0 .and.nRbr3==val(pripr->Rbr)
+ elseif nRbr3<>0 .and.nRbr3==val(fin_pripr->Rbr)
     nRbr:=nRbr3
- elseif nRbr4<>0 .and.nRbr4==val(pripr->Rbr)
+ elseif nRbr4<>0 .and.nRbr4==val(fin_pripr->Rbr)
     nRbr:=nRbr4
  else
     nRbr:=0  // nista
@@ -1294,7 +1294,7 @@ MsgO("Drugi krug...")
 set order to
 go top
 do while !eof()
-   if nRbr1<>0 .and. val(pripr->Rbr)<=nRbr1
+   if nRbr1<>0 .and. val(fin_pripr->Rbr)<=nRbr1
       altd()
       if opis=">prenos iz p.n.<"   .and. idkonto=cPomKTO
        if nRbr2=0
@@ -1305,7 +1305,7 @@ do while !eof()
       else
        replace brnal with cBrnal1
       endif
-   elseif nRbr2<>0 .and. val(pripr->Rbr)<=nRbr2
+   elseif nRbr2<>0 .and. val(fin_pripr->Rbr)<=nRbr2
       if opis=">prenos iz p.n.<"     .and. idkonto=cPomKTO
        if nRbr3=0
          replace brnal with cBrnal5
@@ -1315,7 +1315,7 @@ do while !eof()
       else
        replace brnal with cBrnal2
       endif
-   elseif nRbr3<>0 .and. val(pripr->Rbr)<=nRbr3
+   elseif nRbr3<>0 .and. val(fin_pripr->Rbr)<=nRbr3
       if opis=">prenos iz p.n.<"      .and. idkonto=cPomKTO
        if nRbr4=0
          replace brnal with cBrnal5
@@ -1325,7 +1325,7 @@ do while !eof()
       else
        replace brnal with cBrnal3
       endif
-   elseif nRbr4<>0 .and. val(pripr->Rbr)<=nRbr4
+   elseif nRbr4<>0 .and. val(fin_pripr->Rbr)<=nRbr4
       if opis=">prenos iz p.n.<"    .and. idkonto=cPomKTO
        replace brnal with cBrnal5
       else
@@ -1357,7 +1357,7 @@ function SetDatUPripr()
               "B1")
     CLOSERET
   ENDIF
-  O_PRIPR
+  O_FIN_PRIPR
   GO TOP
   DO WHILE !EOF()
     IF IDVN<>cTDok; SKIP 1; LOOP; ENDIF
@@ -1654,7 +1654,7 @@ function IzvodBanke()
  PRIVATE cLFSpec := "A:\ZEN*.", cIdVn:="99"
 
  O_NALOG
- O_PRIPR
+ O_FIN_PRIPR
  if reccount2()<>0
    Msg("Priprema mora biti prazna !")
    closeret
@@ -1775,7 +1775,7 @@ function IzvodBanke()
     ? REPL("-",160)
 
     IF !EMPTY(cIdVn)
-      SELECT PRIPR
+      select fin_pripr
       APPEND BLANK
       REPLACE idfirma   with  gFirma      ,;
               idvn      with  cIdVn       ,;
@@ -1934,9 +1934,9 @@ local nLen
 nArr:=SELECT()
 lUsed:=.t.
 
-O_PRIPR
-if gRJ == "D" .and. pripr->(FIELDPOS("IDRJ")) <> 0
-	nLen := LEN( pripr->idrj )
+O_FIN_PRIPR
+if gRJ == "D" .and. fin_pripr->(FIELDPOS("IDRJ")) <> 0
+	nLen := LEN( fin_pripr->idrj )
 	cRJ:=SPACE( nLen )
 else
 	nLen := 6

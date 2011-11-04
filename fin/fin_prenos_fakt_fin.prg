@@ -319,7 +319,7 @@ endif
 cBrNalF:=""
 
 O_NALOG
-O_PRIPR
+O_FIN_PRIPR
 
 select FINMAT
 go top
@@ -378,7 +378,7 @@ do while !eof()    // datoteka finmat
           		endif
 			if nIz<>0  
 				// ako je iznos elementa <> 0, dodaj stavku u fpripr
-				select pripr
+				select fin_pripr
 				if trfp2->znak=="-"
               				nIz:=-nIz
             			endif
@@ -473,7 +473,7 @@ enddo
 if lAFin
 // fpripr ******* zaokruzi
 
-select pripr; go top
+select fin_pripr; go top
 do while !eof()
   cPom:=right(trim(opis),1)
   // na desnu stranu opisa stavim npr "ZADUZ MAGACIN          0"

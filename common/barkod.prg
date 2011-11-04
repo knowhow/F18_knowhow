@@ -108,9 +108,9 @@ O_ROBA
 set order to tag "ID"
 
 O_BARKOD
-O_PRIPR
+O_KALK_PRIPR
 
-SELECT PRIPR
+SELECT KALK_PRIPR
 
 private aStampati:=ARRAY(RECCOUNT())
 
@@ -148,7 +148,7 @@ cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N"
 
 SELECT BARKOD
 ZAP
-SELECT PRIPR
+SELECT KALK_PRIPR
 GO TOP
 
 do while !EOF()
@@ -157,7 +157,7 @@ do while !EOF()
 		loop
 	endif
 	SELECT ROBA
-	HSEEK PRIPR->idroba
+	HSEEK KALK_PRIPR->idroba
 	if empty(barkod).and.(IzFmkIni("BarKod","Auto","N",SIFPATH)=="D")
 		private cPom:=IzFmkIni("BarKod","AutoFormula","ID",SIFPATH)
 		// kada je barkod prazan, onda formiraj sam interni barkod
@@ -170,7 +170,7 @@ do while !EOF()
 		seek cIBK
 		if found()
 			PopWa()
-			MsgBeep("Prilikom formiranja internog barkoda##vec postoji kod: "+cIBK+"??##"+"Moracete za artikal "+pripr->idroba+" sami zadati jedinstveni barkod !")
+			MsgBeep("Prilikom formiranja internog barkoda##vec postoji kod: "+cIBK+"??##"+"Moracete za artikal "+kalk_pripr->idroba+" sami zadati jedinstveni barkod !")
 			replace barkod with "????"
 		else
 			PopWa()
@@ -180,24 +180,24 @@ do while !EOF()
 	if cSprefix=="N"
 		// ne stampaj koji nemaju isti prefix
 		if left(barkod,len(cPrefix))!=cPrefix
-			select pripr
+			select kalk_pripr
 			skip
 			loop
 		endif
 	endif
 
 	SELECT BARKOD
-	for i:=1 to pripr->kolicina+IF(pripr->kolicina>0, nRezerva, 0)
+	for i:=1 to kalk_pripr->kolicina+IF(kalk_pripr->kolicina>0, nRezerva, 0)
 		APPEND BLANK
-		REPLACE id WITH pripr->idRoba
+		REPLACE id WITH kalk_pripr->idRoba
 		REPLACE naziv WITH TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")"
-		REPLACE l1 WITH DTOC(PRIPR->datdok)+", "+TRIM(PRIPR->(idfirma+"-"+idvd+"-"+brdok))
+		REPLACE l1 WITH DTOC(kalk_pripr->datdok)+", "+TRIM(kalk_pripr->(idfirma+"-"+idvd+"-"+brdok))
 		REPLACE l2 WITH cLinija2
 		REPLACE vpc WITH ROBA->vpc
 		REPLACE mpc WITH ROBA->mpc
 		REPLACE barkod WITH roba->barkod
 	next
-	SELECT PRIPR
+	SELECT kalk_pripr
 	SKIP 1
 enddo
 close all
@@ -247,9 +247,9 @@ O_SIFV
 O_ROBA
 SET ORDER to TAG "ID"
 O_BARKOD
-O_PRIPR
+O_FAKT_PRIPR
 
-SELECT PRIPR
+SELECT fakt_pripr
 
 private aStampati:=ARRAY(RECCOUNT())
 
@@ -289,14 +289,14 @@ cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N"
 
 SELECT BARKOD
 ZAP
-SELECT PRIPR
+SELECT fakt_pripr
 GO TOP
 do while !EOF()
 
 
 if aStampati[RECNO()]=="N"; SKIP 1; loop; endif
 SELECT ROBA
-HSEEK PRIPR->idroba
+HSEEK fakt_pripr->idroba
 if empty(barkod) .and. (  IzFmkIni("BarKod" , "Auto" , "N", SIFPATH) == "D")
 private cPom:=IzFmkIni("BarKod","AutoFormula","ID", SIFPATH)
   // kada je barkod prazan, onda formiraj sam interni barkod
@@ -314,7 +314,7 @@ if found()
      PopWa()
      MsgBeep(;
        "Prilikom formiranja internog barkoda##vec postoji kod: "  + cIBK + "??##" + ;
-     "Moracete za artikal "+pripr->idroba+" sami zadati jedinstveni barkod !" )
+     "Moracete za artikal "+fakt_pripr->idroba+" sami zadati jedinstveni barkod !" )
      replace barkod with "????"
 else
     PopWa()
@@ -325,7 +325,7 @@ endif
 if cSprefix=="N"
 // ne stampaj koji nemaju isti prefix
 if left(barkod,len(cPrefix)) != cPrefix
-      select pripr
+      select fakt_pripr
       skip
       loop
 endif
@@ -333,14 +333,14 @@ endif
 
 
 SELECT BARKOD
-for  i:=1  to  PRIPR->kolicina + IF( PRIPR->kolicina > 0 , nRezerva , 0 )
+for  i:=1  to  fakt_pripr->kolicina + IF( fakt_pripr->kolicina > 0 , nRezerva , 0 )
 
 	APPEND BLANK
 
-	REPLACE ID       WITH  KonvZnWin(PRIPR->idroba)
+	REPLACE ID       WITH  KonvZnWin(fakt_pripr->idroba)
 
 	if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="D"
-		REPLACE L1 WITH KonvZnWin(DTOC(PRIPR->datdok)+", "+TRIM(PRIPR->(idfirma+"-"+idtipdok+"-"+brdok)))
+		REPLACE L1 WITH KonvZnWin(DTOC(fakt_pripr->datdok)+", "+TRIM(fakt_pripr->(idfirma+"-"+idtipdok+"-"+brdok)))
 	else
 		REPLACE L1 WITH KonvZnWin(cLinija1)
 	endif
@@ -354,7 +354,7 @@ for  i:=1  to  PRIPR->kolicina + IF( PRIPR->kolicina > 0 , nRezerva , 0 )
 	endif
 
 next
-SELECT PRIPR
+SELECT FAKT_PRIPR
 SKIP 1
 
 enddo

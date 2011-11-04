@@ -69,7 +69,7 @@ function o_fin_za_azuriranje()
 close all
 O_KONTO
 O_PARTN
-O_PRIPR
+O_FIN_PRIPR
 O_SUBAN
 O_ANAL
 O_SINT
@@ -227,11 +227,11 @@ local nSaldo
 Box("ad", 10, MAXCOLS()-10)
 
 if lLogAzur
-	cOpis := pripr->idfirma + "-" + ;
-		pripr->idvn + "-" + ;
-		pripr->brnal
+	cOpis := fin_pripr->idfirma + "-" + ;
+		fin_pripr->idvn + "-" + ;
+		fin_pripr->brnal
 
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil, nil, nil, nil, cOpis, "", "", pripr->datdok, Date(), ;
+	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil, nil, nil, nil, cOpis, "", "", fin_pripr->datdok, Date(), ;
 		      "", "Azuriranje dokumenta - poceo !")
 endif
 
@@ -292,7 +292,7 @@ enddo
 
 BoxC()
 
-select PRIPR
+select fin_pripr
 __dbpack()
 
 select PSUBAN
@@ -555,7 +555,7 @@ return NIL
 function fin_pripr_delete(cNal)
 
 // nalog je uravnotezen, moze se izbrisati iz PRIPR
-select PRIPR
+select fin_pripr
 seek cNal
 @ m_x+3,m_y+2 SAY "BRISEM PRIPREMU "
 do while !eof() .and. cNal==IdFirma+IdVn+BrNal
@@ -577,7 +577,7 @@ local nTRec := RECNO()
 local cBrNal 
 local cTmpNal := "XXXXXXXX"
 
-select pripr
+select fin_pripr
 go top
 
 cTmpNal := field->brnal
@@ -604,18 +604,18 @@ static function prov_duple_stavke()
 local cSeekNal
 local lNalExist:=.f.
 
-select pripr
+select fin_pripr
 go top
 
 // provjeri duple dokumente
 do while !EOF()
-	cSeekNal := pripr->(idfirma + idvn + brnal)
+	cSeekNal := fin_pripr->(idfirma + idvn + brnal)
 	if dupli_nalog(cSeekNal)
 		lNalExist := .t.
 		exit
 	endif
 	
-	select pripr
+	select fin_pripr
 	skip
 enddo
 
@@ -649,20 +649,20 @@ return 0
 // ------------------------------------------------------------
 static function prip_brisi_duple()
 local cSeek
-select pripr
+select fin_pripr
 go top
 
 do while !EOF()
 
-	cSeek := pripr->(idfirma + idvn + brnal)
+	cSeek := fin_pripr->(idfirma + idvn + brnal)
 	
 	if dupli_nalog( cSeek )
 		// pobrisi stavku
-		select pripr
+		select fin_pripr
 		delete
 	endif
 	
-	select pripr
+	select fin_pripr
 	skip
 enddo
 
@@ -673,14 +673,14 @@ return 0
 // -------------------------------------------------------------
 static function kum_brisi_duple()
 local cSeek
-select pripr
+select fin_pripr
 go top
 
 cKontrola := "XXX"
 
 do while !EOF()
 	
-	cSeek := pripr->(idfirma + idvn + brnal)
+	cSeek := fin_pripr->(idfirma + idvn + brnal)
 	
 	if cSeek == cKontrola
 		skip
@@ -782,7 +782,7 @@ do while !EOF()
 	
 	   cKontrola := cSeek
 	
-	   select pripr
+	   select fin_pripr
 	   skip
 
 enddo

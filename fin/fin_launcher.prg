@@ -33,7 +33,6 @@ PUBLIC gKonvertPath:="D"
 cModul:="FIN"
 PUBLIC goModul
 
-
 oFin := TFinMod():new(NIL, cModul, D_FI_VERZIJA, D_FI_PERIOD , cKorisn, cSifra, p3,p4,p5,p6,p7)
 goModul:=oFin
 

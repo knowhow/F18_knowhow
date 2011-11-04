@@ -333,18 +333,18 @@ if (nArea==-1 .or. nArea==(F_KONTO))
 	CREATE_INDEX("NAZ","naz",SIFPATH+"KONTO")
 endif
 
-if (nArea==-1 .or. nArea==(F_RJ))
+if (nArea==-1 .or. nArea==(F_FIN_RJ))
 
 	aDBf:={}
 	AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
    	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
 		
-	if !FILE(f18_ime_dbf("rj"))
-   		DBcreate2(KUMPATH+"RJ.DBF",aDbf)
+	if !FILE(f18_ime_dbf("fin_rj"))
+   		DBcreate2(KUMPATH+"FIN_RJ.DBF",aDbf)
 	endif
 	
-	CREATE_INDEX("ID","id",KUMPATH+"RJ")
-	CREATE_INDEX("NAZ","NAZ",KUMPATH+"RJ")
+	CREATE_INDEX("ID","id",KUMPATH+"FIN_RJ")
+	CREATE_INDEX("NAZ","NAZ",KUMPATH+"FIN_RJ")
 
 endif
 
@@ -524,15 +524,15 @@ if (nArea==-1 .or. nArea==(F_PSUBAN))
 endif
 
 
-if (nArea==-1 .or. nArea==(F_PRIPR))
+if (nArea==-1 .or. nArea==(F_FIN_PRIPR))
 	//PRIPR.DBF
 
-	if !FILE(f18_ime_dbf("pripr"))
-        	DBcreate2(PRIVPATH+"PRIPR.DBF",aDbf)
+	if !FILE(f18_ime_dbf("fin_pripr"))
+        	DBcreate2(PRIVPATH+"FIN_PRIPR.DBF",aDbf)
 	endif
 
-	CREATE_INDEX("1","idFirma+IdVN+BrNal+Rbr",PRIVPATH+"PRIPR")
-	CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",PRIVPATH+"PRIPR")
+	CREATE_INDEX("1","idFirma+IdVN+BrNal+Rbr",PRIVPATH+"FIN_PRIPR")
+	CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",PRIVPATH+"FIN_PRIPR")
 endif
 
 
@@ -945,7 +945,7 @@ lIdiDalje:=.f.
 
 // altd()
 
-if i==F_PRIPR .or. i==F_BBKLAS .or. i==F_IOS  .or.i==F_PNALOG .or. i==F_PSUBAN .or. i==F_PANAL  .or. i==F_PSINT
+if i==F_FIN_PRIPR .or. i==F_BBKLAS .or. i==F_IOS  .or.i==F_PNALOG .or. i==F_PSUBAN .or. i==F_PANAL  .or. i==F_PSINT
 	lIdiDalje:=.t.
 endif
 

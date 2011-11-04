@@ -65,16 +65,16 @@ lOpened := .t.
 
 if (gModul=="KALK")
 
-	SELECT(F_PRIPR)
+	SELECT(F_KALK_PRIPR)
 	if !USED()
-		O_PRIPR
+		O_KALK_PRIPR
 		lOpened:=.f.
 	endif
 
 	PushWa()
-	SELECT pripr
+	SELECT kalk_pripr
 	GO TOP
-	cIdVd:=pripr->idVd
+	cIdVd:=kalk_pripr->idVd
 	
 	PopWa()
 	
@@ -170,10 +170,10 @@ static function KaFillRLabele( cKolicina )
 local cDok
 local nBr_labela := 0
 
-O_PRIPR
+O_KALK_PRIPR
 O_ROBA
 
-select pripr
+select kalk_pripr
 go top
 
 cDok := ( field->idFirma + field->idVd + field->brDok )
@@ -192,11 +192,11 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 
 	// pronadji ovu robu
 	select roba
-	seek pripr->idRoba
+	seek kalk_pripr->idRoba
 	
 	// pregledaj postoji li vec u rlabele.dbf !
 	select rLabele
-	seek pripr->idroba
+	seek kalk_pripr->idroba
 	
 	if ( cKolicina == "D" .or. ( cKolicina == "N" .and. !found() ) )
 		
@@ -207,10 +207,10 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 		
 		Scatter()
 		
-		_idRoba := pripr->idRoba
+		_idRoba := kalk_pripr->idRoba
 		_naz := LEFT(roba->naz, 40)
-		_idTarifa := pripr->idTarifa
-		_evBr := pripr->brDok
+		_idTarifa := kalk_pripr->idTarifa
+		_evBr := kalk_pripr->brDok
 
 		if roba->(FIELDPOS("barkod")) <> 0
 			if !EMPTY( roba->barkod )
@@ -218,11 +218,11 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 			endif
 		endif
 		
-		if (pripr->idVd=="19")
-			_cijena:=pripr->mpcSaPP+pripr->fCj
-			_sCijena:=pripr->fCj
+		if (kalk_pripr->idVd=="19")
+			_cijena:=kalk_pripr->mpcSaPP+pripr->fCj
+			_sCijena:=kalk_pripr->fCj
 		else
-			_cijena:=pripr->mpcSaPP
+			_cijena:=kalk_pripr->mpcSaPP
 			_sCijena:=_cijena
 		endif
 		
@@ -232,7 +232,7 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 	
 	endif
 	
-	select pripr
+	select kalk_pripr
 	skip 1
 enddo
 

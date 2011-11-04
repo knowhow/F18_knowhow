@@ -18,7 +18,7 @@ function OiNIsplate()
 
 LOCAL nRec:=0
  PRIVATE cBrojOiN:="T"     // T,S,O
-  SELECT PRIPR
+  select fin_pripr
   nRec:=RECNO()
 
   IF !VarEdit({ {"Koliko obrazaca stampati? (T-samo tekuci, S-sve, O-od tekuceg do kraja)","cBrojOiN","cBrojOiN$'TSO'","@!",} }, 10,0,14,79,;
@@ -138,7 +138,7 @@ endif
 nArr:=SELECT()
 nRec:=RecNo()
 
-select pripr
+select fin_pripr
 set order to tag "0"
 go top
 

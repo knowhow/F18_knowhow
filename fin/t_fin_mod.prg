@@ -75,7 +75,7 @@ close all
 
 ::mMenuStandard()
 
-::quit()
+//::quit()
 
 return nil
 
@@ -165,7 +165,7 @@ else
 	lPodBugom:=.f.
 endif
 
-Menu_SC("gfin",.t.,lPodBugom)
+Menu_SC("gfin",.f.,lPodBugom)
 
 return
 

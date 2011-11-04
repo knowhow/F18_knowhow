@@ -186,7 +186,7 @@ ELSE
 ENDIF
 
 O_FAKT
-O_PRIPR
+O_FAKT_PRIPR
 if reccount2()<>0 .and. nTekug=1
   Msg("Neki dokument vec postoji u pripremi")
   closeret

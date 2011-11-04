@@ -41,7 +41,7 @@ if IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
   O_VRSTEP
 endif
 
-O_PRIPR
+O_FIN_PRIPR
 O_KONTO
 O_PARTN
 O_TNAL
@@ -53,7 +53,7 @@ __par_len := LEN(partn->id)
 select PSUBAN
 ZAP
 
-SELECT PRIPR
+select fin_pripr
 set order to tag "1"
 
 go top

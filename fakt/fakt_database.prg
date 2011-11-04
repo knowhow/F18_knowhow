@@ -1449,7 +1449,7 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
 	// trajno izbrises
 	// lSilent = .t.
 
-	azur_smece( .t. )
+	azuriraj_smece( .t. )
 	
 	select fakt_pripr
 

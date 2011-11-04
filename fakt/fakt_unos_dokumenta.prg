@@ -188,9 +188,10 @@ do case
   	aMemo:=ParsMemo(txt)
   	cRet += aMemo[1]
    otherwise
-	DbSelectArr(F_ROBA)
+	O_ROBA
+	select roba
    	seek PRIPR->IdRoba
- 	DbSelectArr(F_PRIPR)
+ 	select fakt_pripr
  	cRet += LEFT(ROBA->naz,40)
 endcase
 
@@ -338,7 +339,6 @@ do case
 			close all
           		StOLPP()
         	else
-          		//StampRtf(PRIVPATH+"fakt.rtf", nil, cPom)
 			StDokOdt( nil, nil, nil )
         	endif
         	
@@ -433,11 +433,6 @@ do case
 	case UPPER(Chr(Ch))=="R"
         	return DE_REFRESH
 		
-	case Ch==K_F7
-		if IsRabati()
-			SrediRabate()
-			return DE_REFRESH
-		endif
 	case Ch==K_F9
         	Iz20u10() 
 		lDirty:=.t.
@@ -1235,8 +1230,8 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 		
 		if fNovi 
 			lSkonto := Pitanje(, "Unositi kasu skonto (D/N)?", "N") == "D"
-			GetTRabat(@cTipRab)
-			_tiprabat := PADR(cTipRab, 10)
+			//GetTRabat(@cTipRab)
+			//_tiprabat := PADR(cTipRab, 10)
 	
 		else
 			if ( _skonto == 0 )
@@ -1527,7 +1522,7 @@ else
 			endif
 			if Empty(cTipRab)
 				if Empty(_tiprabat)
-					GetTRabat(@cTipRab)
+					//GetTRabat(@cTipRab)
 				else
 					cTipRab := _tiprabat	
 				endif
@@ -2315,9 +2310,9 @@ else
     endif
   elseif cidtipdok=="19" .and. lPartic
     if cIdFirma==nil
-      StDok2()
+      //StDok2()
     else
-      StDok2(cIdFirma,cIdTipdok,cbrdok)
+      //StDok2(cIdFirma,cIdTipdok,cbrdok)
     endif
   else
    if gTipF=="1"
@@ -2343,9 +2338,9 @@ else
       else
         gVarF:="2"
         if cIdFirma==nil
-           StDok2()
+           //StDok2()
         else
-           StDok2(cIdFirma,cIdTipdok,cbrdok)
+           //StDok2(cIdFirma,cIdTipdok,cbrdok)
         endif
         gVarF:="9"
       endif
@@ -2359,17 +2354,17 @@ else
       else
         gVarF:="2"
         if cIdFirma==nil
-          StDok2()
+          //StDok2()
         else
-          StDok2(cIdFirma,cIdTipdok,cbrdok)
+          //StDok2(cIdFirma,cIdTipdok,cbrdok)
         endif
         gVarF:="A"
       endif
     else
       if cIdFirma==nil
-        StDok2()
+        //StDok2()
       else
-        StDok2(cIdFirma,cIdTipdok,cbrdok)
+        //StDok2(cIdFirma,cIdTipdok,cbrdok)
       endif
     endif
    else
@@ -2394,68 +2389,6 @@ PicCDEM:=InPicCDEM
 return
 *}
 
-
-/*! \fn StampRtf(cImeF,cIdFirma,cIdTipDok,cBrDok)
- *  \brief Stampa u rtf formatu
- *  \todo Ovo bi trebalo prebaciti u /RPT
- *  \param cImeF
- *  \param cIdFirma
- *  \param cIdTipDok
- *  \param cBrDok
- */
- 
-function StampRtf(cImeF,cIdFirma,cIdTipdok,cbrdok)
-*{
-private InPicDEM:=PicDEM  // picture iznosa
-private InPicCDEM:=PicCDEM  // picture iznosa
-
-private cRtfPoziv
-private cKom
-
-cRtfPoziv:=IzFmkIni("FAKT", "RtfPoziv", "")
-
-if !(cIdTipdok $ "10#11#15#25#27") .and.;
-   !(cIdTipDok $ "20" .and. IzFMKIni("FAKT","PredracuniUvijekSaIznosima","N",PRIVPATH)=="D") .and.;
-   (gSamokol=="D" .or. glDistrib.and.cIdTipDok$"26#21" .or.;
-    Pitanje(,"Prikaz iznosa na dokumentu ?","D")=="N")
-   Picdem:=space(len(picdem))
-   PicCdem:=space(len(picCdem))
-endif
-
-#ifndef CAX
-close all
-#endif
-
-Setpxlat()
-
-if !EMPTY(cRtfPoziv)
-	cKom:=cRtfPoziv+"( "+ArgToStr(cImeF)+", "+ArgToStr(cIdFirma)+", "+ArgToStr(cIdTipDok)+", "+ArgToStr(cBrDok)+")"
-	EVAL( {|| &cKom} )
-else
-	if gTipF=="1"
-		StDRtf1(cImeF, cIdFirma, cidtipdok, cbrdok)
-	elseif gTipF=="2"
-		if EMPTY(gVarRF)
-			StDRtf2(cImeF,cIdFirma,cidtipdok,cbrdok)
-		else
-			StDRtf21(cImeF,cIdFirma,cidtipdok,cbrdok)
-		endif
-	else
-		StDRtf3(cImeF,cIdFirma,cidtipdok,cbrdok)
-	endif
-endif
-konvtable()
-PicDEM:=InPicDEM
-PicCDEM:=InPicCDEM
-
-#ifdef CAX
-  select (F_PRIPR)
-  use
-  select (F_POR)
-  use
-#endif
-return
-*}
 
 /* \fn ArgToStr()
  * Argument To String
@@ -2833,7 +2766,7 @@ function StUgRabKup()
 *{
 lUgRab:=.t.
 lSSIP99:=.f.
-StDok2()
+//StDok2()
 lUgRab:=.f.
 return
 *}

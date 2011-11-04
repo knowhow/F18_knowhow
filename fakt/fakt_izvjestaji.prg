@@ -319,7 +319,7 @@ static function TekRec()
 *{
 nSlog++
  @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
- @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(cmxKeysIncluded())
+ @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(nSlog)
 return (nil)
 *}
 
@@ -1033,7 +1033,7 @@ RETURN
  *  \brief Vrijednost robe po partnerima/prodavnicama
  */
  
-static function VRobPoPar()
+function VRobPoPar()
 *{
 IF IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D"
     O_OPS
@@ -1249,7 +1249,7 @@ RETURN aVrati
  *  \brief Vrijednost robe po izdavacima/dobavljacima
  */
  
-static function VRobPoIzd()
+function VRobPoIzd()
 *{
 O_SIFK; O_SIFV
   O_RJ

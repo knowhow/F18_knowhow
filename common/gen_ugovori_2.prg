@@ -974,7 +974,7 @@ if IsDocExists(cFirma, "10", gen_ug->brdok_od) .and. ;
 	IsDocExists(cFirma, "10", gen_ug->brdok_do)
 	
 	cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-	PovSvi(cBrDokOdDo, nil, nil, cFirma)
+	Povrat_fakt_po_kriteriju(cBrDokOdDo, nil, nil, cFirma)
 
 endif
 

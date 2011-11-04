@@ -76,7 +76,7 @@ s_params()
 
 O_FAKT_DOKS
 select fakt_doks
-TrebaRegistrovati(20)
+//TrebaRegistrovati(20)
 USE
 
 ::mMenuStandard()
@@ -127,7 +127,7 @@ AADD(opcexe,{|| MAzurDoks()})
 AADD(opc,"------------------------------------")
 AADD(opcexe,{|| nil})
 AADD(opc,"8. sifrarnici")
-AADD(opcexe,{|| Sifre()})
+AADD(opcexe,{|| fakt_sifrarnik()})
 AADD(opc,"9. administracija baze podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
 	AADD(opcexe,{|| MnuAdmin()})
@@ -192,11 +192,8 @@ local cSekcija
 local cVar
 local cVal
 
+set_global_vars()
 SetFmkRGVars()
-
-SetFmkSGVars()
-
-SetSpecifVars()
 
 ::nDuzinaSifre:=VAL(IzFMKINI('SifRoba','DuzSifra','10', SIFPATH))
 ::cTekVpc:=IzFmkIni("FAKT","TekVpc","1",SIFPATH)

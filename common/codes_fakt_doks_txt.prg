@@ -43,7 +43,7 @@ private ImeKol
 private Kol
 private gTBDir:="N"
 
-OSifDoksTxt()
+//OSifDoksTxt()
 
 SELECT (F_DOKSTXT)
 

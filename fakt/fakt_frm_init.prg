@@ -86,69 +86,7 @@ return oObj
 *}
 
 
-#ifdef CPP
-/*! \class TFrmInvIt
- *  \brief Inventura Forma Item Inventura - definise stavku inventure
- *
- */
-class TFrmInvIt
-{
-	public:
-	
-	*TObject self;
-	*TFrmInv oOwner;
-	*bool lNovaStavka;
-	*TObject oFrmParent;
-	
-	*bool lSilent;
-	// form varijable
-	*string cIdRj;
-	*string cIdVd;
-	*string dDatDok;
-	*string cBrDok;
-	*string cValuta;
-	*string cPartner;
-	*string cMjesto;
-	*string cAdresa;
-	*string cValuta
-	*int nRbr;
-	*string cIdRoba;
-	*int nPKolicina;
-	*int nKKolicina;
-	*int nKKolPrijeEdita;
-	*int nPKolicina;
-	*int nCijena;
-	*int nUkupno;	
-	
-	//caclulated values
-	*int nNaStanju;
-	
-	*void newItem();
-	
-	*void open();
-	*void close();
-	*void nextItem();
-	*void deleteItem();
-	*bool wheIdRoba();
-	*bool vldIdRoba();
-	*bool vldKKolicina();
-	*bool wheKKolicina();
-	*bool vldPKolicina();
-	*bool vldRj();
-	*bool vldRbr();
-	*bool vldBrDok();
-	*bool wheBrDok();
-	*bool vldPartner();
-	*bool whePartner();
-	*void getPartner(int nRow);
-	*void sayPartner(int nRow);
-	*void showArtikal();
-}
 
-#endif
-
-
-#ifndef CPP
 
 CREATE CLASS TFrmInvIt
 	EXPORTED:
@@ -207,7 +145,6 @@ CREATE CLASS TFrmInvIt
 	method showArtikal
 
 END CLASS
-#endif
 
 
 
@@ -284,7 +221,7 @@ return
 method newItem()
 
 SET ORDER TO TAG "1"
-select fakt_pripr
+SELECT pripr
 
 GO BOTTOM
 ::loadFromTbl()
@@ -327,7 +264,7 @@ return
 *{
 method nextItem()
 
-select fakt_pripr
+SELECT pripr
 SKIP
 
 if EOF()
@@ -345,7 +282,7 @@ return 1
 method loadFromTbl()
 local aMemo
 
-select fakt_pripr
+SELECT pripr
 
 ::cIdRj:=field->idFirma
 ::cIdVd:=field->idTipDok
@@ -388,7 +325,7 @@ return
 method saveToTbl()
 local cTxt
 
-select fakt_pripr
+SELECT pripr
 
 REPLACE idFirma WITH ::cIdRj
 REPLACE idTipDok WITH ::cIdVd
@@ -489,7 +426,7 @@ if ::lSilent
 	?? roba->idtarifa, "PPP", str(tarifa->opp,7,2)+"%", "PPU", str(tarifa->ppp,7,2)
 endif
 
-select fakt_pripr
+SELECT pripr
 return .t.
 *}
 
@@ -614,12 +551,12 @@ FaStanje(::cIdRj, ::cIdRoba, @nUl, @nIzl, @nRezerv, @nRevers)
 
 ::nNaStanju:=nUl-nIzl-nRevers-nRezerv  
 
-select fakt_pripr
+SELECT pripr
 
 ::showArtikal()
 
 if ((::nNaStanju - ::nKolicina)<0)
-	fakt_box_stanje({{::cIdRj, nUl, nIzl, nRevers, nRezerv}},::cIdRoba)
+	BoxStanje({{::cIdRj, nUl, nIzl, nRevers, nRezerv}},::cIdRoba)
 endif
 */
 

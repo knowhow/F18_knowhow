@@ -64,7 +64,7 @@ AADD(opcexe,{|| SaldaKupaca()})
 AADD(opc,"6. pocetno stanje za evidenciju uplata")
 AADD(opcexe,{|| GPSUplata()})
 AADD(opc,"7. stampa narudzbenice")
-AADD(opcexe,{|| Mnu_Narudzbenica()})
+AADD(opcexe,{|| Mnu_Narudzba()})
 
 Menu_SC("ostop")
 return .f.

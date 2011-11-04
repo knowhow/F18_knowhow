@@ -439,9 +439,11 @@ IF _idtipdok=="26" .and. glDistrib .and. !UGenNar()
 ENDIF
 
 if IsRabati() .and. (_idtipdok $ gcRabDok)
-	_rabat := RabVrijednost(gcRabDef, cTipRab, _idroba, gcRabIDef)
+	_rabat := 0
+	// _rabat := RabVrijednost(gcRabDef, cTipRab, _idroba, gcRabIDef)
 	if lSkonto
-		_skonto := SKVrijednost(gcRabDef, cTipRab, _idroba)
+		_skonto := 0
+		// _skonto :=  SKVrijednost(gcRabDef, cTipRab, _idroba)
 	endif
 endif
 
@@ -489,9 +491,9 @@ if right(trim(&cVarIdRoba),2)="++"
   	select roba
 	seek cPom
   	if found()
-      		BrowseKart(cPom)    
+      		//BrowseKart(cPom)    
 		// prelistaj kalkulacije
-      		&cVarIdRoba:=cPom
+      		//&cVarIdRoba:=cPom
   	endif
 endif
 

@@ -889,7 +889,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
       			@ prow(),pcol()+1 SAY kolicina() pict pickol
       			@ prow(),pcol()+1 SAY lower(ROBA->jmj)
       			IF glDistrib .and. cIdTipDok $ "10#21"
-        			IspisiAmbalazu()
+        			//IspisiAmbalazu()
       			ENDIF
     		endif	
 
@@ -1014,7 +1014,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
        		if !empty(roba->barkod)
          		?? roba->barkod,""
        		endif
-       		PrintC1_3()
+       		//PrintC1_3()
        		if izfmkini("SifRoba","PDRazmak","N",SIFPATH)=="D"
          		?
        		endif

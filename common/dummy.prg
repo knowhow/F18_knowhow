@@ -16,4 +16,19 @@ function send2comport(cStr)
 
 return
 
+function rloptlevel()
+return ""
+
+function isRudnik()
+return .f.
+
+function isPlanika()
+return .f.
+
+function isKonsig()
+return .f.
+
+function isStampa()
+return .f.
+
 

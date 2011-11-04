@@ -260,9 +260,9 @@ LOCAL nArr:=SELECT()
 
 
 if UPPER(Chr(Ch))=="K"
- PushWa()
- BrowseKart(roba->id)
- PopWa()
+ //PushWa()
+ //BrowseKart(roba->id)
+ //PopWa()
  return 6  // DE_CONT2
 
 elseif upper(Chr(Ch))=="S"

@@ -58,7 +58,7 @@ public gPrinter:="1"
 public gPPORT:="1"
 
 IniPrinter()
-UcitajParams()
+//UcitajParams()
 
 public gldistrib:=.f.
 public fID_J:=.f.

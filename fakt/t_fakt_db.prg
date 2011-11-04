@@ -281,6 +281,10 @@ return
 *{
 method Kreiraj(nArea)
 
+cDirRad := my_home()
+cDirSif := my_home()
+cDirPriv := my_home()
+
 CreFMKSvi()
 CreRoba()
 if IsRabati()

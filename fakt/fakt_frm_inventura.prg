@@ -13,59 +13,6 @@
 #include "fakt.ch"
 #include "hbclass.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/fakt/dok/2g/frm_inv.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.9 $
- * $Log: frm_inv.prg,v $
- * Revision 1.9  2002/06/29 09:11:43  sasa
- * no message
- *
- * Revision 1.8  2002/06/28 10:20:33  ernad
- *
- *
- * ispravka fje IsDocExists, nova fja FaNoviBroj, debug Azur (lVrstap)
- *
- * Revision 1.7  2002/06/28 09:56:27  ernad
- *
- *
- * nadogradnja objekat TFrmInv, prepravka funkcije IsDocExists
- *
- * Revision 1.6  2002/06/28 07:22:35  ernad
- *
- *
- * zavrsetak formiranja skeleton-a (Obrazac inventure)
- *
- * Revision 1.5  2002/06/28 07:16:44  ernad
- *
- *
- * skeleton funkcija RptInv, RptObrPopisa
- *
- * Revision 1.4  2002/06/28 06:34:16  ernad
- *
- *
- * dokument inventure skeleton funkcija Generacija dokumenta viska, manjka
- *
- * Revision 1.3  2002/06/27 17:20:33  ernad
- *
- *
- * dokument inventure, razrada, uvedena generacija dokumenta
- *
- * Revision 1.2  2002/06/27 15:43:26  ernad
- *
- *
- * debug dokument inventure
- *
- * Revision 1.1  2002/06/27 14:03:05  ernad
- *
- *
- * dok/2g init
- *
- *
- */
  
 *string tbl_fakt_serBr
 /*! \var tbl_fakt_serBr
@@ -120,7 +67,7 @@ return
 *}
 
 
-#ifndef CPP
+
 CREATE CLASS TFrmInv 
 	EXPORTED:
 	var self
@@ -139,7 +86,6 @@ CREATE CLASS TFrmInv
 	method close
 	method print
 	method printOPop
-	method azuriraj_fakturu
 	method deleteItem
 	method deleteAll
 	method itemsCount
@@ -157,8 +103,6 @@ CREATE CLASS TFrmInv
 
 END CLASS
 
-#endif
-
 /*! \fn TFrmInv::open()
  */
 
@@ -168,7 +112,7 @@ private ImeKol
 private Kol
 
 o_fakt_edit()
-select fakt_pripr
+SELECT pripr
 SET ORDER TO TAG "1"
 
 if ::lTerminate
@@ -198,7 +142,7 @@ if ::lTerminate
 	return DE_ABORT
 endif
 
-select fakt_pripr
+SELECT pripr
 if (::nCh==K_ENTER  .and. EMPTY(field->brDok) .and. EMPTY(field->rbr))
   return DE_CONT
 endif
@@ -239,7 +183,7 @@ do case
 
 	case ::nCh==K_ALT_A
 		CLOSE ALL
-		::azuriraj_fakturu()
+		azuriraj_fakturu()
 		o_fakt_edit()
 		return DE_REFRESH
 
@@ -255,8 +199,8 @@ do case
        		return DE_REFRESH
 
 	case ::nCh==K_ALT_F10
-		FaAsistent()
-      		return DE_REFRESH
+		//FaAsistent()
+      	//	return DE_REFRESH
 	
 	case ::nCh==K_ESC
 		return DE_ABORT
@@ -441,7 +385,7 @@ method itemsCount()
 local nCnt
 
 PushWa()
-select fakt_pripr
+SELECT pripr
 nCnt:=0
 do while !EOF()
 	nCnt++

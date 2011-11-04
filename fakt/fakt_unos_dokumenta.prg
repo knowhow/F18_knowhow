@@ -68,12 +68,12 @@ if glRadNal
 	AADD(ImeKol, { "Rad.nalog", {|| idrnal}, "idrnal" })
 endif
 
-if pripr->(fieldpos("k1"))<>0 .and. gDK1=="D"
+if fakt_pripr->(fieldpos("k1"))<>0 .and. gDK1=="D"
   AADD(ImeKol,{ "K1",{|| k1}, "k1" })
   AADD(ImeKol,{ "K2",{|| k2}, "k2" })
 endif
 
-if pripr->(fieldpos("idrelac")) <> 0
+if fakt_pripr->(fieldpos("idrelac")) <> 0
 	
 	AADD( ImeKol , { "ID relac.", {|| idrelac  }, "IDRELAC"  } )
 
@@ -151,10 +151,10 @@ local cRet
 
 if EOF()
 	cRet:=""
-elseif VAL(pripr->podbr)==0
-   	cRet:=pripr->rbr+")"
+elseif VAL(fakt_pripr->podbr)==0
+   	cRet:=fakt_pripr->rbr+")"
 else
-   	cRet:=pripr->rbr+"."+alltrim(pripr->podbr)
+   	cRet:=fakt_pripr->rbr+"."+alltrim(fakt_pripr->podbr)
 endif
 
 return padr(cRet,6)
@@ -190,7 +190,7 @@ do case
    otherwise
 	O_ROBA
 	select roba
-   	seek PRIPR->IdRoba
+   	seek fakt_pripr->IdRoba
  	select fakt_pripr
  	cRet += LEFT(ROBA->naz,40)
 endcase
@@ -248,7 +248,7 @@ do case
 	
 		lFisMark := .f.
 
-		if pripr->(reccount()) <> 0
+		if fakt_pripr->(reccount()) <> 0
 			// priprema nije prazna, nema stampanja racuna
 			msgbeep("Priprema nije prazna, stampa fisk.racuna nije moguca!")
 			return DE_CONT
@@ -538,7 +538,7 @@ return DE_CONT
 // -------------------------------------------
 function BrisiStavku()
 cSecur:=SecurR(KLevel,"BRISIGENDOK")
-if m1="X" .and. ImaSlovo ("X", cSecur)   // pripr->m1
+if m1="X" .and. ImaSlovo ("X", cSecur)   // fakt_pripr->m1
        Beep(1)
        Msg("Dokument izgenerisan, ne smije se brisati !!",0)
        return 0
@@ -552,7 +552,7 @@ endif
 if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
 	if (RecCount2 () == 1) .OR. JedinaStavka ()
         	select fakt_doks
-           	HSEEK PRIPR->IdFirma+PRIPR->IdTipDok+PRIPR->BrDok
+           	HSEEK fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
            	if FOUND () .AND. DOKS->M1 == "Z"
               		// dokument zapisan samo u DOKS-u
               		DELETE
@@ -751,13 +751,13 @@ function RekZadMpO()
 select fakt_pripr
 GO TOP
 cSort1:="IzSifK('PARTN','LINI',idpartner,.f.)+idroba"
-cFilt1:="idtipdok=='13'.and.idfirma=="+cm2str(PRIPR->idfirma)
+cFilt1:="idtipdok=='13'.and.idfirma=="+cm2str(fakt_pripr->idfirma)
 INDEX ON &cSort1 to "TMPPRIPR" for &cFilt1
 GO TOP
 StartPrint()
 ? "FAKT,",date(),", REKAPITULACIJA ZADUZENJA MALOPRODAJNIH OBJEKATA"
 ? 
-IspisFirme(PRIPR->idfirma)
+IspisFirme(fakt_pripr->idfirma)
 ?
 do while !EOF()
   cLinija:=IzSifK('PARTN','LINI',idpartner,.f.)
@@ -799,7 +799,7 @@ function CijeneOK(cStr)
 local fMyFlag := .F., lRetFlag := .T., nTekRec
   select fakt_pripr
   nTekRec := RECNO ()
-  if PRIPR->IdTipDok $ "10#11#15#20#25#27"
+  if fakt_pripr->IdTipDok $ "10#11#15#20#25#27"
      // PROVJERI IMA LI NEODREDJENIH CIJENA ako se radi o fakturi
      Scatter()
      SET ORDER to 1
@@ -1338,7 +1338,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 				_isp_partn( _idpartner, nPX, nPY + 18 ) }
      		
 		// prodajno mjesto - polje
-		if pripr->(FIELDPOS("IDPM")) <> 0
+		if fakt_pripr->(FIELDPOS("IDPM")) <> 0
        			@ m_x + 5, m_y + 2 SAY "P.M.:" GET _idpm ;
 				VALID {|| P_IDPM(@_idpm,_idpartner) }
      		endif
@@ -1435,7 +1435,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 		
 		endif
    		
-		if (pripr->(FIELDPOS("idrelac")) <> 0 .and. _idtipdok $ "#11#")
+		if (fakt_pripr->(FIELDPOS("idrelac")) <> 0 .and. _idtipdok $ "#11#")
      			@ m_x + 9, m_y + 2  SAY "Relacija   :" ;
 				GET _idrelac
    		endif
@@ -1577,11 +1577,11 @@ endif
 
 RKOR2+=GetKarC3N2(row()+1)
 
-if (pripr->(fieldpos("K1"))<>0 .and. gDK1=="D")
+if (fakt_pripr->(fieldpos("K1"))<>0 .and. gDK1=="D")
 	@ m_x+15+RKOR2,m_y+66 SAY "K1" GET _K1 pict "@!"
 endif
 
-if (pripr->(fieldpos("K2"))<>0 .and. gDK2=="D")
+if (fakt_pripr->(fieldpos("K2"))<>0 .and. gDK2=="D")
 	@ m_x+16+RKOR2,m_y+66 SAY "K2" GET _K2 pict "@!"
 endif
 
@@ -2101,9 +2101,9 @@ function NarBrDok(fNovi)
 *{
 local nPrev:=SELECT()
 
-if !EMPTY (PRIPR->BrDok) .or. eof()  // nema dokumenata
+if !EMPTY (fakt_pripr->BrDok) .or. eof()  // nema dokumenata
    // ovaj vec ima odredjen broj
-   return PRIPR->BrDok
+   return fakt_pripr->BrDok
 endif
 
 
@@ -2111,10 +2111,10 @@ if gMreznoNum == "D"
   select fakt_pripr
   nTrecPripr:=recno()
   go top
-  _idtipdok:=pripr->idtipdok
-  _idfirma:=pripr->idfirma
-  _datdok:=pripr->datdok
-  _dindem:=pripr->dindem
+  _idtipdok:=fakt_pripr->idtipdok
+  _idfirma:=fakt_pripr->idfirma
+  _datdok:=fakt_pripr->datdok
+  _dindem:=fakt_pripr->dindem
   _rezerv:=""
   _idpartner:=""
   _partner:=""
@@ -3100,36 +3100,36 @@ local nDod:=0
 local x:=0
 local y:=0
 
-if (pripr->(fieldpos("C1"))<>0 .and. gKarC1=="D")
+if (fakt_pripr->(fieldpos("C1"))<>0 .and. gKarC1=="D")
 	@ mx+(++nKor),m_y+2 SAY "C1" GET _C1 pict "@!"
 	nDod++
 endif
 
-if (pripr->(fieldpos("C2"))<>0 .and. gKarC2=="D")
+if (fakt_pripr->(fieldpos("C2"))<>0 .and. gKarC2=="D")
 	SljPozGet(@x,@y,@nKor,mx,nDod)
 	@ x,y SAY "C2" GET _C2 pict "@!"
 	nDod++
 endif
 
-if (pripr->(fieldpos("C3"))<>0 .and. gKarC3=="D")
+if (fakt_pripr->(fieldpos("C3"))<>0 .and. gKarC3=="D")
 	SljPozGet(@x,@y,@nKor,mx,nDod)
 	@ x,y SAY "C3" GET _C3 pict "@!"
 	nDod++
 endif
 
-if (pripr->(fieldpos("N1"))<>0 .and. gKarN1=="D")
+if (fakt_pripr->(fieldpos("N1"))<>0 .and. gKarN1=="D")
 	SljPozGet(@x,@y,@nKor,mx,nDod)
 	@ x,y SAY "N1" GET _N1 pict "999999.999"
 	nDod++
 endif
 
-if (pripr->(fieldpos("N2"))<>0 .and. gKarN2=="D")
+if (fakt_pripr->(fieldpos("N2"))<>0 .and. gKarN2=="D")
 	SljPozGet(@x,@y,@nKor,mx,nDod)
 	@ x,y SAY "N2" GET _N2 pict "999999.999"
 	nDod++
 endif
 
-if (pripr->(fieldpos("opis"))<>0)
+if (fakt_pripr->(fieldpos("opis"))<>0)
 	SljPozGet(@x,@y,@nKor,mx,nDod)
 	@x,y SAY "Opis" GET _opis pict "@S40"
 	nDod++

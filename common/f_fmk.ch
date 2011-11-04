@@ -10,6 +10,7 @@
 #define F_SIFV     10
 #define F_TMP      11
 #define F_SQLPAR   12
+#define F_FDEVICE   12
 
 // proizvoljni izvjestaji
 #define F_KONIZ    13

@@ -58,10 +58,10 @@ endif
 select fakt_pripr
 if pcount()==0  // poziva se faktura iz pripreme
  cIdTipdok:=idtipdok; cIdFirma:=IdFirma; cBrDok:=BrDok
- select roba; hseek pripr->idroba ; select fakt_pripr
+ select roba; hseek fakt_pripr->idroba ; select fakt_pripr
  _principal:=roba->principal
  do while !eof()
-   select roba; hseek pripr->idroba; select fakt_pripr
+   select roba; hseek fakt_pripr->idroba; select fakt_pripr
    if roba->principal<>_principal
      Msg("U stavki rbr: "+rbr+"."+podbr+" pojavljuje se principal "+roba->principal)
      closeret
@@ -159,7 +159,7 @@ function StFD2()
  ?
  ?
  SELECT ROBA
- SEEK pripr->idroba
+ SEEK fakt_pripr->idroba
  ? space(gnLmarg)+"PRINCIPAL : "+PADR(principal,10)+" "+Ocitaj(F_PARTN,principal,"naz")
  ? space(gnLmarg)+"VALUTA    : "+PADR(valuta,10)+" KURS VALUTE : "+STR(Ocitaj(F_VALUTE,valuta,"kurs1"),10,3)
  select fakt_pripr
@@ -205,7 +205,7 @@ return
 function Blok30()
 *{
 LOCAL nPom,nPoz
-  select roba; hseek pripr->idroba; select fakt_pripr
+  select roba; hseek fakt_pripr->idroba; select fakt_pripr
   nUk+=round(kolicina*cijena , nZaokr)
 
   // izracunajmo koliki je iznos carine po carinskoj tarifi

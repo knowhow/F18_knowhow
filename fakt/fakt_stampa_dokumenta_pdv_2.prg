@@ -152,7 +152,7 @@ nRec:=RecNO()
 
 
 do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok
-	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 	
 	// nastimaj i tarifu
 	select tarifa
@@ -172,8 +172,8 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	endif
 
 	// dodaj i vrijednost iz polja SERBR
-	if !EMPTY(ALLTRIM(pripr->serbr))
-		cRobaNaz := cRobaNaz + ", " + ALLTRIM(pripr->serbr) 
+	if !EMPTY(ALLTRIM(fakt_pripr->serbr))
+		cRobaNaz := cRobaNaz + ", " + ALLTRIM(fakt_pripr->serbr) 
 	endif
 
 	//resetuj varijable sa cijenama
@@ -183,11 +183,11 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	nCj2BPDV := 0
 	nVPopust := 0
 	
-	if pripr->(FIELDPOS("C1")) <> 0
-		cC1 := pripr->c1
-		cC2 := pripr->c2
-		cC3 := pripr->c3
-		cOpis := pripr->opis
+	if fakt_pripr->(FIELDPOS("C1")) <> 0
+		cC1 := fakt_pripr->c1
+		cC2 := fakt_pripr->c2
+		cC3 := fakt_pripr->c3
+		cOpis := fakt_pripr->opis
 	endif
 
 	cRbr := field->rbr

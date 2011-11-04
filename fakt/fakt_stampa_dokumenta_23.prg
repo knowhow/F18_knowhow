@@ -346,7 +346,7 @@ if fDelphiRb
   	if IzFmkIni('FAKT','StampaWin2000','N',EXEPATH) == 'D'
     		cPoziv := IzFmkIni('FAKT','PozivDelphiRB','DelphiRB',EXEPATH)
   	endif
-  	if IzFmkIni('FAKT','10Duplo','N')=='D' .and. pripr->(reccount2())<=10
+  	if IzFmkIni('FAKT','10Duplo','N')=='D' .and. fakt_pripr->(reccount2())<=10
      		// dupli prored fakture do deset stavki !!!
      		cRTM := ALLTRIM(cRTM) + "dp"
   	endif
@@ -658,7 +658,7 @@ endif
 private nTekStavka:=0 // tekuca stavka dokumenta
 
 do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !eof()
-	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 	++nTekStavka
    	if alltrim(podbr)=="."   .or. roba->tip="U"
       		aMemo:=ParsMemo(txt)
@@ -680,8 +680,8 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
       			select fakt_pripr
       			select pom
       			append blank
-      			replace rbr with pripr->(Rbr())
-      			replace naziv with KonvZnWin(@cTxt1,gKonvZnWin), kolicina with transform(PRIPR->(kolicina()),pickol)
+      			replace rbr with fakt_pripr->(Rbr())
+      			replace naziv with KonvZnWin(@cTxt1,gKonvZnWin), kolicina with transform(fakt_pripr->(kolicina()),pickol)
       			select fakt_pripr
     		else
 			? space(gnLMarg)
@@ -720,8 +720,8 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
         		endif
 			if fDelphiRB
           			select pom
-          			replace  kolicina with pripr->(transform(iif(kolicina==0,0,nUk2/kolicina()) , piccdem)) ,;
-                   		rabat with pripr->(cRab+"%"), dest with pripr->dest
+          			replace  kolicina with fakt_pripr->(transform(iif(kolicina==0,0,nUk2/kolicina()) , piccdem)) ,;
+                   		rabat with fakt_pripr->(cRab+"%"), dest with fakt_pripr->dest
           			if nporez-int(nporez)<>0
             				cPor:=str(nporez,3,1)
           			else
@@ -767,9 +767,9 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
        			select tarifa
        			hseek roba->idtarifa
        			IF IzFMKINI("POREZI","PPUgostKaoPPU","D")=="D"
-         			nMPVBP:=round( pripr->(cijena*nKurs*PrerCij()*kolicina())/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100) , nZaokr)
+         			nMPVBP:=round( fakt_pripr->(cijena*nKurs*PrerCij()*kolicina())/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100) , nZaokr)
        			ELSE
-         			nMPVBP:=round( pripr->(cijena*nKurs*PrerCij()*kolicina())/((1+tarifa->opp/100)*(1+tarifa->ppp/100)+tarifa->zpp/100) , nZaokr)
+         			nMPVBP:=round( fakt_pripr->(cijena*nKurs*PrerCij()*kolicina())/((1+tarifa->opp/100)*(1+tarifa->ppp/100)+tarifa->zpp/100) , nZaokr)
        			ENDIF
        			if tarifa->opp<>0
          			select por
@@ -811,7 +811,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
       			if fdelphiRB
        				select pom
        				append blank  //prvo se stavlja naziv!!!
-       				replace naziv with pripr->(aMemo[1])
+       				replace naziv with fakt_pripr->(aMemo[1])
        				select fakt_pripr
       			endif
     		else
@@ -820,8 +820,8 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
        				cK1:=cK2:=""
        				select pom
        				append blank // prvo se stavlja naziv!!
-       				replace naziv with pripr->(trim(LEFT(roba->naz,40))+iif(!empty(ck1+ck2)," "+ck1+" "+ck2,"")+Katbr()+IspisiPoNar())
-       				replace serbr with pripr->serbr
+       				replace naziv with fakt_pripr->(trim(LEFT(roba->naz,40))+iif(!empty(ck1+ck2)," "+ck1+" "+ck2,"")+Katbr()+IspisiPoNar())
+       				replace serbr with fakt_pripr->serbr
        				select fakt_pripr
       			endif
     		endif
@@ -838,8 +838,8 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
 
 		if fDelphiRB
       			select pom
-      			replace rbr with pripr->(RBr()) ,;
-              			Sifra  with pripr->(StIdROBA(idroba))
+      			replace rbr with fakt_pripr->(RBr()) ,;
+              			Sifra  with fakt_pripr->(StIdROBA(idroba))
       			select fakt_pripr
     		else
       			? space(gnLMarg)
@@ -882,7 +882,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
 		
 		if fDelphiRB
       			select pom
-      			replace kolicina with transform(pripr->(kolicina()),pickol),;
+      			replace kolicina with transform(fakt_pripr->(kolicina()),pickol),;
               			jmj with lower(ROBA->jmj)
       			select fakt_pripr
     		else
@@ -896,7 +896,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
     		if empty(podbr) .or. (!empty(podbr) .and. cTI=="1")
          		if fDelphiRB
             			select pom
-            			replace cijena with pripr->(transform(cijena*Koef(cDinDem),piccdem))
+            			replace cijena with fakt_pripr->(transform(cijena*Koef(cDinDem),piccdem))
             			select fakt_pripr
          		else
             			@ prow(),pcol()+1 SAY cijena*nKurs pict piccdem
@@ -917,7 +917,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
              			if !(gVarF=="3" .and. cidtipdok=="12")
                				if fDelphiRB
                  				select pom
-                 				replace Rabat with pripr->(cRab+"%")
+                 				replace Rabat with fakt_pripr->(cRab+"%")
                  				select fakt_pripr
                				else
                  				@ prow(),pcol()+1 SAY cRab+"%"
@@ -926,7 +926,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
              			if gVarF=="2"
                				if fDelphiRB
                  				select pom
-                 				replace CijenaMR with pripr->(transform(cijena*(1-rabat/100)*Koef(cDinDem),piccdem))
+                 				replace CijenaMR with fakt_pripr->(transform(cijena*(1-rabat/100)*Koef(cDinDem),piccdem))
                  				select fakt_pripr
                				else
                  				@ prow(),pcol()+1 SAY cijena*(1-rabat/100)*nKurs  pict piccdem
@@ -942,7 +942,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
              			endif
 				if fDelphiRB
                 			select pom
-                			replace POR with pripr->(cPor+"%")
+                			replace POR with fakt_pripr->(cPor+"%")
                 			select fakt_pripr
              			else
                				if !(gVarF=="3" .and. cidtipdok=="12")
@@ -955,7 +955,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
 
            		if fDelphiRB
                 		select pom
-                		replace UKUPNO with pripr->(transform(round(kolicina()*cijena*Koef(cDinDem),nZaokr),picdem))
+                		replace UKUPNO with fakt_pripr->(transform(round(kolicina()*cijena*Koef(cDinDem),nZaokr),picdem))
                 		select fakt_pripr
            		else
              			@ prow(),pcol()+1 SAY round( kolicina()*cijena*nKurs*PrerCij(), nZaokr) pict picdem
@@ -971,9 +971,9 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
            		if nPor2<>0
               			select por
               			if roba->tip="U"
-               				cPor:="PPU "+ str(pripr->Porez,5,2)+"%"
+               				cPor:="PPU "+ str(fakt_pripr->Porez,5,2)+"%"
               			else
-               				cPor:="PPP "+ str(pripr->Porez,5,2)+"%"
+               				cPor:="PPP "+ str(fakt_pripr->Porez,5,2)+"%"
               			endif
               			seek cPor
               			if !found()
@@ -1354,8 +1354,8 @@ if fdelphiRb
      UzmiIzIni(cIniName,'Varijable','PARTNER'+ALLTRIM(STR(j)),"",'WRITE')
    NEXT
    if gDest
-     if !EMPTY(PRIPR->DEST)
-       cDest:=PRIPR->DEST
+     if !EMPTY(fakt_pripr->DEST)
+       cDest:=fakt_pripr->DEST
      else
        cDest:='--'
      endif
@@ -1448,9 +1448,9 @@ elseif cIdTipDok=="01"
   ENDIF
 elseif cIdTipDok=="00"
   cStr := "POCETNO STANJE " + cStr
-elseif (lTrebovanje .and. !Empty(pripr->idRNal))
+elseif (lTrebovanje .and. !Empty(fakt_pripr->idRNal))
   cStr:="IZLAZ MATERIJALA br. " + cStr		
-  cStrRN:=TRIM("PO RADNOM NALOGU br. "+pripr->idRNal)
+  cStrRN:=TRIM("PO RADNOM NALOGU br. "+fakt_pripr->idRNal)
 endif
 
 if fDelphiRB
@@ -1523,7 +1523,7 @@ if cidtipdok=="10"
      UzmiIzIni(cIniName,'Varijable','BrNar',_brnar,'WRITE')
    else
       if gDest
-       ?? "Ugovor/narudzba :",_brnar+", "+PRIPR->DEST
+       ?? "Ugovor/narudzba :",_brnar+", "+fakt_pripr->DEST
       else
        ?? "Ugovor/narudzba :",_brnar
       endif
@@ -1536,7 +1536,7 @@ if cidtipdok=="10"
    UzmiIzIni(cIniName,'Varijable','DatPl',dtoc(_datpl),'WRITE')
  else
    if gDest
-     ?? space(18-LEN(PRIPR->DEST)), "Datum placanja:",_DatPl
+     ?? space(18-LEN(fakt_pripr->DEST)), "Datum placanja:",_DatPl
      ?
    else
      ?? space(18), "Datum placanja:",_DatPl

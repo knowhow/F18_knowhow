@@ -348,7 +348,7 @@ return tb_V_Cijena()
 function Tb_V_Kolicina()
 *{
 NSRNPIdRoba()
-// select roba; hseek pripr->idroba; select fakt_pripr
+// select roba; hseek fakt_pripr->idroba; select fakt_pripr
 if gTBDir=="D" .and. roba->tip=="U"
   TBPomjerise:="<"
 endif
@@ -427,7 +427,7 @@ function Tb_W_Porez()
 local nRet
 
 NSRNPIdRoba()
-// select roba; hseek pripr->idroba; select fakt_pripr
+// select roba; hseek fakt_pripr->idroba; select fakt_pripr
 // mora se nonstop seekovati nanovo !!!
 
 nRet:=_podbr<>" ." .and. !(roba->tip $ "KV")  .and. !_idtipdok$"11#15#27"
@@ -452,7 +452,7 @@ return nRet
 function Tb_V_Porez()
 *{
 NSRNPIdRoba()
-// select roba; hseek pripr->idroba
+// select roba; hseek fakt_pripr->idroba
 select tarifa
 hseek roba->idtarifa
 select fakt_pripr
@@ -602,7 +602,7 @@ return
 function TbRobaNaz()
 *{
 NSRNPIdRoba()
-// select roba; hseek pripr->idroba; select fakt_pripr
+// select roba; hseek fakt_pripr->idroba; select fakt_pripr
 return left(Roba->naz,25)
 *}
 
@@ -632,7 +632,7 @@ endif
 select fakt_pripr
 go top
 if dDatDok=NIL
-  dDatDok:=pripr->DatDok
+  dDatDok:=fakt_pripr->DatDok
 endif
 if cSetPor=NIL
   cSetPor:="D"
@@ -641,7 +641,7 @@ endif
 do while !eof()
  if cSetPor=="D"
   NSRNPIdRoba()
-  // select roba; hseek pripr->idroba
+  // select roba; hseek fakt_pripr->idroba
   select tarifa; hseek roba->idtarifa
   if found()
     select fakt_pripr

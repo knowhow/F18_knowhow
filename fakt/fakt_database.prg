@@ -583,8 +583,8 @@ if (cBrisiKum=="N")
   	set order to 1
   	hseek cIdFirma+cIdTipDok+cBrDok
   	
-	while !eof() .and. pripr->(idfirma+idtipdok+brdok)==(cIdFirma+cIdTipDok+cBrDok)
-    		if (pripr->m1=="X")
+	while !eof() .and. fakt_pripr->(idfirma+idtipdok+brdok)==(cIdFirma+cIdTipDok+cBrDok)
+    		if (fakt_pripr->m1=="X")
       			replace m1 WITH " "
     		endif
     		skip
@@ -783,9 +783,9 @@ fRobaIDJ:=goModul:lId_J
 
 fProtu:=.f.
 
-if (gProtu13=="D" .and. pripr->idtipdok=="13" .and. Pitanje(,"Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
+if (gProtu13=="D" .and. fakt_pripr->idtipdok=="13" .and. Pitanje(,"Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
 	if (gVar13=="2" .and. gVarNum=="1")
-      		cPRj:=RJIzKonta(pripr->idpartner+" ")
+      		cPRj:=RJIzKonta(fakt_pripr->idpartner+" ")
     	else
       		O_RJ
       		Box(,2,50)
@@ -799,7 +799,7 @@ if (gProtu13=="D" .and. pripr->idtipdok=="13" .and. Pitanje(,"Napraviti protu-do
     	
 	lVecPostoji:=.f.
     	// prvo da provjerimo ima li isti broj dokumenta u DOKS
-    	cKontrol2Broj:=pripr->(cPRJ+"01"+TRIM(brdok)+"/13")
+    	cKontrol2Broj:=fakt_pripr->(cPRJ+"01"+TRIM(brdok)+"/13")
     	select fakt_doks
 	seek cKontrol2Broj
     	
@@ -816,7 +816,7 @@ if (gProtu13=="D" .and. pripr->idtipdok=="13" .and. Pitanje(,"Napraviti protu-do
     	endif
     	
 	if lVecPostoji
-      		Msg("Vec postoji dokument pod brojem "+pripr->(cPRJ+"-01-"+TRIM(brdok)+"/13"),4)
+      		Msg("Vec postoji dokument pod brojem "+fakt_pripr->(cPRJ+"-01-"+TRIM(brdok)+"/13"),4)
       		closeret
     	endif
     	fProtu:=.t.
@@ -829,11 +829,11 @@ if lViseDok
 	endif
 else
 	// ako je samo jedan dokument provjeri da li je u dupli
-	cKontrolBroj:=pripr->(idfirma+idtipdok+brdok)
+	cKontrolBroj:=fakt_pripr->(idfirma+idtipdok+brdok)
 
 	if dupli_dokument(cKontrolBroj)
 		Beep(4)
-  		Msg("Dokument "+pripr->(idfirma+"-"+idtipdok+"-"+brdok)+" vec postoji pod istim brojem!",4)
+  		Msg("Dokument "+fakt_pripr->(idfirma+"-"+idtipdok+"-"+brdok)+" vec postoji pod istim brojem!",4)
     		return
 	endif
 endif
@@ -847,7 +847,7 @@ go top
 
 altd()
 // 0. napuni matricu sa brojem dokumenta
-AADD( aFD_data, { pripr->idfirma, pripr->idtipdok, pripr->brdok } )
+AADD( aFD_data, { fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok } )
 
 // 1. azuriranje u bazu FAKT
 
@@ -866,7 +866,7 @@ Box("#Proces azuriranja u toku",3,60)
       			loop
     		else
       			cKontrolBroj:=cPom
-      			@ m_x+2, m_y+2 SAY "Azuriram dokument "+pripr->(idfirma+"-"+idtipdok+"-"+brdok)
+      			@ m_x+2, m_y+2 SAY "Azuriram dokument "+fakt_pripr->(idfirma+"-"+idtipdok+"-"+brdok)
     		endif
   	endif
 
@@ -920,7 +920,7 @@ do while !eof()
   	select fakt_doks
   	set order to 1
   	
-	hseek pripr->idfirma+pripr->idtipdok+pripr->brdok
+	hseek fakt_pripr->idfirma+fakt_pripr->idtipdok+fakt_pripr->brdok
   	
 	if !Found()
      		AppBlank2(.f.,.f.)
@@ -929,7 +929,7 @@ do while !eof()
 	if lDoks2
     		select fakt_doks2
     		set order to 1
-    		hseek pripr->idfirma+pripr->idtipdok+pripr->brdok
+    		hseek fakt_pripr->idfirma+fakt_pripr->idtipdok+fakt_pripr->brdok
     		if !Found()
        			AppBlank2(.f.,.f.)
     		endif
@@ -970,11 +970,11 @@ do while !eof()
   	_field->IdTipDok  := cIdTipDok
   	_field->Partner   := cTxt
   	_field->dindem    := cDinDem
-  	_field->IdPartner := pripr->idpartner
-	_field->idpm      := pripr->idpm
+  	_field->IdPartner := fakt_pripr->idpartner
+	_field->idpm      := fakt_pripr->idpm
 	
 	if doks->(FIELDPOS("dok_veza")) <> 0
-		_field->dok_veza := pripr->dok_veza
+		_field->dok_veza := fakt_pripr->dok_veza
 	endif
 
 	if doks->(FIELDPOS("oper_id")) <> 0 .and. gSecurity == "D"
@@ -982,7 +982,7 @@ do while !eof()
 	endif
   	
 	if doks->(FIELDPOS("fisc_rn")) <> 0 .and. gFc_use == "D" 
-		_field->fisc_rn := pripr->fisc_rn
+		_field->fisc_rn := fakt_pripr->fisc_rn
 	endif
   
   	// datum isporuke, otpremnice, valute
@@ -999,7 +999,7 @@ do while !eof()
   		endif
 	endif
 	
-   	_field->IdVrsteP := pripr->idvrstep
+   	_field->IdVrsteP := fakt_pripr->idvrstep
   	
 	if (FieldPos("DATPL")>0)
    		_field->DatPl:=if(LEN(aMemo)>=9,CToD(aMemo[9]),CToD(""))
@@ -1178,7 +1178,7 @@ go top
 
 // provjeri duple dokumente
 do while !EOF()
-	cSeekDok := pripr->(idfirma + idtipdok + brdok)
+	cSeekDok := fakt_pripr->(idfirma + idtipdok + brdok)
 	if dupli_dokument(cSeekDok)
 		lDocExist := .t.
 		exit
@@ -1221,7 +1221,7 @@ select fakt_pripr
 go top
 
 do while !EOF()
-	cSeek := pripr->(idfirma + idtipdok + brdok)
+	cSeek := fakt_pripr->(idfirma + idtipdok + brdok)
 	
 	if dupli_dokument(cSeek)
 		// pobrisi stavku
@@ -1246,7 +1246,7 @@ cKontrola := "XXX"
 
 do while !EOF()
 	
-	cSeek := pripr->(idfirma + idtipdok + brdok)
+	cSeek := fakt_pripr->(idfirma + idtipdok + brdok)
 	
 	if cSeek == cKontrola
 		skip
@@ -1421,7 +1421,7 @@ function BrisiPripr()
 
 cSecur:=SecurR(KLevel,"BRISIGENDOK")
 
-// pripr->m1
+// fakt_pripr->m1
 if (m1="X" .and. ImaSlovo("X",cSecur))   
 	Beep(1)
   	Msg("Dokument izgenerisan, ne smije se brisati !!",0)
@@ -1467,7 +1467,7 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
       		cIdTipDok:=IdTipDok
       		cBrDok:=BrDok
       		select fakt_doks
-      		hseek pripr->IdFirma+pripr->IdTipDok+pripr->BrDok
+      		hseek fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
       		if (Found() .and. (doks->M1=="Z"))
 	 		// dokument zapisan samo u DOKS-u
 	 		delete
@@ -1577,7 +1577,7 @@ endif
 O_FAKT_PRIPR
 select fakt_pripr
 
-if pripr->(RECCOUNT2()) <> 0
+if fakt_pripr->(RECCOUNT2()) <> 0
 	msgbeep("Priprema nije prazna !!!")
 	return
 endif

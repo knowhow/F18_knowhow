@@ -273,7 +273,7 @@ cDinDEM:=dindem
 P_COND
 do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !eof()
 
-   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 
    if alltrim(podbr)=="." .or. roba->tip="U"
       aMemo:=ParsMemo(txt)
@@ -339,7 +339,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
    else   // podbr nije "."
      if idtipdok$"11#27"  // maloprodaja
        select tarifa; hseek roba->idtarifa
-       nMPVBP:=pripr->(cijena*Koef(cDinDem)*kolicina)/(1+tarifa->ppp/100)/(1+tarifa->opp/100)
+       nMPVBP:=fakt_pripr->(cijena*Koef(cDinDem)*kolicina)/(1+tarifa->ppp/100)/(1+tarifa->opp/100)
        if tarifa->opp<>0
          select por
          seek "PPP "+str(tarifa->opp,6,2)
@@ -422,9 +422,9 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
            if nPor2<>0
               select por
               if roba->tip="U"
-               cPor:="PPU "+ str(pripr->Porez,5,2)+"%"
+               cPor:="PPU "+ str(fakt_pripr->Porez,5,2)+"%"
               else
-               cPor:="PPP "+ str(pripr->Porez,5,2)+"%"
+               cPor:="PPP "+ str(fakt_pripr->Porez,5,2)+"%"
               endif
               seek cPor
               if !found(); append blank; replace por with cPor ;endif

@@ -80,7 +80,7 @@ ZInvp(cLin)
 GO TOP
 do while !eof() 
 	SELECT roba
-	HSEEK pripr->idRoba
+	HSEEK fakt_pripr->idRoba
     	select fakt_pripr
 
 	DokNovaStrana(125,@nStr,1)

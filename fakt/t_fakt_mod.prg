@@ -424,9 +424,9 @@ RPar("50",@gVarC)
 // prvenstveno za win 95
 RPar("95",@gKomLin)       
 
-if empty(gKomLin)
- gKomLin:="start "+trim(goModul:oDataBase:cDirPriv)+"\fakt.rtf"
-endif
+//if empty(gKomLin)
+ //gKomLin:="start "+trim(goModul:oDataBase:cDirPriv)+"\fakt.rtf"
+//endif
 
 Rpar("Bv",@gBaznaV)
 RPar("cr",@gZnPrec)
@@ -741,11 +741,11 @@ if IzFmkIni("FMK","TerminalServer","N")=="D"
    gTerminalServer:=.t.
 endif
 
-public lPoNarudzbi
-lPoNarudzbi:= ( IzFMKINI("FAKT","10PoNarudzbi","N",KUMPATH)=="D" )
+public lPoNarudzbi := "N"
+//lPoNarudzbi:= ( IzFMKINI("FAKT","10PoNarudzbi","N",KUMPATH)=="D" )
 
-public lSpecifZips
-lSpecifZips:= ( IzFmkIni("FAKT_Specif","ZIPS","N")=="D" )
+public lSpecifZips := "N"
+//lSpecifZips:= ( IzFmkIni("FAKT_Specif","ZIPS","N")=="D" )
 
 public gModul:="FAKT"
 gGlBaza:="FAKT.DBF"

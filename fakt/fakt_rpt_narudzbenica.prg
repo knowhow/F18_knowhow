@@ -111,7 +111,7 @@ else
 
 	if !empty(idpartner)
       		select partn
-		HSEEK PRIPR->idpartner
+		HSEEK fakt_pripr->idpartner
       		cxFirma   := naz
       		cxMjesto  := mjesto
       		cxAdresa  := adresa
@@ -182,7 +182,7 @@ else
               					aTxtR:=SjeciStr(aMemo[1],iif(gVarF=="1".and.!idtipdok$"11#15#27",51,40))   // duzina naziva + serijski broj
             				else
               					cK1:=cK2:=""
-              					if pripr->(fieldpos("k1"))<>0
+              					if fakt_pripr->(fieldpos("k1"))<>0
 							ck1:=k1
 							ck2:=k2
 						endif

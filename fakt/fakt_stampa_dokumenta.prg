@@ -156,7 +156,7 @@ cDinDEM:=dindem
 
 do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !eof()
 
-   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 
    if alltrim(podbr)=="." .or.  roba->tip="U"
       aMemo:=ParsMemo(txt)
@@ -216,9 +216,9 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
      if idtipdok $ "11#15#27"  // maloprodaja ili izlaz iz MP putem VP
        select tarifa; hseek roba->idtarifa
        IF IzFMKINI("POREZI","PPUgostKaoPPU","D")=="D"
-         nMPVBP:=pripr->(cijena*Koef(cDinDem)*kolicina)/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100)
+         nMPVBP:=fakt_pripr->(cijena*Koef(cDinDem)*kolicina)/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100)
        ELSE
-         nMPVBP:=pripr->(cijena*Koef(cDinDem)*kolicina)/((1+tarifa->opp/100)*(1+tarifa->ppp/100)+tarifa->zpp/100)
+         nMPVBP:=fakt_pripr->(cijena*Koef(cDinDem)*kolicina)/((1+tarifa->opp/100)*(1+tarifa->ppp/100)+tarifa->zpp/100)
        ENDIF
        if tarifa->opp<>0
          select por
@@ -501,7 +501,7 @@ return IF(gNW=="R","  KJ/KG ", IF(glDistrib,"", IF(BK_SB, "  BARKOD   ","Ser.bro
 
 
 /*! \fn NSRNPIIdRoba(cSR,fSint)
- *  \brief Nasteli sif->roba na pripr->idroba
+ *  \brief Nasteli sif->roba na fakt_pripr->idroba
  *  \param cSR
  *  \param fSint  - ako je fSint:=.t. sinteticki prikaz
  */
@@ -512,7 +512,7 @@ if fSint=NIL
   fSint:=.f.
 endif
 
-IF cSR==NIL; cSR:=PRIPR->IdRoba; ENDIF
+IF cSR==NIL; cSR:=fakt_pripr->IdRoba; ENDIF
 SELECT ROBA
 IF (gNovine=="D" .or.  fSint)
   hseek PADR(LEFT(cSR,gnDS),LEN(cSR))

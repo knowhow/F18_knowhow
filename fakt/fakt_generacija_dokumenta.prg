@@ -417,9 +417,9 @@ if reccount2() == 0
 	       locate for idroba==fakt->idroba
 
 	       if found() .and. lSumirati == .t. ;
-	       		.and. pripr->cijena = fakt->cijena
+	       		.and. fakt_pripr->cijena = fakt->cijena
 
-                 	 _kolicina:=pripr->kolicina+fakt->kolicina
+                 	 _kolicina:=fakt_pripr->kolicina+fakt->kolicina
 
                else
 		  	 // append blank
@@ -470,7 +470,7 @@ if  idtipdok $ "12#20#13#01#27"
         @ m_x+1,m_y+2 SAY "Dokument: "; ?? idfirma+"-"+idtipdok+"-"+brdok,"   ", Datdok
         // select FAKT; go top
         select fakt_doks; go top
-        seek pripr->idfirma+cNoviTip+"È"
+        seek fakt_pripr->idfirma+cNoviTip+"È"
         skip -1
         if  cNoviTip<>idtipdok
          cBrDok:=UBrojDok(1,gNumDio,"")

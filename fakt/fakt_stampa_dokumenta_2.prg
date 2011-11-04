@@ -331,14 +331,14 @@ return IF(lPovDob,-kolicina,kolicina)
 function ImaC1_3()
 *{
 local cPom:=""
-if pripr->(fieldpos("C1"))<>0
-	cPom+=pripr->c1
+if fakt_pripr->(fieldpos("C1"))<>0
+	cPom+=fakt_pripr->c1
 endif
-if pripr->(fieldpos("C2"))<>0
-	cPom+=pripr->c2
+if fakt_pripr->(fieldpos("C2"))<>0
+	cPom+=fakt_pripr->c2
 endif
-if pripr->(fieldpos("C3"))<>0
-	cPom+=pripr->c3
+if fakt_pripr->(fieldpos("C3"))<>0
+	cPom+=fakt_pripr->c3
 endif
 return !EMPTY(cPom)
 *}
@@ -347,17 +347,17 @@ return !EMPTY(cPom)
 
 function PrintC1_3()
 *{
-if pripr->(fieldpos("C1"))<>0 .and. !empty(pripr->c1)
-	?? "C1="+trim(pripr->c1),""
+if fakt_pripr->(fieldpos("C1"))<>0 .and. !empty(fakt_pripr->c1)
+	?? "C1="+trim(fakt_pripr->c1),""
 endif
-if pripr->(fieldpos("C2"))<>0 .and. !empty(pripr->c2)
-	?? "C2="+trim(pripr->c2),""
+if fakt_pripr->(fieldpos("C2"))<>0 .and. !empty(fakt_pripr->c2)
+	?? "C2="+trim(fakt_pripr->c2),""
 endif
-if pripr->(fieldpos("C3"))<>0 .and. !empty(pripr->c3)
-	?? "C3="+trim(pripr->c3),""
+if fakt_pripr->(fieldpos("C3"))<>0 .and. !empty(fakt_pripr->c3)
+	?? "C3="+trim(fakt_pripr->c3),""
 endif
-if pripr->(fieldpos("opis"))<>0 .and. !empty(pripr->opis)
-	?? "op="+trim(pripr->opis),""
+if fakt_pripr->(fieldpos("opis"))<>0 .and. !empty(fakt_pripr->opis)
+	?? "op="+trim(fakt_pripr->opis),""
 endif
 
 

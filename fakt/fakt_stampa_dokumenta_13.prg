@@ -367,7 +367,7 @@ endif
  elseif cPMP=="6"
    nMPCSAPP:=roba->mpc6
  else
-   nMPCSAPP:=pripr->cijena
+   nMPCSAPP:=fakt_pripr->cijena
  endif
  i:=1
  nC:=BrDecimala(piccdem)
@@ -384,7 +384,7 @@ else
   AADD(aKol,{ "Tarifa"    , {|| tarifa->naz           }, .f., "C", 13, 0, 1, ++i} )
 endif
 
-AADD(aKol,{ "Sifra"     , {|| pripr->idroba         }, .f., "C", 10, 0, 1, ++i} )
+AADD(aKol,{ "Sifra"     , {|| fakt_pripr->idroba         }, .f., "C", 10, 0, 1, ++i} )
 AADD(aKol,{ "robe"      , {|| "#"                   }, .f., "C", 10, 0, 2,   i} )
 
 if IzFMKINI("FAKT","Uska13ka","N",KUMPATH)=="D"
@@ -481,7 +481,7 @@ function NadjiVr()
 *{
 local nPor
 
-// Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+// Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 NSRNPIdRoba()   
 aPorezi:={}
 select fakt_pripr
@@ -503,7 +503,7 @@ nMPCSAPP:=roba->mpc6
 elseif cpmp=="1"
 nMPCSAPP:=roba->mpc
 else
-nMPCSAPP:=pripr->cijena
+nMPCSAPP:=fakt_pripr->cijena
 endif
 else
 nMPCSaPP:=cijena
@@ -659,7 +659,7 @@ nDNRobe:=VAL(IzFMKINI("STAMPA","Opresa13kaDuzinaNazivaRobe","18",KUMPATH))
 aKol:={}
 nUkupno:=0
 do while !EOF() .and. cIdFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
    select tarifa
    hseek (cTar:=roba->idtarifa)
    select fakt_pripr
@@ -839,7 +839,7 @@ function ForDok13()
 *{
 local lPom
 
-lPom:=cIdFirma+cIdTipDok+cBrDok==pripr->IdFirma+pripr->IdTipDok+pripr->brDok
+lPom:=cIdFirma+cIdTipDok+cBrDok==fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->brDok
 
 return lPom
 *}

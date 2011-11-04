@@ -76,7 +76,7 @@ dDatDok:=DatDok
 cIdTipDok:=IdTipDok
 
 
-cDocumentName:=doc_name(cIdFirma, cIdTipDok, cBrDok, pripr->IdPartner)
+cDocumentName:=doc_name(cIdFirma, cIdTipDok, cBrDok, fakt_pripr->IdPartner)
 
 
 // prikaz samo kolicine
@@ -283,7 +283,7 @@ DEC_VRIJEDNOST(ZAO_VRIJEDNOST())
 
 lIno:=.f.
 do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok
-	// Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+	// Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 	NSRNPIdRoba()   
 
 	// nastimaj i tarifu
@@ -318,8 +318,8 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	endif
 
 	// dodaj i vrijednost iz polja SERBR
-	if !EMPTY(ALLTRIM(pripr->serbr))
-		cRobaNaz := cRobaNaz + ", " + ALLTRIM(pripr->serbr) 
+	if !EMPTY(ALLTRIM(fakt_pripr->serbr))
+		cRobaNaz := cRobaNaz + ", " + ALLTRIM(fakt_pripr->serbr) 
 	endif
 
 	//resetuj varijable sa cijenama
@@ -336,13 +336,13 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	// procenat pdv-a
 	nPPDV := tarifa->opp
 	
-	cIdPartner = pripr->IdPartner
+	cIdPartner = fakt_pripr->IdPartner
 	
-	if pripr->(FIELDPOS("C1")) <> 0
-		cC1 := pripr->c1
-		cC2 := pripr->c2
-		cC3 := pripr->c3
-		cOpis := pripr->opis
+	if fakt_pripr->(FIELDPOS("C1")) <> 0
+		cC1 := fakt_pripr->c1
+		cC2 := fakt_pripr->c2
+		cC3 := fakt_pripr->c3
+		cOpis := fakt_pripr->opis
 	endif
 
 	// rn Veleprodaje
@@ -374,10 +374,10 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	nRCijen := field->cijena
 
 	
-	if LEFT(pripr->DINDEM, 3) <> LEFT(ValBazna(), 3) 
+	if LEFT(fakt_pripr->DINDEM, 3) <> LEFT(ValBazna(), 3) 
 		// preracunaj u EUR
 		// omjer EUR / KM
-      		nRCijen:= nRCijen / OmjerVal( ValBazna(), pripr->DINDEM, pripr->datdok)
+      		nRCijen:= nRCijen / OmjerVal( ValBazna(), fakt_pripr->DINDEM, fakt_pripr->datdok)
 		nRCijen:=ROUND(nRCijen, DEC_CIJENA() )
    	endif
 
@@ -574,8 +574,8 @@ add_drntext("D09", cIdTipDok)
 add_drntext("D10", cIdFirma)
 
 // dokument veza
-if pripr->(FIELDPOS("dok_veza")) <> 0 .and. !EMPTY( pripr->dok_veza )
-	cTmp := pripr->dok_veza
+if fakt_pripr->(FIELDPOS("dok_veza")) <> 0 .and. !EMPTY( fakt_pripr->dok_veza )
+	cTmp := fakt_pripr->dok_veza
 else
 	cTmp := cM_d_veza
 endif
@@ -590,7 +590,7 @@ for i := 1 to LEN( aTmp )
 next
 
 // tekst na kraju fakture F04, F05, F06
-fill_dod_text( aMemo[2], pripr->idpartner )
+fill_dod_text( aMemo[2], fakt_pripr->idpartner )
 
 // potpis na kraju
 fill_potpis(cIdTipDok)
@@ -738,17 +738,17 @@ return
 // -----------------------------------------------
 static function fill_other()
 
-if pripr->(FIELDPOS("idrnal")) <> 0
+if fakt_pripr->(FIELDPOS("idrnal")) <> 0
 	// radni nalog
-	if !EMPTY( pripr->idrnal )
-		add_drntext("O01", ALLTRIM(pripr->idrnal) )
-		add_drntext("O02", GetNameRNal( pripr->idrnal ) )
+	if !EMPTY( fakt_pripr->idrnal )
+		add_drntext("O01", ALLTRIM(fakt_pripr->idrnal) )
+		add_drntext("O02", GetNameRNal( fakt_pripr->idrnal ) )
 	endif
 endif
 
 // broj fiskalnog isjecka
-add_drntext("O10", fisc_isjecak( pripr->idfirma, pripr->idtipdok, ;
-	pripr->brdok ) )
+add_drntext("O10", fisc_isjecak( fakt_pripr->idfirma, fakt_pripr->idtipdok, ;
+	fakt_pripr->brdok ) )
 
 // traka - ispis, cjene bez pdv, sa pdv (1) bez pdv, (2) sa pdv
 cPom := gMPCjenPDV

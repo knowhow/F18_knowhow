@@ -210,7 +210,7 @@ cDinDEM:=dindem
 
 do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !eof()
 
-   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+   NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 
    if alltrim(podbr)=="."   .or. roba->tip="U"
       aMemo:=ParsMemo(txt)
@@ -278,9 +278,9 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
      if idtipdok $ "11#15#27"  // maloprodaja ili izlaz iz MP putem VP ili predr.MP
        select tarifa; hseek roba->idtarifa
        IF IzFMKINI("POREZI","PPUgostKaoPPU","D")=="D"
-         nMPVBP:=pripr->(cijena*Koef(cDinDem)*kolicina)/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100)
+         nMPVBP:=fakt_pripr->(cijena*Koef(cDinDem)*kolicina)/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100)
        ELSE
-         nMPVBP:=pripr->(cijena*Koef(cDinDem)*kolicina)/((1+tarifa->opp/100)*(1+tarifa->ppp/100)+tarifa->zpp/100)
+         nMPVBP:=fakt_pripr->(cijena*Koef(cDinDem)*kolicina)/((1+tarifa->opp/100)*(1+tarifa->ppp/100)+tarifa->zpp/100)
        ENDIF
        if tarifa->opp<>0
          select por
@@ -369,9 +369,9 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
            if nPor2<>0
               select por
               if roba->tip="U"
-               cPor:="PPU "+ str(pripr->Porez,5,2)+"%"
+               cPor:="PPU "+ str(fakt_pripr->Porez,5,2)+"%"
               else
-               cPor:="PPP "+ str(pripr->Porez,5,2)+"%"
+               cPor:="PPP "+ str(fakt_pripr->Porez,5,2)+"%"
               endif
               seek cPor
               if !found(); append blank; replace por with cPor ;endif

@@ -304,7 +304,7 @@ AADD(::aImeKol, {"IdTipDok",      {|| field->idTipDok}, "idtipdok" })
 AADD(::aImeKol, {"Brdok",         {|| field->brDok}, "brdok" })
 AADD(::aImeKol, {"DatDok",        {|| field->datDok}, "datDok" })
        
-if pripr->(fieldpos("k1"))<>0 .and. gDK1=="D"
+if fakt_pripr->(fieldpos("k1"))<>0 .and. gDK1=="D"
   	AADD(::aImeKol,{ "K1",{|| field->k1}, "k1" })
   	AADD(::aImeKol,{ "K2",{|| field->k2}, "k2" })
 endif

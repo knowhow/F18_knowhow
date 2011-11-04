@@ -79,7 +79,7 @@ if fPBarkod
      cRTM := ALLTRIM(cRTM) + "bk"
 endif
 
-if IzFmkIni('FAKT','10Duplo','N')=='D' .and. pripr->(reccount2())<=10
+if IzFmkIni('FAKT','10Duplo','N')=='D' .and. fakt_pripr->(reccount2())<=10
      // dupli prored fakture do deset stavki !!!
      cRTM := ALLTRIM(cRTM) + "dp"
 endif
@@ -292,17 +292,17 @@ nZaokr:=ZAOKRUZENJE
 cDinDEM:=dindem
 
 do while idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok .and. !eof()
-	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 
 	SELECT ROBA
-	seek pripr->idroba
+	seek fakt_pripr->idroba
 	
 	SELECT TARIFA
 	seek roba->idtarifa
 
 	select fakt_pripr
 
-	cIdPartner := pripr->idpartner
+	cIdPartner := fakt_pripr->idpartner
 	
 	if alltrim(podbr)=="." .or. roba->tip="U"
      		aMemo:=ParsMemo(txt)
@@ -323,14 +323,14 @@ do while idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok .and. !
      			aTxtR:=SjeciStr(aMemo[1],iif(gVarF=="1".and.!idtipdok$"11#27",51,if(.f.,if(idtipdok$"11#27",22,31),40)))   // duzina naziva + serijski broj
        			select pom
        			append blank  //prvo se stavlja naziv!!!
-       			replace naziv with pripr->(aMemo[1])
+       			replace naziv with fakt_pripr->(aMemo[1])
        			select fakt_pripr
     	else
 			
 			cK1:=""
      			cK2:=""
      			
-			if pripr->(fieldpos("k1"))<>0 
+			if fakt_pripr->(fieldpos("k1"))<>0 
      				cK1:=k1
 				cK2:=k2
 			endif
@@ -338,8 +338,8 @@ do while idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok .and. !
 			aTxtR:=SjeciStr(trim(roba->naz)+iif(!empty(ck1+ck2)," "+ck1+" "+ck2,"")+Katbr()+IspisiPoNar(),if(.f.,if(idtipdok$"11#27",22,31),40))
        			select pom
        			append blank // prvo se stavlja naziv!!
-       			replace naziv with pripr->(trim(roba->naz)+iif(!empty(ck1+ck2)," "+ck1+" "+ck2,"")+Katbr()+IspisiPoNar())
-       			replace serbr with pripr->serbr
+       			replace naziv with fakt_pripr->(trim(roba->naz)+iif(!empty(ck1+ck2)," "+ck1+" "+ck2,"")+Katbr()+IspisiPoNar())
+       			replace serbr with fakt_pripr->serbr
        			replace idtarifa with roba->idtarifa
 			select fakt_pripr
 	endif
@@ -357,8 +357,8 @@ do while idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok .and. !
 	
 
       	select pom
-      	replace rbr with pripr->(RBr()) ,;
-                   Sifra  with pripr->(StIdROBA(idroba))
+      	replace rbr with fakt_pripr->(RBr()) ,;
+                   Sifra  with fakt_pripr->(StIdROBA(idroba))
       	select fakt_pripr
 
        	select pom
@@ -366,12 +366,12 @@ do while idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok .and. !
        	select fakt_pripr
      	
 	select pom
-      	replace kolicina with transform(pripr->(kolicina()),pickol)
+      	replace kolicina with transform(fakt_pripr->(kolicina()),pickol)
         replace jmj with lower(ROBA->jmj)
       	select fakt_pripr
 
         select pom
-        replace cijena with pripr->(transform(cijena*Koef(cDinDem),piccdem))
+        replace cijena with fakt_pripr->(transform(cijena*Koef(cDinDem),piccdem))
         select fakt_pripr
 
         if rabat-int(rabat) <> 0
@@ -382,14 +382,14 @@ do while idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok .and. !
 	   
              if gRabProc=="D"
                 select pom
-                replace Rabat with pripr->(cRab+"%")
+                replace Rabat with fakt_pripr->(cRab+"%")
                 select fakt_pripr
              endif
 	     
              select pom
-	     nCijena2 := pripr->cijena * (1- pripr->rabat/100) * Koef(cDinDem)
+	     nCijena2 := fakt_pripr->cijena * (1- fakt_pripr->rabat/100) * Koef(cDinDem)
 
-              replace Cijena2 with pripr->(transform(nCijena2 , piccdem))
+              replace Cijena2 with fakt_pripr->(transform(nCijena2 , piccdem))
 
 
 		nStopa := tarifa->opp
@@ -402,10 +402,10 @@ do while idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok .and. !
 		endif
 
 	        select pom
-                replace POR with pripr->(cPDV)
+                replace POR with fakt_pripr->(cPDV)
                
-                replace UKUPNO with pripr->(transform(round(kolicina()* cijena * Koef(cDinDem), nZaokr), picdem))
-                replace UKUPNO2 with pripr->(transform(round(kolicina()*nCijena2*Koef(cDinDem), nZaokr), picdem))
+                replace UKUPNO with fakt_pripr->(transform(round(kolicina()* cijena * Koef(cDinDem), nZaokr), picdem))
+                replace UKUPNO2 with fakt_pripr->(transform(round(kolicina()*nCijena2*Koef(cDinDem), nZaokr), picdem))
               select fakt_pripr
            
 	        nPDV:=ROUND(kolicina()* Koef(cDinDem)* nCijena2, nZaokr) * nStopa/100

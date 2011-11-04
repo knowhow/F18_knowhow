@@ -16,6 +16,7 @@
 CLASS TDbFakt INHERIT TDB 
 	method New
     method skloniSezonu	
+	method setgaDBFs	
 	method install	
 	method ostalef	
 	method obaza	
@@ -207,59 +208,7 @@ return
 *void TDBFakt::setgaDBFs()
 *{
 method setgaDBFs()
-
-PUBLIC gaDBFs := {;
-{ F_PRIPR  ,"PRIPR"   , P_PRIVPATH    },;
-{ F_PRIPR2 ,"PRIPR2"  , P_PRIVPATH    },;
-{ F_PRIPR9 ,"PRIPR9"  , P_PRIVPATH    },;
-{ F__KALK  ,"_KALK"   , P_PRIVPATH    },;
-{ F_FDEVICE,"FDEVICE" , P_PRIVPATH     },;
-{ F_FINMAT ,"FINMAT"  , P_PRIVPATH    },;
-{ F_KALK   ,"KALK"    , P_KUMPATH     },;
-{ F_KALKS  ,"KALKS"   , P_KUMPATH     },;
-{ F_DOKS   ,"DOKS"    , P_KUMPATH     },;
-{ F_DOKS2  ,"DOKS2"   , P_KUMPATH     },;
-{ F_PORMP  ,"PORMP"   , P_PRIVPATH    },;
-{ F__ROBA  ,"_ROBA"   , P_PRIVPATH    },;
-{ F__PARTN ,"_PARTN"  , P_PRIVPATH    },;
-{ F_ROBA   ,"ROBA"    , P_SIFPATH     },;
-{ F_TARIFA ,"TARIFA"  , P_SIFPATH     },;
-{ F_KONTO  ,"KONTO"   , P_SIFPATH     },;
-{ F_TRFP   ,"TRFP"    , P_SIFPATH     },;
-{ F_PARTN  ,"PARTN"   , P_SIFPATH     },;
-{ F_TNAL   ,"TNAL"    , P_SIFPATH     },;
-{ F_TDOK   ,"TDOK"    , P_SIFPATH     },;
-{ F_KONCIJ ,"KONCIJ"  , P_SIFPATH     },;
-{ F_VALUTE ,"VALUTE"  , P_SIFPATH     },;
-{ F_SAST   ,"SAST"    , P_SIFPATH     },;
-{ F_KONIZ  ,"KONIZ"   , P_KUMPATH     },;
-{ F_IZVJE  ,"IZVJE"   , P_KUMPATH     },;
-{ F_ZAGLI  ,"ZAGLI"   , P_KUMPATH     },;
-{ F_KOLIZ  ,"KOLIZ"   , P_KUMPATH     },;
-{ F_LOGK   ,"LOGK"    , P_KUMPATH     },;
-{ F_LOGKD  ,"LOGKD"   , P_KUMPATH     },;
-{ F_BARKOD ,"BARKOD"  , P_PRIVPATH    },;
-{ F_RJ     ,"RJ"      , P_KUMPATH     },;
-{ F_UPL    ,"UPL"     , P_KUMPATH     },;
-{ F_FTXT   ,"FTXT"    , P_SIFPATH     },;
-{ F_FAKT   ,"FAKT"    , P_KUMPATH     },;
-{ F__FAKT  ,"_FAKT"   , P_PRIVPATH    },;
-{ F_FAPRIPR,"PRIPR"   , P_PRIVPATH    },;
-{ F_UGOV   ,"UGOV"    , P_KUMPATH     },;
-{ F_RUGOV  ,"RUGOV"   , P_KUMPATH     },;
-{ F_GEN_UG ,"GEN_UG"  , P_KUMPATH     },;
-{ F_G_UG_P, "GEN_UG_P", P_KUMPATH     },;
-{ F_DOKS   ,"DOKS"    , P_KUMPATH     },;
-{ F_DOKS2  ,"DOKS2"   , P_KUMPATH     },;
-{ F_VRSTEP ,"VRSTEP"  , P_SIFPATH     },;
-{ F_RELAC  ,"RELAC"   , P_SIFPATH     },;
-{ F_VOZILA ,"VOZILA"  , P_SIFPATH     },;
-{ F_DEST   ,"DEST"    , P_SIFPATH     },;
-{ F_KALPOS ,"KALPOS"  , P_KUMPATH     },;
-{ F_BANKE  ,"BANKE"   , P_SIFPATH     },;
-{ F_OPS    ,"OPS"     , P_SIFPATH     };
-}
-
+// prebaceno u f18_utils.prg
 return
 *}
 
@@ -373,19 +322,19 @@ if (nArea==-1 .or. nArea==(F_FAKT))
 	CREATE_INDEX("1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
 	CREATE_INDEX("2","IdFirma+dtos(datDok)+idtipdok+brdok+rbr",KUMPATH+"FAKT")
 	CREATE_INDEX("3","idroba+dtos(datDok)",KUMPATH+"FAKT")
-	if lPoNarudzbi
+	//if lPoNarudzbi
  		// sifru gradi IDNAR + idroba !!!!!!!!!!
-  		CREATE_INDEX("3N","idnar+idroba+dtos(datDok)",KUMPATH+"FAKT")
-	endif
+  		//CREATE_INDEX("3N","idnar+idroba+dtos(datDok)",KUMPATH+"FAKT")
+	//endif
 	if izfmkini("SifRoba","ID_J")=="D"
  		// sifru gradi IDROBA_J + idroba !!!!!!!!!!
  		CREATE_INDEX("3J","idroba_j+idroba+dtos(datDok)",KUMPATH+"FAKT")
 	endif
 	// ako se koristi varijanta DITRIBUCIJA ukljuci i ove indexe
-	if glDistrib
-		CREATE_INDEX("4","idfirma+idtipdok+dtos(datdok)+idrelac+marsruta+brdok+rbr",KUMPATH+"FAKT")
-  		CREATE_INDEX("5","idfirma+idtipdok+dtos(datdok)+idrelac+iddist+idvozila+idroba",KUMPATH+"FAKT")
-	endif
+	//if glDistrib
+	//	CREATE_INDEX("4","idfirma+idtipdok+dtos(datdok)+idrelac+marsruta+brdok+rbr",KUMPATH+"FAKT")
+  	//	CREATE_INDEX("5","idfirma+idtipdok+dtos(datdok)+idrelac+iddist+idvozila+idroba",KUMPATH+"FAKT")
+	//endif
 
   	CREATE_INDEX("6","idfirma+idpartner+idroba+idtipdok+dtos(datdok)",KUMPATH+"FAKT")
   	CREATE_INDEX("7","idfirma+idpartner+idroba+dtos(datdok)",KUMPATH+"FAKT")
@@ -413,12 +362,12 @@ if (nArea==-1 .or. nArea==(F_FAKT_PRIPR))
 endif
 
 // opcija smece
-if (nArea==-1 .or. nArea==(F_FAKT_PRIPR9))
+if (nArea==-1 .or. nArea==(F_FAKT_PRIPR))
 	//PRIPR9.DBF
 
-	if IsRabati()
-		AADD(aDBf,{ 'TIPRABAT'    , 'C' ,  10 ,  0 })
-	endif
+	//if IsRabati()
+	//	AADD(aDBf,{ 'TIPRABAT'    , 'C' ,  10 ,  0 })
+	//endif
 	
 	if !FILE(f18_ime_dbf("fakt_pripr9"))
         	DBcreate2(PRIVPATH+'FAKT_PRIPR9.DBF',aDbf)
@@ -444,7 +393,7 @@ endif
 
 #ifndef C50
 	dbt2fpt(KUMPATH+'FAKT')
-	dbt2fpt(PRIVPATH+'PRIPR')
+	dbt2fpt(PRIVPATH+'FAKT_PRIPR')
 	dbt2fpt(PRIVPATH+'_FAKT')
 #endif
 
@@ -473,21 +422,21 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	AADD(aDBf,{ 'DAT_VAL'             , 'D' ,   8 ,  0 })
 	AADD(aDBf,{ 'DAT_OTPR'            , 'D' ,   8 ,  0 })
 	
-	if IsRabati()
-		AADD(aDBf,{ 'IDRABAT'             , 'C' ,  10 ,  0 })
-		AADD(aDBf,{ 'TIPRABAT'            , 'C' ,  10 ,  0 })
+	//if IsRabati()
+	//	AADD(aDBf,{ 'IDRABAT'             , 'C' ,  10 ,  0 })
+	//	AADD(aDBf,{ 'TIPRABAT'            , 'C' ,  10 ,  0 })
+	//endif
+	
+	if !FILE(f18_ime_dbf("fakt_doks"))
+        	DBcreate2(KUMPATH+'FAKT_DOKS.DBF',aDbf)
 	endif
 	
-	if !FILE(KUMPATH+"DOKS.DBF")
-        	DBcreate2(KUMPATH+'DOKS.DBF',aDbf)
-	endif
-	
-	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"DOKS")
-	CREATE_INDEX("2","IdFirma+idtipdok+partner",KUMPATH+"DOKS")
-	CREATE_INDEX("3","partner",KUMPATH+"DOKS")
-	CREATE_INDEX("4","idtipdok",KUMPATH+"DOKS")
-	CREATE_INDEX("5","datdok",KUMPATH+"DOKS")
-	CREATE_INDEX("6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS")
+	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"FAKT_DOKS")
+	CREATE_INDEX("2","IdFirma+idtipdok+partner",KUMPATH+"FAKT_DOKS")
+	CREATE_INDEX("3","partner",KUMPATH+"FAKT_DOKS")
+	CREATE_INDEX("4","idtipdok",KUMPATH+"FAKT_DOKS")
+	CREATE_INDEX("5","datdok",KUMPATH+"FAKT_DOKS")
+	CREATE_INDEX("6","IdFirma+idpartner+idtipdok",KUMPATH+"FAKT_DOKS")
 endif
 
 
@@ -506,11 +455,11 @@ if (nArea==-1 .or. nArea==(F_DOKS2))
 	AADD(aDBf,{ "N1"           , "N" ,  15 ,  2 })
 	AADD(aDBf,{ "N2"           , "N" ,  15 ,  2 })
 	
-	if !FILE(KUMPATH+"DOKS2.DBF")
-        	DBcreate2(KUMPATH+"DOKS2.DBF",aDbf)
+	if !FILE(f18_ime_dbf("fakt_doks2"))
+        	DBcreate2(KUMPATH+"FAKT_DOKS2.DBF",aDbf)
 	endif
 	
-	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"DOKS2")
+	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"FAKT_DOKS2")
 endif
 
 
@@ -528,7 +477,7 @@ if (nArea==-1 .or. nArea==(F_VRSTEP))
 	CREATE_INDEX("ID","Id",SIFPATH+"VRSTEP.DBF")
 endif
 
- 
+/* 
 if glDistrib
 	if (nArea==-1 .or. nArea==(F_RELAC)) 
 		//RELAC.DBF
@@ -580,14 +529,15 @@ if glDistrib
   		CREATE_INDEX("2","IDRELAC+DTOS(datum)",KUMPATH+"KALPOS")
 	endif
 endif
+*/
 
 // kreiranje tabela ugovora
 db_cre_ugov()
 
-if gFc_use == "D"
+//if gFc_use == "D"
 	// kreiranje tabele sa listom uredjaja
 	c_fdevice()
-endif
+//endif
 
 return
 
@@ -608,11 +558,11 @@ local cDbfName
 
 lIdiDalje:=.f.
 
-if i==F_KORISN .or. i==F_PARAMS .or.  i==F_GPARAMS .or. i==F_GPARAMSP .or. i==F_MPARAMS .or. i==F_FAKT_PRIPR .or. i==F_FAKT_PRIPR9 
+if i==F_KORISN .or. i==F_PARAMS .or.  i==F_GPARAMS .or. i==F_GPARAMSP .or. i==F_MPARAMS .or. i==F_FAKT_PRIPR 
 	lIdiDalje:=.t.
 endif
 
-if i==F_FAKT  .or. i==F_DOKS .or. i==F_DOKS2 .or. i==F_RJ .or. i==F_UPL
+if i==F_FAKT  .or. i==F_FAKT_DOKS .or. i==F_FAKT_DOKS2 .or. i==F_FAKT_RJ .or. i==F_UPL
 	lIdiDalje:=.t.
 endif
 

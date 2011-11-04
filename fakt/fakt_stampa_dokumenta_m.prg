@@ -169,7 +169,7 @@ CLOSERET
  
 function UkupneVrijednosti()
 *{
-NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
    if alltrim(podbr)=="."   .or. roba->tip="U"
       aMemo:=ParsMemo(txt)
       cTxt1:=padr(aMemo[1],40)
@@ -222,7 +222,7 @@ NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
    else   // podbr nije "."
      if idtipdok$"11#27"  // maloprodaja
        select tarifa; hseek roba->idtarifa
-       nMPVBP:=round( pripr->(cijena*Koef(cDinDem)*PrerCij()*kolicina)/(1+tarifa->ppp/100)/(1+tarifa->opp/100) , nZaokr)
+       nMPVBP:=round( fakt_pripr->(cijena*Koef(cDinDem)*PrerCij()*kolicina)/(1+tarifa->ppp/100)/(1+tarifa->opp/100) , nZaokr)
        if tarifa->opp<>0
          select por
          seek "PPP "+str(tarifa->opp,6,2)
@@ -303,9 +303,9 @@ NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
            if nPor2<>0
               select por
               if roba->tip="U"
-               cPor:="PPU "+ str(pripr->Porez,5,2)+"%"
+               cPor:="PPU "+ str(fakt_pripr->Porez,5,2)+"%"
               else
-               cPor:="PPP "+ str(pripr->Porez,5,2)+"%"
+               cPor:="PPP "+ str(fakt_pripr->Porez,5,2)+"%"
               endif
               seek cPor
               if !found(); append blank; replace por with cPor ;endif

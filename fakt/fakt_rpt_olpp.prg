@@ -122,7 +122,7 @@ PRIVATE nColR:=10
 
 DO WHILE !EOF() .and. cIdfirma+cIdVd+cBrDok==IDFIRMA+IDTIPDOK+BRDOK
 
-	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na Pripr->IdRoba
+	NSRNPIdRoba()   // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 
    	aPorezi:={}
    	select fakt_pripr
@@ -142,7 +142,7 @@ DO WHILE !EOF() .and. cIdfirma+cIdVd+cBrDok==IDFIRMA+IDTIPDOK+BRDOK
      		elseif cpmp=="1"
       			nMPCSAPP:=roba->mpc
      		else
-      			nMPCSAPP:=pripr->cijena
+      			nMPCSAPP:=fakt_pripr->cijena
      		endif
    	ELSE
      		nMPCSaPP:=cijena
@@ -259,7 +259,7 @@ ZagFirma()
 @ prow()+1,35 SAY cNaslov
 ?
 select partn
-hseek pripr->idpartner
+hseek fakt_pripr->idpartner
 select fakt_pripr
 @ prow()+1,20 SAY "Po dokumentu: "+idtipdok+"   "
 ?? StrKZN("Sjedi{te:","7",gKodnaS)

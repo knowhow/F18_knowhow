@@ -356,11 +356,11 @@ endif
 return 1
 
 
-/*! \fn Preknjiz()
+/*! \fn Prefin_unos_naloga()
  *  \brief Preknjizenje naloga
  */
  
-function Preknjiz()
+function Prefin_unos_naloga()
 
 local fK1:="N"
 local fk2:="N"

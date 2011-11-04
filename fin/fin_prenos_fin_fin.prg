@@ -35,7 +35,7 @@ return .f.
  *  \brief Prenos dokumenata 
  */
  
-function PrDisk()
+static function PrDisk()
 local nRec
 PRIVATE cLokPren    := "A:\"
 PRIVATE cFZaPredaju := "AFIN"
@@ -284,7 +284,7 @@ return
  *  \brief Povrat dokumenata
  */
  
-function PovDisk()
+static function PovDisk()
 
 local nRec
 PRIVATE cLokPren    := "A:\"
@@ -420,7 +420,7 @@ return
  *  \param lIni
  */
  
-function PPPDisk(lIni)
+static function PPPDisk(lIni)
 
 LOCAL GetList:={}
   IF lIni==NIL; lIni:=.f.; ENDIF

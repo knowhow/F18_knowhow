@@ -14,7 +14,7 @@
 static __par_len
 
 
-function StDatn()
+function fin_stampa_liste_naloga()
 local nDug:=0.00
 local nPot:=0.00
 local nPos:=15

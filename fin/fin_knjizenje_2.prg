@@ -120,7 +120,7 @@ RETURN (NIL)
 
 
 
-function SrediRbr(lSilent)
+function SrediRbrFin(lSilent)
 local nArr
 local nTREC
 local i

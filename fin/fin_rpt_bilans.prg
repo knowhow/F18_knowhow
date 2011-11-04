@@ -292,7 +292,7 @@ if LEN(cIdFirma)<2
   nSlog:=0; nUkupno:=RECCOUNT2()
   cFilt := IF( EMPTY(cFilter) , "IDFIRMA="+cm2str(cIdFirma) , cFilter+".and.IDFIRMA="+cm2str(cIdFirma) )
   cSort1:="IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
-  INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt EVAL(fin_tek_rec_2()) EVERY 1
   GO TOP
   BoxC()
 else
@@ -822,7 +822,7 @@ if LEN(cIdFirma)<2
   nSlog:=0; nUkupno:=RECCOUNT2()
   cFilt := IF( EMPTY(cFilter) , "IDFIRMA="+cm2str(cIdFirma) , cFilter+".and.IDFIRMA="+cm2str(cIdFirma) )
   cSort1:="IdKonto+dtos(DatNal)"
-  INDEX ON &cSort1 TO "ANATMP" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "ANATMP" FOR &cFilt EVAL(fin_tek_rec_2()) EVERY 1
   GO TOP
   BoxC()
 else
@@ -1172,7 +1172,7 @@ if LEN(cIdFirma)<2
   nSlog:=0; nUkupno:=RECCOUNT2()
   cFilt := IF( EMPTY(cFilter) , "IDFIRMA="+cm2str(cIdFirma) , cFilter+".and.IDFIRMA="+cm2str(cIdFirma) )
   cSort1:="IdKonto+dtos(DatNal)"
-  INDEX ON &cSort1 TO "SINTMP" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "SINTMP" FOR &cFilt EVAL(fin_tek_rec_2()) EVERY 1
   GO TOP
   BoxC()
 else
@@ -1531,7 +1531,7 @@ if LEN(cIdFirma)<2
   nSlog:=0; nUkupno:=RECCOUNT2()
   cFilt := IF( EMPTY(cFilter) , "IDFIRMA="+cm2str(cIdFirma) , cFilter+".and.IDFIRMA="+cm2str(cIdFirma) )
   cSort1:="IdKonto+dtos(DatNal)"
-  INDEX ON &cSort1 TO "SINTMP" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "SINTMP" FOR &cFilt EVAL(fin_tek_rec_2()) EVERY 1
   GO TOP
   BoxC()
 else

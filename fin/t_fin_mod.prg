@@ -88,7 +88,7 @@ private opcexe:={}
 
 AADD(opc, "1. unos/ispravka dokumenta                   ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "KNJIZNALOGA"))
-	AADD(opcexe, {|| Knjiz()})
+	AADD(opcexe, {|| fin_unos_naloga()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -153,7 +153,7 @@ AADD(opcexe, {|| nil})
 
 AADD(opc, "X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","PARAMETRI"))
-	AADD(opcexe, {|| mnu_params()})
+	AADD(opcexe, {|| mnu_fin_params()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

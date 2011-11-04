@@ -1,7 +1,7 @@
 #include "fin.ch"
 
  
-function Kartica()
+function fin_kartica()
 private opc:={}
 private opcexe:={}
 private Izbor:=1

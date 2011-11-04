@@ -589,11 +589,11 @@ return
 
 
 
-/*! \fn PreKart()
+/*! \fn fin_prekart()
  *  \brief Prebacivanje subanalitickih konta... 
  */
  
-function PreKart()
+function fin_prekart()
 
 LOCAL aNiz:={}
  PRIVATE cKonto:=SPACE(60), cPartn:=SPACE(60)

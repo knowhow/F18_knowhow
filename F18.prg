@@ -71,10 +71,16 @@ AADD( menuop, "5) LD - obracun plata")
 mnu_choice := achoice( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t. )
 
 do case
+
 	case mnu_choice == 0
 		quit
+
 	case mnu_choice == 1
 		MainFin(cUser, cPassWord, p3, p4, p5, p6, p7)
+
+	case mnu_choice == 3
+		MainFakt(cUser, cPassWord, p3, p4, p5, p6, p7)
+
 endcase
 
 FCLOSE(nLogHandle)
@@ -96,3 +102,10 @@ return cUser
 function log_write(cMsg)
 FWRITE(nLogHandle, cMsg + hb_eol())
 return
+
+// ovo nešto treba za harbour 
+function TFileRead()
+return
+
+
+

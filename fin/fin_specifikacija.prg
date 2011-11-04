@@ -1657,7 +1657,7 @@ return
 /*! \fn TekRec()
  *  \brief Vraca tekuci zapis
  */
-function TekRec()
+static function TekRec()
 @ m_x+1,m_y+2 SAY RecNo()
 return nil
 
@@ -4245,7 +4245,7 @@ LOCAL GetList:={}
 
 
   MsgO("Formiram pomocnu datoteku....")
-  StKart(,.t.,iif(!empty(cMjesto),{|| Mjesto(cMjesto)}, NIL ))       // priprema bazu POM.DBF - izvjeçtaj otv.stavke
+  StKart(,.t.,iif(!empty(cMjesto),{|| getmjesto(cMjesto)}, NIL ))       // priprema bazu POM.DBF - izvjeçtaj otv.stavke
                      // grupisane po brojevima veze
   MsgC()
   SELECT (F_POM)
@@ -4377,12 +4377,12 @@ CLOSERET
 
 
 
-/*! \fn Mjesto(cMjesto)
+/*! \fn getmjesto(cMjesto)
  *  \brief 
  *  \param cMjesto
  */
  
-function Mjesto(cMjesto)
+function getmjesto(cMjesto)
 
 local fRet
 local nSel := select()
@@ -4485,7 +4485,7 @@ return PostojiSifra(F_VKSG,1,10,60,"Veze konta sa prethodnim godinama",@cId,dx,d
  *  \brief Funkcija koju koristi StampaTabele()
  */
  
-function FFor1()
+static function FFor1()
 
 cIdP:=IDPARTNER
 
@@ -4524,7 +4524,7 @@ RETURN .t.
  *  \brief 
  */
 
-function FSvaki1()
+static function FSvaki1()
 
 ++nRbr
 cNPartnera:=PADR(Ocitaj(F_PARTN,IDPARTNER,"naz"), 25)

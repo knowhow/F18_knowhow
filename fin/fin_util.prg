@@ -77,21 +77,21 @@ cSecur2:=SecurR(KLevel,"SGLEDAJ")
 if ImaSlovo("X",cSecur) .or. ImaSlovo("D",cSecur2)
 	MsgBeep("Opcija nedostupna !")
 else
-	Preknjiz()
+	Prefin_unos_naloga()
 endif
 return
 
 
-/*! \fn PrebKartica()
+/*! \fn Prebfin_kartica()
  *  \brief Prebacivanja kartica
  */
-function PrebKartica()
+function Prebfin_kartica()
 //cSecur:=SecurR(KLevel,"Prekart")
 //cSecur2:=SecurR(KLevel,"SGLEDAJ")
 //if ImaSlovo("TX",cSecur) .or. ImaSlovo("D",cSecur2)
 //	MsgBeep("Opcija nedostupna !")
 //else
-	PreKart()
+	fin_prekart()
 //endif
 return
 

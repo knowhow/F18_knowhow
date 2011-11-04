@@ -748,25 +748,6 @@ local cPrikazi
 return .t.
 
 
-
-/*! \fn P_VrsteP(cId,dx,dy)
- *  \brief Otvara sifrarnik vrsta placanja
- *  \param cId
- *  \param dx
- *  \param dy
- */
- 
-function P_VrsteP(cId,dx,dy)
-
-PRIVATE ImeKol,Kol:={}
-ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",20), {|| naz},      "naz"       };
-        }
- FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-return PostojiSifra(F_VRSTEP,1,10,55,"Sifrarnik vrsta placanja",@cid,dx,dy)
-
-
-
 /*! \fn P_ULimit(cId,dx,dy)
  *  \brief Otvara sifrarnik limita po ugovorima
  *  \param cId
@@ -784,39 +765,6 @@ ImeKol:={ { "ID "        , {|| id       }, "id"       , {|| .t.}, {|| vpsifra(wI
  FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
 return PostojiSifra(F_ULIMIT,1,10,55,"Sifrarnik limita po ugovorima",@cid,dx,dy)
 
-
-
-/*! \fn P_Ftxt(cId,dx,dy)
- *  \brief Otvara sifrarnik tekst na kraju fakture
- *  \param cId
- *  \param dx
- *  \param dy
- */
- 
-function P_Ftxt(cId,dx,dy)
-
-LOCAL vrati
-PRIVATE ImeKol,Kol
-ImeKol:={ { PADR("ID",2),   {|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
-          { "Naziv",  {|| naz},  "naz", {|| UsTipke(),GetList[2]:picture:="@S50",.t.},;
-            {|| wnaz:=strtran(wnaz,"##", chr(13)+chr(10)),BosTipke(),.t.}      };
-        }
-Kol:={1,2}
-Private gTBDir:="N"
-vrati:=PostojiSifra(F_FTXT,1,7,77,"Faktura - tekst na kraju fakture",@cId)
-RETURN vrati
-
-
-
-/*! \fn Labelu()
- *  \brief Napomena da se u modulu fakt vrsi labeliranje
- *  \param
- */
- 
-function Labelu()
-
-Msgo("U modulu FAKT vrsi se labeliranje...")
-return
 
 
 

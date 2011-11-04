@@ -27,7 +27,7 @@ private opc:={}
 private opcexe:={}
 
 AADD(opc,"1. kartica                      ")
-AADD(opcexe,{|| Kartica()})
+AADD(opcexe,{|| fin_kartica()})
 AADD(opc,"2. bruto bilans")
 AADD(opcexe,{|| Bilans()})
 AADD(opc,"3. specifikacije")

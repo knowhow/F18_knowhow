@@ -33,7 +33,7 @@ endif
 
 AADD(opc, "3. prebacivanje kartica")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","PREBKARTICA"))
-	AADD(opcexe, {|| PrebKartica()})
+	AADD(opcexe, {|| Prebfin_kartica()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

@@ -697,7 +697,7 @@ return
  *  \brief Otvorene stavke grupisane po brojevima veze
  *  \param fSolo
  *  \param fTiho
- *  \param bFilter - npr. {|| Mjesto(cMjesto)}
+ *  \param bFilter - npr. {|| getmjesto(cMjesto)}
  */
  
 function StKart(fSolo,fTiho,bFilter)
@@ -1941,7 +1941,7 @@ RETURN (NIL)
  *  \param cVar - varijabla
  */
  
-function UzmiVar(cVar)
+static function UzmiVar(cVar)
 
 LOCAL cVrati:=""
  DO CASE
@@ -2609,7 +2609,7 @@ return .t.
  *  \param nRequest
  */
  
-function SkipDBBK(nRequest)
+static function SkipDBBK(nRequest)
 
 local nCount
 nCount := 0

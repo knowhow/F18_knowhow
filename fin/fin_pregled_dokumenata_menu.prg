@@ -27,7 +27,7 @@ else
 endif
 
 AADD(opc, "3. stampa liste dokumenata")
-AADD(opcexe, {|| StDatN()})
+AADD(opcexe, {|| fin_stampa_liste_naloga()})
 
 AADD(opc, "4. kontrola zbira datoteka za period - BETA")
 AADD(opcexe, {|| KontrZb(.t.)})

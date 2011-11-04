@@ -24,7 +24,7 @@ static __par_len
 // ---------------------------------------------
 // Unos fin naloga
 // ---------------------------------------------
-function Knjiz()
+function fin_unos_naloga()
 local izbor
 private opc[4]
 
@@ -107,7 +107,7 @@ return
  */
  
 function KnjNal()
-O_Edit()
+o_fin_edit()
 ImeKol:={ ;
           {"F.",            {|| IdFirma }, "IdFirma" } ,;
           {"VN",            {|| IdVN    }, "IdVN" } ,;
@@ -147,7 +147,7 @@ Box( , MAXROWS() - 4, MAXCOLS() - 3)
 @ m_x + MAXROWS() - 4,   m_y+2 SAY "<c-F9> Brisi pripremu ³ <F5>  KZB, <a-F5> PrDat³ <a-B> Blagajna,<F10> Ostalo"
 
 
-ObjDbedit("PN2", MaxRows() - 4, MaxCols() - 3,  {|| EdPRIPR()}, "", "Priprema...", , , , ,3)
+ObjDbedit("PN2", MaxRows() - 4, MaxCols() - 3,  {|| edit_fin_pripr()}, "", "Priprema...", , , , ,3)
 BoxC()
 closeret
 return
@@ -187,11 +187,11 @@ return .t.
 
 
 
-/*! \fn O_Edit()
+/*! \fn o_fin_edit()
  *  \brief Otvara unos nove stavke u pripremi
  */
  
-function O_Edit()
+function o_fin_edit()
 *{
 IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
 	O_VRSTEP
@@ -240,12 +240,12 @@ return
 
 
 
-/*! \fn EditPripr()
+/*! \fn edit_fin_priprema()
  *  \brief Ispravka stavke u pripremi
  *  \param fNovi .t. - Nova stavka, .f. - Ispravka postojece
  */
  
-function EditPripr()
+function edit_fin_priprema()
 *{
 parameters fNovi
 
@@ -543,11 +543,11 @@ AEVAL(GetList,{|o| o:display()})
 // c-T  -  Brisanje stavke,  F5 - kontrola zbira za jedan nalog
 // F6 -  Suma naloga, ENTER-edit stavke, c-A - ispravka naloga
 
-/*! \fn EdPRIPR()
+/*! \fn edit_fin_pripr()
  *  \brief Ostale operacije u ispravki stavke
  */
 
-function EdPRIPR()
+function edit_fin_pripr()
 *{
 local nTr2
 local lLogUnos := .f.
@@ -605,7 +605,7 @@ case Ch==K_ALT_F5
 
 
   case Ch==K_F9
-  	SrediRbr()
+  	SrediRbrFin()
 	return DE_REFRESH
   case Ch==K_CTRL_T
      if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
@@ -644,7 +644,7 @@ case Ch==K_ALT_F5
     Box("ist",20,75,.f.)
     Scatter()
     nRbr:=VAL(_Rbr)
-    if EditPRIPR(.f.)==0
+    if edit_fin_priprema(.f.)==0
      BoxC()
      return DE_CONT
     else
@@ -668,7 +668,7 @@ case Ch==K_ALT_F5
            Scatter()
            nRbr:=VAL(_Rbr)
            @ m_x+1,m_y+1 CLEAR to m_x+19,m_y+74
-           if EditPRIPR(.f.)==0
+           if edit_fin_priprema(.f.)==0
            	exit
            else
              	BrisiPBaze()
@@ -719,7 +719,7 @@ case Ch==K_ALT_F5
 	   
            nRbr:=VAL(_Rbr)+1
            @ m_x+1, m_y+1 CLEAR to m_x+19,m_y + 76
-           if EditPRIPR(.t.)==0
+           if edit_fin_priprema(.t.)==0
              exit
            else
              BrisiPBaze()
@@ -735,7 +735,6 @@ case Ch==K_ALT_F5
            @ m_x+19, m_y+56 SAY nDug-nPot PICTURE '9 999 999 999.99'
            inkey(10)
 	   select fin_pripr
-	   //SrediRbr(.t.)
            APPEND BLANK
            Gather()
            
@@ -780,7 +779,7 @@ case Ch==K_ALT_F5
    case Ch==K_CTRL_P
      close all
      StNal()
-     O_Edit()
+     o_fin_edit()
      return DE_REFRESH
 
 
@@ -796,19 +795,19 @@ case Ch==K_ALT_F5
      // pa azuriraj
      close all
      fin_azur(.t.)
-     O_Edit()
+     o_fin_edit()
      return DE_REFRESH
 
 
    case Ch==K_ALT_A
      fin_azur()
-     O_Edit()
+     o_fin_edit()
      return DE_REFRESH
 
    case Ch==K_ALT_B
      close all
      Blagajna()
-     O_Edit()
+     o_fin_edit()
      return DE_REFRESH
 
    case Ch==K_ALT_I
@@ -1035,7 +1034,7 @@ IF lSint==NIL; lSint:=.f.; ENDIF
   nSlog:=0; nUkupno:=RECCOUNT2()
   cFilt:=cFilter
   cSort1:="idFirma+IdVN+BrNal+IdKonto"
-  INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt EVAL(fin_tek_rec_2()) EVERY 1
   GO TOP
   nArr:=SELECT()
   BoxC()
@@ -1132,11 +1131,11 @@ RETURN
 *}
 
 
-/*! \fn TekRec2()
+/*! \fn fin_tek_rec_2()
  *  \brief Tekuci zapis
  */
  
-function TekRec2()
+function fin_tek_rec_2()
 *{
  nSlog++
  @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
@@ -1185,7 +1184,7 @@ private opc[4]
      endcase
   enddo
   m_x:=am_x; m_y:=am_y
-  O_Edit()
+  o_fin_edit()
 RETURN
 
 

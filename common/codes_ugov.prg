@@ -207,7 +207,7 @@ do case
   		I_ListaUg()
 
 	case ( Ch == K_ALT_L )
-  		Labelu()
+  		FaktLabelu()
 
 endcase
 

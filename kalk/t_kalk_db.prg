@@ -187,6 +187,11 @@ return
 method kreiraj(nArea)
 local lPoNarudzbi := .f.
 local glBrojacPoKontima := .f.
+local gVodiSamoTarife := "N"
+
+cDirRad := my_home()
+cDirSif := my_home()
+cDirPriv := my_home()
 
 if (nArea==nil)
 	nArea:=-1

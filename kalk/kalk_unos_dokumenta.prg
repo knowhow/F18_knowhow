@@ -21,11 +21,11 @@
 static cENTER:=chr(K_ENTER)+chr(K_ENTER)+chr(K_ENTER)
 *;
 
-/*! \fn Knjiz()
+/*! \fn kalk_unos_dokumenta()
  *  \brief Nudi meni za rad na dokumentu u staroj varijanti ili direktno poziva tabelu kalk_pripreme u novoj (default) varijanti
  */
 
-function Knjiz()
+function kalk_unos_dokumenta()
 *{
 local izbor:=1
 
@@ -111,7 +111,7 @@ use
 
 altd()
 
-OEdit()
+o_kalk_edit()
 
 private gVarijanta:="2"
 private PicV:="99999999.9"
@@ -172,11 +172,11 @@ return
 
 
 
-/*! \fn OEdit()
+/*! \fn o_kalk_edit()
  *  \brief Otvara sve potrebne baze za kalk_pripremu dokumenata
  */
 
-function OEdit()
+function o_kalk_edit()
 *{
 O_KALK_DOKS
 O_KALK_PRIPR
@@ -229,24 +229,24 @@ do case
        		if Pitanje(,"Zelite li izvrsiti kontiranje ?","D")=="D"
          		Kontnal()
        		endif
-     		Oedit()
+     		o_kalk_edit()
      		return DE_REFRESH
   	case Ch==K_ALT_P
      		close all
      		IzbDokOLPP()
      		// StPripr()
-     		Oedit()
+     		o_kalk_edit()
      		return DE_REFRESH
   	case Ch==K_ALT_L
 		close all
      		label_bkod()
-   		OEdit()
+   		o_kalk_edit()
      		return DE_REFRESH
 	case Ch==K_ALT_Q
 		if Pitanje(,"Stampa naljepnica(labela) za robu ?","D")=="D"
   			CLOSE ALL
 			RLabele()
-			OEdit()		
+			o_kalk_edit()		
 			return DE_REFRESH
 		endif
 		return DE_CONT
@@ -256,14 +256,14 @@ do case
 		endif
 		close all
 		Azur()
-		Oedit()
+		o_kalk_edit()
 		if kalk_pripr->(RECCOUNT())==0 .and. IzFMKINI("Indikatori","ImaU_KALK","N",PRIVPATH)=="D"
 			O__KALK
 			SELECT kalk_pripr
 			APPEND FROM _KALK
 			UzmiIzINI(PRIVPATH+"FMK.INI","Indikatori","ImaU_KALK","N","WRITE")
 			close all
-			Oedit()
+			o_kalk_edit()
 			MsgBeep("Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!")
 		endif
 		return DE_REFRESH
@@ -273,7 +273,7 @@ do case
 		endif
 		close all
 		StKalk()
-		Oedit()
+		o_kalk_edit()
 		return DE_REFRESH
 	case Ch==K_CTRL_T
      		if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
@@ -759,7 +759,7 @@ do while .t.
                 ENDIF
 
             case izbor == 10 .and. cIdVDTek=="19"
-                OEdit()
+                o_kalk_edit()
                 select kalk_pripr
                 go top
                 cidfirma:=idfirma
@@ -780,7 +780,7 @@ do while .t.
                 UzmiTarIzSif()
 
             case izbor == 14
-                StornoDok()
+                storno_kalk_dokument()
 
             case izbor == 15
                 DiskMPCSAPP()
@@ -810,7 +810,7 @@ do while .t.
             endcase
 enddo
 m_x:=am_x; m_y:=am_y
-OEdit()
+o_kalk_edit()
 return DE_REFRESH
 *}
 
@@ -845,7 +845,7 @@ private am_x:=m_x,am_y:=m_y
 private Izbor:=1
 Menu_SC("osop2")
 m_x:=am_x; m_y:=am_y
-OEdit()
+o_kalk_edit()
 return DE_REFRESH
 *}
 
@@ -1652,7 +1652,7 @@ return
 
 function PlusMinusKol()
 *{
-  OEdit()
+  o_kalk_edit()
   SELECT kalk_pripr
   GO TOP
   DO WHILE !EOF()
@@ -1678,7 +1678,7 @@ return
 
 function UzmiTarIzSif()
 *{
-  OEdit()
+  o_kalk_edit()
   SELECT kalk_pripr
   GO TOP
   DO WHILE !EOF()
@@ -1705,7 +1705,7 @@ return
 function DiskMPCSAPP()
 *{
 aPorezi:={}
-OEdit()
+o_kalk_edit()
 SELECT kalk_pripr
 GO TOP
 DO WHILE !EOF()
@@ -1738,7 +1738,7 @@ return
 
 function MPCSAPPuSif()
 *{
-  OEdit()
+  o_kalk_edit()
   SELECT kalk_pripr
   GO TOP
   DO WHILE !EOF()
@@ -1766,7 +1766,7 @@ return
 
 function MPCSAPPiz80uSif()
 *{
-  OEdit()
+  o_kalk_edit()
 
   cIdFirma := gFirma
   cIdVdU   := "80"
@@ -1775,7 +1775,7 @@ function MPCSAPPiz80uSif()
   Box(,4,75)
     @ m_x+0, m_y+5 SAY "FORMIRANJE MPC U SIFRARNIKU OD MPCSAPP DOKUMENTA TIPA 80"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"+cIdVdU+"-"
-    @ row(),col() GET cBrDokU VALID ImaDok(cIdFirma+cIdVdU+cBrDokU)
+    @ row(),col() GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     READ; ESC_BCR
   BoxC()
 
@@ -1807,7 +1807,7 @@ return
 
 function VPCSifUDok()
 *{
-  OEdit()
+  o_kalk_edit()
   SELECT kalk_pripr
   GO TOP
   DO WHILE !EOF()
@@ -2154,7 +2154,7 @@ endif
 
 if (fFaktD .and. !fstara .and. gFakt!="0 ")
 	start print cret
-	OEdit()
+	o_kalk_edit()
 	select kalk_pripr
 	set order to 1
 	go top
@@ -2195,7 +2195,7 @@ function PopustKaoNivelacijaMP()
 *{
 local lImaPromjena
 lImaPromjena:=.f.
-OEdit()
+o_kalk_edit()
 select kalk_pripr
 go top
 do while !eof()

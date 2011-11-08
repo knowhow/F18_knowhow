@@ -878,12 +878,12 @@ if lAsPokreni
 	KUnos(.t.)
       	if __trosk == .t. 
 		// otvori tabele
-		OEdit()
+		o_kalk_edit()
 		// fSilent = .t.
 		RaspTrosk( .t. )
 	endif
 else
-	OEdit()
+	o_kalk_edit()
 endif
 
 if lStampaj == .t.
@@ -894,7 +894,7 @@ endif
 // azuriraj kalk
 Azur( .t. )
 
-OEdit()
+o_kalk_edit()
 
 return
 

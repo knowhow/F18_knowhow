@@ -66,7 +66,7 @@ private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    ViseDokUPripremi(cIdd)
+    vise_kalk_dok_u_pripremi(cIdd)
     RptSeekRT()
     KTroskovi()
 
@@ -291,7 +291,7 @@ private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    ViseDokUPripremi(cIdd)
+    vise_kalk_dok_u_pripremi(cIdd)
     RptSeekRT()
     KTroskovi()
 
@@ -567,7 +567,7 @@ private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    ViseDokUPripremi(cIdd)
+    vise_kalk_dok_u_pripremi(cIdd)
     RptSeekRT()
     KTroskovi()
     DokNovaStrana(230, @nStr, 2)

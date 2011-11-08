@@ -83,7 +83,7 @@ private opcexe:={}
 
 AADD(opc,   "1. unos/ispravka dokumenata                ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","UNOSDOK"))
-	AADD(opcexe,{|| Knjiz()} )
+	AADD(opcexe,{|| kalk_unos_dokumenta()} )
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -105,7 +105,7 @@ else
 endif
 AADD(opc,   "6. udaljene lokacije  - razmjena podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","PRENOSDISKETE"))
-	AADD(opcexe, {|| PrenosDiskete()})
+	AADD(opcexe, {|| KalkPrenosDiskete()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -114,7 +114,7 @@ AADD(opcexe, {|| MAzurDoks()})
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 AADD(opc,   "8. sifrarnici")
-AADD(opcexe,{|| Sifre()})
+AADD(opcexe,{|| kalk_sifrarnik()})
 AADD(opc,   "9. administriranje baze podataka") 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
 	AADD(opcexe, {|| MAdminKalk()})

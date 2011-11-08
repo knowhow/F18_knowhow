@@ -13,9 +13,9 @@
 #include "kalk.ch"
 
 
-function StornoDok()
+function storno_kalk_dokument()
 *{
-  OEdit()
+  o_kalk_edit()
   cIdFirma := gFirma
   cIdVdU   := "  "
   cBrDokU  := SPACE(LEN(kalk_pripr->brdok))
@@ -25,7 +25,7 @@ function StornoDok()
     @ m_x+0, m_y+5 SAY "STORNO DOKUMENTA PROMJENOM PREDZNAKA NA KOLICINI"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"
     @ row(),col() GET cIdVdU
-    @ row(),col() SAY "-" GET cBrDokU VALID ImaDok(cIdFirma+cIdVdU+cBrDokU)
+    @ row(),col() SAY "-" GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     @ m_x+4, m_y+2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !EMPTY(dDatDok)
     READ; ESC_BCR
   BoxC()
@@ -63,11 +63,11 @@ return
 
 
 
-/*! \fn ImaDok(cDok)
+/*! \fn postoji_kalk_dok(cDok)
  *  \brief Ispituje postojanje zadanog dokumenta medju azuriranim
  */
 
-function ImaDok(cDok)
+function postoji_kalk_dok(cDok)
 *{
 LOCAL lVrati:=.f., nArr:=SELECT()
   SELECT kalk_doks

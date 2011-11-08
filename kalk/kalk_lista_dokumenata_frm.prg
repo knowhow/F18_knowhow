@@ -17,7 +17,7 @@
 // --------------------------------------------
 // browse dokumenata - tabelarni pregled
 // --------------------------------------------
-function browse_dok()
+function browse_kalk_dok()
 local cFirma := gFirma
 local cIdVd := PADR("80;", 30)
 local dDatOd := DATE() - 7
@@ -30,7 +30,7 @@ local cHeader := "Pregled dokumenata - tabelarni pregled"
 private ImeKol
 private Kol
 
-if usl_browse_dok(@cFirma, @cIdVd, @dDatOd, @dDatDo, ;
+if usl_browse_kalk_dok(@cFirma, @cIdVd, @dDatOd, @dDatDo, ;
 			@cMagKto, @cProdKto, @cPartner) == 0
 	return
 endif
@@ -200,7 +200,7 @@ return DE_CONT
 // ----------------------------------------
 // uslovi browse-a dokumenata
 // ----------------------------------------
-static function usl_browse_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
+static function usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
 			cMagKto, cProdKto, cPartner )
 local nX := 1
 private GetList:={}

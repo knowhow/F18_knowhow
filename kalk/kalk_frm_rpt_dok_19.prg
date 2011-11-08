@@ -75,7 +75,7 @@ private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVd==IdVd
 
-    ViseDokUPripremi(cIdd)
+    vise_kalk_dok_u_pripremi(cIdd)
     RptSeekRT()
     KTroskovi()
     VTPOREZI()
@@ -228,7 +228,7 @@ endif
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    ViseDokUPripremi(cIdd)
+    vise_kalk_dok_u_pripremi(cIdd)
 
     select ROBA
     HSEEK kalk_pripr->IdRoba

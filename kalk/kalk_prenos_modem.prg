@@ -13,7 +13,7 @@
 #include "kalk.ch"
 
 
-function PrenosDiskete()
+function KalkPrenosDiskete()
 private Opc:={}
 private opcexe:={}
 AADD(opc,"1. prenos dokumenata   =>            ")

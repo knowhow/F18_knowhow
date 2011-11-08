@@ -1814,7 +1814,7 @@ if lAsPokreni
 	// pozovi asistenta
 	KUnos(.t.)
 else
-	OEdit()
+	o_kalk_edit()
 endif
 
 if lStampaj == .t.
@@ -1825,7 +1825,7 @@ endif
 // azuriraj kalk
 Azur( .t. )
 
-OEdit()
+o_kalk_edit()
 
 // ako postoje zavisni dokumenti non stop ponavljaj proceduru obrade
 private nRslt
@@ -1839,7 +1839,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 			// otvori kalk_pripremu
 			KUnos(.t.)
 		else
-			OEdit()
+			o_kalk_edit()
 		endif
 		
 		if lStampaj == .t.
@@ -1847,7 +1847,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 		endif
 		
 		Azur( .t. )
-		OEdit()
+		o_kalk_edit()
 		
 	endif
 
@@ -1858,7 +1858,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 		
 		MsgBeep("Postoji dokument u kalk_pripremi koji je sumljiv!!!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !")
 		KUnos()
-		OEdit()
+		o_kalk_edit()
 		
 	endif
 enddo

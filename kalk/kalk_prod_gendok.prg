@@ -894,7 +894,7 @@ return .t.
 
 function Iz11u412()
 *{
-  OEdit()
+  o_kalk_edit()
   cIdFirma := gFirma
   cIdVdU   := "11"
   cIdVdI   := "4"
@@ -911,7 +911,7 @@ function Iz11u412()
   Box(,6,75)
     @ m_x+0, m_y+5 SAY "FORMIRANJE DOKUMENTA 41/42 NA OSNOVU DOKUMENTA 11"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"+cIdVdU+"-"
-    @ row(),col() GET cBrDokU VALID ImaDok(cIdFirma+cIdVdU+cBrDokU)
+    @ row(),col() GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     @ m_x+3, m_y+2 SAY "Formirati dokument (41 ili 42)  4"
     cPom:="2"
     @ row(),col() GET cPom VALID cPom $ "12" PICT "9"
@@ -1002,7 +1002,7 @@ return
 
 function Iz10u11()
 *{
-  OEdit()
+  o_kalk_edit()
   cIdFirma := gFirma
   cIdVdU   := "10"
   cIdVdI   := "11"
@@ -1020,7 +1020,7 @@ function Iz10u11()
   Box(,6,75)
     @ m_x+0, m_y+5 SAY "FORMIRANJE DOKUMENTA 11 NA OSNOVU DOKUMENTA 10"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"+cIdVdU+"-"
-    @ row(),col() GET cBrDokU VALID ImaDok(cIdFirma+cIdVdU+cBrDokU)
+    @ row(),col() GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     @ m_x+3, m_y+2 SAY "Prodavn.konto zaduzuje   " GET cIdKonto VALID P_Konto(@cIdKonto)
     @ m_x+4, m_y+2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !EMPTY(dDatDok)
     @ m_x+5, m_y+2 SAY "Utvrditi NC po metodi iz parametara ? (D/N)" GET cPoMetodiNC VALID cPoMetodiNC $ "DN" PICT "@!"

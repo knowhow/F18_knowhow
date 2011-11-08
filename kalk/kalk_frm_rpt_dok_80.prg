@@ -114,7 +114,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     KTroskovi()
 
     if empty(idkonto2)
-    	ViseDokUPripremi(cIdd)
+    	vise_kalk_dok_u_pripremi(cIdd)
     else
       if (i==1 .and. left(idkonto2,3)<>"XXX") .or. (i==2 .and. left(idkonto2,3)=="XXX")
          // nastavi

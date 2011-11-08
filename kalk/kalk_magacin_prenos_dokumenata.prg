@@ -13,7 +13,7 @@
 #include "kalk.ch"
 
 
-function FaKaMag()
+function prenos_fakt_kalk_magacin()
 private Opc:={}
 private opcexe:={}
 

@@ -39,7 +39,7 @@ endif
 
 close all
 Karticap(cIdFirma,cidroba,ckonto)
-OEdit()
+o_kalk_edit()
 select roba
 go nR1
 select kalk_pripr

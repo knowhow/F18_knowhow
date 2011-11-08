@@ -231,7 +231,7 @@ select tarifa
 nR3:=recno()
 close all
 Karticam(_IdFirma,_idroba,_IdKonto)
-OEdit()
+o_kalk_edit()
 select roba
 go nR1
 select kalk_pripr

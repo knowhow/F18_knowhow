@@ -25,7 +25,7 @@ AADD(opcexe, {|| GenProd()})
 AADD(opc,"3. proizvodnja - generacija dokumenata")
 AADD(opcexe, {|| GenProizvodnja()})
 AADD(opc,"4. storno dokument")
-AADD(opcexe, {|| StornoDok()})
+AADD(opcexe, {|| storno_kalk_dokument()})
 private Izbor:=1
 Menu_SC("mgend")
 CLOSERET

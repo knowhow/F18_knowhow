@@ -55,7 +55,7 @@ return
  
 function Iz12u97()
 *{
-  OEdit()
+  o_kalk_edit()
 
   cIdFirma    := gFirma
   cIdVdU      := "12"
@@ -74,7 +74,7 @@ function Iz12u97()
     @ m_x+0, m_y+5 SAY "FORMIRANJE DOKUMENTA 96/97 NA OSNOVU DOKUMENTA 11/12"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"
     @ row(), col() GET cIdVdU VALID cIdVdU $ "11#12"
-    @ row(), col() SAY "-" GET cBrDokU VALID ImaDok(cIdFirma+cIdVdU+cBrDokU)
+    @ row(), col() SAY "-" GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     @ m_x+4, m_y+2 SAY "Dokument koji se formira (96/97)" GET cIdVdI VALID cIdVdI $ "96#97"
     @ m_x+5, m_y+2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !EMPTY(dDatDok)
     @ m_x+7, m_y+2 SAY "Prenijeti na konto (prazno-ne prenositi)" GET cKontoSklad
@@ -666,7 +666,7 @@ return
  
 function Iz96u16()
 *{
-  OEdit()
+  o_kalk_edit()
   cIdFirma    := gFirma
   cIdVdU      := "96"
   cIdVdI      := "16"
@@ -682,7 +682,7 @@ function Iz96u16()
   Box(,6,75)
     @ m_x+0, m_y+5 SAY "FORMIRANJE DOKUMENTA 16 NA OSNOVU DOKUMENTA 96"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"+cIdVdU+"-"
-    @ row(),col() GET cBrDokU VALID ImaDok(cIdFirma+cIdVdU+cBrDokU)
+    @ row(),col() GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     @ m_x+4, m_y+2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !EMPTY(dDatDok)
     READ; ESC_BCR
   BoxC()
@@ -736,7 +736,7 @@ return
  
 function Iz16u14()
 *{
-  OEdit()
+  o_kalk_edit()
 
   cIdFirma    := gFirma
   cIdVdU      := "16"
@@ -756,7 +756,7 @@ function Iz16u14()
     @ m_x+0, m_y+5 SAY "FORMIRANJE DOKUMENTA 14 NA OSNOVU DOKUMENTA 16"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"
     @ row(), col() SAY cIdVdU
-    @ row(), col() SAY "-" GET cBrDokU VALID ImaDok(cIdFirma+cIdVdU+cBrDokU)
+    @ row(), col() SAY "-" GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     @ m_x+3, m_y+2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !EMPTY(dDatDok)
     @ m_x+4, m_y+2 SAY "Broj fakture" GET cBrFaktP
     @ m_x+5, m_y+2 SAY "Datum fakture" GET dDatFaktP

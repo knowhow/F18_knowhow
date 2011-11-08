@@ -128,7 +128,7 @@ select kalk_pripr
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
-	ViseDokUPripremi(cIdd)
+	vise_kalk_dok_u_pripremi(cIdd)
     	RptSeekRT()
     	KTroskovi()
 	DokNovaStrana(125, @nStr, 2)

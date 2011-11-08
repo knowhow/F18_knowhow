@@ -35,9 +35,9 @@ private Opc:={}
 private opcexe:={}
 
 AADD(Opc,"1. magacin fakt->kalk         ")
-AADD(opcexe,{|| FaKaMag() })
+AADD(opcexe,{|| prenos_fakt_kalk_magacin() })
 AADD(Opc,"2. prodavnica fakt->kalk")
-AADD(opcexe,{||  FaKaProd()  })
+AADD(opcexe,{||  prenos_fakt_kalk_prodavnica()  })
 AADD(Opc,"3. proizvodnja fakt->kalk")
 AADD(opcexe,{||  FaKaProizvodnja() })        
 AADD(Opc,"4. konsignacija fakt->kalk")

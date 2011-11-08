@@ -15,7 +15,7 @@
 // ----------------------------------------------------------
 // meni opcije prenos FAKT->KALK prodavnica
 // ----------------------------------------------------------
-function FaKaProd()
+function prenos_fakt_kalk_prodavnica()
 private Opc:={}
 private opcexe:={}
 

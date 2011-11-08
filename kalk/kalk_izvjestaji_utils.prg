@@ -14,7 +14,7 @@
 
  
 
-function ViseDokUPripremi(cIdd)
+function vise_kalk_dok_u_pripremi(cIdd)
 
 if field->idPartner+field->brFaktP+field->idKonto+field->idKonto2<>cIdd
      set device to screen

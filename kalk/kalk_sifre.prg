@@ -22,11 +22,11 @@
  *  \brief Sifrarnici
  */
 
-/*! \fn Sifre()
+/*! \fn kalk_sifrarnik()
  *  \brief Glavni menij za izbor sifrarnika
  */
  
-function Sifre()
+function kalk_sifrarnik()
 *{
 PRIVATE PicDem
 PicDem:=gPICDem

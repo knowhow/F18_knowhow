@@ -426,7 +426,7 @@ return
 
 
 // kreiranje i otvaranje pomocne baze POM.DBF
-function CrePom()
+static function CrePom()
   select 0      
   // idi na slobodno podrucje
   cPom:=PRIVPATH+"POM"

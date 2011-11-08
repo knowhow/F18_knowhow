@@ -50,36 +50,6 @@ return
 
 
 
-
-/*! \fn ParsMemo(cTxt)
- *  \brief Pretvaranje formatiranog memo polja u niz
- */
-
-// Struktura cTxt-a je: Chr(16) txt1 Chr(17)  Chr(16) txt2 Chr(17) ...
-function ParsMemo(cTxt)
-*{
-local aMemo:={}
-local i,cPom,fPoc
-
- fPoc:=.f.
- cPom:=""
- for i:=1 to len(cTxt)
-   if  substr(cTxt,i,1)==Chr(16)
-     fPoc:=.t.
-   elseif  substr(cTxt,i,1)==Chr(17)
-     fPoc:=.f.
-     AADD(aMemo,cPom)
-     cPom:=""
-   elseif fPoc
-      cPom:=cPom+substr(cTxt,i,1)
-   endif
- next
-return aMemo
-*}
-
-
-
-
 /*! \fn ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor)
  *  \brief Provjera postojanja sifara
  *  \param clDok - "while" uslov za obuhvatanje slogova tekuce baze

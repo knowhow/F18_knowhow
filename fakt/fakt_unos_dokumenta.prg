@@ -337,7 +337,7 @@ do case
         	
 		if cPom=="13"
 			close all
-          		StOLPP()
+          		FaktStOLPP()
         	else
 			StDokOdt( nil, nil, nil )
         	endif
@@ -2595,9 +2595,9 @@ return lVrati
 
 
 
-// Zagfirma()
+// fakt_zagl_firma()
 // Ispis zaglavlja na izvjestajima
-function ZagFirma()
+function fakt_zagl_firma()
 ?
 P_12CPI
 U_OFF
@@ -2611,19 +2611,6 @@ I_OFF
 ?
 return
 
-
-/*! \fn NazProdObj()
- *  \brief Naziv prodajnog objekta
- */
- 
-function NazProdObj()
-*{
-local cVrati:=""
-
-cVrati:=TRIM(cTxt3a)
-select fakt_pripr
-return cVrati
-*}
 
 
 

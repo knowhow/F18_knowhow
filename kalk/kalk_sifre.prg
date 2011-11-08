@@ -70,11 +70,11 @@ return .f.
 
 
 
-/*! \fn ServFun()
+/*! \fn kalk_serv_functions()
  *  \brief Servisne funkcije 
  */
  
-function ServFun()
+function kalk_serv_functions()
 *{
 Msg("Nije u upotrebi")
 closeret
@@ -148,40 +148,8 @@ elseif upper(Chr(Ch))=="S"
 endif
 
 return DE_CONT
-*}
 
 
-/*! \fn FSvaki2()
- *  \brief Ne radi ama bas nista!!!
- */
- 
-function FSvaki2()
-*{
-return
-*}
-
-
-/*! \fn IspisFirme(cIdRj)
- *  \brief Ispis firme na osnovu radne jedinice
- *  \param cIdRj - radna jedinica
- */
-function IspisFirme(cIdRj)
-*{
-local nOArr
-
-nOArr:=SELECT()
-?? "Firma: "
-B_ON
-?? gNFirma
-B_OFF
-if !EMPTY(cIdrj)
-  SELECT rj
-  HSEEK cIdrj
-  SELECT(nOArr)
-  ?? "  RJ",rj->naz
-endif
-return
-*}
 
 
 /*! \fn OSifBaze()
@@ -189,7 +157,6 @@ return
  */
  
 function OSifBaze()
-*{
 O_SIFK
 O_SIFV
 O_KONTO

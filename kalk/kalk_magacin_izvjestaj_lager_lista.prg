@@ -161,7 +161,7 @@ endif
 
 cArtikalNaz:=SPACE(30)
 
-Box(,21+IF(lPoNarudzbi,2,0)+IF(IsTvin(),1,0),60)
+Box(,21+IF(lPoNarudzbi,2,0),60)
 	
 	do while .t.
  		if gNW $ "DX"
@@ -209,9 +209,6 @@ Box(,21+IF(lPoNarudzbi,2,0)+IF(IsTvin(),1,0),60)
    			cPKN    := "N"
    			@ row()+1,m_y+2 SAY "Uslov po sifri narucioca:" GET qqIdNar pict "@!S30"
    			@ row()+1,m_y+2 SAY "Prikazati kolonu 'narucilac' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
- 		endif
- 		if IsTvin()
- 			@ row()+1,m_y+2 SAY "Prikazati srednju cijenu (D/N) ?" GET cSredCij VALID cSredCij$"DN" PICT "@!"
  		endif
  		if IsPlanika()
  			@ m_x+15,m_y+2 SAY "Prikaz dobavljaca (D/N) ?" GET cPrikazDob PICT "@!" VALID cPrikazDob$"DN"

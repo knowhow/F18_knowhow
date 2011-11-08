@@ -719,7 +719,7 @@ if cPoTar=="D"
 		endif
 		select tarifa
 		hseek aPorezi[i,1]
-		VTPorezi()
+		fakt_vt_porezi()
 		nMPV:=aPorezi[i,2]
 		nMPV0:=ROUND(nMPV/(_ZPP+(1+_OPP)*(1+_PPP)), ZAOKRUZENJE)
 		nPor1:=ROUND(nMPV/(_ZPP+(1+_OPP)*(1+_PPP))*_OPP, ZAOKRUZENJE)

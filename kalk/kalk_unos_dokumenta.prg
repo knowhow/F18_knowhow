@@ -746,7 +746,7 @@ do while .t.
                 O_PARAMS
                 private cSection:="K",cHistory:=" "; aHistory:={}
                 cIspravka:="D"
-                SetMetoda()
+                kalk_par_metoda_nc()
                 select params; use
                 IF gCijene<>aRezim[1] .or. gMetodaNC<>aRezim[2]
                   IF gCijene=="1".and.gMetodaNC==" "
@@ -1496,24 +1496,17 @@ return
  */
 
 function OpisStavke(lGreska)
-*{
  IF !lGreska
   ? "Dokument:    "+idfirma+"-"+idvd+"-"+brdok+", stavka "+rbr
   ? "Artikal: "+idroba+"-"+LEFT(Ocitaj(F_ROBA,idroba,"naz"), 40)
   lGreska:=.t.
  ENDIF
 return
-*}
 
 
 
-
-/*! \fn Soboslikar(aNiz,nIzKodaBoja,nUKodBoja)
- *  \brief Mijenja boje dijela ekrana
- */
 
 function Soboslikar(aNiz,nIzKodaBoja,nUKodBoja)
-*{
  LOCAL i, cEkran
   FOR i:=1 TO LEN(aNiz)
     cEkran:=SAVESCREEN(aNiz[i,1],aNiz[i,2],aNiz[i,3],aNiz[i,4])
@@ -1521,36 +1514,9 @@ function Soboslikar(aNiz,nIzKodaBoja,nUKodBoja)
     RESTSCREEN(aNiz[i,1],aNiz[i,2],aNiz[i,3],aNiz[i,4],cEkran)
   NEXT
 return
-*}
 
 
-
-/*! \fn StrKZN(cInput,cIz,cU)
- *  \brief Vrsi konverziju znakova u stringu iz jednog u drugi izabrani standard
- */
-
-function StrKZN(cInput,cIz,cU)
-*{
- LOCAL a852:={"æ","Ñ","¬","","¦","ç","Ð","Ÿ","†","§"}
- LOCAL a437:={"[","\","^","]","@","{","|","~","}","`"}
- LOCAL aEng:={"S","D","C","C","Z","s","d","c","c","z"}
- LOCAL i:=0, aIz:={}, aU:={}
- aIz := IF( cIz=="7" , a437 , IF( cIz=="8" , a852 , aEng ) )
- aU  := IF(  cU=="7" , a437 , IF(  cU=="8" , a852 , aEng ) )
- FOR i:=1 TO 10
-   cInput:=STRTRAN(cInput,aIz[i],aU[i])
- NEXT
-return cInput
-*}
-
-
-
-/*! \fn ZagFirma()
- *  \brief Ispisuje zaglavlje firme/preduzeca
- */
-
-function ZagFirma()
-*{
+function kalk_zagl_firma()
 P_12CPI
 U_OFF
 B_OFF
@@ -1571,32 +1537,18 @@ U_OFF
 ?
 ?
 return
-*}
 
 
-
-/*! \fn NazProdObj()
- *  \brief Daje naziv prodavnickog konta iz kalk_pripreme
- */
-
-function NazProdObj()
-*{
+static function NazProdObj()
  LOCAL cVrati:=""
   SELECT KONTO
   SEEK kalk_pripr->pkonto
   cVrati:=naz
   SELECT kalk_pripr
 return cVrati
-*}
 
-
-
-/*! \fn IzbDokOLPP()
- *  \brief Izbor dokumenta za stampu u formi OLPP-a
- */
 
 function IzbDokOLPP()
-*{
 O_SIFK
 O_SIFV
 O_ROBA
@@ -1634,7 +1586,7 @@ do while .t.
  HSEEK cIdFirma+cIdVD+cBrDok
  EOF CRET
 
- StOLPP()
+ KalkStOLPP()
 
 enddo
 
@@ -2293,7 +2245,7 @@ do while .t.
 
 	EOF CRET
 
-	StOlpp()
+	KalkStOlpp()
 		
 
 enddo  // vrti kroz kalkulacije

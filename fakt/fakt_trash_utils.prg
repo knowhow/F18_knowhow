@@ -61,13 +61,13 @@ Box(,20,77)
 @ m_x+19,m_y+2 SAY "<P> Povrat dokumenta u pripremu "
 @ m_x+20,m_y+2 SAY "               "
 
-ObjDbedit("PRIPR9",20,77,{|| EdPr9()},"<P>-povrat dokumenta u pripremu","Pregled smeca...", , , , ,4)
+ObjDbedit("PRIPR9",20,77,{|| fa_pripr9_key_handler()},"<P>-povrat dokumenta u pripremu","Pregled smeca...", , , , ,4)
 BoxC()
 
 return
 
 
-function EdPr9()
+function fa_pripr9_key_handler()
 do case
 	case Ch==K_CTRL_T 
 		// brisanje dokumenta iz pripr9
@@ -87,7 +87,7 @@ return DE_CONT
 return
 
 
-function PovPr9()
+static function PovPr9()
 local nArr
 nArr:=SELECT()
 

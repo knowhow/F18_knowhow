@@ -76,7 +76,7 @@ if IsDomZdr()
 	private cKalkTip:=SPACE(1)
 endif
 
-Box(,18+IF(IsTvin(),1,0),68)
+Box(,18,68)
 
 cGrupacija:=space(4)
 cPredhStanje:="N"
@@ -127,9 +127,6 @@ do while .t.
    		cPKN    := "N"
    		@ row()+1,m_y+2 SAY "Uslov po sifri narucioca:" GET qqIdNar pict "@!S30"
    		@ row()+1,m_y+2 SAY "Prikazati kolonu 'narucilac' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
- 	endif
- 	if IsTvin()
- 		@ row()+1, m_y+2 SAY "Prikazati srednju cijenu (D/N) ?" GET cSredCij VALID cSredCij$"DN" PICT "@!"
  	endif
  
 	if IsPlanika()

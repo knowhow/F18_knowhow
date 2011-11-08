@@ -64,7 +64,11 @@ RPar("ti",@cBrI)
 SELECT PARAMS; USE
 
 
-OtBazPI()
+if goModul:oDatabase:cName == "KALK"
+	OtBazPIKalk()
+else
+	OtBazPIFin()
+endif
 
 P_Proizv(@cBrI,NIL,NIL,"#Odaberi izvjestaj :") // # hash na pocetku kaze - obavezno browsaj !
 
@@ -1052,7 +1056,11 @@ local i,cstbroj,cnbroj
 MsgBeep("Nije jos implementirano ...")
 return
 
-OtBazPI()
+if goModul:oDatabase:cName == "KALK"
+	OtBazPIKalk()
+else
+	OtBazPIFin()
+endif
 
 cStBroj:=space(2)
 cNBroj:="99"

@@ -13,14 +13,14 @@
 #include "kalk.ch"
 
 // obracunski list poreza na promet
-function StOLPP()
+function KalkStOLPP()
 // => stolpdv()
 StOLPDV()
 return
 
 
 // obracunski list poreza na dodanu vrijednost
-function StOLPDV()
+static function StOLPDV()
 local ik
 local cPrviKTO
 local nUkPDV:=0
@@ -234,10 +234,10 @@ return
 
 
 // zaglavlje izvjestaja stolpdv
-function ZOLPDV()
+static function ZOLPDV()
 local cNaslov:=StrKZN("OBRA^UNSKI LIST PDV-A","7",gKodnaS),cPom1,cPom2,c
 
-ZagFirma()
+kalk_zagl_firma()
 
 IspisNaDan(20)
 

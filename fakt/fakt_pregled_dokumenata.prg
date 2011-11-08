@@ -585,7 +585,7 @@ if cRTarifa=="D" .and. empty(cImeKup) .and. qqTipDok $ "11#13#27"  // racun malo
     cpmp:="9"
   ENDIF
 
-  RekTarife(cPMP)
+  fakt_rekap_tarifa(cPMP)
   select fakt; use
 endif
 
@@ -1394,14 +1394,14 @@ return nRet
 *}
 
 
-/*! \fn RekTarife(cPMP,cRegion)
+/*! \fn fakt_rekap_tarifa(cPMP,cRegion)
  *  \brief Rekapitulacija po tarifama
  *  \todo Prebaciti u /RPT
  *  \param cPMP
  *  \param cRegion
  */
  
-function RekTarife(cPMP,cRegion)
+function fakt_rekap_tarifa(cPMP,cRegion)
 *{
 // prosljedjuje cidfirma,cidvd,cbrdok
 local nArea:=select()
@@ -1470,7 +1470,7 @@ do while !eof()
            _cijena:=(nArea)->cijena
          endif
     endif
-    VtPorezi()
+    fakt_vt_porezi()
 
     // TODO: Opet ces imati problem zaokruzenja
     nU1+=round(_cijena*kolicina/(_ZPP+(1+_opp)*(1+_ppp)) ,ZAOKRUZENJE)
@@ -1512,11 +1512,11 @@ return
 
 
 
-/*! \fn VTPorezi()
+/*! \fn fakt_vt_porezi()
  *  \brief Smjesta poreze iz tarifa u javne varijable
  */
 
-function VTPorezi()
+function fakt_vt_porezi()
 *{
 public _ZPP:=0
 if roba->tip=="V"

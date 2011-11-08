@@ -25,10 +25,18 @@ return .f.
 function isPlanika()
 return .f.
 
+function isPlNs()
+return .f.
+
 function isKonsig()
 return .f.
 
 function isStampa()
 return .f.
+
+function isJerry()
+return .f.
+
+
 
 

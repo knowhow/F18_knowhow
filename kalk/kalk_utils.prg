@@ -13,9 +13,6 @@
 #include "kalk.ch"
 
  
-function OtkljucajBug()
-return
-
 
 function kalk_pripr9View()
 
@@ -37,7 +34,7 @@ if LastKey()==K_ESC
 	return
 endif
 
-P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
+ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
 
 private gVarijanta:="2"
 
@@ -71,17 +68,17 @@ endif
 
 private lAutoAsist:=.f.
 
-ObjDbedit("PRIPR9",20,77,{|| EdPr9()},"<P>-povrat dokumenta u kalk_pripremu","Pregled smeca...", , , , ,4)
+ObjDbedit("PRIPR9",20,77,{|| ka_pripr9_key_handler()},"<P>-povrat dokumenta u kalk_pripremu","Pregled smeca...", , , , ,4)
 BoxC()
 
 
 return
 
 
-/*! \fn EdPr9()
+/*! \fn ka_pripr9_key_handler()
  *  \brief Opcije pregleda smeca
  */
-function EdPr9()
+function ka_pripr9_key_handler()
 *{
 do case
 	case Ch==K_CTRL_T // brisanje dokumenta iz kalk_pripr9
@@ -92,7 +89,7 @@ do case
 		return DE_REFRESH
 	case chr(Ch) $ "pP" // povrat dokumenta u kalk_pripremu
 		PovPr9()
-		P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
+		ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
      		return DE_REFRESH
 endcase
 return DE_CONT
@@ -104,7 +101,7 @@ return
 /*! \fn PovPr9()
  *  \brief povrat dokumenta iz kalk_pripr9
  */
-function PovPr9()
+static function PovPr9()
 *{
 local nArr
 nArr:=SELECT()
@@ -117,10 +114,10 @@ return DE_CONT
 *}
 
 
-/*! \fn P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
+/*! \fn ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
  *  \brief Postavlja filter na tabeli kalk_pripr9
  */
-static function P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
+static function ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
 *{
 O_KALK_PRIPR9
 set order to tag "1"
@@ -151,39 +148,5 @@ go top
 
 return
 
-
-// -------------------------------------------------
-// potpis na dokumentima
-// -------------------------------------------------
-function dok_potpis( nLen, cPad, cRow1, cRow2 )
-
-if nLen == nil
-	nLen := 80
-endif
-
-if cPad == nil
-	cPad := "L"
-endif
-
-if cRow1 == nil
-	cRow1 := "Potpis:"
-endif
-
-if cRow2 == nil
-	cRow2 := "__________________"
-endif
-
-if cPad == "L"
-	? PADL( cRow1, nLen )
-	? PADL( cRow2, nLen )
-elseif cPad == "R"
-	? PADR( cRow1, nLen )
-	? PADR( cRow2, nLen )
-else
-	? PADL( cRow1, nLen )
-	? PADL( cRow2, nLen )
-endif
-
-return
 
 

@@ -20,13 +20,13 @@ private opcexe:={}
 AADD(Opc,"1. fakt->kalk (10->14) racun veleprodaje               ")
 AADD(opcexe,{|| FaKaPrenos10_14() })
 AADD(Opc,"2. fakt->kalk (12->96) otpremnica")
-AADD(opcexe,{||  FaKaPrenosOtpremnica()  })
+AADD(opcexe,{||  mag_fa_ka_prenos_otpr()  })
 AADD(Opc,"3. fakt->kalk (19->96) izlazi po ostalim osnovama")
-AADD(opcexe,{||  FaKaPrenosOtpremnica("19") })         
+AADD(opcexe,{||  mag_fa_ka_prenos_otpr("19") })         
 AADD(Opc,"4. fakt->kalk (01->10) ulaz od dobavljaca")
-AADD(opcexe,{||  FaKaPrenosOtpremnica("01_10") })          
+AADD(opcexe,{||  mag_fa_ka_prenos_otpr("01_10") })          
 AADD(Opc,"5. fakt->kalk (0x->16) doprema u magacin")
-AADD(opcexe,{||  FaKaPrenosOtpremnica("0x") })          
+AADD(opcexe,{||  mag_fa_ka_prenos_otpr("0x") })          
 private Izbor:=1
 Menu_SC("fkma")
 CLOSERET
@@ -236,11 +236,11 @@ return
 
 
 
-/*! \fn FaKaPrenosOtpremnica(cIndik)
+/*! \fn mag_fa_ka_prenos_otpr(cIndik)
  *  \brief Prenosi FAKT->KALK (12->96),(19->96),(01->10),(0x->16)
  */
 
-function FaKaPrenosOtpremnica(cIndik)
+function mag_fa_ka_prenos_otpr(cIndik)
 local cIdFirma := gFirma
 local cIdTipDok := "12"
 local cBrDok := SPACE(8)

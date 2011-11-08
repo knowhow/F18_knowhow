@@ -455,7 +455,7 @@ if gRekTar=="D" .and. cidTipdok=="13"
      index on roba->idtarifa  to fakttar2 for &cFilTarifa
    endif
    P_COND
-   RekTarife(cPmP,cRegion)
+   fakt_rekap_tarifa(cPmP,cRegion)
    select fakt_pripr
    use
 endif

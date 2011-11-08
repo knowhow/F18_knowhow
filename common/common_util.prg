@@ -258,3 +258,53 @@ else
 endif
 
 
+
+function NazProdObj()
+local cVrati:=""
+
+cVrati:=TRIM(cTxt3a)
+select fakt_pripr
+return cVrati
+
+// -------------------------------------------------
+// potpis na dokumentima
+// -------------------------------------------------
+function dok_potpis( nLen, cPad, cRow1, cRow2 )
+
+if nLen == nil
+	nLen := 80
+endif
+
+if cPad == nil
+	cPad := "L"
+endif
+
+if cRow1 == nil
+	cRow1 := "Potpis:"
+endif
+
+if cRow2 == nil
+	cRow2 := "__________________"
+endif
+
+if cPad == "L"
+	? PADL( cRow1, nLen )
+	? PADL( cRow2, nLen )
+elseif cPad == "R"
+	? PADR( cRow1, nLen )
+	? PADR( cRow2, nLen )
+else
+	? PADL( cRow1, nLen )
+	? PADL( cRow2, nLen )
+endif
+
+return
+
+// ovo treba ukinuti skroz
+function OtkljucajBug()
+return
+
+
+
+
+

@@ -79,7 +79,7 @@ O_KALK_DOKS
 nUvecaj := 1
 for nCnt:=1 to LEN(aProd)
 	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDok(gFirma, "80", nUvecaj)
+	cBrKalk:=GetNextKalkDoc(gFirma, "80", nUvecaj)
 	cPKonto:=aProd[nCnt, 1]
 	
 	@ 2+m_x, 2+m_y SAY "Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-80-" + ALLTRIM(cBrKalk)
@@ -172,7 +172,7 @@ O_KALK_DOKS
 nUvecaj := 1
 for nCnt:=1 to LEN(aProd)
 	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDok(gFirma, "80", nUvecaj)
+	cBrKalk:=GetNextKalkDoc(gFirma, "80", nUvecaj)
 	cPKonto:=aProd[nCnt, 1]
 	
 	@ 2+m_x, 2+m_y SAY "Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-80-" + ALLTRIM(cBrKalk)

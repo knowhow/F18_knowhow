@@ -807,7 +807,7 @@ IF fTiho .or. lEx
       READ
     Boxc()
   ENDIF
-  CrePom(fTiho)  // kreiraj pomocnu bazu
+  fin_create_pom_table(fTiho)  // kreiraj pomocnu bazu
 ENDIF
 
 
@@ -1065,12 +1065,12 @@ ENDIF
 
 
 
-/*! \fn CrePom(fTiho)
+/*! \fn fin_create_pom_table(fTiho)
  *  \brief Kreira pomocnu tabelu
  *  \fTiho
  */
  
-function CrePom(fTiho, nParLen)
+function fin_create_pom_table(fTiho, nParLen)
 
 local nPartLen
 IF fTiho==NIL; fTiho:=.f.; ENDIF

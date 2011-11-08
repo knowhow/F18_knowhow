@@ -16,7 +16,7 @@
 
 // -----------------------------------------------
 // -----------------------------------------------
-CLASS TFaktMod FROM TAppMod
+CLASS TKalkMod FROM TAppMod
 	method New
 	method setGVars
 	method mMenu
@@ -46,7 +46,7 @@ method mMenu()
 
 private Izbor
 
-say_fmk_ver()
+//say_fmk_ver()
 
 SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
@@ -56,7 +56,6 @@ CheckROnly(KUMPATH + "\KALK.DBF")
 
 O_KALK_DOKS
 select kalk_doks
-TrebaRegistrovati(10)
 gDuzKonto:=LEN(mkonto) 
 select kalk_doks
 
@@ -180,9 +179,8 @@ local cOdradjeno
 local cSekcija
 local cVar,cVal
 
-::super:setTGVars()
+set_global_vars()
 SetFmkRGVars()
-SetFmkSGVars()
 
 PUBLIC KursLis:="1"
 PUBLIC gMetodaNC:="2"

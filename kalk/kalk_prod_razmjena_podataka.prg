@@ -20,7 +20,7 @@ private Opc:={}
 private opcexe:={}
 
 AADD(Opc,"1. fakt->kalk (13->11) otpremnica maloprodaje        ")
-AADD(opcexe,{||  FaKaPrenosOtpremnica()})
+AADD(opcexe,{||  prod_fa_ka_prenos_otpr()})
 AADD(Opc,"2. fakt->kalk (11->41) racun maloprodaje")
 AADD(opcexe,{||  FaKaPrenosRacunMP()  })
 AADD(Opc,"3. fakt->kalk (11->42) paragon")
@@ -253,7 +253,7 @@ return
 // -----------------------------------------
 // prenos 13->11
 // -----------------------------------------
-function FaKaPrenosOtpremnica()
+function prod_fa_ka_prenos_otpr()
 local cIdFirma:=gFirma
 local cIdTipDok:="13"
 local cBrDok:=SPACE(8)

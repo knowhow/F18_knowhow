@@ -142,7 +142,7 @@ private nRbr:=0
 
 #DEFINE CMORE
 
-#XCOMMAND CMINIT => ncmSlogova:=cmFiltCount(); ncmRec:=1
+#XCOMMAND CMINIT => ncmSlogova:=100; ncmRec:=1
 //#DEFINE CMNEOF  !eof() .and. ncmRec<=ncmSLOGOVA
 //#XCOMMAND CMSKIP => ++ncmRec; if ncmrec>ncmslogova;exit;end; skip
 #DEFINE CMNEOF  !eof()

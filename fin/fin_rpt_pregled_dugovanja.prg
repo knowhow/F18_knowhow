@@ -106,7 +106,7 @@ ELSE
     	Boxc()
 ENDIF
 
-CrePom(, __par_len)  // kreiraj pomocnu bazu
+fin_create_pom_table(, __par_len)  // kreiraj pomocnu bazu
 
 gaZagFix:={4,5}
 

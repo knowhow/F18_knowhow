@@ -12,38 +12,13 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_KumPath_FAKT_Cijena13MPC
-  * \brief Da li je MPC cijena koja se pamti u dokumentu tipa 13 (otpremnica u MP) ?
-  * \param N - ne, default vrijednost
-  * \param D - da
-  */
-*string FmkIni_KumPath_FAKT_Cijena13MPC;
-
-
-/*! \fn StOLPP()
- *  \brief Stampa obracunaskog lista poreza na promet
- *  \todo Prebaciti u /RPT
- */
-
-function StOLPP()
-*{
+function FaktStOLPP()
 // sada se koristi StOLPDV()
 StOLPDV()
 return
-*}
 
 // stampa obracunskog lista PDV-a
-function StOLPDV()
-*{
+static function StOLPDV()
 local nUkPDV:=0
 local nTotPDV:=0
 local ii:=0
@@ -250,12 +225,12 @@ return
 // ----------------------------------
 // zaglavlje obracunskog lista 
 // ----------------------------------
-function ZOLPDV()
+static function ZOLPDV()
 LOCAL cNaslov:=StrKZN("OBRA^UNSKI LIST PDV-A","7",gKodnaS)
 local cPom1
 local cPom2
 local c
-ZagFirma()
+fakt_zagl_firma()
 @ prow()+1,35 SAY cNaslov
 ?
 select partn

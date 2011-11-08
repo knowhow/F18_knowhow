@@ -306,9 +306,6 @@ do while !eof()
 			idtarifa with topska->idtarifa,;
 			mpcsapp  with topska->(mpc-stmpc),;
 			tprevoz  with "R"
-			if IsTehnoprom()
-				replace idpartner with topska->idpartner
-			endif
 		endif
 	else
 		if (topska->kolicina<>0)		
@@ -329,9 +326,6 @@ do while !eof()
 			RABATV   with topska->stmpc
 			if (cIdVd=="19")
 				REPLACE fcj with topska->stmpc
-			endif
-			if IsTehnoprom()
-				replace idpartner with topska->idpartner
 			endif
 		endif
 	endif

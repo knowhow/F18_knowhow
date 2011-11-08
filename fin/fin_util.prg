@@ -25,20 +25,6 @@ endif
 return .t.
 
 
-
-
-/*! \fn OtkljucajBug()
-    \brief ??Otkljucaj lafo bug?
-    \note sifra: BUG
- */
- 
-function OtkljucajBug()
-if SigmaSif("BUG     ")
-	lPodBugom:=.f.
-    	gaKeys:={}
-endif
-return NIL
-
 /*! \fn Izvj0()
  *  \brief
  */

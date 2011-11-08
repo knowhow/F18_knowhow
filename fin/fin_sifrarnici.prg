@@ -17,11 +17,11 @@
  */
 
 
-/*! \fn ServFun()
+/*! \fn fin_serv_functions()
  *  \brief Servisne funkcije
  */
  
-function ServFun()
+function fin_serv_functions()
 
 Box(,4,60)
   cOdg:="1"

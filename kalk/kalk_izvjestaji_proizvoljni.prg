@@ -215,7 +215,7 @@ function GenProIzvKalk()
   nStavki:=AX_KeyNo()
 #else
   GO TOP
-  nStavki:=cmxKeyCount()
+  nStavki:=100
   //COUNT TO nStavki
 #endif
   Msgc()

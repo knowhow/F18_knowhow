@@ -77,7 +77,7 @@ O_KALK_DOKS
 nUvecaj := 1
 for nCnt:=1 to LEN(aMag)
 	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDok(gFirma, "16", nUvecaj)
+	cBrKalk:=GetNextKalkDoc(gFirma, "16", nUvecaj)
 	cMKonto:=aMag[nCnt, 1]
 	
 	@ 2+m_x, 2+m_y SAY "Magacin: " + ALLTRIM(cMKonto) + "   dokument: "+ gFirma + "-16-" + ALLTRIM(cBrKalk)
@@ -168,7 +168,7 @@ O_KALK_DOKS
 nUvecaj := 1
 for nCnt:=1 to LEN(aMag)
 	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDok(gFirma, "16", nUvecaj)
+	cBrKalk:=GetNextKalkDoc(gFirma, "16", nUvecaj)
 	cMKonto:=aMag[nCnt, 1]
 	
 	@ 2+m_x, 2+m_y SAY "Magacin: " + ALLTRIM(cMKonto) + "   dokument: "+ gFirma + "-16-" + ALLTRIM(cBrKalk)

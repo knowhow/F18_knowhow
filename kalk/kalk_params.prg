@@ -13,7 +13,7 @@
 #include "kalk.ch"
 
 
-function Params()
+function kalk_params()
 *{
 O_KONTO
 O_PARAMS
@@ -24,28 +24,28 @@ private opcexe:={}
 
 
 AADD(Opc,"1. osnovni podaci o firmi                                 ")
-AADD(opcexe, {|| SetFirma('D')})
+AADD(opcexe, {|| kalk_par_firma('D')})
 
 AADD(Opc,"2. metoda proracuna NC, mogucnosti ispravke dokumenata ")
-AADD(opcexe, {|| SetMetoda('D')})
+AADD(opcexe, {|| kalk_par_metoda_nc('D')})
 
 AADD(Opc,"3. varijante obrade i prikaza pojedinih dokumenata ")
-AADD(opcexe, {|| SetVarijante('D')})
+AADD(opcexe, {|| kalk_par_varijante_prikaza('D')})
 
 AADD(Opc,"4. nazivi troskova za 10-ku ")
-AADD(opcexe, {|| SetT1('D')})
+AADD(opcexe, {|| kalk_troskovi_10ka('D')})
 
 AADD(Opc, "5. nazivi troskova za 24-ku")
-AADD(opcexe, {|| SetT24('D')})
+AADD(opcexe, {|| kalk_par_troskovi_24('D')})
 
 AADD(Opc,"6. nazivi troskova za RN")
-AADD(opcexe, {|| SetTRN('D')})
+AADD(opcexe, {|| kalk_par_troskovi_rn('D')})
 
 AADD(Opc,"7. prikaz cijene,%,iznosa")
-AADD(opcexe, {|| SetPict('D')})
+AADD(opcexe, {|| kalk_par_cijene('D')})
 
 AADD(Opc,"8. nacin formiranja zavisnih dokumenata")
-AADD(opcexe, {|| SetZavDok('D')})
+AADD(opcexe, {|| kalk_par_zavisni_dokumenti('D')})
 
 AADD(Opc,"9. lokacije FIN/MAT/FAKT ..")
 AADD(opcexe, {|| SetOdirs('D')})
@@ -54,7 +54,7 @@ AADD(Opc, "A. parametri za komisionu prodaju" )
 AADD(opcexe, {|| SetKomis('D')})
 
 AADD(Opc, "B. parametri - razno")
-AADD(opcexe, {|| SetRazno('D')})
+AADD(opcexe, {|| kalk_par_razno('D')})
 
 private Izbor:=1
 Menu_SC("pars")
@@ -66,11 +66,11 @@ return
 
 
 
-/*! \fn SetVarijante()
+/*! \fn kalk_par_varijante_prikaza()
  *  \brief Ispravka parametara "varijante obrade i prikaza pojedinih dokumenata"
  */
 
-function SetVarijante()
+function kalk_par_varijante_prikaza()
 local nX := 1
 private  GetList:={}
 
@@ -201,11 +201,11 @@ return nil
 
 
 
-/*! \fn SetRazno()
+/*! \fn kalk_par_razno()
  *  \brief Ispravka parametara "razno"
  */
 
-function SetRazno()
+function kalk_par_razno()
 private  GetList:={}
 
 Box(,15,75,.f.,"RAZNO")
@@ -256,11 +256,11 @@ return .t.
 
 
 
-/*! \fn SetMetoda()
+/*! \fn kalk_par_metoda_nc()
  *  \brief Ispravka parametara "METODA NC, ISPRAVKA DOKUMENATA"
  */
 
-function SetMetoda()
+function kalk_par_metoda_nc()
 *{
 private  GetList:={}
 
@@ -309,11 +309,11 @@ return .t.
 
 
 
-/*! \fn SetFirma()
+/*! \fn kalk_par_firma()
  *  \brief Ispravka parametara "MATICNA FIRMA, BAZNA VALUTA"
  */
 
-function SetFirma()
+function kalk_par_firma()
 *{
 private  GetList:={}
 
@@ -341,11 +341,11 @@ return .f.
 
 
 
-/*! \fn SetPICT()
+/*! \fn kalk_par_cijene()
  *  \brief Ispravka parametara "PARAMETRI PRIKAZA - PICTURE KODOVI"
  */
 
-function SetPICT()
+function kalk_par_cijene()
 *{
 private  GetList:={}
 
@@ -406,11 +406,11 @@ return nil
 
 
 
-/*! \fn SetZavDok()
+/*! \fn kalk_par_zavisni_dokumenti()
  *  \brief Ispravka parametara "NACINI FORMIRANJA ZAVISNIH DOKUMENATA"
  */
 
-function SetZavDok()
+function kalk_par_zavisni_dokumenti()
 *{
 private  GetList:={}
  Box(,8,76,.f.,"NACINI FORMIRANJA ZAVISNIH DOKUMENATA")
@@ -491,11 +491,11 @@ return nil
 
 
 
-/*! \fn SetT1()
+/*! \fn kalk_troskovi_10ka()
  *  \brief Ispravka parametara "Troskovi 10-ka"
  */
 
-function SetT1()
+function kalk_troskovi_10ka()
 *{
 private  GetList:={}
 
@@ -522,11 +522,11 @@ return nil
 
 
 
-/*! \fn SetTRN()
+/*! \fn kalk_par_troskovi_rn()
  *  \brief Ispravka parametara "RADNI NALOG"
  */
 
-function SetTRN()
+function kalk_par_troskovi_rn()
 *{
 private  GetList:={}
 
@@ -554,11 +554,11 @@ return nil
 
 
 
-/*! \fn SetT24()
+/*! \fn kalk_par_troskovi_24()
  *  \brief Ispravka parametara "24 - USLUGE"
  */
 
-function SetT24()
+function kalk_par_troskovi_24()
 *{
 private  GetList:={}
 

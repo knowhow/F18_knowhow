@@ -13,7 +13,7 @@
 #include "fakt.ch"
 
 
-function MBrDoks()
+function fakt_pregled_dokumenata()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -42,11 +42,11 @@ CLOSERET
 
 return .f.
 
-/*! \fn MAzurDoks()
+/*! \fn fakt_ostale_operacije_doks()
  *  \brief Ostale operacije nad podacima
  */
  
-function MAzurDoks()
+function fakt_ostale_operacije_doks()
 private opc:={}
 private opcexe:={}
 private Izbor:=1

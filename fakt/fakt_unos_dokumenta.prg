@@ -852,13 +852,13 @@ return nRet
 *}
 
 
-/*! \fn RenumPripr(cVezOtpr,dNajnoviji)
+/*! \fn renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
  *  \brief
  *  \param cVezOtpr
  *  \param dNajnoviji - datum posljednje radjene otpremnice
  */
  
-function RenumPripr(cVezOtpr,dNajnoviji)
+function renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
 *{
 //poziva se samo pri generaciji otpremnica u fakturu
 local dDatDok

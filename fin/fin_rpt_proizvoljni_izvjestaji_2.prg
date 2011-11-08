@@ -19,7 +19,7 @@
  *  \brief Proizvoljni izvjestaji
  */
  
-function ProIzv()
+function ProIzvFin()
 
 PRIVATE cDPnaz1 := "", cDPx1 :="", cDPf1 :="D"
 PRIVATE cDPnaz2 := "", cDPx2 :="", cDPf2 :="D"
@@ -44,7 +44,7 @@ RETURN
  *  \brief Otvara baze proizvoljnih izvjestaja
  */
 
-function OtBazPI()
+function OtBazPIFin()
 
 O_IZVJE
 O_KONIZ
@@ -59,7 +59,7 @@ return
  *  \brief Generisanje proizvoljnih izvjestaja
  */
 
-function GenProIzv()
+function GenProIzvFin()
 
 LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
  PRIVATE lDvaKonta:=.f.
@@ -1081,7 +1081,7 @@ RETURN nVrati
  *  \brief Parametri za sve izvjestaje
  */
  
-function ParSviIzvj()
+function ParSviIzvjFin()
 
 LOCAL GetList:={}
 cPotrazKon:=PADR(cPotrazKon,120)

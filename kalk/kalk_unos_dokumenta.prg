@@ -53,15 +53,15 @@ do while .t.
      case Izbor==0
        EXIT
      case izbor == 1
-         KUnos()
+         kalk_unos_stavki_dokumenta()
      case izbor == 2
          StKalk()
      case izbor == 3
          RekapK()
      case izbor == 4
-         KontNal()
+         kalk_kontiranje_naloga()
      case izbor == 5
-         Azur()
+         Azuriranje_kalk_dokumenta()
      case izbor == 6
        if KursLis=="1"  // prva vrijednost
          KursLis:="2"
@@ -74,7 +74,7 @@ do while .t.
 enddo
 
 else  // gnw=="D"
-   KUnos()
+   kalk_unos_stavki_dokumenta()
 endif
 
 closeret
@@ -83,11 +83,11 @@ return
 
 
 
-/*! \fn KUnos(lAutoObrada)
+/*! \fn kalk_unos_dokumenta(lAutoObrada)
  *  \brief Tabela kalk_pripreme dokumenta
  */
 
-function KUnos(lAObrada)
+function kalk_unos_stavki_dokumenta(lAObrada)
 *{
 O_PARAMS
 
@@ -108,8 +108,6 @@ private cHistory:=" "
 private aHistory:={}
 select 99
 use
-
-altd()
 
 o_kalk_edit()
 
@@ -227,7 +225,7 @@ do case
      		close all
        		RekapK()
        		if Pitanje(,"Zelite li izvrsiti kontiranje ?","D")=="D"
-         		Kontnal()
+         		kalk_kontiranje_naloga()
        		endif
      		o_kalk_edit()
      		return DE_REFRESH
@@ -255,7 +253,7 @@ do case
 			JerryMP()
 		endif
 		close all
-		Azur()
+		Azuriranje_kalk_dokumenta()
 		o_kalk_edit()
 		if kalk_pripr->(RECCOUNT())==0 .and. IzFMKINI("Indikatori","ImaU_KALK","N",PRIVPATH)=="D"
 			O__KALK
@@ -729,7 +727,7 @@ do while .t.
                   FaktKalk()
                endif
             case izbor == 2
-                Povrat()
+                Povrat_kalk_dokumenta()
             case izbor == 3
                 Azur9()
             case izbor == 4
@@ -2172,18 +2170,12 @@ if (fFaktD .and. !fstara .and. gFakt!="0 ")
 	FF
 	END PRINT
 
-	PrModem(.t.)
+	kalk_prenos_modem(.t.)
 endif
 
-#ifdef CAX
-if fstara
-	select kalk_pripr
-	use
-endif
-#endif
 closeret
 return nil
-*}
+
 
 
 

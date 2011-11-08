@@ -59,7 +59,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 // idfirma + DTOS(datdok)
 set order to tag "7"
 
@@ -119,7 +119,7 @@ do while .t.
   		exit
   	endif
 
-  	select xfakt
+  	select fakt
 	set order to tag "1"
 	go top
   	
@@ -130,7 +130,7 @@ do while .t.
      	do while !eof() .and. cFaktFirma + cIdTipDok == IdFirma + IdTipDok
        	
        		// datumska provjera...
-       		if xfakt->datdok < dFaktOd .or. xfakt->datdok > dFaktDo
+       		if fakt->datdok < dFaktOd .or. fakt->datdok > dFaktDo
 			
 			skip
 			loop
@@ -145,7 +145,7 @@ do while .t.
 			
        		endif
 
-		cIdRoba := xfakt->idroba
+		cIdRoba := fakt->idroba
        		select ROBA
        		hseek cIdRoba
 
@@ -169,7 +169,7 @@ do while .t.
        		else
 			set order to tag "5"
 			seek cIdFirma + "11" + cIdRoba + ;
-				STR(xfakt->cijena, 12, 2)
+				STR(fakt->cijena, 12, 2)
 		endif
 
 		if !FOUND()
@@ -181,34 +181,34 @@ do while .t.
                		replace idvd with "11"
                		replace brdok with cBrKalk
                		replace datdok with dDatKalk
-               		replace idtarifa with Tarifa(cPKonto, xfakt->idroba, @aPorezi)
+               		replace idtarifa with Tarifa(cPKonto, fakt->idroba, @aPorezi)
                		replace brfaktp with ""
-               		replace datfaktp with xfakt->datdok
+               		replace datfaktp with fakt->datdok
                		replace idkonto   with cPKonto
                		replace idzaduz  with cidzaduz
                		replace idkonto2  with cidkonto2
                		replace idzaduz2  with cidzaduz2
-               		replace datkurs with xfakt->datdok
-              		replace idroba with xfakt->idroba
+               		replace datkurs with fakt->datdok
+              		replace idroba with fakt->idroba
                		replace nc  with ROBA->nc
-               		replace vpc with xfakt->cijena
-               		replace rabatv with xfakt->rabat
-               		replace mpc with xfakt->porez
+               		replace vpc with fakt->cijena
+               		replace rabatv with fakt->rabat
+               		replace mpc with fakt->porez
                		replace tmarza2 with "A"
                		replace tprevoz with "A"
 			
 			if cCjenSif == "D"
                			replace mpcsapp with UzmiMpcSif()
 			else
-				replace mpcsapp with xfakt->cijena
+				replace mpcsapp with fakt->cijena
 			endif
 		
 		endif
 		
 		// saberi kolicine za jedan artikal
-		replace kolicina with ( kolicina + xfakt->kolicina )
+		replace kolicina with ( kolicina + fakt->kolicina )
        		
-		select xfakt
+		select fakt
        		skip
      	
 	enddo
@@ -228,7 +228,7 @@ do while .t.
 	enddo
 	go top
 
-	select xfakt
+	select fakt
      
      	@ m_x+10,m_y+2 SAY "Dokument je prenesen !!"
      	
@@ -267,7 +267,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 
 dDatKalk:=date()
 cIdKonto:=padr("1320",7)
@@ -317,7 +317,7 @@ do while .t.
   if lastkey()==K_ESC; exit; endif
 
 
-  select xfakt
+  select fakt
   seek cFaktFirma+cIdTipDok+cBrDok
   if !found()
      Beep(4)
@@ -337,27 +337,27 @@ do while .t.
       @ m_x+8,m_y+2 SAY space(30)
       loop
      endif
-     if gVar13u11=="2"  .and. EMPTY(xfakt->idpartner)
+     if gVar13u11=="2"  .and. EMPTY(fakt->idpartner)
        @ m_x+10,m_y+2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
        read
      endif
      go bottom
      if brdok==cBrKalk; nRbr:=val(Rbr); endif
-     select xfakt
+     select fakt
      IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
        MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
        LOOP
      ENDIF
      do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
        select ROBA
-       hseek xfakt->idroba
+       hseek fakt->idroba
 
        select tarifa
        hseek roba->idtarifa
        select koncij
        seek trim(cidkonto)
 
-       select xfakt
+       select fakt
        if alltrim(podbr)=="."  .or. idroba="U"
           skip
           loop
@@ -365,39 +365,39 @@ do while .t.
 
        select kalk_pripr
        APPEND BLANK
-       cPKonto:=IF(gVar13u11=="1",cidkonto,xfakt->idpartner)
+       cPKonto:=IF(gVar13u11=="1",cidkonto,fakt->idpartner)
        private aPorezi:={}
        replace idfirma with cIdFirma,;
                rbr     with str(++nRbr,3),;
                idvd with "11",;   // izlazna faktura
                brdok with cBrKalk,;
                datdok with dDatKalk,;
-               idtarifa with Tarifa(cPKonto, xfakt->idroba , @aPorezi ),;
-               brfaktp with xfakt->brdok,;
-               datfaktp with xfakt->datdok,;
+               idtarifa with Tarifa(cPKonto, fakt->idroba , @aPorezi ),;
+               brfaktp with fakt->brdok,;
+               datfaktp with fakt->datdok,;
                idkonto   with cPKonto ,;
                idzaduz  with cidzaduz,;
                idkonto2  with cidkonto2,;
                idzaduz2  with cidzaduz2,;
-               datkurs with xfakt->datdok,;
-               kolicina with xfakt->kolicina,;
-               idroba with xfakt->idroba,;
+               datkurs with fakt->datdok,;
+               kolicina with fakt->kolicina,;
+               idroba with fakt->idroba,;
                nc  with ROBA->nc,;
-               vpc with IF(gVar13u11=="1",xfakt->cijena,KoncijVPC()),;
-               rabatv with xfakt->rabat,;
-               mpc with xfakt->porez,;
+               vpc with IF(gVar13u11=="1",fakt->cijena,KoncijVPC()),;
+               rabatv with fakt->rabat,;
+               mpc with fakt->porez,;
                tmarza2 with "A",;
                tprevoz with "A",;
-               mpcsapp with IF(gVar13u11=="1",roba->mpc,xfakt->cijena)
+               mpcsapp with IF(gVar13u11=="1",roba->mpc,fakt->cijena)
 
        if gVar13u11=="1"
          replace mpcsapp with UzmiMPCSif()
        endif
-       if gVar13u11=="2" .and. EMPTY(xfakt->idpartner)
+       if gVar13u11=="2" .and. EMPTY(fakt->idpartner)
          replace idkonto with cidkonto
        endif
 
-       select xfakt
+       select fakt
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
@@ -435,7 +435,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 
 dDatKalk:=Date()
 cIdKonto:=PADR("1330",7)
@@ -487,7 +487,7 @@ Box(,15,60)
 				exit
 			endif
 
-			select xfakt
+			select fakt
   			seek cFaktFirma + cIdTipDok + cBrDok
   		
 			if !Found()
@@ -532,17 +532,17 @@ Box(,15,60)
      				if brdok==cBrKalk
 					nRbr:=val(Rbr)
 				endif
-     				select xfakt
+     				select fakt
      				if !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
        					MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
        					LOOP
      				endif
      				do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
        					select ROBA
-					hseek xfakt->idroba
+					hseek fakt->idroba
        					select tarifa
 					hseek roba->idtarifa
-       					select xfakt
+       					select fakt
        					if alltrim(podbr)=="."
           					skip
           					loop
@@ -552,17 +552,17 @@ Box(,15,60)
        					
 					private aPorezi:={}
 					
-					Tarifa(cIdKonto,xfakt->idRoba,@aPorezi)
+					Tarifa(cIdKonto,fakt->idRoba,@aPorezi)
 					
-					nMPVBP:=MpcBezPor(xfakt->(kolicina*cijena),aPorezi)
+					nMPVBP:=MpcBezPor(fakt->(kolicina*cijena),aPorezi)
        					append blank
-					replace idfirma with cIdFirma,rbr with str(++nRbr,3),idvd with "41", brdok with cBrKalk, datdok with dDatKalk, idpartner with cIdPartner, idtarifa with ROBA->idtarifa,	brfaktp with xfakt->brdok, datfaktp with xfakt->datdok, idkonto with cidkonto, idzaduz with cidzaduz, datkurs with xfakt->datdok, kolicina with xfakt->kolicina, idroba with xfakt->idroba, mpcsapp with xfakt->cijena,	tmarza2 with "%"
+					replace idfirma with cIdFirma,rbr with str(++nRbr,3),idvd with "41", brdok with cBrKalk, datdok with dDatKalk, idpartner with cIdPartner, idtarifa with ROBA->idtarifa,	brfaktp with fakt->brdok, datfaktp with fakt->datdok, idkonto with cidkonto, idzaduz with cidzaduz, datkurs with fakt->datdok, kolicina with fakt->kolicina, idroba with fakt->idroba, mpcsapp with fakt->cijena,	tmarza2 with "%"
 
 					
 					replace rabatv with ;
-					( nMPVBP * xfakt->rabat / (xfakt->kolicina*100) ) * 1.17
+					( nMPVBP * fakt->rabat / (fakt->kolicina*100) ) * 1.17
 
-					select xfakt
+					select fakt
       					skip
      				enddo
 			
@@ -585,7 +585,7 @@ Box(,15,60)
 				exit
 			endif
 
-			select xfakt
+			select fakt
 			go top
 			
   			do while !eof() 			
@@ -608,7 +608,7 @@ Box(,15,60)
 						nRbr := val(Rbr)
 					endif
      			
-					select xfakt
+					select fakt
      			
 					if !ProvjeriSif("!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok","IDROBA", F_ROBA)
        						MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
@@ -619,9 +619,9 @@ Box(,15,60)
        					
 					private aPorezi:={}
 					
-					Tarifa(cIdKonto,xfakt->idRoba,@aPorezi)
+					Tarifa(cIdKonto,fakt->idRoba,@aPorezi)
 					
-					nMPVBP:=MpcBezPor(xfakt->(kolicina*cijena),aPorezi)
+					nMPVBP:=MpcBezPor(fakt->(kolicina*cijena),aPorezi)
 					
 					append blank
        			
@@ -632,19 +632,19 @@ Box(,15,60)
 					replace datdok with dDatKalk
 					replace idpartner with cIdPartner
 					replace idtarifa with ROBA->idtarifa
-					replace brfaktp with xfakt->brdok
-					replace datfaktp with xfakt->datdok
+					replace brfaktp with fakt->brdok
+					replace datfaktp with fakt->datdok
 					replace idkonto with cIdKonto
 					replace idzaduz with cIdZaduz
-					replace datkurs with xfakt->datdok
-					replace kolicina with xfakt->kolicina
-					replace idroba with xfakt->idroba
-					replace mpcsapp with xfakt->cijena
+					replace datkurs with fakt->datdok
+					replace kolicina with fakt->kolicina
+					replace idroba with fakt->idroba
+					replace mpcsapp with fakt->cijena
 					replace tmarza2 with "%"
 					replace rabatv with ;
-						( nMPVBP*xfakt->rabat/(xfakt->kolicina*100) ) * 1.17
+						( nMPVBP*fakt->rabat/(fakt->kolicina*100) ) * 1.17
        					
-					select xfakt
+					select fakt
       					skip
 					loop
      				else
@@ -687,7 +687,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 
 dDatKalk:=date()
 cIdKonto:=padr("1320",7)
@@ -728,7 +728,7 @@ do while .t.
   if lastkey()==K_ESC; exit; endif
 
 
-  select xfakt
+  select fakt
   seek cFaktFirma+cIdTipDok+cBrDok
   if !found()
      Beep(4)
@@ -760,16 +760,16 @@ do while .t.
      endif
      go bottom
      if brdok==cBrKalk; nRbr:=val(Rbr); endif
-     select xfakt
+     select fakt
      IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
        MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
        LOOP
      ENDIF
      do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-       select ROBA; hseek xfakt->idroba
+       select ROBA; hseek fakt->idroba
        select tarifa; hseek roba->idtarifa
 
-       select xfakt
+       select fakt
        if alltrim(podbr)=="."
           skip; loop
        endif
@@ -783,18 +783,18 @@ do while .t.
                datdok with dDatKalk,;
                idpartner with cIdPartner,;
                idtarifa with ROBA->idtarifa,;
-               brfaktp with xfakt->brdok,;
-               datfaktp with xfakt->datdok,;
+               brfaktp with fakt->brdok,;
+               datfaktp with fakt->datdok,;
                idkonto   with cidkonto,;
                idzaduz  with cidzaduz,;
-               datkurs with xfakt->datdok,;
-               kolicina with xfakt->kolicina,;
-               idroba with xfakt->idroba,;
-               mpcsapp with xfakt->cijena,;
-               fcj with xfakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
+               datkurs with fakt->datdok,;
+               kolicina with fakt->kolicina,;
+               idroba with fakt->idroba,;
+               mpcsapp with fakt->cijena,;
+               fcj with fakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
                tmarza2 with "%"
 
-       select xfakt
+       select fakt
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
@@ -831,7 +831,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 
 dDatKalk:=date()
 cIdKonto:=padr("1320999",7)
@@ -877,7 +877,7 @@ do while .t.
   if lastkey()==K_ESC; exit; endif
 
 
-  select xfakt
+  select fakt
   seek cFaktFirma+cIdTipDok+cBrDok
   if !found()
      Beep(4)
@@ -898,30 +898,30 @@ do while .t.
       @ m_x+8,m_y+2 SAY space(30)
       loop
      endif
-     if gVar13u11=="2"  .and. EMPTY(xfakt->idpartner)
+     if gVar13u11=="2"  .and. EMPTY(fakt->idpartner)
        @ m_x+10,m_y+2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
        read
      endif
      go bottom
      if brdok==cBrKalk; nRbr:=val(Rbr); endif
-     select xfakt
+     select fakt
      IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
        MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
        LOOP
      ENDIF
      do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-       select ROBA; hseek xfakt->idroba
+       select ROBA; hseek fakt->idroba
 
        select tarifa; hseek roba->idtarifa
        select koncij; seek trim(cidkonto)
 
-       select xfakt
+       select fakt
        if alltrim(podbr)=="."  .or. idroba="U"
           skip; loop
        endif
        cPKonto:=cIdKonto
        private aPorezi:={}
-       cIdTarifa:=Tarifa(cPKonto, xfakt->idroba , @aPorezi )
+       cIdTarifa:=Tarifa(cPKonto, fakt->idroba , @aPorezi )
        select kalk_pripr;       APPEND BLANK
        replace idfirma with cIdFirma,;
                rbr     with str(++nRbr,3),;
@@ -929,20 +929,20 @@ do while .t.
                brdok with cBrKalk,;
                datdok with dDatKalk,;
                idtarifa with cIdTarifa,;
-	       brfaktp with xfakt->brdok,;
-               datfaktp with xfakt->datdok,;
+	       brfaktp with fakt->brdok,;
+               datfaktp with fakt->datdok,;
                idkonto   with cidkonto2,;
                idzaduz  with cidzaduz2,;
                idkonto2  with cidkonto,;
                idzaduz2  with cidzaduz,;
-               datkurs with xfakt->datdok,;
-               kolicina with -xfakt->kolicina,;
-               idroba with xfakt->idroba,;
-               nc with xfakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
+               datkurs with fakt->datdok,;
+               kolicina with -fakt->kolicina,;
+               idroba with fakt->idroba,;
+               nc with fakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
                mpc with 0,;
                tmarza2 with "A",;
                tprevoz with "A",;
-               mpcsapp with xfakt->cijena
+               mpcsapp with fakt->cijena
 
        APPEND BLANK // protustavka
        replace idfirma with cIdFirma,;
@@ -951,23 +951,23 @@ do while .t.
                brdok with cBrKalk,;
                datdok with dDatKalk,;
                idtarifa with cIdTarifa,;
-               brfaktp with xfakt->brdok,;
-               datfaktp with xfakt->datdok,;
+               brfaktp with fakt->brdok,;
+               datfaktp with fakt->datdok,;
                idkonto   with cidkonto,;
                idzaduz  with cidzaduz,;
                idkonto2  with "XXX",;
                idzaduz2  with "",;
-               datkurs with xfakt->datdok,;
-               kolicina with xfakt->kolicina,;
-               idroba with xfakt->idroba,;
-               nc with xfakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
+               datkurs with fakt->datdok,;
+               kolicina with fakt->kolicina,;
+               idroba with fakt->idroba,;
+               nc with fakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
                mpc with 0,;
                tmarza2 with "A",;
                tprevoz with "A",;
-               mpcsapp with xfakt->cijena
+               mpcsapp with fakt->cijena
 
 
-       select xfakt
+       select fakt
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
@@ -1007,7 +1007,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 
 dDatKalk:=date()
 cIdKonto:=padr("1320",7)
@@ -1052,7 +1052,7 @@ do while .t.
   read
   if lastkey()==K_ESC; exit; endif
 
-  select xfakt
+  select fakt
   seek cFaktFirma+cIdTipDok+cBrDok
   if !found()
      Beep(4)
@@ -1095,7 +1095,7 @@ do while .t.
      GO BOTTOM
      if brdok==cBrKalk; nRbr:=val(Rbr); endif
 
-     select xfakt
+     select fakt
      IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
        MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
        LOOP
@@ -1110,16 +1110,16 @@ do while .t.
                    idfirma with cidfirma
         endif
         replace DatVal with dDatPl
-        select xFakt
+        select fakt
      endif
 
      do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-       select ROBA; hseek xfakt->idroba
+       select ROBA; hseek fakt->idroba
 
        select tarifa; hseek roba->idtarifa
        select koncij; seek trim(cidkonto)
 
-       SELECT XFAKT
+       SELECT fakt
        IF ALLTRIM(podbr)=="."  .or. idroba="U"
           SKIP
           LOOP
@@ -1133,8 +1133,8 @@ do while .t.
                brdok     with cBrKalk         ,;
                datdok    with dDatKalk        ,;
                idtarifa  with ROBA->idtarifa  ,;
-               brfaktp   with xfakt->brdok    ,;
-               datfaktp  with xfakt->datdok   ,;
+               brfaktp   with fakt->brdok    ,;
+               datfaktp  with fakt->datdok   ,;
                idkonto   with cidkonto        ,;
                 pkonto    with cIdKonto        ,;
                  pu_i      with "1"             ,;
@@ -1143,19 +1143,19 @@ do while .t.
                 mkonto    with cIdKonto2       ,;
                  mu_i      with "8"             ,;
                idzaduz2  with cidzaduz2       ,;
-               datkurs   with xfakt->datdok   ,;
-               kolicina  with -xfakt->kolicina ,;
-               idroba    with xfakt->idroba   ,;
+               datkurs   with fakt->datdok   ,;
+               kolicina  with -fakt->kolicina ,;
+               idroba    with fakt->idroba   ,;
                nc        with ROBA->nc        ,;
                vpc       with KoncijVPC()     ,;
-               rabatv    with xfakt->rabat    ,;
-               mpc       with xfakt->porez    ,;
+               rabatv    with fakt->rabat    ,;
+               mpc       with fakt->porez    ,;
                tmarza2   with "A"             ,;
                tprevoz   with "R"             ,;
                idpartner with cIdPartner      ,;
-               mpcsapp   with xfakt->cijena
+               mpcsapp   with fakt->cijena
 
-       select xfakt
+       select fakt
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
@@ -1193,7 +1193,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 
 dDatKalk:=Date()
 cIdKonto:=PADR("1330",7)
@@ -1252,7 +1252,7 @@ Box(,15,60)
 				exit
 			endif
 
-			select xfakt
+			select fakt
   			seek cFaktFirma + cIdTipDok + cBrDok
   		
 			if !Found()
@@ -1289,17 +1289,17 @@ Box(,15,60)
      				if brdok==cBrKalk
 					nRbr:=val(Rbr)
 				endif
-     				select xfakt
+     				select fakt
      				if !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
        					MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
        					LOOP
      				endif
      				do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
        					select ROBA
-					hseek xfakt->idroba
+					hseek fakt->idroba
        					select tarifa
 					hseek roba->idtarifa
-       					select xfakt
+       					select fakt
        					if alltrim(podbr)=="."
           					skip
           					loop
@@ -1307,12 +1307,12 @@ Box(,15,60)
 
        					select kalk_pripr
 					private aPorezi:={}
-					Tarifa(cIdKonto,xfakt->idRoba,@aPorezi)
-					nMPVBP:=MpcBezPor(xfakt->(kolicina*cijena),aPorezi)
+					Tarifa(cIdKonto,fakt->idRoba,@aPorezi)
+					nMPVBP:=MpcBezPor(fakt->(kolicina*cijena),aPorezi)
        					APPEND BLANK
-       					replace idfirma with cIdFirma,rbr with str(++nRbr,3),idvd with "42", brdok with cBrKalk, datdok with dDatKalk, idpartner with cIdPartner, idtarifa with ROBA->idtarifa,	brfaktp with xfakt->brdok, datfaktp with xfakt->datdok, idkonto with cidkonto, idzaduz with cidzaduz, datkurs with xfakt->datdok, kolicina with xfakt->kolicina, idroba with xfakt->idroba, mpcsapp with xfakt->cijena,	tmarza2 with "%"
-					replace rabatv with nMPVBP*xfakt->rabat/(xfakt->kolicina*100)
-       					select xfakt
+       					replace idfirma with cIdFirma,rbr with str(++nRbr,3),idvd with "42", brdok with cBrKalk, datdok with dDatKalk, idpartner with cIdPartner, idtarifa with ROBA->idtarifa,	brfaktp with fakt->brdok, datfaktp with fakt->datdok, idkonto with cidkonto, idzaduz with cidzaduz, datkurs with fakt->datdok, kolicina with fakt->kolicina, idroba with fakt->idroba, mpcsapp with fakt->cijena,	tmarza2 with "%"
+					replace rabatv with nMPVBP*fakt->rabat/(fakt->kolicina*100)
+       					select fakt
       					skip
      				enddo
 			
@@ -1335,7 +1335,7 @@ Box(,15,60)
 				exit
 			endif
 
-			select xfakt
+			select fakt
 			
 			go top
 			
@@ -1355,7 +1355,7 @@ Box(,15,60)
 						nRbr := val(Rbr)
 					endif
      			
-					select xfakt
+					select fakt
      			
 					if !ProvjeriSif("!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok","IDROBA", F_ROBA)
        						MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
@@ -1363,24 +1363,24 @@ Box(,15,60)
      					endif
      			
        					select kalk_pripr
-       					locate for idroba == xfakt->idroba
+       					locate for idroba == fakt->idroba
 
 					if ( FOUND() ;
-					   .and. mpcsapp = xfakt->cijena ) ;
+					   .and. mpcsapp = fakt->cijena ) ;
 					   .or. ( FOUND() ;
-					   .and. mpcsapp <> xfakt->cijena ;
+					   .and. mpcsapp <> fakt->cijena ;
 					   .and. cRazCijena == "N" )
 
 						// samo odradi append kolicine
 						replace kolicina with ;
 							kolicina + ;
-							xfakt->kolicina 
+							fakt->kolicina 
 					
 					else
 					
 					  private aPorezi:={}
-					  Tarifa(cIdKonto,xfakt->idRoba,@aPorezi)
-					  nMPVBP:=MpcBezPor(xfakt->(kolicina*cijena),aPorezi)
+					  Tarifa(cIdKonto,fakt->idRoba,@aPorezi)
+					  nMPVBP:=MpcBezPor(fakt->(kolicina*cijena),aPorezi)
 					  append blank
        			
 					  replace idfirma with cIdFirma
@@ -1390,21 +1390,21 @@ Box(,15,60)
 					  replace datdok with dDatKalk
 					  replace idpartner with cIdPartner
 					  replace idtarifa with ROBA->idtarifa
-					  replace brfaktp with xfakt->brdok
-					  replace datfaktp with xfakt->datdok
+					  replace brfaktp with fakt->brdok
+					  replace datfaktp with fakt->datdok
 					  replace idkonto with cIdKonto
 					  replace idzaduz with cIdZaduz
-					  replace datkurs with xfakt->datdok
-					  replace kolicina with xfakt->kolicina
-					  replace idroba with xfakt->idroba
-					  replace mpcsapp with xfakt->cijena
+					  replace datkurs with fakt->datdok
+					  replace kolicina with fakt->kolicina
+					  replace idroba with fakt->idroba
+					  replace mpcsapp with fakt->cijena
 					  replace tmarza2 with "%"
 					  replace rabatv with ;
 					  	nMPVBP * ;
-						xfakt->rabat/(xfakt->kolicina*100)
+						fakt->rabat/(fakt->kolicina*100)
        					endif
 
-					select xfakt
+					select fakt
       					skip
 					loop
      				else

@@ -24,11 +24,11 @@
  *  \brief Meni opcija za stampu i pregled dokumenata
  */
 
-/*! \fn mBrDoks()
+/*! \fn kalk_pregled_dokumenata()
  *  \brief Meni opcija za stampu i pregled dokumenata
  */
 
-function mBrDoks()
+function kalk_pregled_dokumenata()
 *{
 PRIVATE opc:={}
 PRIVATE opcexe:={}
@@ -54,17 +54,17 @@ CLOSERET
 return
 *}
 
-/*! \fn MAzurDoks()
+/*! \fn kalk_ostale_operacije_doks()
  *  \brief Meni - opcija za povrat azuriranog dokumenta
  */
 
-function MAzurDoks()
+function kalk_ostale_operacije_doks()
 *{
 private Opc:={}
 private opcexe:={}
 AADD(opc,"1. povrat dokumenta u pripremu")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
-	AADD(opcexe, {|| Povrat()})
+	AADD(opcexe, {|| Povrat_kalk_dokumenta()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

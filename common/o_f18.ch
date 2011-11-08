@@ -179,6 +179,16 @@
 #xcommand O_RVRSTA   => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"
 #xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  ("2005"+SLASH+"kalk")  ; set order to tag "1"
 #xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  ("2005"+SLASH+"kalk")  ; set order to tag "ID"
+#xcommand O_CACHE   => select(F_ROBASEZ);  my_use  ("cache")  ; set order to tag "1"
+#xcommand O_PRIPT   => select(F_ROBASEZ);  my_use  ("pript")  ; set order to tag "1"
+#xcommand O_K1   => select(F_ROBASEZ);  my_use  ("k1")  ; set order to tag "1"
+#xcommand O_OBJEKTI   => select(F_ROBASEZ);  my_use  ("objekti")  ; set order to tag "1"
+#xcommand O_POBJEKTI   => select(F_ROBASEZ);  my_use  ("pobjekti")  ; set order to tag "1"
+#xcommand O_REKAP1   => select(F_ROBASEZ);  my_use  ("rekap1")  ; set order to tag "1"
+#xcommand O_REKAP2   => select(F_ROBASEZ);  my_use  ("rekap2")  ; set order to tag "1"
+#xcommand O_REKA22   => select(F_ROBASEZ);  my_use  ("reka22")  ; set order to tag "1"
+#xcommand O_R_UIO   => select(F_ROBASEZ);  my_use  ("r_uio") 
+#xcommand O_RPT_TMP   => select(F_ROBASEZ);  my_use  ("rpt_tmp") 
 
 
 // modul FAKT

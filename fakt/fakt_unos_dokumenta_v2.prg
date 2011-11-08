@@ -211,7 +211,7 @@ if _idtipdok=="13" .and. ( gVar13=="2" .or. glCij13Mpc ) .or. _idtipdok=="19" .a
     _cijena:=MPC
   ENDIF
 elseif lRJ .and. rj->tip="M"  // baratamo samo sa mp.cijenama
-   _cijena:=UzmiMPCsif()
+   _cijena:=fakt_mpc_iz_sifrarnika()
 
 elseif _idtipdok$"11#15#27"
   if gMP=="1"
@@ -284,7 +284,7 @@ if _podbr<>" ."
 	if !(roba->tip="U")  // usluge ne diraj
   		if _idtipdok=="13" .and. (gVar13=="2".or.glCij13Mpc).and.gVarNum=="1"
       			if gVar13=="2" .and. _idtipdok=="13"
-        			_cijena := UzmiMPCSif()
+        			_cijena := fakt_mpc_iz_sifrarnika()
       			else
         			if g13dcij=="6"
           				_cijena:=MPC6
@@ -315,7 +315,7 @@ if _podbr<>" ."
         			_cijena:=MPC
       			endif
     		elseif cRjtip="M"
-       			_cijena:=UzmiMPCSif()
+       			_cijena:=fakt_mpc_iz_sifrarnika()
     		elseif _idtipdok$"11#15#27"
       			if gMP=="1"
         			_Cijena:=MPC
@@ -337,7 +337,7 @@ if _podbr<>" ."
 			// ne dirati cijenu ako je vec odredjena
     		elseif cRjTip="V".and._idTipDok $ "10#20" 
 			//ako se radi o racunima i predracunima
-			_cijena:=UzmiVPCSif()
+			_cijena:=fakt_vpc_iz_sifrarnika()
 		else
       			if cTipVPC=="1"
         			_Cijena:=vpc

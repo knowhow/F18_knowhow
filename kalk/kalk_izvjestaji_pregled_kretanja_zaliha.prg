@@ -594,24 +594,6 @@ endif
 return nMpc
 *}
 
-function SetK1K2(cG1, cIdTarifa, cIdRoba, nK1, nK2)
-*{		
-nK2:=0
-nK1:=0
-select pobjekti
-go top
-do while (!EOF()  .and. field->id<"99")
-	select rekap1
-	hseek  cG1+cIdtarifa+cIdroba+pobjekti->idobj
-	nK2+=field->k2
-	nK1+=field->k1
-	select pobjekti
-	skip
-enddo
-
-return
-*}
-
 
 /*! \fn Izmj_cPrSort()
  *  \brief Formula za kljucni dio sifre pri grupisanju roba

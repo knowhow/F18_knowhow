@@ -20,8 +20,8 @@ LOCAL nExpr:=0, nExpr2:=0, cPom:=""
 local fBKempty:=.f.
 
 if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
-  O_ROBA;  O_KONCIJ; O_PRIPR
-  select pripr; go top
+  O_ROBA;  O_KONCIJ; O_KALK_PRIPR
+  select kalk_pripr; go top
   aDbf:={}
   AADD(aDBF,{"IDFIRMA","C",2,0})
   AADD(aDBF,{"BRDOK","C",8,0})
@@ -60,14 +60,14 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
 
   cTOPSDBF:=trim(gTopsDEST)+"KATOPS.DBF"
   dbcreate2(cTOPSDBF,aDBf)
-  usex (cTopsDBF)   NEW   alias katops
-  select pripr
+  my_use( cTopsDBF, .t., "KATOPS")
+  select kalk_pripr
   nRbr:=0
   dDatdok:=date()
   aIdPos:={}   // matrica pos mjesta koje kaci kalkulacija
   fBkEmpty := .f. // upozori ako je empty barkod
   do while !eof()
-    select roba; hseek pripr->idroba
+    select roba; hseek kalk_pripr->idroba
     select koncij; seek trim(pripr->pkonto)
     select katops
     append blank
@@ -76,19 +76,19 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
     endif
     dDatDok:=pripr->datdok
     replace idfirma with gFirma
-    replace idvd with pripr->idvd
+    replace idvd with kalk_pripr->idvd
     replace idpos with koncij->idprodmjes
-    replace datdok with pripr->datdok
-    replace idkonto with pripr->idkonto
-    replace idkonto2 with pripr->idkonto2
-    replace idpartner with pripr->idpartner
-    replace idroba with pripr->idroba
-    replace kolicina with pripr->kolicina
-    replace mpc with pripr->mpcsapp
+    replace datdok with kalk_pripr->datdok
+    replace idkonto with kalk_pripr->idkonto
+    replace idkonto2 with kalk_pripr->idkonto2
+    replace idpartner with kalk_pripr->idpartner
+    replace idroba with kalk_pripr->idroba
+    replace kolicina with kalk_pripr->kolicina
+    replace mpc with kalk_pripr->mpcsapp
     replace naziv with roba->naz
-    replace idtarifa with pripr->idtarifa
+    replace idtarifa with kalk_pripr->idtarifa
     replace jmj with roba->jmj
-    replace brdok with pripr->brdok
+    replace brdok with kalk_pripr->brdok
 
     if roba->(fieldpos("K1"))<>0
         replace K1 with roba->k1, K2 with roba->K2
@@ -109,12 +109,12 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
         endif
     endif
 
-    if pripr->pu_i=="3"  // radi se o nivelaciji
-        replace mpc with pripr->fcj            ,;   // mpc - stara cijena
-                mpc2 with pripr->(fcj+mpcsapp)      // mpc2 - nova cijena
+    if kalk_pripr->pu_i=="3"  // radi se o nivelaciji
+        replace mpc with kalk_pripr->fcj            ,;   // mpc - stara cijena
+                mpc2 with kalk_pripr->(fcj+mpcsapp)      // mpc2 - nova cijena
     endif
 
-    if pripr->pu_i=="5"
+    if kalk_pripr->pu_i=="5"
       replace kolicina with -kolicina
     endif
     if empty(koncij->idprodmjes)
@@ -129,7 +129,7 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
     nExpr2 += NUMAT("A",cPom)
 
     ++nRbr
-    select pripr
+    select kalk_pripr
     skip
   enddo
 
@@ -141,7 +141,7 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
        cDestMod:=RIGHT(DToS(dDatDok),4)  // 1998 1105  - 11 mjesec, 05 dan
        cDestMod:=TRIM(aIdPos[i0])+"\KT"+cDestMod
        // cDestMod ==  "1\KT1117"
-       usex (cTopsDBF) new alias ntops
+       my_use(cTopsDBF, .t., "NTOPS")       
        fIzadji:=.f.
        // donja for-next pelja otvara baze i , ako postoje, gleda da li je
        // u njih pohranjen isti dokument
@@ -149,9 +149,9 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
        	  bErr:=ERRORBLOCK({|o| MyErrH(o)})
           begin sequence
             if i>21
-              usex ( strtran(cTopsDbf,"KATOPS",cDestMod+"U"+CHR(i%21+64)) ) new alias otops
+              my_use( strtran(cTopsDbf,"KATOPS",cDestMod+"U"+CHR(i%21+64)), .t., "otops" )
             else
-              usex ( strtran(cTopsDbf,"KATOPS",cDestMod+chr(64+i)) ) new alias otops
+              my_use( strtran(cTopsDbf,"KATOPS",cDestMod+chr(64+i)), .t., "otops" )
             endif
             // OD A-C
 	    
@@ -191,7 +191,7 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
    MsgBeep("Formirana je datoteka KATOPS.DBF za prenos u TOPS !#Broj stavki: "+str(nRbr))
 
   endif
-  select pripr
+  select kalk_pripr
 endif
 
 closeret
@@ -296,9 +296,9 @@ return
 
 function CheckKALKDokument(idfirma, tipdokumenta, brojdokumenta)
 *{
-O_DOKS
+O_KALK_DOKS
 
-select doks
+select kalk_doks
 hseek idfirma+tipdokumenta+brojdokumenta
 if !Found()  
 	MsgBeep("Dokument " + TRIM(idfirma) + "-" + TRIM(tipdokumenta) + "-" + TRIM(brojdokumenta) + " ne postoji !!!")
@@ -309,7 +309,7 @@ endif
 *}
 
 
-/*! \fn GenTopsAzur(idfirma, idtipdokumenta, brojdokumenta)
+/*! \fn GenTopsAzur(idfirma, idtipdokumenta, brojdokalk_kumenta)
  *  \brief Generacija kalk->tops na osnovu azuriranih kalkulacija
  *  \param idfirma - id firme
  *  \param idtipdokumenta - tip dokumenta
@@ -326,7 +326,7 @@ local cFilter
 
 O_ROBA
 O_KONCIJ
-O_PRIPR
+O_KALK_PRIPR
 O_KALK
 
 
@@ -407,7 +407,7 @@ do while !eof() .and. (field->idfirma==idfirma) .and. (field->idvd=idtipdokument
                 replace mpc2 with kalk->(fcj+mpcsapp)      // mpc2 - nova cijena
     	endif
 
-    	if pripr->pu_i=="5"
+    	if kalk_pripr->pu_i=="5"
       		replace kolicina with -kolicina
     	endif
 
@@ -456,7 +456,7 @@ if (gModemVeza=="D")
 		// 1998 1105  - 11 mjesec, 05 dan
        		cDestMod:=TRIM(aIdPos[i0]) + "\KT" + cDestMod
        		// cDestMod ==  "1\KT1117"
-       		usex (cTopsDBF) new alias ntops
+       		my_use (cTopsDBF, .t., "ntops") 
        		fIzadji:=.f.
        		// donja for-next pelja otvara baze 
 		// i ako postoje, gleda da li je
@@ -465,9 +465,9 @@ if (gModemVeza=="D")
 			bErr:=ERRORBLOCK({|o| MyErrH(o)})
           		begin sequence
             		if i>21
-              			usex ( strtran(cTopsDbf,"KATOPS",cDestMod+"U"+CHR(i%21+64)) ) new alias otops
+              			my_use( strtran(cTopsDbf,"KATOPS",cDestMod+"U"+CHR(i%21+64)), .t., "otops" )
             		else
-              			usex ( strtran(cTopsDbf,"KATOPS",cDestMod+chr(64+i)) ) new alias otops
+              			my_use( strtran(cTopsDbf,"KATOPS",cDestMod+chr(64+i)), .t., "otops" )
             		endif
             		// OD A-C
             		if ntops->brdok==otops->brdok
@@ -567,7 +567,7 @@ endif
 
 cTOPSDBF:=trim(gTopsDEST)+"KATOPS.DBF"
 dbcreate2(cTOPSDBF,aDBf)
-usex (cTopsDBF)   NEW   alias katops
+my_use(cTopsDBF, .t., "katops")
 
 MsgC()
 

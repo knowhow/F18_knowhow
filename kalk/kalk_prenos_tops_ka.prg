@@ -117,7 +117,7 @@ endif
 
 O_ROBA
 O_TARIFA
-O_PRIPR
+O_KALK_PRIPR
 O_KALK
 
 if gModemVeza == "D"
@@ -162,7 +162,7 @@ else
  	ENDIF
 endif
 
-usex (cTopsDBF) NEW alias TOPSKA
+my_use (cTopsDBF, .t., "TOPSKA")
 
 go bottom
 cBRKALK:=LEFT(STRTRAN(DTOC(datum),".",""),4) + "/" + idpos
@@ -232,15 +232,15 @@ lSortNR:=.f.
 
 if IsJerry()
 	if Pitanje(,"Napraviti sort rednih brojeva","D")=="D"
-		select pripr
+		select kalk_pripr
 		go bottom
 		lSortNR:=.t.
-		nSortNR:=VAL(pripr->rbr)
+		nSortNR:=VAL(kalk_pripr->rbr)
 		go top
 		cKalkulacija:=SPACE(8)
 		Box(,4,60)
 		@ 1+m_x, 2+m_y SAY "Uslov za sortiranje rednih brojeva:"
-		@ 2+m_x, 2+m_y SAY "Zadnji redni broj u pripremi: " GET nSortNr PICT "999"
+		@ 2+m_x, 2+m_y SAY "Zadnji redni broj u kalk_pripremi: " GET nSortNr PICT "999"
 		@ 3+m_x, 2+m_y SAY "0 - od pocetka"
 		@ 4+m_x, 2+m_y SAY "Priljepi na broj dokumenta: " GET cKalkulacija
 		read
@@ -279,7 +279,7 @@ do while !eof()
 				cBrDok:=cKalkulacija
 			endif
 			if nSortNr>0
-				select pripr
+				select kalk_pripr
 				go bottom
 			endif
 		else
@@ -290,7 +290,7 @@ do while !eof()
 	IF (cIdVd=="42" .and. l42u11) .or. (cIdVd=="12")
 		// formiraj 11-ku umjesto 42-ke
 		if (topska->kolicina<>0)
-			SELECT pripr
+			SELECT kalk_pripr
 			APPEND BLANK
 			replace idfirma  with gfirma          ,;
 			idvd     with "11"            ,;
@@ -312,7 +312,7 @@ do while !eof()
 		endif
 	else
 		if (topska->kolicina<>0)		
-			SELECT pripr
+			SELECT kalk_pripr
 			APPEND BLANK
 			replace idfirma  with gfirma          ,;
 			idvd     with topska->IdVd    ,;
@@ -353,20 +353,20 @@ do while !eof()
 	    	endif
 	endif
 	
-	select pripr
+	select kalk_pripr
 
 	cSrcOpis := ""
-	if pripr->idvd == "42"
+	if kalk_pripr->idvd == "42"
 		cSrcOpis := "Prodaja"
 	endif
-	if pripr->idvd == "12"
+	if kalk_pripr->idvd == "12"
 		cSrcOpis := "Reklamacija"
 	endif
 	
 	// dodaj stavku i u p_doksrc
-	add_p_doksrc( gFirma, pripr->idvd, pripr->brdok, ;
+	add_p_doksrc( gFirma, kalk_pripr->idvd, kalk_pripr->brdok, ;
 		pripr->datdok, "TOPS", topska->idpos, topska->idvd, ;
-		topska->brdok, topska->datpos, pripr->idkonto, "" ,;
+		topska->brdok, topska->datpos, kalk_pripr->idkonto, "" ,;
 		topska->idpartner, cSrcOpis)
 
 	
@@ -393,16 +393,6 @@ ENDIF
 
 return
 
-
-// da li postoji fajl u chk lokaciji, vraca oznaku
-// R - realizovan
-// X - nije obradjen
-function UChkPostoji(cFullFileName)
-if FILE(STRTRAN(cFullFileName,":" + SLASH, ":" + SLASH + "chk" + SLASH))
-	return "R"
-else
-   	return "X"
-endif
 
 
 

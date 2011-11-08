@@ -12,42 +12,8 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/fakt/gendok/1g/mnu_gdok.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.4 $
- * $Log: mnu_gdok.prg,v $
- * Revision 1.4  2003/01/03 14:07:00  sasa
- * ispravka pocetnog stanja
- *
- * Revision 1.3  2002/09/28 15:49:48  mirsad
- * prenos pocetnog stanja za evid.uplata dovrsen
- *
- * Revision 1.2  2002/09/26 12:47:05  mirsad
- * no message
- *
- * Revision 1.1  2002/07/03 12:22:48  sasa
- * uvodnjenje novog prg fajla
- *
- * Revision 
- * 
- *
- *
- */
- 
 
-/*! \file fmk/fakt/gendok/1g/mnu_gdok.prg
- *  \brief Meni opcija za generisanje dokumenata za modul FAKT
- */
-
-/*! \fn MGenDoks()
- *  \brief Meni opcija za generisanje dokumenata za modul FAKT
- */
-
-function MGenDoks()
+function fakt_mnu_generacija_dokumenta()
 *{
 private Opc:={}
 private opcexe:={}

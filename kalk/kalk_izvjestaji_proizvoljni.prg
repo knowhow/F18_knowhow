@@ -13,19 +13,19 @@
 #include "kalk.ch"
 
  
-function Proizv()
+function ProizvKalk()
 PrIz()
 return
 
 
-function OtBazPI()
+function OtBazPIKalk()
 O_ROBA
 O_TARIFA
 OProizv()
 return
 
 
-function GenProIzv()
+function GenProIzvKalk()
  local nPr:=1, lKumSuma:=.f.
  private lDvaKonta:=.f.  // ? ukinuti ovu var. ?
  private lKljuc:=.f.
@@ -616,107 +616,8 @@ return
 
 
 
-/*! \fn PrikaziTI(cSif)
- *  \brief Prikazuje tekuci izvjestaj
- *  \param cSif - sifra izvjestaja
- */
 
-function PrikaziTI(cSif)
-*{
-local nArr:=SELECT(), nKol:=COL(), nRed:=ROW()
-   SELECT (F_IZVJE)
-   SEEK cSif
-   if FOUND()
-     @ 1,0 SAY PADC("TEKUCI IZVJESTAJ: "+ID+"-"+TRIM(DoHasha(NAZ)),80) COLOR "GR+/N"
-   else
-     @ 1,0 SAY PADC("TEKUCI IZVJESTAJ: "+cSif+"-nije definisan",80) COLOR "GR+/N"
-   endif
-   cPIKPolje  := IF(FIELDPOS("KPOLJE" )==0.or.EMPTY(KPOLJE ),"IDKONTO",;
-                                                             TRIM(KPOLJE ))
-   cPIImeKP   := IF(FIELDPOS("IMEKP"  )==0.or.EMPTY(IMEKP  ),"KONTO"  ,;
-                                                             TRIM(IMEKP  ))
-   cPIKSif    := IF(FIELDPOS("KSIF"   )==0.or.EMPTY(KSif   ),"KONTO"  ,;
-                                                             TRIM(KSif   ))
-   cPIKBaza   := IF(FIELDPOS("KBAZA"  )==0.or.EMPTY(KBAZA  ),"KALK",;
-                                                             TRIM(KBAZA  ))
-   cPIKIndeks := IF(FIELDPOS("KINDEKS")==0.or.EMPTY(KINDEKS),"TAG1",;
-                                                             TRIM(KINDEKS))
-   cPITipTab  := IF(FIELDPOS("TIPTAB" )==0.or.EMPTY(TIPTAB ),"",;
-                                                             TRIM(TIPTAB ))
-   SELECT (nArr)
-  SETPOS(nRed,nKol)
-return
-*}
-
-
-
-/*! \fn FForPI()
- *  \brief 
- */
- 
-function FForPI()
-*{
-local lVrati:=.f.
- if cSaNulama=="D" .or.;
-    !lKljuc .and. ( KUMSUMA<>0 .or. TEKSUMA<>0 .or. KPGSUMA<>0 .or.;
-                    DUGUJE<>0 .or. POTRAZUJE<>0 .or.;
-                    lDvaKonta .and. ( KUMSUMA2<>0 .or. TEKSUMA2<>0 .or.;
-                                      DUGUJE2<>0 .or. POTRAZUJE2<>0 ) ) .or.;
-    lKljuc .and. VidiUaKolS()
-   lVrati:=.t.
- endif
-return lVrati
-*}
-
-
-/*! \fn VidiUaKolS()
- *  \brief
- */
- 
-function VidiUaKolS()
-*{
-local lVrati:=.f., i:=0
-  FOR i:=1 TO LEN(aKolS)
-    cPom777:=aKolS[i,1]
-    if &cPom777<>0
-      lVrati:=.t.
-      EXIT
-    endif
-  NEXT
-return lVrati
-*}
-
-
-/*! \fn FSvakiPI()
- *  \brief
- */
-
-function FSvakiPI()
-*{
-if !lKljuc
-   if EMPTY(U1)
-     uTekSuma:=TEKSUMA
-   else
-     private cPUTS
-     cPUTS:="TEKSUMA"+TRIM(U1)
-     if &cPUTS
-       uTekSuma:=ABS(TEKSUMA)
-     else
-       uTekSuma:=0
-     endif
-   endif
- endif
-return IF(!EMPTY(PODVUCI),"PODVUCI"+PODVUCI,NIL)
-*}
-
-
-
-/*! \fn ParSviIzvj()
- *  \brief Parametri za sve proizvoljne izvjestaje
- */
- 
-function ParSviIzvj()
-*{
+function ParSviIzvjKalk()
 gTabela:=1; cPrikBezDec:="D"; cSaNulama:="D"; nKorZaLands:=-18
 
 O_PARAMS

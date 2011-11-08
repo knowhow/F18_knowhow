@@ -48,7 +48,7 @@ if (lPocStanje==nil)
 	lPocStanje:=.f.
 else
    	lPocStanje:=.t.
-   	O_PRIPR
+   	O_KALK_PRIPR
    	cBrPSt:="00001   "
    	Box(,2,60)
      		@ m_x+1,m_y+2 SAY "Generacija poc. stanja  - broj dokumenta 80 -" GET cBrPSt
@@ -191,7 +191,7 @@ if (cKontrolnaTabela=="D")
 endif
 
 if lPocStanje
-	O_PRIPR
+	O_KALK_PRIPR
 endif
 lPrikK2 := .f.
 if cPrikK2 == "D"
@@ -448,7 +448,7 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 		
 		if lPocStanje
   			
-			select pripr
+			select kalk_pripr
   			
 			if round(nUlaz-nIzlaz,4)<>0 .and. cSrKolNula $ "01"
      				
@@ -638,11 +638,11 @@ if lImaGresaka
 endif
 
 if lPocStanje
-	if lImaGresaka .and. Pitanje(,"Nulirati pripremu (radi ponavljanja procedure) ?","D")=="D"
-   		select pripr
+	if lImaGresaka .and. Pitanje(,"Nulirati kalk_pripremu (radi ponavljanja procedure) ?","D")=="D"
+   		select kalk_pripr
    		zap
  	else
-   		RenumPripr(cBrPSt,"80")
+   		renumeracija_kalk_pripr(cBrPSt,"80")
  	endif
 endif
 

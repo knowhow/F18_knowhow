@@ -51,7 +51,7 @@ function IzKalk2f()
 
  O_KONTO
  O_PARTN
- O_PRIPR
+ O_KALK_PRIPR
  IF RECCOUNT2()>0
    MsgBeep("Prvo ispraznite tabelu pripreme!")
    CLOSERET
@@ -59,8 +59,7 @@ function IzKalk2f()
 
  // otvorimo DOKS
  // -------------
- SELECT 0
- USE (cDir+"DOKS.DBF")
+ MY_USE (cDir+"KALK_DOKS", .t., "NEW")
 
  Box("#PRENOS KALK DOKUMENTA IZ FIRME "+cF,10,75)
   DO WHILE .t.
@@ -73,7 +72,7 @@ function IzKalk2f()
 
     // naÐi najstariju KALK koja nikad nije prenoçena (marker<>"PP")
     // -------------------------------------------------------------
-    SELECT DOKS
+    SELECT KALK_DOKS
     SET ORDER TO TAG "3" // IdFirma+dtos(datdok)+podbr+idvd+brdok
     HSEEK cFirma
     DO WHILE !EOF() .and. idfirma==cFirma
@@ -123,14 +122,13 @@ function IzKalk2f()
 
     // poçto je utvrÐeno da postoji, otvaramo KALK radi prenosa
     // --------------------------------------------------------
-    SELECT 0
-    USE (cDir+"KALK.DBF")
+    my_use ("KALK", .t., "NEW")
     SET ORDER TO TAG "1" // idFirma+IdVD+BrDok+RBr
     HSEEK cFirma+cIdVd+cBrDok
 
     DO WHILE !EOF() .and. cFirma+cIdVd+cBrDok==IdFirma+IdVd+BrDok
       Scatter()
-      SELECT PRIPR
+      SELECT KALK_PRIPR
       APPEND BLANK
       Gather()
       SELECT KALK
@@ -141,13 +139,13 @@ function IzKalk2f()
     // -----------------------------------------------------------------
     SELECT KALK
      USE
-    SELECT DOKS
+    SELECT KALK_DOKS
      Scatter(); _podbr:="PP"; Gather()
      USE
 
     // utvrdimo broj nove kalkulacije
     // ------------------------------
-    O_DOKS
+    O_KALK_DOKS
     SET ORDER TO TAG "1"
     SEEK gFirma+cIdVd+CHR(255); SKIP -1
     IF gFirma+cIdVd == IDFIRMA+IDVD
@@ -157,7 +155,7 @@ function IzKalk2f()
     ENDIF
     cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
 
-    SELECT PRIPR; SET ORDER TO
+    SELECT KALK_PRIPR; SET ORDER TO
     GO TOP
     DO WHILE !EOF()
       Scatter()

@@ -443,7 +443,7 @@ if reccount2() == 0
                      LEFT (cVezOtpr, LEN (cVezOtpr)-2)+"."     // skine ", "
       ENDIF
       select fakt_pripr
-      RenumPripr(cVezOtpr,dNajnoviji)
+      renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
 
       select fakt_doks
       set order to 1

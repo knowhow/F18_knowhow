@@ -274,9 +274,17 @@ AADD( gaDbfs, { F_DOKSRC ,"KALK_DOKSRC"  , "kalk_doksrc"    } )
 AADD( gaDbfs, { F_P_DOKSRC,"P_KALK_DOKSRC", "p_kalk_doksrc"   } )
 AADD( gaDbfs, { F_PPPROD ,"PPPROD"  , "ppprod"    } )
 AADD( gaDbfs, { F_OBJEKTI,"OBJEKTI" , "objekti"     } )
+AADD( gaDbfs, { F_OBJEKTI,"POBJEKTI" , "pobjekti"     } )
 AADD( gaDbfs, { F_PRODNC, "PRODNC"  , "prodnc"     } )
 AADD( gaDbfs, { F_RVRSTA, "RVRSTA"  , "rvrsta"     } )
 AADD( gaDbfs, { F_K1     ,"K1"      , "k1"     } )
+AADD( gaDbfs, { F_K1     ,"CACHE"      , "cache"     } )
+AADD( gaDbfs, { F_K1     ,"PRIPT"      , "pript"     } )
+AADD( gaDbfs, { F_K1     ,"REKAP1"      , "rekap1"     } )
+AADD( gaDbfs, { F_K1     ,"REKAP2"      , "rekap2"     } )
+AADD( gaDbfs, { F_K1     ,"REKA22"      , "reka22"     } )
+AADD( gaDbfs, { F_K1     ,"R_UIO"       , "r_uio"     } )
+AADD( gaDbfs, { F_K1     ,"RPT_TMP"     , "rpt_tmp"     } )
 
 
 // modul FAKT

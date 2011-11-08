@@ -62,13 +62,13 @@ local nTNRec
 local cNalog := ""
 
 // prvo u doks-u nadji dokumente i prema njima onda idi
-O_DOKS
+O_KALK_DOKS
 
 cId_td := ALLTRIM( cId_td )
 cId_mkto := ALLTRIM( cId_mkto )
 cId_pkto := ALLTRIM( cId_pkto )
 
-select doks
+select kalk_doks
 go top
 
 
@@ -120,15 +120,15 @@ do while !EOF()
 	_br_nal( cChBrNal, cD_brdok, @cNalog )
 
 	// kontiraj
-	KontNal( .t., .t., .f., cNalog )
+	kalk_kontiranje_naloga( .t., .t., .f., cNalog )
 
 	// azuriraj nalog
 	p_fin( .t. )
 
 	++ nCount
 
-	O_DOKS
-	select doks
+	O_KALK_DOKS
+	select kalk_doks
 	go (nTNRec)
 	skip
 enddo

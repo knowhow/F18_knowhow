@@ -13,22 +13,11 @@
 #include "fakt.ch"
 
  
-function RedniBroj(nRbr)
-*{
-local nOst
-if nRbr>999
-    nOst:=nRbr%100
-    return Chr(int(nRbr/100)-10+65)+padl(alltrim(str(nOst,2)),2,"0")
-else
-    return str(nRbr,3)
-endif
-*}
-
-/*! \fn UzmiMpcSif()
+/*! \fn fakt_mpc_iz_sifrarnika()
  *  \brief Uzmi maloprodajnu cijenu iz sifrarnika
  */
  
-function UzmiMpcSif()
+function fakt_mpc_iz_sifrarnika()
 *{
 local nCV:=0
 
@@ -57,11 +46,11 @@ return nCV
 *}
 
 
-/*! \fn UzmiVPCSif()
+/*! \fn fakt_vpc_iz_sifrarnika()
  *  \brief Uzmi veleprodajnu cijenu iz sifrarnika
  */
  
-function UzmiVPCSif()
+function fakt_vpc_iz_sifrarnika()
 *{
 local nCV:=0
 
@@ -1923,7 +1912,7 @@ do while !eof()
   if cTipVPC=="2" .and. roba->(fieldpos("vpc2")<>0)
     _cijena := roba->vpc2
   else
-    _cijena := if ( !EMPTY(cIdFirma) , UzmiMPCSif() , roba->vpc )
+    _cijena := if ( !EMPTY(cIdFirma) , fakt_mpc_iz_sifrarnika() , roba->vpc )
   endif
 
   if gVarC=="4" // uporedo vidi i mpc

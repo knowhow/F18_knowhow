@@ -139,8 +139,14 @@ ENDIF
 PrikaziTI(cBrI)
 
 
-GenProIzv()
-OtBazPI()
+if goModul:oDataBase:cName == "KALK"
+	GenProIzvKalk()
+	OtBazPIKalk()
+elseif goModul:oDataBase:cName == "FIN"
+	GenProIzvFin()
+	OtBazPIFin()
+endif
+
 
 DO WHILE .T.
    h[1]:=""; h[2]:=""; h[3]:=""; h[4]:=""; h[5]:=""; h[6]:=""; h[7]:=""
@@ -150,9 +156,14 @@ DO WHILE .T.
       CASE izbor==0
         exit
       CASE izbor==1
+		if goModul:oDataBase:cName == "KALK"
+			GenProIzvKalk()
+			OtBazPIKalk()
+		elseif goModul:oDataBase:cName == "FIN"
+			GenProIzvFin()
+			OtBazPIFin()
+		endif
 
-         GenProIzv()
-         OtBazPI()
       CASE izbor==2
          P_ProIzv()
          PrikaziTI(cBrI)
@@ -163,7 +174,11 @@ DO WHILE .T.
       CASE izbor==5
          P_KolProIzv()
       CASE izbor==6
-         ParSviIzvj()
+         if goModul:oDatabase:cName == "KALK"
+             ParSviIzvjKalk()
+		 elseif goModul:oDataBase:cName == "FIN"
+             ParSviIzvjFin()
+         endif 
       CASE izbor==7
          Box(,3,70)
           @ m_x+2,m_y+2 SAY "Izaberite tekuci izvjestaj (1-99):" GET nTekIzv VALID nTekIzv>0 .and. nTekIzv<100 PICT "99"

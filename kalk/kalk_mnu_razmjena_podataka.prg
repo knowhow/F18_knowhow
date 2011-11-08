@@ -13,7 +13,7 @@
 #include "kalk.ch"
 
 
-function ModRazmjena()
+function kalk_razmjena_podataka()
 private Opc:={}
 private opcexe:={}
 AADD(opc,"1. generisi FIN,FAKT dokumente (kontiraj)      ")

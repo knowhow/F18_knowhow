@@ -368,7 +368,7 @@ do while ! Eof()
     if cTipVPC=="2" .and.  roba->(fieldpos("vpc2")<>0)
           _cijena:=roba->vpc2
     else
-      _cijena := if ( !EMPTY(cIdFirma) , UzmiMPCSif(), roba->vpc )
+      _cijena := if ( !EMPTY(cIdFirma) , fakt_mpc_iz_sifrarnika(), roba->vpc )
     endif
     SELECT POM
     APPEND BLANK

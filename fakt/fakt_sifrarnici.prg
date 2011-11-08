@@ -394,7 +394,7 @@ elseif Ch==K_CTRL_T .and. gSKSif=="D"
  PopWA()
  IF !(cSif==cSif2)
    // ako nije dupla provjerimo da li postoji u kumulativu
-   if ImaUKumul(cSif,"3")
+   if ima_u_fakt_kumulativ(cSif,"3")
      Beep(1)
      Msg("Stavka artikla/robe se ne moze brisati jer se vec nalazi u dokumentima!")
      return 7
@@ -402,7 +402,7 @@ elseif Ch==K_CTRL_T .and. gSKSif=="D"
  ENDIF
 
 elseif Ch==K_F2 .and. gSKSif=="D"
- if ImaUKumul(cSif,"3")
+ if ima_u_fakt_kumulativ(cSif,"3")
    return 99
  endif
 
@@ -694,13 +694,13 @@ RETURN
 
 
 
-/*! \fn ImaUKumul(cKljuc,cTag)
+/*! \fn ima_u_fakt_kumulativ(cKljuc,cTag)
  *  \brief
  *  \param cKljuc
  *  \param cTag
  */
  
-function ImaUKumul(cKljuc,cTag)
+function ima_u_fakt_kumulativ(cKljuc,cTag)
 
   LOCAL lVrati:=.f., lUsed:=.t., nArr:=SELECT()
   SELECT (F_FAKT)

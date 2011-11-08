@@ -58,9 +58,9 @@ return
 function KalkNaF(cidroba,nKols)
 *{
 select (F_FAKT)
-if !used(); XO_FAKT; endif
+if !used(); O_FAKT; endif
 
-select xfakt; set order to 3 // idroba
+select fakt; set order to 3 // idroba
 nKols:=0
 seek cidroba
 do while !eof() .and. cidroba==idroba
@@ -441,11 +441,11 @@ return
 
 
 
-/*! \fn RenumPripr(cDok,cidvd)
+/*! \fn renumeracija_kalk_pripr(cDok,cidvd)
  *  \brief Prenumerisanje stavki zadanog dokumenta u kalk_pripremi
  */
 
-function RenumPripr(cDok,cidvd)
+function renumeracija_kalk_pripr(cDok,cidvd)
 *{
 select kalk_pripr
 set order to 0
@@ -568,7 +568,7 @@ function ObracunPorezaUvoz()
 *{
 local nTP, qqT1, qqT2, aUT1, aUT2
 
-O_PRIPR
+O_KALK_PRIPR
 
 if !(kalk_pripr->idvd $ "10#81")
 	MsgBeep("Ova opcija vrijedi samo za dokumente tipa 10 i 81 !")
@@ -766,31 +766,13 @@ return
 
 
 
-/*! \fn Preduzece()
- *  \brief Ispis naziva preduzeca/firme
- */
-
-function Preduzece()
-*{
-P_INI
-P_10CPI
-P_B_ON
-?? space(8), replicate("-",31)
-? space(8),gTS+": "+gNFirma
-? space(8), replicate("-",31)
-B_OFF
-?
-?
-return
-*}
 
 
-
-/*! \fn ImaUKumul(cKljuc,cTag)
+/*! \fn ima_u_kalk_kumulativ(cKljuc,cTag)
  *  \brief Ispituje postojanje zadanog kljuca u zadanom indeksu kumulativa KALK
  */
 
-function ImaUKumul(cKljuc,cTag)
+function ima_u_kalk_kumulativ(cKljuc,cTag)
 *{
  local lVrati:=.f.
  local lUsed:=.t.
@@ -1001,7 +983,7 @@ nArr:=SELECT()
 O_TARIFA
 O_KONCIJ
 O_ROBA
-O_PRIPR9
+O_KALK_PRIPR9
 cOtpremnica:=SPACE(10)
 cIdKonto:="1320   "
 nBrojac:=0
@@ -1064,7 +1046,7 @@ function Get11FromSmece(cBrDok)
 local nArr
 nArr:=SELECT()
 
-O_PRIPR9
+O_KALK_PRIPR9
 select kalk_pripr9
 go top
 do while !EOF()

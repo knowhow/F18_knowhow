@@ -134,11 +134,11 @@ return
 
 
 
-/*! \fn Zagl11()
+/*! \fn fin_zagl_11()
  *  \brief Zaglavlje analitickog naloga
  */
  
-function Zagl11()
+function fin_zagl_11()
 
 local nArr, lDnevnik:=.f.
 if "DNEVNIKN"==PADR(UPPER(PROCNAME(1)),8) .or.;

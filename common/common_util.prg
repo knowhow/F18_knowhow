@@ -208,3 +208,53 @@ endif
 
 return 1
 
+
+
+function Preduzece()
+local nArr:=select()
+F10CPI
+B_ON
+? gTS+": "
+if gNW=="D"
+ ?? gFirma,"-",gNFirma
+else
+ SELECT PARTN; HSEEK cIdFirma
+ ?? cIdFirma,partn->naz,partn->naz2
+endif
+B_OFF
+?
+select (nArr)
+return
+
+
+
+function RbrUNum(cRBr)
+if left(cRbr,1)>"9"
+   return  (asc(left(cRbr,1))-65+10)*100  + val(substr(cRbr,2,2))
+else
+   return val(cRbr)
+endif
+
+
+function RedniBroj(nRbr)
+local nOst
+if nRbr>999
+    nOst:=nRbr%100
+    return Chr(int(nRbr/100)-10+65)+padl(alltrim(str(nOst,2)),2,"0")
+else
+    return str(nRbr,3)
+endif
+
+
+
+// da li postoji fajl u chk lokaciji, vraca oznaku
+// R - realizovan
+// X - nije obradjen
+function UChkPostoji(cFullFileName)
+if FILE(STRTRAN(cFullFileName,":" + SLASH, ":" + SLASH + "chk" + SLASH))
+	return "R"
+else
+   	return "X"
+endif
+
+

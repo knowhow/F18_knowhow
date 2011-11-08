@@ -42,7 +42,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-XO_FAKT
+O_FAKT
 
 dDatKalk:=date()
 
@@ -87,8 +87,7 @@ do while .t.
   read
   if lastkey()==K_ESC; exit; endif
 
-
-  select xfakt
+  select fakt
   seek cFaktFirma+cIdTipDok+cBrDok
   if !found()
      Beep(4)
@@ -128,17 +127,17 @@ do while .t.
 
      SELECT KONCIJ; SEEK TRIM(cIdKonto)
 
-     select xfakt
+     select fakt
      IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
        MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
        LOOP
      ENDIF
      do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-       select ROBA; hseek xfakt->idroba
+       select ROBA; hseek fakt->idroba
 
        select tarifa; hseek roba->idtarifa
 
-       select xfakt
+       select fakt
        if alltrim(podbr)=="."  .or. idroba="U"
           skip
           loop
@@ -154,21 +153,21 @@ do while .t.
                datdok    WITH dDatKalk        ,;
                idpartner WITH cIdPartner      ,;
                idtarifa  WITH ROBA->idtarifa  ,;
-               brfaktp   WITH xfakt->brdok    ,;
-               datfaktp  WITH xfakt->datdok   ,;
+               brfaktp   WITH fakt->brdok    ,;
+               datfaktp  WITH fakt->datdok   ,;
                idkonto   WITH cidkonto        ,;
                idkonto2  WITH cidkonto2       ,;
                idzaduz2  WITH cidzaduz2       ,;
-               datkurs   WITH xfakt->datdok   ,;
-               kolicina  WITH xfakt->kolicina ,;
-               idroba    WITH xfakt->idroba   ,;
-               fcj       WITH xfakt->cijena   ,;
-               nc        WITH xfakt->cijena   ,;
-               rabatv    WITH xfakt->rabat
+               datkurs   WITH fakt->datdok   ,;
+               kolicina  WITH fakt->kolicina ,;
+               idroba    WITH fakt->idroba   ,;
+               fcj       WITH fakt->cijena   ,;
+               nc        WITH fakt->cijena   ,;
+               rabatv    WITH fakt->rabat
 
        REPLACE vpc       WITH KoncijVPC()
 
-       select xfakt
+       select fakt
        skip 1
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"

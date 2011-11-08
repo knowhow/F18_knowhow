@@ -111,7 +111,7 @@ if fPocStanje==NIL
 	fPocStanje:=.f.
 else
    	fPocStanje:=.t.
-   	O_PRIPR
+   	O_KALK_PRIPR
    	cBrPSt:="00001   "
    	Box(,3,60)
      		@ m_x+1,m_y+2 SAY "Generacija poc. stanja  - broj dokumenta 16 -" GET cBrPSt
@@ -1089,7 +1089,7 @@ if fPocStanje
    select pripr
    zap
  else
-   RenumPripr(cBrPst,"16")
+   renumeracija_kalk_pripr(cBrPst,"16")
  endif
 endif
 
@@ -1483,8 +1483,8 @@ function PocStMag()
 *{
 LLM(.t.)
          if !empty(goModul:oDataBase:cSezonDir) .and. Pitanje(,"Prebaciti dokument u radno podrucje","D")=="D"
-          O_PRIPRRP
-          O_PRIPR
+          O_KALK_PRIPRRP
+          O_KALK_PRIPR
           if reccount2()<>0
             select priprrp
             append from pripr

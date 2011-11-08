@@ -253,10 +253,10 @@ return cRet
 // ------------------------------------------------
 static function MnuObrDok()
 
-if Pitanje(,"Obraditi automatski dokument iz pripreme (D/N)?", "N") == "D"
+if Pitanje(,"Obraditi automatski dokument iz kalk_pripreme (D/N)?", "N") == "D"
 	ObradiDokument( nil, nil, __stampaj )
 else
-	MsgBeep("Dokument nije obradjen!#Obradu uradite iz pripreme!")
+	MsgBeep("Dokument nije obradjen!#Obradu uradite iz kalk_pripreme!")
 	close all
 endif
 
@@ -718,7 +718,7 @@ return cRet
 // vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
 // ---------------------------------------------------------------
 static function FaktExist()
-O_DOKS
+O_KALK_DOKS
 
 select temp
 go top
@@ -741,7 +741,7 @@ do while !EOF()
 	seek cBrFakt
 	
 	if Found()
-		AADD(aRet, {cBrFakt, doks->idfirma + "-" + doks->idvd + "-" + ALLTRIM(doks->brdok)})
+		AADD(aRet, {cBrFakt, kalk_doks->idfirma + "-" + kalk_doks->idvd + "-" + ALLTRIM(kalk_doks->brdok)})
 	endif
 	
 	select temp
@@ -763,9 +763,9 @@ local cTipDok
 local cIdKonto
 local cIdKonto2
 
-O_PRIPR
+O_KALK_PRIPR
 O_KALK
-O_DOKS
+O_KALK_DOKS
 O_ROBA
 
 select temp
@@ -788,8 +788,8 @@ do while !EOF()
 	go top
 	seek cTmpArt
 
-	// dodaj zapis u pripr
-	select pripr
+	// dodaj zapis u kalk_pripr
+	select kalk_pripr
 	append blank
 	
 	replace idfirma with gFirma
@@ -874,8 +874,8 @@ if lStampaj == nil
 endif
 
 if lAsPokreni
-	// pozovi asistenta
-	KUnos(.t.)
+		// pozovi asistenta
+		kalk_unos_stavki_dokumenta(.t.)
       	if __trosk == .t. 
 		// otvori tabele
 		o_kalk_edit()
@@ -892,7 +892,7 @@ if lStampaj == .t.
 endif
 
 // azuriraj kalk
-Azur( .t. )
+Azuriranje_kalk_dokumenta( .t. )
 
 o_kalk_edit()
 

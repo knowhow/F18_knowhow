@@ -78,6 +78,9 @@ do case
 	case mnu_choice == 1
 		MainFin(cUser, cPassWord, p3, p4, p5, p6, p7)
 
+	case mnu_choice == 2
+		MainKalk(cUser, cPassWord, p3, p4, p5, p6, p7)
+
 	case mnu_choice == 3
 		MainFakt(cUser, cPassWord, p3, p4, p5, p6, p7)
 

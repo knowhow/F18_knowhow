@@ -126,7 +126,7 @@ do while .t.
 	cFaktFirma := "10"
   endif
 
-  select xfakt
+  select fakt
   seek cFaktFirma
   
   IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+"'==IdFirma","IDROBA",F_ROBA,"idtipdok $ '"+cIdTipdok+"' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
@@ -143,7 +143,7 @@ do while .t.
     if idtipdok $ cIdTipdok .and. dDatFOd<=datdok .and. dDatFDo>=datdok 
     	// pripada odabranom intervalu
 
-       cFBrDok := xfakt->brdok
+       cFBrDok := fakt->brdok
 
        select doks
        set order to tag "V_BRF"
@@ -152,11 +152,11 @@ do while .t.
 
        if FOUND() .and. ALLTRIM(doks->brfaktp) == ALLTRIM(cFBrDok) .and. doks->idvd == "96"
        		
-		cTmp := xfakt->idfirma + "-" + (cFBrDok)
-		dTmpDate := xfakt->datdok
+		cTmp := fakt->idfirma + "-" + (cFBrDok)
+		dTmpDate := fakt->datdok
 		
 		select partn
-		hseek xfakt->idpartner
+		hseek fakt->idpartner
 		
 		cTmpPartn := ALLTRIM( partn->naz )
 		
@@ -168,14 +168,14 @@ do while .t.
 			AADD(aNotIncl, { cTmp, dTmpDate, cTmpPartn, doks->idvd + "-" + doks->brdok })
 		endif
 		
-		select xfakt
+		select fakt
 		skip
 		loop
 		
        endif
        
        select ROBA
-       hseek xfakt->idroba
+       hseek fakt->idroba
        
        // provjeri prije svega uslov za robu...
        if !EMPTY( cRobaUsl )
@@ -184,13 +184,13 @@ do while .t.
        
        		if &cTmp
 			if cRobaIncl == "I"
-				select xfakt
+				select fakt
 				skip
 				loop
 			endif
 		else
     			if cRobaIncl == "U"
-       				select xfakt
+       				select fakt
        				skip
        				loop
 			endif
@@ -203,9 +203,9 @@ do while .t.
 	  // radi se o proizvodu
 
           select sast
-          hseek  xfakt->idroba
+          hseek  fakt->idroba
           
-	  do while !eof() .and. id==xFakt->idroba // setaj kroz sast
+	  do while !eof() .and. id==fakt->idroba // setaj kroz sast
             
 	    if !EMPTY( cSirovina )
 	    	if cSirovina <> sast->id2
@@ -217,16 +217,16 @@ do while .t.
 	    select roba
 	    hseek sast->id2
             
-	    select pripr
+	    select kalk_pripr
 	    locate for idroba==sast->id2
             
 	    if found()
 
-              replace kolicina with kolicina + xfakt->kolicina*sast->kolicina
+              replace kolicina with kolicina + fakt->kolicina*sast->kolicina
             
 	    else
               
-	      select pripr
+	      select kalk_pripr
               append blank
               replace idfirma with cIdFirma,;
                       rbr     with str(++nRbr,3),;
@@ -240,12 +240,12 @@ do while .t.
                        idkonto2  with cidkonto2,;
                        idzaduz2  with cidzaduz2,;
                        datkurs with dDatKalk,;
-                       kolicina with xfakt->kolicina*sast->kolicina,;
+                       kolicina with fakt->kolicina*sast->kolicina,;
                        idroba with sast->id2,;
                        nc  with ROBA->nc,;
-                       vpc with xfakt->cijena,;
-                       rabatv with xfakt->rabat,;
-                       mpc with xfakt->porez
+                       vpc with fakt->cijena,;
+                       rabatv with fakt->rabat,;
+                       mpc with fakt->porez
             
 	 
 	    endif
@@ -257,15 +257,15 @@ do while .t.
 		   append blank
 			   
 		   replace field->idsast with cSirovina
-		   replace field->idroba with xfakt->idroba
+		   replace field->idroba with fakt->idroba
 		   replace field->r_naz with ""
-		   replace field->idpartner with xfakt->idpartner
-		   replace field->rbr with xfakt->rbr
-		   replace field->brdok with xfakt->idtipdok + ;
-			   	"-" + xfakt->brdok
-		   replace field->kolicina with xfakt->kolicina
+		   replace field->idpartner with fakt->idpartner
+		   replace field->rbr with fakt->rbr
+		   replace field->brdok with fakt->idtipdok + ;
+			   	"-" + fakt->brdok
+		   replace field->kolicina with fakt->kolicina
 		   replace field->kol_sast with ;
-			   	xfakt->kolicina * sast->kolicina
+			   	fakt->kolicina * sast->kolicina
 
 	
 	    endif
@@ -277,7 +277,7 @@ do while .t.
 
        endif // roba->tip == "P"
     endif  // $ cidtipdok
-    select xfakt
+    select fakt
     skip
   enddo
   
@@ -349,13 +349,13 @@ return
 // -------------------------------------
 static function o_tables()
 
-O_PRIPR
+O_KALK_PRIPR
 O_KALK
-O_DOKS
+O_KALK_DOKS
 O_KONTO
 O_PARTN
 O_TARIFA
-XO_FAKT
+O_FAKT
 
 
 return
@@ -463,7 +463,7 @@ do while .t.
   		exit
 	endif
 
-  	select xfakt
+  	select fakt
   	seek cFaktFirma
   	
 	if !ProvjeriSif("!eof() .and. '"+cFaktFirma+"'==IdFirma","IDROBA",F_ROBA,"idtipdok = '"+cIdTipdok+"' .and. brdok = '" + cFaBrDok + "'" )
@@ -477,21 +477,21 @@ do while .t.
     		if idtipdok = cIdTipdok .and. cFaBrDok = brdok 
 
        			select ROBA
-			hseek xfakt->idroba
+			hseek fakt->idroba
        			if roba->tip="P"  
 				// radi se o proizvodu
 				select sast
-          			hseek  xfakt->idroba
-          			do while !eof() .and. id==xFakt->idroba 
+          			hseek  fakt->idroba
+          			do while !eof() .and. id==fakt->idroba 
 					// setaj kroz sast
             				select roba
 					hseek sast->id2
-            				select pripr
+            				select kalk_pripr
             				locate for idroba==sast->id2
             				if found()
-              					replace kolicina with kolicina + xfakt->kolicina*sast->kolicina
+              					replace kolicina with kolicina + fakt->kolicina*sast->kolicina
             				else
-              					select pripr
+              					select kalk_pripr
               					append blank
               					replace idfirma with cIdFirma,;
                       				rbr     with str(++nRbr,3),;
@@ -499,19 +499,19 @@ do while .t.
                        				brdok with cBrKalk,;
                        				datdok with dDatKalk,;
                        				idtarifa with ROBA->idtarifa,;
-                       				brfaktp with xfakt->brdok,;
-						idpartner with xfakt->idpartner,;
+                       				brfaktp with fakt->brdok,;
+						idpartner with fakt->idpartner,;
                        				datfaktp with dDatKalk,;
                        				idkonto   with cidkonto,;
                        				idkonto2  with cidkonto2,;
                        				idzaduz2  with cidzaduz2,;
                        				datkurs with dDatKalk,;
-                       				kolicina with xfakt->kolicina*sast->kolicina,;
+                       				kolicina with fakt->kolicina*sast->kolicina,;
                        				idroba with sast->id2,;
                        				nc  with ROBA->nc,;
-                       				vpc with xfakt->cijena,;
-                       				rabatv with xfakt->rabat,;
-                       				mpc with xfakt->porez
+                       				vpc with fakt->cijena,;
+                       				rabatv with fakt->rabat,;
+                       				mpc with fakt->porez
             				endif
             				
 					select sast
@@ -521,7 +521,7 @@ do while .t.
        			endif 
     		endif 
     		
-		select xfakt
+		select fakt
     		skip
   	enddo
 
@@ -555,14 +555,14 @@ function PrenosNo2()
 *{
 local cIdFirma:=gFirma,cIdTipDok:="10;11;12;      ",cBrDok:=cBrKalk:=space(8)
 
-O_PRIPR
+O_KALK_PRIPR
 O_KALK
 O_ROBA
 O_KONTO
 O_PARTN
 O_TARIFA
 O_SAST
-XO_FAKT
+O_FAKT
 
 dDatKalk:=date()
 cIdKonto:=padr("5100",7)
@@ -603,7 +603,7 @@ do while .t.
   read
   if lastkey()==K_ESC; exit; endif
 
-  select xfakt
+  select fakt
   seek cFaktFirma
   IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+"'==IdFirma","IDROBA",F_ROBA,"idtipdok $ '"+cIdTipdok+"' .and. dDatFOd<=datdok .and. dDatFDo>=datdok")
     MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
@@ -613,16 +613,16 @@ do while .t.
 
     if idtipdok $ cIdTipdok .and. dDatFOd<=datdok .and. dDatFDo>=datdok // pripada odabranom intervalu
 
-       select ROBA; hseek xfakt->idroba
+       select ROBA; hseek fakt->idroba
        if roba->tip="P"  // radi se o proizvodu
 
-          select roba; hseek xfakt->idroba
-          select pripr
-          locate for idroba==xfakt->idroba
+          select roba; hseek fakt->idroba
+          select kalk_pripr
+          locate for idroba==fakt->idroba
           if found()
-            replace kolicina with kolicina + xfakt->kolicina
+            replace kolicina with kolicina + fakt->kolicina
           else
-            select pripr
+            select kalk_pripr
             append blank
             replace idfirma with cIdFirma,;
                      rbr     with str(++nRbr,3),;
@@ -634,27 +634,27 @@ do while .t.
                      datfaktp with dDatKalk,;
                      idkonto   with cidkonto,;
                      datkurs with dDatKalk,;
-                     idroba with xfakt->idroba,;
-                     vpc with xfakt->cijena,;
-                     rabatv with xfakt->rabat,;
-                     kolicina with xfakt->kolicina,;
-                     mpc with xfakt->porez
+                     idroba with fakt->idroba,;
+                     vpc with fakt->cijena,;
+                     rabatv with fakt->rabat,;
+                     kolicina with fakt->kolicina,;
+                     mpc with fakt->porez
           endif
 
        endif // roba->tip == "P"
     endif  // $ cidtipdok
-    select xfakt
+    select fakt
     skip
   enddo
 
-  select pripr   ; go top
+  select kalk_pripr   ; go top
   do while !eof()
      select sast
-     hseek  pripr->idroba
+     hseek  kalk_pripr->idroba
      do while !eof() .and. id==pripr->idroba // setaj kroz sast
        // utvr|ivanje nabavnih cijena po sastavnici !!!!!
        select roba; hseek sast->id2
-       select pripr
+       select kalk_pripr
        // roba->nc - nabavna cijena sirovine
        // sast->kolicina - kolicina po jedinici mjera
        replace fcj with fcj + (roba->nc*sast->kolicina)
@@ -662,9 +662,9 @@ do while .t.
        skip
      enddo
      select roba // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
-     hseek pripr->idroba
-     replace nc with pripr->fcj
-     select pripr
+     hseek kalk_pripr->idroba
+     replace nc with kalk_pripr->fcj
+     select kalk_pripr
      skip
   enddo
   @ m_x+10,m_y+2 SAY "Dokumenti su preneseni !!"

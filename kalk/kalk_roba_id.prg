@@ -24,7 +24,7 @@ endif
 O_ROBA
 O_KALK
 if file(SezRad(gDirFakK)+"FAKT.DBF")
-  XO_FAKT
+  O_FAKT
   fSrediF:=.t.
 else
   fSrediF:=.f.
@@ -40,7 +40,7 @@ do while .t.
 	read
 	ESC_BCR
 
-	if !(kalk->(flock())) .or. !(xfakt->(flock())) .or. !(roba->(flock()))
+	if !(kalk->(flock())) .or. !(fakt->(flock())) .or. !(roba->(flock()))
 		Msg("Ostali korisnici ne smiju raditi u programu")
 		closeret
 	endif
@@ -64,7 +64,7 @@ do while .t.
 	enddo
 
 	if fSrediF
-		select xfakt
+		select fakt
 		locate for idroba==cSifOld
 		nRbr:=0
 		do while found()

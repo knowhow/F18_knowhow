@@ -23,8 +23,8 @@ function NaPrimPak()
 
   O_KONCIJ
   O_ROBA
-  O_KALK_kalk_pripr
-  O_KALK_kalk_doks
+  O_KALK_PRIPR
+  O_KALK_DOKS
   O_KALK
   O_SIFK; O_SIFV
 
@@ -203,8 +203,8 @@ function NaPrPak2()
   O__KALK
   O_KONCIJ
   O_ROBA
-  O_KALK_kalk_pripr
-  O_KALK_kalk_doks
+  O_KALK_PRIPR
+  O_KALK_DOKS
   O_KALK
   O_SIFK; O_SIFV
 

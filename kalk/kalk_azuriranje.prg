@@ -23,11 +23,11 @@
  *  \brief Azuriranje kalkulacija i povrat kalkulacija u kalk_pripremu
  */
 
-/*! \fn Azur()
+/*! \fn Azuriranje_kalk_dokumenta()
  *  \brief Azuriranje kalkulacije
  */
 
-function Azur(lAuto)
+function Azuriranje_kalk_dokumenta(lAuto)
 *{
 local cidfirma
 local cidvd
@@ -192,12 +192,14 @@ do while !eof()
  if idvd<>"24" .and. empty(mu_i) .and. empty(pu_i)
     Beep(2)
     Msg("Stavka broj "+Rbr+". neobradjena , sa <a-F10> pokrenite obradu")
-    clrezret
+    close all
+	return
  endif
  if cidzaduz2<>idzaduz2
     Beep(2)
     Msg("Stavka broj "+Rbr+". razlicito polje RN u odnosu na prvu stavku")
-    clrezret
+    close all
+	return
  endif
 
  skip
@@ -257,7 +259,8 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
  if idvd=="11".and.vpc==0
   Beep(1)
   Msg('VPC = 0, pozovite "savjetnika" sa <Alt-H>!')
-  clrezret
+  close all
+  return
  endif
  skip
 enddo
@@ -268,7 +271,8 @@ if found()
   Beep(1)
   Msg("Vec postoji dokument pod brojem "+cidfirma+"-"+cidvd+"-"+cbrdok)
   if !lViseDok
-    clrezret
+    close all
+    return
   else
     AADD(aOstaju,cIdFirma+cIdVd+cBrDok)
   endif
@@ -425,7 +429,7 @@ if cPametno=="D"
  RekapK()
  
  if (gafin=="D" .or. gamat=="D")
-   	KontNal( .t., lAuto )
+   	kalk_kontiranje_naloga( .t., lAuto )
  endif
 
  P_Fin( lAuto )
@@ -550,19 +554,11 @@ if lFormiranje11ke
 	Get11FromSmece(cBrojZadnje11ke)
 endif
 
-clrezret
-
+close all
 return
-*}
 
-
-/*! \fn Azur9()
- *  \brief
- */
 
 function Azur9()
-*{
- // pametno azuriranje
 local cPametno:="D" 
 
 if Pitanje("p1","Zelite li kalk_pripremu prebaciti u smece (D/N) ?","N")=="N"
@@ -618,11 +614,11 @@ closeret
 
 
 
-/*! \fn Povrat()
+/*! \fn Povrat_kalk_dokumenta()
  *  \brief Povrat kalkulacije u kalk_pripremu
  */
 
-function Povrat()
+function Povrat_kalk_dokumenta()
 *{
 local nRec
 local gEraseKum

@@ -14,7 +14,7 @@
 
 
 
-function MGenDoks()
+function kalk_mnu_generacija_dokumenta()
 *{
 private Opc:={}
 private opcexe:={}

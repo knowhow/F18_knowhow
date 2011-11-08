@@ -1108,7 +1108,7 @@ do while !eof()
   	select fakt_pripr
 enddo
 
-PrModem()
+fakt_prenos_modem()
 
 lAzurOK:=.t.
 

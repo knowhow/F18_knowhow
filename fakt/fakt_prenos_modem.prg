@@ -23,11 +23,11 @@
  */
  
 
-/*! \fn PrModem(fSif)
+/*! \fn fakt_prenos_modem(fSif)
  *  \brief
  */
  
-function PrModem(fSif)
+function fakt_prenos_modem(fSif)
 *{
 local nRec
 
@@ -247,19 +247,5 @@ closeret
 *}
 
 
-
-/*! \fn UChkPostoji(cFullFileName)
- *  \brief U chk direktoriju postoji fajl
- *  \param cFullFileName  - puni naziv fajla (path+ime)
- */
- 
-function UChkPostoji(cFullFileName)
-*{
-if File(strtran(cFullFileName,":\",":\chk\"))
-   return .t.
-else
-   return .f.
-endif
-*}
 
 

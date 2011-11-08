@@ -26,11 +26,11 @@ local cIdFakt97_2:="19"
 cOldVar10 := IzFMKIni("PrenosKALK10_FAKT","NazivPoljaCijeneKojaSePrenosiIzKALK","-",KUMPATH)   // nekad bilo FCJ
 cOldVar16 := IzFMKIni("PrenosKALK16_FAKT","NazivPoljaCijeneKojaSePrenosiIzKALK","-",KUMPATH)   // nekad bilo NC
 
-XO_FAKT
-XO_PRIPR
+O_FAKT
+O_FAKT_PRIPR
 O_PARTN
 O_KONTO
-O_PRIPR
+O_KALK_PRIPR
 USE (gDirFakk+"RJ.DBF") NEW; set order to tag "ID"
 SELECT PRIPR
 
@@ -344,33 +344,33 @@ return
 
 static function Azur()
 *{
-XO_PRIPR
-XO_FAKT
-XO_DOKS
+O_FAKT_PRIPR
+O_FAKT
+O_FAKT_DOKS
 O_VALUTE
 
-if !( XFAKT->(flock()) ) .or. !( XDOKS->(flock()) )
+if !( FAKT->(flock()) ) .or. !( FAKT_DOKS->(flock()) )
     Beep(4)
     BoxC()
     Msg("Azuriranje NE moze vrsiti vise korisnika istovremeno !",4)
     close all
 endif
 
-select Xfakt
-seek XPRIPR->(idfirma+idtipdok+brdok)
+select fakt
+seek fakt_pripr->(idfirma+idtipdok+brdok)
 if found()
   Beep(4)
   Msg("Dokument vec postoji pod istim brojem...",4)
   return
 endif
-append from XPRIPR
+append from fakt_pripr
 
-select Xpripr
+select fakt_pripr
 go top
 do while !eof()
-  select Xdoks
+  select fakt_doks
   append blank
-  select Xpripr
+  select fakt_pripr
 
   cIDFirma:=idfirma
   cBrDok:=BrDok; cIdTipDok:=IdTipDok
@@ -389,15 +389,15 @@ do while !eof()
   if cidtipdok=="20" .and. Serbr="*"
      cRezerv:="*"
   endif
-  select Xdoks
+  select fakt_doks
   replace idfirma with cidfirma, brdok with cbrdok,;
-          rezerv with cRezerv, datdok with xfakt->datdok, idtipdok with cidtipdok,;
+          rezerv with cRezerv, datdok with fakt->datdok, idtipdok with cidtipdok,;
           partner with cTxt, dindem with cdindem
   if fieldpos("sifra")<>0
     replace sifra with sifrakorisn
   endif
 
-  select xpripr
+  select fakt_pripr
   if gBaznaV=="P"
     cIBaznaV:=ValPomocna()
   else
@@ -415,7 +415,7 @@ do while !eof()
     skip
   enddo
 
-  select xdoks
+  select fakt_doks
   if cDinDem==cIBaznaV
    replace iznos with nDug
    replace rabat with nRab
@@ -424,23 +424,23 @@ do while !eof()
    replace rabat with nRabD
   endif
   replace DINDEM with cDinDEM
-  select xpripr
+  select fakt_pripr
 
 enddo
 
-select XPRIPR; zap
+select fakt_pripr; zap
 
-closeret2
+close all
 return
-*}
 
 
 
-/*! \fn PrModem(fSif)
+
+/*! \fn kalk_prenos_modem(fSif)
  *  \brief
  */
  
-function PrModem(fSif)
+function kalk_prenos_modem(fSif)
 *{
 local nRec, gModemVeza:="S"
 
@@ -449,15 +449,15 @@ if gFakt<>"0 " .and. Pitanje(,"Izvrsiti prenos u FAKT modemom ?","D")=="D"
 if fSif==NIL;  fSif:=.f.; endif
 
 if fSif
-	O_PRIPR
+	O_KALK_PRIPR
 endif
 
-XO_PRIPR
-select xpripr
+O_FAKT_PRIPR
+select fakt_pripr
 copy structure extended to struct
 
 // dodacu jos par polja u struct
-usex struct new
+my_use( "struct", "NEW" )
 dbappend()
 replace field_name with "VPC" , field_type with "N", ;
         field_len with 12, field_dec with 3
@@ -498,14 +498,14 @@ select (F_ROBA)
 if !used(); use (SIFPATH+"roba"); endif
 set order to tag "ID"
 
-select pripr; go top
+select kalk_pripr; go top
 do while !eof()
   select _fakt; scatter()
-  select pripr; scatter()
+  select kalk_pripr; scatter()
   select roba
-  hseek pripr->idRoba
+  hseek kalk_pripr->idRoba
   _idTipDok:="01"
-  _brDok:=pripr->idVd+"-"+TRIM(pripr->brDok)
+  _brDok:=kalk_pripr->idVd+"-"+TRIM(kalk_pripr->brDok)
   _MPC:=roba->mpc;  _MPC2:=roba->mpc2
   if roba->(fieldpos("MPC3"))<>0
     _MPC3:=roba->mpc3
@@ -519,22 +519,23 @@ do while !eof()
   _idtarifa:=roba->idtarifa
   select _fakt
   dbappend();  gather()
-  select pripr; skip
+  select kalk_pripr; skip
 enddo
 
 select _fakt; use
 
-select pripr; go top
+select kalk_pripr; go top
 if fsif
   cDestMod:=right(dtos(date()),4)  // 1998 1105  - 11 mjesec, 05 dan
 else
-  cDestMod:=right(dtos(pripr->datdok),4)  // 1998 1105  - 11 mjesec, 05 dan
+  cDestMod:=right(dtos(kalk_pripr->datdok),4)  // 1998 1105  - 11 mjesec, 05 dan
 endif
 cDestMod:="PRENOS\"+gmodemveza+"F"+cDestMod  // PRENOS\SF1205
 
 dirmak2(KUMPATH+"PRENOS") // napravi direktorij prenos !!!
 
-usex (PRIVPATH+"_FAKT.DBF") new alias nFAKT
+my_use("_fakt", "nFAKT") 
+
 fIzadji:=.f.
 // donja for-next pelja otvara baze i , ako postoje, gleda da li je
 // u njih pohranjen isti dokument
@@ -542,7 +543,7 @@ for i:=1 to 25
 
    bErr:=ERRORBLOCK({|o| MyErrH(o)})
    begin sequence
-     usex ( KUMPATH+cDestMod+chr(64+i) ) new alias oFAKT
+     my_use ( KUMPATH+cDestMod+chr(64+i), "oFAKT" )
      // OD A-C
      if nFAKT->(idfirma+idtipdok+brdok)==oFAKT->(idfirma+idtipdok+brdok)
        fIzadji:=.t.

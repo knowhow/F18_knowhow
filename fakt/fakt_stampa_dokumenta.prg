@@ -942,20 +942,6 @@ return
 
 
 
-/*! \fn RbrUNum(cRBr)
- *  \brief 
- *  \param cRBr
- */
- 
-function RbrUNum(cRBr)
-*{
-if left(cRbr,1)>"9"
-   return  (asc(left(cRbr,1))-65+10)*100  + val(substr(cRbr,2,2))
-else
-   return val(cRbr)
-endif
-*}
-
 
 /*! \fn GetRtmFile(cDefRtm)
  *  \brief Vraca naziv rtm fajla za stampu

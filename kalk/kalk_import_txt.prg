@@ -672,7 +672,7 @@ close all
 FErase(PRIVPATH + "PRIPT.DBF")
 FErase(PRIVPATH + "PRIPT.CDX")
 
-O_KALK_kalk_pripr
+O_KALK_PRIPR
 select kalk_pripr
 
 // napravi pript sa strukturom tabele kalk_pripr
@@ -1117,7 +1117,7 @@ local cIdKonto2
 local cIdPJ
 local aArr_ctrl := {}
 
-O_KALK_kalk_pripr
+O_KALK_PRIPR
 O_KALK_DOKS
 O_KALK_DOKS2
 O_ROBA
@@ -1607,7 +1607,7 @@ function ObradiImport(nPocniOd, lAsPokreni, lStampaj)
 local cN_kalk_dok := ""
 local nUvecaj := 0
 
-O_KALK_kalk_pripr
+O_KALK_PRIPR
 O_PRIPT
 
 if lAsPokreni == nil
@@ -1812,7 +1812,7 @@ endif
 
 if lAsPokreni
 	// pozovi asistenta
-	KUnos(.t.)
+	kalk_unos_stavki_dokumenta(.t.)
 else
 	o_kalk_edit()
 endif
@@ -1823,7 +1823,7 @@ if lStampaj == .t.
 endif
 
 // azuriraj kalk
-Azur( .t. )
+Azuriranje_kalk_dokumenta( .t. )
 
 o_kalk_edit()
 
@@ -1837,7 +1837,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 		
 		if lAsPokreni
 			// otvori kalk_pripremu
-			KUnos(.t.)
+			kalk_unos_stavki_dokumenta(.t.)
 		else
 			o_kalk_edit()
 		endif
@@ -1846,7 +1846,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 			StKalk(nil, nil, .t.)
 		endif
 		
-		Azur( .t. )
+		Azuriranje_kalk_dokumenta( .t. )
 		o_kalk_edit()
 		
 	endif
@@ -1857,7 +1857,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 	if nRslt >= 2
 		
 		MsgBeep("Postoji dokument u kalk_pripremi koji je sumljiv!!!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !")
-		KUnos()
+		kalk_unos_stavki_dokumenta()
 		o_kalk_edit()
 		
 	endif

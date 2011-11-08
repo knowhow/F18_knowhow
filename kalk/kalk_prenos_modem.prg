@@ -52,7 +52,7 @@ if pitanje(,"Zelite li izvrsiti prenos KALK na diskete ?","N")=="N"
 endif
 
 if Pitanje(,"Nulirati datoteke prenosa prije nastavka ?","D")=="D"
-  O_PRIPR
+  O_KALK_PRIPR
   copy structure extended to (PRIVPATH+"struct")
   use
   create (PRIVPATH+"_kalk") from (PRIVPATH+"struct")
@@ -304,7 +304,7 @@ ENDIF
 restore screen from cs
 
 O__KALK
-O_PRIPR
+O_KALK_PRIPR
 
 SELECT _KALK; set order to 0  // idFirma+IdVD+BrDok+RBr
 
@@ -329,7 +329,7 @@ endif
 cidfirma:=gfirma; cIdVD:=space(2); cBrDok:=space(8)
 
 MsgO("Prenos _KALK -> PRIPR")
-select pripr
+select kalk_pripr
 append from _KALK
 MsgC()
 

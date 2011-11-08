@@ -892,26 +892,6 @@ function DifIdP(cIdPartner)
 return 0
 
 
-/*! \fn Preduzece()
- *  \brief Vraca naziv firme
- */
- 
-function Preduzece()
-local nArr:=select()
-F10CPI
-B_ON
-? gTS+": "
-if gNW=="D"
- ?? gFirma,"-",gNFirma
-else
- SELECT PARTN; HSEEK cIdFirma
- ?? cIdFirma,partn->naz,partn->naz2
-endif
-B_OFF
-?
-select (nArr)
-return
-
 
 /*! \fn BrisiPBaze()
  *  \brief Brisi pomocne baze
@@ -1411,7 +1391,7 @@ ENDIF
    cIdFirma:=IdFirma; cIdVN:=IdVN; cBrNal:=BrNal
 
 IF cInd $ "1#2" .and. !lAuto
-     Zagl11()
+     fin_zagl_11()
 ENDIF
 
 DO WHILE !eof() .and. eval(b2)
@@ -1422,7 +1402,7 @@ DO WHILE !eof() .and. eval(b2)
          else
            FF
          endif
-         Zagl11()
+         fin_zagl_11()
        endif
        P_NRED
        IF cInd=="3"
@@ -1572,7 +1552,7 @@ DO WHILE !eof() .and. eval(b2)
    ENDDO
 
    IF cInd $ "1#2" .and. !lAuto
-     IF prow()>58+gPStranica; FF; Zagl11();  endif
+     IF prow()>58+gPStranica; FF; fin_zagl_11();  endif
      P_NRED
      ?? M
      P_NRED
@@ -1588,7 +1568,7 @@ DO WHILE !eof() .and. eval(b2)
      nUkDugBHD:=nUKPotBHD:=nUkDugDEM:=nUKPotDEM:=0
 
      if gPotpis=="D"
-       IF prow()>58+gPStranica; FF; Zagl11();  endif
+       IF prow()>58+gPStranica; FF; fin_zagl_11();  endif
        P_NRED
        P_NRED; F12CPI
        P_NRED

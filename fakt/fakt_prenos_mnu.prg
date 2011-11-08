@@ -25,11 +25,11 @@
  */
 
 
-/*! \fn ModRazmjena()
+/*! \fn fakt_razmjena_podataka()
  *  \brief Centralni meni opcija za prenos podataka FAKT<->ostali moduli
  */
 
-function ModRazmjena()
+function fakt_razmjena_podataka()
 *{
 private Opc:={}
 private opcexe:={}

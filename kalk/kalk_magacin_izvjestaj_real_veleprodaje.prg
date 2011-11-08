@@ -16,7 +16,7 @@
 // -------------------------------------------
 // realizacija vp po partnerima
 // -------------------------------------------
-function RealPartn()
+function kalk_real_partnera()
 local nT0:=nT1:=nT2:=nT3:=nT4:=0
 local nCol1:=0
 local nPom
@@ -100,7 +100,7 @@ START PRINT CRET
 B:=0
 
 private nStrana:=0
-ZaglRPartn()
+kalk_zagl_real_partnera()
 
 seek cIdFirma + cIdkonto
 
@@ -220,7 +220,7 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPreki
 
   	if prow()>61
   		FF
- 		ZaglRPartn()
+ 		kalk_zagl_real_partnera()
   	endif
   	select partn
   	hseek cIdPartner
@@ -255,7 +255,7 @@ enddo
 
 if prow()>59
 	FF
-	ZaglRPartn()
+	kalk_zagl_real_partnera()
 endif
 
 ? m
@@ -275,7 +275,7 @@ endif
 
 if prow() > 50
 	FF
-	ZaglRPartn(.f.)
+	kalk_zagl_real_partnera(.f.)
 endif
 
 P_12CPI
@@ -377,11 +377,11 @@ return
 
 
 
-/*! \fn ZaglRPartn(fTabela)
+/*! \fn kalk_zagl_real_partnera(fTabela)
  *  \brief Zaglavlje izvjestaja "realizacija veleprodaje po partnerima"
  */
  
-function ZaglRPartn(fTabela)
+function kalk_zagl_real_partnera(fTabela)
 *{
 if ftabela=NIL
   ftabela:=.t.

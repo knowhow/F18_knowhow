@@ -67,12 +67,12 @@ return
 // ---------------------------------------------
 static function fill_psuban()
 
-FO_PRIPR
+O_FIN_PRIPR
 O_KONTO
 O_PARTN
 O_TNAL
 O_TDOK
-FO_PSUBAN
+O_PSUBAN
 
 select PSUBAN
 ZAP
@@ -96,17 +96,17 @@ DO WHILE !EOF()
 
    	DO WHILE !eof() .and. eval(b2)
 
-         	select PSUBAN
+        select PSUBAN
 		Scatter()
 		select kalk_pripr
 		Scatter()
 
-         	SELECT PSUBAN
-         	APPEND BLANK
-         	Gather()  
+        SELECT PSUBAN
+        APPEND BLANK
+        Gather()  
 		select kalk_pripr
          
-	 SKIP
+	    SKIP
       
       ENDDO
 
@@ -120,12 +120,12 @@ return
 // stampa analitickog naloga
 // ----------------------------------------
 static function StAnalNal(lAuto)
-FO_PRIPR
+O_FIN_PRIPR
 O_KONTO
 O_PARTN
 O_TNAL
 O_TDOK
-FO_PSUBAN
+O_PSUBAN
 
 PicBHD:="@Z 999999999999.99"
 PicDEM:="@Z 9999999.99"
@@ -181,12 +181,12 @@ DO WHILE !EOF()
    //cVN:=VN; cFirma:=Firma1+Firma2
 
    cIdFirma:=IdFirma; cIdVN:=IdVN; cBrNal:=BrNal
-   Zagl11()
+   kalk_zagl_11()
    DO WHILE !eof() .and. eval(b2)
 
          if prow()>61+gPStranica
 	 	FF
-	 	Zagl11()
+	 	kalk_zagl_11()
 	 endif
          P_NRED
          @ prow(),0 SAY RBr
@@ -265,7 +265,7 @@ DO WHILE !EOF()
          SKIP
       ENDDO
 
-      IF prow()>59+gPStranica; FF; Zagl11();  endif
+      IF prow()>59+gPStranica; FF; kalk_zagl_11();  endif
 
       ? M
       ? "Z B I R   N A L O G A:"
@@ -278,7 +278,7 @@ DO WHILE !EOF()
       nUkDugBHD:=nUKPotBHD:=nUkDugDEM:=nUKPotDEM:=0
 
      if gPotpis=="D"
-      IF prow()>58+gPStranica; FF; Zagl11();  endif
+      IF prow()>58+gPStranica; FF; kalk_zagl_11();  endif
       ?
       ?; P_12CPI
       @ prow()+1,55 SAY "Obrada AOP "; ?? replicate("_",20)
@@ -296,11 +296,11 @@ return
 
 
 
-/*! \fn Zagl11()
+/*! \fn kalk_zagl_11()
  *  \brief Zaglavlje analitickog naloga
  */
 
-function Zagl11()
+function kalk_zagl_11()
 *{
 local nArr
 P_COND
@@ -342,10 +342,10 @@ return
 
 static function SintStav( lAuto )
 
-FO_PSUBAN
-FO_PANAL
-FO_PSINT
-FO_PNALOG
+O_PSUBAN
+O_PANAL
+O_PSINT
+O_PNALOG
 O_KONTO
 O_TNAL
 
@@ -535,16 +535,16 @@ return
 static function Azur(lAuto)
 local nLOst := gnLOst
 
-FO_PRIPR
-FO_SUBAN
-FO_ANAL
-FO_SINT
-FO_NALOG
+O_FIN_PRIPR
+O_SUBAN
+O_ANAL
+O_SINT
+O_NALOG
 
-FO_PSUBAN
-FO_PANAL
-FO_PSINT
-FO_PNALOG
+O_PSUBAN
+O_PANAL
+O_PSINT
+O_PNALOG
 
 if (lAuto == nil)
 	lAuto := .f.
@@ -811,12 +811,13 @@ PicDEM:='@Z 999999999.99'
 M:="---- -------- ------- --------------------------------------------- ----------------- ----------------- ------------ ------------"
 
 if fkum  // stampa starog naloga - naloga iz kumulativa - datoteka anal
- select (F_ANAL)
- use anal index anali2 alias PANAL  // alias !!!!
+
+ my_use("anal", "anali2", "panal")
+ 
  O_KONTO
  O_PARTN
  O_TNAL
- FO_NALOG
+ O_NALOG
 
  cIdFirma:=cIdVN:=space(2)
  cBrNal:=space(8)
@@ -958,7 +959,7 @@ function KZbira( lAuto )
 
 O_KONTO
 O_VALUTE
-FO_PRIPR
+O_FIN_PRIPR
 
 if lAuto == nil
 	lAuto := .f.
@@ -1087,44 +1088,6 @@ return
 
 
 
-
-/*! \fn DinDem(p1,p2,cVar)
- *  \brief Konverzija iznosa domaca<->pomocna valuta
- *  \param p1 -
- *  \param p2 -
- *  \param cVar - naziv polja iznosa koji se pretvara (_IZNOSDEM ili _IZNOSBHD)
- */
-
-function DinDem(p1,p2,cVar)
-*{
-local nNaz
-
-// nArr:=SELECT()
-// select tokval
-// seek dtos(_DatDok)
-// if !found() .or. eof()
-//     skip -1
-// endif
-
-// if kurslis=="1"; nNaz:=naz; else;  nNaz:=naz2; endif
-nNaz:=Kurs(_datdok)
-if cVar=="_IZNOSDEM"
-    _IZNOSBHD:=_IZNOSDEM*nnaz
-elseif cVar="_IZNOSBHD"
-  if round(nNaz,4)==0
-    _IZNOSDEM:=0
-  else
-    _IZNOSDEM:=_IZNOSBHD/nnaz
-  endif
-endif
-// select(nArr)
-AEVAL(GetList,{|o| o:display()})
-return
-*}
-
-
-
-
 /*! \fn PovFin(cidfirma,cidvn,cbrnal)
  *  \brief Povrat finansijskog naloga u kalk_pripremu
  *  \param cidfirma - firma
@@ -1142,11 +1105,11 @@ if Klevel<>"0"
     closeret2
 endif
 
-FO_SUBAN
-FO_PRIPR
-FO_ANAL
-FO_SINT
-FO_NALOG
+O_SUBAN
+O_FIN_PRIPR
+O_ANAL
+O_SINT
+O_NALOG
 
 SELECT SUBAN; set order to 4
 if pcount()==0

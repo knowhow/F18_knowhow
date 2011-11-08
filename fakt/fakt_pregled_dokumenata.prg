@@ -1535,12 +1535,12 @@ return
 *}
 
 
-/*! \fn RealPartn()
+/*! \fn fakt_real_partnera()
  *  \brief Realizacija po partnerima
  *  \todo Prebaciti u /RPT
  */
 
-function RealPartn()
+function fakt_real_partnera()
 *{
 O_FAKT_DOKS
 O_PARTN
@@ -1649,7 +1649,7 @@ START PRINT CRET
 
 private nStrana:=0
 private m:="---- ------ -------------------------- ------------ ------------ ------------"
-ZaglRPartn()
+fakt_zagl_real_partnera()
 
 set order to 6
 //"6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS"
@@ -1696,7 +1696,7 @@ do while !eof() .and. IdFirma=cIdFirma
   	enddo
 	if prow()>61
   		FF
-		ZaglRPartn()
+		fakt_zagl_real_partnera()
   	endif
 
   	? space(gnLMarg)
@@ -1712,7 +1712,7 @@ enddo
 
 if prow()>59
 	FF
-	ZaglRPartn()
+	fakt_zagl_real_partnera()
 endif
 
 ? space(gnLMarg)
@@ -1735,10 +1735,10 @@ return
 
 
 // --------------------------------------------------------
-// ZaglRPartn()
+// fakt_zagl_real_partnera()
 // Zaglavlje izvjestaja realizacije partnera 
 // --------------------------------------------------------
-function ZaglRPartn()
+function fakt_zagl_real_partnera()
 
 ? 
 P_12CPI

@@ -132,7 +132,7 @@ for xxx:=1 to 3  // obrazac nivelacije
 	private  aTarGr:={}
 	private nStr:=0
 	if xxx==1
-  		ZaglInv()
+  		kalk_zagl_inventura()
   		nCol1:=10
   		m:="----- ---------------------------------------------------- --- ------- ------- ------ ---------- ------ ---------- ---------- ---------- ------ ---------- ------ ---------- ------ ---------- ------ ---------- ------ ----------"
 else
@@ -229,7 +229,7 @@ do while !eof()
 			if xxx=1
      				if prow()>PREDOVA
 					FF
-					ZaglINV()
+					kalk_zagl_inventura()
 				endif
      				? str(++nRbr,4),"³", cidroba
 				??  "³"
@@ -394,7 +394,7 @@ do while !eof()
 		if xxx=1
     			if prow()>PREDOVA
     				FF
-				ZaglINV()
+				kalk_zagl_inventura()
 			endif
     			//I_ON
     			? m
@@ -497,7 +497,7 @@ do while !eof()
   	if xxx=1
    		if prow()>PREDOVA
 			FF
-			ZaglINV()
+			kalk_zagl_inventura()
 		endif
    		//B_ON
    		? m
@@ -557,7 +557,7 @@ endif
 if xxx=1
 	if prow()>PREDOVA
 		FF
-		ZaglINV()
+		kalk_zagl_inventura()
 	endif
 	//B_ON
 	? strtran(m,"-","=")
@@ -584,7 +584,7 @@ if xxx=1
 
 	if prow()>PREDOVA-8
 		FF
-		ZaglINV()
+		kalk_zagl_inventura()
 	endif
 endif//xxx=1
 
@@ -601,7 +601,7 @@ IF XXX==1
 ENDIF
 IF XXX=1
 	for nCnt:=1 to len(aTarGr)
-		if prow()>PREDOVA; FF; ZaglINV(); endif
+		if prow()>PREDOVA; FF; kalk_zagl_inventura(); endif
 			select k1
 			hseek aTarGr[nCnt,1]
 			? aTarGr[nCnt,1],k1->naz,"(",trim(aTarGr[nCnt,2]),")"
@@ -626,7 +626,7 @@ IF XXX=1
 		? strtran(m,"-","=")
 	ENDIF//XXX=1
 	IF XXX=1
-		if prow()>PREDOVA-4; FF; ZaglINV(); endif
+		if prow()>PREDOVA-4; FF; kalk_zagl_inventura(); endif
 			?
 			?
 			? "UKUPNO PO TARIFAMA:"
@@ -636,7 +636,7 @@ IF XXX=1
 			for nCnt:=1 to len(aTarife)
 				if prow() > PREDOVA
 					FF
-					ZaglINV()
+					kalk_zagl_inventura()
 				endif
 				? aTarife[nCnt,1]
   				@ prow(),nCol1 SAY  aTarife[nCnt,2] pict pickol; ??  "³"
@@ -714,11 +714,11 @@ return
 *}
 
 
-/*! \fn ZaglInv()
+/*! \fn kalk_zagl_inventura()
  *  \brief Zaglavlje inventure
  */
  
-function ZaglInv()
+function kalk_zagl_inventura()
 *{
 P_10CPI
 //; B_ON

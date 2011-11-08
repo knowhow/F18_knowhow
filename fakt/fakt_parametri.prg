@@ -48,13 +48,13 @@ USE
 
 
 AADD(opc,"1. postaviti osnovne podatke o firmi           ")
-AADD(opcexe,{|| SetFirma()})
+AADD(opcexe,{|| fakt_par_firma()})
 
 AADD(opc,"2. postaviti varijante obrade dokumenata       ") 
-AADD(opcexe,{|| SetVarijante()})
+AADD(opcexe,{|| fakt_par_varijante_prikaza()})
 
 AADD(opc,"3. izgled dokumenata      ")
-AADD(opcexe,{|| SetT1()})
+AADD(opcexe,{|| par_fakt_izgled_dokumenta()})
 
 if IsPDV()
 	AADD(opc,"4. izgled dokumenata - zaglavlje ")
@@ -62,13 +62,13 @@ if IsPDV()
 endif
 
 AADD(opc,"5. nazivi dokumenata i teksta na kraju (potpis)")
-AADD(opcexe,{|| SetT2()})
+AADD(opcexe,{|| fakt_par_nazivi_dokumenata()})
 
 AADD(opc,"6. prikaza cijena, iznos ")
-AADD(opcexe,{|| SetPICT()})
+AADD(opcexe,{|| fakt_par_cijene()})
 
 AADD(opc,"7. postaviti parametre - razno                 ")
-AADD(opcexe,{|| SetRazno()})
+AADD(opcexe,{|| fakt_par_razno()})
 
 if !IsPDV()
 	AADD(opc,"W. parametri Win stampe (DelphiRB)             ")
@@ -257,10 +257,10 @@ endif
 return 
 
 
-/*! \fn SetRazno()
+/*! \fn fakt_par_razno()
  *  \brief Podesenja parametri-razno
  */
-function SetRazno()
+function fakt_par_razno()
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
@@ -580,11 +580,11 @@ return
  */
 
 
-/*! \fn SetFirma()
+/*! \fn fakt_par_firma()
  *  \brief Podesenje osnovnih parametara o firmi
  */
  
-function SetFirma()
+function fakt_par_firma()
 private  GetList:={}
 
 O_PARAMS
@@ -646,11 +646,11 @@ return
  */
 
 
-/*! \fn SetPict()
+/*! \fn fakt_par_cijene()
  *  \brief Podesenje Pict iznosa, kolicine, ...
  */
  
-function SetPict()
+function fakt_par_cijene()
 *{
 local nX
 
@@ -844,11 +844,11 @@ return
  */
 
 
-/*! \fn SetVarijante()
+/*! \fn fakt_par_varijante_prikaza()
  *  \brief Podesenje varijante obrade dokumenata
  */
  
-function SetVarijante()
+function fakt_par_varijante_prikaza()
 *{
 private  GetList:={}
 
@@ -1191,11 +1191,11 @@ return
  */
 
 
-/*! \fn SetT1()
+/*! \fn par_fakt_izgled_dokumenta()
  *  \brief Varijante izgleda dokumenta
  */
  
-function SetT1()
+function par_fakt_izgled_dokumenta()
 *{
 local nX
 
@@ -1784,11 +1784,11 @@ return
  */
 
 
-/*! \fn SetT2()
+/*! \fn fakt_par_nazivi_dokumenata()
  *  \brief Ispis naziva dokumenta i potpisa na kraju fakture
  */
  
-function SetT2()
+function fakt_par_nazivi_dokumenata()
 *{
 private  GetList:={}
 

@@ -284,58 +284,10 @@ MsgC()
 
 closeret
 return
-*}
 
 
-
-
-
-/*! \fn RedniBroj(nRbr)
- *  \brief Pretvaranje numericke vrijednosti u string, s tim da je string koji se formira duzine 3. Za brojeve preko 999 koristi se slovo na mjestu prvog znaka, npr.1000 -> A00, 1100 -> B00, 1200 -> C00, ...
- *  \param nRbr -
- */
-
-function RedniBroj(nRbr)
-*{
-// max mjesta je 3
-local nOst
-if nRbr>999
-    nOst:=nRbr%100
-    return Chr(int(nRbr/100)-10+65)+padl(alltrim(str(nOst,2)),2,"0")
-else
-    return str(nRbr,3)
-endif
-return
-*}
-
-
-
-
-
-/*! \fn RbrUNum(cRBr)
- *  \brief Pretvaranje stringa duzine 3 u numericku vrijednost uz mogucnost da prvi znak u stringu bude slovo, npr. A01 -> 1001, B01 -> 1101, C01 -> 1201 ...
- */
-
-function RbrUNum(cRBr)
-*{
-if left(cRbr,1)>"9"
-   return  (asc(left(cRbr,1))-65+10)*100  + val(substr(cRbr,2,2))
-else
-   return val(cRbr)
-endif
-return
-*}
-
-
-
-
-
-/*! \fn Get1_IP()
- *  \brief Prva strana maske za unos dokumenta tipa IP
- */
 
 function Get1_IP()
-*{
 local nFaktVPC
 
 _DatFaktP:=_datdok

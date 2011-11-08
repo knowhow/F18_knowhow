@@ -102,7 +102,7 @@ if Ch==K_CTRL_T .and. gSKSif=="D"
  PopWA()
  IF !(cSif==cSif2)
    // ako nije dupla provjerimo da li postoji u kumulativu
-   if ImaUKumul(cSif,"7")
+   if ima_u_kalk_kumulativ(cSif,"7")
      Beep(1)
      Msg("Stavka se ne moze brisati jer se vec nalazi u dokumentima!")
      return 7
@@ -113,7 +113,7 @@ elseif Ch==K_ALT_M
    return  MpcIzVpc()
 
 elseif Ch==K_F2 .and. gSKSif=="D"
- if ImaUKumul(cSif,"7")
+ if ima_u_kalk_kumulativ(cSif,"7")
    return 99
  endif
 

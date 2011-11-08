@@ -90,16 +90,16 @@ endif
 AADD(opc,   "2. izvjestaji")
 AADD(opcexe, {|| MIzvjestaji()})
 AADD(opc,   "3. pregled dokumenata")
-AADD(opcexe, {|| MBrDoks()})
+AADD(opcexe, {|| kalk_pregled_dokumenata()})
 AADD(opc,   "4. generacija dokumenata")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK"))
-	AADD(opcexe,{|| MGenDoks()})
+	AADD(opcexe,{|| kalk_mnu_generacija_dokumenta()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 AADD(opc,   "5. moduli - razmjena podataka ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA"))
-	AADD(opcexe, {|| ModRazmjena()})
+	AADD(opcexe, {|| kalk_razmjena_podataka()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -110,7 +110,7 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 AADD(opc,   "7. ostale operacije nad dokumentima")
-AADD(opcexe, {|| MAzurDoks()})
+AADD(opcexe, {|| kalk_ostale_operacije_doks()})
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 AADD(opc,   "8. sifrarnici")
@@ -129,7 +129,7 @@ AADD(opc,   "A. stampa azuriranog dokumenta")
 AADD(opcexe, {|| Stkalk(.t.)})
 AADD(opc,   "P. povrat dokumenta u pripremu") 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
-	AADD(opcexe, {|| Povrat()})
+	AADD(opcexe, {|| Povrat_kalk_dokumenta()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -137,7 +137,7 @@ AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 AADD(opc,   "X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","PARAMETRI"))
-	AADD(opcexe, {|| Params()})
+	AADD(opcexe, {|| kalk_params()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -502,7 +502,7 @@ endif
 
 public gDuzKonto
 if !::oDatabase:lAdmin
-	O_PRIPR
+	O_KALK_PRIPR
 	gDuzKonto:=LEN(mkonto)
 	use
 else

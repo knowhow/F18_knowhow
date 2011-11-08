@@ -160,25 +160,25 @@
 // modul KALK
 #xcommand O_KALK_PRIPR   => select(F_KALK_PRIPR); usex (PRIVPATH + "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_S_PRIPR   => select(F_KALK_PRIPR); use (PRIVPATH + "kalk_pripr") ; set order to tag "1"
-#xcommand O_KALK_PRIPRRP   => select (F_KALK_PRIPRRP);   usex (strtran(cDirPriv,goModul:oDataBase:cSezonDir, SLASH) + "pripr") alias priprrp ; set order to tag "1"
+#xcommand O_KALK_PRIPRRP   => select (F_KALK_PRIPRRP);   usex (strtran(cDirPriv,goModul:oDataBase:cSezonDir, SLASH) + "pripr")  ; set order to tag "1"
 #xcommand O_KALK_PRIPR2  => select(F_KALK_PRIPR2); usex (PRIVPATH + "kalk_pripr2") ; set order to tag "1"
 #xcommand O_KALK_PRIPR9  => select(F_KALK_PRIPR9); usex (PRIVPATH + "kalk_pripr9") ; set order to tag "1"
 #xcommand O__KALK  => select(F__KALK); usex (PRIVPATH + "_kalk" )
 #xcommand O_FINMAT  => select(F_FINMAT); usex (PRIVPATH + "finmat")    ; set order to tag "1"
 #xcommand O_KALK   => select(F_KALK);  my_use  (KUMPATH + "kalk")  ; set order to tag "1"
-#xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  (KUMPATH+"2005"+SLASH+"KALK") alias kalksez ; set order to "1"
-#xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  (SIFPATH+"2005"+SLASH+"ROBA") alias robasez ; set order to tag "ID"
+#xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  (KUMPATH+"2005"+SLASH+"KALK")  ; set order to "1"
+#xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  (SIFPATH+"2005"+SLASH+"ROBA")  ; set order to tag "ID"
 #xcommand O_KALKX  => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
 #xcommand O_KALKS  => select(F_KALKS);  my_use  (KUMPATH + "kalks")  ; set order to tag "1"
 #xcommand O_KALKREP => if gKalks; select(F_KALK); use; select(F_KALK) ; my_use  ("kalks", "KALK") ; set order to tag "1";else; select(F_KALK);  my_use  ("KALK")  ; set order to tag "1"; end
-#xcommand O_SKALK   => select(F_KALK);  my_use  (KUMPATH + "kalk")  alias PRIPR ; set order to tag "1"
+#xcommand O_SKALK   => select(F_KALK);  my_use  (KUMPATH + "kalk")   ; set order to tag "1"
 #xcommand O_KALK_DOKS    => select(F_DOKS);  my_use  (KUMPATH + "kalk_doks")     ; set order to tag "1"
 #xcommand O_KALK_DOKS2   => select(F_DOKS2);  my_use  (KUMPATH + "kalk_doks2")     ; set order to tag "1"
 #xcommand O_PORMP  => select(F_PORMP); usex ("pormp")     ; set order to tag "1"
 #xcommand O_PRODNC   => select(F_PRODNC);  my_use  ("prodnc")  ; set order to tag "PRODROBA"
 #xcommand O_RVRSTA   => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"
-#xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  ("2005"+SLASH+"kalk") alias kalksez ; set order to tag "1"
-#xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  ("2005"+SLASH+"kalk") alias robasez ; set order to tag "ID"
+#xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  ("2005"+SLASH+"kalk")  ; set order to tag "1"
+#xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  ("2005"+SLASH+"kalk")  ; set order to tag "ID"
 
 
 // modul FAKT

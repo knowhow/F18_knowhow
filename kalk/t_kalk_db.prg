@@ -96,7 +96,7 @@ Skloni(PRIVPATH,"PARAMS.DBF",cSezona,finverse,fda,fnul)
 Skloni(PRIVPATH,"kalk_pripr2.DBF",cSezona,finverse,fda,fnul)
 Skloni(PRIVPATH,"kalk_pripr9.DBF",cSezona,finverse,fda,fnul)
 if is_kalk_doksrc()
-	Skloni(PRIVPATH,"P_kalk_doksRC.DBF",cSezona,finverse,fda,fnul)
+	Skloni(PRIVPATH,"P_DOKSRC.DBF",cSezona,finverse,fda,fnul)
 endif
 Skloni(PRIVPATH,"FMK.INI",cSezona,finverse,fda,fnul)
 
@@ -120,7 +120,7 @@ endif
 Skloni(KUMPATH,"kalk_doks.DBF",cSezona,finverse,fda,fnul)
 Skloni(KUMPATH,"kalk_doks2.DBF",cSezona,finverse,fda,fnul)
 if is_kalk_doksrc()
-	Skloni(KUMPATH,"kalk_doksRC.DBF",cSezona,finverse,fda,fnul)
+	Skloni(KUMPATH,"DOKSRC.DBF",cSezona,finverse,fda,fnul)
 endif
 
 

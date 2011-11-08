@@ -51,40 +51,37 @@ oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 // ~/.F18/
 cF18HomeDir := get_f18_home_dir(cDatabase)
 
+// menu opcije...
+AADD( menuop, "1) FIN   # finansijsko poslovanje")
+AADD( menuop, "2) KALK  # robno-materijalno poslovanje")
+AADD( menuop, "3) FAKT  # fakturisanje")
+AADD( menuop, "4) ePDV  # elektronska evidencija PDV-a")
+AADD( menuop, "5) LD    # obracun plata")
+AADD( menuop, "6) RNAL  # radni nalozi")
 
-/*
-PUBLIC gTabele:={ ;
-  { F_SUBAN, "fin_suban"  ,  "fmk.fin_suban", "fmk.sem_ver_fin_suban"},;
-  { F_KONTO, "konto"  ,  "fmk.konto", "fmk.sem_ver__konto"},;
-  { F_PARTN, "partn"  ,  "fmk.partn", "fmk_sem_ver__partn"};
-}
-*/
+do while .t.
 
-clear screen
+	clear screen
+ 	mnu_choice := achoice( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t. )
 
-AADD( menuop, "1) FIN - finansijsko poslovanje")
-AADD( menuop, "2) KALK - robno-materijalno poslovanje")
-AADD( menuop, "3) FAKT - fakturisanje")
-AADD( menuop, "4) ePDV - elektronska evidencija PDV-a")
-AADD( menuop, "5) LD - obracun plata")
-
-mnu_choice := achoice( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t. )
-
-do case
-
-	case mnu_choice == 0
-		quit
-
-	case mnu_choice == 1
-		MainFin(cUser, cPassWord, p3, p4, p5, p6, p7)
-
-	case mnu_choice == 2
-		MainKalk(cUser, cPassWord, p3, p4, p5, p6, p7)
-
-	case mnu_choice == 3
-		MainFakt(cUser, cPassWord, p3, p4, p5, p6, p7)
-
-endcase
+ 	do case
+		case mnu_choice == 0
+    		exit
+		case mnu_choice == 1
+			MainFin(cUser, cPassWord, p3, p4, p5, p6, p7)
+		case mnu_choice == 2
+			MainKalk(cUser, cPassWord, p3, p4, p5, p6, p7)
+		case mnu_choice == 3
+			MainFakt(cUser, cPassWord, p3, p4, p5, p6, p7)
+		case mnu_choice == 4
+			//MainEPdv(cUser, cPassWord, p3, p4, p5, p6, p7)
+		case mnu_choice == 5
+			//MainLd(cUser, cPassWord, p3, p4, p5, p6, p7)
+		case mnu_choice == 6
+			//MainRnal(cUser, cPassWord, p3, p4, p5, p6, p7)
+ 	endcase
+ 	loop
+enddo
 
 FCLOSE(nLogHandle)
 

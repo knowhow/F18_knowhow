@@ -268,7 +268,13 @@ endif
 if _podbr<>" ."
 	select RJ
 	hseek _idfirma
-	cRjTip:=rj->tip
+	
+	if rj->(FIELDPOS("tip"))<>0
+		cRjTip := rj->tip
+	else
+		cRjTip := ""
+	endif
+
   	IF gVarNum=="1" .and. gVar13=="2" .and. _idtipdok=="13"
     		hseek RJIzKonta(_idpartner+" ")
   	ENDIF
@@ -353,7 +359,7 @@ if _podbr<>" ."
 	endif
 endif
 
-if lPoNarudzbi
+if lPoNarudzbi = .t.
 	select fakt_pripr
   	return .t.
 endif
@@ -364,7 +370,7 @@ set order to 3
 lBezMinusa := ( IzFMKIni("FAKT","NemaIzlazaBezUlaza","N",KUMPATH) == "D" )
 
 if !(roba->tip="U") .and. !empty(_IdRoba) .and.  left(_idtipdok,1) $ "12"  ;
-	.and. (gPratiK=="D".or.lBezMinusa) .and. ;
+	.and. (gPratiK=="D".or.lBezMinusa = .t.) .and. ;
    	!(left(_idtipdok,1) == "1" .and. left(_serbr,1)="*")  
 	// ovo je onda faktura
         // na osnovu otpremnice
@@ -424,7 +430,7 @@ if !(roba->tip="U") .and. !empty(_IdRoba) .and.  left(_idtipdok,1) $ "12"  ;
  		
 		fakt_box_stanje({{_IdFirma, nUl,nIzl,nRevers,nRezerv}},_idroba)
  		
-		if _idtipdok = "1" .and. lBezMinusa
+		if _idtipdok = "1" .and. lBezMinusa = .t.
    			select fakt_pripr
    			return .f.
 		endif

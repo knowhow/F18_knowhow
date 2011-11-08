@@ -86,14 +86,14 @@ nLTxt2:=1
 
 IF !StFD0(); RETURN; ENDIF
 
- POCNI STAMPU
+ pocni_stampu()
   StFD1()
   StFD2()
   StFD3()
   StFD4()
   StFD5()
   FF
- ZAVRSI STAMPU
+ zavrsi_stampu()
 CLOSERET
 *}
 

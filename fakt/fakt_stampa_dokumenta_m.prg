@@ -148,7 +148,7 @@ select fakt_pripr
 
 PRIVATE nCijena:=0, cRab:="", cPor:="", nIznosS:=0, nCijBezRab:=0
 
-POCNI STAMPU
+pocni_stampu()
 
 IspisiZaglavlje()
 
@@ -157,7 +157,7 @@ StampaTabele(aKol,{|| UkupneVrijednosti()},gnLMarg,gTabela,{|| idfirma==cidfirma
 
 IspisiPodnozje()
 
-ZAVRSI STAMPU
+zavrsi_stampu()
 
 CLOSERET
 *}

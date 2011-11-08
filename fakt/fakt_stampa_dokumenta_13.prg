@@ -226,7 +226,7 @@ else
  cPMP:=g13dcij
 endif
 
-POCNI STAMPU
+pocni_stampu()
 
 //private cIdFirma,cBrDok,cIdTipDok
 cIdFirma:=IdFirma
@@ -468,7 +468,7 @@ PrStr2T(cIdTipDok)
 
  FF
 
- ZAVRSI STAMPU
+ zavrsi_stampu()
 
 CLOSERET
 *}
@@ -578,7 +578,7 @@ endif
 
 cpmp:="9"
 
-POCNI STAMPU
+pocni_stampu()
 
 if !lSSIP99
   gRPL_gusto()
@@ -807,10 +807,9 @@ else
 	endif
 endif
 
-ZAVRSI STAMPU
+zavrsi_stampu()
 
 CLOSERET
-*}
 
 
 /*! \fn GetRegion()

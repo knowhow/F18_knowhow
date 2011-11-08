@@ -102,7 +102,7 @@ TekDokument()
 @ m_x+19,m_y+2 SAY " <c-A> Ispravka Dokumentaณ<c-P> Stampa (TXT)        ณ<a-F10> Asistent  "
 @ m_x+20,m_y+2 SAY " <a-A> Azuriranje dok.   ณ<c-F9> Brisi pripremu     ณ<F5>  Kontrola zbira  "
 @ m_x+21,m_y+2 SAY " <R> Rezerv  <X> Prekid Rณ<F10>  Ostale opcije      ณ<F9> 20,12->10; 27->11"
-ObjDbedit("PNal",21,77,{|| edit_fakt_pripr()},"","Priprema..."+"ออออ<a-N> narudzb.kupca"+"ออออ<a-U> ugov.o rabatu", , , , ,4)
+ObjDbedit("PNal",21,77,{|| fakt_pripr_keyhandler()},"","Priprema..."+"ออออ<a-N> narudzb.kupca"+"ออออ<a-U> ugov.o rabatu", , , , ,4)
 BoxC()
 
 closeret
@@ -228,7 +228,7 @@ return IIF(nBrStavki==1, .t., .f.)
  *  \todo Ovu funkciju definitivno treba srediti....
  */
  
-function edit_fakt_pripr()
+function fakt_pripr_keyhandler()
 *{
 // poziva je ObjDbedit u KnjNal
 local nTr2
@@ -1315,7 +1315,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 			VALID !EMPTY(_BrDok) .and. ;
 			(!glDistrib .or. !JeStorno10() .or. PuniDVRiz10())
    		
-		if lSpecifZips
+		if lSpecifZips = .t.
      			_txt3a := PADR(_txt3a, 60)
 		else
 			if IzFMKINI("PoljeZaNazivPartneraUDokumentu","Prosiriti","N",KUMPATH)=="D"

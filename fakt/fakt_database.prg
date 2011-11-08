@@ -18,7 +18,7 @@ if glRadNal
 	O_RNAL
 endif
 
-if glDistrib
+if glDistrib = .t.
 	O_RELAC
   	O_VOZILA
   	O_KALPOS
@@ -773,7 +773,7 @@ nHPid:=0
 
 lDoks2:=goModul:lDoks2
 
-if (!lDoks2 .and. !(fakt->(FLock()) .and. doks->(FLock())) .or. lDoks2 .and. !(fakt->(FLock()) .and. doks->(FLock()) .and. doks2->(FLock())))
+if (!lDoks2 .and. !(fakt->(FLock()) .and. fakt_doks->(FLock())) .or. lDoks2 .and. !(fakt->(FLock()) .and. fakt_doks->(FLock()) .and. fakt_doks2->(FLock())))
 	Beep(4)
   	Msg("Azuriranje NE moze vrsiti vise korisnika istovremeno !", 15)
   	closeret
@@ -973,20 +973,20 @@ do while !eof()
   	_field->IdPartner := fakt_pripr->idpartner
 	_field->idpm      := fakt_pripr->idpm
 	
-	if doks->(FIELDPOS("dok_veza")) <> 0
+	if fakt_doks->(FIELDPOS("dok_veza")) <> 0
 		_field->dok_veza := fakt_pripr->dok_veza
 	endif
 
-	if doks->(FIELDPOS("oper_id")) <> 0 .and. gSecurity == "D"
+	if fakt_doks->(FIELDPOS("oper_id")) <> 0 .and. gSecurity == "D"
 		_field->oper_id := GetUserID()
 	endif
   	
-	if doks->(FIELDPOS("fisc_rn")) <> 0 .and. gFc_use == "D" 
+	if fakt_doks->(FIELDPOS("fisc_rn")) <> 0 .and. gFc_use == "D" 
 		_field->fisc_rn := fakt_pripr->fisc_rn
 	endif
   
   	// datum isporuke, otpremnice, valute
-	if doks->(FIELDPOS("dat_isp")) <> 0 
+	if fakt_doks->(FIELDPOS("dat_isp")) <> 0 
    		_field->dat_isp:=if(LEN(aMemo)>=7,CToD(aMemo[7]),CToD(""))
    		_field->dat_otpr:=if(LEN(aMemo)>=7,CToD(aMemo[7]),CToD(""))
    		_field->dat_val:=if(LEN(aMemo)>=9,CToD(aMemo[9]),CToD(""))
@@ -1005,7 +1005,7 @@ do while !eof()
    		_field->DatPl:=if(LEN(aMemo)>=9,CToD(aMemo[9]),CToD(""))
   	endif
   	
-	if (doks->m1=="Z")
+	if (fakt_doks->m1=="Z")
     		// skidam zauzece i dobijam normalan dokument
     		// REPLACE m1 WITH " " -- isto kao i gore
     		_field->m1 := " "
@@ -1098,7 +1098,7 @@ do while !eof()
 	endif
 	
 	// ponovo odradi lock tabele DOKS
-	if !(doks->(FLock()))
+	if !(fakt_doks->(FLock()))
 		
 		Beep(4)
   		Msg("Azuriranje NE moze vrsiti vise korisnika istovremeno !", 15)
@@ -1269,7 +1269,7 @@ do while !EOF()
 		go top
 		seek cSeek
 		if Found()
-			do while !eof() .and. doks->(idfirma+idtipdok+brdok) == cSeek
+			do while !eof() .and. fakt_doks->(idfirma+idtipdok+brdok) == cSeek
       				skip 1
 				nRec:=RecNo()
 				skip -1
@@ -1468,7 +1468,7 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
       		cBrDok:=BrDok
       		select fakt_doks
       		hseek fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
-      		if (Found() .and. (doks->M1=="Z"))
+      		if (Found() .and. (fakt_doks->M1=="Z"))
 	 		// dokument zapisan samo u DOKS-u
 	 		delete
       		endif

@@ -37,10 +37,10 @@ return 1
  *  \brief kreiranje tabela RN i DRN
  */
 function drn_create()
-*{
-local cDRnName := "DRN.DBF"
-local cRnName := "RN.DBF"
-local cDRTxtName := "DRNTEXT.DBF"
+
+local cDRnName := "drn"
+local cRnName := "rn"
+local cDRTxtName := "drntext"
 local aDRnField:={}
 local aRnField:={}
 local aDRTxtField:={}
@@ -51,7 +51,7 @@ if del_rndbf() == 0
 endif
 
 // provjeri da li postoji fajl DRN.DBF
-if !FILE(PRIVPATH + cDRnName)
+if !FILE(f18_ime_dbf(cDRnName))
 	// drn specifikacija polja
 	get_drn_fields(@aDRnField)
         // kreiraj tabelu
@@ -59,7 +59,7 @@ if !FILE(PRIVPATH + cDRnName)
 endif
 
 // provjeri da li postoji fajl RN.DBF
-if !FILE(PRIVPATH + cRnName)
+if !FILE(f18_ime_dbf(cRnName))
 	// rn specifikacija polja
 	get_rn_fields(@aRnField)
         // kreiraj tabelu
@@ -67,7 +67,7 @@ if !FILE(PRIVPATH + cRnName)
 endif
 
 // provjeri da li postoji fajl DRNTEXT.DBF
-if !FILE(PRIVPATH + cDRTxtName)
+if !FILE(f18_ime_dbf(cDRTxtName))
 	// rn specifikacija polja
 	get_dtxt_fields(@aDRTxtField)
         // kreiraj tabelu
@@ -75,15 +75,14 @@ if !FILE(PRIVPATH + cDRTxtName)
 endif
 
 // kreiraj indexe
-CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "DRN")
+CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "drn")
 
-CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "RN")
-CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "RN")
+CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "rn")
+CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "rn")
 
-CREATE_INDEX("1", "tip", PRIVPATH + "DRNTEXT")
+CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
 
 return
-*}
 
 
 // kreiranje tabele DOKSPF (POS tabela za podatke o kupcu)

@@ -618,7 +618,7 @@ if fDelphiRB
    	INDEX ON RBR  TAG "1"
    	select fakt_pripr
 else
-	POCNI STAMPU
+	pocni_stampu()
  	P_10CPI
  	if gBold=="1"
 		B_ON
@@ -1187,7 +1187,7 @@ PrStr2T(cIdTipDok)
 if gBold=="1";B_OFF;endif
 if !fDelphiRB
   FF
-  ZAVRSI STAMPU
+  zavrsi_stampu()
 else
   cSwitch:=""
   SELECT (F_POM); USE

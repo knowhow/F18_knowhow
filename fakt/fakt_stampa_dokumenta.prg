@@ -109,7 +109,8 @@ for i:=1 to len(cTxt2)
  endif
 next
 
-POCNI STAMPU
+//POCNI STAMPU
+pocni_stampu()
 
 P_10CPI
 for i:=1 to gnTMarg  
@@ -393,7 +394,8 @@ PrStr2T(cIdTipDok)
 
 FF
 
-ZAVRSI STAMPU
+//ZAVRSI STAMPU
+zavrsi_stampu()
 
 closeret
 *}
@@ -980,4 +982,20 @@ Box(,6, 30)
 BoxC()
 
 return cRet
-*}
+
+
+// prebacio u funkcije iz fakt.ch #command
+function pocni_stampu()
+	if !lSSIP99 .and. !StartPrint()
+		close all
+		return
+	endif
+return
+
+function zavrsi_stampu()
+	if !lSSIP99 
+		EndPrint()
+	endif
+return
+
+

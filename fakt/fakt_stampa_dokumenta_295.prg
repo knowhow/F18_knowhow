@@ -256,7 +256,7 @@ next
 nDuzMemo:=nLtxt2
 if idtipdok $ "10#11"; nLTxt2+=7; endif
 
-POCNI STAMPU
+pocni_stampu()
 
 P_10CPI
 
@@ -566,7 +566,7 @@ P_12CPI
 private cpom:=""
 FF
 
-ZAVRSI STAMPU
+zavrsi_stampu()
 
 CLOSERET
 *}

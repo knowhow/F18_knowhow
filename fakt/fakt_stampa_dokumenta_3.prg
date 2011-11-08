@@ -151,7 +151,7 @@ next
 if idtipdok $ "10#11"; nLTxt2+=7; endif
 
 
-POCNI STAMPU
+pocni_stampu()
 
 P_10CPI
 StZaglavlje(gVlZagl,PRIVPATH)
@@ -453,7 +453,7 @@ PrStr2T(cIdTipDok)
 
 FF
 
-ZAVRSI STAMPU
+zavrsi_stampu()
 
 closeret
 *}

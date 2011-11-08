@@ -27,7 +27,6 @@ CLASS TFaktMod FROM TAppMod
 	var cRoba_Rj
 	var lOpresaStampa
 	method New
-	method dummy
 	method setGVars
 	method mMenu
 	method mMenuStandard
@@ -49,14 +48,6 @@ return self
 method initdb()
 ::oDatabase:=TDbFakt():new()
 return nil
-
-
-
-// -----------------------------------------------
-// -----------------------------------------------
-method dummy()
-return
-
 
 
 // -----------------------------------------------
@@ -414,6 +405,11 @@ public gMPCjenPDV := "2"
 // zaokruzenje 5pf
 public gZ_5pf := "N"
 
+// prebacio iz fakt.ch define komande
+public zaokruzenje := 2
+public i_id := 1
+public nl := chr(13)+chr(10)
+
 O_PARAMS
 private cSection:="1"
 public cHistory:=" "
@@ -720,13 +716,16 @@ IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'') , SIFPATH)
 cSekcija:="BarKod"; cVar:="NazRTM"
 IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'barkod') , SIFPATH)
 
-public glDistrib := (IzFmkIni("FAKT","Distribucija","N",KUMPATH)=="D")
-public gDest := (IzFmkIni("FAKT","Destinacija", "N", KUMPATH)=="D")
-public gPovDob := IzFmkIni("FAKT_TipDok01","StampaPovrataDobavljacu_DefaultOdgovor","0",KUMPATH)
+public glDistrib := .f.
+//(IzFmkIni("FAKT","Distribucija","N",KUMPATH)=="D")
+public gDest := .f.
+//(IzFmkIni("FAKT","Destinacija", "N", KUMPATH)=="D")
+public gPovDob := "0"
+//IzFmkIni("FAKT_TipDok01","StampaPovrataDobavljacu_DefaultOdgovor","0",KUMPATH)
 
 public gUVarPP := IzFMKINI("POREZI","PPUgostKaoPPU","M")
-cPom:=IzFMKINI("POREZI","PPUgostKaoPPU","-",KUMPATH)
-IF cPom<>"-"
+cPom := IzFMKINI("POREZI","PPUgostKaoPPU","-",KUMPATH)
+IF cPom <> "-"
   gUVarPP:=cPom
 ENDIF
 gSQL:=IzFmkIni("Svi","SQLLog","N",KUMPATH)
@@ -741,10 +740,10 @@ if IzFmkIni("FMK","TerminalServer","N")=="D"
    gTerminalServer:=.t.
 endif
 
-public lPoNarudzbi := "N"
+public lPoNarudzbi := .f.
 //lPoNarudzbi:= ( IzFMKINI("FAKT","10PoNarudzbi","N",KUMPATH)=="D" )
 
-public lSpecifZips := "N"
+public lSpecifZips := .f. 
 //lSpecifZips:= ( IzFmkIni("FAKT_Specif","ZIPS","N")=="D" )
 
 public gModul:="FAKT"
@@ -758,7 +757,7 @@ public glCij13Mpc:=(IzFmkIni("FAKT","Cijena13MPC","D", KUMPATH)=="D")
 public gcLabKomLin:=IzFmkIni("FAKT","PozivZaLabeliranje","labelira labelu",KUMPATH)
 public gNovine:=(IzFmkIni("STAMPA","Opresa","N",KUMPATH))
 
-public glRadNal
+public glRadNal := .f.
 glRadNal:=(IzFmkIni("FAKT","RadniNalozi","N",KUMPATH)=="D")
 
 public gKonvZnWin

@@ -293,6 +293,9 @@ AADD( gaDbfs, { F_RELAC  ,"RELAC"   , "relac"     } )
 AADD( gaDbfs, { F_VOZILA ,"VOZILA"  , "vozila"     } )
 AADD( gaDbfs, { F_DEST   ,"DEST"    , "dest"     } )
 AADD( gaDbfs, { F_KALPOS ,"KALPOS"  , "kalpos"     } )
+AADD( gaDbfs, { F_DRN ,   "DRN"     , "drn"     } )
+AADD( gaDbfs, { F_DRN ,   "RN"     , "rn"     } )
+AADD( gaDbfs, { F_DRN ,   "DRNTEXT"     , "drntext"     } )
 
 
 log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)

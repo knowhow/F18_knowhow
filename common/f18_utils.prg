@@ -259,9 +259,24 @@ AADD( gaDbfs, { F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   } )
 AADD( gaDbfs, { F_BUIZ   ,  "BUIZ"    , "fin_buiz"   } )
 
 //modul KALK
-AADD( gaDbfs, { F_KALK   ,"KALK"    , "kalk"     } )
-AADD( gaDbfs, { F_KALKS  ,"KALKS"   , "kalks"     } )
-AADD( gaDbfs, { F__KALK  ,"_KALK" , "_kalk"    } )
+AADD( gaDbfs, { F_KALK   ,"KALK"         , "kalk"     } )
+AADD( gaDbfs, { F_KALKS  ,"KALKS"        , "kalks"    } )
+AADD( gaDbfs, { F__KALK  ,"_KALK"        , "_kalk"    } )
+AADD( gaDbfs, { F_PRIPR  ,"KALK_PRIPR"   , "kalk_pripr"    } )
+AADD( gaDbfs, { F_PRIPR  ,"KALK_PRIPR2"  , "kalk_pripr2"   } )
+AADD( gaDbfs, { F_PRIPR  ,"KALK_PRIPR9"  , "kalk_pripr9"   } )
+AADD( gaDbfs, { F_FINMAT ,"KALK_FINMAT"  , "kalk_finmat"   } )
+AADD( gaDbfs, { F_DOKS   ,"KALK_DOKS"    , "kalk_doks"     } )
+AADD( gaDbfs, { F_DOKS2  ,"KALK_DOKS2"   , "kalk_doks2"    } )
+AADD( gaDbfs, { F_PORMP  ,"PORMP"        , "pormp"     } )
+AADD( gaDbfs, { F_TRFP   ,"TRFP"         , "trfp"      } )
+AADD( gaDbfs, { F_DOKSRC ,"KALK_DOKSRC"  , "kalk_doksrc"    } )
+AADD( gaDbfs, { F_P_DOKSRC,"P_KALK_DOKSRC", "p_kalk_doksrc"   } )
+AADD( gaDbfs, { F_PPPROD ,"PPPROD"  , "ppprod"    } )
+AADD( gaDbfs, { F_OBJEKTI,"OBJEKTI" , "objekti"     } )
+AADD( gaDbfs, { F_PRODNC, "PRODNC"  , "prodnc"     } )
+AADD( gaDbfs, { F_RVRSTA, "RVRSTA"  , "rvrsta"     } )
+AADD( gaDbfs, { F_K1     ,"K1"      , "k1"     } )
 
 
 // modul FAKT

@@ -67,7 +67,8 @@ gRobaBlock:={|Ch| RobaBlock(Ch)}
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
 
 ::mMenuStandard()
-::quit()
+
+//::quit()
 
 return nil
 
@@ -141,7 +142,7 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 private Izbor:=1
-Menu_SC("gkas", .t. , lPodBugom)
+Menu_SC("gkas", .t. )
 
 return
 

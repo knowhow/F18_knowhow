@@ -165,7 +165,7 @@ else
 	lPodBugom:=.f.
 endif
 
-Menu_SC("gfin",.f.,lPodBugom)
+Menu_SC("gfin", .t. )
 
 return
 

@@ -55,7 +55,6 @@ return nil
 method mMenu()
 
 private Izbor
-private lPodBugom
 
 SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
@@ -70,9 +69,12 @@ select fakt_doks
 //TrebaRegistrovati(20)
 USE
 
+@ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
+@ 4,5 SAY ""
+
 ::mMenuStandard()
 
-::quit()
+//::quit()
 
 return nil
 
@@ -147,7 +149,7 @@ else
 endif
 private Izbor:=1
 
-Menu_SC("mfak", .f.)
+Menu_SC("mfak", .t.)
 
 return 
 

@@ -130,7 +130,7 @@ if gFc_use == "N"
 	return
 endif
 
-select fakt_doks
+select doks
 seek cFirma+cTipDok+cBrDok
 
 nBrDok := VAL(ALLTRIM(field->brdok))
@@ -214,7 +214,7 @@ if cContinue == nil
 	cContinue := "0"
 endif
 
-O_FAKT_DOKS
+O_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -225,7 +225,7 @@ if gFc_use == "N"
 	return
 endif
 
-select fakt_doks
+select doks
 seek ( cFirma + cTipDok + cBrDok )
 
 nBrDok := VAL(ALLTRIM(field->brdok))
@@ -545,7 +545,7 @@ local cPOslob := ""
 local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local nU_total
 
-O_FAKT_DOKS
+O_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -556,7 +556,7 @@ if gFc_use == "N"
 	return
 endif
 
-select fakt_doks
+select doks
 seek ( cFirma + cTipDok + cBrDok )
 
 nBrDok := VAL(ALLTRIM(field->brdok))
@@ -847,8 +847,15 @@ local lIno := .f.
 local cPOslob := ""
 local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local cKupacInfo := ""
+local lPdvObveznik := .f.
+local nTotal
+local nF_total
+local nIznos
+local nRabat
+local lPoPNaTeret := .f.
+local n
 
-O_FAKT_DOKS
+O_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -859,12 +866,13 @@ if gFc_use == "N"
 	return
 endif
 
-select fakt_doks
+select doks
 go top
 seek ( cFirma + cTipDok + cBrDok )
 
 nBrDok := VAL(ALLTRIM(field->brdok))
-nTotal := field->iznos
+nIznos := field->iznos
+nRabat := field->rabat
 dDatRn := field->datdok
 nNRekRn := field->fisc_rn
 
@@ -926,23 +934,9 @@ if !EMPTY( cPartnId )
 		// ovo je NN kupac
 		// jednostavno za njega nadji podatke
 		lIno := .f.
+		lPDVObveznik := .t.
 
 	elseif LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob )
-		
-		// ovo je ino partner
-		// uzmi podatak iz deviznog ziro racuna
-
-		// medjutim sada necu setovati partnera uopste 
-		// ovdje imam problem sa uredjajem
-		
-		//nTArea := SELECT()
-		
-		//select partn
-		//seek cPartnId
-
-		//select (nTArea)
-
-		//cJibPartn := PADL( ALLTRIM( partn->dziror ), 13, "A" )
 
 		lIno := .t.
 	
@@ -952,8 +946,9 @@ if !EMPTY( cPartnId )
 		// dodaj "4" ispred id broja
 		
 		cJibPartn := "4" + ALLTRIM( cJibPartn )
-		
+				
 		lIno := .f.
+		lPDVObveznik := .t.
 
 	endif
 
@@ -1009,7 +1004,13 @@ go (nTRec)
 
 // i total sracunaj sa pdv
 // upisat cemo ga u svaku stavku matrice
-nTotal := _uk_sa_pdv( cTipDok, cPartnId, nTotal )
+// to je total koji je bitan kod regularnih racuna
+// pdv, ne pdv obveznici itd...
+
+nTotal := _uk_sa_pdv( cTipDok, cPartnId, nIznos )
+
+// total za sracunavanje kod samaranja po stavkama racuna
+nF_total := 0
 
 // upisi u matricu stavke
 do while !EOF() .and. field->idfirma == cFirma ;
@@ -1071,7 +1072,16 @@ do while !EOF() .and. field->idfirma == cFirma ;
 	endif
 	
 	nF_kolicina := ABS ( field->kolicina )
-	nF_rabat := ABS ( field->rabat ) 
+	
+	// ako korisnik nije PDV obveznik
+	// i radi se o robi sa zasticenom cijenom
+	// rabat preskoci
+	if !lIno .and. !lPdvObveznik .and. RobaZastCijena( roba->idtarifa )
+		lPoPNaTeret := .t.
+		nF_rabat := 0
+	else
+		nF_rabat := ABS ( field->rabat ) 
+	endif
 
 	cF_tarifa := ALLTRIM( roba->idtarifa )
 
@@ -1087,7 +1097,21 @@ do while !EOF() .and. field->idfirma == cFirma ;
 		// ovo ce biti racun koji reklamiramo !
 		cF_st_rn := ALLTRIM( STR( nNRekRn ))
 	endif
-	
+
+	// izracunaj total po stavci 
+	// ako se radi o robi sa zasticenom cijenom
+	// ovaj total ce se napuniti u matricu
+	if field->dindem == LEFT(ValBazna(), 3)
+		nF_total += Round( nF_kolicina * ;
+			nF_cijena * PrerCij() * ;
+			(1 - nF_rabat/100), ZAOKRUZENJE )
+        else
+		nF_total += round( nF_kolicina * ;
+			nF_cijena * ;
+			(PrerCij() / UBaznuValutu(field->datdok)) * ;
+			(1-nF_rabat/100), ZAOKRUZENJE)
+	endif
+
 	// 1 - broj racuna
 	// 2 - redni broj
 	// 3 - id roba
@@ -1124,6 +1148,17 @@ do while !EOF() .and. field->idfirma == cFirma ;
 
 	skip
 enddo
+
+if lPopNaTeret = .t.
+	
+	// ako ima popusta na teret prodavaca
+	// sredi total, ukljuci i rabat koji je dat
+	// uzmi sada onaj nF_total
+
+	for n := 1 to LEN( aStavke )
+		aStavke[n, 14] := nF_total
+	next
+endif
 
 if cTipDok $ "10"
 	
@@ -1271,7 +1306,7 @@ return
 static function fisc_to_fakt( cFirma, cTD, cBroj, nFiscal )
 local nTArea := SELECT()
 
-select fakt_doks
+select doks
 set order to tag "1"
 seek cFirma + cTD + cBroj
 
@@ -1303,7 +1338,7 @@ local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local cKupacInfo := ""
 local nTrig
 
-O_FAKT_DOKS
+O_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -1314,7 +1349,7 @@ if gFc_use == "N"
 	return
 endif
 
-select fakt_doks
+select doks
 go top
 seek ( cFirma + cTipDok + cBrDok )
 
@@ -1647,7 +1682,7 @@ if gFc_use == "N"
 	return
 endif
 
-select fakt_doks
+select doks
 seek cFirma+cTipDok+cBrDok
 
 // ako je storno racun ...
@@ -1850,7 +1885,7 @@ function fisc_isjecak( cFirma, cTipDok, cBrDok )
 local nTArea := SELECT()
 local nFisc_no := 0
 
-select fakt_doks
+select doks
 go top
 seek cFirma + cTipDok + cBrDok
 

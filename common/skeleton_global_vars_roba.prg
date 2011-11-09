@@ -21,7 +21,7 @@
 *string FmkIni_ExePath_ROBA_BezIstihNaziva;
 
 
-function SetFmkRGVars()
+function set_roba_global_vars()
 
 public gUVarPP
 public glProvNazRobe

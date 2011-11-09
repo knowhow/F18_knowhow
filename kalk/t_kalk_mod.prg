@@ -181,7 +181,7 @@ local cSekcija
 local cVar,cVal
 
 set_global_vars()
-SetFmkRGVars()
+set_roba_global_vars()
 
 PUBLIC KursLis:="1"
 PUBLIC gMetodaNC:="2"

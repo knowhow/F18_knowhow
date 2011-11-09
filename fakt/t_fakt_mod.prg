@@ -186,7 +186,7 @@ local cVar
 local cVal
 
 set_global_vars()
-SetFmkRGVars()
+set_roba_global_vars()
 
 ::nDuzinaSifre:=VAL(IzFMKINI('SifRoba','DuzSifra','10', SIFPATH))
 ::cTekVpc:=IzFmkIni("FAKT","TekVpc","1",SIFPATH)

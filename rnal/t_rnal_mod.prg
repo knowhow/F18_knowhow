@@ -186,7 +186,7 @@ return
 method setGVars()
 
 set_global_vars()
-SetFmkRGVars()
+set_roba_global_vars()
 
 private cSection:="1"
 private cHistory:=" "

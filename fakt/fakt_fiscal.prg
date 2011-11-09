@@ -130,7 +130,7 @@ if gFc_use == "N"
 	return
 endif
 
-select doks
+select fakt_doks
 seek cFirma+cTipDok+cBrDok
 
 nBrDok := VAL(ALLTRIM(field->brdok))
@@ -214,7 +214,7 @@ if cContinue == nil
 	cContinue := "0"
 endif
 
-O_DOKS
+O_FAKT_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -225,7 +225,7 @@ if gFc_use == "N"
 	return
 endif
 
-select doks
+select fakt_doks
 seek ( cFirma + cTipDok + cBrDok )
 
 nBrDok := VAL(ALLTRIM(field->brdok))
@@ -272,7 +272,7 @@ if cTipDok $ "10#"
 	// uzmi kupca i setuj placanje
 
 	// daj mi partnera za ovu fakturu
-	cPartnId := doks->idpartner
+	cPartnId := fakt_doks->idpartner
 	cVr_Placanja := "3"
 
 endif
@@ -545,7 +545,7 @@ local cPOslob := ""
 local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local nU_total
 
-O_DOKS
+O_FAKT_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -556,7 +556,7 @@ if gFc_use == "N"
 	return
 endif
 
-select doks
+select fakt_doks
 seek ( cFirma + cTipDok + cBrDok )
 
 nBrDok := VAL(ALLTRIM(field->brdok))
@@ -603,7 +603,7 @@ if cTipDok $ "10#"
 	// uzmi kupca i setuj placanje
 
 	// daj mi partnera za ovu fakturu
-	cPartnId := doks->idpartner
+	cPartnId := fakt_doks->idpartner
 	cVr_Placanja := "3"
 
 endif
@@ -855,7 +855,7 @@ local nRabat
 local lPoPNaTeret := .f.
 local n
 
-O_DOKS
+O_FAKT_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -866,7 +866,7 @@ if gFc_use == "N"
 	return
 endif
 
-select doks
+select fakt_doks
 go top
 seek ( cFirma + cTipDok + cBrDok )
 
@@ -916,7 +916,7 @@ if cTipDok $ "#10#11#"
 	// uzmi kupca i setuj placanje
 
 	// daj mi partnera za ovu fakturu
-	cPartnId := doks->idpartner
+	cPartnId := fakt_doks->idpartner
 	
 	if cTipDok $ "#10#"
 		cVr_Placanja := "3"
@@ -1306,7 +1306,7 @@ return
 static function fisc_to_fakt( cFirma, cTD, cBroj, nFiscal )
 local nTArea := SELECT()
 
-select doks
+select fakt_doks
 set order to tag "1"
 seek cFirma + cTD + cBroj
 
@@ -1338,7 +1338,7 @@ local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local cKupacInfo := ""
 local nTrig
 
-O_DOKS
+O_FAKT_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
@@ -1349,7 +1349,7 @@ if gFc_use == "N"
 	return
 endif
 
-select doks
+select fakt_doks
 go top
 seek ( cFirma + cTipDok + cBrDok )
 
@@ -1398,7 +1398,7 @@ if cTipDok $ "#10#11#"
 	// uzmi kupca i setuj placanje
 
 	// daj mi partnera za ovu fakturu
-	cPartnId := doks->idpartner
+	cPartnId := fakt_doks->idpartner
 	
 	if cTipDok $ "#10#"
 		cVr_Placanja := "3"
@@ -1682,7 +1682,7 @@ if gFc_use == "N"
 	return
 endif
 
-select doks
+select fakt_doks
 seek cFirma+cTipDok+cBrDok
 
 // ako je storno racun ...
@@ -1740,7 +1740,7 @@ if cTipDok $ "10#"
 	nTipRac := 2
 	
 	// daj mi partnera za ovu fakturu
-	nPartnId := _g_spart( doks->idpartner )
+	nPartnId := _g_spart( fakt_doks->idpartner )
 	
 	// stampa vp racuna
 	nSemCmd := 20
@@ -1885,11 +1885,11 @@ function fisc_isjecak( cFirma, cTipDok, cBrDok )
 local nTArea := SELECT()
 local nFisc_no := 0
 
-select doks
+select fakt_doks
 go top
 seek cFirma + cTipDok + cBrDok
 
-if doks->(FIELDPOS("FISC_RN")) <> 0 .and. FOUND() .and. field->fisc_rn <> 0
+if fakt_doks->(FIELDPOS("FISC_RN")) <> 0 .and. FOUND() .and. field->fisc_rn <> 0
 	nFisc_no := field->fisc_rn
 endif
 

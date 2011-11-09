@@ -181,7 +181,7 @@ Box(,21,77,.f.,"PARAMETRI FISKALNOG STMPACA")
 	
 	@ m_x+nX, m_y+2 SAY "Stampati racun nakon stampe fiskalnog racuna ?" ;
 			GET gFC_faktura ;
-			VALID gFC_faktura $ "DN" PICT "@!"
+			VALID gFC_faktura $ "DNGX" PICT "@!"
 	
 	++ nX
 	++ nX

@@ -255,8 +255,8 @@ public gOAsDuPartn:="N"
 public gAzurTimeOut := 120
 public gMjRj := "N"
 
-public aRuleCols := g_rule_cols()
-public bRuleBlock := g_rule_block()
+public aRuleCols := g_rule_cols_fin()
+public bRuleBlock := g_rule_block_fin()
 
 ::super:setTGVars()
 

@@ -18,7 +18,7 @@
 // setuju parametre pri pokretanju modula
 // napuni sifrarnike
 // ------------------------------------------
-function s_params()
+function fakt_set_params()
 
 // PTXT 01.50 compatibility switch
 public gPtxtC50 := .t.

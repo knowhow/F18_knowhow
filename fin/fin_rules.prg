@@ -26,7 +26,7 @@ return
 // --------------------------------------------
 // rule - kolone specificne
 // --------------------------------------------
-function g_rule_cols()
+function g_rule_cols_fin()
 local aKols := {}
 
 //rule_c1 = 1
@@ -48,7 +48,7 @@ return aKols
 // -------------------------------------
 // rule - block tabele rule
 // -------------------------------------
-function g_rule_block()
+function g_rule_block_fin()
 local bBlock := {|| ed_rule_bl() }
 return bBlock
 

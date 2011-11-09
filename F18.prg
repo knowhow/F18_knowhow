@@ -78,7 +78,7 @@ do while .t.
 		case mnu_choice == 5
 			//MainLd(cUser, cPassWord, p3, p4, p5, p6, p7)
 		case mnu_choice == 6
-			//MainRnal(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainRnal(cUser, cPassWord, p3, p4, p5, p6, p7)
  	endcase
  	loop
 enddo

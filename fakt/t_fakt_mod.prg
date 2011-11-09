@@ -62,7 +62,7 @@ Izbor:=1
 CheckROnly(KUMPATH + "\FAKT.DBF")
 
 // setuj parametre pri pokretanju modula
-s_params()
+fakt_set_params()
 
 O_FAKT_DOKS
 select fakt_doks

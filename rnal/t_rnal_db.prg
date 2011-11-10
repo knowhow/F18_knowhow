@@ -191,28 +191,28 @@ if (nArea <> -1)
 	CreSystemDb( nArea )
 endif
 
-cre_tbls(nArea, "DOCS")
-cre_tbls(nArea, "_DOCS")
-cre_tbls(nArea, "DOC_IT")
-cre_tbls(nArea, "_DOC_IT")
-cre_tbls(nArea, "DOC_OPS")
-cre_tbls(nArea, "_DOC_OPS")
-cre_tbls(nArea, "DOC_IT2")
-cre_tbls(nArea, "_DOC_IT2")
-cre_tbls(nArea, "DOC_LOG")
-cre_tbls(nArea, "DOC_LIT")
-cre_tbls(nArea, "ARTICLES")
-cre_tbls(nArea, "ELEMENTS")
-cre_tbls(nArea, "E_AOPS")
-cre_tbls(nArea, "E_ATT")
-cre_tbls(nArea, "E_GROUPS")
-cre_tbls(nArea, "E_GR_ATT")
-cre_tbls(nArea, "E_GR_VAL")
-cre_tbls(nArea, "AOPS")
-cre_tbls(nArea, "AOPS_ATT")
-cre_tbls(nArea, "CUSTOMS")
-cre_tbls(nArea, "CONTACTS")
-cre_tbls(nArea, "OBJECTS")
+cre_tbls(nArea, "docs")
+cre_tbls(nArea, "_docs")
+cre_tbls(nArea, "doc_it")
+cre_tbls(nArea, "_doc_it")
+cre_tbls(nArea, "doc_ops")
+cre_tbls(nArea, "_doc_ops")
+cre_tbls(nArea, "doc_it2")
+cre_tbls(nArea, "_doc_it2")
+cre_tbls(nArea, "doc_log")
+cre_tbls(nArea, "doc_lit")
+cre_tbls(nArea, "articles")
+cre_tbls(nArea, "elements")
+cre_tbls(nArea, "e_aops")
+cre_tbls(nArea, "e_att")
+cre_tbls(nArea, "e_groups")
+cre_tbls(nArea, "e_gr_att")
+cre_tbls(nArea, "e_gr_val")
+cre_tbls(nArea, "aops")
+cre_tbls(nArea, "aops_att")
+cre_tbls(nArea, "customs")
+cre_tbls(nArea, "contacts")
+cre_tbls(nArea, "objects")
 cre_sifk(nArea)
 
 // kreiranje tabele pretraga parametri
@@ -231,7 +231,6 @@ c_rule_cdx()
 c_tbl_ral()
 
 return
-
 
 // ----------------------------------------------
 // vraca matricu sa strukturom tabele DOCS
@@ -260,7 +259,6 @@ AADD(aDBf,{ "doc_sh_desc", "C", 100, 0 })
 AADD(aDBf,{ "doc_status", "N", 2, 0 })
 AADD(aDBf,{ "operater_id", "N", 3, 0 })
 AADD(aDBf,{ "doc_in_fmk", "N", 1, 0 })
-AADD(aDBf,{ "log_it_no", "N", 10, 0 })
 AADD(aDBf,{ "fmk_doc", "C", 150, 0 })
 
 return aDbf
@@ -633,139 +631,139 @@ local aDbf
 local cPath := KUMPATH
 
 do case 
-	case cTable == "DOCS"
+	case cTable == "docs"
 		nArea2 := F_DOCS
-	case cTable == "_DOCS"
+	case cTable == "_docs"
 		nArea2 := F__DOCS
-	case cTable == "DOC_IT"
+	case cTable == "doc_it"
 		nArea2 := F_DOC_IT
-	case cTable == "_DOC_IT"
+	case cTable == "_doc_it"
 		nArea2 := F__DOC_IT
-	case cTable == "DOC_IT2"
+	case cTable == "doc_it2"
 		nArea2 := F_DOC_IT2
-	case cTable == "_DOC_IT2"
+	case cTable == "_doc_it2"
 		nArea2 := F__DOC_IT2
-	case cTable == "DOC_OPS"
+	case cTable == "doc_ops"
 		nArea2 := F_DOC_OPS
-	case cTable == "_DOC_OPS"
+	case cTable == "_doc_ops"
 		nArea2 := F__DOC_OPS
-	case cTable == "DOC_LOG"
+	case cTable == "doc_log"
 		nArea2 := F_DOC_LOG
-	case cTable == "DOC_LIT"
+	case cTable == "doc_lit"
 		nArea2 := F_DOC_LIT
-	case cTable == "E_GROUPS"
+	case cTable == "e_groups"
 		nArea2 := F_E_GROUPS
-	case cTable == "E_GR_ATT"
+	case cTable == "e_gr_att"
 		nArea2 := F_E_GR_ATT
-	case cTable == "E_GR_VAL"
+	case cTable == "e_gr_val"
 		nArea2 := F_E_GR_VAL
-	case cTable == "AOPS"
+	case cTable == "aops"
 		nArea2 := F_AOPS
-	case cTable == "AOPS_ATT"
+	case cTable == "aops_att"
 		nArea2 := F_AOPS_ATT
-	case cTable == "ARTICLES"
+	case cTable == "articles"
 		nArea2 := F_ARTICLES
-	case cTable == "ELEMENTS"
+	case cTable == "elements"
 		nArea2 := F_ELEMENTS
-	case cTable == "E_AOPS"
+	case cTable == "e_aops"
 		nArea2 := F_E_AOPS
-	case cTable == "E_ATT"
+	case cTable == "e_att"
 		nArea2 := F_E_ATT
-	case cTable == "CUSTOMS"
+	case cTable == "customs"
 		nArea2 := F_CUSTOMS
-	case cTable == "CONTACTS"
+	case cTable == "contacts"
 		nArea2 := F_CONTACTS
-	case cTable == "OBJECTS"
+	case cTable == "objects"
 		nArea2 := F_OBJECTS
 endcase
 
 if (nArea==-1 .or. nArea == nArea2)
 	do case 
-		case cTable == "DOCS" 
+		case cTable == "docs" 
 			aDbf := a_docs()
 			cPath := KUMPATH
 			
-		case cTable == "_DOCS"
+		case cTable == "_docs"
 			aDbf := a_docs()
 			cPath := PRIVPATH
 			
-		case cTable == "DOC_IT" 
+		case cTable == "doc_it" 
 			aDbf := a_doc_it()
 			cPath := KUMPATH
 			
-		case cTable == "_DOC_IT"
+		case cTable == "_doc_it"
 			aDbf := a_doc_it()
 			cPath := PRIVPATH
 		
-		case cTable == "DOC_IT2"
+		case cTable == "doc_it2"
 			aDbf := a_doc_it2()
 			cPath := KUMPATH
 
-		case cTable == "_DOC_IT2"
+		case cTable == "_doc_it2"
 			aDbf := a_doc_it2()
 			cPath := PRIVPATH
 		
-		case cTable == "DOC_OPS" 
+		case cTable == "doc_ops" 
 			aDbf := a_doc_ops()
 			cPath := KUMPATH
 			
-		case cTable == "_DOC_OPS"
+		case cTable == "_doc_ops"
 			aDbf := a_doc_ops()
 			cPath := PRIVPATH
 			
-		case cTable == "DOC_LOG"
+		case cTable == "doc_log"
 			aDbf := a_doc_log()
 			cPath := KUMPATH
 			
-		case cTable == "DOC_LIT"
+		case cTable == "doc_lit"
 			aDbf := a_doc_lit()
 			cPath := KUMPATH
 			
-		case cTable == "ARTICLES"
+		case cTable == "articles"
 			aDbf := a_articles()
 			cPath := SIFPATH
 			
-		case cTable == "ELEMENTS"
+		case cTable == "elements"
 			aDbf := a_elements()
 			cPath := SIFPATH
 			
-		case cTable == "E_AOPS"
+		case cTable == "e_aops"
 			aDbf := a_e_aops()
 			cPath := SIFPATH
 			
-		case cTable == "E_ATT"
+		case cTable == "e_att"
 			aDbf := a_e_att()
 			cPath := SIFPATH
 			
-		case cTable == "E_GROUPS"
+		case cTable == "e_groups"
 			aDbf := a_e_groups()
 			cPath := SIFPATH
 			
-		case cTable == "E_GR_ATT"
+		case cTable == "e_gr_att"
 			aDbf := a_e_gr_att()
 			cPath := SIFPATH
 			
-		case cTable == "E_GR_VAL"
+		case cTable == "e_gr_val"
 			aDbf := a_e_gr_val()
 			cPath := SIFPATH
 			
-		case cTable == "CUSTOMS"
+		case cTable == "customs"
 			aDbf := a_customs()
 			cPath := SIFPATH
 			
-		case cTable == "CONTACTS"
+		case cTable == "contacts"
 			aDbf := a_contacts()
 			cPath := SIFPATH
 			
-		case cTable == "OBJECTS"
+		case cTable == "objects"
 			aDbf := a_objects()
 			cPath := SIFPATH
 			
-		case cTable == "AOPS"
+		case cTable == "aops"
 			aDbf := a_aops()
 			cPath := SIFPATH
 			
-		case cTable == "AOPS_ATT"
+		case cTable == "aops_att"
 			aDbf := a_aops_att()
 			cPath := SIFPATH
 			
@@ -774,7 +772,7 @@ if (nArea==-1 .or. nArea == nArea2)
 	// dodaj backslash
 	AddBS(@cPath)
 	
-	if !FILE(cPath + cTable + ".DBF")
+	if !FILE(f18_ime_dbf(cTable))
 		DBcreate2(cPath + cTable + ".DBF", aDbf)
 	endif
 
@@ -782,10 +780,10 @@ if (nArea==-1 .or. nArea == nArea2)
 		case (nArea2 == F_DOCS) .or. (nArea2 == F__DOCS)
 			CREATE_INDEX("1", "STR(doc_no,10)", cPath + cTable, .t.)
 			CREATE_INDEX("A", "STR(doc_status,2)+STR(doc_no,10)", cPath + cTable, .t.)
-			CREATE_INDEX("2", "STR(doc_priority,4)+DTOS(doc_date)+STR(doc_no,10)", cPath + cTable, .t.)
-			CREATE_INDEX("3", "STR(doc_priority,4)+DTOS(doc_dvr_date)+STR(doc_no,10)", cPath + cTable, .t.)
+			CREATE_INDEX("2", "STR(doc_priori,4)+DTOS(doc_date)+STR(doc_no,10)", cPath + cTable, .t.)
+			CREATE_INDEX("3", "STR(doc_priori,4)+DTOS(doc_dvr_da)+STR(doc_no,10)", cPath + cTable, .t.)
 			CREATE_INDEX("D1", "DTOS(doc_date)+STR(doc_no,10)", cPath + cTable, .t.)
-			CREATE_INDEX("D2", "DTOS(doc_dvr_date)+STR(doc_no,10)", cPath + cTable, .t.)
+			CREATE_INDEX("D2", "DTOS(doc_dvr_da)+STR(doc_no,10)", cPath + cTable, .t.)
 		case (nArea2 == F_DOC_IT) .or. (nArea2 == F__DOC_IT)
 			CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(art_id,10)", cPath + cTable, .t.)
 			CREATE_INDEX("2", "STR(art_id,10)+STR(doc_no,10)+STR(doc_it_no,4)", cPath + cTable, .t.)
@@ -797,10 +795,10 @@ if (nArea==-1 .or. nArea == nArea2)
 	
 		case (nArea2 == F_DOC_OPS) .or. (nArea2 == F__DOC_OPS)
 			CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)", cPath + cTable, .t.)
-			CREATE_INDEX("2", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_it_el_no,10)", cPath + cTable, .t.)
+			CREATE_INDEX("2", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_it_el_,10)", cPath + cTable, .t.)
 		case (nArea2 == F_DOC_LOG)
-			CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_log_no,10)+DTOS(doc_log_date)+doc_log_time", cPath + cTable, .t.)
-			CREATE_INDEX("2", "STR(doc_no,10)+doc_log_type+STR(doc_log_no,10)", cPath + cTable, .t.)
+			CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_log_no,10)+DTOS(doc_log_da)+doc_log_ti", cPath + cTable, .t.)
+			CREATE_INDEX("2", "STR(doc_no,10)+doc_log_ty+STR(doc_log_no,10)", cPath + cTable, .t.)
 		case (nArea2 == F_DOC_LIT)
 			CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_log_no,10)+STR(doc_lit_no,10)", cPath + cTable, .t.)
 		case (nArea2 == F_ARTICLES)
@@ -848,6 +846,7 @@ if (nArea==-1 .or. nArea == nArea2)
 			CREATE_INDEX("2","STR(e_gr_at_id,10,0)+STR(e_gr_vl_id,10,0)", cPath + cTable, .t.)
 		
 	endcase
+
 endif
 return 
 

@@ -31,10 +31,10 @@ static _direkt_mod
 // -------------------------------------------
 // ----------------------------------------------------------------------
 function _cre_fnd_par()
-local cFndDbf := "_FND_PAR"
+local cFndDbf := "_fnd_par"
 local aDbf := {}
 
-if !FILE(PRIVPATH + cFndDbf + ".DBF")
+if !FILE(f18_ime_dbf(cFndDbf))
 	
 	AADD(aDbf, { "fnd_par_no", "N", 4, 0})
 	AADD(aDbf, { "fnd_par_type", "C", 10, 0})

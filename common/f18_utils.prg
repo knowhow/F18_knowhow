@@ -344,6 +344,7 @@ AADD(gaDBFs, { F_CUSTOMS, "CUSTOMS", "customs" } )
 AADD(gaDBFs, { F_CONTACTS, "CONTACTS", "contacts" } )
 AADD(gaDBFs, { F_OBJECTS, "OBJECTS", "objects" } )
 AADD(gaDBFs, { F_RAL, "RAL", "ral" } )
+AADD(gaDBFs, { F__FND_PAR, "_FND_PAR", "_fnd_par" } )
 
 
 log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)

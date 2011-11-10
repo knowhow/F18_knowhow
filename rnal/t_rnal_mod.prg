@@ -46,10 +46,10 @@ return nil
 method mMenu()
 
 // security mora biti aktivan
-if gSecurity == "N"
-	MsgBeep("Security nije aktivan!#Prekidam rad...")
-	return
-endif
+//if gSecurity == "N"
+//	MsgBeep("Security nije aktivan!#Prekidam rad...")
+//	return
+//endif
 
 close all
 

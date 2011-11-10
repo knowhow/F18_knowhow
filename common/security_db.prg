@@ -13,7 +13,6 @@
 #include "fmk.ch"
 
 function CreSecurity(nArea)
-*{
 
 close all
 

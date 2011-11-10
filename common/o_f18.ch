@@ -243,9 +243,9 @@
 #xcommand O_AOPS_ATT => select(F_AOPS_ATT); my_use ("aops_att"); set order to tag "1"
 #xcommand O_ARTICLES => select(F_ARTICLES); my_use ("articles"); set order to tag "1"
 #xcommand O_ELEMENTS => select(F_ELEMENTS); my_use ("elements"); set order to tag "1"
-#xcommand O_E_AOPS => select(F_E_AOPS); use ("e_aops"); set order to tag "1"
-#xcommand O_E_ATT => select(F_E_ATT); use ("e_att"); set order to tag "1"
-#xcommand O_RAL => select(F_RAL); use ("ral"); set order to tag "1"
+#xcommand O_E_AOPS => select(F_E_AOPS); my_use ("e_aops"); set order to tag "1"
+#xcommand O_E_ATT => select(F_E_ATT); my_use ("e_att"); set order to tag "1"
+#xcommand O_RAL => select(F_RAL); my_use ("ral"); set order to tag "1"
 
 
 

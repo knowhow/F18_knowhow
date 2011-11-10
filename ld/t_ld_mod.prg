@@ -22,6 +22,7 @@ CLASS TLdMod FROM TAppMod
 	method mMenu
 	method mMenuStandard
 	method initdb
+	method chk_db
 	method srv
 END CLASS
 

@@ -190,6 +190,8 @@ return
 // -------------------------------------------------
 // -------------------------------------------------
 method kreiraj(nArea)
+local lVOBrisiCDX := .f.
+local lViseObr := .f.
 
 cDirRad := my_home()
 cDirSif := my_home()

@@ -305,6 +305,19 @@ function OtkljucajBug()
 return
 
 
+// ----------------------------------------------------
+// upisi tekst u fajl
+// ----------------------------------------------------
+function write2file( nH, cText, lNewRow )
+#DEFINE NROW CHR(13) + CHR(10)
+
+if lNewRow == .t.
+	FWRITE( nH, cText + NROW )
+else
+	FWRITE( nH, cText )
+endif
+
+return
 
 
 

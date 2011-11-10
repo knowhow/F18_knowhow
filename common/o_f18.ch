@@ -65,8 +65,6 @@
 #xcommand O_TIPBL => SELECT (F_TIPBL); MY_USE ("tipbl"); set order to tag "1"
 #xcommand O_VRNAL => SELECT (F_VRNAL); MY_USE ("vrnal"); set order to tag "1"
 
-
-
 // ugovori
 #xcommand O_UGOV     => select(F_UGOV);  my_use  ( "ugov" )     ; set order to tag "ID"
 #xcommand O_RUGOV    => select(F_RUGOV); my_use  ( "rugov" )   ; set order to tag "ID"
@@ -259,4 +257,46 @@
 #xcommand O_R_KIF   => select(F_R_KIF);  my_use  ("r_kif")
 #xcommand O_R_PDV   => select(F_R_PDV);  my_use  ("r_pdv")  
 
+// modul LD
+#xcommand O_RADN    => select (F_RADN); my_use ("radn"); set order to 1
+#xcommand O_TPRSIHT => select (F_TPRSIHT); my_use ("tprsiht"); set order to tag "ID"
+#xcommand O_NORSIHT => select (F_NORSIHT); my_use ("norsiht"); set order to tag "ID"
+#xcommand O_RADSIHT => select (F_RADSIHT); my_use ("radsiht"); set order to tag "1"
+#xcommand O__RADN   => select (F__RADN);  my_use ("_radn")
+#xcommand O_RADKR   => select (F_RADKR);  my_use ("radkr"); set order to  1
+#xcommand O_RADKRX  => select (F_RADKR);  my_use ("radkr") ; set order to  0
+#xcommand O__RADKR  => select (F__RADKR);  my_use ("_radkr")
+#xcommand O_LD      => select (F_LD);      my_use ("ld"); set order to 1
+#xcommand O_LDX     => select (F_LD);    my_use ("ld") ; set order to 1
+#xcommand O__LD     => select (F__LD);    my_use ("_ld")
+#xcommand O_LDSM    => select (F_LDSM);   my_use ("ldsm") ; set order to 1
+#xcommand O_LDSMX   => select (F_LDSM);   my_use ("ldsm") ; set order to 0
+#xcommand O_OPSLD   => select 95; my_use ("opsld") ; set order to 1
+#xcommand O_REKLD0  => select (F_REKLD); my_use ("rekld")
+#xcommand O_REKLD   => select (F_REKLD); my_use ("rekld") ; set order to 1
+#xcommand O_REKLDP  => select (F_REKLDP); my_use ("rekldp") ; set order to 1
+#xcommand O_LD_RJ   => select (F_RJ); my_use ("ld_rj") ; set order to tag "ID"
+#xcommand O_KBENEF  => select (F_KBENEF); my_use (SIFPATH+"kbenef")  ;set order to tag "ID"
+#xcommand O_POR     => select (F_POR); my_use (SIFPATH+"por")  ; set order to tag "ID"
+#xcommand O_DOPR    => select (F_DOPR); my_use (SIFPATH+"dopr") ; set order to tag "ID"
+#xcommand O_KRED    => select (F_KRED); my_use (SIFPATH+"kred")  ; set order to tag "ID"
+#xcommand O__KRED   => select (F__KRED); my_use (PRIVPATH+"_kred") ; set order to tag "ID"
+#xcommand O_STRSPR  => select (F_STRSPR); my_use (SIFPATH+"strspr") ; set order to tag "ID"
+#xcommand O_VPOSLA  => select (F_VPOSLA); my_use  (SIFPATH+"vposla")  ; set order to tag "ID"
+#xcommand O_PAROBR  => select (F_PAROBR);  my_use ("parobr") ; set order to tag "ID"
+#xcommand O_TIPPR   => select (F_TIPPR);   my_use ("tippr") ; set order to tag "ID"
+#xcommand O_TIPPR2  => select (F_TIPPR2);  my_use ("tippr2") ; set order to tag "ID"
+#xcommand O_TIPPRN  => IF cObracun<>"1".and.!EMPTY(cObracun);
+                      ;  select (F_TIPPR2)                  ;
+                      ;  my_use ("tippr2", .t., "tippr2")   ;
+                      ;  set order to tag "ID"              ;
+                      ;ELSE                                 ;
+                      ;  select (F_TIPPR)                   ;
+                      ;  my_use ("tippr")              ;
+                      ;  set order to tag "ID"              ;
+                      ;ENDIF
+#xcommand O_OBRACUNI => select (F_OBRACUNI) ; my_use ("obracuni"); set order to tag "RJ"
+#xcommand O_RADSAT => select (F_RADSAT) ; my_use ("radsat"); set order to tag "IDRADN"
+#xcommand O_PK_RADN => select (F_RADSAT) ; my_use ("pk_radn"); set order to tag "1"
+#xcommand O_PK_DATA => select (F_RADSAT) ; my_use ("pk_data"); set order to tag "1"
 

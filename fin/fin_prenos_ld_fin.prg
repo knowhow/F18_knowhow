@@ -268,7 +268,7 @@ local npom1:=0, npom2:=0, nVrati
 if nIz12==NIL
 	niz12:=1
 endif
-RekapLD(cid,_godina,_mjesec,@npom1,@npom2)
+fin_rekap_ld(cid,_godina,_mjesec,@npom1,@npom2)
 if nIz12==1
 	nVrati:=npom1
 else
@@ -278,7 +278,7 @@ return nVrati
 
 
 
-/*! \fn RekapLD(cId, nGodina, nMjesec, nIzn1, nIzn2, cOpis)
+/*! \fn fin_rekap_ld(cId, nGodina, nMjesec, nIzn1, nIzn2, cOpis)
  *  \brief Rekapitulacija LD
  *  \param cId
  *  \param nGodina
@@ -287,7 +287,7 @@ return nVrati
  *  \param nIzn2
  *  \param cOpis
  */
-function RekapLD(cId, nGodina, nMjesec, nIzn1, nIzn2, cOpis)
+function fin_rekap_ld(cId, nGodina, nMjesec, nIzn1, nIzn2, cOpis)
 
 local nArr:=SELECT()
 
@@ -326,7 +326,7 @@ local npom1:=0, npom2:=0
 if niz12=NIL
 	niz12:=1
 endif
-RekapLDP(cid,_godina,_mjesec,@npom1,@npom2,cBrDok)
+fin_rekap_ld_p(cid,_godina,_mjesec,@npom1,@npom2,cBrDok)
 if niz12==1
  return npom1
 else
@@ -336,7 +336,7 @@ return 0
 
 
 
-/*! \fn RekapLDP(cId, nGodina, nMjesec, nIzn1, nIzn2, cBrDok)
+/*! \fn fin_rekap_ld_p(cId, nGodina, nMjesec, nIzn1, nIzn2, cBrDok)
  *  \brief
  *  \param cId
  *  \param nGodina
@@ -346,7 +346,7 @@ return 0
  *  \param cBrDok
  */
 
-function RekapLDP(cId, nGodina, nMjesec, nIzn1, nIzn2, cBrDok)
+function fin_rekap_ld_p(cId, nGodina, nMjesec, nIzn1, nIzn2, cBrDok)
 
 local nArr:=SELECT()
 

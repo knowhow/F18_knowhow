@@ -1497,7 +1497,6 @@ Linija()
 altd()
 FF
 END PRINT
-*****************************************************
 
 if pitanje(,"Zavrsili ste unos sihtarice ?","D")=="D"
    exit
@@ -1582,14 +1581,7 @@ FUNC UbaciPrefix(cU,cP)
 RETURN TRIM(cU)
 
 
-************************************
 function PrimLD(cOznaka,cTipPr)
-*
-* cOznaka - oznaka obracuna
-* cTipPr  - "01, "02" , ...
-*           "NE" - neto
-* izlaz = iznos cTipPr (primanja ili neta)
-************************************
 local nRez:=0, nArr:=SELECT()
 private cTipa:=""
 private cpom:=""
@@ -1620,8 +1612,6 @@ return nRez
 
 
 
-********************
-********************
 function ObrIzClip()
 local cMjesec,cIdRj,fnovi,lSveRJ
 
@@ -1701,10 +1691,8 @@ CLOSERET
 
 
 function ClipPutanja()
-*{
 local nP2:=AT(SLASH+"SIF",SIFPATH)  //  c:\sigma\sif
 return (LEFT(SIFPATH,nP2)+"SIF0"+SLASH)    // "c:\sigma\"+"sif0\"
-*}
 
 
 /*! \fn DMG(nDan,nMjesec,nGodina)
@@ -1715,24 +1703,10 @@ return (LEFT(SIFPATH,nP2)+"SIF0"+SLASH)    // "c:\sigma\"+"sif0\"
  *  \return var type Date
  */
 function DMG(nDan,nMjesec,nGodina)
-*{
 local cPom
 cPom:=PADL(ALLTRIM(STR(nDan,2)),2,"0")
 cPom+="."+PADL(ALLTRIM(STR(nMjesec,2)),2,"0")
 cPom+="."+PADL(ALLTRIM(STR(nGodina,4)),4,"0")
 return CTOD(cPom)
-*}
-
-* odsjeca Prazne Linije na Kraju stringa
-function OdsjPLK(cTxt)
-*{
-local i
-for i:=len(cTxt) to 1 step -1
-  if !(substr(cTxt,i,1) $ Chr(13)+Chr(10)+" ç")
-       exit
-  endif
-next
-return left(cTxt,i)
-*}
 
 

@@ -875,7 +875,7 @@ static function TekRec2()
 *{
 nSlog++
 @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
-@ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(cmxKeysIncluded())
+@ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(0)
 return (NIL)
 *}
 
@@ -1202,7 +1202,7 @@ RETURN
 
 
 
-static function Izrezi(cPoc,nIza,cOstObav)
+function Izrezi(cPoc,nIza,cOstObav)
   LOCAL cVrati:="", nPoz:=0
   DO WHILE (nPoz:=AT(cPoc,cOstObav)) > 0
     cVrati := cVrati + SUBSTR(cOstObav,nPoz+LEN(cPoc),nIza) + ";"
@@ -1223,7 +1223,7 @@ static function FormNum1(nIznos,nDuz,pici)
 RETURN cVrati
 
 
-static function FormNum2(nIznos,nDuz,pici)
+function FormNum2(nIznos,nDuz,pici)
  return alltrim(formnum1(nIznos,nDuz,pici))
 
 

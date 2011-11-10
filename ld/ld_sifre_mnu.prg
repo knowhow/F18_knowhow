@@ -44,7 +44,7 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 AADD(opc, lokal("5. radne jedinice"))
-AADD(opcexe, {|| P_RJ()})
+AADD(opcexe, {|| P_LD_RJ()})
 AADD(opc, lokal("6. opstine"))
 AADD(opcexe, {|| P_Ops()})
 AADD(opc, lokal("9. vrste posla"))

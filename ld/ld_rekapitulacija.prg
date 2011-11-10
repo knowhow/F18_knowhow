@@ -1552,12 +1552,12 @@ select ld
 ?
 B_ON
 if cMjesec==cMjesecDo
-	? Lokal("RJ:"), cIdRj, rj->naz,SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
+	? Lokal("RJ:"), cIdRj, ld_rj->naz,SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
    	?? SPACE(4) + Lokal("Godina:"), str(cGodina,4)
    	B_OFF
      	? if(gBodK=="1",Lokal("Vrijednost boda:"),Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
 else
-   	? Lokal("RJ:"),cidrj,rj->naz,"  " + Lokal("Za mjesece od:"),str(cmjesec,2),"do",str(cmjesecDo,2)+IspisObr()
+   	? Lokal("RJ:"),cidrj,ld_rj->naz,"  " + Lokal("Za mjesece od:"),str(cmjesec,2),"do",str(cmjesecDo,2)+IspisObr()
    	?? SPACE(4) + Lokal("Godina:"), str(cGodina,4)
    	B_OFF
 endif

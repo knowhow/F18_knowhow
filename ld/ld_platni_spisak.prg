@@ -275,7 +275,7 @@ P_12CPI
 if empty(cidrj)
 	? Lokal("Pregled za sve RJ ukupno:")
 else
- 	? Lokal("RJ:"), cIdRj, rj->naz
+ 	? Lokal("RJ:"), cIdRj, ld_rj->naz
 endif
 
 ?? SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
@@ -620,7 +620,7 @@ P_COND
 if empty(cIdRj)
 	? Lokal("Pregled za sve RJ ukupno:")
 else
- 	? Lokal("RJ:"),cIdRj,rj->naz
+ 	? Lokal("RJ:"),cIdRj,ld_rj->naz
 endif
 
 ?? SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
@@ -912,7 +912,7 @@ select ld
 if empty(cidrj)
 	? Lokal("Pregled za sve RJ ukupno:")
 else
- 	? Lokal("RJ:"), cIdRj, rj->naz
+ 	? Lokal("RJ:"), cIdRj, ld_rj->naz
 endif
 
 ?? SPACE(2) + Lokal("Mjesec:"), str(cmjesec,2)+IspisObr()

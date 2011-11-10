@@ -652,14 +652,14 @@ else
  ?
  B_ON
  IF cMjesec==cMjesecDo
-   ? "RJ:",cidrj,rj->naz,"  Mjesec:",str(cmjesec,2)+IspisObr()
+   ? "RJ:",cidrj,ld_rj->naz,"  Mjesec:",str(cmjesec,2)+IspisObr()
    ?? "    Godina:", str(cGodina,4)
    B_OFF
    #ifndef CPOR
      ? IF(gBodK=="1","Vrijednost boda:","Vr.koeficijenta:"), transform(parobr->vrbod,"99999.99999")
    #endif
  ELSE
-   ? "RJ:",cidrj,rj->naz,"  Za mjesece od:",str(cmjesec,2),"do",str(cmjesecDo,2)+IspisObr()
+   ? "RJ:",cidrj,ld_rj->naz,"  Za mjesece od:",str(cmjesec,2),"do",str(cmjesecDo,2)+IspisObr()
    ?? "    Godina:", str(cGodina,4)
    B_OFF
  ENDIF
@@ -1643,7 +1643,7 @@ O_LD
  cSatiVO:="S"
 
  Box(,6,77)
-   @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_RJ(@cidrj)
+   @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_LD_RJ(@cidrj)
    @ m_x+2,m_y+2 SAY "od mjeseca: "  GET  cmjesec  pict "99"
    @ m_x+2,col()+2 SAY "do"  GET  cmjesec2  pict "99"
    if lViseObr
@@ -1688,7 +1688,7 @@ nStrana:=0
 IF cRazdvoji=="N"
   bZagl:={|| ;
              qqout("OBRACUN"+ IIF(lViseObr,IF(EMPTY(cObracun)," ' '(SVI)"," '"+cObracun+"'"),"")+ Lokal(" PLATE ZA PERIOD") + str(cmjesec,2)+"-"+str(cmjesec2,2)+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
-             qout("RJ:",idrj,rj->naz),;
+             qout("RJ:",idrj,ld_rj->naz),;
              qout(idradn,"-",RADNIK,"Mat.br:",radn->matbr," STR.SPR:",IDSTRSPR),;
              qout( Lokal("Broj knjizice:"), RADN->brknjiz),;
              qout("Vrsta posla:",idvposla,vposla->naz, Lokal("        U radnom odnosu od "), radn->datod);
@@ -1848,7 +1848,7 @@ enddo
    ?
    While ! Eof()
      select ld_rj; hseek _ld->idrj; select _ld
-     qout("RJ:",idrj,rj->naz)
+     qout("RJ:",idrj,ld_rj->naz)
      ? m
      ? Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
      ? m
@@ -1935,7 +1935,7 @@ local nC1:=20,i
  cIdRadn:=space(_LR_)
 
  Box(,4,75)
-   @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_RJ(@cidrj)
+   @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_LD_RJ(@cidrj)
    @ m_x+2,m_y+2 SAY "od mjeseca: "  GET  cmjesec  pict "99"
    @ m_x+2,col()+2 SAY "do"  GET  cmjesec2  pict "99"
    if lViseObr
@@ -1972,7 +1972,7 @@ EOF CRET
 nStrana:=0
 bZagl:={|| ;
            qqout( Lokal("PREGLED PRIMANJA ZA PERIOD ") + str(cmjesec,2) + "-" + str(cmjesec2,2) + IspisObr()+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
-           qout("RJ:",idrj,rj->naz),;
+           qout("RJ:",idrj,ld_rj->naz),;
            qout(idradn,"-",RADNIK,"Mat.br:",radn->matbr," STR.SPR:",IDSTRSPR),;
            qout("Vrsta posla:",idvposla,vposla->naz,"        U radnom odnosu od ",radn->datod);
        }
@@ -2455,4 +2455,18 @@ RETURN aR
 function SetRadnGodObr()
 return
 
+static function DioFajlaUNiz(cImeF,nPocRed,nUkRedova,nUkRedUF)
+  local aVrati:={},nTekRed:=0,nOfset:=0,aPom:={}
+  if nUkRedUF==nil; nUkRedUF:=BrLinFajla(cImeF); endif
+  for nTekRed:=1 to nUkRedUF
+    aPom:=SljedLin(cImeF,nOfset)
+    if nTekRed>=nPocRed .and. nTekRed<nPocRed+nUkRedova
+      AADD(aVrati,aPom[1])
+    endif
+    if nTekRed>=nPocRed+nUkRedova-1
+      exit
+    endif
+    nOfset:=aPom[2]
+  next
+return aVrati
 

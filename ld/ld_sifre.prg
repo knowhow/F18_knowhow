@@ -97,7 +97,7 @@ if radn->(fieldpos("N1")<>0)
 endif
 
 if radn->(fieldpos("IDRJ")<>0)
-	AADD(ImeKol, { "ID RJ" , {|| idrj}, "idrj", {||.t.}, {|| EMPTY(wIdRj) .or. P_Rj(@wIdRj)} } )
+	AADD(ImeKol, { "ID RJ" , {|| idrj}, "idrj", {||.t.}, {|| EMPTY(wIdRj) .or. P_LD_Rj(@wIdRj)} } )
 endif
 
 // Dodaj specificna polja za popunu obrasca DP
@@ -572,7 +572,7 @@ return DE_CONT
 
 // -----------------------------------------------
 // -----------------------------------------------
-function P_RJ(cId,dx,dy)
+function P_LD_RJ(cId,dx,dy)
 local nArr
 nArr:=SELECT()
 private imekol := {}
@@ -587,10 +587,10 @@ select (nArr)
 AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
 AADD(ImeKol, { padr("Naziv",35), {||  naz}, "naz" } )
 
-if rj->(FieldPos("TIPRADA")) <> 0
+if ld_rj->(FieldPos("TIPRADA")) <> 0
 	AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada"  } )
 endif
-if rj->(FieldPos("OPOR")) <> 0
+if ld_rj->(FieldPos("OPOR")) <> 0
 	AADD(ImeKol, { "oporeziv" , {||  opor }, "opor"  } )
 endif
 

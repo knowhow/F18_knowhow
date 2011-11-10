@@ -19,7 +19,7 @@ function ld_set_firma()
 private GetList:={}
 
 Box(, 6,60)
-	@ m_x+1,m_y+2 SAY "Radna jedinica:" GET gRJ valid P_Rj(@gRj) pict "@!"
+	@ m_x+1,m_y+2 SAY "Radna jedinica:" GET gRJ valid P_LD_Rj(@gRj) pict "@!"
       	@ m_x+2,m_y+2 SAY "Mjesec        :" GET gMjesec pict "99"
       	@ m_x+3,m_y+2 SAY "Godina        :" GET gGodina pict "9999"
       	if lViseObr

@@ -166,7 +166,7 @@ Box(, nBoxX, nBoxY )
 	nX += 1
 
 	// radna jedinica....
-	@ m_x + nX, m_y + 2 SAY "RJ (prazno-sve):" GET cRj VALID EMPTY(cRj) .or.p_rj(@cRj)
+	@ m_x + nX, m_y + 2 SAY "RJ (prazno-sve):" GET cRj VALID EMPTY(cRj) .or.p_ld_rj(@cRj)
 	
 	nX += 1
 	

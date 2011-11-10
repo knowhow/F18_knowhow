@@ -56,8 +56,8 @@ return "I#N"
 
 // -----------------------------------------------------------
 // vraca tip rada za radnika i gleda i radnu jedinicu
-// RJ->TIPRADA = " " - gledaj sif.radnika
-// RJ->TIPRADA $ "IAUP.." - uzmi za radnu jedinicu vrijednost
+// ld_rj->TIPRADA = " " - gledaj sif.radnika
+// ld_rj->TIPRADA $ "IAUP.." - uzmi za radnu jedinicu vrijednost
 //                          tipa rada 
 // -----------------------------------------------------------
 function g_tip_rada( cRadn, cRj )
@@ -68,8 +68,8 @@ select ld_rj
 go top
 seek cRJ
 
-if rj->(fieldpos("tiprada")) <> 0
-	cTipRada := rj->tiprada
+if ld_rj->(fieldpos("tiprada")) <> 0
+	cTipRada := ld_rj->tiprada
 endif
 
 // ako je prazno tip rada, gledaj sifrarnik radnika
@@ -86,7 +86,7 @@ return cTipRada
 
 // -----------------------------------------------------------
 // vraca oporezivost za radnika i gleda i radnu jedinicu
-// RJ->OPOR = " " - gledaj sif.ranika
+// ld_rj->OPOR = " " - gledaj sif.ranika
 //            "D" - oporeziva kompletna radna jedinica
 //            "N" - nije oporeziva radna jedinica
 // -----------------------------------------------------------
@@ -98,8 +98,8 @@ select ld_rj
 go top
 seek cRJ
 
-if rj->(fieldpos("opor")) <> 0
-	cOpor := rj->opor
+if ld_rj->(fieldpos("opor")) <> 0
+	cOpor := ld_rj->opor
 endif
 
 // ako je prazno oporeziv, gledaj sifrarnik radnika
@@ -672,9 +672,11 @@ O_RADKR
 O_KRED
 O_RADN
 O_LD
-cmxAutoOpen(.f.)
-O__LD; SET ORDER TO; GO TOP
-cmxAutoOpen(.t.)
+//cmxAutoOpen(.f.)
+O__LD 
+SET ORDER TO
+ GO TOP
+//cmxAutoOpen(.t.)
 O__RADN
 O__RADKR
 O__KRED
@@ -787,9 +789,11 @@ copy file (cDisk+"_KRED.DBF") to (PRIVPATH+"_KRED.DBF")
 O__KRED; GO TOP
 O__RADKR; GO TOP
 O__RADN; GO TOP
-cmxAutoOpen(.f.)
-O__LD; SET ORDER TO; GO TOP
-cmxAutoOpen(.t.)
+//cmxAutoOpen(.f.)
+O__LD
+SET ORDER TO
+GO TOP
+//cmxAutoOpen(.t.)
 
 cidrj   := idrj
 cmjesec := mjesec

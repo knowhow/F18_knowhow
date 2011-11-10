@@ -23,7 +23,6 @@ CLASS TLdMod FROM TAppMod
 	method mMenuStandard
 	method initdb
 	method srv
-	method chkdb
 END CLASS
 
 // -----------------------------------------------
@@ -108,7 +107,7 @@ AADD(opcexe, {|| ld_obracun()} )
 AADD(opc,   Lokal("2. brisanje"))
 AADD(opcexe, {|| ld_brisanje_obr()})
 AADD(opc,   Lokal("3. rekalkulacija"))
-AADD(opcexe, {|| ld_rekalkulacija_obracuna()})
+AADD(opcexe, {|| ld_rekalkulacija()})
 AADD(opc,   Lokal("4. izvjestaji"))
 AADD(opcexe, {|| ld_izvjestaji()})
 AADD(opc,   Lokal("5. krediti"))
@@ -175,7 +174,7 @@ return
 method setGVars()
 O_PARAMS
 
-set_global_params()
+set_global_vars()
 
 public cSection:="1"
 public cHistory:=" "

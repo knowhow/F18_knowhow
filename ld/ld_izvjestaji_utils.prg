@@ -228,23 +228,6 @@ select (nArr)
 return
 
 
-// ---------------------------------------------
-//   Razrijedi (cStr) --> cStrRazr
-//     Ubaci u string, izmedju slova, SPACE()
-// ---------------------------------------------
-function Razrijedi (cStr)
-LOCAL cRazrStr, nLenM1, nCnt
-cStr := ALLTRIM (cStr)
-nLenM1 := LEN (cStr) - 1
-cRazrStr := ""
-FOR nCnt := 1 TO nLenM1
-  cRazrStr += SUBSTR (cStr, nCnt, 1) + " "
-NEXT
-cRazrStr += RIGHT (cStr, 1)
-RETURN (cRazrStr)
-
-
-
 function ASezona2( cPath, cG, cFajl)
 local aSez
 local i

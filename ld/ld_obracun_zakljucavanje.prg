@@ -32,7 +32,7 @@ cOdgovor:="N"
 cStatus:="U"
 
 Box(,9,40)
-	@ m_x+1,m_y+2 SAY "Radna jedinica:" GET cRadnaJedinica valid P_Rj(@cRadnaJedinica) PICT "@!"
+	@ m_x+1,m_y+2 SAY "Radna jedinica:" GET cRadnaJedinica valid P_LD_Rj(@cRadnaJedinica) PICT "@!"
       	@ m_x+2,m_y+2 SAY "Mjesec        :" GET nMjObr PICT "99"
       	@ m_x+3,m_y+2 SAY "Godina        :" GET nGodObr PICT "9999"
        	@ m_x+4,m_y+2 SAY "--------------------------------------"

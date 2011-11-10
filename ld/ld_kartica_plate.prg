@@ -79,7 +79,7 @@ if (PCount()<4)
 	RPar("NK",@cNKNS)
 	cIdRadn:=SPACE(_LR_)
 	Box(,8,75)
-	@ m_x+1,m_y+2 SAY Lokal("Radna jedinica (prazno-sve rj): ")  GET cIdRJ valid empty(cidrj) .or. P_RJ(@cidrj)
+	@ m_x+1,m_y+2 SAY Lokal("Radna jedinica (prazno-sve rj): ")  GET cIdRJ valid empty(cidrj) .or. P_LD_RJ(@cidrj)
 	@ m_x+2,m_y+2 SAY Lokal("Mjesec: ") GET cMjesec pict "99"
 	if lViseObr
 		@ m_x+2,col()+2 SAY Lokal("Obracun: ") GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
@@ -315,7 +315,7 @@ IF lSkrivena
 	? cLMSK+IF(gBodK=="1", Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
 ELSE
 	? LOKAL("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4)," ZA "+ UPPER(TRIM(gTS)), gNFirma
-	? "RJ:",idrj,rj->naz
+	? "RJ:",idrj,ld_rj->naz
 	? idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, "")
 	? Lokal("Radno mjesto:"),radn->rmjesto, "  STR.SPR:",IDSTRSPR

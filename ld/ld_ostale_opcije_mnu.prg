@@ -15,7 +15,7 @@
 // -----------------------------------------------------------
 // Menij ostale operacije nad obracunom
 // -----------------------------------------------------------
-function ld_ostale_operacije_menu()
+function ld_ostale_opcije_menu()
 private opc:={}
 private opcexe:={}
 

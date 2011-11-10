@@ -270,7 +270,7 @@ P_12CPI
 if empty(cidrj)
  ? Lokal("Pregled za sve RJ ukupno:")
 else
- ? Lokal("RJ:"),cidrj,rj->naz
+ ? Lokal("RJ:"),cidrj,ld_rj->naz
 endif
 
 ?? SPACE(2) + Lokal("Mjesec:"), str(cmjesec,2) + IspisObr()

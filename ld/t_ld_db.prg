@@ -397,15 +397,15 @@ CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
 
 
 // RJ
-if !file(KUMPATH+"RJ.DBF")
+if !file(f18_ime_dbf("ld_rj"))
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
    AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
-   DBCREATE2(KUMPATH+'RJ.DBF',aDbf)
+   DBCREATE2(KUMPATH+'LD_RJ.DBF',aDbf)
 endif
-CREATE_INDEX("ID","id",KUMPATH+"RJ")
+CREATE_INDEX("ID","id",KUMPATH+"LD_RJ")
 
 // KRED
 aDBf:={}

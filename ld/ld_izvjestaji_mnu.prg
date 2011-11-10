@@ -183,24 +183,6 @@ Menu_SC("ost")
 return
 
 
-// --------------------------------------------
-// menij izvjestaji autorski honorari
-// --------------------------------------------
-function mnu_ahon()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
-
-AADD(opc,"1. autorski honorari - lista               ")
-AADD(opcexe,{|| ah_list_rpt()})
-AADD(opc,"2. autorski honorari - specifikacija")
-AADD(opcexe,{|| ah_spec_rpt()})
-
-Menu_SC("a_honorari")
-
-return
-
-
 function MnuIzvR()
 *{
 

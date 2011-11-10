@@ -97,7 +97,7 @@ Box(, 20, 65)
 	@ m_x + nX, m_y + 2 SAY "Tekuca godina:" GET nGod PICT "9999"
 	
 	@ m_x + nX, col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
-		VALID EMPTY(cRJ) .or. P_RJ(@cRJ)
+		VALID EMPTY(cRJ) .or. P_LD_RJ(@cRJ)
 	
 	@ m_x + nX, col() + 2 SAY "Obracun:" GET cObr VALID cObr $ " 123456789"
 	

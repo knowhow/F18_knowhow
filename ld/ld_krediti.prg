@@ -504,7 +504,7 @@ cGodina:=gGodina; cMjesec:=gmjesec
 private cRateDN:="D", cAktivni:="D"
 Box(,13,60)
  if lRjRadn
-  @ m_x+1,m_y+2 SAY "RJ (prazno=sve): " GET cIdRj  valid {|| EMPTY(cIdRj) .or. P_Rj(@cIdRj)} pict "@!"
+  @ m_x+1,m_y+2 SAY "RJ (prazno=sve): " GET cIdRj  valid {|| EMPTY(cIdRj) .or. P_LD_Rj(@cIdRj)} pict "@!"
  endif
  @ m_x+2,m_y+2 SAY "Kreditor ('.' svi): " GET cIdKred  valid {|| cidkred='.' .or. P_Kred(@cIdKred)} pict "@!"
  @ m_x+3,m_y+2 SAY "Na osnovu ('.' po svim osnovama):" GET cNaOsnovu pict "@!"
@@ -1041,7 +1041,7 @@ else
  	lLogBrisiKredit:=.f.
 endif
 
-OTblKrediti()
+OTblKredit()
 
 set order to 2
 

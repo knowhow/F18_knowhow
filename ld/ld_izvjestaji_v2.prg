@@ -102,7 +102,7 @@ P_COND
 if empty(cidrj)
  ? "Pregled za sve RJ ukupno:"
 else
- ? "RJ:",cidrj,rj->naz
+ ? "RJ:",cidrj,ld_rj->naz
 endif
 ?? "  Mjesec:",str(cmjesec,2)+IspisObr()
 ?? "    Godina:",str(cGodina,5)
@@ -390,7 +390,7 @@ P_12CPI
 if empty(cIdRj)
  ? "Pregled za sve RJ ukupno:"
 else
- ? "RJ:",cIdRj,rj->naz
+ ? "RJ:",cIdRj,ld_rj->naz
 endif
 ?? space(4),"Str.",str(++nStrana,3)
 ?
@@ -919,7 +919,7 @@ P_COND
 if empty(cidrj)
  ? "Pregled za sve RJ ukupno:"
 else
- ? "RJ:",cidrj,rj->naz
+ ? "RJ:",cidrj,ld_rj->naz
 endif
 ?? "  Mjesec:",str(cmjesec,2)+IspisObr()
 ?? "    Godina:",str(cGodina,5)
@@ -1644,7 +1644,7 @@ ENDDO
 
 aKol:={}
 nKol:=0
-AADD( aKol , { "RJ" , {|| IDRJ+"-"+RJ->NAZ} , .f. , "C", 55 , 0, 1 , ++nKol } )
+AADD( aKol , { "RJ" , {|| IDRJ+"-"+ld_rj->NAZ} , .f. , "C", 55 , 0, 1 , ++nKol } )
 FOR i:=1 TO LEN(aVar)
   cPom:=aVar[i]
   IF cPom="I" .and. LEN(cPom)==3 .and.;
@@ -1756,7 +1756,7 @@ local lSubTotal:=.f., i:=0, lDodZag:=.f.
    ENDIF
    AADD( gaDodStavke[1] , PADC(ALLTRIM(cPom),55," ") )
    AADD( gaDodStavke[2] , REPL("=",55) )
-   AADD( gaDodStavke[3] , IDRJ+"-"+RJ->NAZ )
+   AADD( gaDodStavke[3] , IDRJ+"-"+ld_rj->NAZ )
    FOR i:=1 TO LEN(aVar)
      cPom := aVar[i]
      AADD( gaDodStavke[1] , NIL )

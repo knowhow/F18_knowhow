@@ -1607,7 +1607,7 @@ local cVrsta
 local cMKonto
 local cPKonto
 
-aD := rpt_d_interval( DATE() )
+aD := kalk_rpt_datumski_interval( DATE() )
 
 cVrsta := SPACE(2)
 
@@ -1689,7 +1689,7 @@ RETURN
 //     else
 //     return { 01.tekuci_mjesec, danasnji dan }
 
-function rpt_d_interval (dToday)
+function kalk_rpt_datumski_interval(dToday)
 local nDay, nFDOm
 local dDatOd, dDatDo
 nDay:= DAY(dToday)

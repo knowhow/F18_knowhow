@@ -625,7 +625,7 @@ return aDbf
 //  nArea - podrucje
 //  cTable - naziv tabele
 // ------------------------------------------------
-function cre_tbls(nArea, cTable)
+static function cre_tbls(nArea, cTable)
 local nArea2 := 0
 local aDbf
 local cPath := KUMPATH

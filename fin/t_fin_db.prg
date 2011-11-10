@@ -844,13 +844,13 @@ if (nArea==-1 .or. nArea==(F_KUF))
    	AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
    	AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
 
-	if !FILE(f18_ime_dbf("kuf"))
-   		DBcreate2(KUMPATH+"KUF.DBF",aDbf)
+	if !FILE(f18_ime_dbf("fin_kuf"))
+   		DBcreate2(KUMPATH+"FIN_KUF.DBF",aDbf)
 	endif
 	
-	CREATE_INDEX( "ID" , "id"     , KUMPATH+"KUF" )
-	CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"KUF" )
-	CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"KUF" )
+	CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KUF" )
+	CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KUF" )
+	CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KUF" )
 endif
 
 if (nArea==-1 .or. nArea==(F_KIF))
@@ -870,13 +870,13 @@ if (nArea==-1 .or. nArea==(F_KIF))
    	AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
    	AADD(aDBf,{ "IDVPRIH"             , "C" ,   3 ,  0 })
 
-	if !FILE(f18_ime_dbf("kif"))
-   		DBcreate2(KUMPATH+"KIF.DBF",aDbf)
+	if !FILE(f18_ime_dbf("fin_kif"))
+   		DBcreate2(KUMPATH+"FIN_KIF.DBF",aDbf)
 	endif
 	
-	CREATE_INDEX( "ID" , "id"     , KUMPATH+"KIF" )
-	CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"KIF" )
-	CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"KIF" )
+	CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KIF" )
+	CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KIF" )
+	CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KIF" )
 endif
 
 

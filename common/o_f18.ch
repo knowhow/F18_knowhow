@@ -247,5 +247,16 @@
 #xcommand O_E_ATT => select(F_E_ATT); my_use ("e_att"); set order to tag "1"
 #xcommand O_RAL => select(F_RAL); my_use ("ral"); set order to tag "1"
 
+// modul EPDV
+#xcommand O_P_KUF     => select (F_P_KUF);   my_use ("p_kuf") ; set order to tag "r_br"
+#xcommand O_P_KIF     => select (F_P_KIF);   my_use ("p_kif") ; set order to tag "r_br"
+#xcommand O_KUF     => select (F_KUF);   my_use ("kuf") ; set order to tag "datum"
+#xcommand O_KIF     => select (F_KIF);   my_use ("kif") ; set order to tag "datum"
+#xcommand O_PDV     => select (F_PDV);   my_use ("pdv") ; set order to tag "datum"
+#xcommand O_SG_KIF   => select(F_SG_KIF);  my_use  ("sg_kif")  ; set order to tag "ID"
+#xcommand O_SG_KUF   => select(F_SG_KUF);  my_use  ("sg_kuf")  ; set order to tag "ID"
+#xcommand O_R_KUF   => select(F_R_KUF);  my_use  ("r_kuf") 
+#xcommand O_R_KIF   => select(F_R_KIF);  my_use  ("r_kif")
+#xcommand O_R_PDV   => select(F_R_PDV);  my_use  ("r_pdv")  
 
 

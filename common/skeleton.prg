@@ -182,12 +182,12 @@ endif
 
 oApp:oDataBase:setSigmaBD(IzFmkIni("Svi","SigmaBD","c:"+SLASH+"sigma",EXEPATH))
 
-if (gSecurity=="D")
-  AddSecgaSDBFs()
-  LoginScreen()
-  ShowUser()
-  public nUser:=GetUserID()
-endif
+//if (gSecurity=="D")
+  //AddSecgaSDBFs()
+  //LoginScreen()
+  //ShowUser()
+  //public nUser:=GetUserID()
+//endif
 
 return
 

@@ -209,7 +209,7 @@ endif
 
 cHeader += SPACE(5)
 cHeader += "operater: "
-cHeader += ALLTRIM( goModul:oDataBase:cUser )
+cHeader += ALLTRIM( f18_user() )
 
 @ m_x, m_y + 2 SAY cHeader
 @ m_x + 6, m_y + 1 SAY REPLICATE("Í", 78) COLOR cLineClr
@@ -236,13 +236,13 @@ aKol:={}
 
 AADD(aImeKol, {PADC("Narucioc", 20), {|| PADR(g_cust_desc( cust_id ), 18) + ".."}, "cust_id" })
 AADD(aImeKol, {PADC("Datum", 8), {|| doc_date}, "doc_date", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {PADC("Dat.isp", 8), {|| doc_dvr_date}, "doc_dvr_date" })
-AADD(aImeKol, {"Vr.isp", {|| PADR(doc_dvr_time, 5)}, "doc_dvr_time"  })
-AADD(aImeKol, {"Mj.isp", {|| PADR(doc_ship_place,10)}, "doc_ship_place" })
+AADD(aImeKol, {PADC("Dat.isp", 8), {|| doc_dvr_da}, "doc_dvr_da" })
+AADD(aImeKol, {"Vr.isp", {|| PADR(doc_dvr_ti, 5)}, "doc_dvr_ti"  })
+AADD(aImeKol, {"Mj.isp", {|| PADR(doc_ship_p,10)}, "doc_ship_p" })
 AADD(aImeKol, {"Kontakt", {|| PADR(g_cont_desc( cont_id ), 8) + ".." }, "cont_id" })
-AADD(aImeKol, {"Kont.opis", {|| PADR(cont_add_desc, 18) + ".."}, "cont_add_desc" })
+AADD(aImeKol, {"Kont.opis", {|| PADR(cont_add_d, 18) + ".."}, "cont_add_d" })
 AADD(aImeKol, {"Vrsta p.", {|| doc_pay_id}, "doc_pay_id" })
-AADD(aImeKol, {"Prioritet", {|| doc_priority}, "doc_priority" })
+AADD(aImeKol, {"Prioritet", {|| doc_priori}, "doc_priori" })
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)

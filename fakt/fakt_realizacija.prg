@@ -137,7 +137,7 @@ Box( , 10, 66)
 	++ nX
 
 	@ m_x + nX, m_y + 2 SAY "Operater (0-svi):" GET nOperater ;
-		PICT "999" VALID nOperater = 0 .or. P_USERS( @nOperater )
+		PICT "999" VALID nOperater = 0
 
 	++ nX
 	++ nX

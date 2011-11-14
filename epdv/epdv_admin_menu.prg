@@ -29,8 +29,6 @@ private Izbor:=1
 
 AADD(opc, "1. install db-a                         ")
 AADD(opcexe, {|| goModul:oDatabase:install()})
-AADD(opc, "2. security")
-AADD(opcexe, {|| MnuSecMain()})
 AADD(opc, "3. renumeracija g_r_br KUF")
 AADD(opcexe, {|| rn_gr("KUF")})
 AADD(opc, "4. renumeracija g_r_br KIF")

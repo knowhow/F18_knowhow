@@ -18,8 +18,6 @@ private Opc:={}
 private opcexe:={}
 AADD(Opc,"1. instalacija db-a                               ")
 AADD(opcexe, {|| goModul:oDatabase:install()})
-AADD(opc,"2. security")
-AADD(opcexe, {|| MnuSecMain()})
 AADD(Opc,"3. markiraj polje roba/sez - sifk")
 AADD(opcexe, {|| MPSifK()})
 AADD(Opc,"4. ubaci partnera iz dokumenata u sifrarnik robe")

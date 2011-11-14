@@ -12,330 +12,152 @@
 
 #include "fmk.ch"
 
-// ------------------------------------------------------
-// otvara login screen - prijavu korisnika
-// ------------------------------------------------------
-function LoginScreen()
-local nPokusaj
-local cIme
-local cLozinka
-local nKursor
-nPokusaj:=0
-cIme:=PADR(IzFmkIni("Security","LastUser","",PRIVPATH),15)
-cLozinka:=SPACE(15)
-private GetList:={}
-Box("#PRIJAVA KORISNIKA",5,70)
-	do while (.t.)
-		
-		++ nPokusaj
-		
-		if (nPokusaj > 4)
-			MsgBeep("Odustanite molim Vas, nemate pravo pristupa!")
-			clear screen
-			quit
-		endif
-		
-		nKursor := SETCURSOR(4)
-		cLozinka := SPACE(15)
-		
-		@ m_x+2, m_y+2 SAY "IME    " GET cIme COLOR "N/BG" PICT "@!"
-		@ m_x+4, m_y+2 SAY "LOZINKA" GET cLozinka COLOR "BG/BG" PICT "@!"
-		READ
-		
-		if LASTKEY() == K_ESC
-			clear screen
-			quit
-		endif
-		
-		if (PrijavaOK(cIme,cLozinka))
-			goModul:oDatabase:setUser(users->naz)
-			goModul:oDatabase:setPassword(users->psw)
-			goModul:oDatabase:setGroup1(users->idGrupa1)
-			goModul:oDatabase:setGroup2(users->idGrupa2)
-			goModul:oDatabase:setGroup3(users->idGrupa3)
-			UzmiIzIni(PRIVPATH+"fmk.ini","Security","LastUser",cIme,"WRITE")
-			exit
-		else
-			MsgBeep("Nepostojeci korisnik!")
-		endif
-	enddo
-BoxC()
+// f18, login screen
+function f18_login_screen( cHostname, cDatabase, cUser, cPassword, nPort, cSchema )
+local lSuccess := .t.	
+local nX := 5
+local nLeft := 7
 
-SETCURSOR(nKursor)
+cHostName := PADR( cHostName, 100 )
+cDatabase := PADR( cDatabase, 100 )
+cUser := PADR( cUser, 100 )
+cPassword := PADR( cPassword, 100 )
+cSchema := PADR( cSchema, 100 )
 
-return
+clear screen
 
+@ 5, 5, 15, 77 BOX B_DOUBLE_SINGLE
 
+++ nX
 
-function PrijavaOK(cIme,cLozinka)
-*{
-local lOK
-lOK:=.f.
-select (F_USERS)
-if (!used())
-	O_USERS
-endif
-set order to tag "NAZ"
-seek cIme
-if (found() .and. cLozinka==CRYPT(users->psw,"SIGMASE"))
-	lOK:=.t.
-endif
-return lOK
-*}
+@ nX, nLeft SAY PADC("***** Unestite podatke za pristup *****", 60)
 
+++ nX
+++ nX
 
+@ nX, nLeft SAY "Server:" GET cHostname PICT "@S25"
+@ nX, 45 SAY "Port:" GET nPort PICT "9999"
 
-function ShowUser()
-*{
-local nArea
-local aPos
-nArea:=SELECT()
-aPos:={ROW(),COL()}
-select (F_GROUPS)
-if (!used())
-	O_GROUPS
-endif
-@ 1,50 SAY goModul:oDatabase:cUser+":"+Ocitaj(F_GROUPS,STR(goModul:oDatabase:nGroup1,3),"naz") COLOR "G/N"
-select (nArea)
-@ aPos[1], aPos[2] SAY ""
-return
-*}
+++ nX
 
+@ nX, nLeft SAY "Baza:" GET cDatabase PICT "@S20"
+@ nX, 45 SAY "Shema:" GET cSchema PICT "@S20"
 
+++ nX
+++ nX
 
-function ImaPravoPristupa(cObjekat,cKomponenta,cFunkcija)
-*{
-local lMoze
-local cUser
-local nArea
-local aGrupe
-lMoze:=.f.
-nArea:=SELECT()
-if (gSecurity<>"D" .or. nArea==179)
-	return .t.
-endif
-cUser:=goModul:oDatabase:cUser
-aGrupe:={}
-if (goModul:oDatabase:nGroup1<>nil)
-	AADD(aGrupe, goModul:oDatabase:nGroup1)
-endif
-if (goModul:oDatabase:nGroup2<>nil)
-	AADD(aGrupe, goModul:oDatabase:nGroup2)
-endif
-if (goModul:oDatabase:nGroup3<>nil)
-	AADD(aGrupe, goModul:oDatabase:nGroup3)
-endif
-select (F_RULES)
-if (!used())
-	O_RULES
+@ nX, nLeft SAY PADL( "KORISNIK:", 15 ) GET cUser PICT "@S30"
+
+++ nX
+++ nX
+
+@ nX, nLeft SAY PADL( "LOZINKA:", 15 ) GET cPassword PICT "@S30"
+
+read
+
+if Lastkey() == K_ESC
+	return .f.
 endif
 
-cObjekat:=PADR(cObjekat, LEN(field->objekat))
-cKomponenta:=PADR(cKomponenta, LEN(field->komponenta))
-cFunkcija:=PADR(cFunkcija, LEN(field->funkcija))
+// podesi varijable
+cHostName := ALLTRIM( cHostname )
+cUser := ALLTRIM( cUser )
+cPassword := ALLTRIM( cPassword )
+cDatabase := ALLTRIM( cDatabase )
+cSchema := ALLTRIM( cSchema )
 
-set order to tag "1"
-seek cObjekat+cKomponenta+cFunkcija+cUser
-if (!found())
-	set order to tag "2"
-	seek cObjekat+cKomponenta+cFunkcija+cUser
-	if (!found())
-		// ako pravilo nije definisano za konkretnog usera gledamo grupe
-		set order to tag "1"
-		seek cObjekat+cKomponenta+cFunkcija
-		if (!found())
-			//ne postoji pravilo pa cemo ubaciti default vrijednost
-			append blank
-			Scatter()
-			_id:=900
-			_id2:=0
-			_objekat:=cObjekat
-			_komponenta:=cKomponenta
-			_funkcija:=cFunkcija
-			_dozvola:="D"
-			_log:="D"
-			Gather()
-			if (UGrupiUsera(field->id,field->id2,aGrupe))
-				lMoze:=(field->dozvola=="D")
-			endif
-		else
-			do while (!eof() .and. field->objekat+field->komponenta+field->funkcija==cObjekat+cKomponenta+cFunkcija)
-				if (UGrupiUsera(field->id,field->id2,aGrupe))
-					lMoze:=(field->dozvola=="D")
-				endif
-				skip 1
-			enddo
-		endif
-	else
-		lMoze:=(field->dozvola=="D")
-	endif
-else
-	lMoze:=(field->dozvola=="D")
-endif
-select (nArea)
-return lMoze
-*}
+return lSuccess
 
 
-function UGrupiUsera(nId,nId2,aId)
-*{
-local lUGrupi
-lUGrupi:=.f.
-if (nId==0 .and. nId2==0)
-	// default pravilo za sve grupe
-	lUGrupi:=.t.
-elseif (nId==0)
-	// pravilo za pripadnost grupi nId2
-	lUGrupi:=(ASCAN(aId, nId2)>0)
-elseif (nId2==0)
-	// pravilo za pripadnost grupi nId
-	lUGrupi:=(ASCAN(aId, nId)>0)
-else
-	// pravilo za pripadnost dvjema grupama: nId i nId2
-	lUGrupi:=(ASCAN(aId, nId)>0 .and. ASCAN(aId, nId2)>0)
-endif
-return lUGrupi
-*}
+
+function ImaPravoPristupa( cObjekat, cKomponenta, cFunkcija )
+local cTmpQry
+local cTable := "public.privgranted"
+local oTable
+local lResult := .t.
+local oServer := pg_server()
+local nResult
+
+//nResult := table_count(cTable, "privilege = " + _sql_quote( cFunkcija ) ) 
+
+// provjeri prvo da li ima uopste ovih zapisa u tabeli
+//if nResult <> 1
+//	log_write( cTable + " " + "privilege = " + cFunkcija + " count =" + STR(nResult))
+	//return lResult
+//endif
+
+//cTmpQry := "SELECT granted FROM " + cTable + " WHERE privilege = " + _sql_quote( cFunkcija )
+//oTable := _sql_query( oServer, cTmpQry )
+//IF oTable == NIL
+      //MsgBeep( "problem sa:" + cTmpQry)
+      //QUIT
+//ENDIF
+
+//if oTable:Fieldget( oTable:Fieldpos("granted") ) == "false"
+	//lResult := .f.
+//endif
+
+return lResult
 
 
-function GetUserID()
-local nTArea := SELECT()
-local nRet := 0
-cUser:=goModul:oDataBase:cUser
-O_USERS
-select users
-set order to tag "NAZ"
-seek cUser
-nRet := field->id
-select (nTArea)
-return nRet
+
+// vraca id user-a
+function GetUserID( cUser )
+local cTmpQry
+local cTable := "public.usr_bak"
+local oTable
+local nResult
+local oServer := pg_server()
+
+cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + _sql_quote( cUser )
+oTable := _sql_query( oServer, cTmpQry )
+IF oTable == NIL
+      MsgBeep( "problem sa:" + cTmpQry)
+      QUIT
+ENDIF
+
+nResult := oTable:Fieldget( oTable:Fieldpos("usr_id") )
+
+return nResult
 
 
 // vraca username usera iz sec.systema
-function GetUserName( user_id )
-local nTArea := SELECT()
-local cUserName := ""
-O_USERS
-select users
-set order to tag "ID"
-go top
-seek STR(user_id, 3)
-cUserName := ALLTRIM(field->naz)
-select (nTArea)
-return cUserName
+function GetUserName( nUser_id )
+local cTmpQry
+local cTable := "public.usr_bak"
+local oTable
+local cResult
+local oServer := pg_server()
+
+cTmpQry := "SELECT usr_username FROM " + cTable + " WHERE usr_id = " + ALLTRIM(STR( nUser_id ))
+oTable := _sql_query( oServer, cTmpQry )
+IF oTable == NIL
+      MsgBeep( "problem sa:" + cTmpQry)
+      QUIT
+ENDIF
+
+cResult := oTable:Fieldget( oTable:Fieldpos("usr_username") )
+
+return cResult
 
 
 // vraca full username usera iz sec.systema
-function GetFullUserName( user_id )
-local nTArea := SELECT()
-local cUserName := ""
-O_USERS
-select users
-set order to tag "ID"
-go top
-seek STR(user_id, 3)
-if users->(FIELDPOS("fullname")) <> 0
-	cUserName := ALLTRIM(field->fullname)
-	if Empty(cUserName)
-		cUserName := ALLTRIM(field->naz)
-	endif
-else
-	cUserName := ALLTRIM(field->naz)
-endif
-select (nTArea)
-return cUserName
+function GetFullUserName( nUser_id )
+local cTmpQry
+local cTable := "public.usr_bak"
+local oTable
+local cResult
+local oServer := pg_server()
 
+cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + ALLTRIM(STR( nUser_id ))
+oTable := _sql_query( oServer, cTmpQry )
+IF oTable == NIL
+      MsgBeep( "problem sa:" + cTmpQry)
+      QUIT
+ENDIF
 
-function FmkSecVer()
-*{
-return DBUILD
-*}
+cResult := oTable:Fieldget( oTable:Fieldpos("usr_propername") )
 
-
-/*! \fn MigrateRulesForGroup(cExistingGroup, cNewGroup, cSetLicenceTo)
- *  \brief Kopira pravila za novu grupu korisnika po uzoru na postojecu
- *  \param cExistingGroup - ID postojece grupe
- *  \param cNewGroup - ID nove grupe
- *  \param cSetLicenceTo - postavlja dozvolu na "D" ili "N" za sve stavke za novih pravila
- */
-function MigrateRulesForGroup(cExistingGroup, cNewGroup, cSetLicenceTo)
-*{
-local aMigrate:={}
-
-select rules
-set order to tag "ID"
-go top
-seek cNewGroup
-
-// Check if rules for new group allready exist
-if Found()
-	MsgBeep("Rules for group '" + cNewGroup + "' allready exists!")
-	return
-endif
-
-go top
-seek cExistingGroup
-
-Box(,5,60)
-	// Get data from rules (existing group)
-	nBrojac:=0
-	@ 1+m_x, 2+m_y SAY "Geting data from group '" + cExistingGroup + "'"
-	do while !EOF()
-		if (field->id<>VAL(cExistingGroup))
-			skip
-			loop
-		endif
-		AADD(aMigrate, {field->id, field->id2, field->objekat, field->komponenta, field->funkcija, field->dozvola, field->log})
-		@ 2+m_x, 2+m_y SAY "Total cached: " + STR(++nBrojac)
-		skip
-	enddo
-	
-	//Check for shure
-	if Pitanje(,"Are you shure?", "N")=="N"
-		return
-	endif
-	
-	// Insert data into rules for new group
-	@ 1+m_x, 2+m_y SAY "Inserting data for group '" + cNewGroup + "'"
-	nBrojac:=0
-	for i:=1 to LEN(aMigrate)
-		append blank
-		replace id with VAL(cNewGroup)
-		replace objekat with aMigrate[i, 3]
-		replace komponenta with aMigrate[i, 4]
-		replace funkcija with aMigrate[i, 5]
-		// If cSetLicenceTo empty use the same value field->dozvola from existing group
-		if EMPTY(cSetLicenceTo)
-			replace dozvola with aMigrate[i, 6]
-		else 
-			replace dozvola with cSetLicenceTo 
-		endif
-		replace log with aMigrate[i, 7]
-		@ 2+m_x, 2+m_y SAY "Total records added: " + STR(++nBrojac) 
-	next
-BoxC()
-
-MsgBeep("Migrate " + STR(nBrojac) + " rules for group " + cNewGroup + "##Migrate operation completed successful!!!")
-
-return
-
-
-
-// ----------------------------------
-// vraca naziv grupe
-// ----------------------------------
-function secgr_naz( nGrId )
-local nTArea := SELECT()
-local cRet := PADR("",15)
-
-O_GROUPS
-select groups
-set order to tag "ID"
-seek STR(nGrId,3)
-
-cRet := PADR( field->naz, 15 )
-
-select (nTArea)
-return cRet
+return cResult
 
 

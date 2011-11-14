@@ -25,7 +25,7 @@ endif
 
 cDesc := "na dan: " + DTOC(DATE())
 cDesc += " "
-cDesc += "oper: " + goModul:oDataBase:cUser
+cDesc += "oper: " + f18_user()
 
 @ prow(), nLeft SAY cDesc
 
@@ -50,7 +50,7 @@ Box(,6,60)
 	@ m_x + 1, col() + 1 SAY "do:" GET dD_t
 	
 	@ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
-		VALID {|| nOper == 0 .or. p_users(@nOper) } ;
+		VALID {|| nOper == 0  } ;
 		PICT "999"
   	@ m_x + 3, m_y + 2 SAY "(O)tvoreni / (Z)atvoreni / (S)vi" GET cStatus ;
 		VALID cStatus $ "OZS" PICT "@!"

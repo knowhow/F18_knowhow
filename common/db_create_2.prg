@@ -349,15 +349,6 @@ index_mcode(SIFPATH, cIme)
 
 nArea:=nil
 
-if (!("U"$TYPE("gSecurity")) .and. gSecurity=="D")
-	CreEvents(nArea)
-	CreSecurity(nArea)
-endif
-
-//if IsRabati()
-//	CreRabDB()
-//endif
-
 // kreiraj lokal tabelu : LOKAL
 cre_lokal(F_LOKAL)
 

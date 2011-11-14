@@ -205,7 +205,7 @@ endif
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater VALID {|| nOperater == 0 .or. p_users(@nOperater), show_it( getusername( nOperater ), 20 ) } WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "99 - otvori sifrarnik", nil, cHelpClr )
+@ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater VALID {|| nOperater == 0 , show_it( getusername( nOperater ), 20 ) } WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "99 - otvori sifrarnik", nil, cHelpClr )
 
 nX += 2
 

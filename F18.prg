@@ -16,9 +16,9 @@ static cPassWord := "admin"
 static cDataBase := "demo_db1"
 static cDBFDataPath := ""
 static cSchema := "fmk"
-static oServer := NIL
 static cF18Home := NIL
 static nLogHandle := NIL
+static oServer := NIL
 
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 local menuop := {}

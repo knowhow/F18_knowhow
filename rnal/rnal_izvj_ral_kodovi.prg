@@ -53,7 +53,7 @@ Box(,6,60)
 	@ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
 	@ m_x + 1, col() + 1 SAY "do:" GET dD_t
 	@ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
-		VALID {|| nOper == 0 .or. p_users(@nOper) } ;
+		VALID {|| nOper == 0  } ;
 		PICT "999"
 	@ m_x + 4, m_y + 2 SAY " RAL kodovi (prazno-svi):" GET cRList PICT "@S25"
 	@ m_x + 5, m_y + 2 SAY "boje kodovi (prazno-sve):" GET cColList PICT "@S25"

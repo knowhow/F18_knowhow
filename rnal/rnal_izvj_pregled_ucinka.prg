@@ -205,7 +205,7 @@ Box(, nBoxX, nBoxY)
 
 	nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 .or. p_users( @nOperater ) } PICT "999"
+	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 } PICT "999"
 	
 	read
 BoxC()

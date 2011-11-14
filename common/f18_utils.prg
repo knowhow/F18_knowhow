@@ -386,16 +386,23 @@ AADD(gaDBFs, { F_STRSPR ,"STRSPR"  , "strspr"     } )
 AADD(gaDBFs, { F_KBENEF ,"KBENEF"  , "kbenef"     } )
 AADD(gaDBFs, { F_VPOSLA ,"VPOSLA"  , "vposla"     } )
 
+
 log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)
 
-oServer := TPQServer():New( cHostName, cDatabase, cUser, cPassWord, nPort, cSchema )
-IF oServer:NetErr()
-      log_write( oServer:ErrorMsg() )
-      QUIT
-ENDIF
+if f18_login_screen( @cHostname, @cDatabase, @cUser, @cPassword, @nPort, @cSchema ) = .f.
+	quit
+endif
 
+// try to loggon...
+oServer := TPQServer():New( cHostName, cDatabase, cUser, cPassWord, nPort, cSchema )
+if oServer:NetErr()
+      log_write( oServer:ErrorMsg() )
+      quit
+endif
 
 return oServer 
+
+
 
 // ---------------------------------------
 // ---------------------------------------

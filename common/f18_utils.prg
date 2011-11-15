@@ -118,6 +118,7 @@ return
 function usex(cTable)
 return my_use(cTable)
 
+
 // ---------------------------
 // ~/.F18/bringout1
 // ~/.F18/rg1
@@ -128,9 +129,14 @@ local cHome
 
 cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
 cHome := hb_DirSepAdd(cHome + ".F18")
-cHome := hb_DirSepAdd(cHome + cDatabase)
+
+if cDatabase <> nil
+	cHome := hb_DirSepAdd(cHome + cDatabase)
+endif
 
 return cHome
+
+
 
 
 function f18_ime_dbf(cImeDbf)

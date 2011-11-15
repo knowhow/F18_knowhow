@@ -16,9 +16,13 @@ static cPassWord := "admin"
 static cDataBase := "demo_db1"
 static cDBFDataPath := ""
 static cSchema := "fmk"
-static cF18Home := NIL
+static cF18HomeDir := NIL
+static cF18HomeRoot := NIL
 static nLogHandle := NIL
 static oServer := NIL
+static cIniHomeRoot := NIL
+static cIniHome := NIL
+static cIniConfig := ".f18_config.ini"
 
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 local menuop := {}
@@ -46,10 +50,14 @@ IF ( nLogHandle :=  FCREATE("F18.log") ) == -1
     QUIT
 ENDIF
 
-oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
-
 // ~/.F18/
+cF18HomeRoot := get_f18_home_dir()
+
+// ~/.F18/empty38/
 cF18HomeDir := get_f18_home_dir(cDatabase)
+
+// konektuj se na server
+oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 
 // menu opcije...
 AADD( menuop, "1) FIN   # finansijsko poslovanje")
@@ -93,6 +101,18 @@ return
 // ---------------
 function my_home()
 return cF18HomeDir
+
+// root home dirketorij
+function my_home_root()
+return cF18HomeRoot
+
+// vraca naziv i lokaciju ini fajla iz home root-a
+function ini_home_root()
+return my_home_root() + cIniConfig
+
+// vraca naziv i lokaciju ini fajla iz home direktorija
+function ini_home()
+return my_home() + cIniConfig
 
 function pg_server()
 return oServer

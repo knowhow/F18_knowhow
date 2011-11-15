@@ -17,12 +17,20 @@ function f18_login_screen( cHostname, cDatabase, cUser, cPassword, nPort, cSchem
 local lSuccess := .t.	
 local nX := 5
 local nLeft := 7
+local cPort
 
-cHostName := PADR( cHostName, 100 )
-cDatabase := PADR( cDatabase, 100 )
-cUser := PADR( cUser, 100 )
+cHostName := PADR( f18_ini_read( "F18_server", "Hostname", ini_home_root() ), 100 )
+cDatabase := PADR( f18_ini_read( "F18_server", "Database", ini_home_root() ), 100 )
+cUser := PADR( f18_ini_read( "F18_server", "User", ini_home_root() ), 100 )
+cSchema := PADR( f18_ini_read( "F18_server", "Schema", ini_home_root() ), 100 )
+cPort := f18_ini_read( "F18_server", "Port", ini_home_root() )
 cPassword := PADR( cPassword, 100 )
-cSchema := PADR( cSchema, 100 )
+
+if EMPTY( cPort )
+	cPort := "0"
+endif
+
+nPort := VAL( cPort )
 
 clear screen
 
@@ -35,13 +43,13 @@ clear screen
 ++ nX
 ++ nX
 
-@ nX, nLeft SAY "Server:" GET cHostname PICT "@S25"
-@ nX, 45 SAY "Port:" GET nPort PICT "9999"
+@ nX, nLeft SAY PADL( "Server:", 8 ) GET cHostname PICT "@S25"
+@ nX, 45 SAY PADL( "Port:", 8 ) GET nPort PICT "9999"
 
 ++ nX
 
-@ nX, nLeft SAY "Baza:" GET cDatabase PICT "@S20"
-@ nX, 45 SAY "Shema:" GET cSchema PICT "@S20"
+@ nX, nLeft SAY PADL( "Baza:", 8 ) GET cDatabase PICT "@S25"
+@ nX, 45 SAY PADL( "Shema:", 8 ) GET cSchema PICT "@S20"
 
 ++ nX
 ++ nX
@@ -65,6 +73,13 @@ cUser := ALLTRIM( cUser )
 cPassword := ALLTRIM( cPassword )
 cDatabase := ALLTRIM( cDatabase )
 cSchema := ALLTRIM( cSchema )
+
+// snimi u ini fajl...
+//f18_ini_write( "F18_server", "Database", cDatabase, ini_home_root() )
+//f18_ini_write( "F18_server", "Hostname", cHostname, ini_home_root() )
+//f18_ini_write( "F18_server", "User", cUser, ini_home_root() )
+//f18_ini_write( "F18_server", "Schema", cSchema, ini_home_root() )
+//f18_ini_write( "F18_server", "Port", ALLTRIM(STR(nPort)), ini_home_root() )
 
 return lSuccess
 

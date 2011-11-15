@@ -75,11 +75,11 @@ cDatabase := ALLTRIM( cDatabase )
 cSchema := ALLTRIM( cSchema )
 
 // snimi u ini fajl...
-//f18_ini_write( "F18_server", "Database", cDatabase, ini_home_root() )
-//f18_ini_write( "F18_server", "Hostname", cHostname, ini_home_root() )
-//f18_ini_write( "F18_server", "User", cUser, ini_home_root() )
-//f18_ini_write( "F18_server", "Schema", cSchema, ini_home_root() )
-//f18_ini_write( "F18_server", "Port", ALLTRIM(STR(nPort)), ini_home_root() )
+f18_ini_write( "F18_server", "Database", cDatabase, ini_home_root() )
+f18_ini_write( "F18_server", "Hostname", cHostname, ini_home_root() )
+f18_ini_write( "F18_server", "User", cUser, ini_home_root() )
+f18_ini_write( "F18_server", "Schema", cSchema, ini_home_root() )
+f18_ini_write( "F18_server", "Port", ALLTRIM(STR(nPort)), ini_home_root() )
 
 return lSuccess
 

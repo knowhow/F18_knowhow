@@ -88,7 +88,7 @@ next
 
 if lFoundSect = .f.
 	// dodaj sekciju
-	AADD( aIni, cWrite_sect := hb_hash() )
+	AADD( aIni:Keys,  cWrite_sect := hb_hash() )
 	aSect := aIni[ cWrite_sect ]
 endif
 
@@ -108,7 +108,7 @@ next
 if lFoundKey = .f.
 	
 	// dodaj novi key
-	AADD( aSect, cWrite_key )
+	AADD( aSect:Keys,  cWrite_key  )
 	aSect[ cWrite_key ] := cWrite_value
 
 endif

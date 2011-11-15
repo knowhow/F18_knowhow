@@ -87,6 +87,7 @@ FCLOSE(nLogHandle)
 
 return
 
+
 // ---------------
 // ~/.F18/
 // ---------------
@@ -95,6 +96,10 @@ return cF18HomeDir
 
 function pg_server()
 return oServer
+
+function pg_search_path()
+local cPath := "fmk,public"
+return cPath
 
 function f18_user()
 return cUser

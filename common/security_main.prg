@@ -86,16 +86,16 @@ if nResult <> 1
 	return lResult
 endif
 
-//cTmpQry := "SELECT granted FROM " + cTable + " WHERE privilege = " + _sql_quote( cFunkcija )
-//oTable := _sql_query( oServer, cTmpQry )
-//IF oTable == NIL
-      //MsgBeep( "problem sa:" + cTmpQry)
-      //QUIT
-//ENDIF
+cTmpQry := "SELECT granted FROM " + cTable + " WHERE privilege = " + _sql_quote( cFunkcija )
+oTable := _sql_query( oServer, cTmpQry )
+if oTable == NIL
+	MsgBeep( "problem sa:" + cTmpQry)
+    quit
+endif
 
-//if oTable:Fieldget( oTable:Fieldpos("granted") ) == "false"
-	//lResult := .f.
-//endif
+if oTable:Fieldget( oTable:Fieldpos("granted") ) == "false"
+	lResult := .f.
+endif
 
 return lResult
 

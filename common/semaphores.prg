@@ -202,7 +202,6 @@ LOCAL nResult
 LOCAL cTmpQry
 LOCAL oServer := pg_server()
 
-
 // provjeri prvo da li postoji uopšte ovaj site zapis
 cTmpQry := "SELECT COUNT(*) FROM " + cTable + " WHERE " + cCondition
 

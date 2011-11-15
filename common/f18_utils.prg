@@ -155,6 +155,7 @@ return cImeDbf
   ------------------------- */
 function init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 local oServer
+local cServer_search_path := pg_search_path()
 
 REQUEST DBFCDX
 
@@ -399,6 +400,8 @@ if oServer:NetErr()
       log_write( oServer:ErrorMsg() )
       quit
 endif
+
+_set_sql_path( oServer, cServer_search_path )
 
 return oServer 
 

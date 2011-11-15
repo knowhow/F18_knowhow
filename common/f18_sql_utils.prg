@@ -13,7 +13,8 @@
 
 // pomoćna funkcija za sql query izvršavanje
 function _sql_query( oServer, cQuery )
-LOCAL oResult, cMsg
+local oResult, cMsg
+
 oResult := oServer:Query( cQuery )
 IF oResult:NetErr()
       cMsg := oResult:ErrorMsg()
@@ -25,6 +26,28 @@ IF oResult:NetErr()
       return .f.
 ENDIF
 RETURN oResult
+
+
+// setovanje sql schema path-a
+function _set_sql_path( oServer, cPath )
+local cSrch_path := "SET search_path TO " + cPath + ";"
+local oResult
+local cMsg
+
+oResult := oServer:Query( cSrch_path )
+IF oResult:NetErr()
+      cMsg := oResult:ErrorMsg()
+      if gDebug > 0 
+         log_write(cQuery)
+         log_write(cMsg)
+      endif
+      MsgBeep( cMsg )
+      return .f.
+ENDIF
+RETURN oResult
+
+
+
 /*
 
 function SQLValue(xVar, nDec, cKonv)

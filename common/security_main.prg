@@ -78,13 +78,13 @@ local lResult := .t.
 local oServer := pg_server()
 local nResult
 
-//nResult := table_count(cTable, "privilege = " + _sql_quote( cFunkcija ) ) 
+nResult := table_count(cTable, "privilege = " + _sql_quote( cFunkcija ) ) 
 
 // provjeri prvo da li ima uopste ovih zapisa u tabeli
-//if nResult <> 1
-//	log_write( cTable + " " + "privilege = " + cFunkcija + " count =" + STR(nResult))
-	//return lResult
-//endif
+if nResult <> 1
+	log_write( cTable + " " + "privilege = " + cFunkcija + " count =" + STR(nResult))
+	return lResult
+endif
 
 //cTmpQry := "SELECT granted FROM " + cTable + " WHERE privilege = " + _sql_quote( cFunkcija )
 //oTable := _sql_query( oServer, cTmpQry )

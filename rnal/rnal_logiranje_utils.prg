@@ -598,7 +598,7 @@ function _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 local nOperId
 local nTArea := SELECT()
 
-nOperId := GetUserID()
+nOperId := GetUserID( f18_user() )
 
 select doc_log
 append blank

@@ -26,7 +26,7 @@ private opcexe:={}
 private izbor:=1
 
 __doc_no := nDoc_no
-__oper_id := GetUserID()
+__oper_id := GetUserID( f18_user() )
 
 AADD(opc, "promjena, osnovni podaci naloga ")
 AADD(opcexe, {|| _ch_main() })

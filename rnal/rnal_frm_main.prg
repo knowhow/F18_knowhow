@@ -37,7 +37,7 @@ endif
 
 l_new_doc := lNew
 
-_oper_id := GetUserID()
+_oper_id := GetUserID( f18_user() )
 
 select _docs
 

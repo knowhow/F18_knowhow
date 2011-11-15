@@ -69,6 +69,7 @@ close all
 rnal_set_params()
 
 ::mStartUp()
+
 ::mMenuStandard()
 
 return nil

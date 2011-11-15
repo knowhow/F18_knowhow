@@ -26,7 +26,7 @@ O_DOCS
 O_CUSTOMS
 O_CONTACTS
 
-nOperater := GetUserID()
+nOperater := GetUserID( f18_user() )
 
 Box( , 1, 60)
 	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "999"
@@ -155,7 +155,7 @@ local cLine
 local dDate := DATE()
 local nOperater
 
-nOperater := GetUserID()
+nOperater := GetUserID( f18_user() )
 
 Box(, 3, 60)
 	
@@ -248,7 +248,7 @@ O_DOCS
 O_CUSTOMS
 O_CONTACTS
 
-nOperater := GetUserID()
+nOperater := GetUserID( f18_user() )
 
 Box(, 3, 60)
 	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "999" 
@@ -339,7 +339,7 @@ local i
 local aLog
 local cPrinter
 
-nOperater := GetUserID()
+nOperater := GetUserID( f18_user() )
 
 Box(, 5, 65)
 	

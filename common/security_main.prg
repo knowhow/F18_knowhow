@@ -18,12 +18,13 @@ local lSuccess := .t.
 local nX := 5
 local nLeft := 7
 local cPort
+local cConfigureServer := "N"
 
-cHostName := PADR( f18_ini_read( "F18_server", "Hostname", ini_home_root() ), 100 )
-cDatabase := PADR( f18_ini_read( "F18_server", "Database", ini_home_root() ), 100 )
-cUser := PADR( f18_ini_read( "F18_server", "User", ini_home_root() ), 100 )
-cSchema := PADR( f18_ini_read( "F18_server", "Schema", ini_home_root() ), 100 )
-cPort := f18_ini_read( "F18_server", "Port", ini_home_root() )
+cHostName := PADR( f18_ini_read( "F18_server", "host_name", ini_home_root() ), 100 )
+cDatabase := PADR( f18_ini_read( "F18_server", "database", ini_home_root() ), 100 )
+cUser := PADR( f18_ini_read( "F18_server", "user_name", ini_home_root() ), 100 )
+cSchema := PADR( f18_ini_read( "F18_server", "schema", ini_home_root() ), 100 )
+cPort := f18_ini_read( "F18_server", "port", ini_home_root() )
 cPassword := PADR( cPassword, 100 )
 
 if EMPTY( cPort )
@@ -32,9 +33,13 @@ endif
 
 nPort := VAL( cPort )
 
+if EMPTY(cHostName) .or. EMPTY(cPort)
+	cConfigureServer := "D"
+endif 
+
 clear screen
 
-@ 5, 5, 15, 77 BOX B_DOUBLE_SINGLE
+@ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
 ++ nX
 
@@ -42,14 +47,24 @@ clear screen
 
 ++ nX
 ++ nX
+@ nX, nLeft SAY PADL( "Konfigurisati server ?:", 21 ) GET cConfigureServer VALID cConfigureServer $ "DN" PICT "@!"
+++ nX 
 
-@ nX, nLeft SAY PADL( "Server:", 8 ) GET cHostname PICT "@S25"
-@ nX, 45 SAY PADL( "Port:", 8 ) GET nPort PICT "9999"
+read
+
+if cConfigureServer == "D"
+	++ nX
+	@ nX, nLeft SAY PADL( "Server:", 8 ) GET cHostname PICT "@S20"
+	@ nX, 37 SAY "Port:" GET nPort PICT "9999"
+	@ nX, 48 SAY "Shema:" GET cSchema PICT "@S15"
+else	
+	++ nX
+endif
 
 ++ nX
+++ nX
 
-@ nX, nLeft SAY PADL( "Baza:", 8 ) GET cDatabase PICT "@S25"
-@ nX, 45 SAY PADL( "Shema:", 8 ) GET cSchema PICT "@S20"
+@ nX, nLeft SAY PADL( "Baza:", 15 ) GET cDatabase PICT "@S30"
 
 ++ nX
 ++ nX
@@ -75,11 +90,11 @@ cDatabase := ALLTRIM( cDatabase )
 cSchema := ALLTRIM( cSchema )
 
 // snimi u ini fajl...
-f18_ini_write( "F18_server", "Database", cDatabase, ini_home_root() )
-f18_ini_write( "F18_server", "Hostname", cHostname, ini_home_root() )
-f18_ini_write( "F18_server", "User", cUser, ini_home_root() )
-f18_ini_write( "F18_server", "Schema", cSchema, ini_home_root() )
-f18_ini_write( "F18_server", "Port", ALLTRIM(STR(nPort)), ini_home_root() )
+f18_ini_write( "F18_server", "database", cDatabase, ini_home_root() )
+f18_ini_write( "F18_server", "host_name", cHostname, ini_home_root() )
+f18_ini_write( "F18_server", "user_name", cUser, ini_home_root() )
+f18_ini_write( "F18_server", "schema", cSchema, ini_home_root() )
+f18_ini_write( "F18_server", "port", ALLTRIM(STR(nPort)), ini_home_root() )
 
 return lSuccess
 

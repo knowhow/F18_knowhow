@@ -66,7 +66,7 @@ next
 
 
 if !hb_IniWrite( ini_file, ini_read, "#F18 config", "#end of config" )
-	log_write( "Ne mogu snimiti ini fajl "  + cIni_file )
+	log_write( "Ne mogu snimiti ini fajl "  + ini_file )
     return .f.
 endif
 

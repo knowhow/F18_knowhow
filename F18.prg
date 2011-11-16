@@ -1,5 +1,5 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
+ * This file is part of the bring.out knowhow ERP, a free and open source 
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
@@ -106,14 +106,6 @@ return cF18HomeDir
 function my_home_root()
 return cF18HomeRoot
 
-// vraca naziv i lokaciju ini fajla iz home root-a
-function ini_home_root()
-return my_home_root() + cIniConfig
-
-// vraca naziv i lokaciju ini fajla iz home direktorija
-function ini_home()
-return my_home() + cIniConfig
-
 function pg_server()
 return oServer
 
@@ -126,10 +118,6 @@ return cUser
 
 function log_write(cMsg)
 FWRITE(nLogHandle, cMsg + hb_eol())
-return
-
-// ovo nešto treba za harbour 
-function TFileRead()
 return
 
 

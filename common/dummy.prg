@@ -37,6 +37,7 @@ return .f.
 function isJerry()
 return .f.
 
-
-
+// ovo nešto treba za harbour 
+function TFileRead()
+return
 

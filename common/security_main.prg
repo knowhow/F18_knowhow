@@ -19,23 +19,50 @@ local nX := 5
 local nLeft := 7
 local cPort
 local cConfigureServer := "N"
+local params
 
-cHostName := PADR( f18_ini_read( "F18_server", "host_name", ini_home_root() ), 100 )
-cDatabase := PADR( f18_ini_read( "F18_server", "database", ini_home_root() ), 100 )
-cUser := PADR( f18_ini_read( "F18_server", "user_name", ini_home_root() ), 100 )
-cSchema := PADR( f18_ini_read( "F18_server", "schema", ini_home_root() ), 100 )
-cPort := f18_ini_read( "F18_server", "port", ini_home_root() )
+params := hb_hash()
+params["host_name"] := nil
+params["database"] := nil
+params["user_name"] := nil
+params["schema"] := nil
+params["port"] := nil
+
+f18_ini_read("F18_server", @params, .t.)
+
+
+cHostName := params["host_name"]
+cDatabase := params["database"]
+cUser := params["user_name"]
+cSchema := params["schema"]
+cPort := params["port"]
 cPassword := PADR( cPassword, 100 )
 
-if EMPTY( cPort )
-	cPort := "0"
-endif
-
-nPort := VAL( cPort )
-
-if EMPTY(cHostName) .or. EMPTY(cPort)
+if (cHostName == nil) .or. (cPort == nil)
 	cConfigureServer := "D"
 endif 
+
+if cHostName == nil
+   cHostName := PADR("localhost", 100)
+endif
+
+if cPort == nil
+   nPort := 5432
+else
+   nPort := VAL( cPort )
+endif
+
+if cSchema == nil
+  cSchema :=  PADR("fmk", 40)
+endif
+
+if cDatabase == nil
+  cDatabase := PADR("bringout1", 100)
+endif
+
+if cUser == nil
+  cUser := PADR("admin", 100)
+endif
 
 clear screen
 
@@ -90,11 +117,13 @@ cDatabase := ALLTRIM( cDatabase )
 cSchema := ALLTRIM( cSchema )
 
 // snimi u ini fajl...
-f18_ini_write( "F18_server", "database", cDatabase, ini_home_root() )
-f18_ini_write( "F18_server", "host_name", cHostname, ini_home_root() )
-f18_ini_write( "F18_server", "user_name", cUser, ini_home_root() )
-f18_ini_write( "F18_server", "schema", cSchema, ini_home_root() )
-f18_ini_write( "F18_server", "port", ALLTRIM(STR(nPort)), ini_home_root() )
+params["database"] := cDatabase
+params["host_name"] := cHostName
+params["user_name"] := cUser
+params["schema"] := cSchema 
+params["port"] := ALLTRIM(STR(nPort))
+
+f18_ini_write( "F18_server", params, .t.)
 
 return lSuccess
 

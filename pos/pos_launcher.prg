@@ -9,41 +9,26 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "pos.ch"
 
-function send2comport(cStr)
+EXTERNAL DESCEND
+EXTERNAL RIGHT
 
-? "dummy send2commport"
+
+function MainPos(cKorisn, cSifra, p3, p4, p5, p6, p7)
+local oPos
+local cModul
+
+PUBLIC gKonvertPath:="D"
+
+cModul:="TOPS"
+PUBLIC goModul
+
+oPos := TPosMod():new(NIL, cModul, D_POS_VERZIJA, D_POS_PERIOD , cKorisn, cSifra, p3,p4,p5,p6,p7)
+goModul:=oPos
+
+oPos:run()
 
 return
-
-function rloptlevel()
-return ""
-
-function isRudnik()
-return .f.
-
-function isPlanika()
-return .f.
-
-function isPlNs()
-return .f.
-
-function isKonsig()
-return .f.
-
-function isStampa()
-return .f.
-
-function isJerry()
-return .f.
-
-// ovo nešto treba za harbour 
-function TFileRead()
-return
-
-function PosTest()
-? "Pos test (pos/main/2g/app.prg)"
-return
-
 
 

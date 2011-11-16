@@ -1,0 +1,453 @@
+/* 
+ * This file is part of the bring.out FMK, a free and open source 
+ * accounting software suite,
+ * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including FMK specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
+
+
+#include "pos.ch"
+
+function RealRadnik
+PARAMETERS lTekuci, fPrik, fZaklj
+
+PRIVATE cIdRadnik:=SPACE(4)
+PRIVATE cVrsteP:=SPACE(60)
+PRIVATE aUsl1 := ".t."
+PRIVATE cSmjena:=SPACE(1)
+PRIVATE cIdPos:=gIdPos
+PRIVATE cIdDio := gIdDio
+PRIVATE dDatOd:=gDatum
+PRIVATE dDatDo:=gDatum
+PRIVATE aNiz
+private cGotZir:=" "
+
+
+fPrik := IIF (fPrik==NIL, "P", fPrik)
+fZaklj := IIF (fZaklj==NIL, .F., fZaklj)
+
+O_SIFK
+O_SIFV
+
+O_DIO
+O_KASE
+O_ODJ
+O_ROBA
+
+IF !fZaklj
+	O_OSOB
+	set order to tag ("NAZ")
+EndIF
+
+O_VRSTEP
+O_POS
+O_POS_DOKS
+
+private fPrikPrem:="N"
+
+if roba->(fieldpos("K7"))<>0
+	fPrikPrem:="D"
+endif
+
+
+IF lTekuci
+  cIdRadnik := gIdRadnik
+  IF gRadniRac == "D"
+    cSmjena   := ""             
+    // ako radnik prelazi u narednu smjenu
+  Else
+    cSmjena := gSmjena
+  EndIF
+  dDatOd := dDatDo := gDatum
+ELSE
+  aNiz := {}
+  cIdPos := gIdPos
+  IF gVrstaRS <> "K"
+    if gModul=="HOPS"
+      cIdDio := SPACE (LEN (gIdDio))
+      AADD(aNiz,{"Dio objekta (prazno-svi)","cIdDio","empty(cIdDio). or. P_Dio(@cIdDio)","@!",})
+    endif
+    AADD(aNiz,{"Prodajno mjesto (prazno-sve)","cIdPos","cidpos='X' .or. empty(cIdPos) .or. P_Kase(@cIdPos)","@!",})
+  ENDIF
+  AADD(aNiz,{"Sifra radnika  (prazno-svi)","cIdRadnik","IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",,})
+  AADD(aNiz,{"Vrsta placanja (prazno-sve)","cVrsteP",,"@!S30",})
+  AADD(aNiz,{"Smjena (prazno-sve)","cSmjena",,,})
+  AADD(aNiz,{"Izvjestaj se pravi od datuma","dDatOd",,,})
+  AADD(aNiz,{"                   do datuma","dDatDo",,,})
+  if fPrikPrem=="D"
+     AADD(aNiz,{"Prikaz kolicina za premirane artikle ","fPrikPrem","fprikPrem$'DN'","@!",})
+  endif
+
+
+  fPrik:="O"
+  AADD(aNiz,{"Prikazi Pazar/Robe/Oboje (P/R/O)","fPrik","fPrik$'PRO'","@!",})
+  DO WHILE .t.
+    IF !VarEdit(aNiz,10,5,13+LEN(aNiz),74,'USLOVI ZA IZVJESTAJ "REALIZACIJA"',"B1")
+      CLOSERET
+    ENDIF
+    aUsl1:=Parsiraj(cVrsteP,"IdVrsteP")
+    if aUsl1<>NIL.and.dDatOd<=dDatDo
+      exit
+    elseif aUsl1==NIL
+      Msg("Kriterij za vrstu placanja nije korektno postavljen!")
+    else
+      Msg("'Datum do' ne smije biti stariji nego 'datum od'!")
+    endif
+  EndDO
+ENDIF
+
+aDbf := {}
+AADD (aDbf, {"IdRadnik", "C",  4, 0})
+AADD (aDbf, {"IdVrsteP", "C",  2, 0})
+AADD (aDbf, {"IdRoba"  , "C", 10, 0})
+AADD (aDbf, {"IdCijena", "C",  1, 0})
+AADD (aDbf, {"Kolicina", "N", 15, 3})
+AADD (aDbf, {"Iznos",    "N", 20, 5})
+AADD (aDbf, {"Iznos2",   "N", 20, 5})
+AADD (aDbf, {"Iznos3",   "N", 20, 5})
+NaprPom (aDbf)
+USEX (PRIVPATH+"POM") NEW
+INDEX ON IdRadnik+IdVrsteP+IdRoba+IdCijena TAG ("1") TO (PRIVPATH+"POM")
+INDEX ON IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
+index ON BRISANO TAG "BRISAN"
+set order to 1
+
+if lTekuci
+  IF fZaklj
+    START PRINT2 CRET gLocPort, .F.
+  Else
+    START PRINT CRET
+  EndIF
+
+  ZagFirma()
+
+  ?
+  IF fPrik $ "PO"
+    ?? PADC (IIF (fZaklj, "ZAKLJUCENJE", "PAZAR")+" RADNIKA", 40)
+  Else
+    ?? PADC ("REALIZACIJA RADNIKA PO ROBAMA", 40)
+  EndIF
+  ? PADC (gPosNaz)
+  IF !Empty (gIdDio)     
+    ? PADC (gDioNaz, 40)
+  EndIF
+  ?
+  SELECT OSOB
+  HSEEK gIdRadnik
+  ? gIdRadnik, "-", PADC (AllTrim (OSOB->Naz), 40)
+  cTxt := "Na dan: "+FormDat1 (gDatum)
+  IF gRadniRac == "N"
+    cTxt += " u smjeni " + gSmjena
+  EndIF
+  ? PADC (cTxt, 40)
+  ?
+else
+  START PRINT CRET
+  ZagFirma()
+  ?? gP12cpi
+  ?
+  if glRetroakt
+  	? PADC("REALIZACIJA NA DAN "+FormDat1(dDatDo),40)
+  else
+  	? PADC("REALIZACIJA NA DAN "+FormDat1(gDatum),40)
+  endif
+  ? PADC("-------------------------------------",40)
+  ? "PROD.MJESTO: "+cidpos+"-"+IF(EMPTY(cIdPos),"SVA",Ocitaj (F_KASE, cIdPos,"Naz"))
+  ? "RADNIK     : "+IF(EMPTY(cIdRadnik),"svi",cIdRadnik+"-"+RTRIM(Ocitaj(F_OSOB,cIdRadnik,"naz")))
+  ? "VR.PLACANJA: "+IF(EMPTY(cVrsteP),"sve",RTRIM(cVrsteP))
+  IF ! EMPTY (cSmjena)
+    ? "SMJENA     : "+RTRIM(cSmjena)
+  ENDIF
+  IF ! Empty (gIdDio)
+    ? "DIO OBJEKTA: "+IF(EMPTY(cIdDio),"SVI",Ocitaj (F_DIO, cIdDio,"Naz"))
+  ENDIF
+  ? "PERIOD     : "+FormDat1(dDatOd)+" - "+FormDat1(dDatDo)
+  ?
+  ? "SIFRA PREZIME I IME RADNIKA"
+  ? "-----", REPLICATE ("-", 30)
+endif // lTekuci
+
+select pos_doks
+set order to 2       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
+IF !(aUsl1==".t.")
+  SET FILTER TO &aUsl1
+ENDIF
+
+// formiram pomocnu datoteku sa podacima o realizaciji
+IF !lTekuci
+  RadnIzvuci (VD_PRR)
+EndIF
+RadnIzvuci (VD_RN)
+
+// ispis izvjestaja
+IF fPrik $ "PO"
+  nTotal := 0
+  nTotal2 := 0
+  nTotal3 := 0
+  SELECT POM
+  set order to 1
+  GO TOP
+  do While !Eof()
+    _IdRadnik := POM->IdRadnik
+    nTotRadn := 0
+    nTotRadn2:=0
+    nTotRadn3:=0
+    IF ! lTekuci
+      SELECT OSOB
+      HSEEK _IdRadnik
+      ? OSOB->ID + "  " + PADR (OSOB->Naz, 30)
+      ? REPLICATE ("-", 40)
+      SELECT POM
+    Else
+      ? Space (5)+PADR ("Vrsta placanja", 24), PADC("Iznos", 10)
+      ? Space (5)+REPL ("-", 24), REPL ("-", 10)
+    EndIF
+
+    nKolicO:=0    // kolicina za ostale
+    nKolicPr:=0  // kolicina za premirane
+    do While !Eof() .and. POM->IdRadnik == _IdRadnik
+      _IdVrsteP := POM->IdVrsteP
+      nTotVP := 0
+      nTotVP2:=0
+      nTotVP3:=0
+      do while !Eof() .and. POM->(IdRadnik+IdVrsteP)==(_IdRadnik+_IdVrsteP)
+        nTotVP += POM->Iznos
+        nTotVP2 += pom->iznos2
+        nTotVP3 += pom->iznos3
+
+        if fPrikPrem=="D"
+         select roba
+	 hseek pom->idroba
+	 select pom
+         if !(roba->k2='X')
+            if roba->k7='*'
+                nKolicPr+=pom->kolicina
+            else
+                nKolicO+=pom->kolicina
+            endif
+         endif
+        endif // fPrikPrem=="D"
+        SKIP
+      EndDO
+      SELECT VRSTEP
+      HSEEK _IdVrsteP
+      ? SPACE (5) + PADR (VRSTEP->Naz, 24), STR (nTotVP, 10, 2)
+      
+      nTotRadn += nTotVP
+      nTotRadn2+= nTotVP2
+      nTotRadn3+= nTotVP3
+
+      SELECT POM
+    EndDO
+
+    ? REPLICATE ("-", 40)
+    if fPrikPrem=="D"
+       ?
+       ?  padl("Kolicina - premirani - k7='*' ",29,"."), str(nKolicPr,10,2)
+       ?  padl("Kolicina - ostali artikli",29,), str(nKolicO,10,2)
+       ?
+    endif
+
+    ? PADL ("UKUPNO RADNIK ("+_idradnik+"):", 29), STR (nTotRadn, 10, 2)
+    if nTotRadn2<>0
+      ? PADL ("PARTICIPACIJA:", 29), STR (nTotRadn2, 10, 2)
+    endif
+    if nTotRadn3<>0
+      ? PADL (NenapPop() , 29), STR (nTotRadn3, 10, 2)
+      ? PADL ("UKUPNO NAPLATA:", 29), STR (nTotRadn-nTotRadn3+nTotRadn2, 10, 2)
+    endif
+    ? REPLICATE ("-", 40)
+
+    nTotal += nTotRadn
+    nTotal2+=nTotRadn2
+    nTotal3+=nTotRadn3
+  EndDO
+
+  IF EMPTY (cIdRadnik)
+    ?
+    ? REPLICATE ("=", 40)
+    ? PADC ("SVI RADNICI UKUPNO:", 25), STR (nTotal, 14, 2)
+    if nTotal2<>0
+      ? PADL ("PARTICIPACIJA:", 29), STR (nTotal2, 10, 2)
+    endif
+    if nTotal3<>0
+      ? PADL (NenapPop(), 29), STR (nTotal3, 10, 2)
+      ? PADL ("UKUPNO NAPLATA:", 29), STR (nTotal-nTotal3+nTotal2, 10, 2)
+    endif
+    ? REPLICATE ("=", 40)
+  ENDIF
+EndIF
+
+IF fPrik $ "RO"
+  IF ! lTekuci
+    ?
+    ?
+    ? PADC ("REALIZACIJA PO ROBAMA", 40)
+  EndIF
+  ?
+  ? PADR ("Sifra", 10), PADR ("Naziv robe", 21)
+  ? PADL ("Set c.", 11), PADC ("Kolicina", 12), PADC ("Iznos", 15)
+  ? REPL ("-", 11), REPL ("-", 12), REPL ("-", 15)
+  SELECT POM
+  set order to 2
+  GO TOP
+  nTotal := 0
+  nTotal2 := 0
+  nTotal3 := 0
+  do While !EOF()
+    SELECT ROBA
+    HSEEK POM->IdRoba
+    SELECT POM
+    ? POM->IdRoba+" "
+    if roba->(fieldpos("K7"))<>0
+      ?? PADR (ROBA->Naz, 23)+roba->k7
+    else
+      ?? PADR (ROBA->Naz, 21)
+    endif
+    _IdRoba := POM->IdRoba
+    nRobaIzn := 0
+    nRobaIzn2 := 0
+    nRobaIzn3 := 0
+    do while !Eof() .and. POM->IdRoba==_IdRoba
+      _IdCijena := POM->IdCijena
+      nIzn := 0
+      nIzn2 := 0
+      nIzn3 := 0
+      nKol := 0
+      do While !Eof() .and. POM->(IdRoba+IdCijena)==(_IdRoba+_IdCijena)
+        nKol += POM->Kolicina
+        nIzn += POM->Iznos
+        nIzn2 += POM->Iznos2
+        nIzn3 += POM->Iznos3
+        SELECT POM
+        SKIP
+      EndDO
+      ? PADL (_IdCijena, 11), STR (nKol, 12, 3), STR (nIzn, 15, 2)
+      nTotal += nIzn
+      nTotal2 += nIzn2
+     nTotal3 += nIzn3
+    EndDO
+  EndDO
+  ? REPL ("=", 40)
+  ? PADL ("U K U P N O", 24), STR (nTotal, 15, 2)
+  if nTotal2<>0
+      ? PADL ("PARTICIPACIJA:", 24), STR (nTotal2, 15, 2)
+  endif
+  if nTotal3<>0
+      ? PADL (NenapPop(), 24), STR (nTotal3, 15, 2)
+      ? PADL ("UKUPNO NAPLATA:", 24), STR (nTotal-nTotal3+nTotal2, 15, 2)
+  endif
+  ? REPL ("=", 40)
+ENDIF
+IF lTekuci
+  PaperFeed()
+  IF fZaklj
+    END PRN2
+  Else
+    END PRINT
+  EndIF
+ELSE
+  END PRINT
+ENDIF
+IF fZaklj
+  C_RealRadn()
+Else
+  CLOSE ALL
+Endif
+
+if IsPdv()
+	MsgBeep("Ako trebate izvjestaj realizacije sa prikazom PDV-a#"+;
+	    "koristite izvjestaje korisnika nivoa 'upravnik'")
+endif
+
+return .t.
+*}
+
+
+/*! \fn C_RealRadn()
+ *  \brief Zatvaranje baza koristenih u izvjestaju realizacije po radnicima
+ */
+
+function C_RealRadn()
+*{
+SELECT DIO
+	USE
+SELECT KASE
+	USE
+SELECT ROBA
+	USE
+SELECT VRSTEP
+	USE
+select pos_doks
+	USE
+SELECT POS
+	USE
+SELECT POM
+	USE
+return
+*}
+
+
+/*! \fn RadnIzvuci(cIdVd)
+ *  \brief Punjenje pomocne baze realizacijom po radnicima
+ */
+
+function RadnIzvuci(cIdVd)
+*{
+Seek cIdVd+DTOS (dDatOd)
+do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
+
+  IF (Klevel>"0" .and. pos_doks->idpos="X").or.(pos_doks->IdPos="X" .and. AllTrim (cIdPos) <> "X").or.(!Empty(cIdPos) .and. pos_doks->IdPos <> cIdPos).or.(!Empty(cSmjena) .and. pos_doks->Smjena <> cSmjena).or.(!Empty(cIdRadnik) .and. pos_doks->IdRadnik <> cIdRadnik)
+    skip
+    loop
+  EndIF
+  _IdVrsteP := pos_doks->IdVrsteP
+  _IdRadnik := pos_doks->IdRadnik
+  SELECT POS
+  Seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+  do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+    IF (!empty(cIdDio).and.POS->IdDio<>cIdDio)
+      skip
+      loop
+    EndIF
+    select roba
+    hseek pos->idroba
+    select odj
+    hseek roba->idodj
+    nNeplaca:=0
+    if right(odj->naz,5)=="#1#0#"  // proba!!!
+     nNeplaca:=pos->(Kolicina*Cijena)
+    elseif right(odj->naz,6)=="#1#50#"
+     nNeplaca:=pos->(Kolicina*Cijena)/2
+    endif
+    if gPopVar="P"
+    	nNeplaca+=pos->(NCijena*kolicina)
+    endif
+
+    SELECT POM
+    HSEEK _IdRadnik+_IdVrsteP+POS->IdRoba+POS->IdCijena
+    IF !FOUND()
+      APPEND BLANK
+      REPLACE IdRadnik WITH _IdRadnik, IdVrsteP WITH _IdVrsteP, IdRoba WITH POS->IdRoba, IdCijena WITH POS->IdCijena, Kolicina WITH POS->KOlicina, Iznos WITH POS->Kolicina*POS->Cijena, iznos3 with nNeplaca
+       if gPopVar="A"
+              replace Iznos2   with pos->(ncijena)
+       endif
+    Else
+      REPLACE Kolicina WITH Kolicina+POS->Kolicina, Iznos WITH Iznos+POS->Kolicina*POS->Cijena, iznos3 with iznos3+nNeplaca
+      if gPopVar="A"
+              replace Iznos2   with Iznos2+pos->(ncijena)
+      endif
+    EndIF
+    SELECT POS
+    SKIP
+  EndDO
+  select pos_doks
+  SKIP
+EndDO
+return
+*}
+

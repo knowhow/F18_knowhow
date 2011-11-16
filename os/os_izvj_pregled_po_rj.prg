@@ -20,7 +20,7 @@ local lPartner
 O_RJ
 O_OS
 
-lPartner:=IsPartner()
+lPartner:=os_fld_partn_exist()
 
 cIdrj:=space(4)
 cON:="N"

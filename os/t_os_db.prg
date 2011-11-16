@@ -20,7 +20,6 @@ CLASS TDbOs INHERIT TDB
     method skloniSezonu	
 	method setgaDBFs	
 	method install	
-	method ostalef	
 	method obaza	
 	method kreiraj	
 	method konvZn
@@ -45,17 +44,6 @@ method setgaDBFs()
 return
 
 
-// prebaciti u f18_utils.prg
-/*
-AADD( gaDbfs, { F_INVENT, "INVENT", "invent" } )
-AADD( gaDbfs, { F_OS    , "OS"    , "os"  } )
-AADD( gaDbfs, { F_PROMJ , "PROMJ" , "promj"  } )
-AADD( gaDbfs, { F_RJ    , "RJ"    , "rj"  } )
-AADD( gaDbfs, { F_K1    , "K1"    , "k1"  } )
-AADD( gaDbfs, { F_AMORT , "AMORT" , "amort"  } )
-AADD( gaDbfs, { F_REVAL , "REVAL" , "reval"  } )
-*/
-
 
 // -----------------------------------------------
 // -----------------------------------------------
@@ -68,6 +56,10 @@ return
 // -----------------------------------------------
 // -----------------------------------------------
 method kreiraj(nArea)
+
+cDirRad := my_home()
+cDirSif := my_home()
+cDirPriv := my_home()
 
 if (nArea==nil)
 	nArea:=-1

@@ -62,6 +62,7 @@ AADD( menuop, "3) FAKT  # fakturisanje")
 AADD( menuop, "4) ePDV  # elektronska evidencija PDV-a")
 AADD( menuop, "5) LD    # obracun plata")
 AADD( menuop, "6) RNAL  # radni nalozi")
+AADD( menuop, "7) OS    # osnovna sredstva")
 
 do while .t.
 
@@ -83,6 +84,8 @@ do while .t.
 			MainLd(cUser, cPassWord, p3, p4, p5, p6, p7)
 		case mnu_choice == 6
 			MainRnal(cUser, cPassWord, p3, p4, p5, p6, p7)
+		case mnu_choice == 7
+			MainOs(cUser, cPassWord, p3, p4, p5, p6, p7)
  	endcase
  	loop
 enddo

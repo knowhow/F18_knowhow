@@ -110,7 +110,7 @@ private m:="----- ---------- ---- -------- ------------------------------ --- --
 
 private nrbr:=0
 nDug:=nPot1:=nPot2:=0
-Zagl3()
+os_zagl_amort()
 n1:=n2:=0
 do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
    cIdAm:=idam
@@ -119,7 +119,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
       cIdAmort:=idam
       nDug3:=nPot31:=nPot32:=0
       do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idam==cidamort
-         if prow()>63; FF; Zagl3(); endif
+         if prow()>63; FF; os_zagl_amort(); endif
          if !( (cON=="N" .and. empty(datotp)) .or.;
                (con=="O" .and. !empty(datotp)) .or.;
                (con=="B" .and. year(datum)=year(gdatobr)) .or.;
@@ -217,7 +217,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
 
          skip
       enddo
-      if prow()>62; FF; Zagl3(); endif
+      if prow()>62; FF; os_zagl_amort(); endif
       ? m
       ? " ukupno ",cidamort
       @ prow(),ncol1    SAY ndug3*nBBK pict gpici
@@ -230,7 +230,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
       if !empty(qidAm); exit; endif
     enddo
     if !empty(qidAm); exit; endif
-    // if prow()>62; FF; Zagl3(); endif
+    // if prow()>62; FF; os_zagl_amort(); endif
     // ? m
     // ? " UKUPNO ",cidam
     // @ prow(),ncol1    SAY ndug2 pict gpici
@@ -242,7 +242,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
     nDug+=nDug2; nPot1+=nPot21; nPot2+=nPot22
 enddo
 if empty(qidAm)
-if prow()>60; FF; Zagl3(); endif
+if prow()>60; FF; os_zagl_amort(); endif
 ?
 ? m
 ? " U K U P N O :"

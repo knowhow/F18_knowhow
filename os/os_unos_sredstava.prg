@@ -289,7 +289,7 @@ function ShowSadVr()
     _amd:=_amp:=nOstalo:=0
     _datum:=aSred[i,2]
     _datotp:=aSred[i,3]
-    IzrAm(_datum,iif(!empty(_datotp),min(gDatObr,_datotp),gDatObr),100)     // napuni _amp
+    izracunaj_os_amortizaciju(_datum,iif(!empty(_datotp),min(gDatObr,_datotp),gDatObr),100)     // napuni _amp
     aSred[i,6]=_amp
   NEXT
   SKIP -1

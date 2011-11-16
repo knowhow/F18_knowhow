@@ -300,3 +300,16 @@
 #xcommand O_PK_RADN => select (F_RADSAT) ; my_use ("pk_radn"); set order to tag "1"
 #xcommand O_PK_DATA => select (F_RADSAT) ; my_use ("pk_data"); set order to tag "1"
 
+// modul OS
+#xcommand O_OS   => select (F_OS); my_use ("os"); set order to tag "1"
+#xcommand O_OSX   => select (F_OS); my_use ("os"); set order to tag "1"
+#xcommand O_PROMJ   => select (F_PROMJ); my_use ("promj"); set order to tag "1"
+#xcommand O_PROMJX   => select (F_PROMJ); my_use ("promj"); set order to tag "1"
+#xcommand O_INVENT  =>  select (F_INVENT); my_use ("invent"); set order to tag "1"
+#xcommand O_AMORT   => select (F_AMORT); my_use ("amort"); set order to tag "ID"
+#xcommand O_REVAL   => select (F_REVAL); my_use ("reval"); set order to tag "ID"
+#xcommand O_RJ   => select (F_RJ); my_use ("rj"); set order to tag "ID"
+#xcommand O_K1   => select (F_K1); my_use ("k1"); set order to tag "ID"
+
+
+

@@ -84,7 +84,7 @@ endif
 
 private nrbr:=0
 nDug1:=nDug2:=nPot1:=nPot2:=0
-Zagl4()
+os_zagl_reval()
 n1:=n2:=0
 do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
    cIdSK:=left(idkonto,3)
@@ -93,7 +93,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
       cIdKonto:=idkonto
       nDug31:=nDug32:=nPot31:=nPot32:=0
       do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idkonto==cidkonto
-         if prow()>63; FF; Zagl4(); endif
+         if prow()>63; FF; os_zagl_reval(); endif
          if !( (cON=="N" .and. empty(datotp)) .or.;
                (con=="O" .and. !empty(datotp)) .or.;
                (con=="B" .and. year(datum)=year(gdatobr)) .or.;
@@ -146,7 +146,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
 
          skip
       enddo
-      if prow()>62; FF; Zagl4(); endif
+      if prow()>62; FF; os_zagl_reval(); endif
       ? m
       ? " ukupno ",cidkonto
       @ prow(),ncol1    SAY ndug31*nBBK pict gpici
@@ -160,7 +160,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
       if !empty(qidkonto); exit; endif
     enddo
     if !empty(qidkonto); exit; endif
-    if prow()>62; FF; Zagl4(); endif
+    if prow()>62; FF; os_zagl_reval(); endif
     ? m
     ? " UKUPNO ",cidsk
     @ prow(),ncol1    SAY ndug21*nBBK pict gpici
@@ -173,7 +173,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
     nDug2+=nDug22; nPot2+=nPot22
 enddo
 if empty(qidkonto)
-if prow()>60; FF; Zagl4(); endif
+if prow()>60; FF; os_zagl_reval(); endif
 ?
 ? m
 ? " U K U P N O :"
@@ -191,10 +191,7 @@ end print
 
 closeret
 
-*************************
-* zaglavlje izvjestaj rev
-*************************
-function Zagl4()
+function os_zagl_reval()
 ?
 P_COND
 @ prow(),125 SAY "Str."+str(++nStr,3)

@@ -201,19 +201,6 @@ return PostojiSifra(F_AMORT,1,10,60,"Lista koeficijenata amortizacije",@cId,dx,d
 
 
 
-
-function P_K1(cId,dx,dy)
-
-private imekol,kol
-
-ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",25), {||  naz}, "naz" }                       ;
-       }
-Kol:={1,2}
-return PostojiSifra(F_K1,1,10,55,"Lista grupacija - k1",@cId,dx,dy)
-
-
-
 function P_REVAL(cId,dx,dy)
 PRIVATE ImeKol,Kol
 ImeKol:={ { PADR("Id",4),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    },;

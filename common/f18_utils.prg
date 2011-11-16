@@ -393,6 +393,14 @@ AADD(gaDBFs, { F_STRSPR ,"STRSPR"  , "strspr"     } )
 AADD(gaDBFs, { F_KBENEF ,"KBENEF"  , "kbenef"     } )
 AADD(gaDBFs, { F_VPOSLA ,"VPOSLA"  , "vposla"     } )
 
+// modul OS
+AADD( gaDbfs, { F_INVENT, "INVENT", "invent" } )
+AADD( gaDbfs, { F_OS    , "OS"    , "os"  } )
+AADD( gaDbfs, { F_PROMJ , "PROMJ" , "promj"  } )
+AADD( gaDbfs, { F_RJ    , "RJ"    , "rj"  } )
+AADD( gaDbfs, { F_K1    , "K1"    , "k1"  } )
+AADD( gaDbfs, { F_AMORT , "AMORT" , "amort"  } )
+AADD( gaDbfs, { F_REVAL , "REVAL" , "reval"  } )
 
 log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)
 

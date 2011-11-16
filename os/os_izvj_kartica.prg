@@ -29,46 +29,6 @@ select (nArr)
 return
 
 
-
-static function OmjerVal(v1,v2)
-local nArr:=SELECT(), n1:=1, n2:=1, lv1:=.f., lv2:=.f.
-select valute
-set order to tag "ID2"
-go bottom
-do while (!BOF() .and. (!lv1.or.!lv2))
-	if !lv1 .and. naz2==v1
-		n1:=kurs1
-		lv1:=.t.
-	endif
-	if !lv2 .and. naz2==v2
-		n2:=kurs1
-		lv2:=.t.
-	endif
-	skip -1
-enddo
-select (nArr)
-return (n1/n2)
-
-
-function ImaUSifVal(cKratica)
-local lIma:=.f., nArr:=SELECT()
-select (F_VALUTE)
-if !USED()
-	O_VALUTE
-endif
-go top
-do while !EOF()
-	if naz2==PADR(cKratica,4)
-		lIma:=.t.
-		exit
-	endif 
-	skip 1
-enddo
-select (nArr)
-return lIma
-
-
-
 function PrikazVal()
 return ( IF( gDrugaVal=="D" , " VALUTA:'"+TRIM(cBBV)+"'" , "" ) )
 

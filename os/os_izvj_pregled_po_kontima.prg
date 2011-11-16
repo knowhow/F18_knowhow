@@ -176,7 +176,7 @@ endif
 private nRbr:=0
 nDug:=0
 nPot:=0
-Zagl2()
+os_zagl_konta()
 n1:=n2:=0
 nUUUKol:=0
 
@@ -208,7 +208,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
          if datum>gDatObr // preskoci sredstva van obracuna
             skip; loop
          endif
-         if prow()>63; FF; Zagl2(); endif
+         if prow()>63; FF; os_zagl_konta(); endif
          if (cON=="N" .and. empty(datotp)) .or. ;
             (con=="O"  .and. !empty(datotp)) .or. ;
             (con=="B"  .and. year(datum)=year(gdatobr)) .or.;
@@ -385,7 +385,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
       enddo
       if prow()>62
       	FF
-	Zagl2()
+	os_zagl_konta()
       endif
       if cRekapKonta=="N"
       	? m
@@ -409,7 +409,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
       if !empty(qidkonto); exit; endif
     enddo
     if !empty(qidkonto); exit; endif
-    if prow()>62; FF; Zagl2(); endif
+    if prow()>62; FF; os_zagl_konta(); endif
     ? m
     ? " UKUPNO ", cIdSk, PADR( cNazSKonto, 40 )
      if cRekapKonta=="D"
@@ -427,7 +427,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
      nDug+=nDug2; nPot+=nPot2
 enddo
 if empty(qidkonto)
-if prow()>60; FF; Zagl2(); endif
+if prow()>60; FF; os_zagl_konta(); endif
 ?
 ? m
 ? " U K U P N O :"
@@ -451,7 +451,7 @@ return
 // -------------------------------------
 // zaglavlje izvjestaja
 // -------------------------------------
-function Zagl2()
+function os_zagl_konta()
 P_12CPI
 if con="N"
 	? "PRIKAZ NEOTPISANIH SREDSTAVA:"

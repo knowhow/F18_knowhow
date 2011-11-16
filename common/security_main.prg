@@ -30,20 +30,18 @@ params["port"] := nil
 
 f18_ini_read("F18_server", @params, .t.)
 
-
 cHostName := params["host_name"]
 cDatabase := params["database"]
 cUser := params["user_name"]
 cSchema := params["schema"]
 cPort := params["port"]
-cPassword := PADR( cPassword, 100 )
 
 if (cHostName == nil) .or. (cPort == nil)
 	cConfigureServer := "D"
 endif 
 
 if cHostName == nil
-   cHostName := PADR("localhost", 100)
+   cHostName := "localhost"
 endif
 
 if cPort == nil
@@ -53,16 +51,22 @@ else
 endif
 
 if cSchema == nil
-  cSchema :=  PADR("fmk", 40)
+  cSchema := "fmk"
 endif
 
 if cDatabase == nil
-  cDatabase := PADR("bringout1", 100)
+  cDatabase := "bringout"
 endif
 
 if cUser == nil
-  cUser := PADR("admin", 100)
+  cUser := "admin"
 endif
+
+cSchema :=  PADR(cSchema, 40)
+cDatabase := PADR(cDatabase, 100)
+cHostName := PADR(cHostName, 100)
+cUser := PADR(cUser, 100)
+cPassword := PADR(cPassword, 100 )
 
 clear screen
 

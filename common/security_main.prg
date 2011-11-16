@@ -74,7 +74,7 @@ endif
 ++ nX
 ++ nX
 
-@ nX, nLeft SAY PADL( "LOZINKA:", 15 ) GET cPassword PICT "@S30"
+@ nX, nLeft SAY PADL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR "BG/BG"
 
 read
 

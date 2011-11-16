@@ -830,7 +830,7 @@ if pitanje(,"Izvrsiti prenos k7 iz c:\tops\robknj.dbf","N")=="D"
    usex ("C:\tops\robknj") NEW
    go top
    do while !eof()
-      select roba; seek robknj->id
+      select pos_roba; seek robknj->id
       if found()
          replace k7 with robknj->k7
       endif
@@ -949,7 +949,7 @@ O_MJTRUR
 O_UREDJ
 O_ODJ
 O_K2C
-O_ROBA
+O_POS_ROBA
 O_SIFK
 O_SIFV
 O__PRIPR

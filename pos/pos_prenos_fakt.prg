@@ -48,7 +48,7 @@ return cPm
 function Real2Fakt()
 *{
 
-O_ROBA
+O_POS_ROBA
 O_SIFK
 O_SIFV
 O_RNGOST
@@ -225,7 +225,7 @@ return
 function Stanje2Fakt()
 *{
 
-O_ROBA
+O_POS_ROBA
 O_SIFK
 O_SIFV
 O_RNGOST
@@ -326,7 +326,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 	enddo
 
 
-	select roba
+	select pos_roba
 	seek cIdRoba
 	select topsfakt
 	nKolicina:=nUlaz-nIzlaz
@@ -338,8 +338,8 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 		replace idPos WITH cIdPos
 		replace idRoba WITH cIdRoba
 		replace kolicina WITH nKolicina
-		replace idTarifa WITH roba->idTarifa
-		replace mpc With roba->cijena1
+		replace idTarifa WITH pos_roba->idTarifa
+		replace mpc With pos_roba->cijena1
 		replace datum WITH dDatDo
 		replace idVd With cIdVd
 		replace idPartner with cIdPartner

@@ -536,7 +536,7 @@ if gVodiOdj=="0"
       			skip
     		enddo
     		use
-    		O_ROBA
+    		O_POS_ROBA
 		set order to 0
 		go top
     		do while !eof()

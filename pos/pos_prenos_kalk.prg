@@ -428,7 +428,7 @@ if (cIdVd == nil)
 endif
 
 // prenos realizacija POS - KALK
-O_ROBA
+O_POS_ROBA
 O_KASE
 O_POS
 O_POS_DOKS
@@ -490,8 +490,8 @@ AADD(aDBF,{"IdVd",     "C",  2, 0})
 AADD(aDBF,{"BRDOK",    "C", 10, 0})
 AADD(aDBF,{"M1",       "C",  1, 0})
 
-select roba
-if roba->(FieldPos("barkod"))<>0
+select pos_roba
+if pos_roba->(FieldPos("barkod"))<>0
 	AADD(aDBF,{"BARKOD","C",13,0})
 endif
 
@@ -571,8 +571,8 @@ do while !eof() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum<=dDatDo
 		
 		Scatter()
     		// uzmi i barkod
-		if roba->(fieldpos("barkod"))<>0
-			select roba
+		if pos_roba->(fieldpos("barkod"))<>0
+			select pos_roba
 			set order to tag "ID"
 			hseek pos->idroba
 		endif
@@ -608,8 +608,8 @@ do while !eof() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum<=dDatDo
 					
 			replace StMPC WITH pos->ncijena
 					
-			if roba->(FieldPos("barkod"))<>0
-				replace barkod with roba->barkod
+			if pos_roba->(FieldPos("barkod"))<>0
+				replace barkod with pos_roba->barkod
 			endif
 						
 			if !EMPTY(pos_doks->idgost)
@@ -759,7 +759,7 @@ O_SIFV
 if Pitanje(,"Osvjeziti sifrarnik iz arhive " + cDirZip + "ROBKNJ.ZIP"," ")=="D"
 	lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")
 	AzurSifIzFmk(cDirZip, lAddNew)	
-     	O_ROBA
+     	O_POS_ROBA
      	P_RobaPos()
 endif
 

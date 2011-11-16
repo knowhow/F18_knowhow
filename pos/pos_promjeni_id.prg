@@ -38,7 +38,7 @@ private dMinDatProm:=ctod("")
 O_SIFK
 O_SIFV
 O_KASE
-O_ROBA
+O_POS_ROBA
 O__PRIPR
 O_POS_DOKS
 O_POS

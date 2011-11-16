@@ -111,7 +111,7 @@ O_TARIFA
 @ m_x+2,m_y+2 SAY "Logiram tabelu  "+padr(ALIAS(),15)
 Log_Tabela("TARIFA")
 
-O_ROBA
+O_POS_ROBA
 @ m_x+2,m_y+2 SAY "Logiram tabelu  "+padr(ALIAS(),15)
 Log_Tabela("ROBA")
 
@@ -297,7 +297,7 @@ return 1
  */
 function LogRecRoba(cIdRoba)
 *{
-O_ROBA
+O_POS_ROBA
 set order to tag "ID"
 hseek cIdRoba
 altd()
@@ -319,7 +319,7 @@ return
 function NewRecRoba(cIdRoba)
 *{
 local nTRec
-O_ROBA
+O_POS_ROBA
 set order to tag "ID"
 hseek cIdRoba
 nTRec := RecNo()
@@ -330,9 +330,9 @@ Gw(cSQL)
 // logiraj record
 New_Record()
 
-O_ROBA
+O_POS_ROBA
 go (nTRec)
-if (roba->id == cIdRoba)
+if (pos_roba->id == cIdRoba)
 	delete
 endif
 
@@ -505,16 +505,16 @@ function SynTarCij()
 local lCekaj
 
 CLOSE ALL
-O_ROBA
+O_POS_ROBA
 
 MsgO("Sinhroniziram tarife, cijene lokalni<->udaljeni site...")
 
 
-SELECT roba
+select pos_roba
 GO TOP
 nCnt:=0
 do while !eof()
-	SELECT roba
+	select pos_roba
 	REPLSQL idtarifa with field->idtarifa
 	REPLSQL cijena1 with field->cijena1
 	skip

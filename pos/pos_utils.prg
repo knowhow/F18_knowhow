@@ -416,7 +416,7 @@ aOpc:={"Izmjeni","Ukini","Ostavi"}
 
 O_SIFK
 O_SIFV
-O_ROBA
+O_POS_ROBA
 O_K2C
 
 Box(,10,75)
@@ -519,10 +519,10 @@ function NazivRobe(cIdRoba)
 *{
 local nCurr:=SELECT()
 
-SELECT ROBA
+select pos_roba
 HSEEK cIdRoba
 SELECT nCurr
-return (ROBA->Naz)
+return (pos_roba->Naz)
 *}
 
 

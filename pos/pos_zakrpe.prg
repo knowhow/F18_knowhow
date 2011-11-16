@@ -60,7 +60,7 @@ function SynchroCijene()
 local lCekaj
 
 CLOSE ALL
-O_ROBA
+O_POS_ROBA
 
 MsgBeep("Sinhroniziraj cijene FMK roba i POS roba ...")
 
@@ -86,18 +86,18 @@ if (LASTKEY()==K_ESC)
 endif
 
 SELECT 0
-USE (cLokacija) ALIAS robaFmk
+my_use( cLokacija, .t., "robafmk" )
 SET ORDER TO TAG "ID"
 
-SELECT roba
+select pos_roba
 GO TOP
 nCnt:=0
 do while !eof()
-	SELECT robaFmk
-	SEEK roba->id
+	select robaFmk
+	SEEK pos_roba->id
 	if FOUND()
 		if ROUND(roba->cijena1, 2)<>ROUND(robaFmk->mpc, 2) 
-			SELECT roba
+			select pos_roba
 			if lCekaj
 				MsgBeep(roba->id+"##roba->cijena="+STR(roba->cijena1, 6, 2)+" => fmk->mpc="+STR(robaFmk->mpc, 6, 2))
 				if (LASTKEY()==K_ESC)
@@ -108,16 +108,16 @@ do while !eof()
 			++nCnt
 		endif
 	endif
-	SELECT roba
+	select pos_roba
 	skip
 enddo
 
 MsgBeep("Izvrsio sam "+STR(nCnt,4)+" promjena ")
 
-SELECT robaFmk
+select robaFmk
 USE
 
 return
-*}
+
 
 

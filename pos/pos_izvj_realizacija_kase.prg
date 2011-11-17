@@ -495,9 +495,9 @@ CREATE_INDEX("3" ,"IdPos+IdRoba+IdCijena"                        ,cPomDbf,.f.)
 CREATE_INDEX("4" ,"IdPos+IdVrsteP"                               ,cPomDbf,.f.)
 CREATE_INDEX("K1","IdPos+K1+idroba"                              ,cPomDbf,.f.)
 
-my_use("pom", "POM", .t.)
+my_use("pom", "POM")
 
-set order to 1
+set order to tag "1"
 
 return
 

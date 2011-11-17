@@ -1035,10 +1035,10 @@ AADD(aDbf, {"Otv",      "N", 12, 2})
 Dbcreate2(PRIVPATH+"ZAKSM", aDbf)
 
 select (F_ZAKSM)
-my_use ("zaksm", "NEW", .t.)
+my_use ("zaksm", "ZAKSM", .t.)
 INDEX ON IdRadnik TAG ("1")           
 index ON BRISANO+"10" TAG "BRISAN" 
-Set Order To 1
+Set Order To tag "1"
 
 // pokupi nezakljucene racune....................
 SELECT _POS
@@ -1648,10 +1648,10 @@ AADD(aDbf, {"Datum", "D", 8, 0})
 
 NaprPom (aDbf)
 
-my_use("POM", "NEW", .t.)
+my_use("POM", "POM", .t.)
 
 INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (PRIVPATH+"POM")
-set order to 1
+set order to tag "1"
 
 return
 

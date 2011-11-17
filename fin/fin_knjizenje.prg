@@ -279,7 +279,7 @@ ESC_RETURN 0
 
 if fNovi .and. (_idfirma<>idfirma .or. _idvn<>idvn)
 	_brnal := nextnal( _idfirma, _idvn )
-     	select  pripr
+     	select  fin_pripr
 endif
 
 set key K_ALT_K to DinDem()

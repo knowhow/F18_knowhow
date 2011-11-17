@@ -337,9 +337,11 @@ return (DE_CONT)
  
 function SR_Iznos()
 *{
-
+altd()
 nIznos:=0
 SELECT POS
+set order to tag "1"
+go top
 Seek2(pos_doks->(IdPos+IdVd+dtos(datum)+BrDok))
 while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 	nIznos+=POS->(Kolicina * Cijena)

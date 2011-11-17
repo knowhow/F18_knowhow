@@ -16,7 +16,7 @@
 // -----------------------
 function set_global_vars()
 
-CreParams(F_PARAMS)
+CreParams()
 
 SetSpecifVars()
 SetValuta()

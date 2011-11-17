@@ -44,16 +44,12 @@ endif
 return
 *}
 
-function CreParams(nArea)
+function CreParams()
 *{
 close all
 
 if gReadOnly
 	return
-endif
-
-if (nArea==nil)
-	nArea:=-1
 endif
 
 aDbf:={}
@@ -64,37 +60,26 @@ AADD(aDbf, {"Rbr","C",1,0} )
 AADD(aDbf, {"Tip","C",1,0} ) // tip varijable
 AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
-if (nArea==-1 .or. nArea==F_PARAMS)
 
-    if !file(f18_ime_dbf("params"))
+  	if !file(f18_ime_dbf("params"))
 		DBCREATE2(PRIVPATH+"params.dbf",aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr",PRIVPATH+"params.dbf",.t.)
 	
-endif
-
-
-if (nArea==-1 .or. nArea==F_GPARAMS)
     if !file(f18_ime_dbf("gparams"))
 	 DBCREATE2(PRIVPATH+"gparams.dbf",aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr", PRIVPATH + "gparams.dbf",.t.)
-endif
 
-if (nArea==-1 .or. nArea==F_MPARAMS)
     if !file(f18_ime_dbf("mparams"))
 	 DBCREATE2(TRUENAME(".\mparams.dbf"),aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr",".\mparams",.t.)
-endif
 
-if (nArea==-1 .or. nArea==F_KPARAMS)
     if !file(f18_ime_dbf("kparams"))
 	 DBCREATE2(KUMPATH+"KPARAMS.dbf",aDbf)
 	endif
 	CREATE_INDEX("ID", "fsec+fh+fvar+rbr", KUMPATH+"kparams.dbf", .t.)
-endif
-
 
 aDbf:={}
 AADD(aDbf, {"FH","C",1,0} )  // istorija
@@ -105,13 +90,11 @@ AADD(aDbf, {"Tip","C",1,0} ) // tip varijable
 AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
 
-if (nArea==-1 .or. nArea==F_SECUR)
 	cImeDBf:=ToUnix(KUMPATH+"secur.dbf")
     if !file(f18_ime_dbf(cImeDbF))
 	 DBCREATE2(cImeDBF,aDbf)
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr", cImeDBF, .t.)
-endif
 
 return NIL
 *}

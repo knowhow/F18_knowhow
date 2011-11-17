@@ -385,9 +385,6 @@ cIdVd:=pos_doks->idVd
 cBrDok:=pos_doks->brDok
 dDatum:=pos_doks->datum
 
-//SEEK cIdPos + cIdVd + DTOS(dDatum) + cBrDok
- 
- 
 if ((lUI==NIL) .or. lUI)
 	// ovo su ulazi ...
     	if pos_doks->IdVd $ VD_ZAD+"#"+VD_PCS+"#"+VD_REK

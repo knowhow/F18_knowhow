@@ -211,7 +211,7 @@ ImeKol:={ { "Roba",         {|| IdRoba+"-"+Left (RobaNaz, 30)},},;
         }
 Kol:={1, 2, 3, 4}
 GO TOP
-ObjDBedit (, 20, 70,, " Radni racun "+ AllTrim (cBrDok), "", .T.)
+ObjDBedit ( "rn2", 20, 70,, " Radni racun "+ AllTrim (cBrDok), "", nil )
 SET FILTER TO
 
 select _pos_pripr

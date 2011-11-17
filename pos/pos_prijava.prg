@@ -62,7 +62,7 @@ return (cLevel)
 
 function HSpecSifre(cKorSif)
   if trim(upper(cKorsif)) $ "X"
-    	return
+    	goModul:lTerminate := .t.
 		//UgasitiR()
   elseif trim(upper(cKorsif)) = "I"
        	InstallOps(cKorSif)

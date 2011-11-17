@@ -12,21 +12,8 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- *
- */
- 
-/*! \fn P_RadniRac(cBroj)
- *  \brief Pregled svih otvorenih radnih racuna za radnika
- *  \param cBroj
- */
- 
+
 function P_RadniRac(cBroj)
-*{
 
 if cBroj==nil
 	cBroj:=SPACE(LEN(_POS->BrDok))

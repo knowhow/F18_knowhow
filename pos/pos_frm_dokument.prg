@@ -96,10 +96,10 @@ dDatOd:=DATE()-1
 dDatDo:=DATE()
 
 Box(,3,60)
-@ m_x+1,m_y+2 SAY "Datumski period:" GET dDatOd
-@ m_x+1,col()+2 SAY "-" GET dDatDo
-@ m_x+3,m_y+2 SAY "Vrste (prazno svi)" GET cVrste pict "@!"
-read
+	@ m_x+1,m_y+2 SAY "Datumski period:" GET dDatOd
+	@ m_x+1,col()+2 SAY "-" GET dDatDo
+	@ m_x+3,m_y+2 SAY "Vrste (prazno svi)" GET cVrste pict "@!"
+	read
 BoxC()
 
 if !empty(dDatOd).or.!empty(dDatDo)
@@ -112,13 +112,8 @@ if !(cFilter==".t.")
 	set filter to &cFilter
 endif
 
-// "1", "IdPos+IdVd+dtos(datum)+BrDok"
-if klevel<="0".and.SigmaSif(gSTELA)
-	set scope to
-else
-	set scopebottom to "W"
-endif
-GO TOP
+//set scopebottom to "W"
+go top
 
 aOpc:={"<Enter> - Odabir", "<T> - trazi", "<c-F> - trazi po koloni","<c-P>   - Stampaj listu"}
 
@@ -126,11 +121,12 @@ if klevel<="1"
 	AADD( aOpc, "<F2> - promjena vrste placanja" )
 endif
 
-ObjDBedit( , 19, 77, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", .f., aOpc )
+ObjDBedit( "pos_doks" , 19, 77, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
 
-CLOSERET
+close all
+
 return
-*}
+
 
 
 /*! \fn PrepDokProc()
@@ -186,9 +182,6 @@ do case
 		endif
 		return DE_CONT
 	case Ch==K_CTRL_F9
-		//if !SigmaSif("BRISRN")
-		//	return DE_CONT
-		//endif
 		O_STRAD
         	select strad
 		hseek gStrad

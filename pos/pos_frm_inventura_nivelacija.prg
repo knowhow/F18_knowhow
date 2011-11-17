@@ -12,28 +12,8 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-/*! \file fmk/pos/dok/1g/frm_inni.prg
- *  \brief Inventura/Nivelacija
- */
- 
-
-/*! \fn InvertNivel()
- *  \brief Inventura ili nivelacija
- *  \param lInvent:=.t. -> radi se o inventuri
- *  \param lInvent:=.f. -> radi se o nivelaciji
- *  \param fIzZad -> poziva se iz funkcije zaduzenja
- *  \param fSadAz -> azuriraj odmah
- */
-
 function InventNivel()
 
-*{
 parameters fInvent, fIzZad, fSadAz, dDatRada
 
 local i:=0
@@ -293,7 +273,11 @@ if !fSadAz  // azuriraj odmah
 		GO TOP
 		@ 12,0 SAY ""
   		SET CURSOR ON
-  		ObjDBedit("PripInv",15,77,{|| EditInvNiv()},"Odjeljenje: "+cIdOdj+"-"+ALLTRIM(Ocitaj(F_ODJ,cIdOdj,"naz"))+""+IIF(Empty(cIdDio),"","Dio objekta: "+cIdDio+"-"+ALLTRIM(Ocitaj(F_DIO,cIdDio,"naz"))+""),"PRIPREMA "+cNazDok+"E",.f.,{"<c-N>   Dodaj stavku", "<Enter> Ispravi stavku","<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka"},2,,,)
+  		ObjDBedit( "PripInv", 15, 77, {|| EditInvNiv() }, ;
+			"Odjeljenje: " + cIdOdj + "-" + ALLTRIM(Ocitaj(F_ODJ,cIdOdj,"naz")) + IIF(Empty(cIdDio), ;
+			"", "Dio objekta: " + cIdDio + "-" + ALLTRIM(Ocitaj(F_DIO,cIdDio,"naz"))+""), ;
+			"PRIPREMA " + cNazDok + "E", nil, ;
+			{"<c-N>   Dodaj stavku", "<Enter> Ispravi stavku","<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka"},2,,,)
 
   		// 3) nakon prekida rada na inventuri (<Esc>) utvrdjuje se da li je inventura zavrsena
  

@@ -343,7 +343,7 @@ IF ZAKSM->(RecCount2()) > 0
           }
   Kol:={1,2,3,4}
   ObjDBedit ( , 10, 77, {|Ch| ZakljRadnik (Ch) }, ;
-              "  ZAKLJUCENJE RADNIKA  ", "", .F., ;
+              "  ZAKLJUCENJE RADNIKA  ", "", nil, ;
               "<Z> - Zakljuci")
   IF ZAKSM->(RecCount2()) > 0
     // zakljucen je samo dio radnika - vrati se nazad

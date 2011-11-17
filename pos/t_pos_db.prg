@@ -309,9 +309,9 @@ if (nArea==-1 .or. nArea==(F_PROMVP))
 	
 	cImeDbf:=KUMPATH+"PROMVP.DBF"
 	cImeCdx:=KUMPATH+"PROMVP.CDX"
-	if FILE(cImeDbf)
-		SELECT(F_PROMVP)
-		USE(cImeDbf)
+	if FILE(f18_ime_dbf("promvp"))
+		
+		my_use("promvp")
 		if (FIELDPOS("polog01")==0 .or. FIELDPOS("_SITE_")==0)
 			USE
 			//stara struktura tabele
@@ -319,7 +319,7 @@ if (nArea==-1 .or. nArea==(F_PROMVP))
 			FERASE(cImeCdx)
 		endif
 	endif
-	if !FILE(cImeDbf)
+	if !FILE(f18_ime_dbf("promvp"))
 	   aDbf := { {"pm",        "C",  2, 0}, ;
 		     {"datum",     "D",  8, 0}, ;
 		     {"polog01",   "N", 10, 2}, ;
@@ -365,7 +365,7 @@ if (nArea==-1 .or. nArea==(F__POS))
 endif
 
 if (nArea==-1 .or. nArea==(F__POSP))
-	IF !FILE( PRIVPATH + "_POSP.DBF" )
+	IF !FILE( f18_ime_dbf("_posp") )
 	   DBcreate2 (PRIVPATH + "_POSP", aDbf )
 	ENDIF
 endif
@@ -416,7 +416,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_K2C))
 	// K2C
-	IF !FILE ( PRIVPATH + "K2C.DBF" )
+	IF !FILE ( f18_ime_dbf("k2c") )
 	   aDbf := {}
 	   AADD ( aDbf, {"KEYCODE", "N",  4, 0} )
 	   AADD ( aDbf, {"IDROBA",  "C", 10, 0} )
@@ -428,7 +428,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_MJTRUR))
 	// MJTRUR - parovi (mjesto trebovanja,uredjaj)
-	IF !FILE(PRIVPATH + "MJTRUR.DBF")
+	IF !FILE(f18_ime_dbf("mjtrur"))
 	   aDbf := {}
 	   AADD ( aDbf, {"IDDIO",      "C",  2, 0} )
 	   AADD ( aDbf, {"IDODJ",      "C",  2, 0} )
@@ -440,7 +440,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_ROBAIZ))
 	// ROBAIZ (ako se roba ne izuzima na punktu kojeg pokriva kasa)
-	IF ! FILE (PRIVPATH+"ROBAIZ.DBF")
+	IF ! FILE (f18_ime_dbf("robaiz"))
 	  aDbf := {}
 	  AADD ( aDbf, {"IDROBA",     "C", 10, 0} )
 	  AADD ( aDbf, {"IDDIO",      "C",  2, 0} )
@@ -451,7 +451,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_STRAD))
 	// STRAD.DBF
-	IF ! FILE ( SIFPATH + "STRAD.DBF" )
+	IF ! FILE ( f18_ime_dbf("strad") )
 	   aDbf := {}
 	   AADD ( aDbf, { "ID",        "C",  2, 0} )
 	   AADD ( aDbf, { "NAZ",       "C", 15, 0} )
@@ -464,7 +464,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_OSOB))
 	// OSOB.DBF
-	IF ! FILE ( SIFPATH + "OSOB.DBF" )
+	IF ! FILE ( f18_ime_dbf("osob") )
 	   aDbf := {}
 	   AADD ( aDbf, { "ID",        "C",  4, 0} )
 	   AADD ( aDbf, { "KORSIF",    "C",  6, 0} )     // KORISN.SIF
@@ -478,7 +478,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_KASE))
 	//KASE
-	IF !FILE(SIFPATH+"KASE.DBF")
+	IF !FILE(f18_ime_dbf("kase"))
 	   aDbf := {}
 	   AADD ( aDbf, {"ID" ,     "C",  2, 0} )
 	   AADD ( aDbf, {"NAZ",     "C", 15, 0} )
@@ -490,7 +490,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_ODJ))
 	// ODJ - odjeljenja
-	IF ! FILE ( SIFPATH + "ODJ.DBF")
+	IF ! FILE ( f18_ime_dbf("odj"))
 	   aDbf := {}
 	   AADD ( aDbf, {"ID" ,      "C",  2, 0} )
 	   AADD ( aDbf, {"NAZ",      "C", 25, 0} )
@@ -503,7 +503,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_DIO))
 	// DIO - dijelovi objekta - HOPS
-	IF ! FILE ( SIFPATH + "DIO.DBF")
+	IF ! FILE ( f18_ime_dbf("dio"))
 	   aDbf := {}
 	   AADD ( aDbf, {"ID" ,      "C",  2, 0} )
 	   AADD ( aDbf, {"NAZ",      "C", 25, 0} )
@@ -514,7 +514,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_UREDJ))
 	// UREDJAJ - parovi (mjesto trebovanja,uredjaj)
-	IF ! FILE ( SIFPATH + "UREDJ.DBF")
+	IF ! FILE ( f18_ime_dbf("uredj"))
 	   aDbf := {}
 	   AADD ( aDbf, {"ID"        , "C",  2, 0} )
 	   AADD ( aDbf, {"NAZ"       , "C", 30, 0} )
@@ -527,7 +527,7 @@ endif
 
 if (nArea==-1 .or. nArea==(F_MARS))
 	// MARS.DBF
-	IF ! FILE ( SIFPATH + "MARS.DBF" )
+	IF ! FILE ( f18_ime_dbf("mars") )
 	   aDbf := {}
 	   AADD ( aDbf, { "ID",        "C",  8, 0} )
 	   AADD ( aDbf, { "ID2",       "C",  8, 0} )

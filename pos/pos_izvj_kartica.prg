@@ -70,7 +70,6 @@ O_DIO
 O_SIFK
 O_SIFV
 O_ROBA
-O_SIROV
 O_POS
 
 cRoba:=SPACE(len(idroba))
@@ -117,16 +116,7 @@ endif
 
 read
 
-if odj->zaduzuje="S"
-
-	@ m_x+5,m_y+6 SAY "Sifra artikla (prazno-svi)" GET cRoba valid empty(cRoba) .or. P_Sirov(@cRoba) pict "@!"
-	
-else
-
-	@ m_x+5,m_y+6 SAY "Sifra artikla (prazno-svi)" GET cRoba valid empty(cRoba) .or. P_RobaPos(@cRoba) pict "@!"
-	
-endif
-
+@ m_x+5,m_y+6 SAY "Sifra artikla (prazno-svi)" GET cRoba valid empty(cRoba) .or. P_Roba(@cRoba) pict "@!"
 @ m_x+7,m_y+2 SAY "za period " GET cDat0
 @ m_x+7,col()+2 SAY "do " GET cDat1
 @ m_x+9,m_y+2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt valid cpocst $ "DN" pict "@!"

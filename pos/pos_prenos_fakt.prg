@@ -48,10 +48,10 @@ return cPm
 function Real2Fakt()
 *{
 
-O_POS_ROBA
+O_ROBA
 O_SIFK
 O_SIFV
-O_RNGOST
+O_PARTN
 O_KASE
 O_POS
 O_POS_DOKS
@@ -59,14 +59,14 @@ O_POS_DOKS
 cIdPos:=gIdPos
 dDatOd:=DATE()
 dDatDo:=DATE()
-cIdPartnG:=SPACE(LEN(rngost->id))
+cIdPartnG:=SPACE(LEN(partn->id))
 cBezCijena:="D"
 
 SET CURSOR ON
 
 Box("#PRENOS REALIZACIJE POS->FAKT",6,70)
 	@ m_x+2,m_y+2 SAY "Prodajno mjesto " get cIdPos pict "@!" Valid !EMPTY(cIdPos).or.P_Kase(@cIdPos,2,25)
-	@ m_x+3,m_y+2 SAY "Partner gotovinski " get cIdPartnG pict "@!" Valid EMPTY(cIdPartnG).or.P_Gosti(@cIdPartnG,3,28)
+	@ m_x+3,m_y+2 SAY "Partner gotovinski " get cIdPartnG pict "@!" Valid EMPTY(cIdPartnG).or.P_Firma(@cIdPartnG,3,28)
 	@ m_x+4,m_y+2 SAY "Prenos bez cijene i rabata? (D/N)" GET cBezCijena VALID cBezCijena$"DN" PICT "@!"
 	@ m_x+5,m_y+2 SAY "Prenos za period" GET dDatOd
 	@ m_x+5,col()+2 SAY "-" GET dDatDo
@@ -90,11 +90,11 @@ if eof()
 	CLOSERET
 else
 	if !empty(cIdPartnG)
-		select rngost
+		select partn
 		hseek cIdPartnG
-		cIdPartnG:=rngost->idfmk
+		cIdPartnG:=partn->idfmk
 	else
-		cIdPartnG:=SPACE(LEN(rngost->idfmk))
+		cIdPartnG:=SPACE(LEN(partn->idfmk))
 	endif
 endif
 
@@ -191,7 +191,7 @@ return
 
 
 function PripTOPSFAKT(cIdPartnG)
-*{
+
 aDbf:={}
 AADD(aDBF,{"IdPos","C",2,0})
 AADD(aDBF,{"IDROBA","C",10,0})
@@ -207,13 +207,13 @@ AADD(aDBF,{"M1","C",1,0})
 
 NaprPom(aDbf,"TOPSFAKT")
 
-USEX (PRIVPATH+"TOPSFAKT") NEW
+my_use ("topsfakt", .t., "NEW")
 INDEX ON IdPos+idVd+idPartner+IdRoba+STR(mpc,13,4)+STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"TOPSFAKT")
 INDEX ON brisano+"10" TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
 SET ORDER TO TAG "1"
 
 return
-*}
+
 
 
 
@@ -223,12 +223,12 @@ return
  */
  
 function Stanje2Fakt()
-*{
 
-O_POS_ROBA
+
+O_ROBA
 O_SIFK
 O_SIFV
-O_RNGOST
+O_PARTN
 O_KASE
 O_POS
 O_POS_DOKS
@@ -236,13 +236,13 @@ O_POS_DOKS
 cIdPos:=gIdPos
 dDatOd:=CTOD("")
 dDatDo:=DATE()
-cIdPartnG:=SPACE(LEN(rngost->id))
+cIdPartnG:=SPACE(LEN(partn->id))
 
 SET CURSOR ON
 
 Box("#PRENOS STANJA ROBE POS->FAKT",5,70)
 	@ m_x+2,m_y+2 SAY "Prodajno mjesto " get cIdPos pict "@!" Valid !EMPTY(cIdPos).or.P_Kase(@cIdPos,2,25)
-	@ m_x+3,m_y+2 SAY "Partner/dost.vozilo " get cIdPartnG pict "@!" Valid EMPTY(cIdPartnG).or.P_Gosti(@cIdPartnG,3,28)
+	@ m_x+3,m_y+2 SAY "Partner/dost.vozilo " get cIdPartnG pict "@!" Valid EMPTY(cIdPartnG).or.P_Firma(@cIdPartnG,3,28)
 	@ m_x+4,m_y+2 SAY "Stanje robe na dan" GET dDatDo
 	read
 	ESC_BCR
@@ -256,11 +256,11 @@ else
 endif
 
 if !empty(cIdPartnG)
-	select rngost
+	select partn
 	hseek cIdPartnG
-	cIdPartnG:=rngost->idfmk
+	cIdPartnG:=partn->idfmk
 else
-	cIdPartnG:=SPACE(LEN(rngost->idfmk))
+	cIdPartnG:=SPACE(LEN(partn->idfmk))
 endif
 
 PripTOPSFAKT(cIdPartnG)
@@ -326,7 +326,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 	enddo
 
 
-	select pos_roba
+	select roba
 	seek cIdRoba
 	select topsfakt
 	nKolicina:=nUlaz-nIzlaz
@@ -338,8 +338,8 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 		replace idPos WITH cIdPos
 		replace idRoba WITH cIdRoba
 		replace kolicina WITH nKolicina
-		replace idTarifa WITH pos_roba->idTarifa
-		replace mpc With pos_roba->cijena1
+		replace idTarifa WITH roba->idTarifa
+		replace mpc With roba->cijena1
 		replace datum WITH dDatDo
 		replace idVd With cIdVd
 		replace idPartner with cIdPartner

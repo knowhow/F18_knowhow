@@ -45,7 +45,7 @@ O_PRIPRG
 O_SIFK
 O_SIFV
 O_SAST
-O_POS_ROBA
+O_ROBA
 O_SIROV
 O_ODJ
 O_DIO
@@ -117,19 +117,19 @@ for i:=1 to 2
 				Loop
     			endif
     			Scatter()     // uzmi podatke o promjeni
-    			SELECT SAST
+    			select sast
     			Seek _idroba
     			if FOUND()  // idemo po sastavnici
-      				do while !eof() .and. SAST->Id==_idroba
-        				SELECT SIROV
-					HSEEK SAST->Id2
+      				do while !eof() .and. sast->Id==_idroba
+        				select roba
+					HSEEK sast->Id2
         				if FOUND ()
-          					_Cijena := SIROV->Cijena1
+          					_Cijena := roba->Cijena1
         				else
           					_Cijena := 0
         				endif
         				SELECT PRIPRG
-        				HSEEK _IdPos+_IdOdj+_IdDio+SAST->Id2+DTOS(_Datum)+_Smjena
+        				HSEEK _IdPos+_IdOdj+_IdDio+sast->Id2+DTOS(_Datum)+_Smjena
         				if !FOUND ()
           					APPEND BLANK // priprg
           					_IdVd:="96"
@@ -138,11 +138,11 @@ for i:=1 to 2
           					_IdRadnik:=SPACE(LEN(_IdRadnik))
           					Gather()  // priprg
           					// priprg
-          					REPLACE IdRoba WITH SAST->Id2,Kolicina WITH _Kolicina * SAST->Kolicina
+          					REPLACE IdRoba WITH sast->Id2,Kolicina WITH _Kolicina * sast->Kolicina
         				else
-          					REPLACE Kolicina WITH Kolicina + _Kolicina*SAST->Kolicina
+          					REPLACE Kolicina WITH Kolicina + _Kolicina*sast->Kolicina
         				endif
-        				SELECT SAST
+        				select sast
 					SKIP
       				enddo
     			else // u sastavnici nema robe

@@ -45,49 +45,49 @@ return
  
 function Reindex_All()
 
-OX_DOKS
+O_POS_DOKS
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_PROMVP
+O_PROMVP
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_POS
+O_POS
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_ROBA
+O_ROBA
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_SIROV
+O_SIROV
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_SAST
+O_SAST
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_STRAD
+O_STRAD
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
@@ -95,7 +95,7 @@ __dbpack()
 close
 
 SELECT(F_PARAMS)
-usex(PRIVPATH+"PARAMS")
+my_use("params")
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
@@ -103,74 +103,74 @@ __dbpack()
 close
 
 SELECT(F_KPARAMS)
-usex(KUMPATH+"KPARAMS")
+my_use("kparams")
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 close
 
-OX_OSOB
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-OX_TARIFA
+O_OSOB
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_VALUTE
+O_TARIFA
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_VRSTEP
+O_VALUTE
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_KASE
+O_VRSTEP
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_ODJ
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-close
-
-OX_DIO
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-close
-
-OX_UREDJ
+O_KASE
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_RNGOST
+O_ODJ
+@ m_x+2,m_y+2 SAY padr(alias(),12)
+beep(1)
+reindex
+close
+
+O_DIO
+@ m_x+2,m_y+2 SAY padr(alias(),12)
+beep(1)
+reindex
+close
+
+O_UREDJ
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
 __dbpack()
 close
 
-OX_MARS
+O_PARTN
+@ m_x+2,m_y+2 SAY padr(alias(),12)
+beep(1)
+reindex
+__dbpack()
+close
+
+O_MARS
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
@@ -368,7 +368,7 @@ do while !eof()
 	
 	cIdRoba := roba->id
 	
-	SELECT robasez
+	select robasez
 	set order to tag "ID"
 	hseek cIdRoba
 	
@@ -390,7 +390,7 @@ do while !eof()
 		@ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
 	endif
 	
-	SELECT ROBA
+	select roba
 	skip
 	
 enddo		
@@ -442,7 +442,7 @@ do while !eof()
 	
 	cIdRoba := roba->id
 	
-	SELECT robasez
+	select robasez
 	set order to tag "ID"
 	hseek cIdRoba
 	
@@ -483,7 +483,7 @@ do while !eof()
 	nPdvC2 := nMpcBP2 * ( 1 + nPdvTarifa/100 )
 	nPdvC2 := ROUND( nPdvC2, nZaokruzenje)
 
-	SELECT ROBA
+	select roba
 	replace Cijena1 with nPdvC1, Cijena2 with nPdvC2, ;
 	        IdTarifa with cPdvTarifa
 		

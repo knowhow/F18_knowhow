@@ -63,7 +63,7 @@ if Pitanje(,"Nulirati datoteke prenosa prije nastavka ?","D")=="D"
   	use
   	create (PRIVPATH+"_DOKSP") from (PRIVPATH+"struct")
 	
-	O_POS_ROBA
+	O_ROBA
   	copy structure extended to (PRIVPATH+"struct")
   	use
   	create (PRIVPATH+"_ROBA") from (PRIVPATH+"struct")
@@ -221,7 +221,7 @@ else
 endif
 close all
 
-O_POS_ROBA
+O_ROBA
 
 if fSifK
 	O_SIFK
@@ -247,7 +247,7 @@ do while !eof()
   	// nafiluj tabelu _ROBA sa siframa iz dokumenta
   	seek _posp->idroba
   	if !found()
-    		select pos_roba
+    		select roba
     		seek _posp->idroba
     		if found()
      			scatter()
@@ -362,7 +362,7 @@ MsgO("Prenos POSP -> POS")
 select pos
 append from _posp
 select pos_doks
-append from _doksp
+append from _pos_doksp
 
 MsgC()
 
@@ -374,7 +374,7 @@ lOsvNazRobe:=.t.
 
 if cDN1=="D"
 	close all
-	O_POS_ROBA
+	O_ROBA
 	if fSifK
    		O_SIFK
 		O_SIFV
@@ -390,11 +390,11 @@ if cDN1=="D"
 		do while !eof()
   			@ m_x+1,m_y+2 SAY id
 			?? "-",naz
-  			select pos_roba
+  			select roba
 			scatter()
   			select _roba
   			scatter()
-  			select pos_roba
+  			select roba
 			hseek _id
   			if !found()
     				UpisiURF("ROBA: dodajem "+_id+"-"+_naz,cRFajl,.t.,.f.)
@@ -416,20 +416,20 @@ if cDN1=="D"
     				else
       					if cDN3=="D"
         					Scatter()
-        					if _barkod <>_pos_roba->barkod
+        					if _barkod <>_roba->barkod
           						UpisiURF("ROBA: osvjezavam "+_id+"-"+_naz,cRFajl,.t.,.f.)
-          						UpisiURF("     BARKOD: bilo="+TRANS(_barkod,"")+", sada="+TRANS(_pos_roba->barkod,""),cRFajl,.t.,.f.)
+          						UpisiURF("     BARKOD: bilo="+TRANS(_barkod,"")+", sada="+TRANS(_roba->barkod,""),cRFajl,.t.,.f.)
         					endif
-        					_barkod := _pos_roba->barkod
+        					_barkod := _roba->barkod
         					Gather()
       					endif
       					if lOsvNazRobe
         					Scatter()
-        					if _naz <> _pos_roba->naz
+        					if _naz <> _roba->naz
           						UpisiURF("ROBA: osvjezavam "+_id+"-"+_naz,cRFajl,.t.,.f.)
-          						UpisiURF("     NAZIV: bilo="+TRANS(_naz,"")+", sada="+TRANS(_pos_roba->naz,""),cRFajl,.t.,.f.)
+          						UpisiURF("     NAZIV: bilo="+TRANS(_naz,"")+", sada="+TRANS(_roba->naz,""),cRFajl,.t.,.f.)
         					endif
-        					_naz := _pos_roba->naz
+        					_naz := _roba->naz
         					Gather()
       					endif
     				endif

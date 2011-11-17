@@ -33,7 +33,6 @@ if !used()
 	O_VRSTEP
 endif
 
-
 SELECT F_POS
 if !used()
 	O_POS
@@ -51,7 +50,7 @@ endif
 
 SELECT F_ROBA
 if !used()
-	O_POS_ROBA
+	O_ROBA
 endif
 
 SELECT F_TARIFA
@@ -84,7 +83,7 @@ endif
 
 select F__PRIPR
 if !used()
-	O__PRIPR
+	O__POS_PRIPR
 endif
 
 SELECT F_K2C
@@ -185,7 +184,7 @@ return nStanje
 function OpenPos()
 *{
 
-O_RNGOST
+O_PARTN
 O_VRSTEP
 O_DIO
 O_ODJ
@@ -196,8 +195,7 @@ O_TARIFA
 O_VALUTE
 O_SIFK
 O_SIFV
-O_SIROV
-O_POS_ROBA
+O_ROBA
 
 O_POS_DOKS
 O_POS
@@ -215,17 +213,16 @@ O_KASE
 O_UREDJ
 if gModul=="HOPS"
 	O_MJTRUR
-  	O_POS_ROBAIZ
+  	O_ROBAIZ
   	O_SAST
-  	O_SIROV
   	O_DIO
 endif
 O_ODJ
-O_POS_ROBA
+O_ROBA
 O_TARIFA
 O_VRSTEP
 O_VALUTE
-O_RNGOST
+O_PARTN
 
 O_OSOB
 O_STRAD
@@ -253,8 +250,7 @@ O_SIFK
 O_SIFV
 
 O_SAST
-O_SIROV
-O_POS_ROBA
+O_ROBA
 
 O_POS_DOKS
 O_POS
@@ -284,8 +280,7 @@ O_PRIPRZ
 O_SIFK
 O_SIFV
 
-O_POS_ROBA 
-O_SIROV
+O_ROBA 
 return
 *}
 
@@ -300,7 +295,7 @@ O_OSOB
 O_SIFK
 O_SIFV
 O_VRSTEP 
-O_POS_ROBA
+O_ROBA
 O_ODJ 
 O_DIO
 O_KASE
@@ -323,17 +318,17 @@ endif
 
 if gModul=="HOPS"
 	O_DIO 
-	O_POS_ROBAIZ
+	O_ROBAIZ
 endif
 
 O_MJTRUR 
 O_UREDJ 
 O_ODJ 
 O_K2C
-O_POS_ROBA
+O_ROBA
 O_SIFK
 O_SIFV
-O__PRIPR 
+O__POS_PRIPR 
 O__POS
 
 return
@@ -349,13 +344,13 @@ function O_StAzur()
 O__POS
 O_ODJ
 O_VRSTEP
-O_RNGOST
+O_PARTN
 O_OSOB
 O_VALUTE
 O_TARIFA
 O_POS_DOKS
 O_POS
-O_POS_ROBA
+O_ROBA
 return
 *}
 
@@ -482,7 +477,7 @@ if IsPlanika() .and. !EMPTY(cIdVrsteP)
 	get_vrpl_popust(cIdVrsteP, @nPopust)
 endif
 
-select _pripr
+select _pos_pripr
 go top
 
 cBrdok:=brdok
@@ -512,11 +507,11 @@ do while !eof()
 	
 	gather()
   	
-	select _pripr
+	select _pos_pripr
   	skip
 enddo
 
-SELECT _PRIPR
+select _pos_pripr
 Zapp () 
 __dbPack()
 return
@@ -1058,7 +1053,7 @@ MsgO("Sacekajte trenutak...")
 O__POS
 reindex
 use
-O__PRIPR
+O__POS_PRIPR
 reindex
 use
 MsgC()
@@ -1091,7 +1086,7 @@ AADD(aDbf, {"Otv",      "N", 12, 2})
 Dbcreate2(PRIVPATH+"ZAKSM", aDbf)
 
 select (F_ZAKSM)
-USEX (PRIVPATH+"ZAKSM")
+my_use ("zaksm", .t., "NEW")
 INDEX ON IdRadnik TAG ("1")           
 index ON BRISANO+"10" TAG "BRISAN" 
 Set Order To 1
@@ -1239,7 +1234,6 @@ return cBrDok
  */
  
 function Reind_PB()
-*{ 
 
 local cAlias:=ALIAS(SELECT())
 
@@ -1255,7 +1249,7 @@ if UPPER(cAlias)="_POS"
 elseif UPPER(cAlias)="DOKS"
        	select pos_doks
 	USE
-       	OX_DOKS
+       	O_POS_DOKS
        	reindex
 	USE
        	O_POS_DOKS
@@ -1299,11 +1293,11 @@ return
 *}
 
 
-/*! \fn GenDoks()
+/*! \fn pos_generisi_doks_iz_pos()
  *  \brief Generisanje DOKS-a iz POS-a
  */
  
-function GenDoks()
+function pos_generisi_doks_iz_pos()
 *{
 
 if !SigmaSif("GENDOKS")
@@ -1402,7 +1396,7 @@ return (lVrati)
 function Pos2_Pripr()
 *{
 
-SELECT _PRIPR
+select _pos_pripr
 Zapp()
 Scatter()
 
@@ -1410,17 +1404,17 @@ SELECT POS
 seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 	Scatter ()
-  	select pos_roba
+  	select roba
   	HSEEK _IdRoba
-  	_RobaNaz:=pos_roba->Naz
-  	_Jmj:=pos_roba->Jmj
-  	SELECT _PRIPR
+  	_RobaNaz:=roba->Naz
+  	_Jmj:=roba->Jmj
+  	select _pos_pripr
   	Append Blank // _PRIPR
   	Gather()
   	SELECT POS
   	SKIP
 enddo
-SELECT _PRIPR
+select _pos_pripr
 return
 *}
 
@@ -1596,12 +1590,12 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 			loop
     		endif
     		
-		select pos_roba 
+		select roba 
 		HSEEK pos->IdRoba
 
-		if pos_roba->(fieldpos("sifdob"))<>0
+		if roba->(fieldpos("sifdob"))<>0
 			if !Empty(cDobId)
-				if pos_roba->sifdob <> cDobId
+				if roba->sifdob <> cDobId
 					select pos
 					skip
 					loop
@@ -1610,7 +1604,7 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 		endif
 		
     		SELECT odj 
-		HSEEK pos_roba->IdOdj
+		HSEEK roba->IdOdj
 		
 		nNeplaca:=0
     		
@@ -1634,8 +1628,8 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
          			REPLACE Iznos2 WITH pos->nCijena
       			endif
 
-      			if pos_roba->(fieldpos("K1")) <> 0
-              			REPLACE K2 WITH pos_roba->K2,K1 WITH pos_roba->K1
+      			if roba->(fieldpos("K1")) <> 0
+              			REPLACE K2 WITH roba->K2,K1 WITH roba->K1
       			endif
     		else
       			REPLACE Kolicina WITH Kolicina+POS->Kolicina,Iznos WITH Iznos+POS->Kolicina*POS->Cijena,Iznos3 WITH Iznos3+nNeplaca
@@ -1658,11 +1652,9 @@ if !gAppSrv
 endif
 
 return
-*}
 
 
-function IsDocExists(cIdPos, cIdVd, dDatum, cBrDok)
-*{
+static function IsDocExists(cIdPos, cIdVd, dDatum, cBrDok)
 local lFound
 
 lFound:=.f.
@@ -1694,7 +1686,7 @@ return lFound
  *  \brief Pravi pomocnu tabelu POM za stampu dokumenta iz pregleda dokumenata
  */
 function CreateTmpTblForDocReView()
-*{
+
 aDbf := {}
 AADD(aDbf, {"IdRoba",   "C", 10, 0})
 AADD(aDbf, {"IdCijena", "C",  1, 0})
@@ -1705,13 +1697,13 @@ AADD(aDbf, {"Datum", "D", 8, 0})
 
 NaprPom (aDbf)
 
-USEX (PRIVPATH+"POM") NEW
+my_use("POM", .t., "NEW")
 
 INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (PRIVPATH+"POM")
 set order to 1
 
 return
-*}
+
 
 // ------------------------------------------
 // azuriraj sifrarnik robe
@@ -1764,23 +1756,23 @@ endif
 
 SmReplace("idtarifa", priprz->idtarifa)
 
-if pos_roba->(FIELDPOS("K1"))<>0  .and. priprz->(FIELDPOS("K2"))<>0
+if roba->(FIELDPOS("K1"))<>0  .and. priprz->(FIELDPOS("K2"))<>0
 	SmReplace("k1", priprz->k1)
 	SmReplace("k2", priprz->k2)
 endif
 
-if pos_roba->(fieldpos("K7"))<>0  .and. priprz->(FIELDPOS("K9"))<>0
+if roba->(fieldpos("K7"))<>0  .and. priprz->(FIELDPOS("K9"))<>0
 	SmReplace("k7", priprz->k7)
 	SmReplace("k8", priprz->k8)
 	SmReplace("k9", priprz->k9)
 endif
 
-if pos_roba->(FIELDPOS("N1"))<>0  .and. priprz->(FIELDPOS("N2"))<>0
+if roba->(FIELDPOS("N1"))<>0  .and. priprz->(FIELDPOS("N2"))<>0
 	SmReplace("n1", priprz->n1)
 	SmReplace("n2", priprz->n2)
 endif
 
-if (pos_roba->(FIELDPOS("BARKOD"))<>0 .and. priprz->(FIELDPOS("BARKOD"))<>0)
+if (roba->(FIELDPOS("BARKOD"))<>0 .and. priprz->(FIELDPOS("BARKOD"))<>0)
 	SmReplace("barkod", priprz->barkod)
 endif
 
@@ -1853,24 +1845,24 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	.and. field->idvd == "42"
 
 	cT_roba := field->idroba
-	select pos_roba
+	select roba
 	seek cT_roba
 	
 	select pos
 
 	scatter()
 	
-	select _pripr
+	select _pos_pripr
 	append blank
 	
 	_brdok := PADL( ALLTRIM(_brdok) + "S", 6 )
 	_kolicina := ( _kolicina * -1 )
-	_robanaz := pos_roba->naz
+	_robanaz := roba->naz
 	_datum := gDatum
 
 	gather()
 
-	if _pripr->(FIELDPOS("C_1")) <> 0
+	if _pos_pripr->(FIELDPOS("C_1")) <> 0
 		if EMPTY( cSt_fisc )
 			replace field->c_1 with cSt_rn
 		else
@@ -1924,17 +1916,17 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	.and. field->idvd == "42"
 
 	cT_roba := field->idroba
-	select pos_roba
+	select roba
 	seek cT_roba
 	
 	select pos
 
 	scatter()
 	
-	select _pripr
+	select _pos_pripr
 	append blank
 	
-	_robanaz := pos_roba->naz
+	_robanaz := roba->naz
 
 	gather()
 

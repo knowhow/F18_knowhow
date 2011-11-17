@@ -12,20 +12,9 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 
-/*! \fn PromjeniID()
- *  \brief Promjena prodajnog mjesta racuna
- *  \brief racuni na crno idu sa IdPos -> X
- */
- 
+
 function PromjeniID()
-*{
 local fScope
 local cFil0
 local cTekIdPos:=gIdPos
@@ -38,8 +27,8 @@ private dMinDatProm:=ctod("")
 O_SIFK
 O_SIFV
 O_KASE
-O_POS_ROBA
-O__PRIPR
+O_ROBA
+O__POS_PRIPR
 O_POS_DOKS
 O_POS
 
@@ -57,7 +46,7 @@ qIdRoba:=SPACE(LEN(POS->idroba))
 SET CURSOR ON
 if IzFmkIni("PREGLEDRACUNA","MozeIZaArtikal","N",KUMPATH)=="D"
 	Box(,3,72)
-    	@ m_x+1,m_y+2 SAY "Racuni na kojima se nalazi artikal: (prazno-svi)" GET qIdRoba VALID EMPTY(qIdRoba).or.P_RobaPOS(@qIdRoba) PICT "@!"
+    	@ m_x+1,m_y+2 SAY "Racuni na kojima se nalazi artikal: (prazno-svi)" GET qIdRoba VALID EMPTY(qIdRoba).or.P_Roba(@qIdRoba) PICT "@!"
     	@ m_x+2,m_y+2 SAY "Datumski period:" GET dDatOd
     	@ m_x+2,col()+2 SAY "-" GET dDatDo
 	@ m_x+3,m_y+2 SAY "Prodajno mjesto:" GET gIdPos VALID P_Kase(@gIdPos)
@@ -113,7 +102,6 @@ endif
 gIdPos:=cTekIdPos
 CLOSERET
 return
-*}
 
 
 /*! \fn PromBrRN()
@@ -527,9 +515,9 @@ O_POS
 O_POS_DOKS
 
 select 0
-usex (PRIVPATH+"POS_ST.DBF") alias POS_ST
+my_use ("pos_st", .t., "POS_ST")
 select 0
-usex (PRIVPATH+"DOKS_ST.DBF") alias DOKS_ST
+my_use ("doks_st", .t., "DOKS_ST")
 
 if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje racuna ?","N")=="D"
 

@@ -22,7 +22,7 @@ private cFilter:=".t."
 private ImeKol := {}
 private Kol := {}
 
-O_RNGOST
+O_PARTN
 O_VRSTEP
 O_DIO
 O_ODJ
@@ -35,7 +35,6 @@ O_TARIFA
 O_VALUTE
 O_SIFK
 O_SIFV
-O_SIROV  
 O_ROBA
 O_POS_DOKS   
 O_POS
@@ -53,8 +52,8 @@ endif
 
 if IzFMKIni("TOPS","StAzurDok_PrikazKolonePartnera","N",EXEPATH)=="D"
 	select pos_doks
-  	SET RELATION TO idgost INTO rngost
-  	AADD(ImeKol,{PADR("Partner",25),{||PADR(TRIM(idgost)+"-"+TRIM(rngost->naz),25)}})
+  	SET RELATION TO idgost INTO partn
+  	AADD(ImeKol,{PADR("Partner",25),{||PADR(TRIM(idgost)+"-"+TRIM(partn->naz),25)}})
 endif
 
 AADD(ImeKol,{"VP",{||IdVrsteP}})
@@ -416,26 +415,26 @@ private Kol
 cPrevCol:=SETCOLOR(INVERT)
 SELECT F__PRIPR
 if !used()
-	O__PRIPR
+	O__POS_PRIPR
 endif
-SELECT _PRIPR
+select _pos_pripr
 Zapp()
 Scatter()
 SELECT POS
 seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 	Scatter ()
-  	SELECT ROBA
+  	select roba
   	HSEEK _IdRoba
-  	_RobaNaz:=ROBA->Naz
-  	_Jmj:=ROBA->Jmj
-  	SELECT _PRIPR
+  	_RobaNaz:=roba->Naz
+  	_Jmj:=roba->Jmj
+  	select _pos_pripr
   	Append Blank // _PRIPR
   	Gather()
   	SELECT POS
   	SKIP
 enddo
-SELECT _PRIPR
+select _pos_pripr
 GO TOP
 ImeKol:={{"Sifra",{|| idroba}},{"Naziv",{|| LEFT(RobaNaz,30)}},{"Kolicina",{|| STR(Kolicina,7,2)}},{"Cijena",{|| STR(Cijena,7,2)}},{"Iznos",{|| STR(Kolicina*Cijena,11,2)}}}
 
@@ -446,7 +445,7 @@ Box(,15,73)
 oBrowse:=FormBrowse(m_x+2,m_y+1,m_x+15,m_y+73,ImeKol,Kol,{"Í","Ä","³"},0)
 ShowBrowse(oBrowse,{},{})
 
-SELECT _PRIPR
+select _pos_pripr
 Zapp()
 BoxC()
 SETCOLOR (cPrevCol)

@@ -114,7 +114,7 @@ if gModul=="HOPS"
     		SELECT _PRIPR
     		if RecCount2()>0
       			GO TOP
-      			if _PRIPR->IdRadnik<>gIdRadnik
+      			if _pos_pripr->IdRadnik<>gIdRadnik
         			// u hopsu se radni racuni drze u _POS-u do zakljucenja
         			_Pripr2_Pos()
         			SELECT _PRIPR
@@ -212,8 +212,8 @@ do while !eof()
     		// _PRIPR
 		delete  
   	else
-    		nIznNar+=_PRIPR->(Kolicina*Cijena)
-    		nPopust+=_PRIPR->(Kolicina*NCijena)
+    		nIznNar+=_pos_pripr->(Kolicina*Cijena)
+    		nPopust+=_pos_pripr->(Kolicina*NCijena)
   	endif
   	
 	SKIP
@@ -748,8 +748,8 @@ endif
 Beep (2)
 
 // ponovo izracunaj ukupno
-nIznNar-=_PRIPR->(Kolicina*Cijena)
-nPopust-=_PRIPR->(Kolicina*NCijena)
+nIznNar-=_pos_pripr->(Kolicina*Cijena)
+nPopust-=_pos_pripr->(Kolicina*NCijena)
 
 // osvjezi cijene
 @ m_x+3,m_y+70 SAY nIznNar pict "99999.99" COLOR Invert
@@ -789,7 +789,7 @@ Scatter()
 
 set cursor on
 Box (, 3, 75)
-@ m_x+1,m_y+4 SAY "   Artikal:" GET _idroba PICTURE "@K" VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_PRIPR->IdRoba .OR. NarProvDuple ())
+@ m_x+1,m_y+4 SAY "   Artikal:" GET _idroba PICTURE "@K" VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
 @ m_x+2,m_y+3 SAY "     Cijena:" GET _Cijena  picture "99999.999" when roba->tip=="T"
 @ m_x+3,m_y+3 SAY "   kolicina:" GET _Kolicina VALID KolicinaOK (_Kolicina)
 
@@ -817,7 +817,7 @@ else
 endif
 
 if LASTKEY()<>K_ESC
-	if (_PRIPR->IdRoba<>_IdRoba) .or. roba->tip=="T"
+	if (_pos_pripr->IdRoba<>_IdRoba) .or. roba->tip=="T"
     		SELECT ODJ
     		HSEEK ROBA->IdOdj
     		// LOCATE FOR IdTipMT == ROBA->IdTreb
@@ -843,13 +843,13 @@ if LASTKEY()<>K_ESC
       			return (DE_CONT)
     		endif
   	endif
-  	if (_PRIPR->Kolicina<>_Kolicina)
+  	if (_pos_pripr->Kolicina<>_Kolicina)
      		// azuriraj narudzbu
      		nIznNar+=(_cijena*_kolicina) - cijena*kolicina
      		nPopust+=(_ncijena*_kolicina) - ncijena*kolicina
      		REPLACE Kolicina WITH _Kolicina
   	endif
-  	if (gPopVar=="A" .and. _PRIPR->ncijena<> _NCijena)
+  	if (gPopVar=="A" .and. _pos_pripr->ncijena<> _NCijena)
      		// samo za apoteke
      		replace ncijena with _ncijena
   	endif

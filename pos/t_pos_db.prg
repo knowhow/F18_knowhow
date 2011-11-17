@@ -454,78 +454,6 @@ if (nArea==-1 .or. nArea==(F_ROBAIZ))
 	CREATE_INDEX ("1", "IdRoba", PRIVPATH+"ROBAIZ")
 endif
 
-if (nArea==-1 .or. nArea==(F_ROBA))
-	IF !FILE(f18_ime_dbf( "pos_roba" ))
-	   aDbf := {}
-	   AADD ( aDbf, { "ID",        "C", 10, 0} )
-	   AADD ( aDbf, { "NAZ",       "C", 40, 0} )
-	   AADD ( aDbf, { "JMJ",       "C",  3, 0} )
-	   AADD ( aDbf, { "GRUPA",     "C",  2, 0} )
-	   AADD ( aDbf, { "IDTARIFA",  "C",  6, 0} )
-	   AADD ( aDbf, { "IDODJ",     "C",  2, 0} )
-	   AADD ( aDbf, { "CIJENA1",   "N", 10, 3} )
-	   AADD ( aDbf, { "CIJENA2",   "N", 10, 3} )
-	   AADD ( aDbf, { "TIP",       "C",  1, 0} )
-	   AADD ( aDbf, { "DJELJIV",   "C",  1, 0} )
-	   AADD ( aDbf, { "BARKOD",    "C", 13, 0} )
-	   AADD ( aDbf, { "K1",   "C",  4, 0} )
-	   AADD ( aDbf, { "K2",   "C",  4, 0} )
-	   AADD ( aDBf,{  'N1'   , 'N' ,  12 ,  2 })
-	   AADD ( aDBf,{  'N2'   , 'N' ,  12 ,  2 })
-	   AADD ( aDBf,{ 'MINK'   , 'N' ,  12 ,  2 })
-	   AADD ( aDBf,{ 'FISC_PLU'   , 'N' ,  10 , 0 })
-	   DBcreate2 ( SIFPATH + "POS_ROBA.DBF", aDbf )
-	ENDIF
-
-	CREATE_INDEX ("ID", "ID", SIFPATH+"POS_ROBA")
-	CREATE_INDEX ("NAZ", "Naz", SIFPATH+"POS_ROBA")
-  	CREATE_INDEX ("BARKOD", "BARKOD", SIFPATH+"POS_ROBA")
-  	CREATE_INDEX ("PLU", "str(fisc_plu,10)", SIFPATH+"POS_ROBA")
-
-endif
-
-
-if (nArea==-1 .or. nArea==(F_SIROV))
-	// SIROV.DBF
-	IF ! FILE ( SIFPATH + "SIROV.DBF" )
-	   aDbf := {}
-	   AADD ( aDbf, { "ID",        "C", 10, 0} )
-	   AADD ( aDbf, { "NAZ",       "C", 40, 0} )
-	   AADD ( aDbf, { "JMJ",       "C",  3, 0} )
-	   // AADD ( aDbf, { "GRUPA",     "C",  2, 0} )
-	   AADD ( aDbf, { "IDTARIFA",  "C",  6, 0} )
-	   AADD ( aDbf, { "IDODJ",     "C",  2, 0} )
-	   AADD ( aDbf, { "CIJENA1",   "N", 10, 3} )
-	   AADD ( aDbf, { "CIJENA2",   "N", 10, 3} )
-	   AADD ( aDbf, { "TIP",       "C",  1, 0} )
-	   AADD ( aDbf, { "DJELJIV",   "C",  1, 0} )
-	   AADD ( aDbf, { "K1",   "C",  4, 0} )
-	   AADD ( aDbf, { "K2",   "C",  4, 0} )
-	   AADD ( aDBf, {  'N1'   , 'N' ,  12 ,  2 })
-	   AADD ( aDBf, {  'N2'   , 'N' ,  12 ,  2 })
-	   AADD(aDBf,{ 'MINK' , 'N' ,  12 ,  2 })
-	   DBcreate2 ( SIFPATH + "SIROV.DBF", aDbf )
-	ENDIF
-	CREATE_INDEX ("ID", "ID", SIFPATH+"SIROV")
-	CREATE_INDEX ("NAZ", "Naz", SIFPATH+"SIROV")
-endif
-
-if (nArea==-1 .or. nArea==(F_SAST))
-	IF !FILE( f18_ime_dbf("pos_sast"))
-	   aDBf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
-	   AADD(aDBf,{ 'ID2'                 , 'C' ,   10 ,  0 })
-	   AADD(aDBf,{ 'KOLICINA'            , 'N' ,   12 ,  5 })
-	   AADD(aDBf,{ 'K1'                  , 'C' ,    1 ,  0 })
-	   AADD(aDBf,{ 'K2'                  , 'C' ,    1 ,  0 })
-	   AADD(aDBf,{ 'N1'                  , 'N' ,   20 ,  5 })
-	   AADD(aDBf,{ 'N2'                  , 'N' ,   20 ,  5 })
-	   DBcreate2(SIFPATH+'POS_SAST.DBF',aDbf)
-	ENDIF
-	CREATE_INDEX ("ID", "id+ID2", SIFPATH+"POS_SAST")
-	CREATE_INDEX ("NAZ", "id2+ID", SIFPATH+"POS_SAST")
-endif
-
 if (nArea==-1 .or. nArea==(F_STRAD))
 	// STRAD.DBF
 	IF ! FILE ( SIFPATH + "STRAD.DBF" )
@@ -652,77 +580,6 @@ if (nArea==-1 .or. nArea==(F_UREDJ))
 	CREATE_INDEX ("NAZ", "NAZ", SIFPATH+"UREDJ")
 endif
 
-if (nArea==-1 .or. nArea==(F_RNGOST))
-	// RNGOST.DBF
-	if !FILE(SIFPATH+"RNGOST.DBF")
-		aDbf := {}
-	  	AADD (aDbf, {"ID",       "C",  8, 0})
-	  	AADD (aDbf, {"NAZ",      "C", 40, 0})
-	  	AADD (aDbf, {"JIB",      "C", 13, 0})
-	  	AADD (aDbf, {"ADRESA",   "C", 40, 0})
-	  	AADD (aDbf, {"PTT",      "C", 10, 0})
-	  	AADD (aDbf, {"MJESTO",   "C", 30, 0})
-	  	AADD (aDbf, {"IDVRSTEP", "C",  2, 0})
-	  	AADD (aDbf, {"STATUS",   "C",  1, 0})
-	  	AADD (aDbf, {"TIP",      "C",  1, 0}) // P-partner, S-soba
-	  	DBcreate2(SIFPATH+"RNGOST", aDbf)
-	endif
-	CREATE_INDEX("ID", "ID", SIFPATH+"RNGOST")
-	CREATE_INDEX("NAZ", "NAZ", SIFPATH+"RNGOST")
-endif
-
-if (nArea==-1 .or. nArea==(F_SIFK))
-	if !file(SIFPATH+"SIFK.dbf")
-	   aDbf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-	   AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
-	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-	   AADD(aDBf,{ 'OZNAKA'              , 'C' ,   4 ,  0 })
-	   AADD(aDBf,{ 'VEZA'                , 'C' ,   1 ,  0 })
-	   AADD(aDBf,{ 'UNIQUE'              , 'C' ,   1 ,  0 })
-	   AADD(aDBf,{ 'IZVOR'               , 'C' ,  15 ,  0 })
-	   AADD(aDBf,{ 'USLOV'               , 'C' , 100 ,  0 })
-	   AADD(aDBf,{ 'DUZINA'              , 'N' ,   2 ,  0 })
-	   AADD(aDBf,{ 'DECIMAL'             , 'N' ,   1 ,  0 })
-	   AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
-	   AADD(aDBf,{ 'KVALID'              , 'C' , 100 ,  0 })
-	   AADD(aDBf,{ 'KWHEN'               , 'C' , 100 ,  0 })
-	   AADD(aDBf,{ 'UBROWSU'             , 'C' ,   1 ,  0 })
-	   AADD(aDBf,{ 'EDKOLONA'            , 'N' ,   2 ,  0 })
-	   AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
-	   AADD(aDBf,{ 'K2'                  , 'C' ,   2 ,  0 })
-	   AADD(aDBf,{ 'K3'                  , 'C' ,   3 ,  0 })
-	   AADD(aDBf,{ 'K4'                  , 'C' ,   4 ,  0 })
-
-	   dbcreate2(SIFPATH+'SIFK.DBF',aDbf)
-	endif
-	CREATE_INDEX("ID","id+SORT+naz",SIFPATH+"SIFK")
-	CREATE_INDEX("ID2","id+oznaka",SIFPATH+"SIFK")
-	CREATE_INDEX("NAZ","naz",SIFPATH+"SIFK")
-
-endif
-
-if (nArea==-1 .or. nArea==(F_SIFV))
-	if !file(SIFPATH+"SIFV.dbf")  // sifrarnici - vrijednosti karakteristika
-	   aDbf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-	   AADD(aDBf,{ 'OZNAKA'              , 'C' ,   4 ,  0 })
-	   AADD(aDBf,{ 'IDSIF'               , 'C' ,  15 ,  0 })
-	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
-	   // Primjer:
-	   // ID  = ROBA
-	   // OZNAKA = BARK
-	   // IDSIF  = 2MON0005
-	   // NAZ = 02030303030303
-
-	   dbcreate2(SIFPATH+'SIFV.DBF',aDbf)
-	endif
-	CREATE_INDEX("ID","id+oznaka+IdSif+Naz",SIFPATH+"SIFV")
-	CREATE_INDEX("IDIDSIF","id+IdSif",SIFPATH+"SIFV")
-	//  ROBA + BARK + 2MON0001
-	CREATE_INDEX("NAZ","id+oznaka+naz",SIFPATH+"SIFV")
-endif
-
 if (nArea==-1 .or. nArea==(F_MARS))
 	// MARS.DBF
 	IF ! FILE ( SIFPATH + "MARS.DBF" )
@@ -824,13 +681,13 @@ PUBLIC gKumPath := KUMPATH
 
 if pitanje(,"Izvrsiti prenos k7 iz c:\tops\robknj.dbf","N")=="D"
    close all
-   usex (gSifpath+"ROBA") NEW
+   my_use("roba", .t., "NEW")
    set order to tag "ID"
 
-   usex ("C:\tops\robknj") NEW
+   my_use ("robknj", .t., "NEW")
    go top
    do while !eof()
-      select pos_roba; seek robknj->id
+      select roba; seek robknj->id
       if found()
          replace k7 with robknj->k7
       endif
@@ -855,7 +712,7 @@ if pitanje(,"Izvrsiti promjenu sifre artikla u sifrarniku i prometu? (D/N)","N")
   if cDN=="D"
 
     nPR:=0
-    usex (gSifpath+"ROBA") NEW
+    my_use ("pos_roba", .t., "NEW")
     set order to tag "ID"
     seek cStara
     do while !eof() .and. id==cStara
@@ -868,7 +725,7 @@ if pitanje(,"Izvrsiti promjenu sifre artikla u sifrarniku i prometu? (D/N)","N")
     enddo
 
     nPP:=0
-    usex (gKumPath+"POS") NEW
+    my_use ("pos", .t., "NEW")
     set order to tag "6"
     seek cStara
     do while !eof() .and. idroba==cStara
@@ -949,10 +806,10 @@ O_MJTRUR
 O_UREDJ
 O_ODJ
 O_K2C
-O_POS_ROBA
+O_ROBA
 O_SIFK
 O_SIFV
-O__PRIPR
+O__POS_PRIPR
 O__POS
 
 return .t.

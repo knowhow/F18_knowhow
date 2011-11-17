@@ -12,33 +12,7 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/rpt_dkum.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.5 $
- * $Log: rpt_dkum.prg,v $
- * Revision 1.5  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.4  2002/06/14 14:02:43  mirsad
- * prirpeme za doxy dokumenter
- *
- *
- */
-
-/*! \file fmk/pos/rpt/1g/rpt_dkum.prg
- *  \brief Kumulativ prometa
- */
-
-/*! \fn PrepisKumPr()
- *  \brief Izvjestaj kumulativa prometa
- */
-
 function PrepisKumPr()
-*{
 local nSir:=80
 local nRobaSir:=40
 local cLm:=SPACE(5)
@@ -78,13 +52,13 @@ endif
 
 ? cLM+"Vrsta placanja:",cPom
 
-SELECT RNGOST
+select partn
 HSEEK pos_doks->IdGost
 
 if gVrstaRS=="S"
-	cPom:=RNGOST->Naz
+	cPom:=partn->Naz
 else
-	cPom:=LEFT(RNGOST->Naz,23)
+	cPom:=LEFT(partn->Naz,23)
 endif
 
 ? cLM+"Gost / partner:",cPom

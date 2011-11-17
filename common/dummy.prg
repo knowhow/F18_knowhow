@@ -46,4 +46,6 @@ function PosTest()
 return
 
 
+function replsql_dummy()
+return
 

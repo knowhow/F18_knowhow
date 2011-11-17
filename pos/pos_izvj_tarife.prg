@@ -142,7 +142,7 @@ SELECT (F_ROBA)
 SEEK cIdRoba
 
 SELECT (F_TARIFA)
-SEEK ROBA->idtarifa
+SEEK roba->idtarifa
 SELECT (nArr)
 
 IF IzFMKINI("POREZI","PPUgostKaoPPU","N")=="D"
@@ -157,9 +157,9 @@ ENDIF
 
 nPPU:=(nOsn+nPPP)*tarifa->ppp/100
 
-nPoz := ASCAN (aTarife, {|x| x[1]==ROBA->IdTarifa})
+nPoz := ASCAN (aTarife, {|x| x[1]==roba->IdTarifa})
 IF nPoz==0
-  AADD (aTarife, {ROBA->IdTarifa, nOsn, nPPP, nPPU, nPP})
+  AADD (aTarife, {roba->IdTarifa, nOsn, nPPP, nPPU, nPP})
 Else
   aTarife [nPoz][2] += nOsn
   aTarife [nPoz][3] += nPPP

@@ -97,11 +97,7 @@ Sifra    Naziv              JMJ Kolicina
     EndIF
     ? cLM
     ?? IdRoba, ""
-    IF POS->MU_I $ S_U+S_I  // ??????? sirovine ?????
-      SELECT SIROV
-    else
       SELECT ROBA
-    EndIF
     HSEEK POS->IdRoba
     ?? PADR (_field->Naz, nRobaSir), _field->Jmj, ""
     SELECT POS

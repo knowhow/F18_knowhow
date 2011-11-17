@@ -113,7 +113,7 @@ AddBS(@cDir)
 
 use (cDir + "ROBA") alias ROBAFMK new
 
-O_POS_ROBA
+O_ROBA
 select robafmk
 go top
 
@@ -123,7 +123,7 @@ if !gAppSrv
 endif
 
 do while !eof()
-	select pos_roba
+	select roba
 	go top
   	seek robafmk->id
 	@ 2+m_x, 2+m_y SAY "Dodajem artikal " + ALLTRIM(robafmk->id)
@@ -164,19 +164,19 @@ do while !eof()
 	endif
 	
 	SmReplace("jmj", robafmk->jmj, .t.)
-        if pos_roba->(fieldpos("K1"))<>0  .and. robafmk->(fieldpos("K1"))<>0
+        if roba->(fieldpos("K1"))<>0  .and. robafmk->(fieldpos("K1"))<>0
         	SmReplace("K1", robafmk->k1, .t.)
 		SmReplace("K2", robafmk->k2, .t.)
         endif
-        if pos_roba->(fieldpos("K7"))<>0  .and. robafmk->(fieldpos("K7"))<>0
+        if roba->(fieldpos("K7"))<>0  .and. robafmk->(fieldpos("K7"))<>0
         	SmReplace("K7", robafmk->k7, .t.)
 		SmReplace("K8", robafmk->k8, .t.)
 		SmReplace("K9", robafmk->k9, .t.)
         endif
-        if pos_roba->(fieldpos("BARKOD"))<>0 .and. robafmk->(fieldpos("BARKOD"))<>0
+        if roba->(fieldpos("BARKOD"))<>0 .and. robafmk->(fieldpos("BARKOD"))<>0
         	SmReplace("BARKOD", robafmk->BARKOD, .t.)
         endif
-        if pos_roba->(fieldpos("N1"))<>0 .and. robafmk->(fieldpos("N1"))<>0
+        if roba->(fieldpos("N1"))<>0 .and. robafmk->(fieldpos("N1"))<>0
         	SmReplace("N1", robafmk->N1, .t.)
 		SmReplace("N2", robafmk->N2, .t.)
         endif
@@ -186,7 +186,7 @@ enddo
 
 select robafmk
 use
-select pos_roba
+select roba
 use
 
 if !gAppSrv

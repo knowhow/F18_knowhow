@@ -55,7 +55,6 @@ AADD(aFiles, "GPARAMS.CDX")
 AADD(aFiles, "PARAMS.DBF")
 AADD(aFiles, "PARAMS.CDX")
 
-
 AADD(aFiles, "K2C.DBF")
 AADD(aFiles, "K2C.CDX")
 
@@ -65,9 +64,8 @@ AADD(aFiles, "MJTRUR.CDX")
 AADD(aFiles, "_POS.DBF")
 AADD(aFiles, "_POS.CDX")
 
-
-AADD(aFiles, "_PRIPR.DBF")
-AADD(aFiles, "_PRIPR.CDX")
+AADD(aFiles, "_POS_PRIPR.DBF")
+AADD(aFiles, "_POS_PRIPR.CDX")
 
 AADD(aFiles, "FMK.INI")
 return aFiles
@@ -93,9 +91,6 @@ AADD(aFiles, "TARIFA.CDX")
 AADD(aFiles, "STRAD.DBF")
 AADD(aFiles, "STRAD.CDX")
 
-AADD(aFiles, "SIROV.DBF")
-AADD(aFiles, "SIROV.CDX")
-
 AADD(aFiles, "OSOB.DBF")
 AADD(aFiles, "OSOB.CDX")
 
@@ -110,9 +105,6 @@ AADD(aFiles, "UREDJ.CDX")
 
 AADD(aFiles, "ODJ.DBF")
 AADD(aFiles, "ODJ.CDX")
-
-AADD(aFiles, "RNGOST.DBF")
-AADD(aFiles, "RNGOST.CDX")
 
 AADD(aFiles, "VALUTE.DBF")
 AADD(aFiles, "VALUTE.CDX")
@@ -349,13 +341,13 @@ return .t.
 function zap_all_promet(cSezona)
 brisi_rupe_pdv17(cSezona)
 // zapuj pos
-OX_POS
+O_POS
 zap
 // zapuj doks
-OX_DOKS
+O_POS_DOKS
 zap
 // pakuj robu
-OX_ROBA
+O_ROBA
 __dbpack()
 return
 

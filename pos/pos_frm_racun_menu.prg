@@ -59,9 +59,9 @@ if gRadniRac=="D"
 	Menu_SC("nar")
 else
 	// ne koristi radne racune - ide drito
-	SELECT _PRIPR
+	select _pos_pripr
   	if RecCount2()<>0 .and. !Empty(BrDok)
-    		DodajNaRacun (_PRIPR->BrDok)
+    		DodajNaRacun (_pos_pripr->BrDok)
   	else
     		NoviRacun()
   	endif
@@ -83,10 +83,10 @@ function NarudzbaT()
 *{
 O_Nar()
 
-SELECT _PRIPR
+select _pos_pripr
 
 if reccount2()<>0 .and. !empty(BrDok)
-	DodajNaRacun(_pripr->brdok)
+	DodajNaRacun(_pos_pripr->brdok)
 else
 	NoviRacun()
 endif
@@ -227,7 +227,7 @@ GO TOP
 ObjDBedit (, 20, 70,, " Radni racun "+ AllTrim (cBrDok), "", .T.)
 SET FILTER TO
 
-SELECT _PRIPR
+select _pos_pripr
 return
 *}
 
@@ -292,7 +292,7 @@ PrevId:= GetList[1]:original        // cId
 ImeKol:={ { "Sifra"  , {|| id          }, "" },;
           { "Naziv"  , {|| naz         }, "" },;
           { "J.mj."  , {|| PADC(jmj,5) }, "" },;
-          { "Cijena" , {|| &("ROBA->Cijena"+gIdCijena)}, "" };
+          { "Cijena" , {|| &("roba->Cijena"+gIdCijena)}, "" };
         }
 if roba->(fieldpos("K7"))<>0
 	AADD (ImeKol,{ padc("K7",2 ), {|| k7 }, ""   })
@@ -321,10 +321,10 @@ if LASTKEY()==K_ESC
 	cId:=PrevID
   	Vrati:=.f.
 else
-	@ m_x+dx,m_y+dy SAY PADR (AllTrim (ROBA->Naz)+" ("+AllTrim (ROBA->Jmj)+")",50)
+	@ m_x+dx,m_y+dy SAY PADR (AllTrim (roba->Naz)+" ("+AllTrim (roba->Jmj)+")",50)
   
 	if roba->tip<>"T"
-    		_Cijena:=&("ROBA->Cijena"+gIdCijena)
+    		_Cijena:=&("roba->Cijena"+gIdCijena)
   	endif
 endif
 
@@ -390,12 +390,12 @@ if gRadniRac=="D"
 	Menu_SC("zrac")
 	return .f.
 else
-	O__PRIPR
+	O__POS_PRIPR
     	if RecCount2()==0
       		CLOSERET
     	endif
     	if gDirZaklj=="D".or.Pitanje(,"Zakljuciti racun? D/N", "D")=="D"
-        	SveNaJedan(_PRIPR->BrDok)
+        	SveNaJedan(_pos_pripr->BrDok)
     	endif
 endif
 CLOSERET
@@ -408,14 +408,14 @@ CLOSERET
 function ZakljuciRT()
 *{
 
-O__PRIPR
+O__POS_PRIPR
 
 if RecCount2()==0
 	CLOSERET
 endif
 
 if gDirZaklj=="D" .or. Pitanje(,"Zakljuciti racun? D/N", "D")=="D"
-	SveNaJedan(_PRIPR->BrDok)
+	SveNaJedan(_pos_pripr->BrDok)
 endif
 
 CLOSERET
@@ -684,7 +684,7 @@ do while .t.
 	endif
 	
 	if lGetPartner
-    		@ m_x+2,m_y+2 SAY "Partner:" GET cIdGost PICT "@!" VALID P_Gosti (@cIdGost)
+    		@ m_x+2,m_y+2 SAY "Partner:" GET cIdGost PICT "@!" VALID P_Firma(@cIdGost)
     		read
    	else
     		cIdGost:=space(8)
@@ -793,10 +793,10 @@ local cDN:=" "
 local cIdPOS
 private aVezani:={}
 
-O_RNGOST
+O_PARTN
 O_VRSTEP
 O_ROBA
-O__PRIPR
+O__POS_PRIPR
 O__POS
 O_POS
 O_POS_DOKS
@@ -831,7 +831,7 @@ set cursor on
   
 if (cIdVrsPla<>gGotPlac)
   @ m_x+5,m_y+9 SAY "Partner:" GET cPartner PICT "@!" ;
-                  VALID P_Gosti (@cPartner, 5, 26)
+                  VALID P_Firma(@cPartner, 5, 26)
   READ
   ESC_BCR
 else
@@ -903,7 +903,7 @@ Seek2 (pos_doks->IdVrsteP)
 IF FOUND ()
   @ m_x+3,m_y+26 SAY Naz
 ENDIF
-SELECT RNGOST
+select partn
 Seek2 (pos_doks->IdGost)
 IF FOUND ()
   @ m_x+5,m_y+31 SAY LEFT (Naz, 30)
@@ -956,7 +956,7 @@ function RekapViseRacuna()
 *{
 cBrojStola:=SPACE(3)
 
-O__PRIPR
+O__POS_PRIPR
 O_StAzur()
 
 dDatOd:=Date()
@@ -993,7 +993,7 @@ private aVezani:={}
 private dDatum
 private cVrijeme
 
-O__PRIPR
+O__POS_PRIPR
 O_StAzur()
 Box (, 3, 60)
 

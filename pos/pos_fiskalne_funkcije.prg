@@ -93,15 +93,15 @@ if !EMPTY( cPartner )
 	
 	// imamo partnera, moramo ga dodati u matricu za racun
 	
-	O_RNGOST
-	select rngost
+	O_PARTN
+	select partn
 	go top
 	seek cPartner
 
-	if !EMPTY( rngost->jib )
-	   AADD( aKupac, { rngost->jib, rngost->naz, ;
-		rngost->adresa, rngost->ptt, rngost->mjesto } )
-	endif
+	//if !EMPTY( partn->jib )
+	  // AADD( aKupac, { partn->jib, partn->naz, ;
+		//partn->adresa, partn->ptt, partn->mjesto } )
+	//endif
 
 endif
 
@@ -367,17 +367,17 @@ if !EMPTY( cPartner )
 	
 	// imamo partnera, moramo ga dodati u matricu za racun
 	
-	O_RNGOST
-	select rngost
+	O_PARTN
+	select partn
 	go top
 	seek cPartner
 	
 	aKupac := {}
 
-	if !EMPTY( rngost->jib )
-	   AADD( aKupac, { rngost->jib, rngost->naz, ;
-		rngost->adresa, rngost->ptt, rngost->mjesto } )
-	endif
+	//if !EMPTY( partn->jib )
+	  // AADD( aKupac, { partn->jib, partn->naz, ;
+		//partn->adresa, partn->ptt, partn->mjesto } )
+	//endif
 
 endif
 
@@ -533,17 +533,17 @@ if !EMPTY( cPartner )
 	
 	// imamo partnera, moramo ga dodati u matricu za racun
 	
-	O_RNGOST
-	select rngost
+	O_PARTN
+	select partn
 	go top
 	seek cPartner
 
 	aKupac := {}
 
-	if !EMPTY( rngost->jib )
-	   AADD( aKupac, { rngost->jib, rngost->naz, ;
-		rngost->adresa, rngost->ptt, rngost->mjesto } )
-	endif
+	//if !EMPTY( partn->jib )
+	  // AADD( aKupac, { partn->jib, partn->naz, ;
+		//partn->adresa, partn->ptt, partn->mjesto } )
+	//endif
 
 endif
 

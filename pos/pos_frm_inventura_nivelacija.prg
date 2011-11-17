@@ -121,13 +121,13 @@ SELECT ODJ
 if ODJ->Zaduzuje=="S"
 	cZaduzuje:="S"
   	cRSdbf:="SIROV"
-  	cRSblok:="P_Sirov2 (@_IdRoba)"
+  	cRSblok:="P_Roba(@_IdRoba)"
   	cUI_U:=S_U
 	cUI_I:=S_I
 else
   	cZaduzuje:="R"
   	cRSdbf:="ROBA"
-  	cRSblok:="P_Roba2 (@_IdRoba)"
+  	cRSblok:="P_Roba(@_IdRoba)"
   	cUI_U:=R_U
 	cUI_I:=R_I
 endif

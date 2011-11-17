@@ -36,213 +36,15 @@ function Id2Naz()
 local nSel:=SELECT()
 
 Pushwa()
-SELECT sirov
+select roba
 HSEEK sast->id2
 popwa()
 
-return LEFT(sirov->naz,25)
-
-
-function P_RobaPOS(cId,dx,dy)
-local aZabrane
-private ImeKol
-private Kol:={}
-
-ImeKol:={}
-
-AADD(ImeKol, { padr("Sifra",10), {|| id }, "id", {|| .t.}, {|| vpsifra(wId)} })
-
-// fiscal plu kod, sifra koja se koristi kod izdavanja racuna
-if roba->(fieldpos("FISC_PLU")) <> 0
-	AADD (ImeKol,{ padc("PLU KOD", 8 ), {|| fisc_plu }, "fisc_plu", ;
-		{|| gen_plu(@wfisc_plu), .f. }, {|| .t. }})
-endif
-
-AADD(ImeKol, { padr("Naziv",40), {|| naz},     "naz"      })
-
-AADD(ImeKol, { padr("JMJ",3),    {|| jmj},     "jmj"    })
-AADD(ImeKol, { padr("Cijena(1)",10 ), {|| transform(cijena1,"999999.999")}, "cijena1"   })
-AADD(ImeKol, { padr("Cijena(2)",10 ), {|| transform(cijena2,"999999.999")}, "cijena2"   })
-AADD(ImeKol, { "Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa)}   })
-if gVodiOdj=="D"
-	AADD(ImeKol, { "Odjeljenje",{|| idodj}, "idodj", {|| .t. }, {|| P_Odj(@widodj) }   })
-endif
-AADD(ImeKol, { "Tip",{|| " "+Tip+" "}, "Tip", {|| .t.}, {|| .t.} })
-AADD(ImeKol, { "Djeljiv",{|| " "+Djeljiv+" "}, "Djeljiv", {|| .t.}, {|| EMPTY (wDjeljiv) .or. wDjeljiv $ "DN"} })
-
-if roba->(fieldpos("SIFDOB"))<>0
-	AADD (ImeKol,{ padc("SIFDOB",8 ), {|| sifdob }, "SIFDOB"   })
-endif
-
-if roba->(fieldpos("BARKOD"))<>0
-	AADD(ImeKol, { padr("BARKOD",13),  {|| barkod },     "barkod"    , {|| .t.},  {|| P_BarKod(wBarKod)}  })
-endif
-
-if roba->(fieldpos("K1"))<>0
-	AADD (ImeKol,{ padc("K1",4 ), {|| k1 }, "k1"   })
-	AADD (ImeKol,{ padc("K2",4 ), {|| k2 }, "k2"   })
-endif
-if roba->(fieldpos("mink"))<>0
-	AADD (ImeKol,{ padc("MINK",10 ), {|| transform(MINK,"999999.99")}, "MINK"   })
-endif
-
-if roba->(fieldpos("N2"))<>0
-	AADD (ImeKol,{ padc("N1",10 ), {|| transform(N1,"999999.99")}, "N1"   })
-  	AADD (ImeKol,{ padc("N2",10 ), {|| transform(N2,"999999.99")}, "N2"   })
-endif
-
-if roba->(fieldpos("K7"))<>0
-    	AADD (ImeKol,{ padc("K7",2 ), {|| k7 }, "k7"   })
-    	AADD (ImeKol,{ padc("K8",2 ), {|| k8 }, "k8"   })
-    	AADD (ImeKol,{ padc("K9",3 ), {|| k9 }, "k9"   })
-endif
-
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
-next
-
-
-//if gSifK="D"
-	PushWa()
-	select sifk
-	set order to tag "ID"
-	seek "ROBA"
-	do while !eof() .and. ID="ROBA"
- 		AADD (ImeKol, {  IzSifKNaz("ROBA",SIFK->Oznaka) })
- 		AADD (ImeKol[Len(ImeKol)], &( "{|| padr(ToStr(IzSifk('ROBA','" + sifk->oznaka + "')),10) }" ) )
- 		AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
- 		if sifk->edkolona > 0
-   			for ii:=4 to 9
-    				AADD( ImeKol[Len(ImeKol)], NIL  )
-   			next
-   			AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- 		else
-   			for ii:=4 to 10
-    				AADD( ImeKol[Len(ImeKol)], NIL  )
-   			next
- 		endif
- 		// postavi picture za brojeve
- 		if sifk->Tip="N"
-   			if decimal > 0
-     				ImeKol[Len(ImeKol),7]:=replicate("9", sifk->duzina-sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
-   			else
-     				ImeKol[Len(ImeKol),7]:=replicate("9", sifk->duzina )
-   			endif
- 		endif
-
- 		AADD(Kol,iif( sifk->UBrowsu='1',++i, 0) )
- 		skip
-	enddo
-	PopWa()
-//endif
-
-if KLevel="3"
-	aZabrane:={K_CTRL_T,K_CTRL_N,K_F4,K_F2,K_CTRL_F9}
-elseif KLevel="2" .or.  (klevel=="1" .and. gSifUpravn=="N")
-  	aZabrane:={K_CTRL_T,K_F4,K_F2,K_CTRL_F9}
-else
-  	aZabrane:={}
-endif
-
-return PostojiSifra(F_ROBA,I_ID,15,77,"Sifrarnik robe/artikala",@cId,dx,dy,;
-	{|| ed_r_item(ch) },nil,nil, aZabrane)
-
-
-
-// -------------------------------------
-// edit roba item
-// -------------------------------------
-static function ed_r_item()
-local nRet := DE_CONT
-
-do case
-	case UPPER(CHR(ch)) == "P"
-		// generisi PLU
-		if gen_all_plu() == .t.
-			return DE_REFRESH		
-		endif
-
-endcase
-
-return nRet
-
-
+return LEFT(roba->naz,25)
 
  
 function LMarg()
 return "   "
-
-
-function P_Sirov(cId,dx,dy)
-private ImeKol
-private Kol:={}
-
-ImeKol:={{padr("Sifra",10),{|| id },"id",{||.t.},{||VPSifra(wId)}},{padr("Naziv",40),{|| naz},"naz"},{ padr("JMJ",3),{|| jmj},"jmj"},{"Tarifa",{|| IdTarifa},"IdTarifa",{|| .t. },{|| P_Tarifa(@wIdTarifa)}},{"Odjeljenje",{|| idodj},"IdOdj",{||.t.},{||Empty(wIdOdj).or.P_Odj(@widodj)}}}
-
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
-next
-
-//if gSifK="D"
-	PushWa()
-	select sifk
-	set order to tag "ID"
-	seek "SIROV"
-	do while !eof() .and. ID="SIROV"
-		AADD (ImeKol, {  IzSifKNaz("SIROV",SIFK->Oznaka) })
- 		AADD (ImeKol[Len(ImeKol)], &( "{|| padr(ToStr(IzSifk('SIROV','" + sifk->oznaka + "')),10) }" ) )
- 		AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
- 		if sifk->edkolona > 0
-   			for ii:=4 to 9
-    				AADD( ImeKol[Len(ImeKol)], NIL  )
-   			next
-   			AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- 		else
-   			for ii:=4 to 10
-    				AADD( ImeKol[Len(ImeKol)], NIL  )
-   			next
- 		endif
- 		// postavi picture za brojeve
- 		if sifk->Tip="N"
-   			if decimal > 0
-     				ImeKol[Len(ImeKol),7]:=replicate("9", sifk->duzina-sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
-   			else
-     				ImeKol[Len(ImeKol),7]:=replicate("9", sifk->duzina )
-   			endif
- 		endif
-
- 		AADD(Kol,iif( sifk->UBrowsu='1',++i, 0) )
-
- 		skip
-	enddo
-	PopWa()
-//endif
-
-return PostojiSifra(F_SIROV,I_ID,15,77,"Sifrarnik sirovina",@cId,dx,dy,)
-
-
- 
-function P_Tarifa2(cId,dx,dy)
-local aZabrane
-private ImeKol
-private Kol:={}
-
-ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",10),{|| left(naz,10)},"naz"},{"PPP ",{|| opp},"opp"},{"PPU ",{|| ppp},"ppp"},{"PP  ",{|| zpp},"zpp"},{"P.na Marzu",{|| vpp},"vpp"}}
-
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
-next
-
-if KLevel="3"
-	aZabrane:={K_CTRL_T,K_CTRL_N,K_F4,K_F2,K_CTRL_F9}
-elseif KLevel="2"  .or. (klevel=="1" .and. gSifUpravn=="N")
-  	aZabrane:={K_CTRL_T,K_F4,K_F2,K_CTRL_F9}
-else
-  	aZabrane:={}
-endif
-return PostojiSifra(F_TARIFA,I_ID,10,55,"Sifrarnik tarifnih grupa",@cid,dx,dy,;
-                      NIL, NIL, NIL, aZabrane)
-
 
 
  
@@ -305,102 +107,6 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol,i)
 next
 return PostojiSifra(F_VRSTEP,I_ID,10,55,"Sifrarnik vrsta placanja",@cid,dx,dy)
-
-
- 
-function P_Gosti(cId,dx,dy)
-local aZabrane
-private ImeKol
-private Kol:={}
-
-O_RNGOST
-
-if gModul=="TOPS"
-	ImeKol:={ {"ID ",{|| id }, "id", {|| .t.}, {|| vpsifra(wId)} },;
-	{PADC("Naziv",30),{|| naz},LEFT("naz",30)},;
-	{PADC("JIB", 13),{|| jib},"jib"},;
-	{PADC("Adresa", 40),{|| adresa},"adresa"},;
-	{PADC("PTT", 10),{|| ptt},"ptt"},;
-	{PADC("Mjesto", 30),{|| mjesto},"mjesto"},;
-	{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},;
-	{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},;
-	"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .t.},{|| wStatus $ "DN"}}}
-	
-else
-	ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{ PADC("Naziv",30),{|| naz},LEFT("naz",30)},{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},{"Vrsta placanja",{|| IdVrsteP},"IdVrsteP",{|| .T.},{|| P_VRSTEP(@wIdVrsteP)}},{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .T.},{|| wStatus $ "DN"}}}
-endif
-
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
-next
-
-if KLevel="3"
-	aZabrane:={K_CTRL_F9}
-elseif KLevel="2"
-  	aZabrane:={K_CTRL_T,K_F4,K_F2,K_CTRL_F9}
-else
-  	aZabrane:={}
-endif
-
-if gModul="TOPS"
-	return PostojiSifra(F_RNGOST,I_ID,10,75,"Sifrarnik partnera",@cid,dx,dy,nil,nil,nil,aZabrane)
-else 
-	return PostojiSifra(F_RNGOST,I_ID,10,75,"Sifrarnik partnera/soba",@cid,dx,dy,NIL, NIL, NIL, aZabrane)
-endif 
-
-
-function PopuniIDN(Ch)
-nBrojac:=0
-nIDN:=1
-nRecNo:=RecNo()
-if (Ch==K_CTRL_G .and. Pitanje(,"Popuniti polja IDN za postojece partnere?","N")=="D")
-      	TB:Stabilize()  
-	Box(,1,30)
-		@ m_x+1,m_y+2 SAY "Pocetna vrijednost:" GET nIDN PICT "999999"
-		read
-	BoxC()	
-	do while !eof()
-		if field->idn<>0
-			skip
-			loop
-		else
-			replace idn with nIDN
-			++nIDN
-			++nBrojac
-			skip
-		endif
-	enddo
-	MsgBeep("Popunjena polja idn za postojece partnere.##Broj polja:"+ALLTRIM(STR(nBrojac)))
-endif
-go nRecNo
-return DE_CONT
-
-
-
-static function IncIDN(wId)
-local nRet:=.t.
-
-if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
-	if (LastKey()==K_ESC)
-		return nRet:=.f.
-	endif
-	nRecNo:=RecNo()
-	set order to tag "IDN"
-	wId:=LastIDN(nRecNo)+1
-	set order to
-	AEVAL(GetList,{|o| o:display()})
-endif
-return nRet
-
-
-
-static function LastIDN(nRecNo)
-go bottom
-nLastID:=field->idn
-go nRecNo
-return nLastID
-
-
 
 
  
@@ -473,12 +179,8 @@ next
 return PostojiSifra(F_ROBAIZ,I_ID,10,55,"Sifrarnik iznimki kod izuzimanja robe",@cid,dx,dy)
 
 
-/*! \fn EdOsob()
- *  \brief
- */
- 
+
 function EdOsob()
-*{
 local System:=(KLevel<L_UPRAVN)
 local nVrati:=DE_CONT
 
@@ -544,17 +246,10 @@ if ch==K_ALT_R .or. ch==K_ALT_S .or. ch==K_CTRL_N .or. ch==K_F2 .or. ch==K_F4 .o
 	ch:=0
 endif
 return nVrati
-*}
 
 
 
-/*! \fn GetOsob(fNovi)
- *  \brief
- *  \param fNovi
- */
- 
 function GetOsob(fNovi)
-*{
 local cLevel
 
 Box("",4,60,.f.,"Unos novog korisnika,sifre")
@@ -586,17 +281,10 @@ endif
 READ
 BoxC()
 return lastkey()
-*}
 
 
-/*! \fn VPSifra2(cSifra,cIme)
- *  \brief
- *  \param cSifra
- *  \param cIme
- */
- 
+
 static function VPSifra2(cSifra,cIme)
-*{
 local lRet:=.t.
 local nObl:=SELECT()
 
@@ -618,17 +306,11 @@ enddo
 USE
 SELECT (nObl)
 return lRet
-*}
 
 
 
-/*! \fn PomMenu1(aNiz)
- *  \brief
- *  \param aNiz
- */
- 
+
 function PomMenu1(aNiz)
-*{
 local xP:=ROW()
 local yP:=COL()
 local xN
@@ -649,17 +331,11 @@ next
 @ xP,yP SAY ""
 
 return
-*}
 
 
 
-/*! \fn P_Barkod(cBK)
- *  \brief
- *  \param cBK
- */
- 
+
 function P_Barkod(cBK)
-*{
 local fRet:=.f.
 local nRec:=recno()
 
@@ -688,123 +364,5 @@ endif
 
 PopWa()
 return .t.
-*}
-
-
-/*! \fn P_Roba2(cIdRoba)
- *  \brief
- *  \param cIdRoba
- */
- 
-function P_Roba2(cIdRoba)
-*{
-P_robaPOS(@cIdRoba)
-
-if !EMPTY(ROBA->IdOdj).and.ROBA->IdOdj<>cIdOdj
-	MsgBeep("Artikal ne pripada ovom odjeljenju!")
-    	return .f.
-endif
-
-_cijena:=roba->cijena1
-_ncijena:=_cijena
-_robanaz:=ROBA->Naz
-_jmj:=ROBA->Jmj
-
-return .t.
-*}
-
-function ISast()
-*{
-qqProiz:=SPACE(60)
-cBrisi:="N"
-do while .t.
-	Box(,3,60)
- 		@ m_x+1,m_y+2 SAY "Proizvodi :" GET qqProiz  pict "@!S30"
- 		@ m_x+3,m_y+2 SAY "Brisanje prekinutih sastavnica :" GET cBrisi  pict "@!" valid cBrisi $ "DN"
- 		read
-	BoxC()
-
-private aUsl1:=Parsiraj(qqProiz,"Id")
-if aUsl1<>NIL; exit; endif
-enddo
-
-select sast
-START PRINT CRET
-
-if aUsl1==".t."
-    set filter to
-else
-    set filter to &aUsl1
-endif
-
-
-m:="--------------------------------------------------------------------------------------------"
-nCol1:=60
-P_12CPI
-nStr:=0
-
-if cBrisi=="D"
-  select sast; set order to; go top
-  do while !eof()
-     skip; nTrec:=recno(); skip -1
-     select roba; hseek sast->id  // nema "svog proizvoda"
-     if !found()
-       select sast; delete
-     endif
-     select sast
-     go nTRec
-  enddo
-  select sast; set order to tag "ID"; go top
-endif
-
-?
-? "PREDUZECE: _____________________________"
-?
-? "Pregled sastavnica-normativa za proizvode na dan",date()
-?
-? padl("Strana:"+str(++nStr,2),80)
-?
-go top
-do WHILE !EOF()
-  cId:=id
-  select roba; hseek sast->id; select sast
-  if prow()>60; FF; ? padl("Strana:"+str(++nStr,2),80); ?;endif
-  ?
-  ? LMARG()+m
-  ? LMARG()+roba->id, trim(roba->naz)+" ("+trim(roba->jmj)+")"
-  @ prow(),60 SAY roba->cijena1 pict "999999.99"
-  ?? "", gDomValuta
-  ? LMARG()+m
-  //? "                                                              Kolicina       NV         MPV"
-  nRbr:=0
-  nNC:=0
-  nVPC:=0
-  do WHILE cid==id .and. !eof()
-      if prow()>56; FF; ? padl("Strana:"+str(++nStr,2),80);?; endif
-      select sirov; hseek sast->id2; select sast
-      ? LMARG()+str(++nrbr,5)+"."
-      @ prow(),pcol()+1 SAY sirov->id
-      @ prow(),pcol()+1 SAY padr(trim(sirov->naz)+" ("+trim(sirov->jmj)+")",40)
-      @ prow(),pcol()+1 SAY kolicina pict "999999.9999"
-      nCol1:=pcol()+1
-      @ prow(),pcol()+1 SAY "__________"
-      @ prow(),pcol()+1 SAY "__________"
-      skip
-  enddo
-  ? lmarg()+m
-enddo
-
-FF
-END PRINT
-
-select roba
-set filter to
-select sirov
-set filter to
-select sast
-set filter to
-
-return
-*}
 
 

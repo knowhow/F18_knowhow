@@ -50,7 +50,6 @@ O_DIO
 O_SIFK
 O_SIFV
 O_ROBA
-O_SIROV
 O_POS
 
 cIdPos:=gIdPos

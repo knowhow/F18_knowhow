@@ -157,7 +157,7 @@ use ( KUMPATH + cPredSez + SLASH + "POS" ) ALIAS POS_SEZ
 
 O_POS
 O_POS_DOKS
-O_POS_ROBA
+O_ROBA
 O_TARIFA
 
 select pos_doks
@@ -180,7 +180,7 @@ do while !EOF() .and. field->idpos == cIdPos
 
 	cIdRoba := field->idroba
 
-	select pos_roba
+	select roba
 	set order to tag "ID"
 	go top
 	seek cIdRoba

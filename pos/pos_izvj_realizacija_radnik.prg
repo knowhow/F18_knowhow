@@ -110,7 +110,7 @@ AADD (aDbf, {"Iznos",    "N", 20, 5})
 AADD (aDbf, {"Iznos2",   "N", 20, 5})
 AADD (aDbf, {"Iznos3",   "N", 20, 5})
 NaprPom (aDbf)
-USEX (PRIVPATH+"POM") NEW
+my_use ("pom", .t., "NEW")
 INDEX ON IdRadnik+IdVrsteP+IdRoba+IdCijena TAG ("1") TO (PRIVPATH+"POM")
 INDEX ON IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
 index ON BRISANO TAG "BRISAN"
@@ -299,14 +299,14 @@ IF fPrik $ "RO"
   nTotal2 := 0
   nTotal3 := 0
   do While !EOF()
-    SELECT ROBA
+    select roba
     HSEEK POM->IdRoba
     SELECT POM
     ? POM->IdRoba+" "
     if roba->(fieldpos("K7"))<>0
-      ?? PADR (ROBA->Naz, 23)+roba->k7
+      ?? PADR (roba->Naz, 23)+roba->k7
     else
-      ?? PADR (ROBA->Naz, 21)
+      ?? PADR (roba->Naz, 21)
     endif
     _IdRoba := POM->IdRoba
     nRobaIzn := 0
@@ -378,7 +378,7 @@ SELECT DIO
 	USE
 SELECT KASE
 	USE
-SELECT ROBA
+select roba
 	USE
 SELECT VRSTEP
 	USE

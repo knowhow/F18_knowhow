@@ -12,22 +12,9 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
-/*! \file fmk/pos/rpt/1g/rpt_rodj.prg
- *  \brief Izvjestaj: realizacija odjeljenja
- */
-
-/*! \fn RealOdj()
- *  \brief Izvjestaj: realizacija odjeljenja
- */
 
 function RealOdj()
-*{
 LOCAL   nSir:=IIF (gVrstaRS=="S", 80, 40)
 PRIVATE cIdOdj := SPACE(2), cPrikRobe := "D"
 PRIVATE cSmjena:=SPACE(1), cIdPos:=gIdPos, cIdDio := gIdDio
@@ -54,7 +41,7 @@ O_POS_DOKS
   AADD (aDbf, {"Iznos2",    "N", 20, 5})
   AADD (aDbf, {"Iznos3",    "N", 20, 5})
   NaprPom (aDbf)
-  USEX (PRIVPATH+"POM") NEW
+  my_use ("pom", .t., "NEW")
   INDEX ON IdOdj+IdDio+IdPos+IdRoba+IdCijena TAG ("1") TO (PRIVPATH+"POM")
   INDEX ON IdOdj+IdDio+IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
   index ON BRISANO TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
@@ -244,9 +231,9 @@ endif
         nTotDio3 := 0
         do WHILE !Eof() .and. POM->(IdOdj+IdDio)==(_IdOdj+_IdDio)
           _IdRoba := POM->IdRoba
-          SELECT ROBA
+          select roba
           HSEEK _IdRoba
-          ? SPACE (5) + _IdRoba, LEFT (ROBA->Naz, 26)
+          ? SPACE (5) + _IdRoba, LEFT (roba->Naz, 26)
           SELECT POM
           do WHILE !Eof() .and. ;
                 POM->(IdOdj+IdDio+IdRoba)==(_IdOdj+_IdDio+_IdRoba)
@@ -403,7 +390,7 @@ O_POS_DOKS
   AADD (aDbf, {"Iznos2",    "N", 20, 5})
   AADD (aDbf, {"Iznos3",    "N", 20, 5})
   NaprPom (aDbf)
-  USEX (PRIVPATH+"POM") NEW
+  my_use ("pom", .t., "NEW")
   INDEX ON IdDio+IdPos+IdVrsteP TAG ("1") TO (PRIVPATH+"POM")
   INDEX ON IdDio+IdRadnik+IdVrsteP TAG ("2") TO (PRIVPATH+"POM")
   INDEX ON IdDio+IdVrsteP TAG ("3") TO (PRIVPATH+"POM")
@@ -781,9 +768,9 @@ O_POS_DOKS
       nTotDio3 := 0
       do WHILE !EOF() .and. POM->IdDio==_IdDio
         _IdRoba := POM->IdRoba
-        SELECT ROBA
+        select roba
         HSEEK _IdRoba
-        ? SPACE (5) + _IdRoba, LEFT (ROBA->Naz, 28), "("+ROBA->Jmj+")"
+        ? SPACE (5) + _IdRoba, LEFT (roba->Naz, 28), "("+roba->Jmj+")"
         SELECT POM
         nRobaKol := 0
         nRobaIzn := 0

@@ -26,11 +26,11 @@ private cVrstP:=SPACE(2)
 private cGotZir:=SPACE(1)
 private cSifraDob:=SPACE(8)
 
-O_RNGOST
+O_PARTN
 
 do while .t.
 	if !VarEdit({ ;
-	  {"Sifra partnera (prazno-svi)","cGost","IF(!EMPTY(cGost),P_Gosti(@cGost),.t.)","@!",}, ;
+	  {"Sifra partnera (prazno-svi)","cGost","IF(!EMPTY(cGost),P_Firma(@cGost),.t.)","@!",}, ;
 	  {"Prikaz partnera sa stanjem 0 (D/N)", "cNula","cNula$'DN'","@!",}, ;
 	  {"Prikazati stanje od dana ", "dDatOd",".t.",,},;
 	  {"Prikazati stanje do dana ", "dDat",".t.",,},;
@@ -47,7 +47,7 @@ enddo
 O_ROBA
 O_POS
 O_POS_DOKS
-O_RNGOST
+O_PARTN
 
 START PRINT CRET
 ?? gP12cpi
@@ -177,10 +177,10 @@ do while !eof()
 	
 	if round(nStanje,4)<>0 .or. cNula=="D"
 		
-		SELECT RNGOST
+		select partn
 		hseek cIdGost
 		? REPL("-",80)
-		? ALLTRIM(STR(nBrojacPartnera)) + ") " + PADR(ALLTRIM(cIdGost)+" "+RNGOST->Naz,35)+" "
+		? ALLTRIM(STR(nBrojacPartnera)) + ") " + PADR(ALLTRIM(cIdGost)+" "+partn->Naz,35)+" "
 		if gVrstaRS=="K"
 			? SPACE(4)
 		endif
@@ -288,12 +288,12 @@ private cSpec:="N"
 // izvjestaj je korektan na serveru, odnosno na stand-alone kasi
 O_POS
 O_POS_DOKS
-O_RNGOST
+O_PARTN
 
 // maska za postavljanje uslova
 ///////////////////////////////
 do while .t.
-	if !VarEdit({{"Sifra gosta/partner/sobe (prazno-svi)","cGost","IF(!EMPTY(cGost),P_Gosti(@cGost),.t.)",,},{"Prikazati goste sa stanjem 0 (D/N)", "cNula","cNula$'DN'","@!",},{"Prikazati stanje na dan ", "dDat","dDat<=gDatum",,},{"Prikazati specifikaciju", "cSpec","cSpec$'DN'","@!",} },11,5,17,74,'USLOVI ZA IZVJESTAJ "STANJE RACUNA GOSTIJU"',"B1")
+	if !VarEdit({{"Sifra gosta/partner/sobe (prazno-svi)","cGost","IF(!EMPTY(cGost),P_Firma(@cGost),.t.)",,},{"Prikazati goste sa stanjem 0 (D/N)", "cNula","cNula$'DN'","@!",},{"Prikazati stanje na dan ", "dDat","dDat<=gDatum",,},{"Prikazati specifikaciju", "cSpec","cSpec$'DN'","@!",} },11,5,17,74,'USLOVI ZA IZVJESTAJ "STANJE RACUNA GOSTIJU"',"B1")
 		CLOSERET
 	else
 		exit
@@ -360,9 +360,9 @@ do while !eof()
 	enddo
 	nStanje:=nPlacNije-nPlacJest
 	if round(nStanje,4)<>0 .or. cNula=="D"
-		SELECT RNGOST
+		select partn
 		hseek cIdGost
-		? PADR(ALLTRIM(cIdGost)+" "+RNGOST->Naz,35)+" "
+		? PADR(ALLTRIM(cIdGost)+" "+partn->Naz,35)+" "
 		if gVrstaRS=="K"
 			? SPACE(4)
 		endif

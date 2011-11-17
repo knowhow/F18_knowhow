@@ -102,7 +102,7 @@ AADD(opc,"2. instalacija db-a")
 AADD(opcexe,{|| goModul:oDatabase:install()})
 
 AADD(opc, "3. generisi doks iz POS ")    
-AADD(opcexe, {|| GenDoks() })
+AADD(opcexe, {|| pos_generisi_doks_iz_pos() })
 
 AADD(opc, "4. brisi duple sifre")
 AADD(opcexe, {|| BrisiDupleSifre()})

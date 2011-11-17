@@ -360,22 +360,22 @@ IF ZAKSM->(RecCount2()) > 0
               "<Z> - Zakljuci")
   IF ZAKSM->(RecCount2()) > 0
     // zakljucen je samo dio radnika - vrati se nazad
-    CLOSERET 0
+    close all; return 0
   ENDIF
   // svi radnici su zakljuceni, idi na zakljucenje kase
   IF Pitanje (, "Svi radnici su zakljuceni! Stampati pazar smjene?", "D")=="N"
-    CLOSERET 0
+    close all; return 0
   EndIF
 ELSE
   IF Pitanje ("zsm", "Nema nezakljucenih radnika! Stampati pazar smjene? (D/N)", "D")=="N"
-    CLOSERET 0
+    close all; return 0
   ENDIF
 ENDIF
 
 Close All
 IF !RealKase (.T.)
   MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
-  CLOSERET 0
+  close all; return 0
 EndIF
 
 if gModul=="HOPS"
@@ -416,7 +416,7 @@ aOpc:={"Izmjeni","Ukini","Ostavi"}
 
 O_SIFK
 O_SIFV
-O_POS_ROBA
+O_ROBA
 O_K2C
 
 Box(,10,75)
@@ -519,10 +519,10 @@ function NazivRobe(cIdRoba)
 *{
 local nCurr:=SELECT()
 
-select pos_roba
+select roba
 HSEEK cIdRoba
 SELECT nCurr
-return (pos_roba->Naz)
+return (roba->Naz)
 *}
 
 

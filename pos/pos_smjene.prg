@@ -437,7 +437,8 @@ else
   	Close All
   	if !RealKase(.t.)
     		MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
-    		CLOSERET 0
+    		close all
+			return 0
   	endif
   	if gModul=="HOPS"
     		// generisi utrosak sirovina za smjenu
@@ -447,6 +448,7 @@ endif
 
 gSmjena:=STR(VAL(gSmjena)+1,LEN(gSmjena))
 MsgBeep("Otvorena je smjena "+gSmjena)
-CLOSERET
+close all
+return
 *}
 

@@ -90,9 +90,9 @@ Sifra    Naziv              JMJ Kolicina
     EndIF
     ? cLM
     ?? IdRoba, ""
-    SELECT SIROV
+    select roba
     HSEEK POS->IdRoba
-    ?? PADR (SIROV->Naz, nRobaSir), SIROV->Jmj, ""
+    ?? PADR (roba->Naz, nRobaSir), roba->Jmj, ""
     SELECT POS
     IF gVrstaRS == "S"
      ?? TRANS (POS->Cijena, "9999.99"), ""

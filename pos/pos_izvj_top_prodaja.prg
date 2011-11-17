@@ -39,7 +39,7 @@ AADD (aDbf, {"Iznos2",    "N", 20, 3})
 AADD (aDbf, {"Iznos3",    "N", 20, 3})
 NaprPom (aDbf)
 
-USEX (PRIVPATH+"POM") NEW
+my_use("pom", .t., "NEW")
 index on IdRoba TAG ("1") to (PRIVPATH+"POM")
 index on Descend (Str (Iznos,20,3)) TAG ("2") to (PRIVPATH+"POM")
 index on Descend (Str (Kolicina,15,3)) TAG ("3") to (PRIVPATH+"POM")
@@ -113,14 +113,14 @@ IF cSta $ "IO"
   Set order to 2
   GO TOP
   WHILE ! Eof() .and. nCnt <= nTop
-    SELECT ROBA
+    select roba
     HSEEK POM->IdRoba
     if IsPlanika() .and. cPrikOnlyPar=="D" .and. roba->jmj<>"PAR" 
     	select POM
 	skip
 	loop
     endif
-    ? ROBA->Id, LEFT (ROBA->Naz, 20), STR (POM->Iznos, 19, 2)
+    ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Iznos, 19, 2)
     SELECT POM
     nCnt ++
     SKIP
@@ -138,14 +138,14 @@ IF cSta $ "KO"
   Set order to 3
   GO TOP
   WHILE ! Eof() .and. nCnt <= nTop
-    SELECT ROBA
+    select roba
     HSEEK POM->IdRoba
     if IsPlanika() .and. cPrikOnlyPar=="D" .and. roba->jmj<>"PAR" 
     	select POM
 	skip
 	loop
     endif
-    ? ROBA->Id, LEFT (ROBA->Naz, 20), STR (POM->Kolicina, 15, 3)
+    ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Kolicina, 15, 3)
     SELECT POM
     nCnt ++
     SKIP

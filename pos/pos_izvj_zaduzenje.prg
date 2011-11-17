@@ -242,13 +242,7 @@ DO While ! Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dt
      		?? padr(IdRoba, 8), ""
    	endif
    
-   	if POS->MU_I $ S_I+S_U  
-		// odaberi je li sifrarnik roba ili sirovina
-     		SELECT SIROV          
-		// sirovina ulaz ili sirovina izlaz
-   	else
-     		SELECT ROBA
-   	endif
+    SELECT ROBA
    	
 	HSEEK POS->IdRoba
    	?? PADR (_field->Naz, nRobaSir), _field->Jmj, ""

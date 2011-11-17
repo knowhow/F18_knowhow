@@ -331,6 +331,7 @@
 #xcommand O_POS_SAST  => SELECT (F_SAST); my_use("pos_sast"); set order to tag "ID"
 #xcommand O_STRAD     => SELECT (F_STRAD); my_use("strat"); set order to tag "ID"
 #xcommand O_OSOB      => SELECT (F_OSOB); my_use("osob"); set order to tag "ID"
+#xcommand O_KORISN    => SELECT (F_OSOB); my_use("korisn"); set order to tag "ID"
 #xcommand O_VRSTEP    => SELECT (F_VRSTEP); my_use("vrstep"); set order to tag "ID"
 #xcommand O_KASE      => SELECT (F_KASE); my_use("kase"); set order to tag "ID"
 #xcommand O_ODJ       => SELECT (F_ODJ); my_use("odj"); set order to tag "ID"
@@ -338,26 +339,7 @@
 #xcommand O_UREDJ     => SELECT (F_UREDJ); my_use("uredj"); set order to tag "ID"
 #xcommand O_RNGOST    => SELECT (F_RNGOST); my_use("rngost"); set order to tag "ID"
 #xcommand O_MARS      => SELECT (F_MARS); my_use("mars"); set order to tag "ID"
-// OX treba izbaciti...
-#xcommand OX_POS_DOKS => SELECT (F_DOKS); my_use ("pos_doks"); set order to 1
-#xcommand OX_POS      => SELECT (F_POS); my_use ("pos"); set order to 1
-#xcommand OX_RNGPLA   => SELECT (F_RNGPLA); my_use ("rngpla"); set order to 1
-#xcommand OX_PROMVP   => SELECT (F_PROMVP); my_use ("promvp"); set order to 1
-#xcommand OX_K2C      => SELECT (F_K2C); my_use("k2c"); set order to 1
-#xcommand OX_MJTRUR   => SELECT (F_MJTRUR); my_use("mjtrur"); set order to 1
-#xcommand OX_ROBAIZ   => SELECT (F_ROBAIZ); my_use("robaiz"); set order to 1
-#xcommand OX_RAZDR    => SELECT (F_RAZDR); my_use("razdr")
-#xcommand OX_POS_ROBA => SELECT (F_ROBA); my_use("roba"); set order to tag "ID"
-#xcommand OX_SIROV    => SELECT (F_SIROV); my_use("sirov"); set order to tag "ID"
-#xcommand OX_POS_SAST => SELECT (F_SAST); my_use("pos_sast"); set order to tag "ID"
-#xcommand OX_STRAD    => SELECT (F_STRAD); my_use("strad")
-#xcommand OX_OSOB     => SELECT (F_OSOB); my_use("osob")
-#xcommand OX_VRSTEP   => SELECT (F_VRSTEP); my_use("vrstep")
-#xcommand OX_KASE     => SELECT (F_KASE); my_use("kase")
-#xcommand OX_ODJ      => SELECT (F_ODJ); my_use("odj"); set order to tag "ID"
-#xcommand OX_DIO      => SELECT (F_DIO); my_use("dio"); set order to tag "ID"
-#xcommand OX_UREDJ    => SELECT (F_UREDJ); my_use("uredj"); set order to tag "ID"
-#xcommand OX_RNGOST   => SELECT (F_RNGOST); my_use("rngost"); set order to tag "ID"
-#xcommand OX_MARS     => SELECT (F_MARS); my_use("mars"); set order to tag "ID"
+#xcommand O_POS_ROBASEZ => select(F_ROBASEZ);  my_use("pos_roba")  ; set order to tag "ID"
+
 
 

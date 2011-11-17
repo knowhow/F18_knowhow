@@ -582,7 +582,7 @@ SELECT POM
 GO TOP
 DO WHILE ! EOF()
   cPom:=" * "
-  SELECT ROBA
+  select roba
   HSEEK POM->IdRoba
 
   cPom+=trim(POM->IdRoba)+" - "+TRIM(roba->Naz)

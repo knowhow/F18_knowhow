@@ -134,7 +134,7 @@ SELECT ODJ
 cRSDbf:="ROBA"
 if ODJ->Zaduzuje=="S" .or. cRobSir=="S"
 	cRSdbf:="SIROV"
-	bRSblok:={|x,y| P_Sirov (@_IdRoba, x, y)}
+	bRSblok:={|x,y| P_Roba(@_IdRoba, x, y)}
   	cUI_I:=S_I 
 	cUI_U:=S_U
 else

@@ -1,3 +1,4 @@
+
 {allwin}incpaths=\devel\git\fmk\fmk_lib\include
 #{allwin}libpaths=${HB_DIR_QT}\lib ${QT_DIR}\lib
 
@@ -17,6 +18,7 @@ libs=hbvm hbrtl hblang hbrdd hbrtl hbmacro hbpp rddcdx rddfpt rddntx
 libs=hbsqlit3 sqlite3
 libs=hbcommon hbct hbclipsm
 libs=hbpgsql
+libs=hbdebug
 
 #gt=gtcrs
 {unix}gt=gtxwc

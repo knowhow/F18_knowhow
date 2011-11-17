@@ -389,6 +389,8 @@ if ((lUI==NIL) .or. lUI)
 	// ovo su ulazi ...
     	if pos_doks->IdVd $ VD_ZAD+"#"+VD_PCS+"#"+VD_REK
       		SELECT pos
+			set order to tag "1"
+			go top
       		SEEK cIdPos+cIdVd+DTOS(dDatum)+cBrDok
       		do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
         		nIznos+=pos->kolicina*pos->cijena
@@ -406,6 +408,8 @@ if ((lUI==NIL) .or. !lUI)
     	if pos_doks->IdVd $ VD_RN+"#"+VD_OTP+"#"+VD_RZS+"#"+VD_PRR+"#"+"IN"+"#"+"IN"
 
       		SELECT pos
+			set order to tag "1"
+			go top
       		SEEK cIdPos+cIdVd+DTOS(dDatum)+cBrDok
       		do while !eof() .and. pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
         		do case

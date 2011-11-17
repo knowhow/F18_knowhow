@@ -63,7 +63,7 @@ local nNovaCijena:=0
 if (gPopZCj=="D" .and. roba->tip<>"T")  
 	// u zavisnosti od set-a cijena koji se koristi
 	// &("roba->cijena" + gIdCijena) == roba->cijena1
-	nNovaCijena:=round(&("roba->cijena" + gIdCijena) - nCijena, gPopDec)
+	nNovaCijena:=round(&("roba->mpc" + gIdCijena) - nCijena, gPopDec)
 	AddToArrRabat(aRabat, roba->id, nNovaCijena)
 endif
 
@@ -435,7 +435,7 @@ if cIdVrsteP==NIL
 endif
 
 // prvo vidi koliki je iznos racuna
-select _pripr
+select _pos_pripr
 go top
 do while !EOF()
 	_IdVrsteP := cIdVrsteP
@@ -488,7 +488,7 @@ return
  */
 function Scan_PriprForRabat(aRabat)
 *{
-select _pripr
+select _pos_pripr
 if (RecCount() > 0)
 	do while !EOF()
 		FrmGetRabat(aRabat, field->cijena)

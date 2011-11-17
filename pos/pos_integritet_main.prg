@@ -271,7 +271,7 @@ do while !EOF()
 	nOid := field->_oid_
 	cIdRoba := field->id
 	cRobaNaz := field->naz
-	nCijena1 := field->cijena1
+	nCijena1 := field->mpc
 	cTarifa := field->idtarifa
 	nCnt := 0
 	
@@ -284,7 +284,7 @@ do while !EOF()
 		if (nCnt > 1)
 			if field->_oid_ == nOid
 				// uporedi zapise
-				if roba->(id + naz + idtarifa + STR(cijena1)) == cIdRoba + cRobaNaz + cTarifa + STR(nCijena1)
+				if roba->(id + naz + idtarifa + STR(mpc)) == cIdRoba + cRobaNaz + cTarifa + STR(nCijena1)
 					// dupli oid isti zapisi
 					// dodaj u pom.tabelu sta si izbrisao
 					AddToErrors("W", "OIDDEL", roba->id + "-" + roba->naz, "ROBA.DBF: Pobrisan oid " + ALLTRIM(STR(field->_oid_))+ "!")

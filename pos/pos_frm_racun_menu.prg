@@ -261,14 +261,12 @@ return
  */
  
 function PostRoba(cId,dx,dy,lFlag)
-*{
-
 local aZabrane
 local i
+local vrati := .f.
 private ImeKol
 private Kol
 
-altd()
 sif_uv_naziv(@cId)
 
 UnSetSpecNar()
@@ -279,7 +277,7 @@ PrevId:= GetList[1]:original        // cId
 ImeKol:={ { "Sifra"  , {|| id          }, "" },;
           { "Naziv"  , {|| naz         }, "" },;
           { "J.mj."  , {|| PADC(jmj,5) }, "" },;
-          { "Cijena" , {|| &("roba->Cijena"+gIdCijena)}, "" };
+          { "Cijena" , {|| roba->mpc }, "" };
         }
 if roba->(fieldpos("K7"))<>0
 	AADD (ImeKol,{ padc("K7",2 ), {|| k7 }, ""   })
@@ -302,7 +300,7 @@ endif
 // TODO
 BarKod(@cId)
 
-Vrati:=PostojiSifra(F_ROBA, "ID", 10, 77, "Roba(artikli)", @cId, NIL, NIL, NIL, NIL, NIL, aZabrane)
+Vrati := PostojiSifra(F_ROBA, "ID", 10, 77, "Roba(artikli)", @cId, NIL, NIL, NIL, NIL, NIL, aZabrane)
 
 if LASTKEY()==K_ESC
 	cId:=PrevID
@@ -311,7 +309,7 @@ else
 	@ m_x+dx,m_y+dy SAY PADR (AllTrim (roba->Naz)+" ("+AllTrim (roba->Jmj)+")",50)
   
 	if roba->tip<>"T"
-    		_Cijena:=&("roba->Cijena"+gIdCijena)
+    		_Cijena:=roba->mpc
   	endif
 endif
 
@@ -335,7 +333,6 @@ if gDisplay=="D"
 endif
 
 return Vrati
-*}
 
 /*! \fn ZakljuciRacun()
  *  \brief

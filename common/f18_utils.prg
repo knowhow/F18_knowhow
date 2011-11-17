@@ -427,8 +427,8 @@ AADD( gaDbfs, {  F_DINTEG2   , "DINTEG2", "dinteg2" } )
 AADD( gaDbfs, {  F_INTEG1    , "INTEG1" , "integ1" } )
 AADD( gaDbfs, {  F_INTEG2    , "INTEG2" , "integ2" } )
 AADD( gaDbfs, {  F_DOKSPF    , "DOKSPF" , "dokspf" } )
-AADD( gaDbfs, {  F_PROMVP    , "PROMVP", "promvp" } )
-
+AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "promvp" } )
+AADD( gaDbfs, {  F_POM       , "POM"    , "pom"  } )
 
 log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)
 

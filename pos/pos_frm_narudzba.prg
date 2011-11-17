@@ -106,13 +106,13 @@ SetSpecNar()
 
 if gModul=="HOPS"
 	if (gRadniRac=="D")
-    		SELECT _PRIPR
+    		select _pos_pripr
     		if RecCount2()>0
       			GO TOP
       			if _pos_pripr->IdRadnik<>gIdRadnik
         			// u hopsu se radni racuni drze u _POS-u do zakljucenja
         			_Pripr2_Pos()
-        			SELECT _PRIPR
+        			select _pos_pripr
         			Zapp()
 				__dbPack()
       			endif
@@ -126,7 +126,7 @@ if gModul=="HOPS"
     		do while !eof().and._POS->(IdVd+IdRadnik+GT)==(VD_RN+gIdRadnik+OBR_NIJE)
       			if _POS->BrDok==cBrojRn    // _POS->Prebacen == OBR_NIJE
         			Scatter()
-        			SELECT _PRIPR
+        			select _pos_pripr
 				Append Blank // _pripr
         			Gather()
 				SELECT _POS
@@ -153,7 +153,7 @@ if gModul=="HOPS"
 			if !(_POS->m1=="Z")
         			// mora biti Z, jer se odmah zakljucuje
         			Scatter()
-        			SELECT _PRIPR
+        			select _pos_pripr
 				Append Blank  // pripr
         			Gather()
         			SELECT _POS
@@ -180,7 +180,7 @@ else
 		if !(_POS->m1=="Z")
         		// mora biti Z, jer se odmah zakljucuje
         		Scatter()
-        		SELECT _PRIPR
+        		select _pos_pripr
 			Append Blank // pripr
         		Gather()
         		SELECT _POS
@@ -198,7 +198,7 @@ endif
 nIznNar:=0
 nPopust:=0
 
-SELECT _PRIPR
+select _pos_pripr
 GO TOP
 
 do while !eof()
@@ -271,7 +271,7 @@ do while .t.
 	
 	select odj
 	hseek roba->idodj 
-	select _pripr
+	select _pos_pripr
 	if right(odj->naz,5)=="#1#0#".or.right(odj->naz,6)=="#1#50#"
 		set cursor on
      		@ m_x+4,m_y+25 SAY "particip:" GET cParticip pict "@!" valid cParticip $ "DN"
@@ -312,7 +312,7 @@ do while .t.
  		
 		if gVodiOdj=="N" .or. FOUND()
    			
-			SELECT _PRIPR
+			select _pos_pripr
 			append blank 
    			_RobaNaz:=ROBA->Naz
 			_Jmj:=ROBA->Jmj
@@ -353,7 +353,7 @@ do while .t.
        					_IdDio:=gIdDio
      				endif
      				
-				SELECT _PRIPR
+				select _pos_pripr
 				
    			endif
 
@@ -369,7 +369,7 @@ do while .t.
  		else   
 			
 			// nije nadjeno odjeljenje ??
-   			SELECT _PRIPR
+   			select _pos_pripr
    			if gModul=="HOPS"
      				MsgBeep("Za robu "+ALLTRIM(_IdRoba)+" nije odredjeno odjeljenje!#"+"Narucivanje nije moguce!")
    			else
@@ -388,7 +388,7 @@ if gModul=="HOPS"
 	if gRadniRac=="D"
   		SELECT _POS
   		AppFrom("_PRIPR",.f.)
-  		SELECT _PRIPR
+  		select _pos_pripr
   		Zapp()
 		__dbPack()
 	endif
@@ -626,7 +626,7 @@ if gDupliArt=="D".and.gDupliUpoz=="N"
   	return .t.
 endif
 
-SELECT _PRIPR
+select _pos_pripr
 nPrevRec:=RECNO()
 
 if _idroba='PLDUG  ' .and. reccount2()<>0
@@ -718,7 +718,7 @@ function BrisStavNar(oBrowse)
 *{
 //      Brise stavku narudzbe
 //      Koristi privatni parametar OBROWSE iz SHOWBROWSE
-SELECT _PRIPR
+select _pos_pripr
 
 if RecCount2()==0
 	MsgBeep ("Narudzba nema nijednu stavku!#Brisanje nije moguce!", 20)
@@ -760,7 +760,7 @@ function EditStavNar()
 
 private GetList:={}
 
-SELECT _PRIPR
+select _pos_pripr
 if RecCount2() == 0
 	MsgBeep ("Narudzba nema nijednu stavku!#Ispravka nije moguca!", 20)
   	return (DE_CONT)
@@ -782,7 +782,7 @@ endif
 // apoteke !!!
 select odj
 hseek roba->idodj 
-select _pripr
+select _pos_pripr
 if RIGHT(odj->naz,5)=="#1#0#" .or. RIGHT(odj->naz,6)=="#1#50#"
 	set cursor on
      	@ m_x+3,m_y+25 SAY "particip:" GET cParticip pict "@!" valid cParticip $ "DN"
@@ -802,7 +802,7 @@ if LASTKEY()<>K_ESC
     		HSEEK ROBA->IdOdj
     		// LOCATE FOR IdTipMT == ROBA->IdTreb
     		if FOUND()
-      			SELECT _PRIPR
+      			select _pos_pripr
       			_RobaNaz:=ROBA->Naz
       			_JMJ:=ROBA->JMJ
       			if !(roba->tip=="T")
@@ -819,7 +819,7 @@ if LASTKEY()<>K_ESC
       			Gather () //_PRIPR
     		else
       			MsgBeep ("Za robu "+ALLTRIM (_IdRoba)+" nije odredjeno odjeljenje!#"+"Narucivanje nije moguce!!!", 15)
-      			SELECT _PRIPR
+      			select _pos_pripr
       			return (DE_CONT)
     		endif
   	endif

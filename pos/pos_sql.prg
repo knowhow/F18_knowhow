@@ -480,7 +480,7 @@ nCnt:=0
 do while !eof()
 	select roba
 	REPLSQL idtarifa with field->idtarifa
-	REPLSQL cijena1 with field->cijena1
+	REPLSQL mpc with field->mpc
 	skip
 enddo
 

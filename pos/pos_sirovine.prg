@@ -123,7 +123,7 @@ for i:=1 to 2
         				select roba
 					HSEEK sast->Id2
         				if FOUND ()
-          					_Cijena := roba->Cijena1
+          					_Cijena := roba->mpc
         				else
           					_Cijena := 0
         				endif

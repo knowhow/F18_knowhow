@@ -86,7 +86,7 @@ if (LASTKEY()==K_ESC)
 endif
 
 SELECT 0
-my_use( cLokacija, .t., "robafmk" )
+my_use( cLokacija,  "robafmk", .t. )
 SET ORDER TO TAG "ID"
 
 select roba
@@ -96,15 +96,15 @@ do while !eof()
 	select robaFmk
 	SEEK roba->id
 	if FOUND()
-		if ROUND(roba->cijena1, 2)<>ROUND(robaFmk->mpc, 2) 
+		if ROUND(roba->mpc, 2)<>ROUND(robaFmk->mpc, 2) 
 			select roba
 			if lCekaj
-				MsgBeep(roba->id+"##roba->cijena="+STR(roba->cijena1, 6, 2)+" => fmk->mpc="+STR(robaFmk->mpc, 6, 2))
+				MsgBeep(roba->id+"##roba->cijena="+STR(roba->mpc, 6, 2)+" => fmk->mpc="+STR(robaFmk->mpc, 6, 2))
 				if (LASTKEY()==K_ESC)
 					lCekaj:=.f.
 				endif
 			endif
-			SmReplace("cijena1", robaFmk->mpc)
+			SmReplace("mpc", robaFmk->mpc)
 			++nCnt
 		endif
 	endif

@@ -200,7 +200,7 @@ AADD(aDBF,{"M1","C",1,0})
 
 NaprPom(aDbf,"TOPSFAKT")
 
-my_use ("topsfakt", .t., "NEW")
+my_use ("topsfakt", "TOPSFAKT", .t. )
 INDEX ON IdPos+idVd+idPartner+IdRoba+STR(mpc,13,4)+STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"TOPSFAKT")
 INDEX ON brisano+"10" TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
 SET ORDER TO TAG "1"
@@ -332,7 +332,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 		replace idRoba WITH cIdRoba
 		replace kolicina WITH nKolicina
 		replace idTarifa WITH roba->idTarifa
-		replace mpc With roba->cijena1
+		replace mpc With roba->mpc
 		replace datum WITH dDatDo
 		replace idVd With cIdVd
 		replace idPartner with cIdPartner

@@ -39,7 +39,7 @@ AADD (aDbf, {"Iznos2",    "N", 20, 3})
 AADD (aDbf, {"Iznos3",    "N", 20, 3})
 NaprPom (aDbf)
 
-my_use("pom", .t., "NEW")
+my_use("pom", "POM", .t.)
 index on IdRoba TAG ("1") to (PRIVPATH+"POM")
 index on Descend (Str (Iznos,20,3)) TAG ("2") to (PRIVPATH+"POM")
 index on Descend (Str (Kolicina,15,3)) TAG ("3") to (PRIVPATH+"POM")

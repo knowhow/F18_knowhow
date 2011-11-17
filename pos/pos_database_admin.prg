@@ -37,7 +37,7 @@ if File (UPPER(cPomCDX))
 	FErase(UPPER(cPomCDX))
 endif
 
-DBcreate2("pom", aDbf)
+DBcreate2(PRIVPATH + "POM.DBF", aDbf)
 
 return
 

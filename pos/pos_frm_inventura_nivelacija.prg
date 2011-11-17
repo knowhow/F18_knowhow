@@ -222,9 +222,9 @@ if fPocInv
       			if Round(_Kolicina,3)<>0
         			SELECT (cRSdbf)
         			HSEEK _IdRoba
-        			_Cijena:=_field->Cijena1     
+        			_Cijena:=_field->mpc     
 				// postavi tekucu cijenu
-        			_NCijena:=_field->Cijena1
+        			_NCijena:=_field->mpc
         			_RobaNaz:=_field->Naz 
 				_Jmj:=_field->Jmj
         			_idtarifa:=_field->idtarifa

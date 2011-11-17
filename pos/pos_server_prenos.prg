@@ -13,54 +13,27 @@
 #include "pos.ch"
 #include "directry.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-/*! \fn PrebNaServer()
- *  \brief Prebacivanje kumulativnih datoteka na server
- */
- 
+
 function PrebNaServer()
-*{
 return
-*}
 
 
-/*! \fn PrebSaKase()
- *  \brief Prebacivanje kumulativnih datoteka sa kase. Pokrece se sa servera.
- */
  
 function PrebSaKase()
-*{
 return
-*}
 
 static function IsDoksExist(gKasaPath)
-*{
 return .t.
-*}
 
 static function PrenosPos()
-*{
 return
-*}
 
 static function PrenosDoks()
-*{
 return
-*}
 
-/*! \fn PobPaPren()
- *  \brief Brise markere na kasama da je prenos izvrsen za dDat
- */
  
 function PobPaPren()
-*{
 return
-*}
 
 
 
@@ -143,24 +116,24 @@ do while !eof()
 	
 	// koju cijenu1 ubaciti ?
 	if nMPC1 = 1 
-		SmReplace("cijena1", robafmk->mpc, .t.)
+		SmReplace("mpc", robafmk->mpc, .t.)
 	elseif nMPC1 = 2
-		SmReplace("cijena1", robafmk->mpc2, .t.)
+		SmReplace("mpc", robafmk->mpc2, .t.)
 	elseif nMPC1 = 3
-		SmReplace("cijena1", robafmk->mpc3, .t.)
+		SmReplace("mpc", robafmk->mpc3, .t.)
 	else
-		SmReplace("cijena1", robafmk->mpc, .t.)
+		SmReplace("mpc", robafmk->mpc, .t.)
 	endif
 	
 	// koju cijenu2 ubaciti ?
 	if nMPC2 = 1
-		SmReplace("cijena2", robafmk->mpc, .t.)
+		SmReplace("mpc2", robafmk->mpc, .t.)
 	elseif nMPC2 = 2
-		SmReplace("cijena2", robafmk->mpc2, .t.)
+		SmReplace("mpc2", robafmk->mpc2, .t.)
 	elseif nMPC2 = 3
-		SmReplace("cijena2", robafmk->mpc3, .t.)
+		SmReplace("mpc2", robafmk->mpc3, .t.)
 	else
-		SmReplace("cijena2", robafmk->mpc, .t.)
+		SmReplace("mpc2", robafmk->mpc, .t.)
 	endif
 	
 	SmReplace("jmj", robafmk->jmj, .t.)

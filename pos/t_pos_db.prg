@@ -670,10 +670,10 @@ PUBLIC gKumPath := KUMPATH
 
 if pitanje(,"Izvrsiti prenos k7 iz c:\tops\robknj.dbf","N")=="D"
    close all
-   my_use("roba", .t., "NEW")
+   my_use("roba", "ROBA", .t.)
    set order to tag "ID"
 
-   my_use ("robknj", .t., "NEW")
+   my_use ("robknj", "ROBKNJ", .t.)
    go top
    do while !eof()
       select roba; seek robknj->id
@@ -701,7 +701,7 @@ if pitanje(,"Izvrsiti promjenu sifre artikla u sifrarniku i prometu? (D/N)","N")
   if cDN=="D"
 
     nPR:=0
-    my_use ("pos_roba", .t., "NEW")
+    my_use ("roba",  "ROBA", .t.)
     set order to tag "ID"
     seek cStara
     do while !eof() .and. id==cStara
@@ -714,7 +714,7 @@ if pitanje(,"Izvrsiti promjenu sifre artikla u sifrarniku i prometu? (D/N)","N")
     enddo
 
     nPP:=0
-    my_use ("pos", .t., "NEW")
+    my_use ("pos", "POS", .t.)
     set order to tag "6"
     seek cStara
     do while !eof() .and. idroba==cStara

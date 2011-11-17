@@ -69,7 +69,7 @@ if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=
 		return .f.
 	endif
 
-	my_use (cKalkDbf, .t., "KATOPS")
+	my_use (cKalkDbf, "KATOPS", .t.)
 
     	if katops->idvd $ "11#80#81"  
 		// radi se o zaduzenju koje se ovdje biljezi sa 16
@@ -420,7 +420,7 @@ endif
 select pos_doks
 NaprPom(aDbf)
 
-my_use ("pom", .t., "NEW")
+my_use ("pom",  "NEW", .t.)
 INDEX ON IdPos + IdRoba + STR(mpc,13,4) + STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"POM")
 INDEX ON brisano+"10" TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
 SET ORDER TO 1
@@ -433,7 +433,7 @@ IF gVrstaRS=="S"
 	cKalkDbf:=ToUnix(ALLTRIM(gKalkDest)+ALLTRIM(cIdPos)+SLASH+"TOPSKA.DBF")
 endif
 DbCreate2(cKALKDBF,aDbf)
-my_use(cKALKDBF, .t., "NEW")
+my_use(cKALKDBF, "NEW", .t.)
 ZAPP()
 __dbPack()
 

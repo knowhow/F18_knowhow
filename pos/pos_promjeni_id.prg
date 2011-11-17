@@ -515,9 +515,9 @@ O_POS
 O_POS_DOKS
 
 select 0
-my_use ("pos_st", .t., "POS_ST")
+my_use ("pos_st",  "POS_ST", .t.)
 select 0
-my_use ("doks_st", .t., "DOKS_ST")
+my_use ("doks_st", "DOKS_ST", .t.)
 
 if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje racuna ?","N")=="D"
 

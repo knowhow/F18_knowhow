@@ -1086,7 +1086,7 @@ AADD(aDbf, {"Otv",      "N", 12, 2})
 Dbcreate2(PRIVPATH+"ZAKSM", aDbf)
 
 select (F_ZAKSM)
-my_use ("zaksm", .t., "NEW")
+my_use ("zaksm", "NEW", .t.)
 INDEX ON IdRadnik TAG ("1")           
 index ON BRISANO+"10" TAG "BRISAN" 
 Set Order To 1
@@ -1697,7 +1697,7 @@ AADD(aDbf, {"Datum", "D", 8, 0})
 
 NaprPom (aDbf)
 
-my_use("POM", .t., "NEW")
+my_use("POM", "NEW", .t.)
 
 INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (PRIVPATH+"POM")
 set order to 1

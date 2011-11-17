@@ -269,7 +269,7 @@ if !fSadAz
     			_RobaNaz:=_field->Naz
 			_Jmj:=_field->Jmj
     			_IdTarifa:=_field->IdTarifa
-			_Cijena:=if(EMPTY(_cijena),_field->Cijena1,_cijena)
+			_Cijena:=if(EMPTY(_cijena),_field->mpc,_cijena)
     			if ROBA->(FIELDPOS("BARKOD"))<>0
 				_barkod := _field->barkod
 			endif

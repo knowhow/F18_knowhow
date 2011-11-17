@@ -110,7 +110,7 @@ AADD (aDbf, {"Iznos",    "N", 20, 5})
 AADD (aDbf, {"Iznos2",   "N", 20, 5})
 AADD (aDbf, {"Iznos3",   "N", 20, 5})
 NaprPom (aDbf)
-my_use ("pom", .t., "NEW")
+my_use ("pom",  "NEW", .t. )
 INDEX ON IdRadnik+IdVrsteP+IdRoba+IdCijena TAG ("1") TO (PRIVPATH+"POM")
 INDEX ON IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
 index ON BRISANO TAG "BRISAN"

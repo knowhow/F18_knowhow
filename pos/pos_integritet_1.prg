@@ -87,7 +87,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	select roba
 	go top
 	hseek cIdRoba
-	nRCjen := roba->cijena1
+	nRCjen := roba->mpc
 	nOidRoba := roba->_oid_
 	cIdTarifa := roba->idtarifa
 	
@@ -365,7 +365,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	nRobaCnt := GetRobaCnt(cIdRoba)
 	
 	hseek cIdRoba
-	nRCjen := field->cijena1
+	nRCjen := field->mpc
 	nOidRoba := field->_oid_
 	cIdTarifa := field->idtarifa
 	

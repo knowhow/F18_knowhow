@@ -267,7 +267,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
     if cPocSt=="N"
 	SELECT (cRSdbf)
 	HSEEK cIdRoba
-	nCijena1:=cijena1
+	nCijena1:=mpc
 	SELECT POS
     	nStanje:=0
     	nVrijednost:=0
@@ -315,7 +315,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
       
       SELECT (cRSdbf)
       HSEEK cIdRoba
-      nCijena1:=cijena1
+      nCijena1:=mpc
       
       if fSt
         if gVrstaRS=="S" .and. Prow()>63-gPstranica-3

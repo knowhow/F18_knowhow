@@ -213,7 +213,6 @@ IF cId <>NIL
  else
  
    // SEEK PO ID , SEEK PO ID_J
-   altd()
    seek cID
    
    cId := &(FIELDNAME(1))

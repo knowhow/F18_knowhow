@@ -92,12 +92,12 @@ do while .t.
           hseek  kalk2->idroba
           do while !eof() .and. id==kalk2->idroba // setaj kroz sast
             select roba; hseek sast->id2
-            select pripr
+            select kalk_pripr
             locate for idroba==sast->id2
             if found()
               replace kolicina with kolicina + kalk2->kolicina*sast->kolicina
             else
-              select pripr
+              select kalk_pripr
               append blank
               replace idfirma with cIdFirma,;
                       rbr     with str(++nRbr,3),;

@@ -725,7 +725,7 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 
 	if fPocStanje
 
-  		select pripr
+  		select kalk_pripr
   		if glEkonomat
     			FOR i:=LEN(aNabavke) TO 1 STEP -1
       				IF !(ROUND(aNabavke[i,1],8)<>0)
@@ -1083,7 +1083,7 @@ endif
 
 if fPocStanje
  if fimagresaka .and. Pitanje(,"Nulirati pripremu (radi ponavljanja procedure) ?","D")=="D"
-   select pripr
+   select kalk_pripr
    zap
  else
    renumeracija_kalk_pripr(cBrPst,"16")
@@ -1483,9 +1483,9 @@ LLM(.t.)
           O_KALK_PRIPRRP
           O_KALK_PRIPR
           if reccount2()<>0
-            select priprrp
-            append from pripr
-            select pripr; zap
+            select kalk_priprrp
+            append from kalk_pripr
+            select kalk_pripr; zap
             close all
             if Pitanje(,"Prebaciti se na rad sa radnim podrucjem ?","D")=="D"
                URadPodr()

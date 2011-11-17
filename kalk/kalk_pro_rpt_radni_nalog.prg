@@ -43,7 +43,7 @@ select PARTN; HSEEK cIdPartner
  ? m
  nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=0
 
-select pripr
+select kalk_pripr
 
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
@@ -65,7 +65,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
     select ROBA; HSEEK kalk_pripr->IdRoba
     select TARIFA; HSEEK kalk_pripr->IdTarifa
-    select PRIPR
+    select kalk_pripr
 
     if prow()>62+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
 

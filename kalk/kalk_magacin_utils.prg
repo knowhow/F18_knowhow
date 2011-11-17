@@ -29,7 +29,7 @@ if lAutoObr == .t.
 	// uzmi stanje iz cache tabele
 	if knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
 		@nUlNv, @nIzlNv, @nNc ) == 1
-		select pripr
+		select kalk_pripr
 		return
 	endif
 endif
@@ -225,7 +225,7 @@ if gNC_ctrl > 0 .and. nSNC <> 0 .and. nZadnjaUNC <> 0
 endif
 
 nKolicina:=round(nKolicina,4)
-select pripr
+select kalk_pripr
 return
 
 
@@ -625,7 +625,7 @@ if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
    if gAutoCjen == "D" .and. Pitanje( ,"Staviti Cijenu ("+cPom+")"+" u sifrarnik ?","D")=="D"
      select roba
      replace &cPom with nNovaVrijednost
-     select pripr
+     select kalk_pripr
    endif
  endif
 return .t.
@@ -778,7 +778,7 @@ private getlist:={}, cPom:="VPC"
       @ m_x+3,m_y+2 SAY "Unesi "+cPom+" u sifrarnik:" GET _vpc pict picdem
       read
       select roba; replace &cPom with _VPC
-      select pripr
+      select kalk_pripr
       BoxC()
    endif
  endif
@@ -840,7 +840,7 @@ if lAutoObr == .t.
 	// uzmi stanje iz cache tabele
 	if knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
 		@nUlNv, @nIzlNv, @nSNC ) == 1
-		select pripr
+		select kalk_pripr
 		return
 	endif
 endif
@@ -1038,7 +1038,7 @@ endif
 // daj posljednje stanje kakvo i jeste 
 nKolicina := round(nKolicina, 4)
 
-select pripr
+select kalk_pripr
 
 return
 

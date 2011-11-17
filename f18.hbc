@@ -19,7 +19,8 @@ libs=hbcommon hbct hbclipsm
 libs=hbpgsql
 
 #gt=gtcrs
-gt=gtxwc
+(unix)gt=gtxwc
+(allwin)gt=gtwin
 
 {unix}libs=pq
 {!unix}libs=libpq

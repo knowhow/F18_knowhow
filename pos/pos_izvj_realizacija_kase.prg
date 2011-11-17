@@ -17,7 +17,7 @@ static LEN_RAZMAK := 1
 static PIC_UKUPNO := "9999999.99"
 
 
-function RealKase
+function realizacija_kase
 parameters fZaklj,dDat0,dDat1,cVarijanta
 
 private cIdOdj:=SPACE(2)
@@ -66,8 +66,6 @@ SELECT osob
 SET ORDER TO TAG "NAZ"
 
 TblCrePom()
-
-altd()
 // TblCrePom prilikom kreiranja indeksa zatvori sve tabele
 ODbRpt()
 
@@ -489,18 +487,19 @@ AADD(aDbf,{"K2"       ,"C",  4, 0})
 
 NaprPom(aDbf)
 
-cPomDbf:=ToUnix(PRIVPATH+"pom.dbf")
+cPomDbf:="pom"
+
 CREATE_INDEX("1" ,"IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena",cPomDbf,.t.)
 CREATE_INDEX("2" ,"IdPos+IdOdj+IdRoba+IdCijena"                  ,cPomDbf,.f.)
 CREATE_INDEX("3" ,"IdPos+IdRoba+IdCijena"                        ,cPomDbf,.f.)
 CREATE_INDEX("4" ,"IdPos+IdVrsteP"                               ,cPomDbf,.f.)
 CREATE_INDEX("K1","IdPos+K1+idroba"                              ,cPomDbf,.f.)
 
-use (cPomDbf) new
+my_use(cPomDbf, .t., "NEW")
 set order to 1
 
 return
-*}
+
 
 /*! \fn RealPoRadn()
  *  \brief Prikaz realizacije po radnicima

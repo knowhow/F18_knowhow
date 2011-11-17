@@ -436,10 +436,10 @@ return
 *}
 
 
-/*! \fn StDokSK()
+/*! \fn pos_stdoksk()
  *  \brief Stampa dokumenta SINDIKALNI KREDIT
  */
-function StDokSK()
+function pos_stdoksk()
 *{
 local nArr
 nArr:=SELECT()

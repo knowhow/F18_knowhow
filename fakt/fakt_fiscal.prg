@@ -19,7 +19,7 @@ static __auto := .f.
 // ---------------------------------------------------------
 // centralna funkcija za poziv stampe fiskalnog racuna
 // ---------------------------------------------------------
-function fisc_rn( cFirma, cTipDok, cBrDok, lAuto, nDevice )
+function fakt_fisc_rn( cFirma, cTipDok, cBrDok, lAuto, nDevice )
 local nErr := 0
 
 if (lAuto == nil)

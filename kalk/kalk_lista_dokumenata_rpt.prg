@@ -25,7 +25,7 @@ private qqTipDok
 private ddatod,ddatdo
 O_KALK_DOKS
 if reccount2()==0
- GenDoks()
+ kalk_gen_doks_iz_kalk()
 endif
 close all
 SStDoks()
@@ -229,11 +229,11 @@ return
 *}
 
 
-/*! \fn GenDoks()
+/*! \fn kalk_gen_doks_iz_kalk()
  *  \brief Generisanje tabele DOKS na osnovu tabele KALK
  */
 
-function GenDoks()
+function kalk_gen_doks_iz_kalk()
 *{
 O_KALK
 

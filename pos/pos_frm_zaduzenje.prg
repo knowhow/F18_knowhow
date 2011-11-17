@@ -13,23 +13,6 @@
 #include "pos.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-*string IzFmkIni_ExePath_SifRoba_DuzSifra;
-
-/*! \ingroup ini
- *  \fn *string IzFmkIni_ExePath_SifRoba_DuzSifra
- *  \brief Velicina sifre koju program "prima"
- *  \param 10 - default vrijednost
- *  \param 13 - postavit na ovu vrijednost kada radimo sa bar kodovima
- *  \todo  Prebaciti u KUMPATH
- */
-
-
 /*! \fn Zaduzenje(cIdVd)
  *  \brief Dokument zaduzenja
  *
@@ -139,7 +122,7 @@ if ODJ->Zaduzuje=="S" .or. cRobSir=="S"
 	cUI_U:=S_U
 else
   	cRSdbf:="ROBA"
-  	bRSblok:={|x,y| Barkod(@_IdRoba), P_RobaPOS (@_IdRoba, x, y)}
+  	bRSblok:={|x,y| Barkod(@_IdRoba), P_Roba (@_IdRoba, x, y)}
   	cUI_I:=R_I
 	cUI_U:=R_U
 endif
@@ -237,7 +220,7 @@ if !fSadAz
 	SET CURSOR ON
 	do while .t.
   		do while !oBrowse:Stabilize() .and. ((Ch:=INKEY())==0)
-			Ol_Yield()
+			//Ol_Yield()
   		enddo
   		_idroba:=SPACE (LEN (_idroba))
   		_Kolicina:= 0
@@ -264,11 +247,11 @@ if !fSadAz
     			@ m_x+ 3,col()+2 GET _Marza2 PICTURE "9999.99"
 
     			if IzFMKIni("POREZI","PPUgostKaoPPU","N")=="D"
-      				@ m_x+ 3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),Marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_ncijena*(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100+tarifa->zpp/100),_cijena),fmarza:=" ",.t.}
+      				@ m_x+ 3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_ncijena*(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100+tarifa->zpp/100),_cijena),fmarza:=" ",.t.}
     			else
-      				@ m_x+3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),Marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
+      				@ m_x+3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
     			endif
-    			@ m_x+ 4,m_y+35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2:=0, Marza2(), ShowGets(), .t.}
+    			@ m_x+ 4,m_y+35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2:=0, marza2(), ShowGets(), .t.}
   		endif
 
   		READ
@@ -327,7 +310,7 @@ SELECT PRIPRZ
 if RecCount2()>0
 	select pos_doks
   	set order to 1
-  	cBrDok:=NarBrDok(cIdPos,iif(cIdvd=="PD","16",cIdVd)," ",dDatRada)
+  	cBrDok:=pos_naredni_dokument(cIdPos,iif(cIdvd=="PD","16",cIdVd)," ",dDatRada)
   	SELECT PRIPRZ
   	// reklamacije dodatni opis
 	if (IsPlanika() .and. cIdVd==VD_REK)

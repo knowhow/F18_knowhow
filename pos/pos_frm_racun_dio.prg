@@ -116,11 +116,11 @@ endif
 // prvo odredi brojeve (radne) za racune na koje se dijeli ovaj
 // naravno, osim onog od kog se krenulo
 SELECT _POS
-cNarBrDok := NarBrDok (gIdPos, VD_RN)
-AADD (aRacPriv, cNarBrDok)
+cpos_naredni_dokument := pos_naredni_dokument (gIdPos, VD_RN)
+AADD (aRacPriv, cpos_naredni_dokument)
 for nCnt := 3 to nKoliko
-	cNarBrDok := IncID (cNarBrDok)
-    	AADD (aRacPriv, cNarBrDok)
+	cpos_naredni_dokument := IncID (cpos_naredni_dokument)
+    	AADD (aRacPriv, cpos_naredni_dokument)
 next
 
 // rasutaj stavke (kolicine) u _POS
@@ -166,7 +166,7 @@ end
 
 // stampaj racune
 SELECT DOKS
-cStalRac := NarBrDok (gIdPos, VD_RN)
+cStalRac := pos_naredni_dokument (gIdPos, VD_RN)
 
 if fZakPol
 	if IsPDV()

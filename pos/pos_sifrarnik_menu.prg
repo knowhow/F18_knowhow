@@ -14,22 +14,22 @@
 
  
  
-function MenuSifre()
+function pos_sifrarnici()
 if gModul=="HOPS"
-	HSifreIzbor()
+	hops_sifrarnici()
 else
-	SifreT()
+	tops_sifrarnici()
 endif
 return
 
 
 
-function HSifreIzbor()
+function hops_sifrarnici()
 private opc:={}
 private opcexe:={}
 private Izbor:={}
 
-OSif()
+o_pos_sifre()
 
 AADD(opc, "1. opci sifrarnik                ")
 AADD(opcexe, {|| SifreHOpc() })
@@ -109,7 +109,7 @@ return
 
 
  
-function SifreT()
+function tops_sifrarnici()
 private opc:={}
 private opcexe:={}
 private Izbor:={}
@@ -143,7 +143,7 @@ endif
 AADD(opc,"Z. promjena sifre PR")
 AADD(opcexe, {|| KL_PRacuna() })
 
-OSif()
+o_pos_sifre()
 
 Izbor:=1
 Menu_SC("sift")

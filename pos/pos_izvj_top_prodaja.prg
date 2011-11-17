@@ -13,7 +13,7 @@
 #include "pos.ch"
 
 
-function TopN()
+function pos_top_narudzbe()
 *{
 LOCAL   aNiz := {}, cPor, cZaduz, aVrsteP
 PRIVATE cIdPos, cRoba:=SPACE(60), dDat0, dDat1, nTop := 10, cSta := "I"

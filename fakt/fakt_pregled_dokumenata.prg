@@ -1211,7 +1211,7 @@ do case
 		
 		if Pitanje(,"Stampati fiskalni racun ?", "D") == "D"
 
-			fisc_rn( field->idfirma, field->idtipdok, field->brdok )
+			fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok )
 		
 			select fakt_doks
 			set filter to &cFilter

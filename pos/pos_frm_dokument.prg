@@ -16,7 +16,7 @@
 // -------------------------------------------
 // Stampa azuriranog dokumenta
 // -------------------------------------------
-function PrepisDok()
+function pos_prepis_dokumenta()
 local aOpc
 private cFilter:=".t."
 private ImeKol := {}
@@ -276,11 +276,9 @@ do case
 			case pos_doks->IdVd==VD_CK
 				StDokCK()
 			case pos_doks->IdVd==VD_SK
-				StDokSK()
+				pos_stdoksk()
 			case pos_doks->IdVd==VD_GP
 				StDokGP()
-			case pos_doks->IdVd==VD_PP
-				StDokPP()
 			case pos_doks->IdVd==VD_ROP // reklamacija ostali podaci
 				StDokROP(.t.)
       		endcase
@@ -365,7 +363,7 @@ do case
       		RETURN (DE_REFRESH)
     	
 	case Ch==K_CTRL_P
-      		StDoks()
+      		pos_stampa_dokumenta()
 		
 	case UPPER(CHR(Ch)) == "S"
 		// setovanje da li je roba na stanju...

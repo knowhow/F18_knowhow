@@ -16,15 +16,15 @@
 // --------------------------------------------
 // menij robno-materijalno poslovanje
 // --------------------------------------------
-function MenuRobMat()
+function pos_menu_robmat()
 private Opc:={}
 private opcexe:={}
 private Izbor:=1
 
 AADD(opc, "1. unos dokumenata        ")
-AADD(opcexe, {|| MnuDok() })
+AADD(opcexe, {|| pos_menu_dokumenti() })
 AADD(opc, "2. generacija dokumenata")
-AADD(opcexe, {|| MnuGenDok() })
+AADD(opcexe, {|| pos_menu_gendok() })
 
 Menu_SC("mrbm")
 return
@@ -32,7 +32,7 @@ return
 // --------------------------------------------
 // menij generacije dokumenata
 // --------------------------------------------
-function MnuGenDok()
+function pos_menu_gendok()
 private Opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -47,7 +47,7 @@ endif
 
 if gPosKalk=="D"
 	AADD(Opc, "K. prenos sifrarnika iz KALK->TOPS")
-	AADD(opcexe, {|| SifKalkTops() })
+	AADD(opcexe, {|| pos_sifre_katops() })
 endif
 
 Izbor:=1

@@ -18,14 +18,14 @@ if cPom==nil
 	cPom:="POM"
 endif
 
-cPomDBF:=ToUnix(PRIVPATH+cPom+".DBF")
-cPomCDX:=ToUnix(PRIVPATH+cPom+".CDX")
+cPomDBF := my_home() + "pom.dbf"
+cPomCDX := my_home() + "pom.cdx"
 
 if File(cPomDBF)
 	FErase(cPomDBF)
 endif
 
-if File (cPomCDX)
+if File(cPomCDX)
 	FErase(cPomCDX)
 endif
 
@@ -37,13 +37,13 @@ if File (UPPER(cPomCDX))
 	FErase(UPPER(cPomCDX))
 endif
 
-DBcreate2(cPomDBF, aDbf)
+DBcreate2("pom", aDbf)
 
 return
 
 
  
-function Reindex_All()
+function pos_reindex_all()
 
 O_POS_DOKS
 @ m_x+2,m_y+2 SAY padr(alias(),12)
@@ -67,13 +67,6 @@ __dbpack()
 close
 
 O_ROBA
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_SIROV
 @ m_x+2,m_y+2 SAY padr(alias(),12)
 beep(1)
 reindex
@@ -399,102 +392,4 @@ BoxC()
 
 MsgBeep("Setovao barkodove iz sezonskog podrucja")
 return
-
-function SetPdvCijene()
-if !SigmaSif("SETPDVC")
-	MsgBeep("Ne cackaj!")
-	return
-endif
-
-//ppp tarifa
-cIdTarifa:=SPACE(6)
-
-cZaTarifu:=SPACE(6)
-nZaokruzenje:=2
-cPdvTarifa:=PADR("PDV17", 6)
-
-O_ROBA
-O_ROBASEZ
-O_TARIFA
-
-
-SET CURSOR ON
-Box(,5,60)
-	cUvijekUzmi := "N"
-	@ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!" VALID  EMPTY(cZaTarifu) .or. P_Tarifa(@cZaTarifu)
-	@ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get nZaokruzenje PICT "9"
-	@ 3+m_x, 3+m_y SAY "PDV tarifa " GET cPdvTarifa VALID P_Tarifa(@cPdvTarifa)
-	READ
-	
-BoxC()
-
-
-select roba
-
-set order to tag "ID"
-go top
-
-Box(,3,60)
-
-aPorezi := {}
-
-do while !eof()
-	
-	cIdRoba := roba->id
-	
-	select robasez
-	set order to tag "ID"
-	hseek cIdRoba
-	
-	if !Found()
-		select roba
-		skip
-		loop
-	endif
-
-	cIdTarifa:=robasez->idtarifa
-	nMpcSaP1 := robasez->cijena1
-	nMpcSaP2 := robasez->cijena2
-	
-	
-	if !empty(cZaTarifu) .and. (cIdTarifa <> cZaTarifu)
-		select roba
-		skip
-		loop	
-	endif
-	
-	@ m_x+1,m_y+2 SAY "Roba / Tarifa : " + cIdRoba + "/" + cIdTarifa
-
-	// ako je konto prazan, onda gledaj samo sifrarnik
-	Tarifa( "", cIdRoba, @aPorezi, cIdTarifa)
-	
-	
-	// nc = 99999 jer je ne trebamo
-	nMpcBP1 := MpcBezPor( nMpcSaP1, aPorezi, , 99999)
-	nMpcBP2 := MpcBezPor( nMpcSaP2, aPorezi, , 99999)
-
-	SELECT tarifa
-	SEEK cPdvTarifa
-	nPdvTarifa := tarifa->opp
-	
-	nPdvC1 := nMpcBP1 * ( 1 + nPdvTarifa/100 )
-	nPdvC1 := ROUND( nPdvC1, nZaokruzenje)
-		
-	nPdvC2 := nMpcBP2 * ( 1 + nPdvTarifa/100 )
-	nPdvC2 := ROUND( nPdvC2, nZaokruzenje)
-
-	select roba
-	replace Cijena1 with nPdvC1, Cijena2 with nPdvC2, ;
-	        IdTarifa with cPdvTarifa
-		
- 	
-	skip
-	
-enddo		
-
-BoxC()
-
-MsgBeep("Formirao PDV cijene u sifrarniku TOPS")
-return
-
 

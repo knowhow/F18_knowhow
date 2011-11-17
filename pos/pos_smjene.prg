@@ -221,7 +221,7 @@ do while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
 	cRadRac := _POS->BrDok
 	Scatter ()
 	select pos_doks
-	cBrDok := _BrDok := NarBrDok (gIdPos, VD_RN)
+	cBrDok := _BrDok := pos_naredni_dokument (gIdPos, VD_RN)
 	_Vrijeme  := cVrijeme
 	_IdVrsteP := cIdVrsteP
 	_IdOdj    := SPACE (LEN (_IdOdj))
@@ -299,10 +299,10 @@ SavegIdRadnik:=gIdRadnik
 // realizacija radnika, pojedinacno, i kase (finansijski)
 for n:=1 to LEN(aRadnici)
 	gIdRadnik:=aRadnici[n]
-	RealRadnik(.t., "P", .t.)
+	realizacija_radnik(.t., "P", .t.)
 next
 gIdRadnik:=SavegIdRadnik
-RealKase(.t.)
+realizacija_kase(.t.)
 
 // vrati datum i smjenu
 gDatum  := SavegDatum
@@ -343,7 +343,7 @@ if UPPER(CHR(LASTKEY())) == "Z"
   	endif
     	cIdSave := gIdRadnik
   	gIdRadnik := ZAKSM->IdRadnik
-  	if !RealRadnik(.t.,"P",.t.)
+  	if !realizacija_radnik(.t.,"P",.t.)
     		// nije uspio stampati pazar radnika, pa ga sad ne mogu ni zakljuciti
     		MsgBeep("Nije uspjelo stampanje pazara!#Radnik nije zakljucen!")
     		gIdRadnik := cIdSave
@@ -435,7 +435,7 @@ if fImaNezak
 else
 	// odstampam ubiljezeni pazar smjene
   	Close All
-  	if !RealKase(.t.)
+  	if !realizacija_kase(.t.)
     		MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
     		close all
 			return 0

@@ -16,7 +16,7 @@
 // -------------------------------------------------------
 // izvjestaj stanje robe
 // -------------------------------------------------------
-function StanjeRobe()
+function fakt_stanje_robe()
 local fSaberiKol, nKU, nKI
 local cDDokOtpr 
 private cIdFirma

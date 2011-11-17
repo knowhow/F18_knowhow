@@ -12,7 +12,7 @@
 
 #include "pos.ch"
 
-function RealRadnik
+function realizacija_radnik
 PARAMETERS lTekuci, fPrik, fZaklj
 
 PRIVATE cIdRadnik:=SPACE(4)

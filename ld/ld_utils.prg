@@ -1056,10 +1056,3 @@ return
 
 
 
-FUNC Reindex_all()
-RETURN (NIL)
-
-
-function o_nar()
-return
-

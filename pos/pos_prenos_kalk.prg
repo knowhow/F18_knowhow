@@ -12,34 +12,10 @@
 
 #include "pos.ch"
 
-*string 
 static cIdPos
-*;
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 
-//
-// TOPSKA - datoteka koja se formira prilikom generacije iz (H)TOPS-a
-//          realizacije POS -> KALK
-
-// KATOPS - datoteka koja se formira prilikom prenosa iz KALKA u
-//          (H)TOPS
-//
-
-/*! \fn Kalk2Pos(cIdVd, cBrDok, cRSDbf)
- *  \brief Prenos realizacije iz KALK-a u POS
- *  \param cIdVd   - tip dokumenta, f-ja ga mjenja ako prodje kroz prenos sa diskete
- *  \param cBrDok  - f-ja ga mjenja tako sto ga puni izgenerisanim dokumentom
- *  \param cRSDbf  - ROBA ili SIROV zavisno od nacina zaduzenja odjeljenja
- */
- 
 function Kalk2Pos(cIdVd, cBrDok, cRSDbf)
-*{
 local cPrefix
 local Izb3
 local OpcF
@@ -109,7 +85,7 @@ if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=
     	select pos_doks
     	set order to 1
 	
-        cBrDok:=NarBrDok(cIdPos, cIdVd)
+        cBrDok:=pos_naredni_dokument(cIdPos, cIdVd)
 	
 	select katops
     	MsgO("kalk -> priprema, update roba")
@@ -254,60 +230,6 @@ enddo
 BoxC()
 
 return .t.
-*}
-
-
-/*! \fn UChkPostoji(cFullFileName)
- *  \brief
- *  \param cFullFileName
- */
- 
-function UChkPostoji(cFullFileName)
-*{
-// u chk direktoriju postoji fajl
-// npr: UChkPostoji(gKalkDest+"KT1105.DBF")
-
-// ako se ne koristi chk direktorij svi su X
-if gUseChkDir == "N"
-	return "X"
-endif
-
-if FILE(strtran(cFullFileName, ":" + SLASH, ":" + SLASH + "chk" + SLASH))
-	// ako postoji fajl R - realizovan
-	return "R"
-else
-	// ako ne postoji fajl X - nije realizovano
-	return "X"
-endif
-*}
-
-
-/*! \fn BrisiSFajlove(cDir)
- *  \brief
- *  \param cDir
- */
- 
-function BrisiSFajlove(cDir)
-*{
-
-// npr:  cDir ->  c:\tops\prenos\
-//
-// brisi sve fajlove u direktoriju
-// starije od 45 dana
-
-local cFile
-
-cDir:=TRIM(cDir)
-cFile:=fileseek(trim(cDir)+"*.*")
-
-do while !EMPTY(cFile)
-	// svakih 7 dana brisi pomocne fajlove
-	if DATE()-FileDate() > 7  
-       		FileDelete(cDir+cFile)
-    	endif
-    	cFile:=FileSeek()
-enddo
-return nil
 *}
 
 
@@ -596,14 +518,7 @@ do while !eof() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum<=dDatDo
 			if gModul=="HOPS"	
 				replace IdVd With "47"
 			else
-				if IsTehnoprom() .and. pos_doks->idvrstep $ "03"
-					replace idvd with "41"
-				elseif (IsPlanika() .and. pos_doks->idvd == VD_REK)
-					// reklamacija je "12"
-					replace idvd with "12"
-				else	
-					replace idvd with POS->IdVd
-				endif
+				replace idvd with POS->IdVd
 			endif
 					
 			replace StMPC WITH pos->ncijena
@@ -655,9 +570,9 @@ if gModemVeza=="D"
 	endif
            	
 	if (cIdVd <> VD_REK)
-		RealKase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
+		realizacija_kase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
 	else
-		ReklKase(dDatOd, dDatDo) // pregled reklamacija
+		realizacija_kase(dDatOd, dDatDo) // pregled reklamacija
 	endif
 	
 	cDestMod:=StrTran(cKalkDbf,"TOPSKA.",cPrefix+cDestMod)
@@ -684,11 +599,11 @@ return
 *}
 
 
-/*! \fn SifKalkTops()
+/*! \fn pos_sifre_katops()
  *  \brief
  */
  
-function SifKalkTops()
+function pos_sifre_katops()
 *{
 private cDirZip:=ToUnix("C:" + SLASH + "TOPS" + SLASH)
 

@@ -727,7 +727,7 @@ return (nil)
 
 // StAzFakt()
 // Stampa azurirane fakture
-function StAzFakt()
+function fakt_stampa_azuriranog()
 private cIdFirma, cIdTipDok, cBrDok
 
 cIdFirma:=gFirma
@@ -774,7 +774,7 @@ endif
 
 // stampa....
 cTipDok := "10"
-StAzPeriod( gFirma, cTipDok, cBrOd, cBrDo )
+fakt_stampa_azuriranog_period( gFirma, cTipDok, cBrOd, cBrDo )
 
 gcDirekt := cDirPom
 close all
@@ -842,7 +842,7 @@ if Found()
 			ALLTRIM(doks->brdok) <= ALLTRIM(cBrDo) 
 			
 			// pozovi stampu fiskalnog racuna
-			nErr := fisc_rn( doks->idfirma, ;
+			nErr := fakt_fisc_rn( doks->idfirma, ;
 				doks->idtipdok, ;
 				doks->brdok, lAutoStampa, nDevice )
 		
@@ -869,7 +869,7 @@ return
 
 
 // Stampa azuriranih faktura od broja do broja
-function StAzPeriod(cIdFirma, cIdTipDok, cBrOd, cBrDo)
+function fakt_stampa_azuriranog_period(cIdFirma, cIdTipDok, cBrOd, cBrDo)
 local lDirekt := .f.
 local cBatch := "N"
 

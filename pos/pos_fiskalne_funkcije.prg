@@ -18,7 +18,7 @@ static __device := 0
 // --------------------------------------
 // stampa fiskalnog racuna
 // --------------------------------------
-function fisc_rn( cIdPos, dDat, cBrRn )
+function pos_fisc_rn( cIdPos, dDat, cBrRn )
 local nErr := 0
 
 if gFc_use == "N"

@@ -12,7 +12,7 @@
 
 #include "pos.ch"
 
-function Stanje
+function pos_stanje_artikala
 parameters cDat, cSmjena
 
 local nStanje

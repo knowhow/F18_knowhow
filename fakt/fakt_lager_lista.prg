@@ -12,46 +12,8 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
-
-/*! \ingroup ini
-  * \var *string FmkIni_KumPath_IZVJESTAJI_BezUlaza
-  * \brief Da li se na izvjestajima lager-liste i stanja robe prikazuju samo izlazi?
-  * \param N - ne, default vrijednost
-  * \param D - da
-  */
-*string FmkIni_KumPath_IZVJESTAJI_BezUlaza;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_Svi_SaberiKol
-  * \brief Da li se na izvjestajima prikazuje zbir kolicina svih artikala
-  * \param N - ne, default vrijednost
-  * \param D - da
-  */
-*string FmkIni_ExePath_Svi_SaberiKol;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_FAKT_Sintet
-  * \brief Da li se koriste sinteticke (skracene) sifre robe?
-  * \param N - ne, default vrijednost
-  * \param D - da
-  */
-*string FmkIni_ExePath_FAKT_Sintet;
-
-
-
-/*! \fn Lager()
- *  \brief Izvjestaj lager lista
- */
- 
-function Lager()
+function fakt_lager_lista()
 
 parameters lPocStanje, cIdFirma, qqRoba, dDatOd, dDatDo
 
@@ -345,7 +307,7 @@ EOF CRET
 
 START PRINT CRET
 
-ZaglLager()
+Zaglfakt_lager_lista()
 
 _cijena:=0
 _cijena2:=0
@@ -493,7 +455,7 @@ do while !eof()
   enddo
   	
 	if prow()>61-iif(cProred="D",1,0)
-  		ZaglLager()
+  		Zaglfakt_lager_lista()
 	endif
 	//OL_Yield()
 
@@ -641,7 +603,7 @@ do while !eof()
 enddo
 
 if prow()>59
-	ZaglLager()
+	Zaglfakt_lager_lista()
 endif
 
 IF !lBezUlaza
@@ -696,7 +658,7 @@ endif
 
 if cPoTar=="D"
 	if prow()>59
-		ZaglLager()
+		Zaglfakt_lager_lista()
 	endif
 	?
 	z0:="Rekapitulacija stanja po tarifama:"
@@ -710,7 +672,7 @@ if cPoTar=="D"
 	nUMPV:=nUMPV0:=nUPor1:=nUPor2:=nUPor3:=0
 	for i:=1 to len(aPorezi)
 		if prow()>59
-			ZaglLager()
+			Zaglfakt_lager_lista()
 			?
 			? z0
 			? m
@@ -752,11 +714,11 @@ return
 
 
 
-/*! \fn ZaglLager()
+/*! \fn Zaglfakt_lager_lista()
  *  \brief Zaglavlje lager liste
  */
  
-function ZaglLager()
+function Zaglfakt_lager_lista()
 local cPomZK
 
 if nStr>0

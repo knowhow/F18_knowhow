@@ -35,9 +35,9 @@ private Izbor:=1
 // Vrsta kase "A" - samostalna kasa
 
 AADD(opc, "1. izvjestaji                        ")
-AADD(opcexe, {|| Izvj() })    
+AADD(opcexe, {|| pos_izvjestaji() })    
 AADD(opc,"L. lista azuriranih dokumenata")
-AADD(opcexe, {|| PrepisDok()})
+AADD(opcexe, {|| pos_prepis_dokumenta()})
 
 AADD(opc, "V. evidencija prometa po vrstama")
 AADD(opcexe, {|| FrmPromVp()})    
@@ -51,10 +51,10 @@ if IsPlanika()
 endif
 
 AADD(opc, "D. unos dokumenata")
-AADD(opcexe, {|| MnuDok()})    
+AADD(opcexe, {|| pos_menu_dokumenti()})    
 
 AADD(opc, "R. robno-materijalno poslovanje")
-AADD(opcexe, {|| MenuRobMat() })
+AADD(opcexe, {|| pos_menu_robmat() })
 
 if (gVSmjene=="D")
 	AADD(opc, "Z. zakljuci radnika")
@@ -66,25 +66,13 @@ endif
 AADD(opc, "--------------")
 AADD(opcexe, nil)
 AADD(opc, "S. sifrarnici")
-AADD(opcexe, {|| MenuSifre() })
+AADD(opcexe, {|| pos_sifrarnici() })
 AADD(opc, "W. administracija pos-a")
 AADD(opcexe, {|| pos_admin_menu() })
 AADD(opc, "P. promjena seta cijena")
 AADD(opcexe, {|| PromIDCijena()})
 AADD(opc, "T. postavi datum i vrijeme kase")
 AADD(opcexe, {|| PDatMMenu()})
-if IsPlanika()
-	AADD(opc, "M. poruke")
-	AADD(opcexe, {|| Mnu_Poruke()})
-endif
-if IsPlNS()
-	if gFissta=="D"
-		AADD(opc, "F. fiskalni stampac")
-		AADD(opcexe, {|| Fissta_mnu()})
-	endif
-	AADD(opc, "U. trgovacka knjiga")
-	AADD(opcexe, {|| mnu_tk()})
-endif
 
 Menu_SC("upra")
 
@@ -100,7 +88,7 @@ if !SigmaSif("SSAT")
 	MsgBeep("&S& pogresna lozinka ! &SAT&")
 	return 0
 endif
-lPostavljeno:=PostaviDat()
+lPostavljeno:=pos_postavi_datum()
 if lPostavljeno
 	goModul:run()
 	return 0
@@ -118,7 +106,7 @@ private Izbor:=1
 // Vrsta kase "K" - radna stanica
 
 AADD(opc, "1. izvjestaji             ")
-AADD(opcexe,{|| Izvj()})
+AADD(opcexe,{|| pos_izvjestaji()})
 AADD(opc, "2. zakljuci radnika")
 AADD(opcexe,{|| Zakljuci()})
 AADD(opc, "3. otvori narednu smjenu")
@@ -126,9 +114,9 @@ AADD(opcexe,{|| OtvoriSmjenu()})
 AADD(opc, "--------------------------")
 AADD(opcexe,nil)
 AADD(opc, "S. sifrarnici")
-AADD(opcexe,{|| MenuSifre()})
+AADD(opcexe,{|| pos_sifrarnici()})
 AADD(opc, "A. administracija pos-a")
-AADD(opcexe, {|| MenuAdmin() })
+AADD(opcexe, {|| pos_admin_menu() })
 
 Menu_SC("uprk")
 return .f.
@@ -143,18 +131,18 @@ private Izbor:=1
 // Vrsta kase "S" - server kasa
 
 AADD(opc, "1. izvjestaji             ")
-AADD(opcexe,{|| Izvj()})
+AADD(opcexe,{|| pos_izvjestaji()})
 AADD(opc, "2. unos dokumenata")
-AADD(opcexe,{|| MnuDok()})
+AADD(opcexe,{|| pos_menu_dokumenti()})
 AADD(opc, "S. sifrarnici")
-AADD(opcexe,{|| MenuSifre()})
+AADD(opcexe,{|| pos_sifrarnici()})
 
 Menu_SC("uprs")
 closeret
 return .f.
 
 
-function MnuDok()
+function pos_menu_dokumenti()
 private Izbor
 private opc:={}
 private opcexe:={}

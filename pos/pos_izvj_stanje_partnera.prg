@@ -13,7 +13,7 @@
 #include "pos.ch"
 
  
-function StanjePartnera()
+function pos_rpt_stanje_partnera()
 local nPom
 local nDuguje
 local nPotrazuje

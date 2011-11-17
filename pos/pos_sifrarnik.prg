@@ -94,22 +94,6 @@ return PostojiSifra(F_STRAD,I_ID,10,55,"Sifrarnik statusa radnika",@cid,dx,dy)
 
 
 
- 
-function P_VRSTEP(cId,dx,dy)
-private ImeKol
-private Kol:={}
-
-ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",20), {|| naz},      "naz"       };
-        }
-
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
-next
-return PostojiSifra(F_VRSTEP,I_ID,10,55,"Sifrarnik vrsta placanja",@cid,dx,dy)
-
-
- 
 function P_Osob(cId, dx, dy)
 private ImeKol
 private Kol:={}
@@ -293,18 +277,18 @@ if EMPTY(cSifra)
    	return (.f.)
 endif
 
-O_KORISN
-GO TOP
-do while !eof()
-	if (korisn->sif==CryptSC(cSifra).and. korisn->ime!=cIme)
-    		BEEP(3)
-    		lRet:=.f.
-    		EXIT
-  	endif
-  	SKIP 1
-enddo
-USE
-SELECT (nObl)
+//O_KORISN
+//GO TOP
+//do while !eof()
+//	if (korisn->sif==CryptSC(cSifra).and. korisn->ime!=cIme)
+  //  		BEEP(3)
+    //		lRet:=.f.
+    //		EXIT
+  	//endif
+  	//SKIP 1
+//enddo
+//USE
+//SELECT (nObl)
 return lRet
 
 

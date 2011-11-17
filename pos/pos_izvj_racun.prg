@@ -968,7 +968,7 @@ drn_create()
 drn_open()
 drn_empty()
 
-O_Nar()
+o_pos_narudzba()
 O_ROBA
 O_OSOB
 O_POS
@@ -1095,15 +1095,6 @@ for i:=1 to LEN(aRacuni)
 		hseek cIdRoba
 		cJmj := roba->jmj
 		cRobaNaz := ALLTRIM(roba->naz)
-	
-		if IsPlanika() .and. gRobaVelicina == "D"
-			if &cPosDB->(FieldPos("velicina")) <> 0
-				nVelicina := &cPosDB->velicina
-				if nVelicina <> 0
-					cRobaNaz += " Br: " + ALLTRIM(show_number(&cPosDb->velicina, nil, -5))
-				endif
-			endif
-		endif
 	
 		// seek-uj tarifu
 		select tarifa

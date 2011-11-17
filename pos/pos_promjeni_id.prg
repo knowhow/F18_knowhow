@@ -604,7 +604,7 @@ if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje r
 	@ 4+m_x, 2+m_y SAY SPACE(60)
 
 	// nadji novi broj dokumenta
-	cNBrDok := NarBrDok(gIdPos, VD_RN)
+	cNBrDok := pos_naredni_dokument(gIdPos, VD_RN)
 	
 	// prebaci stavke iz pos_st i doks_st
 	
@@ -646,7 +646,7 @@ if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje r
 		enddo
 	
 		select pos_doks
-		cNBrDok := NarBrDok(gIdPos, VD_RN)
+		cNBrDok := pos_naredni_dokument(gIdPos, VD_RN)
 		
 		select pos_doks_st
 		skip

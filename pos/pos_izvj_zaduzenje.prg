@@ -117,9 +117,9 @@ IF RecCount2()>0
   ? "-------- ----------------- --- --------"
 
   if IsPDV()
-  	PDVRekTarife(aTarife)
+  	PDVpos_rekap_tarifa(aTarife)
   else
-  	RekTarife(aTarife)
+  	pos_rekap_tarifa(aTarife)
   endif
 
   ? " Primio " + PADL ("Predao", 31)
@@ -288,9 +288,9 @@ endif
 
 if gModul=="TOPS"
 	if IsPDV()
-   		PDVRekTarife(aTarife)
+   		PDVpos_rekap_tarifa(aTarife)
    	else
-   		RekTarife(aTarife)
+   		pos_rekap_tarifa(aTarife)
   	endif
 endif
 

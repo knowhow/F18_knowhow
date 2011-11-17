@@ -529,58 +529,5 @@ if !lIni
 endif
 use
 return
-*}
-
-/*! \fn UpisiURF(cTekst,cFajl,lNoviRed,lNoviFajl)
- *  \brief Upisi u report fajl
- *  \param cTekst    - tekst
- *  \param cFajl     - ime fajla
- *  \param lNoviRed  - da li prelaziti u novi red
- *  \param lNoviFajl - da li snimati u novi fajl
- */
- 
-function UpisiURF(cTekst,cFajl,lNoviRed,lNoviFajl)
-*{
-StrFile(IF(lNoviRed,CHR(13)+CHR(10),"") + cTekst, cFajl, !lNoviFajl)
-return
-*}
-
-/*! \fn DiffMFV(cZn,cDiff)
- *  \brief differences: memo vs field variable
- *  \param cZn 
- *  \param cdiff
- */
- 
-function DiffMFV(cZN,cDiff)
-*{
-local lVrati:=.f.
-local i
-local aStruct
-
-if cZn==NIL
-	cZn:="_"
-endif
-
-aStruct:=DBSTRUCT()
-
-FOR i:=1 TO LEN(aStruct)
-	cImeP:=aStruct[i,1]
-    	IF !(cImeP=="BRISANO")
-     		cVar:=cZn+cImeP
-      		IF "U"$TYPE(cVar)
-			MsgBeep("Greska:neuskladjene strukture baza!#"+;
-				"Pozovite servis SIGMA-COM-a!#"+;
-				"Funkcija: GATHER(), Alias: "+ALIAS()+", Polje: "+cImeP)
-      		ELSE
-			IF field->&cImeP <> &cVar
-	  			lVrati:=.t.
-          			cDiff+=(CHR(13)+CHR(10))+"     "
-          			cDiff+=cImeP+": bilo="+TRANS(field->&cImeP,"")+", sada="+TRANS(&cVar,"")
-			ENDIF
-      		ENDIF
-    	ENDIF
-NEXT
-return lVrati
-*}
 
 

@@ -765,7 +765,7 @@ lViseDok :=! (cPom==idfirma+idtipdok+brdok)
 
 aOstaju:={}
 
-if Empty(NarBrDok())
+if Empty(fakt_naredni_dokument())
 	closeret
 endif
 

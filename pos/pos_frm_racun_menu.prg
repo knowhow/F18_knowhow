@@ -12,43 +12,30 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 
-/*! \fn Narudzba()
- *  \brief
- */
- 
-function Narudzba()
-*{
-
+function pos_narudzba()
 SETKXLAT("'","-") 
 
 if gModul=="HOPS"
-	NarudzbaH()
+	narudzba_hops()
 else
-	NarudzbaT()
+	narudzba_tops()
 endif
 
 set key "'" to
 return
-*}
 
 /*! \fn NarudzbaH()
  *  \brief
  */
-function NarudzbaH()
+function narudzba_hops()
 *{
 
 private Opc:={}
 private opcexe:={}
 private Izbor
 
-O_Nar()  
+o_pos_narudzba()  
 
 if gRadniRac=="D"
 	AADD(opc,"1. dodaj na racun        ")
@@ -79,9 +66,9 @@ return
 /*! \fn NarudzbaT()
  *  \brief 
  */
-function NarudzbaT()
+function narudzba_tops()
 *{
-O_Nar()
+o_pos_narudzba()
 
 select _pos_pripr
 
@@ -145,7 +132,7 @@ local dx:=3
 
 SELECT _POS
 set cursor on
-cBrojRn:=_POS->(NarBrDok (gIdPos, VD_RN))
+cBrojRn:=_POS->(pos_naredni_dokument(gIdPos, VD_RN))
 
 if gModul="HOPS"
 	if gBrojSto $ "DN"
@@ -467,54 +454,6 @@ if gRadniRac=="D"
   	BoxC()
 endif
 
-if (gRadniRac<>"D")
-
-// standardni racun
-if IsPlNS() 
-	if gFissta=="D" 
-	// provjeri o kakvom se racunu radi
-		nRnType:=ChkRnType()
-		// broj obrasca NI
-		private cObrNiNr:=""
-	
-		if gnDebug == 5
-			MsgBeep(STR(nRnType))
-		endif
-			
-		if (nRnType == 0)
-			MsgBeep("Na racunu se pojavljuju +/- kolicine#Racun nije azuriran!")
-			CLOSERET
-		endif
-		
-		// ako se radi o cistom racunu a postoji formiran dn.izvjestaj ne moze se izdavati FISSTA racun
-		if (nRnType==1 .and. ReadLastFisRpt("1", Date()) .and. gFisRptEvid=="D")
-			MsgBeep("Postoji formiran dnevni izvjestaj!#Izdavanje racuna nije moguce!")
-			CLOSERET
-		endif
-		
-		// ako se radi o cistom racunu onda izdaj rn->FISSTA
-		if (nRnType==1 .or. (nRnType==-1 .and. gFisStorno=="D"))
-				aArtikli:={}
-	  			aArtRacun:={}
-	  			nUkupno:=0 //ukupan iznos racuna
-	  			FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
-	  			cVrPl:=GetCodeVrstePl(cIdVrsteP)
-	  			if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
-	     				// Racun nije formiran
-					// pitaj da li je odstampan na FISSTA
-					// ako nije nemoj azurirati u tops
-					if Pitanje(,"Da li odstampan racun (D/N)?", "N")=="N"
-						MsgBeep("Racun nije azuriran")
-	     					CLOSERET 	
-	  				endif
-				endif
-		endif
-		if (nRnType==-1 .and. gFisStorno=="N")
-				cObrNiNr:=GetFormNiNr()	
-		endif
-	endif
-endif
-	
 // prebaci iz prip u pos
 if (LEN(aRabat) > 0)
 	ReCalcRabat(cIdVrsteP)
@@ -522,21 +461,13 @@ endif
 
 _Pripr2_Pos(cIdVrsteP)
 
-endif
-
 StampAzur(gIdPos, cRacBroj)
 // odstampaj i azuriraj
 CLOSERET
 
 return
-*}
 
-/*! \fn StampAzur(cIdPos,cRadRac)
- *  \brief
- *  \param cIdPos
- *  \param cRadRac
- */
- 
+
 function StampAzur(cIdPos, cRadRac)
 
 local cTime
@@ -544,7 +475,7 @@ local nFis_err := 0
 private cPartner
 
 select pos_doks
-cStalRac:=NarBrDok(cIdPos,VD_RN)
+cStalRac:=pos_naredni_dokument(cIdPos,VD_RN)
 
 // radi mreze rezervisem DOKS !
 append blank
@@ -591,7 +522,7 @@ if (!EMPTY(cTime))
 	if gFc_use == "D"
 		
 		// stampa fiskalnog racuna, vraca ERR
-		nErr := fisc_rn( cIdPos, gDatum, cStalRac )
+		nErr := pos_fisc_rn( cIdPos, gDatum, cStalRac )
 		
 		// da li je nestalo trake ?
 		// -20 signira na nestanak trake !
@@ -972,7 +903,7 @@ Box (,2,60)
 BoxC()
 
 if Pitanje(,"Odstampati zbirni racun (D/N) ?","D")=="D"
-	StampaRekapitulacije(gIdRadnik, cBrojStola, dDatOd, dDatDo, .t.)
+	StampaRekap(gIdRadnik, cBrojStola, dDatOd, dDatDo, .t.)
 endif
 
 return

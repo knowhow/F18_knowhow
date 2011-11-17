@@ -81,19 +81,6 @@ endif
 return (PADL(VAL(ALLTRIM(cID))-1,LEN(cID),cPadCh) )
 *}
 
-/*! \fn FormDat1(dUlazni)
- *  \brief Formatira datum sa stoljecem
- *  \return cDatum - string koji predstavlja 4YEAR formatiran datum
- */
-
-function FormDat1(dUlazni)
-*{
-local cVrati
-SET CENTURY ON
-cVrati:=DTOC(dUlazni)+"."
-SET CENTURY OFF
-return cVrati
-*}
 
 /*! \fn SetNazDVal()
  *  \brief Postavlja naziv domace valute
@@ -373,7 +360,7 @@ ELSE
 ENDIF
 
 Close All
-IF !RealKase (.T.)
+IF !realizacija_kase(.T.)
   MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
   close all; return 0
 EndIF
@@ -385,7 +372,7 @@ endif
 
 // knjiga sanka ili trgovacka knjiga se mogu dobiti na izvjestajima
 IF gStamStaPun=="D" .and. gVrstaRS=="A"
-  Stanje (gDatum, gSmjena)
+  pos_stanje_artikala(gDatum, gSmjena)
 EndIF
 
 // prebacivanje kumulativnih datoteka na server
@@ -466,7 +453,7 @@ do while .t.
 
   	Scatter() // iz K2C
   	@ m_x+5,m_y+3 SAY "Sifra robe koja se pridruzuje tipki:"
-  	@ m_x+6,m_y+13 GET _idroba VALID P_RobaPOS(@_idroba,6,25).AND.NijeDuplo(_idroba, nKey1)
+  	@ m_x+6,m_y+13 GET _idroba VALID P_Roba(@_idroba,6,25).AND.NijeDuplo(_idroba, nKey1)
   	READ
   	if LASTKEY()=K_ESC
      		EXIT
@@ -590,9 +577,7 @@ return
  */
  
 function SetUser(cKorSif,nSifLen,cLevel)
-*{
 
-O_KORISN
 O_STRAD
 O_OSOB
 
@@ -619,7 +604,6 @@ else
 endif
 
 return 0
-*}
 
 /*! \fn PrikStatus()
  *  \brief

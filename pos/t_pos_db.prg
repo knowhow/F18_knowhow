@@ -26,7 +26,6 @@ CLASS TDbPos INHERIT TDB
 	method konvZn
 	method open
 	method reindex
-	method scan
 	method del_pos_z
 	method integ
 	method chkinteg
@@ -413,10 +412,6 @@ if (nArea==-1 .or. nArea==(F_PRIPRG))
 	
 	CREATE_INDEX ("4", "IdVd+IdPos+IdVrsteP+IdGost+DToS(datum)", PRIVPATH+"PRIPRG")
 
-	if IsPlanika()
-		CreDB_Message()
-	endif
-
 endif
 
 if (nArea==-1 .or. nArea==(F_K2C))
@@ -591,12 +586,6 @@ if (nArea==-1 .or. nArea==(F_MARS))
 	ENDIF
 	CREATE_INDEX ("ID", "ID"     , SIFPATH+"MARS")
 	CREATE_INDEX ("2" , "ID+ID2" , SIFPATH+"MARS")
-endif
-
-if (nArea==-1 .or. nArea==(F_MESSAGE))
-	if IsPlanika()
-		CreDB_Message()
-	endif
 endif
 
 // planika integritet
@@ -818,25 +807,7 @@ return .t.
 // --------------------------------------------
 // --------------------------------------------
 method reindex
-Reindex_All()
-return
-
-
-// --------------------------------------------
-// --------------------------------------------
-method scan
-local nFree
-local i
-local cSlaveKasa
-
-cSlaveKasa:=IzFmkIni("POS","Slave","N",PRIVPATH)
-
-if cSlaveKasa=="D"
-	return
-endif
-
-ScanDb()
-
+pos_reindex_all()
 return
 
 

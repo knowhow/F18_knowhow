@@ -14,7 +14,7 @@
 
 
 
-function RealOdj()
+function realizacija_odjeljenja()
 LOCAL   nSir:=IIF (gVrstaRS=="S", 80, 40)
 PRIVATE cIdOdj := SPACE(2), cPrikRobe := "D"
 PRIVATE cSmjena:=SPACE(1), cIdPos:=gIdPos, cIdDio := gIdDio
@@ -346,17 +346,9 @@ function DioIzvuci(cIdVd)
     Skip
   EndDO
 RETURN
-*}
 
 
-/*! \fn RealDio(cPrikRobe)
- *  \param cPrikRobe
- *  \brief Priprema i prikaz realizacije dijela objekta
- */
-
-*function RealDio(cPrikRobe)
-*{
-function RealDio
+function realizacija_dio_objekta
 PARAMETERS cPrikRobe
 PRIVATE cIdDio := SPACE(2)
 PRIVATE cSmjena:=SPACE(1), cIdPos:=gIdPos, cIdOdj := SPACE (2)

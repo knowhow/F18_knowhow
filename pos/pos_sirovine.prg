@@ -46,7 +46,6 @@ O_SIFK
 O_SIFV
 O_SAST
 O_ROBA
-O_SIROV
 O_ODJ
 O_DIO
 O_POS_DOKS
@@ -189,7 +188,7 @@ while !eof()
       			Seek "96"+DTOS (xDatum)+xSmjena
       			if !Found()
         			set order to 1
-        			cBrDok := _BrDok := NarBrDok (cIdPos, VD_RZS)
+        			cBrDok := _BrDok := pos_naredni_dokument (cIdPos, VD_RZS)
         			if (gBrojSto=="D")
 					_zakljucen := "Z"
 				endif
@@ -211,7 +210,7 @@ while !eof()
         			if Empty(cBrDok)  
 					// ne postoji RZS za cIdPos
           				set order to 1
-          				cBrDok := _BrDok := NarBrDok (cIdPos, VD_RZS)
+          				cBrDok := _BrDok := pos_naredni_dokument (cIdPos, VD_RZS)
           				if (gBrojSto=="D")
 						_zakljucen := "Z"
 					endif

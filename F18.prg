@@ -31,6 +31,7 @@ local mnu_left := 2
 local mnu_top := 2
 local mnu_bottom := 23
 local mnu_right := 65
+local params
 
 cHostName :=  ""
 cSchema := ""
@@ -52,11 +53,18 @@ cF18HomeRoot := get_f18_home_dir()
 // konektuj se na server
 oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 
+params := hb_hash()
+params["database"] := nil
+
+f18_ini_read("F18_server", @params, .t.)
+
+cDatabase := params["database"]
+
 // ~/.F18/empty38/
 cF18HomeDir := get_f18_home_dir(cDatabase)
 
 // menu opcije...
-AADD( menuop, "1) FIN   # finansijsko poslovanje")
+AADD( menuop, "1) FIN   # finansijsko poslovanje" )
 AADD( menuop, "2) KALK  # robno-materijalno poslovanje")
 AADD( menuop, "3) FAKT  # fakturisanje")
 AADD( menuop, "4) ePDV  # elektronska evidencija PDV-a")
@@ -91,7 +99,7 @@ do while .t.
 		case mnu_choice == 8
 			//MainSii(cUser, cPassWord, p3, p4, p5, p6, p7)
 		case mnu_choice == 9
-			//MainPos(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainPos(cUser, cPassWord, p3, p4, p5, p6, p7)
  	endcase
  	loop
 enddo

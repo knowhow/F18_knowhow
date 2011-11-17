@@ -202,11 +202,11 @@ O_POS
 return
 *}
 
-/*! \fn OSif()
+/*! \fn o_pos_sifre()
  *  \brief
  */
  
-function OSif()
+function o_pos_sifre()
 *{
 
 O_KASE
@@ -305,11 +305,11 @@ return
 *}
 
 
-/*! \fn O_Nar()
+/*! \fn o_pos_narudzba()
  *  \brief
  */
  
-function O_Nar()
+function o_pos_narudzba()
 *{
 
 if gPratiStanje $ "D!"
@@ -711,7 +711,7 @@ endif
 
 if lNaX
 	nTRec:=RECNO()
-  	_BrDok:=cStalRac:=NarBrDok("X ","42")
+  	_BrDok:=cStalRac:=pos_naredni_dokument("X ","42")
   	_idpos:="X "
   	GO (nTRec)
 endif
@@ -1172,7 +1172,7 @@ SELECT ZAKSM
 return
 *}
 
-/*! \fn NarBrDok(cIdPos,cIdVd,cPadCh,dDat)
+/*! \fn pos_naredni_dokument(cIdPos,cIdVd,cPadCh,dDat)
  *  \brief Naredni broj dokumenta
  *  \param cIdPos
  *  \param cIdVd
@@ -1181,7 +1181,7 @@ return
  *  \return cBrDok
  */
  
-function NarBrDok(cIdPos,cIdVd,cPadCH,dDat)
+function pos_naredni_dokument(cIdPos,cIdVd,cPadCH,dDat)
 *{
 
 local cBrDok

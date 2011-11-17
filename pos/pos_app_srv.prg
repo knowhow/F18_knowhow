@@ -15,36 +15,6 @@
 function PosRunAppSrv(oApp)
 local cLog
 
-? "Pokrecem RunAppSrv"
-
-if mpar37("/ISQLLOG",oApp)
-   if LEFT(oApp:cP5,3)=="/L="
-       cLog:=SUBSTR(oApp:cP5,4)
-       AS_ISQLLog(cLog)
-   endif
-endif
-
-if mpar37("/IALLMSG",oApp) 
-	? "Pokrecem POS: importovanje poruka" 
-	InsertIntoAMessage()
-	goModul:quit()
-endif
-
-
 return
-
  
-function AS_ISQLLog(cLog)
-
-O_KASE
-
-seek gIdPos
-? "vrsim import sql-loga", cLog
-? "Kasa ", gIdPos, kase->naz
-
-O_Log()
-? Iz_SQL_Log(VAL(cLog))
-goModul:quit()
-
-return
 

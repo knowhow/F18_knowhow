@@ -28,13 +28,13 @@ private Izbor:=1
 ImportDSql()
 
 AADD(opc, "1. izvjestaji                       ")
-AADD(opcexe, {|| Izvj() })
+AADD(opcexe, {|| pos_izvjestaji() })
 AADD(opc, "2. pregled racuna")   
 AADD(opcexe, {|| PromjeniID() })
 AADD(opc, "L. lista azuriranih dokumenata")
-AADD(opcexe, {|| PrepisDok()})
+AADD(opcexe, {|| pos_prepis_dokumenta()})
 AADD(opc, "R. robno-materijalno poslovanje")
-AADD(opcexe, {|| MenuRobMat() })
+AADD(opcexe, {|| pos_menu_robmat() })
 AADD(opc, "V. evidencija prometa po vrstama")
 AADD(opcexe, {|| FrmPromVp()})    
 AADD(opc, "K. prenos realizacije u KALK")
@@ -44,7 +44,7 @@ if IsPlanika()
 	AADD(opcexe, {|| Rek2Kalk() })
 endif
 AADD(opc, "S. sifrarnici                  ")
-AADD(opcexe, {|| MenuSifre() })
+AADD(opcexe, {|| pos_sifrarnici() })
 AADD(opc, "P. prenos POS <-> POS")
 AADD(opcexe, {|| PosDiskete() })
 AADD(opc, "A. administracija pos-a")
@@ -62,11 +62,6 @@ if gVrstaRS == "S"
 	AADD(opcexe, {|| PrebSaKase() })
 	AADD(opc, "Y. ponovo prenesi sa kasa ")
 	AADD(opcexe, {|| PobPaPren() })
-endif
-
-if IsPlanika()
-	AADD(opc, "M. poruke")
-	AADD(opcexe, {|| Mnu_Poruke()})
 endif
 
 Menu_SC("adm")
@@ -111,7 +106,7 @@ AADD(opc, "5. uzmi BARKOD iz sezone ")
 AADD(opcexe, {|| UzmiBkIzSez()})
 
 AADD(opc, "6. set pdv cijene na osnovu tarifa iz sezone ")
-AADD(opcexe, {|| SetPdvCijene()})
+AADD(opcexe, {|| set_pdv_cijene()})
 
 if gStolovi == "D"
 	AADD(opc, "7. zakljucivanje postojecih racuna ")
@@ -148,9 +143,6 @@ if (KLevel<L_UPRAVN)
 	nPosSetPM:=LEN(opc)
 	AADD(opcexe, { || SetPm (nPosSetPM) })
 endif
-
-AADD(opc, "T. testcase OID ")
-AADD(opcexe, { || PlFlexTCases() })
 
 Menu_SC("aadm")
 return .f.

@@ -94,7 +94,7 @@ else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
 AADD(opc,"2. izvjestaji")
-AADD(opcexe,{|| Izvj()})
+AADD(opcexe,{|| fakt_izvjestaji()})
 AADD(opc,"3. pregled dokumenata")
 AADD(opcexe,{|| fakt_pregled_dokumenata()})
 AADD(opc,"4. generacija dokumenata")
@@ -123,14 +123,14 @@ AADD(opc,"8. sifrarnici")
 AADD(opcexe,{|| fakt_sifrarnik()})
 AADD(opc,"9. administracija baze podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
-	AADD(opcexe,{|| MnuAdmin()})
+	AADD(opcexe,{|| fakt_admin_menu()})
 else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
 AADD(opc,"------------------------------------")
 AADD(opcexe,{|| nil})
 AADD(opc,"A. stampa azuriranog dokumenta")
-AADD(opcexe,{|| StAzFakt()})
+AADD(opcexe,{|| fakt_stampa_azuriranog()})
 AADD(opc,"P. povrat dokumenta u pripremu")
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))

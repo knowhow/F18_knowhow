@@ -90,7 +90,7 @@ function dokspf_create()
 *{
 local aDbf:={}
 
-if !FILE(KUMPATH + "\DOKSPF.DBF")
+if !FILE(f18_ime_dbf( "dokspf" ))
 	AADD(aDbf, {"IDPOS", "C", 2, 0})
 	AADD(aDbf, {"IDVD",  "C", 2, 0})
 	AADD(aDbf, {"DATUM", "D", 8, 0})
@@ -102,7 +102,7 @@ if !FILE(KUMPATH + "\DOKSPF.DBF")
 	if gSql == "D"
 		AddOidFields(@aDbf)
 	endif
-	DbCreate2(KUMPATH + "\DOKSPF.DBF", aDbf)
+	DbCreate2(KUMPATH + "DOKSPF.DBF", aDbf)
 endif
 
 CREATE_INDEX("1", "idpos+idvd+DToS(datum)+brdok", KUMPATH + "DOKSPF")

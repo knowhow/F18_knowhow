@@ -27,4 +27,21 @@ PostojiSifra(F_K1, I_ID, 10, 60, "Lista - K1")
 return
 
 
+/*! \fn P_VrsteP(cId,dx,dy)
+ *  \brief Otvara sifranik vrsta placanja 
+ *  \param cId
+ *  \param dx
+ *  \param dy
+ */
+
+function P_VrsteP(cId,dx,dy)
+
+PRIVATE ImeKol,Kol:={}
+ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
+          { PADC("Naziv",20), {|| naz},      "naz"       };
+        }
+ FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+return PostojiSifra(F_VRSTEP,1,10,55,"Sifrarnik vrsta placanja",@cid,dx,dy)
+
+
 

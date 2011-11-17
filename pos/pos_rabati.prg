@@ -45,7 +45,7 @@ GetPopClanovi(aRabat, nCijena)
 
 // 6. varijanta
 // Popust zadavanjem procenta
-GetPopProc(aRabat, nCijena)
+GetPopProcent(aRabat, nCijena)
 
 return
 *}

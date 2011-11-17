@@ -12,13 +12,7 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
-
-function MnuAdmin()
+function fakt_admin_menu()
 private opc
 private opcexe
 private Izbor

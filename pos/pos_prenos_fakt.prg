@@ -116,18 +116,11 @@ do while !eof() .and. pos_doks->IdVd==VD_RN .and. pos_doks->Datum<=dDatDo
 	do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==pos_doks->(IdPos+IdVd+DTOS(datum)+BrDok)
 		Scatter()
 		select topsfakt
-		aSastav:=GetSastav("ROBA",pos->idRoba)
-		if len(aSastav)>0
-			cIdRoba:=aSastav[1,1]
-			nKolicina:=aSastav[1,2]*pos->kolicina
-			nPCijena:=pos->cijena/aSastav[1,2]
-			nPopustCij:=pos->nCijena/aSastav[1,2]
-		else
-			cIdRoba:=pos->idRoba
-			nKolicina:=pos->kolicina
-			nPCijena:=pos->cijena
-			nPopustCij:=pos->nCijena
-		endif
+		cIdRoba:=pos->idRoba
+		nKolicina:=pos->kolicina
+		nPCijena:=pos->cijena
+		nPopustCij:=pos->nCijena
+		
 		if cBezCijena=="D"
 			nPCijena:=nPopustCij:=0
 		endif

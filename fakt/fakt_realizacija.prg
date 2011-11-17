@@ -22,7 +22,7 @@ static _FDEC := 4
 // --------------------------------------------
 // realizacija maloprodaje fakt
 // --------------------------------------------
-function real_mp()
+function fakt_real_maloprodaje()
 local nOperater
 local cFirma
 local dD_from

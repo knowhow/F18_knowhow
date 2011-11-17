@@ -216,7 +216,7 @@ DO WHILE !EOF() .and. idvd==cidvd .and.  cBroj==dtos(datum)+brdok
    EndIF
 
    if gModul=="TOPS"
-     WhileaTarifa(PRIPRZ->IdRoba, nIzn, @aTarife )
+     WhileaTarife(PRIPRZ->IdRoba, nIzn, @aTarife )
    endif
 
 
@@ -263,9 +263,9 @@ endif
 
 if gModul="TOPS"
   if IsPDV()
- 	PDVRekTarife(aTarife)
+ 	PDVpos_rekap_tarifa(aTarife)
   else
- 	RekTarife(aTarife)
+ 	pos_rekap_tarifa(aTarife)
   endif
 endif
 

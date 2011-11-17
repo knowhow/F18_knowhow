@@ -24,13 +24,13 @@ endif
 
 if gRadniRac=="D"
 	AADD(opc,"1. narudzba                           ")
-    	AADD(opcexe,{|| Narudzba() })
+    	AADD(opcexe,{|| pos_narudzba() })
     	AADD(opc,"2. zakljuci racun")
     	AADD(opcexe,{|| ZakljuciRacun() })
 else
 	private aRabat:={}
     	AADD(opc,"1. priprema racuna                        ")
-    	AADD(opcexe,{|| Narudzba(), ZakljuciRacun() })
+    	AADD(opcexe,{|| pos_narudzba(), ZakljuciRacun() })
 	if gStolovi == "D"
 		AADD(opc,"2. zakljucenje - placanje stola ")
     		AADD(opcexe,{|| g_zak_sto() })
@@ -46,21 +46,10 @@ if (gModul == "HOPS" .and. gBrojSto=="D") .and. gRadniRac=="N"
 	AADD(opcexe,{|| MnuZakljRacuna() })
 endif
 AADD(opc,"T. trenutni pazar smjene")
-AADD(opcexe,{|| RealRadnik(.t., "P", .f.) })
+AADD(opcexe,{|| realizacija_radnik(.t., "P", .f.) })
 
 AADD(opc,"R. trenutna realizacija po robama")
-AADD(opcexe,{|| RealRadnik(.t.,"R",.f.) })
-
-if IsPlanika()
-	AADD(opc,"M. poruke")
-	AADD(opcexe,{|| Mnu_Poruke() })
-endif
-
-if gnDebug==5
-	AADD(opc,"X. TEST COM PORT")
-	//AADD(opcexe,{|| ProdTestCP() })
-	AADD(opcexe,{|| NotImp() })
-endif
+AADD(opcexe,{|| realizacija_radnik(.t.,"R",.f.) })
 
 if IsPdv()
 	AADD(opc,"P. porezna faktura za posljednji racun")

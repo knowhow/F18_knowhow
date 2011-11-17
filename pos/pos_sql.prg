@@ -37,36 +37,6 @@ return .f.
 *}
 
 
-/*! \fn O_Log()
- *  \brief Ucitavanje SQL log fajla
- */
- 
-function O_Log()
-*{
-local cPom
-local cLogF
-
-cPom:=ToUnix(KUMPATH+SLASH+"SQL")
-DirMak2(cPom)
-
-cLogF:=cPom+SLASH+replicate("0",8)
-
-OKreSQLPar(cPom)
-
-public gSQLSite:=field->_SITE_
-public gSQLUser:=1
-use
-
-//postavi site
-Gw("SET SITE "+Str(gSQLSite))
-Gw("SET TODATABASE OFF")
-Gw("SET MODUL "+gModul)
-
-AImportLog()
-
-return
-*}
-
 
 /*! \fn Sql_0()
  *  \brief Generisanje sql loga pocetnog stanja
@@ -281,11 +251,6 @@ endif
 
 GW_STATUS="-"
 Boxc()
-
-ScanDb()
-
-// nafiluj p_update/KALK
-fill_p_update()
 
 return 1
 

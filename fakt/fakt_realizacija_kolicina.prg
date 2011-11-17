@@ -67,7 +67,7 @@ return
 // ---------------------------------------
 // specifikacija prodaje
 // ---------------------------------------
-function RealKol()
+function fakt_real_kolicina()
 local nX := 1
 local cExport := "N"
 local lExpRpt := .f.

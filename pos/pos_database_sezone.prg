@@ -432,12 +432,12 @@ return lOk
 // napravi c:\tops\kum1\2005.1
 static function cre_ren_dir(cDir, cPodDir)
 
-if PostDir(cDir + cPodDir)
+if direxists(cDir + cPodDir)
 
  // ako postoji /2005 i /2005.1, i /2005.2 on ce /2005 preimenovati u /2005.3
  for i:=1 to 50
    cAlter = ALLTRIM(STR(i, 5, 0))
-   if !PostDir(cDir + cPodDir + "_" +  cAlter)
+   if !direxists(cDir + cPodDir + "_" +  cAlter)
       FRENAME( cDir + cPodDir, cDir + cPodDir + "_" + cAlter )
       exit
    endif
@@ -450,7 +450,7 @@ endif
 
 DirMake(cDir + cPodDir)
 
-if PostDir(cDir + cPodDir)
+if direxists(cDir + cPodDir)
   ?  DATE(), TIME(), "Sezonski direktorij kreiran :" + cDir + cPodDir
   return .t.
 else

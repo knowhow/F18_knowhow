@@ -60,7 +60,7 @@ endif
 
 close all
 if lCreate
-	aDbf := g_prip_fields() 
+	aDbf := g_pos_pripr_fields() 
 	DBcreate2 (cFileName, aDbf )
 	CREATE_INDEX ("1", "IdRoba", cFileName)
 endif

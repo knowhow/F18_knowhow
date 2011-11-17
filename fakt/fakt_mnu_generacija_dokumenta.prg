@@ -37,7 +37,7 @@ return
 function GPStanje()
 *{
 local gSezonDir
-Lager(.t.)
+fakt_lager_lista(.t.)
 if !EMPTY(goModul:oDataBase:cSezonDir) .and. Pitanje(,"Prebaciti dokument u radno podrucje","D")=="D"
 	O_FAKT_PRIPRRP
         O_FAKT_PRIPR

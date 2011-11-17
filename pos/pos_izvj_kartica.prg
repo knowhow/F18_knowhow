@@ -12,36 +12,10 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                         Copyright Sigma-com software 1998-2006 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/pos/rpt/1g/rpt_kart.prg
- *  \brief Kartica artikla
- */
-
-/*! \var *integer FmkIni_KumPath_KARTICA_MaxDuzinaBrDok
-  * \brief Broj znakova u koloni predviðenih za prikaz broja dokumenta
-  * \param 4 - default vrijednost
-  */
-*integer FmkIni_KumPath_KARTICA_MaxDuzinaBrDok;
-
-
-/*! \var *string FmkIni_KumPath_KARTICA_SirokiPapir
-  * \brief
-  * \param D - siri prikaz (za papir formata A4)
-  * \param N - prikaz prilagoðen sirini trake POS-stampaèa, default vrijednost
-  */
-*string FmkIni_KumPath_KARTICA_SirokiPapir;
-
 // -------------------------------------
 // Izvjestaj: kartica artikla
 // --------------------------------------
-function Kartica()
-*{
+function pos_kartica_artikla()
 local nStanje
 local nSign:=1
 local cSt

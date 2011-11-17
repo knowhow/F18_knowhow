@@ -12,67 +12,57 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-function Izvj()
-*{
+
+function pos_izvjestaji()
 
 if gModul=="HOPS"
-	IzvjH()
+	pos_izvjestaji_hops()
 else
-	IzvjT()
+	pos_izvjestaji_tops()
 endif
 return .f.
-*}
 
 
-function IzvjT()
-*{
+function pos_izvjestaji_tops()
 
 private Izbor:=1
 private opc:={}
 private opcexe:={}
 
 AADD(opc,"1. realizacija                      ")
-AADD(opcexe,{|| RealMenu()})
+AADD(opcexe,{|| pos_menu_realizacija()})
 
 if gVrstaRS=="K"
 	AADD(opc,"----------------------------")
 	AADD(opcexe,nil)
   	AADD(opc,"3. najprometniji artikli")
-	AADD(opcexe,{|| TopN() })
+	AADD(opcexe,{|| pos_top_narudzbe() })
 	AADD(opc,"4. stampa azuriranog dokumenta")
-	AADD(opcexe,{|| PrepisDok() })
+	AADD(opcexe,{|| pos_prepis_dokumenta() })
 else
   	// server, samostalna kasa TOPS
 	
 	AADD(opc,"2. stanje artikala ukupno")
-	AADD(opcexe,{|| StanjePM() })
+	AADD(opcexe,{|| pos_stanje_artikala_pm() })
 	
   	if gVodiOdj=="D"
     		AADD(opc,"3. stanje artikala po odjeljenjima")
-		AADD(opcexe,{|| Stanje()})
+		AADD(opcexe,{|| pos_stanje_artikala()})
   	else
     		AADD(opc,"--------------------")
 		AADD(opcexe,nil)
   	endif
   	
 	AADD(opc,"4. kartice artikala")
-	AADD(opcexe,{|| Kartica()})
+	AADD(opcexe,{|| pos_kartica_artikla()})
 	AADD(opc,"5. porezi po tarifama")
 	AADD(opcexe,{|| IF(IsPDV(), PDVPorPoTar(),PorPoTar())})
 	AADD(opc,"6. najprometniji artikli")
-	AADD(opcexe,{|| TopN()})
+	AADD(opcexe,{|| pos_top_narudzbe()})
 	AADD(opc,"7. stanje partnera")
-	AADD(opcexe,{|| StanjePartnera()})
-	AADD(opc,"K. stanje artikala po K1 ")
-  	AADD(opcexe,{|| StanjeK1()})
+	AADD(opcexe,{|| pos_rpt_stanje_partnera()})
 	AADD(opc,"A. stampa azuriranog dokumenta")
-	AADD(opcexe,{|| PrepisDok()})
+	AADD(opcexe,{|| pos_prepis_dokumenta()})
 endif
 
 AADD(opc,"-------------------")
@@ -88,11 +78,10 @@ AADD(opcexe,{|| fisc_rpt() })
 
 Menu_SC("izvt")
 return .f.
-*}
 
 
-function IzvjH()
-*{
+
+function pos_izvjestaji_hops()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -101,7 +90,7 @@ private Izbor:=1
 UPodataka() 
 
 AADD(opc,"1. realizacija                         ")
-AADD(opcexe,{|| RealMenu()})
+AADD(opcexe,{|| pos_menu_realizacija()})
 AADD(opc,"2. stanje racuna gostiju")
 //HOPS - Stanje racuna gostiju ... ovo niko ne koristi ...
 AADD(opcexe,{|| I_RNGostiju() })
@@ -109,41 +98,37 @@ if gVrstaRS=="K"
 	AADD(opc,"----------------------------")
 	AADD(opcexe,nil)
   	AADD(opc,"4. najprometniji artikli")
-	AADD(opcexe,{|| TopN() })
+	AADD(opcexe,{|| pos_top_narudzbe() })
 else
   	// server, samostalna kasa
   	AADD(opc,"3. stanje artikala ukupno")
-	AADD(opcexe,{|| StanjePM() })
+	AADD(opcexe,{|| pos_stanje_artikala_pm() })
   	if gVodiOdj=="D"
     		AADD(opc,"4. stanje artikala po odjeljenjima")
-		AADD(opcexe,{|| Stanje()})
+		AADD(opcexe,{|| pos_stanje_artikala()})
   	else
     		AADD(opc,"--------------------")
 		AADD(opcexe,nil)
   	endif
   	AADD(opc,"5. kartice artikala")
-	AADD(opcexe,{|| Kartica()})
+	AADD(opcexe,{|| pos_kartica_artikla()})
 	AADD(opc,"6. porezi po tarifama")
 	AADD(opcexe,{|| IF(IsPDV(), PDVPorPoTar(), PorPoTar())})
 	AADD(opc,"7. najprometniji artikli")
-	AADD(opcexe,{|| TopN()})
+	AADD(opcexe,{|| pos_top_narudzbe()})
 endif
 
 AADD(opc,"8. stanje partnera")
-AADD(opcexe,{|| StanjePartnera()})
-AADD(opc,"K. stanje artikala po K1 ")
-AADD(opcexe,{|| StanjeK1()})
+AADD(opcexe,{|| pos_rpt_stanje_partnera()})
 AADD(opc,"A. stampa azuriranog dokumenta")
-AADD(opcexe,{|| PrepisDok()})
+AADD(opcexe,{|| pos_prepis_dokumenta()})
 
 Menu_SC("izvh")
 return
-*}
 
 
 
 function UPodataka()
-*{
 
 if gModul=="HOPS"
 	xx:=m_x 

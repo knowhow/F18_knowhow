@@ -262,7 +262,7 @@ do case
 		msgo("stampa na fiskalni printer u toku...")
 
 		// posalji na fiskalni uredjaj
-		fisc_rn( cFFirma, cFTipDok, cFBrDok )
+		fakt_fisc_rn( cFFirma, cFTipDok, cFBrDok )
 
 		msgc()
 
@@ -347,7 +347,7 @@ do case
            		return DE_REFRESH
         	endif
         	
-		if EMPTY(NarBrDok())
+		if EMPTY(fakt_naredni_dokument())
            		return DE_REFRESH
         	endif
 		
@@ -706,7 +706,7 @@ if !CijeneOK("Stampanje")
    	return DE_REFRESH
 endif
 
-if EMPTY( NarBrDok() )
+if EMPTY( fakt_naredni_dokument() )
    	return DE_REFRESH
 endif
 
@@ -2108,14 +2108,14 @@ return cVrati
 
 
 
-/*! \fn NarBrDok(fNovi)
+/*! \fn fakt_naredni_dokument(fNovi)
  *  \brief Postavlja u pripremi broj dokumenta - puni pripremu
- *  \brief NarBrDok(fNovi)->cBroj  - Generise naredni broj dokumenta
+ *  \brief fakt_naredni_dokument(fNovi)->cBroj  - Generise naredni broj dokumenta
  *  \param fNovi
  *  \return _brdok
  */
  
-function NarBrDok(fNovi)
+function fakt_naredni_dokument(fNovi)
 *{
 local nPrev:=SELECT()
 

@@ -14,7 +14,7 @@
 
 
 
-function StDoks()
+function pos_stampa_dokumenta()
 local cIdVd
 local dDatOd:=CTOD("")
 local dDatDo:=gDatum

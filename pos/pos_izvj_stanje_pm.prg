@@ -19,7 +19,7 @@ static lCekaj:=.t.
 // ---------------------------------------------
 // Stanje prodajnog mjesta
 // ---------------------------------------------
-function StanjePM(cD, cS)
+function pos_stanje_artikala_pm(cD, cS)
 local nStanje
 local nSign:=1
 local cSt

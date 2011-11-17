@@ -199,11 +199,11 @@ return
 *}
 
 
-/*! \fn SifKalkTops()
+/*! \fn kalk_sifre_katops()
  *  \brief Prenos sifrarnika iz KALK u TOPS
  */
 
-function SifKalkTops()
+function kalk_sifre_katops()
 *{
 private cDirZip:="C:\SIGMA\PREN\"
 

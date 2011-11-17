@@ -422,12 +422,6 @@ Rpar("dF",@gDiskFree)
 Rpar("UN",@gSifUvPoNaz)
 Rpar("rI",@gRnInfo)
 
-if IsPlanika()
-	// ako je planika prati stanje je uvijek "D"
-	gPratiStanje := "D"
-	Rpar("Mi",@gRobaVelicina)
-endif
-
 if IsPDV()
 	Rpar("pF",@gPorFakt)
 endif
@@ -467,9 +461,6 @@ endif
 
 AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", })
 AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", })
-if IsPlanika()
-	AADD (aNiz, {"Unos velicine robe (D/N)? " , "gRobaVelicina", "gRobaVelicina$'DN'", "@!", })
-endif
 AADD (aNiz, {"Nakon stampe ispis informacija o racunu (D/N)? " , "gRnInfo", "gRnInfo$'DN'", "@!", })
 
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
@@ -499,9 +490,6 @@ if LASTKEY()<>K_ESC
     	Wpar("Si",@gSifUpravn, .t., "D")
     	Wpar("Sx",@gDisplay, .t., "D")
     	Wpar("Bc",@gEntBarCod, .t., "D")
-    	if IsPlanika()
-		Wpar("Mi",@gRobaVelicina, .t., "D")
-    	endif
 	Wpar("np",@gUpitNP, .t., "Z")
     	Wpar("Ep",@gEvidPl, .t., "Z")
     	Wpar("dF",@gDiskFree, .t., "Z")

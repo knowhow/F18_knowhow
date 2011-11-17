@@ -16,7 +16,7 @@
 // --------------------------------------
 // rekapitulacija tarifa pos
 // --------------------------------------
-function RekTarife(aTarife)
+function pos_rekap_tarifa(aTarife)
 
 ?
 ? "REKAPITULACIJA POREZA PO TARIFAMA"
@@ -71,7 +71,7 @@ return NIL
 // -----------------------------------------
 // pdv rekapitulacija tarifa pos
 // -----------------------------------------
-function PDVRekTarife(aTarife)
+function PDVpos_rekap_tarifa(aTarife)
 local nArr
 local cLine
 

@@ -12,33 +12,31 @@
 
 #include "pos.ch"
 
-function RealMenu()
-*{
+function pos_menu_realizacija()
 
 private opc:={}
 private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. kase             ")
-AADD(opcexe,{|| RealKase(.f.)})
+AADD(opcexe,{|| realizacija_kase(.f.)})
 AADD(opc,"2. odjeljenja")
-AADD(opcexe,{|| RealOdj()})
+AADD(opcexe,{|| realizacija_odjeljenja()})
 AADD(opc,"3. radnici")
-AADD(opcexe,{|| RealRadnik(.f.)})
+AADD(opcexe,{|| realizacija_radnik(.f.)})
 
 #IFDEF DEPR
 	AADD(opc,"4. dijelovi objekta ")
-  	AADD(opcexe,{|| RealDio()})
+  	AADD(opcexe,{|| realizacija_dio_objekta()})
 #ELSE
   	AADD(opc,"------ ")
   	AADD(opcexe,nil)
 #ENDIF
 
 AADD(opc,"5. realizacija po K1")
-AADD(opcexe,{|| RealKase(.f.,,,"2")})
+AADD(opcexe,{|| realizacija_kase(.f.,,,"2")})
 
 Menu_SC("real")
 
 return .f.
-*}
 

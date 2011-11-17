@@ -1090,7 +1090,7 @@ return
 
 
 // set pdv cijene
-function SetPdvCijene()
+function set_pdv_cijene()
 *{
 
 if !SigmaSif("SETPDVC")

@@ -170,7 +170,7 @@ function pos_main_menu_level(KLevel,Fx,Fy)
 
 do case
 	case ((KLevel==L_ADMIN).or.(KLevel==L_SYSTEM))
-        	pos_main_menu_administrator()
+        	pos_main_menu_admin()
         case (KLevel==L_UPRAVN)
         	if !CRinitDone
           		Msg("NIJE UNIJETO POCETNO STANJE SMJENE!!!", 10)
@@ -191,27 +191,8 @@ return
 // ------------------------------------------------------
 // ------------------------------------------------------
 method srv()
+
 ? "Pokrecem POS: Applikacion server"
-if (mpar37("/ISQLLOG",goModul))
-	if LEFT(self:cP5,3)=="/L="
-		cLog:=SUBSTR(self:cP5,4)
-		AS_ISQLLog(cLog)
-	endif
-endif
-
-if (mpar37("/IALLMSG",goModul))
-	InsertIntoAMessage()
-	goModul:quit()
-endif
-
-if (mpar37("/IMPMSG",goModul))
-	if LEFT(self:cP5,3)=="/P="
-		if LEFT(self:cP6,3)=="/L="
-			ImportMsgFrom(SUBSTR(self:cP5,4), SUBSTR(self:cP6,4))
-			goModul:quit()
-		endif
-	endif
-endif
 
 if (mpar37("/IMPROBA",goModul))
 	if LEFT(self:cP5,3)=="/S="
@@ -240,33 +221,6 @@ if (mpar37("/REK2KALK", goModul))
 		AutoRek2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
 		goModul:quit()
 	endif
-endif
-
-// Test cases
-if (mpar37("/TEST", goModul))
-	? "App server: test cases"
-	// TEST CASE FISKALNA STAMPA
-	if (self:cP5 == "/FIS")
-		? "Test cases: fiskalna stampa"
-		Fis_test_main()
-		quit	
-		//goModul:quit()
-	endif
-	// TEST CASE EVIDENTIRANJE VRSTA PLACANJA
-	if (self:cP5 == "/EVPL")
-		? "Test cases: evidentiranje vrsta placanja"
-		Test_EvidPl()
-		quit	
-		//goModul:quit()
-	endif
-	// TEST CASE STR UT
-	if (self:cP5 == "/STRUT")
-		? "Test cases: string utility"
-		Test_StrUt()
-		quit	
-		//goModul:quit()
-	endif
-
 endif
 
 return
@@ -440,7 +394,6 @@ gStRad:=""
 //NaslEkran(.t.)
 ToggleIns()
 ToggleIns()
-SayPrivDir(self:oDatabase:cDirPriv)
 
 SC_Opisi [1] := "1"
 SC_Opisi [2] := "2"
@@ -506,9 +459,6 @@ gKalkDEST:=PADR(ToUnix("a:\",20))
 
 public gModemVeza:="N"
 public gUseChkDir:="N"
-if IsPlanika()
-	public gRobaVelicina := "N"
-endif
 public gStrValuta:=space(4)
 // upit o nacinu placanja
 public gUpitNp := "N"  
@@ -641,10 +591,6 @@ Rpar("n0",@gLocPort)
 Rpar("n7",@gGotPlac)
 Rpar("nX",@gDugPlac)
 Rpar("rI",@gRnInfo)
-
-if IsPlanika()
-	Rpar("Mi",@gRobaVelicina)
-endif
 
 gServerPath := AllTrim(gServerPath)
 if (RIGHT(gServerPath,1) <> SLASH)

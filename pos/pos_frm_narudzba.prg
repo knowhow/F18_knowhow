@@ -42,11 +42,6 @@ private bPrevKroz
 private aUnosMsg:={}
 private bPrevUp
 private bPrevDn
-private lRVelicina := .f.
-
-if IsPlanika() .and. gRobaVelicina == "D"
-	lRVelicina := .t.
-endif
 
 o_edit_rn()
 
@@ -252,10 +247,7 @@ do while .t.
 	_idroba:=SPACE(LEN(_idroba))
 	_Kolicina:=0
 	// resetuj i velicinu
-	if lRVelicina
-		_velicina := 0
-	endif
-	
+
 	@ m_x+2,m_y+25 SAY SPACE (40)
 	set cursor on
 
@@ -270,11 +262,6 @@ do while .t.
 	@ m_x+4, m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+4,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina) SEND READER:={|g| GetReader2(g)}
 	
 	nRowPos := 5
-	
-	if lRVelicina
-		@ m_x+nRowPos, m_y+5 SAY "Velicina:" GET _velicina PICT "99.9" when {|| roba->jmj=="PAR" } VALID ( _velicina == 0 .or. c_br_obuce(_velicina, _idroba))
-
-	endif
 	
 	// ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
@@ -311,10 +298,6 @@ do while .t.
 
 	if LASTKEY()==K_ESC
   		
-		//if LEN(aRabat) > 0
-		//	ReCalcRabat()
-		//endif
-		
 		if gDisplay=="D"
 			Send2ComPort(CHR(10)+CHR(13))
 			Send2ComPort(CHR(10)+CHR(13))
@@ -707,10 +690,7 @@ nGetKol:=_Kolicina
 
 aConds:={{|Ch| Ch == ASC ("b") .OR. Ch == ASC ("B")},{|Ch| Ch == K_ENTER}}
 aProcs:={{|| BrisStavNar (oBrowse)},{|| EditStavNar (oBrowse)}}
-if IsPlanika() .and. gRobaVelicina == "D"
-	AADD(aConds, {|Ch| Ch == ASC("v") .or. Ch == ASC("V")})
-	AADD(aProcs, {|| ed_velicina(oBrowse)})
-endif
+
 ShowBrowse(oBrowse,aConds,aProcs)
 
 oBrowse:autolite:=.f.

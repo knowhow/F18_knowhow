@@ -19,11 +19,11 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. stampa azuriranog dokumenta              ")
-AADD(opcexe, {|| StAzFakt()})
+AADD(opcexe, {|| fakt_stampa_azuriranog()})
 AADD(opc,"2. stampa liste dokumenata")
 AADD(opcexe, {|| fakt_stampa_liste_dok()})
 AADD(opc,"3. stampa dokumenata od broja do broja      ")
-AADD(opcexe, {|| StAzPeriod()})
+AADD(opcexe, {|| fakt_stampa_azuriranog_period()})
 
 if IsUgovori()
 	AADD(opc,"U. stampa fakt.na osnovu ugovora od-do")

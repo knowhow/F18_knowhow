@@ -540,7 +540,6 @@ if (nKol==0)
 
 endif
 
-/ provjera ima li robe na stanju
 if gPratiStanje=="N".or.roba->Tip $ "TU"
    	return (.t.)
 else

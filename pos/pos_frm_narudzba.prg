@@ -11,24 +11,10 @@
 
 
 #include "pos.ch"
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
-/*! \file fmk/pos/dok/1g/frm_nar.prg
- *  \brief Unos i ispravka narudzbi
- */
 
-/*! \fn UnesiNarudzbu()
- *  \brief Unos narudzbe
- *  \param cBrojRn 
- *  \param cSto
- *  \todo Ova funkcija je smece koje se treba rijesiti skroz ispocetka !!
- */
+
 function UnesiNarudzbu()
-*{
 parameters cBrojRn, cSto
 
 private ImeKol
@@ -257,9 +243,23 @@ do while .t.
 		cDSFINI := IzFMKINI('SifRoba','DuzSifra','10')
 	endif
 	
-	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba) 
-	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena  picture "99999.999" when (roba->tip=="T" .or. gPopZcj=="D")
-	@ m_x+4, m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+4,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina) SEND READER:={|g| GetReader2(g)}
+	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba ;
+			PICT "@!S10" ;
+			WHEN {|| _idroba := padr(_idroba,VAL(cDSFINI)),.t.} ;
+			VALID PostRoba(@_idroba, 2, 27) .and. NarProvDuple (_idroba)
+ 
+	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena ;
+		 	PICT "99999.999" ;
+			WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
+
+	@ m_x+4, m_y+5 SAY "Kolicina:" GET _Kolicina ;
+			PICT "999999.999" ;
+			WHEN {|| Popust(m_x+4,m_y+28), ;
+				_kolicina := iif(gOcitBarcod, 1, _kolicina), ;
+				_kolicina := iif(_idroba='PLDUG  ', 1, _kolicina), ;
+				iif( _idroba = 'PLDUG  ', .f., .t.) } ;
+			VALID KolicinaOK(_Kolicina) .and. CheckQtty(_Kolicina) 
+			//SEND READER := {|g| GetReader2(g)}
 	
 	nRowPos := 5
 	
@@ -269,21 +269,7 @@ do while .t.
 	cParticip:="N"
 	// apoteke !!!
 	
-	select odj
-	hseek roba->idodj 
-	select _pos_pripr
-	if right(odj->naz,5)=="#1#0#".or.right(odj->naz,6)=="#1#50#"
-		set cursor on
-     		@ m_x+4,m_y+25 SAY "particip:" GET cParticip pict "@!" valid cParticip $ "DN"
-     		read
-     		if cParticip=="D"
-        		_NCijena:=1
-     		else
-        		_NCijena:=0
-     		endif
-	else
-     		@ m_x+4,m_y+25 SAY space (11)
-	endif
+    @ m_x+4,m_y+25 SAY space (11)
 
 	if gDisplay=="D"
 		Send2ComPort(CHR(10)+CHR(13))
@@ -308,7 +294,7 @@ do while .t.
 	else
  		
 		SELECT ODJ
-		HSEEK ROBA->IdOdj
+		HSEEK SPACE(2)
  		
 		if gVodiOdj=="N" .or. FOUND()
    			
@@ -318,7 +304,7 @@ do while .t.
 			_Jmj:=ROBA->Jmj
    			_IdTarifa:=ROBA->IdTarifa
    			if !(roba->tip=="T")
-     				_Cijena:=&("ROBA->Cijena"+gIdCijena)
+     				_Cijena:=ROBA->mpc
    			endif
    			
 			if gVodiOdj=="D"
@@ -397,7 +383,7 @@ endif
 BoxC()
 
 return (.t.)
-*}
+
 
 
 /*! \fn Popust(nx,ny)
@@ -526,7 +512,6 @@ return .f.
 
 
 /*! \fn KolicinaOK(nKol)
- *  \brief Provjerava robu na djeljivost
  */
 static function KolicinaOK(nKol)
 *{
@@ -555,11 +540,7 @@ if (nKol==0)
 
 endif
 
-if roba->djeljiv="N".and.(INT(nKol)<>nKol)
-	MsgBeep( "Roba nije djeljiva!#"+"Morate unijeti cijeli broj jedinica!!#Ponovite unos!", 20)
-   	return (.f.)
-endif
-// provjera ima li robe na stanju
+/ provjera ima li robe na stanju
 if gPratiStanje=="N".or.roba->Tip $ "TU"
    	return (.t.)
 else

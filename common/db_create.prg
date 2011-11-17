@@ -71,10 +71,10 @@ AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 	endif
 	CREATE_INDEX("ID","fsec+fh+fvar+rbr", PRIVPATH + "gparams.dbf",.t.)
 
-    if !file(f18_ime_dbf("mparams"))
-	 DBCREATE2(TRUENAME(".\mparams.dbf"),aDbf)
-	endif
-	CREATE_INDEX("ID","fsec+fh+fvar+rbr",".\mparams",.t.)
+    //if !file(f18_ime_dbf("mparams"))
+	 //DBCREATE2(TRUENAME(".\mparams.dbf"),aDbf)
+	//endif
+	//CREATE_INDEX("ID","fsec+fh+fvar+rbr",".\mparams",.t.)
 
     if !file(f18_ime_dbf("kparams"))
 	 DBCREATE2(KUMPATH+"KPARAMS.dbf",aDbf)

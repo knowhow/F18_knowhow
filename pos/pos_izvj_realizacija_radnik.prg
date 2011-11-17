@@ -12,6 +12,25 @@
 
 #include "pos.ch"
 
+
+static function o_tables()
+O_SIFK
+O_SIFV
+O_DIO
+O_KASE
+O_ODJ
+O_ROBA
+IF !fZaklj
+	O_OSOB
+	set order to tag ("NAZ")
+EndIF
+O_VRSTEP
+O_POS
+O_POS_DOKS
+return
+
+
+
 function realizacija_radnik
 PARAMETERS lTekuci, fPrik, fZaklj
 
@@ -26,26 +45,10 @@ PRIVATE dDatDo:=gDatum
 PRIVATE aNiz
 private cGotZir:=" "
 
+o_tables()
 
 fPrik := IIF (fPrik==NIL, "P", fPrik)
 fZaklj := IIF (fZaklj==NIL, .F., fZaklj)
-
-O_SIFK
-O_SIFV
-
-O_DIO
-O_KASE
-O_ODJ
-O_ROBA
-
-IF !fZaklj
-	O_OSOB
-	set order to tag ("NAZ")
-EndIF
-
-O_VRSTEP
-O_POS
-O_POS_DOKS
 
 private fPrikPrem:="N"
 
@@ -115,6 +118,8 @@ INDEX ON IdRadnik+IdVrsteP+IdRoba+IdCijena TAG ("1") TO (PRIVPATH+"POM")
 INDEX ON IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
 index ON BRISANO TAG "BRISAN"
 set order to tag "1"
+
+o_tables()
 
 if lTekuci
   IF fZaklj

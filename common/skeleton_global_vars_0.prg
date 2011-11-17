@@ -12,57 +12,6 @@
 
 #include "fmk.ch"
 
-/****v SC_BASE/GW_STATUS ***
-
-*AUTOR
- Ernad Husremovic ernad@sigma-com.net
-
-*IME
- GW_STATUS
-
-*OPIS
- "-"                Gateway je slobodan
- "K_NA_CEKI_SQL"    Vrsi se import SQL loga
- "GEN_SQL_LOG"          Trenutno generisem SQL Log
- 
-*PRIMJER
-
-*BILJESKE
-
-/****v SC_BASE/gVeryBusyInterval ***
-
-*AUTOR
- Ernad Husremovic ernad@sigma-com.net
-
-*IME
- gVeryBusyInterval 
-
-*OPIS
- gVeryBusyInterval:=IzFmkINI('Gateway','VeryBusyInterval','70', EXEPATH )
- 
- Broj sekundi nakon kojih ce se provjeravati da li je gateway
- zauzet.
- Preporuceno:
- 70 - na kasama
- 20 - u knjigovodstvu
- 
-****/
-
-/****v SC_BASE/gKonvertPath ***
-
-*AUTOR
- Ernad Husremovic ernad@sigma-com.net
-
-*IME
- gKonvertPath
-
-*OPIS
- IzFmkINI('FMK','KonvertPath','N', EXEPATH )
- D - konvertovati vrijednost varijabli koje predstavljaju lokacije
-     podataka
- 
-****/
-
 // --------------------------------------------
 // postavi globalne varijable
 // --------------------------------------------

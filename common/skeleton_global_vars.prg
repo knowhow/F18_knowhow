@@ -34,10 +34,7 @@ if gModul=="FAKT" .or. gModul=="FIN"
 	cSection:="1"
 endif
 
-select (F_PARAMS)
-if !used()
-	O_PARAMS
-endif
+O_PARAMS
 
 RPar("za",@gZaokr)
 Rpar("fn",@gNFirma)

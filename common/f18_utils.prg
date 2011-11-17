@@ -127,11 +127,16 @@ return my_use(cTable)
 function get_f18_home_dir(cDatabase)
 local cHome
 
-cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
+#ifdef __PLATFORM__WINDOWS
+  cHome := hb_DirSepAdd( GetEnv( "%USERPROFILE%" ) ) 
+#else
+  cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
+#endif
+
 cHome := hb_DirSepAdd(cHome + ".F18")
 
 if cDatabase <> nil
-	cHome := hb_DirSepAdd(cHome + cDatabase)
+ 	cHome := hb_DirSepAdd(cHome + cDatabase)
 endif
 
 return cHome

@@ -20,7 +20,7 @@ libs=hbpgsql
 
 #gt=gtcrs
 {unix}gt=gtxwc
-{allwin}gt=gtwin
+{allwin}gt=gtwvt
 {darwin}gt=gtxwc
 
 {unix}libs=pq

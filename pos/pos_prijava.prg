@@ -62,7 +62,8 @@ return (cLevel)
 
 function HSpecSifre(cKorSif)
   if trim(upper(cKorsif)) $ "X"
-    	UgasitiR()
+    	return
+		//UgasitiR()
   elseif trim(upper(cKorsif)) = "I"
        	InstallOps(cKorSif)
   elseif trim(upper(cKorsif)) = "M"

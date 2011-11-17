@@ -128,7 +128,7 @@ function get_f18_home_dir(cDatabase)
 local cHome
 
 #ifdef __PLATFORM__WINDOWS
-  cHome := hb_DirSepAdd( GetEnv( "%USERPROFILE%" ) ) 
+  cHome := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
 #else
   cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
 #endif

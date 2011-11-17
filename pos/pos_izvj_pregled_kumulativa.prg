@@ -32,14 +32,14 @@ endif
 
 ZagFirma()
 
-if empty(DOKS->IdPos)
-	? PADC("KUMULATIV PROMETA "+ALLTRIM(DOKS->BrDok),nSir)
+if empty(pos_doks->IdPos)
+	? PADC("KUMULATIV PROMETA "+ALLTRIM(pos_doks->BrDok),nSir)
 else
-	? PADC("KUMULATIV PROMETA "+ALLTRIM(DOKS->IdPos)+"-"+ALLTRIM(DOKS->BrDok),nSir)
+	? PADC("KUMULATIV PROMETA "+ALLTRIM(pos_doks->IdPos)+"-"+ALLTRIM(pos_doks->BrDok),nSir)
 endif
 
 ?
-? PADC(FormDat1(DOKS->Datum),nSir)
+? PADC(FormDat1(pos_doks->Datum),nSir)
 ?
 SELECT VRSTEP
 HSEEK pos_doks->IdVrsteP
@@ -63,7 +63,7 @@ endif
 
 ? cLM+"Gost / partner:",cPom
 
-if pos_doks->Placen==PLAC_JEST.or.DOKS->IdVrsteP==gGotPlac
+if pos_doks->Placen==PLAC_JEST.or.pos_doks->IdVrsteP==gGotPlac
 	? cLM+"       Placeno:","DA"
 else
 	? cLM+"       Placeno:","NE"
@@ -82,22 +82,10 @@ else
 endif
 ? m
 
-/****
-Sifra    Naziv                                    JMJ Cijena  Kolicina
--------- ---------------------------------------- --- ------- ----------
-01234567 0123456789012345678901234567890123456789     9999.99 999999.999
-                                                      999,999,999,999.99
-Sifra    Naziv              JMJ Kolicina
--------- ------------------ --- --------
-01234567 012345678901234567 012 9999.999
-         012345 01234567 01
-                            9,999,999.99
-****/
-
 nFin:=0
 SELECT POS
 
-do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
+do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 	if gVrstaRS=="S".and.prow()>63-gPstranica
 		FF
 	endif

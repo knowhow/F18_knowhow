@@ -132,7 +132,7 @@ local dx:=3
 
 SELECT _POS
 set cursor on
-cBrojRn:=_POS->(pos_naredni_dokument(gIdPos, VD_RN))
+cBrojRn := pos_naredni_dokument(gIdPos, VD_RN)
 
 if gModul="HOPS"
 	if gBrojSto $ "DN"
@@ -187,7 +187,7 @@ endif
 UnesiNarudzbu(cBrojRn, cSto)
 
 return
-*}
+
 
 
 /*! \fn PreglRadni(cBrDok)
@@ -201,7 +201,7 @@ function PreglRadni(cBrDok)
 local nPrev:=SELECT()
 
 SELECT _POS
-Set Order To 1
+Set Order To tag "1"
 cFilt1:="IdPos+IdVd+dtos(datum)+BrDok+IdRadnik=="+cm2str(gIdPos+VD_RN+dtos(gDatum)+cBrDok+gIdRadnik)
 Set Filter To &cFilt1
 ImeKol:={ { "Roba",         {|| IdRoba+"-"+Left (RobaNaz, 30)},},;
@@ -472,7 +472,7 @@ local nFis_err := 0
 private cPartner
 
 select pos_doks
-cStalRac:=pos_naredni_dokument(cIdPos,VD_RN)
+cStalRac := pos_naredni_dokument(cIdPos, VD_RN)
 
 // radi mreze rezervisem DOKS !
 append blank
@@ -488,14 +488,8 @@ replsql idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "/
 
 cPartner := cIdGost
 
-if IsPlNs() .and. gFissta=="D"
-	cIdGost := cObrNiNr
-endif
-
 if IsPDV()
 	cTime:=PDVStampaRac(cIdPos, cRadRac, .f., cIdVrsteP, nil, aVezani)
-	
-	
 else
 	cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP, nil, aVezani)
 endif

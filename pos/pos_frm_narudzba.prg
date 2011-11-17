@@ -107,7 +107,7 @@ if gModul=="HOPS"
     		SELECT _POS    
     		
 		// "_POSi3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba"
-		set order to 3 
+		set order to tag "3" 
     		Seek "42"+gIdRadnik+OBR_NIJE
     		do while !eof().and._POS->(IdVd+IdRadnik+GT)==(VD_RN+gIdRadnik+OBR_NIJE)
       			if _POS->BrDok==cBrojRn    // _POS->Prebacen == OBR_NIJE
@@ -123,16 +123,17 @@ if gModul=="HOPS"
 				//Del_Skip()
       			endif
     		enddo
-    		set order to 1
+    		set order to tag "1"
   	else
     		
 		// prije ulaska u pripremu vrati u _PRIPR 
 		// sve iz _POS sto nije "Z"-zakljuceno
 		
 		SELECT _POS
-		Set order to 3
-    		//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
-    		SEEK "42"+gIdRadnik
+		Set order to tag "3"
+
+    	//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
+    	SEEK "42"+gIdRadnik
     		
 		do while !eof().and._POS->(IdVd+IdRadnik)==(VD_RN+gIdRadnik)
       			
@@ -151,34 +152,39 @@ if gModul=="HOPS"
 			
     		enddo
     		
-		set order to 1
+		set order to tag "1"
 		
   	endif  // gradnirac
 else
 	
 	SELECT _POS
-	Set order to 3
-    	//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
-    	SEEK "42"+gIdRadnik
+	set order to tag "3"
+    //"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
+    SEEK VD_RN + gIdRadnik
     	
-	do while !eof().and._POS->(IdVd+IdRadnik)==(VD_RN+gIdRadnik)
+	do while !eof() .and. _pos->(IdVd+IdRadnik) == (VD_RN + gIdRadnik)
       		
-		if !(_POS->m1=="Z")
+		if !(_pos->m1 == "Z")
         		// mora biti Z, jer se odmah zakljucuje
         		Scatter()
         		select _pos_pripr
-			Append Blank // pripr
+				Append Blank // pripr
         		Gather()
         		SELECT _POS
         		Del_Skip()
-      		else
-        		//sasa, brisanje iz _pos sve sto je Zakljuceno
+      	else
+        	
+			//sasa, brisanje iz _pos sve sto je Zakljuceno
 			//SKIP
-			Del_Skip()
-      		endif
-    	enddo
+			
+			delete
+			skip
+
+      	endif
+    enddo
 	
-	set order to 1
+	set order to tag "1"
+
 endif
 
 nIznNar:=0
@@ -546,7 +552,7 @@ else
 	// gprati stanje D, !
 	if gModul=="TOPS"  // ovo cemo samo za TOPS!!
       		select pos
-      		set order to 5  
+      		set order to tag "5"  
 		//"5", "IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
       		seek _IdPos+_idroba
       		nStanje:=0
@@ -576,7 +582,7 @@ else
         		SKIP
       		enddo
       		select pos
-		set order to 1
+		set order to tag "1"
       		select (nSelect)
       		if nKol>nStanje
         		MsgBeep("Trenutno na stanju artikla :"+_IdRoba+" "+str(nStanje,12,2))
@@ -613,7 +619,7 @@ if _idroba='PLDUG  ' .and. reccount2()<>0
 	return .f.
 endif
 
-set order to 1
+set order to tag "1"
 seek 'PLDUG  '
 if FOUND()
 	MsgBeep('PLDUG mora biti jedina stavka !')
@@ -621,7 +627,7 @@ if FOUND()
 	GO (nPrevRec)
    	return .f.
 else
-  	set order to 1
+  	set order to tag "1"
   	HSEEK _IdRoba
 endif
 

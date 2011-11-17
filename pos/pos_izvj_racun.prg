@@ -12,21 +12,8 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 
-/*! \fn StampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatum)
- *  \brief Stampa racuna koji tek treba da se azurira
- *  \param cIdPos  - Prodajno mjesto
- *  \param cBrDok  - Broj dokumenta u _POS.DBF
- */
- 
 function StampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani)
-*{
 
 local cDbf
 local cIdRadnik
@@ -53,9 +40,6 @@ if !used()
 	O_ODJ  
 	// otvori odjeljenje radi APOTEKA....
 endif
-
-altd()
-
 
 if lPrepis
 	cPosDB:="POS"
@@ -85,7 +69,6 @@ if !lPrepis
 	cIdRadnik:=&cPosDB->IdRadnik
 	cSmjena:=&cPosDB->Smjena
 else
-	altd()
 	select pos_doks
 	Seek2 (cIdPos+VD_RN+DToS(dDatumRn)+cBrDok)
 	cSto      := pos_doks->Sto
@@ -94,9 +77,6 @@ else
 endif
 
 SELECT &cPosDB
-
-altd()
-
 
 if VarPopPrekoOdrIzn()
 	gIsPopust:=.f.
@@ -927,10 +907,10 @@ add_drntext("I04", gFirPM)
 add_drntext("I05", gFirTel)
 
 return
-*}
+
+
 
 function fill_rb_traka(cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime)
-*{
 local cPosDB
 local dDatumRn
 local cSto
@@ -969,6 +949,7 @@ drn_open()
 drn_empty()
 
 o_pos_narudzba()
+
 O_ROBA
 O_OSOB
 O_POS
@@ -979,20 +960,17 @@ O_TARIFA
 O__POS
 
 firma_params_fill()
+
 gvars_fill()
 
-cPosDB := "_POS"
-
-if lPrepis
-	cPosDB := "POS"
+if lPrepis == .t.
+	select pos
+else
+	select _pos
 endif
-
-select &cPosDB
 
 // checksum
 nCSum := 0
-
-altd()
 
 // matrica aRacuni moze da sadrzi vise racuna, u svakom slucaju sadrzi 1 racun
 // aRacuni : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
@@ -1010,20 +988,30 @@ for i:=1 to LEN(aRacuni)
 	dDatRn := aRacuni[i, 4]
 	cBrDok := aRacuni[i, 2]
 	
-	if lPrepis
+	if lPrepis == .t.
 		cStalRac := cBrDok
 	endif
 
-	Seek2(cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
+	if lPrepis == .t.
+		select pos
+	else
+		select _pos
+	endif
+
+	set order to tag "1"
+	go top
+	seek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
+	
+	//msgbeep( _pos->brdok + "," + cIdPos + "," + VD_RN + "," + cBrDok + "," + DTOS( dDatRn ) )
 
 	if !lPrepis
-		cSto := &cPosDB->sto
-		cIdRadnik := &cPosDB->idradnik
-		cSmjena := &cPosDB->smjena
+		cSto := _pos->sto
+		cIdRadnik := _pos->idradnik
+		cSmjena := _pos->smjena
 		cTime := LEFT(TIME(), 5)
-		cVrstaP := &cPosDB->idvrstep
+		cVrstaP := _pos->idvrstep
 		if gStolovi == "D"
-			cBrStola := ALLTRIM(STR(&cPosDB->sto_br))
+			cBrStola := ALLTRIM(STR(_pos->sto_br))
 		endif
 	else
 		// nadji parametre kupca
@@ -1058,15 +1046,14 @@ for i:=1 to LEN(aRacuni)
 		cNazVrstaP := ALLTRIM(vrstep->naz)
 	endif
 	
-	select &cPosDB
-
-	if glUgost
-           // nStopaPP1, nUkPP1, nStopaPP2, nUkPP2 ....
-	   aStPP:={}
-	   aUkPP:={}
+	if lPrepis == .t.
+		select pos
+	else
+		select _pos
 	endif
-		
-	do while !eof() .and. &cPosDB->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
+
+	do while !eof() .and. iif( lPrepis == .t., pos->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok), ;
+						_pos->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok) )
 			
 		nCjenBPDV := 0
 		nCjenPDV := 0
@@ -1077,17 +1064,6 @@ for i:=1 to LEN(aRacuni)
  		nPDV := 0
 		nIznPop := 0
 			
-		// trebovanja - da li ovo i dalje treba
-		if gRadniRac="D" .and. gVodiTreb=="D" 
-		    if !lPrepis .and. GT=OBR_NIJE
-      			// vodi se po trebovanjima, a za ovu stavku trebovanje 
-			// nije izgenerisano
-      			// s obzirom da se nalazimo u procesu zakljucenja, 
-			//nuliramo kolicinu
-      			replace kolicina with 0 // nuliraj kolicinu
-		    endif
-  		endif
-		
 		cIdRoba := field->idroba
 		cIdTarifa := field->idtarifa
 		
@@ -1101,32 +1077,17 @@ for i:=1 to LEN(aRacuni)
 		hseek cIdTarifa
 		nPPDV := tarifa->opp
 
-		if glUgost
-			nStPP := tarifa->zpp
+		nStPP := 0
+	
+		if lPrepis == .t.
+			select pos
 		else
-			nStPP := 0
+			select _pos
 		endif
-
-		select &cPosDB
 
 		nKolicina := kolicina
  		nCjenPDV :=  cijena
 		nCjenBPDV := nCjenPDV / ( 1 + (nPPDV + nStPP)/100)	
-
-
-		if glUgost
-		        // kantonalni porez na potrosnju
-		        // stopa poreza na potr <> 0
-			if ROUND(nStPP,0) <> 0
-			   nPos := ASCAN(aStPP, ROUND(nStPP, 0))
-			   if (nPos == 0)
-			        AADD(aStPP, ROUND(nStPP, 0) )
-				AADD(aUkPP, 0 )
-				nPos := LEN (aStPP)
-			   endif
-			   aUkPP[nPos] += nStPP / 100 * nCjenBPDV * nKolicina
-		        endif
-		endif
 
 		// popust - ovo treba jos dobro pregledati
 		do case
@@ -1184,21 +1145,20 @@ for i:=1 to LEN(aRacuni)
 
 		// dodaj stavku u rn.dbf
 		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkStavka,3), 0, 0)
+	
+		if lPrepis == .t.
+			select pos
+		else
+			select _pos
+		endif
 
-		select &cPosDB
   		skip
+
 	enddo
 
 next
 
-if glUgost
-	aPPs := { aStPP, aUkPP }
-else
-	aPPs := nil
-endif
-
-// zaokruzenje
-//nFZaokr := zaokr_5pf( nUTotal )
+aPPs := nil
 
 // dodaj zapis u drn.dbf
 add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal - nFZaokr,2), nCSum, 0, nFZaokr, 0)
@@ -1227,7 +1187,7 @@ if gStolovi == "D"
 endif
 
 // ako je prepis
-if lPrepis
+if lPrepis == .t.
 	// podaci o kupcu
 	add_drntext("K01", dokspf->knaz)
 	add_drntext("K02", dokspf->kadr)
@@ -1254,8 +1214,6 @@ endif
 if (lPrepis == nil)
 	lPrepis := .f.
 endif
-
-altd()
 
 if (cIdVrsteP == nil)
 	cIdVrsteP := ""

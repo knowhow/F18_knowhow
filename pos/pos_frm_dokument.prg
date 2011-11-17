@@ -89,7 +89,6 @@ for i:=1 to LEN(ImeKol)
 next
 
 select pos_doks
-
 set cursor on
 
 cVrste:="  "
@@ -112,7 +111,6 @@ endif
 if !(cFilter==".t.")
 	set filter to &cFilter
 endif
-
 
 // "1", "IdPos+IdVd+dtos(datum)+BrDok"
 if klevel<="0".and.SigmaSif(gSTELA)

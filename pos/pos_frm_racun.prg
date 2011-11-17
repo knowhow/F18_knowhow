@@ -12,28 +12,7 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- *
- */
 
-/*! \file fmk/pos/dok/1g/frm_rac.prg
- *  \brief Izdavanje racuna
- */
-
-/*! \fn PRacuni(dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba)
- *  \brief Pregled racuna 
- *  \param dDat
- *  \param cBroj
- *  \param fPrep
- *  \param fScope
- *  \param cPrefixFilter - filter (iskaz ispred " IdVd=='42'")
- *  \param qIdRoba
- *  \return
- */
 
 function PRacuni(dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba)
 local i
@@ -120,8 +99,8 @@ SET FILTER TO &cFilter
 if !EMPTY(cBroj)
 	SEEK2(cIdPos+"42"+dtos(dDat)+cBroj)
   	if FOUND()
-    		cBroj:=ALLTRIM(doks->IdPos)+"-"+ALLTRIM(doks->BrDok)
-    		dDat:=doks->datum
+    		cBroj:=ALLTRIM(pos_doks->IdPos)+"-"+ALLTRIM(pos_doks->BrDok)
+    		dDat:=pos_doks->datum
     		return(.t.)
   	endif
 else
@@ -142,13 +121,13 @@ ObjDBedit( , 20, 65, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  "
 
 SET FILTER TO
 
-cBroj:=ALLTRIM(DOKS->IdPos)+"-"+AllTrim (DOKS->BrDok)
+cBroj:=ALLTRIM(pos_doks->IdPos)+"-"+AllTrim (pos_doks->BrDok)
 
 if cBroj='-'  // nema racuna
 	cBroj:=SPACE(9)
 endif
 
-dDat:=doks->datum
+dDat:=pos_doks->datum
 
 if LASTKEY()==K_ESC
 	return(.f.)
@@ -166,7 +145,7 @@ function EdPRacuni()
 *{
 
 //                   1            2               3              4
-// aVezani : {DOKS->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
+// aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
 
 local cLevel
 local ii
@@ -193,13 +172,13 @@ use
 select pos_doks
 
 if fMark .and. (LastKey()==Asc("+"))
-	nPos := ASCAN (aVezani, {|x| (x[1]+dtos(x[4])+x[2])==DOKS->(IdPos+dtos(datum)+BrDok)})
+	nPos := ASCAN (aVezani, {|x| (x[1]+dtos(x[4])+x[2])==pos_doks->(IdPos+dtos(datum)+BrDok)})
   	if nPos == 0
-    		if LEN(aVezani)==0 .or.(aVezani[1][3]==DOKS->IdVrsteP .and. aVezani[1][4]==DOKS->Datum)
-      			AADD (aVezani, {DOKS->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
-    		elseif aVezani[1][3]<>DOKS->IdVrsteP
+    		if LEN(aVezani)==0 .or.(aVezani[1][3]==pos_doks->IdVrsteP .and. aVezani[1][4]==pos_doks->Datum)
+      			AADD (aVezani, {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
+    		elseif aVezani[1][3]<>pos_doks->IdVrsteP
       			MsgBeep ("Nemoguce spajanje!#Nacin placanja nije isti!")
-    		elseif aVezani[1][4]<>DOKS->Datum
+    		elseif aVezani[1][4]<>pos_doks->Datum
       			MsgBeep ("Nemoguce spajanje!#Datum racuna nije isti!")
    		endif
   	else
@@ -211,7 +190,7 @@ if fMark .and. (LastKey()==Asc("+"))
 endif
 
 if UPPER(CHR(LASTKEY()))=="P"
-	PreglSRacun(DOKS->IdPos,doks->datum,DOKS->BrDok)
+	PreglSRacun(pos_doks->IdPos,pos_doks->datum,pos_doks->BrDok)
   	return DE_REFRESH
 endif
 
@@ -232,7 +211,7 @@ if UPPER(CHR(LASTKEY()))=="S"
 	
 	// storno racuna
 	storno_rn( .t., pos_doks->brdok, pos_doks->datum, ;
-		PADR( ALLTRIM(STR(doks->fisc_rn)), 10 ) )
+		PADR( ALLTRIM(STR(pos_doks->fisc_rn)), 10 ) )
 
 	msgbeep("Storno racun se nalazi u pripremi !")
 
@@ -243,7 +222,7 @@ endif
 
 if UPPER(CHR(LASTKEY()))=="Z"
   	PushWa()
-	print_zak_br(doks->zak_br)
+	print_zak_br(pos_doks->zak_br)
 	o_pregled()
 	PopWa()
 	return DE_REFRESH
@@ -361,8 +340,8 @@ function SR_Iznos()
 
 nIznos:=0
 SELECT POS
-Seek2(DOKS->(IdPos+IdVd+dtos(datum)+BrDok))
-while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
+Seek2(pos_doks->(IdPos+IdVd+dtos(datum)+BrDok))
+while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 	nIznos+=POS->(Kolicina * Cijena)
   	SKIP
 end
@@ -382,18 +361,18 @@ if Pitanje(,"Potpuno - fizicki izbrisati racun?","N")=="N"
 endif
 
 select pos_doks
-cBrojR:=DOKS->BrDok
-cIdPos:=DOKS->IdPos
-cDatum:=dtos(doks->datum)
+cBrojR:=pos_doks->BrDok
+cIdPos:=pos_doks->IdPos
+cDatum:=dtos(pos_doks->datum)
 
 if empty(dMinDatProm)
-	dMinDatProm:=DOKS->datum
+	dMinDatProm:=pos_doks->datum
 else
-        dMinDatProm:=min(dMinDatProm,DOKS->datum)
+        dMinDatProm:=min(dMinDatProm,pos_doks->datum)
 endif
 
 SELECT POS
-set order to 1
+set order to tag "1"
 Seek cIdPos+VD_RN+cDatum+cBrojR
 
 // DOKS

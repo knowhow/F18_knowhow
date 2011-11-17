@@ -475,9 +475,7 @@ function get_dtxt_opis(cTip)
 *{
 local cRet
 
-if !USED(F_DRNTEXT)
-	O_DRNTEXT
-endif
+O_DRNTEXT
 select drntext
 set order to tag "1"
 hseek cTip
@@ -502,13 +500,8 @@ O_DOKSPF
 // idpos+idvd+DToS(datum)+brdok
 SET ORDER TO TAG "1"
 
-if !USED(F_DRN)
-	O_DRN
-endif
-if !USED(F_DRNTEXT)
-	O_DRNTEXT
-endif
-
+O_DRN
+O_DRNTEXT
 
 cKNaziv := get_dtxt_opis("K01")
 cKAdres := get_dtxt_opis("K02")

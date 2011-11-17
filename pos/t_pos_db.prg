@@ -349,7 +349,7 @@ endif
 aDbf := g_pos_pripr_fields()
 
 if (nArea==-1 .or. nArea==(F__POS))
-	IF !FILE (PRIVPATH+"_POS.DBF")
+	IF !FILE (f18_ime_dbf("_pos"))
 	   DBcreate2 (PRIVPATH+"_POS", aDbf)
 	ENDIF
 
@@ -474,56 +474,6 @@ if (nArea==-1 .or. nArea==(F_OSOB))
 	ENDIF
 	CREATE_INDEX ("ID", "KorSif", SIFPATH+"OSOB")
 	CREATE_INDEX ("NAZ", "ID", SIFPATH+"OSOB")
-endif
-
-if (nArea==-1 .or. nArea==(F_TARIFA))
-	// TARIFA.DBF
-	IF ! FILE (SIFPATH+"TARIFA.dbf")
-	   aDbf:={}
-	   AADD(aDBf,{ 'ID'          , 'C' ,   6 ,  0 })
-	   AADD(aDBf,{ 'NAZ'         , 'C' ,  50 ,  0 })
-	   AADD(aDBf,{ 'OPP'         , 'N' ,   6 ,  2 })  // ppp
-	   AADD(aDBf,{ 'PPP'         , 'N' ,   6 ,  2 })  // ppu
-	   AADD(aDBf,{ 'ZPP'         , 'N' ,   6 ,  2 })  // poseban porez
-	   AADD(aDBf,{ 'VPP'         , 'N' ,   6 ,  2 })  // pnamar
-	   AADD(aDBf,{ 'MPP'         , 'N' ,   6 ,  2 })  
-	   AADD(aDBf,{ 'DLRUC'       , 'N' ,   6 ,  2 })  
-	   DBcreate2 ( SIFPATH+'TARIFA.DBF', aDbf )
-	ENDIF
-	CREATE_INDEX ("ID","Id", SIFPATH+"TARIFA")
-	CREATE_INDEX ("NAZ","Naz", SIFPATH+"TARIFA")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_VALUTE))
-	// VALUTE.DBF
-	if !FILE(SIFPATH+"VALUTE.DBF")
-	   aDbf := { {"ID",    "C",  4, 0}, ;
-		     {"NAZ",   "C", 30, 0}, ;
-		     {"NAZ2",  "C",  4, 0}, ;
-		     {"DATUM", "D",  8, 0}, ;
-		     {"KURS1", "N", 10, 3}, ;
-		     {"KURS2", "N", 10, 3}, ;
-		     {"KURS3", "N", 10, 3}, ;
-		     {"TIP",   "C",  1, 0}  ;
-		   }
-	   DBcreate2 ( SIFPATH + "VALUTE.DBF", aDbf )
-	endif
-	CREATE_INDEX ( "ID", "Id", SIFPATH+"VALUTE")
-	CREATE_INDEX ( "NAZ", "Tip + Id + DTOS (Datum)", SIFPATH+"VALUTE")
-	CREATE_INDEX ( "ID2", "id+dtos(datum)", SIFPATH+"VALUTE")
-	CREATE_INDEX ( "NAZ2", "naz2 + DTOS (Datum)", SIFPATH+"VALUTE")
-endif
-
-if (nArea==-1 .or. nArea==(F_VRSTEP))
-	// VRSTEP.DBF
-	IF ! FILE (SIFPATH + "VRSTEP.DBF")
-	   aDbf := { {"ID",  "C",  2, 0}, ;
-		     {"NAZ", "C", 20, 0}  ;
-		   }
-	   DBcreate2 ( SIFPATH + "VRSTEP.DBF", aDbf )
-	ENDIF
-	CREATE_INDEX ("ID", "Id", SIFPATH+"VRSTEP.DBF")
 endif
 
 if (nArea==-1 .or. nArea==(F_KASE))

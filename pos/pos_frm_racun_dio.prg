@@ -116,11 +116,11 @@ endif
 // prvo odredi brojeve (radne) za racune na koje se dijeli ovaj
 // naravno, osim onog od kog se krenulo
 SELECT _POS
-cpos_naredni_dokument := pos_naredni_dokument (gIdPos, VD_RN)
-AADD (aRacPriv, cpos_naredni_dokument)
+cNarBr := pos_naredni_dokument (gIdPos, VD_RN)
+AADD (aRacPriv, cNarbr)
 for nCnt := 3 to nKoliko
-	cpos_naredni_dokument := IncID (cpos_naredni_dokument)
-    	AADD (aRacPriv, cpos_naredni_dokument)
+	cNarBr := IncID (cpos_naredni_dokument)
+    	AADD (aRacPriv, cNarBr)
 next
 
 // rasutaj stavke (kolicine) u _POS

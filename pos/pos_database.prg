@@ -69,6 +69,7 @@ if !used()
 endif
 
 select pos_doks
+
 return
 
 
@@ -76,39 +77,24 @@ return
 // otvori tabele potrebne za unos stavki u racun
 // ------------------------------------------------
 function o_edit_rn()
-select F__POS
-if !used()
-	O__POS
-endif
-
-select F__PRIPR
-if !used()
-	O__POS_PRIPR
-endif
-
-SELECT F_K2C
-if !used()
-	O_K2C
-endif
-
-SELECT F_MJTRUR
-if !used()
-	O_MJTRUR 
-endif
-
-SELECT F_UREDJ
-if !used()
-	O_UREDJ 
-endif
+O__POS
+O__POS_PRIPR
+O_K2C
+O_MJTRUR 
+O_UREDJ 
 
 o_pregled()
+
 return
 
 
  
 function PostojiPromet()
+
 O_POS_DOKS
+
 select pos_doks
+
 if reccount2()==0
 	use
    	return .f.
@@ -116,6 +102,7 @@ else
    	use
    	return .t.
 endif
+
 return
 
 
@@ -156,7 +143,7 @@ local nStanje
 
 select pos
 //"5", "IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
-set order to 5  
+set order to tag "5"  
 seek _IdPos+_idroba
 
 nStanje:=0
@@ -172,7 +159,7 @@ do while !eof() .and. pos->(IdPos+IdRoba)==(_IdPos+_IdRoba)
         SKIP
 enddo
 select pos
-set order to 1
+set order to tag "1"
 return nStanje
 *}
 
@@ -191,23 +178,19 @@ O_ODJ
 O_KASE
 O_OSOB
 set order to tag "NAZ"
+
 O_TARIFA 
 O_VALUTE
 O_SIFK
 O_SIFV
 O_ROBA
-
+O__POS
 O_POS_DOKS
 O_POS
 return
-*}
 
-/*! \fn o_pos_sifre()
- *  \brief
- */
- 
+
 function o_pos_sifre()
-*{
 
 O_KASE
 O_UREDJ
@@ -231,7 +214,6 @@ O_SIFK
 O_SIFV
 
 return
-*}
 
 
 /*! \fn O_InvNiv()
@@ -332,15 +314,10 @@ O__POS_PRIPR
 O__POS
 
 return
-*}
 
 
-/*! \fn O_StAzur()
- *  \brief
- */
- 
+
 function O_StAzur()
-*{
 O__POS
 O_ODJ
 O_VRSTEP
@@ -352,7 +329,6 @@ O_POS_DOKS
 O_POS
 O_ROBA
 return
-*}
 
 /*! \fn RacIznos(cIdPos,cIdVD,dDatum,cBrDok)
  *  \brief
@@ -473,10 +449,6 @@ endif
 
 nPopust := 0
 
-if IsPlanika() .and. !EMPTY(cIdVrsteP)
-	get_vrpl_popust(cIdVrsteP, @nPopust)
-endif
-
 select _pos_pripr
 go top
 
@@ -494,8 +466,6 @@ do while !eof()
 		_brdok:=cBrDok   
   	endif
 
-	altd()
-	
 	_IdVrsteP := cIdVrsteP
   	
 	if ( IsPlanika() .and. nPopust > 0 ;
@@ -532,7 +502,7 @@ local cDatum
 
 SELECT POS
 cDatum:=DTOS(dDatum)
-set order to 1
+set order to tag "1"
 Seek cIdPos+cIDVD+cDatum+cBrojR
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+cIdVD+cDatum+cBrojR)
 	skip
@@ -668,14 +638,13 @@ return 1
  */
  
 function AzurRacuna(cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost)
-*{
-
 local cDatum
 local nStavki
 
 lNaX:=.f.
 
-altd()
+o_stazur()
+
 if IzFmkIni("TOPS","PitanjePrijeAzuriranja","N",EXEPATH)=="D"
 	lNaX:=(Pitanje(,"Azurirati racun? (D/N)","D")=="N")
 endif
@@ -688,10 +657,12 @@ if (cIdGost==nil)
 endif
 
 SELECT _POS
+set order to tag "1"
 SEEK cIdPos+"42"+dtos(gDatum)+cRadRac
 Scatter()
 
 select pos_doks
+
 _BrDok:=cStalRac
 _Vrijeme:=cVrijeme
 _IdVrsteP:=cNacPlac
@@ -699,26 +670,17 @@ _IdGost:=cIdGost
 _IdOdj:=SPACE(LEN(_IdOdj))
 _M1:=OBR_NIJE
 
-if gModul == "HOPS" .and. gBrojSto=="D"
-	_Zakljucen:="N"
-endif
-
 //Append Blank  radi mreza ne idemo na ovu varijantu!
+set order to tag "1"
 seek cIdPos+"42"+dtos(gdatum)+cStalRac
-if (field->idRadnik != "////")
+
+if ( alltrim(field->idRadnik) != "////" )
 	MsgBeep("Nesto nije u redu zovite servis - radnik bi morao biti //// !!!")
 endif
 
-if lNaX
-	nTRec:=RECNO()
-  	_BrDok:=cStalRac:=pos_naredni_dokument("X ","42")
-  	_idpos:="X "
-  	GO (nTRec)
-endif
-
 Gather()
-sql_azur(.t.)
-GathSQL()
+//sql_azur(.t.)
+//GathSQL()
 
 SELECT _POS
 // uzmi gDatum za azuriranje
@@ -764,13 +726,13 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
 		_IdVrsteP:=cNacPlac
 		_IdGost:=cIdGost
 		append blank
-		Sql_append()
+		//Sql_append()
 		if lNaX
 	  		_idpos:="X "
 		endif
 		Gather()
-		Sql_azur(.t.)
-		GathSQL()
+		//Sql_azur(.t.)
+		//GathSQL()
 		nIznRn+=POS->Kolicina * POS->cijena
   	endif
   	select _pos
@@ -788,17 +750,10 @@ if gEvidPl=="D"
 endif
 
 return
-*}
 
 
-/*! \fn AzurPriprZ(cBrDok,cIdVd)
- *  \brief priprz -> pos, doks
- *  \param cBrDok
- *  \param cIdVd
- */
- 
+
 function AzurPriprZ(cBrDok, cIdVd)
-*{
 
 SELECT PRIPRZ
 GO TOP
@@ -820,12 +775,6 @@ if gBrojSto=="D"
 	endif
 endif
 
-
-if (IsPlanika() .and. cIdVd==VD_REK)
-	// reklamacija u pripremi ili realizovana
-	_sto:=cRekOp4
-endif
-      
 if cIdVd=="PD"
 	_IdVd:="16"
 else
@@ -1194,8 +1143,10 @@ if dDat==nil
 	dDat:=gDatum
 endif
 
+set order to tag "1"
 seek cIdPos+cIdVd+chr(254)
-if (IdPos+IdVd)<>(cIdPos+cIdVd)
+
+if ( IdPos+IdVd )<>( cIdPos+cIdVd )
 	skip -1
 endif
 
@@ -1225,7 +1176,7 @@ do while .t.
  	endif
 enddo
 return cBrDok
-*}
+
 
 
 
@@ -1246,7 +1197,7 @@ if UPPER(cAlias)="_POS"
        	reindex
 	USE
        	O__POS
-elseif UPPER(cAlias)="DOKS"
+elseif UPPER(cAlias)="POS_DOKS"
        	select pos_doks
 	USE
        	O_POS_DOKS

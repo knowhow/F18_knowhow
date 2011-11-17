@@ -12,3 +12,5 @@ export HB_COMPILER=gcc
 
 export HB_INC_INSTALL=/opt/harbour/include/harbour
 export HB_LIB_INSTALL=/opt/harbour/lib/harbour
+
+export HB_DBG_PATH=/Users/bringout/Developer/F18_knowhow/common:/Users/bringout/Developer/F18_knowhow/pos

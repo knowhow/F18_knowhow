@@ -96,8 +96,8 @@ local cRepSr := "N"
 local cRTipRada := " "
 private aSpec:={}
 private cFNTZ:="D"
-private gPici:="9,999,999,999,999,999"+IF(gZaok>0,PADR(".",gZaok+1,"9"),"")
-private gPici2:="9,999,999,999,999,999"+IF(gZaok2>0,PADR(".",gZaok2+1,"9"),"")
+private gPici:="9,999,999,999,999,999" + IIF(gZaok>0, PADR(".",gZaok+1,"9"), "")
+private gPici2:="9,999,999,999,999,999" + IIF(gZaok2>0, PADR(".",gZaok2+1,"9"), "")
 private gPici3:="999,999,999,999.99"
 
 for i:=1 to nGrupaPoslova+1
@@ -196,43 +196,43 @@ private cSection:="4"
 private cHistory:=" "
 private aHistory:={}
 
-RPar("i1",@cFirmNaz)
+RPar("i1", @cFirmNaz)
 cFirmNaz := PADR(cFirmNaz, 35)
-RPar("i2",@cFirmAdresa)  
+RPar("i2", @cFirmAdresa)  
 cFirmAdresa := PADR(cFirmAdresa, 35)
-RPar("i3",@cFirmOpc)
+RPar("i3", @cFirmOpc)
 cFirmOpc := PADR(cFirmOpc, 35)
-RPar("i0",@cFirmVD)
+RPar("i0", @cFirmVD)
 cFirmVD := PADR(cFirmVD, 50)
-RPar("i4",@cMRad) 
-RPar("id",@cPrimDobra)
-RPar("d1",@cDopr1)
-RPar("d2",@cDopr2)
-RPar("d3",@cDopr3)
-RPar("d5",@cDopr5)
-RPar("d6",@cDopr6)
-RPar("d7",@cDopr7)
-RPar("d8",@cDDoprPio)
-RPar("d9",@cDDoprZdr)
-RPar("a1",@ccOO1)
-RPar("a2",@ccOO2)
-RPar("a3",@ccOO3)
-RPar("a4",@ccOO4)
-RPar("a5",@cnOO1)
-RPar("a6",@cnOO2)
-RPar("a7",@cnOO3)
-RPar("a8",@cnOO4)
-RPar("l1",@nLimG1)
-RPar("l2",@nLimG2)
-RPar("l3",@nLimG3)
-RPar("l4",@nLimG4)
-RPar("l5",@nLimG5)
-RPar("qj",@qqIdRJ)
-RPar("st",@qqOpSt)
-RPar("IS",@cIsplata)
+RPar("i4", @cMRad) 
+RPar("id", @cPrimDobra)
+RPar("d1", @cDopr1)
+RPar("d2", @cDopr2)
+RPar("d3", @cDopr3)
+RPar("d5", @cDopr5)
+RPar("d6", @cDopr6)
+RPar("d7", @cDopr7)
+RPar("d8", @cDDoprPio)
+RPar("d9", @cDDoprZdr)
+RPar("a1", @ccOO1)
+RPar("a2", @ccOO2)
+RPar("a3", @ccOO3)
+RPar("a4", @ccOO4)
+RPar("a5", @cnOO1)
+RPar("a6", @cnOO2)
+RPar("a7", @cnOO3)
+RPar("a8", @cnOO4)
+RPar("l1", @nLimG1)
+RPar("l2", @nLimG2)
+RPar("l3", @nLimG3)
+RPar("l4", @nLimG4)
+RPar("l5", @nLimG5)
+RPar("qj", @qqIdRJ)
+RPar("st", @qqOpSt)
+RPar("IS", @cIsplata)
 
-qqIdRj:=PadR(qqIdRj,80) 
-qqOpSt:=PadR(qqOpSt,80)
+qqIdRj:=PadR(qqIdRj, 80) 
+qqOpSt:=PadR(qqOpSt, 80)
 
 cMatBr:=IzFmkIni("Specif","MatBr","--",KUMPATH)
 cMatBR:=padr(cMatBr,13) 
@@ -570,12 +570,10 @@ ENDIF
  nkDopZX := 0
  nkDopPX := 0
 
- UzmiIzIni(cIniName,'Varijable','U017',FormNum2(nPom,16,gPici2),'WRITE')
+ UzmiIzIni(cIniName, 'Varijable', 'U017', FormNum2(nPom,16,gPici2), 'WRITE')
 
  SELECT DOPR
  GO TOP
-
- altd()
 
  DO WHILE !EOF()
    

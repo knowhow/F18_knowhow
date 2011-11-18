@@ -208,10 +208,8 @@ if fNovi
 	select ROBA
 	HSEEK _IdRoba
  	_VPC:=KoncijVPC()
- 	if Carina<>0
-    		_TCarDaz:="%"
-    		_CarDaz:=carina
- 	endif
+    _TCarDaz:="%"
+    _CarDaz:=0
 endif
 
 select kalk_pripr

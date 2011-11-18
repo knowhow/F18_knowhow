@@ -105,10 +105,8 @@ if fNovi
  HSEEK _IdRoba
  _MPCSapp:=UzmiMPCSif()
  _TMarza2:="%"
- if Carina<>0
-    _TCarDaz:="%"
-    _CarDaz:=carina
-  endif
+ _TCarDaz:="%"
+ _CarDaz:=0
 endif
 
 

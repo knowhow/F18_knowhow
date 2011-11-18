@@ -249,10 +249,8 @@ select koncij; seek trim(_idkonto)
 select ROBA; HSEEK _IdRoba
 _VPC:=KoncijVPC()
 _TMarza2:="%"
-if Carina<>0
-  _TCarDaz:="%"
-  _CarDaz:=carina
-endif
+_TCarDaz:="%"
+_CarDaz:=0
 
 
 select kalk_pripr

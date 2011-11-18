@@ -167,9 +167,9 @@
 #xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  (KUMPATH+"2005"+SLASH+"KALK")  ; set order to "1"
 #xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  (SIFPATH+"2005"+SLASH+"ROBA")  ; set order to tag "ID"
 #xcommand O_KALKX  => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
-#xcommand O_KALKS  => select(F_KALKS);  my_use  (KUMPATH + "kalks")  ; set order to tag "1"
+#xcommand O_KALKS  => select(F_KALKS);  my_use  ("kalks")  ; set order to tag "1"
 #xcommand O_KALKREP => if gKalks; select(F_KALK); use; select(F_KALK) ; my_use  ("kalks", "KALK") ; set order to tag "1";else; select(F_KALK);  my_use  ("KALK")  ; set order to tag "1"; end
-#xcommand O_SKALK   => select(F_KALK);  my_use  (KUMPATH + "kalk")   ; set order to tag "1"
+#xcommand O_SKALK   => select(F_KALK);  my_use  ("kalk", "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_DOKS    => select(F_DOKS);  my_use  (KUMPATH + "kalk_doks")     ; set order to tag "1"
 #xcommand O_KALK_DOKS2   => select(F_DOKS2);  my_use  (KUMPATH + "kalk_doks2")     ; set order to tag "1"
 #xcommand O_PORMP  => select(F_PORMP); usex ("pormp")     ; set order to tag "1"

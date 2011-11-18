@@ -160,7 +160,6 @@ return
 
 
 function o_kalk_edit()
-altd()
 O_KALK_DOKS
 O_KALK_PRIPR
 O_DOKSRC
@@ -1799,8 +1798,6 @@ endif
 if (cSeek==nil)
 	cSeek:=""
 endif
-
-altd()
 
 if fstara
 	O_SKALK   // alias kalk_pripr

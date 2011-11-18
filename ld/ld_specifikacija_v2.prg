@@ -363,9 +363,9 @@ PoDoIzSez(nGodina,nMjesec)
 
 // fmk.ini parametri
 cPom:=KUMPATH+"fmk.ini"
-UzmiIzIni(cPom,'Specif',"MatBr",cMatBr,'WRITE')
+UzmiIzIni(cPom, 'Specif', "MatBr", cMatBr, 'WRITE')
 
-cIniName:=EXEPATH+'proizvj.ini'
+cIniName:= EXEPATH + 'proizvj.ini'
 
  //
  // Radi DRB6 iskoristio f-ju Razrijedi()
@@ -945,7 +945,7 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
  // "SPECBN", "SPECBR" ...
  cSpecRtm := cSpecRtm + cRTipRada
 
- private cKomLin := "DelphiRB " + cSpecRtm + ;
+ private cKomLin := "delphirb " + cSpecRtm + ;
 	" " + PRIVPATH + "  DUMMY 1"
 
  cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))

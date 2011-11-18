@@ -9,13 +9,13 @@
 #define FMK_LIB_VER  "0.2.1"
 
 
-#define EXEPATH   my_home_root() + SLASH
-#define SIFPATH   my_home() + SLASH
+#define EXEPATH   my_home_root()
+#define SIFPATH   my_home()
 
-#define PRIVPATH my_home() + SLASH
+#define PRIVPATH my_home()
 
-#define KUMPATH  my_home() + SLASH
-#define CURDIR    "." + SLASH
+#define KUMPATH  my_home()
+#define CURDIR   my_home()
 
 #command ESC_EXIT  => if lastkey()=K_ESC;
                       ;exit             ;

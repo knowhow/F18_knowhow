@@ -77,7 +77,7 @@ O_PSUBAN
 select PSUBAN
 ZAP
 
-SELECT kalk_pripr
+SELECT fin_pripr
 set order to 1
 go top
 
@@ -98,13 +98,13 @@ DO WHILE !EOF()
 
         select PSUBAN
 		Scatter()
-		select kalk_pripr
+		select fin_pripr
 		Scatter()
 
         SELECT PSUBAN
         APPEND BLANK
         Gather()  
-		select kalk_pripr
+		select fin_pripr
          
 	    SKIP
       
@@ -141,7 +141,7 @@ endif
 select PSUBAN
 ZAP
 
-SELECT kalk_pripr
+SELECT fin_pripr
 set order to 1
 go top
 
@@ -193,13 +193,13 @@ DO WHILE !EOF()
          @ prow(),pcol()+1 SAY IdKonto
 
          if !empty(IdPartner)
-           select PARTN; hseek kalk_pripr->idpartner
+           select PARTN; hseek fin_pripr->idpartner
            cStr:=trim(naz)+" "+trim(naz2)
          else
-           select KONTO;  hseek kalk_pripr->idkonto
+           select KONTO;  hseek fin_pripr->idkonto
            cStr:=naz
          endif
-         select kalk_pripr
+         select fin_pripr
 
          aRez:=SjeciStr(cStr,28)
 
@@ -256,12 +256,13 @@ DO WHILE !EOF()
          @ prow(),nColDok say opis+" "+k1+"-"+k2+"-"+k3+"-"+k4
       endif
 
-         select PSUBAN; Scatter(); select kalk_pripr; Scatter()
+         select PSUBAN; Scatter(); select fin_pripr; Scatter()
 
          SELECT PSUBAN
          APPEND BLANK
-         Gather()  // stavi sve vrijednosti iz kalk_pripr u PSUBAN
-         select kalk_pripr
+         Gather()  
+		 // stavi sve vrijednosti iz pripr u PSUBAN
+         select fin_pripr
          SKIP
       ENDDO
 
@@ -677,10 +678,10 @@ do while !eof()
     			Msg("Greska... ponovi stampu naloga ...")
   		endif
 
-    		// nalog je uravnotezen, moze se izbrisati iz kalk_pripr
- 		select kalk_pripr
+    	// nalog je uravnotezen, moze se izbrisati iz fin_pripr
+ 		select fin_pripr
 		seek cNal
-  		@ m_x+3,m_y+2 SAY "BRISEM kalk_priprEMU "
+  		@ m_x+3,m_y+2 SAY "BRISEM PRIPREMU "
   		do while !eof() .and. cNal==IdFirma+IdVn+BrNal
     			skip
 			nTRec:=RECNO()
@@ -775,7 +776,7 @@ do while !eof()
 
 enddo
 
-select kalk_pripr
+select fin_pripr
 __dbpack()
 
 select PSUBAN
@@ -1089,7 +1090,7 @@ return
 
 
 /*! \fn PovFin(cidfirma,cidvn,cbrnal)
- *  \brief Povrat finansijskog naloga u kalk_pripremu
+ *  \brief Povrat finansijskog naloga u fin_pripremu
  *  \param cidfirma - firma
  *  \param cidvn - vrsta naloga
  *  \param cbrnal - broj naloga
@@ -1130,13 +1131,13 @@ Box("",1,35)
  read; ESC_BCR
 BoxC()
 
-if Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal+" povuci u kalk_pripremu (D/N) ?","D")=="N"
+if Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal+" povuci u pripremu (D/N) ?","D")=="N"
    closeret2
 endif
 
 endif
-//if Pitanje(,"Zelite li izbrisati stanje datoteke kalk_pripr (D/N)?","N") == "D"
-//  select kalk_pripr
+//if Pitanje(,"Zelite li izbrisati stanje datoteke pripr (D/N)?","N") == "D"
+//  select fin_pripr
 //  zap
 //endif
 
@@ -1149,9 +1150,9 @@ MsgO("SUBAN")
 select SUBAN
 seek cidfirma+cidvn+cbrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-   select kalk_pripr; Scatter()
+   select fin_pripr; Scatter()
    select SUBAN; Scatter()
-   select kalk_pripr
+   select fin_pripr
    append ncnl; Gather2()
    select SUBAN
    skip

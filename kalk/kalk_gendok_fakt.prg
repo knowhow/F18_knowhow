@@ -31,13 +31,14 @@ O_FAKT_PRIPR
 O_PARTN
 O_KONTO
 O_KALK_PRIPR
-USE (gDirFakk+"RJ.DBF") NEW; set order to tag "ID"
+O_RJ
+set order to tag "ID"
 select kalk_pripr
 
 Box(,3,60)
 
 do while .t.
-  cIdFirma:=pripr->idfirma
+  cIdFirma:=kalk_pripr->idfirma
 
   SELECT RJ; GO TOP
 
@@ -78,8 +79,7 @@ do while .t.
   // cFaktFirma je uvedena za slucaj komisiona koji se treba voditi u
   // FAKT-u pod drugom radnom jedinicom (definicija u parametrima - gKomFakt)
   // gKomKonto je konto komisiona definisan takodje u parametrima
-  /////////////
-  IF kalk_pripr->idvd=="16".and.pripr->idkonto==gKomKonto
+  IF kalk_pripr->idvd=="16" .and. kalk_pripr->idkonto==gKomKonto
     cFaktFirma:=gKomFakt
   ENDIF
 
@@ -174,7 +174,7 @@ do while .t.
 	   endif
        endif
 
-       select XPRIPR
+       select fakt_pripr
        if kalk_pripr->idvd=="97"
 		if lRJKon97
 		       	hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
@@ -182,10 +182,10 @@ do while .t.
 		        	replace kolicina with kolicina+nkolicina
 		       	else
 		        	APPEND BLANK
-				replace idfirma with cFF97
-				replace idtipdok with cIdFakt97
-				replace brdok with cBrFakt
-				replace rbr with kalk_pripr->rbr
+					replace idfirma with cFF97
+					replace idtipdok with cIdFakt97
+					replace brdok with cBrFakt
+					replace rbr with kalk_pripr->rbr
 		        	replace kolicina with nkolicina
 		       	endif
 		endif
@@ -195,16 +195,16 @@ do while .t.
 		        	replace kolicina with kolicina+nkolicina
 		       	else
 		        	APPEND BLANK
-				replace idfirma with cFF97_2
-				replace idtipdok with cIdFakt97_2
-				replace brdok with cBrFakt
-				replace rbr with kalk_pripr->rbr
+					replace idfirma with cFF97_2
+					replace idtipdok with cIdFakt97_2
+					replace brdok with cBrFakt
+					replace rbr with kalk_pripr->rbr
 		        	replace kolicina with nkolicina
 		       	endif
 		endif
        elseif (kalk_pripr->idvd=="16" .and. IsVindija())
-       	APPEND BLANK
-       	replace kolicina with nkolicina
+       		APPEND BLANK
+       		replace kolicina with nkolicina
        else
        	hseek cFaktFirma+pripr->(cIdFakt+cBrFakt+rbr)
        	if found()
@@ -218,7 +218,7 @@ do while .t.
        if ffirst
 	   if kalk_pripr->idvd=="97"
 		if lRJKon97
-          		select XPRIPR
+          		select fakt_pripr
 		       	hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
            		select konto; hseek kalk_pripr->idkonto
            		cTxta:=padr(kalk_pripr->idkonto,30)
@@ -228,11 +228,11 @@ do while .t.
            		      Chr(16)+" "+Chr(17)+;
            		      Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
            		      Chr(16)+cTxtc+Chr(17)
-          		select XPRIPR
+          		select fakt_pripr
           		replace txt with ctxt
 		endif
  		if lRJKon97_2
-          		select XPRIPR
+          		select fakt_pripr
 		       	hseek cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
            		select konto; hseek kalk_pripr->idkonto2
            		cTxta:=padr(kalk_pripr->idkonto2,30)
@@ -242,7 +242,7 @@ do while .t.
            		      Chr(16)+" "+Chr(17)+;
            		      Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
            		      Chr(16)+cTxtc+Chr(17)
-          		select XPRIPR
+          		select fakt_pripr
           		replace txt with ctxt
 		endif
          	fFirst:=.f.
@@ -265,7 +265,7 @@ do while .t.
            	      Chr(16)+cTxtc+Chr(17)
            	fFirst:=.f.
 
-          	select XPRIPR
+          	select fakt_pripr
           	replace txt with ctxt
           endif
        endif
@@ -313,7 +313,7 @@ do while .t.
 	       endif
 
 	       IF lPoNarudzbi .and. FIELDPOS("IDNAR")<>0
-		  REPLACE idnar WITH kalk_pripr->idnar, brojnar WITH kalk_pripr->brojnar
+		  		REPLACE idnar WITH kalk_pripr->idnar, brojnar WITH kalk_pripr->brojnar
 	       ENDIF
 
 	       if kalk_pripr->idvd<>"97"
@@ -330,20 +330,20 @@ enddo
 Boxc()
 
 close all
-Azur()
-closeret2
+kalk_azuriraj_fakturu()
+close all
 return
-*}
 
 
 
 
-/*! \fn Azur()
+
+/*! \fn kalk_azuriraj_fakturu()
  *  \brief Azuriranje FAKT-dokumenta
  */
 
-static function Azur()
-*{
+static function kalk_azuriraj_fakturu()
+
 O_FAKT_PRIPR
 O_FAKT
 O_FAKT_DOKS
@@ -493,9 +493,7 @@ use
 O__FAKT
 zap
 
-
-select (F_ROBA)
-if !used(); use (SIFPATH+"roba"); endif
+O_ROBA
 set order to tag "ID"
 
 select kalk_pripr; go top

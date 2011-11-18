@@ -12,23 +12,9 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
 
-/*! \file fmk/kalk/db/1g/azur.prg
- *  \brief Azuriranje kalkulacija i povrat kalkulacija u kalk_pripremu
- */
-
-/*! \fn Azuriranje_kalk_dokumenta()
- *  \brief Azuriranje kalkulacije
- */
 
 function Azuriranje_kalk_dokumenta(lAuto)
-*{
 local cidfirma
 local cidvd
 local cbrdok

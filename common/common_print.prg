@@ -295,8 +295,13 @@ elseif cPrinter=="V"
 	IF "U" $ TYPE("gaKolFix")
 		gaKolFix:=NIL
 	ENDIF
+	
 	//VidiFajl(cKom,gaZagFix,gaKolFix)
+    #ifdef __PLATFORM__WINDOWS
+        run ("vi " + ToUnix(PRIVPATH + cFName)) 
+    #else    
         run ("mvim " + ToUnix(PRIVPATH + cFName)) 
+	#endif
 
 	gaZagFix:=NIL
 	gaKolFix:=NIL

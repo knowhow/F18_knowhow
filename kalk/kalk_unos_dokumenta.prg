@@ -160,6 +160,7 @@ return
 
 
 function o_kalk_edit()
+altd()
 O_KALK_DOKS
 O_KALK_PRIPR
 O_DOKSRC
@@ -245,12 +246,10 @@ do case
 		endif
 		return DE_REFRESH
 	case Ch==K_CTRL_P
-  		if IsJerry()
-			JerryMP()
-		endif
 		close all
 		kalk_centr_stampa_dokumenta()
-		o_kalk_edit()
+		close all
+                o_kalk_edit()
 		return DE_REFRESH
 	case Ch==K_CTRL_T
      		if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"

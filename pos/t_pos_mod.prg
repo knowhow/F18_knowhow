@@ -234,18 +234,21 @@ return
 
 
 function pos_pdv_parametri()
-O_PARAMS
-private cSection:="1",cHistory:=" "; aHistory:={}
-RPar("PD",@gPDV)
-lSql:=.f.
-if gSQL=="D"
+
+f18_get_metric("PDVGlobal", @gPDV )
+
+lSql := .f.
+if gSQL == "D"
 	lSql := .t.
-	gSQL:="N"
+	gSQL := "N"
 endif
+
 ParPDV()
-WPar("PD",gPDV)
+
+f18_set_metric("PDVGlobal", gPDV )
+
 if lSql
-	gSQL:="D"
+	gSQL := "D"
 endif
 
 if goModul:oDataBase:cRadimUSezona == "RADP"
@@ -256,16 +259,12 @@ return
 
 
 
-
 // ---------------------------------------------
 // ---------------------------------------------
 method setGVars()
 
 set_global_vars()
 set_roba_global_vars()
-
-//SetFmkRGVars()
-//SetFmkSGVars()
 
 pos_pdv_parametri()
 
@@ -376,19 +375,13 @@ public grbStId:="D"
 public grbReduk:=0
 public gRnInfo:="N"
 
-#ifdef CLIP
-	return
-#endif
-
-self:cName:=IzFmkIni("POS","MODUL","TOPS",KUMPATH)
-gModul:=self:cName
+self:cName := "TOPS"
+gModul := self:cName
 
 gKorIme:=""
 gIdRadnik:=""
 gStRad:=""
 
-//SetNaslov(self)
-//NaslEkran(.t.)
 ToggleIns()
 ToggleIns()
 
@@ -449,10 +442,10 @@ public gSifPath:=SIFPATH
 public LocSIFPATH:=SIFPATH
 public gServerPath
 
-gServerPath:=PADR(ToUnix("i:\sigma",40))
+gServerPath := PADR(ToUnix("i:\sigma",40))
 
 public gKalkDEST
-gKalkDEST:=PADR(ToUnix("a:\",20))
+gKalkDEST := PADR(ToUnix("a:\",20))
 
 public gModemVeza:="N"
 public gUseChkDir:="N"
@@ -503,209 +496,164 @@ public gFC_pauto := 0
 public gFC_dlist := "N"
 public gFc_restart := "N"
 
-if gModul=="HOPS"
-	gVodiTreb:="D"
-	gVodiOdj:="D"
-	gBrojSto:="0"
-	gRnSpecOpc:="N"
-	gRadniRac:="D"
-	gDirZaklj:="N"
-	gDupliArt:="N"
-	gDupliUpoz:="D"
-	gDisplay:="N"
-else
-	gVodiTreb:="N"
-	gVodiOdj:="N"
-	gBrojSto:="0"
-	gRnSpecOpc:="N"
-	gRadniRac:="N"
-	gDirZaklj:="D"
-	gDupliArt:="D"
-	gDupliUpoz:="N"
-	gDisplay:="N"
-endif
+gVodiTreb:="N"
+gVodiOdj:="N"
+gBrojSto:="0"
+gRnSpecOpc:="N"
+gRadniRac:="N"
+gDirZaklj:="D"
+gDupliArt:="D"
+gDupliUpoz:="N"
+gDisplay:="N"
 
-O_PARAMS
-private cSection:="F"
-private cHistory:=" "
-private aHistory:={}
+// citaj parametre iz metric tabele
 
-Rpar("f1",@gFc_type)
-Rpar("f2",@gFc_path)
-Rpar("f3",@gFc_name)
-Rpar("f4",@gFc_use)
-Rpar("f5",@gFc_cmd)
-Rpar("f6",@gFc_cp1)
-Rpar("f7",@gFc_cp2)
-Rpar("f8",@gFc_cp3)
-Rpar("f9",@gFc_cp4)
-Rpar("f0",@gFc_cp5)
-Rpar("fE",@gFc_error)
-Rpar("fI",@gIOSA)
-Rpar("fK",@gFc_konv)
-Rpar("fT",@gFc_tout)
-Rpar("fP",@gFc_txrn)
-Rpar("fC",@gFc_acd)
-Rpar("fR",@gFc_alen)
-Rpar("fN",@gFc_nftxt)
-Rpar("fO",@gFc_pdv)
-Rpar("fD",@gFc_device)
-Rpar("fZ",@gFc_pinit)
-Rpar("fX",@gFc_chk)
-Rpar("fS",@gFc_path2)
-Rpar("fA",@gFc_pauto)
-Rpar("fB",@gFc_answ)
-Rpar("fY",@gFc_serial)
-Rpar("fG",@gFc_restart)
+f18_get_metric("FiscalTipUredjaja",@gFc_type)
+f18_get_metric("FiscalLokacijaFajla",@gFc_path)
+f18_get_metric("FiscalImeFajla",@gFc_name)
+f18_get_metric("FiscalAktivan",@gFc_use)
+f18_get_metric("FiscalCmd",@gFc_cmd)
+f18_get_metric("FiscalCmdPar1",@gFc_cp1)
+f18_get_metric("FiscalCmdPar2",@gFc_cp2)
+f18_get_metric("FiscalCmdPar3",@gFc_cp3)
+f18_get_metric("FiscalCmdPar4",@gFc_cp4)
+f18_get_metric("FiscalCmdPar5",@gFc_cp5)
+f18_get_metric("FiscalProvjeraGreske",@gFc_error)
+f18_get_metric("FiscalIOSABroj",@gIOSA)
+f18_get_metric("FiscalKonverzijaZnakova",@gFc_konv)
+f18_get_metric("FiscalTimeOut",@gFc_tout)
+f18_get_metric("FiscalStampatiRacun",@gFc_txrn)
+f18_get_metric("FiscalPluDinamicki",@gFc_acd)
+f18_get_metric("FiscalPluDuzina",@gFc_alen)
+f18_get_metric("FiscalStampatiBrojDokumenta",@gFc_nftxt)
+f18_get_metric("FiscalPDVObveznik",@gFc_pdv)
+f18_get_metric("FiscalListaUredjaja",@gFc_device)
+f18_get_metric("FiscalInicijalniPlu",@gFc_pinit)
+f18_get_metric("FiscalProvjeraPodataka",@gFc_chk)
+f18_get_metric("FiscalLokacijaFajla2",@gFc_path2)
+f18_get_metric("FiscalAutomatskiPolog",@gFc_pauto)
+f18_get_metric("FiscalImeFajlaOdgovora",@gFc_answ)
+f18_get_metric("FiscalSerijskiBroj",@gFc_serial)
+f18_get_metric("FiscalRestartServera",@gFc_restart)
 
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-Rpar("F1",@gFirNaziv)
-Rpar("F2",@gFirAdres)
-Rpar("F3",@gFirIdBroj)
-Rpar("F4",@gFirPM)
-Rpar("F5",@gRnMjesto)
-Rpar("F6",@gFirTel)
-Rpar("F7",@gRnPTxt1)
-Rpar("F8",@gRnPTxt2)
-Rpar("F9",@gRnPTxt3)
-Rpar("pF",@gPorFakt)
-//
-
-Rpar("n8",@gVrstaRS)
-Rpar("na",@gIdPos)
-Rpar("PD",@gPostDO)
-Rpar("DO",@gIdDio)
-Rpar("n9",@gServerPath)
-Rpar("kT",@gKalkDest)
-Rpar("Mv",@gModemVeza)
-Rpar("Mc",@gUseChkDir)
-Rpar("sV",@gStrValuta)
-Rpar("n0",@gLocPort)
-Rpar("n7",@gGotPlac)
-Rpar("nX",@gDugPlac)
-Rpar("rI",@gRnInfo)
+f18_get_metric("RacunNaziv",@gFirNaziv)
+f18_get_metric("RacunAdresa",@gFirAdres)
+f18_get_metric("RacunIdBroj",@gFirIdBroj)
+f18_get_metric("RacunProdajnoMjesto",@gFirPM)
+f18_get_metric("RacunMjestoNastankaRacuna",@gRnMjesto)
+f18_get_metric("RacunTelefon",@gFirTel)
+f18_get_metric("RacunDodatniTekst1",@gRnPTxt1)
+f18_get_metric("RacunDodatniTekst2",@gRnPTxt2)
+f18_get_metric("RacunDodatniTekst3",@gRnPTxt3)
+f18_get_metric("StampatiPoreskeFakture",@gPorFakt)
+f18_get_metric("VrstaRadneStanice",@gVrstaRS)
+f18_get_metric("IDPos",@gIdPos)
+f18_get_metric("ZasebneCjelineObjekta",@gPostDO)
+f18_get_metric("OznakaDijelaObjekta",@gIdDio)
+f18_get_metric("PutanjaServera",@gServerPath)
+f18_get_metric("KalkDestinacija",@gKalkDest)
+f18_get_metric("ModemskaVeza",@gModemVeza)
+f18_get_metric("KoristitiDirektorijProvjere",@gUseChkDir)
+f18_get_metric("StranaValuta",@gStrValuta)
+f18_get_metric("OznakaLokalnogPorta",@gLocPort)
+f18_get_metric("OznakaGotovinskogPlacanja",@gGotPlac)
+f18_get_metric("OznakaDugPlacanja",@gDugPlac)
+f18_get_metric("RacunInfo",@gRnInfo)
 
 gServerPath := AllTrim(gServerPath)
 if (RIGHT(gServerPath,1) <> SLASH)
-	gServerPath+=SLASH
+	gServerPath += SLASH
 endif
 
 // principi rada kase
 cPrevPSS := gPocStaSmjene
 
-Rpar("n2",@gVodiTreb)
-Rpar("zc",@gZadCij)
-Rpar("vO",@gVodiOdj)
-Rpar("vS",@gStolovi)
-Rpar("RR",@gRadniRac)
-Rpar("Dz",@gDirZaklj)
-Rpar("sO",@gRnSpecOpc)
-Rpar("BS",@gBrojSto)
-Rpar("n5",@gDupliArt)
-Rpar("Nu",@gDupliUpoz)
-Rpar("Ns",@gPratiStanje)
-Rpar("nh",@gPocStaSmjene)
-Rpar("nj",@gStamPazSmj)
-Rpar("nk",@gStamStaPun)
-Rpar("vs",@gVsmjene)
-Rpar("ST",@gSezonaTip)
-Rpar("Si",@gSifUpravn)
-Rpar("Sx",@gDisplay)
-Rpar("Bc",@gEntBarCod)
-Rpar("Ep",@gEvidPl)
-Rpar("UN",@gSifUvPoNaz)
-Rpar("dF",@gDiskFree)
+f18_get_metric("VodiTrebovanja",@gVodiTreb)
+f18_get_metric("AzuriranjeCijena",@gZadCij)
+f18_get_metric("VodiOdjeljenja",@gVodiOdj)
+f18_get_metric("Stolovi",@gStolovi)
+f18_get_metric("RadniRacuni",@gRadniRac)
+f18_get_metric("DirektnoZakljucivanjeRacuna",@gDirZaklj)
+f18_get_metric("RacunSpecifOpcije",@gRnSpecOpc)
+f18_get_metric("BrojStolova",@gBrojSto)
+f18_get_metric("DupliArtikli",@gDupliArt)
+f18_get_metric("DupliUnosUpozorenje",@gDupliUpoz)
+f18_get_metric("PratiStanjeRobe",@gPratiStanje)
+f18_get_metric("PratiPocetnoStanjeSmjene",@gPocStaSmjene)
+f18_get_metric("StampanjePazara",@gStamPazSmj)
+f18_get_metric("StampanjePunktova",@gStamStaPun)
+f18_get_metric("VoditiPoSmjenama",@gVsmjene)
+f18_get_metric("TipSezone",@gSezonaTip)
+f18_get_metric("UpravnikIspravljaCijene",@gSifUpravn)
+f18_get_metric("DisplejOpcije",@gDisplay)
+f18_get_metric("BarkodEnter",@gEntBarCod)
+f18_get_metric("EvidentiranjeVrstaPlacanja",@gEvidPl)
+f18_get_metric("PretragaArtiklaPoNazivu",@gSifUvPoNaz)
+f18_get_metric("SlobodniProstorDiska",@gDiskFree)
 
 if IsPlanika()
 	gPratiStanje := "D"
 endif
 
 // izgled racuna
-gSjecistr:=padr(GETPStr(gSjeciStr),20)
-gOtvorstr:=padr(GETPStr(gOtvorStr),20)
-Rpar("n4",@gPoreziRaster)
-Rpar("n6",@nFeedLines)
-Rpar("sS",@gSjeciStr)
-Rpar("oS",@gOtvorStr)
-gSjeciStr:=Odsj(@gSjeciStr)
-gOtvorStr:=Odsj(@gOtvorStr)
+gSjecistr := padr( GETPStr( gSjeciStr ), 20 )
+gOtvorstr := padr( GETPStr( gOtvorStr ), 20 )
 
-Rpar("zI",@gZagIz)
-Rpar("RH",@gRnHeder)
-Rpar("RF",@gRnFuter)
+f18_get_metric("PorezniRaster",@gPoreziRaster)
+f18_get_metric("BrojLinijaZaKrajRacuna",@nFeedLines)
+f18_get_metric("SekvencaSjeciTraku",@gSjeciStr)
+f18_get_metric("SekvencaOtvoriLadicu",@gOtvorStr)
+
+gSjeciStr := Odsj( @gSjeciStr )
+gOtvorStr := Odsj( @gOtvorStr )
+
+f18_get_metric("IzgledZaglavlja",@gZagIz)
+f18_get_metric("RacunHeader",@gRnHeder)
+f18_get_metric("RacunFooter",@gRnFuter)
 
 // izgled racuna
-Rpar("Ra",@grbCjen)
-Rpar("Rb",@grbStId)
-Rpar("Rc",@grbReduk)
+f18_get_metric("RacunCijenaSaPDV",@grbCjen)
+f18_get_metric("RacunStampaIDArtikla",@grbStId)
+f18_get_metric("RacunRedukcijaTrake",@grbReduk)
 
 // cijene
-Rpar("nb",@gIdCijena)
-Rpar("pP",@gPopust)
-Rpar("pd",@gPopDec)
-Rpar("pV",@gPopVar)
-Rpar("pC",@gPopZCj)
-Rpar("pO",@gPopProc)
-Rpar("pR",@gPopIzn)
-Rpar("pS",@gPopIznP)
+f18_get_metric("SetCijena",@gIdCijena)
+f18_get_metric("Popust",@gPopust)
+f18_get_metric("PopustDecimale",@gPopDec)
+f18_get_metric("PopustVarijanta",@gPopVar)
+f18_get_metric("PopustZadavanjemCijene",@gPopZCj)
+f18_get_metric("PopustProcenat",@gPopProc)
+f18_get_metric("PopustIznos",@gPopIzn)
+f18_get_metric("PopustVrijednostProcenta",@gPopIznP)
 
-Rpar("Co",@gColleg)
-Rpar("Du",@gDuplo)
-Rpar("D7",@gDuploKum)
-Rpar("D8",@gDuploSif)
-Rpar("D9",@gFmkSif)
-Rpar("gS",@gRNALSif)
-Rpar("gK",@gRNALKum)
+f18_get_metric("PodesenjeNonsense",@gColleg)
+f18_get_metric("AzurirajUPomocnuBazu",@gDuplo)
+f18_get_metric("KumulativPomocneBaze",@gDuploKum)
+f18_get_metric("SifrarnikPomocneBaze",@gDuploSif)
+f18_get_metric("FMKSifrarnik",@gFmkSif)
+f18_get_metric("RNALSifrarnik",@gRNALSif)
+f18_get_metric("RNALKumulativ",@gRNALKum)
 
-Rpar("gB",@gDuzSifre)
-Rpar("gX",@gOperSys)
+f18_get_metric("DuzinaSifre",@gDuzSifre)
+f18_get_metric("OperativniSistem",@gOperSys)
 
-cPom:=SC_Opisi[1]
-Rpar("nc",@cPom)
-SC_Opisi[1]:=cPom
-
-cPom:=SC_Opisi[2]
-Rpar("nd",@cPom)
-SC_Opisi[2]:=cPom
-
-cPom:=SC_Opisi[3]
-Rpar("ne",@cPom)
-SC_Opisi[3]:=cPom
-
-cPom:=SC_Opisi[4]
-Rpar("nf",@cPom)
-SC_Opisi[4]:=cPom
-
-cPom:=SC_Opisi[5]
-Rpar("ng",@cPom)
-SC_Opisi[5]:=cPom
-
-Rpar("np",@gUpitNp)
-
-SELECT params
-USE
-
-RELEASE cSection,cHistory,aHistory
+f18_get_metric("UpitZaNacinPlacanja",@gUpitNp)
 
 public gStela
 gStela:=CryptSC(IzFmkIni("KL","PregledRacuna",CryptSC("STELA"),KUMPATH))
-public gPVrsteP
-gVrsteP:=IzFMKIni("TOPS","AzuriranjePrometaPoVP","N",KUMPATH)=="D"
 
+public gPVrsteP := .f.
+f18_get_metric("AzuriranjePrometaPoVP", @gPVrsteP)
 
 if (gVrstaRS=="S")
-	gIdPos:=Space(LEN(gIdPos))
+	gIdPos := Space(LEN(gIdPos))
 endif
 
 public gSQLKom
-gSQL:=IzFmkIni("Svi","SQLLog","N",KUMPATH)
-gSamoProdaja:=IzFmkIni("TOPS","SamoProdaja","N",PRIVPATH)
-gSQLLogBase:=IzFmkIni("SQL","SQLLogBase","c:\sigma",EXEPATH)
+gSQL := IzFmkIni("Svi","SQLLog","N",KUMPATH)
+gSQLLogBase := IzFmkIni("SQL","SQLLogBase","c:\sigma",EXEPATH)
 
+f18_get_metric("SamoProdaja", @gSamoProdaja)
 
 public gPosSirovine
 public gPosKalk
@@ -717,34 +665,13 @@ public glRetroakt
 
 glRetroakt:=(IzFmkIni("POS","Retroaktivno","N",KUMPATH)=="D")
 
-// varijable FISSTA
-public gFisCTTPath
-gFisCTTPath:=(IzFmkIni("FISSTA","FisCTTPath","c:\tops",EXEPATH))
-public gFisTimeOut
-gFisTimeOut:=VAL((IzFmkIni("FISSTA","FisTimeOut","5",EXEPATH)))
-public gFisStorno
-gFisStorno:=(IzFmkIni("FISSTA","FisStorno","N",EXEPATH))
-public gFissta
-gFissta:=(IzFmkIni("FISSTA", "Fissta", "N", EXEPATH))
-public gFisRptEvid
-gFisRptEvid:=(IzFmkIni("FISSTA", "FisRptEvid", "N", EXEPATH))
-public gFisConStr
-gFisConStr:=(IzFmkIni("FISSTA", "CmdKonekcija", "0_1", EXEPATH))
-
 gPosSirovine:="D"
 gPosKalk:="D"
-
 gSQLSynchro:="D"
 gPosModem:="D"
 
-
-
-public glPorezNaSvakuStavku
-
-glPorezNaSvakuStavku:=(IzFmkIni("POS","PorezNaSvakuStavku","D",PRIVPATH)=="D")
-
-public glPorNaSvStRKas
-glPorNaSvStRKas:=(IzFmkIni("POS","PorezNaSvStRealKase","N",PRIVPATH)=="D")
+public glPorezNaSvakuStavku := .f.
+public glPorNaSvStRKas := .f.
 
 if (!self:oDatabase:lAdmin .and. gVrstaRS<>"S")
 	O_KASE
@@ -769,11 +696,10 @@ endif
 //  odredi naziv domace valute
 if (!self:oDatabase:lAdmin) 
 	SetNazDVal()
-	if IsPlanika()	
-		chkTblPromVp()
-	endif
 endif
 
 SetBoje(gVrstaRS)
 
 return
+
+

@@ -183,8 +183,8 @@ local cVar,cVal
 set_global_vars()
 set_roba_global_vars()
 
-PUBLIC KursLis:="1"
-PUBLIC gMetodaNC:="2"
+public KursLis:="1"
+public gMetodaNC:="2"
 public gDefNiv:="D"
 public gDecKol:=5
 public gKalo:="2"
@@ -254,7 +254,7 @@ public gGen16:="1"
 public gNiv14:="1"
 
 public gModemVeza:="N"
-
+public gTabela := 0
 public gPicNC := "999999.99999999"
 public gKomFakt:="20"
 public gKomKonto:="5611   "     // zakomision definisemo
@@ -289,7 +289,8 @@ public aNC_ctrl := {}
 // limit za otvorene stavke
 public gnLOst := -99
 
-public lPoNarudzbi
+public lPoNarudzbi := .f.
+public glEkonomat := .f. 
 
 // KALK: auto import
 // print dokumenata pri auto importu
@@ -299,138 +300,144 @@ public gAImpRKonto := PADR("1370", 7)
 // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
 public gAImpRight := 0
 
-lPoNarudzbi:=.f.
+gGlBaza := "KALK.DBF"
 
 f18_get_metric("Dokument10Trosak1", @c10T1)
 f18_get_metric("Dokument10Trosak2", @c10T2)
 f18_get_metric("Dokument10Trosak3", @c10T3)
 f18_get_metric("Dokument10Trosak4", @c10T4)
 f18_get_metric("Dokument10Trosak5", @c10T5)
+
 f18_get_metric("DokumentRNTrosak1", @cRNT1)
 f18_get_metric("DokumentRNTrosak2", @cRNT2)
 f18_get_metric("DokumentRNTrosak3", @cRNT3)
 f18_get_metric("DokumentRNTrosak4", @cRNT4)
 f18_get_metric("DokumentRNTrosak5", @cRNT5)
 
+f18_get_metric("Dokument24Trosak1", @c24T1)
+f18_get_metric("Dokument24Trosak2", @c24T2)
+f18_get_metric("Dokument24Trosak3", @c24T3)
+f18_get_metric("Dokument24Trosak4", @c24T4)
+f18_get_metric("Dokument24Trosak5", @c24T5)
+f18_get_metric("Dokument24Trosak6", @c24T6)
+f18_get_metric("Dokument24Trosak7", @c24T7)
+f18_get_metric("Dokument24Trosak8", @c24T8)
+
+f18_get_metric("BaznaValuta", @gBaznaV)
+
+f18_get_metric("KontiranjeFin", @gAFin)
+f18_get_metric("KontiranjeMat", @gAMat)
+f18_get_metric("KontiranjeFakt", @gAFakt)
+f18_get_metric("BrojacKalkulacija", @gBrojac)
+
+f18_get_metric("MagacinPoNC", @gMagacin)
+
+if IsPDV()
+	f18_get_metric("MagacinPoNCPDV", @gPDVMagNab)
+endif
+
+f18_get_metric("AzuriranjeSumnjivihDokumenata", @gCijene)
+
 /*
-RPar("11",@c10T1)
-RPar("12",@c10T2)
-RPar("13",@c10T3)
-RPar("14",@c10T4)
-RPar("15",@c10T5)
-RPar("71",@cRNT1)
-RPar("72",@cRNT2)
-RPar("73",@cRNT3)
-RPar("74",@cRNT4)
-RPar("75",@cRNT5)
+// ovo su direktoriji fin, mat, kalk...
+// ovo treba izbaciti
+f18_get_metric("d3", @gDirFIK)
+f18_get_metric("d4", @gDirMaK)
+f18_get_metric("d5", @gDirFakK)
+f18_get_metric("df", @gDirFIN)
+f18_get_metric("dm", @gDirMat)
+f18_get_metric("dx", @gDirFakt)
 */
 
-RPar("21",@c24T1)
-RPar("22",@c24T2)
-RPar("23",@c24T3)
-RPar("24",@c24T4)
-RPar("25",@c24T5)
-RPar("26",@c24T6)
-RPar("27",@c24T7)
-RPar("28",@c24T8)
-Rpar("Bv",@gBaznaV)
-RPar("af",@gAFin)
-RPar("am",@gAMat)
-RPar("ax",@gAFakt)
-Rpar("br",@gBrojac)
-RPar("c1",@gMagacin)
-if IsPDV()
-	RPar("c2",@gPDVMagNab)
-endif
-RPar("ci",@gCijene)
-RPar("d3",@gDirFIK)
-RPar("d4",@gDirMaK)
-RPar("d5",@gDirFakK)
-RPar("df",@gDirFIN)
-RPar("dm",@gDirMat)
-RPar("dx",@gDirFakt)
-Rpar("ts",@gTS)
+f18_get_metric("TipSubjekta", @gTS)
 
-RPar("fo", @gSetForm)   // set formula
-RPar("g6",@gGen16)
-Rpar("k1",@gKomFakt)
-Rpar("k2",@gKomKonto)
-Rpar("ka",@gKalo)
-Rpar("vk",@gVodiKalo)
-RPar("n4",@gNiv14)
-Rpar("nc",@gMetodaNC)
-Rpar("dk",@gDeckol)
-Rpar("nI",@gDefNiv)
-Rpar("nw",@gNW)
-Rpar("ve",@gVarEv)
-Rpar("p1",@gPicCDEM)
-Rpar("p2",@gPicProc)
-Rpar("p3",@gPicDEM)
-Rpar("p4",@gPicKol)
-Rpar("p5",@gPicNC)
-Rpar("p6",@gFPicCDem)
-Rpar("p7",@gFPicDem)
-Rpar("p8",@gFPicKol)
-RPar("po",@gPotpis)
-RPar("rc",@gRCRP)
-Rpar("rt",@gRokTr)
-Rpar("ar",@gAutoRavn)
-Rpar("ac",@gAutoCjen)
-Rpar("rx",@gRobaTrosk)
-Rpar("R1",@gRobaTr1Tip)
-Rpar("R2",@gRobaTr2Tip)
-Rpar("R3",@gRobaTr3Tip)
-Rpar("R4",@gRobaTr4Tip)
-Rpar("R5",@gRobaTr5Tip)
+f18_get_metric("TipTabele", @gTabela)
+f18_get_metric("SetFormula", @gSetForm)
+f18_get_metric("Generisi16Nakon96", @gGen16)
+f18_get_metric("OznakaRjUFakt", @gKomFakt)
+f18_get_metric("KomisionKonto", @gKomKonto)
+f18_get_metric("KolicinaKalo", @gKalo)
+f18_get_metric("VoditiKalo", @gVodiKalo)
+f18_get_metric("TipNivelacije14", @gNiv14)
+f18_get_metric("MetodaNC", @gMetodaNC)
+f18_get_metric("BrojDecimalaZaKolicinu", @gDeckol)
+f18_get_metric("PromjenaCijenaOdgovor", @gDefNiv)
+f18_get_metric("NoviKorisnickiInterfejs", @gNW)
+f18_get_metric("VarijantaEvidencije", @gVarEv)
+f18_get_metric("FormatPrikazaCijene", @gPicCDEM)
+f18_get_metric("FormatPrikazaProcenta", @gPicProc)
+f18_get_metric("FormatPrikazaIznosa", @gPicDEM)
+f18_get_metric("FormatPrikazaKolicine", @gPicKol)
+f18_get_metric("FormatPrikazaNabavneCijene", @gPicNC)
+f18_get_metric("FormatPrikazaCijeneProsirenje", @gFPicCDem)
+f18_get_metric("FormatPrikazaIznosaProsirenje", @gFPicDem)
+f18_get_metric("FormatPrikazaKolicineProsirenje", @gFPicKol)
+f18_get_metric("PotpisNaKrajuNaloga", @gPotpis)
+f18_get_metric("VarijantaPopustaNaDokumentima", @gRCRP)
+f18_get_metric("RokTrajanja", @gRokTr)
+f18_get_metric("KontiranjeAutomatskaRavnotezaNaloga", @gAutoRavn)
+f18_get_metric("AutomatskoAzuriranjeCijena", @gAutoCjen)
+f18_get_metric("PreuzimanjeTroskovaIzSifRoba", @gRobaTrosk)
+f18_get_metric("Trosak1Tip", @gRobaTr1Tip)
+f18_get_metric("Trosak2Tip", @gRobaTr2Tip)
+f18_get_metric("Trosak3Tip", @gRobaTr3Tip)
+f18_get_metric("Trosak4Tip", @gRobaTr4Tip)
+f18_get_metric("Trosak5Tip", @gRobaTr5Tip)
+f18_get_metric("KonverzijaValuteNaUnosu", @gDokKVal)
 
-Rpar("KV",@gDokKVal)
+f18_get_metric("Dokument10PrikazUkalkPoreza", @g10Porez)
+f18_get_metric("Dokument10Varijanta", @c10Var)
+f18_get_metric("Dokument11BezNC", @g11bezNC)
+f18_get_metric("Dokument80RekapPoTar", @g80VRT)
+f18_get_metric("Dokument14VarijantaPoreza", @gVarVP)
+f18_get_metric("VarijantaFakt13Kalk11Cijena", @gVar13u11)
+ 
+f18_get_metric("PrenosPOS",@gTops)
+f18_get_metric("PrenosFAKT",@gFakt)
+f18_get_metric("DestinacijaTOPSKA",@gTopsDest)
+f18_get_metric("ModemskaVeza",@gModemVeza)
+f18_get_metric("PomocSaMPC",@gMPCPomoc)
+f18_get_metric("KolicinaKodNivelacijeFakt",@gKolicFakt)
+f18_get_metric("ZabranaPromjeneTarifa",@gPromTar)
+f18_get_metric("DjokerF1KodKontiranja",@gFunKon1)
+f18_get_metric("DjokerF2KodKontiranja",@gFunKon2)
 
-Rpar("up",@g10Porez)
-RPar("v1",@c10Var)
-RPar("v2",@g11bezNC)
-RPar("v3",@g80VRT)
-RPar("vp",@gVarVP)
-RPar("vo",@gVar13u11)
-
-RPar("YT",@gTops)
-RPar("YF",@gFakt)
-RPar("YW",@gTopsDest)
-RPar("Mv",@gModemVeza)
-RPar("mP",@gMPCPomoc)
-RPar("fK",@gKolicFakt)
-RPar("pt",@gPromTar)
-RPar("f1",@gFunKon1)
-RPar("f2",@gFunKon2)
-
-RPar("aK",@gAzurTimeout)
-RPar("aF",@gAzurFinTO)
-RPar("aQ",@gCache)
-RPar("aR",@gNC_ctrl)
-RPar("aY",@gnLOst)
-RPar("bK",@gLenBrKalk)
-RPar("cd",@gArtCDX)
+f18_get_metric("TimeOutKodAzuriranja",@gAzurTimeout)
+f18_get_metric("TimeOutKodAzuriranjaFinNaloga",@gAzurFinTO)
+f18_get_metric("CacheTabela",@gCache)
+f18_get_metric("KontrolaOdstupanjaNC",@gNC_ctrl)
+f18_get_metric("LimitZaOtvoreneStavke",@gnLOst)
+f18_get_metric("DuzinaBrojacaDokumenta",@gLenBrKalk)
+f18_get_metric("IndexZaPretraguArtikla",@gArtCDX)
 
 cOdradjeno:="D"
-if file(EXEPATH+'scshell.ini')
+
+//if file(EXEPATH+'scshell.ini')
         //cBrojLok:=R_IniRead ( 'TekucaLokacija','Broj',  "",EXEPATH+'scshell.INI' )
-        cOdradjeno:=R_IniRead ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "N" ,EXEPATH+'scshell.INI' )
-        R_IniWrite ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "D" ,EXEPATH+'scshell.INI' )
-endif
+  //      cOdradjeno:=R_IniRead ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "N" ,EXEPATH+'scshell.INI' )
+    //    R_IniWrite ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "D" ,EXEPATH+'scshell.INI' )
+//endif
 
+/*
+if ( empty( gDirFin ) .or. ;
+	empty( gDirMat ) .or. empty(gDirFiK) .or. ;
+	empty(gDirMaK) .or. empty(gDirFaKt) .or. ;
+	empty(gDirFakK) ) .or. cOdradjeno="N"
 
-if ( empty(gDirFin) .or. empty(gDirMat) .or. empty(gDirFiK) .or. empty(gDirMaK) .or. empty(gDirFaKt) .or. empty(gDirFakK) ) ;
-   .or. cOdradjeno="N"
-  gDirFin:=strtran(cDirPriv,"KALK","FIN")+SLASH
-  gDirMat:=strtran(cDirPriv,"KALK","MAT")+SLASH
-  gDirFiK:=strtran(cDirRad,"KALK","FIN")+SLASH
-  gDirMaK:=strtran(cDirRad,"KALK","MAT")+SLASH
-  gDirFakt:=strtran(cDirPriv,"KALK","FAKT")+SLASH
-  gDirFakK:=strtran(cDirRad,"KALK","FAKT")+SLASH
+  gDirFin := strtran(cDirPriv,"KALK","FIN")+SLASH
+  gDirMat := strtran(cDirPriv,"KALK","MAT")+SLASH
+  gDirFiK := strtran(cDirRad,"KALK","FIN")+SLASH
+  gDirMaK := strtran(cDirRad,"KALK","MAT")+SLASH
+  gDirFakt := strtran(cDirPriv,"KALK","FAKT")+SLASH
+  gDirFakK := strtran(cDirRad,"KALK","FAKT")+SLASH
+  
   WPar("df",gDirFin)
   WPar("dm",gDirMat)
   WPar("d3",gDirFiK)
   WPar("d4",gDirMaK)
+
 endif
+
 
 gDirFin:=trim(gDirFin)
 gDirMat:=trim(gDirMat)
@@ -438,18 +445,20 @@ gDirFiK:=trim(gDirFiK)
 gDirMaK:=trim(gDirMaK)
 gDirFakt:=trim(gDirFakt)
 gDirFakK:=trim(gDirFakK)
+*/
 
 // KALK: auto import
 private cSection := "7"
-RPar("ai", @gAImpPrint)
-RPar("ak", @gAImpRKonto)
-RPar("ar", @gAImpRight)
+f18_get_metric("AutoImportPodatakaPrintanje", @gAImpPrint)
+f18_get_metric("AutoImportPodatakaKonto", @gAImpRKonto)
+f18_get_metric("AutoImportPodatakaKarakteri", @gAImpRight)
 
 select (F_PARAMS)
 use
 
-cSekcija:="SifRoba"; cVar:="PitanjeOpis"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'D') , SIFPATH)
+cSekcija:="SifRoba"
+cVar:="PitanjeOpis"
+IzFmkIni (cSekcija, cVar, IzFMkIni(cSekcija,cVar,'D') , SIFPATH)
 cSekcija:="SifRoba"; cVar:="ID_J"
 IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'N') , SIFPATH)
 cSekcija:="SifRoba"; cVar:="VPC2"
@@ -472,44 +481,22 @@ IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'') , SIFPATH)
 cSekcija:="BarKod"; cVar:="NazRTM"
 IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'barkod') , SIFPATH)
 
-//definisano u SC_CLIB-u
-gGlBaza:="KALK.DBF"
 
-public glEkonomat 
+// iz FMK inija...
 
-glEKonomat:= (IzFmkIni("KALK","VoditiSamoEkonomat","N",EXEPATH)=="D")
-lPoNarudzbi := ( IzFMKINI("KALK","10PoNarudzbi","N",KUMPATH)=="D" )
+f18_get_metric("VoditiSamoEkonomat", @glEkonomat)
+f18_get_metric("Dokument10PoNarudzbi", @lPoNarudzbi)
 
 public gKalks:=.f.
-
 public lPodBugom:=.f.
-IF IzFMKINI("ZASTITA","PodBugom","N",KUMPATH)=="D"
-  lPodBugom:=.t.
-  gaKeys := { { K_ALT_O , {|| OtkljucajBug()} } }
-ELSE
-  lPodBugom:=.f.
-ENDIF
-
 public gVodiSamoTarife
-gVodiSamoTarife:=IzFmkIni("KALK","VodiSamoTarife","N",PRIVPATH)
+public lSyncon47 := .f.
+public lKoristitiBK := .f.
+public lPrikPRUC := .f.
 
-public lSyncon47
-lSyncon47:=(IzFMKINI("KALK","Synergicon47","N",KUMPATH)=="D")
-
-public lKoristitiBK
-lKoristitiBK:=(IzFmkIni('KALK','Barkod','N',KUMPATH)=="D")
-
-public lPrikPRUC
-lPrikPRUC:=(IzFMKINI("UGOSTITELJSTVO","PrikazKolonePRUC","N",KUMPATH)=="D")
-
-cPom:=IzFMKINI("POREZI","PPUgostKaoPPU","-",KUMPATH)
-if cPom<>"-"
-	gUVarPP:=cPom
-endif
-
-if IsJerry()
-	lPrikPRUC:=.f.
-endif
+f18_get_metric("VodiSamoTarife", @gVodiSamoTarife)
+f18_get_metric("KoristitiBarkodPriUnosu", @lKoristitiBK)
+f18_get_metric("PrikaziKolonePRUC", @lPrikPRUC)
 
 public gDuzKonto
 if !::oDatabase:lAdmin
@@ -521,16 +508,14 @@ else
 endif
 
 public glZabraniVisakIP
-glZabraniVisakIP:=(IzFmkIni("OPRESA","ZabraniVisakIP","N",KUMPATH)=="D")
-
 public glBrojacPoKontima
-glBrojacPoKontima:=(IzFmkIni("KALK","BrojacPoKontima","N",KUMPATH)=="D")
-
 public glEvidOtpis
-glEvidOtpis:=(IzFmkIni("KALKSI","EvidentirajOtpis","N",KUMPATH)=="D")
-
 public gcSLObrazac
-gcSLObrazac:=IzFmkIni("KALK","SLObrazac","1",KUMPATH)
+
+f18_get_metric("ZabraniVisakKodIP", @glZabraniVisakIP)
+f18_get_metric("BrojacPoKontima", @glBrojacPoKontima)
+f18_get_metric("EvidentirajOtpis", @glEvidOtpis)
+f18_get_metric("SLObrazac", @gcSLObrazac)
 
 gRobaBlock:={|Ch| RobaBlock(Ch)}
 
@@ -540,4 +525,6 @@ gRobaBlock:={|Ch| RobaBlock(Ch)}
 public lAutoObr := .f.
 
 return
+
+
 

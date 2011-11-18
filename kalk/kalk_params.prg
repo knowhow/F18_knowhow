@@ -14,10 +14,8 @@
 
 
 function kalk_params()
-*{
+
 O_KONTO
-O_PARAMS
-private cSection:="K",cHistory:=" "; aHistory:={}
 
 private Opc:={}
 private opcexe:={}
@@ -59,16 +57,11 @@ AADD(opcexe, {|| kalk_par_razno('D')})
 private Izbor:=1
 Menu_SC("pars")
 
-select params; use
-closeret
+close all
 return
-*}
 
 
 
-/*! \fn kalk_par_varijante_prikaza()
- *  \brief Ispravka parametara "varijante obrade i prikaza pojedinih dokumenata"
- */
 
 function kalk_par_varijante_prikaza()
 local nX := 1
@@ -168,43 +161,42 @@ Box(,23,76,.f.,"Varijante obrade i prikaza pojedinih dokumenata")
 
 BoxC()
 
- if lastkey()<>K_ESC
-  WPar("c1",gMagacin)
-  if IsPDV()
-  	WPar("c2",gPDVMagNab)
-  endif
-  Wpar("ka",gKalo)
-  Wpar("vk",gVodiKalo)
-  Wpar("up",g10Porez)
-  WPar("vp",@gVarVP)
-  WPar("v1",c10Var)
-  WPar("v2",g11bezNC)
-  WPar("v3",g80VRT)
-  WPar("n4",gNiv14)
-  WPar("vo",gVar13u11)
-  WPar("mP",gMPCPomoc)
-  WPar("fK",gKolicFakt)
-  WPar("rx",gRobaTrosk)
-  Wpar("rc",gRCRP )
-  WPar("ar",gAutoRavn)
-  WPar("ac",gAutoCjen)
-  WPar("R1",gRobaTr1Tip)
-  WPar("R2",gRobaTr2Tip)
-  WPar("R3",gRobaTr3Tip)
-  WPar("R4",gRobaTr4Tip)
-  WPar("R5",gRobaTr5Tip)
-  WPar("KV",gDokKVal)
- endif
+if lastkey() <> K_ESC
+
+	f18_set_metric("MagacinPoNC", gMagacin)
+
+  	if IsPDV()
+  		f18_set_metric("MagacinPoNCPDV", gPDVMagNab)
+  	endif
+
+  	f18_set_metric("KolicinaKalo", gKalo)
+  	f18_set_metric("VoditiKalo", gVodiKalo)
+  	f18_set_metric("Dokument10PrikazUkalkPoreza", g10Porez)
+  	f18_set_metric("Dokument14VarijantaPoreza", gVarVP)
+  	f18_set_metric("Dokument10Varijanta", c10Var)
+  	f18_set_metric("Dokument11BezNC", g11bezNC)
+  	f18_set_metric("Dokument80RekapPoTar", g80VRT)
+  	f18_set_metric("TipNivelacije14", gNiv14)
+  	f18_set_metric("VarijantaFakt13Kalk11Cijena", gVar13u11)
+  	f18_set_metric("PomocSaMPC", gMPCPomoc)
+  	f18_set_metric("KolicinaKodNivelacijeFakt", gKolicFakt)
+  	f18_set_metric("PreuzimanjeTroskovaIzSifRoba", gRobaTrosk)
+  	f18_set_metric("VarijantaPopustaNaDokumentima", gRCRP )
+  	f18_set_metric("KontiranjeAutomatskaRavnotezaNaloga", gAutoRavn)
+  	f18_set_metric("AutomatskoAzuriranjeCijena", gAutoCjen)
+  	f18_set_metric("Trosak1Tip", gRobaTr1Tip)
+  	f18_set_metric("Trosak2Tip", gRobaTr2Tip)
+  	f18_set_metric("Trosak3Tip", gRobaTr3Tip)
+  	f18_set_metric("Trosak4Tip", gRobaTr4Tip)
+  	f18_set_metric("Trosak5Tip", gRobaTr5Tip)
+  	f18_set_metric("KonverzijaValuteNaUnosu", gDokKVal)
+
+endif
 
 return nil
 
 
-
-
-/*! \fn kalk_par_razno()
- *  \brief Ispravka parametara "razno"
- */
-
+// kalk :: parametri razno
 function kalk_par_razno()
 private  GetList:={}
 
@@ -233,21 +225,21 @@ read
 BoxC()
 
 if lastkey()<>K_ESC
-  Wpar("br",gBrojac)
-  Wpar("rt",gRokTr)
-  WPar("po",gPotpis)
-  Wpar("tt",gTabela)
-  Wpar("nw",gNW)
-  Wpar("ve",gVarEv)
-  WPar("pt",gPromTar)
-  WPar("f1",gFunKon1)
-  WPar("f2",gFunKon2)
-  WPar("aK",gAzurTimeout)
-  WPar("aQ",gCache)
-  WPar("aR",gNC_ctrl)
-  WPar("aY",gnLOst)
-  WPar("bK",gLenBrKalk)
-  WPar("cd",gArtCDX)
+	f18_set_metric("BrojacKalkulacija", gBrojac)
+  	f18_set_metric("RokTrajanja", gRokTr)
+  	f18_set_metric("PotpisNaKrajuNaloga", gPotpis)
+  	f18_set_metric("TipTabele", gTabela)
+  	f18_set_metric("NoviKorisnickiInterfejs", gNW)
+  	f18_set_metric("VarijantaEvidencije", gVarEv)
+  	f18_set_metric("ZabranaPromjeneTarifa", gPromTar)
+  	f18_set_metric("DjokerF1KodKontiranja", gFunKon1)
+  	f18_set_metric("DjokerF2KodKontiranja", gFunKon2)
+  	f18_set_metric("TimeOutKodAzuriranja", gAzurTimeout)
+  	f18_set_metric("CacheTabela", gCache)
+  	f18_set_metric("KontrolaOdstupanjaNC", gNC_ctrl)
+  	f18_set_metric("LimitZaOtvoreneStavke", gnLOst)
+  	f18_set_metric("DuzinaBrojacaDokumenta", gLenBrKalk)
+  	f18_set_metric("IndexZaPretraguArtikala", gArtCDX)
 endif
 
 return .t.
@@ -261,35 +253,32 @@ return .t.
  */
 
 function kalk_par_metoda_nc()
-*{
 private  GetList:={}
 
- Box(,4,75,.f.,"METODA NC, ISPRAVKA DOKUMENATA")
-  @ m_x+1,m_y+2 SAY "Metoda nabavne cijene: bez kalk./zadnja/prosjecna/prva ( /1/2/3)" GET gMetodaNC  valid gMetodaNC $ " 123" .and. ReciMu()
-  @ m_x+2,m_y+2 SAY "Program omogucava /ne omogucava azuriranje sumnjivih dokumenata (1/2)" GET gCijene  when {|| gCijene:=iif(empty(gmetodanc),"1","2"),.t.} valid  gCijene $ "12"
-  @ m_x+4,m_y+2 SAY "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv valid  gDefNiv $ "DN" pict "@!"
-  read
- BoxC()
+Box(,4,75,.f.,"METODA NC, ISPRAVKA DOKUMENATA")
+  	@ m_x+1,m_y+2 SAY "Metoda nabavne cijene: bez kalk./zadnja/prosjecna/prva ( /1/2/3)" GET gMetodaNC ;
+ 		valid gMetodaNC $ " 123" .and. metodanc_info()
+  	@ m_x+2,m_y+2 SAY "Program omogucava /ne omogucava azuriranje sumnjivih dokumenata (1/2)" GET gCijene ;
+		when {|| gCijene:=iif(empty(gmetodanc),"1","2"),.t.} valid  gCijene $ "12"
+  	@ m_x+4,m_y+2 SAY "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv ;
+		valid  gDefNiv $ "DN" pict "@!"
+	read
+BoxC()
 
- if lastkey()<>K_ESC
-  Wpar("nc",gMetodaNC)
-  Wpar("nI",gDefNiv)
-  WPar("ci",@gCijene)
-  WPar("dk",@gDecKol)
- endif
+if lastkey() <> K_ESC
+
+  f18_set_metric("MetodaNC", gMetodaNC)
+  f18_set_metric("PromjenaCijenaOdgovor", gDefNiv)
+  f18_set_metric("AzuriranjeSumnjivihDokumenata", gCijene)
+  f18_set_metric("BrojDecimalaZaKolicinu", gDecKol)
+
+endif
 
 return .f.
-*}
 
 
 
-
-/*! \fn Recimu()
- *  \brief Poruka koja objasnjava znacenje parametara "METODA NC, ISPRAVKA DOKUMENATA"
- */
-
-function Recimu()
-*{
+function metodanc_info()
 if gMetodanc==" "
   Beep(2)
   Msg("Ova metoda omogucava da izvrsite proizvoljne ispravke#"+;
@@ -304,49 +293,36 @@ elseif gMetodaNC $ "13"
       "Molimo Vas da usvojite metodu  2 - srednja nabavna cijena !",0)
 endif
 return .t.
-*}
 
 
 
-
-/*! \fn kalk_par_firma()
- *  \brief Ispravka parametara "MATICNA FIRMA, BAZNA VALUTA"
- */
 
 function kalk_par_firma()
-*{
 private  GetList:={}
 
- Box(,4,65,.f.,"MATICNA FIRMA, BAZNA VALUTA")
+Box(,4,65,.f.,"MATICNA FIRMA, BAZNA VALUTA")
   @ m_x+1,m_y+2 SAY "Firma: " GET gFirma
   @ m_x+1,col()+2 SAY "Naziv: " GET gNFirma
   @ m_x+1,col()+2 SAY "TIP SUBJ.: " GET gTS
   @ m_x+2,m_Y+2 SAY "Bazna valuta (Domaca/Pomocna)" GET gBaznaV  valid gbaznav $ "DP"  pict "!@"
   @ m_x+3,m_Y+2 SAY "Zaokruzenje " GET gZaokr pict "99"
   read
- BoxC()
+BoxC()
 
- if lastkey()<>K_ESC
-  Wpar("ff",gFirma)
-  Wpar("ts",gTS)
-  gNFirma:=padr(gNFirma,20)
-  Wpar("fn",gNFirma)
-  Wpar("Bv",gBaznaV)
-  WPar("za",@gZaokr)
- endif
+if lastkey()<>K_ESC
+	f18_set_metric("FirmaID", gFirma)
+  	f18_set_metric("TipSubjekta", gTS)
+  	gNFirma := PADR(gNFirma, 20)
+  	f18_set_metric("FirmaNaziv", gNFirma)
+  	f18_set_metric("BaznaValuta", gBaznaV)
+  	f18_set_metric("Zaokruzenje", @gZaokr)
+endif
 
 return .f.
-*}
 
 
-
-
-/*! \fn kalk_par_cijene()
- *  \brief Ispravka parametara "PARAMETRI PRIKAZA - PICTURE KODOVI"
- */
 
 function kalk_par_cijene()
-*{
 private  GetList:={}
 
 Box(,10,60,.f.,"PARAMETRI PRIKAZA - PICTURE KODOVI")
@@ -363,57 +339,44 @@ Box(,10,60,.f.,"PARAMETRI PRIKAZA - PICTURE KODOVI")
   	read
 BoxC()
 
-if lastkey()<>K_ESC
-	Wpar("p1",gPicCDEM)
-  	Wpar("p2",gPicProc)
-  	Wpar("p3",gPicDEM)
-  	Wpar("p4",gPicKol)
-  	Wpar("p5",gPicNC )
-  	Wpar("p6",gFPicCDem )
-  	Wpar("p7",gFPicDem )
-  	Wpar("p8",gFPicKol )
-  	Wpar("dk",gDecKol)
+if lastkey() <> K_ESC
+	f18_set_metric("FormatPrikazaCijene", gPicCDEM)
+  	f18_set_metric("FormatPrikazaProcenta", gPicProc)
+  	f18_set_metric("FormatPrikazaIznosa", gPicDEM)
+  	f18_set_metric("FormatPrikazaKolicine", gPicKol)
+  	f18_set_metric("FormatPrikazaNabavneCijene", gPicNC )
+  	f18_set_metric("FormatPrikazaCijeneProsirenje", gFPicCDem )
+  	f18_set_metric("FormatPrikazaIznosaProsirenje", gFPicDem )
+  	f18_set_metric("FormatPrikazaKolicineProsirenje", gFPicKol )
+  	f18_set_metric("BrojDecimalaZaKolicinu", gDecKol)
 endif
 
 return .t.
-*}
 
 
-
-
-/*! \fn SetKomis()
- *  \brief Ispravka parametara "PARAMETRI KOMISIONE PRODAJE"
- */
 
 function SetKomis()
-*{
 private  GetList:={}
 
- Box(,6,76,.f.,"PARAMETRI KOMISIONE PRODAJE")
+Box(,6,76,.f.,"PARAMETRI KOMISIONE PRODAJE")
   @ m_x+1,m_y+2 SAY "Komision: -konto" GET gKomKonto valid P_Konto(@gKomKonto)
   @ m_x+2,m_y+2 SAY "Oznaka RJ u FAKT" GET gKomFakt
   read
- BoxC()
+BoxC()
 
- if lastkey()<>K_ESC
-  Wpar("k1",gKomFakt)
-  Wpar("k2",gKomKonto)
- endif
+if lastkey() <> K_ESC
+	f18_set_metric("OznakaRjUFakt", gKomFakt)
+  	f18_set_metric("KomisionKonto", gKomKonto)
+endif
 
 return nil
-*}
 
 
-
-
-/*! \fn kalk_par_zavisni_dokumenti()
- *  \brief Ispravka parametara "NACINI FORMIRANJA ZAVISNIH DOKUMENATA"
- */
 
 function kalk_par_zavisni_dokumenti()
-*{
 private  GetList:={}
- Box(,8,76,.f.,"NACINI FORMIRANJA ZAVISNIH DOKUMENATA")
+
+Box(,8,76,.f.,"NACINI FORMIRANJA ZAVISNIH DOKUMENATA")
   @ m_x+1,m_y+2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin pict "@!" valid gAFin $ "DN0"
   @ m_x+2,m_y+2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT pict "@!" valid gAMat $ "DN0"
   @ m_x+3,m_y+2 SAY "Automatika formiranja FAKT dokum D/N" GET gAFakt pict "@!" valid gAFakt $ "DN"
@@ -426,31 +389,25 @@ private  GetList:={}
     @ m_x+9,m_y+2 SAY "Koristi se modemska veza" GET gModemVeza  pict "@!" valid gModemVeza $ "DN"
     read
   endif
- BoxC()
+BoxC()
 
- if lastkey()<>K_ESC
-  WPar("af",@gAFin)
-  WPar("am",@gAMat)
-  WPar("ax",@gAFakt)
-  WPar("g6",@gGen16)
-  WPar("YT",gTops)
-  WPar("YF",gFakt)
-  WPar("YW",gTopsDest)
-  WPar("Mv",gModemVeza)
- endif
+if lastkey() <> K_ESC
+	f18_set_metric("KontiranjeFin", @gAFin)
+  	f18_set_metric("KontiranjeMat", @gAMat)
+  	f18_set_metric("KontiranjeFakt", @gAFakt)
+  	f18_set_metric("Generisi16Nakon96", @gGen16)
+  	f18_set_metric("PrenosPOS", gTops)
+  	f18_set_metric("PrenosFAKT", gFakt)
+  	f18_set_metric("DestinacijaTOPSKA", gTopsDest)
+  	f18_set_metric("ModemskaVeza", gModemVeza)
+endif
 
 return nil
-*}
 
 
 
-
-/*! \fn SetODirs()
- *  \brief Ispravka parametara "DIREKTORIJI"
- */
 
 function SetODirs()
-*{
 private  GetList:={}
 
  gDirFin:=padr(gDirFin,30)
@@ -478,37 +435,32 @@ private  GetList:={}
  gDirFakK:=trim(gDirFakK)
 
  if lastkey()<>K_ESC
-  WPar("df",gDirFIN);   WPar("d3",gDirFIK)
-  WPar("d4",gDirMaK);   WPar("dm",gDirMat)
+  //f18_set_metric("df",gDirFIN)
+  //f18_set_metric("d3",gDirFIK)
+  //f18_set_metric("d4",gDirMaK)
+  //f18_set_metric("dm",gDirMat)
 
-  WPar("dx",@gDirFakt)
-  WPar("d5",@gDirFakK)
+  //f18_set_metric("dx",@gDirFakt)
+  //f18_set_metric("d5",@gDirFakK)
  endif
 
 return nil
-*}
 
 
-
-
-/*! \fn kalk_troskovi_10ka()
- *  \brief Ispravka parametara "Troskovi 10-ka"
- */
 
 function kalk_troskovi_10ka()
-*{
 private  GetList:={}
 
- Box(,5,76,.T.,"Troskovi 10-ka")
+Box(,5,76,.T.,"Troskovi 10-ka")
   @ m_x+1,m_y+2  SAY "T1:" GET c10T1
   @ m_x+1,m_y+40 SAY "T2:" GET c10T2
   @ m_x+2,m_y+2  SAY "T3:" GET c10T3
   @ m_x+2,m_y+40 SAY "T4:" GET c10T4
   @ m_x+3,m_y+2  SAY "T5:" GET c10T5
   read
- BoxC()
+BoxC()
 
- if lastkey()<>K_ESC
+if lastkey() <> K_ESC
   
 	f18_set_metric("Dokument10Trosak1", c10T1)
 	f18_set_metric("Dokument10Trosak2", c10T2)
@@ -516,62 +468,41 @@ private  GetList:={}
 	f18_set_metric("Dokument10Trosak4", c10T4)
 	f18_set_metric("Dokument10Trosak5", c10T5)
 
-  /*
-  WPar("11",c10T1)
-  WPar("12",c10T2)
-  WPar("13",c10T3)
-  WPar("14",c10T4)
-  WPar("15",c10T5)
-  */
- endif
+endif
 
 return nil
 
 
-
-
-
-/*! \fn kalk_par_troskovi_rn()
- *  \brief Ispravka parametara "RADNI NALOG"
- */
-
 function kalk_par_troskovi_rn()
-*{
 private  GetList:={}
 
- Box(,5,76,.t.,"RADNI NALOG")
+Box(,5,76,.t.,"RADNI NALOG")
   @ m_x+1,m_y+2  SAY "T 1:" GET cRNT1
   @ m_x+1,m_y+40 SAY "T 2:" GET cRNT2
   @ m_x+2,m_y+2  SAY "T 3:" GET cRNT3
   @ m_x+2,m_y+40 SAY "T 4:" GET cRNT4
   @ m_x+3,m_y+2  SAY "T 5:" GET cRNT5
   read
- BoxC()
+BoxC()
 
- if lastkey()<>K_ESC
-  WPar("71",@cRNT1)
-  WPar("72",@cRNT2)
-  WPar("73",@cRNT3)
-  WPar("74",@cRNT4)
-  WPar("75",@cRNT5)
- endif
- cIspravka:="N"
+if lastkey() <> K_ESC
+  f18_set_metric("DokumentRNTrosak1", @cRNT1)
+  f18_set_metric("DokumentRNTrosak2", @cRNT2)
+  f18_set_metric("DokumentRNTrosak3", @cRNT3)
+  f18_set_metric("DokumentRNTrosak4", @cRNT4)
+  f18_set_metric("DokumentRNTrosak5", @cRNT5)
+endif
+
+cIspravka := "N"
 
 return nil
-*}
 
 
-
-
-/*! \fn kalk_par_troskovi_24()
- *  \brief Ispravka parametara "24 - USLUGE"
- */
 
 function kalk_par_troskovi_24()
-*{
 private  GetList:={}
 
- Box(,5,76,.t.,"24 - USLUGE")
+Box(,5,76,.t.,"24 - USLUGE")
   @ m_x+1,m_y+2  SAY "T 1:" GET c24T1
   @ m_x+1,m_y+40 SAY "T 2:" GET c24T2
   @ m_x+2,m_y+2  SAY "T 3:" GET c24T3
@@ -581,20 +512,20 @@ private  GetList:={}
   @ m_x+4,m_y+2  SAY "T 7:" GET c24T7
   @ m_x+4,m_y+40 SAY "T 8:" GET c24T8
   read
- BoxC()
+BoxC()
 
- if lastkey()<>K_ESC
-  WPar("21",c24T1)
-  WPar("22",c24T2)
-  WPar("23",c24T3)
-  WPar("24",c24T4)
-  WPar("25",c24T5)
-  WPar("26",c24T6)
-  WPar("27",c24T7)
-  WPar("28",c24T8)
- endif
+if lastkey() <> K_ESC
+	f18_set_metric("Dokument24Trosak1", c24T1)
+  	f18_set_metric("Dokument24Trosak2", c24T2)
+  	f18_set_metric("Dokument24Trosak3", c24T3)
+  	f18_set_metric("Dokument24Trosak4", c24T4)
+  	f18_set_metric("Dokument24Trosak5", c24T5)
+  	f18_set_metric("Dokument24Trosak6", c24T6)
+  	f18_set_metric("Dokument24Trosak7", c24T7)
+  	f18_set_metric("Dokument24Trosak8", c24T8)
+endif
 
 return nil
-*}
+
 
 

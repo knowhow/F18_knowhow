@@ -41,7 +41,7 @@ static function cre_priprz()
 local cFileName := PRIVPATH + "PRIPRZ"
 local lCreate := .f.
 
-if !FILE(cFileName + ".DBF") 
+if !FILE(f18_ime_dbf("priprz")) 
 	lCreate := .t.
 else
 	 // postoji provjeri je li struktura nova

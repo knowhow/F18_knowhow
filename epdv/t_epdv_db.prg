@@ -175,8 +175,6 @@ cre_tbls(nArea, "p_kuf")
 cre_tbls(nArea, "sg_kif")
 cre_tbls(nArea, "sg_kuf")
 
-cre_sifk(nArea)
-
 return
 
 
@@ -601,45 +599,6 @@ AADD(aDBf,{ "zaok2"      , "N" ,   1,  0 })
 AADD(aDBf,{ "aktivan"      , "C" ,   1,  0 })
 
 return aDbf
-
-
-function g_sifk_fields(aDbf)
-		
-aDbf := {}
-AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
-AADD(aDBf,{ 'Veza'                , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'Unique'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'Izvor'               , 'C' ,  15 ,  0 })
-AADD(aDBf,{ 'Uslov'               , 'C' , 100 ,  0 })
-AADD(aDBf,{ 'Duzina'              , 'N' ,   2 ,  0 })
-AADD(aDBf,{ 'Decimal'             , 'N' ,   1 ,  0 })
-AADD(aDBf,{ 'Tip'                 , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'KVALID'              , 'C' , 100 ,  0 })
-AADD(aDBf,{ 'KWHEN'               , 'C' , 100 ,  0 })
-AADD(aDBf,{ 'UBROWSU'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'EDKOLONA'            , 'N' ,   2 ,  0 })
-AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'K2'                  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'K3'                  , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'K4'                  , 'C' ,   4 ,  0 })
-// Primjer:
-// ID   = ROBA
-// NAZ  = Barkod
-// Oznaka = BARK
-// VEZA  = N ( 1 - moze biti samo jedna karakteristika, N - n karakteristika)
-// UNIQUE = D - radi se o jedinstvenom broju
-// Izvor =  ( sifrarnik  koji sadrzi moguce vrijednosti)
-// Uslov =  ( za koje grupe artikala ova karakteristika je interesantna
-// Tip = C ( N numericka, C - karakter, D datum )
-// Valid = "ImeFje()"
-// validacija  mogu biti vrijednosti A,B,C,D
-//             aktiviraj funkciju ImeFje()
-
-return aDbf
-
 
 
 // cre kuf tabelu

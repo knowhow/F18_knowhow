@@ -34,7 +34,7 @@ AADD( aDbf, { "colp_2", "N", 12, 5 })
 AADD( aDbf, { "colp_3", "N", 12, 5 })
 AADD( aDbf, { "colp_4", "N", 12, 5 })
 
-if !FILE( cPath + cTable + ".DBF" )
+if !FILE( f18_ime_dbf(cTable) )
 	DbCreate2( cPath + cTable, aDbf )
 endif
 

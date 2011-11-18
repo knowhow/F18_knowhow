@@ -101,8 +101,8 @@ function CreFmkSvi()
 
 
 // RJ
-cIme := f18_ime_dbf("rj")
-if !file(cIme)
+cIme := KUMPATH + "rj.dbf" 
+if !file(f18_ime_dbf("rj"))
    	aDBf:={}
    	//if goModul:oDataBase:cName == "LD"
    	//	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
@@ -357,6 +357,8 @@ cre_doksrc()
 
 // kreiraj relacije : RELATION
 cre_relation()
+
+
 
 // kreiraj pravila : RULES
 cre_fmkrules()

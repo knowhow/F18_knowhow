@@ -213,7 +213,6 @@ cre_tbls(nArea, "aops_att")
 cre_tbls(nArea, "customs")
 cre_tbls(nArea, "contacts")
 cre_tbls(nArea, "objects")
-cre_sifk(nArea)
 
 // kreiranje tabele pretraga parametri
 _cre_fnd_par()
@@ -592,33 +591,6 @@ AADD(aDBf,{ "match_code", "C", 10, 0 })
 return aDbf
 
 
-// ---------------------------------------------
-// vraca strukturu tabele SIFK
-// ---------------------------------------------
-function a_sifk(aDbf)
-aDbf := {}
-AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
-AADD(aDBf,{ 'Veza'                , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'Unique'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'Izvor'               , 'C' ,  15 ,  0 })
-AADD(aDBf,{ 'Uslov'               , 'C' , 100 ,  0 })
-AADD(aDBf,{ 'Duzina'              , 'N' ,   2 ,  0 })
-AADD(aDBf,{ 'Decimal'             , 'N' ,   1 ,  0 })
-AADD(aDBf,{ 'Tip'                 , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'KVALID'              , 'C' , 100 ,  0 })
-AADD(aDBf,{ 'KWHEN'               , 'C' , 100 ,  0 })
-AADD(aDBf,{ 'UBROWSU'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'EDKOLONA'            , 'N' ,   2 ,  0 })
-AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'K2'                  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'K3'                  , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'K4'                  , 'C' ,   4 ,  0 })
-
-return aDbf
-
 
 // ------------------------------------------------
 // kreiranje tabela
@@ -850,29 +822,6 @@ if (nArea==-1 .or. nArea == nArea2)
 endif
 return 
 
-
-
-// --------------------------------
-// kreiranje tabele SIFK
-// --------------------------------
-function cre_sifk(nArea)
-local cTbl
-
-if (nArea==-1 .or. nArea == F_SIFK)
-
-	aDbf := a_sifk()
-	cTbl := "SIFK"
-
-	if !FILE( SIFPATH+ cTbl + '.DBF' )
-		dbcreate2(SIFPATH+ cTbl + '.DBF', aDbf)
-	endif
-	
-	CREATE_INDEX("ID","id+SORT+naz", SIFPATH+cTbl)
-	CREATE_INDEX("ID2","id+oznaka", SIFPATH+cTbl)
-	CREATE_INDEX("NAZ","naz", SIFPATH+cTbl)
-endif
-
-return
 
 
 method obaza (i)

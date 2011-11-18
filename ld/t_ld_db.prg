@@ -460,7 +460,7 @@ CREATE_INDEX("ID","id",SIFPATH+"POR")
 
 
 // DOPR
-if !file(SIFPATH+"DOPR.DBF")
+if !file(f18_ime_dbf("DOPR"))
    
 	aDBf:={}
    	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
@@ -585,7 +585,7 @@ AADD(aDBf,{ 'TROSK'               , 'C' ,   1 ,  2 })
 AADD(aDBf,{ 'VAROBR'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'V_ISPL'              , 'C' ,   2 ,  0 })
 
-if !file(KUMPATH+'LD.DBF')
+if !file(f18_ime_dbf("LD"))
 	DBCREATE2(KUMPATH+'LD.DBF',aDbf)
 endif
 
@@ -616,7 +616,7 @@ ENDIF
 
 CREATE_INDEX("RADN","idradn",KUMPATH+"LD")
 
-if !file(PRIVPATH+"LDSM.DBF")
+if !file(f18_ime_dbf("LDSM"))
    AADD(aDBf, { "Obr","C",1,0 } )      // obracun
    DBCREATE2(PRIVPATH+"LDSM.DBF",aDbf)
 endif
@@ -624,11 +624,11 @@ endif
 CREATE_INDEX("1","Obr+str(godina)+str(mjesec)+idradn+idrj",PRIVPATH+"LDSM")
 CREATE_INDEX("RADN","idradn",PRIVPATH+"LDSM")
 
-if !file(PRIVPATH+"_LD.DBF")
+if !file(f18_ime_dbf("_LD"))
    DBCREATE2(PRIVPATH+"_LD.DBF",aDbf)
 endif
 
-if !file(SIFPATH+"STRSPR.DBF")
+if !file(f18_ime_dbf("STRSPR"))
     aDbf:={ {"id","C",3,0} ,;
             {"naz","C",20,0} ,;
             {"naz2","C",6,0} ;
@@ -639,7 +639,7 @@ endif
 
 CREATE_INDEX("ID","id",SIFPATH+"strspr")
 
-if !file(SIFPATH+"KBENEF.DBF")
+if !file(f18_ime_dbf("KBENEF"))
    aDbf:={ {"id","C",1,0} ,;
            {"naz","C",8,0} ,;
            {"iznos","N",5,2} ;
@@ -649,7 +649,7 @@ endif
 CREATE_INDEX("ID","id",SIFPATH+"KBENEF")
 
 
-if !file(SIFPATH+"VPOSLA.DBF")  // vrste posla
+if !file(f18_ime_dbf("VPOSLA"))  // vrste posla
    aDbf:={  {"id","C",2,0}   ,;
             {"naz","C",20,0} ,;
             {"idkbenef","C",1,0} ;
@@ -674,7 +674,7 @@ AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
 AADD(aDBf,{ 'IdNorSiht'           , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'Izvrseno'            , 'N' ,  14 ,  3 })
 AADD(aDBf,{ 'Bodova'              , 'N' ,  14 ,  2 })
-if !file(KUMPATH+"RADSIHT.DBF")
+if !file(f18_ime_dbf("RADSIHT"))
    DBCREATE2(KUMPATH+"RADSIHT.DBF",aDBF)
 endif
 
@@ -693,7 +693,7 @@ AADD(aDBf,{ 'Iznos'             , 'N' ,   8 ,  2 })
 AADD(aDBf,{ 'N1'                , 'N' ,   6 ,  2 })
 AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
-if !file(KUMPATH+"NORSIHT.DBF")
+if !file(f18_ime_dbf("NORSIHT"))
    DBCREATE2(KUMPATH+"NORSIHT.DBF",aDBF)
 endif
 CREATE_INDEX("ID","id",KUMPATH+"NORSIHT")
@@ -709,7 +709,7 @@ AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'K3'                , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'FF'                , 'C' ,  30 ,  0 })
-if !file(KUMPATH+"TPRSIHT.DBF")
+if !file(f18_ime_dbf("TPRSIHT"))
    DBCREATE2(KUMPATH+"TPRSIHT.DBF",aDBF)
 endif
 
@@ -717,81 +717,8 @@ CREATE_INDEX("ID","id",KUMPATH+"TPRSIHT")
 CREATE_INDEX("NAZ","NAZ",KUMPATH+"TPRSIHT")
 
 
-if !file(SIFPATH+"SIFK.dbf")
-   aDbf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-   AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-   AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'Veza'                , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'Unique'              , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'Izvor'               , 'C' ,  15 ,  0 })
-   AADD(aDBf,{ 'Uslov'               , 'C' , 100 ,  0 })
-   AADD(aDBf,{ 'Duzina'              , 'N' ,   2 ,  0 })
-   AADD(aDBf,{ 'Decimal'             , 'N' ,   1 ,  0 })
-   AADD(aDBf,{ 'Tip'                 , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'KVALID'              , 'C' , 100 ,  0 })
-   AADD(aDBf,{ 'KWHEN'               , 'C' , 100 ,  0 })
-   AADD(aDBf,{ 'UBROWSU'             , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'EDKOLONA'            , 'N' ,   2 ,  0 })
-   AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'K2'                  , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'K3'                  , 'C' ,   3 ,  0 })
-   AADD(aDBf,{ 'K4'                  , 'C' ,   4 ,  0 })
-
-   // Primjer:
-   // ID   = ROBA
-   // NAZ  = Barkod
-   // Oznaka = BARK
-   // VEZA  = N ( 1 - moze biti samo jedna karakteristika, N - n karakteristika)
-   // UNIQUE = D - radi se o jedinstvenom broju
-   // Izvor =  ( sifrarnik  koji sadrzi moguce vrijednosti)
-   // Uslov =  ( za koje grupe artikala ova karakteristika je interesantna
-   // DUZINA = 13
-   // Tip = C ( N numericka, C - karakter, D datum )
-   // Valid = "ImeFje()"
-   // validacija  mogu biti vrijednosti A,B,C,D
-   //             aktiviraj funkciju ImeFje()
-   dbcreate2(SIFPATH+'SIFK.DBF',aDbf)
-endif
-CREATE_INDEX("ID","id+SORT+naz",SIFPATH+"SIFK")
-CREATE_INDEX("ID2","id+oznaka",SIFPATH+"SIFK")
-CREATE_INDEX("NAZ","naz",SIFPATH+"SIFK")
-
-if !file(SIFPATH+"SIFV.dbf")  // sifrarnici - vrijednosti karakteristika
-   aDbf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-   AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'IdSif'               , 'C' ,  15 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
-   // Primjer:
-   // ID  = ROBA
-   // OZNAKA = BARK
-   // IDSIF  = 2MON0005
-   // NAZ = 02030303030303
-
-   dbcreate2(SIFPATH+'SIFV.DBF',aDbf)
-endif
-CREATE_INDEX("ID","id+oznaka+IdSif+Naz",SIFPATH+"SIFV")
-CREATE_INDEX("IDIDSIF","id+IdSif",SIFPATH+"SIFV")
-//  ROBA + BARK + 2MON0001
-
-CREATE_INDEX("NAZ","id+oznaka+naz",SIFPATH+"SIFV")
-
-
-if !file(SIFPATH+"BANKE.DBF")
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,   3 ,  0 })
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
-        AADD(aDBf,{ 'Mjesto'              , 'C' ,  20 ,  0 })
-        DBCREATE2(SIFPATH+'BANKE.DBF',aDbf)
-endif
-
-CREATE_INDEX("ID","id", SIFPATH+"BANKE")
-CREATE_INDEX("NAZ","naz", SIFPATH+"BANKE")
-
 // OBRACUNI.DBF
-if !file(KUMPATH+"OBRACUNI.DBF")
+if !file(f18_ime_dbf("OBRACUNI"))
         
 	aDbf:={}
         
@@ -813,7 +740,7 @@ endif
 CREATE_INDEX("RJ","rj+STR(godina)+STR(mjesec)+status+obr",KUMPATH+"OBRACUNI")
 
 // RADSAT.DBF
-if !file(KUMPATH+"RADSAT.DBF")
+if !file(f18_ime_dbf("RADSAT"))
         aDbf:={}
         AADD(aDBf,{'IDRADN','C',6,0})
         AADD(aDBf,{'SATI','N',10,0})

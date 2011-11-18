@@ -398,11 +398,6 @@ if (nArea==-1 .or. nArea==(F_PRIPRG))
 	// prebacivanje u DOKS/POS
 	CREATE_INDEX ("2", ;
 		      "IdPos+DTOS (Datum)+Smjena", PRIVPATH+"PRIPRG")
-	// generisanje pocetnog stanja
-	//CREATE_INDEX ("3", ;
-		 //     "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+" +;
-		 //     "IdRoba+IdCijena+Str (Cijena, 10, 3)+IdTarifa",;
-		 //     PRIVPATH+"PRIPRG")
 
 	if (IzFmkIni('TOPS','SpajanjeRazdCijene','N', KUMPATH)=='D')
 		CREATE_INDEX ("3", "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+IdRoba+STR(Cijena,10,2)", PRIVPATH+"PRIPRG")

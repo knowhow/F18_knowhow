@@ -113,7 +113,7 @@ if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWNC"))
 	AADD(ImeKol, {padc("NC",10 ), {|| transform(NC,gPicCDEM)}, "NC", NIL, NIL, NIL, gPicCDEM  })
 endif
 
-AADD(ImeKol, {"Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), EditOpis() }   })
+AADD(ImeKol, {"Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa) }   })
 
 AADD(ImeKol, {"Tip",{|| " "+Tip+" "}, "Tip", {|| .t.}, {|| wTip $ " TUCKVPSXY" } ,NIL,NIL,NIL,NIL, 27 } )
 
@@ -224,25 +224,6 @@ PopWa()
 
 return cRet
 
-
-// Unos opisa u sifrarnik robe
-function EditOpis()
-local cOp:="N"
-private GetList:={}
-if IzFMkIni('SifRoba',"PitanjeOpis",'N',SIFPATH)=="D"
-	@ m_x+7, m_y+43 SAY "Unijeti opis D/N ?" get cOp pict "@!" valid cop $ "DN"
- 	read
-endif
-UsTipke()
-if cOp=="D"
- 	Box(,14,55)
-   	@ m_x+1,m_y+2 SAY "** <c-W> za kraj unosa opisa **"
-  	wOpis:=MemoEdit(wOpis,m_x+3,m_y+1,m_x+14,m_y+55)
-   	wOpis:=OdsjPLK(wOpis)
- 	BoxC()
-endif
-BosTipke()
-return .t.
 
 
 // ------------------------------------

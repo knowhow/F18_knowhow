@@ -73,7 +73,7 @@ for i:=2 to 10
 next
 
 AADD(aImeKol, {PADC("NC", 10), {|| transform(NC,"999999.999")}, "NC"})
-AADD(aImeKol, {"Tarifa", {|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), EditOpis()}})
+AADD(aImeKol, {"Tarifa", {|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa)}})
 
 AADD(aImeKol, {"K1", {|| K1 }, "K1", {|| .t.}, {|| .t.} })
 AADD(aImeKol, {"Tip", {|| " " + Tip + " "}, "Tip", {|| .t.}, {|| wTip $ "P"}})

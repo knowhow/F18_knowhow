@@ -32,6 +32,7 @@ function CreRoba()
 
 aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'SIFRADOB'            , 'C' ,  20 ,  0 })
 add_f_mcode(@aDbf)
 AADD(aDBf,{ 'NAZ'                 , 'C' , 250 ,  0 })
 AADD(aDBf,{ 'STRINGS'             , 'N' ,  10 ,  0 })
@@ -49,13 +50,12 @@ AADD(aDBf,{ 'MPC2'                , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'MPC3'                , 'N' ,  18 ,  8 })
 // mpc2, mpc3 ------ ?? perspektivno ubaciti u sifk
 
-AADD(aDBf,{ 'Carina'              , 'N' ,   5 ,  2 })
-// mislim da se treba izbrisati
-
 AADD(aDBf,{ 'K1'                  , 'C' ,   4 ,  0 })
 // planika: dobavljac   - grupe artikala
-
 AADD(aDBf,{ 'K2'                  , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'K7'                  , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'K8'                  , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'K9'                  , 'C' ,   4 ,  0 })
 // planika: stavljaju se oznake za velicinu obuce
 //          X - ne broji se parovno
 
@@ -66,15 +66,14 @@ AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'MINK'                , 'N' ,  12 ,  2 })
 
 
-AADD(aDBf,{ 'Opis'                , 'M' ,  10 ,  0 })
+AADD(aDBf,{ 'Opis'                , 'C' , 250 ,  0 })
 // koliko mi je poznato, opis treba ukinuti !!!!
 // napraviti opciju u ikalk za brisanje opisa !!! a u kodu uslovno
 // omoguciti editovanje opisa
 AADD(aDBf,{ 'BARKOD'                , 'C' ,  13 ,  0 })
 
 if !file(f18_ime_dbf("roba"))
-        dbcreate2(SIFPATH+'roba.dbf', aDbf)
-	
+        dbcreate2(SIFPATH+'roba.dbf', aDbf)	
 endif
 
 if !file(f18_ime_dbf("_roba"))
@@ -86,6 +85,9 @@ CREATE_INDEX("ID", "ID", "roba")
 index_mcode(SIFPATH, "roba")
 CREATE_INDEX("NAZ","LEFT(naz,40)", SIFPATH+"roba")
 CREATE_INDEX("ID","id", PRIVPATH+"_roba") 
+CREATE_INDEX("BARKOD","BARKOD", "roba") // roba, artikli
+CREATE_INDEX("SIFRADOB","SIFRADOB",SIFPATH+"roba") // roba, artikli
+CREATE_INDEX("ID_VSD","SIFRADOB", SIFPATH + "roba") // sifra dobavljaca
 
 close all
 O_ROBA
@@ -93,29 +95,6 @@ if fieldpos("KATBR")<>0
   select (F_ROBA)
   use
   CREATE_INDEX("KATBR","KATBR",SIFPATH+"roba") // roba, artikli
-endif
-
-close all
-O_ROBA
-if fieldpos("BARKOD")<>0
-  select (F_ROBA)
-  use
-  CREATE_INDEX("BARKOD","BARKOD", "roba") // roba, artikli
-endif
-
-close all
-O_ROBA
-if fieldpos("SIFRADOB")<>0
-  select (F_ROBA)
-  use
-  CREATE_INDEX("SIFRADOB","SIFRADOB",SIFPATH+"roba") // roba, artikli
-endif
-
-
-if IsVindija()
-	select (F_ROBA)
-  	use
-  	CREATE_INDEX("ID_VSD","SIFRADOB", SIFPATH + "roba") // sifra dobavljaca
 endif
 
 

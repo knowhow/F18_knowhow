@@ -68,7 +68,7 @@ AADD(aDBf,{ 'lo_clpi'           , 'N' ,  10 ,  3 })
 // ukupni faktor licnog odbitka
 AADD(aDBf,{ 'lo_ufakt'          , 'N' ,  10 ,  3 })
 
-if !FILE( KUMPATH + "PK_RADN.DBF" )
+if !FILE( f18_ime_dbf("PK_RADN") )
 	DBCreate2( KUMPATH + "PK_RADN.DBF", aDbf)
 endif
 
@@ -100,7 +100,7 @@ AADD(aDBf,{ 'udio'                , 'N' ,    3 ,  0 })
 // koeficijent odbitka
 AADD(aDBf,{ 'koef'                , 'N' ,    10 ,  3 })
 
-if !FILE( KUMPATH + "PK_DATA.DBF" )
+if !FILE( f18_ime_dbf( "PK_DATA" ) )
 	DBCreate2( KUMPATH + "PK_DATA.DBF", aDbf)
 endif
 

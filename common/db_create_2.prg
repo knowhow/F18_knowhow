@@ -32,14 +32,6 @@ if !used()
   	O_SIFV
 endif
 
-if (!("U" $ TYPE("gSecurity")) .and. gSecurity=="D")
-	O_USERS
-	O_RULES
-	O_GROUPS
-	O_EVENTS
-	O_EVENTLOG
-endif
-
 if (IsRamaGlas() .or. gModul=="FAKT" .and. glRadNal)
 	O_RNAL
 endif

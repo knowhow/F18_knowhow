@@ -1038,7 +1038,6 @@ Dbcreate2(PRIVPATH+"ZAKSM", aDbf)
 select (F_ZAKSM)
 my_use ("zaksm", "ZAKSM", .t.)
 INDEX ON IdRadnik TAG ("1")           
-index ON BRISANO+"10" TAG "BRISAN" 
 Set Order To tag "1"
 
 // pokupi nezakljucene racune....................
@@ -1267,10 +1266,6 @@ BoxC()
 
 if Empty(ALLTRIM(cTipDok)) .and. Pitanje(,"Izbrisati doks ??","N")=="D"
 	ZAPP()
-	if gSQL=="D"
-		Gw("update doks set BRISANO='1'")
-   		Gw("delete from doks")
-	endif
 endif
 
 O_POS

@@ -133,7 +133,7 @@ local cHome
   cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
 #endif
 
-cHome := hb_DirSepAdd(cHome + ".F18")
+cHome := hb_DirSepAdd(cHome + ".f18")
 
 if cDatabase <> nil
  	cHome := hb_DirSepAdd(cHome + cDatabase)

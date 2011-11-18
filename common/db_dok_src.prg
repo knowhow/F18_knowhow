@@ -47,7 +47,7 @@ AADD(aDBf,{ "src_partne"         , "C" ,   6 ,  0 })
 AADD(aDBf,{ "src_opis"            , "C" ,  30 ,  0 })
 
 // kreiraj u KUMPATH
-if !FILE( ToUnix(KUMPATH + cDokSrcName + ".dbf"))
+if !FILE( f18_ime_dbf(cDokSrcName) )
 	DBCREATE2(KUMPATH + cDokSrcName + ".dbf", aDbf)
 endif
 
@@ -57,7 +57,7 @@ CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+
 CREATE_INDEX("2","src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", KUMPATH + cDokSrcName)
 
 // kreiraj u PRIVPATH
-if !FILE(ToUnix(PRIVPATH + cPDokSrcName + ".dbf"))
+if !FILE( f18_ime_dbf(cPDokSrcName))
 	DBCREATE2(PRIVPATH + cPDokSrcName + ".DBF", aDbf)
 endif
 // indexi....
@@ -445,7 +445,7 @@ AADD(aDBf,{ "p_up_date"           , "D" ,   8 ,  0 })
 AADD(aDBf,{ "p_up_time"           , "C" ,  10 ,  0 })
 
 // kreiraj u KUMPATH
-if !FILE(ToUnix(KUMPATH + cDbfName + ".DBF"))
+if !FILE( f18_ime_dbf(cDbfName))
 	DBCREATE2(KUMPATH + cDbfName + ".DBF", aDbf)
 endif
 // indexi....

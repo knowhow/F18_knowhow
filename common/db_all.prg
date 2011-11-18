@@ -246,7 +246,7 @@ return nil
 *           .f. - ne diraj (pretpostavlja se da je zapis vec zakljucan)
 */
 
-function appblank2(fcisti,funl)
+function appblank2(fcisti, funl)
 *{
 local aStruct,i, nPrevOrd, cnew_oid
 

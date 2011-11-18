@@ -60,82 +60,29 @@ endif
 
 fPostoji := .t.
 
-select ( F_TMP )
+select (F_TMP)
 my_use( cIme )
-  
+
 if USED()
-
-	nPos := FIELDPOS("BRISANO")
-    //nPos == nil ako nije otvoren DBF
-    
-    if nPos==0
-    	AddFldBrisano(cImeDbf)
-    endif
-
-    nOrder:=ORDNUMBER("BRISAN")
-    cOrdKey:=ORDKEY("BRISAN")
-    cTmpCDX := STRTRAN( cImeCDX, "." + INDEXEXT, "" )
-
-	if (nOrder==0)  .or. !(LEFT(cOrdKey,8)=="BRISANO")
-    	PRIVATE cPomKey:="BRISANO"
-      	PRIVATE cPomTag:="BRISAN"
-      	INDEX ON &cPomKey  TAG (cPomTag) TO (cTmpCDX)
-    endif
-
-    if (gSQL == "D")
-    	FillOid(cImeDbf, cImeCDX)
-      	if (fieldpos("_OID_")<>0)
-        	//tabela ima _OID_ polje
-        	nOrder:=ORDNUMBER("_OID_")
-        	if (nOrder==0)
-          		cPomKey:="_OID_"
-          		index on &cPomKey TAG "_OID_"  TO (cTmpCDX)
-        	endif
-      	endif
-    endif
-    
-    if (gSQL == "D")
-      if fieldpos("_SITE_")<>0
-        nOrder:=ORDNUMBER("_SITE_")
-        cOrdKey:=ORDKEY("_SITE_")
-        if norder=0  .or. !(left(cOrdKey,6)="_SITE_")
-          index on _SITE_  TAG _SITE_
-        endif
-      endif
-    endif
-
-    nOrder:=ORDNUMBER(cTag)
-    cOrdKey:=ordkey(cTag)
-    
+	nOrder := ORDNUMBER( cTag )
+	cOrdKey := ORDKEY( cTag )
 	select (F_TMP)
-    use
+	use
 else
-    MsgBeep("Nisam uspio otvoriti "+cImeDbf)
-    fPostoji:=.f.
+	msgbeep("Ne mogu otvoriti " + cImeDbf )
+	fPostoji := .f.
 endif
-  
+
 if !fPostoji
-	// nisam uspio otvoriti, znaci ne mogu ni kreirati indexs ..
-  	return
+	return
 endif
 
-if !FILE(LOWER(cImeCdx))  .or. nOrder==0  .or. UPPER(cOrdKey)<> UPPER(cKljuc)
+if nOrder == 0
+	log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeCDX)
+endif
 
+if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
 
-	cFulDbf := cImeDbf
-    if right(cFulDbf, 4) <> "." + DBFEXT
-        
-		cFulDbf := trim(cFulDbf) + "." + DBFEXT
-        if AT(SLASH,cFulDbf)==0  // onda se radi o kumulativnoj datoteci
-             cFulDbf := alltrim(cDirRad) + SLASH + cFulDbf
-        endif
-     
-     endif
-     
-     if  !IsFreeForReading(cFulDBF,fSilent)
-           return .f.
-     endif
-  
      SELECT(F_TMP) 
      my_use(cIme)
  
@@ -159,10 +106,10 @@ if !FILE(LOWER(cImeCdx))  .or. nOrder==0  .or. UPPER(cOrdKey)<> UPPER(cKljuc)
         // da ne bi ispao ovo stavljam !!
      else
 
-     cImeCdx:=strtran(cImeCdx,"."+INDEXEXT,"")
+     	cImeCdx:=strtran(cImeCdx,"."+INDEXEXT,"")
      
-     INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
-     USE
+     	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
+     	USE
      endif
 
      if !fSilent

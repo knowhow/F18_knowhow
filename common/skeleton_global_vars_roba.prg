@@ -38,8 +38,8 @@ public gUgostVarijanta
 // D - starija varijanta ???
 // N - obicno robno knjigovodstvo
 
-glPoreziLegacy := "D"
-glUgost := "N"
+glPoreziLegacy := .t.
+glUgost := .f.
 
 //RMarza_DLimit - osnovica realizovana marza ili donji limit
 //MpcSaPor - Maloprodajna cijena sa porezom

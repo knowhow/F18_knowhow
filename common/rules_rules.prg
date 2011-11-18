@@ -77,7 +77,7 @@ return PADR(cSeek, 100)
 // da li se koriste pravila
 // -----------------------------------------------
 function is_fmkrules()
-if !file(ToUnix(SIFPATH + "FMKRULES.DBF"))
+if !file( f18_ime_dbf("fmkrules"))
 	return .f.
 endif
 return .t.

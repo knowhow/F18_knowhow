@@ -37,9 +37,6 @@ AADD(ImeKol, { PADC("Naziv",35), {|| LEFT(naz, 35)}, "naz" })
 
 if IsPDV()
 	AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
-  	if glUgost
-     		AADD(ImeKol,  { "Por.potr", {|| zpp},  "zpp"  } ) 
-  	endif
 endif
 
 if !IsPDV()

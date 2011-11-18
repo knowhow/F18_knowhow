@@ -132,5 +132,9 @@ return
 *}
 
 
+function addoidfields()
+return
+
+
 function OL_YIELD()
 return

@@ -563,19 +563,7 @@ do case
      uslovsif()
      return DE_REFRESH
 
-  case Ch==K_ALT_F9
-	if SigmaSif("UNDEL")
-		set deleted off
-		go top
-		do while !eof()
-			dbrecall()
-			replace brisano with " "
-			skip 1
-		enddo
-	endif
-	return DE_REFRESH
-
-  case Ch==K_CTRL_T
+   case Ch==K_CTRL_T
     if Pitanje(,"Zelite li izbrisati ovu stavku ??","D")=="D"
       sql_delete()
       delete

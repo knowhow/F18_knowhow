@@ -200,13 +200,6 @@ local cCDX
 
 cIme := f18_ime_dbf(cIme)
 
-
-nPos:=ASCAN(aDbf,  {|x| x[1]=="BRISANO"} )
-if nPos==0
-	AADD(aDBf,{ 'BRISANO'      , 'C' ,  1 ,  0 })
-endif
-
-
 cCDX:= strtran(cIme,"." + DBFEXT, "." + INDEXEXT)
 
 if right(cCDX, 4) == "." + INDEXEXT
@@ -217,6 +210,7 @@ DBCREATE(cIme, aDbf, cDriver)
 return .t.
 
 
+/*
 function AddOidFields(aDbf)
 *{
 
@@ -229,3 +223,6 @@ AADD(aDbf,{"_USER_", "N", 3, 0})
 
 return
 *}
+*/
+
+

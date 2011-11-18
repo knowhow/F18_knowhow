@@ -6,14 +6,16 @@
 
 #define F18_DEFINED
 
-#define FMK_LIB_VER  "0.2.0"
+#define FMK_LIB_VER  "0.2.1"
 
 
-#define EXEPATH   GetExePath(trim(cDirRad))
-#define SIFPATH   trim(cDirSif)+SLASH
-#define PRIVPATH  trim(cDirPriv)+SLASH
-#define KUMPATH   trim(cDirRad)+SLASH
-#define CURDIR    "."+SLASH
+#define EXEPATH   my_home_root()
+#define SIFPATH   my_home()
+
+#define PRIVPATH my_home()
+
+#define KUMPATH  my_home()
+#define CURDIR   my_home()
 
 #command ESC_EXIT  => if lastkey()=K_ESC;
                       ;exit             ;

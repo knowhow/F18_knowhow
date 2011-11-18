@@ -298,7 +298,7 @@ elseif cPrinter=="V"
 	
 	//VidiFajl(cKom,gaZagFix,gaKolFix)
     #ifdef __PLATFORM__WINDOWS
-        run ("vi " + ToUnix(PRIVPATH + cFName)) 
+        run ("gvim " + ToUnix(PRIVPATH + cFName)) 
     #else    
         run ("mvim " + ToUnix(PRIVPATH + cFName)) 
 	#endif

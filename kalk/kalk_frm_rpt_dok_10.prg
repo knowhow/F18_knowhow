@@ -231,7 +231,7 @@ select KONTO; HSEEK cIdKonto
 ?  "MAGACINSKI KONTO zaduzuje :",cIdKonto,"-",naz
 
 
-if !empty(pripr->Idzaduz2) 
+if !empty(kalk_pripr->Idzaduz2) 
 	?? " Rad.nalog:", kalk_pripr->Idzaduz2
 endif
 

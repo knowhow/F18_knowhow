@@ -29,7 +29,7 @@ if !(cidvd $ "16") .or. "-X"$cBrDok .or. Pitanje(,"Formirati dokument radi evide
   return .f.
 endif
 
-cBrUlaz := PADR( TRIM(PRIPR->brdok)+"-X" , 8 )
+cBrUlaz := PADR( TRIM(kalk_pripr->brdok)+"-X" , 8 )
 
 select kalk_pripr
 go top
@@ -39,7 +39,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
   select kalk_pripr2
    append blank
     _brdok:=cBrUlaz
-    _idkonto:="X-"+TRIM(pripr->idkonto)
+    _idkonto:="X-"+TRIM(kalk_pripr->idkonto)
     _MKonto:=_idkonto
     _TBankTr:="X"    // izgenerisani dokument
      gather()

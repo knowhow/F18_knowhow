@@ -30,9 +30,11 @@
 
 //OVA ZAGLAVLJA NAPUSTITI!
 #define F_PRIPR     17
-#define F_FIN_PRIPR     17
-#define F_FAKT_PRIPR     17
-#define F_KALK_PRIPR     17
+#define F_FIN_PRIPR     18
+#define F_FAKT_PRIPR     19
+#define F_KALK_PRIPR     20
+#define F_KALK_PRIPR2    212
+#define F_KALK_PRIPR9    213
 #define F_DOKS      18
 #define F_DOKS2     19
 
@@ -104,6 +106,7 @@
 //KALK
 #define F_KPRIPR    85 
 #define F_FINMAT    86
+#define F_KALK_FINMAT    221
 #define F_KALK      87
 #define F_PORMP     88
 #define F_PRIPR2    89

@@ -470,7 +470,7 @@ do while !EOF()
 	replace field->np_st with ( field->tp_ul - ;
 		field->np_iz )
 	
-	replace field->np_nvi with ( field->np_nvi + (pripr->nc * kalk_pripr->kolicina) )
+	replace field->np_nvi with ( field->np_nvi + (kalk_pripr->nc * kalk_pripr->kolicina) )
 	
 	replace field->np_nvs with ( field->tp_nvu - ;
 		field->np_nvi )

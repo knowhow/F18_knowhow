@@ -77,7 +77,7 @@ select kalk_pripr
 m:="--- ---------- ---------- "+IF(g11bezNC=="D","","---------- ")+"---------- ---------- "+IF(g11bezNC=="D","","---------- ---------- ")+"---------- ---------- ---------- --------- -----------"
 
 ? m
-select koncij; seek trim(pripr->mkonto); select kalk_pripr
+select koncij; seek trim(kalk_pripr->mkonto); select kalk_pripr
 
 if koncij->naz=="P2"
   ? "*R * ROBA     * Kolicina "+IF(g11bezNC=="D","","*  NAB.CJ  ")+"* Plan.Cj. *  TROSAK  *"+IF(g11bezNC=="D","","  NAB.CJ  *  MARZA   *")+"  MARZA  *    MPC   *   PPP %  *   PPP    *  MPC     *"
@@ -88,7 +88,7 @@ endif
 ? "*  *          *          "+IF(g11bezNC=="D","","*          ")+"*          *          *"+IF(g11bezNC=="D","","          *          *")+"         *          *          *          *          *"
 ? m
 
-select koncij; seek trim(pripr->pkonto); select kalk_pripr
+select koncij; seek trim(kalk_pripr->pkonto); select kalk_pripr
 nTot1:=nTot1b:=nTot2:=nTot3:=nTot4:=nTot4b:=nTot5:=nTot6:=nTot7:=0
 
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2

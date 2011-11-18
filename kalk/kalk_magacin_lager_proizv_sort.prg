@@ -312,7 +312,7 @@ local cKto
 ::dDatDo:=DATE()
 
 O_KALK_PRIPR
-::cIdKonto:=PADR("1310",LEN(pripr->mKonto))
+::cIdKonto:=PADR("1310",LEN(kalk_pripr->mKonto))
 USE
 
 ::cUslRoba:=SPACE(60)

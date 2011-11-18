@@ -33,14 +33,15 @@ function Niv_11()
 *{
 O_TARIFA
 O_KONCIJ
-O_KALK_PRIPR
 O_KALK_PRIPR2
+O_KALK_PRIPR
 O_KALK
 O_SIFK
 O_SIFV
 O_ROBA
 
-select kalk_pripr; go top
+select kalk_pripr
+go top
 private cIdFirma:=idfirma,cIdVD:=idvd,cBrDok:=brdok
 if !(cidvd $ "11#81") .and. !empty(gMetodaNC)
   closeret

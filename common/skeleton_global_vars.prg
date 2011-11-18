@@ -12,6 +12,8 @@
 
 #include "fmk.ch"
 
+
+
 // -----------------------
 // -----------------------
 function set_global_vars()
@@ -21,89 +23,53 @@ CreParams()
 SetSpecifVars()
 SetValuta()
 
-public gFirma:="10"
-public gTS:="Preduzece"
+public gFirma := "10"
+public gTS := "Preduzece"
+public gNFirma := space(20)  
+public gZaokr := 2
+public gTabela := 0
+public gPDV := ""
 
-private cSection:="K",cHistory:=" "; aHistory:={}
-public gNFirma:=space(20)  // naziv firme
-public gZaokr:=2
-public gTabela:=0
-public gPDV:=""
+// novi parametri...
+f18_get_metric("Zaokruzenje", @gZaokr)
+f18_get_metric("FirmaID", @gFirma)
+f18_get_metric("FirmaNaziv", @gNFirma)
+f18_get_metric("TipSubjekta", @gTS)
+f18_get_metric("TipTabele", @gTabela)
 
-if gModul=="FAKT" .or. gModul=="FIN"
-	cSection:="1"
-endif
-
-O_PARAMS
-
-RPar("za",@gZaokr)
-Rpar("fn",@gNFirma)
-Rpar("ts",@gTS)
-Rpar("tt",@gTabela)
-
-if gModul=="FAKT"
-	Rpar("fi",@gFirma)
-else
-	Rpar("ff",@gFirma)
-endif
-
-if (gModul<>"POS" .and. gModul<>"TOPS" .and. gModul<>"HOPS")
+if (gModul <> "POS" .and. gModul <> "TOPS" .and. gModul <> "HOPS" )
 	if empty(gNFirma)
 	  Box(,1,50)
 	    Beep(1)
 	    @ m_x+1,m_y+2 SAY "Unesi naziv firme:" GET gNFirma pict "@!"
 	    read
 	  BoxC()
-	  WPar("fn",gNFirma)
+	  f18_set_metric( "FirmaNaziv", gNFirma )
 	endif
 endif
 
-// u sekciji 1 je pdv parametar
-cSection := "1"
-
 if gModul <> "TOPS" 
-	RPar("PD",@gPDV)
-	ParPDV()
-	// odjavi gSql
-	//lSql:=.f.
-	//if gModul=="TOPS" .and. gSql=="D"
-	//	lSql:=.t.
-	//	gSql:="N"
-	//endif
-	WPar("PD",gPDV)
-	//if lSql
-	//	gSql:="D"
-	//endif
-endif
 
-select (F_PARAMS)
-use
+	f18_get_metric( "PDVGlobal", @gPDV )
+	ParPDV()
+	f18_set_metric( "PDVGlobal", gPDV )
+
+endif
 
 public gPartnBlock
-gPartnBlock:=NIL
+gPartnBlock := nil
 
-public gSecurity
-gSecurity:=IzFmkIni("Svi","Security","N",EXEPATH)
+public gSecurity := "D"
+public gnDebug := 0
 
-public gnDebug
 gnDebug:=VAL(IzFmkIni("Svi","Debug","0",EXEPATH))
 
-public gNoReg
-if IzFmkIni("Svi","NoReg","N",EXEPATH)=="D"
-	gNoReg:=.t.
-elseif IzFmkIni("Svi","NoReg","N",EXEPATH)=="N"
-	gNoReg:=.f.
-else
-	gNoReg:=.f.
-endif
-
-public gOpSist
+public gOpSist := "-"
 gOpSist:=IzFmkIni("Svi","OS","-",EXEPATH)
 
-public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
+public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
-public gNovine
-gNovine:=IzFmkIni("STAMPA","Opresa","N",KUMPATH)
+public gNovine := "N"
 
 if gModul<>"TOPS"
 	if goModul:oDataBase:cRadimUSezona == "RADP"
@@ -166,4 +132,5 @@ if gPDV=="D"
 	return .t.
 endif
 return .f.
+
 

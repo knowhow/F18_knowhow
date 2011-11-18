@@ -335,7 +335,7 @@ local nOrder
   PushWa()
   set filter to
   //nOrder:=indexord()
-  set order to 4 //idFirma+pkonto+idroba+dtos(datdok)
+  set order to tag "4" //idFirma+pkonto+idroba+dtos(datdok)
   seek cseek+"X"
   skip -1
   do while !bof() .and. idfirma+pkonto+idroba==cseek
@@ -488,7 +488,7 @@ function StanjeProd(cKljuc,ddatdok)
 *{
  LOCAL nUlaz:=0, nIzlaz:=0
  SELECT KALK
- SET ORDER TO 4
+ set order to tag "4"
  GO TOP
  SEEK cKljuc
  DO WHILE !EOF() .and. cKljuc==idfirma+pkonto+idroba

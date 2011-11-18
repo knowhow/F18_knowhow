@@ -281,7 +281,7 @@ MsgO("Azuriram kalk_pripremu ...")
 
 select kalk_pripr; go top
 
-select kalk_doks; set order to 3
+select kalk_doks; set order to tag "3"
 seek cidfirma+dtos(kalk_pripr->datdok)+chr(255)
 skip -1
 if datdok==kalk_pripr->datdok
@@ -306,7 +306,7 @@ else
   endif
 endif
 select kalk_doks
-set order to 1
+set order to tag "1"
 select KALK
 
 select kalk_pripr
@@ -626,12 +626,12 @@ endif
 O_KALK_DOKS
 
 O_KALK
-set order to 1
+set order to tag "1"
 
 O_KALK_PRIPR
 
 SELECT KALK
-set order to 1  // idFirma+IdVD+BrDok+RBr
+set order to tag "1"  // idFirma+IdVD+BrDok+RBr
 
 cIdFirma:=gfirma
 cIdVD:=space(2)
@@ -811,7 +811,7 @@ O_KALK_PRIPR9
 O_KALK_PRIPR
 
 SELECT kalk_pripr9
-set order to 1  // idFirma+IdVD+BrDok+RBr
+set order to tag "1"  // idFirma+IdVD+BrDok+RBr
 
 if ((cIdFirma == nil) .and. (cIdVd == nil) .and. (cBrDok == nil))
 	lSilent := .f.
@@ -946,7 +946,7 @@ O_KALK_PRIPR9
 O_KALK_PRIPR
 
 //CREATE_INDEX(PRIVPATH+"PRIPR9i3","dtos(datdok)+mu_i+pu_i",PRIVPATH+"PRIPR9")
-SELECT kalk_pripr9; set order to 3  // str(datdok)
+SELECT kalk_pripr9; set order to tag "3"  // str(datdok)
 cidfirma:=gfirma
 cIdVD:=space(2)
 cBrDok:=space(8)
@@ -972,7 +972,7 @@ do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
 enddo
 //CREATE_INDEX(PRIVPATH+"PRIPR9i1","idFirma+IdVD+BrDok+RBr",PRIVPATH+"PRIPR9")
 
-set order to 1
+set order to tag "1"
 select kalk_pripr9
 seek cidfirma+cidvd+cBrDok
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
@@ -1008,7 +1008,7 @@ O_KALK_DOKS
 O_KALK
 O_KALK_PRIPR
 
-SELECT kalk; set order to 5  // str(datdok)
+SELECT kalk; set order to tag "5"  // str(datdok)
 cidfirma:=gfirma
 cIdVD:=space(2)
 cBrDok:=space(8)

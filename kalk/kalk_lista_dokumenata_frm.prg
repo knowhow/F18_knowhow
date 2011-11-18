@@ -261,7 +261,7 @@ cIdFirma:=left(cIdFirma,2)
 O_KALK_DOKS
 select kalk
 select kalk_doks
-set order to 3
+set order to tag "3"
 //CREATE_INDEX("DOKSi3","IdFirma+dtos(datdok)+podbr","DOKS")
 
 Box(,19,77)
@@ -338,14 +338,14 @@ do case
 
      go nTrecDok
 
-     select kalk_doks;  set order to 1
+     select kalk_doks;  set order to tag "1"
      seek cidfirma+cidvd+cbrdok
      replace podbr with cGPodbr
 
      seek cidfirma+cgidvd+cgbrdok
      replace podbr with cPodbr
 
-     select kalk; set order to 1
+     select kalk; set order to tag "1"
      seek cidfirma+cidvd+cbrdok
      do while !eof() .and. cIdFirma+cidvd+cbrdok=idfirma+idvd+brdok
        replace podbr with cGPodbr
@@ -357,7 +357,7 @@ do case
        skip
      enddo
 
-     select kalk_doks; set order to 3
+     select kalk_doks; set order to tag "3"
      go nTrecDok
 
      nRet:=DE_REFRESH
@@ -370,7 +370,7 @@ do case
      PushWa()
      cSeek:=idfirma+idvd+brdok
      close all
-     Stkalk(.t.,cSeek)
+     kalk_centr_stampa_dokumenta(.t.,cSeek)
      O_KALK
      O_KALK_DOKS
      PopWA()
@@ -386,7 +386,7 @@ return nRet
 
 function BrowseDok()
 *{
-select kalk; set order to 1
+select kalk; set order to tag "1"
 
 Box(,15,77,.t.,"Pregled dokumenta")
 
@@ -458,9 +458,9 @@ if !empty(cpkonto)
    endif
 endif
 if empty(cPkonto)
-   set order to 3
+   set order to tag "3"
 else
-   set order to 4
+   set order to tag "4"
 endif
 
 Box(,15,77,.t.,"Pregled  kartice "+iif(empty(cPkonto),cMKonto,cPKonto))
@@ -586,7 +586,7 @@ else
 endif
 
 select kartica; use  // kartica
-select kalk; set order to 1
+select kalk; set order to tag "1"
 go nTreckalk
 
 BoxC()

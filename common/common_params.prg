@@ -15,26 +15,6 @@
 #define  CHR254   254
 
 
- 
-/****f* SC_PAR/RPar ***
- 
-*AUTOR
-   ernad.h 
-
-*IME
-  RPar
-  
-*OPIS
-   Citanje, pisanje parametara u DBF fajlove
-
-*SYNOPSIS
-   RPar(cImeVar, xArg)
-
-*DATUM
-   00.00.96
-
-****/
-
 function RPar(cImeVar,xArg)
 
 local cPom, clTip
@@ -69,30 +49,6 @@ if clTip=="C" .and. gKonvertPath=="D" .and. ( ":\" $ xArg )
 endif
 
 RETURN NIL
-
-
-/****v SC_PAR/sekcija_KonvertPath ***
-
-*AUTOR
- Ernad Husremovic ernad@sigma-com.net
-
-*IME
- sekcija_KonvertPath
-
-*OPIS
- Pravila promjene direktorija koji su definisu lokacije
- podataka
- 
-*PRIMJER
- [KonvertPath]
- kNum=3
- k1=C:\SIGMA\FAKT\1 C:\var\data1\SIGMA\FAKT\1
- k2=C:\SIGMA C:\var\data1\SIGMA
- k3=C:\SIGMA\FAKT\K I:\var\data1\SIGMA\K
-
-*BILJESKE
-
-****/
 
 
 function KonvertPath(cPath)

@@ -21,7 +21,8 @@ O_SIFV
 O_ROBA
 O_KALK
 if Pitanje(,"Prodji kroz neobradjene stavke","N")="D"
-  set order to 0 ; go top
+  set order to 
+  go top
   MsgO("Prolaz#................")
   nCnt:=0
   do while !eof() .and. IspitajPrekid()
@@ -48,7 +49,7 @@ if Pitanje(,"Prodji kroz neobradjene stavke","N")="D"
   Msgc()
 endif
 
-set order to 3
+set order to tag "3"
 //CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
 go top
 aDbf:={}
@@ -142,7 +143,7 @@ function EdLLM()
 local cDn:="N",nTrecDok:=0,nRet:=DE_CONT
 do case
   case Ch==K_ENTER
-         select kalk; set order to 3
+         select kalk; set order to tag "3"
          //CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
          go llm->recno
          BrowseKart()

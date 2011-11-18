@@ -54,7 +54,7 @@ O_SIFV
 O_ROBA
 O_TARIFA
 O_KALK
-set order to 6
+set order to tag "6"
 
 private cFilt1:=""
 

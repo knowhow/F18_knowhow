@@ -23,7 +23,7 @@ local cImeDBF
 
 cImeDBF:=ToUnix(KUMPATH+"izvje.dbf")
 
-if !file(cImeDBF)
+if !file(f18_ime_dbf("izvje"))
    aDBf:={}
    AADD(aDBf,{ 'ID'      , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'NAZ'     , 'C' ,  50 ,  0 })
@@ -39,7 +39,7 @@ endif
 CREATE_INDEX("ID","id",cImeDBF)
 
 cImeDBF:=ToUnix(KUMPATH+"koliz.dbf")
-if !file(cImeDBF)
+if !file(f18_ime_dbf("koliz"))
    aDBf:={}
    AADD(aDBf,{ 'ID'      , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'NAZ'     , 'C' ,  20 ,  0 })
@@ -61,7 +61,7 @@ CREATE_INDEX("ID","id"         ,cImeDBF)
 CREATE_INDEX("1" ,"STR(rbr,2)" ,cImeDBF)
 
 cImeDBF:=ToUnix(KUMPATH+"zagli.dbf")
-if !file(cImeDBF)
+if !file(f18_ime_dbf("zagli"))
    aDBf:={}
    AADD(aDBf,{ 'ID'      , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'x1'      , 'N' ,   3 ,  0 })
@@ -72,7 +72,7 @@ endif
 CREATE_INDEX( "ID", "id"                  , cImeDBF)
 CREATE_INDEX( "1" , "STR(x1,3)+STR(y1,3)" , cImeDBF)
 cImeDBF:=ToUnix(KUMPATH+"koniz.dbf")
-if !file(cImeDBF)
+if !file(f18_ime_dbf("koniz"))
    aDBf:={}
    AADD(aDBf,{ 'IZV'     , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'ID'      , 'C' ,  20 ,  0 })

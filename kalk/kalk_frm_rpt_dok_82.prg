@@ -139,7 +139,7 @@ if prow()>61+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
 IF prow()>55+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3);  endif
 nRec:=recno()
 select kalk_pripr
-set order to 2
+set order to tag "2"
 seek cidfirma+cidvd+cbrdok
 m:="------ ---------- ---------- ---------- ---------- ---------- ----------"
 ? m
@@ -184,7 +184,7 @@ IF prow()>56+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3);  endif
 ? "RUC:";  @ prow(),pcol()+1 SAY nTot5 pict picdem
 ? m
 
-set order to 1
+set order to tag "1"
 go nRec
 return
 *}

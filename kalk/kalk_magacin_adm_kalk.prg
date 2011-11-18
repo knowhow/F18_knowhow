@@ -54,7 +54,7 @@ cBr95 := kalk_sljedeci( gFirma, "95" )
 select koncij
 seek trim(cMagac)
 select kalk
-set order to 3
+set order to tag "3"
 HSEEK gFirma+cMagac
 
 do while !eof() .and. idfirma+mkonto=gFirma+cMagac

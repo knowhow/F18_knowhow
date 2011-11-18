@@ -1817,7 +1817,7 @@ endif
 
 if lStampaj == .t.
 	// odstampaj kalk
-	StKalk( nil, nil, .t. )
+	kalk_centr_stampa_dokumenta( nil, nil, .t. )
 endif
 
 // azuriraj kalk
@@ -1841,7 +1841,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 		endif
 		
 		if lStampaj == .t.
-			StKalk(nil, nil, .t.)
+			kalk_centr_stampa_dokumenta(nil, nil, .t.)
 		endif
 		
 		Azuriranje_kalk_dokumenta( .t. )

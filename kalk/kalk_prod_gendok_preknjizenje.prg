@@ -238,7 +238,7 @@ endif
 
 MsgO("Setujem tarifa PDV17...")
 O_ROBA
-SET ORDER TO 0
+SET ORDER TO
 go TOP
 do while !eof()
    if IsPDV() 

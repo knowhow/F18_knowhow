@@ -103,7 +103,7 @@ O_KALK    // ne ide O_KALKREP zbog toga çto polje BRFAKTP ne postoji
           // u bazi KALKS (var.2), kao ni polja PREVOZ i ostali zavisni
           // troçkovi nabavke
 select kalk
-set order to 5
+set order to tag "5"
 //CREATE_INDEX("KALKi5","idFirma+dtos(datdok)+idvd+brdok+rbr","KALK")
 
 hseek cIdFirma

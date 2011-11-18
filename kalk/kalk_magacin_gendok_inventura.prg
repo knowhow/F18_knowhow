@@ -75,7 +75,7 @@ ELSE
 ENDIF
 
 nRbr:=0
-set order to 3
+set order to tag "3"
 
 
 MsgO("Generacija dokumenta IM - "+cBrdok)
@@ -240,7 +240,7 @@ O_KALK
 private cBrDok:=SljBroj(cIdFirma, "IM", 8)
 
 select kalk
-set order to 3
+set order to tag "3"
 
 nRbr:=0
 

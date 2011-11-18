@@ -12,38 +12,8 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/specif/planika/1g/rpt_rekp.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.2 $
- * $Log: rpt_rekp.prg,v $
- * Revision 1.2  2003/11/11 14:06:35  sasavranic
- * Uvodjenje f-je IspisNaDan()
- *
- * Revision 1.1  2002/06/30 08:57:26  ernad
- *
- *
- * Rekapitulacija - planika -> rpt_rekp.prg
- *
- *
- */
- 
- 
-/*! \fn Planika2()
- *  \brief Rekapitulacija za period 
- *  \ingroup Planika
- * \code
- *  Kolone:
- *  R.br; Artikal (id, naz, jmj, tarifa); poc.stanje (kol/iznos); 
- *  prijem (kol/iznos); prodaja (kol/iznos); reklamac (kol/iznos);
- *  stanje (kol/iznos)"
- */
- 
+
 function Planika2()
-*{
 cIdFirma:=gFirma
 cIdKonto:=padr("1320",gDuzKonto)
 if IzFMKIni("Svi","Sifk")=="D"
@@ -95,7 +65,7 @@ else
 endif
 
 select kalk
-set order to 4
+set order to tag "4"
 //CREATE_INDEX("4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
 HSEEK cIdFirma+cIdKonto
 EOF CRET

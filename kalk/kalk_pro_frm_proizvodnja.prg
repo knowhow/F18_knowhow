@@ -230,7 +230,7 @@ endif
 // preracunaj nc proiz
 nTT0Rec:=recno()
 select kalk_pripr
-set order to 1
+set order to tag "1"
 go top
 
 nNV:=0

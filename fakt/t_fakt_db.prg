@@ -261,7 +261,7 @@ if (nArea==-1 .or. nArea==(F_UPL))
    	AADD(aDBf,{'IDPARTNER'  ,'C', 6,0})
    	AADD(aDBf,{'OPIS'       ,'C',30,0})
    	AADD(aDBf,{'IZNOS'      ,'N',12,2})
-   	if !FILE(KUMPATH+"UPL.DBF")
+   	if !FILE(f18_ime_dbf("UPL"))
 		DBcreate2(KUMPATH+"UPL.DBF",aDbf)
 	endif
 
@@ -276,7 +276,7 @@ if (nArea==-1 .or. nArea==(F_FTXT))
 	aDbf:={}
         AADD(aDBf,{'ID'  ,'C',  2 ,0})
         AADD(aDBf,{'NAZ' ,'C',340 ,0})
-	if !FILE(SIFPATH+"FTXT.DBF")
+	if !FILE(f18_ime_dbf("FTXT"))
         	DBcreate2(SIFPATH+'FTXT.DBF',aDbf)
 	endif
 	
@@ -317,7 +317,7 @@ endif
 if (nArea==-1 .or. nArea==(F_FAKT))
 	//FAKT.DBF
 	
-	if !FILE(KUMPATH+'FAKT.DBF')
+	if !FILE(f18_ime_dbf("FAKT"))
         	DBcreate2(KUMPATH+'FAKT.DBF',aDbf)
 	endif
 	
@@ -386,7 +386,7 @@ endif
 if (nArea==-1 .or. nArea==(F__FAKT))
 	//_FAKT.DBF
 	
-	if !FILE(PRIVPATH+'_FAKT.DBF')
+	if !FILE(f18_ime_dbf("_FAKT"))
         	DBcreate2(PRIVPATH+'_FAKT.DBF',aDbf)
 	endif
 
@@ -472,7 +472,7 @@ if (nArea==-1 .or. nArea==(F_VRSTEP))
 	AADD(aDbf,{"ID" ,"C", 2,0})
 	AADD(aDbf,{"NAZ","C",20,0})
 	
-	if !FILE(SIFPATH+"VRSTEP.DBF")
+	if !FILE(f18_ime_dbf("vrstep"))
 		DBcreate2(SIFPATH+"VRSTEP.DBF",aDbf)
 	endif
 	

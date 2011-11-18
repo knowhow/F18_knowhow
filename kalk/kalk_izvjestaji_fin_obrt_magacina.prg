@@ -172,7 +172,7 @@ private cZText1 := SetRptLineAndText(aLineArgs, 1)
 private cZText2 := SetRptLineAndText(aLineArgs, 2)
 
 SELECT reka22
-set order to 1
+set order to tag "1"
 
 go top
 

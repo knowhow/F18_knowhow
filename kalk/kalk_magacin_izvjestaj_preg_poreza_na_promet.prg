@@ -57,7 +57,7 @@ BoxC()
 
 O_TARIFA
 O_KALK
-set order to 1 
+set order to tag "1" 
 //idFirma+IdVD+BrDok+RBr
 
 private cFilt1:=""

@@ -965,7 +965,7 @@ local aDbf
 
 // STRINGS.DBF
 cIme := "strings.dbf"
-if !File( SIFPATH + cIme + ".dbf")
+if !File( f18_ime_dbf("strings"))
 	aDBf := g_str_fields()
    	DbCreate2( SIFPATH + cIme, aDbf)
 endif

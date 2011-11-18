@@ -258,25 +258,25 @@
 #xcommand O_R_PDV   => select(F_R_PDV);  my_use  ("r_pdv")  
 
 // modul LD
-#xcommand O_RADN    => select (F_RADN); my_use ("radn"); set order to 1
+#xcommand O_RADN    => select (F_RADN); my_use ("radn"); set order to tag "1"
 #xcommand O_TPRSIHT => select (F_TPRSIHT); my_use ("tprsiht"); set order to tag "ID"
 #xcommand O_NORSIHT => select (F_NORSIHT); my_use ("norsiht"); set order to tag "ID"
 #xcommand O_RADSIHT => select (F_RADSIHT); my_use ("radsiht"); set order to tag "1"
 #xcommand O__RADN   => select (F__RADN);  my_use ("_radn")
-#xcommand O_RADKR   => select (F_RADKR);  my_use ("radkr"); set order to  1
-#xcommand O_RADKRX  => select (F_RADKR);  my_use ("radkr") ; set order to  0
+#xcommand O_RADKR   => select (F_RADKR);  my_use ("radkr"); set order to tag "1"
+#xcommand O_RADKRX  => select (F_RADKR);  my_use ("radkr") ; set order to tag "0"
 #xcommand O__RADKR  => select (F__RADKR);  my_use ("_radkr")
-#xcommand O_LD      => select (F_LD);      my_use ("ld"); set order to 1
-#xcommand O_LDX     => select (F_LD);    my_use ("ld") ; set order to 1
+#xcommand O_LD      => select (F_LD);      my_use ("ld"); set order to tag "1"
+#xcommand O_LDX     => select (F_LD);    my_use ("ld") ; set order to tag "1"
 #xcommand O__LD     => select (F__LD);    my_use ("_ld")
-#xcommand O_LDSM    => select (F_LDSM);   my_use ("ldsm") ; set order to 1
-#xcommand O_LDSMX   => select (F_LDSM);   my_use ("ldsm") ; set order to 0
-#xcommand O_OPSLD   => select 95; my_use ("opsld") ; set order to 1
+#xcommand O_LDSM    => select (F_LDSM);   my_use ("ldsm") ; set order to tag "1"
+#xcommand O_LDSMX   => select (F_LDSM);   my_use ("ldsm") ; set order to tag "0"
+#xcommand O_OPSLD   => select 95; my_use ("opsld") ; set order to tag "1"
 #xcommand O_REKLD0  => select (F_REKLD); my_use ("rekld")
-#xcommand O_REKLD   => select (F_REKLD); my_use ("rekld") ; set order to 1
-#xcommand O_REKLDP  => select (F_REKLDP); my_use ("rekldp") ; set order to 1
+#xcommand O_REKLD   => select (F_REKLD); my_use ("rekld") ; set order to tag "1"
+#xcommand O_REKLDP  => select (F_REKLDP); my_use ("rekldp") ; set order to tag "1"
 #xcommand O_LD_RJ   => select (F_RJ); my_use ("ld_rj") ; set order to tag "ID"
-#xcommand O_KBENEF  => select (F_KBENEF); my_use (SIFPATH+"kbenef")  ;set order to tag "ID"
+#xcommand O_KBENEF  => select (F_KBENEF); my_use (SIFPATH+"kbenef") ; set order to tag "ID"
 #xcommand O_POR     => select (F_POR); my_use (SIFPATH+"por")  ; set order to tag "ID"
 #xcommand O_DOPR    => select (F_DOPR); my_use (SIFPATH+"dopr") ; set order to tag "ID"
 #xcommand O_KRED    => select (F_KRED); my_use (SIFPATH+"kred")  ; set order to tag "ID"

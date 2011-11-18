@@ -48,7 +48,7 @@ endif
 nSec:=SECONDS()
 
 SELECT kalk
-set order to 0
+set order to
 
 PRIVATE cFilt1:=""
 

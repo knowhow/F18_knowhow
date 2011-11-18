@@ -888,7 +888,7 @@ endif
 
 if lStampaj == .t.
 	// odstampaj kalk
-	StKalk( nil, nil, .t. )
+	kalk_centr_stampa_dokumenta( nil, nil, .t. )
 endif
 
 // azuriraj kalk

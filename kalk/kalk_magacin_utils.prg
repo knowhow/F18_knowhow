@@ -35,7 +35,7 @@ if lAutoObr == .t.
 endif
 
 select kalk
-set order to 4  //idFirma+pkonto+idroba+pu_i+IdVD
+set order to tag "4"  //idFirma+pkonto+idroba+pu_i+IdVD
 seek cIdFirma+cIdKonto+cIdRoba+chr(254)
 skip -1
 if cIdfirma+cIdkonto+cIdroba==idfirma+pkonto+idroba .and. _datdok<datdok
@@ -377,7 +377,7 @@ select kalk
 PushWa()
 set filter to
 //nOrder:=indexord()
-set order to 3 //idFirma+mkonto+idroba+dtos(datdok)
+set order to tag "3" //idFirma+mkonto+idroba+dtos(datdok)
 seek cseek+"X"
 skip -1
 
@@ -415,7 +415,7 @@ return
 function PratiKMag(cIdFirma,cIdKonto,cIdRoba)
 *{
 local nPom
-select kalk ; set order to 3
+select kalk ; set order to tag "3"
 hseek cIdFirma+cIdKonto+cIdRoba
 //"KALKi3","idFirma+mkonto+idroba+dtos(datdok)+PODBR+MU_I+IdVD",KUMPATH+"KALK")
 

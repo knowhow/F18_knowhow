@@ -90,7 +90,7 @@ endif
 
 O_KALKREP
 select kalk
-set order to 4
+set order to tag "4"
 //"idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD"
 
 cFilt1:="Pkonto="+cm2Str(cIdkonto)

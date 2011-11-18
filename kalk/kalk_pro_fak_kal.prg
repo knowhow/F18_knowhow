@@ -68,7 +68,7 @@ endif
 
 if gBrojac=="D" .and. lTest == .f.
  select kalk
- select kalk; set order to 1;seek cidfirma+"96X"
+ select kalk; set order to tag "1";seek cidfirma+"96X"
  skip -1
  if idvd<>"96"
    cbrkalk:=space(8)
@@ -419,7 +419,7 @@ cBrkalk:=space(8)
 
 if gBrojac=="D"
  	select kalk
-	set order to 1
+	set order to tag "1"
 	seek cIdFirma + "96X"
  	skip -1
  	if idvd<>"96"
@@ -571,7 +571,7 @@ cIdZaduz2:=space(6)
 cBrkalk:=space(8)
 if gBrojac=="D"
  select kalk
- select kalk; set order to 1;seek cidfirma+"10X"
+ select kalk; set order to tag "1";seek cidfirma+"10X"
  skip -1
  if idvd<>"10"
    cbrkalk:=space(8)

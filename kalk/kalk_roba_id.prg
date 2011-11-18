@@ -94,7 +94,7 @@ function kalk_sljedeci(cIdFirma,cVrsta)
 local cBrKalk
 if gBrojac=="D"
  select kalk
- set order to 1
+ set order to tag "1"
  seek cIdFirma+cVrsta+"X"
  skip -1
  if idvd<>cVrsta

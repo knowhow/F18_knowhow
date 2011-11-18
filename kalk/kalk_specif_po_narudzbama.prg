@@ -51,7 +51,7 @@ RETURN cV
 function KalkNab3m(cIdFirma,cIdRoba,cIdKonto,aNabavke,nKolS)
 *{
 select kalk
-set order to 3
+set order to tag "3"
 seek cidfirma+cidkonto+cidroba+"X"
 skip -1
 if cidfirma+cidkonto+cidroba==idfirma+mkonto+idroba .and. _datdok<datdok
@@ -177,7 +177,7 @@ return
 function KalkNab3p(cIdFirma,cIdRoba,cIdKonto,aNabavke,nKolS)
 *{
 select kalk
-set order to 4
+set order to tag "4"
 seek cidfirma+cidkonto+cidroba+"X"
 skip -1
 if cidfirma+cidkonto+cidroba==idfirma+pkonto+idroba .and. _datdok<datdok
@@ -360,7 +360,7 @@ function KalkNab2(cIdFirma,cIdRoba,cIdKonto,aNabavke)
 *{
 
 select kalk
-set order to 3
+set order to tag "3"
 seek cidfirma+cidkonto+cidroba+"X"
 skip -1
 if cidfirma+cidkonto+cidroba==idfirma+mkonto+idroba .and. _datdok<datdok

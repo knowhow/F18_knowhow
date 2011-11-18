@@ -152,7 +152,7 @@ endif
 O_KALK
 nKolicina:=0
 select kalk
-set order to 4
+set order to tag "4"
 // hseek cidfirma+cidkonto+cidroba
 
 private cFilt:=".t."

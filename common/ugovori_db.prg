@@ -49,7 +49,7 @@ do case
 endcase
 
 // kreiraj dbf
-if !File( cPath + cTbl + "." + DBFEXT )
+if !File( f18_ime_dbf(cTbl) )
 	DBcreate2(cPath + cTbl, aDBF)
 endif
 
@@ -289,7 +289,7 @@ local lRet := .f.
 local nTArea := SELECT()
 
 if rugov->(fieldpos("dest")) <> 0 .and. ;
-	FILE( SIFPATH + "DEST.DBF" )
+	FILE( f18_ime_dbf("dest") )
 	
 	lRet := .t.
 	

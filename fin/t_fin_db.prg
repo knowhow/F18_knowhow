@@ -225,7 +225,7 @@ if (nArea==-1 .or. nArea==(F_FUNK))
    	AADD(aDBf,{ "ID"      , "C" ,   5 ,  0 })
    	AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
 	
-	if !FILE(KUMPATH+"FUNK.DBF")
+	if !FILE(f18_ime_dbf("funk"))
    		DBcreate2(KUMPATH+"FUNK.DBF",aDbf)
 	endif
 	
@@ -668,40 +668,6 @@ if (nArea==-1 .or. nArea==(F_PKONTO))
 	CREATE_INDEX("ID","ID",SIFPATH+"PKONTO")
 	CREATE_INDEX("NAZ","TIP",SIFPATH+"PKONTO")
 endif
-
-/*
-if (nArea==-1 .or. nArea==(F_VALUTE))
-
-	//VALUTE.DBF
-
-	if !FILE(f18_ime_dbf("valute"))
-	       	aDbf:={}
-        	AADD(aDBf,{ "ID"                  , "C" ,   4 ,  0 })
-        	AADD(aDBf,{ "NAZ"                 , "C" ,  30 ,  0 })
-        	AADD(aDBf,{ "NAZ2"                , "C" ,   4 ,  0 })
-        	AADD(aDBf,{ "DATUM"               , "D" ,   8 ,  0 })
-        	AADD(aDBf,{ "KURS1"               , "N" ,  10 ,  5 })
-        	AADD(aDBf,{ "KURS2"               , "N" ,  10 ,  5 })
-        	AADD(aDBf,{ "KURS3"               , "N" ,  10 ,  5 })
-        	AADD(aDBf,{ "TIP"                 , "C" ,   1 ,  0 })
-        	
-		DBcreate2(SIFPATH+"VALUTE.DBF",aDbf)
-        	
-		my_USE (SIFPATH+"VALUTE.DBF")
-        	append blank
-        	replace id with "000", naz with "KONVERTIBILNA MARKA",NAZ2 WITH "KM", DATUM WITH CTOD("01.01.02"), TIP WITH "D",KURS1 WITH 1, KURS2 WITH 1, KURS3 WITH 1
-        	append blank
-        	replace id with "987", naz with "EURO",NAZ2 WITH "EURO", DATUM WITH CTOD("01.01.02"), TIP WITH "P",KURS1 WITH 0.51288, KURS2 WITH 0.51288, KURS3 WITH 0.51288
-        	append blank
-        	replace id with "999", naz with "HRVATSKA KUNA",NAZ2 WITH "KN", DATUM WITH CTOD("01.01.02"), TIP WITH "O",KURS1 WITH 3.5, KURS2 WITH 3.5, KURS3 WITH 3.5
-        	CLOSE ALL
-	endif
-
-	CREATE_INDEX("ID","id", SIFPATH+"VALUTE")
-	CREATE_INDEX("NAZ","tip+id", SIFPATH+"VALUTE")
-	CREATE_INDEX("ID2","id+dtos(datum)", SIFPATH+"VALUTE")
-endif
-*/
 
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"          , "C" ,   2 ,  0 })

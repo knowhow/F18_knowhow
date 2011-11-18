@@ -246,92 +246,39 @@ return nil
 *           .f. - ne diraj (pretpostavlja se da je zapis vec zakljucan)
 */
 
-function appblank2(fcisti,funl)
-*{
-local aStruct,i, nPrevOrd, cnew_oid
+function appblank2(fcisti, funl)
+local aStruct,i, nPrevOrd
 
 if fcisti==nil
   fcisti:=.t.
 endif
 
-if funl==nil; funl:=.t.; endif
-
-if gReadonly; return; endif
-
-do while .t.
-set deleted off
-
-if gSQL=="D"  .and. fieldpos("_OID_")<>0
- // hocu da se uzmu u obzir i brisani slogovi !
- cNew_oid:=New_Oid()
-endif
-
 nPrevOrd:=indexord()
 
-if ORDNUMBER("BRISAN")<>0
-  set order to tag "BRISAN"
-  seek "1"
-endif
+dbappend(.t.)
 
-if !(found() .and. deleted())
-     if !funl .or. flock()
-       dbappend(.t.)
-        field->brisano:=" "
-        if gSQL=="D" .and. fieldpos("_OID_")<>0
-         field->_OID_:=cNew_OID // setuj OID koji slijedi !!!
-         sql_azur()
-        endif
-     else // if flock
-       set deleted on
-       inkey(0.4)
-       loop
-     endif // if flock
-     if funl; dbunlockall(); endif
+if fcisti // ako zelis pocistiti stare vrijednosti
+	aStruct:=DBSTRUCT()
+	for i:=1 to len(aStruct)
+		cImeP:=aStruct[i,1]
+		if !("#"+cImeP+"#"  $ "#BRISANO#_OID_#_COMMIT_#")
+		do case
+		case aStruct[i,2]=='C'
+			field->&cImeP:=""
+		case aStruct[i,2]=='N'
+			field->&cImeP:=0
+		case aStruct[i,2]=='D'
+			field->&cImeP:=ctod("")
+		case aStruct[i,2]=='L'
+			field->&cImeP:=.f.
+		endcase
+		endif
+	next
+endif  // fcisti
 
-else
-      if !funl .or. rlock()
-          if fcisti // ako zelis pocistiti stare vrijednosti
-                aStruct:=DBSTRUCT()
-                for i:=1 to len(aStruct)
-                 cImeP:=aStruct[i,1]
-                 if !("#"+cImeP+"#"  $ "#BRISANO#_OID_#_COMMIT_#")
-                 do case
-                   case aStruct[i,2]=='C'
-                     field->&cImeP:=""
-                   case aStruct[i,2]=='N'
-                     field->&cImeP:=0
-                   case aStruct[i,2]=='D'
-                     field->&cImeP:=ctod("")
-                   case aStruct[i,2]=='L'
-                     field->&cImeP:=.f.
-                 endcase
-                 endif
-                next
-          endif  // fcisti
-        field->brisano:=" "
-        dbrecall()
-        field->brisano:=" "
-        if gSQL=="D" .and. fieldpos("_OID_")<>0
-         field->_OID_:=cnew_OID // setuj OID koji slijedi !!!
-         sql_azur()
-        endif
-        set deleted on
-        ordsetfocus(nPrevOrd)
-        if funl; dbunlockall(); endif
-
-      else // rlock
-         inkey(0.4)
-         loop
-      endif // rlock
-endif
-
-set deleted on
 ordsetfocus(nPrevOrd)
-exit
-enddo
 
 return nil
-*}
 
 
 /*! \fn AppFrom(cFDbf, fOtvori)

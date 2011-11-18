@@ -214,7 +214,7 @@ do while !eof()
 	nIzlaz:=0
 
 	select kalk
-	set order to 4
+	set order to tag "4"
 	//"KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
 	
 	seek cIdFirma + cPkonto + cIdRoba
@@ -505,7 +505,7 @@ seek TRIM(cPKonto)
 
 
 select kalk
-set order to 4
+set order to tag "4"
 go top
 //"KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
 	

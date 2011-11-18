@@ -214,10 +214,6 @@ public gAutoRavn:="N"
 public gAutoCjen:="D"
 public gLenBrKalk:=5
 public gArtCDX:=SPACE(20)
-
-O_PARAMS
-private cSection:="K",cHistory:=" "; aHistory:={}
-
 public gNW:="X"  // new vawe
 public gVarEv:="1"  // 1-sa cijenama   2-bez cijena
 public gBaznaV:="D"
@@ -229,13 +225,11 @@ public c24T5:=padr("Tr 5",15)
 public c24T6:=padr("Tr 6",15)
 public c24T7:=padr("Tr 7",15)
 public c24T8:=padr("Tr 8",15)
-
 public c10T1:="PREVOZ.T"
 public c10T2:="AKCIZE  "
 public c10T3:="SPED.TR "
 public c10T4:="CARIN.TR"
 public c10T5:="ZAVIS.TR"
-
 public cRNT1:="        "
 public cRNT2:="R.SNAGA "
 public cRNT3:="TROSK 3 "
@@ -447,40 +441,9 @@ gDirFakt:=trim(gDirFakt)
 gDirFakK:=trim(gDirFakK)
 */
 
-// KALK: auto import
-private cSection := "7"
 f18_get_metric("AutoImportPodatakaPrintanje", @gAImpPrint)
 f18_get_metric("AutoImportPodatakaKonto", @gAImpRKonto)
 f18_get_metric("AutoImportPodatakaKarakteri", @gAImpRight)
-
-select (F_PARAMS)
-use
-
-cSekcija:="SifRoba"
-cVar:="PitanjeOpis"
-IzFmkIni (cSekcija, cVar, IzFMkIni(cSekcija,cVar,'D') , SIFPATH)
-cSekcija:="SifRoba"; cVar:="ID_J"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'N') , SIFPATH)
-cSekcija:="SifRoba"; cVar:="VPC2"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'D') , SIFPATH)
-cSekcija:="SifRoba"; cVar:="MPC2"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'D') , SIFPATH)
-cSekcija:="SifRoba"; cVar:="MPC3"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'D') , SIFPATH)
-cSekcija:="SifRoba"; cVar:="PrikId"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'ID') , SIFPATH)
-cSekcija:="SifRoba"; cVar:="DuzSifra"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'10') , SIFPATH)
-
-cSekcija:="BarKod"; cVar:="Auto"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'N') , SIFPATH)
-cSekcija:="BarKod"; cVar:="AutoFormula"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'ID') , SIFPATH)
-cSekcija:="BarKod"; cVar:="Prefix"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'') , SIFPATH)
-cSekcija:="BarKod"; cVar:="NazRTM"
-IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'barkod') , SIFPATH)
-
 
 // iz FMK inija...
 
@@ -522,6 +485,7 @@ gRobaBlock:={|Ch| RobaBlock(Ch)}
 // inicijalizujem ovu varijablu uvijek pri startu
 // ona sluzi za automatsku obradu kalkulacija 
 // vindija - varazdin
+
 public lAutoObr := .f.
 
 return

@@ -443,9 +443,22 @@ endif
 
 // try to loggon...
 oServer := TPQServer():New( cHostName, cDatabase, cUser, cPassWord, nPort, cSchema )
+
 if oServer:NetErr()
-      log_write( oServer:ErrorMsg() )
-      quit
+      
+	  clear screen
+
+	  ?
+	  ? "Greska sa konekcijom na server:"
+	  ? "==============================="
+	  ? oServer:ErrorMsg()
+
+	  log_write( oServer:ErrorMsg() )
+      
+	  inkey(0)
+ 
+	  quit
+
 endif
 
 _set_sql_path( oServer, cServer_search_path )

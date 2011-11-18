@@ -41,65 +41,60 @@ close all
   
 cImeDbf := f18_ime_dbf(cIme)
 
-if fSilent==nil
-    fSilent:=.f.
+if fSilent == nil
+    fSilent := .f.
 endif
 
 cImeCdx := ImeDbfCdx(cImeDbf)
+ 
+nPom := RAT(SLASH, cImeInd )
+cTag := ""
 
-  
-nPom := RAT(SLASH,cImeInd)
-cTag:=""
+cKljucIz := cKljuc
 
-cKljucIz:=cKljuc
-
-if nPom<>0
-   cTag:=substr(cImeInd, nPom+1)
+if nPom <> 0
+   cTag := substr(cImeInd, nPom+1)
 else
-   cTag:=cImeInd
+   cTag := cImeInd
 endif
 
-fPostoji:=.t.
+fPostoji := .t.
 
-//#ifndef FMK_DEBUG
-// bErr:=ERRORBLOCK({|o| MyErrH(o)})
-// BEGIN SEQUENCE
-//#endif
-
-  select (F_TMP)
-  my_use(cIme)
+select ( F_TMP )
+my_use( cIme )
   
-  if USED()
-    nPos:=FIELDPOS("BRISANO")
+if USED()
+
+	nPos := FIELDPOS("BRISANO")
     //nPos == nil ako nije otvoren DBF
     
     if nPos==0
-      AddFldBrisano(cImeDbf)
+    	AddFldBrisano(cImeDbf)
     endif
 
     nOrder:=ORDNUMBER("BRISAN")
     cOrdKey:=ORDKEY("BRISAN")
-    if (nOrder==0)  .or. !(LEFT(cOrdKey,8)=="BRISANO")
-      PRIVATE cPomKey:="BRISANO"
-      PRIVATE cPomTag:="BRISAN"
-      cImeCDX:=STRTRAN(cImeCDX,"."+INDEXEXT,"")
-      INDEX ON &cPomKey  TAG (cPomTag) TO (cImeCDX)
+    cTmpCDX := STRTRAN( cImeCDX, "." + INDEXEXT, "" )
+
+	if (nOrder==0)  .or. !(LEFT(cOrdKey,8)=="BRISANO")
+    	PRIVATE cPomKey:="BRISANO"
+      	PRIVATE cPomTag:="BRISAN"
+      	INDEX ON &cPomKey  TAG (cPomTag) TO (cTmpCDX)
     endif
 
-    if (gSQL=="D")
-      FillOid(cImeDbf, cImeCDX)
-      if (fieldpos("_OID_")<>0)
-        //tabela ima _OID_ polje
-        nOrder:=ORDNUMBER("_OID_")
-        if (nOrder==0)
-          cPomKey:="_OID_"
-          index on &cPomKey TAG "_OID_"  TO (cImeCDX)
-        endif
-      endif
+    if (gSQL == "D")
+    	FillOid(cImeDbf, cImeCDX)
+      	if (fieldpos("_OID_")<>0)
+        	//tabela ima _OID_ polje
+        	nOrder:=ORDNUMBER("_OID_")
+        	if (nOrder==0)
+          		cPomKey:="_OID_"
+          		index on &cPomKey TAG "_OID_"  TO (cTmpCDX)
+        	endif
+      	endif
     endif
     
-
-    if (gSQL=="D")
+    if (gSQL == "D")
       if fieldpos("_SITE_")<>0
         nOrder:=ORDNUMBER("_SITE_")
         cOrdKey:=ORDKEY("_SITE_")
@@ -111,36 +106,27 @@ fPostoji:=.t.
 
     nOrder:=ORDNUMBER(cTag)
     cOrdKey:=ordkey(cTag)
-    select (F_TMP)
+    
+	select (F_TMP)
     use
-  else
+else
     MsgBeep("Nisam uspio otvoriti "+cImeDbf)
     fPostoji:=.f.
-  endif
+endif
   
-
-//#ifndef FMK_DEBUG
-
-//RECOVER
-//  fPostoji:=.f.
-//END SEQUENCE
-
-//bErr:=ERRORBLOCK(bErr)
-//#endif
-
 if !fPostoji
-  // nisam uspio otvoriti, znaci ne mogu ni kreirati indexs ..
-  return
+	// nisam uspio otvoriti, znaci ne mogu ni kreirati indexs ..
+  	return
 endif
 
 if !FILE(LOWER(cImeCdx))  .or. nOrder==0  .or. UPPER(cOrdKey)<> UPPER(cKljuc)
 
 
-     cFulDbf:=cImeDbf
-     if right(cFulDbf,4) <> "." + DBFEXT
+	cFulDbf := cImeDbf
+    if right(cFulDbf, 4) <> "." + DBFEXT
         
-	cFulDbf:=trim(cFulDbf)+"."+DBFEXT
-        if at(SLASH,cFulDbf)==0  // onda se radi o kumulativnoj datoteci
+		cFulDbf := trim(cFulDbf) + "." + DBFEXT
+        if AT(SLASH,cFulDbf)==0  // onda se radi o kumulativnoj datoteci
              cFulDbf := alltrim(cDirRad) + SLASH + cFulDbf
         endif
      
@@ -151,9 +137,8 @@ if !FILE(LOWER(cImeCdx))  .or. nOrder==0  .or. UPPER(cOrdKey)<> UPPER(cKljuc)
      endif
   
      SELECT(F_TMP) 
-     my_use(cIme) 
-     //DBUSEAREA (.f., nil, cImeDbf, nil, .t. )
-
+     my_use(cIme)
+ 
      if !fSilent
           MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))
      endif
@@ -1000,3 +985,5 @@ return  cIme
 
 static function Every()
 return
+
+

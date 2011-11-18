@@ -224,19 +224,14 @@ endif
 
 enddo
 return nil
-*}
+
 
 function dbdelete2()
-*{
-if gReadonly
-	return
-endif
 if !eof() .or. !bof()
- field->Brisano:="1"
  Dbdelete()
 endif
 return nil
-*}
+
 
 /*
 *

@@ -22,7 +22,7 @@ GOTO DONE
 echo "setuj envars" 
 GOTO:EOF 
 :DONE
-echo "zavrseno"
+ECHO "zavrseno"
 
 
 

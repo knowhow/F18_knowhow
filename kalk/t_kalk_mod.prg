@@ -301,6 +301,18 @@ public gAImpRight := 0
 
 lPoNarudzbi:=.f.
 
+f18_get_metric("Dokument10Trosak1", @c10T1)
+f18_get_metric("Dokument10Trosak2", @c10T2)
+f18_get_metric("Dokument10Trosak3", @c10T3)
+f18_get_metric("Dokument10Trosak4", @c10T4)
+f18_get_metric("Dokument10Trosak5", @c10T5)
+f18_get_metric("DokumentRNTrosak1", @cRNT1)
+f18_get_metric("DokumentRNTrosak2", @cRNT2)
+f18_get_metric("DokumentRNTrosak3", @cRNT3)
+f18_get_metric("DokumentRNTrosak4", @cRNT4)
+f18_get_metric("DokumentRNTrosak5", @cRNT5)
+
+/*
 RPar("11",@c10T1)
 RPar("12",@c10T2)
 RPar("13",@c10T3)
@@ -311,7 +323,7 @@ RPar("72",@cRNT2)
 RPar("73",@cRNT3)
 RPar("74",@cRNT4)
 RPar("75",@cRNT5)
-
+*/
 
 RPar("21",@c24T1)
 RPar("22",@c24T2)

@@ -509,15 +509,24 @@ private  GetList:={}
  BoxC()
 
  if lastkey()<>K_ESC
+  
+	f18_set_metric("Dokument10Trosak1", c10T1)
+	f18_set_metric("Dokument10Trosak2", c10T2)
+	f18_set_metric("Dokument10Trosak3", c10T3)
+	f18_set_metric("Dokument10Trosak4", c10T4)
+	f18_set_metric("Dokument10Trosak5", c10T5)
+
+  /*
   WPar("11",c10T1)
   WPar("12",c10T2)
   WPar("13",c10T3)
   WPar("14",c10T4)
   WPar("15",c10T5)
+  */
  endif
 
 return nil
-*}
+
 
 
 

@@ -465,7 +465,7 @@ return .t.
 // -----------------------------------------
 function LDPoljaINI()
 
-if !FILE(KUMPATH+"LD.DBF")
+if !FILE(f18_ime_dbf("LD"))
 	public cLdPolja := 40
 	return
 endif

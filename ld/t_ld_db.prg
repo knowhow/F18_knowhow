@@ -248,11 +248,11 @@ AADD(aDBf,{ 'AKTIVAN'             , 'C' ,   1 ,  0 })
 if (nArea==-1 .or. nArea==(F_RADN))
 	//RADN.DBF & _RADN.DBF
 	
-	if !FILE(KUMPATH+"RADN.dbf")
+	if !FILE(f18_ime_dbf("RADN"))
   		DBcreate2(KUMPATH+'RADN.DBF',aDbf)
 	endif
 	
-	if !FILE(PRIVPATH+"_RADN.dbf")
+	if !FILE(f18_ime_dbf("_RADN"))
   		DBcreate2(PRIVPATH+'_RADN.DBF',aDbf)
 	endif
 	
@@ -273,10 +273,10 @@ AADD(aDBf,{ 'NaOsnovu'            , 'C' ,  20 ,  0 })
 if (nArea==-1 .or. nArea==(F_RADKR))
 	//RADKR.DBF & _RADKR.DBF
 
-	if !FILE(KUMPATH+"RADKR.dbf")
+	if !FILE(f18_ime_dbf("RADKR"))
 		DBCreate2(KUMPATH+'RADKR.DBF',aDbf)
 	endif
-	if !file(PRIVPATH+"_RADKR.dbf")
+	if !file(f18_ime_dbf("_RADKR"))
 		DBCreate2(PRIVPATH+'_RADKR.DBF',aDbf)
 	endif
 
@@ -300,7 +300,7 @@ AADD( aDbf, {"IDPARTNER"  ,  "C" ,  6, 0})
 if (nArea==-1 .or. nArea==(F_REKLD))
 	//REKLD.DBF
 
-	if !FILE(KUMPATH+"REKLD.DBF")
+	if !FILE(f18_ime_dbf("REKLD"))
   		DBCreate2(KUMPATH+"REKLD.DBF",aDbf)
 	endif
 
@@ -313,7 +313,7 @@ if (nArea==-1 .or. nArea==(F_REKLDP))
 	
 	AADD( aDbf, {"IDRNAL"  ,  "C" , 10, 0})
 
-	if !FILE(KUMPATH+"REKLDP.DBF")
+	if !FILE(f18_ime_dbf("REKLDP"))
   		DBCreate2(KUMPATH+"REKLDP.DBF",aDbf)
 	endif
 
@@ -324,7 +324,7 @@ endif
 // OPSLD
 if (nArea==-1 .or. nArea==(F_OPSLD))
 
-	if !FILE(PRIVPATH+"OPSLD.DBF")
+	if !FILE(f18_ime_dbf("OPSLD"))
 	
   		aDbf:={ {"ID"    , "C" ,  1, 0},;
             		{"IDOPS" , "C" ,  4, 0},;
@@ -343,7 +343,7 @@ endif
 if (nArea==-1 .or. nArea==(F_PAROBR))
 	//REKLD.DBF
 
-	if !file(SIFPATH+"PAROBR.DBF")
+	if !file(f18_ime_dbf("PAROBR"))
    		aDBf:={}
    		AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })  
    		AADD(aDBf,{ 'GODINA'              , 'C' ,   4 ,  0 })  
@@ -387,12 +387,12 @@ AADD(aDBf,{ 'Formula'             , 'C' , 200 ,  0 })
 AADD(aDBf,{ 'OPIS'                , 'C' ,   8 ,  0 })
 AADD(aDBf,{ 'TPR_TIP'             , 'C' ,   1 ,  0 })
 
-if !file(SIFPATH+"TIPPR.DBF")
+if !file(f18_ime_dbf("TIPPR"))
    DBCREATE2(SIFPATH+'TIPPR.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",SIFPATH+"TIPPR")
 
-if !file(SIFPATH+"TIPPR2.DBF")
+if !file(f18_ime_dbf("TIPPR2"))
    DBCREATE2(SIFPATH+'TIPPR2.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
@@ -420,10 +420,10 @@ AADD(aDBf,{ 'MJESTO'              , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'ADRESA'              , 'C' ,  30 ,  0 })
 AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
 AADD(aDBf,{ 'FIL'                 , 'C' ,  30 ,  0 })
-if !file(SIFPATH+"KRED.DBF")
+if !file(f18_ime_dbf("KRED"))
    DBCREATE2(SIFPATH+'KRED.DBF',aDbf)
 endif
-if !file(PRIVPATH+"_KRED.DBF")
+if !file(f18_ime_dbf("_KRED"))
    DBCREATE2(PRIVPATH+'_KRED.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",SIFPATH+"KRED")
@@ -431,7 +431,7 @@ CREATE_INDEX("NAZ","naz",SIFPATH+"KRED")
 
 
 // POR
-if !file(SIFPATH+"POR.DBF")
+if !file(f18_ime_dbf("POR"))
 
    	aDBf:={}
   	

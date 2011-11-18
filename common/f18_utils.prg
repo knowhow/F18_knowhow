@@ -373,9 +373,9 @@ AADD(gaDBFs, { F__RADN  ,"_RADN"   , "_ld_radn"     } )
 AADD(gaDBFs, { F_LDSM   ,"LDSM"    , "ld_ldsm"    } )
 AADD(gaDBFs, { F_OPSLD  ,"OPSLD"   , "ld_opsld"    } )
 AADD(gaDBFs, { F_LD     ,"LD"      , "ld_ld"     } )
-AADD(gaDBFs, { F_LD     ,"_LD"     , "_ld_ld"     } )
-AADD(gaDBFs, { F_LD     ,"REKLD"   , "ld_rekld"     } )
-AADD(gaDBFs, { F_LD     ,"REKLDP"  , "ld_rekldp"     } )
+AADD(gaDBFs, { F__LD     ,"_LD"     , "_ld_ld"     } )
+AADD(gaDBFs, { F_REKLD     ,"REKLD"   , "ld_rekld"     } )
+AADD(gaDBFs, { F_REKLDP     ,"REKLDP"  , "ld_rekldp"     } )
 AADD(gaDBFs, { F_RADKR  ,"RADKR"   , "ld_radkr"     } )
 AADD(gaDBFs, { F_RADN   ,"RADN"    , "ld_radn"     } )
 AADD(gaDBFs, { F_RADSIHT,"RADSIHT" , "ld_radsiht"     } )
@@ -435,11 +435,11 @@ AADD( gaDbfs, {  F_DOKSPF    , "DOKSPF" , "pos_dokspf" } )
 AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "pos_promvp" } )
 AADD( gaDbfs, {  F_POM       , "POM"    , "pos_pom"  } )
 
-log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)
-
 if f18_login_screen( @cHostname, @cDatabase, @cUser, @cPassword, @nPort, @cSchema ) = .f.
 	quit
 endif
+
+log_write(cHostName + " / " + cDatabase + " / " + cUser + " / " + cPassWord + " / " +  STR(nPort)  + " / " + cSchema)
 
 // try to loggon...
 oServer := TPQServer():New( cHostName, cDatabase, cUser, cPassWord, nPort, cSchema )

@@ -68,7 +68,7 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
   fBkEmpty := .f. // upozori ako je empty barkod
   do while !eof()
     select roba; hseek kalk_pripr->idroba
-    select koncij; seek trim(pripr->pkonto)
+    select koncij; seek trim(kalk_pripr->pkonto)
     select katops
     append blank
     if ASCAN(aIdPos,{|x| x==koncij->idprodmjes}) == 0
@@ -121,9 +121,9 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
        replace idpos with gTops
     endif
 
-    cPom:=TRIM(pripr->idvd)+TRIM(pripr->idroba)+;
+    cPom:=TRIM(kalk_pripr->idvd)+TRIM(kalk_pripr->idroba)+;
           TRIM(IF(!empty(koncij->idprodmjes),koncij->idprodmjes,gTops))+;
-          TRIM(roba->naz)+TRIM(pripr->idtarifa)+TRIM(roba->jmj)
+          TRIM(roba->naz)+TRIM(kalk_pripr->idtarifa)+TRIM(roba->jmj)
 
     nExpr  += LEN(cPom)
     nExpr2 += NUMAT("A",cPom)

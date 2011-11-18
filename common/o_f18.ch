@@ -156,14 +156,14 @@
 
 
 // modul KALK
-#xcommand O_KALK_PRIPR   => select(F_KALK_PRIPR); usex (PRIVPATH + "kalk_pripr") ; set order to tag "1"
-#xcommand O_KALK_S_PRIPR   => select(F_KALK_PRIPR); use (PRIVPATH + "kalk_pripr") ; set order to tag "1"
+#xcommand O_KALK_PRIPR   => select(F_KALK_PRIPR); my_use ( "kalk_pripr") ; set order to tag "1"
+#xcommand O_KALK_S_PRIPR   => select(F_KALK_PRIPR); my_use ( "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_PRIPRRP   => select (F_KALK_PRIPRRP);   usex (strtran(cDirPriv,goModul:oDataBase:cSezonDir, SLASH) + "pripr")  ; set order to tag "1"
-#xcommand O_KALK_PRIPR2  => select(F_KALK_PRIPR2); usex (PRIVPATH + "kalk_pripr2") ; set order to tag "1"
-#xcommand O_KALK_PRIPR9  => select(F_KALK_PRIPR9); usex (PRIVPATH + "kalk_pripr9") ; set order to tag "1"
-#xcommand O__KALK  => select(F__KALK); usex (PRIVPATH + "_kalk" )
-#xcommand O_FINMAT  => select(F_FINMAT); usex (PRIVPATH + "finmat")    ; set order to tag "1"
-#xcommand O_KALK   => select(F_KALK);  my_use  (KUMPATH + "kalk")  ; set order to tag "1"
+#xcommand O_KALK_PRIPR2  => select(F_KALK_PRIPR2); my_use ("kalk_pripr2") ; set order to tag "1"
+#xcommand O_KALK_PRIPR9  => select(F_KALK_PRIPR9); my_use ("kalk_pripr9") ; set order to tag "1"
+#xcommand O__KALK  => select(F__KALK); my_use ("_kalk" )
+#xcommand O_KALK_FINMAT  => select(F_KALK_FINMAT); my_use ("kalk_finmat")    ; set order to tag "1"
+#xcommand O_KALK   => select(F_KALK);  my_use  ( "kalk")  ; set order to tag "1"
 #xcommand O_KALKSEZ   => select(F_KALKSEZ);  my_use  (KUMPATH+"2005"+SLASH+"KALK")  ; set order to "1"
 #xcommand O_ROBASEZ   => select(F_ROBASEZ);  my_use  (SIFPATH+"2005"+SLASH+"ROBA")  ; set order to tag "ID"
 #xcommand O_KALKX  => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"

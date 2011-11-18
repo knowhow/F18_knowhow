@@ -898,12 +898,12 @@ function Iz11u412()
   cIdFirma := gFirma
   cIdVdU   := "11"
   cIdVdI   := "4"
-  cBrDokU  := SPACE(LEN(PRIPR->brdok))
+  cBrDokU  := SPACE(LEN(kalk_pripr->brdok))
   cBrDokI  := ""
   dDatDok    := CTOD("")
 
-  cBrFaktP   := SPACE(LEN(PRIPR->brfaktp))
-  cIdPartner := SPACE(LEN(PRIPR->idpartner))
+  cBrFaktP   := SPACE(LEN(kalk_pripr->brfaktp))
+  cIdPartner := SPACE(LEN(kalk_pripr->idpartner))
   dDatFaktP  := CTOD("")
 
   cPoMetodiNC:="N"
@@ -1006,8 +1006,8 @@ function Iz10u11()
   cIdFirma := gFirma
   cIdVdU   := "10"
   cIdVdI   := "11"
-  cBrDokU  := SPACE(LEN(PRIPR->brdok))
-  cIdKonto := SPACE(LEN(PRIPR->idkonto))
+  cBrDokU  := SPACE(LEN(kalk_pripr->brdok))
+  cIdKonto := SPACE(LEN(kalk_pripr->idkonto))
   cBrDokI  := ""
   dDatDok    := CTOD("")
 

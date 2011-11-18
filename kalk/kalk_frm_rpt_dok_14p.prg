@@ -60,12 +60,12 @@ if cidvd=="94"
 else
  select konto; hseek cidkonto2
  ?  "KONTO razduzuje:",pripr->mkonto , "-",naz
- if !empty(pripr->Idzaduz2); ?? " Rad.nalog:",pripr->Idzaduz2; endif
+ if !empty(kalk_pripr->Idzaduz2); ?? " Rad.nalog:",pripr->Idzaduz2; endif
 endif
 
 select kalk_pripr
 select koncij
-seek trim(pripr->mkonto)
+seek trim(kalk_pripr->mkonto)
 select kalk_pripr
 
 m:="--- ---------- ---------- ----------  ---------- ---------- ---------- ----------- --------- ----------"

@@ -168,7 +168,7 @@ do while .t.
        endif
 
        if kalk_pripr->idvd $ "PR#RN"
-           if val(pripr->rbr)>899
+           if val(kalk_pripr->rbr)>899
 		skip
 		loop
 	   endif
@@ -202,7 +202,7 @@ do while .t.
 		        	replace kolicina with nkolicina
 		       	endif
 		endif
-       elseif (pripr->idvd=="16" .and. IsVindija())
+       elseif (kalk_pripr->idvd=="16" .and. IsVindija())
        	APPEND BLANK
        	replace kolicina with nkolicina
        else
@@ -221,7 +221,7 @@ do while .t.
           		select XPRIPR
 		       	hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
            		select konto; hseek kalk_pripr->idkonto
-           		cTxta:=padr(pripr->idkonto,30)
+           		cTxta:=padr(kalk_pripr->idkonto,30)
            		cTxtb:=padr(konto->naz,30)
            		cTxtc:=padr("",30)
            		ctxt:=Chr(16)+" " +Chr(17)+;
@@ -235,7 +235,7 @@ do while .t.
           		select XPRIPR
 		       	hseek cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
            		select konto; hseek kalk_pripr->idkonto2
-           		cTxta:=padr(pripr->idkonto2,30)
+           		cTxta:=padr(kalk_pripr->idkonto2,30)
            		cTxtb:=padr(konto->naz,30)
            		cTxtc:=padr("",30)
            		ctxt:=Chr(16)+" " +Chr(17)+;
@@ -250,7 +250,7 @@ do while .t.
            	select PARTN; hseek kalk_pripr->idpartner
            	if kalk_pripr->idvd $ "11#12#13#95#PR#RN"
            	   select konto; hseek kalk_pripr->idkonto
-           	   cTxta:=padr(pripr->idkonto,30)
+           	   cTxta:=padr(kalk_pripr->idkonto,30)
            	   cTxtb:=padr(konto->naz,30)
            	   cTxtc:=padr("",30)
            	else

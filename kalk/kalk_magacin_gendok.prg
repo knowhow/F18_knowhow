@@ -60,11 +60,11 @@ function Iz12u97()
   cIdFirma    := gFirma
   cIdVdU      := "12"
   cIdVdI      := "97"
-  cBrDokU     := SPACE(LEN(PRIPR->brdok))
+  cBrDokU     := SPACE(LEN(kalk_pripr->brdok))
   cBrDokI     := ""
   dDatDok     := CTOD("")
 
-  cIdPartner  := SPACE(LEN(PRIPR->idpartner))
+  cIdPartner  := SPACE(LEN(kalk_pripr->idpartner))
   dDatFaktP   := CTOD("")
 
   cPoMetodiNC := "N"
@@ -154,7 +154,7 @@ private cIdFirma:=idfirma,cIdVD:=idvd,cBrDok:=brdok
 if !(cidvd $ "IM")
   closeret
 endif
-select koncij; seek trim(pripr->idkonto)
+select koncij; seek trim(kalk_pripr->idkonto)
 
 lOdvojiVisak := Pitanje(,"Napraviti poseban dokument za visak?","N")=="D"
 
@@ -574,14 +574,15 @@ return
 function Otprema()
 *{
 O_KONCIJ
-O_KALK_PRIPR
 O_KALK_PRIPR2
+O_KALK_PRIPR
 O_KALK
 O_SIFK
 O_SIFV
 O_ROBA
 
-select kalk_pripr; go top
+select kalk_pripr
+go top
 private cIdFirma:=idfirma,cIdVD:=idvd,cBrDok:=brdok
 if !(cidvd $ "96#95")  .or. empty(idkonto)
   closeret
@@ -607,7 +608,8 @@ go top
 private nRBr:=0
 do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
   scatter()
-  select roba; hseek _idroba
+  select roba
+  hseek _idroba
   select kalk_pripr2
   append blank
 
@@ -622,9 +624,11 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
    _TMarza:="%"
    _TMarza:="A"
    _gkolicina:=_gkolicin2:=_mpc:=0
-   select koncij; seek trim(pripr->idkonto2)
+   select koncij
+   seek trim(kalk_pripr->idkonto2)
    if koncij->naz=="N1"  // otprema je izvrsena iz magacina koji se vodi po nc
-    select koncij; seek trim(pripr->idkonto)
+    select koncij
+    seek trim(kalk_pripr->idkonto)
     if koncij->naz<>"N1"     // ulaz u magacin sa vpc
      _VPC:=KoncijVPC()
      _marza:=KoncijVPC()-pripr->nc
@@ -639,12 +643,14 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
    _fcj:=_fcj2:=_nc:=pripr->nc
    _rbr:=str(++nRbr,3)
    _kolicina:=pripr->kolicina
-   _BrFaktP:=trim(pripr->idkonto2)+"/"+pripr->brfaktp
+   _BrFaktP:=trim(kalk_pripr->idkonto2)+"/"+pripr->brfaktp
    _idkonto:=pripr->idkonto
    _idkonto2:=""
    _brdok:=cBrUlaz
-   _MKonto:=_Idkonto;_MU_I:="1"     // ulaz
-   _PKonto:="";       _PU_I:=""
+   _MKonto:=_Idkonto
+   _MU_I:="1"     // ulaz
+   _PKonto:=""
+   _PU_I:=""
    _idvd:="16"
 
    _TBankTr:="X"    // izgenerisani dokument
@@ -670,11 +676,11 @@ function Iz96u16()
   cIdFirma    := gFirma
   cIdVdU      := "96"
   cIdVdI      := "16"
-  cBrDokU     := SPACE(LEN(PRIPR->brdok))
+  cBrDokU     := SPACE(LEN(kalk_pripr->brdok))
   cBrDokI     := ""
   dDatDok     := CTOD("")
 
-  cIdPartner  := SPACE(LEN(PRIPR->idpartner))
+  cIdPartner  := SPACE(LEN(kalk_pripr->idpartner))
   dDatFaktP   := CTOD("")
 
   cPoMetodiNC := "N"
@@ -741,12 +747,12 @@ function Iz16u14()
   cIdFirma    := gFirma
   cIdVdU      := "16"
   cIdVdI      := "14"
-  cBrDokU     := SPACE(LEN(PRIPR->brdok))
+  cBrDokU     := SPACE(LEN(kalk_pripr->brdok))
   cBrDokI     := ""
   dDatDok     := CTOD("")
 
-  cIdPartner  := SPACE(LEN(PRIPR->idpartner))
-  cBrFaktP    := SPACE(LEN(PRIPR->brfaktp))
+  cIdPartner  := SPACE(LEN(kalk_pripr->idpartner))
+  cBrFaktP    := SPACE(LEN(kalk_pripr->brfaktp))
   dDatFaktP   := CTOD("")
   dDatKurs    := CTOD("")
 

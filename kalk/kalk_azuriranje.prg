@@ -299,7 +299,7 @@ select kalk_doks; set order to 3
 seek cidfirma+dtos(kalk_pripr->datdok)+chr(255)
 skip -1
 if datdok==kalk_pripr->datdok
-   if  kalk_kalk_pripr->idvd $ "18#19" .and. kalk_kalk_pripr->TBankTr=="X"    // izgenerisani dokument
+   if  kalk_pripr->idvd $ "18#19" .and. kalk_pripr->TBankTr=="X"    // izgenerisani dokument
      if len(podbr)>1
        cNPodbr:=chr256(asc256(podbr)-3)
      else
@@ -345,11 +345,11 @@ do while !eof()
 	select kalk_doks
   	append blank
   	replace idfirma with cidfirma, brdok with cbrdok,;
-        	datdok with kalk_kalk_pripr->datdok, idvd with cidvd,;
-           	idpartner with kalk_kalk_pripr->idpartner, mkonto with kalk_kalk_pripr->MKONTO,;
-          	pkonto with kalk_kalk_pripr->PKONTO,;
-          	idzaduz with kalk_kalk_pripr->idzaduz, idzaduz2 with kalk_kalk_pripr->idzaduz2,;
-          	brfaktp with kalk_kalk_pripr->BrFaktP
+        	datdok with kalk_pripr->datdok, idvd with cidvd,;
+           	idpartner with kalk_pripr->idpartner, mkonto with kalk_pripr->MKONTO,;
+          	pkonto with kalk_pripr->PKONTO,;
+          	idzaduz with kalk_pripr->idzaduz, idzaduz2 with kalk_pripr->idzaduz2,;
+          	brfaktp with kalk_pripr->BrFaktP
   	if fieldpos("sifra")<>0
      		replace sifra with SifraKorisn
   	endif
@@ -358,7 +358,7 @@ do while !eof()
 		
 		cOpis := cIDFirma + "-" + cIdVd + "-" + ALLTRIM(cBrDok)
 
-		EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,cOpis, "", "", kalk_kalk_pripr->datdok, Date(),"","Azuriranje dokumenta")
+		EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,cOpis, "", "", kalk_pripr->datdok, Date(),"","Azuriranje dokumenta")
 	
 	endif
 
@@ -394,9 +394,9 @@ do while !eof()
   		// popunjavanje roba->idpartner
   		// popunjavanje tabele prodnc
   		if IsPlanika()
-			PlFillIdPartner(kalk_pripr->idpartner, kalk_kalk_pripr->idroba)
-			if kalk_kalk_pripr->idvd $ "11#12#13#80#81"
-				SetProdNc(kalk_pripr->pkonto, kalk_kalk_pripr->idroba, kalk_kalk_pripr->idvd, kalk_kalk_pripr->brdok, kalk_kalk_pripr->datdok, kalk_kalk_pripr->fcj)
+			PlFillIdPartner(kalk_pripr->idpartner, kalk_pripr->idroba)
+			if kalk_pripr->idvd $ "11#12#13#80#81"
+				SetProdNc(kalk_pripr->pkonto, kalk_pripr->idroba, kalk_pripr->idvd, kalk_pripr->brdok, kalk_pripr->datdok, kalk_pripr->fcj)
    			endif
   		endif
 

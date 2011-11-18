@@ -34,9 +34,9 @@ if !(cidvd $ "14#96#95#10#94#16") .and. !empty(gMetodaNC)
 endif
 
 if kalk_pripr->idvd $ "14#94#96#95"
- select koncij; seek trim(pripr->idkonto2)
+ select koncij; seek trim(kalk_pripr->idkonto2)
 else
- select koncij; seek trim(pripr->idkonto)
+ select koncij; seek trim(kalk_pripr->idkonto)
 endif
 if koncij->naz $ "N1#P1#P2"
    closeret
@@ -62,9 +62,9 @@ cPromCj:="N"
 do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
   if kalk_pripr->idvd $ "14#94#96#95"   // ako je vise konta u igri - kao 16-ka
-    select koncij; seek trim(pripr->idkonto2)
+    select koncij; seek trim(kalk_pripr->idkonto2)
   else
-    select koncij; seek trim(pripr->idkonto)
+    select koncij; seek trim(kalk_pripr->idkonto)
   endif
   select kalk_pripr
   if koncij->naz $ "N1#P1#P2"
@@ -145,7 +145,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
     if cIdVD $ "10#16#14#96" ;  // samo ako je ulaz,izlaz u magacin promjeni stanje VPC u sif.robe
      .and. !(cidvd=="14" .and. gNiv14=="2")   // minex
      select roba         // promjeni stanje robe !!!!
-     ObSetVPC(pripr->vpc)
+     ObSetVPC(kalk_pripr->vpc)
 
     endif
    endif

@@ -34,7 +34,7 @@ PRIVATE opc:={}
 PRIVATE opcexe:={}
 
 AADD(opc,"1. stampa azuriranog dokumenta              ")
-AADD(opcexe, {|| Stkalk(.t.)})
+AADD(opcexe, {|| kalk_centr_stampa_dokumenta(.t.)})
 AADD(opc,"2. stampa liste dokumenata")
 AADD(opcexe, {|| StDoks()})
 AADD(opc,"3. pregled dokumenata po hronologiji obrade")

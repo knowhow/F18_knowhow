@@ -355,7 +355,7 @@ function MarkBrDok(fNovi)
   IF fNovi .and. KONCIJ->(FIELDPOS("M1"))<>0
     SELECT KONCIJ; HSEEK _idkonto2
     IF !EMPTY(m1)
-      select kalk; set order to 1; seek _idfirma+_idvd+"X"
+      select kalk; set order to tag "1"; seek _idfirma+_idvd+"X"
       skip -1
       _brdok:=space(8)
       do while !bof() .and. idvd==_idvd

@@ -77,7 +77,7 @@ cCjenSif := "N"
 if gBrojac=="D"
 
  	select kalk
-	set order to 1
+	set order to tag "1"
 	seek cIdFirma + "11X"
  	skip -1
  
@@ -277,7 +277,7 @@ cIdZaduz2:=cIdZaduz:=space(6)
 cBrkalk:=space(8)
 if gBrojac=="D"
  select kalk
- select kalk; set order to 1;seek cidfirma+"11X"
+ select kalk; set order to tag "1";seek cidfirma+"11X"
  skip -1
  if idvd<>"11"
    cbrkalk:=space(8)
@@ -447,7 +447,7 @@ cNac_rab := "P"
 if gBrojac=="D"
 	select kalk
  	select kalk
-	set order to 1
+	set order to tag "1"
 	seek cIdFirma+"41X"
  	skip -1
  	if idvd<>"41"
@@ -696,7 +696,7 @@ cIdZaduz:=space(6)
 cBrkalk:=space(8)
 if gBrojac=="D"
  select kalk
- select kalk; set order to 1;seek cidfirma+"81X"
+ select kalk; set order to tag "1";seek cidfirma+"81X"
  skip -1
  if idvd<>"81"
    cbrkalk:=space(8)
@@ -841,7 +841,7 @@ cIdZaduz2:=cIdZaduz:=space(6)
 cBrkalk:=space(8)
 if gBrojac=="D"
  select kalk
- select kalk; set order to 1;seek cidfirma+"80X"
+ select kalk; set order to tag "1";seek cidfirma+"80X"
  skip -1
  if idvd<>"80"
    cbrkalk:=space(8)
@@ -1017,7 +1017,7 @@ cIdZaduz2:=cIdZaduz:=space(6)
 cBrkalk:=space(8)
 if gBrojac=="D"
  select kalk
- select kalk; set order to 1;seek cidfirma+"15X"
+ select kalk; set order to tag "1";seek cidfirma+"15X"
  skip -1
  if idvd<>"15"
    cbrkalk:=space(8)
@@ -1205,7 +1205,7 @@ cZbirno:="D"
 if gBrojac=="D"
 	select kalk
  	select kalk
-	set order to 1
+	set order to tag "1"
 	seek cIdFirma+"42X"
  	skip -1
  	if idvd<>"42"

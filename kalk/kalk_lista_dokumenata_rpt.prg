@@ -127,7 +127,7 @@ qqVD:=trim(qqVD)
 seek cIdFirma+qqVD
 
 if cStampaj=="D"
-   Stkalk(.t.,"IZDOKS")
+   kalk_centr_stampa_dokumenta(.t.,"IZDOKS")
    closeret
 endif
 

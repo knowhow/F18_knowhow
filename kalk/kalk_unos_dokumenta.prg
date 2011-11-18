@@ -12,21 +12,11 @@
 
 #include "kalk.ch"
 
-
-/*! \file fmk/kalk/dok/1g/knjiz.prg
- *  \brief Unos i ispravka dokumenata
- */
-
-*static string
 static cENTER:=chr(K_ENTER)+chr(K_ENTER)+chr(K_ENTER)
-*;
 
-/*! \fn kalk_unos_dokumenta()
- *  \brief Nudi meni za rad na dokumentu u staroj varijanti ili direktno poziva tabelu kalk_pripreme u novoj (default) varijanti
- */
+
 
 function kalk_unos_dokumenta()
-*{
 local izbor:=1
 
 PRIVATE PicCDEM:=gPicCDEM
@@ -55,7 +45,7 @@ do while .t.
      case izbor == 1
          kalk_unos_stavki_dokumenta()
      case izbor == 2
-         StKalk()
+         kalk_centr_stampa_dokumenta()
      case izbor == 3
          RekapK()
      case izbor == 4
@@ -77,18 +67,17 @@ else  // gnw=="D"
    kalk_unos_stavki_dokumenta()
 endif
 
-closeret
+close all
 return
-*}
 
 
 
-/*! \fn kalk_unos_dokumenta(lAutoObrada)
- *  \brief Tabela kalk_pripreme dokumenta
- */
+
 
 function kalk_unos_stavki_dokumenta(lAObrada)
-*{
+local nMaxCol := MAXCOLS()-3
+local nMaxRow := MAXROWS()-4
+
 O_PARAMS
 
 private lAutoObr := .f.
@@ -150,32 +139,27 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
-Box(,20,77)
-	@ m_x+17,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku   "
-	@ m_x+18,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje      "
-	@ m_x+19,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi kalk_pripremu   ³<a-P> Stampa kalk_pripreme "
-	@ m_x+20,m_y+2 SAY "<c-F8> Raspored troskova³<a-F10> asistent        ³<F10>,<F11> Ost.opcije"
+Box(, nMaxRow, nMaxCol )
+	@ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku   "
+	@ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje      "
+	@ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi kalk_pripremu   ³<a-P> Stampa kalk_pripreme "
+	@ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<a-F10> asistent        ³<F10>,<F11> Ost.opcije"
 	IF gCijene=="1" .and. gMetodaNC==" "
-  		Soboslikar({{m_x+17,m_y+1,m_x+20,m_y+77}},23,14)
+  		Soboslikar({{nMaxRow-3,m_y+1,nMaxRow,m_y+77}},23,14)
 	ENDIF
 
 	PRIVATE lAutoAsist:=.f.
 
-	ObjDbedit("PNal",20,77,{|| EdPRIPR(lAutoObr)},"<F5>-kartica magacin, <F6>-kartica prodavnica","Priprema...", , , , ,4)
+	ObjDbedit("PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler(lAutoObr)},"<F5>-kartica magacin, <F6>-kartica prodavnica","Priprema...", , , , ,4)
 BoxC()
 
 CLOSERET
 return
-*}
 
 
 
-/*! \fn o_kalk_edit()
- *  \brief Otvara sve potrebne baze za kalk_pripremu dokumenata
- */
 
 function o_kalk_edit()
-*{
 O_KALK_DOKS
 O_KALK_PRIPR
 O_DOKSRC
@@ -192,19 +176,14 @@ O_TARIFA
 O_KONCIJ
 
 select kalk_pripr
-set order to 1
+set order to tag "1"
 go top
 return
 
 
 
 
-/*! \fn EdPRIPR(lAObrada)
- *  \brief Obrada dostupnih opcija u tabeli kalk_pripreme
- */
-
-function EdPRIPR()
-*{
+function kalk_pripr_key_handler()
 local nTr2,cSekv,nkekk
 local isekv
 
@@ -270,7 +249,7 @@ do case
 			JerryMP()
 		endif
 		close all
-		StKalk()
+		kalk_centr_stampa_dokumenta()
 		o_kalk_edit()
 		return DE_REFRESH
 	case Ch==K_CTRL_T
@@ -897,13 +876,8 @@ return
 
 
 
-/*! \fn EditPripr(fNovi)
- *  \brief Centralna funkcija za unos/ispravku stavke dokumenta
- */
-
 //ulaz _IdFirma, _IdRoba, ...., nRBr (val(_RBr))
 function EditPripr(fNovi)
-*{
 private nMarza:=0,nMarza2:=0,nR
 private PicDEM:="9999999.99999999",PicKol:=gPicKol
 nStrana:=1
@@ -1129,12 +1103,12 @@ endif
 
 @  m_x+2,COL()+2 SAY "Datum:"   get  _DatDok
 
-@ m_x+4,m_y+2  SAY "Redni broj stavke:" GET nRBr PICT '9999' valid {|| CentrTxt("",24),.t.}
+@ m_x+4,m_y+2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
 read
 ESC_RETURN 0
 
 return 1
-*}
+
 
 
 
@@ -1557,7 +1531,9 @@ O_PARTN
 O_KONTO
 O_KALK_PRIPR
 
-select kalk_pripr; set order to 1; go top
+select kalk_pripr
+set order to tag "1"
+go top
 
 do while .t.
 
@@ -1780,13 +1756,13 @@ return
 
 
 
-/*! \fn StKalk()
+/*! \fn kalk_centr_stampa_dokumenta()
  *  \param fstara
  *  \param cSeek
  *  \brief Centralna funkcija za stampu KALK dokumenta. Poziva odgovarajucu funkciju za stampu dokumenta u zavisnosti od tipa dokumenta i podesenja parametara varijante izgleda dokumenta
  */
 
-function StKalk()
+function kalk_centr_stampa_dokumenta()
 *{
 parameters fstara, cSeek, lAuto
 local nCol1
@@ -1825,18 +1801,16 @@ if (cSeek==nil)
 	cSeek:=""
 endif
 
+altd()
+
 if fstara
-#ifdef CAX
-	select (F_PRIPR)
-	use
-#endif
 	O_SKALK   // alias kalk_pripr
 else
 	O_KALK_PRIPR
 endif
 
 select kalk_pripr
-set order to 1
+set order to tag "1"
 go top
 
 fTopsD:=.f.
@@ -2079,7 +2053,7 @@ enddo  // vrti kroz kalkulacije
 if (fTopsD .and. !fstara .and. gTops!="0 ")
 	start print cret
 	select kalk_pripr
-	set order to 1
+	set order to tag "1"
 	go top
 	cIdFirma:=IdFirma
 	cBrDok:=BrDok
@@ -2106,7 +2080,7 @@ if (fFaktD .and. !fstara .and. gFakt!="0 ")
 	start print cret
 	o_kalk_edit()
 	select kalk_pripr
-	set order to 1
+	set order to tag "1"
 	go top
 	cIdFirma:=IdFirma
 	cBrDok:=BrDok
@@ -2208,7 +2182,7 @@ O_TDOK
 O_SKALK   // alias kalk_pripr
 
 select kalk_pripr
-set order to 1
+set order to tag "1"
 go top
 
 do while .t.

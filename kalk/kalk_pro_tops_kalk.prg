@@ -81,7 +81,7 @@ O_TARIFA
 
 if lTest == .f. .and. gBrojac=="D"
 	select kalk
- 	set order to 1
+ 	set order to tag "1"
 	seek cIdFirma + "96X"
  	skip -1
  	if idvd<>"96"

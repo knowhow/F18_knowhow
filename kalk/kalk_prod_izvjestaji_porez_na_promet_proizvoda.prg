@@ -44,7 +44,7 @@ IF prow() > 55+gPStranica
 endif
 nRec:=recno()
 select kalk_kalk_pripr
-set order to 2
+set order to tag "2"
 
 if (cIdVd == "IP")
   ?
@@ -225,7 +225,7 @@ for i:=1 to nCntKonto
 	? m
 next
 
-set order to 1
+set order to tag "1"
 go nRec
 return
 *}

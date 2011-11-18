@@ -54,7 +54,7 @@ cIdZaduz2:=space(6)
 cBrkalk:=space(8)
 if gBrojac=="D"
  select kalk
- select kalk; set order to 1
+ select kalk; set order to tag "1"
  seek cidfirma+cTipkalk+"X"
  skip -1
  if cTipkalk<>IdVD

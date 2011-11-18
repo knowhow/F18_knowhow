@@ -126,7 +126,7 @@ AADD(opcexe, nil)
 
 // najcesece koristenje opcije
 AADD(opc,   "A. stampa azuriranog dokumenta")
-AADD(opcexe, {|| Stkalk(.t.)})
+AADD(opcexe, {|| kalk_centr_stampa_dokumenta(.t.)})
 AADD(opc,   "P. povrat dokumenta u pripremu") 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
 	AADD(opcexe, {|| Povrat_kalk_dokumenta()})

@@ -260,7 +260,7 @@ nRec:=recno()
 
 RekTar41(cIdFirma, cIdVd, cBrDok, @nStr)
 
-set order to 1
+set order to tag "1"
 go nRec
 return
 *}
@@ -280,7 +280,7 @@ local nTotP
 local aPorezi
 
 select kalk_pripr
-set order to 2
+set order to tag "2"
 seek cIdfirma+cIdvd+cBrdok
 
 m:="------ ---------- ---------- ----------  ---------- ---------- ---------- ---------- ---------- ----------"

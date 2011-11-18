@@ -103,11 +103,11 @@ function PrometGP()
   select kalk
 
   if fSint .and. lSabKon
-    set order to 6
+    set order to tag "6"
     //"6","idFirma+IdTarifa+idroba",KUMPATH+"KALK"
     hseek cidfirma
   else
-    set order to 3
+    set order to tag "3"
     hseek cidfirma+cidkonto
   endif
 

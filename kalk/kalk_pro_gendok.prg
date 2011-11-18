@@ -37,7 +37,7 @@ O_KONTO
 O_PARTN
 O_TARIFA
 O_SAST
-#xcommand XO_KALK    => select (F_FAKT);  use  ("KALK")  alias kalk2; set order to 1
+#xcommand XO_KALK    => select (F_FAKT);  use  ("KALK")  alias kalk2; set order to tag "1"
 XO_KALK
 dDatKalk:=date()
 cIdKonto:=padr("",7)
@@ -47,7 +47,7 @@ cIdZaduz2:=space(6)
 cBrkalk:=space(8)
 if gBrojac=="D"
  select kalk
- select kalk; set order to 1;seek cidfirma+"96X"
+ select kalk; set order to tag "1";seek cidfirma+"96X"
  skip -1
  if idvd<>"96"
    cbrkalk:=space(8)

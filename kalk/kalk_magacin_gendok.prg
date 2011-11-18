@@ -191,7 +191,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
   if koncij->naz<>"N1"
    FaktVPC(@nFaktVPC,_idfirma+_idkonto+_idroba)
   endif
-  select kalk; set order to 1; select kalk_pripr
+  select kalk; set order to tag "1"; select kalk_pripr
 
   if round(kolicina-gkolicina,3)<>0   // popisana-stvarna=(>0 visak,<0 manjak)
     IF lOdvojiVisak .and. round(kolicina-gkolicina,3) > 0  // visak odvojiti
@@ -296,7 +296,7 @@ O_KALK
 private cBrDok:=SljBroj(cidfirma,"18",8)
 
 nRbr:=0
-set order to 3  //"3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
+set order to tag "3"  //"3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
 
 MsgO("Generacija dokumenta 18 - "+cbrdok)
 
@@ -425,7 +425,7 @@ private nRbr:=0
 
 select kalk
 cBrNiv:=kalk_sljedeci(gfirma,"18")
-select kalk; set order to 3
+select kalk; set order to tag "3"
 HSEEK gFirma+cMagac
 do while !eof() .and. idfirma+mkonto=gFirma+cMagac
 

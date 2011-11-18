@@ -127,7 +127,7 @@ function TraziNC(cTrazi,dDat)
  LOCAL nSlog:=0, aNiz:={{0,0}}, nPom:=0, nVrati:=0
   SELECT KALK
   nSlog:=RECNO()
-  SET ORDER TO 3
+  set order to tag "3"
   GO TOP
   SEEK cTrazi
   DO WHILE cTrazi==idfirma+mkonto+idroba .and. datdok<=dDat .and. !EOF()
@@ -139,7 +139,7 @@ function TraziNC(cTrazi,dDat)
     ENDIF
     SKIP 1
   ENDDO
-  SET ORDER TO 1
+  set order to tag "1"
   GO nSlog
   ASORT(aNiz,,,{|x,y| x[2]>y[2]})
   IF aNiz[1,1]>0

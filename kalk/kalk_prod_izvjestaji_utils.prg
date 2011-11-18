@@ -37,7 +37,7 @@ endif
 
 nRec:=recno()
 select kalk_pripr
-set order to 2
+set order to tag "2"
 seek cIdFirma+cIdVd+cBrDok
 m:="------ ----------"
 
@@ -181,7 +181,7 @@ for i:=1 to nCntKonto
 	? m
 next
 
-set order to 1
+set order to tag "1"
 go nRec
 return
 *}

@@ -229,7 +229,7 @@ endif
 
 select KALK
 
-set order to 4
+set order to tag "4"
 
 set filter to &cFilter
 //"4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALKS")

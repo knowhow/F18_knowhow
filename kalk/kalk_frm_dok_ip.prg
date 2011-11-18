@@ -60,7 +60,7 @@ O_KALK
 private cBrDok:=SljBroj(cidfirma,"IP",8)
 
 nRbr:=0
-set order to 4
+set order to tag "4"
 
 MsgO("Generacija dokumenta IP - "+cbrdok)
 
@@ -187,7 +187,7 @@ O_KALK
 private cBrDok:=SljBroj(cIdFirma, "IP", 8)
 
 nRbr:=0
-set order to 4
+set order to tag "4"
 
 MsgO("Generacija dokumenta IP - " + cBrDok)
 

@@ -193,7 +193,7 @@ O_KALK
 
 nKolicina:=0
 select kalk
-set order to 3
+set order to tag "3"
 
 private cFilt:=".t."
 

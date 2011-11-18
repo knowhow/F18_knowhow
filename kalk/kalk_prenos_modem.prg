@@ -98,7 +98,7 @@ fSifk:=.t.
 O__KALK
 O_KALK
 
-SELECT KALK; set order to 1  // idFirma+IdVD+BrDok+RBr
+SELECT KALK; set order to tag "1"  // idFirma+IdVD+BrDok+RBr
 cidfirma:=gfirma
 cIdVD:=space(2)
 cBrDok:=space(8)
@@ -306,7 +306,7 @@ restore screen from cs
 O__KALK
 O_KALK_PRIPR
 
-SELECT _KALK; set order to 0  // idFirma+IdVD+BrDok+RBr
+SELECT _KALK; set order to   // idFirma+IdVD+BrDok+RBr
 
 if !EMPTY(cKonvFirma+cKonvBrDok)
   aKBrDok:=TokUNiz(cKonvBrDok)
@@ -349,7 +349,8 @@ O_ROBA
 O_SIFK
 O_SIFV
 O__ROBA
-set order to 0; go top
+set order to
+go top
 Box(,1,60)
 // prolazimo kroz _ROBA
 do while !eof()
@@ -389,7 +390,9 @@ if pitanje(,"PARTN - dodati nepostojece sifre ?","D")=="D"
      O_SIFK;   O_SIFV
   endif
   O__PARTN
-  set order to 0; go top
+  set order to
+  go top
+
   Box(,1,60)
   do while !eof()
     @ m_x+1,m_y+2 SAY id; ?? "-",naz

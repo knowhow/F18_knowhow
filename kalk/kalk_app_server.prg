@@ -24,7 +24,7 @@ if mpar37("/B",p3,p4,p5,p6,p7)
     cBroj:=FreadLn(nH)
     cBroj:=left(cBroj, (len(cBroj) -2 ))
     FClose(nH)
-    StKalk(.t.,cBroj)
+    kalk_centr_stampa_dokumenta(.t.,cBroj)
   else
     FClose(nH)
   endif

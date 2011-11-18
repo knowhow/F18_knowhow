@@ -62,7 +62,7 @@ O_TARIFA
 O_KALK
 
 // "6":"idFirma+IDTarifa+idroba
-set order to 6
+set order to tag "6"
 
 IF lVoSaTa
 	// kreirajmo pomocnu bazu

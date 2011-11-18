@@ -78,7 +78,7 @@ select PSUBAN
 ZAP
 
 SELECT fin_pripr
-set order to 1
+set order to tag "1"
 go top
 
 if EOF()
@@ -142,7 +142,7 @@ select PSUBAN
 ZAP
 
 SELECT fin_pripr
-set order to 1
+set order to tag "1"
 go top
 
 if EOF()
@@ -362,7 +362,7 @@ select PNALOG
 zap
 
 select PSUBAN
-set order to 2
+set order to tag "2"
 go top
 
 if empty(BrNal)
@@ -583,7 +583,7 @@ endif
 Box(,5,60)
 
 select PSUBAN
-set order to 1
+set order to tag "1"
 go top
 
 do while !eof()
@@ -708,7 +708,7 @@ do while !eof()
 		    	endif
 
 			SELECT SUBAN
-			set order to 3
+			set order to tag "3"
     			SEEK _IdFirma+_IdKonto+_IdPartner+_BrDok
 
     			nRec:=recno()
@@ -976,7 +976,7 @@ Box("kzb",12,70,.f.,"Kontrola zbira FIN naloga")
 
  	@ m_x+1,m_y+2 SAY "Nalog broj: "+cidfirma+"-"+cidvn+"-"+cBrNal
 
- 	set order to 1
+ 	set order to tag "1"
  	seek cIdFirma+cIdVn+cBrNal
 
  	private dug:=0
@@ -1112,7 +1112,7 @@ O_ANAL
 O_SINT
 O_NALOG
 
-SELECT SUBAN; set order to 4
+SELECT SUBAN; set order to tag "4"
 if pcount()==0
 
 cIdFirma:=gFirma
@@ -1168,7 +1168,7 @@ use
 MsgC()
 
 MsgO("ANAL")
-select ANAL; set order to 2
+select ANAL; set order to tag "2"
 seek cidfirma+cidvn+cbrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
   skip 1; nRec:=recno(); skip -1
@@ -1179,7 +1179,7 @@ use
 MsgC()
 
 MsgO("SINT")
-select sint;  set order to 2
+select sint;  set order to tag "2"
 seek cidfirma+cidvn+cbrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
   skip 1; nRec:=recno(); skip -1

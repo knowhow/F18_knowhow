@@ -48,7 +48,7 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
     go nTrec
  enddo
 
- select doks; set order to 2
+ select doks; set order to tag "2"
  //CREATE_INDEX("DOKSi2","IdFirma+MKONTO+idzaduz2+idvd+brdok","DOKS")
 
  seek _idfirma+_idkonto+_idzaduz2+"RN"
@@ -68,13 +68,13 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
  do while !eof() .and.;
                  (_idfirma+_idkonto2+_idzaduz2 = idfirma+mkonto+idzaduz2)
 
-    select kalk; set order to 1
+    select kalk; set order to tag "1"
     seek doks->(idfirma+idvd+brdok)
     nKolicina:=0   ; nNabV:=0
     do while !eof() .and. doks->(idfirma+idvd+brdok) == (idfirma+idvd+brdok)
 
           //CREATE_INDEX(PRIVPATH+"PRIPRi3","idFirma+idvd+brdok+idroba+rbr",PRIVPATH+"PRIPR")
-          select kalk_pripr; SET ORDER TO 3
+          select kalk_pripr; set order to tag "3"
           seek _idfirma+_idvd+_brdok+kalk->idroba+"9"
           // nadji odgovoarajucu stavku iznad 900
 
@@ -106,7 +106,7 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
                       nc with nc-kalk->(kolicina*nc)
           endif
 
-          select kalk_pripr; set order to 1
+          select kalk_pripr; set order to tag "1"
           select kalk
           skip
 
@@ -115,7 +115,7 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
     select doks; skip
  enddo
 
- select kalk_pripr; set order to 1; go top
+ select kalk_pripr; set order to tag "1"; go top
  nNV:=0
  do while !eof()
      if val(RBr)>900

@@ -67,7 +67,7 @@ endif
 
 
 SELECT kalk
-set order to 3
+set order to tag "3"
 //("3","idFirma+mkonto+idroba+dtos(datdok)+MU_I+IdVD","KALK")
 hseek cidfirma
 

@@ -140,7 +140,7 @@ O_KALK
 private cBrDok:=SljBroj(cidfirma,"19",8)
 
 nRbr:=0
-set order to 1
+set order to tag "1"
 //"KALKi1","idFirma+IdVD+BrDok+RBr","KALK")
 
 select koncij; seek trim(cidkonto)
@@ -154,7 +154,7 @@ nUlaz:=nIzlaz:=0
 nMPVU:=nMPVI:=nNVU:=nNVI:=0
 nRabat:=0
 select roba; hseek cidroba; select kalk
-set order to 4
+set order to tag "4"
 //"KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
 seek cidfirma+cidkonto+cidroba
 
@@ -195,7 +195,7 @@ do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
   skip
 enddo // po orderu 4
 
-select kalk; set order to 1; go nTrec
+select kalk; set order to tag "1"; go nTrec
 
  select roba
  hseek cidroba
@@ -276,7 +276,7 @@ O_KALK
 private cBrDok:=SljBroj(cidfirma,"19",8)
 
 nRbr:=0
-set order to 4
+set order to tag "4"
 
 MsgO("Generacija dokumenta 19 - "+cbrdok)
 
@@ -468,7 +468,7 @@ DO WHILE !EOF().and.idvd=="19".and.brdok==cStBrDok
   SELECT ROBA; HSEEK KALK->idroba
   SELECT KALK; nSlog:=RECNO()
 //  nPom := StanjeProd( cIdFirma+cIdKonto+KALK->idroba , ddatdok )
-  SET ORDER TO 1
+  set order to tag "1"
   GO nSlog
   Scatter()
   SELECT kalk_pripr; APPEND NCNL
@@ -532,7 +532,7 @@ private nRbr:=0
 
 select kalk
 cBrNiv:=kalk_sljedeci(gfirma,"19")
-select kalk; set order to 4
+select kalk; set order to tag "4"
 HSEEK gFirma+cMagac
 
 Box(,6,65)

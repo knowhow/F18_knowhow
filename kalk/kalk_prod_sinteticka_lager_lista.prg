@@ -87,7 +87,7 @@ if !(cFilt1==".t.")
 endif
 
 select kalk
-set order to 6
+set order to tag "6"
 //CREATE_INDEX("6","idFirma+IdTarifa+idroba",KUMPATH+"KALK")
 hseek cidfirma
 EOF CRET

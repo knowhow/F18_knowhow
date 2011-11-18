@@ -60,7 +60,7 @@ function KalkNaF(cidroba,nKols)
 select (F_FAKT)
 if !used(); O_FAKT; endif
 
-select fakt; set order to 3 // idroba
+select fakt; set order to tag "3" // idroba
 nKols:=0
 seek cidroba
 do while !eof() .and. cidroba==idroba
@@ -104,7 +104,7 @@ local nArr:=SELECT()
 //PushWa()
 SELECT KALK
 set filter to
-set order to 1
+set order to tag "1"
 seek cIdFirma+cIdVD+cBrDok
 if found()
   Beep(1)
@@ -152,7 +152,7 @@ private GetList:={}
  if ( (roba->tip $ "UTY") .or. empty(gMetodaNC) .or. gmagacin=="1" .or. (IsJerry() .and. _idvd="4") )
  	return .t.
  endif
- select kalk_pripr; set order to 3
+ select kalk_pripr; set order to tag "3"
  nRRec:=recno()
  seek _idfirma+_idvd+_brdok+_idroba
  fdupli:=.f.
@@ -179,7 +179,7 @@ private GetList:={}
    _fcj:=dfcj
  endif
  select kalk_pripr
- set order to 1
+ set order to tag "1"
 return .t.
 *}
 
@@ -192,7 +192,7 @@ return .t.
 function DatPosljK()
 *{
 select kalk
-set order to 3
+set order to tag "3"
 seek _idfirma+_mkonto+_idroba+chr(254)
 skip -1
 if _idfirma+_idkonto+_idroba==idfirma+mkonto+idroba .and. _datdok<datdok
@@ -212,7 +212,7 @@ return
 function DatPosljP()
 *{
 select kalk
-set order to 4
+set order to tag "4"
 
 if _idroba="T"
  go bottom
@@ -276,7 +276,7 @@ if gBrojac=="D"
 		seek cIdFirma+cTipKalk+cSufiks+"X"
 	else
 		select kalk
-		set order to 1
+		set order to tag "1"
 		seek cIdFirma+cTipKalk+"X"
 	endif
 	skip -1
@@ -319,7 +319,7 @@ endif
 lIdiDalje := .f.
 
 select kalk_doks
-set order to 1
+set order to tag "1"
 
 seek cIdFirma + cIdTipDok + "XXX"
 // vrati se na zadnji zapis
@@ -386,7 +386,7 @@ local cidkonto:=_idkonto
 local nRabat:=0
 select roba; hseek cidroba; select kalk
 PushWa()
-set order to 4
+set order to tag "4"
 hseek cidfirma+cidkonto+cidroba
 do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
 
@@ -448,7 +448,7 @@ return
 function renumeracija_kalk_pripr(cDok,cidvd)
 *{
 select kalk_pripr
-set order to 0
+set order to
 go top
 
 nRbr:=0
@@ -461,7 +461,7 @@ do while !eof()
 enddo
 
 select kalk_pripr
-set order to 1
+set order to tag "1"
 go top
 return
 *}

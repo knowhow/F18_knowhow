@@ -66,7 +66,7 @@ set softseek off
 O_KONTO
 O_TARIFA
 O_KALKREP
-set order to 6
+set order to tag "6"
 
 if cVDOK=="99"
   cVDOK:="11#80#81#12#13#15#19"
@@ -314,7 +314,7 @@ BoxC()
 set softseek off
 O_KONTO
 O_TARIFA
-O_KALKREP;  set order to 6
+O_KALKREP;  set order to tag "6"
 
 if cVDOK=="99"
   cVDOK:="11#80#81#12#13#15#19"

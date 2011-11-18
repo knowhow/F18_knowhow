@@ -12,12 +12,6 @@
 
 #include "rnal.ch"
 
-/*
-* ----------------------------------------------------------------
-*                             Copyright Sigma-com software 2006
-* ----------------------------------------------------------------
-*/
-
 // picture iznos
 static gPIC_VAL
 // picture dimenzije

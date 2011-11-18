@@ -1162,7 +1162,7 @@ if fStara .and. lAuto == .f.
 	cPom:=naz
    	SELECT KONTO
 	HSEEK KALK_PRIPR->PKONTO
-   	SELECT PRIPR
+   	select kalk_pripr
    	@ m_x+2, m_y+2 SAY "DATUM------------>"             COLOR "W+/B"
    	@ m_x+2, col()+1 SAY DTOC(DATDOK)                   COLOR "N/W"
    	@ m_x+3, m_y+2 SAY "PARTNER---------->"             COLOR "W+/B"
@@ -1494,7 +1494,7 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
              endif
           endif
 
-         select PRIPR
+         select kalk_pripr
          skip
    enddo // brdok
 
@@ -1577,7 +1577,7 @@ endif
 enddo // do while .t.
 
 if fStara .and. !lViseKalk
-	select pripr
+	select kalk_pripr
 	use
 endif
 

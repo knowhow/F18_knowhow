@@ -13,4 +13,5 @@ cp -av os/*.ch  $HB_INC_INSTALL
 cp -av pos/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
-hbmk2 *.prg fin/*.prg fakt/*.prg kalk/*.prg rnal/*.prg epdv/*.prg ld/*.prg os/*.prg pos/*.prg common/*.prg
+hbmk2 F18.hbp
+

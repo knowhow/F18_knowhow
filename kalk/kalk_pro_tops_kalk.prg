@@ -206,12 +206,12 @@ do while !eof() .and. xpos->idpos == cIdPos
           		do while !eof() .and. id==xpos->idroba 
 				select roba
 				hseek sast->id2
-            			select pripr
+            			select kalk_pripr
             			locate for idroba==sast->id2
             			if found()
               				replace kolicina with kolicina + xpos->kolicina * sast->kolicina
             			else
-              				select pripr
+              				select kalk_pripr
               				append blank
               				replace idfirma with gFirma
 					replace rbr with str(++nRbr,3)

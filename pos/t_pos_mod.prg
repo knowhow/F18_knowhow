@@ -163,9 +163,6 @@ CLOSE ALL
 
 return
 
-
-
- 
 function pos_main_menu_level(KLevel,Fx,Fy)
 
 do case
@@ -780,6 +777,3 @@ endif
 SetBoje(gVrstaRS)
 
 return
-
-
-

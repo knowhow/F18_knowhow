@@ -1,0 +1,14 @@
+f18.hbc -DPROBA -DDEFINE2 -DDEBUG -inc
+
+-oF18
+
+F18.prg 
+fin/*.prg 
+fakt/*.prg 
+kalk/*.prg 
+rnal/*.prg 
+epdv/*.prg 
+ld/*.prg 
+os/*.prg 
+pos/*.prg 
+common/*.prg

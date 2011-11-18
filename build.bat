@@ -1,4 +1,5 @@
-IF NOT EXIST "%HB_INC_INSTALL%"  GOTO END
+@ECHO OFF
+IF NOT EXIST "%HB_INC_INSTALL%"  GOTO ERR
 IF EXIST "%HB_INC_INSTALL%"  GOTO BUILD 
 
 :BUILD
@@ -12,9 +13,17 @@ copy os\*.ch  %HB_INC_INSTALL%
 copy pos\*.ch  %HB_INC_INSTALL%
 copy common\*.ch %HB_INC_INSTALL%
 
-hbmk2 *.prg fin\*.prg fakt\*.prg kalk\*.prg rnal\*.prg epdv\*.prg ld\*.prg os\*.prg pos\*.prg common\*.prg
+hbmk2 F18.hbp
+
+GOTO DONE
 
 
-
-:END
+:ERR
 echo "setuj envars" 
+GOTO:EOF 
+:DONE
+echo "zavrseno"
+
+
+
+

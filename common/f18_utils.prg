@@ -128,7 +128,7 @@ function get_f18_home_dir(cDatabase)
 local cHome
 
 #ifdef __PLATFORM__WINDOWS
-  cHome := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
+  cHome := hb_DirSepAdd( '"' + GetEnv( "USERPROFILE" ) + '"' ) 
 #else
   cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
 #endif
@@ -274,9 +274,9 @@ AADD( gaDbfs, { F_BUIZ   ,  "BUIZ"    , "fin_buiz"   } )
 AADD( gaDbfs, { F_KALK   ,"KALK"         , "kalk_kalk"     } )
 AADD( gaDbfs, { F_KALKS  ,"KALKS"        , "kalk_kalks"    } )
 AADD( gaDbfs, { F__KALK  ,"_KALK"        , "_kalk_kalk"    } )
-AADD( gaDbfs, { F_PRIPR  ,"KALK_PRIPR"   , "kalk_pripr"    } )
-AADD( gaDbfs, { F_PRIPR2  ,"KALK_PRIPR2"  , "kalk_pripr2"   } )
-AADD( gaDbfs, { F_PRIPR9  ,"KALK_PRIPR9"  , "kalk_pripr9"   } )
+AADD( gaDbfs, { F_KALK_PRIPR  ,"KALK_PRIPR"   , "kalk_pripr"    } )
+AADD( gaDbfs, { F_KALK_PRIPR2  ,"KALK_PRIPR2"  , "kalk_pripr2"   } )
+AADD( gaDbfs, { F_KALK_PRIPR9  ,"KALK_PRIPR9"  , "kalk_pripr9"   } )
 AADD( gaDbfs, { F_FINMAT ,"KALK_FINMAT"  , "kalk_finmat"   } )
 AADD( gaDbfs, { F_DOKS   ,"KALK_DOKS"    , "kalk_doks"     } )
 AADD( gaDbfs, { F_DOKS2  ,"KALK_DOKS2"   , "kalk_doks2"    } )

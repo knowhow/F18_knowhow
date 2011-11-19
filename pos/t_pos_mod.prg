@@ -199,7 +199,6 @@ if (mpar37("/IMPROBA",goModul))
 endif
 
 if (mpar37("/REAL2KALK", goModul))
-	altd()
 
 	if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
 		// automatski prenos real.u KALK
@@ -210,7 +209,6 @@ if (mpar37("/REAL2KALK", goModul))
 endif
 
 if (mpar37("/REK2KALK", goModul))
-	altd()
 
 	if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
 		// automatski prenos rekl.u KALK

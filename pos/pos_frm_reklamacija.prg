@@ -102,7 +102,6 @@ if (lPregled==nil)
 	lPregled:=.f.
 endif
 
-altd()
 
 // Selektuj stavke dokumenta
 select pos

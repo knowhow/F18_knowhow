@@ -310,7 +310,6 @@ nRbr:=0
 nT1:=nT2:=nT3:=nT4:=0
 nC1:=10
 
-altd()
 do while !eof() .and.  cgodina==godina
   if prow()>62; FF; Eval(bZagl); endif
 
@@ -661,7 +660,6 @@ FUNCTION FFor5()
  cIdRadn:=IDRADN
  cNaziv:=Ocitaj(F_RADN,cIdRadn,"TRIM(NAZ)+' '+TRIM(IME)")
  nPom := 0
- altd()
  DO WHILE !EOF() .and. cIdRadn==IDRADN
    nPom+=uiznos
    SKIP 1

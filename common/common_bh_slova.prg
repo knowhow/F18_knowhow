@@ -11,8 +11,8 @@
 
 #include "fmk.ch"
 
-function KonvZnWin(cText)
-return cTekst
+function KonvZnWin(txt)
+return txt
 
 /*! \fn KonvZnWin(cTekst, cWinKonv)
  *  \brief Konverzija znakova u stringu

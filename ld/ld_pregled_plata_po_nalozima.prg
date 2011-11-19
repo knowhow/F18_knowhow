@@ -76,7 +76,6 @@ do while !eof() .and. godina=cGodina .and. mjesec=cMjesec
 		ParObr(cMjesec,cGodina,IF(lViseObr,field->obr,),field->idRj)
 		_uNeto:=field->uNeto
 		for i:=1 to len(aSati)
-			altd()
 			RekapLdP("UNETO",cGodina,cMjesec,_uNeto*aSati[i,2]/nUkSati,0,,"","",.f.,aSati[i,1])
 		next
 		nUkPlata+=BrutoP(aSati,nUkSati)

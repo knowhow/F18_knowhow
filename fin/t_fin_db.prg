@@ -909,8 +909,6 @@ local cDbfName
 
 lIdiDalje:=.f.
 
-// altd()
-
 if i==F_FIN_PRIPR .or. i==F_BBKLAS .or. i==F_IOS  .or.i==F_PNALOG .or. i==F_PSUBAN .or. i==F_PANAL  .or. i==F_PSINT
 	lIdiDalje:=.t.
 endif

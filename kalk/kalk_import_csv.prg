@@ -341,8 +341,6 @@ nStart:=0
 // prodji kroz svaku liniju i insertuj zapise u temp.dbf
 for i:=1 to nBrLin
 	
-	altd()
-
 	aFMat := SljedLin(cTxtFile, nStart)
       	
 	nStart:=aFMat[2]
@@ -522,8 +520,6 @@ endif
 
 // prodji kroz svaku liniju i insertuj zapise u temp.dbf
 for i:=1 to nBrLin
-
-	altd()
 
 	aFMat:=SljedLin(cTxtFile, nStart)
       	

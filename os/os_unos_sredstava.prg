@@ -88,7 +88,6 @@ cPicSif:=IF(gPicSif="V","@!","")
 
  // recno(), datum, DatOtp, NabVr, OtpVr, KumAmVr
  aSred := { {0,datum,datotp,nabvr,otpvr,0} }
- altd()
 
  private dDatNab:=os->datum
  private dDatOtp:=os->datotp,cOpisOtp:=os->opisotp
@@ -317,7 +316,6 @@ for i:=1 to LEN(aSred)
 	if aSred[i,1]==RECNO()
 		exit
 	endif
-	altd()
 next
 return n
 

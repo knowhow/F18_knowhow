@@ -264,7 +264,6 @@ function LogRecRoba(cIdRoba)
 O_ROBA
 set order to tag "ID"
 hseek cIdRoba
-altd()
 
 cSQL:="delete from ROBA where Id="+SQLValue(cIdRoba)
 Gw(cSQL)

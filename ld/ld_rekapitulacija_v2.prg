@@ -628,8 +628,6 @@ do while !eof() .and. eval(bUSlov)
 		nRSpr_koef := radn->sp_koef	
 	endif
 
-	altd()
-
 	// br.osn za radnika
 	nRadn_bo := bruto_osn( _oosnneto, cTipRada , nKoefLO, nRSpr_koef, cTrosk ) 
 	nTrosk := 0

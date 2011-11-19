@@ -163,7 +163,6 @@ if Pitanje(,"Prenijeti u datoteku prenosa suban.naloge sa ovim kriterijem ?","N"
     SET FILTER TO &cFilt1
   ENDIF
 
-  altd()
   go top
 
   MsgO("Prolaz kroz SUBAN...")
@@ -219,7 +218,6 @@ select PSUBAN
 go top
 // uzmi samo konta koja su se pojavila u dokumentima !!!!
 
-altd()
 
 do while !eof()
 

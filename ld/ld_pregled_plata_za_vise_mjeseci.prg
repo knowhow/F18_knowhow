@@ -269,7 +269,6 @@ static function ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
 local cT_radnik := ""
 local cLine := ""
 
-altd()
 O_R_EXP
 select r_export
 index on STR(godina,4) + STR(mjesec,2) to "1" 

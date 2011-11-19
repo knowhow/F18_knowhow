@@ -265,8 +265,6 @@ DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
 		loop
 	endif
 
-	altd()
-
 	nRSpr_koef := 0
 	nTrosk := 0
 	

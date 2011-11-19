@@ -130,8 +130,6 @@ do while !eof()
 
 		cPom := STRTRAN(cPom, "#AH#", "")
 		
-		altd()
-		
 		cIznos := &cPom
 		
 		select trfp3
@@ -188,8 +186,6 @@ select rekld
 set order to tag &cTag
 go top
 seek str(_godina,4) + str(_mjesec,2) + cId
-
-altd()
 
 do while !EOF() .and. godina == STR(_godina, 4) .and. ;
 		mjesec == STR(_mjesec, 2) .and. ;

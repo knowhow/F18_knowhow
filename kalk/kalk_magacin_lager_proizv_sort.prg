@@ -184,7 +184,6 @@ GO TOP
 oRpt:nStr:=0
 oRpt:setLinija()
 oRpt:printHeader()
-altd()
 nRec:=0
 do while !EOF()
 	ShowKorner(nRec,1)
@@ -398,7 +397,6 @@ CLOSE ALL
 O_RPT_TMP
 SET ORDER TO TAG "idRoba"
 
-altd()
 return
 *}
 
@@ -452,7 +450,6 @@ endif
 SET FILTER TO &cFilter
 GO TOP
 
-altd()
 return 1
 
 

@@ -288,9 +288,6 @@ hseek cidfirma+cidkonto
 do while !eof() .and. cIdFirma+cIdKonto==idFirma+pKonto
 
 	cIdRoba:=idRoba
-	if "02Z"$cIdRoba
-		altd()
-	endif
 	nUlaz:=nIzlaz:=0
 	nMPVU:=nMPVI:=nNVU:=nNVI:=0
 	nRabat:=0
@@ -865,7 +862,6 @@ DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. Pkonto==cPKonto
      nMPV:=nMPVReal         // tj realizovano - akontacija >=0
    endif
 
-   altd()
    if round(nMPVSaPP,4)<>0
      select kalk_pripr ; go bottom
      Scatter()

@@ -337,7 +337,6 @@ return (DE_CONT)
  
 function SR_Iznos()
 *{
-altd()
 nIznos:=0
 SELECT POS
 set order to tag "1"

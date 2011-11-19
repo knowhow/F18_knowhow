@@ -12,7 +12,6 @@
 
 #include "fmk.ch"
 
-
 function cm2str(xValue)
 
 LOCAL cType := ValType( xValue )
@@ -28,8 +27,6 @@ ENDCASE
 
 
 function ToStr(xVal)
-
-
 do case
   case VALTYPE(xVal)  == "C"
      return(xVal)
@@ -49,7 +46,6 @@ return
 // --------------------------------
 // --------------------------------
 function SjeciStr(cStr, nLen, aRez)
-
 
 if aRez == nil
 	aRez:={}
@@ -163,12 +159,7 @@ next
 return cPom
 */
 
-
-
-
 function ChADD(cC,n)
-
-
 *
 *
 * poziv cC:="A"; ChADD(@cC,2) -> "C"
@@ -179,17 +170,12 @@ RETURN NIL
 
 
 function ChSub(cC,cC2)
-
-
 * poziv ChSub("C","A") -> 2
 
 return ASC(cC)-ASC(cC2)
 
 
 function Crypt2(cStr, cModul)
-
-*
-*
 local nLen,cC,cPom,i
 
 if cModul=NIL
@@ -240,7 +226,6 @@ FUNCTION CHR256(nKod)
 
 RETURN ( CHR(INT(nKod/256)) + CHR(nKod%256) )
 
-
 FUNCTION ASC256(cTxt)
 
 RETURN ( ASC(LEFT(cTxt,1)) * 256 + ASC(RIGHT(cTxt,1)) )
@@ -263,7 +248,6 @@ return left(cTxt,i)
 
 
 function ParsMemo(cTxt)
-
 
 * Struktura cTxt-a je: Chr(16) txt1 Chr(17)  Chr(16) txt2 Chr(17) ...
 local aMemo:={}
@@ -324,9 +308,6 @@ for i:=1 to nE
     	AADD(aNiz,cE)
 next
 return (aNiz)
-
-
-
 
 FUNCTION BrDecimala(cFormat)
 

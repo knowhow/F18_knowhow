@@ -1267,7 +1267,6 @@ set order to
 go top
 do while !eof()
    if nRbr1<>0 .and. val(fin_pripr->Rbr)<=nRbr1
-      altd()
       if opis=">prenos iz p.n.<"   .and. idkonto=cPomKTO
        if nRbr2=0
          replace brnal with cBrnal5

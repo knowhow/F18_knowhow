@@ -92,8 +92,6 @@ select pos_doks
 set order to tag "ZAK"
 hseek gIdPos + "42" + STR(nZakBr, 6)
 
-altd()
-
 
 cDokumenti := ""
 nTotal := 0

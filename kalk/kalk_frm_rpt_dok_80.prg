@@ -82,7 +82,6 @@ endif
 
 select kalk_pripr
 nRec:=recno()
-altd()
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 if !empty(idkonto2)
   cidkont:=idkonto

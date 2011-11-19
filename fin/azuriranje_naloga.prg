@@ -847,8 +847,8 @@ if gBrojac=="1"
 	set order to tag "1"
 	seek cIdFirma+cIdVN+chr(254)
 	skip -1
-	altd()
-	if ( idfirma + idvn == cIdFirma + cIdVN )
+	
+    if ( idfirma + idvn == cIdFirma + cIdVN )
 		
 		// napravi validaciju polja ...
 		do while !BOF()

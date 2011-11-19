@@ -168,7 +168,6 @@ static function _obr_2_arr( aArr )
 select r_export
 go top
 
-altd()
 do while !EOF()
 	
 	AADD( aArr, { field->godina, ;

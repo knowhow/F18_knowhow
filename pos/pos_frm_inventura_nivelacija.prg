@@ -112,8 +112,6 @@ else
 	cUI_I:=R_I
 endif
 
-altd()
-
 if !VratiPripr(cIdVd,gIdRadnik,cIdOdj,cIdDio)
 	CLOSERET
 endif
@@ -376,7 +374,6 @@ Box(,5,60,.t.)
 @ m_x+0,m_y+1 SAY " "+IF(nInd==0,"NOVA STAVKA","ISPRAVKA STAVKE")+" "
 SELECT priprz
 do while .t.
-	altd()
 	Scatter()
   	select (cRSdbf)
 	hseek _idroba

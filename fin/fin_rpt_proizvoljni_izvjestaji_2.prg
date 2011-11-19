@@ -890,9 +890,7 @@ LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
 
 
 // postoji RTM fajl za delhpi
-altd()
 cNazRTM:=trim(gmodul)+UzmiIzIni(EXEPATH+"proizvj.ini",'Varijable','OznakaIzvj',"XY",'READ')
-altd()
 
 if file(EXEPATH+cNazRTM+".RTM")
 

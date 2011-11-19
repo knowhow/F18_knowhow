@@ -751,7 +751,6 @@ cKto := LEFT(idkonto, 3 )
 if cKto $ ALLTRIM(gKt_updv) .and. (IdFirma ==  cIdFirma) .and. (IdVn == cIdVn) .and. (BrNal == cBrNal) .and. ;
   ( (!empty(BrDok) .and. (BrDok == cBrDok)) .or. opis_i_oznaka(cOpis, opis) )
 
-	altd()
 	if d_p == "1"
 		// nasao sam stavku pdv-a koja se veze za dobavljaca
 		nPdvIznos := iznosbhd

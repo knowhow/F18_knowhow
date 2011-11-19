@@ -1403,7 +1403,6 @@ function Priprz2Pos()
 *{
 local lNivel
 
-altd()
 lNivel:=.f.
 
 SELECT (cRsDbf)
@@ -1658,7 +1657,6 @@ return
 // ------------------------------------------
 static function AzurRoba()
 
-altd()
 // u jednom dbf-u moze biti vise IdPos
 // ROBA ili SIROV
 select (cRSDbf)

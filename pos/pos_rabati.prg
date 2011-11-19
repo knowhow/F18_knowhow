@@ -447,7 +447,6 @@ enddo
 go top
 do while !eof()
 	if VarPopPrekoOdrIzn()
-		altd()
 		if !IsPopPrekoOdrIzn(nIznNar-nPopust) .or. (IsPopPrekoOdrIzn(nIznNar-nPopust) .and. cIdVrsteP<>"01")
 			if LEN(aRabat)>0
 				nNIznos:=CalcRabatForArticle(aRabat, idroba, .t., .t., .t., .f., .t., .t.)

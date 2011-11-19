@@ -361,7 +361,6 @@ ENDIF
 
    nP80 := nP81 := nP82 := nP83 := nP84 := nP85 := 0
    IF !EMPTY(cObust) .or. !EMPTY(cOstObav)
-     altd()
      FOR t:=1 TO 99
        cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
        IF LD->( FIELDPOS( "I" + cPom ) ) <= 0
@@ -473,15 +472,12 @@ ENDIF
 
 
 
- altd()
  // ukupno radnika
  UzmiIzIni(cIniName,'Varijable','U016', str(nURadnika,0) ,'WRITE')
  // ukupno neto
  UzmiIzIni(cIniName,'Varijable','U018',FormNum2(nUNETO,16,gPici2),'WRITE')
 
 
-
- altd()
 
  //31.01.01 nPorNaPlatu  := ROUND2(POR->iznos * aSpec[nGrupaPoslova+1,4] / 100,gZaok2)
  //SELECT POR; HSEEK "01"  // por.na platu
@@ -494,7 +490,6 @@ ENDIF
  SELECT POR; SEEK "01"
  UzmiIzIni(cIniName,'Varijable','D13_1N',FormNum2(POR->IZNOS,16,gpici3)+"%",'WRITE')
 
- altd()
  nPom=nPorNaPlatu-nPorOlaksice
  UzmiIzIni(cIniName,'Varijable','D13I',FormNum2(nPom,16,gPici2),'WRITE')
  nPom=nPorNaPlatu
@@ -541,7 +536,6 @@ ENDIF
      nOstOb4 += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
    ENDIF
    IF ID $ cDoprOO   // Ostale obaveze
-     altd()
      nOstaleObaveze += round2(MAX(DLIMIT,nBOO * iznos / 100), gZaok2)
    ENDIF
    SKIP 1

@@ -290,7 +290,6 @@ select ostav
 
 nNaz:=Kurs(_datdok)
 
-altd()
 fM3:=.f.
 go top
 do while !eof()
@@ -358,7 +357,6 @@ IF fm3 .and. Pitanje("","Izgenerisati stavke u nalogu za knjizenje ?","D")=="D" 
       nRbr++
       wd_p      :=_D_p
       wIznosBhd := ostav->uplaceno
-      altd()
       if ostav->uplaceno<>ostav->iznosbhd
         wOpis:=trim(cOpis)+", DIO"
       endif
@@ -476,7 +474,6 @@ do case
 	go top
 
         if Pitanje(,"Asistent zatvara stavke ?","D")=="D"
-             altd()
 	     nPIznos:=nIznos  // iznos uplate npr
              go top
              DO WHILE !EOF()

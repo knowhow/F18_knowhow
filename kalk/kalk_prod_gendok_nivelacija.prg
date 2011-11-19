@@ -190,7 +190,6 @@ seek TRIM(cPKonto)
 select roba
 set order to tag "ID"
 go top
-altd()
 do while !eof()
 
 	// provjeri polje ROBA->ZANIVEL

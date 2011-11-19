@@ -143,7 +143,6 @@ do while !EOF()
 	
 	do while !EOF() .and. field->_oid_ == nOid
 		// vrsi se provjera datumskog perioda
-		altd()
 		if !lSve
 			if (field->datum < dDatOd) .or. (field->datum > dDatDo)
 				skip

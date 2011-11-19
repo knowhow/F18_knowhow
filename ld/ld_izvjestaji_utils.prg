@@ -163,8 +163,6 @@ if VALTYPE(cM) == "N"
 	cM := PADL(ALLTRIM(STR(cM)), 2, "0")
 endif
 
-altd()
-
 cPath := SIFPATH
 aSez := ASezona2( cPath, cG )
 

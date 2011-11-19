@@ -77,7 +77,6 @@ nSumaNije:=0
 nSumaJest:=0
 nBrojacPartnera:=1
 nBrojacStavki:=1
-altd()
 
 select pos_doks
 

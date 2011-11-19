@@ -143,7 +143,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     Marza2R()   
     KTroskovi()
 
-altd()    
 Tarifa(pkonto, idRoba, @aPorezi)
 aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
 nPor1:=aIPor[1]
@@ -299,7 +298,6 @@ nTot8:=0
 nTotP:=0 
 
 aPorezi:={}
-altd()
 do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
   cIdTarifa:=idtarifa
   nU1:=0

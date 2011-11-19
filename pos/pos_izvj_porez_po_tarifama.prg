@@ -199,7 +199,6 @@ do while .t.
 	endif
 	
 	? m
-	altd()	
 	for nCnt := 1 to LEN(aTarife)
 		select tarifa
 		hseek aTarife[nCnt][1]

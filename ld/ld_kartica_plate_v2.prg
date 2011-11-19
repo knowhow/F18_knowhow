@@ -660,7 +660,6 @@ endif
 if l2kolone
 	SET PRINTER TO (cDefDev) ADDITIVE
 	// SETPRC(aRCPos[1],aRCPos[2])
-	altd()
 	IF PROW()+2+nDMSK>nKRSK*(2-(nRBrKart%2))
 		aTekst:=U2Kolone(PROW()+2+nDMSK-nKRSK*(2-(nRBrKart%2)))
 		FOR i:=1 TO LEN(aTekst)

@@ -763,8 +763,6 @@ local cDbfName
 
 lIdiDalje:=.f.
 
-//altd()
-
 if i==F__LD .or. i==F__RADN .or. i==F__RADKR .or. i==F_LDSM .or. i==F_OPSLD 
 	lIdiDalje:=.t.
 endif

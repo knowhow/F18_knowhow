@@ -380,7 +380,6 @@ do while !eof()
 		PUBLIC cDokTar := roba->idTarifa
 
 		if !EMPTY(cTarFilter)
-			altd()
 			lRet := &(cTarFilter)
 
 			if !lRet

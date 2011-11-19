@@ -234,12 +234,9 @@ do while !EOF()
 	
 	go top
 
-	altd()
 	select prenhh
 	set order to tag "1"	
 	go top
-	
-	altd()	
 	
 	for i:=1 to prenhh->(RecCount())
 		
@@ -348,10 +345,6 @@ do while !eof() .and. idfirma==gFirma .and. idkonto==cIdKont
 	nUkStanjePartn:=0
 	cIdPartner:=field->idpartner
 	
-	if "5BA01"$cIdPartner
-		
-		altd()
-	endif
 	
 	@ 4+m_x, 2+m_y SAY "ID partner: " + ALLTRIM(cIdPartner)
 	if Empty(field->idpartner) .or. field->idpartner==cPartner

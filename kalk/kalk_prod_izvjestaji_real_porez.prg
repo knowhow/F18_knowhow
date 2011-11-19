@@ -258,7 +258,6 @@ DO WHILE !EOF() .and. IspitajPrekid()
 	  endif
 
 	  nMpc:=DokMpc(field->idvd,aPorezi)
-	  altd()
 	  aIPor:=RacPorezeMP(aPorezi,nMpc,field->mpcSaPP,field->nc)
 	  nPor1:=aIPor[1]*nKolicina
 	  nPor2:=aIPor[2]*nKolicina

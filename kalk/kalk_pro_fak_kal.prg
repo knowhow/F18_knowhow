@@ -252,7 +252,6 @@ do while .t.
             
 	    if !EMPTY( cSirovina )
 	
-		   altd()
 		   select r_export
 		   append blank
 			   

@@ -239,9 +239,6 @@ O_KALK
 
 select kalk
 go top
-#ifdef PROBA
-altd()
-#endif
 
 do while !eof()
   select kalk_doks

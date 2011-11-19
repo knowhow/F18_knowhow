@@ -429,7 +429,6 @@ do while !eof() .and. eval(bUSlov)
  endif
 
  _ouneto:=MAX(_uneto,PAROBR->prosld*gPDLimit/100)
- altd()
  select por; go top
  nPor:=nPorOl:=0
  do while !eof()  // datoteka por
@@ -1298,7 +1297,6 @@ do while !eof()
 
   if empty(idkbenef) // doprinos udara na neto
 
-    altd()
     if !empty(poopst)
       if poopst=="1"
         ?? " (po opst.stan)"
@@ -1320,9 +1318,7 @@ do while !eof()
       nDoprOps2:=0
       select opsld
       seek dopr->poopst
-      altd()
       do while !eof() .and. id==dopr->poopst
-        altd()
         select ops; hseek opsld->idops; select opsld
         IF !ImaUOp("DOPR",DOPR->id)
           SKIP 1; LOOP
@@ -1378,7 +1374,6 @@ do while !eof()
       nPom:=nDoprOps
     else
       // doprinosi nisu po opstinama
-      altd()
       @ prow(),nC1 SAY nBO pict gpici
       nPom:=round2(max(dlimit,iznos/100*nBO),gZaok2)
       if cUmPD=="D"
@@ -1445,7 +1440,6 @@ ENDIF
 
 
 m:="---------------------------------"
-altd()
 if prow()>49+gPStranica; FF; endif
 ? m
 ? "     NETO PRIMANJA:"

@@ -196,7 +196,6 @@ return
  */
 function AzurPosDokument(cIdVd, nRBRSt, nIdent, cBrDok, cIdPos, cBody, nIznos1, nIznos2, nKolicina, dDatum)
 *{
-altd()
 
 
 O_POS

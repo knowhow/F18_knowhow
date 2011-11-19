@@ -430,7 +430,6 @@ do whileSC !eof() .and. cIdKonto==IdKonto
      if !empty(qqBrDok) .and. len(aUslBrDok) <> 0
      	lFound := .f.
      	for i:=1 to len(aUslBrDok)
-		altd()
 		nOdsjeci := len(aUslBrDok[i,1])
 		if right(ALLTRIM(cBrdok), nOdsjeci) == aUslBrDok[i,1]
 			lFound := .t.
@@ -448,7 +447,6 @@ do whileSC !eof() .and. cIdKonto==IdKonto
      do while !eof() .and. idkonto==cidkonto .and. idpartner==cidpartner .and. ;
                            brdok==cBrdok
 
-        altd()
         IF (cMarkeri=="N" .or. OtvSt=" ")
 
            if  DatDok<=dDatum  .and. ;// stavke samo do zadanog datuma !!
@@ -722,7 +720,6 @@ ENDIF
 
 select ANAL; set order to tag "1"
 
-altd()
 //cFilt1:="IdFirma=='"+cIdFirma+"'"
 cFilt1:="IdFirma=="+cm2str(cIdFirma)
 if !(empty(dDatOd) .and. empty(dDatDo))
@@ -1016,7 +1013,6 @@ Box("",20,65)
  		WPar("d2",dDatDo)
  		select params
 		use
-		altd()
  		//aUsl1:=Parsiraj(qqKonto,"IdKonto",NIL,@cIzr1)  ??
  		//aUsl2:=Parsiraj(qqPartner,"IdPartner",NIL,@cIzr2) ??
  		aUsl1:=Parsiraj(qqKonto,"IdKonto")
@@ -1225,7 +1221,6 @@ do whileSC !eof()
 			nPotrazujeBHD:=0
 		endif
    		do whileSC !eof() .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner .and. RasclanRJ()
-     			altd()
 			if cRascFunkFond=="D"
 				cGetFunkFond:=idrj+funk+fond
 				cGetIdRj:=idrj

@@ -481,8 +481,6 @@ do while !eof() .and. field->idodj == cIdOdj
 	enddo
 
 	
-	altd()
-
 	if (ROUND(nKKStanje, 4) == 0 .and. integ1->dat1 < IntegTekDat() )
 		AddToErrors("P", cIdRoba, "", "KALK stanje 0, zadnji TOPS dokument postoji na datum " + ShowDatum(integ1->dat1))
 	

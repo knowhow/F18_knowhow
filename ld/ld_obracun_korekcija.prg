@@ -266,8 +266,6 @@ do while !EOF()
 				hseek ld->idradn
 				select ld
 				
-				altd()	
-				
 				nKoef := &LKOEF
 		
 				// ako zadovoljava uslov za prikaz

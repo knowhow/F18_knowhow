@@ -548,7 +548,6 @@ endif
 
 private cpom:=""
 
-altd()
 
 IF "U" $ TYPE("lRekalk"); lRekalk:=.f.; ENDIF
 
@@ -1474,7 +1473,6 @@ Linija()
 select TPRSiht; go top
 fPRvi:=.t.
 i:=0
-altd()
 _BrBod:=radn->brbod
 if _brbod=0
    MsgBeep("U sifrarniku radnika definisite broj bodova za radnika !")
@@ -1494,7 +1492,6 @@ do while !eof()
   skip
 enddo
 Linija()
-altd()
 FF
 END PRINT
 

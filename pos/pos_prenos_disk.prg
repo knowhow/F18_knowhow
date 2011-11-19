@@ -45,7 +45,6 @@ private cSpecUslov:=""
 private cSinSFormula:="99"
 private cKonvFirma:=""
 private cKonvBrDok:=""
-altd()
 pos_prenos_setup(.t.)
 
 if Pitanje(,"Zelite li izvrsiti prenos podataka na diskete ?","N")=="N"

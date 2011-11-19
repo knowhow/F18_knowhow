@@ -12,11 +12,6 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
  
 
 /*! \file fmk/kalk/prod/dok/1g/frm_41.prg
@@ -40,7 +35,6 @@ private aPorezi:={}
 IF fNovi
   _DatFaktP:=_datdok
 ENDIF
-altd()
 if _idvd=="41"
 
    @  m_x+6,  m_y+2 SAY "KUPAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,5,30)
@@ -125,7 +119,6 @@ if fNovi
  _TMarza2:="A"
 endif
 
-altd()
 
 if IsPdv()
    if (gCijene=="2" .and. (_MpcSAPP==0 .or. fNovi) )

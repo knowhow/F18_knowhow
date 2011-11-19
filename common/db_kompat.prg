@@ -74,9 +74,7 @@ return
 
 
 function kopi(fProm)
-*{
 
-altd()
 
 if fBrisiDBF
      nPos:=at(".",cDbf)
@@ -178,5 +176,4 @@ if fProm
 endif  // fprom
 
 return
-*}
 

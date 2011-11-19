@@ -145,7 +145,6 @@ return
 function EditKredit
 *{
 parameters cIdRadn,cIdKred,cNaOsnovu
-altd()
 if pcount()==0
 	cIdRadn:=space(_LR_)
   	cIdKRed:=space(_LK_)
@@ -426,8 +425,6 @@ local fused:=.t.
 PushWa()
 
 select (F_RADKR)
-
-altd()
 
 if !used()
 	fUsed:=.f.

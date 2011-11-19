@@ -185,8 +185,6 @@ Box(,3, 60)
 
 nCount := 0
 
-altd()
-
 do while !eof()
 
 ++nCount

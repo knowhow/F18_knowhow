@@ -199,7 +199,6 @@ for ik:=1 to 2
 		nUkMPCBezPP:=0
 		nUkPPP:=0
 		nUkMPCSaPP:=0
-		altd()
 		for i:=1 to LEN(aRekPor)
 			if ALLTRIM(field->id)==ALLTRIM(aRekPor[i, 1])	
 				++ nCount

@@ -1406,7 +1406,7 @@ return gpIni == "#%INI__#"
 // --------------------------------
 static function	DSTR_KOREKCIJA()
 local nPom
-altd()
+
 nPom := ROUND(nDuzStrKorekcija, 0)
 if ROUND(nDuzStrKorekcija - nPom, 1) > 0.2
 	nPom ++

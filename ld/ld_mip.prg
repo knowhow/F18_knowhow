@@ -1039,8 +1039,6 @@ do while !eof()
 	cR_opc := ""
 	cR_rmj := ""
 
-	altd()
-
 	do while !EOF() .and. field->idradn == cT_radnik 
 	
 		if ld_date( field->godina, field->mjesec ) < ;

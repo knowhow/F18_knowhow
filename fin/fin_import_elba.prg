@@ -279,7 +279,6 @@ aFin := {}
 // aFin[11] = opis
 // aFin[12] = naziv firme iz TXT fajla
 
-altd()
 
 if aItem[1] $ "+-"
 

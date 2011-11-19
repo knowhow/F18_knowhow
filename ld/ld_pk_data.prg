@@ -118,8 +118,6 @@ Box(, 12,70,.f.)
 
    do while .t.
 	
-	altd()
-
 	nX := 1
 
    	scatter()

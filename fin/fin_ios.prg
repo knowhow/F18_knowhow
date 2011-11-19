@@ -644,7 +644,6 @@ SELECT SUBAN
 
 if cKaoKartica=="D"
 	set order to 1
-     	altd()
      //"IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
 else
 	set order to 3

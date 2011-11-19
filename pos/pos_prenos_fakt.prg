@@ -133,9 +133,6 @@ do while !eof() .and. pos_doks->IdVd==VD_RN .and. pos_doks->Datum<=dDatDo
 			cIdVd:="10"
 		endif
 		
-		if TRIM(cIdRoba)$"001F"
-			altd()
-		endif
 		
 		HSEEK POS->idPos+cIdVd+cIdPartner+cIdRoba+STR(nPCijena,13,4)+STR(nPopustCij,13,4)
 		// seekuj i cijenu i popust (koji je pohranjen u ncijena)

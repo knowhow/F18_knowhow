@@ -224,8 +224,6 @@ cDocXX := "XX"
 
 nItem := 0
 
-altd()
-
 // stampaj podatke 
 do while !EOF()
 

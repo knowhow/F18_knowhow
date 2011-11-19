@@ -277,7 +277,6 @@ endif
 O_OBRACUNI
 select obracuni
 set order to tag "RJ"
-altd()
 hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
 
 if !Found()

@@ -622,7 +622,6 @@ if !fZaklj.and.fPrik$"RO"
 			SELECT ROBA
 			HSEEK pom->idRoba
 		
-			altd()
 			cStr1 := ""
 			
 			if grbStId == "D"

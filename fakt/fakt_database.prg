@@ -82,7 +82,7 @@ O_SIFV
 
 
 select fakt_pripr
-set order to 1
+set order to tag "1"
 go top
 return nil
 
@@ -134,7 +134,7 @@ if goModul:lDoks2
 endif
 
 SELECT fakt
-set order to 1
+set order to tag "1"
 
 cIdFirma := cFirma
 cIdTipDok := SPACE(2)
@@ -322,7 +322,7 @@ if goModul:lDoks2
 endif
 
 select fakt
-set order to 1
+set order to tag "1"
 
 cSifDok:="  "
 
@@ -397,7 +397,7 @@ if gFc_use == "D" .and. cIdTipDok $ "10#11"
 	select fakt_doks
 	hseek cIdFirma+cIdTipDok+cBrDok
 	
-	if FOUND() .and. doks->fisc_rn <> 0
+	if FOUND() .and. fakt_doks->fisc_rn <> 0
 		
 		// veza sa fisc_rn postoji
 		
@@ -479,7 +479,7 @@ if !fR
 			select fakt_doks
 			hseek cIdFirma+cIdTipDok+cBrDok
 			select fakt_pripr
-			_tiprabat := doks->tiprabat
+			_tiprabat := fakt_doks->tiprabat
 		endif
 		
 		Gather2()
@@ -580,7 +580,7 @@ endif // !fr
 if (cBrisiKum=="N")
 	// u PRIPR resetujem flagove generacije, jer mi je dokument ostao u kumul.
 	select fakt_pripr
-  	set order to 1
+  	set order to tag "1"
   	hseek cIdFirma+cIdTipDok+cBrDok
   	
 	while !eof() .and. fakt_pripr->(idfirma+idtipdok+brdok)==(cIdFirma+cIdTipDok+cBrDok)
@@ -918,7 +918,7 @@ do while !eof()
   	endif
 
   	select fakt_doks
-  	set order to 1
+  	set order to tag "1"
   	
 	hseek fakt_pripr->idfirma+fakt_pripr->idtipdok+fakt_pripr->brdok
   	
@@ -928,7 +928,7 @@ do while !eof()
   	
 	if lDoks2
     		select fakt_doks2
-    		set order to 1
+    		set order to tag "1"
     		hseek fakt_pripr->idfirma+fakt_pripr->idtipdok+fakt_pripr->brdok
     		if !Found()
        			AppBlank2(.f.,.f.)
@@ -1265,7 +1265,7 @@ do while !EOF()
 		
 		MsgO("Brisem stavke iz kumulativa ... sacekajte trenutak!")
 		// brisi doks
-		set order to 1
+		set order to tag "1"
 		go top
 		seek cSeek
 		if Found()
@@ -1280,7 +1280,7 @@ do while !EOF()
 		
 		// brisi iz fakt
 		select fakt
-		set order to 1
+		set order to tag "1"
 		go top
 		seek cSeek
 		if Found()
@@ -1309,7 +1309,7 @@ return 0
 // ------------------------------------------
 function dupli_dokument(cSeek)
 select fakt_doks
-set order to 1
+set order to tag "1"
 go top
 seek cSeek
 if Found()
@@ -1321,7 +1321,7 @@ if Found()
 	return .t.
 endif
 select fakt
-set order to 1
+set order to tag "1"
 go top
 seek cSeek
 if Found()
@@ -1336,7 +1336,7 @@ function OdrediNbroj(_idfirma, _idtipdok)
 local cNBrDok:=""
 
 select fakt_doks
-set order to 1
+set order to tag "1"
 go top
 
 if (gVarNum=="2".and._idtipdok=="13")
@@ -1394,7 +1394,7 @@ local nDesniDio
 cBrDok:=""
 
 select fakt_doks
-set order to 1
+set order to tag "1"
 go top
 
 seek cIdFirma+cIdTipDok+CHR(254)

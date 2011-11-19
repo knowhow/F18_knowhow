@@ -196,7 +196,7 @@ private fNovi:=.f.
    endif
 
    // select FAKT; set order to 1
-   select DOKS; set order to 1
+   select FAKT_DOKS; set order to tag "1"
    hseek _idfirma+_idtipdok+_brDok
    if !found()
       select fakt_pripr
@@ -737,7 +737,7 @@ RETURN
 function ChSveStavke(fNovi)
 *{
 LOCAL nRec:=recno()
-  set order to 0
+  set order to
   go top
   do while !eof()
     IF IDFIRMA+IDTIPDOK+BRDOK == _IDFIRMA+_IDTIPDOK+_BRDOK .or.;
@@ -772,7 +772,7 @@ LOCAL nRec:=recno()
     ENDIF
     skip
   enddo
-  set order to 1
+  set order to tag "1"
   go nRec
 RETURN
 *}

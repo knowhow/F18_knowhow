@@ -267,7 +267,7 @@ local nCounter
 O_FAKT
 O_FAKT_DOKS
 
-if doks->(FIELDPOS("dat_isp")) = 0
+if fakt_doks->(FIELDPOS("dat_isp")) = 0
 	msgbeep("potrebna modifikacija struktura !")
 	return
 endif
@@ -380,7 +380,7 @@ do while !EOF()
 	select fakt_doks
 	set order to tag "1"
 	hseek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	dDatPl := doks->datpl
+	dDatPl := fakt_doks->datpl
 	
 	select fakt
 	
@@ -643,9 +643,9 @@ do while !EOF()
 			if field->idpartner == cId
 				
 				AADD( aPartn, { cId, PADR( cPNaz, 25), ;
-					doks->idfirma + ;
-					"-" + doks->idtipdok + ;
-					"-" + doks->brdok } )
+					fakt_doks->idfirma + ;
+					"-" + fakt_doks->idtipdok + ;
+					"-" + fakt_doks->brdok } )
 			endif
 			
 			skip

@@ -70,7 +70,7 @@ if fId_J
 else
 	O_FAKT
 	// idroba+dtos(datDok)
-	set order to 3 
+	set order to tag "3" 
 endif
 
 

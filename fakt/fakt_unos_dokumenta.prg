@@ -571,7 +571,7 @@ if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
 	if (RecCount2 () == 1) .OR. JedinaStavka ()
         	select fakt_doks
            	HSEEK fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
-           	if FOUND () .AND. DOKS->M1 == "Z"
+           	if FOUND () .AND. fakt_doks->M1 == "Z"
               		// dokument zapisan samo u DOKS-u
               		DELETE
            	endif
@@ -820,7 +820,7 @@ local fMyFlag := .F., lRetFlag := .T., nTekRec
   if fakt_pripr->IdTipDok $ "10#11#15#20#25#27"
      // PROVJERI IMA LI NEODREDJENIH CIJENA ako se radi o fakturi
      Scatter()
-     SET ORDER to 1
+     SET ORDER to tag "1"
      Seek2 (_IdFirma + _IdTipDok + _BrDok)
      do while ! EOF() .AND. IdFirma == _IdFirma .AND. ;
            IdTipDok == _IdTipDok .AND. BrDok == _BrDok
@@ -885,7 +885,7 @@ private nRokPl:=0
 private cSetPor:="N"
 
 select fakt_pripr
-set order to 1
+set order to tag "1"
 go top
 if RecCount2 () == 0
 	return
@@ -1507,7 +1507,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
    		endif
 
    		select fakt_doks
-   		set order to 1
+   		set order to tag "1"
    		hseek _idfirma+_idtipdok+_brDok
    		if !Found()
       			select fakt_pripr
@@ -2140,10 +2140,10 @@ if gMreznoNum == "D"
   _rabat:=0
   _m1 := " "
   _idvrstep:=""
-  if DOKS->(FIELDPOS("DATPL")>0)
+  if fakt_doks->(FIELDPOS("DATPL")>0)
     _datpl := CTOD("")
   endif
-  if DOKS->(FIELDPOS("IDPM")>0)
+  if fakt_doks->(FIELDPOS("IDPM")>0)
     _idpm  := SPACE(15)
   endif
   go nTrecPripr
@@ -2155,16 +2155,16 @@ select fakt_doks
 //Scatter ()
 
 if gMreznoNum == "D"
-   if !DOKS->(FLOCK())
+   if !FAKT_DOKS->(FLOCK())
       nOkr := 80     // daj mu 10 sekundi max
       do while nOkr > 0
          InkeySc (.125)
          nOkr --
-         if DOKS->(FLOCK())
+         if fakt_doks->(FLOCK())
             exit
          endif
       enddo
-      if nOkr == 0 .AND. ! DOKS->(FLOCK())
+      if nOkr == 0 .AND. ! fakt_doks->(FLOCK())
          Beep (4)
          Msg ("Nemoguce odrediti broj dokumenta - ne mogu pristupiti bazi!")
          return SPACE (LEN (_BrDok))

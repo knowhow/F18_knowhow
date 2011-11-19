@@ -298,7 +298,7 @@ go top
 if reccount2() == 0
 
    select fakt_doks
-   set order to 2  
+   set order to tag "2"  
    // idfirma+idtipdok+partner
 
    ImeKol:={}
@@ -344,7 +344,7 @@ if reccount2() == 0
       seek cidrj+"12"+cPartner
       dNajnoviji:=CTOD("")
       do while !eof() .and. IdFirma+IdTipdok=cidrj+"12" ;
-               .and. DOKS->Partner=cPartner
+               .and. fakt_doks->Partner=cPartner
          
 	 skip
 	 nTrec0:=recno()
@@ -352,24 +352,24 @@ if reccount2() == 0
          
 	 if m1="*"
 
-	    cIdPart := doks->idpartner
+	    cIdPart := fakt_doks->idpartner
 	    
-	    if dNajnoviji<doks->datDok
-		    dNajnoviji:=doks->datDok
+	    if dNajnoviji < fakt_doks->datDok
+		    dNajnoviji := fakt_doks->datDok
 	    endif
             // scatter()
             nOldIznos:=iznos   // ???!
             
-            cVezOtpr += Trim (DOKS->BrDok)+", "
+            cVezOtpr += Trim ( FAKT_DOKS->BrDok )+", "
             REPLACE IdTipDok WITH "22"      // promijeni naslov
             REPLACE m1       WITH " "       // skini zvjezdicu iz browsa
             
-            dxIdFirma := DOKS->IdFirma    // za provozat FAKT
-            dxBrDok   := DOKS->BrDok
+            dxIdFirma := fakt_doks->IdFirma    // za provozat FAKT
+            dxBrDok   := fakt_doks->BrDok
             
 
             select fakt_doks 
-	    set order to 1
+	    set order to tag "1"
             
 	    // *********  nadji sljedeci broj  10 - ke *********
             
@@ -434,7 +434,7 @@ if reccount2() == 0
 	    enddo
          endif
          select fakt_doks
-	 set order to 2
+	 set order to tag "2"
          //
          go nTrec0
       enddo   // doks
@@ -446,7 +446,7 @@ if reccount2() == 0
       renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
 
       select fakt_doks
-      set order to 1
+      set order to tag "1"
 
    endif // formirati
 

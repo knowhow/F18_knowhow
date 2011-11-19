@@ -331,23 +331,11 @@ select (nArr)
 return
 *}
 
-function PrazanDbf()
-*{
-local fret:=.f.,nRec, nPrevOrd
 
-nPrevOrd:=indexord()
-set order to tag "BRISAN"
-nRec:=recno()
-//set deleted off
-seek " "
-if !found()
-   fRet:=.t.
-endif
-//set deleted on
-dbsetorder(nPrevOrd)
-go nRec
-return fret
-*}
+
+function PrazanDbf()
+return .f.
+
 
 
 #ifdef CAX

@@ -365,7 +365,7 @@ if lPoNarudzbi = .t.
 endif
 
 select fakt
-set order to 3
+set order to tag "3"
 
 lBezMinusa := ( IzFMKIni("FAKT","NemaIzlazaBezUlaza","N",KUMPATH) == "D" )
 

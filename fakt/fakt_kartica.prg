@@ -66,9 +66,11 @@ endif
 
 select fakt
 if fId_J
-  set order to tag "3J" // idroba_J+Idroba+dtos(datDok)
+  set order to tag "3J" 
+  // idroba_J+Idroba+dtos(datDok)
 else
-  set order to 3 // idroba+dtos(datDok)
+  set order to tag "3" 
+  // idroba+dtos(datDok)
 endif
 
 cIdfirma:=gFirma
@@ -399,7 +401,7 @@ do while !eof()
            IF !(&aUsl2); SKIP 1; LOOP; ENDIF
          ELSE
            select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
-           select fakt; if !(doks->partner=qqPartn); skip; loop; endif
+           select fakt; if !(fakt_doks->partner=qqPartn); skip; loop; endif
          ENDIF
        endif
 
@@ -447,7 +449,7 @@ do while !eof()
         IF !(&aUsl2); SKIP 1; LOOP; ENDIF
       ELSE
         select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
-        select fakt; if !(doks->partner=qqPartn); skip; loop; endif
+        select fakt; if !(fakt_doks->partner=qqPartn); skip; loop; endif
       ENDIF
     endif
 
@@ -478,7 +480,7 @@ do while !eof()
 
       if cPPartn=="D"
        select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok); select fakt
-       @ prow(),pcol()+1 SAY padr(doks->Partner,20)
+       @ prow(),pcol()+1 SAY padr(fakt_doks->Partner,20)
       endif
 
       IF lPoNarudzbi .and. cPKN=="D"
@@ -503,11 +505,6 @@ do while !eof()
        @ prow(),pcol()+1 SAY k2
      endif
 
-     *if cPPartn=="D"
-     * select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok); select fakt
-     * ? space(gNLMarg)
-     * @ prow(),pcol()+7 SAY doks->Partner
-     *endif
      if roba->tip="U"
       aMemo:=ParsMemo(txt)
       aTxtR:=SjeciStr(aMemo[1],60)   // duzina naziva + serijski broj

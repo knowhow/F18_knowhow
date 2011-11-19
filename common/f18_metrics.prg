@@ -14,25 +14,25 @@
 // (upisivanje)
 // f18_set_metric("KoristitiFiskalneFunkcije", gFc_use )
 //
-// ako zelimo da nas parametar bude globalan dodajemo .t. kao treci 
-// parametar funkcijama, npr:
+// ako zelimo da nas parametar bude privatan, tj. za pojedinog korisnika
+// zadajemo ga ovako, postavljamo treci uslov na .t.
 //
-// f18_get_metric("Koristiti...", @gFc_use, .t.) 
+// f18_get_metric("Koristiti...", @gFc_use, .t. ) 
 //
 // -------------------------------------------------------------
 // vrati parametar iz metric tabele
 // -------------------------------------------------------------
-function f18_get_metric( param, value, global )
+function f18_get_metric( param, value, par_private )
 local _temp_qry
 local _table
 local _server := pg_server()
 local _temp_res := ""
 
-if global == nil
-	global := .f.
+if par_private == nil
+	par_private := .f.
 endif
 
-_temp_qry := "SELECT fetchmetrictext(" + _sql_quote( __param_name(param, global) ) + ")"
+_temp_qry := "SELECT fetchmetrictext(" + _sql_quote( __param_name(param, par_private) ) + ")"
 _table := _sql_query( _server, _temp_qry )
 if _table == NIL
 	MsgBeep( "problem sa: " + _temp_qry )
@@ -42,7 +42,7 @@ endif
 _temp_res := _table:Fieldget( _table:Fieldpos("fetchmetrictext") )
 
 if EMPTY( _temp_res )
-	f18_set_metric( param, value, global )
+	f18_set_metric( param, value, par_private )
 else
 	value := __get_param_value( value, _temp_res )
 endif
@@ -54,16 +54,16 @@ return .t.
 // --------------------------------------------------------------
 // setuj parametre u metric tabelu
 // --------------------------------------------------------------
-function f18_set_metric( param, value, global )
+function f18_set_metric( param, value, par_priv )
 local _temp_qry
 local _table
 local _server := pg_server()
 
-if global == nil
-	global := .f.
+if par_priv == nil
+	par_priv := .f.
 endif
 
-_temp_qry := "SELECT setmetric(" + _sql_quote( __param_name(param, global) ) + "," + _sql_quote( __set_param_value( value ) ) +  ")"
+_temp_qry := "SELECT setmetric(" + _sql_quote( __param_name(param, par_priv) ) + "," + _sql_quote( __set_param_value( value ) ) +  ")"
 _table := _sql_query( _server, _temp_qry )
 if _table == NIL
 	MsgBeep( "problem sa:" + _temp_qry )
@@ -79,19 +79,19 @@ return _table:Fieldget( _table:Fieldpos("setmetric") )
 // vraca naziv parametra
 // 
 // struktura parametra ce biti 
-//    za global_param = .t.    F18/global/naziv_parametra
-//    za global_param = .f.    F18/FIN/naziv_parametra
+//    za priv_param = .t.    F18/ime_usera/FIN/naziv_parametra
+//    za priv_param = .f.    F18/FIN/naziv_parametra
 // -------------------------------------------------------------
-static function __param_name( param, global_param )
+static function __param_name( param, priv_param )
 local __ret := ""
 
 __ret += "F18/"
 
-if global_param = .t.
-	__ret += "global/" 
-else
-	__ret += goModul:oDataBase:cName + "/"
+if priv_param = .t.
+	__ret += f18_user() + "/" 
 endif
+
+__ret += goModul:oDataBase:cName + "/"
 
 __ret += param
 

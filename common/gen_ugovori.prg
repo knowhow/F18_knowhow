@@ -204,7 +204,7 @@ WPar("P4",cFUArtikal)
 WPar("P5",cSamoAktivni)
 use
 
-SELECT PRIPR
+select fakt_pripr
 //******** utvrdjivanje broja dokumenta **************
 
     cIdTipdok:=ugov->idtipdok
@@ -215,7 +215,7 @@ SELECT PRIPR
       endif
    endif
 
-   select pripr
+   select fakt_pripr
    seek gFirma+cidtipdok+"È"
    skip -1
    if idtipdok <> cIdTipdok
@@ -230,8 +230,8 @@ SELECT PRIPR
      seek "È" // idi na kraj, nema zeljenih  dokumenata
    endif
 
-   if pripr->brdok > fakt->brdok
-     select pripr  // odaberi tabelu u kojoj ima vise dokumenata
+   if fakt_pripr->brdok > fakt->brdok
+     select fakt_pripr  // odaberi tabelu u kojoj ima vise dokumenata
    endif
 
 
@@ -287,7 +287,7 @@ do while !eof() .and. id==cidugov
 
    nCijena:=0
 
-   SELECT PRIPR
+   select fakt_pripr
 
    IF IzFMKIni('FAKT_Ugovori',"SumirajIstuSifru",'D')=="D" .and.;
       IdFirma+idtipdok+brdok+idroba==gFirma+cIDTipDok+PADR(cBrDok,LEN(brdok))+RUGOV->idroba
@@ -332,7 +332,7 @@ do while !eof() .and. id==cidugov
    endif
 
 
-   select pripr
+   select fakt_pripr
 
    private nKolicina:=rugov->kolicina
 
@@ -348,7 +348,7 @@ do while !eof() .and. id==cidugov
       if na2<>0
          select ugov
          replace a1 with a2 , a2 with nA2
-         select pripr
+         select fakt_pripr
       endif
 
       nKolicina:=ugov->(a2-a1)
@@ -363,7 +363,7 @@ do while !eof() .and. id==cidugov
       if nB2<>0
          select ugov
          replace B1 with B2 , B2 with nB2
-         select pripr
+         select fakt_pripr
       endif
       nKolicina:=ugov->(b2-b1)
    elseif rugov->k1="%"   // procenat na neku stavku
@@ -396,7 +396,7 @@ do while !eof() .and. id==cidugov
    _idroba:=rugov->idroba
    select roba; hseek _idroba
 
-   SELECT PRIPR
+   select fakt_pripr
    setujcijenu()
    if ncijena<>0
      _cijena:=nCijena
@@ -404,7 +404,7 @@ do while !eof() .and. id==cidugov
    _rabat:=rugov->rabat
    _porez:=rugov->porez
    _dindem:=ugov->dindem
-   select pripr
+   select fakt_pripr
    Gather()
 
 

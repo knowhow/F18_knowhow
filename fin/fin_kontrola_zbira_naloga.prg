@@ -89,7 +89,7 @@ Box("kzb",12,70,.f.,"Kontrola zbira naloga")
           _D_P:="2"
 	  _IdKonto:=SPACE(7)
           
-	  @ m_x+11,m_y+2 SAY "Opis" GET _opis  WHEN {|| USTipke(),.t.} VALID {|| BosTipke(),.t.} PICT "@S40"
+	  @ m_x+11,m_y+2 SAY "Opis" GET _opis  PICT "@S40"
           @ m_x+12,m_y+2 SAY "Staviti na konto ?" GET _IdKonto valid P_Konto(@_IdKonto)
           @ m_x+12,col()+1 SAY "Datum dokumenta:" GET _DatDok
           read

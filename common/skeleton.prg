@@ -136,7 +136,6 @@ oApp:oDatabase:setgaDbfs()
 
 //IniGparam2()
 
-BosTipke()
 KonvTable()
 
 if lSezone

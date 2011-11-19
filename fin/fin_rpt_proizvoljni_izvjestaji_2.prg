@@ -1139,7 +1139,6 @@ cDPnaz10:=PADR(cDPnaz10, 40); cDPx10:=PADR(cDPx10, 40)
 
 
 Box(,22,75)
- USTIPKE()
  @ m_x+2, m_y+2 SAY "Uslov kojim se obuhvataju sva konta ciji saldo treba da bude potrazni:"
  @ m_x+3, m_y+2 GET cPotrazKon PICT "@S70"
  @ m_x+4, m_y+2 SAY "Porez na dobit (gnPorDob) u % :" GET gnPorDob PICT "999.99"
@@ -1193,7 +1192,6 @@ Box(,22,75)
  @ m_x+21,m_y+55 GET cDPf10 VALID cDPf10$"DN" PICT "@!"
 
  READ
- BOSTIPKE()
 
 
 BoxC()

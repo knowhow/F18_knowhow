@@ -70,14 +70,12 @@ Box(,10,60)
    gFaktKum:=padr(gFaktKum,35)
    gKalkKum:=padr(gKalkKum,35)
    gDzokerF1:=PADR(gDzokerF1,80)
-   USTipke()
    @ m_x+ 8,m_y+2 SAY "FAKT Kumulativ" GET gFaktKum  pict "@S25"
    @ m_x+ 9,m_y+2 SAY "Dzoker F1(formula)" GET gDzokerF1  pict "@S25"
    IF lNCPoSast
      @ m_x+10,m_y+2 SAY "KALK Kumulativ" GET gKalkKum  pict "@S25"
    ENDIF
    READ
-   BosTipke()
    gFaktKum:=trim(gFaktKum)
    gKalkKum:=trim(gKalkKum)
    gDzokerF1:=trim(gDzokerF1)

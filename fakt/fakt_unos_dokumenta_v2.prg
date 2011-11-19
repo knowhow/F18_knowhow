@@ -691,12 +691,11 @@ if (nRbr==1 .and. val(_podbr)<1)
   			ENDIF
  		endif
  		setcolor(Invert)
- 		UsTipke()
  		private fUMemu:=.t.
  		_txt2:=MemoEdit(_txt2,m_x+3,m_y+1,m_x+9,m_y+76)
  		fUMemu:=NIL
- 		//BosTipke()
- 		setcolor(Normal)
+ 		
+        setcolor(Normal)
  	BoxC()
 endif
 return
@@ -786,7 +785,6 @@ if (nRbr==1 .and. val(_podbr)<1)
 		endif
    	endif	
  	setcolor(Invert)
- 	UsTipke()
  	private fUMemu:=.t.
  	_txt2:=MemoEdit(_txt2,m_x+3,m_y+1,m_x+9,m_y+76)
  	fUMemu:=NIL
@@ -921,14 +919,12 @@ if roba->tip=="U"
       _porez  := TARIFA->ppp
     endif
   ENDIF
-  UsTipke()
   if gTBDir=="D"
     @ row(),col()-15 GET _txt1 pict "@S40"
   else
     @ row(),m_y+25 GET _txt1 pict "@S40"
   endif
   read
-  BosTipke()
   _txt1:=trim(_txt1)
 else
   _txt1:=""

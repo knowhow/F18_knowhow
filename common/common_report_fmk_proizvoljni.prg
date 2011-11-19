@@ -393,7 +393,7 @@ STATIC PROCEDURE P_KonIz()
  AADD( ImeKol , { "K(  /Sn/An)"  , {|| K   }, "K"    } )
  AADD( ImeKol , { "FORMULA"      , {|| FI  }, "FI"   } )
  AADD( ImeKol , { "PREDZNAK"     , {|| PREDZN }, "PREDZN"   } )
- AADD( ImeKol , { "OPIS"         , {|| OPIS}, "OPIS" , {|| UsTipke(),.t.},{|| BosTipke(),.t.}  } )
+ AADD( ImeKol , { "OPIS"         , {|| OPIS}, "OPIS" , {|| .t.}, {|| .t.}  } )
  AADD( ImeKol , { cPIImeKP+"2"   , {|| ID2 }, "ID2"  } )
  AADD( ImeKol , { "K2(  /Sn/An)" , {|| K2  }, "K2"   } )
  AADD( ImeKol , { "FORMULA2"     , {|| FI2 }, "FI2"  } )
@@ -549,7 +549,7 @@ STATIC FUNCTION KonIzBlok()
       @ m_x+ 8, m_y+2 SAY "K2(  /Sn/An):" GET _k2
       @ m_x+ 9, m_y+2 SAY "Formula2    :" GET _fi2 PICT "@S60"
       @ m_x+10, m_y+2 SAY "Predznak2   :" GET _predzn2 VALID _predzn2<=1 .and. _predzn2>=-1 PICT "99"
-      @ m_x+11, m_y+2 SAY "OPIS        :" GET _opis  when {|| UsTipke(),.t.} valid {|| BosTipke(),.t.}
+      @ m_x+11, m_y+2 SAY "OPIS        :" GET _opis  when {|| .t.} valid {|| .t.}
       @ m_x+12, m_y+2 SAY "PODVUCI( /x):" GET _podvuci
       IF FIELDPOS("K1")<>0
         @ m_x+13, m_y+2 SAY "K1          :" GET _k1
@@ -584,7 +584,7 @@ STATIC FUNCTION KonIzBlok()
         @ m_x+ 8, m_y+2 SAY "K2(  /Sn/An):" GET _k2
         @ m_x+ 9, m_y+2 SAY "Formula2    :" GET _fi2 PICT "@S60"
         @ m_x+10, m_y+2 SAY "Predznak2   :" GET _predzn2 VALID _predzn2<=1 .and. _predzn2>=-1 PICT "99"
-        @ m_x+11, m_y+2 SAY "OPIS        :" GET _opis  when {|| UsTipke(),.t.} valid {|| BosTipke() ,.t.}
+        @ m_x+11, m_y+2 SAY "OPIS        :" GET _opis  when {|| .t.} valid {|| .t.}
         @ m_x+12, m_y+2 SAY "PODVUCI( /x):" GET _podvuci
         IF FIELDPOS("K1")<>0
           @ m_x+13, m_y+2 SAY "K1          :" GET _k1

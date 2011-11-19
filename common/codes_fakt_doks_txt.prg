@@ -57,9 +57,9 @@ AADD(ImeKol,{PADR("NAZ",3)  ,{|| naz}     ,"naz"})
 AADD(ImeKol,{PADR("MODUL",5),{|| modul}   ,"modul"})
 AADD(ImeKol,{PADR("POZ",3)  ,{|| pozicija},"pozicija"})
 
-AADD(ImeKol,{"TXT",{|| txt},"txt",{|| UsTipke(),.t.},{|| wtxt:=STRTRAN(wtxt,"##",CHR(13)+CHR(10)), BosTipke(), .t.},nil, "@S50" })
+AADD(ImeKol,{"TXT",{|| txt},"txt",{|| .t.},{|| wtxt:=STRTRAN(wtxt,"##",CHR(13)+CHR(10)), NIL, .t.}, {|| .t.}, "@S50" })
 
-AADD(ImeKol,{"TXT2",{|| txt2},"txt2",{|| UsTipke(),.t.},{|| wtxt2:=STRTRAN(wtxt2,"##",CHR(13)+CHR(10)), BosTipke(), .t.},nil, "@S50" })
+AADD(ImeKol,{"TXT2",{|| txt2},"txt2",{|| .t.},{|| wtxt2:=STRTRAN(wtxt2,"##",CHR(13)+CHR(10)), NIL, .t.}, {|| .t.}, "@S50" })
 
 Kol:={1,2,3,4,5,6}
 

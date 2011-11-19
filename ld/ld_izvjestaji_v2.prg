@@ -1229,7 +1229,7 @@ RETURN (nDopr)
 
 
 FUNCTION SortPre2()
-RETURN (BHSORT(RADN->(naz+ime+imerod))+idradn)
+RETURN ( RADN->(naz+ime+imerod) + idradn)
 
 
 

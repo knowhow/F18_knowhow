@@ -41,8 +41,6 @@ _oper_id := GetUserID( f18_user() )
 
 select _docs
 
-UsTipke()
-
 Box(, nGetBoxX, nGetBoxY, .f., "Unos osnovnih podataka naloga")
 @ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 

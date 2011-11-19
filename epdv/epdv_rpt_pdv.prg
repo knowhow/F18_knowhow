@@ -359,8 +359,6 @@ enddo
 // azuriram R_PDV za stavke KUF-a
 SELECT r_pdv
 
-UsTipke()
-
 	
 	read_pdv_pars(@_pot_datum, @_pot_mjesto, @_pot_ob, @_pdv_povrat)
 

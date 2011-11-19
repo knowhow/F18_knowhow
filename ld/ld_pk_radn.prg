@@ -60,8 +60,6 @@ local cPkColor := "W+/G+"
 
 select pk_radn
 
-ustipke()
-
 scatter()
 
 if lNew == .t.

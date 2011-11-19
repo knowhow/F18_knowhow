@@ -75,8 +75,6 @@ endif
 
 select _doc_ops
 
-UsTipke()
-
 Box(, nGetBoxX, nGetBoxY, .f., "Unos dodatnih operacija naloga")
 
 set_opc_box( nGetBoxX, 50 )

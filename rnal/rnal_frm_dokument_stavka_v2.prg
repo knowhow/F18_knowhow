@@ -153,8 +153,6 @@ endif
 
 select _doc_it2
 
-UsTipke()
-
 Box(, nGetBoxX, nGetBoxY, .f., "Unos stavki naloga")
 
 set_opc_box(nGetBoxX, 50)

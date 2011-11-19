@@ -102,7 +102,7 @@ cPom:=""
 nLen:=len(cStr)
 for i=1 to int(nLen/2)
   cC:=substr(cStr,nLen+1-i,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+128)
   else
      cPom+=CHR(ASC(cC)-128)
@@ -111,7 +111,7 @@ next
 
 if nLen%2<>0
    cC:=substr(cStr,int(nLen/2)+1,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+128)
   else
      cPom+=CHR(ASC(cC)-128)
@@ -119,7 +119,7 @@ if nLen%2<>0
 endif
 for i=int(nLen/2) to 1 step -1
    cC:=substr(cStr,i,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+128)
   else
      cPom+=CHR(ASC(cC)-128)
@@ -136,7 +136,7 @@ local nLen,cC,cPom,i
 nLen:=len(cStr)
 for i=1 to int(nLen/2)
   cC:=substr(cStr,nLen+1-i,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+128)
   else
      cPom+=CHR(ASC(cC)-128)
@@ -145,7 +145,7 @@ next
 
 if nLen%2<>0
    cC:=substr(cStr,int(nLen/2)+1,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+128)
   else
      cPom+=CHR(ASC(cC)-128)
@@ -153,7 +153,7 @@ if nLen%2<>0
 endif
 for i=int(nLen/2) to 1 step -1
    cC:=substr(cStr,i,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+128)
   else
      cPom+=CHR(ASC(cC)-128)
@@ -200,7 +200,7 @@ cPom:=""
 nLen:=len(cStr)
 for i=1 to int(nLen/2)
   cC:=substr(cStr,nLen+1-i,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+ASC(substr(padr(cModul,8),i,1)))
   else
      cPom+=CHR(ASC(cC)-ASC(substr(padr(cModul,8),i,1)))
@@ -209,7 +209,7 @@ for i=1 to int(nLen/2)
 next
 for i=int(nLen/2) to 1 step -1
    cC:=substr(cStr,i,1)
-  if cC<'Ä'
+  if cC<'¬Ä'
      cPom+=CHR(ASC(cC)+ASC(substr(padr(cModul,8),nLen+1-i,1)))
   else
      cPom+=CHR(ASC(cC)-ASC(substr(padr(cModul,8),nLen+1-i,1)))
@@ -255,7 +255,7 @@ function OdsjPLK(cTxt)
 
 local i
 for i:=len(cTxt) to 1 step -1
-  if !(substr(cTxt,i,1) $ Chr(13)+Chr(10)+" ç")
+  if !(substr(cTxt,i,1) $ Chr(13)+Chr(10)+" ¬ç")
        exit
   endif
 next
@@ -429,15 +429,10 @@ static function Stotice(nIzn, cRez, fDecimale, fMnozina, cDinDem)
 local fDec,fSto:=.f.,i
 
    if (nPom:=int(nIzn/100))>=1
-      aSl:={ "stotinu", "dvijestotine", "tristotine", "~etiristotine",;
-             "petstotina","{eststotina","sedamstotina","osamstotina","devetstotina"}
-      if gKodnaS=="8"
-        for i:=1 to len(aSL)
-          aSL[i]:=KSTo852(aSl[i])
-        next
-      endif
-      cRez+=aSl[nPom]
-      nIzn:=nIzn-nPom*100
+      aSl:={ "stotinu", "dvijestotine", "tristotine", "ƒçetiristotine",;
+             "petstotina","≈°eststotina","sedamstotina","osamstotina","devetstotina"}
+      cRez += aSl[nPom]
+      nIzn := nIzn - nPom * 100
       fSto:=.t.
    endif
 
@@ -447,36 +442,21 @@ local fDec,fSto:=.f.,i
         cRez+=alltrim(str(nizn,2))
      else
       if int(nIzn)>10 .and. int(nIzn)<20
-        aSl:={ "jedanaest", "dvanaest", "trinaest", "~etrnaest",;
-               "petnaest","{esnaest","sedamnaest","osamnaest","devetnaest"}
+        aSl:={ "jedanaest", "dvanaest", "trinaest", "ƒçetrnaest",;
+               "petnaest","≈°esnaest","sedamnaest","osamnaest","devetnaest"}
 
-        if gKodnaS=="8"
-          for i:=1 to len(aSL)
-            aSL[i]:=KSTo852(aSl[i])
-          next
-        endif
         cRez+=aSl[int(nIzn)-10]
         nIzn:=nIzn-int(nIzn)
       endif
       if (nPom:=int(nIzn/10))>=1
-        aSl:={ "deset", "dvadeset", "trideset", "~etrdeset",;
-               "pedeset","{ezdeset","sedamdeset","osamdeset","devedeset"}
-        if gKodnaS=="8"
-          for i:=1 to len(aSL)
-            aSL[i]:=KSTo852(aSl[i])
-          next
-        endif
+        aSl:={ "deset", "dvadeset", "trideset", "ƒçetrdeset",;
+               "pedeset","≈°ezdeset","sedamdeset","osamdeset","devedeset"}
         cRez+=aSl[nPom]
         nIzn:=nIzn-nPom*10
       endif
       if (nPom:=int(nIzn))>=1
-         aSl:={ "jedan", "dva", "tri", "~etiri",;
-                "pet","{est","sedam","osam","devet"}
-         if gKodnaS=="8"
-          for i:=1 to len(aSL)
-            aSL[i]:=KSTo852(aSl[i])
-          next
-         endif
+         aSl:={ "jedan", "dva", "tri", "ƒçetiri",;
+                "pet","≈°est","sedam","osam","devet"}
         if fmnozina
              aSl[1]:="jedna"
              aSl[2]:="dvije"
@@ -487,7 +467,11 @@ local fDec,fSto:=.f.,i
       if !fDecimale; exit; endif
 
      endif // fdec
-     if fdec; cRez+="/100 "+cDINDEM; exit; endif
+     if fdec
+          cRez+="/100 "+cDINDEM
+     exit
+     endif
+
      fDec:=.t.
      fMnozina:=.f.
      nizn:=round(nIzn*100,0)
@@ -507,8 +491,6 @@ local fDec,fSto:=.f.,i
 
 
 return cRez
-
-
 
 
 /*! \fn CreateHashString(aColl)

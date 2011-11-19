@@ -2293,7 +2293,7 @@ FUNCTION SortPrez(cId)
  LOCAL cVrati:="", nArr:=SELECT()
  SELECT RADN
  HSEEK cId
- cVrati:=BHSORT(naz+ime+imerod)+id
+ cVrati:= naz + ime + imerod + id
  SELECT (nArr)
 RETURN cVrati
 
@@ -2304,7 +2304,7 @@ FUNCTION SortIme(cId)
  LOCAL cVrati:="", nArr:=SELECT()
  SELECT RADN
  HSEEK cId
- cVrati:=BHSORT(ime+naz+imerod)+id
+ cVrati:= ime + naz + imerod + id
  SELECT (nArr)
 RETURN cVrati
 

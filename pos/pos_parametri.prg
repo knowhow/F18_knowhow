@@ -59,7 +59,6 @@ gFMKSif := padr(gFmkSif,30)
 gRNALSif := padr(gRNALSif,100)
 gRNALKum := padr(gRNALKum,100)
 
-UsTipke()
 set cursor on
 
 AADD(aNiz,{"Vrsta radne stanice (K-kasa, A-samostalna kasa, S-server)" , "gVrstaRS", "gVrstaRS$'KSA'", "@!", })
@@ -87,8 +86,6 @@ AADD(aNiz, {"Duzina sifre artikla u unosu","gDuzSifre",, "99",})
 AADD(aNiz, {"Operativni sistem","gOperSys",, "@!",})
 
 VarEdit(aNiz,2,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
-
-BosTipke()
 
 // Upisujem nove parametre
 if LASTKEY()<>K_ESC
@@ -131,7 +128,6 @@ function pos_param_fiscal()
 local aNiz:={}
 local cPom:=""
 
-UsTipke()
 set cursor on
 
 AADD(aNiz,{"PDV obveznik", "gFc_pdv", , "@!", })
@@ -164,8 +160,6 @@ AADD(aNiz,{"Restart server (D/N)?", "gFc_restart", ,"@!", })
 AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
 
 VarEdit(aNiz,2,2,24,78,"Fiskalni parametri","B1")
-
-BosTipke()
 
 // Upisujem nove parametre
 if LASTKEY()<>K_ESC
@@ -215,7 +209,6 @@ local cPom:=""
 
 gFirIdBroj := PADR(gFirIdBroj, 13)
 
-UsTipke()
 set cursor on
 
 AADD(aNiz,{"Puni naziv firme", "gFirNaziv", , , })
@@ -229,8 +222,6 @@ AADD(aNiz,{"Pomocni tekst racuna - linija 2:", "gRnPTxt2", , , })
 AADD(aNiz,{"Pomocni tekst racuna - linija 3:", "gRnPTxt3", , , })
 
 VarEdit(aNiz,7,2,24,78,"PODACI FIRME I RACUNA","B1")
-
-BosTipke()
 
 // Upisujem nove parametre
 if LASTKEY()<>K_ESC
@@ -282,7 +273,6 @@ private cIdPosOld:=gIdPos
 
 cPrevPSS:=gPocStaSmjene
 
-UsTipke()
 set cursor on
 
 aNiz:={{"Da li se vode trebovanja (D/N)" , "gVodiTreb", "gVodiTreb$'DN'", "@!", }}
@@ -293,7 +283,6 @@ AADD (aNiz, {"Dijeljenje racuna, spec.opcije nad racunom (D/N)", "gRnSpecOpc", "
 AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje puktova (D/N)" , "gStamStaPun", "gStamStaPun$'DN'", "@!", })
 
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - UGOSTITELJSTVO","B1")
-BosTipke()
 
 if LASTKEY() <> K_ESC
 		MsgO("Azuriram parametre")
@@ -321,7 +310,6 @@ private cIdPosOld:=gIdPos
 
 cPrevPSS:=gPocStaSmjene
 
-UsTipke()
 set cursor on
 
 aNiz:={}
@@ -359,7 +347,6 @@ AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvP
 AADD (aNiz, {"Nakon stampe ispis informacija o racunu (D/N)? " , "gRnInfo", "gRnInfo$'DN'", "@!", })
 
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
-BosTipke()
 
 if LASTKEY()<>K_ESC
 		MsgO("Azuriram parametre")
@@ -440,7 +427,6 @@ private cIdPosOld:=gIdPos
 gSjecistr:=PADR(GETPStr(gSjeciStr),20)
 gOtvorstr:=PADR(GETPStr(gOtvorStr),20)
 
-UsTipke()
 set cursor on
 
 gSjeciStr:=PADR(gSjeciStr,30)
@@ -456,8 +442,6 @@ AADD(aNiz, {"Racun, prikaz id artikla na racunu (D/N)" , "grbStId", "grbStId$'DN
 AADD(aNiz, {"Redukcija potrosnje trake kod stampe racuna i izvjestaja (0/1/2)" , "grbReduk", "grbReduk>=0 .and. grbReduk<=2", "9", })
 
 VarEdit(aNiz,9,1,19,78,"PARAMETRI RADA PROGRAMA - IZGLED RACUNA","B1")
-
-BosTipke()
 
 if LASTKEY()<>K_ESC
 	MsgO("Azuriram parametre")
@@ -496,7 +480,6 @@ function pos_param_cijene()
 local aNiz:={}
 private cIdPosOld:=gIdPos
 
-UsTipke()
 set cursor on
 
 AADD (aNiz, {"Generalni popust % (99-gledaj sifranik)" , "gPopust" , , "99", })
@@ -507,8 +490,6 @@ AADD (aNiz, {"Popust zadavanjem procenta             " , "gPopProc","gPopProc$'D
 AADD (aNiz, {"Popust preko odredjenog iznosa (iznos):" , "gPopIzn",,"999999.99" , })
 AADD (aNiz, {"                  procenat popusta (%):" , "gPopIznP",,"999.99" , })
 VarEdit(aNiz,9,2,18,78,"PARAMETRI RADA PROGRAMA - CIJENE","B1")
-
-BosTipke()
 
 O_PARAMS
 

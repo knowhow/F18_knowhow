@@ -1364,10 +1364,6 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 		@ m_x + 6, m_y + 2 SAY "Veza:" GET _m_dveza ;
 				PICT "@S25"
 	
-		if lUSTipke
-   			USTipke()
-   		endif
-   	
 		// destinacija
 		_dest := PADR( ALLTRIM(_dest), 80 )
    		
@@ -1483,10 +1479,6 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 			READ
    		endif
 		
-		if lUSTipke
-   			BosTipke()
-   		endif
-    		
 		if (lDoks2 .and. _idtipdok=="10")
       			edit_fakt_doks2()
     		endif

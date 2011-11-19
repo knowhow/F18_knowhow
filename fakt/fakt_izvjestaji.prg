@@ -2085,18 +2085,18 @@ return (TARIFA->opp<>0 .or. TARIFA->ppp<>0 .or. TARIFA->zpp<>0)
  *  \param cSort
  */
  
-function SortFakt(cId,cSort)
+function SortFakt(cId, cSort)
 *{
 LOCAL cVrati:="", nArr:=SELECT()
  SELECT ROBA
  HSEEK cId
  DO CASE
    CASE cSort=="N"
-     cVrati := BHSORT(naz)+id
+     cVrati := naz + id
    CASE cSort=="T"
-     cVrati := BHSORT(idtarifa)+id
+     cVrati := idtarifa + id
    CASE cSort=="J"
-     cVrati := BHSORT(jmj)+id
+     cVrati := jmj + id
  ENDCASE
  SELECT (nArr)
 RETURN cVrati

@@ -91,7 +91,6 @@ endif
  if lBezUpita
  else
   Zaglavlje:=PADR(Zaglavlje,70)
-  UsTipke()
   nColStr:=80
   nSort:="ID       "
   Box(,8,76,.t.)
@@ -207,7 +206,6 @@ endif
  endif
  
  BoxC()
- BosTipke()
  if !lBezUpita
 	START PRINT RET
  endif

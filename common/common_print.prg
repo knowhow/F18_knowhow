@@ -620,7 +620,6 @@ Box(,23,65)
  All_GetPstr()
 
  set key K_CTRL_P TO  PSeqv()
- USTipke()
  @ m_x+3,m_y+2  SAY "INI          " GET gPINI    pict "@S40"
  @ m_x+4,m_y+2  SAY "Kond. -17cpi " GET gPCOND   pict "@S40"
  @ m_x+5,m_y+2  SAY "Kond2.-20cpi " GET gPCond2  pict "@S40"
@@ -645,7 +644,6 @@ Box(,23,65)
  if csekvence=="D"
    read
  endif
- BosTipke()
  set key K_CTRL_P TO
 BoxC()
 

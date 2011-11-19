@@ -9,15 +9,17 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch"
+
+function KonvZnWin(cText)
+return cTekst
 
 /*! \fn KonvZnWin(cTekst, cWinKonv)
  *  \brief Konverzija znakova u stringu
  *  \param cTekst - tekst
  *  \param cWinKonv - tip konverzije
  */
-function KonvZnWin(cTekst, cWinKonv)
+function KonvZnWin_old(cTekst, cWinKonv)
 local aNiz:={}
 local i
 local j
@@ -74,11 +76,16 @@ endif
 
 return cTekst
 
+// -----------------------
+// -----------------------
+function StrKZN(cInput)
+return cInput
+
 
 /*! \fn StrKZN(cInput, cIz, cU)
  *  \brief Vrsi zamjenu cInputa
  */
-function StrKZN(cInput, cIz, cU)
+function StrKZN_old(cInput, cIz, cU)
 
 local a852:={"Ê","—","¨","è","¶","Á","–","ü","Ü","ß"}
 local a437:={"[","\","^","]","@","{","|","~","}","`"}
@@ -165,9 +172,13 @@ cKrajnjeStanjeSif:=cRet
 
 return cRet
 
-// --------------------------------
-// --------------------------------
+
 function KSto7(cStr)
+return cStr
+
+// --------------------------------
+// --------------------------------
+function KSto7_old(cStr)
   cStr:=strtran(cStr,"Á","{")
   cStr:=strtran(cStr,"–","|")
   cStr:=strtran(cStr,"ß","`")
@@ -183,91 +194,6 @@ return cStr
 function KonvTable(fGraf)
 
 return nil
-
-
-function bhsort(cInput)
- IF gKodnaS=="7"
-   cInput:=STRTRAN(cInput,"[","S"+CHR(255))
-   cInput:=STRTRAN(cInput,"\","D"+CHR(255))
-   cInput:=STRTRAN(cInput,"^","C"+CHR(254))
-   cInput:=STRTRAN(cInput,"]","C"+CHR(255))
-   cInput:=STRTRAN(cInput,"@","Z"+CHR(255))
-   cInput:=STRTRAN(cInput,"{","s"+CHR(255))
-   cInput:=STRTRAN(cInput,"|","d"+CHR(255))
-   cInput:=STRTRAN(cInput,"~","c"+CHR(254))
-   cInput:=STRTRAN(cInput,"}","c"+CHR(255))
-   cInput:=STRTRAN(cInput,"`","z"+CHR(255))
- ELSE  // "8"
-   cInput:=STRTRAN(cInput,"Ê","S"+CHR(255))
-   cInput:=STRTRAN(cInput,"—","D"+CHR(255))
-   cInput:=STRTRAN(cInput,"¨","C"+CHR(254))
-   cInput:=STRTRAN(cInput,"è","C"+CHR(255))
-   cInput:=STRTRAN(cInput,"¶","Z"+CHR(255))
-   cInput:=STRTRAN(cInput,"Á","s"+CHR(255))
-   cInput:=STRTRAN(cInput,"–","d"+CHR(255))
-   cInput:=STRTRAN(cInput,"ü","c"+CHR(254))
-   cInput:=STRTRAN(cInput,"Ü","c"+CHR(255))
-   cInput:=STRTRAN(cInput,"ß","z"+CHR(255))
- ENDIF
-RETURN PADR(cInput, 100)
-
-
-// ------------------------------------------
-// ------------------------------------------
-function BosTipke()
-
-/*  
-  SETKEY( ASC('{') , {|| __KEYBOARD('[') }  )
-  SETKEY( ASC('|') , {|| __KEYBOARD('\') }  )
-  SETKEY( ASC('`') , {|| __KEYBOARD('@') }  )
-  SETKEY( ASC('~') , {|| __KEYBOARD('^') }  )
-  SETKEY( ASC('}') , {|| __KEYBOARD(']') }  )
-  SETKEY( ASC('Á') , {|| __KEYBOARD('Ê') }  )
-  SETKEY( ASC('Ü') , {|| __KEYBOARD('è') }  )
-  SETKEY( ASC('ü') , {|| __KEYBOARD('¨') }  )
-  SETKEY( ASC('–') , {|| __KEYBOARD('—') }  )
-  SETKEY( ASC('ß') , {|| __KEYBOARD('¶') }  )
-*/
-
-RETURN
-
-
-// -------------------------------------------
-// -------------------------------------------
-function USTipke()
-
-/*
-SET KEY ASC('{') TO
-  SET KEY ASC('|') TO
-  SET KEY ASC('`') TO
-  SET KEY ASC('~') TO
-  SET KEY ASC('}') TO
-  SET KEY ASC('Á') TO
-  SET KEY ASC('Ü') TO
-  SET KEY ASC('ü') TO
-  SET KEY ASC('–') TO
-  SET KEY ASC('ß') TO
-RETURN
-*/
-
-// ------------------------------
-// ------------------------------
-function KSTo852(cStr)
-
-/*
-  cStr:=strtran(cStr,"{","Á")
-  cStr:=strtran(cStr,"|","–")
-  cStr:=strtran(cStr,"`","ß")
-  cStr:=strtran(cStr,"~","ü")
-  cStr:=strtran(cStr,"}","Ü")
-  cStr:=strtran(cStr,"[","è")
-  cStr:=strtran(cStr,"\","—")
-  cStr:=strtran(cStr,"@","¶")
-  cStr:=strtran(cStr,"^","¨")
-  cStr:=strtran(cStr,"]","è")
-*/
-
-return cStr
 
 // ---------------------------------------------------
 // konverzija u utf-8

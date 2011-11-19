@@ -207,17 +207,21 @@ endif
 return 1
 
 
-
+// --------------------
+// --------------------
 function Preduzece()
+
 local nArr:=select()
+
 F10CPI
 B_ON
 ? gTS+": "
 if gNW=="D"
- ?? gFirma,"-",gNFirma
+ ?? gFirma, "-", hb_strtoutf8( gNFirma )
 else
- SELECT PARTN; HSEEK cIdFirma
- ?? cIdFirma,partn->naz,partn->naz2
+ SELECT PARTN
+ HSEEK cIdFirma
+ ?? cIdFirma, partn->naz, partn->naz2
 endif
 B_OFF
 ?

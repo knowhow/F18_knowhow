@@ -139,7 +139,6 @@ if gRj=="D" .and. fin_pripr->(FIELDPOS("IDRJ")) <> 0
 ENDIF
 
 
-//Alert(MAXROWS())
 Box( , MAXROWS() - 4, MAXCOLS() - 3)
 
 @ m_x + MAXROWS() - 4-2, m_y+2 SAY "<c-N>  Nove Stavke    ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku         "
@@ -342,8 +341,6 @@ if gTroskovi=="D"
        	@  m_x+12,m_y+44 SAY "      Fond." GET _Fond valid empty(_Fond) .or. P_Fond(@_Fond) pict "@!"
 endif
 
-
-
 if DABLAGAS
 	@ m_x+13,m_y+2   SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto,13,20,.t.) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
 
@@ -446,8 +443,6 @@ function V_IznosDEM(p1,p2,cVar,oGet)
 *{
 if lAutoPomUDom .and. oGet:changed
 	
-	altd()
-	
 	_iznosdem:=oGet:unTransform()
    	DinDem(p1,p2,cVar)
 endif
@@ -463,7 +458,6 @@ return .t.
  */
  
 function CheckMark(cIdKonto, cIdPartner, cNewPartner)
-*{
     if (ChkKtoMark(_idkonto))
         cIdPartner := cNewPartner
     else
@@ -471,7 +465,6 @@ function CheckMark(cIdKonto, cIdPartner, cNewPartner)
     endif
 
 return .t.
-*}
 
 /*! \fn Partija(cIdKonto)
  *  \brief

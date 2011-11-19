@@ -111,8 +111,8 @@ DO WHILE !EOF()
      END PRINT
    endif
 
-   IF ASCAN(aNalozi,cIdFirma+cIdVN+cBrNal)==0
-     AADD(aNalozi,cIdFirma+cIdVN+cBrNal)  // lista naloga koji su oti{li
+   IF ASCAN(aNalozi, cIdFirma + cIdVN + cBrNal) == 0
+     AADD(aNalozi, cIdFirma + cIdVN + cBrNal)  // lista naloga koji su oti{li
      IF lAuto
        @ m_x+2, m_y+2 SAY "Formirana sintetika i analitika za nalog:"+cIdFirma+"-"+cIdVN+"-"+cBrNal
      ENDIF
@@ -242,7 +242,6 @@ endif
 A:=0
 // svi nalozi
 DO WHILE !eof()  
-
 
    nStr:=0
    nD1:=nD2:=nP1:=nP2:=0
@@ -374,5 +373,4 @@ enddo
 
 closeret
 return
-
 

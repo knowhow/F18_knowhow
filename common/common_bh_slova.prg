@@ -75,12 +75,9 @@ endif
 return cTekst
 
 
-
-
 /*! \fn StrKZN(cInput, cIz, cU)
  *  \brief Vrsi zamjenu cInputa
  */
- 
 function StrKZN(cInput, cIz, cU)
 
 local a852:={"Ê","—","¨","è","¶","Á","–","ü","Ü","ß"}
@@ -168,8 +165,8 @@ cKrajnjeStanjeSif:=cRet
 
 return cRet
 
-
-
+// --------------------------------
+// --------------------------------
 function KSto7(cStr)
   cStr:=strtran(cStr,"Á","{")
   cStr:=strtran(cStr,"–","|")
@@ -373,8 +370,6 @@ AADD( aUTF, "&#123;" )
 AADD( aUTF, "&#125;" ) 
 AADD( aUTF, "&#60;" ) 
 AADD( aUTF, "&#62;" ) 
-
-altd()
 
 if cIz == "8"
 	aTmp := a852

@@ -1,6 +1,6 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
+ * This file is part of the bring.out ERP, a free and open source 
+ * ERP software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
@@ -99,10 +99,12 @@ local nRec
 local cQuery
 local oServer := pg_server()
 local nSeconds
+local x, y
 
-   //Box("SQ", 10, 60)
+   x := maxrows() - 15
+   y := maxcols() - 20
 
-   //@ m_x+1, m_y+2 SAY "updateujem fin_suban from SQL, algoritam: " + iif( dDatDok == NIL, "FULL", "DATE")
+   @ x+1, y+2 SAY "updateujem fin_suban from SQL, algoritam: " + iif( dDatDok == NIL, "FULL", "DATE")
    nSeconds := SECONDS()
    cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
    if dDatDok != NIL
@@ -135,7 +137,7 @@ local nSeconds
  
     endif
 
-   //@ m_x+4, m_y+2 SAY SECONDS() - nSeconds 
+   @ x+4, y+2 SAY SECONDS() - nSeconds 
 
    nCounter := 1
    DO WHILE !oQuery:Eof()
@@ -158,7 +160,7 @@ local nSeconds
       nCounter++
 
       if nCounter % 5000 == 0
-         //@ m_x+4, m_y+2 SAY SECONDS() - nSeconds
+         @ x+4, y+2 SAY SECONDS() - nSeconds
       endif 
    ENDDO
 
@@ -169,7 +171,6 @@ local nSeconds
      log_write("fin_suban synchro cache:" + STR(SECONDS() - nSeconds))
    endif
 
-   //BoxC()
 close all
  
 return .t. 

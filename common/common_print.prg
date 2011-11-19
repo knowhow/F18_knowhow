@@ -131,11 +131,11 @@ else
 	set console off
 	
 	if gKesiraj $ "CD"
-		cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3), gKesiraj+DRVPATH)
+		cPom:= strtran(PRIVPATH, LEFT(PRIVPATH,3), gKesiraj+DRVPATH)
 		DirMak2(cpom)
 		cKom:=cPom+cFName
-		elseif gKesiraj == "X"
-		cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3), "C"+DRVPATH)
+    elseif gKesiraj == "X"
+		cPom:=strtran(PRIVPATH, LEFT(PRIVPATH,3), "C"+DRVPATH)
 		DirMak2(cpom)
 		cKom:=cPom+cFName
 	else
@@ -145,6 +145,7 @@ else
 	if gnDebug>=5
 		MsgBeep("Direktno N, cKom=" + AllTrim(cKom))
 	endif
+
 endif
 
 
@@ -296,7 +297,7 @@ elseif cPrinter=="V"
 		gaKolFix:=NIL
 	ENDIF
 	
-	//VidiFajl(cKom,gaZagFix,gaKolFix)
+	//VidiFajl(cKom, gaZagFix, gaKolFix)
     #ifdef __PLATFORM__WINDOWS
         run ("gvim " + '"' + PRIVPATH + cFName + '"' ) 
 	#endif
@@ -332,7 +333,6 @@ else
 	endif
 
 	if gPrinter == "R"
-		
 		if gPDFprint == "X" .and. goModul:oDataBase:cName == "FAKT" 
 			if Pitanje(,"Print u PDF/PTXT (D/N)?", "D") == "D" 
 				PDFView(cKom)
@@ -956,7 +956,7 @@ function gpU_ON()
 
 Setpxlat()
 qqout(gPU_ON)
-konvtable(iif(gPrinter="R",.t.,NIL))
+konvtable( iif(gPrinter="R",.t.,NIL) )
 return ""
 
 

@@ -43,6 +43,7 @@ function StOANal()
 
 private fK1:=fk2:=fk3:=fk4:=cDatVal:="N",gnLOst:=0,gPotpis:="N"
 O_PARAMS
+
 Private cSection:="1",cHistory:=" ",aHistory:={}
 Params1()
 RPar("k1",@fk1)
@@ -53,15 +54,14 @@ RPar("dv",@cDatVal)
 RPar("li",@gnLOSt)
 RPar("po",@gPotpis)
 select params
-#ifndef CAX
 use
-#endif
 
 private dDatNal:=date()
 
 IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
   O_VRSTEP
 ENDIF
+
 O_NALOG
 O_SUBAN
 O_KONTO
@@ -128,11 +128,6 @@ M:="---- -------- ------- --------------------------------------------- --------
 if fkum  // stampa starog naloga - naloga iz kumulativa - datoteka anal
 
  select (F_ANAL)
-#ifdef CAX
- altd()
- use
- select (F_PANAL); use
-#endif
  use ANAL alias PANAL
  set order to tag "2"
  O_KONTO
@@ -157,9 +152,6 @@ if fkum  // stampa starog naloga - naloga iz kumulativa - datoteka anal
  BoxC()
  select nalog
  seek cidfirma+cidvn+cbrnal
-#ifdef CAX
- if !found(); select panal; use; endif
-#endif
  NFOUND CRET  // ako ne postoji
  dDatNal:=datnal
 
@@ -191,7 +183,11 @@ nCol1:=70
  Zagl12()
  DO WHILE eval(b1) .and. eval(b2)     // jedan nalog
 
-    IF prow()>61+gPStranica; FF; Zagl12(); ENDIF
+    IF prow()>61+gPStranica
+            FF
+            Zagl12()
+    ENDIF
+
     cIdSinKon:=LEFT(IdKonto,3)
     nUkDugBHD:=nUkPotBHD:=nUkDugDEM:=nUkPotDEM:=0
     DO WHILE  eval(b1) .and. eval(b2) .and. eval(b3)  // sinteticki konto
@@ -263,9 +259,6 @@ FF
 END PRINT
 
 if fkum
-#ifdef CAX
- if !found(); select panal; use; endif
-#endif
  closeret
 endif
 return

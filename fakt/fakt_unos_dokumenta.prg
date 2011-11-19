@@ -1169,9 +1169,6 @@ if !fnovi
      		endif
    	endif
 	
-	
-	altd()
-
 	if LEN(aMemo)>=18
 		// destinacija
 		public _DEST := aMemo[18]
@@ -1987,7 +1984,6 @@ if cVar=="0"   // when
       endif
 
 elseif cVar=="1"  // valid
-	altd()
 	// ako je rama-glas
 	if !lRP0
 		if nRokPl < 1

@@ -67,8 +67,6 @@ open_xml( cXml )
 xml_head()
 xml_subnode("invoice", .f.)
 
-altd()
-
 select drn
 go top
 

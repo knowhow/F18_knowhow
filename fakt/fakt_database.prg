@@ -290,21 +290,13 @@ local fBrisao:=.f.
 local nRec
 local cBrisiKum := " "
 
-if lTest==nil
-	lTest:=.f.
+if lTest == nil
+	lTest := .f.
 endif
 
-if (PCount()==0)
-	fR:=.f.
+if (PCount() == 0)
+	fR := .f.
 endif
-
-if (KLevel>"1")  // Klevel <> "0"
-	Beep(2)
-    	Msg("Nemate pristupa ovoj opciji !",4)
-    	close all
-	return 0
-endif
-
 
 O_FAKT
 
@@ -361,8 +353,7 @@ endif  // cidfirma=NIL
 // provjeri pravila
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK" + cIdTipDok ))
 	
-   if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOKDATUM" + ;
-   	cIdTipDok )) .and. gSecurity == "D"
+   if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOKDATUM" + cIdTipDok )) == .f.
 	
 	nTArea := SELECT()
 
@@ -845,7 +836,6 @@ set order to tag "ID"
 select fakt_pripr
 go top
 
-altd()
 // 0. napuni matricu sa brojem dokumenta
 AADD( aFD_data, { fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok } )
 

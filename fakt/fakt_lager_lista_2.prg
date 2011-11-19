@@ -37,7 +37,7 @@ O_ROBA
 O_RJ
 O_FAKT
 // idroba
-set order to 3 
+set order to tag "3" 
 
 cIdfirma=gFirma
 qqRoba:=""
@@ -152,7 +152,7 @@ endif
 
 // ako ne postoji polje datuma isporuke
 // uvijek gledaj dokumente
-if doks->(FIELDPOS("DAT_ISP")) = 0
+if fakt_doks->(FIELDPOS("DAT_ISP")) = 0
 	cDDokOtpr := "D"
 endif
 
@@ -218,7 +218,7 @@ do while !eof()
     if cDDokOtpr == "O"
     	select fakt_doks
 	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if doks->dat_otpr < dDatOd .or. doks->dat_otpr > dDatDo
+	if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
 		select fakt
 		skip
 		loop
@@ -229,7 +229,7 @@ do while !eof()
     if cDDokOtpr == "V"
     	select fakt_doks
 	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if doks->dat_val < dDatOd .or. doks->dat_val > dDatDo
+	if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
 		select fakt
 		skip
 		loop
@@ -257,7 +257,7 @@ do while !eof()
     if cDDokOtpr == "O"
     	select fakt_doks
 	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if doks->dat_otpr < dDatOd .or. doks->dat_otpr > dDatDo
+	if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
 		select fakt
 		skip
 		loop
@@ -268,7 +268,7 @@ do while !eof()
     if cDDokOtpr == "V"
     	select fakt_doks
 	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if doks->dat_val < dDatOd .or. doks->dat_val > dDatDo
+	if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
 		select fakt
 		skip
 		loop
@@ -294,7 +294,7 @@ do while !eof()
     if !empty(qqPartn)
      select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
      select fakt
-     if !(doks->partner=qqPartn)
+     if !(fakt_doks->partner=qqPartn)
         skip
 	loop
       endif

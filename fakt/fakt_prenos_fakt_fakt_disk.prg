@@ -137,7 +137,7 @@ ENDIF
 O_FAKT
 
 SELECT FAKT
-set order to 1  // idFirma+Idtipdok+BrDok+RBr
+set order to tag "1"  // idFirma+Idtipdok+BrDok+RBr
 cIdfirma:=gfirma
 cIdTipdok:=space(2)
 cBrDok:=space(8)
@@ -388,7 +388,7 @@ O__FAKT
 O_FAKT_PRIPR
 
 SELECT _FAKT
-set order to 0  // idFirma+IdTipdok+BrDok+RBr
+set order to tag "0"  // idFirma+IdTipdok+BrDok+RBr
 
 if !EMPTY(cKonvFirma+cKonvBrDok)
 	aKBrDok:=TokUNiz(cKonvBrDok)
@@ -435,7 +435,7 @@ if cDn1=="D"
 	O_SIFK
 	O_SIFV
 	O__ROBA
-	set order to 0
+	set order to
 	go top
 	Box(,1,60)
 		// prolazimo kroz _ROBA
@@ -512,7 +512,7 @@ if Pitanje(, "PARTN - dodati nepostojece sifre ?", "D") == "D"
      	O_SIFK
 	O_SIFV
   	O__PARTN
-  	set order to 0
+  	set order to 
 	go top
 	cRFajl := PRIVPATH+"FAKT.RF"
 	UpisiURF("IZVJESTAJ O PROMJENAMA NA SIFRARNIKU PARTNERA:",cRFajl,.t.,.t.)

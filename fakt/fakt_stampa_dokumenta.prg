@@ -833,8 +833,8 @@ set order to tag "1"
 hseek cIdFirma + cIdTipDok
 
 if Found()
-	do while !EOF() .and. doks->idfirma = cIdFirma ;
-		.and. doks->idtipdok = cIdTipDok
+	do while !EOF() .and. fakt_doks->idfirma = cIdFirma ;
+		.and. fakt_doks->idtipdok = cIdTipDok
 		
 		nTRec := RecNo()
 		
@@ -842,7 +842,7 @@ if Found()
 			ALLTRIM(doks->brdok) <= ALLTRIM(cBrDo) 
 			
 			// pozovi stampu fiskalnog racuna
-			nErr := fakt_fisc_rn( doks->idfirma, ;
+			nErr := fakt_fisc_rn( fakt_doks->idfirma, ;
 				doks->idtipdok, ;
 				doks->brdok, lAutoStampa, nDevice )
 		
@@ -909,10 +909,10 @@ set order to tag "1"
 hseek cIdFirma + cIdTipDok
 
 if Found()
-	do while !EOF() .and. doks->idfirma = cIdFirma .and. doks->idtipdok = cIdTipDok
+	do while !EOF() .and. fakt_doks->idfirma = cIdFirma .and. fakt_doks->idtipdok = cIdTipDok
 		nTRec := RecNo()
 		
-		if ALLTRIM(doks->brdok) >= ALLTRIM(cBrOd) .and. ALLTRIM(doks->brdok) <= ALLTRIM(cBrDo) 
+		if ALLTRIM(fakt_doks->brdok) >= ALLTRIM(cBrOd) .and. ALLTRIM(fakt_doks->brdok) <= ALLTRIM(cBrDo) 
 			
 			if cBatch == "D"
 				cDirPom := gcDirekt
@@ -920,7 +920,7 @@ if Found()
 				// prebaci na direkt stampu
 			endif
 			
-			StampTXT(doks->idfirma,doks->idtipdok,doks->brdok)
+			StampTXT(fakt_doks->idfirma,fakt_doks->idtipdok,fakt_doks->brdok)
 			
 			if cBatch == "D"
 				gcDirekt := cDirPom

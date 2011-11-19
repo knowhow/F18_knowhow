@@ -51,7 +51,7 @@ O_RJ
 
 O_FAKT
 // idroba
-set order to 3
+set order to tag "3"
 
 
 cKalkFirma:=gFirma
@@ -426,11 +426,11 @@ else
    if ! RJ->(Found()) .or. Empty (RJ->Tip) .or. RJ->Tip="V"
      // veleprodajna cijena u FAKT, uzimam MKONTO u KALK
      cTipC := "V"
-     Set order to 3
+     Set order to tag "3"
    else
      // u suprotnom, uzimam PKONTO
      cTipC := "M"
-     SET ORDER TO 4
+     SET ORDER TO TAG "4"
    endif
   endif
 

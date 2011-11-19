@@ -235,7 +235,7 @@ do while !EOF()
 
 	nOperater := 0
 
-	if doks->(FIELDPOS( "oper_id" )) <> 0
+	if fakt_doks->(FIELDPOS( "oper_id" )) <> 0
 		nOperater := field->oper_id
 	endif
 

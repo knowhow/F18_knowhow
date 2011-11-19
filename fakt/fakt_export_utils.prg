@@ -162,7 +162,7 @@ do while !EOF()
 	replace idtipdok with fakt->idtipdok
 	replace brdok with fakt->brdok
 	replace datdok with fakt->datdok
-	replace idpartner with doks->idpartner
+	replace idpartner with fakt_doks->idpartner
 	replace idroba with fakt->idroba
 	replace kolicina with fakt->kolicina
 	replace cijena with fakt->cijena

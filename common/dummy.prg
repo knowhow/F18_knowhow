@@ -17,7 +17,7 @@ function send2comport(cStr)
 return
 
 function rloptlevel()
-return ""
+return 0
 
 function isRudnik()
 return .f.

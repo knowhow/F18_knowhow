@@ -274,7 +274,7 @@ else
   nFRec:=recno()
 endif
 // "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
-set order to 3
+set order to tag "3"
 SEEK cIdRoba
 
 aStanje:={}

@@ -1692,7 +1692,7 @@ O_FAKT_DOKS; O_FAKT
 if fId_J
   set order to tag "3J" // idroba_J+Idroba+dtos(datDok)
 else
-  set order to 3 // idroba+dtos(datDok)
+  set order to tag "3" // idroba+dtos(datDok)
 endif
 
 cIdfirma:=gFirma
@@ -1954,8 +1954,8 @@ do while !eof()
       ? space(gnLMarg); ?? str(++nRbr,3)+".   "+idfirma+"-"+idtipdok+"-"+brdok+left(serbr,1)+"  "+DTOC(datdok)
 
       select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok); select fakt
-      @ prow(),pcol()+1 SAY doks->idPartner
-      @ prow(),pcol()+1 SAY padr(doks->Partner,20)
+      @ prow(),pcol()+1 SAY fakt_doks->idPartner
+      @ prow(),pcol()+1 SAY padr(fakt_doks->Partner,20)
 
       @ prow(),pcol()+1 SAY kolicina pict lpickol
 

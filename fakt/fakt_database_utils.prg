@@ -84,7 +84,7 @@ lRet:=.f.
 
 PushWa()
 nArea:=SELECT()
-select DOKS
+select fakt_doks
 set order to tag "1"
 HSEEK cIdFirma+cIdTipDok+cBrDok
 if FOUND()

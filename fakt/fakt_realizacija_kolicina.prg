@@ -251,7 +251,7 @@ endif
 
 _o_tables()
 
-if doks->(FIELDPOS("dat_isp")) = 0
+if fakt_doks->(FIELDPOS("dat_isp")) = 0
 	// ako nema ovog polja, samo gledaj po dokumentima
 	cDDokOtpr := "D"
 endif
@@ -329,7 +329,7 @@ if cPrikaz=="1"
 		if cDDokOtpr == "O"
     			select fakt_doks
 			seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-			if doks->dat_otpr < dDatOd .or. doks->dat_otpr > dDatDo
+			if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
 				select fakt
 				skip
 				loop
@@ -340,7 +340,7 @@ if cPrikaz=="1"
 		if cDDokOtpr == "V"
     			select fakt_doks
 			seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-			if doks->dat_val < dDatOd .or. doks->dat_val > dDatDo
+			if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
 				select fakt
 				skip
 				loop
@@ -357,8 +357,8 @@ if cPrikaz=="1"
     				select fakt_doks
 				seek fakt->idfirma + fakt->idtipdok + ;
 					fakt->brdok
-				if doks->dat_otpr < dDatOd .or. ;
-					doks->dat_otpr > dDatDo
+				if fakt_doks->dat_otpr < dDatOd .or. ;
+					fakt_doks->dat_otpr > dDatDo
 					select fakt
 					skip
 					loop
@@ -370,8 +370,8 @@ if cPrikaz=="1"
     				select fakt_doks
 				seek fakt->idfirma + fakt->idtipdok + ;
 					fakt->brdok
-				if doks->dat_val < dDatOd .or. ;
-					doks->dat_val > dDatDo
+				if fakt_doks->dat_val < dDatOd .or. ;
+					fakt_doks->dat_val > dDatDo
 					select fakt
 					skip
 					loop
@@ -450,7 +450,7 @@ else
 		if cDDokOtpr == "O"
     			select fakt_doks
 			seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-			if doks->dat_otpr < dDatOd .or. doks->dat_otpr > dDatDo
+			if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
 				select fakt
 				skip
 				loop
@@ -461,7 +461,7 @@ else
 		if cDDokOtpr == "V"
     			select fakt_doks
 			seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-			if doks->dat_val < dDatOd .or. doks->dat_val > dDatDo
+			if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
 				select fakt
 				skip
 				loop
@@ -497,8 +497,8 @@ else
     				select fakt_doks
 				seek fakt->idfirma + fakt->idtipdok + ;
 					fakt->brdok
-				if doks->dat_otpr < dDatOd .or. ;
-					doks->dat_otpr > dDatDo
+				if fakt_doks->dat_otpr < dDatOd .or. ;
+					fakt_doks->dat_otpr > dDatDo
 					select fakt
 					skip
 					loop
@@ -510,8 +510,8 @@ else
     				select fakt_doks
 				seek fakt->idfirma + fakt->idtipdok + ;
 					fakt->brdok
-				if doks->dat_val < dDatOd .or. ;
-					doks->dat_val > dDatDo
+				if fakt_doks->dat_val < dDatOd .or. ;
+					fakt_doks->dat_val > dDatDo
 					select fakt
 					skip
 					loop

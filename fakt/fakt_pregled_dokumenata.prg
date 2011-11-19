@@ -134,35 +134,34 @@ O_RJ
 qqVrsteP := SPACE(20)
 dDatVal0 := dDatVal1 := CTOD("")
 
-cIdfirma:=gFirma
-dDatOd:=ctod("")
-dDatDo:=date()
-qqTipDok:=""
-Box(,12+IF(lVrsteP .or. lOpcine .or. glRadNal,6,0),77)
+cIdfirma := gFirma
+dDatOd := ctod("")
+dDatDo := date()
+qqTipDok := ""
+qqPartn := space(20)
+cTabela := "N"
+cBrFakDok := SPACE(40)
+cImeKup := space(20)
+cOpcina := SPACE(30)
 
-O_PARAMS
-private cSection:="N",cHistory:=" "; aHistory:={}
-//Params1()
-RPar("c1",@cIdFirma)
-RPar("c2",@qqTipDok)
-RPar("d1",@dDatOd)
-RPar("d2",@dDatDo)
-cTabela:="N"
-cBrFakDok:=SPACE(40)
-cImeKup:=space(20)
-cOpcina:=SPACE(30)
 if glRadNal
-	cRadniNalog:=SPACE(10)
+	cRadniNalog := SPACE(10)
 endif
-qqPartn:=space(20)
-RPar("TA",@cTabela)
-RPar("KU",@cImeKup)
-RPar("sk",@qqPartn)
-RPar("BD",@cBrFakDok)
-cImeKup:=padr(cImeKup,20)
-qqPartn:=padr(qqPartn,20)
 
-qqTipDok:=padr(qqTipDok,2)
+Box( , 12 + IF( lVrsteP .or. lOpcine .or. glRadNal, 6, 0 ), 77 )
+
+f18_get_metric("StampaListeIdFirma", @cIdFirma, .t. )
+f18_get_metric("StampaListeDokumenti", @qqTipDok, .t. )
+f18_get_metric("StampaListeDatumOd", @dDatOd, .t. )
+f18_get_metric("StampaListeDatumDo", @dDatDo, .t. )
+f18_get_metric("StampaListeTabelarniPregled", @cTabela, .t. )
+f18_get_metric("StampaListeImeKupca", @cImeKup, .t. )
+f18_get_metric("StampaListePartner", @qqPartn, .t. )
+f18_get_metric("StampaListeBrojDokumenta", @cBrFakDok, .t. )
+
+cImeKup := padr(cImeKup,20)
+qqPartn := padr(qqPartn,20)
+qqTipDok := padr(qqTipDok,2)
 
 do while .t.
  if gNW$"DR"
@@ -202,11 +201,13 @@ do while .t.
  endif
  
  read
+
  ESC_BCR
- aUslBFD:=Parsiraj(cBrFakDok,"BRDOK","C")
- aUslSK:=Parsiraj(qqPartn,"IDPARTNER","C")
- aUslVrsteP:=Parsiraj(qqVrsteP,"IDVRSTEP","C")
- aUslOpc:=Parsiraj(cOpcina,"IDOPS","C")
+
+ aUslBFD := Parsiraj(cBrFakDok,"BRDOK","C")
+ aUslSK := Parsiraj(qqPartn,"IDPARTNER","C")
+ aUslVrsteP := Parsiraj(qqVrsteP,"IDVRSTEP","C")
+ aUslOpc := Parsiraj(cOpcina,"IDOPS","C")
  if glRadNal
  	//aUslRadNal:=
  endif
@@ -215,23 +216,23 @@ do while .t.
  endif
 enddo
 
+qqTipDok := trim(qqTipDok)
+qqPartn := trim(qqPartn)
 
-qqTipDok:=trim(qqTipDok)
-qqPartn:=trim(qqPartn)
-Params2()
-WPar("c1",cIdFirma)
-WPar("c2",qqTipDok)
-WPar("d1",dDatOd)
-WPar("d2",dDatDo)
-WPar("TA",cTabela)
-WPar("KU",cImeKup)
-WPar("sk",qqPartn)
-WPar("BD",cBrFakDok)
-select params; use
+f18_set_metric("StampaListeIdFirma", cIdFirma, .t. )
+f18_set_metric("StampaListeDokumenti", qqTipDok, .t. )
+f18_set_metric("StampaListeDatumOd", dDatOd, .t. )
+f18_set_metric("StampaListeDatumDo", dDatDo, .t. )
+f18_set_metric("StampaListeTabelarniPregled", cTabela, .t. )
+f18_set_metric("StampaListeImeKupca", cImeKup, .t. )
+f18_set_metric("StampaListePartner", qqPartn, .t. )
+f18_set_metric("StampaListeBrojDokumenta", cBrFakDok, .t. )
 
 BoxC()
 
 select fakt_doks
+set order to tag "1"
+go top
 
 Private cFilter:=".t."
 
@@ -288,14 +289,13 @@ endif
 
 @ 22,77 SAY str(rloptlevel(),2)
 
-qqTipDok:=trim(qqTipDok)
+qqTipDok := trim(qqTipDok)
 
-seek cIdFirma+qqTipDok
+seek cIdFirma + qqTipDok
 
 EOF CRET
 
-
-if cTabela=="D"
+if cTabela == "D"
 
    ImeKol:={}
    
@@ -453,7 +453,7 @@ do while !eof() .and. IdFirma=cIdFirma
      endif
   endif
   if lOpcine
-      SELECT PARTN; HSEEK DOKS->idpartner; select fakt_doks
+      SELECT PARTN; HSEEK fakt_doks->idpartner; select fakt_doks
       if !(PARTN->(&aUslOpc))
          skip; loop
       endif
@@ -1001,7 +1001,7 @@ if cTxt == nil
 	cTxt := ""
 endif
 
-if doks->(FIELDPOS("DOK_VEZA")) <> 0
+if fakt_doks->(FIELDPOS("DOK_VEZA")) <> 0
 	lDok_veza := .t.
 endif
 
@@ -1048,7 +1048,7 @@ private Opc:={}
 private opcexe:={}
 private Izbor
 
-cTmp := g_d_veza( doks->idfirma, doks->idtipdok, doks->brdok, ;
+cTmp := g_d_veza( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, ;
 	doks->dok_veza )
 
 if EMPTY( cTmp )
@@ -1088,14 +1088,14 @@ return nSelected
 static function _veza_fc_rn()
 local cFiscal
 
-if doks->(FIELDPOS("FISC_RN")) = 0
+if fakt_doks->(FIELDPOS("FISC_RN")) = 0
 	return
 endif
 
-cFiscal := ALLTRIM( STR( doks->fisc_rn ) )
+cFiscal := ALLTRIM( STR( fakt_doks->fisc_rn ) )
 
 // samo za izlazne dokumente
-if doks->idtipdok $ "10#11"
+if fakt_doks->idtipdok $ "10#11"
 	
 	if cFiscal == "0"
 		@ m_x + 1, m_y + 2 SAY ;
@@ -1268,7 +1268,7 @@ do case
        endif
        
        O_FAKT 
-       seek  doks->idfirma + doks->idtipdok + doks->brdok
+       seek  fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok
        
        nPom1 := 0
        nPom2 := 0
@@ -1276,7 +1276,7 @@ do case
        nDugD := 0
        nRabD := 0
        
-       do while !EOF() .and. fakt->(idfirma+idtipdok+brdok)==doks->(idfirma+idtipdok+brdok)
+       do while !EOF() .and. fakt->(idfirma+idtipdok+brdok)==fakt_doks->(idfirma+idtipdok+brdok)
          
 	  nPrCij := fakt->cijena
 	  
@@ -1651,7 +1651,7 @@ private nStrana:=0
 private m:="---- ------ -------------------------- ------------ ------------ ------------"
 fakt_zagl_real_partnera()
 
-set order to 6
+set order to tag "6"
 //"6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS"
 seek cIdFirma
 
@@ -1662,7 +1662,7 @@ private cRezerv:=" "
 do while !eof() .and. IdFirma=cIdFirma
 	// uslov po partneru
 	if !Empty(qqPartn)
-  		if !(doks->partner=qqPartn)
+  		if !(fakt_doks->partner=qqPartn)
 			skip
 			loop
 		endif

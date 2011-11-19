@@ -12,8 +12,6 @@
 
 #include "fakt.ch"
 
-
-
 // ------------------------------------------
 // setuju parametre pri pokretanju modula
 // napuni sifrarnike

@@ -315,21 +315,6 @@ endif
 // dodaj text na kraju fakture
 a4_footer()
 
-// dodaj sliku footera
-//if nPicFRow > 0
-	
-	// daj slobodne redove do kraja...... stranice
-	//nPom := nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr) - prow()
-	
-	//for nI := 0 to nPom
-	//	?
-	//next	
-	
-	// put pic footer code
-	//gpPicF()
-	
-//endif
-
 if lStartPrint
 	FF
 	EndPrint()
@@ -943,7 +928,7 @@ endif
 P_10CPI
 // broj dokumenta
 
-cPom := ALLTRIM(cTipDok)
+cPom := hb_strtoutf8( ALLTRIM(cTipDok))
 if lKomision
 	cPom := lokal("KOMISIONA DOSTAVNICA br. ")
 endif

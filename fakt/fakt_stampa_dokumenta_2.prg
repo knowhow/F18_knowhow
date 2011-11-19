@@ -9,19 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fakt.ch"
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
-
-/*! \file fmk/fakt/dok/1g/stdok2.prg
- *  \brief Stampa fakture u varijanti 2
- */
-
 
 /*! \ingroup ini
   * \var *string FmkIni_ExePath_FAKT_KrozDelphi
@@ -230,14 +218,12 @@
  */
  
 function KatBr()
-*{
 if roba->(fieldpos("KATBR"))<>0
   if !empty(roba->katbr)
      return " ("+trim(roba->katbr)+")"
   endif
 endif
 return ""
-*}
 
 
 
@@ -246,14 +232,12 @@ return ""
  */
  
 static function UgRabTXT()
-*{
 local cPom:=""
 local cFajl:=PRIVPATH+gFUgRab
 if FILE(cFajl)
 	cPom:=FILESTR(cFajl)
 endif
 return cPom
-*}
 
 
 /*! \fn DiVoRel()
@@ -329,7 +313,6 @@ return IF(lPovDob,-kolicina,kolicina)
 
 
 function ImaC1_3()
-*{
 local cPom:=""
 if fakt_pripr->(fieldpos("C1"))<>0
 	cPom+=fakt_pripr->c1
@@ -341,8 +324,6 @@ if fakt_pripr->(fieldpos("C3"))<>0
 	cPom+=fakt_pripr->c3
 endif
 return !EMPTY(cPom)
-*}
-
 
 
 function PrintC1_3()
@@ -362,5 +343,3 @@ endif
 
 
 return
-*}
-

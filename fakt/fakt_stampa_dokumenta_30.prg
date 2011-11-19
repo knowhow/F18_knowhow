@@ -12,23 +12,6 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/fakt/dok/1g/stdok30.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.2 $
- * $Log: stdok30.prg,v $
- * Revision 1.2  2002/06/18 13:01:05  sasa
- * no message
- *
- * Revision 1.1.1.1  2002/06/17 18:30:18  ernad
- * no message
- *
- *
- */
-
 /*! \file fmk/fakt/dok/1g/stdok30.prg
  *  \brief Stampa faktura u varijanti 3 0
  */
@@ -272,7 +255,6 @@ RETURN
  */
  
 function StFD5()    
-*{
 nUk:=nUk*(1+gCarEv/100)+nUkCar+nUkPor
  if !empty(picdem)
   cPom:=Slovima(round(nUk,nZaokr),cDinDem)
@@ -291,11 +273,12 @@ nUk:=nUk*(1+gCarEv/100)+nUkCar+nUkPor
  ctxt2:=strtran(ctxt2,"ç"+Chr(10),"")
  ctxt2:=strtran(ctxt2,Chr(13)+Chr(10),Chr(13)+Chr(10)+space(Znakova(gnLMarg,10,17)))
  ? space(Znakova(gnLMarg,10,17)); ?? ctxt2
- ?; ?; P_12CPI
+ ?
+ ?
+ P_12CPI
  private cpom:=""
  ? g10Str2T
 RETURN
-*}
 
 /*! \fn Znakova(nZnakova,nModIz,nModU)
  *  \brief Modovi: npr. 10, 12, 17, 20

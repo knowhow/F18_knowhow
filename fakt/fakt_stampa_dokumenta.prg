@@ -407,25 +407,25 @@ closeret
  */
  
 function Zagl()
-*{
 P_COND
-? space(gnLMarg); ?? m
+? space(gnLMarg)
+?? m
+
 if gVarF=="1"
  if gRabProc=="D"
-   ? space(gnLMarg); ?? " R.br   Sifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena    Rabat    Ukupno"
+   ? space(gnLMarg); ?? " R.br   ¿ifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena    Rabat    Ukupno"
  else
-   ? space(gnLMarg); ?? " R.br   Sifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena      Ukupno"
+   ? space(gnLMarg); ?? " R.br   ¿ifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena      Ukupno"
  endif
 else
  if gRabProc=="D"
-   ? space(gnLMarg); ?? " R.br   Sifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno"
+   ? space(gnLMarg); ?? " R.br   ¿ifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno"
  else
-   ? space(gnLMarg); ?? " R.br   Sifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno"
+   ? space(gnLMarg); ?? " R.br   ¿ifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno"
  endif
 endif
 ? space(gnLMarg); ?? m
 return
-*}
 
 
 /*! \fn NStr0(bZagl)
@@ -553,7 +553,7 @@ endif
 
 private cPom:=""
 private cFaxT:=""
-//cIniName:=PRIVPATH+'fmk.ini'
+
 cFaxT:=IzFmkIni('UpitFax','FaxText','UpisiProizvoljanText',PRIVPATH)
 
 if lUgRab
@@ -572,17 +572,18 @@ if lUgRab
 elseif cIdTipDok $ "00#01#19"
 
 	if fDelphiRB
-     		UzmiIzIni(cIniName,'Varijable','Potpis',g10Str2T,'WRITE')
+     		UzmiIzIni(cIniName,'Varijable','Potpis', __g10Str2T,'WRITE')
    	else
      		if IzFmkIni('UpitFax','Slati','N',PRIVPATH)=='D'
        			? cFaxT
      		else
-       			? g10Str2T
+       			? __g10Str2T
      		endif
    	endif
 else
 
-	cPom:="G"+cIdTipDok+"STR2T"
+	cPom := "G"+ cIdTipDok + "STR2T"
+
    	if fDelphiRB
      		UzmiIzIni(cIniName,'Varijable','Potpis',&cPom,'WRITE')
    	else
@@ -590,7 +591,7 @@ else
        			? cFaxT
      		else
 
-			cPotpis:=&cPom
+			cPotpis:= hb_strtoutf8( &cPom )
 			cPotpis:=STRTRAN(cPotpis, "?S_5?", SPACE(5) )
 			cPotpis:=STRTRAN(cPotpis, "?S_10?", SPACE(10) )
 			aPotpis:= lomi_tarabe(cPotpis)
@@ -609,7 +610,6 @@ if !EMPTY(gNazPotStr) .and. cIdTipDok $ "10#11#20#25"
 endif
 
 return
-*}
 
 
 /*! \fn PrStr2R(cIdTipDok)
@@ -619,18 +619,16 @@ return
  */
  
 function PrStr2R(cIdTipDok)
-*{
 LOCAL cVrati:=""
  // IF "U" $ TYPE("fDelphiRB"); fDelphiRB:=.f.; ENDIF
  private cpom:=""
  if cidtipdok $ "00#01#19"
    cVrati:=g10Str2R
  else
-   cpom:="G"+cidtipdok+"STR2R"
-   cVrati:=&cPom
+   cpom:="G"+cIdtipdok+"STR2R"
+   cVrati:=  &cPom
  endif
-return (cVrati)
-*}
+return hb_strtoutf8(cVrati)
 
 
 /*! \fn ShowIdPar(cId,n,lNoviRed,lVratiRPBNiz)
@@ -722,7 +720,6 @@ if IzFMkIni("FAKT","RegBrPorBr","D",KUMPATH)=="D" .or. lVratiRPBNiz
     	
 endif
 return (nil)
-*}
 
 
 // StAzFakt()
@@ -748,7 +745,7 @@ endif
 
 close all
 
-StampTXT(cIdFirma,cIdTipDok,cBrDok)
+StampTXT(cIdFirma, cIdTipDok, cBrDok)
 
 select fakt_pripr
 use

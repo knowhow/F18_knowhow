@@ -143,19 +143,14 @@ if !Empty(cRNT1)
 endif
 
 if !fPocStanje
- // otvori parametre
- O_PARAMS
- private cSection:="L"
- private cHistory:=" "
- private aHistory:={}
-
- RPar("l1",@cIdKonto)
- RPar("l2",@cPNab)
- RPar("l3",@cNula)
- RPar("l4",@dDatOd)
- RPar("l5",@dDatDo)
- RPar("l6",@cMinK)
- RPar("l7",@cDoNab)
+ 
+ f18_get_metric("LagerListaIdKonto", @cIdKonto, .t. )
+ f18_get_metric("LagerListaPoNabavnoj", @cPNab, .t. )
+ f18_get_metric("LagerListaPrikazNula", @cNula, .t. )
+ f18_get_metric("LagerListaDatumOd", @dDatOd, .t. )
+ f18_get_metric("LagerListaDatumDo", @dDatDo, .t. )
+ f18_get_metric("LagerListaMinimalneKolicine", @cMinK, .t. )
+ f18_get_metric("LagerListaPrikazDoNabavne", @cDoNab, .t. )
 
 endif
 
@@ -270,19 +265,14 @@ Box(,21+IF(lPoNarudzbi,2,0),60)
 BoxC()
 
 if !fPocStanje
- // snimi parametre
- O_PARAMS
- private cSection:="L"
- private cHistory:=" "
- private aHistory:={}
 
- WPar("l1",cIdKonto)
- WPar("l2",cPNab)
- WPar("l3",cNula)
- WPar("l4",dDatOd)
- WPar("l5",dDatDo)
- WPar("l6",cMinK)
- WPar("l7",cDoNab)
+ f18_set_metric("LagerListaIdKonto", cIdKonto, .t.)
+ f18_set_metric("LagerListaPoNabavnoj", cPNab, .t. )
+ f18_set_metric("LagerListaPrikazNula", cNula, .t.)
+ f18_set_metric("LagerListaDatumOd", dDatOd, .t.)
+ f18_set_metric("LagerListaDatumDo", dDatDo, .t. )
+ f18_set_metric("LagerListaMinimalneKolicine", cMinK, .t.)
+ f18_set_metric("LagerListaPrikazDoNabavne", cDoNab, .t.)
 
 endif
 
@@ -290,7 +280,6 @@ endif
 if cExpDbf == "D"
 	lExpDbf := .t.
 endif
-
 
 lSvodi:=.f.
 

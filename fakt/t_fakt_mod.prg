@@ -217,31 +217,31 @@ public gDK2:="N"
 public gIspPart:="N" // ispravka partnera u unosu novog dokumenta
 public gResetRoba:="D" // resetuj uvijek artikal, pri unosu stavki dokumenta 
 
-public g10Str:="RA¬UN/OTPREMNICA br."
+public g10Str:=HB_UTF8TOSTR("RAÄŒUN/OTPREMNICA br.")
 public g10Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g10Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g16Str:="KONSIGNAC.RA¬UN br."
+public g16Str:=HB_UTF8TOSTR("KONSIGNAC.RAÄŒUN br.")
 public g16Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g16Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g06Str:="ZADU¦.KONS.SKLAD.br."
+public g06Str:= HB_UTF8TOSTR("ZADUÅ½.KONS.SKLAD.br.")
 public g06Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g06Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g20Str:="PREDRA¬UN br."
+public g20Str:=HB_UTF8TOSTR("PREDRAÄŒUN br.")
 public g20Str2T:="                                                               Direktor"
 public g20Str2R:="\tab \tab \tab Direktor:"
 
-public g11Str:="RA¬UN MP br."
+public g11Str:=HB_UTF8TOSTR("RAÄŒUN MP br.")
 public g11Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g11Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g15Str:="RA¬UN br."
+public g15Str:=HB_UTF8TOSTR("RAÄŒUN br.")
 public g15Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g15Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g12Str:="OTPREMNICA br."
+public g12Str:=HB_UTF8TOSTR("OTPREMNICA br.")
 public g12Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g12Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
@@ -261,15 +261,15 @@ public g23Str:="ZAKLJ.OTPR.MP    br."
 public g23Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g23Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g25Str:="KNJI¦NA OBAVIJEST br."
+public g25Str:=HB_UTF8TOSTR("KNJIÅ½NA OBAVIJEST br.")
 public g25Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g25Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g26Str:="NARUD¦BA SA IZJAVOM br."
+public g26Str:=HB_UTF8TOSTR("NARUDÅ½BA SA IZJAVOM br.")
 public g26Str2T:="                                      Potpis:"
 public g26Str2R:="\tab \tab Potpis:"
 
-public g27Str:="PREDRA¬UN MP br."
+public g27Str:=HB_UTF8TOSTR("PREDRAÄŒUN MP br.")
 public g27Str2T:="                                                               Direktor"
 public g27Str2R:="\tab \tab \tab Direktor:"
 public gNazPotStr:=SPACE(69)

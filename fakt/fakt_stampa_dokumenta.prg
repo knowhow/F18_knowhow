@@ -414,18 +414,18 @@ P_COND
 if gVarF=="1"
  if gRabProc=="D"
    ? space(gnLMarg)
-   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                    "+ JokSBr() + "             kolicina   jmj   Cijena    Rabat    Ukupno")
+   ?? hb_Utf8ToStr(" R.br   Šifra      Naziv                                    "+ JokSBr() + "             kolicina   jmj   Cijena    Rabat    Ukupno")
  else
    ? space(gnLMarg)
-   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                    " + JokSBr() + "             kolicina   jmj   Cijena      Ukupno")
+   ?? hb_Utf8ToStr(" R.br   Šifra      Naziv                                    " + JokSBr() + "             kolicina   jmj   Cijena      Ukupno")
  endif
 else
  if gRabProc=="D"
    ? space(gnLMarg)
-   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno")
+   ?? hb_Utf8ToStr(" R.br   Šifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno")
  else
    ? space(gnLMarg) 
-   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno")
+   ?? hb_Utf8ToStr(" R.br   Šifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno")
  endif
 endif
 ? space(gnLMarg); ?? m

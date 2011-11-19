@@ -928,7 +928,7 @@ endif
 P_10CPI
 // broj dokumenta
 
-cPom := hb_strtoutf8( ALLTRIM(cTipDok))
+cPom := ALLTRIM(cTipDok)
 if lKomision
 	cPom := lokal("KOMISIONA DOSTAVNICA br. ")
 endif

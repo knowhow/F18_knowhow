@@ -412,7 +412,7 @@ local fDec,fSto:=.f.,i
    if (nPom:=int(nIzn/100))>=1
       aSl:={ "stotinu", "dvijestotine", "tristotine", "četiristotine",;
              "petstotina","šeststotina","sedamstotina","osamstotina","devetstotina"}
-      cRez += aSl[nPom]
+      cRez += hb_utf8tostr(aSl[nPom])
       nIzn := nIzn - nPom * 100
       fSto:=.t.
    endif
@@ -426,13 +426,13 @@ local fDec,fSto:=.f.,i
         aSl:={ "jedanaest", "dvanaest", "trinaest", "četrnaest",;
                "petnaest","šesnaest","sedamnaest","osamnaest","devetnaest"}
 
-        cRez+=aSl[int(nIzn)-10]
+        cRez+=hb_utf8toStr(aSl[int(nIzn)-10])
         nIzn:=nIzn-int(nIzn)
       endif
       if (nPom:=int(nIzn/10))>=1
         aSl:={ "deset", "dvadeset", "trideset", "četrdeset",;
                "pedeset","šezdeset","sedamdeset","osamdeset","devedeset"}
-        cRez+=aSl[nPom]
+        cRez += hb_utf8ToStr(aSl[nPom])
         nIzn:=nIzn-nPom*10
       endif
       if (nPom:=int(nIzn))>=1
@@ -442,10 +442,12 @@ local fDec,fSto:=.f.,i
              aSl[1]:="jedna"
              aSl[2]:="dvije"
         endif
-        cRez+=aSl[nPom]
+        cRez+= hb_utf8ToStr(aSl[nPom])
         nIzn:=nIzn-nPom
       endif
-      if !fDecimale; exit; endif
+      if !fDecimale
+            exit
+      endif
 
      endif // fdec
      if fdec

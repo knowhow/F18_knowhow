@@ -88,7 +88,7 @@ local __ret := ""
 __ret += "F18/"
 
 if priv_param = .t.
-	__ret += f18_user() + "/" 
+	__ret += "(" + f18_user() + ")" + "/" 
 endif
 
 __ret += goModul:oDataBase:cName + "/"

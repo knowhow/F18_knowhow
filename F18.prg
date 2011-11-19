@@ -53,15 +53,18 @@ cF18HomeRoot := get_f18_home_dir()
 // konektuj se na server
 oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
 
+// ove parametre iscitaj iz INI-ja, oni mi trebaju za nastavak rada aplikacije...
 params := hb_hash()
 params["database"] := nil
+params["user_name"] := nil
 
 f18_ini_read("F18_server", @params, .t.)
 
 cDatabase := params["database"]
+cUser := params["user_name"]
 
 // ~/.F18/empty38/
-cF18HomeDir := get_f18_home_dir(cDatabase)
+cF18HomeDir := get_f18_home_dir( cDatabase )
 
 // menu opcije...
 AADD( menuop, "1) FIN   # finansijsko poslovanje" )

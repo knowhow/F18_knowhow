@@ -298,6 +298,8 @@ elseif cPrinter=="V"
 	ENDIF
 	
 	//VidiFajl(cKom, gaZagFix, gaKolFix)
+
+    /*
     #ifdef __PLATFORM__WINDOWS
         run ("gvim " + '"' + PRIVPATH + cFName + '"' ) 
 	#endif
@@ -309,6 +311,10 @@ elseif cPrinter=="V"
 	#ifdef __PLATFORM__DARWIN
         run ("mvim " + PRIVPATH + cFName) 
 	#endif
+    */
+
+    /* TODO treba li f18_editor parametrizirati ?! */   
+    run ("f18_editor " + my_home() + cFName) 
 
 	gaZagFix:=NIL
 	gaKolFix:=NIL

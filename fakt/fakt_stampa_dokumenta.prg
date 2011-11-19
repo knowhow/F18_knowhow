@@ -153,7 +153,7 @@ nRab:=0
 nZaokr:=ZAOKRUZENJE
 cDinDEM:=dindem
 
-//idfirma+idtipdok+brdok==cidfirma+cidtipdok+cbrdok
+// idfirma + idtipdok + brdok == cidfirma + cidtipdok + cbrdok
 
 do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !eof()
 
@@ -379,7 +379,7 @@ endif // gsamokol!="D"
 
 ? space(gnLMarg); ?? m
 ?
-ctxt2:=strtran(ctxt2,"ç"+Chr(10),"")
+ctxt2:=strtran(ctxt2,"¬ç"+Chr(10),"")
 ctxt2:=strtran(ctxt2,Chr(13)+Chr(10),Chr(13)+Chr(10)+space(gnLMarg))
 ? space(gnLMarg); ?? ctxt2
 ?
@@ -413,15 +413,15 @@ P_COND
 
 if gVarF=="1"
  if gRabProc=="D"
-   ? space(gnLMarg); ?? " R.br   øifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena    Rabat    Ukupno"
+   ? space(gnLMarg); ?? " R.br   ≈†ifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena    Rabat    Ukupno"
  else
-   ? space(gnLMarg); ?? " R.br   øifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena      Ukupno"
+   ? space(gnLMarg); ?? " R.br   ≈†ifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena      Ukupno"
  endif
 else
  if gRabProc=="D"
-   ? space(gnLMarg); ?? " R.br   øifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno"
+   ? space(gnLMarg); ?? " R.br   ≈†ifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno"
  else
-   ? space(gnLMarg); ?? " R.br   øifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno"
+   ? space(gnLMarg); ?? " R.br   ≈†ifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno"
  endif
 endif
 ? space(gnLMarg); ?? m

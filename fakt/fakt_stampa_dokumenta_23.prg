@@ -329,7 +329,7 @@ if !gAppSrv .and. IzFmkIni('FAKT','DelphiRB','N') == 'D'
 endif
 if !gAppSrv .and. IzFmkIni('FAKT','KrozDelphi','N') == 'D'
 	fDelphiRB:=.t.
-  	cIniName:=EXEPATH+'ProIzvj.ini'
+  	cIniName := EXEPATH + 'ProIzvj.ini'
 endif
 
 // fPBarkod - .t. stampati barkod, .f. ne stampati
@@ -337,7 +337,7 @@ private cPombk := IzFmkIni("SifRoba","PBarkod","0",SIFPATH)
 private fPBarkod := .f.
 
 if cPombk $ "12"  // pitanje, default "N"
-	fPBarkod := (Pitanje(,"Zelite li ispis barkodova ?",iif(cPombk=="1","N","D"))=="D")
+	fPBarkod := (Pitanje(, "Zelite li ispis barkodova ?",iif(cPombk=="1","N","D"))=="D")
 endif
 
 if fDelphiRb
@@ -855,7 +855,7 @@ do while idfirma==cidfirma .and. idtipdok==cidtipdok .and. brdok==cbrdok .and. !
       			if !(roba->tip="U") .and. gVarF $ "13"
         			//nCTxtR:=pcol()+1
         			if !fDelphiRB .and. !glDistrib
-          				@ prow(),pcol()+1 SAY aSbr[1]
+          				@ prow(), pcol() + 1 SAY aSbr[1]
         			endif
       			endif
     		else
@@ -1196,8 +1196,8 @@ else
     private cKomLin:=cPoziv+" "+ALLTRIM(cRTM)+" "+PRIVPATH+"  pom  1"
     private cKomLinF:=cPoziv+" "+ALLTRIM(cRTMF)+" "+PRIVPATH+"  pom  1"
   else
-    private cKomLin:="start " + cSwitch + " DelphiRB "+ALLTRIM(cRTM)+" "+PRIVPATH+"  pom  1"
-    private cKomLinF:="start " + cSwitch + " DelphiRB "+ALLTRIM(cRTMF)+" "+PRIVPATH+"  pom  1"
+    private cKomLin:="start " + cSwitch + " delphirb "+ALLTRIM(cRTM)+" "+PRIVPATH+"  pom  1"
+    private cKomLinF:="start " + cSwitch + " delphirb "+ALLTRIM(cRTMF)+" "+PRIVPATH+"  pom  1"
   endif
   BEEP(1)
   IF lSSIP99
@@ -1215,9 +1215,6 @@ else
     DO WHILE IzFMKIni('DELPHIRB','Aktivan',"1")<>"0"
       IniRefresh()
       nSek0 := SECONDS()
-      DO WHILE SECONDS()-nSek0<1.5
-        //OL_Yield()
-      ENDDO
       IniRefresh()
     ENDDO
     MsgC()

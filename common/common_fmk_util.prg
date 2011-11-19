@@ -466,11 +466,7 @@ select koverte
 use
 
 if pitanje(,"Aktivirati Win Report ?","D")=="D"
- #ifdef PROBA
-  private cKomLin:="c:\sigma\DelphiRB "+IzFmkIni("Adres","AdresRTM","adres", SIFPATH)+" "+PRIVPATH+"  koverte id"
- #else
-  private cKomLin:="DelphiRB "+IzFmkIni("Adres","AdresRTM","adres", SIFPATH)+" "+PRIVPATH+"  koverte id"
- #endif
+  private cKomLin:="delphirb "+IzFmkIni("Adres","AdresRTM","adres", SIFPATH)+" "+PRIVPATH+"  koverte id"
  run &cKomLin
 endif
 

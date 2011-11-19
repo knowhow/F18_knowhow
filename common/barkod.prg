@@ -204,7 +204,7 @@ close all
 
 
 if Pitanje(,"Aktivirati Win Report ?","D")=="D"
-	cKomLin:="DelphiRB "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
+	cKomLin:="delphirb "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
 	run &cKomLin
 endif
 
@@ -362,7 +362,7 @@ enddo
 close all
 
 if pitanje(,"Aktivirati Win Report ?","D")=="D"
-	private cKomLin:="DelphiRB "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
+	private cKomLin:="delphirb "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
 	run &cKomLin
 endif
 

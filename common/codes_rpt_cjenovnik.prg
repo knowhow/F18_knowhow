@@ -82,7 +82,7 @@ if pitanje(,"Aktivirati Win Report ?","N")=="N"
 	return
 endif
 
-cKomLin:="DelphiRB "+IzFmkIni("Cjen","CjenRTM","cjen", SIFPATH)+TRIM(cCjenIzbor)
+cKomLin:="delphirb "+IzFmkIni("Cjen","CjenRTM","cjen", SIFPATH)+TRIM(cCjenIzbor)
 if IsPlanika()
 	MsgO("kopi -> c:/sigma")
 		//kopiraj sa mreznog diska na c:

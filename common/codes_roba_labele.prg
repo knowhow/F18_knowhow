@@ -259,7 +259,7 @@ static function PrintRLabele( cVarijanta )
 // (rlab1 / rlab2) za kreiranje labela
 private cKomLin
 
-cKomLin:="DelphiRB "+"rlab"+cVarijanta+" "+PRIVPATH+"  rlabele 1"
+cKomLin:="delphirb "+"rlab"+cVarijanta+" "+PRIVPATH+"  rlabele 1"
 
 run &cKomLin
 

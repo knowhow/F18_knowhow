@@ -413,15 +413,19 @@ P_COND
 
 if gVarF=="1"
  if gRabProc=="D"
-   ? space(gnLMarg); ?? " R.br   Šifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena    Rabat    Ukupno"
+   ? space(gnLMarg)
+   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                    "+ JokSBr() + "             kolicina   jmj   Cijena    Rabat    Ukupno")
  else
-   ? space(gnLMarg); ?? " R.br   Šifra      Naziv                                    "+JokSBr()+"             kolicina   jmj   Cijena      Ukupno"
+   ? space(gnLMarg)
+   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                    " + JokSBr() + "             kolicina   jmj   Cijena      Ukupno")
  endif
 else
  if gRabProc=="D"
-   ? space(gnLMarg); ?? " R.br   Šifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno"
+   ? space(gnLMarg)
+   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                     kolicina   jmj   Cijena    Rabat Cijena-Rab    Ukupno")
  else
-   ? space(gnLMarg); ?? " R.br   Šifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno"
+   ? space(gnLMarg) 
+   ?? hb_UtfToStr(" R.br   Šifra      Naziv                                     kolicina   jmj   Cijena   Cijena-Rab    Ukupno")
  endif
 endif
 ? space(gnLMarg); ?? m
@@ -435,11 +439,11 @@ return
 function NStr0(bZagl)
 *{
 ? space(gnLmarg); ?? m
-? space(gnLmarg+IF(gVarF=="9".and.gTipF=="2",14,0)),"Ukupno na strani "+str(++nStrana,3)+":"; @ prow(),nCol1  SAY nUk  pict picdem
+? space(gnLmarg + IIF(gVarF=="9".and.gTipF=="2",14,0)), "Ukupno na strani " + str(++nStrana,3)+":"; @ prow(),nCol1  SAY nUk  pict picdem
 ? space(gnLmarg); ?? m
 FF
 Eval(bZagl)
-? space(gnLmarg+IF(gVarF=="9".and.gTipF=="2",14,0)),"Prenos sa strane "+str(nStrana,3)+":"; @ prow(),nCol1  SAY nUk pict picdem
+? space(gnLmarg + IIF(gVarF=="9".and.gTipF=="2",14,0)), "Prenos sa strane "+str(nStrana,3)+":"; @ prow(),nCol1  SAY nUk pict picdem
 ? space(gnLmarg); ?? m
 return
 *}
@@ -488,7 +492,6 @@ return TRIM(cVrati)
 *}
 
 
-
 /*! \fn JokSBr()
  *  \brief
  */
@@ -498,7 +501,7 @@ function JokSBr()
 if "U" $ TYPE("BK_SB")
 	BK_SB := .f.
 endif
-return IF(gNW=="R","  KJ/KG ", IF(glDistrib,"", IF(BK_SB, "  BARKOD   ","Ser.broj")))
+return IF(gNW=="R","  KJ/KG ", IIF(glDistrib,"", IIF(BK_SB, "  BARKOD   ", "Ser.broj")))
 *}
 
 

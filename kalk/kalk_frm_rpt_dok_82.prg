@@ -14,9 +14,6 @@
 
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_82.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.2 $

@@ -13,17 +13,12 @@
 #include "kalk.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_18.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.3 $
  * $Log: rpt_18.prg,v $
  * Revision 1.3  2002/06/20 13:13:03  mirsad
  * dokumentovanje
- *
- *
  */
  
 

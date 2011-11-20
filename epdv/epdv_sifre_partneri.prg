@@ -12,17 +12,9 @@
 
 #include "epdv.ch"
 
-/*
-* ----------------------------------------------------------------
-*                                     Copyright Sigma-com software 
-* ----------------------------------------------------------------
-*/
-
-
 // ---------------------------------
 // ---------------------------------
 function p_part(cId, dx, dy)
-*{
 local cN2Fin
 local i
 local cRet
@@ -43,7 +35,7 @@ ImeKol:={}
 AADD(ImeKol, { PADR("ID",6),   {|| id },  "id" , {|| .t.}, {|| vpsifra(wid)}    })
 AADD(ImeKol, { PADR("Naziv",25),  {|| naz},  "naz"} )
 
-cN2Fin:=IzFMkIni('FIN','PartnerNaziv2','N')
+cN2Fin:=IzFMkIni('FIN', 'PartnerNaziv2','N')
 
 if cN2Fin=="D"
  AADD(ImeKol, { PADR("Naziv2",25), {|| naz2},     "naz2"      } )
@@ -137,7 +129,7 @@ do while !eof() .and. ID="PARTN"
 enddo
 
 private gTBDir:="N"
-cRet :=PostojiSifra(F_PARTN,1,10,60, "Lista Partnera", @cId, dx, dy, ;
+cRet :=PostojiSifra(F_PARTN, 1, maxrows()-15, maxcols()-20, "Lista Partnera", @cId, dx, dy, ;
         {|Ch| k_handler(Ch)},,,,, {"ID"})
 
 
@@ -145,12 +137,9 @@ PopWa()
 
 return cRet
 
-
-
 // ---------------------------------- 
 // ---------------------------------- 
 static function k_handler(Ch)
-*{
 LOCAL cSif:=PARTN->id, cSif2:=""
 
 if Ch==K_CTRL_T .and. gSKSif=="D"
@@ -165,5 +154,3 @@ if Ch==K_CTRL_T .and. gSKSif=="D"
 endif
 
 RETURN DE_CONT
-*}
-

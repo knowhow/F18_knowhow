@@ -12,10 +12,7 @@
 
 #include "fmk.ch"
 
-
-
 // ----------------------------------------------
-// otvara sifrarnik partera
 // ----------------------------------------------
 function P_Firma(cId, dx, dy)
 local nTArea
@@ -138,9 +135,8 @@ select (nTArea)
 private gTBDir
 gTBDir:="N"
 
-return PostojiSifra(F_PARTN,1,10,60,"Lista Partnera", @cId, dx, dy,;
+return PostojiSifra(F_PARTN, 1, maxrows()-15, maxcols()-20, "Lista Partnera", @cId, dx, dy,;
        gPartnBlock)
-
 
 
 // -------------------------------------

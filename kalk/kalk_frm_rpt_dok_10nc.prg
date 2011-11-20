@@ -14,17 +14,12 @@
 
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_10nc.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.2 $
  * $Log: rpt_10nc.prg,v $
  * Revision 1.2  2002/06/20 13:13:03  mirsad
  * dokumentovanje
- *
- *
  */
  
 

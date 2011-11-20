@@ -14,9 +14,6 @@
 
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/prod/dok/1g/rpt_11_3.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.4 $
@@ -29,8 +26,6 @@
  *
  * Revision 1.2  2002/06/21 07:49:36  mirsad
  * no message
- *
- *
  */
  
 

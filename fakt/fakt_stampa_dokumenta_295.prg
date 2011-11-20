@@ -13,9 +13,6 @@
 #include "fakt.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/fakt/dok/1g/stdok295.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.4 $

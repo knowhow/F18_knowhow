@@ -268,7 +268,7 @@ if gNW=="D"
     	@  m_x+3,m_y+2 SAY "NALOG: "
     	@  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26) PICT "@!"
 else
-	@  m_x+1,m_y+2 SAY "Firma:" GET _idfirma VALID {|| P_Firma(@_IdFirma,1,20),_idfirma:=left(_idfirma,2),.t.}
+	@  m_x+1,m_y+2 SAY "Firma:" GET _idfirma VALID {|| P_Firma(@_IdFirma,1,20), _idfirma:=left(_idfirma,2),.t.}
     	@  m_x+3,m_y+2 SAY "NALOG: "
     	@  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26)
 endif
@@ -342,10 +342,10 @@ if gTroskovi=="D"
 endif
 
 if DABLAGAS
-	@ m_x+13,m_y+2   SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto,13,20,.t.) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
+	@ m_x+13,m_y+2   SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto, maxrows()-15, 30, .t.) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
 
 else
-    	@  m_x+13,m_y+2  SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto,13,20) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
+    	@  m_x+13,m_y+2  SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto, maxrows()-15, 30) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
 
 endif
 

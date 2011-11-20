@@ -61,8 +61,6 @@ closeret
 return
 
 
-
-
 /*!
  * \ingroup ini
  * \var FmkIni_ExePath_FIN_PartnerNaziv2

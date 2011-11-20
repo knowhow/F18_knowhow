@@ -13,9 +13,6 @@
 #include "kalk.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/frm_18.prg,v $
  * $Author: sasavranic $ 
  * $Revision: 1.6 $
@@ -30,7 +27,6 @@
  * Unos podataka putem barkoda
  *
  * Revision 1.3  2002/07/12 10:15:55  ernad
- *
  *
  * debug ROBPR.DBF, ROBPR.CDX - uklonjena funkcija DodajRobPr()
  *

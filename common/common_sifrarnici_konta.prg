@@ -13,9 +13,8 @@
 #include "fmk.ch"
 
 // -------------------------------
-// otvaranje tabele KONTO
 // -------------------------------
-function P_Konto(cId,dx,dy)
+function P_Konto(cId, dx, dy)
 local nTArea
 private ImeKol
 private Kol
@@ -36,7 +35,7 @@ next
 
 select (nTArea)
 
-return PostojiSifra(F_KONTO,1,10,60,"Lista: Konta",@cId,dx,dy)
+return PostojiSifra(F_KONTO, 1, maxrows()-15, maxcols()-20, "Lista: Konta", @cId, dx, dy)
 
 
 // Funkcija vraca vrijednost polja naziv po zadatom idkonto

@@ -9,13 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fakt.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/fakt/specif/vindija/1g/mnu_sif.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.4 $
@@ -45,7 +41,6 @@
  */
  
 function SifOVindija()
-*{
 private Opc:={}
 private opcexe:={}
 
@@ -64,6 +59,5 @@ private Izbor:=1
 Menu_SC("vsif")
 
 return .f.
-*}
 
 

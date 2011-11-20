@@ -13,9 +13,6 @@
 #include "kalk.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/db/1g/box_st.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.2 $

@@ -14,20 +14,14 @@
 
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_10sk.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.2 $
  * $Log: rpt_10sk.prg,v $
  * Revision 1.2  2002/06/20 13:13:03  mirsad
  * dokumentovanje
- *
- *
  */
  
-
 
 /*! \file fmk/kalk/mag/dok/1g/rpt_10sk.prg
  *  \brief Stampa kalkulacije 10 - samo kolicine

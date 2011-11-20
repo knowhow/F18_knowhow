@@ -12,11 +12,7 @@
 
 #include "kalk.ch"
 
-
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/prod/dok/1g/rpt_11nc.prg,v $
  * $Author: mirsadsubasic $ 
  * $Revision: 1.5 $
@@ -32,8 +28,6 @@
  *
  * Revision 1.2  2002/06/21 07:49:36  mirsad
  * no message
- *
- *
  */
  
 

@@ -14,9 +14,6 @@
 
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/prod/dok/1g/rpt_41.prg,v $
  * $Author: sasavranic $ 
  * $Revision: 1.10 $

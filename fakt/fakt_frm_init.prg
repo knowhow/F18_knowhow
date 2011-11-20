@@ -14,9 +14,6 @@
 #include "hbclass.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/fakt/dok/2g/frm_init.prg,v $
  * $Author: mirsad $ 
  * $Revision: 1.7 $
@@ -28,17 +25,13 @@
  * dokumentovanje ini parametara
  *
  * Revision 1.5  2002/06/28 09:56:27  ernad
- *
- *
  * nadogradnja objekat TFrmInv, prepravka funkcije IsDocExists
  *
  * Revision 1.4  2002/06/28 06:34:16  ernad
  *
- *
  * dokument inventure skeleton funkcija Generacija dokumenta viska, manjka
  *
  * Revision 1.3  2002/06/27 17:20:33  ernad
- *
  *
  * dokument inventure, razrada, uvedena generacija dokumenta
  *
@@ -55,7 +48,6 @@
  *
  */
 
-
 /*! \ingroup ini
   * \var *string FmkIni_ExePath_FAKT_NaslovPartnTelefon
   * \brief Da li se uz naziv kupca upisuje i telefon?
@@ -65,7 +57,6 @@
 *string FmkIni_ExePath_FAKT_NaslovPartnTelefon;
 
 
- 
 function TFrmInvItNew(oOwner)
 *{
 local oObj

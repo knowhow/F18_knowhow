@@ -14,41 +14,21 @@
 
 /****h SC_CLIB/FMK_PI ***
 * 
-*AUTOR
+* AUTOR
   Mirsad Subasic, mirsad@sigma-com.net
 
-*IME 
-
-*OPIS
+* OPIS
   SigmaCom FMK Proizvoljni Izvjestaji
   Bazni sistem za formiranje proizvoljnih izvjestaja u FMK
 
-*DATUM
-  04.2002
+* DATUM:  04.2002
 
 ****/
 
 procedure PrIz()
-*
-
-#command AP52 [FROM <(file)>]                                         ;
-         [FIELDS <fields,...>]                                          ;
-         [FOR <for>]                                                    ;
-         [WHILE <while>]                                                ;
-         [NEXT <next>]                                                  ;
-         [RECORD <rec>]                                                 ;
-         [<rest:REST>]                                                  ;
-         [VIA <rdd>]                                                    ;
-         [ALL]                                                          ;
-                                                                        ;
-      => __dbApp(                                                       ;
-                  <(file)>, { <(fields)> },                             ;
-                  <{for}>, <{while}>, <next>, <rec>, <.rest.>, <rdd>    ;
-                )
-
 
 local cScr:=SAVESCREEN(1,0,1,79), GetList:={}
-private cV1,cv2,cv3,cv4,cv5,cv6
+private cV1, cv2, cv3, cv4, cv5, cv6
 
 private opc[10], Izbor, nTekIzv:=1, cBrI:="01", cPotrazKon:="7;811;812;", gnPorDob:=30
                                                // ispitati koja su potr.konta
@@ -70,8 +50,8 @@ else
 	OtBazPIFin()
 endif
 
-P_Proizv(@cBrI,NIL,NIL,"#Odaberi izvjestaj :") // # hash na pocetku kaze - obavezno browsaj !
-
+// # hash na pocetku kaze - obavezno browsaj !
+P_Proizv(@cBrI,NIL,NIL,"#Odaberi izvjestaj :") 
 
 nTokens:=numtoken(izvje->naz,"#")
 
@@ -239,10 +219,7 @@ STATIC FUNCTION P_ProIzv(cId,dx,dy,cNaslov)
 if cNaslov=NIL
  cNaslov:="Izvjestaji"
 endif
-return PostojiSifra(F_Baze("IZVJE"),1,10,77,cNaslov ,@cId,dx,dy)
-
-
-
+return PostojiSifra(F_Baze("IZVJE"), 1, 10, 77, cNaslov, @cId, dx, dy)
 
 
 STATIC FUNCTION P_ZagProIzv(cId,dx,dy,lSamoStampaj)
@@ -303,8 +280,6 @@ LOCAL lVrati:=DE_CONT, nRec:=0, i:=0
      ENDIF
  ENDIF
 RETURN lVrati
-
-
 
 
 STATIC FUNCTION P_KolProIzv(cId,dx,dy,lSamoStampaj)
@@ -671,8 +646,6 @@ FUNCTION TxtUKod(cTxt,cBUI)
  SETPRC(nRow,nCol)
  SET(_SET_PRINTER,lPrinter)
 RETURN ""
-
-
 
 
 FUNCTION StKod(cKod)

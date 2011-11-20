@@ -6,7 +6,7 @@
 
 #define F18_DEFINED
 
-#define FMK_LIB_VER  "0.2.1"
+#define FMK_LIB_VER  "0.3.0"
 
 
 #define EXEPATH   my_home_root()
@@ -280,3 +280,20 @@
 
 
 #define  MEMOEXTENS  "fpt"
+
+#command AP52 [FROM <(file)>]                                         ;
+         [FIELDS <fields,...>]                                          ;
+         [FOR <for>]                                                    ;
+         [WHILE <while>]                                                ;
+         [NEXT <next>]                                                  ;
+         [RECORD <rec>]                                                 ;
+         [<rest:REST>]                                                  ;
+         [VIA <rdd>]                                                    ;
+         [ALL]                                                          ;
+                                                                        ;
+      => __dbApp(                                                       ;
+                  <(file)>, { <(fields)> },                             ;
+                  <{for}>, <{while}>, <next>, <rec>, <.rest.>, <rdd>    ;
+                )
+
+

@@ -13,9 +13,6 @@
 #include "kalk.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/prod/dok/1g/frm_12.prg,v $
  * $Author: sasavranic $ 
  * $Revision: 1.6 $

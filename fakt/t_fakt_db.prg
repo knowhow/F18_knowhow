@@ -424,11 +424,6 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	AADD(aDBf,{ 'DAT_VAL'             , 'D' ,   8 ,  0 })
 	AADD(aDBf,{ 'DAT_OTPR'            , 'D' ,   8 ,  0 })
 	
-	//if IsRabati()
-	//	AADD(aDBf,{ 'IDRABAT'             , 'C' ,  10 ,  0 })
-	//	AADD(aDBf,{ 'TIPRABAT'            , 'C' ,  10 ,  0 })
-	//endif
-	
 	if !FILE(f18_ime_dbf("fakt_doks"))
         	DBcreate2(KUMPATH+'FAKT_DOKS.DBF',aDbf)
 	endif

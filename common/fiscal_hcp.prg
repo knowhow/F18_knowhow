@@ -463,7 +463,7 @@ for i:=1 to LEN( aData )
 	cTmp += _razmak1 + 'VAT="' + cStopa + '"'
 	cTmp += _razmak1 + 'MES="' + cRoba_jmj + '"'
 	cTmp += _razmak1 + 'DEP="' + cDep + '"'
-	cTmp += _razmak1 + 'DSC="' + ALLTRIM( hb_strtoutf8(cRoba_naz) ) + '"'
+	cTmp += _razmak1 + 'DSC="' + ALLTRIM( to_xml_encoding( cRoba_naz ) ) + '"'
 	cTmp += _razmak1 + 'PRC="' + ALLTRIM(STR(nCijena, 12, 2)) + '"'
 	cTmp += _razmak1 + 'LGR="' + ALLTRIM(STR(nLager, 12, 2)) + '"'
 	
@@ -751,11 +751,7 @@ do case
 		cRet := STRTRAN( cF_name, "TR$", cTriger )
 		cRet := UPPER( cRet )
 	
-		if "CLIENT" $ cTriger
-			cRet := cTriger
-		endif
-
-		if "FOOTER" $ cTriger
+		if ".XML" $ cTriger
 			cRet := cTriger
 		endif
 

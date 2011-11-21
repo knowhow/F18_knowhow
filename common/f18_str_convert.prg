@@ -3,26 +3,30 @@
 
 
 
+// --------------------------------------------------------------------
 // pretvara specijalne string karaktere u xml encoding kraktere
 // npr: Č -> &#262; itd...
-
+// to_xml_encoding( "Čekić" ) 
+//  => "&#262;eki&#269;"
+// --------------------------------------------------------------------
 function to_xml_encoding( cp852_str )
-local ret_val := ""
-local ent_arr := _get_ent_codes_array()
-local i
-local UTF8_str 
+local _ent_arr := _get_ent_codes_array()
+local _cnt
+local _utf8_str 
 
-UTF8_str := hb_strtoutf8( cp852_str )
+_utf8_str := hb_strtoutf8( cp852_str )
 
-for i:=1 to LEN( ent_arr )
-	UTF8_str := STRTRAN( UTF8_str, ent_arr[ i, 1 ], ent_arr[ i, 2 ] )
+for _cnt := 1 to LEN( _ent_arr )
+	_utf8_str := STRTRAN( _utf8_str, _ent_arr[ _cnt, 1 ], _ent_arr[ _cnt, 2 ] )
 next
 
-ret_val := UTF8_str
-
-return ret_val
+return _utf8_str
 
 
+// ------------------------------------------------
+// napuni i vrati matricu sa parovima 
+// utf8 karakter, xml entity code
+// ------------------------------------------------
 static function _get_ent_codes_array() 
 local _arr := {}
 

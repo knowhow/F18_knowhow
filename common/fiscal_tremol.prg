@@ -123,9 +123,9 @@ if lKupac == .t.
 	// aKupac[5] - grad stanovanja
 
 	cC_id := ALLTRIM( aKupac[1, 1] )
-	cC_name := strkznutf8( ALLTRIM( aKupac[1, 2] ), "8" )
-	cC_addr := strkznutf8( ALLTRIM( aKupac[1, 3] ), "8" )
-	cC_city := strkznutf8( ALLTRIM( aKupac[1, 5] ), "8" )
+	cC_name := to_xml_encoding( ALLTRIM( aKupac[1, 2] ) )
+	cC_addr := to_xml_encoding( ALLTRIM( aKupac[1, 3] ) )
+	cC_city := to_xml_encoding( ALLTRIM( aKupac[1, 5] ) )
 
 	cOFC_txt := _razmak1 + 'CompanyID="' + cC_id + '"'
 	cOFC_txt += _razmak1 + 'CompanyName="' + cC_name + '"'
@@ -154,7 +154,7 @@ nVr_placanja := 0
 	cTmp := ""
 
 	// naziv artikla
-	cTmp += _razmak1 + 'Description="' + strkznutf8(cRoba_naz,"8") + '"'
+	cTmp += _razmak1 + 'Description="' + to_xml_encoding(cRoba_naz) + '"'
 	//  kolicina artikla 
 	cTmp += _razmak1 + 'Quantity="' + ALLTRIM( STR( nKolicina, 12, 3)) + '"'
 	// cijena artikla

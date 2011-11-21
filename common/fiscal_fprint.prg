@@ -1756,7 +1756,7 @@ if EMPTY( cEmail ) .or. cEmail == "-"
 endif
 
 cMessage := '"Racun: ' +  ALLTRIM(STR(nFisc_rn)) + ;
-	', ' + cFakt_dok + ', ' + StrKzn( cKupac, "8", "W" ) + ;
+	', ' + cFakt_dok + ', ' + hb_strtoutf8( cKupac ) + ;
 	', iznos: ' + ALLTRIM(STR(nTotal,12,2)) + ' KM"' 
 
 email_send("F", nil, nil, cMessage, nil, cEml_file )

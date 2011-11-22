@@ -920,54 +920,50 @@ endif
   BoxC()
 
 return 0
-*}
 
 
 
 
+function kalk_set_doks_total_fields( nNv, nVpv, nMpv, nRabat )
 
-/*! \fn SetZaDoks()
- *  \brief Setuje nnv,nvpv,nmpv za doks.dbf
- */
-
-function SetZaDoks()
-
-if mu_i="1"
-	nNV += nc*(kolicina-gkolicina-gkolicin2)
-	nVPV += vpc*(kolicina-gkolicina-gkolicin2)
-elseif mu_i="P"
-	nNV += nc*(kolicina-gkolicina-gkolicin2)
-	nVPV += vpc*(kolicina-gkolicina-gkolicin2)
-elseif mu_i="3"
-  	nVPV += vpc*(kolicina-gkolicina-gkolicin2)
-elseif mu_i=="5"
- 	nNV-=nc*(kolicina); nVPV-=vpc*(kolicina); nRabat+=vpc*rabatv/100*kolicina
+if field->mu_i = "1"
+	nNV += field->nc * (field->kolicina - field->gkolicina - field->gkolicin2)
+	nVPV += field->vpc * (field->kolicina - field->gkolicina - field->gkolicin2)
+elseif mu_i = "P"
+	nNV += field->nc * (field->kolicina - field->gkolicina - field->gkolicin2)
+	nVPV += field->vpc*( field->kolicina - field->gkolicina - field->gkolicin2)
+elseif mu_i = "3"
+  	nVPV += field->vpc * (field->kolicina - field->gkolicina - field->gkolicin2)
+elseif mu_i == "5"
+	nNV -= field->nc * (field->kolicina)
+	nVPV -= field->vpc * (field->kolicina)
+	nRabat += field->vpc * (field->rabatv / 100) * field->kolicina
 endif
 
-if pu_i=="1"
-	if empty(mu_i)
-   		nNV+=nc*kolicina
+if field->pu_i == "1"
+	if empty(field->mu_i)
+   		nNV += field->nc * field->kolicina
  	endif
- 	nMPV+=mpcsapp*kolicina
-elseif pu_i=="P"
-	if empty(mu_i)
-   		nNV+=nc*kolicina
+ 	nMPV += field->mpcsapp * field->kolicina
+elseif field->pu_i=="P"
+	if empty(field->mu_i)
+   		nNV += field->nc * field->kolicina
  	endif
- 	nMPV+=mpcsapp*kolicina
-elseif pu_i=="5"
- 	if empty(mu_i)
-		nNV-=nc*kolicina
+ 	nMPV += field->mpcsapp * field->kolicina
+elseif field->pu_i=="5"
+ 	if empty(field->mu_i)
+		nNV -= field->nc * field->kolicina
 	endif
- 	nMPV-=mpcsapp*kolicina
-elseif pu_i=="I"
-  	nMPV-=mpcsapp*gkolicin2
-	nNV-=nc*gkolicin2
+ 	nMPV -= field->mpcsapp * field->kolicina
+elseif field->pu_i=="I"
+  	nMPV -= field->mpcsapp * field->gkolicin2
+	nNV -= field->nc * field->gkolicin2
 elseif pu_i=="3"
-  	nMPV+=mpcsapp*kolicina
+  	nMPV += field->mpcsapp * field->kolicina
 endif
 
 return
-*}
+
 
 
 

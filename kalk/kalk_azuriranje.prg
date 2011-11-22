@@ -408,8 +408,8 @@ do while !eof()
    
    		select kalk_pripr
    		if !( cIdVd $ "97" )
-     		SetZaDoks( @nNv, @nVpv, @nMpv, @nRabat ) 
 			// setuj nnv, nmpv ....
+     		kalk_set_doks_total_fields( @nNv, @nVpv, @nMpv, @nRabat ) 
    		endif
    		skip
   	
@@ -628,8 +628,10 @@ return lViseDok
 
 
 
-function o_kalk_za_azuriranje()
+static function o_kalk_za_azuriranje()
 
+O_KALK
+O_KALK_DOKS
 O_KALK_PRIPR
 
 if (( field->tprevoz == "R" .or. field->TCarDaz == "R" .or. field->TBankTr == "R" .or. ;
@@ -643,9 +645,6 @@ if (( field->tprevoz == "R" .or. field->TCarDaz == "R" .or. field->TBankTr == "R
     O_KONCIJ
     select kalk_pripr
     RaspTrosk( .t. )
-    O_KALK
-    O_KALK_PRIPR
-    O_KALK_DOKS
 
 endif
 
@@ -655,9 +654,13 @@ return
 
 // ----------------------
 // ----------------------
-function kalk_azur_sql(oServer)
+static function kalk_azur_sql(oServer)
 local lOk
 local record := hb_hash()
+local _doks_nv := 0
+local _doks_vpv := 0
+local _doks_mpv := 0
+local _doks_rabat := 0
 
 // azuriraj kalk
 MsgO("sql kalk_kalk")
@@ -727,7 +730,10 @@ do while !eof()
        exit
     
     endif
-   
+	
+	// setuj total varijable za upisivanje u tabelu doks   
+	kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat ) 
+	
 	SKIP
 
 enddo
@@ -764,10 +770,10 @@ record["id_zaduz"] := field->idzaduz
 record["id_zaduz2"] := field->idzaduz2
 record["p_konto"] := field->pkonto
 record["m_konto"] := field->mkonto
-record["nv"] := 0
-record["vpv"] := 0
-record["rabat"] := 0
-record["mpv"] := 0
+record["nv"] := _doks_nv
+record["vpv"] := _doks_vpv
+record["rabat"] := _doks_rabat
+record["mpv"] := _doks_mpv
 record["pod_br"] := field->podbr
 record["sifra"] := ""
  

@@ -244,6 +244,7 @@ nResult := oTable:Fieldget( oTable:Fieldpos("count") )
 return _ids
 
 //---------------------------------------
+// date algoritam
 //---------------------------------------
 function push_dat_to_semaphore( table, date )
 local _tbl
@@ -267,7 +268,7 @@ return _ret
 //---------------------------------------
 // vrati date za DATE algoritam
 //---------------------------------------
-function get_ids_from_semaphore( table )
+function get_dat_from_semaphore(table)
 local _server :=  pg_server()
 local _tbl
 local _tbl_obj

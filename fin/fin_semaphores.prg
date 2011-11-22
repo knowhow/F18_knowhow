@@ -15,83 +15,89 @@
 // ------------------------------
 // koristi azur_sql
 // ------------------------------
-function fin_suban_from_sql_server(dDatDok)
-local oQuery
-local nCounter
-local nRec
-local cQuery
-local oServer := pg_server()
-local nSeconds
-local x, y
+function fin_suban_from_sql_server(dat_dok)
+local _qry
+local _counter
+local _rec
+local _qry_obj
+local _server := pg_server()
+local _seconds
+local _x, _y
 
-x := maxrows() - 15
-y := maxcols() - 20
+_x := maxrows() - 15
+_y := maxcols() - 20
 
-@ x+1, y+2 SAY "update fin_suban: " + iif( dDatDok == NIL, "FULL", "DATE")
-nSeconds := SECONDS()
-cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
-if dDatDok != NIL
-    cQuery += " WHERE datdok>=" + _sql_quote(dDatDok)
+@ _x + 1, _y + 2 SAY "update fin_suban: " + iif( dat_dok == NIL, "FULL", "DATE")
+_seconds := SECONDS()
+
+_qry :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
+if dat_dok != NIL
+    _qry += " WHERE datdok>=" + _sql_quote(dat_dok)
 endif
 
-oQuery := oServer:Query(cQuery) 
+_qry_obj := _server:Query(_qry) 
+if _qry_obj:NetErr()
+   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
+   QUIT
+endif
 
 SELECT F_SUBAN
 my_use ("suban", "fin_suban", .f., "SEMAPHORE")
 
-if dDatDok == NIL
+if dat_dok == NIL
     // "full" algoritam
-    log_write("dDatDok = nil full algoritam") 
+    log_write("dat_dok = nil full algoritam") 
     ZAP
 else
-    log_write("dDatDok <> ni date algoritam") 
+    log_write("dat_dok <> ni date algoritam") 
     // "date" algoritam  - brisi sve vece od zadanog datuma
     SET ORDER TO TAG "8"
     // tag je "DatDok" nije DTOS(DatDok)
-    seek dDatDok
-    do while !eof() .and. (datDok >= dDatDok) 
+    seek dat_dok
+    do while !eof() .and. (field->datDok >= dat_dok) 
         // otidji korak naprijed
         SKIP
-        nRec := RECNO()
+        _rec := RECNO()
         SKIP -1
         DELETE
-        GO nRec  
+        GO _rec  
     enddo
 
 endif
 
-@ x+4, y+2 SAY SECONDS() - nSeconds 
+@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-nCounter := 1
-DO WHILE !oQuery:Eof()
+_counter := 1
+
+DO WHILE !_qry_obj:Eof()
     append blank
     //cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartn, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
-    replace idfirma with oQuery:FieldGet(1), ;
-            idvn with oQuery:FieldGet(2), ;
-            brnal with oQuery:FieldGet(3), ;
-            rbr with oQuery:FieldGet(4), ;
-            datdok with oQuery:FieldGet(5), ;
-            datval with oQuery:FieldGet(6), ;
-            opis with oQuery:FieldGet(7), ;
-            idpartner with oQuery:FieldGet(8), ;
-            idkonto with oQuery:FieldGet(9), ;
-            d_p with oQuery:FieldGet(10), ;
-            iznosbhd with oQuery:FieldGet(11)
+    replace idfirma with _qry_obj:FieldGet(1), ;
+            idvn with _qry_obj:FieldGet(2), ;
+            brnal with _qry_obj:FieldGet(3), ;
+            rbr with _qry_obj:FieldGet(4), ;
+            datdok with _qry_obj:FieldGet(5), ;
+            datval with _qry_obj:FieldGet(6), ;
+            opis with _qry_obj:FieldGet(7), ;
+            idpartner with _qry_obj:FieldGet(8), ;
+            idkonto with _qry_obj:FieldGet(9), ;
+            d_p with _qry_obj:FieldGet(10), ;
+            iznosbhd with _qry_obj:FieldGet(11)
 
-    oQuery:Skip()
+    _qry_obj:Skip()
 
-    nCounter++
+    _counter++
 
-    if nCounter % 5000 == 0
-        @ x+4, y+2 SAY SECONDS() - nSeconds
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
 ENDDO
 
 USE
-oQuery:Destroy()
+_qry_obj:Destroy()
 
 if (gDebug > 5)
-    log_write("fin_suban synchro cache:" + STR(SECONDS() - nSeconds))
+    log_write("fin_suban synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
 close all

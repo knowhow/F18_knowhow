@@ -15,34 +15,34 @@
 // ----------------------------------------
 // ----------------------------------------
 function partn_from_sql_server(algoritam)
-local nCounter
-local nRec
+local _counter
+local _rec
 local _qry
 local _server := pg_server()
-local nSeconds
-local x, y
+local _seconds
+local _x, _y
 local _tmp_id, _ids
 local _sql_ids
 local _i
 local _qry_obj
 
-x := maxrows() - 15
-y := maxcols() - 20
+_x := maxrows() - 15
+_y := maxcols() - 20
 
 if algoritam == NIL
    algoritam := "FULL"
 endif
 
-@ x + 1, y + 2 SAY "update partn: " + algoritam
-nSeconds := SECONDS()
+@ _x + 1, _y + 2 SAY "update partn: " + algoritam
+_seconds := SECONDS()
 _qry :=  "SELECT id, naz from fmk.partn"
 
 if (algoritam == "IDS")
     _ids := get_ids_from_semaphore("partn")
     _sql_ids := "("
     for _i := 1 to LEN(_ids)
-        _sql_ids += _sql_quote(_ids[i])
-        if i < LEN(_ids)
+        _sql_ids += _sql_quote(_ids[_i])
+        if _i < LEN(_ids)
            _sql_ids += ","
         endif
     next
@@ -51,7 +51,10 @@ if (algoritam == "IDS")
 endif
 
 _qry_obj := _server:Query(_qry) 
-altd()
+if _qry_obj:NetErr()
+   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
+   QUIT
+endif
 
 SELECT F_PARTN
 my_use ("partn", "partn", .f., "SEMAPHORE")
@@ -75,9 +78,9 @@ elseif altoritam == "IDS"
 
 endif
 
-@ x+4, y+2 SAY SECONDS() - nSeconds 
+@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-nCounter := 1
+_counter := 1
 DO WHILE ! _qry_obj:Eof()
     append blank
     replace id with _qry_obj:FieldGet(1), ;
@@ -85,9 +88,9 @@ DO WHILE ! _qry_obj:Eof()
     
     _qry_obj:Skip()
 
-    nCounter++
-    if nCounter % 5000 == 0
-        @ x+4, y+2 SAY SECONDS() - nSeconds
+    _counter++
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
 ENDDO
 
@@ -95,7 +98,7 @@ USE
 _qry_obj:Destroy()
 
 if (gDebug > 5)
-    log_write("partn synchro cache:" + STR(SECONDS() - nSeconds))
+    log_write("partn synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
 close all
@@ -105,34 +108,34 @@ return .t.
 // ------------------------------------
 // ------------------------------------
 function konto_from_sql_server(algoritam)
-local nCounter
-local nRec
+local _counter
+local _rec
 local _qry
 local _server := pg_server()
-local nSeconds
-local x, y
+local _seconds
+local _x, _y
 local _tmp_id, _ids
 local _sql_ids
 local _i
 local _qry_obj
 
-x := maxrows() - 15
-y := maxcols() - 20
+_x := maxrows() - 15
+_y := maxcols() - 20
 
 if algoritam == NIL
    algoritam := "FULL"
 endif
 
-@ x + 1, y + 2 SAY "update konto: " + algoritam
-nSeconds := SECONDS()
-_qry :=  "SELECT id, naz from fmk.konto"
+@ _x + 1, _y + 2 SAY "update konto: " + algoritam
+_seconds := SECONDS()
+_qry := "SELECT id,naz FROM fmk.konto"
 
 if (algoritam == "IDS")
     _ids := get_ids_from_semaphore("konto")
     _sql_ids := "("
     for _i := 1 to LEN(_ids)
-        _sql_ids += _sql_quote(_ids[i])
-        if i < LEN(_ids)
+        _sql_ids += _sql_quote(_ids[_i])
+        if _i < LEN(_ids)
            _sql_ids += ","
         endif
     next
@@ -140,7 +143,12 @@ if (algoritam == "IDS")
     _qry += " WHERE ids IN " + _sql_ids
 endif
 
-_qry_obj := _server:Query(_qry) 
+_qry_obj := _server:Query(_qry)
+
+if _qry_obj:NetErr()
+   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
+   QUIT
+endif
 
 SELECT F_KONTO
 my_use ("konto", "konto", .f., "SEMAPHORE")
@@ -164,19 +172,18 @@ elseif altoritam == "IDS"
 
 endif
 
-@ x+4, y+2 SAY SECONDS() - nSeconds 
+@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-nCounter := 1
+_counter := 1
 DO WHILE ! _qry_obj:Eof()
     append blank
     replace id with _qry_obj:FieldGet(1), ;
             naz with _qry_obj:FieldGet(2)
-    
     _qry_obj:Skip()
 
-    nCounter++
-    if nCounter % 5000 == 0
-        @ x+4, y+2 SAY SECONDS() - nSeconds
+    _counter++
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
 ENDDO
 
@@ -184,7 +191,7 @@ USE
 _qry_obj:Destroy()
 
 if (gDebug > 5)
-    log_write("konto synchro cache:" + STR(SECONDS() - nSeconds))
+    log_write("konto synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
 close all

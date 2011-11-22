@@ -142,7 +142,7 @@ next
 Box(, nMaxRow, nMaxCol )
 	@ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku   "
 	@ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje      "
-	@ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi kalk_pripremu   ³<a-P> Stampa kalk_pripreme "
+	@ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa kalk_pripreme "
 	@ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<a-F10> asistent        ³<F10>,<F11> Ost.opcije"
 	IF gCijene=="1" .and. gMetodaNC==" "
   		Soboslikar({{nMaxRow-3,m_y+1,nMaxRow,m_y+77}},23,14)
@@ -299,7 +299,7 @@ do case
       		RaspTrosk()
       		return DE_REFRESH
 	case Ch==K_CTRL_F9
-      		if Pitanje(,"Zelite Izbrisati cijelu kalk_pripremu ??","N")=="D"
+      		if Pitanje(,"Zelite Izbrisati cijelu pripremu ??","N")=="D"
 			
 			cOpis := kalk_pripr->idfirma + "-" + ;
 				kalk_pripr->idvd + "-" + ;
@@ -658,10 +658,10 @@ if gVodiSamoTarife=="D"
 else
  opc[1]:="1. prenos dokumenta fakt->kalk                                  "
 endif
-opc[2]:="2. povrat dokumenta u kalk_pripremu"
+opc[2]:="2. povrat dokumenta u pripremu"
 opc[3]:="3. kalk_priprema -> smece"
 opc[4]:="4. smece    -> kalk_priprema"
-opc[5]:="5. najstariji dokument iz smeca u kalk_pripremu"
+opc[5]:="5. najstariji dokument iz smeca u pripremu"
 opc[6]:="6. generacija dokumenta inventure magacin "
 opc[7]:="7. generacija dokumenta inventure prodavnica"
 opc[8]:="8. generacija nivelacije prodavn. na osnovu niv. za drugu prod"

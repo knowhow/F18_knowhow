@@ -144,7 +144,6 @@ return .t.
 
 
 function AddFldBrisano(cImeDbf)
-
 use
 save screen to cScr
 CLS

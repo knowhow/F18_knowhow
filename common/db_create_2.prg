@@ -249,7 +249,7 @@ CREATE_INDEX("ID","id+SORT+naz",  "sifk")
 CREATE_INDEX("ID2","id+oznaka", "sifk")
 CREATE_INDEX("NAZ","naz", "sifk")
 
-// SIFV
+
 if !file(f18_ime_dbf("sifv.dbf"))  // sifrarnici - vrijednosti karakteristika
    aDbf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })

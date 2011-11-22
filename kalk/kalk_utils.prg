@@ -59,7 +59,7 @@ next
 Box(,20,77)
 @ m_x+17,m_y+2 SAY "<c-T>  Brisi stavku                              "
 @ m_x+18,m_y+2 SAY "<c-F9> Brisi sve     "
-@ m_x+19,m_y+2 SAY "<P> Povrat dokumenta u kalk_pripremu "
+@ m_x+19,m_y+2 SAY "<P> Povrat dokumenta u pripremu "
 @ m_x+20,m_y+2 SAY "               "
 
 if gCijene=="1" .and. gMetodaNC==" "
@@ -68,7 +68,7 @@ endif
 
 private lAutoAsist:=.f.
 
-ObjDbedit("PRIPR9",20,77,{|| ka_pripr9_key_handler()},"<P>-povrat dokumenta u kalk_pripremu","Pregled smeca...", , , , ,4)
+ObjDbedit("PRIPR9",20,77,{|| ka_pripr9_key_handler()},"<P>-povrat dokumenta u pripremu","Pregled smeca...", , , , ,4)
 BoxC()
 
 

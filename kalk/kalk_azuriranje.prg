@@ -13,7 +13,11 @@
 #include "kalk.ch"
 
 
-// azuriranje kalkulacije
+// ---------------------------------------------------------------------
+// centralna funkcija za azuriranje kalkulacije
+// poziva raznorazne funkcije, generisanje dokumenata, provjere
+// azuriranje u dbf, sql itd...
+// ---------------------------------------------------------------------
 function azur_kalk( lAuto )
 local oServer
 local lViseDok := .f.
@@ -108,9 +112,12 @@ close all
 return
 
 
+
+// ---------------------------------------------------------------------
 // vraca iz tabele kalk_pripr2 sve sto je generisano
 // da bi se moglo naknadno obraditi
 // recimo kalk 16/96 itd...
+// ---------------------------------------------------------------------
 static function kalk_vrati_iz_pripr2()
 local lPrebaci := .f.
 
@@ -179,8 +186,10 @@ endif
 return
 
 
-
-
+// ------------------------------------------------------------------------
+// generisanje zavisnih dokumenata nakon azuriranja kalkulacije
+// mozda cemo dobiti i nove dokumente u pripremi
+// ------------------------------------------------------------------------
 static function kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 local lForm11 := .f.
 local cNext11 := ""
@@ -235,7 +244,10 @@ endif
 return
 
 
-
+// ----------------------------------------------------------------
+// ova opcija ce pobrisati iz pripreme samo one dokumente koji 
+// postoje medju azuriranim 
+// ----------------------------------------------------------------
 static function kalk_ostavi_samo_duple( lViseDok, aOstaju )
 
 // izbrisi samo azurirane
@@ -243,24 +255,24 @@ select kalk_pripr
 
 GO TOP
 DO WHILE !EOF()
-    	SKIP 1
-    	nRecNo:=RECNO()
-    	SKIP -1
-    	IF ASCAN(aOstaju, field->idfirma + field->idvd + field->brdok) = 0
-      		DELETE
-    	ENDIF
-    	GO (nRecNo)
+	SKIP 1
+    nRecNo:=RECNO()
+    SKIP -1
+    IF ASCAN(aOstaju, field->idfirma + field->idvd + field->brdok) = 0
+     	DELETE
+    ENDIF
+    GO (nRecNo)
 ENDDO
 __dbpack()
 MsgBeep("U kalk_pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
   
-
 return
 
 
 
-
-
+// -------------------------------------------------------
+// treba li generisati dokumente ?
+// -------------------------------------------------------
 static function kalk_generisati_zavisne_dokumente()
 local lGen := .f.
 
@@ -280,7 +292,10 @@ return lGen
 
 
 
-
+// ---------------------------------------------------------
+// generisanje zavisnih dokumenata
+// prije azuriranja kalkulacije u dbf i sql
+// ---------------------------------------------------------
 static function kalk_zavisni_dokumenti()
 
 if !(IsMagPNab() .or. IsMagSNab())
@@ -305,7 +320,9 @@ return
 
 
 
-
+// ----------------------------------------------------------------------------
+// azuriranje podataka u dbf
+// ----------------------------------------------------------------------------
 static function kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
 local cIdFirma
 local cIdVd
@@ -335,20 +352,20 @@ skip -1
 if field->datdok == kalk_pripr->datdok
 	if  kalk_pripr->idvd $ "18#19" .and. kalk_pripr->TBankTr=="X"    
 		// rijec je o izgenerisanom dokumentu
-     	if len(field->podbr)>1
+     	if len(field->podbr) > 1
        		cNPodbr:=chr256(asc256(field->podbr)-3)
      	else
        		cNPodbr:=chr(asc(field->podbr)-3)
      	endif
    	else	
-		if len(field->podbr)>1
+		if len(field->podbr) > 1
     		cNPodbr:=chr256(asc256(field->podbr)+6)
      	else
        		cNPodbr:=chr(asc(field->podbr)+6)
      	endif
    	endif
 else	
-	if len(field->podbr)>1
+	if len(field->podbr) > 1
     	cNPodbr:=chr256(30*256+30)
   	else
     	cNPodbr:=chr(30)
@@ -815,28 +832,39 @@ MsgC()
 return lOk
 
 
-
+// ------------------------------------------------------------
+// azuriranje kalk_pripr9 tabele
+// koristi se za smece u vecini slucajeva
+// ------------------------------------------------------------
 function Azur9()
-local cPametno:="D" 
+local lGen := .f.
+local cPametno := "D" 
+local cIdFirma
+local cIdvd
+local cBrDok
 
 if Pitanje("p1","Zelite li pripremu prebaciti u smece (D/N) ?","N")=="N"
-  return
+	return
 endif
 
 O_KALK_PRIPR9
 O_KALK_PRIPR
+
 do while !eof()
 
-cIdFirma:=idfirma
-cIdvd:=idvd
-cBrdok:=brdok
+	cIdFirma:=idfirma
+	cIdvd:=idvd
+	cBrdok:=brdok
 
-do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
- skip
-enddo
+	// ???????
+	do while !eof() .and. cIdfirma == field->idfirma ;
+			.and. cIdvd == field->idvd ;
+			.and. cBrdok == brdok
+ 		skip
+	enddo
 
-select kalk_pripr9
-seek cidFirma+cIdVD+cBrDok
+	select kalk_pripr9
+	seek cidFirma+cIdVD+cBrDok
 if found()
   Beep(1)
   Msg("U smecu vec postoji "+cidfirma+"-"+cidvd+"-"+cbrdok)

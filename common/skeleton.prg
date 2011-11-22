@@ -63,7 +63,6 @@ public gAppSrv
 
 if !oApp:lStarted  
 
-/*
   ? "setujem default engine ..." + RDDENGINE
   RDDSETDEFAULT( RDDENGINE )
 
@@ -83,8 +82,6 @@ if !oApp:lStarted
    hb_setCodePage( "SL852" )
    hb_setTermCP("SLISO")
 #endif
-
-*/
 
   ? "startujem oApp:db()"
   oApp:initdb()
@@ -356,7 +353,6 @@ endif
 
 SET KEY K_INS  TO ToggleINS()
 SET MESSAGE TO 24 CENTER
-// most commands ignores deleted records
 SET DATE GERMAN
 SET SCOREBOARD OFF
 SET CONFIRM ON

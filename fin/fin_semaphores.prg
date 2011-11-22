@@ -108,27 +108,32 @@ return .t.
 // ----------------------------------------------
 function sql_fin_suban_update( op, record )
 
-LOCAL oRet
-LOCAL nResult
-LOCAL cTmpQry
-LOCAL cTable
-LOCAL cWhere
-LOCAL oServer := pg_server()
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _where
+LOCAL _server := pg_server()
 
-if op == "BEGIN"
-    cTmpQry := "BEGIN;"
-elseif op == "END"
-    cTmpQry := "COMMIT;"
-elseif op == "ROLLBACK"
-    cTmpQry := "ROLLBACK;"
-else
-    cWhere := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
-                        " and brnal=" + _sql_quote(record["br_nal"]) +;
-                        " and rbr=" + _sql_quote(STR(record["r_br"], 4)); 
 
-    cTable := "fmk.fin_suban"
+_tbl := "fmk.fin_suban"
+_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
+                        " and brnal=" + _sql_quote(record["br_nal"]) 
 
-    cTmpQry := "INSERT INTO " + cTable + ;
+//                        " and rbr=" + _sql_quote(STR(record["r_br"], 4)); 
+ 
+DO CASE
+ CASE op == "BEGIN"
+    _qry := "BEGIN;"
+ CASE op == "END"
+    _qry := "COMMIT;"
+ CASE op == "ROLLBACK"
+    _qry := "ROLLBACK;"
+ CASE op == "del"
+    _qry := "DELETE FROM " + _tbl + ;
+             " WHERE " + _where
+ CASE op == "ins"
+    _qry := "INSERT INTO " + _tbl + ;
                 "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
@@ -144,16 +149,16 @@ else
 
 endif
    
-oRet := _sql_query( oServer, cTmpQry)
+_ret := _sql_query( _server, _qry)
 
 if (gDebug > 5)
-   log_write(cTmpQry)
-   log_write("_sql_query VALTYPE(oRet) = " + VALTYPE(oRet))
+   log_write(_qry)
+   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
 endif
 
-if VALTYPE(oRet) == "L"
+if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.
-   return oRet
+   return _ret
 else
    return .t.
 endif

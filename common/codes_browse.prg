@@ -2803,16 +2803,7 @@ select (nTArea)
 
 if Pitanje(,"Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
         
-        brisi_sifrarnik(ALIAS())
-
-        nTArea := SELECT()
-        // logiraj promjenu brisanja stavke
-        if _LOG_PROMJENE == .t.
-            EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-            "", "", "", DATE(), DATE(), "", ;
-            "brisanje kompletnog sifrarnika")
-        endif
-    
+    brisi_sve_u_tabeli(ALIAS())   
     select (nTArea)
 
 endif

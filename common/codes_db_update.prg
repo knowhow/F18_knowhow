@@ -53,6 +53,61 @@ endif
 
 return .t.
 
+// -------------------------
+// -------------------------
+function f18_Scatter(zn)
+local _ime_polja, _i, _struct
+local _ret := hb_hash()
+//private cImeP,cVar
+if zn==nil
+  zn:="_"
+endif
+
+// ostavimo ovo radi kompatibilnosti
+Scatter(zn)
+
+_struct := DBSTRUCT()
+for _i:=1 to len(_struct)
+
+  _ime_polja := _struct[i, 1]
+   
+  if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
+      _ret[_ime_polja] := EVAL(FIELDBLOCK(_ime_polja))
+  endif
+
+next
+
+return _ret
+
+
+
+// ---------------------
+// ---------------------
+function f18_Gather(cZn)
+
+local i, aStruct
+local _field_b
+
+if cZn==nil
+  cZn:="_"
+endif
+aStruct:=DBSTRUCT()
+ 
+for i:=1 to len(aStruct)
+     _field_b := FIELDBLOCK(aStruct[i,1])
+
+     // cImeP - privatna var
+     cVar := cZn + cImeP
+
+     IF "U" $ TYPE(cVar)
+         MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + cImeP)
+     ELSE
+            EVAL(_field_b, EVAL(MEMVARBLOCK(cVar)) )
+     ENDIF
+next
+
+return nil
+
 
 
 // -----------------------------------

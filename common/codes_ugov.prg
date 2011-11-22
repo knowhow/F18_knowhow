@@ -276,9 +276,9 @@ if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
 
 	if cDN=="D"
       		set relation to id into ugov
-     	endif
+    endif
 
-     	do while !eof()
+     do while !eof()
        		skip
 		nTrec:=recno()
 		skip -1
@@ -292,9 +292,9 @@ if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
         	else
         		go nTrec
         	endif
-     	enddo
-     	set relation to
-     	select ugov
+     enddo
+     set relation to
+     select ugov
 endif
 
 return DE_CONT

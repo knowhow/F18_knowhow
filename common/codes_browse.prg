@@ -1683,7 +1683,8 @@ PushWa()
 
 cDBF:=padr(cDBF,8)
 cOznaka:=padr(cOznaka,4)
-select sifk; set order to tag "ID2"
+select sifk
+set order to tag "ID2"
 seek cDBF+cOznaka
 
 cWhen:=sifk->KWHEN
@@ -1719,7 +1720,8 @@ set order to tag "ID2"
 seek cDBF+cOznaka
 // karakteristika ovo postoji u tabeli SIFK
 
-if len(cIdSif)>15   // ADRES.DBF
+// ADRES.DBF
+if len(cIdSif) > 15   
   cIdSif:=left(cIdSif,15)
 endif
 
@@ -1761,7 +1763,7 @@ if sifk->Veza="N"
   next
 
 else
-// veza 1-1
+  // veza 1-1
   select sifv
   seek cDBf+cOznaka+cIdSif
   //do sada nije bilo te vrijednosti
@@ -1779,16 +1781,13 @@ else
 
  if xValue<>NIL
 
-   sql_azur(.t.);Scatter()
+   Scatter()
    if sifk->tip=="C"
      replace naz with xValue
-     //replsql naz with xValue
    elseif sifk->tip=="N"
      replace naz with str(xValue,sifk->duzina,sifk->decimal)
-     //replsql naz with str(xValue,sifk->duzina,sifk->decimal)
    elseif sifk->tip=="D"
      replace naz with DTOS(xValue)
-     //replsql naz with DTOS(xValue)
    endif
 
  endif
@@ -1835,8 +1834,6 @@ PopWa()
 
 PopWa()
 return
-
-
 
 /*
  @function   GatherSifk

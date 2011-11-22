@@ -86,7 +86,7 @@ if !FILE(KUMPATH + "INTEG1.DBF")
 endif
 
 // provjeri da li postoji tabela INTEG2
-if !FILE(KUMPATH + "INTEG2.DBF")
+if !FILE("INTEG2.DBF")
 	// kreiraj tabelu INTEG2
 
 	// definicija tabele
@@ -113,27 +113,27 @@ if !FILE(KUMPATH + "INTEG2.DBF")
 		AddOidFields(@aDbf)
 	endif   
 	// kreiraj tabelu INTEG2
-	DBcreate2(KUMPATH+"INTEG2.DBF", aDbf)
+	DBcreate2("INTEG2.DBF", aDbf)
 endif
 
 // kreiraj index za tabelu DINTEG1/2
-CREATE_INDEX ("1", "DTOS(DATUM)+VRIJEME+STR(ID)", KUMPATH+"DINTEG1")
+CREATE_INDEX ("1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG1")
 CREATE_INDEX ("2", "ID", KUMPATH+"DINTEG1")
-CREATE_INDEX ("1", "DTOS(DATUM)+VRIJEME+STR(ID)", KUMPATH+"DINTEG2")
-CREATE_INDEX ("2", "ID", KUMPATH+"DINTEG2")
+CREATE_INDEX ("1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG2")
+CREATE_INDEX ("2", "ID", "DINTEG2")
 
 // kreiraj index za tabelu INTEG1
-CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG1")
-CREATE_INDEX ("2", "ID", KUMPATH+"INTEG1")
+CREATE_INDEX ("1", "STR(ID)+IDROBA", "INTEG1")
+CREATE_INDEX ("2", "ID", "INTEG1")
 
 // kreiraj index za tabelu INTEG2
-CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG2")
-CREATE_INDEX ("2", "ID", KUMPATH+"INTEG2")
+CREATE_INDEX ("1", "STR(ID)+IDROBA", "INTEG2")
+CREATE_INDEX ("2", "ID", "INTEG2")
 
 // OID indexi
-CREATE_INDEX("OID","_oid_",KUMPATH+"DOKS")
-CREATE_INDEX("OID","_oid_",KUMPATH+"POS")
-CREATE_INDEX("OID","_oid_",SIFPATH+"ROBA")
+CREATE_INDEX("OID","_oid_", "DOKS")
+CREATE_INDEX("OID","_oid_", "POS")
+CREATE_INDEX("OID","_oid_", "ROBA")
 
 return
 *}

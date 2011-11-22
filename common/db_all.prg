@@ -68,8 +68,9 @@ return nil
 
 
 function Gather(cZn)
-*{
-local i,aStruct
+
+local i, aStruct
+local _field_b
 
 if cZn==nil
   cZn:="_"
@@ -77,40 +78,19 @@ endif
 aStruct:=DBSTRUCT()
  
 for i:=1 to len(aStruct)
-     cImeP:=aStruct[i,1]
-/*
-     if  (cImeP="BRISANO")
+     _field_b := FIELDBLOCK(aStruct[i,1])
 
-              // nista
+     // cImeP - privatna var
+     cVar := cZn + cImeP
 
-     elseif gSQL=="D"
-
-          // ako je gSQL=="D" desavace se da datoteka kumulativa
-          //                  ima ova polja, a privatna nema
-          if  !("#"+cImeP+"#" $ "#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#")
-            cVar:=cZn+cImeP
-            IF "U"$TYPE(cVar)
-              MsgBeep2("Neuskladj.strukt.baza! "+;
-                    "F-ja: GATHER(), Alias: "+ALIAS()+", Polje: "+cImeP)
-            ELSE
-              field->&cImeP:= &cVar
-            ENDIF
-          endif
-
-     else
-*/
-          cVar:=cZn+cImeP
-          IF "U" $ TYPE(cVar)
-              MsgBeep2("Neuskladj.strukt.baza! "+;
-                    "F-ja: GATHER(), Alias: "+ALIAS()+", Polje: "+cImeP)
-          ELSE
-            field->&cImeP:= &cVar
-          ENDIF
- //     endif
- next
+     IF "U" $ TYPE(cVar)
+         MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + cImeP)
+     ELSE
+            EVAL(_field_b, EVAL(MEMVARBLOCK(cVar)) )
+     ENDIF
+next
 
 return nil
-*}
 
 function GatherR(cZn)
 *{

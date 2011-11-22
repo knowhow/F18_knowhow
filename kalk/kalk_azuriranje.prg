@@ -864,17 +864,20 @@ do while !eof()
 	enddo
 
 	select kalk_pripr9
-	seek cidFirma+cIdVD+cBrDok
-if found()
-  Beep(1)
-  Msg("U smecu vec postoji "+cidfirma+"-"+cidvd+"-"+cbrdok)
-  closeret
-endif
+	seek cIdFirma+cIdVD+cBrDok
+	
+	if found()
+  		Beep(1)
+  		Msg("U smecu vec postoji "+cidfirma+"-"+cidvd+"-"+cbrdok)
+  		close all
+		return
+	endif
 
-select kalk_pripr
-enddo // kalk_pripr
+	select kalk_pripr
+enddo 
 
-select  kalk_pripr; go top
+select kalk_pripr 
+go top
 
 select kalk_pripr9
 append from kalk_pripr
@@ -894,18 +897,18 @@ if Logirati(goModul:oDataBase:cName, "DOK", "SMECE")
 	"", "prebacivanje dokumenta u smece")
 endif
 
-select kalk_pripr; zap
+select kalk_pripr
+zap
 
-closeret
+close all
+return
 
 
 
-/*! \fn Povrat_kalk_dokumenta()
- *  \brief Povrat kalkulacije u pripremu
- */
-
+// -------------------------------------------------------
+// povrat kalkulacije u tabelu pripreme
+// -------------------------------------------------------
 function Povrat_kalk_dokumenta()
-*{
 local nRec
 local gEraseKum
 
@@ -918,14 +921,14 @@ if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (
 endif
 
 O_KALK_DOKS
-
 O_KALK
 set order to tag "1"
 
 O_KALK_PRIPR
 
 SELECT KALK
-set order to tag "1"  // idFirma+IdVD+BrDok+RBr
+set order to tag "1"  
+// idFirma+IdVD+BrDok+RBr
 
 cIdFirma:=gfirma
 cIdVD:=space(2)
@@ -983,54 +986,51 @@ if cBrDok="."
     		MsgO("Prolaz kroz kumulativnu datoteku KALK...")
     		do while !eof()
       			select KALK
-			Scatter()
-			select kalk_pripr
+				Scatter()
+				select kalk_pripr
       			
-			IF ! ( _idvd $ "97" .and. _tbanktr=="X" )
+				IF ! ( _idvd $ "97" .and. _tbanktr=="X" )
         			append ncnl; _ERROR:="";  Gather2()
       			ENDIF
 			
-			if gEraseKum
+				if gEraseKum
       				select kalk_doks
-				seek kalk->(idfirma+idvd+brdok)   // izbrisi u kalk_doks
+					seek kalk->(idfirma+idvd+brdok)   // izbrisi u kalk_doks
       				if Found() 
-					delete
+						delete
+					endif
 				endif
-			endif
 			
-			select kalk
+				select kalk
       			skip
 			
-			nRec:=recno()
+				nRec:=recno()
 			
-			skip -1
+				skip -1
       			
-			if gEraseKum
-				dbdelete2()
-			endif
+				if gEraseKum
+					dbdelete2()
+				endif
       			
-			go nRec
+				go nRec
     		enddo
     		select kalk
 		
-		MsgC()
-  	endif
-  	closeret
+			MsgC()
+  	
+	endif
+  	
+	close all
+	return
 endif
 
 if Pitanje("","Kalk. "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
 	closeret
 endif
 
-gEraseKum:=Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D")=="D"
-
+gEraseKum := Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D")=="D"
 
 select KALK
-if !flock()
-	Msg("KALK je zauzeta ",3)
-	closeret
-endif
-
 hseek cIdFirma+cIdVd+cBrDok
 EOF CRET
 
@@ -1082,13 +1082,9 @@ closeret
 return
 
 
-
+// ------------------------------------------------------------------
 // iz kalk_pripr 9 u kalk_pripr
-
-/*! \fn Povrat9()
- *  \brief Povrat kalkulacije iz "smeca" u pripremu
- */
-
+// ------------------------------------------------------------------
 function Povrat9(cIdFirma, cIdVd, cBrDok)
 local nRec
 
@@ -1212,7 +1208,9 @@ return
 *}
 
 
+// ------------------------------------------------------------------
 // iz kalk_pripr 9 u kalk_pripr najstariju kalkulaciju
+// ------------------------------------------------------------------
 function P9najst()
 local nRec
 
@@ -1262,7 +1260,9 @@ closeret
 
 
 
+// ------------------------------------------------------------------
 // iz kalk u kalk_pripr najnoviju kalkulaciju
+// ------------------------------------------------------------------
 function Pnajn()
 local nRec,cbrsm, fbof, nVraceno:=0
 
@@ -1347,11 +1347,9 @@ closeret
 *}
 
 
-/*! \fn ErPripr9(cIdF, cIdVd, cBrDok)
- *  \brief Brise dokument iz tabele kalk_pripr9
- */
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
 function ErPripr9(cIdF, cIdVd, cBrDok)
-*{
 if Pitanje(,"Sigurno zelite izbrisati dokument?","N")=="N"
 	return
 endif
@@ -1368,14 +1366,11 @@ do while !eof() .and. cIdF==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
 enddo
 
 return
-*}
 
 
-/*! \fn ErP9All()
- *  \brief Brisi sve zapise iz tabele kalk_pripr9
- */
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
 function ErP9All()
-*{
 
 if Pitanje(,"Sigurno zelite izbrisati sve zapise?","N")=="N"
 	return
@@ -1386,5 +1381,4 @@ go top
 zap
 
 return
-*}
 

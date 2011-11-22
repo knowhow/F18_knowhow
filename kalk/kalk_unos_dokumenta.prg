@@ -51,7 +51,7 @@ do while .t.
      case izbor == 4
          kalk_kontiranje_naloga()
      case izbor == 5
-         Azuriranje_kalk_dokumenta()
+         azur_kalk() 
      case izbor == 6
        if KursLis=="1"  // prva vrijednost
          KursLis:="2"
@@ -232,7 +232,7 @@ do case
 			JerryMP()
 		endif
 		close all
-		Azuriranje_kalk_dokumenta()
+		azur_kalk()
 		o_kalk_edit()
 		if kalk_pripr->(RECCOUNT())==0 .and. IzFMKINI("Indikatori","ImaU_KALK","N",PRIVPATH)=="D"
 			O__KALK

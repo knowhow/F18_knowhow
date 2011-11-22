@@ -361,6 +361,8 @@ if (nArea==-1 .or. nArea==(F_KALK))
 	CREATE_INDEX("7","idroba+idvd",KUMPATH+"KALK")
 	CREATE_INDEX("8","mkonto",KUMPATH+"KALK")
 	CREATE_INDEX("9","pkonto",KUMPATH+"KALK")
+
+	CREATE_INDEX("DAT","dtos(datdok)",KUMPATH+"KALK")
 	
 	CREATE_INDEX("MU_I","mu_i+mkonto+idfirma+idvd+brdok",KUMPATH+"KALK")
 	CREATE_INDEX("MU_I2","mu_i+idfirma+idvd+brdok",KUMPATH+"KALK")
@@ -413,6 +415,8 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	CREATE_INDEX("1","IdFirma+idvd+brdok",KUMPATH+"kalk_doks")
 	CREATE_INDEX("2","IdFirma+MKONTO+idzaduz2+idvd+brdok",KUMPATH+"kalk_doks")
 	CREATE_INDEX("3","IdFirma+dtos(datdok)+podbr+idvd+brdok",KUMPATH+"kalk_doks")
+	
+	CREATE_INDEX("DAT","dtos(datdok)",KUMPATH+"kalk_doks")
 
 	// za RN
 	if glBrojacPoKontima = .t.

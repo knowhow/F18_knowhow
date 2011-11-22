@@ -13,332 +13,369 @@
 #include "kalk.ch"
 
 
+// azuriranje kalkulacije
+function azur_kalk( lAuto )
+local oServer
+local lViseDok := .f.
+local aRezim := {}
+local aOstaju := {}
+local lGenerisiZavisne := .f.
+local lBrStDoks := .f.
 
-function Azuriranje_kalk_dokumenta(lAuto)
-local cidfirma
-local cidvd
-local cbrdok
-local cOdg:="N"
-local lgAFin:=gAFin
-local lgAMat:=gAMat
-// pametno azuriranje
-local cPametno:="D" 
-local nBrStavki:=0
-local lBrStDoks:=.f.
-
-PRIVATE aRezim:={}
-
-if (lAuto == nil)
+if ( lAuto == nil )
 	lAuto := .f.
 endif
 
-if !lAuto .and. Pitanje("p1","Zelite li izvrsiti azuriranje KALK dokumenta (D/N) ?","N")=="N"
+if !lAuto .and. Pitanje("p1","Zelite li izvrsiti azuriranje KALK dokumenta (D/N) ?", "N") == "N"
 	return
 endif
 
+// isprazni kalk_pripr2
+// trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
 zap
+
 use
 
-// provjerimo ima li vise dokumenata u kalk_pripremi
-O_KALK_PRIPR
-GO BOTTOM
-cTest:=idfirma+idvd+brdok
-GO TOP
-lViseDok:=.f.
-if cTest<>idfirma+idvd+brdok
-  Beep(1)
-  Msg("U kalk_pripremi je vise dokumenata! Ukoliko zelite da ih azurirate sve#"+;
-      "odjednom (npr.ako ste ih preuzeli sa drugog racunara putem diskete)#"+;
-      "na sljedece pitanje odgovorite sa 'D' i dokumenti ce biti azurirani#"+;
-      "bez provjera koje se vrse pri redovnoj obradi podataka.")
-  IF Pitanje(,"Zelite li bezuslovno dokumente azurirati? (D/N)","N")=="D"
-    lViseDok:=.t.
-    aRezim:={}
-    AADD(aRezim, gCijene )
-    AADD(aRezim, gMetodaNC )
-    gCijene   := "1"
-    gMetodaNC := " "
-  ENDIF
-elseif gCijene=="2"       // ako je samo jedan dokument u kalk_pripremi
-	DO WHILE !EOF()         // i strogi rezim rada
-    		IF ERROR=="1"
-      			Beep(1)
-      			Msg("Program je kontrolisuci redom stavke utvrdio da je stavka#"+;
-          		"br."+rbr+" sumnjiva! Ukoliko bez obzira na to zelite da izvrsite#"+;
-          		"azuriranje ovog dokumenta, na sljedece pitanje odgovorite#"+;
-          		"sa 'D'.")
-      			IF Pitanje(,"Zelite li dokument azurirati bez obzira na upozorenje? (D/N)","N")=="D"
-        			aRezim:={}
-        			AADD(aRezim, gCijene )
-        			AADD(aRezim, gMetodaNC )
-        			gCijene   := "1"
-      			ENDIF
-      			EXIT
-    		ENDIF
-    		SKIP 1
-  	ENDDO
-endif
+lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
 
-if gCijene=="2"   // provjera integriteta
-close all
 O_KALK_DOKS
-if fieldpos("ukstavki")<>0
-	lBrStDoks:=.t.
-endif
-if !flock()
-	Msg("Neko vec koristi datoteku kalk_doks")
-	closeret
-endif
-O_KALK
-if !flock()
-	Msg("Neko vec koristi datoteku KALK")
-	closeret
+if fieldpos("ukstavki") <> 0
+	lBrStDoks := .t.
 endif
 
+// provjeri razne uslove, metode itd...
+if !kalk_provjera_integriteta( @aOstaju, lViseDok )
+	// nisu zadovoljeni uslovi, bjaži...
+	return
+endif
+
+// provjeri vpc, itd...
+if !kalk_provjera_cijena()
+	// nisu zadovoljeni uslovi, bjaži....
+	return
+endif
+
+// treba li generisati šta-god ?
+lGenerisiZavisne := kalk_generisati_zavisne_dokumente()
+
+if lGenerisiZavisne == .t.
+	// generiši, 11-ke, 96-ce itd...
+	kalk_zavisni_dokumenti()
+endif
+
+oServer := pg_server()
+
+if oServer == NIL
+	CLEAR SCREEN 
+  	? "kalk_azur oServer nil ?!"
+  	INKEY(0)
+  	QUIT
+endif
+
+if kalk_azur_sql( oServer )
+	
+	o_kalk_za_azuriranje()
+	
+	if !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
+    	MsgBeep("Neuspjesno KALK/DBF azuriranje !?")
+       	return .f.
+   	endif
+
+else
+  MsgBeep("Neuspjesno KALK/SQL azuriranje !?")
+endif
+
+// generisi zavisne dokumente nakon azuriranja kalkulacije
+kalk_zavisni_nakon_azuriranja( lGenerisiZavisne, lAuto )
+
+// ostavi duple dokumente ili pobrisi pripemu
+if lViseDok == .t. .and. LEN( aOstaju ) > 0
+	kalk_ostavi_samo_duple( aOstaju )
+else
+	// pobrisi kalk_pripr
+	select kalk_pripr
+	zap
+endif
+
+if lGnerisiZavisne == .t.
+	// vrati iz pripr2 dokumente, ako postoje !
+	kalk_vrati_iz_pripr2()
+endif
+
+close all
+
+return
+
+
+
+static function kalk_vrati_iz_pripr2()
+local lPrebaci := .f.
+
+O_KALK_PRIPR2
+
+if field->idvd $ "18#19"  
+	// otprema
+  	if kalk_pripr2->(reccount2())<>0
+   		Beep(1)
+   		Box(,4,70)
+    	@ m_x+1,m_y+2 SAY "1. Cijene robe su promijenjene."
+    	@ m_x+2,m_y+2 SAY "2. Formiran je dokument nivelacije:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
+    	@ m_x+3,m_y+2 SAY "3. Nove cijene su stavljene u sifrarnik."
+    	@ m_x+4,m_y+2 SAY "3. Obradite ovaj dokument."
+    	inkey(0)
+   		BoxC()
+  		lPrebaci := .t.
+	endif
+
+elseif field->idvd $ "95"  
+	// otprema
+	if kalk_pripr2->(reccount2())<>0
+   		Beep(1)
+   		Box(,4,70)
+    	@ m_x+1,m_y+2 SAY "1. Formiran je dokument 95 na osnovu inventure."
+    	@ m_x+4,m_y+2 SAY "3. Obradite ovaj dokument."
+    	inkey(0)
+   		BoxC()
+  		lPrebaci := .t.
+	endif
+
+elseif field->idvd $ "16" .and. gGen16 == "1" 
+   // nakon otpreme doprema
+	if kalk_pripr2->(reccount2())<>0
+   		Beep(1)
+   		Box(,4,70)
+      	@ m_x+1,m_y+2 SAY "1. Roba je otpremljena u magacin "+pripr2->idkonto
+      	@ m_x+2,m_y+2 SAY "2. Formiran je dokument dopreme:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
+      	@ m_x+3,m_y+2 SAY "3. Obradite ovaj dokument."
+    	inkey(0)
+   		BoxC()
+		lPrebaci := .t.
+  	endif
+
+elseif field->idvd $ "11"  
+	// nakon povrata unos u drugu prodavnicu
+	if kalk_pripr2->(reccount2())<>0
+   		Beep(1)
+   		Box(,4,70)
+    	@ m_x+1,m_y+2 SAY "1. Roba je prenesena u prodavnicu "+pripr2->idkonto
+    	@ m_x+2,m_y+2 SAY "2. Formiran je dokument zaduzenja:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
+    	@ m_x+3,m_y+2 SAY "3. Obradite ovaj dokument."
+    	inkey(0)
+    	BoxC()
+		lPrebaci := .t.
+	endif
+endif
+
+if lPrebaci == .t.
+	select kalk_pripr
+	append from kalk_pripr2
+	select kalk_pripr2
+	zap
+endif
+
+return
+
+
+
+
+static function kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
+local lForm11 := .f.
+local cNext11 := ""
+local cOdg := "D"
+local lgAFin := gAFin
+local lgAMat := gAMat
+
+
+O_KALK_DOKS
+O_KALK
 O_KALK_PRIPR
 
-if ((TPrevoz=="R" .or. TCarDaz=="R" .or. TBankTr=="R" .or. ;
-   TSpedTr=="R" .or. TZavTr =="R" ) .and. idvd $ "10#81" )  .or. ;
-   idvd $ "RN"
-   O_SIFK
-   O_SIFV
-    O_ROBA
-    O_TARIFA
-    O_KONCIJ
-    select kalk_pripr
-    RaspTrosk(.t.)
-    close all
-    O_KALK
-    O_KALK_PRIPR
+// generisanje 11-ke iz 10-ke
+if Generisati11_ku()
+	lForm11 := .t.
+	cNext11 := SljBrKalk("11", gFirma)
+	Generisi11ku_iz10ke( cNext11 )
 endif
 
-select kalk_pripr
-go top
-nBrDoks:=0
-do while !eof()
+select KALK
 
-++nBrDoks
-cIdFirma:=idfirma; cidvd:=idvd; cbrdok:=brdok
-dDatDok:=datdok
-do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
- if gMetodaNC<>" " .and. (ERROR=="1" .and. TBANKTR=="X")
-   Beep(2)
-   MSG("Izgenerisane stavke su ispravljane, azuriranje nece biti izvrseno",6)
-   closeret
- endif
- if gMetodaNC<>" " .and. ERROR=="1"
-   Beep(2)
-   MSG("Utvrdjena greska pri obradi dokumenta, rbr: "+rbr,6)
-   closeret
- endif
- if !(IsJerry() .and. cIdVd="4")
- 	if gMetodaNC<>" " .and. ERROR==" "
- 		Beep(2)
- 		MSG("Dokument je izgenerisan, sa <a-F10> izvrsiti njegovu obradu",6)
- 		closeret
+if lGenerisi == .t. 
+
+	RekapK()
+ 
+ 	if ( gafin == "D" .or. gaMat == "D" )
+   		kalk_kontiranje_naloga( .t., lAuto )
  	endif
- 	if dDatDok<>datdok
- 		Beep(2)
- 		if Pitanje(,"Datum razlicit u odnosu na prvu stavku. Ispraviti ?","D")=="D"
- 			replace datdok with dDatDok
- 		else
- 			closeret
+
+ 	P_Fin( lAuto )
+
+ 	gAFin := lgAFin
+ 	gAMat := lgAMat
+
+ 	O_KALK_PRIPR
+ 	if field->idvd $ "10#12#13#16#11#95#96#97#PR#RN" .and. gAFakt=="D"
+ 		if field->idvd $ "16#96"
+ 			cOdg := "N"
+ 		endif
+ 		if Pitanje(,"Formirati dokument u FAKT ?", cOdg)=="D"
+ 			P_Fakt()
  		endif
  	endif
- endif
- skip
-enddo
-select KALK
-seek cidFirma+cIdVD+cBrDok
-if found()
-  Beep(1)
-  Msg("Vec postoji dokument pod brojem "+cidfirma+"-"+cidvd+"-"+cbrdok)
-  closeret
+
 endif
 
+// 11-ku obradi iz smeca
+if lForm11 == .t.
+	Get11FromSmece( cNext11 )
+endif
+
+return
+
+
+
+static function kalk_ostavi_samo_duple( lViseDok, aOstaju )
+
+// izbrisi samo azurirane
 select kalk_pripr
-enddo // eof, kalk_pripr
 
-if gMetodaNC<>" " .and. nBrDoks>1
-  Beep(1)
-  Msg("U kalk_pripremi je vise dokumenata.Prebaci ih u smece, pa obradi pojedinacno")
-  closeret
-endif
+GO TOP
+DO WHILE !EOF()
+    	SKIP 1
+    	nRecNo:=RECNO()
+    	SKIP -1
+    	IF ASCAN(aOstaju, field->idfirma + field->idvd + field->brdok) = 0
+      		DELETE
+    	ENDIF
+    	GO (nRecNo)
+ENDDO
+__dbpack()
+MsgBeep("U kalk_pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
+  
+
+return
 
 
-close all
 
-endif // gcijene
 
-close all
-O_KALK_PRIPR
-cIdzaduz2:=idzaduz2
-do while !eof()
- if idvd<>"24" .and. empty(mu_i) .and. empty(pu_i)
-    Beep(2)
-    Msg("Stavka broj "+Rbr+". neobradjena , sa <a-F10> pokrenite obradu")
-    close all
-	return
- endif
- if cidzaduz2<>idzaduz2
-    Beep(2)
-    Msg("Stavka broj "+Rbr+". razlicito polje RN u odnosu na prvu stavku")
-    close all
-	return
- endif
 
- skip
-enddo
+static function kalk_generisati_zavisne_dokumente()
+local cPametno := "N"
 
-if gcijene=="2"
+if gCijene == "2"
 	cPametno:="D"
 else
- 	if gMetodaNC==" "
-  		cPametno:="N"
+ 	if gMetodaNC == " "
+  		cPametno := "N"
  	elseif lAuto
-		cPametno:="D"
+		cPametno := "D"
 	else
-  		cPametno:=Pitanje(,"Zelite li formirati zavisne dokumente pri azuriranju","D")
+  		cPametno := Pitanje(,"Zelite li formirati zavisne dokumente pri azuriranju","D")
  	endif
 endif
 
-if cPametno=="D"
+return cPametno
 
-	if !(IsMagPNab() .or. IsMagSNab())
-		// ako nije slucaj da je
-		// 1. pdv rezim magacin po nabavnim cijenama
-		// ili
-		// 2. magacin samo po nabavnim cijenama
+
+
+
+static function kalk_zavisni_dokumenti()
+
+if !(IsMagPNab() .or. IsMagSNab())
+	// ako nije slucaj da je
+	// 1. pdv rezim magacin po nabavnim cijenama
+	// ili
+	// 2. magacin samo po nabavnim cijenama
 		
-		// nivelacija 10,94,16
-		Niv_10()  
-	endif
+	// nivelacija 10,94,16
+	Niv_10()  
+endif
 	
-	Niv_11()  // nivelacija 11,81
+Niv_11()  // nivelacija 11,81
 
-	Otprema() // iz otpreme napravi ulaza
- 	Iz13u11()  // prenos iz prodavnice u prodavnicu
+Otprema() // iz otpreme napravi ulaza
+Iz13u11()  // prenos iz prodavnice u prodavnicu
  	
-	// inventura magacina - manjak / visak
-	InvManj()
+// inventura magacina - manjak / visak
+InvManj()
 	
-	lOSitInv:=.f.
- 	IF IzFMKIni("KALKSI","EvidentirajOtpis","N",KUMPATH)=="D"
-   		lOSitInv:=Otpis16SI()
- 	ENDIF
-endif
+return
 
-O_KALK_DOKS
-O_KALK
-O_KALK_PRIPR
-cIdFirma:=""
-aOstaju:={}
 
-do while !eof()
 
-cIdFirma:=idfirma
-cIdVd:=idvd
-cBrDok:=brdok
 
-do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
- if idvd=="11".and.vpc==0
-  Beep(1)
-  Msg('VPC = 0, pozovite "savjetnika" sa <Alt-H>!')
-  close all
-  return
- endif
- skip
-enddo
+static function kalk_azur_dbf( lViseDok, aOstaju, aRezim, lBrStDoks )
+local cIdFirma
+local cIdVd
+local cBrDok
+local cNPodBr
+local nNv := 0
+local nVpv := 0
+local nMpv := 0
+local nRabat := 0
+local cOpis
+local nBrStavki
 
-select KALK
-seek cidFirma+cIdVD+cBrDok
-if found()
-  Beep(1)
-  Msg("Vec postoji dokument pod brojem "+cidfirma+"-"+cidvd+"-"+cbrdok)
-  if !lViseDok
-    close all
-    return
-  else
-    AADD(aOstaju,cIdFirma+cIdVd+cBrDok)
-  endif
-endif
-
-select kalk_pripr
-enddo // kalk_pripr
-lFormiranje11ke:=.f.
-
-if Generisati11_ku()
-	lFormiranje11ke:=.t.
-	cBrojZadnje11ke:=SljBrKalk("11",gFirma)
-	Generisi11ku_iz10ke(cBrojZadnje11ke)
-endif
-
-// AZURIRAJ PRIPREMU !!
 Tone(360,2)
 
 MsgO("Azuriram pripremu ...")
 
-select kalk_pripr; go top
+select kalk_pripr
+go top
 
-select kalk_doks; set order to tag "3"
-seek cidfirma+dtos(kalk_pripr->datdok)+chr(255)
-skip -1
-if datdok==kalk_pripr->datdok
-   if  kalk_pripr->idvd $ "18#19" .and. kalk_pripr->TBankTr=="X"    // izgenerisani dokument
-     if len(podbr)>1
-       cNPodbr:=chr256(asc256(podbr)-3)
-     else
-       cNPodbr:=chr(asc(podbr)-3)
-     endif
-   else
-     if len(podbr)>1
-       cNPodbr:=chr256(asc256(podbr)+6)
-     else
-       cNPodbr:=chr(asc(podbr)+6)
-     endif
-   endif
-else
-  if len(podbr)>1
-    cNPodbr:=chr256(30*256+30)
-  else
-    cNPodbr:=chr(30)
-  endif
-endif
+cIdFirma := field->idfirma
+
 select kalk_doks
-set order to tag "1"
-select KALK
+set order to tag "3"
+seek cIdfirma + dtos( kalk_pripr->datdok ) + chr(255)
+skip -1
+
+if field->datdok == kalk_pripr->datdok
+	if  kalk_pripr->idvd $ "18#19" .and. kalk_pripr->TBankTr=="X"    
+		// rijec je o izgenerisanom dokumentu
+     	if len(field->podbr)>1
+       		cNPodbr:=chr256(asc256(field->podbr)-3)
+     	else
+       		cNPodbr:=chr(asc(field->podbr)-3)
+     	endif
+   	else	
+		if len(field->podbr)>1
+    		cNPodbr:=chr256(asc256(field->podbr)+6)
+     	else
+       		cNPodbr:=chr(asc(field->podbr)+6)
+     	endif
+   	endif
+else	
+	if len(field->podbr)>1
+    	cNPodbr:=chr256(30*256+30)
+  	else
+    	cNPodbr:=chr(30)
+  	endif
+endif
 
 select kalk_pripr
-nNV:=nVPV:=nMPV:=nRABAT:=0
+go top
 
 do while !eof()
 
-	cIdFirma:=idfirma
-	cBrDok:=brdok
-  	cIdvd:=idvd
-  	private nNV:=0
-	private nVPV:=0
-	private nMPV:=0
-	private nRabat:=0  
-	// za kalk_doks.DBF
-  	
-	IF lViseDok .and. ASCAN(aOstaju,cIdFirma+cIdVd+cBrDok)<>0  // preskoci postojece
-    		SKIP 1
-    		LOOP
-  	ENDIF
+	cIdFirma := field->idfirma
+	cBrDok := field->brdok
+  	cIdvd := field->idvd
+  
+	if lViseDok .and. ASCAN( aOstaju, cIdFirma + cIdVd + cBrDok ) <> 0  
+			// preskoci postojece
+    		skip 1
+    		loop
+  	endif
   	
 	select kalk_doks
   	append blank
-  	replace idfirma with cidfirma, brdok with cbrdok,;
-        	datdok with kalk_pripr->datdok, idvd with cidvd,;
-           	idpartner with kalk_pripr->idpartner, mkonto with kalk_pripr->MKONTO,;
-          	pkonto with kalk_pripr->PKONTO,;
-          	idzaduz with kalk_pripr->idzaduz, idzaduz2 with kalk_pripr->idzaduz2,;
-          	brfaktp with kalk_pripr->BrFaktP
-  	if fieldpos("sifra")<>0
-     		replace sifra with SifraKorisn
-  	endif
+  	replace field->idfirma with cIdFirma, field->brdok with cBrdok,;
+        	field->datdok with kalk_pripr->datdok, field->idvd with cIdvd,;
+           	field->idpartner with kalk_pripr->idpartner, field->mkonto with kalk_pripr->mkonto,;
+          	field->pkonto with kalk_pripr->pkonto,;
+          	field->idzaduz with kalk_pripr->idzaduz, field->idzaduz2 with kalk_pripr->idzaduz2,;
+          	field->brfaktp with kalk_pripr->BrFaktP
   
 	if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
 		
@@ -348,56 +385,42 @@ do while !eof()
 	
 	endif
 
-	#ifdef SR
-  		O_LOGK
-  		go bottom
-  		Scatter()
-  		_NO:=NO+1
-  		append blank
-  		_Id:="AZUR";_datum:=kalk_pripr->datdok; _datprom:=date()
-  		_k1:=kalk_pripr->brdok; _k2:=kalk_pripr->brfaktp; Gather()
-  		O_LOGKD  
-		// otvori logove kumulativa
-	#endif
-
   	select kalk_pripr
-  	nBrStavki:=0
-  	do while !eof() .and. cidfirma==idfirma .and. cbrdok==brdok .and. cidvd==idvd
-   		nBrStavki:=nBrStavki+1
+	go top
+
+  	nBrStavki := 0
+  	
+	do while !eof() .and. cIdfirma == field->idfirma .and. cBrdok == field->brdok .and. cIdvd == field->idvd
+   			
+		++ nBrStavki
    		Scatter()
-   		_Podbr:=cNPodbr
+   		_Podbr := cNPodbr
    		select kalk
    		append blank
    		Gather()
-   		if cIdVd=="97"
-     			append blank
-       			_TBankTr := "X"
-       			_mkonto  := _idkonto
-       			_mu_i    := "1"
-     			Gather()
+   		if cIdVd == "97"
+     		append blank
+       		_TBankTr := "X"
+       		_mkonto  := _idkonto
+       		_mu_i    := "1"
+     		Gather()
    		endif
    
-  		// popunjavanje roba->idpartner
-  		// popunjavanje tabele prodnc
-  		if IsPlanika()
-			PlFillIdPartner(kalk_pripr->idpartner, kalk_pripr->idroba)
-			if kalk_pripr->idvd $ "11#12#13#80#81"
-				SetProdNc(kalk_pripr->pkonto, kalk_pripr->idroba, kalk_pripr->idvd, kalk_pripr->brdok, kalk_pripr->datdok, kalk_pripr->fcj)
-   			endif
-  		endif
-
    		select kalk_pripr
-
-   		if ! ( cIdVd $ "97" )
-     			SetZaDoks() 
+   		if !( cIdVd $ "97" )
 			// setuj nnv, nmpv ....
+     		kalk_set_doks_total_fields( @nNv, @nVpv, @nMpv, @nRabat ) 
    		endif
-
    		skip
-  	enddo
+  	
+	enddo
 
   	select kalk_doks
-  	replace nv with nnv, vpv with nvpv, rabat with nrabat, mpv with nmpv, podbr with cNPodbr
+  	replace field->nv with nNv, ;
+			field->vpv with nVpv, ;
+			field->rabat with nRabat, ;
+			field->mpv with nMpv, ;
+			field->podbr with cNPodbr
 
   	if lBrStDoks
   		replace ukstavki with nBrStavki
@@ -408,140 +431,367 @@ enddo
 
 MsgC()
 
-select KALK
+return .t.
 
-if cPametno=="D"
 
- RekapK()
- 
- if (gafin=="D" .or. gamat=="D")
-   	kalk_kontiranje_naloga( .t., lAuto )
- endif
 
- P_Fin( lAuto )
+static function kalk_provjera_cijena()
+local cIdFirma
+local cIdVd
+local cBrDok
 
- gAFin:=lgAFin
- gAMat:=lgAMat
-
- O_KALK_PRIPR
- if idvd $ "10#12#13#16#11#95#96#97#PR#RN" .and. gAFakt=="D"
- 	if idvd $ "16#96"
- 		cOdg:="N"
- 	else
- 		cOdg:="D"
- 	endif
- 	if Pitanje(,"Formirati dokument u FAKT ?",cOdg)=="D"
- 		P_Fakt()
- 	endif
- endif
-
-endif // cpametno=="D"
-
-O_KALK_PRIPR
 select kalk_pripr
+go top
 
-// azuriraj i kalk_pripremu p_doksrc
-p_to_doksrc()
+do while !eof()
 
-O_KALK_PRIPR
-IF lViseDok .and. LEN(aOstaju)>0
-  // izbrisi samo azurirane
-  GO TOP
-  DO WHILE !EOF()
-    SKIP 1
-    nRecNo:=RECNO()
-    SKIP -1
-    IF ASCAN(aOstaju,idfirma+idvd+brdok) = 0
-      DELETE
-    ENDIF
-    GO (nRecNo)
-  ENDDO
-  __dbpack()
-  MsgBeep("U kalk_pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
-ELSE
-  select kalk_pripr; zap
-ENDIF
+	cIdFirma := field->idfirma
+	cIdVd := field->idvd
+	cBrDok := field->brdok
 
+	do while !eof() .and. cIdfirma == field->idfirma .and. cIdvd == field->idvd .and. cBrdok == field->brdok
+ 		if field->idvd == "11".and. field->vpc == 0
+  			Beep(1)
+  			Msg('VPC = 0, pozovite "savjetnika" sa <Alt-H>!')
+  			close all
+  			return .f.
+ 		endif
+ 		skip
+	enddo
 
-if cPametno=="D"
+	select kalk_pripr
 
- O_KALK_PRIPR2
+enddo 
 
- if idvd $ "18#19"  // otprema
-  if kalk_pripr2->(reccount2())<>0
-   Beep(1)
-   Box(,4,70)
-    @ m_x+1,m_y+2 SAY "1. Cijene robe su promijenjene."
-    @ m_x+2,m_y+2 SAY "2. Formiran je dokument nivelacije:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
-    @ m_x+3,m_y+2 SAY "3. Nove cijene su stavljene u sifrarnik."
-    @ m_x+4,m_y+2 SAY "3. Obradite ovaj dokument."
-    inkey(0)
-   BoxC()
-   select kalk_pripr
-   append from kalk_pripr2
-   select kalk_pripr2; zap
-  endif
-
- elseif idvd $ "95"  // otprema
-  if kalk_pripr2->(reccount2())<>0
-   Beep(1)
-   Box(,4,70)
-    @ m_x+1,m_y+2 SAY "1. Formiran je dokument 95 na osnovu inventure."
-    @ m_x+4,m_y+2 SAY "3. Obradite ovaj dokument."
-    inkey(0)
-   BoxC()
-   select kalk_pripr
-   append from kalk_pripr2
-   select kalk_pripr2; zap
-  endif
+return .t.
 
 
- elseif idvd $ "16"  .and. gGen16=="1" 
-   // nakon otpreme doprema
+static function kalk_provjera_integriteta( aDoks, lViseDok )
+local nBrDoks
+local cIdFirma
+local cIdVd
+local cBrDok
+local dDatDok
+local cIdZaduz2
 
-  if kalk_pripr2->(reccount2())<>0
-   Beep(1)
-   Box(,4,70)
-    if lOSitInv   // logicka: Otpis SITnog INVentara
-      @ m_x+1,m_y+2 SAY "1. Otpis se evidentira na mjestu troska: "+pripr2->idkonto
-      @ m_x+2,m_y+2 SAY "2. Formiran je dokument :"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
-      @ m_x+3,m_y+2 SAY "3. Obradite ovaj dokument."
-    else
-      @ m_x+1,m_y+2 SAY "1. Roba je otpremljena u magacin "+pripr2->idkonto
-      @ m_x+2,m_y+2 SAY "2. Formiran je dokument dopreme:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
-      @ m_x+3,m_y+2 SAY "3. Obradite ovaj dokument."
-    endif
-    inkey(0)
-   BoxC()
-   select kalk_pripr
-   append from kalk_pripr2
-   select kalk_pripr2; zap
-  endif
+select kalk_pripr
+go top
 
- elseif idvd $ "11"  // nakon povrata unos u drugu prodavnicu
-  if kalk_pripr2->(reccount2())<>0
-   Beep(1)
-   Box(,4,70)
-    @ m_x+1,m_y+2 SAY "1. Roba je prenesena u prodavnicu "+pripr2->idkonto
-    @ m_x+2,m_y+2 SAY "2. Formiran je dokument zaduzenja:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
-    @ m_x+3,m_y+2 SAY "3. Obradite ovaj dokument."
-    inkey(0)
-    BoxC()
-   select kalk_pripr
-   append from kalk_pripr2
-   select kalk_pripr2; zap
-  endif
- endif
+nBrDoks := 0
 
-endif // cPametno=="D"
+do while !eof()
 
+	++ nBrDoks
 
-if lFormiranje11ke
-	Get11FromSmece(cBrojZadnje11ke)
+	cIdFirma := field->idfirma
+	cIdVd := field->idvd
+	cBrDok := field->brdok
+	dDatDok := field->datdok
+	cIdzaduz2 := field->idzaduz2
+
+	do while !eof() .and. cIdFirma == field->idfirma .and. cIdVd == field->idvd .and. cBrdok == field->brdok
+
+ 		if gMetodaNC <> " " .and. ( field->error == "1" .and. field->tbanktr == "X" )
+   			Beep(2)
+   			MSG("Izgenerisane stavke su ispravljane, azuriranje nece biti izvrseno",6)
+   			close all
+			return .f.
+ 		endif
+
+ 		if gMetodaNC <> " " .and. field->error == "1"
+   			Beep(2)
+   			MSG("Utvrdjena greska pri obradi dokumenta, rbr: "+rbr,6)
+   			close all
+			return .f.
+ 		endif
+
+ 		if !(IsJerry() .and. cIdVd = "4")
+ 			if gMetodaNC <> " " .and. field->error == " "
+ 				Beep(2)
+ 				MSG("Dokument je izgenerisan, sa <a-F10> izvrsiti njegovu obradu",6)
+ 				close all
+				return .f.
+ 			endif
+ 			if dDatDok <> field->datdok
+ 				Beep(2)
+ 				if Pitanje(,"Datum razlicit u odnosu na prvu stavku. Ispraviti ?", "D") == "D"
+ 					replace field->datdok with dDatDok
+ 				else
+ 					close all
+					return .f.
+ 				endif
+ 			endif
+ 		endif
+	
+		if field->idvd <> "24" .and. empty(field->mu_i) .and. empty(field->pu_i)
+    		Beep(2)
+    		Msg("Stavka broj " + field->rbr + ". neobradjena , sa <a-F10> pokrenite obradu")
+    		close all
+			return .f.
+ 		endif
+ 		
+		if cIdzaduz2 <> field->idzaduz2
+    		Beep(2)
+    		Msg("Stavka broj " + field->rbr + ". razlicito polje RN u odnosu na prvu stavku")
+    		close all
+			return .f.
+ 		endif
+
+ 		skip
+	
+	enddo
+
+	select kalk
+	seek cIdFirma + cIdVD + cBrDok
+	
+	if found()
+  		Beep(1)
+  		Msg("Vec postoji dokument pod brojem " + cIdFirma + "-" + cIdvd + "-" + ALLTRIM(cBrDok) )
+  		if !lViseDok
+			close all
+			return .f.
+		else
+    		AADD( aDoks, cIdFirma + cIdVd + cBrDok )
+		endif
+	endif
+
+	select kalk_pripr
+
+enddo 
+
+if gMetodaNC <> " " .and. nBrDoks > 1
+	Beep(1)
+  	Msg("U kalk_pripremi je vise dokumenata.Prebaci ih u smece, pa obradi pojedinacno")
+  	close all
+	return .f.
 endif
 
 close all
+
+return .t.
+
+
+
+// provjerava da li u pripremi postoji vise dokumeata
+static function kalk_provjeri_duple_dokumente( aRezim )
+local lViseDok := .f.
+
+O_KALK_PRIPR
+GO BOTTOM
+
+cTest := field->idfirma + field->idvd + field->brdok
+
+GO TOP
+
+if cTest <> field->idfirma + field->idvd + field->brdok
+	Beep(1)
+ 	Msg("U kalk_pripremi je vise dokumenata! Ukoliko zelite da ih azurirate sve#"+;
+      "odjednom (npr.ako ste ih preuzeli sa drugog racunara putem diskete)#"+;
+      "na sljedece pitanje odgovorite sa 'D' i dokumenti ce biti azurirani#"+;
+      "bez provjera koje se vrse pri redovnoj obradi podataka.")
+  	if Pitanje(,"Zelite li bezuslovno dokumente azurirati? (D/N)","N")=="D"
+    	
+		lViseDok := .t.
+    	aRezim := {}
+
+    	AADD(aRezim, gCijene )
+    	AADD(aRezim, gMetodaNC )
+   		gCijene   := "1"
+    	gMetodaNC := " "
+  	endif
+
+elseif gCijene == "2"       
+	// ako je samo jedan dokument u kalk_pripremi
+
+	DO WHILE !EOF()         
+		// i strogi rezim rada
+    	IF ERROR=="1"
+      		Beep(1)
+      		Msg("Program je kontrolisuci redom stavke utvrdio da je stavka#"+;
+          		"br."+rbr+" sumnjiva! Ukoliko bez obzira na to zelite da izvrsite#"+;
+          		"azuriranje ovog dokumenta, na sljedece pitanje odgovorite#"+;
+          		"sa 'D'.")
+      		IF Pitanje(,"Zelite li dokument azurirati bez obzira na upozorenje? (D/N)","N")=="D"
+        		aRezim := {}
+        		AADD(aRezim, gCijene )
+        		AADD(aRezim, gMetodaNC )
+        		gCijene   := "1"
+      		ENDIF
+      		EXIT
+    	ENDIF
+    	SKIP 1
+  	ENDDO
+
+endif
+
+return lViseDok
+
+
+
+static function o_kalk_za_azuriranje()
+
+O_KALK
+O_KALK_DOKS
+O_KALK_PRIPR
+
+if (( field->tprevoz == "R" .or. field->TCarDaz == "R" .or. field->TBankTr == "R" .or. ;
+   field->TSpedTr == "R" .or. field->TZavTr == "R" ) .and. field->idvd $ "10#81" )  .or. ;
+   field->idvd $ "RN"
+
+	O_SIFK
+   	O_SIFV
+    O_ROBA
+    O_TARIFA
+    O_KONCIJ
+    select kalk_pripr
+    RaspTrosk( .t. )
+
+endif
+
 return
+
+
+
+// ----------------------
+// ----------------------
+static function kalk_azur_sql(oServer)
+local lOk
+local record := hb_hash()
+local _doks_nv := 0
+local _doks_vpv := 0
+local _doks_mpv := 0
+local _doks_rabat := 0
+
+// azuriraj kalk
+MsgO("sql kalk_kalk")
+
+SELECT KALK_PRIPR
+GO TOP
+lOk := .t.
+sql_kalk_kalk_update("BEGIN")
+
+do while !eof()
+ 
+   record["id_firma"] := field->idfirma
+   record["id_vd"] := field->idvd
+   record["br_dok"] := field->brdok
+   record["r_br"] := VAL(field->Rbr)
+   record["dat_dok"] := field->datdok
+   record["br_fakt_p"] := field->brfaktp
+   record["dat_fakt_p"] := field->datfaktp
+   record["id_roba"] := field->idroba
+   record["id_konto"] := field->idkonto
+   record["id_konto2"] := field->idkonto2
+   record["id_zaduz"] := field->idzaduz
+   record["id_zaduz2"] := field->idzaduz2
+   record["id_partner"] := field->idpartner
+   record["dat_kurs"] := field->datkurs
+   record["kolicina"] := field->kolicina
+   record["g_kolicina"] := field->gkolicina
+   record["g_kolicina_2"] := field->gkolicin2
+   record["f_cj"] := field->fcj
+   record["f_cj2"] := field->fcj2
+   record["f_cj3"] := field->fcj3
+   record["t_rabat"] := field->trabat
+   record["rabat"] := field->rabat
+   record["t_prevoz"] := field->tprevoz
+   record["prevoz"] := field->prevoz
+   record["t_prevoz2"] := field->tprevoz2
+   record["prevoz2"] := field->prevoz2
+   record["t_banktr"] := field->tbanktr
+   record["banktr"] := field->banktr
+   record["t_spedtr"] := field->tspedtr
+   record["spedtr"] := field->spedtr
+   record["t_cardaz"] := field->tcardaz
+   record["cardaz"] := field->cardaz
+   record["t_zavtr"] := field->tzavtr
+   record["zavtr"] := field->zavtr
+   record["nc"] := field->nc
+   record["t_marza"] := field->tmarza
+   record["marza"] := field->marza
+   record["vpc"] := field->vpc
+   record["rabatv"] := field->rabatv
+   record["vpc_sa_pp"] := field->vpcsapp
+   record["t_marza2"] := field->tmarza2
+   record["marza2"] := field->marza2
+   record["mpc"] := field->mpc
+   record["id_tarifa"] := field->idtarifa
+   record["mpc_sa_pp"] := field->mpcsapp
+   record["m_konto"] := field->mkonto
+   record["p_konto"] := field->pkonto
+   record["rok_tr"] := field->roktr
+   record["mu_i"] := field->mu_i
+   record["pu_i"] := field->pu_i
+   record["error"] := field->error
+   record["pod_br"] := field->podbr
+                
+    if !sql_kalk_kalk_update( "ins", record )
+       lOk := .f.
+       exit
+    
+    endif
+	
+	// setuj total varijable za upisivanje u tabelu doks   
+	kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat ) 
+	
+	SKIP
+
+enddo
+
+if lOk
+  update_semaphore_version("kalk_kalk")
+  sql_kalk_kalk_update("END")
+else
+  sql_kalk_kalk_update("ROLLBACK")
+endif
+
+MsgC()
+
+
+// azuriraj doks...
+MsgO("sql kalk_doks")
+
+SELECT KALK_PRIPR
+GO TOP
+
+lOk := .t.
+
+sql_kalk_doks_update("BEGIN")
+
+record := hb_hash()
+
+record["id_firma"] := field->idfirma
+record["id_vd"] := field->idvd
+record["br_dok"] := field->brdok
+record["r_br"] := VAL(field->Rbr)
+record["br_fakt_p"] := field->brfaktp
+record["id_partner"] := field->idpartner
+record["id_zaduz"] := field->idzaduz
+record["id_zaduz2"] := field->idzaduz2
+record["p_konto"] := field->pkonto
+record["m_konto"] := field->mkonto
+record["nv"] := _doks_nv
+record["vpv"] := _doks_vpv
+record["rabat"] := _doks_rabat
+record["mpv"] := _doks_mpv
+record["pod_br"] := field->podbr
+record["sifra"] := ""
+ 
+if !sql_kalk_doks_update( "ins", record )
+       lOk := .f.
+endif
+   
+if lOk
+	update_semaphore_version("kalk_doks")
+  	sql_kalk_doks_update("END")
+else
+  	sql_kalk_doks_update("ROLLBACK")
+endif
+
+MsgC()
+
+return lOk
+
 
 
 function Azur9()

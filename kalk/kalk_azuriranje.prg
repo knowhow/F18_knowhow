@@ -58,7 +58,7 @@ endif
 // treba li generisati šta-god ?
 lGenerisiZavisne := kalk_generisati_zavisne_dokumente()
 
-if lGenerisiZavisne == .t.
+if lGenerisiZavisne = .t.
 	// generiši, 11-ke, 96-ce itd...
 	kalk_zavisni_dokumenti()
 endif
@@ -97,7 +97,7 @@ else
 	zap
 endif
 
-if lGnerisiZavisne == .t.
+if lGenerisiZavisne = .t.
 	// vrati iz pripr2 dokumente, ako postoje !
 	kalk_vrati_iz_pripr2()
 endif
@@ -199,7 +199,7 @@ endif
 
 select KALK
 
-if lGenerisi == .t. 
+if lGenerisi = .t. 
 
 	RekapK()
  
@@ -259,21 +259,21 @@ return
 
 
 static function kalk_generisati_zavisne_dokumente()
-local cPametno := "N"
+local lGen := .f.
 
 if gCijene == "2"
-	cPametno := "D"
+	lGen := .t.
 else
  	if gMetodaNC == " "
-  		cPametno := "N"
+  		lGen := .f.
  	elseif lAuto
-		cPametno := "D"
+		lGen := .t.
 	else
-  		cPametno := Pitanje(,"Zelite li formirati zavisne dokumente pri azuriranju","D")
+  		lGen := Pitanje(,"Zelite li formirati zavisne dokumente pri azuriranju","D") == "D"
  	endif
 endif
 
-return cPametno
+return lGen
 
 
 
@@ -439,6 +439,8 @@ local cIdFirma
 local cIdVd
 local cBrDok
 
+O_KALK_PRIPR
+
 select kalk_pripr
 go top
 
@@ -472,6 +474,9 @@ local cIdVd
 local cBrDok
 local dDatDok
 local cIdZaduz2
+
+O_KALK
+O_KALK_PRIPR
 
 select kalk_pripr
 go top
@@ -576,11 +581,11 @@ static function kalk_provjeri_duple_dokumente( aRezim )
 local lViseDok := .f.
 
 O_KALK_PRIPR
-GO BOTTOM
+go bottom
 
 cTest := field->idfirma + field->idvd + field->brdok
 
-GO TOP
+go top
 
 if cTest <> field->idfirma + field->idvd + field->brdok
 	Beep(1)
@@ -664,9 +669,19 @@ local _doks_rabat := 0
 // azuriraj kalk
 MsgO("sql kalk_kalk")
 
-SELECT KALK_PRIPR
-GO TOP
+O_KALK_PRIPR
+
+select kalk_pripr
+go top
+
 lOk := .t.
+
+// definisi glavne varijable record-a
+record["id_firma"] := field->idfirma
+record["id_vd"] := field->idvd
+record["br_dok"] := field->brdok
+record["dat_dok"] := field->datdok
+ 
 sql_kalk_kalk_update("BEGIN")
 
 do while !eof()
@@ -750,14 +765,19 @@ MsgC()
 // azuriraj doks...
 MsgO("sql kalk_doks")
 
-SELECT KALK_PRIPR
-GO TOP
+O_KALK_PRIPR
+select kalk_pripr
+go top
 
 lOk := .t.
 
-sql_kalk_doks_update("BEGIN")
-
 record := hb_hash()
+record["id_firma"] := field->idfirma
+record["id_vd"] := field->idvd
+record["br_dok"] := field->brdok
+record["dat_dok"] := field->datdok
+
+sql_kalk_doks_update("BEGIN")
 
 record["id_firma"] := field->idfirma
 record["id_vd"] := field->idvd
@@ -774,7 +794,7 @@ record["vpv"] := _doks_vpv
 record["rabat"] := _doks_rabat
 record["mpv"] := _doks_mpv
 record["pod_br"] := field->podbr
-record["sifra"] := field->sifra
+//record["sifra"] := field->sifra
  
 if !sql_kalk_doks_update( "ins", record )
        lOk := .f.

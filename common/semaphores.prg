@@ -69,9 +69,6 @@ if  LEN(gaDBFs[nPos])>3
 
         if (nVersion == -1)
           // semafor je resetovan
-          //if gDebug > 9
-          //    log_write("prije eval from sql -1")
-          //endif
           EVAL( gaDBFs[nPos, 4], "FULL")
           update_semaphore_version(cF18Tbl, .f.)
 

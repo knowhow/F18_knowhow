@@ -270,7 +270,7 @@ endif
 // ------------------------------
 // koristi azur_sql
 // ------------------------------
-function kalk_doks_from_sql_server(dat_dok)
+function kalk_doks_from_sql_server(algoritam)
 local _qry
 local _counter
 local _rec
@@ -278,11 +278,17 @@ local _qry_obj
 local _server := pg_server()
 local _seconds
 local _x, _y
+local _dat
+
+if algoritam == NIL
+  algoritam := "FULL"
+endif
 
 _x := maxrows() - 15
 _y := maxcols() - 20
 
-@ _x + 1, _y + 2 SAY "update kalk_doks: " + iif( dat_dok == NIL, "FULL", "DATE")
+@ _x + 1, _y + 2 SAY "update kalk_doks: " + algoritam
+
 _seconds := SECONDS()
 
 _qry :=  "SELECT " + ;
@@ -290,8 +296,10 @@ _qry :=  "SELECT " + ;
 		"pkonto, mkonto, nv, vpv, rabat, mpv, podbr, sifra " + ;
 		"FROM " + ;
 		"fmk.kalk_doks"  
-if dat_dok != NIL
-    _qry += " WHERE datdok >= " + _sql_quote(dat_dok)
+
+if algoritam == "DATE"
+    _dat = get_dat_from_semaphore("kalk_kalk")
+    _qry += " WHERE datdok >= " + _sql_quote(_dat)
 endif
 
 _qry_obj := _server:Query(_qry) 
@@ -303,17 +311,17 @@ endif
 SELECT F_KALK_DOKS
 my_use ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
 
-if dat_dok == NIL
+if algoritam == "FULL"
     // "full" algoritam
     log_write("dat_dok = nil full algoritam") 
     ZAP
 else
-    log_write("dat_dok <> ni date algoritam") 
+    log_write("dat_dok <> nil date algoritam") 
     // "date" algoritam  - brisi sve vece od zadanog datuma
     SET ORDER TO TAG "DAT"
     // tag je "DatDok" nije DTOS(DatDok)
-    seek dat_dok
-    do while !eof() .and. (field->datDok >= dat_dok) 
+    seek _dat
+    do while !eof() .and. (field->datDok >= _dat) 
         // otidji korak naprijed
         SKIP
         _rec := RECNO()

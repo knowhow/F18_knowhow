@@ -1097,14 +1097,7 @@ return
  */
 
 function PovFin(cidfirma,cidvn,cbrnal)
-*{
 local nRec
-
-if Klevel<>"0"
-    Beep(2)
-    Msg("Nemate pristupa ovoj opciji !",4)
-    closeret2
-endif
 
 O_SUBAN
 O_FIN_PRIPR

@@ -73,10 +73,6 @@ endif
 
 save screen to cScr
 
-if KLevel<>"0"
-	MsgBeep("Nemate pravo na koristenje ove opcije")
-endif
-
 cls
 
 if fRS

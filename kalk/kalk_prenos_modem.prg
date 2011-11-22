@@ -277,12 +277,6 @@ PPPDisk(.t.)
 
 fSifk:=.t.
 
-if Klevel<>"0"
-    Beep(2)
-    Msg("Nemate pristupa ovoj opciji !",4)
-    closeret
-endif
-
 // if Pitanje(,"Izvrsiti prenos sa disketa ?","N")=="N"
 //   closeret
 // endif

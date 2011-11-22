@@ -357,12 +357,6 @@ PRIVATE cKonvBrDok  := ""
 
 PPPDisk(.t.)
 
-if Klevel<>"0"
-    Beep(2)
-    Msg("Nemate pristupa ovoj opciji !",4)
-    closeret
-endif
-
 IF !Unzipuj(cFZaPrijem,,cLokPren)   // raspakuje u PRIVPATH
 	CLOSERET
 ENDIF

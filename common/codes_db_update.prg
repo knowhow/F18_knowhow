@@ -88,6 +88,7 @@ function f18_gather(values, where)
 local _table
 local _key, _field_b
 local _ok := .f.
+local _ids := {}
 
 _table := LOWER(ALIAS())
 
@@ -105,7 +106,7 @@ if sql_table_update(_table, "del", values, where )
    if sql_table_update(_table, "ins", values)
        update_semaphore_version(_table, .t.)
    
-       AADD(_ids, _rec["id"])
+       AADD(_ids, values["id"])
        push_ids_to_semaphore( _table, _ids )
 
        sql_table_update(_table, "END")

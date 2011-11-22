@@ -964,7 +964,7 @@ do while .t.
 
      _vars := f18_scatter_global_vars("w")
      f18_gather(_vars)
-
+           
      //f18_gater radi sav posao GatherR("w")
 
      // TODO !!! 
@@ -1027,7 +1027,11 @@ do while .t.
      
 
       _vars := f18_scatter_global_vars("w")
-      f18_gather(_vars)
+      if ! f18_gather(_vars)
+           // brisi appendovani zapis
+           delete
+      endif
+
       // TODO !! 
       GatherSifk("w", lNovi )
       

@@ -48,7 +48,7 @@ if fieldpos("ukstavki") <> 0
 endif
 
 // provjeri razne uslove, metode itd...
-if !kalk_provjera_integriteta( @aOstaju, lViseDok )
+if gCijene == "2" .and. !kalk_provjera_integriteta( @aOstaju, lViseDok )
 	// nisu zadovoljeni uslovi, bjaži...
 	return
 endif

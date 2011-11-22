@@ -16,6 +16,13 @@ function send2comport(cStr)
 
 return
 
+function sql_azur()
+return .t.
+
+function GathSQL()
+return .t.
+
+
 function rloptlevel()
 return 0
 

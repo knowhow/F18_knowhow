@@ -107,7 +107,6 @@ do while !eof()
    record["d_p"] := field->d_p
    record["iznos"] := field->iznosbhd
 
-
    if !sql_fin_suban_update("ins", record )
        lOk := .f.
        exit
@@ -116,7 +115,7 @@ do while !eof()
 enddo
 
 if lOk
-  update_semaphore_version("fin_suban")
+  update_semaphore_version("fin_suban", .t.)
   sql_fin_suban_update("END")
 else
   sql_fin_suban_update("ROLLBACK")

@@ -13,6 +13,50 @@
 
 // -----------------------------------
 // -----------------------------------
+function brisi_stavku_u_tabeli(table)
+local _rec := hb_hash()
+local _ids := {}
+
+sql_table_update(table, "BEGIN")
+
+_rec["id"] := field->id
+// ostala polja su nevazna za brisanje
+
+if sql_table_update(table, "del", _rec)
+   update_semaphore_version(table, .t.)
+   
+   AADD(_ids, _rec["id"])
+   push_ids_to_semaphore( table, _ids )
+
+   sql_table_update(table, "END")
+   // zapujemo dbf
+   DELETE
+
+   return .t.
+else
+   sql_table_update(table, "ROLLBACK")
+   return .f.
+endif
+
+ /* 
+    nTArea := SELECT()
+    
+    // logiraj promjenu brisanja stavke
+    if _LOG_PROMJENE == .t.
+    EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
+    "stavka: " + to_str( FIELDGET(1) ), "", "", DATE(), DATE(), "", ;
+    "brisanje sifre iz sifrarnika")
+    endif
+    
+    select (nTArea)
+*/
+
+return .t.
+
+
+
+// -----------------------------------
+// -----------------------------------
 function brisi_sve_u_tabeli(table)
 local _rec := hb_hash()
 
@@ -22,7 +66,7 @@ _rec["id"] := NIL
 // ostala polja su nevazna za brisanje
 
 if sql_table_update(table, "del", _rec)
-   update_semaphore_version(table)
+   update_semaphore_version(table, .t.)
    sql_table_update(table, "END")
    // zapujemo dbf
    ZAP
@@ -57,7 +101,6 @@ local _key
 
 _tbl := "fmk." + LOWER(table)
 
-altd()
 DO CASE
    CASE op == "BEGIN"
     _qry := "BEGIN;"

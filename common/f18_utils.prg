@@ -11,90 +11,6 @@
 
 #include "fmk.ch"
 
-// ----------------------------------------------------------------
-// xSemaphoreParam se prosjedjuje eval funkciji ..from_sql_server
-// ----------------------------------------------------------------
-function my_use(cTable, cAlias, lNew, cRDD, xSemaphoreParam)
-local nPos
-local cF18Tbl
-local nVersion
-
-if lNew == NIL
-   lNew := .f.
-endif
-
-/*
-{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
-...
-*/
-
-// /home/test/suban.dbf => suban
-cTable := FILEBASE(cTable)
-
-// SUBAN
-nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cTable)} )
-
-if cAlias == NIL
-   cAlias := gaDBFs[nPos, 2]
-endif
-
-if cRDD == NIL
-  cRDD = "DBFCDX"
-endif
-
-if lNew
-   SELECT NEW
-endif
-
-
-// mi otvaramo ovu tabelu ~/.F18/bringout/fin_pripr
-//if gDebug > 9
-// log_write( "LEN gaDBFs[" + STR(nPos) + "]" + STR(LEN(gADBFs[nPos])) + " USE (" + my_home() + gaDBFs[nPos, 3]  + " ALIAS (" + cAlias + ") VIA (" + cRDD + ") EXCLUSIVE")
-//endif
-
-if  LEN(gaDBFs[nPos])>3 
-
-   if (cRDD != "SEMAPHORE")
-        cF18Tbl := gaDBFs[nPos, 3]
-
-        //if gDebug > 9
-        //    log_write("F18TBL =" + cF18Tbl)
-        //endif
-
-        nVersion :=  get_semaphore_version(cF18Tbl)
-        if gDebug > 9
-          log_write("Tabela:" + cF18Tbl + " semaphore nVersion=" + STR(nVersion) + " last_semaphore_version=" + STR(last_semaphore_version(cF18Tbl)))
-        endif
-
-        if (nVersion == -1)
-          // semafor je resetovan
-          //if gDebug > 9
-          //    log_write("prije eval from sql -1")
-          //endif
-          EVAL( gaDBFs[nPos, 4], NIL)
-
-          update_semaphore_version(cF18Tbl)
-        else
-            // moramo osvjeziti cache
-           if nVersion < last_semaphore_version(cF18Tbl)
-             //if gDebug > 9
-             // log_write("prije eval from sql < last_semaphore_version")
-             //endif
-             EVAL( gaDBFs[nPos, 4], NIL)
-             update_semaphore_version(cF18Tbl)
-           endif
-        endif
-   else
-      // poziv is update from sql server procedure
-      cRDD := "DBFCDX" 
-   endif
-
-endif
-
-USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) VIA (cRDD) EXCLUSIVE
-
-return
-
 /*
 #command USEX <(db)>                                                   ;
              [VIA <rdd>]                                                ;
@@ -220,9 +136,9 @@ AADD( gaDbfs, { F_SAST , "SAST"  , "sast"  } )
 AADD( gaDbfs, { F_VRSTEP , "VRSTEP"  , "vrstep"  } )
 AADD( gaDbfs, { F_RJ     ,  "RJ"      , "rj"   } )
 AADD( gaDbfs, { F_TDOK   ,  "TDOK"    , "tdok"   } )
-AADD( gaDbfs, { F_KONTO  ,  "KONTO"   , "konto", {| id | konto_from_sql_server(id) }  } )
+AADD( gaDbfs, { F_KONTO  ,  "KONTO"   , "konto", {| param | konto_from_sql_server(param) }, "IDS"  } )
 AADD( gaDbfs, { F_VPRIH  ,  "VPRIH"   , "vpprih"   } )
-AADD( gaDbfs, { F_PARTN  ,  "PARTN"   , "partn", {| id | partn_from_sql_server(id) }   } )
+AADD( gaDbfs, { F_PARTN  ,  "PARTN"   , "partn", {| param | partn_from_sql_server(param) }, "IDS"   } )
 AADD( gaDbfs, { F_TNAL   ,  "TNAL"    , "tnal"   } )
 AADD( gaDbfs, { F_PKONTO ,  "PKONTO"  , "pkonto"   } )
 AADD( gaDbfs, { F_VALUTE ,  "VALUTE"  , "valute"   } )
@@ -253,12 +169,12 @@ AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )
 AADD( gaDbfs, { F__PARTN ,  "_PARTN"  , "fin__partn"  } )
 AADD( gaDbfs, { F_POM    ,  "POM"     , "fin_pom"  } )
 AADD( gaDbfs, { F_POM2   ,  "POM2"    , "fin_pom2"  } )
-AADD( gaDbfs, { F_KUF    ,  "FIN_KUF"     , "fin_kuf"   } )
-AADD( gaDbfs, { F_KIF    ,  "FIN_KIF"     , "fin_kif"   } )
-AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|dDatDok| fin_suban_from_sql_server(dDatDok) } } )
-AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal", {|dDatDok| fin_anal_from_sql_server(dDatDok) }   } )
-AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint", {|dDatDok| fin_sint_from_sql_server(dDatDok) }    } )
-AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog", {|dDatDok| fin_nalog_from_sql_server(dDatDok) }   } )
+AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"   } )
+AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"   } )
+AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|dDatDok| fin_suban_from_sql_server(dDatDok) }, "DATE" } )
+AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",    {|dDatDok| fin_anal_from_sql_server(dDatDok)  }, "DATE" } )
+AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|dDatDok| fin_sint_from_sql_server(dDatDok)  }, "DATE" } )
+AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|dDatDok| fin_nalog_from_sql_server(dDatDok) }, "DATE" } )
 AADD( gaDbfs, { F_FIN_RJ ,  "FIN_RJ"  , "fin_rj"   } )
 AADD( gaDbfs, { F_FUNK   ,  "FUNK"    , "fin_funk"  } )
 AADD( gaDbfs, { F_BUDZET ,  "BUDZET"  , "fin_budzet"  } )

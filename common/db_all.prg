@@ -75,10 +75,10 @@ if cZn==nil
   cZn:="_"
 endif
 aStruct:=DBSTRUCT()
-while .t.
-  if rlock()
-     for i:=1 to len(aStruct)
+ 
+for i:=1 to len(aStruct)
      cImeP:=aStruct[i,1]
+/*
      if  (cImeP="BRISANO")
 
               // nista
@@ -98,23 +98,16 @@ while .t.
           endif
 
      else
-
+*/
           cVar:=cZn+cImeP
-          IF "U"$TYPE(cVar)
+          IF "U" $ TYPE(cVar)
               MsgBeep2("Neuskladj.strukt.baza! "+;
                     "F-ja: GATHER(), Alias: "+ALIAS()+", Polje: "+cImeP)
           ELSE
             field->&cImeP:= &cVar
           ENDIF
-      endif
-    next
-    dbunlock()
-  else
-      inkey(0.4)
-      loop
-  end
-  exit
-end
+ //     endif
+ next
 
 return nil
 *}

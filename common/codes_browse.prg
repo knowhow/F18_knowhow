@@ -536,7 +536,7 @@ do case
 
   case (Ch==K_CTRL_N .or. Ch==K_F2 .or. Ch==K_F4 .or. Ch==K_CTRL_A)
 
-    if EditSifItem(Ch,nOrder,aZabIsp)==1
+    if EditSifItem(Ch, nOrder, aZabIsp) == 1
       return DE_REFRESH
     endif
     RETURN DE_CONT
@@ -556,34 +556,13 @@ do case
   case Ch==K_ALT_F
      uslovsif()
      return DE_REFRESH
-
-   case Ch==K_CTRL_T
-    if Pitanje(,"Zelite li izbrisati ovu stavku ??","D")=="D"
-      sql_delete()
-      delete
-      
-      nTArea := SELECT()
-      
-      // logiraj promjenu brisanja stavke
-      if _LOG_PROMJENE == .t.
-      	EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-		"stavka: " + to_str( FIELDGET(1) ), "", "", DATE(), DATE(), "", ;
-		"brisanje sifre iz sifrarnika")
-      endif
-      
-      select (nTArea)
-
-      return DE_REFRESH
-    else
-      return DE_CONT
-    endif
-
   case Ch==K_CTRL_F6
     Box(,1,30)
       public gIdFilter:=eval(ImeKol[TB:ColPos,2])
       @ m_x+1,m_y+2 SAY "Filter :" GET gidfilter
       read
     BoxC()
+
     if empty(gidfilter)
       set filter to
     else
@@ -592,6 +571,8 @@ do case
     endif
     return DE_REFRESH
 
+  case Ch==K_CTRL_T
+     return sif_brisi_stavku()
 
   case Ch==K_CTRL_F9
      return sif_brisi_sve()
@@ -833,23 +814,24 @@ do while .t.
 	    lShowPGroup := .f.
 	    
 	    if empty(ImeKol[i,3])  // ovdje se kroji matrica varijabli.......
-		cPom:=""  // area->nazpolja
+           // area->nazpolja
+		  cPom:=""  
 	     else
 	       if left(ImeKol[i,3],6)!="SIFK->"
-		cPom:="w"+ImeKol[i,3]    //npr WVPC2
-		// ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
-		// varijablu karakteristike("ROBA","V2")
-	       else
-	         // ako je SIFK->GRUP, prikazuj status
-	         if ALIAS() == "PARTN" .and. RIGHT(ImeKol[i,3],4) == "GRUP"
-		    lShowPGroup := .t.
-		 endif
-		 cPom:= "wSifk_"+substr(ImeKol[i,3],7)
-		 &cPom:= IzSifk(ALIAS(),substr(ImeKol[i,3],7))
-		 if &cPom = NIL  // ne koristi se !!!
-		    cPom:=""
-		 endif
-	       endif
+		      cPom:="w"+ImeKol[i,3]    //npr WVPC2
+		      // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
+		      // varijablu karakteristike("ROBA","V2")
+	        else
+	              // ako je SIFK->GRUP, prikazuj status
+	             if ALIAS() == "PARTN" .and. RIGHT(ImeKol[i,3],4) == "GRUP"
+		            lShowPGroup := .t.
+		         endif
+		         cPom:= "wSifk_"+substr(ImeKol[i,3],7)
+		         &cPom:= IzSifk(ALIAS(),substr(ImeKol[i,3],7))
+		         if &cPom = NIL  // ne koristi se !!!
+		            cPom:=""
+		         endif
+	         endif
 	     endif
 
 	     cPic:=""
@@ -980,18 +962,16 @@ do while .t.
      GatherR("w")
      GatherSifk("w" , Ch==K_CTRL_N)
 
-     sql_azur(.t.)
-
-     GathSQL("w")
      Scatter("w")
 
      if lastkey()==K_PGUP
-      skip -1
+       skip -1
      else
-      skip
+       skip
      endif
      if eof()
-         skip -1; exit
+         skip -1
+         exit
      endif
     endif
 
@@ -1003,7 +983,7 @@ do while .t.
 
    if lastkey()==K_ESC
       if lNovi
-	 go (nPrevRecNo)
+	     go (nPrevRecNo)
          return 0
       elseif Ch==K_F2
          return 0
@@ -1013,7 +993,7 @@ do while .t.
    else
 
      
-      if lNovi
+   if lNovi
 	
 	// provjeri da li vec ovaj id postoji ?
 	
@@ -1033,15 +1013,14 @@ do while .t.
 	    cOldDesc := _g_fld_desc("w")
 	endif
 
-	sql_append()
+	   //sql_append()
       
       endif
       
       GatherR("w")
       GatherSifk("w", lNovi )
-      sql_azur(.t.)
+      
       Scatter("w")
-      GathSQL("w")
       
       if _LOG_PROMJENE == .t.
          // daj nove vrijednosti
@@ -1869,32 +1848,30 @@ return
 
 */
 function GatherSifk(cTip, lNovi)
-
 local i
-private cPom
+local _alias
+local _field_b
 
 if lNovi
   if IzFmkIni('Svi','SifAuto','N')=='D'
-    sql_azur(.t.)
     Scatter()
     replace ID with NoviID_A()
-    //replsql ID with NoviID_A()
   endif
 endif
 
+_alias := ALIAS()
 for i:=1 to len(ImeKol)
+   if left(ImeKol[i,3], 6) == "SIFK->"
+     _field_b := MEMVARBLOCK( cTip + "Sifk_" + substr(ImeKol[i,3], 7))
 
-   if left(ImeKol[i,3],6)=="SIFK->"
-     cPom:= cTip+"Sifk_"+substr(ImeKol[i,3],7)
-     if IzSifk(ALIAS(),substr(ImeKol[i,3],7),(ALIAS())->id) <> NIL
+     if IzSifk( _alias, substr(ImeKol[i,3],7), (_alias)->id) <> NIL
        // koristi se
-       USifk(ALIAS(),substr(ImeKol[i,3],7),(ALIAS())->id,&cPom)
+       USifk( _alias, substr(ImeKol[i,3], 7), (_alias)->id, EVAL(_field_b) )
      endif
    endif
 next
 
 return
-
 
 /*!
  @function    NoviID_A
@@ -2781,6 +2758,19 @@ if lNFGR .and. !FOUND()
 	go (nRec)
 endif
 return
+
+// -------------------------------
+// -------------------------------
+static function sif_brisi_stavku()
+
+if Pitanje(,"Zelite li izbrisati ovu stavku ??","D")=="D"
+    brisi_stavku_u_tabeli(ALIAS())
+    return DE_REFRESH
+else
+    return DE_CONT
+endif
+
+RETURN DE_REFRESH
 
 // -------------------------------
 // -------------------------------

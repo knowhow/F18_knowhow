@@ -12,7 +12,91 @@
 #include "fmk.ch"
 #include "common.ch"
 
-// ------------------------------------
+// ----------------------------------------------------------------
+// semaphore_param se prosjedjuje eval funkciji ..from_sql_server
+// ----------------------------------------------------------------
+function my_use(cTable, cAlias, lNew, cRDD, semaphore_param)
+local nPos
+local cF18Tbl
+local nVersion
+
+if lNew == NIL
+   lNew := .f.
+endif
+
+/*
+{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
+...
+*/
+
+// /home/test/suban.dbf => suban
+cTable := FILEBASE(cTable)
+
+// SUBAN
+nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cTable)} )
+
+if cAlias == NIL
+   cAlias := gaDBFs[nPos, 2]
+endif
+
+if cRDD == NIL
+  cRDD = "DBFCDX"
+endif
+
+if lNew
+   SELECT NEW
+endif
+
+
+// mi otvaramo ovu tabelu ~/.F18/bringout/fin_pripr
+//if gDebug > 9
+// log_write( "LEN gaDBFs[" + STR(nPos) + "]" + STR(LEN(gADBFs[nPos])) + " USE (" + my_home() + gaDBFs[nPos, 3]  + " ALIAS (" + cAlias + ") VIA (" + cRDD + ") EXCLUSIVE")
+//endif
+
+if  LEN(gaDBFs[nPos])>3 
+
+   if (cRDD != "SEMAPHORE")
+        cF18Tbl := gaDBFs[nPos, 3]
+
+        //if gDebug > 9
+        //    log_write("F18TBL =" + cF18Tbl)
+        //endif
+
+        nVersion :=  get_semaphore_version(cF18Tbl)
+        if gDebug > 9
+          log_write("Tabela:" + cF18Tbl + " semaphore nVersion=" + STR(nVersion) + " last_semaphore_version=" + STR(last_semaphore_version(cF18Tbl)))
+        endif
+
+        if (nVersion == -1)
+          // semafor je resetovan
+          //if gDebug > 9
+          //    log_write("prije eval from sql -1")
+          //endif
+          EVAL( gaDBFs[nPos, 4], "FULL")
+          update_semaphore_version(cF18Tbl, .f.)
+
+        else
+            // moramo osvjeziti cache
+           if nVersion < last_semaphore_version(cF18Tbl)
+             if (semaphore_param == NIL) .and. LEN(gaDBFs[nPos])>4
+                 semaphore_param:= gaDBFs[nPos, 5]
+             endif
+             EVAL( gaDBFs[nPos, 4], semaphore_param )
+             update_semaphore_version(cF18Tbl, .f.)
+           endif
+        endif
+   else
+      // poziv is update from sql server procedure
+      cRDD := "DBFCDX" 
+   endif
+
+endif
+
+USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) VIA (cRDD) EXCLUSIVE
+
+return
+
+
 // ------------------------------------
 function last_semaphore_version(cTable)
 local cTmpQry
@@ -45,10 +129,10 @@ endif
 return oRet:Fieldget( 1 )
 
 /* ------------------------------------------
-  get_semaphore_version( "konto")
+  get_semaphore_version( "konto", last = .t. => last_version)
   -------------------------------------------
 */
-function get_semaphore_version(table)
+function get_semaphore_version(table, last)
 LOCAL _tbl_obj
 LOCAL _result
 LOCAL _qry
@@ -56,7 +140,12 @@ local _tbl
 local _server := pg_server()
 local _user := f18_user()
 
-_tbl := "fmk.semaphores_" + table
+// trebam last_version
+if last == NIL
+   last := .f.
+endif
+
+_tbl := "fmk.semaphores_" + LOWER(table)
 
 _result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
 
@@ -65,17 +154,23 @@ if _result <> 1
   return -1
 endif
 
-_qry := "SELECT version FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+_qry := "SELECT "
+if last
+  _qry +=  "MAX(last_trans_version) AS last_version"
+else
+  _qry += "version"
+endif
+_qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+
 _tbl_obj := _sql_query( _server, _qry )
 IF _tbl_obj == NIL
       MsgBeep( "problem sa:" + _qry)
       QUIT
 ENDIF
 
-_result := _tbl_obj:Fieldget( _tbl_obj:Fieldpos("version") )
+_result := _tbl_obj:Fieldget( _tbl_obj:Fieldpos( iif(last, "last_version", "version")) )
 
 RETURN _result
-
 
 /* ------------------------------------------
   reset_semaphore_version( "konto")
@@ -90,7 +185,7 @@ LOCAL _tbl
 LOCAL _user := f18_user()
 LOCAL _server := pg_server()
 
-_tbl := "fmk.semaphores_" + table
+_tbl := "fmk.semaphores_" + LOWER(table)
 _result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
 
 if (_result == 0)
@@ -111,48 +206,63 @@ _ret := _sql_query( _server, _qry )
 return _ret:Fieldget( _ret:Fieldpos("version") )
 
 
-/* ------------------------------------------
+/*
+  ------------------------------------------
   update_semaphore_version( "konto")
   -------------------------------------------
 */
-function update_semaphore_version(table)
+function update_semaphore_version(table, increment)
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
 LOCAL _tbl
 LOCAL _user := f18_user()
+LOCAL _last
 LOCAL _server := pg_server()
-LOCAL _last := 0
+LOCAL _ver_user, _last_ver
 
-_tbl := "fmk.semaphores_" + table
+_tbl := "fmk.semaphores_" + LOWER(table)
 
 _result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
+
+_last_ver := get_semaphore_version(table, .t.)
+
+if increment == NIL
+   increment := .t.
+endif
+
+_ver_user := _last_ver
+if increment
+   _ver_user++
+endif
 
 if (_result == 0)
    _qry := "INSERT INTO " + _tbl + ;
               "(user_code, version, last_trans_version) " + ;
-               "VALUES(" + _sql_quote(_user)  + ", 1, 1 )"
+               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + " , "+ STR(_ver_user) + ")"
    _ret := _sql_query( _server, _qry)
 
 else
-    _last := get_semaphore_version(table)
     _qry := "UPDATE " + _tbl + ;
-                " SET version=" + STR(_last + 1) + ;
+                " SET version=" + STR(_ver_user) + "," +;
+                " ids=NULL , dat=NULL " + ;
                 " WHERE user_code =" + _sql_quote(_user) 
     _ret := _sql_query( _server, _qry )
 
 endif
 
-// svim setuj last_trans_version
-_qry := "UPDATE " + _tbl + ;
-        " SET last_trans_version=" + STR(_last + 1)  
-_ret := _sql_query( _server, _qry )
+if increment
+    // svim setuj last_trans_version
+    _qry := "UPDATE " + _tbl + ;
+            " SET last_trans_version=" + STR(_last_ver + 1)  
+    _ret := _sql_query( _server, _qry )
 
-// kod svih usera verzija ne moze biti veca od nLast + 1
-_qry := "UPDATE " + _tbl + ;
-              " SET version=" + STR(_last + 1) + ;
-              " WHERE version > " + STR(_last + 1)
-_ret := _sql_query( _server, _qry )
+    // kod svih usera verzija ne moze biti veca od nLast + 1
+    _qry := "UPDATE " + _tbl + ;
+                " SET version=" + STR(_last_ver + 1) + ;
+                " WHERE version > " + STR(_last_ver + 1)
+    _ret := _sql_query( _server, _qry )
+endif
 
 _qry := "SELECT version from " + _tbl + ;
            " WHERE user_code =" + _sql_quote(_user) 
@@ -170,18 +280,26 @@ local _ret
 local _qry
 local _sql_ids
 local _i
+LOCAL _server := pg_server()
 
-if LEN(_ids) < 1
+if LEN(ids) < 1
    return .f.
 endif
 
-_tbl := "fmk.semaphores_" + table
-_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
+_tbl := "fmk.semaphores_" + LOWER(table)
+
+// treba dodati id za sve DRUGE korisnike
+_result := table_count(_tbl, "user_code <> " + _sql_quote(_user)) 
+
+if _result < 1
+   // jedan korisnik
+   return .t.
+endif
 
 // ARAY['id1', 'id2']
 _sql_ids := "ARRAY["
-for _i := 1 TO LEN(ids)
- _sql_ids += _sql_quote(_id) 
+for _i:=1 TO LEN(ids)
+ _sql_ids += _sql_quote(ids[_i]) 
  if _i < LEN(ids)
     _sql_ids := ","
  endif
@@ -191,7 +309,7 @@ _sql_ids += "]"
 
 _qry := "UPDATE " + _tbl + ;
               " SET ids = ids || " + _sql_ids + ;
-              " WHERE user_code =" + _sql_quote(_user) 
+              " WHERE user_code <> " + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
 return _ret
@@ -201,13 +319,14 @@ return _ret
 // vrati matricu id-ova
 //---------------------------------------
 function get_ids_from_semaphore( table )
-local _server :=  pg_server()
+//local _server :=  pg_server()
 local _tbl
 local _tbl_obj
 local _qry
 local _ids, _num_arr, _arr, _i
+LOCAL _server := pg_server()
 
-_tbl := "fmk.semaphores_" + table
+_tbl := "fmk.semaphores_" + LOWER(table)
 
 _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(f18_user())
 _tbl_obj := _sql_query( _server, _qry )
@@ -216,13 +335,17 @@ IF _tbl_obj == NIL
       QUIT
 ENDIF
 
-_ids := oTable:Fieldget( oTable:Fieldpos("ids") )
+_ids := _tbl_obj:Fieldget( _tbl_obj:Fieldpos("ids") )
+
+_arr := {}
+if _ids == NIL
+    return _arr
+endif
 
 // {id1,id2,id3}
 _ids := SUBSTR(_ids, 2, LEN(_ids)-2)
 
 _num_arr := numtoken(_ids, ",")
-_arr := {}
 
 for _i := 1 to _num_arr
    AADD(_arr, token(_ids, ",", _i))
@@ -254,6 +377,7 @@ local _ret
 local _qry
 local _sql_ids
 local _i
+LOCAL _server := pg_server()
 
 _tbl := "fmk.semaphores_" + table
 _result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
@@ -301,8 +425,6 @@ ENDIF
 nResult := oTable:Fieldget( oTable:Fieldpos("count") )
 
 
-
-
 /* ------------------------------  
   broj redova za tabelu
   --------------------------------
@@ -325,5 +447,3 @@ ENDIF
 nResult := oTable:Fieldget( oTable:Fieldpos("count") )
 
 RETURN nResult
-
-

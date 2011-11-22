@@ -108,7 +108,7 @@ do while !eof()
    record["iznos"] := field->iznosbhd
 
 
-   if !sql_fin_suban_update("rec", record )
+   if !sql_fin_suban_update("ins", record )
        lOk := .f.
        exit
     endif

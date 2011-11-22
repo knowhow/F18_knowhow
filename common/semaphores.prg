@@ -15,13 +15,13 @@
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
-function my_use(alias, table, lNew, cRDD, semaphore_param)
+function my_use(alias, table, new_area, _rdd, semaphore_param)
 local _pos
-local cF18Tbl
-local nVersion
+local _version
+local _area
 
-if lNew == NIL
-   lNew := .f.
+if new_area == NIL
+   new_area := .f.
 endif
 
 /*
@@ -29,51 +29,61 @@ endif
 ...
 */
 
-// /home/test/suban.dbf => suban
-alias := FILEBASE(alias)
+if VALTYPE(alias) <> "C"
+   // F_SUBAN
+   _pos := ASCAN(gaDBFs,  { |x|  x[1]==alias} )
+   alias := gaDBFs[_pos, 2]
+else
+   // /home/test/suban.dbf => suban
+   alias := FILEBASE(alias)
+endif
 
 // pozicija gdje je npr. SUBAN
 _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
+_area := gaDBFs[_pos, 1] 
 
 if table == NIL
    // "fin_suban"
    table := gaDBFs[_pos, 3]
 endif
 
-if cRDD == NIL
-  cRDD = "DBFCDX"
+if _rdd == NIL
+  _rdd = "DBFCDX"
 endif
 
-if lNew
+/*
+if new_area
    SELECT NEW
+else
+   SELECT (_area)
 endif
-
+*/
 
 // mi otvaramo ovu tabelu ~/.F18/bringout/fin_pripr
 //if gDebug > 9
-// log_write( "LEN gaDBFs[" + STR(nPos) + "]" + STR(LEN(gADBFs[nPos])) + " USE (" + my_home() + gaDBFs[nPos, 3]  + " ALIAS (" + cAlias + ") VIA (" + cRDD + ") EXCLUSIVE")
+// log_write( "LEN gaDBFs[" + STR(nPos) + "]" + STR(LEN(gADBFs[nPos])) + " USE (" + my_home() + gaDBFs[nPos, 3]  + " ALIAS (" + cAlias + ") VIA (" + _rdd + ") EXCLUSIVE")
 //endif
 
 if  LEN(gaDBFs[_pos])>3 
 
-   if (cRDD != "SEMAPHORE")
+   if (_rdd != "SEMAPHORE")
         //if gDebug > 9
         //    log_write("F18TBL =" + cF18Tbl)
         //endif
 
-        nVersion :=  get_semaphore_version(table)
+        _version :=  get_semaphore_version(table)
         if gDebug > 9
-          log_write("Tabela:" + table + " semaphore nVersion=" + STR(nVersion) + " last_semaphore_version=" + STR(last_semaphore_version(table)))
+          log_write("Tabela:" + table + " semaphore _version=" + STR(_version) + " last_semaphore_version=" + STR(last_semaphore_version(table)))
         endif
 
-        if (nVersion == -1)
+        if (_version == -1)
           // semafor je resetovan
           EVAL( gaDBFs[_pos, 4], "FULL")
           update_semaphore_version(table, .f.)
 
         else
             // moramo osvjeziti cache
-           if nVersion < last_semaphore_version(table)
+           if _version < last_semaphore_version(table)
              if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
                  semaphore_param:= gaDBFs[_pos, 5]
              endif
@@ -83,12 +93,18 @@ if  LEN(gaDBFs[_pos])>3
         endif
    else
       // poziv is update from sql server procedure
-      cRDD := "DBFCDX" 
+      _rdd := "DBFCDX" 
    endif
 
 endif
 
-USE (my_home() + table) ALIAS (alias) VIA (cRDD) EXCLUSIVE
+if new_area
+   SELECT NEW
+else
+   SELECT (_area)
+   use
+endif
+USE (my_home() + table) ALIAS (alias) VIA (_rdd) EXCLUSIVE
 
 return
 
@@ -299,7 +315,7 @@ endif
 // ARAY['id1', 'id2']
 _sql_ids := "ARRAY["
 for _i:=1 TO LEN(ids)
- _sql_ids += _sql_quote(ids[_i]) 
+ _sql_ids += _sql_quote(hb_StrToUtf8(ids[_i])) 
  if _i < LEN(ids)
     _sql_ids := ","
  endif
@@ -325,10 +341,12 @@ local _tbl_obj
 local _qry
 local _ids, _num_arr, _arr, _i
 LOCAL _server := pg_server()
+local _user := f18_user()
+local _tok
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
-_qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(f18_user())
+_qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 _tbl_obj := _sql_query( _server, _qry )
 IF _tbl_obj == NIL
       MsgBeep( "problem sa:" + _qry)
@@ -342,13 +360,20 @@ if _ids == NIL
     return _arr
 endif
 
+_ids := hb_Utf8ToStr(_ids)
+
 // {id1,id2,id3}
 _ids := SUBSTR(_ids, 2, LEN(_ids)-2)
 
 _num_arr := numtoken(_ids, ",")
 
 for _i := 1 to _num_arr
-   AADD(_arr, token(_ids, ",", _i))
+   _tok := token(_ids, ",", _i)
+   if LEFT(_tok, 1) == '"' .and. RIGHT(_tok, 1) == '"'
+     // odsjeci duple navodnike "..."
+     _tok := SUBSTR(_tok, 2, LEN(_tok) -2)
+   endif
+   AADD(_arr, _tok)
 next
 RETURN _arr
 

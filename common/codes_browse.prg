@@ -62,9 +62,12 @@ if finvert=NIL
 endif
 
 select (nDbf)
+
+if !used()
+   my_use(nDbf)
+endif
+
 nOrderSif:=indexord() 
-
-
 nOrdId := ORDNUMBER("ID")
 
 // POSTAVLJANJE ORDERA...

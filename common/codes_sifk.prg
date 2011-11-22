@@ -103,21 +103,26 @@ do while !eof()
  skip
 enddo
 
-select sifV; set order to tag "ID"  //"ID","id+oznaka+IdSif",SIFPATH+"SIFV"
+select sifV
+set order to tag "ID"  //"ID","id+oznaka+IdSif",SIFPATH+"SIFV"
+
 select _SIFV
 do while !eof()
  scatter()
- select SIFV; seek _SIFV->(ID+OZNAKA+IDSIF)
+ select SIFV
+ seek _SIFV->(ID+OZNAKA+IDSIF)
  if !found()
-  append blank
+   append blank
  endif
  Gather()
  select _SIFV
  skip
 enddo
 
-select _SIFK; use
-select _SIFV; use
+select _SIFK
+use
+select _SIFV
+use
 
 PopWa()
 

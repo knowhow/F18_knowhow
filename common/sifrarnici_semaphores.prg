@@ -16,7 +16,7 @@
 // -----------------------------------------
 function partn_from_sql_server(algoritam)
 
-return sifrarnik_from_sql_server("partn", algoritam, F_PARTN, {"id", "naz"})
+return sifrarnik_from_sql_server("partn", algoritam, F_PARTN, {"id", "naz", "mjesto", "adresa", "ziror", "fax", "mobtel" })
 
 
 // -----------------------------------------
@@ -41,7 +41,6 @@ local _i
 local _qry_obj
 local _field_b
 local _fnd
-
 
 _x := maxrows() - 15
 _y := maxcols() - 20
@@ -80,9 +79,11 @@ if (algoritam == "IDS")
         _sql_ids += ")"
         _qry += " ID IN " + _sql_ids
      endif
+
 endif
 
 _qry_obj := _server:Query(_qry) 
+altd()
 if _qry_obj:NetErr()
    MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
    QUIT

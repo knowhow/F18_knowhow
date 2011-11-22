@@ -380,7 +380,7 @@ if (nArea==-1 .or. nArea==(F_KALK))
 	endif
 endif
 
-if (nArea==-1 .or. nArea==(F_DOKS))
+if (nArea==-1 .or. nArea==(F_KALK_DOKS))
 	//kalk_doks.DBF
 	
 	aDbf:={}
@@ -420,7 +420,7 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 endif
 
 
-if (nArea==-1 .or. nArea==(F_DOKS2))
+if (nArea==-1 .or. nArea==(F_KALK_DOKS2))
 	//kalk_doks2.DBF
 	
 	aDbf:={}

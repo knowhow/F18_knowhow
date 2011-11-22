@@ -170,8 +170,8 @@
 #xcommand O_KALKS  => select(F_KALKS);  my_use  ("kalks")  ; set order to tag "1"
 #xcommand O_KALKREP => if gKalks; select(F_KALK); use; select(F_KALK) ; my_use  ("kalks", "KALK") ; set order to tag "1";else; select(F_KALK);  my_use  ("KALK")  ; set order to tag "1"; end
 #xcommand O_SKALK   => select(F_KALK);  my_use  ("kalk", "kalk_pripr") ; set order to tag "1"
-#xcommand O_KALK_DOKS    => select(F_DOKS);  my_use  (KUMPATH + "kalk_doks")     ; set order to tag "1"
-#xcommand O_KALK_DOKS2   => select(F_DOKS2);  my_use  (KUMPATH + "kalk_doks2")     ; set order to tag "1"
+#xcommand O_KALK_DOKS    => select(F_KALK_DOKS);  my_use  (KUMPATH + "kalk_doks")     ; set order to tag "1"
+#xcommand O_KALK_DOKS2   => select(F_KALK_DOKS2);  my_use  (KUMPATH + "kalk_doks2")     ; set order to tag "1"
 #xcommand O_PORMP  => select(F_PORMP); usex ("pormp")     ; set order to tag "1"
 #xcommand O_PRODNC   => select(F_PRODNC);  my_use  ("prodnc")  ; set order to tag "PRODROBA"
 #xcommand O_RVRSTA   => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"
@@ -197,8 +197,8 @@
 #xcommand O__FAKT     => select(F__FAKT)  ;  my_use ("_fakt") 
 #xcommand O__ROBA   => select(F__ROBA);  my_use  ("_roba")
 #xcommand O_PFAKT     => select (F_FAKT);  my_use  ("fakt", "fakt_pripr"); set order to tag "1"
-#xcommand O_FAKT_DOKS      => select(F_DOKS);    my_use  ("fakt_doks")  ; set order to tag "1"
-#xcommand O_FAKT_DOKS2     => select(F_DOKS2);    my_use  ("fakt_doks2")  ; set order to tag "1"
+#xcommand O_FAKT_DOKS      => select(F_FAKT_DOKS);    my_use  ("fakt_doks")  ; set order to tag "1"
+#xcommand O_FAKT_DOKS2     => select(F_FAKT_DOKS2);    my_use  ("fakt_doks2")  ; set order to tag "1"
 #xcommand O_POMGN  => select(F_POMGN);  my_use ("pomgn"); set order to tag "4"
 #xcommand O_SDIM => select(F_SDIM); my_use ("sdim"); set order to tag "1"
 #xcommand O__SDIM => select(F__SDIM); my_use ("_sdim"); set order to tag "1"
@@ -312,7 +312,7 @@
 #xcommand O_K1   => select (F_K1); my_use ("k1"); set order to tag "ID"
 
 // modul POS
-#xcommand O_POS_DOKS  => SELECT (F_DOKS); my_use ("pos_doks"); set order to tag "1"
+#xcommand O_POS_DOKS  => SELECT (F_POS_DOKS); my_use ("pos_doks"); set order to tag "1"
 #xcommand O_POS       => SELECT (F_POS); my_use ("pos"); set order to tag "1"
 #xcommand O_RNGPLA    => SELECT (F_RNGPLA); my_use ("rngpla"); set order to tag "1"
 #xcommand O_PROMVP    => SELECT (F_PROMVP); my_use ("promvp"); set order to tag "1"

@@ -679,7 +679,7 @@ o_fakt_edit()
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok, .t.)
 // printaj narudzbu
 nar_print(.t.)
-select (F_DOKS); use
+select (F_FAKT_DOKS); use
 O_FAKT_DOKS
 if lOpcine
 	O_PARTN
@@ -709,7 +709,7 @@ o_fakt_edit()
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok, .t.)
 // printaj radni nalog
 rnal_print(.t.)
-select (F_DOKS); use
+select (F_FAKT_DOKS); use
 O_FAKT_DOKS
 if lOpcine
 	O_PARTN
@@ -736,7 +736,7 @@ _cBrDok:=brdok
 close all
 o_fakt_edit()
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok)
-select (F_DOKS); use
+select (F_FAKT_DOKS); use
 O_FAKT_DOKS
 if lOpcine
 	O_PARTN
@@ -764,7 +764,7 @@ _cBrDok:=brdok
 close all
 o_fakt_edit()
 StDokOdt( _cidfirma, _cIdTipdok, _cbrdok )
-select (F_DOKS)
+select (F_FAKT_DOKS)
 use
 O_FAKT_DOKS
 if lOpcine
@@ -1324,7 +1324,7 @@ do case
      _cBrDok:=brdok
      close all
      nR_tmp := Povrat_fakt_dokumenta(.f.,_cidfirma,_cIdTipdok,_cbrdok)
-     select (F_DOKS)
+     select (F_FAKT_DOKS)
      use
      O_FAKT_DOKS
      if lOpcine
@@ -1373,7 +1373,7 @@ do case
        enddo
        close all
      endif
-     select (F_DOKS)
+     select (F_FAKT_DOKS)
      use
      O_FAKT_DOKS
      if lOpcine

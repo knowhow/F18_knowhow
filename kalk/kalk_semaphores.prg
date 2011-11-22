@@ -365,8 +365,8 @@ DO WHILE !_qry_obj:Eof()
     		vpv with _qry_obj:FieldGet(12), ;
     		rabat with _qry_obj:FieldGet(13), ;
     		mpv with _qry_obj:FieldGet(14), ;
-    		podbr with _qry_obj:FieldGet(15), ;
-    		sifra with _qry_obj:FieldGet(16)
+    		podbr with _qry_obj:FieldGet(15)
+    		//sifra with _qry_obj:FieldGet(16)
 
     _qry_obj:Skip()
 

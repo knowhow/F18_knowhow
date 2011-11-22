@@ -774,7 +774,7 @@ record["vpv"] := _doks_vpv
 record["rabat"] := _doks_rabat
 record["mpv"] := _doks_mpv
 record["pod_br"] := field->podbr
-record["sifra"] := ""
+record["sifra"] := field->sifra
  
 if !sql_kalk_doks_update( "ins", record )
        lOk := .f.

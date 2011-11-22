@@ -2545,7 +2545,7 @@ function TestMainIndex()
 local lVrati:=.t., lUsedFAKT:=.t., lUsedDOKS:=.t., nOblast:=SELECT()
 
  local cProblemDok:=""
- SELECT (F_DOKS)
+ SELECT (F_FAKT_DOKS)
  if !USED()
    lUsedDOKS:=.f.
    O_FAKT_DOKS
@@ -2588,9 +2588,9 @@ local lVrati:=.t., lUsedFAKT:=.t., lUsedDOKS:=.t., nOblast:=SELECT()
  else
    USE
  endif
- SELECT (F_DOKS)
+ SELECT (F_FAKT_DOKS)
  if lUsedDOKS
-   SELECT (F_DOKS)
+   SELECT (F_FAKT_DOKS)
    PopWA()
  else
    USE

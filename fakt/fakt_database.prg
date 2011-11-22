@@ -1440,7 +1440,7 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
    else
 	
 	
-	SELECT F_DOKS
+	SELECT F_FAKT_DOKS
 	if !used()
 		O_FAKT_DOKS
 	endif

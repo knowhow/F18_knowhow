@@ -183,7 +183,7 @@ function UkZaduz()
 *{
 local nArr:=SELECT(), nVrati:=0
 
-select (F_DOKS)
+select (F_FAKT_DOKS)
 seek gFirma+cIdPartner
 
 do while !eof() .and. idpartner==cIdPartner

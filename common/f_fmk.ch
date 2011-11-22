@@ -28,15 +28,14 @@
 #define F_KOLIZ    16
 #define D_S_TABELE 
 
-//OVA ZAGLAVLJA NAPUSTITI!
 #define F_PRIPR     17
 #define F_FIN_PRIPR     18
 #define F_FAKT_PRIPR     19
 #define F_KALK_PRIPR     20
 #define F_KALK_PRIPR2    212
 #define F_KALK_PRIPR9    213
-#define F_DOKS      18
-#define F_DOKS2     19
+#define F_KALK_DOKS      18
+#define F_KALK_DOKS2     19
 
 // FMK FIN
 #define F_FIPRIPR  20
@@ -137,6 +136,8 @@
 #define F_KALPOS    114
 #define F_CROBA     115
 #define F_POR       116
+#define F_FAKT_DOKS 117
+#define F_FAKT_DOKS2  118
 
 //POS
 #define F_PDOKS     130
@@ -166,6 +167,7 @@
 #define F_POS_K     154
 #define F_DOKS_SEZ  155
 #define F_POS_SEZ   156
+#define F_POS_DOKS   157
 
 
 #define F_TRFP2     160

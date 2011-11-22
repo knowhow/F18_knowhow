@@ -395,7 +395,7 @@ endif
 	dbt2fpt(PRIVPATH+'_FAKT')
 #endif
 
-if (nArea==-1 .or. nArea==(F_DOKS))
+if (nArea==-1 .or. nArea==(F_FAKT_DOKS))
 	//DOKS.DBF
 	
 	aDbf:={}
@@ -433,7 +433,7 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 endif
 
 
-if (nArea==-1 .or. nArea==(F_DOKS2))
+if (nArea==-1 .or. nArea==(F_FAKT_DOKS2))
 	//BLOK: DOKS2
 	
 	aDbf:={}
@@ -669,7 +669,7 @@ else
 endif
 
 aPriv := { F_PRIPR, F__ROBA }
-aKum  := { F_FAKT, F_DOKS, F_RJ, F_UGOV, F_RUGOV, F_UPL, F_DEST, F_DOKS2 }
+aKum  := { F_FAKT, F_FAKT_DOKS, F_RJ, F_UGOV, F_RUGOV, F_UPL, F_DEST, F_FAKT_DOKS2 }
 aSif  := { F_ROBA, F_TARIFA, F_PARTN, F_FTXT, F_VALUTE, F_SAST, F_KONTO,;
            F_VRSTEP, F_OPS }
 

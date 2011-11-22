@@ -637,7 +637,7 @@ xml_subnode("PodaciOPoslodavcu", .f. )
 
  // naziv firme
  xml_node( "JIBPoslodavca", ALLTRIM(cPredJmb) )
- xml_node( "NazivPoslodavca", to_xml_encoding( ALLTRIM(cPredNaz), "8" ) )
+ xml_node( "NazivPoslodavca", to_xml_encoding( ALLTRIM(cPredNaz) ) )
  xml_node( "BrojZahtjeva", STR( nBrZahtjeva ) )
  xml_node( "DatumPodnosenja", xml_date( dDatPodnosenja ) )
 
@@ -863,8 +863,8 @@ xml_head()
 xml_subnode("rpt", .f.)
 
 // naziv firme
-xml_node( "p_naz", to_xml_encoding( ALLTRIM(cPredNaz), "8" ) )
-xml_node( "p_adr", strkzn( ALLTRIM(cPredAdr), "8", "U" ) )
+xml_node( "p_naz", to_xml_encoding( ALLTRIM(cPredNaz) ) )
+xml_node( "p_adr", to_xml_encoding( ALLTRIM(cPredAdr) ) )
 xml_node( "p_jmb", ALLTRIM(cPredJmb) )
 xml_node( "p_per", g_por_per() )
 

@@ -158,8 +158,10 @@ return
 
 
 
-
 function o_kalk_edit()
+
+close all
+
 O_KALK_DOKS
 O_KALK_PRIPR
 O_DOKSRC
@@ -178,6 +180,7 @@ O_KONCIJ
 select kalk_pripr
 set order to tag "1"
 go top
+
 return
 
 
@@ -650,14 +653,9 @@ return DE_REFRESH
  */
 
 function MeniF10()
-*{
 private opc[9]
 
-if gVodiSamoTarife=="D"
- opc[1]:="1. generisi storno sume 41 u postojeci dokument                 "
-else
- opc[1]:="1. prenos dokumenta fakt->kalk                                  "
-endif
+opc[1]:="1. prenos dokumenta fakt->kalk                                  "
 opc[2]:="2. povrat dokumenta u pripremu"
 opc[3]:="3. kalk_priprema -> smece"
 opc[4]:="4. smece    -> kalk_priprema"
@@ -670,7 +668,9 @@ h[1]:=h[2]:=""
 
 select kalk_pripr
 go top
-cIdVDTek:=IdVD  // tekuca vrsta dokumenta
+
+cIdVDTek := IdVD  
+// tekuca vrsta dokumenta
 
 if cidvdtek=="19"
  AADD(opc,"A. obrazac promjene cijena")

@@ -178,13 +178,15 @@ LOCAL _ret
 LOCAL _result
 LOCAL _qry
 LOCAL _tbl
-LOCAL _where
+LOCAL _where := ""
 LOCAL _server := pg_server()
 
-
 _tbl := "fmk.kalk_kalk"
-_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvd=" + _sql_quote( record["id_vd"]) +;
+
+if record <> nil
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvd=" + _sql_quote( record["id_vd"]) +;
                         " and brdok=" + _sql_quote(record["br_dok"]) 
+endif
 
 DO CASE
  CASE op == "BEGIN"
@@ -207,7 +209,7 @@ DO CASE
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vd"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
-                            + _sql_quote(STR( record["r_br"] , 4)) + "," +; 
+                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
                             + _sql_quote( record["dat_dok"] ) + "," +;
                             + _sql_quote( record["br_fakt_p"] ) + "," +;
                             + _sql_quote( record["dat_fakt_p"] ) + "," +;
@@ -392,18 +394,20 @@ return .t.
 // ----------------------------------------------
 // ----------------------------------------------
 function sql_kalk_doks_update( op, record )
-
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
 LOCAL _tbl
-LOCAL _where
+LOCAL _where := ""
 LOCAL _server := pg_server()
 
 
 _tbl := "fmk.kalk_doks"
-_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvd=" + _sql_quote( record["id_vd"]) +;
+
+if record <> nil
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvd=" + _sql_quote( record["id_vd"]) +;
                         " and brdok=" + _sql_quote(record["br_dok"]) 
+endif
 
 DO CASE
  CASE op == "BEGIN"
@@ -418,7 +422,7 @@ DO CASE
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
 			" ( idfirma, idvd, brdok, datdok, brfaktp, idpartner, idzaduz, idzaduz2, " + ;
-			"pkonto, mkonto, nv, vpv, rabat, mpv, podbr, sifra ) " + ;
+			"pkonto, mkonto, nv, vpv, rabat, mpv, podbr ) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vd"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
@@ -433,8 +437,8 @@ DO CASE
                             + _sql_quote( STR( record["vpv"], 18, 8 )) + "," +;
                             + _sql_quote( STR( record["rabat"], 18, 8 )) + "," +;
                             + _sql_quote( STR( record["mpv"], 18, 8 )) + "," +;
-                            + _sql_quote( record["pod_br"] ) + "," +;
-                            + _sql_quote( record["sifra"] ) + " )"
+                            + _sql_quote( record["pod_br"] ) + " )"
+                            //+ _sql_quote( record["sifra"] ) + " )"
                           
 END CASE
    

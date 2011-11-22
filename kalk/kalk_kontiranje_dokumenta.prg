@@ -1032,7 +1032,6 @@ O_ROBA
 O_TARIFA
 
 if fStara
-
 	// otvara se KALK sa aliasom priprema
 	SELECT F_KALK
 	if !used()

@@ -339,19 +339,19 @@ DO WHILE !_qry_obj:Eof()
 	replace idfirma with _qry_obj:FieldGet(1), ;
     		idvd with _qry_obj:FieldGet(2), ;
     		brdok with _qry_obj:FieldGet(3), ;
-    		datdok with _qry_obj:FieldGet(5), ;
-    		brfaktp with _qry_obj:FieldGet(6), ;
-    		idpartner with _qry_obj:FieldGet(13), ;
-    		idzaduz with _qry_obj:FieldGet(11), ;
-    		idzaduz2 with _qry_obj:FieldGet(12), ;
-    		pkonto with _qry_obj:FieldGet(12), ;
-    		mkonto with _qry_obj:FieldGet(12), ;
-    		nv with _qry_obj:FieldGet(51), ;
-    		vpv with _qry_obj:FieldGet(51), ;
-    		rabat with _qry_obj:FieldGet(51), ;
-    		mpv with _qry_obj:FieldGet(51), ;
-    		podbr with _qry_obj:FieldGet(51), ;
-    		sifra with _qry_obj:FieldGet(52)
+    		datdok with _qry_obj:FieldGet(4), ;
+    		brfaktp with _qry_obj:FieldGet(5), ;
+    		idpartner with _qry_obj:FieldGet(6), ;
+    		idzaduz with _qry_obj:FieldGet(7), ;
+    		idzaduz2 with _qry_obj:FieldGet(8), ;
+    		pkonto with _qry_obj:FieldGet(9), ;
+    		mkonto with _qry_obj:FieldGet(10), ;
+    		nv with _qry_obj:FieldGet(11), ;
+    		vpv with _qry_obj:FieldGet(12), ;
+    		rabat with _qry_obj:FieldGet(13), ;
+    		mpv with _qry_obj:FieldGet(14), ;
+    		podbr with _qry_obj:FieldGet(15), ;
+    		sifra with _qry_obj:FieldGet(16)
 
     _qry_obj:Skip()
 
@@ -402,7 +402,7 @@ DO CASE
              " WHERE " + _where
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
-			" ( idfirma, idvd, brdok, datdok, brfaktp, idpartner, idzaduz, idzaduz2" + ;
+			" ( idfirma, idvd, brdok, datdok, brfaktp, idpartner, idzaduz, idzaduz2, " + ;
 			"pkonto, mkonto, nv, vpv, rabat, mpv, podbr, sifra ) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vd"] ) + "," +; 

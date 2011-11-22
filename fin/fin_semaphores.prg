@@ -147,7 +147,7 @@ DO CASE
                             + _sql_quote( record["d_p"] ) + "," +; 
                             + STR( record["iznos"], 17, 2) + ")" 
 
-endif
+END CASE
    
 _ret := _sql_query( _server, _qry)
 

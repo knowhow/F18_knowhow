@@ -14,21 +14,21 @@
 // -----------------------------------
 // -----------------------------------
 function brisi_sve_u_tabeli(table)
-_rec := hb_hash()
+local _rec := hb_hash()
 
-
-sql_tabela_update("BEGIN")
+sql_table_update(table, "BEGIN")
 
 _rec["id"] := NIL
 // ostala polja su nevazna za brisanje
 
-if sql_tabela_update(table, "del", _rec)
-   sql_tabela_update("END")
+if sql_table_update(table, "del", _rec)
+   update_semaphore_version(table)
+   sql_table_update(table, "END")
    // zapujemo dbf
    ZAP
    return .t.
 else
-   sql_tabla_update("ROLLBACK")
+   sql_table_update(table, "ROLLBACK")
    return .f.
 endif
 
@@ -46,8 +46,7 @@ return .t.
  
 //----------------------------------------------
 // ----------------------------------------------
-function sql_tabela_update(table, op, record )
-
+function sql_table_update(table, op, record )
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -58,23 +57,27 @@ local _key
 
 _tbl := "fmk." + LOWER(table)
 
-if record["id"] == NIL
-   // kompletnu tabelu
-   _where := "true"
-else
-_where := "ID = " + _sql_quote(record["id"])
-endif
-
+altd()
 DO CASE
    CASE op == "BEGIN"
     _qry := "BEGIN;"
+
    CASE op == "END"
     _qry := "COMMIT;" 
+
    CASE op == "ROLLBACK"
     _qry := "ROLLBACK;"
-   CASE op = "del"
+
+   CASE op == "del"
+    if record["id"] == NIL
+      // kompletnu tabelu
+      _where := "true"
+    else
+      _where := "ID = " + _sql_quote(record["id"])
+    endif
     _qry := "DELETE FROM " + _tbl + ;
             " WHERE " + _where  
+
    CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + "(" 
     for each  _key in record:Keys
@@ -89,7 +92,7 @@ DO CASE
      next 
     _qry := SUBSTR( _qry, 1, LEN(_qry) - 1) + ")"
 
-endif
+END CASE
    
 _ret := _sql_query( _server, _qry)
 

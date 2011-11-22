@@ -116,10 +116,9 @@ if sql_table_update(_table, "del", values, where )
 endif
 
 if ! _ok
-    sql_table_update(table, "ROLLBACK")
+    sql_table_update(_table, "ROLLBACK")
     return .f.
 endif
-
 
 // sve je ok sada zauriramo dbf
 for each _key in values:Keys

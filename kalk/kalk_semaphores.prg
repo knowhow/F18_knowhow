@@ -56,7 +56,6 @@ if _qry_obj:NetErr()
    QUIT
 endif
 
-altd()
 SELECT F_KALK
 my_use ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 

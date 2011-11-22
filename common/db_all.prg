@@ -45,7 +45,6 @@ static nPreuseLevel:=0
   */
   
 function Scatter(cZn)
-*{
 local i,aStruct
 private cImeP,cVar
 
@@ -64,7 +63,6 @@ endif
 next
 
 return nil
-*}
 
 
 function Gather(cZn)
@@ -93,7 +91,6 @@ next
 return nil
 
 function GatherR(cZn)
-*{
 local i,j,aStruct
 
 if cZn==nil
@@ -149,7 +146,6 @@ while .t.
 end
 
 return nil
-*}
 
 
 /*! \fn Gather2(cZn)

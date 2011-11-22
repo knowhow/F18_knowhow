@@ -25,14 +25,14 @@ Kol:={}
 nTArea := SELECT()
 O_PARTN
 
-AADD(ImeKol,{PADR("ID",6),{|| id},"id",{|| .t.},{|| vpsifra(wid)}})
-AADD(ImeKol,{PADR("Naziv",25),{|| PADR(naz,25) } , "naz"})
+AADD(ImeKol,{PADR("ID",6) , {|| id},"id",{|| .t.},{|| vpsifra(wid)}})
+AADD(ImeKol,{PADR("Naziv",25) , {|| PADR(naz,25) } , "naz"})
 if IzFmkIni("Partn","Naziv2","N", SIFPATH)=="D"
-	AADD(ImeKol,{PADR("Naziv2",25),{|| naz2},"naz2"})
+	AADD(ImeKol,{PADR("Naziv2",25) , {|| naz2},"naz2"})
 endif
-AADD(ImeKol,{PADR("PTT",5),{|| PTT},"ptt"})
-AADD(ImeKol,{PADR("Mjesto",16),{|| MJESTO},"mjesto"})
-AADD(ImeKol,{PADR("Adresa",24),{|| ADRESA},"adresa"})
+AADD(ImeKol,{PADR("PTT",5) , {|| PTT},"ptt"})
+AADD(ImeKol,{PADR("Mjesto",16) , {|| MJESTO},"mjesto"})
+AADD(ImeKol,{PADR("Adresa",24) , {|| ADRESA},"adresa"})
 
 if partn->(fieldpos("_kup")) <> 0
 	
@@ -135,8 +135,7 @@ select (nTArea)
 private gTBDir
 gTBDir:="N"
 
-return PostojiSifra(F_PARTN, 1, 10, 100, "Lista Partnera", @cId, dx, dy,;
-       gPartnBlock)
+return PostojiSifra(F_PARTN, 1, 10, 100, "Lista Partnera", @cId, dx, dy, gPartnBlock)
 
 
 // -------------------------------------

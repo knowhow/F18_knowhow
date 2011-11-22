@@ -722,6 +722,8 @@ local oTable
 local nPrevRecNo
 local cMCField
 local nMCScan
+local _vars
+
 private nXP
 private nYP
 private cPom
@@ -959,7 +961,13 @@ do while .t.
      if lastkey()==K_ESC
      	exit
      endif
-     GatherR("w")
+
+     _vars := f18_scatter_global_vars("w")
+     f18_gather(_vars)
+
+     //f18_gater radi sav posao GatherR("w")
+
+     // TODO !!! 
      GatherSifk("w" , Ch==K_CTRL_N)
 
      Scatter("w")
@@ -1016,8 +1024,11 @@ do while .t.
 	   //sql_append()
       
       endif
-      
-      GatherR("w")
+     
+
+      _vars := f18_scatter_global_vars("w")
+      f18_gather(_vars)
+      // TODO !! 
       GatherSifk("w", lNovi )
       
       Scatter("w")
@@ -1057,7 +1068,6 @@ do while .t.
     endif
 
 return 0
-
 
 
 // --------------------------------------------------

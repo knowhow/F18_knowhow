@@ -55,7 +55,8 @@ return .t.
 
 // -------------------------
 // -------------------------
-function f18_Scatter(zn)
+
+function f18_scatter_global_vars(zn)
 local _ime_polja, _i, _struct
 local _ret := hb_hash()
 //private cImeP,cVar
@@ -63,16 +64,16 @@ if zn==nil
   zn:="_"
 endif
 
-// ostavimo ovo radi kompatibilnosti
-Scatter(zn)
-
 _struct := DBSTRUCT()
 for _i:=1 to len(_struct)
 
-  _ime_polja := _struct[i, 1]
+  _ime_polja := _struct[_i, 1]
    
   if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
-      _ret[_ime_polja] := EVAL(FIELDBLOCK(_ime_polja))
+
+     // punimo hash matricu sa vrijednostima public varijabli
+     // _ret["idfirma" := wIdFirma, za zn = "w"
+      _ret[ LOWER(_ime_polja) ] := EVAL( MEMVARBLOCK( zn + _ime_polja) )
   endif
 
 next
@@ -80,33 +81,54 @@ next
 return _ret
 
 
-
 // ---------------------
 // ---------------------
-function f18_Gather(cZn)
+function f18_gather(values, where)
 
-local i, aStruct
-local _field_b
+local _table
+local _key, _field_b
+local _ok := .f.
 
-if cZn==nil
-  cZn:="_"
+_table := LOWER(ALIAS())
+
+if where == NIL
+  where := "ID=" + _sql_quote(values['id'])
 endif
-aStruct:=DBSTRUCT()
- 
-for i:=1 to len(aStruct)
-     _field_b := FIELDBLOCK(aStruct[i,1])
 
-     // cImeP - privatna var
-     cVar := cZn + cImeP
+sql_table_update(_table, "BEGIN")
 
-     IF "U" $ TYPE(cVar)
-         MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + cImeP)
-     ELSE
-            EVAL(_field_b, EVAL(MEMVARBLOCK(cVar)) )
-     ENDIF
+// ostala polja su nevazna za brisanje
+
+if sql_table_update(_table, "del", values, where )
+
+   // izbrisali smo, sada dodajemo vrijednost
+   if sql_table_update(_table, "ins", values)
+       update_semaphore_version(_table, .t.)
+   
+       AADD(_ids, _rec["id"])
+       push_ids_to_semaphore( _table, _ids )
+
+       sql_table_update(_table, "END")
+
+       _ok := .t.
+   endif
+
+endif
+
+if ! _ok
+    sql_table_update(table, "ROLLBACK")
+    return .f.
+endif
+
+
+// sve je ok sada zauriramo dbf
+for each _key in values:Keys
+    _field_b := FIELDBLOCK(_key)
+    // napuni field sa vrijednosti
+    EVAL(_field_b, values[_key])
 next
 
-return nil
+return .t.
 
 
 
@@ -145,7 +167,7 @@ return .t.
  
 //----------------------------------------------
 // ----------------------------------------------
-function sql_table_update(table, op, record )
+function sql_table_update(table, op, record, where )
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -167,11 +189,16 @@ DO CASE
     _qry := "ROLLBACK;"
 
    CASE op == "del"
-    if record["id"] == NIL
-      // kompletnu tabelu
+    if (where == NIL) .and. (record["id"] == NIL)
+      // brisi kompletnu tabelu
       _where := "true"
     else
-      _where := "ID = " + _sql_quote(record["id"])
+      if where == NIL
+         _where := "ID = " + _sql_quote(record["id"])
+      else
+         // moze biti "id = nesto and id_2 = nesto_drugo"
+         _where := where
+      endif
     endif
     _qry := "DELETE FROM " + _tbl + ;
             " WHERE " + _where  

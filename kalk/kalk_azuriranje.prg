@@ -34,7 +34,6 @@ endif
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
 zap
-
 use
 
 lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
@@ -79,7 +78,7 @@ if kalk_azur_sql( oServer )
 	
 	if !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
     	MsgBeep("Neuspjesno KALK/DBF azuriranje !?")
-       	return .f.
+       	return
    	endif
 
 else
@@ -263,7 +262,7 @@ static function kalk_generisati_zavisne_dokumente()
 local cPametno := "N"
 
 if gCijene == "2"
-	cPametno:="D"
+	cPametno := "D"
 else
  	if gMetodaNC == " "
   		cPametno := "N"
@@ -304,7 +303,7 @@ return
 
 
 
-static function kalk_azur_dbf( lViseDok, aOstaju, aRezim, lBrStDoks )
+static function kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
 local cIdFirma
 local cIdVd
 local cBrDok

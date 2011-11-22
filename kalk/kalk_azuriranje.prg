@@ -711,7 +711,7 @@ do while !eof()
    record["marza"] := field->marza
    record["vpc"] := field->vpc
    record["rabatv"] := field->rabatv
-   record["vpc_sa_pp"] := field->vpcsapp
+   record["vpc_sa_p"] := field->vpcsap
    record["t_marza2"] := field->tmarza2
    record["marza2"] := field->marza2
    record["mpc"] := field->mpc

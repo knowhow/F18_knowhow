@@ -1044,7 +1044,6 @@ else
 	endif
 endif
 
-altd()
 select kalk_finmat
 zap
 

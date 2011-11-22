@@ -82,7 +82,8 @@ if kalk_azur_sql( oServer )
    	endif
 
 else
-  MsgBeep("Neuspjesno KALK/SQL azuriranje !?")
+	MsgBeep("Neuspjesno KALK/SQL azuriranje !?")
+	return
 endif
 
 // generisi zavisne dokumente nakon azuriranja kalkulacije
@@ -107,7 +108,9 @@ close all
 return
 
 
-
+// vraca iz tabele kalk_pripr2 sve sto je generisano
+// da bi se moglo naknadno obraditi
+// recimo kalk 16/96 itd...
 static function kalk_vrati_iz_pripr2()
 local lPrebaci := .f.
 

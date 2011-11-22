@@ -22,6 +22,8 @@ static _tr_cmd := "CMD"
 static _tr_plu := "PLU"
 static _tr_txt := "TXT"
 static _tr_rcp := "RCP"
+static _tr_cli := "CLIENTS.XML"
+static _tr_foo := "FOOTER.XML"
 
 // min/max vrijednosti
 static MAX_QT := 99999.999
@@ -31,9 +33,7 @@ static MIN_PRICE := 0.01
 static MAX_PERC := 99.99
 static MIN_PERC := -99.99
 
-
 // fiskalne funkcije HCP fiskalizacije 
-
 
 // struktura matrice aData
 //
@@ -84,6 +84,10 @@ local nErr_no := 0
 local cOperacija := ""
 local cCmd := ""
 
+if aKupac <> nil .and. LEN( aKupac ) > 0
+	lKupac := .t.
+endif
+
 // brisi tmp fajlove ako su ostali...
 hcp_d_tmp()
 
@@ -107,16 +111,19 @@ if lStorno = .t.
 endif
 
 // programiraj artikal prije nego izdas racun
-//if !lStorno
-	nErr_no := fc_hcp_plu( cFPath, cFName, aData, cError )
+nErr_no := fc_hcp_plu( cFPath, cFName, aData, cError )
 
-	if nErr_no > 0
-		return nErr_no
-	endif
-//endif
+if nErr_no > 0
+	return nErr_no
+endif
 
-if aKupac <> nil .and. LEN( aKupac ) > 0
-	lKupac := .t.
+// dodaj kupca...
+if lKupac = .t.
+	nErr_no := fc_hcp_cli( cFPath, cFName, aKupac, cError )
+endif
+
+if nErr_no > 0
+	return nErr_no
 endif
 
 if lKupac = .t.
@@ -126,10 +133,34 @@ if lKupac = .t.
 	cIBK := aKupac[1, 1]
 	cCmd := _on_partn( cIBK )
 
+	nErr_no := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
+
+	if nErr_no > 0
+		return nErr_no
+	endif
+
 endif
 
 // to je zapravo broj racuna !!!
 cBr_zahtjeva := aData[1, 1]
+
+aFooter := {}
+AADD( aFooter, { "Broj rn: " + cBr_zahtjeva })
+
+// posalji footer...
+nErr_no := fc_hcp_footer( cFPath, cFName, aFooter, cError, _tr_foo )
+
+if nErr_no > 0
+	return nErr_no
+endif
+
+// posalji komandu za reset footera...
+cCmd := _off_footer() 
+nErr_no := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
+
+if nErr_no > 0
+	return nErr_no
+endif
 
 cFName := hcp_filename( cBr_zahtjeva, _tr_rcp )
 
@@ -179,7 +210,7 @@ nVr_placanja := 0
 	// odjeljenje
 	cTmp += _razmak1 + 'DEP="' + cDep + '"'
 	// naziv artikla
-	cTmp += _razmak1 + 'DSC="' + strkznutf8(cRoba_naz,"8") + '"'
+	cTmp += _razmak1 + 'DSC="' + hb_strtoutf8( cRoba_naz ) + '"'
 	// cijena artikla
 	cTmp += _razmak1 + 'PRC="' + ALLTRIM( STR( nCijena, 12, 2 )) + '"'
 	//  kolicina artikla 
@@ -244,12 +275,6 @@ if cError == "D"
 	endif
 endif
 
-if gFc_nftxt == "D"
-	// ispis nefiskalnog teksta
-	// veza broj racuna
-	nErr_no := fc_hcp_txt( cFPath, cFName, cBr_Zahtjeva, cError )  
-endif
-
 return nErr_no
 
 
@@ -273,6 +298,59 @@ msgc()
 
 return
 
+
+// -------------------------------------------------------------------
+// hcp programiranje footer
+// -------------------------------------------------------------------
+function fc_hcp_footer( cFPath, cFName, aFooter, cError )
+local cXML
+local cBr_zahtjeva 
+local nErr_no := 0
+
+cBr_zahtjeva := "0"
+cFName := hcp_filename( cBr_zahtjeva, _tr_foo )
+
+// putanja do izlaznog xml fajla
+cXML := cFPath + _inp_dir + SLASH + cFName
+
+// otvori xml
+open_xml( cXml )
+
+// upisi header
+xml_head()
+
+xml_subnode("FOOTER")
+
+for i:=1 to LEN( aFooter )
+	
+	cTmp := 'TEXT="' + ALLTRIM( aFooter[i, 1] ) + '"'
+	cTmp += ' '
+	cTmp += 'BOLD="false"'
+	
+	xml_snode( "DATA", cTmp )
+
+next
+
+xml_subnode("FOOTER", .t.)
+
+close_xml()
+
+// kreiraj triger cmd.ok
+c_cmdok( cFPath )
+
+if cError == "D"
+	// provjeri greske...
+	// nErr_no := ...
+	if _read_ok( cFPath, cFName ) = .f.
+		
+		// procitaj poruku greske
+		nErr_no := hcp_r_error( cFPath, cFName, gFc_tout, _tr_foo )
+
+	endif
+
+endif
+
+return nErr_no
 
 
 
@@ -304,11 +382,11 @@ for i:=1 to LEN( aKupac )
 
 	cTmp := 'IBK="' + aKupac[i, 1] + '"'
 	cTmp += _razmak1 + 'NAME="' + ;
-		ALLTRIM( strkznutf8( aKupac[i, 2],"8") ) + '"'
+		ALLTRIM( hb_strtoutf8( aKupac[i, 2] ) ) + '"'
 	cTmp += _razmak1 + 'ADDRESS="' + ;
-		ALLTRIM( strkznutf8( aKupac[i, 3], "8") ) + '"'
+		ALLTRIM( hb_strtoutf8( aKupac[i, 3] ) ) + '"'
 	cTmp += _razmak1 + 'TOWN="' + ;
-		ALLTRIM( strkznutf8( aKupac[i, 5], "8" )) + '"'
+		ALLTRIM( hb_strtoutf8( aKupac[i, 5] ) ) + '"'
 	
 	xml_snode( "DATA", cTmp )
 
@@ -385,7 +463,7 @@ for i:=1 to LEN( aData )
 	cTmp += _razmak1 + 'VAT="' + cStopa + '"'
 	cTmp += _razmak1 + 'MES="' + cRoba_jmj + '"'
 	cTmp += _razmak1 + 'DEP="' + cDep + '"'
-	cTmp += _razmak1 + 'DSC="' + ALLTRIM( strkznutf8(cRoba_naz,"8") ) + '"'
+	cTmp += _razmak1 + 'DSC="' + ALLTRIM( to_xml_encoding( cRoba_naz ) ) + '"'
 	cTmp += _razmak1 + 'PRC="' + ALLTRIM(STR(nCijena, 12, 2)) + '"'
 	cTmp += _razmak1 + 'LGR="' + ALLTRIM(STR(nLager, 12, 2)) + '"'
 	
@@ -538,6 +616,17 @@ return cCmd
 
 
 // -------------------------------------------------
+// ponistavanje footer-a
+// -------------------------------------------------
+static function _off_footer()
+local cCmd 
+
+cCmd := 'CMD="FOOTER_OFF"'
+
+return cCmd
+
+
+// -------------------------------------------------
 // iskljuci storno racuna
 // -------------------------------------------------
 static function _off_storno()
@@ -662,6 +751,10 @@ do case
 		cRet := STRTRAN( cF_name, "TR$", cTriger )
 		cRet := UPPER( cRet )
 	
+		if ".XML" $ cTriger
+			cRet := cTriger
+		endif
+
 	otherwise 
 		// ono sta je navedeno u parametrima
 		cRet := cF_name
@@ -765,7 +858,7 @@ return
 // -----------------------------------------------------
 // vraca broj fiskalnog racuna
 // -----------------------------------------------------
-function hcp_fisc_no( cFPath, cFName, cError )
+function hcp_fisc_no( cFPath, cFName, cError, lStorno )
 local cCmd
 local nFisc_no := 0
 local cFState := "BILL_S~1.XML"
@@ -777,7 +870,7 @@ nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
 // ako nema gresaka, iscitaj broj racuna
 if nErr = 0
 	// e sada iscitaj iz fajla
-	nFisc_no := hcp_r_bst( cFPath, cFState, gFC_tout )
+	nFisc_no := hcp_r_bst( cFPath, cFState, gFC_tout, lStorno )
 endif
 
 return nFisc_no
@@ -975,7 +1068,7 @@ return
 // 
 // nTimeOut - time out fiskalne operacije
 // ------------------------------------------------
-function hcp_r_bst( cFPath, cFName, nTimeOut )
+function hcp_r_bst( cFPath, cFName, nTimeOut, lStorno )
 local nErr := 0
 local cF_name
 local i
@@ -986,6 +1079,12 @@ local aBillState
 local aBillData
 local nTime 
 local cLine
+local cScanWhat
+local cMessage
+
+if lStorno == nil
+	lStorno := .f.
+endif
 
 nTime := nTimeOut
 
@@ -1042,7 +1141,13 @@ for i:=1 to nBrLin
 
 	aBillData := TokToNiz( cLine, " " )
 
-	nScan := ASCAN( aBillData, { |xvar| "RECEIPT_NUMBER" $ xvar } )
+    cScanWhat := "RECEIPT_NUMBER"
+
+	if lStorno = .t.
+		cScanWhat := "REFOUND_RECEIPT_NUMBER"
+	endif
+
+	nScan := ASCAN( aBillData, { |xvar| cScanWhat $ xvar } )
 	
 	if nScan > 0
 		
@@ -1050,7 +1155,15 @@ for i:=1 to nBrLin
 		
 		nFisc_no := VAL( aReceipt[2] )
 
-		msgbeep("Formiran fiskalni racun: " + ALLTRIM( STR( nFisc_no) ))
+		cMessage := "Formiran "
+
+		if lStorno = .t.
+			cMessage += "rekl."
+		endif
+		
+		cMessage += "fiskalni racun: "
+
+		msgbeep( cMessage + ALLTRIM( STR( nFisc_no) ))
 		
 		exit
 

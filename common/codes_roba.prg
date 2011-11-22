@@ -41,6 +41,13 @@ if (IzFmkIni("Svi","SifAuto","N", SIFPATH)=="N") .or.;
 	AADD(ImeKol, {padc("ID",10),  {|| id }, iif(IzFmkIni("Svi","SifAuto","N", SIFPATH)="D","","id")  , {|| .t.}, {|| vpsifra(wId)} })
 endif
 
+if roba->(fieldpos("FISC_PLU")) <> 0
+	AADD( ImeKol, { padc("PLU kod", 8), ;
+		{|| PADR(fisc_plu, 10)}, ;
+		"fisc_plu", {|| gen_plu(@wfisc_plu), .f.}, ;
+		{|| .t. } })
+endif
+
 // kataloski broj
 if roba->(fieldpos("KATBR"))<>0
 	AADD(ImeKol, {padc("KATBR",14 ), {|| PADR(katBr, 14)}, "katBr"   })

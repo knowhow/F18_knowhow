@@ -42,35 +42,21 @@ AADD(aDBf,{ 'NC'                  , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'VPC'                 , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'VPC2'                , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'PLC'                 , 'N' ,  18 ,  8 })
-// plc - mislim da ni ovo bas niko ne koristi treba analizirati
-//       vidjeti kod korisnika
-
 AADD(aDBf,{ 'MPC'                 , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'MPC2'                , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'MPC3'                , 'N' ,  18 ,  8 })
-// mpc2, mpc3 ------ ?? perspektivno ubaciti u sifk
-
 AADD(aDBf,{ 'K1'                  , 'C' ,   4 ,  0 })
-// planika: dobavljac   - grupe artikala
 AADD(aDBf,{ 'K2'                  , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'K7'                  , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'K8'                  , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'K9'                  , 'C' ,   4 ,  0 })
-// planika: stavljaju se oznake za velicinu obuce
-//          X - ne broji se parovno
-
 AADD(aDBf,{ 'N1'                  , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'N2'                  , 'N' ,  12 ,  2 })
-
 AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'MINK'                , 'N' ,  12 ,  2 })
-
-
 AADD(aDBf,{ 'Opis'                , 'C' , 250 ,  0 })
-// koliko mi je poznato, opis treba ukinuti !!!!
-// napraviti opciju u ikalk za brisanje opisa !!! a u kodu uslovno
-// omoguciti editovanje opisa
 AADD(aDBf,{ 'BARKOD'                , 'C' ,  13 ,  0 })
+AADD(aDBf,{ 'FISC_PLU'              , 'N' ,  10 ,  0 })
 
 if !file(f18_ime_dbf("roba"))
         dbcreate2(SIFPATH+'roba.dbf', aDbf)	
@@ -88,6 +74,7 @@ CREATE_INDEX("ID","id", PRIVPATH+"_roba")
 CREATE_INDEX("BARKOD","BARKOD", "roba") // roba, artikli
 CREATE_INDEX("SIFRADOB","SIFRADOB",SIFPATH+"roba") // roba, artikli
 CREATE_INDEX("ID_VSD","SIFRADOB", SIFPATH + "roba") // sifra dobavljaca
+CREATE_INDEX("PLU","str(fisc_plu, 10)", SIFPATH + "roba") // sifra dobavljaca
 
 close all
 O_ROBA
@@ -96,7 +83,6 @@ if fieldpos("KATBR")<>0
   use
   CREATE_INDEX("KATBR","KATBR",SIFPATH+"roba") // roba, artikli
 endif
-
 
 // TARIFA
 if !file(f18_ime_dbf("tarifa"))

@@ -809,12 +809,12 @@ nErr := fc_hcp_rn( ALLTRIM( gFC_path ), ;
 		aStavke, aKupac, lStorno, ; 
 		gFc_error, nTotal )
 
-if nErr = 0 .and. lStorno = .f.
+if nErr = 0
 
 	// vrati broj fiskalnog racuna
 	
 	nFisc_no := hcp_fisc_no( ALLTRIM(gFc_path), ;
-		ALLTRIM(gFc_name), gFc_error )
+		ALLTRIM(gFc_name), gFc_error, lStorno )
 
 	if nFisc_no > 0
 	

@@ -790,14 +790,7 @@ return
  */
 
 function Povrat9(cIdFirma, cIdVd, cBrDok)
-*{
 local nRec
-
-if Klevel<>"0"
-	Beep(2)
-    	Msg("Nemate pristupa ovoj opciji !",4)
-    	CLOSERET
-endif
 
 lSilent := .t.
 

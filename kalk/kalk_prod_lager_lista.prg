@@ -635,7 +635,7 @@ if lImaGresaka
 endif
 
 if lPocStanje
-	if lImaGresaka .and. Pitanje(,"Nulirati kalk_pripremu (radi ponavljanja procedure) ?","D")=="D"
+	if lImaGresaka .and. Pitanje(,"Nulirati pripremu (radi ponavljanja procedure) ?","D")=="D"
    		select kalk_pripr
    		zap
  	else

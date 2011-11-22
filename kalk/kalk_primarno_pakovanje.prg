@@ -356,7 +356,7 @@ function NaPrPak2()
     UzmiIzINI(PRIVPATH+"FMK.INI","Indikatori","ImaU_KALK","D","WRITE")
     MsgBeep("Stavke iz kalk_pripreme su privremeno sklonjene!"+;
            "#Prvo obradite izgenerisane stavke u kalk_pripremi, a nakon"+;
-           "#azuriranja sklonjene stavke bice vracene u kalk_pripremu!")
+           "#azuriranja sklonjene stavke bice vracene u pripremu!")
   ELSE
     APPEND FROM _KALK
     MsgBeep("Nema stavki za generaciju dokumenta "+cIdVdI+"!")

@@ -274,10 +274,10 @@ if Generisati11_ku()
 	Generisi11ku_iz10ke(cBrojZadnje11ke)
 endif
 
-// AZURIRAJ kalk_priprEMU !!
+// AZURIRAJ PRIPREMU !!
 Tone(360,2)
 
-MsgO("Azuriram kalk_pripremu ...")
+MsgO("Azuriram pripremu ...")
 
 select kalk_pripr; go top
 
@@ -547,7 +547,7 @@ return
 function Azur9()
 local cPametno:="D" 
 
-if Pitanje("p1","Zelite li kalk_pripremu prebaciti u smece (D/N) ?","N")=="N"
+if Pitanje("p1","Zelite li pripremu prebaciti u smece (D/N) ?","N")=="N"
   return
 endif
 
@@ -601,7 +601,7 @@ closeret
 
 
 /*! \fn Povrat_kalk_dokumenta()
- *  \brief Povrat kalkulacije u kalk_pripremu
+ *  \brief Povrat kalkulacije u pripremu
  */
 
 function Povrat_kalk_dokumenta()
@@ -610,12 +610,6 @@ local nRec
 local gEraseKum
 
 gEraseKum:=.f.
-
-if Klevel<>"0"
-  Beep(2)
-  Msg("Nemate pristupa ovoj opciji !",4)
-  closeret
-endif
 
 if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (N) ?","D")="N"
 	Beep(1)
@@ -671,7 +665,7 @@ if cBrDok="."
    		enddo
   	Boxc()
 
-  	if Pitanje(,"Povuci u kalk_pripremu kalk sa ovim kriterijom ?","N")=="D"
+  	if Pitanje(,"Povuci u pripremu kalk sa ovim kriterijom ?","N")=="D"
     		gEraseKum:=Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D")=="D"
     		select kalk
     		if !flock()
@@ -724,7 +718,7 @@ if cBrDok="."
   	closeret
 endif
 
-if Pitanje("","Kalk. "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u kalk_pripremu (D/N) ?","D")=="N"
+if Pitanje("","Kalk. "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
 	closeret
 endif
 
@@ -740,7 +734,7 @@ endif
 hseek cIdFirma+cIdVd+cBrDok
 EOF CRET
 
-MsgO("Prebacujem u kalk_pripremu...")
+MsgO("Prebacujem u pripremu...")
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
 	select KALK
 	Scatter()
@@ -770,7 +764,7 @@ if gEraseKum
 	if Logirati(goModul:oDataBase:cName,"DOK","POVRAT")
 		
 		cOpis := idfirma + "-" + idvd + "-" + ALLTRIM(brdok)
-		EventLog(nUser, goModul:oDataBase:cName,"DOK","POVRAT",nil,nil,nil,nil,cOpis,"","",datdok,Date(),"","KALK - Povrat dokumenta u kalk_pripremu")
+		EventLog(nUser, goModul:oDataBase:cName,"DOK","POVRAT",nil,nil,nil,nil,cOpis,"","",datdok,Date(),"","KALK - Povrat dokumenta u pripremu")
 	endif
 
 	// vrati i dokument iz kalk_doksRC
@@ -792,7 +786,7 @@ return
 // iz kalk_pripr 9 u kalk_pripr
 
 /*! \fn Povrat9()
- *  \brief Povrat kalkulacije iz "smeca" u kalk_pripremu
+ *  \brief Povrat kalkulacije iz "smeca" u pripremu
  */
 
 function Povrat9(cIdFirma, cIdVd, cBrDok)
@@ -855,7 +849,7 @@ if !lSilent
    enddo
   Boxc()
 
- if Pitanje(,"Povuci u kalk_pripremu dokumente sa ovim kriterijom ?","N")=="D"
+ if Pitanje(,"Povuci u pripremu dokumente sa ovim kriterijom ?","N")=="D"
     select kalk_pripr9
     if !flock(); Msg("PRIPR9 - SMECE je zauzeta ",3); closeret; endif
     PRIVATE cFilt1:=""
@@ -882,7 +876,7 @@ endif
 
 endif // lSilent
 
-if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u kalk_pripremu (D/N) ?","D")=="N"
+if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
 	if !lSilent
 		CLOSERET
 	else
@@ -926,21 +920,8 @@ return
 
 
 // iz kalk_pripr 9 u kalk_pripr najstariju kalkulaciju
-
-/*! \fn P9najst()
- *  \brief Povrat najstarije kalkulacije iz "smeca" u kalk_pripremu
- */
-
 function P9najst()
-*{
 local nRec
-
-if Klevel<>"0"
-    Beep(2)
-    Msg("Nemate pristupa ovoj opciji !",4)
-    closeret
-endif
-
 
 O_KALK_PRIPR9
 O_KALK_PRIPR
@@ -951,7 +932,7 @@ cidfirma:=gfirma
 cIdVD:=space(2)
 cBrDok:=space(8)
 
-if Pitanje(,"Povuci u kalk_pripremu najstariji dokument ?","N")=="N"
+if Pitanje(,"Povuci u pripremu najstariji dokument ?","N")=="N"
   closeret
 endif
 select kalk_pripr9
@@ -989,20 +970,8 @@ closeret
 
 
 // iz kalk u kalk_pripr najnoviju kalkulaciju
-
-/*! \fn Pnajn()
- *  \brief Povrat najnovije kalkulacije u kalk_pripremu
- */
-
 function Pnajn()
-*{
 local nRec,cbrsm, fbof, nVraceno:=0
-
-if Klevel<>"0"
-    Beep(2)
-    Msg("Nemate pristupa ovoj opciji !",4)
-    closeret
-endif
 
 O_KALK_DOKS
 O_KALK
@@ -1020,12 +989,12 @@ dDatDok:=datdok
 
 if eof(); Msg("Na stanju nema dokumenata.."); closeret; endif
 
-if Pitanje(,"Vratiti u kalk_pripremu dokumente od "+dtoc(dDatDok)+" ?","N")=="N"
+if Pitanje(,"Vratiti u pripremu dokumente od "+dtoc(dDatDok)+" ?","N")=="N"
   closeret
 endif
 select kalk
 
-MsgO("Povrat dokumenata od "+dtoc(dDatDok)+" u kalk_priprEMU")
+MsgO("Povrat dokumenata od "+dtoc(dDatDok)+" u pripremu")
 do while !bof() .and. cIdFirma==IdFirma .and. datdok==dDatDok
  cIDFirma:=idfirma; cIdvd:=idvd; cBrDok:=brdok
  cBrSm:=""

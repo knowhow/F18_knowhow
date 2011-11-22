@@ -62,7 +62,7 @@ if finvert=NIL
 endif
 
 select (nDbf)
-nOrderSif:=indexord()  // zapamti order sifranika !!
+nOrderSif:=indexord() 
 
 
 nOrdId := ORDNUMBER("ID")
@@ -183,8 +183,8 @@ IF cId <>NIL
 
      BoxC()
 
-  elseif left(trim(cid),1)=="."
- // SEEK PO NAZ kada se unese DUGACKI DIO
+  elseif left(TRIM(cid), 1)=="."
+     // SEEK PO NAZ kada se unese DUGACKI DIO
      Box(,1,60)
        cNazSrch:=space(len(naz))
        Beep(1)
@@ -192,18 +192,10 @@ IF cId <>NIL
        @ m_x+1,m_y+2 SAY "Unesi naziv:" GET cNazSrch PICTURE "@!S40"
        read
      BoxC()
-     if fbosanski
-        seek trim(BTOEU(cNazSrch))
-     else
-        seek trim(cNazSrch)
-     endif
+      seek trim(cNazSrch)
      cId:=Id
    else
-     if fbosanski
-        seek left(BTOEU(cid), len(trim(cid))-1)
-     else
-        seek left(cid, len(trim(cid))-1)
-     endif
+     seek left(cid, len(trim(cid))-1)
    endif
 
  elseif len(trim(cId))>10 .and. fieldpos("BARKOD")<>0 
@@ -244,7 +236,8 @@ if dx<>NIL .and. dx<0
 endif
 
 if !empty(cUslovSrch)
-  SetSifFilt(cUslovSrch)  // postavi filter u sifrarniku
+  // postavi filter u sifrarniku
+  SetSifFilt(cUslovSrch)  
 endif
 
 if (fPonaz .and. (cNazSrch=="" .or. !trim(cNazSrch)==trim(naz))) .or.;
@@ -367,8 +360,8 @@ endif
 
 return
 
-
-
+// ----------------------------------
+// ----------------------------------
 function SIF_TEKREC(cDBF, nOffset)
 
 local xVal
@@ -399,7 +392,8 @@ if __PSIF_NIVO__ > len(__A_SIFV__)
 endif
 return
 
-
+// ------------------------------
+// ------------------------------
 static function PopSifV()
 
 --__PSIF_NIVO__
@@ -478,7 +472,7 @@ if (Ch==K_CTRL_N .and.  !ImaSlovo("AN", cSecur)  )  .or. ;
    (Ch==K_F4     .and.  !ImaSlovo("AI", cSecur)  )  .or. ;
    (Ch==K_CTRL_F9 .and.  !ImaSlovo("A9", cSecur)  ) .or. ;
    ASCAN(azabrane,Ch)<>0  
-   MsgBeep("Nivo rada:"+klevel+":"+cSecur+": Opcija nedostupna !")
+   MsgBeep("Nivo rada:" + klevel + ":" + cSecur + ": Opcija nedostupna !")
    return DE_CONT
 endif
 
@@ -550,7 +544,7 @@ do case
   case Ch==K_CTRL_P
 
     PushWa()
-    IzborP2(Kol,PRIVPATH+alias())
+    IzborP2( Kol,PRIVPATH + alias())
     if lastkey()==K_ESC
         return DE_CONT
     endif
@@ -600,38 +594,7 @@ do case
 
 
   case Ch==K_CTRL_F9
-
-        if Pitanje(,"Zelite li sigurno izbrisati SVE zapise ??","N")=="D"
-          
-	  Beep(6)
-          
-	  nTArea := SELECT()
-	   // logiraj promjenu brisanja stavke
-          if _LOG_PROMJENE == .t.
-      	       EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-	           "", "", "", DATE(), DATE(), "", ;
-	           "pokusaj brisanja kompletnog sifrarnika")
-          endif
-	  select (nTArea)
-	  
-	  if Pitanje(,"Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
-             zap
-
-             nTArea := SELECT()
-	     // logiraj promjenu brisanja stavke
-             if _LOG_PROMJENE == .t.
-      	        EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-		     "", "", "", DATE(), DATE(), "", ;
-		     "brisanje kompletnog sifrarnika")
-             endif
-	     
-	     select (nTArea)
-
-	  endif
-          return DE_REFRESH
-        else
-          return DE_CONT
-        endif
+     return sif_brisi_sve()
 
   case Ch==K_ALT_C
     
@@ -2819,5 +2782,40 @@ if lNFGR .and. !FOUND()
 endif
 return
 
+// -------------------------------
+// -------------------------------
+static function sif_brisi_sve()
 
+if Pitanje(,"Zelite li sigurno izbrisati SVE zapise ??","N") == "N"
+    return DE_CONT
+endif
+        
+Beep(6)
+    
+nTArea := SELECT()
+// logiraj promjenu brisanja stavke
+if _LOG_PROMJENE == .t.
+    EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
+    "", "", "", DATE(), DATE(), "", ;
+    "pokusaj brisanja kompletnog sifrarnika")
+endif
+select (nTArea)
+
+if Pitanje(,"Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
+        
+        brisi_sifrarnik(ALIAS())
+
+        nTArea := SELECT()
+        // logiraj promjenu brisanja stavke
+        if _LOG_PROMJENE == .t.
+            EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
+            "", "", "", DATE(), DATE(), "", ;
+            "brisanje kompletnog sifrarnika")
+        endif
+    
+    select (nTArea)
+
+endif
+        
+return DE_REFRESH
 

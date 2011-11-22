@@ -15,8 +15,8 @@
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
-function my_use(cTable, cAlias, lNew, cRDD, semaphore_param)
-local nPos
+function my_use(alias, table, lNew, cRDD, semaphore_param)
+local _pos
 local cF18Tbl
 local nVersion
 
@@ -30,13 +30,14 @@ endif
 */
 
 // /home/test/suban.dbf => suban
-cTable := FILEBASE(cTable)
+alias := FILEBASE(alias)
 
-// SUBAN
-nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cTable)} )
+// pozicija gdje je npr. SUBAN
+_pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
 
-if cAlias == NIL
-   cAlias := gaDBFs[nPos, 2]
+if table == NIL
+   // "fin_suban"
+   table := gaDBFs[_pos, 3]
 endif
 
 if cRDD == NIL
@@ -53,33 +54,31 @@ endif
 // log_write( "LEN gaDBFs[" + STR(nPos) + "]" + STR(LEN(gADBFs[nPos])) + " USE (" + my_home() + gaDBFs[nPos, 3]  + " ALIAS (" + cAlias + ") VIA (" + cRDD + ") EXCLUSIVE")
 //endif
 
-if  LEN(gaDBFs[nPos])>3 
+if  LEN(gaDBFs[_pos])>3 
 
    if (cRDD != "SEMAPHORE")
-        cF18Tbl := gaDBFs[nPos, 3]
-
         //if gDebug > 9
         //    log_write("F18TBL =" + cF18Tbl)
         //endif
 
-        nVersion :=  get_semaphore_version(cF18Tbl)
+        nVersion :=  get_semaphore_version(table)
         if gDebug > 9
-          log_write("Tabela:" + cF18Tbl + " semaphore nVersion=" + STR(nVersion) + " last_semaphore_version=" + STR(last_semaphore_version(cF18Tbl)))
+          log_write("Tabela:" + table + " semaphore nVersion=" + STR(nVersion) + " last_semaphore_version=" + STR(last_semaphore_version(table)))
         endif
 
         if (nVersion == -1)
           // semafor je resetovan
-          EVAL( gaDBFs[nPos, 4], "FULL")
-          update_semaphore_version(cF18Tbl, .f.)
+          EVAL( gaDBFs[_pos, 4], "FULL")
+          update_semaphore_version(table, .f.)
 
         else
             // moramo osvjeziti cache
-           if nVersion < last_semaphore_version(cF18Tbl)
-             if (semaphore_param == NIL) .and. LEN(gaDBFs[nPos])>4
-                 semaphore_param:= gaDBFs[nPos, 5]
+           if nVersion < last_semaphore_version(table)
+             if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
+                 semaphore_param:= gaDBFs[_pos, 5]
              endif
-             EVAL( gaDBFs[nPos, 4], semaphore_param )
-             update_semaphore_version(cF18Tbl, .f.)
+             EVAL( gaDBFs[_pos, 4], semaphore_param )
+             update_semaphore_version(table, .f.)
            endif
         endif
    else
@@ -89,7 +88,7 @@ if  LEN(gaDBFs[nPos])>3
 
 endif
 
-USE (my_home() + gaDBFs[nPos, 3]) ALIAS (cAlias) VIA (cRDD) EXCLUSIVE
+USE (my_home() + table) ALIAS (alias) VIA (cRDD) EXCLUSIVE
 
 return
 
@@ -226,6 +225,10 @@ _last_ver := get_semaphore_version(table, .t.)
 
 if increment == NIL
    increment := .t.
+endif
+
+if _last_ver < 0
+  _last_ver := 1
 endif
 
 _ver_user := _last_ver

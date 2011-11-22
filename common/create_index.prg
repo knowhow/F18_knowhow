@@ -22,7 +22,7 @@ static nSlogova:=0
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function create_index(cImeInd, cKljuc, cIme, fSilent)
+function create_index(cImeInd, cKljuc, alias, fSilent)
 
 local bErr
 local cFulDbf
@@ -39,7 +39,7 @@ private cKljuciz
 
 close all
   
-cImeDbf := f18_ime_dbf(cIme)
+cImeDbf := f18_ime_dbf(alias)
 
 if fSilent == nil
     fSilent := .f.
@@ -61,7 +61,7 @@ endif
 fPostoji := .t.
 
 select (F_TMP)
-my_use( cIme )
+my_use(alias)
 
 if USED()
 	nOrder := ORDNUMBER( cTag )
@@ -79,8 +79,9 @@ endif
 
 if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
 
-     SELECT(F_TMP) 
-     my_use(cIme)
+     SELECT(F_TMP)
+   
+     my_use(alias)
  
      if !fSilent
           MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))
@@ -104,7 +105,7 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
         // da ne bi ispao ovo stavljam !!
      else
 
-     	cImeCdx:=strtran(cImeCdx,"."+INDEXEXT,"")
+     	cImeCdx:=strtran(cImeCdx, "." + INDEXEXT, "")
      
      	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
      	USE

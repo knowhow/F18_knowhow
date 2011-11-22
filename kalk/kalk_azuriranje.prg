@@ -26,7 +26,7 @@ if ( lAuto == nil )
 	lAuto := .f.
 endif
 
-if !lAuto .and. Pitanje("p1","Zelite li izvrsiti azuriranje KALK dokumenta (D/N) ?", "N") == "N"
+if !lAuto .and. Pitanje(, "Zelite li izvrsiti azuriranje KALK dokumenta (D/N) ?", "N") == "N"
 	return
 endif
 

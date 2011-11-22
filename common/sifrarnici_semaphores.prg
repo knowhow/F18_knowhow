@@ -12,42 +12,184 @@
 #include "fmk.ch"
 #include "common.ch"
 
-// -------------------------------
-// -------------------------------
-function update_partn_from_sql()
-local oQuery
+// ----------------------------------------
+// ----------------------------------------
+function partn_from_sql_server(algoritam)
 local nCounter
+local nRec
+local _qry
+local _server := pg_server()
+local nSeconds
+local x, y
+local _tmp_id, _ids
+local _sql_ids
+local _i
+local _qry_obj
+
+x := maxrows() - 15
+y := maxcols() - 20
+
+if algoritam == NIL
+   algoritam := "FULL"
+endif
+
+@ x + 1, y + 2 SAY "update partn: " + algoritam
+nSeconds := SECONDS()
+_qry :=  "SELECT id, naz from fmk.partn"
+
+if (algoritam == "IDS")
+    _ids := get_ids_from_semaphore("partn")
+    _sql_ids := "("
+    for _i := 1 to LEN(_ids)
+        _sql_ids += _sql_quote(_ids[i])
+        if i < LEN(_ids)
+           _sql_ids += ","
+        endif
+    next
+    _sql_ids := ")"
+    _qry += " WHERE ids IN " + _sql_ids
+endif
+
+_qry_obj := _server:Query(_qry) 
+altd()
+
+SELECT F_PARTN
+my_use ("partn", "partn", .f., "SEMAPHORE")
+
+if (algoritam == "FULL")
+    // "full" algoritam
+    log_write("id = nil full algoritam") 
+    ZAP
+elseif altoritam == "IDS"
+    log_write("ids <> nil ids algoritam") 
+    // "date" algoritam  - brisi sve vece od zadanog datuma
+    SET ORDER TO TAG "ID"
+
+    // pobrisimo sve id-ove koji su drugi izmijenili
+    for each _tmp_id in _ids
+          SEEK id
+          if found()
+               DELETE
+          endif
+    next
+
+endif
+
+@ x+4, y+2 SAY SECONDS() - nSeconds 
+
+nCounter := 1
+DO WHILE ! _qry_obj:Eof()
+    append blank
+    replace id with _qry_obj:FieldGet(1), ;
+            naz with _qry_obj:FieldGet(2)
+    
+    _qry_obj:Skip()
+
+    nCounter++
+    if nCounter % 5000 == 0
+        @ x+4, y+2 SAY SECONDS() - nSeconds
+    endif 
+ENDDO
+
+USE
+_qry_obj:Destroy()
+
+if (gDebug > 5)
+    log_write("partn synchro cache:" + STR(SECONDS() - nSeconds))
+endif
+
+close all
  
-//  ? "updateujem partn.dbf from sql stanja"
+return .t. 
+ 
+// ------------------------------------
+// ------------------------------------
+function konto_from_sql_server(algoritam)
+local nCounter
+local nRec
+local _qry
+local _server := pg_server()
+local nSeconds
+local x, y
+local _tmp_id, _ids
+local _sql_ids
+local _i
+local _qry_obj
 
-   oQuery := oServer:Query( "SELECT id, naz FROM fmk.partn" )
+x := maxrows() - 15
+y := maxcols() - 20
 
-   aStruct := oQuery:Struct()
+if algoritam == NIL
+   algoritam := "FULL"
+endif
 
-   FOR i := 1 TO Len( aStruct )
-      ? aStruct[ i ][ 1 ], aStruct[ i ][ 2 ]
-   NEXT
+@ x + 1, y + 2 SAY "update konto: " + algoritam
+nSeconds := SECONDS()
+_qry :=  "SELECT id, naz from fmk.konto"
 
-   ? "Fields: ", oQuery:Fcount()
+if (algoritam == "IDS")
+    _ids := get_ids_from_semaphore("konto")
+    _sql_ids := "("
+    for _i := 1 to LEN(_ids)
+        _sql_ids += _sql_quote(_ids[i])
+        if i < LEN(_ids)
+           _sql_ids += ","
+        endif
+    next
+    _sql_ids := ")"
+    _qry += " WHERE ids IN " + _sql_ids
+endif
 
-   SELECT PARTN
-   ZAP
-  
-   nCounter := 1
-   DO WHILE ! oQuery:Eof()
-      append blank
-      replace id with oQuery:FieldGet(1), ;
-              naz with oQuery:FieldGet(2)
+_qry_obj := _server:Query(_qry) 
 
-      oQuery:Skip()
+SELECT F_KONTO
+my_use ("konto", "konto", .f., "SEMAPHORE")
 
-      //? nCounter++
-   ENDDO
+if (algoritam == "FULL")
+    // "full" algoritam
+    log_write("id = nil full algoritam") 
+    ZAP
+elseif altoritam == "IDS"
+    log_write("ids <> nil ids algoritam") 
+    // "date" algoritam  - brisi sve vece od zadanog datuma
+    SET ORDER TO TAG "ID"
 
-   oQuery:Destroy()
+    // pobrisimo sve id-ove koji su drugi izmijenili
+    for each _tmp_id in _ids
+          SEEK id
+          if found()
+               DELETE
+          endif
+    next
 
-return 
+endif
 
+@ x+4, y+2 SAY SECONDS() - nSeconds 
+
+nCounter := 1
+DO WHILE ! _qry_obj:Eof()
+    append blank
+    replace id with _qry_obj:FieldGet(1), ;
+            naz with _qry_obj:FieldGet(2)
+    
+    _qry_obj:Skip()
+
+    nCounter++
+    if nCounter % 5000 == 0
+        @ x+4, y+2 SAY SECONDS() - nSeconds
+    endif 
+ENDDO
+
+USE
+_qry_obj:Destroy()
+
+if (gDebug > 5)
+    log_write("konto synchro cache:" + STR(SECONDS() - nSeconds))
+endif
+
+close all
+ 
+return .t. 
 
 // -------------------------------
 // -------------------------------

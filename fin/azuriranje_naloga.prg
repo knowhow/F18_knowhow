@@ -1,6 +1,6 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * ERP software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
@@ -22,7 +22,7 @@ function fin_azur(lAuto)
 // PostgreSQL server object
 local oServer
 
-if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
+if Logirati(goModul:oDataBase:cName,"DOK", "AZUR")
 	lLogAzur:=.t.
 else
 	lLogAzur:=.f.
@@ -46,11 +46,11 @@ oServer := pg_server()
 if oServer == NIL
   CLEAR SCREEN 
   ? "fin_azur oServer nil ?!"
+  INKEY(0)
   QUIT
 endif
 
 if fin_azur_sql(oServer)
-
    o_fin_za_azuriranje()
    if !fin_azur_dbf(lAuto)
        MsgBeep("Neuspjesno FIN/DBF azuriranje !?")
@@ -82,12 +82,11 @@ O_PNALOG
 return
 
 
-
 // ----------------------
 // ----------------------
 function fin_azur_sql(oServer)
 local lOk
-
+local record := hb_hash()
 MsgO("sql suban")
 
 SELECT PSUBAN
@@ -95,10 +94,21 @@ GO TOP
 lOk := .t.
 sql_fin_suban_update("BEGIN")
 do while !eof()
-   //sql_fin_suban_update(oServer, cIdFirma, cIdVn, cBrNal, nRbr, dDatVal, dDatDok, cOpis, cIdPartn, cKonto, cDP, nIznos)
-    if !sql_fin_suban_update(field->IdFirma, field->IdVn, field->BrNal, VAL(field->Rbr), ;
-           field->DatDok, field->DatVal, field->opis, ;
-           field->IdPartner, field->IdKonto, field->D_P, field->IZNOSBHD)
+ 
+   record["id_firma"] := field->IdFirma
+   record["id_vn"] := field->IdVn
+   record["br_nal"] := field->BrNal
+   record["r_br"] := VAL(field->Rbr)
+   record["dat_dok"] := field->DatDok
+   record["dat_val"] := field->DatVal
+   record["opis"] := field->opis
+   record["id_partner"] := field->IdPartner
+   record["id_konto"] := field->IdKonto
+   record["d_p"] := field->d_p
+   record["iznos"] := field->iznosbhd
+
+
+   if !sql_fin_suban_update("rec", record )
        lOk := .f.
        exit
     endif

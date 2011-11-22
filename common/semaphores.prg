@@ -45,36 +45,36 @@ endif
 return oRet:Fieldget( 1 )
 
 /* ------------------------------------------
-  get_semaphore_version( "konto", "hernad" )
+  get_semaphore_version( "konto")
   -------------------------------------------
 */
-function get_semaphore_version(cTable)
-LOCAL oTable
-LOCAL nResult
-LOCAL cTmpQry
-local oServer:= pg_server()
+function get_semaphore_version(table)
+LOCAL _tbl_obj
+LOCAL _result
+LOCAL _qry
+local _tbl
+local _server := pg_server()
+local _user := f18_user()
 
-cTable := "fmk.semaphores_" + cTable
+_tbl := "fmk.semaphores_" + table
 
-nResult := table_count(cTable, "user_code=" + _sql_quote(f18_user())) 
+_result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
 
-if nResult <> 1
-  log_write( cTable + " " + f18_user() + "count =" + STR(nResult))
+if _result <> 1
+  log_write( _tbl + " " + _user + "count =" + STR(_result))
   return -1
 endif
 
-
-cTmpQry := "SELECT version FROM " + cTable + " WHERE user_code=" + _sql_quote(f18_user())
-oTable := _sql_query( oServer, cTmpQry )
-IF oTable == NIL
-      MsgBeep( "problem sa:" + cTmpQry)
+_qry := "SELECT version FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+_tbl_obj := _sql_query( _server, _qry )
+IF _tbl_obj == NIL
+      MsgBeep( "problem sa:" + _qry)
       QUIT
 ENDIF
 
-nResult := oTable:Fieldget( oTable:Fieldpos("version") )
+_result := _tbl_obj:Fieldget( _tbl_obj:Fieldpos("version") )
 
-RETURN nResult
-
+RETURN _result
 
 
 /* ------------------------------------------
@@ -82,115 +82,225 @@ RETURN nResult
   set version to -1
   -------------------------------------------
 */
-function reset_semaphore_version(cTable)
-LOCAL oRet
-LOCAL nResult
-LOCAL cTmpQry
-LOCAL cFullTable
-LOCAL cUser := f18_user()
-LOCAL oServer := pg_server()
+function reset_semaphore_version(table)
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _user := f18_user()
+LOCAL _server := pg_server()
 
-cFullTable := "fmk.semaphores_" + cTable
-? "table=", cTable
+_tbl := "fmk.semaphores_" + table
+_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
 
-nResult := table_count(cFullTable, "user_code=" + _sql_quote(cUser)) 
-
-if nResult == 0
-
-   cTmpQry := "INSERT INTO " + cFullTable + ;
+if (_result == 0)
+   _qry := "INSERT INTO " + _tbl + ;
               "(user_code, version) " + ;
-               "VALUES(" + _sql_quote(cUser)  + ", -1 )"
-
-   oRet := _sql_query( oServer, cTmpQry)
-
+               "VALUES(" + _sql_quote(_user)  + ", -1 )"
 else
-
-cTmpQry := "UPDATE " + cFullTable + ;
-              " SET version=-1" + ;
-              " WHERE user_code =" + _sql_quote(cUser) 
-
-oRet := _sql_query( oServer, cTmpQry )
-
+    _qry := "UPDATE " + _tbl + ;
+            " SET version=-1" + ;
+            " WHERE user_code =" + _sql_quote(_user) 
 endif
+_ret := _sql_query( _server, _qry )
 
-cTmpQry := "SELECT version from " + cFullTable + ;
-           " WHERE user_code =" + _sql_quote(cUser) 
-oRet := _sql_query( oServer, cTmpQry )
+_qry := "SELECT version from " + _tbl + ;
+           " WHERE user_code =" + _sql_quote(_user) 
+_ret := _sql_query( _server, _qry )
 
-return oRet:Fieldget( oRet:Fieldpos("version") )
-
+return _ret:Fieldget( _ret:Fieldpos("version") )
 
 
 /* ------------------------------------------
   update_semaphore_version( "konto")
   -------------------------------------------
 */
-function update_semaphore_version(cTable)
-LOCAL oRet
-LOCAL nResult
-LOCAL cTmpQry
-LOCAL cFullTable
-LOCAL cUser := f18_user()
-LOCAL oServer := pg_server()
-LOCAL nLast
+function update_semaphore_version(table)
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _user := f18_user()
+LOCAL _server := pg_server()
+LOCAL _last := 0
 
-cFullTable := "fmk.semaphores_" + cTable
-? "table=", cTable
+_tbl := "fmk.semaphores_" + table
 
-nResult := table_count(cFullTable, "user_code=" + _sql_quote(cUser)) 
+_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
 
-if nResult == 0
-
-/*
-   cTmpQry := "INSERT INTO " + cFullTable + ;
-              "(user_code, version) " + ;
-               "VALUES(" + _sql_quote(cUser)  + ", nextval('fmk.sem_ver_"+ cTable + "') )"
-
-*/
-   cTmpQry := "INSERT INTO " + cFullTable + ;
+if (_result == 0)
+   _qry := "INSERT INTO " + _tbl + ;
               "(user_code, version, last_trans_version) " + ;
-               "VALUES(" + _sql_quote(cUser)  + ", 1, 1 )"
-
-
-
-   oRet := _sql_query( oServer, cTmpQry)
+               "VALUES(" + _sql_quote(_user)  + ", 1, 1 )"
+   _ret := _sql_query( _server, _qry)
 
 else
-
-/*
-cTmpQry := "UPDATE " + cFullTable + ;
-              " SET version=nextval('fmk.sem_ver_"+ cTable + "') " + ;
-              " WHERE user_code =" + _sql_quote(cUser) 
-*/
-
-nLast := get_semaphore_version(cTable)
-
-cTmpQry := "UPDATE " + cFullTable + ;
-              " SET version=" + STR(nLast+1) + ;
-              " WHERE user_code =" + _sql_quote(cUser) 
-oRet := _sql_query( oServer, cTmpQry )
+    _last := get_semaphore_version(table)
+    _qry := "UPDATE " + _tbl + ;
+                " SET version=" + STR(_last + 1) + ;
+                " WHERE user_code =" + _sql_quote(_user) 
+    _ret := _sql_query( _server, _qry )
 
 endif
 
 // svim setuj last_trans_version
-cTmpQry := "UPDATE " + cFullTable + ;
-              " SET last_trans_version=" + STR(nLast+1)  
-oRet := _sql_query( oServer, cTmpQry )
+_qry := "UPDATE " + _tbl + ;
+        " SET last_trans_version=" + STR(_last + 1)  
+_ret := _sql_query( _server, _qry )
 
 // kod svih usera verzija ne moze biti veca od nLast + 1
-cTmpQry := "UPDATE " + cFullTable + ;
-              " SET version=" + STR(nLast+1) + ;
-              " WHERE version > " + STR(nLast+1)
-oRet := _sql_query( oServer, cTmpQry )
+_qry := "UPDATE " + _tbl + ;
+              " SET version=" + STR(_last + 1) + ;
+              " WHERE version > " + STR(_last + 1)
+_ret := _sql_query( _server, _qry )
+
+_qry := "SELECT version from " + _tbl + ;
+           " WHERE user_code =" + _sql_quote(_user) 
+_ret := _sql_query( _server, _qry )
+
+return _ret:Fieldget( _ret:Fieldpos("version") )
+
+//---------------------------------------
+//---------------------------------------
+function push_ids_to_semaphore( table, ids )
+local _tbl
+local _result
+local _user := f18_user()
+local _ret
+local _qry
+local _sql_ids
+local _i
+
+if LEN(_ids) < 1
+   return .f.
+endif
+
+_tbl := "fmk.semaphores_" + table
+_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
+
+// ARAY['id1', 'id2']
+_sql_ids := "ARRAY["
+for _i := 1 TO LEN(ids)
+ _sql_ids += _sql_quote(_id) 
+ if _i < LEN(ids)
+    _sql_ids := ","
+ endif
+next
+_sql_ids += "]"
+
+
+_qry := "UPDATE " + _tbl + ;
+              " SET ids = ids || " + _sql_ids + ;
+              " WHERE user_code =" + _sql_quote(_user) 
+_ret := _sql_query( _server, _qry )
+
+return _ret
+
+
+//---------------------------------------
+// vrati matricu id-ova
+//---------------------------------------
+function get_ids_from_semaphore( table )
+local _server :=  pg_server()
+local _tbl
+local _tbl_obj
+local _qry
+local _ids, _num_arr, _arr, _i
+
+_tbl := "fmk.semaphores_" + table
+
+_qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(f18_user())
+_tbl_obj := _sql_query( _server, _qry )
+IF _tbl_obj == NIL
+      MsgBeep( "problem sa:" + _qry)
+      QUIT
+ENDIF
+
+_ids := oTable:Fieldget( oTable:Fieldpos("ids") )
+
+// {id1,id2,id3}
+_ids := SUBSTR(_ids, 2, LEN(_ids)-2)
+
+_num_arr := numtoken(_ids, ",")
+_arr := {}
+
+for _i := 1 to _num_arr
+   AADD(_arr, token(_ids, ",", _i))
+next
+RETURN _arr
+
+
+// provjeri prvo da li postoji uopšte ovaj site zapis
+_qry := "SELECT COUNT(*) FROM " + _ + " WHERE " + cCondition
+
+oTable := _sql_query( oServer, cTmpQry )
+IF oTable:NetErr()
+      log_write( "problem sa query-jem: " + cTmpQry )
+      QUIT
+ENDIF
+
+nResult := oTable:Fieldget( oTable:Fieldpos("count") )
+
+return _ids
+
+//---------------------------------------
+//---------------------------------------
+function push_dat_to_semaphore( table, date )
+local _tbl
+local _result
+local _user := f18_user()
+local _ret
+local _qry
+local _sql_ids
+local _i
+
+_tbl := "fmk.semaphores_" + table
+_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
+
+_qry := "UPDATE " + _tbl + ;
+              " SET dat=" + _sql_quote(date) + ;
+              " WHERE user_code =" + _sql_quote(_user) 
+_ret := _sql_query( _server, _qry )
+
+return _ret
+
+//---------------------------------------
+// vrati date za DATE algoritam
+//---------------------------------------
+function get_ids_from_semaphore( table )
+local _server :=  pg_server()
+local _tbl
+local _tbl_obj
+local _qry
+local _dat
+
+_tbl := "fmk.semaphores_" + table
+
+_qry := "SELECT dat FROM " + _tbl + " WHERE user_code=" + _sql_quote(f18_user())
+_tbl_obj := _sql_query( _server, _qry )
+IF _tbl_obj == NIL
+      MsgBeep( "problem sa:" + _qry)
+      QUIT
+ENDIF
+
+_dat := oTable:Fieldget( oTable:Fieldpos("dat") )
+
+RETURN _dat
+
+
+// provjeri prvo da li postoji uopšte ovaj site zapis
+_qry := "SELECT COUNT(*) FROM " + _ + " WHERE " + cCondition
+
+oTable := _sql_query( oServer, cTmpQry )
+IF oTable:NetErr()
+      log_write( "problem sa query-jem: " + cTmpQry )
+      QUIT
+ENDIF
+
+nResult := oTable:Fieldget( oTable:Fieldpos("count") )
 
 
 
-
-cTmpQry := "SELECT version from " + cFullTable + ;
-           " WHERE user_code =" + _sql_quote(cUser) 
-oRet := _sql_query( oServer, cTmpQry )
-
-return oRet:Fieldget( oRet:Fieldpos("version") )
 
 /* ------------------------------  
   broj redova za tabelu
@@ -214,4 +324,5 @@ ENDIF
 nResult := oTable:Fieldget( oTable:Fieldpos("count") )
 
 RETURN nResult
+
 

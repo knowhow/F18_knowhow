@@ -27,7 +27,6 @@
          .I.   .ILI.  ;           // i izraz, ili izraz
          $  < >  >=  <=  #  --    // in, manje, vece, vece ili jednake, manje ili jednako
          .S.LM??3*;               // like izraz
-
 *DATUM
   04.2002
 

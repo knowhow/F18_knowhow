@@ -93,7 +93,8 @@ function CreFmkSvi()
 
 
 // RJ
-cIme := KUMPATH + "rj.dbf" 
+cIme := "rj.dbf" 
+
 if !file(f18_ime_dbf("rj"))
    	aDBf:={}
    	//if goModul:oDataBase:cName == "LD"
@@ -111,7 +112,6 @@ CREATE_INDEX("ID","id", "rj")
 CREATE_INDEX("NAZ","NAZ", "rj")
 
 index_mcode(KUMPATH, "rj")
-
 
 // PARTN
 aDbf:={}
@@ -131,16 +131,23 @@ AADD(aDBf,{ 'DZIROR'              , 'C' ,  22 ,  0 })
 AADD(aDBf,{ 'TELEFON'             , 'C' ,  12 ,  0 })
 AADD(aDBf,{ 'FAX'                 , 'C' ,  12 ,  0 })
 AADD(aDBf,{ 'MOBTEL'              , 'C' ,  20 ,  0 })
-if !file(f18_ime_dbf("partn"))
-        dbcreate2('partn.dbf',aDbf)
-endif
-if !file(f18_ime_dbf("_partn"))
-        dbcreate2('_partn.dbf',aDbf)
-endif
-CREATE_INDEX("ID","id",SIFPATH+"partn") // firme
-CREATE_INDEX("NAZ","LEFT(NAZ,25)",SIFPATH+"partn")
 
-CREATE_INDEX("ID","id",PRIVPATH+"_partn")
+if !file(f18_ime_dbf("partn"))
+
+    dbcreate2('partn', aDbf)
+
+    reset_semaphore_version("partn")
+    my_use("partn")
+ 
+endif
+
+if !file(f18_ime_dbf("_partn"))
+        dbcreate2('_partn', aDbf)
+endif
+CREATE_INDEX("ID", "id", "partn")
+CREATE_INDEX("NAZ", "NAZ", "partn")
+
+CREATE_INDEX("ID", "id", "_partn")
 
 index_mcode(SIFPATH, "partn")
 
@@ -150,10 +157,15 @@ if !file(f18_ime_dbf("konto"))
    AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
    add_f_mcode(@aDbf)
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  57 ,  0 })
-   dbcreate2('konto',aDbf)
+
+   dbcreate2('konto', aDbf)
+
+   reset_semaphore_version("konto")
+   my_use("konto")
+   close all
 endif
 
-CREATE_INDEX("ID","id", "konto") // konta
+CREATE_INDEX("ID","id", "konto")
 CREATE_INDEX("NAZ","naz", "konto")
 index_mcode(SIFPATH, "KONTO")
 

@@ -13,9 +13,6 @@
 #include "pos.ch"
 
 /*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
  * $Source: c:/cvsroot/cl/sigma/fmk/pos/sql/1g/parser.prg,v $
  * $Author: ernad $ 
  * $Revision: 1.2 $

@@ -132,22 +132,22 @@ index_mcode(SIFPATH, "KONCIJ")
 
 // TRFP
 if !file(f18_ime_dbf("trfp"))
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
-        add_f_mcode(@aDbf)
+    aDbf:={}
+    AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
+    add_f_mcode(@aDbf)
 	AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-        AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
-        AADD(aDBf,{ 'DOKUMENT'            , 'C' ,   1 ,  0 })
-        AADD(aDBf,{ 'PARTNER'             , 'C' ,   1 ,  0 })
-        AADD(aDBf,{ 'D_P'                 , 'C' ,   1 ,  0 })
-        AADD(aDBf,{ 'ZNAK'                , 'C' ,   1 ,  0 })
-        AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
-        AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
-        AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
-        dbcreate2(SIFPATH+"trfp.dbf",aDbf)
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+    AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
+    AADD(aDBf,{ 'DOKUMENT'            , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'PARTNER'             , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'D_P'                 , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'ZNAK'                , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
+    AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
+    AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
+    dbcreate2(SIFPATH+"trfp.dbf",aDbf)
 endif
-CREATE_INDEX("ID","idvd+shema+Idkonto",SIFPATH+"trfp")
+CREATE_INDEX("ID", "idvd+shema+Idkonto", "trfp")
 index_mcode(SIFPATH, "TRFP")
 
 
@@ -165,7 +165,7 @@ if !file(f18_ime_dbf("sast"))
    dbcreate2('SAST', aDbf)
 endif
 
-CREATE_INDEX("ID", "ID+ID2", SIFPATH + "SAST")
+CREATE_INDEX("ID", "ID+ID2", "SAST")
 
 close all
 O_SAST

@@ -40,6 +40,7 @@ local _sql_ids
 local _i
 local _qry_obj
 local _field_b
+local _fnd
 
 
 _x := maxrows() - 15
@@ -101,12 +102,17 @@ elseif algoritam == "IDS"
     SET ORDER TO TAG "ID"
 
     // pobrisimo sve id-ove koji su drugi izmijenili
-    for each _tmp_id in _ids
-          SEEK id
+    do while .t.
+       _fnd := .f.
+       for each _tmp_id in _ids
+          HSEEK _tmp_id
           if found()
+               _fnd := .t.
                DELETE
           endif
-    next
+        next
+        if ! _fnd ; exit ; endif
+    enddo
 endif
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 

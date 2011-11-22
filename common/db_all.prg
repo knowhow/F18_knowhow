@@ -309,61 +309,18 @@ return .f.
 
 
 
-#ifdef CAX
-
-/*! \fn reccount2()
- * \note CAX - Advantage db server verzija
- */
- 
-function reccount2()
-*{
-local nC:=0,nRec, nPrevOrd
-
-if ORDNUMBER("BRISAN")<>0
-  nRec:=recno()
-  nPrevOrd:=indexord()
-  set deleted off
-  set order to tag "BRISAN"
-  set scope to "1"  // postavi scope na brisane
-  nC:=AX_KeyCount()
-  set deleted on
-  set scope to
-  dbsetorder(nPrevOrd)
-  go nRec
-endif
-return reccount()-nC
-*}
-
-#else
-
 /*! \fn reccount2()
  * \note COMIX - CDX verzija
  */
 function reccount2()
-*{
-local nC:=0,nRec, nPrevOrd
+local nRec, nPrevOrd
 
-if ORDNUMBER("BRISAN")<>0
-  nPrevOrd:=indexord()
-  set order to tag "BRISAN"
-  set scope to "1"  // postavi scope na brisane
-
-  nC:=ordkeycount()
-
-  set scope to
-  dbsetorder(nPrevOrd)
-endif
-return reccount()-nC
-*}
-
-#endif
+return reccount()
 
 
 function seek2(cArg)
-*{
 dbseek( cArg)
 return nil
-*}
 
 /*
 * markira za brisanje sve zapise u bazi
@@ -382,9 +339,7 @@ bErr:=ERRORBLOCK({|o| MyErrH(o)})
 begin sequence
    __dbzap()
 recover
-//if SHARED()
        do while .t.
-       if flock()
           // neophodno, posto je index po kriteriju deleted() !!
           set order to 0 
           go top
@@ -393,10 +348,6 @@ recover
             dbdelete2()
             skip
           enddo
-       else  // flock
-            inkey(0.4)
-            loop
-       endif // flock
 
        exit
        enddo
@@ -407,9 +358,7 @@ PopWa()
 return nil
 
 function nerr(oe)
-*{
 break oe
-*}
 
 /*! \fn EofFndRet(ef, close)
  *  \brief Daje poruku da ne postoje podaci
@@ -536,12 +485,8 @@ return
 function JelReadOnly()
 IF !( "U" $ TYPE("gGlBaza") )
 	IF !EMPTY(gGlBaza)
-		#ifdef CLIP      
-      			gReadOnly := ( FILEATTR(ToUnix(goModul:oDatabase:cDirKum+SLASH+gGlBaza))==1 )
-		#else
       			gReadOnly := ( FILEATTR(ToUnix(cDirRad+SLASH+gGlBaza))==1 )
-		#endif
-    	ENDIF
+    ENDIF
 ENDIF
 return nil
 

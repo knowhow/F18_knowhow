@@ -363,12 +363,10 @@ for nDbfff:=1 to 250
    if used()
     @ m_x+1,m_y+30 SAY SPACE(12)
     @ m_x+1,m_y+30 SAY ALIAS()
-    set deleted off
-    nOrder:=ORDNUMBER("BRISAN")
     
     // bezuslovno trazi deleted()
     if cDN=="L"  
-     locate for deleted()
+     //locate for deleted()
     else
      if norder<>0
       set order to TAG "BRISAN"
@@ -377,14 +375,13 @@ for nDbfff:=1 to 250
       seek "1"   
      endif
     endif
-    if nOrder=0 .or. found()   //.or. (alias() $ "GPARAMS")
+    if nOrder=0 .or. found()  
       BEEP(1)
       ordsetfocus(0)
       @ m_x+1,m_y+36 SAY reccount() pict "999999"
       __DBPACK()
       @ m_x+1,m_y+42 SAY "+"
       @ m_x+1,m_y+44 SAY reccount() pict "99999"
-      set deleted on
     else
       @ m_x+1,m_y+36 SAY space(4)
       @ m_x+1,m_y+42 SAY "-"
@@ -393,7 +390,6 @@ for nDbfff:=1 to 250
     inkey(0.4)
 
 
-    set deleted on
     use
    endif //used
 next

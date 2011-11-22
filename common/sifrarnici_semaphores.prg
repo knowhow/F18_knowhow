@@ -83,7 +83,6 @@ if (algoritam == "IDS")
 endif
 
 _qry_obj := _server:Query(_qry) 
-altd()
 if _qry_obj:NetErr()
    MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
    QUIT

@@ -703,153 +703,50 @@ close all
 return 0
 
 
-// -----------------------------------
-// Azur(lSilent)
-// Azuriranje stavki u pripremi
-// lSilent
- 
-function Azuriraj_fakturu(lSilent)
-local fRobaIDJ:=.f.
-local cKontrolBroj:=""
-local nPom1
-local nPom2
-local nPom3
-local nHPid
-local cType
-// koristi se za informacije o dokumentu
-local aFD_data := {}
+// -------------------------------------------------------------------
+// azuriranje u dbf tabele
+// -------------------------------------------------------------------
+static function fakt_azur_dbf( lSilent, lViseDok, aOstaju, lProtu, cPrj )
+local cPom
+local cKontrolBroj
+local fRobaIDJ := goModul:lId_J
+local lDoks2 := goModul:lDoks2
+local nDug:=0
+local nRab:=0
+local nDugD:=0
+local nRabD:=0
+local cIdFirma
+local cBrDok
+local cIdTipDok
+local dDatDok
+local aMemo
+local cTxt
+local cDinDem
+local cRezerv
+local nPom1, nPom2, nPom3
 
-cType:=TYPE("lVrsteP")
-
-if (cType<>"L")
-	lVrsteP:=.f.
-endif
-
-if (lSilent==nil)
-	lSilent:=.f.
-endif
-
-if (!lSilent .and. Pitanje( ,"Sigurno zelite izvrsiti azuriranje (D/N)?","N")=="N")
-	return
-endif
-
-o_fakt_edit()
-
-// otvori exclusivno
-select fakt_pripr
-USE
-O_FAKT_PRIPR
-
-go bottom
-
-cPom:=idfirma+idtipdok+brdok
-
-go top
-
-lViseDok :=! (cPom==idfirma+idtipdok+brdok)
-
-aOstaju:={}
-
-if Empty(fakt_naredni_dokument())
-	closeret
-endif
-
-nHPid:=0
-
-lDoks2:=goModul:lDoks2
-
-if (!lDoks2 .and. !(fakt->(FLock()) .and. fakt_doks->(FLock())) .or. lDoks2 .and. !(fakt->(FLock()) .and. fakt_doks->(FLock()) .and. fakt_doks2->(FLock())))
-	Beep(4)
-  	Msg("Azuriranje NE moze vrsiti vise korisnika istovremeno !", 15)
-  	closeret
-endif
-
-fRobaIDJ:=goModul:lId_J
-
-fProtu:=.f.
-
-if (gProtu13=="D" .and. fakt_pripr->idtipdok=="13" .and. Pitanje(,"Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
-	if (gVar13=="2" .and. gVarNum=="1")
-      		cPRj:=RJIzKonta(fakt_pripr->idpartner+" ")
-    	else
-      		O_RJ
-      		Box(,2,50)
-       			cPRj:=IzFMKIni("FAKT","ProtuDokument13kiIdeNaRJ","P1",KUMPATH)
-       			@ m_x+1,m_y+2 SAY "RJ - objekat:" GET cPRj valid P_RJ(@cPRJ) pict "@!"
-       			read
-      		BoxC()
-      		select rj
-		use
-    	endif
-    	
-	lVecPostoji:=.f.
-    	// prvo da provjerimo ima li isti broj dokumenta u DOKS
-    	cKontrol2Broj:=fakt_pripr->(cPRJ+"01"+TRIM(brdok)+"/13")
-    	select fakt_doks
-	seek cKontrol2Broj
-    	
-	if Found()
-      		lVecPostoji:=.t.
-    	else
-      		// ako nema u DOKS, 
-		// provjerimo ima li isti broj dokumenta u FAKT
-      		select fakt
-		seek cKontrol2Broj
-      		if Found()
-			lVecPostoji:=.t.
-		endif
-    	endif
-    	
-	if lVecPostoji
-      		Msg("Vec postoji dokument pod brojem "+fakt_pripr->(cPRJ+"-01-"+TRIM(brdok)+"/13"),4)
-      		closeret
-    	endif
-    	fProtu:=.t.
-endif
-
-// ako je vise dokumenata u pripremi provjeri duple stavke
-if lViseDok
-	if prov_duple_stavke() == 1
-		return
-	endif
-else
-	// ako je samo jedan dokument provjeri da li je u dupli
-	cKontrolBroj:=fakt_pripr->(idfirma+idtipdok+brdok)
-
-	if dupli_dokument(cKontrolBroj)
-		Beep(4)
-  		Msg("Dokument "+fakt_pripr->(idfirma+"-"+idtipdok+"-"+brdok)+" vec postoji pod istim brojem!",4)
-    		return
-	endif
-endif
-
-fRobaIDJ:=goModul:lId_J
-
-select roba
-set order to tag "ID"
 select fakt_pripr
 go top
-
-// 0. napuni matricu sa brojem dokumenta
-AADD( aFD_data, { fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok } )
 
 // 1. azuriranje u bazu FAKT
 
 Box("#Proces azuriranja u toku",3,60)
-	do while !eof()
-  	if lViseDok
-    		cPom:=idfirma+idtipdok+brdok
+	
+do while !eof()
+  	if lViseDok = .t.
+    		cPom := field->idfirma + field->idtipdok + field->brdok
     		select fakt_doks
     		seek cPom
-    		if Found() .and. (gMreznoNum=="N" .or. M1 <> "Z")
-      			AADD(aOstaju,cPom)
+    		
+			if Found() .and. ( gMreznoNum=="N" .or. M1 <> "Z" )
+      			AADD( aOstaju, cPom )
       			select fakt_pripr
-      			do while !eof() .and. cPom==idfirma+idtipdok+brdok
+      			do while !eof() .and. cPom == field->idfirma + field->idtipdok + field->brdok
         			skip 1
       			enddo
       			loop
     		else
-      			cKontrolBroj:=cPom
+      			cKontrolBroj := cPom
       			@ m_x+2, m_y+2 SAY "Azuriram dokument "+fakt_pripr->(idfirma+"-"+idtipdok+"-"+brdok)
     		endif
   	endif
@@ -866,26 +763,26 @@ Box("#Proces azuriranja u toku",3,60)
 		// nafiluj polje IDROBA_J u prometu
    		select roba
 		hseek _idroba
-   		_idroba_j:=roba->id_j
+   		_idroba_j := roba->id_j
    		select fakt
   	endif
        
-        // opet nemoj otkljucavati
+    // opet nemoj otkljucavati
 	Gather2()
 
-  	if (fProtu .and. idtipdok=="13")
-     		AppBlank2(.f.,.f.) 
-     		_idfirma:=cPRJ
-     		_idtipdok:="01"
-     		_brdok:=TRIM(_brdok)+"/13"
-     		// gather()
-     		Gather2()
+  	if ( lProtu .and. field->idtipdok == "13" )
+    	AppBlank2(.f.,.f.) 
+     	_idfirma := cPRJ
+     	_idtipdok := "01"
+     	_brdok := TRIM(_brdok) + "/13"
+     	Gather2()
   	endif
-  	select fakt_pripr
+  	
+	select fakt_pripr
   	
 	skip
-enddo
 
+enddo
 
 // 2. azuriranje u bazu DOKS
 
@@ -894,8 +791,8 @@ go top
 
 do while !eof()
 	
-	if (lViseDok .and. ASCAN(aOstaju,cPom:=idfirma+idtipdok+brdok)<>0)
-    		do while !eof() .and. cPom==idfirma+idtipdok+brdok
+	if ( lViseDok .and. ASCAN( aOstaju, cPom := field->idfirma + field->idtipdok + field->brdok ) <> 0 )
+    		do while !eof() .and. cPom == field->idfirma + field->idtipdok + field->brdok
       			skip 1
     		enddo
     		loop
@@ -904,7 +801,7 @@ do while !eof()
   	select fakt_doks
   	set order to tag "1"
   	
-	hseek fakt_pripr->idfirma+fakt_pripr->idtipdok+fakt_pripr->brdok
+	hseek fakt_pripr->idfirma + fakt_pripr->idtipdok + fakt_pripr->brdok
   	
 	if !Found()
      		AppBlank2(.f.,.f.)
@@ -913,7 +810,7 @@ do while !eof()
 	if lDoks2
     		select fakt_doks2
     		set order to tag "1"
-    		hseek fakt_pripr->idfirma+fakt_pripr->idtipdok+fakt_pripr->brdok
+    		hseek fakt_pripr->idfirma + fakt_pripr->idtipdok + fakt_pripr->brdok
     		if !Found()
        			AppBlank2(.f.,.f.)
     		endif
@@ -921,28 +818,25 @@ do while !eof()
   	
 	select fakt_pripr
 
-  	cIdFirma:=idfirma
-  	private cBrDok:=brdok
-	private cIdTipDok:=idtipdok
-	private dDatDok:=datdok
+  	cIdFirma := field->idfirma
+  	cBrDok := field->brdok
+	cIdTipDok := field->idtipdok
+	dDatDok := field->datdok
 
-	if IsRabati()
-		private cTipRabat:=tiprabat
-	endif
+  	aMemo := ParsMemo( field->txt )
 	
-  	aMemo:=ParsMemo(txt)
-	if (LEN(aMemo)>=5)
+	if (LEN( aMemo )>=5)
     		cTxt:=TRIM(aMemo[3])+" "+TRIM(aMemo[4])+","+TRIM(aMemo[5])
   	else
     		cTxt:=""
   	endif
   	
-	cTxt:=PadR(cTxt,30)
-  	cDinDem:=dindem
-  	cRezerv:=" "
+	cTxt := PadR(cTxt,30)
+  	cDinDem := dindem
+  	cRezerv := " "
   	
-	if (cIdTipDok$"10#20#27" .and. Serbr="*")
-     		cRezerv:="*"
+	if ( cIdTipDok $ "10#20#27" .and. field->serbr = "*" )
+     		cRezerv := "*"
   	endif
   	
 	select fakt_doks
@@ -976,13 +870,6 @@ do while !eof()
    		_field->dat_val:=if(LEN(aMemo)>=9,CToD(aMemo[9]),CToD(""))
 	endif
 
-	if IsRabati()
-		if (cIdTipDok $ gcRabDok)
-			_field->idrabat := PADR(gcRabDef, 10)
-			_field->tiprabat := PADR(cTipRabat, 10)
-  		endif
-	endif
-	
    	_field->IdVrsteP := fakt_pripr->idvrstep
   	
 	if (FieldPos("DATPL")>0)
@@ -993,11 +880,6 @@ do while !eof()
     		// skidam zauzece i dobijam normalan dokument
     		// REPLACE m1 WITH " " -- isto kao i gore
     		_field->m1 := " "
-  	endif
-  	
-	if (FieldPos("SIFRA")<>0)
-     		// replace sifra with sifrakorisn
-     		_field->sifra:=SifraKorisn
   	endif
   	
 	if lDoks2
@@ -1016,52 +898,53 @@ do while !eof()
   	
 	select fakt_pripr
   	
-	nDug:=0
-	nRab:=0
-  	nDugD:=0
-	nRabD:=0
+	nDug := 0
+	nRab := 0
+  	nDugD := 0
+	nRabD := 0
   	
 	do while !eof() .and. cIdFirma==idfirma .and. cIdTipdok==idtipdok .and. cBrDok==brdok
-    		if cDinDem==LEFT(ValBazna(),3)
-        		nPom1:=Round(kolicina*Cijena*PrerCij()*(1-Rabat/100),ZAOKRUZENJE)
-        		// npom1 - cijena sa porezom i uracunatim rabatom
-        		nPom2:=ROUND( kolicina*Cijena*PrerCij()*Rabat/100 , ZAOKRUZENJE)
-        		// rabat za stavku
-        		nPom3:=ROUND(nPom1*Porez/100, ZAOKRUZENJE)
-        		nDug+= nPom1 + nPom3
-        		// nDug je iznos ukupne fakture, ali bez izbijenog rabata !!!
-        		nRab+= nPom2
-    		else
-        		//nPom1:=round( Cijena*kolicina*PrerCij()/UBaznuValutu(datdok)*(1+Porez/100), ZAOKRUZENJE)
-        		// greska kada imamo porez  !!
-        		nPom1:=round( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*(1-Rabat/100), ZAOKRUZENJE)
-        		// npom1 - cijena sa porezom i uracunatim rabatom
-        		nPom2:=ROUND( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*Rabat/100 , ZAOKRUZENJE)
-        		// rabat za stavku
-        		nPom3:=ROUND(nPom1*Porez/100, ZAOKRUZENJE)
-        		nDugD+= nPom1 + nPom3
-        		nRabD+= nPom2
-    		endif
-    		skip
-  	enddo
+    	
+		if cDinDem == LEFT(ValBazna(),3)
+        	nPom1:=Round(kolicina*Cijena*PrerCij()*(1-Rabat/100),ZAOKRUZENJE)
+        	// npom1 - cijena sa porezom i uracunatim rabatom
+        	nPom2:=ROUND( kolicina*Cijena*PrerCij()*Rabat/100 , ZAOKRUZENJE)
+        	// rabat za stavku
+        	nPom3:=ROUND(nPom1*Porez/100, ZAOKRUZENJE)
+        	nDug+= nPom1 + nPom3
+        	// nDug je iznos ukupne fakture, ali bez izbijenog rabata !!!
+        	nRab+= nPom2
+    	else
+        	//nPom1:=round( Cijena*kolicina*PrerCij()/UBaznuValutu(datdok)*(1+Porez/100), ZAOKRUZENJE)
+        	// greska kada imamo porez  !!
+        	nPom1:=round( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*(1-Rabat/100), ZAOKRUZENJE)
+        	// npom1 - cijena sa porezom i uracunatim rabatom
+        	nPom2:=ROUND( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*Rabat/100 , ZAOKRUZENJE)
+        	// rabat za stavku
+        	nPom3:=ROUND(nPom1*Porez/100, ZAOKRUZENJE)
+        	nDugD+= nPom1 + nPom3
+        	nRabD+= nPom2
+    	endif
+    	skip
+	enddo
   
   	select fakt_doks
   	
-	if (cDinDem==LEFT(ValBazna(),3))
-   		_field->Iznos:=nDug 
+	if ( cDinDem == LEFT(ValBazna(),3))
+   		_field->Iznos := nDug 
 		// iznos sadrzi umanjenje za rabat
-   		_field->Rabat:=nRab
+   		_field->Rabat := nRab
   	else
    		_field->Iznos := nDugD 
    		_field->Rabat := nRabD
  	endif
 
 	// protu dokument
-  	if (idtipdok=="13" .and. fProtu)
+  	if ( field->idtipdok == "13" .and. lProtu )
     		Scatter()
     		AppBlank2(.f.,.f.)
     		_idtipdok:="01"
-    		_idfirma:=cPRJ
+    		_idfirma := cPRJ
     		_BrDok:=TRIM(_brdok)+"/13"
     		Gather2()
     		Beep(1)
@@ -1081,74 +964,253 @@ do while !eof()
 		EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,"","","dokument: " + cIdFirma+"-"+cIdTipDok+"-"+cBrDok,dDatDok,Date(),"","Azuriranje dokumenta")
 	endif
 	
-	// ponovo odradi lock tabele DOKS
-	if !(fakt_doks->(FLock()))
-		
-		Beep(4)
-  		Msg("Azuriranje NE moze vrsiti vise korisnika istovremeno !", 15)
-  		closeret
-	endif
-
   	select fakt_pripr
+
 enddo
-
-fakt_prenos_modem()
-
-lAzurOK:=.t.
-
-select fakt_doks
-go top
-
-seek cKontrolBroj
-
-if Found()
-	select fakt
-	go top
-  	seek cKontrolBroj
-  	if !Found()
-    		lAzurOK:=.f.
-  	elseif lDoks2
-    		select fakt_doks2
-		go top
-    		seek cKontrolBroj
-    		if !Found()
-      			lAzurOK:=.f.
-    		endif
-  	endif
-else
-	lAzurOK:=.f.
-endif
-
-if !lAzurOK
-	MsgBeep("Neuspjelo azuriranje! Priprema nije izbrisana!# 1) Izvrsite reindeksiranje# 2) Promijenite broj dokumenta u pripremi# 3) Izvrsite povrat dokumenta pod brojem koji ste prvi put zadali# 4) Izbrisite u pripremi stavke koje su vracene# 5) Vratite broj dokumenta na prvobitni i ponovo pokusajte azuriranje")
-else
-	select fakt_pripr
-  	if (lViseDok .and. LEN(aOstaju)>0)
-    		// izbrisi samo azurirane
-    		go top
-    		do while !eof()
-      			skip 1
-			nRecNo:=RecNo()
-			skip -1
-      			if (ASCAN(aOstaju,idfirma+idtipdok+brdok)=0)
-        			delete
-      			endif
-      			go (nRecNo)
-    		enddo
-    		
-		__dbpack()
-    		
-		MsgBeep("U pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
-  	else
-    		ZAP
-  	endif
-endif
 
 BoxC()
 
 close all
 
+return
+
+
+
+// ---------------------------------------------------
+// azuriranje u sql tabele
+// ---------------------------------------------------
+static function fakt_azur_sql()
+local lOk := .t.
+return lOk
+
+
+
+// --------------------------------------------------------------
+// provjerava da li postoje dupli dokumenti u pripremi
+// --------------------------------------------------------------
+static function fakt_provjeri_duple_dokumente( lViseDok )
+local cTmp
+local lRet := .t.
+local cKontrolBroj 
+
+select fakt_pripr
+go bottom
+cTmp := field->idfirma + field->idtipdok + field->brdok
+
+go top
+lViseDok := !( cTmp == field->idfirma + field->idtipdok + field->brdok )
+
+// ako je vise dokumenata u pripremi provjeri duple stavke
+if lViseDok
+	if prov_duple_stavke() == 1
+		return lRet
+	endif
+else
+	// ako je samo jedan dokument provjeri da li je u dupli
+	cKontrolBroj:=fakt_pripr->(idfirma+idtipdok+brdok)
+
+	if dupli_dokument(cKontrolBroj)
+		Beep(4)
+  		Msg("Dokument " + fakt_pripr->(idfirma+"-"+idtipdok+"-"+brdok)+" vec postoji pod istim brojem!",4)
+    	return lRet
+	endif
+
+endif
+
+lRet := .f.
+
+return lRet
+
+
+// -----------------------------------------------------------
+// pravi fakt, protudokumente
+// -----------------------------------------------------------
+static function fakt_protu_dokumenti( cPrj )
+local lVecPostoji := .f.
+local cKontrol2Broj
+local lProtu := .f.
+
+if ( gProtu13 == "D" .and. ;
+	fakt_pripr->idtipdok == "13" .and. ;
+	Pitanje(,"Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
+	
+	if (gVar13 == "2" .and. gVarNum == "1")
+      	cPRj := RJIzKonta(fakt_pripr->idpartner+" ")
+    else
+      	O_RJ
+      	Box(,2,50)
+       		cPRj:=IzFMKIni("FAKT","ProtuDokument13kiIdeNaRJ","P1",KUMPATH)
+       		@ m_x+1,m_y+2 SAY "RJ - objekat:" GET cPRj valid P_RJ(@cPRJ) pict "@!"
+       		read
+      	BoxC()
+      	select rj
+		use
+   	endif
+    	
+	lVecPostoji := .f.
+    // prvo da provjerimo ima li isti broj dokumenta u DOKS
+    cKontrol2Broj := fakt_pripr->(cPRJ+"01"+TRIM(brdok)+"/13")
+    select fakt_doks
+	seek cKontrol2Broj
+    	
+	if Found()
+      	lVecPostoji:=.t.
+    else
+      	// ako nema u DOKS, 
+		// provjerimo ima li isti broj dokumenta u FAKT
+      	select fakt
+		seek cKontrol2Broj
+      	if Found()
+			lVecPostoji:=.t.
+		endif
+    endif
+    	
+	if lVecPostoji
+      	Msg("Vec postoji dokument pod brojem "+fakt_pripr->(cPRJ+"-01-"+TRIM(brdok)+"/13"),4)
+      	close all
+		return .f.
+    endif
+
+    lProtu := .t.
+
+endif
+
+return lProtu
+
+
+
+// ---------------------------------------------------------
+// upisuje u matricu informacije o racunu
+// ovo se proslijedjuje poslije fiskalnom uredjaju
+// ---------------------------------------------------------
+static function fakt_set_fd_arr( aArr )
+
+select fakt_pripr
+go top
+
+// 0. napuni matricu sa brojem dokumenta
+AADD( aArr, { fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok } )
+
+return
+
+
+
+// --------------------------------------------------
+// centralna funkcija za azuriranje fakture
+// --------------------------------------------------
+function azur_fakt(lSilent)
+local aOstaju := {}
+local lProtuDokumenti := .f.
+local lViseDok := .f.
+local aFd_data := {}
+local oServer
+local cPrj 
+local cType
+local cVrsteP
+
+cType := TYPE("lVrsteP")
+
+if (cType <> "L")
+	lVrsteP := .f.
+endif
+
+if ( lSilent == nil)
+	lSilent := .f.
+endif
+
+if ( !lSilent .and. Pitanje( ,"Sigurno zelite izvrsiti azuriranje (D/N)?","N")=="N")
+	return
+endif
+
+o_fakt_edit()
+
+select fakt_pripr
+USE
+O_FAKT_PRIPR
+
+// provjeri da li postoji vise dokumenata u pripremi
+if fakt_provjeri_duple_dokumente( @lViseDok ) = .t.
+	close all
+	return 
+endif
+
+if Empty( fakt_naredni_dokument() )
+	close all
+	return
+endif
+
+// generisi protu dokumente
+lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
+
+// napuni matricu aFd_data 
+// radi fiskalnog racuna
+fakt_set_fd_arr( @aFd_data )
+
+oServer := pg_server()
+
+if oServer == NIL
+	CLEAR SCREEN 
+  	? "fakt_azur oServer nil ?!"
+  	INKEY(0)
+  	QUIT
+endif
+
+if fakt_azur_sql( oServer )
+	
+	o_fakt_edit()
+	
+	if !fakt_azur_dbf( lSilent, lViseDok, @aOstaju, lProtuDokumenti, cPRj )
+    	MsgBeep("Neuspjesno FAKT/DBF azuriranje !?")
+       	return
+   	endif
+
+else
+	MsgBeep("Neuspjesno FAKT/SQL azuriranje !?")
+	return
+endif
+
+// prenos podataka fakt
+fakt_prenos_modem()
+
+select fakt_pripr
+
+if lViseDok .and. LEN( aOstaju ) > 0
+	fakt_izbrisi_azurirane( aOstaju )
+else
+	// izbrisi pripremu
+	ZAP
+endif
+	
+close all
+
 return aFD_data
+
+
+
+
+// ---------------------------------------------------------------------------
+// izbrisi azurirane dokumente iz pripreme na osnovu matrice aOstaju
+// ---------------------------------------------------------------------------
+static function fakt_izbrisi_azurirane( aOstaju )
+local nRecNo
+
+select fakt_pripr
+go top
+do while !eof()
+	skip 1
+	nRecNo := RecNo()
+	skip -1
+    if ( ASCAN( aOstaju, field->idfirma + field->idtipdok + field->brdok ) = 0 )
+        delete
+    endif
+    go (nRecNo)
+enddo
+    		
+__dbpack()
+    		
+MsgBeep("U pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
+
+return
 
 
 
@@ -1195,7 +1257,7 @@ if lDocExist
 endif
 
 return 0
-*}
+
 
 
 // brisi stavke iz pripreme koje se vec nalaze u kumulativu

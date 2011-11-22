@@ -183,7 +183,7 @@ do case
 
 	case ::nCh==K_ALT_A
 		CLOSE ALL
-		azuriraj_fakturu()
+		azur_fakt()
 		o_fakt_edit()
 		return DE_REFRESH
 

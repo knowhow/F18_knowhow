@@ -380,7 +380,7 @@ do case
 		CLOSE ALL
         	
 		// funkcija azuriranja vraca matricu sa podacima dokumenta
-		aFakt_dok := Azuriraj_fakturu()
+		aFakt_dok := azur_fakt()
 		
 		lDirty:=.t.
         	

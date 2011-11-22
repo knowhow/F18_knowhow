@@ -135,7 +135,7 @@ select (nTArea)
 private gTBDir
 gTBDir:="N"
 
-return PostojiSifra(F_PARTN, 1, maxrows()-15, maxcols()-20, "Lista Partnera", @cId, dx, dy,;
+return PostojiSifra(F_PARTN, 1, 10, 100, "Lista Partnera", @cId, dx, dy,;
        gPartnBlock)
 
 

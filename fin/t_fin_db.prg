@@ -358,40 +358,6 @@ if (nArea==-1 .or. nArea==(F__KONTO))
 endif
 
 
-
-aDbf:={}
-AADD(aDBf,{ "ID"                  , "C" ,   6 ,  0 })
-AADD(aDBf,{ "NAZ"                 , "C" ,  25 ,  0 })
-AADD(aDBf,{ "NAZ2"                , "C" ,  25 ,  0 })
-AADD(aDBf,{ "PTT"                 , "C" ,   5 ,  0 })
-AADD(aDBf,{ "MJESTO"              , "C" ,  16 ,  0 })
-AADD(aDBf,{ "ADRESA"              , "C" ,  24 ,  0 })
-AADD(aDBf,{ "ZIROR"               , "C" ,  22 ,  0 })
-AADD(aDBf,{ "DZIROR"              , "C" ,  22 ,  0 })
-AADD(aDBf,{ "TELEFON"             , "C" ,  12 ,  0 })
-AADD(aDBf,{ "FAX"                 , "C" ,  12 ,  0 })
-AADD(aDBf,{ "MOBTEL"              , "C" ,  20 ,  0 })
-
-if (nArea==-1 .or. nArea==(F_PARTN))
-	//PARTN.DBF
-
-	if !FILE(f18_ime_dbf("partn"))
-        	DBcreate2(SIFPATH+"PARTN.DBF",aDbf)
-	endif
-
-	CREATE_INDEX("ID","id",SIFPATH+"PARTN") // firme
-	CREATE_INDEX("NAZ","LEFT(naz,25)",SIFPATH+"PARTN")
-endif
-
-
-if (nArea==-1 .or. nArea==(F__PARTN))
-	//_PARTN.DBF
-
-	if !FILE(f18_ime_dbf("_partn"))
-        	DBcreate2(PRIVPATH+"_PARTN.DBF",aDbf)
-	endif
-endif
-
 if (nArea==-1 .or. nArea==(F_TNAL))
 	//TNAL.DBF
 	

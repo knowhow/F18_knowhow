@@ -35,7 +35,7 @@ next
 
 select (nTArea)
 
-return PostojiSifra(F_KONTO, 1, maxrows()-15, maxcols()-20, "Lista: Konta", @cId, dx, dy)
+return PostojiSifra(F_KONTO, 1, 10, 100, "Lista: Konta", @cId, dx, dy)
 
 
 // Funkcija vraca vrijednost polja naziv po zadatom idkonto

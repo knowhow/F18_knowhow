@@ -77,10 +77,6 @@ if !fPostoji
 	return
 endif
 
-if nOrder == 0
-	log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeCDX)
-endif
-
 if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
 
      SELECT(F_TMP) 
@@ -90,6 +86,8 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
           MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))
      endif
     
+	 log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd )
+ 
      nPom:=RAT( SLASH, cImeInd)
     
      private cTag:=""

@@ -316,7 +316,7 @@ ENDIF
 PopWa()
 
 private gTBDir:="N"
-return PostojiSifra(F_KONTO,1,10,60,"Lista: Konta ",@cId,dx,dy,{|Ch| KontoBlok(Ch)},,,,,{"ID"})
+return PostojiSifra(F_KONTO,1,10,100,"Lista: Konta ",@cId,dx,dy,{|Ch| KontoBlok(Ch)},,,,,{"ID"})
 
 
 

@@ -123,7 +123,7 @@ DO WHILE ! _qry_obj:Eof()
     for _i:=1 to LEN(fields)
        _field_b := FIELDBLOCK( fields[_i])
        // replace dbf field
-       EVAL(_field_b, _qry_obj:FieldGet(_i)) 
+       EVAL(_field_b, hb_Utf8ToStr(_qry_obj:FieldGet(_i))) 
     next
     _qry_obj:Skip()
 

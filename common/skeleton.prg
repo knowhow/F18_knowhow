@@ -63,17 +63,12 @@ public gAppSrv
 
 if !oApp:lStarted  
 
+/*
   ? "setujem default engine ..." + RDDENGINE
   RDDSETDEFAULT( RDDENGINE )
 
 #ifdef __PLATFORM__WINDOWS
    
-  //REQUEST HB_CODEPAGE_SL852
-   //REQUEST HB_CODEPAGE_SLWIN
-
-   //hb_setCodePage( "SL852" )
-   //hb_setTermCP("SLWIN")
-
    REQUEST HB_CODEPAGE_SL852 
    REQUEST HB_CODEPAGE_SLISO
 
@@ -89,12 +84,14 @@ if !oApp:lStarted
    hb_setTermCP("SLISO")
 #endif
 
+*/
+
   ? "startujem oApp:db()"
   oApp:initdb()
 
 endif
 
-? "setujem globalne varijable"
+// ? "setujem globalne varijable"
 
 SetgaSDbfs()
 set_global_vars_0()
@@ -111,7 +108,6 @@ endif
 
 SetNaslov(oApp)
 
-SET DELETED ON
 
 //if mpar37("/INSTALL",oApp)
   oApp:oDatabase:lAdmin:=.t.
@@ -177,11 +173,6 @@ SET EXCLUSIVE OFF
 //Setuj globalne varijable varijable modula 
 oApp:setGVars()
 
-// nakon verzije 1.5 ovo cemo ukinuti
-cImeDbf:=KUMPATH+"SECUR.DBF"
-if !FILE(cImeDbf)
-  oApp:oDatabase:kreiraj(F_SECUR)
-endif
 
 oApp:oDataBase:setSigmaBD(IzFmkIni("Svi","SigmaBD","c:"+SLASH+"sigma",EXEPATH))
 
@@ -193,8 +184,6 @@ oApp:oDataBase:setSigmaBD(IzFmkIni("Svi","SigmaBD","c:"+SLASH+"sigma",EXEPATH))
 //endif
 
 return
-
-
 
 /*! \fn ISC_START(oApp, lSezone)
  *  \brief Aktiviranje "install" programskog modula"
@@ -367,7 +356,7 @@ endif
 
 SET KEY K_INS  TO ToggleINS()
 SET MESSAGE TO 24 CENTER
-SET DELETED ON   // most commands ignores deleted records
+// most commands ignores deleted records
 SET DATE GERMAN
 SET SCOREBOARD OFF
 SET CONFIRM ON

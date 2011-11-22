@@ -341,34 +341,28 @@ endif
 
 
 if (nArea==-1 .or. nArea==(F_KALK))
-	//KALK.DBF
 
 	if !FILE(f18_ime_dbf("kalk"))
-  		DBcreate2(KUMPATH+'KALK.DBF',aDbf)
+  		DBcreate2("KALK",aDbf)
+		reset_semaphore_version("kalk_kalk")
+        my_use("kalk")
+        close all
 	endif
 	
 	CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr",KUMPATH+"KALK")
 	CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa",KUMPATH+"KALK")
-	// 3 - vodjenje magacina
 	CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
-	// 4 - vodjenje prodavnice
 	CREATE_INDEX("4","idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD",KUMPATH+"KALK")
-	
 	CREATE_INDEX("5","idFirma+dtos(datdok)+podbr+idvd+brdok",KUMPATH+"KALK")
-
 	CREATE_INDEX("6","idFirma+IdTarifa+idroba",KUMPATH+"KALK")
-	
 	CREATE_INDEX("7","idroba+idvd",KUMPATH+"KALK")
 	CREATE_INDEX("8","mkonto",KUMPATH+"KALK")
 	CREATE_INDEX("9","pkonto",KUMPATH+"KALK")
-
-	CREATE_INDEX("DAT","dtos(datdok)",KUMPATH+"KALK")
-	
+	CREATE_INDEX("DAT","datdok","KALK")
 	CREATE_INDEX("MU_I","mu_i+mkonto+idfirma+idvd+brdok",KUMPATH+"KALK")
 	CREATE_INDEX("MU_I2","mu_i+idfirma+idvd+brdok",KUMPATH+"KALK")
 	CREATE_INDEX("PU_I","pu_i+pkonto+idfirma+idvd+brdok",KUMPATH+"KALK")
 	CREATE_INDEX("PU_I2","pu_i+idfirma+idvd+brdok",KUMPATH+"KALK")
-	
 	CREATE_INDEX("PMAG","idfirma+mkonto+idpartner+idvd+dtos(datdok)",KUMPATH+"KALK")
 	
 	if is_uobrada()
@@ -385,8 +379,6 @@ if (nArea==-1 .or. nArea==(F_KALK))
  		CREATE_INDEX("PTARIFA","idFirma+pkonto+IdTarifa+idroba",KUMPATH+"KALK")
 	endif
 endif
-
-
 
 if (nArea==-1 .or. nArea==(F_DOKS))
 	//kalk_doks.DBF
@@ -409,20 +401,20 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
 	
 	if !FILE(f18_ime_dbf("kalk_doks"))
-        	DBcreate2(KUMPATH+'kalk_doks.DBF',aDbf)
+        	DBcreate2("kalk_doks",aDbf)
+			reset_semaphore_version("kalk_doks")
+        	my_use("kalk_doks")
+  			close all
 	endif
 
 	CREATE_INDEX("1","IdFirma+idvd+brdok",KUMPATH+"kalk_doks")
 	CREATE_INDEX("2","IdFirma+MKONTO+idzaduz2+idvd+brdok",KUMPATH+"kalk_doks")
 	CREATE_INDEX("3","IdFirma+dtos(datdok)+podbr+idvd+brdok",KUMPATH+"kalk_doks")
-	
-	CREATE_INDEX("DAT","dtos(datdok)",KUMPATH+"kalk_doks")
-
+	CREATE_INDEX("DAT","datdok","kalk_doks")
 	// za RN
 	if glBrojacPoKontima = .t.
 		CREATE_INDEX("1S","IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)",KUMPATH+"kalk_doks")
 	endif
-	
 	CREATE_INDEX("V_BRF","brfaktp+idvd",KUMPATH+"kalk_doks")
 	CREATE_INDEX("V_BRF2","idvd+brfaktp",KUMPATH+"kalk_doks")
 endif

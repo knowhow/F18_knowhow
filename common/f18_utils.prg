@@ -187,8 +187,8 @@ AADD( gaDbfs, { F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   } )
 AADD( gaDbfs, { F_BUIZ   ,  "BUIZ"    , "fin_buiz"   } )
 
 //modul KALK
-AADD( gaDbfs, { F_KALK  ,"KALK" , "kalk_kalk" , {|dDatDok| kalk_kalk_from_sql_server(dDatDok) } } )
-AADD( gaDbfs, { F_DOKS  ,"KALK_DOKS", "kalk_doks", {|dDatDok| kalk_doks_from_sql_server(dDatDok) } } )
+AADD( gaDbfs, { F_KALK  ,"KALK" , "kalk_kalk" , {|dDatDok| kalk_kalk_from_sql_server(dDatDok) }, "DATE" } )
+AADD( gaDbfs, { F_DOKS  ,"KALK_DOKS", "kalk_doks", {|dDatDok| kalk_doks_from_sql_server(dDatDok) }, "DATE" } )
 AADD( gaDbfs, { F_DOKS2  ,"KALK_DOKS2"   , "kalk_doks2"    } )
 AADD( gaDbfs, { F_KALKS  ,"KALKS" , "kalk_kalks"    } )
 AADD( gaDbfs, { F__KALK  ,"_KALK" , "_kalk_kalk"    } )

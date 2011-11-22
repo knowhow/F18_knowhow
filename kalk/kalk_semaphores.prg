@@ -35,7 +35,7 @@ _qry :=  "SELECT " + ;
 		"idzaduz2, idpartner, datkurs, kolicina, gkolicina, gkolicin2, fcj, " + ;
 		"fcj2, fcj3, trabat, rabat, tprevoz, prevoz, tprevoz2, prevoz2, tbanktr, banktr, " + ;
 		"tspedtr, spedtr, tcardaz, cardaz, tzavtr, zavtr, nc, tmarza, marza, vpc, rabatv, " + ;
-		"vpcsapp, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, " + ;
+		"vpcsap, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, " + ;
 		"error, podbr " + ;
 		"FROM " + ;
 		"fmk.kalk_kalk"  
@@ -85,7 +85,7 @@ DO WHILE !_qry_obj:Eof()
 	"idzaduz2, idpartner, datkurs, kolicina, gkolicina, gkolicin2, fcj, " 
 	"fcj2, fcj3, trabat, rabat, tprevoz, prevoz, tprevoz2, prevoz2, tbanktr, banktr, " 
 	"tspedtr, spedtr, tcardaz, cardaz, tzavtr, zavtr, nc, tmarza, marza, vpc, rabatv, "
-	"vpcsapp, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, "
+	"vpcsap, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, "
 	"error, podbr " + ;
 	*/
 
@@ -128,7 +128,7 @@ DO WHILE !_qry_obj:Eof()
     		marza with _qry_obj:FieldGet(37), ;
     		vpc with _qry_obj:FieldGet(38), ;
     		rabatv with _qry_obj:FieldGet(39), ;
-    		vpcsapp with _qry_obj:FieldGet(40), ;
+    		vpcsap with _qry_obj:FieldGet(40), ;
     		tmarza2 with _qry_obj:FieldGet(41), ;
     		marza2 with _qry_obj:FieldGet(42), ;
     		mpc with _qry_obj:FieldGet(43), ;
@@ -195,7 +195,7 @@ DO CASE
 			"idzaduz2, idpartner, datkurs, kolicina, gkolicina, gkolicin2, fcj, " + ;
 			"fcj2, fcj3, trabat, rabat, tprevoz, prevoz, tprevoz2, prevoz2, tbanktr, banktr, " + ; 
 			"tspedtr, spedtr, tcardaz, cardaz, tzavtr, zavtr, nc, tmarza, marza, vpc, rabatv, " + ;
-			"vpcsapp, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, " + ;
+			"vpcsap, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, " + ;
 			"error, podbr ) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vd"] ) + "," +; 
@@ -236,7 +236,7 @@ DO CASE
                             + _sql_quote( STR( record["marza"], 18, 8 )) + "," +;
                             + _sql_quote( STR( record["vpc"], 18, 8 )) + "," +;
                             + _sql_quote( STR( record["rabatv"], 18, 8 )) + "," +;
-                            + _sql_quote( STR( record["vpc_sa_pp"], 18, 8 )) + "," +;
+                            + _sql_quote( STR( record["vpc_sa_p"], 18, 8 )) + "," +;
                             + _sql_quote( record["t_marza2"] ) + "," +;
                             + _sql_quote( STR( record["marza2"], 18, 8 )) + "," +;
                             + _sql_quote( STR( record["mpc"], 18, 8 )) + "," +;

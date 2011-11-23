@@ -1100,16 +1100,19 @@ return cChanges
 // -----------------------
 // -----------------------
 function SetSifVars()
-local _i, aStruct
+local _i, _struct
+private cImeP
+private cVar
 
-aStruct:=DBSTRUCT()
+_struct := DBSTRUCT()
 
-SkratiAZaD(@aStruct)
+SkratiAZaD(@_struct)
 
-for i:=_1 to LEN(aStruct)
-     cImeP:=aStruct[i, 1]
-     cVar:="w"+cImeP
-     &cVar:=&cImeP
+for _i:=1 to LEN(_struct)
+     cImeP := _struct[_i, 1]
+     cVar:="w" + cImeP
+     &cVar := &cImeP
+
 next
 
 return

@@ -23,7 +23,8 @@ local _qry_obj
 local _server := pg_server()
 local _seconds
 local _x, _y
-local _dat
+local _dat, _ids
+local _fnd, _tmp_id
 
 _x := maxrows() - 15
 _y := maxcols() - 20
@@ -59,25 +60,79 @@ endif
 SELECT F_KALK
 my_use ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
-if algoritam == "FULL"
-    // "full" algoritam
-    log_write("dat_dok = nil full algoritam") 
-    ZAP
-else
-    log_write("dat_dok <> nil date algoritam") 
-    // "date" algoritam  - brisi sve vece od zadanog datuma
-    SET ORDER TO TAG "DAT"
-    // tag je "DatDok" nije DTOS(DatDok)
-    seek _dat
-    do while !eof() .and. (field->datDok >= _dat) 
-        // otidji korak naprijed
-        SKIP
-        _rec := RECNO()
-        SKIP -1
-        DELETE
-        GO _rec  
-    enddo
+DO CASE
 
+	CASE algoritam == "FULL"
+    	// "full" algoritam
+    	log_write("dat_dok = nil full algoritam") 
+    	ZAP
+
+	CASE algoritam == "DATE"
+
+    	log_write("dat_dok <> nil date algoritam") 
+    	// "date" algoritam  - brisi sve vece od zadanog datuma
+    	SET ORDER TO TAG "DAT"
+    	// tag je "DatDok" nije DTOS(DatDok)
+    	seek _dat
+    	do while !eof() .and. (field->datDok >= _dat) 
+        	// otidji korak naprijed
+        	SKIP
+        	_rec := RECNO()
+        	SKIP -1
+        	DELETE
+        	GO _rec  
+    	enddo
+
+	CASE algoritam == "IDS"
+    	
+		_ids := get_ids_from_semaphore("kalk_kalk")
+   		// "date" algoritam  - brisi sve vece od zadanog datuma
+    	SET ORDER TO TAG "1"
+
+		// CREATE_INDEX("1", "idFirma+IdVd+BrDok+Rbr", "KALK")
+    	// pobrisimo sve id-ove koji su drugi izmijenili
+    	do while .t.
+       		_fnd := .f.
+       		for each _tmp_id in _ids
+          		
+          		HSEEK _tmp_id
+          		
+				do while !EOF() .and. (field->idfirma + field->idvd + field->brnal) == _tmp_id
+               		skip
+               		_rec := RECNO()
+               		skip -1 
+               		DELETE
+               		go _rec 
+               		_fnd := .t.
+          		enddo
+        	next
+        	if ! _fnd 
+				exit
+			endif
+    	enddo
+
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idvd || brnal) IN " + _sql_ids
+     	endif
+
+ENDCASE
+
+_qry_obj := _server:Query( _qry )
+if _qry_obj:NetErr()
+	Msgbeep("ajoj :" + _qry_obj:ErrorMsg())
+	QUIT
 endif
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
@@ -259,7 +314,7 @@ DO CASE
                             + _sql_quote( record["error"] ) + "," +;
                             + _sql_quote( record["pod_br"] ) + " )"
                           
-END CASE
+ENDCASE
    
 _ret := _sql_query( _server, _qry)
 
@@ -287,7 +342,8 @@ local _qry_obj
 local _server := pg_server()
 local _seconds
 local _x, _y
-local _dat
+local _dat, _ids
+local _fnd, _tmp_id
 
 if algoritam == NIL
   algoritam := "FULL"
@@ -320,25 +376,80 @@ endif
 SELECT F_KALK_DOKS
 my_use ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
 
-if algoritam == "FULL"
-    // "full" algoritam
-    log_write("dat_dok = nil full algoritam") 
-    ZAP
-else
-    log_write("dat_dok <> nil date algoritam") 
-    // "date" algoritam  - brisi sve vece od zadanog datuma
-    SET ORDER TO TAG "DAT"
-    // tag je "DatDok" nije DTOS(DatDok)
-    seek _dat
-    do while !eof() .and. (field->datDok >= _dat) 
-        // otidji korak naprijed
-        SKIP
-        _rec := RECNO()
-        SKIP -1
-        DELETE
-        GO _rec  
-    enddo
+DO CASE
 
+	CASE algoritam == "FULL"
+    	
+		// "full" algoritam
+    	log_write("dat_dok = nil full algoritam") 
+	    ZAP
+	
+	CASE algoritam == "DATE"
+
+    	log_write("dat_dok <> nil date algoritam") 
+    	// "date" algoritam  - brisi sve vece od zadanog datuma
+    	SET ORDER TO TAG "DAT"
+    	// tag je "DatDok" nije DTOS(DatDok)
+    	seek _dat
+    	do while !eof() .and. (field->datDok >= _dat) 
+        	// otidji korak naprijed
+        	SKIP
+        	_rec := RECNO()
+        	SKIP -1
+        	DELETE
+        	GO _rec  
+    	enddo
+
+	CASE algoritam == "IDS"
+    	
+		_ids := get_ids_from_semaphore("kalk_doks")
+   		// "date" algoritam  - brisi sve vece od zadanog datuma
+    	SET ORDER TO TAG "1"
+
+		// CREATE_INDEX("1", "idFirma+IdVd+BrDok+Rbr", "KALK")
+    	// pobrisimo sve id-ove koji su drugi izmijenili
+    	do while .t.
+       		_fnd := .f.
+       		for each _tmp_id in _ids
+          		
+          		HSEEK _tmp_id
+          		
+				do while !EOF() .and. (field->idfirma + field->idvd + field->brnal) == _tmp_id
+               		skip
+               		_rec := RECNO()
+               		skip -1 
+               		DELETE
+               		go _rec 
+               		_fnd := .t.
+          		enddo
+        	next
+        	if ! _fnd 
+				exit
+			endif
+    	enddo
+
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idvd || brnal) IN " + _sql_ids
+     	endif
+
+END CASE
+
+_qry_obj := _server:Query( _qry )
+if _qry_obj:NetErr()
+	Msgbeep("ajoj :" + _qry_obj:ErrorMsg())
+	QUIT
 endif
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 

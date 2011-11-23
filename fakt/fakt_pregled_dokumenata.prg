@@ -1192,6 +1192,13 @@ do case
 	return DE_CONT
 
 
+  case chr(Ch) $ "kK"
+	
+	// korekcija podataka na dokumentu
+	if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok ) = .t.
+		return DE_REFRESH
+	endif
+
   case chr(Ch) $ "rR"
 
 	cFilter := DBFilter()

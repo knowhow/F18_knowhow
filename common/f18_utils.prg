@@ -11,26 +11,6 @@
 
 #include "fmk.ch"
 
-/*
-#command USEX <(db)>                                                   ;
-             [VIA <rdd>]                                                ;
-             [ALIAS <a>]                                                ;
-             [<new: NEW>]                                               ;
-             [<ro: READONLY>]                                           ;
-             [INDEX <(index1)> [, <(indexn)>]]                          ;
-                                                                        ;
-      =>  PreUseEvent(<(db)>,.f.,gReadOnly)				;
-        ;  dbUseArea(                                                   ;
-                    <.new.>, <rdd>, ToUnix(<(db)>), <(a)>,              ;
-                     .f., gReadOnly       ;
-                  )                                                     ;
-                                                                        ;
-      [; dbSetIndex( <(index1)> )]                                      ;
-      [; dbSetIndex( <(indexn)> )]
-
-
-*/
-
 function usex(cTable)
 return my_use(cTable)
 
@@ -75,7 +55,6 @@ endif
 cImeDbf := my_home() + gaDBFs[nPos, 3] + ".dbf"
 
 return cImeDbf
-
 
 
 // ---------------------------------------

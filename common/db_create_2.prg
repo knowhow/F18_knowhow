@@ -132,7 +132,6 @@ AADD(aDBf,{ 'MOBTEL'              , 'C' ,  20 ,  0 })
 if !file(f18_ime_dbf("partn"))
 
     dbcreate2('partn', aDbf)
-
     reset_semaphore_version("partn")
     my_use("partn")
  
@@ -264,9 +263,9 @@ if !file(f18_ime_dbf("sifv.dbf"))  // sifrarnici - vrijednosti karakteristika
 
    dbcreate2('sifv', aDbf)
 endif
-CREATE_INDEX("ID","id+oznaka+IdSif+Naz", "sifv")
-CREATE_INDEX("IDIDSIF","id+IdSif", "sifv")
-CREATE_INDEX("NAZ","id+oznaka+naz", "sifv")
+CREATE_INDEX("ID"      , "id+oznaka+IdSif+Naz", "sifv")
+CREATE_INDEX("IDIDSIF" , "id+IdSif", "sifv")
+CREATE_INDEX("NAZ"     , "id+oznaka+naz", "sifv")
 
 
 // TNAL
@@ -274,10 +273,10 @@ if !file(f18_ime_dbf("tnal"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
         add_f_mcode(@aDbf)
-	AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
+	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
         dbcreate2('tnal',aDbf)
 endif
-CREATE_INDEX("ID","id", "tnal")  // vrste naloga
+CREATE_INDEX("ID","id", "tnal")  
 CREATE_INDEX("NAZ","naz", "tnal")
 index_mcode(SIFPATH, "TNAL")
 
@@ -286,7 +285,7 @@ if !file(f18_ime_dbf("tdok"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
         add_f_mcode(@aDbf)
-	AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
+	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
         dbcreate2(f18_ime_dbf('tdok'), aDbf)
 endif
 CREATE_INDEX("ID","id", "TDOK")  // Tip dokumenta
@@ -307,6 +306,7 @@ if !file(f18_ime_dbf("ops"))
    AADD(aDBf,{ 'PUCCITY'             , 'C' ,   5 ,  0 })
    DBCREATE2('ops', aDbf)
 endif
+
 CREATE_INDEX("ID","id", "ops")
 if PoljeExist("IDJ")
 	CREATE_INDEX("IDJ","idj", "ops")
@@ -326,7 +326,7 @@ if !file(f18_ime_dbf(cIme) )
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   3 ,  0 })
         add_f_mcode(@aDbf)
-	AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
+	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
         AADD(aDBf,{ 'Mjesto'              , 'C' ,  20 ,  0 })
         AADD(aDBf,{ 'Adresa'              , 'C' ,  30 ,  0 })
         DBCREATE2(SIFPATH + cIme + ".dbf" , aDbf)
@@ -359,8 +359,6 @@ cre_doksrc()
 // kreiraj relacije : RELATION
 cre_relation()
 
-
-
 // kreiraj pravila : RULES
 cre_fmkrules()
 
@@ -382,6 +380,4 @@ else
 endif
 
 return
-
-
 

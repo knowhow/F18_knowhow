@@ -86,7 +86,9 @@ return
 // ----------------------
 function fin_azur_sql(oServer)
 local lOk
+local _ids := {}
 local record := hb_hash()
+local _tmp_id
 MsgO("sql suban")
 
 SELECT PSUBAN
@@ -98,6 +100,8 @@ do while !eof()
    record["id_firma"] := field->IdFirma
    record["id_vn"] := field->IdVn
    record["br_nal"] := field->BrNal
+   _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"]
+
    record["r_br"] := VAL(field->Rbr)
    record["dat_dok"] := field->DatDok
    record["dat_val"] := field->DatVal
@@ -116,6 +120,8 @@ enddo
 
 if lOk
   update_semaphore_version("fin_suban", .t.)
+  AADD(_ids, _tmp_id) 
+  push_ids_to_semaphore( "fin_suban", _ids )
   sql_fin_suban_update("END")
 else
   sql_fin_suban_update("ROLLBACK")
@@ -521,7 +527,8 @@ do while !eof() .and. cNal==IdFirma+IdVn+BrNal
         _OtvSt:="9"
     endif
 
-    append ncnl
+    //append ncnl
+    APPEND BLANK
     Gather2()
 
     select PSUBAN

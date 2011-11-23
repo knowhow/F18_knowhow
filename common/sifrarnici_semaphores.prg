@@ -92,16 +92,15 @@ SELECT (area)
 
 my_use (table, NIL, .f., "SEMAPHORE", algoritam)
 
-if (algoritam == "FULL")
+DO CASE
+  CASE (algoritam == "FULL")
     // "full" algoritam
-    log_write("id = nil full algoritam") 
     ZAP
-elseif algoritam == "IDS"
-    log_write("ids <> nil ids algoritam") 
-    // "date" algoritam  - brisi sve vece od zadanog datuma
-    SET ORDER TO TAG "ID"
 
-    // pobrisimo sve id-ove koji su drugi izmijenili
+  CASE algoritam == "IDS"
+    _ids := get_ids_from_semaphore(table)
+    SET ORDER TO TAG "ID"
+     // pobrisimo sve id-ove koji su drugi izmijenili
     do while .t.
        _fnd := .f.
        for each _tmp_id in _ids
@@ -113,7 +112,7 @@ elseif algoritam == "IDS"
         next
         if ! _fnd ; exit ; endif
     enddo
-endif
+END CASE
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 

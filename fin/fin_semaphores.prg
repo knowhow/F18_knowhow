@@ -23,7 +23,8 @@ local _qry_obj
 local _server := pg_server()
 local _seconds
 local _x, _y
-local _dat
+local _dat, _ids
+local _fnd, _tmp_id
 
 _x := maxrows() - 15
 _y := maxcols() - 20
@@ -52,11 +53,14 @@ endif
 SELECT F_SUBAN
 my_use ("suban", "fin_suban", .f., "SEMAPHORE")
 
-if algoritam == "FULL"
+DO CASE
+
+ CASE algoritam == "FULL"
     // "full" algoritam
     log_write("dat_dok = nil full algoritam") 
     ZAP
-else
+
+ CASE algoritam == "DATE"
     log_write("dat_dok <> nil date algoritam") 
     // "date" algoritam  - brisi sve vece od zadanog datuma
     SET ORDER TO TAG "8"
@@ -71,6 +75,53 @@ else
         GO _rec  
     enddo
 
+ CASE algoritam == "IDS"
+
+    _ids := get_ids_from_semaphore("fin_suban")
+   // "date" algoritam  - brisi sve vece od zadanog datuma
+    SET ORDER TO TAG "4"
+
+	// CREATE_INDEX("4", "idFirma+IdVN+BrNal+Rbr", "SUBAN")
+    // pobrisimo sve id-ove koji su drugi izmijenili
+    do while .t.
+       _fnd := .f.
+       for each _tmp_id in _ids
+          altd()
+          HSEEK _tmp_id
+          do while !EOF() .and. (idfirma + idvn + brnal) == _tmp_id
+               skip
+               _rec := RECNO()
+               skip -1 
+               DELETE
+               go _rec 
+               _fnd := .t.
+          enddo
+        next
+        if ! _fnd ; exit ; endif
+    enddo
+
+    _qry += " WHERE "
+    if LEN(_ids) < 1
+       // nema id-ova
+       _qry += "false"
+    else
+        _sql_ids := "("
+        for _i := 1 to LEN(_ids)
+            _sql_ids += _sql_quote(_ids[_i])
+            if _i < LEN(_ids)
+            _sql_ids += ","
+            endif
+        next
+        _sql_ids += ")"
+        _qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+     endif
+
+END CASE
+
+_qry_obj := _server:Query(_qry) 
+if _qry_obj:NetErr()
+   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
+   QUIT
 endif
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
@@ -125,11 +176,7 @@ LOCAL _server := pg_server()
 
 
 _tbl := "fmk.fin_suban"
-_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
-                        " and brnal=" + _sql_quote(record["br_nal"]) 
 
-//                        " and rbr=" + _sql_quote(STR(record["r_br"], 4)); 
- 
 DO CASE
  CASE op == "BEGIN"
     _qry := "BEGIN;"
@@ -138,9 +185,13 @@ DO CASE
  CASE op == "ROLLBACK"
     _qry := "ROLLBACK;"
  CASE op == "del"
+    _where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
+                        " and brnal=" + _sql_quote(record["br_nal"]) 
+    //                        " and rbr=" + _sql_quote(STR(record["r_br"], 4)); 
     _qry := "DELETE FROM " + _tbl + ;
              " WHERE " + _where
  CASE op == "ins"
+
     _qry := "INSERT INTO " + _tbl + ;
                 "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
@@ -161,7 +212,6 @@ _ret := _sql_query( _server, _qry)
 
 if (gDebug > 5)
    log_write(_qry)
-   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
 endif
 
 if VALTYPE(_ret) == "L"

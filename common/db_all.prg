@@ -101,7 +101,6 @@ endif
 aStruct:=DBSTRUCT()
 SkratiAZaD(@aStruct)
 while .t.
-  if rlock()
 
          for j:=1 to len(aRel)
            if aRel[j,1]==ALIAS()  // {"K_0","ID","K_1","ID",1}
@@ -139,11 +138,6 @@ while .t.
           cVar:=cZn+cImeP
           field->&cImeP:= &cVar
         next
-    dbunlock()
-  else
-      inkey(0.4)
-      loop
-  end
   exit
 end
 
@@ -155,28 +149,28 @@ return nil
 *   \note Gather2 pretpostavlja zakljucan zapis !!
 */
 
-function Gather2(cZn)
+function Gather2(zn)
 *{
-local i,aStruct
-
-if cZn==nil
-  cZn:="_"
+local _i, _struct
+local _field_b, _var
+ 
+if zn==nil
+  zn:="_"
 endif
-aStruct:=DBSTRUCT()
-for i:=1 to len(aStruct)
-  cImeP:=aStruct[i,1]
-  if  !("#"+cImeP+"#"  $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#")
-   cVar:=cZn+cImeP
-   IF "U"$TYPE(cVar)
-     MsgBeep2("Neuskladj.strukt.baza! "+;
-              "F-ja: GATHER2(), Alias: "+ALIAS()+", Polje: "+cImeP)
-   ELSE
-     field->&cImeP:= &cVar
-   ENDIF
+
+_struct:=DBSTRUCT()
+
+for _i:=1 to len(_struct)
+  _ime_p := _struct[_i, 1]
+  _field_b := FIELDBLOCK(_ime_p)
+  _var :=  zn + _ime_p
+
+  if  !("#" + _ime_p + "#"  $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#")
+     EVAL(_field_b, EVAL(MEMVARBLOCK(_var)) )
   endif
 next
 return
-*}
+
 
 function delete2()
 *{

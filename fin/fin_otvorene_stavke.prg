@@ -2138,8 +2138,11 @@ create (PRIVPATH+"OSUBAN") from OEXT
 
 select (F_OSUBAN)
 usex (PRIVPATH+"OSUBAN")
+
 index on IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr  tag "1"
+
 index on idfirma+idkonto+idpartner+brdok  tag "3"
+
 index on dtos(datdok)+dtos(iif(empty(DatVal),DatDok,DatVal))  tag "DATUM"
 //OSUBAN
 select suban

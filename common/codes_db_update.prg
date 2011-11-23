@@ -118,7 +118,9 @@ endif
 
 if ! _ok
     sql_table_update(_table, "ROLLBACK")
-    return .f.
+
+    MsgBeep("podrska za semafore za " + _table + "nedostaje")
+    // return .f.
 endif
 
 // sve je ok sada zauriramo dbf

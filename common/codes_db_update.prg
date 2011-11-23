@@ -88,6 +88,7 @@ function f18_gather(values, where)
 local _table
 local _key, _field_b
 local _ok := .f.
+local _values_old := hb_hash()
 local _ids := {}
 
 _table := LOWER(ALIAS())
@@ -105,7 +106,15 @@ if sql_table_update(_table, "del", values, where )
    // izbrisali smo, sada dodajemo vrijednost
    if sql_table_update(_table, "ins", values)
        update_semaphore_version(_table, .t.)
-   
+  
+       _field_b := FIELDBLOCK("id")
+       if EVAL(_field_b) <> values["id"]
+           // vrijednost u dbf se razlikuje od memvar zato pobrisi staru sifru
+           _values_old["id"] := EVAL(_field_b)
+           AADD(_ids, _values_old["id"])
+           sql_table_update(_table, "del", _values_old) 
+       endif 
+
        AADD(_ids, values["id"])
        push_ids_to_semaphore( _table, _ids )
 

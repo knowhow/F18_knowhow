@@ -438,30 +438,31 @@ endif
 Ch:=LASTKEY()
 
 // deklarisi privatne varijable sifrarnika
+// wPrivate
 aStruct:=DBSTRUCT()
-SkratiAZaD(@aStruct)
+SkratiAZaD (@aStruct)
 for i:=1 to LEN(aStruct)
-     cImeP:=aStruct[i,1]
-     cVar:="w"+cImeP
-     PRIVATE &cVar:=&cImeP
+     cImeP := aStruct[i,1]
+     cVar := "w" + cImeP
+     PRIVATE &cVar := &cImeP
 next
 
-nOrder:=indexord()
-nRet:=-1
-lZabIsp:=.f.
+nOrder := indexord()
+nRet := -1
+lZabIsp := .f.
 
 if bBlok<>NIL
-  nRet:=Eval(bBlok,Ch)
-  if nret>4
-    if nRet==5
+  nRet:=Eval(bBlok, Ch)
+  if nret > 4
+    if nRet == 5
       return DE_ABORT
-    elseif nRet==6
+    elseif nRet == 6
       return DE_CONT
-    elseif nRet==7
+    elseif nRet == 7
       return DE_REFRESH
-    elseif nRet==99 .and. LEN(aZabIsp)>0
-      lZabIsp:=.t.
-      nRet:=-1
+    elseif nRet == 99 .and. LEN(aZabIsp) > 0
+      lZabIsp := .t.
+      nRet := -1
     endif
   endif
 endif
@@ -547,21 +548,24 @@ do case
   case Ch==K_CTRL_P
 
     PushWa()
-    IzborP2( Kol,PRIVPATH + alias())
-    if lastkey()==K_ESC
+    IzborP2(Kol,PRIVPATH + alias())
+    if lastkey() == K_ESC
         return DE_CONT
     endif
-    Izlaz("Pregled: "+ALLTRIM(cNaslov)+" na dan "+dtoc(date())+" g.","sifrarnik")
+
+    Izlaz("Pregled: " + ALLTRIM(cNaslov) + " na dan " + dtoc(date()) + " g.", "sifrarnik" )
     set filter to
     PopWa()
+
     return DE_CONT
 
   case Ch==K_ALT_F
      uslovsif()
      return DE_REFRESH
+
   case Ch==K_CTRL_F6
     Box(,1,30)
-      public gIdFilter:=eval(ImeKol[TB:ColPos,2])
+      public gIdFilter := eval(ImeKol[TB:ColPos,2])
       @ m_x+1,m_y+2 SAY "Filter :" GET gidfilter
       read
     BoxC()
@@ -581,7 +585,6 @@ do case
      return sif_brisi_sve()
 
   case Ch==K_ALT_C
-    
     return SifClipBoard()
 
   case Ch==K_F10
@@ -597,114 +600,6 @@ do case
 
 endcase
 return
-
-
-// -----------------------------------
-// pretraga po match_code polju
-// -----------------------------------
-static function m_code_src()
-local cSrch
-local cFilter
-
-if !is_m_code()
-	// ne postoji polje match_code
-	return 0
-endif
-
-Box(, 7, 60)
-	private GetList:={}
-	cSrch:=SPACE(20)
-	set cursor on
-	@ m_x+1, m_y+2 SAY "Match code:" GET cSrch VALID !EMPTY(cSrch)
-	@ m_x+3, m_y+2 SAY "Uslovi za pretragu:" COLOR "I"
-	@ m_x+4, m_y+2 SAY " /ABC = m.code pocinje sa 'ABC'  ('ABC001')"
-	@ m_x+5, m_y+2 SAY " ABC/ = m.code zavrsava sa 'ABC' ('001ABC')"
-	@ m_x+6, m_y+2 SAY " #ABC = 'ABC' je unutar m.code  ('01ABC11')"
-	@ m_x+7, m_y+2 SAY " ABC  = m.code je striktno 'ABC'    ('ABC')"
-	read
-BoxC()
-
-// na esc 0
-if LastKey() == K_ESC
-	return 0
-endif
-
-cSrch := TRIM(cSrch)
-// sredi filter
-g_mc_filter(@cFilter, cSrch)
-
-if !EMPTY(cFilter)
-	// set matchcode filter
-     	s_mc_filter(cFilter)  
-else
-	set filter to
-	go top
-endif
-   
-return 1
-
-
-// ------------------------------------------
-// provjerava da li postoji polje match_code
-// ------------------------------------------
-function is_m_code()
-if fieldpos("MATCH_CODE")<>0
-	return .t.
-endif
-return .f.
-
-
-// ---------------------------------
-// setuj match code filter
-// ---------------------------------
-static function s_mc_filter(cFilter)
-set filter to &cFilter
-go top
-return
-
-
-// -------------------------------------
-// sredi filter po match_code za tabelu
-// -------------------------------------
-static function g_mc_filter(cFilt, cSrch)
-local cPom
-local nLeft
-
-cFilt:="TRIM(match_code)"
-cSrch := TRIM(cSrch)
-
-do case
-	case LEFT(cSrch, 1) == "/"
-	
-		// match code pocinje
-		cPom := STRTRAN(cSrch, "/", "")
-		cFilt += "=" + Cm2Str(cPom)
-		
-	case LEFT(cSrch, 1) == "#"
-		
-		// pretraga unutar match codea
-		cPom := STRTRAN(cSrch, "#", "")
-		
-		cFilt := Cm2Str(ALLTRIM(cPom))
-		cFilt += "$ match_code"
-
-	case RIGHT(cSrch, 1) == "/"
-		
-		// match code zavrsava sa...
-		cPom := STRTRAN(cSrch, "/", "")
-		nLeft := LEN(ALLTRIM(cPom))
-		
-		cFilt := "RIGHT(ALLTRIM(match_code),"+ALLTRIM(STR(nLeft))+")"
-		cFilt += "==" + Cm2Str(ALLTRIM(cPom))
-		
-	otherwise
-		
-		// striktna pretraga
-		cFilt += "==" + Cm2Str(cSrch)
-endcase
-
-return
-
 
 // ------------------------------------------
 // ------------------------------------------
@@ -756,16 +651,14 @@ if &cMCField->(fieldpos("MATCH_CODE")) <> 0
 	endif
 endif
 
-
 __A_SIFV__[__PSIF_NIVO__,3]:=  Ch
 
-
 if Ch==K_CTRL_N .or. Ch==K_F2
-       if nordid<>0
+    if nordid<>0
         set order to tag "ID"
-       else
+    else
         set order to tag "1"
-       endif
+    endif
 	go (nPrevRecNo)
 endif
 
@@ -787,25 +680,25 @@ do while .t.
     // setuj varijable za tekuci slog
     SetSifVars()
    
-
     nTrebaredova:=LEN(ImeKol)
     for i:=1 to LEN(ImeKol)
-      if LEN(ImeKol[i])>=10 .and. Imekol[i,10]<>NIL
+      if LEN(ImeKol[i]) >= 10 .and. Imekol[i, 10]<>NIL
          nTrebaRedova--
       endif
     next
 
     i:=1 
     // tekuci red u matrici imekol
-    for jg:=1 to 3  // glavna petlja
+    for jg := 1 to 3  // glavna petlja
 	    
 	    // moguca su  tri get ekrana
 
-	    if jg==1
+	    if jg == 1
 	      Box(, min( 20, nTrebaRedova) + 1, 67 ,.f.)
 	    else
 	      BoxCLS()
 	    endif
+
 	    set cursor on
 	    Private Getlist:={}
 
@@ -814,269 +707,262 @@ do while .t.
 	    nNestampati:=0  // broj redova koji se ne prikazuju (_?_)
 
 	    nTekRed:=1
-	    do while .t.  // i brojac
+	    do while .t. 
 	    
-	    lShowPGroup := .f.
-	    
-	    if empty(ImeKol[i,3])  // ovdje se kroji matrica varijabli.......
-           // area->nazpolja
-		  cPom:=""  
-	     else
-	       if left(ImeKol[i,3],6)!="SIFK->"
-		      cPom:="w"+ImeKol[i,3]    //npr WVPC2
-		      // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
-		      // varijablu karakteristike("ROBA","V2")
-	        else
-	              // ako je SIFK->GRUP, prikazuj status
-	             if ALIAS() == "PARTN" .and. RIGHT(ImeKol[i,3],4) == "GRUP"
-		            lShowPGroup := .t.
-		         endif
-		         cPom:= "wSifk_"+substr(ImeKol[i,3],7)
-		         &cPom:= IzSifk(ALIAS(),substr(ImeKol[i,3],7))
-		         if &cPom = NIL  // ne koristi se !!!
-		            cPom:=""
-		         endif
-	         endif
-	     endif
+            lShowPGroup := .f.
+            
+            if empty(ImeKol[i,3])  // ovdje se kroji matrica varijabli.......
+            // area->nazpolja
+            cPom:=""  
+            else
+            if left(ImeKol[i,3],6)!="SIFK->"
+                cPom:="w"+ImeKol[i,3]    //npr WVPC2
+                // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
+                // varijablu karakteristike("ROBA","V2")
+                else
+                    // ako je SIFK->GRUP, prikazuj status
+                    if ALIAS() == "PARTN" .and. RIGHT(ImeKol[i,3],4) == "GRUP"
+                        lShowPGroup := .t.
+                    endif
+                    cPom:= "wSifk_"+substr(ImeKol[i,3],7)
+                    &cPom:= IzSifk(ALIAS(),substr(ImeKol[i,3],7))
+                    if &cPom = NIL  // ne koristi se !!!
+                        cPom:=""
+                    endif
+                endif
+            endif
 
-	     cPic:=""
-	     if !empty(cPom) // samo varijable koje mozes direktno mjenjati
+            cPic:=""
+            if !empty(cPom) // samo varijable koje mozes direktno mjenjati
 
-		 // uzmi when, valid kodne blokove
-		 if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i,3]))>0)
-		   bWhen := {|| .f.}
-		 elseif (LEN(ImeKol[i])<4 .or. ImeKol[i,4]==nil)
-		   bWhen := {|| .t.}
-		 else
-		   bWhen:=Imekol[i,4]
-		 endif
+            // uzmi when, valid kodne blokove
+            if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i,3]))>0)
+            bWhen := {|| .f.}
+            elseif (LEN(ImeKol[i])<4 .or. ImeKol[i,4]==nil)
+            bWhen := {|| .t.}
+            else
+            bWhen:=Imekol[i,4]
+            endif
 
-		 if (len(ImeKol[i])<5 .or. ImeKol[i,5]==nil)
-		   bValid := {|| .t.}
-		 else
-		   bValid:=Imekol[i,5]
-		 endif
+            if (len(ImeKol[i])<5 .or. ImeKol[i,5]==nil)
+            bValid := {|| .t.}
+            else
+            bValid:=Imekol[i,5]
+            endif
 
-	     if LEN(ToStr(&cPom))>50
-		    cPic:="@S50"
-		    @ m_x+nTekRed+1,m_y+67 SAY Chr(16)
-		 
-                 elseif Len(ImeKol[i])>=7 .and. ImeKol[i,7]<>NIL
-		     cPic:= ImeKol[i,7]
-		 else
-		     cPic:=""
-		 endif
+            if LEN(ToStr(&cPom))>50
+                cPic:="@S50"
+                @ m_x+nTekRed+1,m_y+67 SAY Chr(16)
+            
+                    elseif Len(ImeKol[i])>=7 .and. ImeKol[i,7]<>NIL
+                cPic:= ImeKol[i,7]
+            else
+                cPic:=""
+            endif
 
-		 nRed:=1
-		 nKolona:=1
-		 if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
-		  nKolona:= imekol[i,10]+1
-		  nRed:=0
-		 endif
-		 if nKolona=1
-		     nTekRed++
-		 endif
-		
-		 if lShowPGroup
-		   nXP := nTekRed
-		   nYP := nKolona
-		 endif
-		 
-		 @ m_x+nTekRed , m_y+nKolona SAY if(nKolona>1,"  "+alltrim(ImeKol[i,1]) , PADL( alltrim(ImeKol[i,1]) ,15))  GET &cPom VALID eval(bValid) PICTURE cPic
-		 // stampaj grupu za stavku "GRUP"
-		 if lShowPGroup
-		 	p_gr(&cPom, nXP+1, nYP+1)
-		 endif
-		
-		 if cPom = "wSifk_"
-		   // uzmi when valid iz SIFK
-		   private cWhenSifk, cValidSifk
-		   IzSifKWV(ALIAS(),substr(cPom,7) ,@cWhenSifk,@cValidSifk)
-
-		   if !empty(cWhenSifk)
-		      Getlist[nGet]:PreBlock:=& ("{|| "+cWhenSifk +"}")
-		   else
-		       GetList[nGet]:PreBlock:=bWhen
-		   endif
-		   if !empty(cValidSifk)
-		      Getlist[nGet]:PostBlock:= & ("{|| "+cValidSifk +"}")
-		   else
-		      GetList[nGet]:PostBlock:=bValid
-		   endif
-		   
-		  
-		 else
-
-		  GetList[nGet]:PreBlock:=bWhen
-		  GetList[nGet]:PostBlock:=bValid
-		 endif
-		 nGet++
-	    else
-            // Empty(cpom)  - samo odstampaj
             nRed:=1
             nKolona:=1
             if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
-            nKolona:= imekol[i,10]
+            nKolona:= imekol[i,10]+1
             nRed:=0
-		endif
+            endif
+            if nKolona=1
+                nTekRed++
+            endif
+            
+            if lShowPGroup
+            nXP := nTekRed
+            nYP := nKolona
+            endif
+            
+            @ m_x + nTekRed , m_y + nKolona SAY iif(nKolona>1,"  "+alltrim(ImeKol[i,1]) , PADL( alltrim(ImeKol[i,1]) ,15))  GET &cPom VALID eval(bValid) PICTURE cPic
+            // stampaj grupu za stavku "GRUP"
+            if lShowPGroup
+                p_gr(&cPom, nXP+1, nYP+1)
+            endif
+            
+                if cPom = "wSifk_"
+                // uzmi when valid iz SIFK
+                private cWhenSifk, cValidSifk
+                IzSifKWV(ALIAS(),substr(cPom,7) ,@cWhenSifk,@cValidSifk)
 
-        // ne prikazuj nil vrijednosti
-		if EVAL(ImeKol[i,2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2]))<>"_?_"  
-		  if nKolona=1
-		   ++nTekRed
-		  endif
-		  @ m_x+nTekRed,m_y+nKolona SAY PADL( alltrim(ImeKol[i,1]) ,15)
-		  @ m_x+nTekRed,col()+1 SAY EVAL(ImeKol[i,2])
-		else
-		  ++nNestampati
-		endif
+                if !empty(cWhenSifk)
+                    Getlist[nGet]:PreBlock:=& ("{|| "+cWhenSifk +"}")
+                else
+                    GetList[nGet]:PreBlock:=bWhen
+                endif
+                if !empty(cValidSifk)
+                    Getlist[nGet]:PostBlock:= & ("{|| "+cValidSifk +"}")
+                else
+                    GetList[nGet]:PostBlock:=bValid
+                endif		  
+                else
+                    GetList[nGet]:PreBlock:=bWhen
+                    GetList[nGet]:PostBlock:=bValid
+                endif
 
-	      endif // empty(cpom)
+                nGet++
+            else
+                // Empty(cpom)  - samo odstampaj
+                nRed:=1
+                nKolona:=1
+                if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
+                nKolona:= imekol[i,10]
+                nRed:=0
+            endif
+
+            // ne prikazuj nil vrijednosti
+            if EVAL(ImeKol[i,2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2]))<>"_?_"  
+              if nKolona=1
+              ++nTekRed
+            endif
+               @ m_x+nTekRed,m_y+nKolona SAY PADL( alltrim(ImeKol[i,1]) ,15)
+               @ m_x+nTekRed,col()+1 SAY EVAL(ImeKol[i,2])
+            else
+               ++nNestampati
+            endif
+
+            endif // empty(cpom)
 
 
-	      i++                               // ! sljedeci slog se stampa u istom redu
-	      if ( len(imeKol) < i) .or. ;
-		 ( nTekRed > min(20, nTrebaRedova) .and. !(Len(ImeKol[i])>=10 .and. imekol[i, 10]<>NIL)   )
-		 
-		exit // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
-	      endif
-	    enddo // i
-	    SET KEY K_F8 TO NNSifru()
-	    SET KEY K_F9 TO n_num_sif()
-	    SET KEY K_F5 TO NNSifru2()
+            i++                               // ! sljedeci slog se stampa u istom redu
+            if ( len(imeKol) < i) .or. ( nTekRed > min(20, nTrebaRedova) .and. !(Len(ImeKol[i])>=10 .and. imekol[i, 10]<>NIL)   )
+            
+                exit // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
+            endif
+    enddo
 
 
-	    READ
-	    SET KEY K_F8 TO
-	    SET KEY K_F9 TO
-	    SET KEY K_F5 TO
-
-	    if ( len(imeKol) < i)
-	      exit
-	    endif
+    SET KEY K_F8 TO NNSifru()
+    SET KEY K_F9 TO n_num_sif()
+    SET KEY K_F5 TO NNSifru2()
 
 
-   next 
-   BoxC()
+    READ
+    SET KEY K_F8 TO
+    SET KEY K_F9 TO
+    SET KEY K_F5 TO
 
-
-     if Ch<>K_CTRL_A
-        exit
-     else
-     if lastkey()==K_ESC
-     	exit
-     endif
-
-     _vars := f18_scatter_global_vars("w")
-     f18_gather(_vars)
-           
-     //f18_gater radi sav posao GatherR("w")
-
-     // TODO !!! 
-     GatherSifk("w" , Ch==K_CTRL_N)
-
-     Scatter("w")
-
-     if lastkey()==K_PGUP
-       skip -1
-     else
-       skip
-     endif
-     if eof()
-         skip -1
-         exit
-     endif
+    if ( len(imeKol) < i)
+    exit
     endif
 
-   enddo
 
-   if Ch==K_CTRL_N .or. Ch==K_F2
-      ordsetfocus(nOrder)
-   endif
+    next 
+    BoxC()
 
-   if lastkey()==K_ESC
-      if lNovi
-	     go (nPrevRecNo)
-         return 0
-      elseif Ch==K_F2
-         return 0
-      else
-         return 0
-      endif
-   else
 
-     
-   if lNovi
-	
-	// provjeri da li vec ovaj id postoji ?
-	
-	nNSInfo := _chk_sif("w")
-	
-	if nNSInfo = 1  
-		msgbeep("Ova sifra vec postoji !")
-		return 0
-	elseif nNSInfo = -1
-		return 0
-	endif
+        if Ch<>K_CTRL_A
+            exit
+        else
+        if lastkey()==K_ESC
+            exit
+        endif
 
-	append blank
+        _vars := f18_scatter_global_vars("w")
+        f18_gather(_vars)
+            
+        //f18_gater radi sav posao GatherR("w")
 
-	if _LOG_PROMJENE == .t. 
-	    // ako je novi zapis .. ovo su stare vrijednosti (prazno)
-	    cOldDesc := _g_fld_desc("w")
-	endif
+        // TODO !!! 
+        GatherSifk("w" , Ch==K_CTRL_N)
 
-	   //sql_append()
-      
-      endif
-     
+        Scatter("w")
 
-      _vars := f18_scatter_global_vars("w")
-      if ! f18_gather(_vars)
-           // brisi appendovani zapis
-           delete
-      endif
+        if lastkey()==K_PGUP
+        skip -1
+        else
+        skip
+        endif
+        if eof()
+            skip -1
+            exit
+        endif
+        endif
 
-      // TODO !! 
-      GatherSifk("w", lNovi )
-      
-      Scatter("w")
-      
-      if _LOG_PROMJENE == .t.
-         // daj nove vrijednosti
-         cNewDesc := _g_fld_desc("w") 
-      endif
+// glavni enddo
+enddo
 
-      nTArea := SELECT()
-      
-      // logiraj promjenu sifrarnika...
-      if _LOG_PROMJENE == .t.
-        
-	cChanges := _g_fld_changes(cOldDesc, cNewDesc)
-	if LEN(cChanges) > 250
-		cCh1 := SUBSTR(cChanges,1,250)
-		cCh2 := SUBSTR(cChanges,251,LEN(cChanges))
-	else
-		cCh1 := cChanges
-		cCh2 := ""
-	endif
 
-      	EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-		"promjena na sifri: " + to_str( FIELDGET(1) ), cCh1,cCh2, ;
-		DATE(),DATE(), "", ;
-		"promjene u tabeli " +  ALIAS() + " : " + ;
-		IF(Ch==K_F2,"ispravka",IF(Ch==K_F4,"dupliciranje", ;
-		"nova stavka")))
-      endif
-      select (nTArea)
+if Ch==K_CTRL_N .or. Ch==K_F2
+    ordsetfocus(nOrder)
+endif
 
-      if Ch==K_F4 .and. Pitanje( , "Vrati se na predhodni zapis","D")=="D"
+if lastkey()==K_ESC
+    if lNovi
         go (nPrevRecNo)
-      endif
-      return 1
+    endif
+    return 0
+endif
+
+    
+if lNovi
+
+    // provjeri da li vec ovaj id postoji ?
+    nNSInfo := _chk_sif("w")
+
+    if nNSInfo = 1  
+        msgbeep("Ova sifra vec postoji !")
+        return 0
+    elseif nNSInfo = -1
+        return 0
     endif
 
-return 0
+    append blank
+
+    if _LOG_PROMJENE == .t. 
+        // ako je novi zapis .. ovo su stare vrijednosti (prazno)
+        cOldDesc := _g_fld_desc("w")
+    endif
+
+        
+endif
+
+_vars := f18_scatter_global_vars("w")
+if ! f18_gather(_vars)
+    // brisi appendovani zapis
+    delete
+endif
+
+// TODO !! 
+GatherSifk("w", lNovi )
+
+Scatter("w")
+
+if _LOG_PROMJENE == .t.
+    // daj nove vrijednosti
+    cNewDesc := _g_fld_desc("w") 
+endif
+
+nTArea := SELECT()
+
+// logiraj promjenu sifrarnika...
+if _LOG_PROMJENE == .t.
+
+    cChanges := _g_fld_changes(cOldDesc, cNewDesc)
+    if LEN(cChanges) > 250
+        cCh1 := SUBSTR(cChanges, 1, 250)
+        cCh2 := SUBSTR(cChanges, 251, LEN(cChanges))
+    else
+        cCh1 := cChanges
+        cCh2 := ""
+    endif
+
+        EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
+        "promjena na sifri: " + to_str( FIELDGET(1) ), cCh1,cCh2, ;
+        DATE(),DATE(), "", ;
+        "promjene u tabeli " +  ALIAS() + " : " + ;
+        IIF(Ch==K_F2,"ispravka",IF(Ch==K_F4,"dupliciranje", "nova stavka")))
+endif
+
+select (nTArea)
+
+if Ch==K_F4 .and. Pitanje( , "Vrati se na predhodni zapis","D")=="D"
+    go (nPrevRecNo)
+endif
+    
+return 1
+
 
 // --------------------------------------------------
 // --------------------------------------------------
@@ -1207,16 +1093,21 @@ endif
 
 return cChanges
 
-
+// -----------------------
+// -----------------------
 function SetSifVars()
+local _i, aStruct
 
 aStruct:=DBSTRUCT()
+
 SkratiAZaD(@aStruct)
-for i:=1 to LEN(aStruct)
-     cImeP:=aStruct[i,1]
+
+for i:=_1 to LEN(aStruct)
+     cImeP:=aStruct[i, 1]
      cVar:="w"+cImeP
      &cVar:=&cImeP
 next
+
 return
 
 

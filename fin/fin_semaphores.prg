@@ -43,12 +43,13 @@ if algoritam == "DATE"
     _dat :=  get_dat_from_semaphore("fin_suban")
     _qry += " WHERE datdok>=" + _sql_quote(_dat)
 endif
-
+/*
 _qry_obj := _server:Query(_qry) 
 if _qry_obj:NetErr()
    MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
    QUIT
 endif
+*/
 
 SELECT F_SUBAN
 my_use ("suban", "fin_suban", .f., "SEMAPHORE")
@@ -152,7 +153,7 @@ DO WHILE !_qry_obj:Eof()
 ENDDO
 
 USE
-_qry_obj:Destroy()
+_qry_obj:Close()
 
 if (gDebug > 5)
     log_write("fin_suban synchro cache:" + STR(SECONDS() - _seconds))

@@ -31,6 +31,7 @@ local _offset
 local _step := 15000
 local _retry := 3
 local _order := "idfirma, idvd, brdok, rbr, mkonto, pkonto"
+local _key_block
 
 _tbl := "fmk.kalk_kalk"
 
@@ -47,7 +48,7 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
-for _offset := 0 to _count STEP _step 
+for _offset := 750000 to _count STEP _step 
 
 _qry :=  "SELECT " + ;
 		"idfirma, idvd, brdok, rbr, datdok, brfaktp, datfaktp, idroba, idkonto, idkonto2, idzaduz, " + ;
@@ -61,15 +62,37 @@ _qry :=  "SELECT " + ;
 if algoritam == "DATE"
     _dat := get_dat_from_semaphore("kalk_kalk")
 	_qry += " WHERE datdok >= " + _sql_quote(_dat)
+    _key_block := {|| field->dat_dok }
+endif
+
+if algoritam == "IDS"
+		_ids := get_ids_from_semaphore("kalk_kalk")
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idvd || brnal) IN " + _sql_ids
+     	endif
+
+        _key_block := {|| field->idfirma + field->idvd + field->brnal } 
 endif
 
 _qry += " ORDER BY " + _order
 _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
 
 
-_qry_obj := run_sql_query(_server, _qry, _retry)
 
 
+// sredimo dbf - pobrisimo sto ne treba
 SELECT F_KALK
 my_use ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
@@ -87,7 +110,7 @@ DO CASE
     	SET ORDER TO TAG "DAT"
     	// tag je "DatDok" nije DTOS(DatDok)
     	seek _dat
-    	do while !eof() .and. (field->datDok >= _dat) 
+    	do while !eof() .and. eval(_key_block)  >= _dat 
         	// otidji korak naprijed
         	SKIP
         	_rec := RECNO()
@@ -98,8 +121,6 @@ DO CASE
 
 	CASE algoritam == "IDS"
     	
-		_ids := get_ids_from_semaphore("kalk_kalk")
-   		// "date" algoritam  - brisi sve vece od zadanog datuma
     	SET ORDER TO TAG "1"
 
 		// CREATE_INDEX("1", "idFirma+IdVd+BrDok+Rbr", "KALK")
@@ -110,7 +131,7 @@ DO CASE
           		
           		HSEEK _tmp_id
           		
-				do while !EOF() .and. (field->idfirma + field->idvd + field->brnal) == _tmp_id
+				do while !EOF() .and. EVAL(_key_block) == _tmp_id
                		skip
                		_rec := RECNO()
                		skip -1 
@@ -124,29 +145,19 @@ DO CASE
 			endif
     	enddo
 
-    	_qry += " WHERE "
-    	if LEN(_ids) < 1
-       		// nema id-ova
-      		_qry += "false"
-    	else
-        	_sql_ids := "("
-        	for _i := 1 to LEN(_ids)
-            	_sql_ids += _sql_quote(_ids[_i])
-            	if _i < LEN(_ids)
-            		_sql_ids += ","
-            	endif
-        	next
-        	_sql_ids += ")"
-        	_qry += " (idfirma || idvd || brnal) IN " + _sql_ids
-     	endif
-
 ENDCASE
+// sada je sve izbrisano
 
+/*
+???? otkud ovdje dva x query ?!
 _qry_obj := _server:Query( _qry )
 if _qry_obj:NetErr()
 	Msgbeep("ajoj :" + _qry_obj:ErrorMsg())
 	QUIT
 endif
+*/
+
+_qry_obj := run_sql_query(_server, _qry, _retry)
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
@@ -227,7 +238,7 @@ DO WHILE !_qry_obj:Eof()
 ENDDO
 
 USE
-_qry_obj:Destroy()
+_qry_obj:Close()
 
 // limit, offset
 next
@@ -508,7 +519,7 @@ DO WHILE !_qry_obj:Eof()
 ENDDO
 
 USE
-_qry_obj:Destroy()
+_qry_obj:Close()
 
 if (gDebug > 5)
     log_write("kalk_kalk synchro cache:" + STR(SECONDS() - _seconds))

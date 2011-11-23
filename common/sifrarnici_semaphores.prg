@@ -133,7 +133,7 @@ DO WHILE ! _qry_obj:Eof()
 ENDDO
 
 USE
-_qry_obj:Destroy()
+_qry_obj:Close()
 
 if (gDebug > 5)
     log_write(table + "synchro cache:" + STR(SECONDS() - _seconds))

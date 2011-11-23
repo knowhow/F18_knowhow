@@ -35,6 +35,18 @@ local cOpis := ""
 local cBoxName
 local dPom := CTOD("")
 local cOpcine := SPACE(20)
+local cExpDbf := "N"
+local aExpFields
+local __vr_nal
+local __br_nal
+local __br_veze
+local __r_br
+local __dat_val
+local __dat_nal
+local __opis
+local __p_naz
+local __k_naz
+
 private fK1:=fk2:=fk3:=fk4:="N"
 private cIdFirma:=gFirma
 private fOtvSt:=lOtvSt
@@ -169,6 +181,8 @@ Box("#"+ cBoxName, 21, 65)
  		endif
 	 	@ row()+1,m_y+2 SAY "Opcina (prazno-sve):" GET cOpcine
 		@ row()+1,m_y+2 SAY "Svaka kartica treba da ima zaglavlje kolona ? (D/N)"  GET c1k1z pict "@!" valid c1k1z $ "DN"
+		@ row()+1,m_y+2 SAY "Export kartice u dbf ? (D/N)"  GET cExpDbf pict "@!" valid cExpDbf $ "DN"
+		
 		read
 		ESC_BCR
 	
@@ -233,6 +247,13 @@ endif
 
 select params
 use
+
+if cExpDbf == "D"
+	// inicijalizuj export
+	aExpFields := g_exp_fields()
+	t_exp_create( aExpFields )
+	cLaunch := exp_report()
+endif
 
 cIdFirma:=TRIM(cIdFirma)
 
@@ -404,19 +425,19 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
 
 	do whilesc !eof() .and. cIdKonto==IdKonto .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.)
 
-    		nPDugBHD:=0
+    	nPDugBHD:=0
 		nPPotBHD:=0
 		nPDugDEM:=0
 		nPPotDEM:=0  // prethodni promet
-    		nDugBHD:=0
+    	nDugBHD:=0
 		nPotBHD:=0
 		nDugDEM:=0
 		nPotDEM:=0
-    		nZDugBHD:=0
+    	nZDugBHD:=0
 		nZPotBHD:=0
 		nZDugDEM:=0
 		nZPotDEM:=0
-    		cIdPartner:=IdPartner
+    	cIdPartner:=IdPartner
 
 		nTarea := SELECT()
 
@@ -435,321 +456,344 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
 		select (nTarea)
     		
 		if cRasclaniti=="D"
-       			cRasclan:=idrj+funk+fond
-    		else
-       			cRasclan:=""
-    		endif
+       		cRasclan:=idrj+funk+fond
+    	else
+       		cRasclan:=""
+    	endif
     		
 		if cBrza=="D"   // "brza" kartica
-      			if IdKonto<>qqKonto .or. IdPartner<>qqPartner .and. RTRIM(qqPartner)!=";"
-         			exit
-      			endif
-    		endif
+      		if IdKonto<>qqKonto .or. IdPartner<>qqPartner .and. RTRIM(qqPartner)!=";"
+         		exit
+      		endif
+    	endif
 
-    		if prow() > 55+gPStranica
-     			FF
+    	if prow() > 55+gPStranica
+     		FF
 			ZaglSif(.t.)
-    		endif
+    	endif
 
-    		? m
-    		? "KONTO   "
+    	? m
+    	? "KONTO   "
 		@ prow(),pcol()+1 SAY cIdKonto
-    		SELECT KONTO
+    	SELECT KONTO
 		HSEEK cIdKonto
-    		@ prow(),pcol()+2 SAY naz
-    		? "Partner "
-		@ prow(),pcol()+1 SAY IF(cBrza=="D".and.RTRIM(qqPartner)==";",":  SVI",cIdPartner)
-    		if cRasclaniti=="D"
-      			select rj
-      			set order to tag "ID"
-      			seek cRasclan
-      			? "        "
-      			@ prow(),pcol()+1 SAY left(cRasclan,6) +"/"+substr(cRasclan,7,5)+"/"+substr(cRasclan,12) + " / " + Ocitaj(F_RJ,left(cRasclan, 6),"NAZ")
-      			select konto
-    		endif
+		__k_naz := field->naz
 
-    		if !( cBrza=="D" .and. RTRIM(qqPartner)==";" )
-     			SELECT PARTN
+    	@ prow(),pcol()+2 SAY naz
+    	? "Partner "
+		@ prow(),pcol()+1 SAY IF(cBrza=="D".and.RTRIM(qqPartner)==";",":  SVI",cIdPartner)
+    	if cRasclaniti=="D"
+      		select rj
+      		set order to tag "ID"
+      		seek cRasclan
+      		? "        "
+      		@ prow(),pcol()+1 SAY left(cRasclan,6) +"/"+substr(cRasclan,7,5)+"/"+substr(cRasclan,12) + " / " + Ocitaj(F_RJ,left(cRasclan, 6),"NAZ")
+      		select konto
+    	endif
+
+    	if !( cBrza=="D" .and. RTRIM(qqPartner)==";" )
+     		SELECT PARTN
 			HSEEK cIdPartner
-     			@ prow(),pcol()+1 SAY ALLTRIM(naz)
+			__p_naz := field->naz
+     		@ prow(),pcol()+1 SAY ALLTRIM(naz)
 			@ prow(),pcol()+1 SAY ALLTRIM(naz2)
 			@ prow(),pcol()+1 SAY ZiroR
-    		endif
+    	endif
     		
 		select SUBAN
     		
 		if c1k1z=="D"
-      			ZaglSif(.f.)
-    		else
-      			? m
-    		endif
-    		fPrviPr:=.t.  // prvi prolaz
+      		ZaglSif(.f.)
+    	else
+      		? m
+    	endif
+    	
+		fPrviPr:=.t.  // prvi prolaz
 
 		do whilesc !eof() .and. cIdKonto==IdKonto .and. (cIdPartner==IdPartner .or. (cBrza=="D" .and. RTRIM(qqPartner)==";")) .and. Rasclan() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.)
+			
 			if prow()>62+gPStranica
-             			FF
+             	FF
 				ZaglSif(.t.)
-             			? m
-             			? "KONTO   "
+             	? m
+            	? "KONTO   "
 				@ prow(),pcol()+1 SAY cIdKonto
-             			SELECT KONTO
+             	SELECT KONTO
 				HSEEK cIdKonto
-             			@ prow(),pcol()+2 SAY naz
-             			? "Partner "
+             	@ prow(),pcol()+2 SAY naz
+             	? "Partner "
 				@ prow(),pcol()+1 SAY IF(cBrza=="D".and.RTRIM(qqPartner)==";",":  SVI",cIdPartner)
-             			if !( cBrza=="D" .and. RTRIM(qqPartner)==";" )
-              				SELECT PARTN
+             	if !( cBrza=="D" .and. RTRIM(qqPartner)==";" )
+              		SELECT PARTN
 					HSEEK cIdPartner
-              				@ prow(),pcol()+1 SAY ALLTRIM(naz)
+              		@ prow(),pcol()+1 SAY ALLTRIM(naz)
 					@ prow(),pcol()+1 SAY ALLTRIM(naz2)
 					@ prow(),pcol()+1 SAY ZiroR
-             			endif
-             			? "        "
+             	endif
+             	? "        "
 				@ prow(),pcol()+1 SAY left(cRasclan,6) +"/"+substr(cRasclan,7,5)+"/"+substr(cRasclan,12)
-             			select SUBAN
-             			? m
-          		endif
+             	select SUBAN
+             	? m
+          	endif
 			
 			if cPredh=="2" .and. fPrviPr
-             			fPrviPr:=.f.
-             			do while !eof() .and. cIdKonto==IdKonto .and. (cIdPartner==IdPartner .or. (cBrza=="D".and.RTRIM(qqPartner)==";")) .and. Rasclan().and. dDatOd>DatDok  .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.)
+             	fPrviPr:=.f.
+             	do while !eof() .and. cIdKonto==IdKonto .and. (cIdPartner==IdPartner .or. (cBrza=="D".and.RTRIM(qqPartner)==";")) .and. Rasclan().and. dDatOd>DatDok  .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.)
 					if fOtvSt .and. OtvSt=="9"  // stavka je zatvorena, kartica otv.st
-               					if d_P=="1"
-                					nZDugBHD+=iznosbhd
+               			if d_P=="1"
+                			nZDugBHD+=iznosbhd
 							nZDugDEM+=iznosdem
-               					else
-                					nZPotBHD+=iznosbhd
+               			else
+                			nZPotBHD+=iznosbhd
 							nZPotDEM+=iznosdem
-               					endif
-             				else
-               					if d_P=="1"
-                					nPDugBHD+=iznosbhd
+               			endif
+             		else
+               			if d_P=="1"
+                			nPDugBHD+=iznosbhd
 							nPDugDEM+=iznosdem
-               					else
-                					nPPotBHD+=iznosbhd
+               			else
+                			nPPotBHD+=iznosbhd
 							nPPotDEM+=iznosdem
-               					endif
-             				endif
+               			endif
+             		endif
 					skip
-             			enddo  //prethodni promet
+             	enddo  //prethodni promet
 				
 				? "PROMET DO "; ?? dDatOd
-             			if cSazeta=="D"
-                			if cDinDem=="3"
-                 				@ prow(),36 SAY ""
-                			else
-                 				@ prow(),36 SAY ""
-                			endif
-             			else
-                			if cDinDem=="3"
-                 				if gNW=="D"
-                   					@ prow(),58 SAY ""
-                 				else
-                   					@ prow(),58+IF(cK14=="4",8,17) SAY ""
-                 				endif
-                			else
-                 				if gNW=="D"
-                   					@ prow(),62 SAY ""
-                 				else
-                   					@ prow(),62+IF(cK14=="4",8,17) SAY ""
-                 				endif
-                			endif
-             			endif
+             	if cSazeta=="D"
+                	if cDinDem=="3"
+                 		@ prow(),36 SAY ""
+                	else
+                 		@ prow(),36 SAY ""
+                	endif
+             	else
+                	if cDinDem=="3"
+                 		if gNW=="D"
+                   			@ prow(),58 SAY ""
+                 		else
+                   			@ prow(),58+IF(cK14=="4",8,17) SAY ""
+                 		endif
+                	else
+                 		if gNW=="D"
+                   			@ prow(),62 SAY ""
+                 		else
+                   			@ prow(),62+IF(cK14=="4",8,17) SAY ""
+                 		endif
+                	endif
+             	endif
              			
 				nC1:=pcol()+1
-             			if cDinDem=="1"
-                			@ prow(),pcol()+1 SAY nPDugBHD PICTURE picBHD
-                			@ prow(),pcol()+1 SAY nPPotBHD PICTURE picBHD
-                			nDugBHD+=nPDugBHD
-                			nPotBHD+=nPPotBHD
-             			elseif cDinDem=="2"   // devize
-                			@ prow(),pcol()+1 SAY nPDugDEM PICTURE picbhd
-                			@ prow(),pcol()+1 SAY nPPotDEM PICTURE picbhd
-                			nDugDEM+=nPDugDEM
-                			nPotDEM+=nPPotDEM
-             			elseif cDinDem=="3"   // devize
-                			@ prow(),pcol()+1 SAY nPDugBHD PICTURE picBHD
-                			@ prow(),pcol()+1 SAY nPPotBHD PICTURE picBHD
-                			nDugBHD+=nPDugBHD
-                			nPotBHD+=nPPotBHD
-                			@ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
+             	if cDinDem=="1"
+                	@ prow(),pcol()+1 SAY nPDugBHD PICTURE picBHD
+                	@ prow(),pcol()+1 SAY nPPotBHD PICTURE picBHD
+                	nDugBHD+=nPDugBHD
+                	nPotBHD+=nPPotBHD
+             	elseif cDinDem=="2"   // devize
+                	@ prow(),pcol()+1 SAY nPDugDEM PICTURE picbhd
+                	@ prow(),pcol()+1 SAY nPPotDEM PICTURE picbhd
+                	nDugDEM+=nPDugDEM
+                	nPotDEM+=nPPotDEM
+             	elseif cDinDem=="3"   // devize
+                	@ prow(),pcol()+1 SAY nPDugBHD PICTURE picBHD
+                	@ prow(),pcol()+1 SAY nPPotBHD PICTURE picBHD
+                	nDugBHD+=nPDugBHD
+                	nPotBHD+=nPPotBHD
+                	@ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
+					@ prow(),pcol()+1 SAY nPDugDEM PICTURE picdem
+                	@ prow(),pcol()+1 SAY nPPotDEM PICTURE picdem
+                	nDugDEM+=nPDugDEM
+                	nPotDEM+=nPPotDEM
+                	@ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picdem
+             	endif
 
-                			@ prow(),pcol()+1 SAY nPDugDEM PICTURE picdem
-                			@ prow(),pcol()+1 SAY nPPotDEM PICTURE picdem
-                			nDugDEM+=nPDugDEM
-                			nPotDEM+=nPPotDEM
-                			@ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picdem
-             			endif
+             	if cKumul=="2"  // sa kumulativom
+                	if cDinDem=="1"
+                 		@ prow(),pcol()+1 SAY nDugBHD PICTURE picbhd
+                 		@ prow(),pcol()+1 SAY nPotBHD PICTURE picbhd
+                	else
+                 		@ prow(),pcol()+1 SAY nDugDEM PICTURE picbhd
+                 		@ prow(),pcol()+1 SAY nPotDEM PICTURE picbhd
+                	endif
+            	endif
 
-             			if cKumul=="2"  // sa kumulativom
-                			if cDinDem=="1"
-                 				@ prow(),pcol()+1 SAY nDugBHD PICTURE picbhd
-                 				@ prow(),pcol()+1 SAY nPotBHD PICTURE picbhd
-                			else
-                 				@ prow(),pcol()+1 SAY nDugDEM PICTURE picbhd
-                 				@ prow(),pcol()+1 SAY nPotDEM PICTURE picbhd
-                			endif
-            			endif
-
-             			if cDinDem=="1"  // dinari
-               				@ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
-             			elseif cDinDem=="2"
-               				@ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picbhd
-             			endif
+             	if cDinDem=="1"  // dinari
+               		@ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
+             	elseif cDinDem=="2"
+               		@ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picbhd
+             	endif
 
 				/// nisam imao ovu liniju ???? , te{ko sam uo~io !!!!!!!!
-             			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-             			if !(cIdKonto==IdKonto .and. (cIdPartner==IdPartner .or. (cBrza=="D" .and. RTRIM(qqPartner)==";")) ) .and. Rasclan()
-                      			loop
-             			endif
-             			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+             	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+             	if !(cIdKonto==IdKonto .and. (cIdPartner==IdPartner .or. (cBrza=="D" .and. RTRIM(qqPartner)==";")) ) .and. Rasclan()
+                	loop
+             	endif
 
-          		endif  // prethodni promet
+          	endif  // prethodni promet
 			
 			if !(fOtvSt .and. OtvSt=="9")
-              			? IdVN
+            	
+				// incijalizuj varijable za izvjestaj
+				__vr_nal := field->idvn
+				__br_nal := field->brnal
+				__r_br := field->rbr
+				__dat_nal := field->datdok
+				__dat_val := field->datval
+				__opis := field->opis
+				__br_veze := field->brdok
+
+				? IdVN
 				@ prow(),pcol()+1 SAY BrNal
-              			if cSazeta=="N"
-               				@ prow(),pcol()+1 SAY RBr
-               				if gNW=="N"
-                				@ prow(),pcol()+1 SAY IdTipDok
-                				SELECT TDOK
+              	if cSazeta=="N"
+               		@ prow(),pcol()+1 SAY RBr
+               		if gNW=="N"
+                		@ prow(),pcol()+1 SAY IdTipDok
+                		SELECT TDOK
 						HSEEK SUBAN->IdTipDok
-                				@ prow(),pcol()+1 SAY naz
-               				endif
-              			endif
+                		@ prow(),pcol()+1 SAY naz
+               		endif
+              	endif
               			
 				SELECT SUBAN
               			
 				@ prow(),pcol()+1 SAY padr(BrDok,10)
-              			@ prow(),pcol()+1 SAY datdok
+              	@ prow(),pcol()+1 SAY datdok
 				
-              			if ck14=="1"
-                			@ prow(),pcol()+1 SAY k1+"-"+k2+"-"+K3Iz256(k3)+k4
-              			elseif ck14=="2"
-               				@ prow(),pcol()+1 SAY DatVal
-              			elseif ck14=="3"
-                			nC7:=pcol()+1
-                			@ prow(),nc7 SAY DatVal
-              			endif
+              	if ck14=="1"
+                	@ prow(),pcol()+1 SAY k1+"-"+k2+"-"+K3Iz256(k3)+k4
+				elseif ck14=="2"
+               		@ prow(),pcol()+1 SAY DatVal
+              	elseif ck14=="3"
+                	nC7:=pcol()+1
+                	@ prow(),nc7 SAY DatVal
+              	endif
 
-              			if cSazeta=="N"
-               				if cDinDem=="3"
-                				nSirOp:=16
+              	if cSazeta=="N"
+               		if cDinDem=="3"
+                		nSirOp:=16
 						nCOpis:=pcol()+1
-                				@ prow(),pcol()+1 SAY padr(cOpis:=ALLTRIM(Opis),16)
-               				else
-                				nSirOp:=20
+                		@ prow(),pcol()+1 SAY padr(cOpis:=ALLTRIM(Opis),16)
+               		else
+                		nSirOp:=20
 						nCOpis:=pcol()+1
-                				@ prow(),pcol()+1 SAY PADR(cOpis:=ALLTRIM(Opis),20)
-               				endif
-              			endif
+                		@ prow(),pcol()+1 SAY PADR(cOpis:=ALLTRIM(Opis),20)
+               		endif
+              	endif
 
-              			nC1:=pcol()+1
-          		endif // fOtvStr
+              	nC1:=pcol()+1
+          	endif // fOtvStr
 
-          		if cDinDem=="1"
-           			if fOtvSt .and. OtvSt=="9"
-            				if D_P=="1"
-             					nZDugBHD+=IznosBHD
-            				else
-             					nZPotBHD+=IznosBHD
-            				endif	
-           			else // otvorena stavka
-            				if D_P=="1"
-             					@ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
-             					@ prow(),pcol()+1 SAY 0 PICT picBHD
-             					nDugBHD+=IznosBHD
-            				else
-             					@ prow(),pcol()+1 SAY 0 PICT picBHD
-             					@ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
-             					nPotBHD+=IznosBHD
-            				endif
-            				if cKumul=="2"   // prikaz kumulativa
-              					@ prow(),pcol()+1 SAY nDugBHD pict picbhd
-              					@ prow(),pcol()+1 SAY nPotBHD pict picbhd
-            				endif
-           			endif
-          		elseif cDinDem=="2"   // devize
+          	if cDinDem=="1"
+           		if fOtvSt .and. OtvSt=="9"
+            		if D_P=="1"
+             			nZDugBHD+=IznosBHD
+            		else
+             			nZPotBHD+=IznosBHD
+            		endif	
+           		else // otvorena stavka
+            		if D_P=="1"
+             			@ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
+             			@ prow(),pcol()+1 SAY 0 PICT picBHD
+             			nDugBHD+=IznosBHD
+            		else
+             			@ prow(),pcol()+1 SAY 0 PICT picBHD
+             			@ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
+             			nPotBHD+=IznosBHD
+            		endif
+            				
+					if cKumul=="2"   // prikaz kumulativa
+              			@ prow(),pcol()+1 SAY nDugBHD pict picbhd
+              			@ prow(),pcol()+1 SAY nPotBHD pict picbhd
+            		endif
+           		endif
+          		
+			elseif cDinDem=="2"   // devize
 
-           			if fOtvSt .and. OtvSt=="9"
-            				IF D_P=="1"
-             					nZDugDEM+=IznosDEM
-            				ELSE
-             					nZPotDEM+=IznosDEM
-            				ENDIF
-           			else  // otvorena stavka
-            				IF D_P=="1"
-             					@ prow(),pcol()+1 SAY IznosDEM PICTURE picbhd
-             					@ prow(),pcol()+1 SAY 0 PICTURE picbhd
-             					nDugDEM+=IznosDEM
-            				ELSE
-             					@ prow(),pcol()+1 SAY 0        PICTURE picbhd
-             					@ prow(),pcol()+1 SAY IznosDEM PICTURE picbhd
-             					nPotDEM+=IznosDEM
-            				ENDIF
-            				if cKumul=="2"   // prikaz kumulativa
-              					@ prow(),pcol()+1 SAY nDugDEM pict picbhd
-              					@ prow(),pcol()+1 SAY nPotDEM pict picbhd
-            				endif
-           			endif
-          		elseif cDinDem=="3"
-           			if fOtvSt .and. OtvSt=="9"
-            				IF D_P=="1"
-             					nZDugBHD+=IznosBHD
+           		if fOtvSt .and. OtvSt=="9"
+            		IF D_P=="1"
+             			nZDugDEM+=IznosDEM
+            		ELSE
+             			nZPotDEM+=IznosDEM
+            		ENDIF
+           		else  // otvorena stavka
+            		IF D_P=="1"
+             			@ prow(),pcol()+1 SAY IznosDEM PICTURE picbhd
+             			@ prow(),pcol()+1 SAY 0 PICTURE picbhd
+             			nDugDEM+=IznosDEM
+            		ELSE
+             			@ prow(),pcol()+1 SAY 0        PICTURE picbhd
+             			@ prow(),pcol()+1 SAY IznosDEM PICTURE picbhd
+             			nPotDEM+=IznosDEM
+            		ENDIF
+            		if cKumul=="2"   // prikaz kumulativa
+              			@ prow(),pcol()+1 SAY nDugDEM pict picbhd
+              			@ prow(),pcol()+1 SAY nPotDEM pict picbhd
+            		endif
+           		endif
+          		
+			elseif cDinDem=="3"
+           		if fOtvSt .and. OtvSt=="9"
+            		IF D_P=="1"
+             			nZDugBHD+=IznosBHD
 						nZDugDEM+=IznosDEM
-            				ELSE
-             					nZPotBHD+=IznosBHD
+            		ELSE
+             			nZPotBHD+=IznosBHD
 						nZPotDEM+=IznosDEM
-            				ENDIF
-           			else  // otvorene stavke
-            				IF D_P=="1"
-             @ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
-             @ prow(),pcol()+1 SAY 0        PICTURE picBHD
-             nDugBHD+=IznosBHD
-            ELSE
-             @ prow(),pcol()+1 SAY 0        PICTURE picBHD
-             @ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
-             nPotBHD+=IznosBHD
-            ENDIF
-            @ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
-            IF D_P=="1"
-             @ prow(),pcol()+1 SAY IznosDEM PICTURE picdem
-             @ prow(),pcol()+1 SAY 0        PICTURE picdem
-             nDugDEM+=IznosDEM
-            ELSE
-             @ prow(),pcol()+1 SAY 0        PICTURE picdem
-             @ prow(),pcol()+1 SAY IznosDEM PICTURE picdem
-             nPotDEM+=IznosDEM
-            ENDIF
-            @ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picdem
-           endif
-          endif
+            		ENDIF
+           		else  // otvorene stavke
+            		IF D_P=="1"
+             			@ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
+             			@ prow(),pcol()+1 SAY 0        PICTURE picBHD
+             			nDugBHD+=IznosBHD
+            		ELSE
+             			@ prow(),pcol()+1 SAY 0        PICTURE picBHD
+             			@ prow(),pcol()+1 SAY IznosBHD PICTURE picBHD
+             			nPotBHD+=IznosBHD
+            		ENDIF
+            		@ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
+            		IF D_P=="1"
+             			@ prow(),pcol()+1 SAY IznosDEM PICTURE picdem
+             			@ prow(),pcol()+1 SAY 0        PICTURE picdem
+             			nDugDEM+=IznosDEM
+            		ELSE
+             			@ prow(),pcol()+1 SAY 0        PICTURE picdem
+             			@ prow(),pcol()+1 SAY IznosDEM PICTURE picdem
+             			nPotDEM+=IznosDEM
+            		ENDIF
+            		@ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picdem
+           		endif
+          	endif
 
-          if !(fOtvSt .and. OtvSt=="9")
-          // ******** saldo ..........
-           if cDinDem="1"
-            @ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
-           elseif cDinDem=="2"
-            @ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picbhd
-           endif
+          	if !(fOtvSt .and. OtvSt=="9")
+          		// ******** saldo ..........
+           		if cDinDem="1"
+            		@ prow(),pcol()+1 SAY nDugBHD-nPotBHD pict picbhd
+           		elseif cDinDem=="2"
+            		@ prow(),pcol()+1 SAY nDugDEM-nPotDEM pict picbhd
+           		endif
 
-           OstatakOpisa(@cOpis,nCOpis,{|| IF(prow()>60+gPStranica,EVAL({|| gPFF(),ZaglSif(.t.)}),)},nSirOp)
-           if ck14=="3"
-             @ prow()+1,nc7 SAY k1+"-"+k2+"-"+K3Iz256(k3)+k4
-             if gRj=="D"
-              @ prow(),pcol()+1 SAY "RJ:"+idrj
-             endif
-             if gTroskovi=="D"
-              @ prow(),pcol()+1 SAY "Funk.:"+Funk
-              @ prow(),pcol()+1 SAY "Fond.:"+Fond
-             endif
-           endif
-          endif
-          OstatakOpisa(@cOpis,nCOpis,{|| IF(prow()>60+gPStranica,EVAL({|| gPFF(),ZaglSif(.t.)}),)},nSirOp)
+           		OstatakOpisa(@cOpis,nCOpis,{|| IF(prow()>60+gPStranica,EVAL({|| gPFF(),ZaglSif(.t.)}),)},nSirOp)
+           
+		   		if ck14=="3"
+             		@ prow()+1,nc7 SAY k1+"-"+k2+"-"+K3Iz256(k3)+k4
+             		if gRj=="D"
+              			@ prow(),pcol()+1 SAY "RJ:"+idrj
+             		endif
+             		if gTroskovi=="D"
+              			@ prow(),pcol()+1 SAY "Funk.:"+Funk
+              			@ prow(),pcol()+1 SAY "Fond.:"+Fond
+             		endif
+           		endif
+          	endif
 
+          	OstatakOpisa(@cOpis,nCOpis,{|| IF(prow()>60+gPStranica,EVAL({|| gPFF(),ZaglSif(.t.)}),)},nSirOp)
 
-          SKIP 1
+		  	// upisi u export dbf
+		  	if cExpDbf == "D"
+		  		_add_to_export( cIdKonto, __k_naz, cIdPartner, __p_naz, __vr_nal, __br_nal, __r_br, ;
+								__br_veze, __dat_nal, __dat_val, __opis, nDugBHD, nPotBHD, nDugBHD - nPotBHD )
+		  	endif
+
+          	SKIP 1
      enddo // partner
 
      IF prow()>56+gPStranica; FF; ZaglSif(.t.); ENDIF
@@ -932,9 +976,62 @@ endif
 FF
 END PRINT
 
+// export podataka, dbf
+if cExpDbf == "D"
+	tbl_export( cLaunch )
+endif
+
 closeret
 return
 
+
+// vraca polja export tabele
+static function g_exp_fields()
+local aDbf := {}
+
+AADD( aDbf, { "id_konto", "C", 7, 0 }  )
+AADD( aDbf, { "naz_konto", "C", 40, 0 }  )
+AADD( aDbf, { "id_partn", "C", 6, 0 }  )
+AADD( aDbf, { "naz_partn", "C", 40, 0 }  )
+AADD( aDbf, { "vrsta_nal", "C", 2, 0 }  )
+AADD( aDbf, { "broj_nal", "C", 8, 0 }  )
+AADD( aDbf, { "nal_rbr", "C", 4, 0 }  )
+AADD( aDbf, { "broj_veze", "C", 10, 0 }  )
+AADD( aDbf, { "dat_nal", "D", 8, 0 }  )
+AADD( aDbf, { "dat_val", "D", 8, 0 }  )
+AADD( aDbf, { "opis_nal", "C", 100, 0 }  )
+AADD( aDbf, { "duguje", "N", 15, 5 }  )
+AADD( aDbf, { "potrazuje", "N", 15, 5 }  )
+AADD( aDbf, { "saldo", "N", 15, 5 }  )
+
+return aDbf
+
+// upisuje u export tabelu podatke
+static function _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, cRbr, ;
+								cBrVeze, dDatum, dDatVal, cOpis, nDug, nPot, nSaldo )
+local nTArea := SELECT()
+
+O_R_EXP
+select r_export
+
+append blank
+replace field->id_konto with cKonto
+replace field->naz_konto with cK_naz
+replace field->id_partn with cPartn
+replace field->naz_partn with cP_naz
+replace field->vrsta_nal with cVn
+replace field->broj_nal with cBr
+replace field->nal_rbr with cRbr
+replace field->broj_veze with cBrVeze
+replace field->dat_nal with dDatum
+replace field->dat_val with dDatVal
+replace field->opis_nal with cOpis
+replace field->duguje with nDug
+replace field->potrazuje with nPot
+replace field->saldo with nSaldo
+
+select (nTArea)
+return
 
 
 

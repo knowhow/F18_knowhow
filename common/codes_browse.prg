@@ -1048,24 +1048,6 @@ next
 
 return cRet
 
-// ------------------------------------------------------------
-// vraca vrijednost u tip string - bilo kojeg polja
-// ------------------------------------------------------------
-static function to_str( val )
-local cVal := ""
-local cType := VALTYPE(val)
-
-if cType == "C"
-	cVal := val
-elseif cType == "N"
-	cVal := STR(val)
-elseif cType == "D"
-	cVal := DTOC(val)
-endif
-
-return cVal
-
-
 // ----------------------------------------------------
 // uporedjuje liste promjena na sifri u sifrarniku
 // ----------------------------------------------------

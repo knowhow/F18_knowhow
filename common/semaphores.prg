@@ -175,10 +175,11 @@ endif
 _qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 
 _tbl_obj := _sql_query( _server, _qry )
-IF _tbl_obj == NIL
+
+if VALTYPE(_tbl_obj) == "L" 
       MsgBeep( "problem sa:" + _qry)
       QUIT
-ENDIF
+endif
 
 _result := _tbl_obj:Fieldget( _tbl_obj:Fieldpos( iif(last, "last_version", "version")) )
 
@@ -311,7 +312,7 @@ if _result < 1
    // jedan korisnik
    return .t.
 endif
-altd()
+
 // ARAY['id1', 'id2']
 _sql_ids := "ARRAY["
 for _i:=1 TO LEN(ids)
@@ -377,20 +378,6 @@ for _i := 1 to _num_arr
 next
 RETURN _arr
 
-
-// provjeri prvo da li postoji uopšte ovaj site zapis
-_qry := "SELECT COUNT(*) FROM " + _ + " WHERE " + cCondition
-
-oTable := _sql_query( oServer, cTmpQry )
-IF oTable:NetErr()
-      log_write( "problem sa query-jem: " + cTmpQry )
-      QUIT
-ENDIF
-
-nResult := oTable:Fieldget( oTable:Fieldpos("count") )
-
-return _ids
-
 //---------------------------------------
 // date algoritam
 //---------------------------------------
@@ -428,7 +415,7 @@ _tbl := "fmk.semaphores_" + table
 
 _qry := "SELECT dat FROM " + _tbl + " WHERE user_code=" + _sql_quote(f18_user())
 _tbl_obj := _sql_query( _server, _qry )
-IF _tbl_obj == NIL
+IF VALTYPE(_tbl_obj) == "L" 
       MsgBeep( "problem sa:" + _qry)
       QUIT
 ENDIF
@@ -438,37 +425,25 @@ _dat := oTable:Fieldget( oTable:Fieldpos("dat") )
 RETURN _dat
 
 
-// provjeri prvo da li postoji uopšte ovaj site zapis
-_qry := "SELECT COUNT(*) FROM " + _ + " WHERE " + cCondition
-
-oTable := _sql_query( oServer, cTmpQry )
-IF oTable:NetErr()
-      log_write( "problem sa query-jem: " + cTmpQry )
-      QUIT
-ENDIF
-
-nResult := oTable:Fieldget( oTable:Fieldpos("count") )
-
-
 /* ------------------------------  
   broj redova za tabelu
   --------------------------------
 */
-function table_count(cTable, cCondition)
-LOCAL oTable
-LOCAL nResult
-LOCAL cTmpQry
-LOCAL oServer := pg_server()
+function table_count(table, condition)
+LOCAL _table_obj
+LOCAL _result
+LOCAL _qry
+LOCAL _server := pg_server()
 
 // provjeri prvo da li postoji uopšte ovaj site zapis
-cTmpQry := "SELECT COUNT(*) FROM " + cTable + " WHERE " + cCondition
+_qry := "SELECT COUNT(*) FROM " + table + " WHERE " + condition
 
-oTable := _sql_query( oServer, cTmpQry )
-IF oTable:NetErr()
-      log_write( "problem sa query-jem: " + cTmpQry )
+_table_obj := _sql_query( _server, _qry )
+IF VALTYPE(_table_obj) == "L" 
+      log_write( "problem sa query-jem: " + _qry )
       QUIT
 ENDIF
 
-nResult := oTable:Fieldget( oTable:Fieldpos("count") )
+_result := _table_obj:Fieldget( _table_obj:Fieldpos("count") )
 
-RETURN nResult
+RETURN _result

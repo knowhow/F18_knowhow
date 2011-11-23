@@ -78,10 +78,13 @@ CREATE_INDEX("PLU","str(fisc_plu, 10)", SIFPATH + "roba") // sifra dobavljaca
 
 close all
 O_ROBA
-if fieldpos("KATBR")<>0
-  select (F_ROBA)
-  use
-  CREATE_INDEX("KATBR","KATBR",SIFPATH+"roba") // roba, artikli
+
+if used()
+    if fieldpos("KATBR")<>0
+    select (F_ROBA)
+    use
+    CREATE_INDEX("KATBR","KATBR",SIFPATH+"roba") // roba, artikli
+    endif
 endif
 
 // TARIFA
@@ -89,7 +92,7 @@ if !file(f18_ime_dbf("tarifa"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
         add_f_mcode(@aDbf)
-	AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
+	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
         AADD(aDBf,{ 'OPP'                 , 'N' ,   6 ,  2 })  // ppp
         AADD(aDBf,{ 'PPP'                 , 'N' ,   6 ,  2 })  // ppu
         AADD(aDBf,{ 'ZPP'                 , 'N' ,   6 ,  2 })  //nista
@@ -155,11 +158,14 @@ CREATE_INDEX("ID", "ID+ID2", "SAST")
 
 close all
 O_SAST
-if sast->(fieldpos("R_BR"))<>0
-	use
-	CREATE_INDEX("IDRBR", "ID+STR(R_BR,4,0)+ID2", SIFPATH + "SAST")
+if used()
+    if sast->(fieldpos("R_BR"))<>0
+        use
+        CREATE_INDEX("IDRBR", "ID+STR(R_BR,4,0)+ID2", SIFPATH + "SAST")
+    endif
+    use
 endif
-use
+
 CREATE_INDEX("NAZ", "ID2+ID", SIFPATH + "SAST")
 
 
@@ -183,5 +189,3 @@ CREATE_INDEX("Naziv","LEFT(Naziv,40)+id",PRIVPATH+"BARKOD")
 cre_strings()
 
 return
-
-

@@ -66,6 +66,8 @@ cUser := params["user_name"]
 // ~/.F18/empty38/
 cF18HomeDir := get_f18_home_dir( cDatabase )
 
+log_write("home baze: " + my_home())
+
 // menu opcije...
 AADD( menuop, "1) FIN   # finansijsko poslovanje" )
 AADD( menuop, "2) KALK  # robno-materijalno poslovanje")
@@ -112,6 +114,7 @@ FCLOSE(nLogHandle)
 return
 
 
+
 // ---------------
 // ~/.F18/
 // ---------------
@@ -135,6 +138,3 @@ return cUser
 function log_write(cMsg)
 FWRITE(nLogHandle, cMsg + hb_eol())
 return
-
-
-

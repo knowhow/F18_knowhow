@@ -13,7 +13,7 @@
 #{darwin}libs=/Library/Frameworks/QtNetwork.framework/QtNetwork
 #{darwin}libs=/Library/Frameworks/QtWebKit.framework/QtWebKit
 
-libs=hbvm hbrtl hblang hbrdd hbrtl hbmacro hbpp rddcdx rddfpt rddntx
+libs=hbrtl hblang hbrdd hbrtl hbmacro hbpp rddcdx rddfpt rddntx
 libs=hbsqlit3 sqlite3
 libs=hbcommon hbct hbclipsm
 libs=hbpgsql
@@ -30,7 +30,7 @@ libs=hbdebug
 {!unix}libs=libpq
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
-
+mt=yes
 #gui=yes
 
 #{!HB_QT_STATIC}gt=gtqtc

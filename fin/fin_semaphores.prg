@@ -86,7 +86,6 @@ DO CASE
     do while .t.
        _fnd := .f.
        for each _tmp_id in _ids
-          altd()
           HSEEK _tmp_id
           do while !EOF() .and. (idfirma + idvn + brnal) == _tmp_id
                skip

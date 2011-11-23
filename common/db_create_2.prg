@@ -308,17 +308,19 @@ if !file(f18_ime_dbf("ops"))
 endif
 
 CREATE_INDEX("ID","id", "ops")
-if PoljeExist("IDJ")
-	CREATE_INDEX("IDJ","idj", "ops")
+if used()
+    if PoljeExist("IDJ")
+        CREATE_INDEX("IDJ","idj", "ops")
+    endif
+    if PoljeExist("IDKAN")
+        CREATE_INDEX("IDKAN","idKAN", "ops")
+    endif
+    if PoljeExist("IDN0")
+        CREATE_INDEX("IDN0","IDN0", "ops")
+    endif
+    CREATE_INDEX("NAZ","naz", "ops")
+    index_mcode(SIFPATH, "ops")
 endif
-if PoljeExist("IDKAN")
-	CREATE_INDEX("IDKAN","idKAN", "ops")
-endif
-if PoljeExist("IDN0")
-	CREATE_INDEX("IDN0","IDN0", "ops")
-endif
-CREATE_INDEX("NAZ","naz", "ops")
-index_mcode(SIFPATH, "ops")
 
 // BANKE
 cIme:="banke"
@@ -379,5 +381,4 @@ else
 	return .f.
 endif
 
-return
 

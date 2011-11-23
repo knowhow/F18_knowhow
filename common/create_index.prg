@@ -69,7 +69,7 @@ if USED()
 	select (F_TMP)
 	use
 else
-	msgbeep("Ne mogu otvoriti " + cImeDbf )
+	log_write("create_index: Ne mogu otvoriti " + cImeDbf )
 	fPostoji := .f.
 endif
 

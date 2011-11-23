@@ -733,99 +733,102 @@ do while .t.
             endif
 
             cPic:=""
-            if !empty(cPom) // samo varijable koje mozes direktno mjenjati
+            // samo varijable koje mozes direktno mjenjati
+            if !empty(cPom) 
 
-            // uzmi when, valid kodne blokove
-            if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i,3]))>0)
-            bWhen := {|| .f.}
-            elseif (LEN(ImeKol[i])<4 .or. ImeKol[i,4]==nil)
-            bWhen := {|| .t.}
+                        // uzmi when, valid kodne blokove
+                        if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i,3]))>0)
+                            bWhen := {|| .f.}
+                        elseif (LEN(ImeKol[i])<4 .or. ImeKol[i,4]==nil)
+                            bWhen := {|| .t.}
+                        else
+                            bWhen:=Imekol[i,4]
+                        endif
+
+                        if (len(ImeKol[i])<5 .or. ImeKol[i,5]==nil)
+                            bValid := {|| .t.}
+                        else
+                            bValid:=Imekol[i,5]
+                        endif
+
+                        if LEN(ToStr(&cPom))>50
+                            cPic:="@S50"
+                            @ m_x+nTekRed+1,m_y+67 SAY Chr(16)
+                        elseif Len(ImeKol[i])>=7 .and. ImeKol[i,7] <> NIL
+                            cPic:= ImeKol[i,7]
+                        else
+                            cPic:=""
+                        endif
+
+                        nRed:=1
+                        nKolona:=1
+                        if Len(ImeKol[i]) >= 10 .and. imekol[i,10] <> NIL
+                            nKolona:= imekol[i,10]+1
+                            nRed:=0
+                        endif
+
+                        if nKolona=1
+                            nTekRed++
+                        endif
+                        
+                        if lShowPGroup
+                            nXP := nTekRed
+                            nYP := nKolona
+                        endif
+                        
+                        @ m_x + nTekRed , m_y + nKolona SAY iif(nKolona>1,"  "+alltrim(ImeKol[i,1]) , PADL( alltrim(ImeKol[i,1]) ,15))  GET &cPom VALID eval(bValid) PICTURE cPic
+                        // stampaj grupu za stavku "GRUP"
+                        if lShowPGroup
+                            p_gr(&cPom, nXP+1, nYP+1)
+                        endif
+                    
+                        if cPom == "wSifk_"
+                            // uzmi when valid iz SIFK
+                            private cWhenSifk, cValidSifk
+                            IzSifKWV(ALIAS(),substr(cPom,7) ,@cWhenSifk,@cValidSifk)
+
+                            if !empty(cWhenSifk)
+                                Getlist[nGet]:PreBlock:=& ("{|| "+cWhenSifk +"}")
+                            else
+                                GetList[nGet]:PreBlock:=bWhen
+                            endif
+                            if !empty(cValidSifk)
+                                Getlist[nGet]:PostBlock:= & ("{|| "+cValidSifk +"}")
+                            else
+                                GetList[nGet]:PostBlock:=bValid
+                            endif		  
+                        else
+                                GetList[nGet]:PreBlock:=bWhen
+                                GetList[nGet]:PostBlock:=bValid
+                        endif
+
+                        nGet++
             else
-            bWhen:=Imekol[i,4]
-            endif
+                    // Empty(cpom)  - samo odstampaj
+                    
+                    nRed:=1
+                    nKolona:=1
+                    if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
+                        nKolona:= imekol[i,10]
+                        nRed:=0
+                    endif
 
-            if (len(ImeKol[i])<5 .or. ImeKol[i,5]==nil)
-            bValid := {|| .t.}
-            else
-            bValid:=Imekol[i,5]
-            endif
+                    // ne prikazuj nil vrijednosti
+                    if EVAL(ImeKol[i,2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2]))<>"_?_"  
+                        if nKolona=1
+                           ++nTekRed
+                        endif
+                        @ m_x+nTekRed,m_y+nKolona SAY PADL( alltrim(ImeKol[i,1]) ,15)
+                        @ m_x+nTekRed,col()+1 SAY EVAL(ImeKol[i,2])
+                    else
+                        ++nNestampati
+                    endif
 
-            if LEN(ToStr(&cPom))>50
-                cPic:="@S50"
-                @ m_x+nTekRed+1,m_y+67 SAY Chr(16)
-            
-                    elseif Len(ImeKol[i])>=7 .and. ImeKol[i,7]<>NIL
-                cPic:= ImeKol[i,7]
-            else
-                cPic:=""
-            endif
+            endif 
+             // empty(cpom)
 
-            nRed:=1
-            nKolona:=1
-            if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
-            nKolona:= imekol[i,10]+1
-            nRed:=0
-            endif
-            if nKolona=1
-                nTekRed++
-            endif
-            
-            if lShowPGroup
-            nXP := nTekRed
-            nYP := nKolona
-            endif
-            
-            @ m_x + nTekRed , m_y + nKolona SAY iif(nKolona>1,"  "+alltrim(ImeKol[i,1]) , PADL( alltrim(ImeKol[i,1]) ,15))  GET &cPom VALID eval(bValid) PICTURE cPic
-            // stampaj grupu za stavku "GRUP"
-            if lShowPGroup
-                p_gr(&cPom, nXP+1, nYP+1)
-            endif
-            
-                if cPom = "wSifk_"
-                // uzmi when valid iz SIFK
-                private cWhenSifk, cValidSifk
-                IzSifKWV(ALIAS(),substr(cPom,7) ,@cWhenSifk,@cValidSifk)
-
-                if !empty(cWhenSifk)
-                    Getlist[nGet]:PreBlock:=& ("{|| "+cWhenSifk +"}")
-                else
-                    GetList[nGet]:PreBlock:=bWhen
-                endif
-                if !empty(cValidSifk)
-                    Getlist[nGet]:PostBlock:= & ("{|| "+cValidSifk +"}")
-                else
-                    GetList[nGet]:PostBlock:=bValid
-                endif		  
-                else
-                    GetList[nGet]:PreBlock:=bWhen
-                    GetList[nGet]:PostBlock:=bValid
-                endif
-
-                nGet++
-            else
-                // Empty(cpom)  - samo odstampaj
-                nRed:=1
-                nKolona:=1
-                if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
-                nKolona:= imekol[i,10]
-                nRed:=0
-            endif
-
-            // ne prikazuj nil vrijednosti
-            if EVAL(ImeKol[i,2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2]))<>"_?_"  
-              if nKolona=1
-              ++nTekRed
-            endif
-               @ m_x+nTekRed,m_y+nKolona SAY PADL( alltrim(ImeKol[i,1]) ,15)
-               @ m_x+nTekRed,col()+1 SAY EVAL(ImeKol[i,2])
-            else
-               ++nNestampati
-            endif
-
-            endif // empty(cpom)
-
-
-            i++                               // ! sljedeci slog se stampa u istom redu
+            i++                               
+            // ! sljedeci slog se stampa u istom redu
             if ( len(imeKol) < i) .or. ( nTekRed > min(20, nTrebaRedova) .and. !(Len(ImeKol[i])>=10 .and. imekol[i, 10]<>NIL)   )
             
                 exit // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
@@ -844,7 +847,7 @@ do while .t.
     SET KEY K_F5 TO
 
     if ( len(imeKol) < i)
-    exit
+       exit
     endif
 
 
@@ -870,19 +873,19 @@ do while .t.
         Scatter("w")
 
         if lastkey()==K_PGUP
-        skip -1
+           skip -1
         else
-        skip
+            skip
         endif
+
         if eof()
             skip -1
             exit
         endif
-        endif
+    endif
 
-// glavni enddo
 enddo
-
+// glavni enddo
 
 if Ch==K_CTRL_N .or. Ch==K_F2
     ordsetfocus(nOrder)
@@ -895,9 +898,7 @@ if lastkey()==K_ESC
     return 0
 endif
 
-    
 if lNovi
-
     // provjeri da li vec ovaj id postoji ?
     nNSInfo := _chk_sif("w")
 
@@ -914,8 +915,6 @@ if lNovi
         // ako je novi zapis .. ovo su stare vrijednosti (prazno)
         cOldDesc := _g_fld_desc("w")
     endif
-
-        
 endif
 
 _vars := f18_scatter_global_vars("w")

@@ -25,7 +25,7 @@ _len := len(struct)
 
 for _i:=1 to _len
     // sistemska polja
-    if ("#" + _struct[_i, 1] + "#" $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#")
+    if ("#" + struct[_i, 1] + "#" $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#")
         ADEL (struct, _i)
         _len--
         _i := _i-1

@@ -13,7 +13,6 @@
 #include "fmk.ch"
 
 function cm2str(xValue)
-
 LOCAL cType := ValType( xValue )
 
 DO CASE
@@ -26,21 +25,30 @@ DO CASE
 ENDCASE
 
 
+// ------------------------------------------------------------
+// vraca vrijednost u tip string - bilo kojeg polja
+// ------------------------------------------------------------
+function to_str( val )
+return ToStr(val)
+
 function ToStr(xVal)
+local _val_t
+
+_val_t := VALTYPE(xVal)
+
 do case
-  case VALTYPE(xVal)  == "C"
+  case _val_t  == "C"
      return(xVal)
-  case VALTYPE(xVal)  == "D"
+  case _val_t  == "D"
      return(DTOC(xVal))
-  case VALTYPE(xVal)  == "L"
+  case _val_t  == "L"
      return(iif(xVal,".t.",".f."))
-  case VALTYPE(xVal)  == "N"
+  case _val_t  == "N"
      return(STR(xVal))
   otherwise
      return "_?_"
 endcase
 
-return
 
 
 // --------------------------------

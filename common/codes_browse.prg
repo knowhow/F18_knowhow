@@ -1048,24 +1048,6 @@ next
 
 return cRet
 
-// ------------------------------------------------------------
-// vraca vrijednost u tip string - bilo kojeg polja
-// ------------------------------------------------------------
-static function to_str( val )
-local cVal := ""
-local cType := VALTYPE(val)
-
-if cType == "C"
-	cVal := val
-elseif cType == "N"
-	cVal := STR(val)
-elseif cType == "D"
-	cVal := DTOC(val)
-endif
-
-return cVal
-
-
 // ----------------------------------------------------
 // uporedjuje liste promjena na sifri u sifrarniku
 // ----------------------------------------------------
@@ -1100,16 +1082,19 @@ return cChanges
 // -----------------------
 // -----------------------
 function SetSifVars()
-local _i, aStruct
+local _i, _struct
+private cImeP
+private cVar
 
-aStruct:=DBSTRUCT()
+_struct := DBSTRUCT()
 
-SkratiAZaD(@aStruct)
+SkratiAZaD(@_struct)
 
-for i:=_1 to LEN(aStruct)
-     cImeP:=aStruct[i, 1]
-     cVar:="w"+cImeP
-     &cVar:=&cImeP
+for _i:=1 to LEN(_struct)
+     cImeP := _struct[_i, 1]
+     cVar:="w" + cImeP
+     &cVar := &cImeP
+
 next
 
 return

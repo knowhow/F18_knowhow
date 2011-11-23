@@ -311,13 +311,13 @@ if _result < 1
    // jedan korisnik
    return .t.
 endif
-
+altd()
 // ARAY['id1', 'id2']
 _sql_ids := "ARRAY["
 for _i:=1 TO LEN(ids)
  _sql_ids += _sql_quote(hb_StrToUtf8(ids[_i])) 
  if _i < LEN(ids)
-    _sql_ids := ","
+    _sql_ids += ","
  endif
 next
 _sql_ids += "]"

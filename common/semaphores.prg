@@ -24,6 +24,8 @@ if new_area == NIL
    new_area := .f.
 endif
 
+   
+
 /*
 { F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
 ...
@@ -45,6 +47,10 @@ _area := gaDBFs[_pos, 1]
 if table == NIL
    // "fin_suban"
    table := gaDBFs[_pos, 3]
+endif
+
+if len(gADBFs[_pos]) > 3
+ lock_semaphore(table, "lock")
 endif
 
 if _rdd == NIL
@@ -91,6 +97,7 @@ if  LEN(gaDBFs[_pos])>3
              update_semaphore_version(table, .f.)
            endif
         endif
+        lock_semaphore(table, "free")
    else
       // poziv is update from sql server procedure
       _rdd := "DBFCDX" 
@@ -108,29 +115,76 @@ USE (my_home() + table) ALIAS (alias) VIA (_rdd) EXCLUSIVE
 
 return
 
+// ---------------------------
+// status = "lock", "free"
+// ---------------------------
+function lock_semaphore(table, status)
+local _qry
+local _ret
+local _server:= pg_server()
+local _user := f18_user()
 
-// ------------------------------------
-function last_semaphore_version(cTable)
-local cTmpQry
-local oRet
-local oServer:= pg_server()
-
-//cTmpQry := "SELECT currval('fmk.sem_ver_" + cTable + "')"
-
-cTmpQry := "SELECT last_trans_version FROM  fmk.semaphores_" + cTable + " WHERE user_code=" + _sql_quote(f18_user())
+// svi useri su lockovani
+_qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) 
 
 if gDebug > 5  
-  log_write(cTmpQry)
+  log_write(_qry)
 endif
-oRet := _sql_query( oServer, cTmpQry )
+_ret := _sql_query( _server, _qry )
 
-if VALTYPE(oRet) == "L"
+if VALTYPE(_ret) == "L"
+  // ERROR
+  log_write("error :" + _qry)
+  ? "error:", _qry
+  QUIT
+endif
+
+return .t.
+
+// -----------------------------------
+// -----------------------------------
+function get_semaphore_status(table)
+local _qry
+local _ret
+local _server := pg_server()
+local _user := f18_user()
+
+_qry := "SELECT algorithm FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(_user)
+
+if gDebug > 5  
+  log_write(_qry)
+endif
+_ret := _sql_query( _server, _qry )
+
+if VALTYPE(_ret) == "L"
+   log_write("error :" + _qry)
+  ? "error:", _qry
+  QUIT
+endif
+
+return _ret:Fieldget( 1 )
+
+
+// ------------------------------------
+function last_semaphore_version(table)
+local _qry
+local _ret
+local _server:= pg_server()
+
+_qry := "SELECT last_trans_version FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(f18_user())
+
+if gDebug > 5  
+  log_write(_qry)
+endif
+_ret := _sql_query( _server, _qry )
+
+if VALTYPE(_ret) == "L"
   // ERROR
   // currval of sequence "sem_ver_fin_suban" is not yet defined in this session
-  cTmpQry := "SELECT nextval('fmk.sem_ver_" + cTable + "')"
-  log_write(cTmpQry)
-  oRet := _sql_query( oServer, cTmpQry )
-  if VALTYPE(oRet) == "L"
+  _qry := "SELECT nextval('fmk.sem_ver_" + table + "')"
+  log_write(_qry)
+  _ret := _sql_query( _server, _qry )
+  if VALTYPE(_ret) == "L"
       // ?? opet error ??
       return -1
   else   
@@ -138,7 +192,7 @@ if VALTYPE(oRet) == "L"
   endif
 endif
 
-return oRet:Fieldget( 1 )
+return _ret:Fieldget( 1 )
 
 /* ------------------------------------------
   get_semaphore_version( "konto", last = .t. => last_version)

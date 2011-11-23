@@ -11,6 +11,44 @@
 
 #include "fmk.ch"
 
+
+// ----------------------------------------
+// ----------------------------------------
+function run_sql_query(server, qry, retry) 
+local _i, _qry_obj
+
+// sslv3 alert handshake failure dobijam ?!
+
+for _i:=1 to retry
+
+   ? qry
+   begin sequence with {|err| Break(err)}
+       _qry_obj := server:Query(qry)
+   recover
+      ? "qry rokno !?!"
+      hb_IdleSleep(2)
+   end sequence
+
+   if _qry_obj:NetErr()
+
+       MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
+       log_write("error:" + qry)
+       log_write(_qry_obj:ErrorMsg())
+
+       ? "cekam 2 sec ..."
+       if _i == retry
+           MsgBeep("neuspjesno nakon " + to_str(retry) + "pokusaja !?")
+           QUIT
+        endif
+     else
+       _i := retry + 1
+     endif
+next
+
+return _qry_obj
+
+
+
 // pomoćna funkcija za sql query izvršavanje
 function _sql_query( oServer, cQuery )
 local oResult, cMsg

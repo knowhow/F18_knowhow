@@ -89,6 +89,21 @@ local lOk
 local _ids := {}
 local record := hb_hash()
 local _tmp_id
+local _tbl
+local _i, _retry
+
+_tbl := "fin_suban"
+
+for _i := 1 to _retry
+  if get_semaphore_status(_tbl) == "lock"
+      MsgBeep("tabela zakljucana: " + _tbl)
+      hb_IdleSleep(2)
+  else
+      lock_semaphore(_tbl, "lock")
+  endif
+next
+   
+// -----------------------------------
 MsgO("sql suban")
 
 SELECT PSUBAN
@@ -119,13 +134,16 @@ do while !eof()
 enddo
 
 if lOk
-  update_semaphore_version("fin_suban", .t.)
+  update_semaphore_version( _tbl, .t.)
   AADD(_ids, _tmp_id) 
-  push_ids_to_semaphore( "fin_suban", _ids )
+  push_ids_to_semaphore( _tbl, _ids )
   sql_fin_suban_update("END")
 else
   sql_fin_suban_update("ROLLBACK")
 endif
+
+// u svakoj opciji oslobodi tabelu
+lock_semaphore(_tbl, "free")
 
 MsgC()
 return lOk

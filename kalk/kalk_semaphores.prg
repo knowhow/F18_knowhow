@@ -25,6 +25,14 @@ local _seconds
 local _x, _y
 local _dat, _ids
 local _fnd, _tmp_id
+local _count
+local _tbl
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idvd, brdok, rbr, mkonto, pkonto"
+
+_tbl := "fmk.kalk_kalk"
 
 _x := maxrows() - 15
 _y := maxcols() - 20
@@ -37,6 +45,10 @@ endif
 
 _seconds := SECONDS()
 
+_count := table_count( _tbl, "true" ) 
+
+for _offset := 0 to _count STEP _step 
+
 _qry :=  "SELECT " + ;
 		"idfirma, idvd, brdok, rbr, datdok, brfaktp, datfaktp, idroba, idkonto, idkonto2, idzaduz, " + ;
 		"idzaduz2, idpartner, datkurs, kolicina, gkolicina, gkolicin2, fcj, " + ;
@@ -44,25 +56,26 @@ _qry :=  "SELECT " + ;
 		"tspedtr, spedtr, tcardaz, cardaz, tzavtr, zavtr, nc, tmarza, marza, vpc, rabatv, " + ;
 		"vpcsap, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, " + ;
 		"error, podbr " + ;
-		"FROM " + ;
-		"fmk.kalk_kalk"  
+		"FROM " +	_tbl 
+  
 if algoritam == "DATE"
     _dat := get_dat_from_semaphore("kalk_kalk")
 	_qry += " WHERE datdok >= " + _sql_quote(_dat)
 endif
 
-_qry_obj := _server:Query(_qry) 
-if _qry_obj:NetErr()
-   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
-   QUIT
-endif
+_qry += " ORDER BY " + _order
+_qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+
+_qry_obj := run_sql_query(_server, _qry, _retry)
+
 
 SELECT F_KALK
 my_use ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
 DO CASE
 
-	CASE algoritam == "FULL"
+	CASE algoritam == "FULL" .and. _offset==0
     	// "full" algoritam
     	log_write("dat_dok = nil full algoritam") 
     	ZAP
@@ -215,6 +228,10 @@ ENDDO
 
 USE
 _qry_obj:Destroy()
+
+// limit, offset
+next
+
 
 if (gDebug > 5)
     log_write("kalk_kalk synchro cache:" + STR(SECONDS() - _seconds))

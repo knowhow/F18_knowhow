@@ -28,17 +28,6 @@ function fin_unos_naloga()
 local izbor
 private opc[4]
 
-cSecur:= SecurR(KLevel, "Priprema")
-if ImaSlovo("X",cSecur)
-   MsgBeep("Opcija nedostupna !")
-   closeret
-endif
-cSecur:=SecurR(KLevel, "SGLEDAJ")
-if ImaSlovo("D",cSecur)
-   MsgBeep("Opcija nedostupna !")
-   closeret
-endif
-
 cTekucaRj:=GetTekucaRJ()
 
 lBlagAsis := (IzFMKINI("BLAGAJNA","Asistent","N",PRIVPATH) == "D" )

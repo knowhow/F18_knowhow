@@ -441,6 +441,9 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
 
 	do whilesc !eof() .and. cIdKonto==IdKonto .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.)
 
+		__k_naz := ""
+		__p_naz := ""
+
     	nPDugBHD:=0
 		nPPotBHD:=0
 		nPDugDEM:=0
@@ -1015,9 +1018,9 @@ static function g_exp_fields()
 local aDbf := {}
 
 AADD( aDbf, { "id_konto", "C", 7, 0 }  )
-AADD( aDbf, { "naz_konto", "C", 40, 0 }  )
+AADD( aDbf, { "naz_konto", "C", 100, 0 }  )
 AADD( aDbf, { "id_partn", "C", 6, 0 }  )
-AADD( aDbf, { "naz_partn", "C", 40, 0 }  )
+AADD( aDbf, { "naz_partn", "C", 50, 0 }  )
 AADD( aDbf, { "vrsta_nal", "C", 2, 0 }  )
 AADD( aDbf, { "broj_nal", "C", 8, 0 }  )
 AADD( aDbf, { "nal_rbr", "C", 4, 0 }  )
@@ -1041,16 +1044,16 @@ select r_export
 
 append blank
 replace field->id_konto with cKonto
-replace field->naz_konto with cK_naz
+replace field->naz_konto with (cK_naz)
 replace field->id_partn with cPartn
-replace field->naz_partn with cP_naz
+replace field->naz_partn with (cP_naz)
 replace field->vrsta_nal with cVn
 replace field->broj_nal with cBr
 replace field->nal_rbr with cRbr
-replace field->broj_veze with cBrVeze
+replace field->broj_veze with (cBrVeze)
 replace field->dat_nal with dDatum
 replace field->dat_val with dDatVal
-replace field->opis_nal with cOpis
+replace field->opis_nal with (cOpis)
 replace field->duguje with nDug
 replace field->potrazuje with nPot
 replace field->saldo with nSaldo

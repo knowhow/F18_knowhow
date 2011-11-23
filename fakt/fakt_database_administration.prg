@@ -690,3 +690,149 @@ return
 
 
 
+
+// -------------------------------------------------
+// ispravka podataka dokumenta
+// -------------------------------------------------
+function fakt_edit_data( cFirma, cTipDok, cBrDok )
+local nTArea := SELECT()
+local lRet := .f.
+local nX := 1
+local nCnt
+local __idpartn
+local __br_otpr
+local __br_nar
+local __dat_otpr
+local __dat_pl
+local __txt
+local __p_tmp
+local aTxt
+
+__idpartn := field->idpartner
+
+O_FAKT
+O_PARTN
+
+select fakt
+go top
+seek cFirma + cTipDok + cBrDok
+
+aTxt := parsmemo( field->txt )
+
+__br_otpr := aTxt[6]
+__br_nar := aTxt[8]
+__dat_otpr := CTOD( aTxt[7] )
+__dat_pl := CTOD( aTxt[9] )
+
+Box(, 10, 65 )
+	
+	@ m_x + nX, m_y + 2 SAY "*** korekcija podataka dokumenta"
+
+	++ nX
+	++ nX
+
+	@ m_x + nX, m_y + 2 SAY "Partner:" GET __idpartn ;
+		VALID p_firma(@__idpartn)
+
+	++ nX
+	@ m_x + nX, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr 
+
+	++ nX
+	@ m_x + nX, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr 
+	
+	++ nX
+	@ m_x + nX, m_y + 2 SAY "  Datum placanja:" GET __dat_pl
+	
+	++ nX
+	@ m_x + nX, m_y + 2 SAY "        Narudzba:" GET __br_nar 
+
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	select (nTArea)
+	return lRet
+endif
+
+if Pitanje(,"Izvrsiti zamjenu podataka ? (D/N)", "D") == "N"
+	select (nTArea)
+	return lRet
+endif
+
+// mjenjamo podatke
+lRet := .t.
+
+// pronadji nam partnera
+select partn
+seek __idpartn
+__p_tmp := ALLTRIM( field->naz ) + ;
+	"," + ALLTRIM( field->ptt ) + ;
+	" " + ALLTRIM( field->mjesto )
+
+// vrati se na doks
+select fakt_doks
+seek cFirma + cTipDok + cBrDok
+
+if !FOUND()
+	msgbeep("Nisam nista promjenio !!!")
+	return .f.
+endif
+
+// napravi zamjenu u doks tabeli 
+replace field->idpartner with __idpartn
+replace field->partner with __p_tmp
+
+// prodji kroz fakt stavke
+select fakt
+go top
+seek cFirma + cTipDok + cBrDok
+
+nCnt := 1
+
+do while !EOF() .and. field->idfirma == cFirma ;
+		.and. field->idtipdok == cTipDok ;
+		.and. field->brdok == cBrDok
+
+	replace field->idpartner with __idpartn	
+
+	if nCnt = 1
+		
+		// roba tip U
+		__txt := Chr(16) + aTxt[1] + Chr(17)
+       		// dodatni tekst fakture
+		__txt += Chr(16) + aTxt[2] + Chr(17)
+		// naziv partnera
+		__txt += Chr(16) + ALLTRIM(partn->naz) + Chr(17)
+		// partner 2 podaci
+		__txt += Chr(16) + ALLTRIM(partn->adresa) + ", Tel:" + ALLTRIM(partn->telefon) + Chr(17) 
+		// partner 3 podaci
+		__txt += Chr(16) + ALLTRIM(partn->ptt) + " " + ALLTRIM(partn->mjesto) + Chr(17)
+        	// broj otpremnice
+		__txt += Chr(16) + __br_otpr + Chr(17) 
+        	// datum otpremnice
+		__txt += Chr(16) + DToC(__dat_otpr) + Chr(17)
+        	// broj narudzbenice
+		__txt += Chr(16) + __br_nar + Chr(17)
+		// datum placanja
+		__txt += Chr(16) + DToC(__dat_pl) + Chr(17)
+		
+		if LEN( aTxt ) > 9
+			for i := 10 to LEN( aTxt )
+				__txt += Chr(16) + aTxt[i] + Chr(17)
+			next
+		endif
+
+		replace field->txt with __txt
+
+	endif
+
+	++ nCnt
+
+	skip
+enddo
+
+select (nTArea)
+return lRet
+
+
+

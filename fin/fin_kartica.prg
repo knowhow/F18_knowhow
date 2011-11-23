@@ -21,6 +21,33 @@ Menu_SC("kart")
 
 return
 
+
+// otvara potrebne tabele za izvjestaj kartice
+static function o_kart_tbl()
+
+O_KONTO
+O_PARTN
+if gRj == "D"
+	O_RJ
+endif
+
+if IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
+	lVrsteP:=.t.
+  	O_VRSTEP
+endif
+
+O_SUBAN
+O_TDOK
+
+if IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
+	O_ULIMIT
+  	SELECT ULIMIT
+  	SET ORDER TO TAG "2"
+endif
+
+return
+
+
 // ---------------------------------------------
 // SubKart(lOtvst)
 // Subanaliticka kartica
@@ -46,6 +73,8 @@ local __dat_nal
 local __opis
 local __p_naz
 local __k_naz
+local __dug
+local __pot
 
 private fK1:=fk2:=fk3:=fk4:="N"
 private cIdFirma:=gFirma
@@ -54,11 +83,8 @@ private c1k1z:="N"
 private picBHD:=FormPicL(gPicBHD,16)
 private picDEM:=FormPicL(gPicDEM,12)
 
-O_KONTO
-O_PARTN
-if gRJ=="D"
-	O_RJ
-endif
+o_kart_tbl()
+
 private cSazeta:="N"
 private cK14:="1"
 
@@ -302,21 +328,11 @@ endif
 
 lVrsteP:=.f.
 
+o_kart_tbl()
+
 if IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
 	lVrsteP:=.t.
   	O_VRSTEP
-endif
-
-O_SUBAN
-
-//"1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
-
-O_TDOK
-
-if IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-	O_ULIMIT
-  	SELECT ULIMIT
-  	SET ORDER TO TAG "2"
 endif
 
 select SUBAN
@@ -789,8 +805,17 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
 
 		  	// upisi u export dbf
 		  	if cExpDbf == "D"
+				
+				if field->d_p == "1"
+					__dug := field->iznosbhd
+					__pot := 0
+				else
+					__dug := 0
+					__pot := field->iznosbhd
+				endif
+
 		  		_add_to_export( cIdKonto, __k_naz, cIdPartner, __p_naz, __vr_nal, __br_nal, __r_br, ;
-								__br_veze, __dat_nal, __dat_val, __opis, nDugBHD, nPotBHD, nDugBHD - nPotBHD )
+								__br_veze, __dat_nal, __dat_val, __opis, __dug, __pot, (__dug - __pot) )
 		  	endif
 
           	SKIP 1

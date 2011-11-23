@@ -362,7 +362,7 @@ enddo
 close all
 
 if pitanje(,"Aktivirati Win Report ?","D")=="D"
-	private cKomLin:="delphirb "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
+	private cKomLin:="delphirb "+IzFmkIni("BARKOD", "NazRTM", "barkod", SIFPATH) +" " + PRIVPATH + "  barkod 1"
 	run &cKomLin
 endif
 
@@ -375,11 +375,124 @@ CLOSERET
  */
  
 function FaEdPrLBK()
-*{
 if Ch==ASC(' ')
      aStampati[recno()] := IF( aStampati[recno()]=="N" , "D" , "N" )
      return DE_REFRESH
   endif
 return DE_CONT
-*}
+
+
+/*!
+ @function    NoviBK_A
+ @abstract    Novi Barkod - automatski
+ @discussion  Ova fja treba da obezbjedi da program napravi novi interni barkod
+              tako sto ce pogledati Barkod/Prefix iz fmk.ini i naci zadnji
+              
+	      dodjeljen barkod. Njeno ponasanje ovisno je op parametru
+              Barkod / EAN ; Za EAN=13 vraca trinaestocifreni EANKOD,
+              Kada je EAN<>13 vraca broj duzine DuzSekvenca BEZ PREFIXA
+*/
+function NoviBK_A(cPrefix)
+
+local cPom , xRet
+local nDuzPrefix, nDuzSekvenca, cEAN
+
+PushWA()
+
+nCount:=1
+
+if cPrefix=NIL
+   cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
+endif
+cPrefix:=trim(cPrefix)
+nDuzPrefix:=len(cPrefix)
+
+nDuzSekv:=  val ( IzFmkIni("Barkod","DuzSekvenca","",SIFPATH) )
+cEAN:= IzFmkIni("Barkod","EAN","",SIFPATH)
+
+cRez:= padl(  alltrim(str(1))  , nDuzSekv , "0")
+if cEAN="13"
+   cRez := cPrefix + cRez + KEAN13(cRez)
+   //      0387202   000001   6
+else
+   cRez := cRez
+endif
+
+set filter to // pocisti filter
+set order to tag "BARKOD"
+seek cPrefix+"á" // idi na kraj
+skip -1 // lociraj se na zadnji slog iz grupe prefixa
+if left(barkod,nDuzPrefix) == cPrefix
+ if cEAN=="13"
+  cPom:=   alltrim ( str( val (substr( BARKOD, nDuzPrefix + 1, nDuzSekv)) + 1 ))
+  cPom:=   padl(cPom,nDuzSekv,"0")
+  cRez:=   cPrefix + cPom
+  cRez:=   cRez + KEAN13(cRez)
+ else
+  // interni barkod varijanta planika koristicemo Code128 standard
+  cPom:=   alltrim ( str( val (substr( BARKOD, nDuzPrefix + 1, nDuzSekv)) + 1 ))
+  cPom:=   padl(cPom,nDuzSekv,"0")
+  cRez:=   cPom  // Prefix dio ce dodati glavni alogritam
+ endif
+endif
+
+PopWa()
+
+return cRez
+
+
+/*!
+ @function   KEAN13 ( ckod)
+ @abstract   Uvrdi ean13 kontrolni broj
+ @discussion xx
+ @param      ckod   kod od dvanaest mjesta
+*/
+function KEAN13(cKod)
+
+local n2,n4
+local n1:= val(substr(cKod,2,1)) + val(substr(cKod,4,1)) + val(substr(ckod,6,1)) + val(substr (ckod,8,1)) + val(substr(ckod,10,1)) + val(substr(ckod,12,1))
+local n3:= val(substr(cKod,1,1)) +val(substr(cKod,3,1)) + val(substr(ckod,5,1)) + val(substr (ckod,7,1)) + val(substr(ckod,9,1)) + val(substr(ckod,11,1))
+n2:=n1 * 3
+
+n4:= n2 + n3
+n4:= n4 % 10
+if n4=0
+ return  "0"   // n5
+else
+ return  str( 10 - n4 , 1)   // n5
+endif
+
+// -------------------------
+// -------------------------
+function Barkod(cId)
+
+// postoje barcodovi!!!!!!!!!!!!!
+*
+local cIdRoba:=""
+
+gOcitBarCod:=.f.
+PushWa()
+select ("ROBA")
+if !empty(cId) .and. fieldpos("BARKOD")<>0
+  set order to tag "BARKOD"
+  seek trim(cid)
+  if found() .and. trim(cid)==trim(barkod) // ista je duzina sifre
+      cId:=Id  // nasao sam sifru po barkodu
+     gOcitBarCod:=.t.
+  endif
+
+  // trazi alternativne sifre
+  cIDRoba:=""
+  ImauSifV("ROBA","BARK", cId, @cIdRoba)
+  if !empty(cIdRoba)
+    select roba; set order to tag "ID"; seek cId  // nasao sam sifru !!
+    cId:=cIdRoba
+    gOcitBarCod:=.t.
+  endif
+
+endif
+cId:=padr(cId,10)
+PopWa()
+return
+
 

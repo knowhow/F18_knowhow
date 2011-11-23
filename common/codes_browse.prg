@@ -911,15 +911,17 @@ do while .t.
 		  GetList[nGet]:PostBlock:=bValid
 		 endif
 		 nGet++
-	      else
-		// Empty(cpom)  - samo odstampaj
-		nRed:=1
-		nKolona:=1
-		if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
-		 nKolona:= imekol[i,10]
-		 nRed:=0
+	    else
+            // Empty(cpom)  - samo odstampaj
+            nRed:=1
+            nKolona:=1
+            if Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL
+            nKolona:= imekol[i,10]
+            nRed:=0
 		endif
-		if EVAL(ImeKol[i,2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2]))<>"_?_"  // ne prikazuj nil vrijednosti
+
+        // ne prikazuj nil vrijednosti
+		if EVAL(ImeKol[i,2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2]))<>"_?_"  
 		  if nKolona=1
 		   ++nTekRed
 		  endif
@@ -958,9 +960,9 @@ do while .t.
    BoxC()
 
 
-   if Ch<>K_CTRL_A
-      exit
-   else
+     if Ch<>K_CTRL_A
+        exit
+     else
      if lastkey()==K_ESC
      	exit
      endif

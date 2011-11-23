@@ -772,15 +772,12 @@ do while !eof()
 
 enddo
 
-if lOk
-  update_semaphore_version("kalk_kalk")
-  sql_kalk_kalk_update("END")
-else
-  sql_kalk_kalk_update("ROLLBACK")
-endif
-
 MsgC()
 
+if !lOk
+  	sql_kalk_kalk_update("ROLLBACK")
+	return lOk
+endif
 
 // azuriraj doks...
 MsgO("sql kalk_doks")
@@ -820,14 +817,26 @@ if !sql_kalk_doks_update( "ins", record )
        lOk := .f.
 endif
    
-if lOk
-	update_semaphore_version("kalk_doks")
-  	sql_kalk_doks_update("END")
-else
+MsgC()
+
+if !lOk
+  	sql_kalk_kalk_update("ROLLBACK")
   	sql_kalk_doks_update("ROLLBACK")
+	return lOk
 endif
 
-MsgC()
+
+if lOk
+	
+	// napravi update-e
+	// zavrsi transakcije  
+	update_semaphore_version("kalk_doks")
+  	sql_kalk_kalk_update("END")
+	
+	update_semaphore_version("kalk_kalk")
+  	sql_kalk_kalk_update("END")
+
+endif
 
 return lOk
 

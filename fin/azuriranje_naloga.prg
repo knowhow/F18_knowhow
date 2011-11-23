@@ -858,8 +858,10 @@ function NextNal( cIdFirma, cIdVN )
 local nArr
 nArr:=SELECT()
 
+my_use("nalog")
+select nalog
+
 if gBrojac=="1"
-	select NALOG
 	set order to tag "1"
 	seek cIdFirma+cIdVN+chr(254)
 	skip -1
@@ -882,7 +884,6 @@ if gBrojac=="1"
 		cBrNal := "00000001"
 	endif
 else
-	select NALOG
 	set order to tag "2"
 	seek cIdFirma+chr(254)
 	skip -1

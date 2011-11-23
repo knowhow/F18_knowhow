@@ -459,11 +459,11 @@ if (nArea==-1 .or. nArea==(F_SUBAN))
             close all
 	endif
 	
-	CREATE_INDEX("1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", "SUBAN") 
-	CREATE_INDEX("2","IdFirma+IdPartner+IdKonto", "SUBAN")
-	CREATE_INDEX("3","IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)","SUBAN")
-	CREATE_INDEX("4","idFirma+IdVN+BrNal+Rbr", "SUBAN")
-	CREATE_INDEX("5","idFirma+IdKonto+dtos(DatDok)+idpartner", "SUBAN")
+	CREATE_INDEX("1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", "SUBAN") 
+	CREATE_INDEX("2", "IdFirma+IdPartner+IdKonto", "SUBAN")
+	CREATE_INDEX("3", "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)","SUBAN")
+	CREATE_INDEX("4", "idFirma+IdVN+BrNal+Rbr", "SUBAN")
+	CREATE_INDEX("5", "idFirma+IdKonto+dtos(DatDok)+idpartner", "SUBAN")
 
 	CREATE_INDEX("6","IdKonto", "SUBAN")
 

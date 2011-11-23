@@ -1,6 +1,6 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)

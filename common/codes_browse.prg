@@ -133,7 +133,7 @@ IF cId <>NIL
      seek LEFT(cId, len(trim(cid))-1)
      cId:=id
    else
-     seek "‡·‚"
+     seek "√†√°√¢"
    endif
 
    if !FOUND()
@@ -934,7 +934,7 @@ do while .t.
 
 	      i++                               // ! sljedeci slog se stampa u istom redu
 	      if ( len(imeKol) < i) .or. ;
-		 ( nTekRed>min(20,nTrebaRedova) .and. !(Len(ImeKol[i])>=10 .and. imekol[i,10]<>NIL)   )
+		 ( nTekRed > min(20, nTrebaRedova) .and. !(Len(ImeKol[i])>=10 .and. imekol[i, 10]<>NIL)   )
 		 
 		exit // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
 	      endif
@@ -1243,124 +1243,6 @@ Menu_Sc("bsif")
 return 0
 
 
-
-function SifClipBoard()
-
-if !SigmaSif("CLIP")
-       msgBeep("Neispravna lozinka ....")
-       return DE_CONT
-endif
-
-     private am_x:=m_x,am_y:=m_y
-     m_x:=am_x; m_y:=am_y
-     private opc2[2]
-     opc2[1]:="1. prenesi  -> sif0 (clipboard)  "
-     opc2[2]:="2. uzmi    <-  sif0 (clipboard)  "
-     private Izbor2:=1
-     if reccount2()==0
-       // ako je sifrarnik prazan, logicno je da ce se zeli preuzeti iz
-       // clipboarda
-       Izbor2:=2
-     endif
-
-     do while .t.
-      Izbor2:=menu("9cf9",opc2,Izbor2,.f.)
-      do case
-        case Izbor2==0
-            EXIT
-        case izbor2 == 1
-           // sifrarnik -> sif0
-
-           nDBF:=select()
-           if reccount2()==0
-             MsgBeep("Sifrarnik je prazan, nema smisla prenositi u sif0")
-             loop
-           endif
-
-           copy structure extended to struct
-           nP2:=AT("\SIF",SIFPATH)         // c:\sigma\sif
-           cPath:=left(SIFPATH,nP2) +"SIF0\"
-           cDBF:=ALIAS()+".DBF"
-           // c:\sigma\sif1\trfp.dbf -> c:\sigma\sif0\trfp.dbf
-           DirMak2(cPath)
-           if file(cPath+cDBF)
-               MsgBeep("Tabela "+cPath+cDBF+" vec postoji !")
-               if pitanje(,"Zelite li ipak prebaciti podatke u clipboard ?","N")=="N"
-                    loop
-               endif
-           endif
-
-           select (F_TMP)
-
-           create (cPath+cDBF) from struct  VIA RDDENGINE alias TMP
-
-           USE
-           USEX (cPath+cDBF, "NOVI", .t.) 
-           select (nDBF)
-           set order to 0; go top
-           do while !eof()
-             scatter()
-             select novi
-             append blank; gather()
-             select (nDBF)
-             skip
-           enddo
-           SELECT novi; use
-
-           select (nDBF); go top
-           MsgBeep("sifrarnik je prenesen u clipboard ")
-
-        case izbor2 == 2
-
-           // sifrarnik <- sif0
-
-           nDBF:=select()
-           nP2:=AT("\SIF",SIFPATH)         // c:\sigma\sif
-           cPath:=left(SIFPATH,nP2) +"SIF0\"
-           cDBF:=ALIAS()+".DBF"   // TROBA.DBF
-           // c:\sigma\sif1\trfp.dbf -> c:\sigma\sif0\trfp.dbf
-           if !file(cPath+cDBF)
-               MsgBeep("U clipboardu tabela "+cPath+cDBF+" ne postoji !")
-               loop
-           else
-               // za svaki slucaj izbrisi CDX !! radi moguce korupcije
-               ferase(strtran(cPath+cDbf,".DBF",".CDX"))
-           endif
-
-           USEX (cPath+cDBF, "CLIPB", .f.)
-           select (nDBF)
-           if reccount2()<>0
-              if pitanje(,"Sifrarnik nije prazan, izbrisati postojece stavke ?"," ")=="D"
-                   zap
-              else
-                 if pitanje(,"Da li zelite na postojece stavke dodati clipboard ?","N")=="N"
-                    loop
-                 endif
-              endif
-           endif
-
-           select CLIPB
-           set order to 0; go top
-           do while !eof()
-             select (nDBF); Scatter(); select CLIPB
-             scatter()
-             select (nDBF)
-             append blank; gather()
-             select CLIPB
-             skip
-           enddo
-           SELECT CLIPB; use
-
-           select (nDBF); go top
-           MsgBeep("Sifrarnik je osvjezen iz clipboarda")
-
-
-      end case
-     enddo
-     m_x:=am_x; m_y:=am_y
-     
-return DE_REFRESH
-
 // --------------------------------------------
 // validacija da li polje postoji
 // --------------------------------------------
@@ -1375,516 +1257,6 @@ if lRet == .f.
 endif
 
 return lRet
-
-// ----------------------------------------------------------
-// kopiranje vrijednosti nekog polja u neko SIFK polje
-// ----------------------------------------------------------
-function copy_to_sifk()
-
-local cTable := ALIAS()
-local cFldFrom := SPACE(8)
-local cFldTo := SPACE(4)
-local cEraseFld := "D"
-local cRepl := "D"
-local nTekX 
-local nTekY
-
-Box(, 6, 65, .f.)
-	
-	private GetList:={}
-	set cursor on
-	
-	nTekX := m_x
-	nTekY := m_y
-	
-	@ m_x+1,m_y+2 SAY PADL("Polje iz kojeg kopiramo (polje 1)", 40) GET cFldFrom VALID !EMPTY(cFldFrom) .and. val_fld(cFldFrom)
-	@ m_x+2,m_y+2 SAY PADL("SifK polje u koje kopiramo (polje 2)", 40) GET cFldTo VALID g_sk_flist(@cFldTo)
-	
-	@ m_x+4,m_y+2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
-	
-	@ m_x+6,m_y+2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
-	read
- 
-BoxC()
-
-if cRepl == "N"
-	return 0
-endif
-
-if LastKey()==K_ESC
-	return 0
-endif
-
-nTRec := RecNo()
-go top
-
-do while !EOF()
-	
-	skip
-	nRec := RECNO()
-	skip -1
-	
-	cCpVal := (ALIAS())->&cFldFrom
-	if !EMPTY( cCpval)
-		USifK( ALIAS(), cFldTo, (ALIAS())->id, cCpVal)
-	endif
-	
-	if cEraseFld == "D"
-		replace (ALIAS())->&cFldFrom with ""
-	endif
-	
-	go (nRec)
-enddo
-
-go (nTRec)
-
-return 0
-
-
-// --------------------------------------------------
-// zamjena vrijednosti sifk polja
-// --------------------------------------------------
-function repl_sifk_item()
-
-local cTable := ALIAS()
-local cField := SPACE(4)
-local cOldVal
-local cNewVal
-local cCurrVal
-local cPtnField
-
-Box(,3,60, .f.)
-	private GetList:={}
-	set cursor on
-	
-	nTekX := m_x
-	nTekY := m_y
-	
-	@ m_x+1,m_y+2 SAY " SifK polje:" GET cField VALID g_sk_flist(@cField)
-	read
-	
-	cCurrVal:= "wSifk_" + cField
-	&cCurrVal:= IzSifk(ALIAS(), cField)
-	cOldVal := &cCurrVal
-	cNewVal := SPACE(LEN(cOldVal))
-	
-	m_x := nTekX
-	m_y := nTekY
-	
-	@ m_x+2,m_y+2 SAY "      Trazi:" GET cOldVal
-        @ m_x+3,m_y+2 SAY "Zamijeni sa:" GET cNewVal
-	
-        read 
-BoxC()
-
-if LastKey()==K_ESC
-	return 0
-endif
-
-if Pitanje(,"Izvrsiti zamjenu polja? (D/N)","D") == "N"
-	return 0
-endif
-
-nTRec := RecNo()
-
-do while !EOF()
-	&cCurrVal := IzSifK(ALIAS(), cField)
-	if &cCurrVal == cOldVal
-		USifK(ALIAS(), cField, (ALIAS())->id, cNewVal)
-	endif
-	skip
-enddo
-
-go (nTRec)
-
-return 0
-
-
-
-function g_sk_flist(cField)
-
-local aFields:={}
-local cCurrAlias := ALIAS()
-local nArr
-local nField
-
-nArr := SELECT()
-
-select sifk
-set order to tag "ID"
-cCurrAlias := PADR(cCurrAlias,8)
-seek cCurrAlias
-
-do while !EOF() .and. field->id == cCurrAlias
-	AADD(aFields, {field->oznaka, field->naz})
-	skip
-enddo
-
-select (nArr)
-
-if !EMPTY(cField) .and. ASCAN(aFields, {|xVal| xVal[1] == cField}) > 0
-	return .t.
-endif
-
-if LEN(aFields) > 0
-	private Izbor:=1
-	private opc:={}
-	private opcexe:={}
-	private GetList:={}
-	
-	for i:=1 to LEN(aFields)
-		AADD(opc, PADR(aFields[i, 1] + " - " + aFields[i, 2], 40))
-		AADD(opcexe, {|| nField := Izbor, Izbor:=0})
-	next
-	
-	Izbor:=1
-	Menu_SC("skf")
-endif
-
-cField := aFields[nField, 1]
-
-return .t.
-
-
-
-/*!
- *\fn IzSifk
- *\brief Izvlaci vrijednost iz tabele SIFK
- *\param cDBF ime DBF-a
- *\param cOznaka oznaka BARK , GR1 itd
- *\param cIDSif  interna sifra, npr  000000232  ,
- *               ili "00000232,XXX1233233" pri pretrazivanju
- *\param fNil    NIL - vrati nil za nedefinisanu vrijednost,
- *               .f. - vrati "" za nedefinisanu vrijednost
- *\fpretrazivanje
- *
- * Vrsi se analiza postojanaja
- * Pretpostavke:
- * Otvorene tabele SIFK, SIFV
- *
- */
-function IzSifk(cDBF,cOznaka, cIdSif, fNiL, fPretrazivanje)
-
-local cJedanod:=""
-local xRet:=""
-local nTr1, nTr2 , xVal
-private cPom:=""
-
-if cIdSif=NIL
-  cIdSif:=(cDBF)->id
-endif
-
-
-if numtoken(cOznaka,",")=2
-     cJedanod:=token( cOznaka,",",2)
-     cOznaka :=token( cOznaka,",",1)
-endif
-
-PushWa()
-
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
-
-// ako tabela sifk, sifv nije otvorena - otvoriti
-SELECT(F_SIFK)
-if (!USED())
-	O_SIFK	
-endif
-
-SELECT(F_SIFV)
-if (!USED())
-	O_SIFV	
-endif
-
-SELECT sifk
-SET ORDER TO TAG "ID2"
-SEEK cDBF+cOznaka
-
-
-xVal:=nil
-
-if found()
-  // da li uopste traziti
-  cPom:=Uslov   
-  if !empty(cPom)
-     xVal=&cPom
-  endif
-
-  if empty(cPom) .or. xVal
-    select sifv
-    if len(cIdSif)>15  // ADRES.DBF
-      cIdSif:=left(cIdSif,15)
-    endif
-    hseek cDBf+cOznaka+cIdSif
-    xRet:=UVSifv()
-    // pokupi sve vrijednosti
-    if sifk->veza="N" .and. fpretrazivanje<>NIL // radi se o artiklu sa vezom 1->N
-      // ova varijanta poziva desava se samo pri pretrazivanju
-      seek cDbf+cOznaka+padr(cIdSif,len(idsif))+cJedanod
-      if found()
-         xRet:=cJedanod
-      else
-         xRet:=""+cJedanod+""
-      endif
-
-    elseif sifk->veza="N"
-     skip
-     do while !eof() .and.  ((id+oznaka+idsif) = (cDBf+cOznaka+cIdSif))
-      xRet+=","+ToStr(UvSifv()) //kalemi u jedan string
-      skip
-     enddo
-     xRet:=padr(xRet,190)
-    endif
-
-  else   // daj praznu vrijednost
-    if xVal  .or. (fNil<>NIL)
-       if sifk->tip=="C"
-          xRet:= padr("",sifk->duzina)
-       elseif sifk->tip=="N"
-          xRet:=  val( str(0,sifk->duzina,sifk->decimal) )
-       elseif sifk->tip=="D"
-          xRet:= ctod("")
-       else
-          xRet:= "NEPTIP"
-       endif
-    else
-     // ne koristi se
-     xRet:=nil
-    endif
-  endif
-
-endif
-
-PopWa()
-
-return xRet
-
-
-static function UVSifv()
-
-local xRet
-if sifk->tip=="C"
-   xRet:= padr(naz,sifk->duzina)
-elseif sifk->tip=="N"
-   xRet:= val(alltrim(naz))
-elseif sifk->tip=="D"
-   xRet:= STOD(trim(naz))
-else
-   xRet:= "NEPTIP"
-endif
-return xRet
-
-
-function IzSifkNaz(cDBF,cOznaka)
-
-local xRet:="", nArea
-
-PushWA()
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
-select sifk; set order to tag "ID2"
-seek cDBF+cOznaka
-xRet:=sifk->Naz
-PopWA()
-return xRet
-
-// ------------------------------------------
-// ------------------------------------------
-function IzSifkWV
-parameters cDBF, cOznaka, cWhen, cValid
-
-local xRet:=""
-
-PushWa()
-
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
-select sifk
-set order to tag "ID2"
-seek cDBF+cOznaka
-
-cWhen:=sifk->KWHEN
-cValid:=sifk->KVALID
-
-PopWa()
-return NIL
-
-
-/*!
- *\fn USifk
- *\brief Postavlja vrijednost u tabel SIFK
- *\note Pretpostavke: Otvorene tabele SIFK, SIFV
- *
- *\param cDBF ime DBF-a
- *\param cOznaka oznaka xxxx
- *\param cIdSif  Id u sifrarniku npr. 2MON0001
- *\param xValue  vrijednost (moze biti tipa C,N,D)
- *
- */
-function USifk(cDBF, cOznaka, cIdSif, xValue)
-
-local ntrec, numtok
-private cPom:=""
-
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
-
-PushWa()
-
-select sifk
-set order to tag "ID2"
-seek cDBF+cOznaka
-// karakteristika ovo postoji u tabeli SIFK
-
-// ADRES.DBF
-if len(cIdSif) > 15   
-  cIdSif:=left(cIdSif,15)
-endif
-
-if found()
-
-if sifk->Veza="N" 
-// veza 1->N posebno se tretira !!
-
-  select sifv
-  seek cDBf+cOznaka+cIdSif
-  //izbrisi stare vrijednost !!!
-  do while !eof() .and. ( (id+oznaka+idsif)= (cDBf+cOznaka+cIdSif) )
-     skip
-     ntrec:=recno()
-     skip -1
-     sql_delete()
-     delete
-     go nTrec
-  enddo
-
-  numTok:=numtoken(xValue,",")
-  for i:=1 to numtok
-    append blank
-    sql_append()
-    replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-    sql_azur(.t.);Scatter()
-    //replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-    xValue_i:=token(xValue,",",i)
-    if sifk->tip=="C"
-        replace naz with xValue_i
-        //replsql naz with xValue_i
-    elseif sifk->tip=="N"
-        replace naz with str(xValue_i,sifk->duzina,sifk->decimal)
-        //replsql naz with str(xValue_i,sifk->duzina,sifk->decimal)
-    elseif sifk->tip=="D"
-     	replace naz with DTOS(xValue_i)
-     	//replsql naz with DTOS(xValue_i)
-    endif
-  next
-
-else
-  // veza 1-1
-  select sifv
-  seek cDBf+cOznaka+cIdSif
-  //do sada nije bilo te vrijednosti
-  if !found()
-    if !empty(ToStr(xValue))
-     append blank
-     sql_append()
-     replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-     //replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-    else    // ne dodaji prazne vrijednosti
-      PopWa()
-      return
-    endif
-  endif
-
- if xValue<>NIL
-
-   Scatter()
-   if sifk->tip=="C"
-     replace naz with xValue
-   elseif sifk->tip=="N"
-     replace naz with str(xValue,sifk->duzina,sifk->decimal)
-   elseif sifk->tip=="D"
-     replace naz with DTOS(xValue)
-   endif
-
- endif
-
-endif 
-// veza
-endif  
-// found
-
-PopWa()
-return
-
-
-/*!
- @function ImauSifv
- @abstract Povjerava ima li u sifv vrijednost ...
- @discussion - poziv ImaUSifv("ROBA","BARK","BK0002030300303",@cIdSif)
- @param cDBF ime DBF-a
- @param cOznaka oznaka BARK , GR1 itd
- @param cVOznaka oznaka BARK003030301
- @param cIDSif   00000232 - interna sifra
-*/
-function ImaUSifv(cDBF,cOznaka,cVOznaka, cIdSif)
-
-local cJedanod:=""
-local xRet:=""
-local nTr1, nTr2 , xVal
-private cPom:=""
-
-PushWa()
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
-
-xVal:=NIL
-
-select sifv
-PushWa() 
-set order to tag "NAZ"
-hseek cDbf + cOznaka + cVOznaka
-if found()
-   cIdSif:=IdSif
-endif
-PopWa()
-
-PopWa()
-return
-
-/*
- @function   GatherSifk
- @abstract
- @discussion Popunjava ID_J (uz pomoc fje NoviId_A()),
-             te puni SIFV (na osnovu ImeKol)
- @param cTip  prefix varijabli sa kojima se tabela puni
- @param lNovi .t. - radi se o novom slogu
-
-*/
-function GatherSifk(cTip, lNovi)
-local i
-local _alias
-local _field_b
-
-if lNovi
-  if IzFmkIni('Svi','SifAuto','N')=='D'
-    Scatter()
-    replace ID with NoviID_A()
-  endif
-endif
-
-_alias := ALIAS()
-for i:=1 to len(ImeKol)
-   if left(ImeKol[i,3], 6) == "SIFK->"
-     _field_b := MEMVARBLOCK( cTip + "Sifk_" + substr(ImeKol[i,3], 7))
-
-     if IzSifk( _alias, substr(ImeKol[i,3],7), (_alias)->id) <> NIL
-       // koristi se
-       USifk( _alias, substr(ImeKol[i,3], 7), (_alias)->id, EVAL(_field_b) )
-     endif
-   endif
-next
-
-return
 
 /*!
  @function    NoviID_A
@@ -1907,12 +1279,12 @@ set filter to
 set order to tag "ID"
 go bottom
 if id>"99"
-   seek "ˆˆ·"  
-   // ˆ - chr(246) pokusaj
+   seek chr(246)+chr(246)+chr(246) 
+   // chr(246) pokusaj
    skip -1
-   if id<"ˆˆ9"
+   if id < chr(246) + chr(246) + "9"
       cPom:=   str( val(substr(id,4))+nCount , len(id)-2 )
-      xRet:= "ˆˆ"+padl(  cPom , len(id)-2 ,"0")
+      xRet:= chr(246)+chr(246) + padl(  cPom , len(id)-2 ,"0")
    endif
 else
   cPom:= str( val(id) + nCount , len(id) )
@@ -1959,7 +1331,7 @@ PushWA()
 
 nTrec:=recno()
 set order to tag "ID_J"
-seek cStr+"‚"
+seek cStr + chr(246)
 skip -1
 // ova fja se uvijek poziva nakon Edsif-a
 // ako je __LAST_CH__=f4 onda se radi o dupliciranju
@@ -2279,7 +1651,7 @@ local cPom
 local nDuzSif:=0
 local lPopuni:=.f.
 local nDuzUn:=0
-local cLast:="¨è¶Ê—"
+local cLast:="¬¨¬è¬¶√¶√ë"
 local nKor:=0
 
 IF IzFmkIni("NovaSifraOpc_F8","PopunjavaPraznine","N")=="D"
@@ -2313,21 +1685,21 @@ IF cImeVar == "WID"
       			IF LEN(TRIM(id))<=nDuzUn .or. RIGHT(TRIM(id),1)=="."
 				SKIP 1
 			ENDIF
-      			IF cLast=="¨è¶Ê—" // tj. prva konkretna u nizu
+      			IF cLast=="¬¨¬è¬¶√¶√ë" // tj. prva konkretna u nizu
         			IF VAL(SUBSTR(id,nDuzUn+1)) > 1
-          				// rupa odmah na poüetku
+          				// rupa odmah na po¬üetku
           				nKor:= nDuzSif-LEN(TRIM(id))
           				EXIT
         			ENDIF
       			ELSEIF VAL(SUBSTR(id,nDuzUn+1))-VAL(cLast) > 1
-        			// rupa izme–u
+        			// rupa izme√êu
         			EXIT
       			ENDIF
       			cLast:=SUBSTR(id,nDuzUn+1)
       			SKIP 1
     		ENDDO
-    		// na osnovu cLast formiram slijedeÜu Áifru
-    		cPom:=LEFT(cPom,nDuzUn)+IF(cLast=="¨è¶Ê—",REPL("0",nDuzSif-nDuzUn-nKor),cLast)
+    		// na osnovu cLast formiram slijede¬Üu √ßifru
+    		cPom:=LEFT(cPom,nDuzUn)+IF(cLast=="¬¨¬è¬¶√¶√ë",REPL("0",nDuzSif-nDuzUn-nKor),cLast)
     		&(cImeVar):=PADR(NovaSifra( IF( EMPTY(cPom) , cPom , RTRIM(cPom) ) ),nDuzSif," ")
   	ELSE
     		
@@ -2597,7 +1969,7 @@ endif
 
 set filter to // pocisti filter
 set order to tag "BARKOD"
-seek cPrefix+"·" // idi na kraj
+seek cPrefix+"√°" // idi na kraj
 skip -1 // lociraj se na zadnji slog iz grupe prefixa
 if left(barkod,nDuzPrefix) == cPrefix
  if cEAN=="13"
@@ -2732,7 +2104,7 @@ if lNFGR
 	nRec:=RECNO()
 endif
 
-if fieldpos("BARKOD")<>0 // traßi glavni barkod
+if fieldpos("BARKOD")<>0 // tra¬ßi glavni barkod
 	set order to tag "BARKOD"
 	seek cID
 	gOcitBarkod:=.t.
@@ -2743,7 +2115,7 @@ if fieldpos("BARKOD")<>0 // traßi glavni barkod
 		seek cID
 	endif
 else
-	seek "‡·‚"
+	seek "√†√°√¢"
 endif
 
 // nisam nasao barkod u polju BARKOD

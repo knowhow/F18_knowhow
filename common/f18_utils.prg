@@ -152,6 +152,8 @@ AADD( gaDbfs, { F_TRFP3  ,  "TRFP3"   , "trfp3"   } )
 AADD( gaDbfs, { F_VKSG   ,  "VKSG"    , "vksg"   } )
 AADD( gaDbfs, { F_ULIMIT ,  "ULIMIT"  , "ulimit"  } )
 
+// r_export
+AADD( gaDbfs, { F_R_EXP ,  "r_export"  , "r_export"  } )
 
 // modul FIN
 AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )

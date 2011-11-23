@@ -34,7 +34,7 @@ close all
 ferase( PRIVPATH + cExpTbl )
 
 // kreiraj tabelu
-dbcreate2(PRIVPATH + cExpTbl, aFields)
+dbcreate2(PRIVPATH + "r_export", aFields)
 
 return
 *}

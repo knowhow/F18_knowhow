@@ -521,3 +521,19 @@ next
 return
 
 
+// --------------------------------------------
+// validacija da li polje postoji
+// --------------------------------------------
+static function val_fld(cField)
+local lRet := .t.
+if (ALIAS())->(FieldPOS(cField)) == 0
+	lRet := .f.
+endif
+
+if lRet == .f.
+	msgbeep("Polje ne postoji !!!")
+endif
+
+return lRet
+
+

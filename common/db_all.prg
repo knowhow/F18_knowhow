@@ -621,28 +621,6 @@ endif
 return
 
 
-/*! \fn SkratiAZaD(aStruct)
- *  \brief skrati matricu za polje D
- 
- *  \code
- *  SkratiAZaD(@aStruct)
- *  \endcode
-*/
-
-function SkratiAZaD(aStruct)
-nLen:=len(aStruct)
-for i:=1 to nLen
-    // sistemska polja
-    if ("#"+aStruct[i,1]+"#" $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#")
-     ADEL (astruct,i)
-     nLen--
-     i:=i-1
-    endif
-next
-ASIZE(aStruct,nLen)
-
-return nil
-
  
 /*! \fn Append2()
  * \brief Dodavanje novog zapisa u (nArr) -

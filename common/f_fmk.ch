@@ -98,6 +98,7 @@
 #define F_FIN_RJ        73
 #define F_FAKT_RJ        73
 #define F_KALK_RJ        73
+#define F_LD_RJ        73
 #define F_OPS       74
 #define F_REFER     75
 #define F_STRINGS  180

@@ -138,8 +138,10 @@ return __server
 function my_server_search_path(path)
 local _key := "search_path"
 
-if path == nil .or. !hb_hhaskey(__server_params, _key)
-   __server_params[_key] := "fmk,public"
+if path == nil
+   if !hb_hhaskey(__server_params, _key)
+     __server_params[_key] := "fmk,public"
+   endif
 else
    __server_params[_key] := path
 endif

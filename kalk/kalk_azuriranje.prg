@@ -970,6 +970,10 @@ function Povrat_kalk_dokumenta()
 local nRec
 local gEraseKum
 
+msgbeep("Opcija trenutno onemogucena !")
+close all
+return
+
 gEraseKum:=.f.
 
 if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (N) ?","D")="N"

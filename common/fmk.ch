@@ -6,7 +6,7 @@
 
 #define F18_DEFINED
 
-#define FMK_LIB_VER  "0.7.0"
+#define FMK_LIB_VER  "0.8.0"
 
 
 #define EXEPATH   my_home_root()

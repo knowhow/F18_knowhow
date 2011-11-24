@@ -26,22 +26,17 @@ for _i:=1 to retry
    begin sequence with {|err| Break(err)}
        _qry_obj := _server:Query(qry)
    recove
-      ? "qry rokno !?!"
-      // ovaj sleep ne pije vode treba pokusati server close/open
+      log_write("ajoj ajoj: qry rokno !?!")
       my_server_logout()
-      hb_IdleSleep(1)
+      hb_IdleSleep(0.5)
       _server := my_server_login()
    end sequence
 
    if _qry_obj:NetErr()
-
-       MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
-       log_write("error:" + qry)
-       log_write(_qry_obj:ErrorMsg())
-
+       log_write("ajoj :" + _qry_obj:ErrorMsg())
+       log_write("error na:" + qry)
        my_server_logout()
-       ? "cekam 1 sec ..."
-       hb_IdleSleep(1)
+       hb_IdleSleep(0.5)
        _server := my_server_login()
    
        if _i == retry

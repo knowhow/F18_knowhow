@@ -48,7 +48,7 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
-for _offset := 750000 to _count STEP _step 
+for _offset := 0 to _count STEP _step 
 
 _qry :=  "SELECT " + ;
 		"idfirma, idvd, brdok, rbr, datdok, brfaktp, datfaktp, idroba, idkonto, idkonto2, idzaduz, " + ;

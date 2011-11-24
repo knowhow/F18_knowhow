@@ -876,7 +876,7 @@ function NextNal( cIdFirma, cIdVN )
 local nArr
 nArr:=SELECT()
 
-my_use("nalog")
+O_NALOG
 select nalog
 
 if gBrojac=="1"

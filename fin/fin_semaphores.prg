@@ -43,13 +43,6 @@ if algoritam == "DATE"
     _dat :=  get_dat_from_semaphore("fin_suban")
     _qry += " WHERE datdok>=" + _sql_quote(_dat)
 endif
-/*
-_qry_obj := _server:Query(_qry) 
-if _qry_obj:NetErr()
-   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
-   QUIT
-endif
-*/
 
 SELECT F_SUBAN
 my_use ("suban", "fin_suban", .f., "SEMAPHORE")
@@ -79,8 +72,8 @@ DO CASE
  CASE algoritam == "IDS"
 
     _ids := get_ids_from_semaphore("fin_suban")
-   // "date" algoritam  - brisi sve vece od zadanog datuma
-    SET ORDER TO TAG "4"
+    
+	SET ORDER TO TAG "4"
 
 	// CREATE_INDEX("4", "idFirma+IdVN+BrNal+Rbr", "SUBAN")
     // pobrisimo sve id-ove koji su drugi izmijenili

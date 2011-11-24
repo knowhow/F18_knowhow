@@ -80,16 +80,14 @@ if algoritam == "IDS"
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvd || brnal) IN " + _sql_ids
+        	_qry += " (idfirma || idvd || brdok) IN " + _sql_ids
      	endif
 
-        _key_block := {|| field->idfirma + field->idvd + field->brnal } 
+        _key_block := {|| field->idfirma + field->idvd + field->brdok } 
 endif
 
 _qry += " ORDER BY " + _order
 _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
 
 
 // sredimo dbf - pobrisimo sto ne treba
@@ -431,10 +429,10 @@ DO CASE
 	CASE algoritam == "IDS"
     	
 		_ids := get_ids_from_semaphore("kalk_doks")
-   		// "date" algoritam  - brisi sve vece od zadanog datuma
-    	SET ORDER TO TAG "1"
+    	
+		SET ORDER TO TAG "1"
 
-		// CREATE_INDEX("1", "idFirma+IdVd+BrDok+Rbr", "KALK")
+		// CREATE_INDEX("1", "idFirma+IdVd+BrDok", "KALK_DOKS")
     	// pobrisimo sve id-ove koji su drugi izmijenili
     	do while .t.
        		_fnd := .f.
@@ -442,7 +440,7 @@ DO CASE
           		
           		HSEEK _tmp_id
           		
-				do while !EOF() .and. (field->idfirma + field->idvd + field->brnal) == _tmp_id
+				do while !EOF() .and. (field->idfirma + field->idvd + field->brdok) == _tmp_id
                		skip
                		_rec := RECNO()
                		skip -1 
@@ -469,7 +467,7 @@ DO CASE
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvd || brnal) IN " + _sql_ids
+        	_qry += " (idfirma || idvd || brdok) IN " + _sql_ids
      	endif
 
 END CASE

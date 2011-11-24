@@ -318,6 +318,7 @@ endif
 
 lIdiDalje := .f.
 
+O_KALK_DOKS
 select kalk_doks
 set order to tag "1"
 

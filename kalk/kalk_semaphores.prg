@@ -146,7 +146,7 @@ DO CASE
 ENDCASE
 // sada je sve izbrisano
 
-_qry_obj := run_sql_query(_server, _qry, _retry)
+_qry_obj := run_sql_query(_qry, _retry)
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
@@ -229,10 +229,6 @@ ENDDO
 USE
 
 //_qry_obj:Close()
-_qry_obj:Close()
-
-my_server_logout()
-_server := my_server_login()
 
 // limit, offset
 next

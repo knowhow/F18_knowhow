@@ -14,8 +14,9 @@
 
 // ----------------------------------------
 // ----------------------------------------
-function run_sql_query(server, qry, retry) 
+function run_sql_query(qry, retry) 
 local _i, _qry_obj
+local _server := my_server()
 
 // sslv3 alert handshake failure dobijam ?!
 
@@ -23,13 +24,13 @@ for _i:=1 to retry
 
    ? qry
    begin sequence with {|err| Break(err)}
-       _qry_obj := server:Query(qry)
+       _qry_obj := _server:Query(qry)
    recove
       ? "qry rokno !?!"
       // ovaj sleep ne pije vode treba pokusati server close/open
       my_server_logout()
       hb_IdleSleep(1)
-      my_server_login()
+      _server := my_server_login()
    end sequence
 
    if _qry_obj:NetErr()
@@ -38,11 +39,15 @@ for _i:=1 to retry
        log_write("error:" + qry)
        log_write(_qry_obj:ErrorMsg())
 
-       ? "cekam 2 sec ..."
+       my_server_logout()
+       ? "cekam 1 sec ..."
+       hb_IdleSleep(1)
+       _server := my_server_login()
+   
        if _i == retry
            MsgBeep("neuspjesno nakon " + to_str(retry) + "pokusaja !?")
            QUIT
-        endif
+       endif
      else
        _i := retry + 1
      endif
@@ -90,7 +95,6 @@ IF _result:NetErr()
 ENDIF
 
 RETURN _result
-
 
 
 /*

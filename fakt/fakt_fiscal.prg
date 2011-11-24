@@ -480,13 +480,13 @@ nErr := fc_trm_rn( ALLTRIM( gFC_path ), ;
 		gFc_error, cContinue )
 
 
+cFName := trm_filename( cF_brrn )
+
 // pogledati kako obraditi gresku...
 if gFc_error == "D"
 	
 	// provjeri greske...
 	// nErr := ...
-
-	cFName := trm_filename( cF_brrn )
 
 	if trm_read_out( ALLTRIM(gFc_path), ALLTRIM(cFName) )
 		

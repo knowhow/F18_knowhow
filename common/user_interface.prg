@@ -1329,13 +1329,20 @@ function ispisiSez()
 return
 
 
+function SecurR( cLevel, cStavka )
+local cK1 := "AT"
+return cK1
 
-/*! \fn SecurR(cLevel, cStavka)
- *
- * \return A - moze sve, administrator, C - citaj, P - pisi, B - brisi, N - nedostupno, T - tekuca aktivnost - nije specijalno definisano
- *
- * \note return vrijednost moze biti i kombinacija  CP - citaj i pisi, ali ne brisi
- */
+
+
+/*
+
+// \fn SecurR(cLevel, cStavka)
+//
+// \return A - moze sve, administrator, C - citaj, P - pisi, B - brisi, N - nedostupno, T - tekuca aktivnost - nije specijalno definisano
+//
+// \note return vrijednost moze biti i kombinacija  CP - citaj i pisi, ali ne brisi
+
  
 function SecurR(cLevel,cStavka)
 local cK1:="AT", fZatv:=.f., nSelect
@@ -1356,6 +1363,8 @@ endif
 
 select(nSelect)
 return cK1
+*/
+
 
 // ---------------------------------------------
 // ---------------------------------------------

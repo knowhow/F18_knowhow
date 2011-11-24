@@ -578,10 +578,7 @@ nArr:=SELECT()
 private imekol := {}
 private kol := {}
 
-select (F_RJ)
-if (!used())
-	O_LD_RJ
-endif
+O_LD_RJ
 select (nArr)
 
 AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
@@ -598,7 +595,7 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
-return PostojiSifra(F_RJ, 1, 10, 55, Lokal("Lista radnih jedinica"), @cId, dx, dy)
+return PostojiSifra(F_LD_RJ, 1, 10, 55, Lokal("Lista radnih jedinica"), @cId, dx, dy)
 
 
 

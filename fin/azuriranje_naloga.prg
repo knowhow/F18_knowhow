@@ -90,14 +90,14 @@ local _ids := {}
 local record := hb_hash()
 local _tmp_id
 local _tbl
-local _i, _retry
+local _i
 
 _tbl := "fin_suban"
 
-for _i := 1 to _retry
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
   if get_semaphore_status(_tbl) == "lock"
       MsgBeep("tabela zakljucana: " + _tbl)
-      hb_IdleSleep(2)
+      hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
   else
       lock_semaphore(_tbl, "lock")
   endif

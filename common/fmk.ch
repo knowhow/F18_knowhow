@@ -17,6 +17,9 @@
 #define KUMPATH  my_home()
 #define CURDIR   my_home()
 
+#define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
+#define SEMAPHORE_LOCK_RETRY_NUM 3
+
 #command ESC_EXIT  => if lastkey()=K_ESC;
                       ;exit             ;
                       ;endif

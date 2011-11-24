@@ -688,19 +688,18 @@ local _doks_rabat := 0
 local _tbl_kalk
 local _tbl_doks
 local _i
-local _retry := 3
 local _tmp_id
 local _ids := {}
 
 _tbl_kalk := "kalk_kalk"
 _tbl_doks := "kalk_doks"
 
-for _i := 1 to _retry
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 	// provjeri kalk
 	if get_semaphore_status( _tbl_kalk ) == "lock"
 		Msgbeep( "tabela zakljucana: " + _tbl_kalik )
-		hb_IdleSleep(2)
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
 	else
 		lock_semaphore( _tbl_kalk, "lock" )
 	endif
@@ -708,7 +707,7 @@ for _i := 1 to _retry
 	// provjeri kalk_doks
 	if get_semaphore_status( _tbl_doks ) == "lock"
 		Msgbeep( "tabela zakljucana: " + _tbl_doks )
-		hb_IdleSleep(2)
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
 	else
 		lock_semaphore( _tbl_doks, "lock" )
 	endif

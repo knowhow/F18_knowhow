@@ -9,20 +9,13 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-static cHostName := "localhost"
-static nPort := 5433
-static cUser := ""
-static cPassWord := ""
-static cDataBase := ""
-static cDBFDataPath := ""
-static cSchema := "fmk"
 static cF18HomeDir := NIL
 static cF18HomeRoot := NIL
 static nLogHandle := NIL
-static oServer := NIL
 static cIniHomeRoot := NIL
 static cIniHome := NIL
 static cIniConfig := ".f18_config.ini"
+static cDBFDataPath := ""
 
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 local menuop := {}
@@ -31,13 +24,7 @@ local mnu_left := 2
 local mnu_top := 2
 local mnu_bottom := 23
 local mnu_right := 65
-local params
-
-cHostName :=  ""
-cSchema := ""
-cDatabase := ""
-cUser := ""
-cPassWord := ""
+local _server
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
@@ -51,20 +38,13 @@ ENDIF
 cF18HomeRoot := get_f18_home_dir()
 
 // konektuj se na server
-oServer := init_f18_app(cHostName, cDatabase, cUser, cPassword, nPort, cSchema)
+_server := init_f18_app()
 
-// ove parametre iscitaj iz INI-ja, oni mi trebaju za nastavak rada aplikacije...
-params := hb_hash()
-params["database"] := nil
-params["user_name"] := nil
-
-f18_ini_read("F18_server", @params, .t.)
-
-cDatabase := params["database"]
-cUser := params["user_name"]
+// setujem server
+pg_server(_server)
 
 // ~/.F18/empty38/
-cF18HomeDir := get_f18_home_dir( cDatabase )
+cF18HomeDir := get_f18_home_dir( my_server_params()["database"] )
 
 log_write("home baze: " + my_home())
 
@@ -88,23 +68,23 @@ do while .t.
 		case mnu_choice == 0
     		exit
 		case mnu_choice == 1
-			MainFin(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainFin(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 2
-			MainKalk(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainKalk(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 3
-			MainFakt(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainFakt(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 4
-			MainEPdv(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainEPdv(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 5
-			MainLd(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainLd(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 6
-			MainRnal(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainRnal(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 7
-			MainOs(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainOs(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 8
-			//MainSii(cUser, cPassWord, p3, p4, p5, p6, p7)
+			//MainSii(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 9
-			MainPos(cUser, cPassWord, p3, p4, p5, p6, p7)
+			MainPos(my_user(), "dummy", p3, p4, p5, p6, p7)
  	endcase
  	loop
 enddo
@@ -113,27 +93,14 @@ FCLOSE(nLogHandle)
 
 return
 
-
-
-// ---------------
-// ~/.F18/
-// ---------------
+// ----------------
+// ----------------
 function my_home()
 return cF18HomeDir
 
 // root home dirketorij
 function my_home_root()
 return cF18HomeRoot
-
-function pg_server()
-return oServer
-
-function pg_search_path()
-local cPath := "fmk,public"
-return cPath
-
-function f18_user()
-return cUser
 
 function log_write(cMsg)
 FWRITE(nLogHandle, cMsg + hb_eol())

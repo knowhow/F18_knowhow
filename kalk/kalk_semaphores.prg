@@ -146,15 +146,6 @@ DO CASE
 ENDCASE
 // sada je sve izbrisano
 
-/*
-???? otkud ovdje dva x query ?!
-_qry_obj := _server:Query( _qry )
-if _qry_obj:NetErr()
-	Msgbeep("ajoj :" + _qry_obj:ErrorMsg())
-	QUIT
-endif
-*/
-
 _qry_obj := run_sql_query(_server, _qry, _retry)
 
 @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
@@ -236,7 +227,12 @@ DO WHILE !_qry_obj:Eof()
 ENDDO
 
 USE
+
+//_qry_obj:Close()
 _qry_obj:Close()
+
+my_server_logout()
+_server := my_server_login()
 
 // limit, offset
 next

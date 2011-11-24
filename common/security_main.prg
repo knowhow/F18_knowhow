@@ -62,6 +62,10 @@ if cUser == nil
   cUser := "admin"
 endif
 
+if cPassword == nil
+  cPassword := "admin"
+endif
+
 cSchema :=  PADR(cSchema, 40)
 cDatabase := PADR(cDatabase, 100)
 cHostName := PADR(cHostName, 100)

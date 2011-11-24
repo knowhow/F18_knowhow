@@ -24,9 +24,12 @@ for _i:=1 to retry
    ? qry
    begin sequence with {|err| Break(err)}
        _qry_obj := server:Query(qry)
-   recover
+   recove
       ? "qry rokno !?!"
-      hb_IdleSleep(2)
+      // ovaj sleep ne pije vode treba pokusati server close/open
+      my_server_logout()
+      hb_IdleSleep(1)
+      my_server_login()
    end sequence
 
    if _qry_obj:NetErr()
@@ -65,24 +68,28 @@ IF oResult:NetErr()
 ENDIF
 RETURN oResult
 
-
+// -------------------------------------
 // setovanje sql schema path-a
-function _set_sql_path( oServer, cPath )
-local cSrch_path := "SET search_path TO " + cPath + ";"
-local oResult
-local cMsg
+function _set_sql_path( oServer)
+local _server := my_server()
+local _path := my_server_search_path()
 
-oResult := oServer:Query( cSrch_path )
-IF oResult:NetErr()
-      cMsg := oResult:ErrorMsg()
+local _qry := "SET search_path TO " + _path + ";"
+local _result
+local _msg
+
+_result := _server:Query( _qry )
+IF _result:NetErr()
+      _msg := _result:ErrorMsg()
       if gDebug > 0 
-         log_write(cQuery)
-         log_write(cMsg)
+         log_write(_qry)
+         log_write(_msg)
       endif
-      MsgBeep( cMsg )
+      MsgBeep( _msg )
       return .f.
 ENDIF
-RETURN oResult
+
+RETURN _result
 
 
 

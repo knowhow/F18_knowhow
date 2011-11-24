@@ -685,6 +685,35 @@ local _doks_nv := 0
 local _doks_vpv := 0
 local _doks_mpv := 0
 local _doks_rabat := 0
+local _tbl_kalk
+local _tbl_doks
+local _i
+local _retry := 3
+local _tmp_id
+local _ids := {}
+
+_tbl_kalk := "kalk_kalk"
+_tbl_doks := "kalk_doks"
+
+for _i := 1 to _retry
+
+	// provjeri kalk
+	if get_semaphore_status( _tbl_kalk ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl_kalik )
+		hb_IdleSleep(2)
+	else
+		lock_semaphore( _tbl_kalk, "lock" )
+	endif
+
+	// provjeri kalk_doks
+	if get_semaphore_status( _tbl_doks ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl_doks )
+		hb_IdleSleep(2)
+	else
+		lock_semaphore( _tbl_doks, "lock" )
+	endif
+
+next
 
 // azuriraj kalk
 MsgO("sql kalk_kalk")
@@ -706,6 +735,8 @@ sql_kalk_kalk_update("BEGIN")
 
 do while !eof()
  
+   _tmp_id := record["id_firma"] + record["id_vd"] + record["br_dok"]
+
    record["id_firma"] := field->idfirma
    record["id_vd"] := field->idvd
    record["br_dok"] := field->brdok
@@ -775,14 +806,19 @@ enddo
 MsgC()
 
 if !lOk
+
   	sql_kalk_kalk_update("ROLLBACK")
+		
+	lock_semaphore( _tbl_kalk, "free" )
+	lock_semaphore( _tbl_doks, "free" )
+
 	return lOk
+
 endif
 
 // azuriraj doks...
 MsgO("sql kalk_doks")
 
-O_KALK_PRIPR
 select kalk_pripr
 go top
 
@@ -811,7 +847,6 @@ record["vpv"] := _doks_vpv
 record["rabat"] := _doks_rabat
 record["mpv"] := _doks_mpv
 record["pod_br"] := field->podbr
-//record["sifra"] := field->sifra
  
 if !sql_kalk_doks_update( "ins", record )
        lOk := .f.
@@ -820,21 +855,36 @@ endif
 MsgC()
 
 if !lOk
-  	sql_kalk_kalk_update("ROLLBACK")
+  	
+	sql_kalk_kalk_update("ROLLBACK")
   	sql_kalk_doks_update("ROLLBACK")
+	
+	lock_semaphore( _tbl_kalk, "free" )
+	lock_semaphore( _tbl_doks, "free" )
+
 	return lOk
+
 endif
 
 
 if lOk
 	
 	// napravi update-e
-	// zavrsi transakcije  
-	update_semaphore_version("kalk_doks")
-  	sql_kalk_kalk_update("END")
+	// zavrsi transakcije 
+ 
+	AADD( _ids, _tmp_id )
+
+	update_semaphore_version( _tbl_doks, .t. )
+	push_ids_to_semaphore( _tbl_doks, _ids ) 
+  	sql_kalk_doks_update("END")
 	
-	update_semaphore_version("kalk_kalk")
+	update_semaphore_version( _tbl_kalk, .t. )
+	push_ids_to_semaphore( _tbl_kalk, _ids ) 
   	sql_kalk_kalk_update("END")
+
+	// otkljucaj tabele...
+	lock_semaphore( _tbl_kalk, "free" )
+	lock_semaphore( _tbl_doks, "free" )
 
 endif
 

@@ -70,7 +70,8 @@ RETURN oResult
 
 // -------------------------------------
 // setovanje sql schema path-a
-function _set_sql_path( oServer)
+// -----------------------------------
+function set_sql_search_path()
 local _server := my_server()
 local _path := my_server_search_path()
 

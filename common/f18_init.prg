@@ -81,7 +81,6 @@ if my_server():NetErr()
 	  quit
 
 endif
-_set_sql_path(  my_server() )
 
 // init_threads()
 
@@ -124,6 +123,7 @@ endif
 
 __server :=  TPQServer():New( params["host_name"], params["database"], params["user"], params["password"], params["port"], params["schema"] )
 
+set_sql_search_path()
 return __server
 
 // --------------------------
@@ -138,7 +138,7 @@ return __server
 function my_server_search_path(path)
 local _key := "search_path"
 
-if path == nil .and. !hb_hhaskey(__server_params, _key)
+if path == nil .or. !hb_hhaskey(__server_params, _key)
    __server_params[_key] := "fmk,public"
 else
    __server_params[_key] := path

@@ -2,6 +2,6 @@
   #include "fmk.ch"
 #endif
 
-#define D_FI_VERZIJA "0.8.5"
-#define D_FI_PERIOD "11.94-23.11.11"
+#define D_FI_VERZIJA "0.9.0"
+#define D_FI_PERIOD "11.94-25.11.11"
 

@@ -6,7 +6,9 @@
 
 #define F18_DEFINED
 
-#define FMK_LIB_VER  "0.8.0"
+#define F18_VER  "0.9.0"
+
+#define FMK_LIB_VER  "0.8.5"
 
 
 #define EXEPATH   my_home_root()
@@ -16,6 +18,7 @@
 
 #define KUMPATH  my_home()
 #define CURDIR   my_home()
+
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
 #define SEMAPHORE_LOCK_RETRY_NUM 3

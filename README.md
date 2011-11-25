@@ -1,10 +1,14 @@
 # F18
 
-## dev environment
+## dev environment MAC
 
 <pre>
 $ source scripts/mac_set_envars.sh
 $ ./build.sh
 </pre>
 
-rezultat treba biti F18 execute
+rezultat treba biti F18:
+
+```
+./F18
+```

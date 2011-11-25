@@ -1,4 +1,4 @@
-0.9.0, 2011-09-10, hernad, init changelog 
+0.9.0, 2011-11-25, hernad, init changelog 
 
     #define F18_VER  "0.9.0"
 

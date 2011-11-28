@@ -249,7 +249,7 @@ DO CASE
                             + _sql_quote( record["id_partner"] ) + "," +;
                             + _sql_quote( record["din_dem"] ) + "," +;
                             + _sql_quote( record["zaokr"] ) + "," +;
-                            + _sql_quote(STR( record["podbr"], 4 )) + "," +;
+                            + _sql_quote(STR( record["pod_br"], 4 )) + "," +;
                             + _sql_quote( record["id_roba"] ) + "," +;
                             + _sql_quote( record["ser_br"] ) + "," +;
                             + STR( record["kolicina"], 14, 5 ) + "," +;
@@ -302,6 +302,12 @@ local _x, _y
 local _dat, _ids
 local _fnd, _tmp_id
 local _tbl
+local _count
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idtipdok, brdok"
+local _key_block
 
 if algoritam == NIL
   algoritam := "FULL"
@@ -316,77 +322,23 @@ _tbl := "fmk.fakt_doks"
 
 _seconds := SECONDS()
 
-_qry :=  "SELECT " + ;
+_count := table_count( _tbl, "true" )
+
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT " + ;
 		"idfirma, idtipdok, brdok, partner, datdok, dindem, iznos, rabat, rezerv, m1, idpartner, " + ;
 		"idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_ispl, dat_otpr, dat_val " + ;
 		"FROM " + _tbl
 
-if algoritam == "DATE"
-    _dat = get_dat_from_semaphore( _tbl )
-    _qry += " WHERE datdok >= " + _sql_quote(_dat)
-endif
+  if algoritam == "DATE"
+      _dat = get_dat_from_semaphore( _tbl )
+      _qry += " WHERE datdok >= " + _sql_quote(_dat)
+      _key_block := { || field->datdok }
+  endif
 
-_qry_obj := _server:Query(_qry) 
-if _qry_obj:NetErr()
-   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
-   QUIT
-endif
-
-SELECT F_FAKT_DOKS
-my_use ("fakt_doks", "fakt_doks", .f., "SEMAPHORE")
-
-DO CASE
-
-	CASE algoritam == "FULL"
-    	
-		// "full" algoritam
-    	log_write("dat_dok = nil full algoritam") 
-	    ZAP
-	
-	CASE algoritam == "DATE"
-
-    	log_write("dat_dok <> nil date algoritam") 
-    	// "date" algoritam  - brisi sve vece od zadanog datuma
-    	SET ORDER TO TAG "5"
-    	// tag je "DatDok" nije DTOS(DatDok)
-    	seek _dat
-    	do while !eof() .and. (field->datDok >= _dat) 
-        	// otidji korak naprijed
-        	SKIP
-        	_rec := RECNO()
-        	SKIP -1
-        	DELETE
-        	GO _rec  
-    	enddo
-
-	CASE algoritam == "IDS"
-    	
-		_ids := get_ids_from_semaphore("fakt_doks")
-    	
-		SET ORDER TO TAG "1"
-
-		// CREATE_INDEX("1", "idFirma+IdTipDok+BrDok", "FAKT_DOKS")
-    	// pobrisimo sve id-ove koji su drugi izmijenili
-    	do while .t.
-       		_fnd := .f.
-       		for each _tmp_id in _ids
-          		
-          		HSEEK _tmp_id
-          		
-				do while !EOF() .and. (field->idfirma + field->idtipdok + field->brdok ) == _tmp_id
-               		skip
-               		_rec := RECNO()
-               		skip -1 
-               		DELETE
-               		go _rec 
-               		_fnd := .t.
-          		enddo
-        	next
-        	if ! _fnd 
-				exit
-			endif
-    	enddo
-
+  if algoritam == "IDS"
+		_ids := get_ids_from_semaphore( _tbl )
     	_qry += " WHERE "
     	if LEN(_ids) < 1
        		// nema id-ova
@@ -403,19 +355,75 @@ DO CASE
         	_qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
      	endif
 
-END CASE
+        _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
+  endif
 
-_qry_obj := _server:Query( _qry )
-if _qry_obj:NetErr()
-	Msgbeep("ajoj :" + _qry_obj:ErrorMsg())
-	QUIT
-endif
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
 
-@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-_counter := 1
+  SELECT F_FAKT_DOKS
+  my_use ("fakt_doks", "fakt_doks", .f., "SEMAPHORE")
 
-DO WHILE !_qry_obj:Eof()
+  DO CASE
+
+	CASE algoritam == "FULL"
+    	
+		// "full" algoritam
+    	log_write("dat_dok = nil full algoritam") 
+	    ZAP
+	
+	CASE algoritam == "DATE"
+
+    	log_write("dat_dok <> nil date algoritam") 
+    	// "date" algoritam  - brisi sve vece od zadanog datuma
+    	SET ORDER TO TAG "5"
+    	// tag je "DatDok" nije DTOS(DatDok)
+    	seek _dat
+    	do while !eof() .and. EVAL( _key_block ) >= _dat 
+        	// otidji korak naprijed
+        	SKIP
+        	_rec := RECNO()
+        	SKIP -1
+        	DELETE
+        	GO _rec  
+    	enddo
+
+	CASE algoritam == "IDS"
+    	
+		SET ORDER TO TAG "1"
+
+		// CREATE_INDEX("1", "idFirma+IdTipDok+BrDok", "FAKT_DOKS")
+    	// pobrisimo sve id-ove koji su drugi izmijenili
+    	do while .t.
+       		_fnd := .f.
+       		for each _tmp_id in _ids
+          		
+          		HSEEK _tmp_id
+          		
+				do while !EOF() .and. EVAL( _key_block ) == _tmp_id 
+               		skip
+               		_rec := RECNO()
+               		skip -1 
+               		DELETE
+               		go _rec 
+               		_fnd := .t.
+          		enddo
+        	next
+        	if ! _fnd 
+				exit
+			endif
+    	enddo
+
+  ENDCASE
+
+  _qry_obj := run_sql_query( _qry, _retry )
+
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
     append blank
    
 	replace idfirma with _qry_obj:FieldGet(1), ;
@@ -446,10 +454,11 @@ DO WHILE !_qry_obj:Eof()
     if _counter % 5000 == 0
         @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
-ENDDO
+  ENDDO
 
-USE
-_qry_obj:Close()
+  USE
+
+next
 
 if (gDebug > 5)
     log_write("fakt_doks synchro cache:" + STR(SECONDS() - _seconds))

@@ -362,6 +362,15 @@ local _seconds
 local _x, _y
 local _dat, _ids
 local _fnd, _tmp_id
+local _count
+local _tbl
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idvd, brdok"
+local _key_block
+
+_tbl := "fmk.kalk_doks"
 
 if algoritam == NIL
   algoritam := "FULL"
@@ -374,78 +383,24 @@ _y := maxcols() - 20
 
 _seconds := SECONDS()
 
-_qry :=  "SELECT " + ;
+_count := table_count( _tbl, "true" )
+
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT " + ;
 		"idfirma, idvd, brdok, datdok, brfaktp, idpartner, idzaduz, idzaduz2, " + ;
 		"pkonto, mkonto, nv, vpv, rabat, mpv, podbr, sifra " + ;
 		"FROM " + ;
 		"fmk.kalk_doks"  
 
-if algoritam == "DATE"
-    _dat = get_dat_from_semaphore("kalk_kalk")
+  if algoritam == "DATE"
+    _dat = get_dat_from_semaphore( _tbl )
     _qry += " WHERE datdok >= " + _sql_quote(_dat)
-endif
+    _key_block := { || field->datdok }
+  endif
 
-_qry_obj := _server:Query(_qry) 
-if _qry_obj:NetErr()
-   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
-   QUIT
-endif
-
-SELECT F_KALK_DOKS
-my_use ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
-
-DO CASE
-
-	CASE algoritam == "FULL"
-    	
-		// "full" algoritam
-    	log_write("dat_dok = nil full algoritam") 
-	    ZAP
-	
-	CASE algoritam == "DATE"
-
-    	log_write("dat_dok <> nil date algoritam") 
-    	// "date" algoritam  - brisi sve vece od zadanog datuma
-    	SET ORDER TO TAG "DAT"
-    	// tag je "DatDok" nije DTOS(DatDok)
-    	seek _dat
-    	do while !eof() .and. (field->datDok >= _dat) 
-        	// otidji korak naprijed
-        	SKIP
-        	_rec := RECNO()
-        	SKIP -1
-        	DELETE
-        	GO _rec  
-    	enddo
-
-	CASE algoritam == "IDS"
-    	
+  if algoritam == "IDS"
 		_ids := get_ids_from_semaphore("kalk_doks")
-    	
-		SET ORDER TO TAG "1"
-
-		// CREATE_INDEX("1", "idFirma+IdVd+BrDok", "KALK_DOKS")
-    	// pobrisimo sve id-ove koji su drugi izmijenili
-    	do while .t.
-       		_fnd := .f.
-       		for each _tmp_id in _ids
-          		
-          		HSEEK _tmp_id
-          		
-				do while !EOF() .and. (field->idfirma + field->idvd + field->brdok) == _tmp_id
-               		skip
-               		_rec := RECNO()
-               		skip -1 
-               		DELETE
-               		go _rec 
-               		_fnd := .t.
-          		enddo
-        	next
-        	if ! _fnd 
-				exit
-			endif
-    	enddo
-
     	_qry += " WHERE "
     	if LEN(_ids) < 1
        		// nema id-ova
@@ -462,19 +417,74 @@ DO CASE
         	_qry += " (idfirma || idvd || brdok) IN " + _sql_ids
      	endif
 
-END CASE
+        _key_block := {|| field->idfirma + field->idvd + field->brdok } 
+  endif
 
-_qry_obj := _server:Query( _qry )
-if _qry_obj:NetErr()
-	Msgbeep("ajoj :" + _qry_obj:ErrorMsg())
-	QUIT
-endif
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
 
-@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+  SELECT F_KALK_DOKS
+  my_use ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
 
-_counter := 1
+  DO CASE
 
-DO WHILE !_qry_obj:Eof()
+	CASE algoritam == "FULL"
+    	
+		// "full" algoritam
+    	log_write("dat_dok = nil full algoritam") 
+	    ZAP
+	
+	CASE algoritam == "DATE"
+
+    	log_write("dat_dok <> nil date algoritam") 
+    	// "date" algoritam  - brisi sve vece od zadanog datuma
+    	SET ORDER TO TAG "DAT"
+    	// tag je "DatDok" nije DTOS(DatDok)
+    	seek _dat
+    	do while !eof() .and. EVAL( _key_block ) >= _dat 
+        	// otidji korak naprijed
+        	SKIP
+        	_rec := RECNO()
+        	SKIP -1
+        	DELETE
+        	GO _rec  
+    	enddo
+
+	CASE algoritam == "IDS"
+    	
+		SET ORDER TO TAG "1"
+
+		// CREATE_INDEX("1", "idFirma+IdVd+BrDok", "KALK_DOKS")
+    	// pobrisimo sve id-ove koji su drugi izmijenili
+    	do while .t.
+       		_fnd := .f.
+       		for each _tmp_id in _ids
+          		
+          		HSEEK _tmp_id
+          		
+				do while !EOF() .and. EVAL( _key_block ) == _tmp_id
+               		skip
+               		_rec := RECNO()
+               		skip -1 
+               		DELETE
+               		go _rec 
+               		_fnd := .t.
+          		enddo
+        	next
+        	if ! _fnd 
+				exit
+			endif
+    	enddo
+
+  ENDCASE
+
+  _qry_obj := run_sql_query( _qry, _retry )
+
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
     append blank
 
 	/*
@@ -506,13 +516,14 @@ DO WHILE !_qry_obj:Eof()
     if _counter % 5000 == 0
         @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
-ENDDO
+  ENDDO
 
-USE
-_qry_obj:Close()
+  USE
+
+next
 
 if (gDebug > 5)
-    log_write("kalk_kalk synchro cache:" + STR(SECONDS() - _seconds))
+    log_write("kalk_doks synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
 close all

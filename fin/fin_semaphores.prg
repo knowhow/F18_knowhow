@@ -12,9 +12,9 @@
 #include "fin.ch"
 #include "common.ch"
 
-// ------------------------------
-// koristi azur_sql
-// ------------------------------
+// --------------------------------------------------------
+// fin_suban - sinhronizacija sa servera
+// --------------------------------------------------------
 function fin_suban_from_sql_server(algoritam)
 local _qry
 local _counter
@@ -25,6 +25,15 @@ local _seconds
 local _x, _y
 local _dat, _ids
 local _fnd, _tmp_id
+local _count
+local _tbl
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idvn, brnal, rbr"
+local _key_block
+
+_tbl := "fmk.fin_suban"
 
 _x := maxrows() - 15
 _y := maxcols() - 20
@@ -37,30 +46,62 @@ endif
 
 _seconds := SECONDS()
 
-_qry :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
+_count := table_count( _tbl, "true" ) 
 
-if algoritam == "DATE"
-    _dat :=  get_dat_from_semaphore("fin_suban")
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd, iznosdem FROM " + _tbl  
+
+  if algoritam == "DATE"
+    _dat :=  get_dat_from_semaphore( _tbl )
     _qry += " WHERE datdok>=" + _sql_quote(_dat)
-endif
+    _key_block := { || field->datdok }
+  endif
 
-SELECT F_SUBAN
-my_use ("suban", "fin_suban", .f., "SEMAPHORE")
+  if algoritam == "IDS"
+		_ids := get_ids_from_semaphore( _tbl )
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+     	endif
 
-DO CASE
+        _key_block := {|| field->idfirma + field->idvn + field->brnal } 
+  endif
 
- CASE algoritam == "FULL"
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+
+  SELECT F_SUBAN
+  my_use ("suban", "fin_suban", .f., "SEMAPHORE")
+
+  DO CASE
+
+   CASE algoritam == "FULL"
+    
     // "full" algoritam
     log_write("dat_dok = nil full algoritam") 
     ZAP
 
- CASE algoritam == "DATE"
+   CASE algoritam == "DATE"
+
     log_write("dat_dok <> nil date algoritam") 
     // "date" algoritam  - brisi sve vece od zadanog datuma
     SET ORDER TO TAG "8"
     // tag je "DatDok" nije DTOS(DatDok)
     seek _dat
-    do while !eof() .and. (field->datDok >= _dat) 
+    do while !eof() .and. eval( _key_block )  >= _dat 
         // otidji korak naprijed
         SKIP
         _rec := RECNO()
@@ -69,10 +110,8 @@ DO CASE
         GO _rec  
     enddo
 
- CASE algoritam == "IDS"
+   CASE algoritam == "IDS"
 
-    _ids := get_ids_from_semaphore("fin_suban")
-    
 	SET ORDER TO TAG "4"
 
 	// CREATE_INDEX("4", "idFirma+IdVN+BrNal+Rbr", "SUBAN")
@@ -81,7 +120,7 @@ DO CASE
        _fnd := .f.
        for each _tmp_id in _ids
           HSEEK _tmp_id
-          do while !EOF() .and. (idfirma + idvn + brnal) == _tmp_id
+          do while !EOF() .and. EVAL( _key_block ) == _tmp_id
                skip
                _rec := RECNO()
                skip -1 
@@ -90,38 +129,20 @@ DO CASE
                _fnd := .t.
           enddo
         next
-        if ! _fnd ; exit ; endif
+        if !_fnd 
+			 exit 
+		endif
     enddo
 
-    _qry += " WHERE "
-    if LEN(_ids) < 1
-       // nema id-ova
-       _qry += "false"
-    else
-        _sql_ids := "("
-        for _i := 1 to LEN(_ids)
-            _sql_ids += _sql_quote(_ids[_i])
-            if _i < LEN(_ids)
-            _sql_ids += ","
-            endif
-        next
-        _sql_ids += ")"
-        _qry += " (idfirma || idvn || brnal) IN " + _sql_ids
-     endif
+  ENDCASE
 
-END CASE
+  _qry_obj := run_sql_query( _qry, _retry ) 
 
-_qry_obj := _server:Query(_qry) 
-if _qry_obj:NetErr()
-   MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
-   QUIT
-endif
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+  _counter := 1
 
-_counter := 1
-
-DO WHILE !_qry_obj:Eof()
+  DO WHILE !_qry_obj:Eof()
     append blank
     //cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartn, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
     replace idfirma with _qry_obj:FieldGet(1), ;
@@ -134,7 +155,8 @@ DO WHILE !_qry_obj:Eof()
             idpartner with _qry_obj:FieldGet(8), ;
             idkonto with _qry_obj:FieldGet(9), ;
             d_p with _qry_obj:FieldGet(10), ;
-            iznosbhd with _qry_obj:FieldGet(11)
+            iznosbhd with _qry_obj:FieldGet(11), ;
+            iznosdem with _qry_obj:FieldGet(12)
 
     _qry_obj:Skip()
 
@@ -143,10 +165,11 @@ DO WHILE !_qry_obj:Eof()
     if _counter % 5000 == 0
         @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
-ENDDO
+  ENDDO
 
-USE
-_qry_obj:Close()
+  USE
+
+next
 
 if (gDebug > 5)
     log_write("fin_suban synchro cache:" + STR(SECONDS() - _seconds))
@@ -156,7 +179,10 @@ close all
  
 return .t. 
 
+
+
 // ----------------------------------------------
+// fin_suban - update
 // ----------------------------------------------
 function sql_fin_suban_update( op, record )
 
@@ -170,6 +196,11 @@ LOCAL _server := pg_server()
 
 _tbl := "fmk.fin_suban"
 
+if record <> nil
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
+                        " and brnal=" + _sql_quote(record["br_nal"]) 
+endif
+
 DO CASE
  CASE op == "BEGIN"
     _qry := "BEGIN;"
@@ -178,15 +209,12 @@ DO CASE
  CASE op == "ROLLBACK"
     _qry := "ROLLBACK;"
  CASE op == "del"
-    _where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
-                        " and brnal=" + _sql_quote(record["br_nal"]) 
-    //                        " and rbr=" + _sql_quote(STR(record["r_br"], 4)); 
     _qry := "DELETE FROM " + _tbl + ;
              " WHERE " + _where
  CASE op == "ins"
 
     _qry := "INSERT INTO " + _tbl + ;
-                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd) " + ;
+                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd, iznosdem) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
                             + _sql_quote( record["br_nal"] ) + "," +; 
@@ -197,7 +225,8 @@ DO CASE
                             + _sql_quote( record["id_partner"] ) + "," +; 
                             + _sql_quote( record["id_konto"] ) + "," +; 
                             + _sql_quote( record["d_p"] ) + "," +; 
-                            + STR( record["iznos"], 17, 2) + ")" 
+                            + STR( record["iznos_bhd"], 17, 2) + "," + ;
+							+ STR( record["iznos_dem"], 17, 2) + ")" 
 
 END CASE
    
@@ -205,6 +234,7 @@ _ret := _sql_query( _server, _qry)
 
 if (gDebug > 5)
    log_write(_qry)
+   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
 endif
 
 if VALTYPE(_ret) == "L"
@@ -214,16 +244,683 @@ else
    return .t.
 endif
  
-function fin_anal_from_sql_server()
 
-return
 
-function fin_sint_from_sql_server()
+// -------------------------------------------------------------------
+// fin_anal - sinhronizacija sa servera
+// -------------------------------------------------------------------
+function fin_anal_from_sql_server( algoritam )
+local _qry
+local _counter
+local _rec
+local _qry_obj
+local _server := pg_server()
+local _seconds
+local _x, _y
+local _dat, _ids
+local _fnd, _tmp_id
+local _count
+local _tbl
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idvn, brnal, rbr"
+local _key_block
 
-return
+_tbl := "fmk.fin_anal"
 
-function fin_nalog_from_sql_server()
+_x := maxrows() - 15
+_y := maxcols() - 20
 
-return
+if algoritam == NIL
+   algoritam := "FULL"
+endif
+
+@ _x + 1, _y + 2 SAY "update fin_anal: " + algoritam
+
+_seconds := SECONDS()
+
+_count := table_count( _tbl, "true" ) 
+
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
+
+  if algoritam == "DATE"
+    _dat :=  get_dat_from_semaphore( _tbl )
+    _qry += " WHERE datnal >= " + _sql_quote(_dat)
+    _key_block := { || field->datnal }
+  endif
+
+  if algoritam == "IDS"
+		_ids := get_ids_from_semaphore( _tbl )
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+     	endif
+
+        _key_block := {|| field->idfirma + field->idvn + field->brnal } 
+  endif
+
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+
+  SELECT F_ANAL
+  my_use ("anal", "fin_anal", .f., "SEMAPHORE")
+
+  DO CASE
+
+   CASE algoritam == "FULL"
+    
+    // "full" algoritam
+    log_write("dat_nal = nil full algoritam") 
+    ZAP
+
+   CASE algoritam == "DATE"
+
+    log_write("dat_nal <> nil date algoritam") 
+    // "date" algoritam  - brisi sve vece od zadanog datuma
+    SET ORDER TO TAG "5"
+    // tag je "DatDok" nije DTOS(DatDok)
+    seek _dat
+    do while !eof() .and. eval( _key_block )  >= _dat 
+        // otidji korak naprijed
+        SKIP
+        _rec := RECNO()
+        SKIP -1
+        DELETE
+        GO _rec  
+    enddo
+
+   CASE algoritam == "IDS"
+
+	SET ORDER TO TAG "2"
+
+	// CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", "ANAL")
+    // pobrisimo sve id-ove koji su drugi izmijenili
+    do while .t.
+       _fnd := .f.
+       for each _tmp_id in _ids
+          HSEEK _tmp_id
+          do while !EOF() .and. EVAL( _key_block ) == _tmp_id
+               skip
+               _rec := RECNO()
+               skip -1 
+               DELETE
+               go _rec 
+               _fnd := .t.
+          enddo
+        next
+        if !_fnd 
+			 exit 
+		endif
+    enddo
+
+  ENDCASE
+
+  _qry_obj := run_sql_query( _qry, _retry ) 
+
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
+    append blank
+    // qry :=  "idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem"  
+    replace idfirma with _qry_obj:FieldGet(1), ;
+            idvn with _qry_obj:FieldGet(2), ;
+            brnal with _qry_obj:FieldGet(3), ;
+            rbr with _qry_obj:FieldGet(4), ;
+            datnal with _qry_obj:FieldGet(5), ;
+            idkonto with _qry_obj:FieldGet(6), ;
+            dugbhd with _qry_obj:FieldGet(7), ;
+            potbhd with _qry_obj:FieldGet(8), ;
+            dugdem with _qry_obj:FieldGet(9), ;
+            potdem with _qry_obj:FieldGet(10)
+
+    _qry_obj:Skip()
+
+    _counter++
+
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
+    endif 
+  ENDDO
+
+  USE
+
+next
+
+if (gDebug > 5)
+    log_write("fin_anal synchro cache:" + STR(SECONDS() - _seconds))
+endif
+
+close all
+ 
+return .t.
+
+
+// ----------------------------------------------
+// fin_anal - update
+// ----------------------------------------------
+function sql_fin_anal_update( op, record )
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _where
+LOCAL _server := pg_server()
+
+_tbl := "fmk.fin_anal"
+
+if record <> nil
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
+                        " and brnal=" + _sql_quote(record["br_nal"]) 
+endif
+
+DO CASE
+ CASE op == "BEGIN"
+    _qry := "BEGIN;"
+ CASE op == "END"
+    _qry := "COMMIT;"
+ CASE op == "ROLLBACK"
+    _qry := "ROLLBACK;"
+ CASE op == "del"
+    _qry := "DELETE FROM " + _tbl + ;
+             " WHERE " + _where
+ CASE op == "ins"
+    _qry := "INSERT INTO " + _tbl + ;
+                "(idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem) " + ;
+                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
+                            + _sql_quote( record["id_vn"] ) + "," +; 
+                            + _sql_quote( record["br_nal"] ) + "," +; 
+                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
+                            + _sql_quote( record["dat_nal"] ) + "," +; 
+                            + _sql_quote( record["id_konto"] ) + "," +; 
+                            + STR( record["dug_bhd"], 17, 2 ) + "," +; 
+                            + STR( record["pot_bhd"], 17, 2 ) + "," +; 
+                            + STR( record["dug_dem"], 15, 2 ) + "," +; 
+                            + STR( record["pot_dem"], 15, 2) + ")" 
+
+END CASE
+   
+_ret := _sql_query( _server, _qry)
+
+if (gDebug > 5)
+   log_write(_qry)
+   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
+endif
+
+if VALTYPE(_ret) == "L"
+   // u slucaju ERROR-a _sql_query vraca  .f.
+   return _ret
+else
+   return .t.
+endif
+ 
+
+
+
+// -------------------------------------------------------------------
+// fin_sint - sinhronizacija sa servera
+// -------------------------------------------------------------------
+function fin_sint_from_sql_server( algoritam )
+local _qry
+local _counter
+local _rec
+local _qry_obj
+local _server := pg_server()
+local _seconds
+local _x, _y
+local _dat, _ids
+local _fnd, _tmp_id
+local _count
+local _tbl
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idvn, brnal, rbr"
+local _key_block
+
+_tbl := "fmk.fin_sint"
+
+_x := maxrows() - 15
+_y := maxcols() - 20
+
+if algoritam == NIL
+   algoritam := "FULL"
+endif
+
+@ _x + 1, _y + 2 SAY "update fin_sint: " + algoritam
+
+_seconds := SECONDS()
+
+_count := table_count( _tbl, "true" ) 
+
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
+
+  if algoritam == "DATE"
+    _dat :=  get_dat_from_semaphore( _tbl )
+    _qry += " WHERE datnal >= " + _sql_quote(_dat)
+    _key_block := { || field->datnal }
+  endif
+
+  if algoritam == "IDS"
+		_ids := get_ids_from_semaphore( _tbl )
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+     	endif
+
+        _key_block := {|| field->idfirma + field->idvn + field->brnal } 
+  endif
+
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+
+  SELECT F_SINT
+  my_use ("sint", "fin_sint", .f., "SEMAPHORE")
+
+  DO CASE
+
+   CASE algoritam == "FULL"
+    
+    // "full" algoritam
+    log_write("dat_nal = nil full algoritam") 
+    ZAP
+
+   CASE algoritam == "DATE"
+
+    log_write("dat_nal <> nil date algoritam") 
+    // "date" algoritam  - brisi sve vece od zadanog datuma
+    SET ORDER TO TAG "3"
+    // tag je "DatDok" nije DTOS(DatDok)
+    seek _dat
+    do while !eof() .and. eval( _key_block )  >= _dat 
+        // otidji korak naprijed
+        SKIP
+        _rec := RECNO()
+        SKIP -1
+        DELETE
+        GO _rec  
+    enddo
+
+   CASE algoritam == "IDS"
+
+	SET ORDER TO TAG "2"
+
+	// CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", "SINT")
+    // pobrisimo sve id-ove koji su drugi izmijenili
+    do while .t.
+       _fnd := .f.
+       for each _tmp_id in _ids
+          HSEEK _tmp_id
+          do while !EOF() .and. EVAL( _key_block ) == _tmp_id
+               skip
+               _rec := RECNO()
+               skip -1 
+               DELETE
+               go _rec 
+               _fnd := .t.
+          enddo
+        next
+        if !_fnd 
+			 exit 
+		endif
+    enddo
+
+  ENDCASE
+
+  _qry_obj := run_sql_query( _qry, _retry ) 
+
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
+    append blank
+    // qry :=  "idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem"  
+    replace idfirma with _qry_obj:FieldGet(1), ;
+            idvn with _qry_obj:FieldGet(2), ;
+            brnal with _qry_obj:FieldGet(3), ;
+            rbr with _qry_obj:FieldGet(4), ;
+            datnal with _qry_obj:FieldGet(5), ;
+            idkonto with _qry_obj:FieldGet(6), ;
+            dugbhd with _qry_obj:FieldGet(7), ;
+            potbhd with _qry_obj:FieldGet(8), ;
+            dugdem with _qry_obj:FieldGet(9), ;
+            potdem with _qry_obj:FieldGet(10)
+
+    _qry_obj:Skip()
+
+    _counter++
+
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
+    endif 
+  ENDDO
+
+  USE
+
+next
+
+if (gDebug > 5)
+    log_write("fin_sint synchro cache:" + STR(SECONDS() - _seconds))
+endif
+
+close all
+ 
+return .t.
+
+
+// ----------------------------------------------
+// fin_sint - update
+// ----------------------------------------------
+function sql_fin_sint_update( op, record )
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _where
+LOCAL _server := pg_server()
+
+_tbl := "fmk.fin_sint"
+
+if record <> nil
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
+                        " and brnal=" + _sql_quote(record["br_nal"]) 
+endif
+
+DO CASE
+ CASE op == "BEGIN"
+    _qry := "BEGIN;"
+ CASE op == "END"
+    _qry := "COMMIT;"
+ CASE op == "ROLLBACK"
+    _qry := "ROLLBACK;"
+ CASE op == "del"
+    _qry := "DELETE FROM " + _tbl + ;
+             " WHERE " + _where
+ CASE op == "ins"
+    _qry := "INSERT INTO " + _tbl + ;
+                "(idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem) " + ;
+                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
+                            + _sql_quote( record["id_vn"] ) + "," +; 
+                            + _sql_quote( record["br_nal"] ) + "," +; 
+                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
+                            + _sql_quote( record["dat_nal"] ) + "," +; 
+                            + _sql_quote( record["id_konto"] ) + "," +; 
+                            + STR( record["dug_bhd"], 17, 2 ) + "," +; 
+                            + STR( record["pot_bhd"], 17, 2 ) + "," +; 
+                            + STR( record["dug_dem"], 15, 2 ) + "," +; 
+                            + STR( record["pot_dem"], 15, 2) + ")" 
+
+END CASE
+   
+_ret := _sql_query( _server, _qry)
+
+if (gDebug > 5)
+   log_write(_qry)
+   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
+endif
+
+if VALTYPE(_ret) == "L"
+   // u slucaju ERROR-a _sql_query vraca  .f.
+   return _ret
+else
+   return .t.
+endif
+ 
+
+
+
+// -------------------------------------------------------------------
+// fin_nalog - sinhronizacija sa servera
+// -------------------------------------------------------------------
+function fin_nalog_from_sql_server( algoritam )
+local _qry
+local _counter
+local _rec
+local _qry_obj
+local _server := pg_server()
+local _seconds
+local _x, _y
+local _dat, _ids
+local _fnd, _tmp_id
+local _count
+local _tbl
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idvn, brnal"
+local _key_block
+
+_tbl := "fmk.fin_nalog"
+
+_x := maxrows() - 15
+_y := maxcols() - 20
+
+if algoritam == NIL
+   algoritam := "FULL"
+endif
+
+@ _x + 1, _y + 2 SAY "update fin_nalog: " + algoritam
+
+_seconds := SECONDS()
+
+_count := table_count( _tbl, "true" ) 
+
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT idfirma, idvn, brnal, datnal, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
+
+  if algoritam == "DATE"
+    _dat :=  get_dat_from_semaphore( _tbl )
+    _qry += " WHERE datnal >= " + _sql_quote(_dat)
+    _key_block := { || field->datnal }
+  endif
+
+  if algoritam == "IDS"
+		_ids := get_ids_from_semaphore( _tbl )
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+     	endif
+
+        _key_block := {|| field->idfirma + field->idvn + field->brnal } 
+  endif
+
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+
+  SELECT F_NALOG
+  my_use ("nalog", "fin_nalog", .f., "SEMAPHORE")
+
+  DO CASE
+
+   CASE algoritam == "FULL"
+    
+    // "full" algoritam
+    log_write("dat_nal = nil full algoritam") 
+    ZAP
+
+   CASE algoritam == "DATE"
+
+    log_write("dat_nal <> nil date algoritam") 
+    // "date" algoritam  - brisi sve vece od zadanog datuma
+    SET ORDER TO TAG "4"
+    // tag je "DatDok" nije DTOS(DatDok)
+    seek _dat
+    do while !eof() .and. eval( _key_block )  >= _dat 
+        // otidji korak naprijed
+        SKIP
+        _rec := RECNO()
+        SKIP -1
+        DELETE
+        GO _rec  
+    enddo
+
+   CASE algoritam == "IDS"
+
+	SET ORDER TO TAG "1"
+
+	// CREATE_INDEX("1", "idFirma+IdVN+BrNal", "NALOG")
+    // pobrisimo sve id-ove koji su drugi izmijenili
+    do while .t.
+       _fnd := .f.
+       for each _tmp_id in _ids
+          HSEEK _tmp_id
+          do while !EOF() .and. EVAL( _key_block ) == _tmp_id
+               skip
+               _rec := RECNO()
+               skip -1 
+               DELETE
+               go _rec 
+               _fnd := .t.
+          enddo
+        next
+        if !_fnd 
+			 exit 
+		endif
+    enddo
+
+  ENDCASE
+
+  _qry_obj := run_sql_query( _qry, _retry ) 
+
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
+    append blank
+    // qry :=  "idfirma, idvn, brnal, datnal, dugbhd, potbhd, dugdem, potdem"  
+    replace idfirma with _qry_obj:FieldGet(1), ;
+            idvn with _qry_obj:FieldGet(2), ;
+            brnal with _qry_obj:FieldGet(3), ;
+            datnal with _qry_obj:FieldGet(4), ;
+            dugbhd with _qry_obj:FieldGet(5), ;
+            potbhd with _qry_obj:FieldGet(6), ;
+            dugdem with _qry_obj:FieldGet(7), ;
+            potdem with _qry_obj:FieldGet(8)
+
+    _qry_obj:Skip()
+
+    _counter++
+
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
+    endif 
+  ENDDO
+
+  USE
+
+next
+
+if (gDebug > 5)
+    log_write("fin_nalog synchro cache:" + STR(SECONDS() - _seconds))
+endif
+
+close all
+ 
+return .t.
+
+
+
+
+// ----------------------------------------------
+// fin_nalog - update
+// ----------------------------------------------
+function sql_fin_nalog_update( op, record )
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _where
+LOCAL _server := pg_server()
+
+_tbl := "fmk.fin_nalog"
+
+if record <> nil
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
+                        " and brnal=" + _sql_quote(record["br_nal"]) 
+endif
+
+DO CASE
+ CASE op == "BEGIN"
+    _qry := "BEGIN;"
+ CASE op == "END"
+    _qry := "COMMIT;"
+ CASE op == "ROLLBACK"
+    _qry := "ROLLBACK;"
+ CASE op == "del"
+    _qry := "DELETE FROM " + _tbl + ;
+             " WHERE " + _where
+ CASE op == "ins"
+    _qry := "INSERT INTO " + _tbl + ;
+                "(idfirma, idvn, brnal, datnal, dugbhd, potbhd, dugdem, potdem) " + ;
+                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
+                            + _sql_quote( record["id_vn"] ) + "," +; 
+                            + _sql_quote( record["br_nal"] ) + "," +; 
+                            + _sql_quote( record["dat_nal"] ) + "," +; 
+                            + STR( record["dug_bhd"], 17, 2 ) + "," +; 
+                            + STR( record["pot_bhd"], 17, 2 ) + "," +; 
+                            + STR( record["dug_dem"], 15, 2 ) + "," +; 
+                            + STR( record["pot_dem"], 15, 2) + ")" 
+
+END CASE
+   
+_ret := _sql_query( _server, _qry)
+
+if (gDebug > 5)
+   log_write(_qry)
+   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
+endif
+
+if VALTYPE(_ret) == "L"
+   // u slucaju ERROR-a _sql_query vraca  .f.
+   return _ret
+else
+   return .t.
+endif
+ 
 
 

@@ -404,12 +404,18 @@ if (nArea==-1 .or. nArea==(F_NALOG))
 	//NALOG.DBF
 
 	if !FILE(f18_ime_dbf("nalog"))
-        	DBcreate2(KUMPATH+"NALOG.DBF",aDbf)
+        	DBcreate2("NALOG",aDbf)
+			reset_semaphore_version("fin_nalog")
+			my_use("nalog")
+			close all
 	endif
+
+
 	
 	CREATE_INDEX("1","IdFirma+IdVn+BrNal",KUMPATH+"NALOG") 
 	CREATE_INDEX("2","IdFirma+str(val(BrNal),8)+idvn",KUMPATH+"NALOG") 
 	CREATE_INDEX("3","dtos(datnal)+IdFirma+idvn+brnal",KUMPATH+"NALOG") 
+	CREATE_INDEX("4","datnal",KUMPATH+"NALOG") 
 
 endif
 
@@ -519,9 +525,12 @@ if (nArea==-1 .or. nArea==(F_ANAL))
 	//ANAL.DBF
 
 	if !FILE(f18_ime_dbf("anal"))
- 		DBcreate2(KUMPATH+"ANAL.DBF",aDbf)
+ 		DBcreate2( "ANAL", aDbf )
+		reset_semaphore_version("fin_anal")
+		my_use("anal")
+		close all
 	endif
-	
+			
 	CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)",KUMPATH+"ANAL")  //analiti
 	CREATE_INDEX("2","idFirma+IdVN+BrNal+Rbr",KUMPATH+"ANAL")  //analiti
 	CREATE_INDEX("3","idFirma+dtos(DatNal)",KUMPATH+"ANAL")  //analiti
@@ -559,11 +568,16 @@ if (nArea==-1 .or. nArea==(F_SINT))
 	//SINT.DBF
 
 	if !FILE(f18_ime_dbf("sint"))
-        	DBcreate2(KUMPATH+"SINT.DBF",aDbf)
+        	DBcreate2( "SINT", aDbf )
+			reset_semaphore_version("fin_sint")
+			my_use("sint")
+			close all
 	endif
+
 	
 	CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)",KUMPATH+"SINT")  // sinteti
 	CREATE_INDEX("2","idFirma+IdVN+BrNal+Rbr",KUMPATH+"SINT")
+	CREATE_INDEX("3","datnal",KUMPATH+"SINT")
 
 endif
 

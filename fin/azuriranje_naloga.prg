@@ -85,68 +85,245 @@ return
 // ----------------------
 // ----------------------
 function fin_azur_sql(oServer)
-local lOk
+local lOk := .t.
 local _ids := {}
-local record := hb_hash()
+local record
 local _tmp_id
-local _tbl
+local _tbl_suban
+local _tbl_anal
+local _tbl_sint
+local _tbl_nalog
 local _i
 
-_tbl := "fin_suban"
+_tbl_suban := "fin_suban"
+_tbl_anal := "fin_anal"
+_tbl_nalog := "fin_nalog"
+_tbl_sint := "fin_sint"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-  if get_semaphore_status(_tbl) == "lock"
-      MsgBeep("tabela zakljucana: " + _tbl)
-      hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  else
-      lock_semaphore(_tbl, "lock")
-  endif
+	
+	// lock suban  
+	if get_semaphore_status( _tbl_suban ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_suban )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_suban, "lock" )
+  	endif
+
+	// lock anal  
+	if get_semaphore_status( _tbl_anal ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_anal )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_anal, "lock" )
+  	endif
+	
+	// lock sint
+	if get_semaphore_status( _tbl_sint ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_sint )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_sint, "lock" )
+  	endif
+	
+	// lock nalog
+	if get_semaphore_status( _tbl_nalog ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_nalog )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_nalog, "lock" )
+  	endif
+
 next
    
 // -----------------------------------
-MsgO("sql suban")
 
-SELECT PSUBAN
-GO TOP
-lOk := .t.
-sql_fin_suban_update("BEGIN")
-do while !eof()
+
+if lOk = .t.
+  
+  MsgO("sql suban")
+  
+  record := hb_hash()
+
+  SELECT PSUBAN
+  GO TOP
+  lOk := .t.
+  sql_fin_suban_update("BEGIN")
+  do while !eof()
+ 
+     record["id_firma"] := field->IdFirma
+     record["id_vn"] := field->IdVn
+     record["br_nal"] := field->BrNal
+     _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"]
+
+     record["r_br"] := VAL(field->Rbr)
+     record["dat_dok"] := field->DatDok
+     record["dat_val"] := field->DatVal
+     record["opis"] := field->opis
+     record["id_partner"] := field->IdPartner
+     record["id_konto"] := field->IdKonto
+     record["d_p"] := field->d_p
+     record["iznos_bhd"] := field->iznosbhd
+     record["iznos_dem"] := field->iznosdem
+
+     if !sql_fin_suban_update("ins", record )
+       lOk := .f.
+       exit
+     endif
+     SKIP
+  enddo
+
+  MsgC()
+
+endif
+
+// idi dalje, na anal ... ako je ok
+if lOk = .t.
+  
+  MsgO("sql anal")
+
+  record := hb_hash()
+
+  SELECT PANAL
+  GO TOP
+  sql_fin_anal_update("BEGIN")
+  do while !eof()
  
    record["id_firma"] := field->IdFirma
    record["id_vn"] := field->IdVn
    record["br_nal"] := field->BrNal
-   _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"]
-
    record["r_br"] := VAL(field->Rbr)
-   record["dat_dok"] := field->DatDok
-   record["dat_val"] := field->DatVal
-   record["opis"] := field->opis
-   record["id_partner"] := field->IdPartner
+   record["dat_nal"] := field->Datnal
    record["id_konto"] := field->IdKonto
-   record["d_p"] := field->d_p
-   record["iznos"] := field->iznosbhd
+   record["dug_bhd"] := field->dugbhd
+   record["pot_bhd"] := field->potbhd
+   record["dug_dem"] := field->dugdem
+   record["pot_dem"] := field->potdem
 
-   if !sql_fin_suban_update("ins", record )
+   if !sql_fin_anal_update("ins", record )
        lOk := .f.
        exit
     endif
    SKIP
-enddo
+  enddo
 
-if lOk
-  update_semaphore_version( _tbl, .t.)
-  AADD(_ids, _tmp_id) 
-  push_ids_to_semaphore( _tbl, _ids )
-  sql_fin_suban_update("END")
-else
-  sql_fin_suban_update("ROLLBACK")
+  MsgC()
+
 endif
 
-// u svakoj opciji oslobodi tabelu
-lock_semaphore(_tbl, "free")
 
-MsgC()
+// idi dalje, na sint ... ako je ok
+if lOk = .t.
+  
+  MsgO("sql sint")
+
+  record := hb_hash()
+
+  SELECT PSINT
+  GO TOP
+  sql_fin_sint_update("BEGIN")
+  do while !eof()
+ 
+   record["id_firma"] := field->IdFirma
+   record["id_vn"] := field->IdVn
+   record["br_nal"] := field->BrNal
+   record["r_br"] := VAL(field->Rbr)
+   record["dat_nal"] := field->Datnal
+   record["id_konto"] := LEFT( field->IdKonto, 3 )
+   record["dug_bhd"] := field->dugbhd
+   record["pot_bhd"] := field->potbhd
+   record["dug_dem"] := field->dugdem
+   record["pot_dem"] := field->potdem
+
+   if !sql_fin_sint_update("ins", record )
+       lOk := .f.
+       exit
+    endif
+   SKIP
+  enddo
+
+  MsgC()
+
+endif
+
+
+// idi dalje, na nalog ... ako je ok
+if lOk = .t.
+  
+  MsgO("sql nalog")
+
+  record := hb_hash()
+
+  SELECT PNALOG
+  GO TOP
+  sql_fin_nalog_update("BEGIN")
+  do while !eof()
+ 
+   record["id_firma"] := field->IdFirma
+   record["id_vn"] := field->IdVn
+   record["br_nal"] := field->BrNal
+   record["dat_nal"] := field->Datnal
+   record["dug_bhd"] := field->dugbhd
+   record["pot_bhd"] := field->potbhd
+   record["dug_dem"] := field->dugdem
+   record["pot_dem"] := field->potdem
+
+   if !sql_fin_nalog_update("ins", record )
+       lOk := .f.
+       exit
+    endif
+   SKIP
+  enddo
+
+  MsgC()
+
+endif
+
+
+if !lOk
+
+	// vrati sve promjene...  	
+	sql_fin_suban_update( "ROLLBACK" )
+	sql_fin_sint_update( "ROLLBACK" )
+	sql_fin_anal_update( "ROLLBACK" )
+	sql_fin_nalog_update( "ROLLBACK" )
+
+else
+
+	// dodaj ids
+  	AADD(_ids, _tmp_id) 
+	
+	// suban  
+	update_semaphore_version( _tbl_suban, .t.)
+  	push_ids_to_semaphore( _tbl_suban, _ids )
+  	sql_fin_suban_update("END")
+
+	// anal
+	update_semaphore_version( _tbl_anal, .t.)
+  	push_ids_to_semaphore( _tbl_anal, _ids )
+  	sql_fin_anal_update("END")
+	
+	// sint
+	update_semaphore_version( _tbl_sint, .t.)
+  	push_ids_to_semaphore( _tbl_sint, _ids )
+  	sql_fin_sint_update("END")
+	
+	// nalog
+	update_semaphore_version( _tbl_nalog, .t.)
+  	push_ids_to_semaphore( _tbl_nalog, _ids )
+  	sql_fin_nalog_update("END")
+
+endif
+
+// otkljucaj sve tabele
+lock_semaphore(_tbl_suban, "free")
+lock_semaphore(_tbl_anal, "free")
+lock_semaphore(_tbl_sint, "free")
+lock_semaphore(_tbl_nalog, "free")
+
 return lOk
+
+
 
 // ---------------------------
 // provjeri prije azuriranja

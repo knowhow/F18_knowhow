@@ -38,7 +38,10 @@ if (nArea==-1 .or. nArea == F_LOKAL)
 	cTbl := "LOKAL"
 
 	if !FILE(f18_ime_dbf(cTbl))
-		dbcreate2(SIFPATH+ cTbl + '.DBF', aDbf)
+		dbcreate2("LOKAL", aDbf)
+        reset_semaphore_version("lokal")
+        my_use("lokal")
+        close all
 	endif
 	
 	CREATE_INDEX("ID","id+STR(id_str,6,0)+naz",  SIFPATH+cTbl)

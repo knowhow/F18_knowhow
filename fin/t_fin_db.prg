@@ -716,7 +716,10 @@ if (nArea==-1 .or. nArea==(F_TRFP2))
         AADD(aDBf,{ "IDTARIFA"            , "C" ,   6 ,  0 })
 	
 	if !FILE(f18_ime_dbf("trfp2"))
-        	DBcreate2(SIFPATH+"TRFP2.DBF",aDbf)
+        	DBcreate2( "TRFP2", aDbf ) 
+			reset_semaphore_version("trfp2")
+			my_use("trfp2")
+			close all
 	endif
 
 	CREATE_INDEX("ID","idvd+shema+Idkonto",SIFPATH+"TRFP2")
@@ -735,7 +738,10 @@ if (nArea==-1 .or. nArea==(F_TRFP3))
         AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
 	
 	if !FILE(f18_ime_dbf("trfp3"))
-        	DBcreate2(SIFPATH+"TRFP3.DBF",aDbf)
+        	DBcreate2("TRFP3",aDbf)
+			reset_semaphore_version("trfp3")
+			my_use("trfp3")
+			close all	
 	endif
 
 	CREATE_INDEX("ID","shema+Idkonto",SIFPATH+"TRFP3")
@@ -752,7 +758,10 @@ if (nArea==-1 .or. nArea==(F_KONCIJ))
    	AADD(aDBf,{ "IDPRODMJES"          , "C" ,   2 ,  0 })
    
 	if !FILE(f18_ime_dbf("koncij"))
-      		DBcreate2(SIFPATH+"KONCIJ.DBF",aDbf)
+      		DBcreate2("KONCIJ",aDbf)
+			reset_semaphore_version("koncij")
+			my_use("koncij")
+			close all	
 	endif
 
 	CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
@@ -832,7 +841,10 @@ if (nArea==-1 .or. nArea==(F_TNAL))
 	if !FILE(f18_ime_dbf("vrstep"))
    		aDbf:={{"ID",  "C",  2, 0}, ;
              	       {"NAZ", "C", 20, 0}}
-   		DBcreate2(SIFPATH+"VRSTEP.DBF",aDbf)
+   		DBcreate2("VRSTEP",aDbf)
+		//reset_semaphore_version("vrstep")
+		//my_use("vrstep")
+		//close all	
 	endif
 	
 	CREATE_INDEX("ID","Id",SIFPATH+"VRSTEP.DBF")

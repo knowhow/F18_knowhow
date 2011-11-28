@@ -103,12 +103,15 @@ if !file(f18_ime_dbf("rj"))
 	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
 
    	DBCREATE2("rj", aDbf)
+    reset_semaphore_version("rj")
+    my_use("rj")
+	close all 
 endif
+
 CREATE_INDEX("ID","id", "rj")
-
 CREATE_INDEX("NAZ","NAZ", "rj")
-
 index_mcode(KUMPATH, "rj")
+
 
 // PARTN
 aDbf:={}
@@ -134,7 +137,7 @@ if !file(f18_ime_dbf("partn"))
     dbcreate2('partn', aDbf)
     reset_semaphore_version("partn")
     my_use("partn")
- 
+	close all 
 endif
 
 if !file(f18_ime_dbf("_partn"))
@@ -179,7 +182,8 @@ if !file(cIme)
         AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
         AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
         dbcreate2("valute", aDbf)
-        close all
+        reset_semaphore_version("valute")
+		close all
         my_use ('valute')
         append blank
         replace id with "000", naz with "KONVERTIBILNA MARKA", ;
@@ -243,6 +247,9 @@ if !file(f18_ime_dbf("sifk"))
    // validacija  mogu biti vrijednosti A,B,C,D
    //             aktiviraj funkciju ImeFje()
    dbcreate2('SIFK', aDbf)
+   reset_semaphore_version("sifk")
+   my_use("sifk")
+   close all
 endif
 CREATE_INDEX("ID","id+SORT+naz",  "sifk")
 CREATE_INDEX("ID2","id+oznaka", "sifk")
@@ -262,6 +269,9 @@ if !file(f18_ime_dbf("sifv.dbf"))  // sifrarnici - vrijednosti karakteristika
    // NAZ = 02030303030303
 
    dbcreate2('sifv', aDbf)
+   reset_semaphore_version("sifv")
+   my_use("sifv")
+   close all
 endif
 CREATE_INDEX("ID"      , "id+oznaka+IdSif+Naz", "sifv")
 CREATE_INDEX("IDIDSIF" , "id+IdSif", "sifv")
@@ -275,6 +285,9 @@ if !file(f18_ime_dbf("tnal"))
         add_f_mcode(@aDbf)
 	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
         dbcreate2('tnal',aDbf)
+        reset_semaphore_version("tnal")
+        my_use("tnal")
+        close all
 endif
 CREATE_INDEX("ID","id", "tnal")  
 CREATE_INDEX("NAZ","naz", "tnal")
@@ -287,6 +300,9 @@ if !file(f18_ime_dbf("tdok"))
         add_f_mcode(@aDbf)
 	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
         dbcreate2(f18_ime_dbf('tdok'), aDbf)
+        reset_semaphore_version("tdok")
+        my_use("tdok")
+        close all
 endif
 CREATE_INDEX("ID","id", "TDOK")  // Tip dokumenta
 CREATE_INDEX("NAZ","naz", "TDOK")
@@ -305,6 +321,9 @@ if !file(f18_ime_dbf("ops"))
    AADD(aDBf,{ 'PUCCANTON'           , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'PUCCITY'             , 'C' ,   5 ,  0 })
    DBCREATE2('ops', aDbf)
+   reset_semaphore_version("ops")
+   my_use("ops")
+   close all
 endif
 
 CREATE_INDEX("ID","id", "ops")
@@ -331,7 +350,10 @@ if !file(f18_ime_dbf(cIme) )
 	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
         AADD(aDBf,{ 'Mjesto'              , 'C' ,  20 ,  0 })
         AADD(aDBf,{ 'Adresa'              , 'C' ,  30 ,  0 })
-        DBCREATE2(SIFPATH + cIme + ".dbf" , aDbf)
+        DBCREATE2("BANKE" , aDbf)
+        reset_semaphore_version("banke")
+        my_use("banke")
+        close all
 endif
 CREATE_INDEX("ID","id", SIFPATH + cIme)
 CREATE_INDEX("NAZ","naz", SIFPATH + cIme)

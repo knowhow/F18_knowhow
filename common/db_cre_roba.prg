@@ -59,7 +59,10 @@ AADD(aDBf,{ 'BARKOD'                , 'C' ,  13 ,  0 })
 AADD(aDBf,{ 'FISC_PLU'              , 'N' ,  10 ,  0 })
 
 if !file(f18_ime_dbf("roba"))
-        dbcreate2(SIFPATH+'roba.dbf', aDbf)	
+        dbcreate2("ROBA", aDbf)
+ 		reset_semaphore_version("roba")
+		my_use("roba")
+		close all	
 endif
 
 if !file(f18_ime_dbf("_roba"))
@@ -99,7 +102,10 @@ if !file(f18_ime_dbf("tarifa"))
         AADD(aDBf,{ 'VPP'                 , 'N' ,   6 ,  2 })  // pnamar
         AADD(aDBf,{ 'MPP'                 , 'N' ,   6 ,  2 })  // pnamar MP
         AADD(aDBf,{ 'DLRUC'               , 'N' ,   6 ,  2 })  // donji limit RUC-a(%)
-        dbcreate2( SIFPATH+'tarifa', aDbf)
+        dbcreate2( "TARIFA", aDbf)
+		reset_semaphore_version("tarifa")
+		my_use("tarifa")
+		close all
 endif
 CREATE_INDEX("ID","id",  SIFPATH+"TARIFA")
 CREATE_INDEX("naz","naz", SIFPATH+"TARIFA")
@@ -114,7 +120,10 @@ if !file(f18_ime_dbf("koncij"))
    AADD(aDBf,{ 'NAZ'                 , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'IDPRODMJES'          , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'REGION'              , 'C' ,   2 ,  0 })
-   dbcreate2(SIFPATH+'KONCIJ.DBF',aDbf)
+   dbcreate2('KONCIJ',aDbf)
+   reset_semaphore_version("koncij")
+   my_use("koncij")
+   close all
 endif
 CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
 index_mcode(SIFPATH, "KONCIJ")
@@ -134,7 +143,10 @@ if !file(f18_ime_dbf("trfp"))
     AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
     AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
     AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
-    dbcreate2(SIFPATH+"trfp.dbf",aDbf)
+    dbcreate2("TRFP",aDbf)
+    reset_semaphore_version("trfp")
+    my_use("trfp")
+    close all
 endif
 CREATE_INDEX("ID", "idvd+shema+Idkonto", "trfp")
 index_mcode(SIFPATH, "TRFP")
@@ -152,6 +164,9 @@ if !file(f18_ime_dbf("sast"))
    AADD(aDBf,{ 'N1'                  , 'N' ,   20 ,  5 })
    AADD(aDBf,{ 'N2'                  , 'N' ,   20 ,  5 })
    dbcreate2('SAST', aDbf)
+   reset_semaphore_version("sast")
+   my_use("sast")
+   close all
 endif
 
 CREATE_INDEX("ID", "ID+ID2", "SAST")
@@ -189,3 +204,7 @@ CREATE_INDEX("Naziv","LEFT(Naziv,40)+id",PRIVPATH+"BARKOD")
 cre_strings()
 
 return
+
+
+
+

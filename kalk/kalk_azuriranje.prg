@@ -698,7 +698,7 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 	// provjeri kalk
 	if get_semaphore_status( _tbl_kalk ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl_kalik )
+		Msgbeep( "tabela zakljucana: " + _tbl_kalk )
 		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
 	else
 		lock_semaphore( _tbl_kalk, "lock" )

@@ -15,15 +15,506 @@
 // -----------------------------------------
 // -----------------------------------------
 function partn_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "partn"
 
-return sifrarnik_from_sql_server("partn", algoritam, F_PARTN, {"id", "naz", "mjesto", "adresa", "ziror", "fax", "mobtel" })
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_PARTN, {"id", "naz", "mjesto", "adresa", "ziror", "fax", "mobtel" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
 
 
 // -----------------------------------------
 // -----------------------------------------
 function konto_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "konto"
 
-return sifrarnik_from_sql_server("konto", algoritam, F_PARTN, {"id", "naz"})
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_KONTO, {"id", "naz"})
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function roba_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "roba"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_ROBA, {"id", ;
+				"sifradob", "naz", "jmj", "vpc", "vpc2", "nc", "mpc", ;
+				"idtarifa", "tip", "barkod" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function sifk_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "sifk"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFK, {"id", ;
+				"sort", "naz", "oznaka", "veza", "f_unique", "izvor", "uslov", ;
+				"duzina", "f_decimal", "tip", "kvalid", "kwhen", "ubrowsu", ;
+				"k1", "k2", "k3", "k4" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function sifv_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "sifv"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", ;
+				"idsif", "naz", "oznaka" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function opstine_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "ops"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_OPS, {"id", ;
+				"idj", "idn0", "naz", "idkan", "zipcode", "puccanton", "puccity", "region" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function banke_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "banke"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_BANKE, {"id", ;
+				"mjesto", "naz", "adresa" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function lokal_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "lokal"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_LOKAL, {"id", ;
+				"id_str", "naz" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function trfp_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "trfp"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TRFP, {"id", ;
+				"shema", "naz", "idkonto", "dokument", "partner", "d_p", ;
+				"znak", "idvd", "idvn", "idtarifa" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function trfp2_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "trfp2"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TRFP2, {"id", ;
+				"shema", "naz", "idkonto", "dokument", "partner", "d_p", ;
+				"znak", "idvd", "idvn", "idtarifa" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function trfp3_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "trfp3"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TRFP3, {"id", ;
+				"shema", "naz", "idkonto", "d_p", "znak", "idvn" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function sast_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "sast"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SAST, {"id", ;
+				"r_br", "id2", "kolicina", "k1", "k2", "n1", "n2" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function rj_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "rj"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_RJ, {"id", "naz" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function ld_rj_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "ld_rj"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_LD_RJ, {"id", "naz", "tiprada", "opor" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function tdok_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "tdok"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TDOK, {"id", "naz" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function tnal_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "tnal"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TNAL, {"id", "naz" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function valute_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "valute"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_VALUTE, {"id", "naz", "naz2", "datum", ; 
+							"kurs1", "kurs2", "kurs3", "tip" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function tarifa_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "tarifa"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TARIFA, {"id", "naz", "opp", "ppp", "zpp", "vpp", "mpp", "dlruc" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+// -----------------------------------------
+// -----------------------------------------
+function koncij_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "koncij"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_KONCIJ, {"id", "shema", "naz", "idprodmjes", "region" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
 
 
 // ----------------------------------------
@@ -121,8 +612,13 @@ DO WHILE ! _qry_obj:Eof()
     append blank
     for _i:=1 to LEN(fields)
        _field_b := FIELDBLOCK( fields[_i])
+       _field_type := VALTYPE( EVAL( _field_b ) )
        // replace dbf field
-       EVAL(_field_b, hb_Utf8ToStr(_qry_obj:FieldGet(_i))) 
+       if _field_type == "C"   
+			EVAL(_field_b, hb_Utf8ToStr(_qry_obj:FieldGet(_i))) 
+       else
+		    EVAL(_field_b, _qry_obj:FieldGet(_i))
+       endif 
     next
     _qry_obj:Skip()
 
@@ -142,3 +638,5 @@ endif
 close all
  
 return .t. 
+
+

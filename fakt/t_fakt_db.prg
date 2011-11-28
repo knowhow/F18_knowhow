@@ -258,7 +258,10 @@ if (nArea==-1 .or. nArea==(F_UPL))
    	AADD(aDBf,{'OPIS'       ,'C',30,0})
    	AADD(aDBf,{'IZNOS'      ,'N',12,2})
    	if !FILE(f18_ime_dbf("UPL"))
-		DBcreate2(KUMPATH+"UPL.DBF",aDbf)
+		DBcreate2( "UPL", aDbf )
+		reset_semaphore_version("fakt_upl")
+		my_use("upl")
+		close all
 	endif
 
 	CREATE_INDEX("1","IDPARTNER+DTOS(DATUPL)",KUMPATH+"UPL")
@@ -273,7 +276,10 @@ if (nArea==-1 .or. nArea==(F_FTXT))
         AADD(aDBf,{'ID'  ,'C',  2 ,0})
         AADD(aDBf,{'NAZ' ,'C',340 ,0})
 	if !FILE(f18_ime_dbf("FTXT"))
-        	DBcreate2(SIFPATH+'FTXT.DBF',aDbf)
+        	DBcreate2("FTXT",aDbf)
+			reset_semaphore_version("fakt_ftxt")
+			my_use("ftxt")
+			close all
 	endif
 	
 	CREATE_INDEX("ID","ID",SIFPATH+"FTXT")

@@ -46,9 +46,9 @@ return
  */
 function PovratNaloga()
 
-if gBezVracanja=="N"
-	Povrat_fin_naloga()
-endif
+//if gBezVracanja == "N"
+//	Povrat_fin_naloga()
+//endif
 
 return
 

@@ -188,9 +188,9 @@ nVr_placanja := 0
     // iznos = 0, ako je 0 onda sve ide tom vrstom placanja
 
     cVr_placanja := _g_v_plac( VAL( aData[1, 13] ) )
-    nVr_placanja := 0
+    nVr_placanja := aData[1, 14]
 
-    if aData[1, 13] <> "0"
+    if aData[1, 13] <> "0" .and. !lStorno
 
     	cTmp := 'Type="' + cVr_placanja + '"'
     	cTmp += _razmak1 + 'Amount="' + ALLTRIM( STR(nVr_placanja,12,2)) + '"'

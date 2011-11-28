@@ -725,6 +725,10 @@ local cDinDem
 local cRezerv
 local nPom1, nPom2, nPom3
 
+if cPrj == nil
+	cPrj := ""
+endif
+
 select fakt_pripr
 go top
 
@@ -972,7 +976,7 @@ BoxC()
 
 close all
 
-return
+return .t.
 
 
 
@@ -1054,7 +1058,6 @@ if lOk = .t.
    record["k1"] := field->k1
    record["k2"] := field->k2
    record["m1"] := field->m1
-   record["id_roba_j"] := field->idroba_j
    record["id_vrste_p"] := field->idvrstep
    record["id_pm"] := field->idpm
    record["c1"] := field->c1
@@ -1107,7 +1110,7 @@ if lOk = .t.
   record["id_tip_dok"] := field->idtipdok
   record["br_dok"] := field->brdok
   record["dat_dok"] := field->datdok
-  record["partner"] := field->partner
+  record["partner"] := ""
   record["id_partner"] := field->idpartner
   record["din_dem"] := field->dindem
   record["iznos"] := 0
@@ -1336,7 +1339,7 @@ endif
 if fakt_azur_sql( oServer )
 	
 	o_fakt_edit()
-	
+
 	if !fakt_azur_dbf( lSilent, lViseDok, @aOstaju, lProtuDokumenti, cPRj )
     	MsgBeep("Neuspjesno FAKT/DBF azuriranje !?")
        	return
@@ -1346,6 +1349,9 @@ else
 	MsgBeep("Neuspjesno FAKT/SQL azuriranje !?")
 	return
 endif
+
+// otvori potrebne tabele
+o_fakt_edit()
 
 // prenos podataka fakt
 fakt_prenos_modem()

@@ -366,6 +366,6 @@ if !FOUND()
 		veza with "1" ,;
 		tip with "C" ,;
 		duzina with nDuzina,;
-		decimal with 0
+		f_decimal with 0
 endif
 

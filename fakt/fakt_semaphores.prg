@@ -52,7 +52,7 @@ for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT " + ;
 		"idfirma, idtipdok, brdok, rbr, datdok, idpartner, dindem, zaokr, podbr, idroba, serbr, kolicina, " + ;
-		"cijena, rabat, porez, txt, k1, k2, m1, idroba_j, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza " + ;
+		"cijena, rabat, porez, txt, k1, k2, m1, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza " + ;
 		"FROM " +	_tbl 
   
   if algoritam == "DATE"
@@ -154,7 +154,7 @@ for _offset := 0 to _count STEP _step
 	/*
 	_qry :=  "SELECT " + ;
 		"idfirma, idtipdok, brdok, rbr, datdok, idpartner, dindem, zaokr, podbr, idroba, serbr, kolicina, " + ;
-		"cijena, rabat, porez, txt, k1, k2, m1, idroba_j, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza " + ;
+		"cijena, rabat, porez, txt, k1, k2, m1, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza " + ;
 		"FROM " +	_tbl 
  	*/
 
@@ -177,16 +177,15 @@ for _offset := 0 to _count STEP _step
     		k1 with _qry_obj:FieldGet(17), ;
     		k2 with _qry_obj:FieldGet(18), ;
     		m1 with _qry_obj:FieldGet(19), ;
-    		idroba_j with _qry_obj:FieldGet(20), ;
-    		idvrstep with _qry_obj:FieldGet(21), ;
-    		idpm with _qry_obj:FieldGet(22), ;
-    		c1 with _qry_obj:FieldGet(23), ;
-    		c2 with _qry_obj:FieldGet(24), ;
-    		c3 with _qry_obj:FieldGet(25), ;
-    		n1 with _qry_obj:FieldGet(26), ;
-    		n2 with _qry_obj:FieldGet(27), ;
-    		opis with _qry_obj:FieldGet(28), ;
-    		dok_veza with _qry_obj:FieldGet(29)
+    		idvrstep with _qry_obj:FieldGet(20), ;
+    		idpm with _qry_obj:FieldGet(21), ;
+    		c1 with _qry_obj:FieldGet(22), ;
+    		c2 with _qry_obj:FieldGet(23), ;
+    		c3 with _qry_obj:FieldGet(24), ;
+    		n1 with _qry_obj:FieldGet(25), ;
+    		n2 with _qry_obj:FieldGet(26), ;
+    		opis with _qry_obj:FieldGet(27), ;
+    		dok_veza with _qry_obj:FieldGet(28)
       
 	_qry_obj:Skip()
 
@@ -240,16 +239,16 @@ DO CASE
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
 				"( idfirma, idtipdok, brdok, rbr, datdok, idpartner, dindem, zaokr, podbr, idroba, serbr, kolicina, " + ;
-				"cijena, rabat, porez, txt, k1, k2, m1, idroba_j, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza ) " + ;
+				"cijena, rabat, porez, txt, k1, k2, m1, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza ) " + ;
                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
-                            + _sql_quote(STR( record["r_br"] , 4)) + "," +; 
+                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
                             + _sql_quote( record["dat_dok"] ) + "," +;
                             + _sql_quote( record["id_partner"] ) + "," +;
                             + _sql_quote( record["din_dem"] ) + "," +;
                             + _sql_quote( record["zaokr"] ) + "," +;
-                            + _sql_quote(STR( record["pod_br"], 4 )) + "," +;
+                            + _sql_quote(STR( record["pod_br"], 2 )) + "," +;
                             + _sql_quote( record["id_roba"] ) + "," +;
                             + _sql_quote( record["ser_br"] ) + "," +;
                             + STR( record["kolicina"], 14, 5 ) + "," +;
@@ -260,7 +259,6 @@ DO CASE
                             + _sql_quote( record["k1"] ) + "," +;
                             + _sql_quote( record["k2"] ) + "," +;
                             + _sql_quote( record["m1"] ) + "," +;
-                            + _sql_quote( record["id_roba_j"] ) + "," +;
                             + _sql_quote( record["id_vrste_p"] ) + "," +;
                             + _sql_quote( record["id_pm"] ) + "," +;
                             + _sql_quote( record["c1"] ) + "," +;
@@ -328,7 +326,7 @@ for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT " + ;
 		"idfirma, idtipdok, brdok, partner, datdok, dindem, iznos, rabat, rezerv, m1, idpartner, " + ;
-		"idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_ispl, dat_otpr, dat_val " + ;
+		"idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_isp, dat_otpr, dat_val " + ;
 		"FROM " + _tbl
 
   if algoritam == "DATE"
@@ -500,7 +498,7 @@ DO CASE
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
 				"( idfirma, idtipdok, brdok, partner, datdok, dindem, iznos, rabat, rezerv, m1, idpartner, " + ;
-				"idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_ispl, dat_otpr, dat_val ) " + ;
+				"idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_isp, dat_otpr, dat_val ) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 

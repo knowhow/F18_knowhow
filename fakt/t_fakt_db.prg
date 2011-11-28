@@ -297,6 +297,7 @@ AADD(aDBf,{ 'zaokr'     , 'N' ,   1 ,  0 })
 AADD(aDBf,{ 'Rbr'       , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'PodBr'     , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDROBA'    , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'IDROBA_J'  , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'SerBr'     , 'C' ,  15 ,  0 })
 AADD(aDBf,{ 'KOLICINA'  , 'N' ,  14 ,  5 })
 AADD(aDBf,{ 'Cijena'    , 'N' ,  14 ,  5 })
@@ -310,17 +311,21 @@ AADD(aDBf,{ 'IDVRSTEP'  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDPM'      , 'C' ,  15 ,  0 })
 AADD(aDBf,{ 'DOK_VEZA'  , 'C' , 150 ,  0 })
 AADD(aDBf,{ 'FISC_RN'   , 'N' ,  10 ,  0 })
-
-if IsRabati()
-	AADD(aDBf,{ 'TIPRABAT'  , 'C' ,  10 ,  0 })
-	AADD(aDBf,{ 'SKONTO'    , 'N' ,  10 ,  5 })
-endif
+AADD(aDBf,{ 'C1'        , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'C2'        , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'C3'        , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'N1'        , 'N' ,  10 ,  3 })
+AADD(aDBf,{ 'N2'        , 'N' ,  10 ,  3 })
+AADD(aDBf,{ 'OPIS'      , 'C' , 120 ,  0 })
 
 if (nArea==-1 .or. nArea==(F_FAKT))
 	//FAKT.DBF
 	
 	if !FILE(f18_ime_dbf("FAKT"))
-        	DBcreate2(KUMPATH+'FAKT.DBF',aDbf)
+        	DBcreate2("FAKT", aDbf)
+			reset_semaphore_version("fakt_fakt")
+			my_use("fakt")
+			close all
 	endif
 	
 	CREATE_INDEX("1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
@@ -428,7 +433,10 @@ if (nArea==-1 .or. nArea==(F_FAKT_DOKS))
 	AADD(aDBf,{ 'DAT_OTPR'            , 'D' ,   8 ,  0 })
 	
 	if !FILE(f18_ime_dbf("fakt_doks"))
-        	DBcreate2(KUMPATH+'FAKT_DOKS.DBF',aDbf)
+        	DBcreate2("FAKT_DOKS",aDbf)
+			reset_semaphore_version("fakt_doks")	
+			my_use("fakt_doks")
+			close all
 	endif
 	
 	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"FAKT_DOKS")
@@ -456,7 +464,10 @@ if (nArea==-1 .or. nArea==(F_FAKT_DOKS2))
 	AADD(aDBf,{ "N2"           , "N" ,  15 ,  2 })
 	
 	if !FILE(f18_ime_dbf("fakt_doks2"))
-        	DBcreate2(KUMPATH+"FAKT_DOKS2.DBF",aDbf)
+        	DBcreate2("FAKT_DOKS2",aDbf)
+			reset_semaphore_version("fakt_doks2")
+			my_use("fakt_doks2")
+			close all
 	endif
 	
 	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"FAKT_DOKS2")

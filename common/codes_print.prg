@@ -186,7 +186,7 @@ endif
         AADD(aKol,{ImeKol[i,1],ImeKol[i,2],IF(LEN(ImeKol[i])>2.and.VALTYPE(ImeKol[i,3])=="L",ImeKol[i,3],.f.),;
                  IF(SIFK->veza=="N","P",VALTYPE(xPom)),;
                  IF(SIFK->veza=="N",SIFK->duzina+1,MAX(SIFK->duzina,LEN(TRIM(ImeKol[i,1])))),;
-                 IF(VALTYPE(xPom)=="N",SIFK->decimal,0),1,Kol[i]+1})
+                 IF(VALTYPE(xPom)=="N",SIFK->f_decimal,0),1,Kol[i]+1})
         loop
       endif
       nDuz1:=IF(LEN(ImeKol[i])>4.and.VALTYPE(ImeKol[i,5])=="N",ImeKol[i,5],LENx(xPom))

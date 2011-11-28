@@ -275,7 +275,7 @@ if found()
        if sifk->tip=="C"
           xRet:= padr("",sifk->duzina)
        elseif sifk->tip=="N"
-          xRet:=  val( str(0,sifk->duzina,sifk->decimal) )
+          xRet:=  val( str(0,sifk->duzina,sifk->f_decimal) )
        elseif sifk->tip=="D"
           xRet:= ctod("")
        else
@@ -404,11 +404,9 @@ if sifk->Veza="N"
         replace naz with xValue_i
         //replsql naz with xValue_i
     elseif sifk->tip=="N"
-        replace naz with str(xValue_i,sifk->duzina,sifk->decimal)
-        //replsql naz with str(xValue_i,sifk->duzina,sifk->decimal)
+        replace naz with str(xValue_i,sifk->duzina,sifk->f_decimal)
     elseif sifk->tip=="D"
      	replace naz with DTOS(xValue_i)
-     	//replsql naz with DTOS(xValue_i)
     endif
   next
 
@@ -435,7 +433,7 @@ else
    if sifk->tip=="C"
      replace naz with xValue
    elseif sifk->tip=="N"
-     replace naz with str(xValue,sifk->duzina,sifk->decimal)
+     replace naz with str(xValue,sifk->duzina,sifk->f_decimal)
    elseif sifk->tip=="D"
      replace naz with DTOS(xValue)
    endif

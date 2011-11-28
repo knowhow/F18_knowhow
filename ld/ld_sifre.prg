@@ -822,8 +822,8 @@ do while !eof() .and. ID="POR"
 
 	// postavi picture za brojeve
 	if (sifk->Tip="N")
-		if (decimal>0)
-     			ImeKol[Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
+		if (f_decimal>0)
+     			ImeKol[Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
    		else
      			ImeKol[Len(ImeKol),7] := replicate("9", sifk->duzina )
    		endif
@@ -935,8 +935,8 @@ do while !eof() .and. ID="DOPR"
 	endif
 	// postavi picture za brojeve
  	if (sifk->tip="N")
-   		if (decimal>0)
-     			ImeKol[LEN(ImeKol),7] := replicate("9", sifk->duzina - sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
+   		if (f_decimal>0)
+     			ImeKol[LEN(ImeKol),7] := replicate("9", sifk->duzina - sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
    		else
      			ImeKol[LEN(ImeKol),7] := replicate("9", sifk->duzina )
    		endif

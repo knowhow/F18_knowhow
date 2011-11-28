@@ -214,11 +214,11 @@ if !file(f18_ime_dbf("sifk"))
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
    AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
    AADD(aDBf,{ 'Veza'                , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'Unique'              , 'C' ,   1 ,  0 })
+   AADD(aDBf,{ 'f_unique'            , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'Izvor'               , 'C' ,  15 ,  0 })
    AADD(aDBf,{ 'Uslov'               , 'C' , 100 ,  0 })
    AADD(aDBf,{ 'Duzina'              , 'N' ,   2 ,  0 })
-   AADD(aDBf,{ 'Decimal'             , 'N' ,   1 ,  0 })
+   AADD(aDBf,{ 'f_decimal'           , 'N' ,   1 ,  0 })
    AADD(aDBf,{ 'Tip'                 , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'KVALID'              , 'C' , 100 ,  0 })
    AADD(aDBf,{ 'KWHEN'               , 'C' , 100 ,  0 })
@@ -234,7 +234,7 @@ if !file(f18_ime_dbf("sifk"))
    // NAZ  = Barkod
    // Oznaka = BARK
    // VEZA  = N ( 1 - moze biti samo jedna karakteristika, N - n karakteristika)
-   // UNIQUE = D - radi se o jedinstvenom broju
+   // F_UNIQUE = D - radi se o jedinstvenom broju
    // Izvor =  ( sifrarnik  koji sadrzi moguce vrijednosti)
    // Uslov =  ( za koje grupe artikala ova karakteristika je interesantna
    // DUZINA = 13

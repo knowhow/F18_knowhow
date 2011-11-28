@@ -979,9 +979,187 @@ return
 // ---------------------------------------------------
 // azuriranje u sql tabele
 // ---------------------------------------------------
-static function fakt_azur_sql()
-local lOk := .t.
+static function fakt_azur_sql( oServer )
+local lOk
+local record := hb_hash()
+local _tbl_fakt
+local _tbl_doks
+local _i
+local _tmp_id
+local _ids := {}
+
+_tbl_fakt := "fakt_fakt"
+_tbl_doks := "fakt_doks"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	// provjeri fakt
+	if get_semaphore_status( _tbl_fakt ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl_fakt )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl_fakt, "lock" )
+	endif
+
+	// provjeri fakt_doks
+	if get_semaphore_status( _tbl_doks ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl_doks )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl_doks, "lock" )
+	endif
+
+next
+
+lOk := .t.
+
+if lOk = .t.
+
+  // azuriraj fakt
+  MsgO("sql fakt_fakt")
+
+  O_FAKT_PRIPR
+
+  select fakt_pripr
+  go top
+
+  // definisi glavne varijable record-a
+  record["id_firma"] := field->idfirma
+  record["id_tip_dok"] := field->idtipdok
+  record["br_dok"] := field->brdok
+  record["dat_dok"] := field->datdok
+ 
+  sql_fakt_fakt_update("BEGIN")
+
+  do while !eof()
+ 
+   _tmp_id := record["id_firma"] + record["id_tip_dok"] + record["br_dok"]
+
+   record["id_firma"] := field->idfirma
+   record["id_tip_dok"] := field->idtipdok
+   record["br_dok"] := field->brdok
+   record["r_br"] := VAL(field->Rbr)
+   record["dat_dok"] := field->datdok
+   record["id_partner"] := field->idpartner
+   record["din_dem"] := field->dindem
+   record["zaokr"] := field->zaokr
+   record["pod_br"] := VAL( field->podbr )
+   record["id_roba"] := field->idroba
+   record["ser_br"] := field->serbr
+   record["kolicina"] := field->kolicina
+   record["cijena"] := field->cijena
+   record["rabat"] := field->rabat
+   record["porez"] := field->porez
+   record["txt"] := field->txt
+   record["k1"] := field->k1
+   record["k2"] := field->k2
+   record["m1"] := field->m1
+   record["id_roba_j"] := field->idroba_j
+   record["id_vrste_p"] := field->idvrstep
+   record["id_pm"] := field->idpm
+   record["c1"] := field->c1
+   record["c2"] := field->c2
+   record["c3"] := field->c3
+   record["n1"] := field->n1
+   record["n2"] := field->n2
+   record["opis"] := field->opis
+   record["dok_veza"] := field->dok_veza
+               
+    if !sql_fakt_fakt_update( "ins", record )
+       lOk := .f.
+       exit
+    endif
+	
+	SKIP
+
+  enddo
+
+  MsgC()
+
+endif
+
+
+if lOk = .t.
+ 
+   // azuriraj doks...
+  MsgO("sql fakt_doks")
+
+  select fakt_pripr
+  go top
+
+  select partn
+  go top
+  seek fakt_pripr->idpartner
+
+  select fakt_pripr
+
+  lOk := .t.
+
+  record := hb_hash()
+  record["id_firma"] := field->idfirma
+  record["id_tip_dok"] := field->idtipdok
+  record["br_dok"] := field->brdok
+  record["dat_dok"] := field->datdok
+
+  sql_fakt_doks_update("BEGIN")
+
+  record["id_firma"] := field->idfirma
+  record["id_tip_dok"] := field->idtipdok
+  record["br_dok"] := field->brdok
+  record["dat_dok"] := field->datdok
+  record["partner"] := field->partner
+  record["id_partner"] := field->idpartner
+  record["din_dem"] := field->dindem
+  record["iznos"] := 0
+  record["rabat"] := 0
+  record["rezerv"] := ""
+  record["m1"] := field->m1
+  record["id_vrste_p"] := field->idvrstep
+  record["dat_pl"] := DATE()
+  record["id_pm"] := ""
+  record["dok_veza"] := ""
+  record["oper_id"] := 0
+  record["fisc_rn"] := 0
+  record["dat_isp"] := DATE()
+  record["dat_otpr"] := DATE()
+  record["dat_val"] := DATE()
+ 
+  if !sql_fakt_doks_update( "ins", record )
+       lOk := .f.
+  endif
+   
+  MsgC()
+
+endif
+
+if !lOk
+
+	// vrati sve nazad...  	
+	sql_fakt_fakt_update("ROLLBACK")
+  	sql_fakt_doks_update("ROLLBACK")
+	
+else
+	
+	// napravi update-e
+	// zavrsi transakcije 
+ 
+	AADD( _ids, _tmp_id )
+
+	update_semaphore_version( _tbl_doks, .t. )
+	push_ids_to_semaphore( _tbl_doks, _ids ) 
+  	sql_fakt_doks_update("END")
+	
+	update_semaphore_version( _tbl_fakt, .t. )
+	push_ids_to_semaphore( _tbl_fakt, _ids ) 
+  	sql_fakt_fakt_update("END")
+
+endif
+
+lock_semaphore( _tbl_fakt, "free" )
+lock_semaphore( _tbl_doks, "free" )
+
 return lOk
+
 
 
 

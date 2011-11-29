@@ -164,23 +164,14 @@ return .t.
 *}
 
 
-/*! \fn VRbr()
- *  \brief 
- */
- 
 function vrbr()
-*{
 return .t.
-*}
 
 
 
-/*! \fn o_fin_edit()
- *  \brief Otvara unos nove stavke u pripremi
- */
- 
 function o_fin_edit()
-*{
+close all
+
 IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
 	O_VRSTEP
 ENDIF
@@ -188,22 +179,6 @@ ENDIF
 IF IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
 	O_ULIMIT
 ENDIF
-
-O_PSUBAN
-O_PANAL
-O_PSINT
-O_PNALOG
-
-O_PAREK
-O_KONTO
-O_PARTN
-O_TNAL
-O_TDOK
-
-O_FIN_PRIPR
-
-
-O_NALOG
 
 if (IsRamaGlas())
 	O_RNAL
@@ -218,13 +193,23 @@ if gTroskovi=="D"
 	O_FUNK
 endif
 
+O_PSUBAN
+O_PANAL
+O_PSINT
+O_PNALOG
+O_PAREK
+O_KONTO
+O_PARTN
+O_TNAL
+O_TDOK
+O_NALOG
+O_FIN_PRIPR
+
 select fin_pripr
 set order to tag "1"
 go top
 
-// ulaz _IdFirma, _IdKonto, ...., nRBr (val(_RBr))
 return
-*}
 
 
 

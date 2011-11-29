@@ -53,18 +53,11 @@ if lSilent
 	MsgO("Provjeravam kontrolu zbira datoteka...")
 endif
 
-select F_NALOG
-my_use("nalog")
-set order to
-select F_SUBAN
-my_use("suban")
-set order to
-select F_ANAL
-my_use("anal")
-set order to
-select F_SINT
-my_use("sint") 
-set order to
+close all
+O_NALOG
+O_SUBAN
+O_SINT
+O_ANAL
 
 if !lSilent
  Box("KZD",9,77,.f.)
@@ -87,7 +80,9 @@ if !lSilent
 	picDEM:=FormPicL("9 "+gPicDEM,16)
 endif
 
-select NALOG
+altd()
+
+select nalog
 go top
 	
 nDug:=nPot:=nDu2:=nPo2:=0

@@ -53,13 +53,13 @@ for _offset := 0 to _count STEP _step
   _qry :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd, iznosdem FROM " + _tbl  
 
   if algoritam == "DATE"
-    _dat :=  get_dat_from_semaphore( _tbl )
+    _dat :=  get_dat_from_semaphore( "fin_suban" )
     _qry += " WHERE datdok>=" + _sql_quote(_dat)
     _key_block := { || field->datdok }
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( _tbl )
+		_ids := get_ids_from_semaphore( "fin_suban" )
     	_qry += " WHERE "
     	if LEN(_ids) < 1
        		// nema id-ova
@@ -175,7 +175,7 @@ if (gDebug > 5)
     log_write("fin_suban synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+//close all
  
 return .t. 
 
@@ -287,13 +287,13 @@ for _offset := 0 to _count STEP _step
   _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
 
   if algoritam == "DATE"
-    _dat :=  get_dat_from_semaphore( _tbl )
+    _dat :=  get_dat_from_semaphore( "fin_anal" )
     _qry += " WHERE datnal >= " + _sql_quote(_dat)
     _key_block := { || field->datnal }
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( _tbl )
+		_ids := get_ids_from_semaphore( "fin_anal" )
     	_qry += " WHERE "
     	if LEN(_ids) < 1
        		// nema id-ova
@@ -407,7 +407,7 @@ if (gDebug > 5)
     log_write("fin_anal synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+//close all
  
 return .t.
 
@@ -514,13 +514,13 @@ for _offset := 0 to _count STEP _step
   _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
 
   if algoritam == "DATE"
-    _dat :=  get_dat_from_semaphore( _tbl )
+    _dat :=  get_dat_from_semaphore( "fin_sint" )
     _qry += " WHERE datnal >= " + _sql_quote(_dat)
     _key_block := { || field->datnal }
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( _tbl )
+		_ids := get_ids_from_semaphore( "fin_sint" )
     	_qry += " WHERE "
     	if LEN(_ids) < 1
        		// nema id-ova
@@ -634,7 +634,7 @@ if (gDebug > 5)
     log_write("fin_sint synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+// close all
  
 return .t.
 
@@ -741,13 +741,13 @@ for _offset := 0 to _count STEP _step
   _qry :=  "SELECT idfirma, idvn, brnal, datnal, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
 
   if algoritam == "DATE"
-    _dat :=  get_dat_from_semaphore( _tbl )
+    _dat :=  get_dat_from_semaphore( "fin_nalog" )
     _qry += " WHERE datnal >= " + _sql_quote(_dat)
     _key_block := { || field->datnal }
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( _tbl )
+		_ids := get_ids_from_semaphore( "fin_nalog" )
     	_qry += " WHERE "
     	if LEN(_ids) < 1
        		// nema id-ova
@@ -859,7 +859,7 @@ if (gDebug > 5)
     log_write("fin_nalog synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+//close all
  
 return .t.
 

@@ -516,6 +516,33 @@ return _result
 
 
 
+// -----------------------------------------
+// -----------------------------------------
+function dest_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "dest"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_DEST, {"id", "idpartner", "naziv", "naziv2", "adresa", "mjesto", ;
+			"ptt", "telefon", "fax", "mobitel" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
 
 // ----------------------------------------
 // ----------------------------------------

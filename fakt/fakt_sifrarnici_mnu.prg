@@ -53,13 +53,10 @@ else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-if IsUgovori()
-	AADD(opc,"U. ugovori")
-	AADD(opcexe,{|| o_ugov(), SifUgovori()})
-endif
-
+AADD(opc,"U. ugovori")
+AADD(opcexe,{|| o_ugov(), SifUgovori()})
 
 Menu_SC("fsif")
 return
-*}
+
 

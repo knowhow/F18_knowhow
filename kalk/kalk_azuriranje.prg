@@ -724,18 +724,10 @@ if lOk = .t.
   select kalk_pripr
   go top
 
-  // definisi glavne varijable record-a
-  record["id_firma"] := field->idfirma
-  record["id_vd"] := field->idvd
-  record["br_dok"] := field->brdok
-  record["dat_dok"] := field->datdok
- 
   sql_kalk_kalk_update("BEGIN")
 
   do while !eof()
  
-   _tmp_id := record["id_firma"] + record["id_vd"] + record["br_dok"]
-
    record["id_firma"] := field->idfirma
    record["id_vd"] := field->idvd
    record["br_dok"] := field->brdok
@@ -789,7 +781,9 @@ if lOk = .t.
    record["error"] := field->error
    record["pod_br"] := field->podbr
                 
-    if !sql_kalk_kalk_update( "ins", record )
+   _tmp_id := record["id_firma"] + record["id_vd"] + ALLTRIM( record["br_dok"] )
+   
+   if !sql_kalk_kalk_update( "ins", record )
        lOk := .f.
        exit
     
@@ -815,11 +809,7 @@ if lOk = .t.
   go top
 
   record := hb_hash()
-  record["id_firma"] := field->idfirma
-  record["id_vd"] := field->idvd
-  record["br_dok"] := field->brdok
-  record["dat_dok"] := field->datdok
-
+  
   sql_kalk_doks_update("BEGIN")
 
   record["id_firma"] := field->idfirma

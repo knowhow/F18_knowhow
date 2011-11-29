@@ -330,13 +330,13 @@ for _offset := 0 to _count STEP _step
 		"FROM " + _tbl
 
   if algoritam == "DATE"
-      _dat = get_dat_from_semaphore( _tbl )
+      _dat = get_dat_from_semaphore( "fakt_doks" )
       _qry += " WHERE datdok >= " + _sql_quote(_dat)
       _key_block := { || field->datdok }
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( _tbl )
+		_ids := get_ids_from_semaphore( "fakt_doks" )
     	_qry += " WHERE "
     	if LEN(_ids) < 1
        		// nema id-ova
@@ -536,5 +536,237 @@ else
    return .t.
 endif
  
+
+
+// ------------------------------
+// koristi azur_sql
+// ------------------------------
+function fakt_doks2_from_sql_server(algoritam)
+local _qry
+local _counter
+local _rec
+local _qry_obj
+local _server := pg_server()
+local _seconds
+local _x, _y
+local _dat, _ids
+local _fnd, _tmp_id
+local _tbl
+local _count
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idtipdok, brdok"
+local _key_block
+
+if algoritam == NIL
+  algoritam := "FULL"
+endif
+
+_x := maxrows() - 15
+_y := maxcols() - 20
+
+_tbl := "fmk.fakt_doks2"
+
+@ _x + 1, _y + 2 SAY "update fakt_doks2: " + algoritam
+
+_seconds := SECONDS()
+
+_count := table_count( _tbl, "true" )
+
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT " + ;
+		"idfirma, idtipdok, brdok, k1, k2, k3, k4, k5, n1, n2 " + ;
+		"FROM " + _tbl
+
+  if algoritam == "DATE"
+      _dat = get_dat_from_semaphore( "fakt_doks2" )
+      _qry += " WHERE datdok >= " + _sql_quote(_dat)
+      _key_block := { || field->datdok }
+  endif
+
+  if algoritam == "IDS"
+		_ids := get_ids_from_semaphore( "fakt_doks2" )
+    	_qry += " WHERE "
+    	if LEN(_ids) < 1
+       		// nema id-ova
+      		_qry += "false"
+    	else
+        	_sql_ids := "("
+        	for _i := 1 to LEN(_ids)
+            	_sql_ids += _sql_quote(_ids[_i])
+            	if _i < LEN(_ids)
+            		_sql_ids += ","
+            	endif
+        	next
+        	_sql_ids += ")"
+        	_qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
+     	endif
+
+        _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
+  endif
+
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+
+  SELECT F_FAKT_DOKS2
+  my_use ("fakt_doks2", "fakt_doks2", .f., "SEMAPHORE")
+
+  DO CASE
+
+	CASE algoritam == "FULL"
+    	
+		// "full" algoritam
+    	log_write("dat_dok = nil full algoritam") 
+	    ZAP
+	
+	CASE algoritam == "DATE"
+
+    	log_write("dat_dok <> nil date algoritam") 
+    	// "date" algoritam  - brisi sve vece od zadanog datuma
+    	SET ORDER TO TAG "5"
+    	// tag je "DatDok" nije DTOS(DatDok)
+    	seek _dat
+    	do while !eof() .and. EVAL( _key_block ) >= _dat 
+        	// otidji korak naprijed
+        	SKIP
+        	_rec := RECNO()
+        	SKIP -1
+        	DELETE
+        	GO _rec  
+    	enddo
+
+	CASE algoritam == "IDS"
+    	
+		SET ORDER TO TAG "1"
+
+		// CREATE_INDEX("1", "idFirma+IdTipDok+BrDok", "FAKT_DOKS2")
+    	// pobrisimo sve id-ove koji su drugi izmijenili
+    	do while .t.
+       		_fnd := .f.
+       		for each _tmp_id in _ids
+          		
+          		HSEEK _tmp_id
+          		
+				do while !EOF() .and. EVAL( _key_block ) == _tmp_id 
+               		skip
+               		_rec := RECNO()
+               		skip -1 
+               		DELETE
+               		go _rec 
+               		_fnd := .t.
+          		enddo
+        	next
+        	if ! _fnd 
+				exit
+			endif
+    	enddo
+
+  ENDCASE
+
+  _qry_obj := run_sql_query( _qry, _retry )
+
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
+    append blank
+   
+	replace idfirma with _qry_obj:FieldGet(1), ;
+    		idtipdok with _qry_obj:FieldGet(2), ;
+    		brdok with _qry_obj:FieldGet(3), ;
+    		k1 with _qry_obj:FieldGet(4), ;
+    		k2 with _qry_obj:FieldGet(5), ;
+    		k3 with _qry_obj:FieldGet(6), ;
+    		k4 with _qry_obj:FieldGet(7), ;
+    		k5 with _qry_obj:FieldGet(8), ;
+    		n1 with _qry_obj:FieldGet(9), ;
+    		n2 with _qry_obj:FieldGet(10)
+
+    _qry_obj:Skip()
+
+    _counter++
+
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
+    endif 
+  ENDDO
+
+  USE
+
+next
+
+if (gDebug > 5)
+    log_write("fakt_doks2 synchro cache:" + STR(SECONDS() - _seconds))
+endif
+
+//close all
+ 
+return .t. 
+
+
+// ----------------------------------------------
+// ----------------------------------------------
+function sql_fakt_doks2_update( op, record )
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _where := ""
+LOCAL _server := pg_server()
+
+
+_tbl := "fmk.fakt_doks2"
+
+if record <> nil
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
+                        " and brdok=" + _sql_quote(record["br_dok"]) 
+endif
+
+DO CASE
+ CASE op == "BEGIN"
+    _qry := "BEGIN;"
+ CASE op == "END"
+    _qry := "COMMIT;"
+ CASE op == "ROLLBACK"
+    _qry := "ROLLBACK;"
+ CASE op == "del"
+    _qry := "DELETE FROM " + _tbl + ;
+             " WHERE " + _where
+ CASE op == "ins"
+    _qry := "INSERT INTO " + _tbl + ;
+				"( idfirma, idtipdok, brdok, k1, k2, k3, k4, k5, n1, n2 ) " + ;
+                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
+                            + _sql_quote( record["id_tip_dok"] ) + "," +; 
+                            + _sql_quote( record["br_dok"] ) + "," +; 
+                            + _sql_quote( record["k1"] ) + "," +;
+                            + _sql_quote( record["k2"] ) + "," +;
+                            + _sql_quote( record["k3"] ) + "," +;
+                            + _sql_quote( record["k4"] ) + "," +;
+                            + _sql_quote( record["k5"] ) + "," +;
+							+ _sql_quote( STR( record["n1"], 15, 2 )) + "," +;
+							+ _sql_quote( STR( record["n2"], 15, 2 )) + ")"
+                          
+END CASE
+   
+_ret := _sql_query( _server, _qry)
+
+if (gDebug > 5)
+   log_write(_qry)
+   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
+endif
+
+if VALTYPE(_ret) == "L"
+   // u slucaju ERROR-a _sql_query vraca  .f.
+   return _ret
+else
+   return .t.
+endif
+ 
+
+
 
 

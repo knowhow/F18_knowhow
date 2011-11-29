@@ -387,7 +387,7 @@ if !oApp:lStarted
   endif
 endif
 
-SayPrivDir(cDirPriv)
+say_database_info()
 return nil
 
 

@@ -49,11 +49,6 @@ ObjDbedit("", nLenTbl,nWidthTbl,{|| key_handler( cIdUgov )},"","",,,,,2)
 
 // izbacen brkey... bezveze
 
-//BrowseKey(m_x+3, m_y+1, m_x+ nLenTbl - 2, m_y+ nWidthTbl, ;
-//    ImeKol, {|Ch| key_handler( Ch, cIdUgov)}, ;
-//    "id+brisano==cIdUgov + ' '", ;
-//    cIdUgov, 2,,,{|| .f.})
-
 select ugov
 BoxC()
 
@@ -65,7 +60,7 @@ return .t.
 static function set_f_tbl( cIdUgov )
 local cFilt := ""
 
-cFilt := "id == " + cm2str( cIdUgov ) + " .and. brisano == ' ' "
+cFilt := "id == " + cm2str( cIdUgov )
 set filter to &cFilt
 go top
 
@@ -235,7 +230,7 @@ endif
 
 if lNovi
 	append blank
-       	replace id with cIdUgov
+    replace id with cIdUgov
 endif
 
 replace idroba with cIdRoba
@@ -256,6 +251,13 @@ if lK1
 	replace k2 with cK2
 endif
     
+scatter()
+_vars := f18_scatter_global_vars()
+if !f18_gather(_vars)
+    // brisi appendovani zapis
+    delete
+endif
+
 return DE_REFRESH
 
 

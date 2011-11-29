@@ -148,10 +148,16 @@ endif
 
 return __server_params[_key]
 
+
 // -----------------------------
 // -----------------------------
 function f18_user()
 return __server_params["user"]
+
+
+function f18_database()
+return __server_params["database"]
+
 
 function my_user()
 return f18_user()

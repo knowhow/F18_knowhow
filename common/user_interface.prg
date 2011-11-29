@@ -1822,15 +1822,11 @@ setpos(nx,ny)
 return .t.
 
 
-/*! \fn SayPrivDir(cDirPriv)
- *  \brief Prikazi  ime korisnika + ":" + privatni direktorij na vrhu ekrana
- *
- */
+function say_database_info()
 
-function SayPrivDir(cDirPriv)
-
-@ 0, MAXROWS()-1 SAY PADR(trim(ImeKorisn)+":" + cDirPriv, MAXROWS()) COLOR INVERT
+@ 0, MAXROWS() - 1 SAY PADR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR INVERT
 @ 4,4 SAY ""
+
 return
 
 

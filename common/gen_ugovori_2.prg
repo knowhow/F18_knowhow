@@ -204,7 +204,12 @@ if lSetParams
 	replace kto_kup with cKtoDug
 	replace kto_dob with cKtoPot
 	replace opis with cOpis
-	
+
+	// upisi u sql
+	scatter()
+	_vars := f18_scatter_global_vars()
+	f18_gather(_vars)
+
 endif
 
 // filter na samo aktivne ugovore
@@ -313,15 +318,18 @@ if Found()
 	replace brdok_do with cFaktDo
 endif
 
+// upisi i u sql
+scatter()
+_vars := f18_scatter_global_vars()
+f18_gather(_vars)
+
 BoxC()
 
 // prikazi info generacije
 s_gen_info( dDatObr )
 
 // funkcija azuriranja modula FAKT
-// treba napraviti poziv u modulu FAKT a ne ovdje !
-// ovu iskljucujem
-//Azur(.t.)
+azur_fakt( .t. )
 
 return
 
@@ -693,7 +701,7 @@ do while !EOF() .and. (id == cUId)
 	seek roba->idtarifa
 	nPorez := tarifa->opp
 
-	select pripr
+	select fakt_pripr
 	append blank
 	
 	++ nCount
@@ -724,7 +732,7 @@ do while !EOF() .and. (id == cUId)
 		cTxt4 := f_ftxt(ugov->txt3)
 		cTxt5 := f_ftxt(ugov->txt4)
 		
-		select pripr
+		select fakt_pripr
 	
 		// aMemo[2]
 		cPom := cTxt1 + cTxt2 + cTxt3 + cTxt4 + cTxt5
@@ -818,7 +826,7 @@ do while !EOF() .and. (id == cUId)
 
 	endif
 	
-	select pripr
+	select fakt_pripr
 	
    	_idfirma := cFirma
    	_idpartner := cUPartn
@@ -893,7 +901,7 @@ if Found()
 endif
 
 // vrati se na pripremu i pregledaj djokere na _TXT
-select pripr
+select fakt_pripr
 nTRec := RecNo()
 
 // vrati se na prvu stavku ove fakture

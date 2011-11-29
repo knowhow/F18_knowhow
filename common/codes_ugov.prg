@@ -798,9 +798,14 @@ do case
     BoxC()
 
     IF LASTKEY()!=K_ESC
-      APPEND BLANK
-      Gather()
-      lTrebaOsvUg:=.t.
+      	APPEND BLANK
+      	//Gather()
+		_vars := f18_scatter_global_vars()
+		if ! f18_gather(_vars)
+    		// brisi appendovani zapis
+    		delete
+		endif
+      	lTrebaOsvUg:=.t.
     ELSE
       GO (nRec)
       RETURN DE_CONT
@@ -810,7 +815,9 @@ do case
 
   case Ch==K_CTRL_T
      if Pitanje(,"Izbrisati stavku ?","N")=="D"
-       DELETE
+       
+    	brisi_stavku_u_tabeli( ALIAS() )
+		//DELETE
        lTrebaOsvUg:=.t.
        nRet:=DE_REFRESH
      else

@@ -764,7 +764,7 @@ _field->IdFirma   := _fakt_doks_data["id_firma"]
 _field->BrDok     := _fakt_doks_data["br_dok"]
 _field->Rezerv    := _fakt_doks_data["rezerv"]
 _field->DatDok    := _fakt_doks_data["dat_dok"]
-_field->IdTipDok  := _fakt_doks_data["id_tipdok"]
+_field->IdTipDok  := _fakt_doks_data["id_tip_dok"]
 _field->Partner   := _fakt_doks_data["partner"]
 _field->dindem    := _fakt_doks_data["din_dem"]
 _field->IdPartner := _fakt_doks_data["id_partner"]
@@ -849,7 +849,7 @@ seek id_firma + id_tip_dok + br_dok
 
 _fakt_data["id_firma"] := field->idfirma
 _fakt_data["br_dok"] := field->brdok
-_fakt_data["id_tipdok"] := field->idtipdok
+_fakt_data["id_tip_dok"] := field->idtipdok
 
 _memo := ParsMemo( field->txt )
 	
@@ -877,7 +877,7 @@ seek id_firma + id_tip_dok + br_dok
 
 _fakt_data["id_firma"] := field->idfirma
 _fakt_data["br_dok"] := field->brdok
-_fakt_data["id_tipdok"] := field->idtipdok
+_fakt_data["id_tip_dok"] := field->idtipdok
 _fakt_data["dat_dok"] := field->datdok
 
 _memo := ParsMemo( field->txt )
@@ -1097,7 +1097,7 @@ if lOk = .t.
   sql_fakt_doks_update("BEGIN")
 
   record["id_firma"] := _fakt_doks_data["id_firma"]
-  record["id_tip_dok"] := _fakt_doks_data["id_tipdok"]
+  record["id_tip_dok"] := _fakt_doks_data["id_tip_dok"]
   record["br_dok"] := _fakt_doks_data["br_dok"]
   record["dat_dok"] := _fakt_doks_data["dat_dok"]
   record["partner"] := _fakt_doks_data["partner"]
@@ -1141,7 +1141,7 @@ if lOk = .t.
   sql_fakt_doks2_update("BEGIN")
 
   record["id_firma"] := _fakt_doks2_data["id_firma"]
-  record["id_tip_dok"] := _fakt_doks2_data["id_tipdok"]
+  record["id_tip_dok"] := _fakt_doks2_data["id_tip_dok"]
   record["br_dok"] := _fakt_doks2_data["br_dok"]
   record["k1"] := _fakt_doks2_data["k1"]
   record["k2"] := _fakt_doks2_data["k2"]

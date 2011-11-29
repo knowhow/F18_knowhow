@@ -734,6 +734,7 @@ _cIdFirma:=idfirma
 _cIdTipDok:=idtipdok
 _cBrDok:=brdok
 close all
+altd()
 o_fakt_edit()
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok)
 select (F_FAKT_DOKS); use

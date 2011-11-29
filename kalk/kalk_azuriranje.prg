@@ -679,7 +679,7 @@ return
 // ----------------------
 // ----------------------
 static function kalk_azur_sql(oServer)
-local lOk
+local lOk := .t.
 local record := hb_hash()
 local _doks_nv := 0
 local _doks_vpv := 0
@@ -714,25 +714,25 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 next
 
-// azuriraj kalk
-MsgO("sql kalk_kalk")
+if lOk = .t.
 
-O_KALK_PRIPR
+  // azuriraj kalk
+  MsgO("sql kalk_kalk")
 
-select kalk_pripr
-go top
+  O_KALK_PRIPR
 
-lOk := .t.
+  select kalk_pripr
+  go top
 
-// definisi glavne varijable record-a
-record["id_firma"] := field->idfirma
-record["id_vd"] := field->idvd
-record["br_dok"] := field->brdok
-record["dat_dok"] := field->datdok
+  // definisi glavne varijable record-a
+  record["id_firma"] := field->idfirma
+  record["id_vd"] := field->idvd
+  record["br_dok"] := field->brdok
+  record["dat_dok"] := field->datdok
  
-sql_kalk_kalk_update("BEGIN")
+  sql_kalk_kalk_update("BEGIN")
 
-do while !eof()
+  do while !eof()
  
    _tmp_id := record["id_firma"] + record["id_vd"] + record["br_dok"]
 
@@ -800,77 +800,61 @@ do while !eof()
 	
 	SKIP
 
-enddo
+  enddo
 
-MsgC()
-
-if !lOk
-
-  	sql_kalk_kalk_update("ROLLBACK")
-		
-	lock_semaphore( _tbl_kalk, "free" )
-	lock_semaphore( _tbl_doks, "free" )
-
-	return lOk
+  MsgC()
 
 endif
 
-// azuriraj doks...
-MsgO("sql kalk_doks")
+if lOk = .t.
 
-select kalk_pripr
-go top
+  // azuriraj doks...
+  MsgO("sql kalk_doks")
 
-lOk := .t.
+  select kalk_pripr
+  go top
 
-record := hb_hash()
-record["id_firma"] := field->idfirma
-record["id_vd"] := field->idvd
-record["br_dok"] := field->brdok
-record["dat_dok"] := field->datdok
+  record := hb_hash()
+  record["id_firma"] := field->idfirma
+  record["id_vd"] := field->idvd
+  record["br_dok"] := field->brdok
+  record["dat_dok"] := field->datdok
 
-sql_kalk_doks_update("BEGIN")
+  sql_kalk_doks_update("BEGIN")
 
-record["id_firma"] := field->idfirma
-record["id_vd"] := field->idvd
-record["br_dok"] := field->brdok
-record["r_br"] := VAL(field->Rbr)
-record["br_fakt_p"] := field->brfaktp
-record["id_partner"] := field->idpartner
-record["id_zaduz"] := field->idzaduz
-record["id_zaduz2"] := field->idzaduz2
-record["p_konto"] := field->pkonto
-record["m_konto"] := field->mkonto
-record["nv"] := _doks_nv
-record["vpv"] := _doks_vpv
-record["rabat"] := _doks_rabat
-record["mpv"] := _doks_mpv
-record["pod_br"] := field->podbr
+  record["id_firma"] := field->idfirma
+  record["id_vd"] := field->idvd
+  record["br_dok"] := field->brdok
+  record["r_br"] := VAL(field->Rbr)
+  record["br_fakt_p"] := field->brfaktp
+  record["id_partner"] := field->idpartner
+  record["id_zaduz"] := field->idzaduz
+  record["id_zaduz2"] := field->idzaduz2
+  record["p_konto"] := field->pkonto
+  record["m_konto"] := field->mkonto
+  record["nv"] := _doks_nv
+  record["vpv"] := _doks_vpv
+  record["rabat"] := _doks_rabat
+  record["mpv"] := _doks_mpv
+  record["pod_br"] := field->podbr
  
-if !sql_kalk_doks_update( "ins", record )
+  if !sql_kalk_doks_update( "ins", record )
        lOk := .f.
-endif
+  endif
    
-MsgC()
+  MsgC()
+
+endif
 
 if !lOk
-  	
-	sql_kalk_kalk_update("ROLLBACK")
+
+	// vrati promjene
+  	sql_kalk_kalk_update("ROLLBACK")
   	sql_kalk_doks_update("ROLLBACK")
-	
-	lock_semaphore( _tbl_kalk, "free" )
-	lock_semaphore( _tbl_doks, "free" )
+		
+else
 
-	return lOk
-
-endif
-
-
-if lOk
-	
-	// napravi update-e
-	// zavrsi transakcije 
- 
+	// snimi promjene
 	AADD( _ids, _tmp_id )
 
 	update_semaphore_version( _tbl_doks, .t. )
@@ -881,11 +865,11 @@ if lOk
 	push_ids_to_semaphore( _tbl_kalk, _ids ) 
   	sql_kalk_kalk_update("END")
 
-	// otkljucaj tabele...
-	lock_semaphore( _tbl_kalk, "free" )
-	lock_semaphore( _tbl_doks, "free" )
-
 endif
+
+// otkljucaj tabele svakako
+lock_semaphore( _tbl_kalk, "free" )
+lock_semaphore( _tbl_doks, "free" )
 
 return lOk
 

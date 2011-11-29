@@ -204,7 +204,7 @@ if (gDebug > 5)
     log_write("fakt_fakt synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+//close all
  
 return .t. 
 
@@ -462,7 +462,7 @@ if (gDebug > 5)
     log_write("fakt_doks synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+//close all
  
 return .t. 
 

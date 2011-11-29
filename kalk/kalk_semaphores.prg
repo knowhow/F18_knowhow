@@ -50,7 +50,7 @@ _count := table_count( _tbl, "true" )
 
 for _offset := 0 to _count STEP _step 
 
-_qry :=  "SELECT " + ;
+  _qry :=  "SELECT " + ;
 		"idfirma, idvd, brdok, rbr, datdok, brfaktp, datfaktp, idroba, idkonto, idkonto2, idzaduz, " + ;
 		"idzaduz2, idpartner, datkurs, kolicina, gkolicina, gkolicin2, fcj, " + ;
 		"fcj2, fcj3, trabat, rabat, tprevoz, prevoz, tprevoz2, prevoz2, tbanktr, banktr, " + ;
@@ -59,13 +59,13 @@ _qry :=  "SELECT " + ;
 		"error, podbr " + ;
 		"FROM " +	_tbl 
   
-if algoritam == "DATE"
+  if algoritam == "DATE"
     _dat := get_dat_from_semaphore("kalk_kalk")
 	_qry += " WHERE datdok >= " + _sql_quote(_dat)
     _key_block := {|| field->dat_dok }
-endif
+  endif
 
-if algoritam == "IDS"
+  if algoritam == "IDS"
 		_ids := get_ids_from_semaphore("kalk_kalk")
     	_qry += " WHERE "
     	if LEN(_ids) < 1
@@ -84,17 +84,17 @@ if algoritam == "IDS"
      	endif
 
         _key_block := {|| field->idfirma + field->idvd + field->brdok } 
-endif
+  endif
 
-_qry += " ORDER BY " + _order
-_qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
 
 
-// sredimo dbf - pobrisimo sto ne treba
-SELECT F_KALK
-my_use ("kalk", "kalk_kalk", .f., "SEMAPHORE")
+  // sredimo dbf - pobrisimo sto ne treba
+  SELECT F_KALK
+  my_use ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
-DO CASE
+  DO CASE
 
 	CASE algoritam == "FULL" .and. _offset==0
     	// "full" algoritam
@@ -143,17 +143,18 @@ DO CASE
 			endif
     	enddo
 
-ENDCASE
-// sada je sve izbrisano
+  ENDCASE
+  // sada je sve izbrisano
 
-_qry_obj := run_sql_query(_qry, _retry)
+  _qry_obj := run_sql_query(_qry, _retry)
 
-@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-_counter := 1
+  _counter := 1
 
-DO WHILE !_qry_obj:Eof()
-    append blank
+  DO WHILE !_qry_obj:Eof()
+    
+	append blank
 
 	/*
 	"idfirma, idvd, brdok, rbr, datdok, brfaktp, datfaktp, idroba, idkonto, idkonto2, idzaduz, "
@@ -224,21 +225,17 @@ DO WHILE !_qry_obj:Eof()
     if _counter % 5000 == 0
         @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
-ENDDO
+  ENDDO
 
-USE
+  USE
 
-//_qry_obj:Close()
-
-// limit, offset
 next
-
 
 if (gDebug > 5)
     log_write("kalk_kalk synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+//close all
  
 return .t. 
 
@@ -394,7 +391,7 @@ for _offset := 0 to _count STEP _step
 		"fmk.kalk_doks"  
 
   if algoritam == "DATE"
-    _dat = get_dat_from_semaphore( _tbl )
+    _dat = get_dat_from_semaphore( "kalk_doks" )
     _qry += " WHERE datdok >= " + _sql_quote(_dat)
     _key_block := { || field->datdok }
   endif
@@ -526,7 +523,7 @@ if (gDebug > 5)
     log_write("kalk_doks synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-close all
+//close all
  
 return .t. 
 

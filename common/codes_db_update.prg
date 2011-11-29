@@ -16,40 +16,33 @@
 function brisi_stavku_u_tabeli(table)
 local _rec := hb_hash()
 local _ids := {}
+local _pos
+local _table
 
-sql_table_update(table, "BEGIN")
+// pronaji u tabeli koji je naziv te tabele
+_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+_table := gaDBFs[ _pos, 3 ] 
+
+sql_table_update(_table, "BEGIN")
 
 _rec["id"] := field->id
 // ostala polja su nevazna za brisanje
 
-if sql_table_update(table, "del", _rec)
-   update_semaphore_version(table, .t.)
+if sql_table_update(_table, "del", _rec)
+   update_semaphore_version(_table, .t.)
    
    AADD(_ids, _rec["id"])
-   push_ids_to_semaphore( table, _ids )
+   push_ids_to_semaphore( _table, _ids )
 
-   sql_table_update(table, "END")
+   sql_table_update(_table, "END")
    // zapujemo dbf
    DELETE
 
    return .t.
 else
-   sql_table_update(table, "ROLLBACK")
+   sql_table_update(_table, "ROLLBACK")
    return .f.
 endif
-
- /* 
-    nTArea := SELECT()
-    
-    // logiraj promjenu brisanja stavke
-    if _LOG_PROMJENE == .t.
-    EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-    "stavka: " + to_str( FIELDGET(1) ), "", "", DATE(), DATE(), "", ;
-    "brisanje sifre iz sifrarnika")
-    endif
-    
-    select (nTArea)
-*/
 
 return .t.
 
@@ -84,14 +77,19 @@ return _ret
 // ----------------------------------
 // ---------------------------------
 function f18_gather(values, where)
-
+local _l_table
 local _table
 local _key, _field_b
 local _ok := .f.
 local _values_old := hb_hash()
 local _ids := {}
+local _pos
 
-_table := LOWER(ALIAS())
+_l_table := LOWER(ALIAS())
+
+// pronaji u tabeli koji je naziv te tabele
+_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(_l_table) } )
+_table := gaDBFs[ _pos, 3 ] 
 
 if where == NIL
   where := "ID=" + _sql_quote(values['id'])
@@ -147,33 +145,29 @@ return .t.
 // -----------------------------------
 function brisi_sve_u_tabeli(table)
 local _rec := hb_hash()
+local _pos
+local _table
 
-sql_table_update(table, "BEGIN")
+// pronaji u tabeli koji je naziv te tabele
+_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+_table := gaDBFs[ _pos, 3 ] 
+
+sql_table_update( _table, "BEGIN" )
 
 _rec["id"] := NIL
 // ostala polja su nevazna za brisanje
 
-if sql_table_update(table, "del", _rec)
-   update_semaphore_version(table, .t.)
-   sql_table_update(table, "END")
+if sql_table_update( _table, "del", _rec)
+   update_semaphore_version( _table, .t.)
+   sql_table_update( _table, "END")
    // zapujemo dbf
    ZAP
    return .t.
 else
-   sql_table_update(table, "ROLLBACK")
+   sql_table_update( _table, "ROLLBACK")
    return .f.
 endif
 
-/*
-        nTArea := SELECT()
-        // logiraj promjenu brisanja stavke
-        if _LOG_PROMJENE == .t.
-            EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-            "", "", "", DATE(), DATE(), "", ;
-            "brisanje kompletnog sifrarnika")
-        endif
-*/
- 
 return .t.
  
 //----------------------------------------------

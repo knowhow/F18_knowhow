@@ -489,10 +489,18 @@ if lNovi
 	append blank
 endif
 
-Gather()
+//Gather()
 
-if lNovi
-	GO (nRec)
+_vars := f18_scatter_global_vars()
+if ! f18_gather(_vars)
+    // brisi appendovani zapis
+    delete
+else
+
+	if lNovi
+		GO (nRec)
+	endif
+
 endif
 
 return 7

@@ -680,26 +680,27 @@ cDok:=idfirma+idtipdok+brdok
 
 do while !eof()
 	Scatter()
-    	cPom:=_rbr
-    	if (cDok != _idfirma+_idtipdok+_brdok)
-      		nRbrStari:=0
+    cPom:=_rbr
+    if (cDok != _idfirma+_idtipdok+_brdok)
+      	nRbrStari:=0
 		nRbr:=0
-    	endif
-    	if nRbrStari==RbrUnum(_rbr)
-      		_rbr:=RedniBroj(nRbr)
-    	else
-      		++nRbr
-      		_rbr:=RedniBroj(nRbr)
-    	endif
+    endif
+    if nRbrStari==RbrUnum(_rbr)
+      	_rbr:=RedniBroj(nRbr)
+    else
+      	++nRbr
+      	_rbr:=RedniBroj(nRbr)
+    endif
     	
 	Gather()
     	
 	nRbrStari:=RbrUnum(cPom)
-    	cDok:=idfirma+idtipdok+brdok
-    	skip 1
+    cDok:=idfirma+idtipdok+brdok
+    skip 1
 enddo
 
 close all
+
 return 0
 
 
@@ -724,6 +725,8 @@ local cTxt
 local cDinDem
 local cRezerv
 local nPom1, nPom2, nPom3
+local _fakt_totals
+local _fakt_doks_data
 
 if cPrj == nil
 	cPrj := ""
@@ -819,78 +822,60 @@ do while !eof()
        			AppBlank2(.f.,.f.)
     		endif
   	endif
-  	
-	select fakt_pripr
+ 
+	// daj mi podatke za tabelu doks	
+	_fakt_doks_data := get_fakt_doks_data()
 
-  	cIdFirma := field->idfirma
-  	cBrDok := field->brdok
-	cIdTipDok := field->idtipdok
-	dDatDok := field->datdok
-
-  	aMemo := ParsMemo( field->txt )
-	
-	if (LEN( aMemo )>=5)
-    		cTxt:=TRIM(aMemo[3])+" "+TRIM(aMemo[4])+","+TRIM(aMemo[5])
-  	else
-    		cTxt:=""
-  	endif
-  	
-	cTxt := PadR(cTxt,30)
-  	cDinDem := dindem
-  	cRezerv := " "
-  	
-	if ( cIdTipDok $ "10#20#27" .and. field->serbr = "*" )
-     		cRezerv := "*"
-  	endif
-  	
 	select fakt_doks
   	
-	_field->IdFirma   := cIdFirma
-  	_field->BrDok     := cBrDok
-  	_field->Rezerv    := cRezerv
-  	_field->DatDok    := dDatDok
-  	_field->IdTipDok  := cIdTipDok
-  	_field->Partner   := cTxt
-  	_field->dindem    := cDinDem
-  	_field->IdPartner := fakt_pripr->idpartner
-	_field->idpm      := fakt_pripr->idpm
+	_field->IdFirma   := _fakt_doks_data["id_firma"]
+  	_field->BrDok     := _fakt_doks_data["br_dok"]
+  	_field->Rezerv    := _fakt_doks_data["rezerv"]
+  	_field->DatDok    := _fakt_doks_data["dat_dok"]
+  	_field->IdTipDok  := _fakt_doks_data["id_tipdok"]
+  	_field->Partner   := _fakt_doks_data["partner"]
+  	_field->dindem    := _fakt_doks_data["din_dem"]
+  	_field->IdPartner := _fakt_doks_data["id_partner"]
+	_field->idpm      := _fakt_doks_data["id_pm"]
+   	_field->IdVrsteP := _fakt_doks_data["id_vrste_p"]
 	
 	if fakt_doks->(FIELDPOS("dok_veza")) <> 0
-		_field->dok_veza := fakt_pripr->dok_veza
+		_field->dok_veza := _fakt_doks_data["dok_veza"]
 	endif
 
-	if fakt_doks->(FIELDPOS("oper_id")) <> 0 .and. gSecurity == "D"
-		_field->oper_id := GetUserID()
+	if fakt_doks->(FIELDPOS("oper_id")) <> 0
+		_field->oper_id := _fakt_doks_data["oper_id"]
 	endif
   	
 	if fakt_doks->(FIELDPOS("fisc_rn")) <> 0 .and. gFc_use == "D" 
-		_field->fisc_rn := fakt_pripr->fisc_rn
+		_field->fisc_rn := _fakt_doks_data["fisc_rn"]
 	endif
   
-  	// datum isporuke, otpremnice, valute
 	if fakt_doks->(FIELDPOS("dat_isp")) <> 0 
-   		_field->dat_isp:=if(LEN(aMemo)>=7,CToD(aMemo[7]),CToD(""))
-   		_field->dat_otpr:=if(LEN(aMemo)>=7,CToD(aMemo[7]),CToD(""))
-   		_field->dat_val:=if(LEN(aMemo)>=9,CToD(aMemo[9]),CToD(""))
+   		_field->dat_isp := _fakt_doks_data["dat_isp"]
+   		_field->dat_otpr := _fakt_doks_data["dat_otpr"]
+   		_field->dat_val := _fakt_doks_data["dat_val"]
 	endif
 
-   	_field->IdVrsteP := fakt_pripr->idvrstep
-  	
-	if (FieldPos("DATPL")>0)
-   		_field->DatPl:=if(LEN(aMemo)>=9,CToD(aMemo[9]),CToD(""))
+	if fakt_doks->(FieldPos("DATPL")) <> 0
+   		_field->DatPl := _fakt_doks_data["dat_val"]
   	endif
   	
-	if (fakt_doks->m1=="Z")
+	if (fakt_doks->m1 == "Z")
     		// skidam zauzece i dobijam normalan dokument
     		// REPLACE m1 WITH " " -- isto kao i gore
     		_field->m1 := " "
   	endif
   	
 	if lDoks2
+
+			aMemo := parsmemo( fakt_pripr->txt )
+
     		select fakt_doks2
-    		_field->idfirma:=cIdFirma
-    		_field->brdok:=cBrDok
-    		_field->idtipdok:=cIdTipDok
+    		
+			_field->idfirma := fakt_pripr->idfirma
+    		_field->brdok := fakt_pripr->brdok
+    		_field->idtipdok := fakt_pripr->idtipdok
     		_field->k1:=if(LEN(aMemo)>=11,aMemo[11],"")
     		_field->k2:=if(LEN(aMemo)>=12,aMemo[12],"")
     		_field->k3:=if(LEN(aMemo)>=13,aMemo[13],"")
@@ -898,50 +883,16 @@ do while !eof()
     		_field->k5:=if(LEN(aMemo)>=15,aMemo[15],"")
     		_field->n1:=if(LEN(aMemo)>=16,VAL(ALLTRIM(aMemo[16])),0)
     		_field->n2:=if(LEN(aMemo)>=17,VAL(ALLTRIM(aMemo[17])),0)
-  	endif
   	
-	select fakt_pripr
+	endif
   	
-	nDug := 0
-	nRab := 0
-  	nDugD := 0
-	nRabD := 0
-  	
-	do while !eof() .and. cIdFirma==idfirma .and. cIdTipdok==idtipdok .and. cBrDok==brdok
-    	
-		if cDinDem == LEFT(ValBazna(),3)
-        	nPom1:=Round(kolicina*Cijena*PrerCij()*(1-Rabat/100),ZAOKRUZENJE)
-        	// npom1 - cijena sa porezom i uracunatim rabatom
-        	nPom2:=ROUND( kolicina*Cijena*PrerCij()*Rabat/100 , ZAOKRUZENJE)
-        	// rabat za stavku
-        	nPom3:=ROUND(nPom1*Porez/100, ZAOKRUZENJE)
-        	nDug+= nPom1 + nPom3
-        	// nDug je iznos ukupne fakture, ali bez izbijenog rabata !!!
-        	nRab+= nPom2
-    	else
-        	//nPom1:=round( Cijena*kolicina*PrerCij()/UBaznuValutu(datdok)*(1+Porez/100), ZAOKRUZENJE)
-        	// greska kada imamo porez  !!
-        	nPom1:=round( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*(1-Rabat/100), ZAOKRUZENJE)
-        	// npom1 - cijena sa porezom i uracunatim rabatom
-        	nPom2:=ROUND( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*Rabat/100 , ZAOKRUZENJE)
-        	// rabat za stavku
-        	nPom3:=ROUND(nPom1*Porez/100, ZAOKRUZENJE)
-        	nDugD+= nPom1 + nPom3
-        	nRabD+= nPom2
-    	endif
-    	skip
-	enddo
-  
+	// izracunaj totale za fakturu
+	_fakt_totals := calculate_fakt_total( fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok )
+	
   	select fakt_doks
   	
-	if ( cDinDem == LEFT(ValBazna(),3))
-   		_field->Iznos := nDug 
-		// iznos sadrzi umanjenje za rabat
-   		_field->Rabat := nRab
-  	else
-   		_field->Iznos := nDugD 
-   		_field->Rabat := nRabD
- 	endif
+   	_field->Iznos := _fakt_totals["iznos"] 
+   	_field->Rabat := _fakt_totals["rabat"]
 
 	// protu dokument
   	if ( field->idtipdok == "13" .and. lProtu )
@@ -965,7 +916,8 @@ do while !eof()
 	endif
 
 	if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
-		EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,"","","dokument: " + cIdFirma+"-"+cIdTipDok+"-"+cBrDok,dDatDok,Date(),"","Azuriranje dokumenta")
+		EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;
+			"-" + fakt_pripr->idtipdok + "-" + fakt_pripr->brdok, fakt_pripr->datdok, Date(),"","Azuriranje dokumenta")
 	endif
 	
   	select fakt_pripr
@@ -980,6 +932,122 @@ return .t.
 
 
 
+// priprema podatke za upis u polje "doks->partner"
+static function _fakt_partner_memo( a_memo )
+local _return := ""
+	
+if LEN( a_memo ) >= 5
+	_return := TRIM( a_memo[3] ) + " " + TRIM( a_memo[4] ) + "," + TRIM( a_memo[5] )
+endif
+
+_return := PADR( _return, 30 )
+  	
+return _return
+
+
+
+function get_fakt_doks_data()
+local _fakt_data := hb_hash()
+local _memo 
+
+select fakt_pripr
+
+_fakt_data["id_firma"] := field->idfirma
+_fakt_data["br_dok"] := field->brdok
+_fakt_data["id_tipdok"] := field->idtipdok
+_fakt_data["dat_dok"] := field->datdok
+
+_memo := ParsMemo( field->txt )
+	
+_fakt_data["din_dem"] := field->dindem
+  	
+if ( field->idtipdok $ "10#20#27" .and. field->serbr = "*" )
+	_fakt_data["rezerv"] := "*"
+else
+	_fakt_data["rezerv"] := " "
+endif
+
+_fakt_data["partner"] := _fakt_partner_memo( _memo )
+_fakt_data["id_partner"] := field->idpartner
+_fakt_data["id_pm"] := field->idpm
+  	
+_fakt_data["dok_veza"] := field->dok_veza
+_fakt_data["oper_id"] := getUserId()
+
+_fakt_data["fisc_rn"] := field->fisc_rn
+
+_fakt_data["dat_isp"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
+_fakt_data["dat_otpr"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
+_fakt_data["dat_val"] := if( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
+
+_fakt_data["id_vrste_p"] := field->idvrstep
+
+return _fakt_data
+
+
+
+// ----------------------------------------------------------
+// kalkulise ukupno za fakturu
+// ----------------------------------------------------------
+function calculate_fakt_total( id_firma, id_tipdok, br_dok )
+local _fakt_total := hb_hash()
+local _cij_sa_por := 0
+local _rabat := 0
+local _uk_sa_rab := 0
+local _uk_rabat := 0 
+local _dod_por := 0
+local _din_dem
+
+select fakt_pripr
+go top
+
+seek id_firma + id_tipdok + br_dok
+  	
+_din_dem := field->dindem
+
+do while !eof() .and. field->idfirma == id_firma ;
+			.and. field->idtipdok == id_tipdok ;
+			.and. field->brdok == br_dok
+    	
+	if _din_dem == LEFT( ValBazna(), 3 )
+    	
+		_cij_sa_por := ROUND( field->kolicina * field->cijena * ;
+						PrerCij() * ( 1 - field->rabat / 100), ZAOKRUZENJE )
+        
+		_rabat := ROUND( field->kolicina * field->cijena * ;
+					PrerCij() * field->rabat / 100 , ZAOKRUZENJE )
+        
+		_dod_por := ROUND( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
+        
+    else
+        
+		_cij_sa_por := ROUND( field->kolicina * field->cijena * ;
+						PrerCij() / UBaznuValutu(field->datdok) * ;
+						( 1 - field->Rabat / 100), ZAOKRUZENJE ) 
+        
+		_rabat := ROUND( field->kolicina * field->cijena * ;
+						PrerCij() / UBaznuValutu( field->datdok ) * ;
+						field->rabat / 100 , ZAOKRUZENJE )
+        
+		_dod_por := ROUND( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
+        
+    endif
+ 		
+	_uk_sa_rab += _cij_sa_por + _dod_por
+    _uk_rabat += _rabat
+
+	skip
+
+enddo
+
+_fakt_total["iznos"] := _uk_sa_rab
+_fakt_total["rabat"] := _uk_rabat
+ 
+return _fakt_total
+
+
+
+
 // ---------------------------------------------------
 // azuriranje u sql tabele
 // ---------------------------------------------------
@@ -991,6 +1059,8 @@ local _tbl_doks
 local _i
 local _tmp_id
 local _ids := {}
+local _fakt_doks_data
+local _fakt_totals
 
 _tbl_fakt := "fakt_fakt"
 _tbl_doks := "fakt_doks"
@@ -1088,44 +1158,47 @@ if lOk = .t.
   MsgO("sql fakt_doks")
 
   select fakt_pripr
-  go top
+  go top  
 
-  select partn
-  go top
-  seek fakt_pripr->idpartner
+   // izracunaj totale za fakturu
+  _fakt_totals := calculate_fakt_total( fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok )
 
   select fakt_pripr
-
-  lOk := .t.
+  go top
+	
+  // daj mi podatke za tabelu doks	
+  _fakt_doks_data := get_fakt_doks_data()
 
   record := hb_hash()
-  record["id_firma"] := field->idfirma
-  record["id_tip_dok"] := field->idtipdok
-  record["br_dok"] := field->brdok
-  record["dat_dok"] := field->datdok
+  record["id_firma"] := _fakt_doks_data["id_firma"]
+  record["id_tip_dok"] := _fakt_doks_data["id_tipdok"]
+  record["br_dok"] := _fakt_doks_data["br_dok"]
+  record["dat_dok"] := _fakt_doks_data["dat_dok"]
 
   sql_fakt_doks_update("BEGIN")
 
-  record["id_firma"] := field->idfirma
-  record["id_tip_dok"] := field->idtipdok
-  record["br_dok"] := field->brdok
-  record["dat_dok"] := field->datdok
-  record["partner"] := ""
-  record["id_partner"] := field->idpartner
-  record["din_dem"] := field->dindem
-  record["iznos"] := 0
-  record["rabat"] := 0
-  record["rezerv"] := ""
-  record["m1"] := field->m1
-  record["id_vrste_p"] := field->idvrstep
-  record["dat_pl"] := DATE()
-  record["id_pm"] := ""
-  record["dok_veza"] := ""
-  record["oper_id"] := 0
-  record["fisc_rn"] := 0
-  record["dat_isp"] := DATE()
-  record["dat_otpr"] := DATE()
-  record["dat_val"] := DATE()
+  record["id_firma"] := _fakt_doks_data["id_firma"]
+  record["id_tip_dok"] := _fakt_doks_data["id_tipdok"]
+  record["br_dok"] := _fakt_doks_data["br_dok"]
+  record["dat_dok"] := _fakt_doks_data["dat_dok"]
+  record["partner"] := _fakt_doks_data["partner"]
+  record["id_partner"] := _fakt_doks_data["id_partner"]
+  record["din_dem"] := _fakt_doks_data["din_dem"]
+
+  record["iznos"] := _fakt_totals["iznos"]
+  record["rabat"] := _fakt_totals["rabat"]
+
+  record["rezerv"] := _fakt_doks_data["rezerv"]
+  record["m1"] := " "
+  record["id_vrste_p"] := _fakt_doks_data["id_vrste_p"]
+  record["dat_pl"] := _fakt_doks_data["dat_val"]
+  record["id_pm"] := _fakt_doks_data["id_pm"]
+  record["dok_veza"] := _fakt_doks_data["dok_veza"]
+  record["oper_id"] := _fakt_doks_data["oper_id"]
+  record["fisc_rn"] := _fakt_doks_data["fisc_rn"]
+  record["dat_isp"] := _fakt_doks_data["dat_isp"]
+  record["dat_otpr"] := _fakt_doks_data["dat_otpr"]
+  record["dat_val"] := _fakt_doks_data["dat_val"]
  
   if !sql_fakt_doks_update( "ins", record )
        lOk := .f.
@@ -1565,6 +1638,7 @@ return .f.
 function OdrediNbroj(_idfirma, _idtipdok)
 local cNBrDok:=""
 
+O_FAKT_DOKS
 select fakt_doks
 set order to tag "1"
 go top
@@ -1623,6 +1697,7 @@ local nDesniDio
 
 cBrDok:=""
 
+O_FAKT_DOKS
 select fakt_doks
 set order to tag "1"
 go top

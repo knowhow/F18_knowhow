@@ -575,9 +575,8 @@ DO CASE
                             + _sql_quote( STR( record["rabat"], 18, 8 )) + "," +;
                             + _sql_quote( STR( record["mpv"], 18, 8 )) + "," +;
                             + _sql_quote( record["pod_br"] ) + " )"
-                            //+ _sql_quote( record["sifra"] ) + " )"
                           
-END CASE
+ENDCASE
    
 _ret := _sql_query( _server, _qry)
 

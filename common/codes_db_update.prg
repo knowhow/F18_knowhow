@@ -180,6 +180,10 @@ LOCAL _tbl
 LOCAL _where
 LOCAL _server := pg_server()
 local _key
+local _dbstruct
+local __pos
+local __dec
+local __len
 
 _tbl := "fmk." + LOWER(table)
 
@@ -209,6 +213,10 @@ DO CASE
             " WHERE " + _where  
 
    CASE op == "ins"
+	
+	_dbstruct := {}
+	_dbstruct := DBSTRUCT()
+
     _qry := "INSERT INTO " + _tbl + "(" 
     for each  _key in record:Keys
        _qry +=  _key + ","
@@ -217,9 +225,20 @@ DO CASE
     _qry := SUBSTR( _qry, 1, LEN(_qry) - 1) + ")"
 
     _qry += " VALUES(" 
-     for each _key in record:Keys
-          _qry += _sql_quote( record[_key]) + ","
-     next 
+     
+    for each _key in record:Keys
+        // ako je polje numericko
+		if VALTYPE( record[_key] ) == "N"
+			
+			__pos := ASCAN( _dbstruct, {|_var| LOWER(_var[1]) == LOWER(_key)} )
+			__len := _dbstruct[ __pos, 3 ]
+			__dec := _dbstruct[ __pos, 4 ]
+  
+			_qry += STR( record[_key], __len, __dec ) + ","
+        else
+			_qry += _sql_quote( record[_key]) + ","
+    	endif 	
+	next 
     _qry := SUBSTR( _qry, 1, LEN(_qry) - 1) + ")"
 
 END CASE

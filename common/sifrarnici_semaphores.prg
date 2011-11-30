@@ -598,6 +598,8 @@ if algoritam == NIL
    algoritam := "FULL"
 endif
 
+altd()
+
 @ _x + 1, _y + 2 SAY "update " + table + " : " + algoritam
 _seconds := SECONDS()
 _qry :=  "SELECT " 

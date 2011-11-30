@@ -120,7 +120,7 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 next
 
-_result := sifrarnik_from_sql_server( _tbl, _alias, algoritam, F_G_UG_P, ;
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_G_UG_P, ;
 		{"dat_obr", "idpartner", "id_ugov", "saldo_kup", "saldo_dob", ;
 		"d_p_upl_ku", "d_p_prom_k", "d_p_prom_d", "f_iznos", "f_iznos_pd" })
 

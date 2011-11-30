@@ -225,7 +225,7 @@ else
 	cPomTag := IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
 endif
 
-cRet := PostojiSifra(F_ROBA, (cPomTag), 15, 77, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
+cRet := PostojiSifra(F_ROBA, (cPomTag), 15, MAXCOLS() - 5 , "Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
 
 PopWa()
 

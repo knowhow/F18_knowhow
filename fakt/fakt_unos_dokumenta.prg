@@ -1238,26 +1238,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 		return 0
 	endif
 	
-	// varijanta rabatnih skala
-	if IsRabati() .and. (_idtipdok $ gcRabDok)
-		
-		if fNovi 
-			lSkonto := Pitanje(, "Unositi kasu skonto (D/N)?", "N") == "D"
-			//GetTRabat(@cTipRab)
-			//_tiprabat := PADR(cTipRab, 10)
-	
-		else
-			if ( _skonto == 0 )
-				lSkonto := .f.
-			else
-				lSkonto := .t.
-			endif
-			cTipRab := PADR(_tiprabat, 10)
-		endif
-		nRokPl := 0
-	endif
-
-    	@  m_x+ 2, m_y + 2 SAY PADR(aPom[ASCAN(aPom,{|x|_IdTipdok==LEFT(x,2)})],40)
+    @  m_x+ 2, m_y + 2 SAY PADR(aPom[ASCAN(aPom,{|x|_IdTipdok==LEFT(x,2)})],40)
    	
 	if (_idTipDok=="13" .and. gVarNum=="2" .and. gVar13=="2")
      		
@@ -1395,15 +1376,6 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 
      			if (gDodPar=="1" .or. gDatVal=="D")
       				
-				if fNovi
-					// ako se koriste rabati 
-					// izvuci broj dana iz tabele 
-					// rabatnih skala
-					if !IsRabati()
-						nRokPl:=gRokPl
-					endif
-				endif
-
 				@ m_x + 7, m_y + 51 SAY "Rok plac.(dana):" ;
 					GET nRokPl ;
 					PICT "999" ;
@@ -1508,6 +1480,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
   	
 	ChSveStavke(fNovi)
 else
+
 	@ m_x + 1, m_y+ 2 SAY gNFirma 
 	?? "  RJ:", _IdFirma
    	@ m_x+3,m_y+2 SAY PADR(aPom[ASCAN(aPom,{|x|_IdTipdok==LEFT(x,2)})],35)
@@ -1516,35 +1489,6 @@ else
    	@ m_x+3,col()+1 SAY "Broj: "
 	?? _BrDok
    	_txt2:=""
-	// varijanta rabatnih skala
-	if IsRabati() .and. (_idtipdok $ gcRabDok)
-		if fNovi 
-			skip -1
-			if ( _skonto == 0 )
-				lSkonto := .f.
-			else 
-				lSkonto := .t.
-			endif
-			if Empty(cTipRab)
-				if Empty(_tiprabat)
-					//GetTRabat(@cTipRab)
-				else
-					cTipRab := _tiprabat	
-				endif
-			endif
-			
-			skip 1
-			_tiprabat := PADR(cTipRab, 10)
-		else
-			if ( _skonto == 0 )
-				lSkonto := .f.
-			else
-				lSkonto := .t.
-			endif
-			cTipRab := PADR(_tiprabat, 10)
-		endif
-		nRokPl := 0
-	endif
 
 endif
 

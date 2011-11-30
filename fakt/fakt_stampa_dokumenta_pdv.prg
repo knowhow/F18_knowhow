@@ -40,8 +40,6 @@ drn_create()
 drn_open()
 drn_empty()
 
-altd()
-
 // otvori tabele
 if PCount() == 4 .and. ( cIdtipdok <> nil )
 	o_fakt_edit(.t.)

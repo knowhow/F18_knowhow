@@ -70,6 +70,9 @@ else
  	O_PFAKT
 endif
 
+O_DRN
+O_RN
+O_DRNTEXT
 O_FTXT
 O_TARIFA
 O_VALUTE
@@ -82,6 +85,7 @@ O_SIFV
 select fakt_pripr
 set order to tag "1"
 go top
+
 return nil
 
 

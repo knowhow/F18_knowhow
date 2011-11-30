@@ -56,9 +56,13 @@ REQUEST HB_GT_XWC_DEFAULT
  */
 function SC_START(oApp, lSezone)
 local cImeDbf
+local _i
 public gAppSrv
 
-  
+for _i := 1 to 15
+	?
+next
+
 ? "setujem engine (sc_start)"
 
 if !oApp:lStarted  

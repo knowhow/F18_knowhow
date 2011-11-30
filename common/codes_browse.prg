@@ -538,8 +538,24 @@ do case
 
 
   case (Ch==K_CTRL_N .or. Ch==K_F2 .or. Ch==K_F4 .or. Ch==K_CTRL_A)
+   
+	// ubacio da se vrsi osvjezavanje tabela prije opcije f2, f4...
+    __n_rec := RECNO()
 
-    if EditSifItem(Ch, nOrder, aZabIsp) == 1
+    __pos := ASCAN( gaDbfs, { |var| var[1] == nDbf } )
+    __tbl := gaDbfs[ __pos, 2 ]
+	
+	my_use( __tbl )
+    
+	Tb:RefreshCurrent()
+     		
+	//while !TB:stabilize()
+	//end	
+
+	select ( nDbf )
+    go ( __n_rec )
+ 
+	if EditSifItem(Ch, nOrder, aZabIsp) == 1
       return DE_REFRESH
     endif
     RETURN DE_CONT

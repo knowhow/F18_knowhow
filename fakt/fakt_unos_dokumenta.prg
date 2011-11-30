@@ -726,7 +726,7 @@ do while lJos
 
 	// na lx-u moram ovo staviti ?????
 	// budalestina, jer ispadne na otvaranju tabela...
-	sleep(5)
+	//sleep(5)
 
   	o_fakt_edit()
 

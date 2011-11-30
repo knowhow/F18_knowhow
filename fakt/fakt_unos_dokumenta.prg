@@ -684,7 +684,7 @@ function PrintDok()
 SpojiDuple()  // odradi ovo prije stampanja !
 SrediRbrFakt()
 
-o_fakt_edit() // sredirbr zatvori pripremu !!
+//o_fakt_edit() // sredirbr zatvori pripremu !!
 
 if gTBDir=="D"
 	if eof()

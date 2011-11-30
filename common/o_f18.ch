@@ -196,7 +196,7 @@
 #xcommand O_FAKT      => select (F_FAKT) ;   my_use  ("fakt") ; set order to tag  "1"
 #xcommand O__FAKT     => select(F__FAKT)  ;  my_use ("_fakt") 
 #xcommand O__ROBA   => select(F__ROBA);  my_use  ("_roba")
-#xcommand O_PFAKT     => select (F_FAKT);  my_use  ("fakt", "fakt_pripr"); set order to tag "1"
+#xcommand O_PFAKT     => select (F_FAKT);  my_use  ("fakt_pripr", "fakt_fakt"); set order to tag "1"
 #xcommand O_FAKT_DOKS      => select(F_FAKT_DOKS);    my_use  ("fakt_doks")  ; set order to tag "1"
 #xcommand O_FAKT_DOKS2     => select(F_FAKT_DOKS2);    my_use  ("fakt_doks2")  ; set order to tag "1"
 #xcommand O_POMGN  => select(F_POMGN);  my_use ("pomgn"); set order to tag "4"

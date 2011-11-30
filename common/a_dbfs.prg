@@ -155,8 +155,8 @@ AADD( gaDbfs, { F_RELAC  ,"RELAC"   , "fakt_relac"     } )
 AADD( gaDbfs, { F_VOZILA ,"VOZILA"  , "fakt_vozila"     } )
 AADD( gaDbfs, { F_KALPOS ,"KALPOS"  , "fakt_kalpos"     } )
 AADD( gaDbfs, { F_DRN ,   "DRN"     , "dracun"     } )
-AADD( gaDbfs, { F_DRN ,   "RN"     , "racun"     } )
-AADD( gaDbfs, { F_DRN ,   "DRNTEXT"     , "dracuntext"     } )
+AADD( gaDbfs, { F_RN ,   "RN"     , "racun"     } )
+AADD( gaDbfs, { F_DRNTEXT ,   "DRNTEXT"     , "dracuntext"     } )
 
 // modul RNAL
 AADD(gaDBFs, { F__DOCS, "_DOCS", "_rnal_docs"  } )

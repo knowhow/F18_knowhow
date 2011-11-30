@@ -269,8 +269,6 @@ do case
 
 				StampTXT( cFFirma, cFTipDok, cFBrDok )
 		    	
-				close all
-
 				o_fakt_edit()
 
 				select fakt_pripr
@@ -282,8 +280,6 @@ do case
 			
 				stdokodt( cFFirma, cFTipDok, cFBrDok )
 			
-				close all
-
 				o_fakt_edit()
 
 				select fakt_pripr
@@ -736,7 +732,8 @@ do while lJos
 	
 	gPtxtC50 := .f.
   	StampTXT(nil,cPom,nil)
-	
+
+    close all	
   	o_fakt_edit()
 
 enddo
@@ -2995,7 +2992,9 @@ do while .t.
 enddo
 m_x:=am_x
 m_y:=am_y
+
 o_fakt_edit()
+
 select fakt_pripr
 go bottom
 
@@ -3008,6 +3007,7 @@ function ImportTxt()
 CLOSE ALL
 cKom :="fmk.exe --batch --exe:ImportTxt --db:"+STRTRAN(TRIM(gNFirma), " ", "_") 
 RUN &cKom
+
 o_fakt_edit()
 return
 *}

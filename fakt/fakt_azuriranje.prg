@@ -14,6 +14,9 @@
 
  
 function o_fakt_edit(cVar2)
+
+close all
+
 if glRadNal
 	O_RNAL
 endif

@@ -15,9 +15,9 @@
  
 function o_fakt_edit(cVar2)
 
-close all
+altd()
 
-sleep(3)
+close all
 
 if glRadNal
 	O_RNAL

@@ -17,6 +17,8 @@ function o_fakt_edit(cVar2)
 
 close all
 
+sleep(3)
+
 if glRadNal
 	O_RNAL
 endif

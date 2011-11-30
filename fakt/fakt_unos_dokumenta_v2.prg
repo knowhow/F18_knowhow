@@ -1137,6 +1137,13 @@ if FOUND()
 		replace field->n1 with nRabat
 	endif
 
+    if lFill == .t.
+  	  	// promjene u sql bazi
+		scatter()
+		_vars := f18_scatter_global_vars()
+		f18_gather(_vars)
+	endif
+
 endif
 
 select (nTArea)

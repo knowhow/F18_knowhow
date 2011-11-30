@@ -67,7 +67,7 @@ my_server_login( my_server_params() )
 
 log_write(my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
 
-if __server():NetErr()
+if __server:NetErr()
       
 	  clear screen
 

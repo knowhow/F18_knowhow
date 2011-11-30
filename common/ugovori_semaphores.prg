@@ -65,7 +65,8 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 next
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_RUGOV, ;
-		{"id", "idroba", "kolicina", "porez", "rabat" })
+		{"id", "idroba", "kolicina", "cijena", "porez", "rabat", ;
+			"k1", "k2", "dest" })
 
 lock_semaphore( _tbl, "free" )
 

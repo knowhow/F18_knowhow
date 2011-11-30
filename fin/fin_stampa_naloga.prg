@@ -216,6 +216,7 @@ function SintStav(lAuto)
 
 if lAuto==NIL; lAuto:=.f.; ENDIF
 
+close all
 O_PSUBAN
 O_PARTN
 O_PANAL
@@ -371,6 +372,6 @@ do while !eof()
    enddo
 enddo
 
-closeret
+close all
 return
 

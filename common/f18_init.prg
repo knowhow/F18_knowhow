@@ -123,7 +123,11 @@ endif
 
 __server :=  TPQServer():New( params["host_name"], params["database"], params["user"], params["password"], params["port"], params["schema"] )
 
-set_sql_search_path()
+
+if !__server:NetErr()
+	set_sql_search_path()
+endif
+
 return __server
 
 // --------------------------

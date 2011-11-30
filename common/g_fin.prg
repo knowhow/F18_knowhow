@@ -17,16 +17,8 @@
 // otvaranje tabele suban
 // ----------------------------------------
 function use_suban()
-local cUse
 
-if EMPTY(gFinKPath)
-	return 0
-endif
-
-cUse := ALLTRIM(gFinKPath) + "SUBAN.DBF"
-
-select 130
-use (cUse) alias ug_suban
+O_SUBAN
 
 return 1
 
@@ -45,7 +37,7 @@ if use_suban() == 0
 	return 0
 endif
 
-select ug_suban
+select suban
 set order to tag "2"
 // idfirma + idpartner + idkonto
 seek gFirma + cPartn + cKto
@@ -54,14 +46,14 @@ nSaldo := 0
 nDuguje := 0
 nPotrazuje := 0
 
-do while !EOF() .and. ug_suban->( idfirma + idpartner + idkonto ) == gFirma + cPartn + cKto  
+do while !EOF() .and. suban->( idfirma + idpartner + idkonto ) == gFirma + cPartn + cKto  
 	
-	if ug_suban->d_p == "1"
-		nDuguje += ug_suban->iznosbhd
+	if suban->d_p == "1"
+		nDuguje += suban->iznosbhd
 	endif
 	
-	if ug_suban->d_p == "2"
-		nPotrazuje += ug_suban->iznosbhd
+	if suban->d_p == "2"
+		nPotrazuje += suban->iznosbhd
 	endif
 	
 	skip
@@ -89,17 +81,17 @@ if use_suban() == 0
 	return 0
 endif
 
-select ug_suban
+select suban
 set order to tag "1"
 // idfirma + idkonto + idpartner + DTOS(datdok)
 seek gFirma + cKto + cKupac
 
 dDatum := CToD("")
 
-do while !EOF() .and. ug_suban->( idfirma + idkonto + idPartner ) == gFirma + cKto + cKupac  
+do while !EOF() .and. suban->( idfirma + idkonto + idPartner ) == gFirma + cKto + cKupac  
 	
-	if ug_suban->d_p == "2"
-		dDatum := ug_suban->datdok
+	if suban->d_p == "2"
+		dDatum := suban->datdok
 	endif
 	
 	skip
@@ -120,15 +112,15 @@ if use_suban() == 0
 	return 0
 endif
 
-select ug_suban
+select suban
 set order to tag "1"
 // idfirma + idkonto + idpartner + DTOS(datdok)
 seek gFirma + cKto + cKupac
 
 dDatum := CToD("")
 
-do while !EOF() .and. ug_suban->( idfirma + idkonto + idPartner ) == gFirma + cKto + cKupac  
-	dDatum := ug_suban->datdok
+do while !EOF() .and. suban->( idfirma + idkonto + idPartner ) == gFirma + cKto + cKupac  
+	dDatum := suban->datdok
 	skip
 enddo
 

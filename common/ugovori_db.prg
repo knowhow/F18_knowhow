@@ -243,6 +243,7 @@ O_SIFV
 O_FAKT
 O_FAKT_DOKS
 O_ROBA
+O_TARIFA
 O_PARTN
 O_DEST
 O_UGOV
@@ -272,11 +273,11 @@ replace id_ugov with cIdUgov
 replace idpartner with cUPartner
 replace saldo_kup with nSaldoKup
 replace saldo_dob with nSaldoDob
-replace d_p_upl_kup with dPUplKup
-replace d_p_prom_kup with dPPromKup
-replace d_p_prom_dob with dPPromDob
+replace d_p_upl_ku with dPUplKup
+replace d_p_prom_k with dPPromKup
+replace d_p_prom_d with dPPromDob
 replace f_iznos with nFaktIzn
-replace f_iznos_pdv with nFaktPDV
+replace f_iznos_pd with nFaktPDV
 
 return 
 

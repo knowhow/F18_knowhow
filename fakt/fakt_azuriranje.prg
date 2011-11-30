@@ -1270,6 +1270,8 @@ _a_fakt_doks := _fakt_dokumenti()
 // ovo jos treba vidjeti koristi li se ??????????
 //lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
 
+msgo("Azuriranje dokumenata u toku ...")
+
 // prodji kroz matricu sa dokumentima i azuriraj ih
 for _i := 1 to LEN( _a_fakt_doks )
 
@@ -1283,16 +1285,20 @@ for _i := 1 to LEN( _a_fakt_doks )
  	if fakt_azur_sql( __id_firma, __id_tip_dok, __br_dok  )
 	
 		if !fakt_azur_dbf( __id_firma, __id_tip_dok, __br_dok )
-    		MsgBeep("Neuspjesno FAKT/DBF azuriranje !?")
+    		msgc()
+			MsgBeep("Neuspjesno FAKT/DBF azuriranje !?")
        		return
    		endif
 
 	else
+		msgc()
 		MsgBeep("Neuspjesno FAKT/SQL azuriranje !?")
 		return
 	endif
 
 next
+
+msgc()
 
 // otvori potrebne tabele
 o_fakt_edit()
@@ -1306,8 +1312,11 @@ select fakt_pripr
 if LEN( _a_fakt_doks ) > 1
 	fakt_izbrisi_azurirane( _a_fakt_doks )
 else
+	
 	// izbrisi pripremu
 	ZAP
+	__dbpack()
+
 endif
 	
 close all
@@ -1377,8 +1386,6 @@ enddo
     		
 __dbpack()
     		
-MsgBeep("U pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
-
 return
 
 

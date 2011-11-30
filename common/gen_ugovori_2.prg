@@ -162,6 +162,7 @@ local nGenCh
 local cGenTipDok := ""
 local cDatLFakt
 local dLFakt
+local __where
 
 // otvori tabele
 o_ugov()
@@ -206,9 +207,10 @@ if lSetParams
 	replace opis with cOpis
 
 	// upisi u sql
-	scatter()
-	_vars := f18_scatter_global_vars()
-	f18_gather(_vars)
+	//scatter()
+	//_vars := f18_scatter_global_vars()
+	//__where := "dat_obr = " + _sql_quote( _dat_obr )
+	//f18_gather( _vars, __where )
 
 endif
 
@@ -319,9 +321,9 @@ if Found()
 endif
 
 // upisi i u sql
-scatter()
-_vars := f18_scatter_global_vars()
-f18_gather(_vars)
+//scatter()
+//_vars := f18_scatter_global_vars()
+//f18_gather(_vars)
 
 BoxC()
 

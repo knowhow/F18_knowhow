@@ -1575,7 +1575,7 @@ if (gSamokol != "D")
 		_trabat:="I"
     	_rabat:=_kolicina*_cijena*(1-_rabat/100)
     		
-		@ m_x+18+RKOR+RKOR2, col() + 2  SAY "Cij." GET _Cijena PICT piccdem WHEN _podbr<>" ." .and. KLevel<="1" VALID _cijena>0
+		@ m_x+18+RKOR+RKOR2, col() + 2  SAY "Cij." GET _Cijena PICT piccdem WHEN _podbr<>" ."  VALID _cijena>0
 
     	@ m_x+18+RKOR+RKOR2,col()+2 SAY "Participacija" GET _Rabat PICT "9999.999" when _podbr<>" ."
 
@@ -1583,7 +1583,7 @@ if (gSamokol != "D")
 		
     	@ m_x+18 + RKOR + RKOR2, col() + 2  SAY IF( _idtipdok $ "13#23".and.( gVar13=="2" .or. glCij13Mpc), "MPC.s.PDV", "Cijena ("+ALLTRIM(ValDomaca())+")") GET _Cijena ;
 		     PICT piccdem ;
-		     WHEN  _podbr<>" ." .and. KLevel<="1" .and. SKCKalk(.t.) ;
+		     WHEN  _podbr<>" ." .and. SKCKalk(.t.) ;
 		     VALID SKCKalk(.f.) .and. c_cijena(_cijena, _idtipdok, fNovi)
 
 		if ( PADR(_dindem, 3) <> PADR(ValDomaca(), 3) ) 

@@ -739,7 +739,9 @@ do while lJos
 
   	StampTXT( nil, cPom, nil )
 
-	sleep(10)
+	// na lx-u moram ovo staviti ?????
+	// budalestina, jer ispadne na otvaranju tabela...
+	sleep(5)
 
   	o_fakt_edit()
 

@@ -324,7 +324,7 @@ do case
 	case Ch=K_CTRL_P
 		PrintDok()
 		lDirty:=.f.
-        	return DE_REFRESH
+        return DE_REFRESH
 	case Ch==K_ALT_L
         	close all
          	label_bkod()
@@ -683,7 +683,9 @@ function PrintDok()
 
 SpojiDuple()  // odradi ovo prije stampanja !
 SrediRbrFakt()
+
 o_fakt_edit() // sredirbr zatvori pripremu !!
+
 if gTBDir=="D"
 	if eof()
      		skip -1
@@ -718,7 +720,9 @@ if lSSIP99
     		nDokumBr:=0
   	endif
 endif
+
 do while lJos
+	
 	if gNovine=="D" .or. (IzFMKINI('FAKT','StampaViseDokumenata','N')=="D")
     		lJos:=StViseDokMenu()
     		if LEN(gFiltNov)==0
@@ -728,14 +732,19 @@ do while lJos
   	else
     		lJos:=.f.
   	endif
-  	cPom:=idtipdok
+
+  	cPom := idtipdok
 	
 	gPtxtC50 := .f.
-  	StampTXT(nil,cPom,nil)
+
+  	StampTXT( nil, cPom, nil )
+
+	sleep(10)
 
   	o_fakt_edit()
 
 enddo
+
 if lSSIP99
 	if IzFMKIni("STAMPA","Opresa","N",KUMPATH)=="D"
     		gRPL_normal()
@@ -748,7 +757,6 @@ endif
 lSSIP99:=.f.
 
 return
-*}
 
 
 function RekZadMpO()
@@ -2154,7 +2162,6 @@ return _BrDok
  */
  
 function StampTXT(cIdFirma, cIdTipDok, cBrDok, lJFill)
-*{
 private InPicDEM:=PicDEM  // picture iznosa
 private InPicCDEM:=PicCDEM  // picture iznosa
 
@@ -2310,12 +2317,6 @@ endif
 PicDEM:=InPicDEM
 PicCDEM:=InPicCDEM
 
-#ifdef CAX
-     select (F_PRIPR)
-     use
-     select (F_POR)
-     use
-#endif
 return
 *}
 

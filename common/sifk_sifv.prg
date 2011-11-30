@@ -395,14 +395,11 @@ if sifk->Veza="N"
   numTok:=numtoken(xValue,",")
   for i:=1 to numtok
     append blank
-    sql_append()
     replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-    sql_azur(.t.);Scatter()
-    //replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
+	Scatter()
     xValue_i:=token(xValue,",",i)
     if sifk->tip=="C"
         replace naz with xValue_i
-        //replsql naz with xValue_i
     elseif sifk->tip=="N"
         replace naz with str(xValue_i,sifk->duzina,sifk->f_decimal)
     elseif sifk->tip=="D"
@@ -418,10 +415,8 @@ else
   if !found()
     if !empty(ToStr(xValue))
      append blank
-     sql_append()
      replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-     //replsql Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-    else    // ne dodaji prazne vrijednosti
+   else    // ne dodaji prazne vrijednosti
       PopWa()
       return
     endif

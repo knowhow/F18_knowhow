@@ -80,8 +80,6 @@ if !lSilent
 	picDEM:=FormPicL("9 "+gPicDEM,16)
 endif
 
-altd()
-
 select nalog
 go top
 	

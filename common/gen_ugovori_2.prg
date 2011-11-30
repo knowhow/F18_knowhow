@@ -660,8 +660,6 @@ do while !EOF() .and. (id == cUId)
 		
 	endif
 
-	altd()
-
 	nCijena := rugov->cijena
 	nKolicina := rugov->kolicina
 	nRabat := rugov->rabat

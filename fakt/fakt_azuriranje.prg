@@ -27,45 +27,16 @@ if glDistrib = .t.
   	O_KALPOS
 endif
 
-if goModul:lVrstePlacanja
-	O_VRSTEP
-endif
-
-if goModul:lOpcine
-	O_OPS
-endif
-
-SELECT F_KONTO
-if !used()
-	O_KONTO
-endif
-
-SELECT F_SAST
-if !used()
-	O_SAST
-endif
-
-SELECT F_PARTN
-if !used()
-	O_PARTN
-endif
-
-SELECT F_ROBA
-if !used()
-	O_ROBA
-endif
+O_VRSTEP
+O_OPS
+O_KONTO
+O_SAST
+O_PARTN
+O_ROBA
 
 if (PCount()==0)
-
-	SELECT F_FAKT_PRIPR
-	if !used()
-		O_FAKT_S_PRIPR
-	endif
-	
-	SELECT F_FAKT
-	if !used()
-	 	O_FAKT
-	endif
+	O_FAKT_S_PRIPR
+	O_FAKT
 else
  	O_PFAKT
 endif

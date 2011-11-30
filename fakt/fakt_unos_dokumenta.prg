@@ -733,7 +733,7 @@ do while lJos
 	gPtxtC50 := .f.
   	StampTXT(nil,cPom,nil)
 
-    close all	
+	altd()
   	o_fakt_edit()
 
 enddo

@@ -63,20 +63,20 @@ __server_params["schema"] := cSchema
 
 // try to loggon...
 
-my_server_login(my_server_params())
+my_server_login( my_server_params() )
 
 log_write(my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
 
-if my_server():NetErr()
+if __server():NetErr()
       
 	  clear screen
 
 	  ?
 	  ? "Greska sa konekcijom na server:"
 	  ? "==============================="
-	  ? oServer:ErrorMsg()
+	  ? __server:ErrorMsg()
 
-	  log_write( oServer:ErrorMsg() )
+	  log_write( __server:ErrorMsg() )
 	  inkey(0)
 	  quit
 

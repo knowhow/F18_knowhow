@@ -951,7 +951,7 @@ endif
 
 if _idvd=="10"
 	if nRbr==1
-   		if gVarEv=="2" .or. glEkonomat .or. Pitanje(,"Skracena varijanta (bez troskova) D/N ?","N")=="D"
+   		if gVarEv=="2" .or. glEkonomat .or. Pitanje(,"Skracena varijanta (bez troskova) D/N ?","D")=="D"
      			gVarijanta:="1"
    		else
      			gVarijanta:="2"

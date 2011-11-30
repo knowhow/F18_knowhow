@@ -84,7 +84,10 @@ next
 
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_ROBA, {"id", ;
 				"sifradob", "naz", "jmj", "vpc", "vpc2", "nc", "mpc", ;
-				"idtarifa", "tip", "barkod" })
+				"idtarifa", "tip", "barkod", "mpc2", "mpc3", "k1", "k2", ;
+				"n1", "n2", "plc", "mink", "zanivel", "zaniv2", ;
+				"trosk1", "trosk2", "trosk3", "trosk4", "trosk5", ;
+				"fisc_plu", "k7", "k8", "k9", "strings" })
 
 lock_semaphore( _tbl, "free" )
 
@@ -597,8 +600,6 @@ _y := maxcols() - 20
 if algoritam == NIL
    algoritam := "FULL"
 endif
-
-altd()
 
 @ _x + 1, _y + 2 SAY "update " + table + " : " + algoritam
 _seconds := SECONDS()

@@ -46,8 +46,6 @@ method mMenu()
 
 private Izbor
 
-//say_fmk_ver()
-
 SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
 

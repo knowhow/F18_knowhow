@@ -29,11 +29,6 @@ private lVrsteP := ( IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D" )
 private lOpcine := ( IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D" )
 private gTBDir:="N"
 
-if IsRabati()
-	private cTipRab:=SPACE(10)
-	private lSkonto := .f.
-endif
-
 o_fakt_edit()
 
 select fakt_pripr
@@ -47,7 +42,6 @@ endif
 if IzFMKINI('SifRoba','ID_J','N', SIFPATH)=="D"
 	fId_J:=.t.
 endif
-
 
 private ImeKol:={ ;
           {"Red.br",        {|| Rbr() } } ,;
@@ -74,11 +68,8 @@ if fakt_pripr->(fieldpos("k1"))<>0 .and. gDK1=="D"
 endif
 
 if fakt_pripr->(fieldpos("idrelac")) <> 0
-	
 	AADD( ImeKol , { "ID relac.", {|| idrelac  }, "IDRELAC"  } )
-
 endif
-
 
 Kol:={}
 for i:=1 to len(ImeKol)
@@ -96,38 +87,39 @@ cFFirma := field->idfirma
 cFTipDok := field->idtipdok
 cFBrDok := field->brdok
 
-Box(,21,77)
-TekDokument()
-@ m_x+18,m_y+2 SAY " <c-N> Nove Stavke       ³<ENT> Ispravi stavku      ³<c-T> Brisi Stavku "
-@ m_x+19,m_y+2 SAY " <c-A> Ispravka Dokumenta³<c-P> Stampa (TXT)        ³<a-F10> Asistent  "
-@ m_x+20,m_y+2 SAY " <a-A> Azuriranje dok.   ³<c-F9> Brisi pripremu     ³<F5>  Kontrola zbira  "
-@ m_x+21,m_y+2 SAY " <R> Rezerv  <X> Prekid R³<F10>  Ostale opcije      ³<F9> 20,12->10; 27->11"
-ObjDbedit("PNal",21,77,{|| fakt_pripr_keyhandler()},"","Priprema..."+"ÍÍÍÍ<a-N> narudzb.kupca"+"ÍÍÍÍ<a-U> ugov.o rabatu", , , , ,4)
+Box( , MAXROWS() - 4, MAXCOLS() - 3 )
+
+//TekDokument()
+
+@ m_x + MAXROWS() - 4 - 3, m_y + 2 SAY " <c-N> Nove Stavke        ³ <ENT> Ispravi stavku      ³ <c-T> Brisi Stavku "
+@ m_x + MAXROWS() - 4 - 2, m_y + 2 SAY " <c-A> Ispravka Dokumenta ³ <c-P> Stampa (TXT)        ³ <a-F10> Asistent  "
+@ m_x + MAXROWS() - 4 - 1, m_y + 2 SAY " <a-A> Azuriranje dok.    ³ <c-F9> Brisi pripremu     ³ <F5>  Kontrola zbira  "
+@ m_x + MAXROWS() - 4, m_y + 2 SAY     " <R> Rezerv  <X> Prekid R ³ <F10>  Ostale opcije      ³ <F9> 20,12->10; 27->11"
+
+ObjDbedit( "PNal", MAXROWS() - 4, MAXCOLS() - 3 ,{|| fakt_pripr_keyhandler()},"","Priprema...", , , , ,4)
+
 BoxC()
 
-closeret
+close all
 return
 
 
-
-/*! \fn TekDokument()
- *  \brief Tekuci dokument
- */
- 
+// ----------------------------------------------------------------------
+// ispisuje informaciju o teku¿em dokumentu na vrhu prozora 
+// ----------------------------------------------------------------------
 function TekDokument()
-*{
 local nRec
 local aMemo
 local cTxt
 
-cTxt:=padr("-",60)
+cTxt := padr( "-", 60 )
 
-if RecCount2()<>0
-	nRec:=recno()
+if RecCount2() <> 0
+	nRec := recno()
   	go top
-  	aMemo:=ParsMemo(txt)
+  	aMemo := ParsMemo(txt)
   	if len(aMemo)>=5
-    		cTxt:=trim(amemo[3])+" "+trim(amemo[4])+","+trim(amemo[5])
+    		cTxt := trim(amemo[3]) + " " + trim(amemo[4]) + "," + trim(amemo[5])
   	else
     		cTxt:=""
   	endif
@@ -138,7 +130,7 @@ endif
 
 @ m_x+0,m_y+2 SAY cTxt
 return
-*}
+
 
 
 /*! \fn Rbr()
@@ -240,7 +232,7 @@ if (Ch==K_ENTER  .and. Empty(BrDok) .and. EMPTY(rbr))
 	return DE_CONT
 endif
 
-TekDokument()
+//TekDokument()
 
 select fakt_pripr
 do case
@@ -1228,8 +1220,14 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
     	if gNW=="N"
 		read
 	endif
-    	
+    
+    __mx := m_x
+    __my := m_y
+ 	
 	nPom:= Menu2 (5, 30, aPom, nPom)
+    
+    m_x := __mx
+    m_y := __my
     	
 	ESC_Return 0
     	
@@ -1325,7 +1323,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 		
 		@  m_x + 2, m_y + 45 SAY "Datum:" GET _datDok
 
-   		@  m_x + 2, m_y + col() + 1 SAY "Broj:" GET _BrDok ;
+   		@  m_x + 2, col() + 1 SAY "Broj:" GET _BrDok ;
 			WHEN gMreznoNum=="N" ;
 			VALID !EMPTY(_BrDok) .and. ;
 			(!glDistrib .or. !JeStorno10() .or. PuniDVRiz10())
@@ -1515,7 +1513,7 @@ else
    	@ m_x+3,m_y+2 SAY PADR(aPom[ASCAN(aPom,{|x|_IdTipdok==LEFT(x,2)})],35)
    	@ m_x+3,m_y+45 SAY "Datum: "
    	?? _datDok
-   	@ m_x+3,m_y+col()+1 SAY "Broj: "
+   	@ m_x+3,col()+1 SAY "Broj: "
 	?? _BrDok
    	_txt2:=""
 	// varijanta rabatnih skala
@@ -1574,14 +1572,6 @@ cDSFINI := IzFMKINI('SifRoba','DuzSifra','10', SIFPATH)
 
 RKOR2:=0
 
-if lPoNarudzbi
-	if (_idtipdok="0")
-     		RKOR2+=3
-     		@ m_x+16,m_y+2 SAY "Po nar/ugov br." GET _brojnar
-     		@ m_x+17,m_y+2 SAY "za narucioca" GET _idnar pict "@!" valid empty(_idnar) .or. P_Firma(@_idnar,17,30)
-   	endif
-endif
-
 RKOR2+=GetKarC3N2(row()+1)
 
 if (fakt_pripr->(fieldpos("K1"))<>0 .and. gDK1=="D")
@@ -1639,32 +1629,32 @@ if (gSamokol != "D")
 	if (_idtipdok=="19" .and. IzFMKIni("FAKT","19KaoRacunParticipacije","N",KUMPATH)=="D")
     		
 		_trabat:="I"
-    		_rabat:=_kolicina*_cijena*(1-_rabat/100)
+    	_rabat:=_kolicina*_cijena*(1-_rabat/100)
     		
-		@ m_x+18+RKOR+RKOR2,25  SAY "Cij." GET _Cijena PICT piccdem WHEN _podbr<>" ." .and. KLevel<="1" VALID _cijena>0
+		@ m_x+18+RKOR+RKOR2, col() + 2  SAY "Cij." GET _Cijena PICT piccdem WHEN _podbr<>" ." .and. KLevel<="1" VALID _cijena>0
 
-    		@ m_x+18+RKOR+RKOR2,col()+2 SAY "Participacija" GET _Rabat PICT "9999.999" when _podbr<>" ."
+    	@ m_x+18+RKOR+RKOR2,col()+2 SAY "Participacija" GET _Rabat PICT "9999.999" when _podbr<>" ."
 
 	else
 		
-    		@ m_x+18+RKOR+RKOR2, 25  SAY IF( _idtipdok $ "13#23".and.( gVar13=="2" .or. glCij13Mpc), "MPC.s.PDV", "Cijena ("+ALLTRIM(ValDomaca())+")") GET _Cijena ;
+    	@ m_x+18 + RKOR + RKOR2, col() + 2  SAY IF( _idtipdok $ "13#23".and.( gVar13=="2" .or. glCij13Mpc), "MPC.s.PDV", "Cijena ("+ALLTRIM(ValDomaca())+")") GET _Cijena ;
 		     PICT piccdem ;
 		     WHEN  _podbr<>" ." .and. KLevel<="1" .and. SKCKalk(.t.) ;
 		     VALID SKCKalk(.f.) .and. c_cijena(_cijena, _idtipdok, fNovi)
 
 		if ( PADR(_dindem, 3) <> PADR(ValDomaca(), 3) ) 
 			@ m_x+18+ RKOR + RKOR2, col() + 2 SAY "Pr"  GET cPretvori ;
-			PICT "@!" ;
-			VALID v_pretvori(@cPretvori, _DinDem, _DatDok, @_Cijena )
+				PICT "@!" ;
+				VALID v_pretvori(@cPretvori, _DinDem, _DatDok, @_Cijena )
 		endif
 
 		     
    		if !(_idtipdok $ "12#13").or.(_idtipdok=="12".and.gV12Por=="D")
-			@  m_x+18+RKOR+RKOR2,col()+2  SAY "Rabat" get _Rabat ;
+			@  m_x+18+RKOR+RKOR2, col() + 2  SAY "Rabat" get _Rabat ;
 			     pict PicCDem ;
 			     when _podbr<>" ." .and. !_idtipdok$"15#27"
 			
-      			@ m_x+18+RKOR+RKOR2,col()+1  GET TRabat ;
+      		@ m_x+18+RKOR+RKOR2,col()+1  GET TRabat ;
 			     when {||  trabat:="%",!_idtipdok$"11#15#27" .and. _podbr<>" ."} ;
 			     valid trabat $ "% AUCI" .and. V_Rabat() ;
 			     pict "@!"
@@ -1677,14 +1667,8 @@ if (gSamokol != "D")
 			     valid V_Porez()
 		endif
 		
-   		endif
+   	endif
 		
-		// SKONTO
-		if IsRabati()
-			if (_idtipdok $ "10")
-       				@ m_x+19+RKOR2,m_y+2 SAY "Skonto " get _skonto pict "9999.999"
-			endif
-		endif
 	endif
 
 	private cId:="  "

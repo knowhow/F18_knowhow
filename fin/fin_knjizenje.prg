@@ -127,7 +127,6 @@ if gRj=="D" .and. fin_pripr->(FIELDPOS("IDRJ")) <> 0
 	AADD(Kol, 17)
 ENDIF
 
-
 Box( , MAXROWS() - 4, MAXCOLS() - 3)
 
 @ m_x + MAXROWS() - 4-2, m_y+2 SAY "<c-N>  Nove Stavke    ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku         "

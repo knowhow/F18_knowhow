@@ -64,17 +64,9 @@ CheckROnly(KUMPATH + "\FAKT.DBF")
 // setuj parametre pri pokretanju modula
 fakt_set_params()
 
-O_FAKT_DOKS
-select fakt_doks
-//TrebaRegistrovati(20)
-USE
-
-@ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
-@ 4,5 SAY ""
+@ 1,2 SAY padc( gTS + ": "+ gNFirma, 50, "*" )
 
 ::mMenuStandard()
-
-//::quit()
 
 return nil
 

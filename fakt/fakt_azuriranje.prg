@@ -27,7 +27,7 @@ if glDistrib = .t.
   	O_KALPOS
 endif
 
-O_VRSTEP
+//O_VRSTEP
 O_OPS
 O_KONTO
 O_SAST

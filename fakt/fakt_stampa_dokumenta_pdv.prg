@@ -149,6 +149,8 @@ else
 
 endif
 
+close all
+
 return
 
 

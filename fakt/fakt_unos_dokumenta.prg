@@ -680,11 +680,13 @@ return
 
 
 function PrintDok()
+local cPom
+local lJos
 
 SpojiDuple()  // odradi ovo prije stampanja !
 SrediRbrFakt()
 
-//o_fakt_edit() // sredirbr zatvori pripremu !!
+o_fakt_edit() // sredirbr zatvori pripremu !!
 
 if gTBDir=="D"
 	if eof()
@@ -708,29 +710,12 @@ endif
 
 lJos:=.t.
 
-if lSSIP99
-	if IzFMKIni('FAKT','DelphiRB','N')=='D'
-    		UzmiIzIni(EXEPATH+"FMK.INI",'DELPHIRB','Aktivan',"0",'WRITE')
-  	else
-    		StartPrint(.t.)
-  	endif
-	
-	if IzFMKIni("STAMPA","Opresa","N",KUMPATH)=="D"
-    		gRPL_gusto()
-    		nDokumBr:=0
-  	endif
-endif
-
 do while lJos
 	
-	if gNovine=="D" .or. (IzFMKINI('FAKT','StampaViseDokumenata','N')=="D")
-    		lJos:=StViseDokMenu()
-    		if LEN(gFiltNov)==0
-      			GO TOP
-      			exit
-    		endif
+	if (IzFMKINI('FAKT','StampaViseDokumenata','N')=="D")
+    		lJos := StViseDokMenu()
   	else
-    		lJos:=.f.
+    		lJos := .f.
   	endif
 
   	cPom := idtipdok
@@ -746,15 +731,6 @@ do while lJos
   	o_fakt_edit()
 
 enddo
-
-if lSSIP99
-	if IzFMKIni("STAMPA","Opresa","N",KUMPATH)=="D"
-    		gRPL_normal()
-  	endif
-  	if !(IzFMKIni('FAKT','DelphiRB','N')=='D')
-    		EndPrint()
-  	endif
-endif
 
 lSSIP99:=.f.
 
@@ -2168,10 +2144,13 @@ private InPicDEM:=PicDEM  // picture iznosa
 private InPicCDEM:=PicCDEM  // picture iznosa
 
 if IsPDV()
+
 	if lJFill == nil
 		lJFill := .f.
 	endif
+	
 	if gPdvDrb == "D"
+		
 		if cIdFirma == nil
 			Stdok2p_rb()
 		else
@@ -2185,16 +2164,20 @@ if IsPDV()
 		endif
 	
 	else	
+
 		if cIdFirma == nil
 			StDokPDV()
 		else
 			StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
 		endif
+	
 	endif
 	
 	PicDEM:=InPicDEM
 	PicCDEM:=InPicCDEM
+	
 	return
+
 endif
 
 cIniName:=PRIVPATH+'fmk.ini'

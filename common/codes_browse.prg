@@ -548,10 +548,7 @@ do case
 	my_use( __tbl )
     
 	Tb:RefreshCurrent()
-     		
-	//while !TB:stabilize()
-	//end	
-
+     
 	select ( nDbf )
     go ( __n_rec )
  

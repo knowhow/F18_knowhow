@@ -231,7 +231,7 @@ if lOk = .t.
    		record["src_pm"] := field->src_pm
    endif
                
-   _tmp_id := STR( record["br_dok"], 6, 0 )
+   _tmp_id := PADR( ALLTRIM( STR( record["br_dok"], 6 ) ), 6 )
    
    if tbl == "KUF"
    	    if !sql_epdv_kuf_update( "ins", record )

@@ -540,15 +540,11 @@ if glDistrib
   		CREATE_INDEX("2","IDRELAC+DTOS(datum)",KUMPATH+"KALPOS")
 	endif
 endif
-*/
 
 // kreiranje tabela ugovora
 db_cre_ugov()
 
-//if gFc_use == "D"
-	// kreiranje tabele sa listom uredjaja
-	c_fdevice()
-//endif
+c_fdevice()
 
 return
 

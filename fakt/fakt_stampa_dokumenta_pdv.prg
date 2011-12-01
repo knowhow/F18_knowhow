@@ -48,6 +48,10 @@ else
  	o_fakt_edit()
 endif
 
+// otvori pomocne tabele racuna
+o_dracun()
+
+select fakt_pripr
 
 // barkod artikla
 private cPombk := IzFmkIni("SifRoba","PBarkod","0",SIFPATH)
@@ -75,9 +79,7 @@ cBrDok:=BrDok
 dDatDok:=DatDok
 cIdTipDok:=IdTipDok
 
-
 cDocumentName:=doc_name(cIdFirma, cIdTipDok, cBrDok, fakt_pripr->IdPartner)
-
 
 // prikaz samo kolicine
 if cIdTipDok $ "01#00#12#13#19#21#22#23#26"

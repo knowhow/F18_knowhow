@@ -13,6 +13,14 @@
 #include "fmk.ch"
 
 
+// otvori tabele za stampu racuna
+function o_dracun()
+O_DRN
+O_RN
+O_DRNTEXT
+return
+
+
 // delete rn dbf's
 function del_rndbf()
 *{
@@ -118,7 +126,7 @@ return
  */
 function get_drn_fields(aArr)
 *{
-if gModul == "TOPS"
+if goModul:oDatabase:cName == "TOPS"
 	AADD(aArr, {"BRDOK",   "C",  6, 0})
 else
 	AADD(aArr, {"BRDOK",   "C",  8, 0})
@@ -166,7 +174,7 @@ return
  */
 function get_rn_fields(aArr)
 *{
-if gModul == "TOPS"
+if goModul:oDatabase:cName == "TOPS"
 	AADD(aArr, {"BRDOK",   "C",  6, 0})
 else
 	AADD(aArr, {"BRDOK",   "C",  8, 0})
@@ -321,7 +329,7 @@ endif
 if FIELDPOS("datisp")<>0
 	replace datisp with dDatIsp
 else
-	MsgBeep("DATISP ne postoji u drn.dbf (add_drn_di) #Izvrsiti modstru "+gModul+".CHS !")
+	MsgBeep("DATISP ne postoji u drn.dbf (add_drn_di) #Izvrsiti modstru " + goModul:oDatabase:cName + ".CHS !")
 endif
 
 return
@@ -349,7 +357,8 @@ else
 			xRet := datisp
 		endif
 	else
-		MsgBeep("DATISP ne postoji u drn.dbf (get_drn_di)#Izvrsiti modstru "+gModul+".CHS !")
+		MsgBeep("DATISP ne postoji u drn.dbf (get_drn_di)#Izvrsiti modstru " + ;
+			goModul:oDataBase:cName + ".CHS !")
 		xRet := nil
 	endif
 endif

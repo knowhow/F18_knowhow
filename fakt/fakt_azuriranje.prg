@@ -55,9 +55,6 @@ else
  	O_PFAKT
 endif
 
-O_DRN
-O_RN
-O_DRNTEXT
 O_FTXT
 O_TARIFA
 O_VALUTE

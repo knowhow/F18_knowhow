@@ -28,6 +28,10 @@ else
  	o_fakt_edit()
 endif
 
+// otvori pomocne tabele racuna
+o_dracun()
+
+select fakt_pripr
 
 // barkod artikla
 private cPombk := IzFmkIni("SifRoba","PBarkod","0",SIFPATH)

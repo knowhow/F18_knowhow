@@ -1245,19 +1245,10 @@ return lProtu
 // centralna funkcija za azuriranje fakture
 // --------------------------------------------------
 function azur_fakt( lSilent )
-local cType
-local cVrsteP
-
 local _a_fakt_doks
 local __id_firma
 local __br_dok
 local __id_tip_dok
-
-cType := TYPE("lVrsteP")
-
-if (cType <> "L")
-	lVrsteP := .f.
-endif
 
 if ( lSilent == nil)
 	lSilent := .f.
@@ -1312,6 +1303,8 @@ fakt_prenos_modem()
 
 select fakt_pripr
 
+msgo("brisem pripremu....")
+
 // provjeri sta treba pobrisati iz pripreme
 if LEN( _a_fakt_doks ) > 1
 	fakt_izbrisi_azurirane( _a_fakt_doks )
@@ -1322,6 +1315,8 @@ else
 	__dbpack()
 
 endif
+
+msgc()
 	
 close all
 

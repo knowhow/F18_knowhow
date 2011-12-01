@@ -12,23 +12,8 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
-/*! \file fmk/fakt/razoff/1g/modem.prg
- *  \brief Prenos podataka modemom
- */
- 
-
-/*! \fn fakt_prenos_modem(fSif)
- *  \brief
- */
- 
 function fakt_prenos_modem(fSif)
-*{
 local nRec
 
 if gModemVeza $ "SK" .and. Pitanje(,"Izvrsiti prenos za modem ?","D")=="D"

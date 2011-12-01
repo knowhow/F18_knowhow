@@ -50,7 +50,9 @@ endcase
 
 // kreiraj dbf
 if !File( f18_ime_dbf(cTbl) )
-	DBcreate2(cPath + cTbl, aDBF)
+	DBcreate2( cTbl, aDBF )
+	reset_semaphore_version( "fakt_" + LOWER(cTbl) )
+	my_use( LOWER(cTbl) )
 endif
 
 // indexi

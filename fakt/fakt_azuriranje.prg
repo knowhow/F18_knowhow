@@ -15,8 +15,6 @@
  
 function o_fakt_edit(cVar2)
 
-altd()
-
 if glRadNal
 	select F_RNAL
 	if !used()

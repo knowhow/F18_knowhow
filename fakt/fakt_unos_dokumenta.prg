@@ -180,7 +180,10 @@ do case
   	aMemo:=ParsMemo(txt)
   	cRet += aMemo[1]
    otherwise
-	O_ROBA
+	select F_ROBA
+	if !used()
+		O_ROBA
+	endif
 	select roba
    	seek fakt_pripr->IdRoba
  	select fakt_pripr

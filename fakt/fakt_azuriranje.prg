@@ -810,8 +810,6 @@ select fakt_pripr
 
 BoxC()
 
-close all
-
 return .t.
 
 
@@ -1016,8 +1014,6 @@ if lOk = .t.
 
   // azuriraj fakt
   MsgO("sql fakt_fakt")
-
-  O_FAKT_PRIPR
 
   select fakt_pripr
   go top
@@ -1293,9 +1289,6 @@ for _i := 1 to LEN( _a_fakt_doks )
 	__id_tip_dok := _a_fakt_doks[ _i, 2 ]
 	__br_dok := _a_fakt_doks[ _i, 3 ]
 	
-	// otvori potrebne tabele...
-	o_fakt_edit()
-	
  	if fakt_azur_sql( __id_firma, __id_tip_dok, __br_dok  )
 	
 		if !fakt_azur_dbf( __id_firma, __id_tip_dok, __br_dok )
@@ -1313,9 +1306,6 @@ for _i := 1 to LEN( _a_fakt_doks )
 next
 
 msgc()
-
-// otvori potrebne tabele
-o_fakt_edit()
 
 // prenos podataka fakt
 fakt_prenos_modem()

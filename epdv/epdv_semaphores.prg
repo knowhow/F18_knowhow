@@ -12,6 +12,71 @@
 #include "epdv.ch"
 #include "common.ch"
 
+
+// -----------------------------------------
+// -----------------------------------------
+function epdv_sg_kuf_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "epdv_sg_kuf"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SG_KUF, {"id", "naz", "src", "s_path", "s_path_s", "form_b_pdv", "form_pdv", ;
+				"id_tar", "id_kto", "razb_tar", "razb_kto", "razb_dan", "kat_part", "td_src", "kat_p", "kat_p_2", "s_id_tar", ;
+				"zaok", "zaok2", "s_id_part", "aktivan", "id_kto_naz", "s_br_dok" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function epdv_sg_kif_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "epdv_sg_kif"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SG_KIF, {"id", "naz", "src", "s_path", "s_path_s", "form_b_pdv", "form_pdv", ;
+				"id_tar", "id_kto", "razb_tar", "razb_kto", "razb_dan", "kat_part", "td_src", "kat_p", "kat_p_2", "s_id_tar", ;
+				"zaok", "zaok2", "s_id_part", "aktivan", "id_kto_naz", "s_br_dok" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+
+// ------------------------------
+// sinhronizacija sa sql serverom
+// ------------------------------
+function epdv_pdv_from_sql_server(algoritam)
+return
+
+
+
 // ------------------------------
 // sinhronizacija sa sql serverom
 // ------------------------------
@@ -51,7 +116,7 @@ _count := table_count( _tbl, "true" )
 for _offset := 0 to _count STEP _step 
 
   _qry :=  "SELECT " + ;
-		"datum, datum2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
+		"datum, datum_2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
 		"src_veza_b, src_br_2, r_br, br_dok, g_r_br, lock, kat, kat_2, opis, i_b_pdv, i_pdv, i_v_b_pdv,  " + ;
 		"i_v_pdv, status, kat_p, kat_p_2 " + ;
 		"FROM " +	_tbl 
@@ -153,18 +218,18 @@ for _offset := 0 to _count STEP _step
     append blank
 	
 	/*
-		"datum, datum2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
+		"datum, datum_2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
 		"src_veza_b, src_br_2, r_br, br_dok, g_r_br, lock, kat, kat_2, opis, i_b_pdv, i_pdv, i_v_b_pdv,  " + ;
 		"i_v_pdv, status, kat_p, kat_p_2 " + ;
 	*/
 
     replace datum with _qry_obj:FieldGet(1), ;
-    		datum2 with _qry_obj:FieldGet(2), ;
+    		datum_2 with _qry_obj:FieldGet(2), ;
     		src with _qry_obj:FieldGet(3), ;
     		td_src with _qry_obj:FieldGet(4), ;
     		src_2 with _qry_obj:FieldGet(5), ;
     		id_tar with _qry_obj:FieldGet(6), ;
-    		id_partn with _qry_obj:FieldGet(7), ;
+    		id_part with _qry_obj:FieldGet(7), ;
     		part_idbr with _qry_obj:FieldGet(8), ;
     		part_kat with _qry_obj:FieldGet(9), ;
     		src_td with _qry_obj:FieldGet(10), ;
@@ -234,11 +299,11 @@ DO CASE
              " WHERE " + _where
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
-			   "( datum, datum2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
+			   "( datum, datum_2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
 			   "src_veza_b, src_br_2, r_br, br_dok, g_r_br, lock, kat, kat_2, opis, i_b_pdv, i_pdv, i_v_b_pdv,  " + ;
 			   "i_v_pdv, status, kat_p, kat_p_2 ) " + ;
                "VALUES(" + _sql_quote( record["datum"] )  + "," +;
-                            + _sql_quote( record["datum2"] ) + "," +; 
+                            + _sql_quote( record["datum_2"] ) + "," +; 
                             + _sql_quote( record["src"] ) + "," +; 
                             + _sql_quote( record["td_src"] ) + "," +; 
                             + _sql_quote( record["src_2"] ) + "," +;
@@ -324,7 +389,7 @@ _count := table_count( _tbl, "true" )
 for _offset := 0 to _count STEP _step 
 
   _qry :=  "SELECT " + ;
-		"datum, datum2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
+		"datum, datum_2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
 		"src_veza_b, src_br_2, r_br, br_dok, g_r_br, lock, kat, kat_2, opis, i_b_pdv, i_pdv, i_v_b_pdv,  " + ;
 		"i_v_pdv, status, kat_p, kat_p_2, src_pm " + ;
 		"FROM " +	_tbl 
@@ -426,18 +491,18 @@ for _offset := 0 to _count STEP _step
     append blank
 	
 	/*
-		"datum, datum2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
+		"datum, datum_2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
 		"src_veza_b, src_br_2, r_br, br_dok, g_r_br, lock, kat, kat_2, opis, i_b_pdv, i_pdv, i_v_b_pdv,  " + ;
 		"i_v_pdv, status, kat_p, kat_p_2, src_pm " + ;
 	*/
 
     replace datum with _qry_obj:FieldGet(1), ;
-    		datum2 with _qry_obj:FieldGet(2), ;
+    		datum_2 with _qry_obj:FieldGet(2), ;
     		src with _qry_obj:FieldGet(3), ;
     		td_src with _qry_obj:FieldGet(4), ;
     		src_2 with _qry_obj:FieldGet(5), ;
     		id_tar with _qry_obj:FieldGet(6), ;
-    		id_partn with _qry_obj:FieldGet(7), ;
+    		id_part with _qry_obj:FieldGet(7), ;
     		part_idbr with _qry_obj:FieldGet(8), ;
     		part_kat with _qry_obj:FieldGet(9), ;
     		src_td with _qry_obj:FieldGet(10), ;
@@ -508,11 +573,11 @@ DO CASE
              " WHERE " + _where
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
-			   "( datum, datum2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
+			   "( datum, datum_2, src, td_src, src_2, id_tar, id_part, part_idbr, part_kat, src_td, src_br,  " + ;
 			   "src_pm, src_veza_b, src_br_2, r_br, br_dok, g_r_br, lock, kat, kat_2, opis, i_b_pdv, i_pdv, i_v_b_pdv,  " + ;
 			   "i_v_pdv, status, kat_p, kat_p_2 ) " + ;
                "VALUES(" + _sql_quote( record["datum"] )  + "," +;
-                            + _sql_quote( record["datum2"] ) + "," +; 
+                            + _sql_quote( record["datum_2"] ) + "," +; 
                             + _sql_quote( record["src"] ) + "," +; 
                             + _sql_quote( record["td_src"] ) + "," +; 
                             + _sql_quote( record["src_2"] ) + "," +;

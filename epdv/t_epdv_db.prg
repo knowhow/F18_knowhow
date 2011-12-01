@@ -408,6 +408,14 @@ AADD(aDBf,{ "i_v_pdv"      , "N" ,   16,  2 })
 //  2 - placeno
 AADD(aDBf,{ "status"      , "C" ,   1,  0 })
 
+AADD(aDBf,{ "part_kat"      , "C" ,   1,  0 })
+
+// kategorija partnera
+// shema se primjenjuje samo za odredjenu kategoriju partnera
+AADD(aDBf,{ "kat_p"        , "C" ,   1,  0 })
+AADD(aDBf,{ "kat_p_2"      , "C" ,   1,  0 })
+
+
 return aDbf
 
 
@@ -516,6 +524,14 @@ AADD(aDBf,{ "i_v_pdv"      , "N" ,   16,  2 })
 //  2 - placeno
 AADD(aDBf,{ "status"      , "C" ,   1,  0 })
 
+AADD(aDBf,{ "part_kat"      , "C" ,   1,  0 })
+
+// kategorija partnera
+// shema se primjenjuje samo za odredjenu kategoriju partnera
+AADD(aDBf,{ "kat_p"        , "C" ,   1,  0 })
+AADD(aDBf,{ "kat_p_2"      , "C" ,   1,  0 })
+
+
 return aDbf
 
 // -----------------------------
@@ -593,6 +609,8 @@ AADD(aDBf,{ "s_br_dok"      , "C" ,   12,  0 })
 AADD(aDBf,{ "zaok"      , "N" ,   1,  0 })
 AADD(aDBf,{ "zaok2"      , "N" ,   1,  0 })
 
+AADD(aDBf,{ "kat_part"        , "C" ,   1,  0 })
+
 // aktivan 
 // D - da
 // N - ne
@@ -648,7 +666,11 @@ if (nArea==-1 .or. nArea == nArea2)
     cPath := ""
 	
 	if !FILE( f18_ime_dbf( cTable ) )
-		DBcreate2(cPath + cTable + ".DBF", aDbf)
+		DBcreate2( cTable, aDbf )
+		if ! ("p_" $ cTable )
+			reset_semaphore_version( "epdv_" + cTable )
+			my_use( cTable )
+		endif
 	endif
 
 	do case 

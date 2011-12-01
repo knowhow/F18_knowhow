@@ -15,6 +15,8 @@
  
 function o_fakt_edit(cVar2)
 
+altd()
+
 close all
 
 if glRadNal

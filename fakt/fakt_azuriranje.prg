@@ -28,10 +28,24 @@ if glDistrib = .t.
 endif
 
 //O_VRSTEP
+select F_OPS
+use
 O_OPS
+
+select F_KONTO
+use
 O_KONTO
+
+select F_SAST
+use
 O_SAST
+
+select F_PARTN
+use
 O_PARTN
+
+select F_ROBA
+use
 O_ROBA
 
 if (PCount()==0)
@@ -1348,7 +1362,7 @@ do while !EOF()
 		skip
 	enddo
 	
-	// provjeri da li u fakt_doks postoji ovaj dokument ve¿ ?
+	// provjeri da li u fakt_doks postoji ovaj dokument veÂ¿ ?
 	select fakt_doks
 	go top	
 	seek _id_firma + _id_tip_dok + _br_dok
@@ -1569,7 +1583,7 @@ if (gVarNum=="2".and._idtipdok=="13")
    		skip -1
  	enddo
 else
-	seek _idfirma+_idtipdok+"È"
+	seek _idfirma+_idtipdok+"Ãˆ"
  	skip -1
 
  	if (_idtipdok $ "10#11" .and. ;

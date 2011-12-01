@@ -55,79 +55,6 @@ if glRadNal
 	SET RELATION TO idfirma+idtipdok+brdok INTO FAKT
 endif
 
-if PrazanDBF()
-  Beep(1)
-  O_VALUTE
-  O_FAKT
-
-  select fakt
-  go top
-
-  do while !eof()
-    select fakt_doks
-    append blank
-    select fakt
-
-    cIDFirma:=idfirma
-    private cBrDok:=BrDok,cIdTipDok:=IdTipDok,dDatDok:=datdok
-    aMemo:=ParsMemo(txt)
-    if len(aMemo)>=5
-      cTxt:=trim(amemo[3])+" "+trim(amemo[4])+","+trim(amemo[5])
-    else
-      cTxt:=""
-    endif
-    cTxt:=padr(cTxt,30)
-
-    nDug:=nRab:=0
-    nDugD:=nRabD:=0
-    cDinDem:=dindem
-    cRezerv:=" "
-    if cidtipdok $ "10#20#27" .and. left(Serbr,1)=="*"
-      cRezerv:="*"
-    endif
-    select fakt_doks
-    replace idfirma with cidfirma, brdok with cbrdok,;
-            rezerv with cRezerv, datdok with ddatdok, idtipdok with cidtipdok,;
-            partner with cTxt, dindem with cdindem, ;
-            IdPartner with FAKT->IdPartner
-    IF lVrsteP
-      REPLACE idvrstep WITH FAKT->idvrstep
-    ENDIF
-    IF FIELDPOS("DATPL")>0
-      REPLACE datpl WITH IF(LEN(aMemo)>=9,CTOD(aMemo[9]),CTOD(""))
-    ENDIF
-    select fakt
-
-    do while !eof() .and. cIdFirma==IdFirma .and. cIdTipdok==IdTipDok .and. cBrDok==BrDok
-      if cdindem==left(ValBazna(),3)
-        nDug+=ROUND( kolicina*Cijena*(1-Rabat/100)*(1+Porez/100) ,ZAOKRUZENJE)
-        nRab+=ROUND( kolicina*Cijena*Rabat/100 ,ZAOKRUZENJE)
-
-      else
-        nDugD+=round( kolicina*Cijena*1/UBaznuValutu(datdok)*(1-Rabat/100)*(1+Porez/100) ,ZAOKRUZENJE)
-        nRabD+=round( kolicina*Cijena*Rabat/100*1/UBaznuValutu(datdok),ZAOKRUZENJE)
-      endif
-      skip
-    enddo
-
-    select fakt_doks
-    if cDinDem==left(ValBazna(),3)
-      replace iznos with nDug
-      replace rabat with nRab
-    else
-      replace iznos with nDugD
-      replace rabat with nRabD
-    endif
-    replace DINDEM with cDinDEM
-    select fakt
-
-  enddo
-
-  select valute; use
-  select fakt; use
-endif
-// generacija izvjestaja
-
 O_VALUTE
 O_RJ
 
@@ -287,7 +214,7 @@ else
   set Filter to &cFilter
 endif
 
-@ 22,77 SAY str(rloptlevel(),2)
+@ MAXROW() - 4, MAXCOL() - 3 SAY str(rloptlevel(),2)
 
 qqTipDok := trim(qqTipDok)
 
@@ -309,7 +236,7 @@ if cTabela == "D"
    AADD(ImeKol,{ "VP",       {|| idvrstep } })
    AADD(ImeKol,{ "Datum",    {|| Datdok } })
    AADD(ImeKol,{ "Partner",  ;
-      {|| PADR( iif(m1="Z","<<dok u pripremi>>",partner),28) } })
+      {|| PADR( iif( m1 = "Z", "<<dok u pripremi>>", partner ),28) } })
    AADD(ImeKol,{ "Ukupno-Rab ",    {|| iznos} })
    AADD(ImeKol,{ "Rabat",    {|| rabat} })
    AADD(ImeKol,{ "Ukupno",    {|| iznos+rabat} })
@@ -340,13 +267,18 @@ if cTabela == "D"
      AADD(ImeKol,{ "Operater", {|| oper_id} })
    ENDIF
 
-   Kol:={}; for i:=1 to len(ImeKol); AADD(Kol,i); next
-   Box(,21,72)
+   Kol:={}
+   for i:=1 to len(ImeKol)
+        AADD( Kol, i )
+   next
+   
+   Box(, MAXROW() - 4, MAXCOL() - 3 )
 
-   @ m_x+18,m_y+2 SAY " <ENTER> Stampa dokumenta        ³ <P> Povrat dokumenta u pripremu    ³"
-   @ m_x+19,m_y+2 SAY " <N>     Stampa narudzbenice     ³ <B> Stampa radnog naloga           ³ "
-   @ m_x+20,m_y+2 SAY " <S>     Storno dokument         ³ <R> Rezervacija/Realizacija        ³"
-   @ m_x+21,m_y+2 SAY " <R>  Stampa fiskalnog racuna    ³ <F> otpremnica -> faktura          ³"
+   @ m_x + MAXROW() - 4 - 3, m_y + 2 SAY " <ENTER> Stampa dokumenta        ³ <P> Povrat dokumenta u pripremu    ³"
+   @ m_x + MAXROW() - 4 - 2, m_y + 2 SAY " <N>     Stampa narudzbenice     ³ <B> Stampa radnog naloga           ³ "
+   @ m_x + MAXROW() - 4 - 1, m_y + 2 SAY " <S>     Storno dokument         ³ <R> Rezervacija/Realizacija        ³"
+   @ m_x + MAXROW() - 4, m_y + 2 SAY " <R>  Stampa fiskalnog racuna    ³ <F> otpremnica -> faktura          ³"
+   
    fUPripremu:=.f.
 
    adImeKol:={}
@@ -366,21 +298,33 @@ if cTabela == "D"
    private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
                            // ovo se mo§e setovati u when/valid fjama
 
-   private  TBScatter:="N"  // uzmi samo teku†e polje
-   for i:=1 TO LEN(ImeKol); AADD(adImeKol,ImeKol[i]); next
-   ASIZE(adImeKol,LEN(adImeKol)+1)
-   AINS(adImeKol,6)
+   private  TBScatter:="N"  // uzmi samo tekuce polje
+   
+   for i:=1 TO LEN(ImeKol)
+		 AADD( adImeKol, ImeKol[i] )
+   next
+   
+   ASIZE( adImeKol, LEN( adImeKol ) + 1 )
+   AINS( adImeKol, 6 )
    adImeKol[6] := { "ID PARTNER" , {|| idpartner}, "idpartner", ;
                    {|| .t.}, {|| P_Firma(@widpartner)}, "V" }
-   adKol:={}; for i:=1 to len(adImeKol); AADD(adKol,i); next
+   
+   adKol:={}
+   for i := 1 to len(adImeKol)
+        AADD(adKol,i)
+   next
 
-   ObjDbedit("",19,72,{|| EdDatn()},"","", , , ,{ || if(gFC_use == "D", .f., .f. ) } ,2)
+   ObjDbedit("", MAXROW() - 4, MAXCOL() - 3,{|| EdDatn()}, "", "", , , , , 2 )
    BoxC()
+
    if fupripremu
      close all
      fakt_unos_dokumenta()
    endif
-   closeret
+   
+   close all
+   return
+
 endif
 
 gaZagFix:={3,3}
@@ -1012,7 +956,6 @@ else
 	
 	if EMPTY( cTxt )
 		// uzmi iz fakt->memo polja broj veze
-		O_FAKT
 		select fakt
 		go top
 		seek cIdFirma + cTipDok + cBrDok

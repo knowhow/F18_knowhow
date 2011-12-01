@@ -24,8 +24,6 @@ if new_area == NIL
    new_area := .f.
 endif
 
-   
-
 /*
 { F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
 ...
@@ -56,14 +54,6 @@ endif
 if _rdd == NIL
   _rdd = "DBFCDX"
 endif
-
-/*
-if new_area
-   SELECT NEW
-else
-   SELECT (_area)
-endif
-*/
 
 // mi otvaramo ovu tabelu ~/.F18/bringout/fin_pripr
 //if gDebug > 9

@@ -186,63 +186,50 @@ local nCijena
 // ------------------------------------------
 
 
-cPomPath :=  AddBs(ALLTRIM(sg_kuf->s_path)) + sez_fill(cSezona) + "KALK"
-cPomSPath :=  AddBs(ALLTRIM(sg_kuf->s_path_s)) + sez_fill(cSezona)
+cPomPath := "KALK" 
+cPomSPath := ""
 
 select (F_KALK)
-if cPomPath <> cKalkPath
-	cKalkPath := cPomPath
-	if used()
-		use
-	endif
-	USE (cPomPath)
-else
-	if !used()
-		USE (cKalkPath)
-	endif
+cKalkPath := cPomPath
+if used()
+	use
 endif
+my_use (cPomPath)
 
-if !(cPomSPath == cSifPath)
-
-	cSifPath := cPomSPath
-	
 	SELECT F_PARTN
 	if used()
 		use
 	endif
-	USE (cSifPath + "PARTN")
+	my_use ( "PARTN")
 	SET ORDER TO TAG "ID"
 	
 	SELECT F_ROBA
 	if used()
 		use
 	endif
-	USE (cSifPath + "ROBA")
+	my_use ( "ROBA")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_TARIFA
 	if used()
 		use
 	endif
-	USE (cSifPath + "TARIFA")
+	my_use ( "TARIFA")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFK
 	if used()
 		use
 	endif
-	USE (cSifPath + "SIFK")
+	my_use ( "SIFK")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFV
 	if used()
 		use
 	endif
-	USE (cSifPath + "SIFV")
+	my_use ( "SIFV")
 	SET ORDER TO TAG "ID"
-
-endif
-
 
 	
 SELECT KALK

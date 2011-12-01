@@ -195,6 +195,7 @@ AADD(gaDBFs, { F_SG_KUF, "SG_KUF", "epdv_sg_kuf", {|alg| epdv_sg_kuf_from_sql_se
 AADD(gaDBFs, { F_R_KIF, "R_KIF", "epdv_r_kif"  } )
 AADD(gaDBFs, { F_R_KUF, "R_KUF", "epdv_r_kuf"  } )
 AADD(gaDBFs, { F_R_PDV, "R_PDV", "epdv_r_pdv"  } )
+AADD(gaDBFs, { F_ANAL, "SUBAN_2", "suban_2"  } )
 
 // modul LD
 AADD(gaDBFs, { F__RADKR ,"_RADKR"  , "_ld_radkr"    } )

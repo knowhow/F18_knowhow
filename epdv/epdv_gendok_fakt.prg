@@ -160,62 +160,52 @@ local nF_rabat := 0
 // otvori fakt tabelu
 // ------------------------------------------
 
-cPomPath :=  AddBs(ALLTRIM(sg_kif->s_path)) + sez_fill(cSezona) + "FAKT"
-cPomSPath :=  AddBs(ALLTRIM(sg_kif->s_path_s)) + sez_fill(cSezona) 
+cPomPath := "FAKT"
+cPomSPath :=  "" 
 
 select (F_FAKT)
-if cPomPath <> cFaktPath
-	cFaktPath := cPomPath
-	if used()
-		use
-	endif
-	USE (cPomPath)
-else
-	if !used()
-		USE (cFaktPath)
-	endif
+cFaktPath := cPomPath
+if used()
+	use
 endif
+my_use ( cPomPath )
 
-if !(cPomSPath == cSifPath)
 
-	cSifPath := cPomSPath
-	
 	SELECT F_PARTN
 	if used()
 		use
 	endif
-	USE (cSifPath + "PARTN")
+	my_use ("PARTN")
 	SET ORDER TO TAG "ID"
 	
 	SELECT F_ROBA
 	if used()
 		use
 	endif
-	USE (cSifPath + "ROBA")
+	my_use ( "ROBA")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_TARIFA
 	if used()
 		use
 	endif
-	USE (cSifPath + "TARIFA")
+	my_use ( "TARIFA")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFK
 	if used()
 		use
 	endif
-	USE (cSifPath + "SIFK")
+	my_use ("SIFK")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFV
 	if used()
 		use
 	endif
-	USE (cSifPath + "SIFV")
+	my_use ( "SIFV")
 	SET ORDER TO TAG "ID"
 
-endif
 
 SELECT FAKT
 PRIVATE cFilter := ""

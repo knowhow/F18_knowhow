@@ -190,49 +190,29 @@ local nRecNoSuban
 // ------------------------------------------
 
 
-cPomPath :=  AddBs(ALLTRIM(sg_kif->s_path)) + sez_fill(cSezona) +  "SUBAN"
-cPomSPath :=  AddBs(ALLTRIM(sg_kif->s_path_s)) + sez_fill(cSezona) 
+cPomPath := "SUBAN"
+cPomSPath :=  "" 
 
 select (F_SUBAN)
-if cPomPath <> cFinPath
-	cFinPath := cPomPath
-	if used()
-		use
-	endif
-	USE (cPomPath)
-else
-	if !used()
-		USE (cFinPath)
-	endif
+	
+cFinPath := cPomPath
+if used()
+	use
 endif
+my_use (cPomPath)
 
-// radno podrucje analitike cu koristiti za
-// suban_2 tabelu
-// suban_2 tabelu koristicu za pretragu naloga
 select (F_ANAL)
-if cPomPath <> cFinPath
-	cFinPath := cPomPath
-	if used()
-		use
-	endif
-	USE (cPomPath)
-else
-	if !used()
-		USE (cFinPath) alias suban_2
-		// "4","idFirma+IdVN+BrNal+Rbr
-		SET ORDER TO TAG "4"
-	endif
-endif
+use
+my_use ( "suban_2", "fin_suban", .t. )
+// "4","idFirma+IdVN+BrNal+Rbr
+SET ORDER TO TAG "4"
 
-if !(cPomSPath == cSifPath)
-
-	cSifPath := cPomSPath
 	
 	SELECT F_PARTN
 	if used()
 		use
 	endif
-	USE (cSifPath + "PARTN")
+	my_use ( "PARTN")
 	SET ORDER TO TAG "ID"
 	
 
@@ -240,25 +220,22 @@ if !(cPomSPath == cSifPath)
 	if used()
 		use
 	endif
-	USE (cSifPath + "TARIFA")
+	my_use ( "TARIFA")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFK
 	if used()
 		use
 	endif
-	USE (cSifPath + "SIFK")
+	my_use ( "SIFK")
 	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFV
 	if used()
 		use
 	endif
-	USE (cSifPath + "SIFV")
+	my_use ( "SIFV")
 	SET ORDER TO TAG "ID"
-
-endif
-
 
 	
 SELECT SUBAN

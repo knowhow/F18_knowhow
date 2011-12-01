@@ -625,6 +625,11 @@ if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
    if gAutoCjen == "D" .and. Pitanje( ,"Staviti Cijenu ("+cPom+")"+" u sifrarnik ?","D")=="D"
      select roba
      replace &cPom with nNovaVrijednost
+
+	 // setuj i sql
+	 _vars := f18_scatter_global_vars()
+	 f18_gather(_vars)
+
      select kalk_pripr
    endif
  endif

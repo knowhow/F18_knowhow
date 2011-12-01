@@ -64,7 +64,7 @@ if !used()
 endif
 
 if (PCount()==0)
-	select F_FAKT_PRIPR
+	select F_PRIPR
 	if !used()
 		O_FAKT_S_PRIPR
 	endif

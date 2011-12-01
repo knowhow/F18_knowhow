@@ -31,11 +31,41 @@ local cHome
 
 cHome := hb_DirSepAdd(cHome + ".f18")
 
+f18_create_dir( cHome )
+
 if cDatabase <> nil
- 	cHome := hb_DirSepAdd(cHome + cDatabase)
+ 	
+	cHome := hb_DirSepAdd(cHome + cDatabase)
+
+	f18_create_dir( cHome )
+
 endif
 
 return cHome
+
+
+
+// --------------------------------------------------
+// kreira direktorij ako ne postoji
+// --------------------------------------------------
+function f18_create_dir( location )
+local _len
+local _create
+
+_len := ADIR( location + "*.*" )
+
+if _len == 0
+	// nema direktorija, napravi ga !
+	_create := DIRMAKE( location )
+
+	if _create <> 0
+		? "problem sa kreiranjem direktorija: " + location
+		quit
+	endif	
+
+endif
+
+return
 
 
 

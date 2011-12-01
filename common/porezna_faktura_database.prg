@@ -82,13 +82,32 @@ if !FILE(f18_ime_dbf(cDRTxtName))
 	dbcreate2(PRIVPATH + cDRTxtName, aDRTxtField)
 endif
 
+select F_DRN
+if !used()
+	O_DRN
+endif
+index on ( brdok + DTOS(datdok) ) tag "1" to drn
+  
+select F_RN
+if !used()
+	O_RN
+endif
+index on ( brdok + rbr + podbr ) tag "1" to rn
+index on ( idroba ) tag "IDROBA" to rn
+
+select F_DRNTEXT
+if !used()
+	O_DRNTEXT
+endif
+index on ( tip ) tag "1" to drntext
+
 // kreiraj indexe
-CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "drn")
+//CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "drn")
 
-CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "rn")
-CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "rn")
+//CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "rn")
+//CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "rn")
 
-CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
+//CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
 
 return
 

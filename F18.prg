@@ -105,3 +105,8 @@ return cF18HomeRoot
 function log_write(cMsg)
 FWRITE(nLogHandle, cMsg + hb_eol())
 return
+
+
+
+
+

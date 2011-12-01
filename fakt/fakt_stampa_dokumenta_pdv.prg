@@ -151,7 +151,7 @@ else
 
 endif
 
-close all
+//close all
 
 return
 

@@ -17,54 +17,107 @@ function o_fakt_edit(cVar2)
 
 altd()
 
-close all
-
 if glRadNal
-	O_RNAL
+	select F_RNAL
+	if !used()
+		O_RNAL
+	endif
 endif
 
 if glDistrib = .t.
-	O_RELAC
-  	O_VOZILA
-  	O_KALPOS
+	select F_RELAC
+	if !used()
+		O_RELAC
+  		O_VOZILA
+  		O_KALPOS
+	endif
 endif
 
-//O_VRSTEP
+select F_VRSTEP
+if !used()
+	O_VRSTEP
+endif
+
 select F_OPS
-use
-O_OPS
+if !used()
+	O_OPS
+endif
 
 select F_KONTO
-use
-O_KONTO
-
-select F_SAST
-use
-O_SAST
-
-select F_PARTN
-use
-O_PARTN
-
-select F_ROBA
-use
-O_ROBA
-
-if (PCount()==0)
-	O_FAKT_S_PRIPR
-	O_FAKT
-else
- 	O_PFAKT
+if !used()
+	O_KONTO
 endif
 
-O_FTXT
-O_TARIFA
-O_VALUTE
-O_FAKT_DOKS2
-O_FAKT_DOKS
-O_RJ
-O_SIFK
-O_SIFV
+select F_SAST
+if !used()
+	O_SAST
+endif
+
+select F_PARTN
+if !used()
+	O_PARTN
+endif
+
+select F_ROBA
+if !used()
+	O_ROBA
+endif
+
+if (PCount()==0)
+	select F_FAKT_PRIPR
+	if !used()
+		O_FAKT_S_PRIPR
+	endif
+	select F_FAKT
+	if !used()
+		O_FAKT
+	endif
+else
+	select F_FAKT
+	if !used()
+ 		O_PFAKT
+	endif
+endif
+
+select F_FTXT
+if !used()
+	O_FTXT
+endif
+
+select F_TARIFA
+if !used()
+	O_TARIFA
+endif
+
+select F_VALUTE
+if !used()
+	O_VALUTE
+endif
+
+select F_FAKT_DOKS2
+if !used()
+	O_FAKT_DOKS2
+endif
+
+select F_FAKT_DOKS
+if !used()
+	O_FAKT_DOKS
+endif
+
+select F_RJ
+if !used()
+	O_RJ
+endif
+
+select F_SIFK
+if !used()
+	O_SIFK
+endif
+
+select F_SIFV
+if !used()
+	O_SIFV
+endif
 
 select fakt_pripr
 set order to tag "1"
@@ -645,6 +698,7 @@ endif
 select fakt_pripr
 set order to tag "1"
 go top
+
 return
 
 
@@ -685,7 +739,7 @@ do while !eof()
     skip 1
 enddo
 
-close all
+//close all
 
 return 0
 

@@ -88,29 +88,43 @@ else
 	nBrDok := br_dok
 endif
 
-do while !eof()
+// azuriraj u sql bazu
+if kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
 	
-	Scatter()
-	
-	// datum azuriranja
-	_datum_2 := DATE()
-	_g_r_br := nNextGRbr
-	
-	_br_dok := nBrDok
-	
-	++nCount
-	@ m_x+1, m_y+2 SAY PADR("Dodajem P_KIF -> KUF " + transform(nCount, "9999"), 40)
-	@ m_x+2, m_y+2 SAY PADR("   "+ cTbl +" G.R.BR: " + transform(nNextGRbr, "99999"), 40)
-
-	nNextGRbr ++
-	
-	SELECT (nKArea)
-	APPEND BLANK
-	Gather()
-
 	select (nPArea)
-	SKIP
-enddo
+	go top
+
+	// azuriraj podatke u dbf
+	do while !eof()
+	
+		Scatter()
+	
+		// datum azuriranja
+		_datum_2 := DATE()
+		_g_r_br := nNextGRbr
+	
+		_br_dok := nBrDok
+	
+		++nCount
+		@ m_x+1, m_y+2 SAY PADR("Dodajem P_KIF -> KUF " + transform(nCount, "9999"), 40)
+		@ m_x+2, m_y+2 SAY PADR("   "+ cTbl +" G.R.BR: " + transform(nNextGRbr, "99999"), 40)
+
+		nNextGRbr ++
+	
+		SELECT (nKArea)
+		APPEND BLANK
+		Gather()
+
+		select (nPArea)
+		SKIP
+	enddo
+
+else
+
+	msgbeep("Neuspjesno azuriranje epdv/sql !")
+	return 
+
+endif
 
 SELECT (nKArea)
 use
@@ -133,6 +147,142 @@ BoxC()
 MsgBeep("Azuriran je " + cTbl + " dokument " + STR( _br_dok, 6, 0) )
 
 return _br_dok
+
+
+
+// azuriranje kuf, kif tabela u sql
+function kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
+local lOk := .t.
+local record := hb_hash()
+local _tbl_epdv
+local _i
+local _tmp_id
+local _ids := {}
+local __area
+
+if tbl == "KIF"
+	__area := F_P_KIF
+elseif tbl == "KUF"
+	__area := F_P_KUF
+endif
+
+// npr. LOWER( "KUF" )
+_tbl_epdv := "epdv_" + LOWER( tbl )
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	// provjeri fakt
+	if get_semaphore_status( _tbl_epdv ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl_epdv )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl_epdv, "lock" )
+	endif
+
+next
+
+lOk := .t.
+
+if lOk = .t.
+
+  // azuriraj kuf
+  MsgO( "sql " + _tbl_epdv )
+
+  select ( __area )
+  go top
+
+  if tbl == "KUF"
+  		sql_epdv_kuf_update("BEGIN")
+  elseif tbl == "KIF"
+  		sql_epdv_kif_update("BEGIN")
+  endif
+
+  do while !eof()
+	  
+   record["datum"] := field->datum
+   record["datum_2"] := DATE()
+   record["src"] := field->src
+   record["td_src"] := field->td_src
+   record["src_2"] := field->src_2
+   record["id_tar"] := field->id_tar
+   record["id_part"] := field->id_part
+   record["part_idbr"] := field->part_idbr
+   record["part_kat"] := field->part_kat
+   record["src_td"] := field->src_td
+   record["src_br"] := field->src_br
+   record["src_veza_b"] := field->src_veza_b
+   record["src_br_2"] := field->src_br_2
+   record["r_br"] := field->r_br
+   record["br_dok"] := next_br_dok
+   record["g_r_br"] := next_g_rbr
+   record["lock"] := field->lock
+   record["kat"] := field->kat
+   record["kat_2"] := field->kat_2
+   record["opis"] := field->opis
+   record["i_b_pdv"] := field->i_b_pdv
+   record["i_pdv"] := field->i_pdv
+   record["i_v_b_pdv"] := field->i_v_b_pdv
+   record["i_v_pdv"] := field->i_v_pdv
+   record["status"] := field->status
+   record["kat_p"] := field->kat_p
+   record["kat_p_2"] := field->kat_p_2
+
+   if tbl == "KIF"
+   		record["src_pm"] := field->src_pm
+   endif
+               
+   _tmp_id := STR( record["br_dok"], 6, 0 )
+   
+   if tbl == "KUF"
+   	    if !sql_epdv_kuf_update( "ins", record )
+       		lOk := .f.
+       		exit
+   		endif
+   elseif tbl == "KIF"
+   	    if !sql_epdv_kif_update( "ins", record )
+       		lOk := .f.
+       		exit
+   		endif
+   endif
+
+   skip
+
+  enddo
+
+  MsgC()
+
+endif
+
+if !lOk
+
+	// vrati sve nazad...  	
+	if tbl == "KUF"
+		sql_epdv_kuf_update("ROLLBACK")
+	elseif tbl == "KIF"
+		sql_epdv_kif_update("ROLLBACK")
+	endif
+
+else
+	
+	// napravi update-e
+	// zavrsi transakcije 
+ 
+	AADD( _ids, _tmp_id )
+
+	update_semaphore_version( _tbl_epdv, .t. )
+	push_ids_to_semaphore( _tbl_epdv, _ids ) 
+  	
+	if tbl == "KUF"
+		sql_epdv_kuf_update("END")
+	elseif tbl == "KIF"
+		sql_epdv_kif_update("END")
+	endif
+
+endif
+
+lock_semaphore( _tbl_epdv, "free" )
+
+return lOk
 
 
 

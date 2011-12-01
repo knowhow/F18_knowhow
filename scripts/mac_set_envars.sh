@@ -15,7 +15,7 @@ export HB_LIB_INSTALL=/opt/harbour/lib/harbour
 
 
 HB_DBG=`pwd`
-export HB_DBG_PATH=$HB_DBG/common:$HB_DBG/pos:$HB_DBG/kalk:$HB_DBG/fin:$HB_DBG/fakt:$HB_DBG/os:$HB_DBG/ld:/$HB_DBG/epdf:$HB_DBG/rnal
+export HB_DBG_PATH=$HB_DBG/common:$HB_DBG/pos:$HB_DBG/kalk:$HB_DBG/fin:$HB_DBG/fakt:$HB_DBG/os:$HB_DBG/ld:/$HB_DBG/epdv:$HB_DBG/rnal
 
 
 echo "HB_DBG_PATH="  $HB_DBG_PATH

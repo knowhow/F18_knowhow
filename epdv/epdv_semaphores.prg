@@ -142,10 +142,10 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( br_dok || r_br ) IN " + _sql_ids
+        	_qry += " ( br_dok::char(6) ) IN " + _sql_ids
      	endif
 
-        _key_block := {|| field->br_dok + DTOS(field->datum)  } 
+        _key_block := {|| STR( field->br_dok, 6, 0 ) } 
   endif
 
   _qry += " ORDER BY " + _order
@@ -284,7 +284,7 @@ LOCAL _server := pg_server()
 _tbl := "fmk.epdv_kuf"
 
 if record <> nil
-	_where := "br_dok=" + _sql_quote(record["br_dok"]) + " and r_br=" + _sql_quote( record["r_br"]) 
+	_where := "br_dok=" + _sql_quote(record["br_dok"]) 
 endif
 
 DO CASE
@@ -329,7 +329,8 @@ DO CASE
                             + _sql_quote( record["status"] ) + "," +;
                             + _sql_quote( record["kat_p"] ) + "," +;
                             + _sql_quote( record["kat_p_2"] ) + " )"
-                          
+                         
+ 
 ENDCASE
    
 _ret := _sql_query( _server, _qry)
@@ -415,10 +416,10 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( br_dok || r_br ) IN " + _sql_ids
+        	_qry += " ( br_dok::char(6) ) IN " + _sql_ids
      	endif
 
-        _key_block := {|| field->br_dok + DTOS(field->datum)  } 
+        _key_block := {|| STR( field->br_dok, 6, 0 )  } 
   endif
 
   _qry += " ORDER BY " + _order
@@ -558,7 +559,7 @@ LOCAL _server := pg_server()
 _tbl := "fmk.epdv_kif"
 
 if record <> nil
-	_where := "br_dok=" + _sql_quote(record["br_dok"]) + " and r_br=" + _sql_quote( record["r_br"]) 
+	_where := "br_dok=" + _sql_quote(record["br_dok"]) 
 endif
 
 DO CASE

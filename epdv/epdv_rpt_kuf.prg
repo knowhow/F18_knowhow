@@ -298,16 +298,9 @@ if !empty(cPart)
 	cFilter += "id_part == "+cm2str(cPart)
 endif
 
-
-
-#ifdef PROBA
-MsgBeep(cFilter)
-#endif
-
 SET FILTER TO &cFilter
 
 GO TOP
-
 
 Box(,3, 60)
 

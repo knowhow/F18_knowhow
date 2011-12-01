@@ -179,10 +179,6 @@ PRIVATE cFilter := ""
 // datumski period
 cFilter := cm2str(dDatOd) + " <= datum .and. " + cm2str(dDatDo) + ">= datum" 
 
-#ifdef PROBA
-MsgBeep(cFilter)
-#endif
-
 O_KUF
 SET FILTER TO &cFilter
 GO TOP
@@ -261,10 +257,6 @@ O_KIF
 
 // datumski period
 cFilter := cm2str(dDatOd) + " <= datum .and. " + cm2str(dDatDo) + ">= datum" 
-
-#ifdef PROBA
-MsgBeep(cFilter)
-#endif
 
 O_KIF
 SET FILTER TO &cFilter
@@ -761,7 +753,7 @@ show_raz_1()
 ?? rpt_lm()
 ?? SPACE(RPT_RI)
 // 71
-cPom := PADR("71. Obaveza PDV-a za uplatu/povrat ", RPT_W2 - RPT_BOLD_DELTA ) + TRANSFORM(pdv_uplatiti, PIC_IZN())
+cPom := PADR("71. Obaveza PDV-a za uplatu/povrat ", RPT_W2 - RPT_BOLD_DELTA ) + TRANSFORM(pdv_uplati, PIC_IZN())
 // sirina kolone - indent
 B_ON
 ?? PADL(cPom, RPT_COL - RPT_RI - RPT_BOLD_DELTA + 1)

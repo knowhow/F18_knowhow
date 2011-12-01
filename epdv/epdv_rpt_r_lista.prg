@@ -172,10 +172,6 @@ SELECT (nKArea)
 
 PRIVATE cFilter := cm2str(dDatOd) + " <= datum_2 .and. " + cm2str(dDatDo) + ">= datum_2" 
 
-#ifdef PROBA
-MsgBeep(cFilter)
-#endif
-
 SET FILTER TO &cFilter
 
 GO TOP

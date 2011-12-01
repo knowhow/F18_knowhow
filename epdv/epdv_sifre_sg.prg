@@ -70,7 +70,7 @@ endif
 
 
 set_a_kol( @Kol, @ImeKol)
-return PostojiSifra( nArea, 1, 10, 75, cHeader, ;
+return PostojiSifra( nArea, 1, 10, MAXCOLS() - 3, cHeader, ;
        @cId, dx, dy, ;
 	{|Ch| k_handler(Ch)} )
 	

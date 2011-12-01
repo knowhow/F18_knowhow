@@ -129,7 +129,7 @@ do while !eof() .and. ID="PARTN"
 enddo
 
 private gTBDir:="N"
-cRet :=PostojiSifra(F_PARTN, 1, maxrows()-15, maxcols()-20, "Lista Partnera", @cId, dx, dy, ;
+cRet :=PostojiSifra(F_PARTN, 1, 15, maxcols() - 3, "Lista Partnera", @cId, dx, dy, ;
         {|Ch| k_handler(Ch)},,,,, {"ID"})
 
 

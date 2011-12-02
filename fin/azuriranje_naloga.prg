@@ -46,15 +46,22 @@ if oServer == NIL
   QUIT
 endif
 
+msgo( "Azuriranje dokumenta u toku...." )
+
 if fin_azur_sql(oServer)
-   o_fin_za_azuriranje()
-   if !fin_azur_dbf(lAuto)
-       MsgBeep("Neuspjesno FIN/DBF azuriranje !?")
-       return .f.
+	o_fin_za_azuriranje()
+   	if !fin_azur_dbf(lAuto)
+    	msgc()
+		MsgBeep("Neuspjesno FIN/DBF azuriranje !?")
+		return .f.
    endif
 else
-  MsgBeep("Neuspjesno FIN/SQL azuriranje !?")
+	msgc()
+ 	MsgBeep("Neuspjesno FIN/SQL azuriranje !?")
+	return .f.
 endif
+
+msgc()
 
 return .t.
 

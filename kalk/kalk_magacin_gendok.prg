@@ -207,7 +207,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
       _idpartner:=""
       _rabat:=prevoz:=prevoz2:=_banktr:=_spedtr:=_zavtr:=_marza:=_marza2:=_mpc:=0
-      _kolicina:=pripr->(kolicina-gkolicina)
+      _kolicina:=kalk_pripr->(kolicina-gkolicina)
       _gkolicina:=_gkolicin2:=_mpc:=0
       _idkonto:=_idkonto
       _Idkonto2:=""
@@ -227,7 +227,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
       _idpartner:=""
       _rabat:=prevoz:=prevoz2:=_banktr:=_spedtr:=_zavtr:=_nc:=_marza:=_marza2:=_mpc:=0
-      _kolicina:=pripr->(-kolicina+gkolicina)
+      _kolicina:=kalk_pripr->(-kolicina+gkolicina)
       _gkolicina:=_gkolicin2:=_mpc:=0
       _idkonto2:=_idkonto
       _Idkonto:=""
@@ -634,17 +634,17 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
      _marza:=KoncijVPC()-pripr->nc
      _tmarza:="A"
     else
-     _VPC:=pripr->vpc
+     _VPC:=kalk_pripr->vpc
     endif
    else
-    _VPC:=pripr->vpc
+    _VPC:=kalk_pripr->vpc
    endif
    select kalk_pripr2
-   _fcj:=_fcj2:=_nc:=pripr->nc
+   _fcj:=_fcj2:=_nc:=kalk_pripr->nc
    _rbr:=str(++nRbr,3)
-   _kolicina:=pripr->kolicina
+   _kolicina:=kalk_pripr->kolicina
    _BrFaktP:=trim(kalk_pripr->idkonto2)+"/"+pripr->brfaktp
-   _idkonto:=pripr->idkonto
+   _idkonto:=kalk_pripr->idkonto
    _idkonto2:=""
    _brdok:=cBrUlaz
    _MKonto:=_Idkonto

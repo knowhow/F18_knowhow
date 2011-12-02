@@ -37,8 +37,8 @@ cSrSort := "N"
 IF lOsvjezi
  	
 	cIdFirma:=gFirma
- 	cIdKonto:=pripr->idKonto
- 	dDatDok:=pripr->datDok
+ 	cIdKonto:=kalk_pripr->idKonto
+ 	dDatDok:=kalk_pripr->datDok
 
 ELSE
 
@@ -69,7 +69,7 @@ O_KONCIJ
 O_KALK
 
 IF lOsvjezi
-	private cBrDok:=pripr->brdok
+	private cBrDok:=kalk_pripr->brdok
 ELSE
   	private cBrDok:=SljBroj(cIdFirma,"IM",8)
 ENDIF

@@ -108,7 +108,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
    _idpartner:=""
    _rabat:=prevoz:=prevoz2:=_banktr:=_spedtr:=_zavtr:=_nc:=_marza:=_marza2:=_mpc:=0
    _gkolicina:=_gkolicin2:=_mpc:=0
-   _VPC:=pripr->vpc-nRVPC
+   _VPC:=kalk_pripr->vpc-nRVPC
    _MPCSAPP:=nRVPC
    _kolicina:=nKolS
    _brdok:=cBrniv
@@ -121,18 +121,18 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
    _TBankTr:="X"    // izgenerisani dokument
    _ERROR:=""
    if cIdVD $ "94" // storno fakture,storno otpreme - niveli{i na stornirano
-     _kolicina:=pripr->kolicina
+     _kolicina:=kalk_pripr->kolicina
      _vpc:=nRVPC - kalk_pripr->vpc
-     _mpcsapp:=pripr->vpc
+     _mpcsapp:=kalk_pripr->vpc
      _MKonto:=_Idkonto
    endif
    if   (cidvd=="14" .and. gNiv14=="2")  // minex,
-     _kolicina:=pripr->kolicina
+     _kolicina:=kalk_pripr->kolicina
      _MKonto:=_Idkonto
      if _kolicina<0 // radi se storno fakture
        _kolicina:=-_kolicina
        _vpc:=-_vpc
-       _mpcsapp:=pripr->vpc
+       _mpcsapp:=kalk_pripr->vpc
      endif
 
    endif

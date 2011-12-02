@@ -74,7 +74,7 @@ if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku KATOPS","N")=="D"
     if ASCAN(aIdPos,{|x| x==koncij->idprodmjes}) == 0
        AADD(aIdPos,koncij->idprodmjes)
     endif
-    dDatDok:=pripr->datdok
+    dDatDok:=kalk_pripr->datdok
     replace idfirma with gFirma
     replace idvd with kalk_pripr->idvd
     replace idpos with koncij->idprodmjes

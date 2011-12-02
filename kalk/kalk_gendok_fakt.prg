@@ -43,13 +43,13 @@ do while .t.
   SELECT RJ; GO TOP
 
   IF kalk_pripr->idvd $ "97"
-	  LOCATE FOR konto==PRIPR->idkonto2
+	  LOCATE FOR konto==kalk_PRIPR->idkonto2
 	  if found()
 		  lRJKon97_2:=.t.
 		  cFF97_2:=id
 	  endif
 	  GO TOP
-	  LOCATE FOR konto==PRIPR->idkonto
+	  LOCATE FOR konto==kalk_PRIPR->idkonto
 	  if found()
 		  lRJKon97:=.t.
 		  cFF97:=id
@@ -61,9 +61,9 @@ do while .t.
 	  endif
   ELSE
 	  IF kalk_pripr->idvd $ "11#12#13#95#96"
-	    LOCATE FOR konto==PRIPR->idkonto2
+	    LOCATE FOR konto==kalk_PRIPR->idkonto2
 	  ELSE
-	    LOCATE FOR konto==PRIPR->idkonto
+	    LOCATE FOR konto==kalk_PRIPR->idkonto
 	  ENDIF
 
 	  IF FOUND()
@@ -83,8 +83,8 @@ do while .t.
     cFaktFirma:=gKomFakt
   ENDIF
 
-  cIdTipDok:=pripr->idvd
-  cBrDok:=pripr->brdok
+  cIdTipDok:=kalk_pripr->idvd
+  cBrDok:=kalk_pripr->brdok
   read
 
   select XFAKT
@@ -162,7 +162,7 @@ do while .t.
      fFirst:=.t.
      do while !eof() .and. cIdFirma+cIdTipDok+cBrDok==IdFirma+IdVD+BrDok
 
-       private nKolicina:=pripr->(kolicina-gkolicina-gkolicin2)
+       private nKolicina:=kalk_pripr->(kolicina-gkolicina-gkolicin2)
        if kalk_pripr->idvd $ "12#13"  // ove transakcije su storno otpreme
            nKolicina:=-nKolicina
        endif
@@ -177,7 +177,7 @@ do while .t.
        select fakt_pripr
        if kalk_pripr->idvd=="97"
 		if lRJKon97
-		       	hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
+		       	hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
 		       	if found()
 		        	replace kolicina with kolicina+nkolicina
 		       	else
@@ -190,7 +190,7 @@ do while .t.
 		       	endif
 		endif
 		if lRJKon97_2
-		       	hseek cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
+		       	hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
 		       	if found()
 		        	replace kolicina with kolicina+nkolicina
 		       	else
@@ -206,7 +206,7 @@ do while .t.
        		APPEND BLANK
        		replace kolicina with nkolicina
        else
-       	hseek cFaktFirma+pripr->(cIdFakt+cBrFakt+rbr)
+       	hseek cFaktFirma+kalk_pripr->(cIdFakt+cBrFakt+rbr)
        	if found()
         	replace kolicina with kolicina+nkolicina
        	else
@@ -277,15 +277,15 @@ do while .t.
 				if !lRJKon97
 					loop
 				endif
-		        	hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
+		        	hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
 		       else
 				if !lRJKon97_2
 					loop
 				endif
-		    	   	hseek cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
+		    	   	hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
 		       endif
 	       else
-		       replace idfirma  with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma,pripr->idfirma)
+		       replace idfirma  with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma,kalk_pripr->idfirma)
 		       replace rbr      with kalk_pripr->Rbr
 		       replace idtipdok with cIdFakt   // izlazna faktura
 		       replace brdok    with cBrFakt

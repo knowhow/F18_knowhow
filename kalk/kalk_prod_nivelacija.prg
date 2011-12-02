@@ -100,7 +100,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
     nStCj:=nMPC
 
-    nNCJ:=pripr->MPCSaPP
+    nNCJ:=kalk_pripr->MPCSaPP
 
     _MPCSaPP:=nNCj-nStCj
     _MPC:=0

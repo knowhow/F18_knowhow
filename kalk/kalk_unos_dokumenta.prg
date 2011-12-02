@@ -2170,12 +2170,8 @@ O_TARIFA
 O_PARTN
 O_KONTO
 O_TDOK
-
-#ifdef CAX
-	select (F_PRIPR)
-	use
-#endif
-O_SKALK   // alias kalk_pripr
+O_SKALK   
+// alias kalk_pripr
 
 select kalk_pripr
 set order to tag "1"
@@ -2220,12 +2216,9 @@ do while .t.
 
 enddo  // vrti kroz kalkulacije
 
-#ifdef CAX
-	select kalk_pripr
-	use
-#endif
-closeret
+close all
+
 return nil
-*}
+
 
 

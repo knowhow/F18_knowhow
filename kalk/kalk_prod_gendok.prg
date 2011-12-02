@@ -725,11 +725,11 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
   _idpartner:=""
   _rabat:=prevoz:=prevoz2:=_banktr:=_spedtr:=_zavtr:=_nc:=_marza:=_marza2:=_mpc:=0
 
-   _fcj:=_fcj2:=_nc:=pripr->nc
+   _fcj:=_fcj2:=_nc:=kalk_pripr->nc
    _rbr:=str(++nRbr,3)
-   _kolicina:=pripr->kolicina
+   _kolicina:=kalk_pripr->kolicina
    _idkonto:=cProdavn
-   _idkonto2:=pripr->idkonto2
+   _idkonto2:=kalk_pripr->idkonto2
    _brdok:=cBrUlaz
    _idvd:="11"
    _MKonto:=_Idkonto2;_MU_I:="5"     // izlaz iz magacina
@@ -778,8 +778,8 @@ O_KALK
 select kalk_pripr
 go bottom
 
-cIdFirma:=pripr->idFirma
-cPKonto:=pripr->pkonto
+cIdFirma:=kalk_pripr->idFirma
+cPKonto:=kalk_pripr->pkonto
 
 select kalk; set order to tag "PTARIFA"
 //("PTarifa","idFirma+PKonto+IDTarifa+idroba",KUMPATH+"KALK")

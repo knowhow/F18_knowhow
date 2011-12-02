@@ -24,7 +24,7 @@ PUBLIC gKonvertPath:="D"
 cModul:="KALK"
 PUBLIC goModul
 
-oKalk := TKalkMod():new(NIL, cModul, D_KALK_VERZIJA, D_KALK_PERIOD , cKorisn, cSifra, p3,p4,p5,p6,p7)
+oKalk := TKalkMod():new(NIL, cModul, F18_VER, F18_VER_DATE , cKorisn, cSifra, p3,p4,p5,p6,p7)
 goModul:=oKalk
 
 oKalk:run()

@@ -650,7 +650,7 @@ do while .t.
   do while !eof()
      select sast
      hseek  kalk_pripr->idroba
-     do while !eof() .and. id==pripr->idroba // setaj kroz sast
+     do while !eof() .and. id==kalk_pripr->idroba // setaj kroz sast
        // utvr|ivanje nabavnih cijena po sastavnici !!!!!
        select roba; hseek sast->id2
        select kalk_pripr

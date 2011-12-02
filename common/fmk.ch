@@ -6,10 +6,10 @@
 
 #define F18_DEFINED
 
-#define F18_VER       "0.9.0"
-#define F18_VER_DATE  "25.11.2011"
+#define F18_VER       "0.9.5"
+#define F18_VER_DATE  "02.12.2011"
 
-#define FMK_LIB_VER  "0.8.5"
+#define FMK_LIB_VER  "0.8.6"
 
 
 #define EXEPATH   my_home_root()

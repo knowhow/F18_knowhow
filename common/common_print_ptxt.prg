@@ -50,6 +50,10 @@ else
 	cPTXTSw := R_IniRead ( 'DOS','PTXTSW',  "/P", EXEPATH+'FMK.INI' )
 endif
 
+#ifdef __PLATFORM__WINDOWS
+	cImeF := '"' + cImeF + '"'
+#endif
+
 cKom := "PTXT " + cImeF + " "
 
 cKom += " "+ cPtxtSw

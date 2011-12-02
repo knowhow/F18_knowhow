@@ -14,10 +14,6 @@
 static lIzgenerisi := .f.
 static cNal
 
-/*! \fn Azur(lAuto)
- *  \brief Azuriranje knjizenja
- *  \param lAuto - .t. azuriraj automatski, .f. azuriraj sa pitanjem
- */
 function fin_azur(lAuto)
 // PostgreSQL server object
 local oServer

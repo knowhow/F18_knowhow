@@ -37,7 +37,7 @@ if gafin=="D"
 	endif
 	
 	// azuriranje fin naloga
- 	Azur( lAuto )
+ 	fin_azur( lAuto )
 
 endif
 

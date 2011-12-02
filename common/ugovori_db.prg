@@ -51,7 +51,11 @@ endcase
 // kreiraj dbf
 if !File( f18_ime_dbf(cTbl) )
 	DBcreate2( cTbl, aDBF )
-	reset_semaphore_version( "fakt_" + LOWER(cTbl) )
+	if !( cTbl == "DEST" )
+		reset_semaphore_version( "fakt_" + LOWER(cTbl) )
+	else
+		reset_semaphore_version( LOWER(cTbl) )
+	endif
 	my_use( LOWER(cTbl) )
 endif
 

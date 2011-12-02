@@ -211,7 +211,11 @@ CREATE_INDEX("Naziv","LEFT(Naziv,40)+id",PRIVPATH+"BARKOD")
 // kreiranje tabele strings
 cre_strings()
 
+cre_fin_mat()
+
 return
+
+
 
 
 

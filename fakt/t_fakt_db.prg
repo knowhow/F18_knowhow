@@ -541,6 +541,8 @@ if glDistrib
 	endif
 endif
 
+*/
+
 // kreiranje tabela ugovora
 db_cre_ugov()
 

@@ -50,17 +50,22 @@ return cHome
 // --------------------------------------------------
 function f18_create_dir( location )
 local _len
+local _loc
 local _create
 
-_len := ADIR( location + "*.*" )
+_loc := location
+#ifdef __PLATFORM__WINDOWS
+	_loc := '"' + location + '"'
+#endif
+
+_len := ADIR( _loc + "*.*" )
 
 if _len == 0
-	// nema direktorija, napravi ga !
+
 	_create := DIRMAKE( location )
 
 	if _create <> 0
-		? "problem sa kreiranjem direktorija: " + location
-		quit
+		log_write("problem sa kreiranjem direktorija: " + location )
 	endif	
 
 endif

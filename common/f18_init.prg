@@ -81,8 +81,6 @@ log_write( "direct login: " + ;
 		STR(my_server_params()["port"])  + " / " + ; 
 		my_server_params()["schema"])
 
-altd()
-
 if __server:NetErr()
 	log_write( "Nisam se zakacio kao user/user, pokusat cu sa novim parmetrima !" )
 	// idemo na login formu

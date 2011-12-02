@@ -35,6 +35,7 @@ cDatabase := params["database"]
 cUser := params["user_name"]
 cSchema := params["schema"]
 cPort := params["port"]
+cPassword := ""
 
 if (cHostName == nil) .or. (cPort == nil)
 	cConfigureServer := "D"

@@ -56,7 +56,11 @@ _ini_params["user_name"] := nil
 _ini_params["schema"] := nil
 _ini_params["port"] := nil
 
-f18_ini_read("F18_server", @_ini_params, .t.)
+if !f18_ini_read("F18_server", @_ini_params, .t.)
+	// idemo na formu za logiranje
+	_form_login()
+	return __server
+endif
 
 // definisi parametre servera
 __server_params := hb_hash()
@@ -75,43 +79,50 @@ my_server_login( my_server_params() )
 log_write( "login 1st: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
 
 if __server:NetErr()
-	
 	// idemo na login formu
+	_form_login()	
+endif
 
-	if f18_login_screen( @cHostname, @cDatabase, @cUser, @cPassword, @nPort, @cSchema ) = .f.
-		quit
-	endif
 
-	__server_params := hb_hash()
-	__server_params["host_name"] := cHostName
-	__server_params["database"] := cDatabase
-	__server_params["user"] := cUser
-	__server_params["password"] := cPassword
-	__server_params["port"] := nPort
-	__server_params["schema"] := cSchema
+return __server
 
-	my_server_login( my_server_params() )
 
-	log_write( "login 2nd: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
+static function _form_login()
 
-	if __server:NetErr()
+// idemo na login formu
+
+if f18_login_screen( @cHostname, @cDatabase, @cUser, @cPassword, @nPort, @cSchema ) = .f.
+	quit
+endif
+
+__server_params := hb_hash()
+__server_params["host_name"] := cHostName
+__server_params["database"] := cDatabase
+__server_params["user"] := cUser
+__server_params["password"] := cPassword
+__server_params["port"] := nPort
+__server_params["schema"] := cSchema
+
+my_server_login( my_server_params() )
+
+log_write( "login 2nd: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
+
+if __server:NetErr()
       
-		clear screen
+	clear screen
 
-	  	?
-	  	? "Greska sa konekcijom na server:"
-	  	? "==============================="
-	  	? __server:ErrorMsg()
+  	?
+  	? "Greska sa konekcijom na server:"
+  	? "==============================="
+  	? __server:ErrorMsg()
 
-	  	log_write( __server:ErrorMsg() )
-	  	inkey(0)
-	  	quit
-
-	endif
+  	log_write( __server:ErrorMsg() )
+  	inkey(0)
+  	quit
 
 endif
 
-return oServer 
+return
 
 
 // ------------------

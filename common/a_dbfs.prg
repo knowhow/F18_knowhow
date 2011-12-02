@@ -37,7 +37,7 @@ AADD( gaDbfs, { F_LOKAL , "LOKAL"  , "lokal", { | param | lokal_from_sql_server(
 AADD( gaDbfs, { F_DOKSRC , "DOKSRC"  , "doksrc"  } )
 AADD( gaDbfs, { F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  } )
 AADD( gaDbfs, { F_RELATION , "RELATION"  , "relation"  } )
-AADD( gaDbfs, { F_FMKRULES , "FMKRULES"  , "f18_rules"  } )
+AADD( gaDbfs, { F_FMKRULES , "FMKRULES"  , "f18_rules", { | param | f18_rules_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_RULES , "RULES"  , "rules"  } )
 AADD( gaDbfs, { F_P_UPDATE , "P_UPDATE"  , "p_update"  } )
 AADD( gaDbfs, { F__ROBA , "_ROBA"  , "_roba"  } )

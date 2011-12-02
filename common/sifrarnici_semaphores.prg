@@ -571,6 +571,35 @@ return _result
 
 
 
+// -----------------------------------------
+// -----------------------------------------
+function f18_rules_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "f18_rules"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_FMKRULES, {"rule_id", "modul_name", ;
+			"rule_obj", "rule_no", "rule_name", "rule_ermsg", "rule_level", ;
+			"rule_c1", "rule_c2", "rule_c3", "rule_c4", "rule_c5", "rule_c6", ;
+			"rule_c7", "rule_n1", "rule_n2", "rule_n3", "rule_d1", "rule_d2"  })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
 
 // ----------------------------------------
 // ----------------------------------------

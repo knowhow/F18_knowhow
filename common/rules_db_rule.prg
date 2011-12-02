@@ -18,13 +18,15 @@
 // ----------------------------------
 function cre_fmkrules()
 
-local cTbl := "fmkrules.dbf"
+local cTbl := "fmkrules"
 
 // uzmi def.polja
 local aDbf := g_rule_tbl()
 
-if !FILE( f18_ime_dbf("fmkrules") )
-	DBCREATE2( SIFPATH + cTbl, aDbf )
+if !FILE( f18_ime_dbf( cTbl ) )
+	DBCREATE2( cTbl, aDbf )
+	reset_semaphore_version("f18_rules")
+	my_use( cTbl )
 endif
 
 CREATE_INDEX( "1", "STR(RULE_ID,10)", SIFPATH + cTbl, .t. )

@@ -219,6 +219,7 @@ if lGenerisi = .t.
    		kalk_kontiranje_naloga( .t., lAuto )
  	endif
 
+	altd()
  	P_Fin( lAuto )
 
  	gAFin := lgAFin

@@ -1,7 +1,9 @@
+0.9.5, 2011-12-02, vsasa, moduli FIN, KALK, FAKT stavljeni u funkciju 
+
 0.9.0, 2011-11-25, hernad, init changelog 
 
-    #define F18_VER  "0.9.0"
-    #define F18_VER_DATE  "25.11.2011"
+    #define F18_VER  "0.9.5"
+    #define F18_VER_DATE  "02.12.2011"
 
 --------------------
 

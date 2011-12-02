@@ -23,7 +23,7 @@ if (lAuto == nil)
 	lAuto := .f.
 endif
 
-if gafin=="D"
+if gafin == "D"
 	
 	// kontrola zbira - uravnotezenje
  	KZbira( lAuto )

@@ -59,7 +59,7 @@
 #xcommand O_VOZILA => SELECT (F_VOZILA); my_USE ("vozila"); set order to tag "ID"
 #xcommand O_ADRES     => select (F_ADRES); my_use (ToUnix("adres")) ; set order to tag "ID"
 #xcommand O_RELATION => SELECT (F_RELATION); my_USE ("relation"); set order to tag "1"
-#xcommand O_FINMAT  => select(F_FINMAT); my_use ("fin_mat")    ; set order to tag "1"
+#xcommand O_FINMAT  => select(F_FINMAT); my_use ("finmat")    ; set order to tag "1"
 //#xcommand O_FIN_FINMAT  => select(F_FIN_FINMAT); my_use ("fin_finmat")    ; set order to tag "1"
 //#xcommand O_FAKT_FINMAT  => select(F_FAKT_FINMAT); my_use ("fakt_finmat")    ; set order to tag "1"
 //#xcommand O_KALK_FINMAT  => select(F_KALK_FINMAT); my_use ("kalk_finmat")    ; set order to tag "1"

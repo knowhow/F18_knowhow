@@ -58,7 +58,7 @@ _ini_params["port"] := nil
 
 if !f18_ini_read("F18_server", @_ini_params, .t.)
 	// idemo na formu za logiranje
-	_form_login()
+	_form_login( cHostName, cDataBase, cPassword, nPort, cSchema )
 	return __server
 endif
 
@@ -80,14 +80,13 @@ log_write( "login 1st: " + my_server_params()["host_name"] + " / " + my_server_p
 
 if __server:NetErr()
 	// idemo na login formu
-	_form_login()	
+	_form_login( cHostName, cDataBase, cPassword, nPort, cSchema )
 endif
-
 
 return __server
 
 
-static function _form_login()
+static function _form_login( cHostName, cDataBase, cPassword, nPort, cSchema )
 
 // idemo na login formu
 

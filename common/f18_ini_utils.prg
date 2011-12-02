@@ -20,6 +20,7 @@ endif
 
 if !FILE( ini_file )
 	log_write( "Ne postoji ini fajl " + ini_file )
+	return .f.
 endif
 
 ini_read := hb_iniread( ini_file )

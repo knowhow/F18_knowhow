@@ -36,7 +36,6 @@ cDatabase := params["database"]
 cUser := params["user_name"]
 cSchema := params["schema"]
 cPort := params["port"]
-cPassword := params["user_pwd"]
 
 if (cHostName == nil) .or. (cPort == nil)
 	cConfigureServer := "D"
@@ -62,15 +61,6 @@ endif
 
 if cUser == nil
   cUser := "admin"
-endif
-
-if cPassword == nil
-  cPassword := "admin"
-endif
-
-// ako je user = password, logiraj se
-if cUser == cPassword
-	return lSuccess
 endif
 
 cSchema :=  PADR(cSchema, 40)
@@ -135,7 +125,6 @@ cSchema := ALLTRIM( cSchema )
 params["database"] := cDatabase
 params["host_name"] := cHostName
 params["user_name"] := cUser
-params["user_pwd"] := cPassword
 params["schema"] := cSchema 
 params["port"] := ALLTRIM(STR(nPort))
 

@@ -18,9 +18,14 @@ else
 	ini_file := my_home_root() + INI_FNAME
 endif
 
+if !FILE( ini_file )
+	log_write( "Ne postoji ini fajl " + ini_file )
+endif
+
 ini_read := hb_iniread( ini_file )
 
 if EMPTY( ini_read )
+	log_write( "Fajl je prazan: " + ini_file )
 	return .t.
 endif
 

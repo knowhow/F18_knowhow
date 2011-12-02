@@ -20,6 +20,7 @@ static __server_params := NIL
 function init_f18_app()
 local cHostName, cDatabase, cUser, cPassword, nPort, cSchema
 local oServer
+local _ini_params
 
 REQUEST DBFCDX
 
@@ -47,42 +48,68 @@ public Invert := .f.
 
 set_a_dbfs()
 
-//_thread_aDBFs := ACLONE(gaDBFs)
+// ucitaj parametre iz inija, ako postoje ...
+_ini_params := hb_hash()
+_ini_params["host_name"] := nil
+_ini_params["database"] := nil
+_ini_params["user_name"] := nil
+_ini_params["schema"] := nil
+_ini_params["port"] := nil
 
-if f18_login_screen( @cHostname, @cDatabase, @cUser, @cPassword, @nPort, @cSchema ) = .f.
-	quit
-endif
+f18_ini_read("F18_server", @_ini_params, .t.)
 
+// definisi parametre servera
 __server_params := hb_hash()
-__server_params["host_name"] := cHostName
-__server_params["database"] := cDatabase
-__server_params["user"] := cUser
-__server_params["password"] := cPassword
-__server_params["port"] := nPort
-__server_params["schema"] := cSchema
 
-// try to loggon...
+__server_params["host_name"] := _ini_params["host_name"]
+__server_params["database"] := _ini_params["database"]
+__server_params["user"] := _ini_params["user_name"]
+__server_params["password"] := _ini_params["user_name"]
+__server_params["port"] := VAL( _ini_params["port"] )
+__server_params["schema"] := _ini_params["schema"]
+
+// pokusaj se logirati kao user/user
 
 my_server_login( my_server_params() )
 
-log_write(my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
+log_write( "login 1st: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
 
 if __server:NetErr()
+	
+	// idemo na login formu
+
+	if f18_login_screen( @cHostname, @cDatabase, @cUser, @cPassword, @nPort, @cSchema ) = .f.
+		quit
+	endif
+
+	__server_params := hb_hash()
+	__server_params["host_name"] := cHostName
+	__server_params["database"] := cDatabase
+	__server_params["user"] := cUser
+	__server_params["password"] := cPassword
+	__server_params["port"] := nPort
+	__server_params["schema"] := cSchema
+
+	my_server_login( my_server_params() )
+
+	log_write( "login 2nd: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
+
+	if __server:NetErr()
       
-	  clear screen
+		clear screen
 
-	  ?
-	  ? "Greska sa konekcijom na server:"
-	  ? "==============================="
-	  ? __server:ErrorMsg()
+	  	?
+	  	? "Greska sa konekcijom na server:"
+	  	? "==============================="
+	  	? __server:ErrorMsg()
 
-	  log_write( __server:ErrorMsg() )
-	  inkey(0)
-	  quit
+	  	log_write( __server:ErrorMsg() )
+	  	inkey(0)
+	  	quit
+
+	endif
 
 endif
-
-// init_threads()
 
 return oServer 
 

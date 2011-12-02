@@ -27,7 +27,7 @@ ini_read := hb_iniread( ini_file )
 
 if EMPTY( ini_read )
 	log_write( "Fajl je prazan: " + ini_file )
-	return .t.
+	return .f.
 endif
 
 if HB_HHASKEY(ini_read, sect)

@@ -18,8 +18,6 @@ static __server_params := NIL
 // -------------------------
 // -------------------------
 function init_f18_app()
-local cHostName, cDatabase, cUser, cPassword, nPort, cSchema
-local oServer
 local _ini_params
 
 REQUEST DBFCDX
@@ -58,7 +56,7 @@ _ini_params["port"] := nil
 
 if !f18_ini_read("F18_server", @_ini_params, .t.)
 	// idemo na formu za logiranje
-	_form_login( cHostName, cDataBase, cUser, cPassword, nPort, cSchema )
+	__form_login()
 	return __server
 endif
 
@@ -76,22 +74,29 @@ __server_params["schema"] := _ini_params["schema"]
 
 my_server_login( my_server_params() )
 
-log_write( "login 1st: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
+log_write( "direct login: " + ;
+		my_server_params()["host_name"] + " / " + ;
+		my_server_params()["database"] + " / " + ;
+		my_server_params()["user"] + " / " +  ;
+		STR(my_server_params()["port"])  + " / " + ; 
+		my_server_params()["schema"])
 
 if __server:NetErr()
 	log_write( "Nisam se zakacio kao user/user, pokusat cu sa novim parmetrima !" )
 	// idemo na login formu
-	_form_login( cHostName, cDataBase, cUser, cPassword, nPort, cSchema )
+	__form_login()
 endif
 
 return __server
 
 
-static function _form_login( cHostName, cDataBase, cUser, cPassword, nPort, cSchema )
+static function __form_login()
+local cHostName, cDatabase, cUser, cPassword, nPort, cSchema
 
 // idemo na login formu
 
 if f18_login_screen( @cHostname, @cDatabase, @cUser, @cPassword, @nPort, @cSchema ) = .f.
+	log_write( "nesto nije uredu kod login forme" )
 	quit
 endif
 
@@ -105,7 +110,12 @@ __server_params["schema"] := cSchema
 
 my_server_login( my_server_params() )
 
-log_write( "login 2nd: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
+log_write( "form login: " + ;
+		my_server_params()["host_name"] + " / " + ;
+		my_server_params()["database"] + " / " + ;
+		my_server_params()["user"] + " / " +  ;
+		STR(my_server_params()["port"])  + " / " + ;
+		my_server_params()["schema"])
 
 if __server:NetErr()
     
@@ -165,6 +175,8 @@ __server :=  TPQServer():New( params["host_name"], params["database"], params["u
 
 if !__server:NetErr()
 	set_sql_search_path()
+else
+	log_write( "greska sa konekcijom na server: " + __server:ErrorMsg() )
 endif
 
 return __server
@@ -178,7 +190,7 @@ return __server
 
 // -----------------------------
 // -----------------------------
-function my_server_search_path(path)
+function my_server_search_path( path )
 local _key := "search_path"
 
 if path == nil

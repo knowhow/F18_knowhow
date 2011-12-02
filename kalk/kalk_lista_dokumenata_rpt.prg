@@ -15,7 +15,6 @@
 
 
 function StDoks()
-*{
 local nCol1:=0,cImeKup
 local cidfirma
 local nul,nizl,nRbr
@@ -30,7 +29,6 @@ endif
 close all
 SStDoks()
 return
-*}
 
 
 /*! \fn SStDoks()
@@ -38,8 +36,8 @@ return
  */
 
 function SStDoks()
-*{
 local lImaUkSt:=.f.
+
 O_KALK_DOKS
 O_PARTN
 O_KALK

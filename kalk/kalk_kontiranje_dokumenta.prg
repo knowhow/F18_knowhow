@@ -66,7 +66,7 @@ endif
 
 SELECT F_FINMAT
 if !used()
-	O_KALK_FINMAT
+	O_finmat
 endif
 
 SELECT F_TRFP
@@ -132,30 +132,30 @@ if lAFin .or. lAFin2
 	
 endif
 
-select kalk_finmat
+select finmat
 go top
 
-if kalk_finmat->idvd $ "14#94#96#95"
+if finmat->idvd $ "14#94#96#95"
 	select koncij
-	seek trim(kalk_finmat->idkonto2)
+	seek trim(finmat->idkonto2)
 else
 	select koncij
-	hseek trim(kalk_finmat->idkonto)
+	hseek trim(finmat->idkonto)
 endif
 
 select trfp
-seek kalk_finmat->IdVD+koncij->shema
+seek finmat->IdVD+koncij->shema
 cIdVN:=IdVN   // uzmi vrstu naloga koja ce se uzeti u odnosu na prvu kalkulaciju
              //  koja se kontira
 
-if KONCIJ->(FIELDPOS("FN14"))<>0 .and. !EMPTY(KONCIJ->FN14) .and. kalk_finmat->IDVD=="14"
+if KONCIJ->(FIELDPOS("FN14"))<>0 .and. !EMPTY(KONCIJ->FN14) .and. finmat->IDVD=="14"
 	cIdVN:=KONCIJ->FN14
 endif
 
 if lAFin .or. lAFin2
 	if EMPTY( cNalog ) 
 		select nalog
-		seek kalk_finmat->idfirma+cidvn+chr(254)
+		seek finmat->idfirma+cidvn+chr(254)
 		skip -1
 		if ( idvn <> cidvn )
 			cBrnalF:="00000000"
@@ -179,7 +179,7 @@ if lAFin .or. lAFin2
 	endif
 endif
 
-select kalk_finmat
+select finmat
 go top
 
 dDatNal := datdok
@@ -204,11 +204,11 @@ if lAGen == .f.
 		
 	else
 		if laFin2
-			@ m_x+1,m_y+2 SAY "Broj naloga u FIN  "+kalk_finmat->idfirma+" - "+cidvn+" -" GET cBrNalF
+			@ m_x+1,m_y+2 SAY "Broj naloga u FIN  "+finmat->idfirma+" - "+cidvn+" -" GET cBrNalF
 		endif
 	
 		if idvd<>"24" .and. laMat2
-			@ m_x+2,m_y+2 SAY "Broj naloga u MAT  "+kalk_finmat->idfirma+" - "+cidvn+" -" GET cBrNalM
+			@ m_x+2,m_y+2 SAY "Broj naloga u MAT  "+finmat->idfirma+" - "+cidvn+" -" GET cBrNalM
 		endif
 
 		@ m_x+5,m_y+2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
@@ -225,7 +225,7 @@ nRbr2:=0
 
 MsgO("Prenos KALK -> FIN")
 
-select kalk_finmat
+select finmat
 private cKonto1:=NIL
 
 do while !eof()    
@@ -249,13 +249,13 @@ do while !eof()
  do while cIdVD==IdVD .and. cBrDok==BrDok .and. !eof()
     lDatFakt:=.f.	
      
-     if kalk_finmat->idvd $ "14#94#96#95"
-          select koncij; hseek kalk_finmat->idkonto2
+     if finmat->idvd $ "14#94#96#95"
+          select koncij; hseek finmat->idkonto2
      else
-          select koncij; hseek kalk_finmat->idkonto
+          select koncij; hseek finmat->idkonto
      endif
      select roba
-     hseek kalk_finmat->idroba
+     hseek finmat->idroba
 
          select trfp
          seek cIdVD+koncij->shema
@@ -263,10 +263,10 @@ do while !eof()
      	  
 	  lDatFakt:=.f.
 	  cStavka:=Id
-          select kalk_finmat
+          select finmat
           nIz:=&cStavka
           select trfp
-          if !empty(trfp->idtarifa) .and. trfp->idtarifa<>kalk_finmat->idtarifa
+          if !empty(trfp->idtarifa) .and. trfp->idtarifa<>finmat->idtarifa
             // ako u {ifrarniku parametara postoji tarifa prenosi po tarifama
             niz:=0
           endif
@@ -277,7 +277,7 @@ do while !eof()
 	 
 	  // iskoristeno u slucaju RN, gdje se za kontiranje stavke
           // 901-999 koriste sa tarifom XXXXXX
-          if kalk_finmat->idtarifa=="XXXXXX" .and. trfp->idtarifa<>kalk_finmat->idtarifa
+          if finmat->idtarifa=="XXXXXX" .and. trfp->idtarifa<>finmat->idtarifa
             nIz:=0
           endif
 
@@ -304,9 +304,9 @@ do while !eof()
 	    endif
           
 	    if lDatFakt
-	    	dDFDok:=kalk_finmat->DatFaktP
+	    	dDFDok:=finmat->DatFaktP
 	    else
-		dDFDok:=kalk_finmat->DatKurs
+		dDFDok:=finmat->DatKurs
 	    endif
 	  
             if gBaznaV=="P"
@@ -319,9 +319,9 @@ do while !eof()
 
 
             if "IDKONTO"==padr(trfp->IdKonto,7)
-               cIdKonto:=kalk_finmat->idkonto
+               cIdKonto:=finmat->idkonto
             elseif "IDKONT2"==padr(trfp->IdKonto,7)
-               cIdKonto:=kalk_finmat->idkonto2
+               cIdKonto:=finmat->idkonto2
             else
                cIdKonto:=trfp->Idkonto
             endif
@@ -332,21 +332,21 @@ do while !eof()
               cPomFK777:=TRIM(gFunKon2)
               cIdkonto:=STRTRAN(cidkonto,"F2",&cPomFK777)
 
-              cIdkonto:=STRTRAN(cidkonto,"A1",right(trim(kalk_finmat->idkonto),1))
-              cIdkonto:=STRTRAN(cidkonto,"A2",right(trim(kalk_finmat->idkonto),2))
-              cIdkonto:=STRTRAN(cidkonto,"B1",right(trim(kalk_finmat->idkonto2),1))
-              cIdkonto:=STRTRAN(cidkonto,"B2",right(trim(kalk_finmat->idkonto2),2))
+              cIdkonto:=STRTRAN(cidkonto,"A1",right(trim(finmat->idkonto),1))
+              cIdkonto:=STRTRAN(cidkonto,"A2",right(trim(finmat->idkonto),2))
+              cIdkonto:=STRTRAN(cidkonto,"B1",right(trim(finmat->idkonto2),1))
+              cIdkonto:=STRTRAN(cidkonto,"B2",right(trim(finmat->idkonto2),2))
             ENDIF
 
             if (cIdkonto='KK')  .or.  (cIdkonto='KP')  .or. (cIdkonto='KO')
               if right(trim(cIdkonto),3)=="(2)"  // gonjaj idkonto2
-                 select koncij; nRecno:=recno(); seek kalk_finmat->idkonto2
+                 select koncij; nRecno:=recno(); seek finmat->idkonto2
                  cIdkonto:=strtran(cIdkonto,"(2)","")
                  cIdkonto:=koncij->(&cIdkonto)
                  select koncij; go nRecNo  // vrati se na glavni konto
                  select fin_pripr // finansije, priprema
               elseif right(trim(cIdkonto),3)=="(1)"  // gonjaj idkonto
-                 select koncij; nRecNo:=recno(); seek kalk_finmat->idkonto
+                 select koncij; nRecNo:=recno(); seek finmat->idkonto
                  cIdkonto:=strtran(cIdkonto,"(1)","")
                  cIdkonto:=koncij->(&cIdkonto)
                  select koncij; go nRecNo  // vrati se na glavni konto
@@ -361,10 +361,10 @@ do while !eof()
               cPomFK777:=TRIM(gFunKon2)
               cIdkonto:=STRTRAN(cidkonto,"F2",&cPomFK777)
 
-              cIdkonto:=STRTRAN(cidkonto,"A1",right(trim(kalk_finmat->idkonto),1))
-              cIdkonto:=STRTRAN(cidkonto,"A2",right(trim(kalk_finmat->idkonto),2))
-              cIdkonto:=STRTRAN(cidkonto,"B1",right(trim(kalk_finmat->idkonto2),1))
-              cIdkonto:=STRTRAN(cidkonto,"B2",right(trim(kalk_finmat->idkonto2),2))
+              cIdkonto:=STRTRAN(cidkonto,"A1",right(trim(finmat->idkonto),1))
+              cIdkonto:=STRTRAN(cidkonto,"A2",right(trim(finmat->idkonto),2))
+              cIdkonto:=STRTRAN(cidkonto,"B1",right(trim(finmat->idkonto2),1))
+              cIdkonto:=STRTRAN(cidkonto,"B2",right(trim(finmat->idkonto2),2))
             endif
 
             cIdkonto:=STRTRAN(cidkonto,"?1",trim(ckonto1))
@@ -374,21 +374,21 @@ do while !eof()
             cIdkonto:=padr(cidkonto,7)
 
             cBrDok:=space(8)
-            dDatDok:=kalk_finmat->datdok
+            dDatDok:=finmat->datdok
 
 
             if trfp->Dokument=="R"  // radni nalog
 	    
-                   cBrDok:=kalk_finmat->idZaduz2
+                   cBrDok:=finmat->idZaduz2
 		   
             elseif trfp->Dokument=="1"
 	    
-                   cBrDok:=kalk_finmat->brdok
+                   cBrDok:=finmat->brdok
 		   
             elseif trfp->Dokument=="2"
 	    
-                   cBrDok:=kalk_finmat->brfaktp
-                   dDatDok:=kalk_finmat->datfaktp
+                   cBrDok:=finmat->brfaktp
+                   dDatDok:=finmat->datfaktp
 		   
             elseif trfp->Dokument=="3"
                    dDatDok:=dDatNal
@@ -401,11 +401,11 @@ do while !eof()
 
             cIdPartner:=space(6)
             if trfp->Partner=="1"  //  stavi Partnera
-                    cidpartner:=kalk_finmat->IdPartner
+                    cidpartner:=finmat->IdPartner
             elseif trfp->Partner=="2"   // stavi  Lice koje se zaduzuje
-                    cIdpartner:=kalk_finmat->IdZaduz
+                    cIdpartner:=finmat->IdZaduz
             elseif trfp->Partner=="3"   // stavi  Lice koje se zaduz2
-                    cIdpartner:=kalk_finmat->IdZaduz2
+                    cIdpartner:=finmat->IdZaduz2
             elseif trfp->Partner=="A"
                     cIdpartner:=cPartner1
                     IF !EMPTY(dDatFakt1)
@@ -433,12 +433,12 @@ do while !eof()
             endif
 
             fExist:=.f.
-            seek kalk_finmat->IdFirma+cidvn+cBrNalF
+            seek finmat->IdFirma+cidvn+cBrNalF
             if found()
              fExist:=.f.
-             do while !EOF() .and. kalk_finmat->idfirma+cidvn+cBrNalF==IdFirma+idvn+BrNal
+             do while !EOF() .and. finmat->idfirma+cidvn+cBrNalF==IdFirma+idvn+BrNal
                if IdKonto==cIdKonto .and. IdPartner==cIdPartner .and.;
-                  trfp->d_p==d_p  .and. idtipdok==kalk_finmat->idvd .and.;
+                  trfp->d_p==d_p  .and. idtipdok==finmat->idvd .and.;
                   padr(brdok,10)==padr(cBrDok,10) .and. datdok==dDatDok .and.;
                   IF(lPoRj,TRIM(idrj)==TRIM(cIdRj),.t.)
                   // provjeriti da li se vec nalazi stavka koju dodajemo
@@ -448,9 +448,9 @@ do while !eof()
                skip
              enddo
              if !fExist
-               SEEK kalk_finmat->idfirma+cIdVN+cBrNalF+"ZZZZ"
+               SEEK finmat->idfirma+cIdVN+cBrNalF+"ZZZZ"
                SKIP -1
-               IF idfirma+idvn+brnal==kalk_finmat->idfirma+cIdVN+cBrNalF
+               IF idfirma+idvn+brnal==finmat->idfirma+cIdVN+cBrNalF
                  nRbr:=val(Rbr)+1
                ELSE
                  nRbr:=1
@@ -458,9 +458,9 @@ do while !eof()
                APPEND BLANK
              endif
             else
-               SEEK kalk_finmat->idfirma+cIdVN+cBrNalF+"ZZZZ"
+               SEEK finmat->idfirma+cIdVN+cBrNalF+"ZZZZ"
                SKIP -1
-               IF idfirma+idvn+brnal==kalk_finmat->idfirma+cIdVN+cBrNalF
+               IF idfirma+idvn+brnal==finmat->idfirma+cIdVN+cBrNalF
                  nRbr:=val(Rbr)+1
                ELSE
                  nRbr:=1
@@ -478,10 +478,10 @@ do while !eof()
 	    
             replace D_P      with trfp->d_P
 	    
-            replace idFirma  with kalk_finmat->idfirma,;
+            replace idFirma  with finmat->idfirma,;
                     IdVN     with cIdVN,;
                     BrNal    with cBrNalF,;
-                    IdTipDok with kalk_finmat->IdVD,;
+                    IdTipDok with finmat->IdVD,;
                     BrDok    with cBrDok
 		   
             replace DatDok   with dDatDok
@@ -533,35 +533,35 @@ do while !eof()
 
               cIdPartner:=""
               if trmp->Partner=="1"  //  stavi Partnera
-                      cIdpartner:=kalk_finmat->IdPartner
+                      cIdpartner:=finmat->IdPartner
               endif
 
               cIdzaduz:=""
               if trmp->Zaduz=="1"
-                     cIdKonto:=kalk_finmat->idkonto
-                     cIdZaduz:=kalk_finmat->idzaduz
+                     cIdKonto:=finmat->idkonto
+                     cIdZaduz:=finmat->idzaduz
               elseif trmp->Zaduz=="2"
-                     cIdKonto:=kalk_finmat->idkonto2
-                     cIdZaduz:=kalk_finmat->idzaduz2
+                     cIdKonto:=finmat->idkonto2
+                     cIdZaduz:=finmat->idzaduz2
               endif
 
               cBrDok:=""
-              dDatDok:=kalk_finmat->Datdok
+              dDatDok:=finmat->Datdok
               if trmp->dokument=="1"
-                     cBrDok:=kalk_finmat->Brdok
+                     cBrDok:=finmat->Brdok
               elseif trmp->dokument=="2"
-                     cBrDok:=kalk_finmat->BrFaktP
-                     dDatDok:=kalk_finmat->DatFaktP
+                     cBrDok:=finmat->BrFaktP
+                     dDatDok:=finmat->DatFaktP
               endif
-             nKol:=kalk_finmat->Kolicina
-             nIz:=kalk_finmat->&cIznos
+             nKol:=finmat->Kolicina
+             nIz:=finmat->&cIznos
 
              if trim(cIznos)=="GKV"
-                  nKol:=kalk_finmat->Gkol
+                  nKol:=finmat->Gkol
              elseif  trim(cIznos)=="GKV2"
-                  nKol:=kalk_finmat->GKol2
+                  nKol:=finmat->GKol2
              elseif  trim(cIznos)=="MARZA2"
-                  nKol:=kalk_finmat->(Gkol+GKol2)
+                  nKol:=finmat->(Gkol+GKol2)
              elseif  trim(cIznos)=="RABATV"
                   nKol:=0
              endif
@@ -578,22 +578,22 @@ do while !eof()
              nRbr2:=val(rbr)+1
              append blank
 
-             replace IdFirma   with kalk_finmat->IdFirma,;
+             replace IdFirma   with finmat->IdFirma,;
                      BrNal     with cBrNalM,;
                      IdVN      with cIdVN,;
                      IdPartner with cIdPartner,;
-                     IdRoba    with kalk_finmat->idroba,;
+                     IdRoba    with finmat->idroba,;
                      Kolicina  with nKol,;
                      IdKonto   with cIdKonto,;
                      IdZaduz   with cIdZaduz,;
-                     IdTipDok  with kalk_finmat->IdVD,;
+                     IdTipDok  with finmat->IdVD,;
                      BrDok     with cBrDok,;
                      DatDok    with dDatDok,;
                      Rbr       with str(nRbr2,4),;
                      IdPartner with cIdPartner,;
                      Iznos    with nIz,;
-                     Iznos2   with round(nIz*Kurs(kalk_finmat->DatKurs),2),;
-                     DatKurs  with kalk_finmat->DatKurs,;
+                     Iznos2   with round(nIz*Kurs(finmat->DatKurs),2),;
+                     DatKurs  with finmat->DatKurs,;
                      Cijena   with iif(nKol<>0,Iznos/nKol,0),;
                      U_I      with trmp->u_i,;
                      D_P      with trmp->u_i
@@ -606,21 +606,21 @@ do while !eof()
          endif    // za materijalni nalog
 
 
-  select kalk_finmat
+  select finmat
   skip
  enddo
 
 enddo
 
-select kalk_finmat
+select finmat
 skip -1  
 
 if lAFin .or. lAFin2
   select fin_pripr
   go top
-  seek kalk_finmat->idfirma+cIdVN+cBrNalF
+  seek finmat->idfirma+cIdVN+cBrNalF
   if found()
-	do while !eof() .and. IDFIRMA+IDVN+BRNAL==kalk_finmat->idfirma+cIdVN+cBrNalF
+	do while !eof() .and. IDFIRMA+IDVN+BRNAL==finmat->idfirma+cIdVN+cBrNalF
 		cPom:=right(opis,1)
 		// na desnu stranu opisa stavim npr "ZADUZ MAGACIN          0"
 		// onda ce izvrsiti zaokruzenje na 0 decimalnih mjesta
@@ -722,7 +722,7 @@ return 0
 *}
 
 
-// Primjer SetKonto(1, IsInoDob(kalk_finmat->IdPartner) , "30", "31")
+// Primjer SetKonto(1, IsInoDob(finmat->IdPartner) , "30", "31")
 //
 function SetKonto(nBroj, lValue, cTrue , cFalse)
 *{
@@ -804,7 +804,7 @@ private GetList:={}
 if file(KUMPATH+"DOKS2.DBF")
    PushWa()
    O_FAKT_DOKS2
-   seek kalk_finmat->(idfirma+idvd+brdok)
+   seek finmat->(idfirma+idvd+brdok)
    dDatVal:=DatVal
    IF lVrsteP
      cIdVrsteP:=k2
@@ -816,9 +816,9 @@ if empty(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
 
   Box(,3+IF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
     set cursor on
-    @ m_x+1,m_y+2 SAY "Datum dokumenta: " ; ??  kalk_finmat->datfaktp
+    @ m_x+1,m_y+2 SAY "Datum dokumenta: " ; ??  finmat->datfaktp
     @ m_x+2,m_y+2 SAY "Uvecaj dana    :" GET nUvecaj pict "99"
-    @ m_x+3,m_y+2 SAY "Valuta         :" GET dDatVal when {|| dDatVal:=kalk_finmat->datfaktp+nUvecaj,.t.}
+    @ m_x+3,m_y+2 SAY "Valuta         :" GET dDatVal when {|| dDatVal:=finmat->datfaktp+nUvecaj,.t.}
     IF lVrsteP .and. EMPTY(cIdVrsteP)
       @ m_x+4,m_y+2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
     ENDIF
@@ -827,13 +827,13 @@ if empty(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
   if file(f18_ime_dbf("fakt_doks2"))
      PushWa()
      O_FAKT_DOKS2
-     seek kalk_finmat->(idfirma+idvd+brdok)
+     seek finmat->(idfirma+idvd+brdok)
      if !found()  // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
                   // ako je
         append blank
-        replace idfirma with kalk_finmat->idfirma,;
-                idvd with kalk_finmat->idvd,;
-                brdok with kalk_finmat->brdok
+        replace idfirma with finmat->idfirma,;
+                idvd with finmat->idvd,;
+                brdok with finmat->brdok
      endif
      replace datval with dDatVal
      IF lVrsteP
@@ -1024,7 +1024,7 @@ lVoSaTa := .f.
 fprvi:=.t.  
 do while  .t.
 
-O_KALK_FINMAT
+O_finmat
 O_KONTO
 O_PARTN
 O_TDOK
@@ -1044,7 +1044,7 @@ else
 	endif
 endif
 
-select kalk_finmat
+select finmat
 zap
 
 select KALK_PRIPR
@@ -1286,7 +1286,7 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
 	
 		aIPor:=RacPorezeMP(aPorezi, mpc, mpcSaPP, nc)
 
-        	select kalk_finmat
+        	select finmat
         	append blank
 	
         replace IdFirma   with kalk_PRIPR->IdFirma,;
@@ -1383,7 +1383,7 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
           if  !empty(kalk_pripr->mu_i)
                select tarifa
 	       hseek roba->idtarifa
-	       select kalk_finmat
+	       select finmat
                if IsPDV()
 	       	replace UPOREZV with  round(kalk_pripr->(nMarza*kolicina*TARIFA->OPP/100/(1+TARIFA->OPP/100)),gZaokr)
 	       else
@@ -1391,7 +1391,7 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
                endif
 	       select tarifa
 	       hseek roba->idtarifa
-	       select kalk_finmat
+	       select finmat
           endif
 
           if gKalo=="2" .and.  kalk_pripr->idvd $ "10#81"  // kalo ima vrijednost po NC
@@ -1415,7 +1415,7 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
 	        // popust maloprodaje se smjesta ovdje
 	  	REPLACE Rabat WITH kalk_pripr->RabatV * kalk_pripr->kolicina
 		if ALLTRIM(gnFirma) == "TEST FIRMA"
-		   MsgBeep("Popust MP = kalk_finmat->rabat " + STR(Rabat, 10,2))
+		   MsgBeep("Popust MP = finmat->rabat " + STR(Rabat, 10,2))
 		endif
 	  endif
 

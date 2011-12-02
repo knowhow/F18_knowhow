@@ -89,7 +89,8 @@ BoxC()
 select params; use
 
 if lastkey()==K_ESC
-	closeret
+	close all
+	return
 endif
 
 // ovo dole je ukradeno iz KALK/REKAPK
@@ -104,12 +105,16 @@ O_TARIFA
 IF lNCPoSast
   O_SAST
   select (F_KALK)
-  use (gKalkKum+"KALK")
+  if !used()
+  	O_KALK
+  endif  
   set order to tag "1"
 ENDIF
 
 select (F_FAKT)
-use (gFaktKum+"FAKT")
+if !used()
+	O_FAKT
+endif
 set order to tag "1"
 //"1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
 

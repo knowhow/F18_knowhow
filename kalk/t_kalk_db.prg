@@ -87,7 +87,7 @@ endif
 fnul:=.f.
 Skloni(PRIVPATH,"kalk_pripr.DBF",cSezona,finverse,fda,fnul)
 Skloni(PRIVPATH,"_KALK.DBF",cSezona,finverse,fda,fnul)
-Skloni(PRIVPATH,"kalk_finmat.DBF",cSezona,finverse,fda,fnul)
+Skloni(PRIVPATH,"finmat.DBF",cSezona,finverse,fda,fnul)
 Skloni(PRIVPATH,"PARAMS.DBF",cSezona,finverse,fda,fnul)
 Skloni(PRIVPATH,"kalk_pripr2.DBF",cSezona,finverse,fda,fnul)
 Skloni(PRIVPATH,"kalk_pripr9.DBF",cSezona,finverse,fda,fnul)
@@ -485,13 +485,13 @@ AADD(aDBf,{ 'PRUCMP'              , 'N' ,  20 ,  8 })
 AADD(aDBf,{ 'PORPOT'              , 'N' ,  20 ,  8 })
 
 if (nArea==-1 .or. nArea==(F_FINMAT))
-	//kalk_finmat.DBF
+	//finmat.DBF
 	
-	if !FILE(f18_ime_dbf("kalk_finmat"))
-    		DBcreate2(PRIVPATH+'kalk_finmat.DBF',aDbf)
+	if !FILE(f18_ime_dbf("finmat"))
+    		DBcreate2( 'finmat',aDbf)
 	endif
 
-	CREATE_INDEX("1","idFirma+IdVD+BRDok",PRIVPATH+"kalk_finmat")
+	CREATE_INDEX("1","idFirma+IdVD+BRDok",PRIVPATH+"finmat")
 endif
 
 

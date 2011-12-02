@@ -45,8 +45,8 @@ function isJerry()
 return .f.
 
 // ovo nešto treba za harbour 
-function TFileRead()
-return
+//function TFileRead()
+//return
 
 function PosTest()
 ? "Pos test (pos/main/2g/app.prg)"

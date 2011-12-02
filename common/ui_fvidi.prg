@@ -47,13 +47,19 @@ return
 
 function BrLinFajla(cImeF)
  
- local nOfset:=0,nSlobMem:=0,cPom:="",nVrati:=0
- if FILESTR(cImeF,2,VelFajla(cImeF)-2)!= NRED ; nVrati:=1; endif
- do while LEN(cPom)>=nSlobMem
-  nSlobMem:=MEMORY(1)*1024-100
-  cPom:=FILESTR(cImeF,nSlobMem,nOfset)
-  nOfset=nOfset+nSlobMem-1
-  nVrati=nVrati+NUMAT( NRED ,cPom)
+ local nOfset := 0
+ local nSlobMem := 0
+ local cPom := ""
+ local nVrati := 0
+
+ if FILESTR( cImeF, 2, VelFajla(cImeF)-2) != NRED 
+      nVrati := 1
+ endif
+ do while LEN(cPom) >= nSlobMem
+  nSlobMem := MEMORY(1)*1024-100
+  cPom := FILESTR(cImeF, nSlobMem, nOfset)
+  nOfset = nOfset + nSlobMem - 1
+  nVrati = nVrati + NUMAT(NRED, cPom)
  enddo
 return nVrati
 

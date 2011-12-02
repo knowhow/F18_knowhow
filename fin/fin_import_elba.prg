@@ -131,6 +131,8 @@ endif
 
 select params
 
+cFile := ALLTRIM( cFile )
+
 WPar("i1", cFile)
 //WPar("i2", cFile)
 // ...
@@ -171,14 +173,13 @@ return
 // -------------------------------------------------------
 static function _g_el_items( cTxt, cImpView )
 local nItems := 0
-local aTemp := {}
 local aHeader := {}
 local aItem := {}
 local cTemp := ""
-local nFLines := 0
-local nLStart := 0
 local i
 local cNalBr
+
+local _o_file
 
 private aPartArr := {}
 private GetList:={}
@@ -186,23 +187,22 @@ private GetList:={}
 __nalbr := ""
 __rbr := 0
 
-// broj linija fajla....
-nFLines := brlinfajla( cTxt )
+_o_file := TFileRead():New( cTxt )
+_o_file:Open()
+
+if _o_file:Error()
+	msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: ") )
+	return 0
+endif
 
 Box( , 22, 70)
 
 @ m_x + 1, m_y + 2 SAY "Vrsim import podataka u pripremu ..." COLOR "BG+/B"
 
-for i:=1 to nFLines
+//for i:=1 to nFLines
+while _o_file:MoreToRead()
 
-	// pomocna matrica...
-	aTemp := sljedlin( cTxt, nLStart )
-	
-	// pocetak sljedece pretrage...
-	nLStart := aTemp[2]
-
-	// tekst ...
-	cTemp := aTemp[1]
+	cTemp := hb_strtoutf8( _o_file:ReadLine() )
 
 	if EMPTY(cTemp)
 		loop
@@ -234,8 +234,9 @@ for i:=1 to nFLines
 		
 	endif
 	
-	
-next
+enddo	
+
+_o_file:Close()
 
 // sada uzmi pravi broj naloga i broj veze
 select fin_pripr

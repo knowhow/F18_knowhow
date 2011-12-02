@@ -54,6 +54,7 @@ local _loc
 local _create
 
 _loc := location
+
 #ifdef __PLATFORM__WINDOWS
 	_loc := '"' + location + '"'
 #endif

@@ -236,7 +236,7 @@ if cTabela == "D"
    AADD(ImeKol,{ "VP",       {|| idvrstep } })
    AADD(ImeKol,{ "Datum",    {|| Datdok } })
    AADD(ImeKol,{ "Partner",  ;
-      {|| PADR( iif( m1 = "Z", "<<dok u pripremi>>", partner ),28) } })
+      {|| PADR( iif( m1 = "Z", "<<dok u pripremi>>", hb_utf8tostr( partner ) ),28) } })
    AADD(ImeKol,{ "Ukupno-Rab ",    {|| iznos} })
    AADD(ImeKol,{ "Rabat",    {|| rabat} })
    AADD(ImeKol,{ "Ukupno",    {|| iznos+rabat} })

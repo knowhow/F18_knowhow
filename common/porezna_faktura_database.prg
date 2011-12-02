@@ -63,7 +63,7 @@ if !FILE(f18_ime_dbf(cDRnName))
 	// drn specifikacija polja
 	get_drn_fields(@aDRnField)
         // kreiraj tabelu
-	dbcreate2(PRIVPATH + cDRnName, aDRnField)
+	dbcreate2(cDRnName, aDRnField)
 endif
 
 // provjeri da li postoji fajl RN.DBF
@@ -71,7 +71,7 @@ if !FILE(f18_ime_dbf(cRnName))
 	// rn specifikacija polja
 	get_rn_fields(@aRnField)
         // kreiraj tabelu
-	dbcreate2(PRIVPATH + cRnName, aRnField)
+	dbcreate2(cRnName, aRnField)
 endif
 
 // provjeri da li postoji fajl DRNTEXT.DBF
@@ -79,35 +79,16 @@ if !FILE(f18_ime_dbf(cDRTxtName))
 	// rn specifikacija polja
 	get_dtxt_fields(@aDRTxtField)
         // kreiraj tabelu
-	dbcreate2(PRIVPATH + cDRTxtName, aDRTxtField)
+	dbcreate2(cDRTxtName, aDRTxtField)
 endif
-
-select F_DRN
-if !used()
-	O_DRN
-endif
-index on ( brdok + DTOS(datdok) ) tag "1" to drn
-  
-select F_RN
-if !used()
-	O_RN
-endif
-index on ( brdok + rbr + podbr ) tag "1" to rn
-index on ( idroba ) tag "IDROBA" to rn
-
-select F_DRNTEXT
-if !used()
-	O_DRNTEXT
-endif
-index on ( tip ) tag "1" to drntext
 
 // kreiraj indexe
-//CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "drn")
+CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "drn")
 
-//CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "rn")
-//CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "rn")
+CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "rn")
+CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "rn")
 
-//CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
+CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
 
 return
 

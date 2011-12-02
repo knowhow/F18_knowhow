@@ -66,7 +66,6 @@ if  LEN(gaDBFs[_pos])>3
         //if gDebug > 9
         //    log_write("F18TBL =" + cF18Tbl)
         //endif
-
         _version :=  get_semaphore_version(table)
         if gDebug > 9
           log_write("Tabela:" + table + " semaphore _version=" + STR(_version) + " last_semaphore_version=" + STR(last_semaphore_version(table)))

@@ -60,7 +60,7 @@ if !kalk_provjera_cijena()
 endif
 
 // treba li generisati šta-god ?
-lGenerisiZavisne := kalk_generisati_zavisne_dokumente()
+lGenerisiZavisne := kalk_generisati_zavisne_dokumente( lAuto )
 
 if lGenerisiZavisne = .t.
 	// generiši, 11-ke, 96-ce itd...
@@ -273,7 +273,7 @@ return
 // -------------------------------------------------------
 // treba li generisati dokumente ?
 // -------------------------------------------------------
-static function kalk_generisati_zavisne_dokumente()
+static function kalk_generisati_zavisne_dokumente( lAuto )
 local lGen := .f.
 
 if gCijene == "2"
@@ -281,7 +281,7 @@ if gCijene == "2"
 else
  	if gMetodaNC == " "
   		lGen := .f.
- 	elseif lAuto
+ 	elseif lAuto == .t.
 		lGen := .t.
 	else
   		lGen := Pitanje(,"Zelite li formirati zavisne dokumente pri azuriranju","D") == "D"

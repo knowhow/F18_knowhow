@@ -552,31 +552,35 @@ return
  */
  */
 static function Txt2TTbl(aDbf, aRules, cTxtFile)
-*{
+local _o_file
+
 // prvo kreiraj tabelu temp
 close all
 
 CreTemp(aDbf)
 O_TEMP
 
-if !File(PRIVPATH + SLASH + "TEMP.DBF")
+if !File( f18_ime_dbf( "TEMP" ) )
 	MsgBeep("Ne mogu kreirati fajl TEMP.DBF!")
 	return
 endif
 
 // zatim iscitaj fajl i ubaci podatke u tabelu
 
-// broj linija fajla
-nBrLin:=BrLinFajla(cTxtFile)
-nStart:=0
+cTxtFile := ALLTRIM( cTxtFile )
+
+_o_file := TFileRead():New( cTxtFile )
+_o_file:Open()
+
+if _o_file:Error()
+	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+endif
 
 // prodji kroz svaku liniju i insertuj zapise u temp.dbf
-for i:=1 to nBrLin
+while _o_file:MoreToRead()
 	
-	aFMat:=SljedLin(cTxtFile, nStart)
-      	nStart:=aFMat[2]
 	// uzmi u cText liniju fajla
-	cVar:=aFMat[1]
+	cVar := hb_strtoutf8( _o_file:ReadLine() )
 	
 	// selektuj temp tabelu
 	select temp
@@ -589,9 +593,10 @@ for i:=1 to nBrLin
 		replace &fname with &xVal
 
 	next
-next
 
+enddo
 
+_o_file:Close()
 
 select temp
 
@@ -631,15 +636,10 @@ return nBrLin
  *  \param aDbf - def.polja
  */
 static function CreTemp(aDbf)
-*{
-cTmpTbl := PRIVPATH + "TEMP"
+cTmpTbl := "TEMP"
 
-if File(cTmpTbl + ".DBF") .and. FErase(cTmpTbl + ".DBF") == -1
-	MsgBeep("Ne mogu izbrisati TEMP.DBF!")
-    	ShowFError()
-endif
-if File(cTmpTbl + ".CDX") .and. FErase(cTmpTbl + ".CDX") == -1
-	MsgBeep("Ne mogu izbrisati TEMP.CDX!")
+if File( f18_ime_dbf( cTmpTbl ) ) .and. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
+		MsgBeep("Ne mogu izbrisati TEMP.DBF!")
     	ShowFError()
 endif
 
@@ -658,29 +658,25 @@ else
 	create_index("2","dtype+idfirma+idtipdok+brdok+rbr", cTmpTbl)
 endif
 return
-*}
 
 
-/*! \fn Crekalk_priprTDbf()
- *  \brief Kreiranje tabele PRIVPATH + PRIPT.DBF
- */
-function CrePripTDbf()
-*{
+
+function CrePriptDbf()
+
 close all
-FErase(PRIVPATH + "PRIPT.DBF")
-FErase(PRIVPATH + "PRIPT.CDX")
+FErase( f18_ime_dbf( "KALK_PRIPT" ))
 
 O_KALK_PRIPR
 select kalk_pripr
 
 // napravi pript sa strukturom tabele kalk_pripr
-copy structure to (PRIVPATH+"struct")
-create (PRIVPATH + "pript") from (PRIVPATH + "struct")
-create_index("1","idfirma+idvd+brdok", PRIVPATH+"pript")
-create_index("2","idfirma+idvd+brdok+idroba", PRIVPATH+"pript")
+copy structure to ("struct")
+create ("kalk_pript") from ("struct")
+create_index("1","idfirma+idvd+brdok", "kalk_pript")
+create_index("2","idfirma+idvd+brdok+idroba", "kalk_pript")
 
 return
-*}
+
 
 
 /*! \fn CheckBrFakt()

@@ -1636,6 +1636,7 @@ local aErr_read
 local aErr_data
 local nTime 
 local cSerial := ALLTRIM(gFc_serial)
+local _o_file
 
 nTime := nTimeOut
 
@@ -1677,19 +1678,22 @@ if !FILE( cF_name )
 endif
 
 nFisc_no := 0
-nBrLin := BrLinFajla( cF_name )
-nStart := 0
-
 cFisc_txt := ""
 
-// prodji kroz svaku liniju i procitaj zapise
-for i:=1 to nBrLin
-	
-	aErr_read := SljedLin( cF_name, nStart )
-      	nStart := aErr_read[ 2 ]
+cF_name := ALLTRIM( cF_name )
+_o_file := TFileRead():New( cF_name )
+_o_file:Open()
 
+if _o_file:Error()
+	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	return -9
+endif
+
+// prodji kroz svaku liniju i procitaj zapise
+while _o_file:MoreToRead()
+	
 	// uzmi u cErr liniju fajla
-	cErr := aErr_read[ 1 ]
+	cErr := hb_strtoutf8( _o_file:ReadLine() )
 
 	// ovo je dodavanje artikla
 	if "107,1," + cSerial $ cErr
@@ -1710,7 +1714,9 @@ for i:=1 to nBrLin
 		return nRet
 	endif
 	
-next
+enddo
+
+_o_file:Close()
 
 // ako je sve ok, uzmi broj fiskalnog isjecka
 if !EMPTY( cFisc_txt )

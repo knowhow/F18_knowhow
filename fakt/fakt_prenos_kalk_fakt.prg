@@ -25,45 +25,6 @@ private izbor := 1
 private opc := {}
 private opcexe := {}
 
-
-O_PARAMS
-
-cOdradjeno:="D"
-
-if file(EXEPATH+'scshell.ini')
-        //cBrojLok:=R_IniRead ( 'TekucaLokacija','Broj',  "",EXEPATH+'scshell.INI' )
-        cOdradjeno:=R_IniRead ( 'ShemePromjena',alltrim(strtran(strtran(goModul:oDataBase:cDirPriv,"\","_"),":","_")),  "N" ,EXEPATH+'scshell.INI' )
-        R_IniWrite ( 'ShemePromjena',alltrim(strtran(strtran(goModul:oDataBase:cDirPriv,"\","_"),":","_")),  "D" ,EXEPATH+'scshell.INI' )
-endif
-
-private cSection:="T"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("dk",@gDirKalk)
-
-if empty(gDirKalk) .or. cOdradjeno="N"
-	
-	gDirKalk:=trim(strtran(goModul:oDataBase:cDirKum,"FAKT","KALK"))+"\"
-  	WPar("dk",gDirKalk)
-	
-endif
-
-if cOdradjeno == "N"	
-	
-	private cSection:="1"
-	private cHistory:=" "
-	private aHistory:={}
- 	
-	gKomlin:=strtran(Upper(gKomlin),"1\FAKT.RTF",Right(trim(ImeKorisn))+"\FAKT.RTF" )
- 	WPar("95",gKomLin)       
-	// prvenstveno za win 95
-	
-endif
-
-select 99
-use
-
 AADD( opc, "1. prenos kalk -> fakt            " )
 AADD( opcexe, {|| kalk_2_fakt() })
 AADD( opc, "2. prenos kalk->fakt za partnera  " )
@@ -80,7 +41,6 @@ return
 // parametri prenosa
 // ---------------------------------------
 static function _params()
-gDirKalk:=padr(gDirKalk,80)
 
 O_PARAMS
 
@@ -118,23 +78,9 @@ local lToRacun := .f.
 local cFaktPartn := SPACE(6)
 local lFirst
 
-O_PARAMS
-
-private cSection:="K"
-private cHistory:=" "
-private aHistory:={}
-
-RPar( "c1", @cDir )
-
-select params
-use
-
-cDir := TRIM(cDir)  
-// direktorij u kome je kalk.dbf
-
 _o_tables()
 
-use (gDirKalk+"KALK") new
+select kalk
 set order to tag "1"
 
 Box(,15,60)
@@ -225,7 +171,7 @@ do while .t.
 	go top
 	seek cIdRj	
 	
-     	select KALK
+    select KALK
 	lFirst := .t.
 
 	// rok placanja...
@@ -293,8 +239,8 @@ do while .t.
 			
 	   		lFirst := .f.
 
-          		select fakt_pripr
-          		append blank
+          	select fakt_pripr
+          	append blank
           		
 			replace txt with cTxt
 			replace idpartner with kalk->idpartner
@@ -358,6 +304,7 @@ static function _o_tables()
 O_FAKT_DOKS
 O_ROBA
 O_RJ
+O_KALK
 O_FAKT
 O_FAKT_PRIPR
 O_SIFK
@@ -426,7 +373,6 @@ return xType
 // prenos kalk -> fakt period
 // -------------------------------------------------
 function kalkp_2_fakt()
-local cDir := space(25)
 local lFirst
 local cFaktPartn
 
@@ -445,26 +391,8 @@ cFaktPartn := cIdPartner
 qqIdVd     := PADR("41;",40)
 cIdTipDok  := "11"
 
-O_PARAMS
-private cSection:="K"
-private cHistory:=" "
-private aHistory:={}
- 
-RPar("c1",@cDir)
-RPar("p1",@dOd)
-RPar("p2",@dDo)
-RPar("p3",@cIdPartner)
-RPar("p4",@qqIdVd)
-RPar("p5",@cIdTipDok)
-select params
-use
-
-cDir := TRIM(cDir)  
-// direktorij u kome je kalk.dbf
-
-USE (gDirKalk+"KALK") NEW
+select kalk
 SET ORDER TO TAG "7"  
-// idroba
 
 Box("#KALK->FAKT za partnera", 17, 75)
 
@@ -725,7 +653,7 @@ DO WHILE .T.
 ENDDO
 Boxc()
 
-CLOSERET
+close all
 return
 
 
@@ -736,7 +664,7 @@ return
 static function SljedBrFakt()
 LOCAL nArr:=SELECT()
 IF EMPTY(cBrFakt)
-	_datdok    := dDo
+	    _datdok    := dDo
     	_idpartner := cIdPartner
     	cBrFakt := OdrediNBroj(cIdRJ,cTipFakt)
     	SELECT (nArr)

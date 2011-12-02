@@ -809,13 +809,13 @@ local nErr := 0
 local cTrig := trg_trig( nTrig )
 local cF_name
 local i
-local nBrLin
 local nStart
 local cErr
 local aErr_read
 local aErr_data := {}
 local nTime 
 local lOk
+local _o_file
 
 nTime := nTimeOut
 
@@ -852,20 +852,23 @@ if !FILE( cF_name )
 endif
 
 nFisc_no := 0
-nBrLin := BrLinFajla( cF_name )
-nStart := 0
+
+_o_file := TFileRead():New( cF_name )
+_o_file:Open()
+
+if _o_file:Error()
+	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	return -9
+endif
 
 cFisc_txt := ""
 lOk := .f.
 
 // prodji kroz svaku liniju i procitaj zapise
-for i:=1 to nBrLin
+while _o_file:MoreToRead()
 	
-	aErr_read := SljedLin( cF_name, nStart )
-      	nStart := aErr_read[ 2 ]
-
 	// uzmi u cErr liniju fajla
-	cErr := aErr_read[ 1 ]
+	cErr := hb_strtoutf8( _o_file:ReadLine() )
 
 	// ovo je dodavanje artikla
 	if ( "<?xml" $ cErr ) .or. ;
@@ -878,7 +881,9 @@ for i:=1 to nBrLin
 	endif
 
 	AADD( aErr_data, cErr )	
-next
+enddo
+
+_o_file:Close()
 
 // sad imam matricu sa linijama
 // aErr_data[1, "<Naziv>OK</Naziv>"]

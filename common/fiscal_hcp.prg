@@ -1079,6 +1079,7 @@ local nTime
 local cLine
 local cScanWhat
 local cMessage
+local _o_file
 
 if lStorno == nil
 	lStorno := .f.
@@ -1115,17 +1116,22 @@ if !FILE( cF_name )
 endif
 
 nFisc_no := 0
-nBrLin := BrLinFajla( cF_name )
-nStart := 0
+
+cF_name := ALLTRIM( cF_name )
+
+_o_file := TFileRead():New( cF_name )
+_o_file:Open()
+
+if _o_file:Error()
+	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	return -9
+endif
 
 // prodji kroz svaku liniju i procitaj zapise
-for i:=1 to nBrLin
+while _o_file:MoreToRead()
 	
-	aBillState := SljedLin( cF_name, nStart )
-      	nStart := aBillState[ 2 ]
-
 	// uzmi u cLine liniju fajla
-	cLine := aBillState[ 1 ]
+	cLine := hb_strtoutf8( _o_file:ReadLine() )
 
 	if UPPER("xml version") $ UPPER(cLine)
 		// ovo je prvi red, preskoci
@@ -1167,7 +1173,9 @@ for i:=1 to nBrLin
 
 	endif
 
-next
+enddo
+
+_o_file:Close()
 
 // brisi fajl odgovora
 if nFisc_no > 0

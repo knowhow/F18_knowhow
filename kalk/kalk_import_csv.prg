@@ -320,6 +320,7 @@ return
 // --------------------------------------------------------
 function Txt2TOst(aDbf, cTxtFile)
 local cDelimiter := ";"
+local _o_file 
 
 // prvo kreiraj tabelu temp
 close all
@@ -327,26 +328,29 @@ close all
 CreTemp(aDbf, .f.)
 O_TEMP
 
-if !File(PRIVPATH + SLASH + "TEMP.DBF")
+if !File( f18_ime_dbf( "TEMP" ) )
 	MsgBeep("Ne mogu kreirati fajl TEMP.DBF!")
 	return
 endif
 
 // zatim iscitaj fajl i ubaci podatke u tabelu
 
-// broj linija fajla
-nBrLin:=BrLinFajla(cTxtFile)
-nStart:=0
+cTxtFile := ALLTRIM( cTxtFile )
+
+_o_file := TFileRead():New( cTxtFile )
+_o_file:Open()
+
+if _o_file:Error()
+	msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	return
+endif
+
 
 // prodji kroz svaku liniju i insertuj zapise u temp.dbf
-for i:=1 to nBrLin
-	
-	aFMat := SljedLin(cTxtFile, nStart)
-      	
-	nStart:=aFMat[2]
+while _o_file:MoreToRead()
 	
 	// uzmi u cText liniju fajla
-	cVar:=aFMat[1]
+	cVar := hb_strtoutf8( _o_file:ReadLine() )
 
 	if EMPTY(cVar)
 		loop
@@ -374,7 +378,10 @@ for i:=1 to nBrLin
 
 	replace idpartner with cTmp
 	replace idrefer with ALLTRIM( aRow[2] )
-next
+
+enddo
+
+_o_file:Close()
 
 select temp
 
@@ -444,6 +451,7 @@ local nTrosk4
 local nTrosk5
 local aFMat
 local cFirstRow
+local _o_file
 
 // prvo kreiraj tabelu temp
 close all
@@ -451,26 +459,24 @@ close all
 CreTemp(aDbf)
 O_TEMP
 
-if !File(PRIVPATH + SLASH + "TEMP.DBF")
+if !File( f18_ime_dbf( "TEMP" ) )
 	MsgBeep("Ne mogu kreirati fajl TEMP.DBF!")
 	return
 endif
 
 // zatim iscitaj fajl i ubaci podatke u tabelu
+cTxtFile := ALLTRIM( cTxtFile )
 
-// broj linija fajla
-nBrLin:=BrLinFajla(cTxtFile)
-nStart:=0
+_o_file := TFileRead():New( cTxtFile )
+_o_file:Open()
 
-
-// iz prvog zapisa uzmi podatke o samoj fakturi
-aFMat := SljedLin( cTxtFile, nStart )
-
-// sljdeca pozicija od koje ce poceti da cita fajl...
-nStart := aFMat[2]
+if _o_file:Error()
+	msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	return
+endif
 
 // prvi red csv fajla je ovo:
-cFirstRow := aFMat[1]
+cFirstRow := hb_strtoutf8( _o_file:ReadLine() )
 
 // napuni ga u matricu
 aFirstRow := csvrow2arr( cFirstRow, cDelimiter )
@@ -519,14 +525,10 @@ if ((nTrosk1+nTrosk2+nTrosk3+nTrosk4+nTrosk5) <> 0 )
 endif
 
 // prodji kroz svaku liniju i insertuj zapise u temp.dbf
-for i:=1 to nBrLin
+while _o_file:MoreToRead()
 
-	aFMat:=SljedLin(cTxtFile, nStart)
-      	
-	nStart:=aFMat[2]
-	
 	// uzmi u cText liniju fajla
-	cVar:=aFMat[1]
+	cVar := hb_strtoutf8( _o_file:ReadLine() )
 
 	if EMPTY(cVar)
 		loop
@@ -576,7 +578,10 @@ for i:=1 to nBrLin
 	replace trosk3 with nTrosk3
 	replace trosk4 with nTrosk4
 	replace trosk5 with nTrosk5
-next
+
+enddo
+
+_o_file:Close()
 
 select temp
 
@@ -591,18 +596,14 @@ return
 // Kreira tabelu PRIVPATH\TEMP.DBF prema definiciji polja iz aDbf
 // ----------------------------------------------------------------
 static function CreTemp( aDbf, lIndex )
-cTmpTbl := PRIVPATH + "TEMP"
+cTmpTbl := "TEMP"
 
 if lIndex == nil
 	lIndex := .t.
 endif
 
-if File(cTmpTbl + ".DBF") .and. FErase(cTmpTbl + ".DBF") == -1
-	MsgBeep("Ne mogu izbrisati TEMP.DBF!")
-    	ShowFError()
-endif
-if File(cTmpTbl + ".CDX") .and. FErase(cTmpTbl + ".CDX") == -1
-	MsgBeep("Ne mogu izbrisati TEMP.CDX!")
+if File( f18_ime_dbf( cTmpTbl ) ) .and. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
+		MsgBeep("Ne mogu izbrisati TEMP.DBF!")
     	ShowFError()
 endif
 

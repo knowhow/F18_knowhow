@@ -757,8 +757,6 @@ local cF_name
 local i
 local n
 local x
-local nBrLin
-local nStart
 local cErr
 local aLinija 
 local aErr := {}
@@ -768,6 +766,7 @@ local aErr_data
 local aF_err := {}
 local cErrCode := ""
 local cErrDesc := ""
+local _o_file
 
 // primjer: c:\fiscal\00001.out
 cF_name := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "XML", "OUT" )
@@ -776,21 +775,25 @@ cF_name := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "XML", "OUT" )
 // prikaza greske tipa OUT fajlovi...
 
 nFisc_no := 0
-nBrLin := BrLinFajla( cF_name )
-nStart := 0
+cF_name := ALLTRIM( cF_name )
+
+_o_file := TFileRead():New( cF_name )
+_o_file:Open()
+
+if _o_file:Error()
+	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	return -9
+endif
 
 cFisc_txt := ""
 
 // prodji kroz svaku liniju i procitaj zapise
 // 1 liniju preskoci zato sto ona sadrzi 
 // <?xml version="1.0"...>
-for i:=1 to nBrLin
-
-	aErr_read := SljedLin( cF_name, nStart )
-      	nStart := aErr_read[ 2 ]
+while _o_file:MoreToRead()
 
 	// uzmi u cErr liniju fajla
-	cErr := aErr_read[ 1 ]
+	cErr := hb_strtoutf8( _o_file:ReadLine()  )
 
 	if "?xml" $ cErr
 		// prvu liniju preskoci !
@@ -823,7 +826,9 @@ for i:=1 to nBrLin
 		AADD( aErr, aLinija[m] )
 	next
 
-next
+enddo
+
+_o_file:Close()
 
 // potrazimo gresku...
 nScan := ASCAN( aErr, {|xVal| "OPOS_SUCCESS" $ xVal } )
@@ -891,7 +896,6 @@ if nScan <> 0
 	// ErrorDescription=xxxxxxx
 	aTmp2 := {}
 	aTmp2 := TokToNiz( aErr[ nScan ], "=" )
-	
 	cTmp += " Description: " + ALLTRIM( aTmp2[2] )
 
 endif

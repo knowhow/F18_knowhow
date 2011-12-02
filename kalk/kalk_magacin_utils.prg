@@ -603,6 +603,7 @@ return .t.
 
 function SetujVPC(nNovaVrijednost, lUvijek)
 local nVal
+local _vars
 
 if lUvijek == nil
 	lUvijek := .f.

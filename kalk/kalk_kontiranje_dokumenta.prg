@@ -24,7 +24,7 @@ static dDatMax
 // lViseKalk - vise kalkulacija
 // cNalog - broj naloga koji ce se uzeti, ako je EMPTY() ne uzima se !
 // -----------------------------------------------------------------------
-function kalk_kontiranje_naloga(fAuto, lAGen, lViseKalk, cNalog )
+function kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog )
 local cIdFirma
 local cIdVd
 local cBrDok
@@ -191,8 +191,19 @@ if lAGen == .f.
 	set cursor on
 
 	if fAuto
-		cBrNalF:=""
-		cBrBalM:=""
+		if !lAFin
+			cBrNalF:=""
+		else
+			@ m_x+1,m_y+2  SAY "Broj naloga u FIN  "+finmat->idfirma+" - "+cidvn+" - "+cBrNalF
+		endif
+	
+		if !lAMat
+			cBrBalM:=""
+		else
+			if idvd<>"24" // kalkulacija usluge
+				@ m_x+2,m_y+2 SAY "Broj naloga u MAT  "+finmat->idfirma+" - "+cidvn+" - "+cBrNalM
+			endif
+		endif
 	
 		@ m_x+4,m_y+2 SAY "Datum naloga: "
 		
@@ -201,7 +212,7 @@ if lAGen == .f.
 		if lAFin .or. lAMat
 			inkey(0)
 		endif
-		
+	
 	else
 		if laFin2
 			@ m_x+1,m_y+2 SAY "Broj naloga u FIN  "+finmat->idfirma+" - "+cidvn+" -" GET cBrNalF
@@ -254,17 +265,22 @@ do while !eof()
      else
           select koncij; hseek finmat->idkonto
      endif
-     select roba
+     
+	 select roba
      hseek finmat->idroba
 
          select trfp
-         seek cIdVD+koncij->shema
-         do while !empty(cBrNalF) .and. idvd==cIDVD  .and. shema=koncij->shema .and. !eof()
+		 go top
+         seek cIdVD + koncij->shema
+
+		altd()
+
+         do while !EOF() .and. !EMPTY( cBrNalF ) .and. field->idvd == cIDVD  .and. field->shema == koncij->shema
      	  
-	  lDatFakt:=.f.
-	  cStavka:=Id
+	      lDatFakt:=.f.
+	      cStavka:=Id
           select finmat
-          nIz:=&cStavka
+       nIz:=&cStavka
           select trfp
           if !empty(trfp->idtarifa) .and. trfp->idtarifa<>finmat->idtarifa
             // ako u {ifrarniku parametara postoji tarifa prenosi po tarifama

@@ -79,6 +79,7 @@ my_server_login( my_server_params() )
 log_write( "login 1st: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
 
 if __server:NetErr()
+	log_write( "Nisam se zakacio kao user/user, pokusat cu sa novim parmetrima !" )
 	// idemo na login formu
 	_form_login( cHostName, cDataBase, cUser, cPassword, nPort, cSchema )
 endif
@@ -107,7 +108,8 @@ my_server_login( my_server_params() )
 log_write( "login 2nd: " + my_server_params()["host_name"] + " / " + my_server_params()["database"] + " / " + my_server_params()["user"] + " / " +  STR(my_server_params()["port"])  + " / " + my_server_params()["schema"])
 
 if __server:NetErr()
-      
+    
+    log_write( "nisam se uspio zakaciti ni drugi put sa parametrima..." )  
 	clear screen
 
   	?

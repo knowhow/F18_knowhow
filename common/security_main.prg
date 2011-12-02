@@ -27,7 +27,6 @@ params["database"] := nil
 params["user_name"] := nil
 params["schema"] := nil
 params["port"] := nil
-params["user_pwd"] := nil
 
 f18_ini_read("F18_server", @params, .t.)
 

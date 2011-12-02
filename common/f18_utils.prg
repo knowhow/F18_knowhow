@@ -53,13 +53,13 @@ local _len
 local _loc
 local _create
 
-_loc := location
+_loc := location + "*.*"
 
 #ifdef __PLATFORM__WINDOWS
-	_loc := '"' + location + '"'
+	_loc := '"' + location + "*.*" + '"'
 #endif
 
-_len := ADIR( _loc + "*.*" )
+_len := ADIR( _loc )
 
 if _len == 0
 

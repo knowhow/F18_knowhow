@@ -688,7 +688,7 @@ DO CASE
 
   CASE algoritam == "IDS"
     _ids := get_ids_from_semaphore(table)
-    SET ORDER TO TAG index_tag
+    SET ORDER TO TAG &(index_tag)
      // pobrisimo sve id-ove koji su drugi izmijenili
     do while .t.
        _fnd := .f.

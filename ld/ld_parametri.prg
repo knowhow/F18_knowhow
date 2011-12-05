@@ -485,7 +485,7 @@ else
 endif
 
 if ld->(fieldpos("OBR"))<>0
-	public lViseObr:=.t.
+	public lViseObr:=.f.
 else
 	public lViseObr:=.f.
 endif

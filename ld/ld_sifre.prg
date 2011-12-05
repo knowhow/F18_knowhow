@@ -595,7 +595,7 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
-return PostojiSifra(F_LD_RJ, 1, 10, 55, Lokal("Lista radnih jedinica"), @cId, dx, dy)
+return PostojiSifra( F_LD_RJ, 1, 10, 55, Lokal("Lista radnih jedinica"), @cId, dx, dy)
 
 
 

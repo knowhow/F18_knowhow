@@ -41,7 +41,7 @@ cMjesec:=gMjesec
 cGodina:=gGodina
 cObracun:=gObracun
 
-O_RJ
+O_LD_RJ
 O_POR
 O_DOPR
 O_RADN

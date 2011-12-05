@@ -95,10 +95,6 @@
 #define F_BARKOD    71
 #define F__VALUTE   72
 #define F_RJ        73
-#define F_FIN_RJ        73
-#define F_FAKT_RJ        73
-#define F_KALK_RJ        73
-#define F_LD_RJ        73
 #define F_OPS       74
 #define F_REFER     75
 #define F_STRINGS  180
@@ -255,6 +251,9 @@
 #define F_REVAL    302
 #define F_PROMJ    303
 #define F_INVENT   304
+
+//ld
+#define F_LD_RJ    310
 
 //virm
 #define F_VIPRIPR 216

@@ -30,7 +30,7 @@ Box(, 4 +IF(lViseObr, 1, 0), 50)
 	set cursor on
 	
 	@ m_x + nX, m_y + 2 SAY PADL( "Radna jedinica", nPadL ) GET gRJ ;
-		valid P_LD_Rj(@gRj) pict "@!"
+		valid P_LD_Rj( @gRj ) pict "@!"
 	
 	++nX
 

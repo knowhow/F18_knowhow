@@ -166,7 +166,11 @@ do while !eof()
    			
 			nUkupno+=round(_amp,2)
   		endif
-  		
+  	
+		// sinhronizuj podatke sql/server
+		_vars := f18_scatter_global_vars()
+        f18_gather( _vars )
+	
 		Gather()
 		
   		// amortizacija promjena
@@ -205,6 +209,11 @@ do while !eof()
 				nUkupno+=round(_amp,2)
 				
     			endif
+
+				// sinhronizuj podatke sql/server
+				_vars := f18_scatter_global_vars()
+        		f18_gather( _vars )
+	
     			Gather()
     			skip
   		enddo  
@@ -267,7 +276,11 @@ do while !eof()
      			@ prow(),pcol()+1 SAY _datotp pict gpici
      			
 			nUkupno+=round(_amp,2)
-     			
+    		
+			// sinhronizuj podatke sql/server
+			_vars := f18_scatter_global_vars()
+        	f18_gather( _vars )
+	
 			Gather()
      			
 			// amortizacija promjena
@@ -313,8 +326,12 @@ do while !eof()
        				
 				nUkupno+=round(_amp,2)
        				
+    			// sinhronizuj podatke sql/server
+				_vars := f18_scatter_global_vars()
+        		f18_gather( _vars )
+	
 				Gather()
-       				
+   				
 				skip
      			enddo 
 		

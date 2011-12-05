@@ -398,16 +398,18 @@ CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
 if !file(f18_ime_dbf("ld_rj"))
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+   add_f_mcode(@aDbf)
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
    AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
-   DBCREATE2(KUMPATH+'LD_RJ.DBF',aDbf)
+   DBCREATE2( "LD_RJ", aDbf )
 endif
 CREATE_INDEX("ID","id",KUMPATH+"LD_RJ")
 
 // KRED
 aDBf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+add_f_mcode(@aDbf)
 AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
 AADD(aDBf,{ 'ZIRO'                , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'ZIROD'               , 'C' ,  20 ,  0 })
@@ -432,6 +434,7 @@ if !file(f18_ime_dbf("POR"))
    	aDBf:={}
   	
 	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    add_f_mcode(@aDbf)
    	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
    	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
    	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
@@ -460,6 +463,7 @@ if !file(f18_ime_dbf("DOPR"))
    
 	aDBf:={}
    	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    add_f_mcode(@aDbf)
    	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
    	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
    	AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
@@ -580,9 +584,12 @@ AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  2 })
 AADD(aDBf,{ 'TROSK'               , 'C' ,   1 ,  2 })
 AADD(aDBf,{ 'VAROBR'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'V_ISPL'              , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'OBR'                 , 'C' ,   1 ,  0 })
 
 if !file(f18_ime_dbf("LD"))
-	DBCREATE2(KUMPATH+'LD.DBF',aDbf)
+	DBCREATE2( "LD", aDbf )
+	reset_semaphore_version("ld_ld")
+	my_use("LD")
 endif
 
 IF lVOBrisiCDX

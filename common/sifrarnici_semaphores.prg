@@ -365,30 +365,6 @@ lock_semaphore( _tbl, "free" )
 return _result
 
 
-// -----------------------------------------
-// -----------------------------------------
-function ld_rj_from_sql_server(algoritam)
-local _result := .f.
-local _i
-local _tbl := "ld_rj"
-
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_LD_RJ, {"id", "naz", "tiprada", "opor" })
-
-lock_semaphore( _tbl, "free" )
-
-return _result
-
 
 // -----------------------------------------
 // -----------------------------------------
@@ -612,7 +588,7 @@ local _seconds
 local _x, _y
 local _tmp_id, _ids
 local _sql_ids
-local _i
+local _i := 1
 local _qry_obj
 local _field_b
 local _fnd
@@ -666,7 +642,7 @@ if (algoritam == "IDS")
             endif
         next
         _sql_ids += ")"
-        _qry += " " + field_tag + " IN " + _sql_ids
+        _qry += " ( " + field_tag + " ) IN " + _sql_ids
      endif
 
 endif

@@ -603,7 +603,7 @@ return _result
 
 // ----------------------------------------
 // ----------------------------------------
-function sifrarnik_from_sql_server(table, algoritam, area, fields)
+function sifrarnik_from_sql_server( table, algoritam, area, fields, index_tag, field_tag )
 local _counter
 local _rec
 local _qry
@@ -618,6 +618,14 @@ local _field_b
 local _fnd
 local _alias
 local _pos
+
+if index_tag == nil
+	index_tag := "ID"
+endif
+
+if field_tag == nil
+	field_tag := "ID"
+endif
 
 // pronaji alias tabele
 _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER( table ) } )
@@ -658,7 +666,7 @@ if (algoritam == "IDS")
             endif
         next
         _sql_ids += ")"
-        _qry += " ID IN " + _sql_ids
+        _qry += " " + field_tag + " IN " + _sql_ids
      endif
 
 endif
@@ -680,7 +688,7 @@ DO CASE
 
   CASE algoritam == "IDS"
     _ids := get_ids_from_semaphore(table)
-    SET ORDER TO TAG "ID"
+    SET ORDER TO TAG index_tag
      // pobrisimo sve id-ove koji su drugi izmijenili
     do while .t.
        _fnd := .f.

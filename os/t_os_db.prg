@@ -98,9 +98,12 @@ if (nArea==-1 .or. nArea==(F_OS))
 	   AADD(aDBf,{ 'BrSoba'              , 'C' ,   6 ,  0 })
 	   AADD(aDBf,{ 'IdPartner'           , 'C' ,   6 ,  0 })
 
-	   DBCREATE2(KUMPATH+'OS.DBF',aDbf)
+	   DBCREATE2("OS", aDbf)
+	   reset_semaphore_version( "os_os" )
+	   my_use("OS")
 
 	endif
+
 	CREATE_INDEX("1","id+idam+dtos(datum)",KUMPATH+"OS")
 	CREATE_INDEX("2","idrj+id+dtos(datum)",KUMPATH+"OS")
 	CREATE_INDEX("3","idrj+idkonto+id",KUMPATH+"OS")
@@ -115,7 +118,9 @@ if (nArea==-1 .or. nArea==(F_K1))
 	   aDBf:={}
 	   AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
 	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-	   DBCREATE2(KUMPATH+'K1.DBF',aDbf)
+	   DBCREATE2( "K1", aDbf )
+	   reset_semaphore_version( "os_k1" )
+       my_use("K1")
 	endif
 	CREATE_INDEX("ID","id",KUMPATH+"K1")
 	CREATE_INDEX("NAZ","NAZ",KUMPATH+"K1")
@@ -130,6 +135,7 @@ if (nArea==-1 .or. nArea==(F_INVENT))
 	        AADD(aDBf,{ 'KOLICINA'            , 'N' ,   6 ,  1 })
 	        AADD(aDBf,{ 'IZNOS'               , 'N' ,  14 ,  2 })
 	        DBCREATE2(PRIVPATH+'INVENT.DBF',aDbf)
+			
 	endif
 	CREATE_INDEX("ID","Id",PRIVPATH+"INVENT") // Inventura
 endif
@@ -147,7 +153,9 @@ if (nArea==-1 .or. nArea==(F_PROMJ))
 	   AADD(aDBf,{ 'AmP'                , 'N' ,  18 ,  2 })
 	   AADD(aDBf,{ 'RevD'               , 'N' ,  18 ,  2 })
 	   AADD(aDBf,{ 'RevP'               , 'N' ,  18 ,  2 })
-	   DBCREATE2(KUMPATH+'Promj.DBF',aDbf)
+	   DBCREATE2( "PROMJ", aDbf )
+	   reset_semaphore_version("os_promj")
+	   my_use("PROMJ")
 	endif
 	CREATE_INDEX("1","id+tip+dtos(datum)",KUMPATH+"PROMJ")
 endif
@@ -158,7 +166,9 @@ if (nArea==-1 .or. nArea==(F_AMORT))
 	   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
 	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
 	   AADD(aDBf,{ 'Iznos'               , 'N' ,   7 ,  3 })
-	   DBCREATE2(SIFPATH+'AMORT.DBF',aDbf)
+	   DBCREATE2("AMORT", aDbf)
+	   reset_semaphore_version("os_amort")
+	   my_use("AMORT")
 	endif
 	CREATE_INDEX("ID","id",SIFPATH+"AMORT")
 endif
@@ -180,7 +190,9 @@ if (nArea==-1 .or. nArea==(F_REVAL))
 	   AADD(aDBf,{ 'I10'                 , 'N' ,   7 ,  3 })
 	   AADD(aDBf,{ 'I11'                 , 'N' ,   7 ,  3 })
 	   AADD(aDBf,{ 'I12'                 , 'N' ,   7 ,  3 })
-	   DBCREATE2(SIFPATH+'REVAL.DBF',aDbf)
+	   DBCREATE2("REVAL", aDbf)
+	   reset_semaphore_version("os_reval")
+	   my_use("REVAL")
 	endif
 	CREATE_INDEX("ID","id",SIFPATH+"REVAL")
 endif

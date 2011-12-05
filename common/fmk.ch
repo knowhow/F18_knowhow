@@ -24,6 +24,10 @@
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
 #define SEMAPHORE_LOCK_RETRY_NUM 3
 
+#define I_ID 1
+#define DE_ADD  5
+#define DE_DEL  6
+
 #command ESC_EXIT  => if lastkey()=K_ESC;
                       ;exit             ;
                       ;endif

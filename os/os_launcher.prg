@@ -24,7 +24,7 @@ PUBLIC gKonvertPath:="D"
 cModul:="OS"
 PUBLIC goModul
 
-oOs := TOsMod():new(NIL, cModul, D_OS_VERZIJA, D_OS_PERIOD , cKorisn, cSifra, p3,p4,p5,p6,p7)
+oOs := TOsMod():new(NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3,p4,p5,p6,p7)
 goModul:=oOs
 
 oOs:run()

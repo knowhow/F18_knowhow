@@ -104,11 +104,12 @@ if (nArea==-1 .or. nArea==(F_OS))
 
 	endif
 
-	CREATE_INDEX("1","id+idam+dtos(datum)",KUMPATH+"OS")
-	CREATE_INDEX("2","idrj+id+dtos(datum)",KUMPATH+"OS")
-	CREATE_INDEX("3","idrj+idkonto+id",KUMPATH+"OS")
-	CREATE_INDEX("4","idkonto+idrj+id",KUMPATH+"OS")
-	CREATE_INDEX("5","idam+idrj+id",KUMPATH+"OS")
+	CREATE_INDEX("1", "id+idam+dtos(datum)", "OS")
+	CREATE_INDEX("2", "idrj+id+dtos(datum)", "OS")
+	CREATE_INDEX("3", "idrj+idkonto+id", "OS")
+	CREATE_INDEX("4", "idkonto+idrj+id", "OS")
+	CREATE_INDEX("5", "idam+idrj+id", "OS")
+
 endif
 
 

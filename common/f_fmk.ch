@@ -244,17 +244,17 @@
 #define F_PK_DATA   237
 
 //kam
-#define F_KAMPRIPR 204
-#define F_KAMAT    205
-#define F_KS       206
-#define F_KS2      207
+#define F_KAMPRIPR 280
+#define F_KAMAT    281
+#define F_KS       282
+#define F_KS2      283
 
 //os
-#define F_OS       208
-#define F_AMORT    209
-#define F_REVAL    210
-#define F_PROMJ    211
-#define F_INVENT   212
+#define F_OS       300
+#define F_AMORT    301
+#define F_REVAL    302
+#define F_PROMJ    303
+#define F_INVENT   304
 
 //virm
 #define F_VIPRIPR 216

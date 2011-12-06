@@ -41,6 +41,7 @@ cp scripts/ptxt  $F18INSTALL
 cp util/ptxt.exe ~/.wine/drive_c/
 cp util/delphirb.exe ~/.wine/drive_c/
 cp fonts/ptxt_fonts/*.ttf  ~/.wine/drive_c/windows/Fonts/
+cp scripts/update  $F18INSTALL
 
 
 echo "setujem envars"

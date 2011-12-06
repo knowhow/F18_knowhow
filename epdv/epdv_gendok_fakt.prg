@@ -127,7 +127,7 @@ enddo
 
 // ------------------------------------------
 // ------------------------------------------
-static function  gen_sg_item( cSezona )
+static function gen_sg_item( cSezona )
 local cPomPath
 local cPomSPath
 
@@ -251,10 +251,10 @@ do while !eof()
 		_id_part := cIdPart
 	endif
 
-	lOslPoClan := IsOslClan(_id_part)
+	lOslPoClanu := IsOslClan(_id_part)
 	lIno := IsIno(_id_part)
 	lPdvObveznik := IsPdvObveznik(_id_part)
-	
+
 	lSkip := .f.
 	do case
 	
@@ -452,7 +452,7 @@ do while !eof()
 	_uk_b_pdv := round(_uk_b_pdv, nZaok2)
 	_uk_popust := round(_popust, nZaok2)
 
-	if !empty(cIdTar) .and. cDokTar <> "PDV7AV" .and. !lOslPoClanu
+    if !empty(cIdTar) .and. cDokTar <> "PDV7AV" .and. !lOslPoClanu
 		// uzmi iz sg sifrarnika tarifu kojom treba setovati
 		_id_tar := cIdTar
 	else
@@ -487,8 +487,6 @@ do while !eof()
 	Gather()
 	
 
-	f_part_f_src(cSifPath, _id_part)
-	
 	select fakt
 enddo
 

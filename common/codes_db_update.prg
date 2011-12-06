@@ -36,8 +36,11 @@ if sql_table_update(_table, "del", _rec)
 
    sql_table_update(_table, "END")
    // zapujemo dbf
-   DELETE
-
+   if rlock()
+      DELETE
+      dbrunlock()
+   endif
+   
    return .t.
 else
    sql_table_update(_table, "ROLLBACK")
@@ -45,6 +48,34 @@ else
 endif
 
 return .t.
+
+
+// ------------------------
+// ------------------------
+function f18_get_rec()
+local _ime_polja, _i, _struct
+local _ret := hb_hash()
+
+_struct := DBSTRUCT()
+for _i:=1 to len(_struct)
+
+  _ime_polja := _struct[_i, 1]
+   
+  if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
+      _ret[ LOWER(_ime_polja) ] := EVAL( FIELDBLOCK(_ime_polja) )
+  endif
+
+next
+
+return _ret
+
+
+
+return f18_scatter_global_vars()
+
+function f18_update_rec(values, where)
+return f18_gather(values, where)
+
 
 // -------------------------
 // -------------------------

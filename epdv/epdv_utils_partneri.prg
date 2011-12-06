@@ -63,6 +63,8 @@ local cMjesto
 local cIdBroj
 local cPtt
 local cPom := gNFirma
+local _vars
+
 PushWa()
 
 if lRetArray == nil
@@ -75,9 +77,15 @@ SELECT partn
 SET ORDER TO TAG "ID"
 seek gFirma
 
+altd()
 if !found()
 	APPEND BLANK
-	replace id with gFirma
+    if rlock()
+	    replace id with gFirma
+        _vars := f18_get_rec()
+        f18_update_rec(_vars)
+        dbrunlock()
+    endif
 endif
 
 cNaziv := naz
@@ -93,10 +101,17 @@ endif
 
 if lNepopunjeno
 	if get_my_firma(@cNaziv, @cIdBroj, @cMjesto, @cAdresa,  @cPtt)
-		replace naz with cNaziv ,;
-			mjesto with cMjesto ,;
-			adresa with cAdresa ,;
-			ptt with cPtt
+
+        if rlock()
+		  replace naz with cNaziv ,;
+		      mjesto with cMjesto ,;
+			  adresa with cAdresa ,;
+			  ptt with cPtt
+              _vars := f18_get_rec()
+              f18_update_rec(_vars)
+              dbrunlock()
+        endif
+
 		USifK("PARTN", "REGB", gFirma, cIdBroj)
 	else
 		MsgBeep("Nepopunjeni podaci o maticnoj firmi !")

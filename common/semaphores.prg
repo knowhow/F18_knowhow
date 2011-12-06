@@ -12,16 +12,27 @@
 #include "fmk.ch"
 #include "common.ch"
 
+
+
+function my_usex(alias, table, new_area, _rdd, semaphore_param)
+
+return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
+
+
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
-function my_use(alias, table, new_area, _rdd, semaphore_param)
+function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
 local _pos
 local _version
 local _area
 
 if new_area == NIL
    new_area := .f.
+endif
+
+if excl == NIL
+  excl := .f.
 endif
 
 /*
@@ -54,11 +65,6 @@ endif
 if _rdd == NIL
   _rdd = "DBFCDX"
 endif
-
-// mi otvaramo ovu tabelu ~/.F18/bringout/fin_pripr
-//if gDebug > 9
-// log_write( "LEN gaDBFs[" + STR(nPos) + "]" + STR(LEN(gADBFs[nPos])) + " USE (" + my_home() + gaDBFs[nPos, 3]  + " ALIAS (" + cAlias + ") VIA (" + _rdd + ") EXCLUSIVE")
-//endif
 
 if  LEN(gaDBFs[_pos])>3 
 
@@ -94,13 +100,24 @@ if  LEN(gaDBFs[_pos])>3
 
 endif
 
-if new_area
-   SELECT NEW
+/*
+
+#command USE <(db)> [VIA <rdd>] [ALIAS <a>] [<nw: NEW>] ;
+325             [<ex: EXCLUSIVE>] [<sh: SHARED>] [<ro: READONLY>] ;
+326             [CODEPAGE <cp>] [INDEX <(index1)> [, <(indexN)>]] => ;
+327          dbUseArea( <.nw.>, <rdd>, <(db)>, <(a)>, ;
+328                     if(<.sh.> .or. <.ex.>, !<.ex.>, NIL), <.ro.> [, <cp>] ) ;
+329          [; dbSetIndex( <(index1)> )] ;
+330          [; dbSetIndex( <(indexN)> )]
+
+if excl
+  USE (my_home() + table) ALIAS (alias) VIA (_rdd) EXCLUSIVE 
 else
-   SELECT (_area)
-   use
+  USE (my_home() + table) ALIAS (alias) VIA (_rdd) 
 endif
-USE (my_home() + table) ALIAS (alias) VIA (_rdd) EXCLUSIVE
+*/
+
+dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
 
 return
 

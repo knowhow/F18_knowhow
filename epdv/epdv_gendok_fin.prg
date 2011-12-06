@@ -540,9 +540,6 @@ do while !eof()
 	APPEND BLANK
 	Gather()
 	
-
-	f_part_f_src(cSifPath, _id_part)
-	
 	select SUBAN
 enddo
 

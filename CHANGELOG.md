@@ -1,3 +1,10 @@
+0.9.8, 2001-12-06, hernad, pravim haos
+
+  - my_use default shared - trazi rlock
+    sada se pojavljuje milion "lock required"
+
+  - uvodim get_rec, update_rec
+
 0.9.7, 2001-12-06, hernad,  sem_ver uklonjeno iz semafora
 
    [sem_ver #25395](http://redmine.bring.out.ba/issues/25395)

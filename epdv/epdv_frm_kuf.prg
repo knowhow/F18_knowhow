@@ -216,7 +216,7 @@ do case
    case (Ch == K_F5)
    
         // kontrola zbira KUF
-   	kzb_kuf()
+   	    kzb_kuf()
       	return DE_REFRESH
 
    case (Ch == K_ENTER)

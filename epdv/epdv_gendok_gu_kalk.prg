@@ -510,8 +510,6 @@ do while !eof()
 	Gather()
 	
 
-	f_part_f_src(cSifPath, _id_part)
-	
 	select KALK
 enddo
 

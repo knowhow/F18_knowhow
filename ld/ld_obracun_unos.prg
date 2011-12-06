@@ -62,10 +62,16 @@ do while .t.
 			
 			// upisi tekucu varijantu obracuna
 			_varobr := gVarObracun
-			
 			Gather()
 
-     		else
+			_vals := f18_scatter_global_vars()
+			sql_update_ld_ld( _vals )
+	     		
+			//Gather()
+			
+			// obracun snimiti u sql bazu
+        	
+		else
      			if lNovi
         			delete
      			endif
@@ -80,10 +86,10 @@ do while .t.
   		endif
 
 	else 
-		//K_ESC
   		
-		if lNovi  // ako je novi zapis  .and. ESCAPE
-     			delete
+		if lNovi  
+			// ako je novi zapis  .and. ESCAPE
+     		delete
   		endif
   		
 		return

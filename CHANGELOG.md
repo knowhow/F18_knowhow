@@ -1,4 +1,6 @@
 0.9.7, 2001-12-06, hernad,  sem_ver uklonjeno iz semafora
+
+   [sem_ver #25395](http://redmine.bring.out.ba/issues/25395)
     
 
 0.9.5, 2011-12-02, vsasa, moduli FIN, KALK, FAKT stavljeni u funkciju 

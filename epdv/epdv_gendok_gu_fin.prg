@@ -12,12 +12,6 @@
 
 #include "epdv.ch"
 
-/*
-* ----------------------------------------------------------------
-*                              Copyright Sigma-com software 2006
-* ----------------------------------------------------------------
-*/
-
 static dDatOd
 static dDatDo
 static cFinPath

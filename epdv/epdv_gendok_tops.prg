@@ -12,12 +12,6 @@
 
 #include "epdv.ch"
 
-/*
-* ----------------------------------------------------------------
-*                              Copyright Sigma-com software 2006
-* ----------------------------------------------------------------
-*/
-
 static dDatOd
 static dDatDo
 static cKalkPath
@@ -171,55 +165,37 @@ local cIdPos
 // ------------------------------------------
 
 
-cPomPath :=  AddBs(ALLTRIM(sg_kif->s_path)) + sez_fill(cSezona) + "POS"
-cPomSPath :=  AddBs(ALLTRIM(sg_kif->s_path_s)) + sez_fill(cSezona)
+cPomPath :=  "POS"
+cPomSPath :=  ""
 
 select (F_POS)
-if cPomPath <> cKalkPath
-	cKalkPath := cPomPath
-	if used()
-		use
-	endif
-	USE (cPomPath)
-else
-	if !used()
-		USE (cKalkPath)
-	endif
+cKalkPath := cPomPath
+if used()
+	use
 endif
-
-if !(cPomSPath == cSifPath)
+my_use ( cPomPath )
 
 	cSifPath := cPomSPath
 
 	SELECT F_ROBA
-	if used()
-		use
+	if !used()
+		O_ROBA
 	endif
-	USE (cSifPath + "ROBA")
-	SET ORDER TO TAG "ID"
 
 	SELECT F_TARIFA
-	if used()
-		use
+	if !used()
+		O_TARIFA
 	endif
-	USE (cSifPath + "TARIFA")
-	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFK
-	if used()
-		use
+	if !used()
+		O_SIFK
 	endif
-	USE (cSifPath + "SIFK")
-	SET ORDER TO TAG "ID"
 
 	SELECT F_SIFV
-	if used()
-		use
+	if !used()
+		O_SIFV
 	endif
-	USE (cSifPath + "SIFV")
-	SET ORDER TO TAG "ID"
-
-endif
 
 
 SELECT POS

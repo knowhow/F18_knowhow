@@ -69,7 +69,9 @@ AADD(aDBf,{ 'lo_clpi'           , 'N' ,  10 ,  3 })
 AADD(aDBf,{ 'lo_ufakt'          , 'N' ,  10 ,  3 })
 
 if !FILE( f18_ime_dbf("PK_RADN") )
-	DBCreate2( KUMPATH + "PK_RADN.DBF", aDbf)
+	DBCreate2( "PK_RADN", aDbf )
+	reset_semaphore_version("ld_pk_radn")
+	my_use("pk_radn")
 endif
 
 CREATE_INDEX( "1", "idradn", KUMPATH + "PK_RADN" )
@@ -102,6 +104,8 @@ AADD(aDBf,{ 'koef'                , 'N' ,    10 ,  3 })
 
 if !FILE( f18_ime_dbf( "PK_DATA" ) )
 	DBCreate2( KUMPATH + "PK_DATA.DBF", aDbf)
+	reset_semaphore_version("ld_pk_data")
+ 	my_use( "PK_DATA" )
 endif
 
 CREATE_INDEX( "1", "idradn+ident+STR(rbr)", KUMPATH + "PK_DATA" )

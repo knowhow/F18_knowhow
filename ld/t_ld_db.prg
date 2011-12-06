@@ -260,7 +260,9 @@ if (nArea==-1 .or. nArea==(F_RADN))
 	//RADN.DBF & _RADN.DBF
 	
 	if !FILE(f18_ime_dbf("RADN"))
-  		DBcreate2(KUMPATH+'RADN.DBF',aDbf)
+  		DBcreate2("RADN", aDbf)
+		reset_semaphore_version("ld_radn")
+		my_use("RADN")
 	endif
 	
 	if !FILE(f18_ime_dbf("_RADN"))
@@ -285,8 +287,11 @@ if (nArea==-1 .or. nArea==(F_RADKR))
 	//RADKR.DBF & _RADKR.DBF
 
 	if !FILE(f18_ime_dbf("RADKR"))
-		DBCreate2(KUMPATH+'RADKR.DBF',aDbf)
+		DBCreate2( "RADKR", aDbf)
+		reset_semaphore_version( "ld_radkr" )
+		my_use( "RADKR" )
 	endif
+
 	if !file(f18_ime_dbf("_RADKR"))
 		DBCreate2(PRIVPATH+'_RADKR.DBF',aDbf)
 	endif
@@ -295,6 +300,7 @@ if (nArea==-1 .or. nArea==(F_RADKR))
 	CREATE_INDEX("2","idradn+idkred+naosnovu+str(godina)+str(mjesec)",KUMPATH+"RADKR")
 	CREATE_INDEX("3","idkred+naosnovu+idradn+str(godina)+str(mjesec)",KUMPATH+"RADKR")
 	CREATE_INDEX("4","str(godina)+str(mjesec)+idradn+naosnovu",KUMPATH+"RADKR")
+
 endif
 
 
@@ -312,7 +318,7 @@ if (nArea==-1 .or. nArea==(F_REKLD))
 	//REKLD.DBF
 
 	if !FILE(f18_ime_dbf("REKLD"))
-  		DBCreate2(KUMPATH+"REKLD.DBF",aDbf)
+  		DBCreate2( "REKLD.DBF", aDbf )
 	endif
 
   	CREATE_INDEX("1","godina+mjesec+id",KUMPATH+"REKLD")
@@ -325,7 +331,7 @@ if (nArea==-1 .or. nArea==(F_REKLDP))
 	AADD( aDbf, {"IDRNAL"  ,  "C" , 10, 0})
 
 	if !FILE(f18_ime_dbf("REKLDP"))
-  		DBCreate2(KUMPATH+"REKLDP.DBF",aDbf)
+  		DBCreate2( "REKLDP.DBF", aDbf)
 	endif
 
   	CREATE_INDEX("1","godina+mjesec+id+idRNal",KUMPATH+"REKLDP")
@@ -343,7 +349,7 @@ if (nArea==-1 .or. nArea==(F_OPSLD))
             		{"IZNOS2", "N" , 18, 4},;
             		{"LJUDI" , "N" ,  4, 0} ;
           		}
-  		DBCREATE2(PRIVPATH + "OPSLD.DBF", aDbf)
+  		DBCREATE2( "OPSLD.DBF", aDbf )
 		
 	endif
 
@@ -371,7 +377,9 @@ if (nArea==-1 .or. nArea==(F_PAROBR))
    		AADD(aDBf,{ 'M_BR_SAT'            , 'N' ,  12 ,  2 })
    		AADD(aDBf,{ 'M_NET_SAT'           , 'N' ,  12 ,  2 })
    		
-		DBCREATE2(SIFPATH+'PAROBR.DBF',aDbf)
+		DBCREATE2( "PAROBR", aDbf )
+		reset_semaphore_version( "ld_parobr" )
+		my_use( "PAROBR" )
 	endif
 
 	IF lVOBrisiCDX
@@ -399,25 +407,32 @@ AADD(aDBf,{ 'OPIS'                , 'C' ,   8 ,  0 })
 AADD(aDBf,{ 'TPR_TIP'             , 'C' ,   1 ,  0 })
 
 if !file(f18_ime_dbf("TIPPR"))
-   DBCREATE2(SIFPATH+'TIPPR.DBF',aDbf)
+   	DBCREATE2( 'TIPPR', aDbf)
+	reset_semaphore_version("tippr")
+	my_use("TIPPR")
 endif
+
 CREATE_INDEX("ID","id",SIFPATH+"TIPPR")
 
 if !file(f18_ime_dbf("TIPPR2"))
-   DBCREATE2(SIFPATH+'TIPPR2.DBF',aDbf)
+   	DBCREATE2( 'TIPPR2', aDbf )
+	reset_semaphore_version("tippr2")
+	my_use("TIPPR2")
 endif
-CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
 
+CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
 
 // RJ
 if !file(f18_ime_dbf("ld_rj"))
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-   add_f_mcode(@aDbf)
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
-   AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
-   DBCREATE2( "LD_RJ", aDbf )
+	aDBf:={}
+   	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+   	add_f_mcode(@aDbf)
+   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
+   	AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
+   	DBCREATE2( "LD_RJ", aDbf )
+	reset_semaphore_version("ld_rj")
+	my_use("ld_rj")
 endif
 CREATE_INDEX("ID","id",KUMPATH+"LD_RJ")
 
@@ -434,11 +449,15 @@ AADD(aDBf,{ 'ADRESA'              , 'C' ,  30 ,  0 })
 AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
 AADD(aDBf,{ 'FIL'                 , 'C' ,  30 ,  0 })
 if !file(f18_ime_dbf("KRED"))
-   DBCREATE2(SIFPATH+'KRED.DBF',aDbf)
+   	DBCREATE2( 'KRED', aDbf )
+	reset_semaphore_version("kred")
+	my_use("KRED")
 endif
+
 if !file(f18_ime_dbf("_KRED"))
-   DBCREATE2(PRIVPATH+'_KRED.DBF',aDbf)
+   DBCREATE2( '_KRED',aDbf)
 endif
+
 CREATE_INDEX("ID","id",SIFPATH+"KRED")
 CREATE_INDEX("NAZ","naz",SIFPATH+"KRED")
 
@@ -455,7 +474,6 @@ if !file(f18_ime_dbf("POR"))
    	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
    	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
    	AADD(aDBf,{ 'POR_TIP'             , 'C' ,   1 ,  0 })
-   	
 	// stepenasti porez
 	AADD(aDBf,{ 'ALGORITAM'           , 'C' ,   1 ,  0 })
 	AADD(aDBf,{ 'S_STO_1'             , 'N' ,   5 ,  2 })
@@ -469,8 +487,12 @@ if !file(f18_ime_dbf("POR"))
    	AADD(aDBf,{ 'S_STO_5'             , 'N' ,   5 ,  2 })
 	AADD(aDBf,{ 'S_IZN_5'             , 'N' ,  12 ,  2 })
    
-	DBCREATE2(SIFPATH+'POR.DBF',aDbf)
+	DBCREATE2( 'POR', aDbf )
+	reset_semaphore_version("por")
+	my_use("POR")
+
 endif
+
 CREATE_INDEX("ID","id",SIFPATH+"POR")
 
 
@@ -488,7 +510,10 @@ if !file(f18_ime_dbf("DOPR"))
    	AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
    	AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
 	
-   	DBCREATE2(SIFPATH+'DOPR.DBF',aDbf)
+   	DBCREATE2( 'DOPR', aDbf )
+	reset_semaphore_version("dopr")
+	my_use("dopr")
+
 endif
 
 CREATE_INDEX("ID","id",SIFPATH+"DOPR")
@@ -652,7 +677,10 @@ if !file(f18_ime_dbf("STRSPR"))
             {"naz","C",20,0} ,;
             {"naz2","C",6,0} ;
                 }
-     DBCREATE2(SIFPATH+"STRSPR.DBF",aDbf)
+    DBCREATE2( "STRSPR", aDbf )
+	reset_semaphore_version( "strspr" )
+	my_use("STRSPR")
+
 endif
 
 
@@ -663,8 +691,12 @@ if !file(f18_ime_dbf("KBENEF"))
            {"naz","C",8,0} ,;
            {"iznos","N",5,2} ;
          }
-   DBCREATE2(SIFPATH+"KBENEF",aDbf)
+  	DBCREATE2( "KBENEF", aDbf )
+	reset_semaphore_version( "kbenef" )
+	my_use("KBENEF")
+	
 endif
+
 CREATE_INDEX("ID","id",SIFPATH+"KBENEF")
 
 
@@ -673,8 +705,12 @@ if !file(f18_ime_dbf("VPOSLA"))  // vrste posla
             {"naz","C",20,0} ,;
             {"idkbenef","C",1,0} ;
          }
-   DBCREATE2(SIFPATH+"VPOSLA",aDbf)
+	DBCREATE2( "VPOSLA", aDbf )
+	reset_semaphore_version( "vposla" )
+	my_use( "VPOSLA" )
+
 endif
+
 CREATE_INDEX("ID","id",SIFPATH+"VPOSLA")
 
 
@@ -693,8 +729,11 @@ AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
 AADD(aDBf,{ 'IdNorSiht'           , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'Izvrseno'            , 'N' ,  14 ,  3 })
 AADD(aDBf,{ 'Bodova'              , 'N' ,  14 ,  2 })
+
 if !file(f18_ime_dbf("RADSIHT"))
-   DBCREATE2(KUMPATH+"RADSIHT.DBF",aDBF)
+	DBCREATE2( "RADSIHT", aDBF )
+	reset_semaphore_version( "ld_radsiht" )
+	my_use("RADSIHT")
 endif
 
 CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr",KUMPATH+"RADSIHT")
@@ -712,9 +751,15 @@ AADD(aDBf,{ 'Iznos'             , 'N' ,   8 ,  2 })
 AADD(aDBf,{ 'N1'                , 'N' ,   6 ,  2 })
 AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
+
 if !file(f18_ime_dbf("NORSIHT"))
-   DBCREATE2(KUMPATH+"NORSIHT.DBF",aDBF)
+
+	DBCREATE2( "NORSIHT", aDBF)
+	reset_semaphore_version("ld_norsiht")
+	my_use("NORSIHT")
+
 endif
+
 CREATE_INDEX("ID","id",KUMPATH+"NORSIHT")
 CREATE_INDEX("NAZ","NAZ",KUMPATH+"NORSIHT")
 
@@ -728,8 +773,11 @@ AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'K3'                , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'FF'                , 'C' ,  30 ,  0 })
+
 if !file(f18_ime_dbf("TPRSIHT"))
-   DBCREATE2(KUMPATH+"TPRSIHT.DBF",aDBF)
+	DBCREATE2( "TPRSIHT", aDBF )
+	reset_semaphore_version("ld_tprsiht")
+	my_use("TPRSIHT")
 endif
 
 CREATE_INDEX("ID","id",KUMPATH+"TPRSIHT")
@@ -753,7 +801,10 @@ if !file(f18_ime_dbf("OBRACUNI"))
         AADD(aDBf,{'ISPL_ZA','C',50,0})
         AADD(aDBf,{'VR_ISPL','C',50,0})
 
-        DBCREATE2(KUMPATH+'OBRACUNI.DBF',aDbf)
+        DBCREATE2( "OBRACUNI", aDbf )
+		reset_semaphore_version("ld_obracuni")
+		my_use("OBRACUNI")
+
 endif
 
 CREATE_INDEX("RJ","rj+STR(godina)+STR(mjesec)+status+obr",KUMPATH+"OBRACUNI")
@@ -764,7 +815,9 @@ if !file(f18_ime_dbf("RADSAT"))
         AADD(aDBf,{'IDRADN','C',6,0})
         AADD(aDBf,{'SATI','N',10,0})
         AADD(aDBf,{'STATUS','C',2,0})
-        DBCREATE2(KUMPATH+'RADSAT.DBF',aDbf)
+        DBCREATE2( "RADSAT", aDbf )
+		reset_semaphore_version("ld_radsat")
+		my_use("RADSAT")
 endif
 CREATE_INDEX("IDRADN","idradn",KUMPATH+"RADSAT")
 

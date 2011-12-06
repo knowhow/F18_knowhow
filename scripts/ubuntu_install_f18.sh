@@ -38,12 +38,15 @@ chmod +x $F18INSTALL/F18
 
 echo "deps" 
 
-cp scripts/ptxt  $F18INSTALL
+cp scripts/PTXT  $F18INSTALL/PTXT
 cp util/ptxt.exe ~/.wine/drive_c/
 cp util/delphirb.exe ~/.wine/drive_c/
 cp fonts/ptxt_fonts/*.ttf  ~/.wine/drive_c/windows/Fonts/
 cp scripts/update  $F18INSTALL
+cp scripts/f18_editor $F18INSTALL
 chmod +x $F18INSTALL/update
+chmod +x $F18INSTALL/PTXT
+chmod +x $F18INSTALL/f18_editor
 
 
 echo "setujem envars"

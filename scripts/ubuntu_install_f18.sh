@@ -11,6 +11,7 @@ echo "F18 lin installacija ...."
 
 echo "F18 req."
 
+sudo apt-get update
 sudo apt-get install libqt4-sql-psql
 sudo apt-get install wine
 sudo apt-get install vim-gtk
@@ -42,6 +43,7 @@ cp util/ptxt.exe ~/.wine/drive_c/
 cp util/delphirb.exe ~/.wine/drive_c/
 cp fonts/ptxt_fonts/*.ttf  ~/.wine/drive_c/windows/Fonts/
 cp scripts/update  $F18INSTALL
+chmod +x $F18INSTALL/update
 
 
 echo "setujem envars"

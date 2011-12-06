@@ -170,7 +170,7 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 next
 
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_OPS, {"id", ;
-				"idj", "idn0", "naz", "idkan", "zipcode", "puccanton", "puccity", "region" })
+				"idj", "idn0", "naz", "idkan", "zipcode", "puccanton", "puccity", "reg" })
 
 lock_semaphore( _tbl, "free" )
 

@@ -333,21 +333,6 @@ if (nArea==-1 .or. nArea==(F_KONTO))
 	CREATE_INDEX("NAZ","naz",SIFPATH+"KONTO")
 endif
 
-if (nArea==-1 .or. nArea==(F_FIN_RJ))
-
-	aDBf:={}
-	AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
-		
-	if !FILE(f18_ime_dbf("fin_rj"))
-   		DBcreate2(KUMPATH+"FIN_RJ.DBF",aDbf)
-	endif
-	
-	CREATE_INDEX("ID","id",KUMPATH+"FIN_RJ")
-	CREATE_INDEX("NAZ","NAZ",KUMPATH+"FIN_RJ")
-
-endif
-
 
 if (nArea==-1 .or. nArea==(F__KONTO))
 	//_KONTO.DBF

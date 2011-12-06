@@ -20,7 +20,7 @@ local _result := .f.
 local _i
 local _tbl := "ld_ld"
 local _ld_index_tag := "1"
-local _ld_field_tag := "mjesec || godina || idradn"
+local _ld_field_tag := "godina::char(4) || mjesec::char(2) || idradn || obr"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
@@ -96,7 +96,9 @@ function ld_radkr_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "ld_radkr"
-
+local _index_tag := "1"
+local _field_tag := " godina::char(4) || mjesec::char(2) || idradn || idkred || naosnovu"
+ 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 	if get_semaphore_status( _tbl ) == "lock"
@@ -110,7 +112,7 @@ next
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_RADKR, ;
 		{ "idradn", "mjesec", "godina", "idkred", "naosnovu", "iznos", ;
-			"placeno" })
+			"placeno" }, _index_tag, _field_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -124,6 +126,8 @@ function ld_radsat_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "ld_radsat"
+local _index_tag := "IDRADN"
+local _fields_tag := "idradn"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
@@ -137,7 +141,7 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 next
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_RADSAT, ;
-		{ "idradn", "sati", "status" })
+		{ "idradn", "sati", "status" }, _index_tag, _fields_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -210,6 +214,8 @@ function ld_radsiht_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "ld_radsiht"
+local _index_tag := "4"
+local _field_tag := "idradn || godina::char(4) || mjesec::char(2) || idkonto"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
@@ -225,7 +231,7 @@ next
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_RADSIHT, ;
 		{ "godina", "mjesec", "dan", "dandio", "idrj", "idradn", ;
 		"idkonto", "opis", "idtippr", "brbod", "idnorsiht", "izvrseno", ;
-		"bodova" })
+		"bodova" }, _index_tag, _field_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -238,6 +244,8 @@ function ld_pk_data_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "ld_pk_data"
+local _index_tag := "1"
+local _fields_tag := "idradn || ident || rbr::char(3)"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
@@ -252,7 +260,7 @@ next
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_PK_DATA, ;
 		{ "idradn", "ident", "rbr", "ime_pr", "jmb", "sr_naz", "sr_kod", ;
-			"prihod", "udio", "koef" })
+			"prihod", "udio", "koef" }, _index_tag, _fields_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -265,6 +273,8 @@ function ld_pk_radn_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "ld_pk_radn"
+local _index_tag := "1"
+local _fields_tag := "idradn"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
@@ -281,7 +291,7 @@ _result := sifrarnik_from_sql_server( _tbl, algoritam, F_PK_RADN, ;
 		{ "idradn", "zahtjev", "datum", "r_prez", "r_ime", "r_imeoca", ;
 		"r_jmb", "r_adr", "r_opc", "r_opckod", "r_drodj", "r_tel", "p_naziv", ;
 		"p_jib", "p_zap", "lo_osn", "lo_brdr", "lo_izdj", "lo_clp", "lo_clpi", ;
-		"lo_ufakt" })
+		"lo_ufakt" }, _index_tag, _fields_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -294,6 +304,8 @@ function ld_obracuni_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "ld_obracuni"
+local _index_tag := "RJ"
+local _fields_tag := "rj || godina::char(4) || mjesec::char(2) || status || obr"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
@@ -308,7 +320,7 @@ next
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_OBRACUNI, ;
 		{ "rj", "mjesec", "godina", "obr", "status", "dat_ispl", ;
-		"mj_ispl", "ispl_za", "vr_ispl" })
+		"mj_ispl", "ispl_za", "vr_ispl" }, _index_tag, _fields_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -376,6 +388,8 @@ function ld_parobr_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "ld_parobr"
+local _fields_tag := "id || godina::char(4)"
+local _index_tag := "ID"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
@@ -389,7 +403,9 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 next
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_PAROBR, ;
-		{ "id", "naz" })
+		{ "id", "naz", "vrbod", "k1", "k2", "k3", "k4", "k5", "k6", ;
+		"k7", "k8", "m_br_sat", "m_net_sat", "prosld", "idrj", "godina" }, ;
+		_index_tag, _fields_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -585,6 +601,500 @@ _result := sifrarnik_from_sql_server( _tbl, algoritam, F_TPRSIHT, ;
 lock_semaphore( _tbl, "free" )
 
 return _result
+
+
+
+// ----------------------------------
+// ---------------------------------
+function sql_update_ld_ld( values )
+local _table := "ld_ld"
+local _key, _field_b
+local _ok := .t.
+local _values_old := hb_hash()
+local _ids := {}
+local _pos
+local _where
+local _i
+
+_where := "godina=" + _sql_quote(STR(values["godina"], 4)) + ;
+	" AND mjesec=" + _sql_quote(STR(values["mjesec"], 2)) + ;
+	" AND idradn=" + _sql_quote(values["idradn"]) + ;
+	" AND obr=" + _sql_quote(values["obr"])
+
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _table ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _table )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _table, "lock" )
+	endif
+
+next
+
+if _ok == .t.
+
+  msgo("Azuriranje tabele " + _table + " u toku...")
+
+  sql_table_update( _table, "BEGIN" )
+
+  if sql_table_update( _table, "del", values, _where )
+
+    if sql_table_update( _table, "ins", values )
+       
+		update_semaphore_version( _table, .t. )
+  
+       	AADD( _ids, STR(values["godina"],4) + STR(values["mjesec"],2) + values["idradn"] + values["obr"] ) 
+       	push_ids_to_semaphore( _table, _ids )
+
+       	sql_table_update( _table, "END" )  
+
+    else
+        _ok := .f.
+	endif
+
+  else
+     _ok := .f.
+  endif
+
+  msgc()
+
+endif
+
+if ! _ok
+
+    sql_table_update( _table, "ROLLBACK" )
+
+    MsgBeep("Problem sa azuriranjem tabele " + _table )
+
+endif
+
+lock_semaphore( _table, "free" )
+
+return _ok
+
+
+
+// ----------------------------------
+// ---------------------------------
+function sql_update_ld_radkr( values )
+local _table := "ld_radkr"
+local _key, _field_b
+local _ok := .t.
+local _values_old := hb_hash()
+local _ids := {}
+local _pos
+local _where
+local _i
+
+_where := "godina=" + _sql_quote(STR(values["godina"], 4)) + ;
+	" AND mjesec=" + _sql_quote(STR(values["mjesec"], 2)) + ;
+	" AND idradn=" + _sql_quote(values["idradn"]) + ;
+	" AND idkred=" + _sql_quote(values["idkred"]) + ;
+	" AND naosnovu=" + _sql_quote(values["naosnovu"])
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _table ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _table )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _table, "lock" )
+	endif
+
+next
+
+if _ok == .t.
+
+  msgo("Azuriranje tabele " + _table + " u toku...")
+
+  sql_table_update( _table, "BEGIN" )
+
+  if sql_table_update( _table, "del", values, _where )
+
+    if sql_table_update( _table, "ins", values )
+       
+		update_semaphore_version( _table, .t. )
+  
+       	AADD( _ids, STR(values["godina"],4) + STR(values["mjesec"],2) + values["idradn"] + values["idkred"] + values["naosnovu"] ) 
+       	push_ids_to_semaphore( _table, _ids )
+
+       	sql_table_update( _table, "END" )  
+    else
+        _ok := .f.
+	endif
+  else
+     _ok := .f.
+  endif
+
+  msgc()
+
+endif
+
+if ! _ok
+
+    sql_table_update( _table, "ROLLBACK" )
+
+    MsgBeep("Problem sa azuriranjem tabele " + _table )
+
+endif
+
+lock_semaphore( _table, "free" )
+
+
+return _ok
+
+
+// ----------------------------------
+// ---------------------------------
+function sql_update_ld_radsat( values )
+local _table := "ld_radsat"
+local _key, _field_b
+local _ok := .t.
+local _values_old := hb_hash()
+local _ids := {}
+local _pos
+local _where
+local _i
+
+_where := "idradn=" + _sql_quote( values["idradn"] )
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _table ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _table )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _table, "lock" )
+	endif
+
+next
+
+if _ok == .t.
+
+  msgo("Azuriranje tabele " + _table + " u toku...")
+
+
+  sql_table_update( _table, "BEGIN" )
+
+  if sql_table_update( _table, "del", values, _where )
+
+   if sql_table_update( _table, "ins", values )
+       
+		update_semaphore_version( _table, .t. )
+  
+       	AADD( _ids, values["idradn"] ) 
+       	push_ids_to_semaphore( _table, _ids )
+
+       	sql_table_update( _table, "END" )  
+
+	else
+        _ok := .f.   
+	endif
+
+  else
+      _ok := .f.
+ endif
+
+ msgc()
+
+endif
+
+if ! _ok
+
+    sql_table_update( _table, "ROLLBACK" )
+
+    MsgBeep("Problem sa azuriranjem tabele " + _table )
+
+endif
+
+lock_semaphore( _table, "free" )
+
+return _ok
+
+
+// ----------------------------------
+// ---------------------------------
+function sql_update_ld_radsiht( values )
+local _table := "ld_radsiht"
+local _key, _field_b
+local _ok := .t.
+local _values_old := hb_hash()
+local _ids := {}
+local _pos
+local _where
+local _i
+
+_where := "idradn=" + _sql_quote(values["idradn"]) + ;
+	" AND godina=" + _sql_quote(STR(values["godina"], 4)) + ;
+	" AND mjesec=" + _sql_quote(STR(values["mjesec"], 2)) + ;
+	" AND idkonto=" + _sql_quote(values["idkred"]) 
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _table ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _table )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _table, "lock" )
+	endif
+
+next
+
+if _ok == .t.
+
+  msgo("Azuriranje tabele " + _table + " u toku...")
+
+  sql_table_update( _table, "BEGIN" )
+
+  if sql_table_update( _table, "del", values, _where )
+
+   if sql_table_update( _table, "ins", values )
+       
+		update_semaphore_version( _table, .t. )
+  
+       	AADD( _ids, values["idradn"] + STR(values["godina"],4) + STR(values["mjesec"],2) + values["idkonto"] ) 
+       	push_ids_to_semaphore( _table, _ids )
+
+       	sql_table_update( _table, "END" )  
+
+    else
+        _ok := .f.
+	endif
+
+  else
+      _ok := .f.
+  endif
+
+  msgc()
+
+endif
+
+if ! _ok
+
+    sql_table_update( _table, "ROLLBACK" )
+
+    MsgBeep("Problem sa azuriranjem tabele " + _table )
+
+endif
+
+lock_semaphore( _table, "free" )
+
+return _ok
+
+
+// ----------------------------------
+// ---------------------------------
+function sql_update_ld_pk_data( values )
+local _table := "ld_pk_data"
+local _key, _field_b
+local _ok := .t.
+local _values_old := hb_hash()
+local _ids := {}
+local _pos
+local _where
+local _i
+
+_where := "idradn=" + _sql_quote( values["idradn"]) + ;
+	" AND ident=" + _sql_quote( values["ident"] ) + ;
+	" AND rbr=" + _sql_quote( STR(values["rbr"], 3) )
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _table ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _table )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _table, "lock" )
+	endif
+
+next
+
+if _ok == .t.
+
+  msgo("Azuriranje tabele " + _table + " u toku...")
+
+  sql_table_update( _table, "BEGIN" )
+
+  if sql_table_update( _table, "del", values, _where )
+
+   if sql_table_update( _table, "ins", values )
+       
+		update_semaphore_version( _table, .t. )
+  
+       	AADD( _ids, values["idradn"] + values["ident"] + STR(values["rbr"],3) ) 
+       	push_ids_to_semaphore( _table, _ids )
+
+       	sql_table_update( _table, "END" )  
+
+	else
+		_ok := .f.
+	endif
+
+  else
+	_ok := .f.
+  endif
+
+  msgc()
+
+endif
+
+if ! _ok
+
+    sql_table_update( _table, "ROLLBACK" ) 
+
+    MsgBeep("Problem sa azuriranjem tabele " + _table )
+
+endif
+
+// oslobodi tabelu svakako
+
+lock_semaphore( _table, "free" )
+
+return _ok
+
+
+
+// ----------------------------------
+// ---------------------------------
+function sql_update_ld_pk_radn( values )
+local _table := "ld_pk_radn"
+local _key, _field_b
+local _ok := .t.
+local _values_old := hb_hash()
+local _ids := {}
+local _pos
+local _where
+local _i
+
+_where := "idradn=" + _sql_quote( values["idradn"] )
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _table ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _table )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _table, "lock" )
+	endif
+
+next
+
+if _ok == .t.
+
+  msgo("Azuriranje tabele " + _table + " u toku...")
+
+  sql_table_update( _table, "BEGIN" )
+
+  if sql_table_update( _table, "del", values, _where )
+
+   if sql_table_update( _table, "ins", values )
+       
+		update_semaphore_version( _table, .t. )
+  
+       	AADD( _ids, values["idradn"] ) 
+       	push_ids_to_semaphore( _table, _ids )
+
+       	sql_table_update( _table, "END" )  
+
+	else
+		_ok := .f.
+	endif
+
+  else
+	_ok := .f.
+  endif
+
+  msgc()
+
+endif
+
+if ! _ok
+
+    sql_table_update( _table, "ROLLBACK" ) 
+
+    MsgBeep("Problem sa azuriranjem tabele " + _table )
+
+endif
+
+lock_semaphore( _table, "free" )
+
+return _ok
+
+
+// ----------------------------------
+// ---------------------------------
+function sql_update_ld_obracuni( values )
+local _table := "ld_obracuni"
+local _key, _field_b
+local _ok := .t.
+local _values_old := hb_hash()
+local _ids := {}
+local _pos
+local _where
+local _i
+
+_where := "idrj=" + _sql_quote( values["idrj"]) + ;
+	" AND godina=" + _sql_quote( STR(values["godina"], 4) ) + ;
+	" AND mjesec=" + _sql_quote( STR(values["mjesec"], 2) ) + ;
+	" AND status=" + _sql_quote( values["status"] ) + ;
+	" AND obr=" + _sql_quote( values["obr"] )
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _table ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _table )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _table, "lock" )
+	endif
+
+next
+
+if _ok == .t.
+
+  msgo("Azuriranje tabele " + _table + " u toku...")
+
+  sql_table_update( _table, "BEGIN" )
+
+  if sql_table_update( _table, "del", values, _where )
+
+   if sql_table_update( _table, "ins", values )
+       
+		update_semaphore_version( _table, .t. )
+  
+       	AADD( _ids, values["idrj"] + STR( values["godina"], 4) + STR(values["mjesec"],2) + values["status"] + values["obr"] ) 
+       	push_ids_to_semaphore( _table, _ids )
+
+       	sql_table_update( _table, "END" )  
+
+	else
+		_ok := .f.
+	endif
+
+  else
+	_ok := .f.
+  endif
+
+  msgc()
+
+endif
+
+if ! _ok
+
+    sql_table_update( _table, "ROLLBACK" ) 
+
+    MsgBeep("Problem sa azuriranjem tabele " + _table )
+
+endif
+
+// oslobodi tabelu svakako
+
+lock_semaphore( _table, "free" )
+
+return _ok
+
 
 
 

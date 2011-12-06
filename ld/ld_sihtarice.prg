@@ -26,7 +26,11 @@ local nMjesec := gMjesec
 local cGroup := SPACE(7)
 local cOpis := SPACE(50)
 
-O_RADSIHT
+select (F_RADSIHT)
+if !used()
+	O_RADSIHT
+endif
+
 select radsiht
 set order to tag "2"
 
@@ -101,11 +105,13 @@ Box(, nBoxX, nBoxY )
 		exit
 	endif
 	
+	_vals := f18_scatter_global_vars()
+	sql_update_ld_radsiht( _vals ) 
+
 	gather()
 
 	// resetuj varijable
 	cIdRadn := SPACE(6)
-
 
 	nX := 1
 
@@ -383,7 +389,11 @@ if !EMPTY( cGroup )
 	cFilter += " .and. idkonto == " + cm2str( cGroup )
 endif
 
-O_RADSIHT
+select (F_RADSIHT)
+if !used()
+	O_RADSIHT
+endif
+
 select radsiht
 set filter to &cFilter
 go top
@@ -424,6 +434,9 @@ go top
 nCnt := 0
 do while !EOF()
 	++ nCnt
+    
+	// sql update-delete ??????
+
 	delete
 	skip
 enddo
@@ -464,7 +477,11 @@ if lImeOca == nil
 	lImeOca := .f.
 endif
 
-O_RADN
+select (F_RADN)
+if !used()
+	O_RADN
+endif
+
 seek cId
 
 xRet := ALLTRIM( field->ime )

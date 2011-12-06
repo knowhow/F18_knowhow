@@ -21,7 +21,10 @@ function gr_pos( cId )
 local nTArea := SELECT()
 local lRet := .f.
 
-O_KONTO
+select (F_KONTO)
+if !used()
+	O_KONTO
+endif
 select konto
 seek cId
 

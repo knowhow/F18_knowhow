@@ -682,7 +682,12 @@ if (radn->brbod<>_brbod)
 	if Pitanje(, Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
      		select radn
      		replace brbod with _brbod
-     		select ld
+ 
+			scatter()
+			_vals := f18_scatter_global_vars()
+			f18_gather( _vals ) 
+
+    		select ld
   	endif
 endif
 return .t.
@@ -696,6 +701,11 @@ if radn->kminrad<>_kminrad
 	if Pitanje(,Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
      		select radn
      		replace kminrad with _kminrad
+
+			scatter()
+			_vals := f18_scatter_global_vars()
+			f18_gather( _vals ) 
+
      		select ld
   	endif
 endif
@@ -755,6 +765,11 @@ do case
 			return DE_CONT
 		else
 			replace field->sati with nSati
+			
+			scatter()
+			_vals := f18_scatter_global_vars()
+			sql_update_ld_radsat( _vals ) 
+
 			return DE_REFRESH
 		endif
 
@@ -931,6 +946,11 @@ else
 
 endif
 
+Scatter()
+// update na sql server
+_vals := f18_scatter_global_vars()
+sql_update_ld_radsat( _vals ) 
+
 select (nArr)
 
 return
@@ -947,7 +967,14 @@ select radsat
 hseek cIdRadn
 
 if Found()
+	
 	replace field->sati with nIznos
+
+	Scatter()
+	// update na sql server
+	_vals := f18_scatter_global_vars()
+	sql_update_ld_radsat( _vals ) 
+
 endif
 
 select (nArr)
@@ -959,9 +986,16 @@ function FillVPosla()
 *{
 if radn->idvposla<>_idvposla
 	if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
+
     		select radn
      		replace idvposla with _idvposla
-     		select ld
+			
+			Scatter()
+    		// update na sql server
+			_vals := f18_scatter_global_vars()
+			f18_gather( _vals ) 
+
+			select ld
   	endif
 endif
 return .t.
@@ -1263,7 +1297,7 @@ if !used(); O_RADSIHT; endif
 Scatter()
 _Godina:=nGodina
 _Mjesec:=nmjesec
-_Idradn:=cIdRAdn
+eIdradn:=cIdRAdn
 _IdRj:=cIdRj
 _Dan:=1
 _DanDio:=" "

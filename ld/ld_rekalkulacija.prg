@@ -247,6 +247,10 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
  select ld
 
  Gather()
+ 
+ // obracun snimiti u sql bazu
+ _vals := f18_scatter_global_vars()
+ sql_update_ld_ld( _vals ) 
 
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
 
@@ -404,6 +408,10 @@ select ld
 
 
  Gather()
+ // obracun snimiti u sql bazu
+ _vals := f18_scatter_global_vars()
+ sql_update_ld_ld( _vals ) 
+
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
  skip
 enddo
@@ -543,6 +551,10 @@ select ld
 
 
  Gather()
+ // obracun snimiti u sql bazu
+ _vals := f18_scatter_global_vars()
+ sql_update_ld_ld( _vals ) 
+
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
  skip
 enddo
@@ -635,6 +647,11 @@ do while !eof() .and.  cGodina==godina .and.  cmjesec=mjesec .and.;
  _UIznos:=_UNeto+_UOdbici
 
  Gather()
+
+ // obracun snimiti u sql bazu
+ _vals := f18_scatter_global_vars()
+ sql_update_ld_ld( _vals ) 
+
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
  skip
 enddo

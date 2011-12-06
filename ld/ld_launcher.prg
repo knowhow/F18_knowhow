@@ -24,7 +24,7 @@ PUBLIC gKonvertPath:="D"
 cModul:="LD"
 PUBLIC goModul
 
-oLd := TLdMod():new(NIL, cModul, D_LD_VERZIJA, D_LD_PERIOD , cKorisn, cSifra, p3,p4,p5,p6,p7)
+oLd := TLdMod():new(NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3,p4,p5,p6,p7)
 goModul:=oLd
 
 oLd:run()

@@ -168,17 +168,7 @@ endif
 _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "L"
-  // ERROR
-  // currval of sequence "sem_ver_fin_suban" is not yet defined in this session
-  _qry := "SELECT nextval('fmk.sem_ver_" + table + "')"
-  log_write(_qry)
-  _ret := _sql_query( _server, _qry )
-  if VALTYPE(_ret) == "L"
-      // ?? opet error ??
-      return -1
-  else   
-      return 1
-  endif
+  return -1
 endif
 
 return _ret:Fieldget( 1 )

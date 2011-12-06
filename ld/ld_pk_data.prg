@@ -198,10 +198,19 @@ Box(, 12,70,.f.)
 	if lNew == .t. .and. LastKey() <> K_ESC
 		append blank
 		gather()
+		// snimiti u sql bazu
+		_vals := f18_scatter_global_vars()
+		if !sql_update_ld_pk_data( _vals ) 
+			delete
+		endif	
 	endif
 
 	if lNew == .f.
 		gather()
+		// snimiti u sql bazu
+		_vals := f18_scatter_global_vars()
+		if !sql_update_ld_pk_data( _vals ) 
+		endif	
 		exit
 	endif
 

@@ -117,8 +117,17 @@ return
 // otvara tabele za unos podataka
 // --------------------------------------
 function o_pk_tbl()
-O_PK_RADN
-O_PK_DATA
+
+select F_PK_RADN
+if !used()
+	O_PK_RADN
+endif
+
+select F_PK_DATA
+if !used()
+	O_PK_DATA
+endif
+
 return
 
 

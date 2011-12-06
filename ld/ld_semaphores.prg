@@ -676,6 +676,8 @@ return _ok
 
 
 
+
+
 // ----------------------------------
 // ---------------------------------
 function sql_update_ld_radkr( values )
@@ -1035,7 +1037,7 @@ local _pos
 local _where
 local _i
 
-_where := "idrj=" + _sql_quote( values["idrj"]) + ;
+_where := "rj=" + _sql_quote( values["rj"]) + ;
 	" AND godina=" + _sql_quote( STR(values["godina"], 4) ) + ;
 	" AND mjesec=" + _sql_quote( STR(values["mjesec"], 2) ) + ;
 	" AND status=" + _sql_quote( values["status"] ) + ;
@@ -1064,7 +1066,7 @@ if _ok == .t.
        
 		update_semaphore_version( _table, .t. )
   
-       	AADD( _ids, values["idrj"] + STR( values["godina"], 4) + STR(values["mjesec"],2) + values["status"] + values["obr"] ) 
+       	AADD( _ids, values["rj"] + STR( values["godina"], 4) + STR(values["mjesec"],2) + values["status"] + values["obr"] ) 
        	push_ids_to_semaphore( _table, _ids )
 
        	sql_table_update( _table, "END" )  

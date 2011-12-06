@@ -64,13 +64,12 @@ do while .t.
 			_varobr := gVarObracun
 			Gather()
 
-			_vals := f18_scatter_global_vars()
-			sql_update_ld_ld( _vals )
-	     		
-			//Gather()
-			
 			// obracun snimiti u sql bazu
-        	
+			_vals := f18_scatter_global_vars()
+			if !sql_update_ld_ld( _vals ) 
+	     		delete
+			endif	
+
 		else
      			if lNovi
         			delete
@@ -115,29 +114,79 @@ return
 
 
 function OObracun()
-*{
-O_LD
-O_PAROBR
-O_RADN
-O_VPOSLA
-O_STRSPR
-O_DOPR
-O_POR
-O_KBENEF
-O_OPS
-O_LD_RJ
-O_RADKR
-O_KRED
-if lRadniSati
+
+select F_LD
+if !used()
+	O_LD
+endif
+
+select F_PAROBR
+if !used()
+	O_PAROBR
+endif
+
+select F_RADN
+if !used()
+	O_RADN
+endif
+
+select F_VPOSLA
+if !used()
+	O_VPOSLA
+endif
+
+select F_STRSPR
+if !used()
+	O_STRSPR
+endif
+
+select F_DOPR
+if !used()
+	O_DOPR
+endif
+
+select F_POR
+if !used()
+	O_POR
+endif
+
+select F_KBENEF
+if !used()
+	O_KBENEF
+endif
+
+select F_OPS
+if !used()
+	O_OPS
+endif
+
+select F_LD_RJ
+if !used()
+	O_LD_RJ
+endif
+
+select F_RADKR
+if !used()
+	O_RADKR
+endif
+
+select F_KRED
+if !used()
+	O_KRED
+endif
+
+select F_RADSAT
+if !used()
 	O_RADSAT
 endif
-if (IsRamaGlas())
+
+if ( IsRamaGlas() )
 	O_RADSIHT
 	O_RNAL
 endif
 
 return
-*}
+
 
 
 function PrikaziBox(lSaveObracun)
@@ -167,7 +216,10 @@ OObracun()
 if lViseObr
 	O_TIPPRN
 else
-	O_TIPPR
+	select F_TIPPR
+	if !used()
+		O_TIPPR
+	endif
 endif
 
 lNovi:=.f.
@@ -549,7 +601,11 @@ private cSection:="S"
 
 RPar("zr",@cZadnjiRAdnik)
 
-O_RADSIHT
+select F_RADSIHT
+if !used()
+	O_RADSIHT
+endif
+
 select radsiht
 seek str(_godina,4)+str(cmjesec,2)+cZadnjiRadnik+cIdRj
 if found() // ovaj je radnik fakat radjen

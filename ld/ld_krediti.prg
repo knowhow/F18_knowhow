@@ -16,7 +16,6 @@
 //#define  RADNIK  radn->(padr(  trim(naz)+" ("+trim(imerod)+") "+ime,35))
 
 function NoviKredit()
-*{
 local i
 local cIdRadn:=SPACE(_LR_)
 private nMjesec:=gMjesec
@@ -64,19 +63,25 @@ do while .t.
 	set order to 2
 	//"2","idradn+idkred+naosnovu+str(godina)+str(mjesec)"
 
-	seek cidradn+cIdkred+cosnov
-	private nRec:=0
+	seek cIdRadn + cIdkred + cOsnov
+	private nRec := 0
+
 	if found()
   		if Pitanje(,"Stavke vec postoje. Zamijeniti novim podacima ?","D")=="N"
     			MsgBeep("Rate nisu formirane! Unesite novu osnovu kredita za zadanog kreditora!")
-    			closeret
+    			close all
+				return
   		else
     			select radkr
-    			do while !eof() .and. cidradn==idradn .and. cidkred==idkred .and. cosnov==naosnovu
+    			do while !eof() .and. cIdRadn == idradn .and. cIdKred == idkred .and. cOsnov == naosnovu
       				skip
-				nRec:=recno()
-				skip -1
+					nRec := recno()
+					skip -1
+
+					// sql baza update-delete ???
+
       				delete
+
       				go nRec
     			enddo
   		endif
@@ -90,23 +95,36 @@ do while .t.
 	nTekMj:=nMjesec-1
 	
 	do while .t.
+
 		if nTeKMj+1>12
     			nTekMj:=1
     			++nTekGodina
   		else
    			nTekMj++
   		endif
+
   		nIRata:=nRata
+
   		if nIRata>0 .and. (nOstalo-nIRata<0)  // rata je pozitivna
     			nIRata:=nOstalo
   		endif
+
   		if nIRata<0 .and. (nOstalo-nIRata>0)  // rata je negativna
     			nIRata:=nOstalo
   		endif
+
   		if round(nIRata,2)<>0
+
    			append blank
+
    			replace idradn with cidradn, mjesec with nTekMj, Godina with nTekGodina,idkred with cidkred, iznos with nIRata, naosnovu with cOsnov
+
+			// kredite snimiti u sql bazu
+			_vals := f18_scatter_global_vars()
+			sql_update_ld_radkr( _vals ) 
+
    			++i
+
   		endif
 
 		nOstalo:=nOstalo-nIRata
@@ -137,13 +155,13 @@ do while .t.
 
 enddo
 
-closeret
+close all
 return
-*}
+
+
 
 
 function EditKredit
-*{
 parameters cIdRadn,cIdKred,cNaOsnovu
 if pcount()==0
 	cIdRadn:=space(_LR_)
@@ -376,7 +394,9 @@ return nNRata
 function SumKredita()
 local fUsed:=.t.
 local cTRada := " "
+
 PushWa()
+
 select (F_RADKR)
 if !Used()
 	fUsed:=.f.
@@ -392,27 +412,32 @@ if gVarObracun == "2"
 	endif
 endif
 
-//if gVarObracun == "2"
-	// redefiniranje kredita
-//	kr_redef()
-//endif
-
 set order to tag "1"
 seek str(_godina,4)+str(_mjesec,2)+_idradn
 
-nIznos:=0
+nIznos := 0
 
 do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn=_idradn
-	niznos+=iznos
-  	replace Placeno with Iznos
+	
+	nIznos += field->iznos
+  	replace field->placeno with Iznos
+
+	Scatter()
+    // postavi to i u sql bazu
+   	_vals := f18_scatter_global_vars()
+	sql_update_ld_radkr( _vals ) 
+
  	skip
+
 enddo
 
 if !fUsed
 	select radkr
 	use
 endif
+
 PopWa()
+
 return nIznos
 
 

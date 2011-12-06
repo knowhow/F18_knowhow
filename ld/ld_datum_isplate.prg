@@ -79,7 +79,10 @@ local cRj := "  "
 local nX := 1
 local cOk := "D"
 
-O_OBRACUNI
+select F_OBRACUNI
+if !used()
+	O_OBRACUNI
+endif
 
 if obracuni->(FIELDPOS("DAT_ISPL")) == 0 .or. obracuni->(FIELDPOS("OBR")) == 0
 	MsgBeep("Potrebna modifikacija struktura LD.CHS !!!#Prekidam operaciju")
@@ -290,7 +293,10 @@ nMjIsp := 0
 cIsplZa := SPACE(50)
 cVrsta := SPACE(50)
 
-O_OBRACUNI
+select F_OBRACUNI
+if !used()
+	O_OBRACUNI
+endif
 
 select obracuni
 set order to tag "RJ"
@@ -325,7 +331,10 @@ static function s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, ;
 
 local nTArea := SELECT()
 
-O_OBRACUNI
+select F_OBRACUNI
+if !used()
+	O_OBRACUNI
+endif
 
 select obracuni
 set order to tag "RJ"
@@ -357,6 +366,11 @@ else
 	replace vr_ispl with cVrsta
 endif
 
+// azuriranje na sql server
+Scatter()
+_vals := f18_scatter_global_vars()
+sql_update_ld_obracuni( _vals ) 
+Gather()
 
 select (nTArea)
 return

@@ -212,6 +212,14 @@ endif
 
 gather()
 
+// snimiti u sql bazu
+_vals := f18_scatter_global_vars()
+if !sql_update_ld_pk_radn( _vals ) 
+	if lNew == .t.
+		delete
+	endif
+endif	
+
 return field->lo_ufakt
 
 

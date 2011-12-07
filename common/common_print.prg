@@ -314,7 +314,11 @@ elseif cPrinter=="V"
     */
 
     /* TODO treba li f18_editor parametrizirati ?! */   
-    run ("f18_editor " + my_home() + cFName) 
+    #ifdef __PLATFORM__WINDOWS
+    	run ('f18_editor ' + '"' +  my_home() + cFName + '"') 
+	#else
+    	run ("f18_editor " + my_home() + cFName) 
+	#endif
 
 	gaZagFix:=NIL
 	gaKolFix:=NIL

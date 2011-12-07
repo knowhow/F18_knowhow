@@ -1108,7 +1108,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
         else
 		nF_total += round( nF_kolicina * ;
 			nF_cijena * ;
-			(PrerCij() / UBaznuValutu(field->datdok)) * ;
+			PrerCij() * ;
 			(1-nF_rabat/100), ZAOKRUZENJE)
 	endif
 

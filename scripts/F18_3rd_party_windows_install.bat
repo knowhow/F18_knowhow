@@ -1,7 +1,15 @@
 @echo on
 
+set I_VER="0.1.1"
+set I_DATE="07.12.2011"
+set DELRB_VER="1.0"
+set PTXT_VER="1.55"
+set F18_VER="0.9.9"
+
+echo "F18 windows third party install ver %I_VER%, %I_DATE%"
+
 rem env vars
-set PATH=%PATH%;C:\knowhowerp\bin;C:\knowhowerp\lib;C:\knowhowerp\util
+set PATH=%PATH%;C:\knowhowERP\bin;C:\knowhowERP\lib;C:\knowhowERP\util
 
 rem provjeri i kreiraj install dir 
 if not exist c:\knowhowERP  md c:\knowhowERP
@@ -18,6 +26,7 @@ xcopy /y   *.ttf "%WINDIR%\Fonts"
 
 cd ..\.. 
 
+mkdir bin
 mkdir tmp
 cd tmp
 
@@ -28,8 +37,10 @@ IF     ERRORLEVEL 1 goto :OFFLINE
 
 :ONLINE
 
-wget http://knowhow-erp-f18.googlecode.com/files/delphirb_1.0.gz
-wget http://knowhow-erp-f18.googlecode.com/files/ptxt_1.55.gz
+wget http://knowhow-erp-f18.googlecode.com/files/delphirb_%DELRB_VER%.gz
+wget http://knowhow-erp-f18.googlecode.com/files/ptxt_%PTXT_VER%.gz
+
+get http://knowhow-erp-f18.googlecode.com/files/F18_Windows_%F18_VER%.gz
 
 
 goto :EXTRACT
@@ -42,11 +53,14 @@ echo kreiran je tmp podfolder ubacite potrebne pakete u isti
 
 :EXTRACT
 
-gzip -dN ptxt_1.55.gz
-gzip -dN delphirb_1.0.gz
+gzip -dN ptxt_%PTXT_VER%.gz
+gzip -dN delphirb_%DELRB_VER%.gz
 
 xcopy  /i ptxt.exe c:\knowhowERP\util
 xcopy  /i delphirb.exe c:\knowhowERP\util
+xcopy  /i F18.exe c:\knowhowERP\bin
+
+
 
 cd ..
 

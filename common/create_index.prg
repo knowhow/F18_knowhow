@@ -61,7 +61,7 @@ endif
 fPostoji := .t.
 
 select (F_TMP)
-my_use(alias)
+my_usex(alias)
 
 if USED()
 	nOrder := ORDNUMBER( cTag )
@@ -81,7 +81,7 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
 
      SELECT(F_TMP)
    
-     my_use(alias)
+     my_usex(alias)
  
      if !fSilent
           MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))

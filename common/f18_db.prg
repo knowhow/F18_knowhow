@@ -237,11 +237,15 @@ if ! _ok
     // return .f.
 endif
 
-// sve je ok sada zauriramo dbf
-for each _key in values:Keys
-    _field_b := FIELDBLOCK(_key)
-    // napuni field sa vrijednosti
-    EVAL(_field_b, values[_key])
-next
+if rlock()
+    // sve je ok sada zauriramo dbf
+    for each _key in values:Keys
+        _field_b := FIELDBLOCK(_key)
+        // napuni field sa vrijednosti
+        EVAL(_field_b, values[_key])
+    next
+else
+    MsgBeep("ajoj rlock dbf ne radi : " + ALIAS())
+endif
 
 return .t.

@@ -57,7 +57,7 @@ local _all_vars
 if rlock()
    for each _key in var:Keys
        // replace polja
-       EVAL( FIELDBLOCK( _key, vars[_key] )
+       EVAL( FIELDBLOCK(_key), vars[_key] )
     next
 
     update_rec_on_server( NIL, where)
@@ -114,7 +114,7 @@ return .t.
 
 // -----------------------------------
 // -----------------------------------
-function brisi_sve_u_tabeli(table)
+function delete_all_dbf_and_server(table)
 local _rec := hb_hash()
 local _pos
 local _table

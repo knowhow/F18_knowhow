@@ -1,3 +1,7 @@
+0.9.9, 2001-12-07, hernad, cistim haos, init
+
+  - refactoring init replace => update_rec_dbf_and_server
+ 
 0.9.8, 2001-12-06, hernad, pravim haos
 
   - my_use default shared - trazi rlock

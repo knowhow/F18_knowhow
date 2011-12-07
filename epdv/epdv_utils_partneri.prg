@@ -63,7 +63,7 @@ local cMjesto
 local cIdBroj
 local cPtt
 local cPom := gNFirma
-local _vars
+local _fields
 
 PushWa()
 
@@ -77,15 +77,12 @@ SELECT partn
 SET ORDER TO TAG "ID"
 seek gFirma
 
-altd()
 if !found()
 	APPEND BLANK
-    if rlock()
-	    replace id with gFirma
-        _vars := f18_get_rec()
-        f18_update_rec(_vars)
-        dbrunlock()
-    endif
+    _fields := hbhash()
+    _fields["id"] := gFirma
+
+    update_rec_dbf_and_server(_fields) 
 endif
 
 cNaziv := naz
@@ -102,15 +99,13 @@ endif
 if lNepopunjeno
 	if get_my_firma(@cNaziv, @cIdBroj, @cMjesto, @cAdresa,  @cPtt)
 
-        if rlock()
-		  replace naz with cNaziv ,;
-		      mjesto with cMjesto ,;
-			  adresa with cAdresa ,;
-			  ptt with cPtt
-              _vars := f18_get_rec()
-              f18_update_rec(_vars)
-              dbrunlock()
-        endif
+        _fields := hbhash()
+        _fields["naz"] := cNaziv
+        _fields["mjesto"] := cMjesto
+        _fields["adresa"] := cAdresa
+        _fields["ptt"] := cPTT
+
+        update_rec_dbf_and_server(_fields) 
 
 		USifK("PARTN", "REGB", gFirma, cIdBroj)
 	else

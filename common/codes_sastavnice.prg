@@ -1,7 +1,7 @@
 /* 
  * This file is part of the bring.out FMK, a free and open source 
  * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
@@ -25,7 +25,7 @@ select roba
 set_a_kol(@ImeKol, @Kol)
 
 select roba
-index on id+tip tag "IDUN" to robapro for tip="P"  
+index on id + tip tag "IDUN" to robapro for tip="P"  
 // samo lista robe
 set order to tag "idun"
 go top
@@ -152,9 +152,9 @@ cNewS:=SPACE(10)
 nKolic:=0
 
 Box(,6,70)
-@ m_x+1, m_y+2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba(@cOldS)
-@ m_x+2, m_y+2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .and. P_Roba(@cNewS)
-@ m_x+4, m_y+2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
+@ m_x + 1, m_y + 2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba(@cOldS)
+@ m_x + 2, m_y + 2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .and. P_Roba(@cNewS)
+@ m_x + 4, m_y + 2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
 read
 BoxC()
 

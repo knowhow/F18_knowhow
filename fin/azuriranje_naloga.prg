@@ -741,15 +741,23 @@ return
  *  \brief Dodaje u tabelu SifK stavke PARTN i BANK
  */
 function SifkPartnBank()
-
+local _rec
 O_SIFK
 set order to tag "ID2"
-seek padr("PARTN",8)+"BANK"
+seek padr("PARTN", 8) + "BANK"
 if !found()
  if Pitanje(,"U sifk dodati PARTN/BANK  ?","D")=="D"
     append blank
-    replace id with "PARTN" , oznaka with "BANK", naz with "Banke",;
-            Veza with "N", Duzina with 16 , Tip with "C"
+
+    _rec := hbhash()
+    _rec["id"] := "PARTN"
+    _rec["oznaka"] := "BANK"
+    _rec["naz"] := "Banke"
+    _rec["veza"] := "N"
+    _rec["duzina"] := 16
+    _rec["tip"] := "C"
+    update_rec_dbf_and_server(_rec, "id=" + _sql_quote(_rec["id"]) + " and oznaka =" + _rec["oznaka"])
+
  endif
 endif
 use

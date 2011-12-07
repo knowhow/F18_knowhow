@@ -128,12 +128,12 @@ for i:=1 to len(ImeKol)
 next
 
 Box(,20,50)
-ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranje             Í<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
+ObjDbedit("PLBK",20,50, {|| KaEdPrLBK()},"<SPACE> markiranje             Í<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
 BoxC()
 
 nRezerva:=0
 
-cLinija2:=padr("Uvoznik:"+gNFirma,45)
+cLinija2:=padr("Uvoznik:" + gNFirma, 45)
 
 Box(,4,75)
 	@ m_x+0, m_y+25 SAY " LABELIRANJE BAR KODOVA "
@@ -143,7 +143,7 @@ Box(,4,75)
 	ESC_BCR
 BoxC()
 
-cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
+cPrefix:=IzFmkIni("Barkod","Prefix","", SIFPATH)
 cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
@@ -336,7 +336,6 @@ SELECT BARKOD
 for  i:=1  to  fakt_pripr->kolicina + IF( fakt_pripr->kolicina > 0 , nRezerva , 0 )
 
 	APPEND BLANK
-
 	REPLACE ID       WITH  KonvZnWin(fakt_pripr->idroba)
 
 	if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="D"
@@ -348,9 +347,9 @@ for  i:=1  to  fakt_pripr->kolicina + IF( fakt_pripr->kolicina > 0 , nRezerva , 
 	REPLACE L2 WITH KonvZnWin(cLinija2), VPC WITH ROBA->vpc, MPC WITH ROBA->mpc, BARKOD WITH roba->barkod
 
 	if IzFmkIni("BarKod","JMJ","D",SIFPATH)=="N"
-		replace NAZIV    WITH  KonvZnWin(TRIM(ROBA->naz))
+		replace NAZIV WITH  KonvZnWin(TRIM(ROBA->naz))
 	else
-		replace NAZIV    WITH  KonvZnWin(TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")")
+		replace NAZIV WITH  KonvZnWin(TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")")
 	endif
 
 next

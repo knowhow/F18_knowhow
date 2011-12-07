@@ -1914,7 +1914,7 @@ return
 static function sif_brisi_stavku()
 
 if Pitanje(,"Zelite li izbrisati ovu stavku ??","D")=="D"
-    brisi_stavku_u_tabeli(ALIAS())
+    delete_rec_dbf_and_server()
     return DE_REFRESH
 else
     return DE_CONT
@@ -1941,9 +1941,9 @@ if _LOG_PROMJENE == .t.
 endif
 select (nTArea)
 
-if Pitanje(,"Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
+if Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
         
-    brisi_sve_u_tabeli(ALIAS())   
+    delete_all_dbf_and_server()   
     select (nTArea)
 
 endif

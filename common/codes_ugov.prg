@@ -815,9 +815,8 @@ do case
 
   case Ch==K_CTRL_T
      if Pitanje(,"Izbrisati stavku ?","N")=="D"
-       
-    	brisi_stavku_u_tabeli( ALIAS() )
-		//DELETE
+      
+       delete_rec_dbf_and_server() 
        lTrebaOsvUg:=.t.
        nRet:=DE_REFRESH
      else

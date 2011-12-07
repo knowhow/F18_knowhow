@@ -251,9 +251,9 @@ if !file(f18_ime_dbf("sifk"))
    my_use("sifk")
    close all
 endif
-CREATE_INDEX("ID","id+SORT+naz",  "sifk")
-CREATE_INDEX("ID2","id+oznaka", "sifk")
-CREATE_INDEX("NAZ","naz", "sifk")
+CREATE_INDEX("ID", "id+SORT+naz",  "sifk")
+CREATE_INDEX("ID2", "id+oznaka", "sifk")
+CREATE_INDEX("NAZ", "naz", "sifk")
 
 
 if !file(f18_ime_dbf("sifv.dbf"))  // sifrarnici - vrijednosti karakteristika

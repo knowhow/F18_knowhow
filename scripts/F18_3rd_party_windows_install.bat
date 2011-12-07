@@ -40,7 +40,7 @@ IF     ERRORLEVEL 1 goto :OFFLINE
 wget http://knowhow-erp-f18.googlecode.com/files/delphirb_%DELRB_VER%.gz
 wget http://knowhow-erp-f18.googlecode.com/files/ptxt_%PTXT_VER%.gz
 
-get http://knowhow-erp-f18.googlecode.com/files/F18_Windows_%F18_VER%.gz
+wget http://knowhow-erp-f18.googlecode.com/files/F18_Windows_%F18_VER%.gz
 
 
 goto :EXTRACT
@@ -55,11 +55,11 @@ echo kreiran je tmp podfolder ubacite potrebne pakete u isti
 
 gzip -dN ptxt_%PTXT_VER%.gz
 gzip -dN delphirb_%DELRB_VER%.gz
+gzip -dN F18_Windows_%F18_VER%.gz
 
 xcopy  /i ptxt.exe c:\knowhowERP\util
 xcopy  /i delphirb.exe c:\knowhowERP\util
 xcopy  /i F18.exe c:\knowhowERP\bin
-
 
 
 cd ..

@@ -154,7 +154,7 @@ for _offset := 0 to _count STEP _step
 
   // sredimo dbf - pobrisimo sto ne treba
   SELECT F_KUF
-  my_use ("kuf", "epdv_kuf", .f., "SEMAPHORE")
+  my_usex ("kuf", "epdv_kuf", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -428,7 +428,7 @@ for _offset := 0 to _count STEP _step
 
   // sredimo dbf - pobrisimo sto ne treba
   SELECT F_KIF
-  my_use ("kif", "epdv_kif", .f., "SEMAPHORE")
+  my_usex ("kif", "epdv_kif", .f., "SEMAPHORE")
 
   DO CASE
 

@@ -88,7 +88,7 @@ for _offset := 0 to _count STEP _step
 
   // sredimo dbf - pobrisimo sto ne treba
   SELECT F_FAKT
-  my_use ("fakt", "fakt_fakt", .f., "SEMAPHORE")
+  my_usex ("fakt", "fakt_fakt", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -361,7 +361,7 @@ for _offset := 0 to _count STEP _step
 
 
   SELECT F_FAKT_DOKS
-  my_use ("fakt_doks", "fakt_doks", .f., "SEMAPHORE")
+  my_usex ("fakt_doks", "fakt_doks", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -612,7 +612,7 @@ for _offset := 0 to _count STEP _step
 
 
   SELECT F_FAKT_DOKS2
-  my_use ("fakt_doks2", "fakt_doks2", .f., "SEMAPHORE")
+  my_usex ("fakt_doks2", "fakt_doks2", .f., "SEMAPHORE")
 
   DO CASE
 

@@ -92,7 +92,7 @@ for _offset := 0 to _count STEP _step
 
   // sredimo dbf - pobrisimo sto ne treba
   SELECT F_KALK
-  my_use ("kalk", "kalk_kalk", .f., "SEMAPHORE")
+  my_usex ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -421,7 +421,7 @@ for _offset := 0 to _count STEP _step
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
 
   SELECT F_KALK_DOKS
-  my_use ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
+  my_usex ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
 
   DO CASE
 

@@ -655,7 +655,7 @@ endif
 
 SELECT (area)
 
-my_use ( _alias, NIL, .f., "SEMAPHORE", algoritam)
+my_usex ( _alias, NIL, .f., "SEMAPHORE", algoritam)
 
 DO CASE
   CASE (algoritam == "FULL")
@@ -709,8 +709,6 @@ if (gDebug > 5)
     log_write(table + "synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t. 
 
 

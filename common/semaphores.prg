@@ -100,23 +100,9 @@ if  LEN(gaDBFs[_pos])>3
 
 endif
 
-/*
-
-#command USE <(db)> [VIA <rdd>] [ALIAS <a>] [<nw: NEW>] ;
-325             [<ex: EXCLUSIVE>] [<sh: SHARED>] [<ro: READONLY>] ;
-326             [CODEPAGE <cp>] [INDEX <(index1)> [, <(indexN)>]] => ;
-327          dbUseArea( <.nw.>, <rdd>, <(db)>, <(a)>, ;
-328                     if(<.sh.> .or. <.ex.>, !<.ex.>, NIL), <.ro.> [, <cp>] ) ;
-329          [; dbSetIndex( <(index1)> )] ;
-330          [; dbSetIndex( <(indexN)> )]
-
-if excl
-  USE (my_home() + table) ALIAS (alias) VIA (_rdd) EXCLUSIVE 
-else
-  USE (my_home() + table) ALIAS (alias) VIA (_rdd) 
+if used()
+   use
 endif
-*/
-
 dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
 
 return

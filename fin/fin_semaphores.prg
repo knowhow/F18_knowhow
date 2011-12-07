@@ -84,7 +84,7 @@ for _offset := 0 to _count STEP _step
 
 
   SELECT F_SUBAN
-  my_use ("suban", "fin_suban", .f., "SEMAPHORE")
+  my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -318,7 +318,7 @@ for _offset := 0 to _count STEP _step
 
 
   SELECT F_ANAL
-  my_use ("anal", "fin_anal", .f., "SEMAPHORE")
+  my_usex ("anal", "fin_anal", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -545,7 +545,7 @@ for _offset := 0 to _count STEP _step
 
 
   SELECT F_SINT
-  my_use ("sint", "fin_sint", .f., "SEMAPHORE")
+  my_usex ("sint", "fin_sint", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -772,7 +772,7 @@ for _offset := 0 to _count STEP _step
 
 
   SELECT F_NALOG
-  my_use ("nalog", "fin_nalog", .f., "SEMAPHORE")
+  my_usex ("nalog", "fin_nalog", .f., "SEMAPHORE")
 
   DO CASE
 

@@ -1019,7 +1019,7 @@ return ""
 function gPFF()
 
 Setpxlat()
-qqout(CHR(13)+Chr(10)+gPFF)
+qqout( hb_eol() + gPFF)
 setprc(0,0)
 konvtable(iif(gPrinter="R",.t.,NIL))
 return ""

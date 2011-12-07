@@ -622,18 +622,20 @@ else
    nVal:=roba->VPC
 endif
 
-if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek 
-   if gAutoCjen == "D" .and. Pitanje( ,"Staviti Cijenu ("+cPom+")"+" u sifrarnik ?","D")=="D"
+if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
+ 
+   if gAutoCjen == "D" .and. Pitanje( , "Staviti Cijenu (" + cPom + ")" + " u sifrarnik ?", "D") == "D"
      select roba
-     replace &cPom with nNovaVrijednost
+     
+     _vars := hbhash()
+     _vars[cPom] := nNovaVrijednost
 
-	 // setuj i sql
-	 _vars := f18_scatter_global_vars()
-	 f18_gather(_vars)
+     update_rec_dbf_and_server(_vars)
 
      select kalk_pripr
    endif
  endif
+
 return .t.
 
 

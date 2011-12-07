@@ -1,7 +1,7 @@
 @echo on
 
 rem env vars
-set PATH "C:\knowhowerp\bin;C:\knowhowerp\lib;C:\knowhowerp\util;C:\knowhowerp\lib;%PATH%"
+set PATH=%PATH%;C:\knowhowerp\bin;C:\knowhowerp\lib;C:\knowhowerp\util
 
 rem provjeri i kreiraj install dir 
 if not exist c:\knowhowERP  md c:\knowhowERP
@@ -53,6 +53,3 @@ cd ..
 echo F18 3d_party set uspjesno instaliran
 pause
 exit
-
-
-

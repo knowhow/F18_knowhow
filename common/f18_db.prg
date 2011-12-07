@@ -57,7 +57,7 @@ local _all_vars
 if rlock()
    for each _key in var:Keys
        // replace polja
-       EVAL( FIELDBLOCK(_key), vars[_key] )
+       EVAL( FIELDBLOCK( _key, vars[_key] ) )
     next
 
     update_rec_on_server( NIL, where)

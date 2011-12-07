@@ -316,11 +316,7 @@ elseif cPrinter=="V"
 
     /* TODO treba li f18_editor parametrizirati ?! */   
     
-	#ifdef __PLATFORM__WINDOWS
-    	_f_path := 'gvim ' + '"' + my_home() + cFName + '"'
-	#else
-    	_f_path := "f18_editor " + my_home() + cFName 
-	#endif
+    _f_path := "f18_editor " + my_home() + cFName 
 
     run ( _f_path )
 	

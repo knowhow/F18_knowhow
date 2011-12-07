@@ -235,6 +235,7 @@ local cS
 local i
 local nSek2
 local cOutfTxt
+local _f_path
 PRIVATE cPom
 
 SET DEVICE TO SCREEN
@@ -314,12 +315,15 @@ elseif cPrinter=="V"
     */
 
     /* TODO treba li f18_editor parametrizirati ?! */   
-    #ifdef __PLATFORM__WINDOWS
-    	run ('f18_editor ' + '"' +  my_home() + cFName + '"') 
+    
+	#ifdef __PLATFORM__WINDOWS
+    	_f_path := 'f18_editor ' + STRTRAN( my_home() + cFName, " ", "\ " )
 	#else
-    	run ("f18_editor " + my_home() + cFName) 
+    	_f_path := "f18_editor " + my_home() + cFName 
 	#endif
 
+    run ( _f_path )
+	
 	gaZagFix:=NIL
 	gaKolFix:=NIL
 

@@ -1149,7 +1149,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
 	skip
 enddo
 
-if lPopNaTeret = .t.
+if lPopNaTeret = .t. .or. lIni = .t.
 	
 	// ako ima popusta na teret prodavaca
 	// sredi total, ukljuci i rabat koji je dat

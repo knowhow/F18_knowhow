@@ -402,7 +402,7 @@ public gZ_5pf := "N"
 // prebacio iz fakt.ch define komande
 public zaokruzenje := 2
 public i_id := 1
-public nl := chr(13)+chr(10)
+public nl := hb_eol()
 
 O_PARAMS
 private cSection:="1"

@@ -9,26 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "os.ch"
-#include "f18_ver.ch"
-
-EXTERNAL DESCEND
-EXTERNAL RIGHT
+#define F18_VER_DEFINED
 
 
-function MainOs(cKorisn, cSifra, p3, p4, p5, p6, p7)
-local oOs
-local cModul
+#define F18_VER       "0.9.11"
+#define F18_VER_DATE  "08.12.2011"
 
-PUBLIC gKonvertPath:="D"
-
-cModul:="OS"
-PUBLIC goModul
-
-oOs := TOsMod():new(NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3,p4,p5,p6,p7)
-goModul:=oOs
-
-oOs:run()
-
-return
-
+#define FMK_LIB_VER   "0.9.6"

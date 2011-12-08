@@ -80,7 +80,7 @@ endif
 if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
 
      SELECT(F_TMP)
-   
+     use
      my_usex(alias)
  
      if !fSilent
@@ -101,14 +101,15 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      endif
 
 
-     if (LEFT(cTag,4)=="ID_J" .and. fieldpos("ID_J")==0) .or. (cTag=="_M1_" .and. FIELDPOS("_M1_")==0)
-        // da ne bi ispao ovo stavljam !!
-     else
+     //  provjeri indeksiranje na nepostojecim poljima ID_J, _M1_
+     if  !(LEFT(cTag, 4)=="ID_J" .and. fieldpos("ID_J")==0) .and. !(cTag=="_M1_" .and. FIELDPOS("_M1_")==0)
 
-     	cImeCdx:=strtran(cImeCdx, "." + INDEXEXT, "")
-     
+     	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
+
+        log_write("index on" + cKljucIz + " / " + cTag + " / " + cImeCdx + " / used() = " + hb_valToStr(USED()))     
      	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
      	USE
+
      endif
 
      if !fSilent

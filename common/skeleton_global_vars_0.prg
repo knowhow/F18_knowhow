@@ -11,6 +11,7 @@
 
 
 #include "fmk.ch"
+#include "f18_ver.ch"
 
 // --------------------------------------------
 // postavi globalne varijable

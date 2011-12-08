@@ -69,9 +69,6 @@ endif
 if  LEN(gaDBFs[_pos])>3 
 
    if (_rdd != "SEMAPHORE")
-        //if gDebug > 9
-        //    log_write("F18TBL =" + cF18Tbl)
-        //endif
         _version :=  get_semaphore_version(table)
         if gDebug > 9
           log_write("Tabela:" + table + " semaphore _version=" + STR(_version) + " last_semaphore_version=" + STR(last_semaphore_version(table)))
@@ -119,7 +116,7 @@ local _user := f18_user()
 // svi useri su lockovani
 _qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) 
 
-if gDebug > 5  
+if gDebug > 9 
   log_write(_qry)
 endif
 _ret := _sql_query( _server, _qry )
@@ -143,7 +140,7 @@ local _user := f18_user()
 
 _qry := "SELECT algorithm FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(_user)
 
-if gDebug > 5  
+if gDebug > 10 
   log_write(_qry)
 endif
 _ret := _sql_query( _server, _qry )
@@ -165,7 +162,7 @@ local _server:= pg_server()
 
 _qry := "SELECT last_trans_version FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(f18_user())
 
-if gDebug > 5  
+if gDebug > 9 
   log_write(_qry)
 endif
 _ret := _sql_query( _server, _qry )

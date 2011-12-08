@@ -28,7 +28,7 @@ local _server
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-public gDebug := 10
+public gDebug := 7
 IF ( nLogHandle :=  FCREATE("F18.log") ) == -1
     ? "Cannot create log file: F18.log"
     QUIT

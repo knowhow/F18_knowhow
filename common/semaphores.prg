@@ -66,14 +66,12 @@ if _rdd == NIL
   _rdd = "DBFCDX"
 endif
 
-if  LEN(gaDBFs[_pos])>3 
+if (LEN(gaDBFs[_pos]) > 3) 
 
+   // tabela je pokrivena semaforom
    if (_rdd != "SEMAPHORE")
         _version :=  get_semaphore_version(table)
-        if gDebug > 9
-          log_write("Tabela:" + table + " semaphore _version=" + STR(_version) + " last_semaphore_version=" + STR(last_semaphore_version(table)))
-        endif
-
+     
         if (_version == -1)
           // semafor je resetovan
           EVAL( gaDBFs[_pos, 4], "FULL")
@@ -91,8 +89,11 @@ if  LEN(gaDBFs[_pos])>3
         endif
         lock_semaphore(table, "free")
    else
-      // poziv is update from sql server procedure
-      _rdd := "DBFCDX" 
+      // rdd = "SEMAPHORE" poziv is update from sql server procedure
+     if gDebug > 5
+          log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area))
+     endif
+     _rdd := "DBFCDX" 
    endif
 
 endif

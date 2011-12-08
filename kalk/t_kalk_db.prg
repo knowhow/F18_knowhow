@@ -401,15 +401,15 @@ if (nArea==-1 .or. nArea==(F_KALK_DOKS))
 	AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
 	
 	if !FILE(f18_ime_dbf("kalk_doks"))
-        	DBcreate2("kalk_doks",aDbf)
+        	DBcreate2("kalk_doks", aDbf)
 			reset_semaphore_version("kalk_doks")
-        	my_use("kalk_doks")
+        	my_usex("kalk_doks")
   			close all
 	endif
 
-	CREATE_INDEX("1","IdFirma+idvd+brdok",KUMPATH+"kalk_doks")
-	CREATE_INDEX("2","IdFirma+MKONTO+idzaduz2+idvd+brdok",KUMPATH+"kalk_doks")
-	CREATE_INDEX("3","IdFirma+dtos(datdok)+podbr+idvd+brdok",KUMPATH+"kalk_doks")
+	CREATE_INDEX("1", "IdFirma+idvd+brdok", "kalk_doks")
+	CREATE_INDEX("2","IdFirma+MKONTO+idzaduz2+idvd+brdok", "kalk_doks")
+	CREATE_INDEX("3","IdFirma+dtos(datdok)+podbr+idvd+brdok", "kalk_doks")
 	CREATE_INDEX("DAT","datdok","kalk_doks")
 	// za RN
 	if glBrojacPoKontima = .t.

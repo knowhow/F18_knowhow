@@ -235,6 +235,7 @@ local cS
 local i
 local nSek2
 local cOutfTxt
+local _f_path
 PRIVATE cPom
 
 SET DEVICE TO SCREEN
@@ -314,8 +315,11 @@ elseif cPrinter=="V"
     */
 
     /* TODO treba li f18_editor parametrizirati ?! */   
-    run ("f18_editor " + my_home() + cFName) 
+    
+    _f_path := "f18_editor " + my_home() + cFName 
 
+    run ( _f_path )
+	
 	gaZagFix:=NIL
 	gaKolFix:=NIL
 

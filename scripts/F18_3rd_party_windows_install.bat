@@ -4,7 +4,7 @@ set I_VER="0.1.1"
 set I_DATE="07.12.2011"
 set DELRB_VER="1.0"
 set PTXT_VER="1.55"
-set F18_VER="0.9.9"
+set F18_VER="0.9.10"
 
 echo "F18 windows third party install ver %I_VER%, %I_DATE%"
 
@@ -17,16 +17,16 @@ if not exist c:\knowhowERP  md c:\knowhowERP
 rem install
 
 
-xcopy  /i lib c:\knowhowERP\lib
-xcopy  /i util c:\knowhowERP\util
+xcopy  /Y /i lib c:\knowhowERP\lib
+xcopy  /Y /i util c:\knowhowERP\util
 
 echo kopiram fontove
 cd  fonts\ptxt_fonts\
-xcopy /y   *.ttf "%WINDIR%\Fonts" 
+xcopy /Y /y   *.ttf "%WINDIR%\Fonts" 
 
 cd ..\.. 
 
-mkdir bin
+
 mkdir tmp
 cd tmp
 
@@ -39,7 +39,6 @@ IF     ERRORLEVEL 1 goto :OFFLINE
 
 wget http://knowhow-erp-f18.googlecode.com/files/delphirb_%DELRB_VER%.gz
 wget http://knowhow-erp-f18.googlecode.com/files/ptxt_%PTXT_VER%.gz
-
 wget http://knowhow-erp-f18.googlecode.com/files/F18_Windows_%F18_VER%.gz
 
 
@@ -57,10 +56,11 @@ gzip -dN ptxt_%PTXT_VER%.gz
 gzip -dN delphirb_%DELRB_VER%.gz
 gzip -dN F18_Windows_%F18_VER%.gz
 
-xcopy  /i ptxt.exe c:\knowhowERP\util
-xcopy  /i delphirb.exe c:\knowhowERP\util
-xcopy  /i F18.exe c:\knowhowERP\bin
-
+xcopy  /Y /i ptxt.exe c:\knowhowERP\util
+xcopy  /Y /i delphirb.exe c:\knowhowERP\util
+mkdir  c:\knowhowERP\bin
+xcopy  /Y /i F18.exe c:\knowhowERP\bin
+xcopy /Y   c:\knowhowERP\util\F18.lnk "%USERPROFILE%\Desktop"
 
 cd ..
 

@@ -48,6 +48,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+
+// sredimo dbf - pobrisimo sto ne treba
+SELECT F_KALK
+my_usex ("kalk", "kalk_kalk", .f., "SEMAPHORE")
+
+
 for _offset := 0 to _count STEP _step 
 
   _qry :=  "SELECT " + ;
@@ -88,11 +94,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  // sredimo dbf - pobrisimo sto ne treba
-  SELECT F_KALK
-  my_usex ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -227,9 +228,10 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
 
 next
+
+USE
 
 if (gDebug > 5)
     log_write("kalk_kalk synchro cache:" + STR(SECONDS() - _seconds))
@@ -382,6 +384,10 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+SELECT F_KALK_DOKS
+my_usex ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
+
+
 for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT " + ;
@@ -419,9 +425,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-  SELECT F_KALK_DOKS
-  my_usex ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -515,15 +518,13 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
-
 next
 
+USE
 if (gDebug > 5)
     log_write("kalk_doks synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
  
 return .t. 
 

@@ -22,7 +22,7 @@ static nSlogova:=0
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function create_index(cImeInd, cKljuc, alias, fSilent)
+function create_index(cImeInd, cKljuc, alias, silent)
 
 local bErr
 local cFulDbf
@@ -41,8 +41,8 @@ close all
   
 cImeDbf := f18_ime_dbf(alias)
 
-if fSilent == nil
-    fSilent := .f.
+if silent == nil
+    silent := .f.
 endif
 
 cImeCdx := ImeDbfCdx(cImeDbf)
@@ -83,12 +83,14 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      use
      my_usex(alias)
  
-     if !fSilent
+     if !silent
           MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))
      endif
-    
-	 log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd )
- 
+   
+     if gDebug > 5 
+	    log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd )
+     endif
+
      nPom:=RAT( SLASH, cImeInd)
     
      private cTag:=""
@@ -106,13 +108,13 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
 
      	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
 
-        log_write("index on" + cKljucIz + " / " + cTag + " / " + cImeCdx + " / used() = " + hb_valToStr(USED()))     
+        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " / alias=" + alias + " / used() = " + hb_valToStr(USED()))     
      	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
      	USE
 
      endif
 
-     if !fSilent
+     if !silent
        MsgC()
      endif
      use

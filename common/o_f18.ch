@@ -17,7 +17,7 @@
 #xcommand O_KPARAMS   => select (F_KPARAMS); my_use ( "kparams" ) ; set order to tag  "ID"
 #xcommand O_SECUR     => select (F_SECUR); my_use ( "secur" )  ; set order to tag "ID"
 #xcommand O_ADRES     => select (F_ADRES); my_use ( "adres" )  ; set order to tag "ID"
-#xcommand O_SQLPAR    => select (F_SQLPAR); my_use ( ToUnix( KUMPATH + "SQL"+ SLASH + "SQLPAR" ) )
+#xcommand O_SQLPAR    => select (F_SQLPAR); my_use ( "SQLPAR" )
 
 // sifk, sifv
 #xcommand O_SIFK => select(F_SIFK);  my_use  ("sifk")     ; set order to tag "ID"
@@ -60,9 +60,7 @@
 #xcommand O_ADRES     => select (F_ADRES); my_use (ToUnix("adres")) ; set order to tag "ID"
 #xcommand O_RELATION => SELECT (F_RELATION); my_USE ("relation"); set order to tag "1"
 #xcommand O_FINMAT  => select(F_FINMAT); my_use ("finmat")    ; set order to tag "1"
-//#xcommand O_FIN_FINMAT  => select(F_FIN_FINMAT); my_use ("fin_finmat")    ; set order to tag "1"
-//#xcommand O_FAKT_FINMAT  => select(F_FAKT_FINMAT); my_use ("fakt_finmat")    ; set order to tag "1"
-//#xcommand O_KALK_FINMAT  => select(F_KALK_FINMAT); my_use ("kalk_finmat")    ; set order to tag "1"
+
 #xcommand O_VPRIH => SELECT (F_VPRIH); MY_USE ("vrprih"); set order to tag "ID"
 #xcommand O_ULIMIT => SELECT (F_ULIMIT); MY_USE ("ulimit"); set order to tag "ID"
 #xcommand O_TIPBL => SELECT (F_TIPBL); MY_USE ("tipbl"); set order to tag "1"
@@ -100,10 +98,10 @@
 #xcommand O_RULES  => select (F_RULES); my_use ("rules") ; set order to tag "ID"
 
 // stampa PDV racuna
-#xcommand O_DRN => select(F_DRN); my_use ("drn"); set order to tag "1"
-#xcommand O_RN => select(F_RN); my_use ("rn"); set order to tag "1"
-#xcommand O_DRNTEXT => select(F_DRNTEXT); my_use ("drntext"); set order to tag "1"
-#xcommand O_DOKSPF => select(F_DOKSPF); my_use ("dokspf"); set order to tag "1"
+#xcommand O_DRN => select(F_DRN); my_usex ("drn"); set order to tag "1"
+#xcommand O_RN => select(F_RN); my_usex ("rn"); set order to tag "1"
+#xcommand O_DRNTEXT => select(F_DRNTEXT); my_usex ("drntext"); set order to tag "1"
+#xcommand O_DOKSPF => select(F_DOKSPF); my_usex ("dokspf"); set order to tag "1"
 
 // tabele provjere integriteta
 #xcommand O_DINTEG1 => SELECT (F_DINTEG1); USEX ("dinteg1"); set order to tag "1"
@@ -113,8 +111,8 @@
 #xcommand O_ERRORS => SELECT (F_ERRORS); USEX ("errors"); set order to tag "1"
 
 // sql messages
-#xcommand O_MESSAGE   => select(F_MESSAGE); my_use ("message"); set order to tag "1"
-#xcommand O_AMESSAGE   => select(F_AMESSAGE); my_use (EXEPATH+"amessage"); set order to tag "1"
+#xcommand O_MESSAGE   => select(F_MESSAGE); my_usex ("message"); set order to tag "1"
+#xcommand O_AMESSAGE   => select(F_AMESSAGE); my_usex (EXEPATH+"amessage"); set order to tag "1"
 #xcommand O_TMPMSG  => select(F_TMPMSG); my_use (EXEPATH+"tmpmsg"); set order to tag "1"
 
 

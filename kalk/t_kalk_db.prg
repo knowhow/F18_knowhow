@@ -441,7 +441,6 @@ endif
 
 
 
-
 if (nArea==-1 .or. nArea==(F_OBJEKTI))
 	
 	cImeTbl:="objekti"
@@ -458,19 +457,6 @@ if (nArea==-1 .or. nArea==(F_OBJEKTI))
 	CREATE_INDEX("NAZ", "NAZ", cImeTbl)
 	CREATE_INDEX("IdObj", "IdObj", cImeTbl)
 
-endif
-
-
-if (nArea==-1 .or. nArea==(F_K1))
-	aDbf:={}
-	AADD(aDbf, {"id", "C", 4, 0})
-	AADD(aDbf, {"naz","C", 20, 0})
-	cImeTbl:="k1"
-	if !FILE(f18_ime_dbf(cImeTbl))
-		DBCREATE2("K1", aDbf)
-	endif
-	CREATE_INDEX("ID", "ID", cImeTbl)
-	CREATE_INDEX("NAZ", "NAZ", cImeTbl)
 endif
 
 

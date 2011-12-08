@@ -13,6 +13,7 @@
 #include "dbstruct.ch"
 #include "error.ch"
 #include "setcurs.ch"
+#include "f18_separator.ch"
 
 /*! \fn function ObjDBedit(cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
  * \brief Glavna funkcija tabelarnog prikaza podataka

@@ -9,10 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define F18_VER_DEFINED
+#define BROWSE_HEAD_SEP 'ÑÍ'
+#define BROWSE_COL_SEP '³'
 
-
-#define F18_VER       "0.9.13"
-#define F18_VER_DATE  "08.12.2011"
-
-#define FMK_LIB_VER   "0.9.20"

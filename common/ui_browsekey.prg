@@ -13,6 +13,7 @@
 #include "dbstruct.ch"
 #include "error.ch"
 #include "setcurs.ch"
+#include "f18_separator.ch"
 
 // ------------------------------------------------------
 // ------------------------------------------------------

@@ -314,6 +314,3 @@
                 )
 
 
-#define BROWSE_HEAD_SEP 'ÑÍ'
-#define BROWSE_COL_SEP  "³"
- 

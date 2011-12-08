@@ -700,8 +700,6 @@ go top
 return
 
 
-
-
 /*! \fn SrediRbrFakt()
  *  \brief Sredi redni broj
  */

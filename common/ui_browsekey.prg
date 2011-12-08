@@ -1,14 +1,13 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "fmk.ch"
 #include "dbstruct.ch"
@@ -17,13 +16,12 @@
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-function BrowseKey(y1,x1,y2,x2,;
-                   ImeKol,bfunk,uslov,traz,brkol,;
-                   dx,dy,bPodvuci)
+function BrowseKey(y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, bPodvuci)
 
 static poziv:=0
 local lk, REKORD,TCol
-local nCurRec:=1,nRecCnt:=0
+local nCurRec:=1
+local nRecCnt:=0
 
 Private TB
 private usl
@@ -32,14 +30,18 @@ usl='USL'+alltrim(str(POZIV,2))
 POZIV++
 &usl=uslov
 TB:=tbrowsedb(y1,x1,y2,x2)
-TB:headsep='—Õ'
-TB:colsep ='≥'
-if eof(); skip -1; endif
-seek traz           //
+TB:headsep='√ë√ç'
+TB:colsep ='¬≥'
+if eof()
+   skip -1
+endif
+
+seek traz
 do while  &(&usl)
    nRecCnt ++
    skip
 enddo
+
 seek traz          
 if !found()
    nCurRec:=0
@@ -52,24 +54,35 @@ for i:=1 to len(ImeKol)
     endif
     TB:addcolumn(TCol)
 next
+
 if !empty(brkol) .and. valtype(brkol)='N'
   TB:freeze :=brkol
 endif
-TB:skipblock:={|x| korisnik(x,traz,dx,dy,@nCurRec,@nRecCnt)}
+
+TB:skipblock:={|x| korisnik(x, traz, dx, dy, @nCurRec, @nRecCnt)}
 
 EVAL(bfunk,0)
 
 do while .t.
    if dx<>NIL .and. dy<>NIL
-     @ m_x+dx,m_y+dy say STR(nRecCnt,4)
+     @ m_x+dx, m_y+dy say STR(nRecCnt,4)
    endif
 
-   while !Tb:stabilize() .and. NEXTKEY() == 0
-     if dx<>NIL .and. dy<>NIL
-        @ m_x+dx,m_y+dy say STR(nRecCnt,4)
-     endif
+   do while !Tb:stable .and. ((lk := INKEY()) == 0)
+       Tb:stabilize()
    enddo
-   lk:=LASTKEY()
+
+   if TB:stable .AND. (lk := INKEY()) == 0
+
+      if dx<>NIL .and. dy<>NIL
+         @ m_x + dx, m_y + dy say STR(nRecCnt,4)
+      endif
+
+      lk := inkey(0)
+   endif
+
+
+
 
    if lk==K_ESC
       POZIV--
@@ -104,7 +117,9 @@ do while .t.
          nRecCnt++
          TB:refreshall()
       elseif povrat==DE_DEL
-         if nRecCnt>0; nRecCnt--; endif
+         if nRecCnt>0
+               nRecCnt--
+         endif
          TB:refreshall()
       elseif povrat==DE_REFRESH
          TB:refreshall()
@@ -117,7 +132,7 @@ return (nil)
 
 // ------------------------------------------------------------
 // ------------------------------------------------------------
-static function Korisnik(nRequest,traz,dx,dy,nCurRec,nRecCnt)
+static function Korisnik(nRequest, traz, dx, dy, nCurRec, nRecCnt)
 
 local nCount
 nCount := 0

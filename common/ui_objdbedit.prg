@@ -60,9 +60,7 @@
 
 */
 
-function ObjDBedit(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, ;
-       lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, ;
-       aPoredak, skipblock)
+function ObjDBedit(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
 
 local nBroji2
 local cSmj, nRez, i, K, aUF, cPomDB, nTTrec
@@ -159,15 +157,11 @@ DO WHILE .T.
     endif
 
 
-    // nBroji2 := seconds()
     DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
-   
         Tb:stabilize()
-        // CekaHandler(@nBroji2)
-    
     ENDDO
 
-   if TB:stable .AND. (Ch := INKEY()) == 0
+    if TB:stable .AND. (Ch := INKEY()) == 0
          
       if bUserF<>NIL
          xcpos:=ROW()
@@ -176,14 +170,7 @@ DO WHILE .T.
          @ xcpos, ycpos SAY ""
       endif
 
-         //nBroji2:=seconds()
-
       Ch := inkey(0)
-         //DO WHILE ( Ch := INKEY() ) == 0
-         //  CekaHandler(@nBroji2)
-         //ENDDO
-         // Ch := INKEY()
-
    endif
 
    if bUserF <> NIL

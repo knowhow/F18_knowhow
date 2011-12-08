@@ -9,14 +9,15 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "os.ch"
 
 
 function unos_osnovnih_sredstava()
-private cId:=space(10),cIdRj:=space(4)
+private cId:=space(10), cIdRj:=space(4)
 
-Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA",19,77)
+MsgBeep( hb_Utf8ToStr("F18 unos promjena ne funkcioniše !##Opciju koristite samo za pregled za sada !") )
+
+Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
 do while .t.
 
 BoxCLS()
@@ -29,15 +30,17 @@ O_AMORT
 O_REVAL
 O_PROMJ
 set cursor on
-cPicSif:=IF(gPicSif="V","@!","")
+
+cPicSif := IIF(gPicSif="V", "@!", "")
 
  IF gIBJ=="D"
 
    @ m_x+1,m_y+2 SAY "Sredstvo:      " GET cId  VALID P_OS(@CID,1,35) PICT cPicSif
    @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj  ;
       WHEN {|| cIdRj:=os->idrj,.t. }  ;
-      VALID P_RJ(@CIDRJ,2,35)
-   read; ESC_BCR
+      VALID P_RJ(@cIDRJ,2, 35)
+   read
+   ESC_BCR
 
  ELSE
 
@@ -45,19 +48,22 @@ cPicSif:=IF(gPicSif="V","@!","")
 
      @ m_x+1,m_y+2 SAY "Sredstvo:      " GET cId PICT cPicSif
      @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj
-     read; ESC_BCR
+     read
+     ESC_BCR
+
      SELECT OS
      SEEK cId
      DO WHILE !EOF() .and. cId==OS->ID .and. cIdRJ!=OS->IDRJ
        SKIP 1
      ENDDO
+
      IF cID!=OS->ID .or. cIdRJ!=OS->IDRJ
        Msg("Izabrano sredstvo ne postoji!",5)
      ELSE
        SELECT RJ
        SEEK cIdRj
-       @ m_x+1,m_y+35 SAY OS->naz
-       @ m_x+2,m_y+35 SAY RJ->naz
+       @ m_x+1, m_y+35 SAY OS->naz
+       @ m_x+2, m_y+35 SAY RJ->naz
        EXIT
      ENDIF
 
@@ -65,25 +71,29 @@ cPicSif:=IF(gPicSif="V","@!","")
 
  ENDIF
 
- select amort; hseek os->idam
+ select amort
+ hseek os->idam
+
  select os
- if cidrj<>os->idrj
+ if (cIdrj <> os->idrj)
    IF Pitanje(,"Jeste li sigurni da zelite promijeniti radnu jedinicu ovom sredstvu? (D/N)"," ")=="D"
      replace idrj with cidrj
    ELSE
      cIdRj:=idrj
-     SELECT RJ; SEEK cIdRj; SELECT OS
+     SELECT RJ
+     SEEK cIdRj
+     SELECT OS
      @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj
      @ m_x+2,m_y+35 SAY RJ->naz
      CLEAR GETS
    ENDIF
  endif
- @ m_x+3,m_y+2 SAY "Datum nabavke: "; ?? os->datum
+ @ m_x+3, m_y+2 SAY "Datum nabavke: "; ?? os->datum
  if !empty(os->datotp)
-   @ m_x+3,m_y+38 SAY "Datum otpisa: "; ?? os->datotp
+   @ m_x+3, m_y+38 SAY "Datum otpisa: "; ?? os->datotp
  endif
- @ m_x+4,m_y+2 SAY "Nabavna vr.:"; ?? transform(nabvr,gpici)
- @ m_x+4,col()+2 SAY "Ispravka vr.:"; ?? transform(otpvr,gpici)
+ @ m_x+4, m_y + 2 SAY "Nabavna vr.:"; ?? transform(nabvr,gpici)
+ @ m_x+4, col() + 2 SAY "Ispravka vr.:"; ?? transform(otpvr,gpici)
  aVr:={nabvr,otpvr,0}
 
  // recno(), datum, DatOtp, NabVr, OtpVr, KumAmVr
@@ -94,14 +104,18 @@ cPicSif:=IF(gPicSif="V","@!","")
  select promj
 
 ImeKol:={}
-AADD(ImeKol,{ "DATUM",         {|| DATUM}                          })
-AADD(ImeKol,{ "OPIS",          {|| OPIS}                          })
-//AADD(ImeKol,{ "tip",           {|| tip}                          })
-AADD(ImeKol,{ PADR("Nabvr",11), {|| transform(nabvr,gpici)}     })
-AADD(ImeKol,{ PADR("OtpVr",11), {|| transform(otpvr,gpici)}     })
-AADD(ImeKol,{ PADR("Kumul.SadVr",11), {|| transform(PSadVr(),gpici)}     })
+
+AADD(ImeKol, { "DATUM",            {|| DATUM}                          })
+AADD(ImeKol, { "OPIS",             {|| OPIS}                          })
+AADD(ImeKol, { PADR("Nabvr",11),   {|| transform(nabvr,gpici)}     })
+AADD(ImeKol, { PADR("OtpVr",11),   {|| transform(otpvr,gpici)}     })
+AADD(ImeKol, { PADR("Kumul.SadVr",11), {|| transform(PSadVr(),gpici)}     })
+
 Kol:={}
-for i:=1 to len(ImeKol); AADD(Kol,i); next
+
+for i:=1 to len(ImeKol)
+   AADD(Kol,i)
+next
 
 set cursor on
 
@@ -110,9 +124,8 @@ set cursor on
 ShowSadVr()
 
 DO WHILE .t.
-  BrowseKey(m_x+8,m_y+1,m_x+19,m_y+77,ImeKol,{|Ch| unos_os_key_handler(Ch)},"id==cid",cid,2,;
-            ,,{|| PSadVr()<0})
-  IF aVr[1]-aVr[2]>=0
+  BrowseKey( m_x+8, m_y+1, m_x + maxrows() - 5, m_y + maxcols()-5, ImeKol, {|Ch| unos_os_key_handler(Ch)},"id==cid", cId, 2, NIL, NIL, {|| PSadVr()<0})
+  IF (aVr[1]-aVr[2] >= 0)
     IF aVr[3]<0
       MsgBeep("Greska: sadasnja vrijednost sa uracunatom amortizacijom manja od nule! #Ispravite gresku!")
     ELSE
@@ -121,7 +134,8 @@ DO WHILE .t.
   ELSE
     MsgBeep("Greska: sadasnja vrijednost manja od nule ! Ispravite gresku !")
   ENDIF
-  EXIT  // ipak necu zabraniti izlazak jer bi to moglo jos zakomplikovati rad
+  EXIT  
+
 ENDDO
 
 close all
@@ -132,12 +146,15 @@ closeret
 return
 
 
-
 function unos_os_key_handler(Ch)
-local cDn:="N",nRet:=DE_CONT, nRec0:=RECNO()
+
+local cDn:="N"
+local nRet:=DE_CONT
+local nRec0:=RECNO()
+
 do case
-  case Ch==K_ENTER .or. Ch==K_CTRL_N
-     IF CH=K_CTRL_N
+  case (Ch==K_ENTER .and. !(EOF() .or. BOF())) .or. Ch==K_CTRL_N
+     IF Ch==K_CTRL_N
        GO BOTTOM
        SKIP 1
      ENDIF
@@ -161,12 +178,14 @@ do case
        ShowSadVr()
        nRet:=DE_REFRESH
      ENDIF
+
   case Ch==K_CTRL_T
      if pitanje(,"Sigurno zelite izbrisati promjenu ?","N")=="D"
        delete
        ShowSadVr()
      endif
      return DE_REFRESH
+
   case Ch==K_CTRL_O
      select os
      nKolotp:=kolicina
@@ -180,7 +199,6 @@ do case
        read
      BoxC()
 
-     // ESC_RETURN  DE_CONT   - bug 09.05.02 MS
      IF LASTKEY()==K_ESC
        SELECT PROMJ
        RETURN DE_CONT
@@ -202,11 +220,11 @@ do case
        // novi inv broj
        appblank2(.f.,.t.)  //NC DL
        _kolicina:=nkolotp
-       _nabvr:=nnabvrj*nkolotp
-       _otpvr:=notpvrj*nkolotp
-       _id:=left(_id,9)+"O"
-       _datotp:=ddatotp
-       _opisotp:=copisotp
+       _nabvr := nnabvrj*nkolotp
+       _otpvr := notpvrj*nkolotp
+       _id := left(_id,9) + "O"
+       _datotp := ddatotp
+       _opisotp := cOpisOtp
        gather()
 
        fRastavljeno:=.t.
@@ -215,13 +233,15 @@ do case
       replace datotp with ddatotp,opisotp with cOpisOtp
      endif
      select promj
-     @ m_x+5,m_y+38 SAY "Datum otpisa: "; ?? os->datotp
+
+     @ m_x+5, m_y+38 SAY "Datum otpisa: "; ?? os->datotp
      if frastavljeno
          Msg("Postojeci inv broj je rastavljen na dva-otpisani i neotpisani")
          return DE_ABORT
      else
         RETURN DE_REFRESH
      endif
+
   case Ch==K_CTRL_I
      Box(,4,50)
        private cNovi:=space(10)
@@ -249,7 +269,7 @@ do case
 
          select os
          seek cid
-         replace id with cnovi
+         replace id with cNovi
          cId:=cnovi
        endif
        select promj
@@ -258,8 +278,6 @@ do case
      return DE_CONT
 endcase
 return nRet
-
-
 
 // 1) izracunaj i prikazi sadasnju vrijednost
 // 2) izracunaj i kumulativ amortizacije u aSred

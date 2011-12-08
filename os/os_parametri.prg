@@ -12,7 +12,6 @@
 
 #include "os.ch"
 
-
 // -----------------------------------
 // parametar datum obrade ...
 // -----------------------------------
@@ -21,7 +20,7 @@ function os_set_datum_obrade()
 O_PARAMS
 private cSection:="1",cHistory:=" "; aHistory:={}
 
-Box(,3,50)
+Box(, 3, 50)
 	set cursor on
  	//@ m_x+1,m_y+2 SAY "Radna jedinica" GET gRJ
  	@ m_x+2,m_y+2 SAY "Datum obrade  " GET gDatObr

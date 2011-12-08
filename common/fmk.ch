@@ -109,11 +109,11 @@
 #xcommand CLOSERET  => close all; return
 
 
-#xcommand ESC_BCR   => if lastkey()=K_ESC;
+#xcommand ESC_BCR   =>  if lastkey()=K_ESC;
                            ; close all        ;
                            ; BoxC()           ;
-                           ;return            ;
-                           ;endif
+                         ;return            ;
+                         ;endif
 
 
 #command START PRINT CRET <x> =>  if !StartPrint()       ;

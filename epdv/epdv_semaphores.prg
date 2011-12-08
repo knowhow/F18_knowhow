@@ -113,6 +113,10 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+SELECT F_KUF
+my_usex ("kuf", "epdv_kuf", .f., "SEMAPHORE")
+
+
 for _offset := 0 to _count STEP _step 
 
   _qry :=  "SELECT " + ;
@@ -150,11 +154,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  // sredimo dbf - pobrisimo sto ne treba
-  SELECT F_KUF
-  my_usex ("kuf", "epdv_kuf", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -260,9 +259,10 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
 
 next
+
+USE
 
 if (gDebug > 5)
     log_write("epdv_kuf synchro cache:" + STR(SECONDS() - _seconds))
@@ -387,6 +387,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+SELECT F_KIF
+my_usex ("kif", "epdv_kif", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step 
 
   _qry :=  "SELECT " + ;
@@ -425,10 +428,6 @@ for _offset := 0 to _count STEP _step
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
 
-
-  // sredimo dbf - pobrisimo sto ne treba
-  SELECT F_KIF
-  my_usex ("kif", "epdv_kif", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -535,9 +534,10 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
 
 next
+
+USE
 
 if (gDebug > 5)
     log_write("epdv_kif synchro cache:" + STR(SECONDS() - _seconds))

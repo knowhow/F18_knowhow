@@ -53,7 +53,6 @@ _count := table_count( _tbl, "true" )
 SELECT F_KALK
 my_usex ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
-
 for _offset := 0 to _count STEP _step 
 
   _qry :=  "SELECT " + ;
@@ -386,7 +385,6 @@ _count := table_count( _tbl, "true" )
 
 SELECT F_KALK_DOKS
 my_usex ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
-
 
 for _offset := 0 to _count STEP _step
 

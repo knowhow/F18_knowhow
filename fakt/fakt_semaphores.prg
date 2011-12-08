@@ -48,6 +48,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+SELECT F_FAKT
+my_usex ("fakt", "fakt_fakt", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step 
 
   _qry :=  "SELECT " + ;
@@ -84,11 +87,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  // sredimo dbf - pobrisimo sto ne treba
-  SELECT F_FAKT
-  my_usex ("fakt", "fakt_fakt", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -196,9 +194,9 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
-
 next
+
+USE
 
 if (gDebug > 5)
     log_write("fakt_fakt synchro cache:" + STR(SECONDS() - _seconds))
@@ -322,6 +320,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+SELECT F_FAKT_DOKS
+my_usex ("fakt_doks", "fakt_doks", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT " + ;
@@ -358,10 +359,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  SELECT F_FAKT_DOKS
-  my_usex ("fakt_doks", "fakt_doks", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -454,10 +451,9 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
-
 next
 
+USE
 if (gDebug > 5)
     log_write("fakt_doks synchro cache:" + STR(SECONDS() - _seconds))
 endif
@@ -574,6 +570,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+SELECT F_FAKT_DOKS2
+my_usex ("fakt_doks2", "fakt_doks2", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT " + ;
@@ -609,10 +608,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  SELECT F_FAKT_DOKS2
-  my_usex ("fakt_doks2", "fakt_doks2", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -695,16 +690,14 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
 
 next
 
+USE
 if (gDebug > 5)
     log_write("fakt_doks2 synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t. 
 
 

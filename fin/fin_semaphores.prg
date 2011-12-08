@@ -48,6 +48,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+SELECT F_SUBAN
+my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd, iznosdem FROM " + _tbl  
@@ -81,10 +84,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  SELECT F_SUBAN
-  my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -167,9 +166,10 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
 
 next
+
+USE
 
 if (gDebug > 5)
     log_write("fin_suban synchro cache:" + STR(SECONDS() - _seconds))
@@ -282,6 +282,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+SELECT F_ANAL
+my_usex ("anal", "fin_anal", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
@@ -315,10 +318,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  SELECT F_ANAL
-  my_usex ("anal", "fin_anal", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -399,16 +398,14 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
-
 next
+
+USE
 
 if (gDebug > 5)
     log_write("fin_anal synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t.
 
 
@@ -509,6 +506,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+SELECT F_SINT
+my_usex ("sint", "fin_sint", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
@@ -542,10 +542,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  SELECT F_SINT
-  my_usex ("sint", "fin_sint", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -626,16 +622,15 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
 
 next
+
+USE
 
 if (gDebug > 5)
     log_write("fin_sint synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-// close all
- 
 return .t.
 
 
@@ -736,6 +731,9 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+SELECT F_NALOG
+my_usex ("nalog", "fin_nalog", .f., "SEMAPHORE")
+
 for _offset := 0 to _count STEP _step
 
   _qry :=  "SELECT idfirma, idvn, brnal, datnal, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
@@ -769,10 +767,6 @@ for _offset := 0 to _count STEP _step
 
   _qry += " ORDER BY " + _order
   _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-
-
-  SELECT F_NALOG
-  my_usex ("nalog", "fin_nalog", .f., "SEMAPHORE")
 
   DO CASE
 
@@ -851,9 +845,10 @@ for _offset := 0 to _count STEP _step
     endif 
   ENDDO
 
-  USE
 
 next
+
+USE
 
 if (gDebug > 5)
     log_write("fin_nalog synchro cache:" + STR(SECONDS() - _seconds))
@@ -862,8 +857,6 @@ endif
 //close all
  
 return .t.
-
-
 
 
 // ----------------------------------------------

@@ -291,9 +291,9 @@
 
 #command APPEND NCNL    =>  appblank2(.f.,.f.)
 
-#command APPEND BLANKS           => appblank2()
+#command APPEND BLANKS  => appblank2()
 
-#command MY_DELETE  =>    delete2()
+#command MY_DELETE      =>    delete2()
 
 
 #define  MEMOEXTENS  "fpt"
@@ -314,3 +314,6 @@
                 )
 
 
+#define BROWSE_HEAD_SEP 'Ä'
+#define BROWSE_COL_SEP  "³"
+ 

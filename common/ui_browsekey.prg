@@ -30,8 +30,10 @@ usl='USL'+alltrim(str(POZIV,2))
 POZIV++
 &usl=uslov
 TB:=tbrowsedb(y1,x1,y2,x2)
-TB:headsep='ÑÍ'
-TB:colsep ='³'
+
+TB:headsep := BROWSE_HEAD_SEP
+TB:colsep := BROWSE_COL_SEP
+
 if eof()
    skip -1
 endif

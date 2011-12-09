@@ -946,11 +946,13 @@ return
 // --------------------------------
 // --------------------------------
 function PushWA()
+
 if used()
- StackPush(aWAStack,{select(),IndexOrd(),DBFilter(),RECNO()})
+   StackPush(aWAStack, {select(), IndexOrd(), DBFilter(), RECNO()})
 else
- StackPush(aWAStack,{NIL,NIL,NIL,NIL})
+   StackPush(aWAStack, {NIL, NIL, NIL, NIL})
 endif
+
 return NIL
 
 

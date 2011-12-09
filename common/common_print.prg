@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -133,13 +133,13 @@ else
 	if gKesiraj $ "CD"
 		cPom:= strtran(PRIVPATH, LEFT(PRIVPATH,3), gKesiraj+DRVPATH)
 		DirMak2(cpom)
-		cKom:=cPom+cFName
+		cKom := cPom + cFName
     elseif gKesiraj == "X"
 		cPom:=strtran(PRIVPATH, LEFT(PRIVPATH,3), "C"+DRVPATH)
 		DirMak2(cpom)
-		cKom:=cPom+cFName
+		cKom := cPom + cFName
 	else
-		cKom:=PRIVPATH+cFName
+		cKom := PRIVPATH + cFName
 	endif
 
 	if gnDebug>=5
@@ -360,8 +360,8 @@ else
 endif
 restore screen from cS
 
-endif 
 // cPrinter
+endif 
 
 // nemoj "brze izvjestaje"
 if nSek2-nSekundi>10  
@@ -386,7 +386,6 @@ return
 
 function SPrint2(cKom)
 
-
 // cKom je oznaka porta, npr. "3"
 
  local cddir, nNPort
@@ -396,11 +395,13 @@ if gPrinter="R"
   return
 endif
 
-setprc(0,0)
-nZagrada:=0
-cKom:=UPPER(cKom)
-nNPort:=VAL(substr(cKom,4))
+setprc(0, 0)
+nZagrada := 0
+cKom := UPPER(cKom)
+nNPort := VAL(substr(cKom,4))
+
 do while .t.
+
      if (SLASH $  cKom) .or. InRange(nNPort,5,7)  .or. ;
         (nNPort=8 ) .or.  ;
         (nNPort=9 ) .or.  ;
@@ -469,7 +470,6 @@ do while .t.
 return .t.
 
 
-
 function EPrint2(xPos)
 
 private cPom
@@ -479,12 +479,12 @@ if gPrinter=="R"
   return
 endif
 
-  RESET
-  set printer to
-  set printer off
-  set console on
-  SET DEVICE TO SCREEN
-  set printer to
+RESET
+set printer to
+set printer off
+set console on
+SET DEVICE TO SCREEN
+set printer to
 
   if gPPort $ "89"
     if gKesiraj $ "CD"
@@ -527,7 +527,7 @@ endif
   endif
   
   // LPT1, LPT2 ...
-  if gOpSist$"W2000WXP"
+  if gOpSist $ "W2000WXP"
   	save screen to cS
   	cPom:=EXEPATH+"dummy.txt"
   	!copy &cPom
@@ -545,11 +545,6 @@ endif
   Msg( "Stampanje zavrseno. Pritisnite bilo koju tipku za nastavak rada!", ;
        15, xPos )
 return
-
-
-//function cPrinter()
-
-//return cPrinter
 
 
 // ------------------------------------------

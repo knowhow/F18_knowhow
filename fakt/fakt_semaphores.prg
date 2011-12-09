@@ -182,7 +182,7 @@ for _offset := 0 to _count STEP _step
     		c3 with _qry_obj:FieldGet(24), ;
     		n1 with _qry_obj:FieldGet(25), ;
     		n2 with _qry_obj:FieldGet(26), ;
-    		opis with _qry_obj:FieldGet(27), ;
+    		opis with hb_Utf8ToStr(_qry_obj:FieldGet(27)), ;
     		dok_veza with _qry_obj:FieldGet(28)
       
 	_qry_obj:Skip()
@@ -424,7 +424,7 @@ for _offset := 0 to _count STEP _step
 	replace idfirma with _qry_obj:FieldGet(1), ;
     		idtipdok with _qry_obj:FieldGet(2), ;
     		brdok with _qry_obj:FieldGet(3), ;
-    		partner with _qry_obj:FieldGet(4), ;
+    		partner with hb_Utf8ToStr(_qry_obj:FieldGet(4)), ;
     		datdok with _qry_obj:FieldGet(5), ;
     		dindem with _qry_obj:FieldGet(6), ;
     		iznos with _qry_obj:FieldGet(7), ;

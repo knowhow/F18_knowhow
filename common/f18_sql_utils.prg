@@ -11,6 +11,25 @@
 
 #include "fmk.ch"
 
+
+// ------------------------------
+// fields := { "id, "naz" }
+// => "id, naz"
+//
+function sql_fields(fields)
+local  _i, _sql_fields := ""	
+
+for _i:=1 to LEN(fields)
+   _sql_fields += fields[_i]
+   if _i < LEN(fields)
+      _sql_fields +=  ","
+   endif
+next
+
+return _sql_fields
+
+ 
+
 //----------------------------------------------
 // ----------------------------------------------
 function sql_table_update(table, op, record, where )

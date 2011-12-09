@@ -32,6 +32,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idtipdok, brdok, rbr"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.fakt_fakt"
 
@@ -51,12 +52,15 @@ _count := table_count( _tbl, "true" )
 SELECT F_FAKT
 my_usex ("fakt", "fakt_fakt", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idtipdok", "brdok", "rbr", "datdok", "idpartner", "dindem", "zaokr", "podbr", "idroba", "serbr", "kolicina", "cijena", "rabat", "porez", "txt", "k1", "k2", "m1", "idvrstep", "idpm", "c1", "c2", "c3", "n1", "n2", "opis", "dok_veza" }
+
+
+_sql_fields := sql_fields(_fields)
+
+ 
 for _offset := 0 to _count STEP _step 
 
-  _qry :=  "SELECT " + ;
-		"idfirma, idtipdok, brdok, rbr, datdok, idpartner, dindem, zaokr, podbr, idroba, serbr, kolicina, " + ;
-		"cijena, rabat, porez, txt, k1, k2, m1, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza " + ;
-		"FROM " +	_tbl 
+  _qry :=  "SELECT " + _sql_fields + " FROM " +	_tbl 
   
   if algoritam == "DATE"
     _dat := get_dat_from_semaphore("fakt_fakt")
@@ -147,44 +151,18 @@ for _offset := 0 to _count STEP _step
   _counter := 1
 
   DO WHILE !_qry_obj:Eof()
+    
     append blank
-	
-	/*
-	_qry :=  "SELECT " + ;
-		"idfirma, idtipdok, brdok, rbr, datdok, idpartner, dindem, zaokr, podbr, idroba, serbr, kolicina, " + ;
-		"cijena, rabat, porez, txt, k1, k2, m1, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza " + ;
-		"FROM " +	_tbl 
- 	*/
+		
+    for _i := 1 to LEN(_fields)
+          _fld := FIELDBLOCK(_fields[_i])
+          if VALTYPE(EVAL(_fld)) $ "CM"
+              EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+          else
+              EVAL(_fld, _qry_obj:FieldGet(_i))
+          endif
+    next
 
-    replace idfirma with _qry_obj:FieldGet(1), ;
-    		idtipdok with _qry_obj:FieldGet(2), ;
-    		brdok with _qry_obj:FieldGet(3), ;
-    		rbr with _qry_obj:FieldGet(4), ;
-    		datdok with _qry_obj:FieldGet(5), ;
-    		idpartner with _qry_obj:FieldGet(6), ;
-    		dindem with _qry_obj:FieldGet(7), ;
-    		zaokr with _qry_obj:FieldGet(8), ;
-    		podbr with _qry_obj:FieldGet(9), ;
-    		idroba with _qry_obj:FieldGet(10), ;
-    		serbr with _qry_obj:FieldGet(11), ;
-    		kolicina with _qry_obj:FieldGet(12), ;
-    		cijena with _qry_obj:FieldGet(13), ;
-    		rabat with _qry_obj:FieldGet(14), ;
-    		porez with _qry_obj:FieldGet(15), ;
-    		txt with _qry_obj:FieldGet(16), ;
-    		k1 with _qry_obj:FieldGet(17), ;
-    		k2 with _qry_obj:FieldGet(18), ;
-    		m1 with _qry_obj:FieldGet(19), ;
-    		idvrstep with _qry_obj:FieldGet(20), ;
-    		idpm with _qry_obj:FieldGet(21), ;
-    		c1 with _qry_obj:FieldGet(22), ;
-    		c2 with _qry_obj:FieldGet(23), ;
-    		c3 with _qry_obj:FieldGet(24), ;
-    		n1 with _qry_obj:FieldGet(25), ;
-    		n2 with _qry_obj:FieldGet(26), ;
-    		opis with hb_Utf8ToStr(_qry_obj:FieldGet(27)), ;
-    		dok_veza with _qry_obj:FieldGet(28)
-      
 	_qry_obj:Skip()
 
     _counter++
@@ -304,6 +282,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idtipdok, brdok"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 if algoritam == NIL
   algoritam := "FULL"
@@ -320,15 +299,16 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+
+_fields := { "idfirma", "idtipdok", "brdok", "partner", "datdok", "dindem", "iznos", "rabat", "rezerv", "m1", "idpartner", "idvrstep", "datpl", "idpm", "dok_veza", "oper_id", "fisc_rn", "dat_isp", "dat_otpr", "dat_val" }
+_sql_fields := sql_fields(_fields)
+
 SELECT F_FAKT_DOKS
 my_usex ("fakt_doks", "fakt_doks", .f., "SEMAPHORE")
 
 for _offset := 0 to _count STEP _step
 
-  _qry :=  "SELECT " + ;
-		"idfirma, idtipdok, brdok, partner, datdok, dindem, iznos, rabat, rezerv, m1, idpartner, " + ;
-		"idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_isp, dat_otpr, dat_val " + ;
-		"FROM " + _tbl
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl
 
   if algoritam == "DATE"
       _dat = get_dat_from_semaphore( "fakt_doks" )
@@ -420,27 +400,15 @@ for _offset := 0 to _count STEP _step
 
   DO WHILE !_qry_obj:Eof()
     append blank
-   
-	replace idfirma with _qry_obj:FieldGet(1), ;
-    		idtipdok with _qry_obj:FieldGet(2), ;
-    		brdok with _qry_obj:FieldGet(3), ;
-    		partner with hb_Utf8ToStr(_qry_obj:FieldGet(4)), ;
-    		datdok with _qry_obj:FieldGet(5), ;
-    		dindem with _qry_obj:FieldGet(6), ;
-    		iznos with _qry_obj:FieldGet(7), ;
-    		rabat with _qry_obj:FieldGet(8), ;
-    		rezerv with _qry_obj:FieldGet(9), ;
-    		m1 with _qry_obj:FieldGet(10), ;
-    		idpartner with _qry_obj:FieldGet(11), ;
-    		idvrstep with _qry_obj:FieldGet(12), ;
-    		datpl with _qry_obj:FieldGet(13), ;
-    		idpm with _qry_obj:FieldGet(14), ;
-    		dok_veza with _qry_obj:FieldGet(15), ;
-    		oper_id with _qry_obj:FieldGet(16), ;
-    		fisc_rn with _qry_obj:FieldGet(17), ;
-    		dat_isp with _qry_obj:FieldGet(18), ;
-    		dat_otpr with _qry_obj:FieldGet(19), ;
-    		dat_val with _qry_obj:FieldGet(20)
+   			
+    for _i := 1 to LEN(_fields)
+          _fld := FIELDBLOCK(_fields[_i])
+          if VALTYPE(EVAL(_fld)) $ "CM"
+              EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+          else
+              EVAL(_fld, _qry_obj:FieldGet(_i))
+          endif
+    next
 
     _qry_obj:Skip()
 
@@ -458,8 +426,6 @@ if (gDebug > 5)
     log_write("fakt_doks synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t. 
 
 

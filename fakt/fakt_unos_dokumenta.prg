@@ -1,21 +1,20 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fakt.ch"
+#include "f18_separator.ch"
 
 static lKonsignacija := .f.
 static lDoks2 := .t.
 static lDirty := .t.
-
 
 
 // -----------------------------------------------------------------
@@ -89,14 +88,12 @@ cFBrDok := field->brdok
 
 Box( , MAXROWS() - 4, MAXCOLS() - 3 )
 
-//TekDokument()
+@ m_x + MAXROWS() - 4 - 3, m_y + 2 SAY " <c-N> Nove Stavke        " + BROWSE_COL_SEP + " <ENT> Ispravi stavku      " + BROWSE_COL_SEP + " <c-T> Brisi Stavku "
+@ m_x + MAXROWS() - 4 - 2, m_y + 2 SAY " <c-A> Ispravka Dokumenta " + BROWSE_COL_SEP + " <c-P> Stampa (TXT)        " + BROWSE_COL_SEP + " <a-F10> Asistent  "
+@ m_x + MAXROWS() - 4 - 1, m_y + 2 SAY " <a-A> Azuriranje dok.    " + BROWSE_COL_SEP + " <c-F9> Brisi pripremu     " + BROWSE_COL_SEP + " <F5>  Kontrola zbira  "
+@ m_x + MAXROWS() - 4, m_y + 2 SAY     " <R> Rezerv  <X> Prekid R " + BROWSE_COL_SEP + " <F10>  Ostale opcije      " + BROWSE_COL_SEP + " <F9> 20,12->10; 27->11"
 
-@ m_x + MAXROWS() - 4 - 3, m_y + 2 SAY " <c-N> Nove Stavke        ³ <ENT> Ispravi stavku      ³ <c-T> Brisi Stavku "
-@ m_x + MAXROWS() - 4 - 2, m_y + 2 SAY " <c-A> Ispravka Dokumenta ³ <c-P> Stampa (TXT)        ³ <a-F10> Asistent  "
-@ m_x + MAXROWS() - 4 - 1, m_y + 2 SAY " <a-A> Azuriranje dok.    ³ <c-F9> Brisi pripremu     ³ <F5>  Kontrola zbira  "
-@ m_x + MAXROWS() - 4, m_y + 2 SAY     " <R> Rezerv  <X> Prekid R ³ <F10>  Ostale opcije      ³ <F9> 20,12->10; 27->11"
-
-ObjDbedit( "PNal", MAXROWS() - 4, MAXCOLS() - 3 ,{|| fakt_pripr_keyhandler()},"","Priprema...", , , , ,4)
+ObjDbedit( "PNal", MAXROWS() - 4, MAXCOLS() - 3 , {|| fakt_pripr_keyhandler()}, "", "Priprema...", , , , , 4)
 
 BoxC()
 
@@ -105,7 +102,7 @@ return
 
 
 // ----------------------------------------------------------------------
-// ispisuje informaciju o teku¿em dokumentu na vrhu prozora 
+// ispisuje informaciju o tekucem dokumentu na vrhu prozora 
 // ----------------------------------------------------------------------
 function TekDokument()
 local nRec
@@ -1656,11 +1653,10 @@ if (_podbr==" ." .or.  roba->tip="U" .or. (nrbr==1 .and. val(_podbr)<1))
 	// odsjeci na kraju prazne linije
 	_txt2:=OdsjPLK(_txt2)           
      	if !"Faktura formirana na osnovu" $ _txt2
-        	_txt2 += CHR(13)+Chr(10)+_VezOtpr
+        	_txt2 += CHR(13)+Chr(10) + _VezOtpr
      	endif
 	
-    	//1
-	_txt:=Chr(16)+trim(_txt1)+Chr(17) 
+	_txt := Chr(16)+trim(_txt1)+Chr(17) 
 	_txt += Chr(16)+_txt2+Chr(17)
 	_txt += Chr(16)+trim(_txt3a)+Chr(17) 
 	_txt += Chr(16)+_txt3b+Chr(17)
@@ -2642,17 +2638,17 @@ function SKCKalk(lSet)
 *{
 // knjizna obavijest obavezno, a mo§e se podesiti i za ostale dokumente
 if _idtipdok=="25" .or.;
-     IzFMKIni("FAKT","TipDok"+_idtipdok+"_OmoguciUzimanjeFCJizKALK","N",KUMPATH)=="D"
+     IzFMKIni("FAKT","TipDok"+_idtipdok+"_OmoguciUzimanjeFCJizKALK", "N", KUMPATH)=="D"
     if lSet
       SET KEY K_ALT_K to UCKalk()
-      @ row()+1,27 SAY "ÚÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄ¿"
-      @ row()+1,27 SAY "³ <a-K> uzmi FCJ iz KALK ³"
-      @ row()+1,27 SAY "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+      @ row()+1, 27 SAY REPLICATE("-", 26)
+      @ row()+1, 27 SAY BROWSE_COL_SEP+" <a-K> uzmi FCJ iz KALK "+BROWSE_COL_SEP
+      @ row()+1, 27 SAY REPLICATE("-", 26)
     else
       SET KEY K_ALT_K TO
-      @ row()+1,27 SAY "                          "
-      @ row()+1,27 SAY "                          "
-      @ row()+1,27 SAY "                          "
+      @ row()+1, 27 SAY "                          "
+      @ row()+1, 27 SAY "                          "
+      @ row()+1, 27 SAY "                          "
     endif
   endif
 return .t.

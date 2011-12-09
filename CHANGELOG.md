@@ -1,15 +1,19 @@
-0.9.9, 2001-12-07, hernad, cistim haos, init
+0.9.13  2011-12-09, hernad FAKT
+ 
+  - FAKT naša slova [#25622](http://redmine.bring.out.ba/issues/25622)
+
+0.9.9,  2011-12-07, hernad, cistim haos, init
 
   - refactoring init replace => update_rec_dbf_and_server
  
-0.9.8, 2001-12-06, hernad, pravim haos
+0.9.8, 2011-12-06, hernad, pravim haos
 
   - my_use default shared - trazi rlock
     sada se pojavljuje milion "lock required"
 
   - uvodim get_rec, update_rec
 
-0.9.7, 2001-12-06, hernad,  sem_ver uklonjeno iz semafora
+0.9.7, 2011-12-06, hernad,  sem_ver uklonjeno iz semafora
 
    [sem_ver #25395](http://redmine.bring.out.ba/issues/25395)
     

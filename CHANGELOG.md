@@ -1,3 +1,7 @@
+0.9.14  2011-12-09, hernad FAKT
+
+  - inteligentnije azuriranje FAKT [#25631](http://redmine.bring.out.ba/issues/25631)
+
 0.9.13  2011-12-09, hernad FAKT
  
   - FAKT naša slova [#25622](http://redmine.bring.out.ba/issues/25622)
@@ -15,7 +19,7 @@
 
 0.9.7, 2011-12-06, hernad,  sem_ver uklonjeno iz semafora
 
-   [sem_ver #25395](http://redmine.bring.out.ba/issues/25395)
+  - [sem_ver #25395](http://redmine.bring.out.ba/issues/25395)
     
 
 0.9.5, 2011-12-02, vsasa, moduli FIN, KALK, FAKT stavljeni u funkciju 

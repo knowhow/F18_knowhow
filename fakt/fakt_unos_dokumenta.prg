@@ -2119,26 +2119,10 @@ if lJFill == nil
 		lJFill := .f.
 endif
 
-if gPdvDrb == "D"
-		if cIdFirma == nil
-			Stdok2p_rb()
-		else
-			if Pitanje(, "Stampa graficka faktura ? ", "N") == "D"
-					
-				Stdok2p_rb(cIdFirma, cIdTipDok, cBrDok)
-			else
-				StdokPdv(cIdFirma, cIdTipDok, cBrDok, lJFill)
-			endif
-		endif
-	
-else	
-
-	if cIdFirma == nil
-			StDokPDV()
-    else
-			StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
-	endif
-	
+if cIdFirma == nil
+  StDokPDV()
+else
+  StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
 endif
 	
 return

@@ -353,7 +353,7 @@ if !file(f18_ime_dbf(cIme) )
         AADD(aDBf,{ 'Adresa'              , 'C' ,  30 ,  0 })
         DBCREATE2("BANKE" , aDbf)
         reset_semaphore_version("banke")
-        my_use("banke")
+        my_usex("banke")
         close all
 endif
 CREATE_INDEX("ID","id", SIFPATH + cIme)

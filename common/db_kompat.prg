@@ -20,9 +20,8 @@
  */
 
 function DBT2FPT(cImeDBF)
-*{
 
-cImeDbf:=strtran(ToUnix(cImeDBF),"."+DBFEXT,"")
+cImeDbf := strtran(cImeDBF,"."+DBFEXT,"")
 close all
 
 if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
@@ -34,7 +33,7 @@ if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
    MsgO("Konvertujem "+cImeDBF+" iz DBT u FPT")
      Beep(1)
      copy structure extended to struct
-     USEX("STRUCT", nil, .t.)
+     my_USEX("STRUCT", nil, .t.)
      dbappend()
      replace field_name with "BRISANO" , field_type with "C", ;
         field_len with 1, field_dec with 0
@@ -70,7 +69,6 @@ endif
 close all
 
 return
-*}
 
 
 function kopi(fProm)

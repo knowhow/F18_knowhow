@@ -1,9 +1,9 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
@@ -11,8 +11,7 @@
 
 #include "fin.ch"
 
-
-#define DABLAGAS lBlagAsis.and._IDVN==cBlagIDVN
+#define DABLAGAS lBlagAsis .and. _IDVN==cBlagIDVN
 
 static cTekucaRj:=""
 static __par_len
@@ -26,6 +25,7 @@ static __par_len
 // ---------------------------------------------
 function fin_unos_naloga()
 local izbor
+
 private opc[4]
 
 cTekucaRj:=GetTekucaRJ()
@@ -60,7 +60,8 @@ if gNW=="N"
  Izbor:=1
  do while .t.
 
- h[1]:=h[2]:=h[3]:=h[4]:=""
+ h[1]:= h[2]:= h[3]:= h[4]:= ""
+
  Izbor:=menu("knjiz",opc,Izbor,.f.)
 
    do case
@@ -84,12 +85,12 @@ if gNW=="N"
 
  enddo
 
-else   // gNW=="D"
+else 
+  // gNW=="D"
   KnjNal()
 endif
 closeret
 return
-*}
 
 /*! \fn KnjNal()
  *  \brief Otvara pripremu za knjizenje naloga
@@ -109,10 +110,10 @@ ImeKol:={ ;
           {"D/P",           {|| D_P     }, "D_P" } ,;
           {ValDomaca(),     {|| transform(IznosBHD,FormPicL(gPicBHD,15)) }, "iznos "+ALLTRIM(ValDomaca()) } ,;
           {ValPomocna(),    {|| transform(IznosDEM,FormPicL(gPicDEM,10)) }, "iznos "+ALLTRIM(ValPomocna()) } ,;
-          {"Opis",          {|| Opis      }, "OPIS" }, ;
+          {"Opis",          {|| LEFT(Opis, 40) + IIF(LEN(Opis)>40, "...", "")  }, "OPIS" }, ;
           {"K1",            {|| k1      }, "k1" },;
           {"K2",            {|| k2      }, "k2" },;
-          {"K3",            {|| K3Iz256(k3)      }, "k3" },;
+          {"K3",            {|| K3Iz256(k3)   }, "k3" },;
           {"K4",            {|| k4      }, "k4" } ;
         }
 
@@ -129,9 +130,9 @@ ENDIF
 
 Box( , MAXROWS() - 4, MAXCOLS() - 3)
 
-@ m_x + MAXROWS() - 4-2, m_y+2 SAY "<c-N>  Nove Stavke    ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku         "
-@ m_x + MAXROWS() - 4-1, m_y+2 SAY "<c-A>  Ispravka Naloga³ <c-P> Stampa Naloga    ³ <a-A> Azuriranje           "
-@ m_x + MAXROWS() - 4,   m_y+2 SAY "<c-F9> Brisi pripremu ³ <F5>  KZB, <a-F5> PrDat³ <a-B> Blagajna,<F10> Ostalo"
+@ m_x + MAXROWS() - 2, m_y + 2 SAY "<c-N>  Nove Stavke    ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku         "
+@ m_x + MAXROWS() - 3, m_y + 2 SAY "<c-A>  Ispravka Naloga³ <c-P> Stampa Naloga    ³ <a-A> Azuriranje           "
+@ m_x + MAXROWS() - 4, m_y + 2 SAY "<c-F9> Brisi pripremu ³ <F5>  KZB, <a-F5> PrDat³ <a-B> Blagajna,<F10> Ostalo"
 
 
 ObjDbedit("PN2", MaxRows() - 4, MaxCols() - 3,  {|| edit_fin_pripr()}, "", "Priprema...", , , , ,3)
@@ -144,6 +145,7 @@ return
  *  \brief Sredjivaje rednog broja u pripremi 
  */
 function WRbr()
+
 scatter()
 if val(_rbr)<2
   @ m_x+1,m_y+2 SAY "Dokument:" GET _idvn
@@ -160,7 +162,6 @@ enddo
 set order to tag "1"
 go top
 return .t.
-*}
 
 
 function vrbr()
@@ -210,15 +211,13 @@ go top
 
 return
 
-
-
 /*! \fn edit_fin_priprema()
  *  \brief Ispravka stavke u pripremi
  *  \param fNovi .t. - Nova stavka, .f. - Ispravka postojece
  */
  
 function edit_fin_priprema()
-*{
+
 parameters fNovi
 
 if fNovi .and. nRbr==1
@@ -257,27 +256,27 @@ endif
 set key K_ALT_K to DinDem()
 set key K_ALT_O to KonsultOS()
 
-@  m_x+3,m_y+55  SAY "Broj:"   get _BrNal   valid Dupli(_IdFirma,_IdVN,_BrNal) .and. !empty(_BrNal)
-@  m_x+5,m_y+2  SAY "Redni broj stavke naloga:" get nRbr picture "9999"
-@  m_x+7,m_y+2   SAY "DOKUMENT: "
+@  m_x+3, m_y + 55  SAY "Broj:"   get _BrNal   valid Dupli(_IdFirma,_IdVN,_BrNal) .and. !empty(_BrNal)
+@  m_x+5, m_y + 2  SAY "Redni broj stavke naloga:" get nRbr picture "9999"
+@  m_x+7, m_y + 2   SAY "DOKUMENT: "
 
 if gNW<>"D"
 	@  m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
 endif
 
 if (IsRamaGlas())
-	@  m_x+8,m_y+2   SAY "Vezni broj (racun/r.nalog):"  get _BrDok valid BrDokOK()
+	@  m_x+8, m_y+2   SAY "Vezni broj (racun/r.nalog):"  get _BrDok valid BrDokOK()
 else
-	@  m_x+8,m_y+2   SAY "Vezni broj:" GET _BrDok
+	@  m_x+8, m_y+2   SAY "Vezni broj:" GET _BrDok
 endif
 
-@  m_x+8,m_y+COL()+2  SAY "Datum:" GET _DatDok VALID chk_sezona() 
+@  m_x+8, m_y + COL() + 2  SAY "Datum:" GET _DatDok VALID chk_sezona() 
 
 if cDatVal=="D"
 	@  m_x+8,col()+2 SAY "Valuta" GET _DatVal
 endif
 
-@ m_x+11, m_y+2  SAY "Opis :" GET _Opis WHEN {|| .t.} VALID {|| .t.} PICT "@S20"
+@ m_x+11, m_y+2  SAY "Opis :" GET _Opis WHEN {|| .t.} VALID {|| .t.} PICT "@S50"
 
 if fk1=="D"
 	@  m_x+11,col()+2 SAY "K1" GET _k1 pict "@!" 
@@ -538,12 +537,14 @@ case Ch==K_ALT_F5
         cIdKonto:=space(7)
         dDatDok:=date()
         nDana:=15
-        Box(,5,60)
-          @ m_x+1,m_Y+2 SAY "Promjena za konto  " GET cIdKonto
-          @ m_x+3,m_Y+2 SAY "Novi datum dok " GET dDatDok
-          @ m_x+5,m_Y+2 SAY "uvecati stari datdok za (dana) " GET nDana pict "99"
+
+        Box(, 5, 60)
+          @ m_x+1, m_Y+2 SAY "Promjena za konto  " GET cIdKonto
+          @ m_x+3, m_Y+2 SAY "Novi datum dok " GET dDatDok
+          @ m_x+5, m_Y+2 SAY "uvecati stari datdok za (dana) " GET nDana pict "99"
           read
         BoxC()
+
         if lastkey()<>K_ESC
           select fin_pripr
           go top
@@ -633,7 +634,7 @@ case Ch==K_ALT_F5
 	   skip-1
            Scatter()
            nRbr:=VAL(_Rbr)
-           @ m_x+1,m_y+1 CLEAR to m_x+19,m_y+74
+           @ m_x+1, m_y+1 CLEAR to m_x+19,m_y+74
            if edit_fin_priprema(.f.)==0
            	exit
            else
@@ -738,11 +739,12 @@ case Ch==K_ALT_F5
 			"", "Brisanje kompletne pripreme !")
 	     endif
 	     zap
-             BrisiPBaze()
+         BrisiPBaze()
 	endif
         return DE_REFRESH
 
    case Ch==K_CTRL_P
+
      close all
      StNal()
      o_fin_edit()
@@ -758,7 +760,6 @@ case Ch==K_ALT_F5
      close all
      StNal(.t.)
 
-     // pa azuriraj
      close all
      fin_azur(.t.)
      o_fin_edit()
@@ -864,15 +865,19 @@ return 0
  */
  
 function BrisiPBaze()
-*{
   PushWA()
-  SELECT F_PSUBAN; ZAP
-  SELECT F_PANAL; ZAP
-  SELECT F_PSINT; ZAP
-  SELECT F_PNALOG; ZAP
+  SELECT F_PSUBAN
+  ZAP
+  SELECT F_PANAL
+  ZAP
+  SELECT F_PSINT
+  ZAP
+  SELECT F_PNALOG
+  ZAP
+  
   PopWA()
+
 RETURN (NIL)
-*}
 
 
 /*! \fn PreuzSezSPK(cSif)
@@ -1586,170 +1591,6 @@ function PrenosDNal()
   nTSDugBHD:=nTSPotBHD:=nTSDugDEM:=nTSPotDEM:=0   // tekuca strana
 RETURN
 *}
-
-
-/*! \fn IzvodBanke()
- *  \brief Formira nalog u pripremi na osnovu txt-izvoda iz banke
- */
- 
-function IzvodBanke()
-*{
- LOCAL nIF:=1, cBrNal:=""
- PRIVATE cLFSpec := "A:\ZEN*.", cIdVn:="99"
-
- O_NALOG
- O_FIN_PRIPR
- if reccount2()<>0
-   Msg("Priprema mora biti prazna !")
-   closeret
- endif
-
- Box(,20,75); old_m_x := m_x; old_m_y := m_y
-
-  O_PARAMS
-   PRIVATE cSection:="7",cHistory:=" ",aHistory:={}
-    RPar("f1",@cLFSpec)
-     RPar("f2",@cIdVn)
-      SELECT PARAMS; USE
-
-  cLFSpec:=PADR(cLFSpec,50)
-  @ m_x+2, m_y+2 SAY "Lokacija i specifikacija fajla-izvoda banke" GET cLFSpec PICT "@!S30"
-  @ m_x+3, m_y+2 SAY "Vrsta naloga koji se formira (prazno-ne formiraj nalog):" GET cIdVn
-  READ; ESC_BCR
-  cLFSpec:=TRIM(cLFSpec)
-
-  O_PARAMS
-   PRIVATE cSection:="7",cHistory:=" "; aHistory:={}
-    WPar("f1",cLFSpec)
-     WPar("f2",cIdVn)
-      SELECT PARAMS; USE
-
-  aFajlovi := DIRECTORY(cLFSpec)
-  IF LEN(aFajlovi)<1
-    MsgBeep("Na izabranoj lokaciji ne postoji nijedan specificirani fajl!")
-    BoxC(); CLOSERET
-  ENDIF
-
-  FOR i:=1 TO LEN(aFajlovi); aFajlovi[i]:=PADR(aFajlovi[i,1],20); NEXT
-  nIF := Menu("IBan",aFajlovi,nIF,.f.)
-  IF nIF<1
-    BoxC(); CLOSERET
-  ELSE
-    // zatvaranje prozora menija
-    // -------------------------
-    Menu("IBan",aFajlovi,0,.f.)
-  ENDIF
-  cIme := LEFT(cLFSpec,2)+"\"+TRIM(aFajlovi[nIF])
-  m_x := old_m_x; m_y := old_m_y
-  @ m_x+4, m_y+2 SAY "Izabran fajl:"
-  @ m_x+4, col()+2 SAY cIme COLOR INVERT
-
-  nH   := fopen(cIme)
-  nRBr := 0
-  cBrNal := nextnal( gFirma, cIdvn )
-  
-  StartPrint(.t.)
-
-  P_COND2
-  ? "ÚÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿"
-  ? "³R.BR³ DATUM  ³ZIRO-RACUN      ³POSILJAOC: NAZIV, ADRESA I MJESTO                                                         ³POZIV NA BROJ                     ³"
-  ? "ÃÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÁÂÄÄÄÄÄÄÄÄÂÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄ´"
-  ? "³SIFRA I OPIS SVRHE DOZNAKE                                     ³     IZNOS    ³D/P³MAT.BROJ     ³VR.UPL.³VR.PRIH.³ DAT.OD ³ DAT.DO ³OP³ P.NA BR. ³BUDZ.ORG.³"
-  ? "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÙ"
-
-  DO WHILE .T.
-
-    cString := Freadln(nH,1,268)
-    cString := STRTRAN( cString , CHR(0) , " " )
-
-    IF LEN(TRIM(cString)) < 2
-      EXIT
-    ENDIF
-
-    w_DatDok := CTOD( SUBSTR( cString , 1 , 2 ) + "." +;
-                      SUBSTR( cString , 3 , 2 ) + "." +;
-                      SUBSTR( cString , 5 , 2 ) )
-
-    w_ZiroR  := SUBSTR( cString ,   7 , 16 )
-    w_SaljeN := SUBSTR( cString ,  23 , 30 )
-    w_SaljeA := SUBSTR( cString ,  53 , 30 )
-    w_SaljeM := SUBSTR( cString ,  83 , 30 )
-    w_PNABR  := SUBSTR( cString , 113 , 26 )
-    w_SifDoz := SUBSTR( cString , 139 ,  3 )
-    w_SvrDoz := SUBSTR( cString , 142 , 60 )
-
-    w_Iznos  := VAL( SUBSTR( cString , 202 , 10 )+"."+;
-                     SUBSTR( cString , 212 ,  2 ) )
-
-    w_DugPot := SUBSTR( cString , 214 ,  1 )
-    w_MatBr  := SUBSTR( cString , 215 , 13 )
-    w_VrUpl  := SUBSTR( cString , 228 ,  1 )
-    w_VrPrih := SUBSTR( cString , 229 ,  6 )
-
-    w_DatOd  := CTOD( SUBSTR( cString , 235 , 2 ) + "." +;
-                      SUBSTR( cString , 237 , 2 ) + "." +;
-                      SUBSTR( cString , 239 , 2 ) )
-
-    w_DatDo  := CTOD( SUBSTR( cString , 241 , 2 ) + "." +;
-                      SUBSTR( cString , 243 , 2 ) + "." +;
-                      SUBSTR( cString , 245 , 2 ) )
-
-    w_Opcina := SUBSTR( cString , 247 ,  3 )
-    w_PNABR2 := SUBSTR( cString , 250 , 10 )
-    w_BudOrg := SUBSTR( cString , 260 ,  7 )
-
-    ++nRBr
-
-    // TEST:
-    // ? nRBr, w_datdok, w_ziror, w_opcina, w_pnabr2, w_budorg
-
-    IF prow()>60
-      FF
-      ? "ÚÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿"
-      ? "³R.BR³ DATUM  ³ZIRO-RACUN      ³POSILJAOC: NAZIV, ADRESA I MJESTO                                                         ³POZIV NA BROJ                     ³"
-      ? "ÃÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÁÂÄÄÄÄÄÄÄÄÂÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄ´"
-      ? "³SIFRA I OPIS SVRHE DOZNAKE                                     ³     IZNOS    ³D/P³MAT.BROJ     ³VR.UPL.³VR.PRIH.³ DAT.OD ³ DAT.DO ³OP³ P.NA BR. ³BUDZ.ORG.³"
-      ? "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÙ"
-    ENDIF
-
-
-    ? " "+STR(nRBR,4), w_DatDok, w_ZiroR, PADR(TRIM(w_SaljeN)+", "+TRIM(w_SaljeA)+", "+TRIM(w_SaljeM),90), w_PNABR
-    ? " "+w_SifDoz, w_SvrDoz, w_Iznos, IF(w_DugPot=="1","dug","pot"), w_MatBr
-    ?? " "+PADR(w_VrUpl,7), PADR(w_VrPrih,8), w_DatOd, w_DatDo, w_Opcina, w_PNABR2, w_BudOrg
-    ? REPL("-",160)
-
-    IF !EMPTY(cIdVn)
-      select fin_pripr
-      APPEND BLANK
-      REPLACE idfirma   with  gFirma      ,;
-              idvn      with  cIdVn       ,;
-              brnal     with  cBrNal      ,;
-              datdok    with  w_datdok    ,;
-              d_p       with  w_DugPot    ,;
-              iznosbhd  with  w_iznos     ,;
-              rbr       with  str(nRBr,4) ,;
-              idkonto   with  w_VrPrih    ,;
-              opis      with  w_SvrDoz
-    ENDIF
-
-  ENDDO
-
-  FClose(nH)
-
-  FF
-  EndPrint()
-
-  IF !EMPTY(cIdVn)
-    MsgBeep("Preuzimanje izvoda zavrseno. Vratite se u pripremu tipkom <Esc>!")
-  ELSE
-    MsgBeep("Pregled izvoda zavrsen. Vratite se u pripremu tipkom <Esc>!")
-  ENDIF
-
- BoxC()
-CLOSERET
-return
-*}
-
 
 
 /*! \fn K3Iz256(cK3)

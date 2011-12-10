@@ -12,7 +12,6 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
-static lKonsignacija := .f.
 static lDoks2 := .t.
 static lDirty := .t.
 
@@ -999,10 +998,6 @@ endif
 
 Gather()
 
-if lSetujDatum .or. cSetPor=="D"    
-      // obracunaj porez na promet proizvoda na sve stavke!!
-      ObracunajPP(cSetPor,dDatDok)
-endif
 
 return
 
@@ -1021,16 +1016,12 @@ local lTxtNaKraju := .f.
 local cAvRacun
 local cListaTxt := ""
 
-lKonsignacija := IzFmkIni("FAKT","Konsignacija","N",KUMPATH) == "D"
 lDoks2:=(IzFmkIni("FAKT","Doks2","D", KUMPATH)=="D")
 
 private aPom:={}
 
 AADD(aPom, "00 - Pocetno stanje                ")
 AADD(aPom, "01 - Ulaz / Radni nalog ")
-if lKonsignacija
-	AADD(aPom, "06 - Ulaz u konsig.skladiste")
-endif
 
 AADD(aPom, "10 - Porezna faktura")
 
@@ -1039,11 +1030,7 @@ AADD(aPom, "12 - Otpremnica" )
 
 AADD(aPom, "13 - Otpremnica u maloprodaju")
 
-if lKonsignacija
-AADD(aPom, "16 - Konsignacioni racun")
-endif
-
-AADD(aPom, "19 - "+Naziv19ke())
+AADD(aPom, "19 - " + Naziv19ke() )
 
 AADD(aPom, "20 - Ponuda/Avansna faktura") 
 
@@ -2045,7 +2032,6 @@ endif
 
 // novi dokument, koji nema svog broja, u pripremi
 select fakt_doks
-//Scatter ()
 
 if gMreznoNum == "D"
    if !FAKT_DOKS->(FLOCK())
@@ -2122,34 +2108,21 @@ if gMreznoNum == "D"
 endif
 
 return _BrDok
-*}
 
 
 
-/*! \fn StampTXT(cIdFirma,cIdTipDok,cBrDok)
- *  \brief Stampa dokumenta
- *  \todo Ovo bi trebalo prebaciti u /RPT
- *  \param cIdFirma
- *  \param cIdTipDok
- *  \param cBrDok
- */
- 
 function StampTXT(cIdFirma, cIdTipDok, cBrDok, lJFill)
-private InPicDEM:=PicDEM  // picture iznosa
-private InPicCDEM:=PicCDEM  // picture iznosa
+private InPicDEM:=PicDEM
+private InPicCDEM:=PicCDEM  
 
-if IsPDV()
-
-	if lJFill == nil
+if lJFill == nil
 		lJFill := .f.
-	endif
+endif
 
-	if gPdvDrb == "D"
-		
+if gPdvDrb == "D"
 		if cIdFirma == nil
 			Stdok2p_rb()
 		else
-			// poziv iz stame liste dokumenata, pitaj
 			if Pitanje(, "Stampa graficka faktura ? ", "N") == "D"
 					
 				Stdok2p_rb(cIdFirma, cIdTipDok, cBrDok)
@@ -2158,148 +2131,17 @@ if IsPDV()
 			endif
 		endif
 	
-	else	
+else	
 
-		if cIdFirma == nil
+	if cIdFirma == nil
 			StDokPDV()
-		else
+    else
 			StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
-		endif
-	
 	endif
 	
-	PicDEM:=InPicDEM
-	PicCDEM:=InPicCDEM
+endif
 	
-	return
-
-endif
-
-cIniName:=PRIVPATH+'fmk.ini'
-UzmiIzIni(cIniName,'UpitFax','Slati','N','WRITE')
-UzmiIzIni(EXEPATH+'fmk.ini','FAKT','KrozDelphi','N','WRITE')
-
-
-if IzFmkIni('Fakt','DelphiRB','N',EXEPATH)=='P'
-   if Pitanje(,'Zelite li stampu kroz DelphiRB D/N ?','N')=='D'
-      UzmiIzIni(EXEPATH+'fmk.ini','FAKT','KrozDelphi','D','WRITE')
-   endif
-endif
-if IzFmkIni('UpitFax','PitatiZaFax','N',PRIVPATH)=='D'
-  if Pitanje(,'Zelite li dokument za slanje faks-om D/N ?','N')=='D'
-     UzmiIzIni(cIniName,'UpitFax','Slati','D','WRITE')
-  endif
-endif
-
-if "U" $ TYPE("lSSIP99") .or. !VALTYPE(lSSIP99)=="L"; lSSIP99:=.f.; endif
-
-
-if !(cIdTipdok $ "10#11#13#15#25#27") .and.;
-   !(cIdTipDok $ "20" .and. IzFMKIni("FAKT","PredracuniUvijekSaIznosima","N",PRIVPATH)=="D") .and.;
-   (gSamokol=="D" .or. glDistrib.and.cIdTipDok$"26#21" .or.;
-    Pitanje(,"Prikaz iznosa na dokumentu ?","D")=="N")
-   Picdem:=space(len(picdem))
-   PicCdem:=space(len(piccdem))
-endif
-
-lPartic := ( IzFMKIni("FAKT","19KaoRacunParticipacije","N",KUMPATH)=="D" )
-
-if gNW=="T"
-  if cIdFirma==nil
-   StDokM()
-  else
-   StDokM(cIdFirma,cIdTipdok,cbrdok)
-  endif
-else
-  if cidtipdok=="13"
-    if cIdFirma==nil
-     if IzFMKINI("STAMPA","Opresa","N",KUMPATH)=="D"
-       StDok13s()
-     else
-       StDok13()
-     endif
-    else
-     if IzFMKINI("STAMPA","Opresa","N",KUMPATH)=="D"
-       StDok13s(cIdFirma,cIdTipdok,cbrdok)
-     else
-       StDok13(cIdFirma,cIdTipdok,cbrdok)
-     endif
-    endif
-  elseif cidtipdok=="19" .and. lPartic
-    if cIdFirma==nil
-      //StDok2()
-    else
-      //StDok2(cIdFirma,cIdTipdok,cbrdok)
-    endif
-  else
-   if gTipF=="1"
-     if cIdFirma==nil
-        StDok()
-     else
-        Stdok(cIdFirma,cIdTipdok,cbrdok)
-     endif
-   elseif gTipF=="2"
-    if gVarF=="3"
-      if cIdFirma==nil
-         Stdok23()
-      else
-         Stdok23(cIdFirma,cIdTipdok,cbrdok)
-      endif
-    elseif gVarF=="9".or.gVarF=="B"
-      if cidtipdok $ "12#10#20#25"
-        if cIdFirma==nil
-           StDok29()
-        else
-           StDok29(cIdFirma,cIdTipdok,cbrdok)
-        endif
-      else
-        gVarF:="2"
-        if cIdFirma==nil
-           //StDok2()
-        else
-           //StDok2(cIdFirma,cIdTipdok,cbrdok)
-        endif
-        gVarF:="9"
-      endif
-    elseif gVarF=="A"
-      if cidtipdok $ "12#10#20#25#26"
-        if cIdFirma==nil
-         StDok2a()
-        else
-         StDok2a(cIdFirma,cIdTipdok,cbrdok)
-        endif
-      else
-        gVarF:="2"
-        if cIdFirma==nil
-          //StDok2()
-        else
-          //StDok2(cIdFirma,cIdTipdok,cbrdok)
-        endif
-        gVarF:="A"
-      endif
-    else
-      if cIdFirma==nil
-        //StDok2()
-      else
-        //StDok2(cIdFirma,cIdTipdok,cbrdok)
-      endif
-    endif
-   else
-    if cIdFirma==nil
-      StDok3()
-    else
-      StDok3(cIdFirma,cIdTipdok,cbrdok)
-    endif
-   endif
-  endif
-endif
-
-PicDEM:=InPicDEM
-PicCDEM:=InPicCDEM
-
 return
-*}
-
 
 /* \fn ArgToStr()
  * Argument To String

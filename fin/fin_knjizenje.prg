@@ -608,7 +608,7 @@ case Ch==K_ALT_F5
       return DE_REFRESH
 
    case Ch==K_ENTER
-    Box("ist",20,75,.f.)
+    Box("ist", MAXROWS()- 5, MAXCOLS() - 8,.f.)
     Scatter()
     nRbr:=VAL(_Rbr)
     if edit_fin_priprema(.f.)==0

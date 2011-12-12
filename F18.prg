@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-static nLogHandle := NIL
 static cIniHomeRoot := NIL
 static cIniHome := NIL
 static cIniConfig := ".f18_config.ini"
@@ -27,10 +26,6 @@ local _server
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 public gDebug := 7
-IF ( nLogHandle :=  FCREATE("F18.log") ) == -1
-    ? "Cannot create log file: F18.log"
-    QUIT
-ENDIF
 
 init_f18_app()
 
@@ -75,12 +70,8 @@ do while .t.
  	loop
 enddo
 
-FCLOSE(nLogHandle)
+log_close()
 
-return
-
-function log_write(cMsg)
-FWRITE(nLogHandle, cMsg + hb_eol())
 return
 
 

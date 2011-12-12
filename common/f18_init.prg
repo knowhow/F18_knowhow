@@ -13,6 +13,7 @@ static __server := NIL
 static __server_params := NIL
 static __f18_home := NIL
 static __f18_home_root := NIL
+static __log_handle := NIL
 
 #include "fmk.ch"
 
@@ -54,10 +55,15 @@ public cDirSif:=""
 
 set_f18_home_root()
 
+if ( __log_handle := FCREATE("F18.log") ) == -1
+    ? "Cannot create log file: F18.log"
+    QUIT
+endif
+
+
+
 SetgaSDbfs()
 set_global_vars_0()
-
-
 set_a_dbfs()
 
 // ucitaj parametre iz inija, ako postoje ...
@@ -295,4 +301,13 @@ my_home(_home)
 return .t.
 
 
+// -------------------------------
+// -------------------------------
+function log_write(msg)
+ FWRITE(__log_handle, msg + hb_eol())
+return
+
+function log_close()
+ FCLOSE(__log_handle)
+return .t.
 

@@ -21,9 +21,9 @@ PRIVATE PicKol:="@Z 999999.999"
 PRIVATE PicDEM:="@Z 9999999999.99"
 PRIVATE picBHD:='@Z 999999999999.99'
 
-opc[1]:="1. mat_sintetika      "
-opc[2]:="2. mat_analitika"
-opc[3]:="3. mat_subanalitika "
+opc[1]:="1. sintetika      "
+opc[2]:="2. analitika"
+opc[3]:="3. subanalitika "
 Izbor:=1
 DO WHILE .T.
    Izbor:=Menu("kca",opc,Izbor,.f.)
@@ -264,10 +264,10 @@ enddo // eof
 EJECTNA0
 EndPrint()
 set filter to
-closeret
+close all
+return
 
-******************************
-******************************
+
 static function ZaglKAnalK()
 P_COND
 @ a,0  SAY "MAT.P: KARTICA - mat_analITICKI "+KonSeks("KONTO")+" - ZA POJEDINACNI "+KonSeks("KONTO")
@@ -289,8 +289,6 @@ SELECT mat_anal
 RETURN
 
 
-*********************************
-*********************************
 function KAnKKonto()
 
 cIdFirma:="  "
@@ -318,11 +316,7 @@ O_SIFK
 O_SIFV
 
 SELECT mat_anal
-#ifndef C50
 set order to tag "2"
-#else
-set order to 2
-#endif
 SEEK cIdFirma
 NFOUND CRET
 
@@ -380,10 +374,11 @@ nUkUkDug:=nUkUkPot:=nUkUk2Dug:=nUkUk2Pot:=0
 
 EJECTNA0
 END PRINT
-closeret
+close all
+return
 
-****************************
-****************************
+
+
 function ZagKKAnalK()
 P_COND
 @ a,0  SAY "MAT.P: KARTICA STANJA PO mat_analITICKIM "+KonSeks("KONT")+"IMA NA DAN "; @ A,PCOL()+1 SAY DATE()

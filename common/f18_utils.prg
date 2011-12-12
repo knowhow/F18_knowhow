@@ -15,35 +15,6 @@ function usex(cTable)
 return my_use(cTable)
 
 
-// ---------------------------
-// ~/.F18/bringout1
-// ~/.F18/rg1
-// ~/.F18/test
-// ---------------------------
-function get_f18_home_dir(cDatabase)
-local cHome
-
-#ifdef __PLATFORM__WINDOWS
-  cHome := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
-#else
-  cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
-#endif
-
-cHome := hb_DirSepAdd(cHome + ".f18")
-
-f18_create_dir( cHome )
-
-if cDatabase <> nil
- 	
-	cHome := hb_DirSepAdd(cHome + cDatabase)
-
-	f18_create_dir( cHome )
-
-endif
-
-return cHome
-
-
 
 // --------------------------------------------------
 // kreira direktorij ako ne postoji

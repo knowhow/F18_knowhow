@@ -88,15 +88,18 @@ return .t.
  *  \brief Sredjivanje otvorenih stavki pri knjizenju, poziv na polju strane valute<a+O>
  */
  
-function KonsultOS()
+function KonsultOS(xEdit)
+
 local fgenerisano
 local nNaz:=1
 local nRec:=RECNO()
 
+/*
 if readvar() <> "_IZNOSDEM"
   	MsgBeep("Morate se pozicionirati na polje strane valute !")
   	return
 endif
+*/
 
 lAsist := .t.
 lSumirano := .f.
@@ -151,8 +154,8 @@ set order to tag "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
 
 GO TOP
 
-Box(,19,77)
-@ m_x, m_y+25 SAY "KONSULTOVANJE OTVORENIH STAVKI"
+Box(, 20, 77)
+@ m_x, m_y + 25 SAY "KONSULTOVANJE OTVORENIH STAVKI"
 
 // formiraj datoteku
 aDbf:={}
@@ -164,19 +167,20 @@ AADD(aDBf,{ 'D_P'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'IZNOSBHD'            , 'N' ,  21 ,  2 })
 AADD(aDBf,{ 'UPLACENO'            , 'N' ,  21 ,  2 })
 AADD(aDBf,{ 'M2'                  , 'C' ,  1 , 0 })
-DBCREATE2(PRIVPATH+'OStav.dbf',aDbf)
+
+DBCREATE2('ostav.dbf', aDbf)
 
 select (F_OSTAV)
-use (PRIVPATH+'OStav')
-index ON BRISANO TAG "BRISAN"
-index on dtos(DatDok)+DTOS(iif(empty(datval),datdok,datval))+Brdok  tag "1"
+
+my_usex ('OSTAV')
+index on dtos(DatDok) + DTOS(iif(empty(datval), datdok, datval)) + Brdok  tag "1"
 
 nUkDugBHD:=0
 nUkPotBHD:=0
 select suban
 set order to tag "3"
 
-seek cidfirma+cidkonto+cidpartner
+seek cIdfirma + cIdkonto + cIdpartner
 
 dDatDok:=ctod("")
 
@@ -271,18 +275,19 @@ AADD(ImeKol,{ PADR("Uplaceno",14), {|| str(uplaceno,14,2)}     })
 Kol:={}
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 
-Box(,15,74,.t.)
+Box(,15, 74,.t.)
 set cursor on
-@ m_x+13,m_y+1 SAY '<Enter> Izaberi/ostavi stavku'
-@ m_x+14,m_y+1 SAY '<F10>   Asistent'
-@ m_x+15,m_y+1 SAY ""; ?? "  IZNOS Koji zatvaramo: "+IF(cDugPot=="1","duguje","potrazuje")+" "+ALLTRIM(STR(nIznos))
+@ m_x+13, m_y+1 SAY '<Enter> Izaberi/ostavi stavku'
+@ m_x+14, m_y+1 SAY '<F10>   Asistent'
+@ m_x+15, m_y+1 SAY ""; ?? "  IZNOS Koji zatvaramo: "+IF(cDugPot=="1","duguje","potrazuje")+" "+ALLTRIM(STR(nIznos))
 
 private cPomBrDok:=SPACE(10)
 
 select ostav
 go top
+
 ObjDbedit("KOStav",15,74,{|| EdKonsRos()},"","Otvorene stavke.", , , ,{|| m2='3'} ,3)
-// )
+
 Boxc()
 
 
@@ -369,14 +374,14 @@ IF fm3 .and. Pitanje("","Izgenerisati stavke u nalogu za knjizenje ?","D")=="D" 
     ENDIF // m2="3"
     SKIP 1
 
-
   ENDDO
 ENDIF
 BoxC()
 
 if fgenerisano
   --nRbr
-  select (F_PRIPR);  Scatter()  // uzmi posljednji slog
+  select (F_PRIPR)
+  Scatter()  // uzmi posljednji slog
   if fnovi
     MY_DELETE // izbrisi
   else
@@ -386,15 +391,16 @@ if fgenerisano
   ShowGets()
 endif
 
-select (F_OSTAV)
+select F_OSTAV
 use
 
-select (F_PRIPR)
-
-// pobrisi stavke "XX"
-//_del_nal_xx()
+select F_FIN_PRIPR
 
 if !fGenerisano
+   if !USED()
+      o_fin_edit()
+      SELECT F_FIN_PRIPR
+   endif
    go nRec
 endif
 

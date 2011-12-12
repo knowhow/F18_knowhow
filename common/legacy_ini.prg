@@ -368,7 +368,6 @@ endif
 return if ( nPos > 0, nPos + nStart - 1, 0 )
 
 
-
 /*! \fn IzFmkIni(cSection, cVar, cValue, cLokacija )
  *
  *  \param cSection  - [SECTION]
@@ -388,16 +387,16 @@ return if ( nPos > 0, nPos + nStart - 1, 0 )
 function IzFmkIni(cSection, cVar, cValue, cLokacija, lAppend)
 
 local cRez:=""
-local cNazIni:='FMK.INI'
+local cNazIni := 'FMK.INI'
 
-if (cLokacija=nil)
-	cLokacija:=EXEPATH
-endif
+cLokacija := my_home_root()
+
 if (lAppend==nil)
 	lAppend:=.f.
 endif
 
-if !file(cLokacija+cNazIni)
+
+if !file(cLokacija + cNazIni)
   nFH:=FCreate(cLokacija+cNazIni)
   FWrite(nFh,";------- Ini Fajl FMK-------")
   Fclose(nFH)

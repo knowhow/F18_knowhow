@@ -12,6 +12,7 @@
 
 #include "fakt.ch"
 #include "hbclass.ch"
+#include "f18_separator.ch"
 
  
 *string tbl_fakt_serBr
@@ -271,10 +272,10 @@ return
 *{
 method sayKomande()
 
-@ m_x+18, m_y+2 SAY " <c-N> Nove Stavke       ³<ENT> Ispravi stavku      ³<c-T> Brisi Stavku "
-@ m_x+19, m_y+2 SAY " <c-A> Ispravka Dokumenta³<c-P> Stampa dokumenta    ³<a-P> Stampa obr. popisa"
-@ m_x+20, m_y+2 SAY " <a-A> Azuriranje dok.   ³<c-F9> Brisi pripremu     ³"
-@ m_x+21, m_y+2 SAY " <F10>  Ostale opcije    ³<a-F10> Asistent  "
+@ m_x + 18, m_y+2 SAY " <c-N> Nove Stavke       " + BROWSE_COL_SEP + "<ENT> Ispravi stavku      " + BROWSE_COL_SEP + "<c-T> Brisi Stavku "
+@ m_x + 19, m_y+2 SAY " <c-A> Ispravka Dokumenta" + BROWSE_COL_SEP + "<c-P> Stampa dokumenta    " + BROWSE_COL_SEP + "<a-P> Stampa obr. popisa"
+@ m_x + 20, m_y+2 SAY " <a-A> Azuriranje dok.   " + BROWSE_COL_SEP + "<c-F9> Brisi pripremu     " + BROWSE_COL_SEP + ""
+@ m_x + 21, m_y+2 SAY " <F10>  Ostale opcije    " + BROWSE_COL_SEP + "<a-F10> Asistent  "
 
 return
 *}

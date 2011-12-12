@@ -11,7 +11,8 @@
 
 static __server := NIL
 static __server_params := NIL
-
+static __f18_home := NIL
+static __f18_home_root := NIL
 
 #include "fmk.ch"
 
@@ -22,7 +23,7 @@ local _ini_params
 
 REQUEST DBFCDX
 
-? "setujem default engine ..." + RDDENGINE
+// ? "setujem default engine ..." + RDDENGINE
 RDDSETDEFAULT( RDDENGINE )
 
 REQUEST HB_CODEPAGE_SL852 
@@ -39,10 +40,23 @@ else
    QUIT
 endif
 
+set( _SET_EVENTMASK, INKEY_ALL )
+mSetCursor( .t. )
+
 public gRj := "N"
 public gReadOnly := .f.
 public gSQL := "N"
 public Invert := .f.
+public gOModul := NIL
+public cDirPriv:=""
+public cDirRad:=""
+public cDirSif:=""
+
+set_f18_home_root()
+
+SetgaSDbfs()
+set_global_vars_0()
+
 
 set_a_dbfs()
 
@@ -54,10 +68,10 @@ _ini_params["user_name"] := nil
 _ini_params["schema"] := nil
 _ini_params["port"] := nil
 
+
 if !f18_ini_read("F18_server", @_ini_params, .t.)
 	// idemo na formu za logiranje
 	__form_login()
-	return __server
 endif
 
 // definisi parametre servera
@@ -71,8 +85,11 @@ __server_params["port"] := VAL( _ini_params["port"] )
 __server_params["schema"] := _ini_params["schema"]
 
 // pokusaj se logirati kao user/user
-
 my_server_login( my_server_params() )
+
+// ~/.F18/empty38/
+set_f18_home( my_server_params()["database"] )
+log_write("home baze: " + my_home())
 
 log_write( "direct login: " + ;
 		my_server_params()["host_name"] + " / " + ;
@@ -87,7 +104,10 @@ if __server:NetErr()
 	__form_login()
 endif
 
-return __server
+dbf_update()
+my_server(__server)
+
+return .t.
 
 
 static function __form_login()
@@ -132,6 +152,7 @@ if __server:NetErr()
   	quit
 
 endif
+
 
 return
 
@@ -216,6 +237,62 @@ return __server_params["database"]
 
 function my_user()
 return f18_user()
+
+// --------------------
+// --------------------
+function my_home(home)
+
+if home != NIL
+  __f18_home := home
+endif
+
+return __f18_home
+
+// -----------------------------
+// ------------------------------
+function my_home_root(home_root)
+
+if home_root != NIL
+  __f18_home_root := home_root
+endif
+
+return __f18_home_root
+
+
+// ----------------------------
+// ----------------------------
+function set_f18_home_root()
+local home
+
+#ifdef __PLATFORM__WINDOWS
+  home := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
+#else
+  home := hb_DirSepAdd( GetEnv( "HOME" ) ) 
+#endif
+
+home := hb_DirSepAdd(home + ".f18")
+
+f18_create_dir(home)
+
+my_home_root(home)
+return .t.
+
+
+// ---------------------------
+// ~/.F18/bringout1
+// ~/.F18/rg1
+// ~/.F18/test
+// ---------------------------
+function set_f18_home(database)
+local _home 
+
+if database <> nil
+	_home := hb_DirSepAdd(my_home_root() + database)
+	f18_create_dir( _home )
+endif
+
+my_home(_home)
+return .t.
 
 
 

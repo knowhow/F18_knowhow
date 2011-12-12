@@ -9,14 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define F18_VER_DEFINED
+#include "fin.ch"
 
+function fin_legacy()
 
-#define F18_VER       "0.9.14"
-#define F18_VER_DATE  "09.12.2011"
+return "DABLAGAS"
 
-#define FMK_LIB_VER   "0.9.20"
-
-#define F18_DBF_VER_MAJOR  0
-#define F18_DBF_VER_MINOR  1
-#define F18_DBF_VER_PATCH  0

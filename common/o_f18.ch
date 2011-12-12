@@ -154,6 +154,7 @@
 #xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")
 #xcommand O__PARTN => select(F__PARTN); MY_USE  ("_partn")
 #xcommand O_PRENHH   => select(F_PRENHH); my_usex ("prenhh"); set order to tag "1"
+#xcommand O_OSTAV   => select(F_OSTAV); my_usex ("ostav"); set order to tag "1"
 
 
 // modul KALK

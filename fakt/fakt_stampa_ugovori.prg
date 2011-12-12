@@ -9,14 +9,33 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define F18_VER_DEFINED
+#include "fakt.ch"
+
+// ------------------------------------
+// stampa ugovora za period
+// ------------------------------------
+function ug_za_period()
+local dDatGen
+local cBrOd
+local cBrDo
+local cTipDok
+local cDirPom
+
+cDirPom := gcDirekt
+gcDirekt := "B"
+// parametri
+if ug_st_od_do(@cBrOd, @cBrDo) == 0
+	return
+endif
+
+// stampa....
+cTipDok := "10"
+fakt_stampa_azuriranog_period( gFirma, cTipDok, cBrOd, cBrDo )
+
+gcDirekt := cDirPom
+close all
+
+return
 
 
-#define F18_VER       "0.9.14"
-#define F18_VER_DATE  "09.12.2011"
 
-#define FMK_LIB_VER   "0.9.20"
-
-#define F18_DBF_VER_MAJOR  0
-#define F18_DBF_VER_MINOR  1
-#define F18_DBF_VER_PATCH  0

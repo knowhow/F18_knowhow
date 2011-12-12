@@ -9,8 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-static cF18HomeDir := NIL
-static cF18HomeRoot := NIL
 static nLogHandle := NIL
 static cIniHomeRoot := NIL
 static cIniHome := NIL
@@ -34,19 +32,7 @@ IF ( nLogHandle :=  FCREATE("F18.log") ) == -1
     QUIT
 ENDIF
 
-// ~/.F18/
-cF18HomeRoot := get_f18_home_dir()
-
-// konektuj se na server
-_server := init_f18_app()
-
-// setujem server
-pg_server(_server)
-
-// ~/.F18/empty38/
-cF18HomeDir := get_f18_home_dir( my_server_params()["database"] )
-
-log_write("home baze: " + my_home())
+init_f18_app()
 
 // menu opcije...
 AADD( menuop, "1) FIN   # finansijsko poslovanje" )
@@ -62,7 +48,7 @@ AADD( menuop, "9) POS   # maloprodajna kasa")
 do while .t.
 
 	clear screen
- 	mnu_choice := achoice( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t. )
+ 	mnu_choice := ACHOICE( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t. )
 
  	do case
 		case mnu_choice == 0
@@ -92,15 +78,6 @@ enddo
 FCLOSE(nLogHandle)
 
 return
-
-// ----------------
-// ----------------
-function my_home()
-return cF18HomeDir
-
-// root home dirketorij
-function my_home_root()
-return cF18HomeRoot
 
 function log_write(cMsg)
 FWRITE(nLogHandle, cMsg + hb_eol())

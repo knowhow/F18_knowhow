@@ -87,10 +87,10 @@ cFBrDok := field->brdok
 
 Box( , MAXROWS() - 4, MAXCOLS() - 3 )
 
-@ m_x + MAXROWS() - 4 - 3, m_y + 2 SAY " <c-N> Nove Stavke        " + BROWSE_COL_SEP + " <ENT> Ispravi stavku      " + BROWSE_COL_SEP + " <c-T> Brisi Stavku "
-@ m_x + MAXROWS() - 4 - 2, m_y + 2 SAY " <c-A> Ispravka Dokumenta " + BROWSE_COL_SEP + " <c-P> Stampa (TXT)        " + BROWSE_COL_SEP + " <a-F10> Asistent  "
-@ m_x + MAXROWS() - 4 - 1, m_y + 2 SAY " <a-A> Azuriranje dok.    " + BROWSE_COL_SEP + " <c-F9> Brisi pripremu     " + BROWSE_COL_SEP + " <F5>  Kontrola zbira  "
-@ m_x + MAXROWS() - 4, m_y + 2 SAY     " <R> Rezerv  <X> Prekid R " + BROWSE_COL_SEP + " <F10>  Ostale opcije      " + BROWSE_COL_SEP + " <F9> 20,12->10; 27->11"
+@ m_x + MAXROWS() - 1, m_y + 2 SAY " <c-N> Nove Stavke        " + BROWSE_COL_SEP + " <ENT> Ispravi stavku      " + BROWSE_COL_SEP + " <c-T> Brisi Stavku "
+@ m_x + MAXROWS() - 2, m_y + 2 SAY " <c-A> Ispravka Dokumenta " + BROWSE_COL_SEP + " <c-P> Stampa (TXT)        " + BROWSE_COL_SEP + " <a-F10> Asistent  "
+@ m_x + MAXROWS() - 3, m_y + 2 SAY " <a-A> Azuriranje dok.    " + BROWSE_COL_SEP + " <c-F9> Brisi pripremu     " + BROWSE_COL_SEP + " <F5>  Kontrola zbira  "
+@ m_x + MAXROWS() - 4, m_y + 2 SAY " <R> Rezerv  <X> Prekid R " + BROWSE_COL_SEP + " <F10>  Ostale opcije      " + BROWSE_COL_SEP + " <F9> 20,12->10; 27->11"
 
 ObjDbedit( "PNal", MAXROWS() - 4, MAXCOLS() - 3 , {|| fakt_pripr_keyhandler()}, "", "Priprema...", , , , , 4)
 

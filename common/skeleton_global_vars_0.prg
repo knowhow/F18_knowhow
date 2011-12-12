@@ -55,7 +55,6 @@ public gShemaVF:="B5"
 //counter - za testiranje
 public gCnt1:=0
 
-
 PUBLIC m_x
 PUBLIC m_y
 PUBLIC h[20]
@@ -88,12 +87,6 @@ public gKodnaS:="8"
 public gWord97:="N"
 public g50f:=" "
 
-if !goModul:lStarted 
-  public cDirPriv:=""
-  public cDirRad:=""
-  public cDirSif:=""
-endif
-
 PUBLIC StaraBoja
 StarBoja:=SETCOLOR()
 
@@ -108,9 +101,8 @@ PUBLIC  Blink:="R****/W,W/B,,,W/RB"
 PUBLIC  Nevid:="W/W,N/N"
 PUBLIC gVeryBusyInterval
 
-gVeryBusyInterval:=VAL(IzFmkIni('Gateway','VeryBusyInterval','70'))
-
 PUBLIC gKonvertPath
+
 gKonvertPath:=IzFmkIni('FMK','KonvertPath','N', EXEPATH )
 
 PUBLIC gSifk
@@ -150,8 +142,6 @@ public gJODRep := PADR("c:\bout\java\jodrep.jar", 200)
 public gJODTemplate := PADR("c:\", 200)
 
 return
-
-
 
 
 

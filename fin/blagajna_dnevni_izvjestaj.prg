@@ -29,7 +29,11 @@ O_ANAL
 O_FIN_PRIPR
 
 GO TOP
-_IDVN:=idvn; cIdfirma:=idfirma; cBrdok:=brnal
+_IDVN:=idvn 
+
+cIdfirma:=idfirma
+cBrdok:=brnal
+
 IF DABLAGAS
   cKontoBlag := PADR(IzFMKINI("BLAGAJNA","Konto","202000",PRIVPATH),7)
   // CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",PRIVPATH+"PRIPR")

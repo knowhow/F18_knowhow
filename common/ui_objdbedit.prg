@@ -158,7 +158,7 @@ DO WHILE .T.
 
     if TB:stable .AND. (Ch := INKEY()) == 0
          
-      if bUserF<>NIL
+      if bUserF <>NIL
          xcpos:=ROW()
          ycpos:=COL()
          Eval(bUserF)

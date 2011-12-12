@@ -40,17 +40,24 @@ endif
 ...
 */
 
-if VALTYPE(alias) <> "C"
+if VALTYPE(alias) == "N"
    // F_SUBAN
    _pos := ASCAN(gaDBFs,  { |x|  x[1]==alias} )
    alias := gaDBFs[_pos, 2]
 else
    // /home/test/suban.dbf => suban
-   alias := FILEBASE(alias)
+   alias := UPPER(FILEBASE(alias))
+   
+   if table != NIL
+        // ako je naveden alias i ime tabele, onda je ime tabele "glavna" vrijednost
+       table := FILEBASE(table)
+       _pos := ASCAN(gaDBFs,  { |x|  x[3]==table} )
+   else
+       _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
+   endif
 endif
 
 // pozicija gdje je npr. SUBAN
-_pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
 _area := gaDBFs[_pos, 1] 
 
 if table == NIL

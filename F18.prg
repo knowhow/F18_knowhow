@@ -76,8 +76,3 @@ enddo
 log_close()
 
 return
-
-
-
-
-

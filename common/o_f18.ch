@@ -111,6 +111,7 @@
 #xcommand O_ERRORS => SELECT (F_ERRORS); my_USEX ("errors"); set order to tag "1"
 
 // sql messages
+#define F_MSGNEW 234
 #xcommand O_MESSAGE   => select(F_MESSAGE); my_usex ("message"); set order to tag "1"
 #xcommand O_AMESSAGE   => select(F_AMESSAGE); my_usex ("amessage"); set order to tag "1"
 #xcommand O_TMPMSG  => select(F_TMPMSG); my_use ("tmpmsg"); set order to tag "1"

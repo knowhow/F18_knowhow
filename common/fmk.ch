@@ -16,7 +16,15 @@
 #include "box.ch"
 #include "dbedit.ch"
 
-#define F18_DEFINED
+#define FMK_DEFINED
+
+#ifndef F18_DEFINED
+  #include "f18.ch"
+#endif
+
+#ifndef F18_RELEASE_DEFINED
+  #include "f18_release.ch"
+#endif
 
 #define EXEPATH   my_home_root()
 #define SIFPATH   my_home()
@@ -25,10 +33,6 @@
 
 #define KUMPATH  my_home()
 #define CURDIR   my_home()
-
-
-#define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
-#define SEMAPHORE_LOCK_RETRY_NUM 3
 
 #define I_ID 1
 #define DE_ADD  5

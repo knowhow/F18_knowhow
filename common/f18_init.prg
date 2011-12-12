@@ -55,12 +55,10 @@ public cDirSif:=""
 
 set_f18_home_root()
 
-if ( __log_handle := FCREATE("F18.log") ) == -1
-    ? "Cannot create log file: F18.log"
+if ( __log_handle := FCREATE(F18_LOG_FILE) ) == -1
+    ? "Cannot create log file: " + F18_LOG_FILE
     QUIT
 endif
-
-
 
 SetgaSDbfs()
 set_global_vars_0()

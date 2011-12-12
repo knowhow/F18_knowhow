@@ -14,7 +14,7 @@
 
 
 
-function m_params()
+function mat_parametri()
 local cK1:=cK2:=cK3:=cK4:="N"
 O_PARAMS
 // select 99; use (PRIVPATH+"params") index (PRIVPATH+"parai1")

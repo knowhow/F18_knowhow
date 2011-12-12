@@ -65,14 +65,14 @@ private opcexe:={}
 AADD(opc, "1. unos/ispravka dokumenata               ")
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT"))
-	AADD(opcexe, {|| knjiz()})
+	AADD(opcexe, {|| mat_knjizenje_naloga()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 AADD(opc, "2. izvjestaji")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RPT","MNU"))
-	AADD(opcexe, {|| izvjesta()})
+	AADD(opcexe, {|| mat_izvjestaji()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -80,25 +80,25 @@ endif
 
 AADD(opc, "3. kontrola zbira datoteka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","KZB"))
-	AADD(opcexe, {|| kzb()})
+	AADD(opcexe, {|| mat_kzb()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 AADD(opc, "4. stampa datoteke naloga")
-AADD(opcexe, {|| stdatn()})
+AADD(opcexe, {|| mat_dnevnik_naloga()})
 
 AADD(opc, "5. stampa proknjizenih naloga")
-AADD(opcexe, {|| stonal()})
+AADD(opcexe, {|| mat_stampa_naloga()})
 
 AADD(opc, "6. inventura")
-AADD(opcexe, {|| invent()})
+AADD(opcexe, {|| mat_inventura()})
 
 AADD(opc, "F. prenos fakt->mat")
-AADD(opcexe, {|| fakmat()})
+AADD(opcexe, {|| mat_prenos_fakmat()})
 
 AADD(opc, "G. generacija dokumenta pocetnog stanja")
-AADD(opcexe, {|| prenosmat()})
+AADD(opcexe, {|| mat_prenos_podataka()})
 
 
 AADD(opc, "------------------------------------")
@@ -112,7 +112,7 @@ AADD(opcexe, {|| nil})
 
 AADD(opc, "P. povrat naloga u pripremu")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "POVRAT"))
-	AADD(opcexe, {|| povrat()})
+	AADD(opcexe, {|| mat_povrat_naloga()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -120,7 +120,7 @@ endif
 
 AADD(opc, "9. administracija baze podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN"))
-	AADD(opcexe, {|| m_adm()})
+	AADD(opcexe, {|| mat_admin_menu()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -132,7 +132,7 @@ AADD(opcexe, {|| nil})
 AADD(opc, "X. parametri")
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","ALL"))
-	AADD(opcexe, {|| m_params()})
+	AADD(opcexe, {|| mat_parametri()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

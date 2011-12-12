@@ -133,7 +133,7 @@ closeret
 
 *****************************
 *****************************
-function ZaglKSintK()
+static function ZaglKSintK()
 ?? "MAT.P: mat_sintETICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
 SELECT PARTN; HSEEK cIdFirma
 ? "FIRMA:",cidfirma,partn->naz,partn->naz2
@@ -268,7 +268,7 @@ closeret
 
 ******************************
 ******************************
-FUNCTION ZaglKAnalK()
+static function ZaglKAnalK()
 P_COND
 @ a,0  SAY "MAT.P: KARTICA - mat_analITICKI "+KonSeks("KONTO")+" - ZA POJEDINACNI "+KonSeks("KONTO")
 @ ++A,0 SAY "FIRMA:"; @ A,pcol()+1 SAY cIdFirma
@@ -726,7 +726,7 @@ closeret
 return
 
 
-function ZaglKSif()
+static function ZaglKSif()
 P_COND2
 ?? "MAT.P: mat_subanALITICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
 ? "FIRMA:"
@@ -758,17 +758,5 @@ SELECT KONTO; HSEEK cIdKonto
 
 SELECT mat_suban
 return
-
-
-
-***********************************************
-* validacija firme -  unesi firmu po referenci
-***********************************************
-function V_Firma(cIdFirma)
-
-P_Firma(@cIdFirma)
-cIdFirma:=trim(cIdFirma)
-cIdFirma:=left(cIdFirma,2)
-return .t.
 
 

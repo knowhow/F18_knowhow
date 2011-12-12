@@ -12,7 +12,7 @@
 
 #include "mat.ch"
 
-function kzb()
+function mat_kzb()
 
 
 local   picBHD:='999999999999.99'

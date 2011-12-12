@@ -160,35 +160,6 @@ return
 
 
 
-/*
-method setgaDBFs()
-PUBLIC gaDBFs:={}
-
-AADD(gaDBFs, { F_PARAMS, "PARAMS", P_PRIVPATH  } )
-AADD(gaDBFs, { F_mat_pripr, "mat_pripr", P_PRIVPATH  } )
-AADD(gaDBFs, { F_INVENT, "INVENT", P_PRIVPATH  } )
-AADD(gaDBFs, { F_Pmat_suban, "Pmat_suban", P_PRIVPATH  } )
-AADD(gaDBFs, { F_Pmat_sint, "Pmat_sint", P_PRIVPATH  } )
-AADD(gaDBFs, { F_Pmat_anal, "Pmat_anal", P_PRIVPATH  } )
-AADD(gaDBFs, { F_Pmat_nalog, "Pmat_nalog", P_PRIVPATH  } )
-
-AADD(gaDBFs, { F_mat_suban, "mat_suban", P_KUMPATH  } )
-AADD(gaDBFs, { F_mat_anal, "mat_anal", P_KUMPATH  } )
-AADD(gaDBFs, { F_mat_sint, "mat_sint", P_KUMPATH  } )
-AADD(gaDBFs, { F_mat_nalog, "mat_nalog", P_KUMPATH  } )
-
-AADD(gaDBFs, { F_KONTO, "KONTO", P_SIFPATH } )
-AADD(gaDBFs, { F_PARTN, "PARTN", P_SIFPATH } )
-AADD(gaDBFs, { F_VALUTE, "VALUTE", P_SIFPATH } )
-AADD(gaDBFs, { F_TARIFA, "TARIFA", P_SIFPATH } )
-AADD(gaDBFs, { F_TNAL, "TNAL", P_SIFPATH } )
-AADD(gaDBFs, { F_TDOK, "TDOK", P_SIFPATH } )
-AADD(gaDBFs, { F_ROBA, "ROBA", P_SIFPATH } )
-AADD(gaDBFs, { F_KARKON, "KARKON", P_SIFPATH } )
-
-return
-*/
-
  
 // ------------------------------------------------------------- 
 // ------------------------------------------------------------- 
@@ -223,7 +194,7 @@ AADD(aDBf,{ 'POT'                 , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'DUG2'                , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'POT2'                , 'N' ,  15 ,  2 })
 
-if !file(f18_ime_dbf( "mat_nalog" )
+if !file(f18_ime_dbf( "mat_nalog" ))
         DBCREATE2( "mat_nalog", aDbf )
 		reset_semaphore_version("mat_nalog")
 		my_use("mat_nalog")

@@ -13,7 +13,7 @@
 #include "mat.ch"
 
 
-function stonal()
+function mat_stampa_naloga()
 
 
 local izb:=1
@@ -31,9 +31,9 @@ do while .t.
         exit
      case izb==1
        //StOANal()
-       StAnalNal(.f.)
+       mat_st_anal_nalog(.f.)
      case izb==2
-       StOSNal()
+       mat_st_sint_nalog()
      case izb==3
         izb:=0
   endcase
@@ -42,7 +42,7 @@ enddo
 *********************************************************
 * Stampa mat_sintetickog naloga
 *********************************************************
-function StOSNal(fnovi)
+function mat_st_sint_nalog(fnovi)
 
 if pcount()==0
  fnovi:=.f.
@@ -184,7 +184,7 @@ closeret
 *************************************
 * zaglavlje mat_analitickog naloga
 **************************************
-function Zagl12()
+static function Zagl12()
 local nArr
 P_COND
 @ A,0 SAY "MAT.P: mat_analITICKI NALOG ZA KNJIZENJE BROJ :"

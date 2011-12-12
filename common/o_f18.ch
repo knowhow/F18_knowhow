@@ -337,4 +337,25 @@
 #xcommand O_MARS      => SELECT (F_MARS); my_use("mars"); set order to tag "ID"
 
 
+// modul MAT
+#xcommand O_MAT_PRIPR    =>  select(F_MAT_PRIPR   ); my_use ("mat_pripr") ; set order to tag "1"
+#xcommand O_MAT_PRIPRRP  =>  select(F_MAT_PRIPRRP); my_use("mat_priprrp", "mat_pripr"); set order to tag "1"
+#xcommand O_MAT_SUBAN    =>  select(F_MAT_SUBAN); my_use ( "mat_suban" ); set order to tag "1"
+#xcommand O_MAT_SUBANX   =>  select(F_MAT_SUBAN); my_use ( "mat_suban" ); set order to tag "1"
+#xcommand O_MAT_SUBAN2   =>  select(F_MAT_SUBAN); my_use ( "mat_pripr", "mat_suban" ); set order to tag "4"
+#xcommand O_MAT_ANAL     =>  select(F_MAT_ANAL); my_use ( "mat_anal" ); set order to tag "1"
+#xcommand O_MAT_SINT     =>  select(F_MAT_SINT); my_use ( "mat_sint" ); set order to tag "1"
+#xcommand O_MAT_NALOG    =>  select(F_MAT_NALOG); my_use ( "mat_nalog" ); set order to tag "1"
+#xcommand O_IZDEF        =>  select(F_IZDEF); my_use ( "izdef" ); set order to tag "1"
+#xcommand O_IZOP         =>  select(F_IZOP ); my_use ( "izop" ); set order to tag "1"
+#xcommand O_MAT_PNALOG   =>  select(F_MAT_PNALOG); my_use ( "mat_pnalog" ); set order to tag "1"
+#xcommand O_MAT_PSUBAN   =>  select(F_MAT_PSUBAN); my_use ( "mat_psuban" ); set order to tag "1"
+#xcommand O_MAT_PSUBAN2  =>  select(F_MAT_PSUBAN); my_use ( "mat_suban", "mat_psuban" ); set order to tag "1"
+#xcommand O_MAT_PANAL    =>  select(F_MAT_PANAL) ; my_use ( "mat_panal") ; set order to tag "1"
+#xcommand O_MAT_PANAL2   =>  select(F_MAT_PANAL) ; my_use ( "mat_anal", "mat_panal"); set order to tag "1"
+#xcommand O_MAT_PSINT    =>  select(F_MAT_PSINT) ; my_use ( "mat_psint" ) ; set order to tag "1"
+#xcommand O_INVENT       =>  select(F_INVENT); my_use( "invent" ); set order to tag "1"
+#xcommand O_KARKON       =>  select(F_KARKON); my_use ( "karkon" ); set order to tag "ID"
+
+
 

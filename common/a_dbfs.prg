@@ -263,4 +263,19 @@ AADD( gaDbfs, {  F_DOKSPF    , "DOKSPF" , "pos_dokspf" } )
 AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "pos_promvp" } )
 AADD( gaDbfs, {  F_POM       , "POM"    , "pos_pom"  } )
 
+
+// modul MAT
+AADD(gaDBFs, { F_MAT_PRIPR,   "MAT_PRIPR",   "mat_pripr"   } )
+AADD(gaDBFs, { F_INVENT,      "INVENT",      "mat_invent"  } )
+AADD(gaDBFs, { F_MAT_PSUBAN,  "MAT_PSUBAN",  "mat_psuban"  } )
+AADD(gaDBFs, { F_MAT_PSINT,   "MAT_PSINT",   "mat_psint"   } )
+AADD(gaDBFs, { F_MAT_PANAL,   "MAT_PANAL",   "mat_panal"   } )
+AADD(gaDBFs, { F_MAT_PNALOG,  "MAT_PNALOG",  "mat_pnalog"  } )
+AADD(gaDBFs, { F_MAT_SUBAN,   "MAT_SUBAN",   "mat_suban"   } )
+AADD(gaDBFs, { F_MAT_ANAL,    "MAT_ANAL",    "mat_anal"    } )
+AADD(gaDBFs, { F_MAT_SINT,    "MAT_SINT",    "mat_sint"    } )
+AADD(gaDBFs, { F_MAT_NALOG,   "MAT_NALOG",   "mat_nalog"   } )
+AADD(gaDBFs, { F_KARKON,      "KARKON",      "mat_karkon"  } )
+
+
 return

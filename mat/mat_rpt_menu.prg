@@ -12,7 +12,8 @@
 
 #include "mat.ch"
 
-function izvjesta()
+
+function mat_izvjestaji()
 private opc[7],Izbor
 
 PRIVATE PicDEM:="99999999.99"
@@ -36,9 +37,9 @@ DO WHILE .T.
       case izbor == 1
          Kartica()
       case izbor == 2
-         Specif()
+         mat_specifikacija()
       case izbor == 3
-         Specifs()
+         mat_sint_specifikacija()
       case izbor == 4
          PorNar()
       case izbor == 5 .AND. gNW=="R"

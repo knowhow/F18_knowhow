@@ -12,7 +12,7 @@
 
 #include "mat.ch"
 
-function knjiz()
+function mat_knjizenje_naloga()
 
 
 PRIVATE PicDEM:="9999999.99"
@@ -52,7 +52,7 @@ else
      case izbor == 1
          KnjNal()
      case izbor == 2
-         StNal()
+         mat_st_nalog()
      case izbor == 3
          Azur()
      case izbor == 4
@@ -375,7 +375,7 @@ do case
   case Ch==K_CTRL_T
      if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
       delete
-      BrisiPBaze()
+      mat_brisi_pbaze()
       return DE_REFRESH
      endif
      return DE_CONT
@@ -430,7 +430,7 @@ do case
      return DE_CONT
     else
      Gather()
-     BrisiPBaze()
+     mat_brisi_pbaze()
      BoxC()
      return DE_REFRESH
     endif
@@ -449,7 +449,7 @@ do case
            if EditPRIPR(.f.)==0
              exit
            else
-             BrisiPBaze()
+             mat_brisi_pbaze()
            endif
            if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
            @ m_x+20,m_y+1 SAY "ZBIR mat_nalogA:"
@@ -481,7 +481,7 @@ do case
            if EditPRIPR(.t.)==0
              exit
            else
-             BrisiPBaze()
+             mat_brisi_pbaze()
            endif
            if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
            @ m_x+20,m_y+1 SAY "ZBIR mat_nalogA:"
@@ -500,13 +500,13 @@ do case
    case Ch=K_CTRL_F9
         if Pitanje(,"Zelite li izbrisati mat_pripremu !!????","N")=="D"
              zap
-             BrisiPBaze()
+             mat_brisi_pbaze()
         endif
         return DE_REFRESH
 
    case Ch==K_CTRL_P
      close all
-     StNal()
+     mat_st_nalog()
      O_Edit()
      return DE_REFRESH
 
@@ -649,25 +649,25 @@ Inkey(2)
 BoxC()
 closeret
 
-function StNal()
+function mat_st_nalog()
 local Izb
 
 PRIVATE PicDEM:="@Z 9999999.99"
 PRIVATE PicBHD:="@Z 999999999.99"
 PRIVATE PicKol:="@Z 999999.999"
 
-StAnalNal()
+mat_st_anal_nalog()
 //StSintNal()
 MsgO("Formiranje mat_analitickih i mat_sintetickih stavki...")
 SintStav()
 MsgC()
 if (gKonto=="D" .and. Pitanje(,"Stampa mat_analitike","D")=="D")  .or. ;
    (gKonto=="N" .and. Pitanje(,"Stampa mat_analitike","N")=="D")
- StoSNal(.t.)
+ mat_st_sint_nalog(.t.)
 endif
 return
 
-function StAnalNal(fnovi)
+function mat_st_anal_nalog(fnovi)
 local i
 
 if pcount()==0
@@ -875,7 +875,7 @@ closeret
 
 
 
-function Zagl11()
+static function Zagl11()
 local nArr
 P_10CPI
 ?? gnFirma
@@ -1030,7 +1030,7 @@ enddo
 closeret
 
 
-FUNCTION BrisiPBaze()
+FUNCTION mat_brisi_pbaze()
   PushWA()
   SELECT (F_mat_psuban); ZAP
   SELECT (F_mat_panal); ZAP

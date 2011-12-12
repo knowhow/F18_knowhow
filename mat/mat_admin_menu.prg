@@ -13,7 +13,7 @@
 #include "mat.ch"
 
 
-function m_adm()
+function mat_admin_menu()
 private opc:={}
 private opcexe:={}
 private Izbor:=1

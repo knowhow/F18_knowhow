@@ -13,7 +13,7 @@
 #include "mat.ch"
 
 
-function invent()
+function mat_inventura()
 
 
 local opc[5],Izbor

@@ -34,7 +34,7 @@ RPar("po",@gPotpis)
 select params; use
 
 if gNW$"DR"
-  KnjNal()
+  mat_knjizi_nalog()
 else
  private opc[4],Izbor:=1
  Opc[1]:="1. knjizenje mat_naloga    "
@@ -50,7 +50,7 @@ else
      case izbor == 0
          exit
      case izbor == 1
-         KnjNal()
+         mat_knjizi_nalog()
      case izbor == 2
          mat_st_nalog()
      case izbor == 3
@@ -72,7 +72,7 @@ closeret
 
 *******************************
 *******************************
-Function KnjNal()
+Function mat_knjizi_nalog()
 
 O_Edit()
 
@@ -149,7 +149,7 @@ return
 ******************************************************
 * ulaz _IdFirma, ...., nRedBr (str(_RBr))
 ******************************************************
-function EditPRIPR(fNovi)
+static function EditPRIPR(fNovi)
    private nKurs:=0
    if fnovi .and. nRbr==1; _idfirma:=gFirma; endif
 
@@ -174,7 +174,7 @@ function EditPRIPR(fNovi)
    endif
 
 
-   @  m_x+3,m_y+52  SAY "Broj:"   get _BrNal   valid Dupli(_BrNal,_IdVN,_IdFirma) .and. !empty(_BrNal)
+   @  m_x+3,m_y+52  SAY "Broj:"   get _BrNal   valid mat_dupli_nalog(_BrNal,_IdVN,_IdFirma) .and. !empty(_BrNal)
 
    @  m_x+5,m_y+2  SAY "Redni broj stavke mat_naloga:" get nRbr picture "9999"
 
@@ -324,7 +324,7 @@ RETURN (nFin/nMat)
 
 
 
-function V_Roba(fnovi)
+static function V_Roba(fnovi)
 
 P_Roba(@_IdRoba,14,25)
 if fnovi .and. _idvn $ gNalPr  // predlozi izlaz iz prod
@@ -519,7 +519,7 @@ endcase
 
 
 
-function dupli(cBrNal,cVN,cIdFirma)
+function mat_dupli_nalog(cBrNal,cVN,cIdFirma)
 PushWa()
 select mat_nalog
 seek cIdFirma+cVN+cBrNal

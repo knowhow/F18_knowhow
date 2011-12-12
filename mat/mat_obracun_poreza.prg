@@ -61,14 +61,11 @@ aDbf:={ { "IDTARIFA", "C",6,0} ,;
         { "MPV"     , "N",16,3} ,;
         { "MPVSAP"  , "N",16,3} ;
       }
-dbcreate2(PRIVPATH+"real",aDbf)
+dbcreate2("real", aDbf )
 select 95
-usex (PRIVPATH+"real")
-#ifndef C50
-dbcreateind(PRIVPATH+"reali1","brisano+idtarifa",{|| brisano+idtarifa})
-#else
-dbcreateind(PRIVPATH+"reali1","d()+idtarifa",{|| d()+idtarifa})
-#endif
+my_use ( "real" )
+
+//dbcreateind(PRIVPATH+"reali1","d()+idtarifa",{|| d()+idtarifa})
 
 select mat_suban; set filter to Tacno(aUsl1) .and. IdFirma==cIdFirma .and. ;
        idvn $ cNalPr .and. u_i=="2" .and. dDatOd<=datdok .and. dDatDo>=datdok

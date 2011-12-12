@@ -263,7 +263,7 @@
 #define F_MAT_PANAL    326
 #define F_MAT_PSINT    327
 #define F_MAT_PNALOG   328
-#define F_INVENT       329
+#define F_MAT_INVENT   329
 #define F_KARKON       330
 #define F_IZDEF       331
 #define F_IZOP       332

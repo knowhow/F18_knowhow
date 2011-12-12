@@ -266,7 +266,7 @@ AADD( gaDbfs, {  F_POM       , "POM"    , "pos_pom"  } )
 
 // modul MAT
 AADD(gaDBFs, { F_MAT_PRIPR,   "MAT_PRIPR",   "mat_pripr"   } )
-AADD(gaDBFs, { F_INVENT,      "INVENT",      "mat_invent"  } )
+AADD(gaDBFs, { F_MAT_INVENT,  "MAT_INVENT",  "mat_invent"  } )
 AADD(gaDBFs, { F_MAT_PSUBAN,  "MAT_PSUBAN",  "mat_psuban"  } )
 AADD(gaDBFs, { F_MAT_PSINT,   "MAT_PSINT",   "mat_psint"   } )
 AADD(gaDBFs, { F_MAT_PANAL,   "MAT_PANAL",   "mat_panal"   } )
@@ -279,3 +279,7 @@ AADD(gaDBFs, { F_KARKON,      "KARKON",      "mat_karkon"  } )
 
 
 return
+
+
+
+

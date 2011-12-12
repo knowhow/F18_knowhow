@@ -332,7 +332,7 @@ CREATE_INDEX("2","idFirma+IdVN+BrNal+BrDok+Rbr",PRIVPATH+"mat_pripr")
 CREATE_INDEX("3","idFirma+IdVN+IdKonto",PRIVPATH+"mat_pripr")
 
 
-if !file( f18_ime_dbf( 'INVENT' ))
+if !file( f18_ime_dbf( 'mat_invent' ))
         aDbf:={}
 //        AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
         AADD(aDBf,{ 'IDROBA'              , 'C' ,  10 ,  0 })
@@ -342,9 +342,9 @@ if !file( f18_ime_dbf( 'INVENT' ))
         AADD(aDBf,{ 'CIJENA'              , 'N' ,  12 ,  2 })
         AADD(aDBf,{ 'IZNOS'               , 'N' ,  14 ,  2 })
         AADD(aDBf,{ 'IZNOS2'              , 'N' ,  14 ,  2 })
-        DBCREATE2( 'INVENT', aDbf)
+        DBCREATE2( 'mat_invent', aDbf)
 endif
-CREATE_INDEX("1","IdRoba", "INVENT") // Inventura
+CREATE_INDEX("1","IdRoba", "mat_invent") // Inventura
 
 
 if !file(f18_ime_dbf( 'KARKON' ))

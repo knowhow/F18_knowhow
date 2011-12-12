@@ -100,10 +100,10 @@ BoxC()
 cIdF:=left(cIdF,2)
 save to  (PRIVPATH+"invent.mem") all like cId?
 
-O_INVENT
+O_MAT_INVENT
 O_MAT_SUBAN
 
-select INVENT; ZAP
+select MAT_INVENT; ZAP
 
 nRBr:=nKolicina:=nIznos:=nCijena:=0
 SELECT mat_suban
@@ -137,7 +137,7 @@ DO WHILE !eof() .AND. cIdF=IdFirma .and. cIdK==Idkonto
    ENDDO
    IF round(nKolicina,4) <> 0 // nKolicina<>0
       nCijena:=nIznos/nKolicina
-      select INVENT
+      select MAT_INVENT
       APPEND BLANK
       REPLACE ;  //     IdFirma WITH cIdF,IdOrgJed WITH cIdOrgJed,;
            IdRoba WITH cIdRoba,;
@@ -146,7 +146,7 @@ DO WHILE !eof() .AND. cIdF=IdFirma .and. cIdK==Idkonto
            Iznos with nIznos, Iznos2 with nIznos2
    ELSEIF round(nIznos,4) <> 0 // Postoji finansijsko stanje -  kalo itd
       nCijena:=0
-      select INVENT
+      select MAT_INVENT
       APPEND BLANK
       REPLACE ;  //     IdFirma WITH cIdF,IdOrgJed WITH cIdOrgJed,;
            IdRoba WITH cIdRoba,;
@@ -162,13 +162,13 @@ closeret
 ******************************
 Function UnEdStvKol()
 
-O_INVENT
+O_MAT_INVENT
 O_ROBA
 O_SIFV
 O_SIFK
 O_PARTN
 
-SELECT INVENT; GO TOP
+SELECT MAT_INVENT; GO TOP
 #ifndef C50
 set order to tag "1"
 #else
@@ -289,7 +289,7 @@ BoxC(); ESC_RETURN 0
 cIdF:=left(cIdF,2)
 save to  (PRIVPATH+"invent.mem") all like cId?
 
-SELECT INVENT
+SELECT MAT_INVENT
 #ifndef C50
 set order to tag "1"
 #else
@@ -310,7 +310,7 @@ DO WHILE !eof()
 
       if prow()>62; EJECTA0; ZPrUnKol(); ENDIF
 
-      select ROBA; HSEEK INVENT->IdRoba; select invent
+      select ROBA; HSEEK MAT_INVENT->IdRoba; select invent
 
       @ prow()+1,0 SAY ++nRBr PICTURE '9999'
       @ prow(),pcol()+1 SAY IdRoba
@@ -343,7 +343,7 @@ SELECT PARTN; HSEEK cIdF
 select KONTO; HSEEK cIdK
 ? "Konto: ",cIdK, naz
 
-SELECT INVENT
+SELECT MAT_INVENT
 ? m
 ? "*R. *  SIFRA   *         NAZIV ARTIKLA                  *J. * KOLICINA *   CIJENA   *   IZNOS    *"
 ? "*B. * ARTIKLA  *                                        *MJ.*          *            *            *"
@@ -381,7 +381,7 @@ picD:='@Z 99999999999.99'
 picD1:='@Z 99999999.99'
 picK:='@Z 99999.99'
 
-O_INVENT
+O_MAT_INVENT
 O_ROBA
 O_SIFV
 O_SIFK
@@ -393,7 +393,7 @@ set order to 3
 #endif
 set filter to DatDok<=cIdD
 
-SELECT INVENT; go top
+SELECT MAT_INVENT; go top
 
 START PRINT CRET
 
@@ -421,7 +421,7 @@ DO WHILE !eof()
       @ A,pcol()+1 SAY cIdK
       SELECT KONTO; HSEEK cIdK
       @ A,pcol()+1 SAY naz
-      select INVENT
+      select MAT_INVENT
       A+=2
       @ ++A,0 SAY "---- ---------- -------------------- --- ---------- -------------------- -------------------- -------------------- ---------------------"
       @ ++A,0 SAY "*R. *  SIFRA   *  NAZIV ARTIKLA     *J. *  CIJENA  *   STVARNO STANJE   *   KNJIZNO STANJE   *   RAZLIKA VISAK    *   RAZLIKA MANJAK   *"
@@ -460,7 +460,7 @@ DO WHILE !eof()
    select ROBA; HSEEK cIdRoba
    @ A,16 SAY Naz PICTURE replicate ("X",20)
    @ A,37 SAY jmj
-   select INVENT
+   select MAT_INVENT
    @ A,40       SAY  Cijena PICTURE picD1
    @ A,pcol()+1 SAY  round(SK,2) PICTURE picK
    @ A,pcol()+1 SAY  round(SV,2) PICTURE picD1
@@ -543,7 +543,7 @@ set order to 3
 #endif
 set filter to DatDok<=cIdD
 
-SELECT INVENT; go top
+SELECT MAT_INVENT; go top
 
 
 A:=0
@@ -595,7 +595,7 @@ DO WHILE !eof()
 
    endif
 
-   select INVENT
+   select MAT_INVENT
    skip
 ENDDO
 
@@ -640,12 +640,12 @@ cIdDir:=gDirPor
 use (ciddir+"pormp") new index (ciddir+"pormpi1"), (ciddir+"pormpi2"), (ciddir+"pormpi3")
 set order to 3           // str(mjesec,2)+idkonto+idtarifa+id
 
-SELECT INVENT; go top
+SELECT MAT_INVENT; go top
 
 DO WHILE !eof()
 
-   select roba; hseek invent->idroba; select tarifa; hseek roba->idtarifa
-   select invent
+   select roba; hseek mat_invent->idroba; select tarifa; hseek roba->idtarifa
+   select mat_invent
    nMPVSAPP:=kolicina*cijena
    if nMPVSAPP==0; skip; loop; endif
    nMPV:=nMPVSAPP/(1+tarifa->ppp/100)/(1+tarifa->opp/100)
@@ -674,7 +674,7 @@ DO WHILE !eof()
            MPVSaPP  with MPVSaPP+nMPVSAPP
 
 
-   select INVENT
+   select MAT_INVENT
    skip
 ENDDO
 

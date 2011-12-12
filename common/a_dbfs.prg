@@ -277,9 +277,9 @@ AADD(gaDBFs, { F_MAT_SINT,    "MAT_SINT",    "mat_sint"    } )
 AADD(gaDBFs, { F_MAT_NALOG,   "MAT_NALOG",   "mat_nalog"   } )
 AADD(gaDBFs, { F_KARKON,      "KARKON",      "mat_karkon"  } )
 
+#ifdef TEST
+AADD(gaDBFs, { 100,      "TEST_F18",      "test_f18"  } )
+#endif
 
 return
-
-
-
 

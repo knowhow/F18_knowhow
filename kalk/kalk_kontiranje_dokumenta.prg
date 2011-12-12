@@ -273,8 +273,6 @@ do while !eof()
 		 go top
          seek cIdVD + koncij->shema
 
-		altd()
-
          do while !EOF() .and. !EMPTY( cBrNalF ) .and. field->idvd == cIDVD  .and. field->shema == koncij->shema
      	  
 	      lDatFakt:=.f.

@@ -261,7 +261,7 @@ if (nArea==-1 .or. nArea==(F_BUDZET))
    	AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
    	AADD(aDBf,{ "REBIZNOS"            , "N" ,  20 ,  2 })
    		
-	if !FILE(f18_ime_dbf("budzet"))
+	if !FILE(f18_ime_dbf("BUDZET"))
 		DBcreate2("BUDZET", aDbf)
 	endif
 	

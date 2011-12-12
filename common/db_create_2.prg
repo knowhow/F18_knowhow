@@ -293,7 +293,6 @@ CREATE_INDEX("ID","id", "tnal")
 CREATE_INDEX("NAZ","naz", "tnal")
 index_mcode(SIFPATH, "TNAL")
 
-// TDOK
 if !file(f18_ime_dbf("tdok"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })

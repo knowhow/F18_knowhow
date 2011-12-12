@@ -186,13 +186,18 @@
                             ;return                     ;
                             ;endif
 
-#DEFINE SLASH  HB_OSPATHSEPARATOR()
+#define SLASH  HB_OSPATHSEPARATOR()
+
 #DEFINE INDEXEXTENS "cdx"
-#DEFINE INDEXEXT "cdx"
-#DEFINE DBFEXT "dbf"
-#DEFINE MEMOEXT "fpt"
-#DEFINE RDDENGINE "DBFCDX"
+#DEFINE  MEMOEXTENS  "fpt"
+
+#define INDEXEXT "cdx"
+#define DBFEXT   "dbf"
+#define MEMOEXT  "fpt"
+#define RDDENGINE "DBFCDX"
+
 #DEFINE DRVPATH ":\"
+
 #define NRED chr(13)+chr(10)
 
 #define P_NRED QOUT()
@@ -210,10 +215,8 @@
 
 #command KRESI <x> NA <len> =>  <x>:=left(<x>,<len>)
 
-
-
-#define DE_REF      12      // Force reread/redisplay of all data rows
-
+// Force reread/redisplay of all data rows
+#define DE_REF      12      
 
 #command DEL2                                                            ;
       => (nArr)->(DbDelete2())                                            ;
@@ -278,7 +281,6 @@
       [; dbSetRelation( <(aliasn)>,{||'1'+<keyn>}, "'1'+"+<"keyn"> ) ]
 
 
-
 #command POCNI STAMPU   => if !lSSIP99 .and. !StartPrint()       ;
                            ;close all             ;
                            ;return                ;
@@ -294,7 +296,6 @@
 #command MY_DELETE      =>    delete2()
 
 
-#define  MEMOEXTENS  "fpt"
 
 #command AP52 [FROM <(file)>]                                         ;
          [FIELDS <fields,...>]                                          ;

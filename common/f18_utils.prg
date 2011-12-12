@@ -44,24 +44,22 @@ endif
 
 return
 
+// -------------------------
+// -------------------------
+function f18_ime_dbf(alias)
+local _pos
 
+alias := FILEBASE(alias)
+_pos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
 
-
-function f18_ime_dbf(cImeDbf)
-local nPos
-
-cImeDbf:=ToUnix(cImeDbf)
-cImeDbf := FILEBASE(cImeDbf)
-nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cImeDbf)} )
-
-if nPos == 0
-   ? "ajjoooj nemas u gaDBFs ovu stavku:", cImeDBF
-   //QUIT
+if _pos == 0
+   ? "ajjoooj nemas u gaDBFs ovu stavku:", alias
+   inkey(10)
 endif
 
-cImeDbf := my_home() + gaDBFs[nPos, 3] + ".dbf"
+alias := my_home() + gaDBFs[_pos, 3] + "." + DBFEXT
 
-return cImeDbf
+return alias
 
 
 // ---------------------------------------

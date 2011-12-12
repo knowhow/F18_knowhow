@@ -34,9 +34,9 @@ oFile:Close()
 modstru(_ret)
 
 // ------------------------------------------------------------------
-//  Modstru({"*fin_budzet.dbf", "C EKKATEG C 5 0  IDKONTO C 7 0", "})
+//  Modstru({"*fin_budzet", "C IDKONTO C 10 0",  "A IDKONTO2 C 7 0"})
 
-function ModStru (a_commands)
+function modstru(a_commands)
 local _path, _ime_dbf
 local _brisi_dbf := .f.,  _rename_dbf := NIL
 local _linija := 0
@@ -44,11 +44,9 @@ local _lin
 local _stru_changed := .f.
 local _curr_stru, _new_stru
 
-? SPACE(40),"bring.out, 10.99-11.11, ver 02.6"
+? SPACE(40),"bring.out, 10.99-12.11, ver 02.6"
 ? SPACE(40),"---------------------------------"
 ?
-// ne kopiraj izbrisane zapise !!!
-set deleted on  
 close all
 
 SET AUTOPEN OFF
@@ -65,19 +63,19 @@ for each _lin in a_commands
     endif
 
     if LEFT(_lin, 1) == "*"
-       
-       kopi(_path, _ime_dbf, @_brisi_dbf, @_rename_dbf, @_stru_changed)
+      
+       kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
        
        _lin := substr(_lin, 2, len(trim(_lin))-1)
 
-       _ime_dbf:=alltrim(_lin)
-       _ime_dbf:= LOWER( _ime_dbf + iif( AT(".", _ime_dbf) <> 0, "", ".dbf") )
+       // fin_budzet
+       _ime_dbf := ALLTRIM(_lin)
 
        ?  _path + _ime_dbf
 
-       if file( _path + _ime_dbf )
+       if file( _path + _ime_dbf + "." + DBFEXT )
            select 1
-           my_usex ( "olddbf", _ime_dbf, .f.)
+           my_usex ( "OLDDBF", _ime_dbf, .f.)
        else
            _ime_dbf := "*"
            ?? "  Ne nalazi se u direktorijumu"
@@ -88,21 +86,22 @@ for each _lin in a_commands
        _curr_stru := DBSTRUCT()
        _new_stru := ACLONE(_curr_stru)      
 
+
+        if empty(_ime_dbf)
+            ? "Nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !"
+            return .f.
+        endif
+
+
+    else
+         _op := Rjec(@_lin)
+         if !chs_op(_op, @_lin, @_curr_stru, @_new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
+              MsgBeep("modstru problem :" + _ime_dbf)
+         endif
     endif
-
-    if empty(_ime_dbf)
-          ? "Nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !"
-          return .f.
-    endif
-
-    _op := Rjec(@_lin)
-    chs_op(_op, @_lin, @_curr_stru, @_new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
-
 next
 
-
-kopi(_path, _ime_dbf, @_brisi_dbf, @_rename_dbf, @_stru_changed)
-
+kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
 
 SET AUTOPEN ON 
 return
@@ -156,9 +155,10 @@ DO CASE
                 ADEL (stru_new, _pos)
                 // prepakuj array
                 Prepakuj(@_stru_new)  
-                stru_changed:=.t.
+                stru_changed := .t.
           else
                 ? "Greska: Brisanje nepostojeceg polja, linija:", _l
+                return .f.
           endif
 
     CASE op == "C"
@@ -182,7 +182,7 @@ DO CASE
            _pos_2 := ASCAN( curr_stru, {|x| x[1]== _ime_p_2})
            if _pos_2 <> 0 .and.  _ime_p <> _ime_p_2
                 ? "Greska: zadana je promjena u postojece polje, linija:", _l
-                return .t.
+                return .f.
            endif
            stru_changed :=.t.
 
@@ -204,6 +204,7 @@ DO CASE
                 
             if !stru_changed
                 ? "Greska: Neispravna konverzija, linija:", _l
+                return .f.
             endif
 
             AADD(curr_stru[_pos], _ime_p_2)
@@ -230,26 +231,26 @@ return .t.
 
 
 // -----------------------------
-// _ime_dbf obavezno "test.dbf"
+// ime_dbf obavezno "fin_budzet"
 // -----------------------------
-function kopi(path, ime_dbf, brisi_dbf, rename_dbf, stru_changed)
+function kopi(path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_changed)
 local _pos, _pos_2
 local _ext, _ime_old, _ime_new
 local _ime_p, _row, _path_2, _tmp
 local _ime_file, _ime_tmp, _ime_bak
 local _cdx_file
+local _f 
 
+_f := path + ime_dbf + "."
 if brisi_dbf
-     _pos := AT(".", ime_dbf)
-
-     select olddbf
+     select OLDDBF
      use
 
-     ferase(path + left( ime_dbf, _pos) + DBFEXT)
-     ? "BRISEM :",path + left(ime_dbf, _pos) + DBFEXT
+     ferase(_f + DBFEXT)
+     ? "BRISEM :", _f + DBFEXT
 
-     ferase(path + left( ime_dbf,  _pos) + FPTEXT)
-     ? "BRISEM :", path + left( ime_dbf, _pos) + FPTEXT
+     ferase(_f +  MEMOEXT)
+     ? "BRISEM :", _f + MEMOEXT
 
      brisi_dbf := .f.
      return
@@ -257,52 +258,39 @@ endif
 
 if rename_dbf != NIL
 
-     _pos := at(".", ime_dbf)
-     _pos_2 := at(".", _rename_dbf)
-
-     select olddbf
+     select OLDDBF
      use
+     for each _ext in {DBFEXT, MEMOEXT}
 
-     for each _ext in {DBFEXT, FPTEXT}
-
-       ime_dbf_old := path + left(_ime_dbf, _pos) +  _ext
-       ime_dbf_new := path + left(_rename_dbf, _pos_2) + _ext
-           if FRENAME(_ime_old, _ime_new) == 0
+       _ime_old := _f  +  _ext
+       _ime_new := path + rename_dbf + _ext
+       if FRENAME(_ime_old, _ime_new) == 0
           ? "PREIMENOVAO :", _ime_old," U ", _ime_new
        endif
 
      next
-
-     _rename_dbf := NIL
+     rename_dbf := NIL
 endif
 
 
 if stru_changed
 
-     _pos := RAT(SLASH, ime_dbf)
-     
-     if _pos <> 0
-       _path_2 := substr(ime_dbf, 1, _pos)
-     else
-       _path_2 := ""
-     endif
-
-     _cdx_file := strtran(ime_dbf, "." + DBFEXT, "." + INDEXEXT)
-     if right(_cdx_file, 4) == "." + INDEXEXT 
-       // izbrisi cdx
+     _cdx_file := path + ime_dbf + "." + INDEXEXT
+     if FILE(_cdx_file)
        FERASE( path + _cdx_file)
      endif
 
-     for each _tmp in { FPTEXT, INDEXEXT, DBFEXT} 
-        FERASE(path + _path_2 + "modstru_tmp." + _tmp)
+     for each _tmp in { MEMOEXT, INDEXEXT, DBFEXT} 
+        FERASE(path + "modstru_tmp." + _tmp)
      next
 
      DBCREATE( my_home() + "modstru_tmp." + DBFEXT, new_stru)
 
      select 2
      USE ( my_home() + "modstru_tmp." + DBFEXT) ALIAS "tmp" EXCLUSIVE 
-     select olddbf  
+     
 
+     select OLDDBF 
      ?
      
      _row:=row()
@@ -322,55 +310,50 @@ if stru_changed
 
         for _i := 1 to LEN(curr_stru)
          
-         _ime_p := curr_stru[_i, 1]
+            _ime_p := curr_stru[_i, 1]
          
             if len(curr_stru[_i]) > 4
 
-                _ime_p_new := stru_new[_i, 5]
-
+                _ime_p_new := curr_stru[_i, 5]
                 DO CASE
-                    
-                    CASE curr_stru[_i, 2] == curr_stru[i, 6]
-                        EVAL(FIELDBLOCK(_ime_p_new),  EVAL( FIELDWBLOCK("olddbf", _ime_p) )) 
-                    CASE curr_stru[_i, 2] == "C" .and. curr_stru[i, 6] == "N"
-                        EVAL(FIELDBLOCK(_ime_p_new),  VAL(EVAL( FIELDWBLOCK("olddbf", _ime_p) ))) 
-                    CASE curr_stru[_i, 2] == "N" .and. curr_stru[i, 6] == "C"
-                        EVAL(FIELDBLOCK(_ime_p_new),  STR(EVAL( FIELDWBLOCK("olddbf", _ime_p) ))) 
-                        CASE curr_stru[_i, 2] == "C" .and. curr_stru[i, 6] == "D"
-                        EVAL(FIELDBLOCK(_ime_p_new),  CTOD(EVAL( FIELDWBLOCK("olddbf", _ime_p) ))) 
+                    CASE curr_stru[_i, 2] == curr_stru[_i, 6]
+                        EVAL(FIELDBLOCK(_ime_p_new),  EVAL( FIELDWBLOCK(_ime_p, 1) )) 
+                    CASE curr_stru[_i, 2] == "C" .and. curr_stru[_i, 6] == "N"
+                        EVAL(FIELDBLOCK(_ime_p_new),  VAL(EVAL( FIELDWBLOCK(_ime_p, 1) ))) 
+                    CASE curr_stru[_i, 2] == "N" .and. curr_stru[_i, 6] == "C"
+                        EVAL(FIELDBLOCK(_ime_p_new),  STR(EVAL( FIELDWBLOCK(_ime_p, 1) ))) 
+                    CASE curr_stru[_i, 2] == "C" .and. curr_stru[_i, 6] == "D"
+                        EVAL(FIELDBLOCK(_ime_p_new),  CTOD(EVAL( FIELDWBLOCK(_ime_p, 1) ))) 
                 
                 END CASE
 
-            else
-                _pos := ASCAN( stru_new, {|x| _ime_p== x[1]} )
-                if _pos <> 0 
-                    EVAL(FIELDBLOCK(_ime_p),  EVAL( FIELDWBLOCK("olddbf", _ime_p) )) 
-                endif
-            endif
+             else
+                 _pos := ASCAN( new_stru, {|x| _ime_p== x[1]} )
+                 if _pos <> 0 
+                     EVAL(FIELDBLOCK(_ime_p),  EVAL( FIELDWBLOCK(_ime_p, 1) )) 
+                 endif
+             endif
         next
 
-        select olddbf
+        select OLDDBF
         skip
     
-   enddo 
+    enddo 
 
    close all
      
-   _pos := RAT(".", ime_dbf)
+   for each _tmp in { DBFEXT, MEMOEXT, INDEXEXT }
 
-
-   for each _tmp in { DBFEXT, FPTEXT, INDEXEXT }
-
-      _ime_file := my_home() + LEFT(ime_dbf, _pos) + _tmp + "_bak"
+      _ime_file := _f + _tmp
       // modstru_tmp.dbf
       _ime_tmp := my_home() + "modstru_tmp." + _tmp
       // fin_suban.dbf_bak
-      _ime_bak := my_home() + LEFT(ime_dbf, _pos) + _tmp + "_bak"
+      _ime_bak := _f + _tmp + "_bak"
 
-      if FILE( _ime_file)
-        FERASE( _ime_bak)
-        FRENAME(_ime_tmp, _ime_bak)
-        FERASE(_ime_tmp )
+      if FILE(_ime_file)
+        FERASE(_ime_bak)
+        FRENAME(_ime_file, _ime_bak)
+        FRENAME(_ime_tmp, _ime_file)
       endif
 
    next
@@ -383,8 +366,7 @@ return
 // -------------------
 // -------------------
 function Rjec(cLin)
-
-local cOp,nPos
+local cOp, nPos
 
 nPos:=aT(" ",cLin)
 if nPos==0 .and. !empty(cLin) // zadnje polje
@@ -393,22 +375,25 @@ if nPos==0 .and. !empty(cLin) // zadnje polje
   return cOp
 endif
 
-cOp:=alltrim(left(cLin,nPos-1))
-cLin:=right(cLin,len(cLin)-nPos)
-cLin:=alltrim(cLin)
+cOp  := alltrim(left(cLin,nPos-1))
+cLin := right(cLin,len(cLin)-nPos)
+cLin := alltrim(cLin)
 return cOp
 
 
 function Prepakuj(aNStru)
+local i, aPom
 
-local i,aPom
 aPom:={}
-for i:=1 to len(aNStru)
+
+for i:=1 to LEN(aNStru)
   if aNStru[i]<>nil
-   aadd(aPom,aNStru[i])
+     AADD(aPom, aNStru[i])
   endif
 next
-aNStru:=aClone(aPom)
+
+aNStru := ACLONE(aPom)
+
 return nil
 
 

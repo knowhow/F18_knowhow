@@ -9,11 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-static cIniHomeRoot := NIL
-static cIniHome := NIL
-static cIniConfig := ".f18_config.ini"
-static cDBFDataPath := ""
-
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 local menuop := {}
 local mnu_choice
@@ -27,7 +22,7 @@ set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 public gDebug := 7
 
-init_f18_app()
+f18_init_app()
 
 // menu opcije...
 AADD( menuop, " 1) FIN   # finansijsko poslovanje" )

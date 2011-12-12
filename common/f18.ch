@@ -14,3 +14,14 @@
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
 #define SEMAPHORE_LOCK_RETRY_NUM 3
 
+#ifndef TEST
+  #ifndef F18_RELEASE_DEFINED
+      #include "f18_release.ch"
+  #endif
+#else
+  #ifndef F18_TEST_DEFINED
+      #include "f18_test.ch"
+  #endif
+#endif
+
+

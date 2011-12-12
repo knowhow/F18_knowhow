@@ -22,9 +22,6 @@
   #include "f18.ch"
 #endif
 
-#ifndef F18_RELEASE_DEFINED
-  #include "f18_release.ch"
-#endif
 
 #define EXEPATH   my_home_root()
 #define SIFPATH   my_home()
@@ -53,7 +50,6 @@
 #command HSEEK <xpr>     => dbSeek(<xpr> ,.f.)
 
 #command MSEEK <xpr>             => dbSeek(<xpr> )
-
 
 
 #command EJECTA0          => qqout(chr(13)+chr(10)+chr(12))  ;
@@ -89,7 +85,6 @@
 #xcommand P_RPL_G            =>  gRPL_Gusto()
 
 
-// stari interfejs
 #xcommand INI             =>  gPB_ON()
 #xcommand B_ON             =>  gPB_ON()
 #xcommand B_OFF            =>  gPB_OFF()
@@ -109,7 +104,6 @@
 
 
 #xcommand CLOSERET2   => close all; return
-
 #xcommand CLOSERET  => close all; return
 
 

@@ -50,7 +50,7 @@ return
 
 // -----------------------------------------------
 // -----------------------------------------------
-static function get_dbf_ver(major, minor, patch)
+function get_dbf_ver(major, minor, patch)
 
 if VALTYPE(major) == "C"
    return  VAL(major)* 10000 +  VAL(minor)*100 + VAL(patch)

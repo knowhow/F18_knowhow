@@ -353,7 +353,7 @@ if !file(f18_ime_dbf( 'KARKON' ))
         AADD(aDBf,{ 'TIP_NC'              , 'C' ,  1 ,   0 })
         AADD(aDBf,{ 'TIP_PC'              , 'C' ,  1 ,   0 })
         DBCREATE2( 'KARKON', aDbf )
-		reset_semaphore_version("karkon")
+		reset_semaphore_version("mat_karkon")
 		my_use("karkon")
 endif
 CREATE_INDEX("ID","ID", "KARKON")

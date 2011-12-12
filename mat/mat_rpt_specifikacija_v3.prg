@@ -13,7 +13,7 @@
 #include "mat.ch"
 
 
-function specifs()
+function mat_sint_specifikacija()
 
 O_ROBA
 O_SIFV

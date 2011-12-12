@@ -13,7 +13,7 @@
 #include "mat.ch"
 
 
-function specif()
+function mat_specifikacija()
 
 O_ROBA
 O_SIFV
@@ -397,7 +397,7 @@ ENDIF
 CLOSERET
 
 
-FUNCTION FFor1s()
+static function FFor1s()
  cIdPartner:=idpartner
  cNPartnera:=Ocitaj(F_PARTN,idpartner,"TRIM(naz)+' '+TRIM(naz2)")
  nUlaz:=nIzlaz:=nDuguje:=nPotrazuje:=nSaldo:=0
@@ -417,11 +417,11 @@ FUNCTION FFor1s()
 RETURN .t.
 
 
-PROCEDURE FSvaki1s()
-RETURN
+static function FSvaki1s()
+return
 
 
-FUNCTION FFor2s()
+static function FFor2s()
  LOCAL nArr := SELECT()
  ++nRBr
  cIdRoba := idroba
@@ -446,6 +446,6 @@ FUNCTION FFor2s()
 RETURN .t.
 
 
-PROCEDURE FSvaki2s()
-RETURN
+static function FSvaki2s()
+return
 

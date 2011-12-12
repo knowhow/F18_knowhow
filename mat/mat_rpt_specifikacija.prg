@@ -136,7 +136,7 @@ END PRINT
 CLOSERET
 
 
-FUNCTION FFor1()
+static function FFor1()
  cIdPartner:=idpartner
  nRoba1:=nRoba2:=nRoba3:=nRoba4:=nRoba5:=nRoba6:=0
  cNPartnera:=Ocitaj(F_PARTN,idpartner,"TRIM(naz)+' '+TRIM(naz2)")
@@ -153,15 +153,15 @@ FUNCTION FFor1()
 RETURN .t.
 
 
-PROCEDURE FSvaki1()
-RETURN
+static function FSvaki1()
+return
 
 
-FUNCTION TekRec()
+static function TekRec()
  nSlog++
  @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
- @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(cmxKeysIncluded())
-RETURN (NIL)
+ @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(0)
+return (NIL)
 
 
 ************************************************************************
@@ -250,7 +250,7 @@ END PRINT
 CLOSERET
 
 
-FUNCTION FFor2()
+static function FFor2()
  LOCAL lVrati:=.f.
   cIdPartner:=idpartner
   IF ASCAN(aDobav,cIdpartner)==0
@@ -368,17 +368,8 @@ FUNCTION SrediKonta()
     ENDIF
     GO (nRec)
   ENDDO
-CLOSERET
-
-#ifdef CAX
- function truename(cc)  // sklonjena iz CTP
- return cc
-#else
- #ifdef EXT
-   function truename(cc)  // sklonjena iz CTP
-   return cc
- #endif
-#endif
+close all
+return
 
 
 

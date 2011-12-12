@@ -14,7 +14,7 @@
 
 
 
-function Povrat()
+function mat_povrat_naloga()
 
 O_mat_suban
 O_mat_anal
@@ -140,7 +140,7 @@ return
 // ----------------------------------------------
 // generacija dokumenta pocetnog stanja
 // ----------------------------------------------
-function PrenosMat()
+function mat_prenos_podataka()
 
 O_mat_pripr
 

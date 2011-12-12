@@ -13,7 +13,7 @@
 #include "mat.ch"
 
 
-function stdatn()
+function mat_dnevnik_naloga()
 
 O_MAT_NALOG
 SELECT mat_nalog

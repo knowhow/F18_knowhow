@@ -13,7 +13,7 @@
 #include "mat.ch"
 
 
-function fakmat()
+function mat_prenos_fakmat()
 
 O_PARAMS
 // select 99; use (PRIVPATH+"params") index (PRIVPATH+"parai1")

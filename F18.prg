@@ -30,15 +30,16 @@ public gDebug := 7
 init_f18_app()
 
 // menu opcije...
-AADD( menuop, "1) FIN   # finansijsko poslovanje" )
-AADD( menuop, "2) KALK  # robno-materijalno poslovanje")
-AADD( menuop, "3) FAKT  # fakturisanje")
-AADD( menuop, "4) ePDV  # elektronska evidencija PDV-a")
-AADD( menuop, "5) LD    # obracun plata")
-AADD( menuop, "6) RNAL  # radni nalozi")
-AADD( menuop, "7) OS    # osnovna sredstva")
-AADD( menuop, "8) SII   # sitan inventar")
-AADD( menuop, "9) POS   # maloprodajna kasa")
+AADD( menuop, " 1) FIN   # finansijsko poslovanje" )
+AADD( menuop, " 2) KALK  # robno-materijalno poslovanje")
+AADD( menuop, " 3) FAKT  # fakturisanje")
+AADD( menuop, " 4) ePDV  # elektronska evidencija PDV-a")
+AADD( menuop, " 5) LD    # obracun plata")
+AADD( menuop, " 6) RNAL  # radni nalozi")
+AADD( menuop, " 7) OS    # osnovna sredstva")
+AADD( menuop, " 8) SII   # sitan inventar")
+AADD( menuop, " 9) POS   # maloprodajna kasa")
+AADD( menuop, "10) MAT   # materijalno")
 
 do while .t.
 
@@ -66,7 +67,9 @@ do while .t.
 			//MainSii(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 9
 			MainPos(my_user(), "dummy", p3, p4, p5, p6, p7)
- 	endcase
+ 		case mnu_choice == 10
+			MainMat(my_user(), "dummy", p3, p4, p5, p6, p7)
+	endcase
  	loop
 enddo
 

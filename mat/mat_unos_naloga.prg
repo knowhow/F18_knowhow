@@ -12,7 +12,7 @@
 
 #include "mat.ch"
 
-function knjiz()
+function mat_knjizenje_naloga()
 
 
 PRIVATE PicDEM:="9999999.99"
@@ -34,7 +34,7 @@ RPar("po",@gPotpis)
 select params; use
 
 if gNW$"DR"
-  KnjNal()
+  mat_knjizi_nalog()
 else
  private opc[4],Izbor:=1
  Opc[1]:="1. knjizenje mat_naloga    "
@@ -50,9 +50,9 @@ else
      case izbor == 0
          exit
      case izbor == 1
-         KnjNal()
+         mat_knjizi_nalog()
      case izbor == 2
-         StNal()
+         mat_st_nalog()
      case izbor == 3
          Azur()
      case izbor == 4
@@ -72,7 +72,7 @@ closeret
 
 *******************************
 *******************************
-Function KnjNal()
+Function mat_knjizi_nalog()
 
 O_Edit()
 
@@ -149,7 +149,7 @@ return
 ******************************************************
 * ulaz _IdFirma, ...., nRedBr (str(_RBr))
 ******************************************************
-function EditPRIPR(fNovi)
+static function EditPRIPR(fNovi)
    private nKurs:=0
    if fnovi .and. nRbr==1; _idfirma:=gFirma; endif
 
@@ -174,7 +174,7 @@ function EditPRIPR(fNovi)
    endif
 
 
-   @  m_x+3,m_y+52  SAY "Broj:"   get _BrNal   valid Dupli(_BrNal,_IdVN,_IdFirma) .and. !empty(_BrNal)
+   @  m_x+3,m_y+52  SAY "Broj:"   get _BrNal   valid mat_dupli_nalog(_BrNal,_IdVN,_IdFirma) .and. !empty(_BrNal)
 
    @  m_x+5,m_y+2  SAY "Redni broj stavke mat_naloga:" get nRbr picture "9999"
 
@@ -324,7 +324,7 @@ RETURN (nFin/nMat)
 
 
 
-function V_Roba(fnovi)
+static function V_Roba(fnovi)
 
 P_Roba(@_IdRoba,14,25)
 if fnovi .and. _idvn $ gNalPr  // predlozi izlaz iz prod
@@ -375,7 +375,7 @@ do case
   case Ch==K_CTRL_T
      if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
       delete
-      BrisiPBaze()
+      mat_brisi_pbaze()
       return DE_REFRESH
      endif
      return DE_CONT
@@ -430,7 +430,7 @@ do case
      return DE_CONT
     else
      Gather()
-     BrisiPBaze()
+     mat_brisi_pbaze()
      BoxC()
      return DE_REFRESH
     endif
@@ -449,7 +449,7 @@ do case
            if EditPRIPR(.f.)==0
              exit
            else
-             BrisiPBaze()
+             mat_brisi_pbaze()
            endif
            if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
            @ m_x+20,m_y+1 SAY "ZBIR mat_nalogA:"
@@ -481,7 +481,7 @@ do case
            if EditPRIPR(.t.)==0
              exit
            else
-             BrisiPBaze()
+             mat_brisi_pbaze()
            endif
            if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
            @ m_x+20,m_y+1 SAY "ZBIR mat_nalogA:"
@@ -500,13 +500,13 @@ do case
    case Ch=K_CTRL_F9
         if Pitanje(,"Zelite li izbrisati mat_pripremu !!????","N")=="D"
              zap
-             BrisiPBaze()
+             mat_brisi_pbaze()
         endif
         return DE_REFRESH
 
    case Ch==K_CTRL_P
      close all
-     StNal()
+     mat_st_nalog()
      O_Edit()
      return DE_REFRESH
 
@@ -519,7 +519,7 @@ endcase
 
 
 
-function dupli(cBrNal,cVN,cIdFirma)
+function mat_dupli_nalog(cBrNal,cVN,cIdFirma)
 PushWa()
 select mat_nalog
 seek cIdFirma+cVN+cBrNal
@@ -649,25 +649,25 @@ Inkey(2)
 BoxC()
 closeret
 
-function StNal()
+function mat_st_nalog()
 local Izb
 
 PRIVATE PicDEM:="@Z 9999999.99"
 PRIVATE PicBHD:="@Z 999999999.99"
 PRIVATE PicKol:="@Z 999999.999"
 
-StAnalNal()
+mat_st_anal_nalog()
 //StSintNal()
 MsgO("Formiranje mat_analitickih i mat_sintetickih stavki...")
 SintStav()
 MsgC()
 if (gKonto=="D" .and. Pitanje(,"Stampa mat_analitike","D")=="D")  .or. ;
    (gKonto=="N" .and. Pitanje(,"Stampa mat_analitike","N")=="D")
- StoSNal(.t.)
+ mat_st_sint_nalog(.t.)
 endif
 return
 
-function StAnalNal(fnovi)
+function mat_st_anal_nalog(fnovi)
 local i
 
 if pcount()==0
@@ -875,7 +875,7 @@ closeret
 
 
 
-function Zagl11()
+static function Zagl11()
 local nArr
 P_10CPI
 ?? gnFirma
@@ -1030,7 +1030,7 @@ enddo
 closeret
 
 
-FUNCTION BrisiPBaze()
+FUNCTION mat_brisi_pbaze()
   PushWA()
   SELECT (F_mat_psuban); ZAP
   SELECT (F_mat_panal); ZAP

@@ -1,3 +1,8 @@
+0.9.15  2001-12-12, hernad haos_2
+
+  - uvodim mouse podrsku [#25300](http://redmine.bring.out.ba/issues/25300)
+  - legacy [#25640](http://redmine.bring.out.ba/issues/25640)
+
 0.9.14  2011-12-09, hernad FAKT
 
   - inteligentnije azuriranje FAKT [#25631](http://redmine.bring.out.ba/issues/25631)

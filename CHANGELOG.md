@@ -1,3 +1,7 @@
+0.9.16  2001-12-12, test init
+
+  - modstru_test [#25648](http://redmine.bring.out.ba/issues/25648)
+
 0.9.15  2001-12-12, hernad haos_2
 
   - uvodim mouse podrsku [#25300](http://redmine.bring.out.ba/issues/25300)

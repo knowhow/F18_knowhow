@@ -22,7 +22,6 @@ PRIVATE PicKol:="999999.999"
 public gPotpis:="N"
 PicUN:="999999999.99"
 private fK1:=fk2:=fk3:=fk4:="N"
-************************************************
 O_PARAMS
 Private cSection:="1",cHistory:=" ",aHistory:={}
 Params1()
@@ -54,7 +53,7 @@ else
      case izbor == 2
          mat_st_nalog()
      case izbor == 3
-         Azur()
+         azur_mat()
      case izbor == 4
        if KursLis=="1"  // prva vrijednost
          KursLis:="2"
@@ -74,7 +73,7 @@ closeret
 *******************************
 Function mat_knjizi_nalog()
 
-O_Edit()
+mat_o_edit()
 
 ImeKol:={ ;
           {"F.",         {|| IdFirma }, "idfirma" } ,;
@@ -106,23 +105,24 @@ ENDIF
 
 Kol:={}; for i:=1 to LEN(ImeKol); AADD(Kol,i); next
 
-Box(,20,77)
-@ m_x+18,m_y+2 SAY " <c-N>  Nove Stavke       ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku "
-@ m_x+19,m_y+2 SAY " <c-A>  Ispravka mat_naloga   ³ <c-P> Stampa mat_naloga    ³ <a-A> Azuriranje   "
-@ m_x+20,m_y+2 SAY " <c-F9> Brisi mat_pripremu    ³ <F5>  Kontrola zbira   ³                    "
-ObjDbedit("PNal",20,77,{|| EdPRIPR()},"","Priprema..", , , , ,3)
+Box(, MAXROWS()-4, MAXCOLS()-3)
+
+@ m_x + MAXROWS()-4-2, m_y + 2 SAY " <c-N>  Nove Stavke       ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku "
+@ m_x + MAXROWS()-4-1, m_y + 2 SAY " <c-A>  Ispravka mat_naloga   ³ <c-P> Stampa mat_naloga    ³ <a-A> Azuriranje   "
+@ m_x + MAXROWS()-4, m_y + 2 SAY " <c-F9> Brisi mat_pripremu    ³ <F5>  Kontrola zbira   ³                    "
+ObjDbedit( "PNal", MAXROWS()-4, MAXCOLS()-3, {|| mat_pripr_key_handler()},"","Priprema..", , , , ,3)
 BoxC()
 
-closeret
+close all
+return
 
 
-function O_Edit()
+function mat_o_edit()
 
-O_mat_psuban
-O_mat_panal
-O_mat_psint
-O_mat_pnalog
-
+O_MAT_PSUBAN
+O_MAT_PANAL
+O_MAT_PSINT
+O_MAT_PNALOG
 O_MAT_SUBAN
 O_KARKON
 O_MAT_PRIPR
@@ -363,7 +363,7 @@ endif
 return .t.
 
 
-function EdPRIPR()
+function mat_pripr_key_handler()
 local nTr2
 
 if (Ch==K_CTRL_T .or. Ch==K_ENTER)  .and. empty(BrNal)
@@ -507,13 +507,13 @@ do case
    case Ch==K_CTRL_P
      close all
      mat_st_nalog()
-     O_Edit()
+     mat_o_edit()
      return DE_REFRESH
 
    case Ch==K_ALT_A
      close all
-     Azur()
-     O_Edit()
+     azur_mat()
+     mat_o_edit()
      return DE_REFRESH
 endcase
 
@@ -535,7 +535,7 @@ return .t.
 
 
 
-function Azur()
+function azur_mat()
 
 if Pitanje(,"Sigurno zelite izvrsiti azuriranje (D/N)?","N")=="N"
    return
@@ -544,13 +544,13 @@ endif
 O_PARTN
 O_MAT_PRIPR
 O_MAT_SUBAN
-O_mat_psuban
+O_MAT_PSUBAN
 O_MAT_ANAL
-O_mat_panal
+O_MAT_PANAL
 O_MAT_SINT
-O_mat_psint
+O_MAT_PSINT
 O_MAT_NALOG
-O_mat_pnalog
+O_MAT_PNALOG
 O_ROBA
 
 fAzur:=.t.
@@ -658,11 +658,11 @@ PRIVATE PicKol:="@Z 999999.999"
 
 mat_st_anal_nalog()
 //StSintNal()
-MsgO("Formiranje mat_analitickih i mat_sintetickih stavki...")
+MsgO("Formiranje analitickih i sintetickih stavki...")
 SintStav()
 MsgC()
-if (gKonto=="D" .and. Pitanje(,"Stampa mat_analitike","D")=="D")  .or. ;
-   (gKonto=="N" .and. Pitanje(,"Stampa mat_analitike","N")=="D")
+if (gKonto=="D" .and. Pitanje(,"Stampa analitike","D")=="D")  .or. ;
+   (gKonto=="N" .and. Pitanje(,"Stampa analitike","N")=="D")
  mat_st_sint_nalog(.t.)
 endif
 return
@@ -843,7 +843,7 @@ DO WHILE !EOF()
    IF prow()>59; FF; Zagl11();  endif
    IF gNW!="R"
      ? M
-     ? "ZBIR mat_nalogA:"
+     ? "ZBIR NALOGA:"
      @ prow(),nCI-1 SAY ""
      @ prow(),pcol()+1 SAY nUkDug PICTURE "@Z "+gPicDEM()
      @ prow(),pcol()+1 SAY nUkPot PICTURE "@Z "+gPicDEM()
@@ -871,7 +871,8 @@ DO WHILE !EOF()
 
 ENDDO  // eof()
 
-closeret
+close all
+return
 
 
 
@@ -885,7 +886,7 @@ else
  P_COND2
 endif
 ?
-? "MAT.P: mat_nalog ZA KNJIZENJE BROJ :"
+? "MAT.P: NALOG ZA KNJIZENJE BROJ :"
 @ prow(),PCOL()+2 SAY cIdFirma+" - "+cIdVn+" - "+cBrNal
 nArr:=select()
 select TNAL; HSEEK cIdVN; @ prow(),pcol()+4 SAY naz
@@ -920,18 +921,16 @@ select mat_psint; zap
 select mat_pnalog; zap
 
 select mat_psuban
-#ifndef C50
 set order to tag "2"
-#else
-set order to 2
-#endif
 go top
-if empty(BrNal); closeret; endif
+if empty(BrNal)
+	close all
+	return
+endif
 
 DO WHILE !eof()   // svi nalozi
 
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
-
 
    nDug11:=nPot11:=nDug22:=nPot22:=0
 
@@ -1027,22 +1026,23 @@ do while !eof()
    enddo
 enddo
 
-closeret
+close all
+return
 
 
-FUNCTION mat_brisi_pbaze()
+function mat_brisi_pbaze()
   PushWA()
   SELECT (F_mat_psuban); ZAP
   SELECT (F_mat_panal); ZAP
   SELECT (F_mat_psint); ZAP
   SELECT (F_mat_pnalog); ZAP
   PopWA()
-RETURN (NIL)
+return nil
 
 
 
 
-PROCEDURE OsvCijSif()
+function OsvCijSif()
 local nArr:=SELECT(),cPom1:=" ",cPom2:=" "
 
 SELECT ROBA

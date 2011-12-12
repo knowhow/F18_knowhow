@@ -29,10 +29,8 @@ CREATE_INDEX("NAZ", "naz", ime_f)
 
 my_usex(ime_f)
 
-APPEND BLANK
-
-
 for _i := 1 to 50
+ APPEND BLANK
  replace id with STR(_i, 2)
  replace naz with "naz" + STR(_i, 2)
 next

@@ -1,23 +1,26 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch"
+#include "f18_ver.ch"
+
 #include "error.ch"
+/*
 #include "dbstruct.ch"
 #include "set.ch"
+*/
 
 // ------------------------------------------
 // ------------------------------------------
-function MyErrorHandler(objErr,lLocalHandler)
+function MyErrorHandler(objErr, lLocalHandler)
 
 local cOldDev
 local cOldCon
@@ -31,10 +34,10 @@ if lLocalHandler
   Break objErr
 endif
 
-cOldDev:=SET(_SET_DEVICE,"SCREEN")
-cOldCon:=SET(_SET_CONSOLE,"ON")
-cOldPrn:=SET(_SET_PRINTER,"")
-cOldFile:=SET(_SET_PRINTFILE,"")
+cOldDev  := SET(_SET_DEVICE,"SCREEN")
+cOldCon  := SET(_SET_CONSOLE,"ON")
+cOldPrn  := SET(_SET_PRINTER,"")
+cOldFile :=SET(_SET_PRINTFILE,"")
 BEEP(5)
 
 nErr:=objErr:genCode
@@ -80,39 +83,28 @@ return .t.
 
 // -----------------------------------------------
 // -----------------------------------------------
-function GlobalErrorHandler(objErr, lLocalHandler)
+function GlobalErrorHandler(err_obj)
 
-local cOldDev
-local cOldCon
-local cScr
-local cStampaj
-local nErr
-local cOdg
+local _i, _err_code
+local _out_file
 
-private ckom
-
-if llocalHandler==NIL
-    lLocalHandler:=.f.
-endif
-
- 
-if lLocalHandler
-  Break objErr
-endif
-
- 
-cOldDev:=SET(_SET_DEVICE,"SCREEN")
-cOldCon:=SET(_SET_CONSOLE,"ON")
-cOldPrn:=SET(_SET_PRINTER,"")
-cOldFile:=SET(_SET_PRINTFILE,"")
-
-
-lInstallDB:=.f.
+_err_code := err_obj:genCode
 
 BEEP(5)
+_out_file := my_home_root() + "error.txt"
+
+/*
+cOldDev  := SET(_SET_DEVICE, "SCREEN")
+cOldCon  := SET(_SET_CONSOLE, "ON")
+cOldPrn  := SET(_SET_PRINTER, "")
+cOldFile := SET(_SET_PRINTFILE, "")
+
+
+lInstallDB := .f.
+
+
 SETCANCEL(.t.)
 
-nErr:=objErr:genCode
 do case
 
    CASE objErr:genCode=EG_ARG
@@ -216,7 +208,6 @@ do case
   cOdg:=Pitanje(,"Zelite li pokusati ponovo D/N ?",cOdg)
  endif
 
-
 if (cOdg=='D')
   SET(_SET_DEVICE,cOldDev)
   SET(_SET_CONSOLE,cOldCon)
@@ -228,60 +219,53 @@ if (cOdg=='D')
 endif
 
 SETCOLOR(StaraBoja)
+*/
 
 CLS
 
-cStampaj:="N"
+_print := f18_start_print(_out_file)
 
-do while .t.
+P_12CPI
 
-  if cStampaj=="D"
-    start print cret
-    P_10CPI
-  endif
+? REPLICATE("=", 84) 
+? "F18 bug report:", DATE(), TIME()
+? REPLICATE("=", 84) 
 
-  ?
-  ? "Verzija programa:", gVerzija ," FMK lib:", fmklibver()
-  ?
-  ? "Podsistem klipera:",objErr:SubSystem
-  ? "GenKod:",str(objErr:GenCode,3),"OpSistKod:",str(objErr:OsCode,3)
-  ? "Opis:",objErr:description
-  ? "ImeFajla:",objErr:filename
-  ? "Operacija:",objErr:operation
-  ? "Argumenti:",objErr:args
-  for i:=10 to 2 STEP -1
-   if !empty(PROCNAME(i))
-    ? "Procedura:",padr(PROCNAME(i),10),"Linija:",ProcLine(i)
+
+? "Verzija programa:", F18_VER, F18_VER_DATE, FMK_LIB_VER
+?
+
+? "Podsistem:", err_obj:SubSystem
+? "GenKod:", str(err_obj:GenCode, 3), "OpSistKod:", str(err_obj:OsCode,3)
+? "Opis:", err_obj:description
+? "ImeFajla:", err_obj:filename
+? "Operacija:", err_obj:operation
+? "Argumenti:", err_obj:args
+
+? 
+? "CALL STACK:"
+? "---", REPLICATE("-", 80)
+for _i := 10 to 1 STEP -1
+   if !empty(PROCNAME(_i))
+    ? STR(_i, 3), PROCNAME(_i) + " / " +   ALLTRIM(STR(ProcLine(_i), 6))
    endif
-  next
-  ?
-  ? "Trenutno radno podrucje:",alias(),", na zapisu broj:",recno()
-  ?
-  ?
+next
+? "---", REPLICATE("-", 80)
+?
 
-  if cStampaj=="D"
-   ?
-   ?
-   end print
-   exit
-  else
-   ?
-   ? "Odstampati gornje podatke na stampac D/N ?"
-   INKEY()
-   
-   cStampaj:=upper(chr(lastkey()))
-   if cstampaj=="D"
-     loop
-   else
-    exit
-   endif
-  endif
+if used() 
+   ? "Trenutno radno podrucje:", alias() ,", na zapisu broj:", recno()
+else
+   ? "USED() = false"
+endif
 
-enddo
-
+? 
+? "== END OF BUG REPORT =="
+f18_end_print(_out_file, _print)
 
 close all
-goModul:quit()
+
+quit
 
 RETURN
 

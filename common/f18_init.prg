@@ -14,6 +14,8 @@ static __server_params := NIL
 static __f18_home := NIL
 static __f18_home_root := NIL
 static __log_handle := NIL
+static __my_error_handler := NIL
+static __global_error_handler := NIL
 
 #include "fmk.ch"
 
@@ -32,6 +34,8 @@ REQUEST HB_CODEPAGE_SL852
 REQUEST HB_CODEPAGE_SLISO
 
 SET DELETED ON
+
+SETCANCEL(.f.)
 
 HB_CDPSELECT("SL852")
 
@@ -67,6 +71,12 @@ log_write("== F18 start: " + hb_ValToStr(DATE()) + " / " + hb_ValToStr(TIME()) +
 SetgaSDbfs()
 set_global_vars_0()
 set_a_dbfs()
+
+
+__my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }
+
+__global_error_handler := ERRORBLOCK(__my_error_handler)
+
 
 // ucitaj parametre iz inija, ako postoje ...
 _ini_params := hb_hash()
@@ -437,4 +447,10 @@ return
 function log_close()
  FCLOSE(__log_handle)
 return .t.
+
+function my_error_handler()
+return  __my_error_handler
+
+function global_error_handler()
+return  __global_error_handler
 

@@ -230,7 +230,7 @@ DO CASE
                             + _sql_quote( record["id_partner"] ) + "," +;
                             + _sql_quote( record["id_zaduz"] ) + "," +;
                             + STR( record["iznos2"], 15, 2 ) + "," +;
-                            + _sql_quote( record["datkurs"] ) + "," +;
+                            + _sql_quote( record["dat_kurs"] ) + "," +;
                             + _sql_quote( record["k1"] ) + "," +;
                             + _sql_quote( record["k2"] ) + "," +;
                             + _sql_quote( record["k3"] ) + "," +;

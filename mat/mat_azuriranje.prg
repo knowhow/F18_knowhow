@@ -39,7 +39,7 @@ return
 static function _provjera_dokumenta()
 local _valid := .t.
 
-if !stampan_nalog()
+if !_stampan_nalog()
 	_valid := .f.
 	return _valid
 endif
@@ -157,7 +157,9 @@ endif
 // azuriraj u sql
 if _mat_azur_sql()
 	// azuriraj u dbf
-	_mat_azur_dbf()
+	if !_mat_azur_dbf()
+		msgbeep( "Problem sa azuriranjem mat/dbf !" )
+	endif
 else
 	msgbeep( "Problem sa azuriranjem mat/sql !" )
 endif
@@ -172,7 +174,256 @@ return
 // --------------------------------------------------
 static function _mat_azur_sql()
 local _ok := .t.
+local _ids := {}
+local record
+local _tmp_id
+local _tbl_suban
+local _tbl_anal
+local _tbl_sint
+local _tbl_nalog
+local _i
 
+_tbl_suban := "mat_suban"
+_tbl_anal := "mat_anal"
+_tbl_nalog := "mat_nalog"
+_tbl_sint := "mat_sint"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+	
+	// lock suban  
+	if get_semaphore_status( _tbl_suban ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_suban )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_suban, "lock" )
+  	endif
+
+	// lock anal  
+	if get_semaphore_status( _tbl_anal ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_anal )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_anal, "lock" )
+  	endif
+	
+	// lock sint
+	if get_semaphore_status( _tbl_sint ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_sint )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_sint, "lock" )
+  	endif
+	
+	// lock nalog
+	if get_semaphore_status( _tbl_nalog ) == "lock"
+    	MsgBeep("tabela zakljucana: " + _tbl_nalog )
+      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+  	else
+    	lock_semaphore( _tbl_nalog, "lock" )
+  	endif
+
+next
+   
+
+if _ok = .t.
+  
+  MsgO("sql mat_suban")
+  
+  record := hb_hash()
+
+  select mat_psuban
+  go top
+
+  sql_mat_suban_update("BEGIN")
+  
+  do while !eof()
+ 
+     record["id_firma"] := field->IdFirma
+     record["id_vn"] := field->IdVn
+     record["br_nal"] := field->BrNal
+     _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"]
+
+     record["r_br"] := field->Rbr
+     record["dat_dok"] := field->DatDok
+     record["id_roba"] := field->idroba
+     record["id_konto"] := field->idkonto
+     record["id_partner"] := field->IdPartner
+     record["d_p"] := field->d_p
+     record["iznos"] := field->iznos
+     record["iznos2"] := field->iznos2
+     record["id_tip_dok"] := field->IdTipDok
+     record["br_dok"] := field->brdok
+     record["u_i"] := field->u_i
+     record["kolicina"] := field->kolicina
+     record["id_zaduz"] := field->idzaduz
+     record["dat_kurs"] := field->datkurs
+     record["k1"] := field->k1
+     record["k2"] := field->k2
+     record["k3"] := field->k3
+     record["k4"] := field->k4
+
+     if !sql_mat_suban_update("ins", record )
+       _ok := .f.
+       exit
+     endif
+
+     skip
+  
+  enddo
+
+  MsgC()
+
+endif
+
+// idi dalje, na anal ... ako je ok
+if _ok = .t.
+  
+  MsgO("sql mat_anal")
+
+  record := hb_hash()
+
+  select mat_panal
+  go top
+  
+  sql_mat_anal_update("BEGIN")
+  
+  do while !eof()
+ 
+   record["id_firma"] := field->IdFirma
+   record["id_vn"] := field->IdVn
+   record["br_nal"] := field->BrNal
+   record["r_br"] := field->Rbr
+   record["dat_nal"] := field->Datnal
+   record["id_konto"] := field->IdKonto
+   record["dug"] := field->dug
+   record["pot"] := field->pot
+   record["dug2"] := field->dug2
+   record["pot2"] := field->pot2
+
+   if !sql_mat_anal_update("ins", record )
+       _ok := .f.
+       exit
+    endif
+   skip
+  enddo
+
+  MsgC()
+
+endif
+
+
+// idi dalje, na sint ... ako je ok
+if _ok = .t.
+  
+  MsgO("sql mat_sint")
+
+  record := hb_hash()
+
+  select mat_psint
+  go top
+  
+  sql_mat_sint_update("BEGIN")
+  
+  do while !eof()
+ 
+   record["id_firma"] := field->IdFirma
+   record["id_vn"] := field->IdVn
+   record["br_nal"] := field->BrNal
+   record["r_br"] := field->Rbr
+   record["dat_nal"] := field->Datnal
+   record["id_konto"] := LEFT( field->IdKonto, 3 )
+   record["dug"] := field->dug
+   record["pot"] := field->pot
+   record["dug2"] := field->dug2
+   record["pot2"] := field->pot2
+
+   if !sql_mat_sint_update("ins", record )
+       _ok := .f.
+       exit
+    endif
+   skip
+  enddo
+
+  MsgC()
+
+endif
+
+
+// idi dalje, na nalog ... ako je ok
+if _ok = .t.
+  
+  MsgO("sql mat_nalog")
+
+  record := hb_hash()
+
+  select mat_pnalog
+  go top
+
+  sql_mat_nalog_update("BEGIN")
+
+  do while !eof()
+ 
+   record["id_firma"] := field->IdFirma
+   record["id_vn"] := field->IdVn
+   record["br_nal"] := field->BrNal
+   record["dat_nal"] := field->Datnal
+   record["dug"] := field->dug
+   record["pot"] := field->pot
+   record["dug2"] := field->dug2
+   record["pot2"] := field->pot2
+
+   if !sql_mat_nalog_update("ins", record )
+       _ok := .f.
+       exit
+    endif
+   skip
+  enddo
+
+  MsgC()
+
+endif
+
+
+if ! _ok
+
+	// vrati sve promjene...  	
+	sql_mat_suban_update( "ROLLBACK" )
+	sql_mat_sint_update( "ROLLBACK" )
+	sql_mat_anal_update( "ROLLBACK" )
+	sql_mat_nalog_update( "ROLLBACK" )
+
+else
+
+	// dodaj ids
+  	AADD(_ids, _tmp_id) 
+	
+	// suban  
+	update_semaphore_version( _tbl_suban, .t.)
+  	push_ids_to_semaphore( _tbl_suban, _ids )
+  	sql_mat_suban_update("END")
+
+	// anal
+	update_semaphore_version( _tbl_anal, .t.)
+  	push_ids_to_semaphore( _tbl_anal, _ids )
+  	sql_mat_anal_update("END")
+	
+	// sint
+	update_semaphore_version( _tbl_sint, .t.)
+  	push_ids_to_semaphore( _tbl_sint, _ids )
+  	sql_mat_sint_update("END")
+	
+	// nalog
+	update_semaphore_version( _tbl_nalog, .t.)
+  	push_ids_to_semaphore( _tbl_nalog, _ids )
+  	sql_mat_nalog_update("END")
+
+endif
+
+// otkljucaj sve tabele
+lock_semaphore(_tbl_suban, "free")
+lock_semaphore(_tbl_anal, "free")
+lock_semaphore(_tbl_sint, "free")
+lock_semaphore(_tbl_nalog, "free")
 
 return _ok
 

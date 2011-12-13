@@ -39,12 +39,11 @@ local _field_b
 
 if rlock()
 	for each _key in vars:Keys
-    	// replace polja
-   		_field_b := FIELDBLOCK(_key)
+        // replace polja
+        _field_b := FIELDBLOCK(_key)
         // napuni field sa vrijednosti
         EVAL( _field_b, vars[_key] ) 
-    next
- 
+    next 
     dbrunlock()
 else
    	MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())

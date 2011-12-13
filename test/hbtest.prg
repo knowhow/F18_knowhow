@@ -198,10 +198,7 @@ PROCEDURE TEST_BEGIN( cParam )
    PUBLIC mbBlockC  := sbBlockC
    PUBLIC maArray   := { 9898 }
 
-#ifndef __XPP__
-   //rddSetDefault( "DBFCDX" )
-#endif
-
+/*
    bErrorOld := ErrorBlock( {| oError | Break( oError ) } )
    BEGIN SEQUENCE
       dbCreate( "_hbtmp_.dbf",;
@@ -239,9 +236,11 @@ PROCEDURE TEST_BEGIN( cParam )
    END SEQUENCE
    ErrorBlock( bErrorOld )
 
-   //IF ! s_lDBFAvail
-   //   OutMsg( s_nFhnd, "WARNING ! Test .dbf could not be created. Related tests will be skipped." + hb_eol() )
-   //ENDIF
+   IF ! s_lDBFAvail
+      OutMsg( s_nFhnd, "WARNING ! Test .dbf could not be created. Related tests will be skipped." + hb_eol() )
+   ENDIF
+
+*/
 
    RETURN
 

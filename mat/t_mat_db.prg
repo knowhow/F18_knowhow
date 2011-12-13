@@ -205,6 +205,7 @@ if !file( f18_ime_dbf( "mat_pnalog" ))
 endif
 
 CREATE_INDEX("1","IdFirma+IdVn+BrNal", "mat_nalog") // Nalozi
+CREATE_INDEX("2","datnal", "mat_nalog") // Nalozi
 CREATE_INDEX("1","IdFirma", "mat_pnalog") // Nalozi
 
 aDbf:={}
@@ -274,6 +275,7 @@ endif
 
 CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)",KUMPATH+"mat_anal")  //mat_analiti
 CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",KUMPATH+"mat_anal")
+CREATE_INDEX("3","datnal",KUMPATH+"mat_anal")
 CREATE_INDEX("1","IdFirma+idvn+brnal+idkonto",PRIVPATH+"mat_panal")
 
 aDbf:={}
@@ -300,6 +302,7 @@ endif
 
 CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)",KUMPATH+"mat_sint")  // mat_sinteti
 CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",KUMPATH+"mat_sint")
+CREATE_INDEX("3","datnal",KUMPATH+"mat_sint")
 CREATE_INDEX("1","IdFirma",PRIVPATH+"mat_psint")
 
 if !file( f18_ime_dbf( 'mat_pripr' ) )

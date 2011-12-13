@@ -317,17 +317,6 @@ function SetNaslov(oApp)
 
 gNaslov:= oApp:cName + " F18, " + oApp:cPeriod 
 
-#ifndef FMK_DEBUG
-SETCANCEL(.f.)
-#endif
-
-#IFDEF  READONLY
-     gNaslov+="-RO"
-#ENDIF
-
-//PUBLIC bGlobalErrorHandler
-//bGlobalErrorHandler:={|objError| GlobalErrorHandler(objError,.f.)}
-
 return
 
 

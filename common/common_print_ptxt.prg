@@ -12,26 +12,25 @@
 
 #include "fmk.ch"
 
-/* --------------------- */
 function PtxtSekvence()
 
-gpIni:=  "#%INI__#"
-gpCOND:= "#%KON17#"
-gpCOND2:="#%KON20#"
-gp10CPI:="#%10CPI#"
-gP12CPI:="#%12CPI#"
-gPB_ON :="#%BON__#"
-gPB_OFF:="#%BOFF_#"
-gPU_ON:="#%UON__#"
-gPU_OFF:="#%UOFF_#"
-gPI_ON:="#%ION__#"
-gPI_OFF:="#%IOFF_#"
-gPFF   :="#%NSTR_#"
-gPO_Port:="#%PORTR#"
-gPO_Land:="#%LANDS#"
+public gpIni:=  "#%INI__#"
+public gpCOND:= "#%KON17#"
+public gpCOND2:="#%KON20#"
+public gp10CPI:="#%10CPI#"
+public gP12CPI:="#%12CPI#"
+public gPB_ON :="#%BON__#"
+public gPB_OFF:="#%BOFF_#"
+public gPU_ON:="#%UON__#"
+public gPU_OFF:="#%UOFF_#"
+public gPI_ON:="#%ION__#"
+public gPI_OFF:="#%IOFF_#"
+public gPFF   :="#%NSTR_#"
+public gPO_Port:="#%PORTR#"
+public gPO_Land:="#%LANDS#"
 
-gRPL_Normal:=""
-gRPL_Gusto:=""
+public gRPL_Normal:=""
+public gRPL_Gusto:=""
 
 return
 

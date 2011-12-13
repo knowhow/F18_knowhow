@@ -1,3 +1,7 @@
+0.9.17  2001-12-13, bug report
+
+  - [#25663](http://redmine.bring.out.ba/issues/25663)
+
 0.9.16  2001-12-12, test init
 
   - modstru_test [#25648](http://redmine.bring.out.ba/issues/25648)

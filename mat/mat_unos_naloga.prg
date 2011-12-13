@@ -542,14 +542,22 @@ PRIVATE PicBHD:="@Z 999999999.99"
 PRIVATE PicKol:="@Z 999999.999"
 
 mat_st_anal_nalog()
+
 //StSintNal()
+
 MsgO("Formiranje analitickih i sintetickih stavki...")
-SintStav()
+
+mat_sint_stav()
+
 MsgC()
+
 if (gKonto=="D" .and. Pitanje(,"Stampa analitike","D")=="D")  .or. ;
    (gKonto=="N" .and. Pitanje(,"Stampa analitike","N")=="D")
- mat_st_sint_nalog(.t.)
+	
+	mat_st_sint_nalog(.t.)
+
 endif
+
 return
 
 function mat_st_anal_nalog(fnovi)
@@ -794,20 +802,24 @@ endif
 return
 
 
-function mat_sintStav()
+function mat_sint_stav()
 
-O_mat_psuban
-O_mat_panal
-O_mat_psint
-O_mat_pnalog
+O_MAT_PSUBAN
+O_MAT_PANAL
+O_MAT_PSINT
+O_MAT_PNALOG
 
-select mat_panal; zap
-select mat_psint; zap
-select mat_pnalog; zap
+select mat_panal
+zap
+select mat_psint
+zap
+select mat_pnalog
+zap
 
 select mat_psuban
 set order to tag "2"
 go top
+
 if empty(BrNal)
 	close all
 	return

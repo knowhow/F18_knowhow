@@ -35,17 +35,20 @@ return _ret
 // ------------------------------
 function dbf_update_rec(vars)
 local _key
+local _field_b
 
 if rlock()
-   for each _key in vars:Keys
-       // replace polja
-       EVAL( FIELDBLOCK( _key, vars[_key] ) )
+	for each _key in vars:Keys
+    	// replace polja
+   		_field_b := FIELDBLOCK(_key)
+        // napuni field sa vrijednosti
+        EVAL( _field_b, vars[_key] ) 
     next
-
+ 
     dbrunlock()
 else
-   MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())
-   return .f.
+   	MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())
+   	return .f.
 endif
 
 return .t.
@@ -59,8 +62,8 @@ function update_rec_on_server(values, where)
 local _vars
 
 if values == NIL
-   // pokupi iz takuceg dbf zapisa vrijednosti
-   values := dbf_get_rec()
+	// pokupi iz takuceg dbf zapisa vrijednosti
+   	values := dbf_get_rec()
 endif
 
 return f18_gather(values, where)
@@ -76,17 +79,19 @@ return f18_gather(values, where)
 function update_rec_dbf_and_server(vars, where)
 local _key
 local _all_vars
+local _field_b
 
 if rlock()
-   for each _key in vars:Keys
-       // replace polja
-       EVAL( FIELDBLOCK( _key, vars[_key] ) )
+	for each _key in vars:Keys
+       	// replace polja
+       	_field_b := FIELDBLOCK( _key )
+		EVAL( _field_b, vars[_key] ) )
     next
 
     update_rec_on_server( NIL, where)
     dbrunlock()
 else
-   MsgBeep( "Ne mogu rlock-ovati" + ALIAS())
+   	MsgBeep( "Ne mogu rlock-ovati" + ALIAS())
 endif
 
 return .t.

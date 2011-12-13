@@ -444,6 +444,8 @@ Box(,7,30,.f.)
 	select mat_panal
 	go top
 
+	altd()
+
 	do while !EOF()
 		
 		_vars := dbf_get_rec() 

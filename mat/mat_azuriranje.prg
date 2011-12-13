@@ -435,58 +435,97 @@ return _ok
 // --------------------------------------------------
 static function _mat_azur_dbf()
 local _ret := .t.
+local _vars
 
 Box(,7,30,.f.)
+
 	
-	// azuriranje mat_anal
-	select mat_anal
-	APPEND FROM mat_panal
-	@ m_x+1,m_y+2 SAY "ANALITIKA"
+	@ m_x + 1, m_y + 2 SAY "ANALITIKA"
+	select mat_panal
+	go top
+
+	do while !EOF()
+		
+		_vars := dbf_get_rec() 
+		
+		select mat_anal
+		append blank
+		
+		update_rec_dbf_and_server(_vars)
+		
+		select mat_panal
+		skip
+	
+	enddo
+
 	select mat_panal
 	zapp()
 
-	// azuriranje mat_sint
-	select mat_sint
-	APPEND FROM mat_psint
-	@ m_x+3,m_y+2 SAY "SINTETIKA  "
+	@ m_x + 3, m_y + 2 SAY "SINTETIKA"
+	select mat_psint
+	go top
+
+	do while !EOF()
+		
+		_vars := dbf_get_rec() 
+		
+		select mat_sint
+		append blank
+		
+		update_rec_dbf_and_server( _vars )
+		
+		select mat_psint
+		skip
+	
+	enddo
+
 	select mat_psint
 	zapp()
 
-	// azuriranje mat_nalog
-	select mat_nalog
-	APPEND FROM mat_pnalog
-	@ m_x+5,m_y+2 SAY "NALOZI     "
+	@ m_x + 5, m_y + 2 SAY "NALOZI"
+	select mat_pnalog
+	go top
+
+	do while !EOF()
+		
+		_vars := dbf_get_rec() 
+		
+		select mat_nalog
+		append blank
+		
+		update_rec_dbf_and_server( _vars )
+		
+		select mat_pnalog
+		skip
+	
+	enddo
+
 	select mat_pnalog
 	zapp()
 
-	// azuriranje mat_suban...
-	select mat_suban
-	APPEND FROM mat_psuban
-	@ m_x+7,m_y+2 SAY "SUBANALITIKA "
-	
+	@ m_x + 7, m_y + 2 SAY "SUBANALITIKA"
 	select mat_psuban
 	go top
 
-	// brise pripremu
 	do while !EOF()
-
-   	   	select mat_pripr
-   		seek mat_psuban->(idfirma+idvn+brnal)
-   		if found()
-			dbdelete2()
-		endif
-
-   		select mat_psuban
-   		skip
-
+		
+		_vars := dbf_get_rec() 
+		
+		select mat_suban
+		append blank
+		
+		update_rec_dbf_and_server( _vars )
+		
+		select mat_psuban
+		skip
+	
 	enddo
 
-	// pobrisi i mat_suban
 	select mat_psuban
 	zapp()
 
 	select mat_pripr
-	__dbpack()
+	zapp()
 
 	Inkey(2)
 

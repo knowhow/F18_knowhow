@@ -246,6 +246,7 @@ CREATE_INDEX("3","IdFirma+IdKonto+IdRoba+dtos(DatDok)", KUMPATH+"mat_suban")
 CREATE_INDEX("4","idFirma+IdVN+BrNal+rbr"             , KUMPATH+"mat_suban")
 CREATE_INDEX("5","IdFirma+IdKonto+IdPartner+IdRoba+dtos(DatDok)", ;
 	KUMPATH+"mat_suban")
+CREATE_INDEX("8","datdok"             , KUMPATH+"mat_suban")
 CREATE_INDEX("1","idFirma+idvn+brnal"        , PRIVPATH+"mat_psuban")
 CREATE_INDEX("2","idFirma+IdVN+Brnal+IdKonto", PRIVPATH+"mat_psuban")
 

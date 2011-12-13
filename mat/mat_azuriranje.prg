@@ -451,7 +451,7 @@ Box(,7,30,.f.)
 		select mat_anal
 		append blank
 		
-		update_rec_dbf_and_server(_vars)
+		dbf_update_rec( _vars )
 		
 		select mat_panal
 		skip
@@ -472,7 +472,7 @@ Box(,7,30,.f.)
 		select mat_sint
 		append blank
 		
-		update_rec_dbf_and_server( _vars )
+		dbf_update_rec( _vars )
 		
 		select mat_psint
 		skip
@@ -493,7 +493,7 @@ Box(,7,30,.f.)
 		select mat_nalog
 		append blank
 		
-		update_rec_dbf_and_server( _vars )
+		dbf_update_rec( _vars )
 		
 		select mat_pnalog
 		skip
@@ -514,7 +514,7 @@ Box(,7,30,.f.)
 		select mat_suban
 		append blank
 		
-		update_rec_dbf_and_server( _vars )
+		dbf_update_rec( _vars )
 		
 		select mat_psuban
 		skip

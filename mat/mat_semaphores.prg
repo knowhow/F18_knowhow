@@ -961,7 +961,7 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 next
 
-_result := sifrarnik_from_sql_server( _tbl, algoritam, F_MAT_KARKON, {"id", "tip_nc", "tip_pc" })
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_KARKON, {"id", "tip_nc", "tip_pc" })
 
 lock_semaphore( _tbl, "free" )
 

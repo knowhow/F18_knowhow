@@ -942,3 +942,33 @@ endif
 return
 
 
+
+// -----------------------------------------
+// -----------------------------------------
+function mat_karkon_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "mat_karkon"
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_MAT_KARKON, {"id", "tip_nc", "tip_pc" })
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+
+
+

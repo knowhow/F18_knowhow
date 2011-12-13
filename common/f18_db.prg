@@ -31,6 +31,28 @@ next
 
 return _ret
 
+// ------------------------------
+// ------------------------------
+function dbf_update_rec(vars)
+local _key
+
+if rlock()
+   for each _key in vars:Keys
+       // replace polja
+       EVAL( FIELDBLOCK( _key, vars[_key] ) )
+    next
+
+    dbrunlock()
+else
+   MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())
+   return .f.
+endif
+
+return .t.
+
+
+
+
 // -----------------------------------------
 // -----------------------------------------
 function update_rec_on_server(values, where)
@@ -42,6 +64,7 @@ if values == NIL
 endif
 
 return f18_gather(values, where)
+
 
 
 // ------------------------------------------

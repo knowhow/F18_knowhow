@@ -55,7 +55,7 @@ local _key
 local _all_vars
 
 if rlock()
-   for each _key in var:Keys
+   for each _key in vars:Keys
        // replace polja
        EVAL( FIELDBLOCK( _key, vars[_key] ) )
     next

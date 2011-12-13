@@ -917,10 +917,14 @@ return
 
 function mat_brisi_pbaze()
   PushWA()
-  SELECT (F_mat_psuban); ZAP
-  SELECT (F_mat_panal); ZAP
-  SELECT (F_mat_psint); ZAP
-  SELECT (F_mat_pnalog); ZAP
+  SELECT (F_MAT_PSUBAN)
+  ZAP
+  SELECT (F_MAT_PANAL)
+  ZAP
+  SELECT (F_MAT_PSINT)
+  ZAP
+  SELECT (F_MAT_PNALOG)
+  ZAP
   PopWA()
 return nil
 
@@ -929,54 +933,57 @@ return nil
 
 function OsvCijSif()
 local nArr:=SELECT(),cPom1:=" ",cPom2:=" "
+local _vars := hb_hash()
 
 SELECT ROBA
 SEEK _idroba
 IF !FOUND()
-  SELECT (nArr)
-  MsgBeep("Nema sifre artikla!")
-  RETURN
+	SELECT (nArr)
+  	MsgBeep("Nema sifre artikla!")
+  	RETURN
 ENDIF
 
 // da vidimo osobine unesenog konta, ako postoje
 SELECT KARKON
 SEEK _idkonto
 if found()
-  cPom1:=tip_nc
-  cPom2:=tip_pc
+  	cPom1:=tip_nc
+  	cPom2:=tip_pc
 endif
 SELECT ROBA
-Scatter("q")
+
+//Scatter("q")
+
 // ako se radi o ulazu
 if _u_i=="1"
   // ako nije po kontu definisan tip cijene, gledamo u parametre
   if cPom1==" "
     if gCijena=="1"
-      IF qnc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qnc  := _Cijena
+      IF field->nc <> _cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["NC"] := _Cijena
       ENDIF
     elseif gCijena=="2"
-      IF qvpc<>_cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qvpc  := _Cijena
+      IF field->vpc <> _cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["VPC"] := _Cijena
       ENDIF
     elseif gCijena=="3"
-      IF qmpc<>_cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qmpc  := _Cijena
+      IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["MPC"] := _Cijena
       ENDIF
     elseif gCijena=="P"
     endif
   else // u suprotnom gledamo u karakteristiku konta "tip_nc" <=> cPom1
     if cPom1=="1"
-      IF qnc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qnc  := _Cijena
+      IF field->nc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["NC"] := _Cijena
       ENDIF
     elseif cPom1=="2"
-      IF qvpc<>_cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qvpc  := _Cijena
+      IF field->vpc <> _cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["VPC"] := _Cijena
       ENDIF
     elseif cPom1=="3"
-      IF qmpc<>_cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qmpc  := _Cijena
+      IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["MPC"] := _Cijena
       ENDIF
     elseif cPom1=="P"
     endif
@@ -985,37 +992,39 @@ else   // tj. ako se radi o izlazu
   // ako nije po kontu definisan tip cijene, gledamo u parametre
   if cPom2==" "
     if gCijena=="1"
-      IF qnc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qnc  := _Cijena
+      IF field->nc <> _cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["NC"] := _Cijena
       ENDIF
     elseif gCijena=="2"
-      IF qvpc<>_cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qvpc  := _Cijena
+      IF field->vpc <> _cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["VPC"] := _Cijena
       ENDIF
     elseif gCijena=="3"
-      IF qmpc<>_cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qmpc  := _Cijena
+      IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["MPC"] := _Cijena
       ENDIF
     elseif gCijena=="P"
     endif
   else // u suprotnom gledamo u karakteristiku konta "tip_pc" <=> cPom2
     if cPom2=="1"
-      IF qnc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qnc  := _Cijena
+      IF field->nc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["NC"] := _Cijena
       ENDIF
     elseif cPom2=="2"
-      IF qvpc<>_cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qvpc  := _Cijena
+      IF field->vpc<>_cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["VPC"] := _Cijena
       ENDIF
     elseif cPom2=="3"
-      IF qmpc<>_cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        qmpc  := _Cijena
+      IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
+        _vars["MPC"] := _Cijena
       ENDIF
     elseif cPom2=="P"
     endif
   endif
 endif
-Gather("q")
+
+update_rec_dbf_and_server(_vars)
+
 SELECT (nArr)
 RETURN
 

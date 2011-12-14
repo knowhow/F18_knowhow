@@ -26,7 +26,7 @@ AADD(opcexe, {|| os_pregled_po_rj()})
 AADD(opc, "2. pregled sredstava po kontima")
 AADD(opcexe, {|| os_pregled_po_kontima()})
 AADD(opc, "3. amortizacija po kontima")
-AADD(opcexe, {|| os_pregled_amortizacije()})
+AADD(opcexe, {|| os_pregled_amortizacije() } )
 AADD(opc, "4. revalorizacija po kontima")
 AADD(opcexe, {|| os_pregled_revalorizacije()})
 AADD(opc, "5. rekapitulacija kolicina po grupacijama - k1")
@@ -46,6 +46,3 @@ AADD(opcexe, {|| IzbrisanaSredstva()})
 Menu_SC("izv")
 
 return
-
-
-

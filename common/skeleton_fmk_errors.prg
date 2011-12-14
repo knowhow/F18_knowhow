@@ -221,9 +221,13 @@ endif
 SETCOLOR(StaraBoja)
 */
 
-CLS
+set console off
+	
+set printer off
+set device to printer
 
-_print := f18_start_print(_out_file)
+set printer to (_out_file)
+set printer on
 
 P_12CPI
 
@@ -245,7 +249,7 @@ P_12CPI
 ? 
 ? "CALL STACK:"
 ? "---", REPLICATE("-", 80)
-for _i := 10 to 1 STEP -1
+for _i := 1 to 30
    if !empty(PROCNAME(_i))
     ? STR(_i, 3), PROCNAME(_i) + " / " +   ALLTRIM(STR(ProcLine(_i), 6))
    endif
@@ -261,10 +265,17 @@ endif
 
 ? 
 ? "== END OF BUG REPORT =="
-f18_end_print(_out_file, _print)
+
+
+SET DEVICE TO SCREEN
+set printer off
+set printer to
+set console on
+
 
 close all
 
+run (_cmd := "f18_editor " + _out_file)
 quit
 
 RETURN

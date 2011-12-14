@@ -129,7 +129,7 @@ endif
 set confirm off
 set cursor on
 if !gAppSrv
-	cDirekt:=UpitPrinter(@cDirekt)
+	cDirekt := UpitPrinter(@cDirekt)
 endif
 
 return cDirekt
@@ -160,15 +160,17 @@ if gcDirekt <> "B"
 			pict "@!" valid cDirekt $ "DNERV"
 
 	@ m_x+2,m_y+2 SAY "----------------------------------" 
-	@ m_x+3,m_y+2 SAY "D - direktno na printer"
-	@ m_x+4,m_y+2 SAY "V - prikaz na ekranu iz programa"
-	@ m_x+5,m_y+2 SAY "R - Windows printer"
+	@ m_x+4,m_y+2 SAY "V - prikaz izvjestaja u editoru"
+	@ m_x+5,m_y+2 SAY "R - direktna stampa"
 	@ m_x+6,m_y+2 SAY "---------- O P C I J E -----------"
 	read
     BoxC()
 
-    return cDirekt
-
+    if LASTKEY() == K_ESC
+        return ""
+    else
+        return cDirekt
+    endif
 else
 
 	Box (, 3, 60)

@@ -82,94 +82,87 @@ return nil
 
 method mMenuStandard()
 
-private Izbor:=1
-private opc:={}
-private opcexe:={}
+local _izbor :=1
+local _opc:={}
+local _opcexe:={}
 
-AADD(opc, "1. unos/ispravka dokumenta                   ")
+AADD(_opc, "1. unos/ispravka dokumenta                   ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "KNJIZNALOGA"))
-	AADD(opcexe, {|| fin_unos_naloga()})
+	AADD(_opcexe, {|| fin_unos_naloga()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
-AADD(opc, "2. izvjestaji")
-AADD(opcexe, {|| Izvjestaji()})
+AADD(_opc, "2. izvjestaji")
+AADD(_opcexe, {|| Izvjestaji()})
 
-AADD(opc, "3. pregled dokumenata")
-AADD(opcexe, {|| MnuPregledDokumenata()})
+AADD(_opc, "3. pregled dokumenata")
+AADD(_opcexe, {|| MnuPregledDokumenata()})
 
-AADD(opc, "4. generacija dokumenata")
+AADD(_opc, "4. generacija dokumenata")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK"))
-	AADD(opcexe, {|| MnuGenDok()})
+	AADD(_opcexe, {|| MnuGenDok()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "5. moduli - razmjena podataka")
+AADD(_opc, "5. moduli - razmjena podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA"))
-	AADD(opcexe, {|| MnuRazmjenaPodataka()})
+	AADD(_opcexe, {|| MnuRazmjenaPodataka()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "6. ostale operacije nad dokumentima")
-AADD(opcexe, {|| MnuOstOperacije()})
+AADD(_opc, "6. ostale operacije nad dokumentima")
+AADD(_opcexe, {|| MnuOstOperacije()})
 
-AADD(opc, "7. udaljene lokacije - razmjena podataka ")
+AADD(_opc, "7. udaljene lokacije - razmjena podataka ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA"))
-	AADD(opcexe, {|| MnuUdaljeneLokacije()})
+	AADD(_opcexe, {|| MnuUdaljeneLokacije()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
+AADD(_opc, "------------------------------------")
+AADD(_opcexe, {|| nil})
 
-AADD(opc, "8. sifrarnici")
-AADD(opcexe, {|| MnuSifrarnik()})
+AADD(_opc, "8. sifrarnici")
+AADD(_opcexe, {|| MnuSifrarnik()})
 
-AADD(opc, "9. administracija baze podataka")
+AADD(_opc, "9. administracija baze podataka")
+
 if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
-	AADD(opcexe, {|| MnuAdminDB()})
+	AADD(_opcexe, {|| MnuAdminDB()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
+AADD(_opc, "------------------------------------")
+AADD(_opcexe, {|| nil})
 
-AADD(opc, "K. kontrola zbira datoteka")
-AADD(opcexe, {|| KontrZb()})
+AADD(_opc, "K. kontrola zbira datoteka")
+AADD(_opcexe, {|| KontrZb()})
 
-AADD(opc, "P. povrat dokumenta u pripremu")
+AADD(_opc, "P. povrat dokumenta u pripremu")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","POVRATNALOGA"))
-	AADD(opcexe, {|| PovratNaloga()})
+	AADD(_opcexe, {|| PovratNaloga()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
+AADD(_opc, "------------------------------------")
+AADD(_opcexe, {|| nil})
 
-AADD(opc, "X. parametri")
+AADD(_opc, "X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","PARAMETRI"))
-	AADD(opcexe, {|| mnu_fin_params()})
+	AADD(_opcexe, {|| mnu_fin_params()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-if IzFMKINI("ZASTITA","PodBugom","N",KUMPATH)=="D"
-  	lPodBugom:=.t.
-  	gaKeys:={{K_ALT_O,{|| OtkljucajBug()}}}
-else
-	lPodBugom:=.f.
-endif
 
-Menu_SC("gfin", .t. )
+f18_menu("gfin", .t., _izbor, _opc, _opcexe )
 
 return
-
-
 
 method srv()
 ? "Pokrecem FIN aplikacijski server"

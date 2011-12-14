@@ -105,7 +105,7 @@ DO WHILE !EOF()
      START PRINT CRET
    endif
 
-   StSubNal("1",lAuto)
+   StSubNal("1", lAuto)
 
    if !fizgenerisi
      END PRINT

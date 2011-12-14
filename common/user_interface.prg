@@ -47,23 +47,23 @@ local lFK:=.f.
 SET DEVICE TO SCREEN
 
 IF nPovratak==NIL
-	nPovratak:=0
+    nPovratak:=0
 ENDIF
 IF nMaxVR==NIL
-	nMaxVR:=16
+    nMaxVR:=16
 ENDIF
 IF aFixKoo==NIL
-	aFixKoo:={}
+    aFixKoo:={}
 ENDIF
 IF LEN(aFixKoo)==2
-	lFK:=.t.
+    lFK:=.t.
 ENDIF
 
 N:=IF(Len(Items)>nMaxVR,nMaxVR,LEN(Items))
 Length:=Len(Items[1])+1
 
 if Inv==NIL
-	Inv:=.f.
+    Inv:=.f.
 endif
 LocalC:=IF(Inv,Invert,Normal)
 LocalIC:=IF(Inv,Normal,Invert)
@@ -193,14 +193,14 @@ local cAction
 cAction := what_action(nItemNo)
 
 do case
-	case cAction == "K_CTRL_N"
-		nRetItem := nItemNo - 10000
-	case cAction == "K_F2"
-		nRetItem := nItemNo - 20000
-	case cAction == "K_CTRL_T"
-		nRetItem := nItemNo - 30000
-	otherwise
-		nRetItem := nItemNo
+    case cAction == "K_CTRL_N"
+        nRetItem := nItemNo - 10000
+    case cAction == "K_F2"
+        nRetItem := nItemNo - 20000
+    case cAction == "K_CTRL_T"
+        nRetItem := nItemNo - 30000
+    otherwise
+        nRetItem := nItemNo
 endcase
 
 return nRetItem
@@ -210,9 +210,9 @@ return nRetItem
 function range(nVal, nMin, nMax)
 local lRet
 if (nVal <= nMax) .and. (nVal >= nMin)
-	lRet := .t.
+    lRet := .t.
 else
-	lRet := .f.
+    lRet := .f.
 endif
 return lRet
 
@@ -221,14 +221,14 @@ function what_action(nItemNo)
 local cAction
 
 do case
-	case RANGE(nItemNo, 10000, 10999)
-		cAction := "K_CTRL_N"
-	case RANGE(nItemNo, 20000, 20999)
-		cAction := "K_F2"
-	case RANGE(nItemNo, 30000, 30999)
-		cAction := "K_CTRL_T"
-	otherwise
-		cAction := ""
+    case RANGE(nItemNo, 10000, 10999)
+        cAction := "K_CTRL_N"
+    case RANGE(nItemNo, 20000, 20999)
+        cAction := "K_F2"
+    case RANGE(nItemNo, 30000, 30999)
+        cAction := "K_CTRL_T"
+    otherwise
+        cAction := ""
 endcase
 
 return cAction
@@ -246,8 +246,8 @@ local l, msg_x1, msg_x2, msg_y1, msg_y2, cPom:=SET(_SET_DEVICE)
 LOCAL nLen, nHashPos, aText := {}, nCnt, nBrRed := 0
 
 if gAppSrv
-	? text
-	return
+    ? text
+    return
 endif
 
 SET DEVICE TO SCREEN
@@ -309,8 +309,8 @@ local cPom
 
 cPom:=SET(_SET_DEVICE)
 if gAppSrv
-	? text
-	return
+    ? text
+    return
 endif
 
 SET DEVICE TO SCREEN
@@ -520,12 +520,13 @@ aBoxPar:=aBoxStack[len(aBoxStack)]
 return
 
 
+// ------------------
+// ------------------
 function Beep(nPuta)
+local _i
 
-local i
-
-for i:=1 to nPuta
-	Tone(300, 1)
+for _i := 1 to nPuta
+    Tone(300, 1)
 next
 
 return
@@ -565,7 +566,7 @@ local cSavC
 local nCtrlKeyVal := 0
 
 if nItemNo==0
-	return nItemNo
+    return nItemNo
 endif
 
 fExit:=.f.
@@ -580,97 +581,97 @@ nLen:=LEN(Items)
 @ x1,y1 CLEAR TO x2-1,y2
 
 for i:=1 to nLen
-	if i==nItemNo
-   		if left(cOldColor,3)==left(Normal,3)
-        		setcolor(Invert)
-   		else
-   			setcolor(Normal)
-   		endif
- 	else
-   		setcolor(cOldColor)
- 	endif
- 	@ x1+i-1,y1 SAY PADR(Items[i],nWidth)
+    if i==nItemNo
+        if left(cOldColor,3)==left(Normal,3)
+                setcolor(Invert)
+        else
+            setcolor(Normal)
+        endif
+    else
+        setcolor(cOldColor)
+    endif
+    @ x1+i-1,y1 SAY PADR(Items[i],nWidth)
 next
 
 fFirst:=.t.
 
 do while .t.
-	SetColor(Invert)
-	SetColor(cOldColor)
-	if !fFirst
-		setcolor(cOldColor)
-		@ x1+nOldItemNo-1,y1 SAY PADR(Items[nOldItemNo],nWidth)
-		if left(cOldColor,3)==left(Normal,3)
-			setcolor(Invert)
-		else
-			setcolor(Normal)
-		endif
-		@ x1+nItemNo-1,y1 SAY PADR(Items[nItemNo],nWidth)
-	endif
-	fFirst:=.f.
+    SetColor(Invert)
+    SetColor(cOldColor)
+    if !fFirst
+        setcolor(cOldColor)
+        @ x1+nOldItemNo-1,y1 SAY PADR(Items[nOldItemNo],nWidth)
+        if left(cOldColor,3)==left(Normal,3)
+            setcolor(Invert)
+        else
+            setcolor(Normal)
+        endif
+        @ x1+nItemNo-1,y1 SAY PADR(Items[nItemNo],nWidth)
+    endif
+    fFirst:=.f.
 
-	if fExit
-   		exit
-	endif
+    if fExit
+        exit
+    endif
 
-	nChar:=WaitScrSav()
-	nOldItemNo:=nItemNo
+    nChar:=WaitScrSav()
+    nOldItemNo:=nItemNo
 
-	do case
-      		case nChar==K_ESC
-        		nItemNo:=0
-        		exit
-      		case nChar==K_HOME
-        		nItemNo:=1
-      		case nChar==K_END
-        		nItemNo:=nLen
-      		case nChar==K_DOWN
-        		nItemNo++
-      		case nChar==K_UP
-        		nItemNo--
-      		case nChar==K_ENTER
-        		exit
-      		case IsAlpha(Chr(nChar)) .or. IsDigit(Chr(nChar))
-        		for ii:=1 to nLen
-          			// cifra
-          			if IsDigit(chr(nChar)) 
-            				if Chr(nChar) $ left(Items[ii],3) 
-						// provjera postojanja
-             					nItemNo:=ii          
-	     					// broja u stavki samo 
-						// u prva 3 karaktera
-             					fexit:=.t.
-            				endif             
-          			else 
-					// veliko slovo se trazi 
-					// po citavom stringu
-            				if UPPER(Chr(nChar)) $ Items[ii]
-              					nItemNo:=ii
-              					fexit:=.t.
-            				endif
-          			endif
-        		next
-      		
-		case nChar == K_CTRL_N
-			nCtrlKeyVal := 10000
-			exit
-		case nChar == K_F2
-			nCtrlKeyVal := 20000
-			exit
-		case nChar == K_CTRL_T
-			nCtrlKeyVal := 30000
-			exit
-		otherwise
-         		goModul:GProc(nChar)
-   	endcase
-   	
-	if nItemNo > nLen
-        	nItemNo--
-   	endif
-   	
-	if nItemNo < 1
-		nItemNo++
-	endif
+    do case
+            case nChar==K_ESC
+                nItemNo:=0
+                exit
+            case nChar==K_HOME
+                nItemNo:=1
+            case nChar==K_END
+                nItemNo:=nLen
+            case nChar==K_DOWN
+                nItemNo++
+            case nChar==K_UP
+                nItemNo--
+            case nChar==K_ENTER
+                exit
+            case IsAlpha(Chr(nChar)) .or. IsDigit(Chr(nChar))
+                for ii:=1 to nLen
+                    // cifra
+                    if IsDigit(chr(nChar)) 
+                            if Chr(nChar) $ left(Items[ii],3) 
+                        // provjera postojanja
+                                nItemNo:=ii          
+                            // broja u stavki samo 
+                        // u prva 3 karaktera
+                                fexit:=.t.
+                            endif             
+                    else 
+                    // veliko slovo se trazi 
+                    // po citavom stringu
+                            if UPPER(Chr(nChar)) $ Items[ii]
+                                nItemNo:=ii
+                                fexit:=.t.
+                            endif
+                    endif
+                next
+            
+        case nChar == K_CTRL_N
+            nCtrlKeyVal := 10000
+            exit
+        case nChar == K_F2
+            nCtrlKeyVal := 20000
+            exit
+        case nChar == K_CTRL_T
+            nCtrlKeyVal := 30000
+            exit
+        otherwise
+                goModul:GProc(nChar)
+    endcase
+    
+    if nItemNo > nLen
+            nItemNo--
+    endif
+    
+    if nItemNo < 1
+        nItemNo++
+    endif
 enddo
 
 setcursor(iif(nOldCurs==0,0,iif(readinsert(),2,1)))
@@ -754,7 +755,7 @@ SetColor(cOldColor)
              fexit:=.t.
             endif             
           else // veliko slovo se trazi po citavom stringu - promijenjeno
-	    if (Items[ii]<>NIL) .and. UPPER(Chr(nChar)) $ LEFT(Items[ii],3)  
+        if (Items[ii]<>NIL) .and. UPPER(Chr(nChar)) $ LEFT(Items[ii],3)  
               nItemNo:=ii                             
               fexit:=.t.                              
             endif
@@ -762,14 +763,14 @@ SetColor(cOldColor)
         next
        
        case nChar == K_CTRL_N
-       	   nCtrlKeyVal := 10000
-	   exit
+           nCtrlKeyVal := 10000
+       exit
        case nChar == K_F2
            nCtrlKeyVal := 20000
-	   exit
+       exit
        case nChar == K_CTRL_T
            nCtrlKeyVal := 30000
-	   exit
+       exit
       otherwise
         goModul:GProc(nChar)
    endcase
@@ -828,13 +829,13 @@ LOCAL cPom:=SET(_SET_DEVICE)
  
 SET DEVICE TO SCREEN
 IF cBojaN==NIL
-	cBojaN:="GR+/N"
+    cBojaN:="GR+/N"
 ENDIF
 IF cOkvir==NIL
-	cOkvir:=B_SINGLE+" "
+    cOkvir:=B_SINGLE+" "
 ENDIF
 IF nKursor==NIL
-	nKursor:=SETCURSOR()
+    nKursor:=SETCURSOR()
 ENDIF
 StackPush( aPrStek , { row(),col(),v1, h1, v2, h2, SAVESCREEN(v1,h1,v2,h2),;
                         SETCOLOR(cBojaT), SETCURSOR(nKursor)     } )
@@ -1285,7 +1286,7 @@ return VAL(SUBSTR(cPicture,nPozS+1))
 
 function MsgBeep(cMsg)
 if !gAppSrv
-	Beep(2) 
+    Beep(2) 
 endif
 // poruke koje su duze od 70 znakova
 if LEN(cMsg) > 69 .and.  (AT(cMsg, "#") == 0) 
@@ -1302,7 +1303,7 @@ local i
 local fRet:=.t.
 
 if goModul:oDataBase:cName=="LD"
-	return fRet
+    return fRet
 endif
 
 PushWa()
@@ -1468,7 +1469,7 @@ return fret
 function NaslEkran(fBox)
 
 if fBox
-	clear
+    clear
 endif
 
 @ 0,2 SAY '<ESC> Izlaz' COLOR INVERT
@@ -1478,7 +1479,7 @@ endif
 DISPBox(2, 0, 4, MAXCOLS()-1, B_DOUBLE + ' ' , NORMAL)
 
 if fbox
-	DISPBox(5 ,0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE + "±", INVERT)
+    DISPBox(5 ,0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE + "±", INVERT)
 endif
 
 @ 3,1 SAY PADC(gNaslov + ' Ver.' + gVerzija, MAXCOLS()-8) COLOR NORMAL
@@ -1495,21 +1496,21 @@ public  Blink
 public  Nevid
 
 if TYPE("gFKolor")<>"C"
-	gFKolor:="D"
+    gFKolor:="D"
 endif
 
 if (gFKolor=="D" .and. ISCOLOR())
 
-	Invert:="B/W,R/N+,,,R/B+"
-	Normal:="W/B,R/N+,,,N/W"
-	Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
-	Nevid:="W/W,N/N"
+    Invert:="B/W,R/N+,,,R/B+"
+    Normal:="W/B,R/N+,,,N/W"
+    Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
+    Nevid:="W/W,N/N"
 else
 
-	Invert:="N/W,W/N,,,W/N"
-	Normal:="W/N,N/W,,,N/W"
-	Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
-	Nevid:="W/W,N/N"
+    Invert:="N/W,W/N,,,W/N"
+    Normal:="W/N,N/W,,,N/W"
+    Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
+    Nevid:="W/W,N/N"
 endif
 
 return nil
@@ -1523,21 +1524,21 @@ public  Blink
 public  Nevid
 
 if TYPE("gFKolor")<>"C"
-	gFKolor:="D"
+    gFKolor:="D"
 endif
 
 if (gFKolor=="D" .and. ISCOLOR())
 
-	Invert:="B/W,R/N+,,,R/B+"
-	Normal:="W/G,R/N+,,,N/W"
-	Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
-	Nevid:="W/W,N/N"
+    Invert:="B/W,R/N+,,,R/B+"
+    Normal:="W/G,R/N+,,,N/W"
+    Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
+    Nevid:="W/W,N/N"
 else
 
-	Invert:="N/W,W/N,,,W/N"
-	Normal:="W/N,N/W,,,N/W"
-	Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
-	Nevid:="W/W,N/N"
+    Invert:="N/W,W/N,,,W/N"
+    Normal:="W/N,N/W,,,N/W"
+    Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
+    Nevid:="W/W,N/N"
 endif
 
 return nil
@@ -1712,82 +1713,63 @@ if i%nstep=0
 endif
 return .t.
 
-/*! \fn Menu_SC(cIzp, fMain, lBug)
- * 
- * \param opc    - indirektno priv.var, matrica naslova opcija
- * \param opcexe - indirektno priv.var, matrica funkcija (string ili kodni blok promjenljive)
- * 
- *  \code
- *  private Opc:={}
- *  private opcexe:={}
- *  AADD(Opc,"1. kartica                                ")
- *  AADD(opcexe, {|| Kart41_42()})
- *  AADD(Opc,"2. kartica v2 (uplata,obaveza,saldo)")
- *  AADD(opcexe, {|| Kart412v2()})
- *  AADD(Opc,"5. realizovani porez")
- *  AADD(opcexe, {|| RekRPor})
- *  private Izbor:=1
- *  Menu_SC("itar")
- * \endcode
- *
- */
 
-function Menu_SC(cIzp, fMain, lBug)
+function f18_menu(cIzp, main_menu, izbor, opc, opcexe)
 local cOdgovor
 local nIzbor
+local _menu_opc
 
-if fMain==NIL
-  fMain:=.f.
-endif
-if lBug==NIL
-  lBug:=.f.
+if main_menu==NIL
+  main_menu:=.f.
 endif
 
-if fMain
+if main_menu
   @ 4,5 SAY ""
 endif
 
 do while .t.
-   Izbor:=menu(cIzp, opc, Izbor, .f.)
-   nIzbor := retitem(Izbor)
+   Izbor := menu(cIzp, opc, izbor, .f.)
+   nIzbor := retitem(izbor)
    do case
-     case Izbor==0
-       if fMain
+     case izbor==0
+       if main_menu
          cOdgovor:=Pitanje("",'Zelite izaci iz programa ?','N')
          if cOdgovor=="D"
           EXIT
          elseif cOdgovor=="L"
-          Prijava()
-          Izbor:=1
-          @ 4,5 SAY ""
-          LOOP
+            Prijava()
+            Izbor:=1
+            @ 4,5 SAY ""
+             LOOP
          else
-          Izbor:=1
-          @ 4,5 SAY ""
-          LOOP
+             Izbor:=1
+             @ 4,5 SAY ""
+             LOOP
          endif
        else
           EXIT
        endif
-     case lBug
-        LOOP
-	
+    
      otherwise
-      	 if opcexe[nIzbor] <> nil
-          private xPom:=opcexe[nIzbor]
-	  
-	  if VALTYPE(xPom)="C"
-	     xDummy:=&(xPom)
-	  else
-	     
-	     EVAL(xPom)
-	  endif
 
-	 endif  
-     endcase
+         if opcexe[nIzbor] <> nil
+
+             _menu_opc := opcexe[nIzbor]
+
+             if valtype(_menu_opc) == "B"
+                EVAL(_menu_opc)
+             else
+                MsgBeep("meni cudan ?" + hb_ValToStr(nIzbor))
+             endif
+
+         endif  
+   endcase
      
 enddo
 return
+
+
+
 
 
 function MAXROWS()
@@ -1831,11 +1813,11 @@ function IzreziPath(cPath,cTekst)
 
 local nPom
 if LEFT(cTekst,1)<>SLASH
-	cTekst:=SLASH+cTekst
+    cTekst:=SLASH+cTekst
 endif
 nPom:=AT(cTekst,cPath)
 if nPom>0
-	cPath:=LEFT(cPath,nPom-1)
+    cPath:=LEFT(cPath,nPom-1)
 endif
 return cPath
 
@@ -1849,20 +1831,20 @@ public  Blink
 public  Nevid
 
 if TYPE("gFKolor")<>"C"
-	gFKolor:="D"
+    gFKolor:="D"
 endif
 
 
 if (gFKolor=="D" .and. ISCOLOR())
-	Invert:="N/W,R/N+,,,R/B+"
-	Normal:="GR+/N,R/N+,,,N/W"
-	Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
-	Nevid:="W/W,N/N"
+    Invert:="N/W,R/N+,,,R/B+"
+    Normal:="GR+/N,R/N+,,,N/W"
+    Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
+    Nevid:="W/W,N/N"
 else
-	Invert:="N/W,W/N,,,W/N"
-	Normal:="W/N,N/W,,,N/W"
-	Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
-	Nevid:="W/W,N/N"
+    Invert:="N/W,W/N,,,W/N"
+    Normal:="W/N,N/W,,,N/W"
+    Blink:="N"+REPLICATE("*",4)+"/W,W/N,,,W/N"
+    Nevid:="W/W,N/N"
 endif
 
 return nil
@@ -1880,29 +1862,29 @@ local i
 oBrowse:=TBrowseDB(nT,nL,nB,nR)
 
 for k:=1 to LEN(aKol)
-	i:=ASCAN(aKol,k)
-  	if i<>0
-     		oColumn:=TBColumnNew(aImeKol[i,1], aImeKol[i,2])
-		if bIstakni<>nil
-        		oColumn:colorBlock := {|| IIF (EVAL (bIstakni), {5,2}, {1,2})}
-     		endif
-		if aHFCS[1]<>nil
-        		oColumn:headSep := aHFCS [1]
-     		endif
-     		if aHFCS[2]<>nil
-        		oColumn:footSep := aHFCS [2]
-     		endif
-     		if aHFCS[3]<>nil
-        		oColumn:colSep := aHFCS [3]
-     		endif
-     		oBrowse:addColumn (oColumn)
-  	endif
+    i:=ASCAN(aKol,k)
+    if i<>0
+            oColumn:=TBColumnNew(aImeKol[i,1], aImeKol[i,2])
+        if bIstakni<>nil
+                oColumn:colorBlock := {|| IIF (EVAL (bIstakni), {5,2}, {1,2})}
+            endif
+        if aHFCS[1]<>nil
+                oColumn:headSep := aHFCS [1]
+            endif
+            if aHFCS[2]<>nil
+                oColumn:footSep := aHFCS [2]
+            endif
+            if aHFCS[3]<>nil
+                oColumn:colSep := aHFCS [3]
+            endif
+            oBrowse:addColumn (oColumn)
+    endif
 next
 
 if nFreeze==nil
-	oBrowse:Freeze := 1
+    oBrowse:Freeze := 1
 else
-   	oBrowse:Freeze := nFreeze
+    oBrowse:Freeze := nFreeze
 endif
 
 return (oBrowse)

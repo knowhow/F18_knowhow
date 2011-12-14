@@ -918,3 +918,78 @@ cStr:=cPom
 return cPom
 
 
+
+/*! \fn Menu_SC(cIzp, fMain, lBug)
+ * 
+ * \param opc    - indirektno priv.var, matrica naslova opcija
+ * \param opcexe - indirektno priv.var, matrica funkcija (string ili kodni blok promjenljive)
+ * 
+ *  \code
+ *  private Opc:={}
+ *  private opcexe:={}
+ *  AADD(Opc,"1. kartica                                ")
+ *  AADD(opcexe, {|| Kart41_42()})
+ *  AADD(Opc,"2. kartica v2 (uplata,obaveza,saldo)")
+ *  AADD(opcexe, {|| Kart412v2()})
+ *  AADD(Opc,"5. realizovani porez")
+ *  AADD(opcexe, {|| RekRPor})
+ *  private Izbor:=1
+ *  Menu_SC("itar")
+ * \endcode
+ *
+ */
+
+function Menu_SC(cIzp, fMain)
+local cOdgovor
+local nIzbor
+
+if fMain==NIL
+  fMain:=.f.
+endif
+
+if fMain
+  @ 4,5 SAY ""
+endif
+
+do while .t.
+   Izbor:=menu(cIzp, opc, Izbor, .f.)
+   nIzbor := retitem(Izbor)
+   do case
+     case Izbor==0
+       if fMain
+         cOdgovor:=Pitanje("",'Zelite izaci iz programa ?','N')
+         if cOdgovor=="D"
+          EXIT
+         elseif cOdgovor=="L"
+            Prijava()
+            Izbor:=1
+            @ 4,5 SAY ""
+             LOOP
+         else
+             Izbor:=1
+             @ 4,5 SAY ""
+             LOOP
+         endif
+       else
+          EXIT
+       endif
+    
+     otherwise
+
+         if opcexe[nIzbor] <> nil
+             private xPom:=opcexe[nIzbor]
+
+             if VALTYPE(xPom)="C"
+                xDummy:=&(xPom)
+             else
+                EVAL(xPom)
+             endif
+
+         endif  
+   endcase
+     
+enddo
+return
+
+
+

@@ -107,39 +107,44 @@
 #xcommand CLOSERET  => close all; return
 
 
-#xcommand ESC_BCR   =>  if lastkey()=K_ESC;
-                           ; close all        ;
-                           ; BoxC()           ;
+#xcommand ESC_BCR   =>  if lastkey() == K_ESC;
+                         ; close all        ;
+                         ; BoxC()           ;
                          ;return            ;
                          ;endif
 
 
-#command START PRINT CRET <x> =>  if !StartPrint()       ;
+#command START PRINT CRET <x> =>  ;private __print_opt := NIL ; 
+                                  ; if EMPTY(f18_start_print(NIL, @_print_opt))       ;
                                   ;close all             ;
-                                  ;return <x>            ;
+                                  ;    return <x>            ;
                                   ;endif
-#command START PRINT CRET     =>  if !StartPrint()       ;
+
+#command START PRINT CRET     =>  ;private __print_opt := NIL ; 
+                                  ;if EMPTY(f18_start_print(NIL, @__print_opt)) ;
                                   ;close all             ;
                                   ;return                ;
                                   ;endif
 
-#command START PRINT RET <x>  =>  if !StartPrint()       ;
-                                  ;return <x>            ;
+#command START PRINT RET <x>  =>  ;private __print_opt := NIL ; 
+                                  ;if EMPTY(f18_start_print(NIL, @__print_opt))      ;
+                                  ; return <x>            ;
                                   ;endif
-#command START PRINT RET      =>  if !StartPrint()       ;
-                                  ;return                ;
+
+#command START PRINT RET      =>  ;private __print_opt := NIL ; 
+                                  ;if EMPTY(f18_start_print(NIL, @__print_opt))      ;
+                                  ;  return                ;
                                   ;endif
 
 #command START PRINT2 CRET <p>, <x> =>  IF !SPrint2(<p>)       ;
                                         ;close all             ;
                                         ;return <x>            ;
                                         ;endif
+
 #command START PRINT2 CRET <p>   =>  if !Sprint2(<p>)          ;
                                      ;close all             ;
                                      ;return                ;
                                      ;endif
-
-
 
 #command START PRINT CRET DOCNAME <y>    =>  if !StartPrint(nil, nil, <y>)    ;
                                              ;close all             ;
@@ -156,7 +161,8 @@
 
 #command END PRN2     => Eprint2()
 
-#command END PRINT => EndPrint()
+
+#command END PRINT => f18_end_print(NIL, __print_opt)
 
 #command EOF CRET <x> =>  if EofFndret(.t.,.t.)       ;
                           ;return <x>                 ;

@@ -12,41 +12,42 @@
 
 #include "fmk.ch"
 
-function f18_start_print(f_name, document_name)
-local _print_opt := "V"
+function f18_start_print(f_name, print_opt, document_name)
+
+if print_opt == NIL
+  print_opt := "V"
+endif
 
 set_print_f_name(@f_name)
 
 PtxtSekvence()
 
-ERRORBLOCK(global_error_handler())
-
 if (document_name == nil)
   document_name :=  gModul + '_' + DTOC(DATE()) 
 endif
 
-_print_opt :=IzlazPrn(_print_opt)
+// vraca prazan string u slucaju <ESC>
+print_opt :=IzlazPrn(print_opt)
+
+if empty(print_opt) 
+   return ""
+endif
 
 private GetList:={}
 
-setprc(0, 0)
-
-
 MsgO("Priprema izvjestaja...")
-	
+
+setprc(0, 0)
 set console off
 	
 set printer off
 set device to printer
 
-SET(_SET_DEFAULT, my_home())
-
 set printer to (f_name)
 set printer on
-
 GpIni(document_name)
 
-return _print_opt
+return print_opt
 
 // ----------------------------------------
 // ----------------------------------------
@@ -83,7 +84,6 @@ DO CASE
 
 END CASE
 
-ERRORBLOCK(my_error_handler())
 return
 
 static function set_print_f_name(f_name)
@@ -106,25 +106,19 @@ return f_name
 // izbaci ini seqvencu za printer
 //  * posalji i docname 
 // ----------------------------------------
-function GpIni(cDocumentName)
-local lKonvTable:=nil
+function GpIni(document_name)
 
-if cDocumentName == nil .or. gPrinter<>"R"
- cDocumentName := ""
+if document_name == nil .or. gPrinter<>"R"
+ document_name := ""
 endif
 
 Setpxlat()
 
-qqout(gPini)
+QQOUT(gPini)
 
-if !empty(cDocumentName)
- qqout("#%DOCNA#" + cDocumentName)
+if !empty(document_name)
+ qqout("#%DOCNA#" + document_name)
 endif
-
-if gPrinter=="R"
-  lKonvTable:=.t.
-endif
-konvtable( lKonvTable ) 
 
 return 
 

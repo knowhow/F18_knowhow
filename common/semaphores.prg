@@ -65,13 +65,15 @@ if table == NIL
    table := gaDBFs[_pos, 3]
 endif
 
-if len(gADBFs[_pos]) > 3
- lock_semaphore(table, "lock")
-endif
-
 if _rdd == NIL
   _rdd = "DBFCDX"
 endif
+
+/*
+if len(gADBFs[_pos]) > 3
+ lock_semaphore(table, "lock")
+endif
+*/
 
 if (LEN(gaDBFs[_pos]) > 3) 
 
@@ -81,20 +83,24 @@ if (LEN(gaDBFs[_pos]) > 3)
      
         if (_version == -1)
           // semafor je resetovan
-          EVAL( gaDBFs[_pos, 4], "FULL")
-          update_semaphore_version(table, .f.)
+          // lockuj da drugi korisnici ne bi dirali tablelu dok je ucitavam
+          lock_semaphore(table, "lock")
+            EVAL( gaDBFs[_pos, 4], "FULL")
+            update_semaphore_version(table, .f.)
+          lock_semaphore(table, "free")
 
         else
             // moramo osvjeziti cache
            if _version < last_semaphore_version(table)
+             lock_semaphore(table, "lock")
              if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
                  semaphore_param:= gaDBFs[_pos, 5]
              endif
              EVAL( gaDBFs[_pos, 4], semaphore_param )
              update_semaphore_version(table, .f.)
+             lock_semaphore(table, "free")
            endif
         endif
-        lock_semaphore(table, "free")
    else
       // rdd = "SEMAPHORE" poziv is update from sql server procedure
      if gDebug > 5

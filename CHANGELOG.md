@@ -1,12 +1,16 @@
-0.9.17  2001-12-13, bug report
+0.9.18  2011-12-14, f18_start_print
+ 
+ - [#25684](http://redmine.bring.out.ba/issues/25684)
+
+0.9.17  2011-12-13, bug report
 
   - [#25663](http://redmine.bring.out.ba/issues/25663)
 
-0.9.16  2001-12-12, test init
+0.9.16  2011-12-12, test init
 
   - modstru_test [#25648](http://redmine.bring.out.ba/issues/25648)
 
-0.9.15  2001-12-12, hernad haos_2
+0.9.15  2011-12-12, hernad haos_2
 
   - uvodim mouse podrsku [#25300](http://redmine.bring.out.ba/issues/25300)
   - legacy [#25640](http://redmine.bring.out.ba/issues/25640)

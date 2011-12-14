@@ -17,7 +17,7 @@
 #xcommand O_KPARAMS   => select (F_KPARAMS); my_use ( "kparams" ) ; set order to tag  "ID"
 #xcommand O_SECUR     => select (F_SECUR); my_use ( "secur" )  ; set order to tag "ID"
 #xcommand O_ADRES     => select (F_ADRES); my_use ( "adres" )  ; set order to tag "ID"
-#xcommand O_SQLPAR    => select (F_SQLPAR); my_use ( ToUnix( KUMPATH + "SQL"+ SLASH + "SQLPAR" ) )
+#xcommand O_SQLPAR    => select (F_SQLPAR); my_use ( "SQLPAR" )
 
 // sifk, sifv
 #xcommand O_SIFK => select(F_SIFK);  my_use  ("sifk")     ; set order to tag "ID"
@@ -60,9 +60,7 @@
 #xcommand O_ADRES     => select (F_ADRES); my_use (ToUnix("adres")) ; set order to tag "ID"
 #xcommand O_RELATION => SELECT (F_RELATION); my_USE ("relation"); set order to tag "1"
 #xcommand O_FINMAT  => select(F_FINMAT); my_use ("finmat")    ; set order to tag "1"
-//#xcommand O_FIN_FINMAT  => select(F_FIN_FINMAT); my_use ("fin_finmat")    ; set order to tag "1"
-//#xcommand O_FAKT_FINMAT  => select(F_FAKT_FINMAT); my_use ("fakt_finmat")    ; set order to tag "1"
-//#xcommand O_KALK_FINMAT  => select(F_KALK_FINMAT); my_use ("kalk_finmat")    ; set order to tag "1"
+
 #xcommand O_VPRIH => SELECT (F_VPRIH); MY_USE ("vrprih"); set order to tag "ID"
 #xcommand O_ULIMIT => SELECT (F_ULIMIT); MY_USE ("ulimit"); set order to tag "ID"
 #xcommand O_TIPBL => SELECT (F_TIPBL); MY_USE ("tipbl"); set order to tag "1"
@@ -100,70 +98,72 @@
 #xcommand O_RULES  => select (F_RULES); my_use ("rules") ; set order to tag "ID"
 
 // stampa PDV racuna
-#xcommand O_DRN => select(F_DRN); my_use ("drn"); set order to tag "1"
-#xcommand O_RN => select(F_RN); my_use ("rn"); set order to tag "1"
-#xcommand O_DRNTEXT => select(F_DRNTEXT); my_use ("drntext"); set order to tag "1"
-#xcommand O_DOKSPF => select(F_DOKSPF); my_use ("dokspf"); set order to tag "1"
+#xcommand O_DRN => select(F_DRN); my_usex ("drn"); set order to tag "1"
+#xcommand O_RN => select(F_RN); my_usex ("rn"); set order to tag "1"
+#xcommand O_DRNTEXT => select(F_DRNTEXT); my_usex ("drntext"); set order to tag "1"
+#xcommand O_DOKSPF => select(F_DOKSPF); my_usex ("dokspf"); set order to tag "1"
 
 // tabele provjere integriteta
-#xcommand O_DINTEG1 => SELECT (F_DINTEG1); USEX ("dinteg1"); set order to tag "1"
-#xcommand O_DINTEG2 => SELECT (F_DINTEG2); USEX ("dinteg2"); set order to tag "1"
-#xcommand O_INTEG1 => SELECT (F_INTEG1); USEX ("integ1"); set order to tag "1"
-#xcommand O_INTEG2 => SELECT (F_INTEG2); USEX ("integ2"); set order to tag "1"
-#xcommand O_ERRORS => SELECT (F_ERRORS); USEX ("errors"); set order to tag "1"
+#xcommand O_DINTEG1 => SELECT (F_DINTEG1); my_USEX ("dinteg1"); set order to tag "1"
+#xcommand O_DINTEG2 => SELECT (F_DINTEG2); my_USEX ("dinteg2"); set order to tag "1"
+#xcommand O_INTEG1 => SELECT (F_INTEG1); my_USEX ("integ1"); set order to tag "1"
+#xcommand O_INTEG2 => SELECT (F_INTEG2); my_USEX ("integ2"); set order to tag "1"
+#xcommand O_ERRORS => SELECT (F_ERRORS); my_USEX ("errors"); set order to tag "1"
 
 // sql messages
-#xcommand O_MESSAGE   => select(F_MESSAGE); my_use ("message"); set order to tag "1"
-#xcommand O_AMESSAGE   => select(F_AMESSAGE); my_use (EXEPATH+"amessage"); set order to tag "1"
-#xcommand O_TMPMSG  => select(F_TMPMSG); my_use (EXEPATH+"tmpmsg"); set order to tag "1"
+#define F_MSGNEW 234
+#xcommand O_MESSAGE   => select(F_MESSAGE); my_usex ("message"); set order to tag "1"
+#xcommand O_AMESSAGE   => select(F_AMESSAGE); my_usex ("amessage"); set order to tag "1"
+#xcommand O_TMPMSG  => select(F_TMPMSG); my_use ("tmpmsg"); set order to tag "1"
 
 
 // modul FIN
-#xcommand O_FIN_PRIPR     => select (F_FIN_PRIPR);  usex ("fin_pripr") ; set order to tag "1"
-#xcommand O_FIN_PRIPRRP   => select (F_FIN_PRIPRRP); usex (strtran(cDirPriv, goModul:oDataBase:cSezonDir, SLASH) + "FIN_PRIPR", "fin_priprrp"); set order to tag "1"
-#xcommand O_PNALOG   => select (F_PNALOG); usex ("pnalog"); set order to tag "1"
-#xcommand O_PSUBAN   => select (F_PSUBAN); usex ("psuban"); set order to tag "1"
-#xcommand O_PANAL   => select (F_PANAL); usex ("panal")   ; set order to tag "1"
-#xcommand O_PSINT   => select (F_PSINT); usex ("psint")   ; set order to tag "1"
+#xcommand O_FIN_PRIPR     => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
+#xcommand O_FIN_PRIPRRP   => select (F_FIN_PRIPRRP); my_usex (strtran(cDirPriv, goModul:oDataBase:cSezonDir, SLASH) + "FIN_PRIPR", "fin_priprrp"); set order to tag "1"
+#xcommand O_PNALOG   => select (F_PNALOG); my_usex ("pnalog"); set order to tag "1"
+#xcommand O_PSUBAN   => select (F_PSUBAN); my_usex ("psuban"); set order to tag "1"
+#xcommand O_PANAL   => select (F_PANAL); my_usex ("panal")   ; set order to tag "1"
+#xcommand O_PSINT   => select (F_PSINT); my_usex ("psint")   ; set order to tag "1"
 #xcommand O_SUBAN    => SELECT (F_SUBAN); my_use("suban"); set order to tag "1"
 #xcommand O_KUF      => SELECT (F_KUF); my_use("kuf"); set order to tag "ID"
 #xcommand O_KIF      => SELECT (F_KIF); my_use("kif"); set order to tag "ID"
 #xcommand O_ANAL    => SELECT (F_ANAL); my_use("anal"); set order to tag "1"
 #xcommand O_NALOG    => SELECT (F_NALOG); my_use("nalog"); set order to tag "1"
 #xcommand O_SINT    => SELECT (F_SINT); my_use("sint"); set order to tag "1"
-#xcommand O_RSUBAN    => select (F_SUBAN);  usex("suban"); set order to tag "1"
-#xcommand O_RANAL    => select (F_ANAL);    usex("anal") ; set order to tag "1"
+#xcommand O_RSUBAN    => select (F_SUBAN);  my_usex("suban"); set order to tag "1"
+#xcommand O_RANAL    => select (F_ANAL);    my_usex("anal") ; set order to tag "1"
 #xcommand O_SINTSUB => select (F_SUBAN);    my_use("suban"); set order to tag "1"
-#xcommand O_BUDZET   => select (F_BUDZET);    my_use("budzet") ; set order to tag "1"
+#xcommand O_BUDZET   => select (F_BUDZET);  my_use("budzet") ; set order to tag "1"
 #xcommand O_PAREK   => select (F_PAREK);    my_use("parek")   ; set order to tag "1"
 #xcommand O_BBKLAS   => select (F_BBKLAS);    my_use("bbklas")   ; set order to tag "1"
-#xcommand O_IOS   => select (F_IOS);    my_use("ios")   ; set order to tag "1"
+#xcommand O_IOS   => select (F_IOS);    my_usex("ios")   ; set order to tag "1"
 #xcommand O_FIN_RJ   => select (F_FIN_RJ);          MY_USE  ("fin_rj")    ; set order to tag "ID"
 #xcommand O_FUNK   => select (F_FUNK);    MY_USE  ("funk") ; set order to tag "ID"
 #xcommand O_FOND   => select (F_FOND);    MY_USE  ("fond") ; set order to tag "ID"
 #xcommand O_BUIZ   => select (F_BUIZ);    MY_USE  ("buiz") ; set order to tag "ID"
-#xcommand OX_KONTO    => select (F_KONTO);  usex ("konto")  ;  set order to tag "ID"
+#xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"
 #xcommand O_VKSG     => select (F_VKSG);  MY_USE ("vksg");  set order to tag "1"
-#xcommand OX_VKSG     => select (F_VKSG);  usex ("vksg")  ;  set order to tag "1"
-#xcommand O_RKONTO    => select (F_KONTO);  usex ("konto") ; set order to tag "ID"
-#xcommand OX_PARTN    => select (F_PARTN);  usex ("partn") ; set order to tag "ID"
-#xcommand O_RPARTN    => select (F_PARTN);  usex ("partn") ; set order to tag "ID"
-#xcommand OX_TNAL    => select (F_TNAL);  usex ("tnal")      ; set order to tag "ID"
-#xcommand OX_TDOK    => select (F_TDOK);  usex ("tdok")      ; set order to tag "ID"
-#xcommand O_PKONTO   => select (F_PKONTO); MY_USE  ("pkonto")  ; set order to tag "ID"
-#xcommand OX_PKONTO   => select (F_PKONTO); usex  ("pkonto")  ; set order to tag "ID"
-#xcommand OX_VALUTE   => select(F_VALUTE);  usex  ("valute")  ; set order to tag "ID"
+#xcommand OX_VKSG     => select (F_VKSG);  my_usex ("vksg")  ;  set order to tag "1"
+#xcommand O_RKONTO    => select (F_KONTO);  my_usex ("konto") ; set order to tag "ID"
+#xcommand OX_PARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"
+#xcommand O_RPARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"
+#xcommand OX_TNAL    => select (F_TNAL);  my_usex ("tnal")      ; set order to tag "ID"
+#xcommand OX_TDOK    => select (F_TDOK);  my_usex ("tdok")      ; set order to tag "ID"
+#xcommand O_PKONTO   => select (F_PKONTO); MY_USEx  ("pkonto")  ; set order to tag "ID"
+#xcommand OX_PKONTO   => select (F_PKONTO); my_usex  ("pkonto")  ; set order to tag "ID"
+#xcommand OX_VALUTE   => select(F_VALUTE);  my_usex  ("valute")  ; set order to tag "ID"
 #xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")
 #xcommand O__PARTN => select(F__PARTN); MY_USE  ("_partn")
-#xcommand O_PRENHH   => select(F_PRENHH); usex ("prenhh"); set order to tag "1"
+#xcommand O_PRENHH   => select(F_PRENHH); my_usex ("prenhh"); set order to tag "1"
+#xcommand O_OSTAV   => select(F_OSTAV); my_usex ("ostav"); set order to tag "1"
 
 
 // modul KALK
-#xcommand O_KALK_PRIPR   => select(F_KALK_PRIPR); my_use ( "kalk_pripr") ; set order to tag "1"
-#xcommand O_KALK_S_PRIPR   => select(F_KALK_PRIPR); my_use ( "kalk_pripr") ; set order to tag "1"
+#xcommand O_KALK_PRIPR   => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
+#xcommand O_KALK_S_PRIPR   => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_PRIPRRP   => select (F_KALK_PRIPRRP);   usex (strtran(cDirPriv,goModul:oDataBase:cSezonDir, SLASH) + "pripr")  ; set order to tag "1"
-#xcommand O_KALK_PRIPR2  => select(F_KALK_PRIPR2); my_use ("kalk_pripr2") ; set order to tag "1"
-#xcommand O_KALK_PRIPR9  => select(F_KALK_PRIPR9); my_use ("kalk_pripr9") ; set order to tag "1"
+#xcommand O_KALK_PRIPR2  => select(F_KALK_PRIPR2); my_usex ("kalk_pripr2") ; set order to tag "1"
+#xcommand O_KALK_PRIPR9  => select(F_KALK_PRIPR9); my_usex ("kalk_pripr9") ; set order to tag "1"
 #xcommand O__KALK  => select(F__KALK); my_use ("_kalk" )
 #xcommand O_KALK_FINMAT  => select(F_KALK_FINMAT); my_use ("kalk_finmat")    ; set order to tag "1"
 #xcommand O_KALK   => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
@@ -172,7 +172,7 @@
 #xcommand O_KALKX  => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
 #xcommand O_KALKS  => select(F_KALKS);  my_use  ("kalks")  ; set order to tag "1"
 #xcommand O_KALKREP => if gKalks; select(F_KALK); use; select(F_KALK) ; my_use  ("kalks", "KALK") ; set order to tag "1";else; select(F_KALK);  my_use  ("KALK")  ; set order to tag "1"; end
-#xcommand O_SKALK   => select(F_KALK);  my_use  ("kalk_pripr", "kalk_kalk") ; set order to tag "1"
+#xcommand O_SKALK   => select(F_KALK);  my_usex  ("kalk_pripr", "kalk_kalk") ; set order to tag "1"
 #xcommand O_KALK_DOKS    => select(F_KALK_DOKS);  my_use  (KUMPATH + "kalk_doks")     ; set order to tag "1"
 #xcommand O_KALK_DOKS2   => select(F_KALK_DOKS2);  my_use  (KUMPATH + "kalk_doks2")     ; set order to tag "1"
 #xcommand O_PORMP  => select(F_PORMP); usex ("pormp")     ; set order to tag "1"
@@ -193,9 +193,9 @@
 
 
 // modul FAKT
-#xcommand O_FAKT_PRIPR     => select (F_PRIPR);   my_use ("fakt_pripr") ; set order to tag "1"
-#xcommand O_FAKT_PRIPRRP   => select (F_PRIPRRP); my_use ("fakt_pripr") ; set order to tag  "1"
-#xcommand O_FAKT_PRIPR9   => select (F_PRIPR9); my_use ("fakt_pripr9") ; set order to tag  "1"
+#xcommand O_FAKT_PRIPR     => select (F_PRIPR);   my_usex ("fakt_pripr") ; set order to tag "1"
+#xcommand O_FAKT_PRIPRRP   => select (F_PRIPRRP); my_usex ("fakt_pripr") ; set order to tag  "1"
+#xcommand O_FAKT_PRIPR9   => select (F_PRIPR9); my_usex ("fakt_pripr9") ; set order to tag  "1"
 #xcommand O_FAKT      => select (F_FAKT) ;   my_use  ("fakt") ; set order to tag  "1"
 #xcommand O__FAKT     => select(F__FAKT)  ;  my_use ("_fakt") 
 #xcommand O__ROBA   => select(F__ROBA);  my_use  ("_roba")
@@ -210,7 +210,7 @@
 #xcommand O_FADO     => select (F_FADO); my_use  ("fado")    ; set order to tag "ID"
 #xcommand O_FADE     => select (F_FADE); my_use  ("fade")    ; set order to tag "ID"
 #xcommand O_FTXT    => select (F_FTXT);    my_use ("ftxt")    ; set order to tag "ID"
-#xcommand O_FAKT_S_PRIPR   => select(F_PRIPR); my_use ("fakt_pripr") ; set order to "1"
+#xcommand O_FAKT_S_PRIPR   => select(F_PRIPR); my_usex ("fakt_pripr") ; set order to "1"
 #xcommand O_POR      => select (F_FTXT); my_use ("por")  
 #xcommand O_UPL      => select (F_UPL); my_use  ("upl")         ; set order to tag "1"
 #xcommand O_DEST     => select(F_DEST);  my_use  ("dest")     ; set order to tag "ID"
@@ -320,11 +320,11 @@
 #xcommand O_RNGPLA    => SELECT (F_RNGPLA); my_use ("rngpla"); set order to tag "1"
 #xcommand O_PROMVP    => SELECT (F_PROMVP); my_use ("promvp"); set order to tag "1"
 #xcommand O__POS      => SELECT (F__POS)  ; my_use("_pos")  ; set order to tag "1"
-#xcommand O__POS_PRIPR  => SELECT (F__PRIPR); my_use("_pos_pripr"); set order to tag "1"
-#xcommand O_PRIPRZ    => SELECT (F_PRIPRZ); my_use("priprz"); set order to tag "1"
-#xcommand O_PRIPRG    => SELECT (F_PRIPRG); my_use("priprg"); set order to tag "1"
-#xcommand O__POSP     => select(F__POSP)  ; my_use("_posp") 
-#xcommand O__POS_DOKSP  => select(F__DOKSP)  ; my_use("_pos_doksp")
+#xcommand O__POS_PRIPR  => SELECT (F__PRIPR); my_usex("_pos_pripr"); set order to tag "1"
+#xcommand O_PRIPRZ    => SELECT (F_PRIPRZ); my_usex("priprz"); set order to tag "1"
+#xcommand O_PRIPRG    => SELECT (F_PRIPRG); my_usex("priprg"); set order to tag "1"
+#xcommand O__POSP     => select(F__POSP)  ; my_usex("_posp") 
+#xcommand O__POS_DOKSP  => select(F__DOKSP)  ; my_usex("_pos_doksp")
 #xcommand O_K2C       => SELECT (F_K2C)   ; my_use("k2c")   ; set order to tag "1"
 #xcommand O_MJTRUR    => SELECT (F_MJTRUR); my_use("mjtrur"); set order to tag "1"
 #xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); my_use("robaiz"); set order to tag "1"
@@ -336,6 +336,27 @@
 #xcommand O_DIO       => SELECT (F_DIO); my_use("dio"); set order to tag "ID"
 #xcommand O_UREDJ     => SELECT (F_UREDJ); my_use("uredj"); set order to tag "ID"
 #xcommand O_MARS      => SELECT (F_MARS); my_use("mars"); set order to tag "ID"
+
+
+// modul MAT
+#xcommand O_MAT_PRIPR    =>  select(F_MAT_PRIPR); my_usex ("mat_pripr") ; set order to tag "1"
+#xcommand O_MAT_PRIPRRP  =>  select(F_MAT_PRIPRRP); my_usex("mat_priprrp", "mat_pripr"); set order to tag "1"
+#xcommand O_MAT_SUBAN    =>  select(F_MAT_SUBAN); my_use ( "mat_suban" ); set order to tag "1"
+#xcommand O_MAT_SUBANX   =>  select(F_MAT_SUBAN); my_use ( "mat_suban" ); set order to tag "1"
+#xcommand O_MAT_SUBAN2   =>  select(F_MAT_SUBAN); my_use ( "mat_pripr", "mat_suban" ); set order to tag "4"
+#xcommand O_MAT_ANAL     =>  select(F_MAT_ANAL); my_use ( "mat_anal" ); set order to tag "1"
+#xcommand O_MAT_SINT     =>  select(F_MAT_SINT); my_use ( "mat_sint" ); set order to tag "1"
+#xcommand O_MAT_NALOG    =>  select(F_MAT_NALOG); my_use ( "mat_nalog" ); set order to tag "1"
+#xcommand O_IZDEF        =>  select(F_IZDEF); my_use ( "izdef" ); set order to tag "1"
+#xcommand O_IZOP         =>  select(F_IZOP ); my_use ( "izop" ); set order to tag "1"
+#xcommand O_MAT_PNALOG   =>  select(F_MAT_PNALOG); my_usex ( "mat_pnalog" ); set order to tag "1"
+#xcommand O_MAT_PSUBAN   =>  select(F_MAT_PSUBAN); my_usex ( "mat_psuban" ); set order to tag "1"
+#xcommand O_MAT_PSUBAN2  =>  select(F_MAT_PSUBAN); my_usex ( "mat_suban", "mat_psuban" ); set order to tag "1"
+#xcommand O_MAT_PANAL    =>  select(F_MAT_PANAL) ; my_usex ( "mat_panal") ; set order to tag "1"
+#xcommand O_MAT_PANAL2   =>  select(F_MAT_PANAL) ; my_usex ( "mat_anal", "mat_panal"); set order to tag "1"
+#xcommand O_MAT_PSINT    =>  select(F_MAT_PSINT) ; my_usex ( "mat_psint" ) ; set order to tag "1"
+#xcommand O_MAT_INVENT   =>  select(F_MAT_INVENT); my_use( "mat_invent" ); set order to tag "1"
+#xcommand O_KARKON       =>  select(F_KARKON); my_use ( "karkon" ); set order to tag "ID"
 
 
 

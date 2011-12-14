@@ -15,11 +15,11 @@
 #define  CHR254   254
 
 
-function RPar(cImeVar,xArg)
+function RPar(cImeVar, xArg)
 
 local cPom, clTip
 
-SEEK cSection+cHistory+cImeVar+"1"
+SEEK cSection + cHistory + cImeVar + "1"
 
 if found() 
   cPom:=""

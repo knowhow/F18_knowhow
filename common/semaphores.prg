@@ -40,17 +40,24 @@ endif
 ...
 */
 
-if VALTYPE(alias) <> "C"
+if VALTYPE(alias) == "N"
    // F_SUBAN
    _pos := ASCAN(gaDBFs,  { |x|  x[1]==alias} )
    alias := gaDBFs[_pos, 2]
 else
    // /home/test/suban.dbf => suban
-   alias := FILEBASE(alias)
+   alias := UPPER(FILEBASE(alias))
+   
+   if table != NIL
+        // ako je naveden alias i ime tabele, onda je ime tabele "glavna" vrijednost
+       table := FILEBASE(table)
+       _pos := ASCAN(gaDBFs,  { |x|  x[3]==table} )
+   else
+       _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
+   endif
 endif
 
 // pozicija gdje je npr. SUBAN
-_pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
 _area := gaDBFs[_pos, 1] 
 
 if table == NIL
@@ -66,17 +73,12 @@ if _rdd == NIL
   _rdd = "DBFCDX"
 endif
 
-if  LEN(gaDBFs[_pos])>3 
+if (LEN(gaDBFs[_pos]) > 3) 
 
+   // tabela je pokrivena semaforom
    if (_rdd != "SEMAPHORE")
-        //if gDebug > 9
-        //    log_write("F18TBL =" + cF18Tbl)
-        //endif
         _version :=  get_semaphore_version(table)
-        if gDebug > 9
-          log_write("Tabela:" + table + " semaphore _version=" + STR(_version) + " last_semaphore_version=" + STR(last_semaphore_version(table)))
-        endif
-
+     
         if (_version == -1)
           // semafor je resetovan
           EVAL( gaDBFs[_pos, 4], "FULL")
@@ -94,8 +96,11 @@ if  LEN(gaDBFs[_pos])>3
         endif
         lock_semaphore(table, "free")
    else
-      // poziv is update from sql server procedure
-      _rdd := "DBFCDX" 
+      // rdd = "SEMAPHORE" poziv is update from sql server procedure
+     if gDebug > 5
+          log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area))
+     endif
+     _rdd := "DBFCDX" 
    endif
 
 endif
@@ -119,7 +124,7 @@ local _user := f18_user()
 // svi useri su lockovani
 _qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) 
 
-if gDebug > 5  
+if gDebug > 9 
   log_write(_qry)
 endif
 _ret := _sql_query( _server, _qry )
@@ -143,7 +148,7 @@ local _user := f18_user()
 
 _qry := "SELECT algorithm FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(_user)
 
-if gDebug > 5  
+if gDebug > 10 
   log_write(_qry)
 endif
 _ret := _sql_query( _server, _qry )
@@ -165,7 +170,7 @@ local _server:= pg_server()
 
 _qry := "SELECT last_trans_version FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(f18_user())
 
-if gDebug > 5  
+if gDebug > 9 
   log_write(_qry)
 endif
 _ret := _sql_query( _server, _qry )

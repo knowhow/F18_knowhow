@@ -560,7 +560,6 @@ return (DE_CONT)
 *}
 
 function NaslovDok(cIdVd)
-*{
 do case
 	case cIdVd=="16"
 		return "ZADUZENJE"
@@ -575,5 +574,4 @@ do case
 endcase
 
 return
-*}
 

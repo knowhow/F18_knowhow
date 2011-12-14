@@ -190,23 +190,21 @@ endif
 
 // ------------------------------------------
 // ------------------------------------------
-function DBCREATE2(cIme, aDbf, cDriver)
+function DBCREATE2(ime_dbf, struct_dbf, driver)
 
-local nPos
-local cCDX
+local _pos
+local _ime_cdx
 
 
-//dbf_ext_na_kraju(@cIme)
+ime_dbf := f18_ime_dbf(ime_dbf)
 
-cIme := f18_ime_dbf(cIme)
+_ime_cdx:= strtran(ime_dbf, "." + DBFEXT, "." + INDEXEXT)
 
-cCDX:= strtran(cIme,"." + DBFEXT, "." + INDEXEXT)
-
-if right(cCDX, 4) == "." + INDEXEXT
-  ferase(cCDX)
+if right(_ime_cdx, 4) == "." + INDEXEXT
+  ferase(_ime_cdx)
 endif
 
-DBCREATE(cIme, aDbf, cDriver)
+DBCREATE(ime_dbf, struct_dbf, driver)
 return .t.
 
 

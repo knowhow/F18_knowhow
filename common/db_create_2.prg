@@ -293,7 +293,6 @@ CREATE_INDEX("ID","id", "tnal")
 CREATE_INDEX("NAZ","naz", "tnal")
 index_mcode(SIFPATH, "TNAL")
 
-// TDOK
 if !file(f18_ime_dbf("tdok"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
@@ -353,7 +352,7 @@ if !file(f18_ime_dbf(cIme) )
         AADD(aDBf,{ 'Adresa'              , 'C' ,  30 ,  0 })
         DBCREATE2("BANKE" , aDbf)
         reset_semaphore_version("banke")
-        my_use("banke")
+        my_usex("banke")
         close all
 endif
 CREATE_INDEX("ID","id", SIFPATH + cIme)

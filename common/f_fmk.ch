@@ -252,6 +252,24 @@
 #define F_PROMJ    303
 #define F_INVENT   304
 
+//mat
+
+#define F_MAT_SUBAN   320
+#define F_MAT_ANAL    321
+#define F_MAT_SINT    322
+#define F_MAT_NALOG   323
+#define F_MAT_PRIPR   324
+#define F_MAT_PSUBAN   325
+#define F_MAT_PANAL    326
+#define F_MAT_PSINT    327
+#define F_MAT_PNALOG   328
+#define F_MAT_INVENT   329
+#define F_KARKON       330
+#define F_IZDEF       331
+#define F_IZOP       332
+#define F_MAT_PRIPRP  333
+
+
 //ld
 #define F_LD_RJ    310
 

@@ -1665,7 +1665,8 @@ RETURN aVrati
 
 
 
-
+// ----------------------------------------------
+// ----------------------------------------------
 function MsgBeep2(cTXT)
 
 @ MAXROWS()-1, 0 SAY PADL(cTXT, MAXCOLS()) COLOR "R/W"
@@ -1675,7 +1676,7 @@ return
 
 function Reci(x,y,cT,nP)
 
-LOCAL px:=ROW(),py:=COL()
+LOCAL px:=ROW(), py:=COL()
  IF nP==40 .and. (x==11 .and. y==23 .or. x==12 .and. y==23 .or. x==12 .and. y==24 .or. x==12 .and. y==25)
    nP+=6
  ENDIF
@@ -1711,9 +1712,6 @@ if i%nstep=0
 endif
 return .t.
 
-
-
-
 /*! \fn Menu_SC(cIzp, fMain, lBug)
  * 
  * \param opc    - indirektno priv.var, matrica naslova opcija
@@ -1735,8 +1733,6 @@ return .t.
  */
 
 function Menu_SC(cIzp, fMain, lBug)
-
-
 local cOdgovor
 local nIzbor
 

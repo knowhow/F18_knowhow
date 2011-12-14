@@ -80,8 +80,6 @@ endif
 return  .t.
 
 
-
-
 function V_Rj ()
 IF gDetPromRj == "D" .and. gFirma <> _IdFirma
     Beep (3)
@@ -1148,6 +1146,324 @@ endif
 
 select (nTArea)
 return
+
+
+/*! \fn IniVars()
+ *  \brief Ini varijable
+ */
+ 
+function IniVars()
+*{
+set cursor on
+
+// varijable koje se inicijalizuju iz baze
+_txt1:=_txt2:=_txt3a:=_txt3b:=_txt3c:=""        // txt1  -  naziv robe,usluge
+_BrOtp:=space(8)
+_DatOtp:=ctod("")
+_BrNar:=space(8)
+_DatPl:=ctod("")
+_VezOtpr := ""
+
+aMemo:=ParsMemo(_txt)
+if len(aMemo)>0
+  _txt1:=aMemo[1]
+endif
+if len(aMemo)>=2
+  _txt2:=aMemo[2]
+endif
+if len(aMemo)>=5
+  _txt3a:=aMemo[3]; _txt3b:=aMemo[4]; _txt3c:=aMemo[5]
+endif
+if len(aMemo)>=9
+ _BrOtp:=aMemo[6]; _DatOtp:=ctod(aMemo[7]); _BrNar:=amemo[8]; _DatPl:=ctod(aMemo[9])
+endif
+IF len (aMemo)>=10
+  _VezOtpr := aMemo [10]
+EndIF
+*}
+
+
+
+/*! \fn SetVars()
+ *  \brief Setuj varijable
+ */
+ 
+function SetVars()
+*{
+if _podbr==" ." .or.  roba->tip="U" .or. (val(_Rbr)<=1 .and. val(_podbr)<1)
+    _txt2:=OdsjPLK(_txt2)           // odsjeci na kraju prazne linije
+    if ! "Faktura formirana na osnovu" $ _txt2
+       _txt2 += CHR(13)+Chr(10)+_VezOtpr
+    endif
+    _txt:=Chr(16)+trim(_txt1)+Chr(17) + Chr(16)+_txt2+Chr(17)+;
+          Chr(16)+trim(_txt3a)+Chr(17) + Chr(16)+_txt3b+Chr(17)+;
+          Chr(16)+trim(_txt3c)+Chr(17) +;
+          Chr(16)+_BrOtp+Chr(17) +;
+          Chr(16)+dtoc(_DatOtp)+Chr(17) +;
+          Chr(16)+_BrNar+Chr(17) +;
+          Chr(16)+dtoc(_DatPl)+Chr(17) +;
+          IIF (Empty (_VezOtpr), "", Chr(16)+_VezOtpr+Chr(17))
+else
+    _txt:=""
+endif
+return
+*}
+
+
+
+/*! \fn Tb_V_RBr()
+ *  \brief
+ */
+ 
+function Tb_V_RBr()
+*{
+replace Rbr with str(nRbr,3)
+return .t.
+*}
+
+
+/*! \fn Tb_W_IdRoba()
+ *  \brief
+ */
+ 
+function Tb_W_IdRoba()
+*{
+_idroba:=padr(_idroba,15)
+return W_Roba()
+*}
+
+
+/*! \fn TbRobaNaz()
+ *  \brief
+ */
+ 
+function TbRobaNaz()
+*{
+NSRNPIdRoba()
+// select roba; hseek fakt_pripr->idroba; select fakt_pripr
+return left(Roba->naz,25)
+*}
+
+
+/*! \fn ObracunajPP(cSetPor,dDatDok)
+ *  \brief Obracunaj porez na promet 
+ *  \param cSetPor
+ *  \param dDatDok
+ */
+ 
+function ObracunajPP(cSetPor,dDatDok)
+*{
+
+select (F_FAKT_PRIPR)
+if !used()
+	O_FAKT_PRIPR
+endif
+select (F_ROBA)
+if !used()
+	O_ROBA
+endif
+select (F_TARIFA)
+if !used()
+	O_TARIFA
+endif
+
+select fakt_pripr
+go top
+if dDatDok=NIL
+  dDatDok:=fakt_pripr->DatDok
+endif
+if cSetPor=NIL
+  cSetPor:="D"
+endif
+
+do while !eof()
+ if cSetPor=="D"
+  NSRNPIdRoba()
+  // select roba; hseek fakt_pripr->idroba
+  select tarifa; hseek roba->idtarifa
+  if found()
+    select fakt_pripr
+    replace porez with tarifa->opp
+  endif
+ endif
+ if datDok<>dDatdok
+    replace DatDok with dDatDok
+ endif
+ select fakt_pripr
+ skip
+enddo
+
+go top
+RETURN
+*}
+
+
+
+/*! \fn UCKalk()
+ *  \brief Uzmi cijenu iz Kalk-a
+ */
+ 
+function UCKalk()
+*{
+LOCAL nArr:=SELECT(), aUlazi:={}, GetList:={}, cIdPartner:=_idpartner
+  LOCAL cSezona:="RADP", cPKalk:=""
+  PUBLIC gDirKalk:=""
+  O_PARAMS
+  private cSection:="T",cHistory:=" "; aHistory:={}
+  RPar("dk",@gDirKalk)
+  if empty(gDirKalk)
+    gDirKalk:=trim(strtran(goModul:oDataBase:cDirKum,"FAKT","KALK"))+"\"
+    WPar("dk",gDirKalk)
+  endif
+  select 99; use
+  Box("#ROBA:"+_IDROBA,4,50)
+    @ m_x+2, m_y+2 SAY "Sifra dobavljaca             :" GET cIdPartner
+    @ m_x+3, m_y+2 SAY "Sezona ('RADP'-tekuca godina):" GET cSezona
+    READ
+  BoxC()
+  SETLASTKEY(0)
+  select (F_KALK)
+  IF cSezona=="RADP"
+    cPKalk:=gDirKalk+"KALK"
+  ELSE
+    cPKalk:=gDirKalk+cSezona+"\KALK"
+  ENDIF
+  IF FILE(cPKalk+".DBF")
+    USE (cPKalk)
+  ELSE
+    MsgBeep("Baza '"+cPKalk+".DBF' ne postoji !")
+    SELECT (nArr); RETURN
+  ENDIF
+  set order to tag "7"   // "7","idroba"
+  seek _idroba
+  IF !FOUND()
+    USE; SELECT (nArr); RETURN
+  ENDIF
+  DO WHILE !EOF() .and. _idroba==idroba
+    IF idpartner==cIdPartner .and. idvd=="10" .and. kolicina>0
+      AADD( aUlazi , idfirma+"-"+idvd+"-"+brdok+"³"+;
+                     DTOC(datdok)+"³"+;
+                     STR(kolicina,11,3)+"³"+;
+                     STR(fcj,11,3)                     )
+    ENDIF
+    SKIP 1
+  ENDDO
+  USE
+  SELECT (nArr)
+  IF !( LEN(aUlazi)>0 ); RETURN; ENDIF
+  h:=ARRAY(LEN(aUlazi)); AFILL(h,"")
+  Box("#POSTOJECI ULAZI (KALK): ÍÍÍÍÍÍÍ <Enter>-izbor ",MIN(LEN(aUlazi),16)+3,51)
+   @ m_x+1, m_y+2 SAY "    DOKUMENT   ³ DATUM  ³ KOLICINA  ³  CIJENA    "
+   @ m_x+2, m_y+2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄ"
+   nPom := 1
+   @ row()-1, col()-6 SAY ""
+   nPom := Menu("KCME",aUlazi,nPom,.f.,,,{m_x+2,m_y+1})
+   IF nPom>0
+     _cijena  := VAL(ALLTRIM(RIGHT(aUlazi[nPom],11)))
+     Menu("KCME",aUlazi,0,.f.)
+   ENDIF
+  BoxC()
+RETURN
+*}
+
+
+/*! \fn ChSveStavke(fNovi)
+ *  \brief
+ *  \param fNovi
+ */
+ 
+function ChSveStavke(fNovi)
+*{
+LOCAL nRec:=recno()
+  set order to
+  go top
+  do while !eof()
+    IF IDFIRMA+IDTIPDOK+BRDOK == _IDFIRMA+_IDTIPDOK+_BRDOK .or.;
+       !fNovi .and. cOldKeyDok == IDFIRMA+IDTIPDOK+BRDOK
+      RLOCK()
+      _field->idfirma   := _IdFirma
+      _field->datdok    := _DatDok
+      _field->IdTipDok  := _IdTipDok
+      _field->brdok     := _BrDok
+      _field->dindem    := _dindem
+      _field->zaokr     := _zaokr
+      _field->idpartner := _idpartner
+      IF lVrsteP
+       _field->idvrstep:=_idvrstep
+      ENDIF
+      IF glDistrib
+       _field->iddist   := _iddist
+       _field->idrelac  := _idrelac
+       _field->idvozila := _idvozila
+       _field->idpm     := _idpm
+       _field->marsruta := _marsruta
+       _field->ambp     := _ambp
+       _field->ambk     := _ambk
+      ENDIF
+      if glRadNal
+      	_field->idRNal:=_idRNal
+      endif
+      IF !(_idtipdok="0") .and. lPoNarudzbi
+       _field->idnar    := _idpartner
+      ENDIF
+      DBUNLOCK()
+    ENDIF
+    skip
+  enddo
+  set order to tag "1"
+  go nRec
+RETURN
+*}
+
+
+
+/*! \fn TarifaR(cRegion, cIdRoba, aPorezi)
+ *  \brief Tarifa na osnovu region + roba
+ *  \param cRegion
+ *  \param cIdRoba
+ *  \param aPorezi
+ *  \note preradjena funkcija jer Fakt nema cIdKonto
+ */
+ 
+function TarifaR(cRegion, cIdRoba, aPorezi)
+*{
+local cTarifa
+private cPolje
+
+PushWa()
+
+if empty(cRegion)
+ cPolje:="IdTarifa"
+else
+   if cRegion=="1" .or. cRegion==" "
+      cPolje:="IdTarifa"
+   elseif cRegion=="2"
+      cPolje:="IdTarifa2"
+   elseif cRegion=="3"
+      cPolje:="IdTarifa3"
+   else
+      cPolje:="IdTarifa"
+   endif
+endif
+
+SELECT (F_ROBA)
+if !used()
+ O_ROBA
+endif
+seek cIdRoba
+cTarifa:=&cPolje
+
+SELECT (F_TARIFA)
+if !used()
+  O_TARIFA
+endif
+seek cTarifa
+
+SetAPorezi(@aPorezi)
+
+PopWa()
+return tarifa->id
+*}
 
 
 

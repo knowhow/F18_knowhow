@@ -226,7 +226,7 @@ if (nArea==-1 .or. nArea==(F_FUNK))
    	AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
 	
 	if !FILE(f18_ime_dbf("funk"))
-   		DBcreate2(KUMPATH+"FUNK.DBF",aDbf)
+   		DBcreate2("FUNK",aDbf)
 	endif
 	
 	CREATE_INDEX("ID","id",KUMPATH+"FUNK")
@@ -242,11 +242,11 @@ if (nArea==-1 .or. nArea==(F_FOND))
    	AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
 	
 	if !FILE(f18_ime_dbf("FOND"))
-		DBcreate2(KUMPATH+"FOND.DBF",aDbf)
+		DBcreate2("FOND",aDbf)
 	endif
 	
-	CREATE_INDEX("ID","id",KUMPATH+"FOND")
-	CREATE_INDEX("NAZ","NAZ",KUMPATH+"FOND")
+	CREATE_INDEX("ID","id", "FOND")
+	CREATE_INDEX("NAZ","NAZ", "FOND")
 endif
 
 
@@ -261,8 +261,8 @@ if (nArea==-1 .or. nArea==(F_BUDZET))
    	AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
    	AADD(aDBf,{ "REBIZNOS"            , "N" ,  20 ,  2 })
    		
-	if !FILE(f18_ime_dbf("budzet"))
-		DBcreate2(KUMPATH+"BUDZET.DBF",aDbf)
+	if !FILE(f18_ime_dbf("BUDZET"))
+		DBcreate2("BUDZET", aDbf)
 	endif
 	
 	SELECT F_BUDZET
@@ -271,8 +271,6 @@ if (nArea==-1 .or. nArea==(F_BUDZET))
   		USE
   		save screen to cScr
   		cls
-  		FERASE(KUMPATH+"BUDZET.CDX")
-  		Modstru(KUMPATH+"BUDZET.DBF","C EKKATEG C 5 0  IDKONTO C 7 0",.t.)
   		restore screen from cScr
 	endif
 	SELECT F_BUDZET
@@ -473,11 +471,11 @@ if (nArea==-1 .or. nArea==(F_PSUBAN))
 	//PSUBAN.DBF
 
 	if !FILE(f18_ime_dbf("psuban"))
-        	DBcreate2(PRIVPATH+"PSUBAN.DBF",aDbf)
+        	DBcreate2("PSUBAN.DBF", aDbf)
 	endif
 	
-	CREATE_INDEX("1","IdFirma+IdVn+BrNal",PRIVPATH+"PSUBAN")
-	CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",PRIVPATH+"PSUBAN")
+	CREATE_INDEX("1", "IdFirma+IdVn+BrNal", "PSUBAN")
+	CREATE_INDEX("2", "idFirma+IdVN+BrNal+IdKonto", "PSUBAN")
 endif
 
 
@@ -485,7 +483,7 @@ if (nArea==-1 .or. nArea==(F_FIN_PRIPR))
 	//PRIPR.DBF
 
 	if !FILE(f18_ime_dbf("fin_pripr"))
-        	DBcreate2(PRIVPATH+"FIN_PRIPR.DBF",aDbf)
+        	DBcreate2("FIN_PRIPR.DBF",aDbf)
 	endif
 
 	CREATE_INDEX("1","idFirma+IdVN+BrNal+Rbr",PRIVPATH+"FIN_PRIPR")
@@ -516,25 +514,23 @@ if (nArea==-1 .or. nArea==(F_ANAL))
 		close all
 	endif
 			
-	CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)",KUMPATH+"ANAL")  //analiti
-	CREATE_INDEX("2","idFirma+IdVN+BrNal+Rbr",KUMPATH+"ANAL")  //analiti
-	CREATE_INDEX("3","idFirma+dtos(DatNal)",KUMPATH+"ANAL")  //analiti
-	CREATE_INDEX("4","Idkonto",KUMPATH+"ANAL")  //analiti
-	CREATE_INDEX("5","DatNal",KUMPATH+"ANAL")  //analiti
+	CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)", "ANAL")
+	CREATE_INDEX("2","idFirma+IdVN+BrNal+Rbr", "ANAL")
+	CREATE_INDEX("3","idFirma+dtos(DatNal)", "ANAL") 
+	CREATE_INDEX("4","Idkonto", "ANAL")
+	CREATE_INDEX("5","DatNal", "ANAL")
 	
 endif
 
 
 if (nArea==-1 .or. nArea==(F_PANAL))
-	//PANAL.DBF
-
 	if !FILE(f18_ime_dbf("panal"))
-        	DBCREATE2(PRIVPATH+"PANAL.DBF",aDbf)
+        	DBCREATE2("PANAL.DBF", aDbf)
 	endif
-
-	CREATE_INDEX("1","IdFirma+IdVn+BrNal+idkonto",PRIVPATH+"PANAL")
+	CREATE_INDEX("1", "IdFirma+IdVn+BrNal+idkonto", "PANAL")
 endif
 
+//SINT.DBF
 
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
@@ -550,7 +546,6 @@ AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 
 
 if (nArea==-1 .or. nArea==(F_SINT))
-	//SINT.DBF
 
 	if !FILE(f18_ime_dbf("sint"))
         	DBcreate2( "SINT", aDbf )

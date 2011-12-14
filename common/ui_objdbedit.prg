@@ -1,24 +1,19 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "fmk.ch"
 #include "dbstruct.ch"
 #include "error.ch"
 #include "setcurs.ch"
-
-/*! \file cgrid.prg
- *
- *   Funkcije za prikaz i obradu tabelarnih podataka
- */
+#include "f18_separator.ch"
 
 /*! \fn function ObjDBedit(cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
  * \brief Glavna funkcija tabelarnog prikaza podataka
@@ -60,9 +55,7 @@
 
 */
 
-function ObjDBedit(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, ;
-       lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, ;
-       aPoredak, skipblock)
+function ObjDBedit(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
 
 local nBroji2
 local cSmj, nRez, i, K, aUF, cPomDB, nTTrec
@@ -159,31 +152,20 @@ DO WHILE .T.
     endif
 
 
-    // nBroji2 := seconds()
     DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
-   
         Tb:stabilize()
-        // CekaHandler(@nBroji2)
-    
     ENDDO
 
-   if TB:stable .AND. (Ch := INKEY()) == 0
+    if TB:stable .AND. (Ch := INKEY()) == 0
          
-      if bUserF<>NIL
+      if bUserF <>NIL
          xcpos:=ROW()
          ycpos:=COL()
          Eval(bUserF)
          @ xcpos, ycpos SAY ""
       endif
 
-         //nBroji2:=seconds()
-
       Ch := inkey(0)
-         //DO WHILE ( Ch := INKEY() ) == 0
-         //  CekaHandler(@nBroji2)
-         //ENDDO
-         // Ch := INKEY()
-
    endif
 
    if bUserF <> NIL
@@ -376,12 +358,7 @@ ENDIF
   @ m_x + aParametri[2]+1, col()+1 SAY IF(!lIzOBJDB, REPL("Í",42),"")
   @ m_x+1,m_y+aParametri[3]-6 SAY STR(RecCount2(),5)
 
-  // hernad
-  //? "tbrowsedb"
-  //? m_x + 2 + aParametri[10], m_y + 1, m_x + aParametri[2]-aParametri[9]-iif(aParametri[9]<>0,1 , 0), m_y + aParametri[3]
-  //inkey(20)
-
-  TB:=TBRowseDB( m_x + 2 + aParametri[10], m_y + 1, m_x + aParametri[2]-aParametri[9]-iif(aParametri[9]<>0,1 , 0), m_y + aParametri[3])
+  TB := TBRowseDB( m_x + 2 + aParametri[10], m_y + 1, m_x + aParametri[2] - aParametri[9] - iif(aParametri[9]<>0,1 , 0), m_y + aParametri[3])
 
   if TBSkipBlock<>NIL
      Tb:skipBlock := TBSkipBlock
@@ -399,8 +376,8 @@ ENDIF
     END IF
   NEXT
 
-  TB:headSep := 'Ä'
-  TB:colsep :="³"
+  TB:headSep := BROWSE_HEAD_SEP 
+  TB:colsep :=  BROWSE_COL_SEP
   
   if aParametri[6]==NIL
      TB:Freeze:=1

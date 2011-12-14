@@ -1,17 +1,38 @@
-0.9.9, 2001-12-07, hernad, cistim haos, init
+0.9.17  2001-12-13, bug report
+
+  - [#25663](http://redmine.bring.out.ba/issues/25663)
+
+0.9.16  2001-12-12, test init
+
+  - modstru_test [#25648](http://redmine.bring.out.ba/issues/25648)
+
+0.9.15  2001-12-12, hernad haos_2
+
+  - uvodim mouse podrsku [#25300](http://redmine.bring.out.ba/issues/25300)
+  - legacy [#25640](http://redmine.bring.out.ba/issues/25640)
+
+0.9.14  2011-12-09, hernad FAKT
+
+  - inteligentnije azuriranje FAKT [#25631](http://redmine.bring.out.ba/issues/25631)
+
+0.9.13  2011-12-09, hernad FAKT
+ 
+  - FAKT naša slova [#25622](http://redmine.bring.out.ba/issues/25622)
+
+0.9.9,  2011-12-07, hernad, cistim haos, init
 
   - refactoring init replace => update_rec_dbf_and_server
  
-0.9.8, 2001-12-06, hernad, pravim haos
+0.9.8, 2011-12-06, hernad, pravim haos
 
   - my_use default shared - trazi rlock
     sada se pojavljuje milion "lock required"
 
   - uvodim get_rec, update_rec
 
-0.9.7, 2001-12-06, hernad,  sem_ver uklonjeno iz semafora
+0.9.7, 2011-12-06, hernad,  sem_ver uklonjeno iz semafora
 
-   [sem_ver #25395](http://redmine.bring.out.ba/issues/25395)
+  - [sem_ver #25395](http://redmine.bring.out.ba/issues/25395)
     
 
 0.9.5, 2011-12-02, vsasa, moduli FIN, KALK, FAKT stavljeni u funkciju 

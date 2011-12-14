@@ -440,7 +440,8 @@ Kol := {}
 
 AADD(ImeKol, { PADR("ID",2),   {|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    } )
 add_mcode(@ImeKol)
-AADD(ImeKol,{ "Naziv",  {|| naz},  "naz" , { || .t. }, { || wnaz:=strtran(wnaz,"##", chr(13)+chr(10)), .t.}, NIL, "@S50" } )
+AADD(ImeKol,{ "Naziv",  {|| naz},  "naz" , { || .t. }, ;
+		{ || wnaz := strtran( wnaz, "##", hb_eol() ), .t. }, NIL, "@S50" } )
 
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)

@@ -22,7 +22,7 @@ static nSlogova:=0
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function create_index(cImeInd, cKljuc, alias, fSilent)
+function create_index(cImeInd, cKljuc, alias, silent)
 
 local bErr
 local cFulDbf
@@ -41,8 +41,8 @@ close all
   
 cImeDbf := f18_ime_dbf(alias)
 
-if fSilent == nil
-    fSilent := .f.
+if silent == nil
+    silent := .f.
 endif
 
 cImeCdx := ImeDbfCdx(cImeDbf)
@@ -80,15 +80,17 @@ endif
 if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
 
      SELECT(F_TMP)
-   
+     use
      my_usex(alias)
  
-     if !fSilent
+     if !silent
           MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))
      endif
-    
-	 log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd )
- 
+   
+     if gDebug > 5 
+	    log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd )
+     endif
+
      nPom:=RAT( SLASH, cImeInd)
     
      private cTag:=""
@@ -101,17 +103,18 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      endif
 
 
-     if (LEFT(cTag,4)=="ID_J" .and. fieldpos("ID_J")==0) .or. (cTag=="_M1_" .and. FIELDPOS("_M1_")==0)
-        // da ne bi ispao ovo stavljam !!
-     else
+     //  provjeri indeksiranje na nepostojecim poljima ID_J, _M1_
+     if  !(LEFT(cTag, 4)=="ID_J" .and. fieldpos("ID_J")==0) .and. !(cTag=="_M1_" .and. FIELDPOS("_M1_")==0)
 
-     	cImeCdx:=strtran(cImeCdx, "." + INDEXEXT, "")
-     
+     	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
+
+        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " / alias=" + alias + " / used() = " + hb_valToStr(USED()))     
      	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
      	USE
+
      endif
 
-     if !fSilent
+     if !silent
        MsgC()
      endif
      use
@@ -580,283 +583,6 @@ if cDn == "D"
 else
   return .f.
 endif
-
-
-
-/*! \fn ModStru(cImeF, cPath, fString)
- *  \brief procedura modifikacija struktura
- * fString - .t. ako saljem string umjesto imena fajla
- */
-function ModStru (cImeF, cPath, fString)
-local oFile
-local cNewLine := HB_OSNewLine()
-
-? SPACE(40),"bring.out, 10.99-11.11, ver 02.6"
-? SPACE(40),"-------------------------------"
-?
-set deleted on  // ne kopiraj izbrisane zapise !!!
-close all
-
-
-SET AUTOPEN OFF
-
-? "modstru start:"
-
-if fString == nil
-  fString=.f.
-endif
-
-if cPath==nil
-  cPath:=""
-endif
-
-if !fString
-
-  if RIGHT(cPath,1)<>SLASH
-       cPath:=cPath+SLASH
-   endif
-
-   oFile := TFileRead():New( ToUnix(cImeF) )
-   oFile:Open()
-
-   nH:=FOPEN(ToUnix(cImeF))
-   
-   if oFile:Error()
-
-       oFile:= TFileRead():New ( ToUnix(".." + SLASH + cImeF ))
-       oFile:Open()
-       if oFile:Error()
-         return .f.
-       endif
-   
-   endif
-
-else
-  if right(cImeF,4) <> "." + DBFEXT
-         cImeF:= cImeF+"." + DBFEXT
-    endif
-    cKomanda:=cPath
-    cPath:=""
-endif
-
-nLinija:=0
-cDBF:=""
-
-private fBrisiDBF := .f.
-private fRenameDBF := .f.
-
-fProm:=.f.
-nProlaza:=0
-
-
-do while fString .or. oFile:MoreToRead()
-  
-  ++nLinija
-  if fString
-      if nProlaza == 0
-           cLin:="*" + cImeF
-           nProlaza++
-
-      elseif nProlaza=1
-
-           cLin:=cKomanda
-
-           nProlaza++
-      else
-           exit
-      endif
-  else
-     cLin:= oFile:ReadLine()
-  endif
-
-  ? nLinija, ":", cLin
-
-if empty(cLin) .or.  left(cLin,1) == ";"
-  loop
-endif
-
-
-if left(cLin,1)="*"
-       
-       kopi(cPath, cDbf, fBrisiDbf, fRenameDbf, fProm)
-       
-       cLin:=substr(cLin,2,len(trim(clin))-1)
-       cDbf:=alltrim(cLin)
-       
-       cDbf:= LOWER( cDbf+iif(at(".", cDbf) <>0, "", ".DBF") )
-
-       ? ToUnix(cPath + cDbf)
-
-       if file( ToUnix(cPath + cDbf) )
-           select 1
-           usex ( cPath + cDbf, "olddbf", .f.)
-       else
-           cDbf:="*"
-           ?? "  Ne nalazi se u direktorijumu"
-       endif
-
-       fProm:=.f.   // flag za postojanje promjena u strukturi dbf-a
-  
-       aStru:=DBSTRUCT()
-       aNStru:=aclone(aStru)      // nova struktura
-
-else  // funkcije za promjenu polja
-  if empty(cDBF)
-          ? "Nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !"
-          quit
-       elseif cDbf=="*"
-          loop // preskoci
-       endif
-
-       cOp:=Rjec(@cLin)
-  
-  if alltrim(cOp)=="IZBRISIDBF"
-          fBrisiDbf:=.t.
-  elseif alltrim(cOp)=="IMEDBF"
-          fRenameDBF:=.t.
-    cImeP:=Rjec(@cLin)
-  elseif alltrim(cOp)=="A"
-          cImeP:=Rjec(@cLin)
-           cTip:=Rjec(@cLin)
-           cLen:=Rjec(@cLin); nLen:=VAL(cLen)
-           cDec:=Rjec(@cLin); nDec:=VAL(cDec)
-           if !(nLen>0 .and. nLen>nDec) .or. (cTip="C" .and. nDec>0) .or. !(cTip $ "CNDM")
-                ? "Greska: Dodavanje polja, linija:",nLinija
-                loop
-           endif
-           nPos=ascan(aStru,{|x| x[1]==cImep})
-           if npos<>0
-                ? "Greska: Polje "+cImeP+" vec postoji u DBF-u, linija:",nlinija
-                loop
-           endif
-           ? "Dodajem polje:",cImeP,cTip,nLen,nDec
-           AADD(aNStru,{cImeP,cTip,nLen,nDec})
-           fProm:=.t.
-
-       elseif alltrim(cOp)=="D"
-          cImeP:=upper(Rjec(@cLin))
-           nPos:=ASCAN(aNStru,{|x| x[1]==cImeP})
-           if nPos<>0
-                ? "Brisem polje:",cImeP
-                ADEL(aNStru,nPos)
-                Prepakuj(@aNstru)  // prepakuj array
-                fProm:=.t.
-           else
-                ? "Greska: Brisanje nepostojeceg polja, linija:",nLinija
-           endif
-
-       elseif alltrim(cOp)=="C"
-          cImeP1:=upper(Rjec(@cLin))
-           cTip1:=Rjec(@cLin)
-           cLen:=Rjec(@cLin); nLen1:=VAL(cLen)
-           cDec:=Rjec(@cLin); nDec1:=VAL(cDec)
-           nPos:=ASCAN(aStru,{|x| x[1]==cImeP1 .and. x[2]==cTip1 .and. x[3]==nLen1 .and. x[4]==nDec1})
-           if nPos==0
-                ? "Greska: zadana je promjena nepostojeceg polja, linija:",nLinija
-                loop
-           endif
-           cImeP2:=upper(Rjec(@cLin))
-           cTip2:=Rjec(@cLin)
-           cLen:=Rjec(@cLin); nLen2:=VAL(cLen)
-           cDec:=Rjec(@cLin); nDec2:=VAL(cDec)
-
-           nPos2:=ASCAN(aStru,{|x| x[1]==cImep2})
-           if nPos2<>0 .and. cImeP1<>cImeP2
-                ? "Greska: zadana je promjena u postojece polje, linija:",nLinija
-                loop
-           endif
-           fIspr:=.f.
-           if cTip1==cTip2
-      fispr:=.t.
-    endif
-           if (cTip1=="N" .and. cTip2=="C")   ;  fispr:=.t.; endif
-           if (cTip1=="C" .and. cTip2=="N")   ;  fispr:=.t.; endif
-           if (cTip1=="C" .and. cTip2=="D")   ;  fispr:=.t.; endif
-           if !fispr; ? "Greska: Neispravna konverzija, linija:",nLinija; loop; endif
-
-    AADD(aStru[nPos],cImeP2)
-           AADD(aStru[nPos],cTip2)
-           AADD(aStru[nPos],nLen2)
-           AADD(aStru[nPos],nDec2)
-
-           nPos:=ASCAN(aNStru,{|x| x[1]==cImeP1 .and. x[2]==cTip1 .and. x[3]==nLen1 .and. x[4]==nDec1})
-           aNStru[nPos]:={ cImeP2, cTip2, nLen2, nDec2}
-
-           ? "Vrsim promjenu:",cImep1,cTip1,nLen1,nDec1," -> ",cImep2,cTip2,nLen2,nDec2
-           // npr {"POLJE1", "C", 10, 0} =>
-           //     {"POLJE1", "C", 10, 0,"POLJE1NEW", "C", "15", 0}
-
-           fProm:=.t.
-  else
-          ? "Greska: Nepostojeca operacija, linija:",nLinija
-       endif
-endif // fje za promjenu polja
-
-enddo
-
-oFile:Close()
-
-kopi(cPath, cDbf, fBrisiDbf, fRenameDbf, fProm)
-
-
-SET AUTOPEN ON 
-return
-
-
-
-function Rjec(cLin)
-
-local cOp,nPos
-
-nPos:=aT(" ",cLin)
-if nPos==0 .and. !empty(cLin) // zadnje polje
-  cOp:=alltrim(clin)
-  cLin:=""
-  return cOp
-endif
-
-cOp:=alltrim(left(cLin,nPos-1))
-cLin:=right(cLin,len(cLin)-nPos)
-cLin:=alltrim(cLin)
-return cOp
-
-
-
-function Prepakuj(aNStru)
-
-local i,aPom
-aPom:={}
-for i:=1 to len(aNStru)
-  if aNStru[i]<>nil
-   aadd(aPom,aNStru[i])
-  endif
-next
-aNStru:=aClone(aPom)
-return nil
-
-
-
-
-function SetgaSDBFs
-
-PUBLIC gaSDBFs:={ ;
- {F_GPARAMS  , "GPARAMS",  P_ROOTPATH },; 
- {F_GPARAMSP , "GPARAMS",  P_PRIVPATH},;
- {F_PARAMS   , "PARAMS"  , P_PRIVPATH},;
- {F_KORISN   , "KORISN"  , P_TEKPATH },;
- {F_MPARAMS  , "MPARAMS" , P_TEKPATH },;
- {F_KPARAMS  , "KPARAMS" , P_KUMPATH },;
- {F_SECUR    , "SECUR"   , P_KUMPATH },;
- {F_ADRES    , "ADRES"   , P_SIFPATH },;
- {F_SIFK     , "SIFK"    , P_SIFPATH },;
- {F_SIFV     , "SIFV"    , P_SIFPATH  },;
- {F_TMP      , "TMP"     , P_PRIVPATH},;
- {F_SQLPAR   , "SQLPAR"  , P_KUMSQLPATH};
-}
-return
-
-
-
 
 function FillOid(cImeDbf, cImeCDX)
 

@@ -90,18 +90,18 @@ endif
 aStruct:=DBSTRUCT()
 
 FOR i:=1 TO LEN(aStruct)
-	cImeP:=aStruct[i,1]
+	cImeP := aStruct[i,1]
     	IF !(cImeP=="BRISANO")
-     		cVar:=cZn+cImeP
-      		IF "U"$TYPE(cVar)
-			MsgBeep("Greska:neuskladjene strukture baza!#"+;
-				"Pozovite servis SIGMA-COM-a!#"+;
-				"Funkcija: GATHER(), Alias: "+ALIAS()+", Polje: "+cImeP)
+     		cVar := cZn+cImeP
+      		IF "U" $ TYPE(cVar)
+			    MsgBeep("Greska:neuskladjene strukture baza!#"+;
+			      	"Pozovite servis bring.out !#"+;
+				    "Funkcija: GATHER(), Alias: "+ALIAS()+", Polje: "+cImeP)
       		ELSE
 			IF field->&cImeP <> &cVar
 	  			lVrati:=.t.
-          			cDiff+=(CHR(13)+CHR(10))+"     "
-          			cDiff+=cImeP+": bilo="+TRANS(field->&cImeP,"")+", sada="+TRANS(&cVar,"")
+          			cDiff += hb_eol() + "     "
+          			cDiff += cImeP+": bilo="+TRANS(field->&cImeP,"")+", sada="+TRANS(&cVar,"")
 			ENDIF
       		ENDIF
     	ENDIF
@@ -136,12 +136,10 @@ Gw("SET MODUL "+gModul)
 AImportLog()
 
 return
-*}
 
 
 function addoidfields()
 return
-
 
 function OL_YIELD()
 return

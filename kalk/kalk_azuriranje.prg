@@ -215,7 +215,6 @@ if lGenerisi = .t.
 
 	RekapK()
  
-	altd()
  	if ( gafin == "D" .or. gaMat == "D" )
    		kalk_kontiranje_naloga( .t., lAuto )
  	endif

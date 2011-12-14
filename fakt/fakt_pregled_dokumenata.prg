@@ -11,7 +11,7 @@
 
 
 #include "fakt.ch"
-
+#include "f18_separator.ch"
 
 // -----------------------------------------------
 // pregled / stampa azuriranih dokumenata 
@@ -20,9 +20,9 @@ function fakt_stampa_liste_dok()
 local nCol1:=0
 local nul,nizl,nRbr
 local m
-private cImekup,cidfirma,qqTipDok,cBrFakDok,qqPartn
+private cImekup, cidfirma, qqTipDok, cBrFakDok, qqPartn
 
-private ddatod,ddatdo
+private ddatod, ddatdo
 
 private lVrsteP := ( IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D" )
 private lOpcine := .t.
@@ -180,7 +180,7 @@ endif
 
 if cTabela=="D"  // tabel prikaz
 
-  if !empty(cimekup)
+  if !empty(cImekup)
     cFilter+=".and. partner="+cm2str(trim(cImeKup))
   endif
 
@@ -236,7 +236,7 @@ if cTabela == "D"
    AADD(ImeKol,{ "VP",       {|| idvrstep } })
    AADD(ImeKol,{ "Datum",    {|| Datdok } })
    AADD(ImeKol,{ "Partner",  ;
-      {|| PADR( iif( m1 = "Z", "<<dok u pripremi>>", hb_utf8tostr( partner ) ),28) } })
+      {|| PADR( iif( m1 = "Z", "<<dok u pripremi>>", partner ),28) } })
    AADD(ImeKol,{ "Ukupno-Rab ",    {|| iznos} })
    AADD(ImeKol,{ "Rabat",    {|| rabat} })
    AADD(ImeKol,{ "Ukupno",    {|| iznos+rabat} })
@@ -274,10 +274,10 @@ if cTabela == "D"
    
    Box(, MAXROW() - 4, MAXCOL() - 3 )
 
-   @ m_x + MAXROW() - 4 - 3, m_y + 2 SAY " <ENTER> Stampa dokumenta        ³ <P> Povrat dokumenta u pripremu    ³"
-   @ m_x + MAXROW() - 4 - 2, m_y + 2 SAY " <N>     Stampa narudzbenice     ³ <B> Stampa radnog naloga           ³ "
-   @ m_x + MAXROW() - 4 - 1, m_y + 2 SAY " <S>     Storno dokument         ³ <R> Rezervacija/Realizacija        ³"
-   @ m_x + MAXROW() - 4, m_y + 2 SAY " <R>  Stampa fiskalnog racuna    ³ <F> otpremnica -> faktura          ³"
+   @ m_x + MAXROW() - 4 - 3, m_y + 2 SAY " <ENTER> Stampa dokumenta        " + BROWSE_COL_SEP + " <P> Povrat dokumenta u pripremu    ³"
+   @ m_x + MAXROW() - 4 - 2, m_y + 2 SAY " <N>     Stampa narudzbenice     " + BROWSE_COL_SEP + " <B> Stampa radnog naloga           ³ "
+   @ m_x + MAXROW() - 4 - 1, m_y + 2 SAY " <S>     Storno dokument         " + BROWSE_COL_SEP + " <R> Rezervacija/Realizacija        ³"
+   @ m_x + MAXROW() - 4,     m_y + 2 SAY " <R>  Stampa fiskalnog racuna    " + BROWSE_COL_SEP + " <F> otpremnica -> faktura          ³"
    
    fUPripremu:=.f.
 
@@ -306,8 +306,7 @@ if cTabela == "D"
    
    ASIZE( adImeKol, LEN( adImeKol ) + 1 )
    AINS( adImeKol, 6 )
-   adImeKol[6] := { "ID PARTNER" , {|| idpartner}, "idpartner", ;
-                   {|| .t.}, {|| P_Firma(@widpartner)}, "V" }
+   adImeKol[6] := { "ID PARTNER" , {|| idpartner}, "idpartner", {|| .t.}, {|| P_Firma(@widpartner)}, "V" }
    
    adKol:={}
    for i := 1 to len(adImeKol)
@@ -332,7 +331,7 @@ START PRINT CRET DOCNAME "FAKT_stampa_dokumenata_na_dan_"+DTOC(date())
 ?
 P_COND
 ?? space(gnLMarg)
-?? "FAKT: Stampa dokumenata na dan:", date(), space(10), "za period",dDatOd,"-",dDatDo
+?? "FAKT: Stampa dokumenata na dan:", date(), space(10), "za period", dDatOd, "-", dDatDo
 ?
 ? space(gnLMarg)
 IspisFirme(cidfirma)
@@ -392,8 +391,9 @@ cImeKup:=trim(cimekup)
 do while !eof() .and. IdFirma=cIdFirma
   cDinDem:=dindem
   if !empty(cimekup)
-     if !(partner=cimekup)
-        skip; loop
+     if !(partner==cimekup)
+        skip 
+        loop
      endif
   endif
   if lOpcine
@@ -403,9 +403,9 @@ do while !eof() .and. IdFirma=cIdFirma
       endif
   endif
 
-  ? space(gnLMarg); ?? Str(++nC,4)+".",datdok,idfirma,idtipdok,brdok+Rezerv+" "
+  ? space(gnLMarg); ?? Str(++nC,4)+".", datdok, idfirma, idtipdok, brdok+Rezerv + " "
   IF m1 <> "Z"
-     ?? partner
+     ?? hb_StrToUtf8(partner)
   ELSE
      ?? PADR ("<<dokument u pripremi>>", LEN (partner))
   ENDIF
@@ -503,7 +503,8 @@ set filter to  // ukini filter
 if cRTarifa=="D" .and. empty(cImeKup) .and. qqTipDok $ "11#13#27"  // racun maloprodaje ili otpremnice u mp
   // ne moze se zadati za jednog kupca
   O_TARIFA
-  O_SIFK; O_SIFV
+  O_SIFK
+  O_SIFV
   O_ROBA
   O_FAKT
 

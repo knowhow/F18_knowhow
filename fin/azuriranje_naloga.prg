@@ -608,9 +608,9 @@ if !empty(psuban->idkonto)
     
     if !found() .and. !lIzgenerisi
         
-        MsgBeep("Stavka br."+psuban->rbr+": Nepostojeca sifra konta!")
-        IF PSUBAN->idvn=="00" .and. Pitanje(,"Preuzeti nepostojecu sifru iz sezone?","N")=='D'
-          PreuzSezSPK("K")
+        MsgBeep("Stavka br." + psuban->rbr + ": Nepostojeca sifra konta!")
+        IF PSUBAN->idvn=="00" .and. Pitanje( ,"Preuzeti nepostojecu sifru iz sezone?","N") == 'D'
+           PreuzSezSPK("K")
         ELSE
           select PSUBAN
           select PANAL

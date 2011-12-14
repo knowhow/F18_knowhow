@@ -142,8 +142,6 @@ AADD(opc, "8. generacija podataka za novu sezonu")
 AADD(opcexe, {|| GenerisanjePodatakaZaNovuSezonu()})
 AADD(opc, "9. regeneracija poc.stanja (nabavna i otpisana vrijednost)")
 AADD(opcexe, {|| RegenerisanjePocStanja()})
-AADD(opc, "A. administracija baze podataka")
-AADD(opcexe, {|| os_admin_db_menu()})
 
 private Izbor:=1
 

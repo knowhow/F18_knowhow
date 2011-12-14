@@ -64,7 +64,7 @@ _o_file := TFileRead():New( cTxtFile )
 _o_file:Open()
 
 if _o_file:Error()
-	msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
 	return
 endif
 

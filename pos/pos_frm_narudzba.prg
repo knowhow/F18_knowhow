@@ -234,8 +234,9 @@ do while .t.
 	// brisi staru cijenu
 	@ m_x+3,m_y+15 SAY SPACE (10)   
 
-	do while !oBrowse:Stabilize().and.((Ch:=INKEY())==0)
+	do while !oBrowse:Stabilize() .and. ((Ch:=INKEY())==0)
 	enddo
+
 	_idroba:=SPACE(LEN(_idroba))
 	_Kolicina:=0
 	// resetuj i velicinu

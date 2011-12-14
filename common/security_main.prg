@@ -1,137 +1,15 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch"
-
-// f18, login screen
-function f18_login_screen( cHostname, cDatabase, cUser, cPassword, nPort, cSchema )
-local lSuccess := .t.	
-local nX := 5
-local nLeft := 7
-local cPort
-local cConfigureServer := "N"
-local params
-
-params := hb_hash()
-params["host_name"] := nil
-params["database"] := nil
-params["user_name"] := nil
-params["schema"] := nil
-params["port"] := nil
-
-f18_ini_read("F18_server", @params, .t.)
-
-cHostName := params["host_name"]
-cDatabase := params["database"]
-cUser := params["user_name"]
-cSchema := params["schema"]
-cPort := params["port"]
-cPassword := ""
-
-if (cHostName == nil) .or. (cPort == nil)
-	cConfigureServer := "D"
-endif 
-
-if cHostName == nil
-   cHostName := "localhost"
-endif
-
-if cPort == nil
-   nPort := 5432
-else
-   nPort := VAL( cPort )
-endif
-
-if cSchema == nil
-  cSchema := "fmk"
-endif
-
-if cDatabase == nil
-  cDatabase := "bringout"
-endif
-
-if cUser == nil
-  cUser := "admin"
-endif
-
-cSchema :=  PADR(cSchema, 40)
-cDatabase := PADR(cDatabase, 100)
-cHostName := PADR(cHostName, 100)
-cUser := PADR(cUser, 100)
-cPassword := PADR(cPassword, 100 )
-
-clear screen
-
-@ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
-
-++ nX
-
-@ nX, nLeft SAY PADC("***** Unestite podatke za pristup *****", 60)
-
-++ nX
-++ nX
-@ nX, nLeft SAY PADL( "Konfigurisati server ?:", 21 ) GET cConfigureServer VALID cConfigureServer $ "DN" PICT "@!"
-++ nX 
-
-read
-
-if cConfigureServer == "D"
-	++ nX
-	@ nX, nLeft SAY PADL( "Server:", 8 ) GET cHostname PICT "@S20"
-	@ nX, 37 SAY "Port:" GET nPort PICT "9999"
-	@ nX, 48 SAY "Shema:" GET cSchema PICT "@S15"
-else	
-	++ nX
-endif
-
-++ nX
-++ nX
-
-@ nX, nLeft SAY PADL( "Baza:", 15 ) GET cDatabase PICT "@S30"
-
-++ nX
-++ nX
-
-@ nX, nLeft SAY PADL( "KORISNIK:", 15 ) GET cUser PICT "@S30"
-
-++ nX
-++ nX
-
-@ nX, nLeft SAY PADL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR "BG/BG"
-
-read
-
-if Lastkey() == K_ESC
-	return .f.
-endif
-
-// podesi varijable
-cHostName := ALLTRIM( cHostname )
-cUser := ALLTRIM( cUser )
-cPassword := ALLTRIM( cPassword )
-cDatabase := ALLTRIM( cDatabase )
-cSchema := ALLTRIM( cSchema )
-
-// snimi u ini fajl...
-params["database"] := cDatabase
-params["host_name"] := cHostName
-params["user_name"] := cUser
-params["schema"] := cSchema 
-params["port"] := ALLTRIM(STR(nPort))
-
-f18_ini_write( "F18_server", params, .t.)
-
-return lSuccess
-
 
 
 function ImaPravoPristupa( cObjekat, cKomponenta, cFunkcija )

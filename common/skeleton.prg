@@ -59,10 +59,6 @@ local cImeDbf
 local _i
 public gAppSrv
 
-for _i := 1 to 15
-	?
-next
-
 ? "setujem engine (sc_start)"
 
 if !oApp:lStarted  
@@ -92,9 +88,8 @@ if !oApp:lStarted
 
 endif
 
-// ? "setujem globalne varijable"
-
 SetgaSDbfs()
+
 set_global_vars_0()
 
 gModul:=oApp:cName
@@ -321,17 +316,6 @@ function SetNaslov(oApp)
 
 
 gNaslov:= oApp:cName + " F18, " + oApp:cPeriod 
-
-#ifndef FMK_DEBUG
-SETCANCEL(.f.)
-#endif
-
-#IFDEF  READONLY
-     gNaslov+="-RO"
-#ENDIF
-
-//PUBLIC bGlobalErrorHandler
-//bGlobalErrorHandler:={|objError| GlobalErrorHandler(objError,.f.)}
 
 return
 

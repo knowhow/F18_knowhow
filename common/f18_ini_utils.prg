@@ -20,28 +20,28 @@ endif
 
 if !FILE( ini_file )
 	log_write( "Ne postoji ini fajl " + ini_file )
-	return .f.
+else
+    ini_read := hb_iniread( ini_file )
 endif
 
-ini_read := hb_iniread( ini_file )
 
 if EMPTY( ini_read )
 	log_write( "Fajl je prazan: " + ini_file )
-	return .f.
-endif
 
-if HB_HHASKEY(ini_read, sect)
+else
+    if HB_HHASKEY(ini_read, sect)
 
-  tmp_ini_section := ini_read[sect]
-  for each tmp_key in ini:Keys
-        // napuni ini sa onim sto si procitao
-		if HB_HHASKEY(tmp_ini_section, tmp_key)
-            ini[tmp_key] := tmp_ini_section[tmp_key]
-        endif
-   next
-	
+    tmp_ini_section := ini_read[sect]
+    for each tmp_key in ini:Keys
+            // napuni ini sa onim sto si procitao
+            if HB_HHASKEY(tmp_ini_section, tmp_key)
+                ini[tmp_key] := tmp_ini_section[tmp_key]
+            endif
+    next
+        
+    endif
 endif
-  
+ 
 return .t.
 
 function f18_ini_write( sect, ini, global )

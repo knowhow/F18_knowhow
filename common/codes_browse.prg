@@ -127,13 +127,12 @@ IF cId <>NIL
 	
  elseif right(trim(cid),1)=="*"
 
-   if  fieldpos("KATBR")<>0 // trazi po kataloskom broju
-     // SEEK KATBR
+   if  fieldpos("KATBR")<>0 
      set order to tag "KATBR"
      seek LEFT(cId, len(trim(cid))-1)
      cId:=id
    else
-     seek "àáâ"
+     seek CHR(250)+CHR(250)+CHR(250)
    endif
 
    if !FOUND()
@@ -155,7 +154,7 @@ IF cId <>NIL
      endif
    endif
 
- elseif right(trim(cid),1) $ "./"
+ elseif right(trim(cid), 1) $ "./"
  // POSTAVI FILTER SA "/"
 
    if nordid<>0
@@ -1111,7 +1110,6 @@ for _i:=1 to LEN(_struct)
 next
 
 return
-
 
 //-------------------------------------------------------
 //-------------------------------------------------------

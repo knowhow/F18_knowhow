@@ -71,6 +71,7 @@ AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )
 AADD( gaDbfs, { F_FIN_FIPRIPR , "FIN_PRIPR"   , "fin_pripr"  } )
 AADD( gaDbfs, { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  } )
 AADD( gaDbfs, { F_IOS    ,  "IOS"     , "fin_ios"  } )
+AADD( gaDbfs, { F_OSTAV    ,  "ostav"     , "fin_ostav"  } )
 AADD( gaDbfs, { F_PNALOG ,  "PNALOG"  , "fin_pnalog"  } )
 AADD( gaDbfs, { F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  } )
 AADD( gaDbfs, { F_PANAL  ,  "PANAL"   , "fin_panal"  } )
@@ -116,7 +117,6 @@ AADD( gaDbfs, { F_OBJEKTI,"OBJEKTI" , "kalk_objekti"     } )
 AADD( gaDbfs, { F_OBJEKTI,"POBJEKTI" , "kalk_pobjekti"     } )
 AADD( gaDbfs, { F_PRODNC, "PRODNC"  , "kalk_prodnc"     } )
 AADD( gaDbfs, { F_RVRSTA, "RVRSTA"  , "kalk_rvrsta"     } )
-//AADD( gaDbfs, { F_K1     ,"K1"      , "kalk_k1"     } )
 AADD( gaDbfs, { F_CACHE     ,"CACHE"      , "kalk_cache"     } )
 AADD( gaDbfs, { F_PRIPT     ,"PRIPT"      , "kalk_pript"     } )
 AADD( gaDbfs, { F_REKAP1     ,"REKAP1"      , "kalk_rekap1"     } )
@@ -131,7 +131,6 @@ AADD( gaDbfs, { F_PRIPR, "FAKT_PRIPR" , "fakt_pripr"  } )
 AADD( gaDbfs, { F_PRIPR2 ,"FAKT_PRIPR2"  , "fakt_pripr2"    } )
 AADD( gaDbfs, { F_PRIPR2 ,"FAKT_PRIPR9"  , "fakt_pripr9"    } )
 AADD( gaDbfs, { F_FDEVICE,"FDEVICE" , "fiscal_fdevice"     } )
-//AADD( gaDbfs, { F_FAKT_FINMAT ,"FAKT_FINMAT"  , "fakt_finmat"    } )
 AADD( gaDbfs, { F_FAKT   ,"FAKT"    , "fakt_fakt", { |alg| fakt_fakt_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_FAKT_DOKS   ,"FAKT_DOKS"    , "fakt_doks", { |alg| fakt_doks_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_FAKT_DOKS2  ,"FAKT_DOKS2"   , "fakt_doks2", { |alg| fakt_doks2_from_sql_server(alg) }, "IDS" } )
@@ -264,4 +263,23 @@ AADD( gaDbfs, {  F_DOKSPF    , "DOKSPF" , "pos_dokspf" } )
 AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "pos_promvp" } )
 AADD( gaDbfs, {  F_POM       , "POM"    , "pos_pom"  } )
 
+
+// modul MAT
+AADD(gaDBFs, { F_MAT_PRIPR,   "MAT_PRIPR",   "mat_pripr"   } )
+AADD(gaDBFs, { F_MAT_INVENT,  "MAT_INVENT",  "mat_invent"  } )
+AADD(gaDBFs, { F_MAT_PSUBAN,  "MAT_PSUBAN",  "mat_psuban"  } )
+AADD(gaDBFs, { F_MAT_PSINT,   "MAT_PSINT",   "mat_psint"   } )
+AADD(gaDBFs, { F_MAT_PANAL,   "MAT_PANAL",   "mat_panal"   } )
+AADD(gaDBFs, { F_MAT_PNALOG,  "MAT_PNALOG",  "mat_pnalog"  } )
+AADD(gaDBFs, { F_MAT_SUBAN,   "MAT_SUBAN",   "mat_suban", { |alg| mat_suban_from_sql_server(alg) }, "IDS" } )
+AADD(gaDBFs, { F_MAT_ANAL,    "MAT_ANAL",    "mat_anal" , { |alg| mat_anal_from_sql_server(alg) }, "IDS" } )
+AADD(gaDBFs, { F_MAT_SINT,    "MAT_SINT",    "mat_sint" , { |alg| mat_sint_from_sql_server(alg) }, "IDS" } )
+AADD(gaDBFs, { F_MAT_NALOG,   "MAT_NALOG",   "mat_nalog", { |alg| mat_nalog_from_sql_server(alg) }, "IDS" } )
+AADD(gaDBFs, { F_KARKON,      "KARKON",      "mat_karkon", { |alg| mat_karkon_from_sql_server(alg) }, "IDS" } )
+
+#ifdef TEST
+AADD(gaDBFs, { 100,      "TEST_F18",      "test_f18"  } )
+#endif
+
 return
+

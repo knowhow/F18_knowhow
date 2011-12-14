@@ -1,0 +1,14 @@
+f18.hbc -DTEST -DDEBUG -inc
+
+-oF18_test
+
+fin/*.prg 
+fakt/*.prg 
+kalk/*.prg 
+rnal/*.prg 
+epdv/*.prg 
+ld/*.prg 
+os/*.prg 
+pos/*.prg 
+common/*.prg
+test/*.prg

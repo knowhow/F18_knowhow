@@ -125,7 +125,8 @@ NEXT
 
 
 // Start the event handler loop
-DO WHILE .t.      // nKey <> K_ESC
+DO WHILE .t.      
+// nKey <> K_ESC
 
 // Stabilize
 nKey := 0

@@ -1,21 +1,19 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fakt.ch"
+#include "f18_separator.ch"
 
-static lKonsignacija := .f.
 static lDoks2 := .t.
 static lDirty := .t.
-
 
 
 // -----------------------------------------------------------------
@@ -89,14 +87,12 @@ cFBrDok := field->brdok
 
 Box( , MAXROWS() - 4, MAXCOLS() - 3 )
 
-//TekDokument()
+@ m_x + MAXROWS() - 1, m_y + 2 SAY " <c-N> Nove Stavke        " + BROWSE_COL_SEP + " <ENT> Ispravi stavku      " + BROWSE_COL_SEP + " <c-T> Brisi Stavku "
+@ m_x + MAXROWS() - 2, m_y + 2 SAY " <c-A> Ispravka Dokumenta " + BROWSE_COL_SEP + " <c-P> Stampa (TXT)        " + BROWSE_COL_SEP + " <a-F10> Asistent  "
+@ m_x + MAXROWS() - 3, m_y + 2 SAY " <a-A> Azuriranje dok.    " + BROWSE_COL_SEP + " <c-F9> Brisi pripremu     " + BROWSE_COL_SEP + " <F5>  Kontrola zbira  "
+@ m_x + MAXROWS() - 4, m_y + 2 SAY " <R> Rezerv  <X> Prekid R " + BROWSE_COL_SEP + " <F10>  Ostale opcije      " + BROWSE_COL_SEP + " <F9> 20,12->10; 27->11"
 
-@ m_x + MAXROWS() - 4 - 3, m_y + 2 SAY " <c-N> Nove Stavke        ³ <ENT> Ispravi stavku      ³ <c-T> Brisi Stavku "
-@ m_x + MAXROWS() - 4 - 2, m_y + 2 SAY " <c-A> Ispravka Dokumenta ³ <c-P> Stampa (TXT)        ³ <a-F10> Asistent  "
-@ m_x + MAXROWS() - 4 - 1, m_y + 2 SAY " <a-A> Azuriranje dok.    ³ <c-F9> Brisi pripremu     ³ <F5>  Kontrola zbira  "
-@ m_x + MAXROWS() - 4, m_y + 2 SAY     " <R> Rezerv  <X> Prekid R ³ <F10>  Ostale opcije      ³ <F9> 20,12->10; 27->11"
-
-ObjDbedit( "PNal", MAXROWS() - 4, MAXCOLS() - 3 ,{|| fakt_pripr_keyhandler()},"","Priprema...", , , , ,4)
+ObjDbedit( "PNal", MAXROWS() - 4, MAXCOLS() - 3 , {|| fakt_pripr_keyhandler()}, "", "Priprema...", , , , , 4)
 
 BoxC()
 
@@ -105,7 +101,7 @@ return
 
 
 // ----------------------------------------------------------------------
-// ispisuje informaciju o teku¿em dokumentu na vrhu prozora 
+// ispisuje informaciju o tekucem dokumentu na vrhu prozora 
 // ----------------------------------------------------------------------
 function TekDokument()
 local nRec
@@ -1002,10 +998,6 @@ endif
 
 Gather()
 
-if lSetujDatum .or. cSetPor=="D"    
-      // obracunaj porez na promet proizvoda na sve stavke!!
-      ObracunajPP(cSetPor,dDatDok)
-endif
 
 return
 
@@ -1024,16 +1016,12 @@ local lTxtNaKraju := .f.
 local cAvRacun
 local cListaTxt := ""
 
-lKonsignacija := IzFmkIni("FAKT","Konsignacija","N",KUMPATH) == "D"
 lDoks2:=(IzFmkIni("FAKT","Doks2","D", KUMPATH)=="D")
 
 private aPom:={}
 
 AADD(aPom, "00 - Pocetno stanje                ")
 AADD(aPom, "01 - Ulaz / Radni nalog ")
-if lKonsignacija
-	AADD(aPom, "06 - Ulaz u konsig.skladiste")
-endif
 
 AADD(aPom, "10 - Porezna faktura")
 
@@ -1042,11 +1030,7 @@ AADD(aPom, "12 - Otpremnica" )
 
 AADD(aPom, "13 - Otpremnica u maloprodaju")
 
-if lKonsignacija
-AADD(aPom, "16 - Konsignacioni racun")
-endif
-
-AADD(aPom, "19 - "+Naziv19ke())
+AADD(aPom, "19 - " + Naziv19ke() )
 
 AADD(aPom, "20 - Ponuda/Avansna faktura") 
 
@@ -1656,11 +1640,10 @@ if (_podbr==" ." .or.  roba->tip="U" .or. (nrbr==1 .and. val(_podbr)<1))
 	// odsjeci na kraju prazne linije
 	_txt2:=OdsjPLK(_txt2)           
      	if !"Faktura formirana na osnovu" $ _txt2
-        	_txt2 += CHR(13)+Chr(10)+_VezOtpr
+        	_txt2 += CHR(13)+Chr(10) + _VezOtpr
      	endif
 	
-    	//1
-	_txt:=Chr(16)+trim(_txt1)+Chr(17) 
+	_txt := Chr(16)+trim(_txt1)+Chr(17) 
 	_txt += Chr(16)+_txt2+Chr(17)
 	_txt += Chr(16)+trim(_txt3a)+Chr(17) 
 	_txt += Chr(16)+_txt3b+Chr(17)
@@ -2049,7 +2032,6 @@ endif
 
 // novi dokument, koji nema svog broja, u pripremi
 select fakt_doks
-//Scatter ()
 
 if gMreznoNum == "D"
    if !FAKT_DOKS->(FLOCK())
@@ -2126,184 +2108,24 @@ if gMreznoNum == "D"
 endif
 
 return _BrDok
-*}
 
 
 
-/*! \fn StampTXT(cIdFirma,cIdTipDok,cBrDok)
- *  \brief Stampa dokumenta
- *  \todo Ovo bi trebalo prebaciti u /RPT
- *  \param cIdFirma
- *  \param cIdTipDok
- *  \param cBrDok
- */
- 
 function StampTXT(cIdFirma, cIdTipDok, cBrDok, lJFill)
-private InPicDEM:=PicDEM  // picture iznosa
-private InPicCDEM:=PicCDEM  // picture iznosa
+private InPicDEM:=PicDEM
+private InPicCDEM:=PicCDEM  
 
-if IsPDV()
-
-	if lJFill == nil
+if lJFill == nil
 		lJFill := .f.
-	endif
-
-	if gPdvDrb == "D"
-		
-		if cIdFirma == nil
-			Stdok2p_rb()
-		else
-			// poziv iz stame liste dokumenata, pitaj
-			if Pitanje(, "Stampa graficka faktura ? ", "N") == "D"
-					
-				Stdok2p_rb(cIdFirma, cIdTipDok, cBrDok)
-			else
-				StdokPdv(cIdFirma, cIdTipDok, cBrDok, lJFill)
-			endif
-		endif
-	
-	else	
-
-		if cIdFirma == nil
-			StDokPDV()
-		else
-			StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
-		endif
-	
-	endif
-	
-	PicDEM:=InPicDEM
-	PicCDEM:=InPicCDEM
-	
-	return
-
 endif
 
-cIniName:=PRIVPATH+'fmk.ini'
-UzmiIzIni(cIniName,'UpitFax','Slati','N','WRITE')
-UzmiIzIni(EXEPATH+'fmk.ini','FAKT','KrozDelphi','N','WRITE')
-
-
-if IzFmkIni('Fakt','DelphiRB','N',EXEPATH)=='P'
-   if Pitanje(,'Zelite li stampu kroz DelphiRB D/N ?','N')=='D'
-      UzmiIzIni(EXEPATH+'fmk.ini','FAKT','KrozDelphi','D','WRITE')
-   endif
-endif
-if IzFmkIni('UpitFax','PitatiZaFax','N',PRIVPATH)=='D'
-  if Pitanje(,'Zelite li dokument za slanje faks-om D/N ?','N')=='D'
-     UzmiIzIni(cIniName,'UpitFax','Slati','D','WRITE')
-  endif
-endif
-
-if "U" $ TYPE("lSSIP99") .or. !VALTYPE(lSSIP99)=="L"; lSSIP99:=.f.; endif
-
-
-if !(cIdTipdok $ "10#11#13#15#25#27") .and.;
-   !(cIdTipDok $ "20" .and. IzFMKIni("FAKT","PredracuniUvijekSaIznosima","N",PRIVPATH)=="D") .and.;
-   (gSamokol=="D" .or. glDistrib.and.cIdTipDok$"26#21" .or.;
-    Pitanje(,"Prikaz iznosa na dokumentu ?","D")=="N")
-   Picdem:=space(len(picdem))
-   PicCdem:=space(len(piccdem))
-endif
-
-lPartic := ( IzFMKIni("FAKT","19KaoRacunParticipacije","N",KUMPATH)=="D" )
-
-if gNW=="T"
-  if cIdFirma==nil
-   StDokM()
-  else
-   StDokM(cIdFirma,cIdTipdok,cbrdok)
-  endif
+if cIdFirma == nil
+  StDokPDV()
 else
-  if cidtipdok=="13"
-    if cIdFirma==nil
-     if IzFMKINI("STAMPA","Opresa","N",KUMPATH)=="D"
-       StDok13s()
-     else
-       StDok13()
-     endif
-    else
-     if IzFMKINI("STAMPA","Opresa","N",KUMPATH)=="D"
-       StDok13s(cIdFirma,cIdTipdok,cbrdok)
-     else
-       StDok13(cIdFirma,cIdTipdok,cbrdok)
-     endif
-    endif
-  elseif cidtipdok=="19" .and. lPartic
-    if cIdFirma==nil
-      //StDok2()
-    else
-      //StDok2(cIdFirma,cIdTipdok,cbrdok)
-    endif
-  else
-   if gTipF=="1"
-     if cIdFirma==nil
-        StDok()
-     else
-        Stdok(cIdFirma,cIdTipdok,cbrdok)
-     endif
-   elseif gTipF=="2"
-    if gVarF=="3"
-      if cIdFirma==nil
-         Stdok23()
-      else
-         Stdok23(cIdFirma,cIdTipdok,cbrdok)
-      endif
-    elseif gVarF=="9".or.gVarF=="B"
-      if cidtipdok $ "12#10#20#25"
-        if cIdFirma==nil
-           StDok29()
-        else
-           StDok29(cIdFirma,cIdTipdok,cbrdok)
-        endif
-      else
-        gVarF:="2"
-        if cIdFirma==nil
-           //StDok2()
-        else
-           //StDok2(cIdFirma,cIdTipdok,cbrdok)
-        endif
-        gVarF:="9"
-      endif
-    elseif gVarF=="A"
-      if cidtipdok $ "12#10#20#25#26"
-        if cIdFirma==nil
-         StDok2a()
-        else
-         StDok2a(cIdFirma,cIdTipdok,cbrdok)
-        endif
-      else
-        gVarF:="2"
-        if cIdFirma==nil
-          //StDok2()
-        else
-          //StDok2(cIdFirma,cIdTipdok,cbrdok)
-        endif
-        gVarF:="A"
-      endif
-    else
-      if cIdFirma==nil
-        //StDok2()
-      else
-        //StDok2(cIdFirma,cIdTipdok,cbrdok)
-      endif
-    endif
-   else
-    if cIdFirma==nil
-      StDok3()
-    else
-      StDok3(cIdFirma,cIdTipdok,cbrdok)
-    endif
-   endif
-  endif
+  StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
 endif
-
-PicDEM:=InPicDEM
-PicCDEM:=InPicCDEM
-
+	
 return
-*}
-
 
 /* \fn ArgToStr()
  * Argument To String
@@ -2642,17 +2464,17 @@ function SKCKalk(lSet)
 *{
 // knjizna obavijest obavezno, a mo§e se podesiti i za ostale dokumente
 if _idtipdok=="25" .or.;
-     IzFMKIni("FAKT","TipDok"+_idtipdok+"_OmoguciUzimanjeFCJizKALK","N",KUMPATH)=="D"
+     IzFMKIni("FAKT","TipDok"+_idtipdok+"_OmoguciUzimanjeFCJizKALK", "N", KUMPATH)=="D"
     if lSet
       SET KEY K_ALT_K to UCKalk()
-      @ row()+1,27 SAY "ÚÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄ¿"
-      @ row()+1,27 SAY "³ <a-K> uzmi FCJ iz KALK ³"
-      @ row()+1,27 SAY "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+      @ row()+1, 27 SAY REPLICATE("-", 26)
+      @ row()+1, 27 SAY BROWSE_COL_SEP+" <a-K> uzmi FCJ iz KALK "+BROWSE_COL_SEP
+      @ row()+1, 27 SAY REPLICATE("-", 26)
     else
       SET KEY K_ALT_K TO
-      @ row()+1,27 SAY "                          "
-      @ row()+1,27 SAY "                          "
-      @ row()+1,27 SAY "                          "
+      @ row()+1, 27 SAY "                          "
+      @ row()+1, 27 SAY "                          "
+      @ row()+1, 27 SAY "                          "
     endif
   endif
 return .t.

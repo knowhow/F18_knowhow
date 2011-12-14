@@ -1,15 +1,26 @@
+/* 
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including FMK specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
+
+
 #include "o_f18.ch"
 #include "f_fmk.ch"
 #include "inkey.ch"
 #include "box.ch"
 #include "dbedit.ch"
 
-#define F18_DEFINED
+#define FMK_DEFINED
 
-#define F18_VER       "0.9.9"
-#define F18_VER_DATE  "07.12.2011"
-
-#define FMK_LIB_VER  "0.9.3"
+#ifndef F18_DEFINED
+  #include "f18.ch"
+#endif
 
 
 #define EXEPATH   my_home_root()
@@ -19,10 +30,6 @@
 
 #define KUMPATH  my_home()
 #define CURDIR   my_home()
-
-
-#define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
-#define SEMAPHORE_LOCK_RETRY_NUM 3
 
 #define I_ID 1
 #define DE_ADD  5
@@ -43,7 +50,6 @@
 #command HSEEK <xpr>     => dbSeek(<xpr> ,.f.)
 
 #command MSEEK <xpr>             => dbSeek(<xpr> )
-
 
 
 #command EJECTA0          => qqout(chr(13)+chr(10)+chr(12))  ;
@@ -79,7 +85,6 @@
 #xcommand P_RPL_G            =>  gRPL_Gusto()
 
 
-// stari interfejs
 #xcommand INI             =>  gPB_ON()
 #xcommand B_ON             =>  gPB_ON()
 #xcommand B_OFF            =>  gPB_OFF()
@@ -99,15 +104,14 @@
 
 
 #xcommand CLOSERET2   => close all; return
-
 #xcommand CLOSERET  => close all; return
 
 
-#xcommand ESC_BCR   => if lastkey()=K_ESC;
+#xcommand ESC_BCR   =>  if lastkey()=K_ESC;
                            ; close all        ;
                            ; BoxC()           ;
-                           ;return            ;
-                           ;endif
+                         ;return            ;
+                         ;endif
 
 
 #command START PRINT CRET <x> =>  if !StartPrint()       ;
@@ -182,13 +186,18 @@
                             ;return                     ;
                             ;endif
 
-#DEFINE SLASH  HB_OSPATHSEPARATOR()
+#define SLASH  HB_OSPATHSEPARATOR()
+
 #DEFINE INDEXEXTENS "cdx"
-#DEFINE INDEXEXT "cdx"
-#DEFINE DBFEXT "dbf"
-#DEFINE MEMOEXT "fpt"
-#DEFINE RDDENGINE "DBFCDX"
+#DEFINE  MEMOEXTENS  "fpt"
+
+#define INDEXEXT "cdx"
+#define DBFEXT   "dbf"
+#define MEMOEXT  "fpt"
+#define RDDENGINE "DBFCDX"
+
 #DEFINE DRVPATH ":\"
+
 #define NRED chr(13)+chr(10)
 
 #define P_NRED QOUT()
@@ -206,10 +215,8 @@
 
 #command KRESI <x> NA <len> =>  <x>:=left(<x>,<len>)
 
-
-
-#define DE_REF      12      // Force reread/redisplay of all data rows
-
+// Force reread/redisplay of all data rows
+#define DE_REF      12      
 
 #command DEL2                                                            ;
       => (nArr)->(DbDelete2())                                            ;
@@ -274,7 +281,6 @@
       [; dbSetRelation( <(aliasn)>,{||'1'+<keyn>}, "'1'+"+<"keyn"> ) ]
 
 
-
 #command POCNI STAMPU   => if !lSSIP99 .and. !StartPrint()       ;
                            ;close all             ;
                            ;return                ;
@@ -285,12 +291,11 @@
 
 #command APPEND NCNL    =>  appblank2(.f.,.f.)
 
-#command APPEND BLANKS           => appblank2()
+#command APPEND BLANKS  => appblank2()
 
-#command MY_DELETE  =>    delete2()
+#command MY_DELETE      =>    delete2()
 
 
-#define  MEMOEXTENS  "fpt"
 
 #command AP52 [FROM <(file)>]                                         ;
          [FIELDS <fields,...>]                                          ;

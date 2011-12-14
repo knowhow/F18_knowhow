@@ -9,10 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "os.ch"
-
-
 
 // ----------------------------------
 // obracun meni
@@ -34,9 +31,6 @@ AADD(opcexe, {|| os_obracun_revalorizacije() })
 Menu_SC("obracun")
 
 return
-
-
-
 
 // ----------------------------------
 // obracun amortizacije

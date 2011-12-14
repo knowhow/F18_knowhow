@@ -11,6 +11,25 @@
 
 #include "fmk.ch"
 
+
+// ------------------------------
+// fields := { "id, "naz" }
+// => "id, naz"
+//
+function sql_fields(fields)
+local  _i, _sql_fields := ""	
+
+for _i:=1 to LEN(fields)
+   _sql_fields += fields[_i]
+   if _i < LEN(fields)
+      _sql_fields +=  ","
+   endif
+next
+
+return _sql_fields
+
+ 
+
 //----------------------------------------------
 // ----------------------------------------------
 function sql_table_update(table, op, record, where )
@@ -116,7 +135,9 @@ for _i:=1 to retry
       log_write("ajoj ajoj: qry rokno !?!")
       my_server_logout()
       hb_IdleSleep(0.5)
-      _server := my_server_login()
+      if my_server_login()
+         _server := my_server()
+      endif
    end sequence
 
    if _qry_obj:NetErr()
@@ -124,8 +145,10 @@ for _i:=1 to retry
        log_write("error na:" + qry)
        my_server_logout()
        hb_IdleSleep(0.5)
-       _server := my_server_login()
-   
+       if my_server_login()
+            _server := my_server()
+       endif
+
        if _i == retry
            MsgBeep("neuspjesno nakon " + to_str(retry) + "pokusaja !?")
            QUIT

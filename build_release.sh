@@ -41,11 +41,11 @@ cp -av scripts/install_f18.sh out/
 
 cd out
 
-F18_REL=`grep 'F18_VER\ \\+\\"\\(.*\\)\\"' -o ../common/fmk.ch | grep -o "[0-9]\\+.[0-9]\\+.[0-9]\\+"`
+F18_REL=`grep 'F18_VER\ \\+\\"\\(.*\\)\\"' -o ../common/f18_ver.ch | grep -o "[0-9]\\+.[0-9]\\+.[0-9]\\+"`
 
 echo $F18_REL
 
-INSTALL_F_NAME=F18_${F18_REL}_${OS}_install.tar.bz2 
+INSTALL_F_NAME=F18_${OS}_${F18_REL}_install.tar.bz2 
 
 echo kreiram $INSTALL_F_NAME
 

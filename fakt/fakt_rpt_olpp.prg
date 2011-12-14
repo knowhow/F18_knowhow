@@ -123,7 +123,7 @@ DO WHILE !EOF() .and. cIdfirma+cIdVd+cBrDok==IDFIRMA+IDTIPDOK+BRDOK
      		nMPCSaPP:=cijena
    	ENDIF
 
-   	if kolicina==0   // nivelacija:TNAM
+   	if kolicina==0   
      		nMPC1 := MpcBezPor( iznos , aPorezi )
      		nMPC2 := nMPC1 + Izn_P_PPP( nMPC1 , aPorezi )
    	else

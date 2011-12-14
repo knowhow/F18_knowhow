@@ -85,40 +85,49 @@ if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","UNOSDOK"))
 else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
+
 AADD(opc,"2. izvjestaji")
 AADD(opcexe,{|| fakt_izvjestaji()})
 AADD(opc,"3. pregled dokumenata")
 AADD(opcexe,{|| fakt_pregled_dokumenata()})
+
 AADD(opc,"4. generacija dokumenata")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK"))
 	AADD(opcexe,{|| fakt_mnu_generacija_dokumenta()})
 else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
+
 AADD(opc,"5. moduli - razmjena podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA"))
 	AADD(opcexe,{|| fakt_razmjena_podataka()})
 else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
+
 AADD(opc,"6. udaljene lokacije - razmjena")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA"))
 	AADD(opcexe,{|| faktprenosdiskete()})
 else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
+
 AADD(opc,"7. ostale operacije nad dokumentima")
 AADD(opcexe,{|| fakt_ostale_operacije_doks()})
 AADD(opc,"------------------------------------")
 AADD(opcexe,{|| nil})
 AADD(opc,"8. sifrarnici")
 AADD(opcexe,{|| fakt_sifrarnik()})
+/*
 AADD(opc,"9. administracija baze podataka")
+
 if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
 	AADD(opcexe,{|| fakt_admin_menu()})
 else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
+*/
+
 AADD(opc,"------------------------------------")
 AADD(opcexe,{|| nil})
 AADD(opc,"A. stampa azuriranog dokumenta")
@@ -133,19 +142,19 @@ endif
 
 AADD(opc,"------------------------------------")
 AADD(opcexe,{|| nil})
+
 AADD(opc,"X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","PARAMETRI"))
 	AADD(opcexe,{|| mnu_fakt_params()})
 else
 	AADD(opcexe,{|| MsgBeep(cZabrana)})
 endif
+
 private Izbor:=1
 
 Menu_SC("mfak", .t.)
 
 return 
-
-
 
 // -----------------------------------------------
 // -----------------------------------------------
@@ -402,7 +411,7 @@ public gZ_5pf := "N"
 // prebacio iz fakt.ch define komande
 public zaokruzenje := 2
 public i_id := 1
-public nl := chr(13)+chr(10)
+public nl := hb_eol()
 
 O_PARAMS
 private cSection:="1"

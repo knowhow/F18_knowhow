@@ -15,35 +15,6 @@ function usex(cTable)
 return my_use(cTable)
 
 
-// ---------------------------
-// ~/.F18/bringout1
-// ~/.F18/rg1
-// ~/.F18/test
-// ---------------------------
-function get_f18_home_dir(cDatabase)
-local cHome
-
-#ifdef __PLATFORM__WINDOWS
-  cHome := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
-#else
-  cHome := hb_DirSepAdd( GetEnv( "HOME" ) ) 
-#endif
-
-cHome := hb_DirSepAdd(cHome + ".f18")
-
-f18_create_dir( cHome )
-
-if cDatabase <> nil
- 	
-	cHome := hb_DirSepAdd(cHome + cDatabase)
-
-	f18_create_dir( cHome )
-
-endif
-
-return cHome
-
-
 
 // --------------------------------------------------
 // kreira direktorij ako ne postoji
@@ -73,24 +44,22 @@ endif
 
 return
 
+// -------------------------
+// -------------------------
+function f18_ime_dbf(alias)
+local _pos
 
+alias := FILEBASE(alias)
+_pos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
 
-
-function f18_ime_dbf(cImeDbf)
-local nPos
-
-cImeDbf:=ToUnix(cImeDbf)
-cImeDbf := FILEBASE(cImeDbf)
-nPos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(cImeDbf)} )
-
-if nPos == 0
-   ? "ajjoooj nemas u gaDBFs ovu stavku:", cImeDBF
-   //QUIT
+if _pos == 0
+   ? "ajjoooj nemas u gaDBFs ovu stavku:", alias
+   inkey(10)
 endif
 
-cImeDbf := my_home() + gaDBFs[nPos, 3] + ".dbf"
+alias := my_home() + gaDBFs[_pos, 3] + "." + DBFEXT
 
-return cImeDbf
+return alias
 
 
 // ---------------------------------------

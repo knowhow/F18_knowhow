@@ -10,6 +10,7 @@
  */
 
 #include "fakt.ch"
+#include "f18_ver.ch"
 
 EXTERNAL DESCEND
 EXTERNAL RIGHT

@@ -438,7 +438,6 @@ local _ret := .t.
 local _vars
 
 Box(,7,30,.f.)
-
 	
 	@ m_x + 1, m_y + 2 SAY "ANALITIKA"
 	select mat_panal

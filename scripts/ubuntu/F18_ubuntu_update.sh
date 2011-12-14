@@ -9,6 +9,7 @@ fi
  
 NVER=$1
 SERVICE='F18'
+ARCH=`uname -m`
  
 if ps ax | grep -v grep | grep $SERVICE > /dev/null
 then
@@ -21,15 +22,16 @@ fi
  
 
 echo -n "pricekajte u toku je download..."
-wget http://knowhow-erp-f18.googlecode.com/files/F18_$1.tar.gz
+wget http://knowhow-erp-f18.googlecode.com/files/F18_"$ARCH"_"$NVER".tar.gz
 
 echo "ok - zavrseno"
 
 echo "upgrade"
 
-tar  xvfz F18_$1.tar.gz 
+tar  xvfz F18_"$ARCH"_"$NVER".tar.gz
 mv F18 ~/bin
-rm  F18_$1.tar.gz
+rm  F18_"$ARCH"_"$NVER".tar.gz
+
 
 echo "update je zavrsen"
 

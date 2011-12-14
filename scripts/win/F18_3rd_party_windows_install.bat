@@ -1,10 +1,10 @@
 @echo on
 
-set I_VER="0.1.1"
-set I_DATE="07.12.2011"
+set I_VER="0.1.2"
+set I_DATE="14.12.2011"
 set DELRB_VER="1.0"
 set PTXT_VER="1.55"
-set F18_VER="0.9.10"
+set F18_VER="0.9.17"
 
 echo "F18 windows third party install ver %I_VER%, %I_DATE%"
 
@@ -22,7 +22,7 @@ xcopy  /Y /i util c:\knowhowERP\util
 
 echo kopiram fontove
 cd  fonts\ptxt_fonts\
-xcopy /Y /y   *.ttf "%WINDIR%\Fonts" 
+xcopy /Y /i   *.ttf "%WINDIR%\Fonts" 
 
 cd ..\.. 
 

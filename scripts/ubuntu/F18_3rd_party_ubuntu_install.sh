@@ -54,7 +54,6 @@ echo "setujem envars"
 echo export PATH=\$PATH:~/bin >> ~/.bash_profile
 echo ""
 echo ""
-clear
 echo "F18 instalacija zavrsena, pokrecemo iz terminala sa F18 "
 
 

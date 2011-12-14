@@ -84,7 +84,7 @@ if rlock()
     for each _key in vars:Keys
         // replace polja
         _field_b := FIELDBLOCK( _key )
-        EVAL( _field_b, vars[_key] ) )
+        EVAL( _field_b, vars[_key] )
     next
 
     update_rec_on_server( NIL, where)

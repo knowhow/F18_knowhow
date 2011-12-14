@@ -1,4 +1,4 @@
-0.9.18  2011-12-14, f18_start_print
+0.9.18  2011-12-14, hernad f18_start_print/f18_end_print
  
  - [#25684](http://redmine.bring.out.ba/issues/25684)
 

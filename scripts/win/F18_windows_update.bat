@@ -42,7 +42,7 @@ echo kreiran je tmp podfolder ubacite potrebne pakete u isti
 pause 
 
 
-
+echo zatvaram aktivne F18 procese 
 :KILL
 taskkill /F /IM F18.exe /T
 tasklist /FI "IMAGENAME eq F18.exe" 2>NUL | find /I /N "F18.exe">NUL

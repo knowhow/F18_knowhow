@@ -41,6 +41,14 @@ echo kreiran je tmp podfolder ubacite potrebne pakete u isti
 
 pause 
 
+
+
+:KILL
+taskkill /F /IM F18.exe /T
+tasklist /FI "IMAGENAME eq F18.exe" 2>NUL | find /I /N "F18.exe">NUL
+if "%ERRORLEVEL%"=="0" goto KILL
+
+
 :EXTR
 
 gzip -dN F18_Windows_%1.gz

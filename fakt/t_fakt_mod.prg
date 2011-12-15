@@ -123,12 +123,6 @@ AADD(_opcexe,{|| fakt_sifrarnik()})
 AADD(_opc,"9. uplate")
 AADD(_opcexe, {|| mnu_fakt_uplate()} )
 
-f18_menu("fmai", .t., _izbor, _opc, _opcexe)
-
-return .f.
-
-
-
 /*
 AADD(opc,"9. administracija baze podataka")
 
@@ -139,33 +133,33 @@ else
 endif
 */
 
-AADD(opc,"------------------------------------")
-AADD(opcexe,{|| nil})
-AADD(opc,"A. stampa azuriranog dokumenta")
-AADD(opcexe,{|| fakt_stampa_azuriranog()})
-AADD(opc,"P. povrat dokumenta u pripremu")
+AADD(_opc,"------------------------------------")
+AADD(_opcexe,{|| nil})
+AADD(_opc,"A. stampa azuriranog dokumenta")
+AADD(_opcexe,{|| fakt_stampa_azuriranog()})
+AADD(_opc,"P. povrat dokumenta u pripremu")
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
-	AADD(opcexe,{|| Povrat_fakt_dokumenta()})
+	AADD(_opcexe,{|| Povrat_fakt_dokumenta()})
 else
-	AADD(opcexe,{|| MsgBeep(cZabrana)})
+	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"------------------------------------")
-AADD(opcexe,{|| nil})
+AADD(_opc,"------------------------------------")
+AADD(_opcexe,{|| nil})
 
-AADD(opc,"X. parametri")
+AADD(_opc,"X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","PARAMETRI"))
-	AADD(opcexe,{|| mnu_fakt_params()})
+	AADD(_opcexe,{|| mnu_fakt_params()})
 else
-	AADD(opcexe,{|| MsgBeep(cZabrana)})
+	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-private Izbor:=1
+f18_menu("fmai", .t., _izbor, _opc, _opcexe)
 
-Menu_SC("mfak", .t.)
+return .f.
 
-return 
+
 
 // -----------------------------------------------
 // -----------------------------------------------

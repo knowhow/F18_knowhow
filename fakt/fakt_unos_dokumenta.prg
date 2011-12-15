@@ -2256,13 +2256,15 @@ return
  */
  
 function PrerCij()
-*{
-local cSBr:=ALLTRIM(_field->serbr), nVrati:=1
- if !EMPTY(cSbr) .and. cSbr!="*" .and. gNW=="R"
-   nVrati := VAL(cSBr)/1000
- endif
+local cSBr := ALLTRIM(_field->serbr)
+local nVrati:=1
+
+if !EMPTY(cSbr) .and. cSbr != "*" .and. gNW=="R"
+    nVrati := VAL(cSBr)/1000
+endif
+
 return nVrati
-*}
+
 
 
 

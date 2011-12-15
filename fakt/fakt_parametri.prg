@@ -76,12 +76,6 @@ endif
 AADD(opc,"8. parametri stampaca                          ")
 AADD(opcexe,{|| PushWa(), PPrint(), PopWa() })
 
-
-if IsRabati()
-	AADD(opc,"9. rabatne skale            ")
-	AADD(opcexe,{|| PRabat()})
-endif
-
 AADD(opc,"F. parametri fiskalnog uredjaja  ")
 AADD(opcexe,{|| fisc_param() })
 
@@ -2217,96 +2211,15 @@ else
 endif
 
 return
-*}
-
-*string Params_s7;
-/*! \ingroup params
- *  \var Params_s7
- *  \brief Grad tj.mjesto u kojem je firma
- *  \param Zenica - u Zenici
- *  \note gMjStr
- */
 
 
-*string Params_fi;
-/*! \ingroup params
- *  \var Params_fi
- *  \brief Sifra firme/default radne jedinice
- *  \param 10 - sifra firme ili default radne jedinice je 10
- *  \note gFirma
- */
 
+// ----------------------------------------------------
+// specificne funkcije za fakturisanje uglja
+// ----------------------------------------------------
+function is_fakt_ugalj()
+return .f.
 
-*string Params_ts;
-/*! \ingroup params
- *  \var Params_ts
- *  \brief Tip poslovnog subjekta
- *  \param Preduzece - znaci da se radi o preduzecu
- *  \note gTS
- */
-
-
-*string Params_fn;
-/*! \ingroup params
- *  \var Params_fn
- *  \brief Naziv firme
- *  \param SIGMA-COM - naziv firme je SIGMA-COM
- *  \note gNFirma
- */
-
-
-*string Params_Bv;
-/*! \ingroup params
- *  \var Params_Bv
- *  \brief Bazna valuta
- *  \param D - domaca
- *  \param P - pomocna
- *  \note gBaznaV
- */
-
-
-*string Params_mV;
-/*! \ingroup params
- *  \var Params_mV
- *  \brief Koristiti modemsku vezu?
- *  \param S - da, server
- *  \param K - da, korisnik
- *  \param N - ne koristiti modemsku vezu
- *  \note gModemVeza
- */
-
-
-/*! \fn PRabat()
- *  \brief Podesenje parametara rabatnih skala
- */
- 
-function PRabat()
-*{
-private  GetList:={}
-
-O_PARAMS
-RPar("rs", gcRabDef)
-RPar("is", gcRabIDef)
-RPar("id", gcRabDok)
-
-gcRabDef:=PADR(gcRabDef, 10)
-
-Box(,4,60,.f.,"RABATNE SKALE")
-  	@ m_x+1,m_y+2 SAY "Tekuca vr. rabat (oznaka)    :" GET gcRabDef VALID !Empty(gcRabDef)
-	@ m_x+2,m_y+2 SAY "Tekuci iznos rabata (1-5):" GET gcRabIDef VALID gcRabIDef$"12345" PICT "!@"
-	@ m_x+3,m_y+2 SAY "Odnosi se na sljedece tipove dok. (10#12):" 
-	@ m_x+4,m_y+2 GET gcRabDok VALID !Empty(gcRabDok) PICT "@S20"
-  	READ
-BoxC()
-
-if (LASTKEY()<>K_ESC)
-	WPar("rs",gcRabDef)
-  	Wpar("ir",gcRabIDef)
-  	Wpar("id",gcRabDok)
-endif
-
-return
-*}
 
 
 

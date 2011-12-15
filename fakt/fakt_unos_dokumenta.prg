@@ -2259,7 +2259,7 @@ function PrerCij()
 local cSBr := ALLTRIM(_field->serbr)
 local nVrati:=1
 
-if !EMPTY(cSbr) .and. cSbr != "*" .and. gNW=="R"
+if !EMPTY(cSbr) .and. cSbr != "*" .and. is_fakt_ugalj()
     nVrati := VAL(cSBr)/1000
 endif
 

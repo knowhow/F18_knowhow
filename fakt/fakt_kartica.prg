@@ -12,38 +12,8 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
-
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_FAKT_OstraniciKarticu
-  * \brief Da li se ostranicava kartica artikla?
-  * \param N - ne, default vrijednost
-  * \param D - da
-  */
-*string FmkIni_SifPath_FAKT_OstraniciKarticu;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_FAKT_Sintet
-  * \brief Da li se koriste sinteticke (skracene) sifre robe?
-  * \param N - ne, default vrijednost
-  * \param D - da
-  */
-*string FmkIni_ExePath_FAKT_Sintet;
-
-
-
-/*! \fn fakt_kartica()
- *  \brief Izvjestaj - kartica
- */
- 
 function fakt_kartica()
-*{
 local cIdfirma, nRezerv, nRevers
 local nul, nizl, nRbr, cRR, nCol1:=0, cKolona, cBrza:="D"
 local cPredh:="2"

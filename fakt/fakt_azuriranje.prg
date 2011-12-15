@@ -11,7 +11,6 @@
 
 #include "fakt.ch"
 
- 
 function o_fakt_edit(cVar2)
 
 if glRadNal
@@ -126,7 +125,6 @@ return nil
 /*! \fn PovSvi()
  *  \brief Povrat dokumenta u pripremu sa zadanim kriterijem
  */
-
 function Povrat_fakt_po_kriteriju(qBrDok, qDatDok, qTipDok, cFirma )
 
 local nRec
@@ -171,17 +169,17 @@ cIdTipDok := SPACE(2)
 cBrDok := SPACE(8)
 cIdF := cIdFirma
 
-Box(,4,60)
+Box(, 4, 60)
 	do while .t.
-  		@ m_x+1,m_y+2 SAY "Rj               "  GEt cIdF pict "@!"
-  		@ m_x+2,m_y+2 SAY "Vrste dokumenata "  GEt qqTipdok pict "@S40"
-  		@ m_x+3,m_y+2 SAY "Broj dokumenata  "  GEt qqBrDok pict "@S40"
-  		@ m_x+4,m_y+2 SAY "Datumi           "  GET qqDatDok pict "@S40"
+  		@ m_x+1, m_y+2 SAY "Rj               "  GEt cIdF pict "@!"
+  		@ m_x+2, m_y+2 SAY "Vrste dokumenata "  GEt qqTipdok pict "@S40"
+  		@ m_x+3, m_y+2 SAY "Broj dokumenata  "  GEt qqBrDok pict "@S40"
+  		@ m_x+4, m_y+2 SAY "Datumi           "  GET qqDatDok pict "@S40"
   		read
   	
-		private aUsl1:=Parsiraj(qqBrDok,"BrDok","C")
-  		private aUsl2:=Parsiraj(qqDatDok,"DatDok","D")
-  		private aUsl3:=Parsiraj(qqTipdok,"IdTipdok","C")
+		private aUsl1 := Parsiraj(qqBrDok,"BrDok","C")
+  		private aUsl2 := Parsiraj(qqDatDok,"DatDok","D")
+  		private aUsl3 := Parsiraj(qqTipdok,"IdTipdok","C")
 
   		if (aUsl1<>nil .and. aUsl2<>nil .and. aUsl3<>nil)
     			exit
@@ -328,9 +326,10 @@ if (PCount() == 0)
 	fR := .f.
 endif
 
+MsgBeep("opcija trenutno onemogucena")
+
 O_FAKT
 
-// obavezno exclusivno otvori
 O_FAKT_PRIPR
 O_FAKT_DOKS
 
@@ -348,7 +347,7 @@ set order to tag "1"
 
 cSifDok:="  "
 
-if cIdFirma == nil  // bez parametara
+if cIdFirma == nil  
 	cIdFirma:=gFirma
   	if fR
     		if Pitanje(,"Prekinuti rezervaciju VP-20 ili MP-27 (V/M)?","V","VM")=="V"
@@ -361,7 +360,7 @@ if cIdFirma == nil  // bez parametara
 	cIdTipDok:=SPACE(2)
   	cBrDok:=SPACE(8)
 
-  	Box("",1,35)
+  	Box("", 1, 35)
    		@ m_x+1,m_y+2 SAY "Dokument:"
    		@ m_x+1,col()+1 GET cIdFirma
    		@ m_x+1,col()+1 SAY "-"
@@ -468,7 +467,6 @@ fBrisao:=.f.
 if !fR
 	select fakt
   	hseek cIdFirma+cIdTipDok+cBrDok
-  	//NFOUND CRET
   	if (fakt->m1=="X")
     		// izgenerisani dokument
     		MsgBeep("Radi se o izgenerisanom dokumentu!!!")
@@ -809,16 +807,15 @@ _field->Partner   := _fakt_doks_data["partner"]
 _field->dindem    := _fakt_doks_data["din_dem"]
 _field->IdPartner := _fakt_doks_data["id_partner"]
 _field->idpm      := _fakt_doks_data["id_pm"]
-_field->IdVrsteP := _fakt_doks_data["id_vrste_p"]
-_field->dok_veza := _fakt_doks_data["dok_veza"]
-_field->oper_id := _fakt_doks_data["oper_id"]
-_field->fisc_rn := _fakt_doks_data["fisc_rn"]
-_field->dat_isp := _fakt_doks_data["dat_isp"]
-_field->dat_otpr := _fakt_doks_data["dat_otpr"]
-_field->dat_val := _fakt_doks_data["dat_val"]
-_field->DatPl := _fakt_doks_data["dat_val"]
+_field->IdVrsteP  := _fakt_doks_data["id_vrste_p"]
+_field->dok_veza  := _fakt_doks_data["dok_veza"]
+_field->oper_id   := _fakt_doks_data["oper_id"]
+_field->fisc_rn   := _fakt_doks_data["fisc_rn"]
+_field->dat_isp   := _fakt_doks_data["dat_isp"]
+_field->dat_otpr  := _fakt_doks_data["dat_otpr"]
+_field->dat_val   := _fakt_doks_data["dat_val"]
+_field->DatPl     := _fakt_doks_data["dat_val"]
   	
-// ovo nemam pojma sta je ???????????????
 if ( fakt_doks->m1 == "Z" )
 	// skidam zauzece i dobijam normalan dokument
     // REPLACE m1 WITH " " -- isto kao i gore
@@ -850,7 +847,7 @@ _field->n1 := _fakt_doks2_data["n1"]
 _field->n2 := _fakt_doks2_data["n2"]
  	
 if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
-	EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;
+	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;
 			"-" + fakt_pripr->idtipdok + "-" + fakt_pripr->brdok, fakt_pripr->datdok, Date(),"","Azuriranje dokumenta")
 endif
 	
@@ -860,17 +857,16 @@ BoxC()
 
 return .t.
 
-
-
-// priprema podatke za upis u polje "doks->partner"
 static function _fakt_partner_memo( a_memo )
 local _return := ""
 	
+// priprema podatke za upis u polje "doks->partner"
+
 if LEN( a_memo ) >= 5
 	_return := TRIM( a_memo[3] ) + " " + TRIM( a_memo[4] ) + "," + TRIM( a_memo[5] )
 endif
 
-_return := PADR( _return, 30 )
+_return := PADR( _return, FAKT_DOKS_PARTNER_LENGTH )
   	
 return _return
 
@@ -1244,7 +1240,7 @@ if ( gProtu13 == "D" .and. ;
 	Pitanje(,"Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
 	
 	if (gVar13 == "2" .and. gVarNum == "1")
-      	cPRj := RJIzKonta(fakt_pripr->idpartner+" ")
+      	cPRj := RJIzKonta(fakt_pripr->idpartner + " ")
     else
       	O_RJ
       	Box(,2,50)
@@ -1369,9 +1365,6 @@ msgc()
 close all
 
 return _a_fakt_doks
-
-
-
 
 // vise dokumenata u pripremi
 static function _fakt_dokumenti()
@@ -1610,7 +1603,7 @@ set order to tag "1"
 go top
 
 if (gVarNum=="2".and._idtipdok=="13")
-	seek _idfirma+_idtipdok+PADL(ALLTRIM(STR(VAL(ALLTRIM(SUBSTR(_idpartner,4))))),2,"0")+CHR(238)
+	seek _idfirma+_idtipdok+PADL(ALLTRIM(STR(VAL(ALLTRIM(SUBSTR(_idpartner,4))))), 2, "0") + CHR(238)
  	skip -1
  	do while !bof() .and. _idfirma==idfirma.and._idtipdok==idtipdok.and.LEFT(_idpartner,6)==LEFT(idpartner,6).and.SUBSTR(brdok,6,2)!=PADL(ALLTRIM(STR(MONTH(_datdok))),2,"0")
    		skip -1
@@ -1631,7 +1624,7 @@ else
  	endif
 endif
 
-if (_idtipdok<>idtipdok .or. _idfirma<>idfirma .or. LEFT(_idpartner,6)<>LEFT(idpartner,6) .and. (gVarNum=="2" .and. _idtipdok=="13"))
+if (_idtipdok<>idtipdok .or. _idfirma<>idfirma .or. LEFT(_idpartner,6) <> LEFT(idpartner, 6) .and. (gVarNum=="2" .and. _idtipdok=="13"))
 	if (gVarNum=="2".and._idtipdok=="13")
     		cNBrDok:=PADL(ALLTRIM(STR(VAL(ALLTRIM(SUBSTR(_idpartner,4))))),2,"0")+"01/"+PADL(ALLTRIM(STR(MONTH(_datdok))),2,"0")
   	else
@@ -1639,7 +1632,7 @@ if (_idtipdok<>idtipdok .or. _idfirma<>idfirma .or. LEFT(_idpartner,6)<>LEFT(idp
   	endif
 else
 	if (gVarNum=="2".and._idtipdok=="13")
-    		cNBrDok:=SljBrDok13(brdok,MONTH(_datdok),_idpartner)
+    		cNBrDok:=SljBrDok13(brdok,MONTH(_datdok), _idpartner)
   	else
     		cNBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, gNumDio, right(brdok,len(brdok)-gNumDio))
   	endif

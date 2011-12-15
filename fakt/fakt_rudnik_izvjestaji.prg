@@ -12,71 +12,36 @@
 
 #include "fakt.ch"
 
- 
-/*! \fn fakt_mpc_iz_sifrarnika()
- *  \brief Uzmi maloprodajnu cijenu iz sifrarnika
- */
- 
-function fakt_mpc_iz_sifrarnika()
-*{
-local nCV:=0
 
-if RJ->tip=="N1"
-	nCV := roba->nc
-elseif RJ->tip=="M1"
-	nCV := roba->mpc
-elseif RJ->tip=="M2"
-	nCV := roba->mpc2
-elseif RJ->tip=="M3"
-    	nCV := roba->mpc3
-elseif RJ->tip=="M4"
-    	nCV := roba->mpc4
-elseif RJ->tip=="M5"
-    	nCV := roba->mpc5
-elseif RJ->tip=="M6"
-    	nCV := roba->mpc6
-else
-	if IzFMKINI("FAKT","ZaIzvjestajeDefaultJeMPC","N",KUMPATH)=="D"
-      		nCV := roba->mpc
-    	else
-      		nCV := roba->vpc
-    	endif
-endif
-return nCV
-*}
+// -------------------------------------------------
+// specificne rudnik opcije
+// -------------------------------------------------
+function mnu_sp_rudnik()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+AADD( _opc, "1. isporuceni asortiman po kupcima                " )
+AADD( _opcexe,{|| rpt_sp_isporuke_po_kup_asort()} )
+AADD( _opc, "2. fakture asortimana za kupca" )
+AADD( _opcexe,{|| Pregled2()} )
+AADD( _opc, "3. isporuceni asortiman za kupca po pogonima" )
+AADD( _opcexe,{|| Pregled3()} )
+AADD( _opc, "4. pregled faktura usluga za kupca" )
+AADD( _opcexe,{|| Pregled4()})
+AADD( _opc, "5. pregled poreza" )
+AADD( _opcexe,{|| Pregled5()})
+
+f18_menu("rizv", .f., _izbor, _opc, _opcexe )
+
+return
 
 
-/*! \fn fakt_vpc_iz_sifrarnika()
- *  \brief Uzmi veleprodajnu cijenu iz sifrarnika
- */
- 
-function fakt_vpc_iz_sifrarnika()
-*{
-local nCV:=0
+// -------------------------------------------------
+// isporuceni asortiman po kupcima i asortimanu
+// -------------------------------------------------
+function rpt_sp_isporuke_po_kup_asort()
 
-if rj->tip=="V1"
-    	nCV := roba->vpc
-elseif rj->tip=="V2"
-    	nCV := roba->vpc2
-else
-	if IzFMKINI("FAKT","ZaIzvjestajeDefaultJeMPC","N",KUMPATH)=="D"
-      		nCV := roba->mpc
-    	else
-      		nCV := roba->vpc
-    	endif
-endif
-return nCV
-*}
-
-
-
-/*! \fn Pregled1() 
- *  \brief Pregled isporucenog uglja po kupcima i asortimanu
- *  \brief Izvjestaj je specificno radjen za Rudnik
- */
- 
-function Pregled1()
-*{
 O_PARTN
 O_FAKT
 
@@ -92,7 +57,9 @@ cProsCij:="N"
 
 O_PARAMS
 private cSection:="5",cHistory:=" "; aHistory:={}
+
 Params1()
+
 RPar("d1",@dDatOd); RPar("d2",@dDatDo)
 RPar("O1",@cRoba1); RPar("O2",@cRoba2); RPar("O3",@cRoba3)
 RPar("O4",@cRoba4); RPar("O5",@cRoba5); RPar("O6",@cRoba6)
@@ -159,16 +126,19 @@ WPar("F1",qqRoba1); WPar("F2",qqRoba2); WPar("F3",qqRoba3)
 WPar("F4",qqRoba4); WPar("F5",qqRoba5); WPar("F6",qqRoba6)
 WPar("F9",cProsCij)
 
-select params; use
+select params
+use
 
 SELECT FAKT
 
 cTMPFAKT:=""
+
 Box(,2,30)
-  nSlog:=0; nUkupno:=RECCOUNT2()
+  nSlog:=0
+  nUkupno := RECCOUNT2()
   cSort1 := "IDPARTNER"
-  cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. "+aUsl0
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt EVAL(TekRec()) EVERY 1
+  cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. " + aUsl0
+  INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt EVAL(TekRec()) EVERY 1
 BoxC()
 
 GO TOP
@@ -239,11 +209,12 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
 
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
 
-CLOSERET
+//MyFERASE(cTMPFAKT)
+
+close all
 return
-*}
+
 
 
 /*! \fn FFor1()
@@ -286,13 +257,9 @@ cIdPartner:=idpartner
 
  SKIP -1
 return .t.
-*}
 
 
-/*! \fn FSvaki1()
- *  \brief 
- */
- 
+
 static function FSvaki1()
 *{
 RETURN
@@ -2100,29 +2067,17 @@ LOCAL cVrati:="", nArr:=SELECT()
  ENDCASE
  SELECT (nArr)
 RETURN cVrati
-*}
 
 
-/*! \fn TmpFakt()
- *  \brief
- */
- 
+
 function TmpFakt()
-*{
 RETURN TEMPFILE(KUMPATH,"CDX",0)
-*}
 
 
-/*! \fn MyFErase()
- *  \brief
- */
- 
 function MyFErase()
-*{
 PARAMETERS cFajl
   IF !(cFajl==NIL .or. "U" $ TYPE("cFajl") )
     FERASE(cFajl)
   ENDIF
 RETURN
-*}
 

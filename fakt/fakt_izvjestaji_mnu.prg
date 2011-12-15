@@ -16,59 +16,59 @@
 // glavni menij izvjestaja
 // ------------------------------------------------------------
 function fakt_izvjestaji()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
 
 // PTXT compatibility  sa ver < 1.52
 gPtxtC50 := .t.
 
-AADD(opc,"1. stanje robe                               ")
-AADD(opcexe,{|| fakt_stanje_robe()})
-AADD(opc,"2. lager lista - specifikacija   ")
-AADD(opcexe,{|| fakt_lager_lista()})
-AADD(opc,"3. kartica")
-AADD(opcexe,{|| fakt_kartica()})
-AADD(opc,"4. uporedna lager lista fakt1 <-> fakt2")
-AADD(opcexe,{|| Fakt_Kalk(.t.)})
-AADD(opc,"5. uporedna lager lista fakt <-> kalk")
-AADD(opcexe,{|| Fakt_Kalk(.f.)})
-AADD(opc,"6. realizacija kumulativno po partnerima")
-AADD(opcexe,{|| fakt_real_partnera()})
-AADD(opc,"7. specifikacija prodaje")
-AADD(opcexe,{|| fakt_real_kolicina()})
-AADD(opc,"8. specifikacija prodaje po parternima ")
-AADD(opcexe,{|| spec_kol_partn()})
-AADD(opc,"9. realizacija maloprodaje ")
-AADD(opcexe,{|| fakt_real_maloprodaje()})
-AADD(opc,"10. fiskalni izvjestaji i komande ")
-AADD(opcexe,{|| fisc_rpt()})
+AADD(_opc,"1. stanje robe                               ")
+AADD(_opcexe,{|| fakt_stanje_robe()})
+AADD(_opc,"2. lager lista - specifikacija   ")
+AADD(_opcexe,{|| fakt_lager_lista()})
+AADD(_opc,"3. kartica")
+AADD(_opcexe,{|| fakt_kartica()})
+AADD(_opc,"4. uporedna lager lista fakt1 <-> fakt2")
+AADD(_opcexe,{|| Fakt_Kalk(.t.)})
+AADD(_opc,"5. uporedna lager lista fakt <-> kalk")
+AADD(_opcexe,{|| Fakt_Kalk(.f.)})
+AADD(_opc,"6. realizacija kumulativno po partnerima")
+AADD(_opcexe,{|| fakt_real_partnera()})
+AADD(_opc,"7. specifikacija prodaje")
+AADD(_opcexe,{|| fakt_real_kolicina()})
+AADD(_opc,"8. specifikacija prodaje po parternima ")
+AADD(_opcexe,{|| spec_kol_partn()})
+AADD(_opc,"9. realizacija maloprodaje ")
+AADD(_opcexe,{|| fakt_real_maloprodaje()})
+AADD(_opc,"10. fiskalni izvjestaji i komande ")
+AADD(_opcexe,{|| fisc_rpt()})
 
-if IsRudnik() 
-	AADD(opc,"R. rudnik")
-	AADD(opcexe,{|| MnuRudnik()})
-endif
+//if IsRudnik() 
+	AADD(_opc,"R. specificni izvjestaji (rmu)")
+	AADD(_opcexe, {|| mnu_sp_rudnik() })
+//endif
 	
 if IsStampa()
-	AADD(opc,"S. stampa")
-	AADD(opcexe,{|| MnuStampa()})
+	AADD(_opc,"S. stampa")
+	AADD(_opcexe,{|| MnuStampa()})
 endif
 
 if IsKonsig()
-	AADD(opc,"K. konsignacija")
-	AADD(opcexe,{|| KarticaKons()})
+	AADD(_opc,"K. konsignacija")
+	AADD(_opcexe,{|| KarticaKons()})
 endif    	
 
 
 private fID_J:=.f.
 if IzFmkIni('SifRoba','ID_J','N')=="D"
 	private fId_J:=.t.
-  	AADD(opc,"C. osvjezi promjene sifarskog sistema u prometu")
-	AADD(opcexe,{|| OsvjeziIdJ()})
+  	AADD(_opc,"C. osvjezi promjene sifarskog sistema u prometu")
+	AADD(_opcexe,{|| OsvjeziIdJ()})
 endif
 
-Menu_SC("izvj")
+f18_menu( "izvj", .f., _izbor, _opc, _opcexe )
 
 return
-*}
+
 

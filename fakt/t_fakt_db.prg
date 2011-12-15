@@ -348,6 +348,7 @@ if (nArea==-1 .or. nArea==(F_FAKT))
   	CREATE_INDEX("6","idfirma+idpartner+idroba+idtipdok+dtos(datdok)",KUMPATH+"FAKT")
   	CREATE_INDEX("7","idfirma+idpartner+idroba+dtos(datdok)",KUMPATH+"FAKT")
   	CREATE_INDEX("8","datdok",KUMPATH+"FAKT")
+  	CREATE_INDEX("IDPARTN","idpartner",KUMPATH+"FAKT")
 
 endif
 

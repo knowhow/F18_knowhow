@@ -24,13 +24,13 @@ local _izbor := 1
 AADD( _opc, "1. isporuceni asortiman po kupcima                " )
 AADD( _opcexe,{|| rpt_sp_isporuke_po_kup_asort()} )
 AADD( _opc, "2. fakture asortimana za kupca" )
-AADD( _opcexe,{|| Pregled2()} )
+AADD( _opcexe,{|| rpt_sp_fakture_asort()} )
 AADD( _opc, "3. isporuceni asortiman za kupca po pogonima" )
-AADD( _opcexe,{|| Pregled3()} )
+AADD( _opcexe,{|| rpt_sp_isporuke_pogon()} )
 AADD( _opc, "4. pregled faktura usluga za kupca" )
-AADD( _opcexe,{|| Pregled4()})
+AADD( _opcexe,{|| rpt_sp_fakture_usluga()})
 AADD( _opc, "5. pregled poreza" )
-AADD( _opcexe,{|| Pregled5()})
+AADD( _opcexe,{|| rpt_sp_pregled_poreza()})
 
 f18_menu("rizv", .f., _izbor, _opc, _opcexe )
 
@@ -132,19 +132,18 @@ use
 SELECT FAKT
 
 cTMPFAKT:=""
+cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. " + aUsl0
+//  INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt EVAL(TekRec()) EVERY 1
 
-Box(,2,30)
-  nSlog:=0
-  nUkupno := RECCOUNT2()
-  cSort1 := "IDPARTNER"
-  cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. " + aUsl0
-  INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt EVAL(TekRec()) EVERY 1
-BoxC()
+set order to tag "IDPARTN"
+set filter to &cFilt 
 
 GO TOP
+
 if eof()
 	Msg("Ne postoje trazeni podaci...",6)
-	closeret
+	close all
+    return
 endif
 
 START PRINT CRET
@@ -156,7 +155,7 @@ PRIVATE nIzR1:=nIzR2:=nIzR3:=nIzR4:=nIzR5:=nIzR6:=0
 
 IF cProsCij=="D"
 
-aKol:={ { "SIFRA"       , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
+  aKol:={ { "SIFRA"       , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
         { "KUPAC"       , {|| cNPartnera             }, .f., "C",50, 0, 1, 2},;
         { cRoba1        , {|| nRoba1                 }, .t., "N",12, 2, 1, 3},;
         { cRoba2        , {|| nRoba2                 }, .t., "N",12, 2, 1, 4},;
@@ -183,7 +182,7 @@ aKol:={ { "SIFRA"       , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
 
 ELSE
 
-aKol:={ { "SIFRA"       , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
+  aKol:={ { "SIFRA"       , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
         { "KUPAC"       , {|| cNPartnera             }, .f., "C",50, 0, 1, 2},;
         { cRoba1        , {|| nRoba1                 }, .t., "N",10, 2, 1, 3},;
         { cRoba2        , {|| nRoba2                 }, .t., "N",10, 2, 1, 4},;
@@ -210,19 +209,13 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
 FF
 END PRINT
 
-//MyFERASE(cTMPFAKT)
-
 close all
 return
 
 
 
-/*! \fn FFor1()
- *  \brief 
- */
- 
 static function FFor1()
-*{
+
 cIdPartner:=idpartner
  nRoba1:=nRoba2:=nRoba3:=nRoba4:=nRoba5:=nRoba6:=nUkRoba:=nUkIznos:=0
  nIzR1:=nIzR2:=nIzR3:=nIzR4:=nIzR5:=nIzR6:=0
@@ -261,33 +254,26 @@ return .t.
 
 
 static function FSvaki1()
-*{
 RETURN
-*}
 
 
 
-/*! \fn TekRac()
- *  \brief
- */
- 
+
 static function TekRec()
-*{
 nSlog++
  @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
  @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(nSlog)
 return (nil)
-*}
 
 
 
 
-/*! \fn Pregled2()
+/*! \fn rpt_sp_fakture_asort()
  *  \brief Pregled faktura asortimana za kupca
  *  \brief Izvjestaj specificno radjen za Rudnik
  */
  
-function Pregled2()
+function rpt_sp_fakture_asort()
 *{
 O_PARTN
 O_FAKT
@@ -438,12 +424,12 @@ return .t.
 
 
 
-/*! \fn Pregled3()
+/*! \fn rpt_sp_isporuke_pogon()
  *  \brief Pregled isporucenog asortimana za kupca po pogonima
  *  \brief Izvjestaj specifican za rudnik
  */
  
-function Pregled3()
+function rpt_sp_isporuke_pogon()
 *{
 O_PARTN
 O_RJ
@@ -665,12 +651,12 @@ RETURN
 
 
 
-/*! \fn Pregled4()
+/*! \fn rpt_sp_fakture_usluga()
  *  \brief Pregled faktura usluga za kupca
  *  \brief Izvjestaj specifican za runik
  */
 
-function Pregled4()
+function rpt_sp_fakture_usluga()
 *{
 O_PARTN
 O_FAKT
@@ -795,11 +781,11 @@ RETURN
 *}
 
 
-/*! \fn Pregled5()
+/*! \fn rpt_sp_pregled_poreza()
  *  \brief Pregled poreza po fakturama
  *  \brief Izvjestaj specifican za rudnik
  */
-function Pregled5()
+function rpt_sp_pregled_poreza()
 *{
 O_PARTN
 O_FAKT

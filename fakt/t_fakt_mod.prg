@@ -76,48 +76,59 @@ return nil
 // -----------------------------------------------
 method mMenuStandard
 
-private opc:={}
-private opcexe:={}
+local _opc    :={}
+local _opcexe :={}
+local _izbor  := 1
 
-AADD(opc,"1. unos/ispravka dokumenta             ")
+AADD(_opc,"1. unos/ispravka dokumenta             ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","UNOSDOK"))
-	AADD(opcexe,{|| fakt_unos_dokumenta()})
+	AADD(_opcexe,{|| fakt_unos_dokumenta()})
 else
-	AADD(opcexe,{|| MsgBeep(cZabrana)})
+	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"2. izvjestaji")
-AADD(opcexe,{|| fakt_izvjestaji()})
-AADD(opc,"3. pregled dokumenata")
-AADD(opcexe,{|| fakt_pregled_dokumenata()})
+AADD(_opc,"2. izvjestaji")
+AADD(_opcexe,{|| fakt_izvjestaji()})
+AADD(_opc,"3. pregled dokumenata")
+AADD(_opcexe,{|| fakt_pregled_dokumenata()})
 
-AADD(opc,"4. generacija dokumenata")
+AADD(_opc,"4. generacija dokumenata")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK"))
-	AADD(opcexe,{|| fakt_mnu_generacija_dokumenta()})
+	AADD(_opcexe,{|| fakt_mnu_generacija_dokumenta()})
 else
-	AADD(opcexe,{|| MsgBeep(cZabrana)})
+	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"5. moduli - razmjena podataka")
+AADD(_opc,"5. moduli - razmjena podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA"))
-	AADD(opcexe,{|| fakt_razmjena_podataka()})
+	AADD(_opcexe,{|| fakt_razmjena_podataka()})
 else
-	AADD(opcexe,{|| MsgBeep(cZabrana)})
+	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"6. udaljene lokacije - razmjena")
+AADD(_opc,"6. udaljene lokacije - razmjena")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA"))
-	AADD(opcexe,{|| faktprenosdiskete()})
+	AADD(_opcexe,{|| faktprenosdiskete()})
 else
-	AADD(opcexe,{|| MsgBeep(cZabrana)})
+	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"7. ostale operacije nad dokumentima")
-AADD(opcexe,{|| fakt_ostale_operacije_doks()})
-AADD(opc,"------------------------------------")
-AADD(opcexe,{|| nil})
-AADD(opc,"8. sifrarnici")
-AADD(opcexe,{|| fakt_sifrarnik()})
+AADD(_opc,"7. ostale operacije nad dokumentima")
+AADD(_opcexe,{|| fakt_ostale_operacije_doks()})
+AADD(_opc,"------------------------------------")
+AADD(_opcexe,{|| nil})
+AADD(_opc,"8. sifrarnici")
+AADD(_opcexe,{|| fakt_sifrarnik()})
+
+AADD(_opc,"9. uplate")
+AADD(_opcexe, {|| mnu_fakt_uplate()} )
+
+f18_menu("fmai", .t., _izbor, _opc, _opcexe)
+
+return .f.
+
+
+
 /*
 AADD(opc,"9. administracija baze podataka")
 

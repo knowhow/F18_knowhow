@@ -21,21 +21,19 @@ opc:={}
 opcexe:={}
 Izbor:=1
 
-AADD(opc, "1. instalacija db-a                   ")
-AADD(opcexe, {|| goModul:oDatabase:install()}) 
-AADD(opc, "2. skip speed db-a")
+AADD(opc, "1. skip speed db-a")
 AADD(opcexe, {|| SpeedSkip()}) 
-AADD(opc, "4. regeneracija fakt memo polja")
+AADD(opc, "2. regeneracija fakt memo polja")
 AADD(opcexe, {|| fa_memo_regen()})
-AADD(opc, "5. regeneracija polja fakt->rbr")
+AADD(opc, "3. regeneracija polja fakt->rbr")
 AADD(opcexe, {|| fa_rbr_regen()})
-AADD(opc, "6. regeneracija polja idpartner")
+AADD(opc, "4. regeneracija polja idpartner")
 AADD(opcexe, {|| fa_part_regen()})
-AADD(opc, "7. generisanja datuma otpr. isp.")
+AADD(opc, "5. generisanja datuma otpr. isp.")
 AADD(opcexe, {|| gen_dotpr()})
-AADD(opc, "8. regeneracija doks iznos ukupno")
+AADD(opc, "6. regeneracija doks iznos ukupno")
 AADD(opcexe, {|| do_uk_regen()})
-AADD(opc, "9. kontrola duplih partnera")
+AADD(opc, "7. kontrola duplih partnera")
 AADD(opcexe, {|| chk_dpartn()})
 AADD(opc, "E. fakt export (r_exp) ")
 AADD(opcexe, {|| fkt_export()})
@@ -64,7 +62,7 @@ O_FAKT
 select fakt
 set order to tag 0
 
-Box(,3,60)
+Box(, 3,60)
 @ m_x+1, m_y+2 SAY "Vrsim regeneraciju rednih brojeva fakt..."
 
 nCounter := 0

@@ -411,40 +411,40 @@ if (nArea==-1 .or. nArea==(F_FAKT_DOKS))
 	//DOKS.DBF
 	
 	aDbf:={}
-	AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
-	AADD(aDBf,{ 'IdTIPDok'            , 'C' ,   2 ,  0 })
-	AADD(aDBf,{ 'BRDOK'               , 'C' ,   8 ,  0 })
-	AADD(aDBf,{ 'PARTNER'             , 'C' ,  30 ,  0 })
-	AADD(aDBf,{ 'DATDOK'              , 'D' ,   8 ,  0 })
-	AADD(aDBf,{ 'DINDEM'              , 'C' ,   3 ,  0 })
-	AADD(aDBf,{ 'Iznos'               , 'N' ,  12 ,  3 })
-	AADD(aDBf,{ 'Rabat'               , 'N' ,  12 ,  3 })
-	AADD(aDBf,{ 'Rezerv'              , 'C' ,   1 ,  0 })
-	AADD(aDBf,{ 'M1'                  , 'C' ,   1 ,  0 })
-	AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
-	AADD(aDBf,{ 'IDVRSTEP'            , 'C' ,   2 ,  0 })
-	AADD(aDBf,{ 'DATPL'               , 'D' ,   8 ,  0 })
-	AADD(aDBf,{ 'IDPM'                , 'C' ,  15 ,  0 })
-	AADD(aDBf,{ 'DOK_VEZA'            , 'C' , 150 ,  0 })
-	AADD(aDBf,{ 'OPER_ID'             , 'N' ,   3 ,  0 })
-	AADD(aDBf,{ 'FISC_RN'             , 'N' ,  10 ,  0 })
-	AADD(aDBf,{ 'DAT_ISP'             , 'D' ,   8 ,  0 })
-	AADD(aDBf,{ 'DAT_VAL'             , 'D' ,   8 ,  0 })
-	AADD(aDBf,{ 'DAT_OTPR'            , 'D' ,   8 ,  0 })
+	AADD(aDBf, { 'IDFIRMA'             , 'C' ,   2 ,  0 })
+	AADD(aDBf, { 'IdTIPDok'            , 'C' ,   2 ,  0 })
+	AADD(aDBf, { 'BRDOK'               , 'C' ,   8 ,  0 })
+	AADD(aDBf, { 'PARTNER'             , 'C' ,  30 ,  0 })
+	AADD(aDBf, { 'DATDOK'              , 'D' ,   8 ,  0 })
+	AADD(aDBf, { 'DINDEM'              , 'C' ,   3 ,  0 })
+	AADD(aDBf, { 'Iznos'               , 'N' ,  12 ,  3 })
+	AADD(aDBf, { 'Rabat'               , 'N' ,  12 ,  3 })
+	AADD(aDBf, { 'Rezerv'              , 'C' ,   1 ,  0 })
+	AADD(aDBf, { 'M1'                  , 'C' ,   1 ,  0 })
+	AADD(aDBf, { 'IDPARTNER'           , 'C' ,   6 ,  0 })
+	AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
+	AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
+	AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
+	AADD(aDBf, { 'DOK_VEZA'            , 'C' , 150 ,  0 })
+	AADD(aDBf, { 'OPER_ID'             , 'N' ,   3 ,  0 })
+	AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
+	AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })
+	AADD(aDBf, { 'DAT_VAL'             , 'D' ,   8 ,  0 })
+	AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })
 	
 	if !FILE(f18_ime_dbf("fakt_doks"))
-        	DBcreate2("FAKT_DOKS",aDbf)
+        	DBcreate2("FAKT_DOKS", aDbf)
 			reset_semaphore_version("fakt_doks")	
 			my_use("fakt_doks")
 			close all
 	endif
 	
-	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"FAKT_DOKS")
-	CREATE_INDEX("2","IdFirma+idtipdok+partner",KUMPATH+"FAKT_DOKS")
-	CREATE_INDEX("3","partner",KUMPATH+"FAKT_DOKS")
-	CREATE_INDEX("4","idtipdok",KUMPATH+"FAKT_DOKS")
-	CREATE_INDEX("5","datdok",KUMPATH+"FAKT_DOKS")
-	CREATE_INDEX("6","IdFirma+idpartner+idtipdok",KUMPATH+"FAKT_DOKS")
+	CREATE_INDEX("1","IdFirma+idtipdok+brdok", "FAKT_DOKS")
+	CREATE_INDEX("2","IdFirma+idtipdok+partner", "FAKT_DOKS")
+	CREATE_INDEX("3","partner", "FAKT_DOKS")
+	CREATE_INDEX("4","idtipdok", "FAKT_DOKS")
+	CREATE_INDEX("5","datdok", "FAKT_DOKS")
+	CREATE_INDEX("6","IdFirma+idpartner+idtipdok", "FAKT_DOKS")
 endif
 
 
@@ -470,7 +470,7 @@ if (nArea==-1 .or. nArea==(F_FAKT_DOKS2))
 			close all
 	endif
 	
-	CREATE_INDEX("1","IdFirma+idtipdok+brdok",KUMPATH+"FAKT_DOKS2")
+	CREATE_INDEX("1","IdFirma+idtipdok+brdok", "FAKT_DOKS2")
 endif
 
 
@@ -485,7 +485,7 @@ if (nArea==-1 .or. nArea==(F_VRSTEP))
 		DBcreate2(SIFPATH+"VRSTEP.DBF",aDbf)
 	endif
 	
-	CREATE_INDEX("ID","Id",SIFPATH+"VRSTEP.DBF")
+	CREATE_INDEX("ID", "Id", "VRSTEP.DBF")
 endif
 
 /* 
@@ -552,14 +552,7 @@ return
 
 
 
-/*! \fn *void TDBFakt::obaza(int i)
- *  \brief otvara odgovarajucu tabelu
- *  
- *      
- */
-
-*void TDBFakt::obaza(int i)
-*{
+// void TDBFakt::obaza(int i)
 
 method obaza (i)
 local lIdIDalje
@@ -611,7 +604,6 @@ endif
 
 
 return
-*}
 
 /*! \fn *void TDBFakt::ostalef()
  *  \brief Ostalef funkcije (bivsi install modul)
@@ -619,84 +611,15 @@ return
 */
 
 *void TDBFakt::ostalef()
-*{
 method ostalef()
-
-
 return
-*}
 
 /*! \fn *void TDBFakt::konvZn()
  *  \brief koverzija 7->8 baze podataka KALK
  */
  
-*void TDBFakt::konvZn()
-*{
 method konvZn()
-
-LOCAL cIz:="7", cU:="8", aPriv:={}, aKum:={}, aSif:={}
-LOCAL GetList:={}, cSif:="D", cKum:="D", cPriv:="D"
-
-if !gAppSrv
-	IF !SigmaSif("KZ      ")
-   		RETURN
-	ENDIF
-
-	Box(,8,50)
-  	@ m_x+2, m_y+2 SAY "Trenutni standard (7/8)        " GET cIz   VALID   cIz$"78"  PICT "9"
-  	@ m_x+3, m_y+2 SAY "Konvertovati u standard (7/8/A)" GET cU    VALID    cU$"78A" PICT "@!"
-  	@ m_x+5, m_y+2 SAY "Konvertovati sifrarnike (D/N)  " GET cSif  VALID  cSif$"DN"  PICT "@!"
-  	@ m_x+6, m_y+2 SAY "Konvertovati radne baze (D/N)  " GET cKum  VALID  cKum$"DN"  PICT "@!"
-  	@ m_x+7, m_y+2 SAY "Konvertovati priv.baze  (D/N)  " GET cPriv VALID cPriv$"DN"  PICT "@!"
-  	READ
-  	IF LASTKEY()==K_ESC
-		BoxC()
-		RETURN
-	ENDIF
-  	IF Pitanje(,"Jeste li sigurni da zelite izvrsiti konverziju (D/N)","N")=="N"
-    		BoxC()
-		RETURN
-  	ENDIF
-	BoxC()
-else
-	?
-	cKonvertTo:=IzFmkIni("FMK","KonvertTo","78",EXEPATH)
-	
-	if cKonvertTo=="78"
-		cIz:="7"
-		cU:="8"
-		? "Trenutni standard: " + cIz
-		? "Konvertovati u: " + cU 
-	elseif cKonvertTo=="87"
-		cIz:="8"
-		cU:="7"
-		? "Trenutni standard: " + cIz
-		? "Konvertovati u: " + cU 
-	else // pitaj
-		?
-		@ 10, 2 SAY "Trenutni standard (7/8)        " GET cIz VALID cIz$"78" PICT "9"
-		?
-		@ 11, 2 SAY "Konvertovati u standard (7/8/A)" GET cU VALID cU$"78A" PICT "@!"
-		read
-	endif
-	cSif:="D"
-	cKum:="D"
-	cPriv:="D"
-endif
-
-aPriv := { F_PRIPR, F__ROBA }
-aKum  := { F_FAKT, F_FAKT_DOKS, F_RJ, F_UGOV, F_RUGOV, F_UPL, F_DEST, F_FAKT_DOKS2 }
-aSif  := { F_ROBA, F_TARIFA, F_PARTN, F_FTXT, F_VALUTE, F_SAST, F_KONTO,;
-           F_VRSTEP, F_OPS }
-
-IF cSif  == "N"; aSif  := {}; ENDIF
-IF cKum  == "N"; aKum  := {}; ENDIF
-IF cPriv == "N"; aPriv := {}; ENDIF
-
-KZNbaza(aPriv,aKum,aSif,cIz,cU)
-
 return
-*}
 
 
 

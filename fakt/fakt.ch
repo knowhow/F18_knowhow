@@ -7,3 +7,5 @@
 
 #define __g10Str2T hb_strToUtf8(g10Str2T)
 #define __g10Str hb_strToUtf8(g10Str)
+
+#define FAKT_DOKS_PARTNER_LENGTH 30

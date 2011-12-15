@@ -34,11 +34,11 @@ public gRPL_Gusto:=""
 
 return
 
-
-/* --------------------- */
+// -------------------------
+// -------------------------
 function Ptxt(cImeF)
 
-local cPtxtSw:=""
+local cPtxtSw := ""
 local nFH
 
 local cKom
@@ -46,41 +46,19 @@ local cKom
 if gPtxtSw <> nil
 	cPtxtSw := gPtxtSw
 else
-	cPTXTSw := R_IniRead ( 'DOS','PTXTSW',  "/P", EXEPATH+'FMK.INI' )
+	cPTXTSw := R_IniRead ( 'DOS', 'PTXTSW',  "/P", EXEPATH + 'FMK.INI' )
 endif
 
 #ifdef __PLATFORM__WINDOWS
 	cImeF := '"' + cImeF + '"'
 #endif
 
-cKom := "PTXT " + cImeF + " "
+cKom := "ptxt " + cImeF + " "
 
-cKom += " "+ cPtxtSw
-
-if compat50()
-	// postavi compatibility
-	cKom += " /c50"
-endif
+cKom += " " + cPtxtSw
 
 Run(cKom)
+return .t.
 
-return
 
-
-// -----------------------------------------------
-// ako gPTxtC50 varijabla nije definisana
-// onda se mora ici ka PTXT kompatibilnost
-// ako postoji varijabla onda je ona  logicka
-// i vraca se postavka PTXT-a
-// -----------------------------------------------
-static function compat50()
-local cType
-
-cType:=TYPE("gPtxtC50")
-do case
-	case cType == "L"
-		return gPtxtC50
-	otherwise
-		return .t.
-endcase
 

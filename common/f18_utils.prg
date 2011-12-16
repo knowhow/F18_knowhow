@@ -54,7 +54,10 @@ _pos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
 
 if _pos == 0
    ? "ajjoooj nemas u gaDBFs ovu stavku:", alias
-   inkey(10)
+   ? "pretisni, al' ne pretis lonac"
+   inkey(0)
+   inkey(0)
+   quit
 endif
 
 alias := my_home() + gaDBFs[_pos, 3] + "." + DBFEXT

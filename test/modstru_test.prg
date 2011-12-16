@@ -14,18 +14,22 @@
 
 
 function create_test_f18_dbf()
-local ime_f := "test_f18"
-local dbf_struct := {}
+local _ime_f := "test_f18"
+local _dbf_struct := {}
 local _i
 
-AADD(dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
-AADD(dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
+AADD(_dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
+AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
        
-DBCREATE2(ime_f, dbf_struct)
+DBCREATE2(_ime_f, _dbf_struct)
 
-CREATE_INDEX("ID",  "id", ime_f)  
-CREATE_INDEX("NAZ", "naz", ime_f)
+CREATE_INDEX("ID",  "id", _ime_f)  
+CREATE_INDEX("NAZ", "naz", _ime_f)
 
+_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
+if _i == 0
+  AADD(gaDBFs, { 100,  UPPER(_ime_f),  _ime_f  } )
+endif
 
 my_usex(ime_f)
 

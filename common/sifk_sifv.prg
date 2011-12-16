@@ -343,105 +343,158 @@ cValid:=sifk->KVALID
 PopWa()
 return NIL
 
+// -------------------------------------------------------
+// USifk
+// Postavlja vrijednost u tabel SIFK
+// cDBF ime DBF-a
+// cOznaka oznaka xxxx
+// cIdSif  Id u sifrarniku npr. 2MON0001
+// xValue  vrijednost (moze biti tipa C,N,D)
+//
+//  veza: 1
+//	USifK("PARTN", "ROKP", temp->idpartner, temp->rokpl)
+//	USifK("PARTN", "PORB", temp->idpartner, temp->porbr)
 
-/*!
- *\fn USifk
- *\brief Postavlja vrijednost u tabel SIFK
- *\note Pretpostavke: Otvorene tabele SIFK, SIFV
- *
- *\param cDBF ime DBF-a
- *\param cOznaka oznaka xxxx
- *\param cIdSif  Id u sifrarniku npr. 2MON0001
- *\param xValue  vrijednost (moze biti tipa C,N,D)
- *
- */
+//  veza: N
+//  USifK( "PARTN", "BANK", cPartn, "1400000000001,131111111111112" )
+//  iz ovoga se vidi da je "," nedozvoljen znak u ID-u
+// ------------------------------------------------------------------
+
 function USifk(cDBF, cOznaka, cIdSif, xValue)
-
+local _i
 local ntrec, numtok
 private cPom:=""
 
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
+SELECT F_SIFV
+if !used()
+   O_SIFV
+endif
+
+SELECT F_SIFK
+if !used()
+     O_SIFK
+endif
+
+cDBF := padr(cDBF, 8)
+cOznaka:=padr(cOznaka, 4)
 
 PushWa()
 
 select sifk
 set order to tag "ID2"
-seek cDBF+cOznaka
+seek cDBF + cOznaka
 // karakteristika ovo postoji u tabeli SIFK
 
-// ADRES.DBF
-if len(cIdSif) > 15   
-  cIdSif:=left(cIdSif,15)
+// ADRES.DBF ?
+if LEN(cIdSif) > 15   
+  cIdSif := LEFT(cIdSif, 15)
 endif
 
-if found()
-
-if sifk->Veza="N" 
-// veza 1->N posebno se tretira !!
-
-  select sifv
-  seek cDBf+cOznaka+cIdSif
-  //izbrisi stare vrijednost !!!
-  do while !eof() .and. ( (id+oznaka+idsif)= (cDBf+cOznaka+cIdSif) )
-     skip
-     ntrec:=recno()
-     skip -1
-     sql_delete()
-     delete
-     go nTrec
-  enddo
-
-  numTok:=numtoken(xValue,",")
-  for i:=1 to numtok
-    append blank
-    replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-	Scatter()
-    xValue_i:=token(xValue,",",i)
-    if sifk->tip=="C"
-        replace naz with xValue_i
-    elseif sifk->tip=="N"
-        replace naz with str(xValue_i,sifk->duzina,sifk->f_decimal)
-    elseif sifk->tip=="D"
-     	replace naz with DTOS(xValue_i)
-    endif
-  next
-
-else
-  // veza 1-1
-  select sifv
-  seek cDBf+cOznaka+cIdSif
-  //do sada nije bilo te vrijednosti
-  if !found()
-    if !empty(ToStr(xValue))
-     append blank
-     replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
-   else    // ne dodaji prazne vrijednosti
-      PopWa()
-      return
-    endif
-  endif
-
- if xValue<>NIL
-
-   Scatter()
-   if sifk->tip=="C"
-     replace naz with xValue
-   elseif sifk->tip=="N"
-     replace naz with str(xValue,sifk->duzina,sifk->f_decimal)
-   elseif sifk->tip=="D"
-     replace naz with DTOS(xValue)
-   endif
-
- endif
-
-endif 
-// veza
+if !FOUND()
+   PopWa()
+   return .f.
 endif  
-// found
 
-PopWa()
+if sifk->veza == "N" 
+   update_sifv_n_relation(cDbf, cOznaka, cIdSif, xValue) 
+else
+   update_sifv_1_relation(cDbf, cOznaka, cIdSif, xValue)
+endif
+
+return .t.
+
+
+// -------------------------------------------------------------------
+// -------------------------------------------------------------------
+static function update_sifv_n_relation(cDbf, cOznaka, cIdSif, xValue) 
+local _i, _numtok
+
+// veza 1->N posebno se tretira !!
+SELECT sifv
+
+brisi_sifv_item(cDbf, cOznaka, cIdSif)
+
+_numtok := NUMTOKEN(xValue, ",")
+
+for _i := 1 to _numtok
+
+    APPEND BLANK
+    replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
+
+	Scatter()
+    xValue_i := TOKEN(xValue, "," , _i)
+    replace_sifv_naz(xValue_i)
+
+next
+ 
 return
+
+// -------------------------------------------------------------------
+// -------------------------------------------------------------------
+static function update_sifv_1_relation(cDbf, cOznaka, cIdSif, xValue)
+
+if xValue == NIL
+  return .f.
+endif
+
+// veza 1-1
+SELECT  sifv
+SEEK cDBf + cOznaka + cIdSif
+
+// do sada nije bilo te vrijednosti
+if !FOUND()
+     if !EMPTY( ToStr(xValue) )
+           APPEND BLANK
+           replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
+     else    
+           // ne dodaji prazne vrijednosti
+           PopWa()
+           return .t.
+     endif
+endif
+
+Scatter()
+replace_sifv_naz(xValue)
+
+return .t.
+
+
+// -----------------------------------------------------
+// -----------------------------------------------------
+static function brisi_sifv_item(cDbf, cOznaka, cIdSif)
+local _rec
+SELECT sifv
+seek cDBf + cOznaka + cIdSif
+ 
+//izbrisi stare vrijednost !!!
+do while !eof() .and. ( (field->id + field->oznaka + field->idsif) == (cDBf + cOznaka + cIdSif) )
+     skip
+     _rec:=recno()
+     skip -1
+     delete
+     go _rec
+enddo
+
+return
+
+// ----------------------------------------
+// ----------------------------------------
+static function replace_sifv_naz(xValue_i)
+do case 
+
+   CASE sifk->tip=="C"
+        replace naz with xValue_i
+   CASE sifk->tip=="N"
+        replace naz with str(xValue_i, sifk->duzina, sifk->f_decimal)
+   CASE sifk->tip=="D"
+     	replace naz with DTOS(xValue_i)
+   OTHERWISE
+        return .f.
+end case
+return .t.
+
+
+
 
 
 /*!

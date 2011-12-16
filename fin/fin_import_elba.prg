@@ -813,7 +813,7 @@ if RIGHT( cNewBank, 1 ) <> ","
 	cNewBank += ","
 endif
 
-// dodaj konaèno novu banku...
+// dodaj konacno novu banku...
 cNewBank += cBank
 
 // sve to ubaci u SIFV

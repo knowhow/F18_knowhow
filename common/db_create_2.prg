@@ -251,12 +251,13 @@ if !file(f18_ime_dbf("sifk"))
    my_use("sifk")
    close all
 endif
+
 CREATE_INDEX("ID", "id+SORT+naz",  "sifk")
 CREATE_INDEX("ID2", "id+oznaka", "sifk")
 CREATE_INDEX("NAZ", "naz", "sifk")
 
 
-if !file(f18_ime_dbf("sifv.dbf"))  // sifrarnici - vrijednosti karakteristika
+if !file(f18_ime_dbf("sifv.dbf"))  
    aDbf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
    AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
@@ -273,9 +274,9 @@ if !file(f18_ime_dbf("sifv.dbf"))  // sifrarnici - vrijednosti karakteristika
    my_use("sifv")
    close all
 endif
-CREATE_INDEX("ID"      , "id+oznaka+IdSif+Naz", "sifv")
-CREATE_INDEX("IDIDSIF" , "id+IdSif", "sifv")
-CREATE_INDEX("NAZ"     , "id+oznaka+naz", "sifv")
+CREATE_INDEX("ID"      , "id + oznaka + idsif + naz", "sifv")
+CREATE_INDEX("IDIDSIF" , "id + idsif",            "sifv")
+CREATE_INDEX("NAZ"     , "id + oznaka + naz",       "sifv")
 
 
 // TNAL

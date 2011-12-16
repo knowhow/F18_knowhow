@@ -10,5 +10,6 @@ epdv/*.prg
 ld/*.prg 
 os/*.prg 
 pos/*.prg 
+mat/*.prg 
 common/*.prg
 test/*.prg

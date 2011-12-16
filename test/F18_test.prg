@@ -12,6 +12,8 @@ harbour_base()
 
 modstru_test()
 
+sifk_sifv_test()
+
 TEST_END()
 
 ? "kraj"

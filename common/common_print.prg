@@ -147,122 +147,88 @@ return ""
 // pic footer
 // ----------------------------------------
 function gpPicF()
-Setpxlat()
 qqout("#%PIC_F#")
-konvtable(.t.)
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpCOND()
-Setpxlat()
 qqout(gpCOND)
-konvtable(iif(gPrinter="R",.t.,NIL))
 
 return ""
 
 // ----------------------------------------
 // ---------------------------------------
 function gpCOND2()
-Setpxlat()
 qqout(gpCOND2)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 // ----------------------------------------
 // ---------------------------------------
 function gp10CPI()
-Setpxlat()
 qqout(gP10CPI)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 // ----------------------------------------
 // ---------------------------------------
 function gp12CPI()
-Setpxlat()
 qqout(gP12CPI)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 // ----------------------------------------
 // ---------------------------------------
 function gpB_ON()
-
-Setpxlat()
 qqout(gPB_ON)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpB_OFF()
-
-Setpxlat()
 qqout(gPB_OFF)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpU_ON()
-
-Setpxlat()
 qqout(gPU_ON)
-konvtable( iif(gPrinter="R",.t.,NIL) )
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpU_OFF()
-
-Setpxlat()
 qqout(gPU_OFF)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpI_ON()
-
-Setpxlat()
 qqout(gPI_ON)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpI_OFF()
-
-Setpxlat()
 qqout(gPI_OFF)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpReset()
-
-Setpxlat()
 qqout(gPReset)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
 // ----------------------------------------
 // ---------------------------------------
 function gpNR()
-
-Setpxlat()
 qout()
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
@@ -270,10 +236,8 @@ return ""
 // ---------------------------------------
 function gPFF()
 
-Setpxlat()
 qqout( hb_eol() + gPFF)
 setprc(0,0)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
@@ -281,9 +245,7 @@ return ""
 // ---------------------------------------
 function gpO_Port()
 
-Setpxlat()
 qqout(gPO_Port)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
@@ -291,9 +253,7 @@ return ""
 // ---------------------------------------
 function gpO_Land()
 
-Setpxlat()
 qqout(gPO_Land)
-konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 

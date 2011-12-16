@@ -72,6 +72,7 @@ SetgaSDbfs()
 set_global_vars_0()
 set_a_dbfs()
 
+PtxtSekvence()
 
 __my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }
 

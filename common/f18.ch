@@ -9,7 +9,13 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define F18_DEFINED
+
+#define F18_F18_DEFINED
+
+#define INDEXEXT  "cdx"
+#define DBFEXT    "dbf"
+#define MEMOEXT   "fpt"
+#define RDDENGINE "DBFCDX"
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
 #define SEMAPHORE_LOCK_RETRY_NUM 3
@@ -23,5 +29,3 @@
       #include "f18_test.ch"
   #endif
 #endif
-
-

@@ -15,7 +15,6 @@ function usex(cTable)
 return my_use(cTable)
 
 
-
 // --------------------------------------------------
 // kreira direktorij ako ne postoji
 // --------------------------------------------------

@@ -9,6 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "fmk.ch"
+
 function delete_with_rlock()
 
 if rlock()
@@ -30,7 +32,6 @@ if FILE(tbl_name)
    endif
 endif
 
-altd()
 _tmp := STRTRAN(tbl_name, DBFEXT, INDEXEXT)
 if FILE(_tmp)
    if FERASE(_tmp) != 0

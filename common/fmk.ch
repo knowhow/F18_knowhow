@@ -9,6 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#define FMK_DEFINED
+#define F18_DEFINED
 
 #include "o_f18.ch"
 #include "f_fmk.ch"
@@ -16,11 +18,9 @@
 #include "box.ch"
 #include "dbedit.ch"
 
-#ifndef F18_DEFINED
+#ifndef F18_F18_DEFINED
   #include "f18.ch"
 #endif
-
-#define FMK_DEFINED
 
 #define EXEPATH   my_home_root()
 #define SIFPATH   my_home()
@@ -195,11 +195,6 @@
 
 #DEFINE INDEXEXTENS "cdx"
 #DEFINE  MEMOEXTENS  "fpt"
-
-#define INDEXEXT "cdx"
-#define DBFEXT   "dbf"
-#define MEMOEXT  "fpt"
-#define RDDENGINE "DBFCDX"
 
 #DEFINE DRVPATH ":\"
 

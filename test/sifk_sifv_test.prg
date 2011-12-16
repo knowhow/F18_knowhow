@@ -15,7 +15,7 @@ function sifk_sifv_test()
 local _ime_f := "tsifv_k"
 local _dbf_struct := {}
 local _i, _rec
-local _id_sif, _karakteristika, _karakteristika_2
+local _id_sif, _karakteristika, _karakterirstika_n
 local _header
 
 _i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
@@ -48,8 +48,8 @@ replace naz with "naz 02"
 replace dest with "dest 02"
 
 _id_sif := "tsifv_k"
-_karakteristika := "k1"
-_karakteristika_2 := "k2"
+_karakteristika := "ka1"
+_karakteristika_n := "kaN"
 
 O_SIFK
 SET ORDER TO TAG "ID2"
@@ -57,8 +57,10 @@ SEEK _id_sif + _karakteristika
 
 TEST_LINE( LEN(_id_sif) <= 8 .and. LEN(_karakteristika) < 4,  .t.)
 
-append_sifk(_id_sif, _karakteristika)
-append_sifk(_id_sif, _karakteristika_2, {"id", "oznaka"} , { |x| "ID=" + _sql_quote(x["id"]) + "and OZNAKA=" + _sql_quote(x["oznaka"]) })
+append_sifk(_id_sif, _karakteristika, "1")
+append_sifk(_id_sif, _karakteristika_n, "N")
+
+//,  {"id", "oznaka"} , { |x| "ID=" + _sql_quote(x["id"]) + "and OZNAKA=" + _sql_quote(x["oznaka"]) })
 
 
 SELECT F_SIFK
@@ -69,8 +71,8 @@ SET ORDER TO TAG "ID2"
 seek padr(_id_sif, 8) + PADR(_karakteristika, 4)
 TEST_LINE( field->id + field->oznaka, padr(_id_sif, 8) + PADR(_karakteristika, 4)) 
 
-seek padr(_id_sif, 8) + PADR(_karakteristika_2, 4)
-TEST_LINE( field->id + field->oznaka, padr(_id_sif, 8) + PADR(_karakteristika_2, 4)) 
+seek padr(_id_sif, 8) + PADR(_karakterirstika_n, 4)
+TEST_LINE( field->id + field->oznaka, padr(_id_sif, 8) + PADR(_karakterirstika_n, 4)) 
 
 USE
 
@@ -87,19 +89,32 @@ seek padr(_id_sif, 8) + PADR(_karakteristika, 4)
 _header := "NAKON FERASE: "
 TEST_LINE( _header + field->id + field->oznaka, _header + padr(_id_sif, 8) + PADR(_karakteristika, 4)) 
 
-seek padr(_id_sif, 8) + PADR(_karakteristika_2, 4)
+seek padr(_id_sif, 8) + PADR(_karakterirstika_n, 4)
 _header := "NAKON FERASE: "
-TEST_LINE( _header + field->id + field->oznaka, _header + padr(_id_sif, 8) + PADR(_karakteristika_2, 4)) 
+TEST_LINE( _header + field->id + field->oznaka, _header + padr(_id_sif, 8) + PADR(_karakterirstika_n, 4)) 
 
 USE
 close all
 
-TEST_LINE( 0 == 0, .t.)
+
+TEST_LINE(USifK(_id_sif, _karakteristika, "01", "K1VAL"), .t.)
+// trebao bi da zapamti samo zadnju sifru posto je karakteristika sa vezom 1 
+TEST_LINE(USifK(_id_sif, _karakteristika, "01", "K2VAL"), .t.)
+
+TEST_LINE(USifK(_id_sif, _karakterirstika_n, "01", "K2VAL1,K2VAL2"), .t.)
+// trebao bi da nastikla
+TEST_LINE(USifK(_id_sif, _karakterirstika_n, "01", "K2VAL3,K2VAL4"), .t.)
+
+
+TEST_LINE(IzSifk(_id_sif, _karakteristika, "01"), "")
+TEST_LINE(IzSifk(_id_sif, _karakterirstika_n, "01"), "")
+
+
 return
 
 // -------------------------------------------
 // -------------------------------------------
-static function append_sifk(_id_sif, _karakteristika, fields, where_block)
+static function append_sifk(_id_sif, _karakteristika, veza, fields, where_block)
 
 SELECT sifk
 set order to tag "ID2"
@@ -110,8 +125,8 @@ if !FOUND()
     _rec := dbf_get_rec()
     _rec["id"] := _id_sif
     _rec["oznaka"] := _karakteristika
-    _rec["naz"] := "karakteristika 1"
-    _rec["veza"] := "N"
+    _rec["naz"] := _karakteristika + " naziv "
+    _rec["veza"] := veza
     // sirina karakteristike 1 je 15 znakova 
     _rec["duzina"] := 15
     _rec["tip"] := "C"

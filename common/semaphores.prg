@@ -376,7 +376,11 @@ _qry := "UPDATE " + _tbl + ;
               " WHERE user_code <> " + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
-return _ret
+if VALTYPE(_ret) == "O"
+  return .t.
+else
+  return .f.
+endif
 
 
 //---------------------------------------

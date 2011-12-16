@@ -19,6 +19,35 @@ else
    return .f.
 endif
 
+function ferase_dbf(tbl_name)
+local _tmp
+
+tbl_name := f18_ime_dbf(tbl_name)
+
+if FILE(tbl_name)
+   if FERASE(tbl_name) != 0
+      return .f.
+   endif
+endif
+
+altd()
+_tmp := STRTRAN(tbl_name, DBFEXT, INDEXEXT)
+if FILE(_tmp)
+   if FERASE(_tmp) != 0
+        return .f.
+   endif
+endif
+
+_tmp := STRTRAN(tbl_name, DBFEXT, MEMOEXT)
+if FILE(_tmp)
+   if FERASE(_tmp) != 0
+        return .f.
+   endif
+endif
+
+return .t.
+
+
 // ------------------------------------
 // set_global_vars_from_dbf("w")
 // geerise public vars wId, wNaz ..

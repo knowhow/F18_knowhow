@@ -210,75 +210,7 @@ if !file(f18_ime_dbf('tokval.dbf'))
 endif
 CREATE_INDEX("ID","id", "tokval")
 
-// SIFK
-if !file(f18_ime_dbf("sifk"))
-   aDbf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-   AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-   AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'Veza'                , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'f_unique'            , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'Izvor'               , 'C' ,  15 ,  0 })
-   AADD(aDBf,{ 'Uslov'               , 'C' , 100 ,  0 })
-   AADD(aDBf,{ 'Duzina'              , 'N' ,   2 ,  0 })
-   AADD(aDBf,{ 'f_decimal'           , 'N' ,   1 ,  0 })
-   AADD(aDBf,{ 'Tip'                 , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'KVALID'              , 'C' , 100 ,  0 })
-   AADD(aDBf,{ 'KWHEN'               , 'C' , 100 ,  0 })
-   AADD(aDBf,{ 'UBROWSU'             , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'EDKOLONA'            , 'N' ,   2 ,  0 })
-   AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'K2'                  , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'K3'                  , 'C' ,   3 ,  0 })
-   AADD(aDBf,{ 'K4'                  , 'C' ,   4 ,  0 })
-
-   // Primjer:
-   // ID   = ROBA
-   // NAZ  = Barkod
-   // Oznaka = BARK
-   // VEZA  = N ( 1 - moze biti samo jedna karakteristika, N - n karakteristika)
-   // F_UNIQUE = D - radi se o jedinstvenom broju
-   // Izvor =  ( sifrarnik  koji sadrzi moguce vrijednosti)
-   // Uslov =  ( za koje grupe artikala ova karakteristika je interesantna
-   // DUZINA = 13
-   // Tip = C ( N numericka, C - karakter, D datum )
-   // Valid = "ImeFje()"
-   // validacija  mogu biti vrijednosti A,B,C,D
-   //             aktiviraj funkciju ImeFje()
-   dbcreate2('SIFK', aDbf)
-   reset_semaphore_version("sifk")
-   my_use("sifk")
-   close all
-endif
-
-CREATE_INDEX("ID", "id + sort + naz", "sifk")
-CREATE_INDEX("ID2", "id + oznaka"   , "sifk")
-CREATE_INDEX("NAZ", "naz"           , "sifk")
-
-
-if !file(f18_ime_dbf("sifv.dbf"))  
-   aDbf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-   AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'IdSif'               , 'C' ,  15 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
-
-   // Primjer:
-   // ID  = ROBA
-   // OZNAKA = BARK
-   // IDSIF  = 2MON0005
-   // NAZ = 02030303030303
-
-   dbcreate2('sifv', aDbf)
-   reset_semaphore_version("sifv")
-   my_use("sifv")
-   close all
-endif
-
-CREATE_INDEX("ID"      , "id + oznaka + idsif + naz", "sifv")
-CREATE_INDEX("IDIDSIF" , "id + idsif",            "sifv")
-CREATE_INDEX("NAZ"     , "id + oznaka + naz",       "sifv")
+cre_sifk_sifv()
 
 
 // TNAL
@@ -390,6 +322,83 @@ cre_relation()
 cre_fmkrules()
 
 return
+
+// ----------------------------------------------------
+// ----------------------------------------------------
+function cre_sifk_sifv()
+
+// SIFK
+if !file(f18_ime_dbf("sifk"))
+   aDbf:={}
+   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
+   AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
+   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
+   AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
+   AADD(aDBf,{ 'Veza'                , 'C' ,   1 ,  0 })
+   AADD(aDBf,{ 'f_unique'            , 'C' ,   1 ,  0 })
+   AADD(aDBf,{ 'Izvor'               , 'C' ,  15 ,  0 })
+   AADD(aDBf,{ 'Uslov'               , 'C' , 100 ,  0 })
+   AADD(aDBf,{ 'Duzina'              , 'N' ,   2 ,  0 })
+   AADD(aDBf,{ 'f_decimal'           , 'N' ,   1 ,  0 })
+   AADD(aDBf,{ 'Tip'                 , 'C' ,   1 ,  0 })
+   AADD(aDBf,{ 'KVALID'              , 'C' , 100 ,  0 })
+   AADD(aDBf,{ 'KWHEN'               , 'C' , 100 ,  0 })
+   AADD(aDBf,{ 'UBROWSU'             , 'C' ,   1 ,  0 })
+   AADD(aDBf,{ 'EDKOLONA'            , 'N' ,   2 ,  0 })
+   AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
+   AADD(aDBf,{ 'K2'                  , 'C' ,   2 ,  0 })
+   AADD(aDBf,{ 'K3'                  , 'C' ,   3 ,  0 })
+   AADD(aDBf,{ 'K4'                  , 'C' ,   4 ,  0 })
+
+   // Primjer:
+   // ID   = ROBA
+   // NAZ  = Barkod
+   // Oznaka = BARK
+   // VEZA  = N ( 1 - moze biti samo jedna karakteristika, N - n karakteristika)
+   // F_UNIQUE = D - radi se o jedinstvenom broju
+   // Izvor =  ( sifrarnik  koji sadrzi moguce vrijednosti)
+   // Uslov =  ( za koje grupe artikala ova karakteristika je interesantna
+   // DUZINA = 13
+   // Tip = C ( N numericka, C - karakter, D datum )
+   // Valid = "ImeFje()"
+   // validacija  mogu biti vrijednosti A,B,C,D
+   //             aktiviraj funkciju ImeFje()
+   dbcreate2('SIFK', aDbf)
+   reset_semaphore_version("sifk")
+   my_use("sifk")
+   close all
+endif
+
+CREATE_INDEX("ID", "id + sort + naz", "sifk")
+CREATE_INDEX("ID2", "id + oznaka"   , "sifk")
+CREATE_INDEX("NAZ", "naz"           , "sifk")
+
+
+if !file(f18_ime_dbf("sifv.dbf"))  
+   aDbf:={}
+   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
+   AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
+   AADD(aDBf,{ 'IdSif'               , 'C' ,  15 ,  0 })
+   AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
+
+   // Primjer:
+   // ID  = ROBA
+   // OZNAKA = BARK
+   // IDSIF  = 2MON0005
+   // NAZ = 02030303030303
+
+   dbcreate2('sifv', aDbf)
+   reset_semaphore_version("sifv")
+   my_use("sifv")
+   close all
+endif
+
+CREATE_INDEX("ID"      , "id + oznaka + idsif + naz", "sifv")
+CREATE_INDEX("IDIDSIF" , "id + idsif",            "sifv")
+CREATE_INDEX("NAZ"     , "id + oznaka + naz",       "sifv")
+
+return .t.
+
 
 // --------------------------------------------
 // provjerava da li polje postoji, samo za ops

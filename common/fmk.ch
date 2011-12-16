@@ -16,12 +16,11 @@
 #include "box.ch"
 #include "dbedit.ch"
 
-#define FMK_DEFINED
-
 #ifndef F18_DEFINED
   #include "f18.ch"
 #endif
 
+#define FMK_DEFINED
 
 #define EXEPATH   my_home_root()
 #define SIFPATH   my_home()

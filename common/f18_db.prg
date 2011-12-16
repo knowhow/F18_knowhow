@@ -212,10 +212,10 @@ _l_table := LOWER(ALIAS())
 // proadji naziv tabele prema aliasu
 _pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(_l_table) } )
 _table := gaDBFs[ _pos, 3 ]
- 
+
 if id_fields == NIL
    if LEN(gaDBFs[_pos]) > 5
-       id_fields := gaDBFs[6]
+       id_fields := gaDBFs[_pos, 6]
    else
        id_fields := { "id" }
    endif
@@ -223,7 +223,7 @@ endif
 
 if where_block == NIL
    if LEN(gaDBFs[_pos]) > 6
-      where_block := gaDBFs[7]
+      where_block := gaDBFs[_pos, 7]
    else
       where_block := { |x| "ID=" + _sql_quote(x['id']) }
    endif
@@ -237,7 +237,7 @@ sql_table_update(_table, "BEGIN")
 
 // ostala polja su nevazna za brisanje
 
-if !sql_table_update(_table, "del", nil, EVAL(sql_block, values))
+if !sql_table_update(_table, "del", nil, EVAL(where_block, values))
    sql_table_update(_table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - SQL del / 1")
    return .f.
@@ -249,7 +249,7 @@ if !sql_table_update(_table, "ins", values)
    return .f.
 endif
 
-if !update_semaphore_version(_table, .t.)
+if update_semaphore_version(_table, .t.) < 0
    sql_table_update(_table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - update_semaphore_version / 1")
    return .f.
@@ -258,8 +258,8 @@ endif
 _full_id_dbf := ""
 _full_id_mem := ""
 _changed_id  := .f.
-_values_dbf  := hbhash()
-for each _field  in id_fields:Keys
+_values_dbf  := hb_hash()
+for each _field  in id_fields
     _values_dbf[_field] := EVAL(FIELDBLOCK(_field))
     if _values_dbf[_field] != values[_field]
         _changed_id := .t.
@@ -271,7 +271,7 @@ next
 // razlike izmedju dbf-a i values postoje
 if _changed_id
     AADD(_ids, _full_id_dbf)
-    if !sql_table_update(_table, "del", NIL, EVAL(sql_block, _values_dbf)) 
+    if !sql_table_update(_table, "del", NIL, EVAL(where_block, _values_dbf)) 
        sql_table_update(_table, "ROLLBACK")
        MsgBeep("mi imamos mnogos problemos - del / 2")
        return .f.

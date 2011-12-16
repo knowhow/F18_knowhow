@@ -32,12 +32,12 @@ Box(, 6, 65, .f.)
 	nTekX := m_x
 	nTekY := m_y
 	
-	@ m_x+1,m_y+2 SAY PADL("Polje iz kojeg kopiramo (polje 1)", 40) GET cFldFrom VALID !EMPTY(cFldFrom) .and. val_fld(cFldFrom)
-	@ m_x+2,m_y+2 SAY PADL("SifK polje u koje kopiramo (polje 2)", 40) GET cFldTo VALID g_sk_flist(@cFldTo)
+	@ m_x+1, m_y+2 SAY PADL("Polje iz kojeg kopiramo (polje 1)", 40) GET cFldFrom VALID !EMPTY(cFldFrom) .and. val_fld(cFldFrom)
+	@ m_x+2, m_y+2 SAY PADL("SifK polje u koje kopiramo (polje 2)", 40) GET cFldTo VALID g_sk_flist(@cFldTo)
 	
-	@ m_x+4,m_y+2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
+	@ m_x+4, m_y+2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
 	
-	@ m_x+6,m_y+2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
+	@ m_x+6, m_y+2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
 	read
  
 BoxC()
@@ -396,9 +396,13 @@ if !FOUND()
 endif  
 
 if sifk->veza == "N" 
-   update_sifv_n_relation(cDbf, cOznaka, cIdSif, xValue) 
+   if !update_sifv_n_relation(cDbf, cOznaka, cIdSif, xValue) 
+      return .f.
+   endif
 else
-   update_sifv_1_relation(cDbf, cOznaka, cIdSif, xValue)
+   if !update_sifv_1_relation(cDbf, cOznaka, cIdSif, xValue)
+      return .f.
+   endif
 endif
 
 return .t.
@@ -427,7 +431,7 @@ for _i := 1 to _numtok
 
 next
  
-return
+return .t.
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
@@ -446,6 +450,7 @@ if !FOUND()
      if !EMPTY( ToStr(xValue) )
            APPEND BLANK
            replace Id with cDbf, oznaka with cOznaka, IdSif with cIdSif
+           return .t.
      else    
            // ne dodaji prazne vrijednosti
            PopWa()

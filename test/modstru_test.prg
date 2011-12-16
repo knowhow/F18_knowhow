@@ -18,6 +18,12 @@ local _ime_f := "test_f18"
 local _dbf_struct := {}
 local _i
 
+_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
+if _i == 0
+  AADD(gaDBFs, { 100,  UPPER(_ime_f),  _ime_f  } )
+endif
+
+
 AADD(_dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
 AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
        
@@ -26,12 +32,7 @@ DBCREATE2(_ime_f, _dbf_struct)
 CREATE_INDEX("ID",  "id", _ime_f)  
 CREATE_INDEX("NAZ", "naz", _ime_f)
 
-_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
-if _i == 0
-  AADD(gaDBFs, { 100,  UPPER(_ime_f),  _ime_f  } )
-endif
-
-my_usex(ime_f)
+my_usex(_ime_f)
 
 for _i := 1 to 50
  APPEND BLANK

@@ -1136,10 +1136,8 @@ if FOUND()
 	endif
 
     if lFill == .t.
-  	  	// promjene u sql bazi
-		scatter()
-		_vars := f18_scatter_global_vars()
-		f18_gather(_vars)
+		_vars := dbf_get_rec()
+		update_rec_server_and_dbf(_vars)
 	endif
 
 endif

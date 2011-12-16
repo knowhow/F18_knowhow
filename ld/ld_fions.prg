@@ -677,34 +677,36 @@ return nRezult
 
 
 function FillBrBod()
-*{
+local _vars
 if (radn->brbod<>_brbod)
+
 	if Pitanje(, Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
      		select radn
      		replace brbod with _brbod
- 
-			scatter()
-			_vals := f18_scatter_global_vars()
-			f18_gather( _vals ) 
+
+            _vars := get_dbf_global_memvars()
+            update_rec_server_and_dbf(_vars)
 
     		select ld
   	endif
+
 endif
 return .t.
-*}
 
 
+function FillKMinRad(k_min_rad)
+local _fields
 
-function FillKMinRad()
-*{
-if radn->kminrad<>_kminrad
-	if Pitanje(,Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
-     		select radn
-     		replace kminrad with _kminrad
+if radn->kminrad <> k_min_rad
+	if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
 
-			scatter()
-			_vals := f18_scatter_global_vars()
-			f18_gather( _vals ) 
+            select radn
+            _fields := dbf_get_rec()     
+            _fields["kminrad"] := k_min_rad
+
+         	select radn
+
+            update_rec_server_and_dbf(_fields)
 
      		select ld
   	endif
@@ -983,7 +985,7 @@ return
 
 
 function FillVPosla()
-*{
+
 if radn->idvposla<>_idvposla
 	if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
 
@@ -999,7 +1001,7 @@ if radn->idvposla<>_idvposla
   	endif
 endif
 return .t.
-*}
+
 
 
 // vraca naziv radnika

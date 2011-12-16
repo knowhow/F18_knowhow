@@ -252,9 +252,9 @@ if !file(f18_ime_dbf("sifk"))
    close all
 endif
 
-CREATE_INDEX("ID", "id+SORT+naz",  "sifk")
-CREATE_INDEX("ID2", "id+oznaka", "sifk")
-CREATE_INDEX("NAZ", "naz", "sifk")
+CREATE_INDEX("ID", "id + sort + naz", "sifk")
+CREATE_INDEX("ID2", "id + oznaka"   , "sifk")
+CREATE_INDEX("NAZ", "naz"           , "sifk")
 
 
 if !file(f18_ime_dbf("sifv.dbf"))  
@@ -263,6 +263,7 @@ if !file(f18_ime_dbf("sifv.dbf"))
    AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
    AADD(aDBf,{ 'IdSif'               , 'C' ,  15 ,  0 })
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
+
    // Primjer:
    // ID  = ROBA
    // OZNAKA = BARK
@@ -274,6 +275,7 @@ if !file(f18_ime_dbf("sifv.dbf"))
    my_use("sifv")
    close all
 endif
+
 CREATE_INDEX("ID"      , "id + oznaka + idsif + naz", "sifv")
 CREATE_INDEX("IDIDSIF" , "id + idsif",            "sifv")
 CREATE_INDEX("NAZ"     , "id + oznaka + naz",       "sifv")

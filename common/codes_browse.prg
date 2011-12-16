@@ -729,7 +729,8 @@ do while .t.
                 else
                     if left(ImeKol[i,3],6) != "SIFK->"
 
-                        cPom:="w"+ImeKol[i,3]    //npr WVPC2
+                        cPom:="w"+ImeKol[i,3]    
+                        // npr WVPC2
                         // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
                         // varijablu karakteristike("ROBA","V2")
 
@@ -820,7 +821,6 @@ do while .t.
 
                             nGet++
                 else
-                        // Empty(cpom)  - samo odstampaj
                         
                         nRed:=1
                         nKolona:=1
@@ -878,15 +878,17 @@ do while .t.
             exit
         endif
 
-        _vars := f18_scatter_global_vars("w")
-        f18_gather(_vars)
+        _vars := get_dbf_global_memvars("w")
             
-        //f18_gater radi sav posao GatherR("w")
+        if IzFmkIni('Svi','SifAuto','N')=='D'
+              _vars["id"] := NoviID_A()
+         endif
 
-        // TODO !!! 
-        GatherSifk("w" , Ch==K_CTRL_N)
+        update_rec_server_and_dbf(_vars)
+        update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N)
 
-        Scatter("w")
+        set_global_vars_from_dbf("w")
+
 
         if lastkey()==K_PGUP
            skip -1
@@ -934,16 +936,14 @@ if lNovi
     endif
 endif
 
-_vars := f18_scatter_global_vars("w")
-if ! f18_gather(_vars)
-    // brisi appendovani zapis
-    delete
+_vars := get_dbf_global_memvars("w")
+if !update_rec_server_and_dbf(_vars)
+   delete_with_rlock()
+else
+   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi)
 endif
 
-// TODO !! 
-GatherSifk("w", lNovi )
-
-Scatter("w")
+set_global_vars_from_dbf("w")
 
 if _LOG_PROMJENE == .t.
     // daj nove vrijednosti
@@ -1102,11 +1102,10 @@ _struct := DBSTRUCT()
 
 SkratiAZaD(@_struct)
 
-for _i:=1 to LEN(_struct)
+for _i := 1 to LEN(_struct)
      cImeP := _struct[_i, 1]
      cVar:="w" + cImeP
      &cVar := &cImeP
-
 next
 
 return
@@ -1134,58 +1133,6 @@ Izbor:=1
 Menu_Sc("bsif")
 
 return 0
-
-/*!
- @function    NoviID_A
- @abstract    Novi ID - automatski
- @discussion  Za one koji ne pocinju iz pocetak, ID-ovi su dosadasnje sifre
-              Program (radi prometnih datoteka) ove sifre ne smije dirati)
-              Zato ce se nove sifre davati po kljucu Chr(246)+Chr(246) + sekvencijalni dio
-*/
-function NoviID_A()
-
-local cPom , xRet
-
-PushWA()
-
-nCount:=1
-do while .t.
-
-set filter to 
-// pocisti filter
-set order to tag "ID"
-go bottom
-if id>"99"
-   seek chr(246)+chr(246)+chr(246) 
-   // chr(246) pokusaj
-   skip -1
-   if id < chr(246) + chr(246) + "9"
-      cPom:=   str( val(substr(id,4))+nCount , len(id)-2 )
-      xRet:= chr(246)+chr(246) + padl(  cPom , len(id)-2 ,"0")
-   endif
-else
-  cPom:= str( val(id) + nCount , len(id) )
-  xRet:= cPom
-endif
-
-++nCount
-SEEK xRet
-if !found()
-  exit
-endif
-
-if nCount>100
-  MsgBeep("Ne mogu da dodijelim sifru automatski ????")
-  xRet:=""
-  exit
-endif
-
-enddo
-
-PopWa()
-
-return xRet
-
 
 
 // -------------------------------------------------------------------

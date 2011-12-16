@@ -59,23 +59,23 @@ endif
 AADD(Imekol,{PADR("Telefon",12),{|| TELEFON},"telefon"})
 
 if partn->(fieldpos("FAX"))<>0
-	AADD(ImeKol,{padr("Fax",12 ),{|| fax},"fax"})
+	AADD(ImeKol,{padr("Fax", 12 ),{|| fax},"fax"})
 endif
 
 if partn->(fieldpos("MOBTEL"))<>0
-	AADD(ImeKol,{padr("MobTel",20 ),{|| mobtel},"mobtel"})
+	AADD(ImeKol,{padr("MobTel", 20 ),{|| mobtel},"mobtel"})
 endif
 
 if partn->(fieldpos("IDOPS"))<>0 .and. (F_OPS)->(USED())
-	AADD (ImeKol,{padr("Opcina",20 ),{|| idops},"idops",{|| .t.},{||P_Ops(@widops)}})
+	AADD (ImeKol,{padr("Opcina", 20 ),{|| idops},"idops",{|| .t.},{||P_Ops(@widops)}})
 endif
 
 if partn->(fieldpos("BRLK"))<>0
-	AADD(ImeKol,{padr("Broj LK",20 ),{|| mobtel},"brlk"})
+	AADD(ImeKol,{padr("Broj LK",20 ), {|| mobtel},"brlk"})
 endif
 
 if partn->(fieldpos("JMBG"))<>0
-	AADD(ImeKol,{padr("JMBG",20 ),{|| mobtel},"jmbg"})
+	AADD(ImeKol,{padr("JMBG",20 ), {|| mobtel},"jmbg"})
 endif
 
 if partn->(fieldpos("FIDBR"))<>0
@@ -94,14 +94,16 @@ if !used()
   	O_SIFV
 endif
 
-select sifk
+SELECT SIFK
 set order to tag "ID"
 seek "PARTN"
 
-do while !eof() .and. ID="PARTN"
+do while !eof() .and. ID == "PARTN"
+
+    // dinamicki se dodaju sve karakteristike iz sifk koje se odnose na partnere
 	AADD (ImeKol, {  IzSifKNaz("PARTN",SIFK->Oznaka) })
  	AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + sifk->oznaka + "')) }" ) )
- 	AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
+ 	AADD (ImeKol[Len(ImeKol)], "SIFK->" + SIFK->Oznaka )
  	if sifk->edkolona > 0
    		for ii:=4 to 9
     			AADD( ImeKol[Len(ImeKol)], NIL  )

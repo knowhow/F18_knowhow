@@ -745,31 +745,21 @@ local _rec
 O_SIFK
 set order to tag "ID2"
 seek padr("PARTN", 8) + "BANK"
-if !found()
- if Pitanje(,"U sifk dodati PARTN/BANK  ?","D")=="D"
-    append blank
 
-    _rec := hbhash()
-    _rec["id"] := "PARTN"
-    _rec["oznaka"] := "BANK"
-    _rec["naz"] := "Banke"
-    _rec["veza"] := "N"
-    _rec["duzina"] := 16
-    _rec["tip"] := "C"
-    update_rec_dbf_and_server(_rec, "id=" + _sql_quote(_rec["id"]) + " and oznaka =" + _rec["oznaka"])
-
- endif
+if !found() .and. Pitanje(,"U sifk dodati PARTN/BANK  ?","D") == "D"
+        APPEND BLANK
+        _rec := dbf_get_rec()
+        _rec["id"] := "PARTN"
+        _rec["oznaka"] := "BANK"
+        _rec["naz"] := "Banke"
+        _rec["veza"] := "N"
+        _rec["duzina"] := 16
+        _rec["tip"] := "C"
+        if !update_rec_server_and_dbf(_rec)
+            delete_with_rlock()
+        endif
 endif
 use
-return NIL
-
-/*! \fn OKumul(nArea,cStaza,cIme,nIndexa,cDefault)
- */
-function OKumul(nArea, cStaza, cIme, nIndexa, cDefault)
-
-select (nArea)
- 
-my_use (cIme)
 return NIL
 
 // ------------------------------

@@ -206,12 +206,6 @@ if lSetParams
 	replace kto_dob with cKtoPot
 	replace opis with cOpis
 
-	// upisi u sql
-	//scatter()
-	//_vars := f18_scatter_global_vars()
-	//__where := "dat_obr = " + _sql_quote( _dat_obr )
-	//f18_gather( _vars, __where )
-
 endif
 
 // filter na samo aktivne ugovore
@@ -319,11 +313,6 @@ if Found()
 	replace brdok_od with cFaktOd
 	replace brdok_do with cFaktDo
 endif
-
-// upisi i u sql
-//scatter()
-//_vars := f18_scatter_global_vars()
-//f18_gather(_vars)
 
 BoxC()
 

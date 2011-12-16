@@ -993,3 +993,11 @@ return
 
 
 
+/*! \fn OKumul(nArea,cStaza,cIme,nIndexa,cDefault)
+ */
+function OKumul(nArea, cStaza, cIme, nIndexa, cDefault)
+
+select (nArea)
+ 
+my_use (cIme)
+return NIL

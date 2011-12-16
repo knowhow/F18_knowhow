@@ -79,10 +79,9 @@ seek gFirma
 
 if !found()
 	APPEND BLANK
-    _fields := hbhash()
+    _fields := dbf_get_rec()
     _fields["id"] := gFirma
-
-    update_rec_dbf_and_server(_fields) 
+    update_rec_server_and_dbf(_fields) 
 endif
 
 cNaziv := naz
@@ -99,13 +98,13 @@ endif
 if lNepopunjeno
 	if get_my_firma(@cNaziv, @cIdBroj, @cMjesto, @cAdresa,  @cPtt)
 
-        _fields := hbhash()
-        _fields["naz"] := cNaziv
+        _fields           := dbf_get_rec()
+        _fields["naz"]    := cNaziv
         _fields["mjesto"] := cMjesto
         _fields["adresa"] := cAdresa
-        _fields["ptt"] := cPTT
+        _fields["ptt"]    := cPTT
 
-        update_rec_dbf_and_server(_fields) 
+        update_rec_server_and_dbf(_fields) 
 
 		USifK("PARTN", "REGB", gFirma, cIdBroj)
 	else

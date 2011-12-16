@@ -338,9 +338,9 @@ Box(,21,77)
 	select ld
 	@ m_x+3,col()+2 SAY IF(gBodK=="1", Lokal("Vrijednost boda"), Lokal("Vr.koeficijenta")); @ row(),col()+1 SAY parobr->vrbod  pict "99999.99999"
 	if gMinR=="B"
- 		@ m_x+3,col()+2 SAY Lokal("Minuli rad (bod)") GET _kminrad pict "9999.99" valid FillKMinRad()
+ 		@ m_x + 3, col() + 2 SAY Lokal("Minuli rad (bod)") GET _kminrad pict "9999.99" valid FillKMinRad(_kminrad)
 	else
- 		@ m_x+3,col()+2 SAY Lokal("Koef.minulog rada") GET _kminrad pict "99.99%" valid FillKMinRad()
+ 		@ m_x + 3, col() + 2 SAY Lokal("Koef.minulog rada") GET _kminrad pict "99.99%" valid FillKMinRad(_kminrad)
 	endif
 	if gVarObracun == "2"
 		@ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "9999.99"

@@ -111,12 +111,11 @@ else
 
 	if !empty(idpartner)
       		select partn
-		HSEEK fakt_pripr->idpartner
+		    HSEEK fakt_pripr->idpartner
       		cxFirma   := naz
       		cxMjesto  := mjesto
       		cxAdresa  := adresa
       		cxTelefon := telefon
-      		//cxDomZR   := IzborBanke( IzSifK( "PARTN" , "BANK" , id , .f. ) )
       		cxDomZR   := IspisBankeNar(IzSifK("PARTN","BANK",id,.f.))
       		cxRegBr   := IzSifK( "PARTN" , "REGB" , id , .f. )
       		cxPorBr   := IzSifK( "PARTN" , "PORB" , id , .f. )

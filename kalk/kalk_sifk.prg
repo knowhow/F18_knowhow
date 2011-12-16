@@ -50,12 +50,12 @@ set filter to &cFilt1
 go top
 do while !eof()
   ? idfirma, idvd, brdok, datdok, idroba
-  if cNemojMinuse=="D" .and. (kolicina-GKolicina-GKolicin2)<0
+  if cNemojMinuse=="D" .and. (kolicina - GKolicina - GKolicin2)<0
     skip 1
     loop
   endif
-  if cUvijek=="D" .or. empty(IzSifk("ROBA",cRPolje,kalk->idroba,.f.))
-    USifk("ROBA",cRPolje,kalk->idroba,cSezona)
+  if cUvijek=="D" .or. empty(IzSifk("ROBA",cRPolje, kalk->idroba, .f.))
+    USifk("ROBA", cRPolje, kalk->idroba, cSezona)
   endif
   select kalk
   skip

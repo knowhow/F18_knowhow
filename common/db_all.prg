@@ -43,26 +43,10 @@ static nPreuseLevel:=0
   * \endcode
   *
   */
-  
+ 
 function Scatter(cZn)
-local i,aStruct
-private cImeP,cVar
+return set_global_vars_from_dbf(cZn)
 
-if cZn==nil
-  cZn:="_"
-endif
-aStruct:=DBSTRUCT()
-for i:=1 to len(aStruct)
-cImeP:=aStruct[i,1]
-
-if !("#"+cImeP+"#" $ "#BRISANO#_OID_#_COMMIT_#")
-  cVar:=cZn+cImeP
-  PUBLIC &cVar:=&cImeP
-endif
-
-next
-
-return nil
 
 
 function Gather(cZn)

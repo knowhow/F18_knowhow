@@ -484,7 +484,10 @@ if !empty(cId) .and. fieldpos("BARKOD")<>0
   cIDRoba:=""
   ImauSifV("ROBA","BARK", cId, @cIdRoba)
   if !empty(cIdRoba)
-    select roba; set order to tag "ID"; seek cId  // nasao sam sifru !!
+    select roba
+    set order to tag "ID"
+    seek cId  
+// nasao sam sifru !!
     cId:=cIdRoba
     gOcitBarCod:=.t.
   endif

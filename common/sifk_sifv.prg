@@ -531,6 +531,7 @@ PopWa()
 PopWa()
 return
 
+
 /*
  @function   GatherSifk
  @abstract
@@ -540,26 +541,19 @@ return
  @param lNovi .t. - radi se o novom slogu
 
 */
-function GatherSifk(cTip, lNovi)
-local i
+function update_sifk_na_osnovu_ime_kol_from_global_var(ime_kol, var_prefix, novi)
+local _i
 local _alias
 local _field_b
 
-if lNovi
-  if IzFmkIni('Svi','SifAuto','N')=='D'
-    Scatter()
-    replace ID with NoviID_A()
-  endif
-endif
-
 _alias := ALIAS()
-for i:=1 to len(ImeKol)
-   if left(ImeKol[i,3], 6) == "SIFK->"
-     _field_b := MEMVARBLOCK( cTip + "Sifk_" + substr(ImeKol[i,3], 7))
 
-     if IzSifk( _alias, substr(ImeKol[i,3],7), (_alias)->id) <> NIL
-       // koristi se
-       USifk( _alias, substr(ImeKol[i,3], 7), (_alias)->id, EVAL(_field_b) )
+for _i := 1 to len(ime_kol)
+   if LEFT(ime_kol[i, 3], 6) == "SIFK->"
+     _field_b :=  MEMVARBLOCK( var_prefix + "Sifk_" + SUBSTR(ime_kol[i,3], 7))
+
+     if IzSifk( _alias, SUBSTR(ime_kol[_i, 3], 7), (_alias)->id) <> NIL
+         USifk( _alias, SUBSTR(ImeKol[_i, 3], 7), (_alias)->id, EVAL(_field_b) )
      endif
    endif
 next

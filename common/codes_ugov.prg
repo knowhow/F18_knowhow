@@ -489,18 +489,14 @@ if lNovi
 	append blank
 endif
 
-//Gather()
+_vars := get_dbf_global_memvars()
 
-_vars := f18_scatter_global_vars()
-if ! f18_gather(_vars)
-    // brisi appendovani zapis
-    delete
+if !update_rec_server_and_dbf(_vars)
+   delete_with_rlock()
 else
-
 	if lNovi
 		GO (nRec)
 	endif
-
 endif
 
 return 7
@@ -797,14 +793,14 @@ do case
      READ
     BoxC()
 
-    IF LASTKEY()!=K_ESC
+    IF LASTKEY() != K_ESC
+
       	APPEND BLANK
-      	//Gather()
-		_vars := f18_scatter_global_vars()
-		if ! f18_gather(_vars)
-    		// brisi appendovani zapis
-    		delete
-		endif
+        _vars := get_dbf_global_memvars()
+        if !update_rec_server_and_dbf(_vars)
+                delete_with_rlock()
+        endif
+
       	lTrebaOsvUg:=.t.
     ELSE
       GO (nRec)

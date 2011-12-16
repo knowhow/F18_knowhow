@@ -627,10 +627,10 @@ if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
    if gAutoCjen == "D" .and. Pitanje( , "Staviti Cijenu (" + cPom + ")" + " u sifrarnik ?", "D") == "D"
      select roba
      
-     _vars := hbhash()
+     _vars := dbf_get_rec()
      _vars[cPom] := nNovaVrijednost
 
-     update_rec_dbf_and_server(_vars)
+     update_rec_server_and_dbf(_vars)
 
      select kalk_pripr
    endif

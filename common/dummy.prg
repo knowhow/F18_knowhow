@@ -143,3 +143,15 @@ return
 
 function OL_YIELD()
 return
+
+
+function f18_gather()
+MsgBeep("f18_gather zamijeniti")
+quit
+return
+
+function f18_scatter_global_vars()
+MsgBeep("f18_scatter_global_vars zamijeniti")
+quit
+return
+

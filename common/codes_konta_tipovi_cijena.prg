@@ -25,6 +25,7 @@ Kol := {}
 nTArea := SELECT()
 O_KONCIJ
 
+
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
 AADD(ImeKol, { PADC("Shema",5), {|| PADC(shema,5)}, "shema"})
 AADD(ImeKol, { "Tip", {|| naz}, "naz"})

@@ -162,6 +162,7 @@ local cK1
 local cK2
 local nX := 1
 local nBoxLen := 20
+local _vars
 
 cIdRoba:=IdRoba
 nKolicina:=kolicina
@@ -230,32 +231,34 @@ endif
 
 if lNovi
 	append blank
-    replace id with cIdUgov
+    _vars := dbf_get_rec() 
+    _vars["id"] := cIdUgov
+else
+    _vars := dbf_get_rec()
 endif
 
-replace idroba with cIdRoba
-replace kolicina with nKolicina
-replace rabat with nRabat
-replace porez with nPorez
+
+_vars["idroba"] := cIdRoba
+_vars["kolicina"] := nKolicina
+_vars["rabat"] := nRabat
+_vars["porez"] := nPorez
 
 if lDest
-	replace dest with cDestinacija
+   _vars["dest"] := cDestinacija
 endif
 
 if lCijena
-	replace cijena with nCijena
+   _vars["cijena"] := nCijena
 endif
       
 if lK1
-	replace k1 with cK1
-	replace k2 with cK2
+	_vars["k1"] := cK1
+	_vars["k2"] := cK2
 endif
     
-scatter()
-_vars := f18_scatter_global_vars()
-if !f18_gather(_vars)
-    // brisi appendovani zapis
-    delete
+
+if !update_rec_server_and_dbf(_vars)
+    delete_with_rlock()
 endif
 
 return DE_REFRESH

@@ -228,7 +228,7 @@ go top
 
 EOF CRET
 
-msgO("Punim pomocnu tabelu izvjestaja...")
+msgO( "Punim pomocnu tabelu izvjestaja..." )
 
 // napuni pomocnu tabelu podacima
 _fill_rpt_data( _params )
@@ -241,7 +241,7 @@ _line := _get_line( _fmt )
 START PRINT CRET
 
 if _params["grupacije"] == "D"
-    _show_report( _params, _line )
+    _show_report_grupe( _params, _line )
 else
     _show_report( _params, _line )
 endif
@@ -431,6 +431,128 @@ return
 
 
 
+// ---------------------------------------------
+// ispisi izvjestaj po grupama
+// ---------------------------------------------
+static function _show_report_grupe( params, line )
+local _mark_pos
+local _rbr
+local _uk_dug_1, _uk_dug_2, _uk_pot_1, _uk_pot_2
+local _fmt := params["format"]
+local _grupa
+local _u_ulaz, _u_izlaz, _u_sld_k, _u_dug_1, _u_dug_2, _u_pot_1, _u_pot_2
+local _u_sld_i_1, _u_sld_i_2
+
+
+?
+_mark_pos := 0
+
+// stampaj zaglavlje
+_zaglavlje( params, line )
+
+select r_export
+set order to tag "2"
+go top
+
+_rbr := 0
+
+_uk_dug_1 := 0
+_uk_pot_1 := 0
+_uk_dug_2 := 0
+_uk_pot_2 := 0
+
+do while !EOF()
+   
+    // provjera novog reda... 
+    if prow() > 63
+        FF
+    endif
+
+    _grupa := field->grupa
+
+    _u_ulaz := 0
+    _u_izlaz := 0
+    _u_sld_k := 0
+    _u_dug_1 := 0 
+    _u_dug_2 := 0 
+    _u_pot_1 := 0
+    _u_pot_2 := 0
+    _u_sld_i_1 := 0
+    _u_sld_i_2 := 0
+
+    do while !EOF() .and. field->grupa == _grupa
+        
+        // saberi totale...
+        _u_ulaz += field->ulaz_1
+        _u_izlaz += field->izlaz_1
+        _u_sld_k += field->saldo_k_1
+
+        _u_dug_1 += field->dug_1
+        _u_dug_2 += field->dug_2
+        _u_pot_1 += field->pot_1
+        _u_pot_2 += field->pot_2
+
+        _u_sld_i_1 += field->saldo_i_1
+        _u_sld_i_2 += field->saldo_i_2
+
+        skip
+
+    enddo
+    
+    @ prow() + 1, 0 SAY ++_rbr PICT '9999'
+    @ prow(), pcol() + 1 SAY PADR( "Ukupno grupa: " + _grupa, 55 )
+    
+    @ prow(), pcol() + 1 SAY _u_ulaz PICT picKol
+    @ prow(), pcol() + 1 SAY _u_izlaz PICT picKol
+    @ prow(), pcol() + 1 SAY _u_sld_k PICT picKol
+    
+    _mark_pos := pcol()
+     
+    if _fmt $ "12"
+        @ prow(),pcol()+1 SAY _u_dug_1 PICT PicDEM
+        @ prow(),pcol()+1 SAY _u_pot_1 PICT PicDEM
+        @ prow(),pcol()+1 SAY _u_sld_i_1 PICT PicDEM
+    endif
+     
+    if _fmt $ "13"
+        @ prow(),pcol()+1 SAY _u_dug_2 PICT PicBHD
+        @ prow(),pcol()+1 SAY _u_pot_2 PICT PicBHD
+        @ prow(),pcol()+1 SAY _u_sld_i_2 PICT PicBHD
+    endif
+
+    _uk_dug_1 += _u_dug_1
+    _uk_pot_1 += _u_pot_1
+    _uk_dug_2 += _u_dug_2
+    _uk_pot_2 += _u_pot_2
+
+    select r_export
+    skip
+
+enddo
+
+?  line
+?  "UKUPNO (sve grupe) :"
+
+@  prow(), _mark_pos SAY ""
+
+if _fmt $ "12"  
+    @ prow(), pcol() + 1 SAY _uk_dug_1 PICT PicDEM
+    @ prow(), pcol() + 1 SAY _uk_pot_1 PICT PicDEM
+    @ prow(), pcol() + 1 SAY ( _uk_dug_1 - _uk_pot_1 ) PICT PicDEM
+endif
+
+if _fmt $ "13"
+    @ prow(), pcol() + 1 SAY _uk_dug_2 PICT PicBHD
+    @ prow(), pcol() + 1 SAY _uk_pot_2 PICT PicBHD
+    @ prow(), pcol() + 1 SAY ( _uk_dug_2 - _uk_pot_2 ) PICT PicBHD
+endif
+
+? line
+
+return
+
+
+
 // ------------------------------------------------
 // filovanje pomocne tabele 
 // ------------------------------------------------
@@ -522,6 +644,9 @@ return
 // zaglavlje izvestaja...
 // ------------------------------------------------------------
 static function _zaglavlje( param, line )
+local _r_line_1 := ""
+local _r_line_2 := ""
+local _r_line_3 := ""
 
 P_COND
 @ prow(), 0 SAY "MAT.P: SPECIFIKACIJA ROBE (U "
@@ -553,19 +678,49 @@ hseek param["firma"]
 ? "Kriterij za " + KonSeks("konta") + ":", trim( param["konta"] )
    
 ? line
-   
-if param["format"] == "2"
-    ? "*R. *  SIFRA   *       N A Z I V                        *J. *       K O L I C I N A          *     V R I J E D N O S T          *"
-    ? "*Br.*                                                       -------------------------------- ------------------------------------"
-    ? "*   *          *                                        *MJ.*   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE   * POTRAZUJE *  SALDO   *"
-elseif param["format"] == "3"
-    ? "*R. *  SIFRA   *       N A Z I V                        *J. *       K O L I C I N A          *        V R I J E D N O S T          *"
-    ? "*Br.*                                                       -------------------------------- ---------------------------------------"
-    ? "*   *          *                                        *MJ.*   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE    *  POTRAZUJE *  SALDO    *"
+
+// definisi nazive kolona
+_r_line_1 += "*R. "
+_r_line_2 += "*Br."
+_r_line_3 += "*   "
+
+if param["grupacije"] == "N"
+
+    _r_line_1 += "*  SIFRA   "
+    _r_line_2 += "*          "
+    _r_line_3 += "*          "
+
+    _r_line_1 += "*       N A Z I V                        "
+    _r_line_2 += "*                                        "
+    _r_line_3 += "*                                        "
+
+else
+
+    _r_line_1 += "*  GRUPACIJA                                        "
+    _r_line_2 += "*                                                   "
+    _r_line_3 += "*                                                   "
+
 endif
+
+_r_line_1 += "*J. "
+_r_line_2 += "*MJ."
+_r_line_3 += "*   "
+
+_r_line_1 += "*       K O L I C I N A          "
+_r_line_2 += " --------------------------------"
+_r_line_3 += "*   ULAZ   *  IZLAZ   *  STANJE  "
+
+_r_line_1 += "*     V R I J E D N O S T              *"
+_r_line_2 += " --------------------------------------"
+_r_line_3 += "*  DUGUJE    * POTRAZUJE  *   SALDO    *"
+
+? _r_line_1
+? _r_line_2
+? _r_line_3
     
 ?  line
 
 return
+
 
 

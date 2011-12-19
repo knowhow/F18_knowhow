@@ -13,6 +13,11 @@
 #include "mat.ch"
 
 
+static PicDEM := "99999999.99"
+static PicBHD := "9999999999.99"
+static PicKol := "9999999.99"
+
+
 function mat_specifikacija()
 
 O_ROBA
@@ -29,63 +34,77 @@ cIdTarifa:=space(6)
 dDATOD=dDatDO:=CTOD("")
 //cDN:="D"
 cFmt:="2"
+
 Box("Spec",8,65,.f.)
 
-@ m_x+1,m_y+2 SAY "SPECIFIKACIJA - Izvjestaj formata A3/A4 (1/2)" GET cFmt VALID cFmt $ "12"
-read
-if cFmt=="2"
- cFmt:="1"
- @ m_x+2,m_y+2 SAY "Iznos u "+ValPomocna()+"/"+ValDomaca()+"(1/2) ?" GET cFmt VALID cFmt $ "12"
- read
- if cFmt=="1"; cFmt:="2"; else; cFmt:="3"; endif
-endif
+    @ m_x+1,m_y+2 SAY "SPECIFIKACIJA - Izvjestaj formata A3/A4 (1/2)" GET cFmt VALID cFmt $ "12"
+    
+    read
+    
+    if cFmt=="2"
+        cFmt:="1"
+        @ m_x+2,m_y+2 SAY "Iznos u " +ValPomocna() + "/" + ValDomaca() + "(1/2) ?" GET cFmt VALID cFmt $ "12"
+        read
+        if cFmt=="1"
+            cFmt:="2"
+        else
+            cFmt:="3"
+        endif
+    endif
 
-if gNW$"DR"
-  @ m_x+4,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-else
-  @ m_x+4,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-endif
-@ m_x+5,m_y+2 SAY KonSeks("Konta  ")+" : " GET qqKonto  PICTURE "@S50"
-@ m_x+6,m_y+2 SAY "Partner : " GET qqPartn  PICTURE "@S50"
-@ m_x+7,m_y+2 SAY "Tarifa (prazno-sve) : " GET cidTarifa  valid empty(cidtarifa) .or. P_Tarifa(@cIdTarifa)
-@ m_x+8,m_y+2 SAY "Datum dokumenta - od datuma:"    GET dDatOd
-@ m_x+8,col()+1 SAY "do:"    GET dDatDo valid dDatDo>=dDatOd
+    if gNW$"DR"
+        @ m_x+4,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
+    else
+        @ m_x+4,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+    endif
+    
+    @ m_x+5,m_y+2 SAY KonSeks("Konta  ")+" : " GET qqKonto  PICTURE "@S50"
+    @ m_x+6,m_y+2 SAY "Partner : " GET qqPartn  PICTURE "@S50"
+    @ m_x+7,m_y+2 SAY "Tarifa (prazno-sve) : " GET cidTarifa  valid empty(cidtarifa) .or. P_Tarifa(@cIdTarifa)
+    @ m_x+8,m_y+2 SAY "Datum dokumenta - od datuma:"    GET dDatOd
+    @ m_x+8,col()+1 SAY "do:"    GET dDatDo valid dDatDo>=dDatOd
 
-do while .t.
-READ; ESC_BCR
-  aUsl1:=Parsiraj(qqKonto,"IdKonto","C")
-  aUsl2:=Parsiraj(qqPartn,"IdPartner","C")
-  if aUsl1<>NIL .and. aUsl2<>NIL; exit; endif
-enddo
+    do while .t.
 
-BoxC(); ESC_RETURN 0
+        read
+        ESC_BCR
 
-cIdFirma:=left(cIdFirma,2)
+        aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" ) 
+        aUsl2 := Parsiraj( qqPartn, "IdPartner", "C" )
+  
+        if aUsl1 <> NIL .and. aUsl2 <> NIL
+            exit
+        endif
 
-*
+    enddo
+
+BoxC()
+
+ESC_RETURN 0
+
+cIdFirma := left(cIdFirma,2)
+
 SELECT mat_suban
-#ifndef C50
 set order to tag "3"
-#else
-set order to 3
-#endif
 
-if len(aUsl2)==0
- if !empty(dDatOd) .or. !empty(dDatDo)
-  set filter to cIdFirma==IdFirma .and. Tacno(aUsl1) ;
+if len( aUsl2 ) == 0
+    if !empty(dDatOd) .or. !empty(dDatDo)
+        set filter to cIdFirma==IdFirma .and. Tacno(aUsl1) ;
                .and. dDatOd<=DatDok .and. dDatDo>=DatDok
- else
-   set filter to cIdFirma==IdFirma .and. Tacno(aUsl1)
- endif
+    else
+        set filter to cIdFirma==IdFirma .and. Tacno(aUsl1)
+    endif
 else
- if !empty(dDatOd) .or. !empty(dDatDo)
-  set filter to cIdFirma==IdFirma .and. Tacno(aUsl1) ;
+    if !empty(dDatOd) .or. !empty(dDatDo)
+        set filter to cIdFirma==IdFirma .and. Tacno(aUsl1) ;
                 .and. dDatOd<=DatDok .and. dDatDo>=DatDok .and. Tacno(aUsl2)
- else
-   set filter to cIdFirma==IdFirma .and. Tacno(aUsl1) .and. Tacno(aUsl2)
- endif
+    else
+        set filter to cIdFirma==IdFirma .and. Tacno(aUsl1) .and. Tacno(aUsl2)
+    endif
 endif
+
 go top
+
 EOF CRET
 
 if cFmt=="1" // A3
@@ -105,6 +124,7 @@ DO WHILE !eof()
    cIdKonto:=IdKonto
    IF prow()==0
       P_COND
+      
       ?? "MAT.P: SPECIFIKACIJA STANJA (U "
       if cFmt=="1"
        ?? ValPomocna()+"/"+ValDomaca()+") "
@@ -182,13 +202,16 @@ DO WHILE !eof()
           ENDIF
        SKIP
       ENDDO // IdRoba
+      
       select roba
-      cRoba:=naz; cjmj:=jmj
+      cRoba := PADR( field->naz, 40 ) 
+      cJmj := field->jmj
 
       nSaldoK:=nUlazK-nIzlazK
       nSaldoI:=nDugI-nPotI
       nSaldoK2:=nUlazK2-nIzlazK2
       nSaldoI2:=nDugI2-nPotI2
+
       @ prow()+1,0 SAY ++B PICTURE '9999'
       @ prow(),pcol()+1 SAY cIdRoba
       @ prow(),pcol()+1 SAY cRoba
@@ -241,21 +264,28 @@ endif
 
 FF
 
-ENDDO // firma
+ENDDO 
+// firma
 
 END PRINT
-closeret
 
-FUNCTION KonSekS(cNaz)
-RETURN IF(gSekS=="D","PREDMET",cNaz)
+close all
+return
 
 
-PROCEDURE IArtPoPogonima()
-  O_PARTN         // pogoni
-  O_ROBA          // artikli
-  O_SIFV
-  O_SIFK
-  O_MAT_SUBAN         // dokumenti
+
+function KonSekS( cNaz )
+return if( gSekS == "D", "PREDMET", cNaz )
+
+
+
+function IArtPoPogonima()
+  
+O_PARTN         // pogoni
+O_ROBA          // artikli
+O_SIFV
+O_SIFK
+O_MAT_SUBAN         // dokumenti
 
   cIdRoba:=SPACE(LEN(ROBA->id))
   dOd:=CTOD("")
@@ -300,28 +330,32 @@ PROCEDURE IArtPoPogonima()
   endif
   select params; use
 
-SELECT mat_suban
+select mat_suban
 
-IF EMPTY(cIdRoba)
-  // svi artikli
-  // -----------
-  Box(,2,30)
-    nSlog:=0; nUkupno:=RECCOUNT2()
-    cSort1 := "IDROBA"
-    cFilt  := "DATDOK>=dOd .and. DATDOK<=dDo "
-    IF !EMPTY(qqPartner)
-      cFilt += ( ".and." + aUsl1 )
-    ENDIF
-    INDEX ON &cSort1 TO "TMPMAT" FOR &cFilt EVAL(TekRec()) EVERY 1
-  BoxC()
+if EMPTY(cIdRoba)
 
-  GO TOP
-  if eof(); Msg("Ne postoje trazeni podaci...",6); closeret; endif
+    // svi artikli
+  
+    set order to tag "idroba" 
 
-  START PRINT CRET
+    cFilt := "DATDOK>=dOd .and. DATDOK<=dDo "
+    if !EMPTY(qqPartner)
+        cFilt += ( ".and." + aUsl1 )
+    endif
 
-  PRIVATE cIdRoba:="", cArtikal:="", cJMJ:="", nRBr:=0
-  PRIVATE nUlaz:=0, nIzlaz:=0, nKol:=0, nDuguje:=0, nPotrazuje:=0, nSaldo:=0
+    set filter to &cFilt
+    go top
+
+    if eof()
+        Msg("Ne postoje trazeni podaci...",6)
+        close all
+        return 
+    endif
+
+    START PRINT CRET
+
+    PRIVATE cIdRoba:="", cArtikal:="", cJMJ:="", nRBr:=0
+    PRIVATE nUlaz:=0, nIzlaz:=0, nKol:=0, nDuguje:=0, nPotrazuje:=0, nSaldo:=0
 
   aKol:={ { "R.BR."        , {|| STR(nRBr,4)+"."}, .f., "C", 5, 0, 1, ++nKol},;
           { "SIFRA"        , {|| cIdRoba        }, .f., "C",10, 0, 1, ++nKol},;
@@ -347,21 +381,24 @@ IF EMPTY(cIdRoba)
                                {|| FFor2s()},IF(gOstr=="D",,-1),,,,,)
   FF
   END PRINT
+
 ELSE
-  // jedan artikal
-  // -------------
-  Box(,2,30)
-    nSlog:=0; nUkupno:=RECCOUNT2()
-    cSort1 := "IDPARTNER"
+
+    // jedan artikal
+    set order to tag "idpartn"
+
     cFilt  := "IDROBA==cIdRoba .and. DATDOK>=dOd .and. DATDOK<=dDo "
     IF !EMPTY(qqPartner)
       cFilt += ( ".and." + aUsl1 )
     ENDIF
-    INDEX ON &cSort1 TO "TMPMAT" FOR &cFilt EVAL(TekRec()) EVERY 1
-  BoxC()
+    set filter to &cFilt
+    go top
 
-  GO TOP
-  if eof(); Msg("Ne postoje trazeni podaci...",6); closeret; endif
+    if eof()
+        Msg("Ne postoje trazeni podaci...",6)
+        close all
+        return
+    endif
 
   START PRINT CRET
 

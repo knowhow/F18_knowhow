@@ -13,38 +13,30 @@
 #include "mat.ch"
 
 
-function kartica()
+static PicDEM := "99999999.99"
+static PicBHD := "9999999999.99"
+static PicKol := "9999999.99"
 
-private opc[3],Izbor
 
-PRIVATE PicKol:="@Z 999999.999"
-PRIVATE PicDEM:="@Z 9999999999.99"
-PRIVATE picBHD:='@Z 999999999999.99'
+function mat_kartica()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-opc[1]:="1. sintetika      "
-opc[2]:="2. analitika"
-opc[3]:="3. subanalitika "
-Izbor:=1
-DO WHILE .T.
-   Izbor:=Menu("kca",opc,Izbor,.f.)
-   if lastkey()=27; exit; endif
-   do case
-      case izbor==0
-         exit
-      case izbor == 1
-         KSintKont()
-      case izbor == 2
-         KAnalK()
-      case izbor == 3
-         KSuban()
-      case izbor == 4
-         Izbor:=0
-   endcase
-enddo
-closeret
+AADD( _opc, "1. sintetika      " )
+AADD( _opcexe, { || KSintKont() } )
+AADD( _opc, "2. analitika" )
+AADD( _opcexe, { || KAnalK() } )
+AADD( _opc, "3. subanalitika " )
+AADD( _opcexe, { || KSuban() } )
 
-*************************************
-*************************************
+
+f18_menu("kca", .f., _izbor, _opc, _opcexe )
+
+close all
+return
+
+
 function KSintKont()
 local nC1:=30
 
@@ -62,28 +54,43 @@ if gNW$"DR"
 endif
 @ m_x+4,m_y+2 SAY KonSeks("KONTO")+":  " GET qqKonto picture "@S50"
 READ;  ESC_BCR
- aUsl1:=Parsiraj(qqKonto,"IdKonto","C")
- if aUsl1<>NIL; exit; endif
+ aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
+ if aUsl1<>NIL
+     exit
+ endif
 enddo
+
 BoxC()
+
 cIdFirma:=left(cIdFirma,2)
 
 O_MAT_SINT
 O_KONTO
 
-select mat_sint; set filter to Tacno(aUsl1) .and. IdFirma==cIdFirma; go top
+select mat_sint
+set filter to Tacno(aUsl1) .and. IdFirma==cIdFirma
+go top
+
 EOF CRET
 
 START PRINT CRET
 
-m:="------- ---- ----------- -------------- -------------- -------------- --------------"
-*
+m := "------- ---- ----------- -------------- -------------- -------------- --------------"
 
-do while !eof() // firma
+do while !eof() 
+// firma
 
-nUkDug:=nUkPot:=nUkDug2:=nUkPot2:=0
-cIdKonto:=IdKonto
-if prow()<>0; FF; ZaglKSintK();endif
+nUkDug := 0
+nUkPot := 0
+nUkDug2 := 0
+nUkPot2 := 0
+cIdKonto := IdKonto
+
+if prow()<>0
+    FF
+    ZaglKSintK()
+endif
+
 DO WHILE !eof() .AND. cIdFirma=IdFirma .and. cIdKonto=IdKonto
    IF prow()==0; ZaglKSintK(); ENDIF
    IF prow()>65; FF; ZaglKSintK(); ENDIF
@@ -128,13 +135,14 @@ nUkDug:=nUkPot:=nUkDug2:=nUkPot2:=0
 enddo
 
 FF
-EndPrint()
-closeret
+END PRINT
 
-*****************************
-*****************************
+close all
+return
+
+
 static function ZaglKSintK()
-?? "MAT.P: mat_sintETICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
+?? "MAT.P: SINTETICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
 SELECT PARTN; HSEEK cIdFirma
 ? "FIRMA:",cidfirma,partn->naz,partn->naz2
 
@@ -148,9 +156,9 @@ SELECT KONTO; HSEEK cIdKonto
 SELECT mat_sint
 RETURN
 
-***************************
-***************************
-Proc KAnalK()
+
+
+function KAnalK()
 
 private opc[2],Izbor
 
@@ -381,7 +389,7 @@ return
 
 function ZagKKAnalK()
 P_COND
-@ a,0  SAY "MAT.P: KARTICA STANJA PO mat_analITICKIM "+KonSeks("KONT")+"IMA NA DAN "; @ A,PCOL()+1 SAY DATE()
+@ a,0  SAY "MAT.P: KARTICA STANJA PO ANALITICKIM "+KonSeks("KONT")+"IMA NA DAN "; @ A,PCOL()+1 SAY DATE()
 @ A,0 SAY "FIRMA:"
 @ A,10 SAY cIdFirma
 SELECT PARTN; HSEEK cIdFirma
@@ -723,7 +731,7 @@ return
 
 static function ZaglKSif()
 P_COND2
-?? "MAT.P: mat_subanALITICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
+?? "MAT.P: SUBANALITICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
 ? "FIRMA:"
 @ prow(),pcol()+1 SAY cIdFirma
 SELECT PARTN; HSEEK cIdFirma

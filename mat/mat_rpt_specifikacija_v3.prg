@@ -13,6 +13,11 @@
 #include "mat.ch"
 
 
+static PicDEM := "99999999.99"
+static PicBHD := "9999999999.99"
+static PicKol := "9999999.99"
+
+
 function mat_sint_specifikacija()
 
 O_ROBA
@@ -56,13 +61,9 @@ BoxC(); ESC_RETURN 0
 
 cIdFirma:=left(cIdFirma,2)
 
-*
-SELECT mat_suban   // ("SUBANi1","IdFirma+IdRoba+dtos(DatDok)","SUBAN")
-#ifndef C50
+SELECT mat_suban   
+// ("SUBANi1","IdFirma+IdRoba+dtos(DatDok)","SUBAN")
 set order to tag "1"
-#else
-set order to 1
-#endif
 
 if !empty(dDatOd) .or. !empty(dDatDo)
  set filter to cIdFirma==IdFirma .and. Tacno(aUsl1) .and. Tacno(aUsl2) ;
@@ -148,8 +149,10 @@ do while  !eof()
        SKIP
       ENDDO // IdRoba
 
-      SELECT ROBA; HSEEK cIdRoba
-      cRoba:=naz; cjmj:=jmj
+      SELECT ROBA
+      HSEEK cIdRoba
+      cRoba := PADR( field->naz, 40 )
+      cJmj := field->jmj
 
       nSaldoK:=nUlazK-nIzlazK
       nSaldoI:=nDugI-nPotI
@@ -209,4 +212,11 @@ endif
 FF
 
 END PRINT
-closeret
+close all
+
+return
+
+
+
+
+

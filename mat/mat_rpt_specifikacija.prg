@@ -12,10 +12,8 @@
 
 #include "mat.ch"
 
-************************************************************************
 // RUDNIK - pregled isporucenog materijala
 // po mjestima troskova
-************************************************************************
 function PoMjeTros()
 
 O_PARTN
@@ -164,10 +162,8 @@ static function TekRec()
 return (NIL)
 
 
-************************************************************************
 // OPCINA - pregled cijene artikla po dobavljacima
-************************************************************************
-PROCEDURE CArDob()
+function CArDob()
 
 O_ROBA
 O_SIFV
@@ -212,19 +208,31 @@ WPar("d1",dDatOd) ; WPar("d2",dDatDo)
 WPar("F7",qqIDVN)
 WPar("c5",qqRoba)
 
-select params; use
+select params
+use
 
-SELECT mat_suban
+select mat_suban
+set order to tag "9"
 
-Box(,2,30)
-  nSlog:=0; nUkupno:=RECCOUNT2()
-  cSort1 := "DESCEND(DTOS(DATDOK))+IDPARTNER"
+
+//Box(,2,30)
+  //nSlog:=0
+  //nUkupno:=RECCOUNT2()
+  //cSort1 := "DESCEND(DTOS(DATDOK))+IDPARTNER"
+
   cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. Tacno(aUsl7) .and. IDROBA==qqRoba .and. U_I=='1'"
-  INDEX ON &cSort1 TO "TMPMAT" FOR &cFilt EVAL(TekRec()) EVERY 1
-BoxC()
 
-GO TOP
-if eof(); Msg("Ne postoje trazeni podaci...",6); closeret; endif
+  //INDEX ON &cSort1 TO "TMPMAT" FOR &cFilt EVAL(TekRec()) EVERY 1
+//BoxC()
+
+set filter to &cFilt
+go top
+
+if eof()
+    Msg("Ne postoje trazeni podaci...",6)
+    close all 
+    return
+endif
 
 START PRINT CRET
 
@@ -247,7 +255,8 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
 
 END PRINT
 
-CLOSERET
+close all
+return
 
 
 static function FFor2()

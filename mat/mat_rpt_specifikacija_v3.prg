@@ -309,8 +309,8 @@ do while !EOF()
     hseek _id_roba
 
     // ovdje cemo smjestiti grupaciju...
-    _roba_gr := roba->k7
-
+    _roba_gr := IzSifK( "ROBA", "GR1", _id_roba, .f. )
+    
     select mat_suban
 
     _saldo_k_1 := _ulaz_k_1 - _izlaz_k_1

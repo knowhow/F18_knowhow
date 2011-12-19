@@ -18,6 +18,9 @@ static PicBHD := "9999999999.99"
 static PicKol := "9999999.99"
 
 
+// --------------------------------------
+// kartice, glavni menij
+// --------------------------------------
 function mat_kartica()
 local _opc := {}
 local _opcexe := {}
@@ -37,6 +40,9 @@ close all
 return
 
 
+// --------------------------------------
+// sinteticka kartica
+// --------------------------------------
 function KSintKont()
 local nC1:=30
 
@@ -141,13 +147,16 @@ close all
 return
 
 
+// ----------------------------------------------
+// zaglavlje sinteticke kartice
+// ----------------------------------------------
 static function ZaglKSintK()
 ?? "MAT.P: SINTETICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
 SELECT PARTN; HSEEK cIdFirma
-? "FIRMA:",cidfirma,partn->naz,partn->naz2
+? "FIRMA:",cidfirma,PADR( partn->naz, 25 ), PADR( partn->naz2, 25 )
 
 SELECT KONTO; HSEEK cIdKonto
-? KonSeks("KONTO")+":",cidkonto,konto->naz
+? KonSeks("KONTO")+":", cIdkonto, konto->naz
 ? m
 ? "*NALOG * R. *  DATUM    *   I Z N O S   U   "+ValPomocna()+"      *  I Z N O S    U    "+ValDomaca()+"    *"
 ? "*      * Br *           ------------------------------ -----------------------------"
@@ -157,31 +166,27 @@ SELECT mat_sint
 RETURN
 
 
-
+// -----------------------------------------
+// analiticka kartica
+// -----------------------------------------
 function KAnalK()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
 
-private opc[2],Izbor
+AADD( _opc, "1. kartica za pojedinacni konto         " )
+AADD( _opcexe, { || KAnKPoj() } )
+AADD( _opc, "2. kartica po svim kontima" )
+AADD( _opcexe, { || KAnKKonto() } )
 
-opc[1]:="1. KARTICA - ZA POJEDINACNI "+KonSeks("KONTO ")
-opc[2]:="2. KARTICA PO SVIM "+KonSeks("KONT")+"IMA"
-Izbor:=1
-DO WHILE .T.
-   Izbor:=Menu("pregl",opc,Izbor,.f.)
-   do case
-      case Izbor == 0
-         exit
-      case Izbor == 1
-         KAnKPoj()
-      case Izbor == 2
-         KAnKKonto()
-      case Izbor == 3
-         Izbor:=0
-   endcase
-enddo
+f18_menu("ksix", .f., _izbor, _opc, _opcexe )
+
 return
 
-********************************
-********************************
+
+
+// -----------------------------------------
+// -----------------------------------------
 function KAnKPoj()
 cIdFirma:="  "
 qqKonto:=SPACE(100)
@@ -210,10 +215,8 @@ BoxC()
 O_MAT_ANAL
 O_KONTO
 
-// cIdFirma:=left(cIdFirma,2)
-//cIdOrgjed:=left(cIdOrgjed,4)
-select mat_anal; set filter to Tacno(aUsl1) .and. IdFirma==cIdFirma
-//.and. cIdOrgJed==IdOrgJed
+select mat_anal 
+set filter to Tacno(aUsl1) .and. IdFirma==cIdFirma
 go top
 EOF CRET
 
@@ -270,15 +273,18 @@ do while !eof()
 enddo // eof
 
 EJECTNA0
-EndPrint()
+
+END PRINT
+
 set filter to
 close all
+
 return
 
 
 static function ZaglKAnalK()
 P_COND
-@ a,0  SAY "MAT.P: KARTICA - mat_analITICKI "+KonSeks("KONTO")+" - ZA POJEDINACNI "+KonSeks("KONTO")
+@ a,0  SAY "MAT.P: KARTICA - ANALITICKI "+KonSeks("KONTO")+" - ZA POJEDINACNI "+KonSeks("KONTO")
 @ ++A,0 SAY "FIRMA:"; @ A,pcol()+1 SAY cIdFirma
 SELECT PARTN; HSEEK cIdFirma
 @ A,pcol()+1 SAY naz; @ A,pcol()+1 SAY naz2
@@ -295,6 +301,7 @@ SELECT KONTO; HSEEK cIdKonto
 
 SELECT mat_anal
 RETURN
+
 
 
 function KAnKKonto()
@@ -730,7 +737,10 @@ return
 
 
 static function ZaglKSif()
+
+?
 P_COND2
+
 ?? "MAT.P: SUBANALITICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
 ? "FIRMA:"
 @ prow(),pcol()+1 SAY cIdFirma

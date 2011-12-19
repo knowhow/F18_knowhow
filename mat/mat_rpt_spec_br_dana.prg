@@ -159,8 +159,8 @@ do while !EOF()
         skip
 
     enddo
-    
-    if param["prikaz_nule"] == "N" .and. ( _interv_1 + _interv_2 + _interv_3 + _saldo_1 = 0 )     
+   
+    if ROUND( _interv_1 + _interv_2 + _interv_3 + _saldo_1, 2 ) == 0 .and. param["prikaz_nule"] == "N"    
         // preskoci...
     else
         // ubaci u pomocnu tabelu podatke

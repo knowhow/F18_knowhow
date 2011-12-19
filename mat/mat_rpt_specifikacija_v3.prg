@@ -589,7 +589,11 @@ static function _fill_tmp_tbl( id_roba, grupa, roba_naz, roba_jmj, ;
 
 local _arr := SELECT()
 
-O_R_EXP
+select (F_R_EXP)
+if !used()
+    O_R_EXP
+endif
+
 append blank
 replace field->id_roba with id_roba
 replace field->grupa with grupa

@@ -39,6 +39,8 @@ AADD( _opc, "6. cijena artikla po dobavljacima" )
 AADD( _opcexe, { || cardob() } )
 AADD( _opc, "7. specifikacija artikla po mjestu troska" )
 AADD( _opcexe, { || iartpopogonima() } )
+AADD( _opc, "8. specifikacija zaliha po roc.intervalima" )
+AADD( _opcexe, { || mat_spec_br_dan() } )
 
 f18_menu( "matizv", .f., _izbor, _opc, _opcexe )
 

@@ -42,6 +42,7 @@ local _artikli
 local _dat_od
 local _dat_do
 local _group
+local _sel_groups
 local _cnt := 1
 local _ret := .t.
 
@@ -53,8 +54,9 @@ _artikli := SPACE(200)
 _dat_od := CTOD( "" )
 _dat_do := CTOD( "" )
 _group := "N"
+_sel_groups := SPACE(200)
 
-Box( "Spe2", 9, 65, .f. )
+Box( "Spe2", 10, 65, .f. )
 
     ++ _cnt
 
@@ -93,6 +95,9 @@ Box( "Spe2", 9, 65, .f. )
     @ m_x + _cnt, m_y + 2 SAY "Prikaz po grupacijama (D/N)?" GET _group ;
         VALID _group $ "DN" PICT "@!"
 
+    ++ _cnt
+    @ m_x + _cnt, m_y + 2 SAY "Grupe:" GET _sel_groups PICT "@S50"
+
     read
 
 BoxC()
@@ -109,7 +114,8 @@ params["konta"] := _konta
 params["artikli"] := _artikli
 params["dat_od"] := _dat_od
 params["dat_do"] := _dat_do
-params["grupacije"] := _group
+params["po_grupi"] := _group
+params["grupe"] := _sel_groups
 
 return _ret
 
@@ -240,7 +246,7 @@ _line := _get_line( _fmt )
 
 START PRINT CRET
 
-if _params["grupacije"] == "D"
+if _params["po_grupi"] == "D"
     _show_report_grupe( _params, _line )
 else
     _show_report( _params, _line )
@@ -469,6 +475,15 @@ do while !EOF()
     endif
 
     _grupa := field->grupa
+     
+    // provjeri da li postoji uslov za grupacije...
+    if !EMPTY( params["grupe"] )
+        if ! ( _grupa $ params["grupe"] )
+            select r_export
+            skip
+            loop
+        endif
+    endif
 
     _u_ulaz := 0
     _u_izlaz := 0
@@ -481,7 +496,15 @@ do while !EOF()
     _u_sld_i_2 := 0
 
     do while !EOF() .and. field->grupa == _grupa
-        
+
+        if !EMPTY( params["grupe"] )
+            if ! ( _grupa $ params["grupe"] )
+                select r_export
+                skip
+                loop
+            endif
+        endif
+
         // saberi totale...
         _u_ulaz += field->ulaz_1
         _u_izlaz += field->izlaz_1
@@ -684,7 +707,7 @@ _r_line_1 += "*R. "
 _r_line_2 += "*Br."
 _r_line_3 += "*   "
 
-if param["grupacije"] == "N"
+if param["po_grupi"] == "N"
 
     _r_line_1 += "*  SIFRA   "
     _r_line_2 += "*          "

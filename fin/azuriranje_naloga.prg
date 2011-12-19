@@ -755,7 +755,7 @@ if !found() .and. Pitanje(,"U sifk dodati PARTN/BANK  ?","D") == "D"
         _rec["veza"] := "N"
         _rec["duzina"] := 16
         _rec["tip"] := "C"
-        if !update_rec_server_and_dbf(_rec)
+        if !update_rec_server_and_dbf("sifk", _rec)
             delete_with_rlock()
         endif
 endif

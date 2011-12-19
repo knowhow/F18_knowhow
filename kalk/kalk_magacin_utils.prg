@@ -630,7 +630,7 @@ if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
      _vars := dbf_get_rec()
      _vars[cPom] := nNovaVrijednost
 
-     update_rec_server_and_dbf(_vars)
+     update_rec_server_and_dbf("roba", _vars)
 
      select kalk_pripr
    endif

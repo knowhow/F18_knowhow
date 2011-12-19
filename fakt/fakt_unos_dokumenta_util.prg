@@ -1137,7 +1137,7 @@ if FOUND()
 
     if lFill == .t.
 		_vars := dbf_get_rec()
-		update_rec_server_and_dbf(_vars)
+		update_rec_server_and_dbf(nil, _vars)
 	endif
 
 endif

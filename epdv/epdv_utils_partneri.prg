@@ -81,7 +81,7 @@ if !found()
 	APPEND BLANK
     _fields := dbf_get_rec()
     _fields["id"] := gFirma
-    update_rec_server_and_dbf(_fields) 
+    update_rec_server_and_dbf(nil, _fields) 
 endif
 
 cNaziv := naz
@@ -104,7 +104,7 @@ if lNepopunjeno
         _fields["adresa"] := cAdresa
         _fields["ptt"]    := cPTT
 
-        update_rec_server_and_dbf(_fields) 
+        update_rec_server_and_dbf(nil, _fields) 
 
 		USifK("PARTN", "REGB", gFirma, cIdBroj)
 	else

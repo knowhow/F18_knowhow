@@ -257,7 +257,7 @@ if lK1
 endif
     
 
-if !update_rec_server_and_dbf(_vars)
+if !update_rec_server_and_dbf(nil, _vars)
     delete_with_rlock()
 endif
 

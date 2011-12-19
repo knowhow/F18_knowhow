@@ -681,11 +681,10 @@ local _vars
 if (radn->brbod<>_brbod)
 
 	if Pitanje(, Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
-     		select radn
-     		replace brbod with _brbod
 
             _vars := get_dbf_global_memvars()
-            update_rec_server_and_dbf(_vars)
+            _vars["brbod"] := _brbod
+            update_rec_server_and_dbf("radn", _vars)
 
     		select ld
   	endif
@@ -704,9 +703,7 @@ if radn->kminrad <> k_min_rad
             _fields := dbf_get_rec()     
             _fields["kminrad"] := k_min_rad
 
-         	select radn
-
-            update_rec_server_and_dbf(_fields)
+            update_rec_server_and_dbf("radn", _field)
 
      		select ld
   	endif

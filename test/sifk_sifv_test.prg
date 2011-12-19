@@ -121,6 +121,7 @@ set order to tag "ID2"
 seek padr(_id_sif, 8) + PADR(_karakteristika, 4)
 
 if !FOUND()
+
     APPEND BLANK
     _rec := dbf_get_rec()
     _rec["id"] := _id_sif
@@ -131,7 +132,7 @@ if !FOUND()
     _rec["duzina"] := 15
     _rec["tip"] := "C"
 
-    if !update_rec_server_and_dbf(_rec, fields, where_block) 
+    if !update_rec_server_and_dbf("sifk", _rec, fields, where_block) 
         delete_with_rlock()
     endif
 endif

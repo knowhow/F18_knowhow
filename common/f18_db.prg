@@ -55,47 +55,95 @@ return .t.
 
 
 
-// --------------------------------------
-// --------------------------------------
-function delete_rec_dbf_and_server(table, where)
-local _rec := hb_hash()
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+function delete_rec_server_and_dbf(table, values, id_fields, where_block, order_key_tag)
 local _ids := {}
 local _pos
-local _table
+local _full_id
+local _dbf_pkey_search
 
 if table == NIL
    table := ALIAS()
 endif
 
-// pronadji u tabeli koji je naziv te tabele
-_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
-_table := gaDBFs[ _pos, 3 ] 
-
-sql_table_update(_table, "BEGIN")
-
-_rec["id"] := field->id
-// ostala polja su nevazna za brisanje
-
-if sql_table_update(_table, "del", _rec, where)
-   update_semaphore_version(_table, .t.)
-   
-   AADD(_ids, _rec["id"])
-   push_ids_to_semaphore( _table, _ids )
-
-   sql_table_update(_table, "END")
-   // brisemo DBF zapis
-   if rlock()
-      DELETE
-      dbrunlock()
-   endif
-   
-   return .t.
-else
-   sql_table_update(_table, "ROLLBACK")
-   return .f.
+if values == NIL
+  values := dbf_get_rec()
 endif
 
-return .t.
+// pronadji u tabeli koji je naziv te tabele
+_pos   := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+table  := gaDBFs[ _pos, 3 ] 
+_alias := gaDBFs[ _pos, 2 ]
+
+if id_fields == NIL
+   if LEN(gaDBFs[_pos]) > 5
+       id_fields := gaDBFs[_pos, 6]
+   else
+       id_fields := { "id" }
+   endif
+endif
+
+if where_block == NIL
+   if LEN(gaDBFs[_pos]) > 6
+      where_block := gaDBFs[_pos, 7]
+   else
+      where_block := { |x| "ID=" + _sql_quote(x['id']) }
+   endif
+endif
+
+
+// tag po kome se primarni kljuc pretrazuje
+if order_key_tag == NIL
+   if LEN(gaDBFs[_pos]) > 7 
+      order_key_tag := gaDBFs[_pos, 8]
+   else
+      order_key_tag := "ID"
+   endif
+endif
+
+sql_table_update(table, "BEGIN")
+
+if !sql_table_update(table, "del", nil, EVAL(where_block, values))
+
+   update_semaphore_version(table, .t.)
+   
+   _full_id := ""
+   for each _field  in id_fields
+     _full_id += values[_field]
+   next
+
+   AADD(_ids, _full_id)
+   push_ids_to_semaphore( table, _ids )
+
+
+   SELECT (_alias)
+   SET ORDER TO TAG (order_key_tag)
+   _dbf_pkey_search := ""
+   for each _field in id_fields
+       _dbf_pkey_search += _field
+   next
+
+   if FLOCK()
+      SEEK _dbf_pkey_search
+      while FOUND()
+          DELETE
+          // sve dok budes nalazio pod ovim kljucem brisi
+          SEEK _dbf_pkey_search
+      enddo
+   else
+      sql_table_update(table, "ROLLBACK")
+      return .f.
+   endif
+   DBUNLOCKALL() 
+
+   sql_table_update(table, "END")
+   return .t.
+
+else
+   sql_table_update(table, "ROLLBACK")
+   return .f.
+endif
 
 
 // -----------------------------------
@@ -118,12 +166,13 @@ sql_table_update( _table, "BEGIN" )
 _rec["id"] := NIL
 // ostala polja su nevazna za brisanje
 
+
 if sql_table_update( _table, "del", _rec)
    update_semaphore_version( _table, .t.)
    sql_table_update( _table, "END")
 
    // zapujemo dbf
-   if flock()
+   if FLOCK()
       ZAP
       dbunlockall()
    endif
@@ -149,7 +198,7 @@ if zn==nil
 endif
 
 _struct := DBSTRUCT()
-for _i:=1 to len(_struct)
+for _i := 1 to len(_struct)
 
   _ime_polja := _struct[_i, 1]
    
@@ -170,7 +219,7 @@ return _ret
 
 // -----------------------------------------
 // -----------------------------------------
-function update_rec_on_server(values, id_fields, where_block)
+function update_rec_on_server(table, values, id_fields, where_block)
 local _vars
 
 if values == NIL
@@ -178,7 +227,7 @@ if values == NIL
     values := dbf_get_rec()
 endif
 
-return update_rec_server_and_dbf(values, id_fields, where_block, .t.)
+return update_rec_server_and_dbf(table, values, id_fields, where_block, .t.)
 
 // ----------------------------------------------------------------------------------------------------------
 // vrsimo snimanje na server
@@ -191,8 +240,7 @@ return update_rec_server_and_dbf(values, id_fields, where_block, .t.)
 //
 //  server_only je pobezveze, radi gornje funkcije za koju nisam siguran da ikome treba
 // -----------------------------------------------------------------------------------------------------------
-function update_rec_server_and_dbf(values, id_fields, where_block, server_only)
-local _l_table
+function update_rec_server_and_dbf(table, values, id_fields, where_block, server_only)
 local _table
 local _key, _field, _field_b
 local _ok := .t.
@@ -207,11 +255,19 @@ if !USED()
    return .f.
 endif
 
-_l_table := LOWER(ALIAS())
+
+if table == NIL
+   table := ALIAS()
+endif
+
+if values == NIL
+  values := dbf_get_rec()
+endif
+
 
 // proadji naziv tabele prema aliasu
-_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(_l_table) } )
-_table := gaDBFs[ _pos, 3 ]
+_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+table := gaDBFs[ _pos, 3 ]
 
 if id_fields == NIL
    if LEN(gaDBFs[_pos]) > 5
@@ -233,24 +289,24 @@ if server_only == NIL
   server_only := .f.
 endif
 
-sql_table_update(_table, "BEGIN")
+sql_table_update(table, "BEGIN")
 
 // ostala polja su nevazna za brisanje
 
-if !sql_table_update(_table, "del", nil, EVAL(where_block, values))
-   sql_table_update(_table, "ROLLBACK")
+if !sql_table_update(table, "del", nil, EVAL(where_block, values))
+   sql_table_update(table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - SQL del / 1")
    return .f.
 endif
 
-if !sql_table_update(_table, "ins", values)
-   sql_table_update(_table, "ROLLBACK")
+if !sql_table_update(table, "ins", values)
+   sql_table_update(table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - SQL ins / 1")
    return .f.
 endif
 
-if update_semaphore_version(_table, .t.) < 0
-   sql_table_update(_table, "ROLLBACK")
+if update_semaphore_version(table, .t.) < 0
+   sql_table_update(table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - update_semaphore_version / 1")
    return .f.
 endif
@@ -271,8 +327,8 @@ next
 // razlike izmedju dbf-a i values postoje
 if _changed_id
     AADD(_ids, _full_id_dbf)
-    if !sql_table_update(_table, "del", NIL, EVAL(where_block, _values_dbf)) 
-       sql_table_update(_table, "ROLLBACK")
+    if !sql_table_update(table, "del", NIL, EVAL(where_block, _values_dbf)) 
+       sql_table_update(table, "ROLLBACK")
        MsgBeep("mi imamos mnogos problemos - del / 2")
        return .f.
     endif
@@ -280,19 +336,19 @@ endif
 
 AADD(_ids, _full_id_mem)
 
-if !push_ids_to_semaphore( _table, _ids )
-     sql_table_update(_table, "ROLLBACK")
+if !push_ids_to_semaphore(table, _ids)
+     sql_table_update(table, "ROLLBACK")
      MsgBeep("mi imamos mnogos problemos - push_ids_to_semaphore / 2")
      return .f.
 endif
 
 if server_only
-  sql_table_update(_table, "END")
+  sql_table_update(table, "END")
   return .t.
 endif
 
 if dbf_update_rec(values)
-    sql_table_update(_table, "END")
+    sql_table_update(table, "END")
     return .f.
 else
     sql_table_update(_table, "ROLLBACK")

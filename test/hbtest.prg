@@ -273,7 +273,7 @@ PROCEDURE TEST_CALL( cBlock, bBlock, xResultExpected )
 
    ELSE
 
-      bOldError := ErrorBlock( {|oError| Break( oError ) } )
+      //bOldError := ErrorBlock( {|oError| Break( oError ) } )
 
       BEGIN SEQUENCE
          xResult := Eval( bBlock )
@@ -281,7 +281,7 @@ PROCEDURE TEST_CALL( cBlock, bBlock, xResultExpected )
          xResult := ErrorMessage( oError )
       END SEQUENCE
 
-      ErrorBlock( bOldError )
+      //ErrorBlock( bOldError )
 
       IF !( ValType( xResult ) == ValType( xResultExpected ) )
          IF ValType( xResultExpected ) == "C" .AND. ValType( xResult ) $ "ABMO"

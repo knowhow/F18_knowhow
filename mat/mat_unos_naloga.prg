@@ -1035,7 +1035,7 @@ else   // tj. ako se radi o izlazu
   endif
 endif
 
-update_rec_server_and_dbf(_vars)
+update_rec_server_and_dbf("roba", _vars)
 
 SELECT (nArr)
 RETURN

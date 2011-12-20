@@ -20,8 +20,8 @@
  
 function Blagajna()
 
-local nRbr,nCOpis:=0,cOpis:=""
-private pici:=FormPicL("9,"+gPicDEM,12)
+local nRbr, nCOpis:=0, cOpis := ""
+private pici := FormPicL("9," + gPicDEM, 12)
 
 lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
 O_KONTO

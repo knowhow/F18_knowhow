@@ -49,39 +49,6 @@ endif
 return .t.
 
 
-// ------------------------------------
-// set_global_vars_from_dbf("w")
-// geerise public vars wId, wNaz ..
-// sa vrijednostima dbf polja Id, Naz 
-// -------------------------------------
-function set_global_vars_from_dbf(zn)
-
-local _i, _struct, _field, _var
-
-private cImeP,cVar
-
-if zn == NIL 
-  zn := "_"
-endif
-
-_struct := DBSTRUCT()
-
-for _i := 1 to LEN(_struct)
-   _field := _struct[_i, 1]
-
-    if !("#"+ _field +"#" $ "#BRISANO#_OID_#_COMMIT_#")
-        _var := zn + _field
-        // kreiram public varijablu sa imenom vrijednosti _var varijable
-        __MVPUBLIC(_var)
-        EVAL(MEMVARBLOCK(_var), EVAL(FIELDBLOCK(_field))) 
-
-    endif
-next
-
-return .t.
-
-
-
 /*!
  @function    NoviID_A
  @abstract    Novi ID - automatski

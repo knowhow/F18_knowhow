@@ -19,7 +19,7 @@ local _ime_polja, _i, _struct
 local _ret := hb_hash()
 
 _struct := DBSTRUCT()
-for _i:=1 to len(_struct)
+for _i := 1 to LEN(_struct)
 
   _ime_polja := _struct[_i, 1]
    
@@ -32,19 +32,26 @@ next
 return _ret
 
 // ------------------------------
+// no_lock - ne zakljucavaj
 // ------------------------------
-function dbf_update_rec(vars)
+function dbf_update_rec(vars, no_lock)
 local _key
 local _field_b
 
-if rlock()
+if no_lock == NIL
+   no_lock := .f.
+endif
+
+if no_lock .or. rlock()
     for each _key in vars:Keys
         // replace polja
         _field_b := FIELDBLOCK(_key)
         // napuni field sa vrijednosti
         EVAL( _field_b, vars[_key] ) 
     next 
-    dbrunlock()
+    if !no_lock 
+         dbrunlock()
+    endif
 else
     MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())
     return .f.
@@ -194,10 +201,42 @@ else
 endif
 
 return .t.
+
+// ------------------------------------
+// set_global_vars_from_dbf("w")
+// geerise public vars wId, wNaz ..
+// sa vrijednostima dbf polja Id, Naz 
+// -------------------------------------
+function set_global_vars_from_dbf(zn)
+
+local _i, _struct, _field, _var
+
+private cImeP,cVar
+
+if zn == NIL 
+  zn := "_"
+endif
+
+_struct := DBSTRUCT()
+
+for _i := 1 to LEN(_struct)
+   _field := _struct[_i, 1]
+
+    if !("#"+ _field +"#" $ "#BRISANO#_OID_#_COMMIT_#")
+        _var := zn + _field
+        // kreiram public varijablu sa imenom vrijednosti _var varijable
+        __MVPUBLIC(_var)
+        EVAL(MEMVARBLOCK(_var), EVAL(FIELDBLOCK(_field))) 
+
+    endif
+next
+
+return .t.
+
+
  
 // -------------------------------------
 // --------------------------------------
-
 function get_dbf_global_memvars(zn)
 local _ime_polja, _i, _struct
 local _ret := hb_hash()
@@ -224,6 +263,9 @@ for _i := 1 to len(_struct)
 next
 
 return _ret
+
+
+
 
 
 // -----------------------------------------

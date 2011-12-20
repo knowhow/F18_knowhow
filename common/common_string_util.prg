@@ -716,3 +716,15 @@ elseif cChar == chr(230)
 else
     return CHR(ASC(cChar) + 1)
 endif
+
+
+// ------------------
+// ------------------
+function _to_utf8(str)
+return hb_StrToUtf8(str)
+
+// ------------------
+// ------------------
+function _to_str(str)
+return hb_Utf8ToStr(str)
+

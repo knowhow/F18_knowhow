@@ -25,7 +25,7 @@ function PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
 local cRet, cIdBK
 local _i
-local _komande := {"<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", "<c-T> Brisi", "<c-P> Print", "<F4>  Dupliciraj", hb_Utf8ToStr("<c-F9> Briši SVE"), "<c-F> Trazi", "<a-S> Popuni kol.","<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka"}
+local _komande := {"<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str("<c-T> Briši"), "<c-P> Print", "<F4>  Dupliciraj", _to_str("<c-F9> Briši SVE"), _to_str("<c-F> Traži"), "<a-S> Popuni kol.","<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka"}
 local cUslovSrch :=  ""
 local cNazSrch
 
@@ -580,23 +580,7 @@ do case
 
   case (Ch==K_CTRL_N .or. Ch==K_F2 .or. Ch==K_F4 .or. Ch==K_CTRL_A)
    
-/*
-    // ubacio da se vrsi osvjezavanje tabela prije opcije f2, f4...
-    __n_rec := RECNO()
-
-    __pos := ASCAN( gaDbfs, { |var| var[1] == nDbf } )
-    __tbl := gaDbfs[ __pos, 2 ]
-    
-    my_use( __tbl )
-   
-*/
- 
     Tb:RefreshCurrent()
-
-/*     
-    select ( nDbf )
-    go ( __n_rec )
-*/
 
     if EditSifItem(Ch, nOrder, aZabIsp) == 1
         return DE_REFRESH
@@ -607,7 +591,7 @@ do case
   case Ch==K_CTRL_P
 
     PushWa()
-    IzborP2(Kol,PRIVPATH + alias())
+    IzborP2(Kol, PRIVPATH + ALIAS())
     if lastkey() == K_ESC
         return DE_CONT
     endif
@@ -623,9 +607,10 @@ do case
      return DE_REFRESH
 
   case Ch==K_CTRL_F6
-    Box(,1,30)
+
+    Box( ,1, 30)
       public gIdFilter := eval(ImeKol[TB:ColPos,2])
-      @ m_x+1,m_y+2 SAY "Filter :" GET gidfilter
+      @ m_x+1, m_y+2 SAY "Filter :" GET gidfilter
       read
     BoxC()
 
@@ -649,12 +634,12 @@ do case
   case Ch==K_F10
       SifPopup(nOrder)
       RETURN DE_CONT
-  otherwise
 
+  otherwise
      if nRet>-1
-       return nRet
+        return nRet
      else
-       return DE_CONT
+        return DE_CONT
      endif
 
 endcase
@@ -1840,13 +1825,13 @@ Kol:={}
 O_SIFK
 O_SIFV
 ImeKol:={ { padr("Id", 15),      {|| id}, "id"  }           ,;
-          { padr("Naz", 25),     {||  naz}, "naz" }         ,;
-          { padr("Sort", 4),     {||  sort}, "sort" } ,;
+          { padr("Naz", 25),     {|| naz}, "naz" }         ,;
+          { padr("Sort", 4),     {|| sort}, "sort" } ,;
           { padr("Oznaka", 4),   {|| oznaka}, "oznaka" } ,;
           { padr("Veza", 4),     {|| veza}, "veza" }       ,;
           { padr("Izvor", 15),   {|| izvor}, "izvor" }   ,;
           { padr("Uslov", 30),   {|| PADR(uslov, 30) }, "uslov" }   ,;
-          { padr("Tip", 3),      {||  tip}, "tip" }   ,;
+          { padr("Tip", 3),      {|| tip}, "tip" }   ,;
           { padr("Unique", 3),   {|| f_unique}, "f_unique", NIL, NIL,NIL,NIL,NIL,NIL, 20}   ,;
           { padr("Duz", 3),      {|| duzina}, "duzina" }   ,;
           { padr("Dec", 3),      {|| f_decimal}, "f_decimal" }   ,;
@@ -1854,13 +1839,13 @@ ImeKol:={ { padr("Id", 15),      {|| id}, "id"  }           ,;
           { padr("K When", 50),  {|| KWhen }, "KWhen" }   ,;
           { padr("UBrowsu", 4),  {|| UBrowsu}, "UBrowsu" }             ,;
           { padr("EdKolona", 4), {|| EdKolona}, "EdKolona" }             ,;
-          { padr("K1", 4),       {||  k1}, "k1" }             ,;
-          { padr("K2", 4),       {||  k2}, "k2" }             ,;
-          { padr("K3", 4),       {||  k3}, "k3" }             ,;
-          { padr("K4", 4),       {||  k4}, "k4" }             ;
+          { padr("K1", 4),       {|| k1}, "k1" }             ,;
+          { padr("K2", 4),       {|| k2}, "k2" }             ,;
+          { padr("K3", 4),       {|| k3}, "k3" }             ,;
+          { padr("K4", 4),       {|| k4}, "k4" }             ;
        }
 
-FOR i:=1 TO LEN(ImeKol)
+FOR i := 1 TO LEN(ImeKol)
    AADD(Kol, i)
 NEXT
 
@@ -1880,14 +1865,14 @@ private cK1:=""
 private cImeVar:=""
 private cNumDio:=""
 
-if ALIAS()<>"ROBA" .or. IzFMKINI("ROBA","Planika","N",SIFPATH)<>"D" .or. FIELDPOS("K1")==0 .or. !((cImeVar:=READVAR())=="WID") .or. !EMPTY(cK1:=SPACE(LEN(K1))) .or. !VarEdit({ {"Unesite K1","cK1",,"@!",} },10,23,14,56,"Odredjivanje nove sifre artikla","B5")
+if ALIAS()<>"ROBA" .or.  FIELDPOS("K1")==0 .or. !((cImeVar:=READVAR())=="WID") .or. !EMPTY(cK1:=SPACE(LEN(K1))) .or. !VarEdit({ {"Unesite K1","cK1",,"@!",} }, 10, 23, 14, 56, "Odredjivanje nove sifre artikla","B5")
     return (NIL)
 endif
 cNumDio := IzFMKINI("ROBA","NumDio","SUBSTR(ID,7,3)",SIFPATH)
 cPom2   := &(cImeVar)
 nDuz    := LEN(cPom2)
 cPom2   := RTRIM(cPom2)
-cPom    := cK1+CHR(255)
+cPom    := cK1 + CHR(255)
 PushWA()
 
 nOrder:=ORDNUMBER("BROBA")
@@ -1926,7 +1911,8 @@ if lNFGR
     nRec:=RECNO()
 endif
 
-if fieldpos("BARKOD")<>0 // tra§i glavni barkod
+// trazi glavni barkod
+if fieldpos("BARKOD")<>0 
     set order to tag "BARKOD"
     seek cID
     gOcitBarkod:=.t.
@@ -1970,7 +1956,7 @@ return
 // -------------------------------
 static function sif_brisi_stavku()
 
-if Pitanje(,"Zelite li izbrisati ovu stavku ??","D")=="D"
+if Pitanje( , "Zelite li izbrisati ovu stavku ??","D")=="D"
     delete_rec_server_and_dbf()
     return DE_REFRESH
 else

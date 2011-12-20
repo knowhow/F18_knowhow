@@ -627,15 +627,21 @@ return .t.
 // -------------------
 // -------------------
 function panal_anal(cNal)
+local _rec
 
-@ m_x+3,m_y+2 SAY "ANALITIKA       "
+@ m_x + 3, m_y+2 SAY "ANALITIKA       "
 select PANAL
 seek cNal
 do while !eof() .and. cNal==IdFirma+IdVn+BrNal
-    Scatter()
+    
+    _rec := dbf_get_rec()
+
     select ANAL
-    append ncnl
-    Gather2()
+
+    APPEND BLANK
+
+    dbf_update_rec(_rec, .f.)
+
     select PANAL
     skip
 enddo
@@ -645,15 +651,21 @@ return
 // -------------------
 // -------------------
 function psint_sint(cNal)
-  @ m_x+3,m_y+2 SAY "SINTETIKA       "
-  select PSINT
-  seek cNal
+local _rec
+  
+@ m_x + 3, m_y + 2 SAY "SINTETIKA       "
+select PSINT
+seek cNal
 
-do while !eof() .and. cNal==IdFirma+IdVn+BrNal
-    Scatter()
+do while !eof() .and. cNal == IdFirma + IdVn + BrNal
+
+    _rec:= dbf_get_rec()
+
     select SINT
-    append ncnl
-    Gather2()
+
+    APPEND BLANK
+    dbf_update_rec(_rec, .f.)
+    
     select PSINT
     skip
 enddo
@@ -664,15 +676,17 @@ return
 //-----------------------
 //-----------------------
 function pnalog_nalog(cNal)
+local _rec
 
 select PNALOG
 seek cNal
 if found()
-    Scatter()
-    //_Sifra:=sifrakorisn
+    _rec := dbf_get_rec()
     select NALOG
-    append ncnl
-    Gather2()
+ 
+    APPEND BLANK
+    dbf_update_rec(_rec, .f.)
+
 else
     Beep(4)
     Msg("Greska... ponovi stampu naloga ...")
@@ -685,8 +699,9 @@ return
 function psuban_suban(cNal)
 local nSaldo :=0
 local nC := 0
+local _rec
 
-@ m_x+3,m_y+2 SAY "SUBANALITIKA   "
+@ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
 select SUBAN
 set order to tag "3"
 select PSUBAN
@@ -695,19 +710,22 @@ seek cNal
 nC:=0
 do while !eof() .and. cNal==IdFirma+IdVn+BrNal
 
-    @ m_x+3,m_y+25 SAY ++nC  pict "99999999999"
+    @ m_x + 3, m_y + 25 SAY ++nC  pict "99999999999"
 
-    Scatter()
-    if _d_p=="1" 
+    set_global_vars_from_dbf("_")
+
+
+    if _D_P == "1" 
           nSaldo:=_IznosBHD
     else
           nSaldo:= -_IznosBHD
     endif
     SELECT SUBAN
-    SEEK _IdFirma+_IdKonto+_IdPartner+_BrDok    // isti dokument
+    SEEK _IdFirma + _IdKonto + _IdPartner + _BrDok    
 
-    nRec:=recno()
-    do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok)== (IdFirma+IdKonto+IdPartner+BrDok)
+
+    nRec := recno()
+    do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok) == (IdFirma+IdKonto+IdPartner+BrDok)
        if d_P=="1"
            nSaldo+= IznosBHD
        else
@@ -716,7 +734,7 @@ do while !eof() .and. cNal==IdFirma+IdVn+BrNal
        skip
     enddo
 
-    if ABS(round(nSaldo,3)) <= gnLOSt
+    if ABS(round(nSaldo, 3)) <= gnLOSt
         GO nRec
         do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok)== (IdFirma+IdKonto+IdPartner+BrDok)
             field->OtvSt:="9"
@@ -725,9 +743,10 @@ do while !eof() .and. cNal==IdFirma+IdVn+BrNal
         _OtvSt:="9"
     endif
 
-    //append ncnl
+    _rec := get_dbf_global_memvars("_")
+    
     APPEND BLANK
-    Gather2()
+    dbf_update_rec(_rec, .f.)
 
     select PSUBAN
     skip
@@ -737,38 +756,15 @@ enddo
 return
 
 
-/*! \fn SifkPartnBank()
- *  \brief Dodaje u tabelu SifK stavke PARTN i BANK
- */
-function SifkPartnBank()
-local _rec
-O_SIFK
-set order to tag "ID2"
-seek padr("PARTN", 8) + "BANK"
-
-if !found() .and. Pitanje(,"U sifk dodati PARTN/BANK  ?","D") == "D"
-        APPEND BLANK
-        _rec := dbf_get_rec()
-        _rec["id"] := "PARTN"
-        _rec["oznaka"] := "BANK"
-        _rec["naz"] := "Banke"
-        _rec["veza"] := "N"
-        _rec["duzina"] := 16
-        _rec["tip"] := "C"
-        if !update_rec_server_and_dbf("sifk", _rec)
-            delete_with_rlock()
-        endif
-endif
-use
-return NIL
-
 // ------------------------------
 // ------------------------------
 function fin_pripr_delete(cNal)
+local ntRec
 
 // nalog je uravnotezen, moze se izbrisati iz PRIPR
 select fin_pripr
 seek cNal
+
 @ m_x+3,m_y+2 SAY "BRISEM PRIPREMU "
 do while !eof() .and. cNal==IdFirma+IdVn+BrNal
     skip

@@ -62,6 +62,8 @@ local _ids := {}
 local _pos
 local _full_id
 local _dbf_pkey_search
+local _field
+local _where_str
 
 if table == NIL
    table := ALIAS()
@@ -104,7 +106,8 @@ endif
 
 sql_table_update(table, "BEGIN")
 
-if !sql_table_update(table, "del", nil, EVAL(where_block, values))
+_where_str := EVAL(where_block, values)
+if sql_table_update(table, "del", nil, _where_str) 
 
    update_semaphore_version(table, .t.)
    
@@ -121,7 +124,7 @@ if !sql_table_update(table, "del", nil, EVAL(where_block, values))
    SET ORDER TO TAG (order_key_tag)
    _dbf_pkey_search := ""
    for each _field in id_fields
-       _dbf_pkey_search += _field
+       _dbf_pkey_search += values[_field]
    next
 
    if FLOCK()
@@ -159,6 +162,12 @@ endif
 
 // pronadji u tabeli koji je naziv te tabele
 _pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+
+if _pos == 0
+   MsgBeep("gaDBFs table ? :" + table)
+   quit
+endif
+
 _table := gaDBFs[ _pos, 3 ] 
 
 sql_table_update( _table, "BEGIN" )
@@ -249,6 +258,7 @@ local _ids := {}
 local _pos
 local _val_dbf, _val_mem
 local _changed_id, _values_dbf, _full_id_dbf, _full_id_mem 
+local _where_str
 
 if !USED()
    MsgBeep("mora biti otvorena neka tabela ?!")
@@ -291,9 +301,8 @@ endif
 
 sql_table_update(table, "BEGIN")
 
-// ostala polja su nevazna za brisanje
-
-if !sql_table_update(table, "del", nil, EVAL(where_block, values))
+_where_str := EVAL(where_block, values)
+if !sql_table_update(table, "del", nil, _where_str) 
    sql_table_update(table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - SQL del / 1")
    return .f.
@@ -349,7 +358,7 @@ endif
 
 if dbf_update_rec(values)
     sql_table_update(table, "END")
-    return .f.
+    return .t.
 else
     sql_table_update(_table, "ROLLBACK")
     MsgBeep("mi imamos dbf problemos - moramo sql rollbackos")

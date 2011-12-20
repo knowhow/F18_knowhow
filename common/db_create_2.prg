@@ -331,9 +331,9 @@ function cre_sifk_sifv()
 if !file(f18_ime_dbf("sifk"))
    aDbf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-   AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
    AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
+   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
+   AADD(aDBf,{ 'SORT'                , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'Veza'                , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'f_unique'            , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'Izvor'               , 'C' ,  15 ,  0 })
@@ -376,10 +376,10 @@ CREATE_INDEX("NAZ", "naz"           , "sifk")
 
 if !file(f18_ime_dbf("sifv.dbf"))  
    aDbf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-   AADD(aDBf,{ 'Oznaka'              , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'IdSif'               , 'C' ,  15 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
+   AADD(aDBf,{ 'id'                  , 'C' ,   8 ,  0 })
+   AADD(aDBf,{ 'oznaka'              , 'C' ,   4 ,  0 })
+   AADD(aDBf,{ 'idsif'               , 'C' ,  15 ,  0 })
+   AADD(aDBf,{ 'naz'                 , 'C' ,  50 ,  0 })
 
    // Primjer:
    // ID  = ROBA

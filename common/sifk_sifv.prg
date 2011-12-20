@@ -107,9 +107,9 @@ Box(,3,60, .f.)
 	m_y := nTekY
 	
 	@ m_x+2,m_y+2 SAY "      Trazi:" GET cOldVal
-        @ m_x+3,m_y+2 SAY "Zamijeni sa:" GET cNewVal
+    @ m_x+3,m_y+2 SAY "Zamijeni sa:" GET cNewVal
 	
-        read 
+    read 
 BoxC()
 
 if LastKey()==K_ESC
@@ -216,8 +216,9 @@ endif
 
 PushWa()
 
-dbf_name := padr (dbf_name, 8)
-ozna     := padr(ozna, 4)
+dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
+ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
+id_sif   := PADR(id_sif, SIFK_LEN_IDSIF)
 
 // ako tabela sifk, sifv nije otvorena - otvoriti
 SELECT(F_SIFK)
@@ -238,38 +239,39 @@ _ret := NIL
 
 if !FOUND()
    // uopste ne postoji takva karakteristika
-
    if return_nil <> NIL
         _ret := get_sifv_value("X", "")
     else
         _ret := NIL
     endif
-
     PopWa()
     return _ret
 endif
 
 _sifk_duzina := sifk->duzina
-_sifk_tip := sifk->tip
-_sifk_veza := sifk->veza
+_sifk_tip    := sifk->tip
+_sifk_veza   := sifk->veza
 
 SELECT sifv
+SET ORDER TO TAG "ID"
+DBSEEK(dbf_name + ozna + id_sif, .t.)
 
-// ADRES.DBF
-if len(id_sif) > 15  
-    id_sif := left(id_sif, 15)
+if !FOUND()
+   PopWa()
+   _ret := get_sifv_value(_sifk_tip, _sifk_duzina, "")
+   return _ret
 endif
 
-HSEEK dbf_name + ozna + id_sif
 _ret := get_sifv_value(_sifk_tip, _sifk_duzina, sifv->naz)
 
 if _sifk_veza == "N"
+    _ret := ToStr(_ret)
     skip
     do while !EOF() .and.  ((id + oznaka + idsif) == (dbf_name + ozna + id_sif))
         _ret += "," + ToStr(get_sifv_value(_sifk_tip, _sifk_duzina, sifv->naz)) 
         skip
     enddo
-    _ret := padr(_ret, 190)
+    //_ret := padr(_ret, 190)
 endif
 
 PopWa()
@@ -279,6 +281,7 @@ return _ret
 // --------------------------------------
 static function get_sifv_value(sifk_tip, sifk_duzina, naz_value)
 local _ret
+
 
 DO CASE
   CASE sifk_tip =="C"
@@ -347,9 +350,10 @@ return NIL
 //  iz ovoga se vidi da je "," nedozvoljen znak u ID-u
 // ------------------------------------------------------------------
 
-function USifk(dbf_name, ozn, id_sif, val)
+function USifk(dbf_name, ozna, id_sif, val)
 local _i
 local ntrec, numtok
+local _sifk_rec
 
 SELECT F_SIFV
 if !used()
@@ -365,54 +369,53 @@ if val == NIL
    return .f.
 endif
 
-dbf_name := padr(dbf_name, 8)
-ozn      := padr(ozn, 4)
+dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
+ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
 
 PushWa()
 
 SELECT SIFK
 set order to tag "ID2"
-seek dbf_name + ozn
+seek dbf_name + ozna
 
 if !FOUND() .or. !(sifk->tip $ "CDN")
     PopWa()
     return .f.
 endif
 
-// ADRES.DBF ?
-if LEN(id_sif) > 15   
-  id_sif := LEFT(id_sif, 15)
-endif
+_sifk_rec := dbf_get_rec()
+id_sif := PADR(id_sif, SIFK_LEN_IDSIF)
 
 if sifk->veza == "N" 
-   if !update_sifv_n_relation(dbf_name, ozn, id_sif, val) 
+   if !update_sifv_n_relation(_sifk_rec, id_sif, val) 
       return .f.
    endif
 else
-   if !update_sifv_1_relation(dbf_name, ozn, id_sif, val)
+   if !update_sifv_1_relation(_sifk_rec, id_sif, val)
       return .f.
    endif
 endif
 
+PopWa()
 return .t.
 
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-static function update_sifv_n_relation(dbf_name, ozn, id_sif, vals) 
+static function update_sifv_n_relation(sifk_rec, id_sif, vals) 
 local _i, _numtok, _tmp, _naz, _values
 local _sifv_rec
 
 _sifv_rec := hb_hash()           
-_sifv_rec["id"] := dbf_name
-_sifv_rec["oznaka"] := ozn
+_sifv_rec["id"] := sifk_rec["id"]
+_sifv_rec["oznaka"] := sifk_rec["oznaka"]
 _sifv_rec["idsif"] := id_sif
-
 
 // veza 1->N posebno se tretira !!
 SELECT sifv
+SET ORDER TO TAG "ID"
 
-brisi_sifv_item(dbf_name, ozn, id_sif)
+brisi_sifv_item(sifk_rec["id"], sifk_rec["oznaka"], id_sif)
 
 _numtok := NUMTOKEN(vals, ",")
 
@@ -421,33 +424,32 @@ for _i := 1 to _numtok
     _tmp := TOKEN(vals, "," , _i)    
     APPEND BLANK
 
-    _sifv_rec["naz"] := get_sifv_naz(_tmp, sifk->tip, sifk->duzina, sifk->f_decimal) 
+    _sifv_rec["naz"] := get_sifv_naz(_tmp, sifk_rec) 
     update_rec_server_and_dbf("sifv", _sifv_rec)
 next
-
  
 return .t.
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-static function update_sifv_1_relation(dbf_name, ozn, id_sif, value)
+static function update_sifv_1_relation(sifk_rec, id_sif, value)
 local _sifv_rec
 
 _sifv_rec := hb_hash()           
-_sifv_rec["id"] := dbf_name
-_sifv_rec["oznaka"] := ozn
+_sifv_rec["id"] := sifk_rec["id"]
+_sifv_rec["oznaka"] := sifk_rec["oznaka"]
 _sifv_rec["idsif"] := id_sif
+
+value := PADR(value, sifk_rec["duzina"])
 
 // veza 1-1
 SELECT  SIFV
-SEEK dbf_name +  ozn + id_sif
+SET ORDER TO TAG "ID"
 
-// do sada nije bilo te vrijednosti
-if !FOUND()
-     APPEND BLANK
-endif
+brisi_sifv_item(sifk_rec["id"], sifk_rec["oznaka"], id_sif)
 
-_sifv_rec["naz"] := get_sifv_naz(value, sifk->tip, sifk->duzina, sifk->f_decimal)
+APPEND BLANK
+_sifv_rec["naz"] := get_sifv_naz(value, sifk_rec)
 update_rec_server_and_dbf("sifv", _sifv_rec)
 
 return .t.
@@ -461,20 +463,17 @@ local _sifv_rec := hb_hash()
 _sifv_rec["id"] := dbf_name
 _sifv_rec["oznaka"] := ozn
 _sifv_rec["idsif"] := id_sif
-
-return delete_rec_server_and_dbf("sifv", _sifv_rec)
- 
+return delete_rec_server_and_dbf("sifv", _sifv_rec, {"id", "oznaka", "idsif"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) + " AND IDSIF=" + _sql_quote(x["idsif"]) }, "ID" )
 
 // ----------------------------------------
 // ----------------------------------------
-static function get_sifv_naz(val, sifk_tip, sifk_duzina, sifk_f_decimal)
+static function get_sifv_naz(val, sifk_rec)
 do case 
-
-   CASE sifk_tip == "C"
+   CASE sifk_rec["tip"] == "C"
+        return PADR(val, sifk_rec["duzina"])
+   case sifk_rec["tip"] == "N"
         return val
-   CASE sifk_tip=="N"
-        return str(val, sifk_duzina, sifk_f_decimal)
-   CASE sifk_tip=="D"
+   CASE sifk_rec["tip"] == "D"
      	return DTOS(val)
 end case
 

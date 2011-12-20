@@ -20,6 +20,10 @@
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 2
 #define SEMAPHORE_LOCK_RETRY_NUM 3
 
+#define SIFK_LEN_DBF     8
+#define SIFK_LEN_OZNAKA  4
+#define SIFK_LEN_IDSIF   15
+
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED
       #include "f18_release.ch"

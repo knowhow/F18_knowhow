@@ -214,7 +214,7 @@ for _i := 1 to len(_struct)
   if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
 
      // punimo hash matricu sa vrijednostima public varijabli
-     // _ret["idfirma" := wIdFirma, za zn = "w"
+     // _ret["idfirma"] := wIdFirma, za zn = "w"
       _ret[ LOWER(_ime_polja) ] := EVAL( MEMVARBLOCK( zn + _ime_polja) )
 
       // oslobadja public ili private varijablu

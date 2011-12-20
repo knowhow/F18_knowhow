@@ -51,9 +51,6 @@ endif
 private nOrdId
 private fBosanski:=.f.
 
-// setuj match_code polje...
-set_mc_imekol(nDbf)
-
 PushWa()
 PushSifV()
 
@@ -66,6 +63,13 @@ select (nDbf)
 if !used()
    my_use(nDbf)
 endif
+
+// setuj match_code polje...
+
+MsgBeep("set_mc_imekol ne radi")
+// set_mc_imekol(nDbf)
+
+
 
 nOrderSif:=indexord() 
 nOrdId := ORDNUMBER("ID")
@@ -332,6 +336,10 @@ local bPom
 
 cFldId := "ID"
 cFldMatchCode := "MATCH_CODE"
+
+if (nDBF == F_SIFK) .or. (nDBF == F_SIFV)
+    return
+endif
 
 // ako nema polja match code ... nista...
 if (nDBF)->(fieldpos(cFldMatchCode)) == 0
@@ -727,9 +735,9 @@ do while .t.
                    // area->nazpolja
                    cPom:=""  
                 else
-                    if left(ImeKol[i,3],6) != "SIFK->"
+                    if left(ImeKol[i,3], 6) != "SIFK->"
 
-                        cPom:="w"+ImeKol[i,3]    
+                        cPom:= "w" + ImeKol[i,3]    
                         // npr WVPC2
                         // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
                         // varijablu karakteristike("ROBA","V2")
@@ -744,7 +752,7 @@ do while .t.
                             &cPom:= IzSifk(ALIAS(), substr(ImeKol[i,3], 7))
                             if &cPom = NIL  
                                 // ne koristi se !!!
-                                cPom:=""
+                                cPom := ""
                             endif
                      endif
                 endif
@@ -793,7 +801,7 @@ do while .t.
                                 nYP := nKolona
                             endif
                             
-                            @ m_x + nTekRed , m_y + nKolona SAY iif(nKolona>1,"  "+alltrim(ImeKol[i,1]) , PADL( alltrim(ImeKol[i,1]) ,15))  GET &cPom VALID eval(bValid) PICTURE cPic
+                            @ m_x + nTekRed , m_y + nKolona SAY iif(nKolona > 1,"  "+alltrim(ImeKol[i,1]) , PADL( alltrim(ImeKol[i,1]) ,15))  GET &cPom VALID eval(bValid) PICTURE cPic
                             // stampaj grupu za stavku "GRUP"
                             if lShowPGroup
                                 p_gr(&cPom, nXP+1, nYP+1)
@@ -802,15 +810,15 @@ do while .t.
                             if cPom == "wSifk_"
                                 // uzmi when valid iz SIFK
                                 private cWhenSifk, cValidSifk
-                                IzSifKWV(ALIAS(), substr(cPom,7) ,@cWhenSifk, @cValidSifk)
+                                IzSifKWV(ALIAS(), substr(cPom,7) , @cWhenSifk, @cValidSifk)
 
                                 if !empty(cWhenSifk)
-                                    Getlist[nGet]:PreBlock:=& ("{|| "+cWhenSifk +"}")
+                                    Getlist[nGet]:PreBlock:=& ("{|| " + cWhenSifk + "}")
                                 else
                                     GetList[nGet]:PreBlock:=bWhen
                                 endif
                                 if !empty(cValidSifk)
-                                    Getlist[nGet]:PostBlock:= & ("{|| "+cValidSifk +"}")
+                                    Getlist[nGet]:PostBlock:= & ("{|| " + cValidSifk + "}")
                                 else
                                     GetList[nGet]:PostBlock:=bValid
                                 endif         

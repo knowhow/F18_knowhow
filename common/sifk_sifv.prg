@@ -181,20 +181,31 @@ cField := aFields[nField, 1]
 return .t.
 
 
-// -----------------------------------------------------------
-// IzSifk
-// Izvlaci vrijednost iz tabele SIFK
-// param cDBF ime DBF-a
-// param cOznaka oznaka BARK , GR1 itd
-// param cIDSif  interna sifra, npr  000000232  ,
-//               ili "00000232,XXX1233233" pri pretrazivanju
-// param fNil    NIL - vrati nil za nedefinisanu vrijednost,
-//               .f. - vrati "" za nedefinisanu vrijednost
-// fpretrazivanje
-//
-// -----------------------------------------------------------
 function IzSifk (dbf_name, ozna, id_sif, return_nil)
+local _tmp
 
+PushWa()
+//altd()
+_tmp := get_karakter_value(dbf_name, ozna, id_sif, return_nil)
+
+PopWa()
+//if VALTYPE(_tmp) == "C"
+//   return PADR(_tmp, 190)
+//else
+return _tmp
+//endif
+
+// -----------------------------------------------------------
+// get_karakter_value
+// Izvlaci vrijednost iz tabele SIFK
+// param dbf_name ime DBF-a
+// param oznaka oznaka BARK , GR1 itd
+// param id_sif       sifra u sifrarniku, npr  000000232  ,
+//                    ili "00000232,XXX1233233" pri pretrazivanju
+// param return_nil   NIL - vrati nil za nedefinisanu vrijednost,
+//                    .f. - vrati "" za nedefinisanu vrijednost
+// -----------------------------------------------------------
+function get_karakter_value (dbf_name, ozna, id_sif, return_nil)
 local _ret := ""
 local _sifk_tip, _sifk_duzina, _sifk_veza
 
@@ -212,9 +223,6 @@ endif
 if id_sif == NIL
   id_sif:=(dbf_name)->ID
 endif
-
-
-PushWa()
 
 dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
 ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
@@ -244,7 +252,6 @@ if !FOUND()
     else
         _ret := NIL
     endif
-    PopWa()
     return _ret
 endif
 
@@ -257,7 +264,6 @@ SET ORDER TO TAG "ID"
 DBSEEK(dbf_name + ozna + id_sif, .t.)
 
 if !FOUND()
-   PopWa()
    _ret := get_sifv_value(_sifk_tip, _sifk_duzina, "")
    return _ret
 endif
@@ -274,7 +280,6 @@ if _sifk_veza == "N"
     //_ret := padr(_ret, 190)
 endif
 
-PopWa()
 return _ret
 
 // --------------------------------------
@@ -299,23 +304,24 @@ END DO
 
 return _ret
 
-function IzSifkNaz(cDBF,cOznaka)
 
+function IzSifkNaz(cDBF, cOznaka)
 local xRet:="", nArea
 
 PushWA()
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
-select sifk; set order to tag "ID2"
-seek cDBF+cOznaka
-xRet:=sifk->Naz
+cDBF := padr(cDBF, SIFK_LEN_DBF)
+cOznaka := padr(cOznaka, SIFK_LEN_OZNAKA)
+
+select sifk
+set order to tag "ID2"
+seek cDBF + cOznaka
+xRet := sifk->Naz
 PopWA()
 return xRet
 
 // ------------------------------------------
 // ------------------------------------------
-function IzSifkWV
-parameters cDBF, cOznaka, cWhen, cValid
+function IzSifkWV(cDBF, cOznaka, cWhen, cValid)
 
 local xRet:=""
 
@@ -327,8 +333,8 @@ select sifk
 set order to tag "ID2"
 seek cDBF+cOznaka
 
-cWhen:=sifk->KWHEN
-cValid:=sifk->KVALID
+cWhen  := sifk->KWHEN
+cValid := sifk->KVALID
 
 PopWa()
 return NIL
@@ -531,8 +537,8 @@ local _field_b
 _alias := ALIAS()
 
 for _i := 1 to len(ime_kol)
-   if LEFT(ime_kol[i, 3], 6) == "SIFK->"
-     _field_b :=  MEMVARBLOCK( var_prefix + "Sifk_" + SUBSTR(ime_kol[i,3], 7))
+   if LEFT(ime_kol[_i, 3], 6) == "SIFK->"
+     _field_b :=  MEMVARBLOCK( var_prefix + "Sifk_" + SUBSTR(ime_kol[_i, 3], 7))
 
      if IzSifk( _alias, SUBSTR(ime_kol[_i, 3], 7), (_alias)->id) <> NIL
          USifk( _alias, SUBSTR(ImeKol[_i, 3], 7), (_alias)->id, EVAL(_field_b) )

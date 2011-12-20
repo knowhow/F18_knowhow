@@ -44,13 +44,19 @@ cSeek :=  cId + "09" + cNaz
 SEEK cSeek   
 
 if !FOUND()
-	APPEND BLANK
-	replace id with cId ,;
-		naz with cNaz ,;
-		oznaka with "REJO" ,;
-		sort with "09" ,;
-		veza with "1" ,;
-		tip with "C" ,;
-		duzina with 1 ,;
-		decimal with 0
+    APPEND BLANK
+    _rec := dbf_get_rec()
+    _rec["id"] := cId
+    _rec["naz"] := cNaz
+    _rec["oznaka"] := "REJO"
+    _rec["sort"] := "09"
+    _rec["tip"] := "C"
+    _rec["duzina"] := 1
+    _rec["veza"] := "1"
+
+    if !update_rec_server_and_dbf("sifk", _rec, fields, where_block) 
+        delete_with_rlock()
+    endif
 endif
+
+

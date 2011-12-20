@@ -11,6 +11,48 @@
 
 #include "fmk.ch"
 
+function cre_partn()
+local aDbf := {}
+
+AADD(aDBf, { 'ID'                  , 'C' ,   6 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf, { 'NAZ'                 , 'C' , 250 ,  0 })
+AADD(aDBf, { 'NAZ2'                , 'C' ,  25 ,  0 })
+AADD(aDBf, { '_KUP'                , 'C' ,   1 ,  0 })
+AADD(aDBf, { '_DOB'                , 'C' ,   1 ,  0 })
+AADD(aDBf, { '_BANKA'              , 'C' ,   1 ,  0 })
+AADD(aDBf, { '_RADNIK'             , 'C' ,   1 ,  0 })
+AADD(aDBf, { 'PTT'                 , 'C' ,   5 ,  0 })
+AADD(aDBf, { 'MJESTO'              , 'C' ,  16 ,  0 })
+AADD(aDBf, { 'ADRESA'              , 'C' ,  24 ,  0 })
+AADD(aDBf, { 'ZIROR'               , 'C' ,  22 ,  0 })
+AADD(aDBf, { 'DZIROR'              , 'C' ,  22 ,  0 })
+AADD(aDBf, { 'TELEFON'             , 'C' ,  12 ,  0 })
+AADD(aDBf, { 'FAX'                 , 'C' ,  12 ,  0 })
+AADD(aDBf, { 'MOBTEL'              , 'C' ,  20 ,  0 })
+
+if !file(f18_ime_dbf("partn"))
+    dbcreate2('partn', aDbf)
+    reset_semaphore_version("partn")
+    my_use("partn")
+	close all 
+endif
+
+if !file(f18_ime_dbf("_partn"))
+        dbcreate2('_partn', aDbf)
+endif
+CREATE_INDEX("ID", "id", "partn")
+CREATE_INDEX("NAZ", "NAZ", "partn")
+
+CREATE_INDEX("ID", "id", "_partn")
+
+index_mcode("", "partn")
+
+set_sifk_partn_bank()
+
+return .t.
+
+
 // ---------------------------------
 // ---------------------------------
 function p_partneri(cId, dx, dy)
@@ -470,5 +512,44 @@ endif
 select (nSelect)
 
 return lRet
+// ----------------------------
+// ----------------------------
+function set_sifk_partn_bank()
+local lFound
+local cSeek
+local cNaz
+local cId
 
 
+SELECT (F_SIFK)
+
+if !used()
+	O_SIFK
+endif
+
+SET ORDER TO TAG "ID"
+// id + SORT + naz
+
+cId := PADR("PARTN", SIFK_LEN_DBF) 
+cNaz := PADR("Banke", LEN(naz))
+cSeek :=  cId + "05" + cNaz
+
+SEEK cSeek   
+
+if !FOUND()
+    APPEND BLANK
+    _rec := dbf_get_rec()
+    _rec["id"] := cId
+    _rec["naz"] := cNaz
+    _rec["oznaka"] := "BANK"
+    _rec["sort"] := "05"
+    _rec["tip"] := "C"
+    _rec["duzina"] := 16
+    _rec["veza"] := "N"
+
+    if !update_rec_server_and_dbf("sifk", _rec) 
+        delete_with_rlock()
+    endif
+endif
+
+return .t.

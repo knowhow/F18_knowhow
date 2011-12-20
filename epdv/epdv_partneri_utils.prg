@@ -26,7 +26,6 @@ local cSeek
 local cNaz
 local cId
 
-
 SELECT (F_SIFK)
 
 if !used()
@@ -34,12 +33,11 @@ if !used()
 endif
 
 SET ORDER TO TAG "ID"
-//id+SORT+naz
+// id + SORT + naz
 
 cId := PADR("PARTN", 8) 
 cNaz := PADR("1-FED,2-RS 3-DB", LEN(naz))
 cSeek :=  cId + "09" + cNaz
-
 
 SEEK cSeek   
 
@@ -54,9 +52,8 @@ if !FOUND()
     _rec["duzina"] := 1
     _rec["veza"] := "1"
 
-    if !update_rec_server_and_dbf("sifk", _rec, fields, where_block) 
+    if !update_rec_server_and_dbf("sifk", _rec) 
         delete_with_rlock()
     endif
 endif
-
 

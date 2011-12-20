@@ -442,7 +442,6 @@ return
 // ------------------------------------------------------------
 // -----------------------------------------------------------
 static function EdSif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)
-
 local i
 local j
 local imin
@@ -455,15 +454,18 @@ local nRed
 local nKolona
 local nTekRed
 local nTrebaRedova
+local cUslovSrch
+local lNovi
+
+
 private cPom
 private aQQ
 private aUsl
 private aStruct
-private lNovi
 
 // matrica zabrana
 if aZabrane=nil
- aZabrane:={}
+  aZabrane:={}
 endif
  
 // matrica zabrana ispravki polja
@@ -511,7 +513,7 @@ if (Ch==K_CTRL_N .and.  !ImaSlovo("AN", cSecur)  )  .or. ;
    (Ch==K_CTRL_T .and.  !ImaSlovo("AB", cSecur)  )  .or. ;
    (Ch==K_F4     .and.  !ImaSlovo("AI", cSecur)  )  .or. ;
    (Ch==K_CTRL_F9 .and.  !ImaSlovo("A9", cSecur)  ) .or. ;
-   ASCAN(azabrane,Ch)<>0  
+   ASCAN(aZabrane, Ch)<>0  
    MsgBeep("Nivo rada:" + klevel + ":" + cSecur + ": Opcija nedostupna !")
    return DE_CONT
 endif
@@ -545,6 +547,7 @@ do case
     endif
 
   case UPPER(CHR(Ch)) == "F"
+
     // pretraga po MATCH_CODE
     if m_code_src() == 0
         return DE_CONT
@@ -552,30 +555,32 @@ do case
         return DE_REFRESH
     endif
 
-  case Ch==ASC("/")
+  case Ch == ASC("/")
 
-    cUslovSrch:=""
-    Box(,1,60)
-       cUslovSrch:=space(120)
-       @ m_x+1,m_y+2 SAY "Zelim pronaci:" GET cUslovSrch pict "@!S40"
+    cUslovSrch := ""
+
+    Box( , 1, 60)
+       cUslovSrch := space(120)
+       @ m_x+1, m_y+2 SAY "Zelim pronaci:" GET cUslovSrch pict "@!S40"
        read
        cUslovSrch:=trim(cUslovSrch)
-       if right(cUslovSrch,1)=="*"
-          cUslovSrch:=left( cUslovSrch , len(cUslovSrch)-1 )
+       if right(cUslovSrch,1) == "*"
+          cUslovSrch := left( cUslovSrch , len(cUslovSrch)-1 )
        endif
     BoxC()
 
     if !empty(cUslovSrch)
-      // postavi filter u sifrarniku
-      SetSifFilt(cUslovSrch)  
+       // postavi filter u sifrarniku
+       SetSifFilt(cUslovSrch)  
     else
-      set filter to
+       set filter to
     endif
     return DE_REFRESH
 
 
   case (Ch==K_CTRL_N .or. Ch==K_F2 .or. Ch==K_F4 .or. Ch==K_CTRL_A)
    
+/*
     // ubacio da se vrsi osvjezavanje tabela prije opcije f2, f4...
     __n_rec := RECNO()
 
@@ -583,15 +588,20 @@ do case
     __tbl := gaDbfs[ __pos, 2 ]
     
     my_use( __tbl )
-    
+   
+*/
+ 
     Tb:RefreshCurrent()
-     
+
+/*     
     select ( nDbf )
     go ( __n_rec )
- 
+*/
+
     if EditSifItem(Ch, nOrder, aZabIsp) == 1
-      return DE_REFRESH
+        return DE_REFRESH
     endif
+
     RETURN DE_CONT
     
   case Ch==K_CTRL_P
@@ -687,25 +697,13 @@ if _LOG_PROMJENE == .t.
     cOldDesc := _g_fld_desc("w")
 endif
 
-// dodaj u matricu match_code ako ne postoji
-cMCField := ALIAS()
-if &cMCField->(fieldpos("MATCH_CODE")) <> 0
-    nMCScan := ASCAN(ImeKol, {|xImeKol| UPPER(xImeKol[3]) == "MATCH_CODE"})
-    
-    // ako ne postoji dodaj ga...
-    if nMCScan == 0
-        // dodaj polje u ImeKol
-        AADD(ImeKol, {"MATCH_CODE", {|| match_code}, "match_code" })
-        // dodaj novu stavku u kol
-        AADD( Kol, LEN(ImeKol) )
-    endif
-endif
+add_match_code(@ImeKol, @Kol)
 
 __A_SIFV__[__PSIF_NIVO__,3] :=  Ch
 
 if Ch==K_CTRL_N .or. Ch==K_F2
 
-    if nordid<>0
+    if nOrdid<>0
         set order to tag "ID"
     else
         set order to tag "1"
@@ -732,14 +730,14 @@ do while .t.
     // setuj varijable za tekuci slog
     SetSifVars()
    
-    nTrebaredova:=LEN(ImeKol)
-    for i:=1 to LEN(ImeKol)
+    nTrebaredova := LEN(ImeKol)
+    for i := 1 to LEN(ImeKol)
       if LEN(ImeKol[i]) >= 10 .and. Imekol[i, 10]<>NIL
          nTrebaRedova--
       endif
     next
 
-    i:=1 
+    i := 1 
     // tekuci red u matrici imekol
     for _jg := 1 to 3  // glavna petlja
             
@@ -755,138 +753,55 @@ do while .t.
             Private Getlist:={}
 
 
-            nGet:=1 // brojac get-ova
-            nNestampati:=0  // broj redova koji se ne prikazuju (_?_)
+            // brojac get-ova
+            nGet := 1 
+            // broj redova koji se ne prikazuju (_?_)
+            nNestampati := 0  
 
-            nTekRed:=1
+            nTekRed := 1
             do while .t. 
             
                 lShowPGroup := .f.
                 
-                if empty(ImeKol[i,3])  
-                   // ovdje se kroji matrica varijabli.......
-                   // area->nazpolja
-                   cPom:=""  
+                if empty(ImeKol[i, 3])  
+                    // ovdje se kroji matrica varijabli.......
+                    // area->nazpolja
+                    cPom := ""  
                 else
-                    if left(ImeKol[i,3], 6) != "SIFK->"
-
-                        cPom:= "w" + ImeKol[i,3]    
-                        // npr WVPC2
-                        // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
-                        // varijablu karakteristike("ROBA","V2")
-
-                     else
-                            // ako je SIFK->GRUP, prikazuj status
-                            if ALIAS() == "PARTN" .and. RIGHT(ImeKol[i,3],4) == "GRUP"
-                                lShowPGroup := .t.
-                            endif
-
-                            cPom:= "wSifk_" + substr(ImeKol[i,3], 7)
-                            &cPom:= IzSifk(ALIAS(), substr(ImeKol[i,3], 7))
-                            if &cPom = NIL  
-                                // ne koristi se !!!
-                                cPom := ""
-                            endif
-                     endif
+                    cPom := set_w_var(ImeKol, i, @lShowPGroup)
                 endif
 
-                cPic:=""
+                cPic := ""
                 // samo varijable koje mozes direktno mjenjati
                 if !empty(cPom) 
 
-                            // uzmi when, valid kodne blokove
-                            if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i,3]))>0)
-                                bWhen := {|| .f.}
-                            elseif (LEN(ImeKol[i])<4 .or. ImeKol[i,4]==nil)
-                                bWhen := {|| .t.}
-                            else
-                                bWhen:=Imekol[i,4]
-                            endif
-
-                            if (len(ImeKol[i])<5 .or. ImeKol[i,5]==nil)
-                                bValid := {|| .t.}
-                            else
-                                bValid:=Imekol[i,5]
-                            endif
-
-                            if LEN(ToStr(&cPom))>50
-                                cPic:="@S50"
-                                @ m_x+nTekRed+1,m_y+67 SAY Chr(16)
-                            elseif Len(ImeKol[i])>=7 .and. ImeKol[i,7] <> NIL
-                                cPic:= ImeKol[i,7]
-                            else
-                                cPic:=""
-                            endif
-
-                            nRed:=1
-                            nKolona:=1
-                            if Len(ImeKol[i]) >= 10 .and. imekol[i,10] <> NIL
-                                nKolona:= imekol[i,10]+1
-                                nRed:=0
-                            endif
-
-                            if nKolona=1
-                                nTekRed++
-                            endif
-                            
-                            if lShowPGroup
-                                nXP := nTekRed
-                                nYP := nKolona
-                            endif
-                            
-                            @ m_x + nTekRed , m_y + nKolona SAY iif(nKolona > 1,"  "+alltrim(ImeKol[i,1]) , PADL( alltrim(ImeKol[i,1]) ,15))  GET &cPom VALID eval(bValid) PICTURE cPic
-                            // stampaj grupu za stavku "GRUP"
-                            if lShowPGroup
-                                p_gr(&cPom, nXP+1, nYP+1)
-                            endif
-                        
-                            if cPom == "wSifk_"
-                                // uzmi when valid iz SIFK
-                                private cWhenSifk, cValidSifk
-                                IzSifKWV(ALIAS(), substr(cPom,7) , @cWhenSifk, @cValidSifk)
-
-                                if !empty(cWhenSifk)
-                                    Getlist[nGet]:PreBlock:=& ("{|| " + cWhenSifk + "}")
-                                else
-                                    GetList[nGet]:PreBlock:=bWhen
-                                endif
-                                if !empty(cValidSifk)
-                                    Getlist[nGet]:PostBlock:= & ("{|| " + cValidSifk + "}")
-                                else
-                                    GetList[nGet]:PostBlock:=bValid
-                                endif         
-                            else
-                                    GetList[nGet]:PreBlock:=bWhen
-                                    GetList[nGet]:PostBlock:=bValid
-                            endif
-
-                            nGet++
+                     sif_getlist(cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed)
+                     nGet++
                 else
                         
-                        nRed:=1
+                        nRed := 1
                         nKolona:=1
-                        if Len(ImeKol[i]) >= 10 .and. imekol[i, 10] <> NIL
-                            nKolona:= imekol[i,10]
-                            nRed:=0
+                        if Len(ImeKol[i]) >= 10 .and. Imekol[i, 10] <> NIL
+                            nKolona:= imekol[i, 10]
+                            nRed := 0
                         endif
 
                         // ne prikazuj nil vrijednosti
-                        if EVAL(ImeKol[i,2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2]))<>"_?_"  
+                        if EVAL(ImeKol[i, 2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2])) <> "_?_"  
                             if nKolona=1
-                            ++nTekRed
+                               ++nTekRed
                             endif
-                            @ m_x+nTekRed, m_y + nKolona SAY PADL( alltrim(ImeKol[i,1]) ,15)
-                            @ m_x+nTekRed, col() + 1 SAY EVAL(ImeKol[i,2])
+                            @ m_x + nTekRed, m_y + nKolona SAY PADL( alltrim(ImeKol[i, 1]) ,15)
+                            @ m_x + nTekRed, col() + 1 SAY EVAL(ImeKol[i,2])
                         else
                             ++nNestampati
                         endif
 
                 endif 
-                // empty(cpom)
 
                 i++                               
                 // ! sljedeci slog se stampa u istom redu
-                if ( len(imeKol) < i) .or. (nTekRed > min(20, nTrebaRedova) .and. !(Len(ImeKol[i] ) >= 10 .and. imekol[i, 10]<>NIL)  )
+                if ( len(imeKol) < i) .or. (nTekRed > min(20, nTrebaRedova) .and. !(Len(ImeKol[i] ) >= 10 .and. imekol[i, 10] <> NIL)  )
                     // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
                     exit 
                 endif
@@ -1007,11 +922,8 @@ if _LOG_PROMJENE == .t.
         cCh2 := ""
     endif
 
-        EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-        "promjena na sifri: " + to_str( FIELDGET(1) ), cCh1,cCh2, ;
-        DATE(),DATE(), "", ;
-        "promjene u tabeli " +  ALIAS() + " : " + ;
-        IIF(Ch==K_F2,"ispravka",IF(Ch==K_F4,"dupliciranje", "nova stavka")))
+    EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, "promjena na sifri: " + to_str( FIELDGET(1) ), cCh1, cCh2,  DATE(), DATE(), "", ;
+    "promjene u tabeli " +  ALIAS() + " : " + IIF(Ch==K_F2, "ispravka", IIF(Ch==K_F4, "dupliciranje", "nova stavka")))
 endif
 
 select (nTArea)
@@ -1021,6 +933,159 @@ if Ch==K_F4 .and. Pitanje( , "Vrati se na predhodni zapis","D")=="D"
 endif
     
 return 1
+
+
+static function set_w_var(ImeKol, _i, show_grup)
+local _tmp, _var_name
+
+if left(ImeKol[_i, 3], 6) != "SIFK->"
+
+    _var_name := "w" + ImeKol[_i, 3]    
+    // npr WVPC2
+    // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
+    // varijablu karakteristike("ROBA","V2")
+
+else
+      // ako je SIFK->GRUP, prikazuj status
+      if ALIAS() == "PARTN" .and. RIGHT(ImeKol[_i, 3], 4) == "GRUP"
+           show_grup := .t.
+      endif
+
+      _var_name := "wSifk_" + substr(ImeKol[_i, 3], 7)
+
+      _tmp := IzSifk(ALIAS(), substr(ImeKol[_i, 3], 7))
+      if _tmp == NIL  
+            // ne koristi se !!!
+            _var_name := ""
+      else
+           __MVPUBLIC(_var_name)
+           EVAL(MEMVARBLOCK(_var_name), _tmp)
+      endif
+
+endif
+
+return _var_name
+
+
+
+static function sif_getlist(var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed)
+local bWhen, bValid, cPic
+local nRed, nKolona
+local cWhenSifk, cValidSifk
+local nXP, nYP
+local _when_block, _valid_block
+
+local _m_block := MEMVARBLOCK(var_name)
+
+// uzmi when, valid kodne blokove
+
+if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i, 3]))>0)
+    bWhen := {|| .f.}
+elseif (LEN(ImeKol[i]) < 4 .or. ImeKol[i, 4]==nil)
+    bWhen := {|| .t.}
+else
+    bWhen:=Imekol[i, 4]
+endif
+
+if (len(ImeKol[i]) < 5 .or. ImeKol[i,5] == nil)
+    bValid := {|| .t.}
+else
+    bValid:=Imekol[i,5]
+endif
+
+_m_block := MEMVARBLOCK(var_name) 
+
+if _m_block == NIL
+  MsgBeep("var_name nedefinisana :" + var_name)
+endif
+
+if LEN( ToStr( EVAL(_m_block)) ) > 50
+        cPic := "@S50"
+        @ m_x + nTekRed + 1, m_y + 67 SAY Chr(16)
+
+elseif Len(ImeKol[i]) >= 7 .and. ImeKol[i , 7] <> NIL
+        cPic:= ImeKol[i, 7]
+else
+        cPic:=""
+endif
+
+nRed := 1
+nKolona := 1
+
+if Len(ImeKol[i]) >= 10 .and. Imekol[i,10] <> NIL
+        nKolona := ImeKol[i, 10] + 1
+        nRed := 0
+endif
+
+if nKolona=1
+        nTekRed++
+endif
+    
+if lShowPGroup
+        nXP := nTekRed
+        nYP := nKolona
+endif
+
+
+// stampaj grupu za stavku "GRUP"
+if lShowPGroup
+        p_gr( EVAL(_var_block), nXP + 1, nYP + 1)
+endif
+
+if var_name == "wSifk_"
+        // uzmi when valid iz SIFK
+        
+        IzSifKWV(ALIAS(), substr(var_name, 7) , @cWhenSifk, @cValidSifk)
+
+        if !empty(cWhenSifk)
+            _when_block := & ("{|| " + cWhenSifk + "}")
+        else
+            _when_block := bWhen
+        endif
+
+        if !empty(cValidSifk)
+            _valid_block := & ("{|| " + cValidSifk + "}")
+        else
+            _valid_block := bValid
+        endif         
+else
+          
+        _when_block := bWhen
+        _valid_block := bValid
+      
+endif
+
+
+@ m_x + nTekRed , m_y + nKolona SAY  IIF(nKolona > 1, "  " + alltrim(ImeKol[i, 1]) , PADL( alltrim(ImeKol[i, 1]) , 15))  + " "
+  
+AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block) ) ;;
+
+ATail(GetList):display()
+
+
+
+return .t.
+
+
+// -----------------------------------------
+// -----------------------------------------
+static function add_match_code(ImeKol, Kol)
+local  _pos, cMCField := ALIAS()
+
+// dodaj u matricu match_code ako ne postoji
+if (cMCField)->(fieldpos("MATCH_CODE")) <> 0
+
+    _pos := ASCAN(ImeKol, {|xImeKol| UPPER(xImeKol[3]) == "MATCH_CODE"})
+    
+    // ako ne postoji dodaj ga...
+    if _pos == 0
+        // dodaj polje u ImeKol
+        AADD(ImeKol, {"MATCH_CODE", {|| match_code}, "match_code" })
+        // dodaj novu stavku u kol
+        AADD( Kol, LEN(ImeKol) )
+    endif
+
+endif
 
 
 // --------------------------------------------------
@@ -1119,6 +1184,7 @@ aNew := TokToNiz(cNew, "#")
 
 // kao osnovnu referencu uzmi novu matricu
 for i := 1 to LEN( aNew )
+
     cVOld := ALLTRIM(aOld[i])
     cVNew := ALLTRIM(aNew[i])
     if cVNew == cVOld
@@ -1148,6 +1214,7 @@ SkratiAZaD(@_struct)
 for _i := 1 to LEN(_struct)
      cImeP := _struct[_i, 1]
      cVar:="w" + cImeP
+     
      &cVar := &cImeP
 next
 
@@ -1772,31 +1839,33 @@ private imekol,kol
 Kol:={}
 O_SIFK
 O_SIFV
-ImeKol:={ { padr("Id",15), {|| id}, "id"  }           ,;
-          { padr("Naz",25), {||  naz}, "naz" }         ,;
-          { padr("Sort",4), {||  sort}, "sort" } ,;
-          { padr("Oznaka",4), {||  oznaka}, "oznaka" } ,;
-          { padr("Veza",4), {||  veza}, "veza" }       ,;
-          { padr("Izvor",15), {||  izvor}, "izvor" }   ,;
-          { padr("Uslov",30), {||  uslov}, "uslov" }   ,;
-          { padr("Tip",3), {|| tip}, "tip" }   ,;
-          { padr("Unique",3), {|| f_unique}, "f_unique", NIL, NIL,NIL,NIL,NIL,NIL, 20}   ,;
-          { padr("Duz",3), {|| duzina}, "duzina" }   ,;
-          { padr("Dec",3), {|| f_decimal}, "f_decimal" }   ,;
-          { padr("K Validacija",50), {|| KValid}, "KValid" }   ,;
-          { padr("K When",50), {|| KWhen }, "KWhen" }   ,;
-          { padr("UBrowsu",4), {|| UBrowsu}, "UBrowsu" }             ,;
-          { padr("EdKolona",4), {|| EdKolona}, "EdKolona" }             ,;
-          { padr("K1",4), {||  k1}, "k1" }             ,;
-          { padr("K2",4), {||  k2}, "k2" }             ,;
-          { padr("K3",4), {||  k3}, "k3" }             ,;
-          { padr("K4",4), {||  k4}, "k4" }             ;
+ImeKol:={ { padr("Id", 15),      {|| id}, "id"  }           ,;
+          { padr("Naz", 25),     {||  naz}, "naz" }         ,;
+          { padr("Sort", 4),     {||  sort}, "sort" } ,;
+          { padr("Oznaka", 4),   {|| oznaka}, "oznaka" } ,;
+          { padr("Veza", 4),     {|| veza}, "veza" }       ,;
+          { padr("Izvor", 15),   {|| izvor}, "izvor" }   ,;
+          { padr("Uslov", 30),   {|| PADR(uslov, 30) }, "uslov" }   ,;
+          { padr("Tip", 3),      {||  tip}, "tip" }   ,;
+          { padr("Unique", 3),   {|| f_unique}, "f_unique", NIL, NIL,NIL,NIL,NIL,NIL, 20}   ,;
+          { padr("Duz", 3),      {|| duzina}, "duzina" }   ,;
+          { padr("Dec", 3),      {|| f_decimal}, "f_decimal" }   ,;
+          { padr("K Validacija", 50), {|| PADR(KValid, 50) }, "KValid" }   ,;
+          { padr("K When", 50),  {|| KWhen }, "KWhen" }   ,;
+          { padr("UBrowsu", 4),  {|| UBrowsu}, "UBrowsu" }             ,;
+          { padr("EdKolona", 4), {|| EdKolona}, "EdKolona" }             ,;
+          { padr("K1", 4),       {||  k1}, "k1" }             ,;
+          { padr("K2", 4),       {||  k2}, "k2" }             ,;
+          { padr("K3", 4),       {||  k3}, "k3" }             ,;
+          { padr("K4", 4),       {||  k4}, "k4" }             ;
        }
 
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-Private gTBDir:="N"
-return PostojiSifra(F_SIFK,1,10,65,"sifk - Karakteristike",@cId,dx,dy)
+FOR i:=1 TO LEN(ImeKol)
+   AADD(Kol, i)
+NEXT
 
+Private gTBDir:="N"
+return PostojiSifra(F_SIFK, 1, MAXROWS()-15, MAXCOLS()-15, "sifk - Karakteristike", @cId, dx, dy)
 
 // nadji novu sifru - radi na pritisak F5 pri unosu
 // nove sifre

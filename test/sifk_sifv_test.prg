@@ -141,7 +141,8 @@ TEST_LINE(IzSifk(_id_sif, _karakteristika, "01"), PADR("K1VAL3", K1_LEN ))
 _tmp := PADR("K2VAL1", KN_LEN) + ","
 _tmp += PADR("K2VAL2", KN_LEN) + ","
 _tmp += PADR("K2VAL4", KN_LEN) 
- 
+
+_tmp := PADR(_tmp, 190) 
 TEST_LINE(IzSifk(_id_sif, _karakteristika_n, "01"), _tmp)
 
 

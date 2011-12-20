@@ -185,15 +185,11 @@ function IzSifk (dbf_name, ozna, id_sif, return_nil)
 local _tmp
 
 PushWa()
-//altd()
 _tmp := get_sifk_value(dbf_name, ozna, id_sif, return_nil)
 
 PopWa()
-//if VALTYPE(_tmp) == "C"
-//   return PADR(_tmp, 190)
-//else
+
 return _tmp
-//endif
 
 // -----------------------------------------------------------
 // get_karakter_value
@@ -255,6 +251,9 @@ DBSEEK(dbf_name + ozna + id_sif, .t.)
 
 if !FOUND()
    _ret := get_sifv_value(_sifk_tip, _sifk_duzina, "")
+   if _sifk_veza == "N"
+      _ret := PADR(_ret, 190)
+   endif
    return _ret
 endif
 

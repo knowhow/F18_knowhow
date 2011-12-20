@@ -78,9 +78,11 @@ return
 // kreiranje indexa matchcode
 // ------------------------------------
 function index_mcode(cPath, cTable)
-if fieldpos("MATCH_CODE")<>0
+
+if fieldpos("MATCH_CODE") <> 0
 	//CREATE_INDEX("MCODE", "match_code", cPath + cTable)
 endif
+
 return
 
 // -----------------------------------
@@ -112,43 +114,7 @@ CREATE_INDEX("ID","id", "rj")
 CREATE_INDEX("NAZ","NAZ", "rj")
 index_mcode(KUMPATH, "rj")
 
-
-// PARTN
-aDbf:={}
-AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-add_f_mcode(@aDbf)
-AADD(aDBf,{ 'NAZ'                 , 'C' , 250 ,  0 })
-AADD(aDBf,{ 'NAZ2'                , 'C' ,  25 ,  0 })
-AADD(aDBf,{ '_KUP'                , 'C' ,   1 ,  0 })
-AADD(aDBf,{ '_DOB'                , 'C' ,   1 ,  0 })
-AADD(aDBf,{ '_BANKA'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ '_RADNIK'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
-AADD(aDBf,{ 'MJESTO'              , 'C' ,  16 ,  0 })
-AADD(aDBf,{ 'ADRESA'              , 'C' ,  24 ,  0 })
-AADD(aDBf,{ 'ZIROR'               , 'C' ,  22 ,  0 })
-AADD(aDBf,{ 'DZIROR'              , 'C' ,  22 ,  0 })
-AADD(aDBf,{ 'TELEFON'             , 'C' ,  12 ,  0 })
-AADD(aDBf,{ 'FAX'                 , 'C' ,  12 ,  0 })
-AADD(aDBf,{ 'MOBTEL'              , 'C' ,  20 ,  0 })
-
-if !file(f18_ime_dbf("partn"))
-
-    dbcreate2('partn', aDbf)
-    reset_semaphore_version("partn")
-    my_use("partn")
-	close all 
-endif
-
-if !file(f18_ime_dbf("_partn"))
-        dbcreate2('_partn', aDbf)
-endif
-CREATE_INDEX("ID", "id", "partn")
-CREATE_INDEX("NAZ", "NAZ", "partn")
-
-CREATE_INDEX("ID", "id", "_partn")
-
-index_mcode(SIFPATH, "partn")
+cre_partn()
 
 // KONTO
 if !file(f18_ime_dbf("konto"))

@@ -86,58 +86,55 @@ RETURN
  -------------------------- */
 
 function set_f18_params()
-
-//IF PCount() < 7
-//    help()
-//    QUIT
-//ENDIF
-
-i := 1
+local _i := 1
 
 // setuj ulazne parametre
 cParams := ""
 
-DO WHILE i <= PCount()
+DO WHILE _i <= PCount()
 
     // ucitaj parametar
-    cTok := hb_PValue( i++ )
+    cTok := hb_PValue( _i++ )
      
     
     DO CASE
 
+      CASE cTok == "--test"
+           test_mode(.t.)
+           
       CASE cTok == "--help"
           f18_help()
           QUIT
+
       CASE cTok == "-h"
-         cHostName := hb_PValue( i++ )
+         cHostName := hb_PValue( _i++ )
          cParams += SPACE(1) + "hostname=" + cHostName
+
       CASE cTok == "-y"
-         nPort := Val( hb_PValue( i++ ) )
+         nPort := Val( hb_PValue( _i++ ) )
          cParams += SPACE(1) + "port=" + ALLTRIM(STR(nPort))
+
       CASE cTok == "-d"
-         cDataBase := hb_PValue( i++ )
+         cDataBase := hb_PValue( _i++ )
          cParams += SPACE(1) + "database=" + cDatabase
+
       CASE cTok == "-u"
-         cUser := hb_PValue( i++ )
+         cUser := hb_PValue( _i++ )
          cParams += SPACE(1) + "user=" + cUser
+
       CASE cTok == "-p"
-         cPassWord := hb_PValue( i++ )
+         cPassWord := hb_PValue( _i++ )
          cParams += SPACE(1) + "password=" + cPassword
+
       CASE cTok == "-t"
-         cDBFDataPath := hb_PValue( i++ )
+         cDBFDataPath := hb_PValue( _i++ )
          cParams += SPACE(1) + "dbf data path=" + cDBFDataPath
+
       CASE cTok == "-e"
-         cSchema := hb_PValue( i++ )
+         cSchema := hb_PValue( _i++ )
          cParams += SPACE(1) + "schema=" + cSchema
-      OTHERWISE
-         //help()
-         //QUIT
     ENDCASE
 
 ENDDO
-
-// ispisi parametre
-? "Ulazni parametri:"
-? cParams
 
 return

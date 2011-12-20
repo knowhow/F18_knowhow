@@ -16,6 +16,7 @@ static __f18_home_root := NIL
 static __log_handle := NIL
 static __my_error_handler := NIL
 static __global_error_handler := NIL
+static __test_mode := .f.
 
 #include "fmk.ch"
 
@@ -87,7 +88,7 @@ _ini_params["user"] := nil
 _ini_params["schema"] := nil
 _ini_params["port"] := nil
 
-if !f18_ini_read(F18_SERVER_INI_SECTION, @_ini_params, .t.)
+if !f18_ini_read(F18_SERVER_INI_SECTION + IIF(test_mode(), "_test", ""), @_ini_params, .t.)
    MsgBeep("problem ini read")
 endif
 
@@ -115,7 +116,7 @@ if my_server_login()
    for each _key in _ini_params:Keys
       _ini_params[_key] := __server_params[_key] 
    next
-   if !f18_ini_write(F18_SERVER_INI_SECTION, _ini_params, .t.)
+   if !f18_ini_write(F18_SERVER_INI_SECTION + IIF(test_mode(), "_test", ""), _ini_params, .t.)
       MsgBeep("problem ini write")
    endif
 
@@ -454,4 +455,11 @@ return  __my_error_handler
 
 function global_error_handler()
 return  __global_error_handler
+
+function  test_mode(tm)
+if tm != nil
+  __test_mode := tm
+endif
+
+return __test_mode
 

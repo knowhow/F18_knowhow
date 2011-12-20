@@ -20,7 +20,7 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc, "1. partneri               ")
-AADD(opcexe, {|| p_part()})
+AADD(opcexe, {|| p_partneri()})
 AADD(opc, "-------------------------")
 AADD(opcexe, {|| nil})
 

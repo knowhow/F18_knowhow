@@ -491,7 +491,7 @@ endif
 
 _vars := get_dbf_global_memvars()
 
-if !update_rec_server_and_dbf(nil, _vars)
+if !update_rec_server_and_dbf(ALIAS(), _vars)
    delete_with_rlock()
 else
 	if lNovi
@@ -797,7 +797,7 @@ do case
 
       	APPEND BLANK
         _vars := get_dbf_global_memvars()
-        if !update_rec_server_and_dbf(nil, _vars)
+        if !update_rec_server_and_dbf(ALIAS(), _vars)
                 delete_with_rlock()
         endif
 

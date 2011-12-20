@@ -88,7 +88,7 @@ local cNewVal
 local cCurrVal
 local cPtnField
 
-Box(,3,60, .f.)
+Box(, 3, 60, .f.)
 	private GetList:={}
 	set cursor on
 	
@@ -106,8 +106,8 @@ Box(,3,60, .f.)
 	m_x := nTekX
 	m_y := nTekY
 	
-	@ m_x+2,m_y+2 SAY "      Trazi:" GET cOldVal
-    @ m_x+3,m_y+2 SAY "Zamijeni sa:" GET cNewVal
+	@ m_x + 2, m_y + 2 SAY "      Trazi:" GET cOldVal
+    @ m_x + 3, m_y + 2 SAY "Zamijeni sa:" GET cNewVal
 	
     read 
 BoxC()
@@ -186,7 +186,7 @@ local _tmp
 
 PushWa()
 //altd()
-_tmp := get_karakter_value(dbf_name, ozna, id_sif, return_nil)
+_tmp := get_sifk_value(dbf_name, ozna, id_sif, return_nil)
 
 PopWa()
 //if VALTYPE(_tmp) == "C"
@@ -205,7 +205,7 @@ return _tmp
 // param return_nil   NIL - vrati nil za nedefinisanu vrijednost,
 //                    .f. - vrati "" za nedefinisanu vrijednost
 // -----------------------------------------------------------
-function get_karakter_value (dbf_name, ozna, id_sif, return_nil)
+function get_sifk_value (dbf_name, ozna, id_sif, return_nil)
 local _ret := ""
 local _sifk_tip, _sifk_duzina, _sifk_veza
 
@@ -228,16 +228,6 @@ dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
 ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
 id_sif   := PADR(id_sif, SIFK_LEN_IDSIF)
 
-// ako tabela sifk, sifv nije otvorena - otvoriti
-SELECT(F_SIFK)
-if (!USED())
-	O_SIFK	
-endif
-
-SELECT(F_SIFV)
-if (!USED())
-	O_SIFV	
-endif
 
 SELECT sifk
 SET ORDER TO TAG "ID2"
@@ -277,7 +267,7 @@ if _sifk_veza == "N"
         _ret += "," + ToStr(get_sifv_value(_sifk_tip, _sifk_duzina, sifv->naz)) 
         skip
     enddo
-    //_ret := padr(_ret, 190)
+    _ret := padr(_ret, 190)
 endif
 
 return _ret
@@ -304,7 +294,8 @@ END DO
 
 return _ret
 
-
+// -------------------------------
+// -------------------------------
 function IzSifkNaz(cDBF, cOznaka)
 local xRet:="", nArea
 
@@ -316,6 +307,7 @@ select sifk
 set order to tag "ID2"
 seek cDBF + cOznaka
 xRet := sifk->Naz
+
 PopWA()
 return xRet
 
@@ -331,7 +323,7 @@ cDBF:=padr(cDBF,8)
 cOznaka:=padr(cOznaka,4)
 select sifk
 set order to tag "ID2"
-seek cDBF+cOznaka
+seek cDBF + cOznaka
 
 cWhen  := sifk->KWHEN
 cValid := sifk->KVALID
@@ -361,6 +353,9 @@ local _i
 local ntrec, numtok
 local _sifk_rec
 
+
+PushWa()
+
 SELECT F_SIFV
 if !used()
    O_SIFV
@@ -378,7 +373,6 @@ endif
 dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
 ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
 
-PushWa()
 
 SELECT SIFK
 set order to tag "ID2"
@@ -404,7 +398,6 @@ endif
 
 PopWa()
 return .t.
-
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------

@@ -62,7 +62,7 @@ if lShow == nil
 	lShow := .t.
 endif
 
-p_part(@cIdPart)
+p_partneri(@cIdPart)
 
 if IsIno(cIdPart)
 	if lShow

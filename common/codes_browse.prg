@@ -25,8 +25,7 @@ static _LOG_PROMJENE := .f.
 static __A_SIFV__:= { {NIL,NIL,NIL}, {NIL,NIL,NIL}, {NIL,NIL,NIL}, {NIL,NIL,NIL}}
 #endif
 
-function PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy, ;
-                      bBlok, aPoredak, bPodvuci, aZabrane, fInvert, aZabIsp )
+function PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, fInvert, aZabIsp )
 
 local cRet, cIdBK
 local i
@@ -65,13 +64,9 @@ if !used()
 endif
 
 // setuj match_code polje...
+set_mc_imekol(nDbf)
 
-MsgBeep("set_mc_imekol ne radi")
-// set_mc_imekol(nDbf)
-
-
-
-nOrderSif:=indexord() 
+nOrderSif := indexord() 
 nOrdId := ORDNUMBER("ID")
 
 // POSTAVLJANJE ORDERA...
@@ -100,7 +95,7 @@ if valtype(nNTX)="N"
     endif
   endif
   
-elseif valtype(nNTX)="C" .and. right(upper(trim(nNTX)),2)="_J"
+elseif valtype(nNTX) == "C" .and. right(upper(trim(nNTX)),2)="_J"
 // postavi order na ID_J
 
   set order to tag (nNTX)
@@ -121,7 +116,7 @@ else
   endif
 endif
 
-private cUslovSrch:=""
+private cUslovSrch :=  ""
 IF cId <>NIL  
  // IZVRSI SEEK
  
@@ -259,14 +254,11 @@ if (fPonaz .and. (cNazSrch=="" .or. !trim(cNazSrch)==trim(naz))) .or.;
    go top
   endif
 
-   ObjDbedit(, nVisina,nSirina, ;
-       {|| EdSif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)}, ;
-       cNaslov, "", finvert,;
-       {"<c-N> Novi","<F2>  Ispravka","<ENT> Odabir","<c-T> Brisi",;
-        "<c-P> Print","<F4>  Dupliciraj","<c-F9> Brisi SVE",;
+   ObjDbedit(, nVisina, nSirina,  {|| EdSif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)}, cNaslov, "", finvert,;
+       {"<c-N> Novi","<F2>  Ispravka","<ENT> Odabir","<c-T> Brisi", ;
+        "<c-P> Print","<F4>  Dupliciraj", hb_Utf8ToStr("<c-F9> Briši SVE"), ;
         "<c-F> Trazi","<a-S> Popuni kol.","<a-R> Zamjena vrij.",;
-        "<c-A> Cirk.ispravka"}, ;
-    1, bPodvuci, , , aPoredak)
+        "<c-A> Cirk.ispravka"},  1, bPodvuci, , , aPoredak)
 
    IF TYPE("id") $ "U#UE"       
      cID:=(nDbf)->(FIELDGET(1))
@@ -649,6 +641,7 @@ private aUsl
 private aStruct
 
 nPrevRecNo:=RECNO()
+
 lNovi:=.f.
 
 if _LOG_PROMJENE == .t.
@@ -670,15 +663,17 @@ if &cMCField->(fieldpos("MATCH_CODE")) <> 0
     endif
 endif
 
-__A_SIFV__[__PSIF_NIVO__,3]:=  Ch
+__A_SIFV__[__PSIF_NIVO__,3] :=  Ch
 
 if Ch==K_CTRL_N .or. Ch==K_F2
+
     if nordid<>0
         set order to tag "ID"
     else
         set order to tag "1"
     endif
     go (nPrevRecNo)
+
 endif
 
 
@@ -879,37 +874,38 @@ do while .t.
     BoxC()
 
 
-        if Ch<>K_CTRL_A
-            exit
+        if Ch <> K_CTRL_A
+           exit
         else
-        if lastkey()==K_ESC
-            exit
-        endif
 
-        _vars := get_dbf_global_memvars("w")
-            
-        if IzFmkIni('Svi','SifAuto','N')=='D'
-              _vars["id"] := NoviID_A()
-         endif
+             if lastkey()==K_ESC
+                   exit
+              endif
 
-        update_rec_server_and_dbf(_vars)
-        update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N)
+                _vars := get_dbf_global_memvars("w")
+                    
+                if IzFmkIni('Svi','SifAuto','N')=='D'
+                    _vars["id"] := NoviID_A()
+                endif
 
-        set_global_vars_from_dbf("w")
+                update_rec_server_and_dbf(alias(), _vars)
+                update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N)
+
+                set_global_vars_from_dbf("w")
 
 
-        if lastkey()==K_PGUP
-           skip -1
-        else
-            skip
-        endif
+                if lastkey()==K_PGUP
+                     skip -1
+                else
+                    skip
+                endif
 
-        if eof()
-            skip -1
-            exit
-        endif
+                if EOF()
+                    skip -1
+                    exit
+                endif
 
-    endif
+       endif
 
 enddo
 // glavni enddo
@@ -945,7 +941,7 @@ if lNovi
 endif
 
 _vars := get_dbf_global_memvars("w")
-if !update_rec_server_and_dbf(nil, _vars)
+if !update_rec_server_and_dbf(alias(), _vars)
    delete_with_rlock()
 else
    update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi)
@@ -964,6 +960,7 @@ nTArea := SELECT()
 if _LOG_PROMJENE == .t.
 
     cChanges := _g_fld_changes(cOldDesc, cNewDesc)
+
     if LEN(cChanges) > 250
         cCh1 := SUBSTR(cChanges, 1, 250)
         cCh2 := SUBSTR(cChanges, 251, LEN(cChanges))
@@ -1547,17 +1544,27 @@ RETURN (NIL)
  *  \param wId - ID koji se provjerava
  */
 
-function VpSifra(wId)
-
-local nRec:=RecNo()
+function VpSifra(wId, cTag)
+local nRec := RecNo()
 local nRet:=.t.
-local cUpozorenje:=" !!! Ovaj ID vec postoji !!! "
+local cUpozorenje := " !!! Ovaj ID vec postoji !!! "
+
+if cTag == NIL
+   cTag := "ID"
+endif
+
+PushWa()
+
+SET ORDER TO TAG (cTag)
+
 seek wId
 
 if (FOUND() .and. Ch==K_CTRL_N)
     MsgBeep(cUpozorenje)
     nRet := .f.
-elseif (gSKSif=="D" .and. FOUND())   // nasao na ispravci ili dupliciranju
+
+elseif (gSKSif=="D" .and. FOUND())   
+    // nasao na ispravci ili dupliciranju
     if nRec <> RecNo()
         MsgBeep(cUpozorenje)
         nRet:=.f.
@@ -1566,11 +1573,12 @@ elseif (gSKSif=="D" .and. FOUND())   // nasao na ispravci ili dupliciranju
         skip 1
         if (!EOF() .and. wId==id)
         MsgBeep(cUpozorenje)
-            nRet:=.f.
+            nRet := .f.
         endif
     endif
 endif
-go nRec
+
+PopWa()
 return nRet
 
 /*! \fn VpNaziv(wNaziv)

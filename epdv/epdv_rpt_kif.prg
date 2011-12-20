@@ -108,7 +108,7 @@ Box(, 11, 60)
   nX += 1
 
   @ m_x+nX, m_y+2 SAY "Partner (prazno svi) ? " GET cPart ;
-  	VALID { || empty(cPart) .or. P_Part(@cPart) } ;
+  	VALID { || empty(cPart) .or. P_Partneri(@cPart) } ;
 	PICT "@!"
 
   nX += 2

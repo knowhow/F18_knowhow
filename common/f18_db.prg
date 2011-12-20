@@ -250,7 +250,6 @@ return update_rec_server_and_dbf(table, values, id_fields, where_block, .t.)
 //  server_only je pobezveze, radi gornje funkcije za koju nisam siguran da ikome treba
 // -----------------------------------------------------------------------------------------------------------
 function update_rec_server_and_dbf(table, values, id_fields, where_block, server_only)
-local _table
 local _key, _field, _field_b
 local _ok := .t.
 local _values_old := hb_hash()
@@ -264,7 +263,6 @@ if !USED()
    MsgBeep("mora biti otvorena neka tabela ?!")
    return .f.
 endif
-
 
 if table == NIL
    table := ALIAS()

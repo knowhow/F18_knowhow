@@ -105,7 +105,7 @@ AADD(aImeKol, {"Zaok dok", {|| zaok2 }, "zaok2", {|| wzaok2 := iif(wzaok2==0, 2,
 AADD(aImeKol, {"Set.Tar", {|| s_id_tar }, "s_id_tar", {|| .t.}, {|| .t.} })
 
 // setuj id tar u kuf/kif
-AADD(aImeKol, {"Set.Par", {|| s_id_part }, "s_id_part", {|| .t.}, {|| empty(ws_id_part) .or. P_Part(@ws_id_part), .t. } })
+AADD(aImeKol, {"Set.Par", {|| s_id_part }, "s_id_part", {|| .t.}, {|| empty(ws_id_part) .or. P_Partneri(@ws_id_part), .t. } })
 
 // setuj id tar u kuf/kif
 AADD(aImeKol, {"Set.Br.Dok", {|| s_br_dok }, "s_br_dok", {|| .t.}, {|| .t.} })

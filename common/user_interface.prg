@@ -11,6 +11,7 @@
 
 #include "fmk.ch"
 #include "set.ch"
+#include "f18_separator.ch"
 
 static aBoxStack:={}
 static aPrStek:={}
@@ -65,11 +66,12 @@ Length:=Len(Items[1])+1
 if Inv==NIL
     Inv:=.f.
 endif
-LocalC:=IF(Inv,Invert,Normal)
-LocalIC:=IF(Inv,Normal,Invert)
+
+LocalC  :=  IIF(Inv,Invert,Normal)
+LocalIC := IIF(Inv,Normal,Invert)
 
 
-OldC:=SetColor(LocalC)
+OldC := SetColor(LocalC)
 
 //  Ako se meni zove prvi put, upisi ga na stek
 IF Len(aMenuStack)==0 .or. (Len(aMenuStack)<>0 .and. MenuId<>(StackTop(aMenuStack))[1])  
@@ -77,8 +79,10 @@ IF Len(aMenuStack)==0 .or. (Len(aMenuStack)<>0 .and. MenuId<>(StackTop(aMenuStac
     m_x := aFixKoo[1]
     m_y := aFixKoo[2]
   ELSE
-    Calc_xy(N,Length)                    && odredi koordinate menija
+    // odredi koordinate menija
+    Calc_xy(@m_x, @m_y, N,Length) 
   ENDIF
+
   StackPush(aMenuStack,{MenuId,;
                         m_x,;
                         m_y,;
@@ -99,10 +103,10 @@ IF lFK
   @ m_x,m_y TO m_x+N+1,m_y+Length+3
 ELSE
   @ m_x,m_y TO m_x+N+1,m_y+Length+3 DOUBLE 
-  @ m_x+N+2,m_y+1 SAY REPLICATE(Chr(177), Length+4)
+  @ m_x + N + 2, m_y+1 SAY REPLICATE(Chr(177), Length+4)
 
-  FOR i:=1 TO N+1
-    @ m_x+i,m_y+Length+4 SAY Chr(177)
+  FOR i:=1 TO N + 1
+    @ m_x + i, m_y + Length + 4 SAY Chr(177)
   NEXT
 
 ENDIF
@@ -114,7 +118,7 @@ ELSE
   CentrTxt(h[1], MAXROWS()-1)
 END IF
 SetColor(LocalC)
-IF LEN(Items)>nMaxVR
+IF LEN(Items) > nMaxVR
  ItemNo:=AChoice3(m_x+1, m_y+2, m_x+N+1, m_y+Length+1, Items, .t., "MenuFunc", RetItem(ItemNo), RetItem(ItemNo)-1)
 ELSE
  ItemNo:=AChoice2(m_x+1, m_y+2, m_x+N+1, m_y+Length+1, Items, .t., "MenuFunc", RetItem(ItemNo), RetItem(ItemNo)-1)
@@ -135,8 +139,8 @@ aMenu[5]:=nTItemNo
 //
 IF nTItemNo<>0
   SetColor(LocalIC)
-  @ m_x+MIN(nTItemNo,nMaxVR),m_y+1 SAY " "+Items[nTItemNo]+" "
-  @ m_x+MIN(nTItemNo,nMaxVR),m_y+2 SAY ""
+  @ m_x + MIN(nTItemNo, nMaxVR), m_y + 1 SAY " " + Items[nTItemNo] + " "
+  @ m_x + MIN(nTItemNo, nMaxVR), m_y + 2 SAY ""
 END IF
 
 Ch:=LastKey()
@@ -146,9 +150,8 @@ Ch:=LastKey()
 IF Ch==K_ESC .or. nTItemNo==0 .or. nTItemNo==nPovratak
   @ m_x,m_y CLEAR TO m_x+N+2-IF(lFK,1,0),m_y+Length+4-IF(lFK,1,0)
   aMenu:=StackPop(aMenuStack)
-  RestScreen(m_x,m_y,m_x+N+2-IF(lFK,1,0),m_y+Length+4-IF(lFK,1,0),aMenu[4])
+  RestScreen(m_x, m_y, m_x + N + 2 -IIF(lFK, 1, 0), m_y + Length + 4 - IIF(lFK, 1, 0), aMenu[4])
 END IF
-
 
 SetColor(OldC)
 SET(_SET_DEVICE,cPom)
@@ -157,30 +160,32 @@ return ItemNo
 
 // ---------------------------------------------------------
 // ---------------------------------------------------------
-function Calc_xy(N,Length)
+function Calc_xy(m_x, m_y, N, Length)
+local x, y
 
 // OPIS  : Odredjuje poziciju za ispis sljedeceg menija na
 //        osnovu pozicije kursora M-x i m_y
 
-private x,y
-
-x:=Row()
-y:=Col()
+x := Row()
+y := Col()
 
 //  Odredi x koordinatu
-IF 23-x >= N+2
-  m_x=x+1
-  IF Length+y+3<= 76
-    m_y=y+3
-  ELSEIF y+5< MAXCOLS()-2 .AND. y-Length>0
-    m_y=y-Length+5
-  ELSE
-    m_y=Int((MAXCOLS()-2-Length)/2)
-  END IF
+IF (MAXROWS() - 2 - x) >=  (N + 2)
+    m_x:= x + 1
+
+    IF Length + y + 3 <= MAXCOLS() - 4
+        m_y := y + 3
+    ELSEIF (y + 5) < (MAXCOLS() - 2) .AND.  (y - Length > 0)
+        m_y := y - Length + 5
+    ELSE
+        m_y := Int((MAXCOLS() - 2 - Length)/2)
+    END IF
+
 ELSE
-  m_x=Int((MAXROWS()-3-N)/2+1)
-  m_y=INT((MAXCOLS()-Length-2)/2)
+    m_x := Int( (MAXROWS() - 3 - N) / 2 + 1)
+    m_y := INT( (MAXCOLS() - Length - 2) / 2)
 END IF
+
 return
 
 
@@ -376,62 +381,87 @@ return
  */
 
 function Box( BoxId, N, Length, Inv, chMsg, cHelpT )
+Local x1, y1, x2, y2
+local LocalC, cPom, cNaslovBoxa
+local _m_x, _m_y, _n
 
+if gAppSrv
+  return
+endif
 
-Local x1,y1,x2,y2,LocalC, cPom, cNaslovBoxa
+cPom := SET(_SET_DEVICE)
+cNaslovBoxa := ""
 
-if gAppSrv; return; endif
-
-cPom:=SET(_SET_DEVICE)
-cNaslovBoxa:=""
-
-IF BoxID<>NIL .and. LEFT(BoxID,1)=="#"
-  cNaslovBoxa:=SUBSTR(BoxID,2)
+IF BoxID<>NIL .and. LEFT(BoxID, 1)=="#"
+  cNaslovBoxa := SUBSTR(BoxID, 2)
 ENDIF
 
 SET DEVICE TO SCREEN
 
-Calc_xy(N,Length)
+_m_x := m_x 
+_m_y := m_y
+_n := N
+
+Calc_xy(@_m_x, @_m_y, @_n, Length)
+
+
+// stvori prostor za prikaz
 IF VALTYPE(chMsg)=="A"
-  BoxId:=OpcTipke(chMsg)
-  IF m_x+N>23-BoxId
-    m_x:=23-BoxId-N
-    IF m_x<1
-      N:=22-BoxId
-      m_x:=1
+
+  BoxId := OpcTipke(chMsg)
+
+  IF _m_x + _N > MAXROWS() - 3 - BoxId
+
+    _m_x := MAXROWS() - 4 - BoxId - _n
+
+    IF _m_x < 1
+       _n := MAXROWS() - 5 - BoxId
+       _m_x := 1
     ENDIF
+
   ENDIF
+
 ENDIF
 
-if  chMsg==NIL; cHMsg:=""; endif
+if  chMsg==NIL
+  cHMsg := ""
+endif
+
+// ako ove privatne vars trebaju, ponovo ih setujemo
+m_x := _m_x
+m_y := _m_y
+N := _n
 
 StackPush(aBoxStack, ;
 {  m_x, ;
    m_y, ;
    N,   ;
    Length, ;
-   SaveScreen(m_x, m_y, m_x+N+1, m_Y+Length+2), ;
-   IF(VALTYPE(chMsg)!="A","",BoxId), ;
+   SaveScreen(m_x, m_y, m_x + N +1, m_Y+Length+2), ;
+   IF(VALTYPE(chMsg) != "A", "", BoxId), ;
    Row(), ;
    Col(), ;
-   if(setcursor()==0,0,iif(readinsert(),2,1)), ;
+   IIF(setcursor()==0, 0, iif(readinsert(), 2, 1)), ;
    SETCOLOR(), ;
    cHelpT;
 })
 
-if Inv==NIL; Inv:=.f.; endif
+if Inv==NIL
+ Inv:=.f.
+endif
 
-LocalC:=IF(Inv,Invert,Normal)
+LocalC:=IIF(Inv,Invert,Normal)
+
 SetColor(LocalC)
 
 SCROLL(m_x,m_y,m_x+N+1,m_Y+Length+2)
-@ m_x,m_y TO m_x+N+1,m_y+Length+2 DOUBLE
+@ m_x,m_y TO m_x+N + 1, m_y + Length + 2 DOUBLE
 
 IF !EMPTY(cNaslovBoxa)
   @ m_x,m_y+2 SAY cNaslovBoxa COLOR "GR+/B"
 ENDIF
 
-SET(_SET_DEVICE,cPom)
+SET(_SET_DEVICE, cPom)
 
 return
 
@@ -489,24 +519,40 @@ return
  */
  
 function OpcTipke(aNiz)
+LOCAL i:=0, j:=0, k:=0, nOmax:=0
+local nBrKol, nOduz, nBrRed, xVrati := ""
 
-LOCAL i:=0,j:=0,k:=0,nOmax:=0,nBrKol,nOduz,nBrRed,xVrati:=""
 IF VALTYPE(aNiz)=="A"
- AEVAL(aNiz,{|x| IF(LEN(x)>nOmax,nOmax:=LEN(x),)})
- nBrKol:=INT(MAXCOLS()/(nOmax+1))
- nBrRed:=INT(LEN(aNiz)/nBrKol)+IF(MOD(LEN(aNiz),nBrKol)!=0,1,0)
- nOduz:=IF(nOmax<10,10,IF(nOmax<16,16,IF(nOmax<20,20,IF(nOmax<27,27,40))))
- Prozor1(MAXROWS()-1-nBrRed, 0,  MAXROWS()-1, MAXCOLS(),,, SPACE(9), , "W/N")
- FOR i:=1 TO nBrRed*nBrKol
-   IF( MOD(i-1,nBrKol)==0 , EVAL({|| ++j,k:=0})  , k+=nOduz )
-   IF i>LEN(aNiz); AADD(aNiz,""); ENDIF
-   IF aNiz[i]==NIL; aNiz[i]=""; ENDIF
-   @ MAXROWS()-1 - nBrRed + j , k SAY PADR(aNiz[i],nOduz-1)+IF(MOD(i-1,nBrKol)==nBrKol-1,"","³")
- NEXT
- FOR i:=1 TO nBrKol
-   @ MAXROWS() -1 - nBrRed,(i-1)*nOduz SAY REPLICATE("Í",nOduz-IF(i==nBrKol,0,1))+IF(i==nBrKol,"","Ñ")
- NEXT
- xVrati:=nBrRed+1
+    AEVAL(aNiz, {|x| IF(LEN(x) > nOmax, nOmax:=LEN(x),) } )
+
+    nBrKol:=INT( MAXCOLS() / (nOmax+1) )
+
+    nBrRed := INT(LEN(aNiz)/nBrKol) + IIF(MOD(LEN(aNiz),nBrKol)!=0, 1, 0)
+
+    nOduz := IIF(nOmax<10, 10, IF(nOmax < 16, 16, IIF(nOmax < 20, 20, IIF(nOmax < 27, 27, 40))))
+
+    Prozor1(MAXROWS() - 3 - nBrRed, 0,  MAXROWS() - 2, MAXCOLS() ,,, SPACE(9), , "W/N")
+
+    FOR i:=1 TO nBrRed * nBrKol
+
+        IF( MOD(i-1, nBrKol)==0 , EVAL({|| ++j, k:=0})  , k+=nOduz )
+
+        IF i > LEN(aNiz)
+              AADD(aNiz,"")
+        ENDIF
+
+        IF aNiz[i]==NIL
+            aNiz[i] := ""
+        ENDIF
+        @ MAXROWS() - 3 - nBrRed + j , k SAY PADR(aNiz[i], nOduz-1) + IIF(MOD(i-1, nBrKol)==nBrKol-1, "", BROWSE_COL_SEP)
+    NEXT
+    
+    FOR i:=1 TO nBrKol
+        // @ MAXROWS() - 3 - nBrRed,(i-1) * nOduz SAY REPLICATE(BROWSE_ROW_SEP, nOduz - IIF(i==nBrKol, 0, 1)) + IIF( i == nBrKol,"", "Ñ")
+        @ MAXROWS() - 3 - nBrRed,(i-1) * nOduz SAY REPLICATE(BROWSE_PODVUCI_2, nOduz - IIF(i==nBrKol, 0, 1)) + IIF( i == nBrKol,"", BROWSE_COL_SEP)
+    NEXT
+
+    xVrati := nBrRed + 1
 ENDIF
 return xVrati
 
@@ -516,7 +562,7 @@ function BoxCLS()
 local aBoxPar[11]
 aBoxPar:=aBoxStack[len(aBoxStack)]
 
-@ aBoxPar[1]+1,aBoxPar[2]+1 clear to aBoxPar[1]+aBoxPar[3],aBoxPar[2]+aBoxPar[4]+1
+@ aBoxPar[1]+1, aBoxPar[2]+1 clear to aBoxPar[1] + aBoxPar[3], aBoxPar[2] + aBoxPar[4]+1
 return
 
 

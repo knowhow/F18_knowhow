@@ -56,59 +56,56 @@
 */
 
 function ObjDBedit(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
-
+local _params:=hb_hash()
 local nBroji2
 local cSmj, nRez, i, K, aUF, cPomDB, nTTrec
-local cLoc:=space(40)
+local cLoc := space(40)
 local cStVr, cNovVr, nRec, nOrder, nPored, xcpos, ycpos
 
-IF "U" $ TYPE("gTBDir")
-  gTBDir:="N"
-ENDIF
-
-
-if ("U" $ TYPE("TBCanClose")) .or. gTBDir=="N"
-
-  private  bGoreRed:=NIL
-  private  bDoleRed:=NIL
-  private  bDodajRed:=NIL
-  private  fTBNoviRed:=.f. // trenutno smo u novom redu ?
-  private  TBCanClose:=.t. // da li se moze zavrsiti unos podataka ?
-  private  TBAppend:="N"
-  private  bZaglavlje:=NIL
+private  bGoreRed:=NIL
+private  bDoleRed:=NIL
+private  bDodajRed:=NIL
+private  fTBNoviRed:=.f. // trenutno smo u novom redu ?
+private  TBCanClose:=.t. // da li se moze zavrsiti unos podataka ?
+private  TBAppend:="N"
+private  bZaglavlje:=NIL
            // zaglavlje se edituje kada je kursor u prvoj koloni
            // prvog reda
-  private  TBScatter:="N"  // uzmi samo tekuce polje
-  private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
-  private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
-  private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
+private  TBScatter:="N"  // uzmi samo tekuce polje
+private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
+private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
+private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
                            // ovo se moze setovati u when/valid fjama
 
-  private  TBSkipBlock:={|nSkip| SkipDB(nSkip, @nTBLine)}
-endif
+private  TBSkipBlock:={|nSkip| SkipDB(nSkip, @nTBLine)}
 
-if gTBDir=="N"  // nije mod direktnog unosa
   
-  if skipblock<>NIL // ovo je zadavanje skip bloka kroz parametar
+ if skipblock<>NIL // ovo je zadavanje skip bloka kroz parametar
      TBSkipBlock:=skipblock
-  else
+else
      TBSkipBlock:=NIL
-  endif
-
 endif
 
 private bTekCol
 private Ch:=0
 
-private azImeKol:=ImeKol
-private azKol:=Kol
+private azImeKol := ImeKol
+private azKol := Kol
 
-if nPrazno==NIL; nPrazno:=0; endif
-if nGPrazno==NIL; nGPrazno:=0; endif
-if aPoredak==NIL; aPoredak:={}; endif
+if nPrazno==NIL
+   nPrazno:=0
+endif
 
-if (nPored:=LEN(aPoredak))>1
-  AADD(aMessage,"<c+U> - Uredi")
+if nGPrazno==NIL
+   nGPrazno:=0
+endif
+
+if aPoredak==NIL
+  aPoredak:={}
+ endif
+
+if (nPored := LEN(aPoredak))>1
+  AADD(aMessage, "<c+U> - Uredi")
 endif
 
 PRIVATE TB
@@ -117,24 +114,19 @@ if lInvert==NIL
   lInvert:=.f.
 endif
 
-PRIVATE aParametri:={}
-AADD(aParametri,cImeBoxa)            //  1
-AADD(aParametri, xw)                  //  2
-AADD(aParametri, yw)                  //  3
-AADD(aParametri,lInvert)             //  4
-AADD(aParametri,aMessage)            //  5
-AADD(aParametri,nFreeze)             //  6
-AADD(aParametri,cMessBot)            //  7
-AADD(aParametri,cMessTop)            //  8
-AADD(aParametri,nPrazno)             //  9
-AADD(aParametri,nGPrazno)            // 10
-AADD(aParametri,bPodvuci)            // 11
+_params["ime"]           := cImeBoxa
+_params["xw"]            := xw
+_params["yw"]            := yw
+_params["invert"]        := lInvert
+_params["msgs"]          := aMessage
+_params["freeze"]        := nFreeze
+_params["msg_bott"]      := cMessBot
+_params["msg_top"]       := cMessTop
+_params["prazno"]        := nPrazno
+_params["gprazno"]       := nGPrazno
+_params["podvuci_b"]     := bPodvuci
 
-IF gTBDir=="D"
-  DaTBDirektni(.t.)
-ELSE
-  NeTBDirektni(.t.)
-ENDIF
+NeTBDirektni(_params, .t.)
 
 DO WHILE .T.
 
@@ -183,18 +175,9 @@ DO WHILE .T.
    do case
 
      CASE Ch==K_UP
-
-       if gTBDir="D" .and. bGoreRed<>NIL
-          Eval(bGoreRed)
-       endif
         TB:up()
 
      CASE Ch==K_DOWN
-       if gTBDir="D"
-          if bDoleRed=NIL .or. Eval(bDoleRed)
-            fTBNoviRed:=.f.
-          endif
-       endif
        TB:down()
 
      CASE Ch==K_LEFT
@@ -214,79 +197,6 @@ DO WHILE .T.
 
        StandTBKomande( Tb, Ch, @nRez, nPored, aPoredak )
 
-       if gTBDir=="D" .and. ! StandTBTipke(Ch)
-
-         if TB:Colpos==1 .or. reccount2()==0
-
-          nTTRec:=recno()
-          skip -1
-
-          if bof() // prvi red
-            go nTTrec
-            if reccount2()=0
-         fTBNoviRed:=.t.
-      endif
-            if bZaglavlje<>NIL
-               if !EVAL(bZaglavlje)
-                 fTBNoviRed:=.f.
-               endif
-            endif
-          else
-            go nTTrec
-          endif
-         endif
-
-       endif
-
-       if gTBDir=="D" .and. LEN(ImeKol[TB:colpos])>2 .and.  !StandTBTipke(Ch) .and. ;
-         !(reccount2()=0 .and. !fTBNoviRed)
-
-         // Getuj polje ............
-         if Ch<>K_ENTER  .and. (!eof() .or. bDodajRed<>NIL)
-           KEYBOARD CHR(Ch)
-         endif
-
-         if EOF()  .or. BOF()
-
-              if bDodajRed<>NIL
-           Eval(bDodajRed)
-        endif
-
-              if TBAppend=="D"
-                  fTBNoviRed:=.t.
-              else
-                  fTBNoviRed:=.f.
-              endif
-         endif
-
-         if !eof() .and. !bof()
-            ObjDbGet()
-         endif
-
-         if len(ImeKol[TB:Colpos])>=6
-               TBPomjeranje(TB,ImeKol[TB:Colpos,6])
-         endif
-
-         if !empty(TBPomjerise)
-              TBPomjeranje(TB,TBPomjerise)
-              TBPomjeriSe:=""
-         endif
-
-
-
-         nRez:=DE_REFRESH
-
-       else
-         
-         // pomjeri se desno
-         if gTBDir=="D" .and. Ch <> 0
-           TB:Right()
-         endif
-         
-         goModul:Gproc(Ch)
-       
-       endif
-
 
    endcase
 
@@ -294,14 +204,10 @@ DO WHILE .T.
 
      CASE nRez==DE_REFRESH
        TB:RefreshAll()
-       @ m_x+1,m_y+yw-6 SAY STR(RecCount2(),5)
+       @ m_x+1, m_y + yw-6 SAY STR(RecCount2(),5)
 
      CASE Ch==K_ESC
        
-       if !TBCanClose
-          MsgBeep("Morate zavrsiti unos reda !")
-          loop
-       endif
        if nPrazno==0
           BoxC()
        endif
@@ -312,6 +218,7 @@ DO WHILE .T.
       if nPrazno==0
          BoxC()
        endif
+
        EXIT
 
 
@@ -326,63 +233,73 @@ return
 // -------------------------------------------------------
 //
 // -------------------------------------------------------
-function NeTBDirektni(lIzOBJDB)
-
-LOCAL i,j,k
+function NeTBDirektni(params, lIzOBJDB)
+LOCAL i, j, k
+local _rows, _width
 
 IF lIzOBJDB==NIL
   lIzOBJDB:=.f.
 ENDIF
 
-if aParametri[9]==0
+_rows  :=  params["xw"] 
+_rows_poruke :=  params["prazno"] + iif(params["prazno"] <> 0, 1 , 0)
+_width :=  params["yw"]
+
+if params["prazno"]==0
  
  IF !lIzOBJDB
     BoxC()
  ENDIF
 
- Box(aParametri[1], aParametri[2], aParametri[3], aParametri[4], aParametri[5])
+  Box(params["ime"], _rows, _width, params["invert"], params["msgs"])
 
 else
 
-@ m_x + aParametri[2] - aParametri[9], m_y+1 SAY replicate("Ä",aParametri[3])
+  @ m_x + params["xw"] - params["prazno"], m_y + 1 SAY replicate( BROWSE_PODVUCI, params["yw"])
 
 endif
 
 IF !lIzOBJDB
-  ImeKol:=azImeKol
-  Kol:=azKol
+  ImeKol := azImeKol
+  Kol := azKol
 ENDIF
 
-  @ m_x,m_y+2 SAY aParametri[8]+IF(!lIzOBJDB, REPL("Í",42),"")
-  @ m_x + aParametri[2]+1, m_y+2 SAY aParametri[7] COLOR "GR+/B"
-  @ m_x + aParametri[2]+1, col()+1 SAY IF(!lIzOBJDB, REPL("Í",42),"")
-  @ m_x+1,m_y+aParametri[3]-6 SAY STR(RecCount2(),5)
+@ m_x, m_y + 2 SAY params["msg_top"] + IIF(!lIzOBJDB, REPL(BROWSE_PODVUCI_2,  42), "")
+@ m_x + params["xw"] + 1,  m_y + 2   SAY params["msg_bott"] COLOR "GR+/B"
 
-  TB := TBRowseDB( m_x + 2 + aParametri[10], m_y + 1, m_x + aParametri[2] - aParametri[9] - iif(aParametri[9]<>0,1 , 0), m_y + aParametri[3])
+@ m_x + params["xw"] + 1,  col() + 1 SAY IIF(!lIzOBJDB, REPL(BROWSE_PODVUCI_2, 42),"")
+@ m_x + 1, m_y + params["yw"] - 6 SAY STR(RecCount2(), 5)
 
-  if TBSkipBlock<>NIL
+
+TB := TBRowseDB( m_x + 2 + params["prazno"], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width) 
+
+if TBSkipBlock<>NIL
      Tb:skipBlock := TBSkipBlock
-  endif
+endif
 
   // Dodavanje kolona  za stampanje
   FOR k:=1 TO Len(Kol)
-    i:=ASCAN(Kol,k)
-    IF i<>0  .and. (ImeKol[i,2]<>NIL)     // kodni blok <> 0
+
+    i := ASCAN(Kol, k)
+    IF i <>0  .and. (ImeKol[i,2] <> NIL)     // kodni blok <> 0
        TCol:=TBColumnNew(ImeKol[i,1],ImeKol[i,2])
-       if aParametri[11]<>NIL
-         TCol:colorBlock:={|| iif(EVAL(aParametri[11]),{5,2},{1,2}) }
+
+       if params["podvuci_b"] <> NIL
+         TCol:colorBlock:={|| IIF(EVAL(params["podvuci_b"]), {5,2}, {1,2} ) }
        endif
+
        TB:addColumn(TCol)
     END IF
+
   NEXT
 
   TB:headSep := BROWSE_HEAD_SEP 
   TB:colsep :=  BROWSE_COL_SEP
   
-  if aParametri[6]==NIL
+  if params["freeze"] == NIL
      TB:Freeze:=1
   else
-     Tb:Freeze:=aParametri[6]
+     Tb:Freeze := params["freeze"]
   endif
 
 return
@@ -422,7 +339,7 @@ DO CASE
  
      bTekCol:=(TB:getColumn(TB:colPos)):Block
      if valtype(EVAL(bTekCol))=="C"
-       Box("bFind",2,50,.f.)
+       Box("bFind", 2, 50,.f.)
         Private GetList:={}
         set cursor on
         cLoc:=PADR(cLoc,40)
@@ -474,7 +391,7 @@ DO CASE
           cKolona:=ImeKol[TB:ColPos,3]
           if valtype(&cKolona) $  "CD"
 
-            Box(,2,60,.f.)
+            Box(, 2, 60,.f.)
              Private GetList:={}
              set cursor on
              cStVr:=&cKolona
@@ -533,7 +450,7 @@ DO CASE
           cKolona:=ImeKol[TB:ColPos,3]
           if valtype(&cKolona)=="N"
 
-            Box(,3,66,.f.)
+            Box(, 3, 66,.f.)
              Private GetList:={}
              set cursor on
              private cVrijednost:=&cKolona

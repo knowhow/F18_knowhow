@@ -38,7 +38,7 @@ private cIzraz:=SPACE(40)
 bKeyOld1:=SETKEY(K_ALT_K,{|| Konv()})
 bKeyOld2:=SETKEY(K_ALT_V,{|| DefKonv()})
 
-Box(,3,60)
+Box(, 3, 60)
 	
 	set cursor on
 	

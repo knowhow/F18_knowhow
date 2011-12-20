@@ -11,4 +11,6 @@
 
 #define BROWSE_HEAD_SEP 'ям'
 #define BROWSE_COL_SEP 'Ё'
+#define BROWSE_PODVUCI "д"
+#define BROWSE_PODVUCI_2 "м"
 

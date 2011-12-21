@@ -967,62 +967,73 @@ RETURN
  */
  
 function PodijeliN()
-*{
+local _rec
+local nDug, nPot
+local nRbr1 := nRbr2 := nRbr3 := nRbr4 := 0
+local cBRnal1, cBrnal2, cBrnal3, cBrnal4, cBrnal5
+local dDatDok
+local cPomKTO := "9999999"
+local cIdFirma, cIdVN, cBrNal
+
 if !SigmaSif("PVNAPVN")
  return
 endif
 
-cPomKTO:="9999999"
 
 O_FIN_PRIPR
 
-nRbr1:=nRbr2:=nRbr3:=nRbr4:=0
-cBRnal1:=cBrnal2:=cBrnal3:=cBrnal4:=cBrnal5:=fin_pripr->brnal
-dDatDok:=fin_pripr->datdok
+cBRnal1 := cBrnal2 := cBrnal3 := cBrnal4 := cBrnal5 := fin_pripr->brnal
+dDatDok := fin_pripr->datdok
 
-Box(,10,60)
- @ m_x+1,m_y+2 SAY "Redni broj / 1 " get nRbr1
- @ m_x+1,col()+2 SAY "novi broj naloga" GET cBRNAL1
- @ m_x+2,m_y+2 SAY "Redni broj / 2 " get nRbr2
- @ m_x+2,col()+2 SAY "novi broj naloga" GET cBRNAL2
- @ m_x+3,m_y+2 SAY "Redni broj / 3 " get nRbr3
- @ m_x+3,col()+2 SAY "novi broj naloga" GET cBRNAL3
- @ m_x+4,m_y+2 SAY "Redni broj / 4 " get nRbr4
- @ m_x+4,col()+2 SAY "novi broj naloga" GET cBRNAL4
+Box( , 10, 60)
 
- @ m_x+6,m_y+6 SAY "Zadnji dio, broj naloga  " get cBrnal5
- @ m_x+8,m_y+6 SAY "Pomocni konto  " get cPomKTO
- @ m_x+9,m_y+6 SAY "Datum dokumenta" get dDatDok
+ @ m_x+1, m_y+2 SAY "Redni broj / 1 " get nRbr1
+ @ m_x+1, col()+2 SAY "novi broj naloga" GET cBRNAL1
+ @ m_x+2, m_y+2 SAY "Redni broj / 2 " get nRbr2
+ @ m_x+2, col()+2 SAY "novi broj naloga" GET cBRNAL2
+ @ m_x+3, m_y+2 SAY "Redni broj / 3 " get nRbr3
+ @ m_x+3, col()+2 SAY "novi broj naloga" GET cBRNAL3
+ @ m_x+4, m_y+2 SAY "Redni broj / 4 " get nRbr4
+ @ m_x+4, col()+2 SAY "novi broj naloga" GET cBRNAL4
+
+ @ m_x+6, m_y+6 SAY "Zadnji dio, broj naloga  " get cBrnal5
+ @ m_x+8, m_y+6 SAY "Pomocni konto  " get cPomKTO
+ @ m_x+9, m_y+6 SAY "Datum dokumenta" get dDatDok
 
  read
 Boxc()
+
 if lastkey()==K_ESC
      close all
      RETURN DE_CONT
 endif
 
 
-nDug:=nPot:=0
+nDug := nPot := 0
 
-cIdfirma:=idfirma
-cIdVN:=IDVN
-cBrnal:=BRNAL
+cIdfirma := idfirma
+cIdVN    := IDVN
+cBrnal   := BRNAL
 
 go top
 MsgO("Prvi krug...")
 do while !eof()
+
  if d_p=="1"
-    nDug+=iznosbhd
+    nDug += iznosbhd
  else
-    nPot+=iznosbhd
+    nPot += iznosbhd
  endif
 
  if nRbr1<>0 .and. nRbr1==val(fin_pripr->Rbr)
     nRbr:=nRbr1
+
  elseif nRbr2<>0 .and. nRbr2==val(fin_pripr->Rbr)
     nRbr:=nRbr2
+
  elseif nRbr3<>0 .and.nRbr3==val(fin_pripr->Rbr)
     nRbr:=nRbr3
+
  elseif nRbr4<>0 .and.nRbr4==val(fin_pripr->Rbr)
     nRbr:=nRbr4
  else
@@ -1030,32 +1041,38 @@ do while !eof()
  endif
 
  if nRbr<>0
-    append blank
-    replace idvn with cidvn,idfirma with cidfirma, brnal with cbrnal,;
-            idkonto with cPomKTO, datdok with dDatDok
 
-    if ndug>nPot // dugovni saldo
-       replace d_p with "2"
-       replace iznosbhd with (nDug-nPot)
+    APPEND BLANK
+    _rec := dbf_get_rec()
+    _rec["idvn"]    := cIdvn
+    _rec["idfirma"] := cIdfirma
+    _rec["brnal"]   := cBrnal
+    _rec["idkonto"] := cPomKTO
+    _rec["datdok"]  := dDatDok
+
+    
+    if nDug > nPot // dugovni saldo
+       _rec["d_p"]      := "2"
+       _rec["iznosbhd"] :=  nDug - nPot
     else
-       replace d_p with "1"
-       replace iznosbhd with (nPot-nDug)
+       _rec["d_p"]      := "1"
+       _rec["iznosbhd"] :=  nPot - nDug
     endif
-    replace rbr with str(nRbr,4)
 
-    // protustavka
-    Scatter()
-    append blank
-    _iznosbhd:=-_iznosbhd
-    // prenos iz predhodnog naloga
-    _opis := ">prenos iz p.n.<"  
-    Gather()
+    _rec["rbr"] := STR(nRbr, 4)
+    dbf_update_rec(_rec)
 
-    if _d_p=="2"  // inicijalizuj ndug,npot
-      nPot:=iznosbhd
+    // slijedi dodavanje protustavke
+    APPEND BLANK
+    _rec["iznosbhd"] :=  -_rec["iznosbhd"]
+    _rec["opis"]     := ">prenos iz p.n.<"  
+    dbf_update_rec(_rec)
+
+    if _d_p == "2"
+      nPot := iznosbhd
       nDug:=0
     else
-      nDug:=iznosbhd
+      nDug := iznosbhd
       nPot:=0
     endif
 
@@ -1064,6 +1081,7 @@ do while !eof()
 
  skip
 enddo
+
 MsgC()
 
 MsgO("Drugi krug...")

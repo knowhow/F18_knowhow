@@ -1,3 +1,11 @@
+0.9.20  2011-12-21, refactoring scatter/gather
+
+ - gather/scatter out [#25776](http://redmine.bring.out.ba/issues/25776)
+ - "--test" switch [#25788](http://redmine.bring.out.ba/issues/25788)
+ - sifk/sifv [#25721](http://redmine.bring.out.ba/issues/25721)
+ - refactor-1 code_browse.prg [#25789](http://redmine.bring.out.ba/issues/25789)
+ - ... i još "mali milion ciscenja i promjena zabiljezenih na commit log-u F18"
+
 0.9.18  2011-12-14, hernad f18_start_print/f18_end_print
  
  - [#25684](http://redmine.bring.out.ba/issues/25684)

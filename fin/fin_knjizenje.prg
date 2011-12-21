@@ -147,20 +147,27 @@ return
  *  \brief Sredjivaje rednog broja u pripremi 
  */
 function WRbr()
+local _rec
+local _rec_2
 
-scatter()
-if val(_rbr) < 2
-  @ m_x+1, m_y+2 SAY "Dokument:" GET _idvn
-  @ m_x+1, col() + 2  GET _brnal
-  read
+_rec := dbf_get_rec()
+
+if val(_rec["rbr"]) < 2
+  @ m_x + 1, m_y + 2 SAY "Dokument:" GET _rec["idvn"]
+  @ m_x + 1, col() + 2  GET _rec["brnal"]
+  READ
 endif
 
 set order to 0
 go top
 do while !eof()
-  replace idvn with _idvn, brnal with _brnal
-  skip
+   _rec_2 := dbf_get_rec()
+   _rec_2["idvn"]  := _rec["idvn"]
+   _rec_2["brnal"] := _rec["brnal"]
+   dbf_update_rec(_rec_2)
+   skip
 enddo
+
 set order to tag "1"
 go top
 return .t.

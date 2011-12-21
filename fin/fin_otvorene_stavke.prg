@@ -1,22 +1,18 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
+
 #include "fin.ch"
 
-/*! \fn Ostav()
- *  \brief Menij otvorenih stavki
- */
- 
 function Ostav()
-
 private izbor:=1
 private opc:={}
 private opcexe:={}
@@ -69,7 +65,7 @@ cFond:="999"
 qqBrDok:=SPACE(40)
 
 O_PARTN
-M:="---- "+REPL("-",LEN(PARTN->id))+" ------------------------------------- ----- ----------------- ---------- ---------------------- --------------------"
+M:="---- "+REPL("-", LEN(PARTN->id))+" ------------------------------------- ----- ----------------- ---------- ---------------------- --------------------"
 O_KONTO
 dDatOd:=dDatDo:=ctod("")
 
@@ -531,7 +527,7 @@ private  TBSkipBlock:={|nSkip| SkipDBBK(nSkip)}
 private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
 private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
 private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
-                        // ovo se mo§e setovati u when/valid fjama
+                        // ovo se moÂ§e setovati u when/valid fjama
 private  TBScatter:="N"  // uzmi samo tekuce polje
 adImeKol:={}
 
@@ -673,7 +669,7 @@ function OSt_StatLin()
  @ m_x+16,m_y+1 SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
  @ m_x+17,m_y+1 SAY " <K>    Ukljuci/iskljuci racun za kamate         <F5> uzmi broj dok.        "
  @ m_x+18,m_y+1 SAY '<ENTER> Postavi/Ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
- @ m_x+19,m_y+1 SAY REPL("Ä",78)
+ @ m_x+19,m_y+1 SAY REPL("Ã„",78)
  @ m_x+20,m_y+1 SAY ""; ?? "Konto:",cIdKonto
 
 return
@@ -866,16 +862,16 @@ DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
              ENDIF
 
              IF fTiho     // poziv iz procedure RekPPG()
-               // za izvjestaj maksuz radjen za Opresu³22.03.01.³
-               // ------------------------------------ÀÄ MSÄÄÄÄÄÙ
+               // za izvjestaj maksuz radjen za OpresuÂ³22.03.01.Â³
+               // ------------------------------------Ã€Ã„ MSÃ„Ã„Ã„Ã„Ã„Ã™
                if afaktura[3] < iif( empty(DatVal), DatDok, DatVal )
                          // datum zadnje promjene iif ubacen 03.11.2000 eh
                          // ----------------------------------------------
                  aFaktura[3]:=iif( empty(DatVal), DatDok, DatVal )
                endif
              ELSE
-               // kao u asist.otv.stavki - koristi npr. Exclusive³22.03.01.³
-               // -----------------------------------------------ÀÄ MSÄÄÄÄÄÙ
+               // kao u asist.otv.stavki - koristi npr. ExclusiveÂ³22.03.01.Â³
+               // -----------------------------------------------Ã€Ã„ MSÃ„Ã„Ã„Ã„Ã„Ã™
                if afaktura[3] < DatDok
                   aFaktura[3]:=DatDok
                endif
@@ -1647,18 +1643,18 @@ ENDIF  // kraj linije   IF lIzgen
 ImeKol:={ ;
           {"Br.racuna", {|| brdok    }, "brdok"    } ,;
           {"Iznos",     {|| iznosbhd }, "iznosbhd" } ,;
-          {"Marker",    {|| IF(marker=="K","ÛÛKÛÛÛ","      ") }, "marker" } ;
+          {"Marker",    {|| IF(marker=="K","Ã›Ã›KÃ›Ã›Ã›","      ") }, "marker" } ;
         }
 
 Kol:={}; for i:=1 to LEN(ImeKol); AADD(Kol,i); next
 Box(,21,77)
 @ m_x,m_y+20 SAY 'KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI"'
-@ m_x+18,m_y+1 SAY REPL("Í",77)
+@ m_x+18,m_y+1 SAY REPL("Ã",77)
 @ m_x+19,m_y+1 SAY "<K> - izaberi/ukini racun za kompenzaciju"
 @ m_x+20,m_y+1 SAY "<CTRL>+<P> - stampanje kompenzacije               <T> - promijeni tabelu"
 @ m_x+21,m_y+1 SAY "<CTRL>+<N> - nova,   <CTRL>+<T> - brisanje,   <ENTER> - ispravka stavke "
 FOR i:=1 TO 17
-  @ m_x+i, m_y+39 SAY "º"
+  @ m_x+i, m_y+39 SAY "Âº"
 NEXT
 
 SELECT TEMP60; GO TOP
@@ -1848,18 +1844,18 @@ LOCAL a1:={}, a2:={}, GetList:={}
           ++nBrSt
 
           IF lTemp60
-            ? SPACE(nLM) + "³"+STR(nBrSt,4)+".³"+brdok+"³"+STR(iznosbhd,17,2)
+            ? SPACE(nLM) + "Â³"+STR(nBrSt,4)+".Â³"+brdok+"Â³"+STR(iznosbhd,17,2)
             nUkup60+=iznosbhd
           ELSE
-            ? SPACE(nLM) + "³     ³"+SPACE(10)+"³"+SPACE(17)
+            ? SPACE(nLM) + "Â³     Â³"+SPACE(10)+"Â³"+SPACE(17)
           ENDIF
 
           SELECT TEMP12
           IF lTemp12
-            ?? "³"+STR(nBrSt,4)+".³"+brdok+"³"+STR(iznosbhd,17,2)+"³"
+            ?? "Â³"+STR(nBrSt,4)+".Â³"+brdok+"Â³"+STR(iznosbhd,17,2)+"Â³"
             nUkup12+=iznosbhd
           ELSE
-            ?? "³     ³"+SPACE(10)+"³"+SPACE(17)+"³"
+            ?? "Â³     Â³"+SPACE(10)+"Â³"+SPACE(17)+"Â³"
           ENDIF
           SKIP 1
 
@@ -1869,7 +1865,7 @@ LOCAL a1:={}, a2:={}, GetList:={}
         ENDDO
 
         FOR j:=nBrSt+1 TO 11
-          ? SPACE(nLM) + "³     ³"+SPACE(10)+"³"+SPACE(17)+"³     ³"+SPACE(10)+"³"+SPACE(17)+"³"
+          ? SPACE(nLM) + "Â³     Â³"+SPACE(10)+"Â³"+SPACE(17)+"Â³     Â³"+SPACE(10)+"Â³"+SPACE(17)+"Â³"
         NEXT
         nSaldo:=ABS(nUkup12-nUkup60)
 
@@ -2481,8 +2477,8 @@ private  TBSkipBlock:={|nSkip| SkipDBBK(nSkip)}
 private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
 private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
 private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
-                        // ovo se mo§e setovati u when/valid fjama
-private  TBScatter:="N"  // uzmi samo teku†e polje
+                        // ovo se moÂ§e setovati u when/valid fjama
+private  TBScatter:="N"  // uzmi samo tekuÂ†e polje
 adImeKol:={}
 for i:=1 TO LEN(ImeKol); AADD(adImeKol,ImeKol[i]); next
 adKol:={}; for i:=1 to len(adImeKol); AADD(adKol,i); next
@@ -2494,7 +2490,7 @@ private aPPos:={cIdPartner,1}  // pozicija kolone partner, broj veze
 
 set cursor on
 @ m_x+16,m_y+1 SAY "****************  REZULTATI ASISTENTA ************"
-@ m_x+17,m_y+1 SAY REPL("Ä",78)
+@ m_x+17,m_y+1 SAY REPL("Ã„",78)
 @ m_x+18,m_y+1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
 @ m_x+19,m_y+1 SAY " <K> Ukljuci/iskljuci racun za kamate "
 @ m_x+20,m_y+1 SAY ' < F6 > Stampanje izvrsenih promjena  '

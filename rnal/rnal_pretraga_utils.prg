@@ -35,13 +35,13 @@ local cFndDbf := "_fnd_par"
 local aDbf := {}
 
 if !FILE(f18_ime_dbf(cFndDbf))
-	
-	AADD(aDbf, { "fnd_par_no", "N", 4, 0})
-	AADD(aDbf, { "fnd_par_type", "C", 10, 0})
-	AADD(aDbf, { "fnd_att", "C", 10, 0})
-	AADD(aDbf, { "fnd_val", "C", 10, 0})
+    
+    AADD(aDbf, { "fnd_par_no", "N", 4, 0})
+    AADD(aDbf, { "fnd_par_type", "C", 10, 0})
+    AADD(aDbf, { "fnd_att", "C", 10, 0})
+    AADD(aDbf, { "fnd_val", "C", 10, 0})
 
-	DBcreate2(PRIVPATH + cFndDbf + ".DBF", aDbf)
+    DBcreate2(PRIVPATH + cFndDbf + ".DBF", aDbf)
 
 endif
 
@@ -74,8 +74,8 @@ O__FND_PAR
 select _fnd_par 
 
 if gFnd_reset == 1
-	// ponisti posljednju pretragu
-	_clear_fnd()
+    // ponisti posljednju pretragu
+    _clear_fnd()
 endif
 
 go top
@@ -110,8 +110,6 @@ private nTBLastLine:=1
 private TBPomjerise:="" 
 private TBScatter:="N"  
 
-private gTBDir := "D"
-
 ObjDbedit("fnd_par", nBoxX, nBoxY, {|| key_handler()}, cHeader, cFooter,,,,,1)
 
 BoxC()
@@ -119,7 +117,7 @@ BoxC()
 select (nTArea)
 
 if LastKey() == K_ESC
-	return 0
+    return 0
 endif
 
 return 1
@@ -131,17 +129,17 @@ static function _clear_fnd( lAlways )
 go top
 
 if lAlways == nil
-	lAlways := .t.
+    lAlways := .t.
 endif
 
 do while !EOF()
-	
-	if lAlways == .t. 
-		replace field->fnd_val with ""
-	endif
-	
-	skip
-	
+    
+    if lAlways == .t. 
+        replace field->fnd_val with ""
+    endif
+    
+    skip
+    
 enddo
 
 return .t.
@@ -155,62 +153,61 @@ local nTRec := RECNO()
 local nRet := DE_CONT
 
 if ( Ch == K_CTRL_T .or. Ch == K_CTRL_F9) .and. RecCount2() == 0
-	return DE_CONT
+    return DE_CONT
 endif
 
 
 do case
 
-	case (Ch == K_ESC) 
-		
-		gTBDir:="N"
-        	NeTBDirektni()
+    case (Ch == K_ESC) 
+        
+            NeTBDirektni()
 
-	case (Ch == K_CTRL_T)
-	
-		if Pitanje(, "Zelite izbrisati ovu stavku ?","D")=="D"
-      			
-			delete
-      			nRet := DE_REFRESH
-			
-      		endif
-		
-	case (Ch == K_CTRL_F9)
+    case (Ch == K_CTRL_T)
+    
+        if Pitanje(, "Zelite izbrisati ovu stavku ?","D")=="D"
+                
+            delete
+                nRet := DE_REFRESH
+            
+            endif
+        
+    case (Ch == K_CTRL_F9)
 
-		if Pitanje(, "Izbrisati sve stavke iz tabele ?", "N") == "D"
-			
-			go top
-			do while !EOF()
-				delete
-				skip
-			enddo
-			
-			nRet := DE_REFRESH
-		endif
-		
-	case (Ch == K_CTRL_N)
-		
-		//dodaj novi parametar u _fnd_par
-		if _add_fnd_par( _new_fnd_par() ) == 0
-			go top
-		endif
-	
-		TB:left()
-		TB:left()
-		TB:down()
+        if Pitanje(, "Izbrisati sve stavke iz tabele ?", "N") == "D"
+            
+            go top
+            do while !EOF()
+                delete
+                skip
+            enddo
+            
+            nRet := DE_REFRESH
+        endif
+        
+    case (Ch == K_CTRL_N)
+        
+        //dodaj novi parametar u _fnd_par
+        if _add_fnd_par( _new_fnd_par() ) == 0
+            go top
+        endif
+    
+        TB:left()
+        TB:left()
+        TB:down()
 
-		while !TB:stabilize()
-		end
-	
-		nRet := DE_REFRESH
-	
-	case ( Ch == K_ALT_F )
-		
-		// zapocni pretragu prema unesenim vrijednostima
-		gTBDir:="N"
-        	NeTBDirektni()
+        while !TB:stabilize()
+        end
+    
+        nRet := DE_REFRESH
+    
+    case ( Ch == K_ALT_F )
+        
+        // zapocni pretragu prema unesenim vrijednostima
 
-		nRet := DE_ABORT
+            NeTBDirektni()
+
+        nRet := DE_ABORT
 
 endcase
 
@@ -227,30 +224,30 @@ aKol:={}
 
 // tip atributa...
 AADD(aImeKol, ;
-	{ PADC( "Tip", 6),;
-	{|| PADR(g_fnd_par_type( fnd_par_type ), 6)} })
+    { PADC( "Tip", 6),;
+    {|| PADR(g_fnd_par_type( fnd_par_type ), 6)} })
 
 // atribut
 AADD(aImeKol, ;
-	{PADC("Atribut", 20),;
-	{|| IF(ALLTRIM(fnd_par_type) == "ATT", ALLTRIM(g_egr_by_att(VAL(fnd_att), .t. )) + "/" + PADR(g_gr_at_desc(VAL(fnd_att), nil, .t.), 15), IF( ALLTRIM(fnd_par_type) == "AOP" , PADR( ALLTRIM(g_aop_desc(VAL(fnd_att), .t.)), 20), PADR("----->", 20) ) ) },;
-	"fnd_att",;
-	{|| ALLTRIM(fnd_par_type) $ "ATT#AOP" .or. not_att_msg() },;
-	{|| IF(ALLTRIM(fnd_par_type) == "ATT", s_e_gr_att( @wfnd_att, nil, @wfnd_att , .t. ), IF( ALLTRIM(fnd_par_type) == "AOP", s_aops(@wfnd_att, @wfnd_att, .t.) , .t.  )), to_str(@wfnd_att), go_right() },;
-	"V" })
+    {PADC("Atribut", 20),;
+    {|| IF(ALLTRIM(fnd_par_type) == "ATT", ALLTRIM(g_egr_by_att(VAL(fnd_att), .t. )) + "/" + PADR(g_gr_at_desc(VAL(fnd_att), nil, .t.), 15), IF( ALLTRIM(fnd_par_type) == "AOP" , PADR( ALLTRIM(g_aop_desc(VAL(fnd_att), .t.)), 20), PADR("----->", 20) ) ) },;
+    "fnd_att",;
+    {|| ALLTRIM(fnd_par_type) $ "ATT#AOP" .or. not_att_msg() },;
+    {|| IF(ALLTRIM(fnd_par_type) == "ATT", s_e_gr_att( @wfnd_att, nil, @wfnd_att , .t. ), IF( ALLTRIM(fnd_par_type) == "AOP", s_aops(@wfnd_att, @wfnd_att, .t.) , .t.  )), to_str(@wfnd_att), go_right() },;
+    "V" })
 
 
 // vrijednost atributa
 AADD(aImeKol, ;
-	{PADC("Vrijednost", 35), ;
-	{|| IF( ALLTRIM(fnd_par_type) == "ATT" , PADR(g_e_gr_vl_desc(val(fnd_val), .t.), 35), IF( ALLTRIM(fnd_par_type) == "AOP", PADR(g_aop_att_desc(val(fnd_val), .t.), 35), PADR(fnd_val, 35)))  },;
-	"fnd_val",;
-	{|| .t. },;
-	{|| IF(ALLTRIM(fnd_par_type) == "ATT" , EMPTY(wfnd_val) .or. s_e_gr_val(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , IF( ALLTRIM(fnd_par_type) == "AOP", EMPTY(wfnd_val) .or. s_aops_att(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , .t.)), to_str(@wfnd_val) },;
-	"V"  })
+    {PADC("Vrijednost", 35), ;
+    {|| IF( ALLTRIM(fnd_par_type) == "ATT" , PADR(g_e_gr_vl_desc(val(fnd_val), .t.), 35), IF( ALLTRIM(fnd_par_type) == "AOP", PADR(g_aop_att_desc(val(fnd_val), .t.), 35), PADR(fnd_val, 35)))  },;
+    "fnd_val",;
+    {|| .t. },;
+    {|| IF(ALLTRIM(fnd_par_type) == "ATT" , EMPTY(wfnd_val) .or. s_e_gr_val(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , IF( ALLTRIM(fnd_par_type) == "AOP", EMPTY(wfnd_val) .or. s_aops_att(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , .t.)), to_str(@wfnd_val) },;
+    "V"  })
 
 for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
+    AADD(aKol, i)
 next
 
 return
@@ -272,7 +269,7 @@ return .t.
 // -----------------------------------------
 static function to_str(nPar)
 if VALTYPE(nPar) == "N"
-	nPar := STR(nPar,10)
+    nPar := STR(nPar,10)
 endif
 return .t.
 
@@ -309,7 +306,7 @@ m_x := nX
 m_y := nY
 
 if LastKey() == K_ESC
-	nSelection := -1
+    nSelection := -1
 endif
 
 return nSelection
@@ -324,16 +321,16 @@ local nTRec := RECNO()
 local nFndParNo := 0
 
 if nSelection < 0
-	return 0
+    return 0
 endif
 
 do case 
-	case nSelection == 1
-		cFndParType := "ATT"
-	case nSelection == 2
-		cFndParType := "AOP"
-	case nSelection == 3
-		cFndParType := "MC"
+    case nSelection == 1
+        cFndParType := "ATT"
+    case nSelection == 2
+        cFndParType := "AOP"
+    case nSelection == 3
+        cFndParType := "MC"
 endcase 
 
 select _fnd_par
@@ -363,16 +360,16 @@ static function g_fnd_par_type( par_type )
 par_type := ALLTRIM( par_type )
 
 if par_type == "ATT"
-	return "atrib."
+    return "atrib."
 endif
 if par_type == "AOP"
-	return "d.oper"
+    return "d.oper"
 endif
 if par_type == "MC"
-	return "m.code"
+    return "m.code"
 endif
 if EMPTY( par_type )
-	return "????"
+    return "????"
 endif
 
 return

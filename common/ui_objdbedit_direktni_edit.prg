@@ -117,13 +117,9 @@ function SkipDB( nRequest, nTBLine )
 
          ENDIF
          IF EOF()
-           if gTBDir=="D" .and. TBAppend=="D" // dodaj novi slog
-            nActually++
-           else
             DBSKIP(-1)
             nTBLine := nTBLastLine
             EXIT
-           endif
          ENDIF
          nActually++
 

@@ -28,7 +28,6 @@ ImeKol:={ ;
           { "Realizovano"   , {|| realiz  }, "realiz"   };
         }
 FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-Private gTBDir:="N"
 
 return PostojiSifra(F_KALPOS, 1, 10, 75, "Kalendar posjeta", @cId, dx, dy)
 
@@ -48,7 +47,6 @@ ImeKol:={ ;
           { "Prodajno mjesto"    , {|| idpm}     , "idpm"      , {|| .t.}, {|| P_IDPM(@widpm,widpartner)} };
         }
 FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-Private gTBDir:="N"
 
 return PostojiSifra(F_RELAC,1,10,75,"Lista: Relacije",@cId,dx,dy)
 
@@ -70,7 +68,6 @@ ImeKol:={ ;
           { "Tablice", {|| tablice}, "tablice"  };
         }
 FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-Private gTBDir:="N"
 
 return PostojiSifra(F_VOZILA,1,10,75,"Lista: Vozila",@cId,dx,dy)
 
@@ -450,7 +447,6 @@ next
 Prozor1(3,0,11,79,"PREGLED TEKSTA")
 @ 12,0 SAY ""
 
-Private gTBDir:="N"
 vrati:=PostojiSifra(F_FTXT, 1, 7, 77, "Faktura - tekst na kraju fakture", @cId , , , {|| PrikFTXT()})
 Prozor0()
 
@@ -573,7 +569,7 @@ AADD (ImeKol,{ "Opis"   , {|| naz},      "Naz"                                  
 
 Kol:={}
 FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-Private gTBDir:="N"
+
 return PostojiSifra(F_FADO,1,10,60,"Lista dokumenata u FAKT <F5> - definisi izgled dokumenta",@cId,dx,dy,{|Ch| DefDokBlok(Ch)})
 
 

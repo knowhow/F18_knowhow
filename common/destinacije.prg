@@ -70,12 +70,10 @@ ImeKol:={ ;
           { "MOBTEL"  , {|| MOBTEL },  "MOBTEL"  };
          }
 for i:=1 to len(ImeKol); AADD(Kol,i); next
-private gTBDir:="N"
 
 PostojiSifra(F_DEST,"1",10,70,"Destinacije za:"+cIdTek+"-"+Ocitaj(F_PARTN,cIdTek,"naz"), , , , {|Ch| EdDestBlok(Ch)},,,,.f.)
 
-private gTBDir:="D"
-cId:=cLastOznaka
+cId := cLastOznaka
 set scope to
 select (nArr)
 return .t.

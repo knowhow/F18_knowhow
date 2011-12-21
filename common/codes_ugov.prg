@@ -49,8 +49,6 @@ set_a_kol(@ImeKol, @Kol)
 // setuj polje pri otvaranju za sortiranje
 set_fld_id(@cFieldId, cId)
 
-private gTBDir:="N"
-
 return PostojiSifra(F_UGOV, cFieldId, 10, 77, cHeader, @cId, dx, dy, {|Ch| key_handler(Ch)})
 
 
@@ -573,8 +571,6 @@ cFilt := "ID = " + cm2str(cIdUg)
 SET FILTER TO
 SET FILTER TO &cFilt
 GO TOP
-
-PRIVATE gTBDir:="D"
 
 ImeKol:={}; Kol:={}
 

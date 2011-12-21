@@ -216,7 +216,6 @@ enddo
 
 select (nTArea)
 
-private gTbDir:="N"
 bRoba:=gRobaBlock
 
 if !EMPTY(cSeek)

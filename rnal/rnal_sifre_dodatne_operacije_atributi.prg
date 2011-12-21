@@ -62,7 +62,6 @@ endif
 
 aop_filter(nAop_id, cAop_desc)
 
-private gTBDir := "N"
 
 cRet := PostojiSifra(F_AOPS_ATT, 1, 10, 70, cHeader, @cId, dx, dy, {|Ch| key_handler(Ch) })
 

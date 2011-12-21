@@ -42,20 +42,5 @@ for i:=1 to LEN(ImeKol)
 next
 
 select (nTArea)
-private gTBDir:="N"
-return PostojiSifra(F_RJ,1,10,65,"Lista radnih jedinica",@cId,dx,dy)
+return PostojiSifra(F_RJ, 1, MAXROWS()-20, MAXCOLS()-30 ,"Lista radnih jedinica",@cId,dx,dy)
 
-/* iz fin
-
-function P_RJ(cId,dx,dy)
-
-private imekol,kol
-
-ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",35), {||  naz}, "naz" }                       ;
-       }
-Kol:={1,2}
-private gTBDir:="N"
-return PostojiSifra(F_RJ,1,10,55,"Lista radnih jedinica",@cId,dx,dy)
-
-*/

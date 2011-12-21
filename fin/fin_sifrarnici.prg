@@ -193,7 +193,6 @@ do while !eof() .and. ID="PARTN"
 enddo
 PopWa()
 
-private gTBDir:="N"
 return PostojiSifra(F_PARTN,1,10,60,"Lista Partnera",@cId,dx,dy,{|Ch| PartnBlok(Ch)},,,,,{"ID"})
 *}
 
@@ -315,7 +314,6 @@ IF lBlag .and. !LEFT(cId,1)$"0123456789"
 ENDIF
 PopWa()
 
-private gTBDir:="N"
 return PostojiSifra(F_KONTO,1,10,100,"Lista: Konta ",@cId,dx,dy,{|Ch| KontoBlok(Ch)},,,,,{"ID"})
 
 
@@ -442,7 +440,7 @@ ImeKol:={ { "ID  ",  {|| id },   "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
           { PADC("Tip prenosa",25), {|| PADC(TipPkonto(tip),25)},     "tip" ,{|| .t.}, {|| wtip $ "123456"}     };
         }
 Kol:={1,2}
-private gTBDir:="N"
+
 return PostojiSifra(F_PKONTO,1,10,60,"Lista: Nacin prenosa konta u novu godinu",@cId,dx,dy)
 
 
@@ -471,33 +469,6 @@ else
 endif
 
 
-
-///*! \fn P_Valuta(cId,dx,dy)
-// *  \brief Otvara sifrarnik valuta
-// *  \param cId
-// *  \param dx
-// *  \param dy
-// */
-// *************************** koristi se zajednicka funkcija 
-//function P_Valuta(cid,dx,dy)
-//*{
-//PRIVATE ImeKol,Kol
-//ImeKol:={ { "ID "       , {|| id }   , "id"        },;
-//          { "Naziv"     , {|| naz}   , "naz"       },;
-//          { "Skrac."    , {|| naz2}  , "naz2"      },;
-//          { "Datum"     , {|| datum} , "datum"     },;
-//          { "Kurs1"     , {|| kurs1} , "kurs1"     },;
-//          { "Kurs2"     , {|| kurs2} , "kurs2"     },;
-//          { "Kurs3"     , {|| kurs3} , "kurs3"     },;
-//          { "Tip(D/P/O)", {|| tip}   , "tip"       ,{|| .t.},{|| wtip$"DPO"}};
-//        }
-//Kol:={1,2,3,4,5,6,7,8}
-//private gTBDir:="N"
-//return PostojiSifra(F_VALUTE,1,10,77,"Valute",@cid,dx,dy)
-//*}
-
-
-
 /*! \fn P_Funk(cId,dx,dy)
  *  \brief Otvara sifranik funkcionalnih klasifikacija 
  *  \param cId
@@ -513,7 +484,7 @@ ImeKol:={ { padr("Id",5)    , {|| id}  , "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",50), {||  naz}, "naz" } ;
         }
 Kol:={1,2}
-private gTBDir:="N"
+
 return PostojiSifra(F_FUNK,1,10,70,"Lista funkcionalne klasifikacije",@cId,dx,dy)
 
 
@@ -533,7 +504,7 @@ ImeKol:={ { padr("Id",3)    , {|| id}  , "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",50), {||  naz}, "naz" } ;
         }
 Kol:={1,2}
-private gTBDir:="N"
+
 return PostojiSifra(F_FOND,1,10,70,"Lista: Fondovi",@cId,dx,dy)
 
 
@@ -553,7 +524,7 @@ ImeKol:={ { padr("Konto",10)    , {|| id}  , "id", {|| .t.}, {|| vpsifra(wid)} }
           { padr("pretvori u",10), {||  naz}, "naz" } ;
         }
 Kol:={1,2}
-private gTBDir:="N"
+
 return PostojiSifra(F_BUIZ,1,10,70,"Lista: konta-izuzeci u sortiranju",@cId,dx,dy)
 
 
@@ -577,7 +548,7 @@ ImeKol:={ { "Glava",   {|| idrj}, "idrj",, {|| empty(wIdRj) .or. P_RJ (@wIdRj)}}
           { "Funk",   {|| Funk}, "funk", {|| gMeniSif:=.f.,empty(wFunk) .or.P_funk(@wFunk), gMeniSif:=.t.,.t.} };
        }
 Kol:={1,2,3,4,5,6}
-private gTBDir:="N"
+
 return PostojiSifra(F_BUDZET,1,10,55,"Plan budzeta za tekucu godinu",@cId,dx,dy)
 
 
@@ -598,7 +569,7 @@ ImeKol:={ { "Partija", {|| IdPartija}, "idpartija",, {|| vpsifra (wIdPartija)}},
           { "Konto"  , {|| IdKonto}, "Idkonto",, {|| gMeniSif:=.f.,P_KontoFin (@wIdKonto), gMeniSif:=.t.,.t.}};
        }
 Kol:={1,2}
-private gTBDir:="N"
+
 return PostojiSifra(F_PAREK,1,10,55,"Partije->Konta" ,@cId,dx,dy)
 
 
@@ -727,21 +698,6 @@ RETURN lVrati
 function P_Roba_fin(CId,dx,dy)
 
 local cPrikazi
-
-//PRIVATE ImeKol,Kol:={}, xRet
-
-//ImeKol:={ }
-//AADD (ImeKol,{ padc("ID",10),  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wId)} })
-//AADD (ImeKol,{ padc("Naziv",40), {|| naz},     "naz"      })
-//AADD (ImeKol,{ padc("JMJ",3), {|| jmj},       "jmj"    })
-
-//FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-
-//Private gTBDir:="N"
-
-//xRet:= PostojiSifra(F_ROBA,1,15,77,"Lista artikala - robe",@cId,dx,dy)
-
-// u isrpravci sifre ispadao kod ugovora, izbacio nije ni potrebno ..?
 
 return .t.
 

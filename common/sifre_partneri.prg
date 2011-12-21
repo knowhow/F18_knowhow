@@ -250,9 +250,7 @@ do while !eof() .and. ID="PARTN"
  skip
 enddo
 
-private gTBDir:="N"
 cRet := PostojiSifra(F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {|Ch| k_handler(Ch)},,,,, {"ID"})
-
 
 PopWa()
 

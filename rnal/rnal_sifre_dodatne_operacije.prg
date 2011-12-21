@@ -56,7 +56,6 @@ endif
 
 set_f_kol(cDesc)
 
-private gTBDir := "N"
 
 cRet := PostojiSifra(F_AOPS, 1, 12, 70, cHeader, @cId, dx, dy, {|Ch| key_handler(Ch) } )
 

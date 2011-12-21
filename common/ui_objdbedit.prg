@@ -28,8 +28,6 @@
  * Funkcija ObjDbedit koristi se za prikaz tabelarnih podataka. Koristi je sifarski sistem, tablela pripreme itd ...
 */
 
-* array ImeKol;
-
 /*! \var ImeKol
  \brief Privatna Varijabla koja se inicijalizira prije "ulaska" u ObjDBedit
  \param - [ 1] Zalavlje kolone 
@@ -42,18 +40,8 @@
  \param - [ 8] - ima jos getova ????
  \param - [ 9] -
  \param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
-
 */
 
-* string gTBDir;
-
-/*! \var gTBDir
- \brief Rezim direktnog TBrowse-a
- \param - [D] Rad u rezimu direktnog TBrowse-a
- \param - [N] "standardni" TBrowse
-
-
-*/
 
 function ObjDBedit(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
 local _params:=hb_hash()
@@ -613,21 +601,19 @@ static function EditPolja( nX, nY, xIni, cNazPolja, ;
   local bGetSet
   local nSirina
 
-  //gTBDir:="N"
-  if TBScatter="N"
-   cPom77I:=cNazpolja
-   cPom77U:="w"+cNazpolja
-   &cPom77U:=xIni
+  if TBScatter == "N"
+   cPom77I := cNazpolja
+   cPom77U := "w"+cNazpolja
+   &cPom77U := xIni
   else
    Scatter()
    if fieldpos(cNazPolja)<>0 // field varijabla
-    cPom77I:=cNazpolja
-    cPom77U:="_"+cNazpolja
+    cPom77I := cNazpolja
+    cPom77U := "_"+cNazpolja
    else
-    cPom77I:=cNazpolja
-    cPom77U:=cNazPolja
+    cPom77I := cNazpolja
+    cPom77U := cNazPolja
    endif
-   //&cPom77U:=xIni
   endif
 
   cpict:=NIL
@@ -688,7 +674,6 @@ static function EditPolja( nX, nY, xIni, cNazPolja, ;
      endif
     endif
 
-  //gTBDir:=cStaraVr
 RETURN
 
 

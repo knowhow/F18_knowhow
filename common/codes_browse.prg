@@ -1849,7 +1849,6 @@ FOR i := 1 TO LEN(ImeKol)
    AADD(Kol, i)
 NEXT
 
-Private gTBDir:="N"
 return PostojiSifra(F_SIFK, 1, MAXROWS()-15, MAXCOLS()-15, "sifk - Karakteristike", @cId, dx, dy)
 
 // nadji novu sifru - radi na pritisak F5 pri unosu

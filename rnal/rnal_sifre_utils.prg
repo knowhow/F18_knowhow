@@ -221,17 +221,7 @@ if cMod == "N"
 	return
 endif
 
-if gTbDir == "N"
-	gTbDir := "D"
-	DaTBDirektni()
-else
-	gTbDir := "N"
-	NeTBDirektni()
-endif
-
 return
-
-
 
 
 // --------------------------------------------------

@@ -517,7 +517,7 @@ AADD(ImeKol,{ "nalog",      {|| idvn+"-"+brnal+"/"+rbr}                  })
 Kol:={}
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 Private aPPos:={2,3}  // pozicija kolone partner, broj veze
-private  gTBDir:="N"
+
 private  bGoreRed:=NIL
 private  bDoleRed:=NIL
 private  bDodajRed:=NIL
@@ -582,25 +582,21 @@ endif
 do case
   case Ch==K_ALT_E  .and. fieldpos("_OBRDOK")=0  // nema prebacivanja u
                                                  // asistentu ot.st.
-     IF gTBDir=="D"
-        gTBDir:="N"
-        OSt_StatLin()
-        NeTBDirektni()  // ELIB, vrati stari tbrowse
-     ELSE
-       IF Pitanje(,"Preci u mod direktog unosa podataka u tabelu? (D/N)","D")=="D"
+     IF Pitanje(,"Preci u mod direktog unosa podataka u tabelu? (D/N)","D")=="D"
          gTBDir:="D"
          OSt_StatLin()
          DaTBDirektni() // ELIB, promjeni tbrowse na edit rezim
-       ENDIF
      ENDIF
-  case Ch==K_ENTER .and. gTBDir="N"
+     
+  case Ch==K_ENTER
+
      cDn:="N"
      Box(,3,50)
        @ m_x+1,m_y+2 SAY "Ne preporucuje se koristenje ove opcije !"
        @ m_x+3,m_y+2 SAY "Zelite li ipak nastaviti D/N" GET cDN pict "@!" valid cDn $ "DN"
        read
      BoxC()
-     if cDN=="D"  .and. gTBDir=="N"
+     if cDN=="D"
      	if OtvSt<>"9"
         	cMark:=""
 		replace OtvSt with "9"
@@ -615,15 +611,16 @@ do case
      else
      	nRet:=DE_CONT
      endif
-  case (Ch==ASC("K") .or. Ch==ASC("k"))  .and. gTBDir="N"
+  case (Ch==ASC("K") .or. Ch==ASC("k"))
       if m1<>"9"
         replace m1 with "9"
       else
         replace m1 with ""
       endif
       nRet:=DE_REFRESH
-  case Ch==K_F2    .and. gTBDir="N"
-     cBrDok:=BrDok; cOpis:=opis
+  case Ch==K_F2 
+     cBrDok:=BrDok
+     cOpis:=opis
      dDatDok:=datdok
      dDatVal:=datval
      Box("eddok",5,60,.f.)
@@ -640,9 +637,10 @@ do case
      	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cBrDok,"Ispravka br.veze",dDatDok,dDatVal,cOpis,"Rucno zatvaranje otvorenih stavki")
      endif
      nRet:=DE_REFRESH
-  case Ch==K_F5  .and. gTBDir="N"
+  case Ch==K_F5
      cPomBrDok:=BrDok
-  case Ch==K_F6  .and. gTBDir="N"
+
+  case Ch==K_F6
      if fieldpos("_OBRDOK")<>0  // nalazimo se u asistentu
         StAz()
      else
@@ -673,19 +671,11 @@ return nRet
  
 function OSt_StatLin()
 
-if gTBDir="D"
- @ m_x+16,m_y+1 SAY space(78)
- @ m_x+17,m_y+1 SAY padr("Direktni mod za unos: ispravka opisa",78)
- @ m_x+18,m_y+1 SAY space(78)
- @ m_x+19,m_y+1 SAY REPL("Ä",78)
- @ m_x+20,m_y+1 SAY ""; ?? "Konto:",cIdKonto
-else
  @ m_x+16,m_y+1 SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
  @ m_x+17,m_y+1 SAY " <K>    Ukljuci/iskljuci racun za kamate         <F5> uzmi broj dok.        "
  @ m_x+18,m_y+1 SAY '<ENTER> Postavi/Ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
  @ m_x+19,m_y+1 SAY REPL("Ä",78)
  @ m_x+20,m_y+1 SAY ""; ?? "Konto:",cIdKonto
-endif
 
 return
 
@@ -2446,8 +2436,6 @@ AADD(ImeKol,{ "Partner",     {|| IdPartner}                          })
 Kol:={}
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 
-
-private  gTBDir:="N"
 private  bGoreRed:=NIL
 private  bDoleRed:=NIL
 private  bDodajRed:=NIL

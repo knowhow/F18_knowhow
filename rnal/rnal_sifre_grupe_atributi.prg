@@ -55,8 +55,6 @@ gr_filter(nGr_id, cE_gr_at_desc)
 select e_gr_att
 go top
 
-private gTBDir:="N"
-
 cRet := PostojiSifra(F_E_GR_ATT, 1, 10, 70, cHeader, @cId, dx, dy, {|| key_handler() })
 
 if VALTYPE(cE_gr_at_desc) == "N"

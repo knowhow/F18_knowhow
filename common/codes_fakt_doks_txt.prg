@@ -1,14 +1,13 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "fmk.ch"
 
@@ -23,7 +22,6 @@
  * Revision 1.1  2002/07/25 11:01:08  sasa
  * uveden novi prg, sifrarnik uzoraka tekstova za dokumente
  *
- *
  */
 
 
@@ -37,13 +35,10 @@
  */
  
 function P_DoksTxt(cId,dx,dy)
-*{
 local vrati
 private ImeKol
 private Kol
-private gTBDir:="N"
 
-//OSifDoksTxt()
 
 SELECT (F_DOKSTXT)
 
@@ -57,7 +52,7 @@ AADD(ImeKol,{PADR("NAZ",3)  ,{|| naz}     ,"naz"})
 AADD(ImeKol,{PADR("MODUL",5),{|| modul}   ,"modul"})
 AADD(ImeKol,{PADR("POZ",3)  ,{|| pozicija},"pozicija"})
 
-AADD(ImeKol,{"TXT",{|| txt},"txt",{|| .t.},{|| wtxt:=STRTRAN(wtxt,"##",CHR(13)+CHR(10)), NIL, .t.}, {|| .t.}, "@S50" })
+AADD(ImeKol,{"TXT",{|| txt},"txt",{|| .t.}, {|| wtxt:=STRTRAN(wtxt,"##",CHR(13)+CHR(10)), .t.}, {|| .t.}, "@S50" })
 
 AADD(ImeKol,{"TXT2",{|| txt2},"txt2",{|| .t.},{|| wtxt2:=STRTRAN(wtxt2,"##",CHR(13)+CHR(10)), NIL, .t.}, {|| .t.}, "@S50" })
 
@@ -72,7 +67,6 @@ vrati:=PostojiSifra(F_DOKSTXT,1,7,77,"Uzorci teksta za izvjestaje",@cId,,,{|| Pr
 Prozor0()
 
 return vrati
-*}
 
 
 /*! \fn PrikDoksTxt()

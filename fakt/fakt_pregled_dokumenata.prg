@@ -1071,20 +1071,7 @@ endif
 
 do case
  
-   case Ch==K_ALT_E
-     IF gTBDir=="D"
-        gTBDir:="N"
-        NeTBDirektni()  // ELIB, vrati stari tbrowse
-     ELSE
-       IF Pitanje(,"Preci u mod direktog unosa podataka u tabelu? (D/N)","D")=="D"
-         gTBDir:="D"
-         select(F_PARTN); if !used(); O_PARTN; endif
-         select fakt_doks
-         DaTBDirektni() // ELIB, promjeni tbrowse na edit rezim
-       ENDIF
-     ENDIF
-     
-  case Ch==K_ENTER .and. gTBDir=="N"
+  case Ch==K_ENTER 
      nRet := pr_pf()
 
   case Ch==K_ALT_P
@@ -1259,7 +1246,7 @@ do case
      
      endif
   
-  case chr(Ch) $ "pP" .and. gTBDir=="N"  // povrat
+  case chr(Ch) $ "pP"
      
      if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
         msgbeep( cZabrana )
@@ -1294,7 +1281,7 @@ do case
      else
       nRet:=DE_REFRESH
      endif
-  case chr(Ch) $ "rR" .and. gTBDir=="N"  // povrat
+  case chr(Ch) $ "rR"
      select fakt_doks
      nTrec      := recno()
      _cIdFirma  := idfirma

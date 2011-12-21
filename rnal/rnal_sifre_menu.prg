@@ -21,8 +21,6 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-gTBDir := "N"
-
 o_sif_tables()
 
 AADD(opc, "1. narucioci                      ")

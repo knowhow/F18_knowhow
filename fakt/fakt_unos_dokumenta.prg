@@ -25,7 +25,6 @@ private gOcitBarkod:=.f.
 private fID_J:=.f.
 private lVrsteP := ( IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D" )
 private lOpcine := ( IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D" )
-private gTBDir:="N"
 
 o_fakt_edit()
 
@@ -291,14 +290,14 @@ do case
     
     return DE_CONT
     
-    case (Ch==K_CTRL_T .or. (Ch=K_DEL .and. gTBDir=="D"))
+    case (Ch==K_CTRL_T)
             if BrisiStavku()==1
                 return DE_REFRESH
         else
             return DE_CONT
         endif
-    case Ch==K_ENTER .and. gTBDir="N"
-            Box("ist", 22, 75, .f.)
+    case Ch==K_ENTER 
+        Box("ist", 22, 75, .f.)
         Scatter()
             nRbr:=RbrUnum(_Rbr)
             if edit_fakt_priprema(.f.)==0
@@ -312,11 +311,11 @@ do case
             lDirty:=.t.
                 return DE_REFRESH
             endif
-    case Ch==K_CTRL_A  .and. gTBDir="N"
+    case Ch==K_CTRL_A
             ProdjiKrozStavke()
         lDirty:=.t.
             return DE_REFRESH
-    case Ch==K_CTRL_N  .and. gTBDir="N"
+    case Ch==K_CTRL_N
             NoveStavke()
         lDirty:=.t.
             return DE_REFRESH
@@ -686,12 +685,6 @@ SpojiDuple()  // odradi ovo prije stampanja !
 SrediRbrFakt()
 
 o_fakt_edit() // sredirbr zatvori pripremu !!
-
-if gTBDir=="D"
-    if eof()
-            skip -1
-    endif
-endif
 
 if !CijeneOK("Stampanje")
     return DE_REFRESH

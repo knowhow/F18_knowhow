@@ -4457,7 +4457,6 @@ ImeKol:={ { "Konto"   , {|| id    },     "id"       },;
           { "St.konto", {|| ids   },     "ids"      };
         }
 Kol:={1,2,3}
-private gTBDir:="N"
 return PostojiSifra(F_VKSG,1,10,60,"Veze konta sa prethodnim godinama",@cId,dx,dy)
 
 

@@ -373,9 +373,7 @@ if !(roba->tip="U") .and. !empty(_IdRoba) .and.  left(_idtipdok,1) $ "12"  ;
 	// ovo je onda faktura
         // na osnovu otpremnice
 
-	if gTBDir="N"
-  		MsgO("Izracunavam trenutno stanje ...")
-	endif
+    MsgO("Izracunavam trenutno stanje ...")
  	
 	seek _idroba
  	
@@ -412,17 +410,7 @@ if !(roba->tip="U") .and. !empty(_IdRoba) .and.  left(_idtipdok,1) $ "12"  ;
    		skip
  	enddo
 
-	if gTBDir="N"
-  		MsgC()
-	else
-  		@ m_x+17, m_y+1   SAY "Artikal: "
-		?? _idRoba 
-		?? "("+roba->jmj+")"
-  		@ m_x+18, m_y+1   SAY "Stanje :"
-  		@ m_x+18, col()+1 SAY nUl-nIzl-nRevers-nRezerv  picture pickol
-  		@ m_x+19, m_y+1   SAY "Tarifa : " 
-		?? roba->idtarifa
-	endif
+    MsgC()
 
 	if ( ( nUl - nIzl - nRevers - nRezerv - _kolicina ) < 0 )
  		
@@ -523,15 +511,8 @@ select tarifa
 seek roba->idtarifa
 
 if lPrikTar
-	if gTBDir=="N"
-    		if IsPDV()
-			@ m_X+16,m_y+28 SAY "TBr: "
-			?? roba->idtarifa, "PDV", str(tarifa->opp,7,2)+"%"
-		else
-			@ m_X+16,m_y+28 SAY "TBr: "
-			?? roba->idtarifa, "PPP", str(tarifa->opp,7,2)+"%", "PPU", str(tarifa->ppp,7,2)
-  		endif
-	endif
+	@ m_X+16,m_y+28 SAY "TBr: "
+	?? roba->idtarifa, "PDV", str(tarifa->opp,7,2)+"%"
   	if _IdTipdok=="13"
 		if IsPDV()
      			@ m_X+18,m_y+47 SAY "MPC.s.PDV sif:"
@@ -894,7 +875,6 @@ function GetUsl(fNovi)
 *{
 private GetList:={}
 
-if gTBDir="N"
 
 if !(roba->tip="U")
  devpos(m_x+15,m_y+25)
@@ -902,7 +882,6 @@ if !(roba->tip="U")
  devpos(m_x+15,m_y+25)
 
  ?? trim(LEFT(roba->naz,40)),"("+roba->jmj+")"
-endif
 endif
 
 if roba->tip $ "UT" .and. fnovi
@@ -917,11 +896,7 @@ if roba->tip=="U"
       _porez  := TARIFA->ppp
     endif
   ENDIF
-  if gTBDir=="D"
-    @ row(),col()-15 GET _txt1 pict "@S40"
-  else
-    @ row(),m_y+25 GET _txt1 pict "@S40"
-  endif
+  @ row(),m_y+25 GET _txt1 pict "@S40"
   read
   _txt1:=trim(_txt1)
 else

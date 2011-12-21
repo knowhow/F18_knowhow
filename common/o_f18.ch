@@ -78,18 +78,11 @@
 #xcommand O_DOKSPF    => select(F_DOKSPF)   ; my_usex ("dokspf")   ; set order to tag "1"
 
 // tabele provjere integriteta
-#xcommand O_DINTEG1 => SELECT (F_DINTEG1)   ; my_usex ("dinteg1"); set order to tag "1"
-#xcommand O_DINTEG2 => SELECT (F_DINTEG2)   ; my_usex ("dinteg2"); set order to tag "1"
-#xcommand O_INTEG1 => SELECT (F_INTEG1)     ; my_usex ("integ1"); set order to tag "1"
-#xcommand O_INTEG2 => SELECT (F_INTEG2)     ; my_usex ("integ2"); set order to tag "1"
-#xcommand O_ERRORS => SELECT (F_ERRORS)     ; my_usex ("errors"); set order to tag "1"
-
-// sql messages
-#define F_MSGNEW 234
-#xcommand O_MESSAGE   => select(F_MESSAGE); my_usex ("message"); set order to tag "1"
-#xcommand O_AMESSAGE   => select(F_AMESSAGE); my_usex ("amessage"); set order to tag "1"
-#xcommand O_TMPMSG  => select(F_TMPMSG); my_use ("tmpmsg"); set order to tag "1"
-
+#xcommand O_DINTEG1 => SELECT (F_DINTEG1)   ; my_usex ("dinteg1")  ; set order to tag "1"
+#xcommand O_DINTEG2 => SELECT (F_DINTEG2)   ; my_usex ("dinteg2")  ; set order to tag "1"
+#xcommand O_INTEG1  => SELECT (F_INTEG1)    ; my_usex ("integ1")   ; set order to tag "1"
+#xcommand O_INTEG2  => SELECT (F_INTEG2)    ; my_usex ("integ2")   ; set order to tag "1"
+#xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
 #xcommand O_FIN_PRIPR     => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
@@ -364,5 +357,12 @@
 #xcommand O_USERS  => select (F_USERS); my_use ("users") ; set order to tag "ID"
 #xcommand O_GROUPS  => select (F_GROUPS); my_use ("groups") ; set order to tag "ID"
 #xcommand O_RULES  => select (F_RULES); my_use ("rules") ; set order to tag "ID"
+
+
+// sql messages
+#define F_MSGNEW 234
+#xcommand O_MESSAGE   => select(F_MESSAGE); my_usex ("message"); set order to tag "1"
+#xcommand O_AMESSAGE   => select(F_AMESSAGE); my_usex ("amessage"); set order to tag "1"
+#xcommand O_TMPMSG  => select(F_TMPMSG); my_use ("tmpmsg"); set order to tag "1"
 
 

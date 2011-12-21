@@ -1,3 +1,7 @@
+0.9.21  2011-12-21, fakt->fin
+
+ - my_usex faktfin [#25795](http://redmine.bring.out.ba/issues/25795)
+
 0.9.20  2011-12-21, refactoring scatter/gather
 
  - gather/scatter out [#25776](http://redmine.bring.out.ba/issues/25776)

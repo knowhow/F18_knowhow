@@ -22,16 +22,11 @@ gFaktKum:=""
 gKalkKum:=""
 gDzokerF1:=""
 
-cOdradjeno:="D"
-if file(EXEPATH+'scshell.ini')
-        //cBrojLok:=R_IniRead ( 'TekucaLokacija','Broj',  "",EXEPATH+'scshell.INI' )
-        cOdradjeno:=R_IniRead ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "N" ,EXEPATH+'scshell.INI' )
-        R_IniWrite ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "D" ,EXEPATH+'scshell.INI' )
-endif
+cOdradjeno := "D"
 
-Rpar("a1",@gFaktKum)
-Rpar("a2",@gDzokerF1)
-Rpar("a3",@gKalkKum)
+Rpar("a1", @gFaktKum)
+Rpar("a2", @gDzokerF1)
+Rpar("a3", @gKalkKum)
 
 gDzokerF1 := TRIM(gDzokerF1)
 
@@ -56,15 +51,15 @@ cSetIdRj := "N"
 Box(,10,60)
  @ m_x+1,m_y+2 SAY "RJ u fakt:" GET cIdRjFakt
  @ m_x+1,col()+2 SAY "postaviti IdRj u FIN ?" GET cSetIdRj ;
- 	PICT "@!" ;
-	VALID (cSetIdRj $ "DN")
-	
- @ m_x+2,m_y+2 SAY "Vrsta dokumenta u fakt:" GET cIdFakt
- @ m_x+3,m_y+2 SAY "Dokumenti u periodu:" GET dDAtOd
- @ m_x+3,col()+2 SAY "do" GET dDatDo
- @ m_x+5,m_y+2 SAY "Broj dokumenta" GET qqDok
+    PICT "@!" ;
+    VALID (cSetIdRj $ "DN")
+    
+ @ m_x+2, m_y+2 SAY "Vrsta dokumenta u fakt:" GET cIdFakt
+ @ m_x+3, m_y+2 SAY "Dokumenti u periodu:" GET dDAtOd
+ @ m_x+3, col()+2 SAY "do" GET dDatDo
+ @ m_x+5, m_y+2 SAY "Broj dokumenta" GET qqDok
 
- @ m_x+6,m_y+2 SAY "Podesiti parametre prenosa" GET cSetPAr valid csetpar$"DN" pict "@!"
+ @ m_x+6, m_y+2 SAY "Podesiti parametre prenosa" GET cSetPAr valid csetpar$"DN" pict "@!"
  read
  if cSetPar=="D"
    gFaktKum:=padr(gFaktKum,35)
@@ -86,11 +81,12 @@ Box(,10,60)
 
 BoxC()
 
-select params; use
+select params
+use
 
 if lastkey()==K_ESC
-	close all
-	return
+    close all
+    return
 endif
 
 // ovo dole je ukradeno iz KALK/REKAPK
@@ -106,14 +102,14 @@ IF lNCPoSast
   O_SAST
   select (F_KALK)
   if !used()
-  	O_KALK
+    O_KALK
   endif  
   set order to tag "1"
 ENDIF
 
 select (F_FAKT)
 if !used()
-	O_FAKT
+    O_FAKT
 endif
 set order to tag "1"
 //"1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
@@ -123,7 +119,8 @@ zap
 
 aUsl:=Parsiraj(qqDok,"Brdok","C")
 
-private cFilter:="DatDok>="+cm2str(dDatOd)+".and.DatDok<="+cm2str(dDatDo)+".and. idtipdok=="+cm2str(cIdFakt) + ".and. IdFirma=="+cm2str(cIdRjFakt)
+private cFilter := "DatDok>="+cm2str(dDatOd)+".and.DatDok<="+cm2str(dDatDo)+".and. idtipdok=="+cm2str(cIdFakt) + ".and. IdFirma=="+cm2str(cIdRjFakt)
+
 if aUsl<>".t."
   cFilter+=".and."+aUsl
 endif
@@ -143,35 +140,38 @@ do whilesc !eof()
 
    select fakt
 
-   cIdPartner:=idpartner
+   cIdPartner := idpartner
    if empty(IdPartner)
-      Box(,6,66)
+      Box(, 6, 66)
       aMemo:=parsmemo(txt)
       if len(aMemo)>=5
-        @ m_x+1,m_y+2 SAY "FAKT broj:"+BrDOK
-        @ m_x+2,m_y+2 SAY padr(trim(amemo[3]),30)
-        @ m_x+3,m_y+2 SAY padr(trim(amemo[4]),30)
-        @ m_x+4,m_y+2 SAY padr(trim(amemo[5]),30)
+        @ m_x+1 ,m_y+2 SAY "FAKT broj:" + BrDOK
+        @ m_x+2, m_y+2 SAY padr(trim(amemo[3]),30)
+        @ m_x+3, m_y+2 SAY padr(trim(amemo[4]),30)
+        @ m_x+4, m_y+2 SAY padr(trim(amemo[5]),30)
       else
          cTxt:=""
       endif
-      @ m_x+6,m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid P_Firma(@cIdPartner)
+      @ m_x+6, m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid P_Firma(@cIdPartner)
       read
       BoxC()
    endif
 
    do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdTipDok==IdTipDok
 
-        nFV:=Cijena*Kolicina
-        nRabat:=Cijena*kolicina*Rabat/100
+        nFV:=Cijena * Kolicina
+        nRabat:=Cijena * kolicina * Rabat/100
 
-        select ROBA; HSEEK FAKT->IdRoba
-        select TARIFA; HSEEK roba->idtarifa
+        select ROBA
+        HSEEK FAKT->IdRoba
+        select TARIFA
+        HSEEK roba->idtarifa
         select fakt
 
         nNV:=0
         IF lNCPoSast .and. ROBA->tip=="P"
-          SELECT SAST; HSEEK FAKT->idroba
+          SELECT SAST
+          HSEEK FAKT->idroba
           DO WHILE !EOF() .and. id==FAKT->idroba
             nNV += FAKT->kolicina*SAST->kolicina*IzKalk(SAST->id2,cKonSir,"NC")
             SKIP 1
@@ -179,7 +179,7 @@ do whilesc !eof()
         ENDIF
 
         select FINMAT
-        append blank
+        APPEND BLANK
         cIdVD := fakt->IdTipdok
         replace IdFirma   with gFirma,;
                 IdTarifa  with roba->IdTarifa,;
@@ -201,12 +201,11 @@ do whilesc !eof()
                 idroba    with fakt->idroba,;
                 Kolicina  with fakt->Kolicina
 
-	if (cSetIdRj == "D")
-		replace IdRj with cIdRjFakt
-	endif
-	
-         IF cIDVD=="11" .and. lNCPoSast .and.;
-            TARIFA->mpp<>0 .and. FIELDPOS("POREZ3")>0
+         if (cSetIdRj == "D")
+            replace IdRj with cIdRjFakt
+         endif
+    
+         IF cIDVD=="11" .and. lNCPoSast .and. TARIFA->mpp<>0 .and. FIELDPOS("POREZ3")>0
            REPLACE porez3 WITH PorezMP("MPP")
          ENDIF
          select fakt
@@ -217,10 +216,10 @@ enddo
 
 select finmat
 if reccount2()>0
-	close all
- 	fin_kontiranje_naloga(dDatDo)
+    close all
+    fin_kontiranje_naloga(dDatDo)
 else
- 	MsgBeep("Nema dokumenata za prenos ...")
+    MsgBeep("Nema dokumenata za prenos ...")
 endif
 closeret
 
@@ -246,52 +245,52 @@ nPPU:=tarifa->ppp/100
 nCSP:=nFV-nRabat     // cijena sa porezima
 
 if gUVarPP=="T"
-	nPor1:=nCSP*nPPP/(1+nPPP)
-	nPor2:=(nCSP-nPor1-nNV)*nMPP/(1+nMPP)
-	nPor3:=(nCSP-nPor2)*nPP
-	do case
-		case cVar=="PP"
-			nVrati:=nPor3
-		case cVar=="PPP"
-			nVrati:=nPor1
-		case cVar=="PPU"
-			nVrati:=0
-		case cVar=="MPP"
-			nVrati:=nPor2
-	endcase
-	return nVrati
+    nPor1:=nCSP*nPPP/(1+nPPP)
+    nPor2:=(nCSP-nPor1-nNV)*nMPP/(1+nMPP)
+    nPor3:=(nCSP-nPor2)*nPP
+    do case
+        case cVar=="PP"
+            nVrati:=nPor3
+        case cVar=="PPP"
+            nVrati:=nPor1
+        case cVar=="PPU"
+            nVrati:=0
+        case cVar=="MPP"
+            nVrati:=nPor2
+    endcase
+    return nVrati
 endif
 
 if  gUVarPP=="D"
-	nD := 1+TARIFA->zpp/100+TARIFA->ppp/100
+    nD := 1+TARIFA->zpp/100+TARIFA->ppp/100
 else
-	nD := (1+TARIFA->opp/100)*(1+TARIFA->ppp/100)+TARIFA->zpp/100
+    nD := (1+TARIFA->opp/100)*(1+TARIFA->ppp/100)+TARIFA->zpp/100
 endif
 
 do case
-	case cVar=="PP"
-		nVrati := nCSP*(TARIFA->zpp/100)/nD
-	case cVar=="PPU"
-		if gUVarPP=="D"
-			nVrati := nCSP*(TARIFA->ppp/100)/nD
-		else
-			nVrati := nCSP*(TARIFA->ppp/100)*(1+TARIFA->opp/100)/nD
-		endif
-	case cVar=="PPP"
-		if gUVarPP=="D" 
-			nVrati := nCSP*(TARIFA->opp/100)/((1+TARIFA->opp/100)*nD)
-		else
-			nVrati := nCSP*(TARIFA->opp/100)/nD
-		endif
-		
-	case cVar=="MPP"
-		if gUVarPP=="D"
-			nMPVBP := nCSP/((1+TARIFA->opp/100)*nD)
-		else
-			nMPVBP := nCSP/nD
-		endif
-		nPom   := nMPVBP-nNV
-		nVrati := MAX( nCSP*(TARIFA->dlruc/100)*(TARIFA->mpp/100), TARIFA->mpp*nPom/(100+TARIFA->mpp) )
+    case cVar=="PP"
+        nVrati := nCSP*(TARIFA->zpp/100)/nD
+    case cVar=="PPU"
+        if gUVarPP=="D"
+            nVrati := nCSP*(TARIFA->ppp/100)/nD
+        else
+            nVrati := nCSP*(TARIFA->ppp/100)*(1+TARIFA->opp/100)/nD
+        endif
+    case cVar=="PPP"
+        if gUVarPP=="D" 
+            nVrati := nCSP*(TARIFA->opp/100)/((1+TARIFA->opp/100)*nD)
+        else
+            nVrati := nCSP*(TARIFA->opp/100)/nD
+        endif
+        
+    case cVar=="MPP"
+        if gUVarPP=="D"
+            nMPVBP := nCSP/((1+TARIFA->opp/100)*nD)
+        else
+            nMPVBP := nCSP/nD
+        endif
+        nPom   := nMPVBP-nNV
+        nVrati := MAX( nCSP*(TARIFA->dlruc/100)*(TARIFA->mpp/100), TARIFA->mpp*nPom/(100+TARIFA->mpp) )
 end case
 return nVrati
 
@@ -333,9 +332,9 @@ cIdVN:=IdVN   // uzmi vrstu naloga koja ce se uzeti u odnosu na prvu kalkulaciju
              //  koja se kontira
 
 if lAFin
-	cBrNalF := nextnal( finmat->idfirma, cIdVn )
-	select nalog
-	use
+    cBrNalF := nextnal( finmat->idfirma, cIdVn )
+    select nalog
+    use
 endif
 
 select finmat
@@ -358,90 +357,90 @@ private cKonto1:=NIL
 private KursLis:="1"
 
 do while !eof()    // datoteka finmat
-	cIDVD:=IdVD
-	cBrDok:=BrDok
- 	if valtype(cKonto1)<>"C"
-  		private cKonto1:="";cKonto2:="";cKonto3:=""
-  		private cPartner1:="";cPartner2:=cPartner3:=""
- 	endif
- 	do while cIdVD==IdVD .and. cBrDok==BrDok .and. !eof()
-		select roba
-		hseek finmat->idroba
-		select trfp2
-         	seek cIdVD+" "  
-		// nemamo vise sema kontiranja kao u kalk
-         	do while !empty(cBrNalF) .and. idvd==cIDVD  .and. shema=" " .and. !eof()
-			cStavka:=Id
-          		select finmat
-          		nIz:=&cStavka
-          		select trfp2
-          		if !empty(trfp2->idtarifa) .and. trfp2->idtarifa<>finmat->idtarifa
-           			// ako u {ifrarniku parametara postoji tarifa prenosi po tarifama
-            			nIz:=0
-          		endif
-			if nIz<>0  
-				// ako je iznos elementa <> 0, dodaj stavku u fpripr
-				select fin_pripr
-				if trfp2->znak=="-"
-              				nIz:=-nIz
-            			endif
-               			nIz:=round7(nIz, RIGHT(TRFP2->naz,2))  
-				
-				//DEM - pomocna valuta
-               			nIz2:=nIz * Kurs(dDatNal, "D", "P")
-            			
-				cIdKonto:=trfp2->Idkonto
-            			cIdkonto:=STRTRAN(cidkonto,"?1",trim(ckonto1))
-            			cIdkonto:=STRTRAN(cidkonto,"?2",trim(ckonto2))
-            			cIdkonto:=STRTRAN(cidkonto,"?3",trim(ckonto3))
-				IF "F1" $ cIdKonto
-              				IF EMPTY(gDzokerF1)
-                				cPom:=""
-              				ELSE
-                				cPom:=&gDzokerF1
-              				ENDIF
-              				cIdkonto:=STRTRAN(cidkonto,"F1",cPom)
-            			ENDIF
-				cIdkonto:=padr(cidkonto,7)
-				cIdPartner:=space(6)
-            			if trfp2->Partner=="1"  //  stavi Partnera
-                    			cIdpartner:=FINMAT->IdPartner
-           			elseif trfp2->Partner=="A"   // stavi  Lice koje se zaduz2
-                    			cIdpartner:=padr(cPartner1,7)
-            			elseif trfp2->Partner=="B"   // stavi  Lice koje se zaduz2
-                    			cIdpartner:=padr(cPartner2,7)
-            			elseif trfp2->Partner=="C"   // stavi  Lice koje se zaduz2
-                    			cIdpartner:=padr(cPartner3,7)
-            			endif
-				cBrDok:=space(8)
-            			dDatDok:=FINMAT->datdok
-            			if trfp2->Dokument=="1"
-                   			cBrDok:=FINMAT->brdok
-            			elseif trfp2->Dokument=="3"
-                   			dDatDok:=dDatNal
-            			endif
-				fExist:=.f.
-            			seek FINMAT->IdFirma+cidvn+cBrNalF
-            			if found()
-             				fExist:=.f.
-             				do while FINMAT->idfirma+cidvn+cBrNalF==IdFirma+idvn+BrNal
-               					if IdKonto==cIdKonto .and. IdPartner==cIdPartner .and.trfp2->d_p==d_p  .and. idtipdok==FINMAT->idvd .and. padr(brdok,10)==padr(cBrDok,10) .and. datdok==dDatDok
-                  					// provjeriti da li se vec nalazi stavka koju dodajemo
-                 					fExist:=.t.
-                 					exit
-               					endif
-              					skip
-             				enddo
-             				if !fExist
-               					go bottom
-               					nRbr:=val(Rbr)+1
-	       					append blank
-             				endif
-            			else
-             				go bottom
-             				nRbr:=val(rbr)+1
-             				append blank
-            			endif
+    cIDVD:=IdVD
+    cBrDok:=BrDok
+    if valtype(cKonto1)<>"C"
+        private cKonto1:="";cKonto2:="";cKonto3:=""
+        private cPartner1:="";cPartner2:=cPartner3:=""
+    endif
+    do while cIdVD==IdVD .and. cBrDok==BrDok .and. !eof()
+        select roba
+        hseek finmat->idroba
+        select trfp2
+            seek cIdVD+" "  
+        // nemamo vise sema kontiranja kao u kalk
+            do while !empty(cBrNalF) .and. idvd==cIDVD  .and. shema=" " .and. !eof()
+            cStavka:=Id
+                select finmat
+                nIz:=&cStavka
+                select trfp2
+                if !empty(trfp2->idtarifa) .and. trfp2->idtarifa<>finmat->idtarifa
+                    // ako u {ifrarniku parametara postoji tarifa prenosi po tarifama
+                        nIz:=0
+                endif
+            if nIz<>0  
+                // ako je iznos elementa <> 0, dodaj stavku u fpripr
+                select fin_pripr
+                if trfp2->znak=="-"
+                            nIz:=-nIz
+                        endif
+                        nIz:=round7(nIz, RIGHT(TRFP2->naz,2))  
+                
+                //DEM - pomocna valuta
+                        nIz2:=nIz * Kurs(dDatNal, "D", "P")
+                        
+                cIdKonto:=trfp2->Idkonto
+                        cIdkonto:=STRTRAN(cidkonto,"?1",trim(ckonto1))
+                        cIdkonto:=STRTRAN(cidkonto,"?2",trim(ckonto2))
+                        cIdkonto:=STRTRAN(cidkonto,"?3",trim(ckonto3))
+                IF "F1" $ cIdKonto
+                            IF EMPTY(gDzokerF1)
+                                cPom:=""
+                            ELSE
+                                cPom:=&gDzokerF1
+                            ENDIF
+                            cIdkonto:=STRTRAN(cidkonto,"F1",cPom)
+                        ENDIF
+                cIdkonto:=padr(cidkonto,7)
+                cIdPartner:=space(6)
+                        if trfp2->Partner=="1"  //  stavi Partnera
+                                cIdpartner:=FINMAT->IdPartner
+                    elseif trfp2->Partner=="A"   // stavi  Lice koje se zaduz2
+                                cIdpartner:=padr(cPartner1,7)
+                        elseif trfp2->Partner=="B"   // stavi  Lice koje se zaduz2
+                                cIdpartner:=padr(cPartner2,7)
+                        elseif trfp2->Partner=="C"   // stavi  Lice koje se zaduz2
+                                cIdpartner:=padr(cPartner3,7)
+                        endif
+                cBrDok:=space(8)
+                        dDatDok:=FINMAT->datdok
+                        if trfp2->Dokument=="1"
+                            cBrDok:=FINMAT->brdok
+                        elseif trfp2->Dokument=="3"
+                            dDatDok:=dDatNal
+                        endif
+                fExist:=.f.
+                        seek FINMAT->IdFirma+cidvn+cBrNalF
+                        if found()
+                            fExist:=.f.
+                            do while FINMAT->idfirma+cidvn+cBrNalF==IdFirma+idvn+BrNal
+                                if IdKonto==cIdKonto .and. IdPartner==cIdPartner .and.trfp2->d_p==d_p  .and. idtipdok==FINMAT->idvd .and. padr(brdok,10)==padr(cBrDok,10) .and. datdok==dDatDok
+                                    // provjeriti da li se vec nalazi stavka koju dodajemo
+                                    fExist:=.t.
+                                    exit
+                                endif
+                                skip
+                            enddo
+                            if !fExist
+                                go bottom
+                                nRbr:=val(Rbr)+1
+                            append blank
+                            endif
+                        else
+                            go bottom
+                            nRbr:=val(rbr)+1
+                            append blank
+                        endif
 
             replace iznosDEM with iznosDEM+nIz2,;
                     iznosBHD with iznosBHD+nIz,;

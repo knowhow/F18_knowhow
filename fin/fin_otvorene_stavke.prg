@@ -1123,9 +1123,9 @@ if fTiho
   AADD(aDBf, { 'GOD'+STR(VAL(aGod[i-1,1])-2, 4), 'N' , 15 ,  2 })
 endif
 
-DBCREATE2 (cPom, aDbf)
+DBCREATE2 (_ime_dbf, aDbf)
 
-my_usex (cPom)
+my_usex (_alias)
 
 INDEX ON  IDPARTNER + DTOS(DATDOK) + DTOS( IIF(EMPTY(DATVAL), DATDOK, DATVAL)) + BRDOK TAG "1"
 

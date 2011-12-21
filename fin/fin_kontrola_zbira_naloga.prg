@@ -53,7 +53,13 @@ Box("kzb",12,70, .f., "Kontrola zbira naloga")
 
     dug:=dug2:=Pot:=Pot2:=0
     do while  !eof() .and. (IdFirma+IdVn+BrNal==cIdFirma+cIdVn+cBrNal)
-        if D_P=="1"; dug+=IznosBHD; dug2+=iznosdem; else; pot+=IznosBHD;pot2+=iznosdem; endif
+        if D_P=="1"
+            dug  += IznosBHD
+            dug2 += iznosdem
+        else
+            pot  += IznosBHD
+            pot2 +=iznosdem
+        endif
         skip
     enddo
     SKIP -1

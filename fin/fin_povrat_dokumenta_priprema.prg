@@ -14,7 +14,7 @@
 // -------------------------------------
 // povrat naloga u pripremu
 // -------------------------------------
-function Povrat_fin_naloga(lStorno)
+function povrat_fin_naloga(lStorno)
 local nRec
 
 if lStorno==NIL 
@@ -36,94 +36,120 @@ O_NALOG
 SELECT SUBAN
 set order to tag "4"
 
-cIdFirma:=gFirma
-cIdFirma2:=gFirma
-cIdVN:=cIdVN2:=space(2)
-cBrNal:=cBrNal2:=space(8)
+cIdFirma  :=gFirma
+cIdFirma2 :=gFirma
+cIdVN := cIdVN2  := space(2)
+cBrNal:= cBrNal2 := space(8)
 
-Box("",IF(lStorno,3,1),IF(lStorno,65,35))
- @ m_x+1,m_y+2 SAY "Nalog:"
+Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
+
+ @ m_x + 1, m_y + 2 SAY "Nalog:"
+
  if gNW=="D"
-  @ m_x+1,col()+1 SAY cIdFirma PICT "@!"
+      @ m_x+1,col()+1 SAY cIdFirma PICT "@!"
  else
-  @ m_x+1,col()+1 GET cIdFirma PICT "@!"
+      @ m_x+1,col()+1 GET cIdFirma PICT "@!"
  endif
- @ m_x+1,col()+1 SAY "-" GET cIdVN PICT "@!"
- @ m_x+1,col()+1 SAY "-" GET cBrNal VALID _f_brnal(@cBrNal)
+
+ @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
+ @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID _f_brnal(@cBrNal)
+
  IF lStorno
+
    @ m_x+3,m_y+2 SAY "Broj novog naloga (naloga storna):"
+
    if gNW=="D"
-    @ m_x+3,col()+1 SAY cIdFirma2
+       @ m_x+3, col()+1 SAY cIdFirma2
    else
-    @ m_x+3,col()+1 GET cIdFirma2
+       @ m_x+3, col()+1 GET cIdFirma2
    endif
-   @ m_x+3,col()+1 SAY "-" GET cIdVN2 PICT "@!"
-   @ m_x+3,col()+1 SAY "-" GET cBrNal2
+
+   @ m_x + 3, col() + 1 SAY "-" GET cIdVN2 PICT "@!"
+   @ m_x + 3, col() + 1 SAY "-" GET cBrNal2
+
  ENDIF
- read; ESC_BCR
+
+ read
+ ESC_BCR
+
 BoxC()
 
 
-if cBrNal="."
+if (cBrNal == ".")
+
 	IF !SigmaSif()
      		CLOSERET
   	ENDIF
   	private qqBrNal:=qqDatDok:=qqIdvn:=space(80)
-  	qqIdVn:=padr(cidvn+";",80)
-  	Box(,3,60)
+
+  	qqIdVn := padr(cidvn+";",80)
+
+  	Box(, 3, 60)
    	do while .t.
-    		@ m_x+1,m_y+2 SAY "Vrste naloga   "  GEt qqIdVn pict "@S40"
-    		@ m_x+2,m_y+2 SAY "Broj naloga    "  GEt qqBrNal pict "@S40"
+    		@ m_x+1, m_y+2 SAY "Vrste naloga   "  GEt qqIdVn pict "@S40"
+    		@ m_x+2, m_y+2 SAY "Broj naloga    "  GEt qqBrNal pict "@S40"
     		read
-    		private aUsl1:=Parsiraj(qqBrNal,"BrNal","C")
-    		private aUsl3:=Parsiraj(qqIdVN,"IdVN","C")
+
+    		private aUsl1 := Parsiraj(qqBrNal, "BrNal", "C")
+    		private aUsl3 := Parsiraj(qqIdVN, "IdVN", "C")
     		if aUsl1<>NIL .and. ausl3<>NIL
       			exit
     		endif
    	enddo
   	Boxc()
-  	if Pitanje(,IF(lStorno,"Stornirati","Povuci u pripremu")+" naloge sa ovim kriterijem ?","N")=="D"
+
+  	if Pitanje( , IIF(lStorno, "Stornirati", "Povuci u pripremu") + " naloge sa ovim kriterijem ?","N")=="D"
     		select suban
     		if !flock()
 			Msg("SUBANALITIKA je zauzeta ",3)
 			closeret
 		endif
 
-    private cFilt:="IdFirma=="+cm2str(cIdFirma)
+    private cFilt := "IdFirma==" + cm2str(cIdFirma)
     if aUsl1==".t." .and. aUsl3==".t."
-      set filter to &cFilt
+        set filter to &cFilt
     else
-      cFilt:=cFilt+".and."+aUsl1+".and."+aUsl3
-      set filter to &cFilt
+        cFilt:=cFilt+".and."+aUsl1+".and."+aUsl3
+        set filter to &cFilt
     endif
 
 
     MsgO("Prolaz kroz SUBANALITIKU...")
     go top
     do while !eof()
-      select SUBAN; Scatter()
+      select SUBAN
+      Scatter()
       select fin_pripr
       if lStorno
          _idfirma := cIdFirma2
-            _idvn := cIdVn2
-           _brnal := cBrNal2
-        _iznosbhd := -_iznosbhd
-        _iznosdem := -_iznosdem
+         _idvn := cIdVn2
+         _brnal := cBrNal2
+         _iznosbhd := -_iznosbhd
+         _iznosdem := -_iznosdem
       endif
-      append ncnl;  Gather2()
+
+      append ncnl
+      Gather2()
       select suban
       skip
       nRec:=recno()
       skip -1
 
-      if !lStorno; MY_DELETE; endif
+      if !lStorno
+          MY_DELETE
+      endif
 
       go nRec
     enddo
     MsgC()
+
+
     MsgO("Prolaz kroz ANALITIKU...")
     select anal
-    if !flock(); msg("Datoteka je zauzeta ",3); closeret; endif
+    if !flock()
+        msg("Datoteka je zauzeta ",3)
+        closeret
+    endif
 
     private cFilt:="IdFirma=="+cm2str(cIdFirma)
     if aUsl1==".t." .and. aUsl3==".t."
@@ -132,47 +158,73 @@ if cBrNal="."
       cFilt:=cFilt+".and."+aUsl1+".and."+aUsl3
       set filter to &cFilt
     endif
+
     go top
     do while !eof()
-      skip; nRec:=recno(); skip -1
-      if !lStorno; MY_DELETE; endif
+      skip
+      nRec:=recno()
+      skip -1
+      if !lStorno
+          MY_DELETE
+      endif
       go nRec
     enddo
     MsgC()
 
     MsgO("Prolaz kroz SINTETIKU...")
     select sint
-    if !flock(); msg("Datoteka je zauzeta ",3); closeret; endif
-
-
-    private cFilt:="IdFirma=="+cm2str(cIdFirma)
-    if aUsl1==".t." .and. aUsl3==".t."
-      set filter to &cFilt
-    else
-      cFilt:=cFilt+".and."+aUsl1+".and."+aUsl3
-      set filter to &cFilt
+    if !flock()
+        msg("Datoteka je zauzeta ",3)
+        closeret
     endif
+
+
+    private cFilt := "IdFirma==" + cm2str(cIdFirma)
+    if aUsl1==".t." .and. aUsl3==".t."
+        set filter to &cFilt
+    else
+        cFilt:=cFilt+".and."+aUsl1+".and."+aUsl3
+        set filter to &cFilt
+    endif
+
     go top
     do while !eof()
-      skip; nRec:=recno(); skip -1
-      if !lStorno; MY_DELETE; endif
+      skip
+      nRec:=recno()
+      skip -1
+      if !lStorno
+          MY_DELETE
+      endif
       go nRec
     enddo
+
     MsgC()
+
+
     MsgO("Prolaz kroz NALOZI...")
     select nalog
-    if !flock(); msg("Datoteka je zauzeta ",3); closeret; endif
-    private cFilt:="IdFirma=="+cm2str(cIdFirma)
-    if aUsl1==".t." .and. aUsl3==".t."
-      set filter to &cFilt
-    else
-      cFilt:=cFilt+".and."+aUsl1+".and."+aUsl3
-      set filter to &cFilt
+
+    if !flock()
+       msg("Datoteka je zauzeta ",3)
+       closeret
     endif
+    private cFilt := "IdFirma==" + cm2str(cIdFirma)
+
+    if aUsl1==".t." .and. aUsl3==".t."
+        set filter to &cFilt
+    else
+        cFilt:=cFilt+".and."+aUsl1+".and."+aUsl3
+        set filter to &cFilt
+    endif
+
     go top
     do while !eof()
-      skip; nRec:=recno(); skip -1
-      if !lStorno; MY_DELETE; endif
+      skip
+      nRec:=recno()
+      skip -1
+      if !lStorno
+          MY_DELETE
+      endif
       go nRec
     enddo
     MsgC()
@@ -182,7 +234,7 @@ if cBrNal="."
 endif
 
 
-if Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal+IF(lStorno," stornirati"," povuci u pripremu")+" (D/N) ?","D")=="N"
+if Pitanje(,"Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + IIF(lStorno," stornirati"," povuci u pripremu") + " (D/N) ?","D") == "N"
    closeret
 endif
 
@@ -197,23 +249,24 @@ ENDIF
 MsgO("SUBAN")
 
 select SUBAN
-seek cidfirma+cidvn+cbrNal
+seek cIdfirma + cIdvn + cBrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-   select fin_pripr; Scatter()
-   select SUBAN; Scatter()
+   select fin_pripr
+   Scatter()
+   select SUBAN
+   Scatter()
    select fin_pripr
    if lStorno
-      _idfirma := cIdFirma2
-         _idvn := cIdVn2
-        _brnal := cBrNal2
-     _iznosbhd := -_iznosbhd
-     _iznosdem := -_iznosdem
+       _idfirma := cIdFirma2
+       _idvn := cIdVn2
+       _brnal := cBrNal2
+       _iznosbhd := -_iznosbhd
+       _iznosdem := -_iznosdem
    endif
-#ifdef XBASE
-   append blank; Gather()
-#else
-   append ncnl; Gather2()
-#endif
+
+   append ncnl
+   Gather2()
+
    select SUBAN
    skip
 enddo
@@ -227,12 +280,15 @@ if tbl_busy( F_SUBAN ) = 0
 	closeret
 endif
 
-//if !flock(); msg("Datoteka je zauzeta ",3); closeret; endif
 
-seek cidfirma+cidvn+cbrNal
+seek cIdfirma + cIdvn + cBrNal
 DO WHILE !EOF() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1; nRec:=recno(); skip -1
-  if !lStorno; MY_DELETE; endif
+  skip 1
+  nRec:=recno()
+  skip -1
+  if !lStorno
+    MY_DELETE
+  endif
   go nRec
 ENDDO
 USE
@@ -240,19 +296,22 @@ USE
 MsgC()
 
 MsgO("ANAL")
-select ANAL; set order to tag "2"
+select ANAL
+set order to tag "2"
 
 if tbl_busy( F_ANAL ) = 0
 	msg("Datoteka je zauzeta ",3)
 	closeret
 endif
 
-//if !flock(); msg("Datoteka je zauzeta ",3); closeret; endif
-
 seek cidfirma+cidvn+cbrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1; nRec:=recno(); skip -1
-  if !lStorno; MY_DELETE; endif
+  skip 1
+  nRec:=recno()
+   skip -1
+  if !lStorno
+     MY_DELETE
+  endif
   go nRec
 enddo
 use
@@ -260,19 +319,22 @@ MsgC()
 
 
 MsgO("SINT")
-select sint;  set order to tag "2"
+select sint
+ set order to tag "2"
 
 if tbl_busy( F_SINT ) = 0
 	msg("Datoteka je zauzeta ",3)
 	closeret
 endif
 
-//if !flock(); msg("Datoteka je zauzeta ",3); closeret; endif
-
-seek cidfirma+cidvn+cbrNal
+seek cIdfirma + cIdvn + cBrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1; nRec:=recno(); skip -1
-  if !lStorno; MY_DELETE; endif
+  skip 1
+  nRec:=recno()
+  skip -1
+  if !lStorno
+     MY_DELETE
+  endif
   go nRec
 enddo
 
@@ -286,12 +348,15 @@ if tbl_busy( F_NALOG ) = 0
 	msg("Datoteka je zauzeta ",3)
 	closeret
 endif
-//if !flock(); msg("Datoteka je zauzeta ",3); closeret; endif
 
 seek cidfirma+cidvn+cbrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1; nRec:=recno(); skip -1
-  if !lStorno; MY_DELETE; endif
+  skip 1
+  nRec:=recno()
+  skip -1
+  if !lStorno
+      MY_DELETE
+  endif
   go nRec
 enddo
 use
@@ -358,7 +423,6 @@ return 1
 /*! \fn Prefin_unos_naloga()
  *  \brief Preknjizenje naloga
  */
- 
 function Prefin_unos_naloga()
 
 local fK1:="N"

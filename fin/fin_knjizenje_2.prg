@@ -124,6 +124,7 @@ function SrediRbrFin(lSilent)
 local nArr
 local nTREC
 local i
+local _rec
 
 if (lSilent == nil)
 	lSilent := .f.
@@ -135,14 +136,14 @@ if !lSilent
 	endif
 endif
 
-nArr:=SELECT()
-nRec:=RecNo()
+nArr := SELECT()
+nRec := RecNo()
 
 select fin_pripr
 set order to tag "0"
 go top
 
-i:=1
+i := 1
 
 Box(, 1, 50)
 
@@ -152,9 +153,10 @@ do while !EOF()
 	nTREC := RECNO()
 	skip -1
 	
-	Scatter()
-	_rbr := PADL( ALLTRIM(STR(i)) , 4 )
-	Gather()
+    _rec := dbf_get_rec()
+
+	_rec["rbr"] := PADL( ALLTRIM(STR(i)) , 4 )
+	dbf_update_rec(_rec)
 	
 	@ m_x + 1, m_y + 2 SAY "redni broj: " + field->rbr
 	

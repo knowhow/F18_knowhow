@@ -18,7 +18,7 @@ function KontrZbNal()
 
 PushWa()
 
-Box("kzb",12,70,.f.,"Kontrola zbira naloga")
+Box("kzb",12,70, .f., "Kontrola zbira naloga")
       
     set cursor on
     
@@ -43,7 +43,7 @@ Box("kzb",12,70,.f.,"Kontrola zbira naloga")
     
     
     set order to tag "1"
-    seek cIdFirma+cIdVn+cBrNal
+    seek cIdFirma + cIdVn + cBrNal
     if !(IdFirma+IdVn+BrNal==cIdFirma+cIdVn+cBrNal)
         Msg("Ovaj nalog nije unesen ...",10)
         BoxC()
@@ -78,35 +78,36 @@ Box("kzb",12,70,.f.,"Kontrola zbira naloga")
     if round(Dug-Pot,2) <> 0  .and. gRavnot=="D"
         
 	cDN:="N"
-        set cursor on
+    set cursor on
         @ m_x+10,m_y+2 SAY "Zelite li uravnoteziti nalog (D/N) ?" GET cDN valid (cDN $ "DN") pict "@!"
         read
 
         if cDN=="D"
           
-	  _Opis:=PADR("?",LEN(_opis))
-          _BrDok:=""
-          _D_P:="2"
-	  _IdKonto:=SPACE(7)
-          
-	  @ m_x+11,m_y+2 SAY "Opis" GET _opis  PICT "@S40"
-          @ m_x+12,m_y+2 SAY "Staviti na konto ?" GET _IdKonto valid P_Konto(@_IdKonto)
-          @ m_x+12,col()+1 SAY "Datum dokumenta:" GET _DatDok
-          read
-          
-	  if lastkey()<>K_ESC
-            _Rbr:=str(val(_Rbr)+1,4)
-            _IdPartner:=""
-            _IznosBHD:=Dug-Pot
-            DinDem(NIL,NIL,"_IZNOSBHD")
-            append blank
-            Gather()
-	  endif
+            _Opis:=PADR("?",LEN(_opis))
+            _BrDok:=""
+            _D_P:="2"
+            _IdKonto:=SPACE(7)
+                
+            @ m_x+11,m_y+2 SAY "Opis" GET _opis  PICT "@S40"
+            @ m_x+12,m_y+2 SAY "Staviti na konto ?" GET _IdKonto valid P_Konto(@_IdKonto)
+            @ m_x+12,col()+1 SAY "Datum dokumenta:" GET _DatDok
+            read
+                
+            if lastkey()<>K_ESC
+                    _Rbr:=str(val(_Rbr)+1,4)
+                    _IdPartner:=""
+                    _IznosBHD:=Dug-Pot
+                    DinDem(NIL,NIL,"_IZNOSBHD")
+                    append blank
+                    Gather()
+            endif
 
         endif // cDN=="D"
 
     endif  // dug-pot<>0
 BoxC()
+
 PopWA()
 
 return

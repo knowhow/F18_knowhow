@@ -15,6 +15,8 @@
  *  \brief Postavi datum u pripremi
  */
 function SetDatUPripr()
+local _rec
+
   PRIVATE cTDok:="00"
   PRIVATE dDatum:=CTOD("01.01." + STR(YEAR(DATE()),4))
   IF !VarEdit({ {"Postaviti datum dokumenta","dDatum",,,},;
@@ -23,18 +25,23 @@ function SetDatUPripr()
               "B1")
     CLOSERET
   ENDIF
+
   O_FIN_PRIPR
   GO TOP
   DO WHILE !EOF()
-    IF IDVN<>cTDok; SKIP 1; LOOP; ENDIF
-    Scatter()
-    IF EMPTY(_datval)
-      _datval:=_datdok
+    IF IDVN<>cTDok
+       SKIP 1
+       LOOP
     ENDIF
-    _datdok:=dDatum
-    Gather()
+    _rec := dbf_get_rec()
+    IF EMPTY(_rec["datval"])
+      _rec["datval"] := _rec["datdok"]
+    ENDIF
+    _rec["datdok"] := dDatum
+    dbf_update_rec(_rec)
     SKIP 1
   ENDDO
+
 CLOSERET
 return
 

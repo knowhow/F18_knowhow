@@ -532,9 +532,11 @@ private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
 private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
 private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
                         // ovo se mo§e setovati u when/valid fjama
-private  TBScatter:="N"  // uzmi samo teku†e polje
+private  TBScatter:="N"  // uzmi samo tekuce polje
 adImeKol:={}
+
 for i:=1 TO LEN(ImeKol); AADD(adImeKol,ImeKol[i]); next
+
 adKol:={}; for i:=1 to len(adImeKol); AADD(adKol,i); next
 
 private bBKUslov:= {|| idFirma+idkonto+idpartner=cidFirma+cidkonto+cidpartner}
@@ -552,9 +554,6 @@ OSt_StatLin()
 ObjDbEdit("Ost",21,77,{|| EdRos()} ,"","",     ;
            .f. ,NIL, 1, {|| otvst=="9"}, 6, 0, ;  // zadnji par: nGPrazno
             NIL, {|nSkip| SkipDBBK(nSkip)} )
-
-//BrowseKey(m_x+6,m_y+1,m_x+21,m_y+77,ImeKol,{|Ch| EdRos(Ch)},"idFirma+idkonto+idpartner=cidFirma+cidkonto+cidpartner",cidFirma+cidkonto+cidpartner,2,,,{|| otvst=="9"})
-
 
 BoxC()
 
@@ -689,10 +688,11 @@ return
  */
  
 function StKart(fSolo,fTiho,bFilter)
+local nCol1:=72, cSvi:="N", cSviD:="N", lEx:=.f.
 
-local nCol1:=72,cSvi:="N",cSviD:="N",lEx:=.f.
-
-IF fTiho==NIL; fTiho:=.f.; ENDIF
+IF fTiho==NIL
+ fTiho:=.f.
+ENDIF
 
 private cIdPartner
 
@@ -709,13 +709,13 @@ if fsolo==NIL
 endif
 
 IF gVar1=="0"
- M:="----------- ------------- -------------- -------------- ---------- ---------- ---------- --"
+   M:="----------- ------------- -------------- -------------- ---------- ---------- ---------- --"
 ELSE
- M:="----------- ------------- -------------- -------------- --"
+   M:="----------- ------------- -------------- -------------- --"
 ENDIF
 
 IF lEx
- m := "-------- -------- -------- " + m
+   m := "-------- -------- -------- " + m
 ENDIF
 
 nStr:=0
@@ -723,29 +723,30 @@ fVeci:=.f.
 cPrelomljeno:="N"
 
 if fTiho
- cSvi:="D"
-elseif fsolo
- O_SUBAN
- O_PARTN
- O_KONTO
- cIdFirma:=gFirma
- cIdkonto:=space(7)
- cIdPartner:=space(6)
- Box(,5,60)
-    if gNW=="D"
-      @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-     else
-      @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-    endif
-    @ m_x+2,m_y+2 SAY "Konto:               " GET cIdkonto   pict "@!"  valid P_kontoFin(@cIdkonto)
-    @ m_x+3,m_y+2 SAY "Partner (prazno svi):" GET cIdpartner pict "@!"  valid empty(cIdpartner)  .or. ("." $ cidpartner) .or. (">" $ cidpartner) .or. P_Firma(@cIdPartner)
-    @ m_x+5,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
-    read; ESC_BCR
- Boxc()
-else
- if Pitanje(,"Zelite li napraviti ovaj izvjestaj za sve partnere ?","N")=="D"
    cSvi:="D"
- endif
+elseif fsolo
+    O_SUBAN
+    O_PARTN
+    O_KONTO
+    cIdFirma:=gFirma
+    cIdkonto:=space(7)
+    cIdPartner:=space(6)
+    Box(,5,60)
+        if gNW=="D"
+        @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
+        else
+        @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+        endif
+        @ m_x+2,m_y+2 SAY "Konto:               " GET cIdkonto   pict "@!"  valid P_kontoFin(@cIdkonto)
+        @ m_x+3,m_y+2 SAY "Partner (prazno svi):" GET cIdpartner pict "@!"  valid empty(cIdpartner)  .or. ("." $ cidpartner) .or. (">" $ cidpartner) .or. P_Firma(@cIdPartner)
+        @ m_x+5,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
+        read
+        ESC_BCR
+    Boxc()
+else
+    if Pitanje(,"Zelite li napraviti ovaj izvjestaj za sve partnere ?","N")=="D"
+    cSvi:="D"
+    endif
 endif
 
 if !fTiho .and. Pitanje(,"Prikazati dokumente sa saldom 0 ?","N")=="D"
@@ -753,49 +754,60 @@ if !fTiho .and. Pitanje(,"Prikazati dokumente sa saldom 0 ?","N")=="D"
 endif
 
 if fTiho
- // onda svi
+    // onda svi
 elseif !fsolo
- if type('TB')="O"
-    if VALTYPE(aPPos[1])="C"
-       private cIdPartner:=aPPos[1]
-    else
-       private cIdPartner:=EVAL(TB:getColumn(aPPos[1]):Block)
+
+    if type('TB')="O"
+        if VALTYPE(aPPos[1])="C"
+        private cIdPartner:=aPPos[1]
+        else
+        private cIdPartner:=EVAL(TB:getColumn(aPPos[1]):Block)
+        endif
     endif
- endif
+
 else
- if "." $ cidpartner
-     cidpartner:=strtran(cidpartner,".","")
-    cIdPartner:=trim(cidPartner)
- endif
- if ">" $ cidpartner
-     cidpartner:=strtran(cidpartner,">","")
-     cIdPartner:=trim(cidPartner)
-     fVeci:=.t.
- endif
- if empty(cIdpartner)
-      cidpartner:=""
- endif
- cSvi:=cIdpartner
+
+    if "." $ cidpartner
+        cidpartner:=strtran(cidpartner,".","")
+        cIdPartner:=trim(cidPartner)
+    endif
+    if ">" $ cidpartner
+        cidpartner:=strtran(cidpartner,">","")
+        cIdPartner:=trim(cidPartner)
+        fVeci:=.t.
+    endif
+    if empty(cIdpartner)
+        cidpartner:=""
+    endif
+    cSvi := cIdpartner
+
 endif
 
 IF fTiho .or. lEx
+
   // odredjivanje prirode zadanog konta (dug. ili pot.)
   // --------------------------------------------------
-  select (F_TRFP2); if !used(); O_TRFP2; endif
+  select (F_TRFP2)
+  if !used()
+     O_TRFP2
+  endif
+
   HSEEK "99 "+LEFT(cIdKonto,1)
   DO WHILE !EOF() .and. IDVD=="99" .and. TRIM(idkonto)!=LEFT(cIdKonto,LEN(TRIM(idkonto)))
     SKIP 1
   ENDDO
+
   IF IDVD=="99" .and. TRIM(idkonto)==LEFT(cIdKonto,LEN(TRIM(idkonto)))
-    cDugPot:=D_P
+    cDugPot := D_P
   ELSE
     cDugPot:="1"
-    Box(,3,60)
-      @ m_x+2,m_y+2 SAY "Konto "+cIdKonto+" duguje / potrazuje (1/2)" get cdugpot  VALID cdugpot$"12" PICT "9"
+    Box( , 3, 60)
+      @ m_x+2, m_y+2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
       READ
     Boxc()
   ENDIF
-  fin_create_pom_table(fTiho)  // kreiraj pomocnu bazu
+  fin_create_pom_table(fTiho)
+
 ENDIF
 
 
@@ -803,8 +815,10 @@ if !fTiho
   START PRINT RET
 endif
 
-nUkDugBHD:=nUkPotBHD:=0
-select suban; set order to tag "3"
+nUkDugBHD := nUkPotBHD:=0
+
+select suban
+set order to tag "3"
 
 if cSvi=="D"
  seek cidfirma+cidkonto
@@ -815,11 +829,13 @@ endif
 DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
 
     if bFilter<>NIL
-      if ! eval(bFilter) ; skip; loop; endif
+        if ! eval(bFilter)
+            SKIP
+            LOOP
+        endif
     endif
 
-    cidPartner:=idpartner
-    //ZagkStSif()
+    cidPartner := idpartner
 
     nUDug2:=nUPot2:=0
     nUDug:=nUPot:=0
@@ -829,10 +845,12 @@ DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
           if bFilter<>NIL
             if ! eval(bFilter) ; skip; loop; endif
           endif
+
           cBrDok:=BrDok; cOtvSt:=otvst
           nDug2:=nPot2:=0
           nDug:=nPot:=0
-          aFaktura:={CTOD(""),CTOD(""),CTOD("")}
+          aFaktura:={ CTOD(""), CTOD(""), CTOD("") }
+
           DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner ;
                      .and. brdok==cBrDok
              IF D_P=="1"
@@ -887,7 +905,9 @@ DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
                    nDug2:=0
                 endif
              endif
-             SELECT POM; APPEND BLANK
+             //
+             SELECT POM
+             APPEND BLANK
              Scatter()
               _idpartner := cIdPartner
               _datdok    := aFaktura[1]
@@ -1059,25 +1079,29 @@ ENDIF
  */
  
 function fin_create_pom_table(fTiho, nParLen)
-
+local i
 local nPartLen
-IF fTiho==NIL; fTiho:=.f.; ENDIF
-select (F_POM); USE
+local _alias := "POM"
+local _ime_dbf
+local aDbf, aGod
+
+IF fTiho==NIL
+    fTiho:=.f.
+ENDIF
+
+select (F_POM)
+USE
 if nParLen == nil
 	nParLen := 6
 endif
+
 // kreiranje pomocne baze POM.DBF
 // ------------------------------
-cPom:=PRIVPATH+"POM"
-  IF ferase(PRIVPATH+"POM.DBF")==-1
-    MsgBeep("Ne mogu izbrisati POM.DBF!")
-    ShowFError()
-  ENDIF
-  IF ferase(PRIVPATH+"POM.CDX")==-1
-    MsgBeep("Ne mogu izbrisati POM.CDX!")
-    ShowFError()
-  ENDIF
-  // ferase(cPom+".CDX")
+
+_ime_dbf := f18_ime_dbf(_alias)
+
+ferase_dbf(_ime_dbf)
+
 aDbf := {}
 AADD(aDBf,{ 'IDPARTNER'   , 'C' ,  nParLen ,  0 })
 AADD(aDBf,{ 'DATDOK'      , 'D' ,  8 ,  0 })
@@ -1088,18 +1112,26 @@ AADD(aDBf,{ 'POT'         , 'N' , 17 ,  2 })
 AADD(aDBf,{ 'DUG2'        , 'N' , 15 ,  2 })
 AADD(aDBf,{ 'POT2'        , 'N' , 15 ,  2 })
 AADD(aDBf,{ 'OTVST'       , 'C' ,  1 ,  0 })
-AADD(aDBf,{ 'DATZPR'      , 'D' ,  8 ,  0 })  // datum zadnje promjene
-IF fTiho
-  FOR i:=1 TO LEN(aGod)
-    AADD(aDBf,{ 'GOD'+aGod[i,1], 'N' , 15 ,  2 })  // godina valute
+AADD(aDBf,{ 'DATZPR'      , 'D' ,  8 ,  0 })  
+
+// datum zadnje promjene
+if fTiho
+  FOR i := 1 TO LEN(aGod)
+    AADD(aDBf, { 'GOD'+aGod[i,1], 'N' , 15 ,  2 }) 
   NEXT
-  AADD(aDBf,{ 'GOD'+STR(VAL(aGod[i-1,1])-1,4), 'N' , 15 ,  2 })  // godina valute
-  AADD(aDBf,{ 'GOD'+STR(VAL(aGod[i-1,1])-2,4), 'N' , 15 ,  2 })  // godina valute
-ENDIF
+  AADD(aDBf, { 'GOD'+STR(VAL(aGod[i-1,1])-1, 4), 'N' , 15 ,  2 })
+  AADD(aDBf, { 'GOD'+STR(VAL(aGod[i-1,1])-2, 4), 'N' , 15 ,  2 })
+endif
+
 DBCREATE2 (cPom, aDbf)
-USEX (cPom)
-INDEX ON IDPARTNER+DTOS(DATDOK)+DTOS(IIF(EMPTY(DATVAL),DATDOK,DATVAL))+BRDOK TAG "1"
-SET ORDER TO TAG "1" ; GO TOP
+
+my_usex (cPom)
+
+INDEX ON  IDPARTNER + DTOS(DATDOK) + DTOS( IIF(EMPTY(DATVAL), DATDOK, DATVAL)) + BRDOK TAG "1"
+
+SET ORDER TO TAG "1" 
+GO TOP
+
 return .t.
 
 

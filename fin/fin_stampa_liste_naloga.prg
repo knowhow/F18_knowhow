@@ -1,26 +1,26 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
+
 #include "fin.ch"
 
 static __par_len
 
-
 function fin_stampa_liste_naloga()
-local nDug:=0.00
-local nPot:=0.00
-local nPos:=15
+local nDug := 0.00
+local nPot := 0.00
+local nPos := 15
 
-cInteg:="N"
-nSort:=1
+cInteg := "N"
+nSort := 1
 
 cIdVN:="  "
 
@@ -342,23 +342,31 @@ RETURN IF( nMjesec>0.and.nMjesec<13 , aVrati[nMjesec] , "" )
  */
  
 function VidiNaloge()
+local i
 
-O_NALOG; SET ORDER TO TAG "3"; GO TOP
-  ImeKol:={ ;
+O_NALOG
+SET ORDER TO TAG "3"
+GO TOP
+
+ImeKol:={ ;
           {"Firma",         {|| IDFIRMA }, "IDFIRMA" } ,;
           {"Vrsta naloga",  {|| IDVN    }, "IDVN"    } ,;
           {"Broj naloga",   {|| BRNAL   }, "BRNAL"   } ,;
           {"Datum naloga",  {|| DATNAL  }, "DATNAL"  } ;
         }
 
-  Kol:={}; for i:=1 to len(ImeKol); AADD(Kol,i); next
+Kol:={}
+ 
+for i:=1 to len(ImeKol) 
+   AADD(Kol, i)
+next
 
-  Box(,20,45)
-   ObjDbedit("Nal",20,45,{|| EdNal()},"<Enter> - ispravka","Nalozi...", , , , ,)
-  BoxC()
+Box(, 20, 45)
+   ObjDbedit("Nal", MAXROWS()-10, 50, {|| EdNal()},"<Enter> - ispravka","Nalozi...", , , , ,)
+BoxC()
+
 CLOSERET
 return
-
 
 
 /*! \fn EdNal()
@@ -368,20 +376,27 @@ return
 function EdNal()
 
 LOCAL nVrati:=DE_CONT, dDatNal:=NALOG->datnal, GetList:={}
-  IF Ch==K_ENTER
-    Box(,4,77)
-      @ m_x+2, m_y+2 SAY "Stari datum naloga: "+DTOC(dDatNal)
+
+if (Ch==K_ENTER)
+
+    Box(, 4, 77)
+      @ m_x+2, m_y+2 SAY "Stari datum naloga: " + DTOC(dDatNal)
       @ m_x+3, m_y+2 SAY "Novi datum naloga :" GET dDatNal
       READ
     BoxC()
-    IF LASTKEY()!=K_ESC
-      SELECT NALOG
-      Scatter()
-       _datnal:=dDatNal
-      Gather()
+
+    IF LASTKEY() != K_ESC
+
+       SELECT NALOG
+       _rec := dbf_get_rec()
+       _rec["datnal"] := dDatNal
+       dbf_update_rec(_rec)
+
       nVrati:=DE_REFRESH
     ENDIF
-  ENDIF
+
+endif
+
 RETURN nVrati
 
 

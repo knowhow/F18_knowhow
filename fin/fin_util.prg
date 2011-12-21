@@ -30,12 +30,6 @@ return .t.
  */
 function Izvj0()
 
-// sasa, 28.01.04, problem sa secur.dbf
-//cSecur:=SecurR(KLevel,"IZVJESTAJI")
-//if ImaSlovo("X",cSecur)
-//	MsgBeep("Opcija nedostupna !")
-//	return
-//endif
 Izvjestaji()
 
 return
@@ -47,7 +41,7 @@ return
 function PovratNaloga()
 
 //if gBezVracanja == "N"
-//	Povrat_fin_naloga()
+povrat_fin_naloga()
 //endif
 
 return
@@ -58,8 +52,8 @@ return
  */
 function Preknjizenje()
 
-cSecur:=SecurR(KLevel,"Preknjiz")
-cSecur2:=SecurR(KLevel,"SGLEDAJ")
+cSecur := SecurR(KLevel,"Preknjiz")
+cSecur2 := SecurR(KLevel,"SGLEDAJ")
 if ImaSlovo("X",cSecur) .or. ImaSlovo("D",cSecur2)
 	MsgBeep("Opcija nedostupna !")
 else

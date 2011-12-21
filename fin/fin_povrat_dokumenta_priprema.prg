@@ -15,7 +15,10 @@
 // povrat naloga u pripremu
 // -------------------------------------
 function povrat_fin_naloga(lStorno)
+local _rec
 local nRec
+local _del_rec, _ok
+local _field_ids, _where_block
 
 if lStorno==NIL 
   lStorno:=.f.
@@ -81,130 +84,80 @@ endif
 
 lBrisi:=.t.
 IF !lStorno
-  IF IzFMKIni("FIN","MogucPovratNalogaBezBrisanja","N",KUMPATH)=="D"
-    lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal+;
-              " izbrisati iz baze azuriranih dokumenata (D/N) ?","D")=="D" )
-  ENDIF
+    lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
 ENDIF
 
-MsgO("SUBAN")
+MsgO("Punim pripremu sa fin_suban: " + cIdfirma + cIdvn + cBrNal )
 
 select SUBAN
 seek cIdfirma + cIdvn + cBrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
+
    select fin_pripr
-   Scatter()
+
    select SUBAN
-   Scatter()
+   _rec := dbf_get_rec()
+
    select fin_pripr
    if lStorno
-       _idfirma := cIdFirma2
-       _idvn := cIdVn2
-       _brnal := cBrNal2
-       _iznosbhd := -_iznosbhd
-       _iznosdem := -_iznosdem
+       _rec["idfirma"]  := cIdFirma2
+       _rec["idvn"]     := cIdVn2
+       _rec["brnal"]    := cBrNal2
+       _rec["iznosbhd"] := -_iznosbhd
+       _rec["iznosdem"] := -_iznosdem
    endif
 
-   append ncnl
-   Gather2()
+   APPEND BLANK
+
+   dbf_update_rec(_rec)
 
    select SUBAN
    skip
 enddo
 
+MsgC()
+
 IF !lBrisi
   CLOSERET
 ENDIF
 
-if tbl_busy( F_SUBAN ) = 0
-	msg("Datoteka je zauzeta ",3)
-	closeret
+_del_rec := hb_hash()
+_del_rec["idfirma"] := cIdFirma
+_del_rec["idvn"]    := cIdVn
+_del_rec["brnal"]   := cBrNal 
+
+if !lStorno
+
+    _ok := .t.
+
+    _field_ids := {"idfirma", "idvn", "brnal"}
+    _where_block := { |x| "IDFIRMA=" + _sql_quote(x["idfirma"]) + " AND IDVN=" + _sql_quote(x["idvn"]) + " AND BRNAL=" + _sql_quote(x["brnal"]) } 
+
+    MsgO("del suban")
+    // SUBAN TAG = "4"
+    _ok :=  _ok .and. delete_rec_server_and_dbf("suban", _del_rec, _field_ids, _where_block,  "4" )
+    MsgC()
+
+    MsgO("del anal")
+    _ok :=  _ok .and. delete_rec_server_and_dbf("anal", _del_rec, _field_ids, _where_block,  "2" )
+    MsgC()
+
+    MsgO("del sint")
+    _ok :=  _ok .and. delete_rec_server_and_dbf("sint", _del_rec, _field_ids, _where_block,  "2" )
+    MsgC()
+
+    MsgO("del nalog")
+    _ok :=  _ok .and. delete_rec_server_and_dbf("nalog", _del_rec, _field_ids, _where_block,  "1" )
+    MsgC()
+
 endif
 
-
-seek cIdfirma + cIdvn + cBrNal
-DO WHILE !EOF() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1
-  nRec:=recno()
-  skip -1
-  if !lStorno
-    MY_DELETE
-  endif
-  go nRec
-ENDDO
-USE
-
-MsgC()
-
-MsgO("ANAL")
-select ANAL
-set order to tag "2"
-
-if tbl_busy( F_ANAL ) = 0
-	msg("Datoteka je zauzeta ",3)
-	closeret
+if !_ok
+  MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
 endif
-
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1
-  nRec:=recno()
-   skip -1
-  if !lStorno
-     MY_DELETE
-  endif
-  go nRec
-enddo
-use
-MsgC()
-
-
-MsgO("SINT")
-select sint
- set order to tag "2"
-
-if tbl_busy( F_SINT ) = 0
-	msg("Datoteka je zauzeta ",3)
-	closeret
-endif
-
-seek cIdfirma + cIdvn + cBrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1
-  nRec:=recno()
-  skip -1
-  if !lStorno
-     MY_DELETE
-  endif
-  go nRec
-enddo
-
-use
-MsgC()
-
-MsgO("NALOG")
-select nalog
-
-if tbl_busy( F_NALOG ) = 0
-	msg("Datoteka je zauzeta ",3)
-	closeret
-endif
-
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1
-  nRec:=recno()
-  skip -1
-  if !lStorno
-      MY_DELETE
-  endif
-  go nRec
-enddo
-use
-MsgC()
 
 if lLogPovrat
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "POVRAT", nil, nil, nil, nil, "", "", cIdFirma+"-"+cIdVn+"-"+cBrNal, Date(), Date(), "", "Povrat naloga u pripremu")
+	EventLog(nUser, goModul:oDataBase:cName, "DOK", "POVRAT", nil, nil, nil, nil, "", "", cIdFirma + "-" + cIdVn + "-" + cBrNal, Date(), Date(), "", "Povrat naloga u pripremu")
 endif
 
 closeret

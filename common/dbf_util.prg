@@ -21,6 +21,7 @@ else
    return .f.
 endif
 
+
 function ferase_dbf(tbl_name)
 local _tmp
 

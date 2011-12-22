@@ -69,8 +69,8 @@ IF gNW=="R"
  AADD(ImeKol,{"Datum",               {|| DatDok                       }, "datdok" })
 ELSE
  AADD(ImeKol,{"Cijena ",             {|| transform(Cijena,"99999.999") }           })
- AADD(ImeKol,{"Iznos "+ValPomocna(), {|| transform(Iznos,"9999999.9") }           })
- AADD(ImeKol,{"Iznos "+ValDomaca(),  {|| transform(Iznos2,"9999999.9")}           })
+ AADD(ImeKol,{"Iznos "+ValDomaca(), {|| transform(Iznos,"9999999.9") }           })
+ AADD(ImeKol,{"Iznos "+ValPomocna(),  {|| transform(Iznos2,"9999999.9")}           })
  AADD(ImeKol,{"Datum",               {|| DatDok                       }, "datdok" })
 ENDIF
 
@@ -188,9 +188,9 @@ static function EditPRIPR(fNovi)
      @ m_x+16,m_y+50 SAY "CIJENA   :" GET _Cijena PICTURE PicUn+"9" ;
          when {|| IF(_cijena<>0,.t.,Cijena())} ;
          valid {|| _Iznos:=iif(_Cijena<>0,round(_Cijena*_Kolicina,2),_Iznos), .t.}
-     @ m_x+17,m_y+50 SAY "IZNOS "+ValPomocna()+":" GET _Iznos PICTURE PicUn ;
+     @ m_x+17,m_y+50 SAY "IZNOS "+ValDomaca()+":" GET _Iznos PICTURE PicUn ;
          when {|| iif(gkonto=="D",.f.,.t.)}  valid  {|| _Iznos2:=_Iznos/nKurs, .t.}
-     @ m_x+18,m_y+50 SAY "IZNOS "+ValDomaca()+":" GET _Iznos2 PICTURE PicUn ;
+     @ m_x+18,m_y+50 SAY "IZNOS "+ValPomocna()+":" GET _Iznos2 PICTURE PicUn ;
          when {|| _iznos2:=iif(gkonto=="D",_iznos,_iznos2),.t.}
    
    ENDIF
@@ -431,7 +431,7 @@ do case
              mat_brisi_pbaze()
            endif
            if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
-           @ m_x+20,m_y+1 SAY "ZBIR mat_nalogA:"
+           @ m_x+20,m_y+1 SAY "ZBIR NALOGA:"
            @ m_x+20,m_y+14 SAY nDug PICTURE PicDEM
            @ m_x+20,m_y+35 SAY nPot PICTURE PicDEM
            @ m_x+20,m_y+56 SAY nDug-nPot PICTURE PicDEM
@@ -463,7 +463,7 @@ do case
              mat_brisi_pbaze()
            endif
            if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
-           @ m_x+20,m_y+1 SAY "ZBIR mat_nalogA:"
+           @ m_x+20,m_y+1 SAY "ZBIR NALOGA:"
            @ m_x+20,m_y+14 SAY nDug PICTURE PicDEM
            @ m_x+20,m_y+35 SAY nPot PICTURE PicDEM
            @ m_x+20,m_y+56 SAY nDug-nPot PICTURE PicDEM
@@ -522,8 +522,6 @@ PRIVATE PicKol:="@Z 999999.999"
 
 mat_st_anal_nalog()
 
-//StSintNal()
-
 MsgO("Formiranje analitickih i sintetickih stavki...")
 
 mat_sint_stav()
@@ -538,6 +536,8 @@ if (gKonto=="D" .and. Pitanje(,"Stampa analitike","D")=="D")  .or. ;
 endif
 
 return
+
+
 
 function mat_st_anal_nalog(fnovi)
 local i
@@ -675,7 +675,7 @@ DO WHILE !EOF()
           if Kolicina<>0 .AND. gNW!="R"
             @ prow(),nCK SAY "Cijena:"
             @ prow(),pcol()+1 SAY  Iznos/Kolicina picture "*****.***"
-            @ prow(),pcol()+1 SAY ValPomocna()
+            @ prow(),pcol()+1 SAY ValDomaca()
           endif
         endif
 
@@ -766,11 +766,11 @@ select(nArr)
 @ prow(),120 SAY "Str "+str(++nStr,3)
 ? M
 if gkonto=="N" .and. g2Valute=="D"
- ? "*R. *"+KonSeks("KONTO  ")+"*  ROBA    *  NAZIV ROBE      *  D O K U M E N T   *      KOLICINA       *"+IF(gNW=="R","","  I Z N O S   "+ValPomocna()+"   *   I Z N O S   "+ValDomaca()+"     *")
+ ? "*R. *"+KonSeks("KONTO  ")+"*  ROBA    *  NAZIV ROBE      *  D O K U M E N T   *      KOLICINA       *"+IF(gNW=="R","","  I Z N O S   "+ValDomaca()+"   *   I Z N O S   "+ValPomocna()+"     *")
  ? "             ----------  ---------------  --------------------- --------------------- "+IF(gNW=="R","","--------------------- -------------------------")
  ? "*BR.*       * PARTNER  *  ZADUZUJE        *TIP* BROJ  * DATUM  *  ULAZ    *  IZLAZ   *"+IF(gNW=="R","","   DUG    *   POT    *    DUG     *    POT    *")
 else
-  ? "*R. *"+KonSeks("KONTO  ")+"*Partn.*  SIFRA   *            NAZIV                       * DOKUMENT   *"+IF(gNW=="R","","  Cijena *")+"      KOLICINA       *"+IF(gNW=="R","","   I Z N O S   "+ValPomocna()+"     *")
+  ? "*R. *"+KonSeks("KONTO  ")+"*Partn.*  SIFRA   *            NAZIV                       * DOKUMENT   *"+IF(gNW=="R","","  Cijena *")+"      KOLICINA       *"+IF(gNW=="R","","   I Z N O S   "+ValDomaca()+"     *")
   ? "            *      *                                                   --------------"+IF(gNW=="R","","         *")+"--------------------- "+IF(gNW=="R","","-------------------------")
   ? "*BR.*       *      *          *                                        *TIP* DATUM  *"+IF(gNW=="R","","         *")+"  ULAZ    *  IZLAZ   *"+IF(gNW=="R","","    DUG     *    POT    *")
 endif

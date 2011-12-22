@@ -60,7 +60,7 @@ Box( "Spe2", 10, 65, .f. )
 
     ++ _cnt
 
-    @ m_x + _cnt, m_y + 2 SAY "Iznos u " + ValPomocna() + "/" + ValDomaca() + "(1/2) ?" GET _fmt ;
+    @ m_x + _cnt, m_y + 2 SAY "Iznos u " + ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET _fmt ;
                 VALID _fmt $ "12"
     read
     

@@ -164,7 +164,7 @@ public KursLis:="1"
 public gpicdem:="9999999.99"
 public gpicdin:="999999999999"
 public gPicKol:="999999.999"
-public gBaznaV:="P"
+public gBaznaV:="D"
 public g2Valute:="D"
 public gPotpis:="N"
 

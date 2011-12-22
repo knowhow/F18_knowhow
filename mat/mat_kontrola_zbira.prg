@@ -34,10 +34,10 @@ local picDEM:='999999999.99'
 local _header
 
 _header := PADR( "* NAZIV", 13 )      
-_header += PADR( "* DUGUJE " + ValPomocna(), 13 )
-_header += PADR( "* POTRAZ." + ValPomocna(), 13 )
-_header += PADR( "* DUGUJE " + ValDomaca(), 13 ) 
+_header += PADR( "* DUGUJE " + ValDomaca(), 13 )
 _header += PADR( "* POTRAZ." + ValDomaca(), 13 )
+_header += PADR( "* DUGUJE " + ValPomocna(), 13 ) 
+_header += PADR( "* POTRAZ." + ValPomocna(), 13 )
 
 o_kzb_tables()
 

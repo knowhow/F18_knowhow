@@ -194,11 +194,11 @@ SELECT TNAL; HSEEK cIDVN; @ A,90 SAY naz; select(nArr)
 @ a,pcol()+3 SAY "Str "+str(++nStr,3)
 @ ++A,0 SAY M
 if gkonto=="N" .and. g2Valute=="D"
- @ ++A,0 SAY "*R.*  Datum  *         K O N T O                                              *  I Z N O S   "+ValPomocna()+"   *   I Z N O S   "+ValDomaca()+"     *"
+ @ ++A,0 SAY "*R.*  Datum  *         K O N T O                                              *  I Z N O S   "+ValDomaca()+"   *   I Z N O S   "+ValPomocna()+"     *"
  @ ++A,0 SAY "*Br*                                                                           --------------------- -------------------------"
  @ ++A,0 SAY "*  *         *                                                                *   DUG    *    POT   *    DUG     *    POT    *"
 else
- @ ++A,0 SAY "*R.*  Datum  *         K O N T O                                              *   I Z N O S   "+ValPomocna()+"     *"
+ @ ++A,0 SAY "*R.*  Datum  *         K O N T O                                              *   I Z N O S   "+ValDomaca()+"     *"
  @ ++A,0 SAY "*Br*                                                                           -------------------------"
  @ ++A,0 SAY "*  *         *                                                                *    DUG     *    POT    *"
 endif

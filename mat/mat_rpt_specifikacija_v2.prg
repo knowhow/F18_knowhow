@@ -43,7 +43,7 @@ Box("Spec",8,65,.f.)
     
     if cFmt=="2"
         cFmt:="1"
-        @ m_x+2,m_y+2 SAY "Iznos u " +ValPomocna() + "/" + ValDomaca() + "(1/2) ?" GET cFmt VALID cFmt $ "12"
+        @ m_x+2,m_y+2 SAY "Iznos u " +ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET cFmt VALID cFmt $ "12"
         read
         if cFmt=="1"
             cFmt:="2"
@@ -127,9 +127,9 @@ DO WHILE !eof()
       
       ?? "MAT.P: SPECIFIKACIJA STANJA (U "
       if cFmt=="1"
-       ?? ValPomocna()+"/"+ValDomaca()+") "
+       ?? ValDomaca()+"/"+ValPomocna()+") "
       elseif cFmt=="2"
-       ?? ValPomocna()+") "
+       ?? ValDomaca()+") "
       else
        ?? ValDomaca()+") "
       endif
@@ -155,7 +155,7 @@ DO WHILE !eof()
       select mat_suban
       ?  m
       if cFmt=="1"
-       ? "*R. *  SIFRA   *       N A Z I V                        *J. *   ZADNJA *  ZADNJA  *  ZADNJA  *       K O L I C I N A          *     V R I J E D N O S T    "+ValPomocna()+"   *        V R I J E D N O S T   "+ValDomaca()+"   *"
+       ? "*R. *  SIFRA   *       N A Z I V                        *J. *   ZADNJA *  ZADNJA  *  ZADNJA  *       K O L I C I N A          *     V R I J E D N O S T    "+ValDomaca()+"   *        V R I J E D N O S T   "+ValPomocna()+"   *"
        ? " Br.                                                    *   *    NC    *    VPC   *   MPC     ------------------------------- ------------------------------------ --------------------------------------"
        ? "*   *          *                                        *MJ.*          *          *          *   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE   * POTRAZUJE *   SALDO   *  DUGUJE    *  POTRAZUJE *  SALDO    *"
      elseif cFmt=="2"

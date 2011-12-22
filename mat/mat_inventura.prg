@@ -170,8 +170,8 @@ ImeKol:={ ;
           {"Roba",{|| idroba}       },;
           {"Cijena",{|| Cijena}     },;
           {"Kolicina",{|| Kolicina} },;
-          {"Iznos "+ValPomocna(),{|| iznos}      },;
-          {"Iznos "+ValDomaca(),{|| iznos2}      };
+          {"Iznos "+ValDomaca(),{|| iznos}      },;
+          {"Iznos "+ValPomocna(),{|| iznos2}      };
         }
 
 Kol:={}; for i:=1 to 5; AADD(Kol,i); next

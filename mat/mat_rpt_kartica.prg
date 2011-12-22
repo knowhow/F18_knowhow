@@ -158,7 +158,7 @@ SELECT PARTN; HSEEK cIdFirma
 SELECT KONTO; HSEEK cIdKonto
 ? KonSeks("KONTO")+":", cIdkonto, konto->naz
 ? m
-? "*NALOG * R. *  DATUM    *   I Z N O S   U   "+ValPomocna()+"      *  I Z N O S    U    "+ValDomaca()+"    *"
+? "*NALOG * R. *  DATUM    *   I Z N O S   U   "+ValDomaca()+"      *  I Z N O S    U    "+ValPomocna()+"    *"
 ? "*      * Br *           ------------------------------ -----------------------------"
 ? "*      *    *  NALOGA   *    DUGUJE    *  POTRAZUJE   *      DUGUJE   *  POTRAZUJE *"
 ? m
@@ -294,7 +294,7 @@ SELECT KONTO; HSEEK cIdKonto
 @ A,pcol()+1 SAY naz
 
 @ ++A,0 SAY "---------------------------------------------------------------------------------"
-@ ++A,0 SAY "*V*BR  *R  * DATUM  *  I Z N O S   U   "+ValPomocna()+"     *    I Z N O S    U    "+ValDomaca()+"     *"
+@ ++A,0 SAY "*V*BR  *R  * DATUM  *  I Z N O S   U   "+ValDomaca()+"     *    I Z N O S    U    "+ValPomocna()+"     *"
 @ ++A,0 SAY "                      -------------------------- --------------------------------"
 @ ++A,0 SAY "*N*NAL *BR * NALOGA *    DUGUJE   *  POTRAZUJE  *     DUGUJE    *   POTRAZUJE   *"
 @ ++A,0 SAY m
@@ -403,7 +403,7 @@ SELECT PARTN; HSEEK cIdFirma
 @ A,PCOL()+2 SAY naz; @ A,PCOL()+1 SAY naz2
 
 @ ++A,0 SAY "------- --------------------------------- ----------------------------------------- ------------------------------------------------"
-@ ++A,0 SAY KonSeks("*KONTO ")+"*      NAZIV "+KonSeks("KONTA  ")+"              *     I  Z  N  O  S     U     "+ValPomocna()+"        *       I  Z  N  O  S     U     "+ValDomaca()+"            *"
+@ ++A,0 SAY KonSeks("*KONTO ")+"*      NAZIV "+KonSeks("KONTA  ")+"              *     I  Z  N  O  S     U     "+ValDomaca()+"        *       I  Z  N  O  S     U     "+ValPomocna()+"            *"
 @ ++A,0 SAY "                                          ----------------------------------------- --------------- --------------- ----------------"
 @ ++A,0 SAY "*      *                                 *    DUGUJE   *  POTRAZUJE  *    SALDO    *     DUGUJE    *  POTRAZUJE    *  SALDO        *"
 @ ++A,0 SAY M
@@ -762,9 +762,10 @@ SELECT KONTO; HSEEK cIdKonto
 @ prow(),pcol()+1 SAY konto->naz
 
 ?  "------- --------------------------- --------------------- ---------- ----------- --------------------------- -------------------------------"
-?  "*NALOG *   D O K U M E N T         *       KOLICINA      *  STANJE  *  CIJENA   *     I Z N O S   "+ValPomocna()+"      *     I Z N O S    "+ValDomaca()+"        *"
+?  "*NALOG *   D O K U M E N T         *       KOLICINA      *  STANJE  *  CIJENA   *     I Z N O S   "+ValDomaca()+"      *     I Z N O S    "+ValPomocna()+"        *"
+
 ?  "------- --------------------------- ---------------------           *           * -------------------------- -------------------------------"
-?  "*V*BROJ*TIP* BROJ  * DATUM  * PART *   ULAZ   *   IZLAZ  *          *   "+ValPomocna()+"    *    DUGUJE   *   POTRAZUJE *    DUGUJE     *   POTRAZUJE  *"
+?  "*V*BROJ*TIP* BROJ  * DATUM  * PART *   ULAZ   *   IZLAZ  *          *   "+ValDomaca()+"    *    DUGUJE   *   POTRAZUJE *    DUGUJE     *   POTRAZUJE  *"
 ?  "*N*    *  *        *        * NER  *          *          *          *           *             *             *               *              *"
 ?  m
 

@@ -38,7 +38,7 @@ DO WHILE !EOF()
       @ prow(),pcol()+2 SAY DATE()
       ? m
       ? "*RED*FIR* V * BR  * DAT    *   DUGUJE   * POTRAZUJE  *     DUGUJE     *   POTRAZUJE    *"
-      ? "*BRD*MA * N * NAL * NAL    *    "+ValPomocna()+"    *    "+ValPomocna()+"    *      "+ValDomaca()+"      *      "+ValDomaca()+"      *"
+      ? "*BRD*MA * N * NAL * NAL    *    "+ValDomaca()+"    *    "+ValDomaca()+"    *      "+ValPomocna()+"      *      "+ValPomocna()+"      *"
       ? m
    ENDIF
 

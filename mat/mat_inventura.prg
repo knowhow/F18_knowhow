@@ -50,7 +50,7 @@ local _opcexe := {}
 local _izbor := 1
 
 AADD( _opc, "1. ispravka stvarnih kolicina sa popisnih lista      " )
-AADD( _opcexe, { || AutoFDat() } )
+AADD( _opcexe, { || AutFDat() } )
 AADD( _opc, "2. automatsko formiranje datoteke" )
 AADD( _opcexe, { || UnEdStvKol() } )
 AADD( _opc, "3. popisna lista za invetarisanje" )

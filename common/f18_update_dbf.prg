@@ -35,6 +35,7 @@ log_write("    F18 dbf version:" + STR(_new_dbf_ver))
 // 0.1.0
 if _current_dbf_ver < _new_dbf_ver
    modstru({"*fin_budzet.dbf", "C EKKATEG C 5 0  IDKONTO C 7 0"})
+   modstru({"*roba.dbf", "A IDKONTO C 7 0"})
 endif
 
 
@@ -57,3 +58,4 @@ if VALTYPE(major) == "C"
 else
   return  major * 10000 +  minor * 100 + patch
 endif
+

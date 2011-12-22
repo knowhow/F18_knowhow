@@ -12,73 +12,65 @@
 
 #include "mat.ch"
 
+static PicDEM:="99999999.99"
+static PicBHD:="9999999999.99"
+static PicKol:="9999999.99"
 
+// ---------------------------------------------
+// inventura - menij
+// ---------------------------------------------
 function mat_inventura()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+AADD( _opc, "1. unos,ispravka stvarnih kolicina            " )
+AADD( _opcexe, { || unospopl() } )
+AADD( _opc, "2. pregled unesenih kolicina" )
+AADD( _opcexe, { || preglunkol() } )
+AADD( _opc, "3. obracun inventure" )
+AADD( _opcexe, { || obracinv() } )
+AADD( _opc, "4. mat_nalog sravnjenja" )
+AADD( _opcexe, { || nalinv() } )
+AADD( _opc, "5. inventura - obrac r.por" )
+AADD( _opcexe, { || matpormp() } )
+
+f18_menu("invnt", .f., _izbor, _opc, _opcexe )
+
+close all
+return
 
 
-local opc[5],Izbor
-
-private PicDEM:="99999999.99"
-private PicBHD:="9999999999.99"
-private PicKol:="9999999.99"
-
-opc[1]:="1. unos,ispravka stvarnih kolicina  "
-opc[2]:="2. pregled unesenih kolicina"
-opc[3]:="3. obracun inventure"
-opc[4]:="4. mat_nalog sravnjenja"
-opc[5]:="5. inventura - obrac r.por"
-
-h[1]:="Unos, ispravka, brisanje stvarnih kolicina sa popisnih lista..."
-Izbor:=1
-DO WHILE .T.
-   Izbor:=Menu("invnt",opc,Izbor,.f.)
-   do case
-      case izbor == 0
-         exit
-      case izbor == 1
-         UnosPopL()
-      case izbor == 2
-         PreglUnKol()
-      case izbor == 3
-         ObracInv()
-      case izbor == 4
-         NalInv()
-      case izbor == 5
-         matpormp()
-   endcase
-enddo
-closeret
-
-***************************
-***************************
+// -------------------------------------------
+// unos kolicina
+// -------------------------------------------
 function UnosPopL()
-private opc[3],Izbor
-opc[1]:="1. ispravka stvarnih kolicina sa popisnih lista"
-opc[2]:="2. automatsko formiranje datoteke"
-opc[3]:="3. popisna lista za inventarisanje  "
-Izbor:=1
-DO WHILE .T.
-   Izbor:=Menu("bedpl",opc,Izbor,.f.)
-   do case
-      case izbor==0
-         exit
-      case izbor == 2
-         AutFDat()
-      case izbor == 1
-         UnEdStvKol()
-      case izbor==3
-         PopL()
-   endcase
-enddo
-closeret
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-*****************************
-*****************************
+AADD( _opc, "1. ispravka stvarnih kolicina sa popisnih lista      " )
+AADD( _opcexe, { || AutoFDat() } )
+AADD( _opc, "2. automatsko formiranje datoteke" )
+AADD( _opcexe, { || UnEdStvKol() } )
+AADD( _opc, "3. popisna lista za invetarisanje" )
+AADD( _opcexe, { || PopisnaLista() } )
+
+f18_menu("bedpl", .f., _izbor, _opc, _opcexe )
+
+close all
+return
+
+
+// ------------------------------------------------
+//ispravka stvarnih kolicina
+// ------------------------------------------------
 function AutFDat()
 
 cIdF:=gFirma
 cIdK:=SPACE(7)
 cIdD:=date()
+
 if file(PRIVPATH+"invent.mem")
      restore from (PRIVPATH+"invent.mem") additive
 endif
@@ -103,15 +95,12 @@ save to  (PRIVPATH+"invent.mem") all like cId?
 O_MAT_INVENT
 O_MAT_SUBAN
 
-select MAT_INVENT; ZAP
+select MAT_INVENT
+ZAP
 
 nRBr:=nKolicina:=nIznos:=nCijena:=0
 SELECT mat_suban
-#ifndef C50
 set order to tag "3"
-#else
-set order to 3
-#endif
 set filter to DatDok<=cIdD
 SEEK cIdF+cIdK
 NFOUND CRET
@@ -156,11 +145,14 @@ DO WHILE !eof() .AND. cIdF=IdFirma .and. cIdK==Idkonto
    ENDIF
    SELECT mat_suban
 ENDDO
-closeret
+close all
+return
 
-******************************
-******************************
-Function UnEdStvKol()
+
+
+// -------------------------------------------------
+// -------------------------------------------------
+function UnEdStvKol()
 
 O_MAT_INVENT
 O_ROBA
@@ -168,12 +160,10 @@ O_SIFV
 O_SIFK
 O_PARTN
 
-SELECT MAT_INVENT; GO TOP
-#ifndef C50
+SELECT MAT_INVENT
+GO TOP
+
 set order to tag "1"
-#else
-set order to 1
-#endif
 
 ImeKol:={ ;
           {"R.br",{|| rbr}          },;
@@ -188,9 +178,10 @@ Kol:={}; for i:=1 to 5; AADD(Kol,i); next
 ObjDbedit("USKSP",20,77,{|| EdPopList()},"³<c-T> BriSt³<ENT> IsprSt³<c-A> IsprSvih³<c-N> NoveSt³<c-Z> BrisiSve³","Pregled popisne liste...")
 closeret
 
-**************************
-**************************
-function EdPopList()
+
+// -----------------------------------------------
+// -----------------------------------------------
+static function EdPopList()
 
 do case
   case Ch==K_ENTER .or. Ch==K_CTRL_N
@@ -247,19 +238,21 @@ do case
 endcase
 return DE_CONT
 
-***********************
-***********************   
+
+
 function GETPL()
+
 @ m_x+1,m_y+2 SAY "Red.br:  " GET nRBr  PICTURE "9999"
 @ m_x+3,m_y+2 SAY "Roba:    " GET _IdRoba valid P_Roba(@_IdRoba,3,24)
 @ m_x+4,m_y+2 SAY "Cijena:  " GET _Cijena  PICTURE PicDEM
 @ m_x+5,m_y+2 SAY "Kolicina:" GET _Kolicina PICTURE PicKol ;
    VALID {|| _Iznos:=_Cijena*_Kolicina, qqout("  Iznos:",TRANSFORM(_iznos,PicDEM)),Inkey(5),.t.}
+
 return
 
 
-**************************
-**************************
+
+
 function PreglUnKol()
 
 O_INVENT
@@ -290,11 +283,7 @@ cIdF:=left(cIdF,2)
 save to  (PRIVPATH+"invent.mem") all like cId?
 
 SELECT MAT_INVENT
-#ifndef C50
 set order to tag "1"
-#else
-set order to 1
-#endif
 GO TOP
 
 START PRINT  CRET
@@ -330,9 +319,10 @@ if prow()>60; EJECTA0; ZPrUnKol(); ENDIF
 ? m
 EJECTA0
 END  PRINT
-closeret
-****************************
-****************************
+close all
+return
+
+
 function ZPrUnKol()
 P_COND
 @ prow(),0 SAY "MAT.P: PREGLED UNESENIH KOLICINA NA DAN:"; @ prow(),pcol()+1 SAY cIdD
@@ -349,10 +339,10 @@ SELECT MAT_INVENT
 ? "*B. * ARTIKLA  *                                        *MJ.*          *            *            *"
 ? m
 
+return
 
 
-*******************************************
-*******************************************
+
 function ObracInv()
 
 cIdF:=gFirma
@@ -386,14 +376,11 @@ O_ROBA
 O_SIFV
 O_SIFK
 O_MAT_SUBAN
-#ifndef C50
 set order to tag "3"
-#else
-set order to 3
-#endif
 set filter to DatDok<=cIdD
 
-SELECT MAT_INVENT; go top
+SELECT MAT_INVENT
+go top
 
 START PRINT CRET
 
@@ -492,11 +479,10 @@ ENDDO
 
 EJECTNA0
 END PRINT
-closeret
+close all
+return
 
 
-*******************************************
-*******************************************
 function NalInv()
 
 cIdF:=gFirma
@@ -536,15 +522,11 @@ O_ROBA
 O_SIFV
 O_SIFK
 O_MAT_SUBAN
-#ifndef C50
 set order to tag "3"
-#else
-set order to 3
-#endif
 set filter to DatDok<=cIdD
 
-SELECT MAT_INVENT; go top
-
+SELECT MAT_INVENT
+go top
 
 A:=0
 
@@ -599,12 +581,13 @@ DO WHILE !eof()
    skip
 ENDDO
 
-closeret
+close all
+return
 
 
-*******************************************
-* prenos iz materijalnog u obracun  poreza
-*******************************************
+// ---------------------------------------------------
+// prenos iz materijalnog u obracun  poreza
+// ---------------------------------------------------
 function matpormp()
 local cIdDir
 
@@ -638,9 +621,11 @@ save to  (PRIVPATH+"invent.mem") all like cId?
 cIdDir:=gDirPor
 
 use (ciddir+"pormp") new index (ciddir+"pormpi1"), (ciddir+"pormpi2"), (ciddir+"pormpi3")
-set order to 3           // str(mjesec,2)+idkonto+idtarifa+id
+set order to tag "3"           
+// str(mjesec,2)+idkonto+idtarifa+id
 
-SELECT MAT_INVENT; go top
+SELECT MAT_INVENT
+go top
 
 DO WHILE !eof()
 
@@ -678,15 +663,15 @@ DO WHILE !eof()
    skip
 ENDDO
 
-closeret
+close all
+return
 
-*****************************
-*****************************
-function PopL()
+
+// ------------------------------------
+// ------------------------------------
+function PopisnaLista()
 I:=K:=C:=0
-*
 m:="---- ---------- ----------------------------------- --- ------------ ---------"
-*
 cIdF:="  "
 cIdK:=SPACE(7)
 cIdD:=date()
@@ -703,18 +688,13 @@ Box("",4,60)
 READ; ESC_BCR
 BoxC()
 save to  (PRIVPATH+"invent.mem") all like cId?
-*
 O_MAT_SUBAN
 O_SIFV
 O_SIFK
 O_ROBA
 
 SELECT mat_suban
-#ifndef C50
 set order to tag "3"
-#else
-set order to 3
-#endif
 set filter to DatDok<=cIdD
 SEEK cIdF+cIdK
 NFOUND CRET
@@ -792,4 +772,8 @@ A+=2
 
 EJECTNA0
 END PRINT
-closeret
+
+close all
+return
+
+

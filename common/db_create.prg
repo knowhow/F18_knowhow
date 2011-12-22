@@ -15,6 +15,7 @@ function cre_all_dbfs()
 
 cre_sifk_sifv()
 CreFmkSvi()
+CreRoba()
 
 // TODO: http://redmine.bring.out.ba/issues/25815
 

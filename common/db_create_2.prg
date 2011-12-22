@@ -25,16 +25,16 @@ O_OPS
 select(F_SIFK)
 
 if !used()
-	O_SIFK
-  	O_SIFV
+    O_SIFK
+    O_SIFV
 endif
 
 if (IsRamaGlas() .or. gModul=="FAKT" .and. glRadNal)
-	O_RNAL
+    O_RNAL
 endif
 
 if FILE(f18_ime_dbf("RULES"))
-	O_RULES
+    O_RULES
 endif
 
 return
@@ -57,7 +57,7 @@ O_UGOV
 O_RUGOV
 
 if (rugov->(FIELDPOS("DESTIN"))<>0)
-	O_DEST
+    O_DEST
 endif
 
 O_PARTN
@@ -80,7 +80,7 @@ return
 function index_mcode(cPath, cTable)
 
 if fieldpos("MATCH_CODE") <> 0
-	//CREATE_INDEX("MCODE", "match_code", cPath + cTable)
+    //CREATE_INDEX("MCODE", "match_code", cPath + cTable)
 endif
 
 return
@@ -95,19 +95,15 @@ function CreFmkSvi()
 cIme := "rj.dbf" 
 
 if !file(f18_ime_dbf("rj"))
-   	aDBf:={}
-   	//if goModul:oDataBase:cName == "LD"
-   	//	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-   	//else
-   		AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-   	//endif
-	add_f_mcode(@aDbf)
-	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
+    aDBf:={}
+    AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+    add_f_mcode(@aDbf)
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
 
-   	DBCREATE2("rj", aDbf)
+    DBCREATE2("rj", aDbf)
     reset_semaphore_version("rj")
     my_use("rj")
-	close all 
+    close all 
 endif
 
 CREATE_INDEX("ID","id", "rj")
@@ -140,7 +136,7 @@ if !file(cIme)
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
         add_f_mcode(@aDbf)
-    	AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
+        AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
         AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
         AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
         AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  5 })
@@ -149,7 +145,7 @@ if !file(cIme)
         AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
         dbcreate2("valute", aDbf)
         reset_semaphore_version("valute")
-		close all
+        close all
         my_use ('valute')
         append blank
         replace id with "000", naz with "KONVERTIBILNA MARKA", ;
@@ -170,7 +166,7 @@ index_mcode(SIFPATH, cIme)
 if !file(f18_ime_dbf('tokval.dbf'))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,  8  ,  2 })
-	AADD(aDBf,{ 'NAZ'                 , 'N' ,  8 ,   2 })
+    AADD(aDBf,{ 'NAZ'                 , 'N' ,  8 ,   2 })
         AADD(aDBf,{ 'NAZ2'                , 'N' ,  8 ,   2 })
         dbcreate2( 'tokval', aDbf)
 endif
@@ -184,7 +180,7 @@ if !file(f18_ime_dbf("tnal"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
         add_f_mcode(@aDbf)
-	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
+        AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
         dbcreate2('tnal',aDbf)
         reset_semaphore_version("tnal")
         my_use("tnal")
@@ -198,7 +194,7 @@ if !file(f18_ime_dbf("tdok"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
         add_f_mcode(@aDbf)
-	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
+        AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
         dbcreate2(f18_ime_dbf('tdok'), aDbf)
         reset_semaphore_version("tdok")
         my_use("tdok")
@@ -248,7 +244,7 @@ if !file(f18_ime_dbf(cIme) )
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   3 ,  0 })
         add_f_mcode(@aDbf)
-	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
+        AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
         AADD(aDBf,{ 'Mjesto'              , 'C' ,  20 ,  0 })
         AADD(aDBf,{ 'Adresa'              , 'C' ,  30 ,  0 })
         DBCREATE2("BANKE" , aDbf)
@@ -374,11 +370,11 @@ function PoljeExist(cNazPolja)
 O_OPS
 
 if OPS->(FieldPos(cNazPolja))<>0
-	use
-	return .t.
+    use
+    return .t.
 else
-	use
-	return .f.
+    use
+    return .f.
 endif
 
 

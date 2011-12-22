@@ -34,8 +34,8 @@ log_write("    F18 dbf version:" + STR(_new_dbf_ver))
 
 // 0.1.0
 if _current_dbf_ver < _new_dbf_ver
-   modstru({"*fin_budzet.dbf", "C EKKATEG C 5 0  IDKONTO C 7 0"})
-   modstru({"*roba.dbf", "A IDKONTO C 7 0"})
+   modstru({"*fin_budzet", "C EKKATEG C 5 0  IDKONTO C 7 0"})
+   modstru({"*roba", "A IDKONTO C 7 0"})
 endif
 
 

@@ -72,7 +72,7 @@ for each _lin in a_commands
        _ime_dbf := ALLTRIM(_lin)
 
        ?  _path + _ime_dbf
-
+        
        if file( _path + _ime_dbf + "." + DBFEXT )
            select 1
            my_usex ( "OLDDBF", _ime_dbf, .f.)

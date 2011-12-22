@@ -164,6 +164,8 @@ next
 ? "---", REPLICATE("-", 80)
 ?
 
+server_info()
+
 if used() 
    current_dbf_info()
 else
@@ -186,6 +188,22 @@ run (_cmd := "f18_editor " + _out_file)
 quit
 
 RETURN
+
+static function server_info()
+local _key
+local _server_vars := {"server_version", "TimeZone"}
+
+?
+? "/---------- BEGIN PostgreSQL vars --------/"
+?
+for each _key in _server_vars 
+  ? PADR(_key, 25) + ":",  server_show(_key)
+next
+?
+? "/----------  END PostgreSQL vars --------/"
+?
+?
+return .t.
 
 // ---------------------------------
 // ---------------------------------

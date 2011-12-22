@@ -28,7 +28,6 @@ local _key
 
 REQUEST DBFCDX
 
-// ? "setujem default engine ..." + RDDENGINE
 RDDSETDEFAULT( RDDENGINE )
 
 REQUEST HB_CODEPAGE_SL852 
@@ -124,7 +123,7 @@ if my_server_login()
    // ~/.F18/empty38/
    set_f18_home( my_server_params()["database"] )
    log_write("home baze: " + my_home())
- 
+
    cre_all_dbfs()
    dbf_update()
 

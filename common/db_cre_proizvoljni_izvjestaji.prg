@@ -18,7 +18,6 @@
  */
  
 function CreFmkPi()
-*{
 local cImeDBF
 
 cImeDBF:=ToUnix(KUMPATH+"izvje.dbf")
@@ -94,4 +93,3 @@ CREATE_INDEX("ID","id", cImeDBF)
 CREATE_INDEX("1" ,"izv+STR(ri,4)" , cImeDBF)
 
 return
-*}

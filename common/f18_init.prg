@@ -125,7 +125,7 @@ if my_server_login()
    set_f18_home( my_server_params()["database"] )
    log_write("home baze: " + my_home())
  
-   cre_sifk_sifv()
+   cre_all_dbfs()
    dbf_update()
 
    return .t.

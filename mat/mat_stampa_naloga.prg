@@ -12,36 +12,27 @@
 
 #include "mat.ch"
 
+static PicDEM:="@Z 9999999.99"
+static PicBHD:="@Z 999999999.99"
+static PicKol:="@Z 999999.999"
+
 
 function mat_stampa_naloga()
+local _izbor := 1
+local _opc, _opcexe := {}
+
+AADD( _opc, "1. subanalitika     " )
+AADD( _opcexe, {|| mat_st_anal_nalog( .f. ) } )
+AADD( _opc, "2. analitika" )
+AADD( _opcexe, {|| mat_st_sint_nalog() } )
+
+f18_menu("onal", .f., _izbor, _opc, _opcexe )
+
+close all
+return
 
 
-local izb:=1
-private opc[2]
-opc[1]:="1. mat_subanalitika"
-opc[2]:="2. mat_analitika"
 
-PRIVATE PicDEM:="@Z 9999999.99"
-PRIVATE PicBHD:="@Z 999999999.99"
-PRIVATE PicKol:="@Z 999999.999"
-do while .t.
-  izb:=menu("onal",opc,izb,.f.)
-  do case
-     case izb==0
-        exit
-     case izb==1
-       //StOANal()
-       mat_st_anal_nalog(.f.)
-     case izb==2
-       mat_st_sint_nalog()
-     case izb==3
-        izb:=0
-  endcase
-enddo
-
-*********************************************************
-* Stampa mat_sintetickog naloga
-*********************************************************
 function mat_st_sint_nalog(fnovi)
 
 if pcount()==0
@@ -58,11 +49,7 @@ if fnovi
 else
  O_MAT_ANAL
  select mat_anal
- #ifndef C50
  set order to tag "2"
- #else
- set order to 2
- #endif
  cIdFirma:=gFirma
  cIdVN:=space(2)
  cBrNal:=space(4)
@@ -181,9 +168,6 @@ END PRINT
 
 closeret
 
-*************************************
-* zaglavlje mat_analitickog naloga
-**************************************
 static function Zagl12()
 local nArr
 P_COND
@@ -205,7 +189,5 @@ endif
 @ ++A,0 SAY M
 return
 
-***********************
-***********************
 function gPicDEM()
 return iif(g2Valute=="N",gPicDin,gPicDEM)

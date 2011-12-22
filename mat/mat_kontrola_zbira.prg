@@ -29,8 +29,7 @@ return
 // kontrola zbira datoteka
 // -----------------------------------------------
 function mat_kzb()
-local picBHD:='999999999999.99'
-local picDEM:='999999999.99'
+local _pict := "999999999.99"
 local _header
 
 _header := PADR( "* NAZIV", 13 )      
@@ -64,10 +63,10 @@ Box("KZB",10,77,.f.)
     ESC_BCR
 
     @ m_x+3,m_y+2 SAY PADL( "NALOZI", 13 )
-    @ row(),col()+1 SAY nDug PICTURE picDEM
-    @ row(),col()+1 SAY nPot PICTURE picDEM
-    @ row(),col()+1 SAY nDug2 PICTURE picBHD
-    @ row(),col()+1 SAY nPot2 PICTURE picBHD
+    @ row(),col()+1 SAY nDug PICT _pict
+    @ row(),col()+1 SAY nPot PICT _pict
+    @ row(),col()+1 SAY nDug2 PICT _pict
+    @ row(),col()+1 SAY nPot2 PICT _pict
 
     select mat_sint
     nDug:=nPot:=nDug2:=nPot2:=0
@@ -79,10 +78,10 @@ Box("KZB",10,77,.f.)
     ENDDO
     ESC_BCR
     @ m_x+5,m_y+2 SAY PADL( "SINTETIKA", 13 )
-    @ row(),col()+1 SAY nDug PICTURE picDEM
-    @ row(),col()+1 SAY nPot PICTURE picDEM
-    @ row(),col()+1 SAY nDug2 PICTURE picBHD
-    @ row(),col()+1 SAY nPot2 PICTURE picBHD
+    @ row(),col()+1 SAY nDug PICTURE _pict
+    @ row(),col()+1 SAY nPot PICTURE _pict
+    @ row(),col()+1 SAY nDug2 PICTURE _pict
+    @ row(),col()+1 SAY nPot2 PICTURE _pict
 
 
     select mat_anal
@@ -95,10 +94,10 @@ Box("KZB",10,77,.f.)
     ENDDO
     ESC_BCR
     @ m_x+7,m_y+2 SAY PADL( "ANALITIKA", 13 )
-    @ row(),col()+1 SAY nDug PICTURE picDEM
-    @ row(),col()+1 SAY nPot PICTURE picDEM
-    @ row(),col()+1 SAY nDug2 PICTURE picBHD
-    @ row(),col()+1 SAY nPot2 PICTURE picBHD
+    @ row(),col()+1 SAY nDug PICTURE _pict
+    @ row(),col()+1 SAY nPot PICTURE _pict
+    @ row(),col()+1 SAY nDug2 PICTURE _pict
+    @ row(),col()+1 SAY nPot2 PICTURE _pict
 
     select mat_suban
     nDug:=nPot:=nDug2:=nPot2:=0
@@ -113,10 +112,10 @@ Box("KZB",10,77,.f.)
     ENDDO
     ESC_BCR
     @ m_x+9,m_y+2 SAY PADL( "SUBANALITIKA", 13 )
-    @ row(),col()+1 SAY nDug PICTURE picDEM
-    @ row(),col()+1 SAY nPot PICTURE picDEM
-    @ row(),col()+1 SAY nDug2 PICTURE picBHD
-    @ row(),col()+1 SAY nPot2 PICTURE picBHD
+    @ row(),col()+1 SAY nDug PICTURE _pict
+    @ row(),col()+1 SAY nPot PICTURE _pict
+    @ row(),col()+1 SAY nDug2 PICTURE _pict
+    @ row(),col()+1 SAY nPot2 PICTURE _pict
 
     Inkey(0)
 BoxC()

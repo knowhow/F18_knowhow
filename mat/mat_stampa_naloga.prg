@@ -19,7 +19,8 @@ static PicKol:="@Z 999999.999"
 
 function mat_stampa_naloga()
 local _izbor := 1
-local _opc, _opcexe := {}
+local _opc := {}
+local _opcexe := {}
 
 AADD( _opc, "1. subanalitika     " )
 AADD( _opcexe, {|| mat_st_anal_nalog( .f. ) } )
@@ -28,7 +29,6 @@ AADD( _opcexe, {|| mat_st_sint_nalog() } )
 
 f18_menu("onal", .f., _izbor, _opc, _opcexe )
 
-close all
 return
 
 
@@ -166,7 +166,8 @@ EJECTA0
 
 END PRINT
 
-closeret
+close all
+return
 
 static function Zagl12()
 local nArr

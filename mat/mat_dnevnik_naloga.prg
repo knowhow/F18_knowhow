@@ -13,7 +13,20 @@
 #include "mat.ch"
 
 
+static _pict := "@Z 999999999.99"
+
+
+// --------------------------------------------
+// stampa liste naloga
+// --------------------------------------------
 function mat_dnevnik_naloga()
+local _line
+local _dug
+local _pot
+local _dug2
+local _pot2
+local _rbr
+local _row_pos
 
 O_MAT_NALOG
 SELECT mat_nalog
@@ -22,53 +35,132 @@ GO TOP
 
 START PRINT CRET
 
-m:="---- --- --- ----- -------- ------------ ------------ ---------------- -----------------"
+_line := _get_line()
+_rbr := 0
+_row_pos := 0
 
-nRBr:=A:=0
-
-nDug:=nPot:=nDug2:=nPot2:=0
-
-PRIVATE picBHD:='@Z 9999999999999.99'
-PRIVATE picDEM:='@Z 999999999.99';
+_dug := 0
+_pot := 0
+_dug2 := 0
+_pot2 := 0
 
 DO WHILE !EOF()
-   IF prow()==0
-      P_COND
-      ?? "DNEVNIK mat_nalogA NA DAN:"
-      @ prow(),pcol()+2 SAY DATE()
-      ? m
-      ? "*RED*FIR* V * BR  * DAT    *   DUGUJE   * POTRAZUJE  *     DUGUJE     *   POTRAZUJE    *"
-      ? "*BRD*MA * N * NAL * NAL    *    "+ValDomaca()+"    *    "+ValDomaca()+"    *      "+ValPomocna()+"      *      "+ValPomocna()+"      *"
-      ? m
-   ENDIF
+   
+    IF prow()==0
+        _zaglavlje( _line )
+    ENDIF
 
-   DO WHILE !EOF() .AND. prow()<66
-      @ prow()+1,0 SAY ++nRBr PICTURE "9999"
-      @ prow(),pcol()+2 SAY IdFirma
-      @ prow(),pcol()+2 SAY IdVN
-      @ prow(),pcol()+2 SAY BrNal
-      @ prow(),pcol()+1 SAY DatNal
-      @ prow(),28       SAY Dug  picture picDEM
-      @ prow(),pcol()+1 SAY Pot  picture picDEM
-      @ prow(),pcol()+1 SAY Dug2 picture picBHD
-      @ prow(),pcol()+1 SAY Pot2 picture picBHD
-      nDug+=Dug
-      nPot+=Pot
-      nDug2+=Dug2
-      nPot2+=Pot2
-      SKIP
-   ENDDO
-   IF prow()>65; FF; ENDIF
+    DO WHILE !EOF() .AND. prow()<66
+        @ prow() + 1, 0 SAY ++_rbr PICTURE "9999"
+        @ prow(), pcol()+2 SAY field->IdFirma
+        @ prow(), pcol()+2 SAY field->IdVN
+        @ prow(), pcol()+2 SAY field->BrNal
+        @ prow(), pcol()+1 SAY field->DatNal
+        _row_pos := pcol()
+        @ prow(), pcol()+1 SAY field->Dug  picture _pict
+        @ prow(), pcol()+1 SAY field->Pot  picture _pict
+        @ prow(), pcol()+1 SAY field->Dug2 picture _pict
+        @ prow(), pcol()+1 SAY field->Pot2 picture _pict
+      
+        _dug += field->Dug
+        _pot += field->Pot
+        _dug2 += field->Dug2
+        _pot2 += field->Pot2
+        
+        SKIP
+    ENDDO
+    IF prow() > 65
+        FF
+    ENDIF
 ENDDO
-? m
+
+? _line
 ? "UKUPNO:"
-@ prow(),28 SAY nDug        picture picDEM
-@ prow(),pcol()+1 SAY nPot  picture picDEM
-@ prow(),pcol()+1 SAY nDug2 picture picBHD
-@ prow(),pcol()+1 SAY nPot2 picture picBHD
-? m
+@ prow(), _row_pos + 1 SAY _dug        picture _pict
+@ prow(), pcol() + 1 SAY _pot  picture _pict
+@ prow(), pcol() + 1 SAY _dug2 picture _pict
+@ prow(), pcol() + 1 SAY _pot2 picture _pict
+? _line
 
 FF
 END PRINT
 
-closeret
+close all
+return
+
+
+// -------------------------------------------
+// zaglavlje izvjestaja
+// -------------------------------------------
+static function _zaglavlje( line )
+local _r_line_1
+local _r_line_2
+        
+P_COND
+        
+?? "DNEVNIK NALOGA NA DAN:"
+@ prow(), pcol() + 2 SAY DATE()
+        
+? line
+
+_r_line_1 := PADR( "*RED", 4 )
+_r_line_2 := PADR( "*BRD", 4 )
+
+_r_line_1 += PADR( "*FIR", 4 )
+_r_line_2 += PADR( "*MA", 4 )
+
+_r_line_1 += PADR( "* V", 4 )
+_r_line_2 += PADR( "* N", 4 )
+
+_r_line_1 += PADR( "* BR", 6 )
+_r_line_2 += PADR( "* NAL", 6 )
+
+_r_line_1 += PADR( "* DAT", 9 )
+_r_line_2 += PADR( "* NAL", 9 )
+
+_r_line_1 += PADR( "*   DUGUJE", 13 )
+_r_line_2 += PADR( "*   " + ValDomaca(), 13 )
+
+_r_line_1 += PADR( "* POTRAZUJE", 13 )
+_r_line_2 += PADR( "*   " + ValDomaca(), 13 )
+
+_r_line_1 += PADR( "*   DUGUJE", 13 )
+_r_line_2 += PADR( "*   " + ValPomocna(), 13 )
+
+_r_line_1 += PADR( "* POTRAZUJE", 13 )
+_r_line_2 += PADR( "*   " + ValPomocna(), 13 )
+
+? _r_line_1
+? _r_line_2
+       
+? line
+ 
+return
+
+
+// vraca liniju za report
+static function _get_line()
+local _line := ""
+
+_line := REPLICATE( "-", 4 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 3 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 3 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 5 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 8 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+
+return _line
+
+
+

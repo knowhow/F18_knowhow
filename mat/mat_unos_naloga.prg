@@ -146,7 +146,7 @@ static function EditPRIPR(fNovi)
 
    @  m_x+3,m_y+52  SAY "Broj:"   get _BrNal   valid mat_dupli_nalog(_BrNal,_IdVN,_IdFirma) .and. !empty(_BrNal)
 
-   @  m_x+5,m_y+2  SAY "Redni broj stavke mat_naloga:" get nRbr picture "9999"
+   @  m_x+5,m_y+2  SAY "Redni broj stavke naloga:" get nRbr picture "9999"
 
    if  gKupZad=="D"
     @ m_x+7,m_y+2    SAY "Dobavljac/Kupac" get _IdPartner valid empty(_IdPartner) .or. P_Firma(@_IdPartner,24)
@@ -361,7 +361,7 @@ do case
 
    case Ch==K_F5 // kontrola zbira za jedan mat_nalog
       PushWa()
-      Box("kzb",8,60,.f.,"Kontrola zbira mat_naloga")
+      Box("kzb",8,60,.f.,"Kontrola zbira naloga")
       set cursor on
       cFirma:=IdFirma; cIdVN:=IdVN; cBrNal:=BrNal
 
@@ -379,7 +379,7 @@ do case
       seek cFirma+cIdVn+cBrNal
       dug:=Pot:=0
       if !(IdFirma+IdVn+BrNal==cFirma+cIdVn+cBrNal)
-        Msg("Ovaj mat_nalog nije unesen ...",10)
+        Msg("Ovaj nalog nije unesen ...",10)
         BoxC()
         PopWa()
         return DE_CONT
@@ -388,7 +388,7 @@ do case
         if D_P=="1"; dug+=Iznos; else; pot+=Iznos; endif
         skip
       enddo
-      @ m_x+5,m_y+2 SAY "Zbir mat_naloga:"
+      @ m_x+5,m_y+2 SAY "Zbir naloga:"
       @ m_x+6,m_y+2 SAY "     Duguje:"
       @ m_x+6,COL()+2 SAY Dug PICTURE gPicDEM()
       @ m_x+7,m_y+2 SAY "  Potrazuje:"
@@ -418,7 +418,7 @@ do case
         PushWA()
         select mat_pripr
         go top
-        Box("anal",20,75,.f.,"Ispravka mat_naloga")
+        Box("anal",20,75,.f.,"Ispravka naloga")
         nDug:=0; nPot:=0
         do while !eof()
            skip; nTR2:=RECNO(); skip-1
@@ -452,7 +452,7 @@ do case
            skip
         enddo
         go bottom
-        Box("knjn",20,77,.f.,"Knjizenje mat_naloga - nove stavke")
+        Box("knjn",20,77,.f.,"Knjizenje naloga - nove stavke")
         do while .t.
            Scatter()
            nRbr:=VAL(_Rbr)+1
@@ -477,7 +477,7 @@ do case
         return DE_REFRESH
 
    case Ch=K_CTRL_F9
-        if Pitanje(,"Zelite li izbrisati mat_pripremu !!????","N")=="D"
+        if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
              zap
              mat_brisi_pbaze()
         endif
@@ -503,7 +503,7 @@ PushWa()
 select mat_nalog
 seek cIdFirma+cVN+cBrNal
 if found()
-   MsgO(" Dupli mat_nalog ! ")
+   MsgO(" Dupli nalog ! ")
    Beep(3)
    MsgC()
    PopWa()

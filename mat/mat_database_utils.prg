@@ -13,128 +13,163 @@
 #include "mat.ch"
 
 
-
-function mat_povrat_naloga()
-
-O_mat_suban
-O_mat_anal
-O_mat_sint
-O_mat_nalog
-O_mat_pripr
+// otvara potrebne tabele za povrat
+static function _o_tables()
+O_MAT_SUBAN
+O_MAT_ANAL
+O_MAT_SINT
+O_MAT_NALOG
+O_MAT_PRIPR
 O_ROBA
 O_SIFK
 O_SIFV
+return
 
-SELECT mat_suban
+
+// ---------------------------------------------
+// povrat naloga u pripremu
+// ---------------------------------------------
+function mat_povrat_naloga( lStorno )
+local _rec
+local nRec
+local _del_rec, _ok
+local _field_ids, _where_block
+
+if lStorno == NIL 
+    lStorno := .f.
+endif
+
+_o_tables()
+
+SELECT MAT_SUBAN
 set order to tag "4"
 
-cIdFirma:=gFirma
-cIdVN:=space(2)
-cBrNal:=space(4)
+cIdFirma := gFirma
+cIdFirma2 := gFirma
+cIdVN := cIdVN2  := space(2)
+cBrNal:= cBrNal2 := space(4)
 
-Box("",1,35)
- @ m_x+1,m_y+2 SAY "mat_nalog:"
- if gNW$"DR"
-  @ m_x+1,col()+1 SAY gFirma
+Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
+
+ @ m_x + 1, m_y + 2 SAY "Nalog:"
+
+ if gNW=="D"
+      @ m_x+1,col()+1 SAY cIdFirma PICT "@!"
  else
-  @ m_x+1,col()+1 GET cIdFirma
+      @ m_x+1,col()+1 GET cIdFirma PICT "@!"
  endif
- @ m_x+1,col()+1 SAY "-" GET cIdVN
- @ m_x+1,col()+1 SAY "-" GET cBrNal
- read; ESC_BCR
+
+ @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
+ @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID !EMPTY( cBrNal )
+
+ IF lStorno
+
+   @ m_x+3,m_y+2 SAY "Broj novog naloga (naloga storna):"
+
+   if gNW=="D"
+       @ m_x+3, col()+1 SAY cIdFirma2
+   else
+       @ m_x+3, col()+1 GET cIdFirma2
+   endif
+
+   @ m_x + 3, col() + 1 SAY "-" GET cIdVN2 PICT "@!"
+   @ m_x + 3, col() + 1 SAY "-" GET cBrNal2
+
+ ENDIF
+
+ read
+ ESC_BCR
+
 BoxC()
 
-seek cidfirma+cidvn+cbrNal
-if Pitanje("","mat_nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal+" povuci u mat_pripremu (D/N) ?","N")=="N"
-   closeret
+
+if Pitanje(,"Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + IIF(lStorno," stornirati"," povuci u pripremu") + " (D/N) ?","D") == "N"
+    close all
+    return
 endif
 
+lBrisi := .t.
 
-if !(  mat_suban->(flock()) .and. mat_anal->(flock()) .and. mat_sint->(flock()) .and. mat_nalog->(flock()) )
-  Beep(1)
-  Msg("Neko vec koristi datoteke !")
-  closeret
-endif
+IF !lStorno
+    lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
+ENDIF
 
-MsgO("mat_suban")
-select mat_suban
+MsgO("Punim pripremu sa mat_suban: " + cIdfirma + cIdvn + cBrNal )
+
+select MAT_SUBAN
+seek cIdfirma + cIdvn + cBrNal
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-   select mat_pripr; Scatter()
-   select mat_suban; Scatter()
-   select mat_pripr
-   APPEND NCNL
-   if _Iznos<>0 .and. _Kolicina<>0
-     _Cijena:=_Iznos/_Kolicina
-   else
-     _Cijena:=0
-   endif
-   Gather2()
 
-   nUlazK:=nIzlK:=nDug:=nPot:=0
-   IF _U_I="1"
-     nUlazK:=_Kolicina
-   ELSE
-     nIzlK:=_Kolicina
-   ENDIF
-   IF _D_P="1"
-      nDug:=_Iznos
-   ELSE
-      nPot:=_Iznos
-   ENDIF
+   select mat_pripr
 
    select mat_suban
-   skip; nRec:=recno(); skip -1
-   dbdelete2()
-   go nRec
+
+   _rec := dbf_get_rec()
+
+   select mat_pripr
+   
+   if lStorno
+       _rec["idfirma"]  := cIdFirma2
+       _rec["idvn"]     := cIdVn2
+       _rec["brnal"]    := cBrNal2
+       _rec["iznos"] := -_iznos
+       _rec["iznos2"] := -_iznos2
+   endif
+
+   APPEND BLANK
+
+   dbf_update_rec( _rec )
+
+   select MAT_SUBAN
+   skip
+
 enddo
-use
+
 MsgC()
 
-MsgO("mat_anal")
-select mat_anal
-#ifndef C50
-set order to tag "2"
-#else
-set order to 2
-#endif
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
- skip; nRec:=recno(); skip -1
- dbdelete2()
- go nRec
-enddo
-use
-MsgC()
+if !lBrisi
+    close all
+    return
+endif
 
+_del_rec := hb_hash()
+_del_rec["idfirma"] := cIdFirma
+_del_rec["idvn"]    := cIdVn
+_del_rec["brnal"]   := cBrNal 
 
-MsgO("mat_sint")
-select mat_sint
-#ifndef C50
-set order to tag "2"
-#else
-set order to 2
-#endif
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
- skip; nRec:=recno(); skip -1
- dbdelete2()
- go nRec
-enddo
-use
-MsgC()
+if !lStorno
 
-MsgO("mat_nalog")
-select mat_nalog
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip; nRec:=recno(); skip -1
-  dbdelete2()
-  go nRec
-enddo
-use
-MsgC()
-closeret
+    _ok := .t.
+
+    _field_ids := {"idfirma", "idvn", "brnal"}
+    _where_block := { |x| "IDFIRMA=" + _sql_quote(x["idfirma"]) + " AND IDVN=" + _sql_quote(x["idvn"]) + " AND BRNAL=" + _sql_quote(x["brnal"]) } 
+
+    MsgO("del mat_suban")
+    // SUBAN TAG = "4"
+    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_suban", _del_rec, _field_ids, _where_block,  "4" )
+    MsgC()
+
+    MsgO("del mat_anal")
+    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_anal", _del_rec, _field_ids, _where_block,  "2" )
+    MsgC()
+
+    MsgO("del mat_sint")
+    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_sint", _del_rec, _field_ids, _where_block,  "2" )
+    MsgC()
+
+    MsgO("del mat_nalog")
+    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_nalog", _del_rec, _field_ids, _where_block,  "1" )
+    MsgC()
+
+endif
+
+if !_ok
+  MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
+endif
+
+close all
 return
+
 
 
 // ----------------------------------------------
@@ -142,11 +177,11 @@ return
 // ----------------------------------------------
 function mat_prenos_podataka()
 
-O_mat_pripr
+O_MAT_PRIPR
 
 if reccount2()<>0
-	MsgBeep("mat_priprema mora biti prazna !!!")
-  	closeret
+	MsgBeep("Tabela pripreme mora biti prazna !!!")
+  	close all
 	return
 endif
 
@@ -165,7 +200,7 @@ BoxC()
 
 start print cret
 
-O_mat_subanX
+O_MAT_SUBANX
 
 // ovo je bio stari indeks, stari prenos bez partnera
 //set order to tag "3"

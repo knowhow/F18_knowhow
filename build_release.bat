@@ -14,7 +14,10 @@ copy pos\*.ch  %HB_INC_INSTALL%
 copy mat\*.ch  %HB_INC_INSTALL%
 copy common\*.ch %HB_INC_INSTALL%
 
-hbmk2 F18.hbp
+copy hb_release.hbm hbmk.hbm
+
+hbmk2 F18.hbp -rebuildall
+
 
 GOTO DONE
 
@@ -24,3 +27,7 @@ echo "setuj envars"
 GOTO:EOF 
 :DONE
 ECHO "zavrseno"
+
+
+
+

@@ -924,7 +924,7 @@ return nil
 
 static function OsvCijSif()
 local nArr:=SELECT(),cPom1:=" ",cPom2:=" "
-local _vars := hb_hash()
+local _vars
 
 SELECT ROBA
 SEEK _idroba
@@ -943,7 +943,7 @@ if found()
 endif
 SELECT ROBA
 
-//Scatter("q")
+_vars := dbf_get_rec()
 
 // ako se radi o ulazu
 if _u_i=="1"

@@ -199,9 +199,10 @@ _struct := DBSTRUCT()
 ? REPLICATE("-", 60)
 ? "Record content:"
 ? REPLICATE("-", 60)
-for i := 1 to LEN(_struct)
+for _i := 1 to LEN( _struct )
    ? STR(_i, 3), _struct[_i, 1], _struct[_i, 2], _struct[_i, 3], _struct[_i, 4], EVAL(FIELDBLOCK(_struct[_i, 1]))
 next
 ? REPLICATE("-", 60)
 
 return .t.
+

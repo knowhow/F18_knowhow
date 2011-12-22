@@ -124,9 +124,10 @@ if my_server_login()
    // ~/.F18/empty38/
    set_f18_home( my_server_params()["database"] )
    log_write("home baze: " + my_home())
-
-   
+ 
+   cre_sifk_sifv()
    dbf_update()
+
    return .t.
 else
 

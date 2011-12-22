@@ -172,9 +172,6 @@ if !file(f18_ime_dbf('tokval.dbf'))
 endif
 CREATE_INDEX("ID","id", "tokval")
 
-cre_sifk_sifv()
-
-
 // TNAL
 if !file(f18_ime_dbf("tnal"))
         aDbf:={}

@@ -360,21 +360,26 @@ if _result < 1
    return .t.
 endif
 
-// ARAY['id1', 'id2']
-_sql_ids := "ARRAY["
-for _i:=1 TO LEN(ids)
- _sql_ids += _sql_quote(hb_StrToUtf8(ids[_i])) 
- if _i < LEN(ids)
-    _sql_ids += ","
- endif
+// TODO: moze li vise update-ova da se stavi u jedan sql_query ?
+
+for _i := 1 TO LEN(ids)
+    // ARAY['id1']
+
+    // ARAY['id1', 'id2']
+    _sql_ids := "ARRAY["
+    _sql_ids += _sql_quote(hb_StrToUtf8(ids[_i])) 
+    //if _i < LEN(ids)
+    //    _sql_ids += ","
+    //endif
+    _sql_ids += "]"
+
+
+    _qry := "UPDATE " + _tbl + ;
+                " SET ids = ids || " + _sql_ids + ;
+                " WHERE user_code <> " + _sql_quote(_user) + " AND NOT " + _sql_ids + " <@ ids"
+    _ret := _sql_query( _server, _qry )
+
 next
-_sql_ids += "]"
-
-
-_qry := "UPDATE " + _tbl + ;
-              " SET ids = ids || " + _sql_ids + ;
-              " WHERE user_code <> " + _sql_quote(_user) 
-_ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "O"
   return .t.

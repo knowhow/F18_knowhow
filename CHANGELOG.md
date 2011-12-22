@@ -1,3 +1,8 @@
+0.9.22  2011-12-22, sifk kreiranje
+ 
+ - [#25829](http://redmine.bring.out.ba/issues/25829)
+ - niz promjena vsasa/MAT
+
 0.9.21  2011-12-21, fakt->fin
 
  - my_usex faktfin [#25795](http://redmine.bring.out.ba/issues/25795)

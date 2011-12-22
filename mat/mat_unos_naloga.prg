@@ -12,66 +12,44 @@
 
 #include "mat.ch"
 
+static PicDEM:="9999999.99"
+static PicBHD:="999999999.99"
+static PicKol:="999999.999"
+
+
+// -----------------------------------------------------
+// knjizenje naloga 
+// -----------------------------------------------------
 function mat_knjizenje_naloga()
-
-
-PRIVATE PicDEM:="9999999.99"
-PRIVATE PicBHD:="999999999.99"
-PRIVATE PicKol:="999999.999"
-
 public gPotpis:="N"
 PicUN:="999999999.99"
 private fK1:=fk2:=fk3:=fk4:="N"
+
 O_PARAMS
+
 Private cSection:="1",cHistory:=" ",aHistory:={}
+
 Params1()
 RPar("k1",@fk1)
 RPar("k2",@fk2)
 RPar("k3",@fk3)
 RPar("k4",@fk4)
 RPar("po",@gPotpis)
-select params; use
+select params
+use
 
-if gNW$"DR"
-  mat_knjizi_nalog()
-else
- private opc[4],Izbor:=1
- Opc[1]:="1. knjizenje mat_naloga    "
- Opc[2]:="2. stampa mat_naloga"
- Opc[3]:="3. azuriranje podataka"
- Opc[4]:="4. kurs "+KursLis
- h[1]:=h[2]:=h[3]:=h[4]:=""
+// unos naloga
+mat_unos_naloga()
 
- do while .t.
- Izbor:=menu("knjiz",opc,Izbor,.f.)
-
-   do case
-     case izbor == 0
-         exit
-     case izbor == 1
-         mat_knjizi_nalog()
-     case izbor == 2
-         mat_st_nalog()
-     case izbor == 3
-         azur_mat()
-     case izbor == 4
-       if KursLis=="1"  // prva vrijednost
-         KursLis:="2"
-       else
-         KursLis:="1"
-       endif
-       opc[4]:="4. kurs "+KursLis
-   endcase
-
- enddo
-endif
-
-closeret
+close all
+return
 
 
-*******************************
-*******************************
-Function mat_knjizi_nalog()
+
+// -----------------------------------------
+// unos naloga
+// -----------------------------------------
+function mat_unos_naloga()
 
 mat_o_edit()
 
@@ -96,14 +74,10 @@ ELSE
  AADD(ImeKol,{"Datum",               {|| DatDok                       }, "datdok" })
 ENDIF
 
-       //   {"Datum",      {|| DatDok  } } ,;
-       //   {"D/P",           {|| D_P     }, "D_P" } ,;
-       //   {"Tip Dok",       {|| IdTipDok}, "IdTipDok" } ,;
-       //   {"Br.Dok",        {|| BrDok   }, "BrDok" } ,;
-       //   {"Zaduz.",        {|| IdZaduz } } ,;
-       //   {"Partner",       {|| IdPartner} } ,;
-
-Kol:={}; for i:=1 to LEN(ImeKol); AADD(Kol,i); next
+Kol:={}
+for i := 1 to LEN(ImeKol)
+    AADD(Kol,i)
+next
 
 Box(, MAXROWS()-4, MAXCOLS()-3)
 
@@ -138,17 +112,13 @@ O_MAT_NALOG
 O_TARIFA
 
 select mat_pripr
-#ifndef C50
 set order to tag "1"
-#else
-set order to 1
-#endif
 go top
+
 return
 
-******************************************************
-* ulaz _IdFirma, ...., nRedBr (str(_RBr))
-******************************************************
+
+
 static function EditPRIPR(fNovi)
    private nKurs:=0
    if fnovi .and. nRbr==1; _idfirma:=gFirma; endif
@@ -202,9 +172,9 @@ static function EditPRIPR(fNovi)
        VALID {|| nKurs:=Kurs(_DatKurs),qqout(" "+ValDomaca()+"/"+ValPomocna(),transform(nKurs,PicUn)),.t.}
    endif
 
-   if gkonto<>"D"
-    @  m_x+13,m_y+2  SAY IF(gSeks=="D","Predmet ","Konto   ") get _IdKonto ;
-      valid {|| nKurs:=Kurs(_DatKurs), P_Konto(@_IdKonto),setpos(m_x+13,m_y+25),qqout(left(konto->naz,45)),.t.}
+   if gkonto <> "D"
+        @  m_x+13,m_y+2  SAY IF( gSeks=="D", "Predmet ", "Konto   ") GET _IdKonto ;
+           VALID {|| nKurs:=Kurs(_DatKurs), P_Konto(@_IdKonto),setpos(m_x+13,m_y+25),qqout(left(konto->naz,45)),.t.}
    endif
 
    @  m_x+14,m_y+2  SAY "Artikal " get _IdRoba pict "@!" ;
@@ -326,31 +296,40 @@ RETURN (nFin/nMat)
 
 static function V_Roba(fnovi)
 
-P_Roba(@_IdRoba,14,25)
-if fnovi .and. _idvn $ gNalPr  // predlozi izlaz iz prod
-      _u_i:="2"
+P_Roba( @_IdRoba, 14, 25 )
+
+if fnovi .and. _idvn $ gNalPr  
+    // predlozi izlaz iz prod
+    _u_i := "2"
 endif
-if gKonto=="D"
-  _Idkonto:=roba->idkonto
-  nKurs:=Kurs(_DatKurs)
-   @  m_x+13,m_y+2  SAY "Konto:   "; ?? _IdKonto
+
+if gKonto == "D"
+    _Idkonto := roba->idkonto
+    nKurs := Kurs( _DatKurs )
+    @  m_x+13,m_y+2  SAY "Konto:   "
+    ?? _IdKonto
 endif
+
 @  m_x+15,m_y+25  SAY "Jed.mjere:"
 @  m_x+15,m_y+36  SAY ROBA->jmj COLOR INVERT
+
 return .t.
 
 
 function V_UI()
 
-if !(_U_I $ "12");  return .f.; endif
+if !(_U_I $ "12")
+    return .f.
+endif
 
-_D_P:=_U_I
+_D_P := _U_I
 
 if _U_I=="1"
-      @ m_x+16,m_y+25 SAY "ULAZ   "
+      @ m_x + 16, m_y + 25 SAY "ULAZ   "
 else
-      @ m_x+16,m_y+25 SAY "IZLAZ  "
+      @ m_x + 16, m_y + 25 SAY "IZLAZ  "
 endif
+
 return .t.
 
 
@@ -943,7 +922,7 @@ return nil
 
 
 
-function OsvCijSif()
+static function OsvCijSif()
 local nArr:=SELECT(),cPom1:=" ",cPom2:=" "
 local _vars := hb_hash()
 

@@ -169,6 +169,9 @@ if roba->(fieldpos("ZANIV2"))<>0
 	AADD (ImeKol,{ padc("Nova cijena/2", 20 ), {|| transform(zaniv2,"999999.999")}, "zaniv2", NIL, NIL,NIL, gPicCDEM  })
 endif
 
+if roba->(fieldpos("IDKONTO"))<>0
+	AADD (ImeKol,{ "Id konto",{|| idkonto}, "idkonto", {|| .t. }, {|| P_Konto(@widkonto) }   })
+endif
 
 if roba->(fieldpos("IDTARIFA2"))<>0
 	AADD (ImeKol,{ "Tarifa R2",{|| IdTarifa2}, "IdTarifa2", {|| .t. }, {|| set_tar_rs(@wIdTarifa2, wIdTarifa) .or. P_Tarifa(@wIdTarifa2) }   })

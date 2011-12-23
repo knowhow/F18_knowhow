@@ -1082,6 +1082,7 @@ return .t.
 function set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
 local nTArea := SELECT()
 local lFill := .f.
+local _vars
 
 select roba
 go top
@@ -1090,28 +1091,28 @@ seek cIdRoba
 if FOUND()	
 
 	// provjeri da li je cijena ista ?
-
-	if cIdTipDok $ "#10#01#12#20#" .and. nCijena <> 0
+    _vars := dbf_get_rec()
+	
+    if cIdTipDok $ "#10#01#12#20#" .and. nCijena <> 0
 		if field->vpc <> nCijena .and. ;
 			Pitanje(, "Postaviti novu VPC u sifranik ?", "N") == "D"
-			replace field->vpc with nCijena
+			_vars["vpc"] := nCijena
 			lFill := .t.
 		endif
 	elseif cIdTipDok $ "#11#13#" .and. nCijena <> 0
 		if field->mpc <> nCijena .and. ;
 			Pitanje(,"Postaviti novu MPC u sifrarnik ?", "N") == "D"
-			replace field->mpc with nCijena
+			_vars["mpc"] := nCijena
 			lFill := .t.
 		endif
 	endif
 	
 	if gRabIzRobe == "D" .and. lFill == .t. .and. nRabat <> 0 .and. ;
 		nRabat <> field->n1
-		replace field->n1 with nRabat
+		_vars["n1"] := nRabat
 	endif
 
     if lFill == .t.
-		_vars := dbf_get_rec()
 		update_rec_server_and_dbf(nil, _vars)
 	endif
 
@@ -1119,6 +1120,7 @@ endif
 
 select (nTArea)
 return
+
 
 
 /*! \fn IniVars()

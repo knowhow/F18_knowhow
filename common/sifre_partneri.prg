@@ -141,66 +141,6 @@ if partn->(fieldpos("_kup")) <> 0
 endif
 
 
-/*
-local nTArea
-private ImeKol
-private Kol
-
-ImeKol:={}
-Kol:={}
-
-nTArea := SELECT()
-O_PARTN
-
-AADD(ImeKol,{PADR("ID",6) , {|| id},"id",{|| .t.},{|| vpsifra(wid)}})
-AADD(ImeKol,{PADR("Naziv",25) , {|| PADR(naz,25) } , "naz"})
-if IzFmkIni("Partn","Naziv2","N", SIFPATH)=="D"
-	AADD(ImeKol,{PADR("Naziv2",25) , {|| naz2},"naz2"})
-endif
-AADD(ImeKol,{PADR("PTT",5) , {|| PTT},"ptt"})
-AADD(ImeKol,{PADR("Mjesto",16) , {|| MJESTO},"mjesto"})
-AADD(ImeKol,{PADR("Adresa",24) , {|| ADRESA},"adresa"})
-
-AADD(ImeKol,{PADR("Ziro R ",22),{|| ZIROR},"ziror"})
-
-if partn->(fieldpos("DZIROR")) <> 0
-	AADD(ImeKol,{padr("Dev ZR",22 ),{|| DZIROR},"Dziror"})
-endif
-
-AADD(Imekol,{PADR("Telefon",12),{|| TELEFON},"telefon"})
-
-if partn->(fieldpos("FAX"))<>0
-	AADD(ImeKol,{padr("Fax", 12 ),{|| fax},"fax"})
-endif
-
-if partn->(fieldpos("MOBTEL"))<>0
-	AADD(ImeKol,{padr("MobTel", 20 ),{|| mobtel},"mobtel"})
-endif
-
-if partn->(fieldpos("IDOPS"))<>0 .and. (F_OPS)->(USED())
-	AADD (ImeKol,{padr("Opcina", 20 ),{|| idops},"idops",{|| .t.},{||P_Ops(@widops)}})
-endif
-
-if partn->(fieldpos("BRLK"))<>0
-	AADD(ImeKol,{padr("Broj LK",20 ), {|| mobtel},"brlk"})
-endif
-
-if partn->(fieldpos("JMBG"))<>0
-	AADD(ImeKol,{padr("JMBG",20 ), {|| mobtel},"jmbg"})
-endif
-
-if partn->(fieldpos("FIDBR"))<>0
-	AADD(ImeKol,{padr("Partn Firma ID",20 ),{|| mobtel},"fidbr"})
-endif
-
-FOR i := 1 TO LEN(ImeKol)
-	AADD(Kol, i)
-NEXT
-
-select (F_SIFK)
-*/
-
-
 FOR i := 1 TO LEN(ImeKol)
 	AADD(Kol, i)
 NEXT

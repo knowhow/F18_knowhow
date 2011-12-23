@@ -334,3 +334,82 @@ lZasticena := lZasticena .or.  (PADR(cIdTarifa, 6) == PADR("CIGA05",6))
 
 return lZasticena
 
+
+
+// ------------------------------------
+// setuje u sifk parametre GR1, GR2
+// ------------------------------------
+function set_sifk_roba_group()
+
+local _seek
+local _naziv
+local _id
+local _rec
+
+SELECT (F_SIFK)
+
+if !used()
+	O_SIFK
+endif
+
+SET ORDER TO TAG "ID"
+GO TOP
+// id + SORT + naz
+
+_id := PADR( "ROBA", SIFK_LEN_DBF ) 
+_naziv := PADR( "Grupa 1", LEN(field->naz) )
+_seek :=  _id + "01" + _naziv
+
+SEEK _seek   
+
+// dodaj grupa 1 ako ne postoji
+
+if !FOUND()
+    
+    APPEND BLANK
+    _rec := dbf_get_rec()
+    _rec["id"] := _id
+    _rec["naz"] := _naziv
+    _rec["oznaka"] := "GR1"
+    _rec["sort"] := "01"
+    _rec["tip"] := "C"
+    _rec["duzina"] := 20
+    _rec["veza"] := "1"
+
+    if !update_rec_server_and_dbf("sifk", _rec) 
+        delete_with_rlock()
+    endif
+
+endif
+
+// dodaj grupa 2 ako ne postoji
+GO TOP
+
+_id := PADR( "ROBA", SIFK_LEN_DBF ) 
+_naziv := PADR( "Grupa 2", LEN(field->naz) )
+_seek :=  _id + "02" + _naziv
+
+SEEK _seek   
+
+if !FOUND()
+    
+    APPEND BLANK
+    _rec := dbf_get_rec()
+    _rec["id"] := _id
+    _rec["naz"] := _naziv
+    _rec["oznaka"] := "GR2"
+    _rec["sort"] := "02"
+    _rec["tip"] := "C"
+    _rec["duzina"] := 20
+    _rec["veza"] := "1"
+
+    if !update_rec_server_and_dbf("sifk", _rec) 
+        delete_with_rlock()
+    endif
+
+endif
+
+return .t.
+
+
+

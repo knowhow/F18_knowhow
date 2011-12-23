@@ -450,6 +450,8 @@ endif
 select (nSelect)
 
 return lRet
+
+
 // ----------------------------
 // ----------------------------
 function set_sifk_partn_bank()

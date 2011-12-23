@@ -98,6 +98,9 @@ if used()
     endif
 endif
 
+// dodaj polja grupe u sifrarnik sifk
+set_sifk_roba_group()
+
 // TARIFA
 if !file(f18_ime_dbf("tarifa"))
         aDbf:={}

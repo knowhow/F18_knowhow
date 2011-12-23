@@ -219,7 +219,7 @@ RETURN DE_CONT
 // ----------------------------------------------
 function P_Firma(cId, dx, dy)
 
-return P_Partneri(cId, dx, dy)
+return P_Partneri(@cId, @dx, @dy)
 
 
 // -------------------------------------

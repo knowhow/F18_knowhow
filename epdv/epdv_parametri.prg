@@ -38,6 +38,7 @@ static gUlPdvKp := "1"
 // -----------------------------------
 // -----------------------------------
 function epdv_parametri()
+ed_g_params()
 return
 
 

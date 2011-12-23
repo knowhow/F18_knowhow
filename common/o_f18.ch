@@ -323,7 +323,7 @@
 #xcommand O_MAT_PANAL    =>  select(F_MAT_PANAL) ; my_usex ( "mat_panal") ; set order to tag "1"
 #xcommand O_MAT_PANAL2   =>  select(F_MAT_PANAL) ; my_usex ( "mat_anal", "mat_panal"); set order to tag "1"
 #xcommand O_MAT_PSINT    =>  select(F_MAT_PSINT) ; my_usex ( "mat_psint" ) ; set order to tag "1"
-#xcommand O_MAT_INVENT   =>  select(F_MAT_INVENT); my_use( "mat_invent" ); set order to tag "1"
+#xcommand O_MAT_INVENT   =>  select(F_MAT_INVENT); my_usex ( "mat_invent" ); set order to tag "1"
 #xcommand O_KARKON       =>  select(F_KARKON); my_use ( "karkon" ); set order to tag "ID"
 
 

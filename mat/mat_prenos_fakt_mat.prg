@@ -14,46 +14,22 @@
 
 
 function mat_prenos_fakmat()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
 
-O_PARAMS
-// select 99; use (PRIVPATH+"params") index (PRIVPATH+"parai1")
-private cSection:="T",cHistory:=" "; aHistory:={}
+AADD( _opc, "1. prenos fakt -> mat      " )
+AADD( _opcexe, { || prenos() } )
+AADD( _opc, "2. parametri" )
+AADD( _opcexe, { || parametri_prenosa() } )
 
-private gDirFakt:="",gVN:=gVD:="41"
-RPar("df",@gDirFakt)
-RPar("vn",@gVN)
-if empty(gDirFakt)
-  gDirFakt:=strtran(cDirRad,"MAT","FAKT")+"\"
-  WPar("df",gDirFakt)
-endif
-select 99; use
-
-private opc[2]
-Opc[1]:="1. prenos fakt -> mat"
-Opc[2]:="2. parametri"
-h[1]:=h[2]:=""
-
-
-Izbor:=1
-do while .t.
-Izbor:=menu("osn",opc,Izbor,.f.)
-
-   do case
-     case Izbor==0
-       exit
-     case izbor == 1
-         Prenos()
-     case izbor == 2
-         ParamT()
-   endcase
-
-enddo
+f18_menu( "osn", .f., _izbor, _opc, _opcexe ) 
 
 return
 
-************************************
-************************************
-function paramT()
+
+
+static function parametri_prenosa()
 
 O_PARAMS
 // select 99; use (PRIVPATH+"params") index (PRIVPATH+"parai1")
@@ -75,10 +51,8 @@ select 99; use
 return
 
 
-**************************************
-**************************************
-function Prenos()
-
+static function prenos()
+local gVn := "10"
 local cIdFirma:=gFirma,cIdTipDok:="11",cBrdok:=space(8),cBrMat:="",;
       cIdZaduz:=space(6)
 
@@ -91,23 +65,14 @@ O_SIFK
 O_KONTO
 O_PARTN
 O_VALUTE
+O_FAKT
 
-#ifndef C50
-use  (gDirFakt+"FAKT") new; set order to tag "1"
-#else
-use  (gDirFakt+"FAKT")   index (gDirFakt+"fakti1") new
-#endif
-
-dDatMat:=date()
-cIdKonto:=cIdKonto2:=space(7)
-cIdZaduz2:=space(6)
+dDatMat := date()
+cIdKonto := cIdKonto2 := space(7)
+cIdZaduz2 := space(6)
 
 select mat_nalog
-#ifndef C50
 set order to tag "1"
-#else
-set order to 1
-#endif
 seek cidfirma+gVN+"X"
 skip -1
 if idvn<>gVN
@@ -225,14 +190,13 @@ do while .t.
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
-     // cbrmat:=padl(alltrim( str(val(cbrmat)+1) ),4,"0")
      inkey(4)
      @ m_x+8,m_y+2 SAY space(30)
   endif
 
 enddo
 Boxc()
-closeret
+close all
 return
 
 

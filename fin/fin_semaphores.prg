@@ -32,6 +32,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idvn, brnal, rbr"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.fin_suban"
 
@@ -51,13 +52,18 @@ _count := table_count( _tbl, "true" )
 SELECT F_SUBAN
 my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", ;
+        "opis", "idpartner", "idkonto", "d_p", "iznosbhd", "iznosdem" }
+
+_sql_fields := sql_fields( _fields )
+
 for _offset := 0 to _count STEP _step
 
-  _qry :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd, iznosdem FROM " + _tbl  
+  _qry := "SELECT " + _sql_fields + " FROM " + _tbl
 
   if algoritam == "DATE"
     _dat :=  get_dat_from_semaphore( "fin_suban" )
-    _qry += " WHERE datdok>=" + _sql_quote(_dat)
+    _qry += " WHERE datdok >=" + _sql_quote(_dat)
     _key_block := { || field->datdok }
   endif
 
@@ -142,29 +148,27 @@ for _offset := 0 to _count STEP _step
   _counter := 1
 
   DO WHILE !_qry_obj:Eof()
-    append blank
-    //cQuery :=  "SELECT idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartn, idkonto, d_p, iznosbhd FROM fmk.fin_suban"  
-    replace idfirma with _qry_obj:FieldGet(1), ;
-            idvn with _qry_obj:FieldGet(2), ;
-            brnal with _qry_obj:FieldGet(3), ;
-            rbr with _qry_obj:FieldGet(4), ;
-            datdok with _qry_obj:FieldGet(5), ;
-            datval with _qry_obj:FieldGet(6), ;
-            opis with _qry_obj:FieldGet(7), ;
-            idpartner with _qry_obj:FieldGet(8), ;
-            idkonto with _qry_obj:FieldGet(9), ;
-            d_p with _qry_obj:FieldGet(10), ;
-            iznosbhd with _qry_obj:FieldGet(11), ;
-            iznosdem with _qry_obj:FieldGet(12)
+    
+  append blank
+   
+  for _i := 1 to LEN(_fields)
+    _fld := FIELDBLOCK(_fields[_i])
+    if VALTYPE(EVAL(_fld)) $ "CM"
+        EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+    else
+        EVAL(_fld, _qry_obj:FieldGet(_i))
+    endif
+  next 
+  
+  _qry_obj:Skip()
 
-    _qry_obj:Skip()
+  _counter++
 
-    _counter++
-
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
-  ENDDO
+  if _counter % 5000 == 0
+      @ _x + 4, _y + 2 SAY SECONDS() - _seconds
+  endif 
+  
+ ENDDO
 
 
 next
@@ -266,6 +270,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idvn, brnal, rbr"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.fin_anal"
 
@@ -285,9 +290,14 @@ _count := table_count( _tbl, "true" )
 SELECT F_ANAL
 my_usex ("anal", "fin_anal", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idvn", "brnal", "rbr", "datnal", "idkonto", ;
+        "dugbhd", "potbhd", "dugdem", "potdem" }
+
+_sql_fields := sql_fields( _fields )
+
 for _offset := 0 to _count STEP _step
 
-  _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl  
 
   if algoritam == "DATE"
     _dat :=  get_dat_from_semaphore( "fin_anal" )
@@ -377,18 +387,14 @@ for _offset := 0 to _count STEP _step
 
   DO WHILE !_qry_obj:Eof()
     append blank
-    // qry :=  "idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem"  
-    replace idfirma with _qry_obj:FieldGet(1), ;
-            idvn with _qry_obj:FieldGet(2), ;
-            brnal with _qry_obj:FieldGet(3), ;
-            rbr with _qry_obj:FieldGet(4), ;
-            datnal with _qry_obj:FieldGet(5), ;
-            idkonto with _qry_obj:FieldGet(6), ;
-            dugbhd with _qry_obj:FieldGet(7), ;
-            potbhd with _qry_obj:FieldGet(8), ;
-            dugdem with _qry_obj:FieldGet(9), ;
-            potdem with _qry_obj:FieldGet(10)
-
+    for _i := 1 to LEN(_fields)
+        _fld := FIELDBLOCK(_fields[_i])
+        if VALTYPE(EVAL(_fld)) $ "CM"
+            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+        else
+            EVAL(_fld, _qry_obj:FieldGet(_i))
+        endif
+    next 
     _qry_obj:Skip()
 
     _counter++
@@ -490,6 +496,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idvn, brnal, rbr"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.fin_sint"
 
@@ -509,9 +516,14 @@ _count := table_count( _tbl, "true" )
 SELECT F_SINT
 my_usex ("sint", "fin_sint", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idvn", "brnal", "rbr", "datnal", ;
+        "idkonto", "dugbhd", "potbhd", "dugdem", "potdem" }
+
+_sql_fields := sql_fields( _fields )
+
 for _offset := 0 to _count STEP _step
 
-  _qry :=  "SELECT idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl  
 
   if algoritam == "DATE"
     _dat :=  get_dat_from_semaphore( "fin_sint" )
@@ -601,18 +613,14 @@ for _offset := 0 to _count STEP _step
 
   DO WHILE !_qry_obj:Eof()
     append blank
-    // qry :=  "idfirma, idvn, brnal, rbr, datnal, idkonto, dugbhd, potbhd, dugdem, potdem"  
-    replace idfirma with _qry_obj:FieldGet(1), ;
-            idvn with _qry_obj:FieldGet(2), ;
-            brnal with _qry_obj:FieldGet(3), ;
-            rbr with _qry_obj:FieldGet(4), ;
-            datnal with _qry_obj:FieldGet(5), ;
-            idkonto with _qry_obj:FieldGet(6), ;
-            dugbhd with _qry_obj:FieldGet(7), ;
-            potbhd with _qry_obj:FieldGet(8), ;
-            dugdem with _qry_obj:FieldGet(9), ;
-            potdem with _qry_obj:FieldGet(10)
-
+    for _i := 1 to LEN(_fields)
+        _fld := FIELDBLOCK(_fields[_i])
+        if VALTYPE(EVAL(_fld)) $ "CM"
+            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+        else
+            EVAL(_fld, _qry_obj:FieldGet(_i))
+        endif
+    next 
     _qry_obj:Skip()
 
     _counter++
@@ -621,7 +629,6 @@ for _offset := 0 to _count STEP _step
         @ _x + 4, _y + 2 SAY SECONDS() - _seconds
     endif 
   ENDDO
-
 
 next
 
@@ -715,6 +722,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idvn, brnal"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.fin_nalog"
 
@@ -734,9 +742,14 @@ _count := table_count( _tbl, "true" )
 SELECT F_NALOG
 my_usex ("nalog", "fin_nalog", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idvn", "brnal", "datnal", "dugbhd", ;
+        "potbhd", "dugdem", "potdem" }
+
+_sql_fields := sql_fields( _fields )
+
 for _offset := 0 to _count STEP _step
 
-  _qry :=  "SELECT idfirma, idvn, brnal, datnal, dugbhd, potbhd, dugdem, potdem FROM " + _tbl  
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl  
 
   if algoritam == "DATE"
     _dat :=  get_dat_from_semaphore( "fin_nalog" )
@@ -826,16 +839,14 @@ for _offset := 0 to _count STEP _step
 
   DO WHILE !_qry_obj:Eof()
     append blank
-    // qry :=  "idfirma, idvn, brnal, datnal, dugbhd, potbhd, dugdem, potdem"  
-    replace idfirma with _qry_obj:FieldGet(1), ;
-            idvn with _qry_obj:FieldGet(2), ;
-            brnal with _qry_obj:FieldGet(3), ;
-            datnal with _qry_obj:FieldGet(4), ;
-            dugbhd with _qry_obj:FieldGet(5), ;
-            potbhd with _qry_obj:FieldGet(6), ;
-            dugdem with _qry_obj:FieldGet(7), ;
-            potdem with _qry_obj:FieldGet(8)
-
+    for _i := 1 to LEN(_fields)
+        _fld := FIELDBLOCK(_fields[_i])
+        if VALTYPE(EVAL(_fld)) $ "CM"
+            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+        else
+            EVAL(_fld, _qry_obj:FieldGet(_i))
+        endif
+    next 
     _qry_obj:Skip()
 
     _counter++
@@ -854,8 +865,6 @@ if (gDebug > 5)
     log_write("fin_nalog synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t.
 
 

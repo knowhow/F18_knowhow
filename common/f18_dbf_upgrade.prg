@@ -32,16 +32,15 @@ _new_dbf_ver := get_dbf_ver( F18_DBF_VER_MAJOR, F18_DBF_VER_MINOR, F18_DBF_VER_P
 log_write("current dbf version:" + STR(_current_dbf_ver))
 log_write("    F18 dbf version:" + STR(_new_dbf_ver))
 
-// 0.1.0
-if _current_dbf_ver < 0100
-   // modstru({"*fin_budzet", "C EKKATEG C 5 0  IDKONTO C 7 0"})
-endif
-
 // 0.2.1
 if _current_dbf_ver < 0201
    modstru({"*roba", "A IDKONTO C 7 0"})
 endif
 
+// 0.3.0
+if _current_dbf_ver < 0300
+   modstru({"*fin_suban", "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
+endif
 
 _ini_params["major"] := F18_DBF_VER_MAJOR
 _ini_params["minor"] := F18_DBF_VER_MINOR

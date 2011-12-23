@@ -21,13 +21,8 @@ function ParObracun()
 local nX := 1
 local nPadL := 20
 
-O_LD_RJ
-O_PARAMS
+Box(, 4 +IF(lViseObr, 1, 0), 50)
 
-select ld_rj
-
-Box(, 4 + IIF(lViseObr, 1, 0), 50)
-	
 	set cursor on
 	
 	@ m_x + nX, m_y + 2 SAY PADL( "Radna jedinica", nPadL ) GET gRJ ;
@@ -62,6 +57,7 @@ BoxC()
 
 if (LASTKEY()<>K_ESC)
 
+    O_PARAMS
 	select params
  	
 	Wpar("rj",@gRJ)

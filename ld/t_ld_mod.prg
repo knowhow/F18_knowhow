@@ -84,8 +84,7 @@ SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
 
 ::chk_db()
-
-use
+close all
 
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
 @ 4,5 SAY ""

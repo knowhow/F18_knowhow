@@ -53,7 +53,8 @@ SELECT F_SUBAN
 my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
 _fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", ;
-        "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem" }
+        "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", ;
+        "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond" }
 
 _sql_fields := sql_fields( _fields )
 

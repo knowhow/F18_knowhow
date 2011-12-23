@@ -32,6 +32,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idvd, brdok, rbr, mkonto, pkonto"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.kalk_kalk"
 
@@ -53,16 +54,22 @@ _count := table_count( _tbl, "true" )
 SELECT F_KALK
 my_usex ("kalk", "kalk_kalk", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idvd", "brdok", "rbr", "datdok", "brfaktp", ;
+        "datfaktp", "idroba", "idkonto", "idkonto2", "idzaduz", ;
+		"idzaduz2", "idpartner", "datkurs", "kolicina", "gkolicina", "gkolicin2", "fcj", ;
+		"fcj2", "fcj3", "trabat", "rabat", "tprevoz", "prevoz", "tprevoz2", "prevoz2", ;
+         "tbanktr", "banktr", ;
+		"tspedtr", "spedtr", "tcardaz", "cardaz", "tzavtr", "zavtr", "nc", "tmarza", "marza", ;
+        "vpc", "rabatv", ;
+		"vpcsap", "tmarza2", "marza2", "mpc", "idtarifa", "mpcsapp", "mkonto", "pkonto", ;
+        "roktr", "mu_i", "pu_i", ;
+		"error", "podbr" } 
+ 
+_sql_fields := sql_fields( _fields )
+
 for _offset := 0 to _count STEP _step 
 
-  _qry :=  "SELECT " + ;
-		"idfirma, idvd, brdok, rbr, datdok, brfaktp, datfaktp, idroba, idkonto, idkonto2, idzaduz, " + ;
-		"idzaduz2, idpartner, datkurs, kolicina, gkolicina, gkolicin2, fcj, " + ;
-		"fcj2, fcj3, trabat, rabat, tprevoz, prevoz, tprevoz2, prevoz2, tbanktr, banktr, " + ;
-		"tspedtr, spedtr, tcardaz, cardaz, tzavtr, zavtr, nc, tmarza, marza, vpc, rabatv, " + ;
-		"vpcsap, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, " + ;
-		"error, podbr " + ;
-		"FROM " +	_tbl 
+  _qry :=  "SELECT " + _sql_fields + " FROM " +	_tbl 
   
   if algoritam == "DATE"
     _dat := get_dat_from_semaphore("kalk_kalk")
@@ -153,71 +160,17 @@ for _offset := 0 to _count STEP _step
   _counter := 1
 
   DO WHILE !_qry_obj:Eof()
-    
-	append blank
-
-	/*
-	"idfirma, idvd, brdok, rbr, datdok, brfaktp, datfaktp, idroba, idkonto, idkonto2, idzaduz, "
-	"idzaduz2, idpartner, datkurs, kolicina, gkolicina, gkolicin2, fcj, " 
-	"fcj2, fcj3, trabat, rabat, tprevoz, prevoz, tprevoz2, prevoz2, tbanktr, banktr, " 
-	"tspedtr, spedtr, tcardaz, cardaz, tzavtr, zavtr, nc, tmarza, marza, vpc, rabatv, "
-	"vpcsap, tmarza2, marza2, mpc, idtarifa, mpcsapp, mkonto, pkonto, roktr, mu_i, pu_i, "
-	"error, podbr " + ;
-	*/
-
-    replace idfirma with _qry_obj:FieldGet(1), ;
-    		idvd with _qry_obj:FieldGet(2), ;
-    		brdok with _qry_obj:FieldGet(3), ;
-    		rbr with _qry_obj:FieldGet(4), ;
-    		datdok with _qry_obj:FieldGet(5), ;
-    		brfaktp with _qry_obj:FieldGet(6), ;
-    		datfaktp with _qry_obj:FieldGet(7), ;
-    		idroba with _qry_obj:FieldGet(8), ;
-    		idkonto with _qry_obj:FieldGet(9), ;
-    		idkonto2 with _qry_obj:FieldGet(10), ;
-    		idzaduz with _qry_obj:FieldGet(11), ;
-    		idzaduz2 with _qry_obj:FieldGet(12), ;
-    		idpartner with _qry_obj:FieldGet(13), ;
-    		datkurs with _qry_obj:FieldGet(14), ;
-    		kolicina with _qry_obj:FieldGet(15), ;
-    		gkolicina with _qry_obj:FieldGet(16), ;
-    		gkolicin2 with _qry_obj:FieldGet(17), ;
-    		fcj with _qry_obj:FieldGet(18), ;
-    		fcj2 with _qry_obj:FieldGet(19), ;
-    		fcj3 with _qry_obj:FieldGet(20), ;
-    		trabat with _qry_obj:FieldGet(21), ;
-    		rabat with _qry_obj:FieldGet(22), ;
-    		tprevoz with _qry_obj:FieldGet(23), ;
-    		prevoz with _qry_obj:FieldGet(24), ;
-    		tprevoz2 with _qry_obj:FieldGet(25), ;
-    		prevoz2 with _qry_obj:FieldGet(26), ;
-    		tbanktr with _qry_obj:FieldGet(27), ;
-    		banktr with _qry_obj:FieldGet(28), ;
-    		tspedtr with _qry_obj:FieldGet(29), ;
-    		spedtr with _qry_obj:FieldGet(30), ;
-    		tcardaz with _qry_obj:FieldGet(31), ;
-    		cardaz with _qry_obj:FieldGet(32), ;
-    		tzavtr with _qry_obj:FieldGet(33), ;
-    		zavtr with _qry_obj:FieldGet(34), ;
-    		nc with _qry_obj:FieldGet(35), ;
-    		tmarza with _qry_obj:FieldGet(36), ;
-    		marza with _qry_obj:FieldGet(37), ;
-    		vpc with _qry_obj:FieldGet(38), ;
-    		rabatv with _qry_obj:FieldGet(39), ;
-    		vpcsap with _qry_obj:FieldGet(40), ;
-    		tmarza2 with _qry_obj:FieldGet(41), ;
-    		marza2 with _qry_obj:FieldGet(42), ;
-    		mpc with _qry_obj:FieldGet(43), ;
-    		idtarifa with _qry_obj:FieldGet(44), ;
-    		mpcsapp with _qry_obj:FieldGet(45), ;
-    		mkonto with _qry_obj:FieldGet(46), ;
-    		pkonto with _qry_obj:FieldGet(47), ;
-    		roktr with _qry_obj:FieldGet(48), ;
-    		mu_i with _qry_obj:FieldGet(49), ;
-    		pu_i with _qry_obj:FieldGet(50), ;
-    		error with _qry_obj:FieldGet(51), ;
-    		podbr with _qry_obj:FieldGet(52)
-
+        
+    append blank
+    for _i := 1 to LEN(_fields)
+        _fld := FIELDBLOCK(_fields[_i])
+        if VALTYPE(EVAL(_fld)) $ "CM"
+            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+        else
+            EVAL(_fld, _qry_obj:FieldGet(_i))
+        endif
+    next 
+ 
     _qry_obj:Skip()
 
     _counter++
@@ -367,6 +320,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idvd, brdok"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.kalk_doks"
 
@@ -386,13 +340,14 @@ _count := table_count( _tbl, "true" )
 SELECT F_KALK_DOKS
 my_usex ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idvd", "brdok", "datdok", "brfaktp", "idpartner", "idzaduz", "idzaduz2",  ;
+		"pkonto", "mkonto", "nv", "vpv", "rabat", "mpv", "podbr", "sifra" }
+		
+_sql_fields := sql_fields( _fields )
+
 for _offset := 0 to _count STEP _step
 
-  _qry :=  "SELECT " + ;
-		"idfirma, idvd, brdok, datdok, brfaktp, idpartner, idzaduz, idzaduz2, " + ;
-		"pkonto, mkonto, nv, vpv, rabat, mpv, podbr, sifra " + ;
-		"FROM " + ;
-		"fmk.kalk_doks"  
+  _qry :=  "SELECT " + _sql_fields + " FROM " + "fmk.kalk_doks"  
 
   if algoritam == "DATE"
     _dat = get_dat_from_semaphore( "kalk_doks" )
@@ -484,29 +439,14 @@ for _offset := 0 to _count STEP _step
 
   DO WHILE !_qry_obj:Eof()
     append blank
-
-	/*
-	"idfirma, idvd, brdok, datdok, brfaktp, idpartner, idzaduz, idzaduz2" + ;
-	"pkonto, mkonto, nv, vpv, rabat, mpv, podbr, sifra ) " + ;
-    */
-    
-	replace idfirma with _qry_obj:FieldGet(1), ;
-    		idvd with _qry_obj:FieldGet(2), ;
-    		brdok with _qry_obj:FieldGet(3), ;
-    		datdok with _qry_obj:FieldGet(4), ;
-    		brfaktp with _qry_obj:FieldGet(5), ;
-    		idpartner with _qry_obj:FieldGet(6), ;
-    		idzaduz with _qry_obj:FieldGet(7), ;
-    		idzaduz2 with _qry_obj:FieldGet(8), ;
-    		pkonto with _qry_obj:FieldGet(9), ;
-    		mkonto with _qry_obj:FieldGet(10), ;
-    		nv with _qry_obj:FieldGet(11), ;
-    		vpv with _qry_obj:FieldGet(12), ;
-    		rabat with _qry_obj:FieldGet(13), ;
-    		mpv with _qry_obj:FieldGet(14), ;
-    		podbr with _qry_obj:FieldGet(15)
-    		//sifra with _qry_obj:FieldGet(16)
-
+    for _i := 1 to LEN(_fields)
+        _fld := FIELDBLOCK(_fields[_i])
+        if VALTYPE(EVAL(_fld)) $ "CM"
+            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+        else
+            EVAL(_fld, _qry_obj:FieldGet(_i))
+        endif
+    next 
     _qry_obj:Skip()
 
     _counter++

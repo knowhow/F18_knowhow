@@ -581,8 +581,8 @@ private kol := {}
 O_LD_RJ
 select (nArr)
 
-AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
-AADD(ImeKol, { padr("Naziv",35), {||  naz}, "naz" } )
+AADD(ImeKol, { padr("Id", 2),      {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
+AADD(ImeKol, { padr("Naziv", 35), {||  naz}, "naz" } )
 
 if ld_rj->(FieldPos("TIPRADA")) <> 0
 	AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada"  } )
@@ -591,11 +591,11 @@ if ld_rj->(FieldPos("OPOR")) <> 0
 	AADD(ImeKol, { "oporeziv" , {||  opor }, "opor"  } )
 endif
 
-for i:=1 to LEN(ImeKol)
+for i := 1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
-return PostojiSifra( F_LD_RJ, 1, 10, 55, Lokal("Lista radnih jedinica"), @cId, dx, dy)
+return PostojiSifra( F_LD_RJ, 1, MAXROWS()-15, 60, Lokal("Lista radnih jedinica"), @cId, dx, dy)
 
 
 

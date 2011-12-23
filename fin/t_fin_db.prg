@@ -436,7 +436,9 @@ AADD(aDBf,{ "K3"               , "C" ,   2 ,  0 })
 AADD(aDBf,{ "K4"               , "C" ,   2 ,  0 })
 AADD(aDBf,{ "M1"               , "C" ,   1 ,  0 })
 AADD(aDBf,{ "M2"               , "C" ,   1 ,  0 })
-
+AADD(aDBf,{ "IDRJ"             , "C" ,   6 ,  0 })
+AADD(aDBf,{ "FUNK"             , "C" ,   5 ,  0 })
+AADD(aDBf,{ "FOND"             , "C" ,   4 ,  0 })
 
 if (nArea==-1 .or. nArea==(F_SUBAN))
 	//SUBAN.DBF

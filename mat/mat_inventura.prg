@@ -381,7 +381,7 @@ Box( "", 5, 60, .f. )
     @ m_x + 3, m_y + 2 SAY "  Konto " GET _konto ;
         VALID P_Konto( @_konto )
     @ m_x + 4, m_y + 2 SAY "Partner " GET _partner ;
-        VALID EMPTY(_partner) .or. P_Firma( @_partner )
+        VALID EMPTY( _partner ) .or. P_Firma( @_partner )
     @ m_x + 5, m_y + 2 SAY "  Datum " GET _datum
     
     read

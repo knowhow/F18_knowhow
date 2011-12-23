@@ -185,7 +185,6 @@ set console on
 close all
 
 run (_cmd := "f18_editor " + _out_file)
-//quit
 
 RETURN
 

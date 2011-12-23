@@ -698,7 +698,7 @@ do while !eof() .and. IdFirma==_id_firma
 
   if prow() > 59
     FF
-    ZaglKSif()
+    ZaglKSif( _id_firma, cIdRoba, cIdKonto, m )
   endif
   
   ? m
@@ -756,11 +756,12 @@ do while !eof() .and. IdFirma==_id_firma
 
   ? m
   ?
-enddo // eof
+enddo 
 
 FF
 END PRINT
-closeret
+
+close all
 return
 
 

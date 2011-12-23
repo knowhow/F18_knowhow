@@ -37,6 +37,7 @@ if _current_dbf_ver < 0201
    modstru({"*roba", "A IDKONTO C 7 0"})
 endif
 
+altd()
 // 0.3.0
 if _current_dbf_ver < 0300
    modstru({"*fin_suban", "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })

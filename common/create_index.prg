@@ -36,7 +36,6 @@ local cImeDbf
 private cTag
 private cKljuciz
 
-
 close all
   
 cImeDbf := f18_ime_dbf(alias)

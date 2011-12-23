@@ -69,8 +69,7 @@ nOrdId    := ORDNUMBER("ID")
 
 sif_set_order(nNTX, nOrdId, @fID_j)
 
-
-sif_seek(@cId, @cIdBK)
+altd()
 sif_seek(@cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, nOrdId) 
 
 if dx <> NIL .and. dx < 0
@@ -267,10 +266,9 @@ return .t.
 
 static function sif_point_or_slash(cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch)
  
-
-// POSTAVI FILTER SA "/"
-
-if nOrdid == 0
+if nOrdid <> 0
+    set order to tag "NAZ"
+else
     set order to tag "2"
 endif
 

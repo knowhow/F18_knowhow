@@ -136,25 +136,25 @@
                                   ;endif
 
 #command START PRINT2 CRET <p>, <x> =>  ;private __print_opt := NIL ;
-                                        IF !SPrint2(<p>)       ;
+                                        ;IF !SPrint2(<p>)       ;
                                         ;close all             ;
                                         ;return <x>            ;
                                         ;endif
 
 #command START PRINT2 CRET <p>   =>  ;private __print_opt := NIL ;
-                                     if !Sprint2(<p>)          ;
+                                     ;if !Sprint2(<p>)          ;
                                      ;close all             ;
                                      ;return                ;
                                      ;endif
 
 #command START PRINT CRET DOCNAME <y>    =>  ;private __print_opt := NIL ;
-                                             if !StartPrint(nil, nil, <y>)    ;
+                                             ;if !StartPrint(nil, nil, <y>)    ;
                                              ;close all             ;
                                              ;return                ;
                                              ;endif
 
 #command START PRINT CRET <x> DOCNAME  <y> => ;private __print_opt := NIL ;  
-                                  if !StartPrint(nil, nil, <y>  )  ;
+                                  ;if !StartPrint(nil, nil, <y>  )  ;
                                   ;close all             ;
                                   ;return <x>            ;
                                   ;endif

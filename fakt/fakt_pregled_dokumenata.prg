@@ -326,7 +326,7 @@ if cTabela == "D"
 endif
 
 gaZagFix:={3,3}
-START PRINT CRET DOCNAME "FAKT_stampa_dokumenata_na_dan_"+DTOC(date())
+START PRINT CRET DOCNAME "FAKT_stampa_dokumenata_na_dan_" + DTOC(date())
 ?
 P_COND
 ?? space(gnLMarg)

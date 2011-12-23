@@ -1,3 +1,5 @@
+0.9.25  2011-12-23, "segmentation fault" problem otklonjen, fin, kalk pametni semafori
+
 0.9.24  2011-12-23, "MAT" release
 
 0.9.23  2011-12-23, otklonjena greška kod funkcija štampe 

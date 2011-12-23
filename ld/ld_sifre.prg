@@ -573,13 +573,10 @@ return DE_CONT
 // -----------------------------------------------
 // -----------------------------------------------
 function P_LD_RJ(cId,dx,dy)
-local nArr
-nArr:=SELECT()
 private imekol := {}
 private kol := {}
 
 O_LD_RJ
-select (nArr)
 
 AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
 AADD(ImeKol, { padr("Naziv",35), {||  naz}, "naz" } )

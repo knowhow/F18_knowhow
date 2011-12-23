@@ -20,11 +20,6 @@ function ParObracun()
 local nX := 1
 local nPadL := 20
 
-O_LD_RJ
-O_PARAMS
-
-select ld_rj
-
 Box(, 4 +IF(lViseObr, 1, 0), 50)
 	
 	set cursor on
@@ -61,6 +56,7 @@ BoxC()
 
 if (LASTKEY()<>K_ESC)
 
+    O_PARAMS
 	select params
  	
 	Wpar("rj",@gRJ)

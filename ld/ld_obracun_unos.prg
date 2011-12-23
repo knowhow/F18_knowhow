@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -224,30 +224,30 @@ endif
 
 lNovi:=.f.
 
-Box(,21,77)
-	@ m_x+1,m_y+2 SAY Lokal("Radna jedinica: ")
-	QQOutC(cIdRJ,"GR+/N")
+Box( , MAXROWS()-10, MAXCOLS()-10)
+	@ m_x+1, m_y+2 SAY Lokal("Radna jedinica: ")
+	QQOutC(cIdRJ, "GR+/N")
 	if gUNMjesec=="D"
- 		@ m_x+1,col()+2 SAY Lokal("Mjesec: ")  GET cMjesec pict "99"
+ 		@ m_x+1, col()+2 SAY Lokal("Mjesec: ")  GET cMjesec pict "99"
 	else
- 		@ m_x+1,col()+2 SAY Lokal("Mjesec: ")
-		QQOutC(str(cMjesec,2),"GR+/N")
+ 		@ m_x+1, col()+2 SAY Lokal("Mjesec: ")
+		QQOutC(str(cMjesec, 2), "GR+/N")
 	endif
 
 	if lViseObr
  		if gUNMjesec=="D"
-  			@ m_x+1,col()+2 SAY Lokal("Obracun: ") GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
+  			@ m_x+1, col()+2 SAY Lokal("Obracun: ") GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
  		else
-  			@ m_x+1,col()+2 SAY Lokal("Obracun: ")
-			QQOutC(cObracun,"GR+/N")
+  			@ m_x+1, col()+2 SAY Lokal("Obracun: ")
+			QQOutC(cObracun, "GR+/N")
  		endif
 	endif
 
 	@ m_x+1,COL()+2 SAY Lokal("Godina: ")
-	QQOutC(str(cGodina,4),"GR+/N")
+	QQOutC(str(cGodina,4), "GR+/N")
 	
 	@ m_x+2,m_y+2 SAY Lokal("Radnik:") GET cIdRadn ;
-	  VALID {|| P_Radn(@cIdRadn), SetPos(m_x+2,m_y+17), ;
+	  VALID {|| P_Radn(@cIdRadn), SetPos(m_x+2, m_y+17), ;
 	  QQOUT(PADR( TRIM(radn->naz)+" ("+TRIM(radn->imerod)+") "+TRIM(radn->ime), 28 )), .t.}
 	
 	read

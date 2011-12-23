@@ -576,6 +576,7 @@ function P_LD_RJ(cId,dx,dy)
 private imekol := {}
 private kol := {}
 
+altd()
 O_LD_RJ
 
 AADD(ImeKol, { padr("Id", 2),      {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )

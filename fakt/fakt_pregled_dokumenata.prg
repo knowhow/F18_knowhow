@@ -404,7 +404,7 @@ do while !eof() .and. IdFirma=cIdFirma
 
   ? space(gnLMarg); ?? Str(++nC,4)+".", datdok, idfirma, idtipdok, brdok+Rezerv + " "
   IF m1 <> "Z"
-     ?? hb_StrToUtf8(partner)
+     ?? PADR( hb_StrToUtf8(partner), 30 )
   ELSE
      ?? PADR ("<<dokument u pripremi>>", LEN (partner))
   ENDIF

@@ -45,6 +45,9 @@ AADD(opc, "7. osobine konta  ")
 AADD(opcexe, {|| p_karkon() } )
 AADD(opc, "8. valute ")
 AADD(opcexe, {|| p_valuta() } )
+AADD(opc, "9. sifk - karakteristike ")
+AADD(opcexe, {|| p_sifk() } )
+
 
 Menu_sc("m_rpt")
 

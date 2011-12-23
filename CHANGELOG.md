@@ -1,3 +1,7 @@
+0.9.23  2011-12-23, otklonjena greška kod funkcija štampe 
+
+ - [#25768](http://redmine.bring.out.ba/issues/25768)
+
 0.9.22  2011-12-22, sifk kreiranje
  
  - [#25829](http://redmine.bring.out.ba/issues/25829)

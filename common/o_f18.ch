@@ -246,7 +246,7 @@
 #xcommand O_REKLD0  => select (F_REKLD); my_use ("rekld")
 #xcommand O_REKLD   => select (F_REKLD); my_use ("rekld") ; set order to tag "1"
 #xcommand O_REKLDP  => select (F_REKLDP); my_use ("rekldp") ; set order to tag "1"
-#xcommand O_LD_RJ   => select (F_RJ); my_use ("ld_rj") ; set order to tag "ID"
+#xcommand O_LD_RJ   => select (F_LD_RJ); my_use ("ld_rj") ; set order to tag "ID"
 #xcommand O_KBENEF  => select (F_KBENEF); my_use ("kbenef") ; set order to tag "ID"
 #xcommand O_POR     => select (F_POR); my_use ("por")  ; set order to tag "ID"
 #xcommand O_DOPR    => select (F_DOPR); my_use ("dopr") ; set order to tag "ID"

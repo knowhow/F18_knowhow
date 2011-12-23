@@ -271,7 +271,7 @@
 
 
 //ld
-#define F_LD_RJ    310
+#define F_LD_RJ    48
 
 //virm
 #define F_VIPRIPR 216

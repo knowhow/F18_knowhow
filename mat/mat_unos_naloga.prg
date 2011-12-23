@@ -82,8 +82,8 @@ next
 Box(, MAXROWS()-4, MAXCOLS()-3)
 
 @ m_x + MAXROWS()-4-2, m_y + 2 SAY " <c-N>  Nove Stavke       ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku "
-@ m_x + MAXROWS()-4-1, m_y + 2 SAY " <c-A>  Ispravka mat_naloga   ³ <c-P> Stampa mat_naloga    ³ <a-A> Azuriranje   "
-@ m_x + MAXROWS()-4, m_y + 2 SAY " <c-F9> Brisi mat_pripremu    ³ <F5>  Kontrola zbira   ³                    "
+@ m_x + MAXROWS()-4-1, m_y + 2 SAY " <c-A>  Ispravka naloga   ³ <c-P> Stampa naloga    ³ <a-A> Azuriranje   "
+@ m_x + MAXROWS()-4, m_y + 2 SAY " <c-F9> Brisi pripremu    ³ <F5>  Kontrola zbira   ³                    "
 ObjDbedit( "PNal", MAXROWS()-4, MAXCOLS()-3, {|| mat_pripr_key_handler()},"","Priprema..", , , , ,3)
 BoxC()
 

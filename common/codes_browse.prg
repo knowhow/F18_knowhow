@@ -69,7 +69,6 @@ nOrdId    := ORDNUMBER("ID")
 
 sif_set_order(nNTX, nOrdId, @fID_j)
 
-altd()
 sif_seek(@cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, nOrdId) 
 
 if dx <> NIL .and. dx < 0

@@ -417,16 +417,17 @@ RETURN
 // mat_subanaliticka kartica
 // ---------------------------------------------
 function KSuban()
-local nCol1
-local nCol2
-local cBrza := "D"
-local cPredh := "1"
-
-cIdFirma:=gFirma
-
-qqRoba:=""
-qqPartner:=""
-qqKonto:=""
+local _roba := ""
+local _partner := ""
+local _konto := ""
+local _filter := ".t."
+local _brza_k := "D"
+local _preth_p := "1"
+local _col_1
+local _col_2
+local _id_firma := gFirma
+local _dat_od := CTOD( "" )
+local _dat_do := CTOD( "" )
 
 O_PARTN
 O_KONTO
@@ -434,73 +435,90 @@ O_SIFV
 O_SIFK
 O_ROBA
 
-Box("",10,70,.f.)
+Box( "", 10, 70, .f. )
 
-private cFilter
+    O_PARAMS
+    Private cSection:="4",cHistory:=" ",aHistory:={}
+    Params1()
+    RPar("c1",@_brza_k)
+    RPar("c2",@_id_firma)
+    RPar("c3",@_konto)
+    RPar("c4",@_partner)
+    RPar("c5",@_roba)
+    RPar("c6",@_preth_p)
+    RPar("d1",@_dat_od)
+    RPar("d2",@_dat_do)
+    
+    if gNW$"DR"
+        _id_firma := gFirma
+    endif
 
-dDatOd:=dDatDo:=ctod("")
+    @ m_x+1, m_y+2 SAY "SUBANALITICKA KARTICA"
 
-O_PARAMS
-Private cSection:="4",cHistory:=" ",aHistory:={}
-Params1()
-RPar("c1",@cBrza)
-RPar("c2",@cIdFirma); RPar("c3",@qqKonto); RPar("c4",@qqPartner)
-RPar("c5",@qqRoba)
-RPar("c6",@cPredh)
-RPar("d1",@dDatOd); RPar("d2",@dDatDo)
-if gNW$"DR";cIdFirma:=gFirma; endif
+    @ m_x+2, m_y+2 SAY "Brza kartica (D/N)" GET _brza_k pict "@!" valid _brza_k $ "DN"
+    
+    read
 
-@ m_x+1,m_y+2 SAY "SUBANALITICKA KARTICA"
+    do while .t.
+        
+        if gNW$"DR"
+            @ m_x+3, m_y+2 SAY "Firma "
+            ?? gFirma, "-", gNFirma
+        else
+            @ m_x+3, m_y+2 SAY "Firma: " GET _id_firma ;
+                VALID {|| P_Firma( @_id_firma ), _id_firma := left( _id_firma, 2), .t. }
+        endif
 
-@ m_x+2,m_y+2 SAY "Brza kartica (D/N)" GET cBrza pict "@!" valid cBrza $ "DN"
-read
+        if _brza_k == "D"
+            _konto := PADR( _konto, 7 )
+            _roba := PADR( _roba, 10 )
+            @ m_x+4, m_y+2 SAY KonSeks("Konto  ")+"        " GET _konto ;
+                pict "@!" valid P_Konto(@_konto)
+            @ m_x+5, m_y+2 SAY "Sifra artikla  " GET _roba ;
+                pict "@!" valid P_Roba(@_roba)
+        else
+            _konto := PADR( _konto, 60 )
+            _partner := PADR( _partner, 60 )
+            _roba := PADR( _roba, 80 )
+            @ m_x+4, m_y+2 SAY KonSeks("Konto  ")+"        " GET _konto ;
+                PICT "@S50"
+            @ m_x+5, m_y+2 SAY "Partner        " GET _partner ;
+                PICT "@S50"
+            @ m_x+6, m_y+2 SAY "Sifra artikla  " GET _roba ;
+                PICT "@S50"
+        endif
 
-do while .t.
-if gNW$"DR"
-  @ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-else
-  @ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-endif
-if cBrza=="D"
- qqKonto:=padr(qqkonto,7)
- qqRoba:=padr(qqRoba,10)
- @ m_x+4,m_y+2   SAY KonSeks("Konto  ")+"        " GET qqKonto   pict "@!" valid P_Konto(@qqKonto)
- @ m_x+5,m_y+2   SAY "Sifra artikla  " GET qqRoba    pict "@!" valid P_Roba(@qqRoba)
-else
- qqKonto:=padr(qqKonto,60)
- qqPartner:=padr(qqPartner,60)
- qqRoba:=padr(qqRoba,80)
- @ m_x+4,m_y+2   SAY KonSeks("Konto  ")+"        " GET qqKonto   PICTURE "@S50"
- @ m_x+5,m_y+2   SAY "Partner        " GET qqPartner PICTURE "@S50"
- @ m_x+6,m_y+2   SAY "Sifra artikla  " GET qqRoba    PICTURE "@S50"
-endif
+        @ m_x+8, m_y+2 SAY "BEZ/SA predhodnim prometom (1/2):" GET _preth_p valid _preth_p $ "12"
+        @ m_x+10, m_y+2 SAY "Datum dokumenta od:" GET _dat_od
+        @ m_x+10, col()+2 SAY "do" GET _dat_do valid _dat_do >= _dat_do
+        
+        READ
+        ESC_BCR
 
-@ m_x+8,m_y+2   SAY "BEZ/SA predhodnim prometom (1/2):" GET cPredh valid cpredh $ "12"
-@ m_x+10,m_y+2   SAY "Datum dokumenta od:" GET dDatOd
-@ m_x+10,col()+2 SAY "do" GET dDatDo valid dDatDo>=dDatOd
-READ;  ESC_BCR
+        if _brza_k == "N"
+            _usl_partner := Parsiraj(_partner,"IdPartner","C")
+            _usl_roba := Parsiraj(_roba,"IdRoba","C")
+            _usl_konto:=Parsiraj(_konto,"IdKonto","C")
+            if _usl_partner <> NIL .and. _usl_roba <> NIL .and. _usl_konto <> NIL 
+ 	            exit
+            endif
+        else
+            exit
+        endif
 
-if cBrza=="N"
- aUsl1:=Parsiraj(qqPartner,"IdPartner","C")
- aUsl2:=Parsiraj(qqRoba,"IdRoba","C")
- aUsl3:=Parsiraj(qqKonto,"IdKonto","C")
- if aUsl1 <> NIL .and. aUsl2 <> NIL .and. aUsl3 <> NIL 
- 	exit
- endif
-else
- exit
-endif
-
-enddo
+    enddo
 
 BoxC()
 
 if Params2()
- WPar("c1",cBrza)
- WPar("c2",padr(cIdFirma,2)); WPar("c3",qqKonto); RPar("c4",qqPartner)
- WPar("c5",qqRoba)
- WPar("c6",cPredh)
- WPar("d1",dDatOd);WPar("d2",@dDatDo)
+ WPar("c1",_brza_k)
+ WPar("c2",padr(_id_firma,2))
+ WPar("c3",_konto)
+ WPar("c4",_partner)
+ WPar("c5",_roba)
+ WPar("c6",_preth_p)
+ WPar("d1",_dat_od)
+ WPar("d2",_dat_do)
 endif
 select params
 use
@@ -511,61 +529,58 @@ O_TDOK
 select mat_suban
 set order to tag "3"
 
-if cBrza == "D"
-	if cPredh == "1"
-         	if !empty(dDatOd) .and. !empty(dDatDo)
-          		set filter to  dDatOd<=DatDok .and. dDatDo>=DatDok
+if _brza_k == "D"
+	if _preth_p == "1"
+         	if !empty(_dat_od) .and. !empty(_dat_do)
+          		set filter to  _dat_od<=DatDok .and. _dat_do>=DatDok
          	else
           		set filter to
          	endif
   	else    
   		// sa predhodnim prometom
-         	if  !empty(dDatDo)
-          		set filter to  dDatDo>=DatDok
+         	if  !empty(_dat_do)
+          		set filter to  _dat_do>=DatDok
          	else
           		set filter to
          	endif
   	endif
   	
-	HSEEK cIdFirma + qqKonto + qqRoba
+	HSEEK _id_firma + _konto + _roba
 
 else 
-       		
-	cFilter := ".t."
-		
-	if cPredh == "1"
+       	
+	if _preth_p == "1"
 
-		if !EMPTY( dDatOd ) .and. !EMPTY( dDatDo )
- 			cFilter += " .and. (DatDok >= " + ;
-				cm2str( dDatOd ) + ;
+		if !EMPTY( _dat_od ) .and. !EMPTY( _dat_do )
+ 			_filter += " .and. (DatDok >= " + ;
+				cm2str( _dat_od ) + ;
 				" .and. DatDok <= " + ;
-				cm2str( dDatDo ) + ")"
+				cm2str( _dat_do ) + ")"
 		endif
 	else
 		
-		if !EMPTY( dDatDo )
-			cFilter += " .and. (DatDok <= " + ;
-				cm2str( dDatDo ) + ")"
+		if !EMPTY( _dat_do )
+			_filter += " .and. (DatDok <= " + ;
+				cm2str( _dat_do ) + ")"
 	
 		endif
 	endif
 
-	if !EMPTY( qqPartner )
-		cFilter += " .and. " + aUsl1
+	if !EMPTY( _partner )
+		_filter += " .and. " + _usl_partner
 	endif
 
-	if !EMPTY( qqKonto )
-		cFilter += " .and. " + aUsl2
+	if !EMPTY( _konto )
+		_filter += " .and. " + _usl_konto
 	endif
 
-	if !EMPTY( qqRoba )
-		cFilter += " .and. " + aUsl3
+	if !EMPTY( _roba )
+		_filter += " .and. " + _usl_roba
 	endif
 
-	set filter to &(cFilter) 
-	HSEEK cIdFirma
+	set filter to &(_filter) 
+	HSEEK _id_firma
        	
-
 endif 
 
 // cBrza
@@ -577,12 +592,13 @@ nStr:=0
 START PRINT CRET
 
 A:=0
-nCol1:=nCol2:=0
+_col_1:=0
+_col_2:=0
 
-do while !eof() .and. IdFirma==cIdFirma
+do while !eof() .and. IdFirma==_id_firma
 
-  if cBrza=="D"
-    if qqKonto<>IdKonto .or. qqRoba<>IdRoba
+  if _brza_k == "D"
+    if _konto<>IdKonto .or. _roba<>IdRoba
     	exit
     endif
   endif
@@ -590,14 +606,18 @@ do while !eof() .and. IdFirma==cIdFirma
   cIdKonto:=IdKonto
   cIdRoba:=IdRoba
 
-  nUlazK:=nIzlazK:=nDugI:=nPotI:=0
-                   nDugI2:=nPotI2:=0
+  nUlazK:=0
+  nIzlazK:=0
+  nDugI:=0
+  nPotI:=0
+  nDugI2:=0
+  nPotI2:=0
 
-  ZaglKSif()
+  ZaglKSif( _id_firma, cIdRoba, cIdKonto, m )
   
-  if cPredh="2"
+  if _preth_p = "2"
     
-    do while !eof() .and. IdFirma==cIdFirma .AND. IdKonto==cIdKonto .and. IdRoba==cIdRoba .and. datdok<dDatOd
+    do while !eof() .and. IdFirma==_id_firma .AND. IdKonto==cIdKonto .and. IdRoba==cIdRoba .and. datdok<_dat_od
      IF U_I="1"
         nUlazK+=Kolicina
      ELSE
@@ -613,7 +633,7 @@ do while !eof() .and. IdFirma==cIdFirma
      ENDIF
       skip
     enddo
-      ? "Promet do",dDatOd
+      ? "Promet do",_dat_od
       @ prow(),36 SAY nUlazK pict pickol
       @ prow(),pcol()+1 SAY nIzlazK pict pickol
       @ prow(),pcol()+1 SAY nUlazK-nIzlazK pict pickol
@@ -629,17 +649,21 @@ do while !eof() .and. IdFirma==cIdFirma
       @ prow(),pcol()+1 SAY nPotI2 pict picbhd
 
   endif
-  DO WHILE !eof() .and. IdFirma==cIdFirma .AND. IdKonto==cIdKonto .and. IdRoba==cIdRoba
+
+  DO WHILE !eof() .and. IdFirma==_id_firma .AND. IdKonto==cIdKonto .and. IdRoba==cIdRoba
      SELECT mat_suban
 
-     if prow()>61; FF; ZaglKSif(); endif
+     if prow()>61 
+         FF
+         ZaglKSif( _id_firma, cIdRoba, cIdKonto, m )
+     endif
      @ prow()+1,0 SAY IdVN
      @ prow(),pcol()+1 SAY BrNal
      @ prow(),pcol()+1 SAY IdTipDok
      @ prow(),pcol()+1 SAY BrDok
      @ prow(),pcol()+1 SAY DatDok
      @ prow(),pcol()+1 SAY IdPartner
-     nCol1:=PCOL()+1
+     _col_1 := PCOL()+1
      IF U_I="1"
         @ prow(),pcol()+1 SAY Kolicina PICTURE PicKol
         @ prow(),pcol()+1 SAY 0 PICTURE PicKol
@@ -652,7 +676,7 @@ do while !eof() .and. IdFirma==cIdFirma
      @ prow(),pcol()+1 SAY nUlazK-nIzlazK pict pickol
      @ prow(),pcol()+1 SAY iif(round(Kolicina,4)<>0,Iznos/Kolicina,0) picture "9999999.999"
 
-     nCol2:=pcol()+1
+     _col_2 := pcol()+1
      IF D_P="1"
         @ prow(),pcol()+1 SAY Iznos PICTURE PicDem
         @ prow(),pcol()+1 SAY 0 PICTURE PicDem
@@ -672,13 +696,17 @@ do while !eof() .and. IdFirma==cIdFirma
      skip
   ENDDO
 
-  if prow()>59; FF; ZaglKSif(); endif
+  if prow() > 59
+    FF
+    ZaglKSif()
+  endif
+  
   ? m
   ? "UKUPNO:"
-  @ prow(),nCol1 SAY nUlazK PICTURE PicKol
+  @ prow(),_col_1 SAY nUlazK PICTURE PicKol
   @ prow(),pcol()+1 SAY nIzlazK PICTURE PicKol
   @ prow(),pcol()+1 SAY nUlazK-nIzlazK PICTURE PicKol
-  @ prow(),nCol2    SAY nDugI PICTURE PicDEM
+  @ prow(),_col_2    SAY nDugI PICTURE PicDEM
   @ prow(),pcol()+1 SAY nPotI PICTURE PicDEM
   @ prow(),pcol()+1 SAY nDugI2 PICTURE PicBHD
   @ prow(),pcol()+1 SAY nPotI2 PICTURE PicBHD
@@ -700,21 +728,21 @@ do while !eof() .and. IdFirma==cIdFirma
   @ prow(),pcol()+1 SAY ValPomocna()
 
   IF nSaldoK>0
-     @ prow(),nCol1 SAY nSaldoK PICTURE PicKol
+     @ prow(),_col_1 SAY nSaldoK PICTURE PicKol
      @ prow(),pcol()+1 SAY 0   PICTURE PicKol
   ELSE
      nSaldoK:=-nSaldoK
-     @ prow(),nCol1     SAY 0       PICTURE PicKol
+     @ prow(),_col_1    SAY 0       PICTURE PicKol
      @ prow(),pcol()+1 SAY nSaldoK PICTURE PicKol
   ENDIF
   @ prow(),pcol()+1 SAY space(len(pickol))
 
   IF nSaldoI>0
-     @ prow(),nCol2 SAY nSaldoI PICTURE PicDEM
+     @ prow(),_col_2 SAY nSaldoI PICTURE PicDEM
      @ prow(),pcol()+1 SAY 0 PICTURE PicDEM
   ELSE
      nSaldoI:=-nSaldoI
-     @ prow(),nCol2  SAY 0         PICTURE PicDEM
+     @ prow(),_col_2  SAY 0         PICTURE PicDEM
      @ prow(),pcol()+1 SAY nSaldoI PICTURE PicDEM
   ENDIF
   IF nSaldoI2>0
@@ -736,29 +764,42 @@ closeret
 return
 
 
-static function ZaglKSif()
+// --------------------------------------------------------------------
+// zaglavlje
+// --------------------------------------------------------------------
+static function ZaglKSif( id_firma, id_roba, id_konto, line )
 
 ?
 P_COND2
 
-?? "MAT.P: SUBANALITICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
+?? "MAT.P: SUBANALITICKA KARTICA   NA DAN "
+@ prow(),PCOL()+1 SAY DATE()
+
 ? "FIRMA:"
-@ prow(),pcol()+1 SAY cIdFirma
-SELECT PARTN; HSEEK cIdFirma
+@ prow(),pcol()+1 SAY id_firma
+
+SELECT PARTN
+HSEEK id_firma
+
 @  prow(),pcol()+2 SAY naz
 @  prow(),pcol()+1 SAY naz2
 @  prow(),120 SAY "Str."+str(++nStr,3)
 
 ? "ARTIKAL:"
-@ prow(),pcol()+1 SAY cIdRoba
-select ROBA; HSEEK cIdRoba
+@ prow(),pcol()+1 SAY id_roba
+
+select ROBA
+HSEEK id_roba
+
 @ prow(),pcol()+1 SAY naz
 @ prow(),pcol()+2 SAY jmj
 
 ? KonSeks("KONTO")+":"
-@ prow(),pcol()+1 SAY cIdKonto
+@ prow(),pcol()+1 SAY id_konto
 
-SELECT KONTO; HSEEK cIdKonto
+SELECT KONTO
+HSEEK id_konto
+
 @ prow(),pcol()+1 SAY konto->naz
 
 ?  "------- --------------------------- --------------------- ---------- ----------- --------------------------- -------------------------------"
@@ -767,7 +808,7 @@ SELECT KONTO; HSEEK cIdKonto
 ?  "------- --------------------------- ---------------------           *           * -------------------------- -------------------------------"
 ?  "*V*BROJ*TIP* BROJ  * DATUM  * PART *   ULAZ   *   IZLAZ  *          *   "+ValDomaca()+"    *    DUGUJE   *   POTRAZUJE *    DUGUJE     *   POTRAZUJE  *"
 ?  "*N*    *  *        *        * NER  *          *          *          *           *             *             *               *              *"
-?  m
+?  line
 
 
 SELECT mat_suban

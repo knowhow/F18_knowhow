@@ -1,13 +1,14 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+
 
 #include "fin.ch"
 
@@ -88,7 +89,8 @@ Box("",2,35)
  if gDatNal=="D"
   @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
  endif
- read; ESC_BCR
+ read
+ ESC_BCR
 BoxC()
 
 select nalog
@@ -183,7 +185,7 @@ nCol1:=70
  Zagl12()
  DO WHILE eval(b1) .and. eval(b2)     // jedan nalog
 
-    IF prow()>61+gPStranica
+    IF prow() > 61 + gPStranica
             FF
             Zagl12()
     ENDIF

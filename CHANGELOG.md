@@ -1,24 +1,28 @@
+0.9.26  2011-12-24, hernad fetch_metric, set_metric
+
+  - [#25877](http://redmine.bring.out.ba/issues/25877)
+
 0.9.25  2011-12-23, "segmentation fault" problem otklonjen, fin, kalk pametni semafori
 
   - [#25791](http://redmine.bring.out.ba/issues/25791)
   - [#25871](http://redmine.bring.out.ba/issues/25871)
 
-0.9.24  2011-12-23, "MAT" release
+0.9.24  2011-12-23, hernad, "MAT" release
 
-0.9.23  2011-12-23, otklonjena greška kod funkcija štampe 
+0.9.23  2011-12-23, vsasa, otklonjena greška kod funkcija štampe 
 
  - [#25768](http://redmine.bring.out.ba/issues/25768)
 
-0.9.22  2011-12-22, sifk kreiranje
+0.9.22  2011-12-22, hernad,, sifk kreiranje
  
  - [#25829](http://redmine.bring.out.ba/issues/25829)
  - niz promjena vsasa/MAT
 
-0.9.21  2011-12-21, fakt->fin
+0.9.21  2011-12-21, hernad, fakt->fin
 
  - my_usex faktfin [#25795](http://redmine.bring.out.ba/issues/25795)
 
-0.9.20  2011-12-21, refactoring scatter/gather
+0.9.20  2011-12-21, hernad, refactoring scatter/gather
 
  - gather/scatter out [#25776](http://redmine.bring.out.ba/issues/25776)
  - "--test" switch [#25788](http://redmine.bring.out.ba/issues/25788)
@@ -30,11 +34,11 @@
  
  - [#25684](http://redmine.bring.out.ba/issues/25684)
 
-0.9.17  2011-12-13, bug report
+0.9.17  2011-12-13, hernad, bug report
 
   - [#25663](http://redmine.bring.out.ba/issues/25663)
 
-0.9.16  2011-12-12, test init
+0.9.16  2011-12-12, hernad, test init
 
   - modstru_test [#25648](http://redmine.bring.out.ba/issues/25648)
 

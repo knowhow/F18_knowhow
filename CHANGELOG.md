@@ -1,6 +1,7 @@
 0.9.26  2011-12-24, hernad fetch_metric, set_metric
 
   - [#25877](http://redmine.bring.out.ba/issues/25877)
+  - NAPOMENA: required server db: 4.0.6
 
 0.9.25  2011-12-23, "segmentation fault" problem otklonjen, fin, kalk pametni semafori
 

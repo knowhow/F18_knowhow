@@ -14,6 +14,7 @@
 function fetch_set_metric()
 local _sect := ""
 local _color, _color_2, _is_fakturisi
+local _dat_1, _dat_2
 
 _is_fakturisi := .f.
 _sect := "fakturisi_ugalj"
@@ -59,5 +60,20 @@ TEST_LINE(fetch_metric(_sect), "hbakir")
 // kod char parametara ne treba zadavati default_value
 _sect := "nepoznata_section"
 TEST_LINE(fetch_metric(_sect, NIL, "default_default"),  "default_default")
+
+_sect := "date_begin"
+_dat_1 := STOD("20111224")
+_dat_2 := STOD("20110101")
+
+// za usera hernad
+set_metric(_sect, "hernad", _dat_1)
+
+// globalni
+set_metric(_sect, NIL , _dat_2)
+
+TEST_LINE(fetch_metric(_sect, "hernad", _dat_2), _dat_1)
+TEST_LINE(fetch_metric(_sect, NIL, _dat_2), _dat_2)
+
+
 
 return

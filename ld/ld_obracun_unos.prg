@@ -62,13 +62,19 @@ do while .t.
 			
 			// upisi tekucu varijantu obracuna
 			_varobr := gVarObracun
-			Gather()
 
 			// obracun snimiti u sql bazu
-			_vals := f18_scatter_global_vars()
-			if !sql_update_ld_ld( _vals ) 
-	     		delete
-			endif	
+			_vals := get_dbf_global_memvars()
+			
+            _fields := { "godina", "mjesec", "idrj", "idradn" }
+            
+            if !update_rec_server_and_dbf( _vals, _fields, ;
+                { |x| "godina=" + _sql_quote(x["godina"]) + ;
+                    "|| mjesec=" + _sql_quote(x["mjesec"]) + ;
+                    "|| idrj=" + _sql_quote(x["idrj"]) + ;
+                    "|| idradn=" + _sql_quote(x["idradn"]) } )
+                delete
+            endif
 
 		else
      			if lNovi
@@ -303,7 +309,10 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
 	else
 		lNovi:=.t.
   		append blank
-  		Scatter()
+  		
+        set_global_vars_from_dbf()
+
+        //Scatter()
   		_Godina:=cGodina
   		_idrj:=cIdRj
 		_idradn:=cIdRadn

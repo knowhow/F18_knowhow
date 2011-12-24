@@ -75,7 +75,7 @@ for each _lin in a_commands
         
        if file( _path + _ime_dbf + "." + DBFEXT )
            select 1
-           my_usex ( "OLDDBF", _ime_dbf, .f.)
+           USE  (_path + _ime_dbf) ALIAS OLDDBF EXCLUSIVE
        else
            _ime_dbf := "*"
            ?? "  Ne nalazi se u direktorijumu"

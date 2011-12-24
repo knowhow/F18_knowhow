@@ -18,5 +18,5 @@
 #define FMK_LIB_VER   "0.9.82"
 
 #define F18_DBF_VER_MAJOR  0
-#define F18_DBF_VER_MINOR  2
-#define F18_DBF_VER_PATCH  1
+#define F18_DBF_VER_MINOR  3
+#define F18_DBF_VER_PATCH  0

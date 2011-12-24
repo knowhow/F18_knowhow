@@ -10,6 +10,16 @@
  */
 
 
+function f18_get_metric()
+MsgBeep(PROCNAME(1) + "/" + PROCLINE(1) + " ovo se mora mjenjati f18_get_metric")
+QUIT
+return
+
+function f18_set_metric()
+MsgBeep(PROCNAME(1) + "/" + PROCLINE(1) + " ovo se mora mjenjati f18_set_metric")
+QUIT
+return
+
 function send2comport(cStr)
 
 ? "dummy send2commport"

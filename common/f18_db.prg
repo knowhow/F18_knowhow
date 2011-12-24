@@ -285,7 +285,7 @@ return update_rec_server_and_dbf(table, values, id_fields, where_block, .t.)
 //
 // mijenja zapis na serveru, pa u dbf-u 
 //
-// update_rec_server_and_dbf( values, 
+// update_rec_server_and_dbf( table, values, 
 //                           {"id", "oznaka"}, 
 //                           {|x| "ID=" + _sql_quote(x["id"]) + "|| OZNAKA=" + _sql_quote(x["oznaka"]) })
 //
@@ -340,7 +340,6 @@ if server_only == NIL
 endif
 
 sql_table_update(table, "BEGIN")
-
 _where_str := EVAL(where_block, values)
 if !sql_table_update(table, "del", nil, _where_str) 
    sql_table_update(table, "ROLLBACK")

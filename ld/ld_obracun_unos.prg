@@ -17,6 +17,8 @@
 // ------------------------------------------------------
 function ld_unos_obracuna()
 local lSaveObracun
+local _vals
+local _fields
 private lNovi
 private lRadniSati
 private GetList
@@ -66,13 +68,14 @@ do while .t.
 			// obracun snimiti u sql bazu
 			_vals := get_dbf_global_memvars()
 			
-            _fields := { "godina", "mjesec", "idrj", "idradn" }
+            _fields := { "godina", "mjesec", "idrj", "idradn", "obr" }
             
-            if !update_rec_server_and_dbf( _vals, _fields, ;
-                { |x| "godina=" + _sql_quote(x["godina"]) + ;
-                    "|| mjesec=" + _sql_quote(x["mjesec"]) + ;
-                    "|| idrj=" + _sql_quote(x["idrj"]) + ;
-                    "|| idradn=" + _sql_quote(x["idradn"]) } )
+            if !update_rec_server_and_dbf( nil,  _vals, _fields, ;
+                { |x| "godina=" + _sql_quote(STR(x["godina"],4)) + ;
+                    " and mjesec=" + _sql_quote(STR(x["mjesec"],2)) + ;
+                    " and idrj=" + _sql_quote(x["idrj"]) + ;
+                    " and idradn=" + _sql_quote(x["idradn"])  + ;
+                    " and obr=" + _sql_quote(x["obr"]) } )
                 delete
             endif
 

@@ -43,10 +43,8 @@ local _linija := 0
 local _lin
 local _stru_changed := .f.
 local _curr_stru, _new_stru
+local _full_name
 
-? SPACE(40),"bring.out, 10.99-12.11, ver 02.6"
-? SPACE(40),"---------------------------------"
-?
 close all
 
 SET AUTOPEN OFF
@@ -72,13 +70,16 @@ for each _lin in a_commands
        _ime_dbf := ALLTRIM(_lin)
 
        ?  _path + _ime_dbf
-        
-       if file( _path + _ime_dbf + "." + DBFEXT )
+
+       _full_name := _path + _ime_dbf + "." + DBFEXT       
+       if file(_full_name)
            select 1
            USE  (_path + _ime_dbf) ALIAS OLDDBF EXCLUSIVE
        else
            _ime_dbf := "*"
-           ?? "  Ne nalazi se u direktorijumu"
+           MsgBeep("modstru ERROR" +  _full_name)
+           log_write("modstru ERROR" +  _full_name)
+           QUIT
        endif
 
        _stru_changed := .f.   

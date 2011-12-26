@@ -26,14 +26,14 @@ _ini_params["patch"] := "0"
 if !f18_ini_read(_ini_section, @_ini_params, .f.)
    MsgBeep("problem sa ini_params " + _ini_section)
 endif
-_current_dbf_ver := get_dbf_ver(_ini_params["major"], _ini_params["minor"], _ini_params["patch"])
-_new_dbf_ver := get_dbf_ver( F18_DBF_VER_MAJOR, F18_DBF_VER_MINOR, F18_DBF_VER_PATCH)
+_current_dbf_ver := get_version_num(_ini_params["major"], _ini_params["minor"], _ini_params["patch"])
+_new_dbf_ver := get_version_num( F18_DBF_VER_MAJOR, F18_DBF_VER_MINOR, F18_DBF_VER_PATCH)
 
 log_write("current dbf version:" + STR(_current_dbf_ver))
 log_write("    F18 dbf version:" + STR(_new_dbf_ver))
 
 // 0.2.1
-if _current_dbf_ver < 0201
+if _current_dbf_ver < 00201
    modstru({"*roba", "A IDKONTO C 7 0"})
 endif
 
@@ -51,14 +51,4 @@ if !f18_ini_write(_ini_section, @_ini_params, .f.)
 endif
 
 return
-
-// -----------------------------------------------
-// -----------------------------------------------
-function get_dbf_ver(major, minor, patch)
-
-if VALTYPE(major) == "C"
-   return  VAL(major)* 10000 +  VAL(minor)*100 + VAL(patch)
-else
-  return  major * 10000 +  minor * 100 + patch
-endif
 

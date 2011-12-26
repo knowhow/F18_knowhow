@@ -127,6 +127,8 @@ if my_server_login()
    cre_all_dbfs()
    dbf_update()
 
+   check_server_db_version()
+
    return .t.
 else
 
@@ -361,7 +363,7 @@ local _key := "search_path"
 
 if path == nil
    if !hb_hhaskey(__server_params, _key)
-     __server_params[_key] := "fmk,public"
+     __server_params[_key] := "fmk, public, u2"
    endif
 else
    __server_params[_key] := path

@@ -16,6 +16,8 @@ sifk_sifv_test()
 
 fetch_set_metric()
 
+test_version()
+
 TEST_END()
 
 ? "kraj"

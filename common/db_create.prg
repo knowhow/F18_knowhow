@@ -18,6 +18,7 @@ CreFmkSvi()
 CreRoba()
 
 // TODO: http://redmine.bring.out.ba/issues/25815
+cre_all_fin()
 
 return
 

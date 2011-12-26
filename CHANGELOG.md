@@ -1,3 +1,7 @@
+0.9.27  2011-12-26, haos-4
+
+  - [#25815](http://redmine.bring.out.ba/issues/25815) modstru vise ne ispada kada nema tabele, cre_all_fin iter-1
+
 0.9.26  2011-12-24, hernad fetch_metric, set_metric
 
   - [#25877](http://redmine.bring.out.ba/issues/25877)

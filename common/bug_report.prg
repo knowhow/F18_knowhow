@@ -164,6 +164,10 @@ next
 ? "---", REPLICATE("-", 80)
 ?
 
+server_connection_info()
+
+server_db_version_info()
+
 server_info()
 
 if used() 
@@ -204,6 +208,37 @@ next
 ?
 return .t.
 
+// --------------------------------------
+// --------------------------------------
+static function server_connection_info()
+?
+? "/----- SERVER connection info: ---------- /"
+?
+? "host/database/port/schema :", my_server_params()["host"] + " / " + my_server_params()["database"] + " / " +  ALLTRIM(STR(my_server_params()["port"], 0)) + " / " +  my_server_params()["schema"]  
+? "                     user :", my_server_params()["user"]
+?
+return .t.
+
+// -------------------------------
+// -------------------------------
+static function server_db_version_info()
+local _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_server_num
+
+_f18_required_server_num := get_version_num(SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH)
+
+_server_db_num := server_db_version()
+
+_f18_required_server_str := get_version_str(_f18_required_server_num)
+_server_db_str := get_version_str(_server_db_num)
+
+? "F18 client required server db >=     :", _f18_required_server_str, "/", ALLTRIM(STR(_f18_required_server_num, 0))
+? "Actual knowhow ERP server db version :", _server_db_str, "/", ALLTRIM(STR(_server_db_num, 0))
+
+return .t.
+
+
+
+
 // ---------------------------------
 // ---------------------------------
 static function current_dbf_info()
@@ -217,7 +252,7 @@ _struct := DBSTRUCT()
 ? "Record content:"
 ? REPLICATE("-", 60)
 for _i := 1 to LEN( _struct )
-   ? STR(_i, 3), _struct[_i, 1], _struct[_i, 2], _struct[_i, 3], _struct[_i, 4], EVAL(FIELDBLOCK(_struct[_i, 1]))
+   ? STR(_i, 3), PADR(_struct[_i, 1], 15), _struct[_i, 2], _struct[_i, 3], _struct[_i, 4], EVAL(FIELDBLOCK(_struct[_i, 1]))
 next
 ? REPLICATE("-", 60)
 

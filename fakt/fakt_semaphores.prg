@@ -520,6 +520,7 @@ local _step := 15000
 local _retry := 3
 local _order := "idfirma, idtipdok, brdok"
 local _key_block
+local _i, _fld, _fields, _sql_fields
 
 if algoritam == NIL
   algoritam := "FULL"
@@ -539,11 +540,12 @@ _count := table_count( _tbl, "true" )
 SELECT F_FAKT_DOKS2
 my_usex ("fakt_doks2", "fakt_doks2", .f., "SEMAPHORE")
 
+_fields := { "idfirma", "idtipdok", "brdok", "k1", "k2", "k3", "k4", "k5", "n1", "n2" }
+_sql_fields := sql_fields( _fields )
+
 for _offset := 0 to _count STEP _step
 
-  _qry :=  "SELECT " + ;
-		"idfirma, idtipdok, brdok, k1, k2, k3, k4, k5, n1, n2 " + ;
-		"FROM " + _tbl
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl
 
   if algoritam == "DATE"
       _dat = get_dat_from_semaphore( "fakt_doks2" )
@@ -635,18 +637,14 @@ for _offset := 0 to _count STEP _step
 
   DO WHILE !_qry_obj:Eof()
     append blank
-   
-	replace idfirma with _qry_obj:FieldGet(1), ;
-    		idtipdok with _qry_obj:FieldGet(2), ;
-    		brdok with _qry_obj:FieldGet(3), ;
-    		k1 with _qry_obj:FieldGet(4), ;
-    		k2 with _qry_obj:FieldGet(5), ;
-    		k3 with _qry_obj:FieldGet(6), ;
-    		k4 with _qry_obj:FieldGet(7), ;
-    		k5 with _qry_obj:FieldGet(8), ;
-    		n1 with _qry_obj:FieldGet(9), ;
-    		n2 with _qry_obj:FieldGet(10)
-
+    for _i := 1 to LEN(_fields)
+          _fld := FIELDBLOCK(_fields[_i])
+          if VALTYPE(EVAL(_fld)) $ "CM"
+              EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+          else
+              EVAL(_fld, _qry_obj:FieldGet(_i))
+          endif
+    next
     _qry_obj:Skip()
 
     _counter++

@@ -31,11 +31,11 @@ public gTabela := 0
 public gPDV := ""
 
 // novi parametri...
-f18_get_metric("Zaokruzenje", @gZaokr)
-f18_get_metric("FirmaID", @gFirma)
-f18_get_metric("FirmaNaziv", @gNFirma)
-f18_get_metric("TipSubjekta", @gTS)
-f18_get_metric("TipTabele", @gTabela)
+gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr)
+gFirma := fetch_metric( "firma_id", nil, gFirma)
+gNFirma := fetch_metric( "firma_naziv", nil, gNFirma)
+gTS := fetch_metric( "tip_subjekta", nil, gTS)
+gTabela := fetch_metric( "tip_tabele", nil, gTabela)
 
 if (gModul <> "POS" .and. gModul <> "TOPS" .and. gModul <> "HOPS" )
 	if empty(gNFirma)
@@ -44,17 +44,18 @@ if (gModul <> "POS" .and. gModul <> "TOPS" .and. gModul <> "HOPS" )
 	    @ m_x+1,m_y+2 SAY "Unesi naziv firme:" GET gNFirma pict "@!"
 	    read
 	  BoxC()
-	  f18_set_metric( "FirmaNaziv", gNFirma )
+	  set_metric( "firma_naziv", nil, gNFirma )
 	endif
 endif
 
 if gModul <> "TOPS" 
 
-	f18_get_metric( "PDVGlobal", @gPDV )
+	gPDV := fetch_metric( "pdv_global", nil, gPDV )
 	ParPDV()
-	f18_set_metric( "PDVGlobal", gPDV )
+	set_metric( "pdv_global", nil, gPDV )
 
 endif
+
 
 public gPartnBlock
 gPartnBlock := nil

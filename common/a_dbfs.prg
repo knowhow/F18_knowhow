@@ -202,11 +202,27 @@ AADD(gaDBFs, { F__RADKR ,"_RADKR"  , "_ld_radkr"    } )
 AADD(gaDBFs, { F__RADN  ,"_RADN"   , "_ld_radn"     } )
 AADD(gaDBFs, { F_LDSM   ,"LDSM"    , "ld_ldsm"    } )
 AADD(gaDBFs, { F_OPSLD  ,"OPSLD"   , "ld_opsld"    } )
-AADD(gaDBFs, { F_LD      ,"LD"      , "ld_ld", { |alg| ld_ld_from_sql_server(alg) }, "IDS" } )
+
+AADD(gaDBFs, { F_LD      ,"LD"      , "ld_ld", { |alg| ld_ld_from_sql_server(alg) }, "IDS", ;
+            { "idrj", {"godina", 4}, {"mjesec", 2}, "obr", "idradn" }, ;
+            { |x| "idrj=" + _sql_quote(x["idrj"]) + ;
+                    " and godina=" + STR( x["godina"], 4 ) + ;
+                    " and mjesec=" + STR( x["mjesec"], 2) + ;
+                    " and obr=" + _sql_quote(x["obr"]) + ;
+                    " and idradn=" + _sql_quote(x["idradn"]) }, "id1" } )
+                       
 AADD(gaDBFs, { F__LD     ,"_LD"     , "_ld_ld"     } )
 AADD(gaDBFs, { F_REKLD   ,"REKLD"   , "ld_rekld"     } )
 AADD(gaDBFs, { F_REKLDP  ,"REKLDP"  , "ld_rekldp"     } )
-AADD(gaDBFs, { F_RADKR  , "RADKR"   , "ld_radkr", { |alg| ld_radkr_from_sql_server(alg) }, "IDS" } )
+
+AADD(gaDBFs, { F_RADKR  , "RADKR"   , "ld_radkr", { |alg| ld_radkr_from_sql_server(alg) }, "IDS", ;
+            { "idradn", "idkred", { "mjesec", 2 }, { "godina", 4 }, "naosnovu" }, ;
+            {|x| "idradn=" + _sql_quote(x["idradn"]) + ;
+                " and idkred=" + _sql_quote(x["idkred"]) + ;
+                " and mjesec=" + STR( x["mjesec"], 2) + ;
+                " and godina=" + STR( x["godina"], 4 ) + ;
+                " and naosnovu=" + _sql_quote(x["naosnovu"]) }, "id1" } )
+
 AADD(gaDBFs, { F_RADN   , "RADN"    , "ld_radn", { |alg| ld_radn_from_sql_server(alg) }, "IDS" } )
 AADD(gaDBFs, { F_RADSIHT, "RADSIHT" , "ld_radsiht", { |alg| ld_radsiht_from_sql_server(alg) }, "IDS" } )
 AADD(gaDBFs, { F_LD_RJ  ,"LD_RJ"   , "ld_rj", { |alg| ld_rj_from_sql_server(alg)}, "IDS" } )

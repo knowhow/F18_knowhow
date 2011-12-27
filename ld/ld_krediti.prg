@@ -126,15 +126,8 @@ do while .t.
             _vals["iznos"] := nIRata
             _vals["naosnovu"] := cOsnov
             
-            _fields := { "idradn", { "mjesec", 2 }, { "godina", 4 }, "idkred", "naosnovu" }
-			
-            update_rec_server_and_dbf( nil, _vals, _fields, ;
-                            {|x| "idradn=" + _sql_quote(x["idradn"]) + ;
-                            " and mjesec=" + STR(x["mjesec"], 2) + ;
-                            " and godina=" + STR(x["godina"], 4) + ;
-                            " and idkred=" + _sql_quote(x["idkred"]) + ;
-                            " and naosnovu=" + _sql_quote(x["naosnovu"]) } )
-
+            update_rec_server_and_dbf( nil, _vals )
+            
             ++i
 
         endif
@@ -436,16 +429,7 @@ do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn=_idradn
     _vals := dbf_get_rec()
     _vals["placeno"] := iznos
     
-    _fields := { "idradn", { "mjesec", 2 }, { "godina", 4 }, "idkred", "naosnovu" }
-			
-    update_rec_server_and_dbf( nil, _vals, _fields, ;
-                            {|x| "idradn=" + _sql_quote(x["idradn"]) + ;
-                            " and mjesec=" + STR(x["mjesec"], 2) + ;
-                            " and godina=" + STR(x["godina"], 4) + ;
-                            " and idkred=" + _sql_quote(x["idkred"]) + ;
-                            " and naosnovu=" + _sql_quote(x["naosnovu"]) } )
-
-   
+    update_rec_server_and_dbf( nil, _vals )
 
  	skip
 

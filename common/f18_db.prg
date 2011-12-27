@@ -364,7 +364,13 @@ _full_id_mem := ""
 _changed_id  := .f.
 _values_dbf  := hb_hash()
 for each _field  in id_fields
-    _values_dbf[_field] := EVAL(FIELDBLOCK(_field))
+    if VALTYPE(_field) == "A"
+       // http://redmine.bring.out.ba/issues/25891#note-9
+       // {"num_polje", length}
+      _values_dbf[_field] := STR(EVAL(FIELDBLOCK(_field[1])), _field[2])
+    else   
+       _values_dbf[_field] := EVAL(FIELDBLOCK(_field))
+    endif
     if _values_dbf[_field] != values[_field]
         _changed_id := .t.
     endif

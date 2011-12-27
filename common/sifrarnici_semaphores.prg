@@ -675,7 +675,9 @@ DO CASE
                DELETE
           endif
         next
-        if ! _fnd ; exit ; endif
+        if ! _fnd 
+            exit
+        endif
     enddo
 END CASE
 

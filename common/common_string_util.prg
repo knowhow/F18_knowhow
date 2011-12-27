@@ -365,7 +365,6 @@ if (nPom:=int(nIzn/10**9))>=1
    fi:=.t.
 endif
 if (nPom:=int(nIzn/10**6))>=1
-   //if fi; cRez+="i"; endif
    if fi; cRez+=""; endif
    fi:=.t.
    if nPom==1
@@ -376,9 +375,9 @@ if (nPom:=int(nIzn/10**6))>=1
    endif
    nIzn:=nIzn-nPom*10**6
    f6:=.t.
+
 endif
 if (nPom:=int(nIzn/10**3))>=1
-   //if fi; cRez+="i"; endif
    if fi; cRez+=""; endif
    fi:=.t.
    if nPom==1

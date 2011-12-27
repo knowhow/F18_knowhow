@@ -266,11 +266,11 @@ if (nArea==-1 .or. nArea==(F_RADN))
 	endif
 	
 	if !FILE(f18_ime_dbf("_RADN"))
-  		DBcreate2(PRIVPATH+'_RADN.DBF',aDbf)
+  		DBcreate2('_RADN.DBF', aDbf)
 	endif
 	
-	CREATE_INDEX("1","id",KUMPATH+"RADN")
-	CREATE_INDEX("2","naz",KUMPATH+"RADN")
+	CREATE_INDEX("1", "id", "RADN")
+	CREATE_INDEX("2", "naz", "RADN")
 endif
 
 // RADKR.DBF

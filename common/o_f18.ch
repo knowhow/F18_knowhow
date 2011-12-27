@@ -229,17 +229,17 @@
 #xcommand O_R_PDV   => select(F_R_PDV);  my_usex  ("r_pdv")  
 
 // modul LD
-#xcommand O_RADN    => select (F_RADN); my_use ("radn"); set order to tag "1"
-#xcommand O_TPRSIHT => select (F_TPRSIHT); my_use ("tprsiht"); set order to tag "ID"
-#xcommand O_NORSIHT => select (F_NORSIHT); my_use ("norsiht"); set order to tag "ID"
-#xcommand O_RADSIHT => select (F_RADSIHT); my_use ("radsiht"); set order to tag "1"
-#xcommand O__RADN   => select (F__RADN);  my_use ("_radn")
-#xcommand O_RADKR   => select (F_RADKR);  my_use ("radkr"); set order to tag "1"
-#xcommand O_RADKRX  => select (F_RADKR);  my_use ("radkr") ; set order to tag "0"
-#xcommand O__RADKR  => select (F__RADKR);  my_use ("_radkr")
-#xcommand O_LD      => select (F_LD);      my_use ("ld"); set order to tag "1"
-#xcommand O_LDX     => select (F_LD);    my_use ("ld") ; set order to tag "1"
-#xcommand O__LD     => select (F__LD);    my_use ("_ld")
+#xcommand O_RADN    => select (F_RADN)    ;  my_use ("radn"); set order to tag "1"
+#xcommand O_TPRSIHT => select (F_TPRSIHT) ;  my_use ("tprsiht"); set order to tag "ID"
+#xcommand O_NORSIHT => select (F_NORSIHT) ;  my_use ("norsiht"); set order to tag "ID"
+#xcommand O_RADSIHT => select (F_RADSIHT) ;  my_use ("radsiht"); set order to tag "1"
+#xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
+#xcommand O_RADKR   => select (F_RADKR)   ;  my_use ("radkr"); set order to tag "1"
+#xcommand O_RADKRX  => select (F_RADKR)   ;  my_use ("radkr") ; set order to tag "0"
+#xcommand O__RADKR  => select (F__RADKR)  ;  my_use ("_radkr")
+#xcommand O_LD      => select (F_LD)      ;  my_use ("ld"); set order to tag "1"
+#xcommand O_LDX     => select (F_LD)      ;  my_use ("ld") ; set order to tag "1"
+#xcommand O__LD     => select (F__LD)     ;  my_use ("_ld")
 #xcommand O_LDSM    => select (F_LDSM);   my_use ("ldsm") ; set order to tag "1"
 #xcommand O_LDSMX   => select (F_LDSM);   my_use ("ldsm") ; set order to tag "0"
 #xcommand O_OPSLD   => select 95; my_use ("opsld") ; set order to tag "1"

@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,12 +12,13 @@
 
 #include "ld.ch"
 
-
-function P_Radn(cId,dx,dy)
+// -------------------------
+// -------------------------
+function P_Radn(cId, dx, dy)
 local i
 local nArr
 
-nArr:=SELECT()
+nArr := SELECT()
 
 private imekol
 private kol
@@ -33,18 +34,19 @@ if (!used())
 	O_RADN
 endif
 
+
 // filterisanje tabele radnika
 _radn_filter( .t. )
 
 select (nArr)
 
 ImeKol:={}
-AADD(ImeKol, { Lokal(padr("Id",6)), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} })
-AADD(ImeKol, { Lokal(padr("Prezime", 20)),{|| naz}, "naz" } )
-AADD(ImeKol, { Lokal(padr("Ime roditelja",15)),{|| imerod}, "imerod" } )
-AADD(ImeKol, { Lokal(padr("Ime",15)), {|| ime}, "ime" } )
-AADD(ImeKol, { padr( IF(gBodK=="1", Lokal("Br.bodova"), Lokal("Koeficij.")), 10),{|| brbod}, "brbod" })
-AADD(ImeKol, { Lokal(padr("MinR%", 5)), {|| kminrad}, "kminrad" })
+AADD(ImeKol, { Lokal(padr("Id",6))             , {|| id}, "id", {|| .t.}, {|| vpsifra(wId, "1") } })
+AADD(ImeKol, { Lokal(padr("Prezime", 20))      , {|| naz}, "naz" } )
+AADD(ImeKol, { Lokal(padr("Ime roditelja",15)) , {|| imerod}, "imerod" } )
+AADD(ImeKol, { Lokal(padr("Ime",15))           , {|| ime}, "ime" } )
+AADD(ImeKol, { padr( IIF(gBodK=="1", Lokal("Br.bodova"), Lokal("Koeficij.")), 10), {|| brbod}, "brbod" })
+AADD(ImeKol, { Lokal(padr("MinR%", 5))         , {|| kminrad}, "kminrad" })
 
 if RADN->(FIELDPOS("KLO")) <> 0
    
@@ -139,10 +141,9 @@ for i:=1 to 9
 next
 
 
-return PostojiSifra(F_RADN, 1, 12, 72, Lokal("Lista radnika") + SPACE(5) + "<S> filter radnika on/off", ;
+return PostojiSifra(F_RADN, 1, MAXROWS()-15, MAXCOLS()-15, Lokal("Lista radnika") + SPACE(5) + "<S> filter radnika on/off", ;
           @cId, dx, dy, ;
 	  {|Ch| RadBl(Ch)},,,,,{"ID"})
-
 
 
 // ------------------------------------------

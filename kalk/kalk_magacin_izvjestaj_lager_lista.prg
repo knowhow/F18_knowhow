@@ -41,7 +41,7 @@ function LLM()
 parameters fPocStanje
 local fimagresaka:=.f.
 local aNabavke:={}
-
+local _curr_user := "<>"
 local lExpDbf := .f.
 local cExpDbf := "N"
 local cMoreInfo := "N"
@@ -144,13 +144,13 @@ endif
 
 if !fPocStanje
  
- f18_get_metric("LagerListaIdKonto", @cIdKonto, .t. )
- f18_get_metric("LagerListaPoNabavnoj", @cPNab, .t. )
- f18_get_metric("LagerListaPrikazNula", @cNula, .t. )
- f18_get_metric("LagerListaDatumOd", @dDatOd, .t. )
- f18_get_metric("LagerListaDatumDo", @dDatDo, .t. )
- f18_get_metric("LagerListaMinimalneKolicine", @cMinK, .t. )
- f18_get_metric("LagerListaPrikazDoNabavne", @cDoNab, .t. )
+ cIdKonto := fetch_metric("kalk_lager_lista_id_konto", _curr_user, cIdKonto )
+ cPNab := fetch_metric("kalk_lager_lista_po_nabavnoj", _curr_user, cPNab )
+ cNula := fetch_metric("kalk_lager_lista_prikaz_nula", _curr_user, cNula )
+ dDatOd := fetch_metric("kalk_lager_lista_datum_od", _curr_user, dDatOd )
+ dDatDo := fetch_metric("kalk_lager_lista_datum_do", _curr_user, dDatDo )
+ cMinK := fetch_metric("kalk_lager_lista_minimalne_kolicine", _curr_user, cMinK )
+ cDoNab := fetch_metric("kalk_lager_Lista_prikaz_do_nabavne", _curr_user, cDoNab )
 
 endif
 
@@ -266,13 +266,13 @@ BoxC()
 
 if !fPocStanje
 
- f18_set_metric("LagerListaIdKonto", cIdKonto, .t.)
- f18_set_metric("LagerListaPoNabavnoj", cPNab, .t. )
- f18_set_metric("LagerListaPrikazNula", cNula, .t.)
- f18_set_metric("LagerListaDatumOd", dDatOd, .t.)
- f18_set_metric("LagerListaDatumDo", dDatDo, .t. )
- f18_set_metric("LagerListaMinimalneKolicine", cMinK, .t.)
- f18_set_metric("LagerListaPrikazDoNabavne", cDoNab, .t.)
+ set_metric("kalk_lager_lista_id_konto", f18_user(), cIdKonto )
+ set_metric("kalk_lager_lista_po_nabavnoj", f18_user(), cPNab )
+ set_metric("kalk_lager_lista_prikaz_nula", f18_user(), cNula )
+ set_metric("kalk_lager_lista_datum_od", f18_user(), dDatOd )
+ set_metric("kalk_lager_lista_datum_do", f18_user(), dDatDo )
+ set_metric("kalk_lager_lista_minimalne_kolicine", f18_user(), cMinK )
+ set_metric("kalk_lager_lista_prikaz_do_nabavne", f18_user(), cDoNab )
 
 endif
 

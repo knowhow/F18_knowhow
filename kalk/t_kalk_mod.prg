@@ -291,174 +291,12 @@ public gAImpPrint := "N"
 public gAImpRKonto := PADR("1370", 7)
 // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
 public gAImpRight := 0
-
-gGlBaza := "KALK.DBF"
-
-f18_get_metric("Dokument10Trosak1", @c10T1)
-f18_get_metric("Dokument10Trosak2", @c10T2)
-f18_get_metric("Dokument10Trosak3", @c10T3)
-f18_get_metric("Dokument10Trosak4", @c10T4)
-f18_get_metric("Dokument10Trosak5", @c10T5)
-
-f18_get_metric("DokumentRNTrosak1", @cRNT1)
-f18_get_metric("DokumentRNTrosak2", @cRNT2)
-f18_get_metric("DokumentRNTrosak3", @cRNT3)
-f18_get_metric("DokumentRNTrosak4", @cRNT4)
-f18_get_metric("DokumentRNTrosak5", @cRNT5)
-
-f18_get_metric("Dokument24Trosak1", @c24T1)
-f18_get_metric("Dokument24Trosak2", @c24T2)
-f18_get_metric("Dokument24Trosak3", @c24T3)
-f18_get_metric("Dokument24Trosak4", @c24T4)
-f18_get_metric("Dokument24Trosak5", @c24T5)
-f18_get_metric("Dokument24Trosak6", @c24T6)
-f18_get_metric("Dokument24Trosak7", @c24T7)
-f18_get_metric("Dokument24Trosak8", @c24T8)
-
-f18_get_metric("BaznaValuta", @gBaznaV)
-
-f18_get_metric("KontiranjeFin", @gAFin)
-f18_get_metric("KontiranjeMat", @gAMat)
-f18_get_metric("KontiranjeFakt", @gAFakt)
-f18_get_metric("BrojacKalkulacija", @gBrojac)
-
-f18_get_metric("MagacinPoNC", @gMagacin)
-
-if IsPDV()
-	f18_get_metric("MagacinPoNCPDV", @gPDVMagNab)
-endif
-
-f18_get_metric("AzuriranjeSumnjivihDokumenata", @gCijene)
-
-/*
-// ovo su direktoriji fin, mat, kalk...
-// ovo treba izbaciti
-f18_get_metric("d3", @gDirFIK)
-f18_get_metric("d4", @gDirMaK)
-f18_get_metric("d5", @gDirFakK)
-f18_get_metric("df", @gDirFIN)
-f18_get_metric("dm", @gDirMat)
-f18_get_metric("dx", @gDirFakt)
-*/
-
-f18_get_metric("TipSubjekta", @gTS)
-
-f18_get_metric("TipTabele", @gTabela)
-f18_get_metric("SetFormula", @gSetForm)
-f18_get_metric("Generisi16Nakon96", @gGen16)
-f18_get_metric("OznakaRjUFakt", @gKomFakt)
-f18_get_metric("KomisionKonto", @gKomKonto)
-f18_get_metric("KolicinaKalo", @gKalo)
-f18_get_metric("VoditiKalo", @gVodiKalo)
-f18_get_metric("TipNivelacije14", @gNiv14)
-f18_get_metric("MetodaNC", @gMetodaNC)
-f18_get_metric("BrojDecimalaZaKolicinu", @gDeckol)
-f18_get_metric("PromjenaCijenaOdgovor", @gDefNiv)
-f18_get_metric("NoviKorisnickiInterfejs", @gNW)
-f18_get_metric("VarijantaEvidencije", @gVarEv)
-f18_get_metric("FormatPrikazaCijene", @gPicCDEM)
-f18_get_metric("FormatPrikazaProcenta", @gPicProc)
-f18_get_metric("FormatPrikazaIznosa", @gPicDEM)
-f18_get_metric("FormatPrikazaKolicine", @gPicKol)
-f18_get_metric("FormatPrikazaNabavneCijene", @gPicNC)
-f18_get_metric("FormatPrikazaCijeneProsirenje", @gFPicCDem)
-f18_get_metric("FormatPrikazaIznosaProsirenje", @gFPicDem)
-f18_get_metric("FormatPrikazaKolicineProsirenje", @gFPicKol)
-f18_get_metric("PotpisNaKrajuNaloga", @gPotpis)
-f18_get_metric("VarijantaPopustaNaDokumentima", @gRCRP)
-f18_get_metric("RokTrajanja", @gRokTr)
-f18_get_metric("KontiranjeAutomatskaRavnotezaNaloga", @gAutoRavn)
-f18_get_metric("AutomatskoAzuriranjeCijena", @gAutoCjen)
-f18_get_metric("PreuzimanjeTroskovaIzSifRoba", @gRobaTrosk)
-f18_get_metric("Trosak1Tip", @gRobaTr1Tip)
-f18_get_metric("Trosak2Tip", @gRobaTr2Tip)
-f18_get_metric("Trosak3Tip", @gRobaTr3Tip)
-f18_get_metric("Trosak4Tip", @gRobaTr4Tip)
-f18_get_metric("Trosak5Tip", @gRobaTr5Tip)
-f18_get_metric("KonverzijaValuteNaUnosu", @gDokKVal)
-
-f18_get_metric("Dokument10PrikazUkalkPoreza", @g10Porez)
-f18_get_metric("Dokument10Varijanta", @c10Var)
-f18_get_metric("Dokument11BezNC", @g11bezNC)
-f18_get_metric("Dokument80RekapPoTar", @g80VRT)
-f18_get_metric("Dokument14VarijantaPoreza", @gVarVP)
-f18_get_metric("VarijantaFakt13Kalk11Cijena", @gVar13u11)
- 
-f18_get_metric("PrenosPOS",@gTops)
-f18_get_metric("PrenosFAKT",@gFakt)
-f18_get_metric("DestinacijaTOPSKA",@gTopsDest)
-f18_get_metric("ModemskaVeza",@gModemVeza)
-f18_get_metric("PomocSaMPC",@gMPCPomoc)
-f18_get_metric("KolicinaKodNivelacijeFakt",@gKolicFakt)
-f18_get_metric("ZabranaPromjeneTarifa",@gPromTar)
-f18_get_metric("DjokerF1KodKontiranja",@gFunKon1)
-f18_get_metric("DjokerF2KodKontiranja",@gFunKon2)
-
-f18_get_metric("TimeOutKodAzuriranja",@gAzurTimeout)
-f18_get_metric("TimeOutKodAzuriranjaFinNaloga",@gAzurFinTO)
-f18_get_metric("CacheTabela",@gCache)
-f18_get_metric("KontrolaOdstupanjaNC",@gNC_ctrl)
-f18_get_metric("LimitZaOtvoreneStavke",@gnLOst)
-f18_get_metric("DuzinaBrojacaDokumenta",@gLenBrKalk)
-f18_get_metric("IndexZaPretraguArtikla",@gArtCDX)
-
-cOdradjeno:="D"
-
-//if file(EXEPATH+'scshell.ini')
-        //cBrojLok:=R_IniRead ( 'TekucaLokacija','Broj',  "",EXEPATH+'scshell.INI' )
-  //      cOdradjeno:=R_IniRead ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "N" ,EXEPATH+'scshell.INI' )
-    //    R_IniWrite ( 'ShemePromjena',alltrim(strtran(strtran(cDirPriv,"\","_"),":","_")),  "D" ,EXEPATH+'scshell.INI' )
-//endif
-
-/*
-if ( empty( gDirFin ) .or. ;
-	empty( gDirMat ) .or. empty(gDirFiK) .or. ;
-	empty(gDirMaK) .or. empty(gDirFaKt) .or. ;
-	empty(gDirFakK) ) .or. cOdradjeno="N"
-
-  gDirFin := strtran(cDirPriv,"KALK","FIN")+SLASH
-  gDirMat := strtran(cDirPriv,"KALK","MAT")+SLASH
-  gDirFiK := strtran(cDirRad,"KALK","FIN")+SLASH
-  gDirMaK := strtran(cDirRad,"KALK","MAT")+SLASH
-  gDirFakt := strtran(cDirPriv,"KALK","FAKT")+SLASH
-  gDirFakK := strtran(cDirRad,"KALK","FAKT")+SLASH
-  
-  WPar("df",gDirFin)
-  WPar("dm",gDirMat)
-  WPar("d3",gDirFiK)
-  WPar("d4",gDirMaK)
-
-endif
-
-
-gDirFin:=trim(gDirFin)
-gDirMat:=trim(gDirMat)
-gDirFiK:=trim(gDirFiK)
-gDirMaK:=trim(gDirMaK)
-gDirFakt:=trim(gDirFakt)
-gDirFakK:=trim(gDirFakK)
-*/
-
-f18_get_metric("AutoImportPodatakaPrintanje", @gAImpPrint)
-f18_get_metric("AutoImportPodatakaKonto", @gAImpRKonto)
-f18_get_metric("AutoImportPodatakaKarakteri", @gAImpRight)
-
-// iz FMK inija...
-
-f18_get_metric("VoditiSamoEkonomat", @glEkonomat)
-f18_get_metric("Dokument10PoNarudzbi", @lPoNarudzbi)
-
 public gKalks:=.f.
 public lPodBugom:=.f.
 public gVodiSamoTarife
 public lSyncon47 := .f.
 public lKoristitiBK := .f.
 public lPrikPRUC := .f.
-
-f18_get_metric("VodiSamoTarife", @gVodiSamoTarife)
-f18_get_metric("KoristitiBarkodPriUnosu", @lKoristitiBK)
-f18_get_metric("PrikaziKolonePRUC", @lPrikPRUC)
-
 public gDuzKonto
 if !::oDatabase:lAdmin
 	O_KALK_PRIPR
@@ -467,24 +305,131 @@ if !::oDatabase:lAdmin
 else
 	gDuzKonto:=7
 endif
-
 public glZabraniVisakIP
 public glBrojacPoKontima
 public glEvidOtpis
 public gcSLObrazac
 
-f18_get_metric("ZabraniVisakKodIP", @glZabraniVisakIP)
-f18_get_metric("BrojacPoKontima", @glBrojacPoKontima)
-f18_get_metric("EvidentirajOtpis", @glEvidOtpis)
-f18_get_metric("SLObrazac", @gcSLObrazac)
-
-gRobaBlock:={|Ch| RobaBlock(Ch)}
-
 // inicijalizujem ovu varijablu uvijek pri startu
 // ona sluzi za automatsku obradu kalkulacija 
 // vindija - varazdin
-
 public lAutoObr := .f.
+
+cOdradjeno := "D"
+
+gGlBaza := "KALK.DBF"
+
+c10T1 := fetch_metric("kalk_dokument_10_trosak_1", nil, c10T1)
+c10T2 := fetch_metric("kalk_dokument_10_trosak_2", nil, c10T2)
+c10T3 := fetch_metric("kalk_dokument_10_trosak_3", nil, c10T3)
+c10T4 := fetch_metric("kalk_dokument_10_trosak_4", nil, c10T4)
+c10T5 := fetch_metric("kalk_dokument_10_trosak_5", nil, c10T5)
+
+cRNT1 := fetch_metric("kalk_dokument_rn_trosak_1", nil, cRNT1)
+cRNT2 := fetch_metric("kalk_dokument_rn_trosak_2", nil, cRNT2)
+cRNT3 := fetch_metric("kalk_dokument_rn_trosak_3", nil, cRNT3)
+cRNT4 := fetch_metric("kalk_dokument_rn_trosak_4", nil, cRNT4)
+cRNT5 := fetch_metric("kalk_dokument_rn_trosak_5", nil, cRNT5)
+
+c24T1 := fetch_metric("kalk_dokument_24_trosak_1", nil, c24T1)
+c24T2 := fetch_metric("kalk_dokument_24_trosak_2", nil, c24T2)
+c24T3 := fetch_metric("kalk_dokument_24_trosak_3", nil, c24T3)
+c24T4 := fetch_metric("kalk_dokument_24_trosak_4", nil, c24T4)
+c24T5 := fetch_metric("kalk_dokument_24_trosak_5", nil, c24T5)
+c24T6 := fetch_metric("kalk_dokument_24_trosak_6", nil, c24T6)
+c24T7 := fetch_metric("kalk_dokument_24_trosak_7", nil, c24T7)
+c24T8 := fetch_metric("kalk_dokument_24_trosak_8", nil, c24T8)
+
+gBaznaV := fetch_metric("kalk_bazna_valuta", nil, gBaznaV)
+gAFin := fetch_metric("kalk_kontiranje_fin", f18_user(), gAFin)
+gAMat := fetch_metric("kalk_kontiranje_mat", f18_user(), gAMat)
+gAFakt := fetch_metric("kalk_kontiranje_fakt", f18_user(), gAFakt)
+gBrojac := fetch_metric("kalk_brojac_kalkulacija", nil, gBrojac)
+gMagacin := fetch_metric("kalk_magacin_po_nc", nil, gMagacin)
+
+if IsPDV()
+	gPDVMagNab := fetch_metric("kalk_magacin_po_nc_pdv", nil, gPDVMagNab)
+endif
+
+gCijene := fetch_metric("kalk_azuriranje_sumnjivih_dokumenata", nil, gCijene)
+gTS := fetch_metric("kalk_tip_subjekta", nil, gTS)
+gTabela := fetch_metric("kalk_tip_tabele", nil, gTabela)
+gSetForm := fetch_metric("kalk_set_formula", nil, gSetForm)
+gGen16 := fetch_metric("kalk_generisi_16_nakon_96", f18_user(), gGen16)
+gKomFakt := fetch_metric("kalk_oznaka_rj_u_fakt", nil, gKomFakt)
+gKomKonto := fetch_metric("kalk_komision_konto", nil, gKomKonto)
+gKalo := fetch_metric("kalk_kolicina_kalo", nil, gKalo)
+gVodiKalo := fetch_metric("kalk_voditi_kalo", nil, gVodiKalo)
+gNiv14 := fetch_metric("kalk_tip_nivelacije_14", nil, gNiv14)
+gMetodaNC := fetch_metric("kalk_metoda_nc", nil, gMetodaNC)
+gDecKol := fetch_metric("kalk_broj_decimala_za_kolicinu", nil, gDeckol)
+gDefNiv := fetch_metric("kalk_promjena_cijena_odgovor", nil, gDefNiv)
+gNW := fetch_metric("kalk_novi_korisnicki_interfejs", nil, gNW)
+gVarEv := fetch_metric("kalk_varijanta_evidencije", nil, gVarEv)
+gPicCDem := fetch_metric("kalk_format_prikaza_cijene", nil, gPicCDEM)
+gPicProc := fetch_metric("kalk_format_prikaza_procenta", nil, gPicProc)
+gPicDem := fetch_metric("kalk_format_prikaza_iznosa", nil, gPicDEM)
+gPicKol := fetch_metric("kalk_format_prikaza_kolicine", nil, gPicKol)
+gPicNc := fetch_metric("kalk_format_prikaza_nabavne_cijene", nil, gPicNC)
+gFPicCDem := fetch_metric("kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem)
+gFPicDem := fetch_metric("kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem)
+gFPicKol := fetch_metric("kalk_format_prikaza_kolicine_prosirenje", nil, gFPicKol)
+gPotpis := fetch_metric("kalk_potpis_na_kraju_naloga", nil, gPotpis)
+gRCRP := fetch_metric("kalk_varijanta_popusta_na_dokumentima", nil, gRCRP)
+gRokTr := fetch_metric("kalk_rok_trajanja", nil, gRokTr)
+gAutoRavn := fetch_metric("kalk_kontiranje_automatska_ravnoteza_naloga", nil, gAutoRavn)
+gAutoCjen := fetch_metric("kalk_automatsko_azuriranje_cijena", nil, gAutoCjen)
+gRobaTrosk := fetch_metric("PreuzimanjeTroskovaIzSifRoba", nil, gRobaTrosk)
+gRobaTr1Tip := fetch_metric("kalk_trosak_1_tip", nil, gRobaTr1Tip)
+gRobaTr2Tip := fetch_metric("kalk_trosak_2_tip", nil, gRobaTr2Tip)
+gRobaTr3Tip := fetch_metric("kalk_trosak_3_tip", nil, gRobaTr3Tip)
+gRobaTr4Tip := fetch_metric("kalk_trosak_4_tip", nil, gRobaTr4Tip)
+gRobaTr5Tip := fetch_metric("kalk_trosak_5_tip", nil, gRobaTr5Tip)
+gDokKVal := fetch_metric("kalk_konverzija_valute_na_unosu", nil, gDokKVal)
+
+g10Porez := fetch_metric("kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez)
+c10Var := fetch_metric("kalk_dokument_10_varijanta", nil, c10Var)
+g11BezNC := fetch_metric("kalk_dokument_11_bez_nc", nil, g11bezNC)
+g80VRT := fetch_metric("kalk_dokument_80_rekap_po_tar", nil, g80VRT)
+gVarVP := fetch_metric("kalk_dokument_14_varijanta_poreza", nil, gVarVP)
+gVar13u11 := fetch_metric("kalk_varijanta_fakt_13_kalk_11_cijena", nil, gVar13u11)
+ 
+gTops := fetch_metric("kalk_prenos_pos", f18_user(), gTops)
+gFakt := fetch_metric("kalk_prenos_fakt", f18_user(), gFakt)
+gTopsDest := fetch_metric("kalk_destinacija_topska", f18_user(), gTopsDest)
+gModemVeza := fetch_metric("kalk_modemska_veza", f18_user(), gModemVeza)
+gMPCPomoc := fetch_metric("kalk_pomoc_sa_mpc", nil, gMPCPomoc)
+gKolicFakt := fetch_metric("kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt)
+gPromTar := fetch_metric("kalk_zabrana_promjene_tarifa", nil, gPromTar)
+gFunKon1 := fetch_metric("kalk_djoker_f1_kod_kontiranja", nil, gFunKon1)
+gFunKon2 := fetch_metric("kalk_djoker_f2_kod_kontiranja", nil, gFunKon2)
+
+gAzurTimeout := fetch_metric("kalk_timeout_kod_azuriranja", nil, gAzurTimeout)
+gAzurFinTO := fetch_metric("kalk_timeout_kod_azuriranja_fin_naloga", nil, gAzurFinTO)
+gCache := fetch_metric("kalk_cache_tabela", f18_user(), gCache)
+gNC_ctrl := fetch_metric("kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl)
+gnLOst := fetch_metric("kalk_limit_za_otvorene_stavke", f18_user(), gnLOst)
+gLenBrKalk := fetch_metric("kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk)
+gArtCDX := fetch_metric("kalk_index_za_pretragu_artikla", f18_user(), gArtCDX)
+
+gAImpPrint := fetch_metric("kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint)
+gAImpRKonto := fetch_metric("kalk_auto_import_podataka_konto", f18_user(), gAImpRKonto)
+gAImpRight := fetch_metric("kalk_auto_import_podataka_karakteri", f18_user(), gAImpRight)
+
+// iz FMK inija...
+
+glEkonomat := fetch_metric("kalk_voditi_samo_ekonomat", nil, glEkonomat)
+lPoNarudzbi := fetch_metric("kalk_dokument_10_po_narudzbi", nil, lPoNarudzbi)
+gVodiSamoTarife := fetch_metric("kalk_vodi_samo_tarife", nil, gVodiSamoTarife)
+lKoristitiBK := fetch_metric("kalk_koristiti_barkod_pri_unosu", nil, lKoristitiBK)
+lPrikPRUC := fetch_metric("kalk_prikazi_kolone_pruc", nil, lPrikPRUC)
+
+glZabraniVisakIP := fetch_metric("kalk_zabrani_visak_kod_ip", nil, glZabraniVisakIP)
+glBrojacPoKontima := fetch_metric("kalk_brojac_po_kontima", nil, glBrojacPoKontima)
+glEvidOtpis := fetch_metric("kalk_evidentiraj_otpis", nil, glEvidOtpis)
+gcSlObracun := fetch_metric("kalk_sl_obrazac", nil, gcSLObrazac)
+
+gRobaBlock:={|Ch| RobaBlock(Ch)}
 
 return
 

@@ -163,33 +163,33 @@ BoxC()
 
 if lastkey() <> K_ESC
 
-	f18_set_metric("MagacinPoNC", gMagacin)
+	set_metric("kalk_magacin_po_nc", nil, gMagacin)
 
   	if IsPDV()
-  		f18_set_metric("MagacinPoNCPDV", gPDVMagNab)
+  		set_metric("kalk_magacin_po_nc_pdv", nil, gPDVMagNab)
   	endif
 
-  	f18_set_metric("KolicinaKalo", gKalo)
-  	f18_set_metric("VoditiKalo", gVodiKalo)
-  	f18_set_metric("Dokument10PrikazUkalkPoreza", g10Porez)
-  	f18_set_metric("Dokument14VarijantaPoreza", gVarVP)
-  	f18_set_metric("Dokument10Varijanta", c10Var)
-  	f18_set_metric("Dokument11BezNC", g11bezNC)
-  	f18_set_metric("Dokument80RekapPoTar", g80VRT)
-  	f18_set_metric("TipNivelacije14", gNiv14)
-  	f18_set_metric("VarijantaFakt13Kalk11Cijena", gVar13u11)
-  	f18_set_metric("PomocSaMPC", gMPCPomoc)
-  	f18_set_metric("KolicinaKodNivelacijeFakt", gKolicFakt)
-  	f18_set_metric("PreuzimanjeTroskovaIzSifRoba", gRobaTrosk)
-  	f18_set_metric("VarijantaPopustaNaDokumentima", gRCRP )
-  	f18_set_metric("KontiranjeAutomatskaRavnotezaNaloga", gAutoRavn)
-  	f18_set_metric("AutomatskoAzuriranjeCijena", gAutoCjen)
-  	f18_set_metric("Trosak1Tip", gRobaTr1Tip)
-  	f18_set_metric("Trosak2Tip", gRobaTr2Tip)
-  	f18_set_metric("Trosak3Tip", gRobaTr3Tip)
-  	f18_set_metric("Trosak4Tip", gRobaTr4Tip)
-  	f18_set_metric("Trosak5Tip", gRobaTr5Tip)
-  	f18_set_metric("KonverzijaValuteNaUnosu", gDokKVal)
+  	set_metric("kalk_kolicina_kalo", nil, gKalo)
+  	set_metric("kalk_voditi_kalo", nil, gVodiKalo)
+  	set_metric("kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez)
+  	set_metric("kalk_dokument_14_varijanta_poreza", nil, gVarVP)
+  	set_metric("kalk_dokument_10_varijanta", nil, c10Var)
+  	set_metric("kalk_dokument_11_bez_nc", nil, g11bezNC)
+  	set_metric("kalk_dokument_80_rekap_po_tar", nil, g80VRT)
+  	set_metric("kalk_tip_nivelacije_14", nil, gNiv14)
+  	set_metric("kalk_varijanta_fakt_13_kalk_11_cijena", nil, gVar13u11)
+  	set_metric("kalk_pomoc_sa_mpc", nil, gMPCPomoc)
+  	set_metric("kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt)
+  	set_metric("kalk_preuzimanje_troskova_iz_sif_roba", nil, gRobaTrosk)
+  	set_metric("kalk_varijanta_popusta_na_dokumentima", nil, gRCRP )
+  	set_metric("kalk_kontiranje_automatska_ravnoteza_naloga", nil, gAutoRavn)
+  	set_metric("kalk_automatsko_azuriranje_cijena", nil, gAutoCjen)
+  	set_metric("kalk_trosak_1_tip", nil, gRobaTr1Tip)
+  	set_metric("kalk_trosak_2_tip", nil, gRobaTr2Tip)
+  	set_metric("kalk_trosak_3_tip", nil, gRobaTr3Tip)
+  	set_metric("kalk_trosak_4_tip", nil, gRobaTr4Tip)
+  	set_metric("kalk_trosak_5_tip", nil, gRobaTr5Tip)
+  	set_metric("kalk_konverzija_valute_na_unosu", nil, gDokKVal)
 
 endif
 
@@ -225,21 +225,21 @@ read
 BoxC()
 
 if lastkey()<>K_ESC
-	f18_set_metric("BrojacKalkulacija", gBrojac)
-  	f18_set_metric("RokTrajanja", gRokTr)
-  	f18_set_metric("PotpisNaKrajuNaloga", gPotpis)
-  	f18_set_metric("TipTabele", gTabela)
-  	f18_set_metric("NoviKorisnickiInterfejs", gNW)
-  	f18_set_metric("VarijantaEvidencije", gVarEv)
-  	f18_set_metric("ZabranaPromjeneTarifa", gPromTar)
-  	f18_set_metric("DjokerF1KodKontiranja", gFunKon1)
-  	f18_set_metric("DjokerF2KodKontiranja", gFunKon2)
-  	f18_set_metric("TimeOutKodAzuriranja", gAzurTimeout)
-  	f18_set_metric("CacheTabela", gCache)
-  	f18_set_metric("KontrolaOdstupanjaNC", gNC_ctrl)
-  	f18_set_metric("LimitZaOtvoreneStavke", gnLOst)
-  	f18_set_metric("DuzinaBrojacaDokumenta", gLenBrKalk)
-  	f18_set_metric("IndexZaPretraguArtikala", gArtCDX)
+	set_metric("kalk_brojac_kalkulacija", nil, gBrojac)
+  	set_metric("kalk_rok_trajanja", nil, gRokTr)
+  	set_metric("kalk_potpis_na_kraju_naloga", nil, gPotpis)
+  	set_metric("kalk_tip_tabele", nil, gTabela)
+  	set_metric("kalk_novi_korisnicki_interfejs", nil, gNW)
+  	set_metric("kalk_varijanta_evidencije", nil, gVarEv)
+  	set_metric("kalk_zabrana_promjene_tarifa", nil, gPromTar)
+  	set_metric("kalk_djoker_f1_kod_kontiranja", nil, gFunKon1)
+  	set_metric("kalk_djoker_f2_kod_kontiranja", nil, gFunKon2)
+  	set_metric("kalk_timeout_kod_azuriranja", nil, gAzurTimeout)
+  	set_metric("kalk_cache_tabela", f18_user(), gCache)
+  	set_metric("kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl)
+  	set_metric("kalk_limit_za_otvorene_stavke", f18_user(), gnLOst)
+  	set_metric("kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk)
+  	set_metric("kalk_index_za_pretragu_artikala", f18_user(), gArtCDX)
 endif
 
 return .t.
@@ -267,10 +267,10 @@ BoxC()
 
 if lastkey() <> K_ESC
 
-  f18_set_metric("MetodaNC", gMetodaNC)
-  f18_set_metric("PromjenaCijenaOdgovor", gDefNiv)
-  f18_set_metric("AzuriranjeSumnjivihDokumenata", gCijene)
-  f18_set_metric("BrojDecimalaZaKolicinu", gDecKol)
+  set_metric("kalk_metoda_nc", nil, gMetodaNC)
+  set_metric("kalk_promjena_cijena_odgovor", nil, gDefNiv)
+  set_metric("kalk_azuriranje_sumnjivih_dokumenata", nil, gCijene)
+  set_metric("kalk_broj_decimala_za_kolicinu", nil, gDecKol)
 
 endif
 
@@ -310,12 +310,12 @@ Box(,4,65,.f.,"MATICNA FIRMA, BAZNA VALUTA")
 BoxC()
 
 if lastkey()<>K_ESC
-	f18_set_metric("FirmaID", gFirma)
-  	f18_set_metric("TipSubjekta", gTS)
+	set_metric("kalk_firma_id", nil, gFirma)
+  	set_metric("kalk_tip_subjekta", nil, gTS)
   	gNFirma := PADR(gNFirma, 20)
-  	f18_set_metric("FirmaNaziv", gNFirma)
-  	f18_set_metric("BaznaValuta", gBaznaV)
-  	f18_set_metric("Zaokruzenje", @gZaokr)
+  	set_metric("kalk_firma_naziv", nil, gNFirma)
+  	set_metric("kalk_bazna_valuta", nil, gBaznaV)
+  	set_metric("kalk_zaokruzenje", nil, gZaokr)
 endif
 
 return .f.
@@ -340,15 +340,15 @@ Box(,10,60,.f.,"PARAMETRI PRIKAZA - PICTURE KODOVI")
 BoxC()
 
 if lastkey() <> K_ESC
-	f18_set_metric("FormatPrikazaCijene", gPicCDEM)
-  	f18_set_metric("FormatPrikazaProcenta", gPicProc)
-  	f18_set_metric("FormatPrikazaIznosa", gPicDEM)
-  	f18_set_metric("FormatPrikazaKolicine", gPicKol)
-  	f18_set_metric("FormatPrikazaNabavneCijene", gPicNC )
-  	f18_set_metric("FormatPrikazaCijeneProsirenje", gFPicCDem )
-  	f18_set_metric("FormatPrikazaIznosaProsirenje", gFPicDem )
-  	f18_set_metric("FormatPrikazaKolicineProsirenje", gFPicKol )
-  	f18_set_metric("BrojDecimalaZaKolicinu", gDecKol)
+	set_metric("kalk_format_prikaza_cijene", nil, gPicCDEM)
+  	set_metric("kalk_format_prikaza_procenta", nil, gPicProc)
+  	set_metric("kalk_format_prikaza_iznosa", nil, gPicDEM)
+  	set_metric("kalk_format_prikaza_kolicine", nil, gPicKol)
+  	set_metric("kalk_format_prikaza_nabavne_cijene", nil, gPicNC )
+  	set_metric("kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
+  	set_metric("kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem )
+  	set_metric("kalk_format_prikaza_kolicine_prosirenje", nil, gFPicKol )
+  	set_metric("kalk_broj_decimala_za_kolicinu", nil, gDecKol)
 endif
 
 return .t.
@@ -365,8 +365,8 @@ Box(,6,76,.f.,"PARAMETRI KOMISIONE PRODAJE")
 BoxC()
 
 if lastkey() <> K_ESC
-	f18_set_metric("OznakaRjUFakt", gKomFakt)
-  	f18_set_metric("KomisionKonto", gKomKonto)
+	set_metric("kalk_oznaka_rj_u_fakt", nil, gKomFakt)
+  	set_metric("kalk_komision_konto", nil, gKomKonto)
 endif
 
 return nil
@@ -392,14 +392,14 @@ Box(,8,76,.f.,"NACINI FORMIRANJA ZAVISNIH DOKUMENATA")
 BoxC()
 
 if lastkey() <> K_ESC
-	f18_set_metric("KontiranjeFin", @gAFin)
-  	f18_set_metric("KontiranjeMat", @gAMat)
-  	f18_set_metric("KontiranjeFakt", @gAFakt)
-  	f18_set_metric("Generisi16Nakon96", @gGen16)
-  	f18_set_metric("PrenosPOS", gTops)
-  	f18_set_metric("PrenosFAKT", gFakt)
-  	f18_set_metric("DestinacijaTOPSKA", gTopsDest)
-  	f18_set_metric("ModemskaVeza", gModemVeza)
+	set_metric("kalk_kontiranje_fin", f18_user(), gAFin)
+  	set_metric("kalk_kontiranje_mat", f18_user(), gAMat)
+  	set_metric("kalk_kontiranje_fakt", f18_user(), gAFakt)
+  	set_metric("kalk_generisi_16_nakon_96", f18_user(), gGen16)
+  	set_metric("kalk_prenos_pos", f18_user(), gTops)
+  	set_metric("kalk_prenos_fakt", f18_user(), gFakt)
+  	set_metric("kalk_destinacija_topska", f18_user(), gTopsDest)
+  	set_metric("kalk_modemska_veza", f18_user(), gModemVeza)
 endif
 
 return nil
@@ -435,13 +435,13 @@ private  GetList:={}
  gDirFakK:=trim(gDirFakK)
 
  if lastkey()<>K_ESC
-  //f18_set_metric("df",gDirFIN)
-  //f18_set_metric("d3",gDirFIK)
-  //f18_set_metric("d4",gDirMaK)
-  //f18_set_metric("dm",gDirMat)
+  //set_metric("df",gDirFIN)
+  //set_metric("d3",gDirFIK)
+  //set_metric("d4",gDirMaK)
+  //set_metric("dm",gDirMat)
 
-  //f18_set_metric("dx",@gDirFakt)
-  //f18_set_metric("d5",@gDirFakK)
+  //set_metric("dx",@gDirFakt)
+  //set_metric("d5",@gDirFakK)
  endif
 
 return nil
@@ -462,11 +462,11 @@ BoxC()
 
 if lastkey() <> K_ESC
   
-	f18_set_metric("Dokument10Trosak1", c10T1)
-	f18_set_metric("Dokument10Trosak2", c10T2)
-	f18_set_metric("Dokument10Trosak3", c10T3)
-	f18_set_metric("Dokument10Trosak4", c10T4)
-	f18_set_metric("Dokument10Trosak5", c10T5)
+	set_metric("kalk_dokument_10_trosak_1", nil, c10T1)
+	set_metric("kalk_dokument_10_trosak_2", nil, c10T2)
+	set_metric("kalk_dokument_10_trosak_3", nil, c10T3)
+	set_metric("kalk_dokument_10_trosak_4", nil, c10T4)
+	set_metric("kalk_dokument_10_trosak_5", nil, c10T5)
 
 endif
 
@@ -486,11 +486,11 @@ Box(,5,76,.t.,"RADNI NALOG")
 BoxC()
 
 if lastkey() <> K_ESC
-  f18_set_metric("DokumentRNTrosak1", @cRNT1)
-  f18_set_metric("DokumentRNTrosak2", @cRNT2)
-  f18_set_metric("DokumentRNTrosak3", @cRNT3)
-  f18_set_metric("DokumentRNTrosak4", @cRNT4)
-  f18_set_metric("DokumentRNTrosak5", @cRNT5)
+  set_metric("kalk_dokument_rn_trosak_1", nil, cRNT1)
+  set_metric("kalk_dokument_rn_trosak_2", nil, cRNT2)
+  set_metric("kalk_dokument_rn_trosak_3", nil, cRNT3)
+  set_metric("kalk_dokument_rn_trosak_4", nil, cRNT4)
+  set_metric("kalk_dokument_rn_trosak_5", nil, cRNT5)
 endif
 
 cIspravka := "N"
@@ -515,14 +515,14 @@ Box(,5,76,.t.,"24 - USLUGE")
 BoxC()
 
 if lastkey() <> K_ESC
-	f18_set_metric("Dokument24Trosak1", c24T1)
-  	f18_set_metric("Dokument24Trosak2", c24T2)
-  	f18_set_metric("Dokument24Trosak3", c24T3)
-  	f18_set_metric("Dokument24Trosak4", c24T4)
-  	f18_set_metric("Dokument24Trosak5", c24T5)
-  	f18_set_metric("Dokument24Trosak6", c24T6)
-  	f18_set_metric("Dokument24Trosak7", c24T7)
-  	f18_set_metric("Dokument24Trosak8", c24T8)
+	set_metric("kalk_dokument_24_trosak_1", nil, c24T1)
+  	set_metric("kalk_dokument_24_trosak_2", nil, c24T2)
+  	set_metric("kalk_dokument_24_trosak_3", nil, c24T3)
+  	set_metric("kalk_dokument_24_trosak_4", nil, c24T4)
+  	set_metric("kalk_dokument_24_trosak_5", nil, c24T5)
+  	set_metric("kalk_dokument_24_trosak_6", nil, c24T6)
+  	set_metric("kalk_dokument_24_trosak_7", nil, c24T7)
+  	set_metric("kalk_dokument_24_trosak_8", nil, c24T8)
 endif
 
 return nil

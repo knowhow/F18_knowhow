@@ -59,9 +59,6 @@ endif
 
 return .t.
 
-
-
-
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
 function delete_rec_server_and_dbf(table, values, id_fields, where_block, order_key_tag)
@@ -183,7 +180,7 @@ _rec["id"] := NIL
 // ostala polja su nevazna za brisanje
 
 
-if sql_table_update( _table, "del", _rec)
+if sql_table_update( _table, "del", _rec, "true")
    update_semaphore_version( _table, .t.)
    sql_table_update( _table, "END")
 
@@ -211,7 +208,7 @@ function set_global_vars_from_dbf(zn)
 
 local _i, _struct, _field, _var
 
-private cImeP,cVar
+private cImeP, cVar
 
 if zn == NIL 
   zn := "_"
@@ -268,8 +265,8 @@ return _ret
 
 
 
-// -----------------------------------------
-// -----------------------------------------
+// -----------------------------------------------------------------
+// -----------------------------------------------------------------
 function update_rec_on_server(table, values, id_fields, where_block)
 local _vars
 
@@ -299,7 +296,7 @@ local _ids := {}
 local _pos
 local _val_dbf, _val_mem
 local _changed_id, _values_dbf, _full_id_dbf, _full_id_mem 
-local _where_str
+local _where_str, _where_str_2
 local _t_field
 local _t_field_dec
 
@@ -319,6 +316,15 @@ endif
 
 // proadji naziv tabele prema aliasu
 _pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+if _pos == 0
+  _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER(table) } )
+endif
+
+if (_pos == 0)
+  MsgBeep( PROCNAME() + " / " + ALLTRIM(STR(PROCLINE(1), 0))  + " tabela: " + table)
+  QUIT
+endif
+    
 table := gaDBFs[ _pos, 3 ]
 
 if id_fields == NIL
@@ -397,7 +403,8 @@ next
 // razlike izmedju dbf-a i values postoje
 if _changed_id
     AADD(_ids, _full_id_dbf)
-    if !sql_table_update(table, "del", NIL, EVAL(where_block, _values_dbf)) 
+    _where_str_2 := EVAL(where_block, _values_dbf)
+    if !sql_table_update(table, "del", NIL, _where_str_2)
        sql_table_update(table, "ROLLBACK")
        MsgBeep("mi imamos mnogos problemos - del / 2")
        return .f.

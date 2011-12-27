@@ -309,14 +309,13 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
 	
 	if found()
   		lNovi:=.f.
-  		scatter()
+  		set_global_vars_from_dbf()
 	else
 		lNovi:=.t.
   		append blank
   		
         set_global_vars_from_dbf()
 
-        //Scatter()
   		_Godina:=cGodina
   		_idrj:=cIdRj
 		_idradn:=cIdRadn

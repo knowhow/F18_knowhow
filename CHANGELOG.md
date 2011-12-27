@@ -1,5 +1,6 @@
-0.9.27  2011-12-26, hernad, haos-4
+0.9.27  2011-12-27, hernad
 
+  - [#25888](http://redmine.bring.out.ba/issues/25888), db parametri
   - [#25750](http://redmine.bring.out.ba/issues/25750), bug_report iter-2
   - [#25881](http://redmine.bring.out.ba/issues/25881), check_server_db
   - [#25815](http://redmine.bring.out.ba/issues/25815), modstru vise ne ispada kada nema tabele, cre_all_fin iter-1

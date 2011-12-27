@@ -17,6 +17,7 @@
 // pregled / stampa azuriranih dokumenata 
 // -----------------------------------------------
 function fakt_stampa_liste_dok()
+local _curr_user := "<>"
 local nCol1:=0
 local nul,nizl,nRbr
 local m
@@ -77,20 +78,21 @@ endif
 
 Box( , 12 + IF( lVrsteP .or. lOpcine .or. glRadNal, 6, 0 ), 77 )
 
-f18_get_metric("StampaListeIdFirma", @cIdFirma, .t. )
-f18_get_metric("StampaListeDokumenti", @qqTipDok, .t. )
-f18_get_metric("StampaListeDatumOd", @dDatOd, .t. )
-f18_get_metric("StampaListeDatumDo", @dDatDo, .t. )
-f18_get_metric("StampaListeTabelarniPregled", @cTabela, .t. )
-f18_get_metric("StampaListeImeKupca", @cImeKup, .t. )
-f18_get_metric("StampaListePartner", @qqPartn, .t. )
-f18_get_metric("StampaListeBrojDokumenta", @cBrFakDok, .t. )
+cIdFirma := fetch_metric("fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
+qqTipDok := fetch_metric("fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
+dDatOd := fetch_metric("fakt_stampa_liste_datum_od", _curr_user, dDatOd )
+dDatDo := fetch_metric("fakt_stampa_liste_datum_do", _curr_user, dDatDo )
+cTabela := fetch_metric("fakt_stampa_liste_tabelarni_pregled", _curr_user, cTabela )
+cImeKup := fetch_metric("fakt_stampa_liste_ime_kupca", _curr_user, cImeKup )
+qqPartn := fetch_metric("fakt_stampa_liste_partner", _curr_user, qqPartn )
+cBrFakDok := fetch_metric("fakt_stampa_liste_broj_dokumenta", _curr_user, cBrFakDok )
 
 cImeKup := padr(cImeKup,20)
 qqPartn := padr(qqPartn,20)
 qqTipDok := padr(qqTipDok,2)
 
 do while .t.
+
  if gNW$"DR"
    cIdFirma:=padr(cidfirma,2)
    @ m_x+1,m_y+2 SAY "RJ prazno svi" GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma) }
@@ -98,13 +100,14 @@ do while .t.
  else
    @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
  endif
- if !empty(cidfirma)
-    @ m_x+2,m_y+2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok pict "@!"
-    qqtipdok:="  "
+
+ if !EMPTY(cIdFirma)
+    @ m_x+2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok pict "@!"
  else
     cIdfirma:=""
     qqtipdok:="  "
  endif
+
  @ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
  @ m_x+3,col()+1 SAY "do"  get dDatDo
  @ m_x+5,m_y+2 SAY "Ime kupca pocinje sa (prazno svi)"  get cImeKup pict "@!"
@@ -146,14 +149,14 @@ enddo
 qqTipDok := trim(qqTipDok)
 qqPartn := trim(qqPartn)
 
-f18_set_metric("StampaListeIdFirma", cIdFirma, .t. )
-f18_set_metric("StampaListeDokumenti", qqTipDok, .t. )
-f18_set_metric("StampaListeDatumOd", dDatOd, .t. )
-f18_set_metric("StampaListeDatumDo", dDatDo, .t. )
-f18_set_metric("StampaListeTabelarniPregled", cTabela, .t. )
-f18_set_metric("StampaListeImeKupca", cImeKup, .t. )
-f18_set_metric("StampaListePartner", qqPartn, .t. )
-f18_set_metric("StampaListeBrojDokumenta", cBrFakDok, .t. )
+set_metric("fakt_stampa_liste_id_firma", f18_user(), cIdFirma )
+set_metric("fakt_stampa_liste_dokumenti", f18_user(), qqTipDok )
+set_metric("fakt_stampa_liste_datum_od", f18_user(), dDatOd )
+set_metric("fakt_stampa_liste_datum_do", f18_user(), dDatDo )
+set_metric("fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
+set_metric("fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
+set_metric("fakt_stampa_liste_partner", f18_user(), qqPartn )
+set_metric("fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
 
 BoxC()
 

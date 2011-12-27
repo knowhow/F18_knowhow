@@ -117,16 +117,14 @@ do while .t.
             
             append blank
             
-            set_global_vars_from_dbf()
-            
-            _idradn := cIdRadn
-            _mjesec := nTekMj
-            _godina := nTekGodina
-            _idkred := cIdKred
-            _iznos := nIRata
-            _naosnovu := cOsnov
-            
-            _vals := get_dbf_global_memvars()
+            _vals := dbf_get_rec()
+ 
+            _vals["idradn"] := cIdRadn
+            _vals["mjesec"] := nTekMj
+            _vals["godina"] := nTekGodina
+            _vals["idkred"] := cIdKred
+            _vals["iznos"] := nIRata
+            _vals["naosnovu"] := cOsnov
             
             _fields := { "idradn", { "mjesec", 2 }, { "godina", 4 }, "idkred", "naosnovu" }
 			

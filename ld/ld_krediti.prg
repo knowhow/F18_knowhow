@@ -59,7 +59,7 @@ do while .t.
     endif
 
     SELECT radkr
-    //"2","idradn+idkred+naosnovu+str(godina)+str(mjesec)"
+    //"2", idradn + idkred + naosnovu + str(godina) + str(mjesec)
     set order to tag "2"
 
     seek cIdRadn + cIdkred + cOsnov
@@ -75,7 +75,7 @@ do while .t.
                 _vals := hb_hash()
                 _vals["idradn"] := cIdRadn
                 _vals["idkred"] := cIdKred
-                _vals["naosnov"]  := cOsnov
+                _vals["naosnovu"]  := cOsnov
                 delete_rec_server_and_dbf("RADKR", _vals,  { "idradn", "idkred", "naosnovu" }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND idkred=" + _sql_quote(x["idkred"]) + " AND naosnovu=" + _sql_quote(x["naosnovu"]) }, "2"  )
         endif
     endif

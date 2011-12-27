@@ -1,4 +1,4 @@
-0.9.27  2011-12-27, hernad, bug report v3
+0.9.28  2011-12-27, hernad, bug report v3
 
   - [#25905](http://redmine.bring.out.ba/issues/25905)
 

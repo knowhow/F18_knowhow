@@ -432,12 +432,20 @@ nIznos := 0
 do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn=_idradn
 	
 	nIznos += field->iznos
-  	replace field->placeno with Iznos
+    
+    _vals := dbf_get_rec()
+    _vals["placeno"] := iznos
+    
+    _fields := { "idradn", { "mjesec", 2 }, { "godina", 4 }, "idkred", "naosnovu" }
+			
+    update_rec_server_and_dbf( nil, _vals, _fields, ;
+                            {|x| "idradn=" + _sql_quote(x["idradn"]) + ;
+                            " and mjesec=" + STR(x["mjesec"], 2) + ;
+                            " and godina=" + STR(x["godina"], 4) + ;
+                            " and idkred=" + _sql_quote(x["idkred"]) + ;
+                            " and naosnovu=" + _sql_quote(x["naosnovu"]) } )
 
-	Scatter()
-    // postavi to i u sql bazu
-   	_vals := f18_scatter_global_vars()
-	sql_update_ld_radkr( _vals ) 
+   
 
  	skip
 

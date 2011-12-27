@@ -337,9 +337,6 @@ elseif dx <> NIL .and. dx > 0 .and. dx < 25
     endif
 endif
 
-
-
-
 // --------------------------
 // --------------------------
 function ID_J(nOffSet)
@@ -605,7 +602,7 @@ do case
 
   case Ch==K_CTRL_F6
 
-    Box( ,1, 30)
+    Box( , 1, 30)
       public gIdFilter := eval(ImeKol[TB:ColPos,2])
       @ m_x+1, m_y+2 SAY "Filter :" GET gidfilter
       read
@@ -714,7 +711,7 @@ do while .t.
    
     nTrebaredova := LEN(ImeKol)
     for i := 1 to LEN(ImeKol)
-      if LEN(ImeKol[i]) >= 10 .and. Imekol[i, 10]<>NIL
+      if LEN(ImeKol[i]) >= 10 .and. Imekol[i, 10] <> NIL
          nTrebaRedova--
       endif
     next
@@ -726,7 +723,7 @@ do while .t.
             // moguca su  tri get ekrana
 
             if _jg == 1
-               Box(, min( 20, nTrebaRedova) + 1, 67 ,.f.)
+               Box( NIL, MIN( MAXROWS()-7, nTrebaRedova) + 1, MAXCOLS()-20 ,.f.)
             else
                BoxCLS()
             endif
@@ -783,7 +780,7 @@ do while .t.
 
                 i++                               
                 // ! sljedeci slog se stampa u istom redu
-                if ( len(imeKol) < i) .or. (nTekRed > min(20, nTrebaRedova) .and. !(Len(ImeKol[i] ) >= 10 .and. imekol[i, 10] <> NIL)  )
+                if ( len(imeKol) < i) .or. (nTekRed > MIN( MAXROWS() -7, nTrebaRedova) .and. !(Len(ImeKol[i] ) >= 10 .and. imekol[i, 10] <> NIL)  )
                     // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
                     exit 
                 endif
@@ -1623,14 +1620,14 @@ RETURN (NIL)
 
 
 
-/*! \fn VpSifra(wId)
- *  \brief Stroga kontrola ID-a sifre pri unosu nove ili ispravci postojece!
- *  \param wId - ID koji se provjerava
- */
-
+// ---------------------------------------------------------------------
+//   VpSifra(wId)
+//  Stroga kontrola ID-a sifre pri unosu nove ili ispravci postojece!
+//  wId - ID koji se provjerava
+// --------------------------------------------------------------------
 function VpSifra(wId, cTag)
 local nRec := RecNo()
-local nRet:=.t.
+local nRet := .t.
 local cUpozorenje := " !!! Ovaj ID vec postoji !!! "
 
 if cTag == NIL

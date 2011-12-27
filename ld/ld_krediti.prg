@@ -15,8 +15,8 @@
 function NoviKredit()
 local i
 local _vals
-local cIdRadn:=SPACE(_LR_)
 local nOstalo, nTekMj, nTekGodina
+local cIdRadn  := SPACE(_LR_)
 local nMjesec  := gMjesec
 local nGodina  := gGodina
 local cIdKred  := SPACE(_LK_)
@@ -72,10 +72,11 @@ do while .t.
                 return
         else
                 // pobrisi sve rate kredita
+                _vals := hb_hash()
                 _vals["idradn"] := cIdRadn
                 _vals["idkred"] := cIdKred
-                _vals["osnov"]  := cOsnov
-                delete_rec_server_and_dbf("ld_radkr", _vals,  { "idradn", "idkred", "naosnovu" }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND idkred=" + _sql_quote(x["idkred"]) + " AND naosnovu=" + _sql_quote(x["naosnovu"]) }, "2"  )
+                _vals["naosnov"]  := cOsnov
+                delete_rec_server_and_dbf("RADKR", _vals,  { "idradn", "idkred", "naosnovu" }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND idkred=" + _sql_quote(x["idkred"]) + " AND naosnovu=" + _sql_quote(x["naosnovu"]) }, "2"  )
         endif
     endif
 
@@ -119,13 +120,13 @@ do while .t.
             _vals["mjesec"]   := nTekMj
             _vals["godina"]   := nTekGodina
             _vals["iznos"]    := nIRata
-            update_rec_server_and_dbf( "ld_radkr", _vals)
+            update_rec_server_and_dbf( "RADKR", _vals)
             ++i
 
         endif
 
-        nOstalo:=nOstalo-nIRata
-        if round(nOstalo,2)==0
+        nOstalo := nOstalo - nIRata
+        if round(nOstalo, 2) == 0
                 exit
         endif
     enddo

@@ -458,6 +458,9 @@ return  __my_error_handler
 function global_error_handler()
 return  __global_error_handler
 
+function dummy_error_handler()
+return {|err| BREAK(err) }
+
 function  test_mode(tm)
 if tm != nil
   __test_mode := tm

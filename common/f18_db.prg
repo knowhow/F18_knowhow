@@ -78,7 +78,10 @@ if values == NIL
 endif
 
 // pronadji u tabeli koji je naziv te tabele
-_pos   := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+if _pos == 0
+  _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER(table) } )
+endif 
 table  := gaDBFs[ _pos, 3 ] 
 _alias := gaDBFs[ _pos, 2 ]
 
@@ -110,7 +113,12 @@ endif
 
 sql_table_update(table, "BEGIN")
 
-_where_str := EVAL(where_block, values)
+BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
+   _where_str := EVAL(where_block, values)
+RECOVER USING values
+   MsgBeep("hash value problematicna")
+END SEQUENCE
+
 if sql_table_update(table, "del", nil, _where_str) 
 
    update_semaphore_version(table, .t.)
@@ -297,8 +305,7 @@ local _pos
 local _val_dbf, _val_mem
 local _changed_id, _values_dbf, _full_id_dbf, _full_id_mem 
 local _where_str, _where_str_2
-local _t_field
-local _t_field_dec
+local _t_field, _t_field_dec
 
 if !USED()
    MsgBeep("mora biti otvorena neka tabela ?!")
@@ -379,30 +386,31 @@ for each _field in id_fields
         // {"num_polje", length}
         _t_field := _field[1]
         _t_field_dec := _field[2]
-        _values_dbf[ _t_field ] := STR(EVAL(FIELDBLOCK( _field[1] )), _field[2] )
-        if _values_dbf[ _t_field ] != STR( values[ _t_field ], _field[2] )
+
+        _values_dbf[_t_field] := EVAL(FIELDBLOCK(_t_field))
+        if _values_dbf[_t_field] != values[ _t_field ]
             _changed_id := .t.
         endif
+        _full_id_dbf += STR(_values_dbf[ _t_field ], _t_field_dec)
+        _full_id_mem += STR( values[ _t_field ], _t_field_dec )
     else   
         _t_field := _field
         _values_dbf[ _t_field ] := EVAL(FIELDBLOCK( _t_field ))
         if _values_dbf[ _t_field ] != values[ _t_field ]
             _changed_id := .t.
         endif
-    endif
-
-    _full_id_dbf += _values_dbf[ _t_field ]
-    
-    if VALTYPE( _field ) == "A"
-        _full_id_mem += STR( values[ _t_field ], _field[2] )
-    else
+       
+        _full_id_dbf += _values_dbf[ _t_field ]
         _full_id_mem += values[ _t_field ]
     endif
+
+    
 next
 
 // razlike izmedju dbf-a i values postoje
 if _changed_id
     AADD(_ids, _full_id_dbf)
+    altd()
     _where_str_2 := EVAL(where_block, _values_dbf)
     if !sql_table_update(table, "del", NIL, _where_str_2)
        sql_table_update(table, "ROLLBACK")

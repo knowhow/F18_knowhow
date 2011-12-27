@@ -47,29 +47,29 @@ nRbr:=0
 GO TOP
 cBrDok:=FaNoviBroj(cIdRj, "IM") 
 do while !EOF()
-	if (field->idFirma<>cIdRj)
-		SKIP
-		loop
-	endif
-	select fakt_pripr
-	cIdRoba:=fakt->idRoba
-	// vidi imali ovo u pripremi; ako ima stavka je obradjena
-	SEEK cIdRj+cIdRoba
-	lFoundUPripremi:=FOUND()
-	SELECT fakt
-	PushWa()
-	if !(lFoundUPripremi)
-		FaStanje(cIdRj, cIdroba, @nUl, @nIzl, @nRezerv, @nRevers, .t.)
-		if (nUl-nIzl-nRevers)<>0
-			select fakt_pripr
-			nRbr++
-			ShowKorner(nRbr, 10)
-			cRbr:=RedniBroj(nRbr)
-			ApndInvItem(cIdRj, cIdRoba, cBrDok, nUl-nIzl-nRevers, cRbr)
-		endif
-	endif
-	PopWa()
-	SKIP
+    if (field->idFirma<>cIdRj)
+        SKIP
+        loop
+    endif
+    select fakt_pripr
+    cIdRoba:=fakt->idRoba
+    // vidi imali ovo u pripremi; ako ima stavka je obradjena
+    SEEK cIdRj+cIdRoba
+    lFoundUPripremi:=FOUND()
+    SELECT fakt
+    PushWa()
+    if !(lFoundUPripremi)
+        FaStanje(cIdRj, cIdroba, @nUl, @nIzl, @nRezerv, @nRevers, .t.)
+        if (nUl-nIzl-nRevers)<>0
+            select fakt_pripr
+            nRbr++
+            ShowKorner(nRbr, 10)
+            cRbr:=RedniBroj(nRbr)
+            ApndInvItem(cIdRj, cIdRoba, cBrDok, nUl-nIzl-nRevers, cRbr)
+        endif
+    endif
+    PopWa()
+    SKIP
 enddo
 MsgC()
 
@@ -90,13 +90,13 @@ REPLACE kolicina WITH nKolicina
 REPLACE rBr WITH cRbr
 
 if VAL(cRbr)==1
-	cTxt:=""
-	AddTxt(@cTxt, "")
-	AddTxt(@cTxt, "")
-	AddTxt(@cTxt, gNFirma)
-	AddTxt(@cTxt, "RJ:"+cIdRj)
-	AddTxt(@cTxt, gMjStr)
-	REPLACE txt WITH cTxt
+    cTxt:=""
+    AddTxt(@cTxt, "")
+    AddTxt(@cTxt, "")
+    AddTxt(@cTxt, gNFirma)
+    AddTxt(@cTxt, "RJ:"+cIdRj)
+    AddTxt(@cTxt, gMjStr)
+    REPLACE txt WITH cTxt
 endif
 
 REPLACE brDok WITH cBrDok
@@ -137,22 +137,22 @@ SELECT fakt
 SET ORDER TO TAG "1"
 HSEEK cIdRj+"IM"+cBrDok
 do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
-	nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
-	if (ROUND(nRazlikaKol,5)>0)
-	        SELECT roba
-		HSEEK fakt->idRoba
-		select fakt_pripr
-		nRBr++
-		cRBr:=RedniBroj(nRBr)
-		ApndInvMItem(cIdRj, fakt->idRoba, cNoviBrDok, nRazlikaKol, cRBr)
-	endif
-	SELECT fakt
-	skip 1
+    nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
+    if (ROUND(nRazlikaKol,5)>0)
+            SELECT roba
+        HSEEK fakt->idRoba
+        select fakt_pripr
+        nRBr++
+        cRBr:=RedniBroj(nRBr)
+        ApndInvMItem(cIdRj, fakt->idRoba, cNoviBrDok, nRazlikaKol, cRBr)
+    endif
+    SELECT fakt
+    skip 1
 enddo
 if (nRBr>0)
-	MsgBeep("U pripremu je izgenerisan dokument otpreme manjka "+cIdRj+"-19-"+cNoviBrDok)
+    MsgBeep("U pripremu je izgenerisan dokument otpreme manjka "+cIdRj+"-19-"+cNoviBrDok)
 else
-	MsgBeep("Inventurom nije evidentiran manjak pa nije generisan nikakav dokument!")
+    MsgBeep("Inventurom nije evidentiran manjak pa nije generisan nikakav dokument!")
 endif
 CLOSE ALL
 return
@@ -181,13 +181,13 @@ REPLACE kolicina WITH nKolicina
 REPLACE rBr WITH cRbr
 
 if (VAL(cRbr)==1)
-	cTxt:=""
-	AddTxt(@cTxt, "")
-	AddTxt(@cTxt, "")
-	AddTxt(@cTxt, gNFirma)
-	AddTxt(@cTxt, "RJ:"+cIdRj)
-	AddTxt(@cTxt, gMjStr)
-	REPLACE txt WITH cTxt
+    cTxt:=""
+    AddTxt(@cTxt, "")
+    AddTxt(@cTxt, "")
+    AddTxt(@cTxt, gNFirma)
+    AddTxt(@cTxt, "RJ:"+cIdRj)
+    AddTxt(@cTxt, gMjStr)
+    REPLACE txt WITH cTxt
 endif
 
 REPLACE brDok WITH cBrDok
@@ -219,22 +219,22 @@ SELECT fakt
 SET ORDER TO TAG "1"
 HSEEK cIdRj+"IM"+cBrDok
 do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
-	nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
-	if (ROUND(nRazlikaKol,5)<0)
-	        SELECT roba
-		HSEEK fakt->idRoba
-		select fakt_pripr
-		nRBr++
-		cRBr:=RedniBroj(nRBr)
-		ApndInvVItem(cIdRj, fakt->idRoba, cNoviBrDok, -nRazlikaKol, cRBr)
-	endif
-	SELECT fakt
-	skip 1
+    nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
+    if (ROUND(nRazlikaKol,5)<0)
+            SELECT roba
+        HSEEK fakt->idRoba
+        select fakt_pripr
+        nRBr++
+        cRBr:=RedniBroj(nRBr)
+        ApndInvVItem(cIdRj, fakt->idRoba, cNoviBrDok, -nRazlikaKol, cRBr)
+    endif
+    SELECT fakt
+    skip 1
 enddo
 if (nRBr>0)
-	MsgBeep("U pripremu je izgenerisan dokument dopreme viska "+cIdRj+"-01-"+cNoviBrDok)
+    MsgBeep("U pripremu je izgenerisan dokument dopreme viska "+cIdRj+"-01-"+cNoviBrDok)
 else
-	MsgBeep("Inventurom nije evidentiran visak pa nije generisan nikakav dokument!")
+    MsgBeep("Inventurom nije evidentiran visak pa nije generisan nikakav dokument!")
 endif
 CLOSE ALL
 return
@@ -264,20 +264,20 @@ REPLACE kolicina WITH nKolicina
 REPLACE rBr WITH cRbr
 
 if (VAL(cRbr)==1)
-	cTxt:=""
-	AddTxt(@cTxt, "")
-	AddTxt(@cTxt, "")
-	AddTxt(@cTxt, gNFirma)
-	AddTxt(@cTxt, "RJ:"+cIdRj)
-	AddTxt(@cTxt, gMjStr)
-	REPLACE txt WITH cTxt
+    cTxt:=""
+    AddTxt(@cTxt, "")
+    AddTxt(@cTxt, "")
+    AddTxt(@cTxt, gNFirma)
+    AddTxt(@cTxt, "RJ:"+cIdRj)
+    AddTxt(@cTxt, gMjStr)
+    REPLACE txt WITH cTxt
 endif
 
 REPLACE brDok WITH cBrDok
 REPLACE dinDem WITH ValDomaca()
 REPLACE cijena WITH roba->vpc
 return
-*}
+
 
 
 
@@ -346,17 +346,17 @@ if reccount2() == 0
       do while !eof() .and. IdFirma+IdTipdok=cidrj+"12" ;
                .and. fakt_doks->Partner=cPartner
          
-	 skip
-	 nTrec0:=recno()
-	 skip -1
+        skip
+        nTrec0:=recno()
+        skip -1
          
-	 if m1="*"
+        if m1="*"
 
-	    cIdPart := fakt_doks->idpartner
-	    
-	    if dNajnoviji < fakt_doks->datDok
-		    dNajnoviji := fakt_doks->datDok
-	    endif
+            cIdPart := fakt_doks->idpartner
+        
+            if dNajnoviji < fakt_doks->datDok
+                dNajnoviji := fakt_doks->datDok
+            endif
             // scatter()
             nOldIznos:=iznos   // ???!
             
@@ -369,11 +369,11 @@ if reccount2() == 0
             
 
             select fakt_doks 
-	    set order to tag "1"
+            set order to tag "1"
             
-	    // *********  nadji sljedeci broj  10 - ke *********
+            // *********  nadji sljedeci broj  10 - ke *********
             
-	    IF gMreznoNum == "N"
+            IF gMreznoNum == "N"
                dbseek( dxidfirma+"10"+"È",.t.)
                skip -1
                if "10"<>idtipdok
@@ -385,138 +385,139 @@ if reccount2() == 0
                                   )
                endif
             ELSE
-	    	// ostavi prazno za mreznu numeraciju
-               	cBrDok := SPACE(LEN(brdok))
+            // ostavi prazno za mreznu numeraciju
+                cBrDok := SPACE(LEN(brdok))
             ENDIF
             
-	    SELECT FAKT
+            SELECT FAKT
             seek dxIdFirma+"12"+dxBrDok
             
-	    do while !eof() .and. (dxIdFirma+"12"+dxBrDok) == ;
-	    	(idfirma+idtipdok+brdok)
+            do while !eof() .and. (dxIdFirma+"12"+dxBrDok) == ;
+                (idfirma+idtipdok+brdok)
                
-	       skip
-	       nTrec:=recno()
-	       skip -1
+                skip
+                nTrec:=recno()
+                skip -1
                
-	       Scatter()
-               replace IdTipDok WITH "22"
+                Scatter()
+                replace IdTipDok WITH "22"
                
-	       if gMreznoNum == "N"
-                  _Brdok:=cBrdok
-               else
-                  _Brdok:=SPACE (LEN (BrDok))
-               endif
+                if gMreznoNum == "N"
+                    _Brdok:=cBrdok
+                else
+                    _Brdok:=SPACE (LEN (BrDok))
+                endif
 
-               _datdok:=date()
-               _m1:="X"
-               _idtipdok:="10"
+                _datdok:=date()
+                _m1:="X"
+                _idtipdok:="10"
                
-               select fakt_pripr
+                select fakt_pripr
                
-	       locate for idroba==fakt->idroba
+                locate for idroba==fakt->idroba
 
-	       if found() .and. lSumirati == .t. ;
-	       		.and. fakt_pripr->cijena = fakt->cijena
+                if found() .and. lSumirati == .t. ;
+                    .and. fakt_pripr->cijena = fakt->cijena
 
-                 	 _kolicina:=fakt_pripr->kolicina+fakt->kolicina
+                     _kolicina:=fakt_pripr->kolicina+fakt->kolicina
 
-               else
-		  	 // append blank
-                         appblank2( .t., .f. )
-               endif
+                else
+                    // append blank
+                    appblank2( .t., .f. )
+                endif
                
-	       Gather2()
+                Gather2()
 
-               select fakt
-               go nTrec
+                select fakt
+                go nTrec
             
-	    enddo
-         endif
-         select fakt_doks
-	 set order to tag "2"
-         //
-         go nTrec0
-      enddo   // doks
-      IF !Empty (cVezOtpr)
-         cVezOtpr := "Faktura formirana na osnovu otpremnica: " +;
+            enddo
+        endif
+        select fakt_doks
+        set order to tag "2"
+        
+        go nTrec0
+    enddo   // doks
+    
+    IF !Empty (cVezOtpr)
+        cVezOtpr := "Faktura formirana na osnovu otpremnica: " +;
                      LEFT (cVezOtpr, LEN (cVezOtpr)-2)+"."     // skine ", "
-      ENDIF
-      select fakt_pripr
-      renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
+    ENDIF
+    select fakt_pripr
+    renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
 
-      select fakt_doks
-      set order to tag "1"
+    select fakt_doks
+    set order to tag "1"
 
-   endif // formirati
+    endif // formirati
 
 else // stara varijanta
 
-if  idtipdok $ "12#20#13#01#27"
+    if  idtipdok $ "12#20#13#01#27"
 
-  if idtipdok="27"
-     cNoviTip:="11"
-  elseif idtipdok="01"
-     cNoviTip:="19"
-  else
-     cNoviTip:="10"
-  endif
-
-  if Pitanje(,"Zelite li dokument pretvoriti u "+cNoviTip,"D")=="D"
-     Box(,5,60)
-     cIdTipDok:=idtipdok
-     ccBrDok := BrDok
-     IF gMreznoNum == "N"
-        @ m_x+1,m_y+2 SAY "Dokument: "; ?? idfirma+"-"+idtipdok+"-"+brdok,"   ", Datdok
-        // select FAKT; go top
-        select fakt_doks; go top
-        seek fakt_pripr->idfirma+cNoviTip+"È"
-        skip -1
-        if  cNoviTip<>idtipdok
-         cBrDok:=UBrojDok(1,gNumDio,"")
+        if idtipdok="27"
+            cNoviTip:="11"
+        elseif idtipdok="01"
+            cNoviTip:="19"
         else
-         cBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, ;
+            cNoviTip:="10"
+        endif
+
+        if Pitanje(,"Zelite li dokument pretvoriti u "+cNoviTip,"D")=="D"
+            Box(,5,60)
+            cIdTipDok:=idtipdok
+            ccBrDok := BrDok
+            IF gMreznoNum == "N"
+                @ m_x+1,m_y+2 SAY "Dokument: "; ?? idfirma+"-"+idtipdok+"-"+brdok,"   ", Datdok
+                // select FAKT; go top
+                select fakt_doks; go top
+                seek fakt_pripr->idfirma+cNoviTip+"È"
+                skip -1
+                if  cNoviTip<>idtipdok
+                    cBrDok:=UBrojDok(1,gNumDio,"")
+                else
+                    cBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, ;
                            gNumDio, ;
                            right(brdok,len(brdok)-gNumDio) ;
                          )
+                endif
+                cBrDok:=padr(cbrdok,8)
+            ELSE
+                cBrDok:=SPACE (LEN (BrDok))
+            ENDIF
+            select fakt_pripr; PushWa()
+
+            go top
+            nTrecc:=0
+            do while !eof()
+                skip; nTrecc:=recno(); skip -1
+                replace  brdok with cbrdok, idtipdok with cNoviTip, datdok with date()
+                if cidtipdok=="12"  // otpremnica u racun
+                    replace serbr with "*"
+                endif
+                if cidtipdok=="13"  //
+                        replace kolicina with -kolicina
+                endif
+                go nTRecc
+            enddo
+            PopWa()
+            IF gMreznoNum == "N"
+                    @ m_x+3,m_y+2 SAY "Dokument: "
+                    ?? idfirma+"-"+idtipdok+"-"+brdok,"   ", Datdok
+            ELSE
+                    @ m_x+3,m_y+2 SAY "Dokument: "
+                    ?? idfirma+"-"+cidtipdok+"-"+ccBrDok,"   ", Datdok, "- PREBACEN"
+            ENDIF
+            inkey(0)
+            BoxC()
         endif
-        cBrDok:=padr(cbrdok,8)
-     ELSE
-        cBrDok:=SPACE (LEN (BrDok))
-     ENDIF
-     select fakt_pripr; PushWa()
 
-     go top
-     nTrecc:=0
-     do while !eof()
-      skip; nTrecc:=recno(); skip -1
-      replace  brdok with cbrdok, idtipdok with cNoviTip, datdok with date()
-      if cidtipdok=="12"  // otpremnica u racun
-         replace serbr with "*"
-      endif
-      if cidtipdok=="13"  //
-         replace kolicina with -kolicina
-      endif
-      go nTRecc
-     enddo
-     PopWa()
-     IF gMreznoNum == "N"
-        @ m_x+3,m_y+2 SAY "Dokument: "
-        ?? idfirma+"-"+idtipdok+"-"+brdok,"   ", Datdok
-     ELSE
-        @ m_x+3,m_y+2 SAY "Dokument: "
-        ?? idfirma+"-"+cidtipdok+"-"+ccBrDok,"   ", Datdok, "- PREBACEN"
-     ENDIF
-     inkey(0)
-     BoxC()
-  endif
+        IsprUzorTxt()
 
-
-  IsprUzorTxt()
-else
-   Msg("Ova opcija je za promjenu 20,12,13 -> 10 i 27 -> 11")
-   return .f.
-endif
+    else
+        Msg("Ova opcija je za promjenu 20,12,13 -> 10 i 27 -> 11")
+        return .f.
+    endif
 
 endif
 
@@ -525,7 +526,8 @@ o_fakt_edit()
 
 select fakt_pripr
 return .t.
-*}
+
+
 
 
 function Iz22u10()
@@ -540,23 +542,23 @@ local nRbr
 local cEditYN:="N"
 
 Box(,5,60)
-	@ m_x+1, m_y+2 SAY "Prebaci iz 22 u 10:"
-	@ m_x+2, m_y+2 SAY "----------------------------"
-	@ m_x+3, m_y+2 SAY "Dokument:" GET cIdFirma 
-	@ m_x+3, m_y+14 SAY "-" GET cVDok
-	@ m_x+3, m_y+19 SAY "-" GET cBrojDokumenta
-	@ m_x+5, m_y+2 SAY "Pitaj prije ispravke stavke (D/N)" GET cEditYN VALID cEditYN$"DN" PICT "@!"
-	read
+    @ m_x+1, m_y+2 SAY "Prebaci iz 22 u 10:"
+    @ m_x+2, m_y+2 SAY "----------------------------"
+    @ m_x+3, m_y+2 SAY "Dokument:" GET cIdFirma 
+    @ m_x+3, m_y+14 SAY "-" GET cVDok
+    @ m_x+3, m_y+19 SAY "-" GET cBrojDokumenta
+    @ m_x+5, m_y+2 SAY "Pitaj prije ispravke stavke (D/N)" GET cEditYN VALID cEditYN$"DN" PICT "@!"
+    read
 BoxC()
 
 
 if LastKey()==K_ESC
-	return .t.
+    return .t.
 endif
 
 if (Empty(cIdFirma) .or. Empty(cVDok) .or. Empty(cBrojDokumenta))
-	MsgBeep("Nisu popunjena sva polja !!!")
-	return .t.
+    MsgBeep("Nisu popunjena sva polja !!!")
+    return .t.
 endif
 
 select fakt_pripr
@@ -576,61 +578,61 @@ set order to tag "1"
 seek cIdFirma+cVDok+cBrojDokumenta
 
 if !Found()
-	MsgBeep("Dokument: " + TRIM(cIdFirma)+"-"+TRIM(cPVDok)+"-"+TRIM(cPBrDok)+" ne postoji!!!")
-	select fakt_pripr
-	return .t.
+    MsgBeep("Dokument: " + TRIM(cIdFirma)+"-"+TRIM(cPVDok)+"-"+TRIM(cPBrDok)+" ne postoji!!!")
+    select fakt_pripr
+    return .t.
 else
-	Box(,4,70)
-	//brojaci dodatih i editovanih stavki
-	nEdit:=0
-	nAdd:=0
-	// pocni popunjavati !!!
-	do while !EOF() .and. field->idfirma=cIdFirma .and. field->idtipdok=cVDok .and. field->brdok=cBrojDokumenta
-		cIdRoba:=field->idroba
-		nKolicina:=field->kolicina
-		@ m_x+1, m_y+2 SAY "Trazim artikal: " + TRIM(cIdRoba)
-		select fakt_pripr
-		go top
-		set order to tag "3"
-		seek cIdFirma+cIdRoba
-		if Found()
-			if (cEditYN=="D" .and. Pitanje("Ispraviti kolicinu za artikal " + TRIM(cIdRoba), "D")=="N")
-				select fakt
-				skip
-				loop
-			endif
-			@ m_x+2, m_y+2 SAY "Status: Ispravljam stavku  "
-			Scatter()
-			_kolicina+=nKolicina
-			Gather()
-			nEdit++
-			select fakt
-			skip
-		else
-			@ m_x+2, m_y+2 SAY "Status: Dodajem novu stavku"
-			append blank
-			replace idfirma with cPFirma
-			replace idtipdok with cPVDok
-			replace brdok with cPBrDok
-			replace rbr with RIGHT(STR(nRbr),3)
-			replace idroba with fakt->idroba
-			replace dindem with fakt->dindem
-			replace zaokr with fakt->zaokr
-			replace kolicina with fakt->kolicina
-			replace cijena with fakt->cijena
-			replace rabat with fakt->rabat
-			replace porez with fakt->porez
-			replace serbr with fakt->serbr
-			replace idpartner with cIdPartn
-			replace datdok with dDatdok
-			nAdd++
-			select fakt
-			skip
-		endif
-		@ m_x+3, m_y+2 SAY "Ispravio stavki  :" + STR(nEdit)
-		@ m_x+4, m_y+2 SAY "Dodao novi stavki:" + STR(nAdd)
-	enddo
-	BoxC()
+    Box(,4,70)
+    //brojaci dodatih i editovanih stavki
+    nEdit:=0
+    nAdd:=0
+    // pocni popunjavati !!!
+    do while !EOF() .and. field->idfirma=cIdFirma .and. field->idtipdok=cVDok .and. field->brdok=cBrojDokumenta
+        cIdRoba:=field->idroba
+        nKolicina:=field->kolicina
+        @ m_x+1, m_y+2 SAY "Trazim artikal: " + TRIM(cIdRoba)
+        select fakt_pripr
+        go top
+        set order to tag "3"
+        seek cIdFirma+cIdRoba
+        if Found()
+            if (cEditYN=="D" .and. Pitanje("Ispraviti kolicinu za artikal " + TRIM(cIdRoba), "D")=="N")
+                select fakt
+                skip
+                loop
+            endif
+            @ m_x+2, m_y+2 SAY "Status: Ispravljam stavku  "
+            Scatter()
+            _kolicina+=nKolicina
+            Gather()
+            nEdit++
+            select fakt
+            skip
+        else
+            @ m_x+2, m_y+2 SAY "Status: Dodajem novu stavku"
+            append blank
+            replace idfirma with cPFirma
+            replace idtipdok with cPVDok
+            replace brdok with cPBrDok
+            replace rbr with RIGHT(STR(nRbr),3)
+            replace idroba with fakt->idroba
+            replace dindem with fakt->dindem
+            replace zaokr with fakt->zaokr
+            replace kolicina with fakt->kolicina
+            replace cijena with fakt->cijena
+            replace rabat with fakt->rabat
+            replace porez with fakt->porez
+            replace serbr with fakt->serbr
+            replace idpartner with cIdPartn
+            replace datdok with dDatdok
+            nAdd++
+            select fakt
+            skip
+        endif
+        @ m_x+3, m_y+2 SAY "Ispravio stavki  :" + STR(nEdit)
+        @ m_x+4, m_y+2 SAY "Dodao novi stavki:" + STR(nAdd)
+    enddo
+    BoxC()
 endif
 
 MsgBeep("Dodao: " + STR(nAdd) + ", ispravio: " + STR(nEdit) + " stavki")

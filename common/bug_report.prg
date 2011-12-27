@@ -40,7 +40,7 @@ set printer on
 P_12CPI
 
 ? REPLICATE("=", 84) 
-? "F18 bug report:", DATE(), TIME()
+? "F18 bug report(v3):", DATE(), TIME()
 ? REPLICATE("=", 84) 
 
 
@@ -78,13 +78,14 @@ else
    ? "USED() = false"
 endif
 
+? "== CARGO" , REPLICATE("=", 50)
 for _i := 1 TO LEN(err_obj:cargo)
    if err_obj:cargo[_i] == "var"
-      ?  err_obj:cargo[_i++],  pprint(err_obj:cargo[_i++])
+      ?  "* var ", err_obj:cargo[++_i], ":", pp(err_obj:cargo[++_i])
    endif
 next
-
-? 
+? REPLICATE("-", 60)
+?
 ? "== END OF BUG REPORT =="
 
 
@@ -98,9 +99,9 @@ close all
 
 run (_cmd := "f18_editor " + _out_file)
 
-if Pitanje(, "Continue ?", "N") == "D"
-  BREAK(err_obj)
-endif
+// if Pitanje(, "Continue F18 ?", "N") == "D"
+//  BREAK(err_obj)
+// endif
 
 RETURN
 

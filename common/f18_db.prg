@@ -113,10 +113,9 @@ endif
 
 sql_table_update(table, "BEGIN")
 
+altd()
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
    _where_str := EVAL(where_block, values)
-RECOVER USING values
-   MsgBeep("hash value problematicna")
 END SEQUENCE
 
 if sql_table_update(table, "del", nil, _where_str) 

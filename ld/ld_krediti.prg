@@ -123,7 +123,6 @@ do while .t.
             _vals["iznos"]    := nIRata
             _vals["naosnovu"] := cOsnov
             update_rec_server_and_dbf( "ld_radkr", _vals)
-
             ++i
 
         endif
@@ -413,8 +412,8 @@ if gVarObracun == "2"
     endif
 endif
 
-set order to tag "1"
-seek str(_godina,4)+str(_mjesec,2)+_idradn
+SET ORDER TO TAG "1"
+SEEK STR(_godina, 4) + STR(_mjesec, 2) + _idradn
 
 nIznos := 0
 
@@ -425,16 +424,7 @@ do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn=_idradn
     _vals := dbf_get_rec()
     _vals["placeno"] := iznos
     
-    _fields := { "idradn", { "mjesec", 2 }, { "godina", 4 }, "idkred", "naosnovu" }
-            
-    update_rec_server_and_dbf( nil, _vals, _fields, ;
-                            {|x| "idradn=" + _sql_quote(x["idradn"]) + ;
-                            " and mjesec=" + STR(x["mjesec"], 2) + ;
-                            " and godina=" + STR(x["godina"], 4) + ;
-                            " and idkred=" + _sql_quote(x["idkred"]) + ;
-                            " and naosnovu=" + _sql_quote(x["naosnovu"]) } )
-
-   
+    update_rec_server_and_dbf( "ld_radkr", _vals )
 
     skip
 

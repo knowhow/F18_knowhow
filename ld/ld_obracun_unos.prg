@@ -69,14 +69,7 @@ do while .t.
 			_vals := get_dbf_global_memvars()
             _vals["varobr"] := gVarObracun		    
 	
-            _fields := { { "godina", 4 }, { "mjesec", 2 }, "idrj", "idradn", "obr" }
-            
-            if !update_rec_server_and_dbf( nil,  _vals, _fields, ;
-                { |x| "godina=" + STR( x["godina"], 4 ) + ;
-                    " and mjesec=" + STR( x["mjesec"], 2) + ;
-                    " and idrj=" + _sql_quote(x["idrj"]) + ;
-                    " and idradn=" + _sql_quote(x["idradn"])  + ;
-                    " and obr=" + _sql_quote(x["obr"]) } )
+            if !update_rec_server_and_dbf( nil,  _vals ) 
                 delete
             endif
 

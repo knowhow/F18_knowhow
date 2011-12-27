@@ -68,11 +68,11 @@ do while .t.
 			// obracun snimiti u sql bazu
 			_vals := get_dbf_global_memvars()
 			
-            _fields := { "godina", "mjesec", "idrj", "idradn", "obr" }
+            _fields := { { "godina", 4 }, { "mjesec", 2 }, "idrj", "idradn", "obr" }
             
             if !update_rec_server_and_dbf( nil,  _vals, _fields, ;
-                { |x| "godina=" + _sql_quote(STR(x["godina"],4)) + ;
-                    " and mjesec=" + _sql_quote(STR(x["mjesec"],2)) + ;
+                { |x| "godina=" + _sql_quote(x["godina"]) + ;
+                    " and mjesec=" + _sql_quote(x["mjesec"]) + ;
                     " and idrj=" + _sql_quote(x["idrj"]) + ;
                     " and idradn=" + _sql_quote(x["idradn"])  + ;
                     " and obr=" + _sql_quote(x["obr"]) } )

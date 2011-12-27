@@ -24,7 +24,6 @@ endif
 function get_version_str(num)
 local _prev, _ret := "", _div, _rest
 
-altd()
 _prev := num
 _div := num % 10000
 num := _div

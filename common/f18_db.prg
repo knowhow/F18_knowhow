@@ -300,6 +300,8 @@ local _pos
 local _val_dbf, _val_mem
 local _changed_id, _values_dbf, _full_id_dbf, _full_id_mem 
 local _where_str
+local _t_field
+local _t_field_dec
 
 if !USED()
    MsgBeep("mora biti otvorena neka tabela ?!")
@@ -363,19 +365,33 @@ _full_id_dbf := ""
 _full_id_mem := ""
 _changed_id  := .f.
 _values_dbf  := hb_hash()
-for each _field  in id_fields
-    if VALTYPE(_field) == "A"
-       // http://redmine.bring.out.ba/issues/25891#note-9
-       // {"num_polje", length}
-      _values_dbf[_field] := STR(EVAL(FIELDBLOCK(_field[1])), _field[2])
+
+for each _field in id_fields
+
+    if VALTYPE( _field ) == "A"
+        // http://redmine.bring.out.ba/issues/25891#note-9
+        // {"num_polje", length}
+        _t_field := _field[1]
+        _t_field_dec := _field[2]
+        _values_dbf[ _t_field ] := STR(EVAL(FIELDBLOCK( _field[1] )), _field[2] )
+        if _values_dbf[ _t_field ] != STR( values[ _t_field ], _field[2] )
+            _changed_id := .t.
+        endif
     else   
-       _values_dbf[_field] := EVAL(FIELDBLOCK(_field))
+        _t_field := _field
+        _values_dbf[ _t_field ] := EVAL(FIELDBLOCK( _t_field ))
+        if _values_dbf[ _t_field ] != values[ _t_field ]
+            _changed_id := .t.
+        endif
     endif
-    if _values_dbf[_field] != values[_field]
-        _changed_id := .t.
+
+    _full_id_dbf += _values_dbf[ _t_field ]
+    
+    if VALTYPE( _field ) == "A"
+        _full_id_mem += STR( values[ _t_field ], _field[2] )
+    else
+        _full_id_mem += values[ _t_field ]
     endif
-    _full_id_dbf += _values_dbf[_field]
-    _full_id_mem += values[_field]
 next
 
 // razlike izmedju dbf-a i values postoje
@@ -410,4 +426,5 @@ else
     return .f.
 endif
 
+return
 

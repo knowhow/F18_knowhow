@@ -113,7 +113,6 @@ endif
 
 sql_table_update(table, "BEGIN")
 
-altd()
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
    _where_str := EVAL(where_block, values)
 END SEQUENCE
@@ -409,7 +408,6 @@ next
 // razlike izmedju dbf-a i values postoje
 if _changed_id
     AADD(_ids, _full_id_dbf)
-    altd()
     _where_str_2 := EVAL(where_block, _values_dbf)
     if !sql_table_update(table, "del", NIL, _where_str_2)
        sql_table_update(table, "ROLLBACK")

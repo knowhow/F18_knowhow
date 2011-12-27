@@ -114,8 +114,8 @@ do while .t.
   		endif
 
   		if round(nIRata,2)<>0
-
-   			append blank
+            
+            append blank
             
             set_global_vars_from_dbf()
             
@@ -126,7 +126,7 @@ do while .t.
             _iznos := nIRata
             _naosnovu := cOsnov
             
-			_vals := get_dbf_global_memvars()
+            _vals := get_dbf_global_memvars()
             
             _fields := { "idradn", { "mjesec", 2 }, { "godina", 4 }, "idkred", "naosnovu" }
 			
@@ -137,9 +137,9 @@ do while .t.
                             " and idkred=" + _sql_quote(x["idkred"]) + ;
                             " and naosnovu=" + _sql_quote(x["naosnovu"]) } )
 
-   			++i
+            ++i
 
-  		endif
+        endif
 
 		nOstalo:=nOstalo-nIRata
   		if round(nOstalo,2)==0

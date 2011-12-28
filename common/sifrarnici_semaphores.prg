@@ -87,7 +87,7 @@ _result := sifrarnik_from_sql_server(_tbl, algoritam, F_ROBA, {"id", ;
 				"idtarifa", "tip", "barkod", "mpc2", "mpc3", "k1", "k2", ;
 				"n1", "n2", "plc", "mink", "zanivel", "zaniv2", ;
 				"trosk1", "trosk2", "trosk3", "trosk4", "trosk5", ;
-				"fisc_plu", "k7", "k8", "k9", "strings", "fisc_plu" })
+				"fisc_plu", "k7", "k8", "k9", "strings", "idkonto" })
 
 lock_semaphore( _tbl, "free" )
 

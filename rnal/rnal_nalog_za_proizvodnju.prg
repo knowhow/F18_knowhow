@@ -651,7 +651,7 @@ do while !EOF()
 		cTmp += ALLTRIM(field->art_desc)
 		
 		// opis stavke
-		cTmp2 := ALLTRIM( field->desc )
+		cTmp2 := ALLTRIM( field->descr )
 		aTmp2 := SjeciStr( cTmp2, 120 )
 
 		//if prow() > LEN_PAGE - DSTR_KOREKCIJA()

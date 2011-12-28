@@ -465,6 +465,7 @@ AADD(aDBf,{ 'TROSK2'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'TROSK3'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'TROSK4'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'TROSK5'              , 'N' ,  15 ,  5 })
+AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  5 })
 
 
 if !file(f18_ime_dbf("roba"))

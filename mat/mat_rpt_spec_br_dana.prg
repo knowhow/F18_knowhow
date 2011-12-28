@@ -397,8 +397,6 @@ Box(, 10, 70 )
     
     read
 
-    ESC_BCR
-
 BoxC()
 
 if LastKey() == K_ESC

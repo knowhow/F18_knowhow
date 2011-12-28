@@ -221,6 +221,35 @@ static function _chk_povrat_zabrana( vars )
 local _area
 local _ret := .t.
 
+// provjeri pravila
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK" + vars["tip_dok"] ))
+    
+    if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOKDATUM" + vars["tip_dok"] )) == .f.
+    
+    _area := SELECT()
+
+    select fakt
+    hseek vars["id_firma"] + vars["tip_dok"] + vars["br_dok"]
+    if FOUND()
+        if fakt->datdok <> DATE()
+            msgbeep("Datum dokumenta <> tekuci datum#Opcija onemogucena !")
+            close all
+            _ret := .f.
+            return .f.
+        endif
+    endif
+    
+    SELECT ( _area )
+   
+   endif
+
+else        
+    msgbeep( cZabrana ) 
+    close all
+    _ret := .f.
+    return _ret
+endif
+
 // fiscal zabrana
 // ako je fiskalni racun u vezi, ovo nema potrebe vracati
 // samo uz lozinku

@@ -705,10 +705,10 @@ local _rec
 select SUBAN
 set order to tag "3"
 select PSUBAN
-seek cNal
+SEEK cNal
   
 nC:=0
-do while !eof() .and. cNal==IdFirma+IdVn+BrNal
+do while !eof() .and. cNal == IdFirma + IdVn + BrNal
 
     @ m_x + 3, m_y + 25 SAY ++nC  pict "99999999999"
 
@@ -720,9 +720,9 @@ do while !eof() .and. cNal==IdFirma+IdVn+BrNal
     else
           nSaldo:= -_IznosBHD
     endif
+
     SELECT SUBAN
     SEEK _IdFirma + _IdKonto + _IdPartner + _BrDok    
-
 
     nRec := recno()
     do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok) == (IdFirma+IdKonto+IdPartner+BrDok)
@@ -746,10 +746,10 @@ do while !eof() .and. cNal==IdFirma+IdVn+BrNal
     _rec := get_dbf_global_memvars("_")
     
     APPEND BLANK
-    dbf_update_rec(_rec, .f.)
+    dbf_update_rec(_rec, .t.)
 
     select PSUBAN
-    skip
+    SKIP
 
 enddo
 

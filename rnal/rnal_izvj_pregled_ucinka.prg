@@ -248,7 +248,7 @@ do while !EOF()
 
 	@ m_x + 1, m_y + 2 SAY "... vrsim odabir stavki ... nalog: " + ALLTRIM( STR(nDoc_no) )
 	
-	nOp_id := field->operater_id
+	nOp_id := field->operater_i
 
 	// provjeri da li ovaj dokument zadovoljava kriterij
 	
@@ -271,7 +271,7 @@ do while !EOF()
 
 		// po operateru
 		
-		if ALLTRIM( STR( field->operater_id )) <> ;
+		if ALLTRIM( STR( field->operater_i )) <> ;
 			ALLTRIM( STR( nOper ) )
 			
 			skip
@@ -281,7 +281,7 @@ do while !EOF()
 	endif
 
 	// ubaci u tabelu
-	_a_to_op( field->operater_id, field->doc_status )
+	_a_to_op( field->operater_i, field->doc_status )
 
 	select docs
 	skip

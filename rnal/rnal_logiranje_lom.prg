@@ -391,7 +391,7 @@ endif
 
 // prodji kroz logove tipa "21" - lom
 do while !EOF() .and. field->doc_no == nDoc_no ;
-		.and. field->doc_log_type == cLogType
+		.and. field->doc_log_ty == cLogType
 
 	nDoc_log_no := field->doc_log_no
 

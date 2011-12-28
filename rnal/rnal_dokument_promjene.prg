@@ -221,7 +221,7 @@ select docs
 
 cDoc_paid := field->doc_paid
 nDoc_pay_id := field->doc_pay_id
-cDoc_pay_desc := field->doc_pay_desc
+cDoc_pay_desc := field->doc_pay_de
 
 // box sa unosom podataka
 if _box_pay(@nDoc_pay_id, @cDoc_paid, @cDoc_pay_desc, @cDesc) == 0
@@ -240,8 +240,8 @@ if _doc_paid <> cDoc_paid
 	_doc_paid := cDoc_paid
 endif
 
-if _doc_pay_desc <> cDoc_pay_desc
-	_doc_pay_desc := cDoc_pay_desc
+if _doc_pay_de <> cDoc_pay_desc
+	_doc_pay_de := cDoc_pay_desc
 endif
 
 if _doc_pay_id <> nDoc_pay_id
@@ -299,7 +299,7 @@ if !lNew
 	
 	nCust_id := field->cust_id
 	nCont_id := field->cont_id
-	cCont_desc := field->cont_add_desc
+	cCont_desc := field->cont_add_d
 	
 endif
 
@@ -323,8 +323,8 @@ Scatter()
 if _cont_id <> nCont_id
 	_cont_id := nCont_id
 endif
-if _cont_add_desc <> cCont_desc
-	_cont_add_desc := cCont_desc
+if _cont_add_d <> cCont_desc
+	_cont_add_d := cCont_desc
 endif
 
 Gather()

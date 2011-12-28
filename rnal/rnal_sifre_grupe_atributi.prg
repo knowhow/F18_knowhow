@@ -116,13 +116,13 @@ endif
 
 AADD(aImeKol, {PADC("Elem.grupa", 10), {|| PADR(g_e_gr_desc(e_gr_id), 10)}, "e_gr_id", {|| set_gr_id(@we_gr_id) }, {|| s_e_groups(@we_gr_id), show_it( g_e_gr_desc( we_gr_id ) ) }})
 
-AADD(aImeKol, {PADC("Opis", 20), {|| PADR(e_gr_at_desc, 20)}, "e_gr_at_desc"})
+AADD(aImeKol, {PADC("Opis", 20), {|| PADR(e_gr_at_de, 20)}, "e_gr_at_de"})
 
-AADD(aImeKol, {PADC("Joker", 20), {|| PADR(e_gr_at_joker, 20) }, "e_gr_at_joker"})
+AADD(aImeKol, {PADC("Joker", 20), {|| PADR(e_gr_at_jo, 20) }, "e_gr_at_jo"})
 
-AADD(aImeKol, {PADC("Neoph", 5), {|| e_gr_at_required}, "e_gr_at_required", {|| .t.}, {|| .t. } })
+AADD(aImeKol, {PADC("Neoph", 5), {|| e_gr_at_re}, "e_gr_at_re", {|| .t.}, {|| .t. } })
 
-AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_desc, 15)}, "in_art_desc"})
+AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_des, 15)}, "in_art_des"})
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)
@@ -217,8 +217,8 @@ go top
 seek e_gr_at_str(nE_gr_att)
 
 if FOUND()
-	if !EMPTY(field->e_gr_at_joker)
-		cEGrAttJoker := ALLTRIM(field->e_gr_at_joker)
+	if !EMPTY(field->e_gr_at_jo)
+		cEGrAttJoker := ALLTRIM(field->e_gr_at_jo)
 	endif
 endif
 
@@ -253,16 +253,16 @@ go top
 seek e_gr_at_str(nE_gr_att_id)
 
 if FOUND()
-	if !EMPTY(field->e_gr_at_desc)
+	if !EMPTY(field->e_gr_at_de)
 		
 		cEGrAttDesc := ""
 		
 		if lShowRequired == .t.
 			
-			if !EMPTY(field->e_gr_at_required)
+			if !EMPTY(field->e_gr_at_re)
 			
 				cEGrAttDesc += "(" 
-				cEGrAttDesc += ALLTRIM(field->e_gr_at_required) 
+				cEGrAttDesc += ALLTRIM(field->e_gr_at_re) 
 				cEGrAttDesc += ")"
 			
 			endif
@@ -270,7 +270,7 @@ if FOUND()
 		endif
 		
 		cEGrAttDesc += " "
-		cEGrAttDesc += ALLTRIM(field->e_gr_at_desc)
+		cEGrAttDesc += ALLTRIM(field->e_gr_at_de)
 	endif
 endif
 
@@ -291,7 +291,7 @@ set order to tag "1"
 seek e_gr_at_str( nE_gr_att )
 
 if FOUND()
-	if field->in_art_desc == "*"
+	if field->in_art_des == "*"
 		lRet := .t.
 	endif
 endif
@@ -311,7 +311,7 @@ set filter to "e_gr_id == " + e_gr_id_str(nE_gr_id)
 go top
 
 do while !EOF() .and. field->e_gr_id == nE_gr_id
-	AADD(aAtt, { field->e_gr_at_id, ALLTRIM(field->e_gr_at_desc), 0, 0, 0 })
+	AADD(aAtt, { field->e_gr_at_id, ALLTRIM(field->e_gr_at_de), 0, 0, 0 })
 	skip
 enddo
 

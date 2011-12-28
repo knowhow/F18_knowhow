@@ -54,7 +54,7 @@ do while !EOF() .and. DTOS(field->doc_date) == DTOS( DATE() )
 	
 	// ako je za tekuæeg operatera
 	if nOperater <> 0
-		if field->operater_id <> nOperater
+		if field->operater_i <> nOperater
 			skip
 			loop
 		endif

@@ -61,7 +61,7 @@ if _wo_id == .f.
 
 endif
 
-AADD(aImeKol, {PADC("Puni naziv grupe", 30), {|| PADR(e_gr_full_desc, 30)}, "e_gr_full_desc"})
+AADD(aImeKol, {PADC("Puni naziv grupe", 30), {|| PADR(e_gr_full_, 30)}, "e_gr_full_"})
 AADD(aImeKol, {PADC("Skr. opis (sifra)", 15), {|| PADR(e_gr_desc, 15)}, "e_gr_desc"})
 
 for i:=1 to LEN(aImeKol)
@@ -134,8 +134,8 @@ seek e_gr_id_str(nE_gr_id)
 if FOUND()
 
 	if lFullDesc == .t.
-		if !EMPTY(field->e_gr_full_desc)
-			cEGrDesc := ALLTRIM(field->e_gr_full_desc)
+		if !EMPTY(field->e_gr_full_)
+			cEGrDesc := ALLTRIM(field->e_gr_full_)
 		endif
 	else
 		if !EMPTY(field->e_gr_desc)

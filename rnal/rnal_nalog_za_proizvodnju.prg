@@ -218,7 +218,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 
 	cDoc_no := docno_str( field->doc_no )
 	cDoc_it_no := docit_str( field->doc_it_no )
-	cDoc_It_type := field->doc_it_type
+	cDoc_It_type := field->doc_it_typ
 	
 	// prikazuj naziv artikla
 	if !EMPTY( field->art_desc )     //lSh_art_desc == .t.
@@ -293,7 +293,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 	    		    .and. field->doc_it_no == t_docit->doc_it_no ;
 			    .and. field->doc_el_no == nDoc_el_no
 		
-	 	cDoc_op_desc := ALLTRIM(field->doc_op_desc)
+	 	cDoc_op_desc := ALLTRIM(field->doc_op_des)
 	    	
 		// element...
 		if nElDesc == 1 
@@ -311,7 +311,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 			?? "obrada na " + STR( field->doc_el_no, 2 ) + ":" 
 			B_OFF
 	    		?? " "
-	    		?? ALLTRIM( field->doc_el_desc )
+	    		?? ALLTRIM( field->doc_el_des )
 			?? ", "
 			// prikazi lot broj
 			?? show_lot()
@@ -341,18 +341,18 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 			?? PADL( STR( ++ nElCount, 3), 3) + ")" + SPACE(1) + ALLTRIM(field->aop_desc)
 		endif
 
-		if !EMPTY(field->aop_att_desc) .and. ALLTRIM(field->aop_att_desc) <> "?????"
+		if !EMPTY(field->aop_att_de) .and. ALLTRIM(field->aop_att_de) <> "?????"
 			?? ", "
-			?? ALLTRIM(field->aop_att_desc)
+			?? ALLTRIM(field->aop_att_de)
 			?? ", "
 			?? ALLTRIM(field->aop_value)
 			
 		endif
 		
-		if !EMPTY(field->doc_op_desc) 
+		if !EMPTY(field->doc_op_des) 
 			
 			cPom := "- napomene: "
-			cPom += ALLTRIM( field->doc_op_desc )
+			cPom += ALLTRIM( field->doc_op_des )
 			aPom := SjeciStr( cPom , 70 )
 			
 			for i:=1 to LEN( aPom )

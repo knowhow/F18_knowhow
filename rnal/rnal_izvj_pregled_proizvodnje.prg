@@ -458,7 +458,7 @@ do while !EOF()
 
 		// po operateru
 		
-		if ALLTRIM( STR( field->operater_id )) <> ;
+		if ALLTRIM( STR( field->operater_i )) <> ;
 			ALLTRIM( STR( nOper ) )
 			
 			skip
@@ -780,7 +780,7 @@ do while !EOF()
 
 			do while !EOF() .and. field->doc_no == nDoc_no ;
 				.and. field->doc_it_no == nDoc_it_no ;
-				.and. field->doc_it_el_no == nEl_no
+				.and. field->doc_it_el_ == nEl_no
 				
 			  // element artikla nad kojim je operacija 
 			  // izvrsena
@@ -993,7 +993,7 @@ do while !EOF()
 
 		// po operateru
 		
-		if ALLTRIM( STR( field->operater_id )) <> ;
+		if ALLTRIM( STR( field->operater_i )) <> ;
 			ALLTRIM( STR( nOper ) )
 			
 			skip

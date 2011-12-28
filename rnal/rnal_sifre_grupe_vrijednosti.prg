@@ -84,9 +84,9 @@ endif
 
 AADD(aImeKol, {PADC("Grupa/atribut", 15), {|| "(" + ALLTRIM(g_egr_by_att(e_gr_at_id)) + ") / " + PADR(g_gr_at_desc(e_gr_at_id), 15)}, "e_gr_at_id", {|| set_e_gr_at(@we_gr_at_id) }, {|| s_e_gr_att( @we_gr_at_id ), show_it( g_gr_at_desc( we_gr_at_id ) ) }})
 
-AADD(aImeKol, {PADC("Vrijednost", 20), {|| PADR(e_gr_vl_full, 28) + ".." }, "e_gr_vl_full"})
+AADD(aImeKol, {PADC("Vrijednost", 20), {|| PADR(e_gr_vl_fu, 28) + ".." }, "e_gr_vl_fu"})
 
-AADD(aImeKol, {PADC("Skr. opis (sifra)", 20), {|| PADR(e_gr_vl_desc, 10) }, "e_gr_vl_desc"})
+AADD(aImeKol, {PADC("Skr. opis (sifra)", 20), {|| PADR(e_gr_vl_de, 10) }, "e_gr_vl_de"})
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)
@@ -191,12 +191,12 @@ seek e_gr_vl_str(nE_gr_vl_id)
 
 if FOUND()
 	if lFullDesc == .t.
-		if !EMPTY(field->e_gr_vl_full)
-			cEGrValDesc := ALLTRIM(field->e_gr_vl_full)
+		if !EMPTY(field->e_gr_vl_fu)
+			cEGrValDesc := ALLTRIM(field->e_gr_vl_fu)
 		endif
 	else
-		if !EMPTY(field->e_gr_vl_desc)
-			cEGrValDesc := ALLTRIM(field->e_gr_vl_desc)
+		if !EMPTY(field->e_gr_vl_de)
+			cEGrValDesc := ALLTRIM(field->e_gr_vl_de)
 		endif
 	endif
 endif

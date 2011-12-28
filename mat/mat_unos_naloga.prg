@@ -589,8 +589,8 @@ DO WHILE !EOF()
 //   SEEK cIdFirma+cIdVN+cBrNal
 //   NFOUND CRET
 
-   *----------- mat_nalog -------------------*
    START PRINT CRET
+   ?
    nStr:=0
    nUkDug:=nUkPot:=0
    nUkDug2:=nUkPot2:=0

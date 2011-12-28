@@ -171,8 +171,9 @@ return
 
 static function Zagl12()
 local nArr
+?
 P_COND
-@ A,0 SAY "MAT.P: mat_analITICKI NALOG ZA KNJIZENJE BROJ :"
+@ A,0 SAY "MAT.P: ANALITICKI NALOG ZA KNJIZENJE BROJ :"
 @ A,PCOL()+2 SAY cIdFirma+" - "+cIdVn+" - "+cBrNal
 nArr:=select()
 SELECT TNAL; HSEEK cIDVN; @ A,90 SAY naz; select(nArr)

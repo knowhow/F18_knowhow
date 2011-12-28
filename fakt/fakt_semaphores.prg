@@ -95,7 +95,7 @@ for _offset := 0 to _count STEP _step
 
   DO CASE
 
-    CASE algoritam == "FULL" .and. _offset==0
+    CASE (algoritam == "FULL") .and. (_offset==0)
         log_write( _tbl + " : synchro full algoritam") 
         ZAP
 
@@ -117,10 +117,9 @@ for _offset := 0 to _count STEP _step
 
     CASE algoritam == "IDS"
         
+        // "1", "idFirma+Idtipdok+BrDok+Rbr"
         SET ORDER TO TAG "1"
 
-        // CREATE_INDEX("1", "idFirma+Idtipdok+BrDok+Rbr", "FAKT")
-        // pobrisimo sve id-ove koji su drugi izmijenili
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids
@@ -142,7 +141,8 @@ for _offset := 0 to _count STEP _step
         enddo
 
   ENDCASE
-  // sada je sve izbrisano
+
+  // sada je sve izbrisano u lokalnom dbf-u
 
   _qry_obj := run_sql_query( _qry, _retry )
 
@@ -180,8 +180,6 @@ if (gDebug > 5)
     log_write("fakt_fakt synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t. 
 
 
@@ -365,10 +363,9 @@ for _offset := 0 to _count STEP _step
 
     CASE algoritam == "IDS"
         
+        // "1", "idFirma+IdTipDok+BrDok"
         SET ORDER TO TAG "1"
 
-        // CREATE_INDEX("1", "idFirma+IdTipDok+BrDok", "FAKT_DOKS")
-        // pobrisimo sve id-ove koji su drugi izmijenili
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids
@@ -600,9 +597,9 @@ for _offset := 0 to _count STEP _step
 
     CASE algoritam == "IDS"
         
+        // "1", "idFirma+IdTipDok+BrDok"
         SET ORDER TO TAG "1"
 
-        // "1", "idFirma+IdTipDok+BrDok"
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids

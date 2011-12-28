@@ -1,3 +1,7 @@
+0.9.28  2011-12-27, hernad, bug report v3
+
+  - [#25905](http://redmine.bring.out.ba/issues/25905)
+
 0.9.27  2011-12-27, hernad
 
   - [#25888](http://redmine.bring.out.ba/issues/25888), db parametri

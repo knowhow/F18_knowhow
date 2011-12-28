@@ -14,14 +14,16 @@
 
 function NoviKredit()
 local i
-local cIdRadn:=SPACE(_LR_)
-private nMjesec:=gMjesec
-private nGodina:=gGodina
-private cIdKred:=SPACE(_LK_)
-private nIznKred:=0
-private nRata:=0
-private nRata2:=0
-private cOsnov:=SPACE(20)
+local _vals
+local nOstalo, nTekMj, nTekGodina
+local cIdRadn  := SPACE(_LR_)
+local nMjesec  := gMjesec
+local nGodina  := gGodina
+local cIdKred  := SPACE(_LK_)
+local nIznKred := 0
+local nRata    := 0
+local nRata2   := 0
+local cOsnov   := SPACE(20)
 
 if Logirati(goModul:oDataBase:cName, "KREDIT", "NOVIKREDIT")
     lLogNoviKredit:=.t.
@@ -31,14 +33,14 @@ endif
 
 do while .t.
     OTblKredit()
-    Box(,10,70)
-        @ m_x+1,m_y+2 SAY "Mjesec:" GET nMjesec pict "99"
-        @ m_x+1,col()+2 SAY "Godina:" GET nGodina pict "9999"
-        @ m_x+2,m_y+2 SAY "Radnik  :" GET cIdRadn  valid {|| P_Radn(@cIdRadn),setpos(m_x+2,m_y+20),qqout(trim(radn->naz)+" ("+trim(radn->imerod)+") "+radn->ime),.t.}
-        @ m_x+3,m_y+2 SAY "Kreditor:" GET cIdKred pict "@!" valid P_Kred(@cIdKred,3,21)
-        @ m_x+4,m_y+2 SAY "Kredit po osnovu:" GET cOsnov pict "@!"
-        @ m_x+5,m_y+2 SAY "Ukupan iznos kredita:" GET nIznKred pict "99"+gPicI
-        if IzFMKIni("LD","ZaNoviKreditUnositiBrojRata","N",KUMPATH)=="D"
+    Box(, 10, 70)
+        @ m_x + 1, m_y + 2   SAY "Mjesec:" GET nMjesec pict "99"
+        @ m_x + 1, col() + 2 SAY "Godina:" GET nGodina pict "9999"
+        @ m_x + 2, m_y + 2   SAY "Radnik  :" GET cIdRadn  valid {|| P_Radn(@cIdRadn), setpos(m_x+2, m_y+20), qqout(trim(radn->naz) + " (" + trim(radn->imerod)+") "+radn->ime),.t.}
+        @ m_x + 3, m_y + 2   SAY "Kreditor:" GET cIdKred pict "@!" valid P_Kred(@cIdKred, 3, 21)
+        @ m_x + 4, m_y + 2   SAY "Kredit po osnovu:" GET cOsnov pict "@!"
+        @ m_x + 5, m_y + 2   SAY "Ukupan iznos kredita:" GET nIznKred pict "99"+gPicI
+        if IzFMKIni("LD","ZaNoviKreditUnositiBrojRata","N", KUMPATH) == "D"
                 lBrojRata:=.t.
                 @ m_x+7,m_y+2 SAY "Broj rata   :" GET nRata2 pict "9999" valid nRata2>0
         else
@@ -50,41 +52,38 @@ do while .t.
     BoxC()
     
     if lBrojRata
-        nRata:=ROUND(nIznKred/nRata2,2)
-        if nRata*nRata2-nIznKred<0
+        nRata:=ROUND(nIznKred / nRata2, 2)
+        if nRata * nRata2 - nIznKred < 0
                 nRata += 0.01
         endif
     endif
 
     SELECT radkr
-    //"2","idradn+idkred+naosnovu+str(godina)+str(mjesec)"
+    //"2", idradn + idkred + naosnovu + str(godina) + str(mjesec)
     set order to tag "2"
 
     seek cIdRadn + cIdkred + cOsnov
     private nRec := 0
 
     if found()
-        if Pitanje(,"Stavke vec postoje. Zamijeniti novim podacima ?","D")=="N"
+        if Pitanje( , "Stavke vec postoje. Zamijeniti novim podacima ?","D")=="N"
                 MsgBeep("Rate nisu formirane! Unesite novu osnovu kredita za zadanog kreditora!")
                 close all
                 return
         else
-                select radkr
-                do while !eof() .and. cIdRadn == idradn .and. cIdKred == idkred .and. cOsnov == naosnovu
-                    skip
-                    nRec := recno()
-                    skip -1
-
-                    delete
-
-                    go nRec
-                enddo
+                // pobrisi sve rate kredita
+                _vals := hb_hash()
+                _vals["idradn"] := cIdRadn
+                _vals["idkred"] := cIdKred
+                _vals["naosnovu"]  := cOsnov
+                delete_rec_server_and_dbf("RADKR", _vals,  { "idradn", "idkred", "naosnovu" }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND idkred=" + _sql_quote(x["idkred"]) + " AND naosnovu=" + _sql_quote(x["naosnovu"]) }, "2"  )
         endif
     endif
 
-    private nOstalo:=nIznKred
-    nTekMj:=nMjesec
-    nTekGodina:=nGodina
+
+    nOstalo := nIznKred
+    nTekMj := nMjesec
+    nTekGodina := nGodina
 
     i := 0
     nTekMj := nMjesec-1
@@ -105,7 +104,7 @@ do while .t.
                 nIRata:=nOstalo
         endif
 
-        if nIRata < 0 .and. (nOstalo-nIRata>0)  
+        if nIRata < 0 .and. (nOstalo - nIRata > 0)  
                 // rata je negativna
                 nIRata := nOstalo
         endif
@@ -113,22 +112,21 @@ do while .t.
         if round(nIRata, 2) <> 0
             
             append blank
-            
             _vals := dbf_get_rec()
  
             _vals["idradn"]   := cIdRadn
+            _vals["idkred"]   := cIdKred
+            _vals["naosnovu"] := cOsnov
             _vals["mjesec"]   := nTekMj
             _vals["godina"]   := nTekGodina
-            _vals["idkred"]   := cIdKred
             _vals["iznos"]    := nIRata
-            _vals["naosnovu"] := cOsnov
-            update_rec_server_and_dbf( "ld_radkr", _vals)
+            update_rec_server_and_dbf( "RADKR", _vals)
             ++i
 
         endif
 
-        nOstalo:=nOstalo-nIRata
-        if round(nOstalo,2)==0
+        nOstalo := nOstalo - nIRata
+        if round(nOstalo, 2) == 0
                 exit
         endif
     enddo
@@ -138,10 +136,10 @@ do while .t.
     endif
     
     private cDn:="N"
-    Box(,5,60)
+    Box(, 5, 60)
         set confirm off
-        @ m_x+1,m_y+2 SAY "Za radnika "+cIdRadn+" kredit je formiran na "+STR(i,3)+" rata"
-        @ m_x+3,m_y+2 SAY "Prikazati pregled kamata:" GET cDN pict "@!"
+        @ m_x+1, m_y+2 SAY "Za radnika "+cIdRadn+" kredit je formiran na "+STR(i,3)+" rata"
+        @ m_x+3, m_y+2 SAY "Prikazati pregled kamata:" GET cDN pict "@!"
         read
     BoxC()
 
@@ -149,8 +147,8 @@ do while .t.
 
     close all
 
-    if cDn=="D"
-        EditKredit(cIdRadn,cIdKred,cOsnov)
+    if (cDn == "D")
+        EditKredit(cIdRadn, cIdKred, cOsnov)
     endif
 
 enddo

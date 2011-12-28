@@ -10,6 +10,8 @@ TEST_BEGIN("")
 
 harbour_base()
 
+dbf_test()
+
 modstru_test()
 
 sifk_sifv_test()

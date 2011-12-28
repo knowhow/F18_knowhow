@@ -28,105 +28,6 @@ _out_file := my_home_root() + "error.txt"
 PTxtSekvence()
 
 
-/*
-do case
-
-   CASE objErr:genCode=EG_ARG
-     MsgO(objErr:description+' Neispravan argument')
-   CASE objErr:genCode=EG_BOUND
-     MsgO(objErr:description+' Greska-EG_BOUND')
-   CASE objErr:genCode=EG_STROVERFLOW
-     MsgO(objErr:description+' Prevelik string')
-   CASE objErr:genCode=EG_NUMOVERFLOW
-     MsgO(objErr:description+' Prevelik broj')
-   CASE objErr:genCode=36
-     //Workarea not indexed
-     lInstallDB:=.t.
-     
-   CASE objErr:genCode=EG_ZERODIV
-     MsgO(objErr:description+' Dijeljenje sa nulom')
-   CASE objErr:genCode=EG_NUMERR
-     MsgO(objErr:description+' EG_NUMERR')
-   CASE objErr:genCode=EG_SYNTAX
-     MsgO(objErr:description+' Greska sa sintaksom')
-   CASE objErr:genCode=EG_COMPLEXITY
-     MsgO('Prevelika kompleksnost za makro operaciju')
-
-   CASE objErr:genCode=EG_MEM
-     MsgO(objErr:description+' Nepostojeca varijabla')
-
-
-   CASE objErr:genCode=EG_NOFUNC
-     MsgO(objErr:description+' Nepostojeca funkcija')
-   CASE objErr:genCode=EG_NOMETHOD
-     MsgO(objErr:description+' Nepostojeci metod')
-   CASE objErr:genCode=EG_NOVAR
-    MsgO(objErr:description+' Nepostojeca varijabla -?-')
-
-   CASE objErr:genCode=EG_NOALIAS
-     MsgO(objErr:description+' Nepostojeci alias')
-   CASE objErr:genCode=EG_NOVARMETHOD
-     MsgO(objErr:description+' Nepostojeci metod')
-
-   CASE objErr:genCode=EG_CREATE
-     MsgO(ObjErr:description+' Ne mogu kreirati fajl '+ObjErr:filename)
-   CASE objErr:genCode=EG_OPEN
-     MsgO(ObjErr:description+' Ne mogu otvoriti fajl '+ObjErr:filename)
-     lInstallDB:=.t.
-     
-   CASE objErr:genCode=EG_CLOSE
-     MsgO(objErr:description+':Ne mogu zatvoriti fajl '+ObjErr:filename)
-   CASE objErr:genCode=EG_READ
-     MsgO(objErr:description+':Ne mogu procitati fajl '+ObjErr:filename)
-   CASE objErr:genCode=EG_WRITE
-     MsgO(objErr:description+':Ne mogu zapisati u fajl '+ObjErr:filename)
-   CASE objErr:genCode=EG_PRINT
-     MsgO(objErr:description+':Greska sa stampacem !!!!')
-
-   CASE objErr:genCode=EG_UNSUPPORTED
-     MsgO(objErr:description+' Greska - nepodrzano')
-
-   CASE objErr:genCode=EG_CORRUPTION
-     MsgO(objErr:description+' Grska - ostecenje pomocnih CDX fajlova')
-     lInstallDB:=.t.
-
-   CASE objErr:genCode=EG_DATATYPE
-     MsgO(objErr:description+' Greska - tip podataka neispravan')
-   CASE objErr:genCode=EG_DATAWIDTH
-     MsgO(objErr:description+' Greska EG_DATAWIDTH')
-   CASE objErr:genCode=EG_NOTABLE
-     MsgO(objErr:description+' Greska - EG_NOTABLE')
-   CASE objErr:genCode=EG_NOORDER
-     MsgO(objErr:description+' Greska - no order ')
-   CASE objErr:genCode=EG_SHARED
-     MsgO(objErr:description+' Greska - dijeljenje')
-   CASE objErr:genCode=EG_UNLOCKED
-     MsgO(objErr:description+' Greska - nije zakljucan zapis/fajl')
-   CASE objErr:genCode=EG_READONLY
-     MsgO(objErr:description+' Greska - samo za citanje')
-   CASE objErr:genCode=EG_APPENDLOCK
-     MsgO(objErr:description+' Greska - nije zakljucano pri apendovanju')
-   OTHERWISE
-     MsgO(objErr:description+' Greska !!!!')
- endcase
-
- INKEY(0)
-
- MsgC()
-
- if (lInstallDB .and. !(goModul:oDatabase:lAdmin) .and. Pitanje(,"Install DB procedura ?","D")=="D")
-   goModul:oDatabase:install()
-   return .t.
- endif
-
- cOdg:="N"
- if (objErr:genCode>=EG_ARG .and.  objErr:genCode<=EG_NOVARMETHOD) .or.;
-    (objErr:genCode>=EG_UNSUPPORTED .and. objErr:genCode<=EG_APPENDLOCK)
-   cOdg:="N"
- else
-
-*/
-
 set console off
     
 set printer off
@@ -139,19 +40,20 @@ set printer on
 P_12CPI
 
 ? REPLICATE("=", 84) 
-? "F18 bug report:", DATE(), TIME()
+? "F18 bug report(v3):", DATE(), TIME()
 ? REPLICATE("=", 84) 
 
 
 ? "Verzija programa:", F18_VER, F18_VER_DATE, FMK_LIB_VER
 ?
 
-? "Podsistem  :", err_obj:SubSystem
-? "GenKod     :", str(err_obj:GenCode, 3), "OpSistKod:", str(err_obj:OsCode,3)
-? "Opis       :", err_obj:description
-? "ImeFajla   :", err_obj:filename
-? "Operacija  :", err_obj:operation
-? "Argumenti  :", err_obj:args
+? "SubSystem/severity    :", err_obj:SubSystem, err_obj:severity
+? "GenCod/SubCode/OsCode :", err_obj:GenCode, err_obj:SubCode, err_obj:OsCode
+? "Opis                  :", err_obj:description
+? "ImeFajla              :", err_obj:filename
+? "Operacija             :", err_obj:operation
+? "Argumenti             :", err_obj:args
+? "canRetry/canDefault   :", err_obj:canRetry, err_obj:canDefault
 
 ? 
 ? "CALL STACK:"
@@ -170,13 +72,20 @@ server_db_version_info()
 
 server_info()
 
-if used() 
+if USED() 
    current_dbf_info()
 else
    ? "USED() = false"
 endif
 
-? 
+? "== CARGO" , REPLICATE("=", 50)
+for _i := 1 TO LEN(err_obj:cargo)
+   if err_obj:cargo[_i] == "var"
+      ?  "* var ", err_obj:cargo[++_i], ":", pp(err_obj:cargo[++_i])
+   endif
+next
+? REPLICATE("-", 60)
+?
 ? "== END OF BUG REPORT =="
 
 
@@ -189,6 +98,10 @@ set console on
 close all
 
 run (_cmd := "f18_editor " + _out_file)
+
+// if Pitanje(, "Continue F18 ?", "N") == "D"
+//  BREAK(err_obj)
+// endif
 
 RETURN
 
@@ -235,8 +148,6 @@ _server_db_str := get_version_str(_server_db_num)
 ? "Actual knowhow ERP server db version :", _server_db_str, "/", ALLTRIM(STR(_server_db_num, 0))
 
 return .t.
-
-
 
 
 // ---------------------------------

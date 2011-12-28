@@ -138,3 +138,36 @@ DO WHILE _i <= PCount()
 ENDDO
 
 return
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+function pp(x)
+local _key, _i
+local _tmp
+local _type
+
+_tmp := ""
+
+_type := VALTYPE(x)
+
+if _type == "H"
+  _tmp += "(hash): "
+  FOR EACH _key in x:Keys
+      _tmp +=  pp(_key) + " / " + pp(x[_key]) + " ; "
+  NEXT
+  return _tmp
+endif
+
+if _type  == "A"
+  _tmp += "(array): "
+  FOR _i := 1 to LEN(x)
+      _tmp +=  ALLTRIM(pp(_i)) + " / " + pp(x[_i]) + " ; "
+  NEXT
+  return _tmp
+endif
+
+if _type $ "CLDN"
+   return hb_ValToStr(x)
+endif
+
+return "?" + _type + "?"

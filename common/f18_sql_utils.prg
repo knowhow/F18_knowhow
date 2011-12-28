@@ -58,9 +58,11 @@ DO CASE
     _qry := "ROLLBACK;"
 
    CASE op == "del"
-    if (where == NIL) .and. (record["id"] == NIL)
+    if (where == NIL) .and. (record == NIL .or. (record["id"] == NIL))
       // brisi kompletnu tabelu
       _where := "true"
+      MsgBeep(PROCNAME(1) + "/" + ALLTRIM(STR(PROCLINE(1))) + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!")
+      QUIT
     else
       if where == NIL
          _where := "ID = " + _sql_quote(record["id"])

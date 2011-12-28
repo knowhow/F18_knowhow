@@ -211,7 +211,7 @@ AADD(gaDBFs, { F_REKLDP  , "REKLDP"  , "ld_rekldp"  } )
 // RADKR TAG "2", "idradn + idkred + naosnovu + str(godina) + str(mjesec)"
 // u skladu sa tim mora biti { "idradn", "idkred", "naosnovu" ...  }
 //
-AADD(gaDBFs, { F_RADKR  , "RADKR"   , "ld_radkr", { |alg| ld_radkr_from_sql_server(alg) }, "IDS", { "idradn", "idkred", "naosnovu", {"godina", 4}, {"mjesec", 2 } }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND mjesec=" + STR(x["mjesec"], 2) + " AND godina=" + STR(x["godina"], 4) + " AND idkred=" + _sql_quote(x["idkred"]) + " AND naosnovu=" + _sql_quote(x["naosnovu"]) }, "2" } )
+AADD(gaDBFs, { F_RADKR  , "RADKR"   , "ld_radkr", { |alg| ld_radkr_from_sql_server(alg) }, "IDS", { "idradn", "idkred", "naosnovu", {"godina", 4}, {"mjesec", 2 } }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND idkred=" + _sql_quote(x["idkred"]) +  " AND naosnovu=" + _sql_quote(x["naosnovu"]) +  " AND godina=" + STR(x["godina"], 4) + " AND mjesec=" + STR(x["mjesec"], 2) }, "2" } )
 
 AADD(gaDBFs, { F_RADN   ,  "RADN"    , "ld_radn",     { |alg| ld_radn_from_sql_server(alg) }, "IDS" } )
 AADD(gaDBFs, { F_RADSIHT,  "RADSIHT" , "ld_radsiht",  { |alg| ld_radsiht_from_sql_server(alg) }, "IDS" } )

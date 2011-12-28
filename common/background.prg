@@ -81,11 +81,6 @@ do while .t.
   
         begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
           _used := .f. 
-          // nemoj ako se koristi nista raditi
-          //if used()
-          //   use
-          //   _used :=.t.
-          //endif
           if used()
              log_write_db("_db_thread USED!:" + to_str(TIME()) + " / " + to_str(_i) + " : "  + to_str(_area) + " : " + to_str( _alias ))
           else
@@ -100,8 +95,8 @@ do while .t.
     next
 
     //hb_dbDetach( , {|| _result})
-//endif
-//? "thread_db end"
+    //endif
+    //? "thread_db end"
 
 hb_IdleSleep(5)
 

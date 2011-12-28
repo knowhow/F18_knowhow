@@ -188,9 +188,9 @@ do while !EOF()
 	
 	nArt_id := field->art_id
 	// koliko ima kvadrata
-	nUm2 := c_ukvadrat( field->doc_it_qtty, ;
-		field->doc_it_height, ;
-		field->doc_it_widht) 
+	nUm2 := c_ukvadrat( field->doc_it_qtt, ;
+		field->doc_it_hei, ;
+		field->doc_it_wid) 
 
 	// sada imam sve potrebne podatke za obracun
 	aArr := calc_ral( nRal, nTick, nRoller, nUm2 )

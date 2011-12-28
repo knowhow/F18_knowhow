@@ -478,7 +478,7 @@ do while !EOF()
 	do while !EOF() .and. field->doc_no == nDoc_no
 
 		nDoc_it_no := field->doc_it_no
-		cDoc_it_type := field->doc_it_type
+		cDoc_it_type := field->doc_it_typ
 		nArt_id := field->art_id
 	
 		// artikal nedefinisan
@@ -491,12 +491,12 @@ do while !EOF()
 			loop
 		endif
 
-		nQtty := field->doc_it_qtty
+		nQtty := field->doc_it_qtt
 		
-		nHeight := field->doc_it_height
+		nHeight := field->doc_it_hei
 		nH_orig := nHeight
 		
-		nWidth := field->doc_it_width
+		nWidth := field->doc_it_wid
 		nW_orig := nWidth
 
 		nH2 := field->doc_it_h2
@@ -1041,17 +1041,17 @@ do while !EOF()
 			endif
 		endif
 	
-		cArt_desc := field->art_full_desc
+		cArt_desc := field->art_full_d
 		
 		select doc_it
 	
 		nDoc_it_no := field->doc_it_no
-		cDoc_it_type := field->doc_it_type
+		cDoc_it_type := field->doc_it_typ
 
-		nQtty := field->doc_it_qtty
+		nQtty := field->doc_it_qtt
 		
-		nHeight := field->doc_it_height
-		nWidth := field->doc_it_width
+		nHeight := field->doc_it_hei
+		nWidth := field->doc_it_wid
 		
 		// ostecenih stavki 
 		nDmg := 0
@@ -1292,7 +1292,7 @@ do while !EOF()
 				.and. field->doc_it_no = nDoc_it_no
 
 			// element artikla nad kojim je operacija izvrsena
-			nEl_no := field->doc_it_el_no
+			nEl_no := field->doc_it_el_
 			cAopValue := field->aop_value
 
 			aElem := {}

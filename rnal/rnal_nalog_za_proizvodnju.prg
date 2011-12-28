@@ -423,7 +423,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 	if cDoc_it_type == "R"
 	  
 	  // prikazi fi
-	  ?? PADL( show_fi( field->doc_it_width, field->doc_it_heigh ), 21 )
+	  ?? PADL( show_fi( field->doc_it_wid, field->doc_it_hei ), 21 )
 	
 	elseif cDoc_it_type == "S"
 		
@@ -440,50 +440,50 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 	  // ovo moram podvuci u drugi red
 	  
 	  // sirina 1 / 2
-	  ?? PADL( show_shape( field->doc_it_width, field->doc_it_w2 ), 15 )
+	  ?? PADL( show_shape( field->doc_it_wid, field->doc_it_w2 ), 15 )
 	
 	  ?? " "
 	  
 	  // visina 1 / 2
-	  ?? PADL( show_shape( field->doc_it_heigh, field->doc_it_h2), 15 )
+	  ?? PADL( show_shape( field->doc_it_hei, field->doc_it_h2), 15 )
 	  
 	else
 	
 	  // sirina
-	  ?? show_number(field->doc_it_width, nil, -10 )
+	  ?? show_number(field->doc_it_wid, nil, -10 )
 
 	  ?? " "
 
 	  // visina
- 	  ?? show_number(field->doc_it_heigh, nil, -10 )
+ 	  ?? show_number(field->doc_it_hei, nil, -10 )
 	
 	endif
 	
 	?? " "
 
 	// kolicina
-	?? show_number(field->doc_it_qtty, nil, -10 )
+	?? show_number(field->doc_it_qtt, nil, -10 )
 
 	
 	// napomene za item:
 	// - napomene
 	// - shema u prilogu
 
-	if !EMPTY( field->doc_it_desc ) ;
-		.or. field->doc_it_altt <> 0 ;
-		.or. ( field->doc_it_schema == "D" )
+	if !EMPTY( field->doc_it_des ) ;
+		.or. field->doc_it_alt <> 0 ;
+		.or. ( field->doc_it_sch == "D" )
 	
 		cPom := "Napomene: " + ;
-			ALLTRIM( field->doc_it_desc )
+			ALLTRIM( field->doc_it_des )
 		
-		if field->doc_it_schema == "D"
+		if field->doc_it_sch == "D"
 		
 			cPom += " "
 			cPom += "(SHEMA U PRILOGU)"
 		endif	
 
 		// nadmorska visina
-		if field->doc_it_altt <> 0
+		if field->doc_it_alt <> 0
 			
 			if !EMPTY( field->doc_acity )
 				cPom += "Montaza: "
@@ -491,7 +491,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 			endif
 			
 			cPom += ", "
-			cPom += "nadmorska visina = " + ALLTRIM(STR(field->doc_it_altt, 12, 2)) + " m"
+			cPom += "nadmorska visina = " + ALLTRIM(STR(field->doc_it_alt, 12, 2)) + " m"
 		endif
 	
 		cItDesc := cPom
@@ -663,7 +663,7 @@ do while !EOF()
 		?? ALLTRIM(STR(field->it_no)) + "."
 		?? " "
 		?? PADR( cTmp, 40 )
-		?? " kol.=", ALLTRIM( STR( field->doc_it_qtty, 12, 2) )
+		?? " kol.=", ALLTRIM( STR( field->doc_it_qtt, 12, 2) )
 		
 		if !EMPTY( cTmp2 )
 			

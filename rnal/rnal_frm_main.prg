@@ -136,15 +136,15 @@ local cObjId
 if l_new_doc
 
 	_doc_date := DATE()
-	_doc_dvr_date := DATE() + 2
-	_doc_dvr_time := PADR( PADR(TIME(), 5), 8)
-	_doc_ship_place := PADR("", LEN(_doc_ship_place) )
-	_doc_priority := 2
+	_doc_dvr_da := DATE() + 2
+	_doc_dvr_ti := PADR( PADR(TIME(), 5), 8)
+	_doc_ship_p := PADR("", LEN(_doc_ship_p) )
+	_doc_priori := 2
 	_doc_pay_id := 1
 	_doc_paid := "D"
-	_doc_pay_desc := SPACE( LEN(_doc_pay_desc) )
+	_doc_pay_de := SPACE( LEN(_doc_pay_de) )
 	_doc_status := 0
-	_doc_sh_desc := SPACE( LEN( _doc_sh_desc ) )
+	_doc_sh_des := SPACE( LEN( _doc_sh_de ) )
 	
 	cCustId := PADR("", 10)
 	cContId := PADR("", 10)
@@ -158,7 +158,7 @@ else
 endif
 
 // set vrijednosti polja koja se uvijek mijenjaju
-_operater_id := _oper_id
+_operater_i := _oper_id
 
 // unos podataka...
 
@@ -170,9 +170,9 @@ nX += 2
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("Datum isporuke (*):", nLeft) GET _doc_dvr_date VALID must_enter( _doc_dvr_date ) WHEN set_opc_box( nBoxX, 50 )
+@ m_x + nX, m_y + 2 SAY PADL("Datum isporuke (*):", nLeft) GET _doc_dvr_da VALID must_enter( _doc_dvr_da ) WHEN set_opc_box( nBoxX, 50 )
 
-@ m_x + nX, col() + 2 SAY PADL("Vrijeme isporuke (*):", nLeft) GET _doc_dvr_time VALID must_enter(_doc_dvr_time) WHEN set_opc_box(nBoxX, 50, "format: HH:MM")
+@ m_x + nX, col() + 2 SAY PADL("Vrijeme isporuke (*):", nLeft) GET _doc_dvr_ti VALID must_enter(_doc_dvr_ti) WHEN set_opc_box(nBoxX, 50, "format: HH:MM")
 
 nX += 2
 
@@ -180,7 +180,7 @@ nX += 2
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("Mjesto isporuke :", nLeft) GET _doc_ship_place VALID {|| sh_place_pattern(@_doc_ship_place) } PICT "@S46" WHEN set_opc_box( nBoxX, 50, "mjesto gdje se roba isporucuje", "/RP - rg prod. /T - tvornica nar." )
+@ m_x + nX, m_y + 2 SAY PADL("Mjesto isporuke :", nLeft) GET _doc_ship_p VALID {|| sh_place_pattern(@_doc_ship_p) } PICT "@S46" WHEN set_opc_box( nBoxX, 50, "mjesto gdje se roba isporucuje", "/RP - rg prod. /T - tvornica nar." )
 @ m_x + nX, col() SAY ">" COLOR "I"
 
 nX += 1
@@ -189,12 +189,12 @@ nX += 1
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("dodatni opis:", nLeft + 2 ) GET _cont_add_desc PICT "@S44" WHEN set_opc_box( nBoxX, 50, "dodatni opis kontakta" )
+@ m_x + nX, m_y + 2 SAY PADL("dodatni opis:", nLeft + 2 ) GET _cont_add_d PICT "@S44" WHEN set_opc_box( nBoxX, 50, "dodatni opis kontakta" )
 @ m_x + nX, col() SAY ">" COLOR "I"
 
 nX += 3
 
-@ m_x + nX, m_y + 2 SAY PADL("Prioritet (*):", nLeft) GET _doc_priority VALID {|| (_doc_priority > 0 .and. _doc_priority < 4), show_it(s_priority(_doc_priority), 40) } PICT "9" WHEN set_opc_box( nBoxX, 50, "1 - high, 2 - normal, 3 - low") 
+@ m_x + nX, m_y + 2 SAY PADL("Prioritet (*):", nLeft) GET _doc_priori VALID {|| (_doc_priori > 0 .and. _doc_priori < 4), show_it(s_priority(_doc_priori), 40) } PICT "9" WHEN set_opc_box( nBoxX, 50, "1 - high, 2 - normal, 3 - low") 
 
 nX += 1
 
@@ -204,17 +204,17 @@ nX += 1
 	
 @ m_x + nX, m_y + 2 SAY PADL("Placeno (D/N)? (*):", nLeft) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
 	
-@ m_x + nX, col() + 2 SAY "dod.nap.plac:" GET _doc_pay_desc PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
+@ m_x + nX, col() + 2 SAY "dod.nap.plac:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
 @ m_x + nX, col() SAY ">" COLOR "I"
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("Kratki opis (*):", nLeft) GET _doc_sh_desc VALID !EMPTY(_doc_sh_desc) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "kratki opis naloga (asocijacija)", "npr: ulazna stijena, vrata ...") 
+@ m_x + nX, m_y + 2 SAY PADL("Kratki opis (*):", nLeft) GET _doc_sh_des VALID !EMPTY(_doc_sh_des) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "kratki opis naloga (asocijacija)", "npr: ulazna stijena, vrata ...") 
 @ m_x + nX, col() SAY ">" COLOR "I"
 
 nX += 1 
 
-@ m_x + nX, m_y + 2 SAY PADL("Dod.opis naloga:", nLeft) GET _doc_desc VALID chk_mandatory( _doc_desc, _doc_priority ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "dodatni opis naloga" )
+@ m_x + nX, m_y + 2 SAY PADL("Dod.opis naloga:", nLeft) GET _doc_desc VALID chk_mandatory( _doc_desc, _doc_priori ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "dodatni opis naloga" )
 @ m_x + nX, col() SAY ">" COLOR "I"
 
 read

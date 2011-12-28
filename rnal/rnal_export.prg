@@ -151,13 +151,13 @@ if field->cust_id <> 0
 		field->cust_id , ;
 		ALLTRIM( customs->cust_desc ) + " " + ALLTRIM(customs->cust_addr) + " " + ALLTRIM(customs->cust_tel) , ;
 		ALLTRIM( field->doc_desc ) , ;
-		ALLTRIM( field->doc_sh_desc ) , ;
-		ALLTRIM( field->cont_add_desc ) , ;
+		ALLTRIM( field->doc_sh_des ) , ;
+		ALLTRIM( field->cont_add_d ) , ;
 		ALLTRIM( contacts->cont_desc) + " " + ALLTRIM(contacts->cont_tel) , ;
 		nil, ;
 		field->doc_date, ;
-		field->doc_dvr_date, ;
-		field->doc_ship_place )
+		field->doc_dvr_da, ;
+		field->doc_ship_p )
 		
 	// UPISI <ORD>
 	write_rec( nHnd, aOrd, aOrdSpec )
@@ -190,8 +190,8 @@ do while !EOF() .and. field->doc_no == nDoc_no
 	
 	nDoc_it_no := field->doc_it_no
 	nArt_id := field->art_id
-	nHeight := field->doc_it_height
-	nWidth := field->doc_it_width
+	nHeight := field->doc_it_hei
+	nWidth := field->doc_it_wid
 
 	select articles
 	set order to tag "1"
@@ -277,7 +277,7 @@ do while !EOF() .and. field->doc_no == nDoc_no
 		select (nADOC_OP)
 	
 		// moramo znati i koji je element
-		nElemPos := field->doc_it_el_no
+		nElemPos := field->doc_it_el_
 	
 		// kod brusenja dodaj na dimenzije po 3mm
 		if cJoker == "<A_B>"
@@ -399,15 +399,15 @@ do while !EOF() .and. field->doc_no == nDoc_no
 	next
 
 	// samo ako su dimenzije ispravne.....
-	if ( field->doc_it_width <> 0 .and. ;
-		field->doc_it_height <> 0 .and. ;
-		field->doc_it_qtty <> 0 )
+	if ( field->doc_it_wid <> 0 .and. ;
+		field->doc_it_hei <> 0 .and. ;
+		field->doc_it_qtt <> 0 )
 		
 		// ubaci u matricu podatke
 		aPos := add_pos( field->doc_it_no, ;
 			"", ;
 			nil, ;
-			field->doc_it_qtty, ;
+			field->doc_it_qtt, ;
 			nGl1w, ;
 			nGl1h, ;
 			cPosGl1, ;
@@ -458,10 +458,10 @@ do while !EOF() .and. field->doc_no == nDoc_no
 			aGlSpec, aFrSpec )
 
 	// ako ima napomena...
-	if !EMPTY( field->doc_it_desc )
+	if !EMPTY( field->doc_it_des )
 		
 		// upisi <TXT> ostale informacije
-		aTxt := add_txt( 1, ALLTRIM( field->doc_it_desc ) )
+		aTxt := add_txt( 1, ALLTRIM( field->doc_it_des ) )
 		write_rec(nHnd, aTxt, aTxtSpec )
 
 	endif

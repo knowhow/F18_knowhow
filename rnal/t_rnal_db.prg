@@ -242,21 +242,21 @@ aDbf:={}
 AADD(aDBf,{ "doc_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_date", "D", 8, 0 })
 AADD(aDBf,{ "doc_time", "C", 8, 0 })
-AADD(aDBf,{ "doc_dvr_date", "D", 8, 0 })
-AADD(aDBf,{ "doc_dvr_time", "C", 8,  0 })
-AADD(aDBf,{ "doc_ship_place", "C", 200, 0 })
+AADD(aDBf,{ "doc_dvr_da", "D", 8, 0 })
+AADD(aDBf,{ "doc_dvr_ti", "C", 8,  0 })
+AADD(aDBf,{ "doc_ship_p", "C", 200, 0 })
 AADD(aDBf,{ "cust_id", "N", 10, 0 })
 AADD(aDBf,{ "cont_id", "N", 10, 0 })
 AADD(aDBf,{ "obj_id", "N", 10, 0 })
-AADD(aDBf,{ "cont_add_desc", "C", 200, 0 })
+AADD(aDBf,{ "cont_add_d", "C", 200, 0 })
 AADD(aDBf,{ "doc_pay_id", "N", 4, 0 })
 AADD(aDBf,{ "doc_paid", "C", 1, 0 })
-AADD(aDBf,{ "doc_pay_desc", "C", 100, 0 })
-AADD(aDBf,{ "doc_priority", "N", 4, 0 })
+AADD(aDBf,{ "doc_pay_de", "C", 100, 0 })
+AADD(aDBf,{ "doc_priori", "N", 4, 0 })
 AADD(aDBf,{ "doc_desc", "C", 200, 0 })
-AADD(aDBf,{ "doc_sh_desc", "C", 100, 0 })
+AADD(aDBf,{ "doc_sh_des", "C", 100, 0 })
 AADD(aDBf,{ "doc_status", "N", 2, 0 })
-AADD(aDBf,{ "operater_id", "N", 3, 0 })
+AADD(aDBf,{ "operater_i", "N", 3, 0 })
 AADD(aDBf,{ "doc_in_fmk", "N", 1, 0 })
 AADD(aDBf,{ "fmk_doc", "C", 150, 0 })
 
@@ -275,14 +275,14 @@ aDbf:={}
 AADD(aDBf,{ "doc_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_it_no", "N", 4, 0 })
 AADD(aDBf,{ "art_id", "N", 10, 0 })
-AADD(aDBf,{ "doc_it_width", "N", 15,  5 })
-AADD(aDBf,{ "doc_it_heihg", "N", 15,  5 })
-AADD(aDBf,{ "doc_it_qtty",  "N", 15,  5 })
-AADD(aDBf,{ "doc_it_altt",  "N", 15,  5 })
+AADD(aDBf,{ "doc_it_wid", "N", 15,  5 })
+AADD(aDBf,{ "doc_it_hei", "N", 15,  5 })
+AADD(aDBf,{ "doc_it_qtt",  "N", 15,  5 })
+AADD(aDBf,{ "doc_it_alt",  "N", 15,  5 })
 AADD(aDBf,{ "doc_acity",  "C", 50,  5 })
-AADD(aDBf,{ "doc_it_schema",  "C", 1,  0 })
-AADD(aDBf,{ "doc_it_desc",  "C", 150,  0 })
-AADD(aDBf,{ "doc_it_type",  "C", 1,  0 })
+AADD(aDBf,{ "doc_it_sch",  "C", 1,  0 })
+AADD(aDBf,{ "doc_it_des",  "C", 150,  0 })
+AADD(aDBf,{ "doc_it_typ",  "C", 1,  0 })
 AADD(aDBf,{ "doc_it_w2", "N", 15,  5 })
 AADD(aDBf,{ "doc_it_h2", "N", 15,  5 })
 AADD(aDBf,{ "doc_it_pos", "C", 20,  0 })
@@ -321,12 +321,12 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "doc_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_it_no", "N", 4, 0 })
-AADD(aDBf,{ "doc_it_el_no", "N", 10, 0 })
+AADD(aDBf,{ "doc_it_el_", "N", 10, 0 })
 AADD(aDBf,{ "doc_op_no", "N", 4, 0 })
 AADD(aDBf,{ "aop_id", "N", 10,  0 })
 AADD(aDBf,{ "aop_att_id", "N", 10,  0 })
 AADD(aDBf,{ "aop_value", "C", 150,  0 })
-AADD(aDBf,{ "doc_op_desc", "C", 150,  0 })
+AADD(aDBf,{ "doc_op_des", "C", 150,  0 })
 
 return aDbf
 
@@ -341,11 +341,11 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "doc_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_log_no", "N", 10, 0 })
-AADD(aDBf,{ "doc_log_date", "D", 8, 0 })
-AADD(aDBf,{ "doc_log_time", "C", 8, 0 })
-AADD(aDBf,{ "operater_id", "N", 3,  0 })
-AADD(aDBf,{ "doc_log_type", "C", 3,  0 })
-AADD(aDBf,{ "doc_log_desc", "C", 100,  0 })
+AADD(aDBf,{ "doc_log_da", "D", 8, 0 })
+AADD(aDBf,{ "doc_log_ti", "C", 8, 0 })
+AADD(aDBf,{ "operater_i", "N", 3,  0 })
+AADD(aDBf,{ "doc_log_ty", "C", 3,  0 })
+AADD(aDBf,{ "doc_log_de", "C", 100,  0 })
 
 return aDbf
 
@@ -361,7 +361,7 @@ aDbf:={}
 AADD(aDBf,{ "doc_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_log_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_lit_no", "N", 4, 0 })
-AADD(aDBf,{ "doc_lit_action", "C", 1, 0 })
+AADD(aDBf,{ "doc_lit_ac", "C", 1, 0 })
 AADD(aDBf,{ "art_id", "N", 10, 0 })
 AADD(aDBf,{ "char_1", "C", 100,  0 })
 AADD(aDBf,{ "char_2", "C", 100,  0 })
@@ -391,8 +391,8 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "art_id", "N", 10, 0 })
 AADD(aDBf,{ "art_desc", "C", 100, 0 })
-AADD(aDBf,{ "art_full_desc", "C", 250, 0 })
-AADD(aDBf,{ "art_lab_desc", "C", 200, 0 })
+AADD(aDBf,{ "art_full_d", "C", 250, 0 })
+AADD(aDBf,{ "art_lab_de", "C", 200, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf
@@ -458,7 +458,7 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "e_gr_id", "N", 10, 0 })
 AADD(aDBf,{ "e_gr_desc", "C", 100, 0 })
-AADD(aDBf,{ "e_gr_full_desc", "C", 100, 0 })
+AADD(aDBf,{ "e_gr_full_", "C", 100, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf
@@ -475,10 +475,10 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "e_gr_at_id", "N", 10, 0 })
 AADD(aDBf,{ "e_gr_id", "N", 10, 0 })
-AADD(aDBf,{ "e_gr_at_desc", "C", 100, 0 })
-AADD(aDBf,{ "e_gr_at_required", "C", 1, 0 })
-AADD(aDBf,{ "in_art_desc", "C", 1, 0 })
-AADD(aDBf,{ "e_gr_at_joker", "C", 20, 0 })
+AADD(aDBf,{ "e_gr_at_de", "C", 100, 0 })
+AADD(aDBf,{ "e_gr_at_re", "C", 1, 0 })
+AADD(aDBf,{ "in_art_des", "C", 1, 0 })
+AADD(aDBf,{ "e_gr_at_jo", "C", 20, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf
@@ -495,8 +495,8 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "e_gr_vl_id", "N", 10, 0 })
 AADD(aDBf,{ "e_gr_at_id", "N", 10, 0 })
-AADD(aDBf,{ "e_gr_vl_desc", "C", 100, 0 })
-AADD(aDBf,{ "e_gr_vl_full", "C", 100, 0 })
+AADD(aDBf,{ "e_gr_vl_de", "C", 100, 0 })
+AADD(aDBf,{ "e_gr_vl_fu", "C", 100, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf
@@ -512,8 +512,8 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "aop_id", "N", 10, 0 })
 AADD(aDBf,{ "aop_desc", "C", 100, 0 })
-AADD(aDBf,{ "aop_full_desc", "C", 100, 0 })
-AADD(aDBf,{ "in_art_desc", "C", 1, 0 })
+AADD(aDBf,{ "aop_full_d", "C", 100, 0 })
+AADD(aDBf,{ "in_art_des", "C", 1, 0 })
 AADD(aDBf,{ "aop_joker", "C", 20, 0 })
 AADD(aDBf,{ "aop_unit", "C", 10, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
@@ -531,9 +531,9 @@ local aDbf
 aDbf:={}
 AADD(aDBf,{ "aop_att_id", "N", 10, 0 })
 AADD(aDBf,{ "aop_id", "N", 10, 0 })
-AADD(aDBf,{ "aop_att_desc", "C", 100, 0 })
-AADD(aDBf,{ "aop_att_full", "C", 100, 0 })
-AADD(aDBf,{ "in_art_desc", "C", 1, 0 })
+AADD(aDBf,{ "aop_att_de", "C", 100, 0 })
+AADD(aDBf,{ "aop_att_fu", "C", 100, 0 })
+AADD(aDBf,{ "in_art_des", "C", 1, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf
@@ -551,7 +551,7 @@ AADD(aDBf,{ "cust_id", "N", 10, 0 })
 AADD(aDBf,{ "cust_desc", "C", 250, 0 })
 AADD(aDBf,{ "cust_addr", "C", 50, 0 })
 AADD(aDBf,{ "cust_tel", "C", 100, 0 })
-AADD(aDBf,{ "cust_ident_no", "C", 13, 0 })
+AADD(aDBf,{ "cust_ident", "C", 13, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf
@@ -569,7 +569,7 @@ AADD(aDBf,{ "cont_id", "N", 10, 0 })
 AADD(aDBf,{ "cust_id", "N", 10, 0 })
 AADD(aDBf,{ "cont_desc", "C", 150, 0 })
 AADD(aDBf,{ "cont_tel", "C", 100, 0 })
-AADD(aDBf,{ "cont_add_desc", "C", 250, 0 })
+AADD(aDBf,{ "cont_add_d", "C", 250, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf

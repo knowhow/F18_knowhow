@@ -98,7 +98,7 @@ if !EMPTY(cAop_desc)
 		cFilter += ' .and. '
 	endif
 
-	cFilter += 'ALLTRIM(UPPER(aop_att_desc)) = ' + cm2str(UPPER(ALLTRIM(cAop_desc))) 
+	cFilter += 'ALLTRIM(UPPER(aop_att_d)) = ' + cm2str(UPPER(ALLTRIM(cAop_desc))) 
 endif
 
 if !EMPTY(cFilter)
@@ -124,14 +124,14 @@ if __wo_id == .f.
 endif
 
 AADD(aImeKol, {PADR("Dod.op.ID", 15), {|| PADR(g_aop_desc( aop_id ), 15) }, "aop_id", {|| set_aop_id(@waop_id) }, {|| s_aops( @waop_id ), show_it(g_aop_desc(waop_id))  }})
-AADD(aImeKol, {PADR("Opis", 40), {|| PADR(aop_att_full, 40)}, "aop_att_full"})
-AADD(aImeKol, {PADR("Skr. opis (sifra)", 20), {|| PADR(aop_att_desc, 20)}, "aop_att_desc"})
+AADD(aImeKol, {PADR("Opis", 40), {|| PADR(aop_att_fu, 40)}, "aop_att_fu"})
+AADD(aImeKol, {PADR("Skr. opis (sifra)", 20), {|| PADR(aop_att_de, 20)}, "aop_att_de"})
 
 if aops_att->(fieldpos("AOP_ATT_JO")) <> 0
-	AADD(aImeKol, { PADR("Joker", 20), {|| aop_att_joker }, "aop_att_joker"})
+	AADD(aImeKol, { PADR("Joker", 20), {|| aop_att_jo }, "aop_att_jo"})
 endif
 
-AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_desc, 15)}, "in_art_desc"})
+AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_des, 15)}, "in_art_des"})
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)
@@ -186,7 +186,7 @@ go top
 seek aop_att_str( nAop_att_id )
 
 if FOUND()
-	if field->in_art_desc == "*"
+	if field->in_art_des == "*"
 		lRet := .t.
 	endif
 endif
@@ -220,8 +220,8 @@ if FOUND()
 		
 	endif
 	
-	if !EMPTY(field->aop_att_joker)
-		cAttJoker := ALLTRIM(field->aop_att_joker)
+	if !EMPTY(field->aop_att_jo)
+		cAttJoker := ALLTRIM(field->aop_att_jo)
 	endif
 endif
 
@@ -259,12 +259,12 @@ seek aop_att_str(nAop_att_id)
 
 if FOUND()
 	if lFullDesc == .t.
-		if !EMPTY(field->aop_att_full)
-			cAopAttDesc := ALLTRIM(field->aop_att_full)
+		if !EMPTY(field->aop_att_fu)
+			cAopAttDesc := ALLTRIM(field->aop_att_fu)
 		endif
 	else
-		if !EMPTY(field->aop_att_desc)
-			cAopAttDesc := ALLTRIM(field->aop_att_desc)
+		if !EMPTY(field->aop_att_de)
+			cAopAttDesc := ALLTRIM(field->aop_att_de)
 		endif
 	endif
 endif
@@ -327,34 +327,34 @@ seek aop_att_str(nAop_att_id)
 if FOUND()
 	
 	// standarni konfigurator
-	if "#G_CONFIG#" $ field->aop_att_full
+	if "#G_CONFIG#" $ field->aop_att_fu
 		
 		lGConf := .t.
 	
 	// konfigurator busenja rupa
-	elseif "#HOLE_CONFIG#" $ field->aop_att_full
+	elseif "#HOLE_CONFIG#" $ field->aop_att_fu
 		
 		lHConf := .t.
 	
 	// RAL - konfigurator
-	elseif "#RAL_CONFIG#" $ field->aop_att_full
+	elseif "#RAL_CONFIG#" $ field->aop_att_fu
 		
 		lRalConf := .t.
 
 	// konfigurator pozicije pecata
-	elseif "#STAMP_CONFIG#" $ field->aop_att_full
+	elseif "#STAMP_CONFIG#" $ field->aop_att_fu
 		
 		lStConf := .t.
 	
-	elseif "#PREP_CONFIG#" $ field->aop_att_full
+	elseif "#PREP_CONFIG#" $ field->aop_att_fu
 		
 		lPrepConf := .t.
 
-	elseif "#" $ field->aop_att_full
+	elseif "#" $ field->aop_att_fu
 	
 		lGConf := .f.
 
-		aTmp := TokToNiz( field->aop_att_full, "#" )
+		aTmp := TokToNiz( field->aop_att_fu, "#" )
 		cVal := PADR(  ALLTRIM(aTmp[2]) , 150 )
 		
 		return .t.
@@ -364,10 +364,10 @@ if FOUND()
 	// find joker
 	if aops_att->(FieldPos("AOP_ATT_JO")) <> 0
 		// uzmi iz polja joker
-		cJoker := ALLTRIM( field->aop_att_joker )
+		cJoker := ALLTRIM( field->aop_att_jo )
 	else
 		// uzmi iz opisa
-		cJoker := ALLTRIM( field->aop_att_desc )
+		cJoker := ALLTRIM( field->aop_att_de )
 	endif
 	
 endif

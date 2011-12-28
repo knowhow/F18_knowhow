@@ -56,6 +56,7 @@ local nCustId
 local nDoc_priority
 local cDesc
 local aArr
+local _rec
 
 if Pitanje(,"Zelite izmjeniti osnovne podatke naloga (D/N)?", "D") == "N"
 	return
@@ -64,7 +65,7 @@ endif
 select docs
 
 nCustId := field->cust_id
-nDoc_priority := field->doc_priority
+nDoc_priority := field->doc_priori
 
 // box sa unosom podataka
 if _box_main(@nCustId, @nDoc_priority, @cDesc) == 0
@@ -75,16 +76,16 @@ aArr := a_log_main( nCustId, nDoc_priority )
 log_main(__doc_no, cDesc, "E", aArr)
 
 select docs
-Scatter()
+_rec := dbf_get_rec()
 
-if _cust_id <> nCustId
-	_cust_id := nCustId
+if _rec["cust_id"] <> nCustId
+	_rec["cust_id"] := nCustId
 endif
-if _doc_priority <> nDoc_priority
-	_doc_priority := nDoc_priority
+if _rec["doc_priori"] <> nDoc_priority
+	_rec["doc_priori"] := nDoc_priority
 endif
 
-Gather()
+dbf_update_rec( _rec )
 
 skip
 
@@ -135,9 +136,9 @@ endif
 
 select docs
 
-cShipPlace := field->doc_ship_place
-dDvrDate := field->doc_dvr_date
-cDvrTime := field->doc_dvr_time
+cShipPlace := field->doc_ship_p
+dDvrDate := field->doc_dvr_da
+cDvrTime := field->doc_dvr_ti
 nObj_id := field->obj_id
 nCust_id := field->cust_id
 
@@ -154,16 +155,16 @@ select docs
 
 Scatter()
 
-if _doc_ship_place <> cShipPlace
-	_doc_ship_place := cShipPlace
+if _doc_ship_p <> cShipPlace
+	_doc_ship_p := cShipPlace
 endif
 
-if _doc_dvr_time <> cDvrTime
-	_doc_dvr_time := cDvrTime
+if _doc_dvr_ti <> cDvrTime
+	_doc_dvr_ti := cDvrTime
 endif
 
-if _doc_dvr_date <> dDvrDate
-	_doc_dvr_date := dDvrDate
+if _doc_dvr_da <> dDvrDate
+	_doc_dvr_da := dDvrDate
 endif
 
 if _obj_id <> nObj_id

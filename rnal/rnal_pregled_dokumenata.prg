@@ -383,8 +383,8 @@ if _status == 1
 	else
 	
 		// daj info o kasnjenju
-		_sh_dvr_warr( _chk_date( doc_dvr_date ), ;
-			_chk_time( doc_dvr_time ) )
+		_sh_dvr_warr( _chk_date( doc_dvr_da ), ;
+			_chk_time( doc_dvr_ti ) )
 	endif		
 endif
 
@@ -1093,14 +1093,14 @@ AADD(aImeKol, {"Datum", ;
 	{|| .t.} })
 
 AADD(aImeKol, {"Dat.isp." , ;
-	{|| doc_dvr_date }, ;
-	"doc_dvr_date", ;
+	{|| doc_dvr_da }, ;
+	"doc_dvr_da", ;
 	{|| .t.}, ;
 	{|| .t.} })
 
 AADD(aImeKol, {"Vr.isp." , ;
-	{|| doc_dvr_time }, ;
-	"doc_dvr_time", ;
+	{|| doc_dvr_ti }, ;
+	"doc_dvr_ti", ;
 	{|| .t.}, ;
 	{|| .t.} })
 
@@ -1112,15 +1112,15 @@ AADD(aImeKol, {PADC("Dok.br",10), ;
 
 if _operater = 0
    AADD(aImeKol, { "Operater", ;
-	{|| PADR( getusername(operater_id), 10) }, ;
-	"operater_id", ;
+	{|| PADR( getusername(operater_i), 10) }, ;
+	"operater_i", ;
 	{|| .t.}, ;
 	{|| .t.} })
 endif
 
 AADD(aImeKol, {"Prioritet" , ;
-	{|| PADR( s_priority(doc_priority) ,10) }, ;
-	"doc_priority", ;
+	{|| PADR( s_priority(doc_priori) ,10) }, ;
+	"doc_priori", ;
 	{|| .t.}, ;
 	{|| .t.} })
 
@@ -1400,7 +1400,7 @@ go top
 seek docno_str(nDoc_no) + cLogType
 
 do while !EOF() .and. field->doc_no == nDoc_no ;
-		.and. field->doc_log_type == cLogType
+		.and. field->doc_log_ty == cLogType
 
 	nDoc_log_no := field->doc_log_no
 	

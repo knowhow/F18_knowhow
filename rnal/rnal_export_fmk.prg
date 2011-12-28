@@ -370,10 +370,10 @@ do while !EOF()
     nArt_id := field->art_id
     
     // ukupna kvadratura
-    nM2 := field->doc_it_total
+    nM2 := field->doc_it_tot
 
     // opis artikla (kratki)
-    cArt_sh := field->art_sh_desc
+    cArt_sh := field->art_sh_des
     
     cIdRoba := g_rel_val("1", "ARTICLES", "ROBA", ALLTRIM(STR(nArt_id)) )
     
@@ -408,11 +408,11 @@ do while !EOF()
         nM2 := 0
 
         // sracunaj za iste artikle
-        do while !EOF() .and. field->art_sh_desc == cArt_sh
+        do while !EOF() .and. field->art_sh_des == cArt_sh
 
             if field->print == "D"
                 // kolicina
-                nM2 += field->doc_it_total
+                nM2 += field->doc_it_tot
             endif
 
             skip

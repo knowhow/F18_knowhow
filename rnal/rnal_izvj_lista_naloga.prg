@@ -70,9 +70,9 @@ do while !EOF() .and. DTOS(field->doc_date) == DTOS( DATE() )
 	cPom := ""
 	cPom += PADR( docno_str(field->doc_no) , 10)
 	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_date) , 8)
+	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
 	cPom += " "
-	cPom += PADR( field->doc_dvr_time , 8 )
+	cPom += PADR( field->doc_dvr_ti , 8 )
 	cPom += " "
 	cPom += show_customer( field->cust_id, field->cont_id )
 	
@@ -196,7 +196,7 @@ do while !EOF() .and. DTOS(field->doc_date) >= DTOS( dDate )
 	
 	// operater uslov
 	if nOperater <> 0 
-		if field->operater_id <> nOperater
+		if field->operater_i <> nOperater
 			skip
 			loop
 		endif
@@ -214,9 +214,9 @@ do while !EOF() .and. DTOS(field->doc_date) >= DTOS( dDate )
 	cPom := ""
 	cPom += PADR( docno_str(field->doc_no) , 10)
 	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_date) , 8)
+	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
 	cPom += " "
-	cPom += PADR( field->doc_dvr_time , 8 )
+	cPom += PADR( field->doc_dvr_ti , 8 )
 	cPom += " "
 	cPom += show_customer( field->cust_id, field->cont_id )
 	
@@ -272,11 +272,11 @@ START PRINT CRET
 
 r_list_zagl()
 
-do while !EOF() .and. DTOS(field->doc_dvr_date) >= DTOS( DATE() )
+do while !EOF() .and. DTOS(field->doc_dvr_da) >= DTOS( DATE() )
 	
 	// uslov po operateru
 	if nOperater <> 0 
-		if field->operater_id <> nOperater
+		if field->operater_i <> nOperater
 			skip
 			loop
 		endif
@@ -284,7 +284,7 @@ do while !EOF() .and. DTOS(field->doc_dvr_date) >= DTOS( DATE() )
 	
 	// samo tekuci dan!
 	if cCurrent == "D"
-		if DTOS(field->doc_dvr_date) <> DTOS(DATE())
+		if DTOS(field->doc_dvr_da) <> DTOS(DATE())
 			skip
 			loop
 		endif
@@ -302,9 +302,9 @@ do while !EOF() .and. DTOS(field->doc_dvr_date) >= DTOS( DATE() )
 	cPom := ""
 	cPom += PADR( docno_str(nDoc_no) , 10)
 	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_date) , 8)
+	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
 	cPom += " "
-	cPom += PADR( field->doc_dvr_time , 8 )
+	cPom += PADR( field->doc_dvr_ti , 8 )
 	cPom += " "
 	cPom += show_customer( field->cust_id, field->cont_id )
 	
@@ -385,7 +385,7 @@ do while !EOF()
 	
 	// uslov po operateru
 	if nOperater <> 0
-		if field->operater_id <> nOperater
+		if field->operater_i <> nOperater
 			skip
 			loop
 		endif
@@ -399,7 +399,7 @@ do while !EOF()
 	endif
 
 	// ako je u datum isti ili manji, preskoci...
-	if DATE() <= field->doc_dvr_date 
+	if DATE() <= field->doc_dvr_da 
 		
 		skip
 		loop
@@ -409,7 +409,7 @@ do while !EOF()
 	// uzeti filter i za dane unazad....
 	if nDays <> 0
 	
-		if ( DATE() - nDays ) <= doc_dvr_date
+		if ( DATE() - nDays ) <= doc_dvr_da
 			
 			skip
 			loop
@@ -423,9 +423,9 @@ do while !EOF()
 	cPom := ""
 	cPom += PADR( docno_str(nDoc_no) , 10)
 	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_date) , 8)
+	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
 	cPom += " "
-	cPom += PADR( field->doc_dvr_time , 8 )
+	cPom += PADR( field->doc_dvr_ti, 8 )
 	cPom += " "
 	cPom += show_customer( field->cust_id, field->cont_id )
 	
@@ -444,11 +444,11 @@ do while !EOF()
 	
 	do while !EOF() .and. field->doc_no == nDoc_no
 		
-		cLog := DTOC( field->doc_log_date ) 
+		cLog := DTOC( field->doc_log_da ) 
 		cLog += " / " 
-		cLog += ALLTRIM( field->doc_log_time )
+		cLog += ALLTRIM( field->doc_log_ti )
 		cLog += " : "
-		cLog += ALLTRIM( field->doc_log_desc )
+		cLog += ALLTRIM( field->doc_log_de )
 		
 		skip
 	enddo

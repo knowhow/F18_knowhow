@@ -150,8 +150,8 @@ aKol := {}
 aImeKol := {}
 
 AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(art_id)}, "art_id", {|| _inc_id(@wart_id, "ART_ID"), .f.}, {|| .t.}})
-AADD(aImeKol, { "sifra :: puni naziv", {|| ALLTRIM(art_desc) + " :: " + UPPER(art_full_desc) }, "art_desc" })
-AADD(aImeKol, { "labela opis", {|| ALLTRIM(art_lab_desc) }, "art_desc" })
+AADD(aImeKol, { "sifra :: puni naziv", {|| ALLTRIM(art_desc) + " :: " + UPPER(art_full_d) }, "art_desc" })
+AADD(aImeKol, { "labela opis", {|| ALLTRIM(art_lab_de) }, "art_desc" })
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)
@@ -673,8 +673,8 @@ return lRet
 static function art_ed_desc( nArt_id )
 local cArt_desc := PADR(field->art_desc, 100)
 local cArt_mcode := PADR(field->match_code, 10)
-local cArt_full_desc := PADR(field->art_full_desc, 250)
-local cArt_lab_desc := PADR(field->art_lab_desc, 200)
+local cArt_full_desc := PADR(field->art_full_d, 250)
+local cArt_lab_desc := PADR(field->art_lab_de, 200)
 local cDBFilter := DBFILTER()
 local nTRec := RECNO()
 local nRet := 0
@@ -691,8 +691,8 @@ if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
 	Scatter()
 	
 	_art_desc := cArt_desc
-	_art_full_desc := cArt_full_desc
-	_art_lab_desc := cArt_lab_desc
+	_art_full_d := cArt_full_desc
+	_art_lab_de := cArt_lab_desc
 	_match_code := cArt_mcode
 	
 	Gather()
@@ -714,7 +714,7 @@ static function box_preview(nX, nY, nLen)
 local aDesc := {}
 local i
 
-aDesc := TokToNiz( articles->art_full_desc, ";" )
+aDesc := TokToNiz( articles->art_full_d, ";" )
 
 @ nX, nY SAY PADR("ID: " + artid_str(articles->art_id) + SPACE(3) + "MATCH CODE: " + articles->match_code, nLen) COLOR "GR+/G" 
 
@@ -765,8 +765,8 @@ seek artid_str(nArt_id)
 
 if FOUND()
 	if lFullDesc == .t.
-		if !EMPTY(field->art_full_desc)
-			cArtDesc := ALLTRIM(field->art_full_desc)
+		if !EMPTY(field->art_full_d)
+			cArtDesc := ALLTRIM(field->art_full_d)
 		endif
 	else
 		if !EMPTY(field->art_desc)
@@ -1530,7 +1530,7 @@ if FOUND()
 	if !lNew
 		// ako su iste vrijednosti, preskoci...
 		if ALLTRIM(cArt_desc) == ALLTRIM(articles->art_desc) ;
-			.and. ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_desc)
+			.and. ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_d)
 			lAppend := .f.
 		else
 			lAppend := .t.
@@ -1555,7 +1555,7 @@ if FOUND()
 			
 			_art_desc := cArt_desc
 			_match_code := cArt_mcode
-			_art_full_desc := cArt_full_desc
+			_art_full_d := cArt_full_desc
 			
 			Gather()
 		
@@ -1603,7 +1603,7 @@ if FOUND()
 
 	// ako su iste vrijednosti, preskoci...
 	if ALLTRIM(cArt_desc) == ALLTRIM(articles->art_desc) .and. ;
-		ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_desc)
+		ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_d)
 		
 		lChange := .f.
 		
@@ -1625,7 +1625,7 @@ if lChange == .t.
 			
 	_art_desc := cArt_desc
 	_match_code := cArt_mcode
-	_art_full_desc := cArt_full_desc
+	_art_full_d := cArt_full_desc
 			
 	Gather()
 		

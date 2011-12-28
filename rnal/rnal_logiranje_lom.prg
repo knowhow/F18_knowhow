@@ -75,7 +75,7 @@ AADD(aDbf, { "doc_no", "N", 10, 0 })
 AADD(aDbf, { "doc_it_no", "N", 4, 0 })
 AADD(aDbf, { "art_id", "N", 10, 0 })
 AADD(aDbf, { "glass_no", "N", 3, 0 })
-AADD(aDbf, { "doc_it_qtty", "N", 12, 2 })
+AADD(aDbf, { "doc_it_qtt", "N", 12, 2 })
 AADD(aDbf, { "doc_it_h", "N", 12, 2 })
 AADD(aDbf, { "doc_it_w", "N", 12, 2 })
 AADD(aDbf, { "damage", "N", 12, 2 })
@@ -107,9 +107,9 @@ do while !EOF() .and. field->doc_no == __doc_no
 	_doc_no := doc_it->doc_no
 	_doc_it_no := doc_it->doc_it_no
 	_art_id := doc_it->art_id
-	_doc_it_qtty := doc_it->doc_it_qtty
-	_doc_it_h := doc_it->doc_it_height
-	_doc_it_w := doc_it->doc_it_width
+	_doc_it_qtt := doc_it->doc_it_qtt
+	_doc_it_h := doc_it->doc_it_hei
+	_doc_it_w := doc_it->doc_it_wid
 	_damage := 0
 	_glass_no := 0
 	
@@ -198,7 +198,7 @@ aKol := {}
 AADD(aImeKol, {"rbr" , {|| docit_str( doc_it_no ) }, ;
 	"doc_it_no", {|| .t.}, {|| .t.} })
 
-AADD(aImeKol, {"artikal/kol" , {|| sh_article( art_id, doc_it_qtty, ;
+AADD(aImeKol, {"artikal/kol" , {|| sh_article( art_id, doc_it_qtt, ;
 	doc_it_w, doc_it_h ) }, ;
 	"art_id", {|| .t.}, {|| .t.} })
 
@@ -286,7 +286,7 @@ if field->art_marker == "*"
 	
 else
 	
-	if _get_it_desc( @cDesc, field->doc_it_qtty, ;
+	if _get_it_desc( @cDesc, field->doc_it_qtt, ;
 		@nDamage, @nGlass_no ) > 0
 	
 		replace field->art_marker with "*"

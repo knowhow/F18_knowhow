@@ -35,7 +35,7 @@ __doc_no := field->doc_no
 cDesc := "Inicijalni osnovni podaci"
 
 aArr := a_log_main(field->cust_id, ;
-		field->doc_priority )
+		field->doc_priori )
 
 log_main(__doc_no, cDesc, nil, aArr)
 
@@ -45,9 +45,9 @@ go top
 // logiraj podatke o isporuci
 cDesc := "Inicijalni podaci isporuke"
 aArr := a_log_ship( field->obj_id, ;
-		field->doc_dvr_date, ;
-		field->doc_dvr_time, ;
-		field->doc_ship_place)
+		field->doc_dvr_da, ;
+		field->doc_dvr_ti, ;
+		field->doc_ship_p)
 		
 log_ship(__doc_no, cDesc, nil, aArr)
 
@@ -56,7 +56,7 @@ go top
 
 // logiranje podataka o kontaktu
 cDesc := "Inicijalni podaci kontakta"
-aArr := a_log_cont( field->cont_id, field->cont_add_desc )
+aArr := a_log_cont( field->cont_id, field->cont_add_d )
 
 log_cont(__doc_no, cDesc, nil, aArr)
 
@@ -65,7 +65,7 @@ go top
 
 // logiranje podataka o placanju
 cDesc := "Inicijalni podaci placanja"
-aArr := a_log_pay( field->doc_pay_id, field->doc_paid, field->doc_pay_desc )
+aArr := a_log_pay( field->doc_pay_id, field->doc_paid, field->doc_pay_de )
 
 log_pay(__doc_no, cDesc, nil, aArr)
 
@@ -167,7 +167,7 @@ replace doc_log_no with nDoc_log_no
 replace doc_lit_no with nDoc_lit_no
 replace int_1 with aArr[1, 1]
 replace int_2 with aArr[1, 2]
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -215,7 +215,7 @@ replace date_1 with aArr[1, 2]
 replace int_1 with aArr[1, 1]
 replace char_1 with aArr[1, 3]
 replace char_2 with aArr[1, 4]
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -260,7 +260,7 @@ replace doc_log_no with nDoc_log_no
 replace doc_lit_no with nDoc_lit_no
 replace int_1 with aArr[1, 1]
 replace char_1 with aArr[1, 2]
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -307,7 +307,7 @@ replace doc_lit_no with nDoc_lit_no
 replace int_1 with aArr[1, 1]
 replace char_1 with aArr[1, 2]
 replace char_2 with aArr[1, 3]
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -352,7 +352,7 @@ do while !EOF()
 			field->art_desc, ;
 			field->glass_no, ;
 			field->doc_it_no, ;
-			field->doc_it_qtty, ;
+			field->doc_it_qtt, ;
 			field->damage )
 	
 	select _tmp1
@@ -396,11 +396,11 @@ do while !EOF() .and. field->doc_no == nDoc_no
 
 	_lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
 			field->art_id,  ;
-			field->doc_it_desc, ;
-			field->doc_it_schema, ;
-			field->doc_it_qtty,  ;
-			field->doc_it_heigh, ;
-			field->doc_it_width )
+			field->doc_it_des, ;
+			field->doc_it_sch, ;
+			field->doc_it_qtt,  ;
+			field->doc_it_hei, ;
+			field->doc_it_wid )
 	
 	select _doc_it
 	skip
@@ -443,7 +443,7 @@ do while !EOF() .and. field->doc_no == nDoc_no
 	_lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
 			field->aop_id,  ;
 			field->aop_att_id,  ;
-			field->doc_op_desc )
+			field->doc_op_des )
 	
 	select _doc_ops
 	skip
@@ -476,7 +476,7 @@ replace num_2 with nArt_heigh
 replace num_3 with nArt_width
 replace char_1 with cDoc_desc
 replace char_2 with cDoc_sch
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -503,7 +503,7 @@ replace num_1 with nQty
 replace num_2 with nDamage
 replace int_1 with nDoc_it_no
 replace int_2 with nGlass_no
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -528,7 +528,7 @@ replace doc_lit_no with nDoc_lit_no
 replace int_1 with nAop_id
 replace int_2 with nAop_att_id
 replace char_1 with cDoc_op_desc
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -586,7 +586,7 @@ replace doc_no with nDoc_no
 replace doc_log_no with nDoc_log_no
 replace doc_lit_no with nDoc_lit_no
 replace int_1 with nDoc_status
-replace doc_lit_action with cAction
+replace doc_lit_ac with cAction
 
 return
 
@@ -605,11 +605,11 @@ append blank
 
 replace doc_no with nDoc_no
 replace doc_log_no with nDoc_log_no
-replace doc_log_date with DATE()
-replace doc_log_time with PADR(TIME(), 5)
-replace doc_log_type with cDoc_log_type
-replace operater_id with nOperId
-replace doc_log_desc with cDesc
+replace doc_log_da with DATE()
+replace doc_log_ti with PADR(TIME(), 5)
+replace doc_log_ty with cDoc_log_type
+replace operater_i with nOperId
+replace doc_log_de with cDesc
 
 select (nTArea)
 return
@@ -734,11 +734,11 @@ do while !EOF() .and. field->doc_no == nDoc_no
 
 	nDoc_it_no := field->doc_it_no
 	nArt_id := field->art_id
-	nDoc_it_qtty := field->doc_it_qtty
-	nDoc_it_heigh := field->doc_it_heigh
-	nDoc_it_width := field->doc_it_width
-	cDoc_it_desc := field->doc_it_desc
-	cDoc_it_sch := field->doc_it_schema
+	nDoc_it_qtty := field->doc_it_qtt
+	nDoc_it_heigh := field->doc_it_hei
+	nDoc_it_width := field->doc_it_wid
+	cDoc_it_desc := field->doc_it_des
+	cDoc_it_sch := field->doc_it_sch
 	
 	// DOC_IT -> _DOC_IT - provjeri da li je sta brisano
 	// akcija "-"
@@ -776,11 +776,11 @@ do while !EOF() .and. field->doc_no == nDoc_no
 		
 		_lit_20_insert(cAction, nDoc_no, nDoc_log_no, ;
 			   _doc_it->art_id, ;
-			   _doc_it->doc_it_desc, ;
-			   _doc_it->doc_it_schema, ;
-			   _doc_it->doc_it_qtty, ;
-			   _doc_it->doc_it_heigh, ;
-			   _doc_it->doc_it_width )
+			   _doc_it->doc_it_des, ;
+			   _doc_it->doc_it_sch, ;
+			   _doc_it->doc_it_qtt, ;
+			   _doc_it->doc_it_hei, ;
+			   _doc_it->doc_it_wid )
 	
 		lLogAppend := .t.
 	endif
@@ -800,11 +800,11 @@ do while !EOF() .and. field->doc_no == nDoc_no
 
 	nDoc_it_no := field->doc_it_no
 	nArt_id := field->art_id
-	nDoc_it_qtty := field->doc_it_qtty
-	nDoc_it_heigh := field->doc_it_heigh
-	nDoc_it_width := field->doc_it_width
-	cDoc_it_desc := field->doc_it_desc
-	cDoc_it_sch := field->doc_it_schema
+	nDoc_it_qtty := field->doc_it_qtt
+	nDoc_it_heigh := field->doc_it_hei
+	nDoc_it_width := field->doc_it_wid
+	cDoc_it_desc := field->doc_it_des
+	cDoc_it_sch := field->doc_it_sch
 	
 	// _DOC_IT -> DOC_IT, da li stavka postoji u kumulativu
 	// akcija "+"
@@ -871,7 +871,7 @@ do while !EOF() .and. field->doc_no == nDoc_no
 	
 	nAop_id := field->aop_id
 	nAop_att_id := field->aop_att_id
-	cDoc_op_desc := field->doc_op_desc
+	cDoc_op_desc := field->doc_op_des
 	
 	// DOC_OPS -> _DOC_OPS - provjeri da li je sta brisano
 	// akcija "-"
@@ -906,7 +906,7 @@ do while !EOF() .and. field->doc_no == nDoc_no
 		_lit_30_insert(cAction, nDoc_no, nDoc_log_no, ;
 			   _doc_ops->aop_id, ;
 			   _doc_ops->aop_att_id, ;
-			   _doc_ops->doc_op_desc )
+			   _doc_ops->doc_op_des )
 	
 		lLogAppend := .t.
 	endif
@@ -928,7 +928,7 @@ do while !EOF() .and. field->doc_no == nDoc_no
 	nDoc_op_no := field->doc_op_no
 	nAop_id := field->aop_id
 	nAop_att_id := field->aop_att_id
-	cDoc_op_desc := field->doc_op_desc
+	cDoc_op_desc := field->doc_op_des
 	
 	// _DOC_OPS -> DOC_OPS, da li stavka postoji u kumulativu
 	// akcija "+"
@@ -1025,9 +1025,9 @@ set order to tag "1"
 go top
 seek docno_str(nDoc_no) + docit_str(nDoc_it_no) + artid_str(nArt_id)
  
-if (field->doc_it_qtty == nDoc_it_qtty) .and. ;
-   (field->doc_it_heigh == nDoc_it_heigh) .and. ;
-   (field->doc_it_width == nDoc_it_width)
+if (field->doc_it_qtt == nDoc_it_qtty) .and. ;
+   (field->doc_it_hei == nDoc_it_heigh) .and. ;
+   (field->doc_it_wid == nDoc_it_width)
 	lRet := .t.
 endif
 
@@ -1105,7 +1105,7 @@ seek docno_str(nDoc_no) + ;
  
 if (field->aop_id == nAop_id) .and. ;
    (field->aop_att_id == nAop_att_id ) .and. ;
-   (field->doc_op_desc == nDoc_op_desc)
+   (field->doc_op_des == nDoc_op_desc)
 	lRet := .t.
 endif
 

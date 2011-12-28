@@ -99,7 +99,7 @@ return nRet
 static function set_deliver()
 local nRet := 1
 local GetList := {}
-local nDeliver := field->doc_it_qtty
+local nDeliver := field->doc_it_qtt
 
 Box(, 1, 25)
 	@ m_x + 1, m_y + 2 SAY "isporuceno ?" GET nDeliver PICT "9999999.99"
@@ -111,7 +111,7 @@ if LastKey() == K_ESC
 	return nRet
 endif
 
-replace field->doc_it_qtty with nDeliver
+replace field->doc_it_qtt with nDeliver
 
 // rekalkulisi podatke 
 recalc_pr()
@@ -129,10 +129,10 @@ aKol:={}
 AADD(aImeKol, {"nalog", {|| doc_no }, "doc_no", {|| .t.}, {|| .t.} })
 AADD(aImeKol, {"rbr", {|| PADR( ALLTRIM(STR(doc_it_no)),3) }, "doc_it_no", {|| .t.}, {|| .t.} })
 AADD(aImeKol, {PADR("artikal",20), {|| PADR(g_art_desc(art_id,.t.,.f.),20) }, "art_id", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"ispor.", {|| STR(doc_it_qtty,12,2) }, "doc_it_qtty", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {PADR("dimenzije",20) , {|| PADR(_g_dim(doc_it_qtty, doc_it_height, doc_it_width),20) }, "doc_it_qtty", {|| .t.}, {|| .t.} })
+AADD(aImeKol, {"ispor.", {|| STR(doc_it_qtt,12,2) }, "doc_it_qtt", {|| .t.}, {|| .t.} })
+AADD(aImeKol, {PADR("dimenzije",20) , {|| PADR(_g_dim(doc_it_qtt, doc_it_hei, doc_it_wid),20) }, "doc_it_qtt", {|| .t.}, {|| .t.} })
 AADD(aImeKol, {"marker", {|| PADR(_g_st(print),3) }, "print", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"total", {|| "doc_it_total" }, "doc_it_total", {|| .t.}, {|| .t.} })
+AADD(aImeKol, {"total", {|| "doc_it_tot" }, "doc_it_tot", {|| .t.}, {|| .t.} })
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)

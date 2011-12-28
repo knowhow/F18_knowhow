@@ -108,10 +108,10 @@ if __wo_id == .f.
 
 endif
 
-AADD(aImeKol, {PADC("Opis", 40), {|| PADR(aop_full_desc, 40)}, "aop_full_desc"})
+AADD(aImeKol, {PADC("Opis", 40), {|| PADR(aop_full_d, 40)}, "aop_full_d"})
 AADD(aImeKol, {PADC("Skr.opis (sifra)", 20), {|| PADR(aop_desc, 20)}, "aop_desc"})
 AADD(aImeKol, {PADC("Joker", 20), {|| PADR(aop_joker, 20)}, "aop_joker"})
-AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_desc, 15)}, "in_art_desc"})
+AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_des, 15)}, "in_art_des"})
 
 if aops->(FIELDPOS("AOP_UNIT")) <> 0
 	AADD(aImeKol, {PADC("jed.mjere", 10), {|| aop_unit}, "aop_unit"})
@@ -138,7 +138,7 @@ go top
 seek aopid_str( nAop_id )
 
 if FOUND()
-	if field->in_art_desc == "*"
+	if field->in_art_des == "*"
 		lRet := .t.
 	endif
 endif
@@ -207,8 +207,8 @@ seek aopid_str(nAop_id)
 
 if FOUND()
 	if lFullDesc == .t.
-		if !EMPTY(field->aop_full_desc)
-			cAopDesc := ALLTRIM(field->aop_full_desc)
+		if !EMPTY(field->aop_full_d)
+			cAopDesc := ALLTRIM(field->aop_full_d)
 		endif
 	else
 		if !EMPTY(field->aop_desc)

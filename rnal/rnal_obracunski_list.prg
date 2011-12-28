@@ -252,7 +252,7 @@ do while !EOF()
      endif
 	
      do while !EOF() .and. field->doc_no == nDoc_no ;
-			.and. PADR(field->art_sh_desc,150) == ;
+			.and. PADR(field->art_sh_des,150) == ;
 				PADR(cArt_sh,150)
 
 	// da li se stavka stampa ili ne ?
@@ -266,17 +266,17 @@ do while !EOF()
 
 	nArt_id := field->art_id
 		
-	nQty := field->doc_it_qtty
-	nHeig := field->doc_it_height
-	nWidt := field->doc_it_width
+	nQty := field->doc_it_qtt
+	nHeig := field->doc_it_hei
+	nWidt := field->doc_it_wid
 	
-	nZaHeig := field->doc_it_zheigh
-	nZaWidt := field->doc_it_zwidth
+	nZaHeig := field->doc_it_zhe
+	nZaWidt := field->doc_it_zwi
 
-	nNeto := field->doc_it_neto
-	nBruto := field->doc_it_bruto
+	nNeto := field->doc_it_net
+	nBruto := field->doc_it_bru
 	
-	nTotal := field->doc_it_total
+	nTotal := field->doc_it_tot
 	nTot_m := field->doc_it_tm
 
 	nUTotal += nTotal
@@ -309,7 +309,7 @@ do while !EOF()
 	cArt_desc := "(" + ALLTRIM(STR(field->doc_it_no)) + ") " + cArt_desc
 
 	// pozicija ako postotoji
-	cArt_desc += "; " + ALLTRIM( field->doc_it_desc )
+	cArt_desc += "; " + ALLTRIM( field->doc_it_des )
 
 	aArt_desc := SjeciStr( cArt_desc, LEN_DESC )	
 	

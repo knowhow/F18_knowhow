@@ -116,8 +116,8 @@ do while !EOF()
 	go top
 	seek artid_str(nArt_id)
 	
-	cL_desc := strkzn( ALLTRIM( field->art_lab_desc ), "8", "U" )
-   	cF_desc := strkzn( ALLTRIM( field->art_full_desc ), "8", "U" )
+	cL_desc := strkzn( ALLTRIM( field->art_lab_de ), "8", "U" )
+   	cF_desc := strkzn( ALLTRIM( field->art_full_d ), "8", "U" )
    	cS_desc := strkzn( ALLTRIM( field->art_desc ), "8", "U" )
 
 	if EMPTY(cL_desc)
@@ -126,18 +126,18 @@ do while !EOF()
 
 	select t_docit
 
-	nHeight := field->doc_it_height
-	nWidth := field->doc_it_width
+	nHeight := field->doc_it_hei
+	nWidth := field->doc_it_wid
    	
 	// daj i u inche
 	nIHeight := to_inch( nHeight )
 	nIWidth := to_inch( nWidth )
 
-	nQty := field->doc_it_qtty
+	nQty := field->doc_it_qtt
 	
 	cPosition := strkzn( ALLTRIM(field->doc_it_pos), "8", "U" )
 	cCity := strkzn( ALLTRIM( field->doc_acity ), "8", "U" )
-	cAltt := strkzn( ALLTRIM( STR( field->doc_it_altt, 12 ) ), "8", "U" )
+	cAltt := strkzn( ALLTRIM( STR( field->doc_it_alt, 12 ) ), "8", "U" )
    
 	cArt_type := "-"
 

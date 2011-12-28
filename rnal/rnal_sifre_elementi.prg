@@ -1039,10 +1039,7 @@ Box(,6,65)
 
 	@ m_x + 3, m_y + 2 SAY PADL("izaberi atribut elementa", nLeft) GET _e_gr_at_id VALID {|| s_e_gr_att(@_e_gr_at_id, el_gr_id, nil, .t. ), show_it( g_gr_at_desc( _e_gr_at_id ) ) } WHEN lNewRec == .t.
 		
-	//@ m_x + 4, m_y + 2 SAY PADL("izaberi vrijednost atributa", nLeft) GET _e_gr_vl_id VALID s_e_gr_val(@_e_gr_vl_id, _e_gr_at_id, nil, .t.  )
-
 	@ m_x + 4, m_y + 2 SAY PADL("izaberi vrijednost atributa", nLeft) GET cElGrVal VALID {|| s_e_gr_val(@cElGrVal, _e_gr_at_id, cElGrVal, .t.  ), set_var(@_e_gr_vl_id, @cElGrVal) }
-
 
 	@ m_x + 5, m_y + 2 SAY PADL("0 - otvori sifrarnik", nLeft)
 	

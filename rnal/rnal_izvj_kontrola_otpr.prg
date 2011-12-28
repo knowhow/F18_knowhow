@@ -294,7 +294,7 @@ do while !EOF()
 	@ m_x + 1, m_y + 2 SAY "obradjujem nalog: " + ALLTRIM(STR(nDoc_no))
 
 	dDoc_date := field->doc_date
-	dDvr_date := field->doc_dvr_date
+	dDvr_date := field->doc_dvr_da
 	nCust := field->cust_id
 	nCont := field->cont_id
 	cCustomer := ALLTRIM( g_cust_desc( nCust ) )

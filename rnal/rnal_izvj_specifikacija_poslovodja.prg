@@ -153,9 +153,9 @@ do while !EOF()
 	
 	cDoc_stat := g_doc_status( docs->doc_status )
 	
-	cDoc_oper := getusername( docs->operater_id )
+	cDoc_oper := getusername( docs->operater_i )
 
-	cDoc_prior := s_priority( docs->doc_priority )
+	cDoc_prior := s_priority( docs->doc_priori )
 	
 	// get log if exist
 	select doc_log
@@ -168,11 +168,11 @@ do while !EOF()
 	
 	do while !EOF() .and. field->doc_no == nDoc_no
 		
-		cLog := DTOC( field->doc_log_date ) 
+		cLog := DTOC( field->doc_log_da ) 
 		cLog += " / " 
-		cLog += ALLTRIM( field->doc_log_time )
+		cLog += ALLTRIM( field->doc_log_ti )
 		cLog += " : "
-		cLog += ALLTRIM( field->doc_log_desc )
+		cLog += ALLTRIM( field->doc_log_de )
 		
 		skip
 	enddo
@@ -191,7 +191,7 @@ do while !EOF()
 		
 		nArt_id := field->art_id
 		nDoc_it_no := field->doc_it_no
-		nQtty := field->doc_it_qtty
+		nQtty := field->doc_it_qtt
 		
 		// matrica sa stavkama i elementima artikla
 		aArtDesc := {}
@@ -272,13 +272,13 @@ do while !EOF()
 		_ins_tmp1( nDoc_no, ;
 			cCust_desc, ;
 			docs->doc_date , ;
-			docs->doc_dvr_date, ;
-			docs->doc_dvr_time, ;
+			docs->doc_dvr_da, ;
+			docs->doc_dvr_ti, ;
 			cDoc_stat, ;
 			cDoc_prior, ;
 			cDoc_div, ;
 			docs->doc_desc, ;
-			docs->doc_sh_desc, ;
+			docs->doc_sh_de, ;
 			cDoc_oper, ;
 			nQtty, ;
 			cItem, ;
@@ -299,13 +299,13 @@ do while !EOF()
 			_ins_tmp1( nDoc_no, ;
 			cCust_desc, ;
 			docs->doc_date , ;
-			docs->doc_dvr_date, ;
-			docs->doc_dvr_time, ;
+			docs->doc_dvr_da, ;
+			docs->doc_dvr_ti, ;
 			cDoc_stat, ;
 			cDoc_prior, ;
 			cDoc_div, ;
 			docs->doc_desc, ;
-			docs->doc_sh_desc, ;
+			docs->doc_sh_de, ;
 			cDoc_oper, ;
 			nQtty, ;
 			cItem, ;
@@ -345,7 +345,7 @@ cFilter += " .and. DTOS(doc_date) <= " + cm2str(DTOS(dDTo))
 
 if nOper <> 0
 	
-	cFilter += ".and. ALLTRIM(STR(operater_id)) == " + cm2str( ALLTRIM( STR( nOper ) ) )
+	cFilter += ".and. ALLTRIM(STR(operater_i)) == " + cm2str( ALLTRIM( STR( nOper ) ) )
 	
 endif
 

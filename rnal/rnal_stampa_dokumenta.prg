@@ -328,7 +328,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 	endif
 
 	// tip artikla
-	cDoc_it_type := field->doc_it_type
+	cDoc_it_type := field->doc_it_typ
 	
 	// nadji proizvod
 	select articles
@@ -399,7 +399,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 
 	endif
 
-	cArt_full_desc := ALLTRIM(articles->art_full_desc)
+	cArt_full_desc := ALLTRIM(articles->art_full_d)
 	cArt_desc := ALLTRIM(articles->art_desc)
 	
 	cArt_sh := cArt_desc
@@ -422,15 +422,15 @@ do while !EOF() .and. field->doc_no == __doc_no
 
 	select ( nTable )
 	
-	nQtty := field->doc_it_qtty
+	nQtty := field->doc_it_qtt
 	
 	// dimenzije stakla
-	if nHeigh < field->doc_it_heigh
-		nHeigh := field->doc_it_heigh
+	if nHeigh < field->doc_it_hei
+		nHeigh := field->doc_it_hei
 	endif
 
-	if nWidth < field->doc_it_width
-		nWidth := field->doc_it_width
+	if nWidth < field->doc_it_wid
+		nWidth := field->doc_it_wid
 	endif
 
 	// dimenzije ako je oblik SHAPE
@@ -444,9 +444,9 @@ do while !EOF() .and. field->doc_no == __doc_no
 
 	// nadmorska visina
 	// samo ako je razlicita vrijednost od default-ne
-	if (field->doc_it_altt <> gDefNVM) .or. ;
+	if (field->doc_it_alt <> gDefNVM) .or. ;
 		( field->doc_acity <> ALLTRIM(gDefCity) )
-		nDocit_altt := field->doc_it_altt
+		nDocit_altt := field->doc_it_alt
 		cDocit_city := field->doc_acity
 	else
 		nDocit_altt := 0
@@ -459,7 +459,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 	// ukupno duzinski
 	nTot_m := ROUND( c_duzinski(nQtty, nHeigh, nWidth), 2)
 
-	cDoc_it_schema := field->doc_it_schema
+	cDoc_it_schema := field->doc_it_sch
 	// na napomene dodaj i poziciju ako postoji...
 	cDoc_it_desc := cPosition + ALLTRIM( field->doc_it_desc )
 	
@@ -692,7 +692,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 	nElem_no := 0
 	nDoc_it_no := field->doc_it_no
 	nDoc_op_no := field->doc_op_no
-	nDoc_el_no := field->doc_it_el_no
+	nDoc_el_no := field->doc_it_el_
 
 	// uzmi sve operacije za jednu stavku
 	// ispitaj da li trebas da da je dodajes za stampu
@@ -749,7 +749,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 	 nElem_no := 0
 	 nDoc_it_no := field->doc_it_no
 	 nDoc_op_no := field->doc_op_no
-	 nDoc_el_no := field->doc_it_el_no
+	 nDoc_el_no := field->doc_it_el_
 	 
 	 select (nTable2)
 	 set order to tag "1"
@@ -775,7 +775,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 	 cAop_desc := g_aop_desc( nAop_id )
 	 cAop_att_desc := g_aop_att_desc( nAop_att_id )
 
-	 cDoc_op_desc := ALLTRIM( field->doc_op_desc )
+	 cDoc_op_desc := ALLTRIM( field->doc_op_des )
 	
 	 cAop_value := g_aop_value( field->aop_value )
 	 cAop_vraw := ALLTRIM(field->aop_value)
@@ -831,21 +831,21 @@ add_tpars("N01", docno_str( __doc_no ) )
 // datum naloga
 add_tpars("N02", DToC( field->doc_date ) )
 // datum isporuke
-add_tpars("N03", DToC( field->doc_dvr_date ) )
+add_tpars("N03", DToC( field->doc_dvr_da ) )
 // vrijeme isporuke
-add_tpars("N04", PADR( field->doc_dvr_time, 5))
+add_tpars("N04", PADR( field->doc_dvr_ti, 5))
 // hitnost - prioritet
-add_tpars("N05", s_priority( field->doc_priority ))
+add_tpars("N05", s_priority( field->doc_priori ))
 // nalog vrsta placanja
 add_tpars("N06", s_pay_id( field->doc_pay_id ))
 // mjesto isporuke
-add_tpars("N07", ALLTRIM(field->doc_ship_place) )
+add_tpars("N07", ALLTRIM(field->doc_ship_p) )
 // dokument dodatni podaci
 add_tpars("N08", ALLTRIM(field->doc_desc) )
 // dokument, kontakt dodatni podaci...
-add_tpars("N09", ALLTRIM(field->cont_add_desc) )
+add_tpars("N09", ALLTRIM(field->cont_add_d) )
 // operater koji je napravio nalog
-add_tpars("N13", ALLTRIM(getfullusername(field->operater_id)) )
+add_tpars("N13", ALLTRIM(getfullusername(field->operater_i)) )
 
 // dokumenti koji su sadrzani 
 if !EMPTY(cDescr)
@@ -858,7 +858,7 @@ if field->doc_pay_id == 2
 	// placeno d/n...
 	add_tpars("N10", ALLTRIM( field->doc_paid ) )
 	// placanje dodatne napomene...
-	add_tpars("N11", ALLTRIM( field->doc_pay_desc ) )
+	add_tpars("N11", ALLTRIM( field->doc_pay_de ) )
 
 endif
 
@@ -917,7 +917,7 @@ seek contid_str(nCont_id)
 if FOUND()
 	cCont_desc := ALLTRIM( contacts->cont_desc )
 	cCont_tel := ALLTRIM( contacts->cont_tel )
-	cCont_add_desc := ALLTRIM( contacts->cont_add_desc )
+	cCont_add_desc := ALLTRIM( contacts->cont_add_d )
 endif
 
 add_tpars("P10", contid_str(nCont_id))
@@ -1304,7 +1304,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. ;
 
 	// provjeri po elementu
 	if nDoc_el_no > 0
-		if field->doc_it_el_no <> nDoc_el_no
+		if field->doc_it_el_ <> nDoc_el_no
 			skip
 			loop
 		endif
@@ -1377,11 +1377,11 @@ local aZpoGn := {}
 local nTArea := SELECT()
 
 // ukupno mm -> m2
-replace field->doc_it_total with ROUND( c_ukvadrat(field->doc_it_qtty, ;
-	field->doc_it_height, field->doc_it_width), 2)
+replace field->doc_it_tot with ROUND( c_ukvadrat(field->doc_it_qtt, ;
+	field->doc_it_hei, field->doc_it_wid), 2)
 
-replace field->doc_it_tm with ROUND( c_duzinski(field->doc_it_qtty, ;
-	field->doc_it_height, field->doc_it_width), 2)
+replace field->doc_it_tm with ROUND( c_duzinski(field->doc_it_qtt, ;
+	field->doc_it_hei, field->doc_it_wid), 2)
 
 
 aZpoGN := {}
@@ -1414,28 +1414,28 @@ if lBezZaokr == .f.
 endif
 	
 replace field->doc_it_zhe with ;
-	obrl_zaok( field->doc_it_height, aZpoGN, lBezZaokr )
+	obrl_zaok( field->doc_it_hei, aZpoGN, lBezZaokr )
 replace field->doc_it_zh2 with ;
 	obrl_zaok( field->doc_it_h2, aZpoGN, lBezZaokr )
 replace field->doc_it_zwi with ;
-	obrl_zaok( field->doc_it_width, aZpoGN, lBezZaokr )
+	obrl_zaok( field->doc_it_wid, aZpoGN, lBezZaokr )
 replace field->doc_it_zw2 with ;
 	obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr )
 		
 // ako se zaokruzuje onda total ide po zaokr.vrijednostima
-replace field->doc_it_total with ROUND( c_ukvadrat( field->doc_it_qtty, ;
+replace field->doc_it_total with ROUND( c_ukvadrat( field->doc_it_qtt, ;
 	field->doc_it_zhe, ;
 	field->doc_it_zwi, ;
 	field->doc_it_zh2, ;
 	field->doc_it_zw2 ), 2)
-replace field->doc_it_tm with ROUND( c_duzinski( field->doc_it_qtty, ;
+replace field->doc_it_tm with ROUND( c_duzinski( field->doc_it_qtt, ;
 	field->doc_it_zhe, ;
 	field->doc_it_zwi, ;
 	field->doc_it_zh2, ;
 	field->doc_it_zw2 ), 2)
 	
 // izracunaj neto
-replace field->doc_it_neto with ROUND( obrl_neto( field->doc_it_total, aZpoGN ), 2)
+replace field->doc_it_net with ROUND( obrl_neto( field->doc_it_tot, aZpoGN ), 2)
 		
 return
 

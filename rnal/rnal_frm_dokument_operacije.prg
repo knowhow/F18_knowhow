@@ -217,7 +217,7 @@ nX += 2
 	
 nX += 1
 	
-@ m_x + nX, m_y + 2 SAY PADL(" -> element stavke (*):", nLeft) GET _doc_it_el_no VALID {|| get_it_element( @_doc_it_el_no, @nElement ), show_it( get_elem_desc( _a_elem, _doc_it_el_no ), 26 ) } WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no) ), set_opc_box( nBoxX, 50, "odnosi se na odredjeni element stavke", "") }
+@ m_x + nX, m_y + 2 SAY PADL(" -> element stavke (*):", nLeft) GET _doc_it_el_ VALID {|| get_it_element( @_doc_it_el_, @nElement ), show_it( get_elem_desc( _a_elem, _doc_it_el_ ), 26 ) } WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no) ), set_opc_box( nBoxX, 50, "odnosi se na odredjeni element stavke", "") }
 
 nX += 2
 
@@ -236,7 +236,7 @@ nX += 1
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("dodatni opis:", nLeft) GET _doc_op_desc PICT "@S40" WHEN set_opc_box( nBoxX, 50, "dodatni opis vezan uz navedene", "operacije" )
+@ m_x + nX, m_y + 2 SAY PADL("dodatni opis:", nLeft) GET _doc_op_des PICT "@S40" WHEN set_opc_box( nBoxX, 50, "dodatni opis vezan uz navedene", "operacije" )
 
 
 read
@@ -395,8 +395,8 @@ seek docno_str( _doc) + docit_str( nDoc_it_no )
 
 if FOUND()
 	
-	nH := field->doc_it_height
-	nW := field->doc_it_width
+	nH := field->doc_it_hei
+	nW := field->doc_it_wid
 
 	// uzmi debljinu...
 

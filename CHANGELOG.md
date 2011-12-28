@@ -1,7 +1,9 @@
-0.9.28  2011-12-28, hernad, bug report v3, offset
+0.9.28  2011-12-28, vsasa, hernad, bug report v3, offset
 
-  - [#25909](http://redmine.bring.out.ba/issues/25909) fakt_offset
-  - [#25905](http://redmine.bring.out.ba/issues/25905) bug report v3
+  - [#25909](http://redmine.bring.out.ba/issues/25909) hernad, fakt_offset
+  - [#25905](http://redmine.bring.out.ba/issues/25905) hernad, bug report v3
+  - [#25928](http://redmine.bring.out.ba/issues/25928) vsasa, mat, korekcija izvjestaja
+  - [#25929](http://redmine.bring.out.ba/issues/25929) vsasa, mat, sinhronizacija sifrarnika robe, polje idkonto
 
 0.9.27  2011-12-27, hernad
 

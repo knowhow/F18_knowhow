@@ -20,6 +20,8 @@ CreRoba()
 // TODO: http://redmine.bring.out.ba/issues/25815
 cre_all_fin()
 
+cre_all_fakt()
+
 return
 
 

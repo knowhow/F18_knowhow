@@ -1,13 +1,14 @@
 /* 
- * This file is part of the bring.out ERP, a free and open source 
- * ERP software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+
 
 #include "fakt.ch"
 #include "common.ch"
@@ -40,7 +41,7 @@ _x := maxrows() - 15
 _y := maxcols() - 20
 
 if algoritam == NIL
-	algoritam := "FULL"
+    algoritam := "FULL"
 endif
 
 @ _x + 1, _y + 2 SAY "update fakt_fakt: " + algoritam
@@ -60,31 +61,31 @@ _sql_fields := sql_fields(_fields)
  
 for _offset := 0 to _count STEP _step 
 
-  _qry :=  "SELECT " + _sql_fields + " FROM " +	_tbl 
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl 
   
   if algoritam == "DATE"
     _dat := get_dat_from_semaphore("fakt_fakt")
-	_qry += " WHERE datdok >= " + _sql_quote(_dat)
+    _qry += " WHERE datdok >= " + _sql_quote(_dat)
     _key_block := {|| field->datdok }
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore("fakt_fakt")
-    	_qry += " WHERE "
-    	if LEN(_ids) < 1
-       		// nema id-ova
-      		_qry += "false"
-    	else
-        	_sql_ids := "("
-        	for _i := 1 to LEN(_ids)
-            	_sql_ids += _sql_quote(_ids[_i])
-            	if _i < LEN(_ids)
-            		_sql_ids += ","
-            	endif
-        	next
-        	_sql_ids += ")"
-        	_qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
-     	endif
+        _ids := get_ids_from_semaphore("fakt_fakt")
+        _qry += " WHERE "
+        if LEN(_ids) < 1
+            // nema id-ova
+            _qry += "false"
+        else
+            _sql_ids := "("
+            for _i := 1 to LEN(_ids)
+                _sql_ids += _sql_quote(_ids[_i])
+                if _i < LEN(_ids)
+                    _sql_ids += ","
+                endif
+            next
+            _sql_ids += ")"
+            _qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
+        endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
   endif
@@ -94,55 +95,54 @@ for _offset := 0 to _count STEP _step
 
   DO CASE
 
-	CASE algoritam == "FULL" .and. _offset==0
-    	// "full" algoritam
-    	log_write("datdok = nil full algoritam") 
-    	ZAP
+    CASE (algoritam == "FULL") .and. (_offset==0)
+        log_write( _tbl + " : synchro full algoritam") 
+        ZAP
 
-	CASE algoritam == "DATE"
+    CASE algoritam == "DATE"
 
-    	log_write("datdok <> nil date algoritam") 
-    	// "date" algoritam  - brisi sve vece od zadanog datuma
-    	SET ORDER TO TAG "8"
-    	// tag je "DatDok" nije DTOS(DatDok)
-    	seek _dat
-    	do while !eof() .and. eval(_key_block)  >= _dat 
-        	// otidji korak naprijed
-        	SKIP
-        	_rec := RECNO()
-        	SKIP -1
-        	DELETE
-        	GO _rec  
-    	enddo
+        log_write("datdok <> nil date algoritam") 
+        // "date" algoritam  - brisi sve vece od zadanog datuma
+        SET ORDER TO TAG "8"
+        // tag je "DatDok" nije DTOS(DatDok)
+        seek _dat
+        do while !eof() .and. eval(_key_block)  >= _dat 
+            // otidji korak naprijed
+            SKIP
+            _rec := RECNO()
+            SKIP -1
+            DELETE
+            GO _rec  
+        enddo
 
-	CASE algoritam == "IDS"
-    	
-    	SET ORDER TO TAG "1"
+    CASE algoritam == "IDS"
+        
+        // "1", "idFirma+Idtipdok+BrDok+Rbr"
+        SET ORDER TO TAG "1"
 
-		// CREATE_INDEX("1", "idFirma+Idtipdok+BrDok+Rbr", "FAKT")
-    	// pobrisimo sve id-ove koji su drugi izmijenili
-    	do while .t.
-       		_fnd := .f.
-       		for each _tmp_id in _ids
-          		
-          		HSEEK _tmp_id
-          		
-				do while !EOF() .and. EVAL(_key_block) == _tmp_id
-               		skip
-               		_rec := RECNO()
-               		skip -1 
-               		DELETE
-               		go _rec 
-               		_fnd := .t.
-          		enddo
-        	next
-        	if ! _fnd 
-				exit
-			endif
-    	enddo
+        do while .t.
+            _fnd := .f.
+            for each _tmp_id in _ids
+                
+                HSEEK _tmp_id
+                
+                do while !EOF() .and. EVAL(_key_block) == _tmp_id
+                    skip
+                    _rec := RECNO()
+                    skip -1 
+                    DELETE
+                    go _rec 
+                    _fnd := .t.
+                enddo
+            next
+            if ! _fnd 
+                exit
+            endif
+        enddo
 
   ENDCASE
-  // sada je sve izbrisano
+
+  // sada je sve izbrisano u lokalnom dbf-u
 
   _qry_obj := run_sql_query( _qry, _retry )
 
@@ -153,7 +153,7 @@ for _offset := 0 to _count STEP _step
   DO WHILE !_qry_obj:Eof()
     
     append blank
-		
+        
     for _i := 1 to LEN(_fields)
           _fld := FIELDBLOCK(_fields[_i])
           if VALTYPE(EVAL(_fld)) $ "CM"
@@ -163,7 +163,7 @@ for _offset := 0 to _count STEP _step
           endif
     next
 
-	_qry_obj:Skip()
+    _qry_obj:Skip()
 
     _counter++
 
@@ -180,8 +180,6 @@ if (gDebug > 5)
     log_write("fakt_fakt synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t. 
 
 
@@ -198,7 +196,7 @@ LOCAL _server := pg_server()
 _tbl := "fmk.fakt_fakt"
 
 if record <> nil
-	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
+    _where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
                         " and brdok=" + _sql_quote(record["br_dok"]) 
 endif
 
@@ -214,8 +212,8 @@ DO CASE
              " WHERE " + _where
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
-				"( idfirma, idtipdok, brdok, rbr, datdok, idpartner, dindem, zaokr, podbr, idroba, serbr, kolicina, " + ;
-				"cijena, rabat, porez, txt, k1, k2, m1, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza ) " + ;
+                "( idfirma, idtipdok, brdok, rbr, datdok, idpartner, dindem, zaokr, podbr, idroba, serbr, kolicina, " + ;
+                "cijena, rabat, porez, txt, k1, k2, m1, idvrstep, idpm, c1, c2, c3, n1, n2, opis, dok_veza ) " + ;
                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
@@ -317,22 +315,22 @@ for _offset := 0 to _count STEP _step
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( "fakt_doks" )
-    	_qry += " WHERE "
-    	if LEN(_ids) < 1
-       		// nema id-ova
-      		_qry += "false"
-    	else
-        	_sql_ids := "("
-        	for _i := 1 to LEN(_ids)
-            	_sql_ids += _sql_quote(_ids[_i])
-            	if _i < LEN(_ids)
-            		_sql_ids += ","
-            	endif
-        	next
-        	_sql_ids += ")"
-        	_qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
-     	endif
+        _ids := get_ids_from_semaphore( "fakt_doks" )
+        _qry += " WHERE "
+        if LEN(_ids) < 1
+            // nema id-ova
+            _qry += "false"
+        else
+            _sql_ids := "("
+            for _i := 1 to LEN(_ids)
+                _sql_ids += _sql_quote(_ids[_i])
+                if _i < LEN(_ids)
+                    _sql_ids += ","
+                endif
+            next
+            _sql_ids += ")"
+            _qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
+        endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
   endif
@@ -342,53 +340,49 @@ for _offset := 0 to _count STEP _step
 
   DO CASE
 
-	CASE algoritam == "FULL"
-    	
-		// "full" algoritam
-    	log_write("dat_dok = nil full algoritam") 
-	    ZAP
-	
-	CASE algoritam == "DATE"
+    CASE (algoritam == "FULL") .and. (_offset  == 0)
+        
+        log_write(_tbl  + " : refresh full algoritam") 
+        ZAP
+    
+    CASE algoritam == "DATE"
 
-    	log_write("dat_dok <> nil date algoritam") 
-    	// "date" algoritam  - brisi sve vece od zadanog datuma
-    	SET ORDER TO TAG "5"
-    	// tag je "DatDok" nije DTOS(DatDok)
-    	seek _dat
-    	do while !eof() .and. EVAL( _key_block ) >= _dat 
-        	// otidji korak naprijed
-        	SKIP
-        	_rec := RECNO()
-        	SKIP -1
-        	DELETE
-        	GO _rec  
-    	enddo
+        log_write("dat_dok <> nil date algoritam") 
+        // "date" algoritam  - brisi sve vece od zadanog datuma
+        SET ORDER TO TAG "5"
+        // tag je "DatDok" nije DTOS(DatDok)
+        seek _dat
+        do while !eof() .and. EVAL( _key_block ) >= _dat 
+            // otidji korak naprijed
+            SKIP
+            _rec := RECNO()
+            SKIP -1
+            DELETE
+            GO _rec  
+        enddo
 
-	CASE algoritam == "IDS"
-    	
-		SET ORDER TO TAG "1"
+    CASE algoritam == "IDS"
+        
+        // "1", "idFirma+IdTipDok+BrDok"
+        SET ORDER TO TAG "1"
 
-		// CREATE_INDEX("1", "idFirma+IdTipDok+BrDok", "FAKT_DOKS")
-    	// pobrisimo sve id-ove koji su drugi izmijenili
-    	do while .t.
-       		_fnd := .f.
-       		for each _tmp_id in _ids
-          		
-          		HSEEK _tmp_id
-          		
-				do while !EOF() .and. EVAL( _key_block ) == _tmp_id 
-               		skip
-               		_rec := RECNO()
-               		skip -1 
-               		DELETE
-               		go _rec 
-               		_fnd := .t.
-          		enddo
-        	next
-        	if ! _fnd 
-				exit
-			endif
-    	enddo
+        do while .t.
+            _fnd := .f.
+            for each _tmp_id in _ids
+                HSEEK _tmp_id
+                do while !EOF() .and. EVAL( _key_block ) == _tmp_id 
+                    skip
+                    _rec := RECNO()
+                    skip -1 
+                    DELETE
+                    go _rec 
+                    _fnd := .t.
+                enddo
+            next
+            if ! _fnd 
+                exit
+            endif
+        enddo
 
   ENDCASE
 
@@ -400,7 +394,7 @@ for _offset := 0 to _count STEP _step
 
   DO WHILE !_qry_obj:Eof()
     append blank
-   			
+            
     for _i := 1 to LEN(_fields)
           _fld := FIELDBLOCK(_fields[_i])
           if VALTYPE(EVAL(_fld)) $ "CM"
@@ -428,7 +422,6 @@ endif
 
 return .t. 
 
-
 // ----------------------------------------------
 // ----------------------------------------------
 function sql_fakt_doks_update( op, record )
@@ -443,7 +436,7 @@ LOCAL _server := pg_server()
 _tbl := "fmk.fakt_doks"
 
 if record <> nil
-	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
+    _where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
                         " and brdok=" + _sql_quote(record["br_dok"]) 
 endif
 
@@ -459,16 +452,16 @@ DO CASE
              " WHERE " + _where
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
-				"( idfirma, idtipdok, brdok, partner, datdok, dindem, iznos, rabat, rezerv, m1, idpartner, " + ;
-				"idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_isp, dat_otpr, dat_val ) " + ;
+                "( idfirma, idtipdok, brdok, partner, datdok, dindem, iznos, rabat, rezerv, m1, idpartner, " + ;
+                "idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_isp, dat_otpr, dat_val ) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
                             + _sql_quote( record["partner"] ) + "," +;
                             + _sql_quote( record["dat_dok"] ) + "," +;
                             + _sql_quote( record["din_dem"] ) + "," +;
-							+ _sql_quote( STR( record["iznos"], 12, 3 )) + "," +;
-							+ _sql_quote( STR( record["rabat"], 12, 3 )) + "," +;
+                            + _sql_quote( STR( record["iznos"], 12, 3 )) + "," +;
+                            + _sql_quote( STR( record["rabat"], 12, 3 )) + "," +;
                             + _sql_quote( record["rezerv"] ) + "," +;
                             + _sql_quote( record["m1"] ) + "," +;
                             + _sql_quote( record["id_partner"] ) + "," +;
@@ -554,22 +547,22 @@ for _offset := 0 to _count STEP _step
   endif
 
   if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( "fakt_doks2" )
-    	_qry += " WHERE "
-    	if LEN(_ids) < 1
-       		// nema id-ova
-      		_qry += "false"
-    	else
-        	_sql_ids := "("
-        	for _i := 1 to LEN(_ids)
-            	_sql_ids += _sql_quote(_ids[_i])
-            	if _i < LEN(_ids)
-            		_sql_ids += ","
-            	endif
-        	next
-        	_sql_ids += ")"
-        	_qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
-     	endif
+        _ids := get_ids_from_semaphore( "fakt_doks2" )
+        _qry += " WHERE "
+        if LEN(_ids) < 1
+            // nema id-ova
+            _qry += "false"
+        else
+            _sql_ids := "("
+            for _i := 1 to LEN(_ids)
+                _sql_ids += _sql_quote(_ids[_i])
+                if _i < LEN(_ids)
+                    _sql_ids += ","
+                endif
+            next
+            _sql_ids += ")"
+            _qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
+        endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
   endif
@@ -579,53 +572,52 @@ for _offset := 0 to _count STEP _step
 
   DO CASE
 
-	CASE algoritam == "FULL"
-    	
-		// "full" algoritam
-    	log_write("dat_dok = nil full algoritam") 
-	    ZAP
-	
-	CASE algoritam == "DATE"
+    CASE (algoritam == "FULL") .and. (_offset == 0)
+        
+        // "full" algoritam
+        log_write("dat_dok = nil full algoritam") 
+        ZAP
+    
+    CASE algoritam == "DATE"
 
-    	log_write("dat_dok <> nil date algoritam") 
-    	// "date" algoritam  - brisi sve vece od zadanog datuma
-    	SET ORDER TO TAG "5"
-    	// tag je "DatDok" nije DTOS(DatDok)
-    	seek _dat
-    	do while !eof() .and. EVAL( _key_block ) >= _dat 
-        	// otidji korak naprijed
-        	SKIP
-        	_rec := RECNO()
-        	SKIP -1
-        	DELETE
-        	GO _rec  
-    	enddo
+        log_write("dat_dok <> nil date algoritam") 
+        // "date" algoritam  - brisi sve vece od zadanog datuma
+        SET ORDER TO TAG "5"
+        // tag je "DatDok" nije DTOS(DatDok)
+        seek _dat
+        do while !eof() .and. EVAL( _key_block ) >= _dat 
+            // otidji korak naprijed
+            SKIP
+            _rec := RECNO()
+            SKIP -1
+            DELETE
+            GO _rec  
+        enddo
 
-	CASE algoritam == "IDS"
-    	
-		SET ORDER TO TAG "1"
+    CASE algoritam == "IDS"
+        
+        // "1", "idFirma+IdTipDok+BrDok"
+        SET ORDER TO TAG "1"
 
-		// CREATE_INDEX("1", "idFirma+IdTipDok+BrDok", "FAKT_DOKS2")
-    	// pobrisimo sve id-ove koji su drugi izmijenili
-    	do while .t.
-       		_fnd := .f.
-       		for each _tmp_id in _ids
-          		
-          		HSEEK _tmp_id
-          		
-				do while !EOF() .and. EVAL( _key_block ) == _tmp_id 
-               		skip
-               		_rec := RECNO()
-               		skip -1 
-               		DELETE
-               		go _rec 
-               		_fnd := .t.
-          		enddo
-        	next
-        	if ! _fnd 
-				exit
-			endif
-    	enddo
+        do while .t.
+            _fnd := .f.
+            for each _tmp_id in _ids
+                
+                HSEEK _tmp_id
+                
+                do while !EOF() .and. EVAL( _key_block ) == _tmp_id 
+                    skip
+                    _rec := RECNO()
+                    skip -1 
+                    DELETE
+                    go _rec 
+                    _fnd := .t.
+                enddo
+            next
+            if ! _fnd 
+                exit
+            endif
+        enddo
 
   ENDCASE
 
@@ -679,7 +671,7 @@ LOCAL _server := pg_server()
 _tbl := "fmk.fakt_doks2"
 
 if record <> nil
-	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
+    _where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
                         " and brdok=" + _sql_quote(record["br_dok"]) 
 endif
 
@@ -695,7 +687,7 @@ DO CASE
              " WHERE " + _where
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
-				"( idfirma, idtipdok, brdok, k1, k2, k3, k4, k5, n1, n2 ) " + ;
+                "( idfirma, idtipdok, brdok, k1, k2, k3, k4, k5, n1, n2 ) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
@@ -704,8 +696,8 @@ DO CASE
                             + _sql_quote( record["k3"] ) + "," +;
                             + _sql_quote( record["k4"] ) + "," +;
                             + _sql_quote( record["k5"] ) + "," +;
-							+ _sql_quote( STR( record["n1"], 15, 2 )) + "," +;
-							+ _sql_quote( STR( record["n2"], 15, 2 )) + ")"
+                            + _sql_quote( STR( record["n1"], 15, 2 )) + "," +;
+                            + _sql_quote( STR( record["n2"], 15, 2 )) + ")"
                           
 END CASE
    

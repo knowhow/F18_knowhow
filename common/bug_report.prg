@@ -78,13 +78,18 @@ else
    ? "USED() = false"
 endif
 
-? "== CARGO" , REPLICATE("=", 50)
-for _i := 1 TO LEN(err_obj:cargo)
-   if err_obj:cargo[_i] == "var"
-      ?  "* var ", err_obj:cargo[++_i], ":", pp(err_obj:cargo[++_i])
-   endif
-next
-? REPLICATE("-", 60)
+if err_obj:cargo <> NIL
+
+    ? "== CARGO" , REPLICATE("=", 50)
+    for _i := 1 TO LEN(err_obj:cargo)
+    if err_obj:cargo[_i] == "var"
+        ?  "* var ", err_obj:cargo[++_i], ":", pp(err_obj:cargo[++_i])
+    endif
+    next
+    ? REPLICATE("-", 60)
+
+endif
+    
 ?
 ? "== END OF BUG REPORT =="
 

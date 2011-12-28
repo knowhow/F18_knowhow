@@ -42,7 +42,7 @@ endif
 O_KONTO
 O_TNAL
 if fnovi
- O_mat_panal2
+ O_MAT_PANAL2
  cIdFirma:=idFirma
  cIdVN:=idvn
  cBrNal:=brnal
@@ -54,7 +54,6 @@ else
  cIdVN:=space(2)
  cBrNal:=space(4)
 endif
-
 
 
 if !fnovi
@@ -77,6 +76,7 @@ NFOUND CRET
 nStr:=0
 
 START PRINT CRET
+?
 
 A:=0
 if gkonto=="N"  .and. g2Valute=="D"

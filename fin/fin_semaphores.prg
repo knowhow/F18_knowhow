@@ -94,7 +94,7 @@ for _offset := 0 to _count STEP _step
 
   DO CASE
 
-   CASE algoritam == "FULL"
+   CASE (algoritam == "FULL") .and. (_offset==0)
     
     // "full" algoritam
     log_write("dat_dok = nil full algoritam") 

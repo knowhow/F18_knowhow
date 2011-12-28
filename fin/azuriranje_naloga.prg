@@ -61,7 +61,7 @@ else
     return .f.
 endif
 
-msgc()
+MsgC()
 
 return .t.
 
@@ -468,17 +468,18 @@ do while !eof()
 
     @ m_x+1,m_y+2 SAY "Azuriram nalog: " + IdFirma + "-" + idvn + "-" + ALLTRIM(brnal)
 
-    nSaldo:=0
-    cEvIdFirma:=idfirma
-    cEvVrBrNal:=idvn+"-"+brnal
-    dDatNaloga:=datdok
-    dDatValute:=datval
+    nSaldo := 0
+    cEvIdFirma := idfirma
+    cEvVrBrNal := idvn + "-" + brnal
+    dDatNaloga := datdok
+    dDatValute := datval
+
     do while !eof() .and. cNal == IdFirma + IdVn + BrNal
         select psuban
         if D_P=="1"
-          nSaldo+=IznosBHD
+          nSaldo += IznosBHD
         else
-           nSaldo-=IznosBHD
+           nSaldo -= IznosBHD
         endif
         skip
     enddo
@@ -717,16 +718,16 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
     if _D_P == "1" 
           nSaldo:= _rec["iznosbhd"]
     else
-          nSaldo:= - _rec["_iznosbhd"]
+          nSaldo:= -_rec["iznosbhd"]
     endif
 
     SELECT SUBAN
-    SEEK _rec["idfirma"] + _rec["iddkonto"] + _rec["idpartner"] + _rec["brdok"]    
+    SEEK _rec["idfirma"] + _rec["idkonto"] + _rec["idpartner"] + _rec["brdok"]    
 
     nRec := recno()
-    do while  !eof() .and. (_rec["idfirma"] + _rec["iddkonto"] + _rec["idpartner"] + _rec["brdok"]) == (IdFirma+IdKonto+IdPartner+BrDok)
+    do while  !eof() .and. (_rec["idfirma"] + _rec["idkonto"] + _rec["idpartner"] + _rec["brdok"]) == (IdFirma + IdKonto + IdPartner + BrDok)
        if d_P=="1"
-           nSaldo+= field->IznosBHD
+           nSaldo += field->IznosBHD
        else
            nSaldo -= field->IznosBHD
        endif
@@ -736,7 +737,7 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
     if ABS(round(nSaldo, 3)) <= gnLOSt
        
         GO nRec
-        do while  !EOF() .and. (_rec["idfirma"] + _rec["idkonto"] + _rec["idpartner"] + _rec["brdok"]) == (IdFirma+IdKonto+IdPartner+BrDok)
+        do while  !EOF() .and. (_rec["idfirma"] + _rec["idkonto"] + _rec["idpartner"] + _rec["brdok"]) == (IdFirma + IdKonto + IdPartner + BrDok)
             
             _rec_2 := dbf_get_rec()
             _rec_2["otvst"] := "9"
@@ -748,8 +749,7 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
 
     endif
 
-    _rec := get_dbf_global_memvars("_")
-    
+    SELECT SUBAN    
     APPEND BLANK
     dbf_update_rec(_rec, .t.)
 

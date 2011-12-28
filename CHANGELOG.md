@@ -1,4 +1,8 @@
-0.9.28  2011-12-28, MAT-IDKONTO verzija
+0.9.29  2011-12-28, hernad, fin azuriranje
+
+  - [#25927](http://redmine.bring.out.ba/issues/25927) - ispravka psuban_suban, otvorene stavke slati na server
+
+0.9.28  2011-12-28, hernad, MAT-IDKONTO verzija
 
   - Napomena: FIN azuriranje ne radi, verzija namjenjena za MAT korisnike
   - [#25931](http://redmine.bring.out.ba/issues/25931) vsasa, mat, condens stampa ne radi

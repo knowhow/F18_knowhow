@@ -478,7 +478,7 @@ do while !EOF()
      
     // provjeri da li postoji uslov za grupacije...
     if !EMPTY( params["grupe"] )
-        if ! ( _grupa $ params["grupe"] )
+        if ! ( ALLTRIM( _grupa ) $ params["grupe"] )
             select r_export
             skip
             loop
@@ -498,7 +498,7 @@ do while !EOF()
     do while !EOF() .and. field->grupa == _grupa
 
         if !EMPTY( params["grupe"] )
-            if ! ( _grupa $ params["grupe"] )
+            if ! ( ALLTRIM( _grupa ) $ params["grupe"] )
                 select r_export
                 skip
                 loop

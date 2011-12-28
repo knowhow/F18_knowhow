@@ -1,6 +1,7 @@
 0.9.28  2011-12-28, MAT-IDKONTO verzija
 
   - Napomena: FIN azuriranje ne radi, verzija namjenjena za MAT korisnike
+  - [#25931](http://redmine.bring.out.ba/issues/25931) vsasa, mat, condens stampa ne radi
   - [#25929](http://redmine.bring.out.ba/issues/25929) vsasa, mat, sinhronizacija sifrarnika robe, polje idkonto
   - [#25909](http://redmine.bring.out.ba/issues/25909) hernad, fakt_offset
   - [#25905](http://redmine.bring.out.ba/issues/25905) hernad, bug report v3

@@ -245,7 +245,7 @@ local _ime_polja, _i, _struct
 local _ret := hb_hash()
 
 if zn==nil
-  zn:="_"
+  zn := "_"
 endif
 
 _struct := DBSTRUCT()
@@ -266,8 +266,6 @@ for _i := 1 to len(_struct)
 next
 
 return _ret
-
-
 
 
 

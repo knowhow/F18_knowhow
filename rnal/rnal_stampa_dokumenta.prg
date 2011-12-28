@@ -618,7 +618,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 	nQtty := field->doc_it_qtt
 	nPrice := field->doc_it_pri
 
-	cDesc := ALLTRIM( field->desc )
+	cDesc := ALLTRIM( field->descr )
 	cSh_desc := ALLTRIM( field->sh_desc )
 
 	cDescription := ""

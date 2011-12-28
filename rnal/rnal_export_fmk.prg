@@ -214,7 +214,7 @@ do while !EOF()
     nDoc_no := field->doc_no
     cArt_id := field->art_id
     nQtty := field->doc_it_qtt
-    cDesc := field->desc
+    cDesc := field->descr
 
     if lSumirati == .t.
         

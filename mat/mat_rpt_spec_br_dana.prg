@@ -58,6 +58,7 @@ _line := _get_line()
 // ispisi izvjestaj iz pomocne tabele
 START PRINT CRET
 ?
+P_COND
 
 _show_report( _params, _line )
 

@@ -96,8 +96,7 @@ for _offset := 0 to _count STEP _step
   DO CASE
 
     CASE algoritam == "FULL" .and. _offset==0
-        // "full" algoritam
-        log_write("datdok = nil full algoritam") 
+        log_write( _tbl + " : synchro full algoritam") 
         ZAP
 
     CASE algoritam == "DATE"
@@ -343,10 +342,9 @@ for _offset := 0 to _count STEP _step
 
   DO CASE
 
-    CASE algoritam == "FULL"
+    CASE (algoritam == "FULL") .and. (_offset  == 0)
         
-        // "full" algoritam
-        log_write("dat_dok = nil full algoritam") 
+        log_write(_tbl  + " : refresh full algoritam") 
         ZAP
     
     CASE algoritam == "DATE"
@@ -391,6 +389,7 @@ for _offset := 0 to _count STEP _step
 
   ENDCASE
 
+  altd()
   _qry_obj := run_sql_query( _qry, _retry )
 
   @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
@@ -577,7 +576,7 @@ for _offset := 0 to _count STEP _step
 
   DO CASE
 
-    CASE algoritam == "FULL"
+    CASE (algoritam == "FULL") .and. (_offset == 0)
         
         // "full" algoritam
         log_write("dat_dok = nil full algoritam") 
@@ -603,8 +602,7 @@ for _offset := 0 to _count STEP _step
         
         SET ORDER TO TAG "1"
 
-        // CREATE_INDEX("1", "idFirma+IdTipDok+BrDok", "FAKT_DOKS2")
-        // pobrisimo sve id-ove koji su drugi izmijenili
+        // "1", "idFirma+IdTipDok+BrDok"
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids

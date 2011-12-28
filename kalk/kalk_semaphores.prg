@@ -189,8 +189,6 @@ if (gDebug > 5)
     log_write("kalk_kalk synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t. 
 
 

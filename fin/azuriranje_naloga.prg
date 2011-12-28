@@ -19,17 +19,17 @@ function fin_azur(lAuto)
 local oServer
 
 if Logirati(goModul:oDataBase:cName,"DOK", "AZUR")
-	lLogAzur:=.t.
+    lLogAzur:=.t.
 else
-	lLogAzur:=.f.
+    lLogAzur:=.f.
 endif
 
 if (lAuto==NIL)
-	lAuto:=.f.
+    lAuto:=.f.
 endif
 
 if !lAuto .and. Pitanje("pAz", "Sigurno zelite izvrsiti azuriranje (D/N)?", "N") == "N"
-	return
+    return
 endif
 
 o_fin_za_azuriranje()
@@ -49,16 +49,16 @@ endif
 msgo( "Azuriranje dokumenta u toku...." )
 
 if fin_azur_sql(oServer)
-	o_fin_za_azuriranje()
-   	if !fin_azur_dbf(lAuto)
-    	msgc()
-		MsgBeep("Neuspjesno FIN/DBF azuriranje !?")
-		return .f.
+    o_fin_za_azuriranje()
+    if !fin_azur_dbf(lAuto)
+        msgc()
+        MsgBeep("Neuspjesno FIN/DBF azuriranje !?")
+        return .f.
    endif
 else
-	msgc()
- 	MsgBeep("Neuspjesno FIN/SQL azuriranje !?")
-	return .f.
+    msgc()
+    MsgBeep("Neuspjesno FIN/SQL azuriranje !?")
+    return .f.
 endif
 
 msgc()
@@ -104,38 +104,38 @@ _tbl_nalog := "fin_nalog"
 _tbl_sint := "fin_sint"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-	
-	// lock suban  
-	if get_semaphore_status( _tbl_suban ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_suban )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_suban, "lock" )
-  	endif
+    
+    // lock suban  
+    if get_semaphore_status( _tbl_suban ) == "lock"
+        MsgBeep("tabela zakljucana: " + _tbl_suban )
+        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+    else
+        lock_semaphore( _tbl_suban, "lock" )
+    endif
 
-	// lock anal  
-	if get_semaphore_status( _tbl_anal ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_anal )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_anal, "lock" )
-  	endif
-	
-	// lock sint
-	if get_semaphore_status( _tbl_sint ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_sint )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_sint, "lock" )
-  	endif
-	
-	// lock nalog
-	if get_semaphore_status( _tbl_nalog ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_nalog )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_nalog, "lock" )
-  	endif
+    // lock anal  
+    if get_semaphore_status( _tbl_anal ) == "lock"
+        MsgBeep("tabela zakljucana: " + _tbl_anal )
+        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+    else
+        lock_semaphore( _tbl_anal, "lock" )
+    endif
+    
+    // lock sint
+    if get_semaphore_status( _tbl_sint ) == "lock"
+        MsgBeep("tabela zakljucana: " + _tbl_sint )
+        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+    else
+        lock_semaphore( _tbl_sint, "lock" )
+    endif
+    
+    // lock nalog
+    if get_semaphore_status( _tbl_nalog ) == "lock"
+        MsgBeep("tabela zakljucana: " + _tbl_nalog )
+        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+    else
+        lock_semaphore( _tbl_nalog, "lock" )
+    endif
 
 next
    
@@ -285,36 +285,36 @@ endif
 
 if !lOk
 
-	// vrati sve promjene...  	
-	sql_fin_suban_update( "ROLLBACK" )
-	sql_fin_sint_update( "ROLLBACK" )
-	sql_fin_anal_update( "ROLLBACK" )
-	sql_fin_nalog_update( "ROLLBACK" )
+    // vrati sve promjene...    
+    sql_fin_suban_update( "ROLLBACK" )
+    sql_fin_sint_update( "ROLLBACK" )
+    sql_fin_anal_update( "ROLLBACK" )
+    sql_fin_nalog_update( "ROLLBACK" )
 
 else
 
-	// dodaj ids
-  	AADD(_ids, _tmp_id) 
-	
-	// suban  
-	update_semaphore_version( _tbl_suban, .t.)
-  	push_ids_to_semaphore( _tbl_suban, _ids )
-  	sql_fin_suban_update("END")
+    // dodaj ids
+    AADD(_ids, _tmp_id) 
+    
+    // suban  
+    update_semaphore_version( _tbl_suban, .t.)
+    push_ids_to_semaphore( _tbl_suban, _ids )
+    sql_fin_suban_update("END")
 
-	// anal
-	update_semaphore_version( _tbl_anal, .t.)
-  	push_ids_to_semaphore( _tbl_anal, _ids )
-  	sql_fin_anal_update("END")
-	
-	// sint
-	update_semaphore_version( _tbl_sint, .t.)
-  	push_ids_to_semaphore( _tbl_sint, _ids )
-  	sql_fin_sint_update("END")
-	
-	// nalog
-	update_semaphore_version( _tbl_nalog, .t.)
-  	push_ids_to_semaphore( _tbl_nalog, _ids )
-  	sql_fin_nalog_update("END")
+    // anal
+    update_semaphore_version( _tbl_anal, .t.)
+    push_ids_to_semaphore( _tbl_anal, _ids )
+    sql_fin_anal_update("END")
+    
+    // sint
+    update_semaphore_version( _tbl_sint, .t.)
+    push_ids_to_semaphore( _tbl_sint, _ids )
+    sql_fin_sint_update("END")
+    
+    // nalog
+    update_semaphore_version( _tbl_nalog, .t.)
+    push_ids_to_semaphore( _tbl_nalog, _ids )
+    sql_fin_nalog_update("END")
 
 endif
 
@@ -338,12 +338,12 @@ local cNal
 
 // provjeri da li se u pripremi nalazi vise dokumenata... razlicitih
 if _is_vise_dok() == .t.
-	// provjeri za duple stavke prilikom azuriranja...
-	if prov_duple_stavke() == 1 
-		return .f.
-	endif
-	// nafiluj sve potrebne tabele
-	stnal( .t. )
+    // provjeri za duple stavke prilikom azuriranja...
+    if prov_duple_stavke() == 1 
+        return .f.
+    endif
+    // nafiluj sve potrebne tabele
+    stnal( .t. )
 endif
 
 lAzur:=.t.
@@ -440,12 +440,12 @@ local nSaldo
 Box("ad", 10, MAXCOLS()-10)
 
 if lLogAzur
-	cOpis := fin_pripr->idfirma + "-" + ;
-		fin_pripr->idvn + "-" + ;
-		fin_pripr->brnal
+    cOpis := fin_pripr->idfirma + "-" + ;
+        fin_pripr->idvn + "-" + ;
+        fin_pripr->brnal
 
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil, nil, nil, nil, cOpis, "", "", fin_pripr->datdok, Date(), ;
-		      "", "Azuriranje dokumenta - poceo !")
+    EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil, nil, nil, nil, cOpis, "", "", fin_pripr->datdok, Date(), ;
+              "", "Azuriranje dokumenta - poceo !")
 endif
 
 select PSUBAN
@@ -568,11 +568,11 @@ if !empty(psuban->idpartner)
           PreuzSezSPK("P")
         ELSE
           select PSUBAN
-	      zapp()
+          zapp()
           select PANAL
-	      zapp()
+          zapp()
           select PSINT
-	      zapp()
+          zapp()
           close all
           return .f.
         ENDIF
@@ -702,45 +702,50 @@ local nC := 0
 local _rec
 
 @ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
-select SUBAN
-set order to tag "3"
-select PSUBAN
+SELECT SUBAN
+SET ORDER TO TAG "3"
+SELECT PSUBAN
 SEEK cNal
   
-nC:=0
+nC := 0
 do while !eof() .and. cNal == IdFirma + IdVn + BrNal
 
     @ m_x + 3, m_y + 25 SAY ++nC  pict "99999999999"
 
-    set_global_vars_from_dbf("_")
-
-
+    _rec:= dbf_get_rec()
+    
     if _D_P == "1" 
-          nSaldo:=_IznosBHD
+          nSaldo:= _rec["iznosbhd"]
     else
-          nSaldo:= -_IznosBHD
+          nSaldo:= - _rec["_iznosbhd"]
     endif
 
     SELECT SUBAN
-    SEEK _IdFirma + _IdKonto + _IdPartner + _BrDok    
+    SEEK _rec["idfirma"] + _rec["iddkonto"] + _rec["idpartner"] + _rec["brdok"]    
 
     nRec := recno()
-    do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok) == (IdFirma+IdKonto+IdPartner+BrDok)
+    do while  !eof() .and. (_rec["idfirma"] + _rec["iddkonto"] + _rec["idpartner"] + _rec["brdok"]) == (IdFirma+IdKonto+IdPartner+BrDok)
        if d_P=="1"
-           nSaldo+= IznosBHD
+           nSaldo+= field->IznosBHD
        else
-           nSaldo -= IznosBHD
+           nSaldo -= field->IznosBHD
        endif
        skip
     enddo
 
     if ABS(round(nSaldo, 3)) <= gnLOSt
+       
         GO nRec
-        do while  !eof() .and. (_IdFirma+_IdKonto+_IdPartner+_BrDok)== (IdFirma+IdKonto+IdPartner+BrDok)
-            field->OtvSt:="9"
-            skip
+        do while  !EOF() .and. (_rec["idfirma"] + _rec["idkonto"] + _rec["idpartner"] + _rec["brdok"]) == (IdFirma+IdKonto+IdPartner+BrDok)
+            
+            _rec_2 := dbf_get_rec()
+            _rec_2["otvst"] := "9"
+            update_rec_server_and_dbf("fin_suban", _rec_2)
+            SKIP
+
         enddo
-        _OtvSt:="9"
+        _rec["otvSt"] := "9"
+
     endif
 
     _rec := get_dbf_global_memvars("_")
@@ -791,15 +796,15 @@ go top
 cTmpNal := field->brnal
 
 do while !EOF() 
-	cBrNal := field->brnal
-	if  cBrNal == cTmpNal 
-		cTmpNal := cBrNal
-		skip
-		loop
-	else
-		lRet := .t.
-		exit
-	endif
+    cBrNal := field->brnal
+    if  cBrNal == cTmpNal 
+        cTmpNal := cBrNal
+        skip
+        loop
+    else
+        lRet := .t.
+        exit
+    endif
 enddo
 
 return lRet
@@ -817,37 +822,37 @@ go top
 
 // provjeri duple dokumente
 do while !EOF()
-	cSeekNal := fin_pripr->(idfirma + idvn + brnal)
-	if dupli_nalog(cSeekNal)
-		lNalExist := .t.
-		exit
-	endif
-	
-	select fin_pripr
-	skip
+    cSeekNal := fin_pripr->(idfirma + idvn + brnal)
+    if dupli_nalog(cSeekNal)
+        lNalExist := .t.
+        exit
+    endif
+    
+    select fin_pripr
+    skip
 enddo
 
 // postoje dokumenti dupli
 if lNalExist
-	MsgBeep("U pripremi su se pojavili dupli nalozi !!!")
-	if Pitanje(,"Pobrisati duple naloge (D/N)?", "D")=="N"
-		MsgBeep("Dupli nalozi ostavljeni u tabeli pripreme!#Prekidam operaciju azuriranja!")
-		return 1
-	else
-		Box(,1,60)
-			cKumPripr := "P"
-			@ m_x+1, m_y+2 SAY "Zelite brisati stavke iz kumulativa ili pripreme (K/P)" GET cKumPripr VALID !Empty(cKumPripr) .or. cKumPripr $ "KP" PICT "@!"
-			read
-		BoxC()
-		
-		if cKumPripr == "P"
-			// brisi pripremu
-			return prip_brisi_duple()
-		else
-			// brisi kumulativ
-			return kum_brisi_duple()
-		endif
-	endif
+    MsgBeep("U pripremi su se pojavili dupli nalozi !!!")
+    if Pitanje(,"Pobrisati duple naloge (D/N)?", "D")=="N"
+        MsgBeep("Dupli nalozi ostavljeni u tabeli pripreme!#Prekidam operaciju azuriranja!")
+        return 1
+    else
+        Box(,1,60)
+            cKumPripr := "P"
+            @ m_x+1, m_y+2 SAY "Zelite brisati stavke iz kumulativa ili pripreme (K/P)" GET cKumPripr VALID !Empty(cKumPripr) .or. cKumPripr $ "KP" PICT "@!"
+            read
+        BoxC()
+        
+        if cKumPripr == "P"
+            // brisi pripremu
+            return prip_brisi_duple()
+        else
+            // brisi kumulativ
+            return kum_brisi_duple()
+        endif
+    endif
 endif
 
 return 0
@@ -862,16 +867,16 @@ go top
 
 do while !EOF()
 
-	cSeek := fin_pripr->(idfirma + idvn + brnal)
-	
-	if dupli_nalog( cSeek )
-		// pobrisi stavku
-		select fin_pripr
-		delete
-	endif
-	
-	select fin_pripr
-	skip
+    cSeek := fin_pripr->(idfirma + idvn + brnal)
+    
+    if dupli_nalog( cSeek )
+        // pobrisi stavku
+        select fin_pripr
+        delete
+    endif
+    
+    select fin_pripr
+    skip
 enddo
 
 return 0
@@ -887,41 +892,41 @@ go top
 cKontrola := "XXX"
 
 do while !EOF()
-	
-	cSeek := fin_pripr->(idfirma + idvn + brnal)
-	
-	if cSeek == cKontrola
-		skip
-		loop
-	endif
-	
-	if dupli_nalog( cSeek )
-		
-		MsgO("Brisem stavke iz kumulativa ... sacekajte trenutak!")
-		
-		// brisi nalog
-		select nalog
-		
-		if !flock()
-			msg("Datoteka je zauzeta ",3)
-			closeret
-		endif
-	
-		set order to tag "1"
-		go top
-		seek cSeek
-		
-		if Found()
-			
-			do while !eof() .and. nalog->(idfirma+idvn+brnal) == cSeek
-      				skip 1
-				nRec:=RecNo()
-				skip -1
-      				DbDelete2()
-      				go nRec
-    			enddo
-    		endif
-		
+    
+    cSeek := fin_pripr->(idfirma + idvn + brnal)
+    
+    if cSeek == cKontrola
+        skip
+        loop
+    endif
+    
+    if dupli_nalog( cSeek )
+        
+        MsgO("Brisem stavke iz kumulativa ... sacekajte trenutak!")
+        
+        // brisi nalog
+        select nalog
+        
+        if !flock()
+            msg("Datoteka je zauzeta ",3)
+            closeret
+        endif
+    
+        set order to tag "1"
+        go top
+        seek cSeek
+        
+        if Found()
+            
+            do while !eof() .and. nalog->(idfirma+idvn+brnal) == cSeek
+                    skip 1
+                nRec:=RecNo()
+                skip -1
+                    DbDelete2()
+                    go nRec
+                enddo
+            endif
+        
             // brisi iz suban
             select suban
             if !flock()
@@ -984,14 +989,14 @@ do while !EOF()
                 enddo
             endif
         
-	
-		    MsgC()
-	   endif
-	
-	   cKontrola := cSeek
-	
-	   select fin_pripr
-	   skip
+    
+            MsgC()
+       endif
+    
+       cKontrola := cSeek
+    
+       select fin_pripr
+       skip
 
 enddo
 
@@ -1006,7 +1011,7 @@ set order to tag "1"
 go top
 seek cSeek
 if Found()
-	return .t.
+    return .t.
 endif
 return .f.
 
@@ -1024,15 +1029,15 @@ cTmp := RIGHT( cNalog, 4 )
 
 // vidi jesu li sve brojevi
 for i := 1 to LEN( cTmp )
-	
-	cChar := SUBSTR( cTmp, i, 1 )
-	
-	if cChar $ "0123456789"
-		loop
-	else
-		lRet := .f.
-		exit
-	endif
+    
+    cChar := SUBSTR( cTmp, i, 1 )
+    
+    if cChar $ "0123456789"
+        loop
+    else
+        lRet := .f.
+        exit
+    endif
 
 next
 
@@ -1054,32 +1059,32 @@ O_NALOG
 select nalog
 
 if gBrojac=="1"
-	set order to tag "1"
-	seek cIdFirma+cIdVN+chr(254)
-	skip -1
-	
+    set order to tag "1"
+    seek cIdFirma+cIdVN+chr(254)
+    skip -1
+    
     if ( idfirma + idvn == cIdFirma + cIdVN )
-		
-		// napravi validaciju polja ...
-		do while !BOF()
+        
+        // napravi validaciju polja ...
+        do while !BOF()
 
-			if !__val_nalog( field->brnal )
-				skip -1
-				loop
-			else
-				exit
-			endif
-		enddo
-		
-		cBrNal := NovaSifra(brNal)
-	else
-		cBrNal := "00000001"
-	endif
+            if !__val_nalog( field->brnal )
+                skip -1
+                loop
+            else
+                exit
+            endif
+        enddo
+        
+        cBrNal := NovaSifra(brNal)
+    else
+        cBrNal := "00000001"
+    endif
 else
-	set order to tag "2"
-	seek cIdFirma+chr(254)
-	skip -1
-	cBrNal:=padl(alltrim(str(val(brnal)+1)),8,"0")
+    set order to tag "2"
+    seek cIdFirma+chr(254)
+    skip -1
+    cBrNal:=padl(alltrim(str(val(brnal)+1)),8,"0")
 endif
 
 select (nArr)
@@ -1095,16 +1100,16 @@ return cBrNal
 function regen_tbl()
 
 if !SigmaSIF("REGEN")
-	MsgBeep("Ne diraj lava dok spava !")
-	return
+    MsgBeep("Ne diraj lava dok spava !")
+    return
 endif
 
 // otvori sve potrebne tabele
 O_SUBAN
 
 if LEN( suban->brnal ) = 4
-	msgbeep("potrebno odraditi modifikaciju FIN.CHS prvo !")
-	return
+    msgbeep("potrebno odraditi modifikaciju FIN.CHS prvo !")
+    return
 endif
 
 O_NALOG
@@ -1141,13 +1146,13 @@ Box(,2,50)
 
 nCnt := 0
 do while !EOF()
-	xValue := field->brnal
-	if !EMPTY(xValue)
-		replace field->brnal with PADL(ALLTRIM(xValue), 8, "0")
-		++ nCnt
-	endif
-	@ m_x + 2, m_y + 2 SAY PADR( "odradjeno " + ALLTRIM(STR(nCnt)), 45 )
-	skip
+    xValue := field->brnal
+    if !EMPTY(xValue)
+        replace field->brnal with PADL(ALLTRIM(xValue), 8, "0")
+        ++ nCnt
+    endif
+    @ m_x + 2, m_y + 2 SAY PADR( "odradjeno " + ALLTRIM(STR(nCnt)), 45 )
+    skip
 enddo
 
 BoxC()

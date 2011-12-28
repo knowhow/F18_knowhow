@@ -1,6 +1,7 @@
-0.9.28  2011-12-27, hernad, bug report v3
+0.9.28  2011-12-28, hernad, bug report v3, offset
 
-  - [#25905](http://redmine.bring.out.ba/issues/25905)
+  - [#25909](http://redmine.bring.out.ba/issues/25909) fakt_offset
+  - [#25905](http://redmine.bring.out.ba/issues/25905) bug report v3
 
 0.9.27  2011-12-27, hernad
 

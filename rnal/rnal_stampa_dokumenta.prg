@@ -469,7 +469,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 		
 		// zaokruzi vrijednosti....
 		_art_set_descr( nArt_id, nil, nil, @aZpoGN, lZpoGN )
-		
+	
 		lBezZaokr := .f.
 
 		if lBezZaokr == .f.

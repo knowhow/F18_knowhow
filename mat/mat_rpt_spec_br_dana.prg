@@ -61,7 +61,7 @@ _line := _get_line()
 // ispisi izvjestaj iz pomocne tabele
 START PRINT CRET
 ?
-P_COND
+P_COND2
 
 _show_report( _params, _line )
 
@@ -83,6 +83,11 @@ local _interv_1, _interv_2, _interv_3
 local _dug_1, _dug_2, _pot_1, _pot_2
 local _saldo_1, _saldo_2
 local _id_roba, _roba_naz
+local _samo_ulaz := .t.
+
+if param["samo_ulazi"] == "N"
+    _samo_ulaz := .f.
+endif
 
 select mat_suban
 //"IdFirma+IdKonto+IdRoba+dtos(DatDok)"
@@ -123,12 +128,18 @@ do while !EOF()
     do while !EOF() .and. field->idkonto == _id_konto
 
         // resetuj brojace
-        _interv_1 := 0
-        _interv_2 := 0
-        _interv_3 := 0
-        _saldo_1 := 0
-        _dug_1 := 0
-        _pot_1 := 0
+        _int_k_1 := 0
+        _int_k_2 := 0
+        _int_k_3 := 0
+        _int_i_1 := 0
+        _int_i_2 := 0
+        _int_i_3 := 0
+        _saldo_k := 0
+        _saldo_i := 0
+        _dug := 0
+        _pot := 0
+        _ulaz := 0
+        _izlaz := 0
 
         _id_roba := field->idroba
 
@@ -143,16 +154,31 @@ do while !EOF()
         do while !EOF() .and. field->idkonto == _id_konto .and. field->idroba == _id_roba
         
             // logika izvjestaja
-        
-            if field->d_p = "1"
-                _dug_1 := field->iznos
-                _pot_1 := 0
+                    
+            if field->u_i == "1"
+                _ulaz := field->kolicina
+                _izlaz := 0
             else
-                _pot_1 := field->iznos
-                _dug_1 := 0
+                _izlaz := field->kolicina
+                _ulaz := 0
+            endif 
+
+            if field->d_p = "1"
+                _dug := field->iznos
+                _pot := 0
+            else
+                _pot := field->iznos
+                _dug := 0
             endif
 
-            _saldo_1 += _dug_1 - _pot_1  
+            // ako je samo ulaz, onda izlaze uvijek resetuj...
+            if _samo_ulaz == .t.
+                _izlaz := 0
+                _pot := 0
+            endif
+    
+            _saldo_k += _ulaz - _izlaz  
+            _saldo_i += _dug - _pot  
 
             // ovo ce vratiti interval u odnosu na datum dokumenta
             _interval := _get_interval( field->datdok, _datum )
@@ -160,31 +186,34 @@ do while !EOF()
             // prvi interval
             if _interval <= param["interval_1"]
                 // ovo je interval do 6 mjeseci npr..
-                _interv_1 += _dug_1 - _pot_1
+                _int_i_1 += _dug - _pot
+                _int_k_1 += _ulaz - _izlaz  
             endif
 
             // drugi interval
             if _interval > param["interval_1"] .and. _interval <= param["interval_2"]
                 // ovo je interval od 6 do 12 mj, npr..  
-                _interv_2 += _dug_1 - _pot_1
+                _int_i_2 += _dug - _pot
+                _int_k_2 += _ulaz - _izlaz  
             endif
     
             // treci interval
             if _interval > param["interval_2"]
                 // ovo je interval preko 12 mj. npr...
-                _interv_3 += _dug_1 - _pot_1
+                _int_i_3 += _dug - _pot
+                _int_k_3 += _ulaz - _izlaz  
             endif
 
             skip
 
         enddo
    
-        if ROUND( _interv_1 + _interv_2 + _interv_3 + _saldo_1, 2 ) == 0 .and. param["prikaz_nule"] == "N"    
+        if ROUND( _int_i_1 + _int_i_2 + _int_i_3 + _saldo_i, 2 ) == 0 .and. param["prikaz_nule"] == "N"    
             // preskoci...
         else
             // ubaci u pomocnu tabelu podatke
             _fill_tmp_tbl( _id_konto, konto->naz, _id_roba, _roba_naz, ; 
-                _interv_1, _interv_2, _interv_3, _saldo_1 )
+                _int_k_1, _int_k_2, _int_k_3, _int_i_1, _int_i_2, _int_i_3, _saldo_k, _saldo_i )
         endif
    
         select mat_suban
@@ -223,7 +252,8 @@ return _ret
 // -----------------------------------------------
 static function _show_report( param, line )
 local _rbr := 0
-local _u_int_1, _u_int_2, _u_int_3, _u_saldo
+local _u_int_k_1, _u_int_k_2, _u_int_k_3, _u_saldo_k, _u_saldo_i
+local _t_int_k_1, _t_int_k_2, _t_int_k_3, _t_saldo_k, _t_saldo_i
 local _mark_pos := 0
 local _id_konto, _konto_naz
 
@@ -234,20 +264,28 @@ select r_export
 set order to tag "1"
 go top
 
-_t_int_1 := 0
-_t_int_2 := 0
-_t_int_3 := 0
-_t_saldo := 0
+_t_int_k_1 := 0
+_t_int_k_2 := 0
+_t_int_k_3 := 0
+_t_int_i_1 := 0
+_t_int_i_2 := 0
+_t_int_i_3 := 0
+_t_saldo_k := 0
+_t_saldo_i := 0
 
 do while !EOF()
 
     _id_konto := field->id_konto
     _konto_naz := field->konto_naz
  
-    _u_int_1 := 0
-    _u_int_2 := 0
-    _u_int_3 := 0
-    _u_saldo := 0
+    _u_int_k_1 := 0
+    _u_int_k_2 := 0
+    _u_int_k_3 := 0
+    _u_int_i_1 := 0
+    _u_int_i_2 := 0
+    _u_int_i_3 := 0
+    _u_saldo_k := 0
+    _u_saldo_i := 0
 
     do while !EOF() .and. field->id_konto == _id_konto
 
@@ -259,22 +297,40 @@ do while !EOF()
 
         _mark_pos := pcol()
     
-        @ prow(), pcol() + 1 SAY field->inter_1 PICT _pic
-        @ prow(), pcol() + 1 SAY field->inter_2 PICT _pic
-        @ prow(), pcol() + 1 SAY field->inter_3 PICT _pic
-        @ prow(), pcol() + 1 SAY field->saldo   PICT _pic
+        // kolicine
+        @ prow(), pcol() + 1 SAY field->inter_k_1 PICT _pic
+        @ prow(), pcol() + 1 SAY field->inter_i_1 PICT _pic
+        
+        @ prow(), pcol() + 1 SAY field->inter_k_2 PICT _pic
+        @ prow(), pcol() + 1 SAY field->inter_i_2 PICT _pic
+        
+        @ prow(), pcol() + 1 SAY field->inter_k_3 PICT _pic
+        @ prow(), pcol() + 1 SAY field->inter_i_3 PICT _pic
+        
+        @ prow(), pcol() + 1 SAY field->saldo_k   PICT _pic
+        @ prow(), pcol() + 1 SAY field->saldo_i   PICT _pic
 
         // total po kontu
-        _u_int_1 += field->inter_1
-        _u_int_2 += field->inter_2
-        _u_int_3 += field->inter_3
-        _u_saldo += field->saldo
+        _u_int_k_1 += field->inter_k_1
+        _u_int_k_2 += field->inter_k_2
+        _u_int_k_3 += field->inter_k_3
+        _u_saldo_k += field->saldo_k
+ 
+        _u_int_i_1 += field->inter_i_1
+        _u_int_i_2 += field->inter_i_2
+        _u_int_i_3 += field->inter_i_3
+        _u_saldo_i += field->saldo_i
     
         // ukupni total
-        _t_int_1 += field->inter_1
-        _t_int_2 += field->inter_2
-        _t_int_3 += field->inter_3
-        _t_saldo += field->saldo
+        _t_int_k_1 += field->inter_k_1
+        _t_int_k_2 += field->inter_k_2
+        _t_int_k_3 += field->inter_k_3
+        _t_saldo_k += field->saldo_k
+    
+        _t_int_i_1 += field->inter_i_1
+        _t_int_i_2 += field->inter_i_2
+        _t_int_i_3 += field->inter_i_3
+        _t_saldo_i += field->saldo_i
 
         skip
 
@@ -286,10 +342,14 @@ do while !EOF()
     @ prow() + 1, 0 SAY PADR( " kt:", 4 )
     @ prow(), pcol() + 1 SAY PADR( _id_konto, 10 )
     @ prow(), pcol() + 1 SAY PADR( _konto_naz, 40 )
-    @ prow(), pcol() + 1 SAY _u_int_1 PICT _pic
-    @ prow(), pcol() + 1 SAY _u_int_2 PICT _pic
-    @ prow(), pcol() + 1 SAY _u_int_3 PICT _pic
-    @ prow(), pcol() + 1 SAY _u_saldo PICT _pic
+    @ prow(), pcol() + 1 SAY _u_int_k_1 PICT _pic
+    @ prow(), pcol() + 1 SAY _u_int_i_1 PICT _pic
+    @ prow(), pcol() + 1 SAY _u_int_k_2 PICT _pic
+    @ prow(), pcol() + 1 SAY _u_int_i_2 PICT _pic
+    @ prow(), pcol() + 1 SAY _u_int_k_3 PICT _pic
+    @ prow(), pcol() + 1 SAY _u_int_i_3 PICT _pic
+    @ prow(), pcol() + 1 SAY _u_saldo_k PICT _pic
+    @ prow(), pcol() + 1 SAY _u_saldo_i PICT _pic
 
     ? line
 
@@ -301,10 +361,14 @@ enddo
 
 @ prow(), _mark_pos SAY ""
 
-@ prow(), pcol() + 1 SAY _t_int_1 PICT _pic
-@ prow(), pcol() + 1 SAY _t_int_2 PICT _pic
-@ prow(), pcol() + 1 SAY _t_int_3 PICT _pic
-@ prow(), pcol() + 1 SAY _t_saldo PICT _pic
+@ prow(), pcol() + 1 SAY _t_int_k_1 PICT _pic
+@ prow(), pcol() + 1 SAY _t_int_i_1 PICT _pic
+@ prow(), pcol() + 1 SAY _t_int_k_2 PICT _pic
+@ prow(), pcol() + 1 SAY _t_int_i_2 PICT _pic
+@ prow(), pcol() + 1 SAY _t_int_k_3 PICT _pic
+@ prow(), pcol() + 1 SAY _t_int_i_3 PICT _pic
+@ prow(), pcol() + 1 SAY _t_saldo_k PICT _pic
+@ prow(), pcol() + 1 SAY _t_saldo_i PICT _pic
 
 ? line
 
@@ -335,13 +399,14 @@ _line += REPLICATE( "-", 10 )
 _line += SPACE(1)
 _line += REPLICATE( "-", 40 )
 _line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+_line += REPLICATE( "-", 25 )
 _line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+_line += REPLICATE( "-", 25 )
 _line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+_line += REPLICATE( "-", 25 )
 _line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+_line += REPLICATE( "-", 25 )
+
 
 return _line
 
@@ -390,21 +455,21 @@ _r_line_1 += PADR( "", 41 )
 _r_line_2 += PADR( "      N A Z I V   A R T I K L A", 41 )
 _r_line_3 += PADR( "", 41 )
 
-_r_line_1 += PADR( " VRIJEDNOST", 13 )
-_r_line_2 += PADR( "    DO", 13 )
-_r_line_3 += PADR( "   " + ALLTRIM(str(param["interval_1"], 3)) + " mj.", 13 )
+_r_line_1 += PADR( "           DO " + ALLTRIM(str(param["interval_1"], 3)) + " mj.", 26 )
+_r_line_2 += PADR( "", 26 )
+_r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
 
-_r_line_1 += PADR( " VRIJEDNOST", 13 )
-_r_line_2 += PADR( "  OD " + ALLTRIM(str(param["interval_1"], 3)) + " mj.", 13 )
-_r_line_3 += PADR( "  DO " + ALLTRIM(str(param["interval_2"], 3)) + " mj.", 13 )
+_r_line_1 += PADR( "       OD " + ALLTRIM(str(param["interval_1"], 3)) + " mj.", 26 )
+_r_line_2 += PADR( "       DO " + ALLTRIM(str(param["interval_2"], 3)) + " mj.", 26 )
+_r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
 
-_r_line_1 += PADR( " VRIJEDNOST", 13 )
-_r_line_2 += PADR( "   PREKO", 13 )
-_r_line_3 += PADR( "   " + ALLTRIM(str(param["interval_2"], 3)) + " mj.", 13 )
+_r_line_1 += PADR( "     PREKO " + ALLTRIM(str(param["interval_2"], 3)) + " mj.", 26 )
+_r_line_2 += PADR( "", 26 )
+_r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
 
-_r_line_1 += PADR( "   UKUPNA", 13 )
-_r_line_2 += PADR( " VRIJEDNOST", 13 )
-_r_line_3 += PADR( "", 13 )
+_r_line_1 += PADR( "  UKUPNE VRIJEDNOSTI", 26 )
+_r_line_2 += PADR( "", 26 )
+_r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
 
 
 ? line
@@ -431,6 +496,7 @@ local _date := DATE()
 local _int_1 := 6
 local _int_2 := 12
 local _nule := "N"
+local _ulazi := "D"
 
 Box(, 10, 70 )
 
@@ -461,6 +527,9 @@ Box(, 10, 70 )
     @ m_x + _cnt, m_y + 2 SAY "Interval 2 (mj):" GET _int_2 PICT "999"
 
     ++ _cnt
+    @ m_x + _cnt, m_y + 2 SAY "Gledati samo ulazne dokumente (D/N)?" GET _ulazi ;
+            VALID _ulazi $ "DN" PICT "!@"
+ 
     ++ _cnt
     @ m_x + _cnt, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule ;
             VALID _nule $ "DN" PICT "!@"
@@ -482,6 +551,7 @@ params["artikli"] := _artikli
 params["interval_1"] := _int_1
 params["interval_2"] := _int_2
 params["prikaz_nule"] := _nule
+params["samo_ulazi"] := _ulazi
 
 return _ret
 
@@ -491,7 +561,7 @@ return _ret
 // filovanje pomocne tabele 
 // ------------------------------------------------
 static function _fill_tmp_tbl( id_konto, konto_naz, id_roba, roba_naz, ; 
-            interval_1, interval_2, interval_3, saldo )
+            int_k_1, int_k_2, int_k_3, int_i_1, int_i_2, int_i_3, saldo_k, saldo_i )
 
 local _arr := SELECT()
 
@@ -505,10 +575,14 @@ replace field->id_konto with id_konto
 replace field->konto_naz with konto_naz
 replace field->id_roba with id_roba
 replace field->roba_naz with roba_naz
-replace field->inter_1 with interval_1
-replace field->inter_2 with interval_2
-replace field->inter_3 with interval_3
-replace field->saldo with saldo
+replace field->inter_k_1 with int_k_1
+replace field->inter_k_2 with int_k_2
+replace field->inter_k_3 with int_k_3
+replace field->inter_i_1 with int_i_1
+replace field->inter_i_2 with int_i_2
+replace field->inter_i_3 with int_i_3
+replace field->saldo_k with saldo_k
+replace field->saldo_i with saldo_i
 
 select (_arr)
 
@@ -525,10 +599,14 @@ AADD( _dbf, { "id_konto", "C", 7, 0 } )
 AADD( _dbf, { "konto_naz","C", 50, 0 } )
 AADD( _dbf, { "id_roba", "C", 10, 0 } )
 AADD( _dbf, { "roba_naz","C", 50, 0 } )
-AADD( _dbf, { "inter_1", "N", 15, 3 } )
-AADD( _dbf, { "inter_2", "N", 15, 3 } )
-AADD( _dbf, { "inter_3", "N", 15, 3 } )
-AADD( _dbf, { "saldo", "N", 15, 3 } )
+AADD( _dbf, { "inter_k_1", "N", 15, 3 } )
+AADD( _dbf, { "inter_k_2", "N", 15, 3 } )
+AADD( _dbf, { "inter_k_3", "N", 15, 3 } )
+AADD( _dbf, { "inter_i_1", "N", 15, 3 } )
+AADD( _dbf, { "inter_i_2", "N", 15, 3 } )
+AADD( _dbf, { "inter_i_3", "N", 15, 3 } )
+AADD( _dbf, { "saldo_k", "N", 15, 3 } )
+AADD( _dbf, { "saldo_i", "N", 15, 3 } )
 
 // kreiraj tabelu
 t_exp_create( _dbf )

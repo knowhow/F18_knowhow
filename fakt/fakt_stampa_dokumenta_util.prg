@@ -1,20 +1,21 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out d.o.o Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+
 
 #include "fakt.ch"
 
 function KatBr()
 if roba->(fieldpos("KATBR"))<>0
   if !empty(roba->katbr)
-     return " ("+trim(roba->katbr)+")"
+     return " (" + TRIM(roba->katbr) + ")"
   endif
 endif
 return ""
@@ -24,46 +25,17 @@ function GetRegion()
 local cRegion:=" "
 local nArr
 
-nArr:=SELECT()
+nArr := SELECT()
 SELECT (F_ROBA)
 if !USED()
   O_ROBA
 endif
+
 if ROBA->(FIELDPOS("IDTARIFA2")<>0)
    cRegion := Pitanje( , "Porezi za region (1/2/3) ?" , "1" , " 123" )
 endif
 SELECT (nArr)
 return cRegion
-
-
-/*! \fn NSRNPIIdRoba(cSR,fSint)
- *  \brief Nasteli sif->roba na fakt_pripr->idroba
- *  \param cSR
- *  \param fSint  - ako je fSint:=.t. sinteticki prikaz
- */
- 
-function NSRNPIdRoba(cSR,fSint)
-if fSint=NIL
-  fSint:=.f.
-endif
-
-IF cSR==NIL; cSR:=fakt_pripr->IdRoba; ENDIF
-SELECT ROBA
-IF (gNovine=="D" .or.  fSint)
-  hseek PADR(LEFT(cSR,gnDS),LEN(cSR))
-  IF !FOUND() .or. ROBA->tip!="S"
-    hseek cSR
-  ENDIF
-ELSE
-  hseek cSR
-ENDIF
-IF SELECT("PRIPR")!=0
-  select fakt_pripr
-ELSE
-  SELECT (F_PRIPR)
-ENDIF
-
-return
 
 /*! \fn GetRtmFile(cDefRtm)
  *  \brief Vraca naziv rtm fajla za stampu
@@ -91,7 +63,6 @@ BoxC()
 return cRet
 
 
-// prebacio u funkcije iz fakt.ch #command
 function pocni_stampu()
 	if !lSSIP99 .and. !StartPrint()
 		close all
@@ -105,24 +76,39 @@ function zavrsi_stampu()
 	endif
 return
 
- 
-function JokSBr()
-if "U" $ TYPE("BK_SB")
-	BK_SB := .f.
+function StampTXT(cIdFirma, cIdTipDok, cBrDok, lJFill)
+private InPicDEM:=PicDEM
+private InPicCDEM:=PicCDEM  
+
+if lJFill == nil
+        lJFill := .f.
 endif
-return IF(gNW=="R","  KJ/KG ", IIF(glDistrib,"", IIF(BK_SB, "  BARKOD   ", "Ser.broj")))
 
-/*! \fn Koef(cDinDem)
- *  \brief Konverzija valute
- *  \param cDinDem
- */
- 
-function Koef(cdindem)
-local nNaz,nRet,nArr,dDat
-
-if cDinDem==left(ValSekund(),3)
-	return 1/UbaznuValutu(datdok)
+if cIdFirma == nil
+  StDokPDV()
 else
- 	return 1
+  StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
 endif
+    
+return
+
+
+// fakt_zagl_firma()
+// Ispis zaglavlja na izvjestajima
+function fakt_zagl_firma()
+?
+
+P_12CPI
+U_OFF
+B_OFF
+I_OFF
+
+?? "Subjekt:"; U_ON; ?? PADC(TRIM(gTS) + " " + TRIM(gNFirma), 39); U_OFF
+?  "Prodajni objekat:"; U_ON; ?? PADC(ALLTRIM(NazProdObj()), 30) ; U_OFF
+?  "(poslovnica-poslovna jedinica)"
+?  "Datum:"; U_ON; ?? PADC(SrediDat(DATDOK),18); U_OFF
+?
+?
+return
+
 

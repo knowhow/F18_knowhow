@@ -210,6 +210,14 @@ return .t.
 // geerise public vars wId, wNaz ..
 // sa vrijednostima dbf polja Id, Naz 
 // -------------------------------------
+
+function set_global_memvars_from_dbf(zn)
+
+return set_global_vars_from_dbf(zn)
+
+// --------------------------------------------------
+// TODO: imee set_global_vars_from_dbf je legacy
+// --------------------------------------------------
 function set_global_vars_from_dbf(zn)
 
 local _i, _struct, _field, _var

@@ -48,34 +48,6 @@ function Scatter(cZn)
 return set_global_vars_from_dbf(cZn)
 
 
-
-function Gather(cZn)
-
-local i, aStruct
-local _field_b
-local _ime_p
-local cVar
-
-if cZn==nil
-  cZn:="_"
-endif
-aStruct:=DBSTRUCT()
- 
-for i:=1 to len(aStruct)
-     _field_b := FIELDBLOCK(_ime_p := aStruct[i,1])
-
-     // cImeP - privatna var
-     cVar := cZn + _ime_p
-
-     IF "U" $ TYPE(cVar)
-         MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + _ime_p)
-     ELSE
-            EVAL(_field_b, EVAL(MEMVARBLOCK(cVar)) )
-     ENDIF
-next
-
-return nil
-
 function GatherR(cZn)
 local i,j,aStruct
 

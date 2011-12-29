@@ -1320,7 +1320,7 @@ function rnal_aops_att_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "rnal_aops_att"
-local _index_tag := "1"
+local _index_tag := "2"
 local _field_tag := "aop_id::char(10) || aop_att_id::char(10)"
 
 
@@ -1335,7 +1335,7 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 next
 
-_result := sifrarnik_from_sql_server( _tbl, algoritam, F_AOPS_ATT, { "aop_att_id", "aop_id", "aop_att_de", "aop_att_fu", "in_art_des", "match_code" }, _index_tag, _field_tag )
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_AOPS_ATT, { "aop_att_id", "aop_id", "aop_att_de", "aop_att_fu", "aop_att_jo", "in_art_des", "match_code" }, _index_tag, _field_tag )
 
 lock_semaphore( _tbl, "free" )
 
@@ -1523,7 +1523,7 @@ local _result := .f.
 local _i
 local _tbl := "rnal_ral"
 local _index_tag := "1"
-local _field_tag := "id::char(5)"
+local _field_tag := "id::char(5), gl_tick::char(2)"
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 

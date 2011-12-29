@@ -57,7 +57,7 @@ O_RAL
 // setuj kolone tabele
 set_a_kol( @ImeKol, @Kol )
 
-PostojiSifra(F_RAL, 1, 12, 70, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+PostojiSifra(F_RAL, 1, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
 
 return
 
@@ -80,7 +80,7 @@ aImeKol := {}
 AADD(aImeKol, {PADC("RAL", 5), {|| id }, "id", {|| .t.}, {|| .t.}})
 AADD(aImeKol, {PADC("Debljina", 8), {|| gl_tick }, "gl_tick", ;
 	{|| .t.}, {|| .t.}})
-AADD(aImeKol, {PADC("Naziv", 20), {|| PADR(desc, 20)}, "desc"})
+AADD(aImeKol, {PADC("Naziv", 20), {|| PADR(descr, 20)}, "descr"})
 AADD(aImeKol, {PADC("en.naziv", 20), {|| PADR(en_desc, 20)}, "en_desc"})
 AADD(aImeKol, {PADC("Boja 1", 10), {|| col_1 }, "col_1"})
 AADD(aImeKol, {PADC("% boje 1", 12), {|| colp_1 }, "colp_1"})

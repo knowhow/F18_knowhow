@@ -186,7 +186,7 @@ AADD(gaDBFs, { F_E_ATT, "E_ATT", "rnal_e_att", {|alg| rnal_e_att_from_sql_server
 AADD(gaDBFs, { F_CUSTOMS, "CUSTOMS", "rnal_customs", {|alg| rnal_customs_from_sql_server(alg) }, "IDS", { {"cust_id", 10} }, {|x| "CUST_ID=" + STR(x["cust_id"], 10) }, "1" } )
 AADD(gaDBFs, { F_CONTACTS, "CONTACTS", "rnal_contacts", {|alg| rnal_contacts_from_sql_server(alg) }, "IDS", { {"cust_id", 10}, {"cont_id", 10} }, {|x| "CUST_ID=" + STR( x["cust_id"], 10) + " AND CONT_ID=" + STR( x["cont_id"], 10)}, "2" } )
 AADD(gaDBFs, { F_OBJECTS, "OBJECTS", "rnal_objects", {|alg| rnal_objects_from_sql_server(alg) }, "IDS", { {"obj_id", 10} }, {|x| "OBJ_ID=" + STR( x["obj_id"], 10) }, "1" } )
-AADD(gaDBFs, { F_RAL, "RAL", "rnal_ral", {|alg| rnal_ral_from_sql_server(alg) }, "IDS", { {"id", 5} }, {|x| "OBJ_ID=" + STR( x["obj_id"] ) }, "1" } )
+AADD(gaDBFs, { F_RAL, "RAL", "rnal_ral", {|alg| rnal_ral_from_sql_server(alg) }, "IDS", { {"id", 5}, {"gl_tick", 2} }, {|x| "ID=" + STR( x["id"], 10 ) + " AND GL_TICK=" + STR(x["gl_tick"], 2) }, "1" } )
 
 // modul EPDV
 AADD(gaDBFs, { F_P_KIF, "P_KIF", "p_epdv_kif"  } )

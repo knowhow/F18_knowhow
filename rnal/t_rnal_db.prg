@@ -535,6 +535,7 @@ AADD(aDBf,{ "aop_id", "N", 10, 0 })
 AADD(aDBf,{ "aop_att_de", "C", 100, 0 })
 AADD(aDBf,{ "aop_att_fu", "C", 100, 0 })
 AADD(aDBf,{ "in_art_des", "C", 1, 0 })
+AADD(aDBf,{ "aop_att_jo", "C", 20, 0 })
 AADD(aDBf,{ "match_code", "C", 10, 0 })
 
 return aDbf

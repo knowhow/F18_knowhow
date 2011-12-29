@@ -35,8 +35,8 @@ static __aop_sep
 // cId - artikal id
 // ------------------------------------------------
 function s_articles( cId, lAutoFind, lQuickFind )
-local nBoxX := 22
-local nBoxY := 77
+local nBoxX := maxrows() - 4
+local nBoxY := maxcols() - 4
 local nTArea
 local cHeader
 local cFooter
@@ -172,7 +172,7 @@ local nTRec := RecNO()
 local nRet
 
 // prikazi box preview
-box_preview( 17, 1, 77 )
+box_preview( maxrows() - 9, 2, maxcols() - 3 )
 
 do case
     

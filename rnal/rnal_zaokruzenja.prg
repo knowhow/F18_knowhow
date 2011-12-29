@@ -307,6 +307,11 @@ static function z_po_gn(nDimenzija)
 local aGN := {}
 local nRet := 0
 
+// ako se ne koriste gn zaokruzenja
+if gGnUse == "N"
+    return nDimenzija
+endif
+
 // definisi matricu GN-a
 aGN := arr_gn()
 

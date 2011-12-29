@@ -256,6 +256,7 @@ public gInsTimeOut := 150
 public gGnMin := 20
 public gGnMax := 6000
 public gGnStep := 30
+public gGnUse := "D"
 
 ::super:setTGVars()
 
@@ -274,6 +275,7 @@ Rpar( "a3", @gMaxWidth )
 Rpar( "a4", @gMaxHeigh )
 Rpar( "a5", @gDefNVM )
 Rpar( "to", @gInsTimeOut )
+Rpar( "g0", @gGnUse )
 Rpar( "g1", @gGnMin )
 Rpar( "g2", @gGnMax )
 Rpar( "g3", @gGnStep )

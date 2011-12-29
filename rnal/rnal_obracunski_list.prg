@@ -546,7 +546,9 @@ endif
 ? cLine
 
 // prikazi GN tabelu.....
-s_gn_tbl()
+if gGnUse == "D"
+    s_gn_tbl()
+endif
 
 // prikazi rekapitulaciju dodatnog repromaterijala
 s_nal_rekap( lPrintRek )

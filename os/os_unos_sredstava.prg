@@ -15,7 +15,6 @@
 function unos_osnovnih_sredstava()
 private cId:=space(10), cIdRj:=space(4)
 
-MsgBeep( hb_Utf8ToStr("F18 unos promjena ne funkcioniše !##Opciju koristite samo za pregled za sada !") )
 
 Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
 do while .t.

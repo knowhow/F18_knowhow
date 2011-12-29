@@ -8,6 +8,9 @@
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+#include "fmk.ch"
+#include "hbgtinfo.ch"
+#include "hbcompat.ch"
 
 static __server := NIL
 static __server_params := NIL
@@ -20,26 +23,47 @@ static __test_mode := .f.
 static __max_rows := 40
 static __max_cols := 140
 
-#include "fmk.ch"
 
-// -------------------------
-// -------------------------
+// ---------------------------------
+// 
+// ---------------------------------
 function f18_init_app()
 local _ini_params
 local _key
+local _ret_login
 
 REQUEST DBFCDX
+
+REQUEST DBFCDX
+
+#ifdef __PLATFORM__WINDOWS
+
+ // REQUEST HB_GT_WIN
+ // REQUEST HB_GT_WIN_DEFAULT
+ REQUEST HB_GT_WVT
+ REQUEST HB_GT_WVT_DEFAULT
+  
+#else
+
+  //REQUEST HB_GT_CRS_DEFAULT
+  REQUEST HB_GT_XWC_DEFAULT
+
+#endif
 
 RDDSETDEFAULT( RDDENGINE )
 
 REQUEST HB_CODEPAGE_SL852 
 REQUEST HB_CODEPAGE_SLISO
 
+hb_setCodePage("SL852" )
+hb_setTermCP("SLISO")
+hb_CdpSelect("SL852")
+
+
 SET DELETED ON
 
 SETCANCEL(.f.)
 
-HB_CDPSELECT("SL852")
 
 if setmode(MAXROWS(), MAXCOLS())
    ? "hej mogu setovati povecani ekran !"
@@ -107,47 +131,45 @@ if VALTYPE(__server_params["port"]) == "C"
 endif
 __server_params["password"] := __server_params["user"]
 
+// pokusaj se logirati kao user/user
 if !my_server_login()
-    // pokusaj se logirati kao user/user
- 	_form_login(@__server_params)
+
+    // ako ne idi na login formu
+    _ret_login := 0
+    do while _ret_login <> -1
+      _ret_login := _form_login(@__server_params) 
+      if _ret_login == 1
+         exit
+      endif
+    enddo
+
+    Beep(4)
+    if (_ret_login == -1)
+        // neuspjesan login, korisnik odustaje od prijave
+        f18_no_login_quit()
+    endif
+
 endif
 
 
-if my_server_login()
-
-   for each _key in _ini_params:Keys
-      _ini_params[_key] := __server_params[_key] 
-   next
-   if !f18_ini_write(F18_SERVER_INI_SECTION + IIF(test_mode(), "_test", ""), _ini_params, .t.)
-      MsgBeep("problem ini write")
-   endif
-
-
-   // ~/.F18/empty38/
-   set_f18_home( my_server_params()["database"] )
-   log_write("home baze: " + my_home())
-
-   cre_all_dbfs()
-   dbf_update()
-
-   check_server_db_version()
-
-   return .t.
-else
-
-   log_write( "direct login: " + ;
-		my_server_params()["host"] + " / " + ;
-		my_server_params()["database"] + " / " + ;
-		my_server_params()["user"] + " / " +  ;
-		STR(my_server_params()["port"])  + " / " + ; 
-		my_server_params()["schema"])
-
-   MsgBeep("Ne mogu se prijaviti na server !##Za detalje pogledajte log: " + F18_LOG_FILE)
-   log_close() 
-   QUIT
+for each _key in _ini_params:Keys
+    _ini_params[_key] := __server_params[_key] 
+next
+if !f18_ini_write(F18_SERVER_INI_SECTION + IIF(test_mode(), "_test", ""), _ini_params, .t.)
+    MsgBeep("problem ini write")
 endif
 
-return .f.
+
+// ~/.F18/empty38/
+set_f18_home( my_server_params()["database"] )
+log_write("home baze: " + my_home())
+
+cre_all_dbfs()
+dbf_update()
+
+check_server_db_version()
+
+return .t.
 
 
 // ------------------------------------------------------------
@@ -186,52 +208,36 @@ function maxcols()
 return __max_cols
 
 
-// ---------------------------
-// ---------------------------
+// ------------------------------------------
+// ret: -1: <ESC> iz unosa
+//       0: neuspjesno logiranje na server
+//       1: ok
+// ------------------------------------------
 static function _form_login(server_params)
 local _server
 
-if ! f18_login_screen(@server_params) 
-	return .f.
+if !f18_login_screen(@server_params) 
+    return -1
 endif
 
 if my_server_login( server_params )
 
   log_write( "form login: " + ;
-		server_params["host"] + " / " + ;
-		server_params["database"] + " / " + ;
-		server_params["user"] + " / " +  ;
-		STR(my_server_params()["port"])  + " / " + ;
-		server_params["schema"])
-  return .t.
+        server_params["host"] + " / " + ;
+        server_params["database"] + " / " + ;
+        server_params["user"] + " / " +  ;
+        STR(my_server_params()["port"])  + " / " + ;
+        server_params["schema"])
+  return 1
 endif
 
-return .f.
-
-/*
-    _server := my_server()
- 
-    log_write( "nisam se uspio zakaciti ni drugi put sa parametrima..." )  
-	clear screen
-  	?
-  	? "Greska sa konekcijom na server:"
-  	? "==============================="
-    
-    if _server != NIL
-  	  ? _server:ErrorMsg()
-  	  log_write( _server:ErrorMsg() )
-    endif
-
-  	inkey(0)
-  	quit
-*/
-
+return 0
 
 // f18, login screen
 function f18_login_screen(server_params)
 
 local cHostname, cDatabase, cUser, cPassword, nPort, cSchema
-local lSuccess := .t.	
+local lSuccess := .t.   
 local nX := 5
 local nLeft := 7
 local cConfigureServer := "N"
@@ -244,7 +250,7 @@ nPort := server_params["port"]
 cPassword := ""
 
 if (cHostName == nil) .or. (nPort == nil)
-	cConfigureServer := "D"
+    cConfigureServer := "D"
 endif 
 
 if cHostName == nil
@@ -289,12 +295,12 @@ clear screen
 read
 
 if cConfigureServer == "D"
-	++ nX
-	@ nX, nLeft SAY PADL( "Server:", 8 ) GET cHostname PICT "@S20"
-	@ nX, 37 SAY "Port:" GET nPort PICT "9999"
-	@ nX, 48 SAY "Shema:" GET cSchema PICT "@S15"
-else	
-	++ nX
+    ++ nX
+    @ nX, nLeft SAY PADL( "Server:", 8 ) GET cHostname PICT "@S20"
+    @ nX, 37 SAY "Port:" GET nPort PICT "9999"
+    @ nX, 48 SAY "Shema:" GET cSchema PICT "@S15"
+else    
+    ++ nX
 endif
 
 ++ nX
@@ -315,7 +321,7 @@ endif
 read
 
 if Lastkey() == K_ESC
-	return .f.
+    return .f.
 endif
 
 // podesi varijable
@@ -382,7 +388,7 @@ _server :=  TPQServer():New( params["host"], params["database"], params["user"],
 
 if !_server:NetErr()
     my_server(_server)
-	set_sql_search_path()
+    set_sql_search_path()
     return .t.
 else
     return .f.
@@ -473,8 +479,8 @@ function set_f18_home(database)
 local _home 
 
 if database <> nil
-	_home := hb_DirSepAdd(my_home_root() + database)
-	f18_create_dir( _home )
+    _home := hb_DirSepAdd(my_home_root() + database)
+    f18_create_dir( _home )
 endif
 
 my_home(_home)
@@ -507,3 +513,19 @@ endif
 
 return __test_mode
 
+static function f18_no_login_quit()
+
+log_write( "direct login: " + ;
+        my_server_params()["host"] + " / " + ;
+        my_server_params()["database"] + " / " + ;
+        my_server_params()["user"] + " / " +  ;
+        STR(my_server_params()["port"])  + " / " + ; 
+        my_server_params()["schema"])
+
+MsgBeep(hb_Utf8ToStr("Neuspješna prijava na server."))
+
+log_close() 
+
+QUIT
+
+return

@@ -252,4 +252,246 @@ else
    return .t.
 endif
  
+return
+
+
+// ------------------------------
+// koristi azur_sql
+// ------------------------------
+function rnal_doc_it_from_sql_server(algoritam)
+local _qry
+local _counter
+local _rec
+local _qry_obj
+local _server := pg_server()
+local _seconds
+local _x, _y
+local _dat, _ids
+local _fnd, _tmp_id
+local _count
+local _tbl
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "doc_no, doc_it_no"
+local _key_block
+local _i, _fld, _fields, _sql_fields
+
+_tbl := "fmk.rnal_doc_it"
+
+_x := maxrows() - 15
+_y := maxcols() - 20
+
+if algoritam == NIL
+    algoritam := "FULL"
+endif
+
+@ _x + 1, _y + 2 SAY "update rnal_doc_it: " + algoritam
+
+_seconds := SECONDS()
+
+_count := table_count( _tbl, "true" ) 
+
+SELECT F_DOC_IT
+my_usex ("rnal_doc_it", "doc_it", .f., "SEMAPHORE")
+
+_fields := { "doc_no", "doc_it_no", "art_id", "doc_it_wid", "doc_it_hei", "doc_it_qtt", "doc_it_alt", "doc_acity", "doc_it_sch", "doc_it_des", "doc_it_typ", "doc_it_w2", "doc_it_h2", "doc_it_pos" }
+
+_sql_fields := sql_fields(_fields)
+ 
+for _offset := 0 to _count STEP _step 
+
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl 
+  
+  if algoritam == "IDS"
+        _ids := get_ids_from_semaphore("rnal_doc_it")
+        _qry += " WHERE "
+        if LEN(_ids) < 1
+            // nema id-ova
+            _qry += "false"
+        else
+            _sql_ids := "("
+            for _i := 1 to LEN(_ids)
+                _sql_ids += _sql_quote(_ids[_i])
+                if _i < LEN(_ids)
+                    _sql_ids += ","
+                endif
+            next
+            _sql_ids += ")"
+            _qry += " (doc_no || doc_it_no ) IN " + _sql_ids
+        endif
+
+        _key_block := {|| STR( field->doc_no, 10 ) + STR( field->doc_it_no, 4 )  } 
+  endif
+
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+  DO CASE
+
+    CASE (algoritam == "FULL") .and. (_offset==0)
+        log_write( _tbl + " : synchro full algoritam") 
+        ZAP
+    
+    CASE algoritam == "IDS"
+        
+        // "1", "doc_no"
+        SET ORDER TO TAG "1"
+
+        do while .t.
+            _fnd := .f.
+            for each _tmp_id in _ids
+                
+                HSEEK _tmp_id
+                
+                do while !EOF() .and. EVAL(_key_block) == _tmp_id
+                    skip
+                    _rec := RECNO()
+                    skip -1 
+                    DELETE
+                    go _rec 
+                    _fnd := .t.
+                enddo
+            next
+            if ! _fnd 
+                exit
+            endif
+        enddo
+
+  ENDCASE
+
+  // sada je sve izbrisano u lokalnom dbf-u
+
+  _qry_obj := run_sql_query( _qry, _retry )
+
+  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
+    
+    append blank
+        
+    for _i := 1 to LEN(_fields)
+          _fld := FIELDBLOCK(_fields[_i])
+          if VALTYPE(EVAL(_fld)) $ "CM"
+              EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+          else
+              EVAL(_fld, _qry_obj:FieldGet(_i))
+          endif
+    next
+
+    _qry_obj:Skip()
+
+    _counter++
+
+    if _counter % 5000 == 0
+        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
+    endif 
+  ENDDO
+
+next
+
+USE
+
+if (gDebug > 5)
+    log_write("doc_it synchro cache:" + STR(SECONDS() - _seconds))
+endif
+
+return .t. 
+
+
+// ----------------------------------------------
+// ----------------------------------------------
+function sql_rnal_doc_it_update( op, record )
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _where := ""
+LOCAL _server := pg_server()
+
+_tbl := "fmk.rnal_doc_it"
+
+if record <> nil
+    _where := "doc_no=" + STR(record["doc_no"], 10) + " AND doc_it_no=" + STR(record["doc_it_no"], 4)
+endif
+
+DO CASE
+ CASE op == "BEGIN"
+    _qry := "BEGIN;"
+ CASE op == "END"
+    _qry := "COMMIT;"
+ CASE op == "ROLLBACK"
+    _qry := "ROLLBACK;"
+ CASE op == "del"
+    _qry := "DELETE FROM " + _tbl + ;
+             " WHERE " + _where
+ CASE op == "ins"
+    _qry := "INSERT INTO " + _tbl + ;
+                "( doc_no, doc_it_no, art_id, doc_it_wid, doc_it_hei, doc_it_qtt, doc_it_alt, doc_acity, doc_it_sch, doc_it_des, doc_it_typ, doc_it_w2, doc_it_h2, doc_it_pos ) " + ;
+               "VALUES(" + STR( record["doc_no"], 10 )  + "," +;
+                            + STR( record["doc_it_no"], 4 ) + "," +; 
+                            + STR( record["art_id"], 10 ) + "," +; 
+                            + STR( record["doc_it_wid"], 15, 5 ) + "," +;
+                            + STR( record["doc_it_hei"], 15, 5 ) + "," +;
+                            + STR( record["doc_it_qtt"], 15, 5 ) + "," +;
+                            + STR( record["doc_it_alt"], 15, 5 ) + "," +;
+                            + _sql_quote( record["doc_acity"] ) + "," +;
+                            + _sql_quote( record["doc_it_sch"] ) + "," +;
+                            + _sql_quote( record["doc_it_des"] ) + "," +;
+                            + _sql_quote( record["doc_it_typ"] ) + "," +;
+                            + STR( record["doc_it_w2"], 15, 5 ) + "," +;
+                            + STR( record["doc_it_h2"], 15, 5 ) + "," +;
+                            + _sql_quote( record["doc_it_pos"] ) + " )"
+                          
+ENDCASE
+   
+_ret := _sql_query( _server, _qry)
+
+if (gDebug > 5)
+   log_write(_qry)
+   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
+endif
+
+if VALTYPE(_ret) == "L"
+   // u slucaju ERROR-a _sql_query vraca  .f.
+   return _ret
+else
+   return .t.
+endif
+ 
+return
+
+
+// -----------------------------------------
+// -----------------------------------------
+function rnal_articles_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "rnal_articles"
+local _index_tag := "1"
+local _field_tag := "art_id::char(10)"
+
+
+for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
+
+	if get_semaphore_status( _tbl ) == "lock"
+		Msgbeep( "tabela zakljucana: " + _tbl )
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+	else
+		lock_semaphore( _tbl, "lock" )
+	endif
+
+next
+
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_ARTICLES, { "art_id", "art_desc", "art_full_d", "art_lab_de", "match_code" }, _index_tag, _field_tag )
+
+lock_semaphore( _tbl, "free" )
+
+return _result
+
+
+
+
 

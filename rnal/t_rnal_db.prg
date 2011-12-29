@@ -741,11 +741,8 @@ if (nArea==-1 .or. nArea == nArea2)
 			
 	endcase
 	
-	// dodaj backslash
-	AddBS(@cPath)
-	
-	if !FILE(f18_ime_dbf(cTable))
-		DBcreate2(cPath + cTable + ".DBF", aDbf)
+	if !FILE(f18_ime_dbf( cTable ))
+		DBcreate2( cTable + ".DBF", aDbf )
 	endif
 
 	do case 

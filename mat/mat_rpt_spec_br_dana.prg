@@ -497,6 +497,15 @@ local _int_1 := 6
 local _int_2 := 12
 local _nule := "N"
 local _ulazi := "D"
+local _curr_user := "<>"
+
+_konta := fetch_metric("mat_spec_br_dana_konta", _curr_user, _konta )
+_artikli := fetch_metric("mat_spec_br_dana_artikli", _curr_user, _artikli )
+_firma := fetch_metric("mat_spec_br_dana_firma", _curr_user, _firma )
+_int_1 := fetch_metric("mat_spec_br_dana_interval_1", _curr_user, _int_1 )
+_int_2 := fetch_metric("mat_spec_br_dana_interval_2", _curr_user, _int_2 )
+_nule := fetch_metric("mat_spec_br_dana_prikaz_nula", _curr_user, _nule )
+_ulazi := fetch_metric("mat_spec_br_dana_samo_ulazi", _curr_user, _ulazi )
 
 Box(, 10, 70 )
 
@@ -552,6 +561,16 @@ params["interval_1"] := _int_1
 params["interval_2"] := _int_2
 params["prikaz_nule"] := _nule
 params["samo_ulazi"] := _ulazi
+
+// snimi parametre
+set_metric("mat_spec_br_dana_konta", f18_user(), _konta )
+set_metric("mat_spec_br_dana_artikli", f18_user(), _artikli )
+set_metric("mat_spec_br_dana_firma", f18_user(), _firma )
+set_metric("mat_spec_br_dana_interval_1", f18_user(), _int_1 )
+set_metric("mat_spec_br_dana_interval_2", f18_user(), _int_2 )
+set_metric("mat_spec_br_dana_prikaz_nula", f18_user(), _nule )
+set_metric("mat_spec_br_dana_samo_ulazi", f18_user(), _ulazi )
+
 
 return _ret
 

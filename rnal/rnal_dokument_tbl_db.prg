@@ -88,11 +88,11 @@ CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(art_id,10)", PRIVPATH + "
 
 CREATE_INDEX("2", "STR(doc_no,10)+STR(doc_gr_no,2)+STR(doc_it_no,4)+STR(art_id,10)", PRIVPATH + "T_DOCIT")
 
-CREATE_INDEX("3", "STR(doc_no,10)+art_sh_desc", PRIVPATH + "T_DOCIT")
+CREATE_INDEX("3", "STR(doc_no,10)+art_sh_des", PRIVPATH + "T_DOCIT")
 
 CREATE_INDEX("4", "STR(art_id,10)", PRIVPATH + "T_DOCIT")
 
-CREATE_INDEX("5", "art_sh_desc", PRIVPATH + "T_DOCIT")
+CREATE_INDEX("5", "art_sh_des", PRIVPATH + "T_DOCIT")
 
 // T_DOCIT2
 // -----------------------------
@@ -118,26 +118,26 @@ AADD(aArr,{ "doc_gr_no"  , "N" ,   2 ,  0 })
 AADD(aArr,{ "doc_no"     , "N" ,  10 ,  0 })
 AADD(aArr,{ "doc_it_no"  , "N" ,   4 ,  0 })
 AADD(aArr,{ "art_id"     , "N" ,  10 ,  0 })
-AADD(aArr,{ "art_sh_desc", "C" , 150 ,  0 })
+AADD(aArr,{ "art_sh_des", "C" , 150 ,  0 })
 AADD(aArr,{ "art_desc"   , "C" , 250 ,  0 })
-AADD(aArr,{ "doc_it_qtty", "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_heigh" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_qtt", "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_hei" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_h2" , "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_width" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_wid" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_w2" , "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_type" , "C" ,  1 ,  0 })
-AADD(aArr,{ "doc_it_altt" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_typ" , "C" ,  1 ,  0 })
+AADD(aArr,{ "doc_it_alt" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_acity" , "C" ,  50 ,  0 })
-AADD(aArr,{ "doc_it_schema" , "C" ,   1 ,  0 })
-AADD(aArr,{ "doc_it_desc" , "C" , 150 ,  0 })
-AADD(aArr,{ "doc_it_total" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_sch" , "C" ,   1 ,  0 })
+AADD(aArr,{ "doc_it_des" , "C" , 150 ,  0 })
+AADD(aArr,{ "doc_it_tot" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_tm" , "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_zwidth" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_zwi" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_zw2" , "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_zheight" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_zhe" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_zh2" , "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_neto" , "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_bruto" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_net" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_bru" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_pos" , "C" ,  20 ,  0 })
 AADD(aArr,{ "print" , "C" ,  1 ,  0 })
 
@@ -150,12 +150,12 @@ AADD(aArr,{ "doc_no"     , "N" ,  10 ,  0 })
 AADD(aArr,{ "doc_op_no"  , "N" ,   4 ,  0 })
 AADD(aArr,{ "doc_it_no"  , "N" ,   4 ,  0 })
 AADD(aArr,{ "doc_el_no"  , "N" ,   4 ,  0 })
-AADD(aArr,{ "doc_el_desc", "C" , 150 ,  0 })
+AADD(aArr,{ "doc_el_des", "C" , 150 ,  0 })
 AADD(aArr,{ "aop_id"     , "N" ,  10 ,  0 })
 AADD(aArr,{ "aop_desc"   , "C" , 150 ,  0 })
 AADD(aArr,{ "aop_att_id" , "N" ,  10 ,  0 })
-AADD(aArr,{ "aop_att_desc" , "C" , 150 ,  0 })
-AADD(aArr,{ "doc_op_desc", "C" , 150 ,  0 })
+AADD(aArr,{ "aop_att_de" , "C" , 150 ,  0 })
+AADD(aArr,{ "doc_op_des", "C" , 150 ,  0 })
 AADD(aArr,{ "aop_value", "C" , 150 ,  0 })
 AADD(aArr,{ "aop_vraw", "C" , 150 ,  0 })
 
@@ -169,8 +169,8 @@ AADD(aArr,{ "doc_it_no"  , "N" ,   4 ,  0 })
 AADD(aArr,{ "it_no"      , "N" ,   4 ,  0 })
 AADD(aArr,{ "art_id"     , "C" ,  10 ,  0 })
 AADD(aArr,{ "art_desc"   , "C" , 250 ,  0 })
-AADD(aArr,{ "doc_it_qtty", "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_price", "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_qtt", "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_pri", "N" ,  15 ,  5 })
 AADD(aArr,{ "desc", 	    "C" ,  200 ,  5 })
 return
 
@@ -277,8 +277,8 @@ replace doc_it_no with nDoc_it_no
 replace it_no with nIt_no
 replace art_id with cArt_id
 replace art_desc with cArt_desc
-replace doc_it_qtty with nDoc_it_qtty
-replace doc_it_price with nDoc_it_price
+replace doc_it_qtt with nDoc_it_qtty
+replace doc_it_pri with nDoc_it_price
 replace desc with nDescr
 
 return
@@ -305,30 +305,30 @@ replace doc_no with nDoc_no
 replace doc_it_no with nDoc_it_no
 replace art_id with nArt_id
 replace art_desc with cArt_desc
-replace art_sh_desc with cArt_sh_desc
-replace doc_it_qtty with nDoc_it_qtty
-replace doc_it_heigh with nDoc_it_heigh
+replace art_sh_des with cArt_sh_desc
+replace doc_it_qtt with nDoc_it_qtty
+replace doc_it_hei with nDoc_it_heigh
 replace doc_it_h2 with nDoc_it_h2
-replace doc_it_width with nDoc_it_width
+replace doc_it_wid with nDoc_it_width
 replace doc_it_w2 with nDoc_it_w2
-replace doc_it_type with cDoc_it_type
-replace doc_it_altt with nDoc_it_altt
+replace doc_it_typ with cDoc_it_type
+replace doc_it_alt with nDoc_it_altt
 replace doc_acity with cDoc_it_city
-replace doc_it_total with nDoc_it_total
+replace doc_it_tot with nDoc_it_total
 replace doc_it_tm with nDoc_it_tm
-replace doc_it_schema with cDoc_it_schema
-replace doc_it_desc with cDoc_it_desc
+replace doc_it_sch with cDoc_it_schema
+replace doc_it_des with cDoc_it_desc
 // printanje stavki iz tabele "D" - printaj, "N" - ne printaj
 replace print with "D"
 replace doc_it_pos with cDoc_it_pos
 
 if nGNHeigh <> nil
-	replace doc_it_zheight with nGNHeigh
+	replace doc_it_zhe with nGNHeigh
 	replace doc_it_zh2 with nGNH2
-	replace doc_it_zwidth with nGNWidth
+	replace doc_it_zwi with nGNWidth
 	replace doc_it_zw2 with nGNW2
-	replace doc_it_neto with nNeto
-	replace doc_it_bruto with nBruto
+	replace doc_it_net with nNeto
+	replace doc_it_bru with nBruto
 endif
 
 return
@@ -350,12 +350,12 @@ replace doc_no with nDoc_no
 replace doc_op_no with nDoc_op_no
 replace doc_it_no with nDoc_it_no
 replace doc_el_no with nDoc_el_no
-replace doc_el_desc with cDoc_el_desc
+replace doc_el_des with cDoc_el_desc
 replace aop_id with nAop_id
 replace aop_desc with cAop_desc
 replace aop_att_id with nAop_att_id
-replace aop_att_desc with cAop_att_desc
-replace doc_op_desc with cDoc_op_desc
+replace aop_att_de with cAop_att_desc
+replace doc_op_des with cDoc_op_desc
 replace aop_value with cAop_value
 replace aop_vraw with cAop_vraw
 

@@ -59,10 +59,11 @@ set_opc_box(nGetBoxX, 50)
 @ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz , nGetBoxY - 2)
 @ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
 
-set_global_memvars_from_dbf()
 
 do while .t.
 
+    set_global_memvars_from_dbf()
+    
     nFuncRet := _e_box_item( nGetBoxX, nGetBoxY, @cGetDOper )
     
     if nFuncRet == 1
@@ -264,7 +265,7 @@ read
 ESC_RETURN 0
 
 
-if rule_items( "DOC_IT_ALTT", _doc_it_alt, aArtArr ) <> .t.
+if rule_items( "DOC_IT_ALT", _doc_it_alt, aArtArr ) <> .t.
 
 
     @ m_x + nX, m_y + 2 SAY PADL("nadm. visina [m] (*):", nLeft + 3) GET _doc_it_alt PICT "999999" VALID val_altt(_doc_it_alt) WHEN set_opc_box( nBoxX, 50, "Nadmorska visina izrazena u metrima" )

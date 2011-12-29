@@ -461,7 +461,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 
 	cDoc_it_schema := field->doc_it_sch
 	// na napomene dodaj i poziciju ako postoji...
-	cDoc_it_desc := cPosition + ALLTRIM( field->doc_it_desc )
+	cDoc_it_desc := cPosition + ALLTRIM( field->doc_it_des )
 	
 	if lZpoGN == .t.
 

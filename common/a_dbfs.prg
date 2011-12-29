@@ -167,6 +167,11 @@ AADD(gaDBFs, { F__DOC_IT2, "_DOC_IT2", "_rnal_doc_it2"  } )
 AADD(gaDBFs, { F__DOC_OPS, "_DOC_OPS", "_rnal_doc_ops"  } )
 AADD(gaDBFs, { F__FND_PAR, "_FND_PAR", "_fnd_par" } )
 
+AADD(gaDBFs, { F_T_DOCIT, "T_DOCIT", "rnal_t_docit"  } )
+AADD(gaDBFs, { F_T_DOCIT2, "T_DOCIT2", "rnal_t_docit2"  } )
+AADD(gaDBFs, { F_T_DOCOP, "T_DOCOP", "rnal_t_docop"  } )
+AADD(gaDBFs, { F_T_PARS, "T_PARS", "rnal_t_pars"  } )
+
 AADD(gaDBFs, { F_DOCS, "DOCS", "rnal_docs", {|alg| rnal_docs_from_sql_server( alg ) }, "IDS" } )
 AADD(gaDBFs, { F_DOC_IT, "DOC_IT", "rnal_doc_it", {|alg| rnal_doc_it_from_sql_server(alg) }, "IDS" } )
 AADD(gaDBFs, { F_DOC_IT2, "DOC_IT2", "rnal_doc_it2", {|alg| rnal_doc_it2_from_sql_server(alg) }, "IDS"  } )

@@ -64,7 +64,7 @@ if nArtType <> 0
 endif
 
 
-Box(,21,77)
+Box(, 21, 77)
 
 @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str(art_id) + " "
 @ m_x + 20, m_y + 1 SAY REPLICATE("Í", 77) COLOR cLineClr
@@ -82,6 +82,7 @@ _sh_piccode( __el_schema )
 for i:=1 to 19
 	@ m_x + i, m_y + 21 SAY "º" COLOR cLineClr
 next
+
 // vertikalna crta
 @ m_x + 10, m_y + 22 SAY REPLICATE("Í", 56) COLOR cLineClr
 

@@ -190,7 +190,7 @@
 #xcommand O__DOC_OPS => select (F__DOC_OPS); my_usex ("_doc_ops"); set order to tag "1"
 #xcommand O__FND_PAR => select (F__FND_PAR); my_usex ("_fnd_par"); set order to tag "1"
 #xcommand O_T_DOCIT => select (F_T_DOCIT); my_usex ("t_docit"); set order to tag "1"
-#xcommand O_T_DOCIT2 => select (F_T_DOCIT); my_usex ("t_docit2"); set order to tag "1"
+#xcommand O_T_DOCIT2 => select (F_T_DOCIT2); my_usex ("t_docit2"); set order to tag "1"
 #xcommand O_T_DOCOP => select (F_T_DOCOP); my_usex ("t_docop"); set order to tag "1"
 #xcommand O_T_PARS => select (F_T_PARS); my_usex ("t_pars"); set order to tag "id_par"
 #xcommand O__TMP1 => select (F__TMP1); my_usex ("_tmp1"); set order to tag "1"

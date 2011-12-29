@@ -673,7 +673,7 @@ return lRet
 function _new_doc_no()
 local nTArea
 local nNewDocNo
-local _rec, _id_fields, _where_bl
+local _rec, _field_ids, _where_bl
 
 private getlist:={}
 
@@ -742,10 +742,9 @@ nNewBrNal := field->doc_no + 1
 // za ovaj dokument
 select docs
 
-_rec := dbf_get_rec()
-
 appblank2(.f., .f.)   
 
+_rec := dbf_get_rec()
 _rec["doc_status"] := 3
 _rec["doc_no"] := nNewBrNal
 
@@ -757,7 +756,7 @@ endif
 _field_ids := { {"doc_no", 10} }
 _where_bl := {|x| "DOC_NO=" + STR( x["doc_no"], 10 ) }
 
-update_rec_server_and_dbf( nil, _rec, _id_fields, _where_bl )
+update_rec_server_and_dbf( nil, _rec, _field_ids, _where_bl )
 
 DBUnlock()
 
@@ -796,7 +795,7 @@ go top
 _rec := dbf_get_rec()
 
 _rec["doc_no"] := nDoc_no
-if EMPTY(_doc_time)
+if EMPTY( _rec["doc_time"] )
     _rec["doc_time"] := PADR( TIME(), 5 )
 endif
 dbf_update_rec( _rec )

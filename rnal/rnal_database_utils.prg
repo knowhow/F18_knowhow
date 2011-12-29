@@ -241,6 +241,7 @@ function _set_sif_id(nId, cIdField, lAuto )
 local nTArea := SELECT()
 local nTime
 local cIndex
+local _rec
 private GetList:={}
 
 if lAuto == nil
@@ -290,7 +291,7 @@ endif
 
 _inc_id(@nId, cIdField, cIndex, lAuto )
 
-Scatter()
+set_global_memvars_from_dbf()
 
 appblank2(.f., .f.)   
 
@@ -298,8 +299,10 @@ cIdField := "_" + cIdField
 
 &cIdField := nId
 
-Gather2()
-
+_rec := hb_hash()
+_rec := get_dbf_global_memvars()        
+dbf_update_rec( _rec )
+        
 DBUnlock()
 
 select (nTArea)

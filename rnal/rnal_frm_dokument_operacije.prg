@@ -38,10 +38,11 @@ local nGetBoxY := 70
 local cBoxNaz := "unos dodatnih operacija stavke"
 local nRet := 0
 local nFuncRet := 0
+local _rec
 private GetList:={}
 
 if nItem_no == nil
-	nItem_no := 0
+    nItem_no := 0
 endif
 
 _doc := nDoc_no
@@ -50,7 +51,7 @@ __art_id := nArt_id
 _from_article := .f.
 
 if nItem_no > 0
-	_from_article := .t.
+    _from_article := .t.
 endif
 
 _a_arr := {}
@@ -64,13 +65,13 @@ _g_art_elements( @_a_elem, __art_id )
 __art_type := LEN(_a_elem)
 
 if lNew == nil
-	lNew := .t.
+    lNew := .t.
 endif
 
 l_new_ops := lNew
 
 if l_new_ops == .f.
-	cBoxNaz := "ispravka dodatne operacije stavke"
+    cBoxNaz := "ispravka dodatne operacije stavke"
 endif
 
 select _doc_ops
@@ -82,34 +83,38 @@ set_opc_box( nGetBoxX, 50 )
 @ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz, nGetBoxY - 2)
 @ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
 
-Scatter()
+set_global_memvars_from_dbf()
 
 do while .t.
 
-	nFuncRet := _e_box_item( nGetBoxX, nGetBoxY )
-	
-	if nFuncRet == 1
-		
-		select _doc_ops
-		
-		if l_new_ops
-			append blank
-		endif
-		
-		Gather()
-		
-		if l_new_ops
-			loop
-		endif
-		
-	endif
-	
-	BoxC()
-	select _doc_ops
-	
-	nRet := RECCOUNT2()
-	
-	exit
+    nFuncRet := _e_box_item( nGetBoxX, nGetBoxY )
+    
+    if nFuncRet == 1
+        
+        select _doc_ops
+        
+        if l_new_ops
+            append blank
+        endif
+       
+         _rec := hb_hash()
+        _rec := get_dbf_global_memvars()
+        
+        dbf_update_rec( _rec )
+            
+        
+        if l_new_ops
+            loop
+        endif
+        
+    endif
+    
+    BoxC()
+    select _doc_ops
+    
+    nRet := RECCOUNT2()
+    
+    exit
 
 enddo
 
@@ -138,25 +143,25 @@ go top
 seek docno_str( nDoc_no ) + docit_str( nSrchItem )
 
 do while !EOF() .and. field->doc_no == nDoc_no ;
-		.and. field->doc_it_no == nSrchItem
+        .and. field->doc_it_no == nSrchItem
 
-	skip 1
-	
-	nRec := RECNO()
-	
-	skip -1
-	
-	Scatter()
-	
-	append blank
-	
-	_doc_it_no := nDoc_it_no
-	
-	Gather()
-	
-	++ nCnt
-	
-	go (nRec)
+    skip 1
+    
+    nRec := RECNO()
+    
+    skip -1
+    
+    Scatter()
+    
+    append blank
+    
+    _doc_it_no := nDoc_it_no
+    
+    Gather()
+    
+    ++ nCnt
+    
+    go (nRec)
 
 enddo
 
@@ -164,7 +169,7 @@ select (nTArea)
 go (nTRec)
 
 if nCnt > 0
-	msgbeep("Kopirano: " + ALLTRIM(STR(nCnt)) + " operacija !")
+    msgbeep("Kopirano: " + ALLTRIM(STR(nCnt)) + " operacija !")
 endif
 
 return
@@ -187,23 +192,23 @@ local nTick := 0
 
 if l_new_ops
 
-	_doc_no := _doc
-	_doc_op_no := inc_docop( _doc )
-	_doc_it_el_no := 0
-	_aop_id := 0
-	_aop_att_id := 0
-	_doc_op_desc := PADR("", LEN(_doc_op_desc))
-	_doc_it_no := __item_no
-	_aop_value := PADR("", LEN( _aop_value ))
-	
-	cAop := PADR("", 10)
-	cAopAtt := PADR("", 10)
+    _doc_no := _doc
+    _doc_op_no := inc_docop( _doc )
+    _doc_it_el_no := 0
+    _aop_id := 0
+    _aop_att_id := 0
+    _doc_op_desc := PADR("", LEN(_doc_op_desc))
+    _doc_it_no := __item_no
+    _aop_value := PADR("", LEN( _aop_value ))
+    
+    cAop := PADR("", 10)
+    cAopAtt := PADR("", 10)
 
 else
-	
-	cAop := PADL( STR(_aop_id, 10), 10 )
-	cAopAtt := PADL( STR(_aop_att_id, 10), 10 )
-	
+    
+    cAop := PADL( STR(_aop_id, 10), 10 )
+    cAopAtt := PADL( STR(_aop_att_id, 10), 10 )
+    
 endif
 
 
@@ -214,9 +219,9 @@ nX += 2
 nX += 2
 
 @ m_x + nX, m_y + 2 SAY PADL("odnosi se na stavku (*):", nLeft) GET _doc_it_no VALID {|| _item_range( _doc_it_no ) .and. show_it( g_item_desc( _doc_it_no ), 26 )} WHEN {|| set_opc_box( nBoxX, 50, "ova operacija ce se odnositi", "eksplicitno na unesenu stavku"), _from_article == .f. }
-	
+    
 nX += 1
-	
+    
 @ m_x + nX, m_y + 2 SAY PADL(" -> element stavke (*):", nLeft) GET _doc_it_el_ VALID {|| get_it_element( @_doc_it_el_, @nElement ), show_it( get_elem_desc( _a_elem, _doc_it_el_ ), 26 ) } WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no) ), set_opc_box( nBoxX, 50, "odnosi se na odredjeni element stavke", "") }
 
 nX += 2
@@ -230,9 +235,9 @@ nX += 1
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL( "vrijednost:", nLeft ) GET _aop_value ;
-	VALID {|| _g_dim_it_no(_doc_it_no, nElement, @nH, @nW, @nTick) .and. is_g_config( @_aop_value, _aop_att_id, nH, nW, nTick )} ;
-	PICT "@S40" ;
-	WHEN set_opc_box( nBoxX, 50, "vrijednost operacije ako postoji", "kod brusenja, poliranja..." )
+    VALID {|| _g_dim_it_no(_doc_it_no, nElement, @nH, @nW, @nTick) .and. is_g_config( @_aop_value, _aop_att_id, nH, nW, nTick )} ;
+    PICT "@S40" ;
+    WHEN set_opc_box( nBoxX, 50, "vrijednost operacije ako postoji", "kod brusenja, poliranja..." )
 
 nX += 2
 
@@ -254,13 +259,13 @@ local xRet := ""
 local nChoice
 
 if nLen == nil
-	nLen := 17
+    nLen := 17
 endif
 
 nChoice := ASCAN( aElem, {|xVal| xVal[1] == nVal } )
 
 if nChoice > 0
-	xRet := aElem[ nChoice, 2 ]
+    xRet := aElem[ nChoice, 2 ]
 endif
 
 xRet := PADR(xRet, nLen)
@@ -276,8 +281,8 @@ local nXX := m_x
 local nYY := m_y
 
 if nDoc_it_e_id > 0
-	nElement := _get_a_element( _a_elem, nDoc_it_e_id )
-	return .t.
+    nElement := _get_a_element( _a_elem, nDoc_it_e_id )
+    return .t.
 endif
 
 // odaberi element
@@ -298,7 +303,7 @@ local nTmp
 nTmp := ASCAN( aElem, { |xVal| xVal[1] = nEl_no })
 
 if nTmp <> 0
-	nElement := aElem[ nTmp, 3 ]
+    nElement := aElem[ nTmp, 3 ]
 endif
 
 return nElement
@@ -321,22 +326,22 @@ nChoice := 1
 
 for i:=1 to LEN(aElem)
 
-	cPom := PADL( ALLTRIM(STR(i)) + ")", 3 ) + " " + PADR( aElem[i, 2] , 40 )
-	
-	AADD(opc, cPom)
-	AADD(opcexe, {|| nChoice := izbor, izbor := 0 })
-	
+    cPom := PADL( ALLTRIM(STR(i)) + ")", 3 ) + " " + PADR( aElem[i, 2] , 40 )
+    
+    AADD(opc, cPom)
+    AADD(opcexe, {|| nChoice := izbor, izbor := 0 })
+    
 next
 
 Menu_sc("izbor")
 
 if LastKey() == K_ESC
 
-	nChoice := 0
-	nRet := 0
-	
+    nChoice := 0
+    nRet := 0
+    
 else
-	nRet := aElem[ nChoice, 1 ]
+    nRet := aElem[ nChoice, 1 ]
 endif
 
 return nRet
@@ -354,14 +359,14 @@ select _doc_it
 nDocItRec := _doc_it->(RECCOUNT2())
 
 if nItemNo > nDocItRec .or. nItemNo <= 0
-	lRet := .f.
+    lRet := .f.
 endif
 
 select (nTArea)
 
 if lRet == .f.
-	MsgBeep("Nepostojeca stavka naloga !!!##Nalog sadrzi " + ;
-		ALLTRIM(STR(nDocItRec)) + " stavki.")
+    MsgBeep("Nepostojeca stavka naloga !!!##Nalog sadrzi " + ;
+        ALLTRIM(STR(nDocItRec)) + " stavki.")
 endif
 
 return lRet
@@ -394,13 +399,13 @@ set order to tag "1"
 seek docno_str( _doc) + docit_str( nDoc_it_no )
 
 if FOUND()
-	
-	nH := field->doc_it_hei
-	nW := field->doc_it_wid
+    
+    nH := field->doc_it_hei
+    nW := field->doc_it_wid
 
-	// uzmi debljinu...
+    // uzmi debljinu...
 
-	nTick := g_gl_tickness( _a_arr, nElement )
+    nTick := g_gl_tickness( _a_arr, nElement )
 
 endif
 
@@ -424,7 +429,7 @@ set order to tag "1"
 seek docno_str( _doc) + docit_str( nDoc_it_no )
 
 if FOUND()
-	nArt_id  := field->art_id
+    nArt_id  := field->art_id
 endif
 
 select (nTArea)
@@ -448,8 +453,8 @@ set order to tag "1"
 seek docno_str( nDoc_no )
 
 do while !EOF() .and. field->doc_no == nDoc_no
-	nRet := field->doc_op_no
-	skip
+    nRet := field->doc_op_no
+    skip
 enddo
 
 nRet += 1

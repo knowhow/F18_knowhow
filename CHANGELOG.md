@@ -1,3 +1,9 @@
+0.9.30  2011-12-29, vsasa, modul mat korekcija izvjestaja, podesavanje rezolucije ekrana
+
+  - [#25951](http://redmine.bring.out.ba/issues/25951) - podešavanje rezolucije ekrana u ini fajlu
+  - [#25923](http://redmine.bring.out.ba/issues/25923) - modul MAT, specifikacija artikala po ročnim intervalima
+  - ostale sitne korekcije na mat izvještajima i slično
+
 0.9.29  2011-12-28, hernad, fin azuriranje
 
   - [#25927](http://redmine.bring.out.ba/issues/25927) - ispravka psuban_suban, otvorene stavke slati na server

@@ -261,9 +261,9 @@ aKol:={}
 
 AADD(aImeKol, {"R.br", {|| doc_it_no }, "doc_it_no" })
 AADD(aImeKol, {"Artikal", {|| PADR(g_art_desc( art_id, nil, .f. ), 18) + ".." }, "art_id" })
-AADD(aImeKol, {"sirina", {|| TRANSFORM(doc_it_width, PIC_DIM()) }, "doc_it_width" })
-AADD(aImeKol, {"visina", {|| TRANSFORM(doc_it_heigh, PIC_DIM()) }, "doc_it_heigh" })
-AADD(aImeKol, {"kol.", {|| TRANSFORM(doc_it_qtty, PIC_QTTY()) }, "doc_it_qtty" })
+AADD(aImeKol, {"sirina", {|| TRANSFORM(doc_it_wid, PIC_DIM()) }, "doc_it_wid" })
+AADD(aImeKol, {"visina", {|| TRANSFORM(doc_it_hei, PIC_DIM()) }, "doc_it_hei" })
+AADD(aImeKol, {"kol.", {|| TRANSFORM(doc_it_qtt, PIC_QTTY()) }, "doc_it_qtt" })
 
 
 for i:=1 to LEN(aImeKol)
@@ -283,7 +283,7 @@ aKol:={}
 
 AADD(aImeKol, {"dod.oper", {|| PADR(g_aop_desc( aop_id ),10) }, "aop_id"})
 AADD(aImeKol, {"atr.dod.oper", {|| PADR( g_aop_att_desc( aop_att_id ), 10 ) }, "aop_att_id" })
-AADD(aImeKol, {"dod.opis", {|| PADR(doc_op_desc, 15) + ".."}, "doc_op_desc" })
+AADD(aImeKol, {"dod.opis", {|| PADR(doc_op_des, 15) + ".."}, "doc_op_des" })
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol,i)

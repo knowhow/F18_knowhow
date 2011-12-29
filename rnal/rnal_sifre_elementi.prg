@@ -818,6 +818,7 @@ local lAuto := .f.
 local nRet := DE_CONT
 local cColor := "BG+/B"
 local lCoat := .f.
+local _rec
 private GetList:={}
 
 if cType == nil
@@ -843,7 +844,7 @@ if lNewRec
 
 endif
 
-Scatter()
+set_global_memvars_from_dbf()
 
 if lNewRec
 
@@ -892,7 +893,9 @@ endif
 
 if EMPTY(cType) .and. LastKey() == K_ESC .and. lNewRec
 
-	Gather()
+	_rec := hb_hash()
+    _rec := get_dbf_global_memvars()
+
 	delete
 	
 	return 0
@@ -916,7 +919,10 @@ if !EMPTY(cType)
 
 endif
 
-Gather()
+_rec := hb_hash()
+_rec := get_dbf_global_memvars()
+
+update_rec_server_and_dbf( nil, _rec )
 
 if lNewRec
 	// nafiluj odmah atribute za ovu grupu...
@@ -932,7 +938,7 @@ return 1
 // ---------------------------------------------
 static function e_no_edit()
 
-Scatter()
+set_global_memvars_from_dbf()
 
 Box(,1,40)
 
@@ -943,7 +949,9 @@ BoxC()
 
 
 if LastKey() <> K_ESC
-	Gather()
+    _rec := hb_hash()
+    _rec := get_dbf_global_memvars()
+    update_rec_server_and_dbf( nil, _rec )
 endif
 
 
@@ -958,6 +966,7 @@ return 1
 static function __fill_att__( __gr_id, __el_id )
 local nTArea := SELECT()
 local nEl_att_id := 0
+local _rec 
 
 select e_gr_att
 set order to tag "2"
@@ -975,16 +984,18 @@ do while !EOF() .and. field->e_gr_id == __gr_id ;
 		loop
 	endif
 
-	Scatter()
-
-	_el_id := __el_id
+    set_global_memvars_from_dbf()
+	
+    _el_id := __el_id
 	_el_att_id := nEl_att_id
 	_e_gr_at_id := e_gr_att->e_gr_at_id
 	_e_gr_vl_id := 0
 
-	Gather()
+    _rec := hb_hash()
+    _rec := get_dbf_global_memvars()
+    update_rec_server_and_dbf( nil, _rec )
 	
-	select e_gr_att
+    select e_gr_att
 	skip
 
 enddo
@@ -1004,6 +1015,7 @@ local nLeft := 25
 local nEl_att_id := 0
 local cColor := "BG+/B"
 local cElGrVal := SPACE(10)
+local _rec
 private GetList:={}
 
 if !lNewRec .and. field->el_id == 0
@@ -1021,7 +1033,7 @@ if lNewRec
 
 endif
 
-Scatter()
+set_global_memvars_from_dbf()
 
 if lNewRec
 
@@ -1049,15 +1061,19 @@ BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
 	
-	Gather()
+    _rec := hb_hash()
+    _rec := get_dbf_global_memvars()
+
 	delete
 	
 	return 0
 	
 endif
 
-Gather()
-
+_rec := hb_hash()
+_rec := get_dbf_global_memvars()
+update_rec_server_and_dbf( nil, _rec )
+	
 return 1
 
 
@@ -1071,6 +1087,7 @@ static function e_aops_edit( nEl_id, lNewRec )
 local nLeft := 25
 local nEl_op_id := 0
 local cColor := "BG+/B"
+local _rec
 private GetList:={}
 
 if !lNewRec .and. field->el_id == 0
@@ -1088,7 +1105,7 @@ if lNewRec
 
 endif
 
-Scatter()
+set_global_memvars_from_dbf()
 
 if lNewRec
 
@@ -1115,16 +1132,19 @@ Box(,6,65)
 BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
-
-	Gather()
+    
+    _rec := hb_hash()
+    _rec := get_dbf_global_memvars()
 	delete
 	
 	return 0
 	
 endif
 
-Gather()
-
+_rec := hb_hash()
+_rec := get_dbf_global_memvars()
+update_rec_server_and_dbf( nil, _rec )
+	
 return 1
 
 

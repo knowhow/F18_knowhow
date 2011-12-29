@@ -790,7 +790,7 @@ return cArtDesc
 // -------------------------------------------------------
 static function art_delete( nArt_id, lChkKum, lSilent )
 local nEl_id 
-local _del_rec
+local _del_rec, _field_ids, _where_bl
 
 if lSilent == nil
     lSilent := .f.
@@ -831,10 +831,9 @@ if FOUND()
         return 0
     endif
 
-    _del_rec := hb_hash()
-    _del_rec["art_id"] := nArt_id
+    _del_rec := dbf_get_rec()
 
-    delete_rec_server_and_dbf( "articles", _del_rec )
+    delete_rec_server_and_dbf( nil, _del_rec )
 
     select elements
     set order to tag "1"
@@ -852,11 +851,8 @@ if FOUND()
         
         do while !EOF() .and. field->el_id == nEl_id
             
-            _del_rec := hb_hash()
-            _del_rec["art_id"] := field->art_id
-            _del_rec["el_id"] := field->el_id
-
-            delete_rec_server_and_dbf( "elements", _del_rec )
+            _del_rec := dbf_get_rec()
+            delete_rec_server_and_dbf( nil, _del_rec )
 
             skip
         enddo
@@ -867,11 +863,10 @@ if FOUND()
         seek elid_str( nEl_id )
     
         do while !EOF() .and. field->el_id == nEl_id
-            _del_rec := hb_hash()
-            _del_rec["art_id"] := field->art_id
-            _del_rec["el_id"] := field->el_id
+            
+            _del_rec := dbf_get_rec()
 
-            delete_rec_server_and_dbf( "e_aops", _del_rec )
+            delete_rec_server_and_dbf( nil, _del_rec )
 
             skip
         enddo

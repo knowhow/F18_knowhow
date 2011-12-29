@@ -1379,7 +1379,7 @@ local _result := .f.
 local _i
 local _tbl := "rnal_elements"
 local _index_tag := "1"
-local _field_tag := "el_id::char(10) || el_no::char(10) || art_id::char(10)"
+local _field_tag := "art_id::char(10) || el_no::char(4) || el_id::char(10)"
 
 
 for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
@@ -1393,7 +1393,7 @@ for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
 
 next
 
-_result := sifrarnik_from_sql_server( _tbl, algoritam, F_ELEMENTS, { "el_id", "el_no", "art_id", "e_gr_id" }, _index_tag, _field_tag )
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_ELEMENTS, { "art_id", "el_no", "el_id" }, _index_tag, _field_tag )
 
 lock_semaphore( _tbl, "free" )
 

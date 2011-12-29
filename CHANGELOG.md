@@ -1,4 +1,8 @@
-0.9.30  2011-12-29, vsasa, modul mat korekcija izvjestaja, podesavanje rezolucije ekrana
+0.9.31  2011-12-29, hernad, relogin
+
+  - [#25889](http://redmine.bring.out.ba/issues/25889)
+
+0.9.30  2011-12-29, vsasa, MAT v2 ročni intervali
 
   - [#25951](http://redmine.bring.out.ba/issues/25951) - podešavanje rezolucije ekrana u ini fajlu
   - [#25923](http://redmine.bring.out.ba/issues/25923) - modul MAT, specifikacija artikala po ročnim intervalima

@@ -141,11 +141,7 @@ local _rec, _id_fields, _where_bl
 select _docs
 set order to tag "1"
 go top
-
-_rec := dbf_get_rec()
-
-// ???
-//_doc_status := 0
+set_global_memvars_from_dbf("d")
 
 if __doc_stat <> 3
     // pronadji zauzeti slog ( 3 + nDoc_no )
@@ -153,17 +149,19 @@ if __doc_stat <> 3
     set order to tag "A"
     go top
     seek d_busy() + docno_str( nDoc_no )
-    _rec := dbf_get_rec()
 else
     select docs
     set order to tag "1"
     append blank
 endif
 
+_rec := dbf_get_rec()
+_rec := get_dbf_global_memvars("d")
+
 _id_fields := { {"doc_no", 10} }
 _where_bl := { |x| "DOC_NO=" + STR( x["doc_no"], 10) } 
         
-update_rec_server_and_dbf( nil, _rec, _id_fields, _where_bl )
+update_rec_server_and_dbf( "docs", _rec, _id_fields, _where_bl )
         
 set order to tag "1"
 
@@ -756,7 +754,7 @@ endif
 _field_ids := { {"doc_no", 10} }
 _where_bl := {|x| "DOC_NO=" + STR( x["doc_no"], 10 ) }
 
-update_rec_server_and_dbf( nil, _rec, _field_ids, _where_bl )
+update_rec_server_and_dbf( "docs", _rec, _field_ids, _where_bl )
 
 DBUnlock()
 

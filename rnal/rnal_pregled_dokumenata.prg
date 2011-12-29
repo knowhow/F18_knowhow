@@ -41,8 +41,8 @@ static function tbl_list()
 local cFooter
 local cHeader
 local nSort := 3
-local nBoxX := 22
-local nBoxY := 77
+local nBoxX := maxrows() - 10
+local nBoxY := maxcols() - 10
 
 if lst_args( @nSort ) == 0
 	
@@ -383,8 +383,7 @@ if _status == 1
 	else
 	
 		// daj info o kasnjenju
-		_sh_dvr_warr( _chk_date( doc_dvr_da ), ;
-			_chk_time( doc_dvr_ti ) )
+		_sh_dvr_warr( _chk_date( doc_dvr_da ), _chk_time( doc_dvr_ti ), 5 )
 	endif		
 endif
 
@@ -833,16 +832,16 @@ endif
 
 // dodaj u matricu tekst
 cOpt := "A-dodaj Y-brisi: "
-aStr := SjeciStr( cOpt + cStr, 70 )
+aStr := SjeciStr( cOpt + cStr, maxcols()-20 )
 
 // prikaz idi u 2-3 reda
 
-@ 22, 2 SAY PADR("", 77) COLOR "W/G+"
-@ 23, 2 SAY PADR("", 77) COLOR "W/G+"
+@ maxrows() - 12, 2 SAY PADR("", maxcols()-10) COLOR "W/G+"
+@ maxrows() - 11, 2 SAY PADR("", maxcols()-10) COLOR "W/G+"
 
 for n := 1 to LEN( aStr )
 	
-	@ 21 + n, 2 SAY aStr[n] COLOR "W/G+"
+	@ maxrows() - 13  + n, 2 SAY aStr[n] COLOR "W/G+"
 next
 
 return
@@ -1214,7 +1213,7 @@ if nX == nil
 endif
 
 if nLen == nil
-	nLen := 20 
+	nLen := 30 
 endif
 
 if nDays > 0
@@ -1236,7 +1235,7 @@ local cTmp
 local cDoc_stat
 
 if nX == nil
-	nX := 2
+	nX := 5
 endif
 
 if nY == nil
@@ -1322,15 +1321,15 @@ return cTmp
 static function _sh_doc_info( nX, nY )
 local cTmp
 local aTmp
-local nTxtLen := 77
+local nTxtLen := maxcols() - 12
 local cColor := "GR+/B"
 
 if nX == nil
-	nX := 18
+	nX := maxrows() - 11
 endif
 
 if nY == nil
-	nY := 1
+	nY := 6
 endif
 
 // napuni string sa opisom
@@ -1338,7 +1337,7 @@ cTmp := ""
 
 cTmp += ALLTRIM( g_obj_desc( obj_id ) )
 cTmp += ", "
-cTmp += ALLTRIM(doc_sh_desc) 
+cTmp += ALLTRIM(doc_sh_des) 
 
 if !EMPTY(cTmp)
 	cTmp += ", "

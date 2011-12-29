@@ -1001,3 +1001,36 @@ select (nArea)
  
 my_use (cIme)
 return NIL
+
+
+function Gather(cZn)
+
+local i, aStruct
+local _field_b
+local _ime_p
+local cVar
+
+if cZn==nil
+  cZn:="_"
+endif
+aStruct:=DBSTRUCT()
+ 
+for i:=1 to len(aStruct)
+     _field_b := FIELDBLOCK(_ime_p := aStruct[i,1])
+
+     // cImeP - privatna var
+     cVar := cZn + _ime_p
+
+     rlock()
+     //IF "U" $ TYPE(cVar)
+     //    MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + _ime_p)
+     //ELSE
+            EVAL(_field_b, EVAL(MEMVARBLOCK(cVar)) )
+     //ENDIF
+ 
+     dbunlock()
+next
+
+return nil
+
+

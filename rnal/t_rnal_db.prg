@@ -307,7 +307,7 @@ AADD(aDBf,{ "doc_it_qtt",  "N", 15,  5 })
 AADD(aDBf,{ "doc_it_q2",  "N", 15,  5 })
 AADD(aDBf,{ "doc_it_pri", "N", 15,  5 })
 AADD(aDBf,{ "sh_desc", "C", 100,  0 })
-AADD(aDBf,{ "desc", "C", 200,  0 })
+AADD(aDBf,{ "descr", "C", 200,  0 })
 
 return aDbf
 

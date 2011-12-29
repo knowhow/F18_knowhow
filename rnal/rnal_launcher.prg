@@ -10,6 +10,7 @@
  */
 
 #include "rnal.ch"
+#include "f18_ver.ch"
 
 EXTERNAL DESCEND
 EXTERNAL RIGHT
@@ -24,7 +25,7 @@ PUBLIC gKonvertPath:="D"
 cModul:="RNAL"
 PUBLIC goModul
 
-oRnal := TRnalMod():new(NIL, cModul, D_RNAL_VERZIJA, D_RNAL_PERIOD , cKorisn, cSifra, p3,p4,p5,p6,p7)
+oRnal := TRnalMod():new(NIL, cModul, F18_VER, F18_VER_DATE , cKorisn, cSifra, p3,p4,p5,p6,p7)
 goModul:=oRnal
 
 oRnal:run()

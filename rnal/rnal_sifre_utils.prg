@@ -44,10 +44,14 @@ return xRet
 // prikaz id/mc za stavku u browse-u sifrarnika
 // nFieldId - vrijednost id polja
 // ---------------------------------------------
-function sif_idmc(nFieldId, lOnlyMc )
+function sif_idmc(nFieldId, lOnlyMc, nRpad )
 local cId := STR(nFieldId)
 local cMCode := IF(FIELDPOS("MATCH_CODE") <> 0, ALLTRIM(field->match_code), "")
 local xRet := ""
+
+if nRpad == nil
+    nRPad := 10
+endif
 
 if lOnlyMC == nil
 	lOnlyMC := .f.
@@ -68,7 +72,7 @@ if !EMPTY(cMCode)
 	endif
 endif
 
-return PADR(xRet,10)
+return PADR(xRet,nRPad)
 
 
 // ------------------------------------------------

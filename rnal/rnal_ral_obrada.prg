@@ -23,7 +23,7 @@ local cTable := "RAL"
 
 AADD( aDbf, { "id", "N", 5, 0 })
 AADD( aDbf, { "gl_tick", "N", 2, 0 })
-AADD( aDbf, { "desc", "C", 50, 0 })
+AADD( aDbf, { "descr", "C", 50, 0 })
 AADD( aDbf, { "en_desc", "C", 50, 0 })
 AADD( aDbf, { "col_1", "N", 8, 0 })
 AADD( aDbf, { "col_2", "N", 8, 0 })
@@ -39,7 +39,7 @@ if !FILE( f18_ime_dbf(cTable) )
 endif
 
 CREATE_INDEX("1", "STR(id,5)+STR(gl_tick,2)", cPath + cTable, .t.)
-CREATE_INDEX("2", "desc", cPath + cTable, .t.)
+CREATE_INDEX("2", "descr", cPath + cTable, .t.)
 
 return
 

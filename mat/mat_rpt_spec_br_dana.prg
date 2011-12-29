@@ -236,7 +236,7 @@ local _month_datum
 local _ret := 1
 
 _month_dok := MONTH( dat_dok ) 
-_month_datum := MONTH( datum )
+_month_datum := MONTH( datum ) + 1
 
 if _month_datum > _month_dok
     _ret := ( _month_datum - _month_dok )

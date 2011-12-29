@@ -50,7 +50,7 @@ endif
 // postavi filter...
 set_f_kol(cCustDesc)	
 
-cRet := PostojiSifra(F_CUSTOMS, cTag, 12, 70, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+cRet := PostojiSifra(F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
 
 //cId := field->cust_id
 
@@ -97,8 +97,8 @@ static function set_a_kol(aImeKol, aKol)
 aKol := {}
 aImeKol := {}
 
-AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(cust_id)}, "cust_id", {|| _inc_id(@wcust_id, "CUST_ID"), .f.}, {|| .t.}})
-AADD(aImeKol, {PADC("Naziv", 20), {|| PADR(cust_desc, 20)}, "cust_desc"})
+AADD(aImeKol, {PADC("ID/MC", 20), {|| sif_idmc(cust_id, .f., 20)}, "cust_id", {|| _inc_id(@wcust_id, "CUST_ID"), .f.}, {|| .t.}})
+AADD(aImeKol, {PADC("Naziv", 40), {|| PADR(cust_desc, 40)}, "cust_desc"})
 AADD(aImeKol, {PADC("Adresa", 20), {|| PADR(cust_addr, 20)}, "cust_addr"})
 AADD(aImeKol, {PADC("Telefon", 20), {|| PADR(cust_tel, 20)}, "cust_tel"})
 AADD(aImeKol, { "ID broj", {|| cust_ident } , "cust_ident", {|| set_cust_mc(@wmatch_code, @wcust_desc) }, {|| _chk_id(@wcust_id, "CUST_ID") } })

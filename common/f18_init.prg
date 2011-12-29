@@ -17,6 +17,8 @@ static __log_handle := NIL
 static __my_error_handler := NIL
 static __global_error_handler := NIL
 static __test_mode := .f.
+static __max_rows := 40
+static __max_cols := 140
 
 #include "fmk.ch"
 
@@ -78,6 +80,7 @@ __my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }
 
 __global_error_handler := ERRORBLOCK(__my_error_handler)
 
+_get_screen_resolution()
 
 // ucitaj parametre iz inija, ako postoje ...
 _ini_params := hb_hash()
@@ -145,6 +148,42 @@ else
 endif
 
 return .f.
+
+
+// ------------------------------------------------------------
+// vraca informacije iz inija vezane za screen rezoluciju
+// ------------------------------------------------------------
+static function _get_screen_resolution()
+local _ini_params := hb_hash()
+
+_ini_params["max_rows"] := nil
+_ini_params["max_cols"] := nil
+
+IF !f18_ini_read( F18_SCREEN_INI_SECTION, @_ini_params, .t. )
+    MsgBeep("screen resolution: problem sa ini read")
+    return
+ENDIF
+
+// setuj varijable iz inija
+IF _ini_params["max_rows"] != nil
+    __max_rows := VAL( _ini_params["max_rows"] )
+ENDIF
+
+IF _ini_params["max_cols"] != nil
+    __max_cols := VAL( _ini_params["max_cols"] )
+ENDIF
+
+return
+
+
+// vraca maksimalni broj redova
+function maxrows()
+return __max_rows
+
+
+// vraca maksimalni broj kolona
+function maxcols()
+return __max_cols
 
 
 // ---------------------------

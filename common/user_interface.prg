@@ -1818,13 +1818,6 @@ return
 
 
 
-function MAXROWS()
-return 40
-
-
-function MAXCOLS()
-return 140
-
 
 function ToggleINS()
 

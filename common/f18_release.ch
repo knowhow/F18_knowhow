@@ -13,5 +13,6 @@
 #define F18_RELEASE_DEFINED
 
 #define F18_SERVER_INI_SECTION "F18_server"
+#define F18_SCREEN_INI_SECTION "F18_screen"
 
 #define F18_LOG_FILE "F18.log"

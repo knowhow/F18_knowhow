@@ -364,12 +364,8 @@ endif
 for _i := 1 TO LEN(ids)
     // ARAY['id1']
 
-    // ARAY['id1', 'id2']
     _sql_ids := "ARRAY["
-    _sql_ids += _sql_quote(hb_StrToUtf8(ids[_i])) 
-    //if _i < LEN(ids)
-    //    _sql_ids += ","
-    //endif
+    _sql_ids += _sql_quote(ids[_i]) 
     _sql_ids += "]"
 
 

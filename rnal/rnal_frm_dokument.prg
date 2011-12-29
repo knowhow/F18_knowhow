@@ -30,7 +30,7 @@ static l_auto_tab
 function ed_document( lNewDoc )
 
 if lNewDoc == nil
-	lNewDoc := .f.
+    lNewDoc := .f.
 endif
 
 l_new := lNewDoc
@@ -80,74 +80,74 @@ m_x += 6
 
 do while .t.
 
-	if ALIAS() == "_DOCS"
-		
-		nX := 6
-		nY := 78
-		
-		m_x -= 6
-		m_y -= 50
-	
-		// prikazi naslov tabele
-		_say_tbl_desc( m_x + 1, ;
-				m_y + 1, ;
-				cCol2, ;
-				"*** osnovni podaci", ;
-				20 )
-		
-		docs_kol(@ImeKol, @Kol)
-		
-	elseif ALIAS() == "_DOC_IT"
+    if ALIAS() == "_DOCS"
+        
+        nX := 6
+        nY := 78
+        
+        m_x -= 6
+        m_y -= 50
+    
+        // prikazi naslov tabele
+        _say_tbl_desc( m_x + 1, ;
+                m_y + 1, ;
+                cCol2, ;
+                "*** osnovni podaci", ;
+                20 )
+        
+        docs_kol(@ImeKol, @Kol)
+        
+    elseif ALIAS() == "_DOC_IT"
 
-		nX := 15
-		nY := 49
-		
-		m_x += 6
-		
-		_say_tbl_desc( m_x + 1 , ;
-				m_y + 1, ;
-				cCol2, ;
-				"*** stavke naloga" , ;
-				20 )
-		
-		docit_kol(@ImeKol, @Kol)
+        nX := 15
+        nY := 49
+        
+        m_x += 6
+        
+        _say_tbl_desc( m_x + 1 , ;
+                m_y + 1, ;
+                cCol2, ;
+                "*** stavke naloga" , ;
+                20 )
+        
+        docit_kol(@ImeKol, @Kol)
 
-	elseif ALIAS() == "_DOC_OPS"
+    elseif ALIAS() == "_DOC_OPS"
 
-		nX := 15
-		nY := 28
-		m_y += 50
-		
-		_say_tbl_desc( m_x + 1, ;
-				m_y + 1, ;
-				cCol2, ;
-				"*** dod.oper.", ;
-				20 )
-	
-		docop_kol(@ImeKol, @Kol)
-		
-	endif
-	
-	ObjDBedit("docum", nX, nY, {|Ch| key_handler(Ch)},"","",,,,,1)
+        nX := 15
+        nY := 28
+        m_y += 50
+        
+        _say_tbl_desc( m_x + 1, ;
+                m_y + 1, ;
+                cCol2, ;
+                "*** dod.oper.", ;
+                20 )
+    
+        docop_kol(@ImeKol, @Kol)
+        
+    endif
+    
+    ObjDBedit("docum", nX, nY, {|Ch| key_handler(Ch)},"","",,,,,1)
 
-	if ALIAS() == "_DOCS"
-		
-		//m_x -= 6
-		//m_y -= 50
-		
-	endif
+    if ALIAS() == "_DOCS"
+        
+        //m_x -= 6
+        //m_y -= 50
+        
+    endif
 
-	if LastKey() == K_ESC
-	
-		if _docs->doc_status == 3
-		
-			MsgBeep("Dokument ostavljen za doradu !!!")
-		
-		endif
-		
-		exit
-	
-	endif
+    if LastKey() == K_ESC
+    
+        if _docs->doc_status == 3
+        
+            MsgBeep("Dokument ostavljen za doradu !!!")
+        
+        endif
+        
+        exit
+    
+    endif
 
 enddo
 
@@ -168,13 +168,13 @@ return nRet
 function _say_tbl_desc(nX, nY, cColSheme, cTxt, nLeft)
 
 if nLeft == nil
-	nLeft := 20
+    nLeft := 20
 endif
 
 if cColSheme == nil
-	@ nX, nY SAY PADR( cTxt, nLeft )
+    @ nX, nY SAY PADR( cTxt, nLeft )
 else
-	@ nX, nY SAY PADR( cTxt, nLeft ) COLOR cColSheme
+    @ nX, nY SAY PADR( cTxt, nLeft ) COLOR cColSheme
 endif
 
 return
@@ -202,9 +202,9 @@ cHeader += doc_str( _doc )
 cHeader += SPACE(5)
 
 if l_new
-	cHeader += "UNOS NOVOG DOKUMENTA"
+    cHeader += "UNOS NOVOG DOKUMENTA"
 else
-	cHeader += "DORADA DOKUMENTA"
+    cHeader += "DORADA DOKUMENTA"
 endif
 
 cHeader += SPACE(5)
@@ -217,7 +217,7 @@ cHeader += ALLTRIM( f18_user() )
 @ m_x + 22, m_y + 1 SAY cFooter
 
 for i:=7 to 20
-	@ m_x + i, m_y + 50 SAY "º" COLOR cLineClr
+    @ m_x + i, m_y + 50 SAY "º" COLOR cLineClr
 next
 
 select (nTArea)
@@ -245,7 +245,7 @@ AADD(aImeKol, {"Vrsta p.", {|| doc_pay_id}, "doc_pay_id" })
 AADD(aImeKol, {"Prioritet", {|| doc_priori}, "doc_priori" })
 
 for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
+    AADD(aKol, i)
 next
 
 return
@@ -267,7 +267,7 @@ AADD(aImeKol, {"kol.", {|| TRANSFORM(doc_it_qtt, PIC_QTTY()) }, "doc_it_qtt" })
 
 
 for i:=1 to LEN(aImeKol)
-	AADD(aKol,i)
+    AADD(aKol,i)
 next
 
 return
@@ -286,7 +286,7 @@ AADD(aImeKol, {"atr.dod.oper", {|| PADR( g_aop_att_desc( aop_att_id ), 10 ) }, "
 AADD(aImeKol, {"dod.opis", {|| PADR(doc_op_des, 15) + ".."}, "doc_op_des" })
 
 for i:=1 to LEN(aImeKol)
-	AADD(aKol,i)
+    AADD(aKol,i)
 next
 
 return
@@ -307,345 +307,345 @@ local nArea
 
 do case 
 
-	// automatski tab
-	case l_auto_tab == .t.
-			
-		KEYBOARD CHR(K_TAB)
-		l_auto_tab := .f.
-		return DE_REFRESH
-			
-	// browse tabele
-	case Ch == K_TAB
+    // automatski tab
+    case l_auto_tab == .t.
+            
+        KEYBOARD CHR(K_TAB)
+        l_auto_tab := .f.
+        return DE_REFRESH
+            
+    // browse tabele
+    case Ch == K_TAB
 
-		if ALIAS() == "_DOCS"
-		
-			_say_tbl_desc( m_x + 1, m_y + 1, ;
-					nil, "*** osnovni podaci", 20 )
-			
-			select _doc_it
-			nRet := DE_ABORT
-			
-		elseif ALIAS() == "_DOC_IT"
-			
-			_say_tbl_desc( m_x + 1, m_y + 1, ;
-					nil, "*** stavke naloga", 20 )
-			
-			__art_id := field->art_id
-			__item_no := field->doc_it_no
-			
-			select _doc_ops
-			nRet := DE_ABORT
+        if ALIAS() == "_DOCS"
+        
+            _say_tbl_desc( m_x + 1, m_y + 1, ;
+                    nil, "*** osnovni podaci", 20 )
+            
+            select _doc_it
+            nRet := DE_ABORT
+            
+        elseif ALIAS() == "_DOC_IT"
+            
+            _say_tbl_desc( m_x + 1, m_y + 1, ;
+                    nil, "*** stavke naloga", 20 )
+            
+            __art_id := field->art_id
+            __item_no := field->doc_it_no
+            
+            select _doc_ops
+            nRet := DE_ABORT
 
-		elseif ALIAS() == "_DOC_OPS"
+        elseif ALIAS() == "_DOC_OPS"
 
-			_say_tbl_desc( m_x + 1, m_y + 1, ;
-					nil, "*** dod.oper.", 20 )
-			
-			select _docs
-			nRet := DE_ABORT
-			
-		endif
+            _say_tbl_desc( m_x + 1, m_y + 1, ;
+                    nil, "*** dod.oper.", 20 )
+            
+            select _docs
+            nRet := DE_ABORT
+            
+        endif
 
-	// nove stavke
-	case Ch == K_CTRL_N
-	
-		nRet := DE_CONT
+    // nove stavke
+    case Ch == K_CTRL_N
+    
+        nRet := DE_CONT
 
-		if ALIAS() == "_DOCS"
-		
-			if e_doc_main_data( .t. ) == 1
-			
-				select _docs
-				nRet := DE_REFRESH
-				l_auto_tab := .t.
+        if ALIAS() == "_DOCS"
+        
+            if e_doc_main_data( .t. ) == 1
+            
+                select _docs
+                nRet := DE_REFRESH
+                l_auto_tab := .t.
 
-			endif
-			
-			select _docs
-			
-		elseif ALIAS() == "_DOC_IT"
+            endif
+            
+            select _docs
+            
+        elseif ALIAS() == "_DOC_IT"
 
-			select _docs
-			if RECCOUNT2() == 0
-				MsgBeep("Nema definisanog naloga !!!")
-				select _doc_it
-				return DE_CONT
-			endif
-		
-			_doc := field->doc_no
-			
-			select _doc_it
-			set order to tag "1"
-			
-			if e_doc_item( _doc, .t. ) <> 0
-			
-				select _doc_it
-				set order to tag "1"
-				nRet := DE_REFRESH
+            select _docs
+            if RECCOUNT2() == 0
+                MsgBeep("Nema definisanog naloga !!!")
+                select _doc_it
+                return DE_CONT
+            endif
+        
+            _doc := field->doc_no
+            
+            select _doc_it
+            set order to tag "1"
+            
+            if e_doc_item( _doc, .t. ) <> 0
+            
+                select _doc_it
+                set order to tag "1"
+                nRet := DE_REFRESH
 
-			endif
-			
-			select _doc_it
-			set order to tag "1"
-	
-		elseif ALIAS() == "_DOC_OPS"
+            endif
+            
+            select _doc_it
+            set order to tag "1"
+    
+        elseif ALIAS() == "_DOC_OPS"
 
-			select _docs
-			if RECCOUNT2() == 0
-				MsgBeep("Nema definisanog naloga !!!")
-				select _doc_ops
-				return DE_CONT
-			endif
-			
-			select _doc_ops
-			
-			if e_doc_ops( _doc, .t., __art_id ) <> 0
-			
-				select _doc_ops
-				nRet := DE_REFRESH
+            select _docs
+            if RECCOUNT2() == 0
+                MsgBeep("Nema definisanog naloga !!!")
+                select _doc_ops
+                return DE_CONT
+            endif
+            
+            select _doc_ops
+            
+            if e_doc_ops( _doc, .t., __art_id ) <> 0
+            
+                select _doc_ops
+                nRet := DE_REFRESH
 
-			endif
-			
-			select _doc_ops
-			
-		endif
-				
-	case Ch == K_F2 .or. Ch == K_ENTER
-	
-		nRet := DE_CONT
-		
-		if RECCOUNT2() == 0
-			return nRet
-		endif
-		
-		if ALIAS() == "_DOCS"
-		
-			if _docs->doc_status == 3
-			
-				MsgBeep("Ispravka osnovnih podataka onemogucena kod dorade#Opcija promjena sluzi u tu svrhu !!!")
-				return DE_CONT
-				
-			endif
-			
-			if e_doc_main_data( .f. ) == 1
-			
-				select _docs
-				nRet := DE_REFRESH
+            endif
+            
+            select _doc_ops
+            
+        endif
+                
+    case Ch == K_F2 .or. Ch == K_ENTER
+    
+        nRet := DE_CONT
+        
+        if RECCOUNT2() == 0
+            return nRet
+        endif
+        
+        if ALIAS() == "_DOCS"
+        
+            if _docs->doc_status == 3
+            
+                MsgBeep("Ispravka osnovnih podataka onemogucena kod dorade#Opcija promjena sluzi u tu svrhu !!!")
+                return DE_CONT
+                
+            endif
+            
+            if e_doc_main_data( .f. ) == 1
+            
+                select _docs
+                nRet := DE_REFRESH
 
-			endif
+            endif
 
-			select _docs
-		
-		elseif ALIAS() == "_DOC_IT"
+            select _docs
+        
+        elseif ALIAS() == "_DOC_IT"
 
-			if e_doc_item( _doc, .f. ) <> 0
-			
-				select _doc_it
-				nRet := DE_REFRESH
+            if e_doc_item( _doc, .f. ) <> 0
+            
+                select _doc_it
+                nRet := DE_REFRESH
 
-			endif
+            endif
 
-			select _doc_it
-	
-		elseif ALIAS() == "_DOC_OPS"
+            select _doc_it
+    
+        elseif ALIAS() == "_DOC_OPS"
 
-			if e_doc_ops( _doc, .f., __art_id ) <> 0
-			
-				select _doc_ops
-				nRet := DE_REFRESH
+            if e_doc_ops( _doc, .f., __art_id ) <> 0
+            
+                select _doc_ops
+                nRet := DE_REFRESH
 
-			endif
+            endif
 
-			select _doc_ops
-	
-		endif
-	
-	case Ch == K_CTRL_T
+            select _doc_ops
+    
+        endif
+    
+    case Ch == K_CTRL_T
 
-		nRet := DE_CONT
-		
-		if ALIAS() == "_DOCS"
-		
-			if docs_delete() == 1
-				
-				l_auto_tab := .t.
-				KEYBOARD CHR(K_TAB)
-				nRet := DE_REFRESH
-				
-			endif
-			
-		elseif ALIAS() == "_DOC_IT"
+        nRet := DE_CONT
+        
+        if ALIAS() == "_DOCS"
+        
+            if docs_delete() == 1
+                
+                l_auto_tab := .t.
+                KEYBOARD CHR(K_TAB)
+                nRet := DE_REFRESH
+                
+            endif
+            
+        elseif ALIAS() == "_DOC_IT"
 
-			if docit_delete() == 1
-				
-				nRet := DE_REFRESH
-				
-			endif
+            if docit_delete() == 1
+                
+                nRet := DE_REFRESH
+                
+            endif
 
-		elseif ALIAS() == "_DOC_OPS"
+        elseif ALIAS() == "_DOC_OPS"
 
-			if docop_delete() == 1
-			
-				nRet := DE_REFRESH
-			
-			endif
-			
-		endif
+            if docop_delete() == 1
+            
+                nRet := DE_REFRESH
+            
+            endif
+            
+        endif
 
-	case UPPER(CHR(Ch)) == "E"
-		
-		// export dokumenta
-		m_export( _docs->doc_no, nil, .t., .t. )
-		
-		return DE_CONT
+    case UPPER(CHR(Ch)) == "E"
+        
+        // export dokumenta
+        m_export( _docs->doc_no, nil, .t., .t. )
+        
+        return DE_CONT
 
-	case Ch == K_ALT_C
+    case Ch == K_ALT_C
 
-		nRet := DE_CONT
+        nRet := DE_CONT
 
-		if ALIAS() == "_DOC_IT"
-			// kopiranje stavki naloga
-			if cp_items() <> 0
-				nRet := DE_REFRESH
-			endif
-		else
-			msgbeep("Za ovu operaciju pozicionirajte se na#unos stavki naloga !!!")
-		endif
+        if ALIAS() == "_DOC_IT"
+            // kopiranje stavki naloga
+            if cp_items() <> 0
+                nRet := DE_REFRESH
+            endif
+        else
+            msgbeep("Za ovu operaciju pozicionirajte se na#unos stavki naloga !!!")
+        endif
 
-		select _doc_it
+        select _doc_it
 
-		m_x := nX
-		m_y := nY
+        m_x := nX
+        m_y := nY
 
-		return nRet
+        return nRet
 
-	case Ch == K_ALT_A
-		
-		nRet := DE_CONT
+    case Ch == K_ALT_A
+        
+        nRet := DE_CONT
 
-		if ALIAS() == "_DOCS" .and. RECCOUNT2() <> 0 .and. ;
-			Pitanje(,"Izvrsiti azuriranje dokumenta (D/N) ?", "D") == "D"
-			
-			// ima li stavki u nalogu
-			if _doc_integ() == 0
-				msgbeep("!!! Azuriranje naloga onemoguceno !!!")
-				return DE_CONT
-			endif
-			
-			// busy....
-			if field->doc_status == 3
-				_g_doc_desc( @cDesc )
-			endif
-			
-			// uzmi novi broj dokumenta
-			nDocNoNew := _new_doc_no()
+        if ALIAS() == "_DOCS" .and. RECCOUNT2() <> 0 .and. ;
+            Pitanje(,"Izvrsiti azuriranje dokumenta (D/N) ?", "D") == "D"
+            
+            // ima li stavki u nalogu
+            if _doc_integ() == 0
+                msgbeep("!!! Azuriranje naloga onemoguceno !!!")
+                return DE_CONT
+            endif
+            
+            // busy....
+            if field->doc_status == 3
+                _g_doc_desc( @cDesc )
+            endif
+            
+            // uzmi novi broj dokumenta
+            nDocNoNew := _new_doc_no()
 
-			// ako je baza zauzeta...
-			if nDocNoNew == -1
-				return DE_CONT
-			endif
+            // ako je baza zauzeta...
+            if nDocNoNew == -1
+                return DE_CONT
+            endif
 
-			// filuj sve tabele sa novim brojem
-			fill__doc_no( nDocNoNew )
-			
-			// insertuj nalog u kumulativ
-			if doc_insert( cDesc ) == 1
-				
-				select _docs
-				l_auto_tab := .t.
-				KEYBOARD CHR(K_TAB)
-				nRet := DE_REFRESH
-						
-			endif
-		
-		elseif ALIAS() <> "_DOCS"
-			Msgbeep("Pozicionirajte se na tabelu osnovnih podataka")
-		
-		endif
-		
-		return nRet
+            // filuj sve tabele sa novim brojem
+            fill__doc_no( nDocNoNew )
+            
+            // insertuj nalog u kumulativ
+            if doc_insert( cDesc ) == 1
+                
+                select _docs
+                l_auto_tab := .t.
+                KEYBOARD CHR(K_TAB)
+                nRet := DE_REFRESH
+                        
+            endif
+        
+        elseif ALIAS() <> "_DOCS"
+            Msgbeep("Pozicionirajte se na tabelu osnovnih podataka")
+        
+        endif
+        
+        return nRet
 
-	case Ch == K_CTRL_P
+    case Ch == K_CTRL_P
 
-		// stampa naloga
-		nTArea := SELECT()
-		select _docs
-		
-		// ima li stavki u nalogu
-		if _doc_integ( .t. ) == 0
-			return DE_CONT
-		endif
-			
-		select _docs
-		
-		// uzmi novi broj dokumenta
-		nDocNoNew := _new_doc_no()
+        // stampa naloga
+        nTArea := SELECT()
+        select _docs
+        
+        // ima li stavki u nalogu
+        if _doc_integ( .t. ) == 0
+            return DE_CONT
+        endif
+            
+        select _docs
+        
+        // uzmi novi broj dokumenta
+        nDocNoNew := _new_doc_no()
 
-		// ako je baza zauzeta
-		if nDocNoNew == -1
-			return DE_CONT
-		endif
+        // ako je baza zauzeta
+        if nDocNoNew == -1
+            return DE_CONT
+        endif
 
-		// filuj sve tabele sa novim brojem
-		fill__doc_no( nDocNoNew )
-		
-		select _docs
-		go top
-		
-		st_nalpr( .t. , _docs->doc_no )
-		
-		select (nTArea)
-		go top
+        // filuj sve tabele sa novim brojem
+        fill__doc_no( nDocNoNew )
+        
+        select _docs
+        go top
+        
+        st_nalpr( .t. , _docs->doc_no )
+        
+        select (nTArea)
+        go top
 
-		nRet := DE_CONT
+        nRet := DE_CONT
 
-	case Ch == K_CTRL_O
+    case Ch == K_CTRL_O
 
-		// obracunski list......
-		nTArea := SELECT()
-		select _docs
-		
-		// ima li stavki u nalogu
-		if _doc_integ( .t. ) == 0
-			return DE_CONT
-		endif
-			
-		select _docs
-		
-		// uzmi novi broj dokumenta
-		nDocNoNew := _new_doc_no()
+        // obracunski list......
+        nTArea := SELECT()
+        select _docs
+        
+        // ima li stavki u nalogu
+        if _doc_integ( .t. ) == 0
+            return DE_CONT
+        endif
+            
+        select _docs
+        
+        // uzmi novi broj dokumenta
+        nDocNoNew := _new_doc_no()
 
-		// ako je baza zauzeta
-		if nDocNoNew == -1
-			return DE_CONT
-		endif
+        // ako je baza zauzeta
+        if nDocNoNew == -1
+            return DE_CONT
+        endif
 
-		// filuj sve tabele sa novim brojem
-		fill__doc_no( nDocNoNew )
-		
-		select _docs
-		go top
-		
-		st_obr_list( .t. , _docs->doc_no )
-		
-		select (nTArea)
-		go top
+        // filuj sve tabele sa novim brojem
+        fill__doc_no( nDocNoNew )
+        
+        select _docs
+        go top
+        
+        st_obr_list( .t. , _docs->doc_no )
+        
+        select (nTArea)
+        go top
 
-		nRet := DE_CONT
+        nRet := DE_CONT
 
-	case Ch == K_CTRL_R
-		
-		if ALIAS() == "_DOC_IT" .and. RECCOUNT2() <> 0 
-			box_it2( field->doc_no, field->doc_it_no )
-		endif
+    case Ch == K_CTRL_R
+        
+        if ALIAS() == "_DOC_IT" .and. RECCOUNT2() <> 0 
+            box_it2( field->doc_no, field->doc_it_no )
+        endif
 
-		nRet := DE_CONT
-	
-	case Ch == K_CTRL_L
-		
-		st_label( .t., _docs->doc_no )
-		
-		nRet := DE_CONT
+        nRet := DE_CONT
+    
+    case Ch == K_CTRL_L
+        
+        st_label( .t., _docs->doc_no )
+        
+        nRet := DE_CONT
 endcase
 
 m_x := nX
@@ -660,10 +660,10 @@ function _g_doc_desc( cDesc )
 local GetList := {}
 
 Box(,5, 70)
-	cDesc := SPACE(150)
-	@ m_x + 1, m_y + 2 SAY "Unesi opis promjene na nalogu:"
-	@ m_x + 3, m_y + 2 SAY "Opis:" GET cDesc VALID !EMPTY(cDesc) PICT "@S60"
-	read
+    cDesc := SPACE(150)
+    @ m_x + 1, m_y + 2 SAY "Unesi opis promjene na nalogu:"
+    @ m_x + 3, m_y + 2 SAY "Opis:" GET cDesc VALID !EMPTY(cDesc) PICT "@S60"
+    read
 BoxC()
 
 ESC_RETURN 0
@@ -683,7 +683,7 @@ local nCustId := 0
 local nContId := 0
 
 if lPrint == nil
-	lPrint := .f.
+    lPrint := .f.
 endif
 
 select _docs
@@ -698,22 +698,22 @@ nItems := RECCOUNT2()
 select (nTAREA)
 
 if lPrint == .f. .and. ( nItems == 0 .or. nCustId == 0 .or. nContId == 0 )
-	nRet := 0
+    nRet := 0
 elseif lPrint == .t. .and. ( nItems == 0 )
-	nRet := 0
+    nRet := 0
 endif
 
 if nItems == 0
-	MsgBeep("Nalog mora da sadrzi najmanje 1 stavku !!!")
+    MsgBeep("Nalog mora da sadrzi najmanje 1 stavku !!!")
 endif
 
 if lPrint == .f.
-	if nCustId == 0
-		MsgBeep("Polje narucioca mora biti popunjeno !!!")
-	endif
-	if nContId == 0
-		MsgBeep("Polje kontakta mora biti popunjeno !!!")
-	endif
+    if nCustId == 0
+        MsgBeep("Polje narucioca mora biti popunjeno !!!")
+    endif
+    if nContId == 0
+        MsgBeep("Polje kontakta mora biti popunjeno !!!")
+    endif
 endif
 
 return nRet
@@ -727,13 +727,14 @@ return nRet
 static function docs_delete( lSilent )
 local nDoc_no
 local nDoc_status 
+local _vals, _id_fields, _where_bl
 
 if lSilent == nil
-	lSilent := .f.
+    lSilent := .f.
 endif
 
 if !lSilent .and. Pitanje(,"Izbrisati nalog iz pripreme (D/N) ?!???", "N") == "N"
-	return 0
+    return 0
 endif
 
 nDoc_no := field->doc_no
@@ -745,34 +746,40 @@ delete
 select _doc_it
 go top
 do while !EOF()
-	delete
-	skip
+    delete
+    skip
 enddo
 
 select _doc_ops
 go top
 do while !EOF()
-	delete
-	skip
+    delete
+    skip
 enddo
 
 if nDoc_status == 3
 
-	// ukloni marker sa azuriranog dokumenta (busy)
+    // ukloni marker sa azuriranog dokumenta (busy)
 
-	set_doc_marker( nDoc_no, 0 )
+    set_doc_marker( nDoc_no, 0 )
 
 elseif nDoc_status == 0
-	
-	// treba ga brisati i iz azuriranih naloga
-	// jer je zauzeo vec broj
+    
+    // treba ga brisati i iz azuriranih naloga
+    // jer je zauzeo vec broj
 
-	select docs
-	go top
-	seek docno_str( nDoc_no )
-	if FOUND() .and. field->doc_no == nDoc_no
-		delete
-	endif
+    select docs
+    go top
+    seek docno_str( nDoc_no )
+
+    if FOUND() .and. field->doc_no == nDoc_no
+        
+        _vals := dbf_get_rec()
+        _id_fields := { {"doc_no", 10} }
+        _where_bl := {|x| "DOC_NO=" + STR(x["doc_no"], 10) }
+        delete_rec_server_and_dbf( "docs", _vals, _id_fields, _where_bl, "1" )
+
+    endif
 
 endif
 
@@ -790,11 +797,11 @@ static function docit_delete( lSilent )
 local nDoc_it_no
 
 if lSilent == nil
-	lSilent := .f.
+    lSilent := .f.
 endif
 
 if !lSilent .and. Pitanje(,"Izbrisati stavku (D/N)?", "D") == "N"
-	return 0
+    return 0
 endif
 
 nDoc_it_no := field->doc_it_no
@@ -807,10 +814,10 @@ go top
 seek doc_str( _doc ) + docit_str( nDoc_it_no )
 
 do while !EOF() .and. field->doc_no == _doc ;
-		.and. field->doc_it_no == nDoc_it_no
+        .and. field->doc_it_no == nDoc_it_no
 
-	delete
-	skip
+    delete
+    skip
 enddo
 
 select _doc_it
@@ -824,11 +831,11 @@ return 1
 // --------------------------------------------
 static function docop_delete( lSilent )
 if lSilent == nil
-	lSilent := .f.
+    lSilent := .f.
 endif
 
 if !lSilent .and. Pitanje(,"Izbrisati stavku (D/N)?", "D") == "N"
-	return 0
+    return 0
 endif
 
 delete
@@ -843,17 +850,17 @@ function must_enter( xVal )
 local lRet := .t.
 
 if VALTYPE(xVal) == "C"
-	if EMPTY(xVal)
-		lRet := .f.
-	endif
+    if EMPTY(xVal)
+        lRet := .f.
+    endif
 elseif VALTYPE(xVal) == "N"
-	if xVal == 0
-		lRet := .f.
-	endif
+    if xVal == 0
+        lRet := .f.
+    endif
 elseif VALTYPE(xVal) == "D"
-	if CTOD("") == xVal
-		lRet := .f.
-	endif
+    if CTOD("") == xVal
+        lRet := .f.
+    endif
 endif
 
 msg_must_enter( lRet )
@@ -865,7 +872,7 @@ return lRet
 // -----------------------------------------
 static function msg_must_enter( lVal )
 if lVal == .f.
-	MsgBeep("Unos polja obavezan !!!")
+    MsgBeep("Unos polja obavezan !!!")
 endif
 return
 

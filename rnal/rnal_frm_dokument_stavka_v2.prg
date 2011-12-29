@@ -63,36 +63,36 @@ static function it2_handler()
 local nRet := DE_CONT
 
 do case 
-	case (Ch == K_F2)
-	
-		if field->doc_it_no <> 0 .and. ;
-			e_doc_it2( __doc, __doc_it_no, .f. ) <> 0
-			nRet := DE_REFRESH
-		endif
+    case (Ch == K_F2)
+    
+        if field->doc_it_no <> 0 .and. ;
+            e_doc_it2( __doc, __doc_it_no, .f. ) <> 0
+            nRet := DE_REFRESH
+        endif
 
-	case (Ch == K_CTRL_N)
-		
-		if e_doc_it2( __doc, __doc_it_no, .t. ) <> 0
-			nRet := DE_REFRESH
-		endif
+    case (Ch == K_CTRL_N)
+        
+        if e_doc_it2( __doc, __doc_it_no, .t. ) <> 0
+            nRet := DE_REFRESH
+        endif
 
-	case (Ch == K_CTRL_T)
-		
-		if Pitanje(, "Izbrisati stavku ?", "N") == "D"
-			select _doc_it2
-			delete
-			nRet := DE_REFRESH
-		endif
-	
-	case (Ch == K_CTRL_F9)
-		
-		if Pitanje(,"Izbrisati kompletnu tabelu ?", "N") == "D"
-			if Pitanje(,"Sigurni 100% ?", "N") == "D"
-				select _doc_it2
-				zap
-				nRet := DE_REFRESH
-			endif
-		endif
+    case (Ch == K_CTRL_T)
+        
+        if Pitanje(, "Izbrisati stavku ?", "N") == "D"
+            select _doc_it2
+            delete
+            nRet := DE_REFRESH
+        endif
+    
+    case (Ch == K_CTRL_F9)
+        
+        if Pitanje(,"Izbrisati kompletnu tabelu ?", "N") == "D"
+            if Pitanje(,"Sigurni 100% ?", "N") == "D"
+                select _doc_it2
+                zap
+                nRet := DE_REFRESH
+            endif
+        endif
 
 endcase
 
@@ -117,7 +117,7 @@ AADD(aImeKol, {"Opis", {|| sh_desc }, "sh_desc" })
 AADD(aImeKol, {"Napomene", {|| desc }, "desc" })
 
 for i:=1 to LEN(aImeKol)
-	AADD(aKol,i)
+    AADD(aKol,i)
 next
 
 return
@@ -136,19 +136,20 @@ local nGetBoxY := 70
 local cBoxNaz := "unos nove stavke"
 local nRet := 0
 local nFuncRet := 0
+local _rec
 private GetList:={}
 
 __doc := nDoc_no
 __doc_it_no := nDoc_it_no
 
 if lNew == nil
-	lNew := .t.
+    lNew := .t.
 endif
 
 l_new_it := lNew
 
 if l_new_it == .f.
-	cBoxNaz := "ispravka stavke"
+    cBoxNaz := "ispravka stavke"
 endif
 
 select _doc_it2
@@ -161,34 +162,37 @@ set_opc_box(nGetBoxX, 50)
 @ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz , nGetBoxY - 2)
 @ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
 
-Scatter()
+set_global_memvars_from_dbf()
 
 do while .t.
 
-	nFuncRet := _e_box_it2( nGetBoxX, nGetBoxY )
-	
-	if nFuncRet == 1
-		
-		select _doc_it2
-		
-		if l_new_it
-			append blank
-		endif
-		
-		Gather()
-		
-		if l_new_it
-			loop
-		endif
-		
-	endif
-	
-	BoxC()
-	select _doc_it2
-	
-	nRet := RECCOUNT2()
-	
-	exit
+    nFuncRet := _e_box_it2( nGetBoxX, nGetBoxY )
+    
+    if nFuncRet == 1
+        
+        select _doc_it2
+        
+        if l_new_it
+            append blank
+        endif
+ 
+         _rec := hb_hash()
+        _rec := get_dbf_global_memvars()
+        
+        dbf_update_rec( _rec )
+               
+        if l_new_it
+            loop
+        endif
+        
+    endif
+    
+    BoxC()
+    select _doc_it2
+    
+    nRet := RECCOUNT2()
+    
+    exit
 
 enddo
 
@@ -211,15 +215,15 @@ local cPicQtty := "999999.999"
 local cPicPrice := "999999.99"
 
 if l_new_it
-	_doc_no := __doc
-	_doc_it_no := __doc_it_no
-	_it_no := inc_docit2( __doc, __doc_it_no )
+    _doc_no := __doc
+    _doc_it_no := __doc_it_no
+    _it_no := inc_docit2( __doc, __doc_it_no )
 endif
 
 nX += 2
 
 @ m_x + nX, m_y + 2 SAY PADL("Stavka naloga (*)", nLeft) GET _doc_it_no ;
-	VALID {|| if(l_new_it, _it_no := inc_docit2( _doc_no, _doc_it_no ), .t.), .t. }
+    VALID {|| if(l_new_it, _it_no := inc_docit2( _doc_no, _doc_it_no ), .t.), .t. }
 
 nX += 1
 
@@ -230,19 +234,19 @@ nX += 2
 @ m_x + nX, m_y + 2 SAY PADL("FMK ARTIKAL (*):", nLeft) GET _art_id VALID {|| p_roba( @_art_id ), _doc_it_pri := g_roba_price( _art_id ), show_it( g_roba_desc( _art_id ) + ".." , 35 ) } WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz FMK sifrarnika" )
 
 nX += 2
-	
+    
 @ m_x + nX, m_y + 2 SAY PADL("kolicina (*):", nLeft + 3) GET _doc_it_qtt ;
-	PICT cPicQtty WHEN set_opc_box( nBoxX, 50 )
+    PICT cPicQtty WHEN set_opc_box( nBoxX, 50 )
 
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL("kolicina 2:", nLeft + 3) GET _doc_it_q2 ;
-	PICT cPicQtty WHEN set_opc_box( nBoxX, 50, "dodatna kolicina" )
+    PICT cPicQtty WHEN set_opc_box( nBoxX, 50, "dodatna kolicina" )
 
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL("cijena:", nLeft + 3) GET _doc_it_pri ;
-	PICT cPicPrice WHEN set_opc_box( nBoxX, 50, "opciono cijena" )
+    PICT cPicPrice WHEN set_opc_box( nBoxX, 50, "opciono cijena" )
 
 nX += 2
 
@@ -274,9 +278,9 @@ set order to tag "1"
 seek doc_str( nDoc_no ) + docit_str( nDoc_it_no )
 
 do while !EOF() .and. field->doc_no == nDoc_no .and. ;
-	field->doc_it_no == nDoc_it_no
-	nRet := field->it_no
-	skip
+    field->doc_it_no == nDoc_it_no
+    nRet := field->it_no
+    skip
 enddo
 
 nRet += 1
@@ -299,7 +303,7 @@ select roba
 seek cId
 
 if FOUND()
-	cDescr := ALLTRIM( roba->naz )
+    cDescr := ALLTRIM( roba->naz )
 endif
 
 select (nTArea)
@@ -318,7 +322,7 @@ select roba
 seek cId
 
 if FOUND()
-	nPrice := roba->vpc
+    nPrice := roba->vpc
 endif
 
 select (nTArea)

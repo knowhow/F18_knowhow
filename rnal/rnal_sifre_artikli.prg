@@ -55,36 +55,36 @@ __mc_sep := "_"
 __qf_cond := SPACE(200)
 
 if lAutoFind == nil
-	lAutoFind := .f.
+    lAutoFind := .f.
 endif
 
 if lQuickFind == nil
-	lQuickFind := .f.
+    lQuickFind := .f.
 endif
 
 l_auto_find := lAutoFind
 l_quick_find := lQuickFind 
 
 if l_auto_find == .t.
-	l_quick_find := .f.
+    l_quick_find := .f.
 endif
 
 if ( par_count > 0 )
-	
-	if lAutoFind == .f.
-		
-		l_open_dbedit := .f.
-		
-	endif
-	
-	if cId <> VAL(artid_str(0)) .and. lAutoFind == .t.
-		
-		l_open_dbedit := .f.
-		
-		lAutoFind := .f.
-		
-	endif
-	
+    
+    if lAutoFind == .f.
+        
+        l_open_dbedit := .f.
+        
+    endif
+    
+    if cId <> VAL(artid_str(0)) .and. lAutoFind == .t.
+        
+        l_open_dbedit := .f.
+        
+        lAutoFind := .f.
+        
+    endif
+    
 endif
 
 nTArea := SELECT()
@@ -102,35 +102,35 @@ set order to tag "1"
 go top
 
 if !l_open_dbedit
-	
-	seek artid_str(cId)
-	
-	if !FOUND()
-		l_open_dbedit := .t.
-		go top
-	endif
+    
+    seek artid_str(cId)
+    
+    if !FOUND()
+        l_open_dbedit := .t.
+        go top
+    endif
 
 endif
 
 if l_open_dbedit
-	
-	set_a_kol(@ImeKol, @Kol)
+    
+    set_a_kol(@ImeKol, @Kol)
 
-	cOptions += "cN-novi "
-	cOptions += "cT-brisi "
-	cOptions += "F2-ispr. "
-	cOptions += "F3-isp.naz. "
-	cOptions += "F4-dupl. "
-	cOptions += "aF-trazi "
-	cOptions += "Q-br.traz"
+    cOptions += "cN-novi "
+    cOptions += "cT-brisi "
+    cOptions += "F2-ispr. "
+    cOptions += "F3-isp.naz. "
+    cOptions += "F4-dupl. "
+    cOptions += "aF-trazi "
+    cOptions += "Q-br.traz"
 
-	Box(, nBoxX, nBoxY, .t.)
-	
-	@ m_x + nBoxX + 1, m_y + 2 SAY cOptions
+    Box(, nBoxX, nBoxY, .t.)
+    
+    @ m_x + nBoxX + 1, m_y + 2 SAY cOptions
 
-	ObjDbedit(, nBoxX, nBoxY, {|| key_handler(Ch)}, cHeader, cFooter , .t.,,,,7)
+    ObjDbedit(, nBoxX, nBoxY, {|| key_handler(Ch)}, cHeader, cFooter , .t.,,,,7)
 
-	BoxC()
+    BoxC()
 
 endif
 
@@ -154,7 +154,7 @@ AADD(aImeKol, { "sifra :: puni naziv", {|| ALLTRIM(art_desc) + " :: " + UPPER(ar
 AADD(aImeKol, { "labela opis", {|| ALLTRIM(art_lab_de) }, "art_desc" })
 
 for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
+    AADD(aKol, i)
 next
 
 return
@@ -175,176 +175,176 @@ local nRet
 box_preview( 17, 1, 77 )
 
 do case
-	
-	// ako je iz auto pretrage sortiraj artikle
-	case l_auto_find == .t.
-		
-		// odaberi artikle po filteru
-		pick_articles()
-		
-		l_auto_find := .f.
-		
-		Tb:RefreshAll()
-     		
-		while !TB:stabilize()
-		end
-		
-		return DE_CONT
+    
+    // ako je iz auto pretrage sortiraj artikle
+    case l_auto_find == .t.
+        
+        // odaberi artikle po filteru
+        pick_articles()
+        
+        l_auto_find := .f.
+        
+        Tb:RefreshAll()
+            
+        while !TB:stabilize()
+        end
+        
+        return DE_CONT
 
-	case l_quick_find == .t.
+    case l_quick_find == .t.
 
-		_quick_find()
-		
-		l_quick_find := .f.
-		
-		Tb:RefreshAll()
+        _quick_find()
+        
+        l_quick_find := .f.
+        
+        Tb:RefreshAll()
 
-		while !TB:stabilize()
-		end
+        while !TB:stabilize()
+        end
 
-		return DE_CONT
-	
-	case Ch == K_CTRL_N
-		
-		// novi artikal...
-		
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTNEW")
-			
-			MsgBeep( cZabrana )
-			select articles
-			
-			return DE_CONT
-		endif
-		
-		// dodijeli i zauzmi novu sifru...
-		select articles
-		set filter to
-		set relation to
-		
-		if _set_sif_id(@nArt_id, "ART_ID") == 0
-			return DE_CONT
-		endif
-		
-		// prvo mi reci koji artikal zelis praviti...
-		_g_art_type( @nArt_type, @cSchema )
-		
-		if s_elements( nArt_id, .t., nArt_Type, cSchema ) == 1
-			select articles
-			go bottom
-		else
-			select articles
-			go (nTRec)
-		endif
-		
-		
-		return DE_REFRESH
-		
-	case Ch == K_F2
-		
-		// ispravka sifre
-		
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTEDIT")
-			
-			MsgBeep( cZabrana )
-			select articles
-			return DE_CONT
-			
-		endif
-		
-		if s_elements( field->art_id ) == 1
-			
-			select articles
-			set order to tag "1"
-			go (nTRec)
-			
-			return DE_REFRESH
-		
-		endif
-		
-		select articles
-		set order to tag "1"
-		go (nTRec)
-		
-		return DE_CONT
-	
-	case Ch == K_F3
+        return DE_CONT
+    
+    case Ch == K_CTRL_N
+        
+        // novi artikal...
+        
+        if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTNEW")
+            
+            MsgBeep( cZabrana )
+            select articles
+            
+            return DE_CONT
+        endif
+        
+        // dodijeli i zauzmi novu sifru...
+        select articles
+        set filter to
+        set relation to
+        
+        if _set_sif_id(@nArt_id, "ART_ID") == 0
+            return DE_CONT
+        endif
+        
+        // prvo mi reci koji artikal zelis praviti...
+        _g_art_type( @nArt_type, @cSchema )
+        
+        if s_elements( nArt_id, .t., nArt_Type, cSchema ) == 1
+            select articles
+            go bottom
+        else
+            select articles
+            go (nTRec)
+        endif
+        
+        
+        return DE_REFRESH
+        
+    case Ch == K_F2
+        
+        // ispravka sifre
+        
+        if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTEDIT")
+            
+            MsgBeep( cZabrana )
+            select articles
+            return DE_CONT
+            
+        endif
+        
+        if s_elements( field->art_id ) == 1
+            
+            select articles
+            set order to tag "1"
+            go (nTRec)
+            
+            return DE_REFRESH
+        
+        endif
+        
+        select articles
+        set order to tag "1"
+        go (nTRec)
+        
+        return DE_CONT
+    
+    case Ch == K_F3
 
-		if art_ed_desc( field->art_id ) == 1
-			return DE_REFRESH
-		endif
-		
-	case Ch == K_F4
+        if art_ed_desc( field->art_id ) == 1
+            return DE_REFRESH
+        endif
+        
+    case Ch == K_F4
 
-		// ima li pravo pristupa...
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTDUPLI")
-			
-			Msgbeep( cZabrana )
-			select articles
-			return DE_CONT
-			
-		endif
-		
-		// dupliciranje (kloniranje) artikla....
-		select articles
+        // ima li pravo pristupa...
+        if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTDUPLI")
+            
+            Msgbeep( cZabrana )
+            select articles
+            return DE_CONT
+            
+        endif
+        
+        // dupliciranje (kloniranje) artikla....
+        select articles
 
-		nArt_new := clone_article( articles->art_id ) 
-		
-		if nArt_new > 0 .and. s_elements( nArt_new, .t. ) == 1
-		
-			select articles
-			set order to tag "1"
-			go (nTRec)
-		
-			return DE_REFRESH
-		endif
-		
-		select articles
-		set order to tag "1"
-		go (nTRec)
-		return DE_REFRESH
-	
-	case Ch == K_CTRL_T
+        nArt_new := clone_article( articles->art_id ) 
+        
+        if nArt_new > 0 .and. s_elements( nArt_new, .t. ) == 1
+        
+            select articles
+            set order to tag "1"
+            go (nTRec)
+        
+            return DE_REFRESH
+        endif
+        
+        select articles
+        set order to tag "1"
+        go (nTRec)
+        return DE_REFRESH
+    
+    case Ch == K_CTRL_T
 
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTNEW")
-			msgbeep( cZabrana )
-			select articles
-			return DE_CONT
-		endif
-		
-		if art_delete( field->art_id, .t. ) == 1
-			
-			return DE_REFRESH
-		
-		endif
-		
-		return DE_CONT
+        if !ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "ARTNEW")
+            msgbeep( cZabrana )
+            select articles
+            return DE_CONT
+        endif
+        
+        if art_delete( field->art_id, .t. ) == 1
+            
+            return DE_REFRESH
+        
+        endif
+        
+        return DE_CONT
 
-	
-	case Ch == K_ENTER
+    
+    case Ch == K_ENTER
 
-		// izaberi sifru....
-		if par_count > 0
-			return DE_ABORT
-		endif
+        // izaberi sifru....
+        if par_count > 0
+            return DE_ABORT
+        endif
 
-	case Ch == K_ALT_F
+    case Ch == K_ALT_F
 
-		// selekcija artikala....
-		if pick_articles() == 1
-			return DE_REFRESH
-		endif
-		
-		return DE_CONT
-		
-	case UPPER(CHR(Ch)) == "Q"
+        // selekcija artikala....
+        if pick_articles() == 1
+            return DE_REFRESH
+        endif
+        
+        return DE_CONT
+        
+    case UPPER(CHR(Ch)) == "Q"
 
-		// quick find...
-		if _quick_find() == 1
-			return DE_REFRESH
-		endif
-		
-		return DE_CONT
-	
+        // quick find...
+        if _quick_find() == 1
+            return DE_REFRESH
+        endif
+        
+        return DE_CONT
+    
 endcase
 return DE_CONT
 
@@ -361,37 +361,37 @@ cSchema := SPACE(20)
 nType := 0
 
 Box(, 10, 50)
-	
-	@ m_x + nX, m_y + 2 SAY "Odabir vrste artikla"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "   (1) jednostruko staklo"
-	
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "   (2) dvostruko staklo"
-	
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "   (3) trostruko/visestruko staklo"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "   (0) ostalo"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY " selekcija:" GET nType VALID nType >= 0 .and. nType <= 3 PICT "9"
-	
-	read
+    
+    @ m_x + nX, m_y + 2 SAY "Odabir vrste artikla"
+    
+    nX += 2
+    
+    @ m_x + nX, m_y + 2 SAY "   (1) jednostruko staklo"
+    
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "   (2) dvostruko staklo"
+    
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "   (3) trostruko/visestruko staklo"
+    
+    nX += 2
+    
+    @ m_x + nX, m_y + 2 SAY "   (0) ostalo"
+    
+    nX += 2
+    
+    @ m_x + nX, m_y + 2 SAY " selekcija:" GET nType VALID nType >= 0 .and. nType <= 3 PICT "9"
+    
+    read
 
-	if nType <> 0
-		@ m_x + nX, m_y + 18 SAY "shema:" GET cSchema VALID __g_sch( @cSchema , nType )
-	endif
-	
-	read
-	
+    if nType <> 0
+        @ m_x + nX, m_y + 18 SAY "shema:" GET cSchema VALID __g_sch( @cSchema , nType )
+    endif
+    
+    read
+    
 BoxC()
 
 
@@ -413,34 +413,34 @@ private izbor := 1
 aSch := r_el_schema( nType )
 
 if LEN(aSch) == 0
-	
-	msgbeep("ne postoje definisane sheme, koristim default")
-	
-	if nType == 1
-		
-		cSchema := "G"
-	
-	elseif nType == 2
-		
-		cSchema := "G-F-G"
-		
-	elseif nType == 3
-	
-		cSchema := "G-F-G-F-G"
-	
-	endif
-	
-	return .t.
-	
+    
+    msgbeep("ne postoje definisane sheme, koristim default")
+    
+    if nType == 1
+        
+        cSchema := "G"
+    
+    elseif nType == 2
+        
+        cSchema := "G-F-G"
+        
+    elseif nType == 3
+    
+        cSchema := "G-F-G-F-G"
+    
+    endif
+    
+    return .t.
+    
 endif
 
 
 for i := 1 to LEN( aSch )
 
-	cPom := PADR( aSch[i, 1], 30 )
-	
-	AADD( opc, cPom )
-	AADD( opcexe, {|| nSelect := izbor, izbor := 0 })
+    cPom := PADR( aSch[i, 1], 30 )
+    
+    AADD( opc, cPom )
+    AADD( opcexe, {|| nSelect := izbor, izbor := 0 })
 
 next
 
@@ -459,12 +459,12 @@ local cFilt := ".t."
 
 // box q.find
 if _box_qfind() == 0
-	return 0
+    return 0
 endif
 
 // generisi q.f. filter
 if _g_qf_filt( @cFilt ) == 0
-	return 0
+    return 0
 endif
 
 select articles 
@@ -472,24 +472,24 @@ set filter to
 go top
 
 if cFilt == ".t."
-	
-	set filter to
-	go top
-	nRet := 0
+    
+    set filter to
+    go top
+    nRet := 0
 
 else
-	
-	MsgO("Vrsim selekciju artikala... sacekajte trenutak....")
-	
-	cFilt := STRTRAN( cFilt, ".t. .and.", "") 
-	
-	set filter to &cFilt
-	set order to tag "2"
+    
+    MsgO("Vrsim selekciju artikala... sacekajte trenutak....")
+    
+    cFilt := STRTRAN( cFilt, ".t. .and.", "") 
+    
+    set filter to &cFilt
+    set order to tag "2"
 
-	go top
-	
-	MsgC()
-	nRet := 1
+    go top
+    
+    MsgC()
+    nRet := 1
 
 endif
 
@@ -508,7 +508,7 @@ local i
 local nCnt
 
 if EMPTY( __qf_cond )
-	return nRet
+    return nRet
 endif
 
 cCond := ALLTRIM( __qf_cond )
@@ -522,98 +522,98 @@ aTmp := TokToNiz( cCond, ";" )
 // prodji kroz matricu aTmp
 for i := 1 to LEN( aTmp )
 
-	if ( i == 1 )
-	
-		cFilter += " .and. "
-	
-	else
-	
-		cFilter += " .or. "
-	
-	endif
+    if ( i == 1 )
+    
+        cFilter += " .and. "
+    
+    else
+    
+        cFilter += " .or. "
+    
+    endif
 
-	
-	if "*" $ aTmp[ i ]
+    
+    if "*" $ aTmp[ i ]
 
-		aCountTmp := TokToNiz( cCond, "*" )
-		nCount := LEN(aCountTmp)
-		
-		// "*F4"
-		
-		if LEFT( aTmp[i] , 1 ) == "*" .and. nCount == 1
-	
-			cTmp := UPPER(ALLTRIM( aCountTmp[ 1 ] ))
-	
-			cFilter += cm2str( "_" + cTmp ) 
-			cFilter += " $ "
-			cFilter += "ALLTRIM(UPPER(art_desc))"
-		
-	
-		// "F4*"
-		
-		elseif RIGHT( aTmp[i], 1 ) == "*" .and. nCount == 1
+        aCountTmp := TokToNiz( cCond, "*" )
+        nCount := LEN(aCountTmp)
+        
+        // "*F4"
+        
+        if LEFT( aTmp[i] , 1 ) == "*" .and. nCount == 1
+    
+            cTmp := UPPER(ALLTRIM( aCountTmp[ 1 ] ))
+    
+            cFilter += cm2str( "_" + cTmp ) 
+            cFilter += " $ "
+            cFilter += "ALLTRIM(UPPER(art_desc))"
+        
+    
+        // "F4*"
+        
+        elseif RIGHT( aTmp[i], 1 ) == "*" .and. nCount == 1
 
-			cTmp := UPPER(ALLTRIM( aCountTmp[ i ] ))
-			nTmp := LEN(cTmp)
-	
-			cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + ALLTRIM(STR(nTmp))+ ")"
-			cFilter += " = "
-			cFilter += cm2str( cTmp )
-		
+            cTmp := UPPER(ALLTRIM( aCountTmp[ i ] ))
+            nTmp := LEN(cTmp)
+    
+            cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + ALLTRIM(STR(nTmp))+ ")"
+            cFilter += " = "
+            cFilter += cm2str( cTmp )
+        
 
-		elseif nCount > 1
+        elseif nCount > 1
 
-			aArtTmp := TokToNiz( aTmp[i], "*" )
-			
-			for iii := 1 to LEN( aArtTmp )
-				
-				if iii == 1
-			
-					cTmp := UPPER( ALLTRIM( aArtTmp[ iii ] ))
-					nTmp := LEN(cTmp)
-	
-					cFilter += " ( "
-					cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + ALLTRIM(STR(nTmp))+ ")"
-					cFilter += " = "
-					cFilter += cm2str( cTmp )
-			
-				elseif iii > 1
-				
-					cTmp := UPPER( ALLTRIM( aArtTmp[ iii ] ))
-					cFilter += " .and. " + cm2str("_" + cTmp)
-					cFilter += " $ "
-					cFilter += "ALLTRIM(UPPER(art_desc))"
-				
-				endif
+            aArtTmp := TokToNiz( aTmp[i], "*" )
+            
+            for iii := 1 to LEN( aArtTmp )
+                
+                if iii == 1
+            
+                    cTmp := UPPER( ALLTRIM( aArtTmp[ iii ] ))
+                    nTmp := LEN(cTmp)
+    
+                    cFilter += " ( "
+                    cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + ALLTRIM(STR(nTmp))+ ")"
+                    cFilter += " = "
+                    cFilter += cm2str( cTmp )
+            
+                elseif iii > 1
+                
+                    cTmp := UPPER( ALLTRIM( aArtTmp[ iii ] ))
+                    cFilter += " .and. " + cm2str("_" + cTmp)
+                    cFilter += " $ "
+                    cFilter += "ALLTRIM(UPPER(art_desc))"
+                
+                endif
 
-				if iii == LEN( aArtTmp )
-					cFilter += " ) "
-				endif
-			next
-		
-		else
+                if iii == LEN( aArtTmp )
+                    cFilter += " ) "
+                endif
+            next
+        
+        else
 
-		endif
-		
-	else
+        endif
+        
+    else
 
-		// cisi unos, gleda se samo LEFT( nnn )
-		
-		cTmp := ALLTRIM( aTmp[ i ] )
-		nTmp := LEN(cTmp)
-	
-		cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + ALLTRIM(STR(nTmp))+ ")"
-		cFilter += " = "
-		cFilter += cm2str(UPPER(cTmp))
-		
-	endif
-	
+        // cisi unos, gleda se samo LEFT( nnn )
+        
+        cTmp := ALLTRIM( aTmp[ i ] )
+        nTmp := LEN(cTmp)
+    
+        cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + ALLTRIM(STR(nTmp))+ ")"
+        cFilter += " = "
+        cFilter += cm2str(UPPER(cTmp))
+        
+    endif
+    
 next
 
 if cFilter == ".t."
-	nRet := 0
+    nRet := 0
 else
-	nRet := 1
+    nRet := 1
 endif
 
 return nRet
@@ -631,13 +631,13 @@ private GetList:={}
 
 Box(, nBoxX, nBoxY)
 
-	@ m_x + nX, m_y + 2 SAY "===>>> Brza pretraga artikala ===>>>"
-	
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY "uslov:" GET __qf_cond VALID _vl_cond( __qf_cond ) PICT "@S60!" 
-	
-	read
+    @ m_x + nX, m_y + 2 SAY "===>>> Brza pretraga artikala ===>>>"
+    
+    nX += 1
+    
+    @ m_x + nX, m_y + 2 SAY "uslov:" GET __qf_cond VALID _vl_cond( __qf_cond ) PICT "@S60!" 
+    
+    read
 BoxC()
 
 ESC_RETURN 0
@@ -652,11 +652,11 @@ static function _vl_cond( cCond )
 local lRet := .t.
 
 if EMPTY(cCond)
-	lRet := .f.
+    lRet := .f.
 endif
 
 if lRet == .f. .and. EMPTY(cCond)
-	MsgBeep("Uslov mora biti unesen !!!")
+    MsgBeep("Uslov mora biti unesen !!!")
 endif
 
 return lRet
@@ -678,30 +678,31 @@ local cArt_lab_desc := PADR(field->art_lab_de, 200)
 local cDBFilter := DBFILTER()
 local nTRec := RECNO()
 local nRet := 0
+local _rec
 
 if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
-		@cArt_mcode ) == 1
-	
-	set filter to
-	set order to tag "1"
-	go top
-	
-	seek artid_str( nArt_id )
-	
-	Scatter()
-	
-	_art_desc := cArt_desc
-	_art_full_d := cArt_full_desc
-	_art_lab_de := cArt_lab_desc
-	_match_code := cArt_mcode
-	
-	Gather()
+        @cArt_mcode ) == 1
+    
+    set filter to
+    set order to tag "1"
+    go top
+    
+    seek artid_str( nArt_id )
+    
+    _rec := dbf_get_rec()
+    
+    _rec["art_desc"] := cArt_desc
+    _rec["art_full_d"] := cArt_full_desc
+    _rec["art_lab_de"] := cArt_lab_desc
+    _rec["match_code"] := cArt_mcode
+    
+    update_rec_server_and_dbf( nil, _rec )
 
-	set order to tag "1"
-	set filter to &cDBFilter
-	go (nTRec)
-	
-	nRet := 1
+    set order to tag "1"
+    set filter to &cDBFilter
+    go (nTRec)
+    
+    nRet := 1
 endif
 
 return nRet
@@ -719,12 +720,12 @@ aDesc := TokToNiz( articles->art_full_d, ";" )
 @ nX, nY SAY PADR("ID: " + artid_str(articles->art_id) + SPACE(3) + "MATCH CODE: " + articles->match_code, nLen) COLOR "GR+/G" 
 
 for i:=1 to 6
-	@ nX + i, nY SAY PADR("", nLen) COLOR "BG+/B"
+    @ nX + i, nY SAY PADR("", nLen) COLOR "BG+/B"
 next
 
 for i:=1 to LEN(aDesc)
 
-	@ nX + i, nY SAY PADR( " * " + ALLTRIM(aDesc[i]), nLen ) COLOR "BG+/B"
+    @ nX + i, nY SAY PADR( " * " + ALLTRIM(aDesc[i]), nLen ) COLOR "BG+/B"
 
 next
 
@@ -746,15 +747,15 @@ local cArtDesc := "?????"
 local nTArea := SELECT()
 
 if lEmpty == nil
-	lEmpty := .f.
+    lEmpty := .f.
 endif
 
 if lEmpty == .t.
-	cArtDesc := ""
+    cArtDesc := ""
 endif
 
 if lFullDesc == nil
-	lFullDesc := .t.
+    lFullDesc := .t.
 endif
 
 O_ARTICLES
@@ -764,15 +765,15 @@ go top
 seek artid_str(nArt_id)
 
 if FOUND()
-	if lFullDesc == .t.
-		if !EMPTY(field->art_full_d)
-			cArtDesc := ALLTRIM(field->art_full_d)
-		endif
-	else
-		if !EMPTY(field->art_desc)
-			cArtDesc := ALLTRIM(field->art_desc)
-		endif
-	endif
+    if lFullDesc == .t.
+        if !EMPTY(field->art_full_d)
+            cArtDesc := ALLTRIM(field->art_full_d)
+        endif
+    else
+        if !EMPTY(field->art_desc)
+            cArtDesc := ALLTRIM(field->art_desc)
+        endif
+    endif
 endif
 
 select (nTArea)
@@ -789,33 +790,34 @@ return cArtDesc
 // -------------------------------------------------------
 static function art_delete( nArt_id, lChkKum, lSilent )
 local nEl_id 
+local _del_rec
 
 if lSilent == nil
-	lSilent := .f.
+    lSilent := .f.
 endif
 
 if lChkKum == nil
-	lChkKum := .f.
+    lChkKum := .f.
 endif
 
 if lChkKum == .t.
 
-	O_DOC_IT
-	select doc_it
-	set order to tag "2"
-	go top
-	
-	seek artid_str( nArt_id )
-	
-	if FOUND()
-		
-		MsgBeep("Uoceno je da se artikal koristi u nalogu br: " + ALLTRIM(STR(doc_it->doc_no))+ " #!!! BRISANJE ONEMOGUCENO !!!")
-		
-		select articles
-		
-		return 0	
-		
-	endif
+    O_DOC_IT
+    select doc_it
+    set order to tag "2"
+    go top
+    
+    seek artid_str( nArt_id )
+    
+    if FOUND()
+        
+        MsgBeep("Uoceno je da se artikal koristi u nalogu br: " + ALLTRIM(STR(doc_it->doc_no))+ " #!!! BRISANJE ONEMOGUCENO !!!")
+        
+        select articles
+        
+        return 0    
+        
+    endif
 endif
 
 select articles
@@ -824,49 +826,63 @@ go top
 seek artid_str( nArt_id )
 
 if FOUND()
-	
-	if !lSilent .and. Pitanje(, "Izbrisati zapis (D/N) ???", "N") == "N"
-		return 0
-	endif
-	
-	delete
+    
+    if !lSilent .and. Pitanje(, "Izbrisati zapis (D/N) ???", "N") == "N"
+        return 0
+    endif
 
-	select elements
-	set order to tag "1"
-	go top
-	seek artid_str( nArt_id )
+    _del_rec := hb_hash()
+    _del_rec["art_id"] := nArt_id
 
-	do while !EOF() .and. field->art_id == nArt_id
-		
-		nEl_id := field->el_id
-		
-		select e_att
-		set order to tag "1"
-		go top
-		seek elid_str( nEl_id )
-		
-		do while !EOF() .and. field->el_id == nEl_id
-			delete
-			skip
-		enddo
+    delete_rec_server_and_dbf( "articles", _del_rec )
 
-		select e_aops
-		set order to tag "1"
-		go top
-		seek elid_str( nEl_id )
-	
-		do while !EOF() .and. field->el_id == nEl_id
-			delete
-			skip
-		enddo
-		
-		select elements
-		
-		delete
-		skip
-	
-	enddo
-	
+    select elements
+    set order to tag "1"
+    go top
+    seek artid_str( nArt_id )
+
+    do while !EOF() .and. field->art_id == nArt_id
+        
+        nEl_id := field->el_id
+        
+        select e_att
+        set order to tag "1"
+        go top
+        seek elid_str( nEl_id )
+        
+        do while !EOF() .and. field->el_id == nEl_id
+            
+            _del_rec := hb_hash()
+            _del_rec["art_id"] := field->art_id
+            _del_rec["el_id"] := field->el_id
+
+            delete_rec_server_and_dbf( "elements", _del_rec )
+
+            skip
+        enddo
+
+        select e_aops
+        set order to tag "1"
+        go top
+        seek elid_str( nEl_id )
+    
+        do while !EOF() .and. field->el_id == nEl_id
+            _del_rec := hb_hash()
+            _del_rec["art_id"] := field->art_id
+            _del_rec["el_id"] := field->el_id
+
+            delete_rec_server_and_dbf( "e_aops", _del_rec )
+
+            skip
+        enddo
+        
+        select elements
+        
+        delete
+        skip
+    
+    enddo
+    
 endif
 
 select articles
@@ -882,9 +898,10 @@ local nElRecno
 local nOldEl_id
 local nElGr_id
 local nElNewid := 0
+local _rec 
 
 if Pitanje(, "Duplicirati artikal (D/N)?", "D") == "N"
-	return -1
+    return -1
 endif
 
 select articles
@@ -892,7 +909,7 @@ set filter to
 set relation to
 
 if _set_sif_id( @nArtNewid, "ART_ID" ) == 0
-	return -1
+    return -1
 endif
 
 // ELEMENTS
@@ -903,32 +920,32 @@ seek artid_str( nArt_id )
 
 do while !EOF() .and. field->art_id == nArt_id
 
-	nOldEl_id := field->el_id
-	nElGr_id := field->e_gr_id
+    nOldEl_id := field->el_id
+    nElGr_id := field->e_gr_id
 
-	skip 1
-	nElRecno := RECNO()
-	skip -1
-	
-	// daj mi novi element
-	_set_sif_id( @nElNewid, "EL_ID" )
-	
-	Scatter("w")
-	
-	wart_id := nArtNewid
-	we_gr_id := nElGr_id
-	
-	Gather("w")
+    skip 1
+    nElRecno := RECNO()
+    skip -1
+    
+    // daj mi novi element
+    _set_sif_id( @nElNewid, "EL_ID" )
+    
+    _rec := dbf_get_rec()    
 
-	// atributi...
-	_clone_att( nOldEl_id, nElNewid )
+    _rec["art_id"] := nArtNewid
+    _rec["e_gr_id"] := nElGr_id
+    
+    update_rec_server_and_dbf( "elements", _rec )
 
-	// operacije...
-	_clone_aops( nOldEl_id, nElNewid )
+    // atributi...
+    _clone_att( nOldEl_id, nElNewid )
 
-	select elements
-	go (nElRecno)
-	
+    // operacije...
+    _clone_aops( nOldEl_id, nElNewid )
+
+    select elements
+    go (nElRecno)
+    
 enddo
 
 return nArtNewid
@@ -942,6 +959,7 @@ return nArtNewid
 static function _clone_att( nOldEl_id, nNewEl_id )
 local nElRecno
 local nNewAttId
+local _rec
 
 select e_att
 set order to tag "1"
@@ -950,25 +968,25 @@ go top
 seek elid_str( nOldEl_id )
 
 do while !EOF() .and. field->el_id == nOldEl_id
-	
-	skip 1
-	nElRecno := RECNO()
-	skip -1
-	
-	Scatter("w")
-	
-	_set_sif_id( @nNewAttId, "EL_ATT_ID" )
-	
-	Scatter()
+    
+    skip 1
+    nElRecno := RECNO()
+    skip -1
+    
+    _rec := dbf_get_rec()   
+ 
+    _set_sif_id( @nNewAttId, "EL_ATT_ID" )
+    
+    _rec := dbf_get_rec()    
 
-	wel_att_id := nNewAttId
-	wel_id := nNewEl_id
-	
-	Gather("w")
-	
-	select e_att
-	go (nElRecno)
-	
+    _rec["el_att_id"] := nNewAttId
+    _rec["el_id"] := nNewEl_id
+    
+    update_rec_server_and_dbf( "e_att", _rec )
+
+    select e_att
+    go (nElRecno)
+    
 enddo
 
 return
@@ -982,6 +1000,7 @@ return
 static function _clone_aops( nOldEl_id, nNewEl_id )
 local nElRecno
 local nNewAopId
+local _rec
 
 select e_aops
 set order to tag "1"
@@ -990,25 +1009,23 @@ go top
 seek elid_str( nOldEl_id )
 
 do while !EOF() .and. field->el_id == nOldEl_id
-	
-	skip 1
-	nElRecno := RECNO()
-	skip -1
-	
-	Scatter("w")
-	
-	_set_sif_id( @nNewAopId, "EL_OP_ID" )
-	
-	Scatter()
-	
-	wel_op_id := nNewAopid
-	wel_id := nNewEl_id
-	
-	Gather("w")
-	
-	select e_aops
-	go (nElRecno)
-	
+    
+    skip 1
+    nElRecno := RECNO()
+    skip -1
+    
+    _rec := dbf_get_rec()
+ 
+    _set_sif_id( @nNewAopId, "EL_OP_ID" )
+    
+    _rec["el_op_id"] := nNewAopid
+    _rec["el_id"] := nNewEl_id
+    
+    update_rec_server_and_dbf( "e_aops", _rec )
+    
+    select e_aops
+    go (nElRecno)
+    
 enddo
 
 return
@@ -1035,30 +1052,30 @@ Box( , nBoxX, nBoxY )
 
 // prodji sve artikle
 do while !EOF()
-	
-	++ nCnt
-	
-	nRec := RECNO()
-	
-	nArt_id := field->art_id
-	cArt_desc := PADR( field->art_desc, 20 )
-	
-	@ m_x + 1, m_y + 2 SAY "****** Artikal: " + artid_str(nArt_id)
-	@ m_x + 3, m_y + 2 SAY "-----------------"
-	
-	@ m_x + 2, m_y + 2 SAY SPACE(nBoxY)
-	@ m_x + 2, m_y + 2 SAY "opis <--- " + PADR( field->art_desc, 40 ) + "..."
-	
-	_art_set_descr( nArt_id, lNew, lAuto )
-	
-	select articles
-	set order to tag "1"
-	go (nRec)
-	
-	@ m_x + 4, m_y + 2 SAY SPACE(nBoxY)
-	@ m_x + 4, m_y + 2 SAY "opis ---> " + PADR( field->art_desc, 40 ) + "..."
+    
+    ++ nCnt
+    
+    nRec := RECNO()
+    
+    nArt_id := field->art_id
+    cArt_desc := PADR( field->art_desc, 20 )
+    
+    @ m_x + 1, m_y + 2 SAY "****** Artikal: " + artid_str(nArt_id)
+    @ m_x + 3, m_y + 2 SAY "-----------------"
+    
+    @ m_x + 2, m_y + 2 SAY SPACE(nBoxY)
+    @ m_x + 2, m_y + 2 SAY "opis <--- " + PADR( field->art_desc, 40 ) + "..."
+    
+    _art_set_descr( nArt_id, lNew, lAuto )
+    
+    select articles
+    set order to tag "1"
+    go (nRec)
+    
+    @ m_x + 4, m_y + 2 SAY SPACE(nBoxY)
+    @ m_x + 4, m_y + 2 SAY "opis ---> " + PADR( field->art_desc, 40 ) + "..."
 
-	skip
+    skip
 
 enddo
 
@@ -1082,7 +1099,7 @@ return nCnt
 // cAttVal - vrijednost atributa (puni opis)
 // -----------------------------------------
 static function _f_a_attr( aArr, nElNo, cGrValCode, cGrVal, ;
-			cAttJoker, cAttValCode, cAttVal )
+            cAttJoker, cAttValCode, cAttVal )
 
 AADD( aArr, { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal })
 
@@ -1134,12 +1151,12 @@ local nCount := 0
 local nElCount := 0
 
 if lOnlyArr == nil
-	lOnlyArr := .f.
+    lOnlyArr := .f.
 endif
 
 // matrica sa atributima
 if aAttr == nil
-	aAttr := {}
+    aAttr := {}
 endif
 
 // setovanje statickih varijabli
@@ -1152,7 +1169,7 @@ __mc_sep := ";"
 __aop_sep := "-"
 
 if lAuto == nil
-	lAuto := .f.
+    lAuto := .f.
 endif
 
 // ukini filtere
@@ -1174,116 +1191,116 @@ go top
 seek artid_str( nArt_id )
 
 do while !EOF() .and. field->art_id == nArt_id
-	
-	// brojac elementa, 1, 2, 3
-	++ nElCount
-	
-	// ID element
-	nEl_id := field->el_id
-	// ID grupa na osnovu elementa
-	nEl_gr_id := field->e_gr_id
-	
-	// grupa kod
-	cGr_code := ALLTRIM( g_e_gr_desc(nEl_gr_id, nil, .f.) )	
-	// grupa puni opis
-	cGr_desc := ALLTRIM( g_e_gr_desc( nEl_gr_id ) )	
-	
-	// .... predji na atribute elemenata .....
-	select e_att
-	set order to tag "1"
-	go top
-	seek elid_str( nEl_id )
+    
+    // brojac elementa, 1, 2, 3
+    ++ nElCount
+    
+    // ID element
+    nEl_id := field->el_id
+    // ID grupa na osnovu elementa
+    nEl_gr_id := field->e_gr_id
+    
+    // grupa kod
+    cGr_code := ALLTRIM( g_e_gr_desc(nEl_gr_id, nil, .f.) ) 
+    // grupa puni opis
+    cGr_desc := ALLTRIM( g_e_gr_desc( nEl_gr_id ) ) 
+    
+    // .... predji na atribute elemenata .....
+    select e_att
+    set order to tag "1"
+    go top
+    seek elid_str( nEl_id )
 
-	do while !EOF() .and. field->el_id == nEl_id
+    do while !EOF() .and. field->el_id == nEl_id
 
-		
-		// vrijednost atributa
-		nE_gr_val := field->e_gr_vl_id
-		cAttValCode := ALLTRIM(g_e_gr_vl_desc( nE_gr_val, nil, .f. ))
-		cAttVal := ALLTRIM(g_e_gr_vl_desc( nE_gr_val ))
-		
-		// koji je ovo atribut ?????
-		nE_gr_att := g_gr_att_val( nE_gr_val)
+        
+        // vrijednost atributa
+        nE_gr_val := field->e_gr_vl_id
+        cAttValCode := ALLTRIM(g_e_gr_vl_desc( nE_gr_val, nil, .f. ))
+        cAttVal := ALLTRIM(g_e_gr_vl_desc( nE_gr_val ))
+        
+        // koji je ovo atribut ?????
+        nE_gr_att := g_gr_att_val( nE_gr_val)
 
-		// daj njegov opis 
-		cAtt_desc := ALLTRIM(g_gr_at_desc( nE_gr_att ))
-		
-		// joker ovog atributa je ???
-		cAttJoker := g_gr_att_joker( nE_gr_att )
-		
-	
-		_f_a_attr( @aAttr, nElCount, cGr_code, cGr_desc, ;
-			cAttJoker, cAttValCode, cAttVal )
-	
-		skip
-		
-	enddo
+        // daj njegov opis 
+        cAtt_desc := ALLTRIM(g_gr_at_desc( nE_gr_att ))
+        
+        // joker ovog atributa je ???
+        cAttJoker := g_gr_att_joker( nE_gr_att )
+        
+    
+        _f_a_attr( @aAttr, nElCount, cGr_code, cGr_desc, ;
+            cAttJoker, cAttValCode, cAttVal )
+    
+        skip
+        
+    enddo
 
-	// predji na dodatne operacije elemenata....
-	select e_aops
-	set order to tag "1"
-	go top
-	seek elid_str( nEl_id )
+    // predji na dodatne operacije elemenata....
+    select e_aops
+    set order to tag "1"
+    go top
+    seek elid_str( nEl_id )
 
-	do while !EOF() .and. field->el_id == nEl_id
-		
-		// dodatna operacija ID ...
-		nAop_id := field->aop_id
-		
-		cAopCode := ALLTRIM(g_aop_desc( nAop_id, nil, .f. ))
-		cAop := ALLTRIM(g_aop_desc( nAop_id ))
-		
-		// koji je djoker ????
-		cAopJoker := ALLTRIM( g_aop_joker( nAop_id ) )
-		
-		// atribut...
-		nAop_att_id := field->aop_att_id
-		cAopAttCode := ALLTRIM( g_aop_att_desc( nAop_att_id, nil, .f. ) )
-		if EMPTY( cAopAttCode )
-			cAopAttCode := cAopCode
-		endif
+    do while !EOF() .and. field->el_id == nEl_id
+        
+        // dodatna operacija ID ...
+        nAop_id := field->aop_id
+        
+        cAopCode := ALLTRIM(g_aop_desc( nAop_id, nil, .f. ))
+        cAop := ALLTRIM(g_aop_desc( nAop_id ))
+        
+        // koji je djoker ????
+        cAopJoker := ALLTRIM( g_aop_joker( nAop_id ) )
+        
+        // atribut...
+        nAop_att_id := field->aop_att_id
+        cAopAttCode := ALLTRIM( g_aop_att_desc( nAop_att_id, nil, .f. ) )
+        if EMPTY( cAopAttCode )
+            cAopAttCode := cAopCode
+        endif
 
-		cAopAtt := ALLTRIM( g_aop_att_desc( nAop_att_id ) )
+        cAopAtt := ALLTRIM( g_aop_att_desc( nAop_att_id ) )
 
-		if EMPTY( cAopAtt )
-			cAopAtt := cAop
-		endif
+        if EMPTY( cAopAtt )
+            cAopAtt := cAop
+        endif
 
-		// ukini jokere koji se koriste za pozicije pecata i slicno 
-		rem_jokers(@cAopAtt)
+        // ukini jokere koji se koriste za pozicije pecata i slicno 
+        rem_jokers(@cAopAtt)
 
-		_f_a_attr( @aAttr, nElCount, cGr_code, cGr_desc, ;
-				cAopJoker, cAopAttCode, ;
-				cAopAtt )
-		
-		skip
-	enddo
+        _f_a_attr( @aAttr, nElCount, cGr_code, cGr_desc, ;
+                cAopJoker, cAopAttCode, ;
+                cAopAtt )
+        
+        skip
+    enddo
 
-	// vrati se na elemente i idi dalje...
-	select elements
-	skip
-	
-	++ nCount
+    // vrati se na elemente i idi dalje...
+    select elements
+    skip
+    
+    ++ nCount
 
 enddo
 
 if lOnlyArr == .f.
 
-	// sada izvuci nazive iz matrice
+    // sada izvuci nazive iz matrice
 
-	_aset_descr( aAttr, @cArt_code, @cArt_desc, @cArt_mcode )
+    _aset_descr( aAttr, @cArt_code, @cArt_desc, @cArt_mcode )
 
-	// apenduj na artikal
+    // apenduj na artikal
 
-	if lAuto == .t.
-		// automatski generisi opsi i mc 
-		// bez kontrolnog box-a
-		nRet := _art_apnd_auto( nArt_id, cArt_code, cArt_desc, cArt_mcode )
-	else
-		// generisi opis i match_code
-		// otvori kontrolni box
-		nRet := _art_apnd( nArt_id, cArt_code, cArt_desc, cArt_mcode, lNew )
-	endif
+    if lAuto == .t.
+        // automatski generisi opsi i mc 
+        // bez kontrolnog box-a
+        nRet := _art_apnd_auto( nArt_id, cArt_code, cArt_desc, cArt_mcode )
+    else
+        // generisi opis i match_code
+        // otvori kontrolni box
+        nRet := _art_apnd( nArt_id, cArt_code, cArt_desc, cArt_mcode, lNew )
+    endif
 
 endif
 
@@ -1310,15 +1327,15 @@ local cLExtraChar := ""
 
 // ukupni broj elemenata
 if LEN( aArr ) > 0
-	nTotElem := aArr[ LEN(aArr), 1 ]
+    nTotElem := aArr[ LEN(aArr), 1 ]
 endif
 
 if nEl_count > nTotElem
 
-	// ovo ne postoji
-	
-	xRet := "unknown"
-	return xRet
+    // ovo ne postoji
+    
+    xRet := "unknown"
+    return xRet
 
 endif
 
@@ -1326,10 +1343,10 @@ endif
 nScan := ASCAN( aArr, { |xVal| xVal[1] = nEl_count } )
 
 if nScan = 0
-	
-	// bound error greska
-	xRet := "unknown"
-	return xRet
+    
+    // bound error greska
+    xRet := "unknown"
+    return xRet
 
 endif
 
@@ -1341,35 +1358,35 @@ cRule := _get_rule( cElemCode )
 
 // pa ga u matricu ......
 aRule := TokToNiz( cRule, "#" )
-	
+    
 for nRule := 1 to LEN( aRule )
-	
-	// <GL_TICK>
-	cRuleDef := ALLTRIM( aRule[ nRule ] )
+    
+    // <GL_TICK>
+    cRuleDef := ALLTRIM( aRule[ nRule ] )
 
-	if LEFT( cRuleDef, 1 ) <> "<"
-		
-		cLExtraChar := LEFT( cRuleDef, 1 )
-		cRuleDef := STRTRAN( cRuleDef, cLExtraChar, "" )
-			
-		lInsLExtChar := .t.
-			
-	endif
+    if LEFT( cRuleDef, 1 ) <> "<"
+        
+        cLExtraChar := LEFT( cRuleDef, 1 )
+        cRuleDef := STRTRAN( cRuleDef, cLExtraChar, "" )
+            
+        lInsLExtChar := .t.
+            
+    endif
 
-	nSeek := ASCAN(aArr, {| xVal | ;
-		xVal[1] == nEl_count .and. xVal[4] == cRuleDef })
-		
-	if nSeek > 0
-		
-		if lInsLExtChar == .t.
-			xRet += cLExtraChar
-			lInsLExtChar := .f.
-		endif
-	
-		xRet += ALLTRIM( aArr[ nSeek, 5 ] )
-				
-	endif
-	
+    nSeek := ASCAN(aArr, {| xVal | ;
+        xVal[1] == nEl_count .and. xVal[4] == cRuleDef })
+        
+    if nSeek > 0
+        
+        if lInsLExtChar == .t.
+            xRet += cLExtraChar
+            lInsLExtChar := .f.
+        endif
+    
+        xRet += ALLTRIM( aArr[ nSeek, 5 ] )
+                
+    endif
+    
 next
 
 return xRet
@@ -1392,64 +1409,64 @@ local lInsLExtChar := .f.
 local cLExtraChar := ""
 
 if LEN(aArr) > 0
-	nTotElem := aArr[ LEN(aArr), 1 ]
+    nTotElem := aArr[ LEN(aArr), 1 ]
 endif
 
 for i := 1 to nTotElem
 
-	// iscitaj code elementa
-	nTmp := ASCAN( aArr, {| xVar | xVar[1] == i })
-	cElemCode := aArr[ nTmp, 2 ]
+    // iscitaj code elementa
+    nTmp := ASCAN( aArr, {| xVar | xVar[1] == i })
+    cElemCode := aArr[ nTmp, 2 ]
 
-	// uzmi pravilo <GL_TICK>#<GL_TYPE>.....
-	cRule := _get_rule( cElemCode )
-	// pa ga u matricu ......
-	aRule := TokToNiz( cRule, "#" )
-	
-	for nRule := 1 to LEN( aRule )
-	
-		// <GL_TICK>
-		cRuleDef := ALLTRIM( aRule[ nRule ] )
+    // uzmi pravilo <GL_TICK>#<GL_TYPE>.....
+    cRule := _get_rule( cElemCode )
+    // pa ga u matricu ......
+    aRule := TokToNiz( cRule, "#" )
+    
+    for nRule := 1 to LEN( aRule )
+    
+        // <GL_TICK>
+        cRuleDef := ALLTRIM( aRule[ nRule ] )
 
-		if LEFT( cRuleDef, 1 ) <> "<"
-		
-			cLExtraChar := LEFT( cRuleDef, 1 )
-			cRuleDef := STRTRAN( cRuleDef, cLExtraChar, "" )
-			
-			lInsLExtChar := .t.
-			
-		endif
+        if LEFT( cRuleDef, 1 ) <> "<"
+        
+            cLExtraChar := LEFT( cRuleDef, 1 )
+            cRuleDef := STRTRAN( cRuleDef, cLExtraChar, "" )
+            
+            lInsLExtChar := .t.
+            
+        endif
 
-		nSeek := ASCAN(aArr, {| xVal | ;
-			xVal[1] == i .and. xVal[4] == cRuleDef })
-		
-		if nSeek > 0
-		
-			if lInsLExtChar == .t.
-				cArt_code += cLExtraChar
-				lInsLExtChar := .f.
-			endif
-	
-			cArt_code += ALLTRIM( aArr[ nSeek, 5 ] )
+        nSeek := ASCAN(aArr, {| xVal | ;
+            xVal[1] == i .and. xVal[4] == cRuleDef })
+        
+        if nSeek > 0
+        
+            if lInsLExtChar == .t.
+                cArt_code += cLExtraChar
+                lInsLExtChar := .f.
+            endif
+    
+            cArt_code += ALLTRIM( aArr[ nSeek, 5 ] )
 
-			// dodaj space..... na opis puni
-			if !EMPTY(cArt_desc)
-				cArt_desc += " "
-			endif
-				
-			cArt_desc += ALLTRIM( aArr[ nSeek, 6 ] )
-			
-			cArt_mcode += ALLTRIM( ;
-				PADR( UPPER(ALLTRIM(aArr[nSeek, 6])), 2) )
-				
-		endif
-	
-	next
-	
-	if i <> nTotElem
-		cArt_code += "_"
-		cArt_desc += ";"
-	endif
+            // dodaj space..... na opis puni
+            if !EMPTY(cArt_desc)
+                cArt_desc += " "
+            endif
+                
+            cArt_desc += ALLTRIM( aArr[ nSeek, 6 ] )
+            
+            cArt_mcode += ALLTRIM( ;
+                PADR( UPPER(ALLTRIM(aArr[nSeek, 6])), 2) )
+                
+        endif
+    
+    next
+    
+    if i <> nTotElem
+        cArt_code += "_"
+        cArt_desc += ";"
+    endif
 
 next
 
@@ -1466,7 +1483,7 @@ local cRule := ""
 cRule := r_elem_code( cCode )
 
 if EMPTY(cRule)
-	msgbeep("Pravilo za formiranje naziva elementa ne postoji !!!")
+    msgbeep("Pravilo za formiranje naziva elementa ne postoji !!!")
 endif
 
 return cRule
@@ -1487,8 +1504,8 @@ go top
 seek cDesc
 
 if FOUND() .and. field->art_id <> nArt_id .and. ALLTRIM(cDesc) == ALLTRIM(field->art_desc)
-	nId := field->art_id
-	lRet := .t.
+    nId := field->art_id
+    lRet := .t.
 endif
 
 set order to tag "1"
@@ -1516,7 +1533,7 @@ local cArt_lab_desc := ""
 lExist := _chk_art_exist( nArt_id, cArt_desc, @nExist_id )
 
 if lExist == .t.
-	msgBeep("UPOZORENJE: vec postoji artikal sa istim opisom !!!#Artikal: " + ALLTRIM(STR( nExist_id )))
+    msgBeep("UPOZORENJE: vec postoji artikal sa istim opisom !!!#Artikal: " + ALLTRIM(STR( nExist_id )))
 endif
 
 // update art_desc..
@@ -1527,51 +1544,51 @@ seek artid_str( nArt_id )
 
 if FOUND()
 
-	if !lNew
-		// ako su iste vrijednosti, preskoci...
-		if ALLTRIM(cArt_desc) == ALLTRIM(articles->art_desc) ;
-			.and. ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_d)
-			lAppend := .f.
-		else
-			lAppend := .t.
-		endif
-	else
-		lAppend := .t.
-	endif
+    if !lNew
+        // ako su iste vrijednosti, preskoci...
+        if ALLTRIM(cArt_desc) == ALLTRIM(articles->art_desc) ;
+            .and. ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_d)
+            lAppend := .f.
+        else
+            lAppend := .t.
+        endif
+    else
+        lAppend := .t.
+    endif
 
-	if !EMPTY(cArt_desc) .and. lAppend == .t. ;
-		.and. (!lNew .or. (lNew .and. Pitanje(,"Novi artikal, snimiti promjene ?", "D") == "D"))
+    if !EMPTY(cArt_desc) .and. lAppend == .t. ;
+        .and. (!lNew .or. (lNew .and. Pitanje(,"Novi artikal, snimiti promjene ?", "D") == "D"))
 
-		cArt_desc := PADR(cArt_desc, 100)
-		cArt_full_desc := PADR(cArt_full_desc, 250)
-		cArt_lab_desc := PADR(cArt_lab_desc, 200)
-		cArt_mcode := PADR(cArt_mcode, 10)
-		
-		// daj box za pregled korekciju
-		if _box_art_desc( @cArt_desc, @cArt_full_desc, ;
-			@cArt_lab_desc, @cArt_mcode ) == 1
-			
-			Scatter()
-			
-			_art_desc := cArt_desc
-			_match_code := cArt_mcode
-			_art_full_d := cArt_full_desc
-			
-			Gather()
-		
-			return 1
-		
-		endif
-		
-	endif
-		
-	if lNew	== .t.
-		
-		// izbrisi tu stavku....
-		art_delete( nArt_id, .t. , .t. )
-		
-	endif
-	
+        cArt_desc := PADR(cArt_desc, 100)
+        cArt_full_desc := PADR(cArt_full_desc, 250)
+        cArt_lab_desc := PADR(cArt_lab_desc, 200)
+        cArt_mcode := PADR(cArt_mcode, 10)
+        
+        // daj box za pregled korekciju
+        if _box_art_desc( @cArt_desc, @cArt_full_desc, ;
+            @cArt_lab_desc, @cArt_mcode ) == 1
+            
+            _rec := dbf_get_rec()
+            
+            _rec["art_desc"] := cArt_desc
+            _rec["match_code"] := cArt_mcode
+            _rec["art_full_d"] := cArt_full_desc
+            
+            update_rec_server_and_dbf( "articles", _rec )
+        
+            return 1
+        
+        endif
+        
+    endif
+        
+    if lNew == .t.
+        
+        // izbrisi tu stavku....
+        art_delete( nArt_id, .t. , .t. )
+        
+    endif
+    
 endif
 
 return 0
@@ -1587,10 +1604,11 @@ return 0
 // --------------------------------------------------
 static function _art_apnd_auto( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode )
 local lChange := .f.
+local _rec
 
 // ako je vrijednost prazna - 0
 if EMPTY( cArt_desc )
-	return 0
+    return 0
 endif
 
 // update art_desc..
@@ -1601,38 +1619,38 @@ seek artid_str( nArt_id )
 
 if FOUND()
 
-	// ako su iste vrijednosti, preskoci...
-	if ALLTRIM(cArt_desc) == ALLTRIM(articles->art_desc) .and. ;
-		ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_d)
-		
-		lChange := .f.
-		
-	else
-		lChange := .t.
-	endif
+    // ako su iste vrijednosti, preskoci...
+    if ALLTRIM(cArt_desc) == ALLTRIM(articles->art_desc) .and. ;
+        ALLTRIM(cArt_full_desc) == ALLTRIM(articles->art_full_d)
+        
+        lChange := .f.
+        
+    else
+        lChange := .t.
+    endif
 
 endif
 
 if lChange == .t.
 
-	// zamjeni vrijednost....
-	
-	cArt_desc := PADR(cArt_desc, 100)
-	cArt_full_desc := PADR(cArt_full_desc, 100)
-	cArt_mcode := PADR(cArt_mcode, 10)
-		
-	Scatter()
-			
-	_art_desc := cArt_desc
-	_match_code := cArt_mcode
-	_art_full_d := cArt_full_desc
-			
-	Gather()
-		
-	return 1
-		
+    // zamjeni vrijednost....
+    
+    cArt_desc := PADR(cArt_desc, 100)
+    cArt_full_desc := PADR(cArt_full_desc, 100)
+    cArt_mcode := PADR(cArt_mcode, 10)
+        
+    _rec := dbf_get_rec()
+            
+    _rec["art_desc"] := cArt_desc
+    _rec["match_code"] := cArt_mcode
+    _rec["art_full_d"] := cArt_full_desc
+            
+    update_rec_server_and_dbf( "articles", _rec )
+        
+    return 1
+        
 endif
-		
+        
 return 0
 
 
@@ -1647,11 +1665,11 @@ static function __add_to_str( cStr, cAdd, lNoSpace )
 local cSpace := SPACE(1)
 
 if lNoSpace == nil
-	lNoSpace := .f.
+    lNoSpace := .f.
 endif
 
 if EMPTY(cStr) .or. lNoSpace == .t.
-	cSpace := ""
+    cSpace := ""
 endif
 
 cStr += cSpace + cAdd
@@ -1664,21 +1682,21 @@ return
 // box za unos naziva artikla i match_code-a
 // ------------------------------------------------------
 static function _box_art_desc( cArt_desc, cArt_full_desc, ;
-		cArt_lab_desc, cArt_mcode )
+        cArt_lab_desc, cArt_mcode )
 private GetList:={}
 
 Box(, 6, 70)
-	
-	@ m_x + 1, m_y + 2 SAY "*** pregled/korekcija podataka artikla"
-	
-	@ m_x + 3, m_y + 2 SAY "Puni naziv:" GET cArt_full_desc PICT "@S57" VALID !EMPTY(cArt_full_desc)
-	@ m_x + 4, m_y + 2 SAY "Skr. naziv:" GET cArt_desc PICT "@S57" VALID !EMPTY(cArt_desc)
-	@ m_x + 5, m_y + 2 SAY "Lab. tekst:" GET cArt_lab_desc PICT "@S57" 
-	
-	@ m_x + 6, m_y + 2 SAY "Match code:" GET cArt_mcode
-	
-	read
-	
+    
+    @ m_x + 1, m_y + 2 SAY "*** pregled/korekcija podataka artikla"
+    
+    @ m_x + 3, m_y + 2 SAY "Puni naziv:" GET cArt_full_desc PICT "@S57" VALID !EMPTY(cArt_full_desc)
+    @ m_x + 4, m_y + 2 SAY "Skr. naziv:" GET cArt_desc PICT "@S57" VALID !EMPTY(cArt_desc)
+    @ m_x + 5, m_y + 2 SAY "Lab. tekst:" GET cArt_lab_desc PICT "@S57" 
+    
+    @ m_x + 6, m_y + 2 SAY "Match code:" GET cArt_mcode
+    
+    read
+    
 BoxC()
 
 ESC_RETURN 1
@@ -1708,8 +1726,8 @@ go top
 seek artid_str( nArt_id )
 
 if FOUND()
-	cArt_desc := ALLTRIM(field->art_desc)
-	cArt_mc := ALLTRIM(field->match_code)
+    cArt_desc := ALLTRIM(field->art_desc)
+    cArt_mc := ALLTRIM(field->match_code)
 endif
 
 // elementi
@@ -1720,35 +1738,35 @@ seek artid_str( nArt_id )
 
 do while !EOF() .and. field->art_id == nArt_id
 
-	nEl_id := field->el_id
+    nEl_id := field->el_id
 
-	// atributi
-	select e_att
-	set order to tag "1"
-	go top
-	seek artid_str( nEl_id )
-	
-	do while !EOF() .and. field->el_id == nEl_id
+    // atributi
+    select e_att
+    set order to tag "1"
+    go top
+    seek artid_str( nEl_id )
+    
+    do while !EOF() .and. field->el_id == nEl_id
 
-		AADD(aElem, { field->el_id, "ATT",  cArt_desc, cArt_mc, field->e_gr_at_id, field->e_gr_vl_id })
-		skip
+        AADD(aElem, { field->el_id, "ATT",  cArt_desc, cArt_mc, field->e_gr_at_id, field->e_gr_vl_id })
+        skip
 
-	enddo
-	
-	// operacije
-	select e_aops
-	set order to tag "1"
-	go top
-	seek artid_str( nEl_id )
+    enddo
+    
+    // operacije
+    select e_aops
+    set order to tag "1"
+    go top
+    seek artid_str( nEl_id )
 
-	do while !EOF() .and. field->el_id == nEl_id
-		AADD(aElem, { field->el_id, "AOP",  cArt_desc, cArt_mc, field->aop_id, field->aop_att_id })
-		skip
-	enddo
-	
-	select elements
-	skip
-	
+    do while !EOF() .and. field->el_id == nEl_id
+        AADD(aElem, { field->el_id, "AOP",  cArt_desc, cArt_mc, field->aop_id, field->aop_att_id })
+        skip
+    enddo
+    
+    select elements
+    skip
+    
 enddo
 
 select (nTArea)
@@ -1778,18 +1796,18 @@ seek elid_str( nArt_id )
 
 do while !EOF() .and. field->art_id == nArt_id
 
-	++ nCnt 
-	
-	cPom := g_e_gr_desc( field->e_gr_id )
-	cPom += " "
-	cPom += get_el_desc( field->el_id )
+    ++ nCnt 
+    
+    cPom := g_e_gr_desc( field->e_gr_id )
+    cPom += " "
+    cPom += get_el_desc( field->el_id )
 
-	AADD(aElem, { field->el_id, cPom, nCnt } )
-		
-	skip
+    AADD(aElem, { field->el_id, cPom, nCnt } )
+        
+    skip
 
 enddo
-	
+    
 select (nTArea)
 return
 
@@ -1808,10 +1826,10 @@ go top
 seek elid_str( nEl_id )
 
 do while !EOF() .and. field->el_id == nEl_id
-	
-	xRet += ALLTRIM(  g_e_gr_vl_desc(field->e_gr_vl_id) ) + " "
-	
-	skip
+    
+    xRet += ALLTRIM(  g_e_gr_vl_desc(field->e_gr_vl_id) ) + " "
+    
+    skip
 enddo
 
 select (nTArea)
@@ -1827,9 +1845,9 @@ local nTmp
 nTmp := ASCAN( aElem, {|xVal| xVal[1] == nDoc_el_no })
 
 if nTmp > LEN(aElem) .or. nTmp == 0
-	nElem_no := 0
+    nElem_no := 0
 else
-	nElem_no := aElem[ nTmp, 3 ]
+    nElem_no := aElem[ nTmp, 3 ]
 endif
 
 return

@@ -1329,11 +1329,14 @@ function DuzMaske(cPicture)
 LOCAL nPozS:=AT("S",cPicture)
 return VAL(SUBSTR(cPicture,nPozS+1))
 
-
+// ------------------------
+// ------------------------
 function MsgBeep(cMsg)
+
 if !gAppSrv
     Beep(2) 
 endif
+
 // poruke koje su duze od 70 znakova
 if LEN(cMsg) > 69 .and.  (AT(cMsg, "#") == 0) 
   cMsg := SUBSTR(cMsg, 1, 69) + "#" + SUBSTR(cMsg, 70, 69) + "#..." 

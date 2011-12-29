@@ -13,24 +13,6 @@
 #include "fmk.ch"
 #include "achoice.ch"
 #include "fileio.ch"
-#include "hbgtinfo.ch"
-#include "hbcompat.ch"
-
-REQUEST DBFCDX
-
-#ifdef __PLATFORM__WINDOWS
- // REQUEST HB_GT_WIN
- // REQUEST HB_GT_WIN_DEFAULT
- REQUEST HB_GT_WVT
- REQUEST HB_GT_WVT_DEFAULT
-  
-//REQUEST HB_GT_GTQTC_DEFAULT
-#else
-
-//REQUEST HB_GT_CRS_DEFAULT
-REQUEST HB_GT_XWC_DEFAULT
-
-#endif
 
 /*
     Inicijalizacija systema, bazne funkcije
@@ -59,41 +41,18 @@ local cImeDbf
 local _i
 public gAppSrv
 
-? "setujem engine (sc_start)"
-
 if !oApp:lStarted  
-
-  ? "setujem default engine ..." + RDDENGINE
   RDDSETDEFAULT( RDDENGINE )
-
-#ifdef __PLATFORM__WINDOWS
-   
-   REQUEST HB_CODEPAGE_SL852 
-   REQUEST HB_CODEPAGE_SLISO
-
-   hb_setCodePage( "SL852" )
-   hb_setTermCP("SLISO")
-
-#else
-   // linux, macosx
-   REQUEST HB_CODEPAGE_SL852 
-   REQUEST HB_CODEPAGE_SLISO
-
-   hb_setCodePage( "SL852" )
-   hb_setTermCP("SLISO")
-#endif
-
   ? "startujem oApp:db()"
   oApp:initdb()
-
 endif
 
 SetgaSDbfs()
 
 set_global_vars_0()
 
-gModul:=oApp:cName
-gVerzija:=oApp:cVerzija
+gModul   := oApp:cName
+gVerzija := oApp:cVerzija
 
 gAppSrv:=.f.
 

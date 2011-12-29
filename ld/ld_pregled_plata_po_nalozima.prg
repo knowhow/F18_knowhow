@@ -134,8 +134,6 @@ return
 
 
 function RekapLdP(cId,nGodina,nMjesec,nIzn1,nIzn2,cIdPartner,cOpis,cOpis2,lObavDodaj,cRNal)
-*{
-
 if lObavDodaj==nil
 	lObavDodaj:=.f.
 endif
@@ -177,14 +175,15 @@ replace godina with str(nGodina,4),mjesec with str(nMjesec,2),;
 popwa()
 
 return
-*}
 
 
-
+// ----------------------------------------
 // Kreira pomocnu tabelu REKLDP.DBF
+// ----------------------------------------
 function CreRekLDP()
-*{
+local _alias, _table_name
 local aDbf
+
 aDbf:={{"GODINA"     ,  "C" ,  4, 0} ,;
        {"MJESEC"     ,  "C" ,  2, 0} ,;
        {"ID"         ,  "C" , 30, 0} ,;
@@ -195,26 +194,24 @@ aDbf:={{"GODINA"     ,  "C" ,  4, 0} ,;
        {"idpartner"  ,  "C" ,  6, 0},;
        {"idRNal"     ,  "C" , 10, 0}}
 
-DBCREATE2(KUMPATH+"REKLDP",aDbf)
-
-select (F_REKLDP)
-usex (KUMPATH+"rekldp")
-
-index ON  BRISANO+"10" TAG "BRISAN"
-index on  godina+mjesec+id+idRNal  tag "1"
-
-set order to tag "1"
-use
+_alias := "REKLD"
+_table_name := "rekld"
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    close all
+endif
+   
+CREATE_INDEX( "1", "godina+mjesec+id+idRNal", _alias)
 
 return
-*}
 
 
 *******************************************
 * izracun bruto iznosa - proizvodni radnici
 *******************************************
 function BrutoP(aSati,nUkSati)
-*{
 local nPom, nPom2, nBruto, nPorDopr, i, nBO, nPor, nC1, nPorOl, nDopr, nPom0
 
 nBruto:=_UNETO

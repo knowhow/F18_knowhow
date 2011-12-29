@@ -318,19 +318,13 @@ aDbf:={   {"ID"    ,"C", 1,0},;
           {"LJUDI" ,"N", 10,0};
       }
 
-#ifdef CPOR
-  AADD(aDbf, {"PIZNOS" ,"N",25,4})
-  AADD(aDbf, {"PIZNOS2","N",25,4})
-  AADD(aDbf, {"PLJUDI" ,"N", 10,0})
-#endif
-
 //id- 1 opsstan
 //id- 2 opsrad
 DBCREATE2(PRIVPATH+"opsld",aDbf)
 
 
 select(F_OPSLD) ; usex (PRIVPATH+"opsld")
-INDEX ON ID+IDOPS tag "1"
+INDEX ON  ID+IDOPS tag "1"
 index ON  BRISANO TAG "BRISAN"
 use
 
@@ -348,7 +342,9 @@ AADD( aDbf , {"idpartner"  ,  "C" ,  6, 0} )
 
 DBCREATE2(KUMPATH+"REKLD",aDbf)
 
-select (F_REKLD); usex (KUMPATH+"rekld")
+select (F_REKLD)
+usex (KUMPATH+"rekld")
+
 index ON  BRISANO+"10" TAG "BRISAN"
 index on  godina+mjesec+id  tag "1"
 set order to tag "1"

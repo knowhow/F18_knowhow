@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "ld.ch"
 
 // ------------------------------------------------------
@@ -589,69 +588,6 @@ else
 	MsgBeep("Obracun je pohranjen !!!")
 	lSaveObracun:=.t.
 endif
-
-return
-
-
-
-// --------------------------
-// obrada sihtarice
-// --------------------------
-function UzmiSiht()
-
-O_PARAMS
-
-private cZadnjiRadnik:=cIdRadn
-private cSection:="S"
-
-RPar("zr",@cZadnjiRAdnik)
-
-select F_RADSIHT
-if !used()
-	O_RADSIHT
-endif
-
-select radsiht
-seek str(_godina,4)+str(cmjesec,2)+cZadnjiRadnik+cIdRj
-if found() // ovaj je radnik fakat radjen
-	seek str(_godina,4)+str(cmjesec,2)+cidradn+cIdRj
-	if !found()
-	// ako je ovaj radnik vec radjen ne pitaj nista za preuzimanje
-		if pitanje(,'Zelite li preuzeti sihtaricu od radnika '+cZadnjiRadnik+' D/N','D')=='D'
-			select radsiht
-			seek str(_godina,4)+str(cmjesec,2)+cZadnjiRadnik+cIdRj
-			private nTSrec:=0
-			do while !eof() .and. (str(godina,4)+str(mjesec,2)+idradn+IdRj)==(str(_godina,4)+str(cmjesec,2)+cZadnjiRadnik+cIdRj)
-				skip
-				nTSrec:=recno()
-				skip -1
-				Scatter('w')
-				wIdRadn:=cidradn  
-				// sve je isto osim sifre radnika
-				append blank
-				Gather('w')
-				go nTSrec
-			enddo
-		endif // pitanje
-	endif
-endif
-
-Unossiht()
-
-select params
-private cSection:="S"
-select radsiht
-seek str(_godina,4)+str(cmjesec,2)+cIdRadn+cIdRj
-if found()  // nesto je bilo u sihtarici
-	select params
-	cZadnjiRadnik:=cIdRadn
-	WPar("zr",cZadnjiRAdnik)
-endif
-
-select params
-use
-select radsiht
-use
 
 return
 

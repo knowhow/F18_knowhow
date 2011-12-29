@@ -1232,7 +1232,7 @@ RETURN ( RADN->(naz+ime+imerod) + idradn)
 
 
 function SpecPrimRJ()
-*{
+local _alias, _table_name
 
 cGodina  := gGodina
 cMjesecOd:=cMjesecDo:=gMjesec
@@ -1263,12 +1263,12 @@ RPar("p9",@cObracun  )
 RPar("pA",@qqPrimanja)
 
 cMjesecOd := VAL(cMjesecOd)
- cMjesecDo := VAL(cMjesecDo)
- cGodina   := VAL(cGodina  )
- qqRj      := PADR(qqRj,40)
- qqPrimanja:= PADR(qqPrimanja,100)
+cMjesecDo := VAL(cMjesecDo)
+cGodina   := VAL(cGodina  )
+qqRj      := PADR(qqRj,40)
+qqPrimanja:= PADR(qqPrimanja,100)
 
- DO WHILE .t.
+DO WHILE .t.
    Box("#Uslovi za specifikaciju primanja po radnim jedinicama",8,75)
     @ m_x+2,m_y+2   SAY "Radne jedinice (prazno-sve): "   GET qqRj PICT "@S20"
     @ m_x+3,m_y+2   SAY "Mjesec od: "                     GET cMjesecOd PICT "99"
@@ -1278,44 +1278,57 @@ cMjesecOd := VAL(cMjesecOd)
       @ m_x+4,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
     ENDIF
     @ m_x+5,m_y+2   SAY "Sifre primanja (prazno-sve):"   GET qqPrimanja PICT "@S30"
-    READ; ESC_BCR
+    READ
+    ESC_BCR
    BoxC()
    aUslRJ   := Parsiraj(qqRj,"IDRJ")
    aUslPrim := Parsiraj(qqPrimanja,"cIDPRIM")
-   IF aUslRJ<>NIL; EXIT; ENDIF
+   IF aUslRJ<>NIL
+      EXIT
+   ENDIF
  ENDDO
 
- cMjesecOd := STR(cMjesecOd,2)
- cMjesecDo := STR(cMjesecDo,2)
- cGodina   := STR(cGodina  ,4)
- qqRj      := TRIM(qqRj)
- qqPrimanja:= TRIM(qqPrimanja)
+cMjesecOd := STR(cMjesecOd,2)
+cMjesecDo := STR(cMjesecDo,2)
+cGodina   := STR(cGodina  ,4)
+qqRj      := TRIM(qqRj)
+qqPrimanja:= TRIM(qqPrimanja)
 
- WPar("p1",cMjesecOd )
- WPar("p2",cMjesecDo )
- WPar("p3",cGodina   )
- WPar("p8",qqRj      )
- RPar("p9",cObracun  )
- WPar("pA",qqPrimanja)
- SELECT PARAMS; USE
+WPar("p1", cMjesecOd )
+WPar("p2", cMjesecDo )
+WPar("p3", cGodina   )
+WPar("p8", qqRj      )
+RPar("p9", cObracun  )
+WPar("pA", qqPrimanja)
+SELECT PARAMS
+USE
 
  cMjesecOd := VAL(cMjesecOd)
  cMjesecDo := VAL(cMjesecDo)
  cGodina   := VAL(cGodina  )
 
- // pravim pomocnu bazu LDT22.DBF
- // -----------------------------
- aDbf:={    {"IDPRIM"     ,  "C" ,  2, 0 } ,;
+_alias := "LDT22"
+_table_name := "ldt22"
+ 
+// pravim pomocnu bazu LDT22.DBF
+// -----------------------------
+aDbf:={    {"IDPRIM"     ,  "C" ,  2, 0 } ,;
             {"IDKRED"     ,  "C" ,  6, 0 } ,;
             {"IDRJ"       ,  "C" ,  2, 0 } ,;
             {"IZNOS"      ,  "N" , 18, 4 } ;
          }
- DBCREATE2(PRIVPATH+"LDT22",aDbf)
+ 
+DBCREATE2(f18_ime_dbf(_table_name), aDbf)
 
- select 0
- usex (PRIVPATH+"LDT22")
- index on  idprim+idkred+idrj  tag "1"
- set order to tag "1"
+select F_LDT22
+usex (_alias)
+
+CREATE_INDEX("1", "idprim+idkred+idrj", _alias) 
+ 
+use
+O_LDT22
+
+set order to tag "1"
  // -----------------------------
 
  aPrim  := {}       // standardna primanja

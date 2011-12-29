@@ -301,7 +301,7 @@ elseif VALTYPE(xVar) == "D"
                 cPom:=replicate('0',8)
             endif
             //1234-56-78
-            cOut := "'" + substr(cOut,1,4) + "-" + substr(cOut,5,2) + "-" + substr(cOut,7,2) + "'"
+            cOut := "'" + substr(cOut, 1, 4) + "-" + substr(cOut, 5, 2) + "-" + substr(cOut, 7, 2) + "'"
     endif
 else
     cOut := "NULL"
@@ -309,4 +309,42 @@ endif
 
 return cOut
 
+// ---------------------------------------
+// ---------------------------------------
+function sql_where_block(table_name, x)
+local _ret, _pos, _fields, _item
 
+_pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
+
+if _pos == 0
+   MsgBeep(PROCLINE(1) + "sql_where_block tbl ne postoji" + table_name)
+   QUIT
+endif
+
+altd()
+// npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+_fields := gaDBFS[_pos, 6]
+
+_ret := ""
+
+for each _item in _fields
+
+   if !EMPTY(_ret)
+       _ret += " AND "
+   endif
+
+   if VALTYPE(_item) == "A"
+      // numeric
+      _ret += _item[1] + "=" + STR(x[_item[1]], _item[2])
+
+   elseif VALTYPE(_item) == "C"
+     _ret += _item + "=" + _sql_quote(x[_item])
+ 
+   else
+       MsgBeep(PROCNAME(1) + "valtype _item ?!")
+       QUIT
+   endif
+
+next
+
+return _ret

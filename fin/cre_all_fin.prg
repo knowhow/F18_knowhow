@@ -50,15 +50,15 @@ if !FILE(f18_ime_dbf(_alias))
     close all
 endif
     
-CREATE_INDEX("1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias) 
-CREATE_INDEX("2", "IdFirma+IdPartner+IdKonto", _alias)
-CREATE_INDEX("3", "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)", _alias)
-CREATE_INDEX("4", "idFirma+IdVN+BrNal+Rbr", _alias)
-CREATE_INDEX("5", "idFirma+IdKonto+dtos(DatDok)+idpartner", _alias)
-CREATE_INDEX("6", "IdKonto", _alias)
-CREATE_INDEX("7", "Idpartner", _alias)
-CREATE_INDEX("8", "Datdok", _alias)
-CREATE_INDEX("9","idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+rbr", _alias)
+CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias) 
+CREATE_INDEX( "2", "IdFirma+IdPartner+IdKonto", _alias)
+CREATE_INDEX( "3", "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)", _alias)
+CREATE_INDEX( "4", "idFirma+IdVN+BrNal+Rbr", _alias)
+CREATE_INDEX( "5", "idFirma+IdKonto+dtos(DatDok)+idpartner", _alias)
+CREATE_INDEX( "6", "IdKonto", _alias)
+CREATE_INDEX( "7", "Idpartner", _alias)
+CREATE_INDEX( "8", "Datdok", _alias)
+CREATE_INDEX( "9", "idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+rbr", _alias)
 CREATE_INDEX("10", "idFirma+IdVN+BrNal+idkonto+DTOS(datdok)", _alias)
 
 // ----------------------------------------------------------------------------

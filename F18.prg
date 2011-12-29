@@ -35,6 +35,8 @@ AADD( menuop, " 7) OS    # osnovna sredstva")
 AADD( menuop, " 8) SII   # sitan inventar")
 AADD( menuop, " 9) POS   # maloprodajna kasa")
 AADD( menuop, "10) MAT   # materijalno")
+AADD( menuop, "--------------------------")
+AADD( menuop, " R) ReLogin")
 
 do while .t.
 
@@ -64,6 +66,8 @@ do while .t.
 			MainPos(my_user(), "dummy", p3, p4, p5, p6, p7)
  		case mnu_choice == 10
 			MainMat(my_user(), "dummy", p3, p4, p5, p6, p7)
+ 		case mnu_choice == 12
+            relogin()
 	endcase
  	loop
 enddo

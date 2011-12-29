@@ -28,9 +28,6 @@ static __max_cols := 140
 // 
 // ---------------------------------
 function f18_init_app()
-local _ini_params
-local _key
-local _ret_login
 
 REQUEST DBFCDX
 
@@ -75,14 +72,14 @@ endif
 set( _SET_EVENTMASK, INKEY_ALL )
 mSetCursor( .t. )
 
-public gRj := "N"
-public gReadOnly := .f.
-public gSQL := "N"
-public Invert := .f.
-public gOModul := NIL
-public cDirPriv:=""
-public cDirRad:=""
-public cDirSif:=""
+public gRj         := "N"
+public gReadOnly   := .f.
+public gSQL        := "N"
+public Invert      := .f.
+public gOModul     := NIL
+public cDirPriv    := ""
+public cDirRad     := ""
+public cDirSif     := ""
 
 set_f18_home_root()
 
@@ -104,7 +101,27 @@ __my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }
 
 __global_error_handler := ERRORBLOCK(__my_error_handler)
 
-_get_screen_resolution()
+_get_screen_resolution_from_config()
+
+_get_server_params_from_config()
+
+// pokusaj se logirati kao user/user
+if !my_server_login()
+    // ako ne prikazi formu za unos
+    f18_form_login()
+endif
+
+_write_server_params_to_config() 
+
+post_login()
+
+return .t.
+
+
+// -------------------------------------
+// -------------------------------------
+function _get_server_params_from_config()
+local _key, _ini_params
 
 // ucitaj parametre iz inija, ako postoje ...
 _ini_params := hb_hash()
@@ -125,40 +142,31 @@ __server_params := hb_hash()
 for each _key in _ini_params:Keys
    __server_params[_key] := _ini_params[_key]
 next
+
 // port je numeric
 if VALTYPE(__server_params["port"]) == "C"
   __server_params["port"] := VAL(__server_params["port"])
 endif
 __server_params["password"] := __server_params["user"]
 
-// pokusaj se logirati kao user/user
-if !my_server_login()
+return 
 
-    // ako ne idi na login formu
-    _ret_login := 0
-    do while _ret_login <> -1
-      _ret_login := _form_login(@__server_params) 
-      if _ret_login == 1
-         exit
-      endif
-    enddo
+// --------------------------------------------------------
+// --------------------------------------------------------
+static function _write_server_params_to_config()
+local _key, _ini_params := hb_hash()
 
-    Beep(4)
-    if (_ret_login == -1)
-        // neuspjesan login, korisnik odustaje od prijave
-        f18_no_login_quit()
-    endif
-
-endif
-
-
-for each _key in _ini_params:Keys
+for each _key in {"host", "database", "user", "schema", "port"}
     _ini_params[_key] := __server_params[_key] 
 next
+
 if !f18_ini_write(F18_SERVER_INI_SECTION + IIF(test_mode(), "_test", ""), _ini_params, .t.)
     MsgBeep("problem ini write")
 endif
 
+// -------------------------------
+// -------------------------------
+function post_login()
 
 // ~/.F18/empty38/
 set_f18_home( my_server_params()["database"] )
@@ -175,7 +183,7 @@ return .t.
 // ------------------------------------------------------------
 // vraca informacije iz inija vezane za screen rezoluciju
 // ------------------------------------------------------------
-static function _get_screen_resolution()
+static function _get_screen_resolution_from_config()
 local _ini_params := hb_hash()
 
 _ini_params["max_rows"] := nil
@@ -209,32 +217,37 @@ return __max_cols
 
 
 // ------------------------------------------
-// ret: -1: <ESC> iz unosa
-//       0: neuspjesno logiranje na server
-//       1: ok
 // ------------------------------------------
-static function _form_login(server_params)
+static function f18_form_login(server_params)
+local _ret
 local _server
 
-if !f18_login_screen(@server_params) 
-    return -1
+if server_params == NIL
+   server_params := __server_params
 endif
 
-if my_server_login( server_params )
+do while .t.
 
-  log_write( "form login: " + ;
-        server_params["host"] + " / " + ;
-        server_params["database"] + " / " + ;
-        server_params["user"] + " / " +  ;
-        STR(my_server_params()["port"])  + " / " + ;
-        server_params["schema"])
-  return 1
-endif
+    if !_login_screen(@server_params)
+         f18_no_login_quit()
+         return .f.
+    endif
 
-return 0
+    if my_server_login( server_params )
+         log_write( "form login succesfull: " + server_params["host"] + " / " + server_params["database"] + " / " + server_params["user"] + " / " + STR(my_server_params()["port"])  + " / " + server_params["schema"])
+         exit
+    else
+       Beep(4)
+    endif
 
-// f18, login screen
-function f18_login_screen(server_params)
+enddo
+
+return .t.
+
+
+// ------------------------------------------
+// ------------------------------------------
+static function _login_screen(server_params)
 
 local cHostname, cDatabase, cUser, cPassword, nPort, cSchema
 local lSuccess := .t.   
@@ -324,10 +337,15 @@ if Lastkey() == K_ESC
     return .f.
 endif
 
-// podesi varijable
 cHostName := ALLTRIM( cHostname )
 cUser     := ALLTRIM( cUser )
-cPassword := ALLTRIM( cPassword )
+
+// omogucice da se korisnici user=password jednostavno logiraju
+if EMPTY(cPassword)
+   cPassword := cUser
+else
+   cPassword := ALLTRIM( cPassword )
+endif 
 cDatabase := ALLTRIM( cDatabase )
 cSchema   := ALLTRIM( cSchema )
 
@@ -529,3 +547,20 @@ log_close()
 QUIT
 
 return
+
+// ---------------
+// ---------------
+function relogin()
+
+my_server_logout()
+
+_get_server_params_from_config()
+if f18_form_login()
+   post_login()
+endif
+_write_server_params_to_config()
+
+return .t.
+
+
+

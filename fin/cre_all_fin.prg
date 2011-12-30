@@ -46,7 +46,6 @@ _created := .f.
 _alias := "SUBAN"
 _table_name := "fin_suban"
 if !FILE(f18_ime_dbf(_alias))
-    altd()
     DBCREATE2(_alias, aDbf)
     _created := .t.
 endif

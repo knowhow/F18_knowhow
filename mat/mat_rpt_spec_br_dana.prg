@@ -179,7 +179,7 @@ do while !EOF()
             // prvi interval
             if _interval <= param["interval_1"]
                 // ovo je interval do 6 mjeseci npr..
-                if ! (field->idvn # _skip_docs )
+                if ! (field->idvn $ _skip_docs )
                     _int_i_1 += _dug
                     _int_k_1 += _ulaz  
                 endif
@@ -188,31 +188,37 @@ do while !EOF()
             // drugi interval
             if _interval > param["interval_1"] .and. _interval <= param["interval_2"]
                 // ovo je interval od 6 do 12 mj, npr..  
-                if ! (field->idvn # _skip_docs )
+                if ! (field->idvn $ _skip_docs )
                     _int_i_2 += _dug
                     _int_k_2 += _ulaz  
                 endif
             endif
     
             // treci interval
-            if _interval > param["interval_2"]
-                // ovo je interval preko 12 mj. npr...
-                if ! (field->idvn # _skip_docs )
-                    _int_i_3 += _dug
-                    _int_k_3 += _ulaz  
-                endif
-            endif
+            // se racuna na osnovu salda i gornja dva
 
             skip
 
         enddo
+        
+        // treci interval je
+        _int_k_3 := ( _saldo_k - _int_k_1 - _int_k_2 )
+        _int_i_3 := ( _saldo_i - _int_i_1 - _int_i_2 )
+        
+        // ako je negativan onda je nula
+        if _int_k_3 < 0
+            _int_k_3 := 0
+            _int_i_3 := 0
+        endif
    
         if ROUND( _int_i_1 + _int_i_2 + _int_i_3 + _saldo_i, 2 ) == 0 .and. param["prikaz_nule"] == "N"    
             // preskoci...
         else
             // ubaci u pomocnu tabelu podatke
             _fill_tmp_tbl( _id_konto, konto->naz, _id_roba, _roba_naz, ; 
-                _int_k_1, _int_k_2, _int_k_3, _int_i_1, _int_i_2, _int_i_3, _saldo_k, _saldo_i )
+                _int_k_1, _int_k_2, _int_k_3, ;
+                _int_i_1, _int_i_2, _int_i_3, ;
+                 _saldo_k, _saldo_i )
         endif
    
         select mat_suban

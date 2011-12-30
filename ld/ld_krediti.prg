@@ -214,6 +214,7 @@ function EddKred(Ch)
 local cDn:="N"
 local nRet:=DE_CONT
 local nRec:=RECNO()
+local _placeno, _iznos, _rec
 
 if Logirati(goModul:oDataBase:cName,"KREDIT","EDITKREDIT")
     lLogEditKredit:=.t.
@@ -248,13 +249,18 @@ do case
                     SKIP 1
                     nRecK := RECNO()
                     SKIP -1
-                    _rec := dbf_get_rec()
-                    _rec["naosnovu"] := cNaOsnovu2
-                    update_rec_server_and_dbf("RADKR", _rec)
+
+                    _vals["naosnovu"] := cNaOsnovu2
+                    _vals["placeno"] := _placeno
+                    _vals["iznos"] := _iznos
+
+                    update_rec_server_and_dbf( "RADKR", _vals )
+
                     GO (nRecK)
 
                 ENDDO
-                _vals["naosnovu"] := cNaOsnovu := cNaOsnovu2
+      
+                //_vals["naosnovu"] := cNaOsnovu := cNaOsnovu2
 
             endif
             read
@@ -262,7 +268,7 @@ do case
         BoxC()
         GO (nRec)
             
-        update_rec_server_and_dbf( "RADKR", _vals )
+        //update_rec_server_and_dbf( "RADKR", _vals )
             
         if lLogEditKredit
             EventLog(nUser,goModul:oDataBase:cName,"KREDIT","EDITKREDIT",radkr->placeno,radkr->iznos,nil,nil,"","","Rad:"+ALLTRIM(cIdRadn),Date(),Date(),"","Rucna ispravka rate kredita za radnika")

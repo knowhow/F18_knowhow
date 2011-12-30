@@ -1021,14 +1021,14 @@ for i:=1 to len(aStruct)
      // cImeP - privatna var
      cVar := cZn + _ime_p
 
-     rlock()
+     //rlock()
      //IF "U" $ TYPE(cVar)
      //    MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + _ime_p)
      //ELSE
             EVAL(_field_b, EVAL(MEMVARBLOCK(cVar)) )
      //ENDIF
  
-     dbunlock()
+     //dbunlock()
 next
 
 return nil

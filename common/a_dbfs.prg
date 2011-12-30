@@ -86,10 +86,19 @@ AADD( gaDbfs, { F_POM    ,  "POM"     , "fin_pom"  } )
 AADD( gaDbfs, { F_POM2   ,  "POM2"    , "fin_pom2"  } )
 AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"   } )
 AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"   } )
-AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|alg| fin_suban_from_sql_server(alg) }, "IDS" , {"idfirma", "idvn", "brnal", "rbr" }, {|x| "idfirma=" + _sql_quote(x["idfirma"]) + " AND idvn=" + _sql_quote(x["idvn"]) + " AND brnal=" + _sql_quote(x["brnal"]) + " AND rbr=" + _sql_quote(x["rbr"]) }, "4" })
-AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",    {|alg| fin_anal_from_sql_server(alg)  }, "IDS" } )
-AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|alg| fin_sint_from_sql_server(alg)  }, "IDS" } )
-AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS" } )
+AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|alg| fin_suban_from_sql_server(alg) }, "IDS" , {"idfirma", "idvn", "brnal", "rbr" }, {|x| sql_where_block("fin_suban", x} , "4" })
+
+
+// fin_anal: TAG "2", "idFirma+IdVN+BrNal+Rbr"
+AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",    {|alg| fin_anal_from_sql_server(alg)  }, "IDS", {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_anal", x) }, "2" } )
+
+// fin_sint: TAG "2", "idFirma+IdVN+BrNal+Rbr"
+AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|alg| fin_sint_from_sql_server(alg)  }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_sint", x) }, "2" }  )
+
+
+// fin_nalog: tag "1", "IdFirma+IdVn+BrNal"
+AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_nalog", x) }, "1" })
+
 AADD( gaDbfs, { F_FUNK   ,  "FUNK"    , "fin_funk"  } )
 AADD( gaDbfs, { F_BUDZET ,  "BUDZET"  , "fin_budzet"  } )
 AADD( gaDbfs, { F_PAREK  ,  "PAREK"   , "fin_parek"   } )

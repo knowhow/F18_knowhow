@@ -373,36 +373,6 @@ if (nArea==-1 .or. nArea==(F_TDOK))
 endif
 
 
-aDbf:={}
-AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
-AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-AADD(aDBf,{ "BRNAL"               , "C" ,   8 ,  0 })
-AADD(aDBf,{ "DATNAL"              , "D" ,   8 ,  0 })
-AADD(aDBf,{ "DUGBHD"              , "N" ,  17 ,  2 })
-AADD(aDBf,{ "POTBHD"              , "N" ,  17 ,  2 })
-AADD(aDBf,{ "DUGDEM"              , "N" ,  15 ,  2 })
-AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
-
-if (nArea==-1 .or. nArea==(F_NALOG))
-	//NALOG.DBF
-
-	if !FILE(f18_ime_dbf("nalog"))
-        	DBcreate2("NALOG",aDbf)
-			reset_semaphore_version("fin_nalog")
-			my_use("nalog")
-			close all
-	endif
-
-
-	
-	CREATE_INDEX("1","IdFirma+IdVn+BrNal",KUMPATH+"NALOG") 
-	CREATE_INDEX("2","IdFirma+str(val(BrNal),8)+idvn",KUMPATH+"NALOG") 
-	CREATE_INDEX("3","dtos(datnal)+IdFirma+idvn+brnal",KUMPATH+"NALOG") 
-	CREATE_INDEX("4","datnal",KUMPATH+"NALOG") 
-
-endif
-
-
 if (nArea==-1 .or. nArea==(F_PNALOG))
 	//PNALOG.DBF
 

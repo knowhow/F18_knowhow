@@ -101,7 +101,6 @@ AADD(aDBf,{ "POTBHD"              , "N" ,  17 ,  2 })
 AADD(aDBf,{ "DUGDEM"              , "N" ,  15 ,  2 })
 AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 
-
 if !FILE(f18_ime_dbf(_alias))
         DBcreate2( _alias, aDbf )
         reset_semaphore_version(_table_name)
@@ -166,3 +165,33 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 CREATE_INDEX("1", "IdFirma+IdVn+BrNal+idkonto", _alias)
+
+// ----------------------------------------------------------------------------
+// NALOG
+// ----------------------------------------------------------------------------
+
+aDbf:={}
+AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
+AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
+AADD(aDBf,{ "BRNAL"               , "C" ,   8 ,  0 })
+AADD(aDBf,{ "DATNAL"              , "D" ,   8 ,  0 })
+AADD(aDBf,{ "DUGBHD"              , "N" ,  17 ,  2 })
+AADD(aDBf,{ "POTBHD"              , "N" ,  17 ,  2 })
+AADD(aDBf,{ "DUGDEM"              , "N" ,  15 ,  2 })
+AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
+
+
+_alias := "NALOG"
+_table_name := "fin_nalog"
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    close all
+endif
+
+CREATE_INDEX("1", "IdFirma+IdVn+BrNal", _alias) 
+CREATE_INDEX("2", "IdFirma+str(val(BrNal),8)+idvn", _alias) 
+CREATE_INDEX("3", "dtos(datnal)+IdFirma+idvn+brnal", _alias) 
+CREATE_INDEX("4", "datnal", _alias) 
+

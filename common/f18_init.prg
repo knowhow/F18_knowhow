@@ -8,6 +8,7 @@
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+
 #include "fmk.ch"
 #include "hbgtinfo.ch"
 #include "hbcompat.ch"
@@ -30,7 +31,6 @@ static __max_cols := 140
 function f18_init_app()
 
 REQUEST DBFCDX
-
 REQUEST DBFCDX
 
 #ifdef __PLATFORM__WINDOWS
@@ -568,4 +568,15 @@ _write_server_params_to_config()
 return .t.
 
 
+// ----------------------------
+//
+// ----------------------------
+function view_log()
+local _cmd
 
+_out_file := my_home() + "F18.log.txt"
+
+FILECOPY( F18_LOG_FILE, _out_file)
+run (_cmd := "f18_editor " + _out_file)
+
+return .t.

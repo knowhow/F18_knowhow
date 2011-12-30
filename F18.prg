@@ -37,6 +37,7 @@ AADD( menuop, " 9) POS   # maloprodajna kasa")
 AADD( menuop, "10) MAT   # materijalno")
 AADD( menuop, "--------------------------")
 AADD( menuop, " R) ReLogin")
+AADD( menuop, " W) Pregled F18.log-a")
 
 do while .t.
 
@@ -68,6 +69,8 @@ do while .t.
 			MainMat(my_user(), "dummy", p3, p4, p5, p6, p7)
  		case mnu_choice == 12
             relogin()
+	 	case mnu_choice == 13
+            view_log()
 	endcase
  	loop
 enddo

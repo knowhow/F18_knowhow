@@ -9,46 +9,57 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+static __ini_section := "DBF_version"
+
 #include "fmk.ch"
 #include "f18_ver.ch"
 
-function dbf_update()
+// ------------------------------------
+// ------------------------------------
+function read_dbf_version_from_config()
 local _ini_params
 local _current_dbf_ver, _new_dbf_ver
-local _ini_section := "DBF_version"
+local __ini_section := "DBF_version"
+local _ret
 
-// ucitaj parametre iz inija, ako postoje ...
 _ini_params := hb_hash()
 _ini_params["major"] := "0"
 _ini_params["minor"] := "0"
 _ini_params["patch"] := "0"
 
-if !f18_ini_read(_ini_section, @_ini_params, .f.)
-   MsgBeep("problem sa ini_params " + _ini_section)
+_ret := hb_hash()
+
+if !f18_ini_read(__ini_section, @_ini_params, .f.)
+   MsgBeep("problem sa ini_params " + __ini_section)
 endif
 _current_dbf_ver := get_version_num(_ini_params["major"], _ini_params["minor"], _ini_params["patch"])
-_new_dbf_ver := get_version_num( F18_DBF_VER_MAJOR, F18_DBF_VER_MINOR, F18_DBF_VER_PATCH)
+_new_dbf_ver     := get_version_num(F18_DBF_VER_MAJOR, F18_DBF_VER_MINOR, F18_DBF_VER_PATCH)
 
 log_write("current dbf version:" + STR(_current_dbf_ver))
 log_write("    F18 dbf version:" + STR(_new_dbf_ver))
 
-// 0.2.1
-if _current_dbf_ver < 00201
-   modstru({"*roba", "A IDKONTO C 7 0"})
-endif
+_ret["current"] := _current_dbf_ver 
+_ret["new"]     := _new_dbf_ver
 
-// 0.3.0
-if _current_dbf_ver < 0300
-   modstru({"*fin_suban", "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
-endif
+return _ret
+
+// ---------------------------------------
+// ---------------------------------------
+function write_dbf_version_to_config()
+local _ini_params
+
+_ini_params := hb_hash()
+_ini_params["major"] := "0"
+_ini_params["minor"] := "0"
+_ini_params["patch"] := "0"
+
 
 _ini_params["major"] := F18_DBF_VER_MAJOR
 _ini_params["minor"] := F18_DBF_VER_MINOR
 _ini_params["patch"] := F18_DBF_VER_PATCH
 
-if !f18_ini_write(_ini_section, @_ini_params, .f.) 
+if !f18_ini_write(__ini_section, @_ini_params, .f.) 
    MsgBeep("problem write params" + _ini_params)
 endif
 
 return
-

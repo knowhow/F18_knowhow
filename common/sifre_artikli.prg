@@ -429,7 +429,8 @@ return
 
 //---------------------------------------------------
 //---------------------------------------------------
-function CreRoba()
+function CreRoba(ver)
+local _table_name, _alias
 
 aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
@@ -456,9 +457,9 @@ AADD(aDBf,{ 'N2'                  , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'MINK'                , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'Opis'                , 'C' , 250 ,  0 })
-AADD(aDBf,{ 'BARKOD'                , 'C' ,  13 ,  0 })
-AADD(aDBf,{ 'FISC_PLU'              , 'N' ,  10 ,  0 })
-AADD(aDBf,{ 'ZANIVEL'              , 'N' ,  18 ,  8 })
+AADD(aDBf,{ 'BARKOD'              , 'C' ,  13 ,  0 })
+AADD(aDBf,{ 'FISC_PLU'            , 'N' ,  10 ,  0 })
+AADD(aDBf,{ 'ZANIVEL'             , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'ZANIV2'              , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'TROSK1'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'TROSK2'              , 'N' ,  15 ,  5 })
@@ -467,13 +468,23 @@ AADD(aDBf,{ 'TROSK4'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'TROSK5'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  5 })
 
+_alias := "ROBA"
+_table_name := "roba"
 
-if !file(f18_ime_dbf("roba"))
-        dbcreate2("ROBA", aDbf)
- 		reset_semaphore_version("roba")
-		my_use("roba")
-		close all	
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
 endif
+
+// 0.2.1
+if ver["current"] < 00201
+   modstru( {"*" + _table_name, "A IDKONTO C 7 0"})
+endif
+
+reset_semaphore_version(_table_name)
+my_use(_alias)
+use
+
+
 
 if !file(f18_ime_dbf("_roba"))
         dbcreate2(PRIVPATH+'_roba.dbf',aDbf)

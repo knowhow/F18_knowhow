@@ -86,7 +86,7 @@ AADD( gaDbfs, { F_POM    ,  "POM"     , "fin_pom"  } )
 AADD( gaDbfs, { F_POM2   ,  "POM2"    , "fin_pom2"  } )
 AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"   } )
 AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"   } )
-AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|alg| fin_suban_from_sql_server(alg) }, "IDS" , {"idfirma", "idvn", "brnal", "rbr" }, {|x| sql_where_block("fin_suban", x)} , "4" })
+AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|alg| fin_suban_from_sql_server(alg) }, "IDS" , {"idfirma", "idvn", "brnal", "rbr" }, { |x| sql_where_block("fin_suban", x) } , "4" })
 
 
 // fin_anal: TAG "2", "idFirma+IdVN+BrNal+Rbr"

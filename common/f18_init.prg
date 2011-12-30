@@ -80,6 +80,7 @@ public gOModul     := NIL
 public cDirPriv    := ""
 public cDirRad     := ""
 public cDirSif     := ""
+public glBrojacPoKontima := .t.
 
 set_f18_home_root()
 
@@ -167,13 +168,17 @@ endif
 // -------------------------------
 // -------------------------------
 function post_login()
+local _ver
 
 // ~/.F18/empty38/
 set_f18_home( my_server_params()["database"] )
 log_write("home baze: " + my_home())
 
-cre_all_dbfs()
-dbf_update()
+_ver := read_dbf_version_from_config()
+
+cre_all_dbfs(_ver)
+
+write_dbf_version_to_config()
 
 check_server_db_version()
 

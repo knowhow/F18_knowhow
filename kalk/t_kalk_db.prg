@@ -380,46 +380,6 @@ if (nArea==-1 .or. nArea==(F_KALK))
 	endif
 endif
 
-if (nArea==-1 .or. nArea==(F_KALK_DOKS))
-	//kalk_doks.DBF
-	
-	aDbf:={}
-	AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
-	AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
-	AADD(aDBf,{ 'BRDOK'               , 'C' ,   8 ,  0 })
-	AADD(aDBf,{ 'DATDOK'              , 'D' ,   8 ,  0 })
-	AADD(aDBf,{ 'BRFAKTP'             , 'C' ,  10 ,  0 })
-	AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
-	AADD(aDBf,{ 'IdZADUZ'             , 'C' ,   6 ,  0 })
-	AADD(aDBf,{ 'IdZADUZ2'            , 'C' ,   6 ,  0 })
-	AADD(aDBf,{ 'PKONTO'              , 'C' ,   7 ,  0 })
-	AADD(aDBf,{ 'MKONTO'              , 'C' ,   7 ,  0 })
-	AADD(aDBf,{ 'NV'                  , 'N' ,  12 ,  2 })
-	AADD(aDBf,{ 'VPV'                 , 'N' ,  12 ,  2 })
-	AADD(aDBf,{ 'RABAT'               , 'N' ,  12 ,  2 })
-	AADD(aDBf,{ 'MPV'                 , 'N' ,  12 ,  2 })
-	AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
-	
-	if !FILE(f18_ime_dbf("kalk_doks"))
-        	DBcreate2("kalk_doks", aDbf)
-			reset_semaphore_version("kalk_doks")
-        	my_usex("kalk_doks")
-  			close all
-	endif
-
-	CREATE_INDEX("1", "IdFirma+idvd+brdok", "kalk_doks")
-	CREATE_INDEX("2","IdFirma+MKONTO+idzaduz2+idvd+brdok", "kalk_doks")
-	CREATE_INDEX("3","IdFirma+dtos(datdok)+podbr+idvd+brdok", "kalk_doks")
-	CREATE_INDEX("DAT","datdok","kalk_doks")
-	// za RN
-	if glBrojacPoKontima = .t.
-		CREATE_INDEX("1S","IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)",KUMPATH+"kalk_doks")
-	endif
-	CREATE_INDEX("V_BRF","brfaktp+idvd",KUMPATH+"kalk_doks")
-	CREATE_INDEX("V_BRF2","idvd+brfaktp",KUMPATH+"kalk_doks")
-endif
-
-
 if (nArea==-1 .or. nArea==(F_KALK_DOKS2))
 	//kalk_doks2.DBF
 	

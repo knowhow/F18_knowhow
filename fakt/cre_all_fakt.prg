@@ -11,7 +11,7 @@
 
 #include "fmk.ch"
 
-function cre_all_fakt()
+function cre_all_fakt(ver)
 local aDbf
 local _alias, _table_name
 

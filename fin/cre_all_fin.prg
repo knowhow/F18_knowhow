@@ -11,7 +11,7 @@
 
 #include "fmk.ch"
 
-function cre_all_fin()
+function cre_all_fin(ver)
 local aDbf
 local _alias, _table_name
 
@@ -45,11 +45,18 @@ _alias := "SUBAN"
 _table_name := "fin_suban"
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    close all
 endif
-    
+
+// 0.3.0
+if ver["current"] < 00300
+   modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
+endif
+
+reset_semaphore_version(_table_name)
+my_usex(_alias)
+USE
+
+ 
 CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias) 
 CREATE_INDEX( "2", "IdFirma+IdPartner+IdKonto", _alias)
 CREATE_INDEX( "3", "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)", _alias)

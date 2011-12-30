@@ -46,7 +46,6 @@ AADD(aArgs, { cArg })
 return
 
 
-
 // -----------------------------------------
 // pokrece gvim sa zadanim parametrima...
 // -----------------------------------------

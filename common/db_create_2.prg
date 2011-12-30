@@ -88,7 +88,7 @@ return
 // -----------------------------------
 // kreiranje tabela - svi moduli 
 // -----------------------------------
-function CreFmkSvi()
+function CreFmkSvi(ver)
 
 
 // RJ

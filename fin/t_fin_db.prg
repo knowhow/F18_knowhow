@@ -213,8 +213,6 @@ cDirRad := my_home()
 cDirSif := my_home()
 cDirPriv := my_home()
 
-CreFmkSvi()
-CreRoba()
 CreFmkPi()
 
 

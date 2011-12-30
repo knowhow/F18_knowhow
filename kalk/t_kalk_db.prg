@@ -197,8 +197,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-CreFMKSvi()
-CreRoba()
 CreFMKPI()
 
 #IFDEF SR

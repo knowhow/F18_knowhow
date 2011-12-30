@@ -232,11 +232,6 @@ cDirRad := my_home()
 cDirSif := my_home()
 cDirPriv := my_home()
 
-CreFMKSvi()
-CreRoba()
-if IsRabati()
-	CreRabDB()
-endif
 CreFMKPI()
 
 if (nArea==nil)

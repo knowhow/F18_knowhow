@@ -180,8 +180,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-CreFmkSvi()
-CreRoba()
 CreFmkPi()
 
 aDbf:={}

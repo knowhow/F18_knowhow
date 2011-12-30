@@ -163,8 +163,6 @@ if (nArea<>-1)
 endif
 
 
-CreFmkSvi()
-CreRoba()
 CreFmkPi()
 
 cre_tbls(nArea, "pdv")

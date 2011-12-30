@@ -591,9 +591,8 @@ aDbf:={{"GODINA"     ,  "C" ,  4, 0} ,;
 DBCREATE2(KUMPATH+"REKLD",aDbf)
 
 select (F_REKLD)
-usex (KUMPATH+"rekld")
+my_usex( "rekld" )
 
-index ON  BRISANO+"10" TAG "BRISAN"
 index on  godina+mjesec+id tag "1"
 
 set order to tag "1"
@@ -639,10 +638,9 @@ endif
 
 DBCreate2(PRIVPATH + "opsld", aDbf)
 select(F_OPSLD)
-usex (PRIVPATH+"opsld")
+my_usex("opsld")
 
 INDEX ON PORID+ID+IDOPS tag "1"
-index ON BRISANO TAG "BRISAN"
 use
 
 return

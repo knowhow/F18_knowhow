@@ -201,9 +201,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-CreFMKSvi()
-
-
 // REKLD
 aDbf:={}
 AADD( aDbf, {"GODINA"     ,  "C" ,  4, 0})

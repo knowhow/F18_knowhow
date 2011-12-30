@@ -548,7 +548,6 @@ set_metric("mat_spec_br_dana_firma", f18_user(), _firma )
 set_metric("mat_spec_br_dana_interval_1", f18_user(), _int_1 )
 set_metric("mat_spec_br_dana_interval_2", f18_user(), _int_2 )
 set_metric("mat_spec_br_dana_prikaz_nula", f18_user(), _nule )
-set_metric("mat_spec_br_dana_samo_ulazi", f18_user(), _ulazi )
 set_metric("mat_spec_br_dana_datum", f18_user(), _date )
 
 return _ret

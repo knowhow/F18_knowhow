@@ -11,18 +11,20 @@
 
 #include "fmk.ch"
 
-function cre_all_dbfs()
+function cre_all_dbfs(ver)
 
-cre_sifk_sifv()
-CreFmkSvi()
-CreRoba()
+cre_sifk_sifv(ver)
+CreFmkSvi(ver)
+CreRoba(ver)
 
 // TODO: http://redmine.bring.out.ba/issues/25815
-cre_all_fin()
+cre_all_fin(ver)
 
-cre_all_fakt()
+cre_all_kalk(ver)
 
-cre_all_ld()
+cre_all_fakt(ver)
+
+cre_all_ld(ver)
 
 return
 

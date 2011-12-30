@@ -69,8 +69,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-CreFMKSvi()
-
 if (nArea==-1 .or. nArea==(F_OS))
 	if !file(f18_ime_dbf("os"))
 	   aDbf:={}

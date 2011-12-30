@@ -14,6 +14,7 @@
 function cre_all_kalk(ver)
 local aDbf
 local _alias, _table_name
+local _created
 
 // -----------------------------------------------
 // kalk_doks
@@ -36,10 +37,12 @@ AADD(aDBf,{ 'RABAT'               , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'MPV'                 , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
 
+_created := .f.
 _alias := "KALK_DOKS"
 _table_name := "kalk_doks"
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
+    _created := .t.
 endif
 
 // 0.4.0
@@ -47,9 +50,11 @@ if ver["current"] < 0400
    modstru({"*" + _table_name, "A SIFRA C 6 0"})
 endif
 
-reset_semaphore_version(_table_name)
-my_usex(_alias)
-USE
+if _created
+  reset_semaphore_version(_table_name)
+  my_usex(_alias)
+  USE
+endif
 
 CREATE_INDEX("1", "IdFirma+idvd+brdok", _alias)
 CREATE_INDEX("2","IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias)

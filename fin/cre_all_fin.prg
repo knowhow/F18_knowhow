@@ -14,6 +14,7 @@
 function cre_all_fin(ver)
 local aDbf
 local _alias, _table_name
+local _created
 
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
@@ -41,10 +42,12 @@ AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
 AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
 AADD(aDBf,{ "FOND"                , "C" ,   4 ,  0 })
 
+_created := .f.
 _alias := "SUBAN"
 _table_name := "fin_suban"
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
+    _created := .t.
 endif
 
 // 0.3.0
@@ -52,10 +55,11 @@ if ver["current"] < 00300
    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
-reset_semaphore_version(_table_name)
-my_usex(_alias)
-USE
-
+if _created
+  reset_semaphore_version(_table_name)
+  my_usex(_alias)
+  USE
+endif
  
 CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias) 
 CREATE_INDEX( "2", "IdFirma+IdPartner+IdKonto", _alias)

@@ -13,6 +13,8 @@
 #include "mat.ch"
 
 static _pic := "999999999.99"
+static _skip_docs := "#00#"
+
 
 // --------------------------------------------
 // otvara tabele potrebne za izvjestaj
@@ -177,22 +179,28 @@ do while !EOF()
             // prvi interval
             if _interval <= param["interval_1"]
                 // ovo je interval do 6 mjeseci npr..
-                _int_i_1 += _dug
-                _int_k_1 += _ulaz  
+                if ! (field->idvn # _skip_docs )
+                    _int_i_1 += _dug
+                    _int_k_1 += _ulaz  
+                endif
             endif
 
             // drugi interval
             if _interval > param["interval_1"] .and. _interval <= param["interval_2"]
                 // ovo je interval od 6 do 12 mj, npr..  
-                _int_i_2 += _dug
-                _int_k_2 += _ulaz  
+                if ! (field->idvn # _skip_docs )
+                    _int_i_2 += _dug
+                    _int_k_2 += _ulaz  
+                endif
             endif
     
             // treci interval
             if _interval > param["interval_2"]
                 // ovo je interval preko 12 mj. npr...
-                _int_i_3 += _dug
-                _int_k_3 += _ulaz  
+                if ! (field->idvn # _skip_docs )
+                    _int_i_3 += _dug
+                    _int_k_3 += _ulaz  
+                endif
             endif
 
             skip

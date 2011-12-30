@@ -59,7 +59,7 @@ _table_name := "roba"
 
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
-    _created := .f.
+    _created := .t.
 endif
 
 // 0.2.1

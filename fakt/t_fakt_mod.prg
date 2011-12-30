@@ -123,16 +123,6 @@ AADD(_opcexe,{|| fakt_sifrarnik()})
 AADD(_opc,"9. uplate")
 AADD(_opcexe, {|| mnu_fakt_uplate()} )
 
-/*
-AADD(opc,"9. administracija baze podataka")
-
-if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
-	AADD(opcexe,{|| fakt_admin_menu()})
-else
-	AADD(opcexe,{|| MsgBeep(cZabrana)})
-endif
-*/
-
 AADD(_opc,"------------------------------------")
 AADD(_opcexe,{|| nil})
 AADD(_opc,"A. stampa azuriranog dokumenta")
@@ -217,7 +207,8 @@ public gnTMarg:=11 // gornja margina
 public gnTMarg2:=3 // vertik.pomj. stavki u fakturi var.9
 public gnTMarg3:=0 // vertik.pomj. totala fakture var.9
 public gnTMarg4:=0 // vertik.pomj. za donji dio fakture var.9
-public gMjStr:="Zenica", gMjRJ:="N"
+public gMjStr:="Zenica"
+public gMjRJ:="N"
 public gDK1:="N"
 public gDK2:="N"
 public gIspPart:="N" // ispravka partnera u unosu novog dokumenta
@@ -418,6 +409,70 @@ public zaokruzenje := 2
 public i_id := 1
 public nl := hb_eol()
 
+// firma naziv
+public gFNaziv:=SPACE(250) 
+// firma dodatni opis
+public gFPNaziv:=SPACE(250) 
+// firma adresa
+public gFAdresa:=SPACE(35) 
+// firma id broj
+public gFIdBroj:=SPACE(13)
+// telefoni
+public gFTelefon:=SPACE(72) 
+// web
+public gFEmailWeb:=SPACE(72)
+// banka 1
+public gFBanka1:=SPACE(50)
+// banka 2
+public gFBanka2:=SPACE(50)
+// banka 3
+public gFBanka3:=SPACE(50)
+// banka 4
+public gFBanka4:=SPACE(50)
+// banka 5
+public gFBanka5:=SPACE(50)
+// proizv.text 1
+public gFText1:=SPACE(72)
+// proizv.text 2
+public gFText2:=SPACE(72)
+// proizv.text 3
+public gFText3:=SPACE(72)
+// stampati zaglavlje
+public gStZagl:="D" 
+
+// picture header rows
+public gFPicHRow:=0
+public gFPicFRow:=0
+
+// citaj parametre sa db servera
+
+// osnovni parametar
+gMjStr := fetch_metric( "fakt_mjesto", nil, gMjStr )
+gFirma := fetch_metric( "fakt_id_firma", nil, gFirma )
+gTS := fetch_metric( "fakt_tip_subjeka", nil, gTS )
+gNFirma := fetch_metric( "fakt_firma_naziv", nil, gNFirma )
+gBaznaV := fetch_metric( "fakt_bazna_valuta", nil, gBaznaV )
+gModemVeza := fetch_metric( "fakt_modemska_veza", nil, gModemVeza )
+	
+// parametri zaglavlja
+gFNaziv := fetch_metric( "fakt_zagl_firma_naziv", nil, gFNaziv )
+gFPNaziv := fetch_metric( "fakt_zagl_firma_naziv_2", nil, gFPNaziv )
+gFAdresa := fetch_metric( "fakt_zagl_adresa", nil, gFAdresa )
+gFIdBroj := fetch_metric( "fakt_zagl_id_broj", nil, gFIdBroj )
+gFBanka1 := fetch_metric( "fakt_zagl_banka_1", nil, gFBanka1 )
+gFBanka2 := fetch_metric( "fakt_zagl_banka_2", nil, gFBanka2 )
+gFBanka3 := fetch_metric( "fakt_zagl_banka_3", nil, gFBanka3 )
+gFBanka4 := fetch_metric( "fakt_zagl_banka_4", nil, gFBanka4 )
+gFBanka5 := fetch_metric( "fakt_zagl_banka_5", nil, gFBanka5 )
+gFTelefon := fetch_metric( "fakt_zagl_telefon", nil, gFTelefon )
+gFEmailWeb := fetch_metric( "fakt_zagl_email", nil, gFEmailWeb )
+gFText1 := fetch_metric( "fakt_zagl_dtxt_1", nil, gFText1 )
+gFText2 := fetch_metric( "fakt_zagl_dtxt_2", nil, gFText2 )
+gFText3 := fetch_metric( "fakt_zagl_dtxt_3", nil, gFText3 )
+gStZagl := fetch_metric( "fakt_zagl_koristiti_txt", nil, gStZagl )
+gFPicHRow := fetch_metric( "fakt_zagl_pic_header", nil, gFPicHRow )
+gFPicFRow := fetch_metric( "fakt_zagl_pic_footer", nil, gFPicFRow )
+
 O_PARAMS
 private cSection:="1"
 public cHistory:=" "
@@ -428,11 +483,6 @@ RPar("50",@gVarC)
 // prvenstveno za win 95
 RPar("95",@gKomLin)       
 
-//if empty(gKomLin)
- //gKomLin:="start "+trim(goModul:oDataBase:cDirPriv)+"\fakt.rtf"
-//endif
-
-Rpar("Bv",@gBaznaV)
 RPar("cr",@gZnPrec)
 RPar("d1",@gnTMarg2)
 RPar("d2",@gnTMarg3)
@@ -567,7 +617,6 @@ RPar("rp",@gRabProc)
 RPar("pd",@gProtu13)
 RPar("a5",@gFormatA5)
 RPar("mn",@gMreznoNum)
-RPar("mV",@gModemVeza)
 RPar("g1",@gKarC1)
 RPar("g2",@gKarC2)
 RPar("g3",@gKarC3)
@@ -627,71 +676,12 @@ RPar("fY", @gFC_serial)
 
 cSection := "1"
 // varijable PDV
-// firma naziv
-public gFNaziv:=SPACE(250) 
-// firma dodatni opis
-public gFPNaziv:=SPACE(250) 
-// firma adresa
-public gFAdresa:=SPACE(35) 
-// firma id broj
-public gFIdBroj:=SPACE(13)
-// telefoni
-public gFTelefon:=SPACE(72) 
-// web
-public gFEmailWeb:=SPACE(72)
-// banka 1
-public gFBanka1:=SPACE(50)
-// banka 2
-public gFBanka2:=SPACE(50)
-// banka 3
-public gFBanka3:=SPACE(50)
-// banka 4
-public gFBanka4:=SPACE(50)
-// banka 5
-public gFBanka5:=SPACE(50)
-// proizv.text 1
-public gFText1:=SPACE(72)
-// proizv.text 2
-public gFText2:=SPACE(72)
-// proizv.text 3
-public gFText3:=SPACE(72)
-// stampati zaglavlje
-public gStZagl:="D" 
-
-// picture header rows
-public gFPicHRow:=0
-public gFPicFRow:=0
-
 // DelphiRB - pdv faktura
 public gPdvDRb := "N"
 public gPdvDokVar := "1"
 
-// parametri zaglavlja
-Rpar("F1",@gFNaziv)
-Rpar("f1",@gFPNaziv)
-// prosiri na len 250
-gFNaziv := PADR(ALLTRIM(gFNaziv), 250)
-gFPNaziv := PADR(ALLTRIM(gFPNaziv), 250)
-
-Rpar("F2",@gFAdresa)
-Rpar("F3",@gFIdBroj)
-Rpar("F9",@gFBanka1)
-Rpar("G1",@gFBanka2)
-Rpar("G2",@gFBanka3)
-Rpar("G3",@gFBanka4)
-Rpar("G4",@gFBanka5)
-Rpar("G5",@gFTelefon)
-Rpar("G6",@gFEmailWeb)
-Rpar("G7",@gFText1)
-Rpar("G8",@gFText2)
-Rpar("G9",@gFText3)
-
 Rpar("H1",@gPdvDrb)
 Rpar("H2",@gPdvDokVar)
-
-Rpar("Z1",@gStZagl)
-Rpar("Z2",@gFPicHRow)
-Rpar("Z3",@gFPicFRow)
 
 if valtype(gtabela)<>"N"
 	gTabela:=1

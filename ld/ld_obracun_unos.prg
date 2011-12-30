@@ -24,11 +24,11 @@ private GetList
 private cIdRadn
 private nPlacenoRSati
 
-cIdRadn:=SPACE(_LR_)
-GetList:={}
-cRj:=gRj
-nGodina:=gGodina
-nMjesec:=gMjesec
+cIdRadn := SPACE(_LR_)
+GetList := {}
+cRj     := gRj
+nGodina := gGodina
+nMjesec := gMjesec
 
 if GetObrStatus(cRj,nGodina,nMjesec)$"ZX"
 	MsgBeep("Obracun zakljucen! Ne mozete vrsiti ispravku podataka!!!")
@@ -38,7 +38,7 @@ elseif GetObrStatus(cRj,nGodina,nMjesec)=="N"
 	return
 endif
 
-lRadniSati:=(IzFmkIni("LD","RadniSati","N",KUMPATH)=="D")
+lRadniSati := (IzFmkIni("LD", "RadniSati","N", KUMPATH)=="D")
 
 do while .t.
 	
@@ -54,9 +54,10 @@ do while .t.
     			Msg(Lokal("Radnik ne moze imati platu u negativnom iznosu!!!"))
   		endif
   		nPom:=0
-  		for i:=1 to cLDPolja
+  		for i := 1 to cLDPolja
      			cPom:=PADL(ALLTRIM(STR(i)),2,"0")
-     			nPom+=ABS(_i&cPom) + ABS(_s&cPom)  // ako su sve nule
+                // ako su sve nule
+     			nPom+=ABS(_i&cPom) + ABS(_s&cPom)  
   		next
   		
 		if (nPom <> 0)
@@ -64,25 +65,24 @@ do while .t.
 			// upisi tekucu varijantu obracuna
 			//_varobr := gVarObracun
 
-			// obracun snimiti u sql bazu
 			_vals := get_dbf_global_memvars()
             _vals["varobr"] := gVarObracun		    
-	
-            if !update_rec_server_and_dbf( nil,  _vals ) 
-                delete
+
+            if !update_rec_server_and_dbf( "ld_ld",  _vals ) 
+                delete_with_rlock()
             endif
 
 		else
      			if lNovi
-        			delete
+        			delete_with_rlock()
      			endif
   		endif
 
 		if gListic=="D"
     			if lViseObr
-      				KartPl(cRj,nMjesec,nGodina,cIdRadn,gObracun)
+      				KartPl(cRj, nMjesec, nGodina, cIdRadn, gObracun)
     			else
-      				KartPl(cRj,nMjesec,nGodina,cIdRadn)
+      				KartPl(cRj, nMjesec, nGodina, cIdRadn)
     			endif
   		endif
 
@@ -106,15 +106,14 @@ do while .t.
 enddo // do while .t.
 return
 
-
-
+// -----------------------------------
+// -----------------------------------
 function QQOUTC(cTekst,cBoja)
-*{
 @ ROW(),COL() SAY cTekst COLOR cBoja
 return
-*}
 
-
+// ----------------------------------
+// ----------------------------------
 function OObracun()
 
 select F_LD
@@ -183,13 +182,13 @@ if !used()
 endif
 
 if ( IsRamaGlas() )
+    MsgBeep("http://redmine.bring.out.ba/issues/25988")
+    QUIT
 	O_RADSIHT
 	O_RNAL
 endif
 
 return
-
-
 
 function PrikaziBox(lSaveObracun)
 local nULicOdb
@@ -297,7 +296,7 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
 
 	select ld
 	
-	seek STR(cGodina,4)+cIdRj+str(cMjesec,2)+IF(lViseObr,cObracun,"")+cIdRadn
+	seek STR(cGodina,4) + cIdRj + str(cMjesec,2) + IIF(lViseObr,cObracun,"") + cIdRadn
 	
 	if found()
   		lNovi:=.f.
@@ -305,13 +304,12 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
 	else
 		lNovi:=.t.
   		append blank
-  		
         set_global_vars_from_dbf()
 
-  		_Godina:=cGodina
-  		_idrj:=cIdRj
-		_idradn:=cIdRadn
-		_mjesec:=cMjesec
+  		_Godina := cGodina
+  		_idrj   := cIdRj
+		_idradn := cIdRadn
+		_mjesec := cMjesec
   		if gVarObracun == "2"
 			_ulicodb := nULicOdb
 			if LD->(FIELDPOS("TROSK")) <> 0
@@ -331,16 +329,16 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
 		_idstrspr:=radn->idstrspr
 	endif
 
-	ParObr(cMjesec, cGodina, IF(lViseObr,cObracun,),cIdRj)  
+	ParObr(cMjesec, cGodina, IIF(lViseObr,cObracun,), cIdRj)  
 	// podesi parametre obracuna za ovaj mjesec
 	
 	if gTipObr=="1"
- 		@ m_x+3,m_y+2   SAY IF(gBodK=="1", Lokal("Broj bodova"), Lokal("Koeficijent")) GET _brbod pict "99999.99" valid FillBrBod()
+ 		@ m_x+3, m_y+2   SAY IF(gBodK=="1", Lokal("Broj bodova"), Lokal("Koeficijent")) GET _brbod pict "99999.99" valid FillBrBod(_brbod)
 	else
- 		@ m_x+3,m_y+2   SAY Lokal("Plan.osnov ld") GET _brbod pict "99999.99" valid FillBrBod()
+ 		@ m_x+3, m_y+2   SAY Lokal("Plan.osnov ld") GET _brbod pict "99999.99" valid FillBrBod(_brbod)
 	endif
 	select ld
-	@ m_x+3,col()+2 SAY IF(gBodK=="1", Lokal("Vrijednost boda"), Lokal("Vr.koeficijenta")); @ row(),col()+1 SAY parobr->vrbod  pict "99999.99999"
+	@ m_x+3, col()+2 SAY IF(gBodK=="1", Lokal("Vrijednost boda"), Lokal("Vr.koeficijenta")); @ row(),col()+1 SAY parobr->vrbod  pict "99999.99999"
 	if gMinR=="B"
  		@ m_x + 3, col() + 2 SAY Lokal("Minuli rad (bod)") GET _kminrad pict "9999.99" valid FillKMinRad(_kminrad)
 	else
@@ -354,10 +352,10 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
 	endif
 	read
 	if (IsRamaGlas() .and. RadnikJeProizvodni())
-		UnosSatiPoRNal(cGodina,cMjesec,cIdRadn)
+		UnosSatiPoRNal(cGodina, cMjesec, cIdRadn)
 	endif
 	if lRadniSati
-		@ m_x+4,m_y+59 SAY "R.sati:" GET _radSat
+		@ m_x + 4, m_y + 59 SAY "R.sati:" GET _radSat
 	endif
 	
 	read
@@ -668,33 +666,6 @@ return .t.
 
 
 
-function UnosSatiPoRNal(nGodina,nMjesec,cIdRadn)
-private cRNal[8], nSati[8]
-UcitajSateRNal(nGodina,nMjesec,cIdRadn)
-@ m_x+10, m_y+2 SAY "Radni nalog" GET cRNal[1] VALID ValRNal(cRNal[1],1)
-@ m_x+10, col()+2 SAY "sati" GET nSati[1] WHEN !EMPTY(cRNal[1]) PICT "999.99"
-@ m_x+11, m_y+2 SAY "Radni nalog" GET cRNal[2] VALID ValRNal(cRNal[2],2)
-@ m_x+11, col()+2 SAY "sati" GET nSati[2] WHEN !EMPTY(cRNal[2]) PICT "999.99"
-@ m_x+12, m_y+2 SAY "Radni nalog" GET cRNal[3] VALID ValRNal(cRNal[3],3)
-@ m_x+12, col()+2 SAY "sati" GET nSati[3] WHEN !EMPTY(cRNal[3]) PICT "999.99"
-@ m_x+13, m_y+2 SAY "Radni nalog" GET cRNal[4] VALID ValRNal(cRNal[4],4)
-@ m_x+13, col()+2 SAY "sati" GET nSati[4] WHEN !EMPTY(cRNal[4]) PICT "999.99"
-@ m_x+14, m_y+2 SAY "Radni nalog" GET cRNal[5] VALID ValRNal(cRNal[5],5)
-@ m_x+14, col()+2 SAY "sati" GET nSati[5] WHEN !EMPTY(cRNal[5]) PICT "999.99"
-@ m_x+15, m_y+2 SAY "Radni nalog" GET cRNal[6] VALID ValRNal(cRNal[6],6)
-@ m_x+15, col()+2 SAY "sati" GET nSati[6] WHEN !EMPTY(cRNal[6]) PICT "999.99"
-@ m_x+16, m_y+2 SAY "Radni nalog" GET cRNal[7] VALID ValRNal(cRNal[7],7)
-@ m_x+16, col()+2 SAY "sati" GET nSati[7] WHEN !EMPTY(cRNal[7]) PICT "999.99"
-@ m_x+17, m_y+2 SAY "Radni nalog" GET cRNal[8] VALID ValRNal(cRNal[8],8)
-@ m_x+17, col()+2 SAY "sati" GET nSati[8] WHEN !EMPTY(cRNal[8]) PICT "999.99"
-read
-if (LASTKEY()!=K_ESC)
-	SnimiSateRNal(nGodina,nMjesec,cIdRadn)
-endif
-@ m_x+10, m_y+2 CLEAR TO m_x+17,75
-return
-
-
 
 function ValRNal(cPom,i)
 if !EMPTY(cPom)
@@ -718,29 +689,6 @@ enddo
 for j:=i+1 to 8
 	cRNal[j]:=SPACE(10)
 	nSati[j]:=0
-next
-select (nArr)
-return
-
-
-function SnimiSateRNal(nGodina,nMjesec,cIdRadn)
-local nArr:=SELECT()
-local nRec
-local i
-select radsiht
-seek str(nGodina,4)+str(nMjesec,2)+cIdRadn
-do while !eof() .and. str(field->godina,4)+str(field->mjesec,2)+field->idRadn==str(nGodina,4)+str(nMjesec,2)+cIdRadn
-	skip 1
-	nRec:=RECNO()
-	skip -1
-	delete
-	go (nRec)
-enddo
-for i:=1 to 8
-	if !EMPTY(cRNal[i])
-		append blank
-		replace godina with nGodina, mjesec with nMjesec, idRadn with cIdRadn, idRNal with cRNal[i], sati with nSati[i]
-	endif
 next
 select (nArr)
 return

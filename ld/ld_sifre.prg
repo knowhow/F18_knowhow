@@ -179,19 +179,17 @@ return
  *  \param dHiredFrom
  */
 function P_HiredFrom(dHiredFrom)
-*{
 if EMPTY(DToS(dHiredFrom)) .and. !EMPTY(DToS(field->datod)) .and. Pitanje(, Lokal("Popuni polje na osnovu polja Datum Od"), "D") == "D"
 	dHiredFrom:=field->datod
 endif
 return .t.
-*}
 
 /*! \fn P_StreetNum(cStreetNum)
  *  \brief
  *  \param cStreetNum - vrijednost polja streetnum 
  */
 function P_StreetNum(cStreetNum)
-*{
+
 if EMPTY(field->streetnum)
 	cStreetNum:=SPACE(5) + "0"
 endif
@@ -337,11 +335,10 @@ elseif ( UPPER(CHR(Ch))=="S" )
 endif
 
 return DE_CONT
-*}
 
 
 function MsgIspl()
-Box(,3,50)
+Box(, 3, 50)
 	@ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: TR - tekuci racun   ")
  	@ m_x+2,m_y+2 SAY Lokal("                 SK - stedna knjizica")
  	@ m_x+3,m_y+2 SAY Lokal("                 BL - blagajna")
@@ -355,7 +352,8 @@ return .f.
 // sifrarnik parametri obracuna
 // ------------------------------
 function P_ParObr(cId,dx,dy)
-local nArr
+local nArr, _tmp_id
+
 nArr:=SELECT()
 private imekol := {}
 private kol := {}
@@ -365,9 +363,9 @@ if (!used())
 	O_PAROBR
 endif
 
-AADD(ImeKol,{ padr("mjesec",8), {|| id}, "id", {|| wid:=val(wid), .t. },{|| wid:=str(wid,2), .t.}  })
 
-AADD(ImeKol, { "godina" , {|| godina} , "godina" } )
+AADD(ImeKol, { padr("mjesec", 8),  {|| id}, "id", {|| IIF(VALTYPE(wId) == "C", EVAL(MEMVARBLOCK("wId"), VAL(wId)), NIL), .t. } })
+AADD(ImeKol, { "godina" , {|| godina} , "godina", {|| IIF(VALTYPE(wId) == "N", EVAL(MEMVARBLOCK("wID"), STR(wId, 2)), NIL), .t. }  } )
 
 if lViseObr
   	AADD(ImeKol, { padr("obracun",10) , {|| obr} , "obr" } )
@@ -378,7 +376,7 @@ if IzFMKINI( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
 endif
 
 AADD(ImeKol, { padr("opis",10), {|| naz}, "naz" } )
-AADD(ImeKol, { padr(IF(gBodK == "1","vrijednost boda","vr.koeficijenta"),15),;
+AADD(ImeKol, { padr( IIF(gBodK == "1", "vrijednost boda", "vr.koeficijenta"), 15),;
 	{|| vrbod}, "vrbod" } )
 
 // ako postoji polje i ako je nova varijanta obracuna
@@ -415,7 +413,7 @@ next
 
 select (nArr)
 
-return PostojiSifra(F_PAROBR, 1, 10, 70, Lokal("Parametri obracuna"), ;
+return PostojiSifra(F_PAROBR, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Parametri obracuna"), ;
 	@cId, dx, dy)
 
 
@@ -445,7 +443,7 @@ return xRet
 // --------------------------------------------
 // --------------------------------------------
 function P_TipPr(cId,dx,dy)
-*{
+
 local nArr
 local i
 nArr:=SELECT()
@@ -516,12 +514,11 @@ if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR")
 endif
 
 return DE_CONT
-*}
+
 
 
 
 function P_TipPr2(cId,dx,dy)
-*{
 local nArr
 nArr:=SELECT()
 private imekol
@@ -543,16 +540,12 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Opis",8), {|| opis}, "opis"  } ;
        }
 Kol:={1,2,3,4,5,6,7,8}
-return PostojiSifra( F_TIPPR2, 1, 10, 55, Lokal("Tipovi primanja za obracun 2"), ;
-	@cId, dx, dy, ;
-	{|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
-*}
+return PostojiSifra( F_TIPPR2, 1, 10, 55, Lokal("Tipovi primanja za obracun 2"),  @cId, dx, dy, {|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
 
 
 // -----------------------------------------------
 // -----------------------------------------------
 function Tpr2Bl(Ch)
-*{
 if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR2")
 	select tippr
 	if (Ch==K_F2)
@@ -566,7 +559,6 @@ if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR2")
 endif
 
 return DE_CONT
-*}
 
 
 
@@ -615,7 +607,7 @@ return cRet
 
 
 function P_Kred(cId,dx,dy)
-*{
+
 local nArr
 nArr:=SELECT()
 private imekol,kol
@@ -639,12 +631,12 @@ ImeKol:={ { padr("Id",6), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
 Kol:={1,2,3,4,5,6,7,8}
 return PostojiSifra(F_KRED, 1, 10, 55, Lokal("Lista kreditora"), ;
 	@cId, dx, dy)
-*}
+
 
 // -----------------------------
 // -----------------------------
 function KrBlok(Ch)
-*{
+
 if (Ch==K_CTRL_T)
 	if ImaURadKr(KRED->id,"3")
    		Beep(1)
@@ -658,12 +650,12 @@ elseif (Ch==K_F2)
 endif
 
 return DE_CONT
-*}
+
 
 // ------------------------------------------------
 // ------------------------------------------------
 function ImaURadKr(cKljuc,cTag)
-*{
+
 local lVrati:=.f.
 local lUsed:=.t.
 local nArr:=SELECT()
@@ -694,7 +686,7 @@ return lVrati
 
 
 function ImaUObrac(cKljuc,cTag)
-*{
+
 local lVrati:=.f.
 local lUsed:=.t.
 local nArr:=SELECT()
@@ -739,7 +731,7 @@ endif
 select (nArr)
 
 return lVrati
-*}
+
 
 // ---------------------------------
 // ---------------------------------
@@ -865,7 +857,7 @@ return lRet
 
 
 function P_DOPR(cId,dx,dy)
-*{
+
 local nArr
 nArr:=SELECT()
 private imekol := {}
@@ -954,7 +946,7 @@ return PostojiSifra(F_DOPR, 1, 10, 75, ;
 // --------------------------------
 // --------------------------------
 function P_KBenef(cId,dx,dy)
-*{
+
 local nArr
 nArr:=SELECT()
 private imekol
@@ -974,12 +966,12 @@ Kol:={1,2,3}
 return PostojiSifra(F_KBENEF, 1, 10, 55, ;
 	Lokal("Lista koef.beneficiranog radnog staza"), ;
 	@cId,dx,dy)
-*}
+
 
 
 
 function P_StrSpr(cId,dx,dy)
-*{
+
 local nArr
 nArr:=SELECT()
 private imekol,kol
@@ -998,11 +990,10 @@ Kol:={1,2,3}
 return PostojiSifra( F_STRSPR, 1, 10, 55, ;
 	Lokal("Lista: strucne spreme"), ;
 	@cId,dx,dy)
-*}
+
 
 
 function P_VPosla(cId,dx,dy)
-*{
 local nArr
 nArr:=SELECT()
 private imekol
@@ -1044,35 +1035,11 @@ ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
        }
 Kol:={1,2,3,4}
 return PostojiSifra(F_NORSIHT,1,10,55,"Lista: Norme u sihtarici",@cId,dx,dy)
-*}
 
 
-
-function P_TPRSiht(cId,dx,dy)
-*{
-local nArr
-nArr:=SELECT()
-private imekol
-private kol
-
-select (F_TPRSIHT)
-if (!used())
-	O_TPRSIHT
-endif
-select (nArr)
-
-ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",30), {||  naz}, "naz" }                    , ;
-          { padC("K1",3), {|| padc(K1,3)}, "k1"  }  ;
-       }
-Kol:={1,2,3}
-return PostojiSifra(F_TPRSIHT,1,10,55,"Lista: Tipovi primanja u sihtarici",@cId,dx,dy)
-*}
-
-
-
+// -----------------------
+// -----------------------
 function TotBrisRadn()
-*{
 local cSigurno:="N"
 local nRec
 private cIdRadn:=SPACE(6)
@@ -1161,11 +1128,9 @@ Box(,7,75)
  	set key K_F5 to
 BoxC()
 CLOSERET
-*}
 
 
 function PrTotBr(cIdRadn)
-*{
 local cBI:="W+/G"
 
 select (F_RADN)
@@ -1305,9 +1270,9 @@ do case
           		aSez[i] := PADR( aSez[i,1]+" - "+ld_naziv_mjeseca(VAL(LEFT(aSez[i,1],2))) , 73)
         	NEXT
         	h:=ARRAY(LEN(aSez)); AFILL(h,"")
-        	Box("#SEZONE PRED PROMJENU POREZA U "+cGodina+".GODINI: อออออ <Enter>-izbor ",MIN(LEN(aSez),16)+3,77)
+        	Box("#SEZONE PRED PROMJENU POREZA U "+cGodina+".GODINI: รรรรร <Enter>-izbor ",MIN(LEN(aSez),16)+3,77)
          		@ m_x+1, m_y+2 SAY PADC("M J E S E C",75)
-         		@ m_x+2, m_y+2 SAY REPL("ฤ",75)
+         		@ m_x+2, m_y+2 SAY REPL("ร",75)
          		nPom := 1
          		@ row()-1, col()-6 SAY ""
          		nPom := Menu("SPME",aSez,nPom,.f.,,,{m_x+2,m_y+1})
@@ -1335,13 +1300,13 @@ do case
 endcase
 
 return nVrati
-*}
+
 
 
 // ------------------------------------
 // ------------------------------------
 function DoprBl(Ch)
-*{
+
 local nVrati:=DE_CONT
 local nRec:=RECNO()
 
@@ -1421,9 +1386,9 @@ DO CASE
           aSez[i] := PADR( aSez[i,1]+" - "+ld_naziv_mjeseca(VAL(LEFT(aSez[i,1],2))) , 73)
         NEXT
         h:=ARRAY(LEN(aSez)); AFILL(h,"")
-        Box("#SEZONE PRED PROMJENU DOPRINOSA U "+cGodina+".GODINI: อออออ <Enter>-izbor ",MIN(LEN(aSez),16)+3,77)
+        Box("#SEZONE PRED PROMJENU DOPRINOSA U "+cGodina+".GODINI: ||||| <Enter>-izbor ", MIN(LEN(aSez), 16) + 3, 77)
          @ m_x+1, m_y+2 SAY PADC("M J E S E C",75)
-         @ m_x+2, m_y+2 SAY REPL("ฤ",75)
+         @ m_x+2, m_y+2 SAY REPL("-",75)
          nPom := 1
          @ row()-1, col()-6 SAY ""
          nPom := Menu("SDME",aSez,nPom,.f.,,,{m_x+2,m_y+1})
@@ -1449,6 +1414,6 @@ DO CASE
 ENDCASE
 
 return nVrati
-*}
+
 
 

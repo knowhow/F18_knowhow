@@ -383,11 +383,10 @@ _full_id_mem := ""
 _changed_id  := .f.
 _values_dbf  := hb_hash()
 
+BEGIN SEQUENCE with { |err| err:cargo := { "var",  "id_fields", id_fields, "var", "values", values, "var", "_values_dbf", _values_dbf }, GlobalErrorHandler( err ) }
 for each _field in id_fields
 
     if VALTYPE( _field ) == "A"
-        // http://redmine.bring.out.ba/issues/25891#note-9
-        // {"num_polje", length}
         _t_field := _field[1]
         _t_field_dec := _field[2]
 
@@ -410,6 +409,8 @@ for each _field in id_fields
 
     
 next
+END SEQUENCE
+
 
 // razlike izmedju dbf-a i values postoje
 if _changed_id

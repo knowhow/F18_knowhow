@@ -381,18 +381,6 @@ endif
 
 CREATE_INDEX("ID","id",SIFPATH+"DOPR")
 
-if !file(f18_ime_dbf("LDSM"))
-   AADD(aDBf, { "Obr","C",1,0 } )      // obracun
-   DBCREATE2(PRIVPATH+"LDSM.DBF",aDbf)
-endif
-
-CREATE_INDEX("1","Obr+str(godina)+str(mjesec)+idradn+idrj",PRIVPATH+"LDSM")
-CREATE_INDEX("RADN","idradn",PRIVPATH+"LDSM")
-
-if !file(f18_ime_dbf("_LD"))
-   DBCREATE2(PRIVPATH+"_LD.DBF",aDbf)
-endif
-
 if !file(f18_ime_dbf("STRSPR"))
     aDbf:={ {"id","C",3,0} ,;
             {"naz","C",20,0} ,;

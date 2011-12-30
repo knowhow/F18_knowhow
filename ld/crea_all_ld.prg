@@ -308,6 +308,34 @@ endif
 
 CREATE_INDEX("RADN","idradn", _alias)
 
+// --------------------------------------
+// ld_ldsm
+// --------------------------------------
+_alias := "LDSM"
+_table_name := "ld_ldsm"
+
+AADD(aDBf, { "Obr", "C", 1, 0 } )
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    close all
+endif
+
+CREATE_INDEX("1","Obr+str(godina)+str(mjesec)+idradn+idrj", _alias)
+CREATE_INDEX("RADN", "idradn", _alias)
+
+// --------------------------------------
+// ld__ld
+// --------------------------------------
+_alias := "_LD"
+_table_name := "ld__ld"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    close all
+endif
+
+
 // --------------------------------------------
 // --------------------------------------------
 aDBf:={}
@@ -324,7 +352,6 @@ AADD(aDBf, { 'K5'                  , 'N' ,  12 ,  6 })
 AADD(aDBf, { 'K6'                  , 'N' ,  12 ,  6 })
 AADD(aDBf, { 'K7'                  , 'N' ,  11 ,  6 })
 AADD(aDBf, { 'K8'                  , 'N' ,  11 ,  6 })
-AADD(aDBf, { 'K9'                  , 'N' ,  11 ,  6 })
 AADD(aDBf, { 'PROSLD'              , 'N' ,  12 ,  2 })
 AADD(aDBf, { 'M_BR_SAT'            , 'N' ,  12 ,  2 })
 AADD(aDBf, { 'M_NET_SAT'           , 'N' ,  12 ,  2 })
@@ -340,9 +367,9 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 IF lViseObr
-  	CREATE_INDEX("ID","id+godina+obr", _alias)
+  	CREATE_INDEX("ID", "id+godina+obr", _alias)
 ELSE
-  	CREATE_INDEX("ID","id+godina", _alias)
+  	CREATE_INDEX("ID", "id+godina", _alias)
 ENDIF
 
 

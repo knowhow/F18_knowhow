@@ -873,6 +873,7 @@ if lNovi
 endif
 
 _vars := get_dbf_global_memvars("w")
+
 if !update_rec_server_and_dbf(alias(), _vars)
    delete_with_rlock()
 else
@@ -963,13 +964,13 @@ if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i, 3]))>0)
 elseif (LEN(ImeKol[i]) < 4 .or. ImeKol[i, 4]==nil)
     bWhen := {|| .t.}
 else
-    bWhen:=Imekol[i, 4]
+    bWhen := Imekol[i, 4]
 endif
 
-if (len(ImeKol[i]) < 5 .or. ImeKol[i,5] == nil)
+if (len(ImeKol[i]) < 5 .or. ImeKol[i, 5] == nil)
     bValid := {|| .t.}
 else
-    bValid:=Imekol[i,5]
+    bValid := Imekol[i, 5]
 endif
 
 _m_block := MEMVARBLOCK(var_name) 
@@ -996,7 +997,7 @@ if Len(ImeKol[i]) >= 10 .and. Imekol[i,10] <> NIL
         nRed := 0
 endif
 
-if nKolona=1
+if nKolona == 1
         nTekRed++
 endif
     
@@ -1028,15 +1029,12 @@ if var_name == "wSifk_"
             _valid_block := bValid
         endif         
 else
-          
         _when_block := bWhen
         _valid_block := bValid
-      
 endif
 
-
 @ m_x + nTekRed , m_y + nKolona SAY  IIF(nKolona > 1, "  " + alltrim(ImeKol[i, 1]) , PADL( alltrim(ImeKol[i, 1]) , 15))  + " "
-  
+
 AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block) ) ;;
 
 ATail(GetList):display()

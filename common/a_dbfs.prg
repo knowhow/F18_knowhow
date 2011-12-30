@@ -209,14 +209,14 @@ AADD(gaDBFs, { F_ANAL, "SUBAN_2", "suban_2"  } )
 // modul LD
 
 // "1","str(godina)+idrj+str(mjesec)+obr+idradn"
-AADD(gaDBFs, { F_LD      , "LD"      , "ld_ld",    { |alg| ld_ld_from_sql_server(alg) }, "IDS", {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" },  { |x| sql_where_block(x, "ld_ld") }, "1"})
+AADD(gaDBFs, { F_LD      , "LD"      , "ld_ld",    { |alg| ld_ld_from_sql_server(alg) }, "IDS", {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" },  { |x| sql_where_block("ld_ld", x) }, "1"})
 
 // "2", "idradn + idkred + naosnovu + str(godina) + str(mjesec)"
-AADD(gaDBFs, { F_RADKR  , "RADKR"   , "ld_radkr", { |alg| ld_radkr_from_sql_server(alg) }, "IDS", { "idradn", "idkred", "naosnovu", {"godina", 4}, {"mjesec", 2 }}, { |x| sql_where_block(x, "ld_radkr") }, "2" })
+AADD(gaDBFs, { F_RADKR  , "RADKR"   , "ld_radkr", { |alg| ld_radkr_from_sql_server(alg) }, "IDS", { "idradn", "idkred", "naosnovu", {"godina", 4}, {"mjesec", 2 }}, { |x| sql_where_block("ld_radkr", x) }, "2" })
 
 
 //IF  lViseObr => TAG = "ID", index = "id+godina+obr" ;  !lViseObr => "ID", "id+godina"
-AADD(gaDBFs, { F_PAROBR ,  "PAROBR"  , "ld_parobr",   { |alg| ld_parobr_from_sql_server(alg) }, "IDS", { "id", "godina"}, {|x| sql_where_block(x, "ld_parobr")}, "ID" })
+AADD(gaDBFs, { F_PAROBR ,  "PAROBR"  , "ld_parobr",   { |alg| ld_parobr_from_sql_server(alg) }, "IDS", { "id", "godina"}, {|x| sql_where_block("ld_parobr", x)}, "ID" })
 
 // "RJ" - "rj+STR(godina)+STR(mjesec)+status+obr"
 AADD(gaDBFs, { F_OBRACUNI, "OBRACUNI", "ld_obracuni", { |alg| ld_obracuni_from_sql_server(alg) } , "IDS", { "rj", {"godina", 4}, {"mjesec", 2}, "status", "obr" } , {|x| sql_where_block("ld_obracuni", x) }, "RJ" })

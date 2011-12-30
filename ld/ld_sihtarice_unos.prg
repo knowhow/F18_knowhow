@@ -371,3 +371,26 @@ enddo
 return (nil)
 
 
+// -------------------------------
+// -------------------------------
+function P_TPRSiht(cId,dx,dy)
+local nArr
+nArr:=SELECT()
+private imekol
+private kol
+
+select (F_TPRSIHT)
+if (!used())
+	O_TPRSIHT
+endif
+select (nArr)
+
+ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
+          { padr("Naziv",30), {||  naz}, "naz" }                    , ;
+          { padC("K1",3), {|| padc(K1,3)}, "k1"  }  ;
+       }
+Kol:={1,2,3}
+return PostojiSifra(F_TPRSIHT,1,10,55,"Lista: Tipovi primanja u sihtarici",@cId,dx,dy)
+
+
+

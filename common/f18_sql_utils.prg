@@ -321,7 +321,6 @@ if _pos == 0
    QUIT
 endif
 
-altd()
 // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
 _fields := gaDBFS[_pos, 6]
 

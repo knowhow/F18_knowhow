@@ -426,7 +426,7 @@ SEEK STR(_godina, 4) + STR(_mjesec, 2) + _idradn
 
 nIznos := 0
 
-do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn=_idradn
+do while !eof() .and. _godina == godina .and. _mjesec == mjesec .and. idradn == _idradn
     
     nIznos += field->iznos
     

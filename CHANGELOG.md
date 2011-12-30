@@ -1,3 +1,5 @@
+0.9.33  2011-12-30, vsasa, ld, ciscenje, stavljanje u funkciju
+
 0.9.32  2011-12-30, hernad, v2 dbf refaktoring
 
   - [#25990](http://redmine.bring.out.ba/issues/25990)

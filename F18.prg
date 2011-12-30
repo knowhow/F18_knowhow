@@ -38,6 +38,7 @@ AADD( menuop, "10) MAT   # materijalno")
 AADD( menuop, "--------------------------")
 AADD( menuop, " R) ReLogin")
 AADD( menuop, " W) Pregled F18.log-a")
+AADD( menuop, " X) Erase / full synchro tabela")
 
 do while .t.
 
@@ -71,6 +72,8 @@ do while .t.
             relogin()
 	 	case mnu_choice == 13
             view_log()
+	 	case mnu_choice == 14
+            full_table_synchro()
 	endcase
  	loop
 enddo

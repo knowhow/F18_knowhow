@@ -100,3 +100,36 @@ enddo
 PopWa()
 
 return xRet
+
+// -----------------------------
+// -----------------------------
+function full_table_synchro()
+local _sifra := SPACE(6), _full_table_name, _alias := PADR("PAROBR", 30)
+
+
+Box( , 3, 60)
+  @ m_x + 1, m_y + 2 SAY " Admin sifra :" GET  _sifra PICT "@!"
+  @ m_x + 2, m_y + 2 SAY "Table alias  :"  GET _alias PICTURE "@S20"
+  READ
+BoxC()
+
+if (LASTKEY() == K_ESC) .or. (UPPER(ALLTRIM(_sifra)) != "F18AD")
+  MsgBeep("nista od ovog posla !")
+  return .f.
+endif
+
+_alias := ALLTRIM(UPPER(_alias))
+
+close all
+_full_table_name := f18_ime_dbf(_alias)
+
+if FILE(_full_table_name)
+   ferase_dbf(_alias)
+else
+   MsgBeep("ove dbf tabele nema: " + _full_table_name)
+endif
+
+post_login()
+
+return .t.
+

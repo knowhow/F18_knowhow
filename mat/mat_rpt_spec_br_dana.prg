@@ -83,11 +83,6 @@ local _interv_1, _interv_2, _interv_3
 local _dug_1, _dug_2, _pot_1, _pot_2
 local _saldo_1, _saldo_2
 local _id_roba, _roba_naz
-local _samo_ulaz := .t.
-
-if param["samo_ulazi"] == "N"
-    _samo_ulaz := .f.
-endif
 
 select mat_suban
 //"IdFirma+IdKonto+IdRoba+dtos(DatDok)"
@@ -172,11 +167,7 @@ do while !EOF()
             endif
 
             // ako je samo ulaz, onda izlaze uvijek resetuj...
-            if _samo_ulaz == .t.
-                _izlaz := 0
-                _pot := 0
-            endif
-    
+            
             _saldo_k += _ulaz - _izlaz  
             _saldo_i += _dug - _pot  
 
@@ -186,22 +177,22 @@ do while !EOF()
             // prvi interval
             if _interval <= param["interval_1"]
                 // ovo je interval do 6 mjeseci npr..
-                _int_i_1 += _dug - _pot
-                _int_k_1 += _ulaz - _izlaz  
+                _int_i_1 += _dug
+                _int_k_1 += _ulaz  
             endif
 
             // drugi interval
             if _interval > param["interval_1"] .and. _interval <= param["interval_2"]
                 // ovo je interval od 6 do 12 mj, npr..  
-                _int_i_2 += _dug - _pot
-                _int_k_2 += _ulaz - _izlaz  
+                _int_i_2 += _dug
+                _int_k_2 += _ulaz  
             endif
     
             // treci interval
             if _interval > param["interval_2"]
                 // ovo je interval preko 12 mj. npr...
-                _int_i_3 += _dug - _pot
-                _int_k_3 += _ulaz - _izlaz  
+                _int_i_3 += _dug
+                _int_k_3 += _ulaz  
             endif
 
             skip
@@ -297,7 +288,9 @@ do while !EOF()
 
         _mark_pos := pcol()
     
-        // kolicine
+        @ prow(), pcol() + 1 SAY field->saldo_k   PICT _pic
+        @ prow(), pcol() + 1 SAY field->saldo_i   PICT _pic
+
         @ prow(), pcol() + 1 SAY field->inter_k_1 PICT _pic
         @ prow(), pcol() + 1 SAY field->inter_i_1 PICT _pic
         
@@ -307,10 +300,6 @@ do while !EOF()
         @ prow(), pcol() + 1 SAY field->inter_k_3 PICT _pic
         @ prow(), pcol() + 1 SAY field->inter_i_3 PICT _pic
         
-        @ prow(), pcol() + 1 SAY field->saldo_k   PICT _pic
-        @ prow(), pcol() + 1 SAY field->saldo_i   PICT _pic
-
-        // total po kontu
         _u_int_k_1 += field->inter_k_1
         _u_int_k_2 += field->inter_k_2
         _u_int_k_3 += field->inter_k_3
@@ -321,7 +310,6 @@ do while !EOF()
         _u_int_i_3 += field->inter_i_3
         _u_saldo_i += field->saldo_i
     
-        // ukupni total
         _t_int_k_1 += field->inter_k_1
         _t_int_k_2 += field->inter_k_2
         _t_int_k_3 += field->inter_k_3
@@ -342,15 +330,14 @@ do while !EOF()
     @ prow() + 1, 0 SAY PADR( " kt:", 4 )
     @ prow(), pcol() + 1 SAY PADR( _id_konto, 10 )
     @ prow(), pcol() + 1 SAY PADR( _konto_naz, 40 )
+    @ prow(), pcol() + 1 SAY _u_saldo_k PICT _pic
+    @ prow(), pcol() + 1 SAY _u_saldo_i PICT _pic
     @ prow(), pcol() + 1 SAY _u_int_k_1 PICT _pic
     @ prow(), pcol() + 1 SAY _u_int_i_1 PICT _pic
     @ prow(), pcol() + 1 SAY _u_int_k_2 PICT _pic
     @ prow(), pcol() + 1 SAY _u_int_i_2 PICT _pic
     @ prow(), pcol() + 1 SAY _u_int_k_3 PICT _pic
     @ prow(), pcol() + 1 SAY _u_int_i_3 PICT _pic
-    @ prow(), pcol() + 1 SAY _u_saldo_k PICT _pic
-    @ prow(), pcol() + 1 SAY _u_saldo_i PICT _pic
-
     ? line
 
 enddo   
@@ -360,16 +347,14 @@ enddo
 ? "UKUPNO :"
 
 @ prow(), _mark_pos SAY ""
-
+@ prow(), pcol() + 1 SAY _t_saldo_k PICT _pic
+@ prow(), pcol() + 1 SAY _t_saldo_i PICT _pic
 @ prow(), pcol() + 1 SAY _t_int_k_1 PICT _pic
 @ prow(), pcol() + 1 SAY _t_int_i_1 PICT _pic
 @ prow(), pcol() + 1 SAY _t_int_k_2 PICT _pic
 @ prow(), pcol() + 1 SAY _t_int_i_2 PICT _pic
 @ prow(), pcol() + 1 SAY _t_int_k_3 PICT _pic
 @ prow(), pcol() + 1 SAY _t_int_i_3 PICT _pic
-@ prow(), pcol() + 1 SAY _t_saldo_k PICT _pic
-@ prow(), pcol() + 1 SAY _t_saldo_i PICT _pic
-
 ? line
 
 
@@ -455,6 +440,10 @@ _r_line_1 += PADR( "", 41 )
 _r_line_2 += PADR( "      N A Z I V   A R T I K L A", 41 )
 _r_line_3 += PADR( "", 41 )
 
+_r_line_1 += PADR( "  UKUPNE VRIJEDNOSTI", 26 )
+_r_line_2 += PADR( "", 26 )
+_r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
+
 _r_line_1 += PADR( "           DO " + ALLTRIM(str(param["interval_1"], 3)) + " mj.", 26 )
 _r_line_2 += PADR( "", 26 )
 _r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
@@ -464,10 +453,6 @@ _r_line_2 += PADR( "       DO " + ALLTRIM(str(param["interval_2"], 3)) + " mj.",
 _r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
 
 _r_line_1 += PADR( "     PREKO " + ALLTRIM(str(param["interval_2"], 3)) + " mj.", 26 )
-_r_line_2 += PADR( "", 26 )
-_r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
-
-_r_line_1 += PADR( "  UKUPNE VRIJEDNOSTI", 26 )
 _r_line_2 += PADR( "", 26 )
 _r_line_3 += PADR( PADC("KOLICINA", 12) + PADC("IZNOS", 12), 26 )
 
@@ -496,7 +481,6 @@ local _date := DATE()
 local _int_1 := 6
 local _int_2 := 12
 local _nule := "N"
-local _ulazi := "D"
 local _curr_user := "<>"
 
 _konta := fetch_metric("mat_spec_br_dana_konta", _curr_user, _konta )
@@ -505,7 +489,7 @@ _firma := fetch_metric("mat_spec_br_dana_firma", _curr_user, _firma )
 _int_1 := fetch_metric("mat_spec_br_dana_interval_1", _curr_user, _int_1 )
 _int_2 := fetch_metric("mat_spec_br_dana_interval_2", _curr_user, _int_2 )
 _nule := fetch_metric("mat_spec_br_dana_prikaz_nula", _curr_user, _nule )
-_ulazi := fetch_metric("mat_spec_br_dana_samo_ulazi", _curr_user, _ulazi )
+_date := fetch_metric("mat_spec_br_dana_datum", _curr_user, _date )
 
 Box(, 10, 70 )
 
@@ -536,10 +520,6 @@ Box(, 10, 70 )
     @ m_x + _cnt, m_y + 2 SAY "Interval 2 (mj):" GET _int_2 PICT "999"
 
     ++ _cnt
-    @ m_x + _cnt, m_y + 2 SAY "Gledati samo ulazne dokumente (D/N)?" GET _ulazi ;
-            VALID _ulazi $ "DN" PICT "!@"
- 
-    ++ _cnt
     @ m_x + _cnt, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule ;
             VALID _nule $ "DN" PICT "!@"
     
@@ -560,7 +540,6 @@ params["artikli"] := _artikli
 params["interval_1"] := _int_1
 params["interval_2"] := _int_2
 params["prikaz_nule"] := _nule
-params["samo_ulazi"] := _ulazi
 
 // snimi parametre
 set_metric("mat_spec_br_dana_konta", f18_user(), _konta )
@@ -570,7 +549,7 @@ set_metric("mat_spec_br_dana_interval_1", f18_user(), _int_1 )
 set_metric("mat_spec_br_dana_interval_2", f18_user(), _int_2 )
 set_metric("mat_spec_br_dana_prikaz_nula", f18_user(), _nule )
 set_metric("mat_spec_br_dana_samo_ulazi", f18_user(), _ulazi )
-
+set_metric("mat_spec_br_dana_datum", f18_user(), _date )
 
 return _ret
 

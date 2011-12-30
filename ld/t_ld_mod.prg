@@ -216,7 +216,6 @@ public gFUSati:=PADR("USATI",50)
 public gFURSati:=PADR("",50)
 public gFUGod:=PADR("I06",40)
 public gNFirma:=SPACE(20)  // naziv firme
-public gListic:="N"
 public gTS:="Preduzece"
 public gUNMjesec:="N"
 public gMRM:=0
@@ -256,7 +255,6 @@ Rpar("gd",@gFUGod)
 Rpar("go",@gGodina)
 Rpar("kp",@gReKrKP)
 Rpar("pp",@gVarPP)
-Rpar("li",@gListic)
 RPar("m1",@gMRM)
 RPar("m2",@gMRZ)
 RPar("dl",@gPDLimit)

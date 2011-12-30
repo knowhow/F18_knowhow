@@ -14,6 +14,7 @@
 
 static DUZ_STRANA:=64
 static __var_obr
+static __radni_sati := "N"
 
 // -------------------------------------------------------------
 // kartica plate radnika
@@ -21,12 +22,14 @@ static __var_obr
 function KartPl(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
 local i
 local aNeta:={}
+local _radni_sati := fetch_metric("ld_radni_sati", nil, "N" ) 
 
 lSkrivena:=.f.
 private cLMSK:=""
 
+__radni_sati := _radni_sati
+
 l2kolone:=.f.
-lRadniSati:=IzFmkIni("LD","RadniSati","N",KUMPATH)=="D"
 
 if (IzFMKIni("LD","SkrivenaKartica","N",KUMPATH)=="D" .and. Pitanje(,"Stampati u formi skrivene kartice? (D/N)","D")=="D")
 	lSkrivena:=.t.
@@ -60,7 +63,7 @@ else
 	cObracun:=cObrac
 endif
 
-if lRadniSati
+if __radni_sati == "D"
 	O_RADSAT
 endif
 
@@ -339,7 +342,7 @@ ELSE
 		?? SPACE(2) + Lokal("Koef.licnog odbitka:"), ALLTRIM(STR(g_klo(ld->ulicodb)))	
 	endif
 	
-	if lRadniSati
+	if __radni_sati == "D"
 		?? SPACE(2) + Lokal("Radni sati:   ") + ALLTRIM(STR(ld->radsat))
 	endif
 ENDIF
@@ -470,7 +473,7 @@ for i:=1 to cLDPolja
 				@ prow(),pcol()+8 SAY _s&cPom  pict gpics
 				?? " s"
 				
-				if tippr->id=="01" .and. lRadniSati
+				if tippr->id=="01" .and. __radni_sati == "D"
 					nRRSati:=_s&cPom
 					@ prow(),60+LEN(cLMSK) SAY _i&cPom * parobr->k3/100 pict gpici
 					@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
@@ -616,7 +619,7 @@ if cVarijanta=="5"
 	PopWA()
 endif
 
-if lRadniSati
+if __radni_sati == "D"
 	? Lokal("NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena ")
 	?? ALLTRIM(STR((ld->radsat)-nRRSati))  + Lokal(" sati.")
 	? Lokal("          Uplaceno za tekuci mjesec: " + " sati.")

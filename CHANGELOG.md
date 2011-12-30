@@ -1,3 +1,8 @@
+0.9.32  2011-12-30, hernad, v2 dbf refaktoring
+
+  - [#25990](http://redmine.bring.out.ba/issues/25990)
+  - [#25997](http://redmine.bring.out.ba/issues/25997)
+
 0.9.31  2011-12-29, hernad, relogin
 
   - [#25889](http://redmine.bring.out.ba/issues/25889)

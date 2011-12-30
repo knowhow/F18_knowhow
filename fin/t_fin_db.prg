@@ -371,16 +371,6 @@ if (nArea==-1 .or. nArea==(F_TDOK))
 endif
 
 
-if (nArea==-1 .or. nArea==(F_PNALOG))
-	//PNALOG.DBF
-
-	if !FILE(f18_ime_dbf("pnalog"))
-        	DBcreate2(PRIVPATH+"PNALOG.DBF",aDbf)
-	endif
-
-	CREATE_INDEX("1","IdFirma+IdVn+BrNal",PRIVPATH+"PNALOG")
-endif
-
 
 if (nArea==-1 .or. nArea==(F_BBKLAS))
 	//BBKLAS.DBF

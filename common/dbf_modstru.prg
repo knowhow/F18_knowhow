@@ -90,6 +90,7 @@ for each _lin in a_commands
 
         if empty(_ime_dbf)
             ? "Nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !"
+            close all
             return .f.
         endif
 
@@ -105,6 +106,7 @@ next
 kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
 
 SET AUTOPEN ON 
+close all
 return
 
 // ---------------------------------------------------------------------------------------

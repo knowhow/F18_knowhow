@@ -46,6 +46,7 @@ _created := .f.
 _alias := "SUBAN"
 _table_name := "fin_suban"
 if !FILE(f18_ime_dbf(_alias))
+    altd()
     DBCREATE2(_alias, aDbf)
     _created := .t.
 endif
@@ -170,7 +171,7 @@ CREATE_INDEX("3", "datnal", _alias)
 // ----------------------------------------------------------------------------
 
 _alias := "PSINT"
-_table_name := "fin_sint"
+_table_name := "fin_psint"
 if !FILE(f18_ime_dbf(_alias))
     DBcreate2(_alias, aDbf)
 endif
@@ -205,4 +206,18 @@ CREATE_INDEX("1", "IdFirma+IdVn+BrNal", _alias)
 CREATE_INDEX("2", "IdFirma+str(val(BrNal),8)+idvn", _alias) 
 CREATE_INDEX("3", "dtos(datnal)+IdFirma+idvn+brnal", _alias) 
 CREATE_INDEX("4", "datnal", _alias) 
+
+
+_alias := "PNALOG"
+_table_name := "fin_pnalog"
+if !FILE(f18_ime_dbf(_alias))
+    DBcreate2(_alias, aDbf)
+endif
+
+CREATE_INDEX("1","IdFirma+IdVn+BrNal", _alias)
+
+
+
+
+
 

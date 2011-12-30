@@ -72,7 +72,7 @@ AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TROSK'               , 'C' ,   1 ,  0 })
 
 _alias := "RADN"
-_table_name := "radn"
+_table_name := "ld_radn"
 
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
@@ -87,7 +87,7 @@ CREATE_INDEX("2", "naz", _alias)
 // -------------------------------------
 // -------------------------------------
 _alias := "_RADN"
-_table_name := "_radn"
+_table_name := "_ld_radn"
 
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
@@ -120,7 +120,7 @@ CREATE_INDEX("3","idkred+naosnovu+idradn+str(godina)+str(mjesec)", _alias)
 CREATE_INDEX("4","str(godina)+str(mjesec)+idradn+naosnovu", _alias)
 
 _alias := "_RADKR"
-_table_name := "ld__radkr"
+_table_name := "_ld_radkr"
 
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
@@ -328,7 +328,7 @@ CREATE_INDEX("RADN", "idradn", _alias)
 // ld__ld
 // --------------------------------------
 _alias := "_LD"
-_table_name := "ld__ld"
+_table_name := "_ld_ld"
 
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)

@@ -12,7 +12,7 @@
 #define F18_VER_DEFINED
 
 
-#define F18_VER       "0.9.33"
+#define F18_VER       "0.9.34"
 #define F18_VER_DATE  "30.12.2011"
 
 #define FMK_LIB_VER   "0.9.94"

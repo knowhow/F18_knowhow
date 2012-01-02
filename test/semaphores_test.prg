@@ -104,13 +104,17 @@ use
 
 login_as("test1")
 
-//_thread_2_id  :=  hb_threadStart(  HB_BITOR( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_thread_2_fn() )
+_thread_2_id  :=  hb_threadStart(  HB_BITOR( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_thread_2_fn() )
 
+//hb_threadJoin( _thread_2_id )
 
 ? "1) before my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
 
 my_usex(_alias)
 
+TEST_LINE(ALIAS(), UPPER(_alias))
+
+//hb_IdleSleep(10)
 login_as("test2")
 lock_semaphore(_table_name, "free")
 
@@ -237,8 +241,10 @@ return .t.
 function _thread_2_fn()
 local _table_name := "test_sem_1"
 
-MsgBeep("hello from thread 2")
-log_write("thread 2 fn begin")
+_get_server_params_from_config()
+
+//log_write("thread 2 fn begin")
+
 
 login_as("test2")
 lock_semaphore(_table_name, "lock")

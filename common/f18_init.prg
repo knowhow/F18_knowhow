@@ -13,14 +13,16 @@
 #include "hbgtinfo.ch"
 #include "hbcompat.ch"
 
-static __server := NIL
-static __server_params := NIL
+thread static __server := NIL
+thread static __server_params := NIL
+
 static __f18_home := NIL
 static __f18_home_root := NIL
 static __log_handle := NIL
 static __my_error_handler := NIL
 static __global_error_handler := NIL
 static __test_mode := .f.
+
 static __max_rows := 40
 static __max_cols := 140
 
@@ -420,7 +422,10 @@ endif
 // --------------------------
 // --------------------------
 function my_server_logout()
-__server:Close()
+
+if VALTYPE(__server) == "O"
+ __server:Close()
+endif
 
 return __server
 

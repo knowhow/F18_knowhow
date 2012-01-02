@@ -1,3 +1,7 @@
+0.9.34  2011-12-30, hernad, vidi log, brisi dbf i sinhroniziraj
+
+  - [#26010](http://redmine.bring.out.ba/issues/26010)
+
 0.9.33  2011-12-30, vsasa, ld, ciscenje, stavljanje u funkciju
 
 0.9.32  2011-12-30, hernad, v2 dbf refaktoring

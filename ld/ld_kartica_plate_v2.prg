@@ -13,6 +13,7 @@
 #include "ld.ch"
 
 static DUZ_STRANA := 70
+static __radni_sati := "N"
 
 // -------------------------------------------------
 // nova varijanta kartica plate
@@ -23,7 +24,10 @@ local cDoprSpace := SPACE(3)
 local cTprLine 
 local cDoprLine 
 local cMainLine 
+local _radni_sati := fetch_metric("ld_radni_sati", nil, "N" ) 
 private cLMSK := ""	
+
+__radni_sati := _radni_sati
 
 cTprLine := _gtprline()
 cDoprLine := _gdoprline(cDoprSpace)
@@ -139,7 +143,7 @@ for i:=1 to cLDPolja
 				@ prow(),60+LEN(cLMSK) say nPom pict gpici
 
 				
-				if tippr->id=="01" .and. lRadniSati
+				if tippr->id=="01" .and. __radni_sati == "D"
 					
 					nRRSati := _s&cPom
 				
@@ -326,7 +330,7 @@ if cVarijanta=="5"
 	PopWA()
 endif
 
-if lRadniSati
+if __radni_sati == "D"
 	? Lokal("NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena ")
 	?? ALLTRIM(STR((ld->radsat) - nRRSati))  + Lokal(" sati.")
 	? Lokal("          Uplaceno za tekuci mjesec: " + " sati.")

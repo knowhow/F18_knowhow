@@ -103,44 +103,12 @@ _tbl_anal := "fin_anal"
 _tbl_nalog := "fin_nalog"
 _tbl_sint := "fin_sint"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-    
-    // lock suban  
-    if get_semaphore_status( _tbl_suban ) == "lock"
-        MsgBeep("tabela zakljucana: " + _tbl_suban )
-        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-    else
-        lock_semaphore( _tbl_suban, "lock" )
-    endif
-
-    // lock anal  
-    if get_semaphore_status( _tbl_anal ) == "lock"
-        MsgBeep("tabela zakljucana: " + _tbl_anal )
-        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-    else
-        lock_semaphore( _tbl_anal, "lock" )
-    endif
-    
-    // lock sint
-    if get_semaphore_status( _tbl_sint ) == "lock"
-        MsgBeep("tabela zakljucana: " + _tbl_sint )
-        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-    else
-        lock_semaphore( _tbl_sint, "lock" )
-    endif
-    
-    // lock nalog
-    if get_semaphore_status( _tbl_nalog ) == "lock"
-        MsgBeep("tabela zakljucana: " + _tbl_nalog )
-        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-    else
-        lock_semaphore( _tbl_nalog, "lock" )
-    endif
-
-next
+lock_semaphore( _tbl_suban, "lock" )
+lock_semaphore( _tbl_anal, "lock" )
+lock_semaphore( _tbl_sint, "lock" )
+lock_semaphore( _tbl_nalog, "lock" )
    
 // -----------------------------------
-
 
 if lOk = .t.
   

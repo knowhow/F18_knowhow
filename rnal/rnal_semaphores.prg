@@ -1295,21 +1295,7 @@ local _tbl := "rnal_aops"
 local _index_tag := "1"
 local _field_tag := "aop_id::char(10)"
 
-
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_AOPS, { "aop_id", "aop_desc", "aop_full_d", "in_art_des", "aop_joker", "aop_unit", "match_code" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1324,20 +1310,7 @@ local _index_tag := "2"
 local _field_tag := "aop_id::char(10) || aop_att_id::char(10)"
 
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_AOPS_ATT, { "aop_att_id", "aop_id", "aop_att_de", "aop_att_fu", "aop_att_jo", "in_art_des", "match_code" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1353,20 +1326,7 @@ local _index_tag := "1"
 local _field_tag := "art_id::char(10)"
 
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_ARTICLES, { "art_id", "art_desc", "art_full_d", "art_lab_de", "match_code" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1382,20 +1342,7 @@ local _index_tag := "1"
 local _field_tag := "art_id::char(10) || el_no::char(4) || el_id::char(10) || e_gr_id::char(10)"
 
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_ELEMENTS, { "art_id", "el_no", "el_id", "e_gr_id" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1409,21 +1356,7 @@ local _tbl := "rnal_e_groups"
 local _index_tag := "1"
 local _field_tag := "e_gr_id::char(10)"
 
-
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_E_GROUPS, { "e_gr_id", "e_gr_desc", "e_gr_full_" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1437,21 +1370,7 @@ local _tbl := "rnal_e_gr_att"
 local _index_tag := "1"
 local _field_tag := "e_gr_at_id::char(10) || e_gr_id::char(10)"
 
-
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_E_GR_ATT, { "e_gr_at_id", "e_gr_id", "e_gr_at_de", "e_gr_at_re", "in_art_des", "e_gr_at_jo", "match_code" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1467,20 +1386,7 @@ local _index_tag := "1"
 local _field_tag := "e_gr_vl_id::char(10) || e_gr_at_id::char(10)"
 
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_E_GR_VAL, { "e_gr_vl_id", "e_gr_at_id", "e_gr_vl_de", "e_gr_vl_fu", "match_code" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1496,20 +1402,7 @@ local _index_tag := "1"
 local _field_tag := "obj_id::char(10)"
 
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_OBJECTS, { "obj_id", "cust_id", "obj_desc", "match_code" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1525,20 +1418,7 @@ local _tbl := "rnal_ral"
 local _index_tag := "1"
 local _field_tag := "id::char(5), gl_tick::char(2)"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_RAL, { "id", "gl_tick", "descr", "en_desc", "col_1", "col_2", "col_3", "col_4", "colp_1", "colp_2", "colp_3", "colp_4" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1553,20 +1433,7 @@ local _tbl := "rnal_e_att"
 local _index_tag := "1"
 local _field_tag := "el_att_id::char(10) || el_id::char(10) || e_gr_at_id::char(10) || e_gr_vl_id::char(10)"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_E_ATT, { "el_att_id", "el_id", "e_gr_at_id", "e_gr_vl_id" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1581,20 +1448,7 @@ local _tbl := "rnal_e_aops"
 local _index_tag := "1"
 local _field_tag := "el_op_id::char(10) || el_id::char(10) || aop_id::char(10) || aop_att_id::char(10)"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_E_AOPS, { "el_op_id", "el_id", "aop_id", "aop_att_id" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -1609,23 +1463,9 @@ local _tbl := "rnal_customs"
 local _index_tag := "1"
 local _field_tag := "cust_id::char(10)"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_CUSTOMS, { "cust_id", "cust_desc", "cust_addr", "cust_tel", "cust_ident", "match_code" }, _index_tag, _field_tag )
 
-lock_semaphore( _tbl, "free" )
-
 return _result
-
 
 
 // -----------------------------------------
@@ -1637,20 +1477,7 @@ local _tbl := "rnal_contacts"
 local _index_tag := "1"
 local _field_tag := "cust_id::char(10) || cont_id::char(10)"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_CONTACTS, { "cont_id", "cust_id", "cont_desc", "cont_tel", "cont_add_d", "match_code" }, _index_tag, _field_tag )
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 

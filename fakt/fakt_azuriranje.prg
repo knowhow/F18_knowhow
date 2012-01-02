@@ -525,33 +525,9 @@ _tbl_fakt := "fakt_fakt"
 _tbl_doks := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	// provjeri fakt
-	if get_semaphore_status( _tbl_fakt ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl_fakt )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl_fakt, "lock" )
-	endif
-
-	// provjeri fakt_doks
-	if get_semaphore_status( _tbl_doks ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl_doks )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl_doks, "lock" )
-	endif
-
-	// provjeri fakt_doks2
-	if get_semaphore_status( _tbl_doks2 ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl_doks2 )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl_doks2, "lock" )
-	endif
-
-next
+lock_semaphore( _tbl_fakt, "lock" )
+lock_semaphore( _tbl_doks, "lock" )
+lock_semaphore( _tbl_doks2, "lock" )
 
 lOk := .t.
 

@@ -19,20 +19,7 @@ local _result := .f.
 local _i
 local _tbl := "partn"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_PARTN, {"id", "naz", "mjesto", "adresa", "ziror", "fax", "mobtel" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -45,20 +32,7 @@ local _result := .f.
 local _i
 local _tbl := "konto"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_KONTO, {"id", "naz"})
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -71,25 +45,12 @@ local _result := .f.
 local _i
 local _tbl := "roba"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_ROBA, {"id", ;
 				"sifradob", "naz", "jmj", "vpc", "vpc2", "nc", "mpc", ;
 				"idtarifa", "tip", "barkod", "mpc2", "mpc3", "k1", "k2", ;
 				"n1", "n2", "plc", "mink", "zanivel", "zaniv2", ;
 				"trosk1", "trosk2", "trosk3", "trosk4", "trosk5", ;
 				"fisc_plu", "k7", "k8", "k9", "strings", "idkonto" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -102,23 +63,10 @@ local _result := .f.
 local _i
 local _tbl := "sifk"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFK, {"id", ;
 				"sort", "naz", "oznaka", "veza", "f_unique", "izvor", "uslov", ;
 				"duzina", "f_decimal", "tip", "kvalid", "kwhen", "ubrowsu", ;
 				"k1", "k2", "k3", "k4" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -131,21 +79,7 @@ local _result := .f.
 local _i
 local _tbl := "sifv"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", ;
-				"idsif", "naz", "oznaka" })
-
-lock_semaphore( _tbl, "free" )
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", "idsif", "naz", "oznaka" })
 
 return _result
 
@@ -158,21 +92,8 @@ local _result := .f.
 local _i
 local _tbl := "ops"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_OPS, {"id", ;
 				"idj", "idn0", "naz", "idkan", "zipcode", "puccanton", "puccity", "reg" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -185,21 +106,8 @@ local _result := .f.
 local _i
 local _tbl := "banke"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_BANKE, {"id", ;
 				"mjesto", "naz", "adresa" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -212,21 +120,8 @@ local _result := .f.
 local _i
 local _tbl := "lokal"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_LOKAL, {"id", ;
 				"id_str", "naz" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -238,22 +133,9 @@ local _result := .f.
 local _i
 local _tbl := "trfp"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_TRFP, {"id", ;
 				"shema", "naz", "idkonto", "dokument", "partner", "d_p", ;
 				"znak", "idvd", "idvn", "idtarifa" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -265,22 +147,10 @@ local _result := .f.
 local _i
 local _tbl := "trfp2"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
 
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_TRFP2, {"id", ;
 				"shema", "naz", "idkonto", "dokument", "partner", "d_p", ;
 				"znak", "idvd", "idvn", "idtarifa" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -293,21 +163,7 @@ local _result := .f.
 local _i
 local _tbl := "trfp3"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TRFP3, {"id", ;
-				"shema", "naz", "idkonto", "d_p", "znak", "idvn" })
-
-lock_semaphore( _tbl, "free" )
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TRFP3, {"id", "shema", "naz", "idkonto", "d_p", "znak", "idvn" })
 
 return _result
 
@@ -320,24 +176,10 @@ local _result := .f.
 local _i
 local _tbl := "sast"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_SAST, {"id", ;
 				"r_br", "id2", "kolicina", "k1", "k2", "n1", "n2" })
 
-lock_semaphore( _tbl, "free" )
-
 return _result
-
 
 
 // -----------------------------------------
@@ -347,20 +189,7 @@ local _result := .f.
 local _i
 local _tbl := "rj"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_RJ, {"id", "naz" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -373,20 +202,7 @@ local _result := .f.
 local _i
 local _tbl := "tdok"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_TDOK, {"id", "naz" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -398,20 +214,7 @@ local _result := .f.
 local _i
 local _tbl := "tnal"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_TNAL, {"id", "naz" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -424,21 +227,8 @@ local _result := .f.
 local _i
 local _tbl := "valute"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_VALUTE, {"id", "naz", "naz2", "datum", ; 
 							"kurs1", "kurs2", "kurs3", "tip" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -450,20 +240,7 @@ local _result := .f.
 local _i
 local _tbl := "tarifa"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_TARIFA, {"id", "naz", "opp", "ppp", "zpp", "vpp", "mpp", "dlruc" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -476,20 +253,7 @@ local _result := .f.
 local _i
 local _tbl := "koncij"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_KONCIJ, {"id", "shema", "naz", "idprodmjes", "region" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -502,21 +266,8 @@ local _result := .f.
 local _i
 local _tbl := "dest"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_DEST, {"id", "idpartner", "naziv", "naziv2", "adresa", "mjesto", ;
 			"ptt", "telefon", "fax", "mobitel" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -528,20 +279,7 @@ local _result := .f.
 local _i
 local _tbl := "fakt_ftxt"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_FTXT, {"id", "naz" })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -554,23 +292,10 @@ local _result := .f.
 local _i
 local _tbl := "f18_rules"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	if get_semaphore_status( _tbl ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl, "lock" )
-	endif
-
-next
-
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_FMKRULES, {"rule_id", "modul_name", ;
 			"rule_obj", "rule_no", "rule_name", "rule_ermsg", "rule_level", ;
 			"rule_c1", "rule_c2", "rule_c3", "rule_c4", "rule_c5", "rule_c6", ;
 			"rule_c7", "rule_n1", "rule_n2", "rule_n3", "rule_d1", "rule_d2"  })
-
-lock_semaphore( _tbl, "free" )
 
 return _result
 
@@ -595,17 +320,18 @@ local _fnd
 local _alias
 local _pos
 
+// pronadji alias tabele
+_pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER( table ) } )
+_alias := LOWER( gaDBFs[ _pos, 2 ] ) 
+
 if index_tag == nil
 	index_tag := "ID"
 endif
 
 if field_tag == nil
-	field_tag := "ID"
+    // fields {{"godina", 4}, "oznaka"} => "to_char(godina, '999') || oznaka"
+	field_tag := sql_concat_ids(table)
 endif
-
-// pronaji alias tabele
-_pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER( table ) } )
-_alias := LOWER( gaDBFs[ _pos, 2 ] ) 
 
 _x := maxrows() - 15
 _y := maxcols() - 20
@@ -614,12 +340,23 @@ if algoritam == NIL
    algoritam := "FULL"
 endif
 
-@ _x + 1, _y + 2 SAY "update " + table + " : " + algoritam
+if !lock_semaphore(table, "lock")
+    MsgBeep("synchro " + table + " neuspjesan !")
+    return .f.
+endif
+
+MsgO( "update " + table + " : " + algoritam )
 _seconds := SECONDS()
 _qry :=  "SELECT " 
 
 for _i := 1 to LEN(fields)
-  _qry += fields[_i]
+  if VALTYPE(fields[_i]) == "A"
+      // {"num_polje", n_sirina}
+      _qry += fields[_i,1]
+  else
+      _qry += fields[_i]
+  endif
+
   if _i < LEN(fields)
       _qry += ","
   endif
@@ -681,7 +418,7 @@ DO CASE
     enddo
 END CASE
 
-@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
+//@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
 _counter := 1
 DO WHILE ! _qry_obj:Eof()
@@ -699,18 +436,18 @@ DO WHILE ! _qry_obj:Eof()
     _qry_obj:Skip()
 
     _counter++
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
 ENDDO
 
 USE
 _qry_obj:Close()
 
+MsgC()
+
 if (gDebug > 5)
-    log_write(table + "synchro cache:" + STR(SECONDS() - _seconds))
+    log_write("table: " + table + " synchro from sql time:" + STR(SECONDS() - _seconds))
 endif
 
+lock_semaphore(table, "free")
 return .t. 
 
 

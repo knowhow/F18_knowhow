@@ -208,7 +208,7 @@ IF _ini_params["max_cols"] != nil
     __max_cols := VAL( _ini_params["max_cols"] )
 ENDIF
 
-return
+return .t.
 
 
 // vraca maksimalni broj redova

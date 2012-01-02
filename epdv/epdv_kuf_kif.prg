@@ -163,17 +163,8 @@ endif
 // npr. LOWER( "KUF" )
 _tbl_epdv := "epdv_" + LOWER( tbl )
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-
-	// provjeri fakt
-	if get_semaphore_status( _tbl_epdv ) == "lock"
-		Msgbeep( "tabela zakljucana: " + _tbl_epdv )
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-	else
-		lock_semaphore( _tbl_epdv, "lock" )
-	endif
-
-next
+		
+lock_semaphore( _tbl_epdv, "lock" )
 
 lOk := .t.
 

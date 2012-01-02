@@ -40,13 +40,13 @@ static function _provjera_dokumenta()
 local _valid := .t.
 
 if !_stampan_nalog()
-	_valid := .f.
-	return _valid
+    _valid := .f.
+    return _valid
 endif
 
 if !_ispravne_sifre()
-	_valid := .f.
-	return _valid
+    _valid := .f.
+    return _valid
 endif
 
 return _valid
@@ -64,42 +64,42 @@ go top
 
 do while !EOF()
 
-	// provjeri prvo robu	
-	select roba
-	hseek mat_psuban->idroba
-  	
-	if !found()
-    	Beep(1)
-    	Msg("Stavka br."+mat_psuban->rbr+": Nepostojeca sifra artikla!")
-    	_valid := .f.
-		exit
-  	endif
+    // provjeri prvo robu   
+    select roba
+    hseek mat_psuban->idroba
+    
+    if !found()
+        Beep(1)
+        Msg("Stavka br."+mat_psuban->rbr+": Nepostojeca sifra artikla!")
+        _valid := .f.
+        exit
+    endif
   
-	// provjeri partnere
-	select partn
-	hseek mat_psuban->idpartner
-  	
-	if !found() .and. !EMPTY(mat_psuban->idpartner)
-    	Beep(1)
-    	Msg("Stavka br."+mat_psuban->rbr+": Nepostojeca sifra partnera!")
-  		_valid := .f.
-		exit
-	endif
-  	
-	select mat_psuban
-  	skip 1
+    // provjeri partnere
+    select partn
+    hseek mat_psuban->idpartner
+    
+    if !found() .and. !EMPTY(mat_psuban->idpartner)
+        Beep(1)
+        Msg("Stavka br."+mat_psuban->rbr+": Nepostojeca sifra partnera!")
+        _valid := .f.
+        exit
+    endif
+    
+    select mat_psuban
+    skip 1
 
 enddo
 
 // pobrisi tabele ako postoji problem
 if !_valid
 
-	select mat_psuban
-	zapp()
+    select mat_psuban
+    zapp()
     select mat_panal
-	zapp()
+    zapp()
     select mat_psint
-	zapp()
+    zapp()
     
 endif
 
@@ -114,22 +114,22 @@ local _valid := .t.
 
 select mat_psuban
 if reccount2() == 0
-	_valid := .f.
+    _valid := .f.
 endif
 
 select mat_panal
 if reccount2() == 0
-	_valid := .f.
+    _valid := .f.
 endif
 
 select mat_psint
 if reccount2() == 0
-	_valid := .f. 
+    _valid := .f. 
 endif
 
 if !_valid
-	Beep(3)
-  	Msg( "Niste izvrsili stampanje naloga ...", 10 )
+    Beep(3)
+    Msg( "Niste izvrsili stampanje naloga ...", 10 )
 endif
 
 return _valid
@@ -142,7 +142,7 @@ return _valid
 function azur_mat()
 
 if Pitanje(,"Sigurno zelite izvrsiti azuriranje (D/N)?","N")=="N"
-	return
+    return
 endif
 
 // otvori potrebne tabele
@@ -150,18 +150,18 @@ _o_tbls()
 
 // napravi bazne provjere dokumenta prije azuriranja
 if !_provjera_dokumenta()
-	close all
-	return
+    close all
+    return
 endif
 
 // azuriraj u sql
 if _mat_azur_sql()
-	// azuriraj u dbf
-	if !_mat_azur_dbf()
-		msgbeep( "Problem sa azuriranjem mat/dbf !" )
-	endif
+    // azuriraj u dbf
+    if !_mat_azur_dbf()
+        msgbeep( "Problem sa azuriranjem mat/dbf !" )
+    endif
 else
-	msgbeep( "Problem sa azuriranjem mat/sql !" )
+    msgbeep( "Problem sa azuriranjem mat/sql !" )
 endif
 
 close all
@@ -188,43 +188,11 @@ _tbl_anal := "mat_anal"
 _tbl_nalog := "mat_nalog"
 _tbl_sint := "mat_sint"
 
-for _i := 1 to SEMAPHORE_LOCK_RETRY_NUM
-	
-	// lock suban  
-	if get_semaphore_status( _tbl_suban ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_suban )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_suban, "lock" )
-  	endif
-
-	// lock anal  
-	if get_semaphore_status( _tbl_anal ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_anal )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_anal, "lock" )
-  	endif
-	
-	// lock sint
-	if get_semaphore_status( _tbl_sint ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_sint )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_sint, "lock" )
-  	endif
-	
-	// lock nalog
-	if get_semaphore_status( _tbl_nalog ) == "lock"
-    	MsgBeep("tabela zakljucana: " + _tbl_nalog )
-      	hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-  	else
-    	lock_semaphore( _tbl_nalog, "lock" )
-  	endif
-
-next
+lock_semaphore( _tbl_suban, "lock" )
+lock_semaphore( _tbl_anal, "lock" )
+lock_semaphore( _tbl_sint, "lock" )
+lock_semaphore( _tbl_nalog, "lock" )
    
-
 if _ok = .t.
   
   MsgO("sql mat_suban")
@@ -386,36 +354,36 @@ endif
 
 if ! _ok
 
-	// vrati sve promjene...  	
-	sql_mat_suban_update( "ROLLBACK" )
-	sql_mat_sint_update( "ROLLBACK" )
-	sql_mat_anal_update( "ROLLBACK" )
-	sql_mat_nalog_update( "ROLLBACK" )
+    // vrati sve promjene...    
+    sql_mat_suban_update( "ROLLBACK" )
+    sql_mat_sint_update( "ROLLBACK" )
+    sql_mat_anal_update( "ROLLBACK" )
+    sql_mat_nalog_update( "ROLLBACK" )
 
 else
 
-	// dodaj ids
-  	AADD(_ids, _tmp_id) 
-	
-	// suban  
-	update_semaphore_version( _tbl_suban, .t.)
-  	push_ids_to_semaphore( _tbl_suban, _ids )
-  	sql_mat_suban_update("END")
+    // dodaj ids
+    AADD(_ids, _tmp_id) 
+    
+    // suban  
+    update_semaphore_version( _tbl_suban, .t.)
+    push_ids_to_semaphore( _tbl_suban, _ids )
+    sql_mat_suban_update("END")
 
-	// anal
-	update_semaphore_version( _tbl_anal, .t.)
-  	push_ids_to_semaphore( _tbl_anal, _ids )
-  	sql_mat_anal_update("END")
-	
-	// sint
-	update_semaphore_version( _tbl_sint, .t.)
-  	push_ids_to_semaphore( _tbl_sint, _ids )
-  	sql_mat_sint_update("END")
-	
-	// nalog
-	update_semaphore_version( _tbl_nalog, .t.)
-  	push_ids_to_semaphore( _tbl_nalog, _ids )
-  	sql_mat_nalog_update("END")
+    // anal
+    update_semaphore_version( _tbl_anal, .t.)
+    push_ids_to_semaphore( _tbl_anal, _ids )
+    sql_mat_anal_update("END")
+    
+    // sint
+    update_semaphore_version( _tbl_sint, .t.)
+    push_ids_to_semaphore( _tbl_sint, _ids )
+    sql_mat_sint_update("END")
+    
+    // nalog
+    update_semaphore_version( _tbl_nalog, .t.)
+    push_ids_to_semaphore( _tbl_nalog, _ids )
+    sql_mat_nalog_update("END")
 
 endif
 
@@ -438,94 +406,94 @@ local _ret := .t.
 local _vars
 
 Box(,7,30,.f.)
-	
-	@ m_x + 1, m_y + 2 SAY "ANALITIKA"
-	select mat_panal
-	go top
+    
+    @ m_x + 1, m_y + 2 SAY "ANALITIKA"
+    select mat_panal
+    go top
 
-	do while !EOF()
-		
-		_vars := dbf_get_rec() 
-		select mat_anal
-		append blank
-		
-		dbf_update_rec( _vars )
-		
-		select mat_panal
-		skip
-	
-	enddo
+    do while !EOF()
+        
+        _vars := dbf_get_rec() 
+        select mat_anal
+        append blank
+        
+        dbf_update_rec( _vars )
+        
+        select mat_panal
+        skip
+    
+    enddo
 
-	select mat_panal
-	zapp()
+    select mat_panal
+    zapp()
 
-	@ m_x + 3, m_y + 2 SAY "SINTETIKA"
-	select mat_psint
-	go top
+    @ m_x + 3, m_y + 2 SAY "SINTETIKA"
+    select mat_psint
+    go top
 
-	do while !EOF()
-		
-		_vars := dbf_get_rec() 
-		
-		select mat_sint
-		append blank
-		
-		dbf_update_rec( _vars )
-		
-		select mat_psint
-		skip
-	
-	enddo
+    do while !EOF()
+        
+        _vars := dbf_get_rec() 
+        
+        select mat_sint
+        append blank
+        
+        dbf_update_rec( _vars )
+        
+        select mat_psint
+        skip
+    
+    enddo
 
-	select mat_psint
-	zapp()
+    select mat_psint
+    zapp()
 
-	@ m_x + 5, m_y + 2 SAY "NALOZI"
-	select mat_pnalog
-	go top
+    @ m_x + 5, m_y + 2 SAY "NALOZI"
+    select mat_pnalog
+    go top
 
-	do while !EOF()
-		
-		_vars := dbf_get_rec() 
-		
-		select mat_nalog
-		append blank
-		
-		dbf_update_rec( _vars )
-		
-		select mat_pnalog
-		skip
-	
-	enddo
+    do while !EOF()
+        
+        _vars := dbf_get_rec() 
+        
+        select mat_nalog
+        append blank
+        
+        dbf_update_rec( _vars )
+        
+        select mat_pnalog
+        skip
+    
+    enddo
 
-	select mat_pnalog
-	zapp()
+    select mat_pnalog
+    zapp()
 
-	@ m_x + 7, m_y + 2 SAY "SUBANALITIKA"
-	select mat_psuban
-	go top
+    @ m_x + 7, m_y + 2 SAY "SUBANALITIKA"
+    select mat_psuban
+    go top
 
-	do while !EOF()
-		
-		_vars := dbf_get_rec() 
-		
-		select mat_suban
-		append blank
-		
-		dbf_update_rec( _vars )
-		
-		select mat_psuban
-		skip
-	
-	enddo
+    do while !EOF()
+        
+        _vars := dbf_get_rec() 
+        
+        select mat_suban
+        append blank
+        
+        dbf_update_rec( _vars )
+        
+        select mat_psuban
+        skip
+    
+    enddo
 
-	select mat_psuban
-	zapp()
+    select mat_psuban
+    zapp()
 
-	select mat_pripr
-	zapp()
+    select mat_pripr
+    zapp()
 
-	Inkey(2)
+    Inkey(2)
 
 BoxC()
 

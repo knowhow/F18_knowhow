@@ -20,6 +20,8 @@ fetch_set_metric()
 
 test_version()
 
+test_semaphores()
+
 TEST_END()
 
 ? "kraj"

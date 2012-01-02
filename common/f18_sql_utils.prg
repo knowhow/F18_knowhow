@@ -128,6 +128,10 @@ local _server := my_server()
 
 // sslv3 alert handshake failure dobijam ?!
 
+if retry == NIL
+  retry := 1
+endif
+
 for _i:=1 to retry
 
    ? qry
@@ -347,3 +351,46 @@ for each _item in _fields
 next
 
 return _ret
+
+
+// ---------------------------------------
+// ---------------------------------------
+function sql_concat_ids(table_name)
+local _ret, _pos, _fields, _item
+
+_pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
+
+if _pos == 0
+   MsgBeep(PROCLINE(1) + "sql_where_block tbl ne postoji" + table_name)
+   QUIT
+endif
+
+// npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+_fields := gaDBFS[_pos, 6]
+
+_ret := ""
+
+for each _item in _fields
+
+   if !EMPTY(_ret)
+       _ret += " || "
+   endif
+
+   if VALTYPE(_item) == "A"
+      // numeric
+      // to_char(godina, '9999') 
+      _ret += "to_char(" + _item[1] + ",'" + REPLICATE("9", _item[2]) + "')"
+
+   elseif VALTYPE(_item) == "C"
+      _ret += _item
+ 
+   else
+       MsgBeep(PROCNAME(1) + "valtype _item ?!")
+       QUIT
+   endif
+
+next
+
+return _ret
+
+

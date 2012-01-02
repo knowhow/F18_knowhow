@@ -67,12 +67,6 @@ if _rdd == NIL
   _rdd = "DBFCDX"
 endif
 
-/*
-if len(gADBFs[_pos]) > 3
- lock_semaphore(table, "lock")
-endif
-*/
-
 if (LEN(gaDBFs[_pos]) > 3) 
 
    // tabela je pokrivena semaforom
@@ -81,22 +75,24 @@ if (LEN(gaDBFs[_pos]) > 3)
      
         if (_version == -1)
           // semafor je resetovan
-          // lockuj da drugi korisnici ne bi dirali tablelu dok je ucitavam
-          lock_semaphore(table, "lock")
-            EVAL( gaDBFs[_pos, 4], "FULL")
-            update_semaphore_version(table, .f.)
-          lock_semaphore(table, "free")
+          // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
+          if lock_semaphore(table, "lock")
+             EVAL( gaDBFs[_pos, 4], "FULL")
+             update_semaphore_version(table, .f.)
+             lock_semaphore(table, "free")
+          endif
 
         else
             // moramo osvjeziti cache
            if _version < last_semaphore_version(table)
-             lock_semaphore(table, "lock")
-             if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
-                 semaphore_param:= gaDBFs[_pos, 5]
-             endif
-             EVAL( gaDBFs[_pos, 4], semaphore_param )
-             update_semaphore_version(table, .f.)
-             lock_semaphore(table, "free")
+             if lock_semaphore(table, "lock")
+                 if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
+                    semaphore_param:= gaDBFs[_pos, 5]
+                 endif
+                 EVAL( gaDBFs[_pos, 4], semaphore_param )
+                 update_semaphore_version(table, .f.)
+                 lock_semaphore(table, "free")
+              endif
            endif
         endif
    else
@@ -116,17 +112,45 @@ dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
 
 return
 
-// ---------------------------
-// status = "lock", "free"
-// ---------------------------
+// ------------------------------------------
+// status = "lock" (locked_by_me), "free"
+// ------------------------------------------
 function lock_semaphore(table, status)
 local _qry
 local _ret
-local _server:= pg_server()
-local _user := f18_user()
+local _i
+local _server := pg_server()
+local _user   := f18_user()
+
+
+// status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
+
+_i := 0
+while .t.
+
+    _i++
+	if get_semaphore_status(table) == "lock"
+        MsgO("table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)) 
+		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+        MsgC()
+    else 
+        exit
+    endif
+
+    if (_i > SEMAPHORE_LOCK_RETRY_NUM)
+          _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ?!"
+          MsgBeep(_err_msg)
+          log_write(_err_msg)
+          return .f.
+    endif
+enddo
 
 // svi useri su lockovani
-_qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) 
+_qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) + ", last_trans_user_code=" + _sql_quote(_user) + "; "
+
+if status == "lock"
+   _qry += "UPDATE fmk.semaphores_" + table + " SET algorithm='locked_by_me' WHERE user_code=" + _sql_quote(_user) + ";" 
+endif
 
 if gDebug > 9 
   log_write(_qry)
@@ -227,7 +251,7 @@ if VALTYPE(_tbl_obj) == "L"
       QUIT
 endif
 
-_result := _tbl_obj:Fieldget( _tbl_obj:Fieldpos( iif(last, "last_version", "version")) )
+_result := _tbl_obj:Fieldget( _tbl_obj:Fieldpos( IIF(last, "last_version", "version")) )
 
 RETURN _result
 
@@ -248,13 +272,10 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 _result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
 
 if (_result == 0)
-   _qry := "INSERT INTO " + _tbl + ;
-              "(user_code, version) " + ;
+   _qry := "INSERT INTO " + _tbl + "(user_code, version) " + ;
                "VALUES(" + _sql_quote(_user)  + ", -1 )"
 else
-    _qry := "UPDATE " + _tbl + ;
-            " SET version=-1" + ;
-            " WHERE user_code =" + _sql_quote(_user) 
+    _qry := "UPDATE " + _tbl + " SET version=-1 WHERE user_code =" + _sql_quote(_user) 
 endif
 _ret := _sql_query( _server, _qry )
 
@@ -435,12 +456,12 @@ RETURN _arr
 function push_dat_to_semaphore( table, date )
 local _tbl
 local _result
-local _user := f18_user()
 local _ret
 local _qry
 local _sql_ids
 local _i
-LOCAL _server := pg_server()
+local _user := f18_user()
+local _server := pg_server()
 
 _tbl := "fmk.semaphores_" + table
 _result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 

@@ -328,9 +328,13 @@ if index_tag == nil
 	index_tag := "ID"
 endif
 
-if field_tag == nil
-    // fields {{"godina", 4}, "oznaka"} => "to_char(godina, '999') || oznaka"
-	field_tag := sql_concat_ids(table)
+if field_tag == nil 
+    if LEN(gaDBFs[_pos]) > 5 
+       // fields {{"godina", 4}, "oznaka"} => "to_char(godina, '999') || oznaka"
+	   field_tag := sql_concat_ids(table)
+    else
+	   field_tag := "ID"
+    endif
 endif
 
 _x := maxrows() - 15

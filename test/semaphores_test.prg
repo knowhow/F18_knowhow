@@ -10,6 +10,7 @@
  */
 
 #include "fmk.ch"
+#include "hbthread.ch"
 
 #define F_TEST_SEM_1 9001
 #define F_TEST_SEM_2 9002
@@ -21,6 +22,7 @@ local _dbf_struct := {}
 local _server_params
 local _qry
 local _table_name, _alias
+local _thread_2_id
 
 // ------------------------
 _ime_f := "test_sem_1"
@@ -100,10 +102,11 @@ reset_semaphore_version(_table_name)
 SELECT F_TEST_SEM_1
 use
 
-login_as("test2")
-lock_semaphore(_table_name, "lock")
-
 login_as("test1")
+
+//_thread_2_id  :=  hb_threadStart(  HB_BITOR( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_thread_2_fn() )
+
+
 ? "1) before my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
 
 my_usex(_alias)
@@ -227,3 +230,19 @@ _qry += "GRANT ALL ON TABLE fmk.semaphores_" + table_name + " TO xtrole;"
 run_sql_query(_qry)
 
 return .t.
+
+
+// --------------------------------
+// --------------------------------
+function _thread_2_fn()
+local _table_name := "test_sem_1"
+
+MsgBeep("hello from thread 2")
+log_write("thread 2 fn begin")
+
+login_as("test2")
+lock_semaphore(_table_name, "lock")
+hb_IdleSleep(10)
+lock_semaphore(_table_name, "free")
+
+return

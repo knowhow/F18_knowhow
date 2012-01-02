@@ -30,7 +30,7 @@ libs=hbdebug
 {!unix}libs=libpq
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
-mt=no
+mt=yes
 #gui=yes
 
 #{!HB_QT_STATIC}gt=gtqtc

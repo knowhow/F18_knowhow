@@ -119,6 +119,7 @@ function lock_semaphore(table, status)
 local _qry
 local _ret
 local _i
+local _err_msg
 local _server := pg_server()
 local _user   := f18_user()
 
@@ -130,14 +131,16 @@ while .t.
 
     _i++
 	if get_semaphore_status(table) == "lock"
-        MsgO("table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)) 
-		hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+        _err_msg := "table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
+		MsgO(_err_msg)
+         log_write(_err_msg)
+         hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
         MsgC()
     else 
         exit
     endif
 
-    if (_i > SEMAPHORE_LOCK_RETRY_NUM)
+    if (_i >= SEMAPHORE_LOCK_RETRY_NUM)
           _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ?!"
           MsgBeep(_err_msg)
           log_write(_err_msg)

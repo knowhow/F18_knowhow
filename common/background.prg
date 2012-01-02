@@ -24,8 +24,8 @@ return _db_thread_id
 function init_threads()
 local _main_thread
 
-_main_thread :=  hb_threadSelf()
-_db_thread_id   :=  hb_threadStart(  HB_BITOR( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_db_thread_fn() )
+_main_thread   :=  hb_threadSelf()
+_db_thread_id  :=  hb_threadStart(  HB_BITOR( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_db_thread_fn() )
 // --------------
 
 

@@ -22,6 +22,8 @@ test_version()
 
 test_semaphores()
 
+test_thread()
+
 TEST_END()
 
 ? "kraj"

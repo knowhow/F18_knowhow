@@ -361,7 +361,7 @@ local _ret, _pos, _fields, _item
 _pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
 
 if _pos == 0
-   MsgBeep(PROCLINE(1) + "sql_where_block tbl ne postoji" + table_name)
+   MsgBeep(PROCLINE(1) + "sql tbl ne postoji in gaDBFs " + table_name)
    QUIT
 endif
 

@@ -23,6 +23,7 @@ local _server_params
 local _qry
 local _table_name, _alias
 local _thread_2_id
+local _rec
 
 // ------------------------
 _ime_f := "test_sem_1"
@@ -30,11 +31,12 @@ _ime_f := "test_sem_1"
 
 _i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
 if _i == 0
-  AADD(gaDBFs, { F_TEST_SEM_1,  UPPER(_ime_f),  _ime_f, {|alg| test_sem_1_from_sql_server(alg) }, "IDS", {"ID"}, {|x| sql_where_block(_ime_f, x)}, "ID"})
+  AADD(gaDBFs, { F_TEST_SEM_1,  "TEST_SEM_1",  "test_sem_1", {|alg| test_sem_1_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("test_sem_1", x)}, "ID"})
 endif
 
-AADD(_dbf_struct,      { 'ID' ,  'C' ,   1 ,  0 })
-AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
+_dbf_struct := {}
+AADD(_dbf_struct,      { 'ID' ,  'C' ,   4 ,  0 })
+AADD(_dbf_struct,      { 'NAZ' , 'C' ,  20 ,  0 })
        
 DBCREATE2(_ime_f, _dbf_struct)
 
@@ -45,7 +47,7 @@ TEST_LINE(login_as("admin"), .t.)
 
 _qry := "drop table if exists fmk." + _ime_f + "; "
 _qry += "create table " + _ime_f + "(" 
-_qry += " id varchar(2) PRIMARY KEY, naz varchar(10)" 
+_qry += " id varchar(4) PRIMARY KEY, naz varchar(20)" 
 _qry += "); " 
 _qry += "GRANT ALL ON TABLE fmk." + _ime_f + " TO xtrole;"
 
@@ -62,12 +64,12 @@ _ime_f := "test_sem_2"
 
 _i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
 if _i == 0
-  AADD(gaDBFs, { F_TEST_SEM_2,  UPPER(_ime_f),  _ime_f, {|alg| test_sem_2_from_sql_server(alg) }, "IDS", { {"godina", 4}, {"mjesec", 2}, "oznaka" }, {|x| sql_where_block(_ime_f, x)}, "IDN"})
+  AADD(gaDBFs, { F_TEST_SEM_2,  "TEST_SEM_2",  "test_sem_2", {|alg| test_sem_2_from_sql_server(alg) }, "IDS", { {"godina", 4}, {"mjesec", 2}, "oznaka" }, {|x| sql_where_block("test_sem_2", x)}, "IDN"})
 endif
 
 TEST_LINE(sql_concat_ids("test_sem_2"), "to_char(godina,'9999') || to_char(mjesec,'99') || oznaka")
 
-
+_dbf_struct := {}
 AADD(_dbf_struct,      { 'godina' ,  'N' ,   4 ,  0 })
 AADD(_dbf_struct,      { 'mjesec' ,  'N' ,   2 ,  0 })
 AADD(_dbf_struct,      { 'oznaka' ,  'C' ,   2 ,  0 })
@@ -90,7 +92,6 @@ run_sql_query(_qry)
 create_semaphore(_ime_f)
 
 
-login_as("test1")
 
 _alias := "test_sem_1"
 _table_name := _alias
@@ -102,50 +103,57 @@ reset_semaphore_version(_table_name)
 SELECT F_TEST_SEM_1
 use
 
-login_as("test1")
 
+login_as("test2")
+my_usex(_alias)
+my_server_logout()
+altd()
+
+
+login_as("test1")
 _thread_2_id  :=  hb_threadStart(  HB_BITOR( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_thread_2_fn() )
 
 //hb_threadJoin( _thread_2_id )
 
-? "1) before my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
-
 my_usex(_alias)
-
 TEST_LINE(ALIAS(), UPPER(_alias))
 
-//hb_IdleSleep(10)
+_rec := dbf_get_rec()
+
+for _i := 1 to 500
+  APPEND BLANK
+  _rec["id"] := STR(_i, 4)
+  _rec["naz"] := "naz " + STR(_i, 4)
+  update_rec_server_and_dbf(_table_name, _rec)
+next
+
+TEST_LINE(reccount(), 500)
+
+
+use
+
+login_as("test3")
+my_usex(_alias)
+TEST_LINE(ALIAS(), UPPER(_alias))
+use
+
+
 login_as("test2")
-lock_semaphore(_table_name, "free")
-
-login_as("test1")
-? "1b) before my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
-
 my_usex(_alias)
 
-? "1) after my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
-
-
+// user: test3, ids = "{<FULL>/}"
 use
+login_as("test3")
+my_usex(_alias)
 
 
-? replicate("-", 100)
-
+// user: test2, ids = "{<FULL>/}"
+use
 login_as("test2")
-? "2) before my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
 my_usex(_alias)
-? "2) after my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
 
-
-? replicate("-", 100)
 use
 
-? "3) before my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
-my_usex(_alias)
-? "3) after my_usex", used(), alias(), "user=", my_server_params()["user"], _alias
-? replicate("-", 100)
-
-use
 
 /*
 // -------------------------------
@@ -212,8 +220,6 @@ _server_params["password"] := user
 
 my_server_params(_server_params)
 
-? "login ", _server_params["user"]
-
 if my_server_login()
    return .t.
 else
@@ -241,14 +247,30 @@ return .t.
 function _thread_2_fn()
 local _table_name := "test_sem_1"
 
+log_handle(FCREATE(STRTRAN(F18_LOG_FILE, ".log", "_2.log")) )
+
+log_write("--- thread 2: ----")
+
+? "... thread_2_fn ..."
 _get_server_params_from_config()
 
-//log_write("thread 2 fn begin")
+log_write(pp(my_server_params()))
 
+if !login_as("test2")
+  log_write("login thread neuspjesan !!!!")
+  log_close()
+  return .f.
+endif
+? pp(my_server_params())
 
-login_as("test2")
+log_write(ToStr(TIME()) + ": ... thread_2_fn ... lock")
 lock_semaphore(_table_name, "lock")
+//? "... thread_2_fn ... lock", my_user(), VALTYPE(my_server()), get_semaphore_version(_table_name)
+//? "my_home", my_home(), "sempahore status:", get_semaphore_status(_table_name)
+
 hb_IdleSleep(10)
+log_write(ToStr(TIME()) + ": ... thread_2_fn ... unlock")
 lock_semaphore(_table_name, "free")
 
+my_server_logout()
 return

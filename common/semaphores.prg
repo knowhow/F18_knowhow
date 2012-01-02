@@ -131,12 +131,16 @@ while .t.
 
     _i++
 	if get_semaphore_status(table) == "lock"
-        _err_msg := "table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
+        _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
 		MsgO(_err_msg)
          log_write(_err_msg)
          hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
         MsgC()
-    else 
+    else
+        if _i > 1
+           _err_msg := ToStr(Time()) + " : table unlocked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
+           log_write(_err_msg)
+        endif
         exit
     endif
 
@@ -175,7 +179,7 @@ function get_semaphore_status(table)
 local _qry
 local _ret
 local _server := pg_server()
-local _user := f18_user()
+local _user   := f18_user()
 
 _qry := "SELECT algorithm FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(_user)
 
@@ -302,7 +306,7 @@ LOCAL _tbl
 LOCAL _user := f18_user()
 LOCAL _last
 LOCAL _server := pg_server()
-LOCAL _ver_user, _last_ver
+LOCAL _ver_user, _last_ver, _id_full
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
@@ -324,35 +328,31 @@ if increment
 endif
 
 if (_result == 0)
-   _qry := "INSERT INTO " + _tbl + ;
-              "(user_code, version, last_trans_version) " + ;
-               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + " , "+ STR(_ver_user) + ")"
+   _id_full := "ARRAY[" + _sql_quote("<FULL>/") + "]"
+
+   _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
+               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from fmk.semaphores_test_sem_1), " + _id_full + ")"
    _ret := _sql_query( _server, _qry)
 
 else
     _qry := "UPDATE " + _tbl + ;
-                " SET version=" + STR(_ver_user) + "," +;
-                " ids=NULL , dat=NULL " + ;
-                " WHERE user_code =" + _sql_quote(_user) 
+                " SET version=" + STR(_ver_user) + ", ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user) 
     _ret := _sql_query( _server, _qry )
 
 endif
 
 if increment
     // svim setuj last_trans_version
-    _qry := "UPDATE " + _tbl + ;
-            " SET last_trans_version=" + STR(_last_ver + 1)  
+    _qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR(_last_ver + 1)  
     _ret := _sql_query( _server, _qry )
 
     // kod svih usera verzija ne moze biti veca od nLast + 1
-    _qry := "UPDATE " + _tbl + ;
-                " SET version=" + STR(_last_ver + 1) + ;
-                " WHERE version > " + STR(_last_ver + 1)
+    _qry := "UPDATE " + _tbl + " SET version=" + STR(_last_ver + 1) + ;
+            " WHERE version > " + STR(_last_ver + 1)
     _ret := _sql_query( _server, _qry )
 endif
 
-_qry := "SELECT version from " + _tbl + ;
-           " WHERE user_code =" + _sql_quote(_user) 
+_qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
 return _ret:Fieldget( _ret:Fieldpos("version") )
@@ -383,22 +383,19 @@ if _result < 1
    return .t.
 endif
 
-// TODO: moze li vise update-ova da se stavi u jedan sql_query ?
+
+_qry := ""
 
 for _i := 1 TO LEN(ids)
-    // ARAY['id1']
 
-    _sql_ids := "ARRAY["
-    _sql_ids += _sql_quote(ids[_i]) 
-    _sql_ids += "]"
+    _sql_ids := "ARRAY[" + _sql_quote(ids[_i]) + "]"
 
-
-    _qry := "UPDATE " + _tbl + ;
-                " SET ids = ids || " + _sql_ids + ;
-                " WHERE user_code <> " + _sql_quote(_user) + " AND NOT " + _sql_ids + " <@ ids"
-    _ret := _sql_query( _server, _qry )
+    _qry += "UPDATE " + _tbl + " SET ids = ids || " + _sql_ids + ;
+            " WHERE user_code <> " + _sql_quote(_user) + " AND ((ids IS NULL) OR NOT (" + _sql_ids + " <@ ids)) ;"
 
 next
+
+_ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "O"
   return .t.
@@ -411,7 +408,6 @@ endif
 // vrati matricu id-ova
 //---------------------------------------
 function get_ids_from_semaphore( table )
-//local _server :=  pg_server()
 local _tbl
 local _tbl_obj
 local _qry

@@ -18,7 +18,9 @@ thread static __server_params := NIL
 
 static __f18_home := NIL
 static __f18_home_root := NIL
-static __log_handle := NIL
+
+thread static __log_handle := NIL
+
 static __my_error_handler := NIL
 static __global_error_handler := NIL
 static __test_mode := .f.
@@ -405,6 +407,7 @@ endif
 
 for each _key in params:Keys
    if params[_key] == NIL
+       log_write("error server params key: " + _key)
        return .f.
    endif
 next
@@ -414,8 +417,10 @@ _server :=  TPQServer():New( params["host"], params["database"], params["user"],
 if !_server:NetErr()
     my_server(_server)
     set_sql_search_path()
+    log_write("server connection ok: " + params["user"] + " / " + params["database"])
     return .t.
 else
+    log_write("error server connection: " + _server:ErrorMsg())
     return .f.
 endif
 
@@ -514,17 +519,6 @@ endif
 my_home(_home)
 return .t.
 
-
-// -------------------------------
-// -------------------------------
-function log_write(msg)
- FWRITE(__log_handle, msg + hb_eol())
-return
-
-function log_close()
- FCLOSE(__log_handle)
-return .t.
-
 function my_error_handler()
 return  __my_error_handler
 
@@ -571,6 +565,28 @@ endif
 _write_server_params_to_config()
 
 return .t.
+
+
+// -------------------------------
+// -------------------------------
+function log_write(msg)
+ FWRITE(__log_handle, msg + hb_eol())
+return
+
+function log_close()
+ FCLOSE(__log_handle)
+return .t.
+
+
+// ----------------------------------
+// ----------------------------------
+function log_handle(handle)
+
+if handle != NIL
+  __log_handle := handle
+endif
+
+return __log_handle
 
 
 // ----------------------------

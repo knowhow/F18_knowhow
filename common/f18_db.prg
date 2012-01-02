@@ -359,6 +359,7 @@ if server_only == NIL
 endif
 
 sql_table_update(table, "BEGIN")
+
 _where_str := EVAL(where_block, values)
 if !sql_table_update(table, "del", nil, _where_str) 
    sql_table_update(table, "ROLLBACK")

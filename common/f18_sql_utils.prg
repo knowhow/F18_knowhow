@@ -316,7 +316,7 @@ return cOut
 // ---------------------------------------
 // ---------------------------------------
 function sql_where_block(table_name, x)
-local _ret, _pos, _fields, _item
+local _ret, _pos, _fields, _item, _key
 
 _pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
 
@@ -329,7 +329,6 @@ endif
 _fields := gaDBFS[_pos, 6]
 
 _ret := ""
-
 for each _item in _fields
 
    if !EMPTY(_ret)
@@ -338,10 +337,12 @@ for each _item in _fields
 
    if VALTYPE(_item) == "A"
       // numeric
-      _ret += _item[1] + "=" + STR(x[_item[1]], _item[2])
+      _key := LOWER(_item[1])
+      _ret += _item[1] + "=" + STR(x[_key], _item[2])
 
    elseif VALTYPE(_item) == "C"
-     _ret += _item + "=" + _sql_quote(x[_item])
+      _key := LOWER(_item)
+      _ret += _item + "=" + _sql_quote(x[_key])
  
    else
        MsgBeep(PROCNAME(1) + "valtype _item ?!")

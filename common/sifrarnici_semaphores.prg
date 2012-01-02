@@ -319,6 +319,7 @@ local _field_b
 local _fnd
 local _alias
 local _pos
+local _item
 
 // pronadji alias tabele
 _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER( table ) } )
@@ -377,13 +378,24 @@ if (algoritam == "IDS")
     else
         _sql_ids := "("
         for _i := 1 to LEN(_ids)
-            _sql_ids += _sql_quote(_ids[_i])
-            if _i < LEN(_ids)
-            _sql_ids += ","
+            if _ids[_i] == "<FULL>/"
+                _sql_ids := "true"
+                _i := LEN(_ids)
+            else
+                _sql_ids += _sql_quote(_ids[_i])
+                if _i < LEN(_ids)
+                    _sql_ids += ","
+                endif
             endif
         next
-        _sql_ids += ")"
-        _qry += " ( " + field_tag + " ) IN " + _sql_ids
+         
+        if _sql_ids != "true"
+           _sql_ids += ")"
+           _qry += " ( " + field_tag + " ) IN " + _sql_ids
+        else
+           _qry += " " + _sql_ids
+        endif
+
      endif
 
 endif
@@ -399,9 +411,10 @@ SELECT (area)
 my_usex ( _alias, NIL, .f., "SEMAPHORE", algoritam)
 
 DO CASE
-  CASE (algoritam == "FULL")
-    // "full" algoritam
-    ZAP
+
+  CASE (algoritam == "FULL") .or. (_sql_ids == "true")
+     // "full" algoritam
+     ZAP
 
   CASE algoritam == "IDS"
     _ids := get_ids_from_semaphore(table)

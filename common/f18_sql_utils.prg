@@ -126,13 +126,11 @@ function run_sql_query(qry, retry)
 local _i, _qry_obj
 local _server := my_server()
 
-// sslv3 alert handshake failure dobijam ?!
-
 if retry == NIL
   retry := 1
 endif
 
-for _i:=1 to retry
+for _i := 1 to retry
 
    ? qry
    begin sequence with {|err| Break(err)}
@@ -353,7 +351,6 @@ next
 
 return _ret
 
-
 // ---------------------------------------
 // ---------------------------------------
 function sql_concat_ids(table_name)
@@ -394,4 +391,40 @@ next
 
 return _ret
 
+// ---------------------------------------
+// ---------------------------------------
+function sql_primary_key(table_name)
+local _ret, _pos, _fields, _i, _item
 
+_pos := ASCAN(gaDBFS, {|x| x[3] == LOWER(table_name) })
+
+if _pos == 0
+   MsgBeep(PROCLINE(1) + "sql tbl ne postoji in gaDBFs " + table_name)
+   QUIT
+endif
+
+// npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+_fields := gaDBFS[_pos, 6]
+
+_ret := "(org_id, b_year, b_seasson"
+
+for each _item in _fields
+
+   _ret += ", "
+   if VALTYPE(_item) == "A"
+      // numericko polje
+      _ret += _item[1]
+
+   elseif VALTYPE(_item) == "C"
+      _ret += _item
+ 
+   else
+       MsgBeep(PROCNAME(1) + " valtype _item ?!")
+       QUIT
+   endif
+
+next
+
+_ret += ")"
+
+return _ret

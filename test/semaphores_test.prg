@@ -93,6 +93,17 @@ create_semaphore(_ime_f)
 
 
 
+upgrade_test_tables_semaphore_v2()
+
+TEST_LINE( is_table_column_exists("test_sem_1", "b_year"), .t. )
+TEST_LINE( is_table_column_exists("test_sem_1", "b_seasson"), .t. )
+TEST_LINE( is_table_column_exists("test_sem_1", "org_id"), .t. )
+
+TEST_LINE( is_table_column_exists("test_sem_2", "b_year"), .t. )
+
+
+
+
 _alias := "test_sem_1"
 _table_name := _alias
 ? "before reset", _table_name
@@ -102,7 +113,6 @@ reset_semaphore_version(_table_name)
 // -------------------------------
 SELECT F_TEST_SEM_1
 use
-
 
 login_as("test2")
 my_usex(_alias)
@@ -228,7 +238,7 @@ endif
 // ------------------------------------
 // ------------------------------------
 function create_semaphore(table_name)
-local _qry
+local _qry, _ret
 
 _qry := "drop table if exists fmk.semaphores_" + table_name + "; "
 _qry += "create table fmk.semaphores_" + table_name + "("
@@ -236,9 +246,67 @@ _qry += "user_code varchar(20), b_year integer DEFAULT date_part('year', now()) 
 _qry += "); " 
 _qry += "GRANT ALL ON TABLE fmk.semaphores_" + table_name + " TO xtrole;"
 
-run_sql_query(_qry)
+_ret := run_sql_query(_qry)
+
+if VALTYPE(_ret)  == "O"
+   return .t.
+else
+   return .f.
+endif
+
+// -------------------------------------
+// -------------------------------------
+function upgrade_test_tables_semaphore_v2()
+local _qry, _qry_obj, _table
+
+// select tablename from pg_catalog.pg_tables where schemaname = 'fmk' and NOT ( (tablename LIKE 'semaphores_%') OR (tablename LIKE 'test_%') OR (tablename LIKE 'pkg%') OR (tablename = 'metric') OR (tablename = 'client_id')) order by tablename;
+
+_qry := "select tablename from pg_catalog.pg_tables where schemaname = 'fmk' and (tablename LIKE 'test_%')  order by tablename;"
+
+_qry_obj := run_sql_query(_qry)
+
+DO WHILE ! _qry_obj:Eof()    
+    _table := _qry_obj:FieldGet(1)
+    alter_table_semaphore_v2(_table)
+
+    _qry_obj:Skip()
+ENDDO
+
+_qry_obj:Close()
 
 return .t.
+
+// ---------------------------------
+// ---------------------------------
+function alter_table_semaphore_v2(table)
+local _qry, _ret
+
+_qry := "ALTER TABLE fmk." + table + " ADD COLUMN org_id integer DEFAULT 0,  ADD COLUMN b_year integer DEFAULT 0, ADD COLUMN b_seasson integer DEFAULT 0;"
+
+_qry += "ALTER TABLE fmk." +  table + " DROP CONSTRAINT " + table + "_pkey, ADD PRIMARY KEY " + sql_primary_key(table) + ";"
+
+_ret := run_sql_query(_qry)
+
+if VALTYPE(_ret)  == "O"
+   return .t.
+else
+   return .f.
+endif
+
+// -------------------------------------------
+// -------------------------------------------
+function is_table_column_exists(table, column)
+local _qry, _ret
+
+_qry := "SELECT count(column_name) FROM information_schema.columns WHERE table_name =" + _sql_quote(table) + " AND table_schema='fmk' AND column_name=" + _sql_quote(LOWER(column))
+
+_ret := run_sql_query(_qry)
+
+if VALTYPE(_ret)  == "O"
+   return (_ret:FieldGet(1) == 1)
+else
+   return .f.
+endif
 
 
 // --------------------------------
@@ -273,3 +341,6 @@ lock_semaphore(_table_name, "free")
 
 my_server_logout()
 return
+
+
+

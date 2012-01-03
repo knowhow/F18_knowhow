@@ -8,6 +8,9 @@ f18_test_init()
 
 TEST_BEGIN("")
 
+// test bug
+// ? ajoj
+
 harbour_base()
 
 dbf_test()

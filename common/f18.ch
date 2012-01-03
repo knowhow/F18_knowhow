@@ -25,6 +25,7 @@
 #define SIFK_LEN_IDSIF   15
 
 
+#define F18_CLIENT_ID_INI_SECTION "client_id"
 #define F18_SCREEN_INI_SECTION "F18_screen"
 
 #ifndef TEST

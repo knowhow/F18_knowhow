@@ -107,7 +107,6 @@ use
 login_as("test2")
 my_usex(_alias)
 my_server_logout()
-altd()
 
 
 login_as("test1")

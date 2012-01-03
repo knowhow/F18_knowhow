@@ -40,7 +40,7 @@ set printer on
 P_12CPI
 
 ? REPLICATE("=", 84) 
-? "F18 bug report(v3):", DATE(), TIME()
+? "F18 bug report (v3.2) :", DATE(), TIME()
 ? REPLICATE("=", 84) 
 
 
@@ -113,6 +113,7 @@ RETURN
 static function server_info()
 local _key
 local _server_vars := {"server_version", "TimeZone"}
+local _sys_info
 
 ?
 ? "/---------- BEGIN PostgreSQL vars --------/"
@@ -121,9 +122,22 @@ for each _key in _server_vars
   ? PADR(_key, 25) + ":",  server_show(_key)
 next
 ?
+
 ? "/----------  END PostgreSQL vars --------/"
 ?
-?
+_sys_info := server_sys_info()
+
+if _sys_info != NIL
+    ?
+    ? "/-------- BEGIN PostgreSQL sys info --------/"
+    for each _key in _sys_info:Keys
+        ? PADR(_key, 25) + ":",  _sys_info[_key]
+    next
+    ?
+    ? "/-------  END PostgreSQL sys info --------/"
+    ?
+endif
+
 return .t.
 
 // --------------------------------------

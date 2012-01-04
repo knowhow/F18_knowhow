@@ -1,10 +1,10 @@
 // komande koje se koriste 
 // koje nam ne trebaju
 #command REPLSQL <f1> WITH <v1> [, <fN> WITH <vN> ] ; 
-	=> replsql_dummy()
+    => replsql_dummy()
  
 #command REPLSQL TYPE <cTip> <f1> WITH <v1> [, <fN> WITH <vN> ] ;
-	=> replsql_dummy()
+    => replsql_dummy()
 
 
 #define F_GPARAMS   1
@@ -182,7 +182,6 @@
 // kalk
 #define F_PPPROD    167
 
-//kalk, planika
 #define F_K1        168
 #define F_POBJEKTI  170
 #define F_RPT_TMP   171
@@ -232,10 +231,10 @@
 #define F_RADSAT   213
 #define F_REKLDP   214
 #define F_IZDANJA  215
-#define F_RNAL	   216
+#define F_RNAL     216
 #define F_PRIPNO   233
-#define F_LDNO	   234
-#define F_RJES	   235
+#define F_LDNO     234
+#define F_RJES     235
 #define F_PK_RADN  236
 #define F_PK_DATA  237
 #define F_LDT22    437
@@ -301,10 +300,12 @@
 #define F_TMPMSG 234
 // FAKT
 #define F_POMGN 235
-// vindija - auto import
-#define F_TEMP	236
-#define F_PRIPT	237
-#define F_CACHE	240
+
+#define F_TEMP  236
+#define F_PRIPT 237
+#define F_CACHE 240
+
+    
 // tops integritet
 #define F_DINTEG1 238
 #define F_DINTEG2 239
@@ -349,56 +350,56 @@
 #define F_LOKAL 242
 
 // RNAL
-#define F__DOCS		130
-#define F__DOC_IT	131
-#define F__DOC_IT2	200
-#define F__DOC_OPS	132
-#define F_T_DOCIT	133
-#define F_T_DOCIT2	201
-#define F_T_DOCOP	134
-#define F_T_PARS	135
-#define F_DOCS		136
-#define F_DOC_IT	137
-#define F_DOC_IT2	203
-#define F_DOC_OPS	138
-#define F_DOC_LOG	139
-#define F_DOC_LIT	140
-#define F_E_GROUPS	141
-#define F_ARTICLES	142
-#define F_ELEMENTS	143
-#define F_E_AOPS	208
-#define F_E_ATT		145
-#define F_E_GR_ATT	146
-#define F_E_GR_VAL	147
-#define F_AOPS		148
-#define F_AOPS_ATT	149
-#define F_CUSTOMS	150
-#define F_CONTACTS	151
-#define F__FND_PAR	152
-#define F__TMP1		153
-#define F__TMP2		154
-#define F_OBJECTS	155
-#define F_RAL		156
+#define F__DOCS     130
+#define F__DOC_IT   131
+#define F__DOC_IT2  200
+#define F__DOC_OPS  132
+#define F_T_DOCIT   133
+#define F_T_DOCIT2  201
+#define F_T_DOCOP   134
+#define F_T_PARS    135
+#define F_DOCS      136
+#define F_DOC_IT    137
+#define F_DOC_IT2   203
+#define F_DOC_OPS   138
+#define F_DOC_LOG   139
+#define F_DOC_LIT   140
+#define F_E_GROUPS  141
+#define F_ARTICLES  142
+#define F_ELEMENTS  143
+#define F_E_AOPS    208
+#define F_E_ATT     145
+#define F_E_GR_ATT  146
+#define F_E_GR_VAL  147
+#define F_AOPS      148
+#define F_AOPS_ATT  149
+#define F_CUSTOMS   150
+#define F_CONTACTS  151
+#define F__FND_PAR  152
+#define F__TMP1     153
+#define F__TMP2     154
+#define F_OBJECTS   155
+#define F_RAL       156
 
 // relation
 
-#define F_RELATION	171
+#define F_RELATION  171
 
 // DOK_SRC
 #define F_P_DOKSRC 180
 #define F_DOKSRC 181
 
 
-#define POR_PPP		1 
-#define POR_PPU		2
-#define POR_PP		3
-#define POR_PRUC	4
-#define POR_PRUCMP	5
-#define POR_DLRUC	6
+#define POR_PPP     1 
+#define POR_PPU     2
+#define POR_PP      3
+#define POR_PRUC    4
+#define POR_PRUCMP  5
+#define POR_DLRUC   6
 
-#define POR_I_PRUC	1
-#define POR_I_MPC2	2
-#define POR_I_PP	3
-#define POR_I_MPC3	4
-#define POR_I_PPP	5
-#define POR_I_MPC4	6
+#define POR_I_PRUC  1
+#define POR_I_MPC2  2
+#define POR_I_PP    3
+#define POR_I_MPC3  4
+#define POR_I_PPP   5
+#define POR_I_MPC4  6

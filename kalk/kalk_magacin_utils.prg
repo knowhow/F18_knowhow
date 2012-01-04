@@ -612,13 +612,13 @@ endif
 private cPom:="VPC" 
 
 if koncij->naz=="P2"
-   cPom:="PLC"
+   cPom:="plc"
    nVal:=roba->plc
 elseif koncij->naz=="V2"
-   cPom:="VPC2"
+   cPom:="vpc2"
    nVal:=roba->VPC2
 else
-   cPom:="VPC"
+   cPom:="vpc"
    nVal:=roba->VPC
 endif
 

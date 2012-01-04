@@ -8,6 +8,11 @@ f18_test_init()
 
 TEST_BEGIN("")
 
+test_migrate()
+
+TEST_END()
+return
+
 // test bug
 // ? ajoj
 
@@ -25,6 +30,7 @@ test_version()
 
 //test_thread()
 test_semaphores()
+
 
 TEST_END()
 

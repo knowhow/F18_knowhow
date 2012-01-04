@@ -13,12 +13,30 @@
 
 static __fin_fmk_tables := { {"suban", "fin_suban"}, {"anal", "fin_anal"} }
 
+#ifdef TEST
+static __test_fmk_tables := { {"t_fmk_1", "test_sem_1"}, {"test_fmk_2", "test_sem_2"} }
+#endif
+
+// --------------------------------------
+// --------------------------------------
+function fmk_migrate_root(fmk_root_dir)
+if fmk_root_dir == NIL
+#ifdef __PLATFORM__WINDOWS
+   fmk_root_dir := "c:" + SLASH + "SIGMA"
+#else 
+   fmk_root_dir := hb_DirSepAdd(tmp_dir()) +  "SIGMA"
+#endif
+endif
+
+return fmk_root_dir
+
+
+// -----------------------------
+// -----------------------------
 function fmk_migrate(cur_dir)
 local _files, _file
 
-if cur_dir == NIL
-   cur_dir := "/tmp/SIGMA"
-endif
+cur_dir := fmk_migrate_root(cur_dir)
 
 log_write(PROCNAME(1) + ": " + cur_dir)
 

@@ -11,10 +11,10 @@
 
 #include "fmk.ch"
 
-function test_migrate()
+function tmp_dir()
 
-fmk_migrate()
-
-TEST_LINE(.t., .t.)
-
-return .t.
+#ifdef __PLATFORM__WINDOWS
+  home := GetEnv("TMP")
+#else
+  return "/tmp"
+#endif

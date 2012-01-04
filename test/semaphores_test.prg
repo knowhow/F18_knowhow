@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fmk.ch"
+#include "f18.ch"
 #include "hbthread.ch"
 
 #define F_TEST_SEM_1 9001
@@ -25,23 +25,14 @@ local _table_name, _alias
 local _thread_2_id
 local _rec
 
-// ------------------------
 _ime_f := "test_sem_1"
-// ------------------------
 
 _i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
 if _i == 0
   AADD(gaDBFs, { F_TEST_SEM_1,  "TEST_SEM_1",  "test_sem_1", {|alg| test_sem_1_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("test_sem_1", x)}, "ID"})
 endif
 
-_dbf_struct := {}
-AADD(_dbf_struct,      { 'ID' ,  'C' ,   4 ,  0 })
-AADD(_dbf_struct,      { 'NAZ' , 'C' ,  20 ,  0 })
-       
-DBCREATE2(_ime_f, _dbf_struct)
-
-CREATE_INDEX("ID",  "id", _ime_f)  
-CREATE_INDEX("NAZ", "naz", _ime_f)
+cre_t_1("test_sem_1", .t.)
 
 TEST_LINE(login_as("admin"), .t.)
 

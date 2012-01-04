@@ -10,9 +10,6 @@ TEST_BEGIN("")
 
 test_migrate()
 
-TEST_END()
-return
-
 // test bug
 // ? ajoj
 

@@ -202,7 +202,6 @@ do while !EOF()
 	  xml_node( "sh_he", cTmp_h )
 	  // <sh_wi>300</sh_wi>
 	  xml_node( "sh_wi", cTmp_w )
-	  
 	 
 	  // <l_pos>unutra</l_pos>
 	  xml_node( "l_pos", cL_pos_def )

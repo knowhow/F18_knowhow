@@ -14,7 +14,8 @@
 
 static __device := 0
 static __auto := .f.
-
+static __gotov_code := PADR( "GOTOV", 6 )
+static __is_gotov := .f.
 
 // ---------------------------------------------------------
 // centralna funkcija za poziv stampe fiskalnog racuna
@@ -921,6 +922,14 @@ if cTipDok $ "#10#11#"
 	if cTipDok $ "#10#"
 		cVr_Placanja := "3"
 	endif
+
+    // ako je "gotov" vrsta placanja onda resetuj 
+    // na vrstu placanja 0 - gotovina i izbaci partnera iz igre na racunu
+    if cTipDok $ "#10#" .and. cPartnId == __gotov_code
+        __is_gotov := .t.
+        cPartnId := ""
+        cVr_placanja := "0"
+    endif
 
 endif
 

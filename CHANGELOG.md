@@ -1,8 +1,11 @@
-0.9.34  2011-12-30, hernad, vidi log, brisi dbf i sinhroniziraj
+0.9.35  2012-01-01, hernad, dbf ver 0.4.1
 
-  - [#26010](http://redmine.bring.out.ba/issues/26010)
+  - [#26048](http://redmine.bring.out.ba/issues/26048)
+  - dbf ver 0.4.1
 
 0.9.33  2011-12-30, vsasa, ld, ciscenje, stavljanje u funkciju
+  
+  - [#26010](http://redmine.bring.out.ba/issues/26010)
 
 0.9.32  2011-12-30, hernad, v2 dbf refaktoring
 

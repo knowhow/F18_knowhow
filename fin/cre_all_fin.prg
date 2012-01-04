@@ -80,6 +80,12 @@ _table_name := "fin_psuban"
 if !FILE(f18_ime_dbf(_alias))
     DBcreate2(_alias, aDbf)
 endif
+
+// 0.4.1
+if ver["current"] < 00401
+   modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
+endif
+
 CREATE_INDEX("1", "IdFirma+IdVn+BrNal", _alias)
 CREATE_INDEX("2", "idFirma+IdVN+BrNal+IdKonto", _alias)
 
@@ -91,6 +97,11 @@ _alias := "FIN_PRIPR"
 _table_name := "fin_pripr"
 if !FILE(f18_ime_dbf(_alias))
     DBcreate2(_alias, aDbf)
+endif
+
+// 0.4.1
+if ver["current"] < 00401
+   modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
 CREATE_INDEX("1", "idFirma+IdVN+BrNal+Rbr", _alias)

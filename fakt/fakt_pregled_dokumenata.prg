@@ -645,7 +645,7 @@ return DE_CONT
 
 // print radni nalog
 function pr_rn()
-*{
+
 select fakt_doks
 nTrec:=recno()
 _cIdFirma:=idfirma
@@ -656,7 +656,9 @@ o_fakt_edit()
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok, .t.)
 // printaj radni nalog
 rnal_print(.t.)
-select (F_FAKT_DOKS); use
+select (F_FAKT_DOKS)
+use
+
 O_FAKT_DOKS
 if lOpcine
     O_PARTN
@@ -674,16 +676,23 @@ return DE_CONT
 
 // stampaj poresku fakturu
 function pr_pf()
-*{
+
 select fakt_doks
 nTrec:=recno()
+
 _cIdFirma:=idfirma
 _cIdTipDok:=idtipdok
 _cBrDok:=brdok
+
 close all
+
 o_fakt_edit()
+
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok)
-select (F_FAKT_DOKS); use
+
+select (F_FAKT_DOKS)
+use
+
 O_FAKT_DOKS
 if lOpcine
     O_PARTN

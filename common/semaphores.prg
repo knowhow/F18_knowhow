@@ -33,11 +33,6 @@ if excl == NIL
   excl := .f.
 endif
 
-/*
-{ F_PRIPR  ,  "PRIPR"   , "fin_pripr"  },;
-...
-*/
-
 if VALTYPE(alias) == "N"
    // F_SUBAN
    _pos := ASCAN(gaDBFs,  { |x|  x[1]==alias} )
@@ -258,7 +253,7 @@ if VALTYPE(_tbl_obj) == "L"
       QUIT
 endif
 
-_result := _tbl_obj:Fieldget( _tbl_obj:Fieldpos( IIF(last, "last_version", "version")) )
+_result := _tbl_obj:Fieldget(1)
 
 RETURN _result
 
@@ -290,7 +285,7 @@ _qry := "SELECT version from " + _tbl + ;
            " WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
-return _ret:Fieldget( _ret:Fieldpos("version") )
+return _ret:Fieldget(1)
 
 
 /*
@@ -355,7 +350,7 @@ endif
 _qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
-return _ret:Fieldget( _ret:Fieldpos("version") )
+return _ret:Fieldget(1)
 
 //---------------------------------------
 //---------------------------------------
@@ -425,7 +420,7 @@ IF _tbl_obj == NIL
       QUIT
 ENDIF
 
-_ids := _tbl_obj:Fieldget( _tbl_obj:Fieldpos("ids") )
+_ids := _tbl_obj:Fieldget(1)
 
 _arr := {}
 if _ids == NIL
@@ -491,15 +486,14 @@ IF VALTYPE(_tbl_obj) == "L"
       QUIT
 ENDIF
 
-_dat := oTable:Fieldget( oTable:Fieldpos("dat") )
+_dat := oTable:Fieldget(1)
 
 RETURN _dat
 
 
-/* ------------------------------  
-  broj redova za tabelu
-  --------------------------------
-*/
+// ------------------------------  
+//  broj redova za tabelu
+//  --------------------------------
 function table_count(table, condition)
 LOCAL _table_obj
 LOCAL _result
@@ -515,6 +509,6 @@ IF VALTYPE(_table_obj) == "L"
       QUIT
 ENDIF
 
-_result := _table_obj:Fieldget( _table_obj:Fieldpos("count") )
+_result := _table_obj:Fieldget(1)
 
 RETURN _result

@@ -315,7 +315,7 @@ if cTabela == "D"
         AADD(adKol,i)
    next
 
-   ObjDbedit("", MAXROW() - 4, MAXCOL() - 3,{|| EdDatn()}, "", "", , , , , 2 )
+   ObjDbedit("", MAXROW() - 4, MAXCOL() - 3, {|| EdDatn()}, "", "", , , , , 2 )
    BoxC()
 
    if fupripremu
@@ -940,9 +940,11 @@ return nSelected
 // vraca vezu dokumenta
 // ----------------------------------------------------------------
 function g_d_veza( cIdFirma, cTipDok, cBrDok, cDok_veza, cTxt )
+local _open_fakt := .f.
 local cVeza := ""
-local nTArea := SELECT()
 local lDok_veza := .f.
+
+PushWa()
 
 if cTxt == nil
     cTxt := ""
@@ -959,16 +961,21 @@ else
     
     if EMPTY( cTxt )
         // uzmi iz fakt->memo polja broj veze
-        select fakt
-        go top
-        seek cIdFirma + cTipDok + cBrDok
+        SELECT F_FAKT
+        if !USED()
+                _open_fakt := .t.
+                O_FAKT
+        endif
+        SEEK cIdFirma + cTipDok + cBrDok
         cTxt := field->txt
+
+        if _open_fakt 
+               USE
+        endif
+
     endif
 
     aTemp := ParsMemo( cTxt )
-    
-    select ( nTArea )
-
     if LEN( aTemp ) >= 19
         cVeza := ALLTRIM( aTemp[19] )
     else
@@ -976,9 +983,8 @@ else
     endif
 endif
 
+PopWa()
 return cVeza
-
-
 
 // ----------------------------------------------------
 // prikazuje brojeve veze

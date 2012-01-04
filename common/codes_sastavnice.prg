@@ -25,7 +25,8 @@ select roba
 set_a_kol(@ImeKol, @Kol)
 
 select roba
-index on id + tip tag "IDUN" to robapro for tip="P"  
+index on id + tip tag "IDUN" to (my_home() + "robapro") for tip="P"  
+
 // samo lista robe
 set order to tag "idun"
 go top

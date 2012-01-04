@@ -77,10 +77,10 @@ return
 // ------------------------------------
 // kreiranje indexa matchcode
 // ------------------------------------
-function index_mcode(cPath, cTable)
+function index_mcode(dummy, alias)
 
 if fieldpos("MATCH_CODE") <> 0
-    //CREATE_INDEX("MCODE", "match_code", cPath + cTable)
+    CREATE_INDEX("MCODE", "match_code", alias)
 endif
 
 return

@@ -17,6 +17,53 @@ function set_a_dbfs()
 
 public gaDbfs := {}
 
+
+// modul FIN
+AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|alg| fin_suban_from_sql_server(alg) }, "IDS" , {"idfirma", "idvn", "brnal", "rbr" }, { |x| sql_where_block("fin_suban", x) }, "4" })
+// fin_anal: TAG "2", "idFirma+IdVN+BrNal+Rbr"
+AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",    {|alg| fin_anal_from_sql_server(alg)  }, "IDS", {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_anal", x) }, "2" } )
+// fin_sint: TAG "2", "idFirma+IdVN+BrNal+Rbr"
+AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|alg| fin_sint_from_sql_server(alg)  }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_sint", x) }, "2" }  )
+// fin_nalog: tag "1", "IdFirma+IdVn+BrNal"
+AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_nalog", x) }, "1" })
+
+
+// fin sifrarnici
+AADD( gaDbfs, { F_OPS      , "OPS"       , "ops"       , { |param| opstine_from_sql_server( param )   }  , "IDS" } )
+AADD( gaDbfs, { F_BANKE    , "BANKE"     , "banke"     , { |param| banke_from_sql_server( param )     }  , "IDS" } )
+AADD( gaDbfs, { F_FMKRULES , "FMKRULES"  , "f18_rules" , { |param| f18_rules_from_sql_server( param ) }  , "IDS" } )
+
+
+AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )
+AADD( gaDbfs, { F_FIN_FIPRIPR , "FIN_PRIPR"   , "fin_pripr"  } )
+AADD( gaDbfs, { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  } )
+AADD( gaDbfs, { F_IOS    ,  "IOS"     , "fin_ios"  } )
+AADD( gaDbfs, { F_OSTAV    ,  "ostav"     , "fin_ostav"  } )
+AADD( gaDbfs, { F_PNALOG ,  "PNALOG"  , "fin_pnalog"  } )
+AADD( gaDbfs, { F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  } )
+AADD( gaDbfs, { F_PANAL  ,  "PANAL"   , "fin_panal"  } )
+AADD( gaDbfs, { F_PSINT  ,  "PSINT"   , "fin_psint"  } )
+AADD( gaDbfs, { F_FIN_PRIPRRP,  "FIN_PRIPRRP" , "fin_priprrp"  } )
+AADD( gaDbfs, { F_OSTAV  ,  "OSTAV"   , "fin_ostav"   } )
+AADD( gaDbfs, { F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  } )
+AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )
+AADD( gaDbfs, { F__PARTN ,  "_PARTN"  , "fin__partn"  } )
+AADD( gaDbfs, { F_POM    ,  "POM"     , "fin_pom"     } )
+AADD( gaDbfs, { F_POM2   ,  "POM2"    , "fin_pom2"    } )
+AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"     } )
+AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"     } )
+
+
+AADD( gaDbfs, { F_FUNK   ,  "FUNK"    , "fin_funk"    } )
+AADD( gaDbfs, { F_BUDZET ,  "BUDZET"  , "fin_budzet"  } )
+AADD( gaDbfs, { F_PAREK  ,  "PAREK"   , "fin_parek"   } )
+AADD( gaDbfs, { F_FOND   ,  "FOND"    , "fin_fond"    } )
+AADD( gaDbfs, { F_KONIZ  ,  "KONIZ"   , "fin_koniz"   } )
+AADD( gaDbfs, { F_IZVJE  ,  "IZVJE"   , "fin_izvje"   } )
+AADD( gaDbfs, { F_ZAGLI  ,  "ZAGLI"   , "fin_zagli"   } )
+AADD( gaDbfs, { F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   } )
+AADD( gaDbfs, { F_BUIZ   ,  "BUIZ"    , "fin_buiz"    } )
+
 // parametri
 AADD( gaDbfs, { F_PARAMS  ,  "PARAMS"   , "params"  } )
 AADD( gaDbfs, { F_GPARAMS , "GPARAMS"  , "gparams"  } )
@@ -25,25 +72,36 @@ AADD( gaDbfs, { F_SECUR  , "SECUR"  , "secur"  } )
 
 // sifrarnici
 AADD( gaDbfs, { F_TOKVAL  , "TOKVAL"  , "tokval"  } )
+
 AADD( gaDbfs, { F_SIFK  , "SIFK"  , "sifk", { |param| sifk_from_sql_server(param) }, "IDS", {"id", "oznaka"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) }, "ID2" })
 AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( param ) }, "IDS", {"id", "oznaka", "idsif", "naz"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) + " AND IDSIF=" + _sql_quote(x["idsif"] + " AND NAZ=" + _sql_quote(x["naz"])) }, "ID" })
   
-AADD( gaDbfs, { F_OPS , "OPS"  , "ops", { | param | opstine_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_BANKE , "BANKE"  , "banke", { | param | banke_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_BARKOD , "BARKOD"  , "barkod"  } )
-AADD( gaDbfs, { F_STRINGS , "STRINGS"  , "strings"  } )
-AADD( gaDbfs, { F_RNAL , "RNAL"  , "rnal"  } )
-AADD( gaDbfs, { F_DEST   ,"DEST"    , "dest", { | param | dest_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_LOKAL , "LOKAL"  , "lokal", { | param | lokal_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_DOKSRC , "DOKSRC"  , "doksrc"  } )
+// ROBA
+AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    , { | param | roba_from_sql_server(param)    }  , "IDS" } )
+AADD( gaDbfs, { F_SAST     ,  "SAST"    , "sast"    , { | param | sast_from_sql_server(param)    }  , "IDS" } )
+AADD( gaDbfs, { F_TARIFA   ,  "TARIFA"  , "tarifa"  , { | param | tarifa_from_sql_server(param)  }  , "IDS" } )
+AADD( gaDbfs, { F_KONCIJ   ,  "KONCIJ"  , "koncij"  , { | param | koncij_from_sql_server(param)  }  , "IDS" } )
+
+AADD( gaDbfs, { F_BARKOD   , "BARKOD"  , "barkod"  } )
+
+
+
+AADD( gaDbfs, { F_STRINGS  , "STRINGS"  , "strings"  } )
+AADD( gaDbfs, { F_RNAL     , "RNAL"  , "rnal"  } )
+
+// ? koje funkcije ovo koriste
+AADD( gaDbfs, { F_DEST     , "DEST"    , "dest", { | param | dest_from_sql_server( param ) }, "IDS" } )
+
+// ?
+AADD( gaDbfs, { F_LOKAL    , "LOKAL"  , "lokal", { | param | lokal_from_sql_server( param ) }, "IDS" } )
+
+AADD( gaDbfs, { F_DOKSRC   , "DOKSRC"  , "doksrc"  } )
 AADD( gaDbfs, { F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  } )
 AADD( gaDbfs, { F_RELATION , "RELATION"  , "relation"  } )
-AADD( gaDbfs, { F_FMKRULES , "FMKRULES"  , "f18_rules", { | param | f18_rules_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_RULES , "RULES"  , "rules"  } )
 AADD( gaDbfs, { F_P_UPDATE , "P_UPDATE"  , "p_update"  } )
 AADD( gaDbfs, { F__ROBA , "_ROBA"  , "_roba"  } )
-AADD( gaDbfs, { F_TRFP , "TRFP"  , "trfp", { | param | trfp_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_SAST , "SAST"  , "sast", { | param | sast_from_sql_server( param ) }, "IDS" } )
+
 AADD( gaDbfs, { F_VRSTEP , "VRSTEP"  , "vrstep"  } )
 AADD( gaDbfs, { F_RJ     ,  "RJ"      , "rj", { | param | rj_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_TDOK   ,  "TDOK"    , "tdok", { | param | tdok_from_sql_server( param ) }, "IDS" } )
@@ -53,9 +111,7 @@ AADD( gaDbfs, { F_PARTN  ,  "PARTN"   , "partn", {| param | partn_from_sql_serve
 AADD( gaDbfs, { F_TNAL   ,  "TNAL"    , "tnal", { | param | tnal_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_PKONTO ,  "PKONTO"  , "pkonto"   } )
 AADD( gaDbfs, { F_VALUTE ,  "VALUTE"  , "valute", { | param | valute_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_ROBA   ,  "ROBA"    , "roba", { | param | roba_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_TARIFA ,  "TARIFA"  , "tarifa", { | param | tarifa_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_KONCIJ ,  "KONCIJ"  , "koncij", { | param | koncij_from_sql_server( param ) }, "IDS" } )
+
 AADD( gaDbfs, { F_TRFP2  ,  "TRFP2"   , "trfp2", { | param | trfp2_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_TRFP3  ,  "TRFP3"   , "trfp3", { | param | trfp3_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_VKSG   ,  "VKSG"    , "vksg"   } )
@@ -67,74 +123,40 @@ AADD( gaDbfs, { F_R_EXP ,  "R_EXPORT"  , "r_export"  } )
 // finmat
 AADD( gaDbfs, { F_FINMAT ,  "FINMAT"  , "fin_mat"  } )
 
-// modul FIN
-AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )
-AADD( gaDbfs, { F_FIN_FIPRIPR , "FIN_PRIPR"   , "fin_pripr"  } )
-AADD( gaDbfs, { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  } )
-AADD( gaDbfs, { F_IOS    ,  "IOS"     , "fin_ios"  } )
-AADD( gaDbfs, { F_OSTAV    ,  "ostav"     , "fin_ostav"  } )
-AADD( gaDbfs, { F_PNALOG ,  "PNALOG"  , "fin_pnalog"  } )
-AADD( gaDbfs, { F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  } )
-AADD( gaDbfs, { F_PANAL  ,  "PANAL"   , "fin_panal"  } )
-AADD( gaDbfs, { F_PSINT  ,  "PSINT"   , "fin_psint"  } )
-AADD( gaDbfs, { F_FIN_PRIPRRP,  "FIN_PRIPRRP" , "fin_priprrp"  } )
-AADD( gaDbfs, { F_OSTAV  ,  "OSTAV"   , "fin_ostav"  } )
-AADD( gaDbfs, { F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  } )
-AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )
-AADD( gaDbfs, { F__PARTN ,  "_PARTN"  , "fin__partn"  } )
-AADD( gaDbfs, { F_POM    ,  "POM"     , "fin_pom"  } )
-AADD( gaDbfs, { F_POM2   ,  "POM2"    , "fin_pom2"  } )
-AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"   } )
-AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"   } )
-AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|alg| fin_suban_from_sql_server(alg) }, "IDS" , {"idfirma", "idvn", "brnal", "rbr" }, { |x| sql_where_block("fin_suban", x) } , "4" })
-
-
-// fin_anal: TAG "2", "idFirma+IdVN+BrNal+Rbr"
-AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",    {|alg| fin_anal_from_sql_server(alg)  }, "IDS", {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_anal", x) }, "2" } )
-
-// fin_sint: TAG "2", "idFirma+IdVN+BrNal+Rbr"
-AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|alg| fin_sint_from_sql_server(alg)  }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_sint", x) }, "2" }  )
-
-
-// fin_nalog: tag "1", "IdFirma+IdVn+BrNal"
-AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_nalog", x) }, "1" })
-
-AADD( gaDbfs, { F_FUNK   ,  "FUNK"    , "fin_funk"  } )
-AADD( gaDbfs, { F_BUDZET ,  "BUDZET"  , "fin_budzet"  } )
-AADD( gaDbfs, { F_PAREK  ,  "PAREK"   , "fin_parek"   } )
-AADD( gaDbfs, { F_FOND   ,  "FOND"    , "fin_fond"   } )
-AADD( gaDbfs, { F_KONIZ  ,  "KONIZ"   , "fin_koniz"   } )
-AADD( gaDbfs, { F_IZVJE  ,  "IZVJE"   , "fin_izvje"   } )
-AADD( gaDbfs, { F_ZAGLI  ,  "ZAGLI"   , "fin_zagli"   } )
-AADD( gaDbfs, { F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   } )
-AADD( gaDbfs, { F_BUIZ   ,  "BUIZ"    , "fin_buiz"   } )
-
 //modul KALK
-AADD( gaDbfs, { F_KALK  ,"KALK" , "kalk_kalk" , {|alg| kalk_kalk_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, { F_KALK_DOKS  ,"KALK_DOKS", "kalk_doks", {|alg| kalk_doks_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, { F_KALK_DOKS2  ,"KALK_DOKS2"   , "kalk_doks2"    } )
+AADD( gaDbfs, { F_KALK        , "KALK"         , "kalk_kalk" , {|alg| kalk_kalk_from_sql_server(alg) }, "IDS" } )
+AADD( gaDbfs, { F_KALK_DOKS   , "KALK_DOKS"    , "kalk_doks" , {|alg| kalk_doks_from_sql_server(alg) }, "IDS" } )
+
+
+// KALK sifrarnik
+AADD( gaDbfs, { F_TRFP ,       "TRFP"  , "trfp",   { | param | trfp_from_sql_server( param ) }, "IDS" } )
+
+
+// TODO: zar ovaj kalk_doks2 ne treba na server ?
+AADD( gaDbfs, { F_KALK_DOKS2  , "KALK_DOKS2"   , "kalk_doks2"    } )
+
+
 AADD( gaDbfs, { F_KALKS  ,"KALKS" , "kalk_kalks"    } )
 AADD( gaDbfs, { F__KALK  ,"_KALK" , "_kalk_kalk"    } )
 AADD( gaDbfs, { F_KALK_PRIPR  ,"KALK_PRIPR"   , "kalk_pripr"    } )
 AADD( gaDbfs, { F_KALK_PRIPR2  ,"KALK_PRIPR2"  , "kalk_pripr2"   } )
 AADD( gaDbfs, { F_KALK_PRIPR9  ,"KALK_PRIPR9"  , "kalk_pripr9"   } )
-AADD( gaDbfs, { F_PORMP  ,"PORMP"        , "kalk_pormp"     } )
-AADD( gaDbfs, { F_TRFP   ,"TRFP"         , "kalk_trfp"      } )
-AADD( gaDbfs, { F_DOKSRC ,"KALK_DOKSRC"  , "kalk_doksrc"    } )
-AADD( gaDbfs, { F_P_DOKSRC,"P_KALK_DOKSRC", "p_kalk_doksrc"   } )
-AADD( gaDbfs, { F_PPPROD ,"PPPROD"  , "kalk_ppprod"    } )
-AADD( gaDbfs, { F_OBJEKTI,"OBJEKTI" , "kalk_objekti"     } )
-AADD( gaDbfs, { F_POBJEKTI,"POBJEKTI" , "kalk_pobjekti"     } )
-AADD( gaDbfs, { F_PRODNC, "PRODNC"  , "kalk_prodnc"     } )
-AADD( gaDbfs, { F_RVRSTA, "RVRSTA"  , "kalk_rvrsta"     } )
-AADD( gaDbfs, { F_CACHE     ,"CACHE"      , "kalk_cache"     } )
-AADD( gaDbfs, { F_PRIPT     ,"PRIPT"      , "kalk_pript"     } )
-AADD( gaDbfs, { F_REKAP1     ,"REKAP1"      , "kalk_rekap1"     } )
-AADD( gaDbfs, { F_REKAP2     ,"REKAP2"      , "kalk_rekap2"     } )
-AADD( gaDbfs, { F_REKA22     ,"REKA22"      , "kalk_reka22"     } )
-AADD( gaDbfs, { F_R_UIO     ,"R_UIO"       , "kalk_r_uio"     } )
-AADD( gaDbfs, { F_RPT_TMP     ,"RPT_TMP"     , "kalk_rpt_tmp"     } )
+AADD( gaDbfs, { F_PORMP       ,"PORMP"        , "kalk_pormp"     } )
 
+AADD( gaDbfs, { F_DOKSRC      , "KALK_DOKSRC"  , "kalk_doksrc"    } )
+AADD( gaDbfs, { F_P_DOKSRC    , "P_KALK_DOKSRC", "p_kalk_doksrc"   } )
+AADD( gaDbfs, { F_PPPROD      , "PPPROD"  , "kalk_ppprod"    } )
+AADD( gaDbfs, { F_OBJEKTI     , "OBJEKTI" , "kalk_objekti"     } )
+AADD( gaDbfs, { F_POBJEKTI    , "POBJEKTI" , "kalk_pobjekti"     } )
+AADD( gaDbfs, { F_PRODNC      , "PRODNC"  , "kalk_prodnc"     } )
+AADD( gaDbfs, { F_RVRSTA      , "RVRSTA"  , "kalk_rvrsta"     } )
+AADD( gaDbfs, { F_CACHE       , "CACHE"      , "kalk_cache"     } )
+AADD( gaDbfs, { F_PRIPT       , "PRIPT"      , "kalk_pript"     } )
+AADD( gaDbfs, { F_REKAP1      , "REKAP1"      , "kalk_rekap1"     } )
+AADD( gaDbfs, { F_REKAP2      , "REKAP2"      , "kalk_rekap2"     } )
+AADD( gaDbfs, { F_REKA22      , "REKA22"      , "kalk_reka22"     } )
+AADD( gaDbfs, { F_R_UIO       , "R_UIO"       , "kalk_r_uio"     } )
+AADD( gaDbfs, { F_RPT_TMP     , "RPT_TMP"     , "kalk_rpt_tmp"     } )
 
 // modul FAKT
 AADD( gaDbfs, { F_PRIPR       , "FAKT_PRIPR"    , "fakt_pripr"     } )

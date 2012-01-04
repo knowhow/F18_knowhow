@@ -69,5 +69,75 @@ endif
 CREATE_INDEX("V_BRF",  "brfaktp+idvd", _alias)
 CREATE_INDEX("V_BRF2", "idvd+brfaktp", _alias)
 
-return .t.
 
+// ------------------------------------------------
+// KONCIJ
+// ------------------------------------------------
+ 
+aDbf:={}
+   
+AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDPRODMJES'          , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'REGION'              , 'C' ,   2 ,  0 })
+
+_created := .f.
+_alias := "KONCIJ"
+_table_name := "koncij"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    _created := .t.
+endif
+
+if _created
+  reset_semaphore_version(_table_name)
+  my_usex(_alias)
+  USE
+endif
+
+
+CREATE_INDEX("ID","id", _alias)
+index_mcode( NIL, "KONCIJ")
+
+// --------------------------------------------------
+// TRFP
+// --------------------------------------------------
+    
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
+AADD(aDBf,{ 'DOKUMENT'            , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'PARTNER'             , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'D_P'                 , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'ZNAK'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
+
+_created := .f.
+_alias := "TRFP"
+_table_name := "trfp"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    _created := .t.
+endif
+
+if _created
+  reset_semaphore_version(_table_name)
+  my_usex(_alias)
+  USE
+endif
+
+
+CREATE_INDEX("ID", "idvd+shema+Idkonto", _alias)
+index_mcode(NIL, _alias)
+
+
+return .t.

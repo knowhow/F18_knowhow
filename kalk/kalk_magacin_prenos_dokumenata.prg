@@ -470,19 +470,24 @@ closeret
 
 return
 
-
+// --------------------------
+// --------------------------
 function SufBrKalk(cIdKonto)
-*{
-local nArr:=SELECT()
-local cSufiks:=SPACE(3)
+
+local nArr    := SELECT()
+local cSufiks := SPACE(3)
+
 select koncij
 seek cIdKonto
-if found()
-	cSufiks:=field->sufiks
+
+if found() 
+    if FIELDPOS("sufiks") <> 0
+	    cSufiks := field->sufiks
+    endif
 endif
 select (nArr)
+
 return cSufiks
-*}
 
 // --------------------------
 // --------------------------

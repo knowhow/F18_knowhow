@@ -1,4 +1,8 @@
-0.9.35  2012-01-01, hernad, dbf ver 0.4.1
+0.9.36  2012-01-04, hernad, test_sem_1 bug
+
+  - [#26059](http://redmine.bring.out.ba/issues/26059)
+
+0.9.35  2012-01-04, hernad, dbf ver 0.4.1
 
   - [#26048](http://redmine.bring.out.ba/issues/26048)
   - dbf ver 0.4.1

@@ -326,7 +326,7 @@ if (_result == 0)
    _id_full := "ARRAY[" + _sql_quote("<FULL>/") + "]"
 
    _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
-               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from fmk.semaphores_test_sem_1), " + _id_full + ")"
+               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
    _ret := _sql_query( _server, _qry)
 
 else

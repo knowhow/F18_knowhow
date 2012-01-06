@@ -19,30 +19,30 @@
 function getlday( nMonth )
 local nDay := 0
 do case
-	case nMonth = 1
-		nDay := 31
-	case nMonth = 2
-		nDay := 28
-	case nMonth = 3
-		nDay := 31
-	case nMonth = 4
-		nDay := 30
-	case nMonth = 5
-		nDay := 31
-	case nMonth = 6
-		nDay := 30
-	case nMonth = 7
-		nDay := 31
-	case nMonth = 8
-		nDay := 31
-	case nMonth = 9
-		nDay := 30
-	case nMonth = 10
-		nDay := 31
-	case nMonth = 11
-		nDay := 30
-	case nMonth = 12
-		nDay := 31
+    case nMonth = 1
+        nDay := 31
+    case nMonth = 2
+        nDay := 28
+    case nMonth = 3
+        nDay := 31
+    case nMonth = 4
+        nDay := 30
+    case nMonth = 5
+        nDay := 31
+    case nMonth = 6
+        nDay := 30
+    case nMonth = 7
+        nDay := 31
+    case nMonth = 8
+        nDay := 31
+    case nMonth = 9
+        nDay := 30
+    case nMonth = 10
+        nDay := 31
+    case nMonth = 11
+        nDay := 30
+    case nMonth = 12
+        nDay := 31
 endcase
 return nDay
 
@@ -60,7 +60,7 @@ O_OPS
 select ops
 hseek cOpsst
 if ops->reg == "2"
-	lRet := .t.
+    lRet := .t.
 endif
 select (nTArea)
 return lRet
@@ -94,6 +94,8 @@ local uNaRuke
 local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
+local _cmd
+local _dbf_path
 private aSpec:={}
 private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999" + IIF(gZaok>0, PADR(".",gZaok+1,"9"), "")
@@ -101,8 +103,8 @@ private gPici2:="9,999,999,999,999,999" + IIF(gZaok2>0, PADR(".",gZaok2+1,"9"), 
 private gPici3:="999,999,999,999.99"
 
 for i:=1 to nGrupaPoslova+1
-	AADD(aSpec,{0,0,0,0})
-	//  br.bodova, br.radnika, minuli rad, uneto
+    AADD(aSpec,{0,0,0,0})
+    //  br.bodova, br.radnika, minuli rad, uneto
 next
 
 cIdRJ:="  "
@@ -180,14 +182,14 @@ nLimG5:=0
 OSpecif()
 
 if (FieldPos("DNE")<>0)
-	go top
- 	do while !eof()
-   		AADD(aOps,{id,dne,0}) // sifra opstine, dopr.koje nema, neto
-   		skip 1
- 	enddo
- 	lPDNE:=.t.
+    go top
+    do while !eof()
+        AADD(aOps,{id,dne,0}) // sifra opstine, dopr.koje nema, neto
+        skip 1
+    enddo
+    lPDNE:=.t.
 else
-	lPDNE:=.f.
+    lPDNE:=.f.
 endif
 
 select params
@@ -240,84 +242,84 @@ dDatIspl := date()
 
 
 do while .t.
-	Box(,22+IF(gVarSpec=="1",0,1),75)
-     		
-		@ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): " ;
-			GET qqIdRJ PICT "@!S15"
-     		@ m_x+ 1,col()+1 SAY "Djelatnost" GET cRTipRada ;
-			VALID val_tiprada( cRTipRada ) PICT "@!"
-		@ m_x+ 1,col()+1 SAY "Spec.za RS" GET cRepSr ;
-			VALID cRepSr $ "DN" PICT "@!"
+    Box(,22+IF(gVarSpec=="1",0,1),75)
+            
+        @ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): " ;
+            GET qqIdRJ PICT "@!S15"
+            @ m_x+ 1,col()+1 SAY "Djelatnost" GET cRTipRada ;
+            VALID val_tiprada( cRTipRada ) PICT "@!"
+        @ m_x+ 1,col()+1 SAY "Spec.za RS" GET cRepSr ;
+            VALID cRepSr $ "DN" PICT "@!"
 
-		@ m_x+ 2,m_y+ 2 SAY "Opstina stanov.(prazno-sve): " ;
-		 	GET qqOpSt PICT "@!S20"
-		
-		if lViseObr
-       			@ m_x+ 2,col()+1 SAY "Obr.:" GET cObracun ;
-				WHEN HelpObr(.t.,cObracun) ;
-				VALID ValObr(.t.,cObracun)
-     		endif
-     	
-     		@ m_x+ 3,m_y+ 2 SAY "Period od:" GET nDanOd pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nMjesecOd pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nGodinaOd pict "9999"
-     		@ m_x+ 3,col()+1 SAY "do:" GET nDanDo pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nMjesecDo pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nGodinaDo pict "9999"
-     	
-		
-     		@ m_x+ 4,m_y+ 2 SAY " Naziv: " GET cFirmNaz
-     		@ m_x+ 5,m_y+ 2 SAY "Adresa: " GET cFirmAdresa
-     		@ m_x+ 6,m_y+ 2 SAY "Opcina: " GET cFirmOpc
-     		@ m_x+ 7,m_y+ 2 SAY "Vrsta djelatnosti: " GET cFirmVD
-     		
-     		@ m_x+ 4,m_y+ 52 SAY "ID.broj :" GET cMatBR
-     		@ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
-     		
-		
-		@ m_x+9,m_y+ 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
-			GET cPrimDobra  PICT "@!S20"
-     		
-		@ m_x+10,m_y+ 2 SAY "Dopr.pio (iz)" GET cDopr1
-     		@ m_x+10,col()+ 2 SAY "Dopr.pio (na)" GET cDopr5
-     		@ m_x+11,m_y+ 2 SAY "Dopr.zdr (iz)" GET cDopr2
-     		@ m_x+11,col()+ 2 SAY "Dopr.zdr (na)" GET cDopr6
-     		@ m_x+12,m_y+ 2 SAY "Dopr.nez (iz)" GET cDopr3
-     		@ m_x+12,col()+ 2 SAY "Dopr.nez (na)" GET cDopr7
-     		
-     		@ m_x+13,m_y+ 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
-     		@ m_x+14,m_y+ 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
-		
-		@ m_x+15,m_y+ 2 SAY "Ost.obaveze: NAZIV                  USLOV"
-     		@ m_x+16,m_y+ 2 SAY " 1." GET ccOO1
-     		@ m_x+16,m_y+30 GET cnOO1
-     		@ m_x+17,m_y+ 2 SAY " 2." GET ccOO2
-     		@ m_x+17,m_y+30 GET cnOO2
-     		@ m_x+18,m_y+ 2 SAY " 3." GET ccOO3
-     		@ m_x+18,m_y+30 GET cnOO3
-     		@ m_x+19,m_y+ 2 SAY " 4." GET ccOO4
-     		@ m_x+19,m_y+30 GET cnOO4
-     		
-		@ m_x+21, m_y+2 SAY "Isplata: 'A' doprinosi+porez, 'B' samo doprinosi, 'C' samo porez" GET cIsplata VALID cIsplata $ "ABC" PICT "@!"
+        @ m_x+ 2,m_y+ 2 SAY "Opstina stanov.(prazno-sve): " ;
+            GET qqOpSt PICT "@!S20"
+        
+        if lViseObr
+                @ m_x+ 2,col()+1 SAY "Obr.:" GET cObracun ;
+                WHEN HelpObr(.t.,cObracun) ;
+                VALID ValObr(.t.,cObracun)
+            endif
+        
+            @ m_x+ 3,m_y+ 2 SAY "Period od:" GET nDanOd pict "99"
+            @ m_x+ 3,col()+1 SAY "/" GET nMjesecOd pict "99"
+            @ m_x+ 3,col()+1 SAY "/" GET nGodinaOd pict "9999"
+            @ m_x+ 3,col()+1 SAY "do:" GET nDanDo pict "99"
+            @ m_x+ 3,col()+1 SAY "/" GET nMjesecDo pict "99"
+            @ m_x+ 3,col()+1 SAY "/" GET nGodinaDo pict "9999"
+        
+        
+            @ m_x+ 4,m_y+ 2 SAY " Naziv: " GET cFirmNaz
+            @ m_x+ 5,m_y+ 2 SAY "Adresa: " GET cFirmAdresa
+            @ m_x+ 6,m_y+ 2 SAY "Opcina: " GET cFirmOpc
+            @ m_x+ 7,m_y+ 2 SAY "Vrsta djelatnosti: " GET cFirmVD
+            
+            @ m_x+ 4,m_y+ 52 SAY "ID.broj :" GET cMatBR
+            @ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
+            
+        
+        @ m_x+9,m_y+ 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
+            GET cPrimDobra  PICT "@!S20"
+            
+        @ m_x+10,m_y+ 2 SAY "Dopr.pio (iz)" GET cDopr1
+            @ m_x+10,col()+ 2 SAY "Dopr.pio (na)" GET cDopr5
+            @ m_x+11,m_y+ 2 SAY "Dopr.zdr (iz)" GET cDopr2
+            @ m_x+11,col()+ 2 SAY "Dopr.zdr (na)" GET cDopr6
+            @ m_x+12,m_y+ 2 SAY "Dopr.nez (iz)" GET cDopr3
+            @ m_x+12,col()+ 2 SAY "Dopr.nez (na)" GET cDopr7
+            
+            @ m_x+13,m_y+ 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
+            @ m_x+14,m_y+ 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
+        
+        @ m_x+15,m_y+ 2 SAY "Ost.obaveze: NAZIV                  USLOV"
+            @ m_x+16,m_y+ 2 SAY " 1." GET ccOO1
+            @ m_x+16,m_y+30 GET cnOO1
+            @ m_x+17,m_y+ 2 SAY " 2." GET ccOO2
+            @ m_x+17,m_y+30 GET cnOO2
+            @ m_x+18,m_y+ 2 SAY " 3." GET ccOO3
+            @ m_x+18,m_y+30 GET cnOO3
+            @ m_x+19,m_y+ 2 SAY " 4." GET ccOO4
+            @ m_x+19,m_y+30 GET cnOO4
+            
+        @ m_x+21, m_y+2 SAY "Isplata: 'A' doprinosi+porez, 'B' samo doprinosi, 'C' samo porez" GET cIsplata VALID cIsplata $ "ABC" PICT "@!"
 
-		if gVarSpec=="2"
-       			@ m_x+23,m_y+2 SAY "Limit za gr.posl.1" GET nLimG1 PICT "9999.99"
-       			@ m_x+23,m_y+29 SAY "2" GET nLimG2 PICT "9999.99"
-       			@ m_x+23,m_y+39 SAY "3" GET nLimG3 PICT "9999.99"
-       			@ m_x+23,m_y+49 SAY "4" GET nLimG4 PICT "9999.99"
-       			@ m_x+23,m_y+59 SAY "5" GET nLimG5 PICT "9999.99"
-     		endif
-     		
-		read
-     		clvbox()
-     		ESC_BCR
-   	BoxC()
-   	
-	aUslRJ:=Parsiraj(qqIdRj,"IDRJ")
-   	aUslOpSt:=Parsiraj(qqOpSt,"IDOPSST")
-   	if (aUslRJ<>nil .and. aUslOpSt<>nil)
-		EXIT
-	endif
+        if gVarSpec=="2"
+                @ m_x+23,m_y+2 SAY "Limit za gr.posl.1" GET nLimG1 PICT "9999.99"
+                @ m_x+23,m_y+29 SAY "2" GET nLimG2 PICT "9999.99"
+                @ m_x+23,m_y+39 SAY "3" GET nLimG3 PICT "9999.99"
+                @ m_x+23,m_y+49 SAY "4" GET nLimG4 PICT "9999.99"
+                @ m_x+23,m_y+59 SAY "5" GET nLimG5 PICT "9999.99"
+            endif
+            
+        read
+            clvbox()
+            ESC_BCR
+    BoxC()
+    
+    aUslRJ:=Parsiraj(qqIdRj,"IDRJ")
+    aUslOpSt:=Parsiraj(qqOpSt,"IDOPSST")
+    if (aUslRJ<>nil .and. aUslOpSt<>nil)
+        EXIT
+    endif
 enddo
 
 
@@ -389,9 +391,9 @@ UzmiIzIni(cIniName,'Varijable',"MATBR",Razrijedi(cMatBR),'WRITE')
 UzmiIzIni(cIniName,'Varijable',"DATISPL",DTOC(dDatIspl),'WRITE')
 
 if lViseObr
-	cObracun:=TRIM(cObracun)
+    cObracun:=TRIM(cObracun)
 else
-	cObracun:=""
+    cObracun:=""
 endif
 
 //cPorOO:=Izrezi("P->",2,@cOstObav)
@@ -440,31 +442,31 @@ ENDIF
    cRTR := g_tip_rada( ld->idradn, ld->idrj )
    nRSpr_koef := 0
    if cRTR == "S"
-	nRSpr_koef := radn->sp_koef
+    nRSpr_koef := radn->sp_koef
    endif
-	
+    
    if cRTR $ "I#N" .and. EMPTY(cRTipRada)
-   	// ovo je uredu...
-	// jer je i ovo nesamostalni rad
+    // ovo je uredu...
+    // jer je i ovo nesamostalni rad
    elseif cRTipRada <> cRTR
-   	select ld
-	skip
-	loop
+    select ld
+    skip
+    loop
    endif
 
    // provjeri da li se radi o republici srpskoj
    if cRepSr == "N"
-   	if in_rs( radn->idopsst, radn->idopsrad )
-		select ld
-		skip
-		loop
-	endif
+    if in_rs( radn->idopsst, radn->idopsrad )
+        select ld
+        skip
+        loop
+    endif
    else
-   	if !in_rs( radn->idopsst, radn->idopsrad )
-		select ld
-		skip
-		loop
-	endif
+    if !in_rs( radn->idopsst, radn->idopsrad )
+        select ld
+        skip
+        loop
+    endif
    endif
 
    SELECT LD
@@ -529,7 +531,7 @@ ENDIF
    // pojedinacni bruto - dobra ili usluge
    nPojBrDobra := 0
    if nPrDobra > 0
-   	nPojBrDobra := bruto_osn( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
+    nPojBrDobra := bruto_osn( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
    endif
 
    nMPojBrOsn := nPojBrOsn
@@ -546,15 +548,15 @@ ENDIF
 
    // beneficirani radnici
    if UBenefOsnovu()
- 	
-	cFFTmp := gBFForm
-	gBFForm := STRTRAN( gBFForm, "_", "" )
- 	
-	nPojBrBenef := bruto_osn( nNetoOsn - IF(!EMPTY(gBFForm),&gBFForm,0), cRTR, nKoefLO, nRSpr_koef )
- 	
- 	nBrutoOsBenef += nPojBrBenef
+    
+    cFFTmp := gBFForm
+    gBFForm := STRTRAN( gBFForm, "_", "" )
+    
+    nPojBrBenef := bruto_osn( nNetoOsn - IF(!EMPTY(gBFForm),&gBFForm,0), cRTR, nKoefLO, nRSpr_koef )
+    
+    nBrutoOsBenef += nPojBrBenef
 
-	gBFForm := cFFtmp
+    gBFForm := cFFtmp
 
    endif
  
@@ -593,27 +595,27 @@ ENDIF
 
    // dodatni doprinos PIO
    IF ID $ cDodDoprP
- 	
-	nkDopPX += iznos
-   	
-	if "BENEF" $ NAZ
-		// beneficirani	
-		nDodDoprP += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
-	else
-		nDodDoprP += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
+    
+    nkDopPX += iznos
+    
+    if "BENEF" $ NAZ
+        // beneficirani 
+        nDodDoprP += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
+    else
+        nDodDoprP += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
         endif
    ENDIF
    
    // dodatni doprinos ZDR
    IF ID $ cDodDoprZ
-	
-	nkDopZX += iznos
-   	
-	if "BENEF" $ NAZ
-		// beneficirani	
-		nDodDoprZ += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
-	else
-		nDodDoprZ += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
+    
+    nkDopZX += iznos
+    
+    if "BENEF" $ NAZ
+        // beneficirani 
+        nDodDoprZ += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
+    else
+        nDodDoprZ += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
         endif
    ENDIF
   
@@ -662,15 +664,15 @@ ENDIF
  nDopr7X := round2(nMBrutoOsnova * nkD7X / 100, gZaok2)
 
  nPojDoprIZ := round2((nMPojBrOsn * nkD1X /100), gZaok2 ) + ;
- 		round2((nMPojBrOsn * nkD2X / 100), gZaok2) + ;
-		round2((nMPojBrOsn* nkD3X / 100), gZaok2 )
+        round2((nMPojBrOsn * nkD2X / 100), gZaok2) + ;
+        round2((nMPojBrOsn* nkD3X / 100), gZaok2 )
 
  // iznos doprinosa
  
  nPom:=nDopr1X+nDopr2X+nDopr3X
  
  // ukupni doprinosi iz plate
- nUkDoprIZ := nPom	
+ nUkDoprIZ := nPom  
 
  UzmiIzIni(cIniName,'Varijable','D11I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  nPom:=nDopr1X
@@ -700,14 +702,14 @@ ENDIF
  
  if nPojPorOsn >= 0 .and. radn_oporeziv( radn->id, ld->idrj )
 
- 	// osnovica za porez na platu
- 	//nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
- 	nPorOsnovica += nPojPorOsn
+    // osnovica za porez na platu
+    //nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
+    nPorOsnovica += nPojPorOsn
  endif
 
  // osnovica mora biti veca od 0
  if nPorOsnovica < 0
- 	nPorOsnovica := 0
+    nPorOsnovica := 0
  endif
 
  // resetuj varijable
@@ -825,21 +827,21 @@ ENDIF
  nOstaleObaveze := ABS( IF( nOstaleObaveze==0, nOstOb1+nOstOb2+nOstOb3+nOstOb4, nOstaleObaveze ) )
 
  if cIsplata == "A"
- 	// sve obaveze
- 	nPom := nDopr1X+nDopr2x+nDopr3x+;
-       		nDopr5x+nDopr6x+nDopr7x+;
-       		nPorNaPlatu+nPorezOstali-;
-       		nPorOlaksice+nOstaleOBaveze+nDodDoprP+nDodDoprZ
+    // sve obaveze
+    nPom := nDopr1X+nDopr2x+nDopr3x+;
+            nDopr5x+nDopr6x+nDopr7x+;
+            nPorNaPlatu+nPorezOstali-;
+            nPorOlaksice+nOstaleOBaveze+nDodDoprP+nDodDoprZ
 
  elseif cIsplata == "B"
- 	// samo doprinosi
-  	nPom := nDopr1X+nDopr2x+nDopr3x+;
-       		nDopr5x+nDopr6x+nDopr7x+;
-       		nDodDoprP+nDodDoprZ
+    // samo doprinosi
+    nPom := nDopr1X+nDopr2x+nDopr3x+;
+            nDopr5x+nDopr6x+nDopr7x+;
+            nDodDoprP+nDodDoprZ
 
  elseif cIsplata == "C"
- 	// samo porez
-  	nPom := nPorNaPlatu+nPorezOstali-nPorOlaksice+nOstaleOBaveze
+    // samo porez
+    nPom := nPorNaPlatu+nPorezOstali-nPorOlaksice+nOstaleOBaveze
 
  endif
 
@@ -916,11 +918,11 @@ ENDIF
 
  // ukupno za RS obaveze
  if cIsplata == "A"
- 	nPom := nDopr1x+nDopr5x+nD21a+nD22a+nPorNaPlatu
+    nPom := nDopr1x+nDopr5x+nD21a+nD22a+nPorNaPlatu
  elseif cIsplata == "B"
- 	nPom := nDopr1x+nDopr5x+nD21a+nD22a
+    nPom := nDopr1x+nDopr5x+nD21a+nD22a
  elseif cIsplata == "C"
- 	nPom := nPorNaPlatu
+    nPom := nPorNaPlatu
  endif
  
  UzmiIzIni(cIniName,'Varijable','URSOB', FormNum2(nPom,16,gPici2), 'WRITE')
@@ -933,38 +935,43 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
  cSpecRtm := "SPEC"
  
  if cRepSr == "D"
- 	cSpecRtm := cSpecRtm + "RS"
+    cSpecRtm := cSpecRtm + "RS"
  else
- 	cSpecRtm := cSpecRtm + "B"
+    cSpecRtm := cSpecRtm + "B"
  endif
 
  if cRTipRada $ "I#N"
- 	cRTipRada := ""
+    cRTipRada := ""
  endif
 
  // "SPECBN", "SPECBR" ...
  cSpecRtm := cSpecRtm + cRTipRada
+ _dbf_path := my_home()
 
- private cKomLin := "delphirb " + cSpecRtm + ;
-	" " + PRIVPATH + "  DUMMY 1"
+ #ifdef __PLATFORM__WINDOWS
+    _dbf_path := '"' + my_home() + '"'
+ #endif 
+
+ _cmd := "delphirb " + cSpecRtm + " " + _dbf_path + "  DUMMY 1"
 
  cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))
  
  if cPom!="-"
-  cKomLin += " lmarg:"+cPom
+  _cmd += " lmarg:" + cPom
  endif
  
  cPom := alltrim(IzFmkIni("Specif","GornjaMargina","-",KUMPATH))
  
  if cPom!="-"
-  cKomLin += " tmarg:"+cPom
+  _cmd += " tmarg:"+cPom
  endif
 
- run &cKomLin
+ run (_cmd)
 
 endif
 
-CLOSERET
+close all
+return
 
 
 // ---------------------------------------------
@@ -973,9 +980,9 @@ CLOSERET
 function _ispl_d( nIzn, cIspl )
 
 if cIspl $ "AB"
-	return nIzn
+    return nIzn
 else
-	return 0
+    return 0
 endif
 
 return
@@ -986,9 +993,9 @@ return
 function _ispl_p( nIzn, cIspl )
 
 if cIspl $ "AC"
-	return nIzn
+    return nIzn
 else
-	return 0
+    return 0
 endif
 
 return

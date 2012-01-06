@@ -1,3 +1,7 @@
+0.9.37  2012-01-06, vsasa, LD specif
+
+  - [#26099](http://redmine.bring.out.ba/issues/26099)
+
 0.9.36  2012-01-04, hernad, test_sem_1 bug
 
   - [#26059](http://redmine.bring.out.ba/issues/26059)

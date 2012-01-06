@@ -97,7 +97,7 @@ local cRTipRada := " "
 local cMatBr
 local _cmd
 local _home_path
-local _delphi_path
+local _delphi_exe
 local _spec_path
 local _proizv_ini
 private aSpec:={}
@@ -106,19 +106,28 @@ private gPici:="9,999,999,999,999,999" + IIF(gZaok>0, PADR(".",gZaok+1,"9"), "")
 private gPici2:="9,999,999,999,999,999" + IIF(gZaok2>0, PADR(".",gZaok2+1,"9"), "")
 private gPici3:="999,999,999,999.99"
 
+#ifdef __PLATFORM__WINDOWS
+
+_home_path := '"' + my_home() + '"'
+_delphi_exe := '"' + my_home() + "f18_delphirb.exe" + '"'
+_proizv_ini := '"' + my_home() + "proizvj.ini" + '"'
+
+if !FILE(_delphi_exe)
+   FCOPY("c:\knowhowERP\util\delphirb.exe", _delphi_exe)
+endif
+
+#else
+
+MsgBeep("nisam siguran da ovo radi: http://redmine.bring.out.ba/issues/26099")
 _home_path := my_home()
-_delphi_path := my_home() + "f18_delphirb"
+_delphi_exe := "delphirb"
 _proizv_ini := my_home() + "proizvj.ini"
 
-#ifdef __PLATFORM__WINDOWS
-    _home_path := '"' + my_home() + '"'
-    _delphi_path := '"' + my_home() + "f18_delphirb" + '"'
-    _proizv_ini := '"' + my_home() + "proizvj.ini" + '"'
 #endif 
 
-for i:=1 to nGrupaPoslova+1
-    AADD(aSpec,{0,0,0,0})
+for i := 1 to nGrupaPoslova+1
     //  br.bodova, br.radnika, minuli rad, uneto
+    AADD(aSpec,{0,0,0,0})
 next
 
 cIdRJ:="  "
@@ -932,7 +941,7 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 
  _spec_path := cSpecRtm
 
- _cmd := _delphi_path + " " + _spec_path + " " + _home_path + "  DUMMY 1"
+ _cmd := _delphi_exe + " " + _spec_path + " " + _home_path + "  DUMMY 1"
 
  cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))
  

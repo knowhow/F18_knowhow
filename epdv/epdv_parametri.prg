@@ -154,41 +154,22 @@ gUlPdvKp := "1"
 gFirma := SPACE(2)
 gNFirma := SPACE(20)
 
-SELECT F_KPARAMS
+gZAO_IZN := fetch_metric("epdv_zaokruzenje_iznosa", nil, gZAO_IZN)
+gZAO_CIJ := fetch_metric("epdv_zaokruzenje_cijene", nil, gZAO_CIJ)
+gZAO_PDV := fetch_metric("epdv_zaokruzenje_pdv", nil, gZAO_PDV)
 
-if !used()
-	O_KPARAMS
-endif
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
+gPIC_IZN := fetch_metric("epdv_picture_iznos", nil, gPIC_IZN)
+gPIC_CIJ := fetch_metric("epdv_picture_cijena", nil, gPIC_CIJ)
 
-RPar("Z1", @gZAO_IZN)
-RPar("Z2", @gZAO_CIJ)
-RPar("Z3", @gZAO_PDV)
+gUlPDVKp := fetch_metric("epdv_ulazni_pdv_krajnja_potrosnja", nil, gUlPdvKp)
 
-RPar("P1", @gPIC_IZN)
-RPar("P2", @gPIC_CIJ)
+gL_kto_dob := fetch_metric("epdv_lista_konta_dobavljaca", nil, gL_kto_dob)
+gL_kto_kup := fetch_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
+gkt_updv := fetch_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
+gkt_ipdv := fetch_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
 
-RPar("O1", @gUlPdvKp)
-
-RPar("K1", @gL_kto_dob)
-RPar("K2", @gL_kto_kup)
-RPar("K3", @gkt_updv)
-RPar("K4", @gkt_ipdv)
-
-SELECT F_PARAMS
-if !used()
-	O_PARAMS
-endif
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-Rpar("fn",@gNFirma)
-Rpar("ff",@gFirma)
-
-close
+gNFirma := fetch_metric("epdv_firma_naziv", nil, gNFirma)
+gFirma := fetch_metric("epdv_firma", nil, gFirma)
 
 return
 
@@ -197,41 +178,22 @@ return
 // ---------------------------
 function write_g_params()
 
-SELECT F_KPARAMS
+set_metric("epdv_zaokruzenje_iznosa", nil, gZAO_IZN)
+set_metric("epdv_zaokruzenje_cijene", nil, gZAO_CIJ)
+set_metric("epdv_zaokruzenje_pdv", nil, gZAO_PDV)
 
-if !used()
-	O_KPARAMS
-endif
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
+set_metric("epdv_picture_iznos", nil, gPIC_IZN)
+set_metric("epdv_picture_cijena", nil, gPIC_CIJ)
 
-WPar("Z1", gZAO_IZN)
-WPar("Z2", gZAO_CIJ)
-WPar("Z3", gZAO_PDV)
+set_metric("epdv_ulazni_pdv_krajnja_potrosnja", nil, gUlPdvKp)
 
-WPar("P1", gPIC_IZN)
-WPar("P2", gPIC_CIJ)
+set_metric("epdv_lista_konta_dobavljaca", nil, gL_kto_dob)
+set_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
+set_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
+set_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
 
-WPar("O1", gUlPdvKp)
-
-WPar("K1", gL_kto_dob)
-WPar("K2", gL_kto_kup)
-WPar("K3", gkt_updv)
-WPar("K4", gkt_ipdv)
-
-SELECT F_PARAMS
-if !used()
-	O_PARAMS
-endif
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-WPar("ff", gFirma)
-WPar("fn", gNFirma)
-
-close
+set_metric("epdv_firma", nil, gFirma)
+set_metric("epdv_firma_naziv", nil, gNFirma)
 
 return
 
@@ -240,22 +202,10 @@ return
 // ---------------------------------------------------------------
 function read_pdv_pars(dPotDatum, cPotMjesto, cPotOb, cPdvPovrat)
 
-SELECT F_PARAMS
-
-if !used()
-	O_PARAMS
-endif
-
-private cSection:="9"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("D1", @dPotDatum)
-RPar("C1", @cPotMjesto)
-RPar("C2", @cPotOb)
-RPar("C3", @cPdvPovrat)
-
-close
+dPotDatum := fetch_metric("epdv_prijava_datum", nil, dPotDatum)
+dPotMjesto := fetch_metric("epdv_prijava_mjesto", nil, cPotMjesto)
+cPotOb := fetch_metric("epdv_prijava_obveznik", nil, cPotOb)
+cPdvPovrat := fetch_metric("epdv_prijava_povrat", nil, cPdvPovrat)
 
 return
 
@@ -263,22 +213,10 @@ return
 // ---------------------------------------------------------------
 function save_pdv_pars(dPotDatum, cPotMjesto, cPotOb, cPdvPovrat)
 
-SELECT F_PARAMS
-
-if !used()
-	O_PARAMS
-endif
-
-private cSection:="9"
-private cHistory:=" "
-private aHistory:={}
-
-WPar("D1", dPotDatum)
-WPar("C1", cPotMjesto)
-WPar("C2", cPotOb)
-WPar("C3", cPdvPovrat)
-
-close
+set_metric("epdv_prijava_datum", nil, dPotDatum)
+set_metric("epdv_prijava_mjesto", nil, cPotMjesto)
+set_metric("epdv_prijava_obveznik", nil, cPotOb)
+set_metric("epdv_prijava_povrat", nil, cPdvPovrat)
 
 return
 

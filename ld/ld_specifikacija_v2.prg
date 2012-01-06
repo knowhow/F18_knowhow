@@ -956,12 +956,15 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
   _cmd += " tmarg:"+cPom
  endif
 
- run (_cmd)
+ if  hb_run(_cmd) <> 0
+    MsgBeep("ERR cmd: " + _cmd)
+    return .f.
+ endif
 
 endif
 
 close all
-return
+return .t.
 
 
 // ---------------------------------------------
@@ -989,8 +992,4 @@ else
 endif
 
 return
-
-
-
-
 

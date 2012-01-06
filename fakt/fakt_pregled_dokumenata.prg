@@ -273,8 +273,8 @@ return nRet
 
 
 // printaj narudzbenicu
-function pr_nar()
-*{
+function pr_nar(lOpcine)
+
 select fakt_doks
 nTrec:=recno()
 _cIdFirma:=idfirma
@@ -284,16 +284,18 @@ _cBrDok:=brdok
 close all
 o_fakt_edit()
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok, .t.)
-// printaj narudzbu
+
 nar_print(.t.)
-select (F_FAKT_DOKS); use
+select (F_FAKT_DOKS)
+use
 O_FAKT_DOKS
+
 if lOpcine
     O_PARTN
     select fakt_doks
     set relation to idpartner into PARTN
 endif
-if cFilter==".t."
+if cFilter == ".t."
     set Filter to
 else
     set Filter to &cFilter
@@ -301,7 +303,6 @@ endif
 go nTrec
 
 return DE_CONT
-*}
 
 // print radni nalog
 function pr_rn()
@@ -371,8 +372,7 @@ return DE_CONT
 
 
 // stampaj poresku fakturu u odt formatu
-function pr_odt()
-*{
+function pr_odt(lOpcine)
 select fakt_doks
 nTrec:=recno()
 _cIdFirma:=idfirma
@@ -403,7 +403,7 @@ return DE_CONT
 // --------------------------
 // generisi fakturu
 // --------------------------
-function gen_fakt()
+function gen_fakt(lOpcine)
 local cTipDok
 local cFirma
 local cBrFakt
@@ -490,8 +490,7 @@ go top
 seek cFirma + cTipDok + cBrFakt
 
 
-do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
-        cFirma + cTipDok + cBrFakt
+do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
 
     ++ nCnt
     
@@ -755,7 +754,7 @@ do case
 
   case Ch==K_ALT_P
      // print odt
-     nRet := pr_odt()
+     nRet := pr_odt(lOpcine)
 
   case Ch == K_F5
   
@@ -783,7 +782,7 @@ do case
     
     nFiscal := field->fisc_rn
 
-    Box(,1,40)
+    Box(, 1, 40)
         @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal ;
             PICT "9999999999"
         read
@@ -860,17 +859,16 @@ do case
      nRet:=pr_rn()  
      
   case chr(Ch) $ "nN"
-     nRet:=pr_nar()
+     nRet:=pr_nar(lOpcine)
   
   case chr(Ch) $ "fF"
      if idtipdok $ "20"
-       nRet:=gen_fakt()
+       nRet:=gen_fakt(lOpcine)
      endif
      
   case chr(Ch) $ "vV"
-     // ispravka valutiranja
-     
-     
+
+     // ispravka valutiranja     
      if ( PADR(dindem, 3) <> PADR(ValDomaca(), 3) ) 
        
        if !SigmaSif("PRVAL")
@@ -880,7 +878,6 @@ do case
       
        if Pitanje(,"Izvrsiti ispravku valutiranja na dokumentu (D/N)?","N") == "N"
           return DE_CONT
-      
        endif
        
        O_FAKT 
@@ -894,21 +891,21 @@ do case
        
        do while !EOF() .and. fakt->(idfirma+idtipdok+brdok)==fakt_doks->(idfirma+idtipdok+brdok)
          
-      nPrCij := fakt->cijena
-      
-          v_pretvori("D", fakt->DinDem, fakt->DatDok, @nPrCij ) 
-      
-      replace cijena with nPrCij 
-          
-      nPom1 := round( kolicina*Cijena*PrerCij() / UBaznuValutu(datdok) * (1-Rabat/100), ZAOKRUZENJE)
-          nPom2 := ROUND( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*Rabat/100 , ZAOKRUZENJE)
-          nPom3 := ROUND( nPom1 * Porez/100, ZAOKRUZENJE)
-          nDugD += nPom1 + nPom3
-          nRabD += nPom2 
-      
-      skip
-       
-       enddo
+            nPrCij := fakt->cijena
+            
+            v_pretvori("D", fakt->DinDem, fakt->DatDok, @nPrCij ) 
+            
+            replace cijena with nPrCij 
+                
+            nPom1 := round( kolicina*Cijena*PrerCij() / UBaznuValutu(datdok) * (1-Rabat/100), ZAOKRUZENJE)
+            nPom2 := ROUND( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*Rabat/100 , ZAOKRUZENJE)
+            nPom3 := ROUND( nPom1 * Porez/100, ZAOKRUZENJE)
+            nDugD += nPom1 + nPom3
+            nRabD += nPom2 
+            
+            skip
+            
+      enddo
        
        select fakt_doks
        
@@ -928,9 +925,9 @@ do case
   case chr(Ch) $ "pP"
      
      if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
-        msgbeep( cZabrana )
-    nRet := DE_CONT
-    return nRet
+         msgbeep( cZabrana )
+         nRet := DE_CONT
+         return nRet
      endif
      
      select fakt_doks
@@ -939,7 +936,7 @@ do case
      _cIdTipDok:=idtipdok
      _cBrDok:=brdok
      close all
-     nR_tmp := Povrat_fakt_dokumenta(.f.,_cidfirma,_cIdTipdok,_cbrdok)
+     nR_tmp := Povrat_fakt_dokumenta(.f., _cidfirma, _cIdTipdok, _cbrdok)
      select (F_FAKT_DOKS)
      use
      O_FAKT_DOKS
@@ -956,11 +953,13 @@ do case
      go nTrec
      if nR_tmp <> 0 .and. Pitanje(,"Preci u tabelu pripreme ?","D")=="D"
       fUPripremu:=.t.
-      nRet:=DE_ABORT
+        nRet:=DE_ABORT
      else
-      nRet:=DE_REFRESH
+        nRet:=DE_REFRESH
      endif
+
   case chr(Ch) $ "rR"
+
      select fakt_doks
      nTrec      := recno()
      _cIdFirma  := idfirma
@@ -1007,7 +1006,7 @@ do case
 
 endcase
 return nRet
-*}
+
 
 
 /*! \fn fakt_vt_porezi()

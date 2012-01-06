@@ -95,12 +95,22 @@ local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
 local _cmd
-local _dbf_path
+local _home_path
+local _delphi_path
+local _spec_path
 private aSpec:={}
 private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999" + IIF(gZaok>0, PADR(".",gZaok+1,"9"), "")
 private gPici2:="9,999,999,999,999,999" + IIF(gZaok2>0, PADR(".",gZaok2+1,"9"), "")
 private gPici3:="999,999,999,999.99"
+
+_home_path := my_home()
+_delphi_path := my_home() + "f18_delphirb"
+
+#ifdef __PLATFORM__WINDOWS
+    _home_path := '"' + my_home() + '"'
+    _delphi_path := '"' + my_home() + "f18_delphirb" + '"'
+#endif 
 
 for i:=1 to nGrupaPoslova+1
     AADD(aSpec,{0,0,0,0})
@@ -172,12 +182,6 @@ cFirmAdresa:=SPACE(35)
 cFirmOpc:=SPACE(35)  
 cFirmVD:=SPACE(50)  
 cIsplata := "A"
-// naziv, sjediste i broj racuna isplatioca
-nLimG1:=0
-nLimG2:=0
-nLimG3:=0
-nLimG4:=0
-nLimG5:=0
 
 OSpecif()
 
@@ -192,54 +196,47 @@ else
     lPDNE:=.f.
 endif
 
-select params
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("i1", @cFirmNaz)
+cFirmNaz := fetch_metic("ld_firma_naziv", nil, cFirmNaz)
 cFirmNaz := PADR(cFirmNaz, 35)
-RPar("i2", @cFirmAdresa)  
-cFirmAdresa := PADR(cFirmAdresa, 35)
-RPar("i3", @cFirmOpc)
-cFirmOpc := PADR(cFirmOpc, 35)
-RPar("i0", @cFirmVD)
-cFirmVD := PADR(cFirmVD, 50)
-RPar("i4", @cMRad) 
-RPar("id", @cPrimDobra)
-RPar("d1", @cDopr1)
-RPar("d2", @cDopr2)
-RPar("d3", @cDopr3)
-RPar("d5", @cDopr5)
-RPar("d6", @cDopr6)
-RPar("d7", @cDopr7)
-RPar("d8", @cDDoprPio)
-RPar("d9", @cDDoprZdr)
-RPar("a1", @ccOO1)
-RPar("a2", @ccOO2)
-RPar("a3", @ccOO3)
-RPar("a4", @ccOO4)
-RPar("a5", @cnOO1)
-RPar("a6", @cnOO2)
-RPar("a7", @cnOO3)
-RPar("a8", @cnOO4)
-RPar("l1", @nLimG1)
-RPar("l2", @nLimG2)
-RPar("l3", @nLimG3)
-RPar("l4", @nLimG4)
-RPar("l5", @nLimG5)
-RPar("qj", @qqIdRJ)
-RPar("st", @qqOpSt)
-RPar("IS", @cIsplata)
 
+cFirmAdresa := fetch_metric("ld_firma_adresa", nil, cFirmAdresa)  
+cFirmAdresa := PADR(cFirmAdresa, 35)
+
+cFirmOpc := fetch_metric("ld_firma_opcina", nil, cFirmOpc)
+cFirmOpc := PADR(cFirmOpc, 35)
+
+cFirmVD := fetch_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD )
+cFirmVD := PADR(cFirmVD, 50)
+
+cMRad := fetch_metric("ld_specifikacija_minuli_rad", nil, cMRad ) 
+cPrimDobra := fetch_metric("ld_specifikacija_primanja_dobra", nil, cPrimDobra)
+cDopr1 := fetch_metric("ld_specifikacija_doprinos_1", nil, cDopr1)
+cDopr2 := fetch_metric("ld_specifikacija_doprinos_2", nil, cDopr2)
+cDopr3 := fetch_metric("ld_specifikacija_doprinos_3", nil, cDopr3)
+cDopr5 := fetch_metric("ld_specifikacija_doprinos_5", nil, cDopr5)
+cDopr6 := fetch_metric("ld_specifikacija_doprinos_6", nil, cDopr6)
+cDopr7 := fetch_metric("ld_specifikacija_doprinos_7", nil, cDopr7)
+cDDoprPio := fetch_metric("ld_specifikacija_doprinos_pio", nil, cDDoprPio)
+cDDoprZdr := fetch_metric("ld_specifikacija_doprinos_zdr", nil, cDDoprZdr)
+cc001 := fetch_metric("ld_specifikacija_c1", nil, ccOO1)
+cc002 := fetch_metric("ld_specifikacija_c2", nil, ccOO2)
+cc003 := fetch_metric("ld_specifikacija_c3", nil, ccOO3)
+cc004 := fetch_metric("ld_specifikacija_c4", nil, ccOO4)
+cn001 := fetch_metric("ld_specifikacija_n1", nil, cnOO1)
+cn002 := fetch_metric("ld_specifikacija_n2", nil, cnOO2)
+cn003 := fetch_metric("ld_specifikacija_n3", nil, cnOO3)
+cn004 := fetch_metric("ld_specifikacija_n4", nil, cnOO4)
+qqIdRj := fetch_metric("ld_specifikacija_rj", nil, qqIdRJ)
+qqOpSt := fetch_metric("ld_specifikacija_opcine", nil, qqOpSt)
 qqIdRj:=PadR(qqIdRj, 80) 
 qqOpSt:=PadR(qqOpSt, 80)
 
-cMatBr:=IzFmkIni("Specif","MatBr","--",KUMPATH)
-cMatBR:=padr(cMatBr,13) 
-dDatIspl := date()
+cIsplata := fetch_metric("ld_specifikacija_vrsta_isplate", nil, cIsplata)
 
+cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+cMatBR:=padr(cMatBr,13) 
+
+dDatIspl := date()
 
 do while .t.
     Box(,22+IF(gVarSpec=="1",0,1),75)
@@ -302,14 +299,6 @@ do while .t.
             
         @ m_x+21, m_y+2 SAY "Isplata: 'A' doprinosi+porez, 'B' samo doprinosi, 'C' samo porez" GET cIsplata VALID cIsplata $ "ABC" PICT "@!"
 
-        if gVarSpec=="2"
-                @ m_x+23,m_y+2 SAY "Limit za gr.posl.1" GET nLimG1 PICT "9999.99"
-                @ m_x+23,m_y+29 SAY "2" GET nLimG2 PICT "9999.99"
-                @ m_x+23,m_y+39 SAY "3" GET nLimG3 PICT "9999.99"
-                @ m_x+23,m_y+49 SAY "4" GET nLimG4 PICT "9999.99"
-                @ m_x+23,m_y+59 SAY "5" GET nLimG5 PICT "9999.99"
-            endif
-            
         read
             clvbox()
             ESC_BCR
@@ -322,52 +311,41 @@ do while .t.
     endif
 enddo
 
-
-WPar("i1",cFirmNaz)
-WPar("i2",cFirmAdresa)
-WPar("i3",cFirmOpc)
-WPar("i0",cFirmVD)
-WPar("i4",cMRad)
-WPar("id",cPrimDobra)
-WPar("d1",cDopr1)
-WPar("d2",cDopr2)
-WPar("d3",cDopr3)
-WPar("d5",cDopr5)
-WPar("d6",cDopr6)
-WPar("d7",cDopr7)
-WPar("d8",cDDoprPio)
-WPar("d9",cDDoprZdr)
-WPar("a1",ccOO1)
-WPar("a2",ccOO2)
-WPar("a3",ccOO3)
-WPar("a4",ccOO4)
-WPar("a5",cnOO1)
-WPar("a6",cnOO2)
-WPar("a7",cnOO3)
-WPar("a8",cnOO4)
-WPar("l1",nLimG1)
-WPar("l2",nLimG2)
-WPar("l3",nLimG3)
-WPar("l4",nLimG4)
-WPar("l5",nLimG5)
-WPar("IS",cIsplata)
+set_metric("ld_firma_naziv", nil, cFirmNaz)
+set_metric("ld_firma_adresa", nil, cFirmAdresa)
+set_metric("ld_firma_opcina", nil, cFirmOpc)
+set_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD)
+set_metric("ld_specifikacija_minuli_rad", nil, cMRad)
+set_metric("ld_specifikacija_primanja_dobra", nil, cPrimDobra)
+set_metric("ld_specifikacija_doprinos_1", nil, cDopr1)
+set_metric("ld_specifikacija_doprinos_2", nil, cDopr2)
+set_metric("ld_specifikacija_doprinos_3", nil, cDopr3)
+set_metric("ld_specifikacija_doprinos_5", nil, cDopr5)
+set_metric("ld_specifikacija_doprinos_6", nil, cDopr6)
+set_metric("ld_specifikacija_doprinos_7", nil, cDopr7)
+set_metric("ld_specifikacija_doprinos_pio", nil, cDDoprPio)
+set_metric("ld_specifikacija_doprinos_zdr", nil, cDDoprZdr)
+set_metric("ld_specifikacija_c1", nil, ccOO1)
+set_metric("ld_specifikacija_c2", nil, ccOO2)
+set_metric("ld_specifikacija_c3", nil, ccOO3)
+set_metric("ld_specifikacija_c4", nil, ccOO4)
+set_metric("ld_specifikacija_n1", nil, cnOO1)
+set_metric("ld_specifikacija_n2", nil, cnOO2)
+set_metric("ld_specifikacija_n3", nil, cnOO3)
+set_metric("ld_specifikacija_n4", nil, cnOO4)
+set_metric("ld_specifikacija_vrsta_isplate", nil, cIsplata)
 
 qqIdRj:=TRIM(qqIdRj)
 qqOpSt:=TRIM(qqOpSt)
 
-WPar("qj",qqIdRJ)
-WPar("st",qqOpSt)
+set_metric("ld_specifikacija_rj", nil, qqIdRJ)
+set_metric("ld_specifikacija_opcine", nil, qqOpSt)
 
-select params
-use
+set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
 
 PoDoIzSez(nGodina,nMjesec)
 
-// fmk.ini parametri
-cPom:=KUMPATH+"fmk.ini"
-UzmiIzIni(cPom, 'Specif', "MatBr", cMatBr, 'WRITE')
-
-cIniName:= EXEPATH + 'proizvj.ini'
+cIniName:= _dbf_path + 'proizvj.ini'
 
  //
  // Radi DRB6 iskoristio f-ju Razrijedi()
@@ -946,13 +924,14 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 
  // "SPECBN", "SPECBR" ...
  cSpecRtm := cSpecRtm + cRTipRada
- _dbf_path := my_home()
+
+ _spec_path := my_home() + cSpecRtm
 
  #ifdef __PLATFORM__WINDOWS
-    _dbf_path := '"' + my_home() + '"'
- #endif 
+     _spec_path := '"' + my_home() + cSpecRtm + '"'
+ #endif
 
- _cmd := "delphirb " + cSpecRtm + " " + _dbf_path + "  DUMMY 1"
+ _cmd := _delphi_path + " " + _spec_path + " " + _home_path + "  DUMMY 1"
 
  cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))
  

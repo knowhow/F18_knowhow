@@ -23,8 +23,10 @@ function fmk_migrate_root(fmk_root_dir)
 if fmk_root_dir == NIL
 #ifdef __PLATFORM__WINDOWS
    fmk_root_dir := "c:" + SLASH + "SIGMA"
-#else 
-   fmk_root_dir := hb_DirSepAdd(tmp_dir()) +  "SIGMA"
+#else
+    #ifdef TEST 
+        fmk_root_dir := hb_DirSepAdd(tmp_dir()) +  "SIGMA"
+    #endif
 #endif
 endif
 

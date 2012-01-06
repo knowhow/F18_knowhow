@@ -94,10 +94,12 @@ local uNaRuke
 local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
+local cMatBr
 local _cmd
 local _home_path
 local _delphi_path
 local _spec_path
+local _proizv_ini
 private aSpec:={}
 private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999" + IIF(gZaok>0, PADR(".",gZaok+1,"9"), "")
@@ -106,10 +108,12 @@ private gPici3:="999,999,999,999.99"
 
 _home_path := my_home()
 _delphi_path := my_home() + "f18_delphirb"
+_proizv_ini := my_home() + "proizvj.ini"
 
 #ifdef __PLATFORM__WINDOWS
     _home_path := '"' + my_home() + '"'
     _delphi_path := '"' + my_home() + "f18_delphirb" + '"'
+    _proizv_ini := '"' + my_home() + "proizvj.ini" + '"'
 #endif 
 
 for i:=1 to nGrupaPoslova+1
@@ -166,6 +170,7 @@ cnOO2:=SPACE(20)
 cnOO3:=SPACE(20)
 cnOO4:=SPACE(20)
 
+cMatBr := PADR( "--", 13 )
 cDopr1:="10"
 cDopr2:="11"
 cDopr3:="12"
@@ -196,7 +201,7 @@ else
     lPDNE:=.f.
 endif
 
-cFirmNaz := fetch_metic("ld_firma_naziv", nil, cFirmNaz)
+cFirmNaz := fetch_metric("ld_firma_naziv", nil, cFirmNaz)
 cFirmNaz := PADR(cFirmNaz, 35)
 
 cFirmAdresa := fetch_metric("ld_firma_adresa", nil, cFirmAdresa)  
@@ -345,7 +350,7 @@ set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
 
 PoDoIzSez(nGodina,nMjesec)
 
-cIniName:= _dbf_path + 'proizvj.ini'
+cIniName:= _proizv_ini
 
  //
  // Radi DRB6 iskoristio f-ju Razrijedi()
@@ -925,11 +930,7 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
  // "SPECBN", "SPECBR" ...
  cSpecRtm := cSpecRtm + cRTipRada
 
- _spec_path := my_home() + cSpecRtm
-
- #ifdef __PLATFORM__WINDOWS
-     _spec_path := '"' + my_home() + cSpecRtm + '"'
- #endif
+ _spec_path := cSpecRtm
 
  _cmd := _delphi_path + " " + _spec_path + " " + _home_path + "  DUMMY 1"
 

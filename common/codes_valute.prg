@@ -133,16 +133,21 @@ return xRez
 // -----------------------------------------------
 function ValPomocna()    
 local xRez
+
 PushWa()
+
 SELECT F_VALUTE
 IF !USED()
 	O_VALUTE
 ENDIF
+
 SET ORDER TO TAG "NAZ"
-xRez:=Ocitaj(F_VALUTE,"P","naz2")
+xRez := Ocitaj(F_VALUTE, "P", "naz2")
+
 PopWa()
+
 return xRez
-*}
+
 
 // -----------------------------------
 // -----------------------------------
@@ -258,13 +263,11 @@ return
 
 
 function ValBazna()
-*{
 if gBaznaV=="P"
   return ValPomocna()
 else
   return ValDomaca()
 endif
-*}
 
 
 /*! \fn OmjerVal(v1,v2)

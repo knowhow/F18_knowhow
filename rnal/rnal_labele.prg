@@ -54,7 +54,13 @@ local cCn_tel
 local cCn_addr
 local cCity
 local _template
-local _data_xml := my_home() + "data.xml"
+local _data_xml
+
+_data_xml := my_home() + "data.xml"
+
+#ifdef __PLATFORM__WINDOWS
+    _data_xml := '"' + _data_xml + '"'
+#endif
 
 if lDirectPrint == nil
     lDirectPrint := .f.

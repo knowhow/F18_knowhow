@@ -266,29 +266,9 @@ do while !EOF()
     _dindem := "KM "
     _zaokr := 2
 
-
     if x_tbl->(FIELDPOS("OPIS")) <> 0
         _opis := cDesc
     endif
-
-
-    gather()
-
-    // sada ubaci vezu
-    go top
-    
-    cTmp_veza := ""
-
-    if x_tbl->(FIELDPOS("DOK_VEZA")) <> 0
-        
-        // veza, broj naloga
-
-        cTmp_veza := _fmk_doc_upd( field->dok_veza, ;
-            ALLTRIM(STR( nDoc_No )) )
-        replace field->dok_veza with cTmp_veza
-    endif
-
-    scatter()
 
     _txt := ""
 
@@ -333,7 +313,7 @@ do while !EOF()
     // 18. 
     a_to_txt( "", .t. )
     // 19. 
-    a_to_txt( cTmp_veza, .t. )
+    a_to_txt( "", .t. )
 
     gather()
 
@@ -451,25 +431,6 @@ do while !EOF()
         _opis := cArt_sh
     endif
 
-
-    gather()
-
-    // sada ubaci broj veze, na prvi slog
-    go top
-    
-    cTmp_veza := ""
-
-    if x_tbl->(FIELDPOS("DOK_VEZA")) <> 0
-        // veza, broj naloga
-        cTmp_veza := _fmk_doc_upd( field->dok_veza, ;
-              ALLTRIM(STR( nDoc_No )) )
-
-        replace field->dok_veza with cTmp_veza
-    endif
-    
-    // dodaj i memo polje
-    scatter()
-    
     _txt := ""
 
     // roba tip U - nista
@@ -513,18 +474,10 @@ do while !EOF()
     // 18. 
     a_to_txt( "", .t. )
     // 19. 
-    a_to_txt( cTmp_veza, .t. )
+    a_to_txt( "", .t. )
 
     gather()
 
-    // setuj da je dokument prenesen u DOCS
-    select (nADocs)
-    seek docno_str(nDoc_no)
-    replace doc_in_fmk with 1
-    replace fmk_doc with _fmk_doc_upd( ALLTRIM( field->fmk_doc ), ;
-        ALLTRIM(cBrDok) )
-    
-    
     select (nADOC_IT)
 
     if lSumirati == .f.
@@ -533,6 +486,67 @@ do while !EOF()
     
 enddo
 
+// ubaci sada brojeve veze
+// ubaci prvo u fakt
+_ins_x_veza( nADoc_it )
+
+// ubaci brojeve veze u tabelu docs
+_ins_veza( nADoc_it, nADocs, cBrDok )
+
+// sredi redne brojeve
+_fix_rbr()
+
+select (245)
+use
+
+msgbeep("export dokumenta zavrsen !")
+
+select (nTArea)
+
+return
+
+
+// --------------------------------------
+// ubaci vezu u tabelu docs
+// --------------------------------------
+static function _ins_veza( nA_doc_it, nA_docs, cBrfakt )
+local nDoc_no
+
+select ( nA_doc_it )
+set order to tag "1"
+go top
+
+do while !EOF()
+
+    // ovo preskoci
+    if field->print == "N"
+        skip
+        loop
+    endif
+
+    nDoc_no := field->doc_no
+
+    // setuj da je dokument prenesen u DOCS
+    select (nA_docs)
+    seek docno_str(nDoc_no)
+
+    replace doc_in_fmk with 1   
+    replace fmk_doc with _fmk_doc_upd( ALLTRIM( field->fmk_doc ), ;
+        ALLTRIM(cBrfakt) )
+
+    select (nA_doc_it)
+    skip
+
+enddo
+
+return .t.
+
+
+// -----------------------------------
+// sredi redne brojeve
+// -----------------------------------
+static function _fix_rbr()
+local nRbr
 
 // sredi redne brojeve pripreme
 select x_tbl
@@ -544,14 +558,120 @@ do while !EOF()
     skip
 enddo
 
-select (245)
-use
-
-msgbeep("export dokumenta zavrsen !")
-
-select (nTArea)
-
 return
+
+
+// -----------------------------------
+// ubaci broj veze u xtbl fakt
+// -----------------------------------
+static function _ins_x_veza( nArea )
+local cTmp := ""
+local nDoc_no
+local cIns_x := ""
+
+// ako polje veze ne postoji, preskoci ovu operaciju
+if x_tbl->(FIELDPOS("DOK_VEZA")) == 0
+    return .f.
+endif
+
+select ( nArea )
+set order to tag "1"
+go top
+
+do while !EOF()
+    
+    // treba li ovo ubaciti ?
+    if field->print == "N"
+        skip
+        loop
+    endif
+
+    nDoc_no := field->doc_no
+
+    // veza, broj naloga
+
+    cTmp := _fmk_doc_upd( cTmp, ALLTRIM(STR( nDoc_No )) )
+
+    skip
+enddo
+
+// u ovoj se tabeli pozicioniraj na pocetak
+select x_tbl
+go top
+
+// skloni zadnji znak ";"
+cTmp := PADR( ALLTRIM( cTmp ), LEN( ALLTRIM( cTmp ) ) - 1 )
+
+// zatim ubaci broj veze
+cIns_x := _fmk_doc_upd( field->dok_veza, cTmp )
+replace x_tbl->dok_veza with cIns_x
+
+// ubaci opis u memo polje...
+_ins_x_txt( cIns_x )
+
+return .t.
+
+
+
+// ------------------------------------------
+// ubaci tekst u memo polje x_tbl
+// ------------------------------------------
+static function _ins_x_txt( cTxt )
+local aTxt
+
+select x_tbl
+go top
+
+// treba ubaciti i u memo polje
+
+aTxt := parsmemo( field->txt )
+
+scatter()
+
+_txt := ""
+// roba tip U - nista
+a_to_txt( "", .t. )
+// dodatni tekst otpremnice - nista
+a_to_txt( "", .t. )
+// naziv partnera
+a_to_txt( aTxt[3] , .t. )
+// adresa
+a_to_txt( aTxt[4] , .t. )
+// ptt i mjesto
+a_to_txt( aTxt[5] , .t. )
+// broj otpremnice
+a_to_txt( "" , .t. )
+// datum  otpremnice
+a_to_txt( aTxt[7] , .t. )
+// broj ugovora - nista
+a_to_txt( "", .t. )
+// datum isporuke - nista
+a_to_txt( "", .t. )
+// 10. datum valute - nista
+a_to_txt( "", .t. )
+// 11. 
+a_to_txt( "", .t. )
+// 12. 
+a_to_txt( "", .t. )
+// 13. 
+a_to_txt( "", .t. )
+// 14. 
+a_to_txt( "", .t. )
+// 15. 
+a_to_txt( "", .t. )
+// 16. 
+a_to_txt( "", .t. )
+// 17. 
+a_to_txt( "", .t. )
+// 18. 
+a_to_txt( "", .t. )
+// 19. 
+a_to_txt( cTxt, .t. )
+
+gather()
+
+return .t.
+
 
 
 // --------------------------------------------

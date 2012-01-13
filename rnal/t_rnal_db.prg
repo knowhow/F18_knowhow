@@ -287,6 +287,7 @@ AADD(aDBf,{ "doc_it_typ",  "C", 1,  0 })
 AADD(aDBf,{ "doc_it_w2", "N", 15,  5 })
 AADD(aDBf,{ "doc_it_h2", "N", 15,  5 })
 AADD(aDBf,{ "doc_it_pos", "C", 20,  0 })
+AADD(aDBf,{ "it_lab_pos", "C", 1,  0 })
 
 return aDbf
 

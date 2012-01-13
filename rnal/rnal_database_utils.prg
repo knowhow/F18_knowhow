@@ -356,3 +356,93 @@ endif
 return
 
 
+// ----------------------------------------------
+// promjena broja naloga 
+// servisna opcija, zasticena password-om
+// ----------------------------------------------
+function ch_doc_no( old_doc )
+local _new_no := old_doc
+local _repl := .t.
+
+if !SigmaSif("PRBRNO")
+	return .f.
+endif
+
+Box(, 1, 50)
+	@ m_x + 1, m_y + 2 SAY "setuj novi broj:" GET _new_no
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	msgbeep("Prekinuta operacija !")
+	return .f.
+endif
+
+// prodji kroz tabele i promjeni broj
+// tabele su:
+//
+// - docs
+// - doc_it
+// - doc_it2
+// - doc_ops
+
+// odmah zamjeni u tabeli docs, jer se na njoj nalazis
+if field->doc_no == old_doc
+	replace field->doc_no with _new_no
+else
+	_repl := .t.
+endif
+
+if _repl == .f.
+	msgbeep("Nisam nista zamjenio !!!")
+	return .f.
+endif
+
+// doc_it
+select doc_it
+set order to tag "1"
+go top
+
+seek docno_str( old_doc )
+
+if FOUND()
+	set order to 0
+	do while !EOF() .and. field->doc_no == old_doc
+		replace field->doc_no with _new_no
+		skip
+	enddo
+endif
+
+// doc_it2
+select doc_it2
+set order to tag "1"
+go top
+
+seek docno_str( old_doc )
+
+if FOUND()
+	set order to 0
+	do while !EOF() .and. field->doc_no == old_doc
+		replace field->doc_no with _new_no
+		skip
+	enddo
+endif
+
+// doc_ops
+select doc_ops
+set order to tag "1"
+go top
+
+seek docno_str( old_doc )
+
+if FOUND()
+	set order to 0
+	do while !EOF() .and. field->doc_no == old_doc
+		replace field->doc_no with _new_no
+		skip
+	enddo
+endif
+
+return .t.
+
+

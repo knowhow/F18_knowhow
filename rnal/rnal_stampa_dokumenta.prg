@@ -285,6 +285,7 @@ local lGroups := .f.
 local nGr1 
 local nGr2
 local cPosition
+local cIt_lab_pos
 local xx
 local nScan
 
@@ -321,6 +322,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 	nDoc_no := field->doc_no
 	
 	cDoc_it_pos := ALLTRIM(field->doc_it_pos)
+	cIt_lab_pos := field->it_lab_pos
 	cPosition := ""
 
 	if !EMPTY( cDoc_it_pos )
@@ -522,7 +524,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 		  nDocit_altt, cDocit_city, nTotal, nTot_m, ;
 		  nZHeigh, nZWidth, ;
 		  nZH2, nZW2, ;
-		  nNeto, nBruto, cDoc_it_pos )
+		  nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
 	
 	
 	if LEN( cDoc_gr_no ) > 1
@@ -544,7 +546,7 @@ do while !EOF() .and. field->doc_no == __doc_no
 		  nDocit_altt, cDocit_city, nTotal, nTot_m, ;
 		  nZHeigh, nZWidth, ;
 		  nZH2, nZW2, ;
-		  nNeto, nBruto, cDoc_it_pos )
+		  nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
 
 	    next
 

@@ -166,6 +166,7 @@ if l_new_it
     //_doc_it_altt := 0
     //_doc_acity := SPACE( LEN(_doc_acity) )
     _doc_it_typ := " "
+	_it_lab_pos := "I"
     
     // ako je nova stavka i vrijednost je 0, uzmi default...
     if _doc_it_alt == 0
@@ -220,6 +221,11 @@ nX += 1
 
 @ m_x + nX, col() + 2 SAY "pozicija" GET _doc_it_pos ;
     WHEN {|| set_opc_box(nBoxX, 50, "pozicija naljepnice") }
+
+@ m_x + nX, col() + 2 SAY "I/O" GET _it_lab_pos ;
+	WHEN {|| set_opc_box(nBoxX, 50, ;
+		"labela, pozicija I - inside O - outside") } ;
+	VALID {|| _it_lab_pos $ "IO" }
 
 nX += 1
 

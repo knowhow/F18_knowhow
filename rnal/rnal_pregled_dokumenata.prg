@@ -484,6 +484,17 @@ do case
 		
 		RETURN DE_CONT
 		
+    case ( UPPER(CHR(Ch)) == "X" )
+	
+		select docs
+		// promjena broja dokumenta
+		if ch_doc_no( docs->doc_no )
+			select docs
+			RETURN DE_REFRESH
+		endif
+
+		RETURN DE_CONT
+
 	// ispravka veznih dokumenata
 	case ( UPPER(CHR(Ch)) == "O" )
 		

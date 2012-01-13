@@ -295,7 +295,7 @@ _count := table_count( _tbl, "true" )
 SELECT F_DOC_IT
 my_usex ("doc_it", "rnal_doc_it", .f., "SEMAPHORE")
 
-_fields := { "doc_no", "doc_it_no", "art_id", "doc_it_wid", "doc_it_hei", "doc_it_qtt", "doc_it_alt", "doc_acity", "doc_it_sch", "doc_it_des", "doc_it_typ", "doc_it_w2", "doc_it_h2", "doc_it_pos" }
+_fields := { "doc_no", "doc_it_no", "art_id", "doc_it_wid", "doc_it_hei", "doc_it_qtt", "doc_it_alt", "doc_acity", "doc_it_sch", "doc_it_des", "doc_it_typ", "doc_it_w2", "doc_it_h2", "doc_it_pos", "it_lab_pos" }
 
 _sql_fields := sql_fields(_fields)
  
@@ -429,7 +429,7 @@ DO CASE
              " WHERE " + _where
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
-                "( doc_no, doc_it_no, art_id, doc_it_wid, doc_it_hei, doc_it_qtt, doc_it_alt, doc_acity, doc_it_sch, doc_it_des, doc_it_typ, doc_it_w2, doc_it_h2, doc_it_pos ) " + ;
+                "( doc_no, doc_it_no, art_id, doc_it_wid, doc_it_hei, doc_it_qtt, doc_it_alt, doc_acity, doc_it_sch, doc_it_des, doc_it_typ, doc_it_w2, doc_it_h2, doc_it_pos, it_lab_pos ) " + ;
                "VALUES(" + STR( record["doc_no"], 10 )  + "," +;
                             + STR( record["doc_it_no"], 4 ) + "," +; 
                             + STR( record["art_id"], 10 ) + "," +; 
@@ -443,7 +443,8 @@ DO CASE
                             + _sql_quote( record["doc_it_typ"] ) + "," +;
                             + STR( record["doc_it_w2"], 15, 5 ) + "," +;
                             + STR( record["doc_it_h2"], 15, 5 ) + "," +;
-                            + _sql_quote( record["doc_it_pos"] ) + " )"
+                            + _sql_quote( record["doc_it_pos"] ) + "," + ;
+                            + _sql_quote( record["it_lab_pos"] ) + " )"
                           
 ENDCASE
    

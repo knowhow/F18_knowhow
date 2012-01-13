@@ -55,6 +55,7 @@ local cCn_addr
 local cCity
 local _template
 local _data_xml
+local _jod_templates := ALLTRIM( fetch_metric( "jodreports_templates", my_user(), "" ) )
 
 _data_xml := my_home() + "data.xml"
 
@@ -236,7 +237,7 @@ close_xml()
 
 _template := ""
 // izaberi sablon
-if g_afile( my_home(), "_rg*.odt", @_template ) = 0
+if g_afile( _jod_templates, "_rg*.odt", @_template ) = 0
     return
 endif
 
@@ -251,17 +252,22 @@ return
 // startanje jod reports
 // ---------------------------------------------------------
 static function _run_j_reports( template_file )
-local _java_start := ALLTRIM( gJavaStart )
 local _chk_error := .f.
 local _sv_screen
-local _jod_report := ALLTRIM( gJODRep )
 local _data_xml
 local _out_file
 local _template
+local _java_start
+local _jod_bin
+
+// fetch parametara
+_java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
+_jod_bin := ALLTRIM( fetch_metric( "jodreports_bin", my_user(), "" ) )
+_jod_templates := ALLTRIM( fetch_metric( "jodreports_templates", my_user(), "" ) )
 
 _data_xml := my_home() + "data.xml"
 _out_file := my_home() + "rg-lab.odt"
-_template := my_home() + template_file
+_template := _jod_templates + template_file
 
 #ifdef __PLATFORM_WINDOWS
     _data_xml := '"' + _data_xml + '"'
@@ -283,7 +289,7 @@ clear screen
 // cmdline: java -jar jodreports-cli.jar template.odt data.xml output.odt
 
 // java -jar jodreports-cli.jar
-_cmd_line := _java_start + " " + _jod_report + " "
+_cmd_line := _java_start + " " + _jod_bin + " "
 // template file
 _cmd_line += _template + " " 
 // data.xml
@@ -311,15 +317,19 @@ return
 // ------------------------------------------
 static function _run_o_office()
 local _sv_screen
-local _oo_start
+local _oo_start, _oo_bin, _oo_writer_exe
 local _cmd_line
 local _out_file
 
-_oo_start := ALLTRIM( gOOPath ) + ALLTRIM( gOOWriter )
+// fetch parametara
+_oo_bin := fetch_metric( "openoffice_bin", my_user(), "" )
+_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), "swriter" )
+
+_oo_start := ALLTRIM( _oo_bin ) + ALLTRIM( _oo_writer_exe )
 _out_file := my_home() + "rg-lab.odt"
 
 #ifdef __PLATFORM__WINDOWS
-    _oo_start := '"' + ALLTRIM( gOOPath ) + ALLTRIM( gOOWriter ) + '"'
+    _oo_start := '"' + ALLTRIM( _oo_bin ) + ALLTRIM( _oo_writer_exe ) + '"'
     _out_file := '"' + my_home() + "rg-lab.odt" + '"'
 #endif
 

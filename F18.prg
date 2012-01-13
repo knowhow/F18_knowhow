@@ -36,6 +36,7 @@ AADD( menuop, " 8) SII   # sitan inventar")
 AADD( menuop, " 9) POS   # maloprodajna kasa")
 AADD( menuop, "10) MAT   # materijalno")
 AADD( menuop, "--------------------------")
+AADD( menuop, " P) Parametri aplikacije")
 AADD( menuop, " R) ReLogin")
 AADD( menuop, " W) Pregled F18.log-a")
 AADD( menuop, " X) Erase / full synchro tabela")
@@ -68,11 +69,13 @@ do while .t.
 			MainPos(my_user(), "dummy", p3, p4, p5, p6, p7)
  		case mnu_choice == 10
 			MainMat(my_user(), "dummy", p3, p4, p5, p6, p7)
- 		case mnu_choice == 12
+        case mnu_choice == 12
+            f18_app_parameters()
+        case mnu_choice == 13
             relogin()
-	 	case mnu_choice == 13
-            view_log()
 	 	case mnu_choice == 14
+            view_log()
+	 	case mnu_choice == 15
             full_table_synchro()
 	endcase
  	loop

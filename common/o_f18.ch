@@ -258,10 +258,10 @@
 #xcommand O_PAROBR  => select (F_PAROBR)  ;  my_use ("parobr")   ; set order to tag "ID"
 #xcommand O_TIPPR   => select (F_TIPPR)   ;  my_use ("tippr")    ; set order to tag "ID"
 #xcommand O_TIPPR2  => select (F_TIPPR2)  ;  my_use ("tippr2")   ; set order to tag "ID"
-#xcommand O_OBRACUNI => select (F_OBRACUNI) ; my_use ("obracuni"); set order to tag "RJ"
+#xcommand O_OBRACUNI => select (F_OBRACUNI) ; my_use("obracuni"); set order to tag "RJ"
 #xcommand O_RADSAT  => select (F_RADSAT)  ; my_use ("radsat")    ; set order to tag "IDRADN"
-#xcommand O_PK_RADN => select (F_RADSAT)  ; my_use ("pk_radn")   ; set order to tag "1"
-#xcommand O_PK_DATA => select (F_RADSAT)  ; my_use ("pk_data")   ; set order to tag "1"
+#xcommand O_PK_RADN => select (F_PK_RADN)  ; my_use ("pk_radn")   ; set order to tag "1"
+#xcommand O_PK_DATA => select (F_PK_DATA)  ; my_use ("pk_data")   ; set order to tag "1"
 
 #xcommand O_LDT22 => select (F_LDT22)  ; my_use ("LDT22")        ; set order to tag "1"
 

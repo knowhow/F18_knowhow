@@ -81,201 +81,201 @@ local cOk := "D"
 
 select F_OBRACUNI
 if !used()
-	O_OBRACUNI
+    O_OBRACUNI
 endif
 
 if obracuni->(FIELDPOS("DAT_ISPL")) == 0 .or. obracuni->(FIELDPOS("OBR")) == 0
-	MsgBeep("Potrebna modifikacija struktura LD.CHS !!!#Prekidam operaciju")
-	return
+    MsgBeep("Potrebna modifikacija struktura LD.CHS !!!#Prekidam operaciju")
+    return
 endif
 
 
 Box(, 20, 65)
-	
-	@ m_x + nX, m_y + 2 SAY "*** Unos datuma isplata placa" COLOR "I"
-	
-	++nX
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "Tekuca godina:" GET nGod PICT "9999"
-	
-	@ m_x + nX, col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
-		VALID EMPTY(cRJ) .or. P_LD_RJ(@cRJ)
-	
-	@ m_x + nX, col() + 2 SAY "Obracun:" GET cObr VALID cObr $ " 123456789"
-	
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "----------------------------------------"  
-	++nX
+    
+    @ m_x + nX, m_y + 2 SAY "*** Unos datuma isplata placa" COLOR "I"
+    
+    ++nX
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "Tekuca godina:" GET nGod PICT "9999"
+    
+    @ m_x + nX, col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
+        VALID EMPTY(cRJ) .or. P_LD_RJ(@cRJ)
+    
+    @ m_x + nX, col() + 2 SAY "Obracun:" GET cObr VALID cObr $ " 123456789"
+    
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "----------------------------------------"  
+    ++nX
 
-	read
+    read
 
-	// uzmi parametre postojece
-	// prethodna godina
-	dDatPr := g_isp_date( cRj, nGod - 1, 12, cObr, @nMjPr, @cIsZaPr, ;
-		@cVrIsPr )
-	
-	// od mjeseca 1 do mjeseca 12 tekuce godine
-	dDat1 := g_isp_date( cRj, nGod, 1, cObr, @nMj1, @cIsZa1, @cVrIs1 )
-	dDat2 := g_isp_date( cRj, nGod, 2, cObr, @nMj2, @cIsZa2, @cVrIs2 )
-	dDat3 := g_isp_date( cRj, nGod, 3, cObr, @nMj3, @cIsZa3, @cVrIs3 )
-	dDat4 := g_isp_date( cRj, nGod, 4, cObr, @nMj4, @cIsZa4, @cVrIs4 )
-	dDat5 := g_isp_date( cRj, nGod, 5, cObr, @nMj5, @cIsZa5, @cVrIs5 )
-	dDat6 := g_isp_date( cRj, nGod, 6, cObr, @nMj6, @cIsZa6, @cVrIs6 )
-	dDat7 := g_isp_date( cRj, nGod, 7, cObr, @nMj7, @cIsZa7, @cVrIs7 )
-	dDat8 := g_isp_date( cRj, nGod, 8, cObr, @nMj8, @cIsZa8, @cVrIs8 )
-	dDat9 := g_isp_date( cRj, nGod, 9, cObr, @nMj9, @cIsZa9, @cVrIs9 )
-	dDat10 := g_isp_date( cRj, nGod, 10, cObr, @nMj10, @cIsZa10, @cVrIs10 )
-	dDat11 := g_isp_date( cRj, nGod, 11, cObr, @nMj11, @cIsZa11, @cVrIs11 )
-	dDat12 := g_isp_date( cRj, nGod, 12, cObr, @nMj12, @cIsZa12, @cVrIs12 )
+    // uzmi parametre postojece
+    // prethodna godina
+    dDatPr := g_isp_date( cRj, nGod - 1, 12, cObr, @nMjPr, @cIsZaPr, ;
+        @cVrIsPr )
+    
+    // od mjeseca 1 do mjeseca 12 tekuce godine
+    dDat1 := g_isp_date( cRj, nGod, 1, cObr, @nMj1, @cIsZa1, @cVrIs1 )
+    dDat2 := g_isp_date( cRj, nGod, 2, cObr, @nMj2, @cIsZa2, @cVrIs2 )
+    dDat3 := g_isp_date( cRj, nGod, 3, cObr, @nMj3, @cIsZa3, @cVrIs3 )
+    dDat4 := g_isp_date( cRj, nGod, 4, cObr, @nMj4, @cIsZa4, @cVrIs4 )
+    dDat5 := g_isp_date( cRj, nGod, 5, cObr, @nMj5, @cIsZa5, @cVrIs5 )
+    dDat6 := g_isp_date( cRj, nGod, 6, cObr, @nMj6, @cIsZa6, @cVrIs6 )
+    dDat7 := g_isp_date( cRj, nGod, 7, cObr, @nMj7, @cIsZa7, @cVrIs7 )
+    dDat8 := g_isp_date( cRj, nGod, 8, cObr, @nMj8, @cIsZa8, @cVrIs8 )
+    dDat9 := g_isp_date( cRj, nGod, 9, cObr, @nMj9, @cIsZa9, @cVrIs9 )
+    dDat10 := g_isp_date( cRj, nGod, 10, cObr, @nMj10, @cIsZa10, @cVrIs10 )
+    dDat11 := g_isp_date( cRj, nGod, 11, cObr, @nMj11, @cIsZa11, @cVrIs11 )
+    dDat12 := g_isp_date( cRj, nGod, 12, cObr, @nMj12, @cIsZa12, @cVrIs12 )
 
-	@ m_x + nX, m_y + 2 SAY PADL("datum", 7) + ;
-		PADL("mj.ispl.", 18) + ;
-		PADL("isplata za", 18) + ;
-		PADL("vrsta ispl.", 18)
+    @ m_x + nX, m_y + 2 SAY PADL("datum", 7) + ;
+        PADL("mj.ispl.", 18) + ;
+        PADL("isplata za", 18) + ;
+        PADL("vrsta ispl.", 18)
 
-	++nX
+    ++nX
 
-	@ m_x + nX, m_y + 2 SAY "12." + ALLTRIM(STR(nGod-1)) + ;
-		" => " GET dDatPr
-	@ m_x + nX, col() + 2 SAY "" GET nMjPr PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZaPr PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIsPr PICT "@S15"
-	
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "01." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat1
-	@ m_x + nX, col() + 2 SAY "" GET nMj1 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa1 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs1 PICT "@S15"
+    @ m_x + nX, m_y + 2 SAY "12." + ALLTRIM(STR(nGod-1)) + ;
+        " => " GET dDatPr
+    @ m_x + nX, col() + 2 SAY "" GET nMjPr PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZaPr PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIsPr PICT "@S15"
+    
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "01." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat1
+    @ m_x + nX, col() + 2 SAY "" GET nMj1 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa1 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs1 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "02." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat2
-	@ m_x + nX, col() + 2 SAY "" GET nMj2 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa2 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs2 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "02." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat2
+    @ m_x + nX, col() + 2 SAY "" GET nMj2 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa2 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs2 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "03." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat3
-	@ m_x + nX, col() + 2 SAY "" GET nMj3 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa3 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs3 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "03." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat3
+    @ m_x + nX, col() + 2 SAY "" GET nMj3 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa3 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs3 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "04." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat4
-	@ m_x + nX, col() + 2 SAY "" GET nMj4 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa4 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs4 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "04." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat4
+    @ m_x + nX, col() + 2 SAY "" GET nMj4 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa4 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs4 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "05." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat5
-	@ m_x + nX, col() + 2 SAY "" GET nMj5 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa5 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs5 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "05." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat5
+    @ m_x + nX, col() + 2 SAY "" GET nMj5 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa5 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs5 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "06." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat6
-	@ m_x + nX, col() + 2 SAY "" GET nMj6 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa6 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs6 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "06." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat6
+    @ m_x + nX, col() + 2 SAY "" GET nMj6 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa6 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs6 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "07." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat7
-	@ m_x + nX, col() + 2 SAY "" GET nMj7 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa7 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs7 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "07." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat7
+    @ m_x + nX, col() + 2 SAY "" GET nMj7 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa7 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs7 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "08." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat8
-	@ m_x + nX, col() + 2 SAY "" GET nMj8 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa8 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs8 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "08." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat8
+    @ m_x + nX, col() + 2 SAY "" GET nMj8 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa8 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs8 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "09." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat9
-	@ m_x + nX, col() + 2 SAY "" GET nMj9 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa9 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs9 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "09." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat9
+    @ m_x + nX, col() + 2 SAY "" GET nMj9 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa9 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs9 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "10." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat10
-	@ m_x + nX, col() + 2 SAY "" GET nMj10 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa10 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs10 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "10." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat10
+    @ m_x + nX, col() + 2 SAY "" GET nMj10 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa10 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs10 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "11." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat11
-	@ m_x + nX, col() + 2 SAY "" GET nMj11 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa11 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs11 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "11." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat11
+    @ m_x + nX, col() + 2 SAY "" GET nMj11 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa11 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs11 PICT "@S15"
 
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "12." + ALLTRIM(STR(nGod)) + ;
-		" => " GET dDat12
-	@ m_x + nX, col() + 2 SAY "" GET nMj12 PICT "99"
-	@ m_x + nX, col() + 2 SAY "" GET cIsZa12 PICT "@S15"
-	@ m_x + nX, col() + 2 SAY "" GET cVrIs12 PICT "@S15"
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "12." + ALLTRIM(STR(nGod)) + ;
+        " => " GET dDat12
+    @ m_x + nX, col() + 2 SAY "" GET nMj12 PICT "99"
+    @ m_x + nX, col() + 2 SAY "" GET cIsZa12 PICT "@S15"
+    @ m_x + nX, col() + 2 SAY "" GET cVrIs12 PICT "@S15"
 
-	
-	++nX
-	++nX
-	
-	@ m_x + nX, m_y + 2 SAY "Unos ispravan (D/N)" GET cOk ;
-		VALID cOK $ "DN" ;
-		PICT "@!"
+    
+    ++nX
+    ++nX
+    
+    @ m_x + nX, m_y + 2 SAY "Unos ispravan (D/N)" GET cOk ;
+        VALID cOK $ "DN" ;
+        PICT "@!"
 
-	read
+    read
 BoxC()
 
 if LastKey() <> K_ESC
 
-	if cOk == "N"
-		return
-	endif
-	
-	nGodina := nGod
+    if cOk == "N"
+        return
+    endif
+    
+    nGodina := nGod
 
-	// setuj promjene
-	// prethodna godina
-	s_isp_date( cRJ, nGodina - 1 , 12, cObr, dDatPr, nMjPr, cIsZaPr, ;
-		cVrIsPr )
+    // setuj promjene
+    // prethodna godina
+    s_isp_date( cRJ, nGodina - 1 , 12, cObr, dDatPr, nMjPr, cIsZaPr, ;
+        cVrIsPr )
 
-	// od 1 do 12 mjeseca tekuce
-	s_isp_date( cRJ, nGodina, 1, cObr, dDat1, nMj1, cIsZa1, cVrIs1 )
-	s_isp_date( cRJ, nGodina, 2, cObr, dDat2, nMj2, cIsZa2, cVrIs2 )
-	s_isp_date( cRJ, nGodina, 3, cObr, dDat3, nMj3, cIsZa3, cVrIs3 )
-	s_isp_date( cRJ, nGodina, 4, cObr, dDat4, nMj4, cIsZa4, cVrIs4 )
-	s_isp_date( cRJ, nGodina, 5, cObr, dDat5, nMj5, cIsZa5, cVrIs5 )
-	s_isp_date( cRJ, nGodina, 6, cObr, dDat6, nMj6, cIsZa6, cVrIs6 )
-	s_isp_date( cRJ, nGodina, 7, cObr, dDat7, nMj7, cIsZa7, cVrIs7 )
-	s_isp_date( cRJ, nGodina, 8, cObr, dDat8, nMj8, cIsZa8, cVrIs8 )
-	s_isp_date( cRJ, nGodina, 9, cObr, dDat9, nMj9, cIsZa9, cVrIs9 )
-	s_isp_date( cRJ, nGodina, 10, cObr, dDat10, nMj10, cIsZa10, cVrIs10 )
-	s_isp_date( cRJ, nGodina, 11, cObr, dDat11, nMj11, cIsZa11, cVrIs11 )
-	s_isp_date( cRJ, nGodina, 12, cObr, dDat12, nMj12, cIsZa12, cVrIs12 )
+    // od 1 do 12 mjeseca tekuce
+    s_isp_date( cRJ, nGodina, 1, cObr, dDat1, nMj1, cIsZa1, cVrIs1 )
+    s_isp_date( cRJ, nGodina, 2, cObr, dDat2, nMj2, cIsZa2, cVrIs2 )
+    s_isp_date( cRJ, nGodina, 3, cObr, dDat3, nMj3, cIsZa3, cVrIs3 )
+    s_isp_date( cRJ, nGodina, 4, cObr, dDat4, nMj4, cIsZa4, cVrIs4 )
+    s_isp_date( cRJ, nGodina, 5, cObr, dDat5, nMj5, cIsZa5, cVrIs5 )
+    s_isp_date( cRJ, nGodina, 6, cObr, dDat6, nMj6, cIsZa6, cVrIs6 )
+    s_isp_date( cRJ, nGodina, 7, cObr, dDat7, nMj7, cIsZa7, cVrIs7 )
+    s_isp_date( cRJ, nGodina, 8, cObr, dDat8, nMj8, cIsZa8, cVrIs8 )
+    s_isp_date( cRJ, nGodina, 9, cObr, dDat9, nMj9, cIsZa9, cVrIs9 )
+    s_isp_date( cRJ, nGodina, 10, cObr, dDat10, nMj10, cIsZa10, cVrIs10 )
+    s_isp_date( cRJ, nGodina, 11, cObr, dDat11, nMj11, cIsZa11, cVrIs11 )
+    s_isp_date( cRJ, nGodina, 12, cObr, dDat12, nMj12, cIsZa12, cVrIs12 )
 
 endif
 
@@ -295,7 +295,7 @@ cVrsta := SPACE(50)
 
 select F_OBRACUNI
 if !used()
-	O_OBRACUNI
+    O_OBRACUNI
 endif
 
 select obracuni
@@ -305,18 +305,18 @@ go top
 seek  cRJ + ALLTRIM(STR( nGod )) + FmtMjesec( nMjesec ) + "G" + cObr
 
 if field->rj == cRj .and. ;
-	field->mjesec = nMjesec .and. ;
-	field->godina = nGod .and. ;
-	field->obr == cObr .and. ;
-	field->status == "G"
+    field->mjesec = nMjesec .and. ;
+    field->godina = nGod .and. ;
+    field->obr == cObr .and. ;
+    field->status == "G"
 
-	dDate := field->dat_ispl
-	nMjIsp := field->mj_ispl
-	cIsplZa := field->ispl_za
-	cVrsta := field->vr_ispl
+    dDate := field->dat_ispl
+    nMjIsp := field->mj_ispl
+    cIsplZa := field->ispl_za
+    cVrsta := field->vr_ispl
 
 else
-	dDate := CTOD("")
+    dDate := CTOD("")
 endif
 
 select (nTArea)
@@ -327,13 +327,15 @@ return dDate
 // setuje datum isplate za mjesec
 // ----------------------------------------
 static function s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, ;
-	cIsplZa, cVrsta )
+    cIsplZa, cVrsta )
 
 local nTArea := SELECT()
+local _rec
+local _field_ids, _where_cond
 
 select F_OBRACUNI
 if !used()
-	O_OBRACUNI
+    O_OBRACUNI
 endif
 
 select obracuni
@@ -343,34 +345,34 @@ seek  cRJ + ALLTRIM(STR( nGod )) + FmtMjesec( nMjesec ) + "G" + cObr
 
 
 if field->rj == cRj .and. ;
-	field->mjesec = nMjesec .and. ;
-	field->godina = nGod .and. ;
-	field->obr == cObr .and. ;
-	field->status == "G"
-	
-	replace dat_ispl with dDatIspl
-	replace mj_ispl with nMjIspl
-	replace ispl_za with cIsplZa
-	replace vr_ispl with cVrsta
-
+    field->mjesec = nMjesec .and. ;
+    field->godina = nGod .and. ;
+    field->obr == cObr .and. ;
+    field->status == "G"
+    
+    _rec := dbf_get_rec()
+    _rec["dat_ispl"] := dDatIspl
+    _rec["mj_ispl"] := nMjIspl
+    _rec["ispl_za"] := cIsplZa
+    _rec["vr_ispl"] := cVrsta
 else
-	append blank
-	replace rj with cRj
-	replace godina with nGod
-	replace mjesec with nMjesec
-	replace obr with cObr
-	replace status with "G"
-	replace dat_ispl with dDatIspl
-	replace mj_ispl with nMjIspl
-	replace ispl_za with cIsplZa
-	replace vr_ispl with cVrsta
+    
+    append blank
+    _rec := dbf_get_rec()
+    _rec["rj"] := cRj
+    _rec["godina"] := nGod
+    _rec["mjesec"] := nMjesec
+    _rec["obr"] := cObr
+    _rec["status"] := "G"
+    _rec["dat_ispl"] := dDatIspl
+    _rec["mj_ispl"] := nMjIspl
+    _rec["ispl_za"] := cIsplZa
+    _rec["vr_ispl"] := cVrsta
+    
 endif
 
 // azuriranje na sql server
-Scatter()
-_vals := f18_scatter_global_vars()
-sql_update_ld_obracuni( _vals ) 
-Gather()
+update_rec_server_and_dbf( "OBRACUNI", _rec )
 
 select (nTArea)
 return

@@ -49,6 +49,12 @@ static nDuzStrKorekcija := 0
 static function g_line( )
 local cLine
 
+if gGnUse == "N"
+	// posto nema gn-a 
+	// smanji glavnu liniju
+	LEN_LINE1 := 92
+endif
+
 // linija za obraèunski list
 cLine := RAZMAK
 cLine += REPLICATE("-", LEN_LINE1 ) 
@@ -67,8 +73,10 @@ cLine := SPACE( COL_ITEM )
 cLine += REPLICATE("-", LEN_QTTY)
 cLine += " " + REPLICATE("-", LEN_DIMENSION)
 cLine += " " + REPLICATE("-", LEN_DIMENSION)
-cLine += " " + REPLICATE("-", LEN_DIMENSION)
-cLine += " " + REPLICATE("-", LEN_DIMENSION)
+if gGnUse == "D"
+    cLine += " " + REPLICATE("-", LEN_DIMENSION)
+    cLine += " " + REPLICATE("-", LEN_DIMENSION)
+endif
 cLine += " " + REPLICATE("-", LEN_VALUE)
 cLine += " " + REPLICATE("-", LEN_VALUE)
 cLine += " " + REPLICATE("-", LEN_VALUE)
@@ -369,14 +377,17 @@ do while !EOF()
 	?? " "
 
 	// zaokruzenja po GN-u
+
+    if gGnUse == "D" 	
+	    // sirina
+	    ?? show_number(nZaWidt, nil, -10 )
+	    ?? " "
 	
-	// sirina
-	?? show_number(nZaWidt, nil, -10 )
-	?? " "
-	
-	// visina
-	?? show_number(nZaHeig, nil, -10 )
-	?? " "
+	    // visina
+	    ?? show_number(nZaHeig, nil, -10 )
+	    ?? " "
+
+    endif
 
 	// neto
 	?? show_number(nNeto, nil, -10 )
@@ -411,6 +422,9 @@ do while !EOF()
 
       nTmp := COL_ITEM
       nRepl := 94
+      if gGnUse == "N"
+      	nRepl := 84
+      endif
 
       // ispis totala po istim artiklima
       
@@ -438,13 +452,15 @@ do while !EOF()
 
       // zaokruzenja po GN-u
 	
-      // sirina
-      ?? show_number(nUZWidt, nil, -10 )
-      ?? " "
+      if gGnUse == "D"
+        // sirina
+        ?? show_number(nUZWidt, nil, -10 )
+        ?? " "
 	
-      // visina
-      ?? show_number(nUZHeig, nil, -10 )
-      ?? " "
+        // visina
+        ?? show_number(nUZHeig, nil, -10 )
+        ?? " "
+      endif
 
       // neto
       ?? show_number(nUNeto, nil, -10 )
@@ -521,13 +537,17 @@ endif
 
 // zaokruzenja po GN-u
 	
-// sirina
-?? show_number(nTZWidt, nil, -10 )
-?? " "
+if gGnUse == "D"
+
+    // sirina
+    ?? show_number(nTZWidt, nil, -10 )
+    ?? " "
 	
-// visina
-?? show_number(nTZHeig, nil, -10 )
-?? " "
+    // visina
+    ?? show_number(nTZHeig, nil, -10 )
+    ?? " "
+
+endif
 
 // neto
 ?? show_number(nTNeto, nil, -10 )
@@ -651,8 +671,12 @@ cRow2 += SPACE( COL_ITEM )
 cRow2 += PADC("Kol.", LEN_QTTY)
 cRow2 += " " + PADC("Sir. (mm)", LEN_DIMENSION)
 cRow2 += " " + PADC("Vis. (mm)", LEN_DIMENSION)
-cRow2 += " " + PADC("Sir.GN", LEN_DIMENSION)
-cRow2 += " " + PADC("Vis.GN", LEN_DIMENSION)
+
+if gGnUse == "D"
+    cRow2 += " " + PADC("Sir.GN", LEN_DIMENSION)
+    cRow2 += " " + PADC("Vis.GN", LEN_DIMENSION)
+endif
+
 cRow2 += " " + PADC("Neto (kg)", LEN_VALUE)
 cRow2 += " " + PADC("Bruto (kg)", LEN_VALUE)
 cRow2 += " " + PADC("Total (m2)", LEN_VALUE)

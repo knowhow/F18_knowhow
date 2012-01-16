@@ -571,7 +571,7 @@ endif
 @ m_x+22,m_y+10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"
 
 if gVarObracun == "2" .and. ld->(FIELDPOS("V_ISPL")) <> 0
-    @ m_x+21,m_y+2 SAY "Vrsta isplate (1 - 10):"
+    @ m_x+21,m_y+2 SAY "Vrsta isplate (1 - 13):"
     @ row(),col()+1 GET _v_ispl
     read
 endif

@@ -26,6 +26,6 @@ else
   F18_EXE="F18"
 fi
 
-gzip -cN ${F18_EXE} > F18_${TAG_OS}_${VER}.gz
+gzip -v -cN ${F18_EXE} > F18_${TAG_OS}_${VER}.gz
 
-ls -l -h F18_${TAG_OS}_${VER}.gz
+ls -l F18_${TAG_OS}_${VER}.gz

@@ -1,6 +1,7 @@
-0.9.38  2012-01-16, vsasa, hernad
+0.9.38  2012-01-16, hernad
  
-  - scripts/build_release.sh
+  - vsasa IOS update tekst
+  - hernad scripts/build_release.sh
 
 0.9.37  2012-01-06, vsasa, LD specif
 

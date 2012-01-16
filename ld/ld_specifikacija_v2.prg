@@ -951,6 +951,10 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 
  _spec_path := cSpecRtm
 
+ IF !FILE( my_home() + _spec_path )
+    FILECOPY( "c:\knowhowERP\templates\" + _spec_path + ".rtm", my_home() + _spec_path + ".rtm" )
+ ENDIF
+
  _cmd := _delphi_exe_r + ' ' + _spec_path
 
  if  hb_run(_cmd) <> 0

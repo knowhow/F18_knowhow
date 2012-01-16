@@ -138,8 +138,8 @@ DO WHILE !eof() .AND. cIdFirma==IdFirma .and. cIdKonto==IdKonto
       // ako je datum veci od datuma do kojeg generisem
       // preskoci
       if field->datdok > dDatDo
-      	skip
-	loop
+        skip
+    loop
       endif
       
       IF OtvSt=" "
@@ -297,27 +297,27 @@ memvar->DATUM:=date()
 cDinDem:="1"
 
 Box("IOSS", 7, 60, .f.)
-	
-	@ m_x+1,m_y+8 SAY "I O S"
-	@ m_x+2,m_y+2 SAY "UKUCAJTE DATUM IOS-a:"  GET memvar->DATUM
-	IF gVar1=="0"
- 		@ m_x+3,m_y+2 SAY "Prikaz "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+" (1/2)"  GET cDinDem valid cdindem $ "12"
-	ENDIF
-	@ m_x+4,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
-	@ m_x+5,m_y+2 SAY "Prikaz identicno kartici " GET cKaoKartica valid cKaoKartica $ "DN" pict "@!"
-	@ m_x+6,m_y+2 SAY "Gledati period do: " GET dDatDo
-	@ m_x+7,m_y+2 SAY "Exportovati tabelu u dbf?" GET cExpDbf VALID cExpDbf$"DN" PICT "@!"
-	READ
+    
+    @ m_x+1,m_y+8 SAY "I O S"
+    @ m_x+2,m_y+2 SAY "UKUCAJTE DATUM IOS-a:"  GET memvar->DATUM
+    IF gVar1=="0"
+        @ m_x+3,m_y+2 SAY "Prikaz "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+" (1/2)"  GET cDinDem valid cdindem $ "12"
+    ENDIF
+    @ m_x+4,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
+    @ m_x+5,m_y+2 SAY "Prikaz identicno kartici " GET cKaoKartica valid cKaoKartica $ "DN" pict "@!"
+    @ m_x+6,m_y+2 SAY "Gledati period do: " GET dDatDo
+    @ m_x+7,m_y+2 SAY "Exportovati tabelu u dbf?" GET cExpDbf VALID cExpDbf$"DN" PICT "@!"
+    READ
 BoxC()
 
 if cExpDbf == "D"
-	lExpDbf := .t.
+    lExpDbf := .t.
 endif
 
 if lExpDbf == .t.
-	aExpFields := g_exp_fields()
-	t_exp_create( aExpFields )
-	cLaunch := exp_report()
+    aExpFields := g_exp_fields()
+    t_exp_create( aExpFields )
+    cLaunch := exp_report()
 endif
 
 ESC_RETURN 0
@@ -339,18 +339,18 @@ SELECT IOS
 go top
 
 DO WHILE !eof()
-	
-	cIdFirma:=IdFirma
-   	cIdKonto:=IdKonto
-   	cIdPartner:=IdPartner
-   	nIznosBHD:=IznosBHD
-   	nIznosDEM:=IznosDEM
-   	
-	// ispisi ios, exportuj ako treba
-	ZagIOSS( cDinDem, dDatDo, lExpDbf )
-   	
-	SKIP
-	
+    
+    cIdFirma:=IdFirma
+    cIdKonto:=IdKonto
+    cIdPartner:=IdPartner
+    nIznosBHD:=IznosBHD
+    nIznosDEM:=IznosDEM
+    
+    // ispisi ios, exportuj ako treba
+    ZagIOSS( cDinDem, dDatDo, lExpDbf )
+    
+    SKIP
+    
 ENDDO
 
 FF
@@ -358,7 +358,7 @@ end print
 
 // lansiraj report....
 if lExpDbf == .t.
-	tbl_export( cLaunch )
+    tbl_export( cLaunch )
 endif
 
 closeret
@@ -519,8 +519,8 @@ return aDbf
 // filovanje tabele sa podacima
 // ---------------------------------------------------------
 static function fill_exp_tbl( cIdPart, cNazPart, ;
-			cBrRn, cOpis, dDatum, dValuta, ;
-			nDug, nPot )
+            cBrRn, cOpis, dDatum, dValuta, ;
+            nDug, nPot )
 local nTArea := SELECT()
 
 O_R_EXP
@@ -551,7 +551,7 @@ local cIdPar
 local cNazPar
 
 if lExpDbf == nil
-	lExpDbf := .f.
+    lExpDbf := .f.
 endif
 
 ?
@@ -568,7 +568,7 @@ HSEEK cIdFirma
 @ prow()+1,5 SAY Adresa
 @ prow()+1,5 SAY PTT
 @ prow()+1,5 SAY ZiroR
-?
+@ prow()+1,5 SAY IzSifK( "PARTN", "REGB", cIdFirma, .f. )
 ?
 
 SELECT PARTN
@@ -583,12 +583,12 @@ HSEEK cIdPartner
 if !empty(telefon)
   @ prow()+1,45 SAY "Telefon: "+telefon
 endif
+@ prow()+1,45 SAY IzSifK( "PARTN", "REGB", cIdPartner, .f. )
 
 // setuj id i naziv partnera
 cIdPar := id
 cNazPar := naz
 
-?
 ?
 ?
 @ prow(),6 SAY "IZVOD OTVORENIH STAVKI NA DAN :"; @ prow(),pcol()+2 SAY memvar->DATUM; @ prow(),pcol()+1 SAY "GODINE"
@@ -625,9 +625,9 @@ endif
 
 @ prow(),0 SAY "U"
 IF nIznosBHD>0
-	@ prow(),pcol()+1 SAY "NAæU"
+    @ prow(),pcol()+1 SAY "NAæU"
 ELSE
-      	@ prow(),pcol()+1 SAY "VAæU"
+        @ prow(),pcol()+1 SAY "VAæU"
 ENDIF
 
 @ prow(),pcol()+1 SAY "KORIST I SASTOJI SE IZ SLIJEDEIH OTVORENIH STAVKI:"
@@ -643,10 +643,10 @@ nCol1:=62
 SELECT SUBAN
 
 if cKaoKartica=="D"
-	set order to 1
+    set order to 1
      //"IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
 else
-	set order to 3
+    set order to 3
 endif
 
 SEEK cIdFirma+cIdKonto+cIdPartner
@@ -657,159 +657,159 @@ nRbr:=0
 
 // ako je kartica, onda nikad ne prelamaj
 if cKaoKartica=="D"
-	cPrelomljeno:="N"
+    cPrelomljeno:="N"
 endif
 
 DO WHILE !eof() .AND. cIdFirma=IdFirma .AND. cIdKonto=IdKonto .AND. cIdPartner==IdPartner
      
-	cBrDok:=brdok
-     	dDatdok:=datdok
-     	cOpis:=ALLTRIM(opis)
-     	dDatVal:=datval
-     	nDBHD:=0
-     	nPBHD:=0
-     	nDDEM:=0
-     	nPDEM:=0
-     	cOtvSt:=otvst
+    cBrDok:=brdok
+        dDatdok:=datdok
+        cOpis:=ALLTRIM(opis)
+        dDatVal:=datval
+        nDBHD:=0
+        nPBHD:=0
+        nDDEM:=0
+        nPDEM:=0
+        cOtvSt:=otvst
      
-     	DO WHILE !eof() .AND. cIdFirma=IdFirma .AND. cIdKonto=IdKonto .AND. cIdPartner==IdPartner .and. (cKaoKartica=="D" .or. brdok==cBrdok)
+        DO WHILE !eof() .AND. cIdFirma=IdFirma .AND. cIdKonto=IdKonto .AND. cIdPartner==IdPartner .and. (cKaoKartica=="D" .or. brdok==cBrdok)
          
-	 	if field->datdok > dDatDo
-			skip
-			loop
-		endif
-		
-		IF OtvSt = " "
+        if field->datdok > dDatDo
+            skip
+            loop
+        endif
+        
+        IF OtvSt = " "
             
-	    		if cKaoKartica=="D"
+                if cKaoKartica=="D"
                
-				if prow()>61+gPStranica
-	       	    			FF
-	       			endif      
+                if prow()>61+gPStranica
+                            FF
+                    endif      
                
-	       			@ prow()+1,8 SAY ++nRbr PICTURE '999'
-               			@ prow(),pcol()+1  SAY BrDok
-               			nCOpis:=pcol()+1
-               			@ prow(),nCOpis    SAY PADR(Opis,20)
-               			@ prow(),pcol()+1  SAY DatDok
-               			@ prow(),pcol()+1  SAY DatVal
+                    @ prow()+1,8 SAY ++nRbr PICTURE '999'
+                        @ prow(),pcol()+1  SAY BrDok
+                        nCOpis:=pcol()+1
+                        @ prow(),nCOpis    SAY PADR(Opis,20)
+                        @ prow(),pcol()+1  SAY DatDok
+                        @ prow(),pcol()+1  SAY DatVal
                
-	       			if cDinDem=="1"
-                    			@ prow(),ncol1    SAY iif(D_P="1",iznosbhd,0)  PICTURE picBHD
-                    			@ prow(),pcol()+1 SAY iif(D_P="2",iznosbhd,0)  PICTURE picBHD
-               			else
-                    			@ prow(),ncol1    SAY iif(D_P="1",iznosdem,0) PICTURE picBHD
-                    			@ prow(),pcol()+1 SAY iif(D_P="2",iznosdem,0) PICTURE picBHD
-               			endif
+                    if cDinDem=="1"
+                                @ prow(),ncol1    SAY iif(D_P="1",iznosbhd,0)  PICTURE picBHD
+                                @ prow(),pcol()+1 SAY iif(D_P="2",iznosbhd,0)  PICTURE picBHD
+                        else
+                                @ prow(),ncol1    SAY iif(D_P="1",iznosdem,0) PICTURE picBHD
+                                @ prow(),pcol()+1 SAY iif(D_P="2",iznosdem,0) PICTURE picBHD
+                        endif
 
-	       			if lExpDbf == .t.
-	       				fill_exp_tbl( cIdPar, cNazPar, brdok, opis, ;
-	       					datdok, datval, iif(d_p=="1", iznosbhd, 0), ;
-						iif(d_p=="2", iznosbhd, 0) )
-	      			endif
-	       
-            		endif
-            
-	    		IF D_P = "1"
-               			nDBHD+=IznosBHD
-				nDDEM+=IznosDEM
-            		ELSE
-               			nPBHD+=IznosBHD
-				nPDEM+=IznosDEM
-            		ENDIF
-            
-	    		cOtvSt := " "
-        
-		else  // zatvorene stavke
-            
-	    		IF D_P="1"
-               			nDugBHDZ+=IznosBHD; nDugDEMZ+=IznosDEM
-            		ELSE
-               			nPotBHDZ+=IznosBHD; nPotDEMZ+=IznosDEM
-            		ENDIF
-        
-		endif
-	
-        	skip
-     
-     	enddo
-     
-     	if cOtvSt == " "
-      
-      		if cKaoKartica=="N"
-       
-			if prow()>61+gPStranica
-				FF
-			endif
-			
-			// MS 29.11.01
-        
-			@ prow()+1,8 SAY ++nRbr PICTURE '999'
-
-        		@ prow(),pcol()+1  SAY cBrDok
-        		nCOpis:=pcol()+1
-        		@ prow(),nCOpis    SAY PADR(cOpis,20)
-        		@ prow(),pcol()+1  SAY dDatDok
-        		@ prow(),pcol()+1  SAY dDatVal
-      
-      		endif
-      
-      		if cDinDem == "1"
-		
-          		if cPrelomljeno=="D"
-              			
-				if nDBHD-nPBHD>0
-                			nDBHD:=nDBHD-nPBHD
-                			nPBHD:=0
-              			else
-                			nPBHD:=nPBHD-nDBHD
-                			nDBHD:=0
-              			endif
-				
-          		endif
-          
-	  		if cKaoKartica=="N"
+                    if lExpDbf == .t.
+                        fill_exp_tbl( cIdPar, cNazPar, brdok, opis, ;
+                            datdok, datval, iif(d_p=="1", iznosbhd, 0), ;
+                        iif(d_p=="2", iznosbhd, 0) )
+                    endif
            
-	   			@ prow(),ncol1 SAY nDBHD PICTURE picBHD
-           			@ prow(),pcol()+1 SAY nPBhD PICTURE picBHD
-          	
-				if lExpDbf == .t.
-	       				fill_exp_tbl( cIdPar, cNazPar, cBrDok, cOpis, dDatdok, dDatval, nDBHD,nPBHD )
-	  			endif
-	            
-	 		endif
-	
-	  	
-      		else
-          		if cPrelomljeno=="D"
-              			if nDDEM-nPDEM>0
-                			nDDEM:=nDDEM-nPDEM
-                			nPBHD:=0
-              			else
-                			nPDEM:=nPDEM-nDDEM
-                			nDDEM:=0
-              			endif
-          		endif
-          		
-			if cKaoKartica=="N"
-           			
-				@ prow(),ncol1    SAY nDDEM PICTURE picBHD
-           			@ prow(),pcol()+1 SAY nPDEM PICTURE picBHD
-          		
-	  
-	  			if lExpDbf == .t.
-	       				fill_exp_tbl( cIdPar, cNazPar, cBrdok, cOpis, dDatdok, dDatval, nDDEM,nPDEM )
-	  			endif
-	  
-	  		endif
-      		endif
+                    endif
+            
+                IF D_P = "1"
+                        nDBHD+=IznosBHD
+                nDDEM+=IznosDEM
+                    ELSE
+                        nPBHD+=IznosBHD
+                nPDEM+=IznosDEM
+                    ENDIF
+            
+                cOtvSt := " "
+        
+        else  // zatvorene stavke
+            
+                IF D_P="1"
+                        nDugBHDZ+=IznosBHD; nDugDEMZ+=IznosDEM
+                    ELSE
+                        nPotBHDZ+=IznosBHD; nPotDEMZ+=IznosDEM
+                    ENDIF
+        
+        endif
+    
+            skip
      
-      		nDugBHD+=nDBHD; nPotBHD+=nPBHD
-      		nDugDem+=nDDem; nPotDem+=nPDem
+        enddo
      
-     	endif
+        if cOtvSt == " "
+      
+            if cKaoKartica=="N"
+       
+            if prow()>61+gPStranica
+                FF
+            endif
+            
+            // MS 29.11.01
+        
+            @ prow()+1,8 SAY ++nRbr PICTURE '999'
+
+                @ prow(),pcol()+1  SAY cBrDok
+                nCOpis:=pcol()+1
+                @ prow(),nCOpis    SAY PADR(cOpis,20)
+                @ prow(),pcol()+1  SAY dDatDok
+                @ prow(),pcol()+1  SAY dDatVal
+      
+            endif
+      
+            if cDinDem == "1"
+        
+                if cPrelomljeno=="D"
+                        
+                if nDBHD-nPBHD>0
+                            nDBHD:=nDBHD-nPBHD
+                            nPBHD:=0
+                        else
+                            nPBHD:=nPBHD-nDBHD
+                            nDBHD:=0
+                        endif
+                
+                endif
+          
+            if cKaoKartica=="N"
+           
+                @ prow(),ncol1 SAY nDBHD PICTURE picBHD
+                    @ prow(),pcol()+1 SAY nPBhD PICTURE picBHD
+            
+                if lExpDbf == .t.
+                        fill_exp_tbl( cIdPar, cNazPar, cBrDok, cOpis, dDatdok, dDatval, nDBHD,nPBHD )
+                endif
+                
+            endif
+    
+        
+            else
+                if cPrelomljeno=="D"
+                        if nDDEM-nPDEM>0
+                            nDDEM:=nDDEM-nPDEM
+                            nPBHD:=0
+                        else
+                            nPDEM:=nPDEM-nDDEM
+                            nDDEM:=0
+                        endif
+                endif
+                
+            if cKaoKartica=="N"
+                    
+                @ prow(),ncol1    SAY nDDEM PICTURE picBHD
+                    @ prow(),pcol()+1 SAY nPDEM PICTURE picBHD
+                
+      
+                if lExpDbf == .t.
+                        fill_exp_tbl( cIdPar, cNazPar, cBrdok, cOpis, dDatdok, dDatval, nDDEM,nPDEM )
+                endif
+      
+            endif
+            endif
      
-     	OstatakOpisa(cOpis,nCOpis)
+            nDugBHD+=nDBHD; nPotBHD+=nPBHD
+            nDugDem+=nDDem; nPotDem+=nPDem
+     
+        endif
+     
+        OstatakOpisa(cOpis,nCOpis)
    
 ENDDO
 
@@ -900,8 +900,10 @@ if prow()>58+gPStranica; FF; endif
 if prow()>52+gPStranica; FF; endif
 ?
 ?
-@ prow(),0 SAY "Po clanu 69. novog Zakona o racunovodstvu i reviziji u FBiH onaj ko ne odgovori na konfirmaciju" 
-@ prow()+1,0 SAY "u roku od 8 dana bit ce kaznjen za prekrsaj novcanom kaznom u iznosu od 5.000 do 15.000 KM."
+@ prow(),0 SAY "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09)" 
+@ prow()+1,0 SAY "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana."
+@ prow()+1,0 SAY "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je"
+@ prow()+1,0 SAY "usaglasavanje izvrseno i da je stanje isto."
 ?
 ?
 @ prow(),0 SAY "NAPOMENA: OSPORAVAMO ISKAZANO STANJE U CJELINI _______________ DJELIMI¬NO"

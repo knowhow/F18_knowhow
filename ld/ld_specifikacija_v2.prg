@@ -96,11 +96,13 @@ local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
 local cMatBr
-local _cmd
 local _home_path
 local _delphi_exe
+local _delphi_exe_r
 local _spec_path
 local _proizv_ini
+local _cmd
+
 private aSpec:={}
 private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999" + IIF(gZaok>0, PADR(".",gZaok+1,"9"), "")
@@ -109,19 +111,26 @@ private gPici3:="999,999,999,999.99"
 
 #ifdef __PLATFORM__WINDOWS
 
-_home_path := '"' + my_home() + '"'
-_delphi_exe := '"' + my_home() + "f18_delphirb.exe" + '"'
-_proizv_ini := '"' + my_home() + "proizvj.ini" + '"'
+_home_path := my_home()
 
-if !FILE(_delphi_exe)
-   FILECOPY("c:\knowhowERP\util\delphirb.exe", _delphi_exe)
+_delphi_exe := my_home() + "f18_delphirb.exe"
+_delphi_exe_r := '"' + _delphi_exe + '"'
+
+_proizv_ini := my_home() + "proizvj.ini"
+
+if !FILE( _delphi_exe )
+    FILECOPY( "c:\knowhowERP\util\delphirb.exe", _delphi_exe )
 endif
 
 #else
 
 MsgBeep("nisam siguran da ovo radi: http://redmine.bring.out.ba/issues/26099")
+
 _home_path := my_home()
-_delphi_exe := "delphirb"
+
+_delphi_exe := my_home() + "delphirb.exe"
+_delphi_exe_r := _delphi_exe
+
 _proizv_ini := my_home() + "proizvj.ini"
 
 #endif 
@@ -942,23 +951,11 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 
  _spec_path := cSpecRtm
 
- _cmd := _delphi_exe + " " + _spec_path + " " + _home_path + "  DUMMY 1"
-
- cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))
- 
- if cPom!="-"
-  _cmd += " lmarg:" + cPom
- endif
- 
- cPom := alltrim(IzFmkIni("Specif","GornjaMargina","-",KUMPATH))
- 
- if cPom!="-"
-  _cmd += " tmarg:"+cPom
- endif
+ _cmd := _delphi_exe_r + ' ' + _spec_path
 
  if  hb_run(_cmd) <> 0
-    MsgBeep("ERR cmd: " + _cmd)
-    return .f.
+   MsgBeep("ERR cmd: " + _cmd)
+   return .f.
  endif
 
 endif

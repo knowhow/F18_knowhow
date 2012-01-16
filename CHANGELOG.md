@@ -1,3 +1,7 @@
+0.9.38  2012-01-16, vsasa, hernad
+ 
+  - scripts/build_release.sh
+
 0.9.37  2012-01-06, vsasa, LD specif
 
   - [#26099](http://redmine.bring.out.ba/issues/26099)

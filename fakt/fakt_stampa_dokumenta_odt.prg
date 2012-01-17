@@ -40,7 +40,9 @@ stdokpdv( cIdF, cIdVd, cBrDok, .t. )
 _gen_xml()
 
 // uzmi template koji ces koristiti
-g_afile( _t_path, _filter, @_template, .t. )
+if g_afile( _t_path, _filter, @_template, .t. ) == 0
+    return
+endif
 
 // pozovi odt stampu
 _odt_print( _t_path, _template )

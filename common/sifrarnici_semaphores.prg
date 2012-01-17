@@ -19,7 +19,7 @@ local _result := .f.
 local _i
 local _tbl := "partn"
 
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_PARTN, {"id", "naz", "naz2", "ptt", "mjesto", "adresa", "ziror", "telefon", "dziror", "fax", "mobtel", "_kup", "_dob", "_banka", "_radnik" })
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_PARTN, {"id", "naz", "naz2", "ptt", "mjesto", "adresa", "ziror", "telefon", "dziror", "fax", "mobtel", "_kup", "_dob", "_banka", "_radnik", "idrefer", "idops" })
 
 return _result
 
@@ -108,6 +108,19 @@ local _tbl := "banke"
 
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_BANKE, {"id", ;
 				"mjesto", "naz", "adresa" })
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function refer_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "refer"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_REFER, {"id", ;
+				"idops", "naz" })
 
 return _result
 

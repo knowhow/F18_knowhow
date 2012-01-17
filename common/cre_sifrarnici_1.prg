@@ -36,8 +36,6 @@ CREATE_INDEX("ID","id", "rj")
 CREATE_INDEX("NAZ","NAZ", "rj")
 index_mcode(KUMPATH, "rj")
 
-cre_partn()
-
 // KONTO
 if !file(f18_ime_dbf("konto"))
    aDbf:={}
@@ -191,6 +189,17 @@ endif
 CREATE_INDEX("ID","id", SIFPATH + cIme)  // vrste naloga
 CREATE_INDEX("NAZ","naz", SIFPATH + cIme)
 index_mcode(SIFPATH, cIme)
+
+// REFER
+if !file( f18_ime_dbf("refer"))
+   aDBf:={}
+   AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
+   AADD(aDBf,{ 'IDOPS'               , 'C' ,   4 ,  0 })
+   AADD(aDBf,{ 'NAZ'                 , 'C' ,  40 ,  0 })
+   DBCREATE2( 'REFER', aDbf )
+endif
+CREATE_INDEX("ID","id", "refer") 
+CREATE_INDEX("NAZ","naz", "refer")
 
 nArea:=nil
 

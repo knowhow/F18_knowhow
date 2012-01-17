@@ -11,8 +11,9 @@
 
 #include "fmk.ch"
 
-function cre_partn()
+function cre_partn( ver )
 local aDbf := {}
+local _created, _table_name, _alias
 
 AADD(aDBf, { 'ID'                  , 'C' ,   6 ,  0 })
 add_f_mcode(@aDbf)
@@ -31,16 +32,30 @@ AADD(aDBf, { 'TELEFON'             , 'C' ,  12 ,  0 })
 AADD(aDBf, { 'FAX'                 , 'C' ,  12 ,  0 })
 AADD(aDBf, { 'MOBTEL'              , 'C' ,  20 ,  0 })
 
-if !file(f18_ime_dbf("partn"))
-    dbcreate2('partn', aDbf)
-    reset_semaphore_version("partn")
-    my_use("partn")
-	close all 
+_created := .f.
+_alias := "PARTN"
+_table_name := "partn"
+
+IF !FILE(f18_ime_dbf("partn"))
+    dbcreate2( _table_name, aDbf )
+    _created := .t.
+ENDIF
+
+// 0.4.2
+if ver["current"] < 00402
+   modstru( {"*" + _table_name, "A IDREFER C 10 0", "A IDOPS C 4 0" })
 endif
 
-if !file(f18_ime_dbf("_partn"))
+IF _created
+    reset_semaphore_version( _table_name )
+    my_use( _alias )
+	close all 
+ENDIF
+
+IF !FILE(f18_ime_dbf("_partn"))
         dbcreate2('_partn', aDbf)
-endif
+ENDIF
+
 CREATE_INDEX("ID", "id", "partn")
 CREATE_INDEX("NAZ", "NAZ", "partn")
 
@@ -119,8 +134,12 @@ if partn->(fieldpos("ID2")) <> 0
   AADD (ImeKol,{ padr("Id2", 6 ), {|| id2}, "id2" })
 endif
 
-if partn->(fieldpos("IdOps")) <> 0
-  AADD (ImeKol,{ padr("Opstina", 6 ), {|| idOps}, "idOps" })
+if partn->(fieldpos("idops")) <> 0
+  AADD (ImeKol,{ padr("Opstina", 6 ), {|| idops}, "idops", {|| .t.}, {|| p_ops(@widops)} })
+endif
+
+if partn->(fieldpos("idrefer")) <> 0
+  AADD (ImeKol,{ padr("Referent", 10 ), {|| idrefer}, "idrefer", {|| .t.}, {|| p_refer(@widrefer)} })
 endif
 
 

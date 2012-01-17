@@ -171,6 +171,7 @@ AADD( gaDbfs, { F_LOGKD       , "LOGKD"         , "fakt_logkd"     } )
 AADD( gaDbfs, { F_BARKOD      , "BARKOD"        , "fakt_barkod"    } )
 AADD( gaDbfs, { F_RJ          , "RJ"            , "fakt_rj"        } )
 AADD( gaDbfs, { F_UPL         , "UPL"           , "fakt_upl"       } )
+AADD( gaDbfs, { F_REFER       , "REFER"         , "refer", {|alg| refer_from_sql_server(alg)}, "IDS" } )
 
 AADD( gaDbfs, { F_FAKT        , "FAKT"          , "fakt_fakt"      , { |alg| fakt_fakt_from_sql_server(alg) }  , "IDS", {"idfirma", "idtipdok", "brdok", "rbr"}, {|x| sql_where_block("fakt_fakt", x) }, "1" } )
 

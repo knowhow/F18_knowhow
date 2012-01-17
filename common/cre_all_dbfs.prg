@@ -16,6 +16,7 @@ function cre_all_dbfs(ver)
 cre_sifk_sifv(ver)
 cre_sifrarnici_1(ver)
 cre_roba(ver)
+cre_partn(ver)
 
 // TODO: http://redmine.bring.out.ba/issues/25815
 cre_all_fin(ver)

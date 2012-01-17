@@ -19,7 +19,7 @@ local _result := .f.
 local _i
 local _tbl := "partn"
 
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_PARTN, {"id", "naz", "mjesto", "adresa", "ziror", "fax", "mobtel" })
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_PARTN, {"id", "naz", "naz2", "ptt", "mjesto", "adresa", "ziror", "telefon", "dziror", "fax", "mobtel", "_kup", "_dob", "_banka", "_radnik" })
 
 return _result
 

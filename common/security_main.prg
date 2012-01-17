@@ -52,7 +52,7 @@ local cTable := "public.usr_bak"
 local oTable
 local nResult
 local oServer := pg_server()
-local cUser   := my_user()
+local cUser   := ALLTRIM( my_user() )
 
 cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + _sql_quote( cUser )
 oTable := _sql_query( oServer, cTmpQry )

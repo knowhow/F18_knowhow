@@ -132,7 +132,7 @@ endif
 
 for _i := 1 to retry
 
-   ? qry
+   log_write( "qry: " + qry )
    begin sequence with {|err| Break(err)}
        _qry_obj := _server:Query(qry)
    recove
@@ -428,3 +428,4 @@ next
 _ret += ")"
 
 return _ret
+

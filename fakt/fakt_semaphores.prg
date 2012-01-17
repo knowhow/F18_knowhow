@@ -23,7 +23,6 @@ local _rec
 local _qry_obj
 local _server := pg_server()
 local _seconds
-local _x, _y
 local _dat, _ids
 local _fnd, _tmp_id
 local _count
@@ -37,14 +36,9 @@ local _i, _fld, _fields, _sql_fields
 
 _tbl := "fmk.fakt_fakt"
 
-_x := maxrows() - 15
-_y := maxcols() - 20
-
 if algoritam == NIL
     algoritam := "FULL"
 endif
-
-@ _x + 1, _y + 2 SAY "update fakt_fakt: " + algoritam
 
 _seconds := SECONDS()
 
@@ -145,9 +139,6 @@ for _offset := 0 to _count STEP _step
   // sada je sve izbrisano u lokalnom dbf-u
 
   _qry_obj := run_sql_query( _qry, _retry )
-
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
   _counter := 1
 
   DO WHILE !_qry_obj:Eof()
@@ -165,20 +156,13 @@ for _offset := 0 to _count STEP _step
 
     _qry_obj:Skip()
 
-    _counter++
-
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
 
 next
 
 USE
 
-if (gDebug > 5)
-    log_write("fakt_fakt synchro cache:" + STR(SECONDS() - _seconds))
-endif
+log_write("fakt_fakt synchro cache:" + STR(SECONDS() - _seconds))
 
 return .t. 
 
@@ -247,10 +231,8 @@ ENDCASE
    
 _ret := _sql_query( _server, _qry)
 
-if (gDebug > 5)
-   log_write(_qry)
-   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
-endif
+log_write(_qry)
+log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
 
 if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.
@@ -270,7 +252,6 @@ local _rec
 local _qry_obj
 local _server := pg_server()
 local _seconds
-local _x, _y
 local _dat, _ids
 local _fnd, _tmp_id
 local _tbl
@@ -286,17 +267,11 @@ if algoritam == NIL
   algoritam := "FULL"
 endif
 
-_x := maxrows() - 15
-_y := maxcols() - 20
-
 _tbl := "fmk.fakt_doks"
-
-@ _x + 1, _y + 2 SAY "update fakt_doks: " + algoritam
 
 _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
-
 
 _fields := { "idfirma", "idtipdok", "brdok", "partner", "datdok", "dindem", "iznos", "rabat", "rezerv", "m1", "idpartner", "idvrstep", "datpl", "idpm", "dok_veza", "oper_id", "fisc_rn", "dat_isp", "dat_otpr", "dat_val" }
 _sql_fields := sql_fields(_fields)
@@ -388,8 +363,6 @@ for _offset := 0 to _count STEP _step
 
   _qry_obj := run_sql_query( _qry, _retry )
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
   _counter := 1
 
   DO WHILE !_qry_obj:Eof()
@@ -408,17 +381,13 @@ for _offset := 0 to _count STEP _step
 
     _counter++
 
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
 
 next
 
 USE
-if (gDebug > 5)
-    log_write("fakt_doks synchro cache:" + STR(SECONDS() - _seconds))
-endif
+
+log_write("fakt_doks synchro cache:" + STR(SECONDS() - _seconds))
 
 return .t. 
 
@@ -431,7 +400,6 @@ LOCAL _qry
 LOCAL _tbl
 LOCAL _where := ""
 LOCAL _server := pg_server()
-
 
 _tbl := "fmk.fakt_doks"
 
@@ -479,10 +447,8 @@ END CASE
    
 _ret := _sql_query( _server, _qry)
 
-if (gDebug > 5)
-   log_write(_qry)
-   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
-endif
+log_write(_qry)
+log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
 
 if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.
@@ -503,7 +469,6 @@ local _rec
 local _qry_obj
 local _server := pg_server()
 local _seconds
-local _x, _y
 local _dat, _ids
 local _fnd, _tmp_id
 local _tbl
@@ -519,12 +484,7 @@ if algoritam == NIL
   algoritam := "FULL"
 endif
 
-_x := maxrows() - 15
-_y := maxcols() - 20
-
 _tbl := "fmk.fakt_doks2"
-
-@ _x + 1, _y + 2 SAY "update fakt_doks2: " + algoritam
 
 _seconds := SECONDS()
 
@@ -623,8 +583,6 @@ for _offset := 0 to _count STEP _step
 
   _qry_obj := run_sql_query( _qry, _retry )
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
   _counter := 1
 
   DO WHILE !_qry_obj:Eof()
@@ -641,18 +599,14 @@ for _offset := 0 to _count STEP _step
 
     _counter++
 
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
 
 
 next
 
 USE
-if (gDebug > 5)
-    log_write("fakt_doks2 synchro cache:" + STR(SECONDS() - _seconds))
-endif
+    
+log_write("fakt_doks2 synchro cache:" + STR(SECONDS() - _seconds))
 
 return .t. 
 
@@ -703,10 +657,8 @@ END CASE
    
 _ret := _sql_query( _server, _qry)
 
-if (gDebug > 5)
-   log_write(_qry)
-   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
-endif
+log_write(_qry)
+log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
 
 if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.

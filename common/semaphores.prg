@@ -162,7 +162,6 @@ _ret := _sql_query( _server, _qry )
 if VALTYPE(_ret) == "L"
   // ERROR
   log_write("error :" + _qry)
-  ? "error:", _qry
   QUIT
 endif
 
@@ -185,7 +184,6 @@ _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "L"
    log_write("error :" + _qry)
-  ? "error:", _qry
   QUIT
 endif
 

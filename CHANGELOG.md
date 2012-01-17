@@ -1,3 +1,9 @@
+0.9.39  2012-01-17, vsasa
+
+  - fakt, ciscenje od debug informacija, modstru, sinhro itd...
+  - fakt, ciscenje opcije stampe na fiskalni uredjaj
+  - fakt, ciscenje opcije stampe odt fakture
+
 0.9.38  2012-01-16, hernad
  
   - vsasa IOS update tekst

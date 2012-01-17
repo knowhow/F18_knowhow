@@ -30,18 +30,6 @@ return _utf8_str
 static function _get_ent_codes_array() 
 local _arr := {}
 
-// bh karakteri
-AADD( _arr, { "č", "&#263;" } ) 
-AADD( _arr, { "ć", "&#269;" } ) 
-AADD( _arr, { "ž", "&#382;" } ) 
-AADD( _arr, { "š", "&#353;" } ) 
-AADD( _arr, { "đ", "&#273;" } ) 
-AADD( _arr, { "Č", "&#262;" } ) 
-AADD( _arr, { "Ć", "&#268;" } ) 
-AADD( _arr, { "Ž", "&#381;" } ) 
-AADD( _arr, { "Š", "&#352;" } ) 
-AADD( _arr, { "Đ", "&#272;" } ) 
-
 // rezervisani znakovi
 
 AADD( _arr, { "&", "&amp;" } ) 
@@ -51,6 +39,18 @@ AADD( _arr, { "'", "&#39;" } )
 AADD( _arr, { ",", "&#44;" } ) 
 AADD( _arr, { "<", "&lt;" } ) 
 AADD( _arr, { ">", "&gt;" } ) 
+
+// bh karakteri
+AADD( _arr, { "č", "&#269;" } ) 
+AADD( _arr, { "ć", "&#263;" } ) 
+AADD( _arr, { "ž", "&#382;" } ) 
+AADD( _arr, { "š", "&#353;" } ) 
+AADD( _arr, { "đ", "&#273;" } ) 
+AADD( _arr, { "Č", "&#268;" } ) 
+AADD( _arr, { "Ć", "&#262;" } ) 
+AADD( _arr, { "Ž", "&#381;" } ) 
+AADD( _arr, { "Š", "&#352;" } ) 
+AADD( _arr, { "Đ", "&#272;" } ) 
 
 return _arr
 

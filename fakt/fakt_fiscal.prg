@@ -1314,12 +1314,16 @@ return
 // -------------------------------------------------------------
 static function fisc_to_fakt( cFirma, cTD, cBroj, nFiscal )
 local nTArea := SELECT()
+local _rec
 
 select fakt_doks
 set order to tag "1"
 seek cFirma + cTD + cBroj
 
-replace field->fisc_rn with nFiscal
+_rec := dbf_get_rec()
+_rec["fisc_rn"] := nFiscal
+
+update_rec_server_and_dbf(ALIAS(), _rec)
 
 select (nTArea)
 return

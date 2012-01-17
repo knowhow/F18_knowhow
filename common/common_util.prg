@@ -163,7 +163,7 @@ OpcF:={}
 aFiles := DIRECTORY( cPath + cFilter )
 
 // da li postoje templejti
-if LEN( aFiles )==0 .and. lSilent == .f.
+if LEN( aFiles )==0
 	MsgBeep("Ne postoji definisan niti jedan template !")
 	return 0
 endif

@@ -24,13 +24,14 @@ static PIC_CIJENA := ""
 // stampa dokumenta u odt formatu
 // ------------------------------------------------
 function stdokodt( cIdf, cIdVd, cBrDok )
-local cPath := "c:\"
-local cFilter := "f*.odt"
-local cTemplate := ""
+local _t_path := my_home()
+local _filter := "f*.odt"
+local _template := ""
+local _jod_templates_path := fetch_metric( "jodreports_templates", my_user(), "" )
 
-if !EMPTY( gJODTemplate )
-	cPath := ALLTRIM( gJODTemplate )
-endif
+IF !EMPTY( _jod_templates_path )
+    _t_path := ALLTRIM( _jod_templates_path )
+ENDIF
 
 // samo napuni pomocne tabele
 stdokpdv( cIdF, cIdVd, cBrDok, .t. )
@@ -39,10 +40,10 @@ stdokpdv( cIdF, cIdVd, cBrDok, .t. )
 _gen_xml()
 
 // uzmi template koji ces koristiti
-g_afile( cPath, cFilter, @cTemplate, .t. )
+g_afile( _t_path, _filter, @_template, .t. )
 
 // pozovi odt stampu
-_odt_print( cPath, cTemplate )
+_odt_print( _t_path, _template )
 
 return
 
@@ -51,7 +52,7 @@ return
 // generisi xml sa podacima
 // ---------------------------------------------
 static function _gen_xml()
-local cXML := "c:\data.xml"
+local cXML := my_home() + "data.xml"
 local i
 local cTmpTxt := ""
 
@@ -101,8 +102,8 @@ xml_node("ddin", ALLTRIM(get_dtxt_opis("D07")) )
 // destinacija na fakturi
 cTmp := ALLTRIM(get_dtxt_opis("D08"))
 if EMPTY(cTmp)
-	// ako je prazno, uzmi adresu partnera
-	cTmp := get_dtxt_opis("K02")
+    // ako je prazno, uzmi adresu partnera
+    cTmp := get_dtxt_opis("K02")
 endif
 
 xml_node("ddest", to_xml_encoding(cTmp))
@@ -120,7 +121,7 @@ nLines := VAL( get_dtxt_opis("D30") )
 cTmp := ""
 nTmp := 30
 for i:=1 to nLines
-	cTmp += get_dtxt_opis("D" + ALLTRIM(STR( nTmp + i )))
+    cTmp += get_dtxt_opis("D" + ALLTRIM(STR( nTmp + i )))
 next
 xml_node("dveza", to_xml_encoding(cTmp))
 
@@ -156,13 +157,13 @@ xml_node("kfax", ALLTRIM(get_dtxt_opis("K14")) )
 nTxtR := VAL( get_dtxt_opis("P02") )
 
 for i := 20 to ( 20 + nTxtR )
-	
-	cTmp := "F" + ALLTRIM( STR(i) )
-	cTmpTxt := ALLTRIM( get_dtxt_opis(cTmp) )
+    
+    cTmp := "F" + ALLTRIM( STR(i) )
+    cTmpTxt := ALLTRIM( get_dtxt_opis(cTmp) )
 
-	xml_subnode("text", .f.)
-	xml_node("row", to_xml_encoding(cTmpTxt) )
-	xml_subnode("text", .t.)
+    xml_subnode("text", .f.)
+    xml_node("row", to_xml_encoding(cTmpTxt) )
+    xml_subnode("text", .t.)
 
 next
 
@@ -177,43 +178,43 @@ select rn
 go top
 
 do while !EOF()
-	
-	xml_subnode( "item", .f. )
-	
-	xml_node( "rbr", ALLTRIM( field->rbr ) )
-	xml_node( "pbr", ALLTRIM( field->podbr ) )
-	xml_node( "id", to_xml_encoding(ALLTRIM( field->idroba )) )
-	xml_node( "naz", to_xml_encoding(ALLTRIM( field->robanaz )))
-	xml_node( "jmj", to_xml_encoding(ALLTRIM( field->jmj )) )
-	xml_node( "kol", show_number( field->kolicina, PIC_KOLICINA ) )
-	xml_node( "cpdv", show_number( field->cjenpdv, PIC_CIJENA ) )
-	xml_node( "cbpdv", show_number( field->cjenbpdv, PIC_CIJENA ) )
-	xml_node( "c2pdv", show_number( field->cjen2pdv, PIC_CIJENA ) )
-	xml_node( "c2bpdv", show_number( field->cjen2bpdv, PIC_CIJENA ) )
-	xml_node( "pop", show_number( field->popust, PIC_VRIJEDNOST ) )
-	xml_node( "ppdv", show_number( field->ppdv, PIC_VRIJEDNOST ) )
-	xml_node( "vpdv", show_number( field->vpdv, PIC_VRIJEDNOST ) )
-	// ukupno bez pdv
-	xml_node( "ukbpdv", show_number( field->cjenbpdv * field->kolicina, ;
-		PIC_VRIJEDNOST ) )
-	// ukupno sa pdv
-	xml_node( "ukpdv", show_number( field->ukupno, PIC_VRIJEDNOST ) )
-	// ukupno bez pdv-a sa popustom
-	xml_node( "uk2bpdv", show_number( field->cjen2bpdv * field->kolicina, ;
-		PIC_VRIJEDNOST ) )
-	// ukupno sa pdv-om sa popustom
-	xml_node( "uk2pdv", show_number( field->cjen2pdv * field->kolicina, ;
-		PIC_VRIJEDNOST ) )
-	xml_node( "ptp", show_number( field->poptp, PIC_VRIJEDNOST ) )
-	xml_node( "vtp", show_number( field->vpoptp, PIC_VRIJEDNOST ) )
-	xml_node( "c1", to_xml_encoding( ALLTRIM( field->c1 )) )
-	xml_node( "c2", to_xml_encoding( ALLTRIM( field->c2 )) )
-	xml_node( "c3", to_xml_encoding( ALLTRIM( field->c3 )) )
-	xml_node( "opis", to_xml_encoding( ALLTRIM( field->opis )) )
+    
+    xml_subnode( "item", .f. )
+    
+    xml_node( "rbr", ALLTRIM( field->rbr ) )
+    xml_node( "pbr", ALLTRIM( field->podbr ) )
+    xml_node( "id", to_xml_encoding(ALLTRIM( field->idroba )) )
+    xml_node( "naz", to_xml_encoding(ALLTRIM( field->robanaz )))
+    xml_node( "jmj", to_xml_encoding(ALLTRIM( field->jmj )) )
+    xml_node( "kol", show_number( field->kolicina, PIC_KOLICINA ) )
+    xml_node( "cpdv", show_number( field->cjenpdv, PIC_CIJENA ) )
+    xml_node( "cbpdv", show_number( field->cjenbpdv, PIC_CIJENA ) )
+    xml_node( "c2pdv", show_number( field->cjen2pdv, PIC_CIJENA ) )
+    xml_node( "c2bpdv", show_number( field->cjen2bpdv, PIC_CIJENA ) )
+    xml_node( "pop", show_number( field->popust, PIC_VRIJEDNOST ) )
+    xml_node( "ppdv", show_number( field->ppdv, PIC_VRIJEDNOST ) )
+    xml_node( "vpdv", show_number( field->vpdv, PIC_VRIJEDNOST ) )
+    // ukupno bez pdv
+    xml_node( "ukbpdv", show_number( field->cjenbpdv * field->kolicina, ;
+        PIC_VRIJEDNOST ) )
+    // ukupno sa pdv
+    xml_node( "ukpdv", show_number( field->ukupno, PIC_VRIJEDNOST ) )
+    // ukupno bez pdv-a sa popustom
+    xml_node( "uk2bpdv", show_number( field->cjen2bpdv * field->kolicina, ;
+        PIC_VRIJEDNOST ) )
+    // ukupno sa pdv-om sa popustom
+    xml_node( "uk2pdv", show_number( field->cjen2pdv * field->kolicina, ;
+        PIC_VRIJEDNOST ) )
+    xml_node( "ptp", show_number( field->poptp, PIC_VRIJEDNOST ) )
+    xml_node( "vtp", show_number( field->vpoptp, PIC_VRIJEDNOST ) )
+    xml_node( "c1", to_xml_encoding( ALLTRIM( field->c1 )) )
+    xml_node( "c2", to_xml_encoding( ALLTRIM( field->c2 )) )
+    xml_node( "c3", to_xml_encoding( ALLTRIM( field->c3 )) )
+    xml_node( "opis", to_xml_encoding( ALLTRIM( field->opis )) )
 
-	xml_subnode( "item", .t. )
-	
-	skip
+    xml_subnode( "item", .t. )
+    
+    skip
 
 enddo
 
@@ -226,34 +227,59 @@ return
 // ----------------------------------------------
 // printaj odt dokument
 // ----------------------------------------------
-static function _odt_print( cPath, cTemplate, lDirectPrint )
-local cJodPath 
-local cOOPath
-local cOOParams := ""
-local cJavaStart := ALLTRIM( gJavaStart )
+static function _odt_print( template_path, template_file, direct_print )
+local _jod_bin 
+local _oo_bin
+local _oo_writer_exe
+local _oo_params := ""
+local _java_start 
+local _cmd
+local _data_xml := my_home() + "data.xml"
+local _out_file := my_home() + "out.odt"
+local _sv_screen
+local _template
+local _office
 
-private cCmdLine
+_template := ALLTRIM( template_path ) + ALLTRIM( template_file )
+_oo_bin := ALLTRIM( fetch_metric( "openoffice_bin", my_user(), "" ) )
+_oo_writer_exe := ALLTRIM( fetch_metric( "openoffice_writer", my_user(), "" ) )
+_java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
+_jod_bin := ALLTRIM( fetch_metric( "jodreports_bin", my_user(), "" ) )
+_office := _oo_bin + _oo_writer_exe
 
-if lDirectPrint == nil
-	lDirectPrint := .f.
-endif
+IF direct_print == nil
+    direct_print := .f.
+ENDIF
 
-cJodPath := ALLTRIM(gJODRep)
-cOOPath := '"' + ALLTRIM(gOOPath) + ALLTRIM(gOOWriter) + '"'
+#IFDEF __PLATFORM__WINDOWS
+    _data_xml := '"' + _data_xml + '"'
+    _out_file := '"' + _out_file + '"'
+    _template := '"' + _template + '"'
+    _office := '"' + _office + '"'
+    _jod_bin := '"' + _jod_bin + '"'
+#ENDIF
 
-cCmdLine := cJavaStart + " " + cJodPath + " " + cPath + cTemplate + ;
-	" c:\data.xml c:\out.odt" 
+_cmd := _java_start + " " + _jod_bin + " " 
+_cmd += _template + " "
+_cmd += _data_xml + " "
+_cmd += _out_file
 
-save screen to cScreen
-run &cCmdLine
-restore screen from cScreen
+log_write( "jodreports line: " + _cmd )
 
-if lDirectPrint == .t.
-	cOOParams := " -pt "
-endif
+SAVE SCREEN TO _sv_screen
+run (_cmd)
+RESTORE SCREEN FROM _sv_screen
 
-cCmdLine := "start " + cOOPath + " " + cOOParams + " c:\out.odt"
-run &cCmdLine
+IF direct_print == .t.
+    _oo_params := " -pt "
+ENDIF
+
+_cmd := "start " 
+_cmd += _office + " " + _oo_params + " "
+_cmd += _out_file
+
+log_write("oo print: " + _cmd)
+run ( _cmd )
 
 return
 

@@ -399,7 +399,7 @@ return
 // export xml-a
 // ----------------------------------------
 static function _xml_export()
-local cMsg, _id_br, _naziv, _adresa, _grad
+local cMsg, _id_br, _naziv, _adresa, _mjesto
 
 if __xml == 1
 	return
@@ -423,7 +423,7 @@ BoxC()
 set_metric( "org_id_broj", NIL, _id_br)
 set_metric( "org_naziv", NIL, _naziv)
 set_metric( "org_adresa", NIL, _adresa)
-set_metric( "org_grad", NIL, _grad)
+set_metric( "org_mjesto", NIL, _mjesto)
 
 
 if LASTKEY() == K_ESC

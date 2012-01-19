@@ -1,5 +1,6 @@
 0.9.40  2012-01-19, hernad
 
+  - org_pdv_broj
   - haos sa parametrima  [#26300](http://redmine.bring.out.ba/issues/26300)
   - LD MIP export [#26298](http://redmine.bring.out.ba/issues/26298)
 

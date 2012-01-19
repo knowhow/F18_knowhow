@@ -19,7 +19,7 @@ DO CASE
    CASE cType == "D" 
          RETURN "STOD('" + DTOS( xValue ) + "')"
    case cType == "C"
-         RETURN "'"+ xValue+"'"
+         RETURN "'" + xValue + "'"
    OTHERWISE
          HB_ValToStr(xValue)
 ENDCASE
@@ -48,8 +48,6 @@ do case
   otherwise
      return "_?_"
 endcase
-
-
 
 // --------------------------------
 // --------------------------------
@@ -132,40 +130,6 @@ next
 
 return cPom
 
-
-/*
-function Crypt(cStr)
-local nLen,cC,cPom,i
-
-nLen:=len(cStr)
-for i=1 to int(nLen/2)
-  cC:=substr(cStr,nLen+1-i,1)
-  if cC<''
-     cPom+=CHR(ASC(cC)+128)
-  else
-     cPom+=CHR(ASC(cC)-128)
-  endif
-next
-
-if nLen%2<>0
-   cC:=substr(cStr,int(nLen/2)+1,1)
-  if cC<''
-     cPom+=CHR(ASC(cC)+128)
-  else
-     cPom+=CHR(ASC(cC)-128)
-  endif
-endif
-for i=int(nLen/2) to 1 step -1
-   cC:=substr(cStr,i,1)
-  if cC<''
-     cPom+=CHR(ASC(cC)+128)
-  else
-     cPom+=CHR(ASC(cC)-128)
-  endif
-next
-
-return cPom
-*/
 
 function ChADD(cC,n)
 *

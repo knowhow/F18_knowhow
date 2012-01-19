@@ -475,7 +475,7 @@ local nU_lodb
 local nU_porez
 
 // otvori xml za upis
-open_xml(my_home() + ALLTRIM(id_br) + ".xml")
+open_xml(_path_quote(my_home() + ALLTRIM(id_br) + ".xml"))
 
 // upisi header
 _xml_head()
@@ -712,6 +712,9 @@ xml_subnode("Obrazac1023", .t. )
 xml_subnode("PaketniUvozObrazaca", .t.)
 
 select (nTArea)
+
+close_xml()
+
 return
 
 

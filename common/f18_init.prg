@@ -473,6 +473,18 @@ endif
 
 return __f18_home
 
+// ----------------------------
+// ----------------------------
+function _path_quote(path)
+
+if AT(path, " ") != 0
+  return  '"' + path + '"'
+else
+  return path
+endif
+
+
+
 // -----------------------------
 // ------------------------------
 function my_home_root(home_root)

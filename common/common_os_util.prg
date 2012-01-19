@@ -313,9 +313,17 @@ return
 // ----------------------------
 // ----------------------------
 function open_folder(folder)
-
+local _cmd
 #ifdef __PLATFORM__WINDOWS
-   hb_run("start " + folder) 
+   _cmd := "explorer " + '"' + folder + '"' 
+   
 #else
-   hb_run("open " + folder)
+   _cmd := "open " + folder
 #endif
+
+log_write(_cmd)
+hb_run(_cmd)
+
+return .t.
+
+

@@ -315,8 +315,7 @@ return
 function open_folder(folder)
 local _cmd
 #ifdef __PLATFORM__WINDOWS
-   _cmd := "explorer " + '"' + folder + '"' 
-   
+   _cmd := "explorer " + _path_quote(folder)   
 #else
    _cmd := "open " + folder
 #endif

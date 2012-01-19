@@ -25,9 +25,7 @@ local _create
 
 _loc := location + "*.*"
 
-#ifdef __PLATFORM__WINDOWS
-	_loc := '"' + location + "*.*" + '"'
-#endif
+_loc := _path_quote(location + "*.*")
 
 _len := ADIR( _loc )
 

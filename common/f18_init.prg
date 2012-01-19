@@ -477,7 +477,8 @@ return __f18_home
 // ----------------------------
 function _path_quote(path)
 
-if AT(path, " ") != 0
+if (AT(path, " ") != 0) .and. (AT(PATH, '"') == 0)
+  altd()
   return  '"' + path + '"'
 else
   return path

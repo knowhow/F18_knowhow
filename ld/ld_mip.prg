@@ -399,7 +399,7 @@ return
 // export xml-a
 // ----------------------------------------
 static function _xml_export()
-local cMsg, _id_br, _naziv, _adresa, _mjesto
+local _cre, cMsg, _id_br, _naziv, _adresa, _mjesto, _lokacija
 
 if __xml == 1
 	return
@@ -432,11 +432,27 @@ endif
 
 _id_br := ALLTRIM(_id_br)
 
+_lokacija := _path_quote(my_home() + "export" + SLASH)
+
+
+if DirChange(_lokacija) != 0
+
+   _cre := MakeDir (_lokacija)
+   if _cre != 0
+       MsgBeep("kreiranje " + _lokacija + " neuspjesno ?!")
+       log_write("dircreate err:" + _lokacija)
+       return .f.
+   endif
+
+endif
+
+
+DirChange(_lokacija)
+
 // napuni xml fajl
-_fill_e_xml(_id_br)
+_fill_e_xml(_id_br + ".xml")
 
 
-DIRCHANGE (my_home())
 _cmd := "zip " + _id_br + ".zip " + _id_br + ".xml"
 
 _ret := hb_run(_cmd)
@@ -447,13 +463,13 @@ if _ret != 0
 endif
 
 cMsg := "Generacija obrasca završena.#"
-cMsg += "Lokacija:" + my_home() + _id_br + ".xml#"
-cMsg += "Pripremljena je zip arhiva:#"
-cMsg += "Lokacija: " + my_home() + _id_br + ".zip"
+cMsg +=  _lokacija + _id_br + ".xml#"
 
 MsgBeep(cMsg)
 
-open_folder(my_home())
+
+DirChange(my_home())
+open_folder(_lokacija)
 
 return
 
@@ -462,7 +478,7 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima za export
 // --------------------------------------------
-static function _fill_e_xml(id_br)
+static function _fill_e_xml(file)
 
 local nTArea := SELECT()
 local nU_dn_pio
@@ -475,7 +491,7 @@ local nU_lodb
 local nU_porez
 
 // otvori xml za upis
-open_xml(_path_quote(my_home() + ALLTRIM(id_br) + ".xml"))
+open_xml(file)
 
 // upisi header
 _xml_head()

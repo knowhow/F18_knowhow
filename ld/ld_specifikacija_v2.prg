@@ -220,7 +220,7 @@ else
     lPDNE:=.f.
 endif
 
-cFirmNaz := fetch_metric("ld_firma_naziv", nil, cFirmNaz)
+cFirmNaz := fetch_metric("org_naziv", nil, cFirmNaz)
 cFirmNaz := PADR(cFirmNaz, 35)
 
 cFirmAdresa := fetch_metric("ld_firma_adresa", nil, cFirmAdresa)  
@@ -335,7 +335,7 @@ do while .t.
     endif
 enddo
 
-set_metric("ld_firma_naziv", nil, cFirmNaz)
+set_metric("org_naziv", nil, cFirmNaz)
 set_metric("ld_firma_adresa", nil, cFirmAdresa)
 set_metric("ld_firma_opcina", nil, cFirmOpc)
 set_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD)

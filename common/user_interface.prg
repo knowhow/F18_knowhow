@@ -1333,14 +1333,15 @@ return VAL(SUBSTR(cPicture,nPozS+1))
 // ------------------------
 function MsgBeep(cMsg)
 
+cMsg := hb_Utf8ToStr(cMsg)
+
 if !gAppSrv
     Beep(2) 
 endif
 
 // poruke koje su duze od 70 znakova
-if LEN(cMsg) > 69 .and.  (AT(cMsg, "#") == 0) 
-  cMsg := SUBSTR(cMsg, 1, 69) + "#" + SUBSTR(cMsg, 70, 69) + "#..." 
-  //+ "#" + SUBSTR(cMsg, 140, 70)
+if LEN(cMsg) > MAXCOLS()-11 .and.  (AT(cMsg, "#") == 0) 
+  cMsg := SUBSTR(cMsg, 1, MAXCOLS()-11) + "#" + SUBSTR(cMsg, MAXCOLS()-10, MAXCOLS()-11) + "#..." 
 endif
 
 Msg(cMsg, 20)

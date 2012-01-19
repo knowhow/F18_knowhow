@@ -185,7 +185,7 @@ public gnHelpObr:=0
 public gMjesec:=1
 public gObracun := " "
 // varijanta obracuna u skladu sa zak.promjenama
-public gVarObracun := " "
+public gVarObracun := "2"
 // default vrijednost osnovnog licnog odbitka 
 public gOsnLOdb := 300
 
@@ -215,7 +215,7 @@ public gFURaz:=PADR("",60)
 public gFUSati:=PADR("USATI",50)
 public gFURSati:=PADR("",50)
 public gFUGod:=PADR("I06",40)
-public gNFirma:=SPACE(20)  // naziv firme
+public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
 public gTS:="Preduzece"
 public gUNMjesec:="N"
 public gMRM:=0
@@ -260,7 +260,9 @@ RPar("m2",@gMRZ)
 RPar("dl",@gPDLimit)
 Rpar("mj",@gMjesec)
 Rpar("ob",@gObracun)
-Rpar("ov",@gVarObracun)
+
+gVarObracun := fetch_metric("ld_varijanta_obracuna", NIL, "2")
+
 RPar("mr",@gMinR)      // min rad %, Bodovi
 RPar("os",@gFSpec)     // fajl-obrazac specifikacije
 RPar("p9",@gDaPorOl)   // praviti poresku olaksicu D/N

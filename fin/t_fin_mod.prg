@@ -216,7 +216,7 @@ private aHistory:={}
 
 public gFirma:="10"
 public gTS:="Preduzece"
-public gNFirma:=space(20)  // naziv firme
+public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
 public gRavnot:="D"
 public gDatNal:="N"
 public gSAKrIz:="N"

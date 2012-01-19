@@ -168,8 +168,8 @@ gL_kto_kup := fetch_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
 gkt_updv := fetch_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
 gkt_ipdv := fetch_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
 
-gNFirma := fetch_metric("epdv_firma_naziv", nil, gNFirma)
-gFirma := fetch_metric("epdv_firma", nil, gFirma)
+gNFirma := fetch_metric("org_naziv", nil, gNFirma)
+gFirma := fetch_metric("org_id", nil, gFirma)
 
 return
 
@@ -192,8 +192,8 @@ set_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
 set_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
 set_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
 
-set_metric("epdv_firma", nil, gFirma)
-set_metric("epdv_firma_naziv", nil, gNFirma)
+set_metric("org_id", nil, gFirma)
+set_metric("org_naziv", nil, gNFirma)
 
 return
 

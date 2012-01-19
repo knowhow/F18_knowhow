@@ -310,10 +310,10 @@ Box(,4,65,.f.,"MATICNA FIRMA, BAZNA VALUTA")
 BoxC()
 
 if lastkey()<>K_ESC
-	set_metric("kalk_firma_id", nil, gFirma)
+	set_metric("org_id", nil, gFirma)
   	set_metric("kalk_tip_subjekta", nil, gTS)
   	gNFirma := PADR(gNFirma, 20)
-  	set_metric("kalk_firma_naziv", nil, gNFirma)
+  	set_metric("org_naziv", nil, gNFirma)
   	set_metric("kalk_bazna_valuta", nil, gBaznaV)
   	set_metric("kalk_zaokruzenje", nil, gZaokr)
 endif

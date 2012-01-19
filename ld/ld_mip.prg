@@ -1,17 +1,15 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "ld.ch"
-
 
 static __mj
 static __god
@@ -38,7 +36,7 @@ if !EMPTY(cRj)
 		cFilter += " .and. "
 	endif
 	
-	cFilter += Parsiraj(cRj,"IDRJ")
+	cFilter += Parsiraj(cRj, "IDRJ")
 endif
 
 if !EMPTY(cFilter)
@@ -47,9 +45,9 @@ if !EMPTY(cFilter)
 endif
 
 if EMPTY(cRadnik) 
-	INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
+	INDEX ON str(godina) + str(mjesec) + SortPrez(idradn) + idrj TAG "MIP1" TO (my_home() + "ld_tmp")
 	go top
-	seek str(cGod,4)+str(cMj,2)+cRadnik
+	seek str(cGod,4) + str(cMj,2) + cRadnik
 else
 	set order to tag (TagVO("2"))
 	go top
@@ -401,21 +399,61 @@ return
 // export xml-a
 // ----------------------------------------
 static function _xml_export()
-local cMsg
+local cMsg, _id_br, _naziv, _adresa, _grad
 
 if __xml == 1
 	return
 endif
 
+
+_id_br  := fetch_metric( "org_id_broj", NIL, PADR( "<POPUNI>", 13 ))
+_naziv  := fetch_metric( "org_naziv", NIL, PADR( "<POPUNI naziv>", 100 ))
+_adresa := fetch_metric( "org_adresa", NIL, PADR( "<POPUNI adresu>", 100 ))
+_mjesto   := fetch_metric( "org_mjesto", NIL, PADR( "<POPUNI mjesto>", 100 ))
+
+Box(, 6, 70)
+  @ m_x + 1, m_y + 2 SAY " - Firma/Organizacija - "
+  @ m_x + 3, m_y + 2 SAY " Id broj: " GET _id_br
+  @ m_x + 4, m_y + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
+  @ m_x + 5, m_y + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
+  @ m_x + 6, m_y + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
+  READ 
+BoxC()
+
+set_metric( "org_id_broj", NIL, _id_br)
+set_metric( "org_naziv", NIL, _naziv)
+set_metric( "org_adresa", NIL, _adresa)
+set_metric( "org_grad", NIL, _grad)
+
+
+if LASTKEY() == K_ESC
+   return .f.
+endif
+
+_id_br := ALLTRIM(_id_br)
+
 // napuni xml fajl
-_fill_e_xml()
+_fill_e_xml(_id_br)
 
-cMsg := "Export xml datoteke zavrsen. Datoteka se nalazi#"
-cMsg += "na lokaciji c:\export.xml#"
-cMsg += "Potrebno promjeniti naziv xml fajla u TIN.xml gdje je#"
-cMsg += "TIN id broj preduzeca, zatim zipovati fajl u TIN.zip."
 
-msgbeep( cMsg )
+DIRCHANGE (my_home())
+_cmd := "zip " + _id_br + ".zip " + _id_br + ".xml"
+
+_ret := hb_run(_cmd)
+
+if _ret != 0
+   MsgBeep("Hmm ... neuspješna zip komanda  !?#"  + _cmd)
+   log_write("err: " + _cmd)
+endif
+
+cMsg := "Generacija obrasca završena.#"
+cMsg += "Lokacija:" + my_home() + _id_br + ".xml#"
+cMsg += "Pripremljena je zip arhiva:#"
+cMsg += "Lokacija: " + my_home() + _id_br + ".zip"
+
+MsgBeep(cMsg)
+
+open_folder(my_home())
 
 return
 
@@ -424,7 +462,8 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima za export
 // --------------------------------------------
-static function _fill_e_xml()
+static function _fill_e_xml(id_br)
+
 local nTArea := SELECT()
 local nU_dn_pio
 local nU_dn_zdr
@@ -436,7 +475,7 @@ local nU_lodb
 local nU_porez
 
 // otvori xml za upis
-open_xml( "c:\export.xml" )
+open_xml(my_home() + ALLTRIM(id_br) + ".xml")
 
 // upisi header
 _xml_head()
@@ -476,12 +515,12 @@ xml_subnode("Obrazac1023", .f.)
 xml_subnode("Dio1", .f.)
 	
   xml_node("JibJmb", ALLTRIM(cPredJmb) )
-  xml_node("Naziv", strkzn( ALLTRIM(cPredNaz), "8", "U" ) )
+  xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz), "8", "U" ) )
   xml_node("DatumUpisa", xml_date(dDatPodn) )
   xml_node("BrojUposlenih", STR( nBrZahtjeva ) )
   xml_node("PeriodOd", xml_date( dD_start ) )
   xml_node("PeriodDo", xml_date( dD_end ) )
-  xml_node("SifraDjelatnosti", ALLTRIM(cPredSDJ) )
+  xml_node("SifraDjelatnosti", to_xml_encoding(ALLTRIM(cPredSDJ)) )
 
 xml_subnode("Dio1", .t.)
 // dio1
@@ -586,10 +625,10 @@ do while !EOF()
 	xml_subnode("PodaciOPrihodima", .f.)
 
 	xml_node("VrstaIsplate", ;
-		strkzn( ALLTRIM(cVr_ispl), "8", "U" ))
+		to_xml_encoding( ALLTRIM(cVr_ispl), "8", "U" ))
 	xml_node("Jmb", ALLTRIM(cR_jmb) )
 	xml_node("ImePrezime", ;
-		strkzn( ALLTRIM(cR_ime), "8", "U" ))
+		to_xml_encoding( ALLTRIM(cR_ime), "8", "U" ))
 	xml_node("DatumIsplate", xml_date(dD_ispl) )
 	xml_node("RadniSati", ;
 		STR( nR_sati, 12, 2 ) ) 
@@ -674,7 +713,6 @@ xml_subnode("PaketniUvozObrazaca", .t.)
 
 select (nTArea)
 return
-
 
 
 // --------------------------------------

@@ -146,7 +146,7 @@ private cHistory:=" "
 private aHistory:={}
 
 public gFirma:="10"
-public gNFirma:=space(20)  
+public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
 public gPicVrijednost := "9999999.99"
 public gL_kto_dob := PADR("541;", 100)
 public gL_kto_kup := PADR("211;", 100)

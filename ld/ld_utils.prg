@@ -522,8 +522,7 @@ return nIzn
 // ----------------------------------------------------------
 function set_obr_2009()
 
-if YEAR(DATE()) >= 2009 .and. ;
-	goModul:oDataBase:cRadimUSezona == "RADP" .and. ;
+if YEAR(DATE()) >= 2009 .and. goModul:oDataBase:cRadimUSezona == "RADP" .and. ;
 	gVarObracun <> "2"
 
 	MsgBeep("Nova je godina. Obracun je podesen u skladu sa#novim zakonskim promjenama !")

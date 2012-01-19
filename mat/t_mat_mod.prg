@@ -171,7 +171,7 @@ public gPotpis:="N"
 O_PARAMS
 private cSection:="1",cHistory:=" "; aHistory:={}
 
-public gNFirma:=space(20)  // naziv firme
+public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
 public gDatNal:="N"
 public gKupZad:="N"
 public gNW:="D"  // new vawe

@@ -25,26 +25,27 @@ SetValuta()
 
 public gFirma := "10"
 public gTS := "Preduzece"
-public gNFirma := space(20)  
+public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
+
 public gZaokr := 2
 public gTabela := 0
 public gPDV := ""
 
 // novi parametri...
 gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr)
-gFirma := fetch_metric( "firma_id", nil, gFirma)
-gNFirma := fetch_metric( "firma_naziv", nil, gNFirma)
+gFirma := fetch_metric( "org_id", nil, gFirma)
+gNFirma := fetch_metric( "org_naziv", nil, gNFirma)
 gTS := fetch_metric( "tip_subjekta", nil, gTS)
 gTabela := fetch_metric( "tip_tabele", nil, gTabela)
 
 if (gModul <> "POS" .and. gModul <> "TOPS" .and. gModul <> "HOPS" )
 	if empty(gNFirma)
-	  Box(,1,50)
+	  Box(, 1, 50)
 	    Beep(1)
-	    @ m_x+1,m_y+2 SAY "Unesi naziv firme:" GET gNFirma pict "@!"
+	    @ m_x + 1, m_y + 2 SAY "Unesi naziv firme:" GET gNFirma pict "@!"
 	    read
 	  BoxC()
-	  set_metric( "firma_naziv", nil, gNFirma )
+	  set_metric( "org_naziv", nil, gNFirma )
 	endif
 endif
 

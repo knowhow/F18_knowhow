@@ -188,16 +188,18 @@ if (LastKey() <> K_ESC)
     endif
     
     WPar("fo", gSetForm)
-        WPar("mr", @gMinR)   // min rad %, Bodovi
-        WPar("p9", @gDaPorOl) // praviti poresku olaksicu D/N
-        Wpar("to",gTipObr)
-        Wpar("vo",cVarPorOl)
-        WPar("um",gUNMjesec)
-        Wpar("vs",gVarSpec)
-        Wpar("Si",gSihtarica)
-        Wpar("SG",gSihtGroup)
-    Wpar("ov",gvarObracun)
+    WPar("mr", @gMinR)   // min rad %, Bodovi
+    WPar("p9", @gDaPorOl) // praviti poresku olaksicu D/N
+    Wpar("to",gTipObr)
+    Wpar("vo",cVarPorOl)
+    WPar("um",gUNMjesec)
+    Wpar("vs",gVarSpec)
+    Wpar("Si",gSihtarica)
+    Wpar("SG",gSihtGroup)
     Wpar("rf",gRadnFilter)
+
+    set_metric("ld_varijanta_obracuna", NIL, gVarObracun) 
+
 endif
 
 return
@@ -214,15 +216,15 @@ gPotp1 := PADR(gPotp1, 150)
 gPotp2 := PADR(gPotp2, 150)
 
 Box(,15,77)
-    @ m_x+1,m_y+2 SAY "Krediti-rekap.po 'na osnovu' (D/N/X)?" GET gReKrOs VALID gReKrOs $ "DNX" PICT "@!"
-    @ m_x+2,m_y+2 SAY "Na kraju obrade odstampati listic D/N:" GET _pr_kart_pl  pict "@!" valid _pr_kart_pl $ "DN"
-    @ m_x+3,m_y+2 SAY "Prikaz bruto iznosa na kartici radnika (D/N/X) " GET gPrBruto pict "@!" valid gPrBruto $ "DNX"
-    @ m_x+4,m_y+2 SAY "Potpis na kartici radnika D/N:" GET gPotp  valid gPotp $ "DN"   pict "@!"
-    @ m_x+5,m_y+2 SAY "Varijanta kartice plate za kredite (1/2) ?" GET gReKrKP VALID gReKrKP$"12"
-    @ m_x+6,m_y+2 SAY "Opis osnovnih podataka za obracun (1-bodovi/2-koeficijenti) ?" GET gBodK VALID gBodK$"12"
-    @ m_x+7,m_y+2 SAY "Pregled plata: varijanta izvjestaja (1/2)" GET gVarPP VALID gVarPP$"12"
-    @ m_x+8,m_y+2 SAY "Potpisi na svim izvjestajima (D/N)" GET gPotpRpt VALID gPotpRpt$"DN" PICT "@!"
-    @ m_x+9,m_y+2 SAY "Unos radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
+    @ m_x+1, m_y+2 SAY "Krediti-rekap.po 'na osnovu' (D/N/X)?" GET gReKrOs VALID gReKrOs $ "DNX" PICT "@!"
+    @ m_x+2, m_y+2 SAY "Na kraju obrade odstampati listic D/N:" GET _pr_kart_pl  pict "@!" valid _pr_kart_pl $ "DN"
+    @ m_x+3, m_y+2 SAY "Prikaz bruto iznosa na kartici radnika (D/N/X) " GET gPrBruto pict "@!" valid gPrBruto $ "DNX"
+    @ m_x+4, m_y+2 SAY "Potpis na kartici radnika D/N:" GET gPotp  valid gPotp $ "DN"   pict "@!"
+    @ m_x+5, m_y+2 SAY "Varijanta kartice plate za kredite (1/2) ?" GET gReKrKP VALID gReKrKP$"12"
+    @ m_x+6, m_y+2 SAY "Opis osnovnih podataka za obracun (1-bodovi/2-koeficijenti) ?" GET gBodK VALID gBodK$"12"
+    @ m_x+7, m_y+2 SAY "Pregled plata: varijanta izvjestaja (1/2)" GET gVarPP VALID gVarPP$"12"
+    @ m_x+8, m_y+2 SAY "Potpisi na svim izvjestajima (D/N)" GET gPotpRpt VALID gPotpRpt$"DN" PICT "@!"
+    @ m_x+9, m_y+2 SAY "Unos radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
     read
     
     if gPotpRpt == "D"

@@ -843,6 +843,7 @@ local _id_firma
 local _konto
 local _datum
 local _partner
+local _filter := ""
 
 O_KONTO
 O_PARTN
@@ -870,7 +871,16 @@ O_ROBA
 
 SELECT mat_suban
 set order to tag "3"
-set filter to DatDok <= _datum
+
+_filter := "DTOS( datdok ) <= " + DTOS( _datum )
+
+if !EMPTY( _partner )
+    _filter += ".and. idpartner == " + cm2str( _partner )
+endif
+
+set filter to &_filter
+go top
+
 SEEK _id_firma + _konto
 NFOUND CRET
 

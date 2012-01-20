@@ -341,11 +341,11 @@ _ed_kolicina := vars["kolicina"]
 _ed_iznos := vars["iznos"]
 
 @ m_x+1,m_y+2 SAY "Red.br:  " GET r_br PICT "9999"
-@ m_x+3,m_y+2 SAY "Roba:    " GET _ed_id_roba VALID P_Roba(@_IdRoba,3,24)
+@ m_x+3,m_y+2 SAY "Roba:    " GET _ed_id_roba VALID P_Roba(@_ed_id_roba,3,24)
 @ m_x+4,m_y+2 SAY "Cijena:  " GET _ed_cijena PICT PicDEM
 @ m_x+5,m_y+2 SAY "Kolicina:" GET _ed_kolicina PICT PicKol ;
     VALID {|| _ed_iznos := _ed_cijena * _ed_kolicina, ;
-        qqout("  Iznos:", TRANSFORM( _ed_iznos, PicDEM)), Inkey(5), .t. }
+        qqout("  Iznos:", TRANSFORM( _ed_iznos, PicDEM ) ), Inkey(5), .t. }
 
 vars["idroba"] := _ed_id_roba
 vars["cijena"] := _ed_cijena

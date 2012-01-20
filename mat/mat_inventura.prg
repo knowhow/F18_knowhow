@@ -497,6 +497,12 @@ HSEEK vars["id_firma"]
 @ prow(), pcol() + 1 SAY ALLTRIM( field->naz )
 @ prow(), pcol() + 1 SAY ALLTRIM( field->naz2 )
 
+SELECT PARTN
+HSEEK vars["partner"]
+@ prow() + 1, 0 SAY "Partner:"
+@ prow(), pcol() + 1 SAY ALLTRIM( field->naz )
+@ prow(), pcol() + 1 SAY ALLTRIM( field->naz2 )
+
 select KONTO
 HSEEK vars["konto"]
 
@@ -872,13 +878,7 @@ O_ROBA
 SELECT mat_suban
 set order to tag "3"
 
-_filter := "DTOS( datdok ) <= " + DTOS( _datum )
-
-if !EMPTY( _partner )
-    _filter += ".and. idpartner == " + cm2str( _partner )
-endif
-
-set filter to &_filter
+set filter to datdok<=_datum .and. IF( !EMPTY(_partner), idpartner == _partner, .t. )
 go top
 
 SEEK _id_firma + _konto

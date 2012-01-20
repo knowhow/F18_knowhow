@@ -253,7 +253,7 @@ do case
             
             read
             
-            _vars["rbr"] := _r_br
+            _vars["rbr"] := PADL( ALLTRIM( STR( _r_br, 4 )), 4 )
 
         BoxC()
         
@@ -262,7 +262,7 @@ do case
             return DE_CONT
         endif
         
-        dbf_update_rec()
+        dbf_update_rec(_vars)
         
         return DE_REFRESH
 
@@ -283,13 +283,13 @@ do case
             
             read
 
-            _vars["rbr"] := STR( _r_br, 4 )
+            _vars["rbr"] := PADL( ALLTRIM(STR( _r_br, 4 )), 4 )
             if lastkey()==K_ESC
                 BoxC()
                 return DE_REFRESH
             endif
             
-            dbf_update_rec()
+            dbf_update_rec(_vars)
             
             if lastkey() == K_PGUP
                 skip -1
@@ -393,7 +393,7 @@ if LastKey() == K_ESC
     return _ret
 endif
 
-vars["id_firma"] := _id_firma
+vars["id_firma"] := LEFT( _id_firma, 2 )
 vars["konto"] := _konto
 vars["datum"] := _datum
 vars["partner"] := _partner
@@ -431,6 +431,7 @@ set order to tag "1"
 GO TOP
 
 START PRINT CRET
+?
 
 _r_br := 0
 
@@ -444,7 +445,7 @@ nC1:=60
 do while !eof()
 
     if prow()>62
-        EJECTA0
+        FF
         ZPrUnKol( _vars, m )
     endif
 
@@ -454,7 +455,7 @@ do while !eof()
 
     @ prow()+1,0 SAY ++_r_br PICTURE '9999'
     @ prow(),pcol()+1 SAY field->idroba
-    @ prow(),pcol()+1 SAY roba->naz
+    @ prow(),pcol()+1 SAY PADR( roba->naz, 40 )
     @ prow(),pcol()+1 SAY roba->jmj
     @ prow(),pcol()+1 SAY field->Kolicina PICTURE '999999.999'
     @ prow(),pcol()+1 SAY field->Cijena PICTURE '99999999.999'
@@ -466,7 +467,7 @@ do while !eof()
 enddo
 
 if prow() > 60
-    EJECTA0
+    FF
     ZPrUnKol( _vars, m )
 ENDIF
 
@@ -474,7 +475,7 @@ ENDIF
 ? "UKUPNO:"
 @ prow(), nC1 SAY nU PICTURE '999999999.99'
 ? m
-EJECTA0
+
 END  PRINT
 close all
 return
@@ -837,24 +838,31 @@ return
 // ------------------------------------
 // ------------------------------------
 function mat_popisna_lista()
-I:=K:=C:=0
+local _vars := hb_hash()
+local _id_firma 
+local _konto
+local _datum
+local _partner
+
+O_KONTO
+O_PARTN
+
+IF !_get_inv_vars( @_vars )
+    CLOSE ALL
+    return
+ENDIF
+
+_konto := _vars["konto"]
+_datum := _vars["datum"]
+_id_firma := LEFT( _vars["id_firma"], 2 )
+_partner := _vars["partner"]
+
+I:=0
+K:=0
+C:=0
+
 m:="---- ---------- ----------------------------------- --- ------------ ---------"
-cIdF:="  "
-cIdK:=SPACE(7)
-cIdD:=date()
-if file(PRIVPATH+"invent.mem")
-     restore from (PRIVPATH+"invent.mem") additive
-endif
-cIdF:=left(cIdF,2)
-O_KONTO; O_PARTN
-Box("",4,60)
-@ m_x+1,m_y+6 SAY "OBRACUN INVENTURE - POPISNA LISTA"
-@ m_x+2,m_y+2 SAY "Firma  " GET cIdF valid P_Firma(@cIdF)
-@ m_x+3,m_y+2 SAY "Konto  " GET cIdK valid P_Konto(@cIdK)
-@ m_x+4,m_y+2 SAY "Datum inventure " GET cIdD
-READ; ESC_BCR
-BoxC()
-save to  (PRIVPATH+"invent.mem") all like cId?
+
 O_MAT_SUBAN
 O_SIFV
 O_SIFK
@@ -862,69 +870,91 @@ O_ROBA
 
 SELECT mat_suban
 set order to tag "3"
-set filter to DatDok<=cIdD
-SEEK cIdF+cIdK
+set filter to DatDok <= _datum
+SEEK _id_firma + _konto
 NFOUND CRET
 
 START PRINT CRET
+?
+P_COND
 
-A:=B:=0
-DO WHILE !eof() .AND. cIdF=IdFirma .and. cIdK==IdKonto
-   IF A==0
-      @ A,0 SAY "MAT.P: POPISNA LISTA ZA INVENTARISANJE NA DAN:"; @ A,pcol()+1 SAY cIdD
-      @ ++A,0 SAY "FIRMA:"; @ A,pcol()+1 SAY cIdF
-      SELECT PARTN; HSEEK cIdF
-      @ A,pcol()+2 SAY naz; @ A,pcol()+2 SAY naz2
+A:=0
+B:=0
 
-      @ ++A,0 SAY "KONTO:"; @ A,pcol()+1 SAY cIdK
-      SELECT KONTO; HSEEK cIdK
-      @ A,pcol()+2 SAY naz
-      @ ++A,0 SAY m
-      @ ++A,0 SAY "*R. *  SIFRA   *          NAZIV ARTIKLA            *J. *   CIJENA   *KOLICINA*"
-      @ ++A,0 SAY "*BR.* ARTIKLA  *                                   *MJ.*            *        *"
-      @ ++A,0 SAY m
-   ENDIF
-   IF A>62; EJECTA0; ENDIF
+DO WHILE !eof() .AND. _id_firma == IdFirma .and. _konto == IdKonto
+   
+    IF A==0
+        @ A,0 SAY "MAT.P: POPISNA LISTA ZA INVENTARISANJE NA DAN:"
+        @ A, pcol() + 1 SAY _datum
+        @ ++A,0 SAY "FIRMA:"; @ A,pcol()+1 SAY _id_firma
+        
+        SELECT PARTN
+        HSEEK _id_firma
+      
+        @ A,pcol()+2 SAY naz
+        @ A,pcol()+2 SAY naz2
 
-   SELECT mat_suban
-   cIdRoba:=IdRoba
-   nIznos:=nIznos2:=nStanje:=nCijena:=0
-   DO WHILE !eof() .AND. cIdF==IdFirma .and. cIdK==IdKonto .and. cIdRoba==IdRoba
-    // saberi za jednu robu
-      IF U_I="1"
-         nStanje+=Kolicina
-      ELSE
-         nStanje-=Kolicina
-      ENDIF
-      IF D_P="1"
-         nIznos+=Iznos
-         nIznos2+=Iznos2
-      ELSE
-         nIznos-=Iznos
-         nIznos2-=Iznos2
-      ENDIF
-    SKIP
-   ENDDO
+        @ ++A,0 SAY "KONTO:"
+        @ A,pcol()+1 SAY _konto
 
-  if round(nStanje,4)<>0 .or. round(nIznos,4)<>0  // uzimaj samo one koji su na stanju  <> 0
-   SELECT ROBA; HSEEK cIdRoba
-   @ ++A,0 SAY ++B PICTURE '9999'
-   @ A,5 SAY Id
-   @ A,16 SAY naz PICTURE replicate ("X",35)
-   @ A,52 SAY jmj
-   IF round(nStanje,4) <> 0
-      nCijena:=nIznos/nStanje
-   else
-      nCijena:=0
-   ENDIF
-   @ A,57 SAY nCijena PICTURE PicDEM
-   @ A,70 SAY "________"
+        SELECT KONTO
+        HSEEK _konto
 
-   SELECT mat_suban
-  endif
+        @ A,pcol()+2 SAY naz
+        @ ++A,0 SAY m
+        @ ++A,0 SAY "*R. *  SIFRA   *          NAZIV ARTIKLA            *J. *   CIJENA   *KOLICINA*"
+        @ ++A,0 SAY "*BR.* ARTIKLA  *                                   *MJ.*            *        *"
+        @ ++A,0 SAY m
+    ENDIF
+
+    IF A > 62
+        EJECTA0
+    ENDIF
+
+    SELECT mat_suban
+    cIdRoba := IdRoba
+    nIznos := nIznos2 := nStanje := nCijena := 0
+    DO WHILE !eof() .AND. _id_firma == field->IdFirma .and. _konto == field->IdKonto .and. cIdRoba == field->IdRoba
+        // saberi za jednu robu
+        IF field->U_I="1"
+            nStanje += field->kolicina
+        ELSE
+            nStanje -= field->Kolicina
+        ENDIF
+        IF D_P="1"
+            nIznos+=field->Iznos
+            nIznos2+=field->Iznos2
+        ELSE
+            nIznos-=field->Iznos
+            nIznos2-=field->Iznos2
+        ENDIF
+        SKIP
+    ENDDO
+
+    IF round(nStanje,4)<>0 .or. round(nIznos,4)<>0  
+        // uzimaj samo one koji su na stanju  <> 0
+        SELECT ROBA
+        HSEEK cIdRoba
+        @ ++A,0 SAY ++B PICTURE '9999'
+        @ A,5 SAY Id
+        @ A,16 SAY naz PICTURE replicate ("X",35)
+        @ A,52 SAY jmj
+        IF round(nStanje,4) <> 0
+            nCijena:=nIznos/nStanje
+        ELSE
+            nCijena:=0
+        ENDIF    
+        @ A,57 SAY nCijena PICTURE PicDEM
+        @ A,70 SAY "________"
+
+        SELECT mat_suban
+    ENDIF
 ENDDO
 
-If A>56; EJECTA0; endif
+IF A > 56
+    EJECTA0
+ENDIF
+
 @ ++A,0 say m
 A+=3
 @ A,10 SAY "ODGOVORNO LICE:"

@@ -117,12 +117,13 @@ endif
 
 START PRINT CRET
 ?
+P_COND
 
 nCDI:=0
 DO WHILE !eof()
 
    cIdKonto:=IdKonto
-   IF prow()==0
+   IF prow()==1
       P_COND
       
       ?? "MAT.P: SPECIFIKACIJA STANJA (U "

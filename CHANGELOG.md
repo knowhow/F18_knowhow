@@ -3,6 +3,7 @@
   - generalno čišćenje funkcija modula FAKT
   - update server db 4.1.4 (nepostojeća polja) [#26350](http://redmine.bring.out.ba/issues/26350)
   - template za štampu odt fakture prebačen na lokaciju c:\knowhowERP\template
+  - init port modul VIRM [#25359](http://redmine.bring.out.ba/issues/25359)
 
 0.9.40  2012-01-19, hernad
 

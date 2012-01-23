@@ -1312,8 +1312,11 @@ CLOSERET
 // ---------------------------------------------------
 // generisi storno dokument u pripremi
 // ---------------------------------------------------
-function storno_dok( cIdFirma, cIdTipDok, cBrDok )
-local cNoviBroj 
+function storno_dok( id_firma, id_tip_dok, br_dok )
+local _novi_br_dok
+local _rec 
+local _count
+local _fiscal_no
 
 if Pitanje(,"Formirati storno dokument ?","D") == "N"
     return
@@ -1327,69 +1330,67 @@ if fakt_pripr->(RECCOUNT2()) <> 0
     return
 endif
 
-
 O_FAKT
 O_FAKT_DOKS
 O_ROBA
 O_PARTN
 
-cNoviBroj := ALLTRIM(cBrDok) + "/S"
+_novi_br_dok := ALLTRIM( br_dok ) + "/S"
 
-if LEN( ALLTRIM( cNoviBroj ) ) > 8
+if LEN( ALLTRIM( _novi_br_dok ) ) > 8
     
     // otkini prva dva karaktera
     // da moze stati "/S"
-    cNoviBroj := RIGHT( ALLTRIM( cBrDok ), 6 ) + "/S"
+    _novi_br_dok := RIGHT( ALLTRIM( br_dok ), 6 ) + "/S"
 
 endif
 
-nCnt := 0
+_count := 0
 
 select fakt_doks
 set order to tag "1"
 go top
-seek cIdFirma + cIdTipDok + cBrDok
+seek id_firma + id_tip_dok + br_dok
 
-nFiscal := 0
+_fiscal_no := 0
 if gFc_use == "D"
-    nFiscal := field->fisc_rn
+    _fiscal_no := field->fisc_rn
 endif
 
 select fakt
 set order to tag "1"
 go top
-seek cIdFirma + cIdTipDok + cBrDok
+seek id_firma + id_tip_dok + br_dok
 
-do while !EOF() .and. field->idfirma == cIdFirma ;
-        .and. field->idtipdok == cIdTipDok ;
-        .and. field->brdok == cBrDok
+do while !EOF() .and. field->idfirma == id_firma ;
+        .and. field->idtipdok == id_tip_dok ;
+        .and. field->brdok == br_dok
     
-    
-    scatter()
+    _rec := dbf_get_rec()
 
     select fakt_pripr
     append blank
-    
-    gather()
 
-    replace field->kolicina with ( field->kolicina * -1 )
-    replace field->brdok with cNoviBroj
-    replace field->datdok with DATE()
+    _rec["kolicina"] := ( _rec["kolicina"] * -1 )
+    _rec["brdok"] := _novi_br_dok
+    _rec["datdok"] := DATE()
     
     if gFc_use == "D"
-        replace field->fisc_rn with nFiscal
+        _rec["fisc_rn"] := _fiscal_no
     endif
+
+    dbf_update_rec( _rec )
 
     select fakt
     skip
 
-    ++ nCnt
+    ++ _count
 
 enddo
 
-if nCnt > 0
-    msgbeep("Formiran je dokument " + cIdFirma + "-" + ;
-        cIdTipDok + "-" + ALLTRIM(cNoviBroj) + ;
+if _count > 0
+    msgbeep("Formiran je dokument " + id_firma + "-" + ;
+        id_tip_dok + "-" + ALLTRIM( _novi_br_dok ) + ;
         " u pripremi !")
 endif
 

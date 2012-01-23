@@ -220,6 +220,8 @@ if cId <> NIL
             SeekBarKod( @cId, @cIdBk, .t. )
         endif
 
+    endif
+
 endif
 
 return

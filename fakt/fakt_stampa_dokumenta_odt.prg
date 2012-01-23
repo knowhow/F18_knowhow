@@ -27,7 +27,7 @@ function stdokodt( cIdf, cIdVd, cBrDok )
 local _t_path := my_home()
 local _filter := "f*.odt"
 local _template := ""
-local _jod_templates_path := fetch_metric( "jodreports_templates", my_user(), "" )
+local _jod_templates_path := F18_TEMPLATE_LOCATION
 
 IF !EMPTY( _jod_templates_path )
     _t_path := ALLTRIM( _jod_templates_path )

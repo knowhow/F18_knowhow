@@ -215,7 +215,7 @@ if cId <> NIL
         
         if found()
             cId := &(FIELDNAME(1))
-        elseif !found() .and. fieldpos("barkod")<>0
+        elseif !found() .and. fieldpos("barkod")<>0 .and. !EMPTY(cId)
             // pretrazi po barkod-u
             SeekBarKod( @cId, @cIdBk, .t. )
         endif

@@ -868,43 +868,49 @@ function KorMenu2
 return nVrati
 
 
-function Prozor1(v1,h1,v2,h2,cNaslov,cBojaN,cOkvir,cBojaO,cBojaT,nKursor)
-
-
-LOCAL cPom:=SET(_SET_DEVICE)
+function Prozor1( v1, h1, v2, h2, cNaslov, cBojaN, cOkvir, cBojaO, cBojaT, nKursor )
+local _device := SET( _SET_DEVICE )
  
 SET DEVICE TO SCREEN
-IF cBojaN==NIL
-    cBojaN:="GR+/N"
+
+IF cBojaN == NIL
+    cBojaN := "GR+/N"
 ENDIF
-IF cOkvir==NIL
-    cOkvir:=B_SINGLE+" "
+
+IF cOkvir == NIL
+    cOkvir := B_SINGLE + " "
 ENDIF
-IF nKursor==NIL
-    nKursor:=SETCURSOR()
+
+IF nKursor == NIL
+    nKursor := SETCURSOR()
 ENDIF
-StackPush( aPrStek , { row(),col(),v1, h1, v2, h2, SAVESCREEN(v1,h1,v2,h2),;
-                        SETCOLOR(cBojaT), SETCURSOR(nKursor)     } )
-DISPBox(v1,h1,v2,h2,cOkvir,cBojaO)
-@ v1+1,h1+1 CLEAR TO v2-1,h2-1
-IF cNaslov!=NIL
-   @ v1,(h2+h1+-1-LEN(cNaslov))/2 SAY " "+cNaslov+" " COLOR cBojaN
+
+StackPush( aPrStek, { row(), col(), v1, h1, v2, h2, SAVESCREEN( v1, h1, v2, h2 ), SETCOLOR( cBojaT ), SETCURSOR( nKursor ) } )
+
+DISPBox( v1, h1, v2, h2, cOkvir, cBojaO )
+
+@ v1 + 1, h1 + 1 CLEAR TO v2 - 1, h2 - 1
+
+IF cNaslov != NIL
+   @ v1, (h2 + h1 + -1 - LEN(cNaslov)) / 2 SAY " " + cNaslov + " " COLOR cBojaN
 ENDIF
-SET(_SET_DEVICE,cPom)
+
+SET( _SET_DEVICE, _device )
+
 return
 
 
-function Prozor0()
 
-local aSt:=StackPop(aPrStek)
-local cPom:=SET(_SET_DEVICE)
+function Prozor0()
+local _a_st := StackPop(aPrStek)
+local _device := SET( _SET_DEVICE )
 
 SET DEVICE TO SCREEN
-RESTSCREEN(aSt[3],aSt[4],aSt[5],aSt[6],aSt[7])
-SETCOLOR(aSt[8])
-SETCURSOR(aSt[9])
-@ aSt[1],aSt[2] SAY ""
-SET(_SET_DEVICE,cPom)
+RESTSCREEN( _a_st[3], _a_st[4], _a_st[5], _a_st[6], _a_st[7] )
+SETCOLOR( _a_st[8] )
+SETCURSOR( _a_st[9] )
+@ _a_st[1], _a_st[2] SAY ""
+SET( _SET_DEVICE, _device )
 return
 
 

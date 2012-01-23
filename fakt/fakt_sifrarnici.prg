@@ -425,8 +425,14 @@ return
 
 
 function P_FTxt(cId, dx, dy)
-local vrati
-local nArr:=SELECT()
+local _vrati
+local _t_area := SELECT()
+local _p_bottom 
+local _p_top
+local _p_left
+local _p_right
+local _box_h := MAXROWS() - 20
+local _box_w := MAXCOLS() - 3
 private ImeKol
 private Kol
 
@@ -444,14 +450,21 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
-Prozor1(3,0,11,79,"PREGLED TEKSTA")
-@ 12,0 SAY ""
+_p_bottom := 15
+_p_top := 3
+_p_left := 1
+_p_right := maxcols()-3
 
-vrati:=PostojiSifra(F_FTXT, 1, 7, 77, "Faktura - tekst na kraju fakture", @cId , , , {|| PrikFTXT()})
+Prozor1( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
+
+@ _p_bottom, 0 SAY ""
+
+_vrati := PostojiSifra( F_FTXT, 1, _box_h, _box_w, "Faktura - tekst na kraju fakture", @cId , , , {|| PrikFTXT( _p_top, _p_left, 8, _p_right )})
+
 Prozor0()
 
-select (nArr)
-RETURN vrati
+select ( _t_area )
+RETURN _vrati
 
 
 
@@ -459,18 +472,22 @@ RETURN vrati
  *  \brief Prikazuje uzorak teksta
  */
  
-function PrikFTxt()
+function PrikFTxt( top_pos, left_pos, bott_pos, text_length )
+local _i := 0
+local _arr := {}
 
-LOCAL  i:=0, aTXT:={}
- @ 3,60 SAY "SIFRA:"+id
- aTXT := TXTuNIZ( naz , 78 )
- FOR i:=1 TO 7
-   IF i > LEN(aTXT)
-     @ 3+i,1 SAY SPACE(78)
-   ELSE
-     @ 3+i,1 SAY PADR(aTXT[i],78)
-   ENDIF
- NEXT
+@ top_pos, 6 SAY "uzorak teksta id: " + field->id
+
+_arr := TXTuNIZ( field->naz , text_length - 1 - left_pos )
+ 
+FOR _i := 1 TO bott_pos
+    IF _i > LEN( _arr )
+        @ top_pos + _i, left_pos + 1 SAY SPACE( text_length - 1 - left_pos )
+    ELSE
+        @ top_pos + _i, left_pos + 1 SAY PADR( _arr[_i], text_length - 1 - left_pos )
+    ENDIF
+NEXT
+
 return -1
 
 

@@ -602,7 +602,8 @@ case Ch==K_ALT_F5
       cBIznos := STR(field->iznosbhd)
 
       delete
-     
+      __dbPack()
+ 
       BrisiPBaze()
       
       if lLogBrisanje

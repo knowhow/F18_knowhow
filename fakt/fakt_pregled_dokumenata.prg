@@ -403,7 +403,7 @@ return DE_CONT
 // --------------------------
 // generisi fakturu
 // --------------------------
-function gen_fakt(lOpcine)
+function generisi_fakturu( is_opcine )
 local cTipDok
 local cFirma
 local cBrFakt
@@ -414,21 +414,22 @@ local dDatIsp
 local i
 local cPart
 local aMemo := {}
+local _rec
 
-if pitanje(,"Generisati fakturu na osnovu ponude ?", "D") == "N"
+if Pitanje(,"Generisati fakturu na osnovu ponude ?", "D") == "N"
     return DE_CONT
 endif
 
 select fakt_doks
-nTrec:=recno()
+nTrec := RecNo()
 
-cTipDok := idtipdok
-cFirma := idfirma
-cBrFakt := brdok
-cPart := idpartner
-dDatFakt := datdok
-dDatVal := datdok
-dDatIsp := datdok
+cTipDok := field->idtipdok
+cFirma := field->idfirma
+cBrFakt := field->brdok
+cPart := field->idpartner
+dDatFakt := field->datdok
+dDatVal := field->datdok
+dDatIsp := field->datdok
 
 cNBrFakt := cBrFakt
 
@@ -449,7 +450,7 @@ Box(, 7, 55)
 
 BoxC()
 
-
+// postavi filter 
 set filter to
 go top
 seek cFirma + "10" + cBrFakt
@@ -466,29 +467,35 @@ if FOUND()
     
 endif
 
+//
+// prvo prekopiraj doks podatke
+// 
 select fakt_doks
 go top
 seek cFirma + cTipDok + cBrFakt
 
-// ubaci doks
-Scatter()
+_rec := dbf_get_rec()
 
 append blank
 
-// tip dok je "10"
-_idtipdok := "10"
-_brdok := cNBrFakt
-_datdok := dDatFakt
+// tip dokumneta treba da bude 10 jer se radi o fakturi
+_rec["idtipdok"] := "10"
+_rec["brdok"] := cNBrFakt
+_rec["datdok"] := dDatFakt
 
-Gather()
+// update podataka na server
+update_rec_server_and_dbf( ALIAS(), _rec )
+
+
+// 
+// sada odradi istu stvar za stavke fakture iz tabele fakt
+//
 
 O_FAKT
 select fakt
 set order to tag "1"
 go top
-
 seek cFirma + cTipDok + cBrFakt
-
 
 do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
 
@@ -496,51 +503,53 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma 
     
     nFRec := RECNO()
 
-    Scatter()
+    _rec := dbf_get_rec()
 
-    aMemo := ParsMemo(_txt)
+    aMemo := ParsMemo( _rec["txt"] )
 
     append blank
     
-    _idtipdok := "10"
-    _brdok := cNBrFakt
-    _datdok := dDatFakt
+    _rec["idtipdok"] := "10"
+    _rec["brdok"] := cNBrFakt
+    _rec["datdok"] := dDatFakt
     
     // dodaj memo polje, samo prva stavka
     if nCnt = 1
     
-        _txt := ""
-        _txt += CHR(16) + aMemo[1] + CHR(17)
-        _txt += CHR(16) + aMemo[2] + CHR(17)
-        _txt += CHR(16) + aMemo[3] + CHR(17)
-        _txt += CHR(16) + aMemo[4] + CHR(17)
-        _txt += CHR(16) + aMemo[5] + CHR(17)
-        _txt += CHR(16) + aMemo[6] + CHR(17)
+        _rec["txt"] := ""
+        _rec["txt"] += CHR(16) + aMemo[1] + CHR(17)
+        _rec["txt"] += CHR(16) + aMemo[2] + CHR(17)
+        _rec["txt"] += CHR(16) + aMemo[3] + CHR(17)
+        _rec["txt"] += CHR(16) + aMemo[4] + CHR(17)
+        _rec["txt"] += CHR(16) + aMemo[5] + CHR(17)
+        _rec["txt"] += CHR(16) + aMemo[6] + CHR(17)
         // datum otpremnice
-        _txt += CHR(16) + DTOC(dDatIsp) + CHR(17)
-        _txt += CHR(16) + aMemo[8] + CHR(17)
+        _rec["txt"] += CHR(16) + DTOC(dDatIsp) + CHR(17)
+        _rec["txt"] += CHR(16) + aMemo[8] + CHR(17)
         // datum narudzbe / amemo[9]
-        _txt += CHR(16) + DTOC(dDatVal) + CHR(17)
+        _rec["txt"] += CHR(16) + DTOC(dDatVal) + CHR(17)
         // datum valute / amemo[10]
-        _txt += CHR(16) + DTOC(dDatVal) + CHR(17)
+        _rec["txt"] += CHR(16) + DTOC(dDatVal) + CHR(17)
 
         // dodaj i ostala polja
 
         if LEN(aMemo) > 10
             for i:=11 to LEN(aMemo)
-                _txt += CHR(16) + aMemo[i] + CHR(17)
+                _rec["txt"] += CHR(16) + aMemo[i] + CHR(17)
             next
         endif
 
     endif
     
-    Gather()
+    // upisi podatke u db
+    update_rec_server_and_dbf( ALIAS(), _rec )
 
     go ( nFRec )
     
     skip
 
 enddo
+
 
 if isugovori()
 
@@ -553,7 +562,9 @@ if isugovori()
         seek cPart
 
         if FOUND() .and. field->idpartner == cPart
-            replace field->dat_l_fakt with DATE()
+            _rec := dbf_get_rec()
+            _rec["dat_l_fakt"] := DATE()
+            update_rec_server_and_dbf( ALIAS(), _rec )
         endif
         
     endif
@@ -562,13 +573,13 @@ endif
 
 select fakt_doks
 
-if lOpcine
+if is_opcine
     O_PARTN
-        select fakt_doks
-        set relation to idpartner into PARTN
+    select fakt_doks
+    set relation to idpartner into PARTN
 endif
 
-if cFilter==".t."
+if cFilter == ".t."
     set Filter to
 else
     set Filter to &cFilter
@@ -863,7 +874,7 @@ do case
   
   case chr(Ch) $ "fF"
      if idtipdok $ "20"
-       nRet:=gen_fakt(lOpcine)
+       nRet:=generisi_fakturu(lOpcine)
      endif
      
   case chr(Ch) $ "vV"

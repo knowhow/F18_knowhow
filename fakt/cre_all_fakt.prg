@@ -60,23 +60,6 @@ endif
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2", "IdFirma+dtos(datDok)+idtipdok+brdok+rbr", _alias)
 CREATE_INDEX("3","idroba+dtos(datDok)", _alias)
-
-/*
-    if lPoNarudzbi = .t.
-        // sifru gradi IDNAR + idroba !!!!!!!!!!
-        CREATE_INDEX("3N","idnar+idroba+dtos(datDok)",KUMPATH+"FAKT")
-    endif
-    if izfmkini("SifRoba","ID_J")=="D"
-        // sifru gradi IDROBA_J + idroba !!!!!!!!!!
-        CREATE_INDEX("3J","idroba_j+idroba+dtos(datDok)",KUMPATH+"FAKT")
-    endif
-    // ako se koristi varijanta DITRIBUCIJA ukljuci i ove indexe
-    if glDistrib = .t.
-        CREATE_INDEX("4","idfirma+idtipdok+dtos(datdok)+idrelac+marsruta+brdok+rbr",KUMPATH+"FAKT")
-        CREATE_INDEX("5","idfirma+idtipdok+dtos(datdok)+idrelac+iddist+idvozila+idroba",KUMPATH+"FAKT")
-    endif
-*/
-
 CREATE_INDEX("6", "idfirma+idpartner+idroba+idtipdok+dtos(datdok)", _alias)
 CREATE_INDEX("7", "idfirma+idpartner+idroba+dtos(datdok)", _alias)
 CREATE_INDEX("8", "datdok", _alias)

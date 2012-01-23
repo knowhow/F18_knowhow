@@ -212,16 +212,19 @@ if cId <> NIL
     
         // SEEK PO ID , SEEK PO ID_J
         seek cId
-        cId := &(FIELDNAME(1))
         
-        // pretrazi po barkod-u
-        if !found() .and. fieldpos("barkod")<>0
+        if found()
+            cId := &(FIELDNAME(1))
+        elseif !found() .and. fieldpos("barkod")<>0
+            // pretrazi po barkod-u
             SeekBarKod( @cId, @cIdBk, .t. )
         endif
 
     endif
 
 endif
+
+return
 
 
 

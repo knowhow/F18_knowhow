@@ -67,9 +67,9 @@ SETCANCEL(.f.)
 
 
 if setmode(MAXROWS(), MAXCOLS())
-   ? "hej mogu setovati povecani ekran !"
+   log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
 else
-   ? "ne mogu setovati povecani ekran !"
+   log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
    QUIT
 endif
 

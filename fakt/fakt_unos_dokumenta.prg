@@ -340,29 +340,29 @@ do case
             return DE_REFRESH
         
     case UPPER(Chr(Ch))=="R"
-            return DE_REFRESH
+        return DE_REFRESH
         
     case Ch==K_F9
-            Iz20u10() 
+        Iz20u10() 
         lDirty:=.t.
-            return DE_REFRESH
+        return DE_REFRESH
         
     case Ch==K_ALT_F10
-            private nEntera:=30
-            for iSekv:=1 to INT(RecCount2()/15)+1
-                cSekv:=chr(K_CTRL_A)
-                for nKekk:=1 to MIN(RecCount2(),15)*20
-                    cSekv+=cEnter
-                next
-                keyboard cSekv
+        private nEntera:=30
+        for iSekv:=1 to INT(RecCount2()/15)+1
+            cSekv:=chr(K_CTRL_A)
+            for nKekk:=1 to MIN(RecCount2(),15)*20
+                cSekv+=cEnter
             next
+            keyboard cSekv
+        next
         lDirty:=.t.
-            return DE_REFRESH
+        return DE_REFRESH
         
     case Ch==K_F10
-            Popupfakt_unos_dokumenta()
-            SETLASTKEY(K_CTRL_PGDN)
-            return DE_REFRESH
+        Popupfakt_unos_dokumenta()
+        SETLASTKEY(K_CTRL_PGDN)
+        return DE_REFRESH
     
     case Ch==K_F11
         // pregled smeca
@@ -374,9 +374,9 @@ do case
         return DE_REFRESH
 
     case Ch=K_ALT_I
-            RekZadMpO()
-            o_fakt_edit()
-            return DE_REFRESH
+        RekZadMpO()
+        o_fakt_edit()
+        return DE_REFRESH
         
     case Ch==K_ALT_N
         if lDirty
@@ -385,14 +385,14 @@ do case
             "na narudzbenici bili azurni")
             return DE_CONT
         endif
-            select fakt_pripr
+        select fakt_pripr
         nRec:=RECNO()
-            GO TOP
+        GO TOP
         nar_print(.t.)
         o_fakt_edit()
         select fakt_pripr
-            GO (nRec)
-            return DE_CONT
+        GO (nRec)
+        return DE_CONT
 
     case Ch==K_CTRL_R
         if lDirty
@@ -432,11 +432,21 @@ return DE_CONT
 // brisanje stavke
 // -------------------------------------------
 function BrisiStavku()
-cSecur:=SecurR(KLevel,"BRISIGENDOK")
-if m1="X" .and. ImaSlovo ("X", cSecur)   // fakt_pripr->m1
-       Beep(1)
-       Msg("Dokument izgenerisan, ne smije se brisati !!",0)
-       return 0
+local _secur_code
+local _log_opis
+local _log_stavka
+local _log_artikal, _log_kolicina, _log_cijena
+local _log_datum
+local _t_area
+local _rec
+
+_secur_code := SecurR( KLevel, "BRISIGENDOK" )
+
+if field->m1 = "X" .and. ImaSlovo ( "X", _secur_code )   
+    // fakt_pripr->m1
+    Beep(1)
+    Msg("Dokument izgenerisan, ne smije se brisati !!",0)
+    return 0
 endif
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
@@ -445,41 +455,45 @@ if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
 endif
     
 if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-    if (RecCount2 () == 1) .OR. JedinaStavka ()
-            select fakt_doks
-            HSEEK fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
-            if FOUND () .AND. fakt_doks->M1 == "Z"
-                    // dokument zapisan samo u DOKS-u
-                    DELETE
-            endif
-            select fakt_pripr
+    if (RecCount2() == 1) .or. JedinaStavka()
+        select fakt_doks
+        HSEEK fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
+        if FOUND () .AND. fakt_doks->M1 == "Z"
+            // dokument zapisan samo u DOKS-u
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( ALIAS(), _rec )
         endif
+        select fakt_pripr
+    endif
     
     // uzmi opis dokumenta za logiranje
-    cOpis := "dokument: " + field->idfirma + "-" + field->idtipdok + "-" + field->brdok
-    cStavka := field->rbr
-    cArtikal := "artikal: " + field->idroba
-    nKolicina := field->kolicina
-    nCijena := field->cijena
-    dDatumDok := field->datdok
+    _log_opis := "dokument: " + field->idfirma + "-" + field->idtipdok + "-" + field->brdok
+    _log_stavka := field->rbr
+    _log_artikal := "artikal: " + field->idroba
+    _log_kolicina := field->kolicina
+    _log_cijena := field->cijena
+    _log_datum := field->datdok
 
     delete
+    __dbPack()
 
-    nTArea := SELECT()
+    _t_area := SELECT()
 
     // logiraj promjenu brisanja stavke !
 
     if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
         EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", ;
-            nKolicina, nCijena, nil, nil, ;
-            cArtikal,"", cOpis, dDatumDok, DATE(), "", ;
-            "Brisanje stavke " + cStavka + " iz pripreme")
+            _log_kolicina, _log_cijena, nil, nil, ;
+            _log_artikal, "", _log_opis, _log_datum, DATE(), "", ;
+            "Brisanje stavke " + _log_stavka + " iz pripreme")
     endif
 
-    select (nTArea)
+    select ( _t_area )
 
-        return 1
+    return 1
+
 endif
+
 return 0
 
 

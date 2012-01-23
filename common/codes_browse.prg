@@ -220,7 +220,8 @@ if cId <> NIL
             SeekBarKod( @cId, @cIdBk, .t. )
         endif
 
-    endif
+    endi
+            // pretrazi po barkod-uf
 
 endif
 

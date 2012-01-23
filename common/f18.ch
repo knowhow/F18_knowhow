@@ -24,9 +24,14 @@
 #define SIFK_LEN_OZNAKA  4
 #define SIFK_LEN_IDSIF   15
 
-
 #define F18_CLIENT_ID_INI_SECTION "client_id"
 #define F18_SCREEN_INI_SECTION "F18_screen"
+
+#ifdef __PLATFORM__WINDOWS
+    #define F18_TEMPLATE_LOCATION "c:\\knowhowERP\\template\\"
+#else
+    #define F18_TEMPLATE_LOCATION ""
+#endif
 
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED

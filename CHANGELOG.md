@@ -1,3 +1,9 @@
+0.9.41  2012-01-23, vsasa
+  
+  - generalno čišćenje funkcija modula FAKT
+  - update server db 4.1.4 (nepostojeća polja) [#26350](http://redmine.bring.out.ba/issues/26350)
+  - template za štampu odt fakture prebačen na lokaciju c:\knowhowERP\template
+
 0.9.40  2012-01-19, hernad
 
   - org_pdv_broj

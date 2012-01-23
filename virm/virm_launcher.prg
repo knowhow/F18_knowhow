@@ -9,20 +9,26 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define F18_VER_DEFINED
+#include "virm.ch"
+#include "f18_ver.ch"
+
+EXTERNAL DESCEND
+EXTERNAL RIGHT
 
 
-#define F18_VER       "0.9.41"
-#define F18_VER_DATE  "23.01.2012"
+function MainVirm(cKorisn, cSifra, p3, p4, p5, p6, p7)
+local oVirm
+local cModul
 
-#define FMK_LIB_VER   "0.9.95"
+PUBLIC gKonvertPath:="D"
 
-#define F18_DBF_VER_MAJOR  0
-#define F18_DBF_VER_MINOR  4
-#define F18_DBF_VER_PATCH  2
+cModul:="VIRM"
+PUBLIC goModul
 
+oVirm := TVirmMod():new(NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3,p4,p5,p6,p7)
+goModul:=oVirm
 
-#define SERVER_DB_VER_MAJOR  4
-#define SERVER_DB_VER_MINOR  1
-#define SERVER_DB_VER_PATCH  4
+oVirm:run()
+
+return
 

@@ -349,6 +349,14 @@ AADD(gaDBFs, { F_MAT_SINT,    "MAT_SINT",    "mat_sint" , { |alg| mat_sint_from_
 AADD(gaDBFs, { F_MAT_NALOG,   "MAT_NALOG",   "mat_nalog", { |alg| mat_nalog_from_sql_server(alg) }, "IDS" } )
 AADD(gaDBFs, { F_KARKON,      "KARKON",      "mat_karkon", { |alg| mat_karkon_from_sql_server(alg) }, "IDS" } )
 
+// modul VIRM
+AADD(gaDBFs, { F_VIPRIPR,  "VIRM_PRIPR"   , "virm_pripr" } )
+AADD(gaDBFs, { F_IZLAZ  ,  "IZLAZ"   , "izlaz" } )
+AADD(gaDBFs, { F_VRPRIM ,  "VRPRIM"  , "vrprim" } )
+AADD(gaDBFs, { F_VRPRIM2,  "VRPRIM2" , "vrprim2" } )
+AADD(gaDBFs, { F_JPRIH  ,  "JPRIH"   , "jprih" } )
+AADD(gaDBFs, { F_LDVIRM ,  "LDVIRM"  , "ldvirm" } )
+AADD(gaDBFs, { F_KALVIR ,  "KALVIR"  , "kalvir" } )
 
 
 return

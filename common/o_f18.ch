@@ -330,6 +330,15 @@
 #xcommand O_MAT_INVENT   =>  select(F_MAT_INVENT); my_usex ( "mat_invent" ); set order to tag "1"
 #xcommand O_KARKON       =>  select(F_KARKON); my_use ( "karkon" ); set order to tag "ID"
 
+// modul VIRM
+#xcommand O_VIRM_PRIPR   => select (F_VIPRIPR); my_usex("virm_pripr") ; set order to tag "1"
+#xcommand O_VRPRIM   => select (F_VRPRIM) ; my_use  ("vrprim") ; set order to tag "ID"
+#xcommand O_VRPRIM2  => select (F_VRPRIM2); my_use  ("vrprim2") ; set order to tag "ID"
+#xcommand O_LDVIRM   => select (F_LDVIRM) ; my_use ("ldvirm") ; set order to tag "ID"
+#xcommand O_KALVIR   => select (F_KALVIR) ; my_use ("kalvir") ; set order to tag "ID"
+#xcommand O_JPRIH   => select (F_JPRIH) ; my_use  ("jprih")  ; set order to tag "ID"
+#xcommand O_IZLAZ   => select (F_IZLAZ) ; my_usex ("izlaz") ; set order to tag "1"
+
 
 // --------------------------------------------------------------------------------------
 // legacy - izbaciti donje tabele

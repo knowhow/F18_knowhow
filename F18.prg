@@ -35,6 +35,7 @@ AADD( menuop, " 7) OS    # osnovna sredstva")
 AADD( menuop, " 8) SII   # sitan inventar")
 AADD( menuop, " 9) POS   # maloprodajna kasa")
 AADD( menuop, "10) MAT   # materijalno")
+AADD( menuop, "11) VIRM  # virmani")
 AADD( menuop, "--------------------------")
 AADD( menuop, " P) Parametri aplikacije")
 AADD( menuop, " R) ReLogin")
@@ -69,13 +70,15 @@ do while .t.
 			MainPos(my_user(), "dummy", p3, p4, p5, p6, p7)
  		case mnu_choice == 10
 			MainMat(my_user(), "dummy", p3, p4, p5, p6, p7)
-        case mnu_choice == 12
-            f18_app_parameters()
+       	case mnu_choice == 11
+			MainVirm(my_user(), "dummy", p3, p4, p5, p6, p7)
         case mnu_choice == 13
+            f18_app_parameters()
+        case mnu_choice == 14
             relogin()
-	 	case mnu_choice == 14
-            view_log()
 	 	case mnu_choice == 15
+            view_log()
+	 	case mnu_choice == 16
             full_table_synchro()
 	endcase
  	loop

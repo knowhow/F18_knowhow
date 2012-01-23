@@ -12,4 +12,5 @@ ld/*.prg
 os/*.prg 
 pos/*.prg 
 mat/*.prg 
+virm/*.prg 
 common/*.prg

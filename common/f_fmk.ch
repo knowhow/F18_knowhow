@@ -275,17 +275,12 @@
 
 //virm
 #define F_VIPRIPR 216
-#define F_KUMUL   217
 #define F_VRPRIM  218
-#define F_STAMP   219
-#define F_VIPRIP2 220
 #define F_VRPRIM2 221
-#define F_STAMP2  222
 #define F_LDVIRM  223
 #define F_KALVIR  224
 #define F_IZLAZ   225
 #define F_JPRIH   226
-#define F_KUMUL2  227
 
 // pos
 #define F__POSP  228

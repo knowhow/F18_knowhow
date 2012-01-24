@@ -11,6 +11,7 @@
 
 #include "fin.ch"
 
+
 function PrenosFin()
 local cStranaBitna
 local lStranaBitna

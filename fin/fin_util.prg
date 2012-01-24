@@ -80,14 +80,7 @@ return
  *  \brief generacija pocetnog stanja
  */
 function GenPocStanja()
-
-cSecur:=SecurR(KLevel,"PrenosNG")
-cSecur2:=SecurR(KLevel,"SGLEDAJ")
-if ImaSlovo("X",cSecur) .or. ImaSlovo("D",cSecur2)
-	MsgBeep("Opcija nedostupna !")
-else
-	PrenosFin()
-endif
+PrenosFin()
 return
 
 

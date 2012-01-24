@@ -75,8 +75,6 @@ close all
 
 ::mMenuStandard()
 
-//::quit()
-
 return nil
 
 

@@ -53,11 +53,11 @@ NEXT
 
 @ 12,0 SAY ""
 
-ObjDBedit( "PripVir", MAXROWS()-4, MAXCOLS()-3, {|| _k_handler()},"","PRIPREMA",;
+ObjDBedit( "PripVir", MAXROWS()-6, MAXCOLS()-3, {|| _k_handler()},"","Priprema virmana",;
           .f.,{"<c-N>   Nova uplatnica", "<c-T>   Brisi ",;
                "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve",;
-               "<a-A>   Azuriranje", "<c-P>   Stampanje",;
-               "<a-P>   Rekapitulacija","<a-K> Pretvori u DEM", "<c-O>   Ostalo"},2,,,)
+               "<c-P>   Stampanje",;
+               "<a-P>   Rekapitulacija"},2,,,)
 
 close all
 return
@@ -119,35 +119,7 @@ do case
     case Ch==K_CTRL_P
         StVirm()
         return DE_REFRESH
-
-    case Ch==K_CTRL_O
-        O_PARAMS
-        private cSection:="1",cHistory:=" "; aHistory:={}
-
-        Rpar("da",@gDatum)
-        Rpar("fi",@gFirma)
-        Rpar("mj",@gMjesto)
-        Rpar("oj",@gOrgJed) // iskoristicu ovu varijablu za broj poreskog
-                         // obveznika
-        gOrgJed:=padr(gOrgJed,13)
-        set cursor on
-        aNiz:={ {"Firma - nalogodavac", "gFirma", "P_Firma(@gFirma)", , },;
-              {"Inicijalni datum uplate", "gDatum", , , },;
-              {"Mjesto uplate", "gMjesto", , , }, ;
-              {"Broj poreskog obveznika", "gOrgJed", , , } ;
-            }
-        VarEdit(aNiz,12,5,19,74,"OSTALI PARAMETRI","B1")
-        if lastkey()<>K_ESC
-            Wpar("da",gDatum)
-            Wpar("fi",gFirma)
-            Wpar("mj",gMjesto)
-            Wpar("oj",gOrgJed)
-            select params; use
-        endif
-        use
-        SELECT virm_pripr
-        lVrati:=DE_REFRESH
-   
+  
     case Ch==K_CTRL_A
         PushWA()
         select virm_pripr

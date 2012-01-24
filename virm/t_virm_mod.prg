@@ -89,10 +89,8 @@ return
 // ----------------------------------------
 // ----------------------------------------
 method setGVars()
-O_PARAMS
 
 set_global_vars()
-//set_global_roba_vars()
 
 public gDatum := DATE()
 public gFirma := SPACE(6)
@@ -103,23 +101,15 @@ public gINulu:="N"
 public gPici:="9,999,999,999,999,999.99"
 public gIDU:="D"
 
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
+gFirma := fetch_metric("firma_id", nil, "10" )
+gNFirma := fetch_metric("firma_naziv", nil, PADR( "bring.out", 100 ) )
+gMjesto := fetch_metric("virm_mjesto_uplate", nil, PADR( "Sarajevo", 100 ) )
+gOrgJed := fetch_metric("virm_org_jedinica", nil, PADR( "--", 17 ) )
+gPici := fetch_metric("virm_iznos_pict", nil, gPici )
+gINulu := fetch_metric("virm_stampati_nule", nil, gINulu )
+gIDU := fetch_metric("virm_sys_datum_uplate", nil, gIDU )
+gDatum := fetch_metric("virm_init_datum_uplate", nil, gDatum )
 
-Rpar("Pi",@gPici)
-RPar("bn",@gINulu)
-Rpar("da",@gDatum)
-Rpar("fi",@gFirma)
-Rpar("fn",@gNFirma)
-Rpar("mj",@gMjesto)
-Rpar("oj",@gOrgJed)
-RPar("du",@gIDU)
-
-select params
-use
-release cSection,cHistory,aHistory
 return
 
 

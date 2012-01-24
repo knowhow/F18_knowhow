@@ -53,7 +53,7 @@ NEXT
 
 @ 12,0 SAY ""
 
-ObjDBedit( "PripVir", MAXROWS()-6, MAXCOLS()-3, {|| _k_handler()},"","Priprema virmana",;
+ObjDBedit( "PripVir", MAXROWS()-8, MAXCOLS()-3, {|| _k_handler()},"","Priprema virmana",;
           .f.,{"<c-N>   Nova uplatnica", "<c-T>   Brisi ",;
                "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve",;
                "<c-P>   Stampanje",;
@@ -246,7 +246,7 @@ endif
 
 @ m_x+8,m_y+2 SAY "Svrha doznake:" GET _svrha_doz  pict "@S30"
 
-@ m_x+10,m_y+2 SAY "Mjesto" GET _mjesto  pict "@!"
+@ m_x+10,m_y+2 SAY "Mjesto" GET _mjesto  pict "@S20"
 @ m_x+10,col()+2 SAY "Datum uplate :" GET _dat_upl
 
 

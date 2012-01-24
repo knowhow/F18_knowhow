@@ -109,7 +109,7 @@ AADD( gaDbfs, { F_KONTO  ,  "KONTO"   , "konto", {| param | konto_from_sql_serve
 AADD( gaDbfs, { F_VPRIH  ,  "VPRIH"   , "vpprih"   } )
 AADD( gaDbfs, { F_PARTN  ,  "PARTN"   , "partn", {| param | partn_from_sql_server(param) }, "IDS" } )
 AADD( gaDbfs, { F_TNAL   ,  "TNAL"    , "tnal", { | param | tnal_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_PKONTO ,  "PKONTO"  , "pkonto"   } )
+AADD( gaDbfs, { F_PKONTO ,  "PKONTO"  , "pkonto", { | param | pkonto_from_sql_server(param) }, "IDS" } )
 AADD( gaDbfs, { F_VALUTE ,  "VALUTE"  , "valute", { | param | valute_from_sql_server( param ) }, "IDS" } )
 
 AADD( gaDbfs, { F_TRFP2  ,  "TRFP2"   , "trfp2", { | param | trfp2_from_sql_server( param ) }, "IDS" } )

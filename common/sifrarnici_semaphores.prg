@@ -37,6 +37,19 @@ _result := sifrarnik_from_sql_server(_tbl, algoritam, F_KONTO, {"id", "naz"})
 return _result
 
 
+// -----------------------------------------
+// -----------------------------------------
+function pkonto_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "pkonto"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_PKONTO, { "id", "tip" } )
+
+return _result
+
+
+
 
 // -----------------------------------------
 // -----------------------------------------

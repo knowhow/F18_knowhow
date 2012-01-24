@@ -116,8 +116,8 @@
 #xcommand O_RPARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"
 #xcommand OX_TNAL    => select (F_TNAL);  my_usex ("tnal")      ; set order to tag "ID"
 #xcommand OX_TDOK    => select (F_TDOK);  my_usex ("tdok")      ; set order to tag "ID"
-#xcommand O_PKONTO   => select (F_PKONTO); MY_USEx  ("pkonto")  ; set order to tag "ID"
-#xcommand OX_PKONTO   => select (F_PKONTO); my_usex  ("pkonto")  ; set order to tag "ID"
+#xcommand O_PKONTO   => select (F_PKONTO); my_use ("pkonto")  ; set order to tag "ID"
+#xcommand OX_PKONTO   => select (F_PKONTO); my_use  ("pkonto")  ; set order to tag "ID"
 #xcommand OX_VALUTE   => select(F_VALUTE);  my_usex  ("valute")  ; set order to tag "ID"
 #xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")
 #xcommand O__PARTN => select(F__PARTN); MY_USE  ("_partn")
@@ -379,7 +379,7 @@
 #xcommand O_TMPMSG  => select(F_TMPMSG); my_use ("tmpmsg"); set order to tag "1"
 
 
-#xcommand O_FIN_PRIPRRP   => select (F_FIN_PRIPRRP); my_usex (strtran(cDirPriv, goModul:oDataBase:cSezonDir, SLASH) + "FIN_PRIPR", "fin_priprrp"); set order to tag "1"
+#xcommand O_FIN_PRIPRRP   => select (F_FIN_PRIPRRP); my_usex("fin_priprrp", "fin_pripr"); set order to tag "1"
 
 
 #xcommand O_KALKSEZ        => select(F_KALKSEZ);  my_use  ("2005"+SLASH+"kalk")  ; set order to tag "1"

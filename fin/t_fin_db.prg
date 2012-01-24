@@ -13,15 +13,15 @@
 
 #include "hbclass.ch"
 CLASS TDbFin INHERIT TDB 
-	method New
-    method skloniSezonu	
-	method install	
-	method setgaDBFs	
-	method ostalef	
-	method obaza	
-	method kreiraj	
-	method konvZn
-	method scan
+    method New
+    method skloniSezonu 
+    method install  
+    method setgaDBFs    
+    method ostalef  
+    method obaza    
+    method kreiraj  
+    method konvZn
+    method scan
 
 ENDCLASS
 
@@ -74,20 +74,20 @@ if fRS // radna stanica
 endif
 
 if KLevel<>"0"
-	MsgBeep("Nemate pravo na koristenje ove opcije")
+    MsgBeep("Nemate pravo na koristenje ove opcije")
 endif
 
 cls
 
 if fRS
-	// mrezna radna stanica
-	? "Formiranje DBF-ova u privatnom direktoriju, RS ...."
+    // mrezna radna stanica
+    ? "Formiranje DBF-ova u privatnom direktoriju, RS ...."
 endif
 ?
 if finverse
- 	? "Prenos iz  sezonskih direktorija u radne podatke"
+    ? "Prenos iz  sezonskih direktorija u radne podatke"
 else
-	? "Prenos radnih podataka u sezonske direktorije"
+    ? "Prenos radnih podataka u sezonske direktorije"
 endif
 ?
 // privatni
@@ -200,13 +200,13 @@ method kreiraj(nArea)
 local cImeDbf
 
 if (nArea==nil)
-	nArea:=-1
+    nArea:=-1
 endif
 
 Beep(1)
 
 if (nArea<>-1)
-	CreSystemDb(nArea)
+    CreSystemDb(nArea)
 endif
 
 cDirRad := my_home()
@@ -218,95 +218,95 @@ CreFmkPi()
 
 if (nArea==-1 .or. nArea==(F_FUNK))
         //FUNK.DBF
-	
-	aDBf:={}
-   	AADD(aDBf,{ "ID"      , "C" ,   5 ,  0 })
-   	AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
-	
-	if !FILE(f18_ime_dbf("funk"))
-   		DBcreate2("FUNK",aDbf)
-	endif
-	
-	CREATE_INDEX("ID","id",KUMPATH+"FUNK")
-	CREATE_INDEX("NAZ","NAZ",KUMPATH+"FUNK")
+    
+    aDBf:={}
+    AADD(aDBf,{ "ID"      , "C" ,   5 ,  0 })
+    AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
+    
+    if !FILE(f18_ime_dbf("funk"))
+        DBcreate2("FUNK",aDbf)
+    endif
+    
+    CREATE_INDEX("ID","id",KUMPATH+"FUNK")
+    CREATE_INDEX("NAZ","NAZ",KUMPATH+"FUNK")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_FOND))
-	//FOND.DBF
-	
-   	aDBf:={}
-   	AADD(aDBf,{ "ID"      , "C" ,   3 ,  0 })
-   	AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
-	
-	if !FILE(f18_ime_dbf("FOND"))
-		DBcreate2("FOND",aDbf)
-	endif
-	
-	CREATE_INDEX("ID","id", "FOND")
-	CREATE_INDEX("NAZ","NAZ", "FOND")
+    //FOND.DBF
+    
+    aDBf:={}
+    AADD(aDBf,{ "ID"      , "C" ,   3 ,  0 })
+    AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
+    
+    if !FILE(f18_ime_dbf("FOND"))
+        DBcreate2("FOND",aDbf)
+    endif
+    
+    CREATE_INDEX("ID","id", "FOND")
+    CREATE_INDEX("NAZ","NAZ", "FOND")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_BUDZET))
-	//BUDZET.DBF	
-	
-   	aDBf:={}
-   	AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
-   	AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
-   	AADD(aDBf,{ "IZNOS"               , "N" ,  20 ,  2 })
-   	AADD(aDBf,{ "FOND"                , "C" ,   3 ,  0 })
-   	AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
-   	AADD(aDBf,{ "REBIZNOS"            , "N" ,  20 ,  2 })
-   		
-	if !FILE(f18_ime_dbf("BUDZET"))
-		DBcreate2("BUDZET", aDbf)
-	endif
-	
-	SELECT F_BUDZET
-	MY_USE (KUMPATH+"BUDZET")
-	if FieldPos("IDKONTO")=0 // ne postoji polje "idkonto"
-  		USE
-  		save screen to cScr
-  		cls
-  		restore screen from cScr
-	endif
-	SELECT F_BUDZET
-	USE
+    //BUDZET.DBF    
+    
+    aDBf:={}
+    AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "IZNOS"               , "N" ,  20 ,  2 })
+    AADD(aDBf,{ "FOND"                , "C" ,   3 ,  0 })
+    AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
+    AADD(aDBf,{ "REBIZNOS"            , "N" ,  20 ,  2 })
+        
+    if !FILE(f18_ime_dbf("BUDZET"))
+        DBcreate2("BUDZET", aDbf)
+    endif
+    
+    SELECT F_BUDZET
+    MY_USE (KUMPATH+"BUDZET")
+    if FieldPos("IDKONTO")=0 // ne postoji polje "idkonto"
+        USE
+        save screen to cScr
+        cls
+        restore screen from cScr
+    endif
+    SELECT F_BUDZET
+    USE
 
-	CREATE_INDEX("1","IdRj+Idkonto",KUMPATH+"BUDZET")
-	CREATE_INDEX("2","Idkonto",KUMPATH+"BUDZET")
+    CREATE_INDEX("1","IdRj+Idkonto",KUMPATH+"BUDZET")
+    CREATE_INDEX("2","Idkonto",KUMPATH+"BUDZET")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_PAREK))
-	//PAREK.DBF
-   	
-	aDBf:={}
-   	AADD(aDBf,{ "IDPARTIJA"           , "C" ,   6 ,  0 })
-   	AADD(aDBf,{ "Idkonto"             , "C" ,   7 ,  0 })
-   	
-	if !FILE(f18_ime_dbf("parek"))
-		DBcreate2(KUMPATH+"PAREK",aDbf)
-	endif
+    //PAREK.DBF
+    
+    aDBf:={}
+    AADD(aDBf,{ "IDPARTIJA"           , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "Idkonto"             , "C" ,   7 ,  0 })
+    
+    if !FILE(f18_ime_dbf("parek"))
+        DBcreate2(KUMPATH+"PAREK",aDbf)
+    endif
 
-	CREATE_INDEX("1","IdPartija",KUMPATH+"PAREK")
+    CREATE_INDEX("1","IdPartija",KUMPATH+"PAREK")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_BUIZ))
-   	//BUIZ.DBF
-	
-	aDBf:={}
-   	AADD(aDBf,{ "ID"        , "C" ,   7 ,  0 })
-   	AADD(aDBf,{ "NAZ"       , "C" ,  10 ,  0 })
-   	
-	if !FILE(f18_ime_dbf("buiz"))
-		DBcreate2(KUMPATH+"BUIZ",aDbf)
-	endif
+    //BUIZ.DBF
+    
+    aDBf:={}
+    AADD(aDBf,{ "ID"        , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "NAZ"       , "C" ,  10 ,  0 })
+    
+    if !FILE(f18_ime_dbf("buiz"))
+        DBcreate2(KUMPATH+"BUIZ",aDbf)
+    endif
 
-	CREATE_INDEX( "ID"  , "ID"  , KUMPATH+"BUIZ" )
-	CREATE_INDEX( "NAZ" , "NAZ" , KUMPATH+"BUIZ" )
+    CREATE_INDEX( "ID"  , "ID"  , KUMPATH+"BUIZ" )
+    CREATE_INDEX( "NAZ" , "NAZ" , KUMPATH+"BUIZ" )
 endif
 
 
@@ -319,61 +319,61 @@ AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
 
 
 if (nArea==-1 .or. nArea==(F_KONTO))
-	//KONTO.DBF
-	
-	if !FILE(f18_ime_dbf("konto"))
-   		DBcreate2(SIFPATH+"KONTO.DBF",aDbf)
-	endif
+    //KONTO.DBF
+    
+    if !FILE(f18_ime_dbf("konto"))
+        DBcreate2(SIFPATH+"KONTO.DBF",aDbf)
+    endif
 
-	CREATE_INDEX("ID","id",SIFPATH+"KONTO") // konta
-	CREATE_INDEX("NAZ","naz",SIFPATH+"KONTO")
+    CREATE_INDEX("ID","id",SIFPATH+"KONTO") // konta
+    CREATE_INDEX("NAZ","naz",SIFPATH+"KONTO")
 endif
 
 
 if (nArea==-1 .or. nArea==(F__KONTO))
-	//_KONTO.DBF
+    //_KONTO.DBF
 
-	if !FILE(f18_ime_dbf("_konto"))
-   		DBcreate2(PRIVPATH+"_KONTO.DBF",aDbf)
-	endif
+    if !FILE(f18_ime_dbf("_konto"))
+        DBcreate2(PRIVPATH+"_KONTO.DBF",aDbf)
+    endif
 endif
 
 
 if (nArea==-1 .or. nArea==(F_TNAL))
-	//TNAL.DBF
-	
+    //TNAL.DBF
+    
         aDbf:={}
         AADD(aDBf,{ "ID"                  , "C" ,   2 ,  0 })
         AADD(aDBf,{ "NAZ"                 , "C" ,  29 ,  0 })
 
-	if !FILE(f18_ime_dbf("tnal"))
-        	DBcreate2(SIFPATH+"TNAL.DBF",aDbf)	
-	endif
-	
-	CREATE_INDEX("ID","id",SIFPATH+"TNAL")  // vrste naloga
-	CREATE_INDEX("NAZ","naz",SIFPATH+"TNAL")
+    if !FILE(f18_ime_dbf("tnal"))
+            DBcreate2(SIFPATH+"TNAL.DBF",aDbf)  
+    endif
+    
+    CREATE_INDEX("ID","id",SIFPATH+"TNAL")  // vrste naloga
+    CREATE_INDEX("NAZ","naz",SIFPATH+"TNAL")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_TDOK))
-	//TDOK.DBF
+    //TDOK.DBF
 
-	if !FILE(f18_ime_dbf("tdok"))
+    if !FILE(f18_ime_dbf("tdok"))
         aDbf:={}
         AADD(aDBf,{ "ID"                  , "C" ,   2 ,  0 })
         AADD(aDBf,{ "NAZ"                 , "C" ,  13 ,  0 })
         
-		DBCREATE2(SIFPATH+"TDOK.DBF",aDbf)
-	endif
-	
-	CREATE_INDEX("ID","id",SIFPATH+"TDOK")  // Tip dokumenta
-	CREATE_INDEX("NAZ","naz",SIFPATH+"TDOK")
+        DBCREATE2(SIFPATH+"TDOK.DBF",aDbf)
+    endif
+    
+    CREATE_INDEX("ID","id",SIFPATH+"TDOK")  // Tip dokumenta
+    CREATE_INDEX("NAZ","naz",SIFPATH+"TDOK")
 endif
 
 
 
 if (nArea==-1 .or. nArea==(F_BBKLAS))
-	//BBKLAS.DBF
+    //BBKLAS.DBF
         
         aDbf:={}
         AADD(aDBf,{ "IDKLASA"             , "C" ,   1 ,  0 })
@@ -385,52 +385,55 @@ if (nArea==-1 .or. nArea==(F_BBKLAS))
         AADD(aDBf,{ "KUMPPOT"             , "N" ,  17 ,  2 })
         AADD(aDBf,{ "SALPDUG"             , "N" ,  17 ,  2 })
         AADD(aDBf,{ "SALPPOT"             , "N" ,  17 ,  2 })
-	
-	if !FILE(f18_ime_dbf("bbklas"))
-        	DBcreate2(PRIVPATH+"BBKLAS.DBF",aDbf)
-	endif
-	
-	CREATE_INDEX("1","IdKlasa", PRIVPATH+"BBKLAS")
+    
+    if !FILE(f18_ime_dbf("bbklas"))
+            DBcreate2(PRIVPATH+"BBKLAS.DBF",aDbf)
+    endif
+    
+    CREATE_INDEX("1","IdKlasa", PRIVPATH+"BBKLAS")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_IOS))
-	//IOS.DBF
+    //IOS.DBF
 
-	aDbf:={}
+    aDbf:={}
         AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
         AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
         AADD(aDBf,{ "IDPARTNER"           , "C" ,   6 ,  0 })
         AADD(aDBf,{ "IZNOSBHD"            , "N" ,  17 ,  2 })
         AADD(aDBf,{ "IZNOSDEM"            , "N" ,  15 ,  2 })
-	
-	if !FILE(f18_ime_dbf("ios"))
-        	DBcreate2(PRIVPATH+"IOS",aDbf)
-	endif
+    
+    if !FILE(f18_ime_dbf("ios"))
+            DBcreate2(PRIVPATH+"IOS",aDbf)
+    endif
 
-	CREATE_INDEX("1","IdFirma+IdKonto+IdPartner",PRIVPATH+"IOS") // IOS
+    CREATE_INDEX("1","IdFirma+IdKonto+IdPartner",PRIVPATH+"IOS") // IOS
 endif
 
 
 
 if (nArea==-1 .or. nArea==(F_PKONTO))
-	//PKONTO.DBF
+    //PKONTO.DBF
         
-        aDbf:={}
-        AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
-        AADD(aDBf,{ "TIP"                 , "C" ,  1 ,   0 })
-		
-	if !FILE(f18_ime_dbf("pkonto"))
-        	DBcreate2(SIFPATH+"PKONTO.DBF",aDbf)
-	endif
-	
-	CREATE_INDEX("ID","ID",SIFPATH+"PKONTO")
-	CREATE_INDEX("NAZ","TIP",SIFPATH+"PKONTO")
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
+    AADD(aDBf,{ "TIP"                 , "C" ,  1 ,   0 })
+        
+    if !FILE(f18_ime_dbf("pkonto"))
+        DBcreate2( "PKONTO", aDbf )
+        reset_semaphore_version("pkonto")
+        my_use("pkonto")    
+        close all
+    endif
+    
+    CREATE_INDEX("ID","ID", "PKONTO" )
+    CREATE_INDEX("NAZ","TIP", "PKONTO" )
 endif
 
 
 if (nArea==-1 .or. nArea==(F_TRFP2))
-	//TRFP2.DBF
+    //TRFP2.DBF
         
         aDbf:={}
         AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
@@ -444,19 +447,19 @@ if (nArea==-1 .or. nArea==(F_TRFP2))
         AADD(aDBf,{ "IDVD"                , "C" ,   2 ,  0 })
         AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
         AADD(aDBf,{ "IDTARIFA"            , "C" ,   6 ,  0 })
-	
-	if !FILE(f18_ime_dbf("trfp2"))
-        	DBcreate2( "TRFP2", aDbf ) 
-			reset_semaphore_version("trfp2")
-			my_use("trfp2")
-			close all
-	endif
+    
+    if !FILE(f18_ime_dbf("trfp2"))
+            DBcreate2( "TRFP2", aDbf ) 
+            reset_semaphore_version("trfp2")
+            my_use("trfp2")
+            close all
+    endif
 
-	CREATE_INDEX("ID","idvd+shema+Idkonto",SIFPATH+"TRFP2")
+    CREATE_INDEX("ID","idvd+shema+Idkonto",SIFPATH+"TRFP2")
 endif
 
 if (nArea==-1 .or. nArea==(F_TRFP3))
-	//TRFP3.DBF
+    //TRFP3.DBF
         
         aDbf:={}
         AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
@@ -466,146 +469,146 @@ if (nArea==-1 .or. nArea==(F_TRFP3))
         AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
         AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
         AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-	
-	if !FILE(f18_ime_dbf("trfp3"))
-        	DBcreate2("TRFP3",aDbf)
-			reset_semaphore_version("trfp3")
-			my_use("trfp3")
-			close all	
-	endif
+    
+    if !FILE(f18_ime_dbf("trfp3"))
+            DBcreate2("TRFP3",aDbf)
+            reset_semaphore_version("trfp3")
+            my_use("trfp3")
+            close all   
+    endif
 
-	CREATE_INDEX("ID","shema+Idkonto",SIFPATH+"TRFP3")
+    CREATE_INDEX("ID","shema+Idkonto",SIFPATH+"TRFP3")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_KONCIJ))
-	//KONCIJ.DBF
+    //KONCIJ.DBF
 
-   	aDbf:={}
-   	AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
-   	AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
-   	AADD(aDBf,{ "NAZ"                 , "C" ,   2 ,  0 })
-   	AADD(aDBf,{ "IDPRODMJES"          , "C" ,   2 ,  0 })
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "IDPRODMJES"          , "C" ,   2 ,  0 })
    
-	if !FILE(f18_ime_dbf("koncij"))
-      		DBcreate2("KONCIJ",aDbf)
-			reset_semaphore_version("koncij")
-			my_use("koncij")
-			close all	
-	endif
+    if !FILE(f18_ime_dbf("koncij"))
+            DBcreate2("KONCIJ",aDbf)
+            reset_semaphore_version("koncij")
+            my_use("koncij")
+            close all   
+    endif
 
-	CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
+    CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
 endif
 
 if (nArea==-1 .or. nArea==(F_VKSG))
-	//VKSG.DBF
+    //VKSG.DBF
 
-	aDbf:={}
-	AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
-	AADD(aDBf,{ "GODINA"              , "C" ,   4 ,  0 })
-	AADD(aDBf,{ "IDS"                 , "C" ,   7 ,  0 })
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "GODINA"              , "C" ,   4 ,  0 })
+    AADD(aDBf,{ "IDS"                 , "C" ,   7 ,  0 })
 
-	if !FILE(f18_ime_dbf("vksg"))
-   		DBcreate2(SIFPATH+"VKSG.DBF",aDbf)
-	endif
+    if !FILE(f18_ime_dbf("vksg"))
+        DBcreate2(SIFPATH+"VKSG.DBF",aDbf)
+    endif
 
-	CREATE_INDEX("1","id+DESCEND(godina)",SIFPATH+"VKSG")
+    CREATE_INDEX("1","id+DESCEND(godina)",SIFPATH+"VKSG")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_KUF))
-	//KUF.DBF
+    //KUF.DBF
 
-   	aDbf:={}
-   	AADD(aDBf,{ "ID"                  , "C" ,   8 ,  0 })
-   	AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-   	AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
-   	AADD(aDBf,{ "DATPR"               , "D" ,   8 ,  0 })
-   	AADD(aDBf,{ "IDPARTN"             , "C" ,   6 ,  0 })
-   	AADD(aDBf,{ "DATFAKT"             , "D" ,   8 ,  0 })
-   	AADD(aDBf,{ "BRFAKT"              , "C" ,  20 ,  0 })
-   	AADD(aDBf,{ "IZNOS"               , "N" ,  12 ,  2 })
-   	AADD(aDBf,{ "IDVRSTEP"            , "C" ,   2 ,  0 })
-   	AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
-   	AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   8 ,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
+    AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "DATPR"               , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "IDPARTN"             , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "DATFAKT"             , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "BRFAKT"              , "C" ,  20 ,  0 })
+    AADD(aDBf,{ "IZNOS"               , "N" ,  12 ,  2 })
+    AADD(aDBf,{ "IDVRSTEP"            , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
 
-	if !FILE(f18_ime_dbf("fin_kuf"))
-   		DBcreate2(KUMPATH+"FIN_KUF.DBF",aDbf)
-	endif
-	
-	CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KUF" )
-	CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KUF" )
-	CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KUF" )
+    if !FILE(f18_ime_dbf("fin_kuf"))
+        DBcreate2(KUMPATH+"FIN_KUF.DBF",aDbf)
+    endif
+    
+    CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KUF" )
+    CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KUF" )
+    CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KUF" )
 endif
 
 if (nArea==-1 .or. nArea==(F_KIF))
-	//KIF.DBF
+    //KIF.DBF
 
-   	aDbf:={}
-   	AADD(aDBf,{ "ID"                  , "C" ,   8 ,  0 })
-   	AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-   	AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
-   	AADD(aDBf,{ "DATPR"               , "D" ,   8 ,  0 })
-   	AADD(aDBf,{ "IDPARTN"             , "C" ,   6 ,  0 })
-   	AADD(aDBf,{ "DATFAKT"             , "D" ,   8 ,  0 })
-   	AADD(aDBf,{ "BRFAKT"              , "C" ,  20 ,  0 })
-   	AADD(aDBf,{ "IZNOS"               , "N" ,  12 ,  2 })
-   	AADD(aDBf,{ "IDVRSTEP"            , "C" ,   2 ,  0 })
-   	AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
-   	AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
-   	AADD(aDBf,{ "IDVPRIH"             , "C" ,   3 ,  0 })
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   8 ,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
+    AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "DATPR"               , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "IDPARTN"             , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "DATFAKT"             , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "BRFAKT"              , "C" ,  20 ,  0 })
+    AADD(aDBf,{ "IZNOS"               , "N" ,  12 ,  2 })
+    AADD(aDBf,{ "IDVRSTEP"            , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "IDVPRIH"             , "C" ,   3 ,  0 })
 
-	if !FILE(f18_ime_dbf("fin_kif"))
-   		DBcreate2(KUMPATH+"FIN_KIF.DBF",aDbf)
-	endif
-	
-	CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KIF" )
-	CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KIF" )
-	CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KIF" )
+    if !FILE(f18_ime_dbf("fin_kif"))
+        DBcreate2(KUMPATH+"FIN_KIF.DBF",aDbf)
+    endif
+    
+    CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KIF" )
+    CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KIF" )
+    CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KIF" )
 endif
 
 
 if (nArea==-1 .or. nArea==(F_TNAL))
-	//VRSTEP.DBF
+    //VRSTEP.DBF
 
-	if !FILE(f18_ime_dbf("vrstep"))
-   		aDbf:={{"ID",  "C",  2, 0}, ;
-             	       {"NAZ", "C", 20, 0}}
-   		DBcreate2("VRSTEP",aDbf)
-		//reset_semaphore_version("vrstep")
-		//my_use("vrstep")
-		//close all	
-	endif
-	
-	CREATE_INDEX("ID","Id",SIFPATH+"VRSTEP.DBF")
+    if !FILE(f18_ime_dbf("vrstep"))
+        aDbf:={{"ID",  "C",  2, 0}, ;
+                       {"NAZ", "C", 20, 0}}
+        DBcreate2("VRSTEP",aDbf)
+        //reset_semaphore_version("vrstep")
+        //my_use("vrstep")
+        //close all 
+    endif
+    
+    CREATE_INDEX("ID","Id",SIFPATH+"VRSTEP.DBF")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_VPRIH))
-	//VPRIH.DBF
+    //VPRIH.DBF
 
-	if !FILE(f18_ime_dbf("vprih"))
-   		aDbf:={{"ID",  "C",  3, 0}, ;
-             	       {"NAZ", "C", 20, 0}}
-   		DBcreate2(SIFPATH+"VPRIH.DBF",aDbf)	
-	endif
-	
-	CREATE_INDEX ("ID", "Id", SIFPATH+"VPRIH.DBF")
+    if !FILE(f18_ime_dbf("vprih"))
+        aDbf:={{"ID",  "C",  3, 0}, ;
+                       {"NAZ", "C", 20, 0}}
+        DBcreate2(SIFPATH+"VPRIH.DBF",aDbf) 
+    endif
+    
+    CREATE_INDEX ("ID", "Id", SIFPATH+"VPRIH.DBF")
 endif
 
 
 if (nArea==-1 .or. nArea==(F_ULIMIT))
-	//ULIMIT.DBF
+    //ULIMIT.DBF
 
-	if !FILE(f18_ime_dbf("ulimit"))
-   		aDbf:={{"ID"        , "C" ,  3 , 0 }, ;
-        	       { "IDPARTNER" , "C" ,  6 , 0 }, ;
-             	       { "LIMIT"     , "N" , 15 , 2 }}
-   		DBcreate2(SIFPATH+"ULIMIT.DBF",aDbf)
-	endif
-	
-	CREATE_INDEX("ID","Id"          , SIFPATH+"ULIMIT.DBF")
-	CREATE_INDEX("2" ,"Id+idpartner", SIFPATH+"ULIMIT.DBF")
+    if !FILE(f18_ime_dbf("ulimit"))
+        aDbf:={{"ID"        , "C" ,  3 , 0 }, ;
+                   { "IDPARTNER" , "C" ,  6 , 0 }, ;
+                       { "LIMIT"     , "N" , 15 , 2 }}
+        DBcreate2(SIFPATH+"ULIMIT.DBF",aDbf)
+    endif
+    
+    CREATE_INDEX("ID","Id"          , SIFPATH+"ULIMIT.DBF")
+    CREATE_INDEX("2" ,"Id+idpartner", SIFPATH+"ULIMIT.DBF")
 endif
 
 // kreiraj indexe tabele FMKRULES
@@ -632,53 +635,53 @@ local cDbfName
 lIdiDalje:=.f.
 
 if i==F_FIN_PRIPR .or. i==F_BBKLAS .or. i==F_IOS  .or.i==F_PNALOG .or. i==F_PSUBAN .or. i==F_PANAL  .or. i==F_PSINT
-	lIdiDalje:=.t.
+    lIdiDalje:=.t.
 endif
 
 if i==F_SUBAN  .or. i==F_ANAL   .or. i==F_SINT   .or. i==F_NALOG 
-	lIdiDalje:=.t.
+    lIdiDalje:=.t.
 endif
 
 if  i==F_PARTN  .or. i==F_KONTO  .or. i==F_ULIMIT .or. i==F_PKONTO  .or. i==F_TNAL   .or. i==F_TDOK   .or. i==F_VALUTE .or. i==F_VKSG   .or.  i==F_RJ   .or.  i==F__KONTO .or. i==F__PARTN .or. i==F_SIFK  .or. i==F_SIFV 
-	lIdiDalje:=.t.
+    lIdiDalje:=.t.
 endif
 
 if  i==F_FUNK  .or. i==F_FOND  .or. i==F_BUIZ 
-	lIdiDalje:=.t.
+    lIdiDalje:=.t.
 endif
 
 IF IzFMKIni("FIN","KUF","N")=="D"
   if i==F_KUF   
-  	lIdiDalje:=.t.  
+    lIdiDalje:=.t.  
   endif
 ENDIF
 
 IF IzFMKIni("FIN","KIF","N")=="D"
   if i==F_KIF  .or. O_VPRIH 
-  	lIdiDalje:=.t.
+    lIdiDalje:=.t.
   endif
 ENDIF
 
 if (gSecurity=="D" .and. (i==F_EVENTS .or. i==F_EVENTLOG .or. i==F_USERS .or. i==F_GROUPS .or. i==F_RULES))
-	lIdiDalje:=.t.
+    lIdiDalje:=.t.
 endif
 
 if lIdiDalje
-	cDbfName:=DBFName(i,.t.)
-	if gAppSrv 
-		? "OPEN: " + cDbfName + ".DBF"
-		if !File(cDbfName + ".DBF")
-			? "Fajl " + cDbfName + ".dbf ne postoji!!!"
-			use
-			return
-		endif
-	endif
-	
-	select(i)
-	usex(cDbfName)
+    cDbfName:=DBFName(i,.t.)
+    if gAppSrv 
+        ? "OPEN: " + cDbfName + ".DBF"
+        if !File(cDbfName + ".DBF")
+            ? "Fajl " + cDbfName + ".dbf ne postoji!!!"
+            use
+            return
+        endif
+    endif
+    
+    select(i)
+    usex(cDbfName)
 else
-	use
-	return
+    use
+    return
 endif
 
 return
@@ -709,49 +712,49 @@ method konvZn()
 LOCAL cIz:="7", cU:="8", aPriv:={}, aKum:={}, aSif:={}
 LOCAL GetList:={}, cSif:="D", cKum:="D", cPriv:="D"
 if !gAppSrv
-	IF !SigmaSif("KZ      ")
-   		RETURN
- 	ENDIF
-	Box(,8,50)
-  	@ m_x+2, m_y+2 SAY "Trenutni standard (7/8)        " GET cIz   VALID   cIz$"78"  PICT "9"
-  	@ m_x+3, m_y+2 SAY "Konvertovati u standard (7/8/A)" GET cU    VALID    cU$"78A" PICT "@!"
-  	@ m_x+5, m_y+2 SAY "Konvertovati sifrarnike (D/N)  " GET cSif  VALID  cSif$"DN"  PICT "@!"
-  	@ m_x+6, m_y+2 SAY "Konvertovati radne baze (D/N)  " GET cKum  VALID  cKum$"DN"  PICT "@!"
-  	@ m_x+7, m_y+2 SAY "Konvertovati priv.baze  (D/N)  " GET cPriv VALID cPriv$"DN"  PICT "@!"
-  	READ
-  	IF LASTKEY()==K_ESC
-		BoxC()
-		RETURN
-	ENDIF
-  	IF Pitanje(,"Jeste li sigurni da zelite izvrsiti konverziju (D/N)","N")=="N"
-    		BoxC()
-		RETURN
-  	ENDIF
- 	BoxC()
+    IF !SigmaSif("KZ      ")
+        RETURN
+    ENDIF
+    Box(,8,50)
+    @ m_x+2, m_y+2 SAY "Trenutni standard (7/8)        " GET cIz   VALID   cIz$"78"  PICT "9"
+    @ m_x+3, m_y+2 SAY "Konvertovati u standard (7/8/A)" GET cU    VALID    cU$"78A" PICT "@!"
+    @ m_x+5, m_y+2 SAY "Konvertovati sifrarnike (D/N)  " GET cSif  VALID  cSif$"DN"  PICT "@!"
+    @ m_x+6, m_y+2 SAY "Konvertovati radne baze (D/N)  " GET cKum  VALID  cKum$"DN"  PICT "@!"
+    @ m_x+7, m_y+2 SAY "Konvertovati priv.baze  (D/N)  " GET cPriv VALID cPriv$"DN"  PICT "@!"
+    READ
+    IF LASTKEY()==K_ESC
+        BoxC()
+        RETURN
+    ENDIF
+    IF Pitanje(,"Jeste li sigurni da zelite izvrsiti konverziju (D/N)","N")=="N"
+            BoxC()
+        RETURN
+    ENDIF
+    BoxC()
 else
-	?
-	cKonvertTo:=IzFmkIni("FMK","KonvertTo","78",EXEPATH)
-	
-	if cKonvertTo=="78"
-		cIz:="7"
-		cU:="8"
-		? "Trenutni standard: " + cIz
-		? "Konvertovati u: " + cU 
-	elseif cKonvertTo=="87"
-		cIz:="8"
-		cU:="7"
-		? "Trenutni standard: " + cIz
-		? "Konvertovati u: " + cU 
-	else // pitaj
-		?
-		@ 10, 2 SAY "Trenutni standard (7/8)        " GET cIz VALID cIz$"78" PICT "9"
-		?
-		@ 11, 2 SAY "Konvertovati u standard (7/8/A)" GET cU VALID cU$"78A" PICT "@!"
-		read
-	endif
-	cSif:="D"
-	cKum:="D"
-	cPriv:="D"
+    ?
+    cKonvertTo:=IzFmkIni("FMK","KonvertTo","78",EXEPATH)
+    
+    if cKonvertTo=="78"
+        cIz:="7"
+        cU:="8"
+        ? "Trenutni standard: " + cIz
+        ? "Konvertovati u: " + cU 
+    elseif cKonvertTo=="87"
+        cIz:="8"
+        cU:="7"
+        ? "Trenutni standard: " + cIz
+        ? "Konvertovati u: " + cU 
+    else // pitaj
+        ?
+        @ 10, 2 SAY "Trenutni standard (7/8)        " GET cIz VALID cIz$"78" PICT "9"
+        ?
+        @ 11, 2 SAY "Konvertovati u standard (7/8/A)" GET cU VALID cU$"78A" PICT "@!"
+        read
+    endif
+    cSif:="D"
+    cKum:="D"
+    cPriv:="D"
 endif
  
 aKum  := { F_SUBAN, F_ANAL, F_SINT, F_NALOG, F_BUDZET, F_PAREK, F_RJ,;
@@ -781,21 +784,21 @@ local cSlaveRadnaStanica
 cSlaveRadnaStanica:=IzFmkIni("DB","Slave","N",PRIVPATH)
 
 if (cSlaveRadnaStanica=="D")
-	return
+    return
 endif
 
 ScanDb()
 
 if (gSql=="D")
-	
-	nFree:=GwDiskFree()
-	//odredi kolicinu u MB
-	nFree:=ROUND(((nFree)/1024)/1024,1)
-	for i:=1 to 2
-		if (nFree<50)
-			MsgBeep("Na disku C: je ostalo samo "+ALLTRIM(STR(nFree,10,1))+" MB#oslobodite prostor na disku # ... ili prijavite u servis SC-a !!") 
-		endif
-	next
+    
+    nFree:=GwDiskFree()
+    //odredi kolicinu u MB
+    nFree:=ROUND(((nFree)/1024)/1024,1)
+    for i:=1 to 2
+        if (nFree<50)
+            MsgBeep("Na disku C: je ostalo samo "+ALLTRIM(STR(nFree,10,1))+" MB#oslobodite prostor na disku # ... ili prijavite u servis SC-a !!") 
+        endif
+    next
 endif
 return
 

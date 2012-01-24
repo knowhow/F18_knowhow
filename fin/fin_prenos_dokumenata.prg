@@ -571,6 +571,8 @@ Postotak(0)
 end print
 close all
 
+// ovo nam u ovom momentu ne treba uopste !!!
+/*
 if !empty(goModul:oDataBase:cSezona) .and. Pitanje(,"Prebaciti dokument u radno podrucje","D")=="D"
   O_FIN_PRIPRRP
   O_FIN_PRIPR
@@ -582,9 +584,8 @@ if !empty(goModul:oDataBase:cSezona) .and. Pitanje(,"Prebaciti dokument u radno 
       URadPodr()
   endif
 endif
+*/
 
-
-close all
 return
 
 
@@ -962,10 +963,9 @@ function ZadnjiRBR()
 local nZRBR:=0
 local nObl:=SELECT()
 
-O_FIN_PRIPRRP
+O_FIN_PRIPR
 go bottom
 nZRBR:=VAL(rbr)
-use
 select (nObl)
 return (nZRBR)
 

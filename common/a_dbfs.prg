@@ -124,9 +124,8 @@ AADD( gaDbfs, { F_R_EXP ,  "R_EXPORT"  , "r_export"  } )
 AADD( gaDbfs, { F_FINMAT ,  "FINMAT"  , "fin_mat"  } )
 
 //modul KALK
-AADD( gaDbfs, { F_KALK        , "KALK"         , "kalk_kalk" , {|alg| kalk_kalk_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, { F_KALK_DOKS   , "KALK_DOKS"    , "kalk_doks" , {|alg| kalk_doks_from_sql_server(alg) }, "IDS" } )
-
+AADD( gaDbfs, { F_KALK        , "KALK"         , "kalk_kalk" , {|alg| kalk_kalk_from_sql_server(alg) }, "IDS", {"idfirma", "idvd", "brdok"}, {|x| sql_where_block("kalk_kalk", x) }, "1" } )
+AADD( gaDbfs, { F_KALK_DOKS   , "KALK_DOKS"    , "kalk_doks" , {|alg| kalk_doks_from_sql_server(alg) }, "IDS", {"idfirma", "idvd", "brdok"}, {|x| sql_where_block("kalk_doks", x)}, "1" } )
 
 // KALK sifrarnik
 AADD( gaDbfs, { F_TRFP ,       "TRFP"  , "trfp",   { | param | trfp_from_sql_server( param ) }, "IDS" } )

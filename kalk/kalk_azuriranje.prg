@@ -923,20 +923,21 @@ return
 // -------------------------------------------------------
 // povrat kalkulacije u tabelu pripreme
 // -------------------------------------------------------
-function Povrat_kalk_dokumenta()
-local nRec
-local gEraseKum
+function povrat_kalk_dokumenta()
+local _brisi_kum
+local _rec
+local _id_firma
+local _id_vd
+local _br_dok
+local _del_rec, _ok
 
-msgbeep("Opcija trenutno onemogucena !")
-close all
-return
+_brisi_kum := .f.
 
-gEraseKum:=.f.
-
-if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (N) ?","D")="N"
+if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (N) ?","D") = "N"
     Beep(1)
     PNajn()
-    closeret
+    close all
+    return
 endif
 
 O_KALK_DOKS
@@ -947,147 +948,103 @@ O_KALK_PRIPR
 
 SELECT KALK
 set order to tag "1"  
-// idFirma+IdVD+BrDok+RBr
 
-cIdFirma:=gfirma
-cIdVD:=space(2)
-cBrDok:=space(8)
+_id_firma := gfirma
+_id_vd := space(2)
+_br_dok := space(8)
 
 Box("",1,35)
     @ m_x+1,m_y+2 SAY "Dokument:"
     if gNW $ "DX"
-        @ m_x+1,col()+1 SAY cIdFirma
+        @ m_x+1,col()+1 SAY _id_firma
     else
-        @ m_x+1,col()+1 GET cIdFirma
+        @ m_x+1,col()+1 GET _id_firma
     endif
-    @ m_x+1,col()+1 SAY "-" GET cIdVD pict "@!"
-    @ m_x+1,col()+1 SAY "-" GET cBrDok
+    @ m_x+1,col()+1 SAY "-" GET _id_vd pict "@!"
+    @ m_x+1,col()+1 SAY "-" GET _br_dok
     read
     ESC_BCR
 BoxC()
 
-if cBrDok="."
-    if !SigmaSif()
-            closeret
-    endif
-    private qqBrDok:=qqDatDok:=qqIdvD:=space(80)
-    qqIdVD:=padr(cidvd+";",80)
-    Box(,3,60)
-        do while .t.
-            @ m_x+1,m_y+2 SAY "Vrste kalk.    "  GEt qqIdVD pict "@S40"
-            @ m_x+2,m_y+2 SAY "Broj dokumenata"  GEt qqBrDok pict "@S40"
-            @ m_x+3,m_y+2 SAY "Datumi         " GET  qqDatDok pict "@S40"
-            read
-            private aUsl1:=Parsiraj(qqBrDok,"BrDok","C")
-            private aUsl2:=Parsiraj(qqDatDok,"DatDok","D")
-            private aUsl3:=Parsiraj(qqIdVD,"IdVD","C")
-            if aUsl1<>NIL .and. aUsl2<>NIL .and. ausl3<>NIL
-                exit
-            endif
-        enddo
-    Boxc()
-
-    if Pitanje(,"Povuci u pripremu kalk sa ovim kriterijom ?","N")=="D"
-            gEraseKum:=Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D")=="D"
-            select kalk
-            if !flock()
-            Msg("KALK je zauzeta ",3)
-            closeret
-        endif
-            PRIVATE cFilt1:=""
-            cFilt1 := "IDFIRMA=="+cm2str(cIdFirma)+".and."+aUsl1+".and."+aUsl2+".and."+aUsl3
-            cFilt1 := STRTRAN(cFilt1,".t..and.","")
-            IF !(cFilt1==".t.")
-                SET FILTER TO &cFilt1
-            ENDIF
-            select kalk
-        go top
-            MsgO("Prolaz kroz kumulativnu datoteku KALK...")
-            do while !eof()
-                select KALK
-                Scatter()
-                select kalk_pripr
-                
-                IF ! ( _idvd $ "97" .and. _tbanktr=="X" )
-                    append ncnl; _ERROR:="";  Gather2()
-                ENDIF
-            
-                if gEraseKum
-                    select kalk_doks
-                    seek kalk->(idfirma+idvd+brdok)   // izbrisi u kalk_doks
-                    if Found() 
-                        delete
-                    endif
-                endif
-            
-                select kalk
-                skip
-            
-                nRec:=recno()
-            
-                skip -1
-                
-                if gEraseKum
-                    dbdelete2()
-                endif
-                
-                go nRec
-            enddo
-            select kalk
-        
-            MsgC()
+// ako je uslov sa tackom, vrati sve nabrojane u pripremu...
+if _br_dok = "."
+    povrat_vise_dokumenata()
+    close all
+    return
+endif
     
-    endif
-    
+if Pitanje( "", "Kalk. " + _id_firma + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "D" ) == "N"
     close all
     return
 endif
 
-if Pitanje("","Kalk. "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
-    closeret
-endif
+_brisi_kum := Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D" ) == "D"
 
-gEraseKum := Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D")=="D"
+select kalk
+hseek _id_firma + _id_vd + _br_dok
 
-select KALK
-hseek cIdFirma+cIdVd+cBrDok
 EOF CRET
 
 MsgO("Prebacujem u pripremu...")
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-    select KALK
-    Scatter()
+
+do while !eof() .and. _id_firma == field->IdFirma .and. _id_vd == field->IdVD .and. _br_dok == field->BrDok
+    
+    select kalk
+    _rec := dbf_get_rec()
     select kalk_pripr
-    IF ! ( _idvd $ "97" .and. _tbanktr=="X" )
-            append ncnl;_ERROR:="";  Gather2()
+
+    IF ! ( _rec["idvd"] $ "97" .and. _rec["tbanktr"] == "X" )
+        append ncnl
+        _rec["error"] := ""
+        dbf_update_rec( _rec )
     ENDIF
-    select KALK
+
+    select kalk
     skip
+
 enddo
+
 MsgC()
 
-if gEraseKum
+if _brisi_kum
+    
     MsgO("Brisem dokument iz KALK-a")
-    select KALK
-    seek cIdFirma+cIdVd+cBrDok
-    do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
 
-        select kalk_doks; seek kalk->(idfirma+idvd+brdok)   // izbrisi u kalk_doks
-        if found(); delete; endif
-        select kalk
-        skip 1; nRec:=recno(); skip -1
-        dbdelete2()
-        go nRec
-    enddo
+    select kalk
+
+    _del_rec := hb_hash()
+    _del_rec["idfirma"] := _id_firma
+    _del_rec["idvd"]    := _id_vd
+    _del_rec["brdok"]   := _br_dok
+
+    _ok := .t.
+    _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+    if !_ok
+        msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele kalk !!!!")
+        close all
+        return
+    endif
+
+    select kalk_doks
+    _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+    if !_ok
+        msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele doks !!!!")
+        close all
+        return
+    endif
+
+    MsgC()
 
     if Logirati(goModul:oDataBase:cName,"DOK","POVRAT")
-        
-        cOpis := idfirma + "-" + idvd + "-" + ALLTRIM(brdok)
-        EventLog(nUser, goModul:oDataBase:cName,"DOK","POVRAT",nil,nil,nil,nil,cOpis,"","",datdok,Date(),"","KALK - Povrat dokumenta u pripremu")
+        _descr := _id_firma + "-" + _id_vd + "-" + ALLTRIM(_br_dok)
+        EventLog(nUser, goModul:oDataBase:cName,"DOK","POVRAT",nil,nil,nil,nil,_descr,"","",Date(),Date(),"","KALK - Povrat dokumenta u pripremu")
     endif
 
     // vrati i dokument iz kalk_doksRC
-    povrat_doksrc(cIdFirma, cIdVd, cBrDok)
+    povrat_doksrc( _id_firma, _id_vd, _br_dok )
+
 endif
 
 select kalk_doks
@@ -1095,10 +1052,143 @@ use
 select kalk
 use
 
-MsgC()
-
-closeret
+close all
 return
+
+
+// -----------------------------------------------------
+// povrat vise dokumenata od jednom...
+// -----------------------------------------------------
+static function povrat_vise_dokumenata()
+local _br_dok := SPACE(80)
+local _dat_dok := SPACE(80)
+local _id_vd := SPACE(80)    
+local _usl_br_dok
+local _usl_dat_dok
+local _usl_id_vd
+local _brisi_kum := .f.
+local _filter
+local _id_firma := gFirma
+local _rec
+local _del_rec, _ok
+
+if !SigmaSif()
+    close all
+    return .f.
+endif
+    
+Box(,3,60)
+    do while .t.
+        @ m_x+1, m_y+2 SAY "Vrste kalk.    " GET _id_vd pict "@S40"
+        @ m_x+2, m_y+2 SAY "Broj dokumenata" GET _br_dok pict "@S40"
+        @ m_x+3, m_y+2 SAY "Datumi         " GET _dat_dok pict "@S40"
+        read
+        _usl_br_dok := Parsiraj( _br_dok, "BrDok", "C")
+        _usl_dat_dok := Parsiraj( _dat_dok,"DatDok", "D")
+        _usl_id_vd := Parsiraj( _id_vd, "IdVD", "C")
+        if _usl_br_dok <> NIL .and. _usl_dat_dok <> NIL .and. _usl_id_vd <> NIL
+                exit
+        endif
+    enddo
+Boxc()
+
+if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
+
+    _brisi_kum := Pitanje(, "Izbrisati dokument iz kumulativne tabele ?", "D" ) == "D"
+
+    select kalk
+
+    _filter := "IDFIRMA==" + cm2str( _id_firma ) + ".and." + _usl_br_dok + ".and." + _usl_id_vd + ".and." + _usl_dat_dok
+    _filter := STRTRAN( _filter, ".t..and.", "" )
+
+    IF !( _filter == ".t." )
+        SET FILTER TO &(_filter)
+    ENDIF
+
+    select kalk
+    go top
+
+    MsgO("Prolaz kroz kumulativnu datoteku KALK...")
+
+    // vrati prvo dokumente u pripremu...
+    do while !eof()
+
+        select kalk
+
+        _rec := dbf_get_rec()
+
+        select kalk_pripr
+                
+        IF ! ( _rec["idvd"] $ "97" .and. _rec["tbanktr"] == "X" )
+            append ncnl
+            _rec["error"] := ""
+            dbf_update_rec( _rec )
+        ENDIF
+
+        select kalk
+        skip
+    
+    enddo
+            
+    select kalk
+    set order to tag "1"
+    go top
+
+    // idemo sada na brisanje dokumenata
+    do while !EOF()
+
+        _id_firma := field->idfirma
+        _id_vd := field->idvd
+        _br_dok := field->brdok
+
+        // prodji kroz dokument do kraja...
+        do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
+            skip
+        enddo
+
+        _del_rec := hb_hash()
+        _del_rec["idfirma"] := _id_firma
+        _del_rec["idvd"]    := _id_vd
+        _del_rec["brdok"]   := _br_dok
+
+        _ok := .t.
+
+        // treba li brisati kumulativ ?
+        if _brisi_kum
+
+            // brisi prvo tabelu kalk_doks            
+            select kalk_doks
+            _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+            if !_ok
+                msgbeep("Problem sa brisanjem tabele doks !!!")
+                msgc()
+                close all
+                return .f.
+            endif
+            
+            // brisi zatim tabelu kalk_kalk
+            select kalk
+            _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+            if !_ok
+                msgbeep("Problem sa brisanjem tabele kalk !!!")
+                msgc()
+                close all
+                return .f.
+            endif
+
+        endif
+            
+    enddo
+
+    msgc()
+
+endif
+    
+close all
+    
+return .t.
 
 
 // ------------------------------------------------------------------

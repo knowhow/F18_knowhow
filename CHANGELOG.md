@@ -3,7 +3,8 @@
   - modul Fin, generisanje pocetnog stanja u radno podrucje
   - nove tabele na sql/db strani pkonto, vrstep
   - modul Fakt, vrste placanja na dokumentu 10 [#26382](http://redmine.bring.out.ba/issues/26382)
-  - modul ePDV, povrat naloga u pripremu osposobljen
+  - modul ePDV, povrat naloga osposobljen
+  - modul KALK, povrat dokumenta osposobljen
   - ostala sitna ciscenja
 
 0.9.41  2012-01-23, vsasa

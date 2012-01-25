@@ -1028,7 +1028,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                 @ m_x + 9, m_y + 2  SAY "Nacin placanja" ;
                     GET _idvrstep ;
                     PICT "@!" ;
-                    VALID P_VRSTEP( @_idvrstep, 9, 60 )
+                    VALID P_VRSTEP( @_idvrstep, 9, 20 )
             endif
         
         elseif (_idtipdok=="06")
@@ -1053,7 +1053,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
         endif
         
         if (fakt_pripr->(FIELDPOS("idrelac")) <> 0 .and. _idtipdok $ "#11#")
-            @ m_x + 9, m_y + 38  SAY "Relacija   :" GET _idrelac PICT "@S10"
+            @ m_x + 9, m_y + 50  SAY "Relacija   :" GET _idrelac PICT "@S10"
         endif
 
         if _idTipDok $ "10#11#19#20#25#26#27"

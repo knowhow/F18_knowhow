@@ -208,12 +208,11 @@ do case
 
     select P_KUF
     if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-            delete
-            //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nil, nil, nil, nil, "", "", "KUF Stavka pobrisana", Date(), Date(), "", "Brisanje stavke...")     
-
-            return DE_REFRESH
-        endif
-        return DE_CONT
+        delete
+        __dbPack()
+        return DE_REFRESH
+    endif
+    return DE_CONT
 
    case (Ch == K_F5)
    

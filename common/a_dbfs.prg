@@ -230,8 +230,8 @@ AADD(gaDBFs, { F_RAL, "RAL", "rnal_ral", {|alg| rnal_ral_from_sql_server(alg) },
 // modul EPDV
 AADD(gaDBFs, { F_P_KIF, "P_KIF", "p_epdv_kif"  } )
 AADD(gaDBFs, { F_P_KUF, "P_KUF", "p_epdv_kuf"  } )
-AADD(gaDBFs, { F_KUF, "KUF", "epdv_kuf", {|alg| epdv_kuf_from_sql_server(alg)}, "IDS" } )
-AADD(gaDBFs, { F_KIF, "KIF", "epdv_kif", {|alg| epdv_kif_from_sql_server(alg)}, "IDS" } )
+AADD(gaDBFs, { F_KUF, "KUF", "epdv_kuf", {|alg| epdv_kuf_from_sql_server(alg)}, "IDS", {"br_dok"}, {|x| sql_where_block("epdv_kuf", x) }, "BR_DOK" } )
+AADD(gaDBFs, { F_KIF, "KIF", "epdv_kif", {|alg| epdv_kif_from_sql_server(alg)}, "IDS", {"br_dok"}, {|x| sql_where_block("epdv_kif", x) }, "BR_DOK" } )
 AADD(gaDBFs, { F_PDV, "PDV", "epdv_pdv", {|alg| epdv_pdv_from_sql_server(alg)}, "IDS"  } )
 AADD(gaDBFs, { F_SG_KIF, "SG_KIF", "epdv_sg_kif", {|alg| epdv_sg_kif_from_sql_server(alg)}, "IDS" } )
 AADD(gaDBFs, { F_SG_KUF, "SG_KUF", "epdv_sg_kuf", {|alg| epdv_sg_kuf_from_sql_server(alg)}, "IDS" } )

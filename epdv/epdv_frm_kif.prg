@@ -210,8 +210,7 @@ do case
     select P_KIF
     if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
             delete
-            //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nil, nil, nil, nil, "", "", "KIF Stavka pobrisana", Date(), Date(), "", "Brisanje stavke...")     
-
+            __dbPack() 
             return DE_REFRESH
         endif
         return DE_CONT

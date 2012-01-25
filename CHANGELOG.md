@@ -1,3 +1,10 @@
+0.9.42  2012-01-25, vsasa
+
+  - modul Fin, generisanje pocetnog stanja u radno podrucje
+  - nove tabele na sql/db strani pkonto, vrstep
+  - modul Fakt, vrste placanja na dokumentu 10 [#26382](http://redmine.bring.out.ba/issues/26382)
+  - ostala sitna ciscenja
+
 0.9.41  2012-01-23, vsasa
   
   - generalno čišćenje funkcija modula FAKT

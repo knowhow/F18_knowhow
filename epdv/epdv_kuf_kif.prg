@@ -274,91 +274,91 @@ return lOk
 // -------------------------------------------
 // povrat kuf/kif dokumenata u pripremu
 // -------------------------------------------
-function pov_ku_ki(cTbl, nBrDok)
-
+function pov_ku_ki( cTbl, nBrDok )
+local _del_rec, _ok
+local _rec
+local _p_area
+local _k_area
+local _cnt
 
 if (cTbl == "KUF")
 	o_kuf(.t.)
 	// privatno podrucje
-	nPArea := F_P_KUF
-	
+	_p_area := F_P_KUF
 	// kumulativ 
-	nKArea := F_KUF
+	_k_area := F_KUF
 else
 	o_kif(.t.)
-	nPArea := F_P_KIF
-	nKArea := F_KIF
+	_p_area := F_P_KIF
+	_k_area := F_KIF
 endif
 
+_cnt := 0
 
-
-nCount := 0
-
-
-SELECT (nKArea)
+SELECT ( _k_area )
 set order to tag "BR_DOK"
 seek STR(nBrdok, 6, 0)
 
 
 if !found()
-	SELECT (nPArea)
+	SELECT ( _p_area )
 	return 0
 endif
 
-SELECT (nPArea)
+SELECT ( _p_area )
 if RECCOUNT2()>0
 	MsgBeep("U pripremi postoji dokument#ne moze se izvrsiti povrat#operacija prekinuta !")
 	return -1
 endif
 
-
 Box(, 2, 60)
-SELECT (nKArea)
+SELECT ( _k_area )
+
 // dodaj u pripremu dokument
 do while !eof() .and. (br_dok == nBrDok)
 	
-	++nCount
-	@ m_x+1, m_y+2 SAY PADR("P_" + cTbl+  " -> " + cTbl + " :" + transform(nCount, "9999"), 40)
+	++ _cnt
+	@ m_x+1, m_y+2 SAY PADR("P_" + cTbl +  " -> " + cTbl + " :" + transform( _cnt, "9999"), 40)
 	
-
-	SELECT (nKArea)
-	// setuj mem vars _
-	Scatter()
+	SELECT ( _k_area )
+	_rec := dbf_get_rec()
 	
-	SELECT (nPArea)
+	SELECT ( _p_area )
 	// dodaj zapis
 	APPEND BLANK
-	// memvars -> db
-	Gather()
+	dbf_update_rec( _rec )
 	
 	// kumulativ tabela
-	SELECT (nKArea)
+	SELECT ( _k_area )
 	SKIP	
 enddo
 
-// vrati sam dokument, sada mogu  dokument izbrisati iz kumulativa
-seek STR(nBrdok, 6, 0)
-do while !eof() .and. (br_dok == nBrDok)
-	
-	SKIP
-	// sljedeci zapis
-	nTRec := RECNO()
-	SKIP -1
-	
-	++nCount
-	@ m_x+1, m_y+2 SAY PADR("Brisem " + cTbl + transform(nCount, "9999"), 40)
-	
-	DELETE
-	// idi na sljedeci
-	go nTRec
-	
-enddo
+if ( cTbl == "KUF" )
+	o_kuf(.t.)
+else
+	o_kif(.t.)
+endif	
 
-SELECT (nKArea)
+// setuj zapis koji zelis obrisati
+_del_rec := hb_hash()
+_del_rec["br_dok"] := STR( nBrDok, 6 )
+
+_ok := .t.
+
+MsgO("del " + cTbl )
+
+_ok := delete_rec_server_and_dbf( cTbl, _del_rec )
+    
+MsgC()
+
+if !_ok
+  MsgBeep("Operacija brisanja dokumenta nije uspjesna, dokument: " + ALLTRIM( STR( nBrDok )) )
+endif
+
+SELECT ( _k_area )
 use
 
-
-if (cTbl == "KUF")
+if ( cTbl == "KUF" )
 	o_kuf(.t.)
 else
 	o_kif(.t.)
@@ -366,7 +366,9 @@ endif
 
 BoxC()
 
-MsgBeep("Izvrsen je povrat dokumenta " + STR( nBrDok, 6, 0) + " u pripremu" )
+if _ok
+    MsgBeep("Izvrsen je povrat dokumenta " + STR( nBrDok, 6, 0) + " u pripremu" )
+endif
 
 return nBrDok
 

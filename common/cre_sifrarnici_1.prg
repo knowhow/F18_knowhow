@@ -201,7 +201,18 @@ endif
 CREATE_INDEX("ID","id", "refer") 
 CREATE_INDEX("NAZ","naz", "refer")
 
-nArea:=nil
+// VRSTEP
+if !FILE(f18_ime_dbf("vrstep"))
+    aDbf:={}
+	AADD(aDbf,{"ID" ,"C", 2,0})
+	AADD(aDbf,{"NAZ","C",20,0})
+	DBcreate2( "VRSTEP", aDbf )
+    reset_semaphore_version("vrstep")
+    my_use("vrstep")
+endif	
+CREATE_INDEX("ID", "Id", "VRSTEP")
+
+nArea := nil
 
 // kreiraj lokal tabelu : LOKAL
 cre_lokal(F_LOKAL)

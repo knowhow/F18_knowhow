@@ -12,22 +12,8 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                          Copyright Sigma-com software 1996-2006 
- * ----------------------------------------------------------------
- */
 
-/*! \file fmk/fakt/sif/1g/mnu_sif.prg
- *  \brief Menij sifrarnika
- */
-
-/*! \fn Sifre()
- *  \brief Menij sifrarnika
- */
- 
 function fakt_sifrarnik()
-*{
 private opc:={}
 private opcexe:={}
 private Izbor:=1

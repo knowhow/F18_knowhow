@@ -19,7 +19,6 @@
 CLASS TFaktMod FROM TAppMod
 	var nDuzinaSifre 
 	var cTekVpc
-	var lVrstePlacanja
 	var lOpcine
 	var lDoks2
 	var lId_J
@@ -760,8 +759,6 @@ glRadNal:=(IzFmkIni("FAKT","RadniNalozi","N",KUMPATH)=="D")
 
 public gKonvZnWin
 gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
-
-::lVrstePlacanja:=IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
 
 ::lOpcine:=IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D"
 

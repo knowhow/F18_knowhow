@@ -49,6 +49,17 @@ _result := sifrarnik_from_sql_server(_tbl, algoritam, F_PKONTO, { "id", "tip" } 
 return _result
 
 
+// -----------------------------------------
+// -----------------------------------------
+function vrstep_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "vrstep"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_VRSTEP, { "id", "naz" } )
+
+return _result
+
 
 
 // -----------------------------------------

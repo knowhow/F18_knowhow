@@ -102,7 +102,7 @@ AADD( gaDbfs, { F_RULES , "RULES"  , "rules"  } )
 AADD( gaDbfs, { F_P_UPDATE , "P_UPDATE"  , "p_update"  } )
 AADD( gaDbfs, { F__ROBA , "_ROBA"  , "_roba"  } )
 
-AADD( gaDbfs, { F_VRSTEP , "VRSTEP"  , "vrstep"  } )
+AADD( gaDbfs, { F_VRSTEP , "VRSTEP"  , "vrstep", {| param | vrstep_from_sql_server( param ) }, "IDS"  } )
 AADD( gaDbfs, { F_RJ     ,  "RJ"      , "rj", { | param | rj_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_TDOK   ,  "TDOK"    , "tdok", { | param | tdok_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_KONTO  ,  "KONTO"   , "konto", {| param | konto_from_sql_server(param) }, "IDS" } )

@@ -22,19 +22,21 @@ local nul,nizl,nRbr
 local m
 local cRadniNalog
 local dDatod, dDatdo
-local lVrsteP := ( IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D" )
+local _tmp := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
+local _vrste_pl := .f.
 local lOpcine := .t.
 
+if _tmp == "D"
+    _vrste_pl := .t.
+endif
 
 private cImekup, cidfirma, qqTipDok, cBrFakDok, qqPartn
 
-if lVrsteP
+if _vrste_pl
     O_VRSTEP
 endif
 
-IF lOpcine
-    O_OPS
-ENDIF
+O_OPS
 
 if glRadNal
     O_RNAL
@@ -44,13 +46,11 @@ O_FAKT
 O_PARTN
 O_FAKT_DOKS
 
-if lVrsteP
+if _vrste_pl
     SET RELATION TO idvrstep INTO VRSTEP
 endif
 
-if lOpcine
-    SET RELATION TO idpartner INTO PARTN
-endif
+SET RELATION TO idpartner INTO PARTN
 
 if glRadNal
     SET RELATION TO idfirma + idtipdok + brdok INTO FAKT
@@ -76,7 +76,7 @@ if glRadNal
     cRadniNalog := SPACE(10)
 endif
 
-Box( , 12 + IF( lVrsteP .or. lOpcine .or. glRadNal, 6, 0 ), 77 )
+Box( , 12 + IF( _vrste_pl .or. lOpcine .or. glRadNal, 6, 0 ), 77 )
 
 cIdFirma := fetch_metric("fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
 qqTipDok := fetch_metric("fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
@@ -117,7 +117,7 @@ do while .t.
  @ m_x+9,m_y+2 SAY "Tabelarni pregled"  get cTabela valid cTabela $ "DN" pict "@!"
  cRTarifa:="N"
  @ m_x+11,m_y+2 SAY "Rekapitulacija po tarifama ?"  get cRTarifa valid cRtarifa $"DN" pict "@!"
- IF lVrsteP
+ IF _vrste_pl
    @ m_x+12,m_y+2 SAY "----------------------------------------"
    @ m_x+13,m_y+2 SAY "Za fakture (Tip dok.10):"
    @ m_x+14,m_y+2 SAY "Nacin placanja:" GET qqVrsteP
@@ -141,7 +141,7 @@ do while .t.
  if glRadNal
     //aUslRadNal:=
  endif
- if (!lOpcine .or. aUslOpc <> NIL) .and. aUslBFD<>NIL .and. aUslSK<>NIL .and. (!lVrsteP.or.aUslVrsteP<>NIL)
+ if (!lOpcine .or. aUslOpc <> NIL) .and. aUslBFD<>NIL .and. aUslSK<>NIL .and. ( !_vrste_pl .or. aUslVrsteP <> NIL )
     exit
  endif
 enddo
@@ -226,10 +226,10 @@ seek cIdFirma + qqTipDok
 EOF CRET
 
 if cTabela == "D"
-  fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine)
+  fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine )
 else
   gaZagFix:={3, 3}
-  stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, lVrsteP,  cImeKup, lOpcine, aUslOpc)
+  stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, _vrste_pl,  cImeKup, lOpcine, aUslOpc)
 endif
 
 close all

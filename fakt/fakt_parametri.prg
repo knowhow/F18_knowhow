@@ -679,6 +679,7 @@ local nSw4 := 31
 local nSw5 := 1
 local nSw6 := 1
 local nSw7 := 0
+local _vr_pl := fetch_metric( "fakt_unos_vrste_placanja", nil, "N" )
 
 private GetList:={}
 private cIzvj:="1"
@@ -838,6 +839,10 @@ Box(,22,76,.f.,"Izgled dokumenata")
 	 nX += 1
 	 
 	 @ m_x+nX, m_y+2 SAY "Varijanta prikaza podataka (1/2)" GET gShSldVar PICT "9" VALID gShSldVar > 0 .and. gShSldVar < 3 WHEN gShSld == "D"
+
+     nX += 1
+
+	 @ m_x+nX, m_y+2 SAY "Unos vrste placanja (D/N)" GET _vr_pl PICT "@!" VALID _vr_pl $ "DN"
 	
 	endif
 
@@ -896,6 +901,8 @@ if (LASTKEY()<>K_ESC)
 
 	cSection := "1"
 	
+    set_metric( "fakt_unos_vrste_placanja", nil, _vr_pl )
+
 endif
 
 return 

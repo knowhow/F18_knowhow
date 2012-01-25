@@ -26,7 +26,6 @@ local i, _x_pos, _y_pos, _x, _y
 private ImeKol, Kol
 private gOcitBarkod:=.f.
 private fID_J:=.f.
-private lVrsteP := ( IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D" )
 private lOpcine := ( IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D" )
 
 o_fakt_edit()
@@ -685,6 +684,7 @@ local nPom:=IF(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
 local lTxtNaKraju := .f.
 local cAvRacun
 local cListaTxt := ""
+local _vrste_placanja := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
 
 lDoks2:=(IzFmkIni("FAKT","Doks2","D", KUMPATH)=="D")
 
@@ -878,37 +878,39 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
     if (_idTipDok=="13" .and. gVarNum=="2" .and. gVar13=="2")
             
         @ m_x+1, 57 SAY "Prodavn.konto" GET _idPartner VALID P_Konto(@_idPartner)
-            read
+        read
 
-            _idPartner:=LEFT(_idPartner,6)
+        _idPartner:=LEFT(_idPartner,6)
             
         if (EMPTY(ALLTRIM(_txt3a+_txt3b+_txt3c)).or._idpartner!=idpartner)
-                _txt3a:=MEMOLINE(ALLTRIM(KONTO->naz)+" ("+ALLTRIM(_idpartner)+")",30,1)
-                _txt3b:=MEMOLINE(ALLTRIM(KONTO->naz)+" ("+ALLTRIM(_idpartner)+")",30,2)
-                _txt3c:=MEMOLINE(ALLTRIM(KONTO->naz)+" ("+ALLTRIM(_idpartner)+")",30,3)
-            endif
+            _txt3a:=MEMOLINE(ALLTRIM(KONTO->naz)+" ("+ALLTRIM(_idpartner)+")",30,1)
+            _txt3b:=MEMOLINE(ALLTRIM(KONTO->naz)+" ("+ALLTRIM(_idpartner)+")",30,2)
+            _txt3c:=MEMOLINE(ALLTRIM(KONTO->naz)+" ("+ALLTRIM(_idpartner)+")",30,3)
+        endif
     
     elseif (_idtipdok=="13" .and. gVarNum=="1" .and. gVar13=="2")
-            _idPartner:=if(EMPTY(_idPartner),"P1",RJIzKonta(_idPartner+" "))
+        
+        _idPartner:=if(EMPTY(_idPartner),"P1",RJIzKonta(_idPartner+" "))
             
         @ m_x+1, 57 SAY "RJ - objekat:" GET _idPartner valid P_RJ(@_idPartner) pict "@!"
-            read
+        read
             
         _idpartner:=PADR(KontoIzRJ(_idpartner),6)
             
         if EMPTY(ALLTRIM(_txt3a+_txt3b+_txt3c)).or._idpartner!=idpartner
-                _txt3a:=MEMOLINE(RJ->id+" - "+ALLTRIM(RJ->naz)+" (ZADU@ENJE)",30,1)
-                _txt3b:=MEMOLINE(RJ->id+" - "+ALLTRIM(RJ->naz)+" (ZADU@ENJE)",30,2)
-                _txt3c:=MEMOLINE(RJ->id+" - "+ALLTRIM(RJ->naz)+" (ZADU@ENJE)",30,3)
-            endif
+            _txt3a:=MEMOLINE(RJ->id+" - "+ALLTRIM(RJ->naz)+" (ZADU@ENJE)",30,1)
+            _txt3b:=MEMOLINE(RJ->id+" - "+ALLTRIM(RJ->naz)+" (ZADU@ENJE)",30,2)
+            _txt3c:=MEMOLINE(RJ->id+" - "+ALLTRIM(RJ->naz)+" (ZADU@ENJE)",30,3)
+        endif
     endif
 
     if (fNovi .and. (nRbr==1 .and. podbr<"0"))
-            _M1:=" "  // marker generacije nuliraj
-            gOcitBarkod:=.f.
-            if (gMreznoNum=="N")
-                cBroj1:=OdrediNBroj(_idfirma,_idtipdok)   //_brdok
-                if ( _idTipDok $ "12#13" )
+        _M1 := " "  
+        // marker generacije nuliraj
+        gOcitBarkod:=.f.
+        if (gMreznoNum=="N")
+            cBroj1:=OdrediNBroj(_idfirma,_idtipdok)   //_brdok
+            if ( _idTipDok $ "12#13" )
                 
                 cTmpTip := "12"
                 cTmpTip2 := "22"
@@ -919,20 +921,20 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                 endif
 
                 cBroj2 := OdrediNBroj( _idfirma, cTmpTip2 )
-                    if VAL(LEFT(cBroj1,gNumDio))>=val(left(cBroj2,gNumDio))
+                if VAL(LEFT(cBroj1,gNumDio))>=val(left(cBroj2,gNumDio))
                         // maximum izmedju broja 22 i 12
                             _Brdok:=cBroj1
-                    else
-                            _BrDok:=cBroj2
-                    endif
                 else
-                    _BrDok:=cBroj1
+                            _BrDok:=cBroj2
                 endif
+           else
+                _BrDok:=cBroj1
+           endif
             
-            select fakt_pripr
-            else
-                _BrDok := SPACE (LEN (_BrDok))
-            endif
+           select fakt_pripr
+        else
+            _BrDok := SPACE (LEN (_BrDok))
+        endif
     endif
     
     do while .t.    
@@ -948,10 +950,10 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                 _txt3a := PADR(_txt3a, 60)
         else
             if IzFMKINI("PoljeZaNazivPartneraUDokumentu","Prosiriti","N",KUMPATH)=="D"
-                    _txt3a:=padr(_txt3a,60)
-                else
-                    _txt3a:=padr(_txt3a,30)
-                endif
+                _txt3a:=padr(_txt3a,60)
+            else
+                _txt3a:=padr(_txt3a,30)
+            endif
         endif
 
         _txt3b:=padr(_txt3b,30)
@@ -959,7 +961,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 
         lUSTipke:=.f.
 
-            @ nPX := m_x + 4, nPY := m_y + 2 SAY "Partner:" GET _idpartner ;
+        @ nPX := m_x + 4, nPY := m_y + 2 SAY "Partner:" GET _idpartner ;
             PICT "@!" ;
             VALID { || P_Firma( @_idpartner ), ;
                 _Txt3a := padr( _idpartner + ".", 30), ;
@@ -970,7 +972,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
         if fakt_pripr->(FIELDPOS("IDPM")) <> 0
                 @ m_x + 5, m_y + 2 SAY "P.M.:" GET _idpm ;
                 VALID {|| P_IDPM(@_idpm,_idpartner) }
-            endif
+        endif
     
         // veza dokumenti
         _m_dveza := PADR( ALLTRIM(_m_dveza), 500 )
@@ -982,8 +984,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
         _dest := PADR( ALLTRIM(_dest), 80 )
         
         if ( gDest .and. !glDistrib )
-                    @ m_x + 7, m_y + 2 SAY "Dest:" GET _dest ;
-                    PICT "@S25"
+            @ m_x + 7, m_y + 2 SAY "Dest:" GET _dest PICT "@S25"
         endif
 
         // radni nalog
@@ -994,9 +995,9 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
 
         if _idtipdok=="10"
 
-                if gDodPar=="1"
+            if gDodPar=="1"
                     
-                    @ m_x + 4, m_y + 51 SAY "Otpremnica broj:" ;
+                @ m_x + 4, m_y + 51 SAY "Otpremnica broj:" ;
                     GET _brotp ;
                     PICT "@S8" ;
                     WHEN W_BrOtp(fnovi)
@@ -1009,7 +1010,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                 
             endif
 
-                if (gDodPar=="1" .or. gDatVal=="D")
+            if (gDodPar=="1" .or. gDatVal=="D")
                     
                 @ m_x + 7, m_y + 51 SAY "Rok plac.(dana):" ;
                     GET nRokPl ;
@@ -1023,21 +1024,21 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                 
             endif
             
-                if lVrsteP
-                    @ m_x + 9, m_y + 38  SAY "Nacin placanja" ;
+            if _vrste_placanja == "D"
+                @ m_x + 9, m_y + 2  SAY "Nacin placanja" ;
                     GET _idvrstep ;
                     PICT "@!" ;
                     VALID P_VRSTEP( @_idvrstep, 9, 60 )
-                endif
+            endif
         
         elseif (_idtipdok=="06")
                 
-                @ m_x + 5, m_y + 51 SAY "Po ul.fakt.broj:" ;
+            @ m_x + 5, m_y + 51 SAY "Po ul.fakt.broj:" ;
                 GET _brotp ;
                 PICT "@S8" ;
                 WHEN W_BrOtp(fnovi)
 
-                @ m_x + 6, m_y + 51 SAY "       i UCD-u :" ;
+            @ m_x + 6, m_y + 51 SAY "       i UCD-u :" ;
                 GET _brNar
         
         else
@@ -1052,16 +1053,13 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
         endif
         
         if (fakt_pripr->(FIELDPOS("idrelac")) <> 0 .and. _idtipdok $ "#11#")
-                @ m_x + 9, m_y + 2  SAY "Relacija   :" ;
-                GET _idrelac
+            @ m_x + 9, m_y + 38  SAY "Relacija   :" GET _idrelac PICT "@S10"
         endif
 
         if _idTipDok $ "10#11#19#20#25#26#27"
-              @ m_x + 10, m_y + 2 SAY "Valuta ?" ;
-                GET _dindem ;
-            PICT "@!" 
+            @ m_x + 10, m_y + 2 SAY "Valuta ?" GET _dindem PICT "@!" 
         else
-              @ m_x + 10, m_y + 1 SAY " "
+            @ m_x + 10, m_y + 1 SAY " "
         endif
         
         if _idTipDok $ "10"
@@ -1086,7 +1084,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
         
         if (lDoks2 .and. _idtipdok=="10")
                 edit_fakt_doks2()
-            endif
+        endif
         
         if (gIspPart == "N")
             _txt3a:=trim(_txt3a)
@@ -1250,9 +1248,6 @@ if (gSamokol != "D")
 endif //gSamokol=="D"  // samo kolicine
 
 read
-
-
-_idvrstep := SPACE(2)
 
 if cAvRacun == "D"
     _idvrstep := "AV"

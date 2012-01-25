@@ -315,10 +315,13 @@ if (nArea==-1 .or. nArea==(F_VRSTEP))
 	AADD(aDbf,{"NAZ","C",20,0})
 	
 	if !FILE(f18_ime_dbf("vrstep"))
-		DBcreate2(SIFPATH+"VRSTEP.DBF",aDbf)
+		DBcreate2( "VRSTEP", aDbf )
+        reset_semaphore_version("vrstep")
+        my_use("vrstep")
+        close all
 	endif
 	
-	CREATE_INDEX("ID", "Id", "VRSTEP.DBF")
+	CREATE_INDEX("ID", "Id", "VRSTEP")
 endif
 
 /* 

@@ -1341,13 +1341,9 @@ RETURN
 *}
 
 
-/*! \fn ChSveStavke(fNovi)
- *  \brief
- *  \param fNovi
- */
  
 function ChSveStavke(fNovi)
-*{
+LOCAL _vrste_pl := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
 LOCAL nRec:=recno()
   set order to
   go top
@@ -1362,7 +1358,7 @@ LOCAL nRec:=recno()
       _field->dindem    := _dindem
       _field->zaokr     := _zaokr
       _field->idpartner := _idpartner
-      IF lVrsteP
+      IF _vrste_pl == "D"
        _field->idvrstep:=_idvrstep
       ENDIF
       IF glDistrib
@@ -1387,7 +1383,7 @@ LOCAL nRec:=recno()
   set order to tag "1"
   go nRec
 RETURN
-*}
+
 
 
 

@@ -14,8 +14,6 @@
 
 static __device := 0
 static __auto := .f.
-static __gotov_code := "GOTOV "
-static __is_gotov := .f.
 
 // ---------------------------------------------------------
 // centralna funkcija za poziv stampe fiskalnog racuna
@@ -855,6 +853,7 @@ local nIznos
 local nRabat
 local lPoPNaTeret := .f.
 local n
+local _vr_plac
 
 O_FAKT_DOKS
 O_FAKT
@@ -876,6 +875,7 @@ nIznos := field->iznos
 nRabat := field->rabat
 dDatRn := field->datdok
 nNRekRn := field->fisc_rn
+_vr_plac := field->idvrstep
 
 select fakt
 go top
@@ -923,10 +923,9 @@ if cTipDok $ "#10#11#"
 		cVr_Placanja := "3"
 	endif
 
-    // ako je "gotov" vrsta placanja onda resetuj 
-    // na vrstu placanja 0 - gotovina i izbaci partnera iz igre na racunu
-    if cTipDok $ "#10#" .and. cPartnId == __gotov_code
-        __is_gotov := .t.
+    // ako je vrsta placanja = "G" gotovina
+    // reset na vrstu placanja 0 - gotovina i izbaci partnera iz igre na racunu
+    if cTipDok $ "#10#" .and. PADR( _vr_plac, 1 ) == "G"
         cPartnId := ""
         cVr_placanja := "0"
     endif

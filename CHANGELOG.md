@@ -1,3 +1,7 @@
+0.9.43  2012-01-30, vsasa
+
+  - bitne opcije modula VIRM osposobljene, generisanje virmana iz ld-a, rekapitulacija uplata
+
 0.9.42  2012-01-25, vsasa
 
   - modul Fin, generisanje pocetnog stanja u radno podrucje

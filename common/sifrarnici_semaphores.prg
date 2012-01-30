@@ -60,6 +60,51 @@ _result := sifrarnik_from_sql_server(_tbl, algoritam, F_VRSTEP, { "id", "naz" } 
 
 return _result
 
+// -----------------------------------------
+// -----------------------------------------
+function vrprim_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "vrprim"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_VRPRIM, { "id", "naz", "pom_txt", "idkonto", "idpartner", "nacin_pl", "racun", "dobav" } )
+
+return _result
+
+// -----------------------------------------
+// -----------------------------------------
+function kalvir_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "kalvir"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_KALVIR, { "id", "naz", "formula", "pnabr" } )
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function jprih_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "jprih"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_JPRIH, { "id", "naz", "idn0", "idkan", "idops", "racun", "budzorg" } )
+
+return _result
+
+// -----------------------------------------
+// -----------------------------------------
+function ldvirm_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "ldvirm"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_LDVIRM, { "id", "naz", "formula" } )
+
+return _result
+
 
 
 // -----------------------------------------

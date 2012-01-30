@@ -57,7 +57,9 @@ Box(,10,70)
  @ m_x+2,m_y+2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid  OdBanku(gFirma,@cIdBanka)
  read
  cKo_zr:=cIdBanka
- select partn; seek gFirma; select pripr
+ select partn 
+ seek gFirma
+ select virm_pripr
  cKo_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
 
  @ m_x+3,m_y+2 SAY "Poziv na broj " GET cPNABR
@@ -105,11 +107,11 @@ DO WHILE !EOF()
      select VRPRIM; hseek ldvirm->id
      select partn;hseek  gFirma
 
-     select PRIPR
+     select virm_PRIPR
     
      nFormula := &cFormula  // npr. RLD("DOPR1XZE01")
 
-     select PRIPR
+     select virm_PRIPR
 
      IF cBezNula=="N" .or. nFormula > 0
 
@@ -141,7 +143,7 @@ DO WHILE !EOF()
        else
           if vrprim->dobav=="D"
              cKome_ZR:=padr(cKome_ZR,3)
-             select partn; seek vrprim->idpartner; select pripr
+             select partn; seek vrprim->idpartner; select virm_pripr
              MsgBeep("Odrediti racun za partnera :"+vrprim->idpartner)
              OdBanku(vrprim->idpartner,@cKome_ZR)
           else

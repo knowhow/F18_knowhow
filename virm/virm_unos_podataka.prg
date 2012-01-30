@@ -76,7 +76,7 @@ do case
 
     case Ch==K_ALT_P      
         // rekapitulacija uplata
-        Rekapit()
+        _rekapitulacija_uplata()
         go (nRec)
         return DE_CONT
 
@@ -117,7 +117,7 @@ do case
         return DE_CONT
 
     case Ch==K_CTRL_P
-        StVirm()
+        stampa_virmana_drb()
         return DE_REFRESH
   
     case Ch==K_CTRL_A
@@ -388,48 +388,63 @@ RETURN lVrati
 
 
 
-function StVirm()
-*{
+// ------------------------------------------
+// stampa virmana delphirb
+// ------------------------------------------
+function stampa_virmana_drb()
+
 bErr:=ERRORBLOCK({|o| MyErrH(o)})
+
 BEGIN SEQUENCE
- O_IZLAZ; ZAP
+    O_IZLAZ
+    ZAP
 RECOVER
- MsgBeep("Vec je aktiviran delphirb ?")
- return
+    MsgBeep("Vec je aktiviran delphirb ?")
+    return
 END SEQUENCE
+
 bErr:=ERRORBLOCK(bErr)
 
-
-nKoliko:=999 // koliko virmana od startne pozicije
+nKoliko := 999 
+// koliko virmana od startne pozicije
 
 cMarkeri:="N"
+
 Box(,2,70)
- @ m_x+1,m_y+2 SAY "Broj virmana od sljedece pozicije:" GET nKoliko pict "999"
- @ m_x+2,m_y+2 SAY "Uzeti u obzir markere            :" GET cMarkeri pict "@!" valid cmarkeri $ "DN"
- read
+    @ m_x+1,m_y+2 SAY "Broj virmana od sljedece pozicije:" GET nKoliko pict "999"
+    @ m_x+2,m_y+2 SAY "Uzeti u obzir markere            :" GET cMarkeri pict "@!" valid cMarkeri $ "DN"
+    read
 BoxC()
+
 i:=1
+
 select virm_pripr
 set order to tag "1"
 
 if cMarkeri="D"
- go top
+    go top
 endif
 
 do while !eof()
+
     Scatter()
+
     if cMarkeri="D" .and. _st_="*"
-       skip; loop
+        skip
+        loop
     else
-       replace _st_ with "*"
+        replace _st_ with "*"
     endif
-    select izlaz ; append blank
+
+    select izlaz 
+    append blank
+    
     cWinKonv:=IzFmkIni("DelphiRb","Konverzija","3")
+
     KonvZnWin(@_ko_txt, cWinKonv)
     KonvZnWin(@_kome_txt, cWinKonv)
     KonvZnWin(@_svrha_doz, cWinKonv)
     KonvZnWin(@_mjesto, cWinKonv)
-
 
     // Dorada za DelphiRB6
     //
@@ -437,51 +452,47 @@ do while !eof()
     //
     // Polja u IZLAZ.DBF koja trebaju biti FullJustified
 
-      _ko_zr    = Razrijedi(_ko_zr)       // z.racun posiljaoca
-      _kome_zr  = Razrijedi(_kome_zr)     // z.racun primaoca
-      _bpo      = Razrijedi(_bpo)         // broj poreznog obveznika
-      _idjprih  = Razrijedi(_idjprih)     // javni prihod
-      _idops    = Razrijedi(_idops)       // opstina
-      _pnabr    = Razrijedi(_pnabr)       // poziv na broj
-      _budzorg  = Razrijedi(_budzorg)     // budzetska organizacija
-      _pod      = Razrijedi(DTOC(_pod))         // porezni period od
-      _pdo      = Razrijedi(DTOC(_pdo))         // porezni period do
-      _dat_upl  = Razrijedi(DTOC(_dat_upl))     // datum uplate
+    _ko_zr    = Razrijedi(_ko_zr)       // z.racun posiljaoca
+    _kome_zr  = Razrijedi(_kome_zr)     // z.racun primaoca
+    _bpo      = Razrijedi(_bpo)         // broj poreznog obveznika
+    _idjprih  = Razrijedi(_idjprih)     // javni prihod
+    _idops    = Razrijedi(_idops)       // opstina
+    _pnabr    = Razrijedi(_pnabr)       // poziv na broj
+    _budzorg  = Razrijedi(_budzorg)     // budzetska organizacija
+    _pod      = Razrijedi(DTOC(_pod))         // porezni period od
+    _pdo      = Razrijedi(DTOC(_pdo))         // porezni period do
+    _dat_upl  = Razrijedi(DTOC(_dat_upl))     // datum uplate
 
     Gather()
+    
     select virm_pripr
     skip
-    if i>=nkoliko
-       exit
+    
+    if i >= nKoliko
+        exit
     endif
     i++
+
 enddo
-if eof(); skip -1; endif
+
+if eof()
+    skip -1
+endif
+
 select virm_pripr
-nTrec:=recno()
+
+nTrec := recno()
 use
 
-
-select izlaz; use
+select izlaz
+use
 
 // ovdje treba kod za filovanje datoteke IZLAZ.DBF
 if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 
-  private cKomLin:="DelphiRB "+IzFmkIni("NalPlac","NazRTM","nalplac", SIFPATH)+" "+PRIVPATH+"  IZLAZ 1"
- if gTrakas=="D"
-   // ispis na perforiranom papiru
-   cKomLin += " paghm:"+alltrim(str(i))
- endif
- cPom := alltrim(IzFmkIni("NalPlac","LijevaMargina","-",KUMPATH))
- if cPom!="-"
-  cKomLin += " lmarg:"+cPom
- endif
- cPom := alltrim(IzFmkIni("NalPlac","GornjaMargina","-",KUMPATH))
- if cPom!="-"
-  cKomLin += " tmarg:"+cPom
- endif
-
- run &cKomLin
+    private cKomLin := "f18_delphirb nalplac " + '"' + my_home() + '"' + "  IZLAZ 1"
+    
+    run &cKomLin
 
 endif
 
@@ -489,7 +500,7 @@ O_VIRM_PRIPR
 go nTRec
 
 return
-*}
+
 
 
 
@@ -785,24 +796,33 @@ function OpcRada()
   ENDIF
   SELECT (nArr)
 RETURN cVrati
-*}
 
 
 
-function Rekapit()
-*{
- LOCAL aNiz:={},nPom:=0
-  SELECT virm_pripr
-  START PRINT RET
-  aNiz:={ {"PRIMALAC"   , {|| kome_txt}  , .f., "C", 55, 0, 1, 1 },;
-          {"IZNOS      ", {|| iznos}     , .t., "N", 15, 2, 1, 2 };
+// ----------------------------------------
+// rekapitulacija uplata
+// ----------------------------------------
+static function _rekapitulacija_uplata()
+local _arr := {}
+
+select virm_pripr
+
+START PRINT RET
+?
+P_COND
+  
+_arr := { ; 
+        { "PRIMALAC", {|| kome_txt }, .f., "C", 55, 0, 1, 1 }, ;
+        { "ZIRO RACUN", {|| kome_zr }, .f., "C", 16, 0, 1, 2 }, ;
+        { "IZNOS      ", {|| iznos }, .t., "N", 15, 2, 1, 3 } ;
         }
-  GO TOP
-  StampaTabele(aNiz,,gnLMarg,gTabela,{|| .t.},gA43=="4",;
-               "REKAPITULACIJA UPLATA",;
-               {|| .t.})
- END PRINT
-RETURN
+go top
+
+StampaTabele( _arr, , 2, gTabela, {|| .t. }, "4", "REKAPITULACIJA UPLATA", {|| .t. } )
+ 
+END PRINT
+
+return
 
 
 static function FormNum1(nIznos)

@@ -162,6 +162,8 @@ _alias := "VRPRIM"
 if (nArea==-1 .or. nArea==(F_VRPRIM))
 	IF !FILE(f18_ime_dbf( _alias ) )
 		DBCREATE2( _alias, aDbf)
+        reset_semaphore_version( _table_name )
+        my_use( _alias )
 	ENDIF
 	CREATE_INDEX("ID","id", _alias )
 	CREATE_INDEX("NAZ","naz", _alias )
@@ -190,6 +192,8 @@ if (nArea==-1 .or. nArea==(F_LDVIRM))
 		AADD(aDBf,{ 'NAZ'        , 'C' ,  50 ,   0 })
 		AADD(aDBf,{ 'FORMULA'    , 'C' ,  70 ,   0 })
 		DBCREATE2( _alias , aDbf )
+        reset_semaphore_version( _table_name )
+        my_use( _alias )
 	ENDIF
 	CREATE_INDEX("ID","id", _alias)
 endif
@@ -205,6 +209,8 @@ if (nArea==-1 .or. nArea==(F_KALVIR))
 		AADD(aDBf,{ 'FORMULA'    , 'C' ,  70 ,   0 })
 		AADD(aDBf,{ 'PNABR'      , 'C' ,  10 ,   0 })
 		DBCREATE2( _alias, aDbf )
+        reset_semaphore_version( _table_name )
+        my_use( _alias )
 	ENDIF
 	CREATE_INDEX("ID","id", _alias )
 endif
@@ -223,6 +229,8 @@ if (nArea==-1 .or. nArea==(F_JPRIH))
 		AADD(aDBf,{ 'Racun'               , 'C' ,  16 ,  0 })
 		AADD(aDBf,{ 'BudzOrg'             , 'C' ,  7 ,  0 })
 		DBCREATE2( _alias, aDbf )
+        reset_semaphore_version( _table_name )
+        my_use( _alias )
 	endif
 
 	CREATE_INDEX("Id","id+IdOps+IdKan+IdN0+Racun", _alias )

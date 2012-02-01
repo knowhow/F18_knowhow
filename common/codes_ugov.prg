@@ -35,9 +35,11 @@ private ImeKol
 private Kol
 
 cHeader += "Ugovori: " 
-cHeader += "<F3> ispravka ugov id-a, "
+cHeader += "<F3> ispravi id, "
 cHeader += "<F5> stavke ugovora, "
-cHeader += "<F6> lista za K1='G'"
+cHeader += "<F6> lista za K1='G', "
+cHeader += "<R> set.poslj.fakt, "
+cHeader += "<P> pregl.destin."
 
 O_UGOV
 
@@ -49,7 +51,7 @@ set_a_kol(@ImeKol, @Kol)
 // setuj polje pri otvaranju za sortiranje
 set_fld_id(@cFieldId, cId)
 
-return PostojiSifra(F_UGOV, cFieldId, 10, 77, cHeader, @cId, dx, dy, {|Ch| key_handler(Ch)})
+return PostojiSifra(F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @cId, dx, dy, {|Ch| key_handler(Ch)})
 
 
 // ----------------------------------------------
@@ -141,8 +143,6 @@ return
 static function key_handler(Ch)
 local GetList:={}
 local nRec:=0
-
-@ m_x+11, 5 SAY "<R>-set poslj.fakt. <c+G>-gen.novih ugov. <P>-preg.dest."
 
 do case
 	case ( Ch == K_CTRL_T )

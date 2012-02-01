@@ -162,7 +162,7 @@ local nGenCh
 local cGenTipDok := ""
 local cDatLFakt
 local dLFakt
-local __where
+local __where, _rec
 
 // otvori tabele
 o_ugov()
@@ -197,14 +197,18 @@ if lSetParams
 	
 	if !FOUND()
 		append blank
-	endif
+    endif
+
+    _rec := dbf_get_rec()
 	
-	replace dat_obr with dDatObr
-	replace dat_gen with dDatGen
-	replace dat_u_fin with dDatLUpl
-	replace kto_kup with cKtoDug
-	replace kto_dob with cKtoPot
-	replace opis with cOpis
+	_rec["dat_obr"] := dDatObr
+	_rec["dat_gen"] := dDatGen
+	_rec["dat_u_fin"] := dDatLUpl
+	_rec["kto_kup"] := cKtoDug
+	_rec["kto_dob"] := cKtoPot
+	_rec["opis"] := cOpis
+
+    //update_rec_server_and_dbf( ALIAS(), _rec )
 
 endif
 
@@ -304,14 +308,17 @@ select gen_ug
 set order to tag "dat_obr"
 go top
 seek DTOS(dDatObr) + cIdArt
-if Found()
-	replace fakt_br with nFaktBr
-	replace saldo with nSaldo
-	replace saldo_pdv with nSaldoPDV
-	replace dat_gen with dDatGen
-	replace dat_val with dDatVal
-	replace brdok_od with cFaktOd
-	replace brdok_do with cFaktDo
+
+if Found()    
+    _rec := dbf_get_rec()
+    _rec["fakt_br"] := nFaktBr
+	_rec["saldo"] := nSaldo
+	_rec["saldo_pdv"] := nSaldoPDV
+	_rec["dat_gen"] := dDatGen
+	_rec["dat_val"] := dDatVal
+	_rec["brdok_od"] := cFaktOd
+	_rec["brdok_do"] := cFaktDo
+    //update_rec_server_and_dbf( ALIAS(), _rec )
 endif
 
 BoxC()
@@ -603,6 +610,7 @@ local dDatLFakt
 local nMjesec
 local nGodina
 local lFromDest
+local _rec
 
 select gen_ug
 set order to tag "dat_obr"
@@ -884,11 +892,13 @@ set order to tag "dat_obr"
 seek DTOS(dDatGen)
 
 if Found()
+	_rec := dbf_get_rec()
 	// broj prve fakture
-	if EMPTY(field->brdok_od)
-		replace field->brdok_od with cBrDok
+	if EMPTY( field->brdok_od )
+        _rec["brdok_od"] := cBrDok
 	endif
-	replace field->brdok_do with cBrDok
+	_rec["brdok_do"] := cBrDok
+    //update_rec_server_and_dbf( ALIAS(), _rec )
 endif
 
 // vrati se na pripremu i pregledaj djokere na _TXT

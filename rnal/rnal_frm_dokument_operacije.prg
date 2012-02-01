@@ -1,18 +1,16 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "rnal.ch"
-
-// variables
 
 static l_new_ops
 static _doc
@@ -126,7 +124,6 @@ m_y := nY
 return nRet
 
 
-
 // -------------------------------------------------------
 // kopiranje operacija sa prethodne stavke
 // -------------------------------------------------------
@@ -173,7 +170,6 @@ if nCnt > 0
 endif
 
 return
-
 
 
 
@@ -250,7 +246,6 @@ ESC_RETURN 0
 
 return 1
 
-
 // --------------------------------------------
 // vraca opis iz matrice - opis elementa
 // --------------------------------------------
@@ -272,7 +267,6 @@ xRet := PADR(xRet, nLen)
 
 return xRet
 
-
 // --------------------------------------------------
 // vraca arr sa elementima artikla...
 // --------------------------------------------------
@@ -293,7 +287,6 @@ m_y := nYY
 
 return .t.
 
-
 // ------------------------------------------------
 // vraca element iz matrice
 // ------------------------------------------------
@@ -307,7 +300,6 @@ if nTmp <> 0
 endif
 
 return nElement
-
 
 
 // -----------------------------------------
@@ -324,7 +316,7 @@ private opcexe := {}
 
 nChoice := 1
 
-for i:=1 to LEN(aElem)
+for i := 1 to LEN(aElem)
 
     cPom := PADL( ALLTRIM(STR(i)) + ")", 3 ) + " " + PADR( aElem[i, 2] , 40 )
     
@@ -336,7 +328,6 @@ next
 Menu_sc("izbor")
 
 if LastKey() == K_ESC
-
     nChoice := 0
     nRet := 0
     
@@ -415,7 +406,6 @@ go (nTRec)
 return .t.
 
 
-
 // ---------------------------------------------
 // vraca artikal za stavku
 // ---------------------------------------------
@@ -463,8 +453,3 @@ select (nTArea)
 go (nTRec)
 
 return nRet
-
-
-
-
-

@@ -1,20 +1,16 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "rnal.ch"
 
-// variables
-
-// novi dokument, bool
 static l_new
 static _doc
 static _doc_it
@@ -60,7 +56,7 @@ local cCol2 := "W+/G"
 private ImeKol
 private Kol
 
-Box(, 22, 77)
+Box(, MAXROWS()-5, MAXCOLS()-5)
 
 l_auto_tab := .f.
 
@@ -118,11 +114,7 @@ do while .t.
         nY := 28
         m_y += 50
         
-        _say_tbl_desc( m_x + 1, ;
-                m_y + 1, ;
-                cCol2, ;
-                "*** dod.oper.", ;
-                20 )
+        _say_tbl_desc( m_x + 1,  m_y + 1,  cCol2,   "*** dod.oper.",  20 )
     
         docop_kol(@ImeKol, @Kol)
         
@@ -156,7 +148,6 @@ BoxC()
 return nRet
 
 
-
 // ---------------------------------------
 // prikaz osnovni podaci
 // nX - x koord.
@@ -184,6 +175,7 @@ return
 // prikazi header i footer 
 // -----------------------------------------------
 static function header_footer()
+local i
 local nTArea := SELECT()
 local cHeader
 local cFooter
@@ -216,7 +208,7 @@ cHeader += ALLTRIM( f18_user() )
 @ m_x + 21, m_y + 1 SAY REPLICATE("Í", 78) COLOR cLineClr
 @ m_x + 22, m_y + 1 SAY cFooter
 
-for i:=7 to 20
+for i := 7 to 20
     @ m_x + i, m_y + 50 SAY "º" COLOR cLineClr
 next
 
@@ -659,7 +651,7 @@ return nRet
 function _g_doc_desc( cDesc )
 local GetList := {}
 
-Box(,5, 70)
+Box( , 5, 70)
     cDesc := SPACE(150)
     @ m_x + 1, m_y + 2 SAY "Unesi opis promjene na nalogu:"
     @ m_x + 3, m_y + 2 SAY "Opis:" GET cDesc VALID !EMPTY(cDesc) PICT "@S60"
@@ -669,7 +661,6 @@ BoxC()
 ESC_RETURN 0
 
 return 1
-
 
 // -------------------------------------------
 // docs - integritet

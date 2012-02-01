@@ -1,17 +1,16 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "rnal.ch"
-
 
 static __cust_id
 
@@ -68,8 +67,7 @@ set order to tag cTag
 set filter to
 obj_filter(nCust_id, cObjDesc)
 
-cRet := PostojiSifra(F_OBJECTS, cTag, 10, 70, cHeader, @cId, dx, dy, ;
-		{|| key_handler( Ch ) })
+cRet := PostojiSifra(F_OBJECTS, cTag, MAXROWS()-15, MAXCOLS()-10, cHeader, @cId, dx, dy, {|| key_handler( Ch ) })
 
 if LastKey() == K_ESC
 	cId := 0
@@ -94,8 +92,6 @@ endcase
 
 return nRet
 
-
-
 // -----------------------------------------
 // setovanje kolona tabele
 // -----------------------------------------
@@ -114,8 +110,6 @@ next
 return
 
 
-
-
 // ----------------------------------------------
 // setuje cust_id pri unosu automatski
 // ----------------------------------------------
@@ -127,7 +121,6 @@ else
 	return .t.
 endif
 return
-
 
 
 // -------------------------------------------
@@ -168,7 +161,6 @@ function objid_str(nId)
 return STR(nId, 10)
 
 
-
 // -------------------------------
 // get obj_id_desc by obj_id
 // -------------------------------
@@ -199,5 +191,3 @@ endif
 select (nTArea)
 
 return cObjDesc
-
-

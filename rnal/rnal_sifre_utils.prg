@@ -1,18 +1,15 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "rnal.ch"
-
-
 
 // -------------------------------------------------
 // vrati match_code za stavku sifrarnika
@@ -39,14 +36,15 @@ select (nTArea)
 return xRet
 
 
-
 // ---------------------------------------------
 // prikaz id/mc za stavku u browse-u sifrarnika
 // nFieldId - vrijednost id polja
 // ---------------------------------------------
 function sif_idmc(nFieldId, lOnlyMc, nRpad )
+
 local cId := STR(nFieldId)
-local cMCode := IF(FIELDPOS("MATCH_CODE") <> 0, ALLTRIM(field->match_code), "")
+
+local cMCode := IIF(FIELDPOS("MATCH_CODE") <> 0, ALLTRIM(field->match_code), "")
 local xRet := ""
 
 if nRpad == nil
@@ -89,8 +87,6 @@ endif
 @ row(), col() + 3 SAY cItem
 
 return .t.
-
-
 
 // --------------------------------------
 // increment id u sifrarniku
@@ -147,8 +143,6 @@ nLast_rec := field->&cFieldName
 
 return nLast_rec
 
-
-
 // --------------------------------------
 // testiraj id u sifrarniku
 // wId - polje id proslijedjeno po ref.
@@ -197,7 +191,7 @@ nId := field->&(cField)
 
 nId += 1
 
-Box(,1,50) 
+Box(, 1, 50) 
 	@ m_x + 1, m_y + 2 SAY "Ispravi sifru na:" GET nId PICT REPLICATE("9",10)
 	read
 BoxC()
@@ -210,22 +204,6 @@ if LastKey() <> K_ESC
 endif
 
 return nRet
-
-
-
-
-// ---------------------------------------------
-// setuje TBrowse direktni edit D/N
-//
-// cMod - tekuci mod...
-// ---------------------------------------------
-function _mod_tb_direkt( cMod )
-
-if cMod == "N"
-	return
-endif
-
-return
 
 
 // --------------------------------------------------

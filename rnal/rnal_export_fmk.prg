@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -18,7 +18,7 @@
 // -----------------------------------------
 static function _g_sumbox( lReturn )
 
-lReturn := Pitanje(,"Sumirati stavke sa naloga (D/N)","D") = "D"
+lReturn := Pitanje( , "Sumirati stavke sa naloga (D/N)","D") = "D"
 
 return
 
@@ -39,6 +39,7 @@ Box(, 3, 65 )
     @ m_x + nX, m_y + 2 SAY " [M] otprenicu mp (dok 13)" GET cVpMp ;
         VALID cVpMp $ "VM" PICT "@!" 
     read
+
 BoxC()
 
 if LastKey() == K_ESC
@@ -86,7 +87,7 @@ if _vp_mp( @cVpMp ) == 0
     return
 endif
 
-if Pitanje(,"Promjeniti podatke isporuke ?", "N") == "D"
+if Pitanje( ,"Promjeniti podatke isporuke ?", "N") == "D"
     // selektuj stavke
     sel_items()
 endif
@@ -94,20 +95,15 @@ endif
 // sumirati stavke da ili ne
 _g_sumbox( @lSumirati )
 
-if !FILE(ALLTRIM(gFaPrivDir) + "PRIPR.DBF")
-    msgbeep("Nije podesena lokacija FAKT ???")
-    select (nTarea)
-    return
-endif
 
 // select pripreme fakt
 select (245)
-use ( ALLTRIM(gFaPrivDir) + "PRIPR" ) alias X_TBL
+O_FAKT_PRIPR
 
 // provjeri da li je priprema FAKT prazna
 if RECCOUNT2() > 0
     msgbeep("priprema fakt nije prazna !")
-    select (245)
+    select (F_FAKT_PRIPR)
     use
     select (nTArea)
     return
@@ -135,7 +131,9 @@ dDatDok := CTOD( g_t_pars_opis( "N02" ) )
 if ALLTRIM( cCust_desc ) == "NN"
     // ako je NN kupac u RNAL, dodaj ovo kao contacts....
     cPartn := PADR( g_rel_val("1", "CONTACTS", "PARTN", ALLTRIM(STR(nCont_id)) ), 6 )
+
 else
+
     // dodaj kao customs
     cPartn := PADR( g_rel_val("1", "CUSTOMS", "PARTN", ALLTRIM(STR(nCust_id)) ), 6 )
 endif
@@ -155,7 +153,7 @@ if EMPTY( cPartn )
             
         else
         
-            select (245)
+            select (F_FAKT_PRIPR)
             use
             
             select (nTArea)
@@ -173,7 +171,7 @@ if EMPTY( cPartn )
             
         else
         
-            select (245)
+            select (F_FAKT_PRIPR)
             use
             
             select (nTArea)
@@ -373,7 +371,7 @@ do while !EOF()
         
         else
             msgbeep("Neki artikli nemaju definisani u tabeli relacija#Prekidam operaciju !")    
-            select (245)
+            select (F_FAKT_PRIPR)
             use
             
             select (nTArea)
@@ -924,8 +922,7 @@ local nTArea := SELECT()
 local cPom
 local nPom
 
-select 113
-use ( ALLTRIM(gFaKumDir) + "DOKS" ) alias FA_DOKS
+O_FAKT_DOKS
 set order to tag "1"
 go top
 seek cFaFirma + cFaTipDok + CHR(254)

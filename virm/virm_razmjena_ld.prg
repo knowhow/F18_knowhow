@@ -99,19 +99,23 @@ DO WHILE !EOF()
      // nema formule - preskoci...
      if EMPTY(cFormula)
         skip
-    loop
+        loop
      endif
      
      cSvrha_pl:=id
 
-     select VRPRIM; hseek ldvirm->id
-     select partn;hseek  gFirma
+     select VRPRIM
+     hseek ldvirm->id
 
-     select virm_PRIPR
+     select partn
+     hseek gFirma
+
+     select virm_pripr
     
-     nFormula := &cFormula  // npr. RLD("DOPR1XZE01")
+     nFormula := &cFormula  
+     // npr. RLD("DOPR1XZE01")
 
-     select virm_PRIPR
+     select virm_pripr
 
      IF cBezNula=="N" .or. nFormula > 0
 
@@ -134,16 +138,24 @@ DO WHILE !EOF()
        cPomOpis := trim(VRPRIM->pom_txt)+IF(!EMPTY(cDOpis)," "+cDOpis,"")+;
                    IF(!EMPTY(cDOBrRad) .and. cOpisPlus2=="D" ,", "+cDOBrRad,"")
 
-       private _kome_zr:=""; _kome_txt:=""; _budzorg:=""
+       private _kome_zr:=""
+       _kome_txt:=""
+       _budzorg:=""
+       
        if vrprim->idpartner="JP  " // javni prihodi
           // setuj varijable _kome_zr, _kome_txt , _budzorg
           SetJPVar()
-          cKome_zr:=_kome_zr; cKome_txt:=_kome_txt; cBudzOrg:=_BudzOrg
-          cBPO:=gOrgJed  // iskoristena za broj poreskog obveznika
+          cKome_zr:=_kome_zr
+          cKome_txt:=_kome_txt
+          cBudzOrg:=_BudzOrg
+          cBPO:=gOrgJed  
+          // iskoristena za broj poreskog obveznika
        else
           if vrprim->dobav=="D"
              cKome_ZR:=padr(cKome_ZR,3)
-             select partn; seek vrprim->idpartner; select virm_pripr
+             select partn
+             seek vrprim->idpartner
+             select virm_pripr
              MsgBeep("Odrediti racun za partnera :"+vrprim->idpartner)
              OdBanku(vrprim->idpartner,@cKome_ZR)
           else
@@ -500,9 +512,10 @@ closeret
 
 
 // --------------------------------------------
-// RLD
+// RLD, funkcija koju zadajemo 
+// kao formulu pri prenosu...
 // --------------------------------------------
-static function RLD(cId, nIz12, qqPartn)
+function RLD(cId, nIz12, qqPartn)
 local nPom1:=0
 local nPom2:=0
 
@@ -538,6 +551,8 @@ static function Rekapld( cId, ;
 local lGroup := .f.
 
 PushWA()
+
+altd()
 
 if cIdPartner == NIL
     cIdPartner := ""

@@ -258,7 +258,7 @@ return
  *  \param nIz12
  */
  
-function RLD(cId, nIz12)
+static function RLD(cId, nIz12)
 
 local npom1:=0, npom2:=0, nVrati
 if nIz12==NIL

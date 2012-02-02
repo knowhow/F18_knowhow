@@ -940,6 +940,7 @@ return cPom
  */
 
 function Menu_SC(cIzp, fMain)
+local _i
 local cOdgovor
 local nIzbor
 
@@ -948,18 +949,22 @@ if fMain==NIL
 endif
 
 if fMain
-  @ 4,5 SAY ""
+  @ 4, 5 SAY ""
 endif
 
+for _i := 1 to LEN(opc)
+   opc[_i] := hb_Utf8ToStr(opc[_i])
+next 
+
 do while .t.
-   Izbor:=menu(cIzp, opc, Izbor, .f.)
+   Izbor := menu(cIzp, opc, Izbor, .f.)
    nIzbor := retitem(Izbor)
    do case
      case Izbor==0
        if fMain
-         cOdgovor:=Pitanje("",'Zelite izaci iz programa ?','N')
+         cOdgovor:=Pitanje("", hb_Utf8ToStr('Želite izaći iz programa ?'),'N')
          if cOdgovor=="D"
-          EXIT
+            EXIT
          elseif cOdgovor=="L"
             Prijava()
             Izbor:=1

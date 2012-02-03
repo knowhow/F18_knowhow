@@ -11,151 +11,109 @@
 
 #include "os.ch"
 
-// ---------------------------------------------------------
-// ---------------------------------------------------------
-function PrenesiUtekucu()
-// prenesi iz sezonskog podrucja u tekucu
-// trenutno se nalazim u sezonskom podrucju!
-local cScr , nprolaz
-local cBioUSezoni
-
-if !sigmasif("OSPREN")
-  msgbeep("Ne cackaj !")
-  return
-endif
-
-MsgBeep("Trenutno se nalazim u sezonskom podrucju, sezona:"+right(goModul:oDataBase:cSezonDir,4)+;
-        "##U ovom podrucju su unesene zavrsne promjene.#"+;
-        "Sada zelite ovo stanje prenijeti u tekucu godinu (radno podrucje)#"+;
-        "radi formiranja pocetnog stanja u tekucoj godini.##"+;
-        "Ako sam u pravu, NASTAVITE. U suprotnom - PREKINITE PROCEDURU !")
-
-if pitanje(,"Izvrsiti prenos podataka sezone: "+right(goModul:oDataBase:cSezonDir,4)+" u radno podrucje ?","N")=="N"
-  return
-endif
-
-MsgO("Prelazim u radno podrucje....")
-  cBioUsezoni:=right(goModul:oDataBase:cSezonDir,4)
-  Uradpodr(.t.)
-MsgC()
-
-ZaSvakiSlucaj()  // !!!
-
-save screen to cScr
-
-fDA:=.f.
-fnulirati:=.f.
-finverse:=.t.
-
-private aFilesP:={}
-private aFilesS:={}
-private aFilesK:={}
-close all
-
-if !PocSkSez()
- ::quit()
-endif
-
-cls
-
-?
-
-? "Prenos iz  sezonskih direktorija u radne podatke"
-?
-
-fnul:=.f.
-Skloni(PRIVPATH,"PARAMS.DBF",cBioUsezoni,finverse,fda,fnul)
-
-Skloni(KUMPATH,"OS.DBF",cBioUsezoni,finverse,fda,fnul)
-Skloni(KUMPATH,"RJ.DBF",cBioUsezoni,finverse,fda,fnul)
-Skloni(KUMPATH,"K1.DBF",cBioUsezoni,finverse,fda,fnul)
-Skloni(KUMPATH,"PROMJ.DBF",cBioUsezoni,finverse,fda,fnul)
-
-// necu konto on je sigurno ok ...Skloni(SIFPATH,"KONTO.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"AMORT.DBF",cBioUsezoni,finverse,fda,fnul)
-Skloni(SIFPATH,"REVAL.DBF",cBioUsezoni,finverse,fda,fnul)
-
-//sifrarnici
-?
-?
-?
-Beep(4)
-? "pritisni nesto za nastavak.."
-inkey(0)
-restore screen from cScr
-
-KrajskSez()
-
-msgbeep("Sada se nalazimo u radnom potrucju.##"+;
-        "Provjerite da li su podaci korektno preneseni !##"+;
-        "Nakon toga mozete izvrsiti opciju formiranja #"+;
-        "pocetnog stanja sredstava u ovoj godini")
-
-
-return
 
 // ------------------------------------------------------
 // ------------------------------------------------------
 function PrenosOs()
+local _t_rec
+local _rec, _r_br
+
 // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
 // otpisana sredstva u protekloj godini
+
 Beep(4)
-if Pitanje(,"Brisanje otpisanih sredstva i promjena u toku protekle godine ! Nastaviti ?","N")="N"
-  closeret
+
+if Pitanje(,"Brisanje otpisanih sredstva i promjena u toku protekle godine ! Nastaviti ?", "N" ) = "N"
+    close all
+    return
 endif
 
 if !sigmaSif("OSGEN")
-  closeret
+    close all
+    return
 endif
 
-start print cret
+START PRINT CRET
 
-O_OSX
-O_PROMJX
+O_OS
+O_PROMJ
 
 ? "Prolazim kroz bazu OS...."
-select os; go top
+
+select os
+go top
+
 do while !eof()
-  nRbr:=0
-  skip; nTRec:=recno(); skip -1
-  Scatter("w")  // za os
-  ? wid,naz
-  wNabVr:=wNabvr+wrevd
-  wOtpVr:=wOtpvr+wrevp+wAmp
-  if !empty(wDatOtp)
-     ?? "  brisem, otpisano"
-     dbdelete2()
-     go nTrec
-     loop
-  endif
-  select promj; hseek os->id
-  do while !eof() .and. id==os->id
-   wNabVr+=nabvr+revd
-   wOtpVr+=otpvr+revp+amp
-   skip
-  enddo
-  select os
-  wAmp:=wAmd:=0
-  wRevD:=wRevP:=0
-  Gather("w")
 
-  go nTrec
+    _r_br := 0
+    skip
+    _t_rec := recno()
+    skip -1
 
-enddo // eof
+    //Scatter("w")  
+    // za os
+    
+    _rec := dbf_get_rec()    
 
+    // ispisi id, naz
+    ? _rec["id"], _rec["naz"]
+    
+    _rec["nabvr"] := _rec["nabvr"] + _rec["revd"]
+    _rec["otpvr"] := _rec["otpvr"] + _rec["revp"] + _rec["amp"]
+    
+    // brisi sta je otpisano
+    IF !EMPTY( _rec["datotp"] )
+        ?? "  brisem, otpisano"
+        delete_rec_server_and_dbf( ALIAS(), _rec )
+        go _t_rec
+        LOOP
+    ENDIF
+
+    select promj
+    hseek os->id
+
+    do while !eof() .and. field->id == os->id
+        _rec["nabvr"] += field->nabvr + field->revd
+        _rec["otpvr"] += field->otpvr + field->revp + field->amp
+        skip
+    enddo
+
+    select os
+
+    _rec["amp"] := 0
+    _rec["amd"] := 0
+    _rec["revd"] := 0
+    _rec["revp"] := 0
+
+    update_rec_server_and_dbf( ALIAS(), _rec )
+
+    go _t_rec
+
+enddo 
+
+// pobrisi sve promjene...
 select promj
-zap
+do while !EOF()
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( ALIAS(), _rec )
+    skip
+enddo
+
 close all
 
-end print
+END PRINT
+
 return
 
 
 // -------------------------------------------
 // -------------------------------------------
 function RegenPS()
+
 // regeneracija nabavne i otpisane vrijednosti za stara sredstva
+
 Beep(4)
+
 if Pitanje(,"Ponovo generisati nab.i otpisanu vrijednost sredstava iz prosle godine ?","N")="N"
   closeret
 endif
@@ -330,7 +288,7 @@ function NovaSredstva()
 local lSamoStara:=.f.
 
 if Pitanje(,"Prikazati samo sredstva iz proteklih godina? (D/N)","D")=="D"
-	lSamoStara:=.t.
+    lSamoStara:=.t.
 endif
 
 O_OSX
@@ -377,8 +335,8 @@ nT1:=nT2:=nT3:=nT4:=nT5:=nT6:=0
 ? "Inv.broj     Datum     Nab.vr.    Otp.vr."
 DO WHILE !EOF()
   if (lSamoStara .and. YEAR(field->datum)>=VAL(cTekSez))
-  	skip 1
-	loop
+    skip 1
+    loop
   endif
   cInvBr:=id    // OS->id
   SELECT ("OS"+cOldSez)
@@ -469,45 +427,20 @@ RETURN
 
 function RazdvojiDupleInvBr()
 if sigmasif("UNIF")
-	if pitanje(,"Razdvojiti duple inv.brojeve ?","N")=="D"
-    	UnifId()
+    if pitanje(,"Razdvojiti duple inv.brojeve ?","N")=="D"
+        UnifId()
     endif
-endif
-return
-
-
-function PrenosPodatakaUTekucePodrucje()
-if empty(goModul:oDataBase:cSezonDir)
-	Msgbeep("Ovo se radi u sezonskom podrucju !")
-else
-    PrenesiUtekucu()
 endif
 return
 
 
 function GenerisanjePodatakaZaNovuSezonu()
-if empty(goModul:oDataBase:cSezonDir)  // nalazim se u radnom podrucju
-	if val(goModul:oDataBase:cSezona)<>year(date())
-        MsgBeep("U radnom podrucju se nalaze podaci iz protekle godine !")
-    else
-    	PrenosOs()
-    endif
-else
-	MsgBeep("Ovo se radi u radnom podrucju !")
-endif
+PrenosOs()
 return
 
 
 function RegenerisanjePocStanja()
-if empty(goModul:oDataBase:cSezonDir)  // nalazim se u radnom podrucju
-	if val(goModul:oDataBase:cSezona)<>year(date())
-    	MsgBeep("U radnom podrucju se nalaze podaci iz protekle godine !")
-    else
-        RegenPS()
-    endif
-else
-    MsgBeep("Ovo se radi u radnom podrucju !")
-endif
+RegenPS()
 return
 
 

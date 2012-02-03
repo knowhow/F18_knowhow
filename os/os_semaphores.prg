@@ -42,9 +42,7 @@ local _tbl := "os_k1"
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_K1, { "id", "naz" })
 
-
 return _result
-
 
 
 

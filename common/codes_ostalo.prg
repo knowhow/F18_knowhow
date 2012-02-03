@@ -3,28 +3,26 @@
 
 
 // k1 - karakteristike
-function P_K1()
-local nTArea
-private ImeKol
-private Kol
+function P_K1( cId, dx, dy )
+local _area, _i
+private ImeKol := {}
+private Kol := {}
 
-ImeKol := {}
-Kol := {}
+_area := SELECT()
 
-nTArea := SELECT()
 O_K1
 
 AADD(ImeKol, { "ID", {|| id}, "id" })
 add_mcode(@ImeKol)
 AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
 
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
+for _i := 1 to LEN( ImeKol )
+	AADD( Kol, _i )
 next
 
-select (nTArea)
-PostojiSifra(F_K1, I_ID, 10, 60, "Lista - K1")
-return
+select ( _area )
+return PostojiSifra( F_K1, I_ID, 10, 60, "Lista - K1", @cId, dx, dy )
+
 
 
 /*! \fn P_VrsteP(cId,dx,dy)

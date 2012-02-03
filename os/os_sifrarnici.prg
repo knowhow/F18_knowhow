@@ -90,7 +90,7 @@ ImeKol:={ { PADR("Inv.Broj",15),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wId
 //          { PADR("DatOtp",8),{|| DatOtp},    "datOtp"     },;
 
 if os->(fieldpos("K1"))<>0
-  AADD (ImeKol,{ padc("K1",4 ), {|| k1}, "k1" , {|| .t.}, {|| P_k1(@wK1)} })
+  AADD (ImeKol,{ padc("K1",4 ), {|| k1}, "k1" , {|| .t.}, {|| P_K1( @wK1 ) } })
   AADD (ImeKol,{ padc("K2",2 ), {|| k2}, "k2"   })
   AADD (ImeKol,{ padc("K3",2 ), {|| k3}, "k3"   })
   AADD (ImeKol,{ padc("Opis",2 ), {|| opis}, "opis"   })

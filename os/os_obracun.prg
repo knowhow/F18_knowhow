@@ -11,6 +11,7 @@
 
 #include "os.ch"
 
+
 // ----------------------------------
 // obracun meni
 // ----------------------------------
@@ -47,8 +48,9 @@ local _rec
 private nGStopa:=100
 
 O_AMORT
-O_OS
-O_PROMJ
+
+o_os_sii()
+o_os_sii_promj()
 
 dDatObr:=gDatObr
 cFiltK1:=SPACE(40)
@@ -74,7 +76,7 @@ Box("#OBRACUN AMORTIZACIJE", 7, 60)
     enddo
 BoxC()
 
-select os
+select_os_sii()
 set order to tag "5"  
 //idam+idrj+id
 
@@ -98,15 +100,17 @@ private nUkupno := 0
 
 do while !eof()
     
-    cIdam := idam
+    cIdam := field->idam
     select amort
     hseek cIdAm
-    select os
+    
+    select_os_sii()
     
     ? cLine
     
     ? "Amortizaciona stopa:", cIdAm, amort->naz, "  Stopa:", amort->iznos, "%"
-    if nGStopa<>100
+    
+    if nGStopa <> 100
         
         ?? " ","efektivno ", transform(round(amort->iznos*nGStopa/100,3),"999.999%")
     
@@ -118,13 +122,13 @@ do while !eof()
     nRGr:=recno()
     nOstalo:=0
     
-    do while !eof() .and. idam == cIdAm
+    do while !eof() .and. field->idam == cIdAm
         
         set_global_memvars_from_dbf()
         
         select amort
         hseek _idam
-        select os
+        select_os_sii()
         
         if !empty(_datotp) .and. YEAR(_datotp) < YEAR(dDatObr)    
             // otpisano sredstvo, ne amortizuj
@@ -165,17 +169,17 @@ do while !eof()
             nUkupno+=round(_amp,2)
         endif
     
-        private cId:=_id
+        private cId := _id
         
         // sinhronizuj podatke sql/server
         _rec := get_dbf_global_memvars()
         update_rec_server_and_dbf( ALIAS(), _rec )
     
         // amortizacija promjena
-        select promj
+        select_promj()
         hseek cId
         
-        do while !eof() .and. id == cId .and. datum <= dDatObr
+        do while !eof() .and. field->id == cId .and. field->datum <= dDatObr
                 
             set_global_memvars_from_dbf()
             
@@ -214,16 +218,18 @@ do while !eof()
             skip
         enddo  
 
-        select os
+        select_os_sii()
         skip
 
     enddo
 
     // drugi prolaz
-    if cAGrupe=="D" 
-        select os
+    if cAGrupe == "D"
+ 
+        select_os_sii()
         go nRGr
-        do while !eof() .and. idam==cIdAm
+
+        do while !eof() .and. field->idam == cIdAm
                 
             set_global_memvars_from_dbf()
                 
@@ -275,16 +281,17 @@ do while !eof()
                 
             nUkupno+=round(_amp,2)
             
+            private cId := _id
+            
             // sinhronizuj podatke sql/server
             _rec := get_dbf_global_memvars()
             update_rec_server_and_dbf( ALIAS(), _rec )
             
             // amortizacija promjena
-            private cId:=_id
-            select promj
+            select_promj()
             hseek cId
                 
-            do while !eof() .and. id==cId .and. datum<=dDatObr
+            do while !eof() .and. field->id == cId .and. field->datum <= dDatObr
                 
                 set_global_memvars_from_dbf()
                 
@@ -330,7 +337,7 @@ do while !eof()
                 skip
             enddo 
         
-            select os
+            select_os_sii()
             skip
         enddo
     
@@ -634,8 +641,8 @@ local  cAGrupe:="D",nRec,dDatObr,nMjesOd,nMjesDo
 local nKoef
 
 O_REVAL
-O_OS
-O_PROMJ
+o_os_sii()
+o_os_sii_promj()
 
 dDatObr:=gDatObr
 cFiltK1:=SPACE(40)
@@ -650,7 +657,9 @@ Box("#OBRACUN REVALORIZACIJE",3,60)
  ENDDO
 BoxC()
 
-select os; set order to 5
+select_os_sii()
+set order to tag "5"
+
 if !EMPTY(cFiltK1)
   set filter to &aUsl1
 endif
@@ -681,7 +690,7 @@ do while !eof()
         skip
         loop
   endif
-  select reval; hseek _idrev; select os
+  select reval; hseek _idrev; select_os_sii()
   nRevAm:=0
   nKoef:=izracunaj_os_reval(_datum,iif(!empty(_datotp),min(dDatOBr,_datotp),dDatObr),@nRevAm)     // napuni _revp,_revd
    ? _id,_datum,_idrev,_naz
@@ -696,7 +705,7 @@ do while !eof()
    nURevAm+=nRevAm
   Gather()
   private cId:=_id
-  select promj; hseek cid
+  select_promj(); hseek cid
   do while !eof() .and. id==cid .and. datum<=dDatObr
     Scatter()
     nRevAm:=0
@@ -715,7 +724,7 @@ do while !eof()
     skip
   enddo
 
-  select os
+  select_os_sii()
   skip
 enddo
 ? m

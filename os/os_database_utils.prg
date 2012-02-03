@@ -12,11 +12,87 @@
 #include "os.ch"
 
 
+// -----------------------------------------------------
+// provjerava da li postoji polje u tabelama os/sii
+// -----------------------------------------------------
+function os_postoji_polje( naziv_polja )
+local _ret := .f.
+
+if gOsSii == "O"
+    if os->(fieldpos( naziv_polja )) <> 0
+        _ret := .t.
+    endif
+else
+    if sii->(fieldpos( naziv_polja )) <> 0
+        _ret := .t.
+    endif
+endif
+
+return _ret
+
+
+// ----------------------------------------
+// selektuje potrebnu tabelu
+// ----------------------------------------
+function select_os_sii()
+
+if gOsSii == "O"
+    select os
+else
+    select sii
+endif
+
+return
+
+
+// ----------------------------------------
+// selektuje potrebnu tabelu
+// ----------------------------------------
+function select_promj()
+
+if gOsSii == "O"
+    select promj
+else
+    select sii_promj
+endif
+
+return
+
+// ----------------------------------------
+// otvara potrebnu tabelu
+// ----------------------------------------
+function o_os_sii()
+
+if gOsSii == "O"
+    O_OS
+else
+    O_SII
+endif
+
+return
+
+
+// ----------------------------------------
+// otvara potrebnu tabelu
+// ----------------------------------------
+function o_os_sii_promj()
+
+if gOsSii == "O"
+    O_PROMJ
+else
+    O_SII_PROMJ
+endif
+
+return
+
+
+
 // ------------------------------------------------------
 // ------------------------------------------------------
 function PrenosOs()
 local _t_rec
 local _rec, _r_br
+local _sr_id 
 
 // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
 // otpisana sredstva u protekloj godini
@@ -35,24 +111,24 @@ endif
 
 START PRINT CRET
 
-O_OS
-O_PROMJ
+o_os_sii()
+o_os_sii_promj()
 
 ? "Prolazim kroz bazu OS...."
 
-select os
+select_os_sii()
 go top
 
 do while !eof()
 
+    _sr_id := field->id
+
     _r_br := 0
     skip
+
     _t_rec := recno()
     skip -1
 
-    //Scatter("w")  
-    // za os
-    
     _rec := dbf_get_rec()    
 
     // ispisi id, naz
@@ -69,16 +145,16 @@ do while !eof()
         LOOP
     ENDIF
 
-    select promj
-    hseek os->id
+    select_promj()
+    hseek _sr_id
 
-    do while !eof() .and. field->id == os->id
+    do while !eof() .and. field->id == _sr_id
         _rec["nabvr"] += field->nabvr + field->revd
         _rec["otpvr"] += field->otpvr + field->revp + field->amp
         skip
     enddo
 
-    select os
+    select_os_sii()
 
     _rec["amp"] := 0
     _rec["amd"] := 0
@@ -92,7 +168,7 @@ do while !eof()
 enddo 
 
 // pobrisi sve promjene...
-select promj
+select_promj()
 do while !EOF()
     _rec := dbf_get_rec()
     delete_rec_server_and_dbf( ALIAS(), _rec )
@@ -125,7 +201,7 @@ if !sigmaSif("OSREGEN")
   closeret
 endif
 
-O_OS
+o_os_sii()
 
 // naÐimo sve postojee sezone
 // ---------------------------
@@ -166,7 +242,7 @@ cMP:="9999999.99"
 ? " (1)  ³    (2)   ³            (3)               ³   (4)    ³   (5)    ³    (6)   ³    (7)   ³  (6)-(4) ³  (7)-(5) "
 m:="------ ---------- ------------------------------ ---------- ---------- ---------- ---------- ---------- ----------"
 ? m
-SELECT OS; GO TOP
+select_os_sii(); GO TOP
 
 nRbr:=0
 nT1:=nT2:=nT3:=nT4:=nT5:=nT6:=0
@@ -184,7 +260,7 @@ DO WHILE !EOF()
         lImaP:=.t.
       ENDIF
    ENDIF
-  SELECT OS
+  select_os_sii()
   IF lIma
     // promijeni NABVR i OTPVR
     ++nRBr
@@ -200,7 +276,7 @@ DO WHILE !EOF()
          wOtpVr+=otpvr+revp+amp
          SKIP 1
        ENDDO
-       SELECT OS
+       select_os_sii()
      ENDIF
       nT3+=wNabVr; nT4+=wOtpVr
      nDifNV+=wNabVr; nDifOV+=wOtpVr
@@ -211,7 +287,7 @@ DO WHILE !EOF()
      wRevD:=wRevP:=0
     Gather("w")
   ENDIF
-  SELECT OS
+  select_os_sii()
   GO nTrec
 ENDDO // EOF
 ? m
@@ -241,49 +317,63 @@ RETURN aSezone
 
 
 
+
 // -----------------------------------------
+// unificiraj invent. brojeve
 // -----------------------------------------
 function Unifid()
-// unificiraj invent. brojeve
 local nTrec, nTSRec
 local nIsti
-O_OS
+local _rec
+
+o_os_sii()
+
 set order to tag "1"
+
 do while !eof()
-  cId:=id
-  nIsti:=0
-  do while !eof() .and. id==cid
-    ++nIsti
-    skip
-  enddo
-  if nisti>1  // ima duplih slogova
-    seek cid // prvi u redu
-    nProlaz:=0
-    do while !eof() .and. id==cid
-      skip
-      ++nProlaz
-      nTrec:=recno()   // sljedeci
-      skip -1
-      nTSRec:=recno()
-      cNovi:=""
-      if len(trim(cid))<=8
-        cNovi:=trim(id)+idrj
-      else
-        cNovi:=trim(id)+chr(48+nProlaz)
-      endif
-      seek cnovi
-      if found()
-        msgbeep("vec postoji "+cid)
-      else
-        go nTSRec
-        replace id with cnovi
-      endif
-      go nTrec
+
+    cId := field->id
+    nIsti := 0
+
+    do while !eof() .and. field->id == cId
+        ++ nIsti
+        skip
     enddo
-  endif
+
+    if nIsti > 1  
+        // ima duplih slogova
+        seek cId 
+        // prvi u redu
+        nProlaz:=0
+        do while !eof() .and. field->id == cId
+            skip
+            ++nProlaz
+            nTrec:=recno()   // sljedeci
+            skip -1
+            nTSRec:=recno()
+            cNovi:=""
+            if len(trim(cid))<=8
+                cNovi:=trim(id)+idrj
+            else
+                cNovi:=trim(id)+chr(48+nProlaz)
+            endif
+            seek cnovi
+            if found()
+                msgbeep("vec postoji "+cid)
+            else
+                go nTSRec
+                _rec := dbf_get_rec()
+                _rec["id"] := cNovi
+                update_rec_server_and_dbf( ALIAS(), _rec ) 
+            endif
+            go nTrec
+        enddo
+    endif
 
 enddo
 return
+
+
 
 
 function NovaSredstva()
@@ -294,12 +384,13 @@ if Pitanje(,"Prikazati samo sredstva iz proteklih godina? (D/N)","D")=="D"
     lSamoStara:=.t.
 endif
 
-O_OS
+o_os_sii()
 
 // nadjimo sve postojece sezone
 // ----------------------------
 aSezone := ASezona(KUMPATH)
 cTekSez := goModul:oDatabase:cSezona
+
 FOR i:=LEN(aSezone) TO 1 STEP -1
   IF aSezone[i,1]>cTekSez .or. aSezone[i,1]<"1995" .or.;
      !FILE(KUMPATH+aSezone[i,1]+"\OS.DBF") .or.;
@@ -331,7 +422,8 @@ cMP:="9999999.99"
 
 ? "Prikaz sredstava iz tekuce sezone kojih nema u prethodnoj sezoni"
 ?
-SELECT OS; GO TOP
+select_os_sii()
+GO TOP
 
 nRbr:=0
 nT1:=nT2:=nT3:=nT4:=nT5:=nT6:=0
@@ -349,7 +441,7 @@ DO WHILE !EOF()
      nT1+=os->nabVr
      nT2+=os->otpVr
    ENDIF
-  SELECT OS
+  select_os_sii()
   skip 1
 ENDDO // EOF
 ?
@@ -360,10 +452,11 @@ END PRINT
 RETURN
 
 
+
 function IzbrisanaSredstva()
 // daje listu sredstava kojih nema u novoj sezoni
 
-O_OS
+o_os_sii()
 
 // nadjimo sve postojece sezone
 // ----------------------------
@@ -408,7 +501,7 @@ nT1:=nT2:=nT3:=nT4:=nT5:=nT6:=0
 ? "Inv.broj     Datum     Nab.vr.    Otp.vr.     Amort."
 DO WHILE !EOF()
   cInvBr:=id    // OS->id
-  SELECT OS
+  select_os_sii()
    HSEEK cInvBr
    IF !FOUND()
      SELECT ("OS"+cOldSez)

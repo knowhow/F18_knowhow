@@ -14,9 +14,12 @@
 
 
 static function _o_sif_tables()
+
 O_VALUTE
 O_KONTO
-O_OS
+
+o_os_sii()
+
 O_AMORT
 O_REVAL
 O_RJ
@@ -24,6 +27,7 @@ O_K1
 O_PARTN
 O_SIFK
 O_SIFV
+
 return
 
 
@@ -94,7 +98,7 @@ ImeKol:={ { PADR("Inv.Broj",15),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wId
 
 //          { PADR("DatOtp",8),{|| DatOtp},    "datOtp"     },;
 
-if os->(fieldpos("K1"))<>0
+if os_postoji_polje("K1")
   AADD (ImeKol,{ padc("K1",4 ), {|| k1}, "k1" , {|| .t.}, {|| P_K1( @wK1 ) } })
   AADD (ImeKol,{ padc("K2",2 ), {|| k2}, "k2"   })
   AADD (ImeKol,{ padc("K3",2 ), {|| k3}, "k3"   })
@@ -105,7 +109,7 @@ if os_fld_partn_exist()
   AADD (ImeKol,{ "Dobavljac", {|| idPartner}, "idPartner" , {|| .t.}, {|| P_Firma(@wIdPartner)}   })
 endif
 
-if os->(fieldpos("BrSoba"))<>0
+if os_postoji_polje("brsoba")
   AADD (ImeKol,{ padc("BrSoba",6 ), {|| brsoba}, "brsoba"   })
 endif
 
@@ -119,44 +123,56 @@ return PostojiSifra( _n_area, 1, MAXROWS()-15, MAXCOLS()-15, "Lista stalnih sred
 
 
 
+
 function os_validate_vrijednost(wNabVr, wOtpVr)
 @ m_x+11,m_y+50 say wNabvr-wOtpvr
 return .t.
 
 
 
-function os_sif_key_handler(Ch, lNovi)
+function os_sif_key_handler( Ch, lNovi )
 local _n_area := F_PROMJ
+local _rec
+local _sr_id 
 lNovi := .t.
 
 if gOsSii == "S"
     _n_area := F_SII_PROMJ
 endif
 
+_sr_id := field->id
+
 do case
+
     case (Ch==K_CTRL_T)
+        
         SELECT ( _n_area )
         lUsedPromj:=.t.
+
         IF !USED()
             lUsedPromj:=.f.
-            O_PROMJ
+            o_os_sii_promj()
         ENDIF
-        select promj
-        seek os->id
-        if found()
+
+        select_promj()
+
+        seek _sr_id
+
+        if FOUND()
             Beep(1)
             Msg("Sredstvo se ne moze brisati - prvo izbrisi promjene !")
         else
-            select os
+            select_os_sii()
             if Pitanje(,"Sigurno zelite izbrisati ovo sredstvo ?","N")=="D"
-                delete
+                _rec := dbf_get_rec()
+                delete_rec_server_and_dbf( ALIAS(), _rec )
             endif
         endif
         IF !lUsedPromj
-            select promj
+            select_promj()
             use
         ENDIF
-        select os
+        select_os_sii()
 
         return 7  
         // kao de_refresh, ali se zavrsava izvrsenje f-ja iz ELIB-a
@@ -172,11 +188,13 @@ return DE_CONT
 
 
 function os_promjena_id_zabrana(lNovi)
-if !lNovi .and. wId <> id
+
+if !lNovi .and. wId <> field->id
     Beep(1)
     Msg("Promjenu inventurnog broja ne vrsiti ovdje !")
     return .f.
 endif
+
 return .t.
 
 
@@ -213,21 +231,27 @@ return PostojiSifra(F_REVAL,1,MAXROWS()-15,MAXCOLS()-15,"Lista koeficijenata rev
 
 
 
-static function vpsifra(wid)
-local nrec:=recno(),nRet
-seek wid
-if found() .and. Ch==K_CTRL_N
-  Beep(3)
-  nRet:=.f.
+static function vpsifra( wid )
+local _t_rec := RECNO()
+local _ret
+
+seek wId
+
+if FOUND() .and. Ch == K_CTRL_N
+    Beep(3)
+    _ret := .f.
 else
-  nRet:=.t.
+    _ret := .t.
 endif
-go nrec
-return nRet
+go _t_rec
+return _ret
 
 
 
+// --------------------------------------------------------------
+// provjerava postojanje polja idpartner u os/sii tabelama
+// --------------------------------------------------------------
 function os_fld_partn_exist()
-return (os->(fieldpos("idPartner")<>0))
+return os_postoji_polje("idpartner")
 
 

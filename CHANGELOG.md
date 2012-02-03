@@ -1,3 +1,7 @@
+0.9.46  2012-02-03, vsasa
+
+  -  modul SII spojen sa OS-om [#25358](http://redmine.bring.out.ba/issues/25358)
+
 0.9.45  2012-02-03, vsasa
 
   -  modul OS stavljen u funkciju [#25358](http://redmine.bring.out.ba/issues/25358)

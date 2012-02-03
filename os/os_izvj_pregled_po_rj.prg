@@ -14,13 +14,12 @@
 
 
 function os_pregled_po_rj()
-
 local lPartner
 
 O_RJ
-O_OS
+o_os_sii()
 
-lPartner:=os_fld_partn_exist()
+lPartner := os_fld_partn_exist()
 
 cIdrj:=space(4)
 cON:="N"
@@ -34,166 +33,186 @@ cFiltDob:=SPACE(40)
 cOpis:="N"
 
 Box(,7+IF(lPartner,1,0),77)
- DO WHILE .t.
-  @ m_x+1,m_y+2 SAY "Radna jedinica:" get cidrj valid p_rj(@cIdrj)
-  @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
-  @ m_x+2,m_y+2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
-  @ m_x+3,m_y+2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   get cON pict "@!" valid con $ "ONBG"
-  @ m_x+4,m_y+2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP valid cKolP $ "DN" pict "@!"
-  @ m_x+5,m_y+2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis valid cOpis $ "DN" pict "@!"
+    DO WHILE .t.
+        @ m_x+1,m_y+2 SAY "Radna jedinica:" get cidrj valid p_rj(@cIdrj)
+        @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
+        @ m_x+2,m_y+2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
+        @ m_x+3,m_y+2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   get cON pict "@!" valid con $ "ONBG"
+        @ m_x+4,m_y+2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP valid cKolP $ "DN" pict "@!"
+        @ m_x+5,m_y+2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis valid cOpis $ "DN" pict "@!"
 
-  if fieldpos("brsoba")<>0
-    lBrojSobe:=.t.
-    @ m_x+6,m_y+2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  pict "@!"
-  endif
+        if os_postoji_polje("brsoba")
+            lBrojSobe:=.t.
+            @ m_x+6,m_y+2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  pict "@!"
+        endif
 
-  @ m_x+7,m_y+2 SAY "Filter po grupaciji K1:" GET cFiltK1 pict "@!S20"
+        @ m_x+7,m_y+2 SAY "Filter po grupaciji K1:" GET cFiltK1 pict "@!S20"
 
-  if lPartner
-    @ m_x+8,m_y+2 SAY "Filter po dobavljacima:" GET cFiltDob pict "@!S20"
-  endif
+        if lPartner
+            @ m_x+8,m_y+2 SAY "Filter po dobavljacima:" GET cFiltDob pict "@!S20"
+        endif
 
-  read; ESC_BCR
-  aUsl1:=Parsiraj(cFiltK1,"K1")
-  aUsl2:=Parsiraj(cFiltDob,"idPartner")
-  if aUsl1<>nil .and. aUsl2<>nil
-    exit
-  endif
- ENDDO
+        read
+        ESC_BCR
+        aUsl1:=Parsiraj(cFiltK1,"K1")
+        aUsl2:=Parsiraj(cFiltDob,"idPartner")
+        if aUsl1<>nil .and. aUsl2<>nil
+            exit
+        endif
+    ENDDO
 BoxC()
 
 if lBrojSobe .and. EMPTY(cBrojSobe)
-  lBrojSobe := ( Pitanje(,"Zelite li da bude prikazan broj sobe? (D/N)","N") == "D" )
+    lBrojSobe := ( Pitanje(,"Zelite li da bude prikazan broj sobe? (D/N)","N") == "D" )
 endif
 
-IF ! ( lBrojSobe .and. EMPTY(cBrojSobe) ) .and.;
-   IzFMKIni("Opresa","PopisnaListaPoKontima","N")=="D"
-  lPoKontima:=.t.
-ELSE
-  lPoKontima:=.f.
-ENDIF
-
-lPoAmortStopama:=(IzFmkIni("OsRptPrj","PoAmortStopama","N",PRIVPATH)=="D")
+lPoKontima := .f.
+lPoAmortStopama := (IzFmkIni("OsRptPrj","PoAmortStopama","N",PRIVPATH)=="D")
 
 if cpocinju=="D"
-  cIdRj:=trim(cidrj)
+    cIdRj:=trim(cIdrj)
 endif
 
 start print cret
 
-m:="----- ---------- ----------------------------"+IF(cOpis=="D"," "+REPL("-",LEN(OS->opis)),"")+"  ---- ------- -------------"
+m:="----- ---------- ----------------------------"+IF(cOpis=="D"," "+REPL("-",LEN(field->opis)),"")+"  ---- ------- -------------"
+
 if lPoAmortStopama
-	select os
+	select_os_sii()
 	if cIdRj==""
-		set order to tag "5" // idam+idrj+id
+		set order to tag "5" 
+        // idam+idrj+id
 	else
 		INDEX ON idrj+idam+id TO "TMPOS"
 	endif
 elseif lBrojSobe .and. EMPTY(cBrojSobe)
-	m:="----- ------ ---------- ----------------------------"+IF(cOpis=="D"," "+REPL("-",LEN(OS->opis)),"")+"  ---- ------- -------------"
-	select os
-	set order to  2 //idrj+id+dtos(datum)
+	m:="----- ------ ---------- ----------------------------"+IF(cOpis=="D"," "+REPL("-",LEN(field->opis)),"")+"  ---- ------- -------------"
+	select_os_sii()
+	set order to tag "2" 
+    //idrj+id+dtos(datum)
 	INDEX ON idrj+brsoba+id+dtos(datum) TO "TMPOS"
 elseif lPoKontima
-	select os
+	select_os_sii()
 	INDEX ON idkonto+id TO "TMPOS"
 elseif cIdRj==""
-	select os
-	set order to tag "1" // id+idam+dtos(datum)
+	select_os_sii()
+	set order to tag "1" 
+    // id+idam+dtos(datum)
 else
-	select os
-	set order to  2 //idrj+id+dtos(datum)
+	select_os_sii()
+	set order to tag "2" 
+    //idrj+id+dtos(datum)
 endif
 
 if !EMPTY(cFiltK1) .or. !EMPTY(cFiltDob)
   cFilter:=aUsl1+".and."+aUsl2
-  select os
+  select_os_sii()
   set filter to &cFilter
 endif
 
 ZglPrj()
 
 if !lPoKontima
-  seek cidrj
+    seek cIdrj
 endif
 
-private nrbr:=0
+private nRbr:=0
 cLastKonto:=""
 
-do while !eof() .and. ( idrj=cidrj .or. lPoKontima)
+do while !eof() .and. ( field->idrj = cIdrj .or. lPoKontima)
 
- if lPoKontima .and. !(idrj=cidrj)
-   skip; loop
- endif
-
- if (cON="B" .and. year(gdatobr)<>year(datum))  // nije novonabavljeno
-   skip ; loop                                  // prikazi samo novonabavlj.
- endif
-
- if (cON="G" .and. year(gdatobr)=year(datum))  // iz protekle godine
-   skip; loop                                   // prikazi samo novonabavlj.
- endif
- // sasa 30.01.04, bilo datotp=gdatobr a sada datotp<=gdatobr
- if (!empty(datotp) .and. year(datotp)<=year(gdatobr)) .and. cON $ "NB"
-     // otpisano sredstvo , a zelim prikaz neotpisanih
-     skip ; loop
- endif
- // sasa 30.01.04, 
- if (empty(datotp) .and. year(datotp)<year(gdatobr)) .and. cON=="O"
-     // neotpisano, a zelim prikaz otpisanih
-     skip ; loop
- endif
-
- if !empty(cBrojsobe)
-    if cbrojsobe<>os->brsoba
-       skip; loop
+    if lPoKontima .and. !( field->idrj = cidrj)
+        skip
+        loop
     endif
- endif
 
- if lPoKontima .and. ( nrbr=0 .or. cLastKonto<>idkonto )  // prvo sredstvo,
+    if (cON="B" .and. year(gdatobr)<>year(field->datum))  
+        // nije novonabavljeno
+        skip 
+        loop                                  
+        // prikazi samo novonabavlj.
+    endif
+
+    if (cON="G" .and. year(gdatobr)=year(field->datum))  
+        // iz protekle godine
+        skip
+        loop                                   
+        // prikazi samo novonabavlj.
+    endif
+
+    if (!empty(datotp) .and. year(datotp)<=year(gdatobr)) .and. cON $ "NB"
+        // otpisano sredstvo , a zelim prikaz neotpisanih
+        skip 
+        loop
+    endif
+    
+    if (empty(datotp) .and. year(datotp)<year(gdatobr)) .and. cON=="O"
+        // neotpisano, a zelim prikaz otpisanih
+        skip 
+        loop
+    endif
+
+    if !empty(cBrojsobe)
+        if cbrojsobe <> field->brsoba
+            skip
+            loop
+        endif
+    endif
+
+    if lPoKontima .and. ( nrbr=0 .or. cLastKonto<>idkonto )  // prvo sredstvo,
                                                           // ispiçi zaglavlje
-   if nrbr>0
-     ? m
-     ?
-     // FF; ZglPrj()
-   endif
+        if nrbr>0
+            ? m
+            ?
+        endif
 
-   if prow()>59; FF; ZglPrj(); endif
+        if prow()>59
+            FF
+            ZglPrj()
+        endif
 
-   ?
-   ? "KONTO:",idkonto
-   ? REPL("-",14)
-   nRbr:=0
+        ?
+        ? "KONTO:",idkonto
+        ? REPL("-",14)
+        nRbr:=0
 
- endif
+    endif
 
- if prow()>62; FF; ZglPrj(); endif
+    if prow()>62
+        FF
+        ZglPrj()
+    endif
  
- if lBrojSobe .and. EMPTY(cBrojSobe)
-   ? str(++nrbr,4)+".",brsoba,id,naz
- else
-   ? str(++nrbr,4)+".",id,naz
- endif
- IF cOpis=="D"
-   ?? "",opis
- ENDIF
- ?? "",jmj
+    if lBrojSobe .and. EMPTY(cBrojSobe)
+        ? str(++nrbr,4)+".",brsoba,id,naz
+    else
+        ? str(++nrbr,4)+".",id,naz
+    endif
+ 
+    IF cOpis=="D"
+        ?? "",opis
+    ENDIF
+    ?? "",jmj
 
- if cKolP=="D"
-  @  prow(),pcol()+1 SAY kolicina pict "9999.99"
- else
-  @  prow(),pcol()+1 SAY space(7)
- endif
+    if cKolP=="D"
+        @  prow(),pcol()+1 SAY kolicina pict "9999.99"
+    else
+        @  prow(),pcol()+1 SAY space(7)
+    endif
 
- cLastKonto := idkonto
+    cLastKonto := idkonto
 
- @ prow(),pcol()+1 SAY " ____________"
- skip
+    @ prow(),pcol()+1 SAY " ____________"
+    skip
 enddo
 
 ? m
 
-if prow()>56; FF; ZglPrj(); endif
+if prow()>56
+    FF
+    ZglPrj()
+endif
+
 ?
 ? "     Zaduzeno lice:                                     Clanovi komisije:"
 ?
@@ -205,19 +224,25 @@ if prow()>56; FF; ZglPrj(); endif
 FF
 end print
 
-closeret
+close all
 return
-*}
+
 
 
 
 function ZglPrj()
-*{
-LOCAL nArr:=SELECT()
+local _mod_name := "OS"
+local nArr := SELECT()
+
+if gOsSii == "S"
+    _mod_name := "SII"
+endif
+
 P_10CPI
 ?? UPPER(gTS)+":",gNFirma
 ?
-? "OS: Pregled stalnih "
+? _mod_name + ": Pregled stalnih "
+
 if cON=="N"
    ?? "sredstava u upotrebi"
 elseif cON=="B"
@@ -225,10 +250,16 @@ elseif cON=="B"
 else
    ?? "sredstava otpisanih u toku godine"
 endif
-select rj; seek cidrj; select (nArr)
-?? "     Datum:",gDatObr
 
-? "Radna jedinica:",cidrj,rj->naz
+select rj
+seek cidrj
+
+select (nArr)
+
+?? "     Datum:", gDatObr
+
+? "Radna jedinica:", cIdrj, rj->naz
+
 if cpocinju=="D"
   ?? space(6),"(SVEUKUPNO)"
 endif
@@ -253,11 +284,12 @@ ENDIF
 
 ? m
 if lBrojSobe .and. EMPTY(cBrojSobe)
- ? " Rbr. Br.sobe Inv.broj        Sredstvo               "+IF(cOpis=="D",PADC("Opis",1+LEN(OS->opis)),"")+" jmj  kol  "
+ ? " Rbr. Br.sobe Inv.broj        Sredstvo               "+IF(cOpis=="D",PADC("Opis",1+LEN(field->opis)),"")+" jmj  kol  "
 else
- ? " Rbr.  Inv.broj        Sredstvo              "+IF(cOpis=="D",PADC("Opis",1+LEN(OS->opis)),"")+"  jmj  kol  "
+ ? " Rbr.  Inv.broj        Sredstvo              "+IF(cOpis=="D",PADC("Opis",1+LEN(field->opis)),"")+"  jmj  kol  "
 endif
 ? m
+
 return
-*}
+
 

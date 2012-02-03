@@ -16,10 +16,13 @@
 function os_pregled_revalorizacije()
 local cIdKonto:=qidkonto:=space(7), cidsk:="", ndug:=ndug2:=npot:=npot2:=ndug3:=npot3:=0
 local nCol1:=10
+local _sr_id
+
 O_KONTO
 O_RJ
-O_PROMJ
-O_OS
+
+o_os_sii_promj()
+o_os_sii()
 
 cIdrj:=space(4)
 cPromj:="2"
@@ -55,11 +58,12 @@ os_rpt_default_valute()
 
 start print cret
 private nStr:=0  // strana
-select rj; hseek cidrj; select os
+select rj
+hseek cIdrj
+select_os_sii()
 
 if !EMPTY(cFiltK1)
-  select os
-  set filter to &aUsl1
+    set filter to &aUsl1
 endif
 
 P_10CPI
@@ -73,123 +77,199 @@ P_COND2
 
 private m:="----- ---------- ---- -------- ------------------------------ --- ------"+REPL(" "+REPL("-",LEN(gPicI)),5)
 
+select_os_sii()
 
 if empty(cidrj)
-  select os; set order to 4 //"OSi4","idkonto+idrj+id"
-  seek qidkonto
+    set order to tag "4" 
+    //"OSi4","idkonto+idrj+id"
+    seek qidkonto
 else
-  select os; set order to  3 //"OSi3","idrj+idkonto+id"
-  seek cidrj+qidkonto
+    set order to tag "3" 
+    //"OSi3","idrj+idkonto+id"
+    seek cidrj + qidkonto
 endif
 
 private nrbr:=0
+
 nDug1:=nDug2:=nPot1:=nPot2:=0
+
 os_zagl_reval()
-n1:=n2:=0
+
+n1:=0
+n2:=0
+
 do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
-   cIdSK:=left(idkonto,3)
-   nDug21:=nDug22:=nPot21:=nPot22:=0
-   do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. left(idkonto,3)==cidsk
-      cIdKonto:=idkonto
-      nDug31:=nDug32:=nPot31:=nPot32:=0
-      do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idkonto==cidkonto
-         if prow()>63; FF; os_zagl_reval(); endif
-         if !( (cON=="N" .and. empty(datotp)) .or.;
-               (con=="O" .and. !empty(datotp)) .or.;
-               (con=="B" .and. year(datum)=year(gdatobr)) .or.;
-               (con=="G" .and. year(datum)<year(gdatobr)) .or.;
+    
+    cIdSK:=left(idkonto,3)
+    nDug21:=0
+    nDug22:=0
+    nPot21:=0
+    nPot22:=0
+   
+    do while !eof() .and. (field->idrj = cIdrj .or. empty(cIdrj)) .and. left(field->idkonto,3) == cIdSK
+      
+        cIdKonto := field->idkonto
+        nDug31 := 0
+        nDug32 := 0
+        nPot31 := 0
+        nPot32 := 0
+      
+        do while !eof() .and. ( field->idrj = cIdrj .or. empty(cIdrj)) .and. field->idkonto == cIdkonto
+         
+            if prow()>63
+                FF
+                os_zagl_reval()
+            endif
+         
+            if !( (cON=="N" .and. empty(field->datotp)) .or.;
+               (con=="O" .and. !empty(field->datotp)) .or.;
+               (con=="B" .and. year(field->datum)=year(gdatobr)) .or.;
+               (con=="G" .and. year(field->datum)<year(gdatobr)) .or.;
                 empty(con) )
-           skip 1
-           loop
-         endif
+                skip 1
+                loop
+            endif
+            
+            fIma := .t.
 
-           fIma:=.t.
-           if cpromj=="3"  // ako zelim samo promjene vidi ima li za sr.
-                          // uopste promjena
-               select promj; hseek os->id
-               fIma:=.f.
-               do while !eof() .and. id==os->id .and. datum<=gDatObr
-                 fIma:=.t.
-                skip
-               enddo
-               select os
-           endif
-           if fIma
-              ? str(++nrbr,4)+".",id,idrj,datum,naz,jmj,str(kolicina,6,1)
-              nCol1:=pcol()+1
-           endif
-           if cPromj <> "3"
-             @ prow(),ncol1    SAY nabvr*nBBK pict gpici
-             @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
-             @ prow(),pcol()+1 SAY revd*nBBK pict gpici
-             @ prow(),pcol()+1 SAY revp*nBBK pict gpici
-             @ prow(),pcol()+1 SAY nabvr*nBBK+revd*nBBK-(otpvr+amp+revp)*nBBK pict gpici
-             nDug31+=nabvr; nPot31+=otpvr+amp
-             nDug32+=revd; nPot32+=revp
-           endif
-           if cPromj $ "23"  // prikaz promjena
-              select promj; hseek os->id
-              do while !eof() .and. id==os->id .and. datum<=gDatObr
-                 ? space(5),space(len(id)),space(len(os->idrj)),datum,opis
-                    n1:=0; n2:=amp
-                 @ prow(),ncol1    SAY nabvr*nBBK pict gpici
-                 @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
-                 @ prow(),pcol()+1 SAY revd*nBBK pict gpici
-                 @ prow(),pcol()+1 SAY revp*nBBK pict gpici
-                 @ prow(),pcol()+1 SAY nabvr*nBBK+revd*nBBK-(otpvr+amp+revp)*nBBK pict gpici
-                 nDug31+=nabvr; nPot31+=otpvr+amp
-                 nDug32+=revd; nPot32+=revp
-                skip
-              enddo
-              select os
-           endif
+            if cPromj == "3"  
+                // ako zelim samo promjene vidi ima li za sr.          
+                // uopste promjena
 
-         skip
-      enddo
-      if prow()>62; FF; os_zagl_reval(); endif
-      ? m
-      ? " ukupno ",cidkonto
-      @ prow(),ncol1    SAY ndug31*nBBK pict gpici
-      @ prow(),pcol()+1 SAY npot31*nBBK pict gpici
-      @ prow(),pcol()+1 SAY ndug32*nBBK pict gpici
-      @ prow(),pcol()+1 SAY npot32*nBBK pict gpici
-      @ prow(),pcol()+1 SAY ndug31*nBBK+nDug32*nBBK-npot31*nBBK-npot32*nBBK pict gpici
-      ? m
-      nDug21+=nDug31; nPot21+=nPot31
-      nDug22+=nDug32; nPot22+=nPot32
-      if !empty(qidkonto); exit; endif
+                // id sredstva
+                _sr_id := field->id
+ 
+                select_promj()
+                hseek _sr_id
+
+                fIma:=.f.
+
+                do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
+                    fIma:=.t.
+                    skip
+                enddo
+
+                select_os_sii()
+
+            endif
+
+            if fIma
+                ? str(++nRbr,4)+".", field->id, field->idrj, field->datum, field->naz, field->jmj, str( field->kolicina, 6, 1 )
+                nCol1:=pcol()+1
+            endif
+            
+            if cPromj <> "3"
+                @ prow(),ncol1    SAY field->nabvr * nBBK pict gpici
+                @ prow(),pcol()+1 SAY field->otpvr * nBBK + field->amp * nBBK pict gpici
+                @ prow(),pcol()+1 SAY field->revd * nBBK pict gpici
+                @ prow(),pcol()+1 SAY field->revp * nBBK pict gpici
+                @ prow(),pcol()+1 SAY field->nabvr * nBBK + field->revd * nBBK - ( field->otpvr + field->amp + field->revp )*nBBK pict gpici
+                nDug31+=nabvr
+                nPot31+=otpvr+amp
+                nDug32+=revd
+                nPot32+=revp
+            endif
+           
+            if cPromj $ "23"  
+                // prikaz promjena
+                
+                _sr_id := field->id
+                _sr_id_rj := field->idrj
+
+                select_promj()
+                hseek os->id
+
+                do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
+                    ? space(5),space(len( _sr_id )), space(len( _sr_id_rj )), field->datum, field->opis
+                    n1 := 0
+                    n2 := field->amp
+                    @ prow(),ncol1    SAY nabvr*nBBK pict gpici
+                    @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
+                    @ prow(),pcol()+1 SAY revd*nBBK pict gpici
+                    @ prow(),pcol()+1 SAY revp*nBBK pict gpici
+                    @ prow(),pcol()+1 SAY nabvr*nBBK+revd*nBBK-(otpvr+amp+revp)*nBBK pict gpici
+                    nDug31+=nabvr
+                    nPot31+=otpvr+amp
+                    nDug32+=revd
+                    nPot32+=revp
+                    skip
+                enddo
+                select_os_sii()
+            endif
+
+            skip
+        enddo
+        
+        if prow()>62
+            FF
+            os_zagl_reval()
+        endif
+        ? m
+        ? " ukupno ", cIdkonto
+        @ prow(),ncol1    SAY ndug31*nBBK pict gpici
+        @ prow(),pcol()+1 SAY npot31*nBBK pict gpici
+        @ prow(),pcol()+1 SAY ndug32*nBBK pict gpici
+        @ prow(),pcol()+1 SAY npot32*nBBK pict gpici
+        @ prow(),pcol()+1 SAY ndug31*nBBK+nDug32*nBBK-npot31*nBBK-npot32*nBBK pict gpici
+        ? m
+        nDug21+=nDug31
+        nPot21+=nPot31
+        nDug22+=nDug32
+        nPot22+=nPot32
+        if !empty(qidkonto)
+            exit
+        endif
+
     enddo
-    if !empty(qidkonto); exit; endif
-    if prow()>62; FF; os_zagl_reval(); endif
+
+    if !empty(qidkonto)
+        exit
+    endif
+    
+    if prow()>62
+        FF
+        os_zagl_reval()
+    endif
+    
     ? m
-    ? " UKUPNO ",cidsk
+    ? " UKUPNO ", cIdsk
     @ prow(),ncol1    SAY ndug21*nBBK pict gpici
     @ prow(),pcol()+1 SAY npot21*nBBK pict gpici
     @ prow(),pcol()+1 SAY ndug22*nBBK pict gpici
     @ prow(),pcol()+1 SAY npot22*nBBK pict gpici
     @ prow(),pcol()+1 SAY ndug21*nBBK+nDug22*nBBK-npot21*nBBK-npot22*nBBK pict gpici
     ? m
-    nDug1+=nDug21; nPot1+=nPot21
-    nDug2+=nDug22; nPot2+=nPot22
+    nDug1+=nDug21
+    nPot1+=nPot21
+    nDug2+=nDug22
+    nPot2+=nPot22
+
 enddo
+
 if empty(qidkonto)
-if prow()>60; FF; os_zagl_reval(); endif
-?
-? m
-? " U K U P N O :"
-@ prow(),ncol1    SAY ndug1*nBBK pict gpici
-@ prow(),pcol()+1 SAY npot1*nBBK pict gpici
-@ prow(),pcol()+1 SAY ndug2*nBBK pict gpici
-@ prow(),pcol()+1 SAY npot2*nBBK pict gpici
-@ prow(),pcol()+1 SAY ndug1*nBBK+nDug2*nBBK-npot1*nBBK-npot2*nBBK pict gpici
-? m
+    if prow()>60
+        FF
+        os_zagl_reval()
+    endif
+    ?
+    ? m
+    ? " U K U P N O :"
+    @ prow(),ncol1    SAY ndug1*nBBK pict gpici
+    @ prow(),pcol()+1 SAY npot1*nBBK pict gpici
+    @ prow(),pcol()+1 SAY ndug2*nBBK pict gpici
+    @ prow(),pcol()+1 SAY npot2*nBBK pict gpici
+    @ prow(),pcol()+1 SAY ndug1*nBBK+nDug2*nBBK-npot1*nBBK-npot2*nBBK pict gpici
+    ? m
 endif
+
 ?
 ? "Napomena: Kolona 'Otp. vrijednost' prikazuje otpisanu vrijednost sredstva sa uracunatom amortizacijom za ovu godinu"
 FF
 end print
 
-closeret
+close all
+return
+
 
 function os_zagl_reval()
 ?
@@ -210,4 +290,8 @@ endif
 ? m
 ? " Rbr.  Inv.broj   RJ    Datum    Sredstvo                     jmj  kol  "+" "+PADC("NabVr",LEN(gPicI))+" "+PADC("OtpVr",LEN(gPicI))+" "+PADC("Rev.Dug.",LEN(gPicI))+" "+PADC("Rev.Pot.",LEN(gPicI))+" "+PADC("SadVr",LEN(gPicI))
 ? m
+
+return
+
+
 

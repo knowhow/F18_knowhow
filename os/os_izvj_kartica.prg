@@ -16,14 +16,14 @@
 function os_rpt_default_valute()
 local nArr:=SELECT()
 if (gDrugaVal=="D" .and. cTip==ValDomaca())
-	Box(,5,70)
-		@ m_x+2, m_y+2 SAY "Pomocna valuta      " GET cBBV pict "@!" valid ImaUSifVal(cBBV)
-		@ m_x+3, m_y+2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK:=OmjerVal(cBBV,cTip),.t.} PICT "999999999.999999999"
-		read
-	BoxC()
+    Box(,5,70)
+        @ m_x+2, m_y+2 SAY "Pomocna valuta      " GET cBBV pict "@!" valid ImaUSifVal(cBBV)
+        @ m_x+3, m_y+2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK:=OmjerVal(cBBV,cTip),.t.} PICT "999999999.999999999"
+        read
+    BoxC()
 else
-	cBBV:=cTip
-	nBBK:=1
+    cBBV:=cTip
+    nBBK:=1
 endif
 select (nArr)
 return
@@ -37,8 +37,10 @@ return ( IF( gDrugaVal=="D" , " VALUTA:'"+TRIM(cBBV)+"'" , "" ) )
 // -------------------------------------------
 // -------------------------------------------
 function os_kartica_sredstva()
-  O_PROMJ
-  O_OS
+  
+o_os_sii_promj()
+o_os_sii()
+
   cId:=SPACE(LEN(id))
 
   cPicSif:=IF(gPicSif="V","@!","")
@@ -81,7 +83,7 @@ function os_kartica_sredstva()
     SET ORDER TO TAG "1"
   NEXT
 
-  SELECT OS
+  select_os_sii()
   IF EMPTY(cId)
     // sve kartice
     GO TOP
@@ -146,7 +148,7 @@ function os_kartica_sredstva()
         NEXT
       ENDIF
     NEXT
-    SELECT OS
+    select_os_sii()
 
     IF LEN(aPom)>0
       ASORT(aPom,,,{|x,y| x[1]<y[1]})
@@ -221,10 +223,10 @@ static function ASezona(cPath)
 local aSezone
 aSezone:=DIRECTORY(cPath+"*.","DV")
 for i:=LEN(aSezone) to 1 step -1
-	if (aSezone[i,1]=="." .or. aSezone[i,1]=="..")
-		ADEL(aSezone,i)
-		ASIZE(aSezone,LEN(aSezone)-1)
-	endif
+    if (aSezone[i,1]=="." .or. aSezone[i,1]=="..")
+        ADEL(aSezone,i)
+        ASIZE(aSezone,LEN(aSezone)-1)
+    endif
 next
 return aSezone
 *}

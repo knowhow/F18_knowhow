@@ -14,13 +14,21 @@
 
 
 function os_amortizacija_po_stopama()
+local _sr_id, _sr_id_rj, _sr_id_am, _sr_dat_otp, _sr_datum
 local cIdAmort:=space(8), cidsk:="", ndug:=ndug2:=npot:=npot2:=ndug3:=npot3:=0
 local nCol1:=10, qIdAm:=SPACE(8)
 local lExpRpt := .f.
+local _mod_name := "OS"
+
+if gOsSii == "S"
+    _mod_name := "SII"
+endif
+
 O_AMORT
 O_RJ
-O_PROMJ
-O_OS
+
+o_os_sii_promj()
+o_os_sii()
 
 cIdrj:=space(4)
 cPromj:="2"
@@ -58,15 +66,16 @@ BoxC()
 lExpRpt := (cExpDbf == "D")
 
 if lExpRpt
-	aDbfFields := get_exp_fields()
-	t_exp_create( aDbfFields )
-	cLaunch := exp_report()
+    aDbfFields := get_exp_fields()
+    t_exp_create( aDbfFields )
+    cLaunch := exp_report()
 endif
 
 O_AMORT
 O_RJ
-O_PROMJ
-O_OS
+
+o_os_sii_promj()
+o_os_sii()
 
 if empty(qidAm); qidAm:=""; endif
 if empty(cIdrj); cidrj:=""; endif
@@ -76,12 +85,12 @@ if cpocinju=="D"
 endif
 
 if empty(cidrj)
-  select os
+  select_os_sii()
   cSort1:="idam+idrj+id"
   INDEX ON &cSort1 TO "TMPOS" FOR &aUsl1
   seek qidAm
 else
-  select os
+  select_os_sii()
   cSort1:="idrj+idam+id"
   INDEX ON &cSort1 TO "TMPOS" FOR &aUsl1
   seek cidrj+qidAm
@@ -95,174 +104,211 @@ os_rpt_default_valute()
 
 start print cret
 private nStr:=0  // strana
-select rj; hseek cidrj; select os
+
+select rj
+hseek cidrj
+
+select_os_sii()
+
 P_10CPI
 ? gTS+":",gnFirma
+
 if !empty(cidrj)
  ? "Radna jedinica:",cidrj,rj->naz
 endif
-? "OS: Pregled obracuna amortizacije po grupama amortizacionih stopa"
+
+? _mod_name + ": Pregled obracuna amortizacije po grupama amortizacionih stopa"
 ?? "",PrikazVal(),"    Datum:",gDatObr
-if !EMPTY(cFiltK1); ? "Filter grupacija K1 pravljen po uslovu: '"+TRIM(cFiltK1)+"'"; endif
+
+if !EMPTY(cFiltK1)
+    ? "Filter grupacija K1 pravljen po uslovu: '"+TRIM(cFiltK1)+"'"
+endif
+
 P_COND2
 
 private m:="----- ---------- ---- -------- ------------------------------ --- ------"+REPL(" "+REPL("-",LEN(gPicI)),5)
 
 private nrbr:=0
+
 nDug:=nPot1:=nPot2:=0
+
 os_zagl_amort()
-n1:=n2:=0
+
+n1:=0
+n2:=0
+
 do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
-   cIdAm:=idam
-   nDug2:=nPot21:=nPot22:=0
-   do while !eof() .and. (idrj=cidrj .or. empty(cidrj)) .and. idam==cidam
-      cIdAmort:=idam
-      nDug3:=nPot31:=nPot32:=0
-      do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idam==cidamort
-         if prow()>63; FF; os_zagl_amort(); endif
-         if !( (cON=="N" .and. empty(datotp)) .or.;
-               (con=="O" .and. !empty(datotp)) .or.;
-               (con=="B" .and. year(datum)=year(gdatobr)) .or.;
-               (con=="G" .and. year(datum)<year(gdatobr)) .or.;
-                empty(con) )
-           skip 1
-           loop
-         endif
+    cIdAm:=idam
+    nDug2:=nPot21:=nPot22:=0
+    do while !eof() .and. (idrj=cidrj .or. empty(cidrj)) .and. idam==cidam
+        cIdAmort:=idam
+        nDug3:=nPot31:=nPot32:=0
+        do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idam==cidamort
+            if prow()>63; FF; os_zagl_amort(); endif
+                if !( (cON=="N" .and. empty(datotp)) .or.;
+                    (con=="O" .and. !empty(datotp)) .or.;
+                    (con=="B" .and. year(datum)=year(gdatobr)) .or.;
+                    (con=="G" .and. year(datum)<year(gdatobr)) .or.;
+                        empty(con) )
+                    skip 1
+                    loop
+                endif
 
-           fIma:=.t.
-           if cpromj=="3"  // ako zelim samo promjene vidi ima li za sr.
-                          // uopste promjena
-               select promj; hseek os->id
-               fIma:=.f.
-               do while !eof() .and. id==os->id .and. datum<=gDatObr
-                 fIma:=.t.
-                skip
-               enddo
-               select os
-           endif
+                fIma:=.t.
+                if cpromj=="3"  
+                    // ako zelim samo promjene vidi ima li za sr.
+                    // uopste promjena
+                    _sr_id := field->id
+                    select_promj()
+                    hseek _sr_id
+                    fIma:=.f.
+                    do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
+                        fIma:=.t.
+                        skip
+                    enddo
+                    select_os_sii()
+                endif
 
 
-           // utvrÐivanje da li sredstvo ima sadaçnju vrijednost
-           // --------------------------------------------------
-           lImaSadVr:=.f.
-           if cPromj <> "3"
-             if nabvr-otpvr-amp>0
-               lImaSadVr:=.t.
-             endif
-           endif
-           if cPromj $ "23"  // prikaz promjena
-              select promj; hseek os->id
-              do while !eof() .and. id==os->id .and. datum<=gDatObr
-                 n1:=0; n2:=amp
-                 if nabvr-otpvr-amp>0
-                   lImaSadVr:=.t.
-                 endif
-                skip
-              enddo
-              select os
-           endif
+                // utvrÐivanje da li sredstvo ima sadaçnju vrijednost
+                // --------------------------------------------------
+                lImaSadVr:=.f.
+                if cPromj <> "3"
+                    if nabvr-otpvr-amp>0
+                        lImaSadVr:=.t.
+                    endif
+                endif
+                if cPromj $ "23"  
+                    // prikaz promjena
+                    _sr_id := field->id
+                    select_promj()
+                    hseek _sr_id
+                    do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
+                        n1 := 0
+                        n2 := amp
+                        if nabvr-otpvr-amp>0
+                            lImaSadVr:=.t.
+                        endif
+                        skip
+                    enddo
+                    select_os_sii()
+                endif
 
-           // ispis stavki
-           // ------------
-           if cFiltSadVr=="1" .and. !(lImaSadVr) .or.;
-              cFiltSadVr=="2" .and. lImaSadVr
-             skip; loop
-           else
-             if fIma
-                ? str(++nrbr,4)+".",id,idrj,datum,naz,jmj,str(kolicina,6,1)
-                nCol1:=pcol()+1
-             endif
-             if cPromj <> "3"
-               @ prow(),ncol1    SAY nabvr*nBBK pict gpici
-               @ prow(),pcol()+1 SAY otpvr*nBBK pict gpici
-               @ prow(),pcol()+1 SAY amp*nBBK pict gpici
-               @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
-               @ prow(),pcol()+1 SAY nabvr*nBBK-otpvr*nBBK-amp*nBBK pict gpici
-               nDug3+=nabvr; nPot31+=otpvr
-               nPot32+=amp
+                // ispis stavki
+                // ------------
+                if cFiltSadVr=="1" .and. !(lImaSadVr) .or.;
+                    cFiltSadVr=="2" .and. lImaSadVr
+                    skip
+                    loop
+                else
+                    if fIma
+                        ? str(++nrbr,4)+".",id,idrj,datum,naz,jmj,str(kolicina,6,1)
+                        nCol1:=pcol()+1
+                    endif
+                    if cPromj <> "3"
+                        @ prow(),ncol1    SAY nabvr*nBBK pict gpici
+                        @ prow(),pcol()+1 SAY otpvr*nBBK pict gpici
+                        @ prow(),pcol()+1 SAY amp*nBBK pict gpici
+                        @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
+                        @ prow(),pcol()+1 SAY nabvr*nBBK-otpvr*nBBK-amp*nBBK pict gpici
+                        nDug3+=nabvr; nPot31+=otpvr
+                        nPot32+=amp
 
-	       nArr := SELECT()
+                        _sr_id_am := field->idam
+                        nArr := SELECT()
                 
-	       select amort
-	       seek os->idam
-	       nAmIznos := amort->iznos
-               select (nArr)
+                        select amort
+                        seek _sr_id_am
+                        nAmIznos := amort->iznos
+                        
+                        select (nArr)
 
-	       
-             endif
-             if cPromj $ "23"  // prikaz promjena
-                select promj; hseek os->id
-                do while !eof() .and. id==os->id .and. datum<=gDatObr
-                   ? space(5),space(len(id)),space(len(os->idrj)),datum,opis
-                      n1:=0; n2:=amp
-                   @ prow(),ncol1    SAY nabvr*nBBK pict gpici
-                   @ prow(),pcol()+1 SAY otpvr*nBBK pict gpici
-                   @ prow(),pcol()+1 SAY amp*nBBK pict gpici
-                   @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
-                   @ prow(),pcol()+1 SAY nabvr*nBBK-amp*nBBK-otpvr*nBBK pict gpici
-                   nDug3+=nabvr; nPot31+=otpvr
-                   nPot32+=amp
-                  skip
-                enddo
-                select os
-             endif
+                    endif
+                    
+                    if cPromj $ "23"  
+                        // prikaz promjena
+                        _sr_id := field->id
+                        _sr_id_rj := field->id_rj
+                        select_promj()  
+                        hseek _sr_id
+                        do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
+                            ? space(5),space(len(id)),space(len( _sr_id_rj )),datum,opis
+                            n1:=0; n2:=amp
+                            @ prow(),ncol1    SAY nabvr*nBBK pict gpici
+                            @ prow(),pcol()+1 SAY otpvr*nBBK pict gpici
+                            @ prow(),pcol()+1 SAY amp*nBBK pict gpici
+                            @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
+                            @ prow(),pcol()+1 SAY nabvr*nBBK-amp*nBBK-otpvr*nBBK pict gpici
+                            nDug3+=nabvr; nPot31+=otpvr
+                            nPot32+=amp
+                            skip
+                        enddo
+                        select_os_sii()
+                    endif
 
-             if lExpRpt		
-	         fill_rpt_exp( id, naz, datum, datotp, ;
-			idkonto, kolicina, jmj, nAmIznos, nabvr, otpvr, amp )
-             endif
-	     
-           endif
+                    if lExpRpt     
+                        fill_rpt_exp( id, naz, datum, datotp, ;
+                            idkonto, kolicina, jmj, nAmIznos, nabvr, otpvr, amp )
+                    endif
+         
+                endif
 
+                skip
 
-         skip
-      enddo
-      if prow()>62; FF; os_zagl_amort(); endif
-      ? m
-      ? " ukupno ",cidamort
-      @ prow(),ncol1    SAY ndug3*nBBK pict gpici
-      @ prow(),pcol()+1 SAY npot31*nBBK pict gpici
-      @ prow(),pcol()+1 SAY npot32*nBBK pict gpici
-      @ prow(),pcol()+1 SAY npot31*nBBK+npot32*nBBK pict gpici
-      @ prow(),pcol()+1 SAY ndug3*nBBK-npot31*nBBK-npot32*nBBK pict gpici
-      ? m
-      nDug2+=nDug3; nPot21+=nPot31; nPot22+=nPot32
-      if !empty(qidAm); exit; endif
-    enddo
-    if !empty(qidAm); exit; endif
-    // if prow()>62; FF; os_zagl_amort(); endif
-    // ? m
-    // ? " UKUPNO ",cidam
-    // @ prow(),ncol1    SAY ndug2 pict gpici
-    // @ prow(),pcol()+1 SAY npot21 pict gpici
-    // @ prow(),pcol()+1 SAY npot22 pict gpici
-    // @ prow(),pcol()+1 SAY npot21+npot22 pict gpici
-    // @ prow(),pcol()+1 SAY ndug2-npot21-npot22 pict gpici
-    // ? m
-    nDug+=nDug2; nPot1+=nPot21; nPot2+=nPot22
+            enddo
+            
+            if prow()>62
+                FF
+                os_zagl_amort()
+            endif
+            
+            ? m
+            ? " ukupno ",cidamort
+            @ prow(),ncol1    SAY ndug3*nBBK pict gpici
+            @ prow(),pcol()+1 SAY npot31*nBBK pict gpici
+            @ prow(),pcol()+1 SAY npot32*nBBK pict gpici
+            @ prow(),pcol()+1 SAY npot31*nBBK+npot32*nBBK pict gpici
+            @ prow(),pcol()+1 SAY ndug3*nBBK-npot31*nBBK-npot32*nBBK pict gpici
+            ? m
+            nDug2+=nDug3; nPot21+=nPot31; nPot22+=nPot32
+            if !empty(qidAm)
+                exit
+            endif
+
+        enddo
+        
+        if !empty(qidAm)
+            exit
+        endif
+
+        nDug+=nDug2; nPot1+=nPot21; nPot2+=nPot22
+
 enddo
+
 if empty(qidAm)
-if prow()>60; FF; os_zagl_amort(); endif
-?
-? m
-? " U K U P N O :"
-@ prow(),ncol1    SAY ndug*nBBK pict gpici
-@ prow(),pcol()+1 SAY npot1*nBBK pict gpici
-@ prow(),pcol()+1 SAY npot2*nBBK pict gpici
-@ prow(),pcol()+1 SAY npot1*nBBK+npot2*nBBK pict gpici
-@ prow(),pcol()+1 SAY ndug*nBBK-npot1*nBBK-npot2*nBBK pict gpici
-? m
+    if prow()>60
+        FF
+        os_zagl_amort()
+    endif
+    ?
+    ? m
+    ? " U K U P N O :"
+    @ prow(),ncol1    SAY ndug*nBBK pict gpici
+    @ prow(),pcol()+1 SAY npot1*nBBK pict gpici
+    @ prow(),pcol()+1 SAY npot2*nBBK pict gpici
+    @ prow(),pcol()+1 SAY npot1*nBBK+npot2*nBBK pict gpici
+    @ prow(),pcol()+1 SAY ndug*nBBK-npot1*nBBK-npot2*nBBK pict gpici
+    ? m
 endif
 
 FF
 end print
 
 if lExpRpt
-	tbl_export( cLaunch )
+    tbl_export( cLaunch )
 endif
 
-
-closeret
+close all
 return
 
 
@@ -292,7 +338,7 @@ return aDBF
 // filuje tabelu R_EXP
 // -------------------------------------------
 static function fill_rpt_exp( cId, cNaz, dDatum, dDatOtp, ;
-			cIdKto, nKol, cJmj, nStAm, nNab, nOtp, nAmp )
+            cIdKto, nKol, cJmj, nStAm, nNab, nOtp, nAmp )
 
 local nArr
 nArr := SELECT()

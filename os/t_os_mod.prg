@@ -57,6 +57,7 @@ ELSE
 ENDIF
 
 os_set_datum_obrade()
+set_os_info()
 
 SETKEY(K_SH_F1,{|| Calc()})
 

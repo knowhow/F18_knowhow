@@ -25,17 +25,16 @@ public gDebug := 7
 f18_init_app()
 
 // menu opcije...
-AADD( menuop, " 1) FIN   # finansijsko poslovanje" )
+AADD( menuop, " 1) FIN   # finansijsko poslovanje                 " )
 AADD( menuop, " 2) KALK  # robno-materijalno poslovanje")
 AADD( menuop, " 3) FAKT  # fakturisanje")
 AADD( menuop, " 4) ePDV  # elektronska evidencija PDV-a")
 AADD( menuop, " 5) LD    # obracun plata")
 AADD( menuop, " 6) RNAL  # radni nalozi")
-AADD( menuop, " 7) OS    # osnovna sredstva")
-AADD( menuop, " 8) SII   # sitan inventar")
-AADD( menuop, " 9) POS   # maloprodajna kasa")
-AADD( menuop, "10) MAT   # materijalno")
-AADD( menuop, "11) VIRM  # virmani")
+AADD( menuop, " 7) OS/SII# osnovna sredstva i sitan inventar")
+AADD( menuop, " 8) POS   # maloprodajna kasa")
+AADD( menuop, " 9) MAT   # materijalno")
+AADD( menuop, "10) VIRM  # virmani")
 AADD( menuop, "--------------------------")
 AADD( menuop, " P) Parametri aplikacije")
 AADD( menuop, " R) ReLogin")
@@ -65,20 +64,18 @@ do while .t.
 		case mnu_choice == 7
 			MainOs(my_user(), "dummy", p3, p4, p5, p6, p7)
 		case mnu_choice == 8
-			//MainSii(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 9
 			MainPos(my_user(), "dummy", p3, p4, p5, p6, p7)
- 		case mnu_choice == 10
+ 		case mnu_choice == 9
 			MainMat(my_user(), "dummy", p3, p4, p5, p6, p7)
-       	case mnu_choice == 11
+       	case mnu_choice == 10
 			MainVirm(my_user(), "dummy", p3, p4, p5, p6, p7)
-        case mnu_choice == 13
+        case mnu_choice == 12
             f18_app_parameters()
-        case mnu_choice == 14
+        case mnu_choice == 13
             relogin()
-	 	case mnu_choice == 15
+	 	case mnu_choice == 14
             view_log()
-	 	case mnu_choice == 16
+	 	case mnu_choice == 15
             full_table_synchro()
 	endcase
  	loop

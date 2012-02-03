@@ -43,6 +43,19 @@ ENDIF
 return
 
 
+// -----------------------------------------
+// ispisuje info na glavnom ekranu...
+// -----------------------------------------
+function set_os_info()
+local _mod_name := PADC( "O S N O V N A    S R E D S T V A", MAXCOLS() ) 
+if gOsSii == "S"
+    _mod_name := PADC( "S I T A N    I N V E N T A R", MAXCOLS() )
+endif
+
+@ MAXROWS() - 2, 1 SAY _mod_name COLOR "I"
+
+return
+
 // -----------------------------------
 // parametri
 // -----------------------------------

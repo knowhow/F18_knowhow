@@ -47,55 +47,104 @@ return
 // parametri
 // -----------------------------------
 function os_parametri()
+local _dat_obr := gDatObr
+local _pic_iznos := gPicI
+local _metoda := gMetodObr
+local _id_unikat := gIBJ
+local _druga_valuta := gDrugaVal
+local _varijanta := gVObracun
+local _obr_pocetak := gVarDio
+local _obr_pocetak_datum := gDatDio
+
+_dat_obr := fetch_metric( "os_datum_obrade", my_user(), _dat_obr )
+_pic_iznos := fetch_metric( "os_prikaz_iznosa", nil, _pic_iznos )
+_metoda := fetch_metric( "os_metoda_obracuna", nil, _metoda )
+_id_unikat := fetch_metric( "os_id_broj_je_unikatan", nil, _id_unikat )
+_druga_valuta := fetch_metric( "os_prikaz_u_dvije_valute", nil, _druga_valuta )
+_varijanta := fetch_metric( "os_varijanta_obracuna", nil, _varijanta )
+_obr_pocetak := fetch_metric( "os_pocetak_obracuna", nil, _obr_pocetak )
+_obr_pocetak_datum := fetch_metric( "os_pocetak_obracuna_datum", nil, _obr_pocetak_datum )
+
 
 O_PARAMS
-private cSection:="1",cHistory:=" "; aHistory:={}
-gPicI:=PADR(gPicI,15)
+private cSection := "1"
+private cHistory := " "
+private aHistory:={}
+
+_pic_iznos := PADR( _pic_iznos, 15 )
 
 Box(,20,70)
- set cursor on
- @ m_x+1,m_y+2 SAY "Firma" GET gFirma
- @ m_x+1,col()+2 SAY "Naziv:" get gNFirma
- @ m_x+1,col()+2 SAY "TIP SUBJ.:" get gTS
 
- @ m_x+3,m_y+2 SAY "Radna jedinica" GET gRJ
- @ m_x+4,m_y+2 SAY "Datum obrade  " GET gDatObr
+    set cursor on
 
- @ m_x+5,m_y+2 SAY "Prikaz iznosa " GET gPicI
+    @ m_x+1,m_y+2 SAY "Firma" GET gFirma
+    @ m_x+1,col()+2 SAY "Naziv:" get gNFirma
+    @ m_x+1,col()+2 SAY "TIP SUBJ.:" get gTS
 
- @ m_x+7,m_y+2 SAY "Inv. broj je unikatan(jedinstven) D/N" GET gIBJ valid gIBJ $ "DN" pict "@!"
+    @ m_x+3,m_y+2 SAY "Radna jedinica" GET gRJ
 
- @ m_x+9,m_y+2 SAY "Izvjestaji mogu i u drugoj valuti ? (D/N)" GET gDrugaVal valid gDrugaVal $ "DN" pict "@!"
+    @ m_x+4,m_y+2 SAY "Datum obrade  " GET _dat_obr
+
+    @ m_x+5,m_y+2 SAY "Prikaz iznosa " GET _pic_iznos
+
+    @ m_x+7,m_y+2 SAY "Inv. broj je unikatan(jedinstven) D/N" GET _id_unikat valid _id_unikat $ "DN" pict "@!"
+
+    @ m_x+9,m_y+2 SAY "Izvjestaji mogu i u drugoj valuti ? (D/N)" GET _druga_valuta valid _druga_valuta $ "DN" pict "@!"
  
- @ m_x+11,m_y+2 SAY "Obracun pocinje od (1) odmah / (2) od 1.u narednom mjesecu" GET gMetodObr valid gMetodObr $ "12"
+    @ m_x+11,m_y+2 SAY "Obracun pocinje od (1) odmah / (2) od 1.u narednom mjesecu" GET _metoda valid _metoda $ "12"
 
- @ m_x+13,m_y+2 SAY "Novi korisnicki interfejs D/N" GET gNW valid gNW $ "DN" pict "@!"
- @ m_x+15,m_y+2 SAY "Varijanta 1 - sredstvo rashodovano npr 10.05, "
- @ m_x+16,m_y+2 SAY "              obracun se NE vrsi za 05 mjesec"
- @ m_x+17,m_y+2 SAY "Varijanta 2 - obracun se vrsi za 05. mjesec  " GET gVObracun  valid gVObracun $ "12" pict "@!"
- @ m_x+19,m_y+2 SAY "Obracun pocinje od datuma razlicitog od 01.01. tekuce godine (D/N)" GET gVarDio valid gVarDio $ "DN" pict "@!"
- @ m_x+20,m_y+2 SAY "Obracun pocinje od datuma" GET gDatDio WHEN gVarDio=="D"
- read
- gPicI:=ALLTRIM(gPicI)
+    @ m_x+15,m_y+2 SAY "Varijanta 1 - sredstvo rashodovano npr 10.05, "
+    @ m_x+16,m_y+2 SAY "              obracun se NE vrsi za 05 mjesec"
+    @ m_x+17,m_y+2 SAY "Varijanta 2 - obracun se vrsi za 05. mjesec  " GET _varijanta  valid _varijanta $ "12" pict "@!"
+    @ m_x+19,m_y+2 SAY "Obracun pocinje od datuma razlicitog od 01.01. tekuce godine (D/N)" GET _obr_pocetak valid _obr_pocetak $ "DN" pict "@!"
+    @ m_x+20,m_y+2 SAY "Obracun pocinje od datuma" GET _obr_pocetak_datum WHEN _obr_pocetak == "D"
+
+    read
+
+    _pic_iznos := ALLTRIM( _pic_iznos )
+
 BoxC()
 
-if lastkey()<>K_ESC
- WPar("ff",gFirma)
- WPar("ts",gTS)
- Wpar("fn",gNFirma)
- Wpar("ib",gIBJ)
- Wpar("dv",gDrugaVal)
- Wpar("nw",gNW)
- Wpar("rj",gRJ)
- Wpar("do",gDatObr)
- Wpar("mo",gMetodObr)
- Wpar("pi",gPicI)
- Wpar("vd",gVarDio)
- Wpar("dd",gDatDio)
- select params
- use
+if lastkey() <> K_ESC
+
+    WPar("ff",gFirma)
+    WPar("ts",gTS)
+    Wpar("fn",gNFirma)
+    Wpar("rj",gRJ)
+   
+    select params
+    use
+    
+    // set sql/db parametri
+
+    set_metric( "os_datum_obrade", my_user(), _dat_obr )
+    gDatObr := _dat_obr
+
+    set_metric( "os_prikaz_iznosa", nil, _pic_iznos )
+    gPicI := _pic_iznos
+
+    set_metric( "os_metoda_obracuna", nil, _metoda )
+    gMetodObr := _metoda
+
+    set_metric( "os_id_broj_je_unikatan", nil, _id_unikat )
+    gIBJ := _id_unikat
+
+    set_metric( "os_prikaz_u_dvije_valute", nil, _druga_valuta )
+    gDrugaVal := _druga_valuta
+
+    set_metric( "os_varijanta_obracuna", nil, _varijanta )
+    gVObracun := _varijanta
+
+    set_metric( "os_pocetak_obracuna", nil, _obr_pocetak )
+    gVarDio := _obr_pocetak
+
+    set_metric( "os_pocetak_obracuna_datum", nil, _obr_pocetak_datum )
+    gDatDio := _obr_pocetak_datum
+
 endif
 
-closeret
+close all
 return
+
+
 

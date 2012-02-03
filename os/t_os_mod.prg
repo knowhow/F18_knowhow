@@ -111,48 +111,51 @@ return
 // -------------------------------------------------
 // -------------------------------------------------
 method setGVars()
-O_PARAMS
 
 set_global_vars()
 
-O_PARAMS
+// glavni parametri firme
+// setovati ih iz globalnih organizaciona jedinica itd...
+public gFirma := "10"
+public gTS := "Preduzece"
+public gNFirma := space(20)  
+public gNW := "D"  
+public gRJ := "00"
 
+// ostali parametri
+public gDatObr := DATE()
+public gValuta := "KM "
+public gPicI := "99999999.99"
+public gPickol := "99999.99"
+public gVObracun := "2"
+public gIBJ := "D"
+public gDrugaVal :="N"
+public gVarDio := "N"
+public gDatDio := CTOD("01.01.1999")
+public gGlBaza := "OS.DBF"
+public gMetodObr := "1"
+public gOsSii := "O"
+
+O_PARAMS
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
 
-public gFirma:="10"
-public gTS:="Preduzece"
-public gNFirma:=space(20)  // naziv firme
-public gNW:="D"  // new vawe
-public gRJ:="00"
-public gDatObr := DATE()
-public gValuta:="KM "
-public gPicI:="99999999.99"
-public gPickol:="99999.99"
-public gVObracun:="2"
-public gIBJ:="D", gDrugaVal:="N"
-public gVarDio:="N", gDatDio:=CTOD("01.01.1999")
-public gGlBaza:="OS.DBF"
-public gMetodObr:="1"
-public gOsSii := "O"
-
 Rpar("ff",@gFirma)
 Rpar("ts",@gTS)
 Rpar("fn",@gNFirma)
-Rpar("ib",@gIBJ)
-Rpar("dv",@gDrugaVal)
-Rpar("nw",@gNW)
 Rpar("rj",@gRj)
-Rpar("va",@gValuta)
-Rpar("pi",@gPicI)
-Rpar("vd",@gVarDio)
-Rpar("dd",@gDatDio)
-Rpar("mo",@gMetodObr)
 
 // procitaj iz sql/db
 gOsSii := fetch_metric( "os_sii_modul", my_user(), gOsSii )
 gDatObr := fetch_metric( "os_datum_obrade", my_user(), gDatObr )
+gPicI := fetch_metric( "os_prikaz_iznosa", nil, gPicI )
+gMetodObr := fetch_metric( "os_metoda_obracuna", nil, gMetodObr )
+gIBJ := fetch_metric( "os_id_broj_je_unikatan", nil, gIBJ )
+gDrugaVal := fetch_metric( "os_prikaz_u_dvije_valute", nil, gDrugaVal )
+gVObracun := fetch_metric( "os_varijanta_obracuna", nil, gVObracun )
+gVarDio := fetch_metric( "os_pocetak_obracuna", nil, gVarDio )
+gDatDio := fetch_metric( "os_pocetak_obracuna_datum", nil, gDatDio )
 
 return
 

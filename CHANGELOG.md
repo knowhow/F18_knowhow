@@ -1,3 +1,7 @@
+0.9.45  2012-02-03, vsasa
+
+  -  modul OS stavljen u funkciju [#25358](http://redmine.bring.out.ba/issues/25358)
+
 0.9.44  2012-02-02, hernad
 
   -  IOS ručno zatvaranje [#26495](http://redmine.bring.out.ba/issues/26495)

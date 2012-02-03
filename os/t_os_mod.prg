@@ -21,7 +21,6 @@ CLASS TOsMod FROM TAppMod
 	method mMenu
 	method mMenuStandard
 	method initdb
-	method srv
 END CLASS
 
 // -----------------------------------------------
@@ -41,7 +40,6 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenu()
-private Izbor
 
 nPom:=VAL(IzFmkIni("SET","Epoch","1945",KUMPATH))
 
@@ -51,18 +49,16 @@ ENDIF
 
 PUBLIC gSQL:="N"
 PUBLIC gCentOn:=IzFmkIni("SET","CenturyOn","N",KUMPATH)
+
 IF gCentOn=="D"
-  SET CENTURY ON
+    SET CENTURY ON
 ELSE
-  SET CENTURY OFF
+    SET CENTURY OFF
 ENDIF
 
 os_set_datum_obrade()
 
 SETKEY(K_SH_F1,{|| Calc()})
-Izbor:=1
-
-CheckROnly(KUMPATH + "\OS.DBF")
 
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
 @ 4,5 SAY ""
@@ -74,78 +70,40 @@ return nil
 
 // --------------------------------------------
 // --------------------------------------------
-method srv()
-? "Pokrecem OS aplikacijski server"
-if (MPar37("/KONVERT", goModul))
-	if LEFT(self:cP5,3)=="/S="
-		cKonvSez:=SUBSTR(self:cP5,4)
-		? "Radim sezonu: " + cKonvSez
-		if cKonvSez<>"RADP"
-			// prebaci se u sezonu cKonvSez
-			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
- 			goModul:oDataBase:setDirKum(trim(goModul:oDataBase:cDirKum)+SLASH+cKonvSez)
- 			goModul:oDataBase:setDirSif(trim(goModul:oDataBase:cDirSif)+SLASH+cKonvSez)
- 			goModul:oDataBase:setDirPriv(trim(goModul:oDataBase:cDirPriv)+SLASH+cKonvSez)
-		endif
-	endif
-	goModul:oDataBase:KonvZN()
-	goModul:quit(.f.)
-endif
-// modifikacija struktura
-if (MPar37("/MODSTRU", goModul))
-	if LEFT(self:cP5,3)=="/S="
-		cSez:=SUBSTR(self:cP5,4)
-		? "Radim sezonu: " + cKonvSez
-		if cSez<>"RADP"
-			// prebaci se u sezonu cKonvSez
-			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
- 			goModul:oDataBase:setDirKum(trim(goModul:oDataBase:cDirKum)+SLASH+cSez)
- 			goModul:oDataBase:setDirSif(trim(goModul:oDataBase:cDirSif)+SLASH+cSez)
- 			goModul:oDataBase:setDirPriv(trim(goModul:oDataBase:cDirPriv)+SLASH+cSez)
-		endif
-	endif
-	cMsFile:=goModul:oDataBase:cName
-	if LEFT(self:cP6,3)=="/M="
-		cMSFile:=SUBSTR(self:cP6,4)
-	endif
-	AppModS(cMsFile)
-	goModul:quit(.f.)
-endif
-
-return
-
-
-
-// --------------------------------------------
-// --------------------------------------------
 method mMenuStandard
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
 
-private opc:={}
-private opcexe:={}
+AADD(_opc, "1. unos promjena na postojecem sredstvu                     ")
+AADD(_opcexe, {|| unos_osnovnih_sredstava()})
+AADD(_opc, "2. obracuni")
+AADD(_opcexe, {|| os_obracuni() })
+AADD(_opc, "3. izvjestaji")
+AADD(_opcexe, {|| os_izvjestaji() })
+AADD(_opc, "--------------------------------------------------------")
+AADD(_opcexe, {|| nil })
 
-AADD(opc, "1. unos promjena na postojecem sredstvu                     ")
-AADD(opcexe, {|| unos_osnovnih_sredstava()})
-AADD(opc, "2. obracuni")
-AADD(opcexe, {|| os_obracuni()})
-AADD(opc, "3. izvjestaji")
-AADD(opcexe, {|| os_izvjestaji()})
-AADD(opc, "--------------")
-AADD(opcexe, {|| RazdvojiDupleInvBr()})
+// ?????
+//AADD(_opcexe, {|| RazdvojiDupleInvBr()})
 //4. inventura"
-AADD(opc, "5. sifrarnici")
-AADD(opcexe, {|| os_sifrarnici()})
-AADD(opc, "6. parametri")
-AADD(opcexe, {|| os_parametri()})
-AADD(opc, "7. zavrsio unose u sezonskom podrucju, prenesi u tekucu")
-AADD(opcexe, {|| PrenosPodatakaUTekucePodrucje()})
-AADD(opc, "8. generacija podataka za novu sezonu")
-AADD(opcexe, {|| GenerisanjePodatakaZaNovuSezonu()})
-AADD(opc, "9. regeneracija poc.stanja (nabavna i otpisana vrijednost)")
-AADD(opcexe, {|| RegenerisanjePocStanja()})
 
-private Izbor:=1
+AADD(_opc, "5. sifrarnici")
+AADD(_opcexe, {|| os_sifrarnici()})
+AADD(_opc, "6. parametri")
+AADD(_opcexe, {|| os_parametri()})
 
-Menu_SC("gos", .t. )
+AADD(_opc, "-------------------------------------------------------")
+AADD(_opcexe, {|| nil })
+
+AADD(_opc, "7. zavrsio unose u sezonskom podrucju, prenesi u tekucu")
+AADD(_opcexe, {|| PrenosPodatakaUTekucePodrucje()})
+AADD(_opc, "8. generacija podataka za novu sezonu")
+AADD(_opcexe, {|| GenerisanjePodatakaZaNovuSezonu()})
+AADD(_opc, "9. regeneracija poc.stanja (nabavna i otpisana vrijednost)")
+AADD(_opcexe, {|| RegenerisanjePocStanja()})
+
+f18_menu( "gos", .f., _izbor, _opc, _opcexe )
 
 return
 
@@ -156,16 +114,19 @@ method setGVars()
 O_PARAMS
 
 set_global_vars()
-//set_roba_global_vars()
 
 O_PARAMS
 
-private cSection:="1",cHistory:=" "; aHistory:={}
-public gFirma:="10", gTS:="Preduzece"
+private cSection:="1"
+private cHistory:=" "
+private aHistory:={}
+
+public gFirma:="10"
+public gTS:="Preduzece"
 public gNFirma:=space(20)  // naziv firme
 public gNW:="D"  // new vawe
 public gRJ:="00"
-public gDatObr:=date()
+public gDatObr := DATE()
 public gValuta:="KM "
 public gPicI:="99999999.99"
 public gPickol:="99999.99"
@@ -174,6 +135,7 @@ public gIBJ:="D", gDrugaVal:="N"
 public gVarDio:="N", gDatDio:=CTOD("01.01.1999")
 public gGlBaza:="OS.DBF"
 public gMetodObr:="1"
+public gOsSii := "O"
 
 Rpar("ff",@gFirma)
 Rpar("ts",@gTS)
@@ -182,12 +144,15 @@ Rpar("ib",@gIBJ)
 Rpar("dv",@gDrugaVal)
 Rpar("nw",@gNW)
 Rpar("rj",@gRj)
-Rpar("do",@gDatObr)
 Rpar("va",@gValuta)
 Rpar("pi",@gPicI)
 Rpar("vd",@gVarDio)
 Rpar("dd",@gDatDio)
 Rpar("mo",@gMetodObr)
+
+// procitaj iz sql/db
+gOsSii := fetch_metric( "os_sii_modul", my_user(), gOsSii )
+gDatObr := fetch_metric( "os_datum_obrade", my_user(), gDatObr )
 
 return
 

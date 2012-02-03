@@ -12,28 +12,35 @@
 
 #include "os.ch"
 
+
 // -----------------------------------
 // parametar datum obrade ...
 // -----------------------------------
 function os_set_datum_obrade()
+local _dat_obr := DATE()
+local _os_sii := "O"
 
-O_PARAMS
-private cSection:="1",cHistory:=" "; aHistory:={}
+_dat_obr := fetch_metric( "os_datum_obrade", my_user(), _dat_obr )
+_os_sii := fetch_metric( "os_sii_modul", my_user(), _os_sii )
 
-Box(, 3, 50)
-	set cursor on
- 	//@ m_x+1,m_y+2 SAY "Radna jedinica" GET gRJ
- 	@ m_x+2,m_y+2 SAY "Datum obrade  " GET gDatObr
-	read
+Box(, 4, 50)
+    SET CURSOR ON
+    @ m_x + 2, m_y + 2 SAY "Obrada (O) OS / (S) SII" GET _os_sii VALID _os_sii $ "OS" PICT "@!"
+    @ m_x + 3, m_y + 2 SAY "Datum obrade  " GET _dat_obr
+    READ
 BoxC()
 
-if lastkey()<>K_ESC
-	Wpar("rj",@gRJ)
- 	Wpar("do",@gDatObr)
- 	select params
-	use
-endif
-closeret
+IF LastKey() <> K_ESC
+
+    set_metric( "os_datum_obrade", my_user(), _dat_obr )
+    set_metric( "os_sii_modul", my_user(), _os_sii )
+
+    gDatObr := _dat_obr
+    // gOsSii := _os_sii
+
+ENDIF
+
+return
 
 
 // -----------------------------------

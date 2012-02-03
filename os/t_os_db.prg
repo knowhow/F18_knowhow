@@ -69,63 +69,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-if (nArea==-1 .or. nArea==(F_OS))
-	if !file(f18_ime_dbf("os"))
-	   aDbf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
-	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
-	   AADD(aDBf,{ 'IDRJ'                , 'C' ,   4 ,  0 })
-	   AADD(aDBf,{ 'Datum'               , 'D' ,   8 ,  0 })
-	   AADD(aDBf,{ 'DatOtp'              , 'D' ,   8 ,  0 })
-	   AADD(aDBf,{ 'OpisOtp'             , 'C' ,  30 ,  0 })
-	   AADD(aDBf,{ 'IdKonto'             , 'C' ,   7 ,  0 })
-	   AADD(aDBf,{ 'kolicina'            , 'N' ,   6 ,  1 })
-	   AADD(aDBf,{ 'jmj'                 , 'C' ,   3 ,  0 })
-	   AADD(aDBf,{ 'IdAm'                , 'C' ,   8 ,  0 })
-	   AADD(aDBf,{ 'IdRev'               , 'C' ,   4 ,  0 })
-	   AADD(aDBf,{ 'NabVr'               , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'OtpVr'               , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'AmD'                 , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'AmP'                 , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'RevD'                , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'RevP'                , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'K1'                  , 'C' ,   4 ,  0 })
-	   AADD(aDBf,{ 'K2'                  , 'C' ,   1 ,  0 })
-	   AADD(aDBf,{ 'K3'                  , 'C' ,   2 ,  0 })
-	   AADD(aDBf,{ 'Opis'                , 'C' ,  25 ,  0 })
-	   AADD(aDBf,{ 'BrSoba'              , 'C' ,   6 ,  0 })
-	   AADD(aDBf,{ 'IdPartner'           , 'C' ,   6 ,  0 })
-
-	   DBCREATE2("OS", aDbf)
-	   reset_semaphore_version( "os_os" )
-	   my_use("OS")
-
-	endif
-
-	CREATE_INDEX("1", "id+idam+dtos(datum)", "OS")
-	CREATE_INDEX("2", "idrj+id+dtos(datum)", "OS")
-	CREATE_INDEX("3", "idrj+idkonto+id", "OS")
-	CREATE_INDEX("4", "idkonto+idrj+id", "OS")
-	CREATE_INDEX("5", "idam+idrj+id", "OS")
-
-endif
-
-
-// k1 - grupacije
-if (nArea==-1 .or. nArea==(F_K1))
-	if !file(f18_ime_dbf("k1"))
-	   aDBf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
-	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-	   DBCREATE2( "K1", aDbf )
-	   reset_semaphore_version( "os_k1" )
-       my_use("K1")
-	endif
-	CREATE_INDEX("ID","id",KUMPATH+"K1")
-	CREATE_INDEX("NAZ","NAZ",KUMPATH+"K1")
-endif
-
-
 if (nArea==-1 .or. nArea==(F_INVENT))
 	if !file(f18_ime_dbf("invent"))
 	        aDbf:={}
@@ -137,63 +80,6 @@ if (nArea==-1 .or. nArea==(F_INVENT))
 			
 	endif
 	CREATE_INDEX("ID","Id",PRIVPATH+"INVENT") // Inventura
-endif
-
-if (nArea==-1 .or. nArea==(F_PROMJ))
-	if !file(f18_ime_dbf("promj"))
-	   aDbf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
-	   AADD(aDBf,{ 'Opis'                , 'C' ,  30 ,  0 })
-	   AADD(aDBf,{ 'Datum'               , 'D' ,   8 ,  0 })
-	   AADD(aDBf,{ 'Tip'                 , 'C' ,   2 ,  0 })
-	   AADD(aDBf,{ 'NabVr'               , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'OtpVr'               , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'AmD'                , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'AmP'                , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'RevD'               , 'N' ,  18 ,  2 })
-	   AADD(aDBf,{ 'RevP'               , 'N' ,  18 ,  2 })
-	   DBCREATE2( "PROMJ", aDbf )
-	   reset_semaphore_version("os_promj")
-	   my_use("PROMJ")
-	endif
-	CREATE_INDEX("1","id+tip+dtos(datum)",KUMPATH+"PROMJ")
-endif
-
-if (nArea==-1 .or. nArea==(F_AMORT))
-	if !file(f18_ime_dbf("amort"))
-	   aDbf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
-	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  25 ,  0 })
-	   AADD(aDBf,{ 'Iznos'               , 'N' ,   7 ,  3 })
-	   DBCREATE2("AMORT", aDbf)
-	   reset_semaphore_version("os_amort")
-	   my_use("AMORT")
-	endif
-	CREATE_INDEX("ID","id",SIFPATH+"AMORT")
-endif
-
-if (nArea==-1 .or. nArea==(F_REVAL))
-	if !file(f18_ime_dbf("reval"))
-	   aDbf:={}
-	   AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
-	   AADD(aDBf,{ 'NAZ'                 , 'C' ,  10 ,  0 })
-	   AADD(aDBf,{ 'I1'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I2'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I3'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I4'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I5'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I6'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I7'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I8'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I9'                  , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I10'                 , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I11'                 , 'N' ,   7 ,  3 })
-	   AADD(aDBf,{ 'I12'                 , 'N' ,   7 ,  3 })
-	   DBCREATE2("REVAL", aDbf)
-	   reset_semaphore_version("os_reval")
-	   my_use("REVAL")
-	endif
-	CREATE_INDEX("ID","id",SIFPATH+"REVAL")
 endif
 
 return

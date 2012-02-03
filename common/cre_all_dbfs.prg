@@ -27,6 +27,8 @@ cre_all_fakt(ver)
 
 cre_all_ld(ver)
 
+cre_all_os(ver)
+
 return
 
 

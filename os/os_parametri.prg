@@ -36,7 +36,7 @@ IF LastKey() <> K_ESC
     set_metric( "os_sii_modul", my_user(), _os_sii )
 
     gDatObr := _dat_obr
-    // gOsSii := _os_sii
+    gOsSii := _os_sii
 
 ENDIF
 

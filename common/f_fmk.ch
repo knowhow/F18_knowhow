@@ -251,6 +251,8 @@
 #define F_REVAL    302
 #define F_PROMJ    303
 #define F_INVENT   304
+#define F_SII      340
+#define F_SII_PROMJ 341
 
 //mat
 

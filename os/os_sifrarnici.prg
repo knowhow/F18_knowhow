@@ -71,8 +71,13 @@ return
 
 function P_OS(cId, dx, dy)
 local lNovi := .t.
+local _n_area := F_OS 
 private ImeKol
 private Kol
+
+if gOsSii == "S"
+    _n_area := F_SII
+endif
 
 ImeKol:={ { PADR("Inv.Broj",15),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wId) .and. os_promjena_id_zabrana(lNovi)} },;
           { PADR("Naziv",30),{|| naz},     "naz"      },;
@@ -107,10 +112,10 @@ endif
 private Kol:={}
 
 for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
+    AADD(Kol, i)
 next
 
-return PostojiSifra(F_OS, 1, MAXROWS()-15, MAXCOLS()-15, "Lista stalnih sredstava", @cId, dx, dy, {|Ch| os_sif_key_handler(Ch, @lNovi)})
+return PostojiSifra( _n_area, 1, MAXROWS()-15, MAXCOLS()-15, "Lista stalnih sredstava", @cId, dx, dy, {|Ch| os_sif_key_handler(Ch, @lNovi)})
 
 
 
@@ -121,41 +126,45 @@ return .t.
 
 
 function os_sif_key_handler(Ch, lNovi)
+local _n_area := F_PROMJ
 lNovi := .t.
+
+if gOsSii == "S"
+    _n_area := F_SII_PROMJ
+endif
 
 do case
     case (Ch==K_CTRL_T)
-	SELECT (F_PROMJ)
- 	lUsedPromj:=.t.
- 	IF !USED()
-   		lUsedPromj:=.f.
-   		O_PROMJ
- 	ENDIF
- 	select promj
- 	seek os->id
- 	if found()
-   		Beep(1)
-   		Msg("Sredstvo se ne moze brisati - prvo izbrisi promjene !")
- 	else
-   		select os
-   		if Pitanje(,"Sigurno zelite izbrisati ovo sredstvo ?","N")=="D"
-    			delete
-   		endif
- 	endif
- 	IF !lUsedPromj
-   		select promj
-		use
- 	ENDIF
- 	select os
+        SELECT ( _n_area )
+        lUsedPromj:=.t.
+        IF !USED()
+            lUsedPromj:=.f.
+            O_PROMJ
+        ENDIF
+        select promj
+        seek os->id
+        if found()
+            Beep(1)
+            Msg("Sredstvo se ne moze brisati - prvo izbrisi promjene !")
+        else
+            select os
+            if Pitanje(,"Sigurno zelite izbrisati ovo sredstvo ?","N")=="D"
+                delete
+            endif
+        endif
+        IF !lUsedPromj
+            select promj
+            use
+        ENDIF
+        select os
 
- 	return 7  
-	// kao de_refresh, ali se zavrsava izvrsenje f-ja iz ELIB-a
+        return 7  
+        // kao de_refresh, ali se zavrsava izvrsenje f-ja iz ELIB-a
     
     case (Ch == K_F2)
-    	// ispravka stavke
-	lNovi := .f.
-	
-	
+        // ispravka stavke
+        lNovi := .f.
+    
 endcase
 
 return DE_CONT
@@ -164,9 +173,9 @@ return DE_CONT
 
 function os_promjena_id_zabrana(lNovi)
 if !lNovi .and. wId <> id
-	Beep(1)
-   	Msg("Promjenu inventurnog broja ne vrsiti ovdje !")
-   	return .f.
+    Beep(1)
+    Msg("Promjenu inventurnog broja ne vrsiti ovdje !")
+    return .f.
 endif
 return .t.
 

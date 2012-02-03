@@ -125,7 +125,7 @@ if !sigmaSif("OSREGEN")
   closeret
 endif
 
-O_OSX
+O_OS
 
 // naÐimo sve postojee sezone
 // ---------------------------
@@ -294,7 +294,7 @@ if Pitanje(,"Prikazati samo sredstva iz proteklih godina? (D/N)","D")=="D"
     lSamoStara:=.t.
 endif
 
-O_OSX
+O_OS
 
 // nadjimo sve postojece sezone
 // ----------------------------
@@ -363,7 +363,7 @@ RETURN
 function IzbrisanaSredstva()
 // daje listu sredstava kojih nema u novoj sezoni
 
-O_OSX
+O_OS
 
 // nadjimo sve postojece sezone
 // ----------------------------

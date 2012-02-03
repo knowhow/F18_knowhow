@@ -297,10 +297,16 @@ AADD(gaDBFs, { F_KRED    , "_KRED"   , "_ld_kred"   } )
 AADD(gaDBFs, { F_LDT22   , "LDT22"   , "ldt22"      } )
 
 
-// modul OS
-AADD( gaDbfs, { F_INVENT, "INVENT", "os_invent" } )
+// modul OS:
+// -----------------
+// OS tabele
 AADD( gaDbfs, { F_OS    , "OS"    , "os_os", { |alg| os_os_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("os_os", x) }, "1" } )
 AADD( gaDbfs, { F_PROMJ , "PROMJ" , "os_promj", { |alg| os_promj_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("os_promj", x) }, "1" } )
+// SII tabele
+AADD( gaDbfs, { F_SII    , "SII"    , "sii_sii", { |alg| sii_sii_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("sii_sii", x) }, "1" } )
+AADD( gaDbfs, { F_SII_PROMJ , "SII_PROMJ" , "sii_promj", { |alg| sii_promj_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("sii_promj", x) }, "1" } )
+
+AADD( gaDbfs, { F_INVENT, "INVENT", "os_invent" } )
 AADD( gaDbfs, { F_K1    , "K1"    , "os_k1", { |alg| os_k1_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_AMORT , "AMORT" , "os_amort", { |alg| os_amort_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_REVAL , "REVAL" , "os_reval", { |alg| os_reval_from_sql_server(alg) }, "IDS" } )

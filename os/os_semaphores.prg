@@ -31,6 +31,24 @@ _result := sifrarnik_from_sql_server( _tbl, algoritam, F_OS, ;
 
 return _result
 
+// -----------------------------------------
+// -----------------------------------------
+function sii_sii_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "sii_sii"
+local _sii_index_tag := "1"
+
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_SII, ;
+        { "id", "naz", "idrj", ;
+        "datum", "datotp", "opisotp", ;
+        "idkonto", "kolicina", "jmj", "idam", "idrev", ;
+        "nabvr", "otpvr", "amd", "amp", "revd", "revp", ;
+        "k1", "k2", "k3", ;
+        "opis", "brsoba", "idpartner" }, _sii_index_tag )
+
+return _result
+
 
 
 // -----------------------------------------
@@ -54,6 +72,21 @@ local _i
 local _tbl := "os_promj"
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_PROMJ, ;
+        { "id", "opis", "datum", "tip", ;
+            "nabvr", "otpvr", "amd", "amp", ;
+            "revd", "revp" })
+
+return _result
+
+
+// -----------------------------------------
+// -----------------------------------------
+function sii_promj_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "sii_promj"
+
+_result := sifrarnik_from_sql_server( _tbl, algoritam, F_SII_PROMJ, ;
         { "id", "opis", "datum", "tip", ;
             "nabvr", "otpvr", "amd", "amp", ;
             "revd", "revp" })

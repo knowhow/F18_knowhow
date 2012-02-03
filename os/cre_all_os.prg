@@ -58,6 +58,7 @@ CREATE_INDEX("3", "idrj+idkonto+id",  _alias )
 CREATE_INDEX("4", "idkonto+idrj+id", _alias )
 CREATE_INDEX("5", "idam+idrj+id", _alias )
 
+/*
 // kreiraj tabelu SII
 
 _alias := "sii"
@@ -74,6 +75,7 @@ CREATE_INDEX("2", "idrj+id+dtos(datum)", _alias )
 CREATE_INDEX("3", "idrj+idkonto+id",  _alias )
 CREATE_INDEX("4", "idkonto+idrj+id", _alias )
 CREATE_INDEX("5", "idam+idrj+id", _alias )
+*/
 
 aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
@@ -89,7 +91,7 @@ AADD(aDBf,{ 'RevP'               , 'N' ,  18 ,  2 })
 
 // kreiraj os promjene
     
-_alias := "os_promj"
+_alias := "promj"
 _table_name := "os_promj"
 
 IF !FILE( f18_ime_dbf( _alias ) )
@@ -100,6 +102,7 @@ ENDIF
 
 CREATE_INDEX("1","id+tip+dtos(datum)", _alias )
 
+/*
 // kreiraj sii promjene
 
 _alias := "sii_promj"
@@ -113,6 +116,7 @@ ENDIF
 
 CREATE_INDEX("1","id+tip+dtos(datum)", _alias )
 
+*/
 
 aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })

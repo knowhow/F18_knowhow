@@ -299,8 +299,8 @@ AADD(gaDBFs, { F_LDT22   , "LDT22"   , "ldt22"      } )
 
 // modul OS
 AADD( gaDbfs, { F_INVENT, "INVENT", "os_invent" } )
-AADD( gaDbfs, { F_OS    , "OS"    , "os_os", { |alg| os_os_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, { F_PROMJ , "PROMJ" , "os_promj", { |alg| os_promj_from_sql_server(alg) }, "IDS" } )
+AADD( gaDbfs, { F_OS    , "OS"    , "os_os", { |alg| os_os_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("os_os", x) }, "1" } )
+AADD( gaDbfs, { F_PROMJ , "PROMJ" , "os_promj", { |alg| os_promj_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("os_promj", x) }, "1" } )
 AADD( gaDbfs, { F_K1    , "K1"    , "os_k1", { |alg| os_k1_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_AMORT , "AMORT" , "os_amort", { |alg| os_amort_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_REVAL , "REVAL" , "os_reval", { |alg| os_reval_from_sql_server(alg) }, "IDS" } )

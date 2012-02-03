@@ -13,77 +13,58 @@
 #include "os.ch"
 
 
-function os_sifrarnici()
-
-local Izb:=1
-local lPartner:=.f.
-
-private opc[9]
-
-gMeniSif:=.t.  // pritiskom na enter se nece napustiti tabela sifrarnika
-
-opc[1]:="1. stalna sredstva            "
-opc[2]:="2. koeficijenti amortizacije"
-opc[3]:="3. koeficijenti revalorizecije"
-opc[4]:="4. radne jedinice"
-opc[5]:="---------------"
-opc[6]:="6. konta"
-opc[7]:="7. grupacije-k1"
-opc[8]:="8. partneri"
-opc[9]:="9. "+IF(gDrugaVal<>"D","-------","valute")
-
-IF gDrugaVal=="D"
-  O_VALUTE
-ENDIF
-
+static function _o_sif_tables()
+O_VALUTE
 O_KONTO
 O_OS
 O_AMORT
 O_REVAL
 O_RJ
 O_K1
+O_PARTN
+O_SIFK
+O_SIFV
+return
 
-if os_fld_partn_exist()
-  lPartner:=.t.
-  O_PARTN
-  O_SIFK
-  O_SIFV
-else
-  opc[8]:="8. -------"
+
+
+function os_sifrarnici()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
+local _opis
+    
+_opis := "osnovna sredstva"
+
+if gOsSii == "S"
+    _opis := "sitan inventar"
 endif
 
-do while .t.
+AADD( _opc, PADR( "1. " + _opis, 40 ) )
+AADD( _opcexe, {|| p_os() })
 
-  h[1]:=""
-  h[2]:=""
-  h[3]:=""
-  h[5]:=""
-  Izb:=Menu("sios",opc,Izb,.f.)
-     do case
-        case Izb==0
-           exit
-        case Izb==1
-           P_OS()
-        case Izb==2
-           P_Amort()
-        case Izb==3
-           P_Reval()
-        case Izb==4
-           P_RJ()
-        case Izb==5
-        case Izb==6
-           P_Konto()
-        case Izb==7
-           P_K1()
-        case Izb==8 .and. lPartner
-           P_Firma()
-        case Izb==9 .and. gDrugaVal=="D"
-           P_Valuta()
-     endcase
-enddo
+AADD( _opc, "2. koeficijenti amortizacije"  )
+AADD( _opcexe, {|| p_amort() })
+AADD( _opc, "3. koeficijenti revalorizacije" )
+AADD( _opcexe, {|| p_reval() })
+AADD( _opc, "4. radne jedinice" )
+AADD( _opcexe, {|| p_rj() })
+AADD( _opc, "---------------------------" )
+AADD( _opcexe, {|| nil })
+AADD( _opc, "6. konta" )
+AADD( _opcexe, {|| p_konto() })
+AADD( _opc, "7. grupacije K1" )
+AADD( _opcexe, {|| p_k1() })
+AADD( _opc, "8. partneri" )
+AADD( _opcexe, {|| p_partneri() })
+AADD( _opc, "9. valute" )
+AADD( _opcexe, {|| p_valuta() })
 
-gMeniSif:=.f.
-closeret
+_o_sif_tables()
+
+f18_menu("sifre", .f., _izbor, _opc, _opcexe )
+
+close all
 return
 
 
@@ -129,7 +110,7 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
-return PostojiSifra(F_OS, 1, 10, 60, "Lista stalnih sredstava", @cId, dx, dy, {|Ch| os_sif_key_handler(Ch, @lNovi)})
+return PostojiSifra(F_OS, 1, MAXROWS()-15, MAXCOLS()-15, "Lista stalnih sredstava", @cId, dx, dy, {|Ch| os_sif_key_handler(Ch, @lNovi)})
 
 
 
@@ -197,7 +178,7 @@ ImeKol:={ { PADR("Id",8),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    }
           { PADR("Iznos",7),{|| iznos},    "iznos"     };
         }
 Kol:={1,2,3}
-return PostojiSifra(F_AMORT,1,10,60,"Lista koeficijenata amortizacije",@cId,dx,dy)
+return PostojiSifra(F_AMORT,1, MAXROWS()-15,MAXCOLS()-15,"Lista koeficijenata amortizacije",@cId,dx,dy)
 
 
 
@@ -219,7 +200,7 @@ ImeKol:={ { PADR("Id",4),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    }
           { PADR("I12",7),{|| i12},    "i12"     };
         }
 Kol:={1,2,3,4,5,6,7,8,9,10,11,12,13,14}
-return PostojiSifra(F_REVAL,1,10,60,"Lista koeficijenata revalorizacije",@cId,dx,dy)
+return PostojiSifra(F_REVAL,1,MAXROWS()-15,MAXCOLS()-15,"Lista koeficijenata revalorizacije",@cId,dx,dy)
 
 
 

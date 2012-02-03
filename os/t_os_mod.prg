@@ -81,7 +81,7 @@ AADD(_opc, "2. obracuni")
 AADD(_opcexe, {|| os_obracuni() })
 AADD(_opc, "3. izvjestaji")
 AADD(_opcexe, {|| os_izvjestaji() })
-AADD(_opc, "--------------------------------------------------------")
+AADD(_opc, "------------------------------------------------------------")
 AADD(_opcexe, {|| nil })
 
 // ?????
@@ -93,7 +93,7 @@ AADD(_opcexe, {|| os_sifrarnici()})
 AADD(_opc, "6. parametri")
 AADD(_opcexe, {|| os_parametri()})
 
-AADD(_opc, "-------------------------------------------------------")
+AADD(_opc, "------------------------------------------------------------")
 AADD(_opcexe, {|| nil })
 
 AADD(_opc, "7. zavrsio unose u sezonskom podrucju, prenesi u tekucu")

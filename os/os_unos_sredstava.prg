@@ -12,15 +12,7 @@
 #include "os.ch"
 
 
-function unos_osnovnih_sredstava()
-private cId:=space(10), cIdRj:=space(4)
-
-
-Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
-do while .t.
-
-BoxCLS()
-
+static function _o_tables()
 O_K1
 O_OS
 O_RJ
@@ -28,327 +20,412 @@ O_KONTO
 O_AMORT
 O_REVAL
 O_PROMJ
-set cursor on
+return
 
-cPicSif := IIF(gPicSif="V", "@!", "")
 
- IF gIBJ=="D"
+function unos_osnovnih_sredstava()
+local _rec
+private cId := space(10)
+private cIdRj:=space(4)
 
-   @ m_x+1,m_y+2 SAY "Sredstvo:      " GET cId  VALID P_OS(@CID,1,35) PICT cPicSif
-   @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj  ;
-      WHEN {|| cIdRj:=os->idrj,.t. }  ;
-      VALID P_RJ(@cIDRJ,2, 35)
-   read
-   ESC_BCR
+Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
+    
+    do while .t.
 
- ELSE
+        BoxCLS()
 
-   DO WHILE .t.
+        _o_tables()
 
-     @ m_x+1,m_y+2 SAY "Sredstvo:      " GET cId PICT cPicSif
-     @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj
-     read
-     ESC_BCR
+        set cursor on
 
-     SELECT OS
-     SEEK cId
-     DO WHILE !EOF() .and. cId==OS->ID .and. cIdRJ!=OS->IDRJ
-       SKIP 1
-     ENDDO
+        cPicSif := IIF(gPicSif="V", "@!", "")
 
-     IF cID!=OS->ID .or. cIdRJ!=OS->IDRJ
-       Msg("Izabrano sredstvo ne postoji!",5)
-     ELSE
-       SELECT RJ
-       SEEK cIdRj
-       @ m_x+1, m_y+35 SAY OS->naz
-       @ m_x+2, m_y+35 SAY RJ->naz
-       EXIT
-     ENDIF
+        IF gIBJ=="D"
 
-   ENDDO
+            @ m_x+1,m_y+2 SAY "Sredstvo:      " GET cId  VALID P_OS(@CID,1,35) PICT cPicSif
+            @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj  ;
+                WHEN {|| cIdRj:=os->idrj,.t. }  ;
+                VALID P_RJ(@cIDRJ,2, 35)
+            read
+            ESC_BCR
 
- ENDIF
+        ELSE
 
- select amort
- hseek os->idam
+            DO WHILE .t.
 
- select os
- if (cIdrj <> os->idrj)
-   IF Pitanje(,"Jeste li sigurni da zelite promijeniti radnu jedinicu ovom sredstvu? (D/N)"," ")=="D"
-     replace idrj with cidrj
-   ELSE
-     cIdRj:=idrj
-     SELECT RJ
-     SEEK cIdRj
-     SELECT OS
-     @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj
-     @ m_x+2,m_y+35 SAY RJ->naz
-     CLEAR GETS
-   ENDIF
- endif
- @ m_x+3, m_y+2 SAY "Datum nabavke: "; ?? os->datum
- if !empty(os->datotp)
-   @ m_x+3, m_y+38 SAY "Datum otpisa: "; ?? os->datotp
- endif
- @ m_x+4, m_y + 2 SAY "Nabavna vr.:"; ?? transform(nabvr,gpici)
- @ m_x+4, col() + 2 SAY "Ispravka vr.:"; ?? transform(otpvr,gpici)
- aVr:={nabvr,otpvr,0}
+                @ m_x+1,m_y+2 SAY "Sredstvo:      " GET cId PICT cPicSif
+                @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj
+                read
+                ESC_BCR
 
- // recno(), datum, DatOtp, NabVr, OtpVr, KumAmVr
- aSred := { {0,datum,datotp,nabvr,otpvr,0} }
+                SELECT OS
+                SEEK cId
+                DO WHILE !EOF() .and. cId==OS->ID .and. cIdRJ!=OS->IDRJ
+                    SKIP 1
+                ENDDO
 
- private dDatNab:=os->datum
- private dDatOtp:=os->datotp,cOpisOtp:=os->opisotp
- select promj
+                IF cID!=OS->ID .or. cIdRJ!=OS->IDRJ
+                    Msg("Izabrano sredstvo ne postoji!",5)
+                ELSE
+                    SELECT RJ
+                    SEEK cIdRj
+                    @ m_x+1, m_y+35 SAY OS->naz
+                    @ m_x+2, m_y+35 SAY RJ->naz
+                    EXIT
+                ENDIF
 
-ImeKol:={}
+            ENDDO
 
-AADD(ImeKol, { "DATUM",            {|| DATUM}                          })
-AADD(ImeKol, { "OPIS",             {|| OPIS}                          })
-AADD(ImeKol, { PADR("Nabvr",11),   {|| transform(nabvr,gpici)}     })
-AADD(ImeKol, { PADR("OtpVr",11),   {|| transform(otpvr,gpici)}     })
-AADD(ImeKol, { PADR("Kumul.SadVr",11), {|| transform(PSadVr(),gpici)}     })
+        ENDIF
 
-Kol:={}
+        select amort
+        hseek os->idam
 
-for i:=1 to len(ImeKol)
-   AADD(Kol,i)
-next
+        select os
+        IF (cIdrj <> os->idrj)
+            IF Pitanje(,"Jeste li sigurni da zelite promijeniti radnu jedinicu ovom sredstvu? (D/N)"," ")=="D"
+                _rec := dbf_get_rec()
+                _rec["idrj"] := cIdRj
+                update_rec_server_and_dbf( ALIAS(), _rec )
+            ELSE
+                cIdRj:=idrj
+                SELECT RJ
+                SEEK cIdRj
+                SELECT OS
+                @ m_x+2,m_y+2 SAY "Radna jedinica: " GET cIdRj
+                @ m_x+2,m_y+35 SAY RJ->naz
+                CLEAR GETS
+            ENDIF
+        ENDIF
+        @ m_x+3, m_y+2 SAY "Datum nabavke: "; ?? os->datum
+        if !empty(os->datotp)
+            @ m_x+3, m_y+38 SAY "Datum otpisa: "; ?? os->datotp
+        endif
+        @ m_x+4, m_y + 2 SAY "Nabavna vr.:"; ?? transform(nabvr,gpici)
+        @ m_x+4, col() + 2 SAY "Ispravka vr.:"; ?? transform(otpvr,gpici)
+        aVr:={nabvr,otpvr,0}
 
-set cursor on
+        // recno(), datum, DatOtp, NabVr, OtpVr, KumAmVr
+        aSred := { {0,datum,datotp,nabvr,otpvr,0} }
 
-@ m_x+20,m_y+2 SAY "<ENT> Ispravka, <c-T> Brisi, <c-N> Nove prom, <c-O> Otpis, <c-I> Novi ID"
+        private dDatNab:=os->datum
+        private dDatOtp:=os->datotp,cOpisOtp:=os->opisotp
+        select promj
 
-ShowSadVr()
+        ImeKol:={}
 
-DO WHILE .t.
-  BrowseKey( m_x+8, m_y+1, m_x + maxrows() - 5, m_y + maxcols()-5, ImeKol, {|Ch| unos_os_key_handler(Ch)},"id==cid", cId, 2, NIL, NIL, {|| PSadVr()<0})
-  IF (aVr[1]-aVr[2] >= 0)
-    IF aVr[3]<0
-      MsgBeep("Greska: sadasnja vrijednost sa uracunatom amortizacijom manja od nule! #Ispravite gresku!")
-    ELSE
-      EXIT
-    ENDIF
-  ELSE
-    MsgBeep("Greska: sadasnja vrijednost manja od nule ! Ispravite gresku !")
-  ENDIF
-  EXIT  
+        AADD(ImeKol, { "DATUM",            {|| DATUM}                          })
+        AADD(ImeKol, { "OPIS",             {|| OPIS}                          })
+        AADD(ImeKol, { PADR("Nabvr",11),   {|| transform(nabvr,gpici)}     })
+        AADD(ImeKol, { PADR("OtpVr",11),   {|| transform(otpvr,gpici)}     })
+        AADD(ImeKol, { PADR("Kumul.SadVr",11), {|| transform(PSadVr(),gpici)}     })
 
-ENDDO
+        Kol:={}
 
-close all
-enddo
+        for i:=1 to len(ImeKol)
+            AADD(Kol,i)
+        next
+
+        set cursor on
+
+        @ m_x+20,m_y+2 SAY "<ENT> Ispravka, <c-T> Brisi, <c-N> Nove prom, <c-O> Otpis, <c-I> Novi ID"
+
+        ShowSadVr()
+
+        DO WHILE .t.
+            BrowseKey( m_x+8, m_y+1, m_x + maxrows() - 5, m_y + maxcols()-5, ImeKol, {|Ch| unos_os_key_handler(Ch)},"id==cid", cId, 2, NIL, NIL, {|| PSadVr()<0})
+            IF (aVr[1]-aVr[2] >= 0)
+                IF aVr[3]<0
+                    MsgBeep("Greska: sadasnja vrijednost sa uracunatom amortizacijom manja od nule! #Ispravite gresku!")
+                ELSE
+                    EXIT
+                ENDIF
+            ELSE
+                MsgBeep("Greska: sadasnja vrijednost manja od nule ! Ispravite gresku !")
+            ENDIF
+            EXIT  
+
+        ENDDO
+
+    close all
+    enddo
+
 BoxC()
 
-closeret
+close all
+
 return
 
 
 function unos_os_key_handler(Ch)
-
 local cDn:="N"
 local nRet:=DE_CONT
 local nRec0:=RECNO()
+local _rec
+local _t_rec
+local _novi
 
 do case
-  case (Ch==K_ENTER .and. !(EOF() .or. BOF())) .or. Ch==K_CTRL_N
-     IF Ch==K_CTRL_N
-       GO BOTTOM
-       SKIP 1
-     ENDIF
-     Scatter()
-     Box(,5,50)
-       @ m_x+1,m_y+2 SAY "Datum:"  get _datum valid os_validate_date()
-       @ m_x+2,m_y+2 SAY "Opis:"  get _opis
-       @ m_x+4,m_y+2 SAY "nab vr" get _nabvr
-       @ m_x+5,m_y+2 SAY "OTP vr" get _otpvr
-       read
-     BoxC()
-     IF LASTKEY()==K_ESC
-       GO (nRec0)
-       nRet:=DE_CONT
-     ELSE
-       IF CH==K_CTRL_N
-         APPEND BLANK
-       ENDIF
-       _ID:=cid
-       Gather()
-       ShowSadVr()
-       nRet:=DE_REFRESH
-     ENDIF
+    case (Ch==K_ENTER .and. !(EOF() .or. BOF())) .or. Ch==K_CTRL_N
+        IF Ch==K_CTRL_N
+            GO BOTTOM
+            SKIP 1
+        ENDIF
+        set_global_memvars_from_dbf()
+        Box(,5,50)
+            @ m_x+1,m_y+2 SAY "Datum:"  get _datum valid os_validate_date()
+            @ m_x+2,m_y+2 SAY "Opis:"  get _opis
+            @ m_x+4,m_y+2 SAY "nab vr" get _nabvr
+            @ m_x+5,m_y+2 SAY "OTP vr" get _otpvr
+            read
+        BoxC()
+        IF LASTKEY()==K_ESC
+            GO (nRec0)
+            nRet:=DE_CONT
+        ELSE
+            IF CH==K_CTRL_N
+                APPEND BLANK
+            ENDIF
+            _ID := cId
+            // sinhronizuj podatke sql/server
+            _rec := get_dbf_global_memvars()
+            update_rec_server_and_dbf( ALIAS(), _rec )
+    
+            ShowSadVr()
+            nRet:=DE_REFRESH
+        ENDIF
 
-  case Ch==K_CTRL_T
-     if pitanje(,"Sigurno zelite izbrisati promjenu ?","N")=="D"
-       delete
-       ShowSadVr()
-     endif
-     return DE_REFRESH
+    case Ch==K_CTRL_T
+        
+        IF pitanje(,"Sigurno zelite izbrisati promjenu ?","N")=="D"
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( ALIAS(), _rec )
+            ShowSadVr()
+        ENDIF
+        return DE_REFRESH
 
-  case Ch==K_CTRL_O
-     select os
-     nKolotp:=kolicina
-     Box(,5,50)
-       @ m_x+1,m_y+2 SAY "Otpis sredstva"
-       @ m_x+3,m_y+2 SAY "Datum: " GET dDatOtp  valid dDatOtp>dDatNab .or. empty(dDatOtp)
-       @ m_x+4,m_y+2 SAY "Opis : " GET cOpisOtp
-       if kolicina>1
-        @ m_x+5,m_y+2 SAY "Kolicina koja se otpisuje:" GET nkolotp pict "999999.99" valid nkolotp<=kolicina .and. nkolotp>=1
-       endif
-       read
-     BoxC()
+    case Ch==K_CTRL_O
+        select os
+        nKolotp:=kolicina
+        Box(,5,50)
+            @ m_x+1,m_y+2 SAY "Otpis sredstva"
+            @ m_x+3,m_y+2 SAY "Datum: " GET dDatOtp  valid dDatOtp>dDatNab .or. empty(dDatOtp)
+            @ m_x+4,m_y+2 SAY "Opis : " GET cOpisOtp
+            if kolicina>1
+                @ m_x+5,m_y+2 SAY "Kolicina koja se otpisuje:" GET nkolotp pict "999999.99" valid nkolotp<=kolicina .and. nkolotp>=1
+            endif
+            read
+        BoxC()
 
-     IF LASTKEY()==K_ESC
-       SELECT PROMJ
-       RETURN DE_CONT
-     ENDIF
+        IF LASTKEY()==K_ESC
+            SELECT PROMJ
+            RETURN DE_CONT
+        ENDIF
 
-     fRastavljeno:=.f.
-     if nkolotp<kolicina
-       select os
-       scatter()
-       nNabVrJ:=_nabvr/_kolicina
-       nOtpVrJ:=_otpvr/_kolicina
+        fRastavljeno:=.f.
+        if nkolotp<kolicina
+            
+            select os
 
-       // postojeci inv broj
-       _kolicina:=_kolicina-nkolotp
-       _nabvr:=nnabvrj*_kolicina
-       _otpvr:=notpvrj*_kolicina
-       gather()
+            _rec := dbf_get_rec()
 
-       // novi inv broj
-       appblank2(.f.,.t.)  //NC DL
-       _kolicina:=nkolotp
-       _nabvr := nnabvrj*nkolotp
-       _otpvr := notpvrj*nkolotp
-       _id := left(_id,9) + "O"
-       _datotp := ddatotp
-       _opisotp := cOpisOtp
-       gather()
+            nNabVrJ := _rec["nabvr"] / _rec["kolicina"]
+            nOtpVrJ := _rec["otpvr"] / _rec["kolicina"]
 
-       fRastavljeno:=.t.
-     else
-      select os
-      replace datotp with ddatotp,opisotp with cOpisOtp
-     endif
-     select promj
+            // postojeci inv broj
+            _rec["kolicina"] := _rec["kolicina"] - nKolOtp
+            _rec["nabvr"] := nNabVrj * _rec["kolicina"]
+            _rec["otpvr"] := nOtpVrj * _rec["kolicina"]
+            
+            update_rec_server_and_dbf( ALIAS(), _rec )
 
-     @ m_x+5, m_y+38 SAY "Datum otpisa: "; ?? os->datotp
-     if frastavljeno
-         Msg("Postojeci inv broj je rastavljen na dva-otpisani i neotpisani")
-         return DE_ABORT
-     else
+            // dodaj novi zapis...
+            _rec := hb_hash()
+            
+            _rec["kolicina"] := nKolOtp
+            _rec["nabvr"] := nNabvrj * nKolotp
+            _rec["otpvr"] := nOtpvrj * nKolotp
+            _rec["id"] := LEFT( _rec["id"], 9 ) + "O"
+            _rec["datotp"] := dDatotp
+            _rec["opisotp"] := cOpisOtp
+            
+            update_rec_server_and_dbf( ALIAS(), _rec )
+
+            fRastavljeno:=.t.
+
+        else
+
+            select os
+
+            _rec := dbf_get_rec()
+            _rec["datotp"] := dDatOtp
+            _rec["opisotp"] := cOpisOtp
+
+            update_rec_server_and_dbf( ALIAS(), _rec )
+
+        endif
+
+        select promj
+
+        @ m_x+5, m_y+38 SAY "Datum otpisa: "; ?? os->datotp
+
+        if frastavljeno
+            Msg("Postojeci inv broj je rastavljen na dva-otpisani i neotpisani")
+            RETURN DE_ABORT
+        else
+            RETURN DE_REFRESH
+        endif
+
+    case Ch==K_CTRL_I
+
+        Box(,4,50)
+            _novi := SPACE(10)
+            @ m_x+1, m_y+2 SAY "Promjena inventurnog broja:"
+            @ m_x+3, m_y+2 SAY "Novi inventurni broj:" GET _novi valid !EMPTY( _novi )
+            read
+        BoxC()
+
+        ESC_RETURN DE_CONT
+
+        select os
+        seek _novi
+        if FOUND()
+            Beep(1)
+            Msg("Vec postoji sredstvo sa istim inventurnim brojem !")
+        else
+            select promj
+            seek cId
+            _t_rec := 0
+            do while !eof() .and. cId == field->id
+                skip
+                _t_rec := recno()
+                skip -1
+                _rec := dbf_get_rec()
+                _rec["id"] := _novi
+                update_rec_server_and_dbf( ALIAS(), _rec )
+                go ( _t_rec )
+            enddo
+            seek _novi
+
+            select os
+            seek cId
+            _rec := dbf_get_rec()
+            _rec["id"] := _novi
+            update_rec_server_and_dbf( ALIAS(), _rec )
+            cId := _novi
+        endif
+        select promj
         RETURN DE_REFRESH
-     endif
-
-  case Ch==K_CTRL_I
-     Box(,4,50)
-       private cNovi:=space(10)
-       @ m_x+1,m_y+2 SAY "Promjena inventurnog broja:"
-       @ m_x+3,m_y+2 SAY "Novi inventurni broj:" GET cnovi valid !empty(cnovi)
-       read
-     BoxC()
-     ESC_RETURN DE_CONT
-
-       select os
-       seek cnovi
-       if found()
-         Beep(1)
-         Msg("Vec postoji sredstvo sa istim inventurnim brojem !")
-       else
-         select promj
-         seek cid
-         private nRec:=0
-         do while !eof() .and. cid==id
-           skip; nRec:=recno(); skip -1
-           replace id with cnovi
-           go nRec
-         enddo
-         seek cnovi
-
-         select os
-         seek cid
-         replace id with cNovi
-         cId:=cnovi
-       endif
-       select promj
-       RETURN DE_REFRESH
-  otherwise
-     return DE_CONT
+    otherwise
+        return DE_CONT
 endcase
+
 return nRet
 
+
+// ------------------------------------------------------------------------
 // 1) izracunaj i prikazi sadasnju vrijednost
 // 2) izracunaj i kumulativ amortizacije u aSred
+// ------------------------------------------------------------------------
 function ShowSadVr()
- local nArr:=SELECT(), nRec:=0, i:=0
-  SELECT PROMJ
-  nRec:=RECNO()
-  SEEK cID
-  aVr[1]:=OS->nabvr
-  aVr[2]:=OS->otpvr
-  FOR i:=LEN(aSred) TO 1 STEP -1
-    IF aSred[i,1]>0 .and. aSred[i,1]<999999
-      ADEL(aSred,i)
-      ASIZE(aSred,LEN(aSred)-1)
+local _arr := SELECT()
+local _t_rec := 0
+local _i := 0
+
+SELECT PROMJ
+_t_rec := RECNO()
+
+SEEK cID
+
+aVr[1] := OS->nabvr
+aVr[2] := OS->otpvr
+  
+FOR _i := LEN( aSred ) TO 1 STEP -1
+    IF aSred[ _i, 1 ] > 0 .and. aSred[ _i, 1 ] < 999999
+        ADEL(aSred, _i)
+        ASIZE(aSred, LEN(aSred) - 1 )
     ENDIF
-  NEXT
-  DO WHILE !EOF() .and. ID==cID
-    aVr[1] += nabvr; aVr[2] += otpvr
-    AADD( aSred , {RECNO(),datum,OS->datotp,nabvr,otpvr,0} )
+NEXT
+  
+DO WHILE !EOF() .and. field->id == cID
+    aVr[1] += field->nabvr
+    aVr[2] += field->otpvr
+    AADD( aSred, { RECNO(), field->datum, os->datotp, field->nabvr, field->otpvr, 0} )
     SKIP 1
-  ENDDO
-  ASORT(aSred,,,{|x,y| x[2]<y[2]})
-  FOR i:=1 TO LEN(aSred)
-    _nabvr:=aSred[i,4]
-    _otpvr:=aSred[i,5]
-    _amd:=_amp:=nOstalo:=0
-    _datum:=aSred[i,2]
-    _datotp:=aSred[i,3]
-    izracunaj_os_amortizaciju(_datum,iif(!empty(_datotp),min(gDatObr,_datotp),gDatObr),100)     // napuni _amp
-    aSred[i,6]=_amp
-  NEXT
-  SKIP -1
-  IF ID==cId; aVr[3]:=PSadVr(); ENDIF
-  @ m_x+6, m_y+1 SAY " UKUPNO:   Nab.vr.="         COLOR "W+/B"
-  @ row(),col()  SAY TRANS(aVr[1],"9999999.99")        COLOR "GR+/B"
-  @ row(),col()  SAY ",    Otp.vr.="         COLOR "W+/B"
-  @ row(),col()  SAY TRANS(aVr[2],"9999999.99")        COLOR "GR+/B"
-  @ row(),col()  SAY ",    Sad.vr.="         COLOR "W+/B"
-  @ row(),col()  SAY TRANS(aVr[1]-aVr[2],"9999999.99") COLOR IF(aVr[1]-aVr[2]<0,"GR+/R","GR+/B")
-  @ m_x+7, m_y+1 SAY "           Sadasnja vrijednost sa uracunatom amortizacijom=" COLOR "W+/B"
-  @ row(),col()  SAY TRANS(aVr[3],"9999999.99")        COLOR IF(aVr[3]<0,"GR+/R","GR+/B")
-  GO (nRec)
- SELECT (nArr)
+ENDDO
+  
+ASORT(aSred,,,{|x,y| x[2]<y[2]})
+
+_i := 1
+
+FOR _i := 1 TO LEN( aSred )
+    _nabvr := aSred[ _i, 4 ]
+    _otpvr := aSred[ _i, 5 ]
+    _amd := 0
+    _amp := 0
+    nOstalo := 0
+    _datum := aSred[ _i, 2 ] 
+    _datotp := aSred[ _i, 3 ]
+    izracunaj_os_amortizaciju( _datum, iif(!empty(_datotp), min(gDatObr,_datotp), gDatObr ),100)     
+    // napuni _amp
+    aSred[ _i, 6 ] = _amp
+NEXT
+  
+SKIP -1
+IF field->id == cId
+    aVr[3] := PSadVr()
+ENDIF
+  
+@ m_x+6, m_y+1 SAY " UKUPNO:   Nab.vr.="         COLOR "W+/B"
+@ row(),col()  SAY TRANS( aVr[1],"9999999.99")        COLOR "GR+/B"
+@ row(),col()  SAY ",    Otp.vr.="         COLOR "W+/B"
+@ row(),col()  SAY TRANS( aVr[2],"9999999.99")        COLOR "GR+/B"
+@ row(),col()  SAY ",    Sad.vr.="         COLOR "W+/B"
+@ row(),col()  SAY TRANS( aVr[1] - aVr[2],"9999999.99") COLOR IF( aVr[1] - aVr[2] < 0,"GR+/R","GR+/B")
+@ m_x+7, m_y+1 SAY "           Sadasnja vrijednost sa uracunatom amortizacijom=" COLOR "W+/B"
+@ row(),col()  SAY TRANS( aVr[3],"9999999.99")        COLOR IF( aVr[3]<0,"GR+/R","GR+/B")
+
+GO (_t_rec)
+SELECT (_arr)
+
 return
 
 
+
 function PSadVr()
-local n:=0, i:=0
-for i:=1 to LEN(aSred)
-	n += ( aSred[i,4]-aSred[i,5]-aSred[i,6] )
-	if i==LEN(aSred)
-		aVr[3]:=n
-	endif
-	if aSred[i,1]==RECNO()
-		exit
-	endif
+local _n := 0
+local _i := 0
+
+for _i:=1 to LEN(aSred)
+    _n += ( aSred[_i,4]-aSred[_i,5]-aSred[_i,6] )
+    if _i==LEN(aSred)
+        aVr[3]:=_n
+    endif
+    if aSred[_i,1]==RECNO()
+        exit
+    endif
 next
-return n
+return _n
+
 
 
 
 function os_validate_date()
-local nRet:=.t.
-if _datum<=dDatNab
-	Beep(1)
-	Msg("Datum promjene mora biti veci od datuma nabavke !")
-	nRet:=.f.
+local _ret := .t.
+
+if _datum <= dDatNab
+    Beep(1)
+    Msg("Datum promjene mora biti veci od datuma nabavke !")
+    _ret := .f.
 endif
-if !empty(dDatOtp) .and. _Datum>=dDatOtp
-	Beep(1)
-	Msg("Datum promjene mora biti manji od datuma otpisa !")
-	nRet:=.f.
+
+if !empty(dDatOtp) .and. _Datum >= dDatOtp
+    Beep(1)
+    Msg("Datum promjene mora biti manji od datuma otpisa !")
+    _ret := .f.
 endif
-return nRet
+
+return _ret
+
+
 

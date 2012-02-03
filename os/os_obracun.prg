@@ -165,13 +165,13 @@ do while !eof()
             nUkupno+=round(_amp,2)
         endif
     
+        private cId:=_id
+        
         // sinhronizuj podatke sql/server
         _rec := get_dbf_global_memvars()
         update_rec_server_and_dbf( ALIAS(), _rec )
     
         // amortizacija promjena
-        
-        private cId:=_id
         select promj
         hseek cId
         

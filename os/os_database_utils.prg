@@ -110,6 +110,9 @@ return
 // -------------------------------------------
 function RegenPS()
 
+MsgBeep("Ova opcija je onemogucena #25358 !")
+return
+
 // regeneracija nabavne i otpisane vrijednosti za stara sredstva
 
 Beep(4)

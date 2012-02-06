@@ -138,7 +138,8 @@ do while !eof()
     _rec["otpvr"] := _rec["otpvr"] + _rec["revp"] + _rec["amp"]
     
     // brisi sta je otpisano
-    IF !EMPTY( _rec["datotp"] )
+    // ali samo osnovna sredstva, sitan inventar ostaje u bazi...
+    IF !EMPTY( _rec["datotp"] ) .and. gOsSii == "O"
         ?? "  brisem, otpisano"
         delete_rec_server_and_dbf( ALIAS(), _rec )
         go _t_rec

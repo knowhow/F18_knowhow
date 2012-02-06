@@ -395,6 +395,15 @@ endif
 
 ? cLine
 
+if _export
+    // dodaj stavku ukupno
+    _add_to_exp( "UKUPNO:", CTOD(""), "", "", ;
+                  "", "", "", "", ;
+                  nTNVU, nTNVI, nTNVU - nTNVI, ;
+                  nTVPVU, nTVPVI, nTVPVU - nTVPVI, ;
+                  nTRabat )
+endif   
+
 FF
 END PRINT
 

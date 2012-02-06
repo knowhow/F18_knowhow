@@ -241,7 +241,7 @@ do while !eof() .and. cidfirma==idfirma .and.  IspitajPrekid()
     
     endif
  
-    cBrFaktP := IF( cPapir=="2" , brfaktp , "" )
+    cBrFaktP := brfaktp
     cIdPartner:=idpartner
     dDatDok:=datdok
     cBroj:=idvd+"-"+brdok
@@ -259,6 +259,7 @@ do while !eof() .and. cidfirma==idfirma .and.  IspitajPrekid()
     cPartnNaz := field->naz
     cPartnPtt := field->ptt
     cPartnMj := field->mjesto
+    cPartnAdr := field->adresa
 
     select ( _t_area )
 
@@ -362,7 +363,7 @@ do while !eof() .and. cidfirma==idfirma .and.  IspitajPrekid()
     if _export 
 
         _add_to_exp( cBroj, dDatDok, cDokNaz, cIdPartner, ;
-                     cPartnNaz, cPartnMj, cPartnPtt, cBrFaktP, ;
+                     cPartnNaz, cPartnMj, cPartnPtt, cPartnAdr, cBrFaktP, ;
                      nNVU, nNVI, nTNVU - nTNVI, ;
                      nVPVU, nVPVI, nTVPVU - nTVPVI, ;
                      nRabat )
@@ -398,7 +399,7 @@ endif
 if _export
     // dodaj stavku ukupno
     _add_to_exp( "UKUPNO:", CTOD(""), "", "", ;
-                  "", "", "", "", ;
+                  "", "", "", "", "", ;
                   nTNVU, nTNVI, nTNVU - nTNVI, ;
                   nTVPVU, nTVPVI, nTVPVU - nTVPVI, ;
                   nTRabat )
@@ -469,6 +470,7 @@ AADD( _dbf, { "idpartner" , "C",  6, 0 } )
 AADD( _dbf, { "part_naz"  , "C",100, 0 } )
 AADD( _dbf, { "part_mj"   , "C", 50, 0 } )
 AADD( _dbf, { "part_ptt"  , "C", 10, 0 } )
+AADD( _dbf, { "part_adr"  , "C", 50, 0 } )
 AADD( _dbf, { "br_fakt"   , "C", 20, 0 } )
 AADD( _dbf, { "nv_dug"    , "N", 15, 2 } )
 AADD( _dbf, { "nv_pot"    , "N", 15, 2 } )
@@ -487,7 +489,7 @@ return _dbf
 // dodaj podatke u r_export tabelu
 // ---------------------------------------
 static function _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
-                            part_naz, part_mjesto, part_ptt, broj_fakture, ;
+                            part_naz, part_mjesto, part_ptt, part_adr, broj_fakture, ;
                             n_v_dug, n_v_pot, n_v_saldo, ;
                             v_p_dug, v_p_pot, v_p_saldo, ;
                             v_p_rabat )
@@ -505,6 +507,7 @@ REPLACE field->idpartner WITH id_partner
 REPLACE field->part_naz WITH part_naz
 REPLACE field->part_mj WITH part_mjesto
 REPLACE field->part_ptt WITH part_ptt
+REPLACE field->part_adr WITH part_adr
 REPLACE field->br_fakt WITH broj_fakture
 REPLACE field->nv_dug WITH n_v_dug
 REPLACE field->nv_pot WITH n_v_pot

@@ -306,7 +306,7 @@ else
 	gDuzKonto:=7
 endif
 public glZabraniVisakIP
-public glBrojacPoKontima
+public glBrojacPoKontima := .f.
 public glEvidOtpis
 public gcSLObrazac
 

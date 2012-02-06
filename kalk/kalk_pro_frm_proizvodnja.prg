@@ -22,177 +22,187 @@ function Get1_PR()
 select F_SAST
 
 if !used()
-	O_SAST
+    O_SAST
 endif
+
 select kalk_pripr
 
 if nRbr==1 .and. fnovi
-	_DatFaktP:=_datdok
+    _DatFaktP:=_datdok
 endif
 
 if nRbr==1
-	@ m_x+ 6,m_y+2   SAY "Broj fakture" GET _brfaktp
-	@ m_x+ 7,m_y+2   SAY "Mag .got.proizvoda zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
- 	@  m_x+8,m_y+2   SAY "Mag. sirovina razduzuje    " get _IdKonto2 pict "@!" valid P_Konto(@_IdKonto2)
- 	@ m_x+12,m_y+2  SAY "Proizvod  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(12,24,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
-	@ m_x+12,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
- 	select TARIFA
-	hseek _IdTarifa  
-	// postavi TARIFA na pravu poziciju
- 	select kalk_pripr  
-	// napuni tarifu
 
- 	@ m_x+13,m_y+2   SAY "Kolicina  " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
- 	
-	read
-	
- 	//_BrFaktP := _idzaduz2
- 	// sada trazim trebovanja u proizvod. u toku i filujem u stavke 
-	// od 100 pa nadalje
-	// ove stavke imace  mu_i=="5", mkonto=_idkonto2, nc,nv
- 	//"KALKi7","idFirma+mkonto+IDZADUZ2+idroba+dtos(datdok)","KALK")
+    @ m_x + 6, m_y + 2 SAY "Broj fakture" GET _brfaktp
+    @ m_x + 7, m_y + 2 SAY "Mag .got.proizvoda zaduzuje" GET _IdKonto valid  P_Konto( @_IdKonto, 21, 5 ) pict "@!"
+    @ m_x + 8, m_y + 2 SAY "Mag. sirovina razduzuje    " get _IdKonto2 pict "@!" valid P_Konto(@_IdKonto2)
+    @ m_x + 12, m_y + 2 SAY "Proizvod  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(12,24,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x + 12, m_y + 70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
 
- 	nTPriPrec:=recno()
- 	select kalk_pripr
- 	go bottom
+    select tarifa
+    hseek _IdTarifa
+  
+    // postavi TARIFA na pravu poziciju
+    select kalk_pripr  
+    // napuni tarifu
+
+    @ m_x + 13, m_y + 2 SAY "Kolicina  " GET _Kolicina PICT PicKol VALID _Kolicina<>0
+    
+    read
+    
+    //_BrFaktP := _idzaduz2
+    // sada trazim trebovanja u proizvod. u toku i filujem u stavke 
+    // od 100 pa nadalje
+    // ove stavke imace  mu_i=="5", mkonto=_idkonto2, nc,nv
+    //"KALKi7","idFirma+mkonto+IDZADUZ2+idroba+dtos(datdok)","KALK")
+
+    nTPriPrec := RECNO()
+
+    select kalk_pripr
+    go bottom
  
- 	if val(rbr)<900 .or. (val(rbr)>1 .and. Pitanje(,"Zelite li izbrisati izgenerisane sirovine ?","N")=="D")
-	  do while !bof() .and. val(rbr)>900
-    	    skip -1
-	    nTrec:=recno()
-	    skip
-    	    dbdelete2()
-    	    go nTrec
-  	  enddo
+    if val(rbr)<900 .or. (val(rbr)>1 .and. Pitanje(,"Zelite li izbrisati izgenerisane sirovine ?","N")=="D")
+        do while !bof() .and. val(rbr)>900
+            skip -1
+            nTrec:=recno()
+            skip
+            dbdelete2()
+            go nTrec
+        enddo
 
-  	  select ROBA
-	  hseek _idroba
-  	
-	  if roba->tip="P" .and. nRbr==1  
-	   // radi se o proizvodu, prva stavka
-     	   nRbr2 := 900
-     	   select sast
-     	   hseek  _idroba
-     	   do while !eof() .and. id==_idroba 
-	    // setaj kroz sast
-       	    select roba
-	    hseek sast->id2
-       	    select kalk_pripr
-       	    locate for idroba==sast->id2
-       	    if found()
-         	replace kolicina with kolicina + kalk_pripr->kolicina*sast->kolicina
-       	    else
-         	select kalk_pripr
-         	append blank
-         	replace  idfirma with _IdFirma,;
-         		rbr with str(++nRbr2,3),;
-         		idvd with "PR",;
-                	brdok with _Brdok,;
-                	datdok with _Datdok,;
-                	idtarifa with ROBA->idtarifa,;
-                	brfaktp with _brfaktp,;
-                	datfaktp with _Datdok,;
-                	idkonto   with _idkonto,;
-                	idkonto2  with _idkonto2,;
-                	datkurs with _Datdok,;
-                	kolicina with _kolicina*sast->kolicina,;
-                	idroba with sast->id2,;
-                	nc with 0,;
-                	vpc with 0,;
-                	pu_i with "",;
-                	mu_i with "5",;
-                	error with "0",; 
-			mkonto with _idkonto2
-			
-		nTTKNrec:=recno()
-         	// kalkulacija nabavne cijene
-         	// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
-         	nKolS:=0
-		nKolZN:=0
-		nc1:=0
-		nc2:=0
-		dDatNab:=ctod("")
-         	if _TBankTr<>"X"  
-		  // ako je X onda su stavke vec izgenerisane
-          	  if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
-           		MsgO("Racunam stanje na skladistu")
-               		KalkNab(_idfirma,sast->id2,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
-           		MsgC()
-          	  endif
-                  if dDatNab>_DatDok
-		    Beep(1)
-		    Msg("Datum nabavke je "+dtoc(dDatNab)+" sirovina "+sast->id2,4)
-		  endif
-          	  if _kolicina>=0 .OR. ROUND(_NC,3)==0 .and. !(roba->tip $ "UT")
-           	    if gmetodanc == "2"
-             	      select roba
-             	      replace nc with _nc
-             	      select kalk_pripr 
-		      // nafiluj sifrarnik robe sa nc sirovina, robe
-           	    endif
-          	  endif
-          	  select kalk_pripr
-          	  go nTTKNRec
-          	  replace nc with nc2, gkolicina with nKolS
+        select ROBA
+        hseek _idroba
+    
+        if roba->tip="P" .and. nRbr==1  
+            // radi se o proizvodu, prva stavka
+            nRbr2 := 900
+            select sast
+            hseek  _idroba
+            do while !eof() .and. id==_idroba 
+                // setaj kroz sast
+                select roba
+                hseek sast->id2
+                select kalk_pripr
+                locate for idroba==sast->id2
+                if FOUND()
+                    replace kolicina with kolicina + kalk_pripr->kolicina*sast->kolicina
+                else
+                    select kalk_pripr
+                    append blank
+                    replace idfirma with _IdFirma,;
+                        rbr with str(++nRbr2,3),;
+                        idvd with "PR",;
+                        brdok with _Brdok,;
+                        datdok with _Datdok,;
+                        idtarifa with ROBA->idtarifa,;
+                        brfaktp with _brfaktp,;
+                        datfaktp with _Datdok,;
+                        idkonto   with _idkonto,;
+                        idkonto2  with _idkonto2,;
+                        datkurs with _Datdok,;
+                        kolicina with _kolicina*sast->kolicina,;
+                        idroba with sast->id2,;
+                        nc with 0,;
+                        vpc with 0,;
+                        pu_i with "",;
+                        mu_i with "5",;
+                        error with "0",; 
+                        mkonto with _idkonto2
+            
+                    nTTKNrec:=recno()
+                    // kalkulacija nabavne cijene
+                    // nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
+                    nKolS:=0
+                    nKolZN:=0
+                    nC1:=0
+                    nC2:=0
+                    dDatNab:=ctod("")
+                    if _TBankTr<>"X"  
+                        // ako je X onda su stavke vec izgenerisane
+                        if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
+                            MsgO("Racunam stanje na skladistu")
+                            KalkNab(_idfirma,sast->id2,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+                            MsgC()
+                        endif
+                        if dDatNab>_DatDok
+                            Beep(1)
+                            Msg("Datum nabavke je "+dtoc(dDatNab)+" sirovina "+sast->id2,4)
+                        endif
+                        if _kolicina>=0 .OR. ROUND(_NC,3)==0 .and. !(roba->tip $ "UT")
+                            if gMetodanc == "2"
+                                select roba
+                                _rec := dbf_get_rec()
+                                _rec["nc"] := _nc
+                                update_rec_server_and_dbf( ALIAS(), _rec )
+                                select kalk_pripr 
+                                // nafiluj sifrarnik robe sa nc sirovina, robe
+                            endif
+                        endif
+                        select kalk_pripr
+                        go nTTKNRec
+                        replace nc with nc2, gkolicina with nKolS
 
-       		endif
-         endif
-         select sast
-         skip
-     enddo
-   endif // roba->tip == "P"
-  endif
-  select kalk_pripr
-  go  nTPriPrec
-  _DatKurs:=_DatFaktP
-  if gNW<>"X"
-	@ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
-  endif
-  read
-  ESC_RETURN K_ESC
+                    endif
+                endif
+                select sast
+                skip
+            enddo
+        endif 
+        // roba->tip == "P"
+    endif
+    select kalk_pripr
+    go nTPriPrec
+    _DatKurs:=_DatFaktP
+    if gNW<>"X"
+        @ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+    endif
+    read
+    ESC_RETURN K_ESC
 else
-  @ m_x+ 7,m_y+2   SAY "Mag. gotovih proizvoda zaduzuje ";?? _IdKonto
-  @ m_x+ 8,m_y+2   SAY "Magacin sirovina razduzuje      ";?? _IdKonto2
-  if gNW<>"X"
-   @ m_x+10,m_y+42  SAY "Zaduzuje: "; ?? _IdZaduz
-  endif
+
+    @ m_x+ 7,m_y+2   SAY "Mag. gotovih proizvoda zaduzuje ";?? _IdKonto
+    @ m_x+ 8,m_y+2   SAY "Magacin sirovina razduzuje      ";?? _IdKonto2
+    if gNW<>"X"
+        @ m_x+10,m_y+42  SAY "Zaduzuje: "; ?? _IdZaduz
+    endif
+
 endif 
 
 @ m_x+11,m_y+66 SAY "Tarif.brĿ"
 
 if nRbr<>1
-	@ m_x+12,m_y+2  SAY "Sirovina  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(12,24,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
-   	@ m_x+13,m_y+2   SAY "Kolicina  " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
+    @ m_x+12,m_y+2  SAY "Sirovina  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(12,24,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+13,m_y+2   SAY "Kolicina  " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
 endif
 
 read
 ESC_RETURN K_ESC
 
 if nRbr<>1  // sirovine
-	// kalkulacija nabavne cijene
- 	nKolS:=0
-	nKolZN:=0
-	nc1:=0
-	nc2:=0
-	dDatNab:=ctod("")
- 	
-	if _TBankTr<>"X"  
-		// ako je X onda su stavke vec izgenerisane
-  		if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
-   			MsgO("Racunam stanje na skladistu")
-       			KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
-   			MsgC()
-  		endif
-  		if dDatNab>_DatDok
-			Beep(1)
-			Msg("Datum nabavke je "+dtoc(dDatNab)+" sirovina "+sast->id2,4)
-		endif
-  		if round(nKols-_kolicina,4)<0
-			MsgBeep("Na stanju je samo :"+str(nkols,15,3))
-			_error:="1"
-		endif
- 	endif 
- 	select kalk_pripr
+    // kalkulacija nabavne cijene
+    nKolS:=0
+    nKolZN:=0
+    nc1:=0
+    nc2:=0
+    dDatNab:=ctod("")
+    
+    if _TBankTr<>"X"  
+        // ako je X onda su stavke vec izgenerisane
+        if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
+            MsgO("Racunam stanje na skladistu")
+                KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+            MsgC()
+        endif
+        if dDatNab>_DatDok
+            Beep(1)
+            Msg("Datum nabavke je "+dtoc(dDatNab)+" sirovina "+sast->id2,4)
+        endif
+        if round(nKols-_kolicina,4)<0
+            MsgBeep("Na stanju je samo :"+str(nkols,15,3))
+            _error:="1"
+        endif
+    endif 
+    select kalk_pripr
 endif
 
 select koncij
@@ -205,24 +215,24 @@ _MU_I:="1"
 DatPosljK()
 
 if fNovi
-	select ROBA
-	HSEEK _IdRoba
- 	_VPC:=KoncijVPC()
+    select ROBA
+    HSEEK _IdRoba
+    _VPC:=KoncijVPC()
     _TCarDaz:="%"
     _CarDaz:=0
 endif
 
 select kalk_pripr
 if _tmarza<>"%"  // procente ne diraj
-	_Marza:=0
+    _Marza:=0
 endif
 
 if nRbr<>1
-	@ m_x+15,m_y+2   SAY "N.CJ.(DEM/JM):"
- 	@ m_x+15,m_y+50  GET _NC PICTURE PicDEM valid _nc>=0
- 	read
- 	_Mkonto:=_idkonto2
- 	_mu_i:="5"
+    @ m_x+15,m_y+2   SAY "N.CJ.(DEM/JM):"
+    @ m_x+15,m_y+50  GET _NC PICTURE PicDEM valid _nc>=0
+    read
+    _Mkonto:=_idkonto2
+    _mu_i:="5"
 endif
 
 // preracunaj nc proiz
@@ -233,40 +243,40 @@ go top
 
 nNV:=0
 do while !eof()
-	if val(RBr)>900
-       		if val(rbr)=nRbr
-        		nNV+=_NC*_kolicina
-       		else
-        		nNV+=NC*kolicina  
-			// ovo je u stvari nabavna vrijednost
-       		endif
-       		if nRbr==1 .and. gkolicina<kolicina
-           		Beep(2)
-           		Msg("Na stanju "+idkonto2+" se nalazi samo "+str(gkolicina,9,2)+" sirovine "+idroba ,0)
-           		_error := "1"
-       		endif
-     	endif
-     	skip
+    if val(RBr)>900
+            if val(rbr)=nRbr
+                nNV+=_NC*_kolicina
+            else
+                nNV+=NC*kolicina  
+            // ovo je u stvari nabavna vrijednost
+            endif
+            if nRbr==1 .and. gkolicina<kolicina
+                Beep(2)
+                Msg("Na stanju "+idkonto2+" se nalazi samo "+str(gkolicina,9,2)+" sirovine "+idroba ,0)
+                _error := "1"
+            endif
+        endif
+        skip
 enddo
 
 if nRbr==1
-	_fcj:=nNV/_kolicina
+    _fcj:=nNV/_kolicina
 else
-	if !fnovi
-     		go top
-     		if val(rbr)=1
-       			replace fcj with nNv/kolicina
-     		endif
-   	endif
+    if !fnovi
+        go top
+        if val(rbr)=1
+            replace fcj with nNv/kolicina
+        endif
+    endif
 endif
 go nTT0Rec
 
 if nRbr==1
-	_fcj:= nNV/_kolicina
- 	@ m_x+15,m_y+2   SAY "N.CJ.(DEM/JM):"
- 	@ m_x+15,m_y+50  GET _FCJ PICTURE PicDEM valid _fcj>0 when V_kol10()
- 	read
-	ESC_RETURN K_ESC
+    _fcj:= nNV/_kolicina
+    @ m_x+15,m_y+2   SAY "N.CJ.(DEM/JM):"
+    @ m_x+15,m_y+50  GET _FCJ PICTURE PicDEM valid _fcj>0 when V_kol10()
+    read
+    ESC_RETURN K_ESC
 endif
 
 _FCJ2 := _FCJ * (1 - _Rabat / 100)
@@ -282,7 +292,7 @@ function Get2_PR()
 local cSPom:=" (%,A,U,R) "
 
 if nRbr<>1 
-	return K_ENTER
+    return K_ENTER
 endif
 
 private getlist:={}
@@ -314,28 +324,28 @@ if empty(_TMarza);  _TMarza:="%" ; endif
 
 if koncij->naz<>"N1"  
 
-	// vodi se po vpc
-  	private fMarza:=" "
-  	@ m_x+10,m_y+2 SAY "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
-  	@ m_x+10,m_y+40 GET _Marza PICTURE PicDEM
-  	@ m_x+10,col()+1 GET fMarza pict "@!"
-  	@ m_x+12,m_y+2 SAY "VELEPRODAJNA CJENA  (VPC)   :"
-  	@ m_x+12,m_y+50 get _VPC PICT PicDEM VALID {|| Marza(fMarza),.t.}
+    // vodi se po vpc
+    private fMarza:=" "
+    @ m_x+10,m_y+2 SAY "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
+    @ m_x+10,m_y+40 GET _Marza PICTURE PicDEM
+    @ m_x+10,col()+1 GET fMarza pict "@!"
+    @ m_x+12,m_y+2 SAY "VELEPRODAJNA CJENA  (VPC)   :"
+    @ m_x+12,m_y+50 get _VPC PICT PicDEM VALID {|| Marza(fMarza),.t.}
 
-  	read
- 	SetujVPC(_vpc)
-	
+    read
+    SetujVPC(_vpc)
+    
 else
 
-	read
-  	_Marza:=0
-	_TMarza:="A"
-	_VPC:=_NC
-	
+    read
+    _Marza:=0
+    _TMarza:="A"
+    _VPC:=_NC
+    
 endif
 
 if nRbr=1
-	_MKonto:=_Idkonto; _MU_I:="1"
+    _MKonto:=_Idkonto; _MU_I:="1"
 endif
 nStrana:=3
 

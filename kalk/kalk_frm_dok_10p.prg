@@ -40,7 +40,7 @@ if nRbr == 1  .or. !fNovi .or. gMagacin=="1"
 	endif
 	
 	_DatKurs:=_DatFaktP
- 	@ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+ 	@ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje" GET _IdKonto valid  P_Konto( @_IdKonto, 21, 5 ) pict "@!"
  	if gNW<>"X"
   		@ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
  	endif
@@ -405,7 +405,7 @@ if nRbr==1  .or. !fNovi
  	@ m_x+8, m_y+2 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
  endif
  
- @ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+ @ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto, 21, 5) pict "@!"
  if gNW<>"X"
   @ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
  endif

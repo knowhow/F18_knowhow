@@ -104,30 +104,31 @@ nTRec := RecNo()
 nReturn := DE_CONT
 
 do case
+
     case Ch == K_CTRL_F9
-    // brisanje sastavnica i proizvoda
-    bris_sast()
-    nReturn := 7
+        // brisanje sastavnica i proizvoda
+        bris_sast()
+        nReturn := 7
 
     case Ch == K_ENTER 
-    // prikazi sastavnicu
-    show_sast()
-    nReturn := DE_REFRESH
+        // prikazi sastavnicu
+        show_sast()
+        nReturn := DE_REFRESH
     
     case Ch == K_CTRL_F4
-    // kopiranje sastavnica u drugi proizvod
-    copy_sast()
-    nReturn := DE_REFRESH
+        // kopiranje sastavnica u drugi proizvod
+        copy_sast()
+        nReturn := DE_REFRESH
 
     case Ch == K_F7
-    // lista sastavnica
-    ISast()
-    nReturn := DE_REFRESH
+        // lista sastavnica
+        ISast()
+        nReturn := DE_REFRESH
 
     case Ch == K_F10  
-    // ostale opcije
-    ost_opc_sast()
-    nReturn := DE_CONT
+        // ostale opcije
+        ost_opc_sast()
+        nReturn := DE_CONT
 
 endcase
 
@@ -384,7 +385,7 @@ go top
 // setuj kolone sastavnice tabele
 sast_a_kol(@ImeKol, @Kol)
     
-PostojiSifra(F_SAST, "IDRBR", 10, 70, cIdTek + "-" + LEFT(roba->naz, 40),,,,{|Char| EdSastBlok(Char)},,,,.f.)
+PostojiSifra( F_SAST, "IDRBR", MAXROWS() - 18, 80, cIdTek + "-" + LEFT( roba->naz, 40 ),,,,{|Char| EdSastBlok(Char)},,,,.f.)
 
 // ukini filter
 set filter to
@@ -404,9 +405,8 @@ static function EdSastBlok(char)
 
 do case
     case char == K_CTRL_F9
-        MsgBeep("Nedozvoljena opcija")
+        MsgBeep("Nedozvoljena opcija !!!")
         return 7  
-        // kao de_refresh, ali se zavrsava izvr{enje f-ja iz ELIB-a
 endcase
 
 return DE_CONT
@@ -421,13 +421,13 @@ aImeKol := {}
 aKol := {}
 
 // redni broj
-AADD(aImeKol, { "rbr", {|| r_br}, "r_br", {|| .t.}, {|| .t.} })
+AADD(aImeKol, { "R.Br", {|| r_br}, "r_br", {|| .t.}, {|| .t.} })
 
 // id roba
-AADD(aImeKol, { "Id2", {|| id2}, "id2", {|| .t.}, {|| wId := cIdTek, p_roba(@wId2)} })
+AADD(aImeKol, { PADC( "Sifra sirovine", 20 ), {|| id2}, "id2", {|| .t.}, {|| wId := cIdTek, p_roba(@wId2)} })
 
 // kolicina
-AADD(aImeKol, { "kolicina", {|| kolicina}, "kolicina" })
+AADD(aImeKol, { "Kolicina", {|| kolicina}, "kolicina" })
 
 for i:=1 to LEN(aImeKol)
     AADD(aKol, i)

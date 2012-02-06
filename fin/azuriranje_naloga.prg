@@ -28,11 +28,12 @@ if (lAuto==NIL)
     lAuto:=.f.
 endif
 
-if !lAuto .and. Pitanje("pAz", "Sigurno zelite izvrsiti azuriranje (D/N)?", "N") == "N"
+o_fin_za_azuriranje()
+
+if fin_pripr->( RECCOUNT() == 0 ) .or. ( !lAuto .and. Pitanje("pAz", "Izvrsiti azuriranje fin naloga ? (D/N)?", "N") == "N" )
     return
 endif
 
-o_fin_za_azuriranje()
 if !fin_azur_check(lAuto)
    return .f.
 endif

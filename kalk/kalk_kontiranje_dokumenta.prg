@@ -96,7 +96,7 @@ endif
 
 lAFin:=(fauto .and. gAFin=="D")
 
-if lafin
+if laFin
     Beep(1)
     
     if !lAGen

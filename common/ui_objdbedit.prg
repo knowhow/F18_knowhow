@@ -372,7 +372,7 @@ DO CASE
 
   CASE Ch==K_ALT_R
 
-    IF (kLevel>"0" .or. gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS"))
+    IF (gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS"))
      Msg("Nemate pravo na koristenje ove opcije",15)
     ELSE
      private cKolona
@@ -429,7 +429,7 @@ DO CASE
 
   CASE Ch==K_ALT_S
     
-    IF (kLevel>"0".or.gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS"))
+    IF (gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS"))
      Msg("Nemate pravo na koristenje ove opcije",15)
     
     ELSE

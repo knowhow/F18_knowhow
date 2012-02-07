@@ -295,7 +295,7 @@ do case
         return DE_CONT
     case Ch==K_ENTER
         return EditStavka()
-    case Ch==K_CTRL_A
+    case Ch==K_CTRL_A .or. lAsistRadi
         return EditAll() 
     case Ch==K_CTRL_N  // nove stavke
         return NovaStavka()
@@ -638,6 +638,7 @@ Box("anal",20,77,.f.,"Ispravka naloga")
     PopWA()
 
 BoxC()
+
 lAsistRadi := .f.
 
 return DE_REFRESH
@@ -650,23 +651,9 @@ return DE_REFRESH
 
 function KnjizAsistent()
 lAutoAsist := .f.
-
-private nEntera:=30
-
-IF IzFMKIni( "KALK","PametniAsistent", "N", KUMPATH ) == "D"
-    lAsistRadi:=.t.
-    cSekv := CHR(K_CTRL_A)
-    keyboard cSekv
-ELSE
-    lAsistRadi:=.f.
-    for iSekv:=1 to int(reccount2()/15)+1
-        cSekv := CHR(K_CTRL_A)
-        for nkekk:=1 to min(reccount2(),15)*30
-            cSekv += cEnter
-        next
-        keyboard cSekv
-    next
-ENDIF
+lAsistRadi:=.t.
+cSekv := CHR(K_CTRL_A)
+keyboard cSekv
 
 return DE_REFRESH
 

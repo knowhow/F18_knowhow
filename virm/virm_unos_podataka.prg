@@ -497,7 +497,7 @@ endif
 
 // kopiraj rtm template
 if !FILE( my_home() + _rtm_file + ".rtm" )
-    FILECOPY( "c:\knowhowERP\template\nalplac.rtm", my_home() + _rtm_file + ".rtm" )
+    FILECOPY( F18_TEMPLATE_LOCATION + "nalplac.rtm", my_home() + _rtm_file + ".rtm" )
 endif
 
 select virm_pripr

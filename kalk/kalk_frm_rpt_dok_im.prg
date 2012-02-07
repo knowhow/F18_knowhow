@@ -38,10 +38,11 @@ dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 
-cSamoObraz:=Pitanje(,"Prikaz samo obrasca inventure? (D/N)")
+cSamoObrazac := Pitanje(,"Prikaz samo obrasca inventure? (D/N)")
 
 cPrikazCijene:="D"
-if cSamoObrazac=="D"
+
+if cSamoObrazac == "D"
 	cPrikazCijene:=Pitanje(,"Prikazati cijenu na obrascu? (D/N)")
 endif
 
@@ -105,7 +106,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
  */  
  
     @ prow()+1,4 SAY IdTarifa+space(4)
-    if cSamoObraz=="D"
+    if cSamoObrazac == "D"
       @ prow(),pcol()+30 SAY Kolicina  PICTURE replicate("_",len(PicKol))
       @ prow(),pcol()+1 SAY GKolicina  PICTURE replicate(" ",len(PicKol))
     else
@@ -114,7 +115,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
     endif
     nC1:=pcol()+1
 
-    if cSamoObraz=="D"
+    if cSamoObrazac == "D"
      @ prow(),pcol()+1 SAY gkolicina*nCijena  PICTURE replicate(" ",len(PicDEM))
      @ prow(),pcol()+1 SAY kolicina*nCijena   PICTURE replicate("_",len(PicDEM))
      @ prow(),pcol()+1 SAY Kolicina-GKolicina  PICTURE replicate(" ",len(PicKol))
@@ -135,7 +136,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
     nTotKol += kolicina
     nTotGKol += gkolicina
     
-    if cSamoObraz=="D"
+    if cSamoObrazac == "D"
 	      @ prow(),pcol()+1 SAY nU4  pict replicate(" ",len(PicDEM))
     else
 	      @ prow(),pcol()+1 SAY nU4 pict IF(nU4>0,picdem,replicate(" ",len(PicDEM)))
@@ -148,7 +149,7 @@ enddo
 
 DokNovaStrana(125, @nStr, 5)
 
-if cSamoObraz=="D"
+if cSamoObrazac == "D"
 	PrnClanoviKomisije()
   	return
 endif
@@ -168,4 +169,5 @@ endif
 
 
 return
+
 

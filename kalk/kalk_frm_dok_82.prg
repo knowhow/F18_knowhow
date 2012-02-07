@@ -12,44 +12,11 @@
 
 #include "kalk.ch"
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/frm_82.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.6 $
- * $Log: frm_82.prg,v $
- * Revision 1.6  2004/05/25 13:53:16  sasavranic
- * Mogucnost evidentiranja tipa sredstva (donirano i kupljeno)
- *
- * Revision 1.5  2003/10/11 09:26:51  sasavranic
- * Ispravljen bug pri unosu izlaznih kalkulacija, na stanju uvije 0 robe, varijanta barkod
- *
- * Revision 1.4  2003/10/06 15:00:26  sasavranic
- * Unos podataka putem barkoda
- *
- * Revision 1.3  2002/06/19 13:57:53  mirsad
- * no message
- *
- * Revision 1.2  2002/06/17 14:48:21  ernad
- *
- *
- * ciscenje
- *
- *
- */
 
-
-/*! \file fmk/kalk/mag/dok/1g/frm_82.prg
- *  \brief Maska za unos dokumenta tipa 82
- */
-
-
-/*! \fn Get1_82()
- *  \brief Prva strana maske za unos dokumenta tipa 82
- */
 
 function Get1_82()
-*{
-pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
+pIzgSt:=.f.   
+// izgenerisane stavke jos ne postoje
 //private cisMarza:=0
 
 set key K_ALT_K to KM2()
@@ -65,9 +32,9 @@ if nRbr==1 .or. !fnovi
  _Idkonto2:=""
 
  @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto ;
-            valid empty(_IdKonto) .or. P_Konto(@_IdKonto,24)
+            valid empty(_IdKonto) .or. P_Konto(@_IdKonto,21,5)
  if gNW<>"X"
-   @ m_x+9,m_y+40 SAY "Razduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+   @ m_x+9,m_y+40 SAY "Razduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
  endif
 else
  //@  m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
@@ -85,15 +52,15 @@ endif
  @ m_x+10,m_y+66 SAY "Tarif.brĿ"
  
  if lKoristitiBK
- 	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  else
- 	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  endif
  @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
 
  read; ESC_RETURN K_ESC
  if lKoristitiBK
- 	_idRoba:=Left(_idRoba, 10)
+    _idRoba:=Left(_idRoba, 10)
  endif
 
  select TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju

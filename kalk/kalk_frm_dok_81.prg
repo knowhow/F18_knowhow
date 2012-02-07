@@ -12,30 +12,11 @@
 
 #include "kalk.ch"
 
-*array
 static aPorezi:={}
-*;
 
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/prod/dok/1g/frm_81.prg
- *  \brief Maska za unos dokumenata tipa 81
- */
-
-
-/*! \fn Get1_81()
- *  \brief Prva strana maske za unos dokumenta tipa 81
- */
 
 // direktni ulaz u prodavnicu
 function Get1_81()
-*{
 
 if nRbr==1 .and. fnovi
   _DatFaktP:=_datdok
@@ -46,9 +27,9 @@ if nRbr==1  .or. !fnovi
  @  m_x+7,m_y+2   SAY "Faktura dobavljaca - Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP
 
- @ m_x+10,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+ @ m_x+10,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
  if gNW<>"X"
-   @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+   @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
  endif
  read
  ESC_RETURN K_ESC
@@ -66,9 +47,9 @@ endif
 
 @ m_x+11,m_y+66 SAY "Tarif.br->"
 if lKoristitiBK
-	@ m_x+12,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba_lv(fNovi, @aPorezi)
+    @ m_x+12,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba_lv(fNovi, @aPorezi)
 else
-	@ m_x+12,m_y+2  SAY "Artikal  " GET _IdRoba pict "@!"  valid  VRoba_lv(fNovi, @aPorezi)
+    @ m_x+12,m_y+2  SAY "Artikal  " GET _IdRoba pict "@!"  valid  VRoba_lv(fNovi, @aPorezi)
 
 endif
 
@@ -78,7 +59,7 @@ read
 ESC_RETURN K_ESC
 
 if lKoristitiBK
-	_idRoba:=Left(_idRoba,10)
+    _idRoba:=Left(_idRoba,10)
 endif
 
 //select TARIFA
@@ -207,15 +188,15 @@ if empty(_TMarza);  _TMarza:="%" ; endif
 
 @ m_x+10,m_y+2 SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
 @ m_x+10,col()+2  GET _Marza2 ;
-	PICTURE  PicDEM ;
-	valid {|| _vpc:=_nc, .t.}
-	
+    PICTURE  PicDEM ;
+    valid {|| _vpc:=_nc, .t.}
+    
 @ m_x+10,col()+1 GET fMarza pict "@!"
 
 if IsPDV()
-	@ m_x+12,m_y+2  SAY "          PC BEZ PDV :"
+    @ m_x+12,m_y+2  SAY "          PC BEZ PDV :"
 else
-	@ m_x+12,m_y+2  SAY "MALOPROD. CJENA (MPC):"
+    @ m_x+12,m_y+2  SAY "MALOPROD. CJENA (MPC):"
 endif
 
 @ m_x+12,m_y+50 GET _MPC picture PicDEM ;
@@ -223,25 +204,25 @@ endif
      VALID V_Mpc_ ("81", (fMarza=="F"), @aPorezi)
 
 if IsPDV()
-	@ m_x+14, m_y+2 SAY "PDV (%):"
-	@ row(),col()+2 SAY  TARIFA->OPP PICTURE "99.99"
-	if glUgost
-	  @ m_x+14,col()+8  SAY "PP (%):"
-	  @ row(),col()+2  SAY TARIFA->ZPP PICTURE "99.99"
-	endif
+    @ m_x+14, m_y+2 SAY "PDV (%):"
+    @ row(),col()+2 SAY  TARIFA->OPP PICTURE "99.99"
+    if glUgost
+      @ m_x+14,col()+8  SAY "PP (%):"
+      @ row(),col()+2  SAY TARIFA->ZPP PICTURE "99.99"
+    endif
 else
-	@ m_x+14, m_y+2 SAY "PPP (%):"
-	@ row(),col()+2 SAY  TARIFA->OPP PICTURE "99.99" 
-	@ m_x+14,col()+8  SAY "PPU (%):"
-	@ row(),col()+2  SAY TARIFA->PPP PICTURE "99.99" 
-	@ m_x+14,col()+8  SAY "PP (%):"
-	@ row(),col()+2  SAY TARIFA->ZPP PICTURE "99.99" 
+    @ m_x+14, m_y+2 SAY "PPP (%):"
+    @ row(),col()+2 SAY  TARIFA->OPP PICTURE "99.99" 
+    @ m_x+14,col()+8  SAY "PPU (%):"
+    @ row(),col()+2  SAY TARIFA->PPP PICTURE "99.99" 
+    @ m_x+14,col()+8  SAY "PP (%):"
+    @ row(),col()+2  SAY TARIFA->ZPP PICTURE "99.99" 
 endif
 
 if IsPDV()
-	@ m_x+16,m_y+2 SAY "    PC SA PDV  :"
+    @ m_x+16,m_y+2 SAY "    PC SA PDV  :"
 else
-	@ m_x+16,m_y+2 SAY "MPC SA POREZOM :"
+    @ m_x+16,m_y+2 SAY "MPC SA POREZOM :"
 endif
 
 @ m_x+16,m_y+50 GET _MPCSaPP  picture PicDEM ;

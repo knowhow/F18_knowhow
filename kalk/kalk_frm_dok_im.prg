@@ -12,27 +12,15 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \fn Get1_IM()
- *  \brief Prva strana maske za unos dokumenta tipa IM
- */
-
 function Get1_IM()
-*{
 local nFaktVPC
 
 _DatFaktP:=_datdok
 _DatKurs:=_DatFaktP
 
-@ m_x+8,m_y+2  SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+@ m_x+8,m_y+2  SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
 if gNW<>"X"
-	@ m_x+8,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+    @ m_x+8,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
 endif
 READ
 ESC_RETURN K_ESC
@@ -40,16 +28,16 @@ ESC_RETURN K_ESC
 @ m_x+10,m_y+66 SAY "Tarif.br-v"
 
 if lKoristitiBK
-	@ m_x+11,m_y+2 SAY "Artikal  " GET _IdRoba PICT "@!S10" WHEN {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} VALID {|| P_Roba(@_IdRoba), Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40), _IdTarifa:=iif(fNovi, ROBA->idtarifa, _IdTarifa), .t.}
+    @ m_x+11,m_y+2 SAY "Artikal  " GET _IdRoba PICT "@!S10" WHEN {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} VALID {|| P_Roba(@_IdRoba), Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40), _IdTarifa:=iif(fNovi, ROBA->idtarifa, _IdTarifa), .t.}
 else
-	@ m_x+11,m_y+2 SAY "Artikal  " GET _IdRoba PICT "@!" VALID {|| P_Roba(@_IdRoba), Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40), _IdTarifa:=iif(fNovi, ROBA->idtarifa, _IdTarifa), .t.}
+    @ m_x+11,m_y+2 SAY "Artikal  " GET _IdRoba PICT "@!" VALID {|| P_Roba(@_IdRoba), Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40), _IdTarifa:=iif(fNovi, ROBA->idtarifa, _IdTarifa), .t.}
 endif
 @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
 
 READ
 ESC_RETURN K_ESC
 if lKoristitiBK
- 	_idRoba:=Left(_idRoba, 10)
+    _idRoba:=Left(_idRoba, 10)
 endif
 
 SELECT tarifa

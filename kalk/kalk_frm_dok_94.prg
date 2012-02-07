@@ -13,20 +13,11 @@
 #include "kalk.ch"
 
 
-/*! \file fmk/kalk/mag/dok/1g/frm_94.prg
- *  \brief Maska za unos dokumenta tipa 94
- */
-
 // prijem robe 16
 // storno 14-ke fakture !!!!!!!!!! - 94
 // storno otpreme  - 97
 
-/*! \fn Get1_94()
- *  \brief Prva strana maske za unos dokumenta tipa 94
- */
-
 function Get1_94()
-*{
 local nRVPC
 pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
 
@@ -45,9 +36,9 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
     valid {|| _DatKurs:=_DatFaktP,.t.}
 
   @ m_x+9,m_y+2 SAY "Magacinski konto zaduzuje"  GET _IdKonto ;
-              valid empty(_IdKonto) .or. P_Konto(@_IdKonto,24)
+              valid empty(_IdKonto) .or. P_Konto(@_IdKonto,21,5)
   if gNW<>"X"
-    @ m_x+9,m_y+40 SAY "Zaduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+    @ m_x+9,m_y+40 SAY "Zaduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
   else
     if !empty(cRNT1)
       @ m_x+9,m_y+40 SAY "Rad.nalog:"   GET _IdZaduz2  pict "@!"
@@ -55,9 +46,9 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
   endif
 
   if _idvd=="16"
-   @ m_x+10,m_y+2   SAY "Prenos na konto          " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,24) pict "@!"
+   @ m_x+10,m_y+2   SAY "Prenos na konto          " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,21,5) pict "@!"
    if gNW<>"X"
-     @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,24)
+     @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,21,5)
    endif
   endif
 
@@ -75,9 +66,9 @@ endif
 
  @ m_x+10,m_y+66 SAY "Tarif.brĿ"
  if lKoristitiBK
- 	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz, 40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz, 40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  else
-  	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  endif
  
  @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
@@ -90,7 +81,7 @@ ENDIF
  @ m_x+12, m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
  read; ESC_RETURN K_ESC
  if lKoristitiBK
- 	_idRoba:=Left(_idRoba, 10)
+    _idRoba:=Left(_idRoba, 10)
  endif
 
  select koncij; seek trim(_idkonto)  // postavi TARIFA na pravu poziciju
@@ -130,9 +121,9 @@ IF gVarEv=="1"          ///////////////////////////// sa cijenama
       @ m_x+14+IF(lPoNarudzbi,1,0),m_y+2   SAY "PLAN. C. " GET _VPC    picture picdem
    else
       if IsPDV()
-      	@ m_x+14+IF(lPoNarudzbi,1,0),m_y+2   SAY "PROD.CIJ " get _VPC    picture PicDEM
+        @ m_x+14+IF(lPoNarudzbi,1,0),m_y+2   SAY "PROD.CIJ " get _VPC    picture PicDEM
       else
-      	@ m_x+14+IF(lPoNarudzbi,1,0),m_y+2   SAY "VPC      " get _VPC    picture PicDEM
+        @ m_x+14+IF(lPoNarudzbi,1,0),m_y+2   SAY "VPC      " get _VPC    picture PicDEM
       endif
    endif
 
@@ -143,23 +134,23 @@ IF gVarEv=="1"          ///////////////////////////// sa cijenama
 
  _PNAP:=0
  if IsPDV()
- 	_MPC := tarifa->opp
-  	@ m_x+16,m_y+2    SAY "PDV (%)  " + TRANSFORM(_MPC,"99.99")
+    _MPC := tarifa->opp
+    @ m_x+16,m_y+2    SAY "PDV (%)  " + TRANSFORM(_MPC,"99.99")
  else
-  	@ m_x+16, m_y+2    SAY "PPP (%)  " get _MPC pict "99.99" ;
-  	when {|| iif(roba->tip=="V",_mpc:=0,NIL),iif(roba->tip=="V",ppp14(.f.),.t.)} ;
-  	valid ppp14(.t.)
+    @ m_x+16, m_y+2    SAY "PPP (%)  " get _MPC pict "99.99" ;
+    when {|| iif(roba->tip=="V",_mpc:=0,NIL),iif(roba->tip=="V",ppp14(.f.),.t.)} ;
+    valid ppp14(.t.)
  endif
  if !IsPDV()
- 	@ m_x+17, m_y+2    SAY "PRUC (%) "; qqout(transform(TARIFA->VPP,"99.99"))
+    @ m_x+17, m_y+2    SAY "PRUC (%) "; qqout(transform(TARIFA->VPP,"99.99"))
  endif
 
  if gVarVP=="1"
   _VPCsaPP:=0
   if IsPDV()
-  	@ m_x+19, m_y+2  SAY "PC SA PDV  "
+    @ m_x+19, m_y+2  SAY "PC SA PDV  "
   else
-  	@ m_x+19, m_y+2  SAY "VPC + PPP  "
+    @ m_x+19, m_y+2  SAY "VPC + PPP  "
   endif
   @ m_x+19+IF(lPoNarudzbi,1,0),m_Y+50 GET _vpcSaPP picture picdem ;
        when {|| _VPCSAPP:=iif(_VPC<>0,_VPC*(1-_RabatV/100)*(1+_MPC/100),0),ShowGets(),.t.} ;
@@ -168,9 +159,9 @@ IF gVarEv=="1"          ///////////////////////////// sa cijenama
  else  // preracunate stope
   _VPCsaPP:=0
   if IsPDV()
-  	@ m_x+19,m_y+2  SAY "PC SA PDV  "
+    @ m_x+19,m_y+2  SAY "PC SA PDV  "
   else
-  	@ m_x+19, m_y+2  SAY "VPC + PPP  "
+    @ m_x+19, m_y+2  SAY "VPC + PPP  "
   endif
 
   @ m_x+19+IF(lPoNarudzbi,1,0),m_Y+50 GET _vpcSaPP picture picdem ;

@@ -12,19 +12,8 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \fn Get1_16PDV()
- *  \brief Prva strana maske za unos dokumenta tipa 16
- */
 
 function Get1_16PDV()
-*{
 local nRVPC
 pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
 
@@ -46,9 +35,9 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
  
 
   @ m_x+9,m_y+2 SAY "Magacinski konto zaduzuje"  GET _IdKonto ;
-              valid empty(_IdKonto) .or. P_Konto(@_IdKonto,24)
+              valid empty(_IdKonto) .or. P_Konto(@_IdKonto,21,5)
   if gNW<>"X"
-    @ m_x+9,m_y+40 SAY "Zaduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+    @ m_x+9,m_y+40 SAY "Zaduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
   else
     if !empty(cRNT1)
       @ m_x+9,m_y+40 SAY "Rad.nalog:"   GET _IdZaduz2  pict "@!"
@@ -57,9 +46,9 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
 
 
   if _idvd=="16"
-   @ m_x+10,m_y+2   SAY "Prenos na konto          " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,24) pict "@!"
+   @ m_x+10,m_y+2   SAY "Prenos na konto          " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,21,5) pict "@!"
    if gNW<>"X"
-     @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,24)
+     @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,21,5)
    endif
   endif
 
@@ -77,9 +66,9 @@ endif
 
  @ m_x+10,m_y+66 SAY "Tarif.brĿ"
  if lKoristitiBK
- 	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  else
- 	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  endif
  @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
 
@@ -98,7 +87,7 @@ ENDIF
  
  read; ESC_RETURN K_ESC
  if lKoristitiBK
- 	_idRoba:=Left(_idRoba, 10)
+    _idRoba:=Left(_idRoba, 10)
  endif
 
  select koncij; seek trim(_idkonto)  // postavi TARIFA na pravu poziciju
@@ -107,64 +96,64 @@ ENDIF
  _MKonto:=_Idkonto; _MU_I:="1"
 
 IF gVarEv=="1"          ///////////////////////////// sa cijenama
-	DatPosljK()
- 	DuplRoba()
-	_GKolicina:=0
- 	if fNovi
-  		select ROBA; HSEEK _IdRoba
-  		if koncij->naz=="P2"
-    			_nc:=plc
-    			_vpc:=plc
-  		else
-   			_VPC:=KoncijVPC()
-   			_NC:=NC
-  		endif
- 	endif
-	VTPorezi()
-	select kalk_pripr
+    DatPosljK()
+    DuplRoba()
+    _GKolicina:=0
+    if fNovi
+        select ROBA; HSEEK _IdRoba
+        if koncij->naz=="P2"
+                _nc:=plc
+                _vpc:=plc
+        else
+            _VPC:=KoncijVPC()
+            _NC:=NC
+        endif
+    endif
+    VTPorezi()
+    select kalk_pripr
 
- 	@ m_x+14+IF(lPoNarudzbi,1,0),m_y+2    SAY "NAB.CJ   "  GET _NC  picture gPicNC  when V_kol10()
+    @ m_x+14+IF(lPoNarudzbi,1,0),m_y+2    SAY "NAB.CJ   "  GET _NC  picture gPicNC  when V_kol10()
 
- 	private _vpcsappp:=0
+    private _vpcsappp:=0
 
-	if !IsMagPNab()
+    if !IsMagPNab()
    
-   		private fMarza:=" "
-   		@ m_x+16,m_y+36   SAY "Magacin. Marza   :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
-   		@ m_x+16,col()+1  GET _Marza PICTURE PicDEM
-   		@ m_x+16,col()+1 GET fMarza pict "@!" valid {|| Marza(fMarza),fMarza:=" ",.t.}
-   		@ m_x+19,m_y+2    SAY "PROD.CJENA BEZ PDV:"
-   		@ m_x+19,col()+2  get _VPC    picture PicDEM;
+        private fMarza:=" "
+        @ m_x+16,m_y+36   SAY "Magacin. Marza   :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
+        @ m_x+16,col()+1  GET _Marza PICTURE PicDEM
+        @ m_x+16,col()+1 GET fMarza pict "@!" valid {|| Marza(fMarza),fMarza:=" ",.t.}
+        @ m_x+19,m_y+2    SAY "PROD.CJENA BEZ PDV:"
+        @ m_x+19,col()+2  get _VPC    picture PicDEM;
                     VALID {|| Marza(fMarza),.t.}
-   		if !IsMagPNab()
-    			_mpcsapp:=roba->mpc
-   			// VPC se izracunava pomocu MPC cijene !!
-   			@ m_x+20,m_y+2 SAY "PROD.CJENA SA PDV:"
-   			@ m_x+20,col()+2 GET _MPCSaPP  picture PicDEM ;
-             			valid {|| _mpcsapp:=iif(_mpcsapp=0,round( _vpc * (1+TARIFA->opp/100),2),_mpcsapp),_mpc:=_mpcsapp/(1+TARIFA->opp/100),iif(_mpc<>0,_vpc:=round(_mpc,2),_vpc), ShowGets(),.t.}
-		endif
-   		read
-		
-		if !IsMagPNab()
-     			if (roba->mpc==0 .or. roba->mpc<>round(_mpcsapp,2)) .and. Pitanje(,"Staviti MPC u sifrarnik")=="D"
-       				select roba
-				replace mpc with _mpcsapp
-       				select kalk_pripr
-     			endif
+        if !IsMagPNab()
+                _mpcsapp:=roba->mpc
+            // VPC se izracunava pomocu MPC cijene !!
+            @ m_x+20,m_y+2 SAY "PROD.CJENA SA PDV:"
+            @ m_x+20,col()+2 GET _MPCSaPP  picture PicDEM ;
+                        valid {|| _mpcsapp:=iif(_mpcsapp=0,round( _vpc * (1+TARIFA->opp/100),2),_mpcsapp),_mpc:=_mpcsapp/(1+TARIFA->opp/100),iif(_mpc<>0,_vpc:=round(_mpc,2),_vpc), ShowGets(),.t.}
+        endif
+        read
+        
+        if !IsMagPNab()
+                if (roba->mpc==0 .or. roba->mpc<>round(_mpcsapp,2)) .and. Pitanje(,"Staviti MPC u sifrarnik")=="D"
+                    select roba
+                replace mpc with _mpcsapp
+                    select kalk_pripr
+                endif
 
-    			SetujVPC(_VPC )  
+                SetujVPC(_VPC )  
 
-   		endif
+        endif
 
-	else // vodi se po nc
-  		read
-  		_VPC:=_nc; marza:=0
- 	endif
+    else // vodi se po nc
+        read
+        _VPC:=_nc; marza:=0
+    endif
 
-	if !IsMagPNab()
-   		SetujVpc(_vpc)
- 	endif
-	
+    if !IsMagPNab()
+        SetujVpc(_vpc)
+    endif
+    
 ENDIF
 
 nStrana:=2

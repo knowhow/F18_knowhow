@@ -13,9 +13,6 @@
 #include "kalk.ch"
 
 
-/*! \fn Get1_95()
- *  \brief Prva strana maske za unos dokumenata tipa 95, 96, 97
- */
 
 function Get1_95()
 pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
@@ -32,14 +29,14 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
     valid {|| _DatKurs:=_DatFaktP,.t.}
  
  if is_uobrada()
- 	@ m_x+5, col()+1 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
+    @ m_x+5, col()+1 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
  endif
  
  _IdZaduz:=""
  @ m_x+8,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
-            valid empty(_IdKonto2) .or. P_Konto(@_IdKonto2,24)
+            valid empty(_IdKonto2) .or. P_Konto(@_IdKonto2,21,5)
  if gNW<>"X"
-   @ m_x+8,m_y+40 SAY "Razduzuje:" GET _IdZaduz2   pict "@!"  valid empty(_idZaduz2) .or. P_Firma(@_IdZaduz2,24)
+   @ m_x+8,m_y+40 SAY "Razduzuje:" GET _IdZaduz2   pict "@!"  valid empty(_idZaduz2) .or. P_Firma(@_IdZaduz2,21,5)
  else
    if !empty(cRNT1) .and. _idvd $ "97#96#95"
      if (IsRamaGlas())
@@ -51,18 +48,18 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
  endif
  if _idvd $ "97#96#95"    // ako je otprema, gdje to ide
    
-   @ m_x+9,m_y+2   SAY "Konto zaduzuje            " GET _IdKonto valid  empty(_IdKonto) .or. P_Konto(@_IdKonto,24) pict "@!"
+   @ m_x+9,m_y+2   SAY "Konto zaduzuje            " GET _IdKonto valid  empty(_IdKonto) .or. P_Konto(@_IdKonto,21,5) pict "@!"
    
    if (_idvd=="95" .and. IsVindija())
        
-       @ m_x+9,m_y+40 SAY "Sifra veze otpisa:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,24) pict "@!"
+       @ m_x+9,m_y+40 SAY "Sifra veze otpisa:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,21,5) pict "@!"
    
    elseif gMagacin=="1"
-       @ m_x+9,m_y+40 SAY "Partner zaduzuje:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,24) pict "@!"
+       @ m_x+9,m_y+40 SAY "Partner zaduzuje:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,21,5) pict "@!"
    
    else
       if _idvd == "96"
-          @ m_x+9,m_y+40 SAY "Partner zaduzuje:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,24) pict "@!"
+          @ m_x+9,m_y+40 SAY "Partner zaduzuje:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,21,5) pict "@!"
       endif
    endif
  
@@ -86,26 +83,26 @@ endif
    @ m_x+10,m_y+66 SAY "Tarif.brĿ"
  endif
  if lKoristitiBK
- 	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  else
- 	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
  endif
  if !glEkonomat
    @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
  endif
  
  if IsDomZdr()
-	@ m_x + 12, m_y + 2 SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
+    @ m_x + 12, m_y + 2 SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
  endif
 
  if is_uobrada()
- 	@ m_x+12,m_y+2 SAY "JCI br: " GET _jci_no PICT "@S10"
- 	@ m_x+12,col()+2 SAY "EX3 br: " GET _ex_no PICT "@S10"
+    @ m_x+12,m_y+2 SAY "JCI br: " GET _jci_no PICT "@S10"
+    @ m_x+12,col()+2 SAY "EX3 br: " GET _ex_no PICT "@S10"
  endif
 
  read; ESC_RETURN K_ESC
  if lKoristitiBK
- 	_idRoba:=Left(_idRoba, 10)
+    _idRoba:=Left(_idRoba, 10)
  endif
 
  _MKonto:=_Idkonto2
@@ -214,9 +211,9 @@ IF gVarEv=="1"
         _vpc := KoncijVPC()        // MS 19.12.00
      endif
      if IsPDV()
-     	@ m_x+15,m_y+2   SAY "PROD.CIJ " get _VPC    picture PicDEM
+        @ m_x+15,m_y+2   SAY "PROD.CIJ " get _VPC    picture PicDEM
      else
-     	@ m_x+15,m_y+2   SAY "VPC      " get _VPC    picture PicDEM
+        @ m_x+15,m_y+2   SAY "VPC      " get _VPC    picture PicDEM
      endif
      _PNAP:=0
      
@@ -227,14 +224,14 @@ IF gVarEv=="1"
      
      if IsPDV() .and. gPDVMagNab == "N"
      
-    	_mpcsapp:=roba->mpc
-   	// VPC se izracunava pomocu MPC cijene !!
-   	@ m_x+17,m_y+2 SAY "PROD.CJENA SA PDV:"
-   	@ m_x+17,col()+2 GET _MPCSaPP  picture PicDEM ;
-             	valid {|| _mpcsapp:=iif(_mpcsapp=0,round( _vpc * (1+TARIFA->opp/100),2),_mpcsapp),_mpc:=_mpcsapp/(1+TARIFA->opp/100),iif(_mpc<>0,_vpc:=round(_mpc,2),_vpc), ShowGets(),.t.}
+        _mpcsapp:=roba->mpc
+    // VPC se izracunava pomocu MPC cijene !!
+    @ m_x+17,m_y+2 SAY "PROD.CJENA SA PDV:"
+    @ m_x+17,col()+2 GET _MPCSaPP  picture PicDEM ;
+                valid {|| _mpcsapp:=iif(_mpcsapp=0,round( _vpc * (1+TARIFA->opp/100),2),_mpcsapp),_mpc:=_mpcsapp/(1+TARIFA->opp/100),iif(_mpc<>0,_vpc:=round(_mpc,2),_vpc), ShowGets(),.t.}
         read
    else
-   	read
+    read
    endif    
    
    else // magacin po vpc
@@ -249,7 +246,7 @@ ENDIF
 IF glEkonomat
   _Marza:=0; _TMarza:="A"
   if !IsPDV()
-  	_mpcsapp:=0
+    _mpcsapp:=0
   endif
   _MKonto:=_Idkonto2;_MU_I:="5"     // izlaz iz magacina
   _PKonto:=""; _PU_I:=""
@@ -286,7 +283,7 @@ IF glEkonomat
 ENDIF
 
 if !IsPDV()
-	_mpcsapp:=0
+    _mpcsapp:=0
 endif
 
 nStrana:=2
@@ -394,9 +391,9 @@ elseif cidvd=="95"
  ?
  ? space(nLijevo),"OTPIS MAGACIN"
  if (!EMPTY(cIdPartner) .and. IsVindija())
- 	B_OFF
- 	?? " -", RTRIM(cIdPartner), "("+RTRIM(partn->naz)+")"
-	B_ON
+    B_OFF
+    ?? " -", RTRIM(cIdPartner), "("+RTRIM(partn->naz)+")"
+    B_ON
  endif
  ?
   select konto; hseek cidkonto2
@@ -581,7 +578,7 @@ local nArr
 local lOK
 local nLenBrDok
 if (!IsRamaGlas())
-	return .t.
+    return .t.
 endif
 nArr:=SELECT()
 lOK:=.t.
@@ -589,10 +586,10 @@ nLenBrDok:=LEN(_idZaduz2)
 select rnal
 hseek PADR(_idZaduz2,10)
 if !found()
-	MsgBeep("Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!")
-	P_Rnal(@_idZaduz2,8,60)
-	_idZaduz2:=PADR(_idZaduz2,nLenBrDok)
-	ShowGets()
+    MsgBeep("Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!")
+    P_Rnal(@_idZaduz2,8,60)
+    _idZaduz2:=PADR(_idZaduz2,nLenBrDok)
+    ShowGets()
 endif
 SELECT (nArr)
 return lOK

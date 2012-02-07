@@ -13,27 +13,9 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-
-/*! \file fmk/kalk/prod/dok/1g/frm_80.prg
- *  \brief Maska za unos dokumenta tipa 80
- */
-
-
-/*! \fn Get1_80()
- *  \brief Prva strana maske za unos dokumenta tipa 80
- */
-
 // prijem prodavnica, predispozicija
 
 function Get1_80()
-*{
 private aPorezi:={}
 if nRbr==1 .and. fnovi
   _DatFaktP:=_datdok
@@ -43,13 +25,13 @@ if nRbr==1  .or. !fnovi
  @  m_x+7,m_y+2   SAY "Dokument - Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP
 
- @ m_x+9,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+ @ m_x+9,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
  if gNW<>"X"
-   @ m_x+9,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+   @ m_x+9,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
  endif
- @ m_x+10,m_y+2   SAY "Prenos na konto    " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,24) pict "@!"
+ @ m_x+10,m_y+2   SAY "Prenos na konto    " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,21,5) pict "@!"
  if gNW<>"X"
-   @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,24)
+   @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,21,5)
  endif
 
  read
@@ -76,9 +58,9 @@ select kalk_pripr
 @ m_x+11,m_y+66 SAY "Tarif.br->"
 
 if lKoristitiBK
-	@ m_x+12,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba_lv(fNovi, @aPorezi)
+    @ m_x+12,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba_lv(fNovi, @aPorezi)
 else
-	@ m_x+12,m_y+2  SAY "Artikal  " GET _IdRoba pict "@!"  valid  VRoba_lv(fNovi, @aPorezi)
+    @ m_x+12,m_y+2  SAY "Artikal  " GET _IdRoba pict "@!"  valid  VRoba_lv(fNovi, @aPorezi)
 endif
 @ m_x+12,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
 
@@ -94,7 +76,7 @@ read
 ESC_RETURN K_ESC
 
 if lKoristitiBK
-	_idRoba:=Left(_idRoba,10)
+    _idRoba:=Left(_idRoba,10)
 endif
 
 select TARIFA
@@ -133,8 +115,8 @@ select kalk_pripr
 
 @ m_x+16, m_y+2 SAY "Marza:" GET _TMarza2  ;
          VALID _Tmarza2 $ "%AU" ;
-	 PICTURE "@!"
-	 
+     PICTURE "@!"
+     
 @ m_x+16, col()+2  GET _Marza2  ;
        PICTURE  PicDEM ;
        valid {|| _vpc:=_nc, .t.}
@@ -144,19 +126,19 @@ select kalk_pripr
 @ m_x+17, m_y+2  SAY "MALOPROD. CJENA (MPC):"
 @ m_x+17, m_y+50 GET _MPC ;
         picture PicDEM;
-	WHEN W_MPC_("80", (fMarza == "F"), @aPorezi) ;
-     	VALID V_Mpc_ ("80", (fMarza=="F"), @aPorezi)
+    WHEN W_MPC_("80", (fMarza == "F"), @aPorezi) ;
+        VALID V_Mpc_ ("80", (fMarza=="F"), @aPorezi)
 
 SayPorezi_lv(19, aPorezi)
 
 if IsPDV()
-	@ m_x+20, m_y+2 SAY "PC SA PDV     :"
+    @ m_x+20, m_y+2 SAY "PC SA PDV     :"
 else
-	@ m_x+20, m_y+2 SAY "MPC SA POREZOM:"
+    @ m_x+20, m_y+2 SAY "MPC SA POREZOM:"
 endif
 
 @ m_x+20, m_y+50 GET _MPCSaPP  picture PicDEM ;
-    	   VALID V_MpcSaPP_( "80", .f., @aPorezi, .t.)
+           VALID V_MpcSaPP_( "80", .f., @aPorezi, .t.)
 
 read
 ESC_RETURN K_ESC
@@ -237,19 +219,19 @@ select kalk_pripr
 @ m_x+16,col()+1 GET fMarza pict "@!"
 
 if IsPDV()
-	@ m_x+17,m_y+2  SAY "PROD.CJENA BEZ PDV   :"
+    @ m_x+17,m_y+2  SAY "PROD.CJENA BEZ PDV   :"
 else
-	@ m_x+17,m_y+2  SAY "MALOPROD. CJENA (MPC):"
+    @ m_x+17,m_y+2  SAY "MALOPROD. CJENA (MPC):"
 endif
 
 @ m_x+17,m_y+50 GET _MPC picture PicDEM WHEN WMpc_lv(nil, nil, aPorezi) VALID VMpc_lv(nil, nil, aPorezi)
-	       
+           
 SayPorezi_lv(19, aPorezi)
 
 if IsPDV()
-	@ m_x+20,m_y+2 SAY "P.CJENA SA PDV:"
+    @ m_x+20,m_y+2 SAY "P.CJENA SA PDV:"
 else
-	@ m_x+20,m_y+2 SAY "MPC SA POREZOM:"
+    @ m_x+20,m_y+2 SAY "MPC SA POREZOM:"
 endif
 
 @ m_x+20,m_y+50 GET _MPCSaPP  picture PicDEM ;
@@ -268,9 +250,9 @@ select kalk_pripr
 _PKonto:=_Idkonto
 
 if IsPlanika()
-	_PU_I := "P"
+    _PU_I := "P"
 else
-	_PU_I := "1"
+    _PU_I := "1"
 endif
 
 _MKonto:=""

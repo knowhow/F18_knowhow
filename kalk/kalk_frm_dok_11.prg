@@ -31,13 +31,13 @@ if nRbr==1  .or. !fnovi
  endif
  _DatKurs:=_DatFaktP
 
- @ m_x+8,m_y+2   SAY "Prodavnicki Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+ @ m_x+8,m_y+2   SAY "Prodavnicki Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto, 21, 5) pict "@!"
  if gNW<>"X"
    @ m_x+8,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
  endif
 
  @ m_x+9,m_y+2   SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
-            valid empty(_IdKonto2) .or. P_Konto(@_IdKonto2,24)
+            valid empty(_IdKonto2) .or. P_Konto(@_IdKonto2, 21, 5 )
  if gNW<>"X"
    @ m_x+9,m_y+42 SAY "Razduzuje:" GET _IdZaduz2   pict "@!"  valid empty(_idZaduz2) .or. P_Firma(@_IdZaduz2,24)
  endif
@@ -59,11 +59,11 @@ endif
 
  @ m_x+10,m_y+66 SAY "Tarifa ->"
  if lKoristitiBK
-	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba()
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba()
 else
-	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid VRoba()
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid VRoba()
 endif
-		 
+         
  @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
 
  IF !lPoNarudzbi
@@ -78,7 +78,7 @@ endif
  ESC_RETURN K_ESC
  
  if lKoristitiBK
-	_idRoba:=Left(_idRoba,10)
+    _idRoba:=Left(_idRoba,10)
  endif
 
  select koncij
@@ -197,24 +197,24 @@ select kalk_pripr
 
 if IsPDvMagNab() .or. IsMagSNab()
         //_VPC:=_NC
-	_vpc:=_fcj
-  	@ m_x+14,m_y+2    SAY "NABAVNA CIJENA (NC)       :"  
-  	if _kolicina>0
-    		@ m_x+14,m_y+50   get _FCj    picture gPicNC ;
+    _vpc:=_fcj
+    @ m_x+14,m_y+2    SAY "NABAVNA CIJENA (NC)       :"  
+    if _kolicina>0
+            @ m_x+14,m_y+50   get _FCj    picture gPicNC ;
                         VALID {|| V_KolMag(), _vpc:=_Fcj, .t.}
-  	else // storno zaduzenja prodavnice
-    		@ m_x+14,m_y+50   get _FCJ    picture PicDEM;
+    else // storno zaduzenja prodavnice
+            @ m_x+14,m_y+50   get _FCJ    picture PicDEM;
                      VALID {|| V_KolPro(),;
                                _vpc:=_fcj, .t.}
-  	endif
+    endif
 else
         // ima vpc
-	if _kolicina>0
-  		@ m_x+14,m_y+2    SAY "NC  :"  GET _fcj picture gPicNC valid V_KolMag()
- 	else // storno zaduzenja
-  		@ m_x+14,m_y+2    SAY "NC  :"  GET _fcj picture gPicNC valid V_KolPro()
- 	endif
-  	@ m_x+14,col()+2  SAY "VPC :"  GET _vpc picture picdem ;
+    if _kolicina>0
+        @ m_x+14,m_y+2    SAY "NC  :"  GET _fcj picture gPicNC valid V_KolMag()
+    else // storno zaduzenja
+        @ m_x+14,m_y+2    SAY "NC  :"  GET _fcj picture gPicNC valid V_KolPro()
+    endif
+    @ m_x+14,col()+2  SAY "VPC :"  GET _vpc picture picdem ;
              when {|| iif(gCijene=="2",.f.,.t.)}
 endif
 
@@ -224,14 +224,14 @@ seek trim(_idkonto)
 select kalk_pripr
 
 if fNovi
-	_TPrevoz:="R"
+    _TPrevoz:="R"
 endif
 
 if nRBr==1 .or. !fNovi // prva stavka
-	@ m_x+15, m_y+2 SAY "MP trosak (A,R):" GET _TPrevoz VALID _tPrevoz $ "AR"
-	@ m_x+15,col()+2 GET _prevoz PICT PICDEM
+    @ m_x+15, m_y+2 SAY "MP trosak (A,R):" GET _TPrevoz VALID _tPrevoz $ "AR"
+    @ m_x+15,col()+2 GET _prevoz PICT PICDEM
 else
-	@ m_x+15,m_y+2 SAY "MP trosak:"; ?? "("+_tPrevoz+") "; ?? _prevoz
+    @ m_x+15,m_y+2 SAY "MP trosak:"; ?? "("+_tPrevoz+") "; ?? _prevoz
 endif
 
 private fMarza:=" "
@@ -243,9 +243,9 @@ private fMarza:=" "
 @ m_x+16,col()+1 GET fMarza pict "@!"   VALID {|| Marza2(fMarza),fMarza:=" ",.t.}
 
 if IsPDV()
-	@ m_x+18,m_y+2  SAY "PRODAJNA CJENA       :"
+    @ m_x+18,m_y+2  SAY "PRODAJNA CJENA       :"
 else
-	@ m_x+18,m_y+2  SAY "MALOPROD. CJENA (MPC):"
+    @ m_x+18,m_y+2  SAY "MALOPROD. CJENA (MPC):"
 endif
 
 @ m_x+18,m_y+50 GET _MPC picture PicDEM valid VMpc(.f.,fMarza) when WMpc(.f.,fMarza)
@@ -253,9 +253,9 @@ endif
 SayPorezi(19)
 
 if IsPDV()
-	@ m_x+20,m_y+2 SAY "PROD.C. SA PDV:"
+    @ m_x+20,m_y+2 SAY "PROD.C. SA PDV:"
 else
-	@ m_x+20,m_y+2 SAY "MPC SA POREZOM:"
+    @ m_x+20,m_y+2 SAY "MPC SA POREZOM:"
 endif
 @ m_x+20,m_y+50 GET _MPCSaPP  picture PicDEM VALID VMPCSaPP(.f.,fMarza)
 

@@ -13,32 +13,16 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/prod/dok/1g/frm_19.prg
- *  \brief Maska za unos dokumenta tipa 19
- */
-
-
-/*! \fn Get1_19()
- *  \brief Prva strana maske za unos dokumenta tipa 19
- */
 
 function Get1_19()
-*{
 _DatFaktP:=_datdok
 _DatKurs:=_DatFaktP
 private aPorezi:={}
 
-@ m_x+8,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+@ m_x+8,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
 
 if gNW<>"X"
-	@ m_x+8,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+	@ m_x+8,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
 endif
 
 read

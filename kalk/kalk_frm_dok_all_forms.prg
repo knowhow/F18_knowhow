@@ -12,24 +12,7 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/prod/dok/1g/frm_all.prg
- *  \brief Funkcije koje se koriste pri unosu svih dokumenata u maloprodaji
- */
-
-
-/*! \fn VRoba(lSay)
- *  \brief Setuje tarifu i poreze na osnovu sifrarnika robe i tarifa
- */
-
 function VRoba(lSay)
-*{
 P_Roba(@_IdRoba)
 
 if lSay==NIL
@@ -55,7 +38,6 @@ if fNovi .or. (gVodiSamoTarife=="D") .or. IsJerry() .or. IsPlanika()
 endif
 
 return .t.
-*}
 
 
 /*! \fn WMpc(fRealizacija,fMarza)

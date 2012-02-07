@@ -42,7 +42,7 @@ if nRbr == 1  .or. !fNovi .or. gMagacin=="1"
 	_DatKurs:=_DatFaktP
  	@ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje" GET _IdKonto valid  P_Konto( @_IdKonto, 21, 5 ) pict "@!"
  	if gNW<>"X"
-  		@ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+  		@ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
  	endif
  	if !empty(cRNT1)
    		@ m_x+10,m_y+42  SAY "Rad.nalog:"   GET _IdZaduz2  pict "@!"

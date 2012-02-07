@@ -12,23 +12,11 @@
 
 #include "kalk.ch"
 
- 
-
-/*! \file fmk/kalk/prod/dok/1g/frm_41.prg
- *  \brief Maska za unos dokumenata tipa 41,42,43,47,49
- */
-
-
-/*! \fn Get1_41()
- *  \brief Prva strana maske za unos dokumenata tipa 41,42,43,47,49
- */
-
 //realizacija prodavnice  41-fakture maloprodaje
 //                        42-gotovina
 
 
 function Get1_41()
-*{
 pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
 private aPorezi:={}
 
@@ -49,9 +37,9 @@ else
 endif
 
 _DatKurs:=_DatFaktP
-@ m_x+8,m_y+2   SAY "Prodavnicki Konto razduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
+@ m_x+8,m_y+2   SAY "Prodavnicki Konto razduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
 if gNW<>"X"
- @ m_x+8,m_y+50  SAY "Razduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+ @ m_x+8,m_y+50  SAY "Razduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
 endif
 _idkonto2:=""
 _idzaduz2:=""
@@ -66,9 +54,9 @@ ESC_RETURN K_ESC
 
 @ m_x+10,m_y+66 SAY "Tarif.br->"
 if lKoristitiBK
-	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba()
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _IdRoba:=PADR(_idroba,VAL(gDuzSifIni)),.t.} valid VRoba()
 else
-	@ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid VRoba()
+    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid VRoba()
 endif
 
 @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
@@ -79,7 +67,7 @@ read
 ESC_RETURN K_ESC
 
 if lKoristitiBK
-	_idRoba:=Left(_idRoba,10)
+    _idRoba:=Left(_idRoba,10)
 endif
 
 
@@ -190,14 +178,14 @@ private cRCRP := gRCRP
 @ m_x+19,m_y+50 GET _Rabatv picture picdem  VALID RabProcToC()
 
 if IsPDV()
-	@ m_x+20,m_y+2 SAY "MPC SA PDV    :"
+    @ m_x+20,m_y+2 SAY "MPC SA PDV    :"
 else
-	@ m_x+20,m_y+2 SAY "MPC SA POREZOM:"
+    @ m_x+20,m_y+2 SAY "MPC SA POREZOM:"
 endif
 
 @ m_x+20,m_y+50 GET _MPCSaPP  picture PicDEM ;
      VALID V_MpcSaPP_( _IdVd, .f., @aPorezi, .t.)
-	     
+         
 read
 ESC_RETURN K_ESC
 
@@ -214,9 +202,9 @@ return lastkey()
 static function RabProcToC()
 *{
 if cRCRP=="P"
-	_rabatv:=_mpcsapp*_rabatv/100
-	cRCRP:="C"
-	ShowGets()
+    _rabatv:=_mpcsapp*_rabatv/100
+    cRCRP:="C"
+    ShowGets()
 endif
 return .t.
 *}

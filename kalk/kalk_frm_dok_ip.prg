@@ -13,25 +13,7 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
- 
-
-/*! \file fmk/kalk/prod/dok/1g/frm_ip.prg
- *  \brief Maska za unos i generisanje dokumenta tipa IP
- */
-
-
-/*! \fn IP()
- *  \brief Generisanje dokumenta tipa IP - inventura prodavnice
- */
-
 function IP()
-*{
 O_KONTO
 O_TARIFA
 O_SIFK

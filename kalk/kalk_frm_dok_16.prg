@@ -12,25 +12,8 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/frm_16.prg
- *  \brief Maska za unos dokumenta tipa 16
- */
-
-
-/*! \fn Get1_16()
- *  \brief Prva strana maske za unos dokumenta tipa 16
- */
 
 function Get1_16()
-*{
 local nRVPC
 pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
 
@@ -50,9 +33,9 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
  
 
   @ m_x+9,m_y+2 SAY "Magacinski konto zaduzuje"  GET _IdKonto ;
-              valid empty(_IdKonto) .or. P_Konto(@_IdKonto,24)
+              valid empty(_IdKonto) .or. P_Konto(@_IdKonto,21,5)
   if gNW<>"X"
-    @ m_x+9,m_y+40 SAY "Zaduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
+    @ m_x+9,m_y+40 SAY "Zaduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
   else
     if !empty(cRNT1)
       @ m_x+9,m_y+40 SAY "Rad.nalog:"   GET _IdZaduz2  pict "@!"
@@ -61,9 +44,9 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
 
 
   if _idvd=="16"
-   @ m_x+10,m_y+2   SAY "Prenos na konto          " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,24) pict "@!"
+   @ m_x+10,m_y+2   SAY "Prenos na konto          " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,21,5) pict "@!"
    if gNW<>"X"
-     @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,24)
+     @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,21,5)
    endif
   endif
 

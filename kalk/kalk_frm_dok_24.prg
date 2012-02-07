@@ -13,12 +13,7 @@
 #include "kalk.ch"
 
 
-/*! \fn Get1_24()
- *  \brief Obradjuje kalkulacije usluga
- */
-
 function Get1_24()
-*{
 
 _DatFaktP:=_datdok
 
@@ -86,7 +81,7 @@ ESC_RETURN K_ESC
 _kolicina:=1
 
 if EMPTY(_idtarifa)
-	_idtarifa := "PDV17 "
+    _idtarifa := "PDV17 "
 endif
 
 select kalk_pripr

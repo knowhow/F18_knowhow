@@ -14,15 +14,16 @@
 
 
 function GenProizvodnja()
-private Opc:={}
-private opcexe:={}
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(Opc,"1. generisi 96 na osnovu 47 po normativima")
-AADD(opcexe,{|| Iz47u96Norm() })
+AADD(_opc,"1. generisi 96 na osnovu 47 po normativima")
+AADD(_opcexe,{|| Iz47u96Norm() })
 
-private Izbor:=1
-Menu_SC("kkno")
-CLOSERET
+f18_menu("kkno", _izbor, _opc, _opcexe )
+
+close all
 return
 
 
@@ -37,8 +38,9 @@ O_KONTO
 O_PARTN
 O_TARIFA
 O_SAST
-#xcommand XO_KALK    => select (F_FAKT);  use  ("KALK")  alias kalk2; set order to tag "1"
+#xcommand XO_KALK  => select (F_FAKT);  my_use ("kalk2", "kalk_kalk" ) ; set order to tag "1"
 XO_KALK
+
 dDatKalk:=date()
 cIdKonto:=padr("",7)
 cIdKonto2:=padr("1010",7)
@@ -46,19 +48,21 @@ cIdZaduz2:=space(6)
 
 cBrkalk:=space(8)
 if gBrojac=="D"
- select kalk
- select kalk; set order to tag "1";seek cidfirma+"96X"
- skip -1
- if idvd<>"96"
-   cbrkalk:=space(8)
- else
-   cbrkalk:=brdok
- endif
+    select kalk
+    set order to tag "1"
+    seek cidfirma+"96X"
+    skip -1
+    if idvd<>"96"
+        cbrkalk:=space(8)
+    else
+        cbrkalk:=brdok
+    endif
 endif
+
 Box(,15,60)
 
 if gBrojac=="D"
- cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
+    cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
 endif
 
 do while .t.

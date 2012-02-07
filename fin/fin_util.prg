@@ -17,9 +17,16 @@
 // ----------------------------------
 function _f_brnal( cBrNal )
 
-
-if !EMPTY( ALLTRIM(cBrNal) ) .and. LEN(ALLTRIM(cBrNal)) < 8
-	cBrNal := PADL( ALLTRIM(cBrNal), 8, "0" )
+if RIGHT( ALLTRIM( cBrNal ), 1 ) == "*"
+    cBrNal := STRTRAN( cBrNal, "*", "" )
+    cBrNal := PADL( ALLTRIM( cBrNal ), 8 )
+elseif LEFT( ALLTRIM( cBrNal ), 1 ) == "*"
+    cBrNal := STRTRAN( cBrNal, "*", "" )
+    cBrNal := PADR( ALLTRIM( cBrNal ), 8 )
+else
+    if !EMPTY( ALLTRIM(cBrNal) ) .and. LEN(ALLTRIM(cBrNal)) < 8
+	    cBrNal := PADL( ALLTRIM(cBrNal), 8, "0" )
+    endif
 endif
 
 return .t.

@@ -86,9 +86,12 @@ ENDIF
 
 MsgO("Punim pripremu sa fin_suban: " + cIdfirma + cIdvn + cBrNal )
 
-select SUBAN
+select suban
+set order to tag "4"
+go top
 seek cIdfirma + cIdvn + cBrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
+
+do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
 
    select fin_pripr
 

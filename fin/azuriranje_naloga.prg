@@ -304,6 +304,21 @@ function fin_azur_check(lAuto)
 local lAzur
 local nSaldo
 local cNal
+local _t_area 
+
+_t_area := SELECT()
+
+select fin_pripr
+go top
+
+// provjeri da li je broj naloga zadovoljen
+if LEN( ALLTRIM( field->brnal ) ) < 8
+    // mora biti LEN = 8
+    MsgBeep( "Broj naloga mora biti sa vodecim nulama !?!" )
+    //return .f.
+endif
+
+select ( _t_area )
 
 // provjeri da li se u pripremi nalazi vise dokumenata... razlicitih
 if _is_vise_dok() == .t.
@@ -1105,6 +1120,7 @@ return
 static function _renum_convert()
 local xValue
 local nCnt
+local _rec
 
 set order to tag "0"
 go top
@@ -1115,15 +1131,26 @@ Box(,2,50)
 
 nCnt := 0
 do while !EOF()
+
     xValue := field->brnal
+
     if !EMPTY(xValue)
-        replace field->brnal with PADL(ALLTRIM(xValue), 8, "0")
+        
+        _rec := dbf_get_rec()
+        _rec["brnal"] := PADL( ALLTRIM( xValue ), 8, "0" )
+        update_rec_server_and_dbf( ALIAS(), _rec )
         ++ nCnt
+
     endif
+
     @ m_x + 2, m_y + 2 SAY PADR( "odradjeno " + ALLTRIM(STR(nCnt)), 45 )
+
     skip
+
 enddo
 
 BoxC()
 
 return
+
+

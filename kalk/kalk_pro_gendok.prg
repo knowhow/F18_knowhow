@@ -18,10 +18,10 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD(_opc,"1. generisi 96 na osnovu 47 po normativima")
-AADD(_opcexe,{|| Iz47u96Norm() })
+AADD( _opc, "1. generisi 96 na osnovu 47 po normativima")
+AADD( _opcexe, { || Iz47u96Norm() })
 
-f18_menu("kkno", _izbor, _opc, _opcexe )
+f18_menu( "kkno", .f.,  _izbor, _opc, _opcexe )
 
 close all
 return

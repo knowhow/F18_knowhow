@@ -338,8 +338,6 @@ do while !eof() .and. id="IS_"
         nRekLDI1 := 0
         nKrOpresa := 0
      
-    altd()
-
         SELECT REKLD
         cSKOpresa := idpartner 
     // SK=sifra kreditora/banke
@@ -551,8 +549,6 @@ static function Rekapld( cId, ;
 local lGroup := .f.
 
 PushWA()
-
-altd()
 
 if cIdPartner == NIL
     cIdPartner := ""

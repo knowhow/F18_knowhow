@@ -22,8 +22,9 @@ local _sys_datum := fetch_metric("virm_sys_datum_uplate", nil, "D" )
 local _org_jed := fetch_metric("virm_org_jedinica", nil, gOrgJed )
 local _mjesto := fetch_metric("virm_mjesto_uplate", nil, gMjesto )
 local _datum := fetch_metric("virm_init_datum_uplate", nil, gDatum )
+local _konverzija := fetch_metric( "virm_konverzija_delphirb", nil, "5" )
 
-Box(, 8, 70 )
+Box(, 10, 70 )
     
     @ m_x + 1, m_y + 2 SAY "Firma (nalogodavac) id:" GET _firma
     @ m_x + 2, m_y + 2 SAY "   Naziv:" GET _firma_naziv PICT "@S45"
@@ -33,6 +34,7 @@ Box(, 8, 70 )
     @ m_x + 6, m_y + 2 SAY "Format iznosa:" GET _pict
     @ m_x + 7, m_y + 2 SAY "Ako je iznos = 0, treba ga stampati (D/N)?" GET _nule
     @ m_x + 8, m_y + 2 SAY "Datum uplate = sistemski datum (D/N)?" GET _sys_datum
+    @ m_x + 9, m_y + 2 SAY "Konverzija za stampu delphirb (1 - 5)" GET _konverzija
 
     read
 
@@ -48,6 +50,7 @@ IF LastKey() <> K_ESC
     set_metric("virm_mjesto_uplate", nil, _mjesto )
     set_metric("virm_init_datum_uplate", nil, _datum )
     set_metric("virm_org_jedinica", nil, _org_jed )
+    set_metric("virm_konverzija_delphirb", nil, _konverzija )
 
 ENDIF
 

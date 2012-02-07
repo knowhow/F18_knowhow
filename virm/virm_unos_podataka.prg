@@ -384,7 +384,6 @@ function ValPl()
  ENDIF
 
 RETURN lVrati
-*}
 
 
 
@@ -392,8 +391,12 @@ RETURN lVrati
 // stampa virmana delphirb
 // ------------------------------------------
 function stampa_virmana_drb()
+local _br_virmana := 999
+local _marker := "N"
+local _i
+local _konverzija := fetch_metric( "virm_konverzija_delphirb", nil, "5" )
 
-bErr:=ERRORBLOCK({|o| MyErrH(o)})
+bErr := ERRORBLOCK( { |o| MyErrH(o) } )
 
 BEGIN SEQUENCE
     O_IZLAZ
@@ -403,25 +406,20 @@ RECOVER
     return
 END SEQUENCE
 
-bErr:=ERRORBLOCK(bErr)
-
-nKoliko := 999 
-// koliko virmana od startne pozicije
-
-cMarkeri:="N"
+bErr := ERRORBLOCK( bErr )
 
 Box(,2,70)
-    @ m_x+1,m_y+2 SAY "Broj virmana od sljedece pozicije:" GET nKoliko pict "999"
-    @ m_x+2,m_y+2 SAY "Uzeti u obzir markere            :" GET cMarkeri pict "@!" valid cMarkeri $ "DN"
+    @ m_x+1,m_y+2 SAY "Broj virmana od sljedece pozicije:" GET _br_virmana pict "999"
+    @ m_x+2,m_y+2 SAY "Uzeti u obzir markere            :" GET _marker pict "@!" valid _marker $ "DN"
     read
 BoxC()
 
-i:=1
+_i := 1
 
 select virm_pripr
 set order to tag "1"
 
-if cMarkeri="D"
+if _marker = "D"
     go top
 endif
 
@@ -429,7 +427,7 @@ do while !eof()
 
     Scatter()
 
-    if cMarkeri="D" .and. _st_="*"
+    if _marker = "D" .and. _st_ = "*"
         skip
         loop
     else
@@ -439,18 +437,10 @@ do while !eof()
     select izlaz 
     append blank
     
-    cWinKonv:=IzFmkIni("DelphiRb","Konverzija","3")
-
-    KonvZnWin(@_ko_txt, cWinKonv)
-    KonvZnWin(@_kome_txt, cWinKonv)
-    KonvZnWin(@_svrha_doz, cWinKonv)
-    KonvZnWin(@_mjesto, cWinKonv)
-
-    // Dorada za DelphiRB6
-    //
-    // !!! NAPOMENA !!!: ova varijanta samo radi sa DelphiRB6
-    //
-    // Polja u IZLAZ.DBF koja trebaju biti FullJustified
+    KonvZnWin( @_ko_txt, _konverzija )
+    KonvZnWin( @_kome_txt, _konverzija )
+    KonvZnWin( @_svrha_doz, _konverzija )
+    KonvZnWin( @_mjesto, _konverzija )
 
     _ko_zr    = Razrijedi(_ko_zr)       // z.racun posiljaoca
     _kome_zr  = Razrijedi(_kome_zr)     // z.racun primaoca
@@ -468,10 +458,10 @@ do while !eof()
     select virm_pripr
     skip
     
-    if i >= nKoliko
+    if _i >= _br_virmana
         exit
     endif
-    i++
+    _i ++
 
 enddo
 
@@ -479,25 +469,70 @@ if eof()
     skip -1
 endif
 
-select virm_pripr
+// pokreni stampu delphi rb-a
+_stampaj_virman()
 
-nTrec := recno()
+return
+
+
+// ----------------------------------------------------
+// stampaj virman
+// ----------------------------------------------------
+static function _stampaj_virman()
+local _t_rec
+local _cmd := ""
+local _delphi_exe
+local _rtm_file
+
+_delphi_exe := my_home() + "f18_delphirb.exe"
+_rtm_file := "nalplac"
+
+// kopiraj delphirb
+if !FILE( _delphi_exe )
+    FILECOPY( "c:\knowhowERP\util\delphirb.exe", _delphi_exe )
+endif
+
+// kopiraj rtm template
+if !FILE( my_home() + _rtm_file )
+    FILECOPY( "c:\knowhowERP\template\nalplac.rtm", my_home() + _rtm_file )
+endif
+
+#ifdef __PLATFORM__WINDOWS
+    _delphi_exe := '"' + _delphi_exe + '"'
+#endif
+
+select virm_pripr
+_t_rec := RECNO()
+
 use
 
 select izlaz
 use
 
 // ovdje treba kod za filovanje datoteke IZLAZ.DBF
-if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
+if LastKey() != K_ESC .and. Pitanje(, "Aktivirati Win Report ?", "D" ) == "D"
 
-    private cKomLin := "f18_delphirb nalplac " + '"' + my_home() + '"' + "  IZLAZ 1"
-    
-    run &cKomLin
+    // komanda: delphirb nalplac c:\sigma\virm\11\  IZLAZ 1
+    _cmd := _delphi_exe
+    _cmd += " "
+    _cmd += "nalplac"
+    _cmd += " "
+    #ifdef __PLATFORM__WINDOWS
+        _cmd += '"' + my_home() + '"'
+    #else
+        _cmd += my_home()
+    #endif
+    _cmd += " "
+    _cmd += " IZLAZ 1"
+
+    log_write( "virm cmd line: " + _cmd )
+
+    run (_cmd)
 
 endif
 
 O_VIRM_PRIPR
-go nTRec
+go ( _t_rec )
 
 return
 

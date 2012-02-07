@@ -315,7 +315,8 @@ go top
 if LEN( ALLTRIM( field->brnal ) ) < 8
     // mora biti LEN = 8
     MsgBeep( "Broj naloga mora biti sa vodecim nulama !?!" )
-    //return .f.
+    select ( _t_area )
+    return .f.
 endif
 
 select ( _t_area )

@@ -69,7 +69,7 @@
 
 // tabele DOK_SRC
 #xcommand O_DOKSRC    => SELECT (F_DOKSRC)  ; my_use ("doksrc")    ; set order to tag "1"
-#xcommand O_P_DOKSRC  => SELECT (F_P_DOKSRC); my_use ("p_doksrc")  ; set order to tag "1"
+#xcommand O_P_DOKSRC  => SELECT (F_P_DOKSRC); my_usex ("p_doksrc")  ; set order to tag "1"
 
 // stampa PDV racuna
 #xcommand O_DRN       => select(F_DRN)      ; my_usex ("drn")      ; set order to tag "1"

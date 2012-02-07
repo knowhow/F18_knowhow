@@ -123,16 +123,7 @@ return
 // otvaranje tabele p_doksrc
 // ---------------------------------------
 function o_p_doksrc(cPath)
-if cPath == nil
-	cPath := PRIVPATH
-endif
-
-AddBS(@cPath)
-
-select (180)
-use (cPath + "P_DOKSRC.DBF") alias P_DOKSRC
-set order to tag "1"
-
+O_P_DOKSRC
 return
 
 
@@ -140,16 +131,7 @@ return
 // otvaranje tabele doksrc
 // --------------------------------------
 function o_doksrc(cPath)
-if cPath == nil
-	cPath := KUMPATH
-endif
-
-AddBS(@cPath)
-
-select (181)
-use (cPath + "DOKSRC.DBF") alias DOKSRC
-set order to tag "1"
-
+O_DOKSRC
 return
 
 
@@ -176,6 +158,7 @@ return
 static function doksrc_to_p(cFirma, cIdVd, cBrDok, dDatDok)
 local nTArea := SELECT()
 local cSeek := ""
+local _rec
 
 O_P_DOKSRC
 O_DOKSRC
@@ -199,11 +182,12 @@ do while !EOF() .and. field->idfirma == cFirma ;
 		.and. IF(dDatDok<>nil, field->datdok == dDatDok, .t.)
 	
 	
-	Scatter()
+	_rec := dbf_get_rec()
 	
 	select p_doksrc
 	append blank
-	Gather()
+	
+    dbf_update_rec( _rec )
 	
 	select doksrc
 	skip
@@ -310,13 +294,13 @@ MsgO("Azuriram DOKSRC....")
 
 do while !EOF()
 	
-	Scatter()
+	_rec := dbf_get_rec()
 	
 	select doksrc
 	
 	append blank
 	
-	Gather()
+	update_rec_server_and_dbf( ALIAS(), _rec )
 	
 	select p_doksrc
 	

@@ -493,8 +493,8 @@ if !FILE( _delphi_exe )
 endif
 
 // kopiraj rtm template
-if !FILE( my_home() + _rtm_file )
-    FILECOPY( "c:\knowhowERP\template\nalplac.rtm", my_home() + _rtm_file )
+if !FILE( my_home() + _rtm_file + ".rtm" )
+    FILECOPY( "c:\knowhowERP\template\nalplac.rtm", my_home() + _rtm_file + ".rtm" )
 endif
 
 #ifdef __PLATFORM__WINDOWS

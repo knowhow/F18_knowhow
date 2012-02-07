@@ -517,7 +517,7 @@ if LastKey() != K_ESC .and. Pitanje(, "Aktivirati Win Report ?", "D" ) == "D"
     _cmd += "nalplac"
     _cmd += " "
     #ifdef __PLATFORM__WINDOWS
-        _cmd += ".\"
+        _cmd += "." + SLASH
     #else
         _cmd += my_home()
     #endif

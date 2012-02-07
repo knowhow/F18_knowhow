@@ -1,3 +1,10 @@
+0.9.47  2012-02-07, vsasa
+
+  - modul FIN, ciscenje opcija povrata dokumenta u pripremu [#26549](http://redmine.bring.out.ba/issues/26549)
+  - modul VIRM, stampanje virmana omoguceno na op.sis. Windows
+  - modul KALK, ciscenje funkcija proizvodnje
+  - ostalo ciscenje, tipke ALT+R (trazi/zamijeni) omogucene
+  
 0.9.46  2012-02-03, vsasa
 
   -  modul SII spojen sa OS-om [#25358](http://redmine.bring.out.ba/issues/25358)

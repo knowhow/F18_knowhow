@@ -16,32 +16,48 @@
 // parametri - firma
 // -----------------------------------------
 function ld_set_firma()
+local _godina := fetch_metric( "ld_godina", my_user(), gGodina )
+local _rj := fetch_metric( "ld_rj", my_user(), gRj )
+local _mjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
+local _v_obr := fetch_metric( "ld_vise_obracuna", my_user(), .f. )
+local _obracun := fetch_metric( "ld_obracun", my_user(), gObracun )
+
 private GetList:={}
 
-Box(, 6,60)
-    @ m_x+1,m_y+2 SAY "Radna jedinica:" GET gRJ valid P_LD_Rj(@gRj) pict "@!"
-        @ m_x+2,m_y+2 SAY "Mjesec        :" GET gMjesec pict "99"
-        @ m_x+3,m_y+2 SAY "Godina        :" GET gGodina pict "9999"
-        if lViseObr
-            @ m_x+4,m_y+2 SAY "Obracun       " GET gObracun WHEN HelpObr(.f.,gObracun) VALID ValObr(.f.,gObracun)
-        endif
-        @ m_x+5,m_y+2 SAY "Naziv firme   :" GET gNFirma
-        @ m_x+6,m_y+2 SAY "Tip subjekta  :" GET gTS
+Box(, 4,60)
+    
+    @ m_x+1,m_y+2 SAY "Radna jedinica:" GET _rj valid P_LD_Rj(@_rj) pict "@!"
+    @ m_x+2,m_y+2 SAY "Mjesec        :" GET _mjesec pict "99"
+    @ m_x+3,m_y+2 SAY "Godina        :" GET _godina pict "9999"
+    
+    if _v_obr
+        @ m_x+4,m_y+2 SAY "Obracun       " GET _obracun WHEN HelpObr( .f., _obracun ) VALID ValObr( .f., _obracun )
+    endif
+    
+    read
 
-        read
-        ClvBox()
+    ClvBox()
+
 BoxC()
 
 if (LastKey()<>K_ESC)
-    Wpar("fn",gNFirma)
-        Wpar("ts",gTS)
-        Wpar("go",gGodina)
-        Wpar("mj",gMjesec)
-        Wpar("ob",gObracun)
-        Wpar("rj",gRJ)
-    if gZastitaObracuna=="D"
-        IspisiStatusObracuna(gRj,gGodina,gMjesec)
+
+    set_metric( "ld_godina", my_user(), _godina )
+    gGodina := _godina
+
+    set_metric( "ld_mjesec", my_user(), _mjesec )
+    gMjesec := _mjesec
+
+    set_metric( "ld_rj", my_user(), _rj )
+    gRJ := _rj
+
+    set_metric( "ld_obracun", my_user(), _obracun )
+    gObracun := _obracun
+
+    if gZastitaObracuna == "D"
+        IspisiStatusObracuna( gRj, gGodina, gMjesec )
     endif
+
 endif
 
 return

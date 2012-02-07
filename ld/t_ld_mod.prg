@@ -215,8 +215,6 @@ public gFURaz:=PADR("",60)
 public gFUSati:=PADR("USATI",50)
 public gFURSati:=PADR("",50)
 public gFUGod:=PADR("I06",40)
-public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
-public gTS:="Preduzece"
 public gUNMjesec:="N"
 public gMRM:=0
 public gMRZ:=0
@@ -239,30 +237,29 @@ public _LR_:=6
 public _LK_:=6
 public lViseObr := .f.
 public lVOBrisiCDX := .f.
-public cLdPolja:=40
+public cLdPolja := 40
 //public nBo:=0
-public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
-public gZastitaObracuna:=IzFmkIni("LD","ZastitaObr","N",KUMPATH)
+public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
+
+gVarObracun := fetch_metric("ld_varijanta_obracuna", NIL, "2")
+gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
+gRJ := fetch_metric( "ld_rj", my_user(), gRj )
+gMjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
+lViseObr := fetch_metric( "ld_vise_obracuna", my_user(), .f. )
+gObracun := fetch_metric( "ld_obracun", my_user(), gObracun )
 
 O_PARAMS
 select (F_PARAMS)
 
 RPar("bk",@gBodK)      // opisno: 1-"bodovi" ili 2-"koeficijenti"
-Rpar("fn",@gNFirma)
-Rpar("ts",@gTS)
 RPar("fo",@gSetForm)   // set formula
 Rpar("gd",@gFUGod)
-Rpar("go",@gGodina)
 Rpar("kp",@gReKrKP)
 Rpar("pp",@gVarPP)
 RPar("m1",@gMRM)
 RPar("m2",@gMRZ)
 RPar("dl",@gPDLimit)
-Rpar("mj",@gMjesec)
-Rpar("ob",@gObracun)
-
-gVarObracun := fetch_metric("ld_varijanta_obracuna", NIL, "2")
-
 RPar("mr",@gMinR)      // min rad %, Bodovi
 RPar("os",@gFSpec)     // fajl-obrazac specifikacije
 RPar("p9",@gDaPorOl)   // praviti poresku olaksicu D/N
@@ -270,7 +267,6 @@ RPar("pb",@gPrBruto)   // set formula
 RPar("pi",@gPicI)
 RPar("po",@gPotp)      // potpis na listicu
 RPar("ps",@gPicS)
-RPar("rj",@gRj)
 RPar("rk",@gReKrOs)
 Rpar("to",@gTipObr)
 Rpar("vo",@cVarPorOl)
@@ -294,8 +290,6 @@ Rpar("t1",@gUgTrosk)
 Rpar("t2",@gAhTrosk)
 Rpar("ks",@gKarSDop)
 Rpar("rf",@gRadnFilter)
-
-//Rpar("tB",@gTabela)
 
 // bazna opcija sihtarica mora biti iskljucena
 if gSihtGroup == "D"

@@ -144,9 +144,6 @@ set_roba_global_vars()
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
-
-public gFirma:="10"
-public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
 public gPicVrijednost := "9999999.99"
 public gL_kto_dob := PADR("541;", 100)
 public gL_kto_kup := PADR("211;", 100)
@@ -156,20 +153,9 @@ public gKt_ipdv := PADR("560;", 100)
 //::super:setTGVars()
 
 O_PARAMS
-Rpar("ff",@gFirma)
-Rpar("fn",@gNFirma)
 Rpar("p1",@gPicVrijednost)
 
-if empty(gNFirma)
-	Beep(1)
-  	Box(,1,50)
-    		@ m_x+1,m_y+2 SAY "Unesi naziv firme:" GET gNFirma pict "@!"
-    		read
-  	BoxC()
-  	WPar("fn",gNFirma)
-endif
 select (F_PARAMS)
-
 use
 
 public gModul

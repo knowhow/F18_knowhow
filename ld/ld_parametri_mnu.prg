@@ -14,58 +14,64 @@
 
 
 function ld_parametri()
-
-private opc:={}
-private opcexe:={}
-private izbor:=1
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
 O_LD_RJ
 O_PARAMS
 
-AADD(opc, "1. naziv firme, RJ, mjesec, godina...                           ")
+private cSection:="1"
+private cHistory:=" "
+private aHistory:={}
+
+
+AADD(_opc, "1. osnovni podaci organizacione jedinice                        ")
+AADD(_opcexe, {|| org_params() })
+
+AADD(_opc, "2. RJ, mjesec, godina...         ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETFIRMA"))
-	AADD(opcexe, {|| ld_set_firma()})
+	AADD(_opcexe, {|| ld_set_firma()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "2. postavka zaokruzenja, valute, formata prikaza iznosa...      ")
+AADD(_opc, "3. postavka zaokruzenja, valute, formata prikaza iznosa...  ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETFORMA"))
-	AADD(opcexe, {|| ld_set_forma()})
+	AADD(_opcexe, {|| ld_set_forma()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "3. postavka nacina obracuna ")
+AADD(_opc, "4. postavka nacina obracuna ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETOBRACUN"))
-	AADD(opcexe, {|| ld_set_obracun()})
+	AADD(_opcexe, {|| ld_set_obracun()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "4. postavka formula (uk.prim.,uk.sati,godisnji) i koeficijenata ")
+AADD(_opc, "5. postavka formula (uk.prim.,uk.sati,godisnji) i koeficijenata ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETFORMULE"))
-	AADD(opcexe, {|| ld_set_formule()})
+	AADD(_opcexe, {|| ld_set_formule()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "5. postavka parametara izgleda dokumenata ")
+AADD(_opc, "6. postavka parametara izgleda dokumenata ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETPRIKAZ"))
-	AADD(opcexe, {|| ld_set_prikaz()})
+	AADD(_opcexe, {|| ld_set_prikaz()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "6. parametri - razno ")
+AADD(_opc, "7. parametri - razno ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETRAZNO"))
-	AADD(opcexe, {|| ld_set_razno()})
+	AADD(_opcexe, {|| ld_set_razno()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-
-Menu_SC("par")
+f18_menu( "par", .f., _izbor, _opc, _opcexe )
 
 return
 

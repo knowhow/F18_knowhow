@@ -14,8 +14,8 @@
 
 
 function virm_parametri()
-local _firma := fetch_metric("firma_id", nil, gFirma )
-local _firma_naziv := fetch_metric("firma_naziv", nil, PADR( gNFirma, 100 ) )
+local _firma := fetch_metric("org_id", nil, gFirma )
+local _firma_naziv := fetch_metric("org_naz", nil, PADR( gNFirma, 100 ) )
 local _pict := fetch_metric("virm_iznos_pict", nil, PADR( "999999999.99", 12 ) )
 local _nule := fetch_metric("virm_stampati_nule", nil, "N" )
 local _sys_datum := fetch_metric("virm_sys_datum_uplate", nil, "D" )
@@ -42,8 +42,8 @@ BoxC()
 
 IF LastKey() <> K_ESC
 
-    set_metric("firma_id", nil, _firma )
-    set_metric("firma_naziv", nil, _firma_naziv )
+    set_metric("org_id", nil, _firma )
+    set_metric("org_naz", nil, _firma_naziv )
     set_metric("virm_iznos_pict", nil, _pict )
     set_metric("virm_stampati_nule", nil, _nule )
     set_metric("virm_sys_datum_uplate", nil, _sys_datum )

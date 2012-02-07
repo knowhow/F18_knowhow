@@ -445,14 +445,6 @@ public gFPicFRow:=0
 
 // citaj parametre sa db servera
 
-// osnovni parametar
-gMjStr := fetch_metric( "fakt_mjesto", nil, gMjStr )
-gFirma := fetch_metric( "fakt_id_firma", nil, gFirma )
-gTS := fetch_metric( "fakt_tip_subjeka", nil, gTS )
-gNFirma := fetch_metric( "org_naziv", nil, gNFirma )
-gBaznaV := fetch_metric( "fakt_bazna_valuta", nil, gBaznaV )
-gModemVeza := fetch_metric( "fakt_modemska_veza", nil, gModemVeza )
-	
 // parametri zaglavlja
 gFNaziv := fetch_metric( "org_naziv", nil, gFNaziv )
 gFPNaziv := fetch_metric( "org_naziv_dodatno", nil, gFPNaziv )

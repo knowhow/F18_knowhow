@@ -46,7 +46,7 @@ USE
 
 
 AADD(opc,"1. postaviti osnovne podatke o firmi           ")
-AADD(opcexe,{|| fakt_par_firma()})
+AADD(opcexe,{|| org_params() })
 
 AADD(opc,"2. postaviti varijante obrade dokumenata       ") 
 AADD(opcexe,{|| fakt_par_varijante_prikaza()})
@@ -510,40 +510,6 @@ endif
 
 return 
 
-
-
-function fakt_par_firma()
-private  GetList:={}
-
-gMjStr:=PADR(gMjStr,20)
-
-Box(, 6, 60, .f.,"Podaci o maticnoj firmi")
-	@ m_x+2,m_y+2 SAY "Firma: " GET gFirma
-  	@ m_x+3,m_y+2 SAY "Naziv: " GET gNFirma
-  	@ m_x+3,col()+2 SAY "TIP SUBJ.: " GET gTS
-  	@ m_x+4,m_y+2 SAY "Grad" GET gMjStr
-  	//@ m_x+5,m_y+2 SAY "Bazna valuta (Domaca/Pomocna)" GET gBaznaV  VALID gBaznaV $ "DP"  PICT "!@"
-  	@ m_x+6,m_y+2 SAY "Koristiti modemsku vezu S-erver/K-orisnik/N" GET gModemVeza VALID gModemVeza $ "SKN"  PICT "!@"
-  	READ
-BoxC()
-
-gMjStr:=TRIM(gMjStr)
-
-// bazna valuta uvijek domaca
-gBaznaV := "D"
-
-if (LASTKEY()<>K_ESC)
-    // snimi parametre
-	set_metric( "fakt_mjesto", nil, gMjStr )
-	set_metric( "fakt_id_firma", nil, gFirma )
-	set_metric( "fakt_tip_subjeka", nil, gTS )
-	set_metric( "org_naziv", nil, gNFirma )
-	set_metric( "fakt_bazna_valuta", nil, gBaznaV )
-	set_metric( "fakt_modemska_veza", nil, gModemVeza )
-	
-endif
-
-return
 
 
 function fakt_par_cijene()

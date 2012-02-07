@@ -212,13 +212,9 @@ private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
 
-public gFirma:="10"
-public gTS:="Preduzece"
-public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
 public gRavnot:="D"
 public gDatNal:="N"
 public gSAKrIz:="N"
-public gNW:="D"  // new wave
 public gBezVracanja:="N"  // parametar zabrane povrata naloga u pripremu
 public gBuIz:="N"  // koristenje konta-izuzetaka u FIN-BUDZET-u
 public gPicDEM:= "9999999.99"

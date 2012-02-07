@@ -22,7 +22,7 @@ private opcexe:={}
 
 
 AADD(Opc,"1. osnovni podaci o firmi                                 ")
-AADD(opcexe, {|| kalk_par_firma('D')})
+AADD(opcexe, {|| org_params() })
 
 AADD(Opc,"2. metoda proracuna NC, mogucnosti ispravke dokumenata ")
 AADD(opcexe, {|| kalk_par_metoda_nc('D')})
@@ -293,32 +293,6 @@ elseif gMetodaNC $ "13"
       "Molimo Vas da usvojite metodu  2 - srednja nabavna cijena !",0)
 endif
 return .t.
-
-
-
-
-function kalk_par_firma()
-private  GetList:={}
-
-Box(,4,65,.f.,"MATICNA FIRMA, BAZNA VALUTA")
-  @ m_x+1,m_y+2 SAY "Firma: " GET gFirma
-  @ m_x+1,col()+2 SAY "Naziv: " GET gNFirma
-  @ m_x+1,col()+2 SAY "TIP SUBJ.: " GET gTS
-  @ m_x+2,m_Y+2 SAY "Bazna valuta (Domaca/Pomocna)" GET gBaznaV  valid gbaznav $ "DP"  pict "!@"
-  @ m_x+3,m_Y+2 SAY "Zaokruzenje " GET gZaokr pict "99"
-  read
-BoxC()
-
-if lastkey()<>K_ESC
-	set_metric("org_id", nil, gFirma)
-  	set_metric("kalk_tip_subjekta", nil, gTS)
-  	gNFirma := PADR(gNFirma, 20)
-  	set_metric("org_naziv", nil, gNFirma)
-  	set_metric("kalk_bazna_valuta", nil, gBaznaV)
-  	set_metric("kalk_zaokruzenje", nil, gZaokr)
-endif
-
-return .f.
 
 
 

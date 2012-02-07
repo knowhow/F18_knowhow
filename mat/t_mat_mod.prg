@@ -17,11 +17,11 @@
 // -----------------------------------------------
 // -----------------------------------------------
 CLASS TMatMod FROM TAppMod
-	method New
-	method setGVars
-	method mMenu
-	method mMenuStandard
-	method initdb
+    method New
+    method setGVars
+    method mMenu
+    method mMenuStandard
+    method initdb
 END CLASS
 
 // -----------------------------------------------
@@ -65,24 +65,24 @@ private opcexe:={}
 AADD(opc, "1. unos/ispravka dokumenata               ")
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT"))
-	AADD(opcexe, {|| mat_knjizenje_naloga()})
+    AADD(opcexe, {|| mat_knjizenje_naloga()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 AADD(opc, "2. izvjestaji")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RPT","MNU"))
-	AADD(opcexe, {|| mat_izvjestaji()})
+    AADD(opcexe, {|| mat_izvjestaji()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 
 AADD(opc, "3. kontrola zbira datoteka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","KZB"))
-	AADD(opcexe, {|| mat_kzb()})
+    AADD(opcexe, {|| mat_kzb()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 AADD(opc, "4. stampa datoteke naloga")
@@ -112,17 +112,17 @@ AADD(opcexe, {|| nil})
 
 AADD(opc, "P. povrat naloga u pripremu")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "POVRAT"))
-	AADD(opcexe, {|| mat_povrat_naloga()})
+    AADD(opcexe, {|| mat_povrat_naloga()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 
 AADD(opc, "9. administracija baze podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN"))
-	AADD(opcexe, {|| mat_admin_menu()})
+    AADD(opcexe, {|| mat_admin_menu()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 AADD(opc, "------------------------------------")
@@ -132,9 +132,9 @@ AADD(opcexe, {|| nil})
 AADD(opc, "X. parametri")
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","ALL"))
-	AADD(opcexe, {|| mat_parametri()})
+    AADD(opcexe, {|| mat_parametri()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 Menu_SC("gmat", .t. )
@@ -156,7 +156,6 @@ private cHistory:=" "
 private aHistory:={}
 
 public gDirPor:=""
-public gFirma:="10"
 public gNalPr:="41#42"
 public gCijena:=" "
 public gKonto:="N"
@@ -164,48 +163,33 @@ public KursLis:="1"
 public gpicdem:="9999999.99"
 public gpicdin:="999999999999"
 public gPicKol:="999999.999"
-public gBaznaV:="D"
 public g2Valute:="D"
 public gPotpis:="N"
 
 O_PARAMS
-private cSection:="1",cHistory:=" "; aHistory:={}
+private cSection:="1"
+private cHistory:=" "
+private aHistory:={}
 
-public gNFirma := PADR(fetch_metric("org_naziv", NIL, "")) 
 public gDatNal:="N"
 public gKupZad:="N"
-public gNW:="D"  // new vawe
 public gSekS:="N"
 
 RPar("dp",@gDirPor)
-RPar("fi",@gFirma)
-Rpar("Bv",@gBaznaV)
 Rpar("2v",@g2Valute)
 RPar("np",@gNalPr)
 RPar("ci",@gCijena)
 RPar("pe",@gpicdem)
 RPar("pd",@gpicdin)
 RPar("pk",@gpickol)
-Rpar("fn",@gNFirma)
 Rpar("dn",@gDatNal)
-Rpar("nw",@gNW)
 Rpar("ss",@gSekS)
 RPar("kd",@gKupZad)
 RPar("ko",@gKonto)
 
-
-if empty(gNFirma)
-  Box(,1,50)
-    Beep(1)
-    @ m_x+1,m_y+2 SAY "Unesi naziv firme:" GET gNFirma pict "@!"
-    read
-  BoxC()
-  WPar("fn",gNFirma)
-endif
-
 if empty(gDirPor)
-  gDirPor:=strtran(cDirPriv,"MAT","KALK")+"\"
-  WPar("dp",gDirPor)
+    gDirPor:=strtran(cDirPriv,"MAT","KALK")+"\"
+    WPar("dp",gDirPor)
 endif
 
 select params

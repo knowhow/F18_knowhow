@@ -56,10 +56,32 @@ endif
 
 return
 
+
+
+// -------------------------------------------
+// meni parametara modula os
+// -------------------------------------------
+function os_parametri()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
+
+AADD( _opc, "1. osnovni podaci org.jedinice         " )
+AADD( _opcexe, { || org_params() } )
+AADD( _opc, "2. parametri os/sii" )
+AADD( _opcexe, { || _os_sii_parametri() } )
+
+f18_menu( "params", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+
+
 // -----------------------------------
 // parametri
 // -----------------------------------
-function os_parametri()
+function _os_sii_parametri()
 local _dat_obr := gDatObr
 local _pic_iznos := gPicI
 local _metoda := gMetodObr
@@ -68,6 +90,7 @@ local _druga_valuta := gDrugaVal
 local _varijanta := gVObracun
 local _obr_pocetak := gVarDio
 local _obr_pocetak_datum := gDatDio
+local _os_rj := gRJ
 
 _dat_obr := fetch_metric( "os_datum_obrade", my_user(), _dat_obr )
 _pic_iznos := fetch_metric( "os_prikaz_iznosa", nil, _pic_iznos )
@@ -77,12 +100,7 @@ _druga_valuta := fetch_metric( "os_prikaz_u_dvije_valute", nil, _druga_valuta )
 _varijanta := fetch_metric( "os_varijanta_obracuna", nil, _varijanta )
 _obr_pocetak := fetch_metric( "os_pocetak_obracuna", nil, _obr_pocetak )
 _obr_pocetak_datum := fetch_metric( "os_pocetak_obracuna_datum", nil, _obr_pocetak_datum )
-
-
-O_PARAMS
-private cSection := "1"
-private cHistory := " "
-private aHistory:={}
+_os_rj := fetch_metric( "os_radna_jedinica", nil, _os_rj )
 
 _pic_iznos := PADR( _pic_iznos, 15 )
 
@@ -90,11 +108,7 @@ Box(,20,70)
 
     set cursor on
 
-    @ m_x+1,m_y+2 SAY "Firma" GET gFirma
-    @ m_x+1,col()+2 SAY "Naziv:" get gNFirma
-    @ m_x+1,col()+2 SAY "TIP SUBJ.:" get gTS
-
-    @ m_x+3,m_y+2 SAY "Radna jedinica" GET gRJ
+    @ m_x+3,m_y+2 SAY "Radna jedinica" GET _os_rj
 
     @ m_x+4,m_y+2 SAY "Datum obrade  " GET _dat_obr
 
@@ -120,16 +134,11 @@ BoxC()
 
 if lastkey() <> K_ESC
 
-    WPar("ff",gFirma)
-    WPar("ts",gTS)
-    Wpar("fn",gNFirma)
-    Wpar("rj",gRJ)
-   
-    select params
-    use
-    
     // set sql/db parametri
 
+    set_metric( "os_radna_jedinica", nil, _os_rj )
+    gRJ := _os_rj
+    
     set_metric( "os_datum_obrade", my_user(), _dat_obr )
     gDatObr := _dat_obr
 
@@ -156,7 +165,6 @@ if lastkey() <> K_ESC
 
 endif
 
-close all
 return
 
 

@@ -114,16 +114,9 @@ method setGVars()
 
 set_global_vars()
 
-// glavni parametri firme
-// setovati ih iz globalnih organizaciona jedinica itd...
-public gFirma := "10"
-public gTS := "Preduzece"
-public gNFirma := space(20)  
-public gNW := "D"  
-public gRJ := "00"
-
 // ostali parametri
 public gDatObr := DATE()
+public gRJ := "00"
 public gValuta := "KM "
 public gPicI := "99999999.99"
 public gPickol := "99999.99"
@@ -136,17 +129,8 @@ public gGlBaza := "OS.DBF"
 public gMetodObr := "1"
 public gOsSii := "O"
 
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-Rpar("ff",@gFirma)
-Rpar("ts",@gTS)
-Rpar("fn",@gNFirma)
-Rpar("rj",@gRj)
-
 // procitaj iz sql/db
+gRJ := fetch_metric( "os_radna_jedinica", nil, gRJ )
 gOsSii := fetch_metric( "os_sii_modul", my_user(), gOsSii )
 gDatObr := fetch_metric( "os_datum_obrade", my_user(), gDatObr )
 gPicI := fetch_metric( "os_prikaz_iznosa", nil, gPicI )

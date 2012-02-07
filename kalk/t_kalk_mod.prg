@@ -192,7 +192,6 @@ if IsPDV()
 	gPDVMagNab:="D"
 endif
 public gRCRP := "C"
-public gTS:="Preduzece"
 public gPotpis:="N"
 public g10Porez:="N"
 public gDirFin:=""
@@ -212,9 +211,7 @@ public gAutoRavn:="N"
 public gAutoCjen:="D"
 public gLenBrKalk:=5
 public gArtCDX:=SPACE(20)
-public gNW:="X"  // new vawe
 public gVarEv:="1"  // 1-sa cijenama   2-bez cijena
-public gBaznaV:="D"
 public c24T1:=padr("Tr 1",15)
 public c24T2:=padr("Tr 2",15)
 public c24T3:=padr("Tr 3",15)
@@ -245,7 +242,6 @@ public gCijene:="2" // cijene iz sifrarnika, validnost
 public gGen16:="1"
 public gNiv14:="1"
 
-public gModemVeza:="N"
 public gTabela := 0
 public gPicNC := "999999.99999999"
 public gKomFakt:="20"
@@ -340,7 +336,7 @@ c24T6 := fetch_metric("kalk_dokument_24_trosak_6", nil, c24T6)
 c24T7 := fetch_metric("kalk_dokument_24_trosak_7", nil, c24T7)
 c24T8 := fetch_metric("kalk_dokument_24_trosak_8", nil, c24T8)
 
-gBaznaV := fetch_metric("kalk_bazna_valuta", nil, gBaznaV)
+gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
 gAFin := fetch_metric("kalk_kontiranje_fin", f18_user(), gAFin)
 gAMat := fetch_metric("kalk_kontiranje_mat", f18_user(), gAMat)
 gAFakt := fetch_metric("kalk_kontiranje_fakt", f18_user(), gAFakt)
@@ -364,7 +360,6 @@ gNiv14 := fetch_metric("kalk_tip_nivelacije_14", nil, gNiv14)
 gMetodaNC := fetch_metric("kalk_metoda_nc", nil, gMetodaNC)
 gDecKol := fetch_metric("kalk_broj_decimala_za_kolicinu", nil, gDeckol)
 gDefNiv := fetch_metric("kalk_promjena_cijena_odgovor", nil, gDefNiv)
-gNW := fetch_metric("kalk_novi_korisnicki_interfejs", nil, gNW)
 gVarEv := fetch_metric("kalk_varijanta_evidencije", nil, gVarEv)
 gPicCDem := fetch_metric("kalk_format_prikaza_cijene", nil, gPicCDEM)
 gPicProc := fetch_metric("kalk_format_prikaza_procenta", nil, gPicProc)

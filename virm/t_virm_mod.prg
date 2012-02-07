@@ -93,16 +93,12 @@ method setGVars()
 set_global_vars()
 
 public gDatum := DATE()
-public gFirma := SPACE(6)
 public gMjesto := SPACE(16)
 public gOrgJed := SPACE(17)
-public gNFirma := SPACE(20)
 public gINulu:="N"
 public gPici:="9,999,999,999,999,999.99"
 public gIDU:="D"
 
-gFirma := fetch_metric("firma_id", nil, "10" )
-gNFirma := fetch_metric("firma_naziv", nil, PADR( "bring.out", 100 ) )
 gMjesto := fetch_metric("virm_mjesto_uplate", nil, PADR( "Sarajevo", 100 ) )
 gOrgJed := fetch_metric("virm_org_jedinica", nil, PADR( "--", 17 ) )
 gPici := fetch_metric("virm_iznos_pict", nil, gPici )

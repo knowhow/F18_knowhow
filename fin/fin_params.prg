@@ -22,7 +22,7 @@ private izbor := 1
 read_params()
 
 AADD(opc, "1. osnovni parametri                        ")
-AADD(opcexe, {|| par_osnovni() })
+AADD(opcexe, {|| org_params() })
 AADD(opc, "2. parametri rada ")
 AADD(opcexe, {|| par_obrada() })
 AADD(opc, "3. parametri izgleda ")
@@ -32,43 +32,6 @@ Menu_sc("fin_param")
 
 return
 
-
-// ---------------------------------------
-// osnovni parametri modula
-// ---------------------------------------
-static function par_osnovni()
-local nX := 1
-
-Box(,10,70)
- 	
-	set cursor on
- 	
-	@ m_x + nX, m_y + 2 SAY "*********** Osnovni parametri:"
-	
-	nX := nX + 2
-	
-	@ m_x + nX, m_y + 2 SAY "Firma" GET gFirma
-	
- 	@ m_x + nX, col() + 2 SAY "Naziv firme:" get gNFirma
- 	
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY "Tip subjekta:" get gTS
-	
-	nX := nX + 2
-	
- 	@ m_x + nX, m_y + 2 SAY "Novi korisnicki interfejs? (D/N)" GET gNW valid gNW $ "DN" pict "@!"
-
-
-	read
-	
-BoxC()
-
-if LastKey() <> K_ESC
-	write_params()
-endif
-
-return
 
 
 // ---------------------------------------

@@ -38,7 +38,17 @@ static gUlPdvKp := "1"
 // -----------------------------------
 // -----------------------------------
 function epdv_parametri()
-ed_g_params()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
+
+AADD( _opc, "1. osnovni podaci org.jedinice            " )
+AADD( _opcexe, { || org_params() } )
+AADD( _opc, "2. parametri izgleda  " )
+AADD( _opcexe, { || ed_g_params() } )
+
+f18_menu( "epdv_param", .f., _izbor, _opc, _opcexe )
+
 return
 
 
@@ -73,16 +83,7 @@ Box(, 20, 70)
 
  set cursor on
 
- @ m_x + nX, m_y+2 SAY "1. Osnovni podaci ***"
-
- nX++
- 
- @ m_x + nX , m_y+2 SAY "Firma:" GET gFirma
- @ m_x + nX , col() + 1 SAY "Naziv:" GET gNFirma
-
- nX ++
-
- @ m_x + nX, m_y+2 SAY "2. Zaokruzenje ***"
+ @ m_x + nX, m_y+2 SAY "1. Zaokruzenje ***"
  nX++
  
  @ m_x + nX , m_y+2 SAY PADL("iznos ", 30)   GET gZAO_IZN PICT "9"
@@ -94,7 +95,7 @@ Box(, 20, 70)
  @ m_x + nX, m_y+2 SAY PADL(" podaci na pdv prijavi ", 30)   GET gZAO_PDV PICT "9"
  nX ++
 
- @ m_x + nX, m_y+2 SAY "3. Prikaz ***"
+ @ m_x + nX, m_y+2 SAY "2. Prikaz ***"
  nX ++
  
  @ m_x + nX, m_y+2 SAY PADL(" iznos ", 30)   GET gPIC_IZN
@@ -103,14 +104,14 @@ Box(, 20, 70)
  @ m_x + nX, m_y+2 SAY PADL(" cijena ", 30)   GET gPIC_CIJ
  nX ++
 
- @ m_x + nX, m_y+2 SAY "4. Obracun ***"
+ @ m_x + nX, m_y+2 SAY "3. Obracun ***"
  nX ++
  
  @ m_x + nX, m_y+2 SAY PADL(" ul. pdv kr.potr-stat fed-1, rs-2, bd-3", 55)   GET gUlPdvKp ;
 	VALID gUlPdvKp $ " 123"
  nX ++
  
- @ m_x + nX, m_y+2 SAY "5. Ostalo ***"
+ @ m_x + nX, m_y+2 SAY "4. Ostalo ***"
  nX ++
  
  @ m_x + nX, m_y+2 SAY PADL(" konta dobavljaci:", 30) GET gL_kto_dob ;
@@ -151,8 +152,6 @@ gZAO_PDV := 0
 gPIC_IZN := "9999999.99"
 gPIC_CIJ := "9999999.99"
 gUlPdvKp := "1"
-gFirma := SPACE(2)
-gNFirma := SPACE(20)
 
 gZAO_IZN := fetch_metric("epdv_zaokruzenje_iznosa", nil, gZAO_IZN)
 gZAO_CIJ := fetch_metric("epdv_zaokruzenje_cijene", nil, gZAO_CIJ)
@@ -168,8 +167,6 @@ gL_kto_kup := fetch_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
 gkt_updv := fetch_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
 gkt_ipdv := fetch_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
 
-gNFirma := fetch_metric("org_naziv", nil, gNFirma)
-gFirma := fetch_metric("org_id", nil, gFirma)
 
 return
 
@@ -191,9 +188,6 @@ set_metric("epdv_lista_konta_dobavljaca", nil, gL_kto_dob)
 set_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
 set_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
 set_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
-
-set_metric("org_id", nil, gFirma)
-set_metric("org_naziv", nil, gNFirma)
 
 return
 

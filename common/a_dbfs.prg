@@ -78,7 +78,7 @@ AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( par
   
 // ROBA
 AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    , { | param | roba_from_sql_server(param)    }  , "IDS" } )
-AADD( gaDbfs, { F_SAST     ,  "SAST"    , "sast"    , { | param | sast_from_sql_server(param)    }  , "IDS" } )
+AADD( gaDbfs, { F_SAST     ,  "SAST"    , "sast"    , { | param | sast_from_sql_server(param)    }  , "IDS", {"id", "id2"}, { |x|  sql_where_block( "sast", x ) }, "idrbr" } )
 AADD( gaDbfs, { F_TARIFA   ,  "TARIFA"  , "tarifa"  , { | param | tarifa_from_sql_server(param)  }  , "IDS" } )
 AADD( gaDbfs, { F_KONCIJ   ,  "KONCIJ"  , "koncij"  , { | param | koncij_from_sql_server(param)  }  , "IDS" } )
 

@@ -426,6 +426,10 @@ gcSlObracun := fetch_metric("kalk_sl_obrazac", nil, gcSLObrazac)
 
 gRobaBlock:={|Ch| RobaBlock(Ch)}
 
+// ne znam zasto, ali ovako je bilo ???
+// u svim modulima je "D"
+gNW := "X"
+
 return
 
 

@@ -14,48 +14,48 @@
 
 
 function kalk_params()
+local izbor := 1
+local _opc := {}
+local _opcexe := {}
 
 O_KONTO
 
-private Opc:={}
-private opcexe:={}
+AADD(_opc,"1. osnovni podaci o firmi                                 ")
+AADD(_opcexe, {|| org_params() })
 
+AADD(_opc,"2. metoda proracuna NC, mogucnosti ispravke dokumenata ")
+AADD(_opcexe, {|| kalk_par_metoda_nc('D')})
 
-AADD(Opc,"1. osnovni podaci o firmi                                 ")
-AADD(opcexe, {|| org_params() })
+AADD(_opc,"3. varijante obrade i prikaza pojedinih dokumenata ")
+AADD(_opcexe, {|| kalk_par_varijante_prikaza('D')})
 
-AADD(Opc,"2. metoda proracuna NC, mogucnosti ispravke dokumenata ")
-AADD(opcexe, {|| kalk_par_metoda_nc('D')})
+AADD(_opc,"4. nazivi troskova za 10-ku ")
+AADD(_opcexe, {|| kalk_troskovi_10ka('D')})
 
-AADD(Opc,"3. varijante obrade i prikaza pojedinih dokumenata ")
-AADD(opcexe, {|| kalk_par_varijante_prikaza('D')})
+AADD(_opc, "5. nazivi troskova za 24-ku")
+AADD(_opcexe, {|| kalk_par_troskovi_24('D')})
 
-AADD(Opc,"4. nazivi troskova za 10-ku ")
-AADD(opcexe, {|| kalk_troskovi_10ka('D')})
+AADD(_opc,"6. nazivi troskova za RN")
+AADD(_opcexe, {|| kalk_par_troskovi_rn('D')})
 
-AADD(Opc, "5. nazivi troskova za 24-ku")
-AADD(opcexe, {|| kalk_par_troskovi_24('D')})
+AADD(_opc,"7. prikaz cijene,%,iznosa")
+AADD(_opcexe, {|| kalk_par_cijene('D')})
 
-AADD(Opc,"6. nazivi troskova za RN")
-AADD(opcexe, {|| kalk_par_troskovi_rn('D')})
+AADD(_opc,"8. nacin formiranja zavisnih dokumenata")
+AADD(_opcexe, {|| kalk_par_zavisni_dokumenti('D')})
 
-AADD(Opc,"7. prikaz cijene,%,iznosa")
-AADD(opcexe, {|| kalk_par_cijene('D')})
+AADD(_opc,"9. lokacije FIN/MAT/FAKT ..")
+AADD(_opcexe, {|| SetOdirs('D')})
 
-AADD(Opc,"8. nacin formiranja zavisnih dokumenata")
-AADD(opcexe, {|| kalk_par_zavisni_dokumenti('D')})
+AADD(_opc, "A. parametri za komisionu prodaju" )
+AADD(_opcexe, {|| SetKomis('D')})
 
-AADD(Opc,"9. lokacije FIN/MAT/FAKT ..")
-AADD(opcexe, {|| SetOdirs('D')})
+AADD(_opc, "B. parametri - razno")
+AADD(_opcexe, {|| kalk_par_razno('D')})
 
-AADD(Opc, "A. parametri za komisionu prodaju" )
-AADD(opcexe, {|| SetKomis('D')})
+f18_menu( "pars", .f., _izbor, _opc, _opcexe )
 
-AADD(Opc, "B. parametri - razno")
-AADD(opcexe, {|| kalk_par_razno('D')})
-
-private Izbor:=1
-Menu_SC("pars")
+gNW := "X"
 
 close all
 return

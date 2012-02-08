@@ -13,11 +13,6 @@
 #include "kalk.ch"
 
 
-/*! \fn Get1_PR()
- *  \brief Prva strana maske za unos dokumenta tipa PR
- */
-
-// ovim funkcijama je proslijedjen parametar fnovi kao privatna varijabla
 function Get1_PR()
 select F_SAST
 

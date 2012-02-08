@@ -35,7 +35,7 @@
 #define F_KALK_PRIPR2    212
 #define F_KALK_PRIPR9    213
 #define F_KALK_DOKS      18
-#define F_KALK_DOKS2     19
+#define F_KALK_DOKS2     350
 
 // FMK FIN
 #define F_FIPRIPR  20

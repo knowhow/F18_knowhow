@@ -850,9 +850,9 @@ if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
 
         _rec := dbf_get_rec()
 
-        if !found()  
+        if !found() 
+            APPEND BLANK 
             // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
-            _rec := hb_hash()
             _rec["idfirma"] := finmat->idfirma
             _rec["idvd"] := finmat->idvd
             _rec["brdok"] := finmat->brdok
@@ -865,7 +865,7 @@ if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
         ENDIF
         
         // update rec sql/db
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( "kalk_doks2", _rec )
     
         PopWa()
     

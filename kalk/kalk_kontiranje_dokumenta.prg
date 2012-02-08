@@ -1133,7 +1133,7 @@ if fStara .and. lAuto == .f.
     @ m_x+2, m_y+2 SAY "DATUM------------>"             COLOR "W+/B"
     @ m_x+2, col()+1 SAY DTOC(DATDOK)                   COLOR "N/W"
     @ m_x+3, m_y+2 SAY "PARTNER---------->"             COLOR "W+/B"
-    @ m_x+3, col()+1 SAY IDPARTNER+"-"+PARTN->naz       COLOR "N/W"
+    @ m_x+3, col()+1 SAY IDPARTNER + "-" + PADR( partn->naz, 20 ) COLOR "N/W"
     @ m_x+4, m_y+2 SAY "KONTO MAGACINA--->"             COLOR "W+/B"
     @ m_x+4, col()+1 SAY MKONTO+"-"+PADR(cPom,49)       COLOR "N/W"
     @ m_x+5, m_y+2 SAY "KONTO PRODAVNICE->"             COLOR "W+/B"

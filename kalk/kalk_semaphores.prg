@@ -530,4 +530,154 @@ else
 endif
  
 
+// ------------------------------
+// koristi azur_sql
+// ------------------------------
+function kalk_doks2_from_sql_server(algoritam)
+local _qry
+local _counter
+local _rec
+local _qry_obj
+local _server := pg_server()
+local _seconds
+local _dat, _ids
+local _fnd, _tmp_id
+local _tbl
+local _count
+local _offset
+local _step := 15000
+local _retry := 3
+local _order := "idfirma, idvd, brdok"
+local _key_block
+local _i, _fld, _fields, _sql_fields
+
+if algoritam == NIL
+  algoritam := "FULL"
+endif
+
+_tbl := "fmk.kalk_doks2"
+
+_seconds := SECONDS()
+
+_count := table_count( _tbl, "true" )
+
+SELECT F_KALK_DOKS2
+my_usex ("kalk_doks2", "kalk_doks2", .f., "SEMAPHORE")
+
+_fields := { "idfirma", "idvd", "brdok", "datval", "opis", "k1", "k2", "k3" }
+_sql_fields := sql_fields( _fields )
+
+for _offset := 0 to _count STEP _step
+
+  _qry :=  "SELECT " + _sql_fields + " FROM " + _tbl
+
+  if algoritam == "DATE"
+      _dat = get_dat_from_semaphore( "kalk_doks2" )
+      _qry += " WHERE datdok >= " + _sql_quote(_dat)
+      _key_block := { || field->datdok }
+  endif
+
+  if algoritam == "IDS"
+        _ids := get_ids_from_semaphore( "kalk_doks2" )
+        _qry += " WHERE "
+        if LEN(_ids) < 1
+            // nema id-ova
+            _qry += "false"
+        else
+            _sql_ids := "("
+            for _i := 1 to LEN(_ids)
+                _sql_ids += _sql_quote(_ids[_i])
+                if _i < LEN(_ids)
+                    _sql_ids += ","
+                endif
+            next
+            _sql_ids += ")"
+            _qry += " (idfirma || idvd || brdok) IN " + _sql_ids
+        endif
+
+        _key_block := {|| field->idfirma + field->idvd + field->brdok } 
+  endif
+
+  _qry += " ORDER BY " + _order
+  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+
+  DO CASE
+
+    CASE (algoritam == "FULL") .and. (_offset == 0)
+        
+        // "full" algoritam
+        log_write("dat_dok = nil full algoritam") 
+        ZAP
+    
+    CASE algoritam == "DATE"
+
+        log_write("dat_dok <> nil date algoritam") 
+        // "date" algoritam  - brisi sve vece od zadanog datuma
+        SET ORDER TO TAG "5"
+        // tag je "DatDok" nije DTOS(DatDok)
+        seek _dat
+        do while !eof() .and. EVAL( _key_block ) >= _dat 
+            // otidji korak naprijed
+            SKIP
+            _rec := RECNO()
+            SKIP -1
+            DELETE
+            GO _rec  
+        enddo
+
+    CASE algoritam == "IDS"
+        
+        // "1", "idFirma+IdVd+BrDok"
+        SET ORDER TO TAG "1"
+
+        do while .t.
+            _fnd := .f.
+            for each _tmp_id in _ids
+                
+                HSEEK _tmp_id
+                
+                do while !EOF() .and. EVAL( _key_block ) == _tmp_id 
+                    skip
+                    _rec := RECNO()
+                    skip -1 
+                    DELETE
+                    go _rec 
+                    _fnd := .t.
+                enddo
+            next
+            if ! _fnd 
+                exit
+            endif
+        enddo
+
+  ENDCASE
+
+  _qry_obj := run_sql_query( _qry, _retry )
+
+  _counter := 1
+
+  DO WHILE !_qry_obj:Eof()
+    append blank
+    for _i := 1 to LEN(_fields)
+          _fld := FIELDBLOCK(_fields[_i])
+          if VALTYPE(EVAL(_fld)) $ "CM"
+              EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+          else
+              EVAL(_fld, _qry_obj:FieldGet(_i))
+          endif
+    next
+    _qry_obj:Skip()
+
+    _counter++
+
+  ENDDO
+
+next
+
+USE
+    
+log_write("kalk_doks2 synchro cache:" + STR(SECONDS() - _seconds))
+
+return .t. 
+
 

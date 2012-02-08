@@ -278,7 +278,7 @@ do while !eof()
           lDatFakt:=.f.
           cStavka:=Id
           select finmat
-       nIz:=&cStavka
+          nIz:=&cStavka
           select trfp
           if !empty(trfp->idtarifa) .and. trfp->idtarifa<>finmat->idtarifa
             // ako u {ifrarniku parametara postoji tarifa prenosi po tarifama
@@ -810,56 +810,54 @@ return 0
  */
 
 function DatVal()
-*{
 local nUvecaj:=15
 private GetList:={}
 
 // uzmi datval iz doks2
-if file(KUMPATH+"DOKS2.DBF")
-   PushWa()
-   O_FAKT_DOKS2
-   seek finmat->(idfirma+idvd+brdok)
-   dDatVal:=DatVal
-   IF lVrsteP
-     cIdVrsteP:=k2
-   ENDIF
-   PopWa()
+if file(f18_ime_dbf( "kalk_doks2" ))
+    PushWa()
+    O_KALK_DOKS2
+    seek finmat->(idfirma+idvd+brdok)
+    dDatVal := DatVal
+    IF lVrsteP
+        cIdVrsteP:=k2
+    ENDIF
+    PopWa()
 endif
 
-if empty(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
+if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
 
-  Box(,3+IF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
-    set cursor on
-    @ m_x+1,m_y+2 SAY "Datum dokumenta: " ; ??  finmat->datfaktp
-    @ m_x+2,m_y+2 SAY "Uvecaj dana    :" GET nUvecaj pict "99"
-    @ m_x+3,m_y+2 SAY "Valuta         :" GET dDatVal when {|| dDatVal:=finmat->datfaktp+nUvecaj,.t.}
-    IF lVrsteP .and. EMPTY(cIdVrsteP)
-      @ m_x+4,m_y+2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
-    ENDIF
-    read
-  BoxC()
-  if file(f18_ime_dbf("fakt_doks2"))
-     PushWa()
-     O_FAKT_DOKS2
-     seek finmat->(idfirma+idvd+brdok)
-     if !found()  // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
+    Box(,3+IF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
+        set cursor on
+        @ m_x+1,m_y+2 SAY "Datum dokumenta: " ; ??  finmat->datfaktp
+        @ m_x+2,m_y+2 SAY "Uvecaj dana    :" GET nUvecaj pict "99"
+        @ m_x+3,m_y+2 SAY "Valuta         :" GET dDatVal when {|| dDatVal:=finmat->datfaktp+nUvecaj,.t.}
+        IF lVrsteP .and. EMPTY(cIdVrsteP)
+            @ m_x+4,m_y+2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
+        ENDIF
+        read
+    BoxC()
+    if file(f18_ime_dbf("kalk_doks2"))
+        PushWa()
+        O_KALK_DOKS2
+        seek finmat->(idfirma+idvd+brdok)
+        if !found()  // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
                   // ako je
-        append blank
-        replace idfirma with finmat->idfirma,;
-                idvd with finmat->idvd,;
-                brdok with finmat->brdok
-     endif
-     replace datval with dDatVal
-     IF lVrsteP
-       replace k2 with cIdVrsteP
-     ENDIF
-     PopWa()
-  endif
+            append blank
+            replace idfirma with finmat->idfirma,;
+                    idvd with finmat->idvd,;
+                    brdok with finmat->brdok
+        endif
+        replace datval with dDatVal
+        IF lVrsteP
+            replace k2 with cIdVrsteP
+        ENDIF
+        PopWa()
+    endif
 
 endif
 
 return 0
-*}
 
 
 

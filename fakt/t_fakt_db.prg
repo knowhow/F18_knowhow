@@ -282,9 +282,8 @@ endif
 
 
 if (nArea==-1 .or. nArea==(F_FAKT_DOKS2))
-	//BLOK: DOKS2
-	
-	aDbf:={}
+
+    	aDbf:={}
 	AADD(aDBf,{ "IDFIRMA"      , "C" ,   2 ,  0 })
 	AADD(aDBf,{ "IDTIPDOK"     , "C" ,   2 ,  0 })
 	AADD(aDBf,{ "BRDOK"        , "C" ,   8 ,  0 })
@@ -304,6 +303,7 @@ if (nArea==-1 .or. nArea==(F_FAKT_DOKS2))
 	endif
 	
 	CREATE_INDEX("1","IdFirma+idtipdok+brdok", "FAKT_DOKS2")
+
 endif
 
 

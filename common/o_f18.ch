@@ -138,9 +138,9 @@
 #xcommand O_KALKX         => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
 #xcommand O_KALKS         => select(F_KALKS);  my_use  ("kalks")  ; set order to tag "1"
 #xcommand O_KALKREP => if gKalks; select(F_KALK); use; select(F_KALK) ; my_use  ("kalks", "KALK") ; set order to tag "1";else; select(F_KALK);  my_use  ("KALK")  ; set order to tag "1"; end
-#xcommand O_SKALK          => select(F_KALK);  my_usex  ("kalk_pripr", "kalk_kalk") ; set order to tag "1"
-#xcommand O_KALK_DOKS      => select(F_KALK_DOKS);  my_use  (KUMPATH + "kalk_doks")     ; set order to tag "1"
-#xcommand O_KALK_DOKS2     => select(F_KALK_DOKS2);  my_use  (KUMPATH + "kalk_doks2")     ; set order to tag "1"
+#xcommand O_SKALK          => select(F_KALK);  my_usex("kalk_pripr", "kalk_kalk") ; set order to tag "1"
+#xcommand O_KALK_DOKS      => select(F_KALK_DOKS);  my_use( "kalk_doks") ; set order to tag "1"
+#xcommand O_KALK_DOKS2     => select(F_KALK_DOKS2);  my_use( "kalk_doks2" ) ; set order to tag "1"
 #xcommand O_PORMP          => select(F_PORMP); usex ("pormp")     ; set order to tag "1"
 #xcommand O_PRODNC         => select(F_PRODNC);  my_use  ("prodnc")  ; set order to tag "PRODROBA"
 #xcommand O_RVRSTA         => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"

@@ -378,6 +378,7 @@ if (nArea==-1 .or. nArea==(F_KALK))
 	endif
 endif
 
+
 if (nArea==-1 .or. nArea==(F_KALK_DOKS2))
 	//kalk_doks2.DBF
 	
@@ -390,11 +391,14 @@ if (nArea==-1 .or. nArea==(F_KALK_DOKS2))
 	AADD(aDBf,{ 'K1'                , 'C' ,  1 ,  0 })
 	AADD(aDBf,{ 'K2'                , 'C' ,  2 ,  0 })
 	AADD(aDBf,{ 'K3'                , 'C' ,  3 ,  0 })
-	if !FILE(f18_ime_dbf("kalk_doks2"))
-       		DBcreate2(KUMPATH+'kalk_doks2.DBF',aDbf)
+	if !FILE(f18_ime_dbf( "kalk_doks2" ))
+       		DBcreate2( "kalk_doks2", aDbf )
+			reset_semaphore_version( "kalk_doks2" )
+			my_use( "kalk_doks2" )
+			close all
 	endif
 	
-	CREATE_INDEX("1","IdFirma+idvd+brdok",KUMPATH+"kalk_doks2")
+	CREATE_INDEX( "1", "IdFirma+idvd+brdok", "kalk_doks2" )
 endif
 
 

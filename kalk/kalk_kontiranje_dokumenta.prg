@@ -811,6 +811,7 @@ return 0
 
 function DatVal()
 local nUvecaj:=15
+local _rec
 private GetList:={}
 
 // uzmi datval iz doks2
@@ -818,7 +819,7 @@ if file(f18_ime_dbf( "kalk_doks2" ))
     PushWa()
     O_KALK_DOKS2
     seek finmat->(idfirma+idvd+brdok)
-    dDatVal := DatVal
+    dDatVal := field->DatVal
     IF lVrsteP
         cIdVrsteP:=k2
     ENDIF
@@ -829,7 +830,8 @@ if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
 
     Box(,3+IF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
         set cursor on
-        @ m_x+1,m_y+2 SAY "Datum dokumenta: " ; ??  finmat->datfaktp
+        @ m_x+1,m_y+2 SAY "Datum dokumenta: " 
+        ??  finmat->datfaktp
         @ m_x+2,m_y+2 SAY "Uvecaj dana    :" GET nUvecaj pict "99"
         @ m_x+3,m_y+2 SAY "Valuta         :" GET dDatVal when {|| dDatVal:=finmat->datfaktp+nUvecaj,.t.}
         IF lVrsteP .and. EMPTY(cIdVrsteP)
@@ -837,22 +839,36 @@ if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
         ENDIF
         read
     BoxC()
+
     if file(f18_ime_dbf("kalk_doks2"))
+
         PushWa()
+
         O_KALK_DOKS2
+
         seek finmat->(idfirma+idvd+brdok)
-        if !found()  // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
-                  // ako je
-            append blank
-            replace idfirma with finmat->idfirma,;
-                    idvd with finmat->idvd,;
-                    brdok with finmat->brdok
+
+        _rec := dbf_get_rec()
+
+        if !found()  
+            // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
+            _rec := hb_hash()
+            _rec["idfirma"] := finmat->idfirma
+            _rec["idvd"] := finmat->idvd
+            _rec["brdok"] := finmat->brdok
         endif
-        replace datval with dDatVal
+        
+        _rec["datval"] := dDatVal
+        
         IF lVrsteP
-            replace k2 with cIdVrsteP
+            _rec["k2"] := cIdVrsteP
         ENDIF
+        
+        // update rec sql/db
+        update_rec_server_and_dbf( ALIAS(), _rec )
+    
         PopWa()
+    
     endif
 
 endif

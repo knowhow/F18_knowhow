@@ -1771,7 +1771,7 @@ local nFiscNO := 0
 local aTmp := {}
 local aFisc := {}
 local cFisc := ""
-local _n_pos := 3
+local _n_pos := 2
 
 if lStorno == nil
     lStorno := .f.
@@ -1782,7 +1782,7 @@ endif
 // 4 - storno racun
 
 if lStorno == .t.
-    _n_pos := 4
+    _n_pos := 3
 endif
 
 aTmp := toktoniz( cTxt, ";" )

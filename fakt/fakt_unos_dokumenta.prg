@@ -139,12 +139,7 @@ do case
         endif
 
         if gFC_Pitanje == "D" .and. Pitanje(,"Odstampati racun na fiskalni printer ?", "D") == "N"
-
-            // resetuj broj fiskalnog racuna, ako postoji setovan
-            reset_fakt_fisc_no( cFFirma, cFTipDok, cFBrDok )
-
             return DE_CONT
-
         endif
 
         msgo("stampa na fiskalni printer u toku...")

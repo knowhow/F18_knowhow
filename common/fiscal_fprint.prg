@@ -537,13 +537,12 @@ local aDaily := {}
 local aStruct := {}
 local nErr := 0
 local cType := "0"
+local _rpt_type := "Z"
+local _param_date, _param_time
+local _last_date, _last_time
 
 if nDevice == nil
 	nDevice := 0
-endif
-
-if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
-	return
 endif
 
 // uslovi
@@ -556,6 +555,25 @@ Box(,4,50)
 BoxC()
 
 if LastKey() == K_ESC
+	return
+endif
+
+if cType == "2"
+    _rpt_type := "X"
+endif
+
+_param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
+_param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
+
+// iscitaj zadnje formirane izvjestaje...
+_last_date := fetch_metric( _param_date, nil, CTOD("") )
+_last_time := PADR( fetch_metric( _param_time, nil, "" ), 5 )
+
+if _rpt_type == "Z" .and. _last_date == DATE()
+    MsgBeep( "Zadnji Z izvjestaj radjen: " + DTOC( _last_date ) + ", u " + _last_time )
+endif
+
+if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
 	return
 endif
 
@@ -583,6 +601,10 @@ if nErr <> 0
 	return
 
 endif
+
+// upisi u sql/db datum i vrijeme formiranja dnevnog izvjestaja
+set_metric( _param_date, nil, DATE() )
+set_metric( _param_time, nil, TIME() )
 
 // pokrecem komandu za brisanje artikala iz uredjaja
 // ovo je bitno za FP550 uredjaj
@@ -1333,6 +1355,11 @@ if cType == nil
 	cType := "0"
 endif
 
+if cType == "2"
+    // kod X reporta ne treba zadnji parametar
+    cOper := ""
+endif
+
 cLogic := "1"
 
 cTmp := "69"
@@ -1347,8 +1374,12 @@ cTmp += REPLICATE("_", 2)
 cTmp += cSep
 cTmp += cType
 cTmp += cSep
-cTmp += cOper
-cTmp += cSep
+
+// ovo se dodaje samo kod Z reporta
+if !EMPTY ( cOper )
+    cTmp += cOper
+    cTmp += cSep
+endif
 	
 AADD( aArr, { cTmp } )
 

@@ -53,6 +53,7 @@ local nPLU := 0
 local lReset := .f.
 local nP_PLU := 0
 local nCnt 
+local _rec
 
 if lSilent == nil
 	lSilent := .f.
@@ -107,8 +108,10 @@ do while !EOF()
 	
 	++ nCnt
 	++ nP_PLU
-
-	replace field->fisc_plu with nP_PLU
+    
+    _rec := dbf_get_rec()
+    _rec["fisc_plu"] := nP_PLU
+    update_rec_server_and_dbf( ALIAS(), _rec )
 
 	@ m_x + 1, m_y + 2 SAY PADR( "idroba: " + field->id + ;
 		" -> PLU: " + ALLTRIM( STR( nP_PLU ) ), 30 )
@@ -146,100 +149,100 @@ function f_filepos( cBrRn )
 local cRet
 
 if ALLTRIM( gFC_Type ) == "FPRINT"
-	cRet := PADL( ALLTRIM( cBrRn ), 8, "0" ) + ".TXT"
+	cRet := PADL( ALLTRIM( cBrRn ), 8, "0" ) + ".txt"
 else
 	cRet := PADL( ALLTRIM( cBrRn ), 8, "0" ) + ".inp"
 endif
 return cRet
 
 
+// vraca naziv parametra za sql/db
+static function _get_auto_plu_param_name( f_device )
+local _ret := "auto_plu"
+
+// parametar moze biti:
+// 
+// "auto_plu" - auto plu bez dodatnih uredjaja
+// "auto_plu_dev_1" - auto plu device 1
+// "auto_plu_dev_2" - auto plu device 2
+
+if f_device == nil
+	f_device := 0
+endif
+
+if f_device > 0
+	_ret := _ret + "_dev_" + ALLTRIM( STR( f_device ) )
+endif
+
+return _ret
+
+
 // --------------------------------------------------
 // vraca iz parametara zadnji PLU broj
 // --------------------------------------------------
-function last_plu( nDevice )
-local nPLU := 0
-private cSection:="X"
-private cHistory:=" "
-private aHistory:={}
+function last_plu( f_device )
+local _plu := 0
+local _param_name := _get_auto_plu_param_name( f_device )
 
-if nDevice == nil
-	nDevice := 0
+if f_device == nil
+	f_device := 0
 endif
 
-O_KPARAMS
-select kparams
+_plu := fetch_metric( _param_name, nil, _plu )
 
-if nDevice = 0
-	RPar( "ap", @nPLU )
-else
-	RPar( "a" + ALLTRIM(STR(nDevice)), @nPLU )
-endif
-
-return nPLU
+return _plu
 
 
 // --------------------------------------------------
 // generisanje novog plug kod-a inkrementalno
 // --------------------------------------------------
-function auto_plu( lReset, lSilent, nDevice )
-local nGenPlu := 0
-local nTArea := SELECT()
+function auto_plu( reset_plu, silent_mode, f_device )
+local _plu := 0
+local _t_area := SELECT()
+local _param_name := _get_auto_plu_param_name( f_device )
 
-private cSection:="X"
-private cHistory:=" "
-private aHistory:={}
-
-if nDevice == nil
-	nDevice := 0
+if f_device == nil
+	f_device := 0
 endif
 
-if lReset == nil
-	lReset := .f.
+if reset_plu == nil
+	reset_plu := .f.
 endif
 
-if lSilent == nil
-	lSilent := .f.
+if silent_mode == nil
+	silent_mode := .f.
 endif
 
-O_KPARAMS
-select kparams
-
-if lReset = .t.
+if reset_plu = .t.
 	// uzmi inicijalni plu iz parametara
-	nGenPlu := gFC_pinit
+	_plu := gFC_pinit
 else
-	if nDevice = 0
-		// iscitaj trenutni PLU KOD
-		RPar( "ap", @nGenPlu )
-	else
-		RPar( "a" + ALLTRIM(STR(nDevice)), @nGenPlu )
-	endif
+
+    _plu := fetch_metric( _param_name, nil, _plu )
+
 	// uvecaj za 1
-	++ nGenPlu 
+	++ _plu 
+
 endif
 
-if lReset = .t. .and. !lSilent
+if reset_plu = .t. .and. !silent_mode
 	if !SigmaSif("RESET")
 		msgbeep("Unesena pogresna sifra !")
-		select (nTArea)
-		return nGenPlu
+		select (_t_area)
+		return _plu
 	endif
 endif
 
-if nDevice = 0
-	// upisi generisani u parametre
-	WPar( "ap", nGenPlu )
-else
-	WPar( "a" + ALLTRIM(STR(nDevice)), nGenPlu )
+// upisi u sql/db
+set_metric( _param_name, nil, _plu )
+
+if reset_plu = .t. .and. !silent_mode
+	msgbeep("Setovan pocetni PLU na: " + ALLTRIM(STR(_plu)))
 endif
 
-if lReset = .t. .and. !lSilent
-	msgbeep("Setovan pocetni PLU na: " + ALLTRIM(STR(nGenPlu)))
-endif
+select (_t_area)
 
-select (nTArea)
-
-return nGenPlu
+return _plu
 
 
 

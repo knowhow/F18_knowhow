@@ -842,7 +842,7 @@ endif
 
 if (nRbr==1 .and. VAL(_podbr) < 1)
     if gNW$"DR"
-        @ m_x+1,m_y+2 SAY gNFirma
+        @ m_x+1,m_y+2 SAY PADR( gNFirma, 20 )
         if RecCount2()==0
                 _idFirma:=gFirma
         endif
@@ -1114,7 +1114,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
     ChSveStavke(fNovi)
 else
 
-    @ m_x + 1, m_y+ 2 SAY gNFirma 
+    @ m_x + 1, m_y+ 2 SAY PADR( gNFirma, 20 )
     ?? "  RJ:", _IdFirma
     @ m_x+3,m_y+2 SAY PADR(aPom[ASCAN(aPom,{|x|_IdTipdok==LEFT(x,2)})],35)
     @ m_x+3,m_y+45 SAY "Datum: "

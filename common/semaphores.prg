@@ -366,6 +366,11 @@ if LEN(ids) < 1
    return .f.
 endif
 
+if gDebug > 7
+      log_write( "push ids: " + table + " / " + pp(ids) )
+endif
+
+
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 // treba dodati id za sve DRUGE korisnike

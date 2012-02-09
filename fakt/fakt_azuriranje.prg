@@ -544,9 +544,7 @@ if lOk = .t.
 
   sql_fakt_fakt_update("BEGIN")
 
-  do while !eof() .and. field->idfirma == id_firma ;
-                    .and. field->idtipdok == id_tip_dok ;
-                    .and. field->brdok == br_dok
+  do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
  
    record["id_firma"] := field->idfirma
    record["id_tip_dok"] := field->idtipdok
@@ -577,7 +575,7 @@ if lOk = .t.
    record["opis"] := field->opis
    record["dok_veza"] := field->dok_veza
                
-   _tmp_id := record["id_firma"] + record["id_tip_dok"] + ALLTRIM( record["br_dok"] )
+   _tmp_id := record["id_firma"] + record["id_tip_dok"] + record["br_dok"]
    
    if !sql_fakt_fakt_update( "ins", record )
        lOk := .f.

@@ -1,3 +1,11 @@
+0.9.49  2012-02-09, vsasa
+
+  - korekcija fiskalnih funkcija fprint za unix varijantu
+
+0.9.48  2012-02-08, vsasa
+
+  - dorade na KALK proizvodnja
+
 0.9.47  2012-02-07, vsasa
 
   - modul FIN, ciscenje opcija povrata dokumenta u pripremu [#26549](http://redmine.bring.out.ba/issues/26549)

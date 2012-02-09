@@ -752,6 +752,7 @@ return
  
 function EdDatn(lOpcine)
 local nRet:=DE_CONT
+local _rec
 
 if gFC_use == "D"
     // ispis informacije o fiskalnom racunu
@@ -800,7 +801,9 @@ do case
     BoxC()
     
     if nFiscal <> field->fisc_rn
-        replace field->fisc_rn with nFiscal
+        _rec := dbf_get_rec()
+        _rec["fisc_rn"] := nFiscal
+        update_rec_server_and_dbf( ALIAS(), _rec )
         return DE_REFRESH
     endif
   
@@ -969,7 +972,7 @@ do case
         nRet:=DE_REFRESH
      endif
 
-  case chr(Ch) $ "rR"
+  case chr(Ch) $ "qQ"
 
      select fakt_doks
      nTrec      := recno()

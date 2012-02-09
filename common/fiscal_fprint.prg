@@ -21,6 +21,7 @@ static MAX_PRICE := 999999.99
 static MIN_PRICE := 0.01
 static MAX_PERC := 99.99
 static MIN_PERC := -99.99
+static ANSW_DIR := "answer"
 
 // ocekivana matrica
 // aData
@@ -1586,10 +1587,10 @@ return cRet
 function fp_d_answer( cPath, cFile )
 local cF_name
 
-cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(gFc_answ)
+cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(gFc_answ)
 
 if EMPTY( ALLTRIM( gFc_answ ) )
-	cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(cFile)
+	cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(cFile)
 endif
 
 // ako postoji fajl obrisi ga
@@ -1641,11 +1642,11 @@ local _o_file
 nTime := nTimeOut
 
 // primjer: c:\fprint\answer\answer.txt
-cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(gFc_answ)
+cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(gFc_answ)
 
 // ako se koristi isti answer kao i input fajl
 if EMPTY( ALLTRIM( gFc_answ ) )
-	cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(cFile)
+	cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(cFile)
 endif
 
 // ova opcija podrazumjeva da je ukljuèena opcija 

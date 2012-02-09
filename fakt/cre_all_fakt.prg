@@ -57,11 +57,6 @@ if !FILE(f18_ime_dbf(_alias))
     _created := .t.
 endif
 
-// 0.4.3
-//if ver["current"] < 0403
-  //  modstru({"*" + _table_name, "A FISC_ST N 10 0"})
-//endif
-
 if _created
     reset_semaphore_version(_table_name)
     my_use(_alias)
@@ -147,7 +142,7 @@ _alias := "FAKT_DOKS"
 _table_name := "fakt_doks"
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
-    _created := .f.
+    _created := .t.
 endif
 
 // 0.4.3

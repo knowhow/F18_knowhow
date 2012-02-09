@@ -78,7 +78,7 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
@@ -138,8 +138,9 @@ for _offset := 0 to _count STEP _step
 
   // sada je sve izbrisano u lokalnom dbf-u
 
+  log_write( "fakt_fakt update, db qry: " + _qry )
   _qry_obj := run_sql_query( _qry, _retry )
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
     
@@ -155,14 +156,14 @@ for _offset := 0 to _count STEP _step
     next
 
     _qry_obj:Skip()
+    ++ _counter
 
   ENDDO
+  log_write( "fakt_fakt update db rec: " + ALLTRIM( STR( _counter ) ) )
 
 next
 
 USE
-
-log_write("fakt_fakt synchro cache:" + STR(SECONDS() - _seconds))
 
 return .t. 
 
@@ -273,7 +274,7 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
-_fields := { "idfirma", "idtipdok", "brdok", "partner", "datdok", "dindem", "iznos", "rabat", "rezerv", "m1", "idpartner", "idvrstep", "datpl", "idpm", "dok_veza", "oper_id", "fisc_rn", "dat_isp", "dat_otpr", "dat_val" }
+_fields := { "idfirma", "idtipdok", "brdok", "partner", "datdok", "dindem", "iznos", "rabat", "rezerv", "m1", "idpartner", "idvrstep", "datpl", "idpm", "dok_veza", "oper_id", "fisc_rn", "fisc_st", "dat_isp", "dat_otpr", "dat_val" }
 _sql_fields := sql_fields(_fields)
 
 SELECT F_FAKT_DOKS
@@ -304,7 +305,7 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
@@ -361,20 +362,24 @@ for _offset := 0 to _count STEP _step
 
   ENDCASE
 
+  log_write( "fakt_doks, update qry: " + _qry )
   _qry_obj := run_sql_query( _qry, _retry )
 
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
     append blank
             
     for _i := 1 to LEN(_fields)
+
           _fld := FIELDBLOCK(_fields[_i])
+
           if VALTYPE(EVAL(_fld)) $ "CM"
               EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
           else
               EVAL(_fld, _qry_obj:FieldGet(_i))
           endif
+
     next
 
     _qry_obj:Skip()
@@ -383,11 +388,11 @@ for _offset := 0 to _count STEP _step
 
   ENDDO
 
+  log_write( "fakt_doks update, dbf update rec: " + ALLTRIM( STR( _counter )) )
+
 next
 
 USE
-
-log_write("fakt_doks synchro cache:" + STR(SECONDS() - _seconds))
 
 return .t. 
 
@@ -421,7 +426,7 @@ DO CASE
  CASE op == "ins"
     _qry := "INSERT INTO " + _tbl + ;
                 "( idfirma, idtipdok, brdok, partner, datdok, dindem, iznos, rabat, rezerv, m1, idpartner, " + ;
-                "idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, dat_isp, dat_otpr, dat_val ) " + ;
+                "idvrstep, datpl, idpm, dok_veza, oper_id, fisc_rn, fisc_st, dat_isp, dat_otpr, dat_val ) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
@@ -439,6 +444,7 @@ DO CASE
                             + _sql_quote( record["dok_veza"] ) + "," +;
                             + _sql_quote( STR( record["oper_id"], 10, 0 ) ) + "," +;
                             + _sql_quote( STR( record["fisc_rn"], 10, 0 ) ) + "," +;
+                            + _sql_quote( STR( record["fisc_st"], 10, 0 ) ) + "," +;
                             + _sql_quote( record["dat_isp"] ) + "," +;
                             + _sql_quote( record["dat_otpr"] ) + "," +;
                             + _sql_quote( record["dat_val"] ) + " )"
@@ -521,7 +527,7 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " (idfirma || idtipdok || brdok) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
@@ -581,9 +587,10 @@ for _offset := 0 to _count STEP _step
 
   ENDCASE
 
+  log_write( "fakt_doks2 db qry: " + _qry )
   _qry_obj := run_sql_query( _qry, _retry )
 
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
     append blank
@@ -597,17 +604,15 @@ for _offset := 0 to _count STEP _step
     next
     _qry_obj:Skip()
 
-    _counter++
+    ++ _counter
 
   ENDDO
-
+  log_write( "fakt_doks2 update rec: " + ALLTRIM( STR( _counter ) ) )
 
 next
 
 USE
     
-log_write("fakt_doks2 synchro cache:" + STR(SECONDS() - _seconds))
-
 return .t. 
 
 

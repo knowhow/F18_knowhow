@@ -1657,7 +1657,7 @@ return
 // nTimeOut - time out fiskalne operacije
 // nFisc_no - broj fiskalnog isjecka
 // ------------------------------------------------
-function fp_r_error( cPath, cFile, nTimeOut, nFisc_no )
+function fp_r_error( cPath, cFile, nTimeOut, nFisc_no, lStorno )
 local nErr := 0
 local cF_name
 local i
@@ -1669,6 +1669,10 @@ local aErr_data
 local nTime 
 local cSerial := ALLTRIM(gFc_serial)
 local _o_file
+
+if lStorno == nil
+    lStorno := .f.
+endif
 
 nTime := nTimeOut
 
@@ -1752,7 +1756,7 @@ _o_file:Close()
 
 // ako je sve ok, uzmi broj fiskalnog isjecka
 if !EMPTY( cFisc_txt )
-	nFisc_no := _g_fisc_no( cFisc_txt )
+	nFisc_no := _g_fisc_no( cFisc_txt, lStorno )
 endif
 
 return nErr
@@ -1762,16 +1766,30 @@ return nErr
 // ------------------------------------------------
 // vraca broj fiskalnog isjecka
 // ------------------------------------------------
-static function _g_fisc_no( cTxt )
+static function _g_fisc_no( cTxt, lStorno )
 local nFiscNO := 0
 local aTmp := {}
 local aFisc := {}
 local cFisc := ""
+local _n_pos := 3
+
+if lStorno == nil
+    lStorno := .f.
+endif
+
+// pozicija u odgovoru
+// 3 - regularni racun
+// 4 - storno racun
+
+if lStorno == .t.
+    _n_pos := 4
+endif
 
 aTmp := toktoniz( cTxt, ";" )
 cFisc := aTmp[2]
 aFisc := toktoniz( cFisc, "," )
-nFiscNO := VAL( aFisc[2] )
+
+nFiscNO := VAL( aFisc[ _n_pos ] )
 
 return nFiscNO
 

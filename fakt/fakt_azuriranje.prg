@@ -312,6 +312,7 @@ _field->IdVrsteP  := _fakt_doks_data["id_vrste_p"]
 _field->dok_veza  := _fakt_doks_data["dok_veza"]
 _field->oper_id   := _fakt_doks_data["oper_id"]
 _field->fisc_rn   := _fakt_doks_data["fisc_rn"]
+_field->fisc_st   := _fakt_doks_data["fisc_st"]
 _field->dat_isp   := _fakt_doks_data["dat_isp"]
 _field->dat_otpr  := _fakt_doks_data["dat_otpr"]
 _field->dat_val   := _fakt_doks_data["dat_val"]
@@ -433,6 +434,7 @@ _fakt_data["dok_veza"] := field->dok_veza
 _fakt_data["oper_id"] := getUserId()
 
 _fakt_data["fisc_rn"] := field->fisc_rn
+_fakt_data["fisc_st"] := field->fisc_st
 
 _fakt_data["dat_isp"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_otpr"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
@@ -624,6 +626,7 @@ if lOk = .t.
   record["dok_veza"] := _fakt_doks_data["dok_veza"]
   record["oper_id"] := _fakt_doks_data["oper_id"]
   record["fisc_rn"] := _fakt_doks_data["fisc_rn"]
+  record["fisc_st"] := _fakt_doks_data["fisc_st"]
   record["dat_isp"] := _fakt_doks_data["dat_isp"]
   record["dat_otpr"] := _fakt_doks_data["dat_otpr"]
   record["dat_val"] := _fakt_doks_data["dat_val"]

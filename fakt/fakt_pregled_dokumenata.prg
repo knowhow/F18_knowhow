@@ -719,27 +719,29 @@ return nSelected
 // -------------------------------------------------
 static function _veza_fc_rn()
 local cFiscal
+local cRekl
 
 if fakt_doks->(FIELDPOS("FISC_RN")) = 0
     return
 endif
 
 cFiscal := ALLTRIM( STR( fakt_doks->fisc_rn ) )
-
+cRekl := ALLTRIM( STR( fakt_doks->fisc_st ) )
+ 
 // samo za izlazne dokumente
 if fakt_doks->idtipdok $ "10#11"
     
     if cFiscal == "0"
         @ m_x + 1, m_y + 2 SAY ;
-            PADR( "nema fiskalnog racuna !!!", 40 ) ;
+            PADR( "nema fiskalnog racuna !!!", 60 ) ;
             COLOR "W/R+"
     else
         @ m_x + 1, m_y + 2 SAY ;
-            PADR( "fiskalni racun: " + cFiscal, 40 ) ;
+            PADR( "fiskalni rn: " + cFiscal + " rekl: " + cRekl, 60 ) ;
             COLOR "GR+/B"
     endif
 else
-    @ m_x + 1, m_y + 2 SAY PADR( "", 40 )
+    @ m_x + 1, m_y + 2 SAY PADR( "", 60 )
 endif
 
 return
@@ -801,16 +803,20 @@ do case
     endif
     
     nFiscal := field->fisc_rn
+    nRekl := field->fisc_st
 
-    Box(, 1, 40)
+    Box(, 2, 40)
         @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal ;
+            PICT "9999999999"
+        @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl ;
             PICT "9999999999"
         read
     BoxC()
     
-    if nFiscal <> field->fisc_rn
+    if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
         _rec := dbf_get_rec()
         _rec["fisc_rn"] := nFiscal
+        _rec["fisc_st"] := nRekl
         update_rec_server_and_dbf( ALIAS(), _rec )
         return DE_REFRESH
     endif

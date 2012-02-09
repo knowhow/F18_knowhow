@@ -11,10 +11,10 @@
 
 #include "fmk.ch"
 
-function cre_all_fakt(ver)
+function cre_all_fakt( ver )
 local aDbf
 local _alias, _table_name
-
+local _created
 
 aDbf:={}
 AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
@@ -48,13 +48,24 @@ AADD(aDBf,{ 'N1'        , 'N' ,  10 ,  3 })
 AADD(aDBf,{ 'N2'        , 'N' ,  10 ,  3 })
 AADD(aDBf,{ 'OPIS'      , 'C' , 120 ,  0 })
 
+_created := .f.
 _alias := "FAKT"
 _table_name := "fakt_fakt"
+
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
+    _created := .t.
+endif
+
+// 0.4.3
+if ver["current"] < 0403
+    modstru({"*" + _table_name, "A FISC_ST N 10 0"})
+endif
+
+if _created
     reset_semaphore_version(_table_name)
     my_use(_alias)
-    close all
+    use
 endif
  
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
@@ -131,15 +142,25 @@ AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_VAL'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })
 
+_created := .f.
 _alias := "FAKT_DOKS"
 _table_name := "fakt_doks"
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
+    _created := .f.
+endif
+
+// 0.4.3
+if ver["current"] < 0403
+    modstru({"*" + _table_name, "A FISC_ST N 10 0"})
+endif
+
+if _created 
     reset_semaphore_version(_table_name)
     my_use(_alias)
-    close all
+    use
 endif
- 
+
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok", _alias)
 CREATE_INDEX("2", "IdFirma+idtipdok+partner", _alias)
 CREATE_INDEX("3", "partner", _alias)

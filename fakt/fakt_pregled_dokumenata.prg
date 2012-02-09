@@ -720,6 +720,7 @@ return nSelected
 static function _veza_fc_rn()
 local cFiscal
 local cRekl
+local nTotal
 
 if fakt_doks->(FIELDPOS("FISC_RN")) = 0
     return
@@ -727,11 +728,12 @@ endif
 
 cFiscal := ALLTRIM( STR( fakt_doks->fisc_rn ) )
 cRekl := ALLTRIM( STR( fakt_doks->fisc_st ) )
- 
+nTotal := fakt_doks->iznos
+
 // samo za izlazne dokumente
 if fakt_doks->idtipdok $ "10#11"
     
-    if cFiscal == "0"
+    if cFiscal == "0" .or. ( cFiscal <> "0" .and. cRekl == "0" .and. nTotal < 0 )
         @ m_x + 1, m_y + 2 SAY ;
             PADR( "nema fiskalnog racuna !!!", 60 ) ;
             COLOR "W/R+"

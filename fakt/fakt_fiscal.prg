@@ -1340,28 +1340,6 @@ return
 
 
 // -------------------------------------------------------------
-// setovanje broja fiskalnog racuna u dokumentu 
-// -------------------------------------------------------------
-function reset_fakt_fisc_no( cFirma, cTD, cBroj )
-local _t_area := SELECT()
-local _rec
-
-select fakt_doks
-set order to tag "1"
-seek cFirma + cTD + cBroj
-
-_rec := dbf_get_rec()
-_rec["fisc_rn"] := 0
-
-update_rec_server_and_dbf(ALIAS(), _rec)
-
-select ( _t_area )
-return
-
-
-
-
-// -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na TFP uredjaj - tring
 // -------------------------------------------------------------
 static function rn_to_tfp( cFirma, cTipDok, cBrDok )

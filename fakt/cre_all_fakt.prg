@@ -58,9 +58,9 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 // 0.4.3
-if ver["current"] < 0403
-    modstru({"*" + _table_name, "A FISC_ST N 10 0"})
-endif
+//if ver["current"] < 0403
+  //  modstru({"*" + _table_name, "A FISC_ST N 10 0"})
+//endif
 
 if _created
     reset_semaphore_version(_table_name)

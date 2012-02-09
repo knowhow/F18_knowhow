@@ -261,11 +261,14 @@ if gFc_use == "D" .and. vars["tip_dok"] $ "10#11"
     SELECT fakt_doks
     hseek vars["id_firma"] + vars["tip_dok"] + vars["br_dok"]
     
-    if FOUND() .and. fakt_doks->fisc_rn <> 0
-        // veza sa fisc_rn postoji
-        msgbeep("Za ovaj dokument je izdat fiskalni racun.#Opcija povrata je onemogucena !!!")
-        _ret := .f.
-        return _ret
+    if FOUND()
+        if ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->iznos > 0 ) .or. ;
+            ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->fisc_st = 0 .and. fakt_doks->iznos < 0 )
+            // veza sa fisc_rn postoji
+            msgbeep("Za ovaj dokument je izdat fiskalni racun.#Opcija povrata je onemogucena !!!")
+            _ret := .f.
+            return _ret
+        endif
     endif
     
     select (_area)

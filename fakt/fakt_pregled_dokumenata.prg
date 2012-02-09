@@ -753,6 +753,9 @@ return
 function EdDatn(lOpcine)
 local nRet:=DE_CONT
 local _rec
+local cFilter
+
+cFilter := DBFilter()
 
 if gFC_use == "D"
     // ispis informacije o fiskalnom racunu
@@ -769,8 +772,13 @@ do case
      nRet := pr_odt(lOpcine)
 
   case Ch == K_F5
-  
+
+    // zatvori tabelu, pa otvori  
     select fakt_doks
+    use
+
+    O_FAKT_DOKS
+    set filter to &cFilter
     go top
 
     // refresh tabele
@@ -823,7 +831,6 @@ do case
 
   case chr(Ch) $ "rR"
 
-    cFilter := DBFilter()
 
     select fakt_doks
 

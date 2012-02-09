@@ -125,7 +125,9 @@ endif
 
 
 select fakt_pripr
+
 do case
+
     case lFisMark == .t.
     
         lFisMark := .f.
@@ -136,9 +138,13 @@ do case
             return DE_CONT
         endif
 
-        if gFC_Pitanje == "D" .and. ;
-            Pitanje(,"Odstampati racun na fiskalni printer ?", "D") == "N"
+        if gFC_Pitanje == "D" .and. Pitanje(,"Odstampati racun na fiskalni printer ?", "D") == "N"
+
+            // resetuj broj fiskalnog racuna, ako postoji setovan
+            reset_fakt_fisc_no( cFFirma, cFTipDok, cFBrDok )
+
             return DE_CONT
+
         endif
 
         msgo("stampa na fiskalni printer u toku...")
@@ -265,8 +271,8 @@ do case
         cFBrDok  := field->brdok
 
         if !CijeneOK("Azuriranje")
-                return DE_REFRESH
-            endif
+            return DE_REFRESH
+        endif
             
         CLOSE ALL
             
@@ -276,6 +282,7 @@ do case
         lDirty:=.t.
             
         o_fakt_edit() 
+        
         if gFc_use == "D" .and. cFTipDok $ "10#11"
             
             if aFakt_dok <> nil .and. LEN( aFakt_dok ) > 0
@@ -285,6 +292,7 @@ do case
             endif
             
             lFisMark := .t.         
+        
         endif
         
         return DE_REFRESH

@@ -202,7 +202,7 @@ if cId <> NIL
     elseif RIGHT(trim(cId), 1) == "*"
          sif_katbr_zvjezdica(@cId, @cIdBK, fId_j)
         
-    elseif right(TRIM(cId), 1) $ "./"
+    elseif RIGHT(TRIM(cId), 1) $ "./$"
          sif_point_or_slash(@cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch)
 
     elseif LEN(trim(cId)) > 10 .and. fieldpos("BARKOD") <> 0 
@@ -267,7 +267,8 @@ return .t.
 
 
 static function sif_point_or_slash(cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch)
- 
+local _filter
+
 if nOrdid <> 0
     set order to tag "NAZ"
 else
@@ -282,16 +283,18 @@ cUslovSrch :=""
 if left(trim(cId), 1) == "/"
 
     private GetList:={}
+
     Box(, 1, 60)
 
         cUslovSrch:=space(120)
         Beep(1)
-          @ m_x+1, m_y+2 SAY "Zelim pronaci:" GET cUslovSrch pict "@!S40"
+          @ m_x+1, m_y+2 SAY "Zelim pronaci:" GET cUslovSrch PICT "@!S40"
         read
 
-        cUslovSrch := TRIM(cUslovSrch)
-        if right(cUslovSrch, 1) == "*"
-            cUslovSrch:=LEFT( cUslovSrch , len(cUslovSrch)-1 )
+        cUslovSrch := TRIM( cUslovSrch )
+
+        if RIGHT( cUslovSrch, 1 ) == "*"
+            cUslovSrch := LEFT( cUslovSrch , len(cUslovSrch) - 1 )
         endif
 
     BoxC()
@@ -300,18 +303,33 @@ elseif left(TRIM(cId), 1) == "."
 
     // SEEK PO NAZ kada se unese DUGACKI DIO
     private GetList:={}
+
     Box(, 1, 60)
 
         cNazSrch := SPACE(LEN(naz))
         Beep(1)
 
-        @ m_x + 1, m_y + 2 SAY "Unesi naziv:" GET cNazSrch PICTURE "@!S40"
+        @ m_x + 1, m_y + 2 SAY "Unesi naziv:" GET cNazSrch PICT "@!S40"
         read
+
     BoxC()
-    seek trim(cNazSrch)
-    cId := Id
+
+    seek trim( cNazSrch )
+    
+    cId := field->id
+
+elseif RIGHT(TRIM(cId), 1) == "$"
+    
+    // pretraga dijela sifre...
+    _filter := cm2str( LEFT( cId, LEN( TRIM( cId )) - 1 )) + " $ naz"
+    set filter to
+    set filter to &(_filter)
+    go top
+
 else
-    seek LEFT(cId, LEN(TRIM(cId)) - 1)
+
+    seek LEFT( cId, LEN(TRIM( cId )) - 1 )
+
 endif
 
 return .t.

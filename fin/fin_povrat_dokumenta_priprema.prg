@@ -139,13 +139,16 @@ if !lStorno
         _del_rec["rbr"]   := PADL( field->rbr, 4 )
     
         _ok := .t.
-        _ok :=  _ok .and. delete_rec_server_and_dbf("suban", _del_rec )
+        _ok :=  delete_rec_server_and_dbf("suban", _del_rec )
 
         _del_rec["rbr"]   := PADL( field->rbr, 3 )
     
-        _ok :=  _ok .and. delete_rec_server_and_dbf("anal", _del_rec )
-        _ok :=  _ok .and. delete_rec_server_and_dbf("sint", _del_rec )
+        select anal
+        _ok :=  delete_rec_server_and_dbf("anal", _del_rec )
+        select sint
+        _ok :=  delete_rec_server_and_dbf("sint", _del_rec )
 
+        select suban
         skip
 
     enddo
@@ -155,7 +158,8 @@ if !lStorno
     _del_rec["idvn"]    := cIdVn
     _del_rec["brnal"]   := cBrNal 
  
-    _ok :=  _ok .and. delete_rec_server_and_dbf("nalog", _del_rec )
+    select nalog
+    _ok :=  delete_rec_server_and_dbf("nalog", _del_rec )
 
     MsgC()
 

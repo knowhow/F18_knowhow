@@ -1,3 +1,7 @@
+0.9.50  2012-02-10, vsasa
+
+ - korekcija semafor funkcija u FIN, KALK, FAKT, azuriranje povrat, upisivanje u semafor tabelu
+
 0.9.49  2012-02-09, vsasa
 
   - korekcija fiskalnih funkcija fprint za unix varijantu

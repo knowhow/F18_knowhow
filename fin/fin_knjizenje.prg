@@ -376,6 +376,9 @@ local nYearSez
 local cCurrSez
 local cTmp := ""
 
+// trenutno ukidam ovu provjeru, jer nemamo sezona
+return .t.
+
 cCurrSez := goModul:oDataBase:cRadimUSezona
 
 if cCurrSez == "RADP"

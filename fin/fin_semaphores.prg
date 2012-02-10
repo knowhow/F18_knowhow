@@ -43,8 +43,6 @@ if algoritam == NIL
    algoritam := "FULL"
 endif
 
-@ _x + 1, _y + 2 SAY "update fin_suban: " + algoritam
-
 _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
@@ -83,7 +81,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
@@ -122,6 +120,9 @@ for _offset := 0 to _count STEP _step
 
 	// CREATE_INDEX("4", "idFirma+IdVN+BrNal+Rbr", "SUBAN")
     // pobrisimo sve id-ove koji su drugi izmijenili
+
+    _counter := 0
+
     do while .t.
        _fnd := .f.
        for each _tmp_id in _ids
@@ -133,6 +134,7 @@ for _offset := 0 to _count STEP _step
                DELETE
                go _rec 
                _fnd := .t.
+               ++ _counter
           enddo
         next
         if !_fnd 
@@ -140,37 +142,36 @@ for _offset := 0 to _count STEP _step
 		endif
     enddo
 
+    log_write( "fin_suban local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+
   ENDCASE
 
+  log_write( "fin_suban update query: " + _qry )
+  
   _qry_obj := run_sql_query( _qry, _retry ) 
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
     
-  append blank
+    append blank
    
-  for _i := 1 to LEN(_fields)
-    _fld := FIELDBLOCK(_fields[_i])
-    if VALTYPE(EVAL(_fld)) $ "CM"
-        EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
-    else
-        EVAL(_fld, _qry_obj:FieldGet(_i))
-    endif
-  next 
+    for _i := 1 to LEN(_fields)
+        _fld := FIELDBLOCK(_fields[_i])
+        if VALTYPE(EVAL(_fld)) $ "CM"
+            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+        else
+            EVAL(_fld, _qry_obj:FieldGet(_i))
+        endif
+    next 
   
-  _qry_obj:Skip()
+    _qry_obj:Skip()
 
-  _counter++
+    ++ _counter
 
-  if _counter % 5000 == 0
-      @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-  endif 
-  
- ENDDO
+  ENDDO
 
+  log_write( "fin_suban update rec: " + ALLTRIM(STR( _counter )) )
 
 next
 
@@ -180,8 +181,6 @@ if (gDebug > 5)
     log_write("fin_suban synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
-//close all
- 
 return .t. 
 
 
@@ -282,8 +281,6 @@ if algoritam == NIL
    algoritam := "FULL"
 endif
 
-@ _x + 1, _y + 2 SAY "update fin_anal: " + algoritam
-
 _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
@@ -321,7 +318,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
@@ -360,6 +357,9 @@ for _offset := 0 to _count STEP _step
 
 	// CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", "ANAL")
     // pobrisimo sve id-ove koji su drugi izmijenili
+
+    _counter := 0
+
     do while .t.
        _fnd := .f.
        for each _tmp_id in _ids
@@ -371,6 +371,7 @@ for _offset := 0 to _count STEP _step
                DELETE
                go _rec 
                _fnd := .t.
+               ++ _counter
           enddo
         next
         if !_fnd 
@@ -378,16 +379,20 @@ for _offset := 0 to _count STEP _step
 		endif
     enddo
 
+    log_write( "fin_anal local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+  
   ENDCASE
+
+  log_write( "fin_anal update qry: " + _qry )
 
   _qry_obj := run_sql_query( _qry, _retry ) 
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
+
     append blank
+
     for _i := 1 to LEN(_fields)
         _fld := FIELDBLOCK(_fields[_i])
         if VALTYPE(EVAL(_fld)) $ "CM"
@@ -396,14 +401,14 @@ for _offset := 0 to _count STEP _step
             EVAL(_fld, _qry_obj:FieldGet(_i))
         endif
     next 
+
     _qry_obj:Skip()
 
-    _counter++
+    ++ _counter
 
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
+
+  log_write( "fin_anal update rec: " + ALLTRIM(STR( _counter )) )
 
 next
 
@@ -508,8 +513,6 @@ if algoritam == NIL
    algoritam := "FULL"
 endif
 
-@ _x + 1, _y + 2 SAY "update fin_sint: " + algoritam
-
 _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
@@ -547,7 +550,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
@@ -586,6 +589,9 @@ for _offset := 0 to _count STEP _step
 
 	// CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", "SINT")
     // pobrisimo sve id-ove koji su drugi izmijenili
+
+    _counter := 0
+
     do while .t.
        _fnd := .f.
        for each _tmp_id in _ids
@@ -597,6 +603,7 @@ for _offset := 0 to _count STEP _step
                DELETE
                go _rec 
                _fnd := .t.
+               ++ _counter
           enddo
         next
         if !_fnd 
@@ -604,16 +611,20 @@ for _offset := 0 to _count STEP _step
 		endif
     enddo
 
+    log_write( "fin_sint local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+
   ENDCASE
+
+  log_write( "fin_sint update qry: " + _qry )
 
   _qry_obj := run_sql_query( _qry, _retry ) 
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
+
     append blank
+
     for _i := 1 to LEN(_fields)
         _fld := FIELDBLOCK(_fields[_i])
         if VALTYPE(EVAL(_fld)) $ "CM"
@@ -622,14 +633,14 @@ for _offset := 0 to _count STEP _step
             EVAL(_fld, _qry_obj:FieldGet(_i))
         endif
     next 
+
     _qry_obj:Skip()
 
-    _counter++
+    ++ _counter
 
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
+
+  log_write( "fin_sint update rec: " + ALLTRIM(( _counter )) )
 
 next
 
@@ -734,8 +745,6 @@ if algoritam == NIL
    algoritam := "FULL"
 endif
 
-@ _x + 1, _y + 2 SAY "update fin_nalog: " + algoritam
-
 _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
@@ -773,7 +782,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvn || brnal) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
@@ -812,6 +821,9 @@ for _offset := 0 to _count STEP _step
 
 	// CREATE_INDEX("1", "idFirma+IdVN+BrNal", "NALOG")
     // pobrisimo sve id-ove koji su drugi izmijenili
+
+    _counter := 0
+
     do while .t.
        _fnd := .f.
        for each _tmp_id in _ids
@@ -823,6 +835,7 @@ for _offset := 0 to _count STEP _step
                DELETE
                go _rec 
                _fnd := .t.
+               ++ _counter
           enddo
         next
         if !_fnd 
@@ -830,16 +843,20 @@ for _offset := 0 to _count STEP _step
 		endif
     enddo
 
+    log_write( "fin_nalog local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+
   ENDCASE
+
+  log_write( "fin_nalog update qry: " + _qry )
 
   _qry_obj := run_sql_query( _qry, _retry ) 
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
+
     append blank
+
     for _i := 1 to LEN(_fields)
         _fld := FIELDBLOCK(_fields[_i])
         if VALTYPE(EVAL(_fld)) $ "CM"
@@ -848,15 +865,14 @@ for _offset := 0 to _count STEP _step
             EVAL(_fld, _qry_obj:FieldGet(_i))
         endif
     next 
+
     _qry_obj:Skip()
 
-    _counter++
+    ++ _counter
 
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
 
+  log_write( "fin_nalog update rec: " + ALLTRIM(STR( _counter )) )
 
 next
 

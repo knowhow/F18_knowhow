@@ -764,7 +764,7 @@ if lOk = .t.
    record["error"] := field->error
    record["pod_br"] := field->podbr
                 
-   _tmp_id := record["id_firma"] + record["id_vd"] + ALLTRIM( record["br_dok"] )
+   _tmp_id := record["id_firma"] + record["id_vd"] + record["br_dok"]
    
    if !sql_kalk_kalk_update( "ins", record )
        lOk := .f.

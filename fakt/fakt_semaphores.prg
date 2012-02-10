@@ -114,6 +114,8 @@ for _offset := 0 to _count STEP _step
         // "1", "idFirma+Idtipdok+BrDok+Rbr"
         SET ORDER TO TAG "1"
 
+        _counter := 0
+
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids
@@ -127,12 +129,15 @@ for _offset := 0 to _count STEP _step
                     DELETE
                     go _rec 
                     _fnd := .t.
+                    ++ _counter
                 enddo
             next
             if ! _fnd 
                 exit
             endif
         enddo
+
+        log_write( "fakt_fakt local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
 
   ENDCASE
 
@@ -159,6 +164,7 @@ for _offset := 0 to _count STEP _step
     ++ _counter
 
   ENDDO
+
   log_write( "fakt_fakt update db rec: " + ALLTRIM( STR( _counter ) ) )
 
 next
@@ -342,6 +348,8 @@ for _offset := 0 to _count STEP _step
         // "1", "idFirma+IdTipDok+BrDok"
         SET ORDER TO TAG "1"
 
+        _counter := 0
+
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids
@@ -353,12 +361,15 @@ for _offset := 0 to _count STEP _step
                     DELETE
                     go _rec 
                     _fnd := .t.
+                    ++ _counter
                 enddo
             next
             if ! _fnd 
                 exit
             endif
         enddo
+
+        log_write( "fakt_doks local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
 
   ENDCASE
 
@@ -565,6 +576,8 @@ for _offset := 0 to _count STEP _step
         // "1", "idFirma+IdTipDok+BrDok"
         SET ORDER TO TAG "1"
 
+        _counter := 0
+
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids
@@ -578,12 +591,15 @@ for _offset := 0 to _count STEP _step
                     DELETE
                     go _rec 
                     _fnd := .t.
+                    ++ _counter
                 enddo
             next
             if ! _fnd 
                 exit
             endif
         enddo
+
+        log_write( "fakt_doks2 local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
 
   ENDCASE
 
@@ -607,6 +623,7 @@ for _offset := 0 to _count STEP _step
     ++ _counter
 
   ENDDO
+
   log_write( "fakt_doks2 update rec: " + ALLTRIM( STR( _counter ) ) )
 
 next

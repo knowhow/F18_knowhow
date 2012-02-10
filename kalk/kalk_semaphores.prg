@@ -43,12 +43,9 @@ if algoritam == NIL
 	algoritam := "FULL"
 endif
 
-@ _x + 1, _y + 2 SAY "update kalk_kalk: " + algoritam
-
 _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
-
 
 // sredimo dbf - pobrisimo sto ne treba
 SELECT F_KALK
@@ -92,7 +89,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvd || brdok) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvd, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvd + field->brdok } 
@@ -130,6 +127,9 @@ for _offset := 0 to _count STEP _step
 
 		// CREATE_INDEX("1", "idFirma+IdVd+BrDok+Rbr", "KALK")
     	// pobrisimo sve id-ove koji su drugi izmijenili
+
+        _counter := 0
+
     	do while .t.
        		_fnd := .f.
        		for each _tmp_id in _ids
@@ -143,6 +143,7 @@ for _offset := 0 to _count STEP _step
                		DELETE
                		go _rec 
                		_fnd := .t.
+                    ++ _counter
           		enddo
         	next
         	if ! _fnd 
@@ -150,14 +151,16 @@ for _offset := 0 to _count STEP _step
 			endif
     	enddo
 
+        log_write( "kalk_kalk local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+
   ENDCASE
   // sada je sve izbrisano
 
+  log_write( "kalk_kalk update qry: " + _qry )
+
   _qry_obj := run_sql_query(_qry, _retry)
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
         
@@ -173,13 +176,11 @@ for _offset := 0 to _count STEP _step
  
     _qry_obj:Skip()
 
-    _counter++
+    ++ _counter
 
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
 
+  log_write( "kalk_kalk update rec: " + ALLTRIM(( _counter )) )
 
 next
 
@@ -329,8 +330,6 @@ endif
 _x := maxrows() - 15
 _y := maxcols() - 20
 
-@ _x + 1, _y + 2 SAY "update kalk_doks: " + algoritam
-
 _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
@@ -368,7 +367,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " (idfirma || idvd || brdok) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvd, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvd + field->brdok } 
@@ -407,6 +406,9 @@ for _offset := 0 to _count STEP _step
 
 		// CREATE_INDEX("1", "idFirma+IdVd+BrDok", "KALK_DOKS")
     	// pobrisimo sve id-ove koji su drugi izmijenili
+
+        _counter := 0
+
     	do while .t.
        		_fnd := .f.
        		for each _tmp_id in _ids
@@ -420,20 +422,23 @@ for _offset := 0 to _count STEP _step
                		DELETE
                		go _rec 
                		_fnd := .t.
+                    ++ _counter 
           		enddo
         	next
         	if ! _fnd 
 				exit
 			endif
     	enddo
+        
+        log_write( "kalk_doks local dbf deleted rec: " + ALLTRIM(STR( _counter )) )
 
   ENDCASE
 
+  log_write( "kalk_doks update qry: " + _qry )
+
   _qry_obj := run_sql_query( _qry, _retry )
 
-  @ _x + 4, _y + 2 SAY SECONDS() - _seconds 
-
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
     append blank
@@ -447,20 +452,18 @@ for _offset := 0 to _count STEP _step
     next 
     _qry_obj:Skip()
 
-    _counter++
+    ++ _counter
 
-    if _counter % 5000 == 0
-        @ _x + 4, _y + 2 SAY SECONDS() - _seconds
-    endif 
   ENDDO
-
+    
+  log_write( "kalk_doks updated rec: " + ALLTRIM(STR( _counter )) )
 next
 
 USE
+
 if (gDebug > 5)
     log_write("kalk_doks synchro cache:" + STR(SECONDS() - _seconds))
 endif
-
  
 return .t. 
 
@@ -592,7 +595,7 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " (idfirma || idvd || brdok) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvd, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idfirma + field->idvd + field->brdok } 
@@ -630,6 +633,8 @@ for _offset := 0 to _count STEP _step
         // "1", "idFirma+IdVd+BrDok"
         SET ORDER TO TAG "1"
 
+        _counter := 0
+
         do while .t.
             _fnd := .f.
             for each _tmp_id in _ids
@@ -643,18 +648,23 @@ for _offset := 0 to _count STEP _step
                     DELETE
                     go _rec 
                     _fnd := .t.
+                    ++ _counter
                 enddo
             next
             if ! _fnd 
                 exit
             endif
         enddo
+        
+        log_write( "kalk_doks2 local dbf deleted rec: " + ALLTRIM( STR( _counter ) ) )
 
   ENDCASE
 
+  log_write( "kalk_doks2 update qry: " + _qry )
+
   _qry_obj := run_sql_query( _qry, _retry )
 
-  _counter := 1
+  _counter := 0
 
   DO WHILE !_qry_obj:Eof()
     append blank
@@ -668,9 +678,11 @@ for _offset := 0 to _count STEP _step
     next
     _qry_obj:Skip()
 
-    _counter++
+    ++ _counter
 
   ENDDO
+
+  log_write( "kalk_doks2 updated rec: " + ALLTRIM(STR( _counter )) )
 
 next
 

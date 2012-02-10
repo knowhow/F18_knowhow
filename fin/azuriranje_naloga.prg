@@ -126,6 +126,7 @@ if lOk = .t.
      record["id_firma"] := field->IdFirma
      record["id_vn"] := field->IdVn
      record["br_nal"] := field->BrNal
+     
      _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"]
 
      record["r_br"] := VAL(field->Rbr)
@@ -525,15 +526,15 @@ return .f.
 // --------------------------------
 function nalog_postoji_u_suban(cNal)
 
-    @ m_x + 3,  m_y + 2 SAY "NALOZI         "
-    select  SUBAN
-    SET ORDER TO TAG "4"  //"4","idFirma+IdVN+BrNal+Rbr"
-    seek cNal
-    if found()
-        MsgBeep("Vec postoji u suban ? "+ IdFirma + "-" + IdVn + "-" + ALLTRIM(BrNal) + "  !")
-        close all
-        return .t.
-    endif
+select  SUBAN
+SET ORDER TO TAG "4"  
+// "idFirma+IdVN+BrNal+Rbr"
+seek cNal
+if found()
+    MsgBeep("Vec postoji u suban ? "+ IdFirma + "-" + IdVn + "-" + ALLTRIM(BrNal) + "  !")
+    close all
+    return .t.
+endif
 
 return .f.
 

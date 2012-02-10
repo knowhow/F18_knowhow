@@ -643,7 +643,7 @@ for _offset := 0 to _count STEP _step
 
   ENDDO
 
-  log_write( "fin_sint update rec: " + ALLTRIM(( _counter )) )
+  log_write( "fin_sint update rec: " + ALLTRIM(STR( _counter )) )
 
 next
 

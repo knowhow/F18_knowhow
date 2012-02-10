@@ -17,7 +17,7 @@
 // funkcija za formatiranje stringa za filter
 // mjenja staru funkciju cm2str()
 // --------------------------------------------------
-function filter_quote( value )
+function _filter_quote( value )
 local _var_type := VAlTYPE( value )
 
 DO CASE
@@ -37,7 +37,7 @@ return
 // mjenja je nova funkcija filter_quote()
 // ------------------------------------------------------------
 function cm2str( value )
-return filter_quote( value )
+return _filter_quote( value )
 
 
 // ------------------------------------------------------------

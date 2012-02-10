@@ -321,7 +321,7 @@ elseif left(TRIM(cId), 1) == "."
 elseif RIGHT(TRIM(cId), 1) == "$"
     
     // pretraga dijela sifre...
-    _filter := filter_quote( LEFT( UPPER(cId), LEN( TRIM( cId )) - 1 )) + " $ UPPER(naz)"
+    _filter := _filter_quote( LEFT( UPPER(cId), LEN( TRIM( cId )) - 1 )) + " $ UPPER(naz)"
     set filter to
     set filter to &(_filter)
     go top

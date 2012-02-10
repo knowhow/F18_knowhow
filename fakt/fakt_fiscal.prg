@@ -854,6 +854,7 @@ local nRabat
 local lPoPNaTeret := .f.
 local n
 local _vr_plac
+local _rn_cnt := 0
 
 O_FAKT_DOKS
 O_FAKT
@@ -888,6 +889,8 @@ do while !EOF() .and. field->idfirma == cFirma ;
     .and. field->idtipdok == cTipDok ;
     .and. field->brdok == cBrDok
 
+    ++ _rn_cnt
+
     if field->kolicina > 0
         lStorno := .f.
         exit
@@ -895,6 +898,12 @@ do while !EOF() .and. field->idfirma == cFirma ;
     
     skip
 enddo
+
+// ovaj racun nema stavki ??!
+if _rn_cnt = 0
+    MsgBeep("Racun nema stavki u tabeli fakt_fakt ?!????")
+    return 0
+endif
 
 // koji je broj racuna koji storniramo
 if lStorno == .t. 

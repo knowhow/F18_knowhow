@@ -467,12 +467,14 @@ IF ( _brisi_kum == "D" )
     _del_rec["idtipdok"] := _id_tip_dok
     _del_rec["brdok"] := _br_dok 
 
+    select fakt_doks
     MsgO("del doks")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks", _del_rec )
+    _ok := delete_rec_server_and_dbf( "fakt_doks", _del_rec )
     MsgC()
 
+    select fakt_doks2
     MsgO("del doks2")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
+    _ok := delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
     MsgC()
 
     IF !_ok

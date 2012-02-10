@@ -343,6 +343,7 @@ local _brisi_kum := "D"
 local _rec, _del_rec, _ok
 local _id_tip_dok, _br_dok, _id_firma
 local _field_ids, _where_block
+local _t_rec
 
 IF test == nil
     test := .f.
@@ -444,6 +445,8 @@ IF ( _brisi_kum == "D" )
     MsgO("del fakt")
 
     DO WHILE !EOF() .and. _id_firma == field->idfirma .and. _id_tip_dok == field->idtipdok .and. _br_dok == field->brdok
+
+        _t_rec := RECNO()
  
         _del_rec := hb_hash()
         _del_rec["idfirma"] := field->idfirma
@@ -453,8 +456,9 @@ IF ( _brisi_kum == "D" )
 
         _ok := .t.
 
-        _ok := _ok .and. delete_rec_server_and_dbf( "fakt", _del_rec )
+        _ok := delete_rec_server_and_dbf( "fakt", _del_rec )
 
+        GO ( _t_rec )
         SKIP
 
     ENDDO

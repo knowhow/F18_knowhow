@@ -12,17 +12,32 @@
 
 #include "fmk.ch"
 
-function cm2str(xValue)
-LOCAL cType := ValType( xValue )
+
+// --------------------------------------------------
+// funkcija za formatiranje stringa za filter
+// mjenja staru funkciju cm2str()
+// --------------------------------------------------
+function filter_quote( value )
+local _var_type := VAlTYPE( value )
 
 DO CASE
-   CASE cType == "D" 
-         RETURN "STOD('" + DTOS( xValue ) + "')"
-   case cType == "C"
-         RETURN "'" + xValue + "'"
+   CASE _var_type == "D" 
+         RETURN "STOD('" + DTOS( value ) + "')"
+   case _var_type == "C"
+         RETURN "'" + value + "'"
    OTHERWISE
-         HB_ValToStr(xValue)
+         RETURN HB_ValToStr( value )
 ENDCASE
+
+return
+
+
+// ------------------------------------------------------------
+// stara funkcija za formatiranje string-a za filterski uslov
+// mjenja je nova funkcija filter_quote()
+// ------------------------------------------------------------
+function cm2str( value )
+return filter_quote( value )
 
 
 // ------------------------------------------------------------

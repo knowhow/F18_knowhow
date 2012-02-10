@@ -81,10 +81,11 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) ) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) || lpad( rbr, 4, ' ' ) ) IN " + _sql_ids
      	endif
 
-        _key_block := {|| field->idfirma + field->idvn + field->brnal } 
+        _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
+
   endif
 
   _qry += " ORDER BY " + _order
@@ -201,8 +202,9 @@ LOCAL _server := pg_server()
 _tbl := "fmk.fin_suban"
 
 if record <> nil
-	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
-                        " and brnal=" + _sql_quote(record["br_nal"]) 
+	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) + ;
+                        " and brnal=" + _sql_quote(record["br_nal"]) + ;
+                        " and rbr=" + _sql_quote(record["r_br"])
 endif
 
 DO CASE
@@ -222,7 +224,7 @@ DO CASE
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
                             + _sql_quote( record["br_nal"] ) + "," +; 
-                            + _sql_quote(STR( record["r_br"] , 4)) + "," +; 
+                            + _sql_quote( record["r_br"] ) + "," +; 
                             + _sql_quote( record["dat_dok"] ) + "," +; 
                             + _sql_quote( record["dat_val"] ) + "," +; 
                             + _sql_quote( record["opis"] ) + "," +; 
@@ -318,10 +320,10 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) ) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) || lpad( rbr, 3, ' ' ) ) IN " + _sql_ids
      	endif
 
-        _key_block := {|| field->idfirma + field->idvn + field->brnal } 
+        _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
   endif
 
   _qry += " ORDER BY " + _order
@@ -436,7 +438,8 @@ _tbl := "fmk.fin_anal"
 
 if record <> nil
 	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
-                        " and brnal=" + _sql_quote(record["br_nal"]) 
+                        " and brnal=" + _sql_quote(record["br_nal"]) + ;
+                        " and rbr=" + _sql_quote(record["r_br"]) 
 endif
 
 DO CASE
@@ -455,7 +458,7 @@ DO CASE
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
                             + _sql_quote( record["br_nal"] ) + "," +; 
-                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
+                            + _sql_quote( PADL( record["r_br"], 3 ) ) + "," +; 
                             + _sql_quote( record["dat_nal"] ) + "," +; 
                             + _sql_quote( record["id_konto"] ) + "," +; 
                             + STR( record["dug_bhd"], 17, 2 ) + "," +; 
@@ -550,10 +553,10 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) ) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) || lpad( rbr, 3, ' ' ) ) IN " + _sql_ids
      	endif
 
-        _key_block := {|| field->idfirma + field->idvn + field->brnal } 
+        _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
   endif
 
   _qry += " ORDER BY " + _order
@@ -668,7 +671,8 @@ _tbl := "fmk.fin_sint"
 
 if record <> nil
 	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvn=" + _sql_quote( record["id_vn"]) +;
-                        " and brnal=" + _sql_quote(record["br_nal"]) 
+                        " and brnal=" + _sql_quote(record["br_nal"]) + ;
+                        " and rbr=" + _sql_quote(record["r_br"]) 
 endif
 
 DO CASE
@@ -687,7 +691,7 @@ DO CASE
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
                             + _sql_quote( record["br_nal"] ) + "," +; 
-                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
+                            + _sql_quote( PADL( record["r_br"] , 3)) + "," +; 
                             + _sql_quote( record["dat_nal"] ) + "," +; 
                             + _sql_quote( record["id_konto"] ) + "," +; 
                             + STR( record["dug_bhd"], 17, 2 ) + "," +; 

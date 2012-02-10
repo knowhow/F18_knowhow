@@ -366,10 +366,7 @@ if LEN(ids) < 1
    return .f.
 endif
 
-if gDebug > 7
-      log_write( "push ids: " + table + " / " + pp(ids) )
-endif
-
+log_write( "push ids: " + table + " / " + pp(ids) )
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
@@ -381,7 +378,6 @@ if _result < 1
    return .t.
 endif
 
-
 _qry := ""
 
 for _i := 1 TO LEN(ids)
@@ -392,6 +388,8 @@ for _i := 1 TO LEN(ids)
             " WHERE user_code <> " + _sql_quote(_user) + " AND ((ids IS NULL) OR NOT (" + _sql_ids + " <@ ids)) ;"
 
 next
+
+log_write( "push ids qry: " + _qry )
 
 _ret := _sql_query( _server, _qry )
 

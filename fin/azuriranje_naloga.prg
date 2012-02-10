@@ -49,6 +49,8 @@ endif
 
 msgo( "Azuriranje dokumenta u toku...." )
 
+altd()
+
 if fin_azur_sql(oServer)
     o_fin_za_azuriranje()
     if !fin_azur_dbf(lAuto)
@@ -93,11 +95,15 @@ local lOk := .t.
 local _ids := {}
 local record
 local _tmp_id
+local _tmp_doc
+local _ids_doc := {}
+local _ids_tmp := {}
 local _tbl_suban
 local _tbl_anal
 local _tbl_sint
 local _tbl_nalog
 local _i
+local _n := 1
 
 _tbl_suban := "fin_suban"
 _tbl_anal := "fin_anal"
@@ -126,10 +132,14 @@ if lOk = .t.
      record["id_firma"] := field->IdFirma
      record["id_vn"] := field->IdVn
      record["br_nal"] := field->BrNal
+     record["r_br"] := field->Rbr
      
-     _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"]
+     _tmp_doc := record["id_firma"] + record["id_vn"] + record["br_nal"]
+     _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"] + record["r_br"]
 
-     record["r_br"] := VAL(field->Rbr)
+     // dodaj u IDS matricu ove stavke...
+     AADD( _ids, _tmp_id )
+
      record["dat_dok"] := field->DatDok
      record["dat_val"] := field->DatVal
      record["opis"] := field->opis
@@ -263,27 +273,32 @@ if !lOk
 
 else
 
-    // dodaj ids
-    AADD(_ids, _tmp_id) 
-    
     // suban  
-    update_semaphore_version( _tbl_suban, .t.)
-    push_ids_to_semaphore( _tbl_suban, _ids )
-    sql_fin_suban_update("END")
-
-    // anal
+    update_semaphore_version( _tbl_suban, .t. )
     update_semaphore_version( _tbl_anal, .t.)
-    push_ids_to_semaphore( _tbl_anal, _ids )
-    sql_fin_anal_update("END")
-    
-    // sint
     update_semaphore_version( _tbl_sint, .t.)
-    push_ids_to_semaphore( _tbl_sint, _ids )
-    sql_fin_sint_update("END")
-    
-    // nalog
     update_semaphore_version( _tbl_nalog, .t.)
-    push_ids_to_semaphore( _tbl_nalog, _ids )
+
+    for _n := 1 to LEN( _ids )
+        
+        // pusiraj promjene u semafore...
+        _ids_tmp := {}
+        AADD( _ids_tmp, _ids[ _n ] ) 
+
+        push_ids_to_semaphore( _tbl_suban, _ids_tmp )
+        push_ids_to_semaphore( _tbl_anal, _ids_tmp )
+        push_ids_to_semaphore( _tbl_sint, _ids_tmp )
+    
+    next
+
+    // tabela naloga ima samo jedan zapis...
+    AADD( _ids_doc, _tmp_doc )
+    push_ids_to_semaphore( _tbl_nalog, _ids_doc )
+   
+    // zavrsi transakcije... 
+    sql_fin_suban_update("END")
+    sql_fin_anal_update("END")
+    sql_fin_sint_update("END")
     sql_fin_nalog_update("END")
 
 endif
@@ -701,7 +716,7 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
 
     _rec:= dbf_get_rec()
     
-    if _D_P == "1" 
+    if _rec["d_p"] == "1" 
           nSaldo:= _rec["iznosbhd"]
     else
           nSaldo:= -_rec["iznosbhd"]
@@ -712,7 +727,7 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
 
     nRec := recno()
     do while  !eof() .and. (_rec["idfirma"] + _rec["idkonto"] + _rec["idpartner"] + _rec["brdok"]) == (IdFirma + IdKonto + IdPartner + BrDok)
-       if d_P=="1"
+       if _rec["d_p"] == "1"
            nSaldo += field->IznosBHD
        else
            nSaldo -= field->IznosBHD
@@ -757,13 +772,16 @@ select fin_pripr
 seek cNal
 
 @ m_x+3,m_y+2 SAY "BRISEM PRIPREMU "
+
 do while !eof() .and. cNal==IdFirma+IdVn+BrNal
     skip
     ntRec:=RECNO()
     skip -1
-    dbdelete2()
+    delete
     go ntRec
 enddo
+
+__dbPack()
 
 return .t.
 
@@ -848,6 +866,8 @@ return 0
 // ------------------------------------------------------------
 static function prip_brisi_duple()
 local cSeek
+local _brisao := .f.
+
 select fin_pripr
 go top
 
@@ -859,13 +879,20 @@ do while !EOF()
         // pobrisi stavku
         select fin_pripr
         delete
+        _brisao := .t.    
     endif
     
     select fin_pripr
     skip
+
 enddo
 
+if _brisao
+    __dbPack()
+endif
+
 return 0
+
 
 // -------------------------------------------------------------
 // brisi stavke iz kumulativa koje se vec nalaze u pripremi
@@ -905,7 +932,7 @@ do while !EOF()
         if Found()
             
             do while !eof() .and. nalog->(idfirma+idvn+brnal) == cSeek
-                    skip 1
+                skip 1
                 nRec:=RecNo()
                 skip -1
                     DbDelete2()

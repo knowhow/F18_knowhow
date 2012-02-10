@@ -898,11 +898,17 @@ enddo
 
 // koji je broj racuna koji storniramo
 if lStorno == .t. 
+
     Box(,1,60)
         @ m_x + 1, m_y + 2 SAY "Reklamiramo fisk.racun:" ;
             GET nNRekRn PICT "999999999" VALID ( nNRekRn > 0 )
         read
     BoxC()
+
+    if LastKey() == K_ESC
+        return 0
+    endif
+
 endif
 
 // kupac

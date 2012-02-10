@@ -136,9 +136,11 @@ _DatKurs:=_DatFaktP
 
  if gMPCPomoc=="D"
      if (roba->mpc==0 .or. roba->mpc<>round(_mpcpom,2)) .and. round(_mpcpom,2)<>0 .and. Pitanje(,"Staviti MPC u sifrarnik")=="D"
-         select roba
-     replace mpc with _mpcpom
-         select kalk_pripr
+            select roba
+            _rec := dbf_get_rec()
+            _rec["mpc"] := _mpcpom
+            update_rec_server_and_dbf( ALIAS(), _rec )
+            select kalk_pripr
      endif
  endif
 

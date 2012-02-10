@@ -89,10 +89,12 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvd, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvd, 2, ' ' ) || rpad( brdok, 8, ' ' ) || lpad( rbr, 3, ' ' ) ) IN " + _sql_ids
+
      	endif
 
-        _key_block := {|| field->idfirma + field->idvd + field->brdok } 
+        _key_block := {|| field->idfirma + field->idvd + field->brdok + field->rbr } 
+
   endif
 
   _qry += " ORDER BY " + _order
@@ -180,7 +182,7 @@ for _offset := 0 to _count STEP _step
 
   ENDDO
 
-  log_write( "kalk_kalk update rec: " + ALLTRIM(( _counter )) )
+  log_write( "kalk_kalk update rec: " + ALLTRIM(STR( _counter )) )
 
 next
 
@@ -208,7 +210,8 @@ _tbl := "fmk.kalk_kalk"
 
 if record <> nil
 	_where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idvd=" + _sql_quote( record["id_vd"]) +;
-                        " and brdok=" + _sql_quote(record["br_dok"]) 
+              " and brdok=" + _sql_quote(record["br_dok"]) + ;
+              " and rbr=" + _sql_quote(record["r_br"])
 endif
 
 DO CASE
@@ -232,7 +235,7 @@ DO CASE
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vd"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
-                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
+                            + _sql_quote(PADL( record["r_br"] , 3)) + "," +; 
                             + _sql_quote( record["dat_dok"] ) + "," +;
                             + _sql_quote( record["br_fakt_p"] ) + "," +;
                             + _sql_quote( record["dat_fakt_p"] ) + "," +;

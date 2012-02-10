@@ -516,9 +516,11 @@ local record := hb_hash()
 local _tbl_fakt
 local _tbl_doks
 local _tbl_doks2
-local _i
-local _tmp_id
+local _i, _n
+local _tmp_id, _tmp_doc
 local _ids := {}
+local _ids_tmp := {}
+local _ids_doc := {}
 local _fakt_doks_data
 local _fakt_doks2_data
 local _fakt_totals
@@ -549,7 +551,7 @@ if lOk = .t.
    record["id_firma"] := field->idfirma
    record["id_tip_dok"] := field->idtipdok
    record["br_dok"] := field->brdok
-   record["r_br"] := VAL(field->Rbr)
+   record["r_br"] := field->Rbr
    record["dat_dok"] := field->datdok
    record["id_partner"] := field->idpartner
    record["din_dem"] := field->dindem
@@ -575,8 +577,11 @@ if lOk = .t.
    record["opis"] := field->opis
    record["dok_veza"] := field->dok_veza
                
-   _tmp_id := record["id_firma"] + record["id_tip_dok"] + record["br_dok"]
-   
+   _tmp_doc := record["id_firma"] + record["id_tip_dok"] + record["br_dok"]
+   _tmp_id := record["id_firma"] + record["id_tip_dok"] + record["br_dok"] + record["r_br"]
+
+   AADD( _ids, _tmp_id )    
+
    if !sql_fakt_fakt_update( "ins", record )
        lOk := .f.
        exit
@@ -680,19 +685,30 @@ else
     
     // napravi update-e
     // zavrsi transakcije 
- 
-    AADD( _ids, _tmp_id )
 
     update_semaphore_version( _tbl_doks, .t. )
-    push_ids_to_semaphore( _tbl_doks, _ids ) 
-    sql_fakt_doks_update("END")
-    
     update_semaphore_version( _tbl_doks2, .t. )
-    push_ids_to_semaphore( _tbl_doks2, _ids ) 
-    sql_fakt_doks2_update("END")
-    
     update_semaphore_version( _tbl_fakt, .t. )
-    push_ids_to_semaphore( _tbl_fakt, _ids ) 
+
+    for _n := 1 to LEN( _ids )
+
+        // pusiraj za svaku stavku posebno
+        _ids_tmp := {}
+        AADD( _ids_tmp, _ids[ _n ] )
+
+        push_ids_to_semaphore( _tbl_fakt, _ids_tmp ) 
+
+    next
+
+    // pusiraj i u fakt_doks, fakt_doks2
+    // dodaj ids za tabele fakt_doks, fakt_doks2 
+    AADD( _ids_doc, _tmp_doc )
+    push_ids_to_semaphore( _tbl_doks2, _ids_doc ) 
+    push_ids_to_semaphore( _tbl_doks, _ids_doc ) 
+    
+    // zavrsi transakcije...
+    sql_fakt_doks_update("END")
+    sql_fakt_doks2_update("END")
     sql_fakt_fakt_update("END")
 
 endif

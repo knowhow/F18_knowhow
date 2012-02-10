@@ -687,9 +687,11 @@ local _doks_mpv := 0
 local _doks_rabat := 0
 local _tbl_kalk
 local _tbl_doks
-local _i
-local _tmp_id
+local _i, _n
+local _tmp_id, _tmp_doc
 local _ids := {}
+local _ids_doc := {}
+local _ids_tmp := {}
 
 _tbl_kalk := "kalk_kalk"
 _tbl_doks := "kalk_doks"
@@ -714,7 +716,7 @@ if lOk = .t.
    record["id_firma"] := field->idfirma
    record["id_vd"] := field->idvd
    record["br_dok"] := field->brdok
-   record["r_br"] := VAL(field->Rbr)
+   record["r_br"] := field->rbr
    record["dat_dok"] := field->datdok
    record["br_fakt_p"] := field->brfaktp
    record["dat_fakt_p"] := field->datfaktp
@@ -764,8 +766,11 @@ if lOk = .t.
    record["error"] := field->error
    record["pod_br"] := field->podbr
                 
-   _tmp_id := record["id_firma"] + record["id_vd"] + record["br_dok"]
+   _tmp_doc := record["id_firma"] + record["id_vd"] + record["br_dok"]
+   _tmp_id := record["id_firma"] + record["id_vd"] + record["br_dok"] + record["r_br"]
    
+   AADD( _ids, _tmp_id )
+
    if !sql_kalk_kalk_update( "ins", record )
        lOk := .f.
        exit
@@ -828,14 +833,26 @@ if !lOk
 else
 
     // snimi promjene
-    AADD( _ids, _tmp_id )
 
     update_semaphore_version( _tbl_doks, .t. )
-    push_ids_to_semaphore( _tbl_doks, _ids ) 
-    sql_kalk_doks_update("END")
-    
     update_semaphore_version( _tbl_kalk, .t. )
-    push_ids_to_semaphore( _tbl_kalk, _ids ) 
+    
+    for _n := 1 to LEN( _ids )
+
+        // dodaj za kalk po stavkama
+        _ids_tmp := {}
+        AADD( _ids_tmp, _ids[ _n ] )
+
+        push_ids_to_semaphore( _tbl_kalk, _ids_tmp ) 
+
+    next
+
+    // za doks ide _ids_doc
+    AADD( _ids_doc, _tmp_doc )
+    push_ids_to_semaphore( _tbl_doks, _ids ) 
+
+    // zavrsi transakcije
+    sql_kalk_doks_update("END")
     sql_kalk_kalk_update("END")
 
 endif

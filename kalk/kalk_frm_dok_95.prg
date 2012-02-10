@@ -192,7 +192,9 @@ IF gVarEv=="1"
        if gMetodaNc == "2"
          if _kolicina > 0
           select roba
-          replace nc with _nc
+          _rec := dbf_get_rec()
+          _rec["nc"] := _nc
+          update_rec_server_and_dbf( ALIAS(), _rec )
           select kalk_pripr // nafiluj sifrarnik robe sa nc sirovina, robe
          endif
        endif

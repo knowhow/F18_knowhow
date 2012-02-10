@@ -280,7 +280,9 @@ if !IsMagSNab()
   	if (gMpcPomoc == "D")
 		if (roba->mpc==0 .or. roba->mpc<>round(_mpcsapp,2)) .and. Pitanje(,"Staviti MPC u sifrarnik")=="D"
          		select roba
-			replace mpc with _mpcsapp
+			    _rec := dbf_get_rec()
+                _rec["mpc"] := _mpcsapp
+                update_rec_server_and_dbf( ALIAS(), _rec )
          		select kalk_pripr
      		endif
   	endif
@@ -512,14 +514,15 @@ if !IsMagSNab()
    read
 
    SetujVPC(_VPC )    
+
    if (gMpcPomoc=="D")
      	if (roba->mpc==0 .or. roba->mpc<>round(_mpcsapp,2)) .and. Pitanje(,"Staviti MPC u sifrarnik")=="D"
        		select roba
-		replace mpc with _mpcsapp
+		    _rec := dbf_get_rec()
+            _rec["mpc"] := _mpcsapp
+            update_rec_server_and_dbf()
        		select kalk_pripr
      	endif
-
-
    endif
  
  else

@@ -49,9 +49,7 @@ my_usex ("fakt", "fakt_fakt", .f., "SEMAPHORE")
 
 _fields := { "idfirma", "idtipdok", "brdok", "rbr", "datdok", "idpartner", "dindem", "zaokr", "podbr", "idroba", "serbr", "kolicina", "cijena", "rabat", "porez", "txt", "k1", "k2", "m1", "idvrstep", "idpm", "c1", "c2", "c3", "n1", "n2", "opis", "dok_veza" }
 
-
 _sql_fields := sql_fields(_fields)
-
  
 for _offset := 0 to _count STEP _step 
 
@@ -78,10 +76,10 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) || lpad( rbr, 3, ' ' ) ) IN " + _sql_ids
         endif
 
-        _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
+        _key_block := {|| field->idfirma + field->idtipdok + field->brdok + field->rbr } 
   endif
 
   _qry += " ORDER BY " + _order
@@ -188,7 +186,8 @@ _tbl := "fmk.fakt_fakt"
 
 if record <> nil
     _where := "idfirma=" + _sql_quote(record["id_firma"]) + " and idtipdok=" + _sql_quote( record["id_tip_dok"]) +;
-                        " and brdok=" + _sql_quote(record["br_dok"]) 
+              " and brdok=" + _sql_quote(record["br_dok"]) + ;
+              " and rbr=" + _sql_quote(record["r_br"])
 endif
 
 DO CASE
@@ -208,7 +207,7 @@ DO CASE
                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
-                            + _sql_quote(STR( record["r_br"] , 3)) + "," +; 
+                            + _sql_quote( PADL( record["r_br"], 3 ) ) + "," +; 
                             + _sql_quote( record["dat_dok"] ) + "," +;
                             + _sql_quote( record["id_partner"] ) + "," +;
                             + _sql_quote( record["din_dem"] ) + "," +;

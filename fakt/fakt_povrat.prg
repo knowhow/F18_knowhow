@@ -178,26 +178,45 @@ DO WHILE !EOF()
         SKIP
     ENDDO
 
+    // sada pobrisi iz kumulativa...
+    SELECT fakt
+    GO TOP
+    SEEK _id_firma + _id_tip_dok + _br_dok
+ 
+    MsgO("del fakt")
+
+    DO WHILE !EOF() .and. _id_firma == field->idfirma .AND. ;
+            _id_tip_dok == field->idtipdok .AND. _br_dok == field->brdok
+
+        _del_rec := hb_hash()
+        _del_rec["idfirma"] := field->idfirma
+        _del_rec["idtipdok"] := field->idtipdok
+        _del_rec["brdok"] := field->brdok
+        _del_rec["rbr"] := field->rbr
+        
+        _ok := .t.
+
+        _ok := _ok .and. delete_rec_server_and_dbf( "fakt", _del_rec  )
+    
+        SKIP
+
+    ENDDO
+    
+    MsgC()
+    
+    // pobrisi doks i doks2
+
     _del_rec := hb_hash()
     _del_rec["idfirma"] := _id_firma
     _del_rec["idtipdok"] := _id_tip_dok
-    _del_rec["brdok"] := _br_dok 
-
-    _ok := .t.
-
-    _field_ids := { "idfirma", "idtipdok", "brdok" }
-    _where_block := { |x| "IDFIRMA=" + _sql_quote(x["idfirma"]) + " AND IDTIPDOK=" + _sql_quote(x["idtipdok"]) + " AND BRDOK=" + _sql_quote(x["brdok"]) } 
-
-    MsgO("del fakt")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt", _del_rec, _field_ids, _where_block,  "1" )
-    MsgC()
-
+    _del_rec["brdok"] := _br_dok
+    
     MsgO("del doks")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks", _del_rec, _field_ids, _where_block,  "1" )
+    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks", _del_rec )
     MsgC()
 
     MsgO("del doks2")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks2", _del_rec, _field_ids, _where_block,  "1" )
+    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
     MsgC()
 
     IF !_ok
@@ -417,27 +436,43 @@ ELSE
 ENDIF
     
 IF ( _brisi_kum == "D" )
-    // pobrisi dokument iz kumulativa...
+
+    SELECT fakt
+    GO TOP
+    SEEK _id_firma + _id_tip_dok + _br_dok
+
+    MsgO("del fakt")
+
+    DO WHILE !EOF() .and. _id_firma == field->idfirma .and. _id_tip_dok == field->idtipdok .and. _br_dok == field->brdok
+ 
+        _del_rec := hb_hash()
+        _del_rec["idfirma"] := field->idfirma
+        _del_rec["idtipdok"] := field->idtipdok
+        _del_rec["brdok"] := field->brdok
+        _del_rec["rbr"] := field->rbr
+
+        _ok := .t.
+
+        _ok := _ok .and. delete_rec_server_and_dbf( "fakt", _del_rec )
+
+        SKIP
+
+    ENDDO
+
+    MsgC()
+
+    // pobrisi sada doks i doks2
     _del_rec := hb_hash()
     _del_rec["idfirma"] := _id_firma
     _del_rec["idtipdok"] := _id_tip_dok
     _del_rec["brdok"] := _br_dok 
 
-    _ok := .t.
-
-    _field_ids := { "idfirma", "idtipdok", "brdok" }
-    _where_block := { |x| "IDFIRMA=" + _sql_quote(x["idfirma"]) + " AND IDTIPDOK=" + _sql_quote(x["idtipdok"]) + " AND BRDOK=" + _sql_quote(x["brdok"]) } 
-
-    MsgO("del fakt")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt", _del_rec, _field_ids, _where_block,  "1" )
-    MsgC()
-
     MsgO("del doks")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks", _del_rec, _field_ids, _where_block,  "1" )
+    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks", _del_rec )
     MsgC()
 
     MsgO("del doks2")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks2", _del_rec, _field_ids, _where_block,  "1" )
+    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
     MsgC()
 
     IF !_ok

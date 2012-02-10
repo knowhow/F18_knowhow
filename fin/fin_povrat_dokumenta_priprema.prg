@@ -121,33 +121,42 @@ IF !lBrisi
   CLOSERET
 ENDIF
 
-_del_rec := hb_hash()
-_del_rec["idfirma"] := cIdFirma
-_del_rec["idvn"]    := cIdVn
-_del_rec["brnal"]   := cBrNal 
-
 if !lStorno
 
-    _ok := .t.
+    select suban
+    set order to tag "4"
+    go top
+    seek cIdfirma + cIdvn + cBrNal
 
-    _field_ids := {"idfirma", "idvn", "brnal"}
-    _where_block := { |x| "IDFIRMA=" + _sql_quote(x["idfirma"]) + " AND IDVN=" + _sql_quote(x["idvn"]) + " AND BRNAL=" + _sql_quote(x["brnal"]) } 
+    MsgO( "del suban/sint/anal/nalog u toku..." )
 
-    MsgO("del suban")
-    // SUBAN TAG = "4"
-    _ok :=  _ok .and. delete_rec_server_and_dbf("suban", _del_rec, _field_ids, _where_block,  "4" )
-    MsgC()
+    do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
 
-    MsgO("del anal")
-    _ok :=  _ok .and. delete_rec_server_and_dbf("anal", _del_rec, _field_ids, _where_block,  "2" )
-    MsgC()
+        _del_rec := hb_hash()
+        _del_rec["idfirma"] := cIdFirma
+        _del_rec["idvn"]    := cIdVn
+        _del_rec["brnal"]   := cBrNal 
+        _del_rec["rbr"]   := PADL( field->rbr, 4 )
+    
+        _ok := .t.
+        _ok :=  _ok .and. delete_rec_server_and_dbf("suban", _del_rec )
 
-    MsgO("del sint")
-    _ok :=  _ok .and. delete_rec_server_and_dbf("sint", _del_rec, _field_ids, _where_block,  "2" )
-    MsgC()
+        _del_rec["rbr"]   := PADL( field->rbr, 3 )
+    
+        _ok :=  _ok .and. delete_rec_server_and_dbf("anal", _del_rec )
+        _ok :=  _ok .and. delete_rec_server_and_dbf("sint", _del_rec )
 
-    MsgO("del nalog")
-    _ok :=  _ok .and. delete_rec_server_and_dbf("nalog", _del_rec, _field_ids, _where_block,  "1" )
+        skip
+
+    enddo
+
+    _del_rec := hb_hash()
+    _del_rec["idfirma"] := cIdFirma
+    _del_rec["idvn"]    := cIdVn
+    _del_rec["brnal"]   := cBrNal 
+ 
+    _ok :=  _ok .and. delete_rec_server_and_dbf("nalog", _del_rec )
+
     MsgC()
 
 endif
@@ -160,7 +169,7 @@ if lLogPovrat
 	EventLog(nUser, goModul:oDataBase:cName, "DOK", "POVRAT", nil, nil, nil, nil, "", "", cIdFirma + "-" + cIdVn + "-" + cBrNal, Date(), Date(), "", "Povrat naloga u pripremu")
 endif
 
-closeret
+close all
 return
 
 

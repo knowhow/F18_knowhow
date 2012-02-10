@@ -1028,22 +1028,36 @@ if _brisi_kum
     MsgO("Brisem dokument iz KALK-a")
 
     select kalk
+    hseek _id_firma + _id_vd + _br_dok
 
-    _del_rec := hb_hash()
-    _del_rec["idfirma"] := _id_firma
-    _del_rec["idvd"]    := _id_vd
-    _del_rec["brdok"]   := _br_dok
+    do while !eof() .and. _id_firma == field->IdFirma .and. _id_vd == field->IdVD .and. _br_dok == field->BrDok
+ 
+        _del_rec := hb_hash()
+        _del_rec["idfirma"] := field->idfirma
+        _del_rec["idvd"]    := field->idvd
+        _del_rec["brdok"]   := field->brdok
+        _del_rec["rbr"]     := field->rbr
 
-    _ok := .t.
-    _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
+        _ok := .t.
+        _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
 
-    if !_ok
-        msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele kalk !!!!")
-        close all
-        return
-    endif
+        if !_ok
+            msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele kalk !!!!")
+            close all
+            return
+        endif
+        
+        skip
+    enddo
 
     select kalk_doks
+    hseek _id_firma + _id_vd + _br_dok
+         
+    _del_rec := hb_hash()
+    _del_rec["idfirma"] := field->idfirma
+    _del_rec["idvd"]    := field->idvd
+    _del_rec["brdok"]   := field->brdok
+    
     _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
 
     if !_ok
@@ -1151,6 +1165,12 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
     set order to tag "1"
     go top
 
+    // ako ne treba brisati kumulativ
+    if !_brisi_kum
+        close all
+        return .f.
+    endif
+
     // idemo sada na brisanje dokumenata
     do while !EOF()
 
@@ -1160,32 +1180,14 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
         // prodji kroz dokument do kraja...
         do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
-            skip
-        enddo
 
-        _del_rec := hb_hash()
-        _del_rec["idfirma"] := _id_firma
-        _del_rec["idvd"]    := _id_vd
-        _del_rec["brdok"]   := _br_dok
+            _del_rec := hb_hash()
+            _del_rec["idfirma"] := field->idfirma
+            _del_rec["idvd"]    := field->idvd
+            _del_rec["brdok"]   := field->brdok
+            _del_rec["rbr"]     := field->rbr
 
-        _ok := .t.
-
-        // treba li brisati kumulativ ?
-        if _brisi_kum
-
-            // brisi prvo tabelu kalk_doks            
-            select kalk_doks
-            _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
-
-            if !_ok
-                msgbeep("Problem sa brisanjem tabele doks !!!")
-                msgc()
-                close all
-                return .f.
-            endif
-            
-            // brisi zatim tabelu kalk_kalk
-            select kalk
+            _ok := .t.
             _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
 
             if !_ok
@@ -1194,7 +1196,28 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
                 close all
                 return .f.
             endif
+ 
+            skip
 
+        enddo
+
+        // pobrsi mi sada tabelu kalk_doks
+
+        _del_rec := hb_hash()
+        _del_rec["idfirma"] := _id_firma
+        _del_rec["idvd"]    := _id_vd
+        _del_rec["brdok"]   := _br_dok
+
+        // brisi prvo tabelu kalk_doks            
+        select kalk_doks
+        _ok := .t.
+        _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+        if !_ok
+            msgbeep("Problem sa brisanjem tabele kalk !!!")
+            msgc()
+            close all
+            return .f.
         endif
             
     enddo

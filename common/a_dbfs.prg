@@ -25,7 +25,7 @@ AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",    {|alg| fin_anal_from_sql_
 // fin_sint: TAG "2", "idFirma+IdVN+BrNal+Rbr"
 AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|alg| fin_sint_from_sql_server(alg)  }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_sint", x) }, "2" }  )
 // fin_nalog: tag "1", "IdFirma+IdVn+BrNal"
-AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_nalog", x) }, "1" })
+AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS",  { "idfirma", "idvn", "brnal" }, {|x| sql_where_block("fin_nalog", x) }, "1" })
 
 
 // fin sifrarnici

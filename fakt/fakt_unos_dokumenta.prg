@@ -343,13 +343,23 @@ do case
         
     case UPPER(Chr(Ch))=="R"
         return DE_REFRESH
-        
+       
+#ifdef __PLATFORM__DARWIN 
+    case Ch==ASC("9")
+#else
     case Ch==K_F9
+#endif
+
         Iz20u10() 
         lDirty:=.t.
         return DE_REFRESH
         
+#ifdef __PLATFORM__DARWIN 
+     case Ch==ASC("0")
+#else
     case Ch==K_ALT_F10
+#endif
+
         private nEntera:=30
         for iSekv:=1 to INT(RecCount2()/15)+1
             cSekv:=chr(K_CTRL_A)

@@ -207,8 +207,8 @@ public gPicS:="99999999"
 public gTipObr:="1"
 public gVarSpec:="1"
 public cVarPorOl:="1"
-public gSihtarica:="N"
-public gSihtGroup:="N"
+public gSihtarica := "N"
+public gSihtGroup := "N"
 public gFUPrim:=PADR("UNETO+I24+I25",50)
 public gBFForm:=PADR("",100)
 public gFURaz:=PADR("",60)
@@ -235,19 +235,30 @@ public gPotp1:=PADR("PADL('Potpis:',70)",150)
 public gPotp2:=PADR("PADL('_________________',70)",150)
 public _LR_:=6
 public _LK_:=6
-public lViseObr := .f.
+public lViseObr := .t.
 public lVOBrisiCDX := .f.
 public cLdPolja := 40
-//public nBo:=0
 public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
 
+// bazni parametri obracuna...
 gVarObracun := fetch_metric("ld_varijanta_obracuna", NIL, "2")
 gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
 gRJ := fetch_metric( "ld_rj", my_user(), gRj )
 gMjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
-lViseObr := fetch_metric( "ld_vise_obracuna", my_user(), .f. )
+lViseObr := fetch_metric( "ld_vise_obracuna", my_user(), lViseObr )
 gObracun := fetch_metric( "ld_obracun", my_user(), gObracun )
+
+// ostali parametri...
+
+gSihtarica := fetch_metric( "ld_obrada_sihtarica", NIL, gSihtarica )
+gSihtGroup := fetch_metric( "ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup )
+
+// bazna opcija sihtarica mora biti iskljucena
+if gSihtGroup == "D"
+	gSihtarica := "N"
+endif
+
 
 O_PARAMS
 select (F_PARAMS)
@@ -278,8 +289,6 @@ Rpar("up",@gFUPrim)
 Rpar("ur",@gFURaz)
 Rpar("va",@gValuta)
 Rpar("vs",@gVarSpec)
-Rpar("Si",@gSihtarica)
-Rpar("SG",@gSihtGroup)
 Rpar("z2",@gZaok2)
 Rpar("zo",@gZaok)
 Rpar("lo",@gOsnLOdb)
@@ -290,11 +299,6 @@ Rpar("t1",@gUgTrosk)
 Rpar("t2",@gAhTrosk)
 Rpar("ks",@gKarSDop)
 Rpar("rf",@gRadnFilter)
-
-// bazna opcija sihtarica mora biti iskljucena
-if gSihtGroup == "D"
-	gSihtarica := "N"
-endif
 
 select (F_PARAMS)
 use

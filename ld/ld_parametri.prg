@@ -145,14 +145,12 @@ return
 // -----------------------------------------
 function ld_set_obracun()
 local nX := 1
+local _radni_sati := fetch_metric("ld_radni_sati", NIL, "N" ) 
 private GetList:={}
 
-cVarPorol:=PADR(cVarPorol,2)
+cVarPorol := PADR( cVarPorol, 2 )
 
-// ovo je nepotrebno !
-// za sada setujem da je uvijek = N
-
-Box(, 18, 77)
+Box(, 20, 77)
     
     @ m_x+nX,m_y+2 SAY "Varijanta obracuna" GET gVarObracun
         
@@ -167,38 +165,46 @@ Box(, 18, 77)
     ++nX    
     
     @ m_x+nX,m_y+2 SAY "Tip obracuna (legacy)" GET gTipObr
-        ++nX
-    @ m_x+nX,m_y+2 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  pict "@!" valid gUnMjesec $ "DN"
-        ++nX
-        @ m_x+nX,m_y+2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm pict "9" valid ld_v_set_form()
-        ++nX
-        @ m_x+nX,m_y+2 SAY "Minuli rad  %/B:" GET gMinR  valid gMinR $ "%B"   pict "@!"
-        ++nX
-        @ m_x+nX,m_y+2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  valid gDaPorOl $ "DN"   pict "@!"
-        ++nX
-        @ m_x+nX,m_y+2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
-        ++nX
-        @ m_x+nX,m_y+2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 ÄÄ¿  "
-        ++nX
-        @ m_x+nX,m_y+2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ÄÄÁÄ>" GET cVarPorOl WHEN gDaPorOl=="D"   PICT "99"
-        ++nX
+    @ m_x+nX, col()+1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  pict "@!" valid gUnMjesec $ "DN"
+    ++nX
+        
+    @ m_x+nX,m_y+2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm pict "9" valid ld_v_set_form()
+    ++nX
+        
+    @ m_x+nX,m_y+2 SAY "Minuli rad  %/B:" GET gMinR  valid gMinR $ "%B"   pict "@!"
+    ++nX
+        
+    @ m_x+nX,m_y+2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  valid gDaPorOl $ "DN"   pict "@!"
+    ++nX
+        
+    @ m_x+nX,m_y+2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
+    ++nX
+        
+    @ m_x+nX,m_y+2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 ÄÄ¿  "
+    ++nX
+        
+    @ m_x+nX,m_y+2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ÄÄÁÄ>" GET cVarPorOl WHEN gDaPorOl=="D"   PICT "99"
+    ++nX
+    
+    @ m_x+nX,m_y+2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  valid gVarSpec $ "12" pict "9"
+    ++nX
+        
+    @ m_x + nX, m_y + 2 SAY "Obrada sihtarice ?" GET gSihtarica VALID gSihtarica $ "DN" pict "@!"
+    @ m_x + nX, col() + 1 SAY "Sihtarice po grupama ?" GET gSihtGroup VALID gSihtGroup $ "DN" pict "@!"
+    ++ nX
+        
+    @ m_x+nX,m_y+2 SAY "Filter 'aktivan' u sifraniku radnika ?" GET gRadnFilter VALID gRadnFilter $ "DN" pict "@!"
+    ++ nX
 
-        @ m_x+nX,m_y+2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  valid gVarSpec $ "12" pict "9"
-        ++nX
-        @ m_x+nX,m_y+2 SAY "Obrada sihtarice ?" GET gSihtarica ;
-        VALID gSihtarica $ "DN" pict "@!"
-        ++nX    
-        @ m_x+nX,m_y+2 SAY "Sihtarice po grupama ?" GET gSihtGroup ;
-        VALID gSihtGroup $ "DN" pict "@!"
-        ++nX
-        @ m_x+nX,m_y+2 SAY "Filter 'aktivan' u sifraniku radnika ?" ;
-        GET gRadnFilter ;
-        VALID gRadnFilter $ "DN" pict "@!"
-    read
+    @ m_x + nX, m_y + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
+
+    READ
+
 BoxC()
 
 if (LastKey() <> K_ESC)
     
+    // ako je opcija sihtarica po grupama, onda bazna opcija sihtarica treba biti iskljucena
     if gSihtGroup == "D"
         gSihtarica := "N"
     endif
@@ -210,11 +216,12 @@ if (LastKey() <> K_ESC)
     Wpar("vo",cVarPorOl)
     WPar("um",gUNMjesec)
     Wpar("vs",gVarSpec)
-    Wpar("Si",gSihtarica)
-    Wpar("SG",gSihtGroup)
     Wpar("rf",gRadnFilter)
 
-    set_metric("ld_varijanta_obracuna", NIL, gVarObracun) 
+    set_metric("ld_varijanta_obracuna", NIL, gVarObracun ) 
+    set_metric("ld_obrada_sihtarica", NIL, gSihtarica ) 
+    set_metric("ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup ) 
+    set_metric("ld_radni_sati", NIL, _radni_sati ) 
 
 endif
 
@@ -225,7 +232,6 @@ return
 // -----------------------------------------------
 function ld_set_prikaz()
 local _pr_kart_pl := fetch_metric("ld_obracun_prikaz_kartice_na_unosu", nil, "N" ) 
-local _radni_sati := fetch_metric("ld_radni_sati", nil, "N" ) 
 private GetList:={}
 
 gPotp1 := PADR(gPotp1, 150)
@@ -240,7 +246,6 @@ Box(,15,77)
     @ m_x+6, m_y+2 SAY "Opis osnovnih podataka za obracun (1-bodovi/2-koeficijenti) ?" GET gBodK VALID gBodK$"12"
     @ m_x+7, m_y+2 SAY "Pregled plata: varijanta izvjestaja (1/2)" GET gVarPP VALID gVarPP$"12"
     @ m_x+8, m_y+2 SAY "Potpisi na svim izvjestajima (D/N)" GET gPotpRpt VALID gPotpRpt$"DN" PICT "@!"
-    @ m_x+9, m_y+2 SAY "Unos radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
     read
     
     if gPotpRpt == "D"
@@ -259,7 +264,6 @@ if (LastKey()<>K_ESC)
 
     // parametri sql/db 
     set_metric("ld_obracun_prikaz_kartice_na_unosu", nil, _pr_kart_pl ) 
-    set_metric("ld_radni_sati", nil, _radni_sati ) 
 
     // postojeci params parmetri
     Wpar("bk",gBodK)
@@ -275,7 +279,6 @@ if (LastKey()<>K_ESC)
     Wpar("P2",gPotp2)
     Wpar("ks",gKarSDop)
 
-    //Wpar("tB",gTabela)
 endif
 
 return

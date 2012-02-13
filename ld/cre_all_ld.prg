@@ -11,11 +11,246 @@
 
 #include "fmk.ch"
 
-function cre_all_ld()
+function cre_all_ld( ver )
 local aDbf
 local _alias, _table_name
-local lViseObr := .f.
+local _created
+
+aDBf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'Aktivan'             , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'Fiksan'              , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'UFS'                 , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'UNeto'               , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'Koef1'               , 'N' ,   5 ,  2 })
+AADD(aDBf,{ 'Formula'             , 'C' , 200 ,  0 })
+AADD(aDBf,{ 'OPIS'                , 'C' ,   8 ,  0 })
+AADD(aDBf,{ 'TPR_TIP'             , 'C' ,   1 ,  0 })
+
+if !file(f18_ime_dbf("TIPPR"))
+    DBCREATE2( 'TIPPR', aDbf)
+	reset_semaphore_version("tippr")
+	my_use("TIPPR")
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"TIPPR")
+
+if !file(f18_ime_dbf("TIPPR2"))
+   	DBCREATE2( 'TIPPR2', aDbf )
+	reset_semaphore_version("tippr2")
+	my_use("TIPPR2")
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
+
+// modul LD koristi sopstveni sifrarnik radnih jedinica
+if !file(f18_ime_dbf("ld_rj"))
+	aDBf:={}
+   	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+   	add_f_mcode(@aDbf)
+   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
+   	AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
+   	DBCREATE2( "LD_RJ", aDbf )
+	reset_semaphore_version("ld_rj")
+	my_use("ld_rj")
+endif
+CREATE_INDEX("ID","id",KUMPATH+"LD_RJ")
+
+// KRED
+aDBf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'ZIRO'                , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'ZIROD'               , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'TELEFON'             , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'MJESTO'              , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'ADRESA'              , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
+AADD(aDBf,{ 'FIL'                 , 'C' ,  30 ,  0 })
+if !file(f18_ime_dbf("KRED"))
+   	DBCREATE2( 'KRED', aDbf )
+	reset_semaphore_version("kred")
+	my_use("KRED")
+endif
+
+if !file(f18_ime_dbf("_KRED"))
+   DBCREATE2( '_KRED',aDbf)
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"KRED")
+CREATE_INDEX("NAZ","naz",SIFPATH+"KRED")
+
+
+// POR
+if !file(f18_ime_dbf("POR"))
+
+   	aDBf:={}
+  	
+	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    add_f_mcode(@aDbf)
+   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+   	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+   	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'POR_TIP'             , 'C' ,   1 ,  0 })
+	// stepenasti porez
+	AADD(aDBf,{ 'ALGORITAM'           , 'C' ,   1 ,  0 })
+	AADD(aDBf,{ 'S_STO_1'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_1'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_2'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_2'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_3'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_3'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_4'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_4'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_5'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_5'             , 'N' ,  12 ,  2 })
    
+	DBCREATE2( 'POR', aDbf )
+	reset_semaphore_version("por")
+	my_use("POR")
+
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"POR")
+
+
+// DOPR
+if !file(f18_ime_dbf("DOPR"))
+   
+	aDBf:={}
+   	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    add_f_mcode(@aDbf)
+   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+   	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+   	AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+	
+   	DBCREATE2( 'DOPR', aDbf )
+	reset_semaphore_version("dopr")
+	my_use("dopr")
+
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"DOPR")
+
+if !file(f18_ime_dbf("STRSPR"))
+    aDbf:={ {"id","C",3,0} ,;
+            {"naz","C",20,0} ,;
+            {"naz2","C",6,0} ;
+                }
+    DBCREATE2( "STRSPR", aDbf )
+	reset_semaphore_version( "strspr" )
+	my_use("STRSPR")
+
+endif
+
+
+CREATE_INDEX("ID","id",SIFPATH+"strspr")
+
+if !file(f18_ime_dbf("KBENEF"))
+   aDbf:={ {"id","C",1,0} ,;
+           {"naz","C",8,0} ,;
+           {"iznos","N",5,2} ;
+         }
+  	DBCREATE2( "KBENEF", aDbf )
+	reset_semaphore_version( "kbenef" )
+	my_use("KBENEF")
+	
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"KBENEF")
+
+
+if !file(f18_ime_dbf("VPOSLA"))  // vrste posla
+   aDbf:={  {"id","C",2,0}   ,;
+            {"naz","C",20,0} ,;
+            {"idkbenef","C",1,0} ;
+         }
+	DBCREATE2( "VPOSLA", aDbf )
+	reset_semaphore_version( "vposla" )
+	my_use( "VPOSLA" )
+
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"VPOSLA")
+
+
+//RADSIHT
+aDbf:={}
+AADD(aDBf,{ 'Godina'              , 'N' ,   4 ,  0 })
+AADD(aDBf,{ 'Mjesec'              , 'N' ,   2 ,  0 })
+AADD(aDBf,{ 'Dan'                 , 'N' ,   2 ,  0 })
+AADD(aDBf,{ 'DanDio'              , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDRADN'              , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
+AADD(aDBf,{ 'OPIS'                , 'C' ,  50 ,  0 })
+AADD(aDBf,{ 'IDTipPR'             , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
+AADD(aDBf,{ 'IdNorSiht'           , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'Izvrseno'            , 'N' ,  14 ,  3 })
+AADD(aDBf,{ 'Bodova'              , 'N' ,  14 ,  2 })
+
+if !file(f18_ime_dbf("RADSIHT"))
+	DBCREATE2( "RADSIHT", aDBF )
+	reset_semaphore_version( "ld_radsiht" )
+	my_use("RADSIHT")
+endif
+
+CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr",KUMPATH+"RADSIHT")
+CREATE_INDEX("2","idkonto+str(godina)+str(mjesec)+idradn",KUMPATH+"RADSIHT")
+CREATE_INDEX("3","idnorsiht+str(godina)+str(mjesec)+idradn",KUMPATH+"RADSIHT")
+CREATE_INDEX("4","idradn+str(godina)+str(mjesec)+idkonto",KUMPATH+"RADSIHT")
+
+
+//NORSIHT - norme u sihtarici - koristi se vjerovatno samo kod rada u normi
+aDbf:={}
+AADD(aDBf,{ 'ID'                , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'NAZ'               , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'JMJ'               , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'Iznos'             , 'N' ,   8 ,  2 })
+AADD(aDBf,{ 'N1'                , 'N' ,   6 ,  2 })
+AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
+
+if !file(f18_ime_dbf("NORSIHT"))
+
+	DBCREATE2( "NORSIHT", aDBF)
+	reset_semaphore_version("ld_norsiht")
+	my_use("NORSIHT")
+
+endif
+
+CREATE_INDEX("ID","id",KUMPATH+"NORSIHT")
+CREATE_INDEX("NAZ","NAZ",KUMPATH+"NORSIHT")
+
+//TPRSIHT   - tipovi primanja koji odradjuju sihtaricu
+aDbf:={}
+AADD(aDBf,{ 'ID'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'NAZ'               , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
+// K1="F" - po formuli
+//    " " - direktno se unose bodovi
+AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'K3'                , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'FF'                , 'C' ,  30 ,  0 })
+
+if !file(f18_ime_dbf("TPRSIHT"))
+	DBCREATE2( "TPRSIHT", aDBF )
+	reset_semaphore_version("ld_tprsiht")
+	my_use("TPRSIHT")
+endif
+
+CREATE_INDEX("ID","id",KUMPATH+"TPRSIHT")
+CREATE_INDEX("NAZ","NAZ",KUMPATH+"TPRSIHT")
+
 // -----------------------
 // RADN.DBF
 // -----------------------
@@ -534,5 +769,4 @@ endif
 CREATE_INDEX("IDRADN", "idradn", _alias)
 
 return .t.
-
 

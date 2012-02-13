@@ -186,11 +186,11 @@ return .t.
 // filter po cust_id
 // nCust_id - id customer
 // -------------------------------------------
-static function cust_filter(nCust_id, cContDesc)
+static function cust_filter( nCust_id, cContDesc )
 local cFilter := ""
 
 if nCust_id > 0
-	cFilter += "cust_id == " + custid_str(nCust_id)
+	cFilter += "cust_id == " + custid_str( nCust_id )
 endif
 
 if !EMPTY(cContDesc)
@@ -198,10 +198,16 @@ if !EMPTY(cContDesc)
 	if !EMPTY(cFilter)
 		cFilter += " .and. "
 	endif
-	
-	cContDesc := ALLTRIM(cContDesc)
-	cFilter += " ALLTRIM(UPPER(cont_desc)) = " + cm2str(UPPER(cContDesc))
-	
+
+	cContDesc := ALLTRIM( cContDesc )
+    
+    if RIGHT( cContDesc ) == "$"
+        // pretrazi po dijelu naziva	
+	    cFilter += _filter_quote( UPPER( LEFT( cContDesc, LEN( cContDesc ) - 1 ) ) ) + " $ ALLTRIM(UPPER(cont_desc))" 
+    else
+	    cFilter += " ALLTRIM(UPPER(cont_desc)) = " + cm2str(UPPER(cContDesc))
+	endif
+
 endif
 
 if !EMPTY(cFilter)

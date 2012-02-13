@@ -49,8 +49,6 @@ endif
 
 msgo( "Azuriranje dokumenta u toku...." )
 
-altd()
-
 if fin_azur_sql(oServer)
     o_fin_za_azuriranje()
     if !fin_azur_dbf(lAuto)

@@ -11,6 +11,7 @@
 
 #include "fmk.ch"
 
+
 function UnosSiht()
 local cidradn,cIdRj,nGodina,nMjesec
 

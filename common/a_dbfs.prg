@@ -272,7 +272,7 @@ AADD(gaDBFs, { F_STRSPR ,  "STRSPR"  , "strspr"   ,     { |alg| strspr_from_sql_
 AADD(gaDBFs, { F_KBENEF ,  "KBENEF"  , "kbenef"   ,     { |alg| kbenef_from_sql_server(alg)   } , "IDS" } )
 AADD(gaDBFs, { F_VPOSLA ,  "VPOSLA"  , "vposla"   ,     { |alg| vposla_from_sql_server(alg)   } , "IDS" } )
 
-AADD(gaDBFs, { F_RADSIHT,  "RADSIHT" , "ld_radsiht",  { |alg| ld_radsiht_from_sql_server(alg) } , "IDS" } )
+AADD(gaDBFs, { F_RADSIHT,  "RADSIHT" , "ld_radsiht",  { |alg| ld_radsiht_from_sql_server(alg) } , "IDS", { "idkonto", {"godina", 4}, {"mjesec", 2}, "idradn" }, { |x| sql_where_block("ld_radsiht", x) }, "2" } )
 
 AADD(gaDBFs, { F_NORSIHT,  "NORSIHT" , "ld_norsiht",  { |alg| ld_norsiht_from_sql_server(alg) } , "IDS" } )
 AADD(gaDBFs, { F_TPRSIHT,  "TPRSIHT" , "ld_tprsiht",  { |alg| ld_tprsiht_from_sql_server(alg) } , "IDS" } )

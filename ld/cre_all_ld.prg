@@ -201,13 +201,15 @@ AADD(aDBf,{ 'Bodova'              , 'N' ,  14 ,  2 })
 if !file(f18_ime_dbf("RADSIHT"))
     DBCREATE2( "RADSIHT", aDBF )
     reset_semaphore_version( "ld_radsiht" )
-    my_use("RADSIHT")
+    my_use( "RADSIHT" )
+    close all
 endif
 
-CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr",KUMPATH+"RADSIHT")
-CREATE_INDEX("2","idkonto+str(godina)+str(mjesec)+idradn",KUMPATH+"RADSIHT")
-CREATE_INDEX("3","idnorsiht+str(godina)+str(mjesec)+idradn",KUMPATH+"RADSIHT")
-CREATE_INDEX("4","idradn+str(godina)+str(mjesec)+idkonto",KUMPATH+"RADSIHT")
+CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr", "RADSIHT" )
+CREATE_INDEX("2","idkonto+str(godina)+str(mjesec)+idradn", "RADSIHT" )
+CREATE_INDEX("3","idnorsiht+str(godina)+str(mjesec)+idradn", "RADSIHT" )
+CREATE_INDEX("4","idradn+str(godina)+str(mjesec)+idkonto", "RADSIHT" )
+CREATE_INDEX("2i","idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", "RADSIHT" )
 
 
 //NORSIHT - norme u sihtarici - koristi se vjerovatno samo kod rada u normi

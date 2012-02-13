@@ -1570,11 +1570,9 @@ replace godina with str(ngodina,4),  mjesec with str(nmjesec,2),;
 
 popwa()
 return
-*}
 
 
 function UKartPl()
-*{
 local nC1:=20
 local i
 cIdRadn:=space(_LR_)
@@ -1587,89 +1585,87 @@ cRazdvoji := "N"
 
 O_LD
 
- copy structure extended to struct
- use
- SELECT 100             // ovo malo siri strukturu
- USE struct             // naime, polja sa satima su premala za
- GO TOP                 // rekapitulairanje vise mjeseci
- While ! Eof()
-   IF LEN (Trim (Field_Name))==3 .and. Left (Field_Name, 1)="S"
-     REPLACE Field_Len WITH Field_Len + 3
-   EndIF
-   SKIP
- EndDO
- select Struct; USE
- ferase(PRIVPATH+"_LD.CDX")
- cPom:=PRIVPATH+"_LD"
- create (cPom) from struct
- use (cPom)
- index on idradn+idrj tag "1"
+COPY STRUCTURE extended TO struct
+USE
  
- close all
- O_PAROBR
- O_LD_RJ
- O_RADN
- O_VPOSLA
- O_RADKR
- O_KRED
- O__LD
- set order to tag "1"
+SELECT 400             
+// ovo malo siri strukturu
+ 
+USE struct             
+// naime, polja sa satima su premala za
+GO TOP                 
+// rekapitulairanje vise mjeseci
+ 
+WHILE !EOF()
+    IF LEN (Trim (Field_Name))==3 .and. Left (Field_Name, 1)="S"
+        REPLACE field_Len WITH field_Len + 3
+    ENDIF
+    SKIP
+ENDDO
+SELECT struct
+USE
+ 
+FERASE( my_home() + "_ld.cdx" )
+cPom := "_ld"
 
-#ifdef CPOR
- IF lIsplaceni
-   O_LD
- ELSE
-   select (F_LDNO)  
-   usex (KUMPATH+"LDNO") alias LD
-   set order to 1
- ENDIF
-#else
- O_LD
-#endif
+CREATE (cPom) from struct
+use (cPom)
+ 
+index on idradn + idrj tag "1"
+ 
+close all
+O_PAROBR
+O_LD_RJ
+O_RADN
+O_VPOSLA
+O_RADKR
+O_KRED
+O__LD
+set order to tag "1"
+O_LD
 
+cIdRadn := SPACE(_LR_)
+cSatiVO := "S"
 
- cIdRadn:=space(_LR_)
-
- cSatiVO:="S"
-
- Box(,6,77)
-   @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_LD_RJ(@cidrj)
-   @ m_x+2,m_y+2 SAY "od mjeseca: "  GET  cmjesec  pict "99"
-   @ m_x+2,col()+2 SAY "do"  GET  cmjesec2  pict "99"
-   if lViseObr
-     @ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-   endif
-   @ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-   @ m_x+4,m_y+2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
-   @ m_x+5,m_y+2 SAY "Razdvojiti za radnika po RJ:" GET cRazdvoji pict "@!";
+Box(,6,77)
+    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_LD_RJ(@cidrj)
+    @ m_x+2,m_y+2 SAY "od mjeseca: "  GET  cmjesec  pict "99"
+    @ m_x+2,col()+2 SAY "do"  GET  cmjesec2  pict "99"
+    @ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+    @ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+    @ m_x+4,m_y+2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
+    @ m_x+5,m_y+2 SAY "Razdvojiti za radnika po RJ:" GET cRazdvoji pict "@!";
                      when Empty (cIdRj) valid cRazdvoji $ "DN"
-   read; clvbox(); ESC_BCR
-   if lViseObr .and. EMPTY(cObracun)
-     @ m_x+6,m_y+2 SAY "Prikaz sati (S-sabrati sve obracune , 1-obracun 1 , 2-obracun 2, ... )" GET cSatiVO VALID cSatiVO$"S123456789" PICT "@!"
-     read; ESC_BCR
-   endif
-  BoxC()
+    read
+    clvbox()
+    ESC_BCR
+    if lViseObr .and. EMPTY(cObracun)
+        @ m_x+6,m_y+2 SAY "Prikaz sati (S-sabrati sve obracune , 1-obracun 1 , 2-obracun 2, ... )" GET cSatiVO VALID cSatiVO$"S123456789" PICT "@!"
+        read
+        ESC_BCR
+    endif
+BoxC()
 
 if lViseObr
-  O_TIPPRN
+    O_TIPPRN
 else
-  O_TIPPR
+    O_TIPPR
 endif
 
 SELECT LD
 
 if lViseObr .and. !EMPTY(cObracun)
-  SET FILTER TO obr=cObracun
+    SET FILTER TO obr=cObracun
 endif
 
 cIdRadn:=trim(cidradn)
 if empty(cidrj)
-  set order to tag (TagVO("4"))
-  seek str(cGodina,4)+cIdRadn
-  cIdrj:=""
+    set order to tag (TagVO("4"))
+    seek str(cGodina,4)+cIdRadn
+    cIdrj:=""
 else
-  set order to tag (TagVO("3"))
-  seek str(cGodina,4)+cidrj+cIdRadn
+    set order to tag (TagVO("3"))
+    seek str(cGodina,4)+cidrj+cIdRadn
 endif
 EOF CRET
 
@@ -2280,35 +2276,43 @@ return
 // ---------------------------------
 // ---------------------------------
 FUNCTION SortPrez(cId)
- LOCAL cVrati:="", nArr:=SELECT()
- SELECT RADN
- HSEEK cId
- cVrati:= naz + ime + imerod + id
- SELECT (nArr)
+local cVrati := ""
+local nArr := SELECT()
+
+O_RADN
+HSEEK cId
+cVrati:= naz + ime + imerod + id
+ 
+SELECT (nArr)
 RETURN cVrati
 
 
 // ---------------------------------
 // ---------------------------------
 FUNCTION SortIme(cId)
- LOCAL cVrati:="", nArr:=SELECT()
- SELECT RADN
- HSEEK cId
- cVrati:= ime + naz + imerod + id
- SELECT (nArr)
+local cVrati := ""
+local nArr := SELECT()
+
+O_RADN
+HSEEK cId
+
+cVrati:= ime + naz + imerod + id
+ 
+SELECT (nArr)
 RETURN cVrati
 
 
 // --------------------------------
 // --------------------------------
 FUNCTION SortVar(cId)
- LOCAL cVrati:="", nArr:=SELECT()
- SELECT RADKR
- SEEK cId
- SELECT RJES
- SEEK RADKR->naosnovu+RADKR->idradn
- cVrati:=varijanta
- SELECT (nArr)
+local cVrati := ""
+local nArr:=SELECT()
+O_RADKR 
+SEEK cId
+SELECT RJES
+SEEK RADKR->naosnovu+RADKR->idradn
+cVrati:=varijanta
+SELECT (nArr)
 RETURN cVrati
 
 

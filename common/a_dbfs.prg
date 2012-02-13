@@ -257,7 +257,7 @@ AADD(gaDBFs, { F_PK_RADN,  "PK_RADN" , "ld_pk_radn",  { |alg| ld_pk_radn_from_sq
 AADD(gaDBFs, { F_PK_DATA,  "PK_DATA" , "ld_pk_data",  { |alg| ld_pk_data_from_sql_server(alg) } , "IDS", {"idradn", "ident", {"rbr", 2}}, {|x| sql_where_block("ld_pk_data", x) }, "1" })
 
 // ld_radsat, tag "IDRADN", index: "idradn"
-AADD(gaDBFs, { F_RADSAT ,  "RADSAT"  , "ld_radsat",   { |alg| ld_radsat_from_sql_server(alg)  } , "IDS",  {"idradn"}, {|x| sql_where_block("ld_pk_data", x) }, "IDRADN"})
+AADD(gaDBFs, { F_RADSAT ,  "RADSAT"  , "ld_radsat",   { |alg| ld_radsat_from_sql_server(alg)  } , "IDS",  {"idradn"}, {|x| sql_where_block("ld_radsat", x) }, "IDRADN" })
 
 
 // ID bazirani sifrarnici

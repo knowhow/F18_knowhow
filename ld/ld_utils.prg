@@ -545,7 +545,7 @@ return ld->varobr
 // -----------------------------------------------------
 // promjena varijante obracuna za tekuci obracun
 // -----------------------------------------------------
-function chVarObracun()
+function ld_promjeni_varijantu_obracuna()
 local nLjudi, _rec
 
 if Logirati(goModul:oDataBase:cName,"DOK","CHVAROBRACUNA")
@@ -891,7 +891,7 @@ closeret
 // ------------------------------------------------
 // preuzimanje podataka iz drugog obracuna
 // ------------------------------------------------
-function UzmiObr()
+function ld_preuzmi_obracun()
 local i, lSveRJ
 
 O_LD
@@ -1003,7 +1003,7 @@ CLOSERET
 
 
 
-function VisePuta()
+function ld_obracun_napravljen_vise_puta()
 *{
 cMjesec  := gMjesec
 cGodina  := gGodina

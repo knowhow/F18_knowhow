@@ -15,7 +15,7 @@
 // -----------------------------------------
 // unos datuma isplate plaæe
 // -----------------------------------------
-function unos_disp()
+function unos_datuma_isplate_place()
 // datum isplate
 local dDatPr 
 local dDat1

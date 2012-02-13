@@ -347,9 +347,9 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     endif
     if gVarObracun == "2"
         @ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "9999.99"
-        @ m_x + 4, col()+1 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
+        @ m_x + 4, col()+1 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,55)) .and. FillVPosla()
     else
-        @ m_x+4,m_y+2 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
+        @ m_x+4,m_y+2 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,55)) .and. FillVPosla()
     endif
     read
 
@@ -358,7 +358,7 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     endif
 
     if _radni_sati == "D"
-        @ m_x + 4, m_y + 59 SAY "R.sati:" GET _radSat
+        @ m_x + 4, m_y + 85 SAY "R.sati:" GET _radSat
     endif
     
     read

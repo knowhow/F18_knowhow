@@ -68,6 +68,7 @@ local _full_id
 local _dbf_pkey_search
 local _field
 local _where_str
+local _t_field, _t_field_dec
 
 if table == NIL
    table := ALIAS()
@@ -119,43 +120,62 @@ END SEQUENCE
 
 if sql_table_update(table, "del", nil, _where_str) 
 
-   update_semaphore_version(table, .t.)
+    update_semaphore_version(table, .t.)
    
-   _full_id := ""
-   for each _field  in id_fields
-     _full_id += values[_field]
-   next
+    _full_id := ""
 
-   AADD(_ids, _full_id)
-   push_ids_to_semaphore( table, _ids )
+    for each _field in id_fields
 
+        if VALTYPE( _field ) == "A"    
+            _t_field := _field[1]
+            _t_field_dec := _field[2]
+            _full_id += STR( values[ _t_field ], _t_field_dec )
+        else
+            _t_field := _field
+            _full_id += values[ _t_field ]
+        endif
 
-   SELECT (_alias)
-   SET ORDER TO TAG (order_key_tag)
-   _dbf_pkey_search := ""
-   for each _field in id_fields
-       _dbf_pkey_search += values[_field]
-   next
+    next
 
-   if FLOCK()
-      SEEK _dbf_pkey_search
-      while FOUND()
-          DELETE
-          // sve dok budes nalazio pod ovim kljucem brisi
-          SEEK _dbf_pkey_search
-      enddo
-   else
-      sql_table_update(table, "ROLLBACK")
-      return .f.
-   endif
-   DBUNLOCKALL() 
+    AADD(_ids, _full_id)
+    push_ids_to_semaphore( table, _ids )
 
-   sql_table_update(table, "END")
-   return .t.
+    SELECT (_alias)
+    SET ORDER TO TAG (order_key_tag)
+    _dbf_pkey_search := ""
+
+    for each _field in id_fields
+
+        if VALTYPE( _field ) == "A"    
+            _t_field := _field[1]
+            _t_field_dec := _field[2]
+            _dbf_pkey_search += STR( values[ _t_field ], _t_field_dec )
+        else
+            _t_field := _field
+            _dbf_pkey_search += values[ _t_field ]
+        endif
+
+    next
+
+    if FLOCK()
+        SEEK _dbf_pkey_search
+        while FOUND()
+            DELETE
+            // sve dok budes nalazio pod ovim kljucem brisi
+            SEEK _dbf_pkey_search
+        enddo
+    else
+        sql_table_update(table, "ROLLBACK")
+        return .f.
+    endif
+    DBUNLOCKALL() 
+
+    sql_table_update(table, "END")
+    return .t.
 
 else
-   sql_table_update(table, "ROLLBACK")
-   return .f.
+    sql_table_update(table, "ROLLBACK")
+    return .f.
 endif
 
 

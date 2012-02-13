@@ -22,9 +22,9 @@ function BrojObracuna()
 private cOznObracuna
 
 if lViseObr
-	cOznObracuna:=cObracun
+    cOznObracuna:=cObracun
 else
-	cOznObracuna:=""
+    cOznObracuna:=""
 endif
 
 return cOznObracuna
@@ -41,20 +41,20 @@ nArr:=select()
 private cPom:=""
 
 for i:=1 to cLDPolja
-	cPom:=padl(alltrim(str(i)),2,"0")
- 	select tippr
-	seek cPom
- 	if tippr->(found()) .and. tippr->aktivan=="D"
-   		if tippr->ufs=="D"
-     			_USati+=_s&cPom
-   		endif
-   		_UIznos+=_i&cPom
-   		if tippr->uneto=="D"
-      			_Uneto+=_i&cPom
-   		else
-      			_UOdbici+=_i&cPom
-   		endif
- 	endif
+    cPom:=padl(alltrim(str(i)),2,"0")
+    select tippr
+    seek cPom
+    if tippr->(found()) .and. tippr->aktivan=="D"
+        if tippr->ufs=="D"
+                _USati+=_s&cPom
+        endif
+        _UIznos+=_i&cPom
+        if tippr->uneto=="D"
+                _Uneto+=_i&cPom
+        else
+                _UOdbici+=_i&cPom
+        endif
+    endif
 next
 
 select(nArr)
@@ -77,11 +77,11 @@ local nRec3:=0
 local nRet := 1
 
 if cObr==nil
-	cObr:=""
+    cObr:=""
 endif
 
 if cIDRJ==nil
-	cIDRJ:=""
+    cIDRJ:=""
 endif
 
 nArr := SELECT()
@@ -94,46 +94,46 @@ seek cMj + cGod + cObr
 
 if !FOUND() .or. EOF()
 
-	// ponovo pretrazi ali bez godine
-	// ima godina = prazan zapis !!!
-	
-	nRet := 2
-	
-	select parobr
-	go top
-	seek cMj + SPACE(4) + cObr
-	
-	if field->id <> cMj
-		nRet := 0
-		skip -1
-	endif
+    // ponovo pretrazi ali bez godine
+    // ima godina = prazan zapis !!!
+    
+    nRet := 2
+    
+    select parobr
+    go top
+    seek cMj + SPACE(4) + cObr
+    
+    if field->id <> cMj
+        nRet := 0
+        skip -1
+    endif
 endif
 
 if IzFMKINI("LD","VrBodaPoRJ","N",KUMPATH) == "D"
 
-	nRec1:=RECNO()
-   	
-	DO WHILE !EOF() .and. id==cMj .and. godina==cGod
-     		IF lViseObr .and. cObr<>obr
-      			SKIP 1
-			LOOP
-     		ENDIF
-     		IF IDRJ==cIdRj
-       			nRec3:=RECNO()
-       			EXIT
-     		ENDIF
-     		IF EMPTY(IDRJ)
-       			nRec2:=RECNO()
-     		ENDIF
-     		SKIP 1
-   	ENDDO
-   	IF nRec3<>0
-     		GO (nRec3)
-   	ELSEIF nRec2<>0
-     		GO (nRec2)
-   	ELSE
-     		GO (nRec1)
-   	ENDIF
+    nRec1:=RECNO()
+    
+    DO WHILE !EOF() .and. id==cMj .and. godina==cGod
+            IF lViseObr .and. cObr<>obr
+                SKIP 1
+            LOOP
+            ENDIF
+            IF IDRJ==cIdRj
+                nRec3:=RECNO()
+                EXIT
+            ENDIF
+            IF EMPTY(IDRJ)
+                nRec2:=RECNO()
+            ENDIF
+            SKIP 1
+    ENDDO
+    IF nRec3<>0
+            GO (nRec3)
+    ELSEIF nRec2<>0
+            GO (nRec2)
+    ELSE
+            GO (nRec1)
+    ENDIF
 ENDIF
 
 SELECT (nArr)
@@ -152,19 +152,19 @@ function Izracunaj(ixx,fPrikaz)
 private cFormula
 
 if PCount()==1
-	fPrikaz:=.t.
+    fPrikaz:=.t.
 endif
 
 cFormula:=TRIM(tippr->formula)
 
 if (tippr->fiksan<>"D") 
-	// ako je fiksan iznos nista ne izracunavaj!
-	if EMPTY(cFormula)
-   		ixx:=0
- 	else
-   		ixx:=&cFormula
- 	endif
-	ixx:=ROUND(ixx,gZaok)
+    // ako je fiksan iznos nista ne izracunavaj!
+    if EMPTY(cFormula)
+        ixx:=0
+    else
+        ixx:=&cFormula
+    endif
+    ixx:=ROUND(ixx,gZaok)
 endif
 return .t.
 *}
@@ -204,144 +204,144 @@ set order to tag (TagVO("2","I"))
 
 i:=0
 if ctip2=="2"
-	do while .t.
-  		++i
-  		if _Mjesec-i<1
-   			seek str(_Godina-1,4)+str(12+_Mjesec-i,2)+_idradn
-   			cMj1:=str(12+_mjesec-i,2)+"."+str(_godina-1,4)
-  		else
-   			seek str(_Godina,4)+str(_mjesec-i,2)+_idradn
-   			cMj1:=str(_mjesec-i,2)+"."+str(_godina,4)
-  		endif
-  		if &gFUGod<>0
-    			nPomak++
-  		else
-    			exit
-  		endif
-  		if i>12  // nema podataka
-    			exit
-  		endif
- 	enddo
+    do while .t.
+        ++i
+        if _Mjesec-i<1
+            seek str(_Godina-1,4)+str(12+_Mjesec-i,2)+_idradn
+            cMj1:=str(12+_mjesec-i,2)+"."+str(_godina-1,4)
+        else
+            seek str(_Godina,4)+str(_mjesec-i,2)+_idradn
+            cMj1:=str(_mjesec-i,2)+"."+str(_godina,4)
+        endif
+        if &gFUGod<>0
+                nPomak++
+        else
+                exit
+        endif
+        if i>12  // nema podataka
+                exit
+        endif
+    enddo
 endif
 
 if _mjesec-1-npomak<1
-	seek str(_Godina-1,4)+str(12+_Mjesec-1-npomak,2)+_idradn
-  	cMj1:=str(12+_mjesec-1-npomak,2)+"."+str(_godina-1,4)
+    seek str(_Godina-1,4)+str(12+_Mjesec-1-npomak,2)+_idradn
+    cMj1:=str(12+_mjesec-1-npomak,2)+"."+str(_godina-1,4)
 else
-  	seek str(_Godina,4)+str(_Mjesec-1-npomak,2)+_idradn
-  	cMj1:=str(_mjesec-1-npomak,2)+"."+str(_godina,4)
+    seek str(_Godina,4)+str(_Mjesec-1-npomak,2)+_idradn
+    cMj1:=str(_mjesec-1-npomak,2)+"."+str(_godina,4)
 endif
 if found()
-	if lViseObr
-     		ScatterS(godina,mjesec,idrj,idradn,"w")
-   	else
-     		wuneto := uneto
-     		wusati := usati
-   	endif
-   	if cTip $ "13"
-     		nMj1:= wUNeto
-   	elseif cTip $ "678"
-     		nMj1:=URPrim()
-   	else
-     		nMj1:=UPrim()
-   	endif
-   	if cTip $ "126"
-    		nSS1:=wUSati
-    		nSP1:=nMj1
-    		if wusati<>0
-      			nMj1:=nMj1/wUSati
-    		else
-      			nMj1:=0
-    		endif
-   	elseif cTip $ "5"
-      		nSS1:=USati()
-   	elseif cTip $ "7"
-      		nSS1:=URSati()
-   	endif
-   	if nMj1<>0
-		++nDijeli
-	endif
+    if lViseObr
+            ScatterS(godina,mjesec,idrj,idradn,"w")
+    else
+            wuneto := uneto
+            wusati := usati
+    endif
+    if cTip $ "13"
+            nMj1:= wUNeto
+    elseif cTip $ "678"
+            nMj1:=URPrim()
+    else
+            nMj1:=UPrim()
+    endif
+    if cTip $ "126"
+            nSS1:=wUSati
+            nSP1:=nMj1
+            if wusati<>0
+                nMj1:=nMj1/wUSati
+            else
+                nMj1:=0
+            endif
+    elseif cTip $ "5"
+            nSS1:=USati()
+    elseif cTip $ "7"
+            nSS1:=URSati()
+    endif
+    if nMj1<>0
+        ++nDijeli
+    endif
 endif
 if _mjesec-2-npomak<1
-	seek str(_Godina-1,4)+str(12+_Mjesec-2-npomak,2)+_idradn
-  	cMj2:=str(12+_mjesec-2-npomak,2)+"."+str(_godina-1,4)
+    seek str(_Godina-1,4)+str(12+_Mjesec-2-npomak,2)+_idradn
+    cMj2:=str(12+_mjesec-2-npomak,2)+"."+str(_godina-1,4)
 else
-  	seek str(_Godina,4)+str(_Mjesec-2-npomak,2)+_idradn
-  	cMj2:=str(_mjesec-2-npomak,2)+"."+str(_godina,4)
+    seek str(_Godina,4)+str(_Mjesec-2-npomak,2)+_idradn
+    cMj2:=str(_mjesec-2-npomak,2)+"."+str(_godina,4)
 endif
 if found()
-	if lViseObr
-     		ScatterS(godina,mjesec,idrj,idradn,"w")
-   	else
-     		wuneto := uneto
-     		wusati := usati
-   	endif
-   	if cTip $ "13"
-     		nMj2:= wUNeto
-   	elseif cTip $ "678"
-     		nMj2:=URPrim()
-   	else
-     		nMj2:=UPrim()
-   	endif
-   	if cTip $ "126"
-    		nSS2:=wUSati
-    		nSP2:=nMj2
-    		if wusati<>0
-      			nMj2:=nMj2/wUSati
-    		else
-      			nMj2:=0
-    		endif
-   	elseif cTip $ "5"
-      		nSS2:=USati()
-   	elseif cTip $ "7"
-      		nSS2:=URSati()
-   	endif
-   	if nMj2<>0
-		++nDijeli
-	endif
+    if lViseObr
+            ScatterS(godina,mjesec,idrj,idradn,"w")
+    else
+            wuneto := uneto
+            wusati := usati
+    endif
+    if cTip $ "13"
+            nMj2:= wUNeto
+    elseif cTip $ "678"
+            nMj2:=URPrim()
+    else
+            nMj2:=UPrim()
+    endif
+    if cTip $ "126"
+            nSS2:=wUSati
+            nSP2:=nMj2
+            if wusati<>0
+                nMj2:=nMj2/wUSati
+            else
+                nMj2:=0
+            endif
+    elseif cTip $ "5"
+            nSS2:=USati()
+    elseif cTip $ "7"
+            nSS2:=URSati()
+    endif
+    if nMj2<>0
+        ++nDijeli
+    endif
 endif
 
 if _mjesec-3-npomak<1
-	seek str(_Godina-1,4)+str(12+_Mjesec-3-npomak,2)+_idradn
-  	cMj3:=str(12+_mjesec-3-npomak,2)+"."+str(_godina-1,4)
+    seek str(_Godina-1,4)+str(12+_Mjesec-3-npomak,2)+_idradn
+    cMj3:=str(12+_mjesec-3-npomak,2)+"."+str(_godina-1,4)
 else
-  	seek str(_Godina,4)+str(_Mjesec-3-npomak,2)+_idradn
-  	cMj3:=str(_mjesec-3-npomak,2)+"."+str(_godina,4)
+    seek str(_Godina,4)+str(_Mjesec-3-npomak,2)+_idradn
+    cMj3:=str(_mjesec-3-npomak,2)+"."+str(_godina,4)
 endif
 if found()
-	if lViseObr
-     		ScatterS(godina,mjesec,idrj,idradn,"w")
-   	else
-     		wuneto := uneto
-     		wusati := usati
-   	endif
-   	if cTip $ "13"
-     		nMj3:= wUNeto
-   	elseif cTip $ "678"
-     		nMj3:=URPrim()
-   	else
-     		nMj3:=UPrim()
-   	endif
-   	if cTip $ "126"
-    		nSS3:=wUSati
-    		nSP3:=nMj3
-    		if wusati<>0
-      			nMj3:=nMj3/wUSati
-    		else
-      			nMj3:=0
-    		endif
-   	elseif cTip $ "5"
-      		nSS3:=USati()
-   	elseif cTip $ "7"
-      		nSS3:=URSati()
-   	endif
-   	if nMj3<>0
-		++nDijeli
-	endif
+    if lViseObr
+            ScatterS(godina,mjesec,idrj,idradn,"w")
+    else
+            wuneto := uneto
+            wusati := usati
+    endif
+    if cTip $ "13"
+            nMj3:= wUNeto
+    elseif cTip $ "678"
+            nMj3:=URPrim()
+    else
+            nMj3:=UPrim()
+    endif
+    if cTip $ "126"
+            nSS3:=wUSati
+            nSP3:=nMj3
+            if wusati<>0
+                nMj3:=nMj3/wUSati
+            else
+                nMj3:=0
+            endif
+    elseif cTip $ "5"
+            nSS3:=USati()
+    elseif cTip $ "7"
+            nSS3:=URSati()
+    endif
+    if nMj3<>0
+        ++nDijeli
+    endif
 endif
 
 if nDijeli==0
-	nDijeli:=99999999
+    nDijeli:=99999999
 endif
 
 nSumsat:=IF(nSS1+nSS2+nSS3<>0,nSS1+nSS2+nSS3,99999999)
@@ -372,9 +372,9 @@ return  (nMj3+nMj2+nMj1)/IF(cTip$"57",nSumsat,ndijeli)
 function UPrim()
 *{
 IF lViseObr
-	c719:=UbaciPrefix(gFUPrim,"w")
+    c719:=UbaciPrefix(gFUPrim,"w")
 ELSE
-  	c719:=gFUPrim
+    c719:=gFUPrim
 ENDIF
 return &c719
 *}
@@ -385,9 +385,9 @@ return &c719
 function USati()
 *{
 IF lViseObr
-	c719:=UbaciPrefix(gFUSati,"w")
+    c719:=UbaciPrefix(gFUSati,"w")
 ELSE
-  	c719:=gFUSati
+    c719:=gFUSati
 ENDIF
 return &c719
 *}
@@ -399,9 +399,9 @@ return &c719
 function URPrim()
 *{
 IF lViseObr
-	c719:=UbaciPrefix(gFURaz,"w")
+    c719:=UbaciPrefix(gFURaz,"w")
 ELSE
-  	c719:=gFURaz
+    c719:=gFURaz
 ENDIF
 return &c719
 *}
@@ -413,9 +413,9 @@ return &c719
 function URSati()
 *{
 IF lViseObr
-	c719:=UbaciPrefix(gFURSati,"w")
+    c719:=UbaciPrefix(gFURSati,"w")
 ELSE
-  	c719:=gFURSati
+    c719:=gFURSati
 ENDIF
 return &c719
 *}
@@ -541,7 +541,7 @@ function Predhodni(i,cVar,cObr)
 local cKljuc:=""
 
 if cObr == NIL
-	cObr := "1"
+    cObr := "1"
 endif
 
 private cpom:=""
@@ -550,10 +550,10 @@ private cpom:=""
 IF "U" $ TYPE("lRekalk"); lRekalk:=.f.; ENDIF
 
 IF lRekalk .and. !TPImaPO(SUBSTR(cVar,3))  
-	// pri rekalkulaciji ne racunaj
-	// predhodni ukoliko u formuli
-	// nema parametara obracuna
-	return 0                                 
+    // pri rekalkulaciji ne racunaj
+    // predhodni ukoliko u formuli
+    // nema parametara obracuna
+    return 0                                 
 ENDIF                                      
 
 PushWa()
@@ -563,9 +563,9 @@ PushWa()
 set order to tag (TagVO("2","I"))
 
 if _Mjesec-i<1
-	hseek str(_Godina-1,4)+str(12+_Mjesec-1,2)+_idradn
+    hseek str(_Godina-1,4)+str(12+_Mjesec-1,2)+_idradn
 else
-	hseek str(_Godina,4)+str(_Mjesec-i,2)+_idradn
+    hseek str(_Godina,4)+str(_Mjesec-i,2)+_idradn
 endif
 
 cPom:=cVar
@@ -588,7 +588,7 @@ if lViseObr
      enddo
    ENDIF
 else
-	&cPom:=&cField
+    &cPom:=&cField
 endif
 
 PopWa()
@@ -638,37 +638,44 @@ function Fill(xValue,xIzn)
  endif
 return 0
 
-**************************
+
+
 function FillR(xValue,xIzn)
-* fora za bolovanje
-* Filr("OSNBOL",PROSJ1("2","2","I18"))
-**************************
- PushWa()
- select radn
- replace &xVAlue with xIzn
- PopWa()
+local _rec
+PushWa()
+select radn
+_rec := dbf_get_rec()
+_rec[LOWER(xValue)] := xIzn
+update_rec_server_and_dbf( ALIAS(), _rec )
+PopWa()
 return xIzn
 
-**************************
-function GETR(cPrompt,xValue)
-**************************
-local nRezult
 
+function GETR(cPrompt,xValue)
+local nRezult
+local _rec
 private Getlist:={}
 
- PushWa()
- select radn
+PushWa()
+select radn
 
- nRezult:=&xValue
- Box(,2,60)
+nRezult := &xValue
+
+Box(,2,60)
     @ m_x+1,m_y+2 SAY cPrompt GET nRezult
-    read
- BoxC()
- if lastkey()==K_ESC
+    READ
+BoxC()
+ 
+if LastKey() == K_ESC
     return &xValue
- endif
- replace &xValue with nRezult
- PopWa()
+endif
+
+_rec := dbf_get_rec()
+_rec[ LOWER(xValue) ] := nRezult
+update_rec_server_and_dbf( ALIAS(), _rec ) 
+ 
+PopWa()
+
 return nRezult
 
 
@@ -680,14 +687,14 @@ local _vars
 
 if (radn->brbod <> _brbod)
 
-	if Pitanje(, Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
+    if Pitanje(, Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
 
             SELECT radn
             _vars := dbf_get_rec()
             _vars["brbod"] := _brbod
             update_rec_server_and_dbf("radn", _vars)
 
-  	endif
+    endif
 
 endif
 
@@ -699,16 +706,16 @@ function FillKMinRad(k_min_rad)
 local _fields
 
 if radn->kminrad <> k_min_rad
-	if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
+    if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
 
             select radn
             _fields := dbf_get_rec()     
             _fields["kminrad"] := k_min_rad
 
-            update_rec_server_and_dbf("radn", _field)
+            update_rec_server_and_dbf( "radn", _fields )
 
-     		select ld
-  	endif
+            select ld
+    endif
 endif
 return .t.
 
@@ -725,9 +732,10 @@ PushWa()
 O_RADN
 O_RADSAT
 select radsat
-set order to tag "1"
+set order to tag "IDRADN"
 
-private Imekol:={}
+private Imekol := {}
+
 AADD(ImeKol, {"radn",         {|| IdRadn   } } )
 AADD(ImeKol, {"ime i prezime", {|| g_naziv(IdRadn) } } )
 AADD(ImeKol, {"sati",          {|| sati   } } )
@@ -736,11 +744,11 @@ AADD(ImeKol, {"status",        {|| status   } } )
 Kol:={}
 
 for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
+    AADD(Kol,i)
 next
 
-Box(,18,60)
-	ObjDbedit("RadSat",18,60,{|| key_handler()},"Pregled radnih sati za radnike","", , , , )
+Box(, MAXROWS() - 16, MAXCOLS() - 5 )
+    ObjDbedit("RadSat", MAXROWS() - 16, MAXCOLS() - 5,{|| key_handler()},"Pregled radnih sati za radnike","", , , , )
 Boxc()
 
 PopwA()
@@ -753,36 +761,36 @@ return
 // key handler za radne sate
 // ---------------------------------------
 static function key_handler()
+local _rec
 
 do case
-	case CH == K_F2
-		
-		Box(,1,40)
-			nSati := field->sati
-			@ m_x+1,m_y+2 SAY "novi sati:" GET nSati
-			read
-		BoxC()
-		if LastKey() == K_ESC
-			return DE_CONT
-		else
-			replace field->sati with nSati
-			
-			scatter()
-			_vals := f18_scatter_global_vars()
-			sql_update_ld_radsat( _vals ) 
+    case CH == K_F2
+        
+        Box(,1,40)
+            nSati := field->sati
+            @ m_x+1,m_y+2 SAY "novi sati:" GET nSati
+            read
+        BoxC()
 
-			return DE_REFRESH
-		endif
+        if LastKey() == K_ESC
+            return DE_CONT
+        else
+            _rec := dbf_get_rec()
+            _rec["sati"] := nSati
+            update_rec_server_and_dbf( ALIAS(), _rec )
+            return DE_REFRESH
+        endif
 
-	case CH == K_CTRL_T
-		if Pitanje(,"izbrisati stavku ?","N") == "D"
-			delete
-			return DE_REFRESH
-		endif
-	
-	case CH == K_CTRL_P
-		stRadniSati()
-		return DE_CONT
+    case CH == K_CTRL_T
+        if Pitanje(,"izbrisati stavku ?","N") == "D"
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( ALIAS(), _rec )
+            return DE_REFRESH
+        endif
+    
+    case CH == K_CTRL_P
+        stRadniSati()
+        return DE_CONT
 endcase
 
 return DE_CONT
@@ -837,14 +845,14 @@ aSati := {}
 nCnt := 0
 do while !EOF() 
 
-	if field->sati = 0
-		skip
-		loop
-	endif
+    if field->sati = 0
+        skip
+        loop
+    endif
 
-	AADD( aSati, { idradn, PADR( g_naziv( idradn ), 25 ), sati, status } )
-	
-	skip
+    AADD( aSati, { idradn, PADR( g_naziv( idradn ), 25 ), sati, status } )
+    
+    skip
 enddo
 
 // sada istampaj
@@ -852,12 +860,12 @@ enddo
 ASORT( aSati,,,{|x,y| x[2] < y[2] } )
 
 for i:=1 to LEN( aSati )
-	
-	? PADL( ALLTRIM( STR( ++ nCnt )), 4 ) + "."
-	@ prow(), pcol()+1 SAY aSati[i, 1]
-	@ prow(), pcol()+1 SAY aSati[i, 2]
-	@ prow(), pcol()+1 SAY aSati[i, 3]
-	@ prow(), pcol()+1 SAY aSati[i, 4]
+    
+    ? PADL( ALLTRIM( STR( ++ nCnt )), 4 ) + "."
+    @ prow(), pcol()+1 SAY aSati[i, 1]
+    @ prow(), pcol()+1 SAY aSati[i, 2]
+    @ prow(), pcol()+1 SAY aSati[i, 3]
+    @ prow(), pcol()+1 SAY aSati[i, 4]
 
 next
 
@@ -874,33 +882,33 @@ return
 function FillRadSati(cIdRadnik,nRadniSati)
 
 // uzmi prethodne sate...
-cSatiPredhodni:=GetStatusRSati(cIdRadnik)	
+cSatiPredhodni:=GetStatusRSati(cIdRadnik)   
 
 if Pitanje(, Lokal("Unos placenih sati (D/N)?"),"D")=="N"
-	return VAL(cSatiPredhodni)
+    return VAL(cSatiPredhodni)
 endif
 
 nPlacenoRSati:=0
 cOdgovor:="D"
 
 Box(,9,48)
-	@ m_x+1,m_y+2 SAY Lokal("Radnik:   ") + ALLTRIM(cIdRadnik)
-	@ m_x+2,m_y+2 SAY Lokal("Ostalo iz predhodnih obracuna: ") + ALLTRIM(cSatiPredhodni) + " sati"
-	@ m_x+3,m_y+2 SAY "-----------------------------------------------"
-	@ m_x+4,m_y+2 SAY Lokal("Uplaceno sati: ") GET nPlacenoRSati PICT "99999999" 
-	read
-	@ m_x+5,m_y+2 SAY "-----------------------------------------------"
-	@ m_x+6,m_y+2 SAY Lokal("Radni sati ovaj mjesec  : ") + ALLTRIM(STR(nRadniSati))
-	@ m_x+7,m_y+2 SAY Lokal("Placeni sati ovaj mjesec: ") + ALLTRIM(STR(nPlacenoRSati))
-	@ m_x+8,m_y+2 SAY Lokal("Ostalo ") + ALLTRIM(STR(nRadniSati-nPlacenoRSati+VAL(cSatiPredhodni))) + Lokal(" sati za sljedeci mjesec !")
-  	@ m_x+9,m_y+2 SAY Lokal("Sacuvati promjene (D/N)? ") GET cOdgovor VALID cOdgovor$"DN" PICT "@!"
-	read
-	
-	if cOdgovor=="D"	
-		UbaciURadneSate(cIdRadnik,nRadniSati-nPlacenoRSati)
-	else
-		MsgBeep(Lokal("Promjene nisu sacuvane !!!"))
-	endif
+    @ m_x+1,m_y+2 SAY Lokal("Radnik:   ") + ALLTRIM(cIdRadnik)
+    @ m_x+2,m_y+2 SAY Lokal("Ostalo iz predhodnih obracuna: ") + ALLTRIM(cSatiPredhodni) + " sati"
+    @ m_x+3,m_y+2 SAY "-----------------------------------------------"
+    @ m_x+4,m_y+2 SAY Lokal("Uplaceno sati: ") GET nPlacenoRSati PICT "99999999" 
+    read
+    @ m_x+5,m_y+2 SAY "-----------------------------------------------"
+    @ m_x+6,m_y+2 SAY Lokal("Radni sati ovaj mjesec  : ") + ALLTRIM(STR(nRadniSati))
+    @ m_x+7,m_y+2 SAY Lokal("Placeni sati ovaj mjesec: ") + ALLTRIM(STR(nPlacenoRSati))
+    @ m_x+8,m_y+2 SAY Lokal("Ostalo ") + ALLTRIM(STR(nRadniSati-nPlacenoRSati+VAL(cSatiPredhodni))) + Lokal(" sati za sljedeci mjesec !")
+    @ m_x+9,m_y+2 SAY Lokal("Sacuvati promjene (D/N)? ") GET cOdgovor VALID cOdgovor$"DN" PICT "@!"
+    read
+    
+    if cOdgovor=="D"    
+        UbaciURadneSate(cIdRadnik,nRadniSati-nPlacenoRSati)
+    else
+        MsgBeep(Lokal("Promjene nisu sacuvane !!!"))
+    endif
 BoxC()
 
 return VAL(cSatiPredhodni)
@@ -916,7 +924,7 @@ select radsat
 hseek cIdRadn
 
 if FOUND() .and. field->idradn == cIdRadn
-	nSati:=field->sati
+    nSati:=field->sati
 endif
 
 select (nArr)
@@ -926,78 +934,69 @@ return STR(nSati)
 
 
 
-function UbaciURadneSate( cIdRadn, nIznosSati )
-
-local nArr
-nArr:=SELECT()
+function UbaciURadneSate( id_radnik, iznos_sati )
+local _t_area := SELECT()
+local _rec, _predh_sati
 
 select radsat
-hseek cIdRadn
+hseek id_radnik
 
 if Found()
-
-	nPredhodniSati:=field->sati
-	replace field->sati with nIznosSati+nPredhodniSati
+    _predh_sati := field->sati
+    _rec := dbf_get_rec()
+    _rec["sati"] := iznos_sati + _predh_sati
+    update_rec_server_and_dbf( ALIAS(), _rec )
 
 else
-
-	append blank
-	replace field->idradn with cIdRadn
-	replace field->sati with nIznosSati
-
+    append blank
+    _rec := dbf_get_rec()
+    _rec["idradn"] := id_radnik
+    _rec["sati"] := iznos_sati
 endif
 
-Scatter()
-// update na sql server
-_vals := f18_scatter_global_vars()
-sql_update_ld_radsat( _vals ) 
+update_rec_server_and_dbf( ALIAS(), _rec )
 
-select (nArr)
+select ( _t_area )
 
 return
+
 
 // ---------------------------------
 // upisi u iznos radne sate
 // ---------------------------------
-function delRadSati( cIdRadn, nIznos )
-
-local nArr
-nArr:=SELECT()
+function delRadSati( id_radnik, iznos_sati )
+local _t_arr := SELECT()
+local _rec
 
 select radsat
-hseek cIdRadn
+hseek id_radnik
 
 if Found()
-	
-	replace field->sati with nIznos
-
-	Scatter()
-	// update na sql server
-	_vals := f18_scatter_global_vars()
-	sql_update_ld_radsat( _vals ) 
+    
+    _rec := dbf_get_rec()
+    _rec["sati"] := iznos_sati
+    update_rec_server_and_dbf( ALIAS(), _rec )  
 
 endif
 
-select (nArr)
+select ( _t_arr )
 
 return
 
 
+
 function FillVPosla()
+local _rec
 
-if radn->idvposla<>_idvposla
-	if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
+if radn->idvposla <> _idvposla
+    if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
 
-    		select radn
-     		replace idvposla with _idvposla
-			
-			Scatter()
-    		// update na sql server
-			_vals := f18_scatter_global_vars()
-			f18_gather( _vals ) 
-
-			select ld
-  	endif
+        select radn
+        _rec := dbf_get_rec()
+        _rec["idvposla"] := _idvposla
+        update_rec_server_and_dbf( ALIAS(), _rec )
+        select ld
+    endif
 endif
 return .t.
 
@@ -1018,7 +1017,6 @@ return cStr
 * izracun bruto iznosa
 ******************************
 function Bruto(nbruto,ndopr)
-*{
 
 nBruto:=_UNETO
 nPorDopr:=0
@@ -1026,19 +1024,19 @@ nPorDopr:=0
 select (F_POR)
 
 if !used()
-	O_POR
+    O_POR
 endif
 
 select (F_DOPR)
 
 if !used()
-	O_DOPR
+    O_DOPR
 endif
 
 select (F_KBENEF)
 
 if !used()
-	O_KBENEF
+    O_KBENEF
 endif
 
 nBO:=0
@@ -1052,21 +1050,21 @@ nC1:=30
 nPorOl:=0
 
 do while !eof()
-	nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok))
-   	nPor+=nPom
-   	skip
+    nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok))
+    nPor+=nPom
+    skip
 enddo
 
 nBruto+=nPor
 nPorDopr+=nPor
 
 if radn->porol<>0  // poreska olaksica
-	nPorOl:=parobr->prosld*radn->porol/100
-   	if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
-     		nPorOl:=nPor
-   	endif
-   	nBruto-=nPorol
-   	nPorDopr-=nPorOl
+    nPorOl:=parobr->prosld*radn->porol/100
+    if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
+            nPorOl:=nPor
+    endif
+    nBruto-=nPorol
+    nPorDopr-=nPorOl
 endif
 if radn->porol<>0
   //? m
@@ -1083,35 +1081,35 @@ nPom:=nDopr:=0
 nC1:=20
 
 do while !eof()  // DOPRINOSI
-	if right(id,1)<>"X"
-   		SKIP
-		LOOP
- 	endif
- 	//? id,"-",naz
- 	//@ prow(),pcol()+1 SAY iznos pict "99.99%"
- 	if empty(idkbenef) // doprinos udara na neto
-   		//@ prow(),pcol()+1 SAY nBO pict gpici
-   		//nC1:=pcol()+1
-   		nPom:=max(dlimit,round(iznos/100*nBO,gZaok))
-   		nBruto+=nPom
-   		nPorDopr+=nPom
- 	else
-   		nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
-   		if nPom0<>0
-     			nPom2:=parobr->k3/100*aNeta[nPom0,2]
-   		else
-     			nPom2:=0
-   		endif
-   		if round(nPom2,gZaok)<>0
-     			//@ prow(),pcol()+1 SAY nPom2 pict gpici
-     			//nC1:=pcol()+1
-     			nPom:=max(dlimit,round(iznos/100*nPom2,gZaok))
-     			nBruto+=nPom
-     			nPorDopr+=nPom
-   		endif
- 	endif
+    if right(id,1)<>"X"
+        SKIP
+        LOOP
+    endif
+    //? id,"-",naz
+    //@ prow(),pcol()+1 SAY iznos pict "99.99%"
+    if empty(idkbenef) // doprinos udara na neto
+        //@ prow(),pcol()+1 SAY nBO pict gpici
+        //nC1:=pcol()+1
+        nPom:=max(dlimit,round(iznos/100*nBO,gZaok))
+        nBruto+=nPom
+        nPorDopr+=nPom
+    else
+        nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
+        if nPom0<>0
+                nPom2:=parobr->k3/100*aNeta[nPom0,2]
+        else
+                nPom2:=0
+        endif
+        if round(nPom2,gZaok)<>0
+                //@ prow(),pcol()+1 SAY nPom2 pict gpici
+                //nC1:=pcol()+1
+                nPom:=max(dlimit,round(iznos/100*nPom2,gZaok))
+                nBruto+=nPom
+                nPorDopr+=nPom
+        endif
+    endif
 
-	skip
+    skip
 enddo // doprinosi
 //? m
 //? "UKUPNO POREZ+DOPRINOSI"
@@ -1347,7 +1345,7 @@ return nRez
 
 
 
-function ObrIzClip()
+function ld_obracun_iz_clipboarda()
 local cMjesec,cIdRj,fnovi,lSveRJ
 
 O_RADN

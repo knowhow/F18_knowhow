@@ -30,7 +30,7 @@ _result := sifrarnik_from_sql_server( _tbl, algoritam, F_LD, ;
         "idvposla", "kminrad", "usati", "uneto", "uodbici", ;
         "uiznos", "varobr", "ubruto", "uneto2", "ulicodb", "trosk", ;
         "opor", "tiprada", "nakn_opor", "nakn_neop", "udopr", ;
-        "udop_st", "uporez", "upor_st", "v_ispl", "obr", ;
+        "udop_st", "uporez", "upor_st", "v_ispl", "obr", "radsat", ;
         "i01", "i02", "i03", "i04", "i05", "i06", "i07", "i08", "i09", "i10", ;
         "i11", "i12", "i13", "i14", "i15", "i16", "i17", "i18", "i19", "i20", ;
         "i21", "i22", "i23", "i24", "i25", "i26", "i27", "i28", "i29", "i30", ;
@@ -239,7 +239,7 @@ local _index_tag := "ID"
 
 _result := sifrarnik_from_sql_server( _tbl, algoritam, F_PAROBR, ;
         { "id", "naz", "vrbod", "k1", "k2", "k3", "k4", "k5", "k6", ;
-        "k7", "k8", "m_br_sat", "m_net_sat", "prosld", "idrj", "godina" }, ;
+        "k7", "k8", "m_br_sat", "m_net_sat", "prosld", "idrj", "obr", "godina" }, ;
         _index_tag, _fields_tag )
 
 return _result

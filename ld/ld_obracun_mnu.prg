@@ -12,99 +12,98 @@
 
 #include "ld.ch"
 
-function ld_obracun()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
 
-AADD(opc, "1. unos                              ")
+function ld_obracun()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+AADD(_opc, "1. unos                              ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","UNOS"))
-	AADD(opcexe, {|| ld_unos_obracuna()})
+	AADD(_opcexe, {|| ld_unos_obracuna()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "2. administracija obracuna           ")
-AADD(opcexe, {|| MnuAdmObr()})
+AADD(_opc, "2. administracija obracuna           ")
+AADD(_opcexe, {|| ld_obracun_mnu_admin()})
 
-Menu_SC("obr")
+f18_menu( "obr", .f., _izbor, _opc, _opcexe )
 
 return
 
-function MnuAdmObr()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
 
-AADD(opc, "1. otvori / zakljuci obracun                     ")
+// administrativni menij obracuna plate
+function ld_obracun_mnu_admin()
+local _radni_sati := fetch_metric("ld_radni_sati", NIL, "N" ) 
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+AADD(_opc, "1. otvori / zakljuci obracun                     ")
 if gZastitaObracuna=="D"
-	AADD(opcexe, {|| DlgZakljucenje()})
+	AADD(_opcexe, {|| DlgZakljucenje()})
 else
-	AADD(opcexe, {|| MsgBeep("Opcija nije dostupna !")})
+	AADD(_opcexe, {|| MsgBeep("Opcija nije dostupna !")})
 endif
 
-if lViseObr
-	AADD(opc, "2. preuzmi podatke iz obracuna       ")
-	if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","UZMIOBR"))
-		AADD(opcexe, {|| UzmiObr()})
-	else
-		AADD(opcexe, {|| MsgBeep(cZabrana)})
-	endif
+AADD(_opc, "2. preuzmi podatke iz obracuna       ")
+if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","UZMIOBR"))
+	AADD(_opcexe, {|| ld_preuzmi_obracun()})
 else
-	AADD(opc, "2. --------------------              ")
-	AADD(opcexe, {|| nil})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "3. prenos obracuna u smece           ")
+AADD(_opc, "3. prenos obracuna u smece           ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","LDSMECE"))
-	AADD(opcexe, {|| LdSmece()})
+	AADD(_opcexe, {|| ld_prenos_u_smece()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "4. povrat obracuna iz smeca          ")
+AADD(_opc, "4. povrat obracuna iz smeca          ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","SMECELD"))
-	AADD(opcexe, {|| SmeceLd()})
+	AADD(_opcexe, {|| ld_prenos_iz_smeca()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "5. uklanjanje obracuna iz smeca      ")
+AADD(_opc, "5. uklanjanje obracuna iz smeca      ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","BRISISMECE"))
-	AADD(opcexe, {|| BrisiSmece()})
+	AADD(_opcexe, {|| ld_brisi_smece()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "6. uzmi obracun iz ClipBoarda (sif0) ")
+AADD(_opc, "6. uzmi obracun iz ClipBoarda (sif0) ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","OBRIZCLIP"))
-	AADD(opcexe, {|| ObrIzClip()})
+	AADD(_opcexe, {|| ld_obracun_iz_clipboarda()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "7. radnici obradjeni vise puta za isti mjesec")
-AADD(opcexe, {|| VisePuta()})
+AADD(_opc, "7. radnici obradjeni vise puta za isti mjesec")
+AADD(_opcexe, {|| ld_obracun_napravljen_vise_puta()})
 
-AADD(opc, "8. promjeni varijantu obracuna za obracun")
-AADD(opcexe, {|| chVarObracun()})
+AADD(_opc, "8. promjeni varijantu obracuna za obracun")
+AADD(_opcexe, {|| ld_promjeni_varijantu_obracuna()})
 
 if gVarObracun == "2"
-	AADD(opc, "9. unos datuma isplate placa")
-	AADD(opcexe, {|| unos_disp()})
+	AADD(_opc, "9. unos datuma isplate placa")
+	AADD(_opcexe, {|| unos_datuma_isplate_place()})
 endif
 
 if gSihtGroup == "D"
-	AADD(opc, "S. obrada sihtarica")
-	AADD(opcexe, {|| siht_obr()})
+	AADD(_opc, "S. obrada sihtarica")
+	AADD(_opcexe, {|| siht_obr()})
 endif
 
-if IzFmkIni("LD","RadniSati","N",KUMPATH) == "D"
-	AADD(opc, "R. pregled/ispravka radnih sati radnika")
-	AADD(opcexe, {|| edRadniSati()})
+if _radni_sati == "D"
+	AADD(_opc, "R. pregled/ispravka radnih sati radnika")
+	AADD(_opcexe, {|| edRadniSati()})
 endif
 
-Menu_SC("ao")
+f18_menu( "ao", .f., _izbor, _opc, _opcexe )
 
 return
 
@@ -112,40 +111,40 @@ return
 // obrada sihtarica
 // ------------------------------------------------
 function siht_obr()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc, "1. unos/ispravka                ")
+AADD(_opc, "1. unos/ispravka                ")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","UNOS"))
-	AADD(opcexe, {|| def_siht()})
+	AADD(_opcexe, {|| def_siht()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "2. pregled unesenih sihtarica")
+AADD(_opc, "2. pregled unesenih sihtarica")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","PRINT"))
-	AADD(opcexe, {|| get_siht()})
+	AADD(_opcexe, {|| get_siht()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "3. pregled ukupnih sati po siht.")
+AADD(_opc, "3. pregled ukupnih sati po siht.")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","PRINT"))
-	AADD(opcexe, {|| get_siht2()})
+	AADD(_opcexe, {|| get_siht2()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "4. brisanje sihtarice ")
+AADD(_opc, "4. brisanje sihtarice ")
 
 if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","BRISANJE"))
-	AADD(opcexe, {|| del_siht()})
+	AADD(_opcexe, {|| del_siht()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-Menu_SC("sobr")
+f18_menu( "sobr", .f., _izbor, _opc, _opcexe )
 
 return
 

@@ -510,6 +510,7 @@ AADD(aDBf,{ 'TROSK'               , 'C' ,   1 ,  2 })
 AADD(aDBf,{ 'VAROBR'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'V_ISPL'              , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'OBR'                 , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'RADSAT'              , 'N' ,  10 ,  0 })
 
 _alias := "LD"
 _table_name := "ld_ld"
@@ -535,8 +536,6 @@ CREATE_INDEX("RADN","idradn", _alias)
 // --------------------------------------
 _alias := "LDSM"
 _table_name := "ld_ldsm"
-
-AADD(aDBf, { "Obr", "C", 1, 0 } )
 
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)

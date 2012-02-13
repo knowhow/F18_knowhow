@@ -17,8 +17,11 @@ local cIdRadn
 local cMjesec
 local cIdRj
 local fnovi
-nUser:=001
+local _rec
+
+nUser := 001
 O_RADN
+O_LD
 
 if Logirati(goModul:oDataBase:cName, "DOK", "BRISIRADNIKA")
     lLogBrRadn:=.t.
@@ -26,24 +29,21 @@ else
     lLogBrRadn:=.f.
 endif
 
-
 do while .t.
-    O_LD
+
     cIdRadn:=SPACE(_LR_)
     cIdRj:=gRj
     cMjesec:=gMjesec
     cGodina:=gGodina
     cObracun := gObracun
+
     Box(,4,60)
         @ m_x+1,m_y+2 SAY "Radna jedinica: "
         QQOUTC(cIdRJ,"N/W")
         @ m_x+2,m_y+2 SAY "Mjesec: "
         QQOUTC(str(cMjesec,2),"N/W")
-        if lViseObr
-            @ m_x+2,col()+2 SAY "Obracun: "
-            QQOUTC(cObracun,"N/W")
-        endif
-        
+        @ m_x+2,col()+2 SAY "Obracun: "
+        QQOUTC(cObracun,"N/W")
         @ m_x+3,m_y+2 SAY "Godina: "
         QQOUTC(STR(cGodina,4),"N/W")
         
@@ -61,20 +61,30 @@ do while .t.
         return
     endif
 
-    if cIdRadn<>"XXXXXX"
+    if cIdRadn <> "XXXXXX"
+
+        O_LD
         select ld
         seek STR(cGodina, 4) + cIdRj + STR(cMjesec, 2) + BrojObracuna() + cIdRadn
+
         if Found()
+
             if Pitanje(,"Sigurno zelite izbrisati ovaj zapis D/N","N")=="D"
-                delete
+
+                _rec := dbf_get_rec()
+                delete_rec_server_and_dbf( "ld_ld", _rec )
+
                 MsgBeep("Izbrisan obracun za radnika: " + cIdRadn + "  !!!")
+
                 if lLogBrRadn
                     EventLog(nUser,goModul:oDataBase:cName,"DOK","BRISIRADNIKA",nil,nil,nil,nil,cIdRj,STR(cMjesec,2),"Rad:"+cIdRadn+" God:"+STR(cGodina,4),Date(),Date(),"","Brisanje obracuna za jednog radnika")
                 endif
+
             endif
         else
             Msg("Podatak ne postoji...",4)
         endif
+
     else
         select ld
         set order to 0
@@ -83,14 +93,14 @@ do while .t.
             Postotak(1, RecCount(),"Ukloni 0 zapise")
             do while !eof()
                     nPom:=0
-                    Scatter()
+                    _rec := dbf_get_rec()
                     for i:=1 to cLDPolja
                         cPom := PadL(ALLTRIM(STR(i)),2,"0")
                         nPom += (ABS(_i&cPom) + ABS(_s&cPom))
                     // ako su sve nule
                     next
                     if (Round(nPom, 5)=0)
-                        DbDelete2()
+                        delete_rec_server_and_dbf( ALIAS(), _rec )
                     endif
                     Postotak(2, RecNo())
                     skip
@@ -105,14 +115,19 @@ do while .t.
     use
 enddo
 
-closeret
+close all
 return
+
+
 
 function BrisiMjesec()
 local cMjesec
 local cIdRj
 local fnovi
-nUser:=001
+local _rec
+
+nUser := 001
+
 O_RADN
 
 if Logirati(goModul:oDataBase:cName,"DOK","BRISIMJESEC")
@@ -134,11 +149,7 @@ do while .t.
     Box(,4,60)
         @ m_x+1,m_y+2 SAY "Radna jedinica: " GET cIdRJ
         @ m_x+2,m_y+2 SAY "Mjesec: "  GET cMjesec pict "99"
-        
-        if lViseObr
-            @ m_x+2,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
-        endif
-        
+        @ m_x+2,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
         @ m_x+3,m_y+2 SAY "Godina: "  GET cGodina pict "9999"
         read
         ClvBox()
@@ -152,10 +163,10 @@ do while .t.
         MsgBeep("Nema otvorenog obracuna za "+ALLTRIM(STR(cMjesec))+"."+ALLTRIM(STR(cGodina)))
         return
     endif
-
     
     if Pitanje(,"Sigurno zelite izbrisati sve podatke za RJ za ovaj mjesec !?","N")=="N"
-        closeret
+        close all
+        return
     endif
     
     MsgO("Sacekajte, brisem podatke....")
@@ -168,8 +179,9 @@ do while .t.
         skip
         nRec:=RecNo()
         skip -1
-        cIdRadn:=idradn
-        delete
+        cIdRadn := field->idradn
+        _rec := dbf_get_rec()
+        delete_rec_server_and_dbf( ALIAS(), _rec )
         go nRec
     enddo
     
@@ -182,18 +194,21 @@ do while .t.
     exit
 enddo
 
-closeret
+close all
 return
-*}
 
-function LdSmece()
-*{
+
+
+function ld_prenos_u_smece()
+local _rec
+
 O_LD
 O_LDSM
-cIdRj:=gRj
-cMjesec:=gMjesec
-cGodina:=gGodina
-cObracun:=" "
+
+cIdRj := gRj
+cMjesec := gMjesec
+cGodina := gGodina
+cObracun := " "
 
 Box(,3,70)
     @ m_x+1,m_y+2 SAY "Mjesec:  "  GET cMjesec pict "99"
@@ -221,23 +236,24 @@ MsgC("Prenos obracuna u smece")
 seek STR(cGodina)+STR(cMjesec)
 
 do while !eof() .and. godina=cGodina .and. mjesec=cMjesec
-    Scatter()
-    _Obr:=cObracun
+    _rec := dbf_get_rec()
+    _rec["obr"] := cObracun
     select ldsm
     append blank
-    gather()
+    dbf_update_rec( _rec )
     select ld
     skip
 enddo
 MsgC()
 
-closeret
-*}
+close all
+return
 
 
-function SmeceLd()
-*{
-local i
+
+function ld_prenos_iz_smeca()
+local i, _rec
+
 O_LD
 O_LDSM
 
@@ -270,35 +286,38 @@ set order to tag "2"
 // str(godina)+str(mjesec)+idradn
 
 if Pitanje(,"Sigurno zelite izvrsiti povrat obracuna iz smeca ?","N")=="N"
-    closeret
+    close all
+    return
 endif
 
 MsgO("Povrat obracuna iz smeca...")
 
 select ldsm
-seek cObracun+STR(cGodina)+STR(cMjesec)
+seek cObracun + STR(cGodina) + STR(cMjesec)
 
-do while !eof() .and. cobracun==obr .and. godina=cgodina .and. mjesec=cmjesec
-    Scatter()
+do while !eof() .and. cObracun==obr .and. godina=cGodina .and. mjesec=cMjesec
+    _rec := dbf_get_rec()
     select ld
     seek STR(_godina)+STR(_mjesec)+_idradn+_idrj
     if !Found()
-            append blank
-            Gather()
+            update_rec_server_and_dbf( ALIAS(), _rec )
     else   // postoji zapis
-            if cDodati=="N"  // ne dodaji na postojeci obracun
-                Gather()
-            else
-                private cPom:=""
-                Scatter("w") // stanje u datoteci ld
-                for i:=1 to cLDPolja
-                    cPom:=PadL(ALLTRIM(STR(i)),2,"0")
-                    wi&cPom+=_i&cPom
-                next
-                wuneto+=_uneto
-                wuodbici+=_uodbici
-                wuiznos+=_uiznos
-                Gather("w")
+        if cDodati == "N"  
+            // ne dodaji na postojeci obracun
+            update_rec_server_and_dbf( ALIAS(), _rec )
+        else
+            private cPom := ""
+            set_global_memvars_from_dbf("w") 
+            // stanje u datoteci ld
+            for i := 1 to cLDPolja
+                cPom := PadL(ALLTRIM(STR(i)),2,"0")
+                wi&cPom += _i&cPom
+            next
+            wuneto += _uneto
+            wuodbici += _uodbici
+            wuiznos += _uiznos
+            _rec := get_dbf_global_memvars( "w" )
+            update_rec_server_and_dbf( ALIAS(), _rec )
         endif
     endif
     
@@ -307,15 +326,15 @@ do while !eof() .and. cobracun==obr .and. godina=cgodina .and. mjesec=cmjesec
 enddo
 MsgC()
 
-closeret
+close all
 return
-*}
 
 
-function BrisiSmece()
-*{
 
+function ld_brisi_smece()
+local _rec
 local nRec
+local _brisano := .f.
 O_LD
 O_LDSM
 
@@ -342,8 +361,14 @@ do while !eof() .and. cObracun==obr .and. godina=cGodina .and. mjesec=cMjesec
     delete
     MsgBeep("Obracun izbrisan iz smeca !!!")
     go nRec
+    _brisano := .t.
 enddo
-closeret
+
+if _brisano
+    __dbPack()
+endif
+
+close all
 return
-*}
+
 

@@ -72,8 +72,14 @@ local cFilter := ""
 if !EMPTY(cCustDesc)
 	
 	cCustDesc := ALLTRIM(cCustDesc)
-	cFilter += "ALLTRIM(UPPER(cust_desc)) = " + cm2str( UPPER(cCustDesc) )
-	
+
+    if RIGHT( cCustDesc ) == "$"
+        // pretrazi po dijelu naziva	
+	    cFilter += _filter_quote( UPPER( LEFT( cCustDesc, LEN( cCustDesc ) - 1 ) ) ) + " $ ALLTRIM(UPPER(cust_desc))" 
+    else
+	    cFilter += "ALLTRIM(UPPER(cust_desc)) = " + _filter_quote( UPPER(cCustDesc) )
+	endif
+
 endif
 
 if !EMPTY(cFilter)

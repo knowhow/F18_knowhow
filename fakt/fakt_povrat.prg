@@ -445,39 +445,38 @@ IF ( _brisi_kum == "D" )
     MsgO("del fakt")
 
     DO WHILE !EOF() .and. _id_firma == field->idfirma .and. _id_tip_dok == field->idtipdok .and. _br_dok == field->brdok
-
+        
+        SKIP 1
         _t_rec := RECNO()
- 
-        _del_rec := hb_hash()
-        _del_rec["idfirma"] := field->idfirma
-        _del_rec["idtipdok"] := field->idtipdok
-        _del_rec["brdok"] := field->brdok
-        _del_rec["rbr"] := field->rbr
+        SKIP -1
 
+        _del_rec := dbf_get_rec()
         _ok := .t.
-
         _ok := delete_rec_server_and_dbf( "fakt", _del_rec )
 
         GO ( _t_rec )
-        SKIP
 
     ENDDO
 
     MsgC()
 
     // pobrisi sada doks i doks2
-    _del_rec := hb_hash()
-    _del_rec["idfirma"] := _id_firma
-    _del_rec["idtipdok"] := _id_tip_dok
-    _del_rec["brdok"] := _br_dok 
-
-    select fakt_doks
     MsgO("del doks")
+    select fakt_doks
+    set order to tag "1"
+    go top
+    seek _if_firma + _id_tip_dok + _br_dok
+
+    _del_rec := dbf_get_rec()
     _ok := delete_rec_server_and_dbf( "fakt_doks", _del_rec )
     MsgC()
 
-    select fakt_doks2
     MsgO("del doks2")
+    select fakt_doks2
+    set order to tag "1"
+    go top
+    seek _if_firma + _id_tip_dok + _br_dok
+    _del_rec := dbf_get_rec()
     _ok := delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
     MsgC()
 

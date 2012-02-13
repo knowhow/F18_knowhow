@@ -198,7 +198,7 @@ endif
 return .t.
 
 
-function P_AMORT(cId,dx,dy)
+function P_AMORT( cId, dx, dy )
 PRIVATE ImeKol,Kol
 ImeKol:={ { PADR("Id",8),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
           { PADR("Naziv",25),{|| naz},     "naz"      },;

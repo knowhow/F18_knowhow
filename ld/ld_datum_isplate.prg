@@ -74,7 +74,7 @@ local cVrIs11
 local cVrIs12
 
 local nGod := YEAR(DATE())
-local cObr := " "
+local cObr := "1"
 local cRj := "  "
 local nX := 1
 local cOk := "D"

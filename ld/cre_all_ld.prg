@@ -182,77 +182,6 @@ endif
 CREATE_INDEX("ID","id",SIFPATH+"VPOSLA")
 
 
-//RADSIHT
-aDbf:={}
-AADD(aDBf,{ 'Godina'              , 'N' ,   4 ,  0 })
-AADD(aDBf,{ 'Mjesec'              , 'N' ,   2 ,  0 })
-AADD(aDBf,{ 'Dan'                 , 'N' ,   2 ,  0 })
-AADD(aDBf,{ 'DanDio'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'IDRADN'              , 'C' ,   6 ,  0 })
-AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
-AADD(aDBf,{ 'OPIS'                , 'C' ,  50 ,  0 })
-AADD(aDBf,{ 'IDTipPR'             , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
-AADD(aDBf,{ 'IdNorSiht'           , 'C' ,   4 ,  0 })
-AADD(aDBf,{ 'Izvrseno'            , 'N' ,  14 ,  3 })
-AADD(aDBf,{ 'Bodova'              , 'N' ,  14 ,  2 })
-
-if !file(f18_ime_dbf("RADSIHT"))
-    DBCREATE2( "RADSIHT", aDBF )
-    reset_semaphore_version( "ld_radsiht" )
-    my_use( "RADSIHT" )
-    close all
-endif
-
-CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr", "RADSIHT" )
-CREATE_INDEX("2","idkonto+str(godina)+str(mjesec)+idradn", "RADSIHT" )
-CREATE_INDEX("3","idnorsiht+str(godina)+str(mjesec)+idradn", "RADSIHT" )
-CREATE_INDEX("4","idradn+str(godina)+str(mjesec)+idkonto", "RADSIHT" )
-CREATE_INDEX("2i","idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", "RADSIHT" )
-
-
-//NORSIHT - norme u sihtarici - koristi se vjerovatno samo kod rada u normi
-aDbf:={}
-AADD(aDBf,{ 'ID'                , 'C' ,   4 ,  0 })
-AADD(aDBf,{ 'NAZ'               , 'C' ,  30 ,  0 })
-AADD(aDBf,{ 'JMJ'               , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'Iznos'             , 'N' ,   8 ,  2 })
-AADD(aDBf,{ 'N1'                , 'N' ,   6 ,  2 })
-AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
-
-if !file(f18_ime_dbf("NORSIHT"))
-
-    DBCREATE2( "NORSIHT", aDBF)
-    reset_semaphore_version("ld_norsiht")
-    my_use("NORSIHT")
-
-endif
-
-CREATE_INDEX("ID","id",KUMPATH+"NORSIHT")
-CREATE_INDEX("NAZ","NAZ",KUMPATH+"NORSIHT")
-
-//TPRSIHT   - tipovi primanja koji odradjuju sihtaricu
-aDbf:={}
-AADD(aDBf,{ 'ID'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'NAZ'               , 'C' ,  30 ,  0 })
-AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
-// K1="F" - po formuli
-//    " " - direktno se unose bodovi
-AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'K3'                , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'FF'                , 'C' ,  30 ,  0 })
-
-if !file(f18_ime_dbf("TPRSIHT"))
-    DBCREATE2( "TPRSIHT", aDBF )
-    reset_semaphore_version("ld_tprsiht")
-    my_use("TPRSIHT")
-endif
-
-CREATE_INDEX("ID","id",KUMPATH+"TPRSIHT")
-CREATE_INDEX("NAZ","NAZ",KUMPATH+"TPRSIHT")
-
 // -----------------------
 // RADN.DBF
 // -----------------------
@@ -751,6 +680,79 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 CREATE_INDEX("IDRADN", "idradn", _alias)
+
+//RADSIHT
+aDbf:={}
+AADD(aDBf,{ 'Godina'              , 'N' ,   4 ,  0 })
+AADD(aDBf,{ 'Mjesec'              , 'N' ,   2 ,  0 })
+AADD(aDBf,{ 'Dan'                 , 'N' ,   2 ,  0 })
+AADD(aDBf,{ 'DanDio'              , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDRADN'              , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
+AADD(aDBf,{ 'OPIS'                , 'C' ,  50 ,  0 })
+AADD(aDBf,{ 'IDTipPR'             , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
+AADD(aDBf,{ 'IdNorSiht'           , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'Izvrseno'            , 'N' ,  14 ,  3 })
+AADD(aDBf,{ 'Bodova'              , 'N' ,  14 ,  2 })
+
+if !file(f18_ime_dbf("RADSIHT"))
+    DBCREATE2( "RADSIHT", aDBF )
+    reset_semaphore_version( "ld_radsiht" )
+    my_use( "RADSIHT" )
+    close all
+endif
+
+CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr", "RADSIHT" )
+CREATE_INDEX("2","idkonto+str(godina)+str(mjesec)+idradn", "RADSIHT" )
+CREATE_INDEX("3","idnorsiht+str(godina)+str(mjesec)+idradn", "RADSIHT" )
+CREATE_INDEX("4","idradn+str(godina)+str(mjesec)+idkonto", "RADSIHT" )
+CREATE_INDEX("2i","idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", "RADSIHT" )
+
+
+//NORSIHT - norme u sihtarici - koristi se vjerovatno samo kod rada u normi
+aDbf:={}
+AADD(aDBf,{ 'ID'                , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'NAZ'               , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'JMJ'               , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'Iznos'             , 'N' ,   8 ,  2 })
+AADD(aDBf,{ 'N1'                , 'N' ,   6 ,  2 })
+AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
+
+if !file(f18_ime_dbf("NORSIHT"))
+
+    DBCREATE2( "NORSIHT", aDBF)
+    reset_semaphore_version("ld_norsiht")
+    my_use("NORSIHT")
+
+endif
+
+CREATE_INDEX("ID","id",KUMPATH+"NORSIHT")
+CREATE_INDEX("NAZ","NAZ",KUMPATH+"NORSIHT")
+
+//TPRSIHT   - tipovi primanja koji odradjuju sihtaricu
+aDbf:={}
+AADD(aDBf,{ 'ID'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'NAZ'               , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'K1'                , 'C' ,   1 ,  0 })
+// K1="F" - po formuli
+//    " " - direktno se unose bodovi
+AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'K3'                , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'FF'                , 'C' ,  30 ,  0 })
+
+if !file(f18_ime_dbf("TPRSIHT"))
+    DBCREATE2( "TPRSIHT", aDBF )
+    reset_semaphore_version("ld_tprsiht")
+    my_use("TPRSIHT")
+endif
+
+CREATE_INDEX("ID","id",KUMPATH+"TPRSIHT")
+CREATE_INDEX("NAZ","NAZ",KUMPATH+"TPRSIHT")
+
+
 
 return .t.
 

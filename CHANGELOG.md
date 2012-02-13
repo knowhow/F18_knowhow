@@ -1,3 +1,8 @@
+0.9.51  2012-02-13, vsasa
+
+ - modul LD, ciscenje (vise obracuna, sihtarice, itd...)
+ - moduli KALK, FIN, korekcija opcije povrata dokumenta
+
 0.9.50  2012-02-10, vsasa
 
  - korekcija semafor funkcija u FIN, KALK, FAKT, azuriranje povrat, upisivanje u semafor tabelu

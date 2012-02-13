@@ -433,8 +433,13 @@ _fakt_data["id_pm"] := field->idpm
 _fakt_data["dok_veza"] := field->dok_veza
 _fakt_data["oper_id"] := getUserId()
 
-_fakt_data["fisc_rn"] := 0
-_fakt_data["fisc_st"] := 0
+if gFisc_use == "D" .and. FieldPOS("fisc_rn") <> 0
+    _fakt_data["fisc_rn"] := field->fisc_rn
+    _fakt_data["fisc_st"] := 0
+else
+    _fakt_data["fisc_rn"] := 0
+    _fakt_data["fisc_st"] := 0
+endif
 
 _fakt_data["dat_isp"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_otpr"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )

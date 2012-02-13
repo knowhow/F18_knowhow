@@ -579,14 +579,10 @@ Box(,5,50)
 	@ m_x+1,m_y+2 SAY "Radna jedinica: "  GET cIdRJ
 	@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
 	@ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-	
-	if lViseObr
-  		@ m_x+4,m_y+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
-	endif
-	
+	@ m_x+4,m_y+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
 	@ m_x+5,m_y+2 SAY "Postavi na varijantu:" GET  cVarijanta
 
-	read
+	READ
 
 	ClvBox()
 	ESC_BCR

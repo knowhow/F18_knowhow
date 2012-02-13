@@ -189,6 +189,10 @@ cDirRad := my_home()
 cDirSif := my_home()
 cDirPriv := my_home()
 
+if (nArea==nil)
+    nArea:=-1
+endif
+
 if (nArea<>-1)
 	CreSystemDb(nArea)
 endif

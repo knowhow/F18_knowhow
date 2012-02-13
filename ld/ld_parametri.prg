@@ -519,12 +519,6 @@ else
     public cLDPolja:=14
 endif
 
-if ld->(fieldpos("OBR"))<>0
-    public lViseObr:=.f.
-else
-    public lViseObr:=.f.
-endif
-
 use
 return
 

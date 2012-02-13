@@ -176,9 +176,7 @@ do while .t.
      		@ m_x+ 2,m_y+ 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
 
      		@ m_x+ 3,m_y+ 2 SAY "Mjesec:"  GET  nMjesec  pict "99"
-     		if lViseObr
-       			@ m_x+ 3,col()+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-     		endif
+       		@ m_x+ 3,col()+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
      		@ m_x+ 3,col()+2 SAY "Godina:"  GET  nGodina  pict "9999"
     		@ m_x+ 3,col()+2 SAY "Format iznosa 9.999,99 (D/N)?"  GET  cFNTZ  VALID cFNTZ$"DN" pict "@!"
      		@ m_x+ 4,m_y+ 2 SAY "Naziv    " GET cIspl1
@@ -293,11 +291,7 @@ UzmiIzIni(cIniName,'Varijable',"SBR",Razrijedi(cSBR),'WRITE')
 UzmiIzIni(cIniName,'Varijable',"SPBR",Razrijedi(cSPBR),'WRITE')
 UzmiIzIni(cIniName,'Varijable',"DATISPL",DTOC(dDatIspl),'WRITE')
 
-if lViseObr
-	cObracun:=TRIM(cObracun)
-else
-	cObracun:=""
-endif
+cObracun := TRIM(cObracun)
 
 cPorOO:=Izrezi("P->",2,@cOstObav)
 cDoprOO:=Izrezi("D->",2,@cOstObav)
@@ -751,9 +745,7 @@ Box(,12,70)
 do while .t.
  @ m_x+2,m_y+2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"
  @ m_x+3,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
- if lViseObr
-   @ m_x+3,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
- endif
+ @ m_x+3,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
  @ m_x+4,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
  @ m_x+6,m_y+2 SAY "Sifra minulog rada" GET cMRad VALID LD->(FIELDPOS("I"+cMRad))>0 .or. EMPTY(cMRad) PICT "99"
  @ m_x+7,m_y+2 SAY "Opstina stanovanja: "  GET  cOpsSt pict "@!" valid empty(cOpsSt) .or. P_Ops(@cOpsSt)
@@ -1251,9 +1243,7 @@ do while .t.
  @ m_x+ 2, m_y+ 2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"
  @ m_x+ 3, m_y+ 2 SAY "Od mjeseca: "  GET  cmjesec  pict "99"
  @ m_x+ 3, col()+2 SAY "do mjeseca: "  GET  cmjesecdo  pict "99"
- if lViseObr
-   @ m_x+ 3, col()+2 SAY "Obracun: "  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
- endif
+ @ m_x+ 3, col()+2 SAY "Obracun: "  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
  @ m_x+ 4, m_y+ 2 SAY "Godina: "  GET  cGodina  pict "9999"
  @ m_x+ 6, m_y+ 2 SAY "Opstina stanovanja: "  GET  cOpsSt pict "@!" valid empty(cOpsSt) .or. P_Ops(@cOpsSt)
  @ m_x+ 7, m_y+ 2 SAY "Opstina rada:       "  GET  cOpsRad  pict "@!" valid empty(cOpsRad) .or. P_Ops(@cOpsRad)

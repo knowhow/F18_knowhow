@@ -68,11 +68,7 @@ Box("#PREGLED TROSKOVA PO SIHTARICAMA", 11, 75)
 @ m_x + 2, col() + 1 SAY "/" GET cGod_od pict "9999"
 @ m_x + 2, col() + 1 SAY "do:" GET cMj_do pict "99" 
 @ m_x + 2, col() + 1 SAY "/" GET cGod_do pict "9999"
-
-if lViseObr
-  	@ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-endif
-
+@ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
 @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
 	VALID EMPTY(cRadnik) .or. p_radn(@cRadnik)
 

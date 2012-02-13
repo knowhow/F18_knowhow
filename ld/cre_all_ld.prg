@@ -30,31 +30,31 @@ AADD(aDBf,{ 'TPR_TIP'             , 'C' ,   1 ,  0 })
 
 if !file(f18_ime_dbf("TIPPR"))
     DBCREATE2( 'TIPPR', aDbf)
-	reset_semaphore_version("tippr")
-	my_use("TIPPR")
+    reset_semaphore_version("tippr")
+    my_use("TIPPR")
 endif
 
 CREATE_INDEX("ID","id",SIFPATH+"TIPPR")
 
 if !file(f18_ime_dbf("TIPPR2"))
-   	DBCREATE2( 'TIPPR2', aDbf )
-	reset_semaphore_version("tippr2")
-	my_use("TIPPR2")
+    DBCREATE2( 'TIPPR2', aDbf )
+    reset_semaphore_version("tippr2")
+    my_use("TIPPR2")
 endif
 
 CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
 
 // modul LD koristi sopstveni sifrarnik radnih jedinica
 if !file(f18_ime_dbf("ld_rj"))
-	aDBf:={}
-   	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-   	add_f_mcode(@aDbf)
-   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
-   	AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
-   	AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
-   	DBCREATE2( "LD_RJ", aDbf )
-	reset_semaphore_version("ld_rj")
-	my_use("ld_rj")
+    aDBf:={}
+    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    add_f_mcode(@aDbf)
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
+    AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
+    DBCREATE2( "LD_RJ", aDbf )
+    reset_semaphore_version("ld_rj")
+    my_use("ld_rj")
 endif
 CREATE_INDEX("ID","id",KUMPATH+"LD_RJ")
 
@@ -71,9 +71,9 @@ AADD(aDBf,{ 'ADRESA'              , 'C' ,  30 ,  0 })
 AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
 AADD(aDBf,{ 'FIL'                 , 'C' ,  30 ,  0 })
 if !file(f18_ime_dbf("KRED"))
-   	DBCREATE2( 'KRED', aDbf )
-	reset_semaphore_version("kred")
-	my_use("KRED")
+    DBCREATE2( 'KRED', aDbf )
+    reset_semaphore_version("kred")
+    my_use("KRED")
 endif
 
 if !file(f18_ime_dbf("_KRED"))
@@ -87,31 +87,31 @@ CREATE_INDEX("NAZ","naz",SIFPATH+"KRED")
 // POR
 if !file(f18_ime_dbf("POR"))
 
-   	aDBf:={}
-  	
-	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    aDBf:={}
+    
+    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
     add_f_mcode(@aDbf)
-   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-   	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
-   	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
-   	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
-   	AADD(aDBf,{ 'POR_TIP'             , 'C' ,   1 ,  0 })
-	// stepenasti porez
-	AADD(aDBf,{ 'ALGORITAM'           , 'C' ,   1 ,  0 })
-	AADD(aDBf,{ 'S_STO_1'             , 'N' ,   5 ,  2 })
-	AADD(aDBf,{ 'S_IZN_1'             , 'N' ,  12 ,  2 })
-   	AADD(aDBf,{ 'S_STO_2'             , 'N' ,   5 ,  2 })
-	AADD(aDBf,{ 'S_IZN_2'             , 'N' ,  12 ,  2 })
-   	AADD(aDBf,{ 'S_STO_3'             , 'N' ,   5 ,  2 })
-	AADD(aDBf,{ 'S_IZN_3'             , 'N' ,  12 ,  2 })
-   	AADD(aDBf,{ 'S_STO_4'             , 'N' ,   5 ,  2 })
-	AADD(aDBf,{ 'S_IZN_4'             , 'N' ,  12 ,  2 })
-   	AADD(aDBf,{ 'S_STO_5'             , 'N' ,   5 ,  2 })
-	AADD(aDBf,{ 'S_IZN_5'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+    AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'POR_TIP'             , 'C' ,   1 ,  0 })
+    // stepenasti porez
+    AADD(aDBf,{ 'ALGORITAM'           , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'S_STO_1'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_1'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_2'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_2'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_3'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_3'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_4'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_4'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_5'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_5'             , 'N' ,  12 ,  2 })
    
-	DBCREATE2( 'POR', aDbf )
-	reset_semaphore_version("por")
-	my_use("POR")
+    DBCREATE2( 'POR', aDbf )
+    reset_semaphore_version("por")
+    my_use("POR")
 
 endif
 
@@ -121,20 +121,20 @@ CREATE_INDEX("ID","id",SIFPATH+"POR")
 // DOPR
 if !file(f18_ime_dbf("DOPR"))
    
-	aDBf:={}
-   	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    aDBf:={}
+    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
     add_f_mcode(@aDbf)
-   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-   	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
-   	AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
-   	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
-   	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
-   	AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
-   	AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
-	
-   	DBCREATE2( 'DOPR', aDbf )
-	reset_semaphore_version("dopr")
-	my_use("dopr")
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+    AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+    
+    DBCREATE2( 'DOPR', aDbf )
+    reset_semaphore_version("dopr")
+    my_use("dopr")
 
 endif
 
@@ -146,8 +146,8 @@ if !file(f18_ime_dbf("STRSPR"))
             {"naz2","C",6,0} ;
                 }
     DBCREATE2( "STRSPR", aDbf )
-	reset_semaphore_version( "strspr" )
-	my_use("STRSPR")
+    reset_semaphore_version( "strspr" )
+    my_use("STRSPR")
 
 endif
 
@@ -159,10 +159,10 @@ if !file(f18_ime_dbf("KBENEF"))
            {"naz","C",8,0} ,;
            {"iznos","N",5,2} ;
          }
-  	DBCREATE2( "KBENEF", aDbf )
-	reset_semaphore_version( "kbenef" )
-	my_use("KBENEF")
-	
+    DBCREATE2( "KBENEF", aDbf )
+    reset_semaphore_version( "kbenef" )
+    my_use("KBENEF")
+    
 endif
 
 CREATE_INDEX("ID","id",SIFPATH+"KBENEF")
@@ -173,9 +173,9 @@ if !file(f18_ime_dbf("VPOSLA"))  // vrste posla
             {"naz","C",20,0} ,;
             {"idkbenef","C",1,0} ;
          }
-	DBCREATE2( "VPOSLA", aDbf )
-	reset_semaphore_version( "vposla" )
-	my_use( "VPOSLA" )
+    DBCREATE2( "VPOSLA", aDbf )
+    reset_semaphore_version( "vposla" )
+    my_use( "VPOSLA" )
 
 endif
 
@@ -199,9 +199,9 @@ AADD(aDBf,{ 'Izvrseno'            , 'N' ,  14 ,  3 })
 AADD(aDBf,{ 'Bodova'              , 'N' ,  14 ,  2 })
 
 if !file(f18_ime_dbf("RADSIHT"))
-	DBCREATE2( "RADSIHT", aDBF )
-	reset_semaphore_version( "ld_radsiht" )
-	my_use("RADSIHT")
+    DBCREATE2( "RADSIHT", aDBF )
+    reset_semaphore_version( "ld_radsiht" )
+    my_use("RADSIHT")
 endif
 
 CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr",KUMPATH+"RADSIHT")
@@ -222,9 +222,9 @@ AADD(aDBf,{ 'K2'                , 'C' ,   2 ,  0 })
 
 if !file(f18_ime_dbf("NORSIHT"))
 
-	DBCREATE2( "NORSIHT", aDBF)
-	reset_semaphore_version("ld_norsiht")
-	my_use("NORSIHT")
+    DBCREATE2( "NORSIHT", aDBF)
+    reset_semaphore_version("ld_norsiht")
+    my_use("NORSIHT")
 
 endif
 
@@ -243,9 +243,9 @@ AADD(aDBf,{ 'K3'                , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'FF'                , 'C' ,  30 ,  0 })
 
 if !file(f18_ime_dbf("TPRSIHT"))
-	DBCREATE2( "TPRSIHT", aDBF )
-	reset_semaphore_version("ld_tprsiht")
-	my_use("TPRSIHT")
+    DBCREATE2( "TPRSIHT", aDBF )
+    reset_semaphore_version("ld_tprsiht")
+    my_use("TPRSIHT")
 endif
 
 CREATE_INDEX("ID","id",KUMPATH+"TPRSIHT")
@@ -328,7 +328,7 @@ if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
     close all
 endif
-	
+    
 // RADKR.DBF
 aDbf:={}
 AADD(aDBf,{ 'IDRadn'              , 'C' ,   6 ,  0 })
@@ -521,26 +521,13 @@ if !FILE(f18_ime_dbf(_alias))
     close all
 endif
 
-IF lViseObr
-	// polje OBR koristimo u indeksima
-  	CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn", _alias)
-  	CREATE_INDEX("2","str(godina)+str(mjesec)+obr+idradn+idrj", _alias)
-  	CREATE_INDEX("3","str(godina)+idrj+idradn", _alias)
-  	CREATE_INDEX("4","str(godina)+idradn+str(mjesec)+obr", _alias)
-  	CREATE_INDEX("1U","str(godina)+idrj+str(mjesec)+idradn", _alias)
-  	CREATE_INDEX("2U","str(godina)+str(mjesec)+idradn+idrj", _alias)
-
-else
-  	
-	// standardno: ne postoji polje OBR
-  	CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+idradn", _alias)
-  	CREATE_INDEX("2","str(godina)+str(mjesec)+idradn+idrj", _alias)
-  	CREATE_INDEX("3","str(godina)+idrj+idradn", _alias)
-  	CREATE_INDEX("4","str(godina)+idradn+str(mjesec)", _alias)
-  	CREATE_INDEX("5","idradn+str(godina)+str(mjesec)", _alias)
-	
-endif
-
+// polje OBR koristimo u indeksima
+CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn", _alias)
+CREATE_INDEX("2","str(godina)+str(mjesec)+obr+idradn+idrj", _alias)
+CREATE_INDEX("3","str(godina)+idrj+idradn", _alias)
+CREATE_INDEX("4","str(godina)+idradn+str(mjesec)+obr", _alias)
+CREATE_INDEX("1U","str(godina)+idrj+str(mjesec)+idradn", _alias)
+CREATE_INDEX("2U","str(godina)+str(mjesec)+idradn+idrj", _alias)
 CREATE_INDEX("RADN","idradn", _alias)
 
 // --------------------------------------
@@ -587,10 +574,11 @@ AADD(aDBf, { 'K5'                  , 'N' ,  12 ,  6 })
 AADD(aDBf, { 'K6'                  , 'N' ,  12 ,  6 })
 AADD(aDBf, { 'K7'                  , 'N' ,  11 ,  6 })
 AADD(aDBf, { 'K8'                  , 'N' ,  11 ,  6 })
+AADD(aDBf, { 'OBR'                 , 'C' ,   1 ,  0 })
 AADD(aDBf, { 'PROSLD'              , 'N' ,  12 ,  2 })
 AADD(aDBf, { 'M_BR_SAT'            , 'N' ,  12 ,  2 })
 AADD(aDBf, { 'M_NET_SAT'           , 'N' ,  12 ,  2 })
-   		
+        
 _alias := "PAROBR"
 _table_name := "ld_parobr"
 
@@ -601,11 +589,7 @@ if !FILE(f18_ime_dbf(_alias))
     close all
 endif
 
-IF lViseObr
-  	CREATE_INDEX("ID", "id+godina+obr", _alias)
-ELSE
-  	CREATE_INDEX("ID", "id+godina", _alias)
-ENDIF
+CREATE_INDEX("ID", "id+godina+obr", _alias)
 
 
 // ---------------------------------------
@@ -637,7 +621,6 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 CREATE_INDEX("RJ", "rj+STR(godina)+STR(mjesec)+status+obr", _alias)
-
 
 aDbf := {}
 

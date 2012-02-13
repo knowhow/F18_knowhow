@@ -367,10 +367,7 @@ endif
 
 AADD(ImeKol, { padr("mjesec", 8),  {|| id}, "id", {|| IIF(VALTYPE(wId) == "C", EVAL(MEMVARBLOCK("wId"), VAL(wId)), NIL), .t. } })
 AADD(ImeKol, { "godina" , {|| godina} , "godina", {|| IIF(VALTYPE(wId) == "N", EVAL(MEMVARBLOCK("wID"), STR(wId, 2)), NIL), .t. }  } )
-
-if lViseObr
-    AADD(ImeKol, { padr("obracun",10) , {|| obr} , "obr" } )
-endif
+AADD(ImeKol, { padr("obracun",10) , {|| obr} , "obr" } )
 
 if IzFMKINI( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
     AADD(ImeKol, { "rj" , {|| IDRJ} , "IDRJ" } )

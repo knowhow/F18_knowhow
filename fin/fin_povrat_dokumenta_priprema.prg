@@ -16,6 +16,7 @@ local _rec
 local nRec
 local _del_rec, _ok
 local _field_ids, _where_block
+local _t_rec
 
 if lStorno==NIL 
   lStorno:=.f.
@@ -128,45 +129,93 @@ if !lStorno
     go top
     seek cIdfirma + cIdvn + cBrNal
 
-    MsgO( "del suban/sint/anal/nalog u toku..." )
+    MsgO( "brisem subanalitiku..." )
+
+    _ok := .t.
 
     do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
 
-        _del_rec := hb_hash()
-        _del_rec["idfirma"] := cIdFirma
-        _del_rec["idvn"]    := cIdVn
-        _del_rec["brnal"]   := cBrNal 
-        _del_rec["rbr"]   := PADL( field->rbr, 4 )
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
+        _del_rec := dbf_get_rec()
     
-        _ok := .t.
+        // pobrisi suban
         _ok :=  delete_rec_server_and_dbf("suban", _del_rec )
 
-        _del_rec["rbr"]   := PADL( field->rbr, 3 )
-    
-        select anal
-        _ok :=  delete_rec_server_and_dbf("anal", _del_rec )
-        select sint
-        _ok :=  delete_rec_server_and_dbf("sint", _del_rec )
-
-        select suban
-        skip
+        go ( _t_rec )
 
     enddo
 
-    _del_rec := hb_hash()
-    _del_rec["idfirma"] := cIdFirma
-    _del_rec["idvn"]    := cIdVn
-    _del_rec["brnal"]   := cBrNal 
- 
+    MsgC()        
+
+    select sint
+    set order to tag "2"
+    go top
+    seek cIdfirma + cIdvn + cBrNal
+
+    MsgO( "brisem sintetiku..." )
+
+    _ok := .t.
+
+    do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
+
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
+        _del_rec := dbf_get_rec()
+        _ok :=  delete_rec_server_and_dbf("sint", _del_rec )
+
+        go ( _t_rec )
+
+    enddo
+
+    MsgC()
+
+    select anal
+    set order to tag "2"
+    go top
+    seek cIdfirma + cIdvn + cBrNal
+
+    MsgO( "brisem analitiku..." )
+
+    _ok := .t.
+
+    do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
+
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
+        _del_rec := dbf_get_rec()
+        _ok :=  delete_rec_server_and_dbf("anal", _del_rec )
+
+        go ( _t_rec )
+
+    enddo
+
+    MsgC()
+
+    MsgO( "brisem nalog....." )
+
     select nalog
-    _ok :=  delete_rec_server_and_dbf("nalog", _del_rec )
+    set order to tag "1"
+    go top
+    seek cIdfirma + cIdvn + cBrNal
+
+    // na kraju pobrisi nalog
+    _del_rec := dbf_get_rec()
+ 
+    _ok := delete_rec_server_and_dbf("nalog", _del_rec )
 
     MsgC()
 
 endif
 
 if !_ok
-  MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
+    MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
 endif
 
 if lLogPovrat

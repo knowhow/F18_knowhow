@@ -19,7 +19,7 @@ function ld_set_firma()
 local _godina := fetch_metric( "ld_godina", my_user(), gGodina )
 local _rj := fetch_metric( "ld_rj", my_user(), gRj )
 local _mjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
-local _v_obr := fetch_metric( "ld_vise_obracuna", my_user(), .f. )
+local _v_obr := fetch_metric( "ld_vise_obracuna", NIL, lViseObr )
 local _obracun := fetch_metric( "ld_obracun", my_user(), gObracun )
 
 private GetList:={}
@@ -30,7 +30,7 @@ Box(, 4,60)
     @ m_x+2,m_y+2 SAY "Mjesec        :" GET _mjesec pict "99"
     @ m_x+3,m_y+2 SAY "Godina        :" GET _godina pict "9999"
     
-    if _v_obr
+    if _v_obr == .t.
         @ m_x+4,m_y+2 SAY "Obracun       " GET _obracun WHEN HelpObr( .f., _obracun ) VALID ValObr( .f., _obracun )
     endif
     
@@ -146,6 +146,7 @@ return
 function ld_set_obracun()
 local nX := 1
 local _radni_sati := fetch_metric("ld_radni_sati", NIL, "N" ) 
+local _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
 private GetList:={}
 
 cVarPorol := PADR( cVarPorol, 2 )
@@ -197,7 +198,10 @@ Box(, 20, 77)
     ++ nX
 
     @ m_x + nX, m_y + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
+    ++ nX
 
+    @ m_x + nX, m_y + 2 SAY "Porezi - stepenaste stope ? (D/N)" GET _st_stopa VALID _st_stopa $ "DN" PICT "@!"
+    
     READ
 
 BoxC()
@@ -218,10 +222,11 @@ if (LastKey() <> K_ESC)
     Wpar("vs",gVarSpec)
     Wpar("rf",gRadnFilter)
 
-    set_metric("ld_varijanta_obracuna", NIL, gVarObracun ) 
-    set_metric("ld_obrada_sihtarica", NIL, gSihtarica ) 
-    set_metric("ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup ) 
-    set_metric("ld_radni_sati", NIL, _radni_sati ) 
+    set_metric( "ld_varijanta_obracuna", NIL, gVarObracun ) 
+    set_metric( "ld_obrada_sihtarica", NIL, gSihtarica ) 
+    set_metric( "ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup ) 
+    set_metric( "ld_radni_sati", NIL, _radni_sati ) 
+    set_metric( "ld_porezi_stepenasta_stopa", NIL, _st_stopa )
 
 endif
 

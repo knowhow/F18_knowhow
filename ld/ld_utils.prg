@@ -546,7 +546,7 @@ return ld->varobr
 // promjena varijante obracuna za tekuci obracun
 // -----------------------------------------------------
 function chVarObracun()
-local nLjudi
+local nLjudi, _rec
 
 if Logirati(goModul:oDataBase:cName,"DOK","CHVAROBRACUNA")
 	lLogChVarObr:=.t.
@@ -593,19 +593,19 @@ Box(,5,50)
 BoxC()
 
 select ld
-seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
+seek STR( cGodina, 4 ) + cIdRj + STR( cMjesec, 2 ) + BrojObracuna()
 
 EOF CRET
 
-nLjudi:=0
+nLjudi := 0
 
 Box(,1,12)
   
    do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .and. if(lViseObr,cObracun==obr,.t.)
 
-	Scatter()
-	_varobr := cVarijanta
-	Gather()
+	_rec := dbf_get_rec()
+    _rec["varobr"] := cVarijanta
+    update_rec_server_and_dbf( ALIAS(), _rec )
 
  	@ m_x+1,m_y+2 SAY ++nLjudi pict "99999"
  	
@@ -622,7 +622,7 @@ Box(,1,12)
 
 BoxC()
 
-closeret
+close all
 
 return
 

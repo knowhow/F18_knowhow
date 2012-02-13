@@ -242,11 +242,13 @@ public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
 
 // bazni parametri obracuna...
+// globalni parametri
 gVarObracun := fetch_metric("ld_varijanta_obracuna", NIL, "2")
+lViseObr := fetch_metric( "ld_vise_obracuna", NIL, lViseObr )
+// parametri po korisinicima
 gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
 gRJ := fetch_metric( "ld_rj", my_user(), gRj )
 gMjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
-lViseObr := fetch_metric( "ld_vise_obracuna", my_user(), lViseObr )
 gObracun := fetch_metric( "ld_obracun", my_user(), gObracun )
 
 // ostali parametri...

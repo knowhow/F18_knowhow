@@ -947,6 +947,7 @@ local _id_firma
 local _id_vd
 local _br_dok
 local _del_rec, _ok
+local _t_rec
 
 _brisi_kum := .f.
 
@@ -1031,13 +1032,12 @@ if _brisi_kum
     hseek _id_firma + _id_vd + _br_dok
 
     do while !eof() .and. _id_firma == field->IdFirma .and. _id_vd == field->IdVD .and. _br_dok == field->BrDok
- 
-        _del_rec := hb_hash()
-        _del_rec["idfirma"] := field->idfirma
-        _del_rec["idvd"]    := field->idvd
-        _del_rec["brdok"]   := field->brdok
-        _del_rec["rbr"]     := field->rbr
 
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
+        _del_rec := dbf_get_rec()
         _ok := .t.
         _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
 
@@ -1047,17 +1047,14 @@ if _brisi_kum
             return
         endif
         
-        skip
+        go ( _t_rec )
+
     enddo
 
     select kalk_doks
     hseek _id_firma + _id_vd + _br_dok
          
-    _del_rec := hb_hash()
-    _del_rec["idfirma"] := field->idfirma
-    _del_rec["idvd"]    := field->idvd
-    _del_rec["brdok"]   := field->brdok
-    
+    _del_rec := dbf_get_rec()
     _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
 
     if !_ok

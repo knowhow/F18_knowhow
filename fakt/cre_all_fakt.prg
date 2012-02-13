@@ -75,12 +75,14 @@ CREATE_INDEX("IDPARTN","idpartner", _alias)
 // fakt_pripr
 // ----------------------------------------------------------------------------
 
+_created := .f.
 _alias := "FAKT_PRIPR"
 _table_name := "fakt_pripr"
 if !FILE(f18_ime_dbf(_alias))
     DBcreate2(_alias, aDbf)
+    _created := .t.
 endif
-    
+
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2", "IdFirma+dtos(datdok)", _alias)
 CREATE_INDEX("3", "IdFirma+idroba+rbr", _alias)

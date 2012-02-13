@@ -718,30 +718,41 @@ return nSelected
 // prikazuje broj fiskalnog racuna
 // -------------------------------------------------
 static function _veza_fc_rn()
-local cFiscal
-local cRekl
-local nTotal
+local _fisc_rn
+local _rekl_rn
+local _total
+local _txt := ""
 
 if fakt_doks->(FIELDPOS("FISC_RN")) = 0
     return
 endif
 
-cFiscal := ALLTRIM( STR( fakt_doks->fisc_rn ) )
-cRekl := ALLTRIM( STR( fakt_doks->fisc_st ) )
-nTotal := fakt_doks->iznos
+_fisc_rn := ALLTRIM( STR( fakt_doks->fisc_rn ) )
+_rekl_rn := ALLTRIM( STR( fakt_doks->fisc_st ) )
+_total := fakt_doks->iznos
 
 // samo za izlazne dokumente
 if fakt_doks->idtipdok $ "10#11"
     
-    if cFiscal == "0" .or. ( cFiscal <> "0" .and. cRekl == "0" .and. nTotal < 0 )
-        @ m_x + 1, m_y + 2 SAY ;
-            PADR( "nema fiskalnog racuna !!!", 60 ) ;
-            COLOR "W/R+"
+    if _fisc_rn == "0" .or. ( _fisc_rn <> "0" .and. _rekl_rn == "0" .and. _total < 0 )
+
+        _txt := "nema fiskalnog racuna !?!!!"
+
+        @ m_x + 1, m_y + 2 SAY PADR( _txt, 60 ) COLOR "W/R+"
+    
     else
-        @ m_x + 1, m_y + 2 SAY ;
-            PADR( "fiskalni rn: " + cFiscal + " rekl: " + cRekl, 60 ) ;
-            COLOR "GR+/B"
+        
+        _txt := ""
+
+        if _rekl_rn <> "0"
+            _txt += "reklamni racun: " + _rekl_rn + ", " 
+        endif
+
+        _txt += "fiskalni rn: " + _fisc_rn
+               
+        @ m_x + 1, m_y + 2 SAY PADR( _txt, 60 ) COLOR "GR+/B"
     endif
+
 else
     @ m_x + 1, m_y + 2 SAY PADR( "", 60 )
 endif

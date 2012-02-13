@@ -433,7 +433,7 @@ _fakt_data["id_pm"] := field->idpm
 _fakt_data["dok_veza"] := field->dok_veza
 _fakt_data["oper_id"] := getUserId()
 
-if gFisc_use == "D" .and. FieldPOS("fisc_rn") <> 0
+if gFc_use == "D" .and. FieldPOS("fisc_rn") <> 0
     _fakt_data["fisc_rn"] := field->fisc_rn
     _fakt_data["fisc_st"] := 0
 else

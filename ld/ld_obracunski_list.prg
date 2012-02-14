@@ -574,6 +574,7 @@ clear screen
 
 if !FILE(cOutput)
 	msgbeep("greska pri kreiranju izlaznog fajla !")
+    restore screen from cScreen
 	return
 endif
 

@@ -34,7 +34,7 @@ set_pdv_params()
 
 gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
 gFirma := fetch_metric( "org_id", nil, gFirma)
-gNFirma := fetch_metric( "org_naziv", nil, gNFirma )
+gNFirma := PADR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
 gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
 gTS := fetch_metric( "tip_subjekta", nil, gTS )
 gTabela := fetch_metric( "tip_tabele", nil, gTabela )

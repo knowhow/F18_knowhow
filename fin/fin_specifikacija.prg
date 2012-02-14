@@ -999,7 +999,7 @@ Box("",20,65)
 
 		@ m_x + 15, m_y + 2 SAY "Opcina (prazno-sve):" GET cOpcine
 		UpitK1k4(15)
- 		@ m_x+10,m_y+2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
+ 		@ m_x+16,m_y+2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
 		
 		READ
 		ESC_BCR

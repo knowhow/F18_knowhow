@@ -2,6 +2,7 @@
 
  - modul LD, ciscenje (vise obracuna, sihtarice, itd...)
  - moduli KALK, FIN, korekcija opcije povrata dokumenta
+ - modul OS, popisna lista - export u dbf/odt
 
 0.9.50  2012-02-10, vsasa
 

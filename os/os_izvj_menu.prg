@@ -14,35 +14,37 @@
 
 
 function os_izvjestaji()
-private Izbor:=1
-private opc:={}
-private opcexe:={}
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
 
-cTip:=IF(gDrugaVal=="D",ValDomaca(),"")
-cBBV:=cTip; nBBK:=1
+cTip := IF( gDrugaVal == "D", ValDomaca(), "" )
+cBBV := cTip
+nBBK := 1
 
-AADD(opc, "1. pregled sredstava za rj                          ")
-AADD(opcexe, {|| os_pregled_po_rj()})
-AADD(opc, "2. pregled sredstava po kontima")
-AADD(opcexe, {|| os_pregled_po_kontima()})
-AADD(opc, "3. amortizacija po kontima")
-AADD(opcexe, {|| os_pregled_amortizacije() } )
-AADD(opc, "4. revalorizacija po kontima")
-AADD(opcexe, {|| os_pregled_revalorizacije()})
-AADD(opc, "5. rekapitulacija kolicina po grupacijama - k1")
-AADD(opcexe, {|| os_rekapitulacija_po_k1()})
-AADD(opc, "6. amortizacija po grupama amortizacionih stopa")
-AADD(opcexe, {|| os_amortizacija_po_stopama()})
-AADD(opc, "7. amortizacija po kontima i po grupama amort.stopa")
-AADD(opcexe, {|| os_amortizacija_po_kontima()})
-AADD(opc, "8. kartica sredstva")
-AADD(opcexe, {|| os_kartica_sredstva()})
-AADD(opc, "9. lista sredstava uvedenih u tekucoj godini")
-AADD(opcexe, {|| NovaSredstva()})
-AADD(opc, "A. lista sredstava izbrisanih u tekucoj godini")
-AADD(opcexe, {|| IzbrisanaSredstva()})
+AADD(_opc, "1. pregled sredstava za rj                          ")
+AADD(_opcexe, {|| os_pregled_po_rj()})
+AADD(_opc, "2. pregled sredstava po kontima")
+AADD(_opcexe, {|| os_pregled_po_kontima()})
+AADD(_opc, "3. amortizacija po kontima")
+AADD(_opcexe, {|| os_pregled_amortizacije() } )
+AADD(_opc, "4. revalorizacija po kontima")
+AADD(_opcexe, {|| os_pregled_revalorizacije()})
+AADD(_opc, "5. rekapitulacija kolicina po grupacijama - k1")
+AADD(_opcexe, {|| os_rekapitulacija_po_k1()})
+AADD(_opc, "6. amortizacija po grupama amortizacionih stopa")
+AADD(_opcexe, {|| os_amortizacija_po_stopama()})
+AADD(_opc, "7. amortizacija po kontima i po grupama amort.stopa")
+AADD(_opcexe, {|| os_amortizacija_po_kontima()})
+AADD(_opc, "8. kartica sredstva")
+AADD(_opcexe, {|| os_kartica_sredstva()})
+AADD(_opc, "9. lista sredstava uvedenih u tekucoj godini")
+AADD(_opcexe, {|| NovaSredstva()})
+AADD(_opc, "A. lista sredstava izbrisanih u tekucoj godini")
+AADD(_opcexe, {|| IzbrisanaSredstva()})
 
-
-Menu_SC("izv")
+f18_menu( "izv", .f., _izbor, _opc, _opcexe )
 
 return
+
+

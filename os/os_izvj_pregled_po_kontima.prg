@@ -41,7 +41,7 @@ O_RJ
 o_os_sii_promj()
 o_os_sii()
 
-cIdrj:=space(4)
+cIdrj := SPACE( LEN(field->idrj) )
 cAmoGr:="N"
 cON:="N"
 cPromj:="2"
@@ -57,75 +57,75 @@ cFiltK3:=SPACE(40)
 cRekapKonta:="N"
 
 Box(,20,77)
-	DO WHILE .t.
-  	@ m_x+1,m_y+2 SAY "Radna jedinica (prazno - svi):" get cidrj valid empty(cIdRj) .or. p_rj(@cIdrj)
-  	@ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
-  	@ m_x+2,m_y+2 SAY "Konto (prazno - svi):" get qIdKonto pict "@!" valid empty(qidkonto) .or. P_Konto(@qIdKonto)
-  	@ m_x+2,col()+2 SAY "grupisati konto na broj mjesta" get nKontoLen pict "9" valid (nKontoLen > 0 .and. nKontoLen < 8)
-  	@ m_x+3,m_y+2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
-  	@ m_x+4,m_y+2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" get cON valid con $ "ONBG " pict "@!"
-  	@ m_x+5,m_y+2 SAY "Za sredstvo prikazati vrijednost:"
-  	@ m_x+6,m_y+2 SAY "1 - bez promjena"
-  	@ m_x+7,m_y+2 SAY "2 - osnovni iznos + promjene"
-  	@ m_x+8,m_y+2 SAY "3 - samo promjene           " GET cPromj valid cpromj $ "123"
-  	@ m_x+10, m_y+2 SAY "1 - prikaz bez uracunate amortizacije i revalor:"
-  	@ m_x+11,m_y+2 SAY "2 - sa uracunatom amortizacijom i revalor      :"
-  	@ m_x+12,m_y+2 SAY "3 - samo amortizacije                          :"
-  	@ m_x+13,m_y+2 SAY "4 - samo revalorizacije                        :"  GET cDodaj valid cDodaj $ "1234"
-  	@ m_x+14, m_y+2 SAY "Prikazi samo rekapitulaciju konta (D/N)" GET cRekapKonta VALID cRekapKonta$"DN" PICT "@!"
-  	@ m_x+15,m_y+2 SAY "Pregled za datumski period :" GET cDatPer valid cdatper $ "DN" pict "@!"
-  	@ m_x+16,m_y+2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr valid cFiltSadVr $ "012" pict "9"
-  	@ m_x+17,m_y+2 SAY "Filter po grupaciji K1:" GET cFiltK1 pict "@!S20"
-  	@ m_x+18,m_y+2 SAY "Filter po K3:" GET cFiltK3 pict "@!S10"
-  	@ m_x+18,m_y+30 SAY "Izbaciti(I) / Ubaciti(U)" GET cIzbUbac PICT "@!" VALID cIzbUbac $ "IU"
-  	@ m_x+19,m_y+2 SAY "Prikazati kolonu 'amort.grupa'? D/N" get cAmoGr valid cAmoGr $ "DN" pict "@!"
-  	read
-  	ESC_BCR
-  	if cDatPer=="D"
-    		@ m_x+20,m_y+2 SAY "Od datuma " GET dDatOd
-    		@ m_x+20,col()+2 Say "do" GET dDatDo
-    		read
-		ESC_BCR
-  	endif
-  	aUsl1:=Parsiraj(cFiltK1, "K1")
-  	aUsl2:=Parsiraj(cFiltK3, "K3")
-  	if cIzbUbac=="I"
-  		aUsl2:=StrTran(aUsl2, "=", "<>")
-  	endif
-  	if aUsl1<>NIL
-  		exit
-  	endif
-  	if aUsl2<>NIL
-  		exit
-  	endif
-	ENDDO
+  DO WHILE .t.
+    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno - svi):" get cidrj valid empty(cIdRj) .or. p_rj(@cIdrj)
+    @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
+    @ m_x+2,m_y+2 SAY "Konto (prazno - svi):" get qIdKonto pict "@!" valid empty(qidkonto) .or. P_Konto(@qIdKonto)
+    @ m_x+2,col()+2 SAY "grupisati konto na broj mjesta" get nKontoLen pict "9" valid (nKontoLen > 0 .and. nKontoLen < 8)
+    @ m_x+3,m_y+2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
+    @ m_x+4,m_y+2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" get cON valid con $ "ONBG " pict "@!"
+    @ m_x+5,m_y+2 SAY "Za sredstvo prikazati vrijednost:"
+    @ m_x+6,m_y+2 SAY "1 - bez promjena"
+    @ m_x+7,m_y+2 SAY "2 - osnovni iznos + promjene"
+    @ m_x+8,m_y+2 SAY "3 - samo promjene           " GET cPromj valid cpromj $ "123"
+    @ m_x+10, m_y+2 SAY "1 - prikaz bez uracunate amortizacije i revalor:"
+    @ m_x+11,m_y+2 SAY "2 - sa uracunatom amortizacijom i revalor      :"
+    @ m_x+12,m_y+2 SAY "3 - samo amortizacije                          :"
+    @ m_x+13,m_y+2 SAY "4 - samo revalorizacije                        :"  GET cDodaj valid cDodaj $ "1234"
+    @ m_x+14, m_y+2 SAY "Prikazi samo rekapitulaciju konta (D/N)" GET cRekapKonta VALID cRekapKonta$"DN" PICT "@!"
+    @ m_x+15,m_y+2 SAY "Pregled za datumski period :" GET cDatPer valid cdatper $ "DN" pict "@!"
+    @ m_x+16,m_y+2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr valid cFiltSadVr $ "012" pict "9"
+    @ m_x+17,m_y+2 SAY "Filter po grupaciji K1:" GET cFiltK1 pict "@!S20"
+    @ m_x+18,m_y+2 SAY "Filter po K3:" GET cFiltK3 pict "@!S10"
+    @ m_x+18,m_y+30 SAY "Izbaciti(I) / Ubaciti(U)" GET cIzbUbac PICT "@!" VALID cIzbUbac $ "IU"
+    @ m_x+19,m_y+2 SAY "Prikazati kolonu 'amort.grupa'? D/N" get cAmoGr valid cAmoGr $ "DN" pict "@!"
+    read
+    ESC_BCR
+    if cDatPer=="D"
+            @ m_x+20,m_y+2 SAY "Od datuma " GET dDatOd
+            @ m_x+20,col()+2 Say "do" GET dDatDo
+            read
+        ESC_BCR
+    endif
+    aUsl1:=Parsiraj(cFiltK1, "K1")
+    aUsl2:=Parsiraj(cFiltK3, "K3")
+    if cIzbUbac=="I"
+        aUsl2:=StrTran(aUsl2, "=", "<>")
+    endif
+    if aUsl1<>NIL
+        exit
+    endif
+    if aUsl2<>NIL
+        exit
+    endif
+  ENDDO
 BoxC()
 
 if cDatPer=="D"
-	select_promj()
-  	PRIVATE cFilt1 := "DATUM>="+cm2str(dDatOd)+".and.DATUM<="+cm2str(dDatDo)
-  	set filter to &cFilt1
-  	select_os_sii()
+    select_promj()
+    PRIVATE cFilt1 := "DATUM>="+cm2str(dDatOd)+".and.DATUM<="+cm2str(dDatDo)
+    set filter to &cFilt1
+    select_os_sii()
 endif
 
 if !EMPTY(cFiltK1)
-  	select_os_sii()
-  	set filter to &aUsl1
+    select_os_sii()
+    set filter to &aUsl1
 endif
 
 if !EMPTY(cFiltK3)
-  	select_os_sii()
-  	set filter to &aUsl2
+    select_os_sii()
+    set filter to &aUsl2
 endif
 
 if empty(qIdKonto)
-	qIdKonto:=""
+    qIdKonto:=""
 endif
 if empty(cIdrj)
-	cIdRj:=""
+    cIdRj:=""
 endif
 if cPocinju=="D"
-	cIdRj:=TRIM(cIdRj)
+    cIdRj:=TRIM(cIdRj)
 endif
 
 os_rpt_default_valute()
@@ -144,96 +144,108 @@ P_10CPI
 ? gTS + ":", gnFirma
 
 if !empty(cIdrj)
-	? "Radna jedinica:", cIdRj, rj->naz
+    ? "Radna jedinica:", cIdRj, rj->naz
 endif
 
 P_COND
 
-? _mod_name + ": Pregled stalnih sredstava po kontima "
+? _mod_name + ": Pregled sredstava po kontima "
 
 if cDodaj=="1"
-	?? "(BEZ uracunate Am. i Rev.)"
+    ?? "(BEZ uracunate Am. i Rev.)"
 elseif cdodaj=="2"
-  	?? "(SA uracunatom Am. i Rev)"
+    ?? "(SA uracunatom Am. i Rev)"
 elseif cdodaj=="3"
-  	?? "(samo efekata amortizacije)"
+    ?? "(samo efekata amortizacije)"
 elseif cdodaj=="4"
-  	?? "(samo efekata revalorizacije)"
+    ?? "(samo efekata revalorizacije)"
 endif
 
 ?? "", PrikazVal(), "    Datum:", gDatObr
 
 if !EMPTY(cFiltK1)
-	? "Filter grupacija K1 pravljen po uslovu: '"+TRIM(cFiltK1)+"'"
+    ? "Filter grupacija K1 pravljen po uslovu: '"+TRIM(cFiltK1)+"'"
 endif
 if !EMPTY(cFiltK3)
-	? "Filter grupacija K3 pravljen po uslovu: '"+TRIM(cFiltK3)+"'"
-	if cIzbUbac=="U"
-		?? " sve sto sadrzi."
-	else
-		?? " sve sto ne sadrzi."
-	endif
+    ? "Filter grupacija K3 pravljen po uslovu: '"+TRIM(cFiltK3)+"'"
+    if cIzbUbac=="U"
+        ?? " sve sto sadrzi."
+    else
+        ?? " sve sto ne sadrzi."
+    endif
 endif
 
 
 private m:="----- ---------- ----"+IF(cAmoGr=="D"," "+REPL("-",LEN(field->idam)),"")+" -------- ------------------------------ --- ------"+REPL(" "+REPL("-",LEN(gPicI)),3)
 
-
-if empty(cIdrj)
-	select_os_sii()
-	set order to tag "4" 
-    //"OSi4","idkonto+idrj+id"
-  	seek qIdKonto
+if EMPTY( cIdrj )
+    select_os_sii()
+    set order to tag "4" 
+    // "idkonto+idrj+id"
+    seek qIdKonto
 else
-  	select_os_sii()
-	set order to tag "3" 
-    //"OSi3","idrj+idkonto+id"
-  	seek cIdRj+qIdKonto
+    select_os_sii()
+    set order to tag "3" 
+    // "idrj+idkonto+id"
+    seek cIdRj+qIdKonto
 endif
 
 private nRbr:=0
+
 nDug:=0
 nPot:=0
+
 os_zagl_konta()
-n1:=n2:=0
+
+n1:=0
+n2:=0
 nUUUKol:=0
 
 do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
 
-    cIdSK:=LEFT(idkonto, nKontoLen)
+    cIdSK := LEFT(idkonto, nKontoLen)
     cNazSKonto := ""
     
     select konto
     hseek cIdSK
    
     if FOUND()
-   	    cNazSKonto := ALLTRIM(konto->naz)
+        cNazSKonto := ALLTRIM(konto->naz)
     endif
    
     select_os_sii()
+
     nDug2:=nPot2:=0
     nUUKol:=0
+
     do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj)) .and. LEFT(idkonto, nKontoLen)==cIdSK
+
         cIdKonto:=idkonto
         cNazKonto := ""
+
         select konto
         hseek cIdKonto
+
         if FOUND()
-      	    cNazKonto := ALLTRIM(konto->naz)
+            cNazKonto := ALLTRIM(konto->naz)
         endif
       
         select_os_sii()
         nDug3:=nPot3:=nUKol:=0
+
         do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idkonto==cidkonto
+
             if datum>gDatObr 
                 // preskoci sredstva van obracuna
                 skip
                 loop
             endif
+
             if prow()>63
                 FF
                 os_zagl_konta()
             endif
+
             if (cON=="N" .and. empty(datotp)) .or. ;
                 (con=="O"  .and. !empty(datotp)) .or. ;
                 (con=="B"  .and. year(datum)=year(gdatobr)) .or.;
@@ -287,11 +299,11 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                     select_os_sii()
                 endif
 
-
                 // ovaj dio nam sad sluzi samo da saznamo ima li sredstvo
                 // sadasnju vrijednost
                 // ------------------------------------------------------
                 lImaSadVr:=.f.
+
                 if cPromj <> "3"
                     if cDatPer="N"  .or. (cDatPer="D" .and. field->datum >= dDatOd .and. field->datum <= dDatDo)
                         if cDodaj=="1"
@@ -354,21 +366,23 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                 // ispis stavki
                 // ------------
                 if cFiltSadVr=="1" .and. !(lImaSadVr) .or. cFiltSadVr=="2" .and. lImaSadVr
-            	    skip
-	        	    loop
+                    skip
+                    loop
                 else
+
                     if fIma
                         if cRekapKonta=="N"
-			                ? str(++nrbr,4)+".",id,idrj
+                            ? str(++nrbr,4)+".",id,idrj
                         endif
-		                IF cRekapKonta=="N" .and. cAmoGr=="D"
+                        IF cRekapKonta=="N" .and. cAmoGr=="D"
                             ?? "",idam
                         ENDIF
                         if cRekapKonta=="N"
-			                ?? "",datum,naz,jmj,str(kolicina,6,1)
+                            ?? "",datum,naz,jmj,str(kolicina,6,1)
                         endif
-		                nCol1:=pcol()+1
+                        nCol1:=pcol()+1
                     endif
+
                     if cPromj <> "3"
                         if cDatPer="N"  .or. (cDatPer="D" .and. datum>=dDatOd .and. datum<=dDatDo)
                             if cdodaj=="1"
@@ -385,16 +399,17 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                                 n2:=revp
                             endif
                             if cRekapKonta=="N"
-	       	                    @ prow(),pcol()+1 SAY n1*nBBK pict gpici
-               	                @ prow(),pcol()+1 SAY n2*nBBK pict gpici
-               	                @ prow(),pcol()+1 SAY n1*nBBK-n2*nBBK pict gpici
+                                @ prow(),pcol()+1 SAY n1*nBBK pict gpici
+                                @ prow(),pcol()+1 SAY n2*nBBK pict gpici
+                                @ prow(),pcol()+1 SAY n1*nBBK-n2*nBBK pict gpici
                             endif
-	                        nDug3+=n1
-	                        nPot3+=n2
+                            nDug3+=n1
+                            nPot3+=n2
                             nUKol+=kolicina
-	                    endif 
+                        endif 
                         // prikaz za datumski period, a OS ne pripada tom periodu
                     endif
+
                     if cPromj $ "23" 
 
                         // prikaz promjena
@@ -405,7 +420,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                         _sr_id_am := field->idam
 
                         select_promj()
-		                hseek _sr_id
+                        hseek _sr_id
 
                         do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                             if (cON=="N" .and. empty( _sr_dat_otp )) .or. ;
@@ -414,15 +429,15 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                                 (con=="G"  .and. year( field->datum ) < year(gdatobr)) .or.;
                                 empty(con)
                                 if cRekapKonta=="N"
-		   	                        ? space(5), space(len( _sr_id )), space(len( _sr_id_rj ))
+                                    ? space(5), space(len( _sr_id )), space(len( _sr_id_rj ))
                                 endif
-		                        IF cRekapKonta=="N" .and. cAmoGr=="D"
+                                IF cRekapKonta=="N" .and. cAmoGr=="D"
                                     ?? "",SPACE(LEN( _sr_id_am ))
                                 ENDIF
                                 if cRekapKonta=="N"
-		   	                        ?? "",datum,opis
+                                    ?? "",datum,opis
                                 endif
-		                        if cdodaj=="1"
+                                if cdodaj=="1"
                                     n1:=nabvr
                                     n2:=otpvr
                                 elseif cdodaj=="2"
@@ -435,18 +450,23 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                                     n1:=revd
                                     n2:=revp
                                 endif
+
                                 if cRekapKonta=="N"
-		   	                        @ prow(),nCol1  SAY n1*nBBK  pict gpici
-                   	                @ prow(),pcol()+1 SAY n2*nBBK  pict gpici
-                   	                @ prow(),pcol()+1 SAY n1*nBBK-n2*nBBK  pict gpici
+                                    @ prow(),nCol1  SAY n1*nBBK  pict gpici
+                                    @ prow(),pcol()+1 SAY n2*nBBK  pict gpici
+                                    @ prow(),pcol()+1 SAY n1*nBBK-n2*nBBK  pict gpici
                                 endif
-		                        nDug3+=n1
+                                nDug3+=n1
                                 nPot3+=n2
+
                             endif
                             skip
+
                         enddo
                         select_os_sii()
+
                     endif
+
                 endif
 
             endif
@@ -454,27 +474,27 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
         enddo
         
         if prow()>62
-      	    FF
-        	os_zagl_konta()
+            FF
+            os_zagl_konta()
         endif
         
         if cRekapKonta=="N"
-      	    ? m
+            ? m
         endif
       
         ? " ukupno ",cIdKonto, PADR( cNazKonto, 40 )
         if cRekapKonta=="D"
-      	    nUUkol+=nUKol
-	        ?? " "
-      	    @ prow(),pcol()+1 SAY nUKol
-      	    @ prow(),pcol()+1 SAY nDug3*nBBK pict gpici
+            nUUkol+=nUKol
+            ?? " "
+            @ prow(),pcol()+1 SAY nUKol
+            @ prow(),pcol()+1 SAY nDug3*nBBK pict gpici
         else
-      	    @ prow(),nCol1 SAY nDug3*nBBK pict gpici
+            @ prow(),nCol1 SAY nDug3*nBBK pict gpici
         endif
         @ prow(),pcol()+1 SAY npot3*nBBK pict gpici
         @ prow(),pcol()+1 SAY ndug3*nBBK-npot3*nBBK pict gpici
         if cRekapKonta=="N"
-      	    ? m
+            ? m
         endif
         nDug2+=nDug3
         nPot2+=nPot3
@@ -497,8 +517,8 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
     ? " UKUPNO ", cIdSk, PADR( cNazSKonto, 40 )
     
     if cRekapKonta=="D"
-	    ?? SPACE(5)
-      	@ prow(),pcol()+1 SAY nUUKol
+        ?? SPACE(5)
+        @ prow(),pcol()+1 SAY nUUKol
         @ prow(),pcol()+1 SAY nDug2*nBBK pict gpici
     else
         @ prow(),nCol1 SAY nDug2*nBBK pict gpici
@@ -522,11 +542,11 @@ if empty(qidkonto)
     ? m
     ? " U K U P N O :"
     if cRekapKonta=="D"
-	    ?? SPACE(44)
-      	@ prow(),pcol()+1 SAY nUUUKol
-	    @ prow(),pcol()+1 SAY nDug*nBBK pict gpici
+        ?? SPACE(44)
+        @ prow(),pcol()+1 SAY nUUUKol
+        @ prow(),pcol()+1 SAY nDug*nBBK pict gpici
     else
-	    @ prow(),nCol1 SAY nDug*nBBK pict gpici
+        @ prow(),nCol1 SAY nDug*nBBK pict gpici
     endif
     @ prow(),pcol()+1 SAY npot*nBBK pict gpici
     @ prow(),pcol()+1 SAY ndug*nBBK-npot*nBBK pict gpici
@@ -550,15 +570,15 @@ select_os_sii()
 ?
 P_12CPI
 if con="N"
-	? "PRIKAZ NEOTPISANIH SREDSTAVA:"
+    ? "PRIKAZ NEOTPISANIH SREDSTAVA:"
 elseif con=="B"
-  	? "PRIKAZ NOVONABAVLJENIH SREDSTAVA:"
+    ? "PRIKAZ NOVONABAVLJENIH SREDSTAVA:"
 elseif con=="G"
-  	? "PRIKAZ SREDSTAVA IZ PROTEKLIH GODINA:"
+    ? "PRIKAZ SREDSTAVA IZ PROTEKLIH GODINA:"
 elseif con=="O"
-  	? "PRIKAZ OTPISANIH SREDSTAVA:"
+    ? "PRIKAZ OTPISANIH SREDSTAVA:"
 elseif   con==" "
-  	? "PRIKAZ SVIH SREDSTAVA:"
+    ? "PRIKAZ SVIH SREDSTAVA:"
 endif
 
 P_COND

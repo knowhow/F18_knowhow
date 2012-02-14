@@ -32,7 +32,7 @@ O_RJ
 o_os_sii_promj()
 o_os_sii()
 
-cIdrj:=space(4)
+cIdrj:=space(LEN(field->idrj))
 cPromj:="2"
 cPocinju:="N"
 cFiltSadVr:="0"

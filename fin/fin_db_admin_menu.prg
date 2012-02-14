@@ -19,7 +19,7 @@ private opcexe:={}
 private Izbor:=1
 
 
-AADD(opc, "1. ima u suban nema u nalog")
+AADD(opc, "1. provjera integriteta tabela - ima u suban nema u nalog ")
 AADD(opcexe, {|| ImaUSubanNemaUNalog()})
 
 AADD(opc, "3. pregled datumskih gresaka u nalozima")

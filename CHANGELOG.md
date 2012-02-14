@@ -1,3 +1,7 @@
+0.9.52 2012-02-14, hernad
+
+ - [#26688](http://redmine.bring.out.ba/issues/26688) fin povrat
+
 0.9.51  2012-02-13, vsasa
 
  - modul LD, ciscenje (vise obracuna, sihtarice, itd...)

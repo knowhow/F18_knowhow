@@ -38,10 +38,7 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "4. ima u suban nema u nalog")
-AADD(opcexe, {|| ImaUSubanNemaUNalog()})
-
-AADD(opc, "5. otvorene stavke")
+AADD(opc, "4. otvorene stavke")
 AADD(opcexe, {|| OStav()})
 
 Menu_SC("oop")

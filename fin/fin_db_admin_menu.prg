@@ -18,8 +18,9 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc, "1. install db-a                            ")
-AADD(opcexe, {|| goModul:oDatabase:install()})
+
+AADD(opc, "1. ima u suban nema u nalog")
+AADD(opcexe, {|| ImaUSubanNemaUNalog()})
 
 AADD(opc, "3. pregled datumskih gresaka u nalozima")
 AADD(opcexe, {|| daterr_rpt() })

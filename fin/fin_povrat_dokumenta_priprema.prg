@@ -85,7 +85,7 @@ IF !lStorno
     lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
 ENDIF
 
-MsgO("Punim pripremu sa fin_suban: " + cIdfirma + cIdvn + cBrNal )
+MsgO("fin_suban -> fin_pripr: " + cIdfirma + cIdvn + cBrNal )
 
 select suban
 set order to tag "4"
@@ -128,7 +128,6 @@ if !lStorno
     set order to tag "4"
     go top
     seek cIdfirma + cIdvn + cBrNal
-
     MsgO( "brisem subanalitiku..." )
 
     _ok := .t.
@@ -205,10 +204,11 @@ if !lStorno
     go top
     seek cIdfirma + cIdvn + cBrNal
 
-    // na kraju pobrisi nalog
-    _del_rec := dbf_get_rec()
- 
-    _ok := delete_rec_server_and_dbf("nalog", _del_rec )
+    if found()
+       // na kraju pobrisi nalog
+       _del_rec := dbf_get_rec() 
+       _ok := delete_rec_server_and_dbf("nalog", _del_rec )
+    endif
 
     MsgC()
 
@@ -225,55 +225,6 @@ endif
 close all
 return
 
-
-
-// --------------------------------
-// tabela zauzeta
-// --------------------------------
-function tbl_busy( f_area )
-local nTime
-private cAlias := ALIAS( f_area )
-
-if !( &(cAlias)->(flock()) )
- 	   
-	    if gAzurTimeOut == nil
-	    	nTime := 150
-	    else
-	        nTime := gAzurTimeOut
-	    endif
-	   
-	    Box(,1, 40)
-
-	    // daj mu vremena...
-	    do while nTime > 0
-	
-		-- nTime
-
-		@ m_x + 1, m_y + 2 SAY "timeout: " + ALLTRIM(STR(nTime))
-		
-		if ( &(cAlias)->(flock()) )
-			exit
-		endif
-	    
-		sleep(1)
-
-	    enddo
-	    
-	    BoxC()
-
-	    if nTime = 0 .and. !( &(cAlias)->(flock()) )
-	
-	    	Beep(4) 
- 	    	BoxC() 
- 	    	Msg("Timeout istekao !#Ponovite operaciju") 
- 	    	close
-		return 0
-	
-	    endif
-
-endif
-
-return 1
 
 
 /*! \fn Prefin_unos_naloga()

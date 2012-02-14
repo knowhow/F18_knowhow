@@ -246,7 +246,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. lPoKontima )
 
     @ prow(),pcol()+1 SAY " ____________"
     
-    _a_to_exp( ALLTRIM( STR( nRbr, 4 ) ), field->id, field->naz, field->jmj, field->kolicina )
+    _a_to_exp( ALLTRIM( STR( nRbr, 4 ) ), field->id, field->naz, field->jmj, field->kolicina, field->datum )
 
     skip
 
@@ -292,6 +292,7 @@ AADD( _dbf, { "sredstvo", "C", 10, 0 } )
 AADD( _dbf, { "naziv", "C", 100, 0 } )
 AADD( _dbf, { "jmj", "C", 3, 0 } )
 AADD( _dbf, { "kolicina", "N", 15, 2 } )
+AADD( _dbf, { "datum", "D", 8, 0 } )
 
 return _dbf
 
@@ -299,7 +300,7 @@ return _dbf
 // -------------------------------------------
 // dodaj u tabelu export-a
 // -------------------------------------------
-static function _a_to_exp( r_br, sredstvo, naziv_sredstva, jmj_sredstva, trenutna_kolicina )
+static function _a_to_exp( r_br, sredstvo, naziv_sredstva, jmj_sredstva, trenutna_kolicina, datum_nabavke )
 local _t_area := SELECT()
 
 O_R_EXP
@@ -309,6 +310,7 @@ replace field->sredstvo with sredstvo
 replace field->naziv with naziv_sredstva
 replace field->jmj with jmj_sredstva
 replace field->kolicina with trenutna_kolicina
+replace field->datum with datum_nabavke
 
 select ( _t_area )
 return

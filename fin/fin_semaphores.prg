@@ -910,10 +910,23 @@ endif
 DO CASE
  CASE op == "BEGIN"
     _qry := "BEGIN;"
+    if gDebug > 7
+        log_write("SQL BEGIN: " + _tbl)
+    endif
+
  CASE op == "END"
     _qry := "COMMIT;"
+    if gDebug > 7
+        log_write("SQL COMMIT: " + _tbl)
+    endif
+
  CASE op == "ROLLBACK"
     _qry := "ROLLBACK;"
+    if gDebug > 7
+        log_write("SQL ROLLBACK: " + _tbl)
+    endif
+
+
  CASE op == "del"
     _qry := "DELETE FROM " + _tbl + ;
              " WHERE " + _where
@@ -944,6 +957,4 @@ if VALTYPE(_ret) == "L"
 else
    return .t.
 endif
- 
-
 

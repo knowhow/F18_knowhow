@@ -95,53 +95,102 @@ return
  *  \brief Ispituje da li nalog postoji u SUBAN ako ga nema u NALOG
  */
 function ImaUSubanNemaUNalog()
+local _i
+local _area
+local _alias
+local _n_scan
+local _a_error := {}
+local _broj_naloga := ""
 
-Box(,5,60)
-close all
-select 1
-use nalog
-set order to tag "1"
-select 2
-use suban
-set order to 0
-select 3
-use anal
-set order to 0
-select 4
-use sint
-set order to 0
-for i:=1 to 3
-	if i==1
-		cAlias:="SUBAN"
-	elseif i==2
-		cAlias:="ANAL"
-	else
-		cAlias:="SINT"
-	endif
-	select &cAlias
-	go top
-	do while !eof().and. inkey()!=27
-		select nalog
-		seek &cAlias->(idfirma+idvn+brnal)
-		if !found()
-			select &cAlias
-			Beep(1)
-			@ m_x+5,m_y+2 SAY  "nema naloga! "
-			?? idfirma+"-"+idvn+"-"+brnal
-			Inkey(0)
-			@ m_x+5,m_y+2 SAY  "             "
-		else
-			@ m_x+3,m_y+2 SAY idfirma+"-"+idvn+"-"+brnal
-		endif
-		select &cAlias
-		@ m_x+1,m_y+2 SAY recno()
-		?? calias
-		skip 1
-	enddo
-next
-BoxC()
+CLOSE ALL
+
+O_NALOG
+O_SUBAN
+O_ANAL
+O_SINT
+
+FOR _i := 1 TO 3
+
+    IF _i == 1
+		    _alias := "suban"
+	ELSEIF _i == 2
+		    _alias := "anal"
+	ELSE
+		    _alias := "sint"
+	ENDIF
+
+	SELECT &_alias
+	GO TOP
+	
+    DO WHILE !EOF().and. INKEY() != 27
+
+        SELECT nalog
+        SEEK &_alias->(idfirma + idvn + brnal)
+
+		IF !Found()
+
+			SELECT &_alias
+                
+            _broj_naloga := field->idfirma + "-" + field->idvn + "-" + field->brnal
+            _n_scan := ASCAN( _a_error, { |_var| _var[1] == _alias .and. _var[2] == _broj_naloga } )
+            
+            // dadaj u matricu gresaka, ako nema tog naloga
+            IF _n_scan == 0
+                AADD( _a_error, { _alias, _broj_naloga } )
+            ENDIF
+
+	    ENDIF
+
+		SELECT &_alias
+		SKIP 1
+    
+    ENDDO
+NEXT
+
+// ispisi greske ako postoje !
+_ispisi_greske( _a_error )
+
 close all
 return
+
+
+// -----------------------------------------------
+// ispis gresaka nakon provjere
+// -----------------------------------------------
+static function _ispisi_greske( a_error )
+local _i
+
+IF LEN( a_error ) == 0 .OR. a_error == NIL
+    return
+ENDIF
+
+START PRINT CRET
+
+?
+? "Pregled ispravnosti podataka:"
+? "============================="
+?
+? "Potrebno odraditi korekciju sljedecih naloga:"
+? "---------------------------------------------"
+
+FOR _i := 1 TO LEN( a_error )
+    
+    ? PADL( "tabela: " + a_error[ _i, 1 ], 15 ) + ", " + a_error[ _i, 2 ]
+
+NEXT
+
+?
+? "NAPOMENA:"
+? "========="
+? "Naloge je potrebno vratiti u pripremu, provjeriti njihovu ispravnost"
+? "sa papirnim kopijama te zatim ponovo azurirati."
+
+FF
+END PRINT
+
+return
+
+
 
 
 // ----------------------------------

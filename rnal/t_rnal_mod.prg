@@ -193,8 +193,6 @@ private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
 
-public gFirma := "10"
-public gNFirma := SPACE(20)
 public gPicVrijednost := "9999999.99"
 
 // rnal - specif params section
@@ -262,11 +260,6 @@ public gGnUse := "D"
 
 O_KPARAMS
 
-// sekcija "1"
-cSection := "1"
-Rpar( "ff", @gFirma )
-Rpar( "fn", @gNFirma )
-
 // sekcija "5"
 cSection := "5"
 Rpar( "p1", @gPicVrijednost )
@@ -292,15 +285,6 @@ Rpar( "tp", @gPoPrivDir )
 Rpar( "tk", @gPoKumDir )
 
 cSection := "1"
-
-if Empty(gNFirma)
-	Beep(1)
-	Box(,1,50)
-		@ m_x+1, m_y+2 SAY "Unesi naziv firme:" GET gNFirma PICT "@!"
-		read
-	BoxC()
-	Wpar("fn", gNFirma)
-endif
 
 select (F_PARAMS)
 

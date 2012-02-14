@@ -293,8 +293,8 @@ AADD( _dbf, { "rbr", "C", 4, 0 } )
 AADD( _dbf, { "sredstvo", "C", 10, 0 } )
 AADD( _dbf, { "naziv", "C", 100, 0 } )
 AADD( _dbf, { "jmj", "C", 3, 0 } )
-AADD( _dbf, { "kolicina", "N", 15, 2 } )
 AADD( _dbf, { "datum", "D", 8, 0 } )
+AADD( _dbf, { "kolicina", "N", 15, 2 } )
 
 return _dbf
 

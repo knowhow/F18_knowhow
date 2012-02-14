@@ -246,7 +246,9 @@ do while !eof() .and. ( field->idrj = cIdrj .or. lPoKontima )
 
     @ prow(),pcol()+1 SAY " ____________"
     
-    _a_to_exp( ALLTRIM( STR( nRbr, 4 ) ), field->id, field->naz, field->jmj, field->kolicina, field->datum )
+    if _export 
+        _a_to_exp( ALLTRIM( STR( nRbr, 4 ) ), field->id, field->naz, field->jmj, field->kolicina, field->datum )
+    endif
 
     skip
 

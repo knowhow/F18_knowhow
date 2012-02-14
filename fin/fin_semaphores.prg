@@ -81,7 +81,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) || lpad( rbr, 4, ' ' ) ) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma,2) || rpad( idvn, 2) || rpad( brnal, 8) || rpad( rbr, 4) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
@@ -320,7 +320,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) || lpad( rbr, 3, ' ' ) ) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2) || rpad( idvn, 2) || rpad( brnal, 8) || rpad( rbr, 3) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
@@ -553,7 +553,7 @@ for _offset := 0 to _count STEP _step
             	endif
         	next
         	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) || lpad( rbr, 3, ' ' ) ) IN " + _sql_ids
+        	_qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idvn, 2, ' ' ) || rpad( brnal, 8, ' ' ) || rpad( rbr, 3, ' ' ) ) IN " + _sql_ids
      	endif
 
         _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 

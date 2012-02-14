@@ -188,15 +188,9 @@ DO WHILE !EOF()
     DO WHILE !EOF() .and. _id_firma == field->idfirma .AND. ;
             _id_tip_dok == field->idtipdok .AND. _br_dok == field->brdok
 
-        _del_rec := hb_hash()
-        _del_rec["idfirma"] := field->idfirma
-        _del_rec["idtipdok"] := field->idtipdok
-        _del_rec["brdok"] := field->brdok
-        _del_rec["rbr"] := field->rbr
-        
+        _del_rec := dbf_get_rec()
         _ok := .t.
-
-        _ok := _ok .and. delete_rec_server_and_dbf( "fakt", _del_rec  )
+        _ok := delete_rec_server_and_dbf( "fakt", _del_rec  )
     
         SKIP
 
@@ -212,11 +206,11 @@ DO WHILE !EOF()
     _del_rec["brdok"] := _br_dok
     
     MsgO("del doks")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks", _del_rec )
+    _ok := delete_rec_server_and_dbf( "fakt_doks", _del_rec )
     MsgC()
 
     MsgO("del doks2")
-    _ok := _ok .and. delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
+    _ok := delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
     MsgC()
 
     IF !_ok
@@ -467,8 +461,11 @@ IF ( _brisi_kum == "D" )
     go top
     seek _if_firma + _id_tip_dok + _br_dok
 
-    _del_rec := dbf_get_rec()
-    _ok := delete_rec_server_and_dbf( "fakt_doks", _del_rec )
+    if found()
+        _del_rec := dbf_get_rec()
+        _ok := delete_rec_server_and_dbf( "fakt_doks", _del_rec )
+    endif
+
     MsgC()
 
     MsgO("del doks2")
@@ -476,8 +473,12 @@ IF ( _brisi_kum == "D" )
     set order to tag "1"
     go top
     seek _if_firma + _id_tip_dok + _br_dok
-    _del_rec := dbf_get_rec()
-    _ok := delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
+
+    if found()
+        _del_rec := dbf_get_rec()
+        _ok := delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
+    endif
+
     MsgC()
 
     IF !_ok

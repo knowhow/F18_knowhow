@@ -1053,9 +1053,11 @@ if _brisi_kum
 
     select kalk_doks
     hseek _id_firma + _id_vd + _br_dok
-         
-    _del_rec := dbf_get_rec()
-    _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+    if found()         
+        _del_rec := dbf_get_rec()
+        _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
+    endif
 
     if !_ok
         msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele doks !!!!")
@@ -1178,12 +1180,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         // prodji kroz dokument do kraja...
         do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
 
-            _del_rec := hb_hash()
-            _del_rec["idfirma"] := field->idfirma
-            _del_rec["idvd"]    := field->idvd
-            _del_rec["brdok"]   := field->brdok
-            _del_rec["rbr"]     := field->rbr
-
+            _del_rec := dbf_get_rec()
             _ok := .t.
             _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
 
@@ -1199,16 +1196,16 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         enddo
 
         // pobrsi mi sada tabelu kalk_doks
-
-        _del_rec := hb_hash()
-        _del_rec["idfirma"] := _id_firma
-        _del_rec["idvd"]    := _id_vd
-        _del_rec["brdok"]   := _br_dok
-
-        // brisi prvo tabelu kalk_doks            
         select kalk_doks
-        _ok := .t.
-        _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
+        go top
+        seek _id_firma + _id_vd + _br_dok
+
+        if found()
+            _del_rec := dbf_get_rec()
+            // brisi prvo tabelu kalk_doks            
+            _ok := .t.
+            _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
+        endif
 
         if !_ok
             msgbeep("Problem sa brisanjem tabele kalk !!!")
@@ -1216,7 +1213,9 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
             close all
             return .f.
         endif
-            
+        
+        select kalk
+                        
     enddo
 
     msgc()

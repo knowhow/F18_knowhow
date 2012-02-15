@@ -601,11 +601,11 @@ LOCAL aNiz:={}
  PRIVATE cKonto:=SPACE(60), cPartn:=SPACE(60)
  PRIVATE dDat0:=CTOD(""), dDat1:=CTOD(""), cFirma:=gFirma
 
- IF !SigmaSif("SIGMAPRE")
-   CLOSERET
- ENDIF
+MsgBeep("http://redmine.bring.out.ba/issues/26730")
 
- Msg("Ova opcija omogucava prebacivanje svih ili dijela stavki sa#"+;
+return
+
+Msg("Ova opcija omogucava prebacivanje svih ili dijela stavki sa#"+;
      "postojeceg na drugi konto. Zeljeni konto je u tabeli prikazan#"+;
      "u koloni sa zaglavljem 'Novi konto'. POSLJEDICA OVIH PROMJENA#"+;
      "JE DA CE NALOZI KOJI SADRZE IZMIJENJENE STAVKE BITI RAZLICITI#"+;
@@ -657,10 +657,8 @@ LOCAL aNiz:={}
 
  SELECT F_SUBAN
 
- cFilt1 := ".t." + IF(!EMPTY(cFirma),".and.IDFIRMA=="+cm2str(cFirma),"")+;
-           IF(!EMPTY(dDat0),".and.DATDOK>="+cm2str(dDat0),"")+;
-           IF(!EMPTY(dDat1),".and.DATDOK<="+cm2str(dDat1),"")+;
-           ".and."+aUsl1+".and."+aUsl2
+ cFilt1 := ".t." + IF(!EMPTY(cFirma),".and.IDFIRMA=="+cm2str(cFirma),"")+ IIF(!EMPTY(dDat0),".and.DATDOK>="+cm2str(dDat0),"")+;
+           IF(!EMPTY(dDat1), ".and.DATDOK<=" + cm2str(dDat1),"") + ".and."+aUsl1+".and."+aUsl2
 
  cFilt1 := STRTRAN( cFilt1 , ".t..and." , "" )
  IF !(cFilt1==".t.")

@@ -14,7 +14,6 @@
 
  
 function PP_Sast()
-*{
   PRIVATE cAkoNema:="N"
   // cDirSif - putanja (direktorij) sifrarnika aktivne firme
   cK2KS:=PADR(TRIM(cDirSif)+"\",40)
@@ -39,8 +38,8 @@ function PP_Sast()
   SELECT PARAMS; USE
 
   IF TRIM(cK2KS)!=TRIM(cDirSif)
-    cPom:=SezRad(TRIM(cK2KS)) + "sast.dbf"
-    cPom2:=SezRad(TRIM(cK2KS)) + "roba.dbf"
+    cPom  := SezRad(TRIM(cK2KS)) + "sast.dbf"
+    cPom2 := SezRad(TRIM(cK2KS)) + "roba.dbf"
 
     IF SELECT("SAST2")!=0
       SELECT SAST2; USE
@@ -53,9 +52,11 @@ function PP_Sast()
       Msg("Na zadanom direktoriju druge firme ne postoji baza za poredjenje !",6)
       RETURN
     ENDIF
-    USE (cPom) ALIAS SAST2 NEW;    SET ORDER TO TAG "ID"
+    USE (cPom) ALIAS SAST2 NEW
+    SET ORDER TO TAG "ID"
     GO TOP
-    USE (cPom2) ALIAS ROBA2 NEW;    SET ORDER TO TAG "ID"
+    USE (cPom2) ALIAS ROBA2 NEW
+    SET ORDER TO TAG "ID"
     GO TOP
   ELSE
     Msg("Zadani direktorij je isti kao i direktorij sifrarnika ove firme !",6)
@@ -94,10 +95,8 @@ function PP_Sast()
   END PRINT
 
 RETURN
-*}
 
 function FFor2()
-*{  
   
 * NA ROBA.DBF SMO
 cIdSif:=ROBA->id                   

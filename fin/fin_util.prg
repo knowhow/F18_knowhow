@@ -42,17 +42,6 @@ Izvjestaji()
 return
 
 
-/*! \fn PovratNaloga()
- *  \brief Povrat naloga
- */
-function PovratNaloga()
-
-//if gBezVracanja == "N"
-povrat_fin_naloga()
-//endif
-
-return
-
 
 /*! \fn Preknjizenje()
  *  \brief preknjizenje

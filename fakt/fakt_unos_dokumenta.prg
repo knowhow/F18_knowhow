@@ -353,9 +353,9 @@ do case
         Iz20u10() 
         lDirty:=.t.
         return DE_REFRESH
-        
+     
 #ifdef __PLATFORM__DARWIN 
-     case Ch==ASC("0")
+    case UPPER(CHR(Ch)) == "O"
 #else
     case Ch==K_ALT_F10
 #endif
@@ -370,8 +370,13 @@ do case
         next
         lDirty:=.t.
         return DE_REFRESH
-        
+         
+#ifdef __PLATFORM__DARWIN 
+     case Ch==ASC("0")
+#else
     case Ch==K_F10
+#endif
+
         Popupfakt_unos_dokumenta()
         SETLASTKEY(K_CTRL_PGDN)
         return DE_REFRESH

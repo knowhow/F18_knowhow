@@ -11,14 +11,15 @@
 
 #include "fin.ch"
 
-/*! \fn StNal(lAuto)
- *  \brief Priprema za stampu naloga 
- *  \param lAuto
- */
-function StNal(lAuto)
 
+// izbaciti StNal
+
+function StNal(lAuto)
+return stampa_fin_document(lAuto)
+
+function stampa_fin_document(lAuto)
 private dDatNal:=date()
-StAnalNal(@lAuto)
+StAnalNal(lAuto)
 SintStav(lAuto)
 return
 
@@ -30,6 +31,7 @@ return
  */
  
 function StAnalNal(lAuto)
+local _print_opt := "V"
 
 private aNalozi:={}
 
@@ -37,9 +39,7 @@ if lAuto==NIL
 	lAuto:=.f.
 ENDIF
 
-if IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-  O_VRSTEP
-endif
+O_VRSTEP
 
 O_FIN_PRIPR
 O_KONTO
@@ -63,15 +63,16 @@ EOF CRET
 fizgenerisi:=.f.
 
 if lAuto .or. field->idvn == "00" 
-	if Pitanje(,"Staviti na stanje bez pojed stampe ?","N")=="D"
-     		fizgenerisi:=.t.
-   	else
-     		lAuto:=.f.
-   	endif
+    fIzgenerisi := .t.
 endif
 
+if lAuto 
+   _print_opt := "D"
+endif
+ 
+
 if lAuto
-	Box(,3,75)
+	Box(, 3, 75)
    	@ m_x+0, m_y+2 SAY "PROCES FORMIRANJA SINTETIKE I ANALITIKE"
 endif
 
@@ -82,37 +83,41 @@ DO WHILE !EOF()
    	if !fizgenerisi
      	Box("",2,50)
        set cursor on
-       @ m_x+1,m_y+2 SAY "Nalog broj:"
+       @ m_x+1, m_y+2 SAY "Nalog broj:"
        if gNW=="D"
-           cIdFirma:=gFirma
-           @ m_x+1,col()+1 SAY cIdFirma
+           cIdFirma := gFirma
+           @ m_x+1, col()+1 SAY cIdFirma
        else
-           @ m_x+1,col()+1 GET cIdFirma
+           @ m_x+1, col()+1 GET cIdFirma
        endif
-       @ m_x+1,col()+1 SAY "-" GET cIdVn
-       @ m_x+1,col()+1 SAY "-" GET cBrNal
-       if gDatNal=="D"
-        @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
+       @ m_x+1, col()+1 SAY "-" GET cIdVn
+       @ m_x+1, col()+1 SAY "-" GET cBrNal
+       if gDatNal == "D"
+        @ m_x+2, m_y+2 SAY "Datum naloga:" GET dDatNal
        endif
-       read; ESC_BCR
+       read
+       ESC_BCR
      BoxC()
    endif
 
-   HSEEK cIdFirma+cIdVN+cBrNal
-   if eof(); closeret; endif
+   HSEEK cIdFirma + cIdVN + cBrNal
+   if eof()
+       closeret
+   endif
 
-   if !fizgenerisi
-     START PRINT CRET
+   if !fIzgenerisi
+     f18_start_print(NIL, @_print_opt)
    endif
 
    StSubNal("1", lAuto)
 
    if !fizgenerisi
-     END PRINT
+     f18_end_print(NIL, @_print_opt)
    endif
 
    IF ASCAN(aNalozi, cIdFirma + cIdVN + cBrNal) == 0
-     AADD(aNalozi, cIdFirma + cIdVN + cBrNal)  // lista naloga koji su oti{li
+     AADD(aNalozi, cIdFirma + cIdVN + cBrNal)  
+     // lista naloga koji su otisli
      IF lAuto
        @ m_x+2, m_y+2 SAY "Formirana sintetika i analitika za nalog:"+cIdFirma+"-"+cIdVN+"-"+cBrNal
      ENDIF
@@ -334,7 +339,7 @@ DO WHILE !eof()
    private cDN:="N"
    if !lAuto
      Box(, 2, 58)
-       @ m_x+1, m_y+2 SAY "Stampanje analitike/sintetike za nalog "+cidfirma+"-"+cidvn+"-"+cbrnal+" ?"  GET cDN pict "@!" valid cDN $ "DN"
+       @ m_x+1, m_y+2 SAY "Stampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN pict "@!" valid cDN $ "DN"
        if gDatNal=="D"
         @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
        endif
@@ -343,7 +348,7 @@ DO WHILE !eof()
    endif
    if cDN=="D"
      select panal
-     seek cidfirma+cidvn+cbrnal
+     seek cIdfirma + cIdvn +cBrnal
      StOSNal(.f.)    // stampa se priprema
    endif
    SELECT PSUBAN

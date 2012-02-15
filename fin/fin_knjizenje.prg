@@ -31,9 +31,9 @@ private opc[4]
 
 cTekucaRj:=GetTekucaRJ()
 
-lBlagAsis := (IzFMKINI("BLAGAJNA","Asistent","N",PRIVPATH) == "D" )
-cBlagIDVN := IzFMKINI("BLAGAJNA","SifraNaloga","66",PRIVPATH)
-lAutoPomUDom := ( IzFMKINI("AutomatskoPretvaranjeIznosa","PomocnaUDomacu","N",PRIVPATH)=="D" )
+lBlagAsis := "N"
+cBlagIDVN := "66"
+lAutoPomUDom := "N"
 
 private fK1:=fk2:=fk3:=fk4:=cDatVal:="N",gnLOst:=0,gPotpis:="N"
 
@@ -98,6 +98,9 @@ return
  */
  
 function KnjNal()
+local _sep := BROWSE_COL_SEP
+local _w := 25
+
 o_fin_edit()
 ImeKol:={ ;
           {"F.",            {|| IdFirma }, "IdFirma" } ,;
@@ -131,9 +134,11 @@ ENDIF
 
 Box( , MAXROWS() - 4, MAXCOLS() - 6)
 
-  @ m_x + MAXROWS() - 6, m_y + 2 SAY "<c-N>  Nove Stavke    " + BROWSE_COL_SEP + " <ENT> Ispravi stavku   " + BROWSE_COL_SEP + " <c-T> Brisi Stavku         "
-  @ m_x + MAXROWS() - 5, m_y + 2 SAY "<c-A>  Ispravka Naloga" + BROWSE_COL_SEP + " <c-P> Stampa Naloga    " + BROWSE_COL_SEP + " <a-A> Azuriranje           "
-  @ m_x + MAXROWS() - 4, m_y + 2 SAY "<c-F9> Brisi pripremu " + BROWSE_COL_SEP + " <F5>  KZB, <a-F5> PrDat" + BROWSE_COL_SEP + " <a-B> Blagajna,<F10> Ostalo"
+  @ m_x + MAXROWS() - 6, m_y + 2 SAY PADR(" <c-N> Nove Stavke", _w) + _sep + PADR(" <ENT> Ispravi stavku", _w)  + _sep + PADR(hb_Utf8ToStr(" <c-T> Briši Stavku"), _w) + _sep + PADR( " P - povrat naloga", _w) + _sep 
+
+  @ m_x + MAXROWS() - 5, m_y + 2 SAY PADR(" <c-A> ispravi sve stavke", _w) + _sep + PADR(hb_Utf8ToStr(" <c-P> Štampa Naloga"), _w) + _sep + PADR(hb_Utf8ToStr(" <a-A> Ažuriranje"), _w) + _sep + PADR(hb_Utf8ToStr(" X Ažur bez štampe"), _w) + _sep
+
+  @ m_x + MAXROWS() - 4, m_y + 2 SAY PADR(hb_Utf8ToStr(" <c-F9> Briši pripremu"), _w) + _sep + PADR(" <F5>  Kontrola zbira", _w)  + _sep + PADR(" <a-F5> PrDat", _w) + _sep + PADR(" <a-B> Blagajna", _w) + _sep + PADR(" <F10> Ostalo", _w) + _sep
 
   ObjDbedit("PN2", MaxRows() - 4, MaxCols() - 6,  {|| edit_fin_pripr()}, "", "Priprema...", , , , ,3)
 
@@ -780,14 +785,10 @@ case Ch==K_ALT_F5
      return DE_REFRESH
 
 
-   case Ch==K_ALT_F10
-
-     if !SigmaSif("SIGMAXXX")
-       return DE_CONT
-     endif
+   case UPPER(Chr(Ch)) == "X" 
 
      close all
-     StNal(.t.)
+     stampa_fin_document(.t.)
 
      close all
      fin_azur(.t.)
@@ -809,10 +810,26 @@ case Ch==K_ALT_F5
    case Ch==K_ALT_I
      OiNIsplate()
      return DE_CONT
+ 
+#ifdef __PLATFORM__DARWIN 
+    case Ch == ASC("0")
+#else
+    case Ch==K_F10
+#endif
+         OstaleOpcije()
+         return DE_REFRESH
 
-   case Ch==K_F10 
-     OstaleOpcije()
-     return DE_REFRESH
+     case UPPER(Chr(Ch)) == "P"
+
+         if reccount() != 0
+             MsgBeep("Povrat nedozvoljen, imate stavke u pripremi")
+             RETURN DE_CONT
+         endif
+
+         close all
+         povrat_fin_naloga()
+         o_fin_edit()
+         RETURN DE_REFRESH
 
 endcase
 
@@ -926,7 +943,7 @@ RETURN (NIL)
  */
  
 function OstaleOpcije()
-*{
+
 private opc[4]
   opc[1]:="1. novi datum->datum, stari datum->dat.valute "
   opc[2]:="2. podijeli nalog na vise dijelova"
@@ -936,7 +953,8 @@ private opc[4]
     opc[3]:="3. -------------------------------"
   endif
   opc[4]:="4. konverzija partnera"
-  h[1]:=h[2]:=h[3]:=h[4]:=""
+
+  h[1] := h[2] := h[3] := h[4] := ""
   private Izbor:=1
   private am_x:=m_x,am_y:=m_y
   close all
@@ -961,7 +979,8 @@ private opc[4]
       msgc()
      endcase
   enddo
-  m_x:=am_x; m_y:=am_y
+  m_x := am_x
+  m_y:=am_y
   o_fin_edit()
 RETURN
 

@@ -26,8 +26,12 @@ if (document_name == nil)
   document_name :=  gModul + '_' + DTOC(DATE()) 
 endif
 
-// vraca prazan string u slucaju <ESC>
-print_opt :=IzlazPrn(print_opt)
+if print_opt != "D"
+   // D - dummy
+
+   // vraca prazan string u slucaju <ESC>
+   print_opt :=IzlazPrn(print_opt)
+endif
 
 if empty(print_opt) 
    return ""
@@ -73,9 +77,8 @@ MsgC()
 
 DO CASE
 
-   CASE print_opt == "R" 
-      // TODO: proslijediti ptxt switch-eve
-	  Ptxt(f_name)
+   CASE print_opt == "D"
+      // dummy ne printaj nista
 	
    OTHERWISE
        // TODO: treba li f18_editor parametrizirati ?!   

@@ -319,11 +319,12 @@ RETURN
 //-----------------------------------------------------
 function StandTBKomande(TB, Ch, nRez, nPored, aPoredak)
 local _tr := hb_Utf8ToStr("Traži:"), _zam := "Zamijeni sa:" 
-local cSmj, i, K,aUF
+local cSmj, i, K, aUF
 local cLoc := space(40)
 local cStVr, cNovVr, nRec, nOrder, xcpos, ycpos
 local _trazi_val, _zamijeni_val 
-local _sect, _piclocal _sect, _pict
+local _sect, _pict
+local _rec, _saved
 
 DO CASE
 
@@ -383,14 +384,15 @@ DO CASE
           cKolona:=ImeKol[TB:ColPos,3]
           if valtype(&cKolona) $  "CD"
 
+      
             Box(, 2, 60, .f.)
              Private GetList:={}
              set cursor on
 
                 // svako polje ima svoj parametar
                 _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
-                _traz_val := &cKolona 
-                _zamijeni_val := fetch_metric(_sect, "<>", _trazi_val)
+                _trazi_val := &cKolona 
+                _trazi_val := fetch_metric(_sect, "<>", _trazi_val)
 
                 _zamijeni_val := _trazi_val
                 _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
@@ -408,24 +410,40 @@ DO CASE
 
             BoxC()
 
+
             if lastkey()<>K_ESC
              nRec:=recno()
              nOrder:=indexord()
              set order to 0
              go top
+             _saved := .f.
              do while !eof()
-               if &cKolona==cStVr
-                   replace &cKolona with cNovVr
-                   //replsql &cKolona with cNovVr
+
+               if EVAL(FIELDBLOCK(cKolona)) ==  _trazi_val
+                   _rec := dbf_get_rec()
+                   _rec[LOWER(cKolona)]  := _zamijeni_val
+                   dbf_update_rec(_rec)
+
+                   if !_saved
+                       // snimi
+                       _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
+                       set_metric(_sect, "<>", _trazi_val)
+
+                       _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
+                       set_metric(_sect, "<>", _zamijeni_val)
+                       _saved := .t.
+                    endif
+
                endif
 
-               if valtype(cStVr)=="C" // samo za karaktere
-                cDio1:=left(cStVr,len(trim(cStVr))-2)
-                cDio2:=left(cNovVr,len(trim(cNovVr))-2)
-                if right(trim(cStVr),2)=="**" .and. cDio1 $ &cKolona
-                   replace &cKolona with strtran(&cKolona,cDio1,cDio2)
-                   //replsql &cKolona with strtran(&cKolona,cDio1,cDio2)
-                endif
+               if valtype(_trazi_val) == "C"
+                   _rec := dbf_get_rec()
+                   cDio1 := left(_trazi_val, len(trim(_trazi_val)) - 2)
+                   cDio2 := left(_zamijeni_val, len(trim(_zamijeni_val)) -2)
+                   if right(trim(_trazi_val), 2) == "**" .and. cDio1 $  _rec[LOWER(cKolona)]
+                       _rec[LOWER(cKolona)] := STRTRAN( _rec[LOWER(cKolona)], cDio1, cDio2)
+                       dbf_update_rec(_rec)
+                   endif
                endif
 
                skip

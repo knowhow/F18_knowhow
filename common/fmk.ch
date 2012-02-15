@@ -84,7 +84,7 @@
 #xcommand P_RPL_G            =>  gRPL_Gusto()
 
 
-#xcommand INI             =>  gPB_ON()
+#xcommand INI              =>  gPB_ON()
 #xcommand B_ON             =>  gPB_ON()
 #xcommand B_OFF            =>  gPB_OFF()
 #xcommand I_ON             =>  gPI_ON()

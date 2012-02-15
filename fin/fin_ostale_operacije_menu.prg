@@ -18,8 +18,8 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc, "1. povrat dokumenta u pripremu          ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","POVRATNALOGA"))
-	AADD(opcexe, {|| PovratNaloga()})
+if (ImaPravoPristupa(goModul:oDatabase:cName,"UT", "POVRATNALOGA"))
+	AADD(opcexe, {|| povrat_fin_naloga()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

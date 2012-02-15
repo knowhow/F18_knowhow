@@ -14,7 +14,7 @@
 
 
 function kalk_params()
-local izbor := 1
+local _izbor := 1
 local _opc := {}
 local _opcexe := {}
 

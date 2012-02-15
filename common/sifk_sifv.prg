@@ -106,8 +106,8 @@ Box(, 3, 60, .f.)
 	m_x := nTekX
 	m_y := nTekY
 	
-	@ m_x + 2, m_y + 2 SAY "      Trazi:" GET cOldVal
-    @ m_x + 3, m_y + 2 SAY "Zamijeni sa:" GET cNewVal
+	@ m_x + 2, m_y + 2 SAY hb_Utf8ToStr("      Traži:") GET cOldVal
+    @ m_x + 3, m_y + 2 SAY              "Zamijeni sa:" GET cNewVal
 	
     read 
 BoxC()
@@ -116,7 +116,7 @@ if LastKey()==K_ESC
 	return 0
 endif
 
-if Pitanje(,"Izvrsiti zamjenu polja? (D/N)","D") == "N"
+if Pitanje( , "Izvrsiti zamjenu polja? (D/N)", "D") == "N"
 	return 0
 endif
 

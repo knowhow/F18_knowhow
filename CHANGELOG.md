@@ -1,7 +1,6 @@
 0.9.53 2012-02-15, hernad, vsasa
 
- - CRITICAL BUG: [#26722](http://redmine.bring.out.ba/issues/26722) broj veze fin
-                 [#26728](http://redmine.bring.out.ba/issues/26728) polja otvorene stavke
+ - CRITICAL BUG: [#26722](http://redmine.bring.out.ba/issues/26722) broj veze fin,  [#26728](http://redmine.bring.out.ba/issues/26728) polja otvorene stavke
 
 0.9.52 2012-02-14, hernad
 

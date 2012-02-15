@@ -160,22 +160,75 @@ return
 
 function o_kalk_edit()
 
-close all
+select F_KALK_DOKS
+if !used()
+    O_KALK_DOKS
+endif
 
-O_KALK_DOKS
-O_KALK_PRIPR
-O_DOKSRC
-O_P_DOKSRC
-O_SIFK
-O_SIFV
-O_ROBA
-O_KALK
-O_KONTO
-O_PARTN
-O_TDOK
-O_VALUTE
-O_TARIFA 
-O_KONCIJ
+select F_KALK_PRIPR
+if !used()
+    O_KALK_PRIPR
+endif
+
+select F_DOKSRC
+if !used()
+    O_DOKSRC
+endif
+
+select F_P_DOKSRC
+if !used()
+    O_P_DOKSRC
+endif
+
+select F_SIFK
+if !used()
+    O_SIFK
+endif
+
+select F_SIFV
+if !used()
+    O_SIFV
+endif
+
+select F_ROBA
+if !used()
+    O_ROBA
+endif
+
+select F_KALK
+if !used()
+    O_KALK
+endif
+
+select F_KONTO
+if !used()
+    O_KONTO
+endif
+
+select F_PARTN
+if !used()
+    O_PARTN
+endif
+
+select F_TDOK
+if !used()
+    O_TDOK
+endif
+
+select F_VALUTE
+if !used()
+    O_VALUTE
+endif
+
+select F_TARIFA
+if !used()
+    O_TARIFA 
+endif
+
+select F_KONCIJ
+if !used()
+    O_KONCIJ
+endif
 
 select kalk_pripr
 set order to tag "1"

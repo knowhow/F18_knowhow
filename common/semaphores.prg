@@ -513,3 +513,77 @@ ENDIF
 _result := _table_obj:Fieldget(1)
 
 RETURN _result
+
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+function create_queries_from_ids(tbl, sql_in, orders, step, offset)
+local _qry_1, _qry_2
+local _queries := {}
+local _ids, _ids_2 = {}, _sql_ids := {}
+local _i
+local _ret := hb_hash()
+
+for _i := 1 to len(_sql_in)
+   AADD(_queries[_i], "SELECT " + _sql_fields + " FROM " + _tbl + " WHERE ")
+   AADD(_sql_ids, NIL)
+   AADD(_ids_2, NIL)
+next
+ 
+_ids := get_ids_from_semaphore( tbl )
+
+for each _id in _ids
+
+    for ___hernadhernad_
+    if LEFT(_id, 2) == "#2"
+       // algoritam 1
+       _id := SUBSTR(_id, 3)
+
+       if _sql_ids[2] == NIL
+          _sql_ids[2] := "("
+          _ids_2[2] := {}
+       endif
+
+       _sql_ids[2] += _sql_quote(_id) += ","
+       AADD(_ids_2[2], _id)
+ 
+    else
+      // algoritam 1 - default
+ 
+       if _sql_ids[1] == NIL
+          _sql_ids[1] := "("
+          _ids_2[1] := {}
+       endif
+
+       _sql_ids[1] += _sql_quote(_id) += ","
+       AADD(_ids_2[1], _id)   
+    next
+
+endif
+
+
+for _i := 1 to LEN(sql_in)
+
+    if _sql_ids[_i] != NIL
+       // odsjeci zarez na kraju
+       _sql_ids[_i] := LEFT(_sql_ids[_i], LEN(_sql_ids[_i]) - 1)
+       _sql_ids[_i] += ")"
+       _queries[_i] +=  "(" + sql_in[_i]  + ") IN " + _sql_ids[_i]
+  
+       _queries[_i] += " ORDER BY " + orders[_i]
+       _queries[_i] += " LIMIT " + STR(step) + " OFFSET " + STR(offset) 
+    else
+       _queries[_i] := NIL
+    endif
+
+next
+
+_ret["qry"] := queries
+_ret["ids"] := _ids_2
+
+return _ret
+
+
+
+
+

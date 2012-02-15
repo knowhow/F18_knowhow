@@ -30,9 +30,26 @@ local _tbl
 local _offset
 local _step := 15000
 local _retry := 3
-local _order := "idfirma, idvn, brnal, rbr"
+local _orders := {}
+local _key_blocks := {} 
 local _key_block
 local _i, _fld, _fields, _sql_fields
+local _sql_in := {}
+local _queries
+local _tags := {}
+
+// algoritam 1 - default
+AADD(_orders, "idfirma, idvn, brnal, rbr")
+AADD(_key_blocks, {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
+AADD(_tags, "4")
+// algoritam 2 - nivo dokumenta
+AADD(_orders, "idfirma, idvn, brnal")
+AADD(_key_blocks, {|| field->idfirma + field->idvn + field->brnal} 
+
+AADD(_sql_in, "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 4)")
+AADD(_sql_in, "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)")
+AADD(_tags, "4")
+
 
 _tbl := "fmk.fin_suban"
 
@@ -50,46 +67,14 @@ _count := table_count( _tbl, "true" )
 SELECT F_SUBAN
 my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
-_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", ;
-        "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", ;
-        "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond" }
+_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond" }
 
 _sql_fields := sql_fields( _fields )
 
 for _offset := 0 to _count STEP _step
 
-  _qry := "SELECT " + _sql_fields + " FROM " + _tbl
 
-  if algoritam == "DATE"
-    _dat :=  get_dat_from_semaphore( "fin_suban" )
-    _qry += " WHERE datdok >=" + _sql_quote(_dat)
-    _key_block := { || field->datdok }
-  endif
 
-  if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( "fin_suban" )
-    	_qry += " WHERE "
-    	if LEN(_ids) < 1
-       		// nema id-ova
-      		_qry += "false"
-    	else
-        	_sql_ids := "("
-        	for _i := 1 to LEN(_ids)
-            	_sql_ids += _sql_quote(_ids[_i])
-            	if _i < LEN(_ids)
-            		_sql_ids += ","
-            	endif
-        	next
-        	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma,2) || rpad( idvn, 2) || rpad( brnal, 8) || lpad( rbr, 4) ) IN " + _sql_ids
-     	endif
-
-        _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
-
-  endif
-
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
 
   DO CASE
 
@@ -99,23 +84,16 @@ for _offset := 0 to _count STEP _step
     log_write("dat_dok = nil full algoritam") 
     ZAP
 
-   CASE algoritam == "DATE"
-
-    log_write("dat_dok <> nil date algoritam") 
-    // "date" algoritam  - brisi sve vece od zadanog datuma
-    SET ORDER TO TAG "8"
-    // tag je "DatDok" nije DTOS(DatDok)
-    seek _dat
-    do while !eof() .and. eval( _key_block )  >= _dat 
-        // otidji korak naprijed
-        SKIP
-        _rec := RECNO()
-        SKIP -1
-        DELETE
-        GO _rec  
-    enddo
-
    CASE algoritam == "IDS"
+
+
+    _queries := create_qry_from_ids("fin_suban",  _sql_in, _orders, _step, _offset)
+     
+    for _i := 1 LEN(_queries)
+
+delete_dbf_ids(tags)
+
+function delete_dbf_ids(tags)
 
 	SET ORDER TO TAG "4"
 
@@ -144,6 +122,7 @@ for _offset := 0 to _count STEP _step
     enddo
 
     log_write( "fin_suban local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+    next
 
   ENDCASE
 

@@ -289,7 +289,7 @@ public gAImpRKonto := PADR("1370", 7)
 public gAImpRight := 0
 public gKalks:=.f.
 public lPodBugom:=.f.
-public gVodiSamoTarife
+public gVodiSamoTarife := "N"
 public lSyncon47 := .f.
 public lKoristitiBK := .f.
 public lPrikPRUC := .f.

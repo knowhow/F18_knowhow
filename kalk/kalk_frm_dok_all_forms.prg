@@ -33,8 +33,8 @@ else
 	SetAPorezi(@aPorezi)
 endif
 
-if fNovi .or. (gVodiSamoTarife=="D") .or. IsJerry() .or. IsPlanika()
-	_IdTarifa:=cTarifa
+if fNovi .or. ( gVodiSamoTarife == "D" ) .or. IsJerry() .or. IsPlanika()
+	_IdTarifa := cTarifa
 endif
 
 return .t.

@@ -12,9 +12,7 @@
 #include "fin.ch"
 #include "f18_separator.ch"
 
-#define DABLAGAS lBlagAsis .and. _IDVN==cBlagIDVN
-
-static cTekucaRj:=""
+static cTekucaRj := ""
 static __par_len
 
 // FmkIni_KumPath_TekucaRj - Tekuca radna jedinica
@@ -33,7 +31,6 @@ cTekucaRj:=GetTekucaRJ()
 
 lBlagAsis := "N"
 cBlagIDVN := "66"
-lAutoPomUDom := "N"
 
 private fK1:=fk2:=fk3:=fk4:=cDatVal:="N",gnLOst:=0,gPotpis:="N"
 
@@ -327,13 +324,8 @@ if gTroskovi=="D"
     @  m_x+12,m_y+44 SAY "      Fond." GET _Fond valid empty(_Fond) .or. P_Fond(@_Fond) pict "@!"
 endif
 
-if DABLAGAS
-    @ m_x+13, m_y+2   SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto, 13, 20, .t.) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
+    @  m_x+13, m_y+2  SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto, 13, 20) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
 
-else
-        @  m_x+13, m_y+2  SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto, 13, 20) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
-
-endif
 
 @ m_x+14, m_y+2 SAY "Partner:" get _IdPartner pict "@!" valid ;
     {|| if( empty(_idpartner), Reci(14, 20, SPACE(25)), ), ;
@@ -349,7 +341,7 @@ endif
 @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99" WHEN {  || _iznos_unesen := .t., .t. }
 
 @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99' ;
-                      WHEN {|| DinDEM( , , "_IZNOSBHD"), .t.} VALID {|oGet| V_IznosDEM( , , "_IZNOSDEM", oGet)} 
+                      WHEN {|| DinDEM( , , "_IZNOSBHD"), .t.} 
 
 
 
@@ -427,25 +419,6 @@ endif
 return
 *}
 
-
-/*! \fn V_IznosDEM(p1, p2, cVar, oGet)
- *  \brief Sredjivanje iznosa
- *  \param p1
- *  \param p2
- *  \param cVar
- *  \param oGet
- */
- 
-function V_IznosDEM(p1,p2,cVar,oGet)
-*{
-if lAutoPomUDom .and. oGet:changed
-    
-    _iznosdem:=oGet:unTransform()
-    DinDem(p1,p2,cVar)
-endif
-
-return .t.
-*}
 
 /*! \fn CheckMark(cIdKonto)
  *  \brief Provjerava da li je konto markiran, ako nije izbrisi zapamceni _IdPartner

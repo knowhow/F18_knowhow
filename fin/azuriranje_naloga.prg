@@ -130,7 +130,7 @@ if lOk = .t.
   lOk := .t.
   sql_fin_suban_update("BEGIN")
   do while !eof()
- 
+
      record["id_firma"] := field->IdFirma
      record["id_vn"] := field->IdVn
      record["br_nal"] := field->BrNal
@@ -142,6 +142,8 @@ if lOk = .t.
      // dodaj u IDS matricu ove stavke...
      AADD( _ids_suban, _tmp_id )
 
+     record["id_tip_dok"] := field->idtipdok
+     record["otv_st"] := field->otvst
      record["dat_dok"] := field->DatDok
      record["dat_val"] := field->DatVal
      record["opis"] := field->opis

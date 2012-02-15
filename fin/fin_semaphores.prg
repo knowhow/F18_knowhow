@@ -52,7 +52,7 @@ my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
 _fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", ;
         "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", ;
-        "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond" }
+        "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond", "otvst", "idtipdok" }
 
 _sql_fields := sql_fields( _fields )
 
@@ -220,7 +220,7 @@ DO CASE
  CASE op == "ins"
 
     _qry := "INSERT INTO " + _tbl + ;
-                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd, iznosdem, brdok, k1, k2, k3, k4, m1, m2, idrj, funk, fond) " + ;
+                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd, iznosdem, brdok, otvst, idtipdok, k1, k2, k3, k4, m1, m2, idrj, funk, fond) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
                             + _sql_quote( record["br_nal"] ) + "," +; 
@@ -234,6 +234,8 @@ DO CASE
                             + STR( record["iznos_bhd"], 17, 2) + "," + ;
 							+ STR( record["iznos_dem"], 17, 2) + "," + ;
                             + _sql_quote( record["br_dok"] ) + "," +; 
+                            + _sql_quote( record["otv_st"] ) + "," +; 
+                            + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["k1"] ) + "," +; 
                             + _sql_quote( record["k2"] ) + "," +; 
                             + _sql_quote( record["k3"] ) + "," +; 

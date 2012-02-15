@@ -1,3 +1,7 @@
+0.9.53 2012-02-15, hernad
+
+ - CRITICAL BUG: [#26722](http://redmine.bring.out.ba/issues/26722) broj veze fin
+
 0.9.52 2012-02-14, hernad
 
  - [#26688](http://redmine.bring.out.ba/issues/26688) fin povrat

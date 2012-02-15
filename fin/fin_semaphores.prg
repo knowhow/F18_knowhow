@@ -220,7 +220,7 @@ DO CASE
  CASE op == "ins"
 
     _qry := "INSERT INTO " + _tbl + ;
-                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd, iznosdem) " + ;
+                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd, iznosdem, brdok, k1, k2, k3, k4, m1, m2, idrj, funk, fond) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
                             + _sql_quote( record["br_nal"] ) + "," +; 
@@ -232,7 +232,17 @@ DO CASE
                             + _sql_quote( record["id_konto"] ) + "," +; 
                             + _sql_quote( record["d_p"] ) + "," +; 
                             + STR( record["iznos_bhd"], 17, 2) + "," + ;
-							+ STR( record["iznos_dem"], 17, 2) + ")" 
+							+ STR( record["iznos_dem"], 17, 2) + "," + ;
+                            + _sql_quote( record["br_dok"] ) + "," +; 
+                            + _sql_quote( record["k1"] ) + "," +; 
+                            + _sql_quote( record["k2"] ) + "," +; 
+                            + _sql_quote( record["k3"] ) + "," +; 
+                            + _sql_quote( record["k4"] ) + "," +; 
+                            + _sql_quote( record["m1"] ) + "," +; 
+                            + _sql_quote( record["m2"] ) + "," +; 
+                            + _sql_quote( record["id_rj"] ) + "," +; 
+                            + _sql_quote( record["funk"] ) + "," +; 
+                            + _sql_quote( record["fond"] ) + ")" 
 
 END CASE
    

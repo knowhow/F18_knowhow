@@ -17,7 +17,13 @@
 // ---------------------------------------------------
 function zip_files( output_file_name, files )
 local _error
+
+IF ( files == NIL ) .or. LEN( files ) == 0
+    return MsgBeep( "Nema fajlova za arhiviranje ?!???" )
+ENDIF
+
 _error := __zip( output_file_name, files )
+
 return _error
 
 

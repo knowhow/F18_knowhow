@@ -18,6 +18,7 @@ libs=hbsqlit3 sqlite3
 libs=hbcommon hbct hbclipsm
 libs=hbpgsql
 libs=hbdebug
+libs=hbmzip minizip
 
 #gt=gtcrs
 {unix}gt=gtxwc

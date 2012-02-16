@@ -16,10 +16,9 @@
 // zipovanje fajlova
 // ---------------------------------------------------
 function zip_files( output_file_name, files )
-
-__zip( output_file_name, files )
-
-return
+local _error
+_error := __zip( output_file_name, files )
+return _error
 
 
 
@@ -28,6 +27,7 @@ return
 static function __zip( zf_name, files )
 local _h_zip
 local _file
+local _error := 0
 local _cnt := 0
 
 // otvori fajl
@@ -45,19 +45,33 @@ IF !EMPTY( _h_zip )
                 IF ! ( _file == zf_name )
                     ++ _cnt
                     @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ..." + PADL( ALLTRIM( _file ), 58 )
-                    HB_ZipStoreFile( _h_zip, _file, _file, nil )
+                    _error := HB_ZipStoreFile( _h_zip, _file, _file, nil )
+                    IF ( _error <> 0 )
+                        RETURN __zip_error( _error )
+                    ENDIF
                 ENDIF
             ENDIF
         NEXT
 
-        HB_ZIPCLOSE( _h_zip, "" )
+        _error := HB_ZIPCLOSE( _h_zip, "" )
     
     BoxC()
 
 ENDIF
 
-return .t.
+IF ( _error <> 0 )
+    RETURN __zip_error( _error )
+ENDIF
+
+RETURN _error
 
 
-
+// -----------------------------------
+// obrada gresaka 
+// -----------------------------------
+static function __zip_error( err )
+IF ( err <> 0 )
+    MsgBeep( "Imamo gresku ?!???" + ALLTRIM( STR( _error ) ) )
+ENDIF
+RETURN
 

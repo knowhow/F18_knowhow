@@ -12,43 +12,47 @@
 #include "fmk.ch"
 
 
-function zip_files( file_name, files )
+// ---------------------------------------------------
+// zipovanje fajlova
+// ---------------------------------------------------
+function zip_files( output_file_name, files )
 
-__zip( file_name, file_name, files )
-
-return
-
-
-function unzip_files()
+__zip( output_file_name, files )
 
 return
 
 
 
+// ------------------------------------------------------
+// ------------------------------------------------------
+static function __zip( zf_name, files )
+local _h_zip
+local _file
+local _cnt := 0
 
-static function __zip( zf_path, zf_name, files )
-local hZip
-local _zip_file_name, _file
+// otvori fajl
+_h_zip := HB_ZIPOPEN( zf_name )
 
-// ovo je izlazni fajl
-_zip_file_name := HB_FNameMerge( zf_path, zf_name )
+IF !EMPTY( _h_zip )
 
-hZip := HB_ZIPOPEN( _zip_file_name )
+    Box(, 2, 65 )
 
-IF !EMPTY( hZip )
+        @ m_x + 1, m_y + 2 SAY "Kompresujem fajl: " + ALLTRIM( zf_name )
 
-    ? "Arhiviram fajl:", _zip_file_name
-
-    FOR EACH _file IN files
-        IF !EMPTY( _file )
-            IF ! (_file == _zip_file_name )
-                ? "Dodajem fajl:", _file
-                HB_ZipStoreFile( hZip, _file, _file, nil )
+        FOR EACH _file IN files
+            // ako postoji fajl
+            IF !EMPTY( _file ) .AND. FILE( _file )
+                IF ! ( _file == zf_name )
+                    ++ _cnt
+                    @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ..." + PADL( ALLTRIM( _file ), 58 )
+                    HB_ZipStoreFile( _h_zip, _file, _file, nil )
+                ENDIF
             ENDIF
-        ENDIF
-    NEXT
+        NEXT
 
-    HB_ZIPCLOSE( hZip, "" )
+        HB_ZIPCLOSE( _h_zip, "" )
+    
+    BoxC()
 
 ENDIF
 

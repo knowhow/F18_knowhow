@@ -103,8 +103,12 @@ local _scan
 local _file_in_zip
 
 // paterni fajlova za ekstrakt
-IF ( files == nil )
+IF ( files == NIL )
     files := {}
+ENDIF
+
+IF ( zf_destination == NIL ) 
+    zf_destination := ""
 ENDIF
 
 // otvori zip fajl
@@ -115,6 +119,11 @@ IF !EMPTY( _h_zip )
     Box(, 2, 65 )
 
         @ m_x + 1, m_y + 2 SAY "Dekompresujem fajl: " + ALLTRIM( zf_name )
+
+        IF !EMPTY( zf_destination )
+            // skoci u direktorij za raspakivanje ...
+            DirChange( zf_destination )
+        ENDIF
 
         _error := HB_UNZIPFILEFIRST( _h_zip )
 

@@ -14,7 +14,8 @@
 
 static __import_dbf_path 
 static __export_dbf_path
-
+static __import_zip_name
+static __export_zip_name
 
 
 function kalk_udaljena_razmjena_podataka()
@@ -24,6 +25,8 @@ local _izbor := 1
 
 __import_dbf_path := my_home() + "import_dbf" + SLASH
 __export_dbf_path := my_home() + "export_dbf" + SLASH
+__import_zip_name := "kalk_imp.zip"
+__export_zip_name := "kalk_exp.zip"
 
 AADD(_opc,"1. => export podataka               ")
 AADD(_opcexe, {|| _kalk_export() })
@@ -51,10 +54,13 @@ endif
 
 // pobrisi u folderu tmp fajlove ako postoje
 delete_exp_files( __export_dbf_path )
-delete_exp_zip_files()
+delete_zip_files( __export_dbf_path + __export_zip_name )
 
 // exportuj podatake
 _exported_rec := __export( _vars )
+
+// zatvori sve tabele prije operacije pakovanja
+close all
 
 // arhiviraj podatke
 if _exported_rec > 0 
@@ -569,26 +575,10 @@ return _a_files
 // -------------------------------------------------
 // brise zip fajl exporta
 // -------------------------------------------------
-static function delete_exp_zip_files()
-local _file := __export_dbf_path + "kalk_exp.zip"
-
-if FILE( _file )
-    FERASE( _file )
+static function delete_zip_files( zip_file )
+if FILE( zip_file )
+    FERASE( zip_file )
 endif 
-
-return
-
-
-// -------------------------------------------------
-// brise zip fajl importa
-// -------------------------------------------------
-static function delete_imp_zip_files()
-local _file := __import_dbf_path + "kalk_imp.zip"
-
-if FILE( _file )
-    FERASE( _file )
-endif 
-
 return
 
 
@@ -619,15 +609,18 @@ return
 // kompresuj fajlove i vrati path 
 // ------------------------------------------
 static function _compress_files()
-local _files, _zip_file
+local _files
 local _error
+local _zip_path, _zip_name
 
 // lista fajlova za kompresovanje
 _files := _file_list( __export_dbf_path )
-_zip_file := __export_dbf_path + "kalk_exp.zip"
+
+_zip_path := __export_dbf_path
+_zip_name := __export_zip_name
 
 // unzipuj fajlove
-_error := zip_files( _zip_file, _files )
+_error := zip_files( _zip_path, _zip_name, _files )
 
 return _error
 
@@ -637,13 +630,14 @@ return _error
 // dekompresuj fajlove i vrati path 
 // ------------------------------------------
 static function _decompress_files()
-local _zip_file
+local _zip_name, _zip_path
 local _error
 
-_zip_file := __import_dbf_path + "kalk_imp.zip"
+_zip_path := __import_dbf_path
+_zip_name := __import_zip_name
 
 // unzipuj fajlove
-_error := unzip_files( _zip_file, __import_dbf_path )
+_error := unzip_files( _zip_path, _zip_name, __import_dbf_path )
 
 return _error
 

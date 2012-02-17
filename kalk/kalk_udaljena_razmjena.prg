@@ -54,7 +54,6 @@ endif
 
 // pobrisi u folderu tmp fajlove ako postoje
 delete_exp_files( __export_dbf_path )
-delete_zip_files( __export_dbf_path + __export_zip_name )
 
 // exportuj podatake
 _exported_rec := __export( _vars )
@@ -99,20 +98,29 @@ return
 static function _kalk_import()
 local _imported_rec
 local _vars := hb_hash()
+local _imp_file 
+
+// import fajl iz liste
+_imp_file := get_import_file()
+
+if _imp_file == NIL .or. EMPTY( _imp_file )
+    MsgBeep( "Nema odabranog import fajla !????" )
+    return
+endif
 
 // parametri
 if !_vars_import( @_vars )
     return
 endif
 
-if !import_file_exist()
+if !import_file_exist( _imp_file )
     // nema fajla za import ?
     MsgBeep( "import fajl ne postoji !??? prekidam operaciju" )
     return
 endif
 
 // dekompresovanje podataka
-if _decompress_files() <> 0
+if _decompress_files( _imp_file ) <> 0
     // ako je bilo greske
     return
 endif
@@ -131,7 +139,7 @@ if ( _imported_rec > 0 )
     // nakon uspjesnog importa...
 
     // brisi zip fajl...
-    delete_zip_files( __import_dbf_path + __import_zip_name )
+    delete_zip_files( _imp_file )
 
     MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
 
@@ -141,6 +149,21 @@ endif
 DirChange( my_home() )
 
 return
+
+
+// -----------------------------------------
+// otvara listu fajlova za import
+// vraca naziv fajla za import
+// -----------------------------------------
+static function get_import_file()
+local _file
+local _filter := "kalk*.*"
+
+if _gFList( _filter, __import_dbf_path, @_file ) == 0
+    _file := ""
+endif
+
+return _file
 
 
 
@@ -199,7 +222,7 @@ if LastKey() <> K_ESC
     vars["datum_do"] := _dat_do
     vars["konta"] := _konta
     vars["vrste_dok"] := _vrste_dok
-    vars["export_sifre"] := _exp_sif
+    vars["export_sif"] := _exp_sif
     
 endif
 
@@ -211,7 +234,7 @@ return _ret
 // uslovi importa dokumenta
 // -------------------------------------------
 static function _vars_import( vars )
-local _ret := .t.
+local _ret := .f.
 local _dat_od := fetch_metric( "kalk_import_datum_od", my_user(), CTOD("") )
 local _dat_do := fetch_metric( "kalk_import_datum_do", my_user(), CTOD("") )
 local _konta := fetch_metric( "kalk_import_lista_konta", my_user(), PADR( "", 200 ) )
@@ -273,7 +296,6 @@ if LastKey() <> K_ESC
     
 endif
 
-
 return _ret
 
 
@@ -288,7 +310,7 @@ local _app_rec
 local _cnt := 0
 local _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
 local _usl_mkonto, _usl_pkonto
-local _partn_id, _p_konto, _m_konto
+local _id_partn, _p_konto, _m_konto
 local _id_roba
 
 // uslovi za export ce biti...
@@ -312,6 +334,7 @@ Box(, 2, 65 )
 @ m_x + 1, m_y + 2 SAY "... export kalk dokumenata u toku"
 
 select kalk_doks
+set order to tag "1"
 go top
 
 do while !EOF()
@@ -319,7 +342,7 @@ do while !EOF()
     _id_firma := field->idfirma
     _id_vd := field->idvd
     _br_dok := field->brdok
-    _partn_id := field->idpartner
+    _id_partn := field->idpartner
     _p_konto := field->pkonto
     _m_konto := field->mkonto
 
@@ -349,23 +372,24 @@ do while !EOF()
     endif
 
     // datumski uslov...
-    if DTOC( _dat_od ) <> ""
+    //if DTOC( _dat_od ) <> ""
         if ( field->datdok < _dat_od )
             skip
             loop
         endif
-    endif
+    //endif
 
-    if DTOC( _dat_do ) <> ""
+    //if DTOC( _dat_do ) <> ""
         if ( field->datdok > _dat_do )
             skip
             loop
         endif
-    endif
+    //endif
 
     // ako je sve zadovoljeno !
     // dodaj zapis u tabelu e_doks
     _app_rec := dbf_get_rec()
+
     select e_doks
     append blank
     dbf_update_rec( _app_rec )    
@@ -480,6 +504,7 @@ local _cnt := 0
 local _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif
 local _usl_mkonto, _usl_pkonto
 local _roba_id, _partn_id, _konto_id
+local _sif_exist
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
@@ -512,19 +537,19 @@ do while !EOF()
     // uslovi, provjera...
 
     // datumi...
-    if DTOC( _dat_od ) <> ""
+    //if DTOC( _dat_od ) <> ""
         if field->datdok < _dat_od
             skip
             loop
         endif
-    endif
+    //endif
 
-    if DTOC( _dat_do ) <> ""
+    //if DTOC( _dat_do ) <> ""
         if field->datdok > _dat_od
             skip
             loop
         endif
-    endif
+    //endif
 
     // lista konta...
     if !EMPTY( _konta )
@@ -556,14 +581,14 @@ do while !EOF()
 
             // dokumente iz kalk, kalk_doks brisi !
             _ok := .t.
-            _ok := _ok .and. del_kalk( _id_firma, _id_vd, _br_dok )
-            _ok := _ok .and. del_kalk_doks( _id_firma, _id_vd, _br_dok )
+            _ok := del_kalk( _id_firma, _id_vd, _br_dok )
+            _ok := del_kalk_doks( _id_firma, _id_vd, _br_dok )
 
-            if !_ok
-                MsgBeep( "Doslo je do greske sa brisanjem podataka !!!#Dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok )
-                BoxC()
-                return 0
-            endif
+            //if !_ok
+              //  MsgBeep( "Doslo je do greske sa brisanjem podataka !!!#Dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok )
+              //  BoxC()
+              //  return 0
+            //endif
             
         else
             select e_doks
@@ -578,6 +603,7 @@ do while !EOF()
     _app_rec := dbf_get_rec()
 
     select kalk_doks
+    append blank
     update_rec_server_and_dbf( "kalk_doks", _app_rec )
 
     ++ _cnt
@@ -595,6 +621,7 @@ do while !EOF()
         _app_rec := dbf_get_rec()
 
         select kalk
+        append blank
         update_rec_server_and_dbf( "kalk", _app_rec )
 
         select e_kalk
@@ -621,7 +648,12 @@ if _cnt > 0
         select roba
         hseek _roba_id
 
-        if !FOUND() .or. _zamjeniti_sif == "D"
+        _sif_exist := .t.
+        if !FOUND()
+            _sif_exist := .f.
+        endif
+
+        if !_sif_exist .or. ( _sif_exist .and. _zamjeniti_sif == "D" )
 
             select e_roba
 
@@ -630,6 +662,11 @@ if _cnt > 0
             _app_rec := dbf_get_rec()
 
             select roba
+
+            if !_sif_exist
+                append blank
+            endif
+
             update_rec_server_and_dbf( "roba", _app_rec )
 
         endif
@@ -650,8 +687,13 @@ if _cnt > 0
 
         select partn
         hseek _partn_id
+        
+        _sif_exist := .t.
+        if !FOUND()
+            _sif_exist := .f.
+        endif
 
-        if !FOUND() .or. _zamjeniti_sif == "D"
+        if !_sif_exist .or. ( _sif_exist .and. _zamjeniti_sif == "D" )
 
             select e_partn
 
@@ -660,6 +702,11 @@ if _cnt > 0
             _app_rec := dbf_get_rec()
 
             select partn
+
+            if !_sif_exist
+                append blank
+            endif
+
             update_rec_server_and_dbf( "partn", _app_rec )
 
         endif
@@ -682,7 +729,12 @@ if _cnt > 0
         select konto
         hseek _konto_id
 
-        if !FOUND() .or. _zamjeniti_sif == "D"
+        _sif_exist := .t.
+        if !FOUND()
+            _sif_exist := .f.
+        endif
+
+        if !_sif_exist .or. ( _sif_exist .and. _zamjeniti_sif == "D" )
 
             select e_konto
 
@@ -691,6 +743,11 @@ if _cnt > 0
             _app_rec := dbf_get_rec()
 
             select konto
+
+            if !_sif_exist
+                append blank
+            endif
+
             update_rec_server_and_dbf( "konto", _app_rec )
 
         endif
@@ -997,19 +1054,55 @@ return _ret
 
 
 
+// --------------------------------------------
+// vraca naziv zip fajla
+// --------------------------------------------
+static function zip_name()
+local _file 
+local _ext := ".zip"
+local _count := 1
+local _exist := .t.
+
+_file := __export_dbf_path + "kalk_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
+
+if FILE( _file )
+    
+    // generisi nove nazive fajlova
+    do while _exist 
+
+        ++ _count
+        _file := __export_dbf_path + "kalk_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
+
+        if !FILE( _file )
+            _exist := .f.
+            exit
+        endif
+
+    enddo
+
+endif
+
+return _file
+
+
 // ------------------------------------------
 // kompresuj fajlove i vrati path 
 // ------------------------------------------
 static function _compress_files()
 local _files
 local _error
-local _zip_path, _zip_name
+local _zip_path, _zip_name, _file
+local __path, __name, __ext
 
 // lista fajlova za kompresovanje
 _files := _file_list( __export_dbf_path )
 
-_zip_path := __export_dbf_path
-_zip_name := __export_zip_name
+_file := zip_name()
+
+HB_FNameSplit( _file, @__path, @__name, @__ext ) 
+
+_zip_path := __path
+_zip_name := __name + __ext
 
 // unzipuj fajlove
 _error := zip_files( _zip_path, _zip_name, _files )
@@ -1021,12 +1114,23 @@ return _error
 // ------------------------------------------
 // dekompresuj fajlove i vrati path 
 // ------------------------------------------
-static function _decompress_files()
+static function _decompress_files( imp_file )
 local _zip_name, _zip_path
 local _error
+local __name, __path, __ext
 
-_zip_path := __import_dbf_path
-_zip_name := __import_zip_name
+if ( imp_file == NIL )
+
+    _zip_path := __import_dbf_path
+    _zip_name := __import_zip_name
+
+else
+
+    HB_FNameSplit( imp_file, @__path, @__name, @__ext ) 
+    _zip_path := __path
+    _zip_name := __name + __ext    
+
+endif
 
 // unzipuj fajlove
 _error := unzip_files( _zip_path, _zip_name, __import_dbf_path )

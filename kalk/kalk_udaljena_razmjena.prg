@@ -545,7 +545,7 @@ do while !EOF()
     //endif
 
     //if DTOC( _dat_do ) <> ""
-        if field->datdok > _dat_od
+        if field->datdok > _dat_do
             skip
             loop
         endif

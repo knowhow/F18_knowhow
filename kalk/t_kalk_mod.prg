@@ -103,7 +103,7 @@ else
 endif
 AADD(opc,   "6. udaljene lokacije  - razmjena podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","PRENOSDISKETE"))
-	AADD(opcexe, {|| KalkPrenosDiskete()})
+	AADD(opcexe, {|| kalk_udaljena_razmjena_podataka()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

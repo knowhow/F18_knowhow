@@ -110,7 +110,7 @@ RETURN _error
 // -----------------------------------
 static function __zip_error( err )
 IF ( err <> 0 )
-    MsgBeep( "Imamo gresku ?!???" + ALLTRIM( STR( _error ) ) )
+    MsgBeep( "Imamo gresku ?!???" + ALLTRIM( STR( err ) ) )
 ENDIF
 RETURN
 
@@ -126,6 +126,7 @@ local _extract := .t.
 local _scan
 local _file_in_zip
 local _zip_file := zf_path + zf_name
+local __file, __date, __time, __size
 
 // paterni fajlova za ekstrakt
 IF ( files == NIL )
@@ -153,12 +154,17 @@ IF !EMPTY( _h_zip )
         _error := HB_UNZIPFILEFIRST( _h_zip )
 
         DO WHILE _error == 0
-            
+ 
+            HB_UnzipFileInfo( _h_zip, @__file, @__date, @__time, , , , @__size )
+
+            IF ( __file == NIL ) .OR. EMPTY( __file )
+                _error := HB_UnzipFileNext( _h_zip )
+            ENDIF
+
             // da li imamo kakve paterne ?
             IF LEN( files ) > 0
                 // daj info o zip fajlu...
-                HB_UnzipFileInfo( _h_zip, @_file_in_zip )
-                _scan := ASCAN( files, { | pattern | HB_WILDMATCH( pattern, _file_in_zip, .t. ) } )
+                _scan := ASCAN( files, { | pattern | HB_WILDMATCH( pattern, __file, .t. ) } )
                 IF _scan == 0
                     _extract := .f.         
                 ENDIF
@@ -166,18 +172,22 @@ IF !EMPTY( _h_zip )
             ENDIF
 
             IF _extract
+
                 ++ _cnt
-                @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ..." + PADL( ALLTRIM( _file ), 58 )
+
+                @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ... " + PADR( ALLTRIM( __file ), 40 )
+
                 _error := HB_UnzipExtractCurrentFile( _h_zip, NIL, NIL )
+
                 IF ( _error <> 0 )
                     RETURN __zip_error( _error )
                 ENDIF
+
             ENDIF
 
+            // ovdje ne treba obrada error-a
+            // zato sto je kraj arhive greska = -100
             _error := HB_UnzipFileNext( _h_zip )
-            IF ( _error <> 0 )
-                RETURN __zip_error( _error )
-            ENDIF
 
         ENDDO
 

@@ -25,7 +25,7 @@ local _izbor := 1
 
 __import_dbf_path := my_home() + "import_dbf" + SLASH
 __export_dbf_path := my_home() + "export_dbf" + SLASH
-__import_zip_name := "kalk_imp.zip"
+__import_zip_name := "kalk_exp.zip"
 __export_zip_name := "kalk_exp.zip"
 
 AADD(_opc,"1. => export podataka               ")
@@ -105,18 +105,40 @@ if !_vars_import( @_vars )
     return
 endif
 
+if !import_file_exist()
+    // nema fajla za import ?
+    MsgBeep( "import fajl ne postoji !??? prekidam operaciju" )
+    return
+endif
+
 // dekompresovanje podataka
-_decompress_files( _vars )
+if _decompress_files() <> 0
+    // ako je bilo greske
+    return
+endif
 
 // import procedura
 _imported_rec := __import( _vars )
 
-// vrati se na home direktorij nakon svega
-DirChange( my_home() )
+// zatvori sve
+close all
+
+// brisi fajlove importa
+delete_exp_files( __import_dbf_path )
 
 if ( _imported_rec > 0 )
+
+    // nakon uspjesnog importa...
+
+    // brisi zip fajl...
+    delete_zip_files( __import_dbf_path + __import_zip_name )
+
     MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
+
 endif
+
+// vrati se na home direktorij nakon svega
+DirChange( my_home() )
 
 return
 
@@ -131,9 +153,10 @@ local _dat_od := fetch_metric( "kalk_export_datum_od", my_user(), DATE() - 30 )
 local _dat_do := fetch_metric( "kalk_export_datum_do", my_user(), DATE() )
 local _konta := fetch_metric( "kalk_export_lista_konta", my_user(), PADR( "1320;", 200 ) )
 local _vrste_dok := fetch_metric( "kalk_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
+local _exp_sif := fetch_metric( "kalk_export_sifrarnik", my_user(), "D" )
 local _x := 1
 
-Box(, 8, 70 )
+Box(, 9, 70 )
 
     @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
 
@@ -152,6 +175,11 @@ Box(, 8, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+
     read
 
 BoxC()
@@ -165,11 +193,13 @@ if LastKey() <> K_ESC
     set_metric( "kalk_export_datum_do", my_user(), _dat_do )
     set_metric( "kalk_export_lista_konta", my_user(), _konta )
     set_metric( "kalk_export_vrste_dokumenata", my_user(), _vrste_dok )
+    set_metric( "kalk_export_sifrarnik", my_user(), _exp_sif )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
     vars["konta"] := _konta
     vars["vrste_dok"] := _vrste_dok
+    vars["export_sifre"] := _exp_sif
     
 endif
 
@@ -182,6 +212,67 @@ return _ret
 // -------------------------------------------
 static function _vars_import( vars )
 local _ret := .t.
+local _dat_od := fetch_metric( "kalk_import_datum_od", my_user(), CTOD("") )
+local _dat_do := fetch_metric( "kalk_import_datum_do", my_user(), CTOD("") )
+local _konta := fetch_metric( "kalk_import_lista_konta", my_user(), PADR( "", 200 ) )
+local _vrste_dok := fetch_metric( "kalk_import_vrste_dokumenata", my_user(), PADR( "", 200 ) )
+local _zamjeniti_dok := fetch_metric( "kalk_import_zamjeniti_dokumente", my_user(), "N" )
+local _zamjeniti_sif := fetch_metric( "kalk_import_zamjeniti_sifre", my_user(), "N" )
+local _x := 1
+
+Box(, 9, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "*** Uslovi importa dokumenata"
+
+    ++ _x
+    ++ _x
+        
+    @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
+    
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
+    @ m_x + _x, col() + 1 SAY "do" GET _dat_do
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Zamjeniti nove dokumente postojecim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
+
+    read
+
+BoxC()
+
+// snimi parametre
+if LastKey() <> K_ESC
+
+    _ret := .t.
+
+    set_metric( "kalk_import_datum_od", my_user(), _dat_od )
+    set_metric( "kalk_import_datum_do", my_user(), _dat_do )
+    set_metric( "kalk_import_lista_konta", my_user(), _konta )
+    set_metric( "kalk_import_vrste_dokumenata", my_user(), _vrste_dok )
+    set_metric( "kalk_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
+    set_metric( "kalk_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
+
+    vars["datum_od"] := _dat_od
+    vars["datum_do"] := _dat_do
+    vars["konta"] := _konta
+    vars["vrste_dok"] := _vrste_dok
+    vars["zamjeniti_dokumente"] := _zamjeniti_dok
+    vars["zamjeniti_sifre"] := _zamjeniti_sif
+    
+endif
+
 
 return _ret
 
@@ -195,14 +286,17 @@ local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
-local _dat_od, _dat_do, _konta, _vrste_dok
+local _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
 local _usl_mkonto, _usl_pkonto
+local _partn_id, _p_konto, _m_konto
+local _id_roba
 
 // uslovi za export ce biti...
 _dat_od := vars["datum_od"]
 _dat_do := vars["datum_do"]
 _konta := ALLTRIM( vars["konta"] )
 _vrste_dok := ALLTRIM( vars["vrste_dok"] )
+_export_sif := ALLTRIM( vars["export_sif"] )
  
 // kreiraj tabele exporta
 _cre_exp_tbls( __export_dbf_path )
@@ -225,8 +319,11 @@ do while !EOF()
     _id_firma := field->idfirma
     _id_vd := field->idvd
     _br_dok := field->brdok
+    _partn_id := field->idpartner
+    _p_konto := field->pkonto
+    _m_konto := field->mkonto
 
-    // provjeri uslove
+    // provjeri uslove ?!??
 
     // lista konta...
     if !EMPTY( _konta )
@@ -252,9 +349,18 @@ do while !EOF()
     endif
 
     // datumski uslov...
-    if ( field->datdok < _dat_od ) .or. ( field->datdok > _dat_do )
-        skip
-        loop
+    if DTOC( _dat_od ) <> ""
+        if ( field->datdok < _dat_od )
+            skip
+            loop
+        endif
+    endif
+
+    if DTOC( _dat_do ) <> ""
+        if ( field->datdok > _dat_do )
+            skip
+            loop
+        endif
     endif
 
     // ako je sve zadovoljeno !
@@ -267,6 +373,7 @@ do while !EOF()
     ++ _cnt
     @ m_x + 2, m_y + 2 SAY PADR(  PADL( ALLTRIM(STR( _cnt )), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + ALLTRIM( _br_dok ), 50 )
 
+    // dodaj zapis i u tabelu e_kalk
     select kalk
     set order to tag "1"
     go top
@@ -274,16 +381,78 @@ do while !EOF()
 
     do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
 
+        // uzmi robu...
+        _id_roba := field->idroba
+
+        // upisi zapis u tabelu e_kalk
         _app_rec := dbf_get_rec()
-        
         select e_kalk
         append blank
         dbf_update_rec( _app_rec )
 
+        // uzmi sada robu sa ove stavke pa je ubaci u e_roba
+        select roba
+        hseek _id_roba
+        if FOUND() .and. _export_sif == "D"
+            _app_rec := dbf_get_rec()        
+            select e_roba
+            set order to tag "ID"
+            seek _id_roba
+            if !FOUND()
+                append blank
+                dbf_update_rec( _app_rec )
+            endif
+        endif
+
+        // idi dalje...
         select kalk
         skip
 
     enddo
+
+    // e sada mozemo komotno ici na export partnera
+    select partn
+    hseek _id_partn 
+    if FOUND() .and. _export_sif == "D"
+        _app_rec := dbf_get_rec()
+        select e_partn
+        set order to tag "ID"
+        seek _id_partn
+        if !FOUND()
+            append blank
+            dbf_update_rec( _app_rec )
+        endif
+    endif
+
+    // i konta, naravno
+
+    // prvo M_KONTO
+    select konto
+    hseek _m_konto 
+    if FOUND() .and. _export_sif == "D"
+        _app_rec := dbf_get_rec()
+        select e_konto
+        set order to tag "ID"
+        seek _m_konto
+        if !FOUND()
+            append blank
+            dbf_update_rec( _app_rec )
+        endif
+    endif
+
+    // zatim P_KONTO
+    select konto
+    hseek _p_konto 
+    if FOUND() .and. _export_sif == "D"
+        _app_rec := dbf_get_rec()
+        select e_konto
+        set order to tag "ID"
+        seek _p_konto
+        if !FOUND()
+            append blank
+            dbf_update_rec( _app_rec )
+        endif
+    endif
 
     select kalk_doks
     skip
@@ -308,7 +477,18 @@ local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
+local _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif
+local _usl_mkonto, _usl_pkonto
+local _roba_id, _partn_id, _konto_id
 
+// ovo su nam uslovi za import...
+_dat_od := vars["datum_od"]
+_dat_do := vars["datum_do"]
+_konta := vars["konta"]
+_vrste_dok := vars["vrste_dok"]
+_zamjeniti_dok := vars["zamjeniti_dokumente"]
+_zamjeniti_sif := vars["zamjeniti_sifre"]
+ 
 // otvaranje export tabela
 _o_exp_tables( __import_dbf_path )
 
@@ -319,17 +499,78 @@ select e_doks
 set order to tag "1"
 go top
 
+Box(, 2, 70 )
+
+@ m_x + 1, m_y + 2 SAY "... import kalk dokumenata u toku "
+
 do while !EOF()
 
     _id_firma := field->idfirma
     _id_vd := field->idvd
     _br_dok := field->brdok
 
+    // uslovi, provjera...
+
+    // datumi...
+    if DTOC( _dat_od ) <> ""
+        if field->datdok < _dat_od
+            skip
+            loop
+        endif
+    endif
+
+    if DTOC( _dat_do ) <> ""
+        if field->datdok > _dat_od
+            skip
+            loop
+        endif
+    endif
+
+    // lista konta...
+    if !EMPTY( _konta )
+
+        _usl_mkonto := Parsiraj( ALLTRIM(_konta), "mkonto" )
+        _usl_pkonto := Parsiraj( ALLTRIM(_konta), "pkonto" )
+
+        if !( &_usl_mkonto )
+            if !( &_usl_pkonto )
+                skip
+                loop
+            endif
+        endif
+
+    endif
+
+    // lista dokumenata...
+    if !EMPTY( _vrste_dok )
+        if !( field->idvd $ _vrste_dok )
+            skip
+            loop
+        endif
+    endif
+
     // da li postoji u prometu vec ?
-    if _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok ) == 0
-        select e_doks
-        skip
-        loop
+    if _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok )
+
+        if _zamjeniti_dok == "D"
+
+            // dokumente iz kalk, kalk_doks brisi !
+            _ok := .t.
+            _ok := _ok .and. del_kalk( _id_firma, _id_vd, _br_dok )
+            _ok := _ok .and. del_kalk_doks( _id_firma, _id_vd, _br_dok )
+
+            if !_ok
+                MsgBeep( "Doslo je do greske sa brisanjem podataka !!!#Dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok )
+                BoxC()
+                return 0
+            endif
+            
+        else
+            select e_doks
+            skip
+            loop
+        endif
+
     endif
 
     // zikni je u nasu tabelu doks
@@ -340,6 +581,7 @@ do while !EOF()
     update_rec_server_and_dbf( "kalk_doks", _app_rec )
 
     ++ _cnt
+    @ m_x + 2, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
     // zikni je u nasu tabelu kalk
     select e_kalk
@@ -379,9 +621,12 @@ if _cnt > 0
         select roba
         hseek _roba_id
 
-        if !FOUND()
+        if !FOUND() .or. _zamjeniti_sif == "D"
 
             select e_roba
+
+            @ m_x + 2, m_y + 2 SAY "import roba id: " + field->id + PADR( field->naz, 20 )
+
             _app_rec := dbf_get_rec()
 
             select roba
@@ -394,7 +639,71 @@ if _cnt > 0
 
     enddo
 
+    // isto kao i partnere !
+    select e_partn
+    set order to tag "ID"
+    go top
+
+    do while !EOF()
+    
+        _partn_id := field->id
+
+        select partn
+        hseek _partn_id
+
+        if !FOUND() .or. _zamjeniti_sif == "D"
+
+            select e_partn
+
+            @ m_x + 2, m_y + 2 SAY "import partn id: " + field->id + PADR( field->naz, 20 )
+
+            _app_rec := dbf_get_rec()
+
+            select partn
+            update_rec_server_and_dbf( "partn", _app_rec )
+
+        endif
+
+        select e_partn
+        skip
+
+    enddo
+
+
+    // a bogme i konta !
+    select e_konto
+    set order to tag "ID"
+    go top
+
+    do while !EOF()
+    
+        _konto_id := field->id
+
+        select konto
+        hseek _konto_id
+
+        if !FOUND() .or. _zamjeniti_sif == "D"
+
+            select e_konto
+
+            @ m_x + 2, m_y + 2 SAY "import partn id: " + field->id + PADR( field->naz, 20 )
+
+            _app_rec := dbf_get_rec()
+
+            select konto
+            update_rec_server_and_dbf( "konto", _app_rec )
+
+        endif
+
+        select e_konto
+        skip
+
+    enddo
+
+
 endif
+
+BoxC()
 
 if _cnt > 0
     _ret := _cnt
@@ -420,6 +729,70 @@ endif
 
 select (_t_area)
 return _ret
+
+
+
+
+// ----------------------------------------------------------
+// brisi dokument iz kalk-a
+// ----------------------------------------------------------
+static function del_kalk( id_firma, id_vd, br_dok )
+local _t_area := SELECT()
+local _del_rec, _t_rec 
+local _ret := .f.
+
+select kalk
+set order to tag "1"
+go top
+seek id_firma + id_vd + br_dok
+
+do while !EOF() .and. field->idfirma == id_firma .and. field->idvd == id_vd .and. field->brdok == br_dok
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    _del_rec := dbf_get_rec()
+
+    delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+    _ret := .t.
+
+    go ( _t_rec )
+
+enddo
+
+select ( _t_area )
+return _ret
+
+
+
+// ----------------------------------------------------------
+// brisi dokument iz doks-a
+// ----------------------------------------------------------
+static function del_kalk_doks( id_firma, id_vd, br_dok )
+local _t_area := SELECT()
+local _del_rec
+local _ret := .f.
+
+select kalk_doks
+set order to tag "1"
+go top
+seek id_firma + id_vd + br_dok
+
+if FOUND()
+
+    _del_rec := dbf_get_rec()
+
+    delete_rec_server_and_dbf( ALIAS(), _del_rec )
+
+    _ret := .t.
+
+endif
+
+select ( _t_area )
+return _ret
+
 
 
 // ---------------------------------------------
@@ -603,6 +976,25 @@ next
 MsgC()
 
 return
+
+
+
+// -------------------------------------------------------
+// da li postoji import fajl ?
+// -------------------------------------------------------
+static function import_file_exist( imp_file )
+local _ret := .t.
+
+if ( imp_file == NIL )
+    imp_file := __import_dbf_path + __import_zip_name
+endif
+
+if !FILE( imp_file )
+    _ret := .f.
+endif
+
+return _ret
+
 
 
 // ------------------------------------------

@@ -63,7 +63,7 @@ close all
 
 // arhiviraj podatke
 if _exported_rec > 0 
-    
+   
     // kompresuj ih u zip fajl za prenos
     _error := _compress_files()
 

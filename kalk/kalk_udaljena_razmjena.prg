@@ -12,11 +12,18 @@
 
 #include "kalk.ch"
 
+static __import_dbf_path 
+static __export_dbf_path
+
+
 
 function kalk_udaljena_razmjena_podataka()
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1
+
+__import_dbf_path := my_home() + "import_dbf" + SLASH
+__export_dbf_path := my_home() + "export_dbf" + SLASH
 
 AADD(_opc,"1. => export podataka               ")
 AADD(_opcexe, {|| _kalk_export() })
@@ -34,22 +41,48 @@ return
 // ----------------------------------------
 static function _kalk_export()
 local _vars := hb_hash()
-local _exported := .f.
+local _exported_rec
+local _error
 
 // uslovi exporta
 if !_vars_export( @_vars )
     return
 endif
 
-// export podataka
-_exported := __export( _vars )
+// pobrisi u folderu tmp fajlove ako postoje
+delete_exp_files( __export_dbf_path )
+delete_exp_zip_files()
+
+// exportuj podatake
+_exported_rec := __export( _vars )
 
 // arhiviraj podatke
-if _exported 
-    // files =
-    // _compress()
+if _exported_rec > 0 
+    
+    // kompresuj ih u zip fajl za prenos
+    _error := _compress_files()
+
+    // sve u redu
+    if _error == 0
+        
+        // pobrisi fajlove razmjene
+        delete_exp_files( __export_dbf_path )
+
+        // otvori folder sa exportovanim podacima
+        open_folder( __export_dbf_path )
+
+    endif
+
 endif
 
+// vrati se na glavni direktorij
+DirChange( my_home() )
+
+if ( _exported_rec > 0 )
+    MsgBeep( "Exportovao " + ALLTRIM(STR( _exported_rec )) + " dokumenta." )
+endif
+
+close all
 return
 
 
@@ -58,7 +91,7 @@ return
 // import podataka modula KALK
 // ----------------------------------------
 static function _kalk_import()
-local _imported := .f.
+local _imported_rec
 local _vars := hb_hash()
 
 // parametri
@@ -67,10 +100,17 @@ if !_vars_import( @_vars )
 endif
 
 // dekompresovanje podataka
-_decompress( _vars )
+_decompress_files( _vars )
 
 // import procedura
-_imported := __import()
+_imported_rec := __import( _vars )
+
+// vrati se na home direktorij nakon svega
+DirChange( my_home() )
+
+if ( _imported_rec > 0 )
+    MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
+endif
 
 return
 
@@ -80,7 +120,52 @@ return
 // uslovi exporta dokumenta
 // -------------------------------------------
 static function _vars_export( vars )
-local _ret := .t.
+local _ret := .f.
+local _dat_od := fetch_metric( "kalk_export_datum_od", my_user(), DATE() - 30 )
+local _dat_do := fetch_metric( "kalk_export_datum_do", my_user(), DATE() )
+local _konta := fetch_metric( "kalk_export_lista_konta", my_user(), PADR( "1320;", 200 ) )
+local _vrste_dok := fetch_metric( "kalk_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
+local _x := 1
+
+Box(, 8, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
+
+    ++ _x
+    ++ _x
+        
+    @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
+    
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
+    @ m_x + _x, col() + 1 SAY "do" GET _dat_do
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
+
+    read
+
+BoxC()
+
+// snimi parametre
+if LastKey() <> K_ESC
+
+    _ret := .t.
+
+    set_metric( "kalk_export_datum_od", my_user(), _dat_od )
+    set_metric( "kalk_export_datum_do", my_user(), _dat_do )
+    set_metric( "kalk_export_lista_konta", my_user(), _konta )
+    set_metric( "kalk_export_vrste_dokumenata", my_user(), _vrste_dok )
+
+    vars["datum_od"] := _dat_od
+    vars["datum_do"] := _dat_do
+    vars["konta"] := _konta
+    vars["vrste_dok"] := _vrste_dok
+    
+endif
 
 return _ret
 
@@ -100,32 +185,73 @@ return _ret
 // export podataka
 // -------------------------------------------
 static function __export( vars )
-local _ret := .f.
+local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
+local _dat_od, _dat_do, _konta, _vrste_dok
+local _usl_mkonto, _usl_pkonto
 
+// uslovi za export ce biti...
+_dat_od := vars["datum_od"]
+_dat_do := vars["datum_do"]
+_konta := ALLTRIM( vars["konta"] )
+_vrste_dok := ALLTRIM( vars["vrste_dok"] )
+ 
 // kreiraj tabele exporta
-_cre_exp_tbls()
+_cre_exp_tbls( __export_dbf_path )
 
 // otvori export tabele za pisanje podataka
-_o_exp_tables()
+_o_exp_tables( __export_dbf_path )
 
 // otvori lokalne tabele za prenos
 _o_tables()
 
-select doks
+Box(, 2, 65 )
+
+@ m_x + 1, m_y + 2 SAY "... export kalk dokumenata u toku"
+
+select kalk_doks
 go top
 
 do while !EOF()
-    
+
     _id_firma := field->idfirma
     _id_vd := field->idvd
     _br_dok := field->brdok
 
-    // if if if if...
+    // provjeri uslove
 
+    // lista konta...
+    if !EMPTY( _konta )
 
+        _usl_mkonto := Parsiraj( ALLTRIM(_konta), "mkonto" )
+        _usl_pkonto := Parsiraj( ALLTRIM(_konta), "pkonto" )
+
+        if !( &_usl_mkonto )
+            if !( &_usl_pkonto )
+                skip
+                loop
+            endif
+        endif
+
+    endif
+
+    // lista dokumenata...
+    if !EMPTY( _vrste_dok )
+        if !( field->idvd $ _vrste_dok )
+            skip
+            loop
+        endif
+    endif
+
+    // datumski uslov...
+    if ( field->datdok < _dat_od ) .or. ( field->datdok > _dat_do )
+        skip
+        loop
+    endif
+
+    // ako je sve zadovoljeno !
     // dodaj zapis u tabelu e_doks
     _app_rec := dbf_get_rec()
     select e_doks
@@ -133,6 +259,7 @@ do while !EOF()
     dbf_update_rec( _app_rec )    
 
     ++ _cnt
+    @ m_x + 2, m_y + 2 SAY PADR(  PADL( ALLTRIM(STR( _cnt )), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + ALLTRIM( _br_dok ), 50 )
 
     select kalk
     set order to tag "1"
@@ -152,13 +279,15 @@ do while !EOF()
 
     enddo
 
-    select doks
+    select kalk_doks
     skip
 
 enddo
 
-if ( _cnt == 0 )
-    _ret := .f.
+BoxC()
+
+if ( _cnt > 0 )
+    _ret := _cnt
 endif
 
 return _ret
@@ -168,14 +297,14 @@ return _ret
 // ----------------------------------------
 // import podataka
 // ----------------------------------------
-static function __import()
-local _ret := .t.
+static function __import( vars )
+local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
 
 // otvaranje export tabela
-_o_exp_tables()
+_o_exp_tables( __import_dbf_path )
 
 // otvori potrebne tabele za import podataka
 _o_tables()
@@ -201,7 +330,7 @@ do while !EOF()
     select e_doks
     _app_rec := dbf_get_rec()
 
-    select doks
+    select kalk_doks
     update_rec_server_and_dbf( "kalk_doks", _app_rec )
 
     ++ _cnt
@@ -261,6 +390,9 @@ if _cnt > 0
 
 endif
 
+if _cnt > 0
+    _ret := _cnt
+endif
 
 return _ret
 
@@ -284,47 +416,75 @@ select (_t_area)
 return _ret
 
 
+// ---------------------------------------------
+// kreiraj direktorij ako ne postoji
+// ---------------------------------------------
+static function _dir_create( use_path )
+local _ret := .t.
+
+//_lokacija := _path_quote( my_home() + "export" + SLASH )
+
+if DirChange( use_path ) != 0
+    _cre := MakeDir ( use_path )
+    if _cre != 0
+        MsgBeep("kreiranje " + use_path + " neuspjesno ?!")
+        log_write("dircreate err:" + use_path )
+        _ret := .f.
+    endif
+endif
+
+return _ret
+
+
 
 // ----------------------------------------
 // kreiranje tabela razmjene
 // ----------------------------------------
-static function _cre_exp_tbls()
+static function _cre_exp_tbls( use_path )
+local _cre 
+
+if use_path == NIL
+    use_path := my_home()
+endif
+
+// provjeri da li postoji direktorij, pa ako ne - kreiraj
+_dir_create( use_path )
 
 // tabela kalk
 O_KALK
 copy structure extended to ( my_home() + "struct" )
 use
-create (my_home() + "e_kalk") from ( my_home() + "struct")
+create ( use_path + "e_kalk") from ( my_home() + "struct")
 
 // tabela doks
 O_KALK_DOKS
 copy structure extended to ( my_home() + "struct" )
 use
-create (my_home() + "e_doks") from ( my_home() + "struct")
+create ( use_path + "e_doks") from ( my_home() + "struct")
 
 // tabela roba
 O_ROBA
 copy structure extended to ( my_home() + "struct" )
 use
-create (my_home() + "e_roba") from ( my_home() + "struct")
+create ( use_path + "e_roba") from ( my_home() + "struct")
 
 // tabela partn
 O_PARTN
 copy structure extended to ( my_home() + "struct" )
 use
-create (my_home() + "e_partn") from ( my_home() + "struct")
+create ( use_path + "e_partn") from ( my_home() + "struct")
 
 // tabela partn
 O_PARTN
 copy structure extended to ( my_home() + "struct" )
 use
-create (my_home() + "e_partn") from ( my_home() + "struct")
+create ( use_path + "e_partn") from ( my_home() + "struct")
 
 // tabela konta
 O_KONTO
 copy structure extended to ( my_home() + "struct" )
 use
-create (my_home() + "e_konto") from ( my_home() + "struct")
+create ( use_path + "e_konto") from ( my_home() + "struct")
 
 
 return
@@ -334,6 +494,7 @@ return
 // otvaranje potrebnih tabela za prenos
 // ----------------------------------------------------
 static function _o_tables()
+
 O_KALK
 O_KALK_DOKS
 O_SIFK
@@ -341,6 +502,7 @@ O_SIFV
 O_KONTO
 O_PARTN
 O_ROBA
+
 return
 
 
@@ -355,28 +517,31 @@ if ( use_path == NIL )
     use_path := my_home()
 endif
 
+// zatvori sve prije otvaranja ovih tabela
+close all
+
 // otvori kalk tabelu
-select ( 500 )
+select ( 360 )
 use ( use_path + "e_kalk" ) alias "e_kalk"
 index on ( idfirma + idvd + brdok ) tag "1"
 
 // otvori doks tabelu
-select ( 501 )
+select ( 361 )
 use ( use_path + "e_doks" ) alias "e_doks"
 index on ( idfirma + idvd + brdok ) tag "1"
 
 // otvori roba tabelu
-select ( 502 )
+select ( 362 )
 use ( use_path + "e_roba" ) alias "e_roba"
 index on ( id ) tag "ID"
 
 // otvori partn tabelu
-select ( 503 )
+select ( 363 )
 use ( use_path + "e_partn" ) alias "e_partn"
 index on ( id ) tag "ID"
 
 // otvori konto tabelu
-select ( 504 )
+select ( 364 )
 use ( use_path + "e_konto" ) alias "e_konto"
 index on ( id ) tag "ID"
 
@@ -400,40 +565,87 @@ AADD( _a_files, use_path + "e_konto.dbf" )
 return _a_files
 
 
+
+// -------------------------------------------------
+// brise zip fajl exporta
+// -------------------------------------------------
+static function delete_exp_zip_files()
+local _file := __export_dbf_path + "kalk_exp.zip"
+
+if FILE( _file )
+    FERASE( _file )
+endif 
+
+return
+
+
+// -------------------------------------------------
+// brise zip fajl importa
+// -------------------------------------------------
+static function delete_imp_zip_files()
+local _file := __import_dbf_path + "kalk_imp.zip"
+
+if FILE( _file )
+    FERASE( _file )
+endif 
+
+return
+
+
+
+// ---------------------------------------------------
+// brise temp fajlove razmjene
+// ---------------------------------------------------
+static function delete_exp_files( use_path )
+local _files := _file_list( use_path )
+local _file, _tmp
+
+MsgO( "Brisem tmp fajlove ..." )
+for each _file in _files
+    if FILE( _file )
+        // pobrisi dbf fajl
+        FERASE( _file )
+        // cdx takodjer ?
+        _tmp := STRTRAN( _file, ".dbf", ".cdx" )
+        FERASE( _tmp )
+    endif
+next
+MsgC()
+
+return
+
+
 // ------------------------------------------
 // kompresuj fajlove i vrati path 
 // ------------------------------------------
-static function _compress( vars )
-local _path
-local _files
-local _export_path := ALLTRIM( vars["export_path"] )
-local _zip_path := ALLTRIM( vars["zip_file_name"] )
+static function _compress_files()
+local _files, _zip_file
 local _error
 
 // lista fajlova za kompresovanje
-_files := _file_list()
+_files := _file_list( __export_dbf_path )
+_zip_file := __export_dbf_path + "kalk_exp.zip"
 
 // unzipuj fajlove
-_error := zip_files( _zip_path, _files )
+_error := zip_files( _zip_file, _files )
 
-return _export_path
+return _error
 
 
 
 // ------------------------------------------
 // dekompresuj fajlove i vrati path 
 // ------------------------------------------
-static function _decompress( vars )
-local _path
-local _files
-local _export_path := ALLTRIM( vars["export_path"] )
-local _zip_path := ALLTRIM( vars["zip_file_name"] )
+static function _decompress_files()
+local _zip_file
 local _error
 
-// unzipuj fajlove
-_error := unzip_files( _zip_path, _export_path )
+_zip_file := __import_dbf_path + "kalk_imp.zip"
 
-return _export_path
+// unzipuj fajlove
+_error := unzip_files( _zip_file, __import_dbf_path )
+
+return _error
 
 
 

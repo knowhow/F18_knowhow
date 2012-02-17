@@ -52,7 +52,7 @@ IF !EMPTY( _h_zip )
 
     Box(, 2, 65 )
 
-        @ m_x + 1, m_y + 2 SAY "Kompresujem fajl: " + ALLTRIM( zf_name )
+        @ m_x + 1, m_y + 2 SAY "Kompresujem fajl: ..." + PADL( ALLTRIM( zf_name ), 40 )
 
         FOR EACH _file IN files
             // ako postoji fajl
@@ -118,7 +118,7 @@ IF !EMPTY( _h_zip )
 
     Box(, 2, 65 )
 
-        @ m_x + 1, m_y + 2 SAY "Dekompresujem fajl: " + ALLTRIM( zf_name )
+        @ m_x + 1, m_y + 2 SAY "Dekompresujem fajl: ..." + PADL( ALLTRIM( zf_name ), 30 )
 
         IF !EMPTY( zf_destination )
             // skoci u direktorij za raspakivanje ...

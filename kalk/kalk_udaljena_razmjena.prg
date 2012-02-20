@@ -834,13 +834,26 @@ return
 // --------------------------------------------------
 static function update_rec_roba_struct( rec )
 local _no_field
+local _struct := {}
 
-_no_field := "idkonto"
-if ! HB_HHASKEY( rec, _no_field )
-    rec[ _no_field ] := nil
-endif
+// moguca nepostojeca polja tabele roba
+AADD( _struct, "idkonto" )
+AADD( _struct, "sifradob" )
+AADD( _struct, "strings" )
+AADD( _struct, "k7" )
+AADD( _struct, "k8" )
+AADD( _struct, "k9" )
+AADD( _struct, "mink" )
+
+for each _no_field in _struct
+    if ! HB_HHASKEY( rec, _no_field )
+        rec[ _no_field ] := nil
+    endif
+next
 
 return
+
+
 
 // ---------------------------------------------------------
 // update tabela sifk, sifv na osnovu pomocnih tabela

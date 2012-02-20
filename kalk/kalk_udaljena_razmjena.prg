@@ -638,129 +638,20 @@ do while !EOF()
 
 enddo
 
+// ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
 
-    // moramo ziknuti i robu ako fali !
-    select e_roba
-    set order to tag "ID"
-    go top
+    // update tabele roba
+    update_table_roba( _zamjeniti_sif )
 
-    do while !EOF()
-    
-        _roba_id := field->id
+    // update tabele partnera
+    update_table_partn( _zamjeniti_sif )
 
-        select roba
-        hseek _roba_id
+    // update tabele konta
+    update_table_konto( _zamjeniti_sif )
 
-        _sif_exist := .t.
-        if !FOUND()
-            _sif_exist := .f.
-        endif
-
-        if !_sif_exist .or. ( _sif_exist .and. _zamjeniti_sif == "D" )
-
-            select e_roba
-
-            @ m_x + 2, m_y + 2 SAY "import roba id: " + field->id + PADR( field->naz, 20 )
-
-            _app_rec := dbf_get_rec()
-
-            select roba
-
-            if !_sif_exist
-                append blank
-            endif
-
-            update_rec_server_and_dbf( "roba", _app_rec )
-
-        endif
-
-        select e_roba
-        skip
-
-    enddo
-
-    // isto kao i partnere !
-    select e_partn
-    set order to tag "ID"
-    go top
-
-    do while !EOF()
-    
-        _partn_id := field->id
-
-        select partn
-        hseek _partn_id
-        
-        _sif_exist := .t.
-        if !FOUND()
-            _sif_exist := .f.
-        endif
-
-        if !_sif_exist .or. ( _sif_exist .and. _zamjeniti_sif == "D" )
-
-            select e_partn
-
-            @ m_x + 2, m_y + 2 SAY "import partn id: " + field->id + PADR( field->naz, 20 )
-
-            _app_rec := dbf_get_rec()
-
-            select partn
-
-            if !_sif_exist
-                append blank
-            endif
-
-            update_rec_server_and_dbf( "partn", _app_rec )
-
-        endif
-
-        select e_partn
-        skip
-
-    enddo
-
-
-    // a bogme i konta !
-    select e_konto
-    set order to tag "ID"
-    go top
-
-    do while !EOF()
-    
-        _konto_id := field->id
-
-        select konto
-        hseek _konto_id
-
-        _sif_exist := .t.
-        if !FOUND()
-            _sif_exist := .f.
-        endif
-
-        if !_sif_exist .or. ( _sif_exist .and. _zamjeniti_sif == "D" )
-
-            select e_konto
-
-            @ m_x + 2, m_y + 2 SAY "import partn id: " + field->id + PADR( field->naz, 20 )
-
-            _app_rec := dbf_get_rec()
-
-            select konto
-
-            if !_sif_exist
-                append blank
-            endif
-
-            update_rec_server_and_dbf( "konto", _app_rec )
-
-        endif
-
-        select e_konto
-        skip
-
-    enddo
-
+    // odradi update tabela sifk, sifv
+    update_sifk_sifv()
 
 endif
 
@@ -771,6 +662,208 @@ if _cnt > 0
 endif
 
 return _ret
+
+
+// ----------------------------------------------------------------
+// update tabele konto na osnovu pomocne tabele
+// ----------------------------------------------------------------
+static function update_table_konto( zamjena_sifre )
+local _app_rec
+local _sif_exist := .t.
+
+select e_konto
+set order to tag "ID"
+go top
+
+do while !EOF()
+
+    _app_rec := dbf_get_rec()    
+
+    select konto
+    hseek _app_rec["id"]
+
+    _sif_exist := .t.
+    if !FOUND()
+        _sif_exist := .f.
+    endif
+
+    if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
+
+        @ m_x + 2, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+
+        select konto
+
+        if !_sif_exist
+            append blank
+        endif
+
+        update_rec_server_and_dbf( "konto", _app_rec )
+
+    endif
+
+    select e_konto
+    skip
+
+enddo
+
+return
+
+
+
+// -----------------------------------------------------------
+// update tabele partnera na osnovu pomocne tabele
+// -----------------------------------------------------------
+static function update_table_partn( zamjena_sifre )
+local _app_rec
+local _sif_exist := .t.
+
+select e_partn
+set order to tag "ID"
+go top
+
+do while !EOF()
+    
+    _app_rec := dbf_get_rec()
+
+    select partn
+    hseek _app_rec["id"]
+
+    _sif_exist := .t.        
+    if !FOUND()
+        _sif_exist := .f.
+    endif
+
+    if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
+
+        @ m_x + 2, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+
+        select partn
+
+        if !_sif_exist
+            append blank
+        endif
+
+        update_rec_server_and_dbf( "partn", _app_rec )
+
+    endif
+
+    select e_partn
+    skip
+
+enddo
+
+return
+
+
+
+// update podataka u tabelu robe
+static function update_table_roba( zamjena_sifre )
+local _app_rec 
+local _sif_exist := .t.
+
+// moramo ziknuti i robu ako fali !
+select e_roba
+set order to tag "ID"
+go top
+
+do while !EOF()
+    
+    _app_rec := dbf_get_rec()
+
+    select roba
+    hseek _app_rec["id"]
+
+    _sif_exist := .t.
+    if !FOUND()
+        _sif_exist := .f.
+    endif
+
+    if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
+
+        @ m_x + 2, m_y + 2 SAY "import roba id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+
+        select roba
+
+        if !_sif_exist
+            append blank
+        endif
+
+        update_rec_server_and_dbf( "roba", _app_rec )
+
+    endif
+
+    select e_roba
+    skip
+
+enddo
+
+return
+
+
+
+// ---------------------------------------------------------
+// update tabela sifk, sifv na osnovu pomocnih tabela
+// ---------------------------------------------------------
+static function update_sifk_sifv()
+local _app_rec
+
+// sifk, sifv tabele
+select e_sifk
+set order to tag "ID2"
+go top
+
+// update sifk
+do while !EOF()
+
+    _app_rec := dbf_get_rec()
+    _app_rec["dec"] := _app_rec["f_dec"]
+        
+    select sifk
+    set order to tag "ID2"
+    go top
+    seek _app_rec["id"] + _app_rec["oznaka"] 
+
+    if !FOUND()
+        append blank
+    endif
+        
+    @ m_x + 2, m_y + 2 SAY "import sifk id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"]
+    
+    // uvijek update odradi friskog stanja sifk tabele
+    update_rec_server_and_dbf( "sifk", _app_rec )
+        
+    select e_sifk
+    skip
+
+enddo
+
+select e_sifv
+set order to tag "ID"
+go top
+
+// update sifv
+do while !EOF()
+
+    _app_rec := dbf_get_rec()
+    select sifv
+    set order to tag "ID"
+    go top
+    seek _app_rec["id"] + _app_rec["oznaka"] + _app_rec["idsif"] + _app_rec["naz"] 
+
+    if !FOUND()
+        append blank
+    endif
+
+    @ m_x + 2, m_y + 2 SAY "import sifv id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"] + ", sifra: " + _app_rec["idsif"]
+    update_rec_server_and_dbf( "sifv", _app_rec )
+
+    select e_sifv
+    skip
+
+enddo
+
+return
+
 
 
 // ---------------------------------------------------------------------

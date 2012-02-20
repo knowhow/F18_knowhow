@@ -815,10 +815,6 @@ do while !EOF()
             append blank
         endif
         
-        _eg_rec := dbf_get_rec()
-
-        corect_rec( @_app_rec, _eg_rec )
-
         update_rec_server_and_dbf( "roba", _app_rec )
 
     endif
@@ -829,27 +825,6 @@ do while !EOF()
 enddo
 
 return
-
-
-
-// kontrolisi stanje append rec zapisa i postojeceg zapisa u bazi
-static function corect_rec( app_rec, ctrl_rec )
-local _field_name
-local _scan
-
-for each _field_name in ctrl_rec
-    
-    _scan := ASCAN( app_rec, { | rec | rec[1] == _field_name }  )    
-
-    // nema polja ?
-    if _scan == 0
-        AADD( app_rec, { _field_name } )
-    endif    
-
-next
-
-return
-
 
 
 // ---------------------------------------------------------

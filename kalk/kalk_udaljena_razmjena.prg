@@ -125,6 +125,10 @@ if _decompress_files( _imp_file ) <> 0
     return
 endif
 
+#ifdef __PLATFORM__UNIX
+    set_file_access()
+#endif
+
 // import procedura
 _imported_rec := __import( _vars )
 
@@ -148,6 +152,15 @@ endif
 // vrati se na home direktorij nakon svega
 DirChange( my_home() )
 
+return
+
+
+// --------------------------------------------
+// promjena privilegija fajlova
+// --------------------------------------------
+static function set_file_access()
+// ova funkcija treba da setuje chown i privilegije za fajlove ekstraktovane fajlove sa windows-a
+// trenutno mi ne treba !!!
 return
 
 
@@ -241,9 +254,10 @@ local _konta := fetch_metric( "kalk_import_lista_konta", my_user(), PADR( "", 20
 local _vrste_dok := fetch_metric( "kalk_import_vrste_dokumenata", my_user(), PADR( "", 200 ) )
 local _zamjeniti_dok := fetch_metric( "kalk_import_zamjeniti_dokumente", my_user(), "N" )
 local _zamjeniti_sif := fetch_metric( "kalk_import_zamjeniti_sifre", my_user(), "N" )
+local _iz_fmk := fetch_metric( "kalk_import_iz_fmk", my_user(), "N" )
 local _x := 1
 
-Box(, 9, 70 )
+Box(, 12, 70 )
 
     @ m_x + _x, m_y + 2 SAY "*** Uslovi importa dokumenata"
 
@@ -271,6 +285,11 @@ Box(, 9, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
 
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
+
     read
 
 BoxC()
@@ -286,6 +305,7 @@ if LastKey() <> K_ESC
     set_metric( "kalk_import_vrste_dokumenata", my_user(), _vrste_dok )
     set_metric( "kalk_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
     set_metric( "kalk_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
+    set_metric( "kalk_import_iz_fmk", my_user(), _iz_fmk )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
@@ -293,6 +313,7 @@ if LastKey() <> K_ESC
     vars["vrste_dok"] := _vrste_dok
     vars["zamjeniti_dokumente"] := _zamjeniti_dok
     vars["zamjeniti_sifre"] := _zamjeniti_sif
+    vars["import_iz_fmk"] := _iz_fmk
     
 endif
 
@@ -505,10 +526,11 @@ local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
-local _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif
+local _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
 local _usl_mkonto, _usl_pkonto
 local _roba_id, _partn_id, _konto_id
 local _sif_exist
+local _fmk_import := .f.
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
@@ -517,9 +539,14 @@ _konta := vars["konta"]
 _vrste_dok := vars["vrste_dok"]
 _zamjeniti_dok := vars["zamjeniti_dokumente"]
 _zamjeniti_sif := vars["zamjeniti_sifre"]
+_iz_fmk := vars["import_iz_fmk"]
  
+if _iz_fmk == "D"
+    _fmk_import := .t.
+endif
+
 // otvaranje export tabela
-_o_exp_tables( __import_dbf_path )
+_o_exp_tables( __import_dbf_path, _fmk_import )
 
 // otvori potrebne tabele za import podataka
 _o_tables()
@@ -1056,49 +1083,89 @@ return
 // ----------------------------------------------------
 // otvranje export tabela
 // ----------------------------------------------------
-static function _o_exp_tables( use_path )
+static function _o_exp_tables( use_path, from_fmk )
+local _dbf_name
 
 if ( use_path == NIL )
     use_path := my_home()
 endif
 
+if ( from_fmk == NIL )
+    from_fmk := .f.
+endif
+
 // zatvori sve prije otvaranja ovih tabela
 close all
 
+_dbf_name := "e_kalk.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
+
 // otvori kalk tabelu
 select ( 360 )
-use ( use_path + "e_kalk" ) alias "e_kalk"
+use ( use_path + _dbf_name ) alias "e_kalk"
 index on ( idfirma + idvd + brdok ) tag "1"
+
+_dbf_name := "e_doks.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
 
 // otvori doks tabelu
 select ( 361 )
-use ( use_path + "e_doks" ) alias "e_doks"
+use ( use_path + _dbf_name ) alias "e_doks"
 index on ( idfirma + idvd + brdok ) tag "1"
+
+_dbf_name := "e_roba.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
 
 // otvori roba tabelu
 select ( 362 )
-use ( use_path + "e_roba" ) alias "e_roba"
+use ( use_path + _dbf_name ) alias "e_roba"
 index on ( id ) tag "ID"
+
+_dbf_name := "e_partn.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
 
 // otvori partn tabelu
 select ( 363 )
-use ( use_path + "e_partn" ) alias "e_partn"
+use ( use_path + _dbf_name ) alias "e_partn"
 index on ( id ) tag "ID"
+
+_dbf_name := "e_konto.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
 
 // otvori konto tabelu
 select ( 364 )
-use ( use_path + "e_konto" ) alias "e_konto"
+use ( use_path + _dbf_name ) alias "e_konto"
 index on ( id ) tag "ID"
+
+_dbf_name := "e_sifk.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
 
 // otvori konto sifk
 select ( 365 )
-use ( use_path + "e_sifk" ) alias "e_sifk"
+use ( use_path + _dbf_name ) alias "e_sifk"
 index on ( id + sort + naz ) tag "ID"
 index on ( id + oznaka ) tag "ID2"
 
+_dbf_name := "e_sifv.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
+
 // otvori konto tabelu
 select ( 366 )
-use ( use_path + "e_sifv" ) alias "e_sifv"
+use ( use_path + _dbf_name ) alias "e_sifv"
 index on ( id + oznaka + idsif + naz ) tag "ID"
 index on ( id + idsif ) tag "IDIDSIF"
 

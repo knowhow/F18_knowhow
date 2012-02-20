@@ -425,6 +425,8 @@ do while !EOF()
             if !FOUND()
                 append blank
                 dbf_update_rec( _app_rec )
+                // napuni i sifk, sifv parametre
+                _fill_sifk( "ROBA", _id_roba )
             endif
         endif
 
@@ -445,6 +447,8 @@ do while !EOF()
         if !FOUND()
             append blank
             dbf_update_rec( _app_rec )
+            // napuni i sifk, sifv parametre
+            _fill_sifk( "PARTN", _id_partn )
         endif
     endif
 
@@ -922,6 +926,18 @@ copy structure extended to ( my_home() + "struct" )
 use
 create ( use_path + "e_konto") from ( my_home() + "struct")
 
+// tabela sifk
+O_SIFK
+copy structure extended to ( my_home() + "struct" )
+use
+create ( use_path + "e_sifk") from ( my_home() + "struct")
+
+// tabela sifv
+O_SIFV
+copy structure extended to ( my_home() + "struct" )
+use
+create ( use_path + "e_sifv") from ( my_home() + "struct")
+
 
 return
 
@@ -981,6 +997,18 @@ select ( 364 )
 use ( use_path + "e_konto" ) alias "e_konto"
 index on ( id ) tag "ID"
 
+// otvori konto sifk
+select ( 365 )
+use ( use_path + "e_sifk" ) alias "e_sifk"
+index on ( id + sort + naz ) tag "ID"
+index on ( id + oznaka ) tag "ID2"
+
+// otvori konto tabelu
+select ( 366 )
+use ( use_path + "e_sifv" ) alias "e_sifv"
+index on ( id + oznaka + idsif + naz ) tag "ID"
+index on ( id + idsif ) tag "IDIDSIF"
+
 return
 
 
@@ -997,6 +1025,8 @@ AADD( _a_files, use_path + "e_doks.dbf" )
 AADD( _a_files, use_path + "e_roba.dbf" )
 AADD( _a_files, use_path + "e_partn.dbf" )
 AADD( _a_files, use_path + "e_konto.dbf" )
+AADD( _a_files, use_path + "e_sifk.dbf" )
+AADD( _a_files, use_path + "e_sifv.dbf" )
 
 return _a_files
 
@@ -1027,6 +1057,9 @@ for each _file in _files
         FERASE( _file )
         // cdx takodjer ?
         _tmp := STRTRAN( _file, ".dbf", ".cdx" )
+        FERASE( _tmp )
+        // fpt takodjer ?
+        _tmp := STRTRAN( _file, ".dbf", ".fpt" )
         FERASE( _tmp )
     endif
 next
@@ -1137,5 +1170,52 @@ _error := unzip_files( _zip_path, _zip_name, __import_dbf_path )
 
 return _error
 
+
+// --------------------------------------------------
+// popunjava sifrarnike sifk, sifv
+// --------------------------------------------------
+static function _fill_sifk( sifrarnik, id_sif )
+local _rec
+
+PushWa()
+
+select e_sifk
+
+if reccount2() == 0  
+    // karakteristike upisi samo jednom i to sve
+    // za svaki slucaj !
+    select sifk
+    set order to tag "ID"
+    go top
+
+    do while !EOF()
+        _rec := dbf_get_rec()
+        select e_sifk
+        append blank
+        dbf_update_rec( _rec )
+        select sifk
+        skip
+    enddo
+endif 
+
+// uzmi iz sifv sve one kod kojih je ID=ROBA, idsif=2MON0002
+select sifv
+set order to tag "IDIDSIF"
+seek PADR( sifrarnik, 8 ) + id_sif
+
+do while !EOF() .and. field->id = PADR( sifrarnik, 8 ) ;
+    .and. field->idsif = PADR( id_sif, LEN( id_sif ) )
+
+    _rec := dbf_get_rec()
+    select e_sifv
+    append blank
+    dbf_update_rec( _rec )
+    select sifv
+    skip
+enddo
+
+PopWa()
+
+return
 
 

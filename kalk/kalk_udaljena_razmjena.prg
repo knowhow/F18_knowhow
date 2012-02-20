@@ -794,7 +794,7 @@ set order to tag "ID"
 go top
 
 do while !EOF()
-    
+   
     _app_rec := dbf_get_rec()
 
     update_rec_roba_struct( @_app_rec )

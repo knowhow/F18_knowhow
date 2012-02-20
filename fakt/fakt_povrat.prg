@@ -459,7 +459,7 @@ IF ( _brisi_kum == "D" )
     select fakt_doks
     set order to tag "1"
     go top
-    seek _if_firma + _id_tip_dok + _br_dok
+    seek _id_firma + _id_tip_dok + _br_dok
 
     if found()
         _del_rec := dbf_get_rec()
@@ -472,7 +472,7 @@ IF ( _brisi_kum == "D" )
     select fakt_doks2
     set order to tag "1"
     go top
-    seek _if_firma + _id_tip_dok + _br_dok
+    seek _id_firma + _id_tip_dok + _br_dok
 
     if found()
         _del_rec := dbf_get_rec()

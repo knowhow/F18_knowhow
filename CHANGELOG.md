@@ -1,3 +1,8 @@
+0.9.55 2012-02-20, vsasa
+
+  - modul KALK, razmjena podataka između udaljenih lokacija [#26695](http://redmine.bring.out.ba/issues/26695) rewrite opcije.
+  - korekcije sitnih grešaka
+
 0.9.54 2012-02-15, hernad
 
   - [#26732](http://redmine.bring.out.ba/issues/26732)

@@ -669,16 +669,16 @@ enddo
 if _cnt > 0
 
     // update tabele roba
-    update_table_roba( _zamjeniti_sif )
+    update_table_roba( _zamjeniti_sif, _fmk_import )
 
     // update tabele partnera
-    update_table_partn( _zamjeniti_sif )
+    update_table_partn( _zamjeniti_sif, _fmk_import )
 
     // update tabele konta
-    update_table_konto( _zamjeniti_sif )
+    update_table_konto( _zamjeniti_sif, _fmk_import )
 
     // odradi update tabela sifk, sifv
-    update_sifk_sifv()
+    update_sifk_sifv( _fmk_import )
 
 endif
 
@@ -694,9 +694,13 @@ return _ret
 // ----------------------------------------------------------------
 // update tabele konto na osnovu pomocne tabele
 // ----------------------------------------------------------------
-static function update_table_konto( zamjena_sifre )
+static function update_table_konto( zamjena_sifre, fmk_import )
 local _app_rec
 local _sif_exist := .t.
+
+if fmk_import == NIL
+    fmk_import := .f.
+endif
 
 select e_konto
 set order to tag "ID"
@@ -705,6 +709,11 @@ go top
 do while !EOF()
 
     _app_rec := dbf_get_rec()    
+
+    if fmk_import
+        // uskladi strukture
+        update_rec_konto_struct( @_app_rec )
+    endif
 
     select konto
     hseek _app_rec["id"]
@@ -740,9 +749,13 @@ return
 // -----------------------------------------------------------
 // update tabele partnera na osnovu pomocne tabele
 // -----------------------------------------------------------
-static function update_table_partn( zamjena_sifre )
+static function update_table_partn( zamjena_sifre, fmk_import )
 local _app_rec
 local _sif_exist := .t.
+
+if fmk_import == NIL
+    fmk_import := .f.
+endif
 
 select e_partn
 set order to tag "ID"
@@ -751,6 +764,11 @@ go top
 do while !EOF()
     
     _app_rec := dbf_get_rec()
+
+    if fmk_import
+        // uskladi strukture
+        update_rec_partn_struct( @_app_rec )
+    endif
 
     select partn
     hseek _app_rec["id"]
@@ -784,9 +802,13 @@ return
 
 
 // update podataka u tabelu robe
-static function update_table_roba( zamjena_sifre )
+static function update_table_roba( zamjena_sifre, fmk_import )
 local _app_rec 
 local _sif_exist := .t.
+
+if fmk_import == NIL
+    fmk_import := .f.
+endif
 
 // moramo ziknuti i robu ako fali !
 select e_roba
@@ -797,7 +819,10 @@ do while !EOF()
    
     _app_rec := dbf_get_rec()
 
-    update_rec_roba_struct( @_app_rec )
+    if fmk_import
+        // uskladi strukture tabela
+        update_rec_roba_struct( @_app_rec )
+    endif
 
     select roba
     hseek _app_rec["id"]
@@ -828,6 +853,72 @@ enddo
 
 return
 
+// --------------------------------------------------
+// update strukture zapisa tabele sifk
+// --------------------------------------------------
+static function update_rec_sifk_struct( rec )
+local _no_field
+local _struct := {}
+
+rec["f_unique"] := rec["unique"]
+rec["f_decimal"] := rec["decimal"]
+
+// pobrisi sljedece clanove...
+hb_hdel( rec, "unique" ) 
+hb_hdel( rec, "decimal" ) 
+
+return
+
+
+
+// --------------------------------------------------
+// update strukture zapisa tabele konto
+// --------------------------------------------------
+static function update_rec_konto_struct( rec )
+local _no_field
+local _struct := {}
+
+// moguca nepostojeca polja tabele roba
+//AADD( _struct, "pozbilu" )
+//AADD( _struct, "pozbils" )
+
+for each _no_field in _struct
+    if ! HB_HHASKEY( rec, _no_field )
+        rec[ _no_field ] := nil
+    endif
+next
+
+// pobrisi sljedece clanove...
+hb_hdel( rec, "pozbils" ) 
+hb_hdel( rec, "pozbilu" ) 
+
+return
+
+
+
+// --------------------------------------------------
+// update strukture zapisa tabele partn
+// --------------------------------------------------
+static function update_rec_partn_struct( rec )
+local _no_field
+local _struct := {}
+
+// moguca nepostojeca polja tabele roba
+// AADD( _struct, "naziv polja" )
+
+for each _no_field in _struct
+    if ! HB_HHASKEY( rec, _no_field )
+        rec[ _no_field ] := nil
+    endif
+next
+
+// pobrisi sljedece clanove...
+hb_hdel( rec, "brisano" ) 
+hb_hdel( rec, "rejon" ) 
+
+return
+
+
 
 // --------------------------------------------------
 // update strukture zapisa tabele roba
@@ -844,12 +935,18 @@ AADD( _struct, "k7" )
 AADD( _struct, "k8" )
 AADD( _struct, "k9" )
 AADD( _struct, "mink" )
+AADD( _struct, "fisc_plu" )
 
 for each _no_field in _struct
     if ! HB_HHASKEY( rec, _no_field )
         rec[ _no_field ] := nil
     endif
 next
+
+// pobrisi sljedece clanove...
+hb_hdel( rec, "carina" ) 
+hb_hdel( rec, "_m1_" ) 
+hb_hdel( rec, "brisano" ) 
 
 return
 
@@ -858,8 +955,12 @@ return
 // ---------------------------------------------------------
 // update tabela sifk, sifv na osnovu pomocnih tabela
 // ---------------------------------------------------------
-static function update_sifk_sifv()
+static function update_sifk_sifv( fmk_import )
 local _app_rec
+
+if fmk_import == NIL
+    fmk_import := .f.
+endif
 
 // sifk, sifv tabele
 select e_sifk
@@ -870,8 +971,12 @@ go top
 do while !EOF()
 
     _app_rec := dbf_get_rec()
-    _app_rec["dec"] := _app_rec["f_dec"]
         
+    if fmk_import
+        // promijeni strukturu ako treba
+        update_rec_sifk_struct( @_app_rec )
+    endif
+
     select sifk
     set order to tag "ID2"
     go top

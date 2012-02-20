@@ -797,6 +797,8 @@ do while !EOF()
     
     _app_rec := dbf_get_rec()
 
+    update_rec_roba_struct( @_app_rec )
+
     select roba
     hseek _app_rec["id"]
 
@@ -826,6 +828,19 @@ enddo
 
 return
 
+
+// --------------------------------------------------
+// update strukture zapisa tabele roba
+// --------------------------------------------------
+static function update_rec_roba_struct( rec )
+local _no_field
+
+_no_field := "idkonto"
+if ! HB_HHASKEY( rec, _no_field )
+    rec[ _no_field ] := nil
+endif
+
+return
 
 // ---------------------------------------------------------
 // update tabela sifk, sifv na osnovu pomocnih tabela

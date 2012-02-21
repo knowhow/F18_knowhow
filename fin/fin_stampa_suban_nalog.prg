@@ -31,7 +31,7 @@ O_PARTN
 __par_len := LEN(partn->id)
 select (nArr)
 
-lJerry := "N"
+lJerry := .f.
 
 PicBHD := "@Z "+FormPicL(gPicBHD,15)
 PicDEM := "@Z "+FormPicL(gPicDEM,10)

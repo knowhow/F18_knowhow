@@ -51,7 +51,8 @@ _print_report_header( cIdvd )
 ? _line
 
 nTot1 := nTot1b := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := 0
-nTot4a:=0
+nTot4a := 0
+nTotMPP := 0
 
 private cIdd := idpartner + brfaktp + idkonto + idkonto2
 
@@ -66,20 +67,21 @@ do while !eof() .and. cIdFirma == field->idfirma .and. cBrDok == field->brdok .a
 
     // formiraj varijable _....
     Scatter() 
+
     RptSeekRT()
 
     // izracunaj nMarza2
     MarzaMPR()
-
     KTroskovi()
   
-    Tarifa(pkonto, idRoba, @aPorezi)
+    Tarifa( pkonto, idRoba, @aPorezi )
     
     if IsPdv()
         // uracunaj i popust
-        aIPor:=RacPorezeMP(aPorezi, mpc, mpcSaPP-RabatV, field->nc)
+        // racporezemp( matrica, mp_bez_pdv, mp_sa_pdv, nc )
+        aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
     else
-        aIPor:=RacPorezeMP(aPorezi, mpc, mpcSaPP, field->nc)
+        aIPor := RacPorezeMP( aPorezi, mpc, mpcSaPP, field->nc )
     endif
 
     nPor1 := aIPor[1]
@@ -88,14 +90,23 @@ do while !eof() .and. cIdFirma == field->idfirma .and. cBrDok == field->brdok .a
 
     DokNovaStrana( 125, @nStr, 2 )
 
+    // nabavna vrijednost
     nTot3 += ( nU3 := IF( roba->tip = "U", 0, nc ) * field->kolicina )
+    // marza
     nTot4 += ( nU4 := nMarza2 * field->kolicina )
-    nTot5 += ( nU5 := mpc * field->kolicina )
-    nTot6 += ( nU6 := (nPor1) * field->kolicina)
-    nTot7 += ( nU7 := field->MPcSaPP * field->kolicina )
-    nTot8 += ( nU8 := ( field->MPcSaPP - field->rabatv) * field->kolicina )
+    // maloprodajna vrijednost bez popusta
+    nTot5 += ( nU5 := ( field->mpc + field->rabatv ) * field->kolicina )
+    // porez
+    nTot6 += ( nU6 := (nPor1) * field->kolicina )
+    // maloprodajna vrijednost sa porezom
+    nTot7 += ( nU7 := field->mpcsapp * field->kolicina )
+    // maloprodajna vrijednost sa popustom bez poreza
+    nTot8 += ( nU8 := ( field->mpc * field->kolicina ) )
+    // popust
     nTot9 += ( nU9 := field->rabatv * field->kolicina )
-
+    // mpv sa pdv - popust
+    nTotMPP += ( nUMPP := ( field->mpc + nPor1 ) * field->kolicina )
+    
     // ispis kalkulacije
     // ===========================================================
 
@@ -103,67 +114,103 @@ do while !eof() .and. cIdFirma == field->idfirma .and. cBrDok == field->brdok .a
 
     @ prow() + 1, 0 SAY field->rbr PICT "999"
     @ prow(), 4 SAY  ""
+
     ?? TRIM(LEFT(roba->naz, 40)), "(", roba->jmj, ")"
+
     if lPoNarudzbi
         IspisPoNar( if(cIdVd == "41", .f., ))
     endif
+
+    // 2. red
+
     @ prow() + 1, 4 SAY field->idroba
     @ prow(), pcol() + 1 SAY field->kolicina PICT pickol
 
     nCol0 := pcol()
 
-    // 2. red
-
     @ prow(), nCol0 SAY ""
 
     if field->idvd <> "47"
+
+        // nabavna cijena
         if roba->tip = "U"
             @ prow(), pcol() + 1 SAY 0 PICT piccdem
         else
             @ prow(), pcol() + 1 SAY field->nc PICT piccdem
         endif
+
+        // marza
         @ prow(), nMPos := pcol() + 1 SAY nMarza2 PICT piccdem
+
     endif
 
-    @ prow(), pcol() + 1 SAY field->mpc PICT PicCDEM
+    // mpc ili prodajna cijena uvecana za rabat
+    @ prow(), pcol() + 1 SAY ( field->mpc + field->rabatv ) PICT PicCDEM
 
     nCol1 := pcol() + 1
 
-    @ prow(), pcol() + 1 SAY aPorezi[POR_PPP] PICT PicProc
-
+    // popusti...
     if field->idvd <> "47"
-        @ prow(), pcol() + 1 SAY ( field->mpcsapp - field->rabatv ) PICT PicCDEM
+        
+        // popust
         @ prow(), pcol() + 1 SAY field->rabatv PICT PicCDEM
+
+        // mpc sa pdv umanjen za popust
+        @ prow(), pcol() + 1 SAY field->mpc PICT PicCDEM
+ 
     endif
 
+    // pdv
+    @ prow(), pcol() + 1 SAY aPorezi[POR_PPP] PICT PicProc
+
+    // mpc sa porezom
+    @ prow(), pcol() + 1 SAY ( field->mpc + nPor1 ) PICT PicCDEM
+
+    // mpc sa porezom
     @ prow(), pcol() + 1 SAY field->mpcsapp PICT PicCDEM
 
-    // 3. red
 
+    // 3. red : totali stavke
+
+    // tarifa
     @ prow() + 1, 4 SAY field->idtarifa
     @ prow(), nCol0 SAY ""
     
     if cIdVd <> "47"
+
+        // ukupna nabavna vrijednost stavke
         if roba->tip = "U"
             @ prow(), pcol() + 1 SAY 0 PICT picdem
         else
             @ prow(), pcol() + 1 SAY ( field->nc * field->kolicina ) PICT picdem
         endif
+
+        // ukupna marza stavke
         @ prow(), pcol() + 1 SAY ( nMarza2 * field->kolicina ) PICT picdem
+
     endif
 
-    @ prow(), pcol() + 1 SAY ( field->mpc * field->kolicina ) PICT picdem
-    @ prow(), nCol1 SAY nPor1 * field->kolicina PICT piccdem
-        
+    // ukupna mpv bez poreza ili ukupna prodajna vrijednost
+    @ prow(), pcol() + 1 SAY ( ( field->mpc + field->rabatv) * field->kolicina ) PICT picdem
+
+    // ukupne vrijednosti mpc sa porezom sa rabatom i sam rabat
     if cIdVd <> "47"
-        @ prow(), pcol() + 1 SAY ( field->mpcsapp - field->rabatv) * field->kolicina PICT picdem
         @ prow(), pcol() + 1 SAY ( field->rabatv * field->kolicina ) PICT picdem
+        @ prow(), pcol() + 1 SAY ( field->mpc * field->kolicina ) PICT picdem
     endif
 
+    // ukupni PDV stavke
+    @ prow(), pcol() + 1 SAY ( nPor1 * field->kolicina ) PICT piccdem
+    
+    // ukupni PDV stavke
+    @ prow(), pcol() + 1 SAY ( ( nPor1 + field->mpc ) * field->kolicina ) PICT piccdem
+        
+    // ukupna maloprodajna vrijednost (sa PDV-om)
     @ prow(), pcol() + 1 SAY ( field->mpcsapp * field->kolicina ) PICT picdem
 
     // 4. red
 
+    // marza iskazana u procentu
     if cIdVd <> "47"
         @ prow() + 1, nMPos SAY ( nMarza2 / field->nc ) * 100 PICT picproc
     endif
@@ -180,24 +227,38 @@ DokNovaStrana(125, @nStr, 3)
 @ prow(), nCol0 SAY ""
 
 if cIDVD <> "47"
+
+    // nabavna vrijednost
     @ prow(), pcol() + 1 SAY nTot3 PICT PicDEM
+    // marza
     @ prow(), pcol() + 1 SAY nTot4 PICT PicDEM
+
 endif
 
+// prodajna vrijednost
 @ prow(), pcol() + 1 SAY nTot5 PICT PicDEM
 
 if !IsPDV()
     @ prow(), pcol() + 1 SAY SPACE(LEN(picproc))
     @ prow(), pcol() + 1 SAY SPACE(LEN(picproc))
 endif
-
-@ prow(), pcol() + 1 SAY nTot6 PICT PicDEM
+    
+// popust
+@ prow(), pcol() + 1 SAY nTot9 PICT PicDEM
 
 if cIdVd <> "47"
+    
+    // prodajna vrijednost - popust
     @ prow(), pcol() + 1 SAY nTot8 PICT PicDEM
-    @ prow(), pcol() + 1 SAY nTot9 PICT PicDEM
+    // porez
+    @ prow(), pcol() + 1 SAY nTot6 PICT PicDEM
+
 endif
 
+// maloprodajna vrijednost sa porezom - popust
+@ prow(), pcol() + 1 SAY nTotMPP PICT PicDEM
+
+// maloprodajna vrijednost sa porezom
 @ prow(), pcol() + 1 SAY nTot7 PICT PicDEM
 
 ? _line
@@ -223,7 +284,7 @@ static function _get_line( id_vd )
 local _line
 _line := "--- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 if id_vd <> "47"
-    _line += " ---------- ----------"
+    _line += " ---------- ---------- ----------"
 endif
 return _line
 
@@ -238,9 +299,9 @@ if id_vd = "47"
     ? "*BR*          *          *          *   PDV    *  SA PDV   *"
     ? "*  *          *          *     ä    *     ä    *     ä     *"
 else
-    ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *    MPC   *   PDV %  *MPC sa PDV*          *  MPC     *"
-    ? "*BR*          *          *   U MP   *         *          *   PDV    * -Popust  *  Popust  *  SA PDV  *"
-    ? "*  *          *          *    ä     *         *     ä    *     ä    *    ä     *          *    ä     *"
+    ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *  Prod.C  *  Popust  * PC-pop.  *   PDV %  *   MPC    * MPC     *"
+    ? "*BR*          *          *   U MP   *         *  Prod.V  *          * PV-pop.  *   PDV    *  SA PDV  * SA PDV  *"
+    ? "*  *          *          *    ä     *         *     ä    *          *          *     ä    * - popust *   ä     *"
 endif
 
 return
@@ -255,7 +316,7 @@ local _line
 local _i
 
 _line := "------ " 
-for _i := 1 to 6
+for _i := 1 to 7
     _line += REPLICATE( "-", 10 ) + " "
 next
 
@@ -273,8 +334,8 @@ static function _print_rekap_header()
 if glUgost
     ?  "* Tar *  PDV%    *  P.P %   *   MPV    *    PDV   *   P.Potr *  Popust  * MPVSAPDV*"
 else
-    ?  "* Tar *  PDV%    *   MPV    *    PDV   * MPV-Pop. *  Popust  *  MPV    *"
-    ?  "*     *          *  bez PDV *    PDV   *  sa PDV  *          * sa PDV  *"
+    ?  "* Tar *  PDV%    *  Prod.   *  Popust  * Prod.vr. *   PDV   * MPV-Pop. *  MPV    *"
+    ?  "*     *          *   vr.    *          * - popust *   PDV   *  sa PDV  * sa PDV  *"
 endif
 return
 
@@ -349,9 +410,10 @@ do while !EOF() .and. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd 
     
         Tarifa( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi )
     
-        // mpc bez poreza
+        // mpc bez poreza sa uracunatim popustom
         nU1 += field->mpc * field->kolicina
-        aIPor := RacPorezeMP( aPorezi, field->mpc, ( field->mpcsapp - field->rabatv ), field->nc )
+
+        aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
 
         // PDV
 
@@ -363,6 +425,7 @@ do while !EOF() .and. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd 
         endif
 
         nU5 += field->mpcsapp * field->kolicina
+
         nUP += field->rabatv * field->kolicina
     
         nTot6 += ( field->mpc - field->nc ) * field->kolicina
@@ -393,8 +456,15 @@ do while !EOF() .and. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd 
   
     nCol1 := pcol()
 
-    // mpv bez pdv
-    @ prow(), nCol1 + 1 SAY nU1 pict picdem
+    // mpv bez pdv 
+    @ prow(), nCol1 + 1 SAY nU1+nUP pict picdem
+
+    // popust
+    @ prow(), pcol() + 1 SAY nUp pict picdem
+
+    // mpv - popust
+    @ prow(), pcol() + 1 SAY nU1 pict picdem
+
     // PDV
     @ prow(), pcol() + 1 SAY nU2 pict picdem
 
@@ -402,12 +472,12 @@ do while !EOF() .and. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd 
         @ prow(), pcol() + 1 SAY nU2b pict picdem
     endif
 
-    // mpv - popust
-    @ prow(), pcol() + 1 SAY nU5-nUp pict picdem
-    // popust
-    @ prow(), pcol() + 1 SAY nUp pict picdem
     // mpv
+    @ prow(), pcol() + 1 SAY (nU1 + nU2) pict picdem
+
+    // mpv sa originalnom cijemo
     @ prow(), pcol() + 1 SAY nU5 pict picdem
+
 
 enddo
 
@@ -417,17 +487,28 @@ DokNovaStrana(125, @nStr, 4)
 
 ? "UKUPNO"
 
-@ prow(), nCol1 + 1 SAY nTot1 pict picdem
-@ prow(), pcol() + 1 SAY nTot2 pict picdem
+// prodajna vrijednost bez popusta
+@ prow(), nCol1 + 1 SAY ( nTot1 + nTotP ) pict picdem
+
+// popust
+@ prow(), pcol() + 1 SAY nTotP pict picdem
 
 if glUgost
     @ prow(), pcol() + 1 SAY nTot2b pict picdem
 endif
 
-// popust
-@ prow(), pcol() + 1 SAY nTot5-nTotP pict picdem  
-@ prow(), pcol() + 1 SAY nTotP pict picdem  
+// prodajna vrijednost - popust
+@ prow(), pcol() + 1 SAY nTot1 pict picdem  
+
+// pdv
+@ prow(), pcol() + 1 SAY nTot2 pict picdem  
+
+// mpv sa uracunatim popustom
+@ prow(), pcol() + 1 SAY ( nTot1 + nTot2 ) pict picdem
+
+// mpv 
 @ prow(), pcol() + 1 SAY nTot5 pict picdem
+
 
 ? _line
 

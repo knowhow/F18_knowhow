@@ -277,7 +277,7 @@ endif
 // postoji MPC, idi unazad
 if !lNaprijed .and. _MpcSapp <> 0
     _Marza2 := 0
-    _Mpc := MpcBezPor( nMpcSaPDV, aPorezi, , _nc ) - _rabatv
+    _Mpc := MpcBezPor( nMpcSaPDV, aPorezi, , _nc ) - _st_popust
 endif
 
 return .t.

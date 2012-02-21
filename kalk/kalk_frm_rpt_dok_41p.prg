@@ -513,8 +513,10 @@ endif
 ? _line
 
 if cIdVd <> "47" .and. !IsJerry()
-    ? "RUC:"
+    ? "        UKUPNA RUC:"
     @ prow(), pcol() + 1 SAY nTot6 pict picdem
+    ? "UKUPNO POPUST U MP:"
+    @ prow(), pcol() + 1 SAY nTot5 - ( nTot1 + nTot2 ) pict picdem
     ? _line
 endif
 

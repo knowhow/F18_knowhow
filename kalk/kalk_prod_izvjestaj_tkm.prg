@@ -176,13 +176,13 @@ do while !EOF()
     @ prow(), _n_iznosi := pcol() + 1 SAY STR( field->mpp_dug, 12, 2 )
 
     // razduzenje sa PDV
-    @ prow(), pcol() + 1 SAY STR( field->mpp_pot, 12, 2 )
+    @ prow(), pcol() + 1 SAY STR( ( field->mp_pot + field->mp_porez ), 12, 2 )
 
     // odobreni rabat
     //@ prow(), pcol() + 1 SAY STR( field->mp_rabat, 12, 2 )
 
     _t_dug += field->mpp_dug
-    _t_pot += field->mpp_pot
+    _t_pot += field->mp_pot + field->mp_porez
     _t_rabat += field->mp_rabat
 
 
@@ -204,7 +204,7 @@ enddo
 ? "UKUPNO:"
 @ prow(), _n_iznosi SAY STR( _t_dug, 12, 2 )
 @ prow(), pcol() + 1 SAY STR( _t_pot, 12, 2 )
-@ prow(), pcol() + 1 SAY STR( _t_rabat, 12, 2 )
+//@ prow(), pcol() + 1 SAY STR( _t_rabat, 12, 2 )
 
 ? "SALDO TRGOVACKE KNJIGE:"
 @ prow(), _n_iznosi SAY STR( _t_dug - _t_pot , 12, 2 )

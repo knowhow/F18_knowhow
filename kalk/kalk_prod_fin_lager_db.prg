@@ -24,6 +24,7 @@ O_SIFK
 O_SIFV
 O_TDOK
 O_ROBA
+O_TARIFA
 O_KONCIJ
 O_KONTO
 O_PARTN
@@ -64,6 +65,8 @@ local _usl_vrste_dok := ""
 local _usl_tarife := ""
 local _v_konta := "N"
 local _cnt := 0
+local _a_porezi
+local __porez, _porez
 
 aPorezi := {}
 
@@ -194,7 +197,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     _tr_prevoz := 0
     _tr_prevoz_2 := 0
     _tr_sped := 0
-
+    _porez := 0
 
     // pokupi mi varijable bitne za azuriranje u export tabelu...
     _id_d_firma := field->idfirma
@@ -259,6 +262,8 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         hseek kalk->idtarifa
         select kalk
         
+        Tarifa( field->pkonto, field->idRoba, @aPorezi )
+    
         VtPorezi()
 
         if field->pu_i == "1"
@@ -270,17 +275,29 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
 
         elseif field->pu_i == "5"
 
+            // sracunaj porez
+            _a_porezi := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+        
+            // porez stavke
+            __porez := _a_porezi[1]        
+
             // prodavnicki izlazi
             if field->idvd $ "12#13"
+
                 _mp_ulaz -= field->mpc * field->kolicina
                 _mp_ulaz_p -= field->mpcsapp * field->kolicina
                 _nv_ulaz -= field->nc * field->kolicina
                 _rabat -= field->rabatv
+                _porez -= __porez * field->kolicina
+
             else
+
                 _mp_izlaz += field->mpc * field->kolicina
                 _mp_izlaz_p += field->mpcsapp * field->kolicina
                 _nv_izlaz += field->nc * field->kolicina
                 _rabat += field->rabatv
+                _porez += __porez * field->kolicina
+            
             endif
 
         elseif field->pu_i == "3"    
@@ -292,6 +309,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         elseif pu_i=="I"
 
             Tarifa(field->pkonto, field->idRoba, @aPorezi )
+
             _mp_izlaz += DokMpc( field->idvd, aPorezi ) * field->gkolicin2
             _mp_izlaz_p += field->mpcsapp * field->gkolicin2
             _nv_izlaz += field->nc * field->gkolicin2
@@ -309,7 +327,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
                 _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
                 _mp_ulaz, _mp_izlaz, _mp_ulaz - _mp_izlaz, ;
                 _mp_ulaz_p, _mp_izlaz_p, _mp_ulaz_p - _mp_izlaz_p, ;
-                _rabat, 0, 0, 0, 0, 0, 0 )
+                _rabat, _porez, 0, 0, 0, 0, 0, 0 )
 
     ++ _cnt
 
@@ -347,6 +365,7 @@ AADD( _dbf, { "mpp_dug"   , "N", 15, 2 } )
 AADD( _dbf, { "mpp_pot"   , "N", 15, 2 } )
 AADD( _dbf, { "mpp_saldo" , "N", 15, 2 } )
 AADD( _dbf, { "mp_rabat"  , "N", 15, 2 } )
+AADD( _dbf, { "mp_porez"  , "N", 15, 2 } )
 AADD( _dbf, { "t_prevoz"  , "N", 15, 2 } )
 AADD( _dbf, { "t_prevoz2" , "N", 15, 2 } )
 AADD( _dbf, { "t_bank"    , "N", 15, 2 } )
@@ -367,7 +386,7 @@ static function _add_to_exp( id_firma, id_tip_dok, broj_dok, datum_dok, vrsta_do
                             n_v_dug, n_v_pot, n_v_saldo, ;
                             m_p_dug, m_p_pot, m_p_saldo, ;
                             m_pp_dug, m_pp_pot, m_pp_saldo, ;
-                            m_p_rabat, tr_prevoz, tr_prevoz_2, ;
+                            m_p_rabat, m_p_porez, tr_prevoz, tr_prevoz_2, ;
                             tr_bank, tr_sped, tr_carina, tr_zavisni )
 
 local _t_area := SELECT()
@@ -399,6 +418,7 @@ _rec["mpp_dug"] := m_pp_dug
 _rec["mpp_pot"] := m_pp_pot
 _rec["mpp_saldo"] := m_pp_saldo
 _rec["mp_rabat"] := m_p_rabat
+_rec["mp_porez"] := m_p_porez
 _rec["t_prevoz"] := tr_prevoz
 _rec["t_prevoz2"] := tr_prevoz_2
 _rec["t_bank"] := tr_bank

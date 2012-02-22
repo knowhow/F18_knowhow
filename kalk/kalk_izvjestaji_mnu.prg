@@ -15,57 +15,58 @@
 
 
 function MIzvjestaji()
-private Opc:={}
-private opcexe:={}
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc,"1. izvjestaji magacin             ")
-AADD(opcexe, {|| kalk_izvjestaji_magacina()})
-AADD(opc,"2. izvjestaji prodavnica")
-AADD(opcexe, {|| IzvjP()})
-AADD(opc,"3. izvjestaji magacin+prodavnica")
-AADD(opcexe, {|| IzvjMaPr() } )
-AADD(opc,"4. proizvoljni izvjestaji")
-AADD(opcexe, {|| ProizvKalk()})
-AADD(opc,"5. export dokumenata")
-AADD(opcexe, {|| krpt_export()})
-AADD(opc,"6. integritet podataka")
-AADD(opcexe, {|| m_integritet() })
+AADD(_opc,"1. izvjestaji magacin             ")
+AADD(_opcexe, {|| kalk_izvjestaji_magacina()})
+AADD(_opc,"2. izvjestaji prodavnica")
+AADD(_opcexe, {|| kalk_izvjestaji_prodavnice()})
+AADD(_opc,"3. izvjestaji magacin+prodavnica")
+AADD(_opcexe, {|| kalk_izvjestaji_mag_i_pro() } )
+AADD(_opc,"4. proizvoljni izvjestaji")
+AADD(_opcexe, {|| ProizvKalk()})
+AADD(_opc,"5. export dokumenata")
+AADD(_opcexe, {|| krpt_export()})
+AADD(_opc,"6. integritet podataka")
+AADD(_opcexe, {|| m_integritet() })
 
-private Izbor:=1
-Menu_SC("izvj")
-CLOSERET
+f18_menu( "izvj", .f., _izbor, _opc, _opcexe )
+
+close all
 return
 
-return
 
 
  
-function IzvjMaPr()
-private opc:={}
-private opcexe:={}
+function kalk_izvjestaji_mag_i_pro()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc, "F. finansijski obrt za period mag+prod")
-AADD(opcexe, {|| ObrtPoMjF()})
-AADD(opc, "N. najprometniji artikli")
-AADD(opcexe, {|| NPArtikli()})
-AADD(opc, "O. stanje artikala po objektima ")
-AADD(opcexe, {|| StanjePoObjektima()})
+AADD(_opc, "F. finansijski obrt za period mag+prod")
+AADD(_opcexe, {|| ObrtPoMjF()})
+AADD(_opc, "N. najprometniji artikli")
+AADD(_opcexe, {|| NPArtikli()})
+AADD(_opc, "O. stanje artikala po objektima ")
+AADD(_opcexe, {|| StanjePoObjektima()})
 
 if IsPlanika()
-	AADD(opc, "Z. pregled kretanja zaliha mag/prod     ")
-	AADD(opcexe, {|| PreglKret()})
-	AADD(opc, "M. mjesecni iskazi prodavnice/magacin")
-	AADD(opcexe, {|| ObrazInv()})
+    AADD(_opc, "Z. pregled kretanja zaliha mag/prod     ")
+    AADD(_opcexe, {|| PreglKret()})
+    AADD(_opc, "M. mjesecni iskazi prodavnice/magacin")
+    AADD(_opcexe, {|| ObrazInv()})
 endif
 
 if IsVindija()
-	AADD(opc, "V. pregled prodaje")
-	AADD(opcexe, {|| PregProdaje()})
+    AADD(_opc, "V. pregled prodaje")
+    AADD(_opcexe, {|| PregProdaje()})
 endif
 
+f18_menu( "izmp", .f., _izbor, _opc, _opcexe )
+
 close all
-private Izbor:=1
-Menu_SC("izmp")
 return
 
 

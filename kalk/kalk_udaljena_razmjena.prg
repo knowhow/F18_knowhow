@@ -126,7 +126,7 @@ if _decompress_files( _imp_file ) <> 0
 endif
 
 #ifdef __PLATFORM__UNIX
-    set_file_access()
+    //set_file_access()
 #endif
 
 // import procedura
@@ -159,8 +159,14 @@ return
 // promjena privilegija fajlova
 // --------------------------------------------
 static function set_file_access()
-// ova funkcija treba da setuje chown i privilegije za fajlove ekstraktovane fajlove sa windows-a
-// trenutno mi ne treba !!!
+local _cmd 
+
+_cmd := "chmod u+rw ."
+
+if hb_run( _cmd ) <> 0 
+    MsgBeep( "Problem sa setovanjem privilegija fajla !????" )
+endif
+
 return
 
 

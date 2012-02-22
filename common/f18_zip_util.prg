@@ -34,9 +34,9 @@ return _error
 // ---------------------------------------------------
 // unzipovanje fajlova
 // ---------------------------------------------------
-function unzip_files( zip_path, zip_file_name, extract_destination, files )
+function unzip_files( zip_path, zip_file_name, extract_destination, files, overwrite_file )
 local _error
-_error := __unzip( zip_path, zip_file_name, extract_destination, files )
+_error := __unzip( zip_path, zip_file_name, extract_destination, files, overwrite_file )
 return _error
 
 
@@ -130,7 +130,7 @@ RETURN
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-static function __unzip( zf_path, zf_name, zf_destination, files )
+static function __unzip( zf_path, zf_name, zf_destination, files, overwrite_file )
 local _h_zip
 local _file
 local _error := 0
@@ -148,6 +148,10 @@ ENDIF
 
 IF ( zf_destination == NIL ) 
     zf_destination := ""
+ENDIF
+
+IF ( overwrite_file == NIL )
+    overwrite_file := .t.
 ENDIF
 
 // otvori zip fajl
@@ -182,6 +186,13 @@ IF !EMPTY( _h_zip )
                     _extract := .f.         
                 ENDIF
 
+            ENDIF
+
+            // prvo provjeri postoji li fajl, ako je u overwrite modu
+            IF overwrite_file 
+                IF FILE( __file )
+                    FERASE( __file )
+                ENDIF
             ENDIF
 
             IF _extract

@@ -513,7 +513,7 @@ xml_subnode("Obrazac1023", .f.)
 xml_subnode("Dio1", .f.)
 	
   xml_node("JibJmb", ALLTRIM(cPredJmb) )
-  xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz), "8", "U" ) )
+  xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz) ) )
   xml_node("DatumUpisa", xml_date(dDatPodn) )
   xml_node("BrojUposlenih", STR( nBrZahtjeva ) )
   xml_node("PeriodOd", xml_date( dD_start ) )
@@ -623,10 +623,10 @@ do while !EOF()
 	xml_subnode("PodaciOPrihodima", .f.)
 
 	xml_node("VrstaIsplate", ;
-		to_xml_encoding( ALLTRIM(cVr_ispl), "8", "U" ))
+		to_xml_encoding( ALLTRIM(cVr_ispl) ))
 	xml_node("Jmb", ALLTRIM(cR_jmb) )
 	xml_node("ImePrezime", ;
-		to_xml_encoding( ALLTRIM(cR_ime), "8", "U" ))
+		to_xml_encoding( ALLTRIM(cR_ime) ))
 	xml_node("DatumIsplate", xml_date(dD_ispl) )
 	xml_node("RadniSati", ;
 		STR( nR_sati, 12, 2 ) ) 

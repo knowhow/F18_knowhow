@@ -711,13 +711,13 @@ do while !EOF()
 	xml_subnode("Dio1PodaciOPoslodavcuIPoreznomObvezniku", .f.)
 	
 	 xml_node("JIBJMBPoslodavca", ALLTRIM(cPredJmb) )
- 	 xml_node("Naziv", strkzn( ALLTRIM(cPredNaz), "8", "U" ) )
- 	 xml_node("AdresaSjedista", strkzn( ALLTRIM( cPredAdr ), "8", "U") )
+ 	 xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz) ) )
+ 	 xml_node("AdresaSjedista", to_xml_encoding( ALLTRIM( cPredAdr ) ) )
  	 xml_node("JMBZaposlenika", ALLTRIM( radn->matbr ) )
- 	 xml_node("ImeIPrezime", strkzn( ALLTRIM(radn->ime) + " " + ;
-	 	ALLTRIM(radn->naz), "8", "U" ) )
-	 xml_node("AdresaPrebivalista", strkzn( ALLTRIM(radn->streetname) + ;
-		" " + ALLTRIM(radn->streetnum), "8", "U" ) )
+ 	 xml_node("ImeIPrezime", to_xml_encoding( ALLTRIM(radn->ime) + " " + ;
+	 	ALLTRIM(radn->naz) ) )
+	 xml_node("AdresaPrebivalista", to_xml_encoding( ALLTRIM(radn->streetname) + ;
+		" " + ALLTRIM(radn->streetnum) ) )
 	 xml_node("PoreznaGodina", STR( nPorGodina ) )
 	 
 	 xml_node("PeriodOd", xml_date( dPerOd ) )
@@ -778,9 +778,9 @@ do while !EOF()
 
 		xml_node("Mjesec", STR( field->mj_ispl ) )
 		xml_node("IsplataZaMjesecIGodinu", ;
-			strkzn( ALLTRIM(field->ispl_za), "8", "U" ) )
+			to_xml_encoding( ALLTRIM(field->ispl_za) ) )
 		xml_node("VrstaIsplate", ;
-			strkzn( ALLTRIM(field->vr_ispl), "8", "U" ))
+			to_xml_encoding( ALLTRIM(field->vr_ispl) ))
 		xml_node("IznosPrihodaUNovcu", ;
 			STR( field->prihod, 12, 2 ) ) 
 		xml_node("IznosPrihodaUStvarimaUslugama", ;
@@ -807,7 +807,7 @@ do while !EOF()
 		xml_node("NetoPlaca", STR( field->neto, 12, 2 ) )
 		xml_node("DatumUplate", xml_date( field->datispl ) )
 		
-		//xml_node("opis", strkzn( ALLTRIM( field->naziv ), "8", "U") )
+		//xml_node("opis", to_xml_encoding( ALLTRIM( field->naziv ) ) )
 		//xml_node("uk", STR( field->ukupno, 12, 2 ) )
 
 		xml_subnode("PodaciOPrihodimaDoprinosimaIPorezu", .t.)
@@ -860,7 +860,7 @@ do while !EOF()
 	xml_subnode("Dio3IzjavaPoslodavcaIsplatioca", .f.)
 	 xml_node("JIBJMBPoslodavca", ALLTRIM(cPredJmb) )
  	 xml_node("DatumUnosa", xml_date( dDatUnosa ) )
- 	 xml_node("NazivPoslodavca", strkzn( ALLTRIM(cPredNaz), "8", "U" ) )
+ 	 xml_node("NazivPoslodavca", to_xml_encoding( ALLTRIM(cPredNaz) ) )
 	xml_subnode("Dio3IzjavaPoslodavcaIsplatioca", .t.)
 
 	xml_subnode("Dokument", .f.)
@@ -933,14 +933,14 @@ do while !EOF()
 
 	xml_subnode("radnik", .f.)
 
-	xml_node("ime", strkzn( ALLTRIM(radn->ime) + ;
+	xml_node("ime", to_xml_encoding( ALLTRIM(radn->ime) + ;
 		" (" + ALLTRIM(radn->imerod) + ;
-		") " + ALLTRIM(radn->naz), "8", "U" ) )
+		") " + ALLTRIM(radn->naz) ) )
 
 	xml_node("mb", ALLTRIM(radn->matbr) )
 	
-	xml_node("adr", strkzn( ALLTRIM(radn->streetname) + ;
-		" " + ALLTRIM(radn->streetnum), "8", "U" ) )
+	xml_node("adr", to_xml_encoding( ALLTRIM(radn->streetname) + ;
+		" " + ALLTRIM(radn->streetnum) ) )
 
 	nT_prih := 0
 	nT_pros := 0
@@ -1008,14 +1008,12 @@ do while !EOF()
 		xml_subnode("obracun", .f.)
 
 		xml_node("rbr", STR( ++nCnt ) )
-		xml_node("pl_opis", strkzn( ALLTRIM( field->mj_opis ), ;
-			"8", "U" ) )
+		xml_node("pl_opis", to_xml_encoding( ALLTRIM( field->mj_opis ) ) )
 		xml_node("mjesec", STR( field->mj_ispl ) )
 		xml_node("godina", STR( field->godina ) )
-		xml_node("isp_m", strkzn( ALLTRIM(field->mj_naz), "8", "U") )
-		xml_node("isp_z", strkzn( ALLTRIM(field->ispl_za), "8", "U" ) )
-		xml_node("isp_v", strkzn( g_v_ispl(ALLTRIM(field->vr_ispl));
-			, "8", "U" ))
+		xml_node("isp_m", to_xml_encoding( ALLTRIM(field->mj_naz) ) )
+		xml_node("isp_z", to_xml_encoding( ALLTRIM(field->ispl_za) ) )
+		xml_node("isp_v", to_xml_encoding( g_v_ispl(ALLTRIM(field->vr_ispl))))
 		xml_node("prihod", STR( field->prihod, 12, 2 ) ) 
 		xml_node("prih_o", STR( field->prihost, 12, 2 ) )
 		xml_node("bruto", STR( field->bruto, 12, 2 ) )
@@ -1034,7 +1032,7 @@ do while !EOF()
 		xml_node("p_izn", STR( field->izn_por, 12, 2 ) )
 		xml_node("uk", STR( field->ukupno, 12, 2 ) )
 		xml_node("d_isp", DTOC( field->datispl ) )
-		xml_node("opis", strkzn( ALLTRIM( field->naziv ), "8", "U") )
+		xml_node("opis", to_xml_encoding( ALLTRIM( field->naziv ) ) )
 
 		xml_subnode("obracun", .t.)
 		

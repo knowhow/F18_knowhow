@@ -212,9 +212,11 @@ cIdRj := gRj
 cMj := gMjesec
 cGod := gGodina
 
-cPredNaz := SPACE(50)
-cPredJMB := SPACE(13)
-cPredSDJ := SPACE(20)
+cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, SPACE(50) )
+cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, SPACE(13) )
+cPredSDJ := fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, SPACE(20) )
+cTp_bol := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
+cBolPreko := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
 dDatPodn := DATE()
 
 nPorGodina := 2011
@@ -222,22 +224,6 @@ nBrZahtjeva := 1
 
 // otvori tabele
 ol_o_tbl()
-
-select params
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("i1",@cPredNaz)
-RPar("x9",@cPredSDJ)  
-RPar("x8",@cDoprDod)  
-RPar("x7",@cTp_bol)  
-RPar("x6",@cBolPreko)  
-
-cPredJMB := IzFmkIni("Specif","MatBr","--",KUMPATH)
-cPredJMB := PADR(cPredJMB, 13)
-
 
 Box("#MIP OBRAZAC ZA RADNIKE", 20, 75)
 
@@ -323,13 +309,12 @@ if cIsplSaberi == "D"
 	__ispl_s := 1
 endif
 
-// upisi vrijednosti
-select params
-WPar("i1", cPredNaz)
-WPar("x9", cPredSDJ)  
-WPar("x8", cDoprDod)  
-WPar("x7", cTP_bol)  
-WPar("x6", cBolPreko)  
+// upisi parametre...
+set_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
+set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
+set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
+set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
+set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
 
 select ld
 
@@ -400,11 +385,11 @@ return
 // ----------------------------------------
 static function _xml_export()
 local _cre, cMsg, _id_br, _naziv, _adresa, _mjesto, _lokacija
+local _a_files, _error
 
 if __xml == 1
 	return
 endif
-
 
 _id_br  := fetch_metric( "org_id_broj", NIL, PADR( "<POPUNI>", 13 ))
 _naziv  := fetch_metric( "org_naziv", NIL, PADR( "<POPUNI naziv>", 100 ))
@@ -446,27 +431,24 @@ if DirChange(_lokacija) != 0
 
 endif
 
-
 DirChange(_lokacija)
 
 // napuni xml fajl
 _fill_e_xml(_id_br + ".xml")
 
+// dodaj fajlove za zip fajl
+_a_files := {}
+AADD( _a_files, _id_br + ".xml" )
 
-_cmd := "zip " + _id_br + ".zip " + _id_br + ".xml"
+// kompresuj zip fajl
+_error := zip_files( _lokacija, _id_br + ".zip", _a_files )
 
-_ret := hb_run(_cmd)
+if _error <> 0
+    cMsg := "Generacija obrasca završena.#"
+    cMsg +=  _lokacija + _id_br + ".xml#"
 
-if _ret != 0
-   MsgBeep("Hmm ... neuspješna zip komanda  !?#"  + _cmd)
-   log_write("err: " + _cmd)
+    MsgBeep(cMsg)
 endif
-
-cMsg := "Generacija obrasca završena.#"
-cMsg +=  _lokacija + _id_br + ".xml#"
-
-MsgBeep(cMsg)
-
 
 DirChange(my_home())
 open_folder(_lokacija)

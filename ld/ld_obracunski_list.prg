@@ -254,17 +254,10 @@ nBrZahtjeva := 1
 // otvori tabele
 ol_o_tbl()
 
-select params
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("i1",@cPredNaz)
-RPar("i2",@cPredAdr)  
-
-cPredJMB := IzFmkIni("Specif","MatBr","--",KUMPATH)
-cPredJMB := PADR(cPredJMB, 13)
+// upisi parametre...
+cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
+cPredAdr := fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr )
+cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
 Box("#OBRACUNSKI LISTOVI RADNIKA", 17, 75)
 
@@ -348,10 +341,10 @@ else
 	__xml := 0
 endif
 
-// upisi vrijednosti
-select params
-WPar("i1", cPredNaz)
-WPar("i2", cPredAdr)  
+// upisi parametre...
+set_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
+set_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr )
+set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
 select ld
 
@@ -503,6 +496,8 @@ return nRet
 // ----------------------------------------
 static function _xml_export( cTip )
 local cMsg
+local _id_br, _naziv, _adresa, _mjesto
+local _lokacija, _cre, _error, _a_files
 
 if __xml == 1
 	return
@@ -512,15 +507,67 @@ if cTip == "1"
 	return
 endif
 
+_id_br  := fetch_metric( "org_id_broj", NIL, PADR( "<POPUNI>", 13 ))
+_naziv  := fetch_metric( "org_naziv", NIL, PADR( "<POPUNI naziv>", 100 ))
+_adresa := fetch_metric( "org_adresa", NIL, PADR( "<POPUNI adresu>", 100 ))
+_mjesto   := fetch_metric( "org_mjesto", NIL, PADR( "<POPUNI mjesto>", 100 ))
+
+Box(, 6, 70)
+  @ m_x + 1, m_y + 2 SAY " - Firma/Organizacija - "
+  @ m_x + 3, m_y + 2 SAY " Id broj: " GET _id_br
+  @ m_x + 4, m_y + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
+  @ m_x + 5, m_y + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
+  @ m_x + 6, m_y + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
+  READ 
+BoxC()
+
+set_metric( "org_id_broj", NIL, _id_br)
+set_metric( "org_naziv", NIL, _naziv)
+set_metric( "org_adresa", NIL, _adresa)
+set_metric( "org_mjesto", NIL, _mjesto)
+
+if LASTKEY() == K_ESC
+   return .f.
+endif
+
+_id_br := ALLTRIM(_id_br)
+
+_lokacija := _path_quote( my_home() + "export" + SLASH )
+
+if DirChange(_lokacija) != 0
+
+   _cre := MakeDir (_lokacija)
+   if _cre != 0
+       MsgBeep("kreiranje " + _lokacija + " neuspjesno ?!")
+       log_write("dircreate err:" + _lokacija)
+       return .f.
+   endif
+
+endif
+
+DirChange(_lokacija)
+
 // napuni xml fajl
-_fill_e_xml()
+_fill_e_xml( _id_br + ".xml" )
 
-cMsg := "Export xml datoteke zavrsen. Datoteka se nalazi#"
-cMsg += "na lokaciji c:\export.xml#"
-cMsg += "Potrebno promjeniti naziv xml fajla u TIN.xml gdje je#"
-cMsg += "TIN id broj preduzeca, zatim zipovati fajl u TIN.zip."
+// setuj za zip kompresiju...
+_a_files := {}
+AADD( _a_files, _id_br + ".xml" )
 
-msgbeep( cMsg )
+// kompresuj fajl...
+_error := zip_files( _lokacija, _id_br + ".zip", _a_files )
+
+if _error <> 0
+
+    cMsg := "Generacija obrasca završena.#"
+    cMsg +=  _lokacija + _id_br + ".xml#"
+
+    MsgBeep(cMsg)
+
+endif
+
+DirChange(my_home())
+open_folder(_lokacija)
 
 return
 
@@ -606,7 +653,7 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima za export
 // --------------------------------------------
-static function _fill_e_xml()
+static function _fill_e_xml( file_name )
 local nTArea := SELECT()
 local nT_prih := 0
 local nT_pros := 0
@@ -624,7 +671,7 @@ local nT_klo := 0
 local nT_lodb := 0
 
 // otvori xml za upis
-open_xml( "c:\export.xml" )
+open_xml( file_name )
 
 // upisi header
 _xml_head()

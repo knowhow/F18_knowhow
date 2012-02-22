@@ -156,6 +156,8 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     endif
 
     // pokupi mi varijable bitne za azuriranje u export tabelu...
+    _id_d_firma := field->idfirma
+    _d_br_dok := field->brdok
     _br_fakt := field->brfaktp
     _id_partner := field->idpartner
     _dat_dok := field->datdok
@@ -243,7 +245,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     
     enddo 
 
-    _add_to_exp( _broj_dok, _dat_dok, _tip_dok_naz, _id_partner, ;
+    _add_to_exp( _id_d_firma, _tip_dok, _d_br_dok, _dat_dok, _tip_dok_naz, _id_partner, ;
                 _partn_naziv, _partn_mjesto, _partn_ptt, _partn_adresa, _br_fakt, ;
                 _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
                 _vp_ulaz, _vp_izlaz, _vp_ulaz - _vp_izlaz, ;
@@ -263,7 +265,9 @@ return _cnt
 static function _cre_tmp_tbl()
 local _dbf := {}
 
-AADD( _dbf, { "broj"      , "C", 10, 0 } )
+AADD( _dbf, { "idfirma"   , "C",  2, 0 } )
+AADD( _dbf, { "idvd"      , "C",  2, 0 } )
+AADD( _dbf, { "brdok"     , "C",  8, 0 } )
 AADD( _dbf, { "datum"     , "D",  8, 0 } )
 AADD( _dbf, { "vr_dok"    , "C", 30, 0 } )
 AADD( _dbf, { "idpartner" , "C",  6, 0 } )
@@ -296,7 +300,7 @@ return _dbf
 // ---------------------------------------
 // dodaj podatke u r_export tabelu
 // ---------------------------------------
-static function _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
+static function _add_to_exp( id_firma, id_tip_dok, broj_dok, datum_dok, vrsta_dok, id_partner, ;
                             part_naz, part_mjesto, part_ptt, part_adr, broj_fakture, ;
                             n_v_dug, n_v_pot, n_v_saldo, ;
                             v_p_dug, v_p_pot, v_p_saldo, ;
@@ -311,7 +315,9 @@ O_R_EXP
 APPEND BLANK
 
 _rec := hb_hash()
-_rec["broj"] := broj_dok
+_rec["idfirma"] := id_firma
+_rec["idvd"] := id_tip_dok
+_rec["brdok"] := broj_dok
 _rec["datum"] := datum_dok
 _rec["vr_dok"] := vrsta_dok
 _rec["idpartner"] := id_partner

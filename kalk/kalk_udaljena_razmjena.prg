@@ -663,6 +663,8 @@ do while !EOF()
 
         // setuj redni broj automatski...
         _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 3 )
+        // reset podbroj
+        _app_rec["podbr"] := ""
 
         select kalk
         append blank

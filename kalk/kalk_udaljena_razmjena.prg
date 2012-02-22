@@ -537,6 +537,7 @@ local _usl_mkonto, _usl_pkonto
 local _roba_id, _partn_id, _konto_id
 local _sif_exist
 local _fmk_import := .f.
+local _redni_broj := 0
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
@@ -652,10 +653,16 @@ do while !EOF()
     go top
     seek _id_firma + _id_vd + _br_dok
 
+    // setuj novi redni broj stavke
+    _redni_broj := 0
+
     // prebaci mi stavke tabele KALK
     do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
         
         _app_rec := dbf_get_rec()
+
+        // setuj redni broj automatski...
+        _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 3 )
 
         select kalk
         append blank

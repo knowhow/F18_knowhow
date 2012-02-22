@@ -552,19 +552,15 @@ _fill_e_xml( _id_br + ".xml" )
 
 // setuj za zip kompresiju...
 _a_files := {}
-AADD( _a_files, _id_br + ".xml" )
+AADD( _a_files, _lokacija + _id_br + ".xml" )
 
 // kompresuj fajl...
 _error := zip_files( _lokacija, _id_br + ".zip", _a_files )
 
-if _error <> 0
+cMsg := "Generacija obrasca završena.#"
+cMsg +=  _lokacija + _id_br + ".xml#"
 
-    cMsg := "Generacija obrasca završena.#"
-    cMsg +=  _lokacija + _id_br + ".xml#"
-
-    MsgBeep(cMsg)
-
-endif
+MsgBeep(cMsg)
 
 DirChange(my_home())
 open_folder(_lokacija)

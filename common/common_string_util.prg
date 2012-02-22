@@ -296,6 +296,7 @@ for i:=1 to nE
 next
 return (aNiz)
 
+
 FUNCTION BrDecimala(cFormat)
 
  LOCAL i:=0,cPom,nVrati:=0

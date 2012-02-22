@@ -18,6 +18,8 @@
 // otvaranje potrebnih tabela
 // -----------------------------------
 static function _o_tbl()
+O_KALK_DOKS
+O_KALK
 O_SIFK
 O_SIFV
 O_TDOK
@@ -91,6 +93,7 @@ endif
 
 // napravi pomocnu tabelu
 _cre_tmp_tbl()
+
 // otvori ponovo tabele izvjestaja
 _o_tbl()
 
@@ -132,8 +135,48 @@ seek TRIM( _konto )
 
 select kalk
 
+Box(, 2, 60 )
+
+@ m_x + 1, m_y + 2 SAY PADR( "Generisanje pomocne tabele u toku...", 58 ) COLOR "I"
+
 do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
 
+    if !_vise_konta .and. field->mkonto <> _konto 
+        skip
+        loop
+    endif
+
+    // ispitivanje konta u varijanti jednog konta i datuma
+    if ( field->datdok < _datum_od .or. field->datdok > _datum_do )
+        skip
+        loop
+    endif
+
+    // ispitivanje konta u varijanti vise konta
+    if _vise_konta .and. !EMPTY( _usl_konto )
+        if !Tacno( _usl_konto )
+            skip
+            loop
+        endif
+    endif
+ 
+    // vrste dokumenata
+    if !EMPTY( _usl_vrste_dok )          
+        if !Tacno( _usl_vrste_dok )    
+            skip       
+            loop    
+        endif               
+    endif          
+
+    // tarife...
+    if !EMPTY( _usl_tarife )
+        if !Tacno( _usl_tarife )
+            skip
+            loop
+        endif
+    endif
+
+    // resetuj varijable... 
     _ulaz := 0
     _izlaz := 0
     _vp_ulaz := 0
@@ -150,10 +193,6 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     _tr_prevoz_2 := 0
     _tr_sped := 0
 
-    if !_vise_konta .and. field->mkonto <> _konto 
-        skip
-        loop
-    endif
 
     // pokupi mi varijable bitne za azuriranje u export tabelu...
     _id_d_firma := field->idfirma
@@ -245,6 +284,8 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     
     enddo 
 
+    @ m_x + 2, m_y + 2 SAY "Dokument: " + _id_d_firma + "-" + _tip_dok + "-" + _d_br_dok
+
     _add_to_exp( _id_d_firma, _tip_dok, _d_br_dok, _dat_dok, _tip_dok_naz, _id_partner, ;
                 _partn_naziv, _partn_mjesto, _partn_ptt, _partn_adresa, _br_fakt, ;
                 _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
@@ -255,6 +296,8 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     ++ _cnt
 
 enddo
+
+BoxC()
 
 return _cnt
 

@@ -19,7 +19,7 @@ private Opc:={}
 private opcexe:={}
 
 AADD(opc,"1. izvjestaji magacin             ")
-AADD(opcexe, {|| IzvjM()})
+AADD(opcexe, {|| kalk_izvjestaji_magacina()})
 AADD(opc,"2. izvjestaji prodavnica")
 AADD(opcexe, {|| IzvjP()})
 AADD(opc,"3. izvjestaji magacin+prodavnica")

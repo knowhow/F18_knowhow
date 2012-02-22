@@ -13,51 +13,54 @@
 #include "kalk.ch"
 
 
-function IzvjM()
-private Opc:={}
-private opcexe:={}
-AADD(Opc,"1. kartica - magacin                        ")
-AADD(opcexe,{|| KarticaM()})
-AADD(Opc,"2. lager lista - magacin")
-AADD(opcexe,{|| LLM()})
-AADD(Opc,"3. lager lista - proizvoljni sort")
-AADD(opcexe,{|| KaLagM()})
+function kalk_izvjestaji_magacina()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(Opc,"4. finansijsko stanje magacina")
-AADD(opcexe, {|| FLLM()})
-AADD(Opc,"5. realizacija po partnerima")
-AADD(opcexe,{||  kalk_real_partnera()})
-AADD(Opc,"6. promet grupe partnera")
-AADD(opcexe,{|| PrometGP()})
-AADD(opc,"7. pregled robe za dobavljaca")
-AADD(opcexe, {|| ProbDob()})
+AADD(_opc,"1. kartica - magacin                        ")
+AADD(_opcexe,{|| KarticaM()})
+AADD(_Opc,"2. lager lista - magacin")
+AADD(_opcexe,{|| LLM()})
+AADD(_Opc,"3. lager lista - proizvoljni sort")
+AADD(_opcexe,{|| KaLagM()})
 
-AADD(Opc,"----------------------------------")
-AADD(opcexe, nil)
-AADD(Opc,"8. porezi")
-AADD(opcexe,{|| MPoreziMag()})
-AADD(Opc,"----------------------------------")
-AADD(opcexe, nil)
+AADD(_Opc,"4. finansijsko stanje magacina")
+AADD(_opcexe, {|| FLLM()})
+AADD(_Opc,"5. realizacija po partnerima")
+AADD(_opcexe,{||  kalk_real_partnera()})
+AADD(_Opc,"6. promet grupe partnera")
+AADD(_opcexe,{|| PrometGP()})
+AADD(_opc,"7. pregled robe za dobavljaca")
+AADD(_opcexe, {|| ProbDob()})
+AADD(_Opc,"8. TKV")
+AADD(_opcexe, {|| kalk_tkv() })
+
+
+AADD(_Opc,"----------------------------------")
+AADD(_opcexe, nil)
+AADD(_Opc,"P. porezi")
+AADD(_opcexe,{|| MPoreziMag()})
+AADD(_Opc,"----------------------------------")
+AADD(_opcexe, nil)
+
 if is_uobrada()
-	AADD(Opc,"R. unutrasnja obrada - pregled ulaza i izlaza")
-	AADD(opcexe, {|| r_uobrada() })
+    AADD(_Opc,"R. unutrasnja obrada - pregled ulaza i izlaza")
+    AADD(_opcexe, {|| r_uobrada() })
 endif
 
-AADD(Opc,"K. kontrolni izvjestaji")
-AADD(opcexe, {|| m_ctrl_rpt() })
+AADD(_Opc,"K. kontrolni izvjestaji")
+AADD(_opcexe, {|| m_ctrl_rpt() })
+AADD(_Opc,"S. pregledi za vise objekata")
+AADD(_opcexe, {|| MRekMag() })
+AADD(_Opc,"T. lista trebovanja po sastavnicama")
+AADD(_opcexe, {|| g_sast_list() })
+AADD(_Opc,"U. specifikacija izlaza po sastavnicama")
+AADD(_opcexe, {|| rpt_prspec() })
 
+f18_menu( "imag", .f., _izbor, _opc, _opcexe )
 
-AADD(Opc,"S. pregledi za vise objekata")
-AADD(opcexe, {|| MRekMag() })
-AADD(Opc,"T. lista trebovanja po sastavnicama")
-AADD(opcexe, {|| g_sast_list() })
-AADD(Opc,"U. specifikacija izlaza po sastavnicama")
-AADD(opcexe, {|| rpt_prspec() })
-
-
-private Izbor:=1
-Menu_SC("imag")
-CLOSERET
+close all
 return
 
 
@@ -65,60 +68,47 @@ return
 // kontrolni izvjestaji
 // ----------------------------------------------------
 function m_ctrl_rpt()
-private Opc:={}
-private opcexe:={}
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(Opc,"1. kontrola sastavnica               ")
-AADD(opcexe,{|| r_ct_sast()})
+AADD(_Opc,"1. kontrola sastavnica               ")
+AADD(_opcexe,{|| r_ct_sast()})
 
-private Izbor:=1
-Menu_SC("ctrl")
+f18_menu( "ctrl", .f., _izbor, _opc, _opcexe )
 
 return
 
-
-
-
-
-/*! \fn MPoreziMag()
- *  \brief Meni izvjestaja o porezima
- */
 
 function MPoreziMag()
-*{
-private Opc:={}
-private opcexe:={}
-AADD(Opc,"1. realizacija - veleprodaja po tarifama")
-AADD(opcexe,{|| RekPorMag()})
-AADD(Opc,"2. porez na promet ")
-AADD(opcexe,{|| RekPorNap()})
-AADD(Opc,"3. rekapitulacija po tarifama")
-AADD(opcexe,{|| RekmagTar()})
-private Izbor:=1
-Menu_SC("porm")
-CLOSERET
+local _opc := {}
+local _opcexe:={}
+local _izbor := 1
+
+AADD(_Opc,"1. realizacija - veleprodaja po tarifama")
+AADD(_opcexe,{|| RekPorMag()})
+AADD(_Opc,"2. porez na promet ")
+AADD(_opcexe,{|| RekPorNap()})
+AADD(_Opc,"3. rekapitulacija po tarifama")
+AADD(_opcexe,{|| RekmagTar()})
+
+f18_menu( "porm", .f., _izbor, _opc, _opcexe )
+
+close all
 return
-*}
 
 
-
-
-/*! \fn MRekMag()
- *  \brief Meni izvjestaja za vise objekata(konta)
- */
- 
 function MRekMag()
-*{
-private Opc:={}
-private opcexe:={}
-AADD(Opc,"1. rekapitulacija finansijskog stanja")
-AADD(opcexe, {|| RFLLM() } )
-private Izbor:=1
-Menu_SC("rmag")
-CLOSERET
-return
-*}
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
+AADD(_opc,"1. rekapitulacija finansijskog stanja")
+AADD(_opcexe, {|| RFLLM() } )
+
+f18_menu( "rmag", .f., _izbor, _opc, _opcexe )
+close all
+return
 
 
 

@@ -64,6 +64,7 @@ local _usl_konto := ""
 local _usl_vrste_dok := ""
 local _usl_tarife := ""
 local _v_konta := "N"
+local _gledati_usluge := "N"
 local _cnt := 0
 local _a_porezi
 local __porez, _porez
@@ -94,6 +95,10 @@ endif
 
 if HB_HHASKEY( vars, "vrste_dok" ) 
     _vrste_dok := vars["vrste_dok"]
+endif
+
+if HB_HHASKEY( vars, "gledati_usluge" ) 
+    _gledati_usluge := vars["gledati_usluge"]
 endif
 
 // napravi pomocnu tabelu
@@ -214,13 +219,27 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     hseek _tip_dok
     _tip_dok_naz := field->naz
 
-    select partn
-    hseek _id_partner
+    if !EMPTY( _id_partner )
+        select partn
+        hseek _id_partner
 
-    _partn_naziv := field->naz
-    _partn_ptt := field->ptt
-    _partn_mjesto := field->mjesto
-    _partn_adresa := field->adresa
+        _partn_naziv := field->naz
+        _partn_ptt := field->ptt
+        _partn_mjesto := field->mjesto
+        _partn_adresa := field->adresa
+
+    else
+
+        _partn_naziv := ""
+        _partn_ptt := ""
+        _partn_mjesto := ""
+        _partn_adresa := ""
+    
+        if _tip_dok $ "41#42"
+            _partn_naziv := "prodavnica " + ALLTRIM( kalk->pkonto )
+        endif
+
+    endif
 
     select ( _t_area )
 
@@ -258,8 +277,17 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         
         select roba
         hseek kalk->idroba
+
+        // nema usluga
+        if ( _gledati_usluge == "N" .and. roba->tip $ "U" )
+            select kalk
+            skip
+            loop
+        endif
+
         select tarifa
         hseek kalk->idtarifa
+        
         select kalk
         
         Tarifa( field->pkonto, field->idRoba, @aPorezi )

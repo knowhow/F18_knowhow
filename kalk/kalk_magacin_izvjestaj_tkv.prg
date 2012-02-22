@@ -50,6 +50,7 @@ local _konta := fetch_metric( "kalk_tkv_konto", my_user(), SPACE(200) )
 local _d_od := fetch_metric( "kalk_tkv_datum_od", my_user(), DATE()-30 )
 local _d_do := fetch_metric( "kalk_tkv_datum_do", my_user(), DATE() )
 local _vr_dok := fetch_metric( "kalk_tkv_vrste_dok", my_user(), SPACE(200) )
+local _usluge := fetch_metric( "kalk_tkv_gledati_usluge", my_user(), "N" )
 local _vise_konta := "D"
 
 Box(, 10, 70)
@@ -71,6 +72,11 @@ Box(, 10, 70)
     
     @ m_x + _x, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
 
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
+
     read
 
 BoxC()
@@ -87,6 +93,7 @@ vars["datum_od"] := _d_od
 vars["datum_do"] := _d_do
 vars["konto"] := _konta
 vars["vrste_dok"] := _vr_dok
+vars["gledati_usluge"] := _usluge
 // ako postoji tacka u kontu onda gledaj 
 if RIGHT( ALLTRIM( _konta ), 1 ) == "."
     _vise_konta := "N"
@@ -98,6 +105,7 @@ set_metric( "kalk_tkv_konto", my_user(), _konta )
 set_metric( "kalk_tkv_datum_od", my_user(), _d_od )
 set_metric( "kalk_tkv_datum_do", my_user(), _d_do )
 set_metric( "kalk_tkv_vrste_dok", my_user(), _vr_dok )
+set_metric( "kalk_tkv_gledati_usluge", my_user(), _usluge )
 
 return _ret
 

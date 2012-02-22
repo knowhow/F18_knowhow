@@ -62,6 +62,7 @@ local _broj_dok, _dat_dok
 local _usl_konto := ""
 local _usl_vrste_dok := ""
 local _usl_tarife := ""
+local _gledati_usluge := "N"
 local _v_konta := "N"
 local _cnt := 0
 
@@ -90,6 +91,11 @@ endif
 if HB_HHASKEY( vars, "vrste_dok" ) 
     _vrste_dok := vars["vrste_dok"]
 endif
+
+if HB_HHASKEY( vars, "gledati_usluge" ) 
+    _gledati_usluge := vars["gledati_usluge"]
+endif
+
 
 // napravi pomocnu tabelu
 _cre_tmp_tbl()
@@ -250,6 +256,18 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
                 loop
             endif
         endif
+
+        select roba
+        hseek kalk->idroba
+
+        // treba li gledati usluge ??
+        if _gledati_usluge == "N" .and. roba->tip $ "U"
+            select kalk
+            skip
+            loop
+        endif
+
+        select kalk
         
         // saberi vrijednosti...
         if field->mu_i == "1" .and. !( field->idvd $ "12#22#94" )

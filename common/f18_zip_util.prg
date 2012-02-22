@@ -84,7 +84,7 @@ IF !EMPTY( _h_zip )
 
                         IF ( _error <> 0 )
                             __zip_error( _error, "operacija: kompresovanje fajla" )
-                            RETURN -99
+                            //RETURN -99
                         ENDIF
 
                     ENDIF
@@ -194,7 +194,7 @@ IF !EMPTY( _h_zip )
 
                 IF ( _error <> 0 )
                     __zip_error( _error, "operacija: dekompresovanje fajla" )
-                    RETURN -99
+                    //RETURN -99
                 ENDIF
 
             ENDIF

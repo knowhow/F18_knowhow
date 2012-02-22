@@ -640,6 +640,9 @@ do while !EOF()
     select e_doks
     _app_rec := dbf_get_rec()
 
+    // cisti podbroj
+    _app_rec["podbr"] := ""
+
     select kalk_doks
     append blank
     update_rec_server_and_dbf( "kalk_doks", _app_rec )

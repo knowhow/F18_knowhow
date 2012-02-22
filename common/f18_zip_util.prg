@@ -74,7 +74,7 @@ IF !EMPTY( _h_zip )
 
                         ++ _cnt
 
-                        @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ..." + PADL( ALLTRIM( __file_path + _a_file[1] ), 58 )
+                        @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ..." + PADR( ALLTRIM( _a_file[1] ), 40 )
 
                         IF relative_path 
                             _error := HB_ZipStoreFile( _h_zip, __file_path + _a_file[1], __file_path + _a_file[1], nil )
@@ -83,7 +83,8 @@ IF !EMPTY( _h_zip )
                         ENDIF
 
                         IF ( _error <> 0 )
-                            RETURN __zip_error( _error )
+                            __zip_error( _error, "operacija: kompresovanje fajla" )
+                            RETURN -99
                         ENDIF
 
                     ENDIF
@@ -99,7 +100,7 @@ IF !EMPTY( _h_zip )
 ENDIF
 
 IF ( _error <> 0 )
-    RETURN __zip_error( _error )
+    __zip_error( _error, "operacija: zatvaranje zip fajla" )
 ENDIF
 
 RETURN _error
@@ -108,10 +109,22 @@ RETURN _error
 // -----------------------------------
 // obrada gresaka 
 // -----------------------------------
-static function __zip_error( err )
+static function __zip_error( err, descr )
+local _add_msg := ""
+
 IF ( err <> 0 )
-    MsgBeep( "Imamo gresku ?!???" + ALLTRIM( STR( err ) ) )
+
+    IF descr == NIL
+        descr := ""
+    ENDIF
+    
+    IF !EMPTY( descr )
+        _add_msg := "#" + descr
+    ENDIF
+
+    MsgBeep( "Imamo gresku ?!???" + ALLTRIM( STR( err ) ) + _add_msg )
 ENDIF
+
 RETURN
 
 
@@ -175,12 +188,13 @@ IF !EMPTY( _h_zip )
 
                 ++ _cnt
 
-                @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ... " + PADR( ALLTRIM( __file ), 40 )
+                @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ... " + PADL( ALLTRIM( __file ), 38 )
 
                 _error := HB_UnzipExtractCurrentFile( _h_zip, NIL, NIL )
 
                 IF ( _error <> 0 )
-                    RETURN __zip_error( _error )
+                    __zip_error( _error, "operacija: dekompresovanje fajla" )
+                    RETURN -99
                 ENDIF
 
             ENDIF
@@ -198,7 +212,7 @@ IF !EMPTY( _h_zip )
 ENDIF
 
 IF ( _error <> 0 )
-    RETURN __zip_error( _error )
+    __zip_error( _error, "operacija: zatvaranje zip fajla" )
 ENDIF
 
 RETURN _error

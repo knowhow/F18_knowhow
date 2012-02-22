@@ -126,7 +126,7 @@ if _decompress_files( _imp_file ) <> 0
 endif
 
 #ifdef __PLATFORM__UNIX
-    //set_file_access()
+    set_file_access()
 #endif
 
 // import procedura
@@ -161,7 +161,7 @@ return
 static function set_file_access()
 local _cmd 
 
-_cmd := "chmod u+rw ."
+_cmd := "chmod u+w *.*"
 
 if hb_run( _cmd ) <> 0 
     MsgBeep( "Problem sa setovanjem privilegija fajla !????" )

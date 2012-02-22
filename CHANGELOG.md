@@ -1,3 +1,9 @@
+0.9.56 2012-02-22, vsasa
+
+  - modul LD, generisanje obrazaca MIP/GIP/OLP [#26674](http://redmine.bring.out.ba/issues/26674)
+  - modul KALK, korigovana obrada dokumenta tip-a 41, 42 [#26824](http://redmine.bring.out.ba/issues/26824)
+  - korekcije sitnih grešaka...
+
 0.9.55 2012-02-20, vsasa
 
   - modul KALK, razmjena podataka između udaljenih lokacija [#26695](http://redmine.bring.out.ba/issues/26695) rewrite opcije.

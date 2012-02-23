@@ -13,23 +13,7 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
-
-/*! \file fmk/kalk/dok/1g/mnu_dok.prg
- *  \brief Meni opcija za stampu i pregled dokumenata
- */
-
-/*! \fn kalk_pregled_dokumenata()
- *  \brief Meni opcija za stampu i pregled dokumenata
- */
-
 function kalk_pregled_dokumenata()
-*{
 PRIVATE opc:={}
 PRIVATE opcexe:={}
 
@@ -52,7 +36,6 @@ private Izbor:=1
 Menu_SC("razp")
 CLOSERET
 return
-*}
 
 /*! \fn kalk_ostale_operacije_doks()
  *  \brief Meni - opcija za povrat azuriranog dokumenta

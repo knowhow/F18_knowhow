@@ -13,27 +13,7 @@
 #include "kalk.ch"
 
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_10nc.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.2 $
- * $Log: rpt_10nc.prg,v $
- * Revision 1.2  2002/06/20 13:13:03  mirsad
- * dokumentovanje
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/rpt_10nc.prg
- *  \brief Stampa kalkulacije 10 za vodjenje magacina po nabavnim cijenama
- */
-
-
-/*! \fn StKalk10_1()
- *  \brief Stampa kalkulacije 10 - nabavne cijene
- */
-
 function StKalk10_1()
-*{
 local nCol1:=nCol2:=0,npom:=0
 
 

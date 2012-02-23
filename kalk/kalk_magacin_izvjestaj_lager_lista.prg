@@ -1022,25 +1022,25 @@ enddo
 ? __line
 ? "UKUPNO:"
 
-@ prow(),nCol0 SAY ntUlaz pict gpickol
-@ prow(),pcol()+1 SAY ntIzlaz pict gpickol
-@ prow(),pcol()+1 SAY ntUlaz-ntIzlaz pict gpickol
+@ prow(),nCol0 SAY ntUlaz pict pic_format( gpickol, ntUlaz )
+@ prow(),pcol()+1 SAY ntIzlaz pict pic_format( gpickol, ntIzlaz )
+@ prow(),pcol()+1 SAY ntUlaz-ntIzlaz pict pic_format( gpickol, (ntUlaz - ntIzlaz) )
 
 nCol1:=pcol()+1
 
 if gVarEv=="1"
 	if IsMagSNab() .or. IsMagPNab()
 	    // NV
- 	    @ prow(),pcol()+1 SAY ntNVU pict gpicdem
- 	    @ prow(),pcol()+1 SAY ntNVI pict gpicdem
- 	    @ prow(),pcol()+1 SAY ntNV pict gpicdem
+ 	    @ prow(),pcol()+1 SAY ntNVU pict pic_format( gpicdem, ntNVU )
+ 	    @ prow(),pcol()+1 SAY ntNVI pict pic_format( gpicdem, ntNVI )
+ 	    @ prow(),pcol()+1 SAY ntNV pict pic_format( gpicdem, ntNV )
  	    
 	    if IsPDV() .and. cDoNab == "N" 
-	       // PV - samo u pdv rezimu 
-		@ prow(),pcol()+1 SAY ntVPVU pict gpicdem
- 		@ prow(),pcol()+1 SAY ntRabat pict gpicdem
- 		@ prow(),pcol()+1 SAY ntVPVI pict gpicdem
- 		@ prow(),pcol()+1 SAY ntVPVU-NtVPVI pict gpicdem
+	        // PV - samo u pdv rezimu 
+		    @ prow(),pcol()+1 SAY ntVPVU pict pic_format( gpicdem, ntVPVU )
+ 		    @ prow(),pcol()+1 SAY ntRabat pict pic_format( gpicdem, ntRabat )
+ 		    @ prow(),pcol()+1 SAY ntVPVI pict pic_format( gpicdem, ntVPVI )
+ 		    @ prow(),pcol()+1 SAY ntVPVU-NtVPVI pict pic_format( gpicdem, ( ntVPVU - ntVPVI ) )
 	    endif
 	    
 	else
@@ -1092,6 +1092,22 @@ gPicKol := cPicKol
 
 closeret
 return
+
+
+// --------------------------------------------------
+// sredjivanje formata ispisa
+// --------------------------------------------------
+static function pic_format( curr_pic, num )
+local _format
+
+if LEN( curr_pic ) < LEN( ALLTRIM( STR( num ) ) )
+    // jednostavno ukini decimalno mjesto kod ispisa
+    _format := STRTRAN( curr_pic, ".", "9" )
+else
+    _format := curr_pic
+endif
+
+return _format
 
 
 // --------------------------------------

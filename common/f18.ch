@@ -30,7 +30,7 @@
 #ifdef __PLATFORM__WINDOWS
     #define F18_TEMPLATE_LOCATION "c:\\knowhowERP\\template\\"
 #else
-    #define F18_TEMPLATE_LOCATION ""
+    #define F18_TEMPLATE_LOCATION "$HOME/knowhowERP/templates/"
 #endif
 
 #ifndef TEST

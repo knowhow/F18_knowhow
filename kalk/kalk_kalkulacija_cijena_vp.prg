@@ -18,7 +18,13 @@
 // ---------------------------------------------
 function kalkulacija_cijena_vp( azurirana )
 local _vars
-local _template := F18_TEMPLATE_LOCATION + "kalk_vp.odt"
+local _template := "kalk_vp.odt"
+
+// ima li template fajla ?
+if !FILE( F18_TEMPLATE_LOCATION + _template )
+    //MsgBeep( "Template fajl ne postoji: " + F18_TEMPLATE_LOCATION + _template )
+    //return
+endif
 
 if azurirana == NIL
     azurirana := .t.
@@ -27,6 +33,7 @@ endif
 // otvori sve potrebne tabele
 o_tables( azurirana )
 
+// uslovi
 if azurirana .and. !get_vars( @_vars )
     return
 endif
@@ -45,7 +52,7 @@ if ! (_vars["tip_dok"] $ "10" )
 endif
 
 // generisi xml na osnovu dokumenta
-if generisi_xml( _vars ) > 0
+if gen_kalk_vp_xml( _vars ) > 0
     // stampaj template fajl sa podacima
     st_kalkulacija_cijena_odt( _template )
 endif
@@ -63,14 +70,19 @@ local _oo_writer_exe
 local _oo_params := ""
 local _java_start 
 local _cmd
-local _data_xml := my_home() + "kalkdata.xml"
+local _data_xml := my_home() + "data.xml"
 local _out_file := my_home() + "out.odt"
 local _sv_screen
 local _template
 local _office
 local _template_file
 
-_template := ALLTRIM( template_file )
+// kopiraj template fajl
+if !FILE( my_home() + template_file )
+    //FILECOPY( F18_TEMPLATE_LOCATION + template_file, my_home() + template_file )
+endif
+
+_template := my_home() + template_file
 _oo_bin := ALLTRIM( fetch_metric( "openoffice_bin", my_user(), "" ) )
 _oo_writer_exe := ALLTRIM( fetch_metric( "openoffice_writer", my_user(), "" ) )
 _java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
@@ -98,10 +110,7 @@ if hb_run(_cmd) <> 0
     msgbeep( "problem sa generisanje jod reporta ..." )
 endif
 
-RESTORE SCREEN FROM _sv_screen
-
-_cmd := "start " 
-_cmd += _office + " " + _oo_params + " "
+_cmd := _office + " " + _oo_params + " "
 _cmd += _out_file
 
 log_write("oo print: " + _cmd)
@@ -110,6 +119,7 @@ if hb_run( _cmd ) <> 0
     msgbeep( "problem sa pokretanjem office-a !!!" )
 endif
 
+RESTORE SCREEN FROM _sv_screen
 return
 
 
@@ -194,14 +204,14 @@ return .t.
 
 
 // ---------------------------------------------
-// generisanje xml fajla
+// generisanje xml fajla za kalk_vp
 // ---------------------------------------------
-static function generisi_xml( vars )
+static function gen_kalk_vp_xml( vars )
 local _firma := vars["id_firma"]
 local _tip_dok := vars["tip_dok"]
 local _br_dok := vars["br_dok"]
 local _generated := 0
-local _xml_file := my_home() + "kalkdata.xml"
+local _xml_file := my_home() + "data.xml"
 local _t_rec
 local _redni_broj := 0
 local _porezna_stopa, _porez

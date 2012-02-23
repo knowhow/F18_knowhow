@@ -538,6 +538,8 @@ local _roba_id, _partn_id, _konto_id
 local _sif_exist
 local _fmk_import := .f.
 local _redni_broj := 0
+local _total_doks := 0
+local _total_kalk := 0
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
@@ -558,13 +560,21 @@ _o_exp_tables( __import_dbf_path, _fmk_import )
 // otvori potrebne tabele za import podataka
 _o_tables()
 
+// broj zapisa u import tabelama
+select e_doks
+_total_doks := RECCOUNT2()
+
+select e_kalk
+_total_kalk := RECCOUNT2()
+
 select e_doks
 set order to tag "1"
 go top
 
-Box(, 2, 70 )
+Box(, 3, 70 )
 
-@ m_x + 1, m_y + 2 SAY "... import kalk dokumenata u toku "
+@ m_x + 1, m_y + 2 SAY PADR( "... import kalk dokumenata u toku ", 69 ) COLOR "I"
+@ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", kalk/" + ALLTRIM(STR( _total_kalk ))
 
 do while !EOF()
 
@@ -648,7 +658,7 @@ do while !EOF()
     update_rec_server_and_dbf( "kalk_doks", _app_rec )
 
     ++ _cnt
-    @ m_x + 2, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
+    @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
     // zikni je u nasu tabelu kalk
     select e_kalk
@@ -669,7 +679,7 @@ do while !EOF()
         // reset podbroj
         _app_rec["podbr"] := ""
 
-        @ m_x + 2, m_y + 40 SAY "stavka: " + _app_rec["rbr"] 
+        @ m_x + 3, m_y + 40 SAY "stavka: " + _app_rec["rbr"] 
 
         select kalk
         append blank
@@ -745,7 +755,7 @@ do while !EOF()
 
     if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
 
-        @ m_x + 2, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+        @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
 
         select konto
 
@@ -800,7 +810,7 @@ do while !EOF()
 
     if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
 
-        @ m_x + 2, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+        @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
 
         select partn
 
@@ -854,7 +864,7 @@ do while !EOF()
 
     if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
 
-        @ m_x + 2, m_y + 2 SAY "import roba id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+        @ m_x + 3, m_y + 2 SAY "import roba id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
 
         select roba
 
@@ -1006,7 +1016,7 @@ do while !EOF()
         append blank
     endif
         
-    @ m_x + 2, m_y + 2 SAY "import sifk id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"]
+    @ m_x + 3, m_y + 2 SAY "import sifk id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"]
     
     // uvijek update odradi friskog stanja sifk tabele
     update_rec_server_and_dbf( "sifk", _app_rec )
@@ -1033,7 +1043,7 @@ do while !EOF()
         append blank
     endif
 
-    @ m_x + 2, m_y + 2 SAY "import sifv id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"] + ", sifra: " + _app_rec["idsif"]
+    @ m_x + 3, m_y + 2 SAY "import sifv id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"] + ", sifra: " + _app_rec["idsif"]
     update_rec_server_and_dbf( "sifv", _app_rec )
 
     select e_sifv

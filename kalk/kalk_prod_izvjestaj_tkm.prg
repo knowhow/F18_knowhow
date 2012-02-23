@@ -12,7 +12,7 @@
 
 #include "kalk.ch"
 
-static __LEN_OPIS := 60
+static __LEN_OPIS := 70
 
 
 // -----------------------------------------
@@ -260,7 +260,7 @@ static function tkm_zaglavlje( vars )
 if !EMPTY( ALLTRIM( vars["konto"] ) ) 
     ?? ALLTRIM( vars["konto"] )
 else
-    ? " sve prodavnice"
+    ?? " sve prodavnice"
 endif
 
 ? "na dan", DATE()

@@ -398,7 +398,7 @@ if IsPDV()
 	__txt3 := cTxt3
 
 else
-	m:="----- ---------- -------------------- ---"+IF(lPoNarudzbi.and.cPKN=="D"," ------","")+" ---------- ---------- ---------- ---------- ---------- ----------"
+	m:="------ ---------- -------------------- ---"+IF(lPoNarudzbi.and.cPKN=="D"," ------","")+" ---------- ---------- ---------- ---------- ---------- ----------"
 
 	if gVarEv=="2"
 		m:="----- ---------- -------------------- --- ---------- ---------- ----------"
@@ -684,7 +684,7 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 	
 	// rbr, idroba, naziv...
 	
-	? str(++nrbr,4)+".", cIdRoba
+	? STR( ++nRbr, 5 ) + ".", cIdRoba
 	nCr:=pcol()+1
 	
 	@ prow(),pcol()+1 SAY aNaz[1]
@@ -1186,7 +1186,7 @@ local aLLM := {}
 local nPom 
 
 // r.br
-nPom := 5
+nPom := 6
 AADD(aLLM, {nPom, PADC("R.", nPom), PADC("br.", nPom), PADC("", nPom) })
 
 // artikl

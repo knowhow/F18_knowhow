@@ -540,6 +540,7 @@ local _fmk_import := .f.
 local _redni_broj := 0
 local _total_doks := 0
 local _total_kalk := 0
+local _gl_brojac := 0
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
@@ -679,7 +680,10 @@ do while !EOF()
         // reset podbroj
         _app_rec["podbr"] := ""
 
-        @ m_x + 3, m_y + 40 SAY "stavka: " + _app_rec["rbr"] 
+        // uvecaj i globalni brojac stavki...
+        _gl_brojac += _redni_broj
+
+        @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select kalk
         append blank
@@ -697,6 +701,9 @@ enddo
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
+
+    // ocisti mi 3 red
+    @ m_x + 3, m_y + 2 SAY PADR( "", 69 )
 
     // update tabele roba
     update_table_roba( _zamjeniti_sif, _fmk_import )

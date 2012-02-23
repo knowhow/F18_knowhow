@@ -399,19 +399,19 @@ do while !EOF()
     endif
 
     // datumski uslov...
-    //if DTOC( _dat_od ) <> ""
+    if _dat_od <> CTOD("") 
         if ( field->datdok < _dat_od )
             skip
             loop
         endif
-    //endif
+    endif
 
-    //if DTOC( _dat_do ) <> ""
+    if _dat_do <> CTOD("")
         if ( field->datdok > _dat_do )
             skip
             loop
         endif
-    //endif
+    endif
 
     // ako je sve zadovoljeno !
     // dodaj zapis u tabelu e_doks
@@ -575,19 +575,19 @@ do while !EOF()
     // uslovi, provjera...
 
     // datumi...
-    //if DTOC( _dat_od ) <> ""
+    if _dat_od <> CTOD( "" ) 
         if field->datdok < _dat_od
             skip
             loop
         endif
-    //endif
+    endif
 
-    //if DTOC( _dat_do ) <> ""
+    if _dat_do <> CTOD( "" )
         if field->datdok > _dat_do
             skip
             loop
         endif
-    //endif
+    endif
 
     // lista konta...
     if !EMPTY( _konta )
@@ -668,6 +668,8 @@ do while !EOF()
         _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 3 )
         // reset podbroj
         _app_rec["podbr"] := ""
+
+        @ m_x + 2, m_y + 40 SAY "stavka: " + _app_rec["rbr"] 
 
         select kalk
         append blank
@@ -1244,6 +1246,8 @@ if ( from_fmk == NIL )
     from_fmk := .f.
 endif
 
+log_write("otvaram tabele importa i pravim imdekse...")
+
 // zatvori sve prije otvaranja ovih tabela
 close all
 
@@ -1257,6 +1261,8 @@ select ( 360 )
 use ( use_path + _dbf_name ) alias "e_kalk"
 index on ( idfirma + idvd + brdok ) tag "1"
 
+log_write("otvorio i indeksirao: " + use_path + _dbf_name )
+
 _dbf_name := "e_doks.dbf"
 if from_fmk
     _dbf_name := UPPER( _dbf_name )
@@ -1266,6 +1272,8 @@ endif
 select ( 361 )
 use ( use_path + _dbf_name ) alias "e_doks"
 index on ( idfirma + idvd + brdok ) tag "1"
+
+log_write("otvorio i indeksirao: " + use_path + _dbf_name )
 
 _dbf_name := "e_roba.dbf"
 if from_fmk
@@ -1318,6 +1326,8 @@ select ( 366 )
 use ( use_path + _dbf_name ) alias "e_sifv"
 index on ( id + oznaka + idsif + naz ) tag "ID"
 index on ( id + idsif ) tag "IDIDSIF"
+
+log_write("otvorene sve import tabele i indeksirane...")
 
 return
 
@@ -1474,6 +1484,8 @@ else
     _zip_name := __name + __ext    
 
 endif
+
+log_write("dekompresujem fajl:" + _zip_path + _zip_name )
 
 // unzipuj fajlove
 _error := unzip_files( _zip_path, _zip_name, __import_dbf_path )

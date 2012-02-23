@@ -39,11 +39,16 @@ if !azurirana
     _vars["br_dok"] := kalk_pripr->brdok
 endif 
 
-// generisi xml na osnovu dokumenta
-generisi_xml( _vars )
+// provjeri da li dokument moze da se stampa
+if ! (_vars["tip_dok"] $ "10" )
+    return
+endif
 
-// stampaj template fajl sa podacima
-st_kalkulacija_cijena_odt( _template )
+// generisi xml na osnovu dokumenta
+if generisi_xml( _vars ) > 0
+    // stampaj template fajl sa podacima
+    st_kalkulacija_cijena_odt( _template )
+endif
 
 return
 
@@ -163,7 +168,7 @@ return
 // ---------------------------------------------
 static function get_vars( vars )
 local _firma := gFirma
-local _tip := SPACE(2)
+local _tip := "10"
 local _broj := SPACE(8)
 local _ret := .f.
 
@@ -236,7 +241,7 @@ open_xml( _xml_file )
 xml_head()
 
 // <kalkulacija>
-xml_subnode("kalkulacija", .f. )
+xml_subnode("kalk", .f. )
 
 // osnovni podaci organizacije
 xml_node( "org_id", ALLTRIM( gFirma ) )
@@ -265,7 +270,9 @@ _u_pv := _t_pv := _u_pv_porez := _t_pv_porez := 0
 
 // prodji kroz dokument...
 do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .and. _br_dok == field->brdok 
-   
+  
+    ++ _generated 
+
     // seek-uje robu 
     RptSeekRT()
 
@@ -391,7 +398,7 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     xml_node( "upor", STR( _u_porez, 12, 2 ) )
     xml_node( "upvp", STR( _u_pv_porez, 12, 2 ) )
 
-    xml_subnode("Stavka", .t. )
+    xml_subnode("stavka", .t. )
 
     skip
 
@@ -413,12 +420,12 @@ xml_node( "tpor", STR( _t_porez, 12, 2 ) )
 xml_node( "tpvp", STR( _t_pv_porez, 12, 2 ) )
 
 // zatvori subnode...
-xml_subnode("Kalkulacija", .t. )
+xml_subnode("kalk", .t. )
 
 // zatvori xml fajl
 close_xml()
 
-return
+return _generated
 
 
 

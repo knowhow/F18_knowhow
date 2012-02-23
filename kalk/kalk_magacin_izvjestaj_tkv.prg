@@ -156,7 +156,7 @@ do while !EOF()
     // 1. red izvjestaja...
 
     // redni broj...
-    ? PADL( ALLTRIM( STR( ++_red_br ) ), 4 ) + "."
+    ? PADL( ALLTRIM( STR( ++_red_br ) ), 6 ) + "."
 
     // datum dokumenta
     @ prow(), pcol() + 1 SAY field->datum
@@ -233,7 +233,7 @@ static function _get_line()
 local _line
 
 _line := ""
-_line += REPLICATE( "-", 5 )
+_line += REPLICATE( "-", 7 )
 _line += SPACE(1)
 _line += REPLICATE( "-", 8 )
 _line += SPACE(1)
@@ -281,8 +281,8 @@ local _row_1, _row_2
 _row_1 := ""
 _row_2 := ""
 
-_row_1 += PADR( "R.Br", 5 )
-_row_2 += PADR( "", 5 )
+_row_1 += PADR( "R.Br", 7 )
+_row_2 += PADR( "", 7 )
 
 _row_1 += SPACE(1)
 _row_2 += SPACE(1)

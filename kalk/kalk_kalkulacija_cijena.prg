@@ -322,6 +322,7 @@ xml_node( "zad_id", to_xml_encoding( ALLTRIM( field->pkonto ) ) )
 xml_node( "zad_naz", to_xml_encoding( ALLTRIM( konto->naz ) ) )
 
 // podaci o dobavljacu i veznom racunu
+xml_node( "dob_id", to_xml_encoding( ALLTRIM( field->idpartner ) ) )
 xml_node( "dob_naziv", to_xml_encoding( ALLTRIM( partn->naz ) ) )
 xml_node( "rn_broj", to_xml_encoding( ALLTRIM( field->brfaktp ) ) )
 xml_node( "rn_datum", DTOC( field->datfaktp ) )
@@ -561,6 +562,7 @@ xml_node( "zad_id", to_xml_encoding( ALLTRIM( field->mkonto ) ) )
 xml_node( "zad_naz", to_xml_encoding( ALLTRIM( konto->naz ) ) )
 
 // podaci o dobavljacu i veznom racunu
+xml_node( "dob_id", to_xml_encoding( ALLTRIM( field->idpartner ) ) )
 xml_node( "dob_naziv", to_xml_encoding( ALLTRIM( partn->naz ) ) )
 xml_node( "rn_broj", to_xml_encoding( ALLTRIM( field->brfaktp ) ) )
 xml_node( "rn_datum", DTOC( field->datfaktp ) )

@@ -280,7 +280,7 @@ local _porezna_stopa, _porez
 local _s_kolicina, _tmp, _a_porezi
 local _u_fv, _t_fv, _u_fv_r, _t_fv_r, _u_tr_prevoz, _u_tr_bank, _u_tr_carina, _u_tr_zavisni, _u_tr_sped, _u_tr_svi
 local _t_tr_prevoz, _t_tr_bank, _t_tr_carina, _t_tr_zavisni, _t_tr_sped, _t_tr_svi, _u_nv, _t_nv, _u_marza, _t_marza
-local _u_porez, _t_porez, _u_pv, _t_pv, _u_pv_porez, _t_pv_porez, _u_s_kol
+local _u_porez, _t_porez, _u_pv, _t_pv, _u_pv_porez, _t_pv_porez, _t_kol, _u_rabat, _t_rabat
 
 private nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 private aPorezi := {}
@@ -314,6 +314,7 @@ xml_node( "org_naziv", to_xml_encoding( ALLTRIM( gNFirma ) ) )
 
 // podaci dokumenta
 xml_node( "dok_naziv", to_xml_encoding( ALLTRIM( tdok->naz ) ) )
+xml_node( "dok_tip", field->idvd )
 xml_node( "dok_broj", to_xml_encoding( ALLTRIM( _br_dok ) ) )
 xml_node( "dok_datum", DTOC( field->datdok ) )
 
@@ -334,7 +335,8 @@ _t_tr_prevoz := _t_tr_bank := _t_tr_carina := _t_tr_zavisni := _t_tr_sped := _t_
 _u_nv := _t_nv := _u_marza := _t_marza := 0
 _u_porez := _t_porez := 0
 _u_pv := _t_pv := _u_pv_porez := _t_pv_porez := 0
-_u_s_kol := 0
+_t_kol := 0
+_u_rabat := _t_rabat := 0
 
 // prodji kroz dokument...
 do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .and. _br_dok == field->brdok 
@@ -355,7 +357,7 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     _porez := _a_porezi[ 1 ]
 
     _s_kolicina := field->kolicina - field->gkolicina - field->gkolicin2
-    _u_s_kol += _s_kolicina
+    _t_kol += _s_kolicina
 
     // fakturna cijena vrijednost
     _u_fv := ROUND( field->fcj * field->kolicina, gZaokr )
@@ -363,6 +365,9 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     _t_fv += _u_fv
 
     // rabati
+    _u_rabat := ROUND( -field->rabat, gZaokr )
+    _t_rabat += _u_rabat
+    
     _u_fv_r := ROUND( -field->rabat / 100 * field->fcj * field->kolicina, gZaokr )
     _t_fv_r += _u_fv_r
 
@@ -420,7 +425,8 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     // jedinicne cijene itd...
     
     xml_node( "fcj", STR( field->fcj, 12, 2 ) )
-    xml_node( "kskonto", STR( -rabat, 12, 2 ) )
+    xml_node( "rabat", STR( -field->rabat, 12, 2 ) )
+    xml_node( "fcjr", STR( -field->rabat/100 * field->fcj, 12, 2 ) )
     xml_node( "nc", STR( field->nc, 12, 2 ) )
     xml_node( "marzap", STR( nMarza2 / field->nc * 100, 12, 2 ) )
     xml_node( "marza", STR( nMarza2, 12, 2 ) )
@@ -454,9 +460,6 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     xml_node( "tr5", STR( nZavTr, 12, 2 ) )
     xml_node( "trs", STR( _tmp, 12, 2 ) )
 
-    // ukupna kolicina
-    xml_node( "uskol", STR( _u_s_kol, 12, 2 ) )
-
     // ukupne vrijednosti po stavkama
     xml_node( "ufv", STR( _u_fv, 12, 2 ) )
     xml_node( "ufvr", STR( _u_fv_r, 12, 2 ) )
@@ -481,6 +484,7 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
 enddo
 
 // ukupne vrijednosti za dokument
+xml_node( "tkol", STR( _t_kol, 12, 2 ) )
 xml_node( "tfv", STR( _t_fv, 12, 2 ) )
 xml_node( "tfvr", STR( _t_fv_r, 12, 2 ) )
 xml_node( "ttr1", STR( _t_tr_prevoz, 12, 2 ) )
@@ -521,7 +525,7 @@ local _porezna_stopa, _porez
 local _s_kolicina, _tmp
 local _u_fv, _t_fv, _u_fv_r, _t_fv_r, _u_tr_prevoz, _u_tr_bank, _u_tr_carina, _u_tr_zavisni, _u_tr_sped, _u_tr_svi
 local _t_tr_prevoz, _t_tr_bank, _t_tr_carina, _t_tr_zavisni, _t_tr_sped, _t_tr_svi, _u_nv, _t_nv, _u_marza, _t_marza
-local _u_porez, _t_porez, _u_pv, _t_pv, _u_pv_porez, _t_pv_porez, _u_s_kol
+local _u_porez, _t_porez, _u_pv, _t_pv, _u_pv_porez, _t_pv_porez, _t_kol, _u_rabat, _t_rabat
 
 private nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
@@ -554,6 +558,7 @@ xml_node( "org_naziv", to_xml_encoding( ALLTRIM( gNFirma ) ) )
 
 // podaci dokumenta
 xml_node( "dok_naziv", to_xml_encoding( ALLTRIM( tdok->naz ) ) )
+xml_node( "dok_tip", field->idvd )
 xml_node( "dok_broj", to_xml_encoding( ALLTRIM( _br_dok ) ) )
 xml_node( "dok_datum", DTOC( field->datdok ) )
 
@@ -574,7 +579,8 @@ _t_tr_prevoz := _t_tr_bank := _t_tr_carina := _t_tr_zavisni := _t_tr_sped := _t_
 _u_nv := _t_nv := _u_marza := _t_marza := 0
 _u_porez := _t_porez := 0
 _u_pv := _t_pv := _u_pv_porez := _t_pv_porez := 0
-_u_s_kol := 0
+_t_kol := 0
+_u_rabat := _t_rabat := 0
 
 // prodji kroz dokument...
 do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .and. _br_dok == field->brdok 
@@ -591,7 +597,7 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     _porez := field->mpcsapp / ( 1 + ( _porezna_stopa / 100 ) ) * ( _porezna_stopa / 100 )
 
     _s_kolicina := field->kolicina - field->gkolicina - field->gkolicin2
-    _u_s_kol += _s_kolicina
+    _t_kol += _s_kolicina
 
     // fakturna cijena vrijednost
     _u_fv := ROUND( field->fcj * field->kolicina, gZaokr )
@@ -599,6 +605,9 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     _t_fv += _u_fv
 
     // rabati
+    _u_rabat := ROUND( -field->rabat, gZaokr )
+    _t_rabat += _u_rabat
+
     _u_fv_r := ROUND( -field->rabat / 100 * field->fcj * field->kolicina, gZaokr )
     _t_fv_r += _u_fv_r
 
@@ -656,7 +665,8 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     // jedinicne cijene itd...
     
     xml_node( "fcj", STR( field->fcj, 12, 2 ) )
-    xml_node( "kskonto", STR( -rabat, 12, 2 ) )
+    xml_node( "rabat", STR( -field->rabat, 12, 2 ) )
+    xml_node( "fcjr", STR( -field->rabat/100 * field->fcj, 12, 2 ) )
     xml_node( "nc", STR( field->nc, 12, 2 ) )
     xml_node( "marzap", STR( nMarza / field->nc * 100, 12, 2 ) )
     xml_node( "marza", STR( nMarza, 12, 2 ) )
@@ -690,9 +700,6 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     xml_node( "tr5", STR( nZavTr, 12, 2 ) )
     xml_node( "trs", STR( _tmp, 12, 2 ) )
 
-    // ukupna kolicina
-    xml_node( "uskol", STR( _u_s_kol, 12, 2 ) )
-
     // ukupne vrijednosti po stavkama
     xml_node( "ufv", STR( _u_fv, 12, 2 ) )
     xml_node( "ufvr", STR( _u_fv_r, 12, 2 ) )
@@ -717,7 +724,9 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
 enddo
 
 // ukupne vrijednosti za dokument
+xml_node( "tkol", STR( _t_kol, 12, 2 ) )
 xml_node( "tfv", STR( _t_fv, 12, 2 ) )
+xml_node( "trab", STR( _t_rabat, 12, 2 ) )
 xml_node( "tfvr", STR( _t_fv_r, 12, 2 ) )
 xml_node( "ttr1", STR( _t_tr_prevoz, 12, 2 ) )
 xml_node( "ttr2", STR( _t_tr_bank, 12, 2 ) )

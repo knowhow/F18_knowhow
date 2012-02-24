@@ -120,13 +120,22 @@ _oo_bin := ALLTRIM( fetch_metric( "openoffice_bin", my_user(), "" ) )
 _oo_writer_exe := ALLTRIM( fetch_metric( "openoffice_writer", my_user(), "" ) )
 _java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
 _jod_bin := ALLTRIM( fetch_metric( "jodreports_bin", my_user(), "" ) )
-_office := _oo_bin + _oo_writer_exe
+
+_office := ""
+if !EMPTY( _oo_bin )
+    _office += _oo_bin
+endif
+if !EMPTY( _oo_writer_exe )
+    _office += _oo_writer_exe
+endif
 
 #IFDEF __PLATFORM__WINDOWS
     _data_xml := '"' + _data_xml + '"'
     _out_file := '"' + _out_file + '"'
     _template := '"' + _template + '"'
-    _office := '"' + _office + '"'
+    if !EMPTY( _office )
+        _office := '"' + _office + '"'
+    endif
     _jod_bin := '"' + _jod_bin + '"'
 #ENDIF
 

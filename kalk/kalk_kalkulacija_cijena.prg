@@ -61,8 +61,8 @@ endif
 
 // ima li template fajla ?
 if !FILE( F18_TEMPLATE_LOCATION + _template )
-    //MsgBeep( "Template fajl ne postoji: " + F18_TEMPLATE_LOCATION + _template )
-    //return
+    MsgBeep( "Template fajl ne postoji: " + F18_TEMPLATE_LOCATION + _template )
+    return
 endif
 
 // pretrazi mi dokument u bazi
@@ -112,7 +112,7 @@ local _template_file
 
 // kopiraj template fajl
 if !FILE( my_home() + template_file )
-    //FILECOPY( F18_TEMPLATE_LOCATION + template_file, my_home() + template_file )
+    FILECOPY( F18_TEMPLATE_LOCATION + template_file, my_home() + template_file )
 endif
 
 _template := my_home() + template_file

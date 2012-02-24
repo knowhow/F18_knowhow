@@ -1,3 +1,9 @@
+0.9.57 2012-02-24, vsasa
+
+  - modul KALK, izvještaji TKV [#26698](http://redmine.bring.out.ba/issues/26698) i TKM [#26699](http://redmine.bring.out.ba/issues/26699)
+  - modul KALK, štampa odt obrazaca kalkulacija cijena za vp [#26700](http://redmine.bring.out.ba/issues/26700) i mp [#26701](http://redmine.bring.out.ba/issues/26701)
+  - korekcije sitnih grešaka...
+
 0.9.56 2012-02-22, vsasa
 
   - modul LD, generisanje obrazaca MIP/GIP/OLP [#26674](http://redmine.bring.out.ba/issues/26674)

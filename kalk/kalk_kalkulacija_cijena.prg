@@ -313,7 +313,7 @@ xml_node( "org_id", ALLTRIM( gFirma ) )
 xml_node( "org_naziv", to_xml_encoding( ALLTRIM( gNFirma ) ) )
 
 // podaci dokumenta
-xml_node( "dok_naziv", "KALKULACIJA CIJENA br." )
+xml_node( "dok_naziv", to_xml_encoding( ALLTRIM( tdok->naz ) ) )
 xml_node( "dok_broj", to_xml_encoding( ALLTRIM( _br_dok ) ) )
 xml_node( "dok_datum", DTOC( field->datdok ) )
 
@@ -553,7 +553,7 @@ xml_node( "org_id", ALLTRIM( gFirma ) )
 xml_node( "org_naziv", to_xml_encoding( ALLTRIM( gNFirma ) ) )
 
 // podaci dokumenta
-xml_node( "dok_naziv", "KALKULACIJA CIJENA br." )
+xml_node( "dok_naziv", to_xml_encoding( ALLTRIM( tdok->naz ) ) )
 xml_node( "dok_broj", to_xml_encoding( ALLTRIM( _br_dok ) ) )
 xml_node( "dok_datum", DTOC( field->datdok ) )
 

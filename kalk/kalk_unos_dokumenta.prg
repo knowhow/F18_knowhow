@@ -140,10 +140,10 @@ for i:=1 to LEN(ImeKol)
 next
 
 Box(, nMaxRow, nMaxCol )
-    @ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku   "
-    @ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje      "
-    @ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa kalk_pripreme "
-    @ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije"
+    @ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku    ³ <K> kalkulacija cijena"
+    @ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje       ³ "
+    @ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa pripreme  ³ "
+    @ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije ³ "
     IF gCijene=="1" .and. gMetodaNC==" "
         Soboslikar({{nMaxRow-3,m_y+1,nMaxRow,m_y+77}},23,14)
     ENDIF
@@ -383,6 +383,12 @@ do case
         return DE_CONT
     case UPPER( CHR(Ch) ) == "A" .or. lAutoAsist
         return KnjizAsistent()
+    case UPPER( CHR(Ch) ) == "K"
+        // kalkulacija cijena
+        kalkulacija_cijena( .f. )
+        select kalk_pripr
+        go top
+        return DE_CONT
     case Ch==K_F10
         return MeniF10()
     case Ch==K_F11

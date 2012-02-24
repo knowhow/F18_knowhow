@@ -318,7 +318,8 @@ xml_node( "dok_broj", to_xml_encoding( ALLTRIM( _br_dok ) ) )
 xml_node( "dok_datum", DTOC( field->datdok ) )
 
 // podaci o kontima
-xml_node( "zaduzuje", to_xml_encoding( ALLTRIM( konto->naz ) ) )
+xml_node( "zad_id", to_xml_encoding( ALLTRIM( field->pkonto ) ) )
+xml_node( "zad_naz", to_xml_encoding( ALLTRIM( konto->naz ) ) )
 
 // podaci o dobavljacu i veznom racunu
 xml_node( "dob_naziv", to_xml_encoding( ALLTRIM( partn->naz ) ) )
@@ -556,7 +557,8 @@ xml_node( "dok_broj", to_xml_encoding( ALLTRIM( _br_dok ) ) )
 xml_node( "dok_datum", DTOC( field->datdok ) )
 
 // podaci o kontima
-xml_node( "zaduzuje", to_xml_encoding( ALLTRIM( konto->naz ) ) )
+xml_node( "zad_id", to_xml_encoding( ALLTRIM( field->mkonto ) ) )
+xml_node( "zad_naz", to_xml_encoding( ALLTRIM( konto->naz ) ) )
 
 // podaci o dobavljacu i veznom racunu
 xml_node( "dob_naziv", to_xml_encoding( ALLTRIM( partn->naz ) ) )

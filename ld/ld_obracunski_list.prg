@@ -571,65 +571,33 @@ return
 // ----------------------------------------
 // stampa xml-a
 // ----------------------------------------
-static function _xml_print( cTip )
-local cOdtName := ""
-local cOutput := "c:\ld_out.odt"
-local cJavaStart := ALLTRIM( gJavaStart )
+static function _xml_print( tip )
+local _template
+local _xml_file := my_home() + "data.xml"
 
 if __xml == 0
 	return
 endif
 
-ferase(cOutput)
-
 // napuni xml fajl
-_fill_xml( cTip )
+_fill_xml( tip, _xml_file )
 
 do case
-	case cTip == "1"
-		cOdtName := "ld_olp.odt"
-	case cTip == "2"
-		cOdtName := "ld_gip.odt"
-	case cTip == "3"
-		cOdtName := "ld_aop.odt"
-	case cTip == "4"
-		cOdtName := "ld_aop2.odt"
+	case tip == "1"
+		_template := "ld_olp.odt"
+	case tip == "2"
+		_template := "ld_gip.odt"
+	case tip == "3"
+		_template := "ld_aop.odt"
+	case tip == "4"
+		_template := "ld_aop2.odt"
 endcase
 
-save screen to cScreen
-
-clear screen
-
-cJODRep := ALLTRIM( gJODRep )
-cT_Path := "C:\"
-
-if !EMPTY( gJODTemplate )
-	cT_Path := ALLTRIM( gJODTemplate )
+// generisi report
+if f18_odt_generate( _template, _xml_file )
+    f18_odt_print()
 endif
 
-// stampanje labele
-cCmdLine := cJavaStart + " " + cJODRep + " " + ;
-	cT_Path + cOdtName + " c:\data.xml " + cOutput
-
-run &cCmdLine
-
-clear screen
-
-if !FILE(cOutput)
-	msgbeep("greska pri kreiranju izlaznog fajla !")
-    restore screen from cScreen
-	return
-endif
-
-cOOStart := '"' + ALLTRIM( gOOPath ) + ALLTRIM( gOOWriter ) + '"'
-cOOParam := ""
-
-// otvori naljepnicu
-cCmdLine := "start " + cOOStart + " " + cOOParam + " " + cOutput
-
-run &cCmdLine
-
-restore screen from cScreen
 
 return
 
@@ -879,7 +847,7 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima izvjestaja
 // --------------------------------------------
-static function _fill_xml( cTip )
+static function _fill_xml( cTip, xml_file )
 local nTArea := SELECT()
 local nT_prih := 0
 local nT_pros := 0
@@ -900,7 +868,7 @@ local nT_klo := 0
 local nT_lodb := 0
 
 // otvori xml za upis
-open_xml("c:\data.xml")
+open_xml( xml_file )
 // upisi header
 xml_head()
 
@@ -1083,6 +1051,10 @@ enddo
 xml_subnode("rpt", .t.)
 
 select (nTArea)
+
+// zatvori xml fajl za upis
+close_xml()
+
 return
 
 

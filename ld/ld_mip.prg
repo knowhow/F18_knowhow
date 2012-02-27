@@ -732,56 +732,21 @@ return
 // stampa xml-a
 // ----------------------------------------
 static function _xml_print()
-local cOdtName := ""
-local cOutput := "c:\ld_out.odt"
-local cJavaStart := ALLTRIM( gJavaStart )
+local _template := "ld_mip.odt"
+local _xml_file := my_home() + "data.xml"
 
 if __xml == 0
 	return
 endif
 
-if FERASE(cOutput) <> 0
-	//
+// napuni xml fajl podacima
+_fill_xml( _xml_file )
+
+// generisi odt report
+if f18_odt_generate( _template, _xml_file )
+    // prikazi ga !
+    f18_odt_print()
 endif
-
-// napuni xml fajl
-_fill_xml()
-
-cOdtName := "ld_mip.odt"
-
-save screen to cScreen
-
-clear screen
-
-cJODRep := ALLTRIM( gJODRep )
-cT_Path := "C:\"
-
-if !EMPTY( gJODTemplate )
-	cT_Path := ALLTRIM( gJODTemplate )
-endif
-
-// stampanje labele
-cCmdLine := cJavaStart + " " + cJODRep + " " + ;
-	cT_Path + cOdtName + " c:\data.xml " + cOutput
-
-run &cCmdLine
-
-clear screen
-
-if !FILE(cOutput)
-	msgbeep("greska pri kreiranju izlaznog fajla !")
-	return
-endif
-
-cOOStart := '"' + ALLTRIM( gOOPath ) + ALLTRIM( gOOWriter ) + '"'
-cOOParam := ""
-
-// otvori report
-cCmdLine := "start " + cOOStart + " " + cOOParam + " " + cOutput
-
-run &cCmdLine
-
-restore screen from cScreen
 
 return
 
@@ -789,11 +754,11 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima izvjestaja
 // --------------------------------------------
-static function _fill_xml()
+static function _fill_xml( xml_file )
 local nTArea := SELECT()
 
 // otvori xml za upis
-open_xml("c:\data.xml")
+open_xml( xml_file )
 // upisi header
 xml_head()
 

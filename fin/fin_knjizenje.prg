@@ -29,7 +29,7 @@ private opc[4]
 
 cTekucaRj:=GetTekucaRJ()
 
-lBlagAsis := "N"
+lBlagAsis := .f.
 cBlagIDVN := "66"
 
 private fK1:=fk2:=fk3:=fk4:=cDatVal:="N",gnLOst:=0,gPotpis:="N"

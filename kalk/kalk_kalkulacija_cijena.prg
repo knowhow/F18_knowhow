@@ -97,71 +97,11 @@ return
 // stampaj odt dokument
 // ----------------------------------------------
 static function st_kalkulacija_cijena_odt( template_file )
-local _jod_bin 
-local _oo_bin
-local _oo_writer_exe
-local _oo_params := ""
-local _java_start 
-local _cmd
-local _data_xml := my_home() + "data.xml"
-local _out_file := my_home() + "out.odt"
-local _sv_screen
-local _template
-local _office
-local _template_file
 
-// kopiraj template fajl
-if !FILE( my_home() + template_file )
-    FILECOPY( F18_TEMPLATE_LOCATION + template_file, my_home() + template_file )
+if f18_odt_generate( template_file )
+    f18_odt_print()
 endif
 
-_template := my_home() + template_file
-_oo_bin := ALLTRIM( fetch_metric( "openoffice_bin", my_user(), "" ) )
-_oo_writer_exe := ALLTRIM( fetch_metric( "openoffice_writer", my_user(), "" ) )
-_java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
-_jod_bin := ALLTRIM( fetch_metric( "jodreports_bin", my_user(), "" ) )
-
-_office := ""
-if !EMPTY( _oo_bin )
-    _office += _oo_bin
-endif
-if !EMPTY( _oo_writer_exe )
-    _office += _oo_writer_exe
-endif
-
-#IFDEF __PLATFORM__WINDOWS
-    _data_xml := '"' + _data_xml + '"'
-    _out_file := '"' + _out_file + '"'
-    _template := '"' + _template + '"'
-    if !EMPTY( _office )
-        _office := '"' + _office + '"'
-    endif
-    _jod_bin := '"' + _jod_bin + '"'
-#ENDIF
-
-_cmd := _java_start + " " + _jod_bin + " " 
-_cmd += _template + " "
-_cmd += _data_xml + " "
-_cmd += _out_file
-
-log_write( "jodreports line: " + _cmd )
-
-SAVE SCREEN TO _sv_screen
-
-if hb_run(_cmd) <> 0
-    msgbeep( "problem sa generisanje jod reporta ..." )
-endif
-
-_cmd := _office + " " + _oo_params + " "
-_cmd += _out_file
-
-log_write("oo print: " + _cmd)
-
-if hb_run( _cmd ) <> 0
-    msgbeep( "problem sa pokretanjem office-a !!!" )
-endif
-
-RESTORE SCREEN FROM _sv_screen
 return
 
 

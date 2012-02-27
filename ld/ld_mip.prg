@@ -692,7 +692,7 @@ xml_subnode("Dio3", .t.)
 xml_subnode("Dio4IzjavaPoslodavca", .f.)
 xml_node("JibJmbPoslodavca", ALLTRIM(cPredJmb) )
 xml_node("DatumUnosa", xml_date( dDatPodn ) )
-xml_node("NazivPoslodavca", strkzn( ALLTRIM(cPredNaz), "8", "U" ) )
+xml_node("NazivPoslodavca", to_xml_encoding( ALLTRIM(cPredNaz) ) )
 xml_subnode("Dio4IzjavaPoslodavca", .t.)
 // dio4
 
@@ -836,9 +836,9 @@ do while !EOF()
 
 	xml_node("rbr", STR( ++nCnt ) )
 	xml_node("visp", ALLTRIM(field->vr_ispl) )
-	xml_node("r_ime", strkzn( ALLTRIM(field->r_ime), "8", "U" ) ) 
+	xml_node("r_ime", to_xml_encoding( ALLTRIM(field->r_ime) ) ) 
 	xml_node("r_jmb", ALLTRIM(field->r_jmb) )
-	xml_node("r_opc", strkzn( ALLTRIM(field->r_opc), "8", "U" ) )
+	xml_node("r_opc", to_xml_encoding( ALLTRIM(field->r_opc) ) )
 	
 	nR_sati := 0
 	nR_satib := 0
@@ -922,6 +922,10 @@ enddo
 xml_subnode("mip", .t.)
 
 select (nTArea)
+
+// zatvori xml fajl
+close_xml()
+
 return
 
 

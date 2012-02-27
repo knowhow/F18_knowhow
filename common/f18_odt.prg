@@ -63,10 +63,7 @@ if !FILE( my_home() + template )
 endif
 
 // prije generisanja pobrisi prošli izlazni fajl...
-if FERASE( __output_odt ) <> 0
-    MsgBeep( "Greska sa brisanjem izlaznog fajla#" + __output_odt + "#Neko ga koristi ???" )
-    return _ok
-endif
+FERASE( __output_odt )
 
 // ovo ce nam biti template lokcija
 _template := my_home() + template
@@ -106,15 +103,17 @@ log_write( DTOC( DATE() ) + ": ODT report generisanje, cmd: " + _cmd )
 SAVE SCREEN TO _screen
 CLEAR SCREEN
 
+? "Generisanje ODT reporta u toku..."
+
 // pokreni generisanje reporta
 _error := hb_run( _cmd )
+
+RESTORE SCREEN FROM _screen
 
 if _error <> 0
     MsgBeep( "Doslo je do greske prilikom generisanja reporta... !!!#" + "Greska: " + ALLTRIM(STR( _error )) )
     return _ok
 endif
-
-RESTORE SCREEN FROM _screen
 
 // sve je ok
 _ok := .t.
@@ -149,7 +148,7 @@ if ( test_mode == NIL )
     test_mode := .f.
 endif
 
-if !FILE( __output_file )
+if !FILE( __output_odt )
     MsgBeep( "Nema fajla za prikaz !!!!" )
     return _ok
 endif
@@ -192,6 +191,8 @@ _cmd := ""
 
 SAVE SCREEN TO _screen
 CLEAR SCREEN
+
+? "Prikaz odt fajla u toku..."
 
 // pokreni komandu
 _error := hb_run( _cmd )

@@ -19,11 +19,11 @@ static _f18_delphi_exe := "f18_delphirb.exe"
 // stampa rtm reporta kroz delphirb
 //
 // - rtm_file - naziv rtm fajla
-// - arg_1 - dodatni argument 1
-// - arg_2 - dodatni argument 2
+// - table_name - naziv tabele koju otvara
+// - table_index - naziv indeksa koji otvara tabelu
 // - test_mode .t. ili .f., default .f. - testni rezim komande
 // ------------------------------------------------------------
-function f18_rtm_print( rtm_file, arg_1, arg_2, test_mode )
+function f18_rtm_print( rtm_file, table_name, table_index, test_mode )
 local _cmd
 local _ok := .f.
 local _delphi_exe := "delphirb.exe"
@@ -37,12 +37,12 @@ if ( rtm_file == NIL )
     return _ok
 endif 
 
-if ( arg_1 == NIL )
-    arg_1 := ""
+if ( table_name == NIL )
+    table_name := ""
 endif
 
-if ( arg_2 == NIL )
-    arg_2 := ""
+if ( table_index == NIL )
+    table_index := ""
 endif
 
 if ( test_mode == NIL )
@@ -80,10 +80,15 @@ _cmd += " "
     _cmd += my_home()
 #endif
     
-_cmd += " "
-_cmd += arg_1
-_cmd += " "
-_cmd += arg_2
+if !EMPTY( table_name )
+
+    // dodaj i naziv tabele i index na komandu
+    _cmd += " "
+    _cmd += table_name
+    _cmd += " "
+    _cmd += table_index
+
+endif
 
 #ifdef __PLATFORM__WINDOWS
     if test_mode

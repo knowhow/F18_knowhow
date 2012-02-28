@@ -916,7 +916,7 @@ if LastKey() != K_ESC
     cSpecRtm := cSpecRtm + cRTipRada
 
     // stampaj specifikaciju
-    f18_rtm_print( cSpecRtm )
+    f18_rtm_print( ALLTRIM( cSpecRtm ) )
 
 endif
 

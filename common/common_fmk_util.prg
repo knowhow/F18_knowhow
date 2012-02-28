@@ -441,8 +441,7 @@ SELECT adres
 GO TOP
 MsgO("Priprema koverte.dbf")
 
-cIniName:=EXEPATH+'ProIzvj.ini'
-
+cIniName := my_home() + 'ProIzvj.ini'
 
 cWinKonv:=IzFmkIni("DelphiRb","Konverzija","3")
 DO WHILE !EOF()
@@ -465,10 +464,7 @@ MsgC()
 select koverte
 use
 
-if pitanje(,"Aktivirati Win Report ?","D")=="D"
-  private cKomLin:="delphirb "+IzFmkIni("Adres","AdresRTM","adres", SIFPATH)+" "+PRIVPATH+"  koverte id"
- run &cKomLin
-endif
+f18_rtm_print( "adres", "koverte", "id" )
 
 return DE_CONT
 

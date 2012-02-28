@@ -16,11 +16,6 @@
 // -------------------------
 function P_Radn(cId, dx, dy)
 local i
-local nArr
-local _x_ret
-
-nArr := SELECT()
-
 private imekol
 private kol
 private cFooter := ""
@@ -28,11 +23,6 @@ private lPInfo := .f.
 
 if PCount() = 0
     lPInfo := .t.
-endif
-
-select (F_RADN)
-if (!used())
-    O_RADN
 endif
 
 // filterisanje tabele radnika
@@ -117,7 +107,6 @@ if radn->(FIELDPOS("BEN_SRMJ")) <> 0
     AADD(ImeKol, { "Benef.sifra",{|| ben_srmj}, "ben_srmj" } )
 endif
 
-
 Kol:={}
 
 for i:=1 to LEN(ImeKol)
@@ -138,13 +127,10 @@ for i:=1 to 9
     endif
 next
 
-_x_ret := PostojiSifra(F_RADN, 1, MAXROWS()-15, MAXCOLS()-15, Lokal("Lista radnika") + SPACE(5) + "<S> filter radnika on/off", ;
+return PostojiSifra(F_RADN, 1, MAXROWS()-15, MAXCOLS()-15, Lokal("Lista radnika") + SPACE(5) + "<S> filter radnika on/off", ;
           @cId, dx, dy, ;
       {|Ch| RadBl(Ch)},,,,,{"ID"})
 
-select (nArr)
-
-return _x_ret
 
 // ------------------------------------------
 // filterisanje tabele radnika
@@ -226,7 +212,8 @@ return
 // radn. blok funkcije
 // --------------------------------------------
 function RadBl(Ch)
-local cMjesec:=gMjesec
+local cMjesec := gMjesec
+local _rec
 
 if lPInfo == .t.
     // ispisi info o poreskoj kartici
@@ -235,6 +222,7 @@ endif
 
 
 if (Ch==K_ALT_M)
+    
     Box(,4,60)
         @ m_x+1,m_y+2 SAY "Postavljenje koef. minulog rada:"
         @ m_x+2,m_y+2 SAY "Pazite da ovu opciju ne izvrsite vise puta za isti mjesec !"
@@ -250,23 +238,28 @@ if (Ch==K_ALT_M)
 
     select radn
     go top
+
     do while !eof()
-        
+
+        _rec := dbf_get_rec()
+     
         if Month(datOd) == cMjesec
                 
             if pol=="M"
-                    replace kminrad with kminrad+gMRM
-                elseif pol=="Z"
-                    replace kminrad with kminrad+gMRZ
-                endif
-            
+                _rec["kminrad"] := _rec["kminrad"] + gMRM
+            elseif pol=="Z"
+                _rec["kminrad"] := _rec["kminrad"] + gMRZ
+            endif
+             
         endif
             
         if kminrad > 20   
             // ogranicenje minulog rada
-                replace kminrad with 20
-            endif
+            _rec["kminrad"] := 20
+        endif
             
+        update_rec_server_and_dbf( ALIAS(), _rec )
+
         skip
     enddo
     
@@ -293,7 +286,9 @@ elseif ( UPPER(CHR(Ch)) == "P" )
     
     if nFakt >= 0 .and. nFakt <> radn->klo
       if Pitanje(,"Postaviti novi faktor licnog odbitka ?", "D") == "D"
-        replace radn->klo with nFakt
+        _rec := dbf_get_rec()
+        _rec["klo"] := nFakt
+        update_rec_server_and_dbf( ALIAS(), _rec )
       endif
     endif
     
@@ -352,18 +347,9 @@ return .f.
 // sifrarnik parametri obracuna
 // ------------------------------
 function P_ParObr(cId,dx,dy)
-local nArr, _tmp_id
-local _x_ret
-
-nArr := SELECT()
-
+local _tmp_id
 private imekol := {}
 private kol := {}
-
-select (F_PAROBR)
-if (!used())
-    O_PAROBR
-endif
 
 AADD(ImeKol, { padr("mjesec", 8),  {|| id}, "id", {|| IIF(VALTYPE(wId) == "C", EVAL(MEMVARBLOCK("wId"), VAL(wId)), NIL), .t. } })
 AADD(ImeKol, { "godina" , {|| godina} , "godina", {|| IIF(VALTYPE(wId) == "N", EVAL(MEMVARBLOCK("wID"), STR(wId, 2)), NIL), .t. }  } )
@@ -409,11 +395,7 @@ for i := 1 to LEN( ImeKol )
     AADD( kol, i )
 next
 
-_x_ret := PostojiSifra(F_PAROBR, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Parametri obracuna"), @cId, dx, dy)
-
-select (nArr)
-
-return _x_ret
+return PostojiSifra(F_PAROBR, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Parametri obracuna"), @cId, dx, dy)
 
 
 // -----------------------------------------------
@@ -441,17 +423,9 @@ return xRet
 // --------------------------------------------
 // --------------------------------------------
 function P_TipPr(cId,dx,dy)
-local _x_ret
-local nArr
 local i
-nArr := SELECT()
 private imekol := {}
 private kol := {}
-
-select (F_TIPPR)
-if (!used())
-    O_TIPPR
-endif
 
 AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
 AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
@@ -471,10 +445,7 @@ for i:=1 to LEN(ImeKol)
     AADD(Kol, i)
 next
 
-_x_ret := PostojiSifra(F_TIPPR, 1, 10, 55, Lokal("Tipovi primanja"), @cId, dx, dy, {|Ch| TprBl(Ch)},,,,,{"ID"})
-
-select (nArr)
-return _x_ret
+return PostojiSifra(F_TIPPR, 1, 10, 55, Lokal("Tipovi primanja"), @cId, dx, dy, {|Ch| TprBl(Ch)},,,,,{"ID"})
 
 
 // -----------------------------------------
@@ -517,15 +488,8 @@ return DE_CONT
 
 
 function P_TipPr2(cId,dx,dy)
-local nArr, _x_ret
-nArr := SELECT()
 private imekol
 private kol
-
-select (F_TIPPR2)
-if (!used())
-    O_TIPPR2
-endif
 
 ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",20), {||  naz}, "naz" }                       ,;
@@ -538,10 +502,8 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
        }
 Kol:={1,2,3,4,5,6,7,8}
 
-_x_ret := PostojiSifra( F_TIPPR2, 1, 10, 55, Lokal("Tipovi primanja za obracun 2"),  @cId, dx, dy, {|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
+return PostojiSifra( F_TIPPR2, 1, 10, 55, Lokal("Tipovi primanja za obracun 2"),  @cId, dx, dy, {|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
 
-select (nArr)
-return _x_ret
 
 
 // -----------------------------------------------
@@ -567,13 +529,8 @@ return DE_CONT
 // -----------------------------------------------
 // -----------------------------------------------
 function P_LD_RJ(cId,dx,dy)
-local _x_ret, _t_area
 private imekol := {}
 private kol := {}
-
-_t_area := SELECT()
-
-O_LD_RJ
 
 AADD(ImeKol, { padr("Id", 2),      {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
 AADD(ImeKol, { padr("Naziv", 35), {||  naz}, "naz" } )
@@ -589,11 +546,7 @@ for i := 1 to LEN(ImeKol)
     AADD(Kol, i)
 next
 
-_x_ret := PostojiSifra( F_LD_RJ, 1, MAXROWS()-15, 60, Lokal("Lista radnih jedinica"), @cId, dx, dy)
-
-select (_t_area)
-
-return _x_ret
+return PostojiSifra( F_LD_RJ, 1, MAXROWS()-15, 60, Lokal("Lista radnih jedinica"), @cId, dx, dy)
 
 
 // vraca PU code opstine

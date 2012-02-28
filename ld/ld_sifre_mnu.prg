@@ -78,7 +78,6 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-
 AADD(opc,"1. parametri obracuna                  ")
 AADD(opcexe, {|| P_ParObr()})
 
@@ -142,6 +141,7 @@ O_KBENEF
 O_VPOSLA
 O_OPS
 O_KRED
+
 if lViseObr
 	O_TIPPR2
 endif

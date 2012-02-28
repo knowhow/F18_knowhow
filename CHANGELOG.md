@@ -1,3 +1,9 @@
+0.9.58 2012-02-28, vsasa
+
+  - modul LD, korekcija obracuna plate [#26643](http://redmine.bring.out.ba/issues/26643) 
+  - štampanje odt izvještaja [#26878](http://redmine.bring.out.ba/issues/26878)
+  - korekcije sitnih grešaka...
+
 0.9.57 2012-02-24, vsasa
 
   - modul KALK, izvještaji TKV [#26698](http://redmine.bring.out.ba/issues/26698) i TKM [#26699](http://redmine.bring.out.ba/issues/26699)

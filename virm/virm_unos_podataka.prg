@@ -116,9 +116,6 @@ do case
         endif
         return DE_CONT
 
-    case UPPER( CHR(Ch) ) == "R"
-        _run_box()
-
     case Ch==K_CTRL_P
         stampa_virmana_drb()
         return DE_REFRESH
@@ -483,22 +480,7 @@ return
 // ----------------------------------------------------
 static function _stampaj_virman()
 local _t_rec
-local _cmd := ""
-local _delphi_exe
-local _rtm_file
-
-_delphi_exe := "f18_delphirb.exe"
-_rtm_file := "nalplac"
-
-// kopiraj delphirb
-if !FILE( _delphi_exe )
-    FILECOPY( "c:\knowhowERP\util\delphirb.exe", my_home() + _delphi_exe )
-endif
-
-// kopiraj rtm template
-if !FILE( my_home() + _rtm_file + ".rtm" )
-    FILECOPY( F18_TEMPLATE_LOCATION + "nalplac.rtm", my_home() + _rtm_file + ".rtm" )
-endif
+local _rtm_file := "nalplac"
 
 select virm_pripr
 _t_rec := RECNO()
@@ -509,59 +491,14 @@ select izlaz
 use
 
 // ovdje treba kod za filovanje datoteke IZLAZ.DBF
-if LastKey() != K_ESC .and. Pitanje(, "Aktivirati Win Report ?", "D" ) == "D"
-
-    // komanda: delphirb nalplac c:\sigma\virm\11\  IZLAZ 1
-    _cmd := _delphi_exe
-    _cmd += " "
-    _cmd += "nalplac"
-    _cmd += " "
-    #ifdef __PLATFORM__WINDOWS
-        _cmd += "." + SLASH
-    #else
-        _cmd += my_home()
-    #endif
-    _cmd += " "
-    _cmd += " IZLAZ 1" 
-
-    // pozicioniraj se na home direktorij tokom izvrsenja
-    DirChange( my_home() )
-
-    log_write( "virm cmd line: " + _cmd )
-
-    _ret := hb_run( _cmd )
-    
-    if _ret != 0
-        MsgBeep("Neuspjesna komanda !!!")
-    endif
-
+if LastKey() != K_ESC 
+    f18_rtm_print( _rtm_file, "izlaz", "1" )
 endif
 
 O_VIRM_PRIPR
 go ( _t_rec )
 
 return
-
-
-static function _run_box()
-local _cmd := fetch_metric( "virm_run_cmd_test", my_user(), SPACE( 500 ) )
-
-Box(,1, 80)
-    @ m_x + 1, m_y + 2 SAY "CMD:" GET _cmd PICT "@S70"
-    read
-BoxC()
-
-IF LastKey() == K_ESC
-    return
-ENDIF
-
-IF !EMPTY( _cmd )
-    set_metric( "virm_run_cmd_test", my_user(), _cmd )
-    run ( _cmd )
-ENDIF
-
-return
-
 
 
 

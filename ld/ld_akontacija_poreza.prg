@@ -379,7 +379,7 @@ static function ak_d_print( dDatIspl, cPeriod, cTipRada )
 local cLine := ""
 local nPageNo := 0
 local nPoc := 1
-local cIni := EXEPATH + "proizvj.ini"
+local cIni := my_home() + "proizvj.ini"
 local cRtmFile := ""
 
 private cKom := ""
@@ -436,11 +436,8 @@ elseif cTipRada == "3"
 	cRtm := "pdn1033"
 endif
 
-cKom := "delphirb " + cRtm + " " + PRIVPATH + "  r_export  1" 
-
-if pitanje(,"Aktivirati drb (D/N)", "D") == "D"
-	run &cKom
-endif
+// stampaj akontaciju poreza delphi
+f18_rtm_print( ALLTRIM(cRtm), "r_export", "1" )
 
 return
 

@@ -96,12 +96,7 @@ local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
 local cMatBr
-local _home_path
-local _delphi_exe
-local _delphi_exe_r
-local _spec_path
 local _proizv_ini
-local _cmd
 
 private aSpec:={}
 private cFNTZ:="D"
@@ -109,31 +104,7 @@ private gPici:="9,999,999,999,999,999" + IIF(gZaok>0, PADR(".",gZaok+1,"9"), "")
 private gPici2:="9,999,999,999,999,999" + IIF(gZaok2>0, PADR(".",gZaok2+1,"9"), "")
 private gPici3:="999,999,999,999.99"
 
-#ifdef __PLATFORM__WINDOWS
-
-_home_path := my_home()
-
-_delphi_exe := my_home() + "f18_delphirb.exe"
-_delphi_exe_r := '"' + _delphi_exe + '"'
-
 _proizv_ini := my_home() + "proizvj.ini"
-
-if !FILE( _delphi_exe )
-    FILECOPY( "c:\knowhowERP\util\delphirb.exe", _delphi_exe )
-endif
-
-#else
-
-MsgBeep("nisam siguran da ovo radi: http://redmine.bring.out.ba/issues/26099")
-
-_home_path := my_home()
-
-_delphi_exe := my_home() + "delphirb.exe"
-_delphi_exe_r := _delphi_exe
-
-_proizv_ini := my_home() + "proizvj.ini"
-
-#endif 
 
 for i := 1 to nGrupaPoslova+1
     //  br.bodova, br.radnika, minuli rad, uneto
@@ -369,7 +340,8 @@ set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
 
 PoDoIzSez(nGodina,nMjesec)
 
-cIniName:= _proizv_ini
+// ovo ce biti ini u koji ces ubacivati podatke
+cIniName := _proizv_ini
 
  //
  // Radi DRB6 iskoristio f-ju Razrijedi()
@@ -392,14 +364,8 @@ UzmiIzIni(cIniName,'Varijable',"DANDO",Razrijedi(strtran(str(nDanDo,2)," ","0"))
 UzmiIzIni(cIniName,'Varijable',"MATBR",Razrijedi(cMatBR),'WRITE')
 UzmiIzIni(cIniName,'Varijable',"DATISPL",DTOC(dDatIspl),'WRITE')
 
-if lViseObr
-    cObracun:=TRIM(cObracun)
-else
-    cObracun:=""
-endif
+cObracun:=TRIM(cObracun)
 
-//cPorOO:=Izrezi("P->",2,@cOstObav)
-//cDoprOO:=Izrezi("D->",2,@cOstObav)
 cDoprOO1:=Izrezi("D->",2,@cnOO1)
 cDoprOO2:=Izrezi("D->",2,@cnOO2)
 cDoprOO3:=Izrezi("D->",2,@cnOO3)
@@ -932,35 +898,25 @@ ENDIF
  IniRefresh()
  //Odstampaj izvjestaj
 
-if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
+if LastKey() != K_ESC
 
- cSpecRtm := "SPEC"
+    cSpecRtm := "spec"
  
- if cRepSr == "D"
-    cSpecRtm := cSpecRtm + "RS"
- else
-    cSpecRtm := cSpecRtm + "B"
- endif
+    if cRepSr == "d"
+        cSpecRtm := cSpecRtm + "rs"
+    else
+        cSpecRtm := cSpecRtm + "b"
+    endif
 
- if cRTipRada $ "I#N"
-    cRTipRada := ""
- endif
+    if cRTipRada $ "I#N"
+        cRTipRada := ""
+    endif
 
- // "SPECBN", "SPECBR" ...
- cSpecRtm := cSpecRtm + cRTipRada
+    // "SPECBN", "SPECBR" ...
+    cSpecRtm := cSpecRtm + cRTipRada
 
- _spec_path := cSpecRtm
-
- IF !FILE( my_home() + _spec_path )
-    FILECOPY( F18_TEMPLATE_LOCATION + _spec_path + ".rtm", my_home() + _spec_path + ".rtm" )
- ENDIF
-
- _cmd := _delphi_exe_r + ' ' + _spec_path
-
- if  hb_run(_cmd) <> 0
-   MsgBeep("ERR cmd: " + _cmd)
-   return .f.
- endif
+    // stampaj specifikaciju
+    f18_rtm_print( cSpecRtm )
 
 endif
 

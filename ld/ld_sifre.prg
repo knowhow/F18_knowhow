@@ -567,15 +567,7 @@ return cRet
 
 
 function P_Kred(cId,dx,dy)
-local _x_ret
-local nArr
-nArr:=SELECT()
 private imekol,kol
-
-select (F_KRED)
-if (!used())
-    O_KRED
-endif
 
 ImeKol:={ { padr("Id",6), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",30), {||  naz}, "naz" }                       ,;
@@ -590,10 +582,8 @@ ImeKol:={ { padr("Id",6), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
 // Dorade 2001
 Kol:={1,2,3,4,5,6,7,8}
 
-_x_ret := PostojiSifra(F_KRED, 1, 10, 55, Lokal("Lista kreditora"), @cId, dx, dy)
+return PostojiSifra(F_KRED, 1, 10, 55, Lokal("Lista kreditora"), @cId, dx, dy)
 
-select (nArr)
-return _x_ret
 
 // -----------------------------
 // -----------------------------
@@ -698,19 +688,10 @@ return lVrati
 // ---------------------------------
 // ---------------------------------
 function P_POR(cId,dx,dy)
-local nArr, _x_ret
 local i
 local _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
-
-nArr := SELECT()
-
 private Imekol := {}
 private Kol := {}
-
-select (F_POR)
-if (!used())
-    O_POR
-endif
 
 AADD(ImeKol, { padr("Id", 2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
 
@@ -749,8 +730,6 @@ next
 
 PushWa()
 
-select (F_SIFK)
-
 O_SIFK
 O_SIFV
 select sifk
@@ -787,12 +766,11 @@ do while !eof() .and. ID="POR"
 enddo
 
 PopWa()
-_x_ret := PostojiSifra(F_POR, 1, 10, 75, ;
+
+return PostojiSifra(F_POR, 1, 10, 75, ;
         Lokal("Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled"), ;
     @cId,dx,dy,{|Ch| PorBl(Ch)})
 
-select (nArr)
-return _x_ret
 
 
 // -------------------------------
@@ -823,24 +801,8 @@ return lRet
 
 
 function P_DOPR(cId,dx,dy)
-local _x_ret
-local nArr
-nArr:=SELECT()
 private imekol := {}
 private kol := {}
-
-select (F_SIFK)
-if !used()
-    O_SIFK
-endif
-select (F_SIFV)
-if !used()
-    O_SIFV
-endif
-select (F_DOPR)
-if !used()
-    O_DOPR
-endif
 
 AADD(ImeKol, { padr("Id",2), {|| id}, "id" } )
 AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
@@ -864,8 +826,6 @@ for i:=1 to LEN(ImeKol)
 next
 
 PushWa()
-
-select (F_SIFK)
 
 O_SIFK
 O_SIFV
@@ -904,27 +864,17 @@ PopWa()
 
 select dopr
 
-_x_ret := PostojiSifra(F_DOPR, 1, 10, 75, ;
+return PostojiSifra(F_DOPR, 1, 10, 75, ;
     Lokal("Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled"), ;
     @cId,dx,dy,{|Ch| DoprBl(Ch)})
 
-select (nArr)
-return _x_ret
 
 
 // --------------------------------
 // --------------------------------
 function P_KBenef(cId,dx,dy)
-local _x_ret
-local nArr
-nArr:=SELECT()
 private imekol
 private kol
-
-select (F_KBENEF)
-if (!used())
-    O_KBENEF
-endif
 
 ImeKol:={ { padr("Id",3), {|| padc(id,3)}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",8), {||  naz}, "naz" }                      , ;
@@ -933,73 +883,44 @@ ImeKol:={ { padr("Id",3), {|| padc(id,3)}, "id", {|| .t.}, {|| vpsifra(wid)} },;
 
 Kol:={1,2,3}
 
-_x_ret := PostojiSifra(F_KBENEF, 1, 10, 55, ;
+return PostojiSifra(F_KBENEF, 1, 10, 55, ;
     Lokal("Lista koef.beneficiranog radnog staza"), ;
     @cId,dx,dy)
 
-select (nArr)
-
-return _x_ret
 
 
 
 function P_StrSpr(cId,dx,dy)
-local _x_ret
-local nArr
-nArr:=SELECT()
 private imekol,kol
-
-select (F_STRSPR)
-if (!used())
-    O_STRSPR
-endif
 
 ImeKol:={ { padr("Id",3), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",20), {||  naz}, "naz" }                    , ;
           { padr("naz2",6), {|| naz2}, "naz2" }                     ;
        }
 Kol:={1,2,3}
-_x_ret := PostojiSifra( F_STRSPR, 1, 10, 55, ;
+
+return PostojiSifra( F_STRSPR, 1, 10, 55, ;
     Lokal("Lista: strucne spreme"), ;
     @cId,dx,dy)
 
-select (nArr)
-return _x_ret
 
 
 
 function P_VPosla(cId,dx,dy)
-local nArr, _x_ret
-nArr:=SELECT()
 private imekol
 private kol
-
-select (F_VPOSLA)
-if (!used())
-    O_VPOSLA
-endif
 
 ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",20), {||  naz}, "naz" }                    , ;
           { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| P_KBenef(@widkbenef) }  }  ;
        }
 Kol:={ 1,2,3}
-_x_ret := PostojiSifra(F_VPOSLA, 1, 10, 55, Lokal("Lista: Vrste posla"), @cId,dx,dy)
-
-select (nArr)
-return _x_ret
+return PostojiSifra(F_VPOSLA, 1, 10, 55, Lokal("Lista: Vrste posla"), @cId,dx,dy)
 
 
 function P_NorSiht(cId,dx,dy)
-local nArr, _x_ret
-nArr:=SELECT()
 private imekol
 private kol
-
-select (F_NORSIHT)
-if (!used())
-    O_NORSIHT
-endif
 
 ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Naziv",20), {||  naz}, "naz" }                    , ;
@@ -1007,9 +928,7 @@ ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Iznos",8), {|| Iznos}, "Iznos"  }  ;
        }
 Kol:={1,2,3,4}
-_x_ret := PostojiSifra(F_NORSIHT,1,10,55,"Lista: Norme u sihtarici",@cId,dx,dy)
-select (nArr)
-return _x_ret
+return PostojiSifra(F_NORSIHT,1,10,55,"Lista: Norme u sihtarici",@cId,dx,dy)
 
 // -----------------------
 // -----------------------

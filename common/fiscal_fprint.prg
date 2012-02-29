@@ -830,6 +830,15 @@ local cOp_pwd := "000000"
 local nTotal := 0
 local cVr_placanja := "0"
 
+// provjeri operatera i lozinku iz podesenja...
+if !EMPTY( ALLTRIM( gFc_operater ) )
+    cOperater := ALLTRIM( gFc_operater )
+endif
+
+if !EMPTY( ALLTRIM( gFc_oper_pwd ) )
+    cOp_pwd := ALLTRIM( gFc_oper_pwd )
+endif
+
 cVr_placanja := ALLTRIM( aData[1, 13] )
 nTotal := aData[1, 14]
 

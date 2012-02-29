@@ -19,7 +19,7 @@
 function FillRadSati(cIdRadnik,nRadniSati)
 
 // uzmi prethodne sate...
-cSatiPredhodni:=GetStatusRSati(cIdRadnik)   
+cSatiPredhodni := GetStatusRSati(cIdRadnik)   
 
 if Pitanje(, Lokal("Unos placenih sati (D/N)?"),"D")=="N"
     return VAL(cSatiPredhodni)
@@ -49,6 +49,26 @@ Box(,9,48)
 BoxC()
 
 return VAL(cSatiPredhodni)
+
+
+// ------------------------------------------------
+// vraca status uplacenih sati za tekuci mjesec
+// ------------------------------------------------
+function GetUplaceniRSati(cIdRadn)
+local nArr
+local nSati := 0
+nArr:=SELECT()
+
+select radsat
+hseek cIdRadn
+
+if FOUND() .and. field->idradn == cIdRadn
+    nSati := field->up_sati
+endif
+
+select (nArr)
+
+return STR(nSati)
 
 
 

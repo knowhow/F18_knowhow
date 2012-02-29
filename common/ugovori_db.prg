@@ -271,19 +271,25 @@ function a_to_gen_p(dDatObr, cIdUgov, cUPartner,  ;
 select gen_ug_p
 set order to tag "dat_obr"
 seek DTOS(dDatObr) + cIdUgov + cUPartner
+
 if !FOUND()
 	append blank
 endif
-replace dat_obr with dDatObr
-replace id_ugov with cIdUgov
-replace idpartner with cUPartner
-replace saldo_kup with nSaldoKup
-replace saldo_dob with nSaldoDob
-replace d_p_upl_ku with dPUplKup
-replace d_p_prom_k with dPPromKup
-replace d_p_prom_d with dPPromDob
-replace f_iznos with nFaktIzn
-replace f_iznos_pd with nFaktPDV
+
+_rec := dbf_get_rec()
+
+_rec["dat_obr"] := dDatObr
+_rec["id_ugov" := cIdUgov
+_rec["idpartner"] := cUPartner
+_rec["saldo_kup"] := nSaldoKup
+_rec["saldo_dob"] := nSaldoDob
+_rec["d_p_upl_ku"] := dPUplKup
+_rec["d_p_prom_k"] := dPPromKup
+_rec["d_p_prom_d"] := dPPromDob
+_rec["f_iznos"] := nFaktIzn
+_rec["f_iznos_pd"] := nFaktPDV
+
+update_rec_server_and_dbf( ALIAS(), _rec )
 
 return 
 

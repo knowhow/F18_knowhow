@@ -880,9 +880,7 @@ dPPromKup := g_dpprom_part(cUPartn, cKtoDug)
 dPPromDob := g_dpprom_part(cUPartn, cKtoPot)
 
 // dodaj stavku u gen_ug_p
-a_to_gen_p(dDatObr, cUId, cUPartn, nSaldoKup,;
-           nSaldoDob, dPUplKup, dPPromKup, dPPromDob,;
-       nFaktIzn, nFaktPdv )
+//a_to_gen_p(dDatObr, cUId, cUPartn, nSaldoKup,nSaldoDob, dPUplKup, dPPromKup, dPPromDob,nFaktIzn, nFaktPdv )
 
 // uvecaj broj faktura
 ++ nFaktBr

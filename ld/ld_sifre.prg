@@ -137,6 +137,7 @@ return PostojiSifra(F_RADN, 1, MAXROWS()-15, MAXCOLS()-15, Lokal("Lista radnika"
 // ------------------------------------------
 static function _radn_filter( lFiltered )
 local cFilter := ""
+local _t_area := SELECT()
 
 if radn->(FIELDPOS("aktivan")) = 0
     return
@@ -148,6 +149,9 @@ endif
 
 cFilter := "aktivan $ ' #D'"
 
+// pozicioniraj se na radnika
+select radn
+
 if lFiltered == .t. .and. gRadnFilter == "D"
     set filter to &cFilter
     go top
@@ -155,6 +159,8 @@ else
     set filter to
     go top
 endif
+
+select ( _t_area )
 
 return
 

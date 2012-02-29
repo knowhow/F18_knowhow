@@ -279,7 +279,7 @@ endif
 _rec := dbf_get_rec()
 
 _rec["dat_obr"] := dDatObr
-_rec["id_ugov" := cIdUgov
+_rec["id_ugov"] := cIdUgov
 _rec["idpartner"] := cUPartner
 _rec["saldo_kup"] := nSaldoKup
 _rec["saldo_dob"] := nSaldoDob

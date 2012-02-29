@@ -1,3 +1,9 @@
+0.9.59 2012-02-29, vsasa
+
+  - modul LD, korekcije [#26643](http://redmine.bring.out.ba/issues/26643) 
+  - refactor fiskalnih parametara [#26250](http://redmine.bring.out.ba/issues/26250)
+  - korekcije sitnih grešaka...
+
 0.9.58 2012-02-28, vsasa
 
   - modul LD, korekcija obracuna plate [#26643](http://redmine.bring.out.ba/issues/26643) 

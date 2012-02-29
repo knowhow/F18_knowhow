@@ -165,3 +165,4 @@ MsgBeep("f18_scatter_global_vars zamijeniti")
 quit
 return
 
+

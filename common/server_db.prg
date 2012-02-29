@@ -36,6 +36,7 @@ return _ret:Fieldget(1)
 // ---------------------------------
 function check_server_db_version()
 local _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_server_num
+local _msg
 
 _f18_required_server_num := get_version_num(SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH)
 
@@ -46,7 +47,11 @@ if (_f18_required_server_num > _server_db_num)
    _f18_required_server_str := get_version_str(_f18_required_server_num)
    _server_db_str := get_version_str(_server_db_num)
 
-   MsgBeep("F18 klijent trazi verziju " + _f18_required_server_str + " server db je verzije: " + _server_db_str)
+   _msg := "F18 klijent trazi verziju " + _f18_required_server_str + " server db je verzije: " + _server_db_str
+
+   log_write(_msg)
+
+   MsgBeep(_msg)
 
    QUIT
 endif

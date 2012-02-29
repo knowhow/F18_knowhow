@@ -1338,19 +1338,37 @@ return VAL(SUBSTR(cPicture,nPozS+1))
 // ------------------------
 // ------------------------
 function MsgBeep(cMsg)
-
+local _set
 cMsg := hb_Utf8ToStr(cMsg)
 
 if !gAppSrv
     Beep(2) 
 endif
 
+CLEAR TYPEAHEAD
+
+/*
+
+INKEY_MOVE          Mouse motion events are allowed
+ 50  *        INKEY_LDOWN         The mouse left click down event is allowed
+ 51  *        INKEY_LUP           The mouse left click up event is allowed
+ 52  *        INKEY_RDOWN         The mouse right click down event is allowed
+ 53  *        INKEY_RUP           The mouse right click up event is allowed
+ 54  *        INKEY_KEYBOARD      All keyboard events are allowed
+ 55  *        INKEY_ALL           All mouse and keyboard events are allowed
+ 56  *        HB_INKEY_EXTENDED   Extended keyboard codes are used.
+
+*/
+
+_set := set( _SET_EVENTMASK, INKEY_KEYBOARD )
 // poruke koje su duze od 70 znakova
 if LEN(cMsg) > MAXCOLS()-11 .and.  (AT(cMsg, "#") == 0) 
   cMsg := SUBSTR(cMsg, 1, MAXCOLS()-11) + "#" + SUBSTR(cMsg, MAXCOLS()-10, MAXCOLS()-11) + "#..." 
 endif
 
 Msg(cMsg, 20)
+
+set( _SET_EVENTMASK, _set)
 
 return
 

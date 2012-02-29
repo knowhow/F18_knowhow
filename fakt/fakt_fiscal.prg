@@ -862,8 +862,9 @@ O_ROBA
 O_SIFK
 O_SIFV
 
-// ako se ne koristi opcija fiscal, izadji !
-if gFc_use == "N"
+// ako se ne koristi opcija fiscal, 
+// ili ako operater ne treba da stampa racune, izadji !
+if gFc_use == "N" .or. gFc_fisc_print == "N"
     return
 endif
 

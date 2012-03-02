@@ -150,7 +150,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
     select fakt
 
     nSifRoba := _g_sdob( field->idroba )
-    cNazRoba := ALLTRIM( konvznwin( roba->naz, gFc_Konv) )
+    cNazRoba := ALLTRIM( to_xml_encoding( roba->naz ) )
     cBarKod := ALLTRIM( roba->barkod )
     nGrRoba := 1
     nPorStopa := 0
@@ -1083,7 +1083,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
 
     nF_pprice := roba->mpc
 
-    cF_artnaz := ALLTRIM( konvznwin( fp_f_naz(roba->naz), gFc_konv) )
+    cF_artnaz := ALLTRIM( to_xml_encoding( fp_f_naz(roba->naz)) )
     cF_artjmj := ALLTRIM( roba->jmj )
 
     nF_cijena := ABS ( field->cijena )
@@ -1585,7 +1585,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
 
     nF_pprice := roba->mpc
 
-    cF_artnaz := ALLTRIM( konvznwin( fp_f_naz(roba->naz), gFc_konv) )
+    cF_artnaz := ALLTRIM( to_xml_encoding( fp_f_naz(roba->naz) ) )
     cF_artjmj := ALLTRIM( roba->jmj )
 
     nF_cijena := ABS ( field->cijena )
@@ -1828,7 +1828,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
     endif
     
     nSifRoba := _g_sdob( field->idroba )
-    cNazRoba := ALLTRIM( konvznwin( roba->naz, gFC_konv) )
+    cNazRoba := ALLTRIM( to_xml_encoding( roba->naz ) )
     cBarKod := ALLTRIM( roba->barkod )
     nGrRoba := 1
     nPorStopa := 1
@@ -1947,7 +1947,7 @@ if EMPTY( cEmail ) .or. cEmail == "-"
 endif
 
 cMessage := '"Racun: ' +  ALLTRIM(STR(nFisc_rn)) + ;
-    ', ' + cFakt_dok + ', ' + StrKzn( cKupac, "8", "W" ) + ;
+    ', ' + cFakt_dok + ', ' + to_xml_encoding( cKupac ) + ;
     ', iznos: ' + ALLTRIM(STR(nTotal,12,2)) + ' KM"' 
 
 email_send("F", nil, nil, cMessage, nil, cEml_file )

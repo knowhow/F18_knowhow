@@ -307,7 +307,7 @@ do while !EOF()
 	nRobaGr := 1
 	nPorSt := 1
 
-	cNaz := konvznwin( field->naz, gFc_Konv )
+	cNaz := to_xml_encoding( field->naz )
 
 	AADD( aRet, { ;
 		VAL(ALLTRIM(field->sifradob)), ;
@@ -346,8 +346,8 @@ do while !EOF()
 
 	select partn
 	
-	cNaz := konvznwin( partn->naz, gFC_Konv )
-	cAdr := konvznwin( partn->adresa, gFc_Konv )
+	cNaz := to_xml_encoding( partn->naz )
+	cAdr := to_xml_encoding( partn->adresa )
 
 	AADD( aRet, { ;
 		VAL(cPid), ;

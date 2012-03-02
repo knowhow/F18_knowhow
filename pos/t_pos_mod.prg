@@ -464,36 +464,12 @@ public gRnPTxt2 := SPACE(35)
 public gRnPTxt3 := SPACE(35)
 public gFirTel := SPACE(20)
 
-// fiskalni parametri
-public gFc_type := SPACE(20)
-public gFc_device := "P"
-public gFc_path := SPACE(100)
-public gFc_path2 := SPACE(100)
-public gFc_name := SPACE(11)
-public gFc_answ := PADR("ANSWER.TXT", 40)
-public gFc_serial := PADR("010001", 15)
-public gFc_error := "D"
-public gFc_use := "N"
-public gFc_cmd := SPACE(100)
-public gFc_cp1 := SPACE(100)
-public gFc_cp2 := SPACE(100)
-public gFc_cp3 := SPACE(100)
-public gFc_cp4 := SPACE(100)
-public gFc_cp5 := SPACE(100)
-public gIOSA := SPACE(16)
-public gFc_konv := "5"
-public gFc_tout := 300
-public gFc_txrn := "N"
-public gFc_acd := "D"
-public gFc_alen := 32
-public gFc_nftxt := "N"
-public gFc_pdv := "D"
-public gFc_pinit := 10
-public gFC_chk := "1"
-public gFC_pauto := 0
-public gFC_dlist := "N"
-public gFc_restart := "N"
+// parametri fiskalnog uredjaja
+public gFc_type, gFc_device, gFc_use, gFc_path, gFc_path2, gFc_name, gFc_answ, gFc_pitanje, gFc_error
+public gFc_fisc_print, gFc_operater, gFc_oper_pwd, gFc_tout, gIosa, gFc_alen, gFc_nftxt, gFc_acd, gFc_pdv
+public gFc_pinit, gFc_chk, gFc_faktura, gFc_zbir, gFc_dlist, gFc_pauto, gFc_serial, gFc_restart
 
+// fiskalni parametri
 gVodiTreb:="N"
 gVodiOdj:="N"
 gBrojSto:="0"
@@ -504,36 +480,10 @@ gDupliArt:="D"
 gDupliUpoz:="N"
 gDisplay:="N"
 
+// procitaj fiskalne parametre
+fiscal_params_read()
+
 // citaj parametre iz metric tabele
-
-f18_get_metric("FiscalTipUredjaja",@gFc_type)
-f18_get_metric("FiscalLokacijaFajla",@gFc_path)
-f18_get_metric("FiscalImeFajla",@gFc_name)
-f18_get_metric("FiscalAktivan",@gFc_use)
-f18_get_metric("FiscalCmd",@gFc_cmd)
-f18_get_metric("FiscalCmdPar1",@gFc_cp1)
-f18_get_metric("FiscalCmdPar2",@gFc_cp2)
-f18_get_metric("FiscalCmdPar3",@gFc_cp3)
-f18_get_metric("FiscalCmdPar4",@gFc_cp4)
-f18_get_metric("FiscalCmdPar5",@gFc_cp5)
-f18_get_metric("FiscalProvjeraGreske",@gFc_error)
-f18_get_metric("FiscalIOSABroj",@gIOSA)
-f18_get_metric("FiscalKonverzijaZnakova",@gFc_konv)
-f18_get_metric("FiscalTimeOut",@gFc_tout)
-f18_get_metric("FiscalStampatiRacun",@gFc_txrn)
-f18_get_metric("FiscalPluDinamicki",@gFc_acd)
-f18_get_metric("FiscalPluDuzina",@gFc_alen)
-f18_get_metric("FiscalStampatiBrojDokumenta",@gFc_nftxt)
-f18_get_metric("FiscalPDVObveznik",@gFc_pdv)
-f18_get_metric("FiscalListaUredjaja",@gFc_device)
-f18_get_metric("FiscalInicijalniPlu",@gFc_pinit)
-f18_get_metric("FiscalProvjeraPodataka",@gFc_chk)
-f18_get_metric("FiscalLokacijaFajla2",@gFc_path2)
-f18_get_metric("FiscalAutomatskiPolog",@gFc_pauto)
-f18_get_metric("FiscalImeFajlaOdgovora",@gFc_answ)
-f18_get_metric("FiscalSerijskiBroj",@gFc_serial)
-f18_get_metric("FiscalRestartServera",@gFc_restart)
-
 f18_get_metric("RacunNaziv",@gFirNaziv)
 f18_get_metric("RacunAdresa",@gFirAdres)
 f18_get_metric("RacunIdBroj",@gFirIdBroj)

@@ -31,7 +31,7 @@ AADD(opcexe,{|| pos_postavi_datum()})
 AADD(opc,"6. podaci firme")
 AADD(opcexe,{|| pos_param_firma()})
 AADD(opc,"7. fiskalni parametri")
-AADD(opcexe,{|| pos_param_fiscal()})
+AADD(opcexe,{|| fiscal_params_set()})
 
 Menu_SC("par")
 return .f.
@@ -121,85 +121,6 @@ if (RIGHT(gServerPath,1) <> SLASH)
 endif
 
 return
-
-
-
-function pos_param_fiscal()
-local aNiz:={}
-local cPom:=""
-
-set cursor on
-
-AADD(aNiz,{"PDV obveznik", "gFc_pdv", , "@!", })
-
-AADD(aNiz,{"Tip fiskalne kase", "gFc_type", , "@S20", })
-AADD(aNiz,{"[K] kasa-printer [P] printer ?", "gFc_device", , "@!", })
-AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
-AADD(aNiz,{"serijski broj", "gFc_serial", , "@S10", })
-
-AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
-AADD(aNiz,{"Sekundarna putanja", "gFc_path2", , "@S50", })
-AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
-AADD(aNiz,{"Naziv odgovora", "gFc_answ", , "@S20", })
-
-AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
-AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "9999", })
-
-AADD(aNiz,{"'kod' artikla je (I)Id, (P/D)Plu, (B)Barkod", "gFc_acd", , "@!", })
-AADD(aNiz,{"inicijalni PLU", "gFc_pinit", , "99999", })
-AADD(aNiz,{"Duzina naziva artikla", "gFc_alen", , "99", })
-
-AADD(aNiz,{"Konverzija znakova", "gFc_konv", , "@!", })
-
-AADD(aNiz,{"Provjera kolicina, cijena (1/2)", "gFc_chk", ,"@!", })
-AADD(aNiz,{"Stampati i pos racun ?", "gFc_txrn", ,"@!", })
-AADD(aNiz,{"Stampati broj dokumenta ?", "gFc_nftxt", ,"@!", })
-AADD(aNiz,{"Automatski polog", "gFc_pauto", ,"999999.99", })
-AADD(aNiz,{"Restart server (D/N)?", "gFc_restart", ,"@!", })
-
-AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
-
-VarEdit(aNiz,2,2,24,78,"Fiskalni parametri","B1")
-
-// Upisujem nove parametre
-if LASTKEY()<>K_ESC
-		
-		MsgO("Azuriram parametre PZ")
-    	
-		f18_set_metric("FiscalTipUredjaja",gFc_type )
-    	f18_set_metric("FiscalLokacijaFajla",gFc_path )
-    	f18_set_metric("FiscalImeFajla",gFc_name )
-    	f18_set_metric("FiscalAktivan",gFc_use )
-    	f18_set_metric("FiscalCmd",gFc_cmd )
-    	f18_set_metric("FiscalCmdPar1",gFc_cp1 )
-    	f18_set_metric("FiscalCmdPar2",gFc_cp2 )
-    	f18_set_metric("FiscalCmdPar3",gFc_cp3 )
-    	f18_set_metric("FiscalCmdPar4",gFc_cp4 )
-    	f18_set_metric("FiscalCmdPar5",gFc_cp5 )
-    	f18_set_metric("FiscalProvjeraGreske",gFc_error )
-    	f18_set_metric("FiscalIOSABroj",gIOSA )
-    	f18_set_metric("FiscalKonverzijaZnakova",gFc_konv )
-    	f18_set_metric("FiscalTimeOut",gFc_tout )
-    	f18_set_metric("FiscalStampatiRacun",gFc_txrn )
-    	f18_set_metric("FiscalPluDinamicki",gFc_acd )
-    	f18_set_metric("FiscalPluDuzina",gFc_alen )
-    	f18_set_metric("FiscalStampatiBrojDokumenta",gFc_nftxt )
-    	f18_set_metric("FiscalPDVObveznik",gFc_pdv )
-    	f18_set_metric("FiscalListaUredjaja",gFc_device )
-    	f18_set_metric("FiscalInicijalniPlu",gFc_pinit )
-    	f18_set_metric("FiscalProvjeraPodataka",gFc_chk )
-    	f18_set_metric("FiscalLokacijaFajla2",gFc_path2 )
-    	f18_set_metric("FiscalAutomatskiPolog",gFc_pauto )
-    	f18_set_metric("FiscalImeFajlaOdgovora",gFc_answ )
-    	f18_set_metric("FiscalSerijskiBroj",gFc_serial )
-    	f18_set_metric("FiscalRestartServera",gFc_restart )
-    	
-		MsgC()
-
-endif
-
-return
-
 
 
 

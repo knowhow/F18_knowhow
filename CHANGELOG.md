@@ -1,3 +1,7 @@
+0.9.60 2012-03-02, vsasa
+
+  - modul FAKT, ispravka bug-a sa fiskalnim opcijama [#26950](http://redmine.bring.out.ba/issues/26950) 
+
 0.9.59 2012-02-29, vsasa
 
   - modul LD, korekcije [#26643](http://redmine.bring.out.ba/issues/26643) 

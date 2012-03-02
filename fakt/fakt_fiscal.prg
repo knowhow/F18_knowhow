@@ -960,7 +960,7 @@ if !EMPTY( cPartnId )
         lIno := .f.
         lPDVObveznik := .t.
 
-    elseif LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob )
+    elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
 
         lIno := .t.
     

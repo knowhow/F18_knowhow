@@ -2,7 +2,7 @@
 
 VER=0.1.0
 DAT=06.12.2011
-F18INSTALL=~/bin
+F18INSTALL=/opt/knowhowERP/util
 
 echo "F18 install app ver: $VER, dat: $DAT"
 echo "F18 lin installacija ...."
@@ -32,8 +32,8 @@ fi
 
 echo " instaliram F18"
 
-cp bin/F18 $F18INSTALL
-chmod +x $F18INSTALL/F18
+#cp bin/F18 $F18INSTALL
+#chmod +x $F18INSTALL/F18
 
 echo "deps" 
 
@@ -51,6 +51,5 @@ echo ""
 echo ""
 clear
 echo "F18 instalacija zavrsena, pokrecemo iz terminala sa F18 "
-
 
 

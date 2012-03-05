@@ -37,39 +37,39 @@ ferase( PRIVPATH + cExpTbl )
 dbcreate2(PRIVPATH + "r_export", aFields)
 
 return
-*}
 
 
 // export tabele
-function tbl_export(cLauncher)
-*{
+function tbl_export( launch )
+local _cmd
 
 close all
 
-cLauncher := ALLTRIM(cLauncher)
+_cmd := ALLTRIM( launch )
+_cmd += " "
 
-if (cLauncher == "start")
-	cKom := cLauncher + " " + PRIVPATH
-else
-   	cKom := cLauncher + " " + PRIVPATH + "r_export.dbf"
-endif
+#ifdef __PLATFORM__WINDOWS
+    _cmd += '"' + my_home() + "r_export.dbf" + '"'
+#else
+    _cmd += my_home() + "r_export.dbf"
+#endif
 
-MsgBeep("Tabela " + PRIVPATH + "R_EXPORT.DBF je formirana##" +;
+MsgBeep("Tabela " + my_home() + "R_EXPORT.DBF je formirana##" +;
         "Sa opcijom Open file se ova tabela ubacuje u excel #" +;
 	"Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" +;
 	"Tako dobijeni xls fajl mozete mijenjati #"+;
 	"prema svojim potrebama ...")
 	
 if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"	
-	run &cKom
+	if hb_run( _cmd ) <> 0
+        MsgBeep( "Problem sa pokretanjem ?!!!" )
+    endif
 endif
 
 return
-*}
 
 
 function set_launcher(cLauncher)
-*{
 local cPom
 
 cPom = UPPER(ALLTRIM(cLauncher))

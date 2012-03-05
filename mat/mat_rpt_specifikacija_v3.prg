@@ -55,6 +55,17 @@ _dat_od := CTOD( "" )
 _dat_do := CTOD( "" )
 _group := "N"
 _sel_groups := SPACE(200)
+_vrijednost := "N"
+
+// uzmi parametre iz sql/db
+_firma := fetch_metric( "mat_rpt_specifikacija_firma", my_user(), _firma )
+_konta := fetch_metric( "mat_rpt_specifikacija_konta", my_user(), _konta )
+_artikli := fetch_metric( "mat_rpt_specifikacija_artikli", my_user(), _artikli )
+_dat_od := fetch_metric( "mat_rpt_specifikacija_datum_od", my_user(), _dat_od )
+_dat_do := fetch_metric( "mat_rpt_specifikacija_datum_do", my_user(), _dat_do )
+_group := fetch_metric( "mat_rpt_specifikacija_grupe", my_user(), _group )
+_sel_groups := fetch_metric( "mat_rpt_specifikacija_selektovane_grupe", my_user(), _sel_groups )
+_vrijednost := fetch_metric( "mat_rpt_specifikacija_samo_vrijednost", my_user(), _vrijednost )
 
 Box( "Spe2", 10, 65, .f. )
 
@@ -98,6 +109,10 @@ Box( "Spe2", 10, 65, .f. )
     ++ _cnt
     @ m_x + _cnt, m_y + 2 SAY "Grupe:" GET _sel_groups PICT "@S50"
 
+    ++ _cnt
+    @ m_x + _cnt, m_y + 2 SAY "Prikaz samo vrijednosti" GET _vrijednost PICT "@!" VALID _vrijednost $ "DN"
+
+
     read
 
 BoxC()
@@ -116,6 +131,17 @@ params["dat_od"] := _dat_od
 params["dat_do"] := _dat_do
 params["po_grupi"] := _group
 params["grupe"] := _sel_groups
+params["samo_vrijednost"] := _vrijednost
+
+// snimi parametre u sql/db
+set_metric( "mat_rpt_specifikacija_firma", my_user(), _firma )
+set_metric( "mat_rpt_specifikacija_konta", my_user(), _konta )
+set_metric( "mat_rpt_specifikacija_artikli", my_user(), _artikli )
+set_metric( "mat_rpt_specifikacija_datum_od", my_user(), _dat_od )
+set_metric( "mat_rpt_specifikacija_datum_do", my_user(), _dat_do )
+set_metric( "mat_rpt_specifikacija_grupe", my_user(), _group )
+set_metric( "mat_rpt_specifikacija_selektovane_grupe", my_user(), _sel_groups )
+set_metric( "mat_rpt_specifikacija_samo_vrijednost", my_user(), _vrijednost )
 
 return _ret
 
@@ -124,7 +150,7 @@ return _ret
 // -------------------------------------------------
 // linija za ogranicavanje na izvjestaju
 // -------------------------------------------------
-static function _get_line( r_format )
+static function _get_line( r_format, params )
 local _line := ""
 
 _line += REPLICATE( "-", 4 )
@@ -134,12 +160,17 @@ _line += SPACE(1)
 _line += REPLICATE( "-", 40 )
 _line += SPACE(1)
 _line += REPLICATE( "-", 3 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 10 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 10 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 10 )
+
+if params["samo_vrijednost"] == "N"
+
+    _line += SPACE(1)
+    _line += REPLICATE( "-", 10 )
+    _line += SPACE(1)
+    _line += REPLICATE( "-", 10 )
+    _line += SPACE(1)
+    _line += REPLICATE( "-", 10 )
+
+endif
 
 if r_format == "1"    
     _line += SPACE(1)
@@ -184,7 +215,7 @@ local _fmt
 local _line
 local _filter := ""
 local _a_tmp
-
+local _samo_vrijednost
 
 // otvori potrebne tabele
 _o_rpt_tables()
@@ -207,6 +238,7 @@ _dat_od := _params["dat_od"]
 _dat_do := _params["dat_do"]
 _firma := LEFT( _params["firma"], 2 )
 _fmt := _params["format"]
+_samo_vrijednost := _params["samo_vrijednost"]
 
 select mat_suban   
 // "IdFirma+IdRoba+dtos(DatDok)"
@@ -242,7 +274,7 @@ _fill_rpt_data( _params )
 msgC()
 
 // daj mi liniju za izvjestaj
-_line := _get_line( _fmt )
+_line := _get_line( _fmt, _params )
 
 START PRINT CRET
 
@@ -524,11 +556,15 @@ do while !EOF()
     
     @ prow() + 1, 0 SAY ++_rbr PICT '9999'
     @ prow(), pcol() + 1 SAY PADR( "Ukupno grupa: " + _grupa, 55 )
-    
-    @ prow(), pcol() + 1 SAY _u_ulaz PICT picKol
-    @ prow(), pcol() + 1 SAY _u_izlaz PICT picKol
-    @ prow(), pcol() + 1 SAY _u_sld_k PICT picKol
-    
+  
+    if params["samo_vrijednost"] == "N"
+  
+        @ prow(), pcol() + 1 SAY _u_ulaz PICT picKol
+        @ prow(), pcol() + 1 SAY _u_izlaz PICT picKol
+        @ prow(), pcol() + 1 SAY _u_sld_k PICT picKol
+
+    endif
+
     _mark_pos := pcol()
      
     if _fmt $ "12"
@@ -676,6 +712,7 @@ local _r_line_2 := ""
 local _r_line_3 := ""
 
 P_COND
+?
 @ prow(), 0 SAY "MAT.P: SPECIFIKACIJA ROBE (U "
 
 if param["format"] == "1"
@@ -733,9 +770,13 @@ _r_line_1 += "*J. "
 _r_line_2 += "*MJ."
 _r_line_3 += "*   "
 
-_r_line_1 += "*       K O L I C I N A          "
-_r_line_2 += " --------------------------------"
-_r_line_3 += "*   ULAZ   *  IZLAZ   *  STANJE  "
+if param["samo_vrijednost"] == "N"
+
+    _r_line_1 += "*       K O L I C I N A          "
+    _r_line_2 += " --------------------------------"
+    _r_line_3 += "*   ULAZ   *  IZLAZ   *  STANJE  "
+
+endif
 
 _r_line_1 += "*     V R I J E D N O S T              *"
 _r_line_2 += " --------------------------------------"

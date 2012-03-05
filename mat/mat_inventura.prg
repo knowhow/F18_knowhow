@@ -386,6 +386,11 @@ local _konto := SPACE(7)
 local _datum := DATE()
 local _partner := SPACE(6)
 
+_id_firma := fetch_metric( "mat_inv_firma", my_user(), _id_firma )
+_konto := fetch_metric( "mat_inv_konto", my_user(), _konto )
+_datum := fetch_metric( "mat_inv_datum", my_user(), _datum )
+_partner := fetch_metric( "mat_inv_partner", my_user(), _partner )
+
 Box( "", 5, 60, .f. )
 
     @ m_x+1, m_y+6 SAY  "PREGLED UNESENIH KOLICINA"
@@ -413,10 +418,17 @@ if LastKey() == K_ESC
     return _ret
 endif
 
+// snimi u hash matricu parametre...
 vars["id_firma"] := LEFT( _id_firma, 2 )
 vars["konto"] := _konto
 vars["datum"] := _datum
 vars["partner"] := _partner
+
+// snimi u sql/db
+set_metric( "mat_inv_firma", my_user(), _id_firma )
+set_metric( "mat_inv_konto", my_user(), _konto )
+set_metric( "mat_inv_datum", my_user(), _datum )
+set_metric( "mat_inv_partner", my_user(), _partner )
 
 return _ret
 

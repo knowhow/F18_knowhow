@@ -42,7 +42,9 @@ local _artikli
 local _dat_od
 local _dat_do
 local _group
+local _group_sifra
 local _sel_groups
+local _group_lista
 local _cnt := 1
 local _ret := .t.
 
@@ -56,6 +58,8 @@ _dat_do := CTOD( "" )
 _group := "N"
 _sel_groups := SPACE(200)
 _vrijednost := "N"
+_group_sifra := "N"
+_group_lista := "N"
 
 // uzmi parametre iz sql/db
 _firma := fetch_metric( "mat_rpt_specifikacija_firma", my_user(), _firma )
@@ -64,10 +68,13 @@ _artikli := fetch_metric( "mat_rpt_specifikacija_artikli", my_user(), _artikli )
 _dat_od := fetch_metric( "mat_rpt_specifikacija_datum_od", my_user(), _dat_od )
 _dat_do := fetch_metric( "mat_rpt_specifikacija_datum_do", my_user(), _dat_do )
 _group := fetch_metric( "mat_rpt_specifikacija_grupe", my_user(), _group )
+_group_sifra := fetch_metric( "mat_rpt_specifikacija_grupe_iz_sifre", my_user(), _group_sifra )
+_group_lista := fetch_metric( "mat_rpt_specifikacija_sadrzaj_grupe", my_user(), _group_lista )
 _sel_groups := fetch_metric( "mat_rpt_specifikacija_selektovane_grupe", my_user(), _sel_groups )
 _vrijednost := fetch_metric( "mat_rpt_specifikacija_samo_vrijednost", my_user(), _vrijednost )
 
-Box( "Spe2", 10, 65, .f. )
+
+Box( "Spe2", 13, 65, .f. )
 
     ++ _cnt
 
@@ -106,12 +113,18 @@ Box( "Spe2", 10, 65, .f. )
     @ m_x + _cnt, m_y + 2 SAY "Prikaz po grupacijama (D/N)?" GET _group ;
         VALID _group $ "DN" PICT "@!"
 
+    @ m_x + _cnt, col() + 1 SAY "Grupu uzmi iz sifre (D/N)?" GET _group_sifra ;
+        VALID _group_sifra $ "DN" PICT "@!"
+
     ++ _cnt
     @ m_x + _cnt, m_y + 2 SAY "Grupe:" GET _sel_groups PICT "@S50"
 
     ++ _cnt
-    @ m_x + _cnt, m_y + 2 SAY "Prikaz samo vrijednosti" GET _vrijednost PICT "@!" VALID _vrijednost $ "DN"
+    @ m_x + _cnt, m_y + 2 SAY "Prikazati sadrzaj grupe (D/N)?" GET _group_lista ;
+        VALID _group_lista $ "DN" PICT "@!"
 
+    ++ _cnt
+    @ m_x + _cnt, m_y + 2 SAY "Prikaz samo vrijednosti" GET _vrijednost PICT "@!" VALID _vrijednost $ "DN"
 
     read
 
@@ -130,8 +143,10 @@ params["artikli"] := _artikli
 params["dat_od"] := _dat_od
 params["dat_do"] := _dat_do
 params["po_grupi"] := _group
+params["grupa_na_osnovu_sifre"] := _group_sifra
 params["grupe"] := _sel_groups
 params["samo_vrijednost"] := _vrijednost
+params["listaj_sadrzaj_grupe"] := _group_lista
 
 // snimi parametre u sql/db
 set_metric( "mat_rpt_specifikacija_firma", my_user(), _firma )
@@ -140,8 +155,10 @@ set_metric( "mat_rpt_specifikacija_artikli", my_user(), _artikli )
 set_metric( "mat_rpt_specifikacija_datum_od", my_user(), _dat_od )
 set_metric( "mat_rpt_specifikacija_datum_do", my_user(), _dat_do )
 set_metric( "mat_rpt_specifikacija_grupe", my_user(), _group )
+set_metric( "mat_rpt_specifikacija_grupe_iz_sifre", my_user(), _group_sifra )
 set_metric( "mat_rpt_specifikacija_selektovane_grupe", my_user(), _sel_groups )
 set_metric( "mat_rpt_specifikacija_samo_vrijednost", my_user(), _vrijednost )
+set_metric( "mat_rpt_specifikacija_sadrzaj_grupe", my_user(), _group_lista )
 
 return _ret
 
@@ -346,9 +363,14 @@ do while !EOF()
     select roba
     hseek _id_roba
 
-    // ovdje cemo smjestiti grupaciju...
-    _roba_gr := IzSifK( "ROBA", "GR1", _id_roba, .f. )
-    
+    // da li se grupa odredjuje putem sifre ili iz sifk ?
+    if param["grupa_na_osnovu_sifre"] == "D"
+        _roba_gr := PADR( _id_roba, 2 )
+    else
+        // ovdje cemo smjestiti grupaciju...
+        _roba_gr := IzSifK( "ROBA", "GR1", _id_roba, .f. )
+    endif
+
     select mat_suban
 
     _saldo_k_1 := _ulaz_k_1 - _izlaz_k_1
@@ -526,6 +548,14 @@ do while !EOF()
     _u_pot_2 := 0
     _u_sld_i_1 := 0
     _u_sld_i_2 := 0
+    _gr_count := 0
+
+    // ako je listanje sadrzaja grupe
+    if params["listaj_sadrzaj_grupe"] == "D"
+        // postavi zaglavlje za grupu...
+        @ prow() + 1, 0 SAY "Sadrzaj grupe " + _grupa
+        ? line
+    endif
 
     do while !EOF() .and. field->grupa == _grupa
 
@@ -535,6 +565,34 @@ do while !EOF()
                 skip
                 loop
             endif
+        endif
+
+        if params["listaj_sadrzaj_grupe"] == "D"
+            // ispisi za svaku grupu...
+            
+            @ prow() + 1, 0 SAY ++_gr_count PICT '9999'
+            @ prow(), pcol() + 1 SAY PADR( ALLTRIM( field->id_roba ) + " - " + ALLTRIM( field->roba_naz ) + " (" + field->roba_jmj + ")" , 50 )
+  
+            if params["samo_vrijednost"] == "N"
+  
+                @ prow(), pcol() + 1 SAY field->ulaz_1 PICT picKol
+                @ prow(), pcol() + 1 SAY field->izlaz_1 PICT picKol
+                @ prow(), pcol() + 1 SAY field->saldo_k_1 PICT picKol
+
+            endif
+
+            if _fmt $ "12"
+                @ prow(),pcol()+1 SAY field->dug_1 PICT PicDEM
+                @ prow(),pcol()+1 SAY field->pot_1 PICT PicDEM
+                @ prow(),pcol()+1 SAY field->saldo_i_1 PICT PicDEM
+            endif
+     
+            if _fmt $ "13"
+                @ prow(),pcol()+1 SAY field->dug_2 PICT PicBHD
+                @ prow(),pcol()+1 SAY field->pot_2 PICT PicBHD
+                @ prow(),pcol()+1 SAY field->saldo_i_2 PICT PicBHD
+            endif
+
         endif
 
         // saberi totale...
@@ -553,7 +611,12 @@ do while !EOF()
         skip
 
     enddo
-    
+   
+    // liniju postavi ako postoji sadrzaj grupe...
+    if params["listaj_sadrzaj_grupe"] == "D"
+        ? line
+    endif
+ 
     @ prow() + 1, 0 SAY ++_rbr PICT '9999'
     @ prow(), pcol() + 1 SAY PADR( "Ukupno grupa: " + _grupa, 55 )
   
@@ -577,6 +640,11 @@ do while !EOF()
         @ prow(),pcol()+1 SAY _u_dug_2 PICT PicBHD
         @ prow(),pcol()+1 SAY _u_pot_2 PICT PicBHD
         @ prow(),pcol()+1 SAY _u_sld_i_2 PICT PicBHD
+    endif
+
+    // liniju postavi ako postoji sadrzaj grupe...
+    if params["listaj_sadrzaj_grupe"] == "D"
+        ? line
     endif
 
     _uk_dug_1 += _u_dug_1

@@ -54,6 +54,8 @@ _cmd += " "
     _cmd += my_home() + "r_export.dbf"
 #endif
 
+log_write( "Export r_export cmd: " + _cmd )
+
 MsgBeep("Tabela " + my_home() + "R_EXPORT.DBF je formirana##" +;
         "Sa opcijom Open file se ova tabela ubacuje u excel #" +;
 	"Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" +;

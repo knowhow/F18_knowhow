@@ -1021,14 +1021,13 @@ if nKolona == 1
 endif
     
 if lShowPGroup
-        altd()
         nXP := nTekRed
         nYP := nKolona
 endif
 
 // stampaj grupu za stavku "GRUP"
 if lShowPGroup
-        p_gr( &var_name, nXP + 1, nYP + 1)
+        p_gr( &var_name, m_x + nXP, m_y + nYP + 1 )
 endif
 
 if "wSifk_" $ var_name

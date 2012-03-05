@@ -286,20 +286,24 @@ function p_set_group( set_field )
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1
+local _m_x, _m_y
+
+_m_x := m_x
+_m_y := m_y
 
 AADD(_Opc, "VP  - veleprodaja          ")
-AADD(_opcexe, {|| set_field := "VP ", _Izbor := 0 } )
+AADD(_opcexe, {|| set_field := "VP ", _izbor := 0 } )
 AADD(_Opc, "AMB - ambulantna dostava  ")
-AADD(_opcexe, {|| set_field := "AMB", _Izbor := 0 } )
+AADD(_opcexe, {|| set_field := "AMB", _izbor := 0 } )
 AADD(_Opc, "SIS - sistemska kuca      ")
-AADD(_opcexe, {|| set_field := "SIS", _Izbor := 0 } )
+AADD(_opcexe, {|| set_field := "SIS", _izbor := 0 } )
 AADD(_Opc, "OST - ostali      ")
-AADD(_opcexe, {|| set_field := "OST", _Izbor := 0 } )
+AADD(_opcexe, {|| set_field := "OST", _izbor := 0 } )
 
-f18_menu("pgr", .f., _izbor, _opc, _opcexe )
+f18_menu("pgr", .f., @_izbor, _opc, _opcexe )
 
-m_x := 1
-m_y := 5
+m_x := _m_x
+m_y := _m_y
 
 return .t.
 
@@ -332,8 +336,8 @@ local cPrn := ""
 cRet := gr_opis( xVal )
 cPrn := SPACE(2) + "-" + SPACE(1) + cRet
 
-@ nX, nY+25 SAY SPACE(40)
-@ nX, nY+25 SAY cPrn
+@ nX, nY + 25 SAY SPACE(40)
+@ nX, nY + 25 SAY cPrn
 
 return .t.
 

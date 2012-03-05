@@ -180,9 +180,9 @@ function mat_prenos_podataka()
 O_MAT_PRIPR
 
 if reccount2()<>0
-	MsgBeep("Tabela pripreme mora biti prazna !!!")
-  	close all
-	return
+    MsgBeep("Tabela pripreme mora biti prazna !!!")
+    close all
+    return
 endif
 
 zap
@@ -191,16 +191,16 @@ index on idfirma+idkonto+idpartner+idroba to "PRIPTMP"
 GO TOP
 
 Box(,5,60)
-	nMjesta := 3
-  	dDatDo := DATE()
-  	@ m_x+3, m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
-  	read
-	ESC_BCR
+    nMjesta := 3
+    dDatDo := DATE()
+    @ m_x+3, m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+    read
+    ESC_BCR
 BoxC()
 
-start print cret
+START PRINT CRET
 
-O_MAT_SUBANX
+O_MAT_SUBAN
 
 // ovo je bio stari indeks, stari prenos bez partnera
 //set order to tag "3"
@@ -216,98 +216,103 @@ go top
 // idfirma, idkonto, idpartner, idroba, datdok
 do while !eof()
 
-  nRbr := 0
-  cIdFirma := idfirma
- 
-  do while !eof() .and. cIdFirma == IdFirma
+    nRbr := 0
+    cIdFirma := idfirma
+    
+    do while !eof() .and. cIdFirma == IdFirma
       
-      cIdKonto := IdKonto
-      select mat_suban
+        cIdKonto := IdKonto
+        select mat_suban
       
-      nDin:=0
-      nDem:=0
+        nDin:=0
+        nDem:=0
       
-      do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto
+        do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto
         
-	cIdPartner := idpartner
+            cIdPartner := idpartner
 
-	do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner
-	
-	   cIdRoba:=IdRoba
+            do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner
+    
+                cIdRoba:=IdRoba
         
-	   ? "Konto:", cIdKonto, ", partner:", cIdPartner, ", roba:", cIdRoba
+                ? "Konto:", cIdKonto, ", partner:", cIdPartner, ", roba:", cIdRoba
         
-	   do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdRoba==cIdRoba
+                do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdRoba==cIdRoba
          
-	 	select mat_pripr
+                    select mat_pripr
          
-	 	hseek mat_suban->(idfirma + idkonto + idpartner + idroba)
+                    hseek mat_suban->(idfirma + idkonto + idpartner + idroba)
          
-	 	if !found()
+                    if !found()
 
-           		append blank
-           		
-			replace idfirma with cIdFirma
-                   	replace idkonto with cIdkonto
-			replace idpartner with cIdPartner
-                   	replace idRoba  with cIdRoba
-                   	replace datdok with dDatDo + 1
-                   	replace datkurs with dDatDo + 1
-                   	replace idvn with "00"
-			replace idtipdok with "00"
-                   	replace brnal with "0001"
-                  	replace d_p with "1"
-                   	replace u_i with "1"
-                   	replace rbr with "9999"
-                   	replace kolicina with ;
-				iif(mat_suban->U_I=="1", mat_suban->kolicina, ;
-				-mat_suban->kolicina)
-                   	replace iznos with ;
-				iif(mat_suban->D_P=="1", mat_suban->iznos, ;
-				-mat_suban->iznos)
-                   	replace iznos2 with ;
-				iif(mat_suban->D_P=="1", mat_suban->iznos2, ;
-				-mat_suban->iznos2)
-         	
-		else
+                        append blank
+                
+                        replace idfirma with cIdFirma
+                        replace idkonto with cIdkonto
+                        replace idpartner with cIdPartner
+                        replace idRoba  with cIdRoba
+                        replace datdok with dDatDo + 1
+                        replace datkurs with dDatDo + 1
+                        replace idvn with "00"
+                        replace idtipdok with "00"
+                        replace brnal with "0001"
+                        replace d_p with "1"
+                        replace u_i with "1"
+                        replace rbr with "9999"
+                        replace kolicina with ;
+                            iif(mat_suban->U_I=="1", mat_suban->kolicina, ;
+                                -mat_suban->kolicina)
+                        replace iznos with ;
+                            iif(mat_suban->D_P=="1", mat_suban->iznos, ;
+                                -mat_suban->iznos)
+                        replace iznos2 with ;
+                            iif(mat_suban->D_P=="1", mat_suban->iznos2, ;
+                                -mat_suban->iznos2)
+            
+                    else
            
-	   		replace kolicina with ;
-				kolicina + iif(mat_suban->U_I=="1", ;
-				mat_suban->kolicina, -mat_suban->kolicina)
-                     	
-			replace iznos with ;
-				iznos + iif(mat_suban->D_P=="1", ;
-				mat_suban->iznos,-mat_suban->iznos)
-                     	
-			replace iznos2 with ;
-				iznos2 + iif(mat_suban->D_P=="1", ;
-				mat_suban->iznos2,-mat_suban->iznos2)
+                        replace kolicina with ;
+                            kolicina + iif(mat_suban->U_I=="1", ;
+                            mat_suban->kolicina, -mat_suban->kolicina)
+                        
+                        replace iznos with ;
+                            iznos + iif(mat_suban->D_P=="1", ;
+                            mat_suban->iznos,-mat_suban->iznos)
+                        
+                        replace iznos2 with ;
+                            iznos2 + iif(mat_suban->D_P=="1", ;
+                            mat_suban->iznos2,-mat_suban->iznos2)
          
-		endif
+                    endif
          
-	 	select mat_suban
-         	skip
+                    select mat_suban
+                    skip
         
-	    enddo //  roba
+                enddo 
+                //  roba
 
-	enddo // partner
+            enddo 
+            // partner
 
-      enddo // konto
+        enddo 
+        // konto
   
-  enddo // firma
+    enddo 
+    // firma
 
-enddo // eof
+enddo 
+// eof
 
 select mat_pripr
 // set order to 0
 set order to
 go top
 do while !eof()
-	if round(iznos,2)==0 .and. round(iznos2,2)==0 .and. ;
-		round(kolicina,3) == 0
-      		dbdelete2()
-  	endif
-  	skip
+    if round(iznos,2)==0 .and. round(iznos2,2)==0 .and. ;
+        round(kolicina,3) == 0
+            dbdelete2()
+    endif
+    skip
 enddo
 __dbpack()
 
@@ -317,35 +322,20 @@ go top
 nTrec := 0
 
 do while !eof()
-	cIdFirma := idfirma
-  	nRbr := 0
-  	do while !eof() .and. cIdFirma==IdFirma
-    		skip 
-		nTrec := recno()
-		skip -1
-    		replace rbr with str(++nRbr,4)
-            	replace cijena with iif(Kolicina<>0,Iznos/Kolicina,0)
-    		go nTrec
-  	enddo
+    cIdFirma := idfirma
+    nRbr := 0
+    do while !eof() .and. cIdFirma==IdFirma
+        skip 
+        nTrec := recno()
+        skip -1
+        replace rbr with str(++nRbr,4)
+        replace cijena with iif(Kolicina<>0,Iznos/Kolicina,0)
+        go nTrec
+    enddo
 enddo
 close all
 
-end print
-
-if !EMPTY( gSezonDir ) .and. ;
-	Pitanje(,"Prebaciti dokument u radno podrucje","D")=="D"
-	
-	O_mat_priprRP
-  	O_mat_pripr
-  	select mat_priprrp
-  	append from mat_pripr
-  	select mat_pripr
-	zap
-  	close all
-  	if Pitanje(,"Prebaciti se na rad sa radnim podrucjem ?","D")=="D"
-      		URadPodr()
-  	endif
-endif
+END PRINT
 
 closeret
 

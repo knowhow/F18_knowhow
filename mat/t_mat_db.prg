@@ -348,6 +348,7 @@ if !file( f18_ime_dbf( 'mat_invent' ))
         AADD(aDBf,{ 'CIJENA'              , 'N' ,  12 ,  2 })
         AADD(aDBf,{ 'IZNOS'               , 'N' ,  14 ,  2 })
         AADD(aDBf,{ 'IZNOS2'              , 'N' ,  14 ,  2 })
+        AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
         DBCREATE2( 'mat_invent', aDbf)
 endif
 CREATE_INDEX("1","IdRoba", "mat_invent") // Inventura

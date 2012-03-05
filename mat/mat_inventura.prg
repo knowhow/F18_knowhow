@@ -77,7 +77,7 @@ local _iznos_2
 local _cijena 
 local _id_roba
 local _vars := hb_hash()
-local _partner, _partn_usl
+local _partner, _partn_usl, _id_partner
 local _filter
 
 O_KONTO
@@ -92,6 +92,7 @@ _konto := _vars["konto"]
 _datum := _vars["datum"]
 _id_firma := LEFT( _vars["id_firma"], 2 )
 _partner := _vars["partner"]
+_id_partner := ""
 
 O_MAT_INVENT
 O_MAT_SUBAN
@@ -113,6 +114,7 @@ set order to tag "3"
 _filter := "datdok <= " + cm2str( _datum )
 
 if !EMPTY( _partner )
+    _id_partner := _partner
     _filter += ".and. idpartner == " + cm2str( _partner )
 endif
 
@@ -124,7 +126,7 @@ NFOUND CRET
 
 do while !EOF() .and. _id_firma == field->IdFirma .and. _konto == field->Idkonto
 
-    _id_roba := field->IdRoba
+    _id_roba := field->idroba
     _kolicina := 0
     _iznos := 0
     _iznos_2 := 0
@@ -165,6 +167,7 @@ do while !EOF() .and. _id_firma == field->IdFirma .and. _konto == field->Idkonto
     _vars["cijena"] := _cijena
     _vars["iznos"] := _iznos
     _vars["iznos2"] := _iznos_2
+    _vars["idpartner"] := _id_partner
         
     dbf_update_rec( _vars )
     
@@ -184,6 +187,8 @@ return
 function mat_inv_tabela()
 local _cnt
 local _header := ""
+private kol := {}
+private imekol := {}
 
 O_MAT_INVENT
 O_ROBA
@@ -196,17 +201,14 @@ GO TOP
 
 set order to tag "1"
 
-ImeKol:={ ;
-          {"R.br",{|| rbr}          },;
-          {"Roba",{|| idroba}       },;
-          {"Cijena",{|| Cijena}     },;
-          {"Kolicina",{|| Kolicina} },;
-          {"Iznos "+ValDomaca(),{|| iznos}      },;
-          {"Iznos "+ValPomocna(),{|| iznos2}      };
-        }
+AADD( ImeKol, { "R.br", {|| rbr } } )
+AADD( ImeKol, { PADR( "Roba", 60 ), {|| pr_roba( idroba ) } } )
+AADD( ImeKol, { "Cijena", {|| cijena } } )
+AADD( ImeKol, { "Kolicina", {|| kolicina } } )
+AADD( ImeKol, { "Iznos " + ValDomaca(), {|| iznos } } )
+AADD( ImeKol, { "Partner", {|| idpartner } } )
 
-Kol:={}
-for _cnt := 1 to 5
+for _cnt := 1 to LEN( ImeKol )
     AADD( Kol, _cnt )
 next
 
@@ -218,6 +220,24 @@ ObjDbedit( "USKSP", MAXROW() - 4, MAXCOL() - 3, {|| _ed_pop_list_khandler() }, _
 close all
 return
 
+
+// prikaz naziva robe u tabeli pregleda inventure
+static function pr_roba( id_roba )
+local _txt := "!!! u sifrarniku nema stavke"
+local _t_area := SELECT()
+
+select roba
+hseek id_roba
+
+if FOUND()
+    _txt := PADL( ALLTRIM( id_roba ), 10 )
+    _txt += " - "
+    _txt += PADR( ALLTRIM( roba->naz ), 40 )
+endif
+
+select (_t_area)
+
+return _txt
 
 // -----------------------------------------------
 // -----------------------------------------------
@@ -405,6 +425,7 @@ return _ret
 
 function mat_pregl_unesenih_stavki()
 local _id_firma 
+local _partner
 local _konto 
 local _datum
 local _r_br 
@@ -425,6 +446,7 @@ endif
 _konto := _vars["konto"]
 _datum := _vars["datum"]
 _id_firma := LEFT( _vars["id_firma"], 2 )
+_partner := _vars["partner"]
 
 SELECT MAT_INVENT
 set order to tag "1"
@@ -485,6 +507,7 @@ return
 static function ZPrUnKol( vars, line )
 
 P_COND
+?
 
 @ prow(), 0 SAY "MAT.P: PREGLED UNESENIH KOLICINA NA DAN:"
 @ prow(), pcol() + 1 SAY vars["datum"]
@@ -893,8 +916,9 @@ B:=0
 
 DO WHILE !eof() .AND. _id_firma == IdFirma .and. _konto == IdKonto
    
-    IF A==0
-        @ A,0 SAY "MAT.P: POPISNA LISTA ZA INVENTARISANJE NA DAN:"
+    IF A == 0
+        ?
+        @ A, 0 SAY "MAT.P: POPISNA LISTA ZA INVENTARISANJE NA DAN:"
         @ A, pcol() + 1 SAY _datum
         @ ++A,0 SAY "FIRMA:"; @ A,pcol()+1 SAY _id_firma
         
@@ -911,6 +935,14 @@ DO WHILE !eof() .AND. _id_firma == IdFirma .and. _konto == IdKonto
         HSEEK _konto
 
         @ A,pcol()+2 SAY naz
+
+        if !EMPTY( _partner )        
+            SELECT PARTN
+            HSEEK _partner
+            @ ++A, 0 SAY "PARTNER:"
+            @ A, pcol() + 1 SAY _partner + "-" + PADR( ALLTRIM( partn->naz ), 40 )
+        endif
+   
         @ ++A,0 SAY m
         @ ++A,0 SAY "*R. *  SIFRA   *          NAZIV ARTIKLA            *J. *   CIJENA   *KOLICINA*"
         @ ++A,0 SAY "*BR.* ARTIKLA  *                                   *MJ.*            *        *"
@@ -923,7 +955,14 @@ DO WHILE !eof() .AND. _id_firma == IdFirma .and. _konto == IdKonto
 
     SELECT mat_suban
     cIdRoba := IdRoba
+
+    if EMPTY( cIdRoba )
+        skip
+        loop
+    endif
+
     nIznos := nIznos2 := nStanje := nCijena := 0
+
     DO WHILE !eof() .AND. _id_firma == field->IdFirma .and. _konto == field->IdKonto .and. cIdRoba == field->IdRoba
         // saberi za jednu robu
         IF field->U_I="1"

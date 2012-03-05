@@ -60,7 +60,7 @@ Box(, _count + 2, 65 )
    
         _var := "_art_" + ALLTRIM(STR(_i))
         _valid_block := "EMPTY(_art_" + ALLTRIM(STR(_i))+ ") .or. P_Roba(@_art_" + ALLTRIM(STR(_i)) + ")"
-        @ m_x + _x, m_y + 2 SAY "Artikal  1:" GET &_var VALID &_valid_block
+        @ m_x + _x, m_y + 2 SAY "Artikal " +  PADL( ALLTRIM(STR(_i)), 2 ) + ":" GET &_var VALID &_valid_block
 
         ++ _x   
 

@@ -1,3 +1,9 @@
+0.9.61 2012-03-05, vsasa
+
+  - modul MAT, korekcije i sitne dorade [#26970](http://redmine.bring.out.ba/issues/26970)
+  - modul FAKT, grupisanje partnera po vrsti isporuke robe [#26952](http://redmine.bring.out.ba/issues/26952)
+  - modul FAKT, količinski pregled isporuka robe [#26953](http://redmine.bring.out.ba/issues/26953)
+
 0.9.60 2012-03-02, vsasa
 
   - modul FAKT, ispravka bug-a sa fiskalnim opcijama [#26950](http://redmine.bring.out.ba/issues/26950) 

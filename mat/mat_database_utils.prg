@@ -176,6 +176,9 @@ return
 // generacija dokumenta pocetnog stanja
 // ----------------------------------------------
 function mat_prenos_podataka()
+local _nule := "D"
+local _po_partneru := "N"
+local _r_br := 0
 
 O_MAT_PRIPR
 
@@ -193,7 +196,10 @@ GO TOP
 Box(,5,60)
     nMjesta := 3
     dDatDo := DATE()
-    @ m_x+3, m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+    @ m_x+2, m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+    @ m_x+3, m_y+2 SAY "Prenositi stavke sa saldom 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "!@"
+    @ m_x+4, m_y+2 SAY "Prenos raditi po partneru (D/N)" GET _po_partneru VALID _po_partneru $ "DN" PICT "!@"
+
     read
     ESC_BCR
 BoxC()
@@ -233,23 +239,40 @@ do while !eof()
 
             do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner
     
-                cIdRoba:=IdRoba
+                cIdRoba := IdRoba
         
                 ? "Konto:", cIdKonto, ", partner:", cIdPartner, ", roba:", cIdRoba
         
-                do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdRoba==cIdRoba
-         
+                do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdRoba==cIdRoba .and. idpartner == cIdPartner
+        
+                    if _nule == "N" .and. ROUND( mat_suban->kolicina, 2 ) == 0
+                        skip
+                        loop
+                    endif
+ 
                     select mat_pripr
-         
-                    hseek mat_suban->(idfirma + idkonto + idpartner + idroba)
-         
+                    set order to tag "4"
+                    go top
+
+                    if _po_partneru == "D"
+                        seek mat_suban->idfirma + mat_suban->idkonto + mat_suban->idpartner + mat_suban->idroba
+                    else
+                        seek mat_suban->idfirma + mat_suban->idkonto + SPACE(6) + mat_suban->idroba
+                    endif
+
                     if !found()
 
                         append blank
                 
                         replace idfirma with cIdFirma
                         replace idkonto with cIdkonto
-                        replace idpartner with cIdPartner
+
+                        if _po_partneru == "D"
+                            replace idpartner with cIdPartner
+                        else
+                            replace idpartner with ""
+                        endif
+
                         replace idRoba  with cIdRoba
                         replace datdok with dDatDo + 1
                         replace datkurs with dDatDo + 1
@@ -258,7 +281,7 @@ do while !eof()
                         replace brnal with "0001"
                         replace d_p with "1"
                         replace u_i with "1"
-                        replace rbr with "9999"
+                        replace rbr with PADL( ALLTRIM( STR( ++ _r_br ) ), 4 )
                         replace kolicina with ;
                             iif(mat_suban->U_I=="1", mat_suban->kolicina, ;
                                 -mat_suban->kolicina)

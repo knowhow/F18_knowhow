@@ -164,6 +164,9 @@ local cDatLFakt
 local dLFakt
 local __where, _rec
 
+msgbeep("bug sa opcijom, pogledaj #27002")
+return
+
 // otvori tabele
 o_ugov()
 

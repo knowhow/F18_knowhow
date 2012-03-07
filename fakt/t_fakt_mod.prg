@@ -206,7 +206,6 @@ public gnTMarg:=11 // gornja margina
 public gnTMarg2:=3 // vertik.pomj. stavki u fakturi var.9
 public gnTMarg3:=0 // vertik.pomj. totala fakture var.9
 public gnTMarg4:=0 // vertik.pomj. za donji dio fakture var.9
-public gMjStr:="Zenica"
 public gMjRJ:="N"
 public gDK1:="N"
 public gDK2:="N"
@@ -503,7 +502,6 @@ RPar("s5",@g11Str2T)
 RPar("xm",@g15Str2T)
 RPar("s6",@g20Str2T)
 RPar("uc",@gNazPotStr)
-RPar("s7",@gMjStr)
 RPar("tb",@gTabela)
 RPar("tf",@gTipF)
 RPar("vf",@gVarF)

@@ -1,3 +1,7 @@
+0.9.62 2012-03-07, vsasa
+
+  - modul MAT, korekcija početnog stanja i proširenje polja rbr [#26989](http://redmine.bring.out.ba/issues/26989)
+ 
 0.9.61 2012-03-05, vsasa
 
   - modul MAT, korekcije i sitne dorade [#26970](http://redmine.bring.out.ba/issues/26970)

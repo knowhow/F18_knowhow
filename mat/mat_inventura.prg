@@ -776,7 +776,7 @@ DO WHILE !eof()
     select mat_pripr
     append blank
     replace idfirma with cidf, idvn with cidvn, brnal with cbrnal,;
-            idkonto with cidk, rbr with str(++nRbr,3), ;
+            idkonto with cidk, rbr with str(++nRbr,4), ;
             idzaduz with cidzaduz,;
             idroba with cidroba, u_i with "2", d_p with "2",;
             kolicina with rk, cijena with nCj, iznos with rv,;

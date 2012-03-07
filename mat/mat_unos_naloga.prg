@@ -886,7 +886,7 @@ do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
    do while !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal     // jedan mat_nalog
-     replace rbr with str(++nRbr,3)
+     replace rbr with str(++nRbr,4)
      skip
    enddo
 enddo
@@ -897,7 +897,7 @@ do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
    do while !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal     // jedan mat_nalog
-     replace rbr with str(++nRbr,3)
+     replace rbr with str(++nRbr,4)
      skip
    enddo
 enddo

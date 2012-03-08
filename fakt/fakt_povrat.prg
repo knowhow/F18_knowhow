@@ -398,6 +398,14 @@ endif
 SELECT fakt
 HSEEK _id_firma + _id_tip_dok + _br_dok
 
+// da li dokument uopste postoji ?
+if !FOUND()
+    MsgBeep( "Trazeni dokument ne postoji !" )
+    close all
+    return 0
+endif
+
+
 if ( fakt->m1 == "X" )
     // izgenerisani dokument
     MsgBeep("Radi se o izgenerisanom dokumentu!!!")

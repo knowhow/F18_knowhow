@@ -35,8 +35,11 @@ close all
 
 StampTXT(cIdFirma, cIdTipDok, cBrDok)
 
-select fakt_pripr
-use
+select F_FAKT_PRIPR
+if USED()
+    use
+endif
+
 return
 
 

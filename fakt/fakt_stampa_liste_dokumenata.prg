@@ -18,7 +18,7 @@
 function stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, lVrsteP,  cImeKup, lOpcine, aUslOpc)
 local m, cDinDnem, cRezerv, nC, nIznos, nRab, nIznosD, nIznos3, nRabD, nRab3, nOsn_tot, nPDV_tot, nUkPDV_tot
 local gnLMarg := 0
-
+local nCol1 := 0
 
 SELECT F_FAKT_DOKS
 if !USED()
@@ -102,7 +102,7 @@ cRezerv := " "
 
 cImeKup:=trim(cimekup)
 
-do while !eof() .and. IdFirma == cIdFirma
+do while !eof() .and. if( !EMPTY( cIdFirma ), IdFirma == cIdFirma, .t. )
 
   cDinDem := fakt_doks->dindem
 

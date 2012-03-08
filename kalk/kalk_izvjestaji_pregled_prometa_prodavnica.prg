@@ -12,45 +12,11 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
 #define NAZIV_PROD_LEN 15
  
-*string tbl_tarifa_naz;
 
-/*! \var tbl_tarifa_naz
- *  \brief Polje naziva u sifrarniku tarifa treba da nosi u nazivu "(N.T.)" za nize tarife, da bi izvjestaj Pregled prometa prodavnica znao da definise nize (djecija obuca) i vise tarife (ostala obuca)
- *  \ingroup Planika
- */
- 
-*string IzFmkIni_KumPath_Prodavnice_KontoNeke;
-
-/*! \var IzFmkIni_KumPath_KontoNekeProdavnice_NazivKonta
- *  \ingroup ini
- *  \brief Definise naziv prodavnice koji ce se pojaviti u izvjestaju pregled prometa
- *  \code
- *  FMK.INI/KumPath
- *  ----------------
- *  [Prodavnice]
- *  Konto_13210="Sarajevo 1"
- *  Konto_13220="Sarajevo 2"
- *  ...
- *  Konto_13290="Zenica"
- *
- */
-
-
-/*! \fn  PPProd()
- *  \ingroup Planika
- *  \brief Izvjestaj: Pregled prometa prodavnice
- */
- 
 function PPProd()
-*{
 local i
 local dDatumOd
 local dDatumDo
@@ -59,8 +25,6 @@ local nUPari1, nUPari2, nUPari
 local nUBruto1, nUBruto2, nUBruto
 local nUNeto1, nUNeto2, nUNeto
 local nStr
-// aPolozi, 2-d matrica: 
-// [1] - naziv pologa, [2] - ukupno polog
 local aPolozi
 local nPolog
 local cNazivProdKonto
@@ -81,7 +45,9 @@ if GetVars(@dDatumOd, @dDatumDo, @cListaKonta, @cPopustDN)==0
 endif
 
 CrePPProd()
+
 MsgBeep("Kreirane pomocne tabele !!!")
+
 // otvori tabelu
 OTblPPProd()
 
@@ -296,10 +262,10 @@ do case
 		return field->polog12
 endcase
 return
-*}
+
+
 
 static function OTblPPProd()
-*{
 local cTbl
 
 // kreiraj tabelu ppprod
@@ -308,10 +274,10 @@ SELECT(F_PPPROD)
 USE (cTbl)
 SET ORDER TO TAG "KONTO"
 return
-*}
+
+
 
 static function GetVars(dDatumOd, dDatumDo, cListaKonta, cPopustDN)
-*{
 
 #ifdef PROBA
 dDatumOd:=DATE()

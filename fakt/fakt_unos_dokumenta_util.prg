@@ -1542,62 +1542,70 @@ return cVrati
  */
  
 function fakt_naredni_dokument(fNovi)
-*{
-local nPrev:=SELECT()
+local nPrev := SELECT()
+local _t_rec, _rec
 
-if !EMPTY (fakt_pripr->BrDok) .or. eof()  // nema dokumenata
-   // ovaj vec ima odredjen broj
-   return fakt_pripr->BrDok
+if !EMPTY (fakt_pripr->BrDok) .or. EOF()  
+    // nema dokumenata
+    // ovaj vec ima odredjen broj
+    return fakt_pripr->BrDok
 endif
-
 
 if gMreznoNum == "D"
-  select fakt_pripr
-  nTrecPripr:=recno()
-  go top
-  _idtipdok:=fakt_pripr->idtipdok
-  _idfirma:=fakt_pripr->idfirma
-  _datdok:=fakt_pripr->datdok
-  _dindem:=fakt_pripr->dindem
-  _rezerv:=""
-  _idpartner:=""
-  _partner:=""
-  _iznos:=0
-  _rabat:=0
-  _m1 := " "
-  _idvrstep:=""
-  if fakt_doks->(FIELDPOS("DATPL")>0)
-    _datpl := CTOD("")
-  endif
-  if fakt_doks->(FIELDPOS("IDPM")>0)
-    _idpm  := SPACE(15)
-  endif
-  go nTrecPripr
-endif
 
+    select fakt_pripr
+    _t_rec := recno()
+
+    go top
+
+    _idtipdok := fakt_pripr->idtipdok
+    _idfirma := fakt_pripr->idfirma
+    _datdok := fakt_pripr->datdok
+    _dindem := fakt_pripr->dindem
+    _rezerv := ""
+    _idpartner := ""
+    _partner := ""
+    _iznos := 0
+    _rabat := 0
+    _m1 := " "
+    _idvrstep := ""
+
+    if fakt_doks->(FIELDPOS("DATPL")>0)
+        _datpl := CTOD("")
+    endif
+
+    if fakt_doks->(FIELDPOS("IDPM")>0)
+        _idpm := SPACE(15)
+    endif
+
+    go _t_rec
+
+endif
 
 // novi dokument, koji nema svog broja, u pripremi
 select fakt_doks
 
 if gMreznoNum == "D"
-   if !FAKT_DOKS->(FLOCK())
-      nOkr := 80     // daj mu 10 sekundi max
-      do while nOkr > 0
-         InkeySc (.125)
-         nOkr --
-         if fakt_doks->(FLOCK())
-            exit
-         endif
-      enddo
-      if nOkr == 0 .AND. ! fakt_doks->(FLOCK())
-         Beep (4)
-         Msg ("Nemoguce odrediti broj dokumenta - ne mogu pristupiti bazi!")
-         return SPACE (LEN (_BrDok))
-      endif
-   endif
+   
+    if !FAKT_DOKS->(FLOCK())
+        nOkr := 80     
+        // daj mu 10 sekundi max
+        do while nOkr > 0
+            InkeySc (.125)
+            nOkr --
+            if fakt_doks->(FLOCK())
+                exit
+            endif
+        enddo
+        if nOkr == 0 .AND. ! fakt_doks->(FLOCK())
+            Beep (4)
+            Msg ("Nemoguce odrediti broj dokumenta - ne mogu pristupiti bazi!")
+            return SPACE (LEN (_BrDok))
+        endif
+    endif
 endif
 
-cBroj1:=OdrediNBroj(_idfirma,_idtipdok)   //_brdok
+cBroj1 := OdrediNBroj(_idfirma,_idtipdok)   
 
 if _idtipdok $ "12#13"
 
@@ -1612,10 +1620,11 @@ if _idtipdok $ "12#13"
     endif
     
     cBroj2 := OdrediNBroj( _idfirma, cTmpTip2 )
+
     if VAL( LEFT( cBroj1, gNumDio )) >= VAL( LEFT(cBroj2, gNumDio))
         _Brdok := cBroj1
     else
-            _BrDok := cBroj2
+        _BrDok := cBroj2
     endif
 else
     _BrDok := cBroj1
@@ -1623,39 +1632,57 @@ endif
 
 if gMreznoNum == "D"
 
-  // pravi se fizicki append u bazi dokumenata da bi se sacuvalo mjesto
-  // za ovaj dokument
-  //
-  select fakt_doks
+    // pravi se fizicki append u bazi dokumenata da bi se sacuvalo mjesto
+    // za ovaj dokument
+    //
+    select fakt_doks
 
-  // dbappend()   // append blank skine LOCK sa baze
-  appblank2 (.F., .F.)   // ne cisti, ne otkljucavaj
-  _M1 := "Z"
-  if fieldpos("SIFRA")<>0
-    _sifra := sifrakorisn
-  endif
-  Gather2 ()
-  DBUNLOCK()
+    // dbappend()   
+    // append blank skine LOCK sa baze
+    appblank2 (.f., .f.)   
+    // ne cisti, ne otkljucavaj
+    
+    _rec := dbf_get_rec()
 
-  // popuni broj dokumenta u svakoj stavki pripreme
-  select fakt_pripr
-  nTekRec := RECNO ()
-  nPrevOrd := INDEXORD()
-  set order to
-  go top
+    _rec["m1"] := "Z"
+    _rec["idtipdok"] := _idtipdok
+    _rec["idfirma"] := _idfirma
+    _rec["brdok"] := _brdok
+    _rec["datdok"] := _datdok
+    _rec["dindem"] := _dindem
+    _rec["rezerv"] := _rezerv
+    _rec["idpartner"] := _idpartner
+    _rec["partner"] := _partner
+    _rec["iznos"] := 0
+    _rec["rabat"] := 0
+    _rec["idvrstep"] := _idvrstep
 
-  LOCATE for IdFirma == _IdFirma .AND. IdTipDok == _IdTipDok ;
-             .AND. EMPTY (BrDok)
-  do while FOUND ()
-    REPLACE BrDok WITH _BrDok
-    CONTINUE
-  END
+    // ubaci podatak na server
+    update_rec_server_and_dbf( "fakt_doks", _rec )
 
-  GO nTekRec
-  DBSETORDER(nPrevOrd)
+    select fakt_doks
+    DBUNLOCK()
+
+    // popuni broj dokumenta u svakoj stavki pripreme
+    select fakt_pripr
+    nTekRec := RECNO ()
+    nPrevOrd := INDEXORD()
+    set order to
+    go top
+
+    locate for IdFirma == _IdFirma .AND. IdTipDok == _IdTipDok .AND. EMPTY (BrDok)
+    
+    do while FOUND()
+        replace brdok WITH _brdok
+        CONTINUE
+    end
+
+    GO nTekRec
+    DBSETORDER(nPrevOrd)
+
 endif
 
-return _BrDok
+return _brdok
 
 
 

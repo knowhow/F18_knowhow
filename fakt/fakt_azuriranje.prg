@@ -281,6 +281,7 @@ seek id_firma + id_tip_dok + br_dok
 select fakt_doks
 set order to tag "1"
 hseek fakt_pripr->idfirma + fakt_pripr->idtipdok + fakt_pripr->brdok
+
 if !Found()
     AppBlank2(.f.,.f.)
 endif
@@ -318,7 +319,7 @@ _field->dat_otpr  := _fakt_doks_data["dat_otpr"]
 _field->dat_val   := _fakt_doks_data["dat_val"]
 _field->DatPl     := _fakt_doks_data["dat_val"]
     
-if ( fakt_doks->m1 == "Z" )
+if ( _field->m1 == "Z" )
     // skidam zauzece i dobijam normalan dokument
     // REPLACE m1 WITH " " -- isto kao i gore
     _field->m1 := " "

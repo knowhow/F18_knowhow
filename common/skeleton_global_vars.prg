@@ -50,7 +50,7 @@ if set_params == .t.
 
     Box(, 10, 70 )
 
-        @ m_x + _x, m_y + 2 SAY "Inicijalna podesenja organizacione jedinice ***" COLOR "I"
+        @ m_x + _x, m_y + 2 SAY "Inicijalna podesenja organizacije ***" COLOR "I"
 
         ++ _x
         ++ _x

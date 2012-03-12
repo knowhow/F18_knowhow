@@ -22,12 +22,12 @@ local _a_ctrl := {}
 local _chk_sif := .f.
 
 if Pitanje(, "Provjera sifrarnika (D/N) ?", "N") == "D"
-	_chk_sif := .t.
+    _chk_sif := .t.
 endif
 
 // provjeri sifrarnik
 if _chk_sif == .t.
-	f18_sif_data( @_a_sif, @_a_ctrl )
+    f18_sif_data( @_a_sif, @_a_ctrl )
 endif
 
 // provjeri fin
@@ -60,14 +60,19 @@ set order to tag "4"
 go top
 
 do while !EOF()
-	
-	_dok := field->idfirma + "-" + field->idvn + "-" + ALLTRIM( field->brnal )
-	
-	@ m_x + 1, m_y + 2 SAY "dokument: " + _dok
+ 
+    if EMPTY( field->idfirma )
+        skip
+        loop    
+    endif
+   
+    _dok := field->idfirma + "-" + field->idvn + "-" + ALLTRIM( field->brnal )
+    
+    @ m_x + 1, m_y + 2 SAY "fin dokument: " + _dok
 
-	// kontrolni broj
-	++ _n_c_stavke
-	_n_c_iznos += ( field->iznosbhd )
+    // kontrolni broj
+    ++ _n_c_stavke
+    _n_c_iznos += ( field->iznosbhd )
 
     skip
 
@@ -76,7 +81,7 @@ enddo
 BoxC()
 
 if _n_c_stavke > 0
-	AADD( checksum, { "fin data", _n_c_stavke, _n_c_iznos } )
+    AADD( checksum, { "fin data", _n_c_stavke, _n_c_iznos } )
 endif
 
 return
@@ -97,14 +102,19 @@ set order to tag "1"
 go top
 
 do while !EOF()
-	
-	_dok := field->idfirma + "-" + field->idtipdok + "-" + ALLTRIM( field->brdok )
-	
-	@ m_x + 1, m_y + 2 SAY "dokument: " + _dok
+ 
+    if EMPTY( field->idfirma )
+        skip
+        loop    
+    endif
 
-	// kontrolni broj
-	++ _n_c_stavke
-	_n_c_iznos += ( field->kolicina + field->iznos )
+    _dok := field->idfirma + "-" + field->idtipdok + "-" + ALLTRIM( field->brdok )
+    
+    @ m_x + 1, m_y + 2 SAY "fakt dokument: " + _dok
+
+    // kontrolni broj
+    ++ _n_c_stavke
+    _n_c_iznos += ( field->kolicina + field->cijena + field->rabat )
 
     skip
 
@@ -113,7 +123,7 @@ enddo
 BoxC()
 
 if _n_c_stavke > 0
-	AADD( checksum, { "fakt data", _n_c_stavke, _n_c_iznos } )
+    AADD( checksum, { "fakt data", _n_c_stavke, _n_c_iznos } )
 endif
 
 return
@@ -134,14 +144,19 @@ set order to tag "1"
 go top
 
 do while !EOF()
-	
-	_dok := field->idfirma + "-" + field->idvd + "-" + ALLTRIM( field->brdok )
-	
-	@ m_x + 1, m_y + 2 SAY "dokument: " + _dok
+    
+    if EMPTY( field->idfirma )
+        skip
+        loop    
+    endif
 
-	// kontrolni broj
-	++ _n_c_stavke
-	_n_c_iznos += ( field->kolicina + field->nc + field->vpc )
+    _dok := field->idfirma + "-" + field->idvd + "-" + ALLTRIM( field->brdok )
+    
+    @ m_x + 1, m_y + 2 SAY "kalk dokument: " + _dok
+
+    // kontrolni broj
+    ++ _n_c_stavke
+    _n_c_iznos += ( field->kolicina + field->nc + field->vpc )
 
     skip
 
@@ -150,7 +165,7 @@ enddo
 BoxC()
 
 if _n_c_stavke > 0
-	AADD( checksum, { "kalk data", _n_c_stavke, _n_c_iznos } )
+    AADD( checksum, { "kalk data", _n_c_stavke, _n_c_iznos } )
 endif
 
 return
@@ -170,7 +185,7 @@ START PRINT CRET
 ?
 P_COND
 
-? "Rezultati testa:", DTOC( DATE() )
+? "F18 rezultati testa:", DTOC( DATE() )
 ? "================================"
 ?
 ? "1) Kontrolni podaci:"
@@ -179,9 +194,9 @@ P_COND
 ? "-------------- --------------- ---------------"
 // prvo mi ispisi kontrolne zapise
 for i := 1 to LEN( a_ctrl )
-	? PADR( a_ctrl[ i, 1 ], 14 )
-	@ prow(), pcol() + 1 SAY STR( a_ctrl[ i, 2 ], 15, 0 )
-	@ prow(), pcol() + 1 SAY STR( a_ctrl[ i, 3 ], 15, 2 )
+    ? PADR( a_ctrl[ i, 1 ], 14 )
+    @ prow(), pcol() + 1 SAY STR( a_ctrl[ i, 2 ], 15, 0 )
+    @ prow(), pcol() + 1 SAY STR( a_ctrl[ i, 3 ], 15, 2 )
 next
 
 ?
@@ -242,20 +257,20 @@ local _scan
 local _stavke := 0
 
 do while !EOF()
-	
-	if EMPTY( _sif_id )
-		skip
-		loop
-	endif
+    
+    if EMPTY( field->id )
+        skip
+        loop
+    endif
 
-	++ _stavke
+    ++ _stavke
 
-	skip
+    skip
 
 enddo
 
 if _stavke > 0
-	AADD( checksum, { "sif. " + ALIAS(), _stavke, 0 } )
+    AADD( checksum, { "sif. " + ALIAS(), _stavke, 0 } )
 endif
 
 return

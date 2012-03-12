@@ -1,4 +1,5 @@
-f18_db_migrate_package 4.2.4
-F18 0.9.62
-delphirb 1.0
-ptxt 1.55
+f18_db_migrate_package 4.2.4 gz
+F18 0.9.62 gz
+F18_update 0.0.0 sh
+delphirb 1.0 exe.gz 
+ptxt 1.55 exe.gz

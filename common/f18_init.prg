@@ -288,11 +288,11 @@ if cSchema == nil
 endif
 
 if cDatabase == nil
-  cDatabase := "bringout"
+  cDatabase := "f18_test"
 endif
 
 if cUser == nil
-  cUser := "admin"
+  cUser := "test1"
 endif
 
 cSchema   := PADR(cSchema, 40)

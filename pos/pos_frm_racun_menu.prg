@@ -265,7 +265,7 @@ endif
 // TODO
 BarKod(@cId)
 
-Vrati := PostojiSifra(F_ROBA, "ID", 10, 77, "Roba(artikli)", @cId, NIL, NIL, NIL, NIL, NIL, aZabrane)
+Vrati := PostojiSifra(F_ROBA, "ID", MAXROWS() - 15, MAXCOLS() - 3, "Roba(artikli)", @cId, NIL, NIL, NIL, NIL, NIL, aZabrane)
 
 if LASTKEY()==K_ESC
 	cId:=PrevID

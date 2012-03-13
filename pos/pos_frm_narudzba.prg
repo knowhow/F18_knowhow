@@ -16,9 +16,8 @@
 
 function UnesiNarudzbu()
 parameters cBrojRn, cSto
-
-private ImeKol
-private Kol
+private ImeKol := {}
+private Kol := {}
 private nRowPos
 private oBrowse
 private aAutoKeys:={}
@@ -51,24 +50,32 @@ if gDisplay=="D"
 endif
 
 
-ImeKol:={{"Sifra",{|| IdRoba             }},{ "Naziv",      {|| Left (RobaNaz, 30) }},{ "JMJ",        {|| JMJ                }},{ "Kolicina  ", {|| STR (kolicina,8,2) }},{ "Cijena    ", {|| STR (Cijena,8,2)   }},{ "Iznos     ", {|| STR (Kolicina * Cijena,10,2)}}}
+AADD( ImeKol, { PADR( "Artikal", 10 ), { || idroba } } )
+AADD( ImeKol, { PADC( "Naziv", 50 ), { || PADR( robanaz, 50 ) } } )
+AADD( ImeKol, { "JMJ", { || jmj } } )
+AADD( ImeKol, { "Tarifa", { || idtarifa } } )
+AADD( ImeKol, { "Kolicina", { || STR( kolicina, 8, 2 ) } } )
+AADD( ImeKol, { "Cijena", { || STR( cijena, 8, 2 ) } } )
+AADD( ImeKol, { "Ukupno", { || STR( kolicina * cijena, 10, 2 ) } } )
 
-Kol:={1, 2, 3, 4, 5, 6}
+for i := 1 to LEN( ImeKol )
+    AADD( Kol, i )
+next
 
-AADD(aUnosMsg, "<*> - Ispravka stavke")
-AADD(aUnosMsg, "Storno/povrat - negativna kolicina")
+AADD( aUnosMsg, "<*> - Ispravka stavke")
+AADD( aUnosMsg, "Storno/povrat - negativna kolicina")
 
 if gModul=="HOPS"
     if gRadniRac=="D"
-            AADD(aUnosMsg, "</> - Pregled racuna")
+            AADD( aUnosMsg, "</> - Pregled racuna")
     endif
 endif
 
 Box(, MAXROWS() - 4, MAXCOLS() - 3 , , aUnosMsg )
 
-@ m_x, m_y + 23 SAY PADC ("RACUN BR: "+Alltrim (cBrojRn), 40) COLOR Invert
+@ m_x, m_y + 23 SAY PADC ("RACUN BR: " + ALLTRIM(cBrojRn), 40) COLOR Invert
 
-oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + MAXROWS() - 10, m_y + MAXCOLS() - 2, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
+oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + MAXROWS() - 8, m_y + MAXCOLS() - 2, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
 
 oBrowse:autolite:=.f.
 aAutoKeys:=HangKeys ()

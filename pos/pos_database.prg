@@ -1211,23 +1211,15 @@ return
 *}
 
 
-
-/*! \fn Del_Skip()
- *  \brief Namijenjena da se prevazidje problem kad se radi klasicni Delete i SKIP
- */ 
- 
 function Del_Skip()
-*{
 local nNextRec
-
 nNextRec:=0
 SKIP
 nNextRec:=RECNO()
 Skip -1
-DELETE
+delete
 GO nNextRec
 return
-*}
 
 
 /*! \fn GoTop2()

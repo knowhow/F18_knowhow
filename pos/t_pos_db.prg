@@ -675,6 +675,10 @@ AADD ( aDbf, { "PREBACEN",  "C",  1, 0} )
 AADD ( aDbf, { "ROBANAZ",   "C", 40, 0} )
 AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
 AADD ( aDbf, { "STO",       "C",  3, 0} )
+AADD ( aDbf, { "STO_BR",    "N",  3, 0} )
+AADD ( aDbf, { "ZAK_BR",    "N",  4, 0} )
+AADD ( aDbf, { "FISC_RN",   "N", 10, 0} )
+
 AADD ( aDbf, { "VRIJEME",   "C",  5, 0} )
 
 AADD( aDBf, { 'K1'                  , 'C' ,   4 ,  0 })

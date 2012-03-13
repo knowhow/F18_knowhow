@@ -664,14 +664,16 @@ SEEK cIdPos + "42" + dtos(gDatum) + cRadRac
 
 set_global_memvars_from_dbf()
 
+altd()
+
 select pos_doks
 
-_BrDok:=cStalRac
-_Vrijeme:=cVrijeme
-_IdVrsteP:=cNacPlac
-_IdGost:=cIdGost
-_IdOdj:=SPACE(LEN(_IdOdj))
-_M1:=OBR_NIJE
+_BrDok := cStalRac
+_Vrijeme := cVrijeme
+_IdVrsteP := cNacPlac
+_IdGost := cIdGost
+_IdOdj := SPACE( LEN( _IdOdj ))
+_M1 := OBR_NIJE
 
 //Append Blank  radi mreza ne idemo na ovu varijantu!
 set order to tag "1"
@@ -684,7 +686,6 @@ endif
 // ubaci zapis u tabelu
 _append := get_dbf_global_memvars()
 update_rec_server_and_dbf( ALIAS(), _append )
-
 
 SELECT _POS
 

@@ -117,7 +117,7 @@ else
   	bMarkF:=NIL
 endif
 
-ObjDBedit( "racun" , 20, 65, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI  ", "", nil,cFnc,,bMarkF)
+ObjDBedit( "racun" , MAXROWS() - 4, MAXCOLS() - 3, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI  ", "", nil,cFnc,,bMarkF)
 
 SET FILTER TO
 

@@ -138,7 +138,7 @@ endif
 
 if cPPar=="D"  
 	O_POS_DOKS
-	SELECT (F_DOKS)
+	SELECT (F_POS_DOKS)
 	// "IdPos+IdVd+dtos(datum)+BrDok"
 	SET ORDER TO TAG "1"
 endif
@@ -455,7 +455,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
       // prikaz partnera
       if cPPar=="D"
         ?? " "
-        ?? Ocitaj(F_DOKS,POS->(IdPos+IdVd+dtos(datum)+BrDok),"idgost")
+        ?? Ocitaj(F_POS_DOKS,POS->(IdPos+IdVd+dtos(datum)+BrDok),"idgost")
       endif
       
 

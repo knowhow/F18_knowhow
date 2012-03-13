@@ -63,8 +63,8 @@ AADD(aNiz,{"Vrsta radne stanice (K-kasa, A-samostalna kasa, S-server)" , "gVrsta
 AADD(aNiz,{"Oznaka/ID prodajnog mjesta" , "gIdPos", "NemaPrometa(cIdPosOld,gIdPos)", "@!", })
 
 if gModul=="HOPS" 
-	AADD(aNiz,{"Ima li objekat zasebne cjeline (dijelove) D/N", "gPostDO","gPostDO$'DN'", "@!", })
-  	AADD(aNiz,{"Oznaka/ID dijela objekta", "gIdDio",, "@!", })
+    AADD(aNiz,{"Ima li objekat zasebne cjeline (dijelove) D/N", "gPostDO","gPostDO$'DN'", "@!", })
+    AADD(aNiz,{"Oznaka/ID dijela objekta", "gIdDio",, "@!", })
 endif
 
 AADD(aNiz,{"Putanja korijenskog direktorija modula na serveru" , "gServerPath", , , })
@@ -87,7 +87,7 @@ VarEdit(aNiz,2,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
 
 // Upisujem nove parametre
 if LASTKEY()<>K_ESC
-	MsgO("Azuriram parametre PZ")
+    MsgO("Azuriram parametre PZ")
     set_metric("VrstaRadneStanice", nil, gVrstaRS )
     set_metric("IDPos", nil, gIdPos )
     set_metric("ZasebneCjelineObjekta", nil, gPostDO )
@@ -115,7 +115,7 @@ endif
 gServerPath := ALLTRIM(gServerPath)
 
 if (RIGHT(gServerPath,1) <> SLASH)
-	gServerPath += SLASH
+    gServerPath += SLASH
 endif
 
 return
@@ -145,7 +145,7 @@ VarEdit(aNiz,7,2,24,78,"PODACI FIRME I RACUNA","B1")
 // Upisujem nove parametre
 if LASTKEY()<>K_ESC
 
-	MsgO("Azuriram parametre PZ")
+    MsgO("Azuriram parametre PZ")
     set_metric("pos_header_org_naziv", nil, gFirNaziv)
     set_metric("pos_header_org_adresa", nil, gFirAdres)
     set_metric("pos_header_org_id_broj", nil, gFirIdBroj)
@@ -156,7 +156,7 @@ if LASTKEY()<>K_ESC
     set_metric("pos_header_txt_2", nil, gRnPTxt2)
     set_metric("pos_header_txt_3", nil, gRnPTxt3)
 
-	MsgC()
+    MsgC()
 
 endif
 
@@ -173,8 +173,8 @@ AADD(opc,"1. osnovna podesenja              ")
 AADD(opcexe,{|| ParPrBase()})
 
 if gModul=="HOPS"
-	AADD(opc,"2. podesenja - ugostiteljstvo   ")
-	AADD(opcexe,{|| ParPrUgost()})
+    AADD(opc,"2. podesenja - ugostiteljstvo   ")
+    AADD(opcexe,{|| ParPrUgost()})
 endif
 
 Menu_SC("prr")
@@ -203,11 +203,11 @@ AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje puktova (D/N)" , "gSt
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - UGOSTITELJSTVO","B1")
 
 if LASTKEY() <> K_ESC
-	MsgO("Azuriram parametre")
+    MsgO("Azuriram parametre")
     set_metric("VodiTrebovanja", nil, gVodiTreb )
     set_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj )
     set_metric("RacunSpecifOpcije", nil, gRnSpecOpc )
-	set_metric("RadniRacuni", nil, gRadniRac )
+    set_metric("RadniRacuni", nil, gRadniRac )
     set_metric("BrojStolova", nil, gBrojSto )
     set_metric("StampanjePunktova", nil, gStamStaPun )
     MsgC()
@@ -242,21 +242,21 @@ AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje odjeljenja (D/N)" , "
 AADD (aNiz, {"Voditi po smjenama (D/N)" , "gVSmjene", "gVsmjene$'DN'", "@!", })
 AADD (aNiz, {"Tip sezona M-mjesec G-godina" , "gSezonaTip", "gSezonaTip$'MG'", "@!", })
 if KLevel=="0"
-	AADD (aNiz, {"Upravnik moze ispravljati cijene" , "gSifUpravn", "gSifUpravn$'DN'", "@!", })
+    AADD (aNiz, {"Upravnik moze ispravljati cijene" , "gSifUpravn", "gSifUpravn$'DN'", "@!", })
 endif
 AADD (aNiz, {"Ako je Bar Cod generisi <ENTER> " , "gEntBarCod", "gEntBarCod$'DN'", "@!", })
 If (!IsPlanika())
-	// generisao bug pri unosu reklamacije
-	AADD (aNiz, {"Pri unosu zaduzenja azurirati i cijene (D/N)? " , "gZadCij", "gZadCij$'DN'", "@!", })
+    // generisao bug pri unosu reklamacije
+    AADD (aNiz, {"Pri unosu zaduzenja azurirati i cijene (D/N)? " , "gZadCij", "gZadCij$'DN'", "@!", })
 else
-	gZadCij:="N"
+    gZadCij:="N"
 endif
 AADD (aNiz, {"Pri azuriranju pitati za nacin placanja (D/N)? " , "gUpitNP", "gUpitNP$'DN'", "@!", })
 AADD (aNiz, {"Stampa na POS displej (D/N)? " , "gDisplay", "gDisplay$'DN'", "@!", })
 AADD (aNiz, {"Evidentiranje podataka o vrstama placanja (D/N)? " , "gEvidPl", "gEvidPl$'DN'", "@!", })
 AADD (aNiz, {"Provjera prostora na disku (D/N)? " , "gDiskFree", "gDiskFree$'DN'", "@!", })
 if IsPDV()
-	AADD (aNiz, {"Stampati poreske fakture (D/N)? " , "gPorFakt", "gPorFakt$'DN'", "@!", })
+    AADD (aNiz, {"Stampati poreske fakture (D/N)? " , "gPorFakt", "gPorFakt$'DN'", "@!", })
 
 endif
 
@@ -267,21 +267,21 @@ AADD (aNiz, {"Nakon stampe ispis informacija o racunu (D/N)? " , "gRnInfo", "gRn
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 
 if LASTKEY()<>K_ESC
-	MsgO("Azuriram parametre")
+    MsgO("Azuriram parametre")
     set_metric("VodiTrebovanja", nil, gVodiTreb)
     if (!IsPlanika())
-		set_metric("AzuriranjeCijena", nil, gZadCij)
+        set_metric("AzuriranjeCijena", nil, gZadCij)
     endif
-	set_metric("VodiOdjeljenja", nil, gVodiOdj)
-	set_metric("Stolovi", nil, gStolovi)
-	set_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj)
+    set_metric("VodiOdjeljenja", nil, gVodiOdj)
+    set_metric("Stolovi", nil, gStolovi)
+    set_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj)
     set_metric("RacunSpecifOpcije", nil, gRnSpecOpc)
-	set_metric("RadniRacuni", nil, gRadniRac)
+    set_metric("RadniRacuni", nil, gRadniRac)
     set_metric("BrojStolova", nil, gBrojSto)
     set_metric("DupliArtikli", nil, gDupliArt)
     set_metric("DupliUnosUpozorenje", nil, gDupliUpoz)
     set_metric("PratiStanjeRobe", nil, gPratiStanje )
-   	set_metric("PratiPocetnoStanjeSmjene", nil, gPocStaSmjene )
+    set_metric("PratiPocetnoStanjeSmjene", nil, gPocStaSmjene )
     set_metric("StampanjePazara", nil, gStamPazSmj )
     set_metric("StampanjePunktova", nil, gStamStaPun )
     set_metric("VoditiPoSmjenama", nil, gVsmjene )
@@ -289,14 +289,14 @@ if LASTKEY()<>K_ESC
     set_metric("UpravnikIspravljaCijene", nil, gSifUpravn )
     set_metric("DisplejOpcije", nil, gDisplay )
     set_metric("BarkodEnter", nil, gEntBarCod )
-	set_metric("UpitZaNacinPlacanja", nil, gUpitNP )
+    set_metric("UpitZaNacinPlacanja", nil, gUpitNP )
     set_metric("EvidentiranjeVrstaPlacanja", nil, gEvidPl )
-   	set_metric("SlobodniProstorDiska", nil, gDiskFree )
+    set_metric("SlobodniProstorDiska", nil, gDiskFree )
     set_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
     set_metric("RacunInfo", nil, gRnInfo )
-	if IsPDV()
-    	set_metric("StampatiPoreskeFakture", nil, gPorFakt )
-	endif
+    if IsPDV()
+        set_metric("StampatiPoreskeFakture", nil, gPorFakt )
+    endif
     MsgC()
 endif
 
@@ -312,41 +312,41 @@ if gVodiOdj=="0"
 
     if Pitanje(,"Nulirati sifre odjeljenja ","N")=="D"
 
-    	Pushwa()
+        Pushwa()
 
-    	O_POS
-		set order to 0
-		go top
+        O_POS
+        set order to 0
+        go top
 
-    	do while !eof()
+        do while !eof()
             _rec := dbf_get_rec()
             _rec["idodj"] := ""
             _rec["iddio"] := "0"
             update_rec_server_and_dbf( ALIAS(), _rec )
-      		skip
-    	enddo
+            skip
+        enddo
 
-    	use
-    	O_ROBA
+        use
+        O_ROBA
 
-		set order to 0
-		go top
-    	do while !eof()
+        set order to 0
+        go top
+        do while !eof()
             _rec := dbf_get_rec()
             _rec["idodj"] := ""
             update_rec_server_and_dbf( ALIAS(), _rec )
-      		skip
-    	enddo
-    	use
-    	PopWa()
-	endif
+            skip
+        enddo
+        use
+        PopWa()
+    endif
 
-  	gVodiOdj:="N"
+    gVodiOdj:="N"
 
 endif
 
 if gVodiOdj$"DN"
-	return .t.
+    return .t.
 endif
 return
 
@@ -378,18 +378,18 @@ AADD(aNiz, {"Redukcija potrosnje trake kod stampe racuna i izvjestaja (0/1/2)" ,
 VarEdit(aNiz,9,1,19,78,"PARAMETRI RADA PROGRAMA - IZGLED RACUNA","B1")
 
 if LASTKEY()<>K_ESC
-	MsgO("Azuriram parametre")
-  	set_metric("PorezniRaster", nil, gPoreziRaster )
-  	set_metric("BrojLinijaZaKrajRacuna", nil, nFeedLines )
-  	set_metric("SekvencaSjeciTraku", nil, gSjeciStr )
-  	set_metric("SekvencaOtvoriLadicu", nil, gOtvorStr )
-  	set_metric("RacunCijenaSaPDV", nil, grbCjen )
-	set_metric("RacunStampaIDArtikla", nil, grbStId )
-	set_metric("RacunRedukcijaTrake", nil, grbReduk )
-  	set_metric("RacunHeader", nil, gRnHeder )
-  	set_metric("IzgledZaglavlja", nil, gZagIz )
-  	set_metric("RacunFooter", nil, gRnFuter )
-	MsgC()
+    MsgO("Azuriram parametre")
+    set_metric("PorezniRaster", nil, gPoreziRaster )
+    set_metric("BrojLinijaZaKrajRacuna", nil, nFeedLines )
+    set_metric("SekvencaSjeciTraku", nil, gSjeciStr )
+    set_metric("SekvencaOtvoriLadicu", nil, gOtvorStr )
+    set_metric("RacunCijenaSaPDV", nil, grbCjen )
+    set_metric("RacunStampaIDArtikla", nil, grbStId )
+    set_metric("RacunRedukcijaTrake", nil, grbReduk )
+    set_metric("RacunHeader", nil, gRnHeder )
+    set_metric("IzgledZaglavlja", nil, gZagIz )
+    set_metric("RacunFooter", nil, gRnFuter )
+    MsgC()
 endif
 
 gSjeciStr:=Odsj(gSjeciStr)
@@ -403,9 +403,9 @@ function pos_v_file(cFile,cSta)
 private cKom:="q "+PRIVPATH+cFile
 
 if !EMPTY(cFile).and.Pitanje(,"Zelite li izvrsiti ispravku "+cSta+"?","N")=="D"
-	Box(,25,80)
-  	run &ckom
-  	BoxC()
+    Box(,25,80)
+    run &ckom
+    BoxC()
 endif
 return .t.
 
@@ -428,7 +428,7 @@ VarEdit(aNiz,9,2,18,78,"PARAMETRI RADA PROGRAMA - CIJENE","B1")
 O_PARAMS
 
 if LASTKEY()<>K_ESC
-	MsgO("Azuriram parametre")
+    MsgO("Azuriram parametre")
     set_metric("Popust", nil, gPopust )
     set_metric("PopustZadavanjemCijene", nil, gPopZCj )
     set_metric("PopustDecimale", nil, gPopDec )
@@ -459,11 +459,11 @@ set date format to "DD.MM.YY"
 BoxC()
 
 if Pitanje(,"Postaviti vrijeme i datum racunara ??","N")=="D"
-	SetDate(dSDat)
-	SetTime(cVrij)
-	// setuj i gDatum
-	gDatum := dSDat
-	return .t.
+    SetDate(dSDat)
+    SetTime(cVrij)
+    // setuj i gDatum
+    gDatum := dSDat
+    return .t.
 endif
 
 return .f.

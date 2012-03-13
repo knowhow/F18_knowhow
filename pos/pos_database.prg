@@ -38,7 +38,7 @@ if !used()
 	O_POS
 endif
 
-SELECT F_DOKS
+SELECT F_POS_DOKS
 if !used()
 	O_POS_DOKS
 endif

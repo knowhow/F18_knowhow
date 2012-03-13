@@ -14,6 +14,7 @@
 
 
 function pos_narudzba()
+
 SETKXLAT("'","-") 
 
 if gModul=="HOPS"
@@ -25,12 +26,8 @@ endif
 set key "'" to
 return
 
-/*! \fn NarudzbaH()
- *  \brief
- */
-function narudzba_hops()
-*{
 
+function narudzba_hops()
 private Opc:={}
 private opcexe:={}
 private Izbor
@@ -60,14 +57,9 @@ if gRadniRac=="D"
 endif
 
 return
-*}
 
 
-/*! \fn NarudzbaT()
- *  \brief 
- */
 function narudzba_tops()
-*{
 o_pos_narudzba()
 
 select _pos_pripr
@@ -79,17 +71,11 @@ else
 endif
 
 set key "'" to
-CLOSERET
-*}
+close all
+return
 
 
-/*! \fn DodajNaRacun(cBrojRn)
- *  \brief
- *  \param cBrojRn
- */
- 
 function DodajNaRacun(cBrojRn)
-*{
 set cursor on
 
 if cBrojRn==nil
@@ -115,16 +101,10 @@ endif
 UnesiNarudzbu(cBrojRn,_POS->Sto)
 
 return
-*}
 
 
-/*! \fn NoviRacun()
- *  \brief
- */
  
 function NoviRacun()
-*{
-
 local cBrojRn
 local cBr2 
 local cSto:=SPACE(3)
@@ -190,13 +170,8 @@ return
 
 
 
-/*! \fn PreglRadni(cBrDok)
- *  \brief
- *  \param cBrDok
- */
  
 function PreglRadni(cBrDok)
-*{
 // koristi se gDatum - uzima se da je to datum radnog racuna SIGURNO
 local nPrev:=SELECT()
 
@@ -211,12 +186,11 @@ ImeKol:={ { "Roba",         {|| IdRoba+"-"+Left (RobaNaz, 30)},},;
         }
 Kol:={1, 2, 3, 4}
 GO TOP
-ObjDBedit ( "rn2", 20, 70,, " Radni racun "+ AllTrim (cBrDok), "", nil )
+ObjDBedit ( "rn2", MAXROWS() - 4, MAXCOLS() - 3,, " Radni racun "+ AllTrim (cBrDok), "", nil )
 SET FILTER TO
 
 select _pos_pripr
 return
-*}
 
 
 // pretraga sifre po nazivu uvijek
@@ -248,17 +222,8 @@ endif
 cId := PADR( ALLTRIM(cId) + "." , 10)
 
 return
-*}
 
 
-
-/*! \fn PostRoba(cId,dx,dy,lFlag)
- *  \brief
- *  \param cId
- *  \param dx
- *  \param dy
- *  \param lFlag
- */
  
 function PostRoba(cId,dx,dy,lFlag)
 local aZabrane
@@ -334,12 +299,8 @@ endif
 
 return Vrati
 
-/*! \fn ZakljuciRacun()
- *  \brief
- */
  
 function ZakljuciRacun()
-*{
 
 if gModul=="HOPS"
 	ZakljuciRH()
@@ -347,17 +308,10 @@ else
 	ZakljuciRT()
 endif
 return
-*}
 
 
-
-/*! \fn ZakljuciRH()
- *  \brief Zakljucenje racuna u HOPS-u
- */
  
 function ZakljuciRH()
-*{
-
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -383,14 +337,9 @@ else
     	endif
 endif
 CLOSERET
-*}
 
-/*! \fn ZakljuciRT()
- *  \brief Zakljucenje racuna u TOPS-u
- */
  
 function ZakljuciRT()
-*{
 
 O__POS_PRIPR
 
@@ -402,17 +351,12 @@ if gDirZaklj=="D" .or. Pitanje(,"Zakljuciti racun? D/N", "D")=="D"
 	SveNaJedan(_pos_pripr->BrDok)
 endif
 
-CLOSERET
-*}
+close all
+return
 
 
-/*! \fn SveNaJedan(cRacBroj)
- *  \brief Zakljucenje sve na jedan racun
- *  \param cRacBroj - broj racuna
- */
  
 function SveNaJedan(cRacBroj)
-*{
 
 if cRacBroj==nil
 	cRacBroj:=SPACE(6)
@@ -545,7 +489,7 @@ if EMPTY( cTime )
 	MsgBeep("Radni racun <" + ALLTRIM (cRadRac) + "> nije zakljucen!#" + "ponovite proceduru stampanja !!!", 20)
   	
 	// ako nisam uspio azurirati racun izbrisi iz doks
-	select (F_DOKS)
+	select (F_POS_DOKS)
 	if !USED()
   		O_POS_DOKS
 	endif

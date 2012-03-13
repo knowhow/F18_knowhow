@@ -16,9 +16,9 @@
  
 function pos_sifrarnici()
 if gModul=="HOPS"
-	hops_sifrarnici()
+    hops_sifrarnici()
 else
-	tops_sifrarnici()
+    tops_sifrarnici()
 endif
 return
 
@@ -60,11 +60,11 @@ AADD(opc, "5. uredjaji za stampu")
 AADD(opcexe, {|| P_Uredj() })
 
 if gVrstaRS == "K"
-      	// metalurg ...
-      	AADD (opc, "6. uredjaji-odjeljenja")
-	AADD(opcexe, {|| NotImp() })
-      	AADD (opc, "7. robe-iznimci")
-	AADD(opcexe, {|| NotImp() })
+        // metalurg ...
+        AADD (opc, "6. uredjaji-odjeljenja")
+    AADD(opcexe, {|| NotImp() })
+        AADD (opc, "7. robe-iznimci")
+    AADD(opcexe, {|| NotImp() })
 endif
 
 Izbor:=1
@@ -96,10 +96,10 @@ AADD(opc,"8. stampa normativa")
 AADD(opcexe, {|| ISast() })
 
 if kLevel < L_UPRAVN
-    	AADD (opc,"9. statusi radnika")
-	AADD(opcexe, {|| P_StRad() })
-    	AADD (opc,"10. osoblje")
-	AADD(opcexe, {|| P_Osob() })
+        AADD (opc,"9. statusi radnika")
+    AADD(opcexe, {|| P_StRad() })
+        AADD (opc,"10. osoblje")
+    AADD(opcexe, {|| P_Osob() })
 endif
 
 Izbor:=1
@@ -134,10 +134,10 @@ AADD(opc, "9. uredjaji za stampu")
 AADD(opcexe, {|| P_Uredj() })
 
 if klevel < L_UPRAVN
-	AADD(opc,"A. statusi radnika")
-	AADD(opcexe, {|| P_StRad() })
-	AADD(opc,"B. osoblje")
-	AADD(opcexe, {|| P_Osob() })
+    AADD(opc,"A. statusi radnika")
+    AADD(opcexe, {|| P_StRad() })
+    AADD(opc,"B. osoblje")
+    AADD(opcexe, {|| P_Osob() })
 endif
 
 AADD(opc,"Z. promjena sifre PR")

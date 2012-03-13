@@ -17,13 +17,13 @@
 // -----------------------------------------------
 // -----------------------------------------------
 CLASS TPosMod FROM TAppMod
-	method New
-	method setGVars
-	method setScreen
-	method mMenu
-	method gProc
-	method initdb
-	method srv
+    method New
+    method setGVars
+    method setScreen
+    method mMenu
+    method gProc
+    method initdb
+    method srv
 END CLASS
 
 // -----------------------------------------------
@@ -54,8 +54,8 @@ do case
         self:oDatabase:vratiSez()
       CASE Ch==K_SH_F6
         IF kLevel <= L_UPRAVN
-	  self:oDatabase:logAgain(Godina_2(gDatum)+padl(month(gDatum),2,"0"),.f.,.t.)
-	EndIF
+      self:oDatabase:logAgain(Godina_2(gDatum)+padl(month(gDatum),2,"0"),.f.,.t.)
+    EndIF
       CASE Ch==K_SH_F7
         KorLoz()
 end case
@@ -75,12 +75,12 @@ Fx:=4
 Fy:=8
 
 if gSql=="D"
-	O_Log()
-	CreDIntDB()
+    O_Log()
+    CreDIntDB()
 endif
 
 if gSamoProdaja == "N"
-	cre_doksrc()
+    cre_doksrc()
 endif
 
 self:oDatabase:scan()
@@ -95,10 +95,10 @@ close all
 
 if gSql=="D"
     if gSamoProdaja=="D"
-		self:oDataBase:integ()
-	else
-		self:oDataBase:chkinteg()
-	endif
+        self:oDataBase:integ()
+    else
+        self:oDataBase:chkinteg()
+    endif
 endif
 
 SETKEY(K_SH_F1,{|| Calc()})
@@ -107,24 +107,24 @@ MsgBeep("Ukoliko je predhodni put u toku rada#bilo problema  (nestanak struje, b
 
 do while (.t.)
 
-	m_x:=Fx
+    m_x:=Fx
     m_y:=Fy
 
     KLevel:=PosPrijava(Fx, Fy)
 
     if (self:lTerminate)
-		return
-	endif
+        return
+    endif
 
-	if !PPrenosPos()
+    if !PPrenosPos()
         self:lTerminate := .t.
         return
     endif
 
-	SETPOS (Fx, Fy)
+    SETPOS (Fx, Fy)
 
     if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
-      	Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
+        Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
         loop
     endif
 
@@ -145,27 +145,27 @@ fPrviPut:=.t.
 
 do while (.t.)
 
-	m_x:=Fx
-	m_y:=Fy
-  	
-	// unesi prijavu korisnika
-  	if fPRviPut .and. gVSmjene=="N" // ne vodi vise smjena
-    	fPrviPut:=.f.
-  	else
-    	KLevel:=PosPrijava(Fx, Fy)
-    	pos_status_traka()
+    m_x:=Fx
+    m_y:=Fy
+    
+    // unesi prijavu korisnika
+    if fPRviPut .and. gVSmjene=="N" // ne vodi vise smjena
+        fPrviPut:=.f.
+    else
+        KLevel:=PosPrijava(Fx, Fy)
+        pos_status_traka()
         if !PPrenosPos()
             self:lTerminate := .t.
         endif
-  	endif
+    endif
 
-  	SETPOS (Fx, Fy)
-  	pos_main_menu_level(KLevel,Fx,Fy)
+    SETPOS (Fx, Fy)
+    pos_main_menu_level(KLevel,Fx,Fy)
 
-	if self:lTerminate
-		// zavrsi run!
-		exit
-	endif
+    if self:lTerminate
+        // zavrsi run!
+        exit
+    endif
 enddo
 
 close all
@@ -176,21 +176,21 @@ return
 function pos_main_menu_level(KLevel,Fx,Fy)
 
 do case
-	case ((KLevel==L_ADMIN).or.(KLevel==L_SYSTEM))
+    case ((KLevel==L_ADMIN).or.(KLevel==L_SYSTEM))
         pos_main_menu_admin()
     case (KLevel==L_UPRAVN)
         if !CRinitDone
-          	Msg("NIJE UNIJETO POCETNO STANJE SMJENE!!!", 10)
-       	endif
-       	SETPOS(Fx, Fy)
-       	pos_main_menu_upravnik()
+            Msg("NIJE UNIJETO POCETNO STANJE SMJENE!!!", 10)
+        endif
+        SETPOS(Fx, Fy)
+        pos_main_menu_upravnik()
     case (KLevel==L_PRODAVAC)
         if gVrstaRS<>"S"
             SETPOS(Fx,Fy)
-          	pos_main_menu_prodavac()
-       	else
-          	MsgBeep("Na serveru ne mozete izdavati racune")
-       	endif
+            pos_main_menu_prodavac()
+        else
+            MsgBeep("Na serveru ne mozete izdavati racune")
+        endif
 endcase
 
 return
@@ -204,30 +204,30 @@ method srv()
 ? "Pokrecem POS: Applikacion server"
 
 if (mpar37("/IMPROBA",goModul))
-	if LEFT(self:cP5,3)=="/S="
-		AzurSifIzFmk(nil, .t., SUBSTR(self:cP5,4))
-		goModul:quit()
-	endif
+    if LEFT(self:cP5,3)=="/S="
+        AzurSifIzFmk(nil, .t., SUBSTR(self:cP5,4))
+        goModul:quit()
+    endif
 endif
 
 if (mpar37("/REAL2KALK", goModul))
 
-	if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
-		// automatski prenos real.u KALK
-		// (D1, D2)
-		AutoReal2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
-		goModul:quit()
-	endif
+    if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
+        // automatski prenos real.u KALK
+        // (D1, D2)
+        AutoReal2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
+        goModul:quit()
+    endif
 endif
 
 if (mpar37("/REK2KALK", goModul))
 
-	if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
-		// automatski prenos rekl.u KALK
-		// (D1, D2)
-		AutoRek2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
-		goModul:quit()
-	endif
+    if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
+        // automatski prenos rekl.u KALK
+        // (D1, D2)
+        AutoRek2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
+        goModul:quit()
+    endif
 endif
 
 return
@@ -468,7 +468,7 @@ gRnInfo := fetch_metric("RacunInfo", nil, gRnInfo)
 
 gServerPath := ALLTRIM( gServerPath )
 if (RIGHT(gServerPath,1) <> SLASH)
-	gServerPath += SLASH
+    gServerPath += SLASH
 endif
 
 // principi rada kase
@@ -546,7 +546,7 @@ public gPVrsteP := .f.
 gPVrsteP := fetch_metric("AzuriranjePrometaPoVP", nil, gPVrsteP)
 
 if (gVrstaRS=="S")
-	gIdPos := Space(LEN(gIdPos))
+    gIdPos := Space(LEN(gIdPos))
 endif
 
 public gSQLKom
@@ -573,28 +573,28 @@ public glPorezNaSvakuStavku := .f.
 public glPorNaSvStRKas := .f.
 
 if (!self:oDatabase:lAdmin .and. gVrstaRS<>"S")
-	O_KASE
-  	set order to tag "ID"
-  	HSEEK gIdPos
-  	if FOUND()
-		gPosNaz:=AllTrim(KASE->Naz)
-  	else
-   		gPosNaz:="SERVER"
-  	endif
-  	O_DIO
-  	set order to tag "ID"
-  	HSEEK gIdDio
-  	if FOUND()
-  		gDioNaz := AllTrim (DIO->Naz)
-  	else
-  		gDioNaz:=""
-  	endif
-  	close all
+    O_KASE
+    set order to tag "ID"
+    HSEEK gIdPos
+    if FOUND()
+        gPosNaz:=AllTrim(KASE->Naz)
+    else
+        gPosNaz:="SERVER"
+    endif
+    O_DIO
+    set order to tag "ID"
+    HSEEK gIdDio
+    if FOUND()
+        gDioNaz := AllTrim (DIO->Naz)
+    else
+        gDioNaz:=""
+    endif
+    close all
 endif
 
 //  odredi naziv domace valute
 if (!self:oDatabase:lAdmin) 
-	SetNazDVal()
+    SetNazDVal()
 endif
 
 SetBoje( gVrstaRS )

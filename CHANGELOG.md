@@ -1,3 +1,8 @@
+0.9.63 2012-03-11, vsasa
+
+  - kontrola integriteta podataka fmk [#27063](http://redmine.bring.out.ba/issues/27063)
+  - modul POS, cišćenje, semafori [#27077](http://redmine.bring.out.ba/issues/27077)
+
 0.9.62 2012-03-07, vsasa
 
   - modul MAT, korekcija početnog stanja i proširenje polja rbr [#26989](http://redmine.bring.out.ba/issues/26989)

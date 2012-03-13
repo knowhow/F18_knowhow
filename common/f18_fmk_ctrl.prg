@@ -20,22 +20,61 @@ local _a_sif := {}
 local _a_data := {}
 local _a_ctrl := {} 
 local _chk_sif := .f.
+local _c_sif := "N"
+local _c_fin := "D"
+local _c_kalk := "D"
+local _c_fakt := "D"
+local _c_ld := "D"
+local _c_pdv := "D"
 
-if Pitanje(, "Provjera sifrarnika (D/N) ?", "N") == "D"
-    _chk_sif := .t.
+Box(, 6, 50 )
+
+    @ m_x + 1, m_y + 2 SAY "Provjeri sifrarnik ?" GET _c_sif VALID _c_sif $ "DN" PICT "@!"
+    @ m_x + 2, m_y + 2 SAY "      Provjeri fin ?" GET _c_fin VALID _c_fin $ "DN" PICT "@!"
+    @ m_x + 3, m_y + 2 SAY "     Provjeri fakt ?" GET _c_fakt VALID _c_fakt $ "DN" PICT "@!"
+    @ m_x + 4, m_y + 2 SAY "     Provjeri kalk ?" GET _c_kalk VALID _c_kalk $ "DN" PICT "@!"
+    @ m_x + 5, m_y + 2 SAY "       Provjeri ld ?" GET _c_ld VALID _c_ld $ "DN" PICT "@!"
+    @ m_x + 6, m_y + 2 SAY "     Provjeri epdv ?" GET _c_pdv VALID _c_pdv $ "DN" PICT "@!"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return
 endif
 
 // provjeri sifrarnik
-if _chk_sif == .t.
+if _c_sif == "D"
     f18_sif_data( @_a_sif, @_a_ctrl )
 endif
 
 // provjeri fin
-f18_fin_data( @_a_data, @_a_ctrl )
+if _c_fin == "D"
+    f18_fin_data( @_a_data, @_a_ctrl )
+endif
+
 // provjeri kalk
-f18_kalk_data( @_a_data, @_a_ctrl )
+if _c_kalk == "D"
+    f18_kalk_data( @_a_data, @_a_ctrl )
+endif
+
 // provjeri fakt
-f18_fakt_data( @_a_data, @_a_ctrl )
+if _c_fakt == "D"
+    f18_fakt_data( @_a_data, @_a_ctrl )
+endif
+
+// provjeri ld
+if _c_ld == "D"
+    f18_ld_data( @_a_data, @_a_ctrl )
+endif
+
+// provjeri epdv
+if _c_pdv == "D"
+    f18_epdv_data( @_a_data, @_a_ctrl )
+endif
+
+
 
 // prikazi rezultat testa
 f18_pr_rezultat( _a_ctrl, _a_data, _a_sif )
@@ -129,6 +168,132 @@ endif
 return
 
 // -----------------------------------------
+// provjera ld
+// -----------------------------------------
+static function f18_ld_data( data, checksum )
+local _n_c_iznos := 0
+local _n_c_stavke := 0
+
+O_LD
+
+Box(, 2, 60 )
+
+select ld
+set order to tag "1"
+go top
+
+do while !EOF()
+    
+    if EMPTY( field->idrj )
+        skip
+        loop    
+    endif
+
+    _dok := field->idrj + ", " + STR( field->godina, 4 ) + ", " + STR( field->mjesec, 2 ) + ", " + field->idradn
+    
+    @ m_x + 1, m_y + 2 SAY "ld stavka: " + _dok
+
+    // kontrolni broj
+    ++ _n_c_stavke
+    _n_c_iznos += ( field->uneto + field->i01 )
+
+    skip
+
+enddo
+
+BoxC()
+
+if _n_c_stavke > 0
+    AADD( checksum, { "ld data", _n_c_stavke, _n_c_iznos } )
+endif
+
+return
+
+
+// -----------------------------------------
+// provjera epdv
+// -----------------------------------------
+static function f18_epdv_data( data, checksum )
+local _n_c_iznos := 0
+local _n_c_stavke := 0
+
+O_KIF
+O_KUF
+
+Box(, 2, 60 )
+
+select kuf
+set order to tag "1"
+go top
+
+do while !EOF()
+    
+    if EMPTY( STR( field->br_dok, 10 ) )
+        skip
+        loop    
+    endif
+
+    _dok := STR( field->br_dok, 10 )
+    
+    @ m_x + 1, m_y + 2 SAY "kuf dokument: " + _dok
+
+    // kontrolni broj
+    ++ _n_c_stavke
+    _n_c_iznos += ( field->i_b_pdv + field->i_pdv )
+
+    skip
+
+enddo
+
+BoxC()
+
+if _n_c_stavke > 0
+    AADD( checksum, { "kuf data", _n_c_stavke, _n_c_iznos } )
+endif
+
+_n_c_stavke := 0
+_n_c_iznos := 0
+
+Box(, 2, 60 )
+
+select kif
+set order to tag "1"
+go top
+
+do while !EOF()
+    
+    if EMPTY( STR( field->br_dok, 10 ) )
+        skip
+        loop    
+    endif
+
+    _dok := STR( field->br_dok, 10 )
+    
+    @ m_x + 1, m_y + 2 SAY "kif dokument: " + _dok
+
+    // kontrolni broj
+    ++ _n_c_stavke
+    _n_c_iznos += ( field->i_b_pdv + field->i_pdv )
+
+    skip
+
+enddo
+
+BoxC()
+
+if _n_c_stavke > 0
+    AADD( checksum, { "kif data", _n_c_stavke, _n_c_iznos } )
+endif
+
+return
+
+
+
+
+
+
+
+// -----------------------------------------
 // provjera kalk
 // -----------------------------------------
 static function f18_kalk_data( data, checksum )
@@ -213,6 +378,7 @@ return
 function f18_sif_data( data, checksum )
 
 O_ROBA
+O_RADN
 O_PARTN
 O_KONTO
 O_TRFP
@@ -221,25 +387,31 @@ O_VALUTE
 O_KONCIJ
 
 select roba
-set order to tag "1"
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )
 
 select partn
-set order to tag "1"
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )
 
 select konto
-set order to tag "1"
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )
 
 select ops
-set order to tag "1"
+set order to tag "ID"
+go top
+
+f18_sif_check( @data, @checksum )
+
+select radn
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )

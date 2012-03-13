@@ -283,7 +283,7 @@ LOCAL cbsstara:=ShemaBoja("B1")
              6+j+3,1,6+j+7,78,"IZBOR SETA CIJENA","B1")
  Prozor0()
  ShemaBoja(cbsstara)
- PrikStatus()
+ pos_status_traka()
 return
 *}
 
@@ -605,25 +605,27 @@ endif
 
 return 0
 
-/*! \fn PrikStatus()
- *  \brief
- */
- 
-function PrikStatus()
-*{
 
-@ 1, 0 SAY "RADI:"+PADR(LTRIM(gKorIme),31)+" SMJENA:"+gSmjena+" CIJENE:"+gIdCijena+" DATUM:"+DTOC(gDatum)+IF(gVrstaRS=="S","   SERVER  "," KASA-PM:"+gIdPos)
+// ...........................................
+// prikazuje status pos modula... 
+// ...........................................
+function pos_status_traka()
+local _x := MAXROWS() - 3
+local _y := 0
 
-IF gIdPos=="X "
-	@ 23, 0 SAY PADC("$$$ --- PRODAJNO MJESTO X ! --- $$$",80,"±")
-ELSE
-	@ 23, 0 SAY REPLICATE("±",80)
-ENDIF
+@ 1, _y + 1 SAY "RADI:"+PADR(LTRIM(gKorIme),31)+" SMJENA:"+gSmjena+" CIJENE:"+gIdCijena+" DATUM:"+DTOC(gDatum)+IF(gVrstaRS=="S","   SERVER  "," KASA-PM:"+gIdPos)
 
-@ 22,1 SAY PADC ( Razrijedi (gKorIme), 78) COLOR INVERT
+if gIdPos=="X "
+	@ _x, _y + 1 SAY PADC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", MAXCOLS() - 2, "±" )
+else
+	@ _x, _y + 1 SAY REPLICATE( "±", MAXCOLS() - 2 )
+endif
+
+@ _x - 1, _y + 1 SAY PADC ( Razrijedi (gKorIme), MAXCOLS() - 2 ) COLOR INVERT
 
 return
-*}
+
+
 
 /*! \fn SetBoje(gVrstaRS)
  *  \brief

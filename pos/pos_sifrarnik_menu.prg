@@ -148,4 +148,7 @@ o_pos_sifre()
 Izbor:=1
 Menu_SC("sift")
 
+return
+
+
 

@@ -14,38 +14,36 @@
 
 
 function pos_parametri()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc,"1. podaci kase                    ")
-AADD(opcexe,{|| pos_param_podaci_kase()})
-AADD(opc,"2. principi rada")
-AADD(opcexe,{|| pos_param_principi_rada()})
-AADD(opc,"3. izgled racuna")
-AADD(opcexe,{|| pos_param_izgled_racuna()})
-AADD(opc,"4. cijene")
-AADD(opcexe,{|| pos_param_cijene()})
-AADD(opc,"5. postavi vrijeme i datum kase")
-AADD(opcexe,{|| pos_postavi_datum()})
-AADD(opc,"6. podaci firme")
-AADD(opcexe,{|| pos_param_firma()})
-AADD(opc,"7. fiskalni parametri")
-AADD(opcexe,{|| fiscal_params_set()})
+AADD(_opc,"1. podaci kase                    ")
+AADD(_opcexe,{|| pos_param_podaci_kase()})
+AADD(_opc,"2. principi rada")
+AADD(_opcexe,{|| pos_param_principi_rada()})
+AADD(_opc,"3. izgled racuna")
+AADD(_opcexe,{|| pos_param_izgled_racuna()})
+AADD(_opc,"4. cijene")
+AADD(_opcexe,{|| pos_param_cijene()})
+AADD(_opc,"5. postavi vrijeme i datum kase")
+AADD(_opcexe,{|| pos_postavi_datum()})
+AADD(_opc,"6. podaci firme")
+AADD(_opcexe,{|| pos_param_firma()})
+AADD(_opc,"7. fiskalni parametri")
+AADD(_opcexe,{|| fiscal_params_set()})
+AADD(_opc,"8. podesenja organizacije")
+AADD(_opcexe,{|| org_params()})
 
-Menu_SC("par")
+f18_menu("par", .f., _izbor, _opc, _opcexe )
+
 return .f.
 
 
 
-/*! \fn pos_param_podaci_kase()
- *  \brief Podesavanje osnovnih podataka o kasi
- */
-
 function pos_param_podaci_kase()
 local aNiz:={}
 local cPom:=""
-
 private cIdPosOld:=gIdPos
 private cHistory:=" "
 private aHistory:={}
@@ -90,28 +88,28 @@ VarEdit(aNiz,2,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
 // Upisujem nove parametre
 if LASTKEY()<>K_ESC
 	MsgO("Azuriram parametre PZ")
-    	f18_set_metric("VrstaRadneStanice",gVrstaRS )
-    	f18_set_metric("IDPos",gIdPos )
-    	f18_set_metric("ZasebneCjelineObjekta",gPostDO )
-    	f18_set_metric("OznakaDijelaObjekta",gIdDio )
-    	f18_set_metric("PutanjaServera",gServerPath )     // pathove ne diraj
-    	f18_set_metric("KalkDestinacija",gKalkDest )       // pathove ne diraj
-    	f18_set_metric("ModemskaVeza",gModemVeza )
-    	f18_set_metric("KoristitiDirektorijProvjere",gUseChkDir ) // koristi chk direktorij
-    	f18_set_metric("OznakaLokalnogPorta",gLocPort )
-    	f18_set_metric("OznakaGotovinskogPlacanja",gGotPlac )
-    	f18_set_metric("OznakaDugPlacanja",gDugPlac )
-    	f18_set_metric("StranaValuta",gStrValuta )
-    	f18_set_metric("PodesenjaNonsens",gColleg )
-    	f18_set_metric("AzurirajUPomocnuBazu",gDuplo )
-    	f18_set_metric("KumulativPomocneBaze",trim(gDuploKum) ) // pathove ne diraj
-    	f18_set_metric("SifrarnikPomocneBaze",trim(gDuploSif) ) // pathove ne diraj
-    	f18_set_metric("FMKSifrarnik",trim(gFmkSif) )   // pathove ne diraj
-    	f18_set_metric("RNALSifrarnik",trim(gRNALSif) )   // pathove ne diraj
-    	f18_set_metric("RNALKumulativ",trim(gRNALKum) )   // pathove ne diraj
-    	f18_set_metric("DuzinaSifre",gDuzSifre )
-    	f18_set_metric("OperativniSistem",gOperSys )
-    	MsgC()
+    set_metric("VrstaRadneStanice", nil, gVrstaRS )
+    set_metric("IDPos", nil, gIdPos )
+    set_metric("ZasebneCjelineObjekta", nil, gPostDO )
+    set_metric("OznakaDijelaObjekta", nil, gIdDio )
+    set_metric("PutanjaServera", nil, gServerPath )     // pathove ne diraj
+    set_metric("KalkDestinacija", nil, gKalkDest )       // pathove ne diraj
+    set_metric("ModemskaVeza", nil, gModemVeza )
+    set_metric("KoristitiDirektorijProvjere", nil, gUseChkDir ) // koristi chk direktorij
+    set_metric("OznakaLokalnogPorta", nil, gLocPort )
+    set_metric("OznakaGotovinskogPlacanja", nil, gGotPlac )
+    set_metric("OznakaDugPlacanja", nil, gDugPlac )
+    set_metric("StranaValuta", nil, gStrValuta )
+    set_metric("PodesenjaNonsens", nil, gColleg )
+    set_metric("AzurirajUPomocnuBazu", nil, gDuplo )
+    set_metric("KumulativPomocneBaze", nil, trim(gDuploKum) ) // pathove ne diraj
+    set_metric("SifrarnikPomocneBaze", nil, trim(gDuploSif) ) // pathove ne diraj
+    set_metric("FMKSifrarnik", nil, trim(gFmkSif) )   // pathove ne diraj
+    set_metric("RNALSifrarnik", nil, trim(gRNALSif) )   // pathove ne diraj
+    set_metric("RNALKumulativ", nil, trim(gRNALKum) )   // pathove ne diraj
+    set_metric("DuzinaSifre", nil, gDuzSifre )
+    set_metric("OperativniSistem", nil, gOperSys )
+    MsgC()
 endif
 
 gServerPath := ALLTRIM(gServerPath)
@@ -147,19 +145,18 @@ VarEdit(aNiz,7,2,24,78,"PODACI FIRME I RACUNA","B1")
 // Upisujem nove parametre
 if LASTKEY()<>K_ESC
 
-		MsgO("Azuriram parametre PZ")
+	MsgO("Azuriram parametre PZ")
+    set_metric("pos_header_org_naziv", nil, gFirNaziv)
+    set_metric("pos_header_org_adresa", nil, gFirAdres)
+    set_metric("pos_header_org_id_broj", nil, gFirIdBroj)
+    set_metric("pos_header_pm", nil, gFirPM)
+    set_metric("pos_header_mjesto", nil, gRnMjesto)
+    set_metric("pos_header_telefon", nil, gFirTel)
+    set_metric("pos_header_txt_1", nil, gRnPTxt1)
+    set_metric("pos_header_txt_2", nil, gRnPTxt2)
+    set_metric("pos_header_txt_3", nil, gRnPTxt3)
 
-    	f18_set_metric("RacunNaziv",gFirNaziv )
-    	f18_set_metric("RacunAdresa",gFirAdres )
-    	f18_set_metric("RacunIdBroj",gFirIdBroj )
-    	f18_set_metric("RacunProdajnoMjesto",gFirPM )
-    	f18_set_metric("RacunMjestoNastankaRacuna",gRnMjesto )
-    	f18_set_metric("RacunTelefon",gFirTel )
-    	f18_set_metric("RacunDodatniTekst1",gRnPTxt1 )
-    	f18_set_metric("RacunDodatniTekst2",gRnPTxt2 )
-    	f18_set_metric("RacunDodatniTekst3",gRnPTxt3 )
-    	
-		MsgC()
+	MsgC()
 
 endif
 
@@ -206,14 +203,14 @@ AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje puktova (D/N)" , "gSt
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - UGOSTITELJSTVO","B1")
 
 if LASTKEY() <> K_ESC
-		MsgO("Azuriram parametre")
-    	f18_set_metric("VodiTrebovanja",gVodiTreb )
-    	f18_set_metric("DirektnoZakljucivanjeRacuna",@gDirZaklj )
-    	f18_set_metric("RacunSpecifOpcije",@gRnSpecOpc )
-		f18_set_metric("RadniRacuni",@gRadniRac )
-    	f18_set_metric("BrojStolova",@gBrojSto )
-    	f18_set_metric("StampanjePunktova",@gStamStaPun )
-    	MsgC()
+	MsgO("Azuriram parametre")
+    set_metric("VodiTrebovanja", nil, gVodiTreb )
+    set_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj )
+    set_metric("RacunSpecifOpcije", nil, gRnSpecOpc )
+	set_metric("RadniRacuni", nil, gRadniRac )
+    set_metric("BrojStolova", nil, gBrojSto )
+    set_metric("StampanjePunktova", nil, gStamStaPun )
+    MsgC()
 endif
 
 return
@@ -270,37 +267,37 @@ AADD (aNiz, {"Nakon stampe ispis informacija o racunu (D/N)? " , "gRnInfo", "gRn
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 
 if LASTKEY()<>K_ESC
-		MsgO("Azuriram parametre")
-    	f18_set_metric("VodiTrebovanja",gVodiTreb)
-    	if (!IsPlanika())
-			f18_set_metric("AzuriranjeCijena",gZadCij)
-    	endif
-		f18_set_metric("VodiOdjeljenja",gVodiOdj)
-		f18_set_metric("Stolovi",@gStolovi)
-		f18_set_metric("DirektnoZakljucivanjeRacuna",@gDirZaklj)
-    	f18_set_metric("RacunSpecifOpcije",@gRnSpecOpc)
-		f18_set_metric("RadniRacuni",@gRadniRac)
-    	f18_set_metric("BrojStolova",@gBrojSto)
-    	f18_set_metric("DupliArtikli",@gDupliArt)
-    	f18_set_metric("DupliUnosUpozorenje",@gDupliUpoz)
-    	f18_set_metric("PratiStanjeRobe",@gPratiStanje )
-   		f18_set_metric("PratiPocetnoStanjeSmjene",@gPocStaSmjene )
-    	f18_set_metric("StampanjePazara",@gStamPazSmj )
-    	f18_set_metric("StampanjePunktova",@gStamStaPun )
-    	f18_set_metric("VoditiPoSmjenama",@gVsmjene )
-    	f18_set_metric("TipSezone",@gSezonaTip )
-    	f18_set_metric("UpravnikIspravljaCijene",@gSifUpravn )
-    	f18_set_metric("DisplejOpcije",@gDisplay )
-    	f18_set_metric("BarkodEnter",@gEntBarCod )
-		f18_set_metric("UpitZaNacinPlacanja",@gUpitNP )
-    	f18_set_metric("EvidentiranjeVrstaPlacanja",@gEvidPl )
-    	f18_set_metric("SlobodniProstorDiska",@gDiskFree )
-    	f18_set_metric("PretragaArtiklaPoNazivu",@gSifUvPoNaz )
-    	f18_set_metric("RacunInfo",@gRnInfo )
-		if IsPDV()
-    		f18_set_metric("StampatiPoreskeFakture",@gPorFakt )
-		endif
-    	MsgC()
+	MsgO("Azuriram parametre")
+    set_metric("VodiTrebovanja", nil, gVodiTreb)
+    if (!IsPlanika())
+		set_metric("AzuriranjeCijena", nil, gZadCij)
+    endif
+	set_metric("VodiOdjeljenja", nil, gVodiOdj)
+	set_metric("Stolovi", nil, gStolovi)
+	set_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj)
+    set_metric("RacunSpecifOpcije", nil, gRnSpecOpc)
+	set_metric("RadniRacuni", nil, gRadniRac)
+    set_metric("BrojStolova", nil, gBrojSto)
+    set_metric("DupliArtikli", nil, gDupliArt)
+    set_metric("DupliUnosUpozorenje", nil, gDupliUpoz)
+    set_metric("PratiStanjeRobe", nil, gPratiStanje )
+   	set_metric("PratiPocetnoStanjeSmjene", nil, gPocStaSmjene )
+    set_metric("StampanjePazara", nil, gStamPazSmj )
+    set_metric("StampanjePunktova", nil, gStamStaPun )
+    set_metric("VoditiPoSmjenama", nil, gVsmjene )
+    set_metric("TipSezone", nil, gSezonaTip )
+    set_metric("UpravnikIspravljaCijene", nil, gSifUpravn )
+    set_metric("DisplejOpcije", nil, gDisplay )
+    set_metric("BarkodEnter", nil, gEntBarCod )
+	set_metric("UpitZaNacinPlacanja", nil, gUpitNP )
+    set_metric("EvidentiranjeVrstaPlacanja", nil, gEvidPl )
+   	set_metric("SlobodniProstorDiska", nil, gDiskFree )
+    set_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
+    set_metric("RacunInfo", nil, gRnInfo )
+	if IsPDV()
+    	set_metric("StampatiPoreskeFakture", nil, gPorFakt )
+	endif
+    MsgC()
 endif
 
 return
@@ -309,29 +306,45 @@ return
 
 
 function gVodiOdj(gVodiOdj)
+local _rec
+
 if gVodiOdj=="0"
-	if Pitanje(,"Nulirati sifre odjeljenja ","N")=="D"
-    		Pushwa()
-    		O_POS
+
+    if Pitanje(,"Nulirati sifre odjeljenja ","N")=="D"
+
+    	Pushwa()
+
+    	O_POS
 		set order to 0
 		go top
-    		do while !eof()
-      			replace idodj with "", iddio with "0"
-      			skip
-    		enddo
-    		use
-    		O_ROBA
+
+    	do while !eof()
+            _rec := dbf_get_rec()
+            _rec["idodj"] := ""
+            _rec["iddio"] := "0"
+            update_rec_server_and_dbf( ALIAS(), _rec )
+      		skip
+    	enddo
+
+    	use
+    	O_ROBA
+
 		set order to 0
 		go top
-    		do while !eof()
-      			replace idodj with ""
-      			skip
-    		enddo
-    		use
-    		PopWa()
+    	do while !eof()
+            _rec := dbf_get_rec()
+            _rec["idodj"] := ""
+            update_rec_server_and_dbf( ALIAS(), _rec )
+      		skip
+    	enddo
+    	use
+    	PopWa()
 	endif
+
   	gVodiOdj:="N"
+
 endif
+
 if gVodiOdj$"DN"
 	return .t.
 endif
@@ -366,16 +379,16 @@ VarEdit(aNiz,9,1,19,78,"PARAMETRI RADA PROGRAMA - IZGLED RACUNA","B1")
 
 if LASTKEY()<>K_ESC
 	MsgO("Azuriram parametre")
-  	f18_set_metric("PorezniRaster", gPoreziRaster )
-  	f18_set_metric("BrojLinijaZaKrajRacuna", nFeedLines )
-  	f18_set_metric("SekvencaSjeciTraku", gSjeciStr )
-  	f18_set_metric("SekvencaOtvoriLadicu", gOtvorStr )
-  	f18_set_metric("RacunCijenaSaPDV", grbCjen )
-	f18_set_metric("RacunStampaIDArtikla", grbStId )
-	f18_set_metric("RacunRedukcijaTrake", grbReduk )
-  	f18_set_metric("RacunHeader", gRnHeder )
-  	f18_set_metric("IzgledZaglavlja", gZagIz )
-  	f18_set_metric("RacunFooter", gRnFuter )
+  	set_metric("PorezniRaster", nil, gPoreziRaster )
+  	set_metric("BrojLinijaZaKrajRacuna", nil, nFeedLines )
+  	set_metric("SekvencaSjeciTraku", nil, gSjeciStr )
+  	set_metric("SekvencaOtvoriLadicu", nil, gOtvorStr )
+  	set_metric("RacunCijenaSaPDV", nil, grbCjen )
+	set_metric("RacunStampaIDArtikla", nil, grbStId )
+	set_metric("RacunRedukcijaTrake", nil, grbReduk )
+  	set_metric("RacunHeader", nil, gRnHeder )
+  	set_metric("IzgledZaglavlja", nil, gZagIz )
+  	set_metric("RacunFooter", nil, gRnFuter )
 	MsgC()
 endif
 
@@ -415,15 +428,15 @@ VarEdit(aNiz,9,2,18,78,"PARAMETRI RADA PROGRAMA - CIJENE","B1")
 O_PARAMS
 
 if LASTKEY()<>K_ESC
-		MsgO("Azuriram parametre")
-    	f18_set_metric("Popust",gPopust )
-    	f18_set_metric("PopustZadavanjemCijene",gPopZCj )
-    	f18_set_metric("PopustDecimale",gPopDec )
-    	f18_set_metric("PopustVarijanta",gPopVar )
-    	f18_set_metric("PopustProcenat",gPopProc )
-    	f18_set_metric("PopustIznos",gPopIzn )
-    	f18_set_metric("PopustVrijednostProcenta",gPopIznP )
-    	MsgC()
+	MsgO("Azuriram parametre")
+    set_metric("Popust", nil, gPopust )
+    set_metric("PopustZadavanjemCijene", nil, gPopZCj )
+    set_metric("PopustDecimale", nil, gPopDec )
+    set_metric("PopustVarijanta", nil, gPopVar )
+    set_metric("PopustProcenat", nil, gPopProc )
+    set_metric("PopustIznos", nil, gPopIzn )
+    set_metric("PopustVrijednostProcenta", nil, gPopIznP )
+    MsgC()
 endif
 
 return

@@ -25,10 +25,6 @@ if ( set_params == nil )
     set_params := .t.
 endif
 
-if ( gModul $ "#TOPS#HOPS#" )
-    return .t.
-endif   
-
 // setuj pdv parametre
 set_pdv_params()
 
@@ -102,9 +98,9 @@ return .t.
 // ----------------------------------------------------
 function set_pdv_params()
 
-if gModul $ "#TOPS#HOPS#"
-    return .t.
-endif 
+//if gModul $ "#TOPS#HOPS#"
+//    return .t.
+//endif 
 
 gPDV := fetch_metric( "pdv_global", nil, gPDV )
 ParPDV()
@@ -153,11 +149,7 @@ public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
 public gNovine := "N"
 
-if gModul<>"TOPS"
-    if goModul:oDataBase:cRadimUSezona == "RADP"
-        SetPDVBoje()
-    endif
-endif
+SetPDVBoje()
 
 return
 

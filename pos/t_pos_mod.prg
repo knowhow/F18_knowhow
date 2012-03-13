@@ -94,7 +94,7 @@ f_init_db()
 close all
 
 if gSql=="D"
-	if gSamoProdaja=="D"
+    if gSamoProdaja=="D"
 		self:oDataBase:integ()
 	else
 		self:oDataBase:chkinteg()
@@ -106,32 +106,40 @@ SETKEY(K_SH_F1,{|| Calc()})
 MsgBeep("Ukoliko je predhodni put u toku rada#bilo problema  (nestanak struje, blokirao racunar...),## kucajte lozinku IB, pa <ENTER> !")
 
 do while (.t.)
+
 	m_x:=Fx
-      	m_y:=Fy
-      	KLevel:=PosPrijava(Fx, Fy)
-      	if (self:lTerminate)
+    m_y:=Fy
+
+    KLevel:=PosPrijava(Fx, Fy)
+
+    if (self:lTerminate)
 		return
 	endif
+
 	if !PPrenosPos()
-        	self:lTerminate := .t.
-                return
-        endif
+        self:lTerminate := .t.
+        return
+    endif
 
 	SETPOS (Fx, Fy)
-      	if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
-      		Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
-        	loop
-      	endif
-      	if gVsmjene=="N"
-        	gSmjena:="1"
-        	OdrediSmjenu(.f.)
-      	else
-        	OdrediSmjenu(.t.) 
-      	endif
-      	exit
+
+    if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
+      	Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
+        loop
+    endif
+
+    if gVsmjene=="N"
+        gSmjena:="1"
+        OdrediSmjenu(.f.)
+    else
+        OdrediSmjenu(.t.) 
+    endif
+
+    exit
+
 enddo
 
-PrikStatus()
+pos_status_traka()
 SETPOS(Fx, Fy)
 fPrviPut:=.t.
 
@@ -142,14 +150,15 @@ do while (.t.)
   	
 	// unesi prijavu korisnika
   	if fPRviPut .and. gVSmjene=="N" // ne vodi vise smjena
-    		fPrviPut:=.f.
+    	fPrviPut:=.f.
   	else
-    		KLevel:=PosPrijava(Fx, Fy)
-    		PrikStatus()
-                if !PPrenosPos()
-                    self:lTerminate := .t.
-                endif
+    	KLevel:=PosPrijava(Fx, Fy)
+    	pos_status_traka()
+        if !PPrenosPos()
+            self:lTerminate := .t.
+        endif
   	endif
+
   	SETPOS (Fx, Fy)
   	pos_main_menu_level(KLevel,Fx,Fy)
 
@@ -159,31 +168,34 @@ do while (.t.)
 	endif
 enddo
 
-CLOSE ALL
+close all
 
 return
+
 
 function pos_main_menu_level(KLevel,Fx,Fy)
 
 do case
 	case ((KLevel==L_ADMIN).or.(KLevel==L_SYSTEM))
-        	pos_main_menu_admin()
-        case (KLevel==L_UPRAVN)
-        	if !CRinitDone
-          		Msg("NIJE UNIJETO POCETNO STANJE SMJENE!!!", 10)
-       		endif
-       		SETPOS(Fx, Fy)
-       		pos_main_menu_upravnik()
-        case (KLevel==L_PRODAVAC)
-            if gVrstaRS<>"S"
-          		SETPOS(Fx,Fy)
-          		pos_main_menu_prodavac()
-       		else
-          		MsgBeep("Na serveru ne mozete izdavati racune")
-       		endif
+        pos_main_menu_admin()
+    case (KLevel==L_UPRAVN)
+        if !CRinitDone
+          	Msg("NIJE UNIJETO POCETNO STANJE SMJENE!!!", 10)
+       	endif
+       	SETPOS(Fx, Fy)
+       	pos_main_menu_upravnik()
+    case (KLevel==L_PRODAVAC)
+        if gVrstaRS<>"S"
+            SETPOS(Fx,Fy)
+          	pos_main_menu_prodavac()
+       	else
+          	MsgBeep("Na serveru ne mozete izdavati racune")
+       	endif
 endcase
 
 return
+
+
 
 // ------------------------------------------------------
 // ------------------------------------------------------
@@ -231,31 +243,6 @@ NaslEkran(.t.)
 return
 
 
-function pos_pdv_parametri()
-
-f18_get_metric("PDVGlobal", @gPDV )
-
-lSql := .f.
-if gSQL == "D"
-	lSql := .t.
-	gSQL := "N"
-endif
-
-ParPDV()
-
-f18_set_metric("PDVGlobal", gPDV )
-
-if lSql
-	gSQL := "D"
-endif
-
-if goModul:oDataBase:cRadimUSezona == "RADP"
-	SetPDVBoje()
-endif
-
-return
-
-
 
 // ---------------------------------------------
 // ---------------------------------------------
@@ -263,8 +250,6 @@ method setGVars()
 
 set_global_vars()
 set_roba_global_vars()
-
-pos_pdv_parametri()
 
 // gPrevIdPos - predhodna vrijednost gIdPos
 public gPrevIdPos:="  "
@@ -389,7 +374,7 @@ SC_Opisi [3] := "3"
 SC_Opisi [4] := "4"
 SC_Opisi [5] := "5"
 
-gDatum:=DATE()
+gDatum := DATE()
 
 public gIdCijena:= "1"
 public gPopust:= 0
@@ -399,32 +384,15 @@ public gPopZcj:= "N"
 public gZadCij:= "N"
 public gPopProc:= "N"
 public gIsPopust:=.f.
-
-public gKolDec
-gKolDec:=INT(VAL(IzFmkIni("TOPS","KolicinaDecimala","2",KUMPATH)))
-public gCijDec
-gCijDec:=INT(VAL(IzFmkIni("TOPS","CijenaDecimala","2",KUMPATH)))
-
-public gStariObrPor
-if IzFmkIni("POS","StariObrPor","N",EXEPATH)=="D"
-	gStariObrPor:=.t.
-else
-	gStariObrPor:=.f.
-endif
-
-public gClanPopust
-if IzFmkIni("TOPS","Clanovi","N",PRIVPATH)=="D"
-	gClanPopust:=.t.
-else
-	gClanPopust:=.f.
-endif
-
+public gKolDec := 2
+public gCijDec := 2
+public gStariObrPor := .f.
+public gClanPopust := .f.
 public gPoreziRaster:="D"
 public gPratiStanje:="N"
 public gIdPos:="1 "
 public gPostDO:="N"
 public gIdDio:="  "
-
 public nFeedLines:=6
 public gPocStaSmjene:="N"
 public gStamPazSmj:="D"
@@ -432,26 +400,17 @@ public gStamStaPun:="D"
 public CRinitDone:=.t.
 public gVrstaRS:="A"
 public gEvidPl:="N"
-
 public gGotPlac:="01"
 public gDugPlac:="DP"
-
-public gSifPath:=SIFPATH
-public LocSIFPATH:=SIFPATH
-public gServerPath
-
-gServerPath := PADR(ToUnix("i:\sigma",40))
-
-public gKalkDEST
-gKalkDEST := PADR(ToUnix("a:\",20))
-
+public gSifPath := my_home()
+public LocSIFPATH := my_home()
+public gServerPath := PADR("i:" + SLASH + "sigma", 40 )
+public gKalkDEST := PADR( "a:" + SLASH, 20 )
 public gModemVeza:="N"
 public gUseChkDir:="N"
 public gStrValuta:=space(4)
 // upit o nacinu placanja
 public gUpitNp := "N"  
-
-
 // podaci kase - zaglavlje
 public gFirNaziv := SPACE(35)
 public gFirAdres := SPACE(35)
@@ -463,7 +422,6 @@ public gRnPTxt1 := SPACE(35)
 public gRnPTxt2 := SPACE(35)
 public gRnPTxt3 := SPACE(35)
 public gFirTel := SPACE(20)
-
 // parametri fiskalnog uredjaja
 public gFc_type, gFc_device, gFc_use, gFc_path, gFc_path2, gFc_name, gFc_answ, gFc_pitanje, gFc_error
 public gFc_fisc_print, gFc_operater, gFc_oper_pwd, gFc_tout, gIosa, gFc_alen, gFc_nftxt, gFc_acd, gFc_pdv
@@ -484,31 +442,31 @@ gDisplay:="N"
 fiscal_params_read()
 
 // citaj parametre iz metric tabele
-f18_get_metric("RacunNaziv",@gFirNaziv)
-f18_get_metric("RacunAdresa",@gFirAdres)
-f18_get_metric("RacunIdBroj",@gFirIdBroj)
-f18_get_metric("RacunProdajnoMjesto",@gFirPM)
-f18_get_metric("RacunMjestoNastankaRacuna",@gRnMjesto)
-f18_get_metric("RacunTelefon",@gFirTel)
-f18_get_metric("RacunDodatniTekst1",@gRnPTxt1)
-f18_get_metric("RacunDodatniTekst2",@gRnPTxt2)
-f18_get_metric("RacunDodatniTekst3",@gRnPTxt3)
-f18_get_metric("StampatiPoreskeFakture",@gPorFakt)
-f18_get_metric("VrstaRadneStanice",@gVrstaRS)
-f18_get_metric("IDPos",@gIdPos)
-f18_get_metric("ZasebneCjelineObjekta",@gPostDO)
-f18_get_metric("OznakaDijelaObjekta",@gIdDio)
-f18_get_metric("PutanjaServera",@gServerPath)
-f18_get_metric("KalkDestinacija",@gKalkDest)
-f18_get_metric("ModemskaVeza",@gModemVeza)
-f18_get_metric("KoristitiDirektorijProvjere",@gUseChkDir)
-f18_get_metric("StranaValuta",@gStrValuta)
-f18_get_metric("OznakaLokalnogPorta",@gLocPort)
-f18_get_metric("OznakaGotovinskogPlacanja",@gGotPlac)
-f18_get_metric("OznakaDugPlacanja",@gDugPlac)
-f18_get_metric("RacunInfo",@gRnInfo)
+gFirNaziv := fetch_metric("pos_header_org_naziv", nil, gFirNaziv)
+gFirAdres := fetch_metric("pos_header_org_adresa", nil, gFirAdres)
+gFirIdBroj := fetch_metric("pos_header_org_id_broj", nil, gFirIdBroj)
+gFirPM := fetch_metric("pos_header_pm", nil, gFirPM)
+gRnMjesto := fetch_metric("pos_header_mjesto", nil, gRnMjesto)
+gFirTel := fetch_metric("pos_header_telefon", nil, gFirTel)
+gRnPTxt1 := fetch_metric("pos_header_txt_1", nil, gRnPTxt1)
+gRnPTxt2 := fetch_metric("pos_header_txt_2", nil, gRnPTxt2)
+gRnPTxt3 := fetch_metric("pos_header_txt_3", nil, gRnPTxt3)
+gPorFakt := fetch_metric("StampatiPoreskeFakture", nil, gPorFakt)
+gVrstaRS := fetch_metric("VrstaRadneStanice", nil, gVrstaRS)
+gIdPos := fetch_metric("IDPos", nil, gIdPos)
+gPostDO := fetch_metric("ZasebneCjelineObjekta", nil, gPostDO)
+gIdDio := fetch_metric("OznakaDijelaObjekta", nil, gIdDio)
+gServerPath := fetch_metric("PutanjaServera", nil, gServerPath)
+gKalkDest := fetch_metric("KalkDestinacija", nil, gKalkDest)
+gModemVeza := fetch_metric("ModemskaVeza", nil, gModemVeza)
+gUseChkDir := fetch_metric("KoristitiDirektorijProvjere", nil, gUseChkDir)
+gStrValuta := fetch_metric("StranaValuta", nil, gStrValuta)
+gLocPort := fetch_metric("OznakaLokalnogPorta", nil, gLocPort)
+gGotPlac := fetch_metric("OznakaGotovinskogPlacanja", nil, gGotPlac)
+gDugPlac := fetch_metric("OznakaDugPlacanja", nil, gDugPlac)
+gRnInfo := fetch_metric("RacunInfo", nil, gRnInfo)
 
-gServerPath := AllTrim(gServerPath)
+gServerPath := ALLTRIM( gServerPath )
 if (RIGHT(gServerPath,1) <> SLASH)
 	gServerPath += SLASH
 endif
@@ -516,82 +474,76 @@ endif
 // principi rada kase
 cPrevPSS := gPocStaSmjene
 
-f18_get_metric("VodiTrebovanja",@gVodiTreb)
-f18_get_metric("AzuriranjeCijena",@gZadCij)
-f18_get_metric("VodiOdjeljenja",@gVodiOdj)
-f18_get_metric("Stolovi",@gStolovi)
-f18_get_metric("RadniRacuni",@gRadniRac)
-f18_get_metric("DirektnoZakljucivanjeRacuna",@gDirZaklj)
-f18_get_metric("RacunSpecifOpcije",@gRnSpecOpc)
-f18_get_metric("BrojStolova",@gBrojSto)
-f18_get_metric("DupliArtikli",@gDupliArt)
-f18_get_metric("DupliUnosUpozorenje",@gDupliUpoz)
-f18_get_metric("PratiStanjeRobe",@gPratiStanje)
-f18_get_metric("PratiPocetnoStanjeSmjene",@gPocStaSmjene)
-f18_get_metric("StampanjePazara",@gStamPazSmj)
-f18_get_metric("StampanjePunktova",@gStamStaPun)
-f18_get_metric("VoditiPoSmjenama",@gVsmjene)
-f18_get_metric("TipSezone",@gSezonaTip)
-f18_get_metric("UpravnikIspravljaCijene",@gSifUpravn)
-f18_get_metric("DisplejOpcije",@gDisplay)
-f18_get_metric("BarkodEnter",@gEntBarCod)
-f18_get_metric("EvidentiranjeVrstaPlacanja",@gEvidPl)
-f18_get_metric("PretragaArtiklaPoNazivu",@gSifUvPoNaz)
-f18_get_metric("SlobodniProstorDiska",@gDiskFree)
-
-if IsPlanika()
-	gPratiStanje := "D"
-endif
+gVodiTreb := fetch_metric("VodiTrebovanja", nil, gVodiTreb)
+gZadCij := fetch_metric("AzuriranjeCijena", nil, gZadCij)
+gVodiOdj := fetch_metric("VodiOdjeljenja", nil, gVodiOdj)
+gStolovi := fetch_metric("Stolovi", nil, gStolovi)
+gRadniRac := fetch_metric("RadniRacuni", nil, gRadniRac)
+gDirZaklj := fetch_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj)
+gRnSpecOpc := fetch_metric("RacunSpecifOpcije", nil, gRnSpecOpc)
+gBrojSto := fetch_metric("BrojStolova", nil, gBrojSto)
+gDupliArt := fetch_metric("DupliArtikli", nil, gDupliArt)
+gDupliUpoz := fetch_metric("DupliUnosUpozorenje", nil, gDupliUpoz)
+gPratiStanje := fetch_metric("PratiStanjeRobe", nil, gPratiStanje)
+gPocStaSmjene := fetch_metric("PratiPocetnoStanjeSmjene", nil, gPocStaSmjene)
+gStamPazSmj := fetch_metric("StampanjePazara", nil, gStamPazSmj)
+gStamStaPun := fetch_metric("StampanjePunktova", nil, gStamStaPun)
+gVSmjene := fetch_metric("VoditiPoSmjenama", nil, gVsmjene)
+gSezonaTip := fetch_metric("TipSezone", nil, gSezonaTip)
+gSifUpravn := fetch_metric("UpravnikIspravljaCijene", nil, gSifUpravn)
+gDisplay := fetch_metric("DisplejOpcije", nil, gDisplay)
+gEntBarCod := fetch_metric("BarkodEnter", nil, gEntBarCod)
+gEvidPl := fetch_metric("EvidentiranjeVrstaPlacanja", nil, gEvidPl)
+gSifUvPoNaz := fetch_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz)
+gDiskFree := fetch_metric("SlobodniProstorDiska", nil, gDiskFree)
 
 // izgled racuna
 gSjecistr := padr( GETPStr( gSjeciStr ), 20 )
 gOtvorstr := padr( GETPStr( gOtvorStr ), 20 )
 
-f18_get_metric("PorezniRaster",@gPoreziRaster)
-f18_get_metric("BrojLinijaZaKrajRacuna",@nFeedLines)
-f18_get_metric("SekvencaSjeciTraku",@gSjeciStr)
-f18_get_metric("SekvencaOtvoriLadicu",@gOtvorStr)
+gPoreziRaster := fetch_metric("PorezniRaster", nil, gPoreziRaster)
+nFeedLines := fetch_metric("BrojLinijaZaKrajRacuna", nil, nFeedLines)
+gSjeciStr := fetch_metric("SekvencaSjeciTraku", nil, gSjeciStr)
+gOtvorStr := fetch_metric("SekvencaOtvoriLadicu", nil, gOtvorStr)
 
 gSjeciStr := Odsj( @gSjeciStr )
 gOtvorStr := Odsj( @gOtvorStr )
 
-f18_get_metric("IzgledZaglavlja",@gZagIz)
-f18_get_metric("RacunHeader",@gRnHeder)
-f18_get_metric("RacunFooter",@gRnFuter)
+gZagIz := fetch_metric("IzgledZaglavlja", nil, gZagIz)
+gRnHeader := fetch_metric("RacunHeader", nil, gRnHeder)
+gRnFuter := fetch_metric("RacunFooter", nil, gRnFuter)
 
 // izgled racuna
-f18_get_metric("RacunCijenaSaPDV",@grbCjen)
-f18_get_metric("RacunStampaIDArtikla",@grbStId)
-f18_get_metric("RacunRedukcijaTrake",@grbReduk)
+grbCjen := fetch_metric("RacunCijenaSaPDV", nil, grbCjen)
+grbStId := fetch_metric("RacunStampaIDArtikla", nil, grbStId)
+grbReduk := fetch_metric("RacunRedukcijaTrake", nil, grbReduk)
 
 // cijene
-f18_get_metric("SetCijena",@gIdCijena)
-f18_get_metric("Popust",@gPopust)
-f18_get_metric("PopustDecimale",@gPopDec)
-f18_get_metric("PopustVarijanta",@gPopVar)
-f18_get_metric("PopustZadavanjemCijene",@gPopZCj)
-f18_get_metric("PopustProcenat",@gPopProc)
-f18_get_metric("PopustIznos",@gPopIzn)
-f18_get_metric("PopustVrijednostProcenta",@gPopIznP)
+gIdCijena := fetch_metric("SetCijena", nil, gIdCijena)
+gPopust := fetch_metric("Popust", nil, gPopust)
+gPopDesc := fetch_metric("PopustDecimale", nil, gPopDec)
+gPopVar := fetch_metric("PopustVarijanta", nil, gPopVar)
+gPopZCj := fetch_metric("PopustZadavanjemCijene", nil, gPopZCj)
+gPopProc := fetch_metric("PopustProcenat", nil, gPopProc)
+gPopIzn := fetch_metric("PopustIznos", nil, gPopIzn)
+gPopIznP := fetch_metric("PopustVrijednostProcenta", nil, gPopIznP)
 
-f18_get_metric("PodesenjeNonsense",@gColleg)
-f18_get_metric("AzurirajUPomocnuBazu",@gDuplo)
-f18_get_metric("KumulativPomocneBaze",@gDuploKum)
-f18_get_metric("SifrarnikPomocneBaze",@gDuploSif)
-f18_get_metric("FMKSifrarnik",@gFmkSif)
-f18_get_metric("RNALSifrarnik",@gRNALSif)
-f18_get_metric("RNALKumulativ",@gRNALKum)
+gColleg := fetch_metric("PodesenjeNonsense", nil, gColleg )
+gDuplo := fetch_metric("AzurirajUPomocnuBazu", nil, gDuplo)
+gDuploKum := fetch_metric("KumulativPomocneBaze", nil, gDuploKum)
+gDuploSif := fetch_metric("SifrarnikPomocneBaze", nil, gDuploSif)
+gFMKSif := fetch_metric("FMKSifrarnik", nil, gFmkSif)
+gRNALSif := fetch_metric("RNALSifrarnik", nil, gRNALSif)
+gRNALKum := fetch_metric("RNALKumulativ", nil, gRNALKum)
 
-f18_get_metric("DuzinaSifre",@gDuzSifre)
-f18_get_metric("OperativniSistem",@gOperSys)
+gDuzSifre := fetch_metric("DuzinaSifre", nil, gDuzSifre)
+gOperSys := fetch_metric("OperativniSistem", nil, gOperSys)
 
-f18_get_metric("UpitZaNacinPlacanja",@gUpitNp)
+gUpitNp := fetch_metric("UpitZaNacinPlacanja", nil, gUpitNp)
 
-public gStela
-gStela:=CryptSC(IzFmkIni("KL","PregledRacuna",CryptSC("STELA"),KUMPATH))
-
+public gStela := CryptSC("STELA")
 public gPVrsteP := .f.
-f18_get_metric("AzuriranjePrometaPoVP", @gPVrsteP)
+gPVrsteP := fetch_metric("AzuriranjePrometaPoVP", nil, gPVrsteP)
 
 if (gVrstaRS=="S")
 	gIdPos := Space(LEN(gIdPos))
@@ -601,7 +553,7 @@ public gSQLKom
 gSQL := IzFmkIni("Svi","SQLLog","N",KUMPATH)
 gSQLLogBase := IzFmkIni("SQL","SQLLogBase","c:\sigma",EXEPATH)
 
-f18_get_metric("SamoProdaja", @gSamoProdaja)
+gSamoProdaja := fetch_metric("SamoProdaja", nil, gSamoProdaja)
 
 public gPosSirovine
 public gPosKalk
@@ -610,7 +562,6 @@ public gSQLSynchro
 public gPosModem
 
 public glRetroakt
-
 glRetroakt:=(IzFmkIni("POS","Retroaktivno","N",KUMPATH)=="D")
 
 gPosSirovine:="D"
@@ -646,7 +597,7 @@ if (!self:oDatabase:lAdmin)
 	SetNazDVal()
 endif
 
-SetBoje(gVrstaRS)
+SetBoje( gVrstaRS )
 
 return
 

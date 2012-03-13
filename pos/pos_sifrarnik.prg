@@ -12,6 +12,7 @@
 
 #include "pos.ch"
 
+
  
 function P_Kase(cId,dx,dy)
 private ImeKol
@@ -277,18 +278,6 @@ if EMPTY(cSifra)
    	return (.f.)
 endif
 
-//O_KORISN
-//GO TOP
-//do while !eof()
-//	if (korisn->sif==CryptSC(cSifra).and. korisn->ime!=cIme)
-  //  		BEEP(3)
-    //		lRet:=.f.
-    //		EXIT
-  	//endif
-  	//SKIP 1
-//enddo
-//USE
-//SELECT (nObl)
 return lRet
 
 

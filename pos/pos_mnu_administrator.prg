@@ -79,7 +79,7 @@ else
 endif
 nLen:=LEN(opc[nPosSetPM])
 opc[nPosSetPM]:=Left(opc[nPosSetPM],nLen-2)+gIdPos
-PrikStatus()
+pos_status_traka()
 return
 
 

@@ -33,7 +33,7 @@ local _tbl
 local _offset
 local _step := 15000
 local _retry := 3
-local _order := "idpos, idvd, datum, brdok"
+local _order := "idpos, idvd, datum, brdok, rbr"
 local _key_block
 local _i, _fld, _fields, _sql_fields
 
@@ -50,7 +50,7 @@ _count := table_count( _tbl, "true" )
 SELECT F_POS
 my_usex ("pos", "pos_pos", .f., "SEMAPHORE")
 
-_fields := { "brdok", "cijena", "datum", "idcijena", "iddio", "idodj", "idpos", "idradnik", "idroba", "idtarifa", "idvd", "kol2", "kolicina", ;
+_fields := { "brdok", "rbr", "cijena", "datum", "idcijena", "iddio", "idodj", "idpos", "idradnik", "idroba", "idtarifa", "idvd", "kol2", "kolicina", ;
             "m1", "mu_i", "ncijena", "prebacen", "smjena", "c_1", "c_2", "c_3" }
 
 _sql_fields := sql_fields(_fields)
@@ -80,10 +80,10 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " ( rpad( idpos, 2, ' ' ) || rpad( idvd, 2, ' ' ) || to_char( datum, 'YYYYMMDD') || rpad( brdok, 6, ' ' ) ) IN " + _sql_ids
+            _qry += " ( rpad( idpos, 2, ' ' ) || rpad( idvd, 2, ' ' ) || to_char( datum, 'YYYYMMDD') || rpad( brdok, 6, ' ' ) || lpad( rbr, 5, ' ' ) ) IN " + _sql_ids
         endif
 
-        _key_block := {|| field->idpos + field->idvd + DTOS(datum) + field->brdok  } 
+        _key_block := {|| field->idpos + field->idvd + DTOS(datum) + field->brdok + field->rbr } 
   endif
 
   _qry += " ORDER BY " + _order
@@ -113,7 +113,7 @@ for _offset := 0 to _count STEP _step
 
     CASE algoritam == "IDS"
         
-        SET ORDER TO TAG "1"
+        SET ORDER TO TAG "IDS_SEM"
 
         _counter := 0
 

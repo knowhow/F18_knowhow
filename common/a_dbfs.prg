@@ -308,7 +308,7 @@ AADD( gaDbfs, { F_REVAL , "REVAL" , "os_reval", { |alg| os_reval_from_sql_server
 
 // modul POS
 AADD( gaDbfs, {  F_POS_DOKS  , "POS_DOKS", "pos_doks", { |alg| pos_doks_from_sql_server(alg) }, "IDS", { "idpos", "idvd", "datum", "brdok" }, { |x| sql_where_block("pos_doks", x) }, "1" } )
-AADD( gaDbfs, {  F_POS       , "POS",      "pos_pos", { |alg| pos_pos_from_sql_server(alg) }, "IDS", {"idpos", "idvd", "datum", "brdok" }, {|x| sql_where_block("pos_pos", x) }, "1" } )
+AADD( gaDbfs, {  F_POS       , "POS",      "pos_pos", { |alg| pos_pos_from_sql_server(alg) }, "IDS", {"idpos", "idvd", "datum", "brdok", "rbr" }, {|x| sql_where_block("pos_pos", x) }, "IDS_SEM" } )
 AADD( gaDbfs, {  F_RNGPLA    , "RNGPLA",   "pos_rngpla"   } )
 AADD( gaDbfs, {  F__POS      , "_POS", 	   "_pos_pos" } )
 AADD( gaDbfs, {  F__PRIPR    , "_POS_PRIPR",  "_pos_pripr" } )

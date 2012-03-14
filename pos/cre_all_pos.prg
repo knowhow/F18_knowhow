@@ -96,6 +96,11 @@ if !FILE(f18_ime_dbf(_alias))
     _created := .t.
 endif
 
+// 0.4.5
+if ver["current"] < 00405
+   modstru({"*" + _table_name, "A RBR C 5 0" })
+endif
+
 if _created
     reset_semaphore_version(_table_name)
     my_use(_alias)
@@ -110,6 +115,7 @@ CREATE_INDEX ("4", "dtos(datum)", _alias )
 CREATE_INDEX ("5", "IdPos+idroba+DTOS(Datum)", _alias )
 CREATE_INDEX ("6", "IdRoba", _alias )
 CREATE_INDEX ("7", "IdPos+IdVd+BrDok+DTOS(Datum)+IdDio+IdOdj", _alias )
+CREATE_INDEX ("IDS_SEM", "IdPos+IdVd+dtos(datum)+BrDok+rbr", _alias )
 
 
 aDbf := {}

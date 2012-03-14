@@ -205,7 +205,6 @@ function SrediRbrFakt()
 local _t_rec, _rec
 local _firma, _broj, _tdok
 local _cnt
-local 
 
 O_FAKT_PRIPR
 set order to tag "1"

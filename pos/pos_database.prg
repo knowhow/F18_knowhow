@@ -330,17 +330,8 @@ O_POS
 O_ROBA
 return
 
-/*! \fn RacIznos(cIdPos,cIdVD,dDatum,cBrDok)
- *  \brief
- *  \param cIdPos
- *  \param cIdVD
- *  \param dDatum
- *  \param cBrDok
- *  \return nIznos   - iznos racuna
- */
- 
+
 function RacIznos(cIdPos,cIdVD,dDatum,cBrDok)
-*{
 
 if cIdPos==nil
 	cIdPos:=pos_doks->IdPos
@@ -358,20 +349,10 @@ do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+cIdVd+dtos(dD
 end
 select pos_doks
 return (nIznos)
-*}
 
 
-
-// Ovo je bilo ali mi je nelogicno !!!
-//function DokIznos(fUI,cIdPos,cIdVD,dDatum,cBrDok)
-
-/*! \fn DokIznos(lUI)
- *  \brief funkcija vraca ukupan iznos iz pregleda racuna
- *  \lUI - True - ulazi; False - izlazi; NIL - stanje bez obzira na prirodu dokumenta
- */
 
 function DokIznos(lUI)
-*{
 local cRet:=SPACE(13)
 local l_u_i
 local nIznos:=0
@@ -429,14 +410,10 @@ select pos_doks
 cRet:=STR(nIznos,13,2)
 
 return (cRet)
-*}
 
 
 
-/*! \fn _Pripr2_POS()
- *  \brief
- */
- 
+
 function _Pripr2_POS(cIdVrsteP)
 local cBrdok
 local nTrec := 0
@@ -489,37 +466,32 @@ return
 
 
   
-/*! \fn BrisiDok(cIdPos,cIdVD,dDatum,cBrojR)
- *  \brief
- *  \param cIdPos
- *  \param cIdVD
- *  \param dDatum
- *  \param cBrojR
- */
- 
-function BrisiDok(cIdPos,cIdVD, dDatum, cBrojR)
-*{
-local cDatum
 
-SELECT POS
-cDatum:=DTOS(dDatum)
+function BrisiDok(cIdPos,cIdVD, dDatum, cBrojR)
+local cDatum
+local _rec
+
+select pos
+cDatum := DTOS( dDatum )
+
 set order to tag "1"
-Seek cIdPos+cIDVD+cDatum+cBrojR
+
+seek cIdPos+cIDVD+cDatum+cBrojR
+
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+cIdVD+cDatum+cBrojR)
 	skip
 	nTTR:=recno()
 	skip -1
-        delete        // DOKS
-        sql_azur(.t.)
-        sql_delete()
-        go nTTR
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( ALIAS(), _rec )
+    go nTTR
 enddo
+
 select pos_doks
-delete       // DOKS
-sql_azur(.t.)
-sql_delete()
+_rec := dbf_get_rec()
+delete_rec_server_and_dbf( ALIAS(), _rec )
+
 return
-*}
 
 
 /*! \fn IspraviDV(cLast, dOrigD, dDatum, cVrijeme, cBroj)
@@ -619,14 +591,7 @@ do while (!EOF() .and. field->datum==dOrigD .and. field->idPos==cIdPos .and. fie
 enddo
 
 return 1
-*}
 
-
-*string IzFmkIni_ExePath_TOPS_PitanjePrijeAzuriranja;
-/*! \ingroup ini
- *  \var IzFmkIni_ExePath_TOPS_PitanjePrijeAzuriranja
- *  \brief Upit prije azuiranja racuna
- */
 
 /*! \fn AzurRacuna(cIdPos,cStalRac,cRadRac,cVrijeme,cNacPlac,cIdGost)
  *  \brief Azuriranje racuna ( _POS->POS, _POS->DOKS )
@@ -642,6 +607,7 @@ function AzurRacuna(cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost)
 local cDatum
 local nStavki
 local _rec, _append
+local _cnt := 0
 
 lNaX:=.f.
 
@@ -743,16 +709,18 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
 		_Vrijeme := cVrijeme
 		_IdVrsteP := cNacPlac
 		_IdGost := cIdGost
+        _rbr := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
 
 		append blank
 
         _rec := dbf_get_rec()
 
 		if lNaX
-            _rec["idpos"] := "X "
+            _idpos := "X "
 		endif
 
         _rec := get_dbf_global_memvars()
+        
         update_rec_server_and_dbf( ALIAS(), _rec )
 
 		nIznRn += ( pos->kolicina * pos->cijena )
@@ -772,6 +740,7 @@ return
 // ---------------------------------------------------------
 function AzurPriprZ(cBrDok, cIdVd)
 local _rec, _app
+local _cnt := 0
 
 SELECT PRIPRZ
 GO TOP
@@ -831,7 +800,10 @@ do while !eof()
         _kolicina:=-_Kolicina
     endif
 
+    _rbr := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
+
     _app := get_dbf_global_memvars()
+
     update_rec_server_and_dbf( ALIAS(), _app )
 
     if cIdVD == "PD"  
@@ -846,6 +818,7 @@ do while !eof()
         _rec["iddio"] := ""
         _rec["idvrstep"] := ""
         _rec["kolicina"] := - _rec["kolicina"]
+        _rec["rbr"] := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
 
         update_rec_server_and_dbf( ALIAS(), _rec )
 	

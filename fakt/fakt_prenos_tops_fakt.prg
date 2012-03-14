@@ -140,23 +140,16 @@ MsgBeep("Dokumenti su preneseni u pripremu!#"+"Broj formiranih racuna: "+ALLTRIM
 
 CLOSERET
 return
-*}
 
 
-
-/*! \fn SljedBrFakt()
- *  \brief Sljedeci broj fakture
- */
- 
 static function SljedBrFakt(cIdRj,cIdVd,dDo,cIdPartner)
-*{
 local nArr:=SELECT()
 local cBrFakt
 _datdok:=dDo
 _idpartner:=cIdPartner
-cBrFakt:=OdrediNBroj(cIdRJ,cIdVd)
+cBrFakt:= fakt_novi_broj_dokumenta( cIdRJ, cIdVd )
 select (nArr)
 return cBrFakt
-*}
+
 
 

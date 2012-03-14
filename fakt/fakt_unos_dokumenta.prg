@@ -617,10 +617,6 @@ if !CijeneOK("Stampanje")
     return DE_REFRESH
 endif
 
-if EMPTY( fakt_naredni_dokument() )
-    return DE_REFRESH
-endif
-
 if IzFMKIni("FAKT","StampajSveIzPripreme","N",PRIVPATH)=="D"
     lSSIP99:=.t.
 else

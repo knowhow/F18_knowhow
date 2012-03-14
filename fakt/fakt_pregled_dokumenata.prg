@@ -421,6 +421,7 @@ if Pitanje(,"Generisati fakturu na osnovu ponude ?", "D") == "N"
 endif
 
 select fakt_doks
+
 nTrec := RecNo()
 
 cTipDok := field->idtipdok
@@ -463,7 +464,7 @@ if FOUND()
         return DE_CONT
     endif
 
-    cNBrFakt := PADR( FaNoviBroj( cFirma, "10" ) , 8 )
+    cNBrFakt := fakt_novi_broj_dokumenta( cFirma, "10" ) 
     
 endif
 

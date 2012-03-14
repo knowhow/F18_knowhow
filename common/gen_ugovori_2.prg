@@ -163,6 +163,7 @@ local cGenTipDok := ""
 local cDatLFakt
 local dLFakt
 local __where, _rec
+local _count := 0
 
 msgbeep("bug sa opcijom, pogledaj #27002")
 return
@@ -269,18 +270,16 @@ do while !EOF()
         cIdFirma := gFirma
     endif
 
-    // nadji novi broj dokumenta
-    if EMPTY(cNBrDok)
+    ++ _count
+
+    if EMPTY(cGenTipDok)
+        cGenTipDok := ugov->idtipdok
+    endif
         
-        if EMPTY(cGenTipDok)
-            cGenTipDok := ugov->idtipdok
-        endif
-        
-        cNBrDok := FaNoviBroj( cIdFirma, cGenTipDok)
+    cNBrDok := fakt_novi_broj_dokumenta( cIdFirma, cGenTipDok )
+    
+    if _count == 1    
         cFaktOd := cNBrDok
-    else
-        // uvecaj stari
-        cNBrDok := UBrojDok( VAL(LEFT(cNBrDok, gNumDio))+1, gNumDio, RIGHT(cNBrDok, LEN(cNBrDok) - gNumDio))
     endif
 
     cUId := ugov->id

@@ -14,7 +14,6 @@
 
 
 function Mnu_Narudzba()
-*{
 local cNarFirma:=gFirma
 local cNarIdVD:=SPACE(2)
 local cNarBrDok:=SPACE(8)

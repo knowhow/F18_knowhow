@@ -282,7 +282,7 @@ return 1
 // vraca novi broj dokumenta
 // -----------------------------------------------
 static function _nBrDok( cFirma, cTip, cBrDok )
-cBrDok := PADR( FaNoviBroj( cFirma, cTip ), 8 )
+cBrDok := PADR( REPLICATE( "0", gNumDio ), 8 )
 return .t.
 
 

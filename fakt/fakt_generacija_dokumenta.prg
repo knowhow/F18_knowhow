@@ -45,7 +45,8 @@ MsgO("scaniram tabelu fakt")
 nRbr:=0
 
 GO TOP
-cBrDok:=FaNoviBroj(cIdRj, "IM") 
+cBrDok := PADR( REPLICATE( "0", gNumDio ), 8 )
+
 do while !EOF()
     if (field->idFirma<>cIdRj)
         SKIP
@@ -132,7 +133,9 @@ nRBr:=0
 O_FAKT
 O_FAKT_PRIPR
 O_ROBA
-cNoviBrDok:=FaNoviBroj(cIdRj, "19")
+
+cNoviBrDok := PADR( REPLICATE("0", gNumDio), 8 )
+
 SELECT fakt
 SET ORDER TO TAG "1"
 HSEEK cIdRj+"IM"+cBrDok
@@ -214,7 +217,9 @@ nRBr:=0
 O_FAKT
 O_FAKT_PRIPR
 O_ROBA
-cNoviBrDok:=FaNoviBroj(cIdRj, "01")
+
+cNoviBrDok := PADR( REPLICATE( "0", gNumDio ), 8 )
+
 SELECT fakt
 SET ORDER TO TAG "1"
 HSEEK cIdRj+"IM"+cBrDok

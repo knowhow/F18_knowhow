@@ -1069,6 +1069,8 @@ enddo
 return 0
 
 
+
+
 // ------------------------------------------
 // ------------------------------------------
 function dupli_dokument(cSeek)
@@ -1093,91 +1095,7 @@ if Found()
 endif
 return .f.
 
-// --------------------------------------
-// OdrediNBroj(_idfirma,_idtipdok)
-// ---------------------------------------- 
-function OdrediNbroj(_idfirma, _idtipdok)
-local cNBrDok:=""
 
-O_FAKT_DOKS
-select fakt_doks
-set order to tag "1"
-go top
-
-if (gVarNum=="2".and._idtipdok=="13")
-    seek _idfirma+_idtipdok+PADL(ALLTRIM(STR(VAL(ALLTRIM(SUBSTR(_idpartner,4))))), 2, "0") + CHR(238)
-    skip -1
-    do while !bof() .and. _idfirma==idfirma.and._idtipdok==idtipdok.and.LEFT(_idpartner,6)==LEFT(idpartner,6).and.SUBSTR(brdok,6,2)!=PADL(ALLTRIM(STR(MONTH(_datdok))),2,"0")
-        skip -1
-    enddo
-else
-    seek _idfirma+_idtipdok+"È"
-    skip -1
-
-    if (_idtipdok $ "10#11" .and. ;
-        !EMPTY(SUBSTR(brdok,gNumDio+1)) .and. ;
-        ( IzFmkIni("FAKT","Brojac11BezEkstenzije","N",KUMPATH)=="D" ;
-        .or. gFc_use == "D" ))
-
-        do while !bof() .and. _idfirma==idfirma .and. _idtipdok==idtipdok .and. !Empty(SUBSTR(brdok,gNumDio+1))
-                skip -1
-        enddo
-
-    endif
-endif
-
-if (_idtipdok<>idtipdok .or. _idfirma<>idfirma .or. LEFT(_idpartner,6) <> LEFT(idpartner, 6) .and. (gVarNum=="2" .and. _idtipdok=="13"))
-    if (gVarNum=="2".and._idtipdok=="13")
-            cNBrDok:=PADL(ALLTRIM(STR(VAL(ALLTRIM(SUBSTR(_idpartner,4))))),2,"0")+"01/"+PADL(ALLTRIM(STR(MONTH(_datdok))),2,"0")
-    else
-            cNBrDok:=UBrojDok(1, gNumDio,"")
-    endif
-else
-    if (gVarNum=="2".and._idtipdok=="13")
-            cNBrDok:=SljBrDok13(brdok,MONTH(_datdok), _idpartner)
-    else
-            cNBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, gNumDio, right(brdok,len(brdok)-gNumDio))
-    endif
-endif
-
-cNBrDok:=padr(cNBrDok, 8)
-
-return cNBrDok
-
-// -------------------------------------------------------
-//  FaNoviBroj(cIdFirma, cIdTiDdok)
-//  Odredi novi broj Fakt-dokumenta 
-//  Ne pokriva specif. slucajeve "a-la" Nijagara ...
-// ------------------------------------------------------- 
-function FaNovibroj(cIdFirma, cIdTipDok)
-local cBrdok
-local cPom
-local cDesniDio
-local nPom
-local nDesniDio
-
-cBrDok:=""
-
-O_FAKT_DOKS
-select fakt_doks
-set order to tag "1"
-go top
-
-seek cIdFirma+cIdTipDok+CHR(254)
-skip -1
-
-if ( (field->idtipdok) <> cIdTipDok ) .or. ((field->idfirma) <> cIdFirma )
-    cBrDok:=UBrojDok(1,gNumDio,"")
-    return cBrDok
-endif
-
-cPom:=LEFT(field->brDok,gNumDio)
-nPom:=VAL(cPom)+1
-nDesniDio:=LEN(field->brDok)-gNumDio
-cDesniDio:=RIGHT(field->brDok, nDesniDio)
-cBrDok:= UBrojDok( nPom, gNumDio, cDesniDio)
-
-return cBrDok
 
 
 

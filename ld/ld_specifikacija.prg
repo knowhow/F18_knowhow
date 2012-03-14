@@ -652,7 +652,7 @@ IniRefresh()
 
 if LastKey() != K_ESC 
 
-    f18_rtm_print( "ldspec" )
+    f18_rtm_print( "ldspec", "DUMMY", "1" )
 
 endif
 

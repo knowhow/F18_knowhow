@@ -132,7 +132,11 @@ if sql_table_update(table, "del", nil, _where_str)
             _full_id += STR( values[ _t_field ], _t_field_dec )
         else
             _t_field := _field
-            _full_id += values[ _t_field ]
+            if VALTYPE( values[ _t_field ] ) == "D"
+                _full_id += DTOS( values[ _t_field ] )
+            else
+                _full_id += values[ _t_field ]
+            endif
         endif
 
     next
@@ -152,7 +156,11 @@ if sql_table_update(table, "del", nil, _where_str)
             _dbf_pkey_search += STR( values[ _t_field ], _t_field_dec )
         else
             _t_field := _field
-            _dbf_pkey_search += values[ _t_field ]
+            if VALTYPE( values[ _t_field ]) == "D"
+                _dbf_pkey_search += DTOS( values[ _t_field ] )
+            else
+                _dbf_pkey_search += values[ _t_field ]
+            endif
         endif
 
     next

@@ -664,8 +664,6 @@ SEEK cIdPos + "42" + dtos(gDatum) + cRadRac
 
 set_global_memvars_from_dbf()
 
-altd()
-
 select pos_doks
 
 _BrDok := cStalRac

@@ -61,7 +61,7 @@ for _offset := 0 to _count STEP _step
   
   if algoritam == "DATE"
     _dat := get_dat_from_semaphore("pos_pos")
-    _qry += " WHERE datdok >= " + _sql_quote(_dat)
+    _qry += " WHERE datum >= " + _sql_quote(_dat)
     _key_block := {|| field->datum }
   endif
 
@@ -80,7 +80,7 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " ( rpad( idpos, 2, ' ' ) || rpad( idvd, 2, ' ' ) || datum::char(8) || rpad( brdok, 6, ' ' ) ) IN " + _sql_ids
+            _qry += " ( rpad( idpos, 2, ' ' ) || rpad( idvd, 2, ' ' ) || to_char( datum, 'YYYYMMDD') || rpad( brdok, 6, ' ' ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idpos + field->idvd + DTOS(datum) + field->brdok  } 
@@ -222,7 +222,7 @@ for _offset := 0 to _count STEP _step
   
   if algoritam == "DATE"
     _dat := get_dat_from_semaphore("pos_doks")
-    _qry += " WHERE datdok >= " + _sql_quote(_dat)
+    _qry += " WHERE datum >= " + _sql_quote(_dat)
     _key_block := {|| field->datum }
   endif
 
@@ -241,7 +241,7 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " ( rpad( idpos, 2, ' ' ) || rpad( idvd, 2, ' ' ) || datum::char(8) || rpad( brdok, 6, ' ' ) ) IN " + _sql_ids
+            _qry += " ( rpad( idpos, 2, ' ' ) || rpad( idvd, 2, ' ' ) || to_char( datum, 'YYYYMMDD' ) || rpad( brdok, 6, ' ' ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idpos + field->idvd + DTOS( field->datum) + field->brdok } 

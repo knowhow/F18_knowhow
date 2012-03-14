@@ -202,38 +202,41 @@ return
  *  \brief Sredi redni broj
  */
 function SrediRbrFakt()
-local nRbr:=0
-local nRbrStari:=0
-local cPom:=0
-local cDok:=""
+local _t_rec, _rec
+local _firma, _broj, _tdok
+local _cnt
+local 
 
-O_FAKT_S_PRIPR
-GO TOP
-
-cDok:=idfirma+idtipdok+brdok
+O_FAKT_PRIPR
+set order to tag "1"
+go top
 
 do while !eof()
-    Scatter()
-    cPom:=_rbr
-    if (cDok != _idfirma+_idtipdok+_brdok)
-        nRbrStari:=0
-        nRbr:=0
-    endif
-    if nRbrStari==RbrUnum(_rbr)
-        _rbr:=RedniBroj(nRbr)
-    else
-        ++nRbr
-        _rbr:=RedniBroj(nRbr)
-    endif
-        
-    Gather()
-        
-    nRbrStari:=RbrUnum(cPom)
-    cDok:=idfirma+idtipdok+brdok
-    skip 1
-enddo
+	
+	_firma := field->idfirma
+	_tdok := field->idtipdok
+	_broj := field->brdok
+	_cnt := 0
 
-//close all
+	do while !EOF() .and. field->idfirma == _firma ;
+			.and. field->idtipdok == _tdok ;
+			.and. field->brdok == _broj
+					
+		skip 1
+		
+		_t_rec := RECNO()
+
+		skip -1
+
+        _rec := dbf_get_rec()
+		_rec["rbr"] := PADL( ALLTRIM(STR( ++_cnt )), 3 )
+	    dbf_update_rec( _rec )
+
+		go ( _t_rec )
+	
+	enddo
+
+enddo
 
 return 0
 

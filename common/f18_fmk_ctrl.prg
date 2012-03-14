@@ -26,6 +26,7 @@ local _c_kalk := "D"
 local _c_fakt := "D"
 local _c_ld := "D"
 local _c_pdv := "D"
+local _c_pos := "D"
 
 Box(, 6, 50 )
 
@@ -35,6 +36,7 @@ Box(, 6, 50 )
     @ m_x + 4, m_y + 2 SAY "     Provjeri kalk ?" GET _c_kalk VALID _c_kalk $ "DN" PICT "@!"
     @ m_x + 5, m_y + 2 SAY "       Provjeri ld ?" GET _c_ld VALID _c_ld $ "DN" PICT "@!"
     @ m_x + 6, m_y + 2 SAY "     Provjeri epdv ?" GET _c_pdv VALID _c_pdv $ "DN" PICT "@!"
+    @ m_x + 6, m_y + 2 SAY "      Provjeri pos ?" GET _c_pos VALID _c_pos $ "DN" PICT "@!"
 
     read
 
@@ -72,6 +74,11 @@ endif
 // provjeri epdv
 if _c_pdv == "D"
     f18_epdv_data( @_a_data, @_a_ctrl )
+endif
+
+// provjeri pos
+if _c_pos == "D"
+    f18_pos_data( @_a_data, @_a_ctrl )
 endif
 
 
@@ -125,6 +132,8 @@ endif
 
 return
 
+
+
 // -----------------------------------------
 // provjera fakt
 // -----------------------------------------
@@ -166,6 +175,53 @@ if _n_c_stavke > 0
 endif
 
 return
+
+
+// -----------------------------------------
+// provjera pos
+// -----------------------------------------
+static function f18_pos_data( data, checksum )
+local _n_c_iznos := 0
+local _n_c_stavke := 0
+local _dok
+
+O_POS
+
+Box(, 2, 60 )
+
+select pos
+set order to tag "1"
+go top
+
+do while !EOF()
+ 
+    if EMPTY( field->idpos )
+        skip
+        loop    
+    endif
+
+    _dok := field->idpos + "-" + field->idvd + "-" + ALLTRIM( field->brdok ) + ", " + DTOC( field->datum )
+    
+    @ m_x + 1, m_y + 2 SAY "pos dokument: " + _dok
+
+    // kontrolni broj
+    ++ _n_c_stavke
+    _n_c_iznos += ( field->kolicina + field->cijena + field->ncijena )
+
+    skip
+
+enddo
+
+BoxC()
+
+if _n_c_stavke > 0
+    AADD( checksum, { "pos data", _n_c_stavke, _n_c_iznos } )
+endif
+
+return
+
+
+
 
 // -----------------------------------------
 // provjera ld

@@ -419,3 +419,96 @@ if !FOUND()
 		f_decimal with 0
 endif
 
+
+
+
+// ------------------------------------------------------------------
+// fakt, uzimanje novog broja za fakt dokument
+// ------------------------------------------------------------------
+function fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
+local _broj := 0
+local _param
+local _tmp, _rest
+local _ret := ""
+local _t_area := SELECT()
+
+if sufiks == nil
+    sufiks := ""
+endif
+
+// param: fakt/10/10
+_param := "fakt" + "/" + firma + "/" + tip_dokumenta 
+
+_broj := fetch_metric( _param, nil, _broj )
+
+// moze biti da nije setovan vec ranije...
+// prvi put se opcija koristi
+if _broj == 0
+
+    O_FAKT_DOKS
+    set order to tag "1"
+    go top
+    seek firma + tip_dokumenta + "Ž"
+    skip -1
+
+    if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
+        _broj := VAL( PADR( field->brdok, gNumDio ) )
+    else
+        _broj := 0
+    endif
+
+endif
+
+// uvecaj broj
+++ _broj
+
+// ovo ce napraviti string prave duzine...
+_ret := PADL( ALLTRIM( STR( _broj ) ), gNumDio, "0" )
+
+if !EMPTY( sufiks )
+    _ret := _ret + sufiks
+endif
+
+_ret := PADR( _ret, 8 )
+
+// upisi ga u globalni parametar
+set_metric( _param, nil, _broj )
+
+select ( _t_area )
+return _ret
+
+
+// ------------------------------------------------------------
+// setuj broj dokumenta u pripremi ako treba !
+// ------------------------------------------------------------
+function fakt_set_broj_dokumenta()
+local _broj_dokumenta
+local _t_area := SELECT()
+
+select fakt_pripr
+go top
+        
+if field->brdok <> PADR( REPLICATE( "0", gNumDio ), 8 )
+    // nemam sta raditi, broj je vec setovan
+    select ( _t_area )
+    return .f.
+endif
+
+// daj mi novi broj dokumenta
+_broj_dokumenta := fakt_novi_broj_dokumenta( field->idfirma, field->idtipdok )
+
+do while !EOF()
+    replace field->brdok with _broj_dokumenta
+    skip
+enddo
+
+go top
+
+select ( _t_area )
+ 
+return .t.
+
+
+
+
+

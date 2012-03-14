@@ -222,9 +222,15 @@ do case
         return DE_REFRESH
 
     case Ch=K_CTRL_P
- 
+        
+        // prvo setuj broj dokumenta
+        fakt_set_broj_dokumenta()
+
+        // printaj dokument
         PrintDok()
+
         lDirty:=.f.
+
         return DE_REFRESH
 
     case Ch==K_ALT_L
@@ -234,18 +240,15 @@ do case
           o_fakt_edit()
 
     case Ch==K_ALT_P
-            
-        if !CijeneOK("Stampanje")
-                return DE_REFRESH
-            endif
-            
-        if EMPTY(fakt_naredni_dokument())
-                return DE_REFRESH
-            endif
         
-        cPom:=idtipdok
+        // setuj broj dokumenta u pripremi ako vec nije
+        fakt_set_broj_dokumenta()
+    
+        if !CijeneOK("Stampanje")
+            return DE_REFRESH
+        endif
             
-        if cPom=="13"
+        if field->idtipdok == "13"
             close all
             FaktStOLPP()
         else
@@ -258,7 +261,10 @@ do case
             
         return DE_REFRESH
 
-    case Ch=K_ALT_A
+    case Ch = K_ALT_A
+
+        // setuj prvo broj dokumenta u pripremi...
+        fakt_set_broj_dokumenta()
 
         // setuj podatke za fiskalni racun
         cFFirma  := field->idfirma
@@ -298,7 +304,7 @@ do case
         lDirty:=.t.
         return DE_REFRESH
         
-    case Ch==K_F5
+    case Ch == K_F5
             // kontrola zbira
             nRec:=RecNo()
             Box(,12,72)
@@ -922,50 +928,24 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
         endif
     endif
 
-    if (fNovi .and. (nRbr==1 .and. podbr<"0"))
+    if ( fNovi .and. ( nRbr == 1 .and. podbr < "0" ) )
+
         _M1 := " "  
         // marker generacije nuliraj
         gOcitBarkod:=.f.
-        if (gMreznoNum=="N")
-            cBroj1:=OdrediNBroj(_idfirma,_idtipdok)   //_brdok
-            if ( _idTipDok $ "12#13" )
-                
-                cTmpTip := "12"
-                cTmpTip2 := "22"
-                    
-                if _idtipdok == "13"
-                    cTmpTip := "13"
-                    cTmpTip2 := "23"
-                endif
 
-                cBroj2 := OdrediNBroj( _idfirma, cTmpTip2 )
-                if VAL(LEFT(cBroj1,gNumDio))>=val(left(cBroj2,gNumDio))
-                        // maximum izmedju broja 22 i 12
-                            _Brdok:=cBroj1
-                else
-                            _BrDok:=cBroj2
-                endif
-           else
-                _BrDok:=cBroj1
-           endif
-            
-           select fakt_pripr
-        else
-            _BrDok := SPACE (LEN (_BrDok))
-        endif
+        // broj dokumenta u pripremi ce biti uvijek 00000
+        _brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
+
     endif
     
     do while .t.    
         
         @  m_x + 2, m_y + 45 SAY "Datum:" GET _datDok
-
-        @  m_x + 2, col() + 1 SAY "Broj:" GET _BrDok ;
-            WHEN gMreznoNum=="N" ;
-            VALID !EMPTY(_BrDok) .and. ;
-            (!glDistrib .or. !JeStorno10() .or. PuniDVRiz10())
+        @  m_x + 2, col() + 1 SAY "Broj:" GET _BrDok VALID !EMPTY(_BrDok) 
         
         if lSpecifZips = .t.
-                _txt3a := PADR(_txt3a, 60)
+            _txt3a := PADR(_txt3a, 60)
         else
             if IzFMKINI("PoljeZaNazivPartneraUDokumentu","Prosiriti","N",KUMPATH)=="D"
                 _txt3a:=padr(_txt3a,60)
@@ -1110,26 +1090,15 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
             _txt3c:=trim(_txt3c)
         endif
         
-        ESC_Return 0
+        ESC_RETURN 0
 
-        if (gMreznoNum=="D")
-                exit
-        endif
-
-        select fakt_doks
-        set order to tag "1"
-        hseek _idfirma+_idtipdok+_brDok
-        if !Found()
-                select fakt_pripr
-                exit
-        else
-                Beep(4)
-                Msg("Vec postoji dokument "+_idtipdok+"-"+_brdok,6)
-                select fakt_pripr
-        endif
+        select fakt_pripr
+        exit
+   
     enddo
     
-    ChSveStavke(fNovi)
+    ChSveStavke( fNovi )
+
 else
 
     @ m_x + 1, m_y+ 2 SAY PADR( gNFirma, 20 )

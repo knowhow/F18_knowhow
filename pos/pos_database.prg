@@ -1032,7 +1032,9 @@ AADD(aDbf, {"Otv",      "N", 12, 2})
 Dbcreate2(PRIVPATH+"ZAKSM", aDbf)
 
 select (F_ZAKSM)
+
 my_use ("zaksm", "ZAKSM", .t.)
+
 INDEX ON IdRadnik TAG ("1")           
 Set Order To tag "1"
 
@@ -1532,8 +1534,10 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 			endif
 		endif
 		
-    		SELECT odj 
-		HSEEK roba->IdOdj
+        if roba->( FIELDPOS("idodj") ) <> 0
+    	    SELECT odj 
+		    HSEEK roba->IdOdj
+        endif
 		
 		nNeplaca:=0
     		
@@ -1547,28 +1551,28 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 			nNeplaca+=pos->(kolicina*nCijena) 
 		endif
 
-    		SELECT pom
+    	SELECT pom
 		HSEEK pos_doks->(IdPos+IdRadnik+IdVrsteP)+pos->(IdOdj+IdRoba+IdCijena)
 		if !found()
-      			APPEND BLANK
-      			REPLACE IdPos WITH pos_doks->IdPos,IdRadnik WITH pos_doks->IdRadnik,IdVrsteP WITH pos_doks->IdVrsteP,IdOdj WITH pos->IdOdj,IdRoba WITH pos->IdRoba,IdCijena WITH pos->IdCijena,Kolicina WITH pos->Kolicina,Iznos WITH pos->Kolicina*POS->Cijena,Iznos3 WITH nNeplaca
+      		APPEND BLANK
+      		REPLACE IdPos WITH pos_doks->IdPos,IdRadnik WITH pos_doks->IdRadnik,IdVrsteP WITH pos_doks->IdVrsteP,IdOdj WITH pos->IdOdj,IdRoba WITH pos->IdRoba,IdCijena WITH pos->IdCijena,Kolicina WITH pos->Kolicina,Iznos WITH pos->Kolicina*POS->Cijena,Iznos3 WITH nNeplaca
       			
 			if gPopVar=="A"
-         			REPLACE Iznos2 WITH pos->nCijena
-      			endif
+         		REPLACE Iznos2 WITH pos->nCijena
+      		endif
 
-      			if roba->(fieldpos("K1")) <> 0
-              			REPLACE K2 WITH roba->K2,K1 WITH roba->K1
-      			endif
-    		else
-      			REPLACE Kolicina WITH Kolicina+POS->Kolicina,Iznos WITH Iznos+POS->Kolicina*POS->Cijena,Iznos3 WITH Iznos3+nNeplaca
-      			if gPopVar=="A"
-         			REPLACE Iznos2 WITH Iznos2+pos->nCijena
-      			endif
-    		endif
+      		if roba->(fieldpos("K1")) <> 0
+             	REPLACE K2 WITH roba->K2,K1 WITH roba->K1
+      		endif
+    	else
+      		REPLACE Kolicina WITH Kolicina+POS->Kolicina,Iznos WITH Iznos+POS->Kolicina*POS->Cijena,Iznos3 WITH Iznos3+nNeplaca
+      		if gPopVar=="A"
+         		REPLACE Iznos2 WITH Iznos2+pos->nCijena
+      		endif
+    	endif
     		
 		SELECT pos
-    		skip
+    	skip
   	enddo
   	
 	select pos_doks  
@@ -1626,9 +1630,9 @@ AADD(aDbf, {"Datum", "D", 8, 0})
 
 NaprPom (aDbf)
 
-my_use("POM", "POM", .t.)
+O_POM
 
-INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (PRIVPATH+"POM")
+INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (my_home()+"POM")
 set order to tag "1"
 
 return
@@ -1864,7 +1868,7 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	
 	_rec["robanaz"] := roba->naz
 
-	dbf_update_rec()
+	dbf_update_rec( _rec )
 
 	select pos
 

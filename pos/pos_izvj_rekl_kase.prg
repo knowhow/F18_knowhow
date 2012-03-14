@@ -172,14 +172,14 @@ AADD(aDbf,{"K2"       ,"C",  4, 0})
 
 NaprPom(aDbf)
 
-cPomDbf:=PRIVPATH + "POM.DBF"
+cPomDbf := my_home() + "POM.DBF"
 CREATE_INDEX("1" ,"IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena",cPomDbf,.t.)
 CREATE_INDEX("2" ,"IdPos+IdOdj+IdRoba+IdCijena"                  ,cPomDbf,.f.)
 CREATE_INDEX("3" ,"IdPos+IdRoba+IdCijena"                        ,cPomDbf,.f.)
 CREATE_INDEX("4" ,"IdPos+IdVrsteP"                               ,cPomDbf,.f.)
 CREATE_INDEX("K1","IdPos+K1+idroba"                              ,cPomDbf,.f.)
 
-my_use ("pom", "POM")
+O_POM
 set order to tag "1"
 
 return

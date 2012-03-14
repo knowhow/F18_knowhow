@@ -1199,12 +1199,11 @@ else
 endif
 
 return
-*}
+
 
 
 
 function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom, lOnlyFill)
-*{
 local cTime
 
 if (lOnlyFill == nil)
@@ -1236,7 +1235,7 @@ if lOnlyFill
 	return 
 endif
 
-if gFc_use == "D" .and. gFc_txrn == "N"
+if gFc_use == "D" .and. gFc_faktura == "N"
 	// fiskalni racun - ne stampati !
 else
 	// ispisi racun

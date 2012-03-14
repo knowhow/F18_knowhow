@@ -410,25 +410,28 @@ return
 
 
 function StampAzur(cIdPos, cRadRac)
-
-local cTime
+local cTime, _rec
 local nFis_err := 0
 private cPartner
 
 select pos_doks
+
 cStalRac := pos_naredni_dokument(cIdPos, VD_RN)
 
 // radi mreze rezervisem DOKS !
 append blank
-replace idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "////", datum with gdatum
-// namjerno divlji radnik!!!!  ////
 
-aVezani:={}
-AADD(aVezani, {pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum})
+_rec := dbf_get_rec()
+_rec["idpos"] := gIdPos
+_rec["idvd"] := VD_RN
+_rec["brdok"] := cStalRac
+_rec["idradnik"] := "////"
+_rec["datum"] := gDatum
 
-sql_azur(.t.)
-sql_append()
-replsql idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "////", datum with gdatum
+update_rec_server_and_dbf( ALIAS(), _rec )
+
+aVezani := {}
+AADD( aVezani, {pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum})
 
 cPartner := cIdGost
 
@@ -498,10 +501,8 @@ if EMPTY( cTime )
 	SEEK gIdPos+"42"+DTOS(gDatum)+cStalRac
 	
 	if (pos_doks->idRadnik=="////")   
-		// divlji radnik
-      		delete  
-		// DOKS
-      		sql_delete()
+      	_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( ALIAS(), _rec )
 	endif
 
 endif
@@ -564,14 +565,9 @@ do while .t.
 enddo
 BoxC()
 return
-*}
 
 
-/*! \fn ZakljuciDio()
- *  \brief
- */
 function ZakljuciDio()
-*{
 
 local cRacBroj:=SPACE(6)
 
@@ -589,17 +585,13 @@ BoxC()
 O_StAzur()
 O_RAZDR
 RazdRac(cRacBroj, .f., 2, "N", "ZAKLJUCENJE DIJELA RACUNA")
-CLOSERET
-*}
+close all
+return
 
 
-/*! \fn RazdijeliRacun()
- *  \brief Razdijeli radni racun na vise djelova
- */
+
  
 function RazdijeliRacun()
-*{
-
 local cOK:=" "
 local cAuto:="D"
 local cRacBroj:=SPACE(6)
@@ -625,38 +617,25 @@ O_RAZDR
 RazdRac(cRacBroj, .t., nKoliko, cAuto, "RAZDIOBA RACUNA")
 CLOSERET
 return
-*}
 
 
-/*! \fn RobaNaziv(cSifra)
- *  \brief
- *  \param cSifra
- */
  
 function RobaNaziv(cSifra)
-*{
 local nARRR:=select()
-
 select roba
 hseek cSifra
 select(nArrr)
-
 return roba->naz
-*}
 
 
-/*! \fn PromNacPlac()
- *  \brief Promjena nacina placanja (i partnera) za odredjeni racun
- */
  
 function PromNacPlac()
-*{
-
 local cRacun:=SPACE(9)
 local cIdVrsPla:=gGotPlac
 local cPartner:=SPACE(8)
 local cDN:=" "
 local cIdPOS
+local _rec
 private aVezani:={}
 
 O_PARTN
@@ -666,61 +645,58 @@ O__POS_PRIPR
 O__POS
 O_POS
 O_POS_DOKS
-Box (, 7, 70)
-// prebaci se na posljednji racun da ti je lakse
-IF gVrstaRS<>"S"
-  select pos_doks
-  Seek (gIdPos+VD_RN+Chr (250))
-  IF pos_doks->IdVd <> VD_RN
-    Skip -1
-  EndIF
-  do while !Bof() .and. pos_doks->(IdPos+IdVd)==(gIdPos+VD_RN) .and. pos_doks->IdRadnik <> gIdRadnik
-    Skip -1
-  EndDO
-  IF !Bof() .and. pos_doks->(IdPos+IdVd)==(gIdPos+VD_RN) .and. pos_doks->IdRadnik==gIdRadnik
-    cRacun := PADR (AllTrim (gIdPos)+"-"+AllTrim (pos_doks->BrDok), ;
-                    Len (cRacun))
-  EndIF
-Endif
-dDat:=gDatum
 
-set cursor on
-@ m_x+1,m_y+4 SAY "Datum:" Get dDat
-@ m_x+2,m_y+4 SAY "Racun:" GET cRacun VALID PRacuni (@dDat,@cRacun) ;
+Box (, 7, 70)
+    // prebaci se na posljednji racun da ti je lakse
+    if gVrstaRS<>"S"
+        select pos_doks
+        seek (gIdPos+VD_RN+Chr (250))
+        if pos_doks->IdVd <> VD_RN
+            skip -1
+        endif
+        do while !Bof() .and. pos_doks->(IdPos+IdVd)==(gIdPos+VD_RN) .and. pos_doks->IdRadnik <> gIdRadnik
+            skip -1
+        enddo
+        if !Bof() .and. pos_doks->(IdPos+IdVd)==(gIdPos+VD_RN) .and. pos_doks->IdRadnik==gIdRadnik
+            cRacun := PADR (AllTrim (gIdPos)+"-"+AllTrim (pos_doks->BrDok), LEN(cRacun))
+        endif
+    endif
+    
+    dDat:=gDatum
+
+    set cursor on
+    @ m_x+1,m_y+4 SAY "Datum:" Get dDat
+    @ m_x+2,m_y+4 SAY "Racun:" GET cRacun VALID PRacuni (@dDat,@cRacun) ;
                         .and. Pisi_NPG();
                         .AND. RacNijeZaklj (cRacun);
                         .AND. RacNijePlac (@cIdVrspla,@cPartner)
-  @ m_x+3,m_y+7 SAY "Nacin placanja:" GET cIdVrsPla ;
+    @ m_x+3,m_y+7 SAY "Nacin placanja:" GET cIdVrsPla ;
                   VALID P_VrsteP (@cIdVrsPla, 3, 26) pict "@!"
-  read
-  ESC_BCR
+    read
+    ESC_BCR
   
-if (cIdVrsPla<>gGotPlac)
-  @ m_x+5,m_y+9 SAY "Partner:" GET cPartner PICT "@!" ;
+    if (cIdVrsPla<>gGotPlac)
+        @ m_x+5,m_y+9 SAY "Partner:" GET cPartner PICT "@!" ;
                   VALID P_Firma(@cPartner, 5, 26)
-  READ
-  ESC_BCR
-else
-  cPartner:=""
-endif
-// vec je DOKS nastiman u BrowseSRn
-select pos_doks
-
-SmReplace("idVrsteP", cIdVrsPla)
-SmReplace("idGost", cPartner)
+        READ
+        ESC_BCR
+    else
+        cPartner:=""
+    endif
+    // vec je DOKS nastiman u BrowseSRn
+    select pos_doks
+    _rec := dbf_get_rec()
+    _rec["idvrstep"] := cIdVrsPla
+    _rec["idgost"] := cPartner    
+    update_rec_server_and_dbf( ALIAS(), _rec )
 
 BoxC()
 
-CLOSERET
-*}
+close all
+return
 
 
-/*! \fn RacNijeZaklj()
- *  \brief
- */
- 
 function RacNijeZaklj()
-*{
 IF (gVrstaRS == "S" .and. kLevel < L_UPRAVN)
   RETURN .t.
 EndIF
@@ -729,17 +705,9 @@ IF (pos_doks->Datum==gDatum)
 EndIF
 MsgBeep ("Promjena nacina placanja nije moguca!")
 return .f.
-*}
 
 
-/*! \fn RacNijePlac(cIdVrsPla,cPartner)
- *  \brief
- *  \param cIdVrsPla
- *  \param cPartner
- */
 function RacNijePlac(cIdVrsPla,cPartner)
-*{
-
 //      Provjerava da li je racun pribiljezen kao placen
 //      Ako jest, tad promjena nacina placanja nema smisla
 
@@ -751,17 +719,11 @@ else
   cPartner:= pos_doks->idgost
 ENDIF
 return (.t.)
-*}
 
 
 
 
-/*! \fn Pisi_NPG()
- *  \brief Ispisuje nazive vrste placanja
- */
- 
 function Pisi_NPG()
-*{
 
 PushWA()
 SELECT VRSTEP
@@ -776,24 +738,17 @@ IF FOUND ()
 ENDIF
 PopWA ()
 return (.t.)
-*}
 
 
-/*! \fn RacObilj()
- *  \brief
- */
  
 function RacObilj()
-*{
 IF ASCAN (aVezani, {|x| x[1]+dtos(x[4])+x[2]==pos_doks->(IdPos+dtos(datum)+BrDok)}) > 0
     RETURN .T.
 ENDIF
 RETURN .F.
-*}
 
 
 function PreglNezakljRN()
-*{
 O_StAzur()
 
 dDatOd:=Date()
@@ -811,15 +766,10 @@ if Pitanje(,"Pregledati nezakljucene racune (D/N) ?","D")=="D"
 	StampaNezakljRN(gIdRadnik,dDatOd,dDatDo)
 endif
 return
-*}
 
 
-/*! \fn RekapViseRacuna()
- *  \brief Stampanje rekapitulacije vise racuna po broju stola
- */
  
 function RekapViseRacuna()
-*{
 cBrojStola:=SPACE(3)
 
 O__POS_PRIPR
@@ -842,16 +792,11 @@ if Pitanje(,"Odstampati zbirni racun (D/N) ?","D")=="D"
 endif
 
 return
-*}
 
 
 
-/*! \fn PrepisRacuna()
- *  \brief Vrsi se prepis vec zakljucenog racuna, odnosno spajanje vise racuna
- */
  
 function PrepisRacuna()
-*{
 local cPolRacun:=SPACE(9)
 local cIdPos:=SPACE(LEN(gIdPos))
 local nPoz
@@ -892,22 +837,12 @@ ELSE
 ENDIF
 
 StampaPrep (cIdPos, cPolRacun, aVezani)
-CLOSERET
+close all
 return
-*}
 
 
-/*! \fn StrValuta(cNaz2, dDat)
- *  \brief Iznos u stranoj valuti 
- *  \code
- *  primjer: strvaluta("KN  ", CTOD("01.01.98")))
- * \endcode
- */
- 
+
 function StrValuta(cNaz2, dDat)
-*{
-
-
 local nTekSel
 
 nTekSel:=select()
@@ -924,7 +859,6 @@ if valute->naz2<>cnaz2
 else
    return valute->kurs1
 endif
-*}
 
 
 

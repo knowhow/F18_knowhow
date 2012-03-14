@@ -41,10 +41,9 @@ O_POS_DOKS
   AADD (aDbf, {"Iznos2",    "N", 20, 5})
   AADD (aDbf, {"Iznos3",    "N", 20, 5})
   NaprPom (aDbf)
-  my_use ("pom", "POM")
-  INDEX ON IdOdj+IdDio+IdPos+IdRoba+IdCijena TAG ("1") TO (PRIVPATH+"POM")
-  INDEX ON IdOdj+IdDio+IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
-  index ON BRISANO TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
+  O_POM
+  INDEX ON IdOdj+IdDio+IdPos+IdRoba+IdCijena TAG ("1") TO (my_home()+"POM")
+  INDEX ON IdOdj+IdDio+IdRoba+IdCijena TAG ("2") TO (my_home()+"POM")
   set order to tag "1"
 
   aNiz := {}
@@ -382,13 +381,12 @@ O_POS_DOKS
   AADD (aDbf, {"Iznos2",    "N", 20, 5})
   AADD (aDbf, {"Iznos3",    "N", 20, 5})
   NaprPom (aDbf)
-  my_use ("pom", "POS", .t.)
-  INDEX ON IdDio+IdPos+IdVrsteP TAG ("1") TO (PRIVPATH+"POM")
-  INDEX ON IdDio+IdRadnik+IdVrsteP TAG ("2") TO (PRIVPATH+"POM")
-  INDEX ON IdDio+IdVrsteP TAG ("3") TO (PRIVPATH+"POM")
-  INDEX ON IdDio+IdOdj TAG ("4") TO (PRIVPATH+"POM")
-  INDEX ON IdDio+IdRoba+IdCijena TAG ("5") TO (PRIVPATH+"POM")
-  index ON BRISANO TAG "BRISAN"
+  O_POM
+  INDEX ON IdDio+IdPos+IdVrsteP TAG ("1") TO (my_home()+"POM")
+  INDEX ON IdDio+IdRadnik+IdVrsteP TAG ("2") TO (my_home()+"POM")
+  INDEX ON IdDio+IdVrsteP TAG ("3") TO (my_home()+"POM")
+  INDEX ON IdDio+IdOdj TAG ("4") TO (my_home()+"POM")
+  INDEX ON IdDio+IdRoba+IdCijena TAG ("5") TO (my_home()+"POM")
   set order to tag "1"
 
   aNiz := {}

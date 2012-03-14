@@ -48,8 +48,6 @@ AADD( gaDbfs, { F_OSTAV  ,  "OSTAV"   , "fin_ostav"   } )
 AADD( gaDbfs, { F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  } )
 AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )
 AADD( gaDbfs, { F__PARTN ,  "_PARTN"  , "fin__partn"  } )
-AADD( gaDbfs, { F_POM    ,  "POM"     , "fin_pom"     } )
-AADD( gaDbfs, { F_POM2   ,  "POM2"    , "fin_pom2"    } )
 AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"     } )
 AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"     } )
 
@@ -69,6 +67,10 @@ AADD( gaDbfs, { F_PARAMS  ,  "PARAMS"   , "params"  } )
 AADD( gaDbfs, { F_GPARAMS , "GPARAMS"  , "gparams"  } )
 AADD( gaDbfs, { F_KPARAMS , "KPARAMS"  , "kparams"  } )
 AADD( gaDbfs, { F_SECUR  , "SECUR"  , "secur"  } )
+
+// pomocne tabele
+AADD( gaDbfs, {  F_POM       , "POM"    , "pom"  } )
+AADD( gaDbfs, {  F_POM2      , "POM2"   , "pom2"  } )
 
 // sifrarnici
 AADD( gaDbfs, { F_TOKVAL  , "TOKVAL"  , "tokval"  } )
@@ -333,7 +335,6 @@ AADD( gaDbfs, {  F_INTEG1    , "INTEG1" , "pos_integ1" } )
 AADD( gaDbfs, {  F_INTEG2    , "INTEG2" , "pos_integ2" } )
 AADD( gaDbfs, {  F_DOKSPF    , "DOKSPF" , "pos_dokspf" } )
 AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "pos_promvp", {|alg| pos_promvp_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, {  F_POM       , "POM"    , "pos_pom"  } )
 
 
 // modul MAT

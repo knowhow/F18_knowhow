@@ -195,7 +195,7 @@ AADD(aDBF,{"DATUM","D",8,0})
 AADD(aDBF,{"IdVd","C",2,0})
 AADD(aDBF,{"M1","C",1,0})
 
-NaprPom(aDbf,"TOPSFAKT")
+NaprPom( aDbf, "TOPSFAKT" )
 
 my_use ("topsfakt", "TOPSFAKT", .t. )
 INDEX ON IdPos+idVd+idPartner+IdRoba+STR(mpc,13,4)+STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"TOPSFAKT")

@@ -12,9 +12,11 @@
 
 #include "pos.ch"
 
+
+
 function NaprPom(aDbf,cPom)
 
-if cPom==nil
+if cPom == nil
 	cPom:="POM"
 endif
 
@@ -37,7 +39,8 @@ if File (UPPER(cPomCDX))
 	FErase(UPPER(cPomCDX))
 endif
 
-DBcreate2(PRIVPATH + "POM.DBF", aDbf)
+// kreiraj tabelu pom.dbf
+DBcreate2( "pom.dbf", aDbf )
 
 return
 

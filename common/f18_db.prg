@@ -405,29 +405,41 @@ _changed_id  := .f.
 _values_dbf  := hb_hash()
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "id_fields", id_fields, "var", "values", values, "var", "_values_dbf", _values_dbf }, GlobalErrorHandler( err ) }
+
 for each _field in id_fields
 
+    
     if VALTYPE( _field ) == "A"
+
         _t_field := _field[1]
         _t_field_dec := _field[2]
 
-        _values_dbf[_t_field] := EVAL(FIELDBLOCK(_t_field))
+        _values_dbf[ _t_field ] := EVAL( FIELDBLOCK( _t_field ) )
         if _values_dbf[_t_field] != values[ _t_field ]
             _changed_id := .t.
         endif
+
         _full_id_dbf += STR(_values_dbf[ _t_field ], _t_field_dec)
         _full_id_mem += STR( values[ _t_field ], _t_field_dec )
+
     else   
+
         _t_field := _field
         _values_dbf[ _t_field ] := EVAL(FIELDBLOCK( _t_field ))
+
         if _values_dbf[ _t_field ] != values[ _t_field ]
             _changed_id := .t.
         endif
-       
-        _full_id_dbf += _values_dbf[ _t_field ]
-        _full_id_mem += values[ _t_field ]
-    endif
 
+        if VALTYPE( _values_dbf[ _t_field ] ) == "D"       
+            _full_id_dbf += DTOS( _values_dbf[ _t_field ] )
+            _full_id_mem += DTOS( values[ _t_field ] )
+        else
+            _full_id_dbf += _values_dbf[ _t_field ]
+            _full_id_mem += values[ _t_field ]
+        endif
+
+    endif
     
 next
 END SEQUENCE

@@ -1189,10 +1189,10 @@ MsgO("Indeksi nisu u redu?! Sacekajte trenutak da reindeksiram...")
 if UPPER(cAlias)="_POS"
 	SELECT _POS
 	USE
-       	O__POS
-       	reindex
+    O__POS
+    reindex
 	USE
-       	O__POS
+    O__POS
 elseif UPPER(cAlias)="POS_DOKS"
     select pos_doks
 	USE
@@ -1204,7 +1204,7 @@ endif
 MsgC()
 
 return
-*}
+
 
 
 function Del_Skip()
@@ -1218,30 +1218,24 @@ GO nNextRec
 return
 
 
-/*! \fn GoTop2()
- *  \brief Skipuje prvi Deleted() slog nakon GO TOP
- */
- 
+
 function GoTop2()
-*{
 GO TOP
 if DELETED()
 	SKIP
 endif
 return
-*}
 
 
-/*! \fn pos_generisi_doks_iz_pos()
- *  \brief Generisanje DOKS-a iz POS-a
- */
  
 function pos_generisi_doks_iz_pos()
-*{
+local _rec
+local _app
 
 if !SigmaSif("GENDOKS")
 	return
 endif
+
 close all
 
 O_POS_DOKS
@@ -1257,26 +1251,28 @@ if Empty(ALLTRIM(cTipDok)) .and. Pitanje(,"Izbrisati doks ??","N")=="D"
 endif
 
 O_POS
-GO TOP
+go top
 
 do while !eof()
 	
-	if !Empty(ALLTRIM(cTipDok))
+	if !Empty( ALLTRIM( cTipDok ) )
 		if pos->idvd <> cTipDok
 			skip
 			loop
 		endif
 	endif
 	
-	Scatter()
-  	do while !eof() .and. _idpos==idpos .and. _idvd==idvd .and. _Datum==datum.and._brdok==brdok
-     		skip
+    _rec := dbf_get_rec()
+
+  	do while !eof() .and. _rec["idpos"] == field->idpos .and. _rec["idvd"] == field->idvd .and. _rec["datum"] == field->datum .and. _rec["brdok"] == field->brdok
+        skip
   	enddo
+
   	select pos_doks
 	
 	if !Empty(ALLTRIM(cTipDok))
 		set order to tag "1"
-		hseek _idpos + _idvd + DTOS(_datum)
+		hseek _rec["idpos"] + _rec["idvd"] + DTOS(_rec["datum"])
 		if Found()
 			select pos
 			skip
@@ -1284,18 +1280,24 @@ do while !eof()
 		endif
 	endif
   	
-	APPEND BLANK
-	if gSQL=="D"
-	  	sql_append()
-	endif
-  	replace idpos with _idpos,brdok with _brdok,idvd with _idvd,idradnik with _idradnik,smjena with _smjena,datum with _datum
-	if gSQL=="D"
-  		sql_azur(.t.)
-	  	replsql idpos with _idpos, brdok with _brdok, idvd with _idvd,idradnik with _idradnik,smjena with _smjena,datum with _datum
-	endif
-  	SELECT pos
+	append blank
+
+    _app := dbf_get_rec()
+    _app["idpos"] := _rec["idpos"]
+    _app["brdok"] := _rec["brdok"]
+    _app["idvd"] := _rec["idvd"]
+    _app["idradnik"] := _rec["idradnik"]
+    _app["smjena"] := _rec["smjena"]
+    _app["datum"] := _rec["datum"]
+  	
+    update_rec_server_and_dbf( ALIAS(), _app )
+	
+  	select pos
+
 enddo
+
 close all
+
 return
 
 
@@ -1307,9 +1309,7 @@ return
  *  \param cIdRoba
  */
  
-function SR_ImaRobu(cPom,cIdRoba)
-*{
-
+function SR_ImaRobu( cPom, cIdRoba )
 local lVrati:=.f.
 local nArr:=SELECT()
 
@@ -1340,7 +1340,8 @@ seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
 	_rec := dbf_get_rec()
-
+    hb_hdel( _rec, "rbr" )
+	
   	select roba
   	HSEEK _IdRoba
   	_rec["robanaz"] := roba->naz
@@ -1382,6 +1383,7 @@ return .t.
 function Priprz2Pos()
 local lNivel
 local _rec
+local _cnt := 0
 
 lNivel:=.f.
 
@@ -1413,6 +1415,7 @@ do while !eof()
 	
 	APPEND BLANK
 
+    _rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt ) ) , 5 ) 
     update_rec_server_and_dbf( ALIAS(), _rec )
 	
   	SELECT PRIPRZ
@@ -1781,8 +1784,9 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	select pos
 
 	_rec := dbf_get_rec()
+	hb_hdel( _rec, "rbr" ) 
 	
-	select _pos_pripr
+    select _pos_pripr
 	append blank
 	
 	_rec["brdok"] := PADL( ALLTRIM( _rec["brdok"] ) + "S", 6 )
@@ -1853,8 +1857,9 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	select pos
 
 	_rec := dbf_get_rec()
+	hb_hdel( _rec, "rbr" ) 
 	
-	select _pos_pripr
+    select _pos_pripr
 	append blank
 	
 	_rec["robanaz"] := roba->naz

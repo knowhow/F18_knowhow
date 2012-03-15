@@ -78,27 +78,33 @@ return
 function fakt_mpc_iz_sifrarnika()
 local nCV:=0
 
-if RJ->tip=="N1"
-	nCV := roba->nc
-elseif RJ->tip=="M1"
-	nCV := roba->mpc
-elseif RJ->tip=="M2"
-	nCV := roba->mpc2
-elseif RJ->tip=="M3"
+if rj->( FIELDPOS("tip")) <> 0
+
+    if RJ->tip=="N1"
+	    nCV := roba->nc
+    elseif RJ->tip=="M1"
+	    nCV := roba->mpc
+    elseif RJ->tip=="M2"
+	    nCV := roba->mpc2
+    elseif RJ->tip=="M3"
     	nCV := roba->mpc3
-elseif RJ->tip=="M4"
+    elseif RJ->tip=="M4"
     	nCV := roba->mpc4
-elseif RJ->tip=="M5"
+    elseif RJ->tip=="M5"
     	nCV := roba->mpc5
-elseif RJ->tip=="M6"
+    elseif RJ->tip=="M6"
     	nCV := roba->mpc6
-else
-	if IzFMKINI("FAKT","ZaIzvjestajeDefaultJeMPC","N",KUMPATH)=="D"
+    else
+	    if IzFMKINI("FAKT","ZaIzvjestajeDefaultJeMPC","N",KUMPATH)=="D"
       		nCV := roba->mpc
     	else
       		nCV := roba->vpc
     	endif
+    endif
+else
+    nCV := roba->vpc
 endif
+
 return nCV
 
 

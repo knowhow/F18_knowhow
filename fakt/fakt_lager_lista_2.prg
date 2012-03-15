@@ -450,6 +450,12 @@ return
  *  \brief Zaglavlje izvjestaja stanje robe
  */
 function ZaglSRobe()
+local _rj_tip := ""
+
+if rj->(fieldpos("tip")) <> 0
+    _rj_tip := rj->tip
+endif
+
 if nstr > 0
   FF
 endif
@@ -503,7 +509,7 @@ endif
 if lBezUlaza
    ?? "R.br  Sifra       Naziv                                 "+IF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"   Stanje    jmj     "
 else
-   ?? "R.br  Sifra       Naziv                                 "+IF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"   Stanje    jmj     "+IF(RJ->tip$"M1#M2".and.!EMPTY(cIdFirma),"Cij.",if(IsPDV()," PC ","VPC "))+"      Iznos"
+   ?? "R.br  Sifra       Naziv                                 "+IF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"   Stanje    jmj     "+IF(_rj_tip$"M1#M2".and.!EMPTY(cIdFirma),"Cij.",if(IsPDV()," PC ","VPC "))+"      Iznos"
 endif
 // endif
 

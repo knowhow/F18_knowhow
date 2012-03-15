@@ -1,3 +1,7 @@
+0.9.65 2012-03-15, hernad
+  
+  - mogućnost podešenja fontova i rezolucije [#27127](http://redmine.bring.out.ba/issues/27127)
+
 0.9.64 2012-03-15, vsasa
 
   - fakt, brojač dokumenata [#26954](http://redmine.bring.out.ba/issues/26954)

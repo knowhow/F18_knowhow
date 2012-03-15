@@ -27,7 +27,7 @@ static __test_mode := .f.
 
 static __max_rows := 40
 static __max_cols := 140
-
+static __font_name := "Lucida Console"
 
 // ---------------------------------
 // 
@@ -66,13 +66,6 @@ SET DELETED ON
 SETCANCEL(.f.)
 
 
-if setmode(MAXROWS(), MAXCOLS())
-   log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
-else
-   log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
-   QUIT
-endif
-
 set( _SET_EVENTMASK, INKEY_ALL )
 mSetCursor( .t. )
 
@@ -107,6 +100,16 @@ __my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }
 __global_error_handler := ERRORBLOCK(__my_error_handler)
 
 _get_screen_resolution_from_config()
+
+hb_gtInfo( HB_GTI_FONTNAME , font_name())
+
+if setmode(maxrows(), maxcols())
+   log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+else
+   log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+   QUIT
+endif
+
 
 _get_server_params_from_config()
 
@@ -197,6 +200,7 @@ local _ini_params := hb_hash()
 
 _ini_params["max_rows"] := nil
 _ini_params["max_cols"] := nil
+_ini_params["font_name"] := nil
 
 IF !f18_ini_read( F18_SCREEN_INI_SECTION, @_ini_params, .t. )
     MsgBeep("screen resolution: problem sa ini read")
@@ -212,6 +216,11 @@ IF _ini_params["max_cols"] != nil
     __max_cols := VAL( _ini_params["max_cols"] )
 ENDIF
 
+IF _ini_params["font_name"] != nil
+    __font_name := _ini_params["font_name"]
+ENDIF
+
+
 return .t.
 
 
@@ -224,6 +233,8 @@ return __max_rows
 function maxcols()
 return __max_cols
 
+function font_name()
+return __font_name
 
 // ------------------------------------------
 // ------------------------------------------

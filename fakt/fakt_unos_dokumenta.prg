@@ -531,6 +531,7 @@ do while !eof()
     skip - 1
 
     Scatter()
+    _podbr := SPACE(2)
 
     nRbr:=RbrUnum(_Rbr)
 
@@ -719,7 +720,7 @@ local nYpom
 local nRec
 local aMemo
 local cPretvori := "N"
-local nPom:=IF(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
+local nPom:= IIF(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
 local lTxtNaKraju := .f.
 local cAvRacun
 local cListaTxt := ""
@@ -869,15 +870,16 @@ else
 
 endif
 
-// prva stavka
+_podbr := SPACE(2)
 
-if (fNovi .and. (nRbr==1 .and. VAL(_podbr) < 1 )) 
-    nPom:=if(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
-    _IdFirma:=gFirma
+// prva stavka
+if (fNovi .and. (nRbr == 1 )) 
+    nPom:= IIF(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
+    _IdFirma := gFirma
     _IdTipDok := "10"
-    _datdok := date()
-    _zaokr := 2
-    _dindem:=LEFT(VAlBazna(),3)
+    _datdok   := date()
+    _zaokr    := 2
+    _dindem   :=LEFT(VAlBazna(),3)
 else
     nPom:=ASCAN(aPom,{|x| _IdTipdok==LEFT(x,2)})
 endif
@@ -918,7 +920,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
     
     @  m_x+ 2, m_y + 2 SAY PADR(aPom[ASCAN(aPom,{|x|_IdTipdok==LEFT(x,2)})],40)
     
-    if (_idTipDok=="13" .and. gVarNum=="2" .and. gVar13=="2")
+    if (_idTipDok == "13" .and. gVarNum=="2" .and. gVar13=="2")
             
         @ m_x+1, 57 SAY "Prodavn.konto" GET _idPartner VALID P_Konto(@_idPartner)
         read
@@ -1751,7 +1753,7 @@ return glDistrib .and. _idtipdok=="10" .and. UPPER(RIGHT(TRIM(_BrDok),1))=="S"
  */
  
 function RabPor10()
-*{
+
 local nArr:=SELECT()
 SELECT FAKT
 SET ORDER to TAG "1"
@@ -1773,7 +1775,6 @@ else
 endif
 SELECT (nArr)
 return
-*}
 
 
 function Popupfakt_unos_dokumenta()
@@ -1833,14 +1834,16 @@ do while .t.
        go top
        nDug:=0
        do while !eof()
-      scatter()
-      nDug+=round( _Cijena*_kolicina*(1-_Rabat/100) , ZAOKRUZENJE)
-      skip
+          scatter()
+          nDug+=round( _Cijena*_kolicina*(1-_Rabat/100) , ZAOKRUZENJE)
+          skip
        enddo
+
        _idroba:=space(10)
        _kolicina:=1
        _rbr := STR(RbrUnum(_Rbr) + 1, 3, 0)
        _rabat := 0
+
        cDN := "D"
        Box(,4,60)
       @ m_x+1 ,m_y+2 SAY "Artikal koji se stvara:" GET _idroba  pict "@!" valid P_Roba(@_idroba)
@@ -1865,11 +1868,13 @@ do while .t.
          select roba; replace vpc with _cijena; select fakt_pripr
       endif
       if lastkey()=K_ESC
-        boxc(); close all; return DE_CONT
+        boxc()
+        close all
+         return DE_CONT
       endif
       append blank
       Gather()
-       BoxC()
+      BoxC()
     case izbor == 5
           
         azuriraj_smece()

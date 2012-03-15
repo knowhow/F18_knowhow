@@ -239,7 +239,6 @@ IF _ini_params[_var_name] != nil
     __font_size := VAL( _ini_params[_var_name] )
 ENDIF
 
-altd()
 return .t.
 
 
@@ -514,7 +513,6 @@ return __f18_home
 function _path_quote(path)
 
 if (AT(path, " ") != 0) .and. (AT(PATH, '"') == 0)
-  altd()
   return  '"' + path + '"'
 else
   return path

@@ -1,6 +1,8 @@
-0.9.65 2012-03-15, hernad
+0.9.65 2012-03-15, hernad, vsasa
   
   - mogućnost podešenja fontova i rezolucije [#27127](http://redmine.bring.out.ba/issues/27127)
+  - korekcija IDS algoritma kod semafora [#27131](http://redmine.bring.out.ba/issues/27131)
+  - sitne korekcije
 
 0.9.64 2012-03-15, vsasa
 

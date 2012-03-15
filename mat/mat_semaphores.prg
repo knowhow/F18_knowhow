@@ -49,6 +49,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_MAT_SUBAN
 my_usex ("mat_suban", "mat_suban", .f., "SEMAPHORE")
 
@@ -89,8 +95,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -291,6 +299,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_MAT_NALOG
 my_usex ("mat_nalog", "mat_nalog", .f., "SEMAPHORE")
 
@@ -330,8 +344,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -518,6 +534,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_MAT_ANAL
 my_usex ("mat_anal", "mat_anal", .f., "SEMAPHORE")
 
@@ -557,8 +579,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -749,6 +773,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _step := 1
+    _offset := 1
+    _count := 1
+endif
+
 SELECT F_MAT_SINT
 my_usex ("mat_sint", "mat_sint", .f., "SEMAPHORE")
 
@@ -788,8 +818,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 

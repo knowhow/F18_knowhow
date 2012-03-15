@@ -88,6 +88,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _step := 1
+    _count := 1
+    _offset := 1
+endif
+
 SELECT F_KUF
 my_usex ("kuf", "epdv_kuf", .f., "SEMAPHORE")
 
@@ -127,8 +133,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| STR( field->br_dok, 6, 0 ) } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -362,6 +370,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _step := 1
+    _count := 1
+    _offset := 1
+endif
+
 SELECT F_KIF
 my_usex ("kif", "epdv_kif", .f., "SEMAPHORE")
 
@@ -400,8 +414,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| STR( field->br_dok, 6, 0 )  } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
 
   DO CASE

@@ -47,6 +47,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _count := 1
+    _step := 1
+endif
+
 SELECT F_SUBAN
 my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
@@ -88,8 +94,10 @@ for _offset := 0 to _count STEP _step
 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -299,6 +307,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_ANAL
 my_usex ("anal", "fin_anal", .f., "SEMAPHORE")
 
@@ -338,8 +352,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -532,6 +548,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_SINT
 my_usex ("sint", "fin_sint", .f., "SEMAPHORE")
 
@@ -571,8 +593,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -765,6 +789,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_NALOG
 my_usex ("nalog", "fin_nalog", .f., "SEMAPHORE")
 
@@ -804,8 +834,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 

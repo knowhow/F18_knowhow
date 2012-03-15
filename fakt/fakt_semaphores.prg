@@ -41,8 +41,13 @@ if algoritam == NIL
 endif
 
 _seconds := SECONDS()
-
 _count := table_count( _tbl, "true" ) 
+
+if algoritam == "IDS"
+    _offset := 1
+    _count := 1
+    _step := 1
+endif
 
 SELECT F_FAKT
 my_usex ("fakt", "fakt_fakt", .f., "SEMAPHORE")
@@ -76,14 +81,16 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) || lpad( rbr, 3, ' ' ) ) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2 ) || rpad( idtipdok, 2 ) || rpad( brdok, 8 ) || lpad( rbr, 3 ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok + field->rbr } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -279,6 +286,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 _fields := { "idfirma", "idtipdok", "brdok", "partner", "datdok", "dindem", "iznos", "rabat", "rezerv", "m1", "idpartner", "idvrstep", "datpl", "idpm", "dok_veza", "oper_id", "fisc_rn", "fisc_st", "dat_isp", "dat_otpr", "dat_val" }
 _sql_fields := sql_fields(_fields)
 
@@ -310,14 +323,16 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2 ) || rpad( idtipdok, 2 ) || rpad( brdok, 8 ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -506,6 +521,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+if algoritam == "IDS"
+    _offset := 1
+    _count := 1
+    _step := 1
+endif
+
 SELECT F_FAKT_DOKS2
 my_usex ("fakt_doks2", "fakt_doks2", .f., "SEMAPHORE")
 
@@ -537,14 +558,16 @@ for _offset := 0 to _count STEP _step
                 endif
             next
             _sql_ids += ")"
-            _qry += " ( rpad( idfirma, 2, ' ' ) || rpad( idtipdok, 2, ' ' ) || rpad( brdok, 8, ' ' ) ) IN " + _sql_ids
+            _qry += " ( rpad( idfirma, 2 ) || rpad( idtipdok, 2 ) || rpad( brdok, 8 ) ) IN " + _sql_ids
         endif
 
         _key_block := {|| field->idfirma + field->idtipdok + field->brdok } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 

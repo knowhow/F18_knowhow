@@ -490,6 +490,8 @@ return _ret
 function fakt_set_broj_dokumenta()
 local _broj_dokumenta
 local _t_area := SELECT()
+local _t_rec
+local _firma, _td
 
 select fakt_pripr
 go top
@@ -503,9 +505,23 @@ endif
 // daj mi novi broj dokumenta
 _broj_dokumenta := fakt_novi_broj_dokumenta( field->idfirma, field->idtipdok )
 
-do while !EOF()
+select fakt_pripr
+set order to tag "1"
+go top
+
+_firma := field->idfirma
+_td := field->idtipdok
+
+do while !EOF() .and. field->idfirma == _firma .and. field->idtipdok == _td
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
     replace field->brdok with _broj_dokumenta
-    skip
+
+    go (_t_rec)
+
 enddo
 
 go top

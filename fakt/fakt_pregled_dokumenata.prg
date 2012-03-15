@@ -333,7 +333,8 @@ else
 endif
 go nTrec
 return DE_CONT
-*}
+
+
 
 // stampaj poresku fakturu
 function pr_pf(lOpcine)

@@ -1,3 +1,8 @@
+0.9.64 2012-03-15, vsasa
+
+  - fakt, brojač dokumenata [#26954](http://redmine.bring.out.ba/issues/26954)
+  - korekcije ostalih sitnih grešaka
+
 0.9.63 2012-03-11, vsasa
 
   - kontrola integriteta podataka fmk [#27063](http://redmine.bring.out.ba/issues/27063)

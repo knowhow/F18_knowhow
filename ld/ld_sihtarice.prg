@@ -162,6 +162,11 @@ local cFilter := ""
 local nLineLen := 100
 local nVar := 1
 
+select F_RADN
+if !used()
+    O_RADN
+endif
+
 if pcount() <= 1
     
     // nema parametara unesenih
@@ -281,6 +286,11 @@ nMjesec := gMjesec
 nGodina := gGodina
 cGroup := SPACE(7)
 cIdRadn := SPACE(6)
+
+select F_RADN
+if !used()
+    O_RADN
+endif
 
 if g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
     return

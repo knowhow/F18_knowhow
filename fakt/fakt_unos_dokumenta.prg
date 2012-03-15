@@ -523,7 +523,7 @@ PushWA()
 
 select fakt_pripr
 // go top
-Box(,22,75,.f.,"")
+Box(, 22, 75, .f., "")
 nDug:=0
 do while !eof()
     skip
@@ -540,14 +540,17 @@ do while !eof()
             exit
     endif
 
-    nDug + = round( _Cijena*_kolicina*PrerCij()*(1-_Rabat/100)*(1+_Porez/100) , ZAOKRUZENJE)
+    nDug + = round( _Cijena * _kolicina * PrerCij() * (1-_Rabat/100) * (1+_Porez/100) , ZAOKRUZENJE)
+
     @ m_x+23, m_y+2 SAY "ZBIR DOKUMENTA:"
     @ m_x+23, col()+1 SAY nDug PICTURE '9 999 999 999.99'
     InkeySc(10)
 
     select fakt_pripr
     Gather()
-    PrCijSif()      // ako treba, promijeni cijenu u sifrarniku
+
+     // ako treba, promijeni cijenu u sifrarniku
+    PrCijSif() 
     go nTR2
 enddo
 PopWA()

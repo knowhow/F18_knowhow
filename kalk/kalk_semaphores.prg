@@ -47,6 +47,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 // sredimo dbf - pobrisimo sto ne treba
 SELECT F_KALK
 my_usex ("kalk", "kalk_kalk", .f., "SEMAPHORE")
@@ -97,8 +103,10 @@ for _offset := 0 to _count STEP _step
 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -337,6 +345,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_KALK_DOKS
 my_usex ("kalk_doks", "kalk_doks", .f., "SEMAPHORE")
 
@@ -376,8 +390,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvd + field->brdok } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -567,6 +583,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" )
 
+if algoritam == "IDS"
+    _offset := 1
+    _count := 1
+    _step := 1
+endif
+
 SELECT F_KALK_DOKS2
 my_usex ("kalk_doks2", "kalk_doks2", .f., "SEMAPHORE")
 
@@ -604,8 +626,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvd + field->brdok } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 

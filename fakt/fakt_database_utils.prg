@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -489,44 +489,47 @@ return _ret
 // ------------------------------------------------------------
 function fakt_set_broj_dokumenta()
 local _broj_dokumenta
-local _t_area := SELECT()
 local _t_rec
-local _firma, _td
+local _firma, _td, _null_brdok
+
+PushWa()
 
 select fakt_pripr
 go top
+
+_null_brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
         
-if field->brdok <> PADR( REPLICATE( "0", gNumDio ), 8 )
+if field->brdok <> _null_brdok 
     // nemam sta raditi, broj je vec setovan
-    select ( _t_area )
+    PopWa()
     return .f.
 endif
-
-// daj mi novi broj dokumenta
-_broj_dokumenta := fakt_novi_broj_dokumenta( field->idfirma, field->idtipdok )
-
-select fakt_pripr
-set order to tag "1"
-go top
 
 _firma := field->idfirma
 _td := field->idtipdok
 
-do while !EOF() .and. field->idfirma == _firma .and. field->idtipdok == _td
+// daj mi novi broj dokumenta
+_broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _td )
+
+select fakt_pripr
+set order to tag "1"
+
+GO TOP
+do while !EOF()
 
     skip 1
     _t_rec := RECNO()
     skip -1
 
-    replace field->brdok with _broj_dokumenta
+    if field->idfirma == _firma .and. field->idtipdok == _td .and. field->brdok == _null_brdok
+       replace field->brdok with _broj_dokumenta
+    endif
 
     go (_t_rec)
 
 enddo
 
-go top
-
-select ( _t_area )
+PopWa()
  
 return .t.
 

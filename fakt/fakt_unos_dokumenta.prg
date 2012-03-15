@@ -222,7 +222,7 @@ do case
         return DE_REFRESH
 
     case Ch=K_CTRL_P
-        
+       
         // prvo setuj broj dokumenta
         fakt_set_broj_dokumenta()
 

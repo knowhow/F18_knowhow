@@ -231,12 +231,12 @@ ENDIF
 
 _var_name := "font_width"
 IF _ini_params[_var_name] != nil
-    __font_width := VAL( _ini_params["_var_name"] )
+    __font_width := VAL( _ini_params[_var_name] )
 ENDIF
 
 _var_name := "font_height"
 IF _ini_params[_var_name] != nil
-    __font_height := VAL( _ini_params["_var_name"] )
+    __font_height := VAL( _ini_params[_var_name] )
 ENDIF
 
 return .t.

@@ -1,4 +1,4 @@
-0.9.64 2012-03-15, hernad
+0.9.65 2012-03-15, hernad
   
   - mogućnost podešenja fontova i rezolucije [#27127](http://redmine.bring.out.ba/issues/27127)
 

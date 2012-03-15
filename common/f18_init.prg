@@ -27,7 +27,7 @@ static __test_mode := .f.
 
 static __max_rows := 40
 static __max_cols := 140
-static __font_name := "DejaVu Sans Mono"
+static __font_name := "Lucida Console"
 
 // ---------------------------------
 // 
@@ -101,8 +101,6 @@ __global_error_handler := ERRORBLOCK(__my_error_handler)
 
 _get_screen_resolution_from_config()
 
-? font_name()
-inkey(0)
 hb_gtInfo( HB_GTI_FONTNAME , font_name())
 
 if setmode(maxrows(), maxcols())

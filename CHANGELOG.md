@@ -1,3 +1,7 @@
+0.9.66 2012-03-15, hernad
+ 
+  - rezolucija 30 x 100 Lucida Console za manje rezolucije
+
 0.9.65 2012-03-15, hernad, vsasa
   
   - mogućnost podešenja fontova i rezolucije [#27127](http://redmine.bring.out.ba/issues/27127)

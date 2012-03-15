@@ -29,8 +29,8 @@ static __max_rows := 40
 static __max_cols := 140
 
 static __font_name := "Lucida Console"
-static __font_size := 24
-static __font_width := 12
+static __font_size := 20
+static __font_width := 10
 
 // ---------------------------------
 // 

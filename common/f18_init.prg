@@ -28,6 +28,8 @@ static __test_mode := .f.
 static __max_rows := 40
 static __max_cols := 140
 static __font_name := "Lucida Console"
+static __font_size := 20
+static __fint_width := 10
 
 // ---------------------------------
 // 
@@ -102,6 +104,9 @@ __global_error_handler := ERRORBLOCK(__my_error_handler)
 _get_screen_resolution_from_config()
 
 hb_gtInfo( HB_GTI_FONTNAME , font_name())
+hb_gtInfo( HB_GTI_FONTWIDTH, font_width())
+hb_gtInfo( HB_GTI_FONTSIZE , font_height())
+
 
 if setmode(maxrows(), maxcols())
    log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
@@ -196,11 +201,15 @@ return .t.
 // vraca informacije iz inija vezane za screen rezoluciju
 // ------------------------------------------------------------
 static function _get_screen_resolution_from_config()
+local _var_name
+
 local _ini_params := hb_hash()
 
 _ini_params["max_rows"] := nil
 _ini_params["max_cols"] := nil
 _ini_params["font_name"] := nil
+_ini_params["font_width"] := nil
+_ini_params["font_height"] := nil
 
 IF !f18_ini_read( F18_SCREEN_INI_SECTION, @_ini_params, .t. )
     MsgBeep("screen resolution: problem sa ini read")
@@ -220,6 +229,15 @@ IF _ini_params["font_name"] != nil
     __font_name := _ini_params["font_name"]
 ENDIF
 
+_var_name := "font_width"
+IF _ini_params[_var_name] != nil
+    __font_width := VAL( _ini_params["_var_name"] )
+ENDIF
+
+_var_name := "font_height"
+IF _ini_params[_var_name] != nil
+    __font_height := VAL( _ini_params["_var_name"] )
+ENDIF
 
 return .t.
 

@@ -540,7 +540,7 @@ do while !eof()
             exit
     endif
 
-    nDug + = round( _Cijena * _kolicina * PrerCij() * (1-_Rabat/100) * (1+_Porez/100) , ZAOKRUZENJE)
+    nDug += round( _Cijena * _kolicina * PrerCij() * ( 1 - _Rabat / 100) * ( 1 + _Porez / 100) , ZAOKRUZENJE)
 
     @ m_x+23, m_y+2 SAY "ZBIR DOKUMENTA:"
     @ m_x+23, col()+1 SAY nDug PICTURE '9 999 999 999.99'

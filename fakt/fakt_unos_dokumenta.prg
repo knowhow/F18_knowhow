@@ -568,36 +568,40 @@ enddo
 
 go bottom
 
-Box("knjn", MAXROWS()-10, MAXCOLS()-10, .f., "Unos novih stavki")
+Box("knjn", MAXROWS() -10, MAXCOLS() - 10, .f., "Unos novih stavki")
 
 do while .t.
     Scatter()
-    if AllTrim(_podbr)=="." .and. empty(_idroba)
+    if AllTrim(_podbr) == "." .and. empty(_idroba)
             nRbr:=RbrUnum(_Rbr)
             _PodBr:=" 1"
-    elseif _podbr>=" 1"
+    elseif _podbr > =" 1"
             nRbr:=RbrUnum(_Rbr)
-            _podbr:= str(val(_podbr)+1,2)
+            _podbr := str(val(_podbr) + 1, 2, 0)
     else
-            nRbr:=RbrUnum(_Rbr)+1
-            _PodBr:="  "
+            nRbr := RbrUnum(_Rbr) + 1
+            _PodBr := "  "
     endif
     BoxCLS()
 
-    _c1:=_c2:=_c3:=SPACE(20)
-    _opis:=space(120)
-    _n1:=_n2:=0
+    _c1 := _c2 := _c3 := SPACE(20)
+
+    _opis := space(120)
+
+    _n1:= _n2 := 0
     if edit_fakt_priprema(.t.) == 0
             exit
     endif
     nDug += Round(_Cijena*_Kolicina*PrerCij()*(1-_Rabat/100)*(1+_Porez/100) , ZAOKRUZENJE)
-    @ m_x+23,m_y+2 SAY "ZBIR DOKUMENTA:"
-    @ m_x+23,col()+2 SAY nDug PICTURE '9 999 999 999.99'
+    @ m_x+23, m_y + 2 SAY "ZBIR DOKUMENTA:"
+    @ m_x+23, col() + 2 SAY nDug PICTURE '9 999 999 999.99'
     InkeySc(10)
+
     select fakt_pripr
     APPEND BLANK
     Gather()
-    PrCijSif()      // ako treba, promijeni cijenu u sifrarniku
+    // ako treba, promijeni cijenu u sifrarniku
+    PrCijSif()      
 enddo
 BoxC()
 
@@ -608,7 +612,9 @@ function PrintDok()
 local cPom
 local lJos
 
-SpojiDuple()  // odradi ovo prije stampanja !
+// odradi ovo prije stampanja !
+SpojiDuple()  
+
 SrediRbrFakt()
 
 o_fakt_edit() // sredirbr zatvori pripremu !!
@@ -653,7 +659,7 @@ function RekZadMpO()
 select fakt_pripr
 GO TOP
 cSort1:="IzSifK('PARTN','LINI',idpartner,.f.)+idroba"
-cFilt1:="idtipdok=='13'.and.idfirma=="+cm2str(fakt_pripr->idfirma)
+cFilt1:="idtipdok=='13'.and.idfirma==" + cm2str(fakt_pripr->idfirma)
 INDEX ON &cSort1 to "TMPPRIPR" for &cFilt1
 GO TOP
 StartPrint()
@@ -676,7 +682,7 @@ do while !EOF()
       nKol += kolicina
       SKIP 1
     enddo
-    ? cIdRoba, LEFT(ROBA->naz,40), STR(nKol,10,0)
+    ? cIdRoba, LEFT(ROBA->naz,40),  STR(nKol, 10, 0)
   enddo
   ? "---------- ---------------------------------------- ----------"
   ?
@@ -1654,7 +1660,7 @@ cVrati:=""
 select banke
 set order to tag "ID"
 for i:=1 to LEN(aOpc)
-    hseek SUBSTR(aOpc[i],1,3)
+    hseek SUBSTR(aOpc[i], 1, 3)
     if Found()
         cVrati += ALLTRIM(banke->naz) + ", " + ALLTRIM(banke->adresa) + ", " + ALLTRIM(banke->mjesto) + ", " + ALLTRIM(aOpc[i]) + "; "
     else
@@ -1791,7 +1797,7 @@ do while .t.
     case izbor == 1
     m_gen_ug()
     case izbor == 2
-    SrediRbrFakt()
+       SrediRbrFakt()
     case izbor == 3
       O_FAKT_S_PRIPR
       O_FTXT
@@ -1817,9 +1823,9 @@ do while .t.
        enddo
        _idroba:=space(10)
        _kolicina:=1
-       _rbr:=str(RbrUnum(_Rbr)+1,3)
-       _rabat:=0
-       cDN:="D"
+       _rbr := STR(RbrUnum(_Rbr) + 1, 3, 0)
+       _rabat := 0
+       cDN := "D"
        Box(,4,60)
       @ m_x+1 ,m_y+2 SAY "Artikal koji se stvara:" GET _idroba  pict "@!" valid P_Roba(@_idroba)
       @ m_x+2 ,m_y+2 SAY "Kolicina" GET _kolicina valid {|| _kolicina<>0 } pict pickol

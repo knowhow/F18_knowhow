@@ -217,9 +217,7 @@ do while !eof()
 	_broj := field->brdok
 	_cnt := 0
 
-	do while !EOF() .and. field->idfirma == _firma ;
-			.and. field->idtipdok == _tdok ;
-			.and. field->brdok == _broj
+	do while !EOF() .and. field->idfirma == _firma .and. field->idtipdok == _tdok .and. field->brdok == _broj
 					
 		skip 1
 		
@@ -228,7 +226,7 @@ do while !eof()
 		skip -1
 
         _rec := dbf_get_rec()
-		_rec["rbr"] := PADL( ALLTRIM(STR( ++_cnt )), 3 )
+		_rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt )), 3, 0 )
 	    dbf_update_rec( _rec )
 
 		go ( _t_rec )
@@ -1233,7 +1231,7 @@ append blank
 
 _idroba:=cIdRoba
 _kolicina:=IF(nDug2-nRab2+nPor2>nIznos,-1,1)
-_rbr:=STR(RbrUnum(_Rbr)+1,3)
+_rbr := STR( RbrUnum(_Rbr) + 1, 3, 0)
 _cijena:=ABS(nDug2-nRab2+nPor2-nIznos)
 _rabat:=0 
 _porez:=0

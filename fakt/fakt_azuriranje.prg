@@ -554,46 +554,46 @@ if lOk = .t.
 
   do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
  
-   record["id_firma"] := field->idfirma
-   record["id_tip_dok"] := field->idtipdok
-   record["br_dok"] := field->brdok
-   record["r_br"] := field->Rbr
-   record["dat_dok"] := field->datdok
-   record["id_partner"] := field->idpartner
-   record["din_dem"] := field->dindem
-   record["zaokr"] := field->zaokr
-   record["pod_br"] := VAL( field->podbr )
-   record["id_roba"] := field->idroba
-   record["ser_br"] := field->serbr
-   record["kolicina"] := field->kolicina
-   record["cijena"] := field->cijena
-   record["rabat"] := field->rabat
-   record["porez"] := field->porez
-   record["txt"] := field->txt
-   record["k1"] := field->k1
-   record["k2"] := field->k2
-   record["m1"] := field->m1
-   record["id_vrste_p"] := field->idvrstep
-   record["id_pm"] := field->idpm
-   record["c1"] := field->c1
-   record["c2"] := field->c2
-   record["c3"] := field->c3
-   record["n1"] := field->n1
-   record["n2"] := field->n2
-   record["opis"] := field->opis
-   record["dok_veza"] := field->dok_veza
-               
-   _tmp_doc := record["id_firma"] + record["id_tip_dok"] + record["br_dok"]
-   _tmp_id := record["id_firma"] + record["id_tip_dok"] + record["br_dok"] + record["r_br"]
+    record["id_firma"] := field->idfirma
+    record["id_tip_dok"] := field->idtipdok
+    record["br_dok"] := field->brdok
+    record["r_br"] := field->Rbr
+    record["dat_dok"] := field->datdok
+    record["id_partner"] := field->idpartner
+    record["din_dem"] := field->dindem
+    record["zaokr"] := field->zaokr
+    record["pod_br"] := field->podbr
+    record["id_roba"] := field->idroba
+    record["ser_br"] := field->serbr
+    record["kolicina"] := field->kolicina
+    record["cijena"] := field->cijena
+    record["rabat"] := field->rabat
+    record["porez"] := field->porez
+    record["txt"] := field->txt
+    record["k1"] := field->k1
+    record["k2"] := field->k2
+    record["m1"] := field->m1
+    record["id_vrste_p"] := field->idvrstep
+    record["id_pm"] := field->idpm
+    record["c1"] := field->c1
+    record["c2"] := field->c2
+    record["c3"] := field->c3
+    record["n1"] := field->n1
+    record["n2"] := field->n2
+    record["opis"] := field->opis
+    record["dok_veza"] := field->dok_veza
+                
+    _tmp_doc := record["id_firma"] + record["id_tip_dok"] + record["br_dok"]
+    _tmp_id := record["id_firma"] + record["id_tip_dok"] + record["br_dok"] + record["r_br"]
 
-   AADD( _ids, _tmp_id )    
+    AADD( _ids, _tmp_id )    
 
-   if !sql_fakt_fakt_update( "ins", record )
-       lOk := .f.
-       exit
-   endif
-    
-   skip
+    if !sql_fakt_fakt_update( "ins", record )
+        lOk := .f.
+        exit
+    endif
+        
+    skip
 
   enddo
 

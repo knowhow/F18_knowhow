@@ -88,14 +88,20 @@ return .t.
 
 
 function V_Podbr()
-local fRet:=.f.,nTRec,nPrec,nPkolicina:=1,nPRabat:=0
+local fRet:=.f., nTRec, nPrec, nPkolicina := 1, nPRabat:=0
+
 private GetList:={}
-if (left(_podbr,1) $ " .0123456789") .and. (right(_podbr,1) $ " .0123456789")
-  fRet:=.t.
+
+if (left(_podbr, 1) $ " .0123456789") .and. (right(_podbr, 1) $ " .0123456789")
+   fRet:=.t.
 endif
 
-if val(_podbr)>0; _podbr:= str(val(_podbr),2); endif
-if alltrim(_podbr)=="."
+if val(_podbr) > 0
+   _podbr:= str(val(_podbr), 2, 0)
+endif
+
+
+if ALLTRIM(_podbr)=="."
   _podbr:=" ."
   cPRoba:=""  // proizvod sifra
   nPKolicina:=_kolicina
@@ -135,8 +141,8 @@ if alltrim(_podbr)=="."
      hseek sast->id2  // pozicioniraj se na materijal
      select fakt_pripr
      append ncnl
-     _rbr:=str(nTrbr,3)
-     _podbr:=str(++npbr,2)
+     _rbr:=str( nTrbr, 3, 0)
+     _podbr:=str( ++nPbr,2, 0)
      _idroba:=sast->id2
      _kolicina:=sast->kolicina*npkolicina
      _rabat:=nPRabat
@@ -148,13 +154,13 @@ if alltrim(_podbr)=="."
        _txt1:=""
      endif
      if _podbr==" ." .or.  roba->tip="U"
-         _txt:=Chr(16)+trim(_txt1)+Chr(17) + Chr(16)+_txt2+Chr(17)+;
-           Chr(16)+trim(_txt3a)+Chr(17) + Chr(16)+_txt3b+Chr(17)+;
-           Chr(16)+trim(_txt3c)+Chr(17) +;
-           Chr(16)+_BrOtp+Chr(17) +;
-           Chr(16)+dtoc(_DatOtp)+Chr(17) +;
-           Chr(16)+_BrNar+Chr(17) +;
-           Chr(16)+dtoc(_DatPl)+Chr(17)
+         _txt:=Chr(16) + trim(_txt1) + Chr(17) + Chr(16) + _txt2+Chr(17)+;
+           Chr(16) + trim(_txt3a) + Chr(17) + Chr(16) + _txt3b + Chr(17)+;
+           Chr(16) + trim(_txt3c)+Chr(17) +;
+           Chr(16) + _BrOtp+Chr(17) +;
+           Chr(16) + dtoc(_DatOtp)+Chr(17) +;
+           Chr(16) + _BrNar + Chr(17) +;
+           Chr(16) + dtoc(_DatPl) + Chr(17)
      endif
      Gather()
      select sast
@@ -162,10 +168,10 @@ if alltrim(_podbr)=="."
    enddo
    select fakt_pripr
    go nTRec
-   _podbr:=" ."
-   _cijena:=0
-   _idroba:=cPRoba
-   _kolicina:=npkolicina
+   _podbr := " ."
+   _cijena := 0
+   _idroba := cPRoba
+   _kolicina := npkolicina
    _txt1:=cptxt1
   endif
   _txt1:=padr(_txt1,40)
@@ -447,7 +453,7 @@ return .t.
 function W_Roba()
 private Getlist:={}
 
-if _podbr==" ."
+if _podbr == " ."
      	@ m_x + 15, m_y + 2  SAY "Roba     " ;
      		GET _txt1 ;
 		PICT "@!"
@@ -643,12 +649,12 @@ if IsPdv() .and. _IdTipDok == "12" .and. IsProfil(_IdPartner, "KMS")
  	endif
 endif
 
-if (nRbr==1 .and. val(_podbr)<1)
+if (nRbr == 1 .and. val( _podbr ) < 1)
 	Box(,9,75)
  		@ m_x+1,m_Y+1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId pict "@!"
  		read
  
- 		if lastkey()<>K_ESC .and. !empty(cId)
+ 		if lastkey() <> K_ESC .and. !empty(cId)
    			P_Ftxt(@cId)
    			SELECT ftxt
    			SEEK cId
@@ -661,7 +667,7 @@ if (nRbr==1 .and. val(_podbr)<1)
   
   			select fakt_pripr
   			IF glDistrib .and. _IdTipdok=="26"
-    				IF cId $ IzFMKIni("FAKT","TXTIzjaveZaObracunPoreza",";",KUMPATH)
+    				IF cId $ IzFMKIni("FAKT", "TXTIzjaveZaObracunPoreza", ";" , KUMPATH)
       					_k2 := "OPOR"
     				ELSE
       					_k2 := ""
@@ -670,11 +676,12 @@ if (nRbr==1 .and. val(_podbr)<1)
  		endif
  		setcolor(Invert)
  		private fUMemu:=.t.
- 		_txt2:=MemoEdit(_txt2,m_x+3,m_y+1,m_x+9,m_y+76)
+ 		_txt2:=MemoEdit(_txt2, m_x+3, m_y+1, m_x+9, m_y+76)
  		fUMemu:=NIL
  		
         setcolor(Normal)
  	BoxC()
+
 endif
 return
 
@@ -744,7 +751,7 @@ endif
 
 if (nRbr==1 .and. val(_podbr)<1)
 
-  Box(,11,75)
+  Box(, 11, 75)
      do while .t.
 
 	@ m_x + 1, m_y + 1 SAY "Odaberi uzorak teksta iz sifrarnika:" ;
@@ -761,15 +768,16 @@ if (nRbr==1 .and. val(_podbr)<1)
 			++ nCount
 			cId := "  "
 		endif
-   	endif	
+   	endif
+
  	setcolor(Invert)
  	private fUMemu:=.t.
+
  	_txt2:=MemoEdit(_txt2,m_x+3,m_y+1,m_x+9,m_y+76)
  	fUMemu:=NIL
- 	setcolor(Normal)
-     
+ 	setcolor(Normal)     
         if LastKey() == K_ESC
-	   exit
+	    exit
 	endif
      
      enddo
@@ -830,14 +838,13 @@ endif
 
 return
 
-
-
 // ----------------------------
 // ino klauzula
 // ----------------------------
 function InoKlauzula()
 
 PushWa() 
+
 	SELECT FTXT
 	seek "IN"
 	if !found()
@@ -846,6 +853,7 @@ PushWa()
 		        naz with "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
 	endif
 PopWa()
+
 return
 
 // ----------------------------
@@ -871,7 +879,6 @@ PopWa()
  */
  
 function GetUsl(fNovi)
-*{
 private GetList:={}
 
 
@@ -880,7 +887,7 @@ if !(roba->tip="U")
  ?? space(40)
  devpos(m_x+15,m_y+25)
 
- ?? trim(LEFT(roba->naz,40)),"("+roba->jmj+")"
+ ?? trim(LEFT(roba->naz, 40) ), "(" + roba->jmj + ")"
 endif
 
 if roba->tip $ "UT" .and. fnovi
@@ -888,23 +895,23 @@ if roba->tip $ "UT" .and. fnovi
 endif
 
 if roba->tip=="U"
-  _txt1 := PADR( IF( fNovi , LEFT(ROBA->naz,40) , _txt1 ) , 320 )
+  _txt1 := PADR( IIF( fNovi , LEFT(ROBA->naz, 40) , _txt1 ) , 320 )
   IF fNovi
     _cijena := ROBA->vpc
     if !_idtipdok$"11#15#27"
-      _porez  := TARIFA->ppp
+        _porez  := TARIFA->ppp
     endif
   ENDIF
-  @ row(),m_y+25 GET _txt1 pict "@S40"
+
+  @ row(), m_y+25 GET _txt1 pict "@S40"
   read
+
   _txt1:=trim(_txt1)
 else
   _txt1:=""
 endif
 
 return .t.
-
-
 
 
 /*! \fn Nijedupla(fNovi)
@@ -924,12 +931,15 @@ local nPrevRec
 
     if gOcitBarkod .and. nRbr>1
 
-        nEntBK:=val(IzFmkIni("Barkod","ENTER"+_IdTipdok,"0",SIFPATH))
-        // otiltaj entere ako je barkod ocitan !!
-        cEntBK:=""
-        for ibk:=1 to nEntBK
-          cEntBK+=Chr(K_ENTER)
+        nEntBK := VAL(IzFmkIni("Barkod", "ENTER" + _IdTipdok, "0", SIFPATH))
+ 
+       // otiltaj entere ako je barkod ocitan !!
+        cEntBK := ""
+
+        for ibk :=1 to nEntBK
+          cEntBK += Chr(K_ENTER)
         next
+
         if nEntBK>0
           KEYBOARD cEntBK
         endif
@@ -943,12 +953,12 @@ local nPrevRec
     IF FOUND ()
       if !(roba->tip $ "UT")
        Beep (2)
-       Msg ("Roba se vec nalazi na dokumentu, stavka "+ALLTRIM (PRIPR->Rbr), 30)
+       Msg ("Roba se vec nalazi na dokumentu, stavka " + ALLTRIM (PRIPR->Rbr), 30)
       endif
     ENDIF
+
     GO nPrevRec
 RETURN (.t.)
-*}
 
 
 
@@ -963,18 +973,21 @@ RETURN (.t.)
  */
  
 function Prepak(cIdRoba,cPako,nPak,nKom,nKol,lKolUPak)
-*{
+
 LOCAL lVrati:=.f., nArr:=SELECT(), aNaz:={}, cKar:="AMB ", nKO:=1, n_Pos:=0
   IF lKOLuPAK==NIL; lKOLuPAK:=.t.; ENDIF
-  SELECT SIFV; SET ORDER TO TAG "ID"
+  SELECT SIFV
+  SET ORDER TO TAG "ID"
   HSEEK "ROBA    "+cKar+PADR(cIdRoba,15)
-  DO WHILE !EOF() .and.;
-           id+oznaka+idsif=="ROBA    "+cKar+PADR(cIdRoba,15)
+  DO WHILE !EOF() .and. id+oznaka+idsif=="ROBA    "+cKar+PADR(cIdRoba,15)
+
     IF !EMPTY(naz)
       AADD( aNaz , naz )
     ENDIF
     SKIP 1
+
   ENDDO
+
   IF LEN(aNaz)>0
     nOpc  := 1  // za sad ne uvodim meni
     n_Pos := AT( "_" , aNaz[nOpc] )
@@ -995,7 +1008,6 @@ LOCAL lVrati:=.f., nArr:=SELECT(), aNaz:={}, cKar:="AMB ", nKO:=1, n_Pos:=0
   ENDIF
   SELECT (nArr)
 RETURN lVrati
-*}
 
 
 
@@ -1004,7 +1016,7 @@ RETURN lVrati
  */
  
 function UGenNar()
-*{
+
 LOCAL lVrati:=.t., nArr:=SELECT(), nIsporuceno, nNaruceno, dNajstariji:=CTOD("")
   SELECT (F_UGOV)
   IF !USED()
@@ -1055,7 +1067,6 @@ LOCAL lVrati:=.t., nArr:=SELECT(), nIsporuceno, nNaruceno, dNajstariji:=CTOD("")
   ENDIF
   SELECT (nArr)
 RETURN lVrati
-*}
 
 
 // ako 
@@ -2022,12 +2033,12 @@ do while !eof()
     nTrec:=recno()
     skip -1
     if Empty(podbr)
-        replace rbr with str(++nRbr,3)
+        replace rbr WITH str(++nRbr, 3, 0)
     else
             if nRbr==0
-            nRbr:=1
+            nRbr := 1
         endif
-            replace rbr with str(nRbr,3)
+            replace rbr with str(nRbr, 3, 0)
     endif
     go nTrec
 enddo
@@ -2035,7 +2046,7 @@ enddo
 go top
 
 Scatter()
-_txt1:=_txt2:=_txt3a:=_txt3b:=_txt3c:=""
+_txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
 _dest := SPACE(150)
 _m_dveza := SPACE(500)
 
@@ -2044,10 +2055,14 @@ if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
 else
     _BrOtp:=space(8)
 endif
-_DatOtp:=ctod(""); _BrNar:=space(8); _DatPl:=ctod("")
+_DatOtp:=ctod("")
+_BrNar:=space(8)
+_DatPl:=ctod("")
+
 if cVezOtpr==nil
     cVezOtpr:= ""
 endif
+
 aMemo:=ParsMemo(_txt)
 if len(aMemo)>0
     _txt1:=aMemo[1]
@@ -2170,17 +2185,18 @@ do case
    case EOF()
     cRet := ""
    case  alltrim(podbr)=="."
-    aMemo:=ParsMemo(txt)
-    cRet += aMemo[1]
+      aMemo:=ParsMemo(txt)
+      cRet += aMemo[1]
    otherwise
-    select F_ROBA
-    if !used()
-        O_ROBA
-    endif
-    select roba
-    seek fakt_pripr->IdRoba
-    select fakt_pripr
-    cRet += LEFT(ROBA->naz,40)
+        select F_ROBA
+        if !used()
+            O_ROBA
+        endif
+
+        select roba
+        seek fakt_pripr->IdRoba
+        select fakt_pripr
+        cRet += LEFT(ROBA->naz, 40)
 endcase
 
 return padr( cRet, 30)

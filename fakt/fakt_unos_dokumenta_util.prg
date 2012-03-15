@@ -953,7 +953,7 @@ local nPrevRec
     IF FOUND ()
       if !(roba->tip $ "UT")
        Beep (2)
-       Msg ("Roba se vec nalazi na dokumentu, stavka " + ALLTRIM (PRIPR->Rbr), 30)
+       Msg ("Roba se vec nalazi na dokumentu, stavka " + ALLTRIM (fakt_pripr->rbr), 30)
       endif
     ENDIF
 

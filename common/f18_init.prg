@@ -254,6 +254,12 @@ return __max_cols
 function font_name()
 return __font_name
 
+function font_width()
+return __font_width
+
+function font_height()
+return __font_height
+
 // ------------------------------------------
 // ------------------------------------------
 static function f18_form_login(server_params)

@@ -249,13 +249,10 @@ do case
         endif
             
         if field->idtipdok == "13"
-            close all
             FaktStOLPP()
         else
             StDokOdt( nil, nil, nil )
         endif
-            
-        close all
             
         o_fakt_edit()
             
@@ -571,7 +568,9 @@ go bottom
 Box("knjn", MAXROWS()-10, MAXCOLS()-10, .f., "Unos novih stavki")
 
 do while .t.
+
     Scatter()
+
     if AllTrim(_podbr)=="." .and. empty(_idroba)
             nRbr:=RbrUnum(_Rbr)
             _PodBr:=" 1"
@@ -582,22 +581,31 @@ do while .t.
             nRbr:=RbrUnum(_Rbr)+1
             _PodBr:="  "
     endif
+
     BoxCLS()
 
     _c1:=_c2:=_c3:=SPACE(20)
     _opis:=space(120)
     _n1:=_n2:=0
+
     if edit_fakt_priprema(.t.) == 0
             exit
     endif
+
     nDug += Round(_Cijena*_Kolicina*PrerCij()*(1-_Rabat/100)*(1+_Porez/100) , ZAOKRUZENJE)
+
     @ m_x+23,m_y+2 SAY "ZBIR DOKUMENTA:"
     @ m_x+23,col()+2 SAY nDug PICTURE '9 999 999 999.99'
+
     InkeySc(10)
+
     select fakt_pripr
     APPEND BLANK
+
     Gather()
-    PrCijSif()      // ako treba, promijeni cijenu u sifrarniku
+    PrCijSif()      
+    // ako treba, promijeni cijenu u sifrarniku
+
 enddo
 BoxC()
 
@@ -608,10 +616,9 @@ function PrintDok()
 local cPom
 local lJos
 
-SpojiDuple()  // odradi ovo prije stampanja !
-SrediRbrFakt()
+SpojiDuple()  
 
-o_fakt_edit() // sredirbr zatvori pripremu !!
+o_fakt_edit() 
 
 if !CijeneOK("Stampanje")
     return DE_REFRESH
@@ -835,7 +842,7 @@ else
     public _m_dveza := ""
 
     if glDistrib
-            _ambp:=0
+        _ambp:=0
         _ambk:=0
     endif
     
@@ -847,6 +854,7 @@ else
     endif
     
     _kolicina:=0
+
 endif
 
 if (fNovi .and. (nRbr==1 .and. VAL(_podbr)<1)) // prva stavka
@@ -872,7 +880,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
     else
         @  m_x+1,m_y+2 SAY "Firma:" GET _IdFirma VALID P_Firma(@_IdFirma,1,20) .and. LEN(TRIM(_idFirma))<=2
     endif
-        if gNW=="N"
+    if gNW=="N"
         read
     endif
     

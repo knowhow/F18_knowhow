@@ -207,12 +207,12 @@ DO CASE
                "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_tip_dok"] ) + "," +; 
                             + _sql_quote( record["br_dok"] ) + "," +; 
-                            + _sql_quote( PADL( record["r_br"], 3 ) ) + "," +; 
+                            + _sql_quote( PADL( ALLTRIM(record["r_br"]), 3 ) ) + "," +; 
                             + _sql_quote( record["dat_dok"] ) + "," +;
                             + _sql_quote( record["id_partner"] ) + "," +;
                             + _sql_quote( record["din_dem"] ) + "," +;
                             + _sql_quote( record["zaokr"] ) + "," +;
-                            + _sql_quote(STR( record["pod_br"], 2 )) + "," +;
+                            + _sql_quote( record["pod_br"] ) + "," +;
                             + _sql_quote( record["id_roba"] ) + "," +;
                             + _sql_quote( record["ser_br"] ) + "," +;
                             + STR( record["kolicina"], 14, 5 ) + "," +;

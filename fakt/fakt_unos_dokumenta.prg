@@ -249,13 +249,10 @@ do case
         endif
             
         if field->idtipdok == "13"
-            close all
             FaktStOLPP()
         else
             StDokOdt( nil, nil, nil )
         endif
-            
-        close all
             
         o_fakt_edit()
             
@@ -592,6 +589,7 @@ do while .t.
             nRbr := RbrUnum(_Rbr) + 1
             _PodBr := "  "
     endif
+
     BoxCLS()
 
     _c1 := _c2 := _c3 := SPACE(20)
@@ -603,6 +601,7 @@ do while .t.
     if edit_fakt_priprema(.t.) == 0
             exit
     endif
+
     nDug += Round(_Cijena*_Kolicina*PrerCij()*(1-_Rabat/100)*(1+_Porez/100) , ZAOKRUZENJE)
     @ m_x + 23, m_y + 2 SAY "ZBIR DOKUMENTA:"
     @ m_x + 23, col() + 2 SAY nDug PICTURE '9 999 999 999.99'
@@ -611,6 +610,7 @@ do while .t.
 
     select fakt_pripr
     APPEND BLANK
+
     Gather()
 
     // ako treba, promijeni cijenu u sifrarniku
@@ -625,12 +625,9 @@ function PrintDok()
 local cPom
 local lJos
 
-// odradi ovo prije stampanja !
 SpojiDuple()  
 
-SrediRbrFakt()
-
-o_fakt_edit() // sredirbr zatvori pripremu !!
+o_fakt_edit() 
 
 if !CijeneOK("Stampanje")
     return DE_REFRESH
@@ -854,7 +851,7 @@ else
     public _m_dveza := ""
 
     if glDistrib
-            _ambp:=0
+        _ambp:=0
         _ambk:=0
     endif
     
@@ -866,6 +863,7 @@ else
     endif
     
     _kolicina:=0
+
 endif
 
 // prva stavka
@@ -894,7 +892,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
     else
         @  m_x+1,m_y+2 SAY "Firma:" GET _IdFirma VALID P_Firma(@_IdFirma,1,20) .and. LEN(TRIM(_idFirma))<=2
     endif
-        if gNW=="N"
+    if gNW=="N"
         read
     endif
     

@@ -231,6 +231,7 @@ if lGenerisi = .t.
         endif
         if Pitanje(,"Formirati dokument u FAKT ?", cOdg)=="D"
             P_Fakt()
+            o_kalk_za_azuriranje()
         endif
     endif
 

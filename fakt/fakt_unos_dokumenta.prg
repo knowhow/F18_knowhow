@@ -166,7 +166,8 @@ do case
                 Pitanje(,"Stampati graficku fakturu ?", "N") == "D"
             
                 stdokodt( cFFirma, cFTipDok, cFBrDok )
-            
+           
+                close all 
                 o_fakt_edit()
 
                 select fakt_pripr

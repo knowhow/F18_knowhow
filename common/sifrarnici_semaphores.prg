@@ -404,6 +404,7 @@ local _fnd
 local _alias
 local _pos
 local _item
+local _deleted
 
 // pronadji alias tabele
 _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER( table ) } )
@@ -484,6 +485,8 @@ if (algoritam == "IDS")
 
 endif
 
+log_write( "sifrarnik " + table + " qry: " + _qry )
+
 _qry_obj := _server:Query(_qry) 
 if _qry_obj:NetErr()
    MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
@@ -501,8 +504,11 @@ DO CASE
      ZAP
 
   CASE algoritam == "IDS"
+
     _ids := get_ids_from_semaphore(table)
     SET ORDER TO TAG &(index_tag)
+
+    _deleted := 0
      // pobrisimo sve id-ove koji su drugi izmijenili
     do while .t.
        _fnd := .f.
@@ -511,33 +517,44 @@ DO CASE
           if found()
                _fnd := .t.
                DELETE
+               ++ _deleted
           endif
         next
         if ! _fnd 
             exit
         endif
     enddo
+    log_write( "IDS algoritam sifrarnik, delete local dbf, recs: " + ALLTRIM(STR(_deleted)))
+
 END CASE
 
-//@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-_counter := 1
+_counter := 0
+
 DO WHILE ! _qry_obj:Eof()
+
     append blank
+
     for _i:=1 to LEN(fields)
+
        _field_b := FIELDBLOCK( fields[_i])
        _field_type := VALTYPE( EVAL( _field_b ) )
+
        // replace dbf field
        if _field_type == "C"   
 			EVAL(_field_b, hb_Utf8ToStr(_qry_obj:FieldGet(_i))) 
        else
 		    EVAL(_field_b, _qry_obj:FieldGet(_i))
        endif 
+
     next
-    _qry_obj:Skip()
 
     _counter++
+    _qry_obj:Skip()
+
 ENDDO
+
+log_write( "sinhro sifrarnik " + table + " update local dbf, recs: " + ALLTRIM(STR( _counter )) )
 
 USE
 _qry_obj:Close()
@@ -549,6 +566,8 @@ if (gDebug > 5)
 endif
 
 lock_semaphore(table, "free")
+
+
 return .t. 
 
 

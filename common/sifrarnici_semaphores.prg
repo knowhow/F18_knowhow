@@ -149,8 +149,9 @@ local _result := .f.
 local _i
 local _tbl := "sifv"
 local _index_tag := "id"
+local _field_tag := "rpad(id, 8) || rpad(oznaka, 4) || rpad(idsif, 15) || rpad( naz, 200 )"
 
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", "idsif", "naz", "oznaka" }, _index_tag )
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", "idsif", "naz", "oznaka" }, _index_tag, _field_tag )
 
 return _result
 
@@ -454,15 +455,20 @@ next
 _qry += " FROM fmk." + table
 
 if (algoritam == "IDS") 
+
     _ids := get_ids_from_semaphore(table)
 
     _qry += " WHERE "
+
     if LEN(_ids) < 1
        // nema id-ova
        _qry += "false"
     else
+
         _sql_ids := "("
+
         for _i := 1 to LEN(_ids)
+
             if _ids[_i] == "<FULL>/"
                 _sql_ids := "true"
                 _i := LEN(_ids)

@@ -426,6 +426,25 @@ if !FOUND()
 endif
 
 
+// ------------------------------------------------------------
+// resetuje brojač dokumenta ako smo pobrisali dokument
+// ------------------------------------------------------------
+function fakt_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
+local _param
+local _broj := 0
+
+// param: fakt/10/10
+_param := "fakt" + "/" + firma + "/" + tip_dokumenta 
+_broj := fetch_metric( _param, nil, _broj )
+
+if VAL( PADR( broj_dokumenta, gNumDio ) ) == _broj
+    -- _broj
+    // smanji globalni brojac za 1
+    set_metric( _param, nil, _broj )
+endif
+
+return
+
 
 
 // ------------------------------------------------------------------

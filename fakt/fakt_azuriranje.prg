@@ -1110,73 +1110,33 @@ return .f.
 // ------------------------------------------------
 // ------------------------------------------------
 function BrisiPripr()
-
-cSecur:=SecurR(KLevel,"BRISIGENDOK")
-
-// fakt_pripr->m1
-if (m1="X" .and. ImaSlovo("X",cSecur))   
-    Beep(1)
-    Msg("Dokument izgenerisan, ne smije se brisati !!",0)
-    return DE_CONT
-endif
+local _id_firma, _tip_dok, _br_dok
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     MsgBeep(cZabrana)
     return DE_CONT
 endif
 
-
 if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
+ 
+    select fakt_pripr
+    go top
+    
+    _id_firma := IdFirma
+    _tip_dok := IdTipDok
+    _br_dok := BrDok
     
     if gcF9usmece == "D"
 
-        select fakt_pripr
-        go top
-    
-        cIdFirma:=IdFirma
-        cIdTipDok:=IdTipDok
-        cBrDok:=BrDok
-      
-        // baci dokument u smece umjesto da ga 
-        // trajno izbrises
-        // lSilent = .t.
-
-        azuriraj_smece( .t. )
-    
+        azuriraj_smece( .t. )    
         select fakt_pripr
 
     else
 
-        SELECT F_FAKT_DOKS
-
-        if !used()
-            O_FAKT_DOKS
-        endif
-
-        select fakt_pripr
-
-        go top
-
-        do while !eof()
-            cIdFirma:=IdFirma
-            cIdTipDok:=IdTipDok
-            cBrDok:=BrDok
-            select fakt_doks
-            hseek fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
-            if (Found() .and. (fakt_doks->M1=="Z"))
-                // dokument zapisan samo u DOKS-u
-                _rec := dbf_get_rec()
-                delete_rec_server_and_dbf( ALIAS(), _rec )
-            endif
-            select fakt_pripr
-            skip
-            do while !eof() .and. (idfirma==cIdFirma) .and. (idtipdok==cIdTipDok) .and. (BrDok==BrDok)
-                skip
-            enddo
-        enddo
-
-        select fakt_pripr
         zap
+
+        // potreba za resetom brojaca ?
+        fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
 
     endif
 
@@ -1184,7 +1144,7 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
     // logiraj ako je potrebno brisanje dokumenta iz pripreme !
     if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
     
-    cOpis := "dokument: " + cIdFirma + "-" + cIdTipDok + "-" + ALLTRIM(cBrDok)
+    cOpis := "dokument: " + _id_firma + "-" + _tip_dok + "-" + ALLTRIM( _br_dok )
 
     EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", ;
         nil, nil, nil, nil, ;

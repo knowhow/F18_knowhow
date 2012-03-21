@@ -461,30 +461,16 @@ local _log_datum
 local _t_area
 local _rec
 
-_secur_code := SecurR( KLevel, "BRISIGENDOK" )
-
-if field->m1 = "X" .and. ImaSlovo ( "X", _secur_code )   
-    // fakt_pripr->m1
-    Beep(1)
-    Msg("Dokument izgenerisan, ne smije se brisati !!",0)
-    return 0
-endif
-
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     MsgBeep(cZabrana)
     return 0
 endif
     
-if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-    if (RecCount2() == 1) .or. JedinaStavka()
-        select fakt_doks
-        HSEEK fakt_pripr->IdFirma+fakt_pripr->IdTipDok+fakt_pripr->BrDok
-        if FOUND () .AND. fakt_doks->M1 == "Z"
-            // dokument zapisan samo u DOKS-u
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( ALIAS(), _rec )
-        endif
-        select fakt_pripr
+if Pitanje(, "Zelite izbrisati ovu stavku ?","D") == "D"
+
+    if ( RecCount2() == 1 ) .or. JedinaStavka()
+        // potreba za resetom brojaca na prethodnu vrijednost ?
+        fakt_reset_broj_dokumenta( field->idfirma, field->idtipdok, field->brdok )
     endif
     
     // uzmi opis dokumenta za logiranje
@@ -499,8 +485,6 @@ if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
     __dbPack()
 
     _t_area := SELECT()
-
-    // logiraj promjenu brisanja stavke !
 
     if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
         EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", ;

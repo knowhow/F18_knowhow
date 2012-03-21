@@ -75,8 +75,8 @@ AADD( gaDbfs, {  F_POM2      , "POM2"   , "pom2"  } )
 // sifrarnici
 AADD( gaDbfs, { F_TOKVAL  , "TOKVAL"  , "tokval"  } )
 
-AADD( gaDbfs, { F_SIFK  , "SIFK"  , "sifk", { |param| sifk_from_sql_server(param) }, "IDS", {"id", "oznaka"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) }, "ID2" })
-AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( param ) }, "IDS", {"id", "oznaka", "idsif", "naz"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) + " AND IDSIF=" + _sql_quote(x["idsif"] + " AND NAZ=" + _sql_quote(x["naz"])) }, "ID" })
+AADD( gaDbfs, { F_SIFK  , "SIFK"  , "sifk", { |param| sifk_from_sql_server(param) }, "IDS", {"id", "oznaka"}, { |x| sql_where_block( "sifk", x ) }, "id2" } )
+AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( param ) }, "IDS", {"id", "oznaka", "idsif", "naz"}, { |x| sql_where_block("sifv", x) }, "id" })
   
 // ROBA
 AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    , { | param | roba_from_sql_server(param)    }  , "IDS" } )

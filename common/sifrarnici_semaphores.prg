@@ -131,11 +131,12 @@ function sifk_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "sifk"
+local _index_tag := "id2"
 
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFK, {"id", ;
 				"sort", "naz", "oznaka", "veza", "f_unique", "izvor", "uslov", ;
 				"duzina", "f_decimal", "tip", "kvalid", "kwhen", "ubrowsu", ;
-				"k1", "k2", "k3", "k4" })
+				"k1", "k2", "k3", "k4" }, _index_tag )
 
 return _result
 
@@ -147,8 +148,9 @@ function sifv_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "sifv"
+local _index_tag := "id"
 
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", "idsif", "naz", "oznaka" })
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", "idsif", "naz", "oznaka" }, _index_tag )
 
 return _result
 

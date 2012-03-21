@@ -271,6 +271,9 @@
 #define F_IZOP       332
 #define F_MAT_PRIPRP  333
 
+// temp tabele
+#define F_TEMP12    "ftemp12"
+#define F_TEMP60    "ftemp60"
 
 //ld
 #define F_LD_RJ    48

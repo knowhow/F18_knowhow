@@ -1485,30 +1485,28 @@ ENDIF
 
 private picBHD:=FormPicL(gPicBHD,14)
 
-IF lIzgen .or. !FILE("TEMP12.DBF")
+IF lIzgen .or. !FILE( f18_ime_dbf( "temp12" ) )
   aTmp := {}
   AADD( aTmp , { "BRDOK"    , "C" , 10 , 0 } )
   AADD( aTmp , { "IZNOSBHD" , "N" , 17 , 2 } )
   AADD( aTmp , { "MARKER"   , "C" ,  1 , 0 } )
-  DBCREATE2("TEMP12.DBF",aTmp)
+  DBCREATE2( "temp12",aTmp)
 ENDIF
 
-SELECT 77
-USEX(TEMP12, TEMP12)
-index on brisano tag "BRISAN"
-//ZAP
-
-IF lIzgen .or. !FILE("TEMP60.DBF")
+IF lIzgen .or. !FILE( f18_ime_dbf( "temp60" ) )
   aTmp := {}
   AADD( aTmp , { "BRDOK"    , "C" , 10 , 0 } )
   AADD( aTmp , { "IZNOSBHD" , "N" , 17 , 2 } )
   AADD( aTmp , { "MARKER"   , "C" ,  1 , 0 } )
-  DBCREATE2("TEMP60.DBF", aTmp)
+  DBCREATE2( "temp60", aTmp )
 ENDIF
 
-SELECT 78
-USEX(TEMP60, TEMP60)
+select (351)
+use ( my_home() + "temp12.dbf" ) alias "temp12"
+select (352)
+use ( my_home() + "temp60.dbf" ) alias "temp60"
 
+altd()
 
 IF lIzgen
 
@@ -1716,38 +1714,44 @@ ImeKol:={ ;
         }
 
 Kol:={}; for i:=1 to LEN(ImeKol); AADD(Kol,i); next
+
 Box(,21,77)
+
 @ m_x,m_y+20 SAY 'KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI"'
 @ m_x+18,m_y+1 SAY REPL("Í",77)
 @ m_x+19,m_y+1 SAY "<K> - izaberi/ukini racun za kompenzaciju"
 @ m_x+20,m_y+1 SAY "<CTRL>+<P> - stampanje kompenzacije               <T> - promijeni tabelu"
 @ m_x+21,m_y+1 SAY "<CTRL>+<N> - nova,   <CTRL>+<T> - brisanje,   <ENTER> - ispravka stavke "
+
 FOR i:=1 TO 17
   @ m_x+i, m_y+39 SAY "º"
 NEXT
 
-SELECT TEMP60; GO TOP
-SELECT TEMP12; GO TOP; m_y+=40
+SELECT TEMP60
+GO TOP
+SELECT TEMP12
+GO TOP
+
+m_y += 40
 
 DO WHILE .t.
 
- IF ALIAS()=="TEMP12"
-   m_y-=40
- ELSEIF ALIAS()=="TEMP60"
-   m_y+=40
- ENDIF
+    IF ALIAS()=="TEMP12"
+        m_y-=40
+    ELSEIF ALIAS()=="TEMP60"
+        m_y+=40
+    ENDIF
 
- ObjDbedit("komp1",15,38,{|| EdKomp()},"", IF(ALIAS()=="TEMP12","DUGUJE "+qqKonto,"POTRAZUJE "+qqKonto2), , , , ,1)
- IF LASTKEY()==K_ESC; EXIT; ENDIF
+    ObjDbedit("komp1",15,38,{|| EdKomp()},"", IF(ALIAS()=="TEMP12","DUGUJE "+qqKonto,"POTRAZUJE "+qqKonto2), , , , ,1)
+    IF LASTKEY() == K_ESC
+        EXIT
+    ENDIF
 
 ENDDO
 
 BoxC()
 
-#IFDEF CAX
-  close all
-#ENDIF
-CLOSERET
+close all
 return
 
 

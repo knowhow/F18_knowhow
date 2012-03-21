@@ -50,6 +50,8 @@ AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )
 AADD( gaDbfs, { F__PARTN ,  "_PARTN"  , "fin__partn"  } )
 AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"     } )
 AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"     } )
+AADD( gaDbfs, { F_TEMP12 ,  "TEMP12" , "temp12"     } )
+AADD( gaDbfs, { F_TEMP60 ,  "TEMP60" , "temp60"     } )
 
 
 AADD( gaDbfs, { F_FUNK   ,  "FUNK"    , "fin_funk"    } )

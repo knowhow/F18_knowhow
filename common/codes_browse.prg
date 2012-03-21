@@ -896,7 +896,9 @@ endif
 _vars := get_dbf_global_memvars("w")
 
 if !update_rec_server_and_dbf(alias(), _vars)
-   delete_with_rlock()
+    if lNovi
+        delete_with_rlock()
+    endif
 else
    update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi)
 endif

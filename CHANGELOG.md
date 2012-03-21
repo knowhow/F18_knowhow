@@ -1,3 +1,9 @@
+0.9.67 2012-03-15, vsasa
+ 
+  - fakt, globalni brojač, korekcije [#27166](http://redmine.bring.out.ba/issues/27166)
+  - sifk/sifv, korekcija bug-a ! [#27174](http://redmine.bring.out.ba/issues/27174)
+  - ostale sitne korekcije
+
 0.9.66 2012-03-15, hernad
  
   - rezolucija 30 x 100 Lucida Console za manje rezolucije

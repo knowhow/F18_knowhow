@@ -866,6 +866,8 @@ close all
 
 return _a_fakt_doks
 
+
+
 // vise dokumenata u pripremi
 static function _fakt_dokumenti()
 local _fakt_doks := {}

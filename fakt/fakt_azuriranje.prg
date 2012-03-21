@@ -806,16 +806,23 @@ o_fakt_edit()
 
 select fakt_pripr
 use
+
 O_FAKT_PRIPR
+go top
 
 // ubaci mi matricu sve dokumente iz pripreme
 _a_fakt_doks := _fakt_dokumenti()
+
+if LEN( _a_fakt_doks ) == 0
+    MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
+    return
+endif
 
 // generisi protu dokumente
 // ovo jos treba vidjeti koristi li se ??????????
 //lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
 
-msgo("Azuriranje dokumenata u toku ...")
+msgo( "Azuriranje dokumenata u toku ..." )
 
 // prodji kroz matricu sa dokumentima i azuriraj ih
 for _i := 1 to LEN( _a_fakt_doks )
@@ -823,6 +830,12 @@ for _i := 1 to LEN( _a_fakt_doks )
     __id_firma := _a_fakt_doks[ _i, 1 ]
     __id_tip_dok := _a_fakt_doks[ _i, 2 ]
     __br_dok := _a_fakt_doks[ _i, 3 ]
+    
+    // provjeri da li postoji vec identican broj azuriran u bazi ?
+    if fakt_doks_exist( __id_firma, __id_tip_dok, __br_dok )
+        msgbeep( "Dokument " + __id_firma + "-" + __id_tip_dok + "-" + ALLTRIM(__br_dok) + " vec postoji azuriran u bazi !" )
+        return
+    endif
     
     if fakt_azur_sql( __id_firma, __id_tip_dok, __br_dok  )
     
@@ -890,13 +903,8 @@ do while !EOF()
         skip
     enddo
     
-    // provjeri da li u fakt_doks postoji ovaj dokument ve¿ ?
-    select fakt_doks
-    go top  
-    seek _id_firma + _id_tip_dok + _br_dok
-
-    if !FOUND()
-        // ne postoji, dodajem ga u matricu
+    // provjeri da li postoji vec identican broj azuriran u bazi ?
+    if !fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
         AADD( _fakt_doks, { _id_firma, _id_tip_dok, _br_dok } )
     endif
 

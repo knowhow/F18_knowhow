@@ -535,5 +535,22 @@ return .t.
 
 
 
+// ------------------------------------------------------------
+// provjerava da li dokument postoji na strani servera 
+// ------------------------------------------------------------
+function fakt_doks_exist( firma, tip_dok, br_dok )
+local _exist := .f.
+local _qry, _qry_ret, _table
+local _server := pg_server()
+
+_qry := "SELECT COUNT(*) FROM fmk.fakt_doks WHERE idfirma = " + _sql_quote( firma ) + " AND idtipdok = " + _sql_quote( tip_dok ) + " AND brdok = " + _sql_quote( br_dok )
+_table := _sql_query( _server, _qry )
+_qry_ret := _table:Fieldget(1)
+
+if _qry_ret > 0
+    _exist := .t.
+endif
+
+return _exist
 
 

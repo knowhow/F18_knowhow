@@ -15,52 +15,56 @@
 // ---------------------------------
 // ---------------------------------
 function fakt_pregled_dokumenata()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
 
-AADD(opc,"1. stampa azuriranog dokumenta              ")
-AADD(opcexe, {|| fakt_stampa_azuriranog()})
-AADD(opc,"2. pregled liste dokumenata")
-AADD(opcexe, {|| fakt_pregled_liste_dokumenata()})
-AADD(opc,"3. stampa dokumenata od broja do broja      ")
-AADD(opcexe, {|| fakt_stampa_azuriranog_period()})
-AADD(opc,"4. stampa narudzbenice")
-AADD(opcexe,{|| Mnu_Narudzba()})
+AADD(_opc,"1. stampa azuriranog dokumenta              ")
+AADD(_opcexe, {|| fakt_stampa_azuriranog()})
+AADD(_opc,"2. pregled liste dokumenata")
+AADD(_opcexe, {|| fakt_pregled_liste_dokumenata()})
+AADD(_opc,"3. stampa dokumenata od broja do broja      ")
+AADD(_opcexe, {|| fakt_stampa_azuriranog_period()})
+AADD(_opc,"4. stampa narudzbenice")
+AADD(_opcexe,{|| Mnu_Narudzba()})
 
 if IsUgovori()
-	AADD(opc,"U. stampa fakt.na osnovu ugovora od-do")
-	AADD(opcexe, {|| ug_za_period()})
+	AADD(_opc,"U. stampa fakt.na osnovu ugovora od-do")
+	AADD(_opcexe, {|| ug_za_period()})
 endif
 
 // ako koristimo fiskalne funkcije
 if gFc_use == "D"
-	AADD(opc,"F. stampa fiskalnih racuna od-do")
-	AADD(opcexe, {|| st_fisc_per()})
+	AADD(_opc,"F. stampa fiskalnih racuna od-do")
+	AADD(_opcexe, {|| st_fisc_per()})
 endif
 
-Menu_SC("stfak")
+f18_menu("stfak", .f., _izbor, _opc, _opcexe )
 
-CLOSERET
+close all
 
 return .f.
 
-/*! \fn fakt_ostale_operacije_doks()
- *  \brief Ostale operacije nad podacima
- */
  
 function fakt_ostale_operacije_doks()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
 
-AADD(opc,"1. povrat dokumenta u pripremu       ")
-AADD(opcexe,{|| Povrat_fakt_dokumenta()})
-AADD(opc,"2. povrat dokumenata prema kriteriju ")
-AADD(opcexe,{|| if(SigmaSif(), Povrat_fakt_po_kriteriju(), nil)})
-AADD(opc,"3. prekid rezervacije")
-AADD(opcexe,{|| Povrat_fakt_dokumenta(.t.)})
+AADD(_opc,"1. povrat dokumenta u pripremu       ")
+AADD(_opcexe,{|| Povrat_fakt_dokumenta()})
 
-Menu_SC("ostop")
+AADD(_opc,"2. povrat dokumenata prema kriteriju ")
+AADD(_opcexe,{|| if(SigmaSif(), Povrat_fakt_po_kriteriju(), nil)})
+
+AADD(_opc,"3. prekid rezervacije")
+AADD(_opcexe,{|| Povrat_fakt_dokumenta(.t.)})
+
+AADD(_opc,"B. podesenje brojaca dokumenta")
+AADD(_opcexe,{|| fakt_set_param_broj_dokumenta()})
+
+
+f18_menu("ostop", .f., _izbor, _opc, _opcexe )
+
 return .f.
-*}
+

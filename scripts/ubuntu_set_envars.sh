@@ -3,12 +3,13 @@
 export KNOWHOW_ERP_ROOT=/opt/knowhowERP
 export HARBOUR_ROOT=$KNOWHOW_ERP_ROOT/hbout
 
-KH_PATH=`echo $PATH | grep -c /opt/knowhowERP/bin`
+let KH_PATH=`echo $PATH | grep -c $KNOWHOW_ERP_ROOT/bin`
 
-if [[ "$PATH" == "0" ]]; then
+if [[ $KH_PATH -eq 0 ]]; then
+   # echo "knowhowERP not in path ($KH_PATH) dodajem"
    export PATH=$KNOWHOW_ERP_ROOT/bin:$KNOWHOW_ERP_ROOT/util:$HARBOUR_ROOT/bin:$PATH
 else
-   echo "knowhowERP already in path ..."
+   echo "knowhowERP already in path ($KH_PATH): $PATH"
 fi
 
 export HB_COMPILER=gcc

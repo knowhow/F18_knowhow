@@ -1,10 +1,10 @@
 /* 
  * This file is part of the bring.out FMK, a free and open source 
  * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -21,7 +21,8 @@ function PregPrim()
 local nC1:=20
 
 cIdRadn:=space(_LR_)
-cIdRj:=gRj; cmjesec:=gMjesec
+cIdRj:=gRj 
+cMjesec:=gMjesec
 cGodina:=gGodina
 cObracun:=gObracun
 cVarSort:="2"
@@ -47,25 +48,32 @@ private aHistory:={}
 RPar("VS",@cVarSort)
 
 Box(,7,45)
-@ m_x+1,m_y+2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
+@ m_x+1, m_y+2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
+@ m_x+2, m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
 if lViseObr
-  @ m_x+2,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+  @ m_x+2, col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
 endif
-@ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-@ m_x+4,m_y+2 SAY "Tip primanja: "  GET  cTip
-@ m_x+5,m_y+2 SAY "Prikaz dodatnu kolonu: "  GET  cDod pict "@!" valid cdod $ "DN"
-@ m_x+6,m_y+2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
-read; clvbox(); ESC_BCR
+@ m_x+3, m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+@ m_x+4, m_y+2 SAY "Tip primanja: "  GET  cTip
+@ m_x+5, m_y+2 SAY "Prikaz dodatnu kolonu: "  GET  cDod pict "@!" valid cdod $ "DN"
+@ m_x+6, m_y+2 SAY "Sortirati po (1-sifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
+read
+
+clvbox()
+
+ESC_BCR
+
 if cDod=="D"
  @ m_x+7,m_y+2 SAY "Naziv kolone:" GET cKolona
  read
 endif
 ckolona:="radn->"+ckolona
+
 BoxC()
 
  WPar("VS",cVarSort)
- SELECT PARAMS; USE
+ SELECT PARAMS
+  USE
 
 if lViseObr
  O_TIPPRN
@@ -74,7 +82,9 @@ else
 endif
 
 select tippr
-hseek ctip
+hseek cTip
+
+
 EOF CRET
 
 IF "SUMKREDITA" $ formula
@@ -100,19 +110,21 @@ ENDIF
 select ld
 
 if lViseObr
-  cObracun:=TRIM(cObracun)
+  cObracun := TRIM(cObracun)
 else
-  cObracun:=""
+  cObracun := ""
 endif
 
-if empty(cidrj)
+if empty(cIdRJ)
+
   cidrj:=""
   IF cVarSort=="1"
     set order to tag (TagVO("2"))
-    hseek str(cGodina,4)+str(cmjesec,2)+cObracun
+    hseek str(cGodina,4) + str(cMjesec, 2) + cObracun
   ELSE
-    Box(,2,30)
-     nSlog:=0; nUkupno:=RECCOUNT2()
+    Box(,2, 30)
+     nSlog:=0
+     nUkupno:=RECCOUNT2()
      cSort1:="SortPrez(IDRADN)"
      cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+;
               IF(EMPTY(cGodina),".t.","GODINA==cGodina")
@@ -126,18 +138,26 @@ if empty(cidrj)
 else
   IF cVarSort=="1"
     set order to tag (TagVO("1"))
-    hseek str(cGodina,4)+cidrj+str(cmjesec,2)+cObracun
+    hseek str(cGodina,4) + cidrj + str(cmjesec, 2) + cObracun
   ELSE
     Box(,2,30)
-     nSlog:=0; nUkupno:=RECCOUNT2()
+
+     nSlog:=0 
+
+     nUkupno:=RECCOUNT2()
+
      cSort1:="SortPrez(IDRADN)"
-     cFilt := "IDRJ==cIdRj.and."+;
-              IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+
+     cFilt := "IDRJ==" + _filter_quote(cIdRj) + " .and. "
+     cFilt += IIF(EMPTY(cMjesec), ".t." , "MJESEC==" + _filter_quote(cMjesec) ) + ".and."
+     cFilt += IIF(EMPTY(cGodina), ".t.", "GODINA==" + _filter_quote(cGodina) )
+
      if lViseObr
-       cFilt += ".and. OBR=cObracun"
+       cFilt += ".and. OBR ==" + _filter_quote(cObracun)
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+
     BoxC()
     GO TOP
   ENDIF
@@ -155,7 +175,9 @@ if cdod=="D"
 endif
 bZagl:={|| ZPregPrim() }
 
-select ld_rj; hseek ld->idrj; select ld
+select ld_rj
+hseek ld->idrj
+select ld
 
 START PRINT CRET
 P_10CPI

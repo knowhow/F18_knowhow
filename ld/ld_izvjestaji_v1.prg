@@ -2279,7 +2279,11 @@ FUNCTION SortPrez(cId)
 local cVrati := ""
 local nArr := SELECT()
 
-O_RADN
+SELECT F_RADN
+if !used()
+   O_RADN
+endif
+
 HSEEK cId
 cVrati:= naz + ime + imerod + id
  

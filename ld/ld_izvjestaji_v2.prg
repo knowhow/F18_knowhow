@@ -79,7 +79,7 @@ if lViseObr .and. !EMPTY(cObracun)
 endif
 
 Box(,1,30)
-index on &cSort TO "TMPBOD" for &cFilt eval(Tekrec()) every 10
+index on &cSort TO "TMPBOD" for &cFilt
 BoxC()
 START PRINT CRET
 
@@ -512,7 +512,7 @@ Box(,2,30)
   if lViseObr .and. !EMPTY(cObracun)
     cFilt += (".and. OBR=="+cm2str(cObracun))
   endif
-  INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
 BoxC()
 
 EOF CRET
@@ -752,7 +752,7 @@ if empty(cidrj)
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     BoxC()
     GO TOP
   ELSE
@@ -764,7 +764,7 @@ if empty(cidrj)
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF
@@ -779,7 +779,7 @@ else
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     BoxC()
     GO TOP
   ELSE
@@ -792,7 +792,7 @@ else
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF

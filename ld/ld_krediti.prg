@@ -573,13 +573,12 @@ if lRazdvojiPoRj
     set relation to idradn into radn
     Box(,2,30)
         nSlog:=0
-        nUkupno:=RECCOUNT2()
         cSort1:="radn->idRj+idKred+naOsnovu+idRadn"
         cFilt :=".t."
         if !cIdKred="."
-            cFilt += ".and. idKred==cIdKred"
+            cFilt += ".and. idKred==" + _filter_quote( cIdKred )
         endif
-        INDEX ON &cSort1 TO "TMPRK" FOR &cFilt EVAL(TekRec2()) EVERY 1
+        INDEX ON &cSort1 TO "TMPRK" FOR &cFilt
     BoxC()
     go top
 else // zadana je radna jedinica ili je prikaz svih rj na jednom spisku

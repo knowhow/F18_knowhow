@@ -124,14 +124,13 @@ if empty(cIdRJ)
   ELSE
     Box(,2, 30)
      nSlog:=0
-     nUkupno:=RECCOUNT2()
      cSort1:="SortPrez(IDRADN)"
-     cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+     cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) ) + ".and."+;
+              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
      if lViseObr
-       cFilt += ".and. OBR=cObracun"
+       cFilt += ".and. OBR=" + _filter_quote( cObracun )
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF
@@ -141,13 +140,8 @@ else
     hseek str(cGodina,4) + cidrj + str(cmjesec, 2) + cObracun
   ELSE
     Box(,2,30)
-
      nSlog:=0 
-
-     nUkupno:=RECCOUNT2()
-
      cSort1:="SortPrez(IDRADN)"
-
      cFilt := "IDRJ==" + _filter_quote(cIdRj) + " .and. "
      cFilt += IIF(EMPTY(cMjesec), ".t." , "MJESEC==" + _filter_quote(cMjesec) ) + ".and."
      cFilt += IIF(EMPTY(cGodina), ".t.", "GODINA==" + _filter_quote(cGodina) )

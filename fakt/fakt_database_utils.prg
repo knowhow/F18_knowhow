@@ -452,6 +452,7 @@ return
 // ------------------------------------------------------------------
 function fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
 local _broj := 0
+local _broj_doks := 0
 local _param
 local _tmp, _rest
 local _ret := ""
@@ -466,21 +467,26 @@ _param := "fakt" + "/" + firma + "/" + tip_dokumenta
 
 _broj := fetch_metric( _param, nil, _broj )
 
-// moze biti da nije setovan vec ranije...
-// prvi put se opcija koristi
-if _broj == 0
+// konsultuj i doks uporedo
+O_FAKT_DOKS
+set order to tag "1"
+go top
+seek firma + tip_dokumenta + "Ž"
+skip -1
 
-    O_FAKT_DOKS
-    set order to tag "1"
-    go top
-    seek firma + tip_dokumenta + "Ž"
-    skip -1
+if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
+    _broj_doks := VAL( PADR( field->brdok, gNumDio ) )
+else
+    _broj_doks := 0
+endif
 
-    if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
-        _broj := VAL( PADR( field->brdok, gNumDio ) )
-    else
-        _broj := 0
-    endif
+if _broj == 0 .or. _broj_doks > _broj
+
+    // ili se prvi put koristi opcija globalnog brojaca
+    // ili je brojac u doks-u veci
+    // uzmi broj iz tabele doks
+
+    _broj := _broj_doks
 
 endif
 

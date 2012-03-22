@@ -1,4 +1,8 @@
-0.9.67 2012-03-15, vsasa
+0.9.68 2012-03-22, vsasa
+ 
+  - fakt, globalni brojač, finalizirana opcija [#27166](http://redmine.bring.out.ba/issues/27166)
+
+0.9.67 2012-03-21, vsasa
  
   - fakt, globalni brojač, korekcije [#27166](http://redmine.bring.out.ba/issues/27166)
   - sifk/sifv, korekcija bug-a ! [#27174](http://redmine.bring.out.ba/issues/27174)

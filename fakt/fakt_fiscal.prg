@@ -846,6 +846,7 @@ local lIno := .f.
 local cPOslob := ""
 local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local cKupacInfo := ""
+local lP_stampa := .f.
 local lPdvObveznik := .f.
 local nTotal
 local nF_total
@@ -959,10 +960,15 @@ if !EMPTY( cPartnId )
         // jednostavno za njega nadji podatke
         lIno := .f.
         lPDVObveznik := .t.
+        lP_stamp := .f.
 
     elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
 
         lIno := .t.
+
+        if !EMPTY( cPOslob )
+            lP_stamp := .t.
+        endif
     
     elseif LEN( cJibPartn ) = 12
 
@@ -973,12 +979,13 @@ if !EMPTY( cPartnId )
                 
         lIno := .f.
         lPDVObveznik := .t.
+        lP_stamp := .t.
 
     endif
 
-    // ako nije INO, onda setuj partnera
+    // ako treba stampati podatke partnera onda predji na naredni korak
 
-    if lIno = .f.
+    if lP_stamp == .t.
         
         nTarea := SELECT()
     

@@ -1,3 +1,8 @@
+0.9.70 2012-03-23, vsasa
+ 
+  - modul LD, radnici odradjeni više puta za jedan mjesec [#27220](http://redmine.bring.out.ba/issues/27220)
+  - modul FAKT, fiskalni računi za partnere oslobođene po članu, ispis podataka [#27221](http://redmine.bring.out.ba/issues/27221)
+
 0.9.69 2012-03-23, vsasa
  
   - modul LD, greška sa EVAL izrazima [#27199](http://redmine.bring.out.ba/issues/27199)

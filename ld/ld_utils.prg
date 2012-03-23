@@ -1004,7 +1004,7 @@ CLOSERET
 
 
 function ld_obracun_napravljen_vise_puta()
-*{
+
 cMjesec  := gMjesec
 cGodina  := gGodina
 cObracun := gObracun
@@ -1017,37 +1017,54 @@ Box(,2,50)
  read; ESC_BCR
 BoxC()
 
-// CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-// ----------- removao ovu liniju 21.11.2000. MS ------------
-
+O_RADN
 O_LD
+
 set order to tag "2"
 
-seek str(cgodina,4)+str(cmjesec,2)
-start print cret
-? Lokal("Radnici obradjeni vise puta za isti mjesec -"),cgodina,"/",cmjesec
+seek STR( cGodina, 4 ) + STR( cMjesec, 2 )
+
+START PRINT CRET
+
+? Lokal("Radnici obradjeni vise puta za isti mjesec -"), cGodina, "/", cMjesec
 ?
-? Lokal("RADNIK RJ     neto        sati")
-? "------ -- ------------- ----------"
-do while !eof() .and. str(cgodina,4)+str(cmjesec,2)==str(godina)+str(mjesec)
-  cIdRadn:=idradn
-  nProlaz:=0
-  do while !eof() .and. str(godina)+str(mjesec)==str(godina)+str(mjesec) .and. idradn==cidradn
-     ++nProlaz
-     skip
-  enddo
-  if nProlaz>1
-     seek str(cgodina,4)+str(cmjesec,2)+cidradn
-     do while !eof() .and. str(godina)+str(mjesec)==str(cgodina,4)+str(cmjesec,2) .and. idradn==cidradn
-        ? idradn,idrj,uneto,usati
+? Lokal("OBR RADNIK                      RJ     neto        sati")
+? "--- ------ -------------------- -- ------------- ----------"
+
+do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godina, 4 ) + STR( field->mjesec, 2 )
+  
+    cIdRadn := idradn
+    nProlaz := 0
+
+    do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godina, 4 ) + STR( field->mjesec, 2 ) .and. field->idradn == cIdradn
+        ++ nProlaz
         skip
-     enddo
-  endif
+    enddo
+
+    if nProlaz > 1
+
+        select radn
+        hseek cIdRadn
+
+        select ld
+    
+        seek STR( cGodina, 4 ) + STR( cMjesec,2) + cIdRadn
+
+        do while !EOF() .and. STR( field->godina, 4 ) + STR( field->mjesec, 2 ) == STR( cGodina, 4 ) + STR( cMjesec, 2 ) .and. field->idradn == cIdRadn
+            ? PADR( field->obr, 3 ), field->idradn, PADR( ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ), 20 ), field->idrj, field->uneto, field->usati
+            skip
+        enddo
+
+    endif
+
 enddo
-end print
-closeret
+
+FF
+END PRINT
+
+close all
 return
-*}
+
 
 
 

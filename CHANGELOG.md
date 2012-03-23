@@ -1,3 +1,7 @@
+0.9.69 2012-03-23, vsasa
+ 
+  - modul LD, greška sa EVAL izrazima [#27199](http://redmine.bring.out.ba/issues/27199)
+
 0.9.68 2012-03-22, vsasa
  
   - fakt, globalni brojač, finalizirana opcija [#27166](http://redmine.bring.out.ba/issues/27166)

@@ -1,3 +1,8 @@
+0.9.71 2012-03-23, vsasa
+ 
+  - modul LD, radnici odradjeni više puta za jedan mjesec, korekcija izvještaja [#27220](http://redmine.bring.out.ba/issues/27220)
+  - sitne korekcije
+
 0.9.70 2012-03-23, vsasa
  
   - modul LD, radnici odradjeni više puta za jedan mjesec [#27220](http://redmine.bring.out.ba/issues/27220)

@@ -1011,10 +1011,11 @@ local _data := {}
 local cIdRadn, nProlaz, _count
 local _i
 
-Box(,2,50)
+Box(,3,50)
 
-    @ m_x+1, m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
-    @ m_x+2, m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+    @ m_x+1, m_y+2 SAY " Mjesec: " GET cMjesec pict "99"
+    @ m_x+2, m_y+2 SAY " Godina: " GET cGodina pict "9999"
+    @ m_x+3, m_y+2 SAY "Obracun: " GET cObracun
 
     read
 
@@ -1027,13 +1028,13 @@ O_LD
 
 set order to tag "2"
 go top
-seek STR( cGodina, 4 ) + STR( cMjesec, 2 )
+seek STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun
 
 Box(, 1, 60)
 
 _count := 0
 
-do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godina, 4 ) + STR( field->mjesec, 2 )
+do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun == STR( field->godina, 4 ) + STR( field->mjesec, 2 ) + obr
   
     cIdRadn := idradn
     nProlaz := 0
@@ -1041,7 +1042,7 @@ do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godin
     ++ _count
     @ m_x + 1, m_y + 2 SAY "Radnik: " + cIdRadn
 
-    do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godina, 4 ) + STR( field->mjesec, 2 ) .and. field->idradn == cIdradn
+    do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun == STR( field->godina, 4 ) + STR( field->mjesec, 2 ) + field->obr .and. field->idradn == cIdradn
         ++ nProlaz
         skip
     enddo
@@ -1053,9 +1054,9 @@ do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godin
 
         select ld
     
-        seek STR( cGodina, 4 ) + STR( cMjesec,2) + cIdRadn
+        seek STR( cGodina, 4 ) + STR( cMjesec,2) + cObracun + cIdRadn
 
-        do while !EOF() .and. STR( field->godina, 4 ) + STR( field->mjesec, 2 ) == STR( cGodina, 4 ) + STR( cMjesec, 2 ) .and. field->idradn == cIdRadn
+        do while !EOF() .and. STR( field->godina, 4 ) + STR( field->mjesec, 2 ) + field->obr == STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun .and. field->idradn == cIdRadn
             AADD( _data, { field->obr, field->idradn, PADR( ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ), 20 ), field->idrj, field->uneto, field->usati } )
             skip
         enddo

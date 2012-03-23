@@ -1004,37 +1004,42 @@ CLOSERET
 
 
 function ld_obracun_napravljen_vise_puta()
-
-cMjesec  := gMjesec
-cGodina  := gGodina
-cObracun := gObracun
-
-private cKBenef:=" ",cVPosla:=" "
+local cMjesec := gMjesec
+local cGodina := gGodina
+local cObracun := gObracun
+local _data := {}
+local cIdRadn, nProlaz, _count
+local _i
 
 Box(,2,50)
- @ m_x+1, m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
- @ m_x+2, m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
- read; ESC_BCR
+
+    @ m_x+1, m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
+    @ m_x+2, m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+
+    read
+
+    ESC_BCR
+
 BoxC()
 
 O_RADN
 O_LD
 
 set order to tag "2"
-
+go top
 seek STR( cGodina, 4 ) + STR( cMjesec, 2 )
 
-START PRINT CRET
+Box(, 1, 60)
 
-? Lokal("Radnici obradjeni vise puta za isti mjesec -"), cGodina, "/", cMjesec
-?
-? Lokal("OBR RADNIK                      RJ     neto        sati")
-? "--- ------ -------------------- -- ------------- ----------"
+_count := 0
 
 do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godina, 4 ) + STR( field->mjesec, 2 )
   
     cIdRadn := idradn
     nProlaz := 0
+
+    ++ _count
+    @ m_x + 1, m_y + 2 SAY "Radnik: " + cIdRadn
 
     do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godina, 4 ) + STR( field->mjesec, 2 ) .and. field->idradn == cIdradn
         ++ nProlaz
@@ -1051,13 +1056,35 @@ do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) == STR( field->godin
         seek STR( cGodina, 4 ) + STR( cMjesec,2) + cIdRadn
 
         do while !EOF() .and. STR( field->godina, 4 ) + STR( field->mjesec, 2 ) == STR( cGodina, 4 ) + STR( cMjesec, 2 ) .and. field->idradn == cIdRadn
-            ? PADR( field->obr, 3 ), field->idradn, PADR( ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ), 20 ), field->idrj, field->uneto, field->usati
+            AADD( _data, { field->obr, field->idradn, PADR( ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ), 20 ), field->idrj, field->uneto, field->usati } )
             skip
         enddo
 
     endif
 
 enddo
+
+BoxC()
+
+// nemam sta prikazati
+if LEN( _data ) == 0
+    close all
+    return
+endif
+
+
+START PRINT CRET
+
+? Lokal("Radnici obradjeni vise puta za isti mjesec -"), cGodina, "/", cMjesec
+?
+? Lokal("OBR RADNIK                      RJ     neto        sati")
+? "--- ------ -------------------- -- ------------- ----------"
+
+for _i := 1 to LEN( _data )
+
+    ? PADR( _data[ _i, 1 ], 3 ), _data[ _i, 2 ], _data[ _i, 3 ], _data[ _i, 4 ], _data[ _i, 5 ], _data[ _i, 6 ]
+
+next
 
 FF
 END PRINT

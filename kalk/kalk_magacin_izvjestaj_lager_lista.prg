@@ -120,8 +120,8 @@ else
    	BoxC()
 endif
 
-private dDatOd:=ctod("")
-private dDatDo:=date()
+private dDatOd := DATE()
+private dDatDo := DATE()
 
 qqRoba:=space(60)
 qqTarifa:=space(60)

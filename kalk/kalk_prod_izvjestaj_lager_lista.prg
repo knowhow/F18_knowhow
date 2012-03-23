@@ -29,6 +29,7 @@ local cPicKol := gPicKol
 local cPicCDEm := gPicCDem
 local cPicDem := gPicDem
 local cSrKolNula := "0"
+local _curr_user := "<>"
 
 gPicCDEM:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM 
 gPicDEM:= REPLICATE("9", VAL(gFPicDem)) + gPicDem
@@ -58,8 +59,8 @@ endif
 
 cNula:="D"
 cK9:=SPACE(3)
-dDatOd:=CToD("")
-dDatDo:=Date()
+dDatOd := DATE()
+dDatDo := DATE()
 qqRoba:=SPACE(60)
 qqTarifa:=SPACE(60)
 qqidvd:=SPACE(60)
@@ -82,17 +83,12 @@ cGrupacija:=space(4)
 cPredhStanje:="N"
 
 if !lPocStanje
- // otvori parametre
- O_PARAMS
- private cSection:="P"
- private cHistory:=" "
- private aHistory:={}
 
- RPar("l1",@cIdKonto)
- RPar("l2",@cPNab)
- RPar("l3",@cNula)
- RPar("l4",@dDatOd)
- RPar("l5",@dDatDo)
+ cIdKonto := fetch_metric("kalk_lager_lista_prod_id_konto", _curr_user, cIdKonto )
+ cPNab := fetch_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, cPNab )
+ cNula := fetch_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, cNula )
+ dDatOd := fetch_metric("kalk_lager_lista_prod_datum_od", _curr_user, dDatOd )
+ dDatDo := fetch_metric("kalk_lager_lista_prod_datum_do", _curr_user, dDatDo )
 
 endif
 
@@ -164,17 +160,11 @@ BoxC()
 
 if !lPocStanje
  
- // otvori parametre
- O_PARAMS
- private cSection:="P"
- private cHistory:=" "
- private aHistory:={}
-
- WPar("l1",cIdKonto)
- WPar("l2",cPNab)
- WPar("l3",cNula)
- WPar("l4",dDatOd)
- WPar("l5",dDatDo)
+ set_metric("kalk_lager_lista_prod_id_konto", _curr_user, cIdKonto )
+ set_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, cPNab )
+ set_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, cNula )
+ set_metric("kalk_lager_lista_prod_datum_od", _curr_user, dDatOd )
+ set_metric("kalk_lager_lista_prod_datum_do", _curr_user, dDatDo )
 
 endif
 

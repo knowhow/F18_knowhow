@@ -760,6 +760,10 @@ if (nRbr==1 .and. val(_podbr)<1)
 	@ m_x + 11, m_y + 1 SAY "<c+W> dodaj tekst na fakturu, unesi novi  <ESC> izadji i snimi"
 	
 	read
+
+    if LastKey() == K_ESC
+        exit
+    endif
  
  	if lastkey() <> K_ESC .and. !EMPTY( cId ) 
 	  	if cId <> "MX"

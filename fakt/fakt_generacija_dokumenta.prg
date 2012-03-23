@@ -12,19 +12,8 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
-
-/*! \fn GDokInv(cIdRj)
- *  \brief generacija dokumenta inventure
- */
- 
 function GDokInv(cIdRj)
-*{
 local cIdRoba
 local cBrDok
 local nUl

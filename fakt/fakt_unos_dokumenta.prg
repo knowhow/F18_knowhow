@@ -1290,7 +1290,7 @@ if (_podbr==" ." .or.  roba->tip="U" .or. (nrbr==1 .and. val(_podbr)<1))
     
     // odsjeci na kraju prazne linije
     _txt2:=OdsjPLK(_txt2)           
-        if !"Faktura formirana na osnovu" $ _txt2
+        if !"Racun formiran na osnovu" $ _txt2
             _txt2 += CHR(13)+Chr(10) + _VezOtpr
         endif
     

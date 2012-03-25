@@ -117,9 +117,11 @@ DO WHILE !EOF()
    stampa_suban_dokument("1", lAuto)
 
    if !_izgenerisi
-     close all
+     //close all
      f18_end_print(NIL, @_print_opt)
    endif
+
+   MsgBeep("Zavrsio sam sa printom ...")
 
    IF ASCAN(aNalozi, cIdFirma + cIdVN + cBrNal) == 0
      AADD(aNalozi, cIdFirma + cIdVN + cBrNal)  
@@ -140,8 +142,9 @@ if _izgenerisi .and. !lAuto
    Msg("Sve stavke su stavljene na stanje")
 endif
 
+CLOSE ALL
 
-closeret
+MsgBeep("Upravo sam zatvorio tabele ...")
 return
 
 

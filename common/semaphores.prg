@@ -592,7 +592,7 @@ for _i := 1 to LEN(sql_in)
 
 next
 
-_ret["qry"] := queries
+_ret["qry"] := _queries
 _ret["ids"] := _ids_2
 
 return _ret

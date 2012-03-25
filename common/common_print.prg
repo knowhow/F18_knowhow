@@ -83,7 +83,7 @@ DO CASE
    OTHERWISE
        // TODO: treba li f18_editor parametrizirati ?!   
        _cmd := "f18_editor " + f_name
-       run (_cmd) 
+       hb_run (_cmd) 
 
 END CASE
 

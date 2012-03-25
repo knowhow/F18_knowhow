@@ -20,7 +20,7 @@ opc[1]:="1. subanalitika        "
 opc[2]:="2. analitika/sintetika"
 
 do while .t.
-  izb:=menu("onal",opc,izb,.f.)
+  izb:=menu("onal", opc, izb, .f.)
   do case
      case izb==0
         exit
@@ -105,7 +105,7 @@ seek cIdfirma + cIdvn + cBrNal
 
 START PRINT CRET
 
-StSubNal("2")
+stampa_suban_dokument("2")
 
 END PRINT
 

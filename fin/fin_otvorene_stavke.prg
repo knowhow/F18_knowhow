@@ -1506,8 +1506,6 @@ use ( my_home() + "temp12.dbf" ) alias "temp12"
 select (352)
 use ( my_home() + "temp60.dbf" ) alias "temp60"
 
-altd()
-
 IF lIzgen
 
 O_SUBAN

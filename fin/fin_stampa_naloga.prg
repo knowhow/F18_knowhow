@@ -36,6 +36,7 @@ return
  
 function StAnalNal(lAuto)
 local _print_opt := "V"
+local _izgenerisi := .f.
 
 private aNalozi:={}
 
@@ -64,10 +65,10 @@ go top
 
 EOF CRET
 
-fIzgenerisi:=.f.
+_izgenerisi:=.f.
 
 if lAuto .or. field->idvn == "00" 
-    fIzgenerisi := .t.
+    _izgenerisi := .t.
 endif
 
 if lAuto 
@@ -84,7 +85,7 @@ DO WHILE !EOF()
 	cIdFirma:=IdFirma
 	cIdVN:=IdVN
 	cBrNal:=BrNal
-   	if !fizgenerisi
+   	if !_izgenerisi
      	Box("",2,50)
        set cursor on
        @ m_x+1, m_y+2 SAY "Nalog broj:"
@@ -109,13 +110,14 @@ DO WHILE !EOF()
        closeret
    endif
 
-   if !fIzgenerisi
+   if !_izgenerisi
      f18_start_print(NIL, @_print_opt)
    endif
 
-   StSubNal("1", lAuto)
+   stampa_suban_dokument("1", lAuto)
 
-   if !fizgenerisi
+   if !_izgenerisi
+     close all
      f18_end_print(NIL, @_print_opt)
    endif
 
@@ -133,7 +135,7 @@ if lAuto
   BoxC()
 endif
 
-if fIzgenerisi .and. !lAuto
+if _izgenerisi .and. !lAuto
    Beep(2)
    Msg("Sve stavke su stavljene na stanje")
 endif

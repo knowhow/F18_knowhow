@@ -17,8 +17,9 @@
  *  \param cInd  - "1"-stampa pripreme, "2"-stampa azuriranog, "3"-stampa dnevnika
  *  \param lAuto
  */
- 
-function StSubNal(cInd, lAuto)
+
+function stampa_suban_dokument(cInd, lAuto)
+
 local nArr:=SELECT()
 local aRez:={}
 local aOpis:={}
@@ -27,6 +28,7 @@ local _vrste_placanja, lJerry
 IF lAuto = NIL
 	lAuto := .f.
 ENDIF
+
 O_PARTN
 __par_len := LEN(partn->id)
 select (nArr)
@@ -47,10 +49,10 @@ IF cInd $ "1#2"
      nStr:=0
 ENDIF
 
-   b2:={|| cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal}
-   cIdFirma:=IdFirma
-   cIdVN:=IdVN
-   cBrNal:=BrNal
+b2:={|| cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal}
+cIdFirma:=IdFirma
+cIdVN:=IdVN
+cBrNal:=BrNal
 
 IF cInd $ "1#2" .and. !lAuto
      fin_zagl_11()
@@ -67,6 +69,7 @@ DO WHILE !eof() .and. eval(b2)
          fin_zagl_11()
        endif
        P_NRED
+
        IF cInd=="3"
          @ prow(),0 SAY STR(++nRBrDN,6)
          @ prow(),pcol()+1 SAY cIdFirma+"-"+cIdVN+"-"+cBrNal
@@ -75,6 +78,7 @@ DO WHILE !eof() .and. eval(b2)
        ELSE
          @ prow(),0 SAY RBr
        ENDIF
+
        @ prow(),pcol()+1 SAY IdKonto
 
        if !empty(IdPartner)
@@ -239,18 +243,22 @@ DO WHILE !eof() .and. eval(b2)
      if gPotpis=="D"
        IF prow()>58+gPStranica; FF; fin_zagl_11();  endif
        P_NRED
-       P_NRED; F12CPI
+       P_NRED
+       F12CPI
        P_NRED
        @ prow(),55 SAY "Obrada AOP "; ?? replicate("_",20)
        P_NRED
        @ prow(),55 SAY "Kontirao   "; ?? replicate("_",20)
      endif
      FF
+
    ELSEIF cInd=="3"
       if prow()>54+gPStranica
         PrenosDNal()
       endif
    ENDIF
+
+
 RETURN
 
 

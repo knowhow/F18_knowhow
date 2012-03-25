@@ -228,8 +228,6 @@ if lAuto == NIL
  lAuto := .f.
 ENDIF
 
-altd()
-close all
 O_PSUBAN
 O_PARTN
 O_PANAL

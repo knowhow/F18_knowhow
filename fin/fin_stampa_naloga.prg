@@ -219,7 +219,9 @@ return
  
 function SintStav(lAuto)
 
-if lAuto==NIL; lAuto:=.f.; ENDIF
+if lAuto==NIL
+ lAuto:=.f.
+ENDIF
 
 close all
 O_PSUBAN

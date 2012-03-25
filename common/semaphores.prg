@@ -100,8 +100,12 @@ if (LEN(gaDBFs[_pos]) > 3)
 
 endif
 
-if used()
+if USED()
    use
+endif
+
+if USED()
+  log_write("ERR ne mogu zatoriti dbf" + my_home() + table + " / excl=" + ToStr(excl))
 endif
 dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
 

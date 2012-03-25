@@ -1,5 +1,15 @@
-#include "fmk.ch"
+/* 
+ * This file is part of the bring.out FMK, a free and open source 
+ * accounting software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
 
+#include "fmk.ch"
 
 // --------------------------------------------------------
 // kreiranje tabele fin_mat
@@ -61,7 +71,7 @@ if !FILE(f18_ime_dbf("finmat"))
     	DBcreate2( "FINMAT", aDbf )
 endif
 	
-CREATE_INDEX("1","idFirma+IdVD+BRDok",PRIVPATH+"FINMAT")
+CREATE_INDEX("1","idFirma+IdVD+BRDok", "FINMAT")
 
 return
 

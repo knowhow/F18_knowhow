@@ -308,8 +308,11 @@ LOCAL cMjGod:=""
     cMjGod:=STR(MONTH(dDatNal),2)+STR(YEAR(dDatNal),4)
     SELECT SUBAN
     HSEEK cIdFirma+cIdVN+cBrNal
-    StSubNal("3")
+    
+
+    stampa_suban_dokument("3")
     SELECT NALOG
+
     SKIP 1
   ENDDO
 

@@ -23,7 +23,7 @@ if gVSmjene=="N"
 	cSmjena:="1"
   	gSmjena:=cSmjena
 	gDatum := dDatum
-  	PrikStatus()
+  	pos_status_traka()
   	CLOSERET
 endif
 
@@ -94,9 +94,10 @@ BoxC()
 gSmjena:=cSmjena
 gDatum := dDatum
 
-PrikStatus()
-CLOSERET
-*}
+pos_status_traka()
+close all
+return
+
 
 
 /*! \fn DatumOK()
@@ -399,9 +400,9 @@ do while .t.
     		goModul:quit()
   	endif
 enddo
-PrikStatus()
+pos_status_traka()
 return
-*}
+
 
 
 /*! \fn OtvoriSmjenu()

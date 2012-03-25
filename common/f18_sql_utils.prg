@@ -87,7 +87,7 @@ DO CASE
     _qry := SUBSTR( _qry, 1, LEN(_qry) - 1) + ")"
 
     _qry += " VALUES(" 
-     
+    
     for each _key in record:Keys
         // ako je polje numericko
 		if VALTYPE( record[_key] ) == "N"

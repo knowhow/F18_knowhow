@@ -760,7 +760,7 @@ do while .t.
 
             nTekRed := 1
             do while .t. 
-            
+           
                 lShowPGroup := .f.
                 
                 if empty(ImeKol[i, 3])  
@@ -896,7 +896,9 @@ endif
 _vars := get_dbf_global_memvars("w")
 
 if !update_rec_server_and_dbf(alias(), _vars)
-   delete_with_rlock()
+    if lNovi
+        delete_with_rlock()
+    endif
 else
    update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi)
 endif
@@ -948,20 +950,21 @@ if left(ImeKol[_i, 3], 6) != "SIFK->"
 
 else
       // ako je SIFK->GRUP, prikazuj status
-      if ALIAS() == "PARTN" .and. RIGHT(ImeKol[_i, 3], 4) == "GRUP"
-           show_grup := .t.
-      endif
+    if ALIAS() == "PARTN" .and. RIGHT(ImeKol[_i, 3], 4) == "GRUP"
+        show_grup := .t.
+    endif
 
-      _var_name := "wSifk_" + substr(ImeKol[_i, 3], 7)
+    _var_name := "wSifk_" + substr(ImeKol[_i, 3], 7)
 
-      _tmp := IzSifk(ALIAS(), substr(ImeKol[_i, 3], 7))
-      if _tmp == NIL  
-            // ne koristi se !!!
-            _var_name := ""
-      else
-           __MVPUBLIC(_var_name)
-           EVAL(MEMVARBLOCK(_var_name), _tmp)
-      endif
+    _tmp := IzSifk(ALIAS(), substr(ImeKol[_i, 3], 7))
+      
+    if _tmp == NIL  
+        // ne koristi se !!!
+        _var_name := ""
+    else
+        __MVPUBLIC(_var_name)
+        EVAL(MEMVARBLOCK(_var_name), _tmp)
+    endif
 
 endif
 
@@ -973,13 +976,10 @@ static function sif_getlist(var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, 
 local bWhen, bValid, cPic
 local nRed, nKolona
 local cWhenSifk, cValidSifk
-local nXP, nYP
 local _when_block, _valid_block
-
 local _m_block := MEMVARBLOCK(var_name)
 
 // uzmi when, valid kodne blokove
-
 if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i, 3]))>0)
     bWhen := {|| .f.}
 elseif (LEN(ImeKol[i]) < 4 .or. ImeKol[i, 4]==nil)
@@ -1019,7 +1019,7 @@ if Len(ImeKol[i]) >= 10 .and. Imekol[i,10] <> NIL
 endif
 
 if nKolona == 1
-        nTekRed++
+        nTekRed ++
 endif
     
 if lShowPGroup
@@ -1027,13 +1027,12 @@ if lShowPGroup
         nYP := nKolona
 endif
 
-
 // stampaj grupu za stavku "GRUP"
 if lShowPGroup
-        p_gr( EVAL(_var_block), nXP + 1, nYP + 1)
+        p_gr( &var_name, m_x + nXP, m_y + nYP + 1 )
 endif
 
-if var_name == "wSifk_"
+if "wSifk_" $ var_name
         // uzmi when valid iz SIFK
         
         IzSifKWV(ALIAS(), substr(var_name, 7) , @cWhenSifk, @cValidSifk)

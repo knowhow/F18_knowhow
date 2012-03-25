@@ -480,29 +480,13 @@ UzmiIzIni(cIniName,'Varijable','UKOBAV',FormNum2(nPom,16,gPici2),'WRITE')
 IniRefresh()
 //Odstampaj izvjestaj
 
-if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
+if lastkey() != K_ESC
 
- cSpecRtm := "SPECBU"
-
- private cKomLin := "DelphiRB " + cSpecRtm + ;
-	" " + PRIVPATH + "  DUMMY 1"
-
- cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))
- 
- if cPom!="-"
-  cKomLin += " lmarg:"+cPom
- endif
- 
- cPom := alltrim(IzFmkIni("Specif","GornjaMargina","-",KUMPATH))
- 
- if cPom!="-"
-  cKomLin += " tmarg:"+cPom
- endif
-
- run &cKomLin
+    cSpecRtm := "specbu"
+    f18_rtm_print( cSpecRtm )
 
 endif
 
-closeret
+close all
 return
 

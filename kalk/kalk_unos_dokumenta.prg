@@ -140,10 +140,10 @@ for i:=1 to LEN(ImeKol)
 next
 
 Box(, nMaxRow, nMaxCol )
-    @ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku   "
-    @ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje      "
-    @ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa kalk_pripreme "
-    @ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije"
+    @ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku    ³ <K> kalkulacija cijena"
+    @ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje       ³ "
+    @ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa pripreme  ³ "
+    @ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije ³ "
     IF gCijene=="1" .and. gMetodaNC==" "
         Soboslikar({{nMaxRow-3,m_y+1,nMaxRow,m_y+77}},23,14)
     ENDIF
@@ -160,22 +160,75 @@ return
 
 function o_kalk_edit()
 
-close all
+select F_KALK_DOKS
+if !used()
+    O_KALK_DOKS
+endif
 
-O_KALK_DOKS
-O_KALK_PRIPR
-O_DOKSRC
-O_P_DOKSRC
-O_SIFK
-O_SIFV
-O_ROBA
-O_KALK
-O_KONTO
-O_PARTN
-O_TDOK
-O_VALUTE
-O_TARIFA 
-O_KONCIJ
+select F_KALK_PRIPR
+if !used()
+    O_KALK_PRIPR
+endif
+
+select F_DOKSRC
+if !used()
+    O_DOKSRC
+endif
+
+select F_P_DOKSRC
+if !used()
+    O_P_DOKSRC
+endif
+
+select F_SIFK
+if !used()
+    O_SIFK
+endif
+
+select F_SIFV
+if !used()
+    O_SIFV
+endif
+
+select F_ROBA
+if !used()
+    O_ROBA
+endif
+
+select F_KALK
+if !used()
+    O_KALK
+endif
+
+select F_KONTO
+if !used()
+    O_KONTO
+endif
+
+select F_PARTN
+if !used()
+    O_PARTN
+endif
+
+select F_TDOK
+if !used()
+    O_TDOK
+endif
+
+select F_VALUTE
+if !used()
+    O_VALUTE
+endif
+
+select F_TARIFA
+if !used()
+    O_TARIFA 
+endif
+
+select F_KONCIJ
+if !used()
+    O_KONCIJ
+endif
 
 select kalk_pripr
 set order to tag "1"
@@ -330,6 +383,12 @@ do case
         return DE_CONT
     case UPPER( CHR(Ch) ) == "A" .or. lAutoAsist
         return KnjizAsistent()
+    case UPPER( CHR(Ch) ) == "K"
+        // kalkulacija cijena
+        kalkulacija_cijena( .f. )
+        select kalk_pripr
+        go top
+        return DE_CONT
     case Ch==K_F10
         return MeniF10()
     case Ch==K_F11

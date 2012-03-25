@@ -139,6 +139,7 @@ ENDIF
 @ m_x+4,m_y+2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
 @ m_x+5,m_y+2 SAY "Od datuma "  get dDatOd
 @ m_x+5,col()+1 SAY "do"  get dDatDo
+
 IF lBezUlaza
   cRR:="N"
 ELSE
@@ -146,6 +147,7 @@ ELSE
   @ m_x+7,m_y+2 SAY "Prikaz bez rezervacija, reversa (N)"
   @ m_x+8,m_y+2 SAY "Prikaz fakturisanog na osnovu otpremnica (F) "  get cRR   pict "@!" valid cRR $ "DNF"
 ENDIF
+
 @ m_x+10,m_y+2 SAY "Prikaz stavki sa stanjem 0 (D/N)    "  get cSaldo0 pict "@!" valid cSaldo0 $ "DN"
 if gVarC $ "12"
  @ m_x+11,m_y+2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  get cTipVpc pict "@!" valid cTipVPC $ "12"
@@ -720,6 +722,11 @@ return
  
 function Zaglfakt_lager_lista()
 local cPomZK
+local _rj_tip := ""
+
+if rj->(fieldpos("tip")) <> 0
+    _rj_tip := rj->tip
+endif
 
 if nStr>0
 	FF
@@ -733,56 +740,55 @@ set century off
 ?
 
 IF cUI=="U"
-  ? space(4),"         (prikaz samo ulaza)"
-  ?
+    ? space(4),"         (prikaz samo ulaza)"
+    ?
 ELSEIF cUI=="I"
-  ? space(4),"         (prikaz samo izlaza)"
-  ?
+    ? space(4),"         (prikaz samo izlaza)"
+    ?
 ENDIF
 
 IF cRR=="D"
-  P_COND2
+    P_COND2
 ELSE
-  P_COND
+    P_COND
 ENDIF
 
-
-
 if cRealizacija=="D"
- P_COND2
- ?
- ? space(gnLMarg)
- ?? "**** FINANSIJSKI: PRIKAZ REALIZACIJE *****"
- ?
+    P_COND2
+    ?
+    ? space(gnLMarg)
+    ?? "**** FINANSIJSKI: PRIKAZ REALIZACIJE *****"
+    ?
 endif
 
 ? space(gnLMarg)
 IspisFirme(cidfirma)
 
 if !empty(qqRoba)
-  ? space(gnLMarg)
-  ?? "Roba:",qqRoba
+    ? space(gnLMarg)
+    ?? "Roba:",qqRoba
 endif
 
 if !empty(cK1)
-  ?
-  ? space(gnlmarg), "- Roba sa osobinom K1:",ck1
+    ?
+    ? space(gnlmarg), "- Roba sa osobinom K1:",ck1
 endif
 
 if !empty(cK2)
-  ?
-  ? space(gnlmarg), "- Roba sa osobinom K2:",ck2
+    ?
+    ? space(gnlmarg), "- Roba sa osobinom K2:",ck2
 endif
 
 if lPoNarudzbi .and. !EMPTY(qqIdNar)
-  ?
-  ? "Prikaz za sljedece narucioce:",TRIM(qqIdNar)
+    ?
+    ? "Prikaz za sljedece narucioce:",TRIM(qqIdNar)
 endif
 
 ?
+
 if cRealizacija=="N" .and. cTipVPC=="2" .and.  roba->(fieldpos("vpc2")<>0)
-  ? space(gnlmarg)
-  ?? "U CJENOVNIKU SU PRIKAZANE CIJENE: "+cTipVPC
+    ? space(gnlmarg)
+    ?? "U CJENOVNIKU SU PRIKAZANE CIJENE: "+cTipVPC
 endif
 
 ?
@@ -791,25 +797,25 @@ endif
 ? space(gnLMarg)
 
 IF lBezUlaza
-   ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"  Stanje    jmj     "
+    ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"  Stanje    jmj     "
 ELSE
-  cPomZK := IF( cUI $ "US" , PADC("Ulaz",12) , "" )+;
+    cPomZK := IF( cUI $ "US" , PADC("Ulaz",12) , "" )+;
             IF( cUI $ "IS" , PADC("Izlaz",12) , "" )+;
             IF( cUI $ "S" , PADC("Stanje",12) , "" )
-  if cRR $ "NF"
-     if IsPDV()
- 	?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+cPomZK+"jmj     "+IIF(RJ->tip$"N1#M1#M2".and.!EMPTY(cIdFirma),"Cij.",iif(cRealizacija=="D","PR.C"," PC "))+;
-      iif(cREalizacija=="N","      Iznos","       PV        Rabat      Realizovano")
-     else
-     	?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+cPomZK+"jmj     "+IIF(RJ->tip$"N1#M1#M2".and.!EMPTY(cIdFirma),"Cij.",iif(cRealizacija=="D","PR.C","VPC "))+;
-      iif(cREalizacija=="N","      Iznos","      VPV        Rabat      Realizovano")
-     endif
-  else
-   ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi .and. cPKN=="D","Naruc. ","")+"  Stanje       Revers    Rezervac.   Ostalo     jmj     "+IF(RJ->tip$"N1#M1#M2" .and. !EMPTY(cIdFirma),"Cij.  Cij.","VPC    VPC")+"*Stanje"
-  endif
-  if gVarC=="4"
-   ?? padc("MPV",13)
-  endif
+    if cRR $ "NF"
+        if IsPDV()
+ 	        ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+cPomZK+"jmj     "+IIF(_rj_tip$"N1#M1#M2".and.!EMPTY(cIdFirma),"Cij.",iif(cRealizacija=="D","PR.C"," PC "))+;
+                iif(cREalizacija=="N","      Iznos","       PV        Rabat      Realizovano")
+        else
+     	    ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+cPomZK+"jmj     "+IIF(_rj_tip$"N1#M1#M2".and.!EMPTY(cIdFirma),"Cij.",iif(cRealizacija=="D","PR.C","VPC "))+;
+                iif(cREalizacija=="N","      Iznos","      VPV        Rabat      Realizovano")
+        endif
+    else
+        ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi .and. cPKN=="D","Naruc. ","")+"  Stanje       Revers    Rezervac.   Ostalo     jmj     "+IF(RJ->tip$"N1#M1#M2" .and. !EMPTY(cIdFirma),"Cij.  Cij.","VPC    VPC")+"*Stanje"
+    endif
+    if gVarC=="4"
+        ?? padc("MPV",13)
+    endif
 ENDIF
 
 ? space(gnLMarg)
@@ -818,3 +824,6 @@ ENDIF
 ShowKorner(nStr,1,16)
 
 return
+
+
+

@@ -24,28 +24,99 @@ O_RJ
 O_SIFK
 O_SIFV
 O_ROBA
+O_OPS
 return
+
+
+
+// -----------------------------------------------------------------------
+// setuje u parametrima robu koja ce se pojavljivati na izvjestajima
+// -----------------------------------------------------------------------
+static function set_articles()
+local _x := 1
+local _count := 20
+local _tmp, _i
+local _ok := .t.
+local _art_1, _art_2, _art_3, _art_4, _art_5, _art_6, _art_7, _art_8, _art_9, _art_10
+local _art_11, _art_12, _art_13, _art_14, _art_15, _art_16, _art_17, _art_18, _art_19, _art_20
+local _var, _valid_block
+
+// procitaj paramtre iz sql/db
+for _i := 1 to _count
+    _var := "_art_" + ALLTRIM(STR(_i))
+    &_var := PADR( fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PADL( ALLTRIM(STR(_i)), 2, "0"), NIL, SPACE(10) ), 10 )
+next
+
+Box(, _count + 2, 65 )
+    
+    @ m_x + _x, m_y + 2 SAY "Izvjestaj se pravi za sljedece artikle:"
+
+    ++ _x
+    ++ _x
+    
+    _i := 1
+
+    for _i := 1 to _count
+   
+        _var := "_art_" + ALLTRIM(STR(_i))
+        _valid_block := "EMPTY(_art_" + ALLTRIM(STR(_i))+ ") .or. P_Roba(@_art_" + ALLTRIM(STR(_i)) + ")"
+        @ m_x + _x, m_y + 2 SAY "Artikal " +  PADL( ALLTRIM(STR(_i)), 2 ) + ":" GET &_var VALID &_valid_block
+
+        ++ _x   
+
+    next
+
+    read
+
+BoxC()
+
+// snimi parametre
+if LastKey() != K_ESC
+
+    // snimi parametre
+    _i := 1
+
+    for _i := 1 to _count
+
+        _var := "_art_" + ALLTRIM( STR( _i ) )
+        set_metric( "fakt_pregled_prodaje_rpt_artikal_" + PADL( ALLTRIM(STR(_i)), 2, "0"), NIL, ALLTRIM( &_var ) )
+
+    next
+
+endif
+
+return _ok
+
+
 
 
 // --------------------------------------------
 // vraca matricu sa robom i definicijom polja
+// praznu
 // --------------------------------------------
 static function _g_ini_roba( )
-local aRoba := {}
-local i
+local _arr := {}
+local _i
+local _param_count := 20
+local _item
+local _count := 0
 
-for i := 1 to 100
+for _i := 1 to _param_count
   
-  cSif := IzFmkIni("SpecKol", "ROBA" + ALLTRIM(STR(i)), nil, KUMPATH )
+    // item uzimam iz sql/db
+    _item := fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PADL( ALLTRIM( STR( _i ) ), 2, "0" ), NIL, "" )
+    
+    if !EMPTY( _item )
 
-  if cSif <> nil
-    AADD(aRoba, { cSif, "ROBA" + ALLTRIM(STR(i)), 0 } )	
-  endif
+        ++ _count
+
+        AADD( _arr, { _item, "ROBA" + ALLTRIM( STR( _count ) ), 0 } ) 
+    
+    endif
 
 next
 
-
-return aRoba
+return _arr
 
 
 
@@ -53,9 +124,9 @@ return aRoba
 // vraca matricu sa definicijom polja exp.tabele
 // aRoba = [ field_naz, sifra_robe, opis_robe   ] 
 // --------------------------------------------------
-static function _g_exp_fields( aRoba )
+static function _g_exp_fields( article_arr )
 local aFields := {}
-local i
+local _i
 
 AADD(aFields, {"rbr", "C", 10, 0 })
 AADD(aFields, {"distrib", "C", 60, 0 })
@@ -67,11 +138,11 @@ AADD(aFields, {"pm_ptt", "C", 10, 0 })
 AADD(aFields, {"pm_adresa", "C", 60, 0 })
 AADD(aFields, {"pm_kt_br", "C", 20, 0 })
 
-for i := 1 to LEN( aRoba )
-	AADD(aFields, { aRoba[i, 2], "N", 15, 5 })
+for _i := 1 to LEN( article_arr )
+    AADD( aFields, { article_arr[ _i, 2 ], "N", 15, 5 })
 next
 
-AADD(aFields, {"ukupno", "N", 15, 5 })
+AADD( aFields, {"ukupno", "N", 15, 5 })
 
 return aFields
 
@@ -80,12 +151,12 @@ return aFields
 // filuje export tabelu sa podacima
 // -------------------------------------------
 static function fill_exp_tbl( cRbr, cDistrib, cPmId, cPmNaz, ;
-		cPmTip, cPmMj, cPmPtt, cPmAdr, cPmKtBr, aRoba )
-local nArr
-local i
-local nTotal := 0
+        cPmTip, cPmMj, cPmPtt, cPmAdr, cPmKtBr, aRoba )
+local _t_area
+local _i
+local _total := 0
 
-nArr := SELECT()
+_t_area := SELECT()
 
 O_R_EXP
 append blank
@@ -99,14 +170,15 @@ replace field->pm_ptt with cPmPtt
 replace field->pm_adresa with cPmAdr
 replace field->pm_kt_br with cPmKtBr
 
-for i:=1 to LEN( aRoba )
-	replace field->&(aRoba[i, 2]) with aRoba[i, 3]
-	nTotal += aRoba[i, 3]
+// dodaj za robu...
+for _i := 1 to LEN( aRoba )
+    replace field->&( aRoba[ _i, 2] ) with aRoba[ _i, 3 ]
+    _total += aRoba[ _i, 3 ]
 next
 
-replace field->ukupno with nTotal 
+replace field->ukupno with _total
 
-select (nArr)
+select (_t_area)
 
 return
 
@@ -116,7 +188,8 @@ return
 // specifikacija prodaje
 // ---------------------------------------
 function spec_kol_partn()
-local nX := 1
+local _x := 1
+local _define := "N"
 local aRoba 
 local cPartner
 local cRoba
@@ -127,43 +200,51 @@ local cFilter
 local cDistrib
 
 _o_tables()
-O_OPS
 
-cIdfirma:=gFirma
-dDatOd:=ctod("")
-dDatDo:=date()
+cIdfirma := gFirma
+dDatOd := CTOD("")
+dDatDo := DATE()
 cDistrib := PADR("10", 6)
 
 Box("#SPECIFIKACIJA PRODAJE PO PARTNERIMA",12,77)
 
-	cIdFirma:=PADR(cIdFirma,2)
- 		
-	@ m_x + nX, m_y+2 SAY "RJ            " GET cIdFirma ;
-		valid {|| empty(cIdFirma) .or. ;
-		cIdFirma==gFirma .or. P_RJ(@cIdFirma) }
- 		
-	++nX
+    cIdFirma := PADR( cIdFirma, 2 )
+        
+    @ m_x + _x, m_y + 2 SAY "RJ            " GET cIdFirma ;
+        VALID {|| EMPTY(cIdFirma) .or. ;
+        cIdFirma == gFirma .or. P_RJ( @cIdFirma ) }
+        
+    ++ _x
 
-	@ m_x + nX, m_y+2 SAY "Od datuma "  get dDatOd
- 		
-	@ m_x + nX, col()+1 SAY "do"  get dDatDo
-	
-	++nX
-	
-	@ m_x + nX, m_y+2 SAY "Distributer   " GET cDistrib ;
-		valid P_Firma(@cDistrib)
-	read
- 		
-	ESC_BCR
-	
+    @ m_x + _x, m_y + 2 SAY "Od datuma " GET dDatOd
+    @ m_x + _x, col() + 1 SAY "do" GET dDatDo
+    
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Distributer   " GET cDistrib VALID P_Firma(@cDistrib)
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Definisi artikle za izvjestaj (D/N) ?" GET _define VALID _define $ "DN" PICT "@!"
+
+    READ
+        
+    ESC_BCR
+    
 BoxC()
+
+// definisi artikle koji ce se naci na izvjestaju...
+if _define == "D"
+    set_articles()    
+endif
 
 // inicijalizuj matricu "aRoba"
 aRoba := _g_ini_roba()
 
-if LEN(aRoba) = 0
-	msgbeep("potrebno ubaciti u fmk.ini podatke o robi !!!")
-	return
+if LEN( aRoba ) = 0
+    msgbeep("Potrebno definisati artikle za izvjestaj !!!")
+    return
 endif
 
 aExpFields := _g_exp_fields( aRoba )
@@ -184,11 +265,11 @@ set order to tag "6"
 cFilter := "idtipdok == '10' "
 
 if (!empty(dDatOd) .or. !empty(dDatDo))
-	cFilter+=".and.  datdok>=" + Cm2Str(dDatOd) + " .and. datdok<="+Cm2Str(dDatDo)
+    cFilter+=".and.  datdok>=" + Cm2Str(dDatOd) + " .and. datdok<="+Cm2Str(dDatDo)
 endif
 
 if (!empty(cIdFirma))
-	cFilter+=" .and. IdFirma=" + Cm2Str(cIdFirma)
+    cFilter+=" .and. IdFirma=" + Cm2Str(cIdFirma)
 endif
 
 // postavi filter
@@ -204,56 +285,57 @@ Box( , 2, 50)
 @ m_x + 1, m_y + 2 SAY "generisem podatke za xls...."
 
 do while !EOF() .and. field->idfirma == cIdFirma
-	
-	// resetuj aroba matricu
-	_reset_aroba( @aRoba )
+    
+    // resetuj aroba matricu
+    _reset_aroba( @aRoba )
 
-	cPartner := field->idpartner
-	
-	lUbaci := .f.
-	
-	// idi za jednog partnera
-	do while !EOF() .and. field->idfirma == cIdFirma ;
-			.and. field->idpartner == cPartner 
-			
-		cRoba := field->idroba
-		nKol := field->kolicina
-		
-		nScan := ASCAN( aRoba, {|xvar| xvar[1] == ALLTRIM(cRoba)  })
+    cPartner := field->idpartner
+    
+    lUbaci := .f.
+    
+    // idi za jednog partnera
+    do while !EOF() .and. field->idfirma == cIdFirma ;
+            .and. field->idpartner == cPartner 
+            
+        cRoba := field->idroba
+        nKol := field->kolicina
+        
+        nScan := ASCAN( aRoba, {|xvar| xvar[1] == ALLTRIM(cRoba)  })
 
-		// ubaci u matricu...
-		if nScan <> 0
+        // ubaci u matricu...
+        if nScan <> 0
 
-			lUbaci := .t.
-			
-			aRoba[ nScan, 3 ] := aRoba[ nScan, 3 ] + nKol	
-			
-			@ m_x + 2, m_y + 2 SAY "  scan: " + cRoba
-		endif
-		
-		skip
-	
-	enddo
+            lUbaci := .t.
+            
+            aRoba[ nScan, 3 ] := aRoba[ nScan, 3 ] + nKol   
+            
+            @ m_x + 2, m_y + 2 SAY "  scan: " + cRoba
 
-	if lUbaci == .t.
-		
-		select partn
-		seek cPartner
-		select fakt
+        endif
+        
+        skip
+    
+    enddo
 
-		fill_exp_tbl( ;
-			ALLTRIM(STR(++nCount)), ;
-			cDistNaz, ;
-			IzSifK( "PARTN", "REGB", cPartner, .f.), ;
-			partn->naz, ;
-			IzSifK( "PARTN", "TIP", cPartner, .f. ), ;
-			partn->mjesto, ;
-			partn->ptt, ;
-			partn->adresa, ;
-			_k_br(cPartner), ;
-			aRoba )
+    if lUbaci == .t.
+        
+        select partn
+        seek cPartner
+        select fakt
 
-	endif
+        fill_exp_tbl( ;
+            ALLTRIM(STR(++nCount)), ;
+            cDistNaz, ;
+            IzSifK( "PARTN", "REGB", cPartner, .f.), ;
+            partn->naz, ;
+            IzSifK( "PARTN", "TIP", cPartner, .f. ), ;
+            partn->mjesto, ;
+            partn->ptt, ;
+            partn->adresa, ;
+            _k_br(cPartner), ;
+            aRoba )
+
+    endif
 
 enddo
 
@@ -267,26 +349,28 @@ return
 // vraca broj kuce partnera
 // djemala bijedica "22" <-----
 // ----------------------------------------
-static function _k_br( cPartn )
-local cTmp := "bb"
-local cRet := ""
+static function _k_br( partner_id )
+local _tmp := "bb"
+local _ret := ""
 
-cRet := IzSifK("PARTN", "KBR", cPartn, .f. )
+_ret := IzSifK("PARTN", "KBR", partner_id, .f. )
 
-if EMPTY(cRet)
-	cRet := cTmp
+if EMPTY( _ret )
+    _ret := _tmp
 endif
-return cRet
+
+return _ret
+
 
 
 // -----------------------------------------------
 // resetuj vrijednosti u aRoba matrici
 // -----------------------------------------------
-static function _reset_aroba( aRoba )
-local i
+static function _reset_aroba( arr )
+local _i
 
-for i:=1 to LEN(aRoba)
-	aRoba[i, 3] := 0
+for _i := 1 to LEN( arr )
+    arr[ _i, 3 ] := 0
 next
 
 return

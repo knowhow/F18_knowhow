@@ -236,12 +236,10 @@ select fakt_pripr
 
 
    if cidtipdok<>idtipdok
-      cBrDok:=UBrojDok(1,gNumDio,"")
+      cBrDok:=UBrojDok(1, gNumDio,"")
    else
-      cBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, ;
-                        gNumDio, ;
-                        right(brdok,len(brdok)-gNumDio) ;
-                      )
+      cBrDok:=UBrojDok( val(left(brdok, gNumDio))+1, ;
+                        gNumDio, right(brdok,len(brdok)-gNumDio) )
    endif
 
 

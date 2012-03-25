@@ -33,8 +33,8 @@ else
 	SetAPorezi(@aPorezi)
 endif
 
-if fNovi .or. (gVodiSamoTarife=="D") .or. IsJerry() .or. IsPlanika()
-	_IdTarifa:=cTarifa
+if fNovi .or. ( gVodiSamoTarife == "D" ) .or. IsJerry() .or. IsPlanika()
+	_IdTarifa := cTarifa
 endif
 
 return .t.
@@ -47,7 +47,7 @@ return .t.
  */
 
 function WMpc(fRealizacija, fMarza)
-*{
+
 if fRealizacija==nil
 	fRealizacija:=.f.
 endif
@@ -56,9 +56,9 @@ if fRealizacija
 	fMarza:=" "
 endif
 
-if _mpcsapp<>0
-	_marza2:=0
-	_mpc:=MpcBezPor(_mpcsapp, aPorezi, , _nc)
+if _mpcsapp <> 0
+	_marza2 := 0
+	_mpc := MpcBezPor( _mpcsapp, aPorezi, , _nc )
 endif
 
 if fRealizacija
@@ -68,7 +68,7 @@ if fRealizacija
 endif
 
 return .t.
-*}
+
 
 
 
@@ -80,7 +80,7 @@ return .t.
  */
 
 function VMpc(fRealizacija, fMarza)
-*{
+
 if fRealizacija==NIL
 	fRealizacija:=.f.
 endif
@@ -95,11 +95,12 @@ endif
 
 Marza2(fMarza)
 
-if _mpcsapp==0
-	_MPCSaPP:=round(MpcSaPor(_mpc, aPorezi),2)
+if _mpcsapp == 0
+	_MPCSaPP := round( MpcSaPor( _mpc, aPorezi ), 2 )
 endif
+
 return .t.
-*}
+
 
 
 
@@ -250,32 +251,37 @@ if fNovi .or. (gVodiSamoTarife=="D") .or. IsJerry()
    _IdTarifa:=cTarifa
 endif
 return .t.
-*}
 
 
-function W_Mpc_ (cIdVd, lNaprijed, aPorezi)
+
+// -----------------------------------------------------------
+// WHEN validator na polju MPC
+// -----------------------------------------------------------
+function W_Mpc_( cIdVd, lNaprijed, aPorezi )
+local _st_popust
 
 // formiraj cijenu naprijed
 if lNaprijed
-  // postavi _Mpc bez poreza
-  MarzaMP(cIdVd, .t. , aPorezi) 
+    // postavi _Mpc bez poreza
+    MarzaMP( cIdVd, .t. , aPorezi )  
 endif
 
 if cIdVd $ "41#42#47"
-     nMpcSaPDV := _MpcSaPP - _RabatV
+    nMpcSaPDV := _MpcSaPP
+    _st_popust := _rabatv
 else
-     nMpcSaPDV := _MpcSapp
+    nMpcSaPDV := _MpcSapp
+    _st_popust := 0
 endif
-
 
 // postoji MPC, idi unazad
-if !lNaprijed .and. _MpcSapp<>0
-  _Marza2 := 0
-  _Mpc:=MpcBezPor(nMpcSaPDV, aPorezi, , _Nc)
+if !lNaprijed .and. _MpcSapp <> 0
+    _Marza2 := 0
+    _Mpc := MpcBezPor( nMpcSaPDV, aPorezi, , _nc ) - _st_popust
 endif
 
-
 return .t.
+
 
 
 /*! \fn WMpc_lv(fRealizacija, fMarza, aPorezi)
@@ -342,11 +348,8 @@ return .t.
 *}
 
 
-/*! \fn V_Mpc_(cIdVd, lNaprijed, aPorezi)
- */
 
 function V_Mpc_( cIdVd, lNaprijed, aPorezi)
-*{
 local nPopust
 
 if cIdVd $ "41#42#47"
@@ -355,13 +358,14 @@ else
      nPopust := 0
 endif
 
-
 MarzaMp(cIdVd, lNaprijed, aPorezi)
-if (_Mpcsapp == 0)
- _MPCSaPP := ROUND( MpcSaPor(_mpc, aPorezi), 2 ) + nPopust
+
+if ( _Mpcsapp == 0 )
+    _mpcsapp := ROUND( MpcSaPor( _mpc, aPorezi ), 2 ) + nPopust
 endif
+
 return .t.
-*}
+
 
 
 
@@ -384,8 +388,9 @@ endif
 if fRealizacija==NIL
   fRealizacija:=.f.
 endif
+
 if fRealizacija
-   nPom:=_mpcsapp - _rabatv
+   nPom:=_mpcsapp
 else
    nPom:=_mpcsapp
 endif
@@ -395,7 +400,7 @@ if fMarza==nil
 endif
 
 if _mpcsapp<>0 .and. empty(fMarza)
-  _mpc:= MpcBezPor (nPom, aPorezi, , _nc)
+  _mpc:= MpcBezPor (nPom, aPorezi, , _nc) - _rabatv
   _marza2:=0
   if fRealizacija
     Marza2R()
@@ -412,14 +417,12 @@ endif
 
 fMarza:=" "
 return .t.
-*}
 
 
-/*! \fn V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets)
- */
-
+// ---------------------------------------------------------------
+// racuna mpc sa porezom 
+// ---------------------------------------------------------------
 function V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets)
-*{
 local nPom
 
 if lShowGets == nil
@@ -427,30 +430,32 @@ if lShowGets == nil
 endif
 
 if cIdvd $ "41#42"
-  nPom := _MpcSaPP - _RabatV
+    nPom := _mpcsapp
 else
-  nPom:=_mpcsapp
+    nPom := _mpcsapp
 endif
 
-if _Mpcsapp<>0 .and. !lNaprijed
+if _Mpcsapp <> 0 .and. !lNaprijed
+
+    // mpc ce biti umanjena mpc sa pp - porez - rabat (ako postoji)  
+    _mpc := MpcBezPor( nPom, aPorezi, , _nc ) - _rabatv
+
+    _marza2 := 0
   
-  _mpc:= MpcBezPor (nPom, aPorezi, , _nc)
-  _marza2:=0
+    MarzaMP(cIdVd, lNaprijed, aPorezi)
   
-  MarzaMP(cIdVd, lNaprijed, aPorezi)
+    if lShowGets
+    	ShowGets()
+    endif
   
-  if lShowGets
-  	ShowGets()
-  endif
-  
-  if cIdVd $ "41#42"
-     DuplRoba()
-  endif
+    if cIdVd $ "41#42"
+        DuplRoba()
+    endif
 
 endif
 
 return .t.
-*}
+
 
 
 

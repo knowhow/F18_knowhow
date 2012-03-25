@@ -11,7 +11,8 @@
 
 
 #include "fin.ch"
-#define DABLAGAS lBlagAsis.and._IDVN==cBlagIDVN
+
+#define DABLAGAS lBlagAsis .and. _IDVN == cBlagIDVN
 
 
 /*! \fn Blagajna()

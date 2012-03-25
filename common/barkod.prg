@@ -202,17 +202,11 @@ do while !EOF()
 enddo
 close all
 
+f18_rtm_print( "barkod", "barkod", "1" )
 
-if Pitanje(,"Aktivirati Win Report ?","D")=="D"
-	cKomLin:="delphirb "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
-	run &cKomLin
-endif
-
-
-CLOSERET
+close all
 return
 
-*}
 
 /*! \fn KaEdPrLBK()
  *  \brief Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
@@ -360,14 +354,12 @@ enddo
 
 close all
 
-if pitanje(,"Aktivirati Win Report ?","D")=="D"
-	private cKomLin:="delphirb "+IzFmkIni("BARKOD", "NazRTM", "barkod", SIFPATH) +" " + PRIVPATH + "  barkod 1"
-	run &cKomLin
-endif
+f18_rtm_print( "barkod", "barkod", "1" )
+
+close all
+return
 
 
-CLOSERET
-*}
 
 /*! \fn FaEdPrLBK()
  *  \brief Priprema barkodova

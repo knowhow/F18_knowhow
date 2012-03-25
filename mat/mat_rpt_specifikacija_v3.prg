@@ -42,7 +42,9 @@ local _artikli
 local _dat_od
 local _dat_do
 local _group
+local _group_sifra
 local _sel_groups
+local _group_lista
 local _cnt := 1
 local _ret := .t.
 
@@ -55,8 +57,24 @@ _dat_od := CTOD( "" )
 _dat_do := CTOD( "" )
 _group := "N"
 _sel_groups := SPACE(200)
+_vrijednost := "N"
+_group_sifra := "N"
+_group_lista := "N"
 
-Box( "Spe2", 10, 65, .f. )
+// uzmi parametre iz sql/db
+_firma := fetch_metric( "mat_rpt_specifikacija_firma", my_user(), _firma )
+_konta := fetch_metric( "mat_rpt_specifikacija_konta", my_user(), _konta )
+_artikli := fetch_metric( "mat_rpt_specifikacija_artikli", my_user(), _artikli )
+_dat_od := fetch_metric( "mat_rpt_specifikacija_datum_od", my_user(), _dat_od )
+_dat_do := fetch_metric( "mat_rpt_specifikacija_datum_do", my_user(), _dat_do )
+_group := fetch_metric( "mat_rpt_specifikacija_grupe", my_user(), _group )
+_group_sifra := fetch_metric( "mat_rpt_specifikacija_grupe_iz_sifre", my_user(), _group_sifra )
+_group_lista := fetch_metric( "mat_rpt_specifikacija_sadrzaj_grupe", my_user(), _group_lista )
+_sel_groups := fetch_metric( "mat_rpt_specifikacija_selektovane_grupe", my_user(), _sel_groups )
+_vrijednost := fetch_metric( "mat_rpt_specifikacija_samo_vrijednost", my_user(), _vrijednost )
+
+
+Box( "Spe2", 13, 65, .f. )
 
     ++ _cnt
 
@@ -95,8 +113,18 @@ Box( "Spe2", 10, 65, .f. )
     @ m_x + _cnt, m_y + 2 SAY "Prikaz po grupacijama (D/N)?" GET _group ;
         VALID _group $ "DN" PICT "@!"
 
+    @ m_x + _cnt, col() + 1 SAY "Grupu uzmi iz sifre (D/N)?" GET _group_sifra ;
+        VALID _group_sifra $ "DN" PICT "@!"
+
     ++ _cnt
     @ m_x + _cnt, m_y + 2 SAY "Grupe:" GET _sel_groups PICT "@S50"
+
+    ++ _cnt
+    @ m_x + _cnt, m_y + 2 SAY "Prikazati sadrzaj grupe (D/N)?" GET _group_lista ;
+        VALID _group_lista $ "DN" PICT "@!"
+
+    ++ _cnt
+    @ m_x + _cnt, m_y + 2 SAY "Prikaz samo vrijednosti" GET _vrijednost PICT "@!" VALID _vrijednost $ "DN"
 
     read
 
@@ -115,7 +143,22 @@ params["artikli"] := _artikli
 params["dat_od"] := _dat_od
 params["dat_do"] := _dat_do
 params["po_grupi"] := _group
+params["grupa_na_osnovu_sifre"] := _group_sifra
 params["grupe"] := _sel_groups
+params["samo_vrijednost"] := _vrijednost
+params["listaj_sadrzaj_grupe"] := _group_lista
+
+// snimi parametre u sql/db
+set_metric( "mat_rpt_specifikacija_firma", my_user(), _firma )
+set_metric( "mat_rpt_specifikacija_konta", my_user(), _konta )
+set_metric( "mat_rpt_specifikacija_artikli", my_user(), _artikli )
+set_metric( "mat_rpt_specifikacija_datum_od", my_user(), _dat_od )
+set_metric( "mat_rpt_specifikacija_datum_do", my_user(), _dat_do )
+set_metric( "mat_rpt_specifikacija_grupe", my_user(), _group )
+set_metric( "mat_rpt_specifikacija_grupe_iz_sifre", my_user(), _group_sifra )
+set_metric( "mat_rpt_specifikacija_selektovane_grupe", my_user(), _sel_groups )
+set_metric( "mat_rpt_specifikacija_samo_vrijednost", my_user(), _vrijednost )
+set_metric( "mat_rpt_specifikacija_sadrzaj_grupe", my_user(), _group_lista )
 
 return _ret
 
@@ -124,7 +167,7 @@ return _ret
 // -------------------------------------------------
 // linija za ogranicavanje na izvjestaju
 // -------------------------------------------------
-static function _get_line( r_format )
+static function _get_line( r_format, params )
 local _line := ""
 
 _line += REPLICATE( "-", 4 )
@@ -134,12 +177,17 @@ _line += SPACE(1)
 _line += REPLICATE( "-", 40 )
 _line += SPACE(1)
 _line += REPLICATE( "-", 3 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 10 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 10 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 10 )
+
+if params["samo_vrijednost"] == "N"
+
+    _line += SPACE(1)
+    _line += REPLICATE( "-", 10 )
+    _line += SPACE(1)
+    _line += REPLICATE( "-", 10 )
+    _line += SPACE(1)
+    _line += REPLICATE( "-", 10 )
+
+endif
 
 if r_format == "1"    
     _line += SPACE(1)
@@ -184,7 +232,7 @@ local _fmt
 local _line
 local _filter := ""
 local _a_tmp
-
+local _samo_vrijednost
 
 // otvori potrebne tabele
 _o_rpt_tables()
@@ -207,6 +255,7 @@ _dat_od := _params["dat_od"]
 _dat_do := _params["dat_do"]
 _firma := LEFT( _params["firma"], 2 )
 _fmt := _params["format"]
+_samo_vrijednost := _params["samo_vrijednost"]
 
 select mat_suban   
 // "IdFirma+IdRoba+dtos(DatDok)"
@@ -242,7 +291,7 @@ _fill_rpt_data( _params )
 msgC()
 
 // daj mi liniju za izvjestaj
-_line := _get_line( _fmt )
+_line := _get_line( _fmt, _params )
 
 START PRINT CRET
 
@@ -314,9 +363,14 @@ do while !EOF()
     select roba
     hseek _id_roba
 
-    // ovdje cemo smjestiti grupaciju...
-    _roba_gr := IzSifK( "ROBA", "GR1", _id_roba, .f. )
-    
+    // da li se grupa odredjuje putem sifre ili iz sifk ?
+    if param["grupa_na_osnovu_sifre"] == "D"
+        _roba_gr := PADR( _id_roba, 2 )
+    else
+        // ovdje cemo smjestiti grupaciju...
+        _roba_gr := IzSifK( "ROBA", "GR1", _id_roba, .f. )
+    endif
+
     select mat_suban
 
     _saldo_k_1 := _ulaz_k_1 - _izlaz_k_1
@@ -494,6 +548,14 @@ do while !EOF()
     _u_pot_2 := 0
     _u_sld_i_1 := 0
     _u_sld_i_2 := 0
+    _gr_count := 0
+
+    // ako je listanje sadrzaja grupe
+    if params["listaj_sadrzaj_grupe"] == "D"
+        // postavi zaglavlje za grupu...
+        @ prow() + 1, 0 SAY "Sadrzaj grupe " + _grupa
+        ? line
+    endif
 
     do while !EOF() .and. field->grupa == _grupa
 
@@ -503,6 +565,34 @@ do while !EOF()
                 skip
                 loop
             endif
+        endif
+
+        if params["listaj_sadrzaj_grupe"] == "D"
+            // ispisi za svaku grupu...
+            
+            @ prow() + 1, 0 SAY ++_gr_count PICT '9999'
+            @ prow(), pcol() + 1 SAY PADR( ALLTRIM( field->id_roba ) + " - " + ALLTRIM( field->roba_naz ) + " (" + field->roba_jmj + ")" , 50 )
+  
+            if params["samo_vrijednost"] == "N"
+  
+                @ prow(), pcol() + 1 SAY field->ulaz_1 PICT picKol
+                @ prow(), pcol() + 1 SAY field->izlaz_1 PICT picKol
+                @ prow(), pcol() + 1 SAY field->saldo_k_1 PICT picKol
+
+            endif
+
+            if _fmt $ "12"
+                @ prow(),pcol()+1 SAY field->dug_1 PICT PicDEM
+                @ prow(),pcol()+1 SAY field->pot_1 PICT PicDEM
+                @ prow(),pcol()+1 SAY field->saldo_i_1 PICT PicDEM
+            endif
+     
+            if _fmt $ "13"
+                @ prow(),pcol()+1 SAY field->dug_2 PICT PicBHD
+                @ prow(),pcol()+1 SAY field->pot_2 PICT PicBHD
+                @ prow(),pcol()+1 SAY field->saldo_i_2 PICT PicBHD
+            endif
+
         endif
 
         // saberi totale...
@@ -521,14 +611,23 @@ do while !EOF()
         skip
 
     enddo
-    
+   
+    // liniju postavi ako postoji sadrzaj grupe...
+    if params["listaj_sadrzaj_grupe"] == "D"
+        ? line
+    endif
+ 
     @ prow() + 1, 0 SAY ++_rbr PICT '9999'
     @ prow(), pcol() + 1 SAY PADR( "Ukupno grupa: " + _grupa, 55 )
-    
-    @ prow(), pcol() + 1 SAY _u_ulaz PICT picKol
-    @ prow(), pcol() + 1 SAY _u_izlaz PICT picKol
-    @ prow(), pcol() + 1 SAY _u_sld_k PICT picKol
-    
+  
+    if params["samo_vrijednost"] == "N"
+  
+        @ prow(), pcol() + 1 SAY _u_ulaz PICT picKol
+        @ prow(), pcol() + 1 SAY _u_izlaz PICT picKol
+        @ prow(), pcol() + 1 SAY _u_sld_k PICT picKol
+
+    endif
+
     _mark_pos := pcol()
      
     if _fmt $ "12"
@@ -541,6 +640,11 @@ do while !EOF()
         @ prow(),pcol()+1 SAY _u_dug_2 PICT PicBHD
         @ prow(),pcol()+1 SAY _u_pot_2 PICT PicBHD
         @ prow(),pcol()+1 SAY _u_sld_i_2 PICT PicBHD
+    endif
+
+    // liniju postavi ako postoji sadrzaj grupe...
+    if params["listaj_sadrzaj_grupe"] == "D"
+        ? line
     endif
 
     _uk_dug_1 += _u_dug_1
@@ -676,6 +780,7 @@ local _r_line_2 := ""
 local _r_line_3 := ""
 
 P_COND
+?
 @ prow(), 0 SAY "MAT.P: SPECIFIKACIJA ROBE (U "
 
 if param["format"] == "1"
@@ -733,9 +838,13 @@ _r_line_1 += "*J. "
 _r_line_2 += "*MJ."
 _r_line_3 += "*   "
 
-_r_line_1 += "*       K O L I C I N A          "
-_r_line_2 += " --------------------------------"
-_r_line_3 += "*   ULAZ   *  IZLAZ   *  STANJE  "
+if param["samo_vrijednost"] == "N"
+
+    _r_line_1 += "*       K O L I C I N A          "
+    _r_line_2 += " --------------------------------"
+    _r_line_3 += "*   ULAZ   *  IZLAZ   *  STANJE  "
+
+endif
 
 _r_line_1 += "*     V R I J E D N O S T              *"
 _r_line_2 += " --------------------------------------"

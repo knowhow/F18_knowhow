@@ -38,7 +38,7 @@ if !used()
 	O_POS
 endif
 
-SELECT F_DOKS
+SELECT F_POS_DOKS
 if !used()
 	O_POS_DOKS
 endif
@@ -330,17 +330,8 @@ O_POS
 O_ROBA
 return
 
-/*! \fn RacIznos(cIdPos,cIdVD,dDatum,cBrDok)
- *  \brief
- *  \param cIdPos
- *  \param cIdVD
- *  \param dDatum
- *  \param cBrDok
- *  \return nIznos   - iznos racuna
- */
- 
+
 function RacIznos(cIdPos,cIdVD,dDatum,cBrDok)
-*{
 
 if cIdPos==nil
 	cIdPos:=pos_doks->IdPos
@@ -358,20 +349,10 @@ do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+cIdVd+dtos(dD
 end
 select pos_doks
 return (nIznos)
-*}
 
 
-
-// Ovo je bilo ali mi je nelogicno !!!
-//function DokIznos(fUI,cIdPos,cIdVD,dDatum,cBrDok)
-
-/*! \fn DokIznos(lUI)
- *  \brief funkcija vraca ukupan iznos iz pregleda racuna
- *  \lUI - True - ulazi; False - izlazi; NIL - stanje bez obzira na prirodu dokumenta
- */
 
 function DokIznos(lUI)
-*{
 local cRet:=SPACE(13)
 local l_u_i
 local nIznos:=0
@@ -429,14 +410,10 @@ select pos_doks
 cRet:=STR(nIznos,13,2)
 
 return (cRet)
-*}
 
 
 
-/*! \fn _Pripr2_POS()
- *  \brief
- */
- 
+
 function _Pripr2_POS(cIdVrsteP)
 local cBrdok
 local nTrec := 0
@@ -489,37 +466,32 @@ return
 
 
   
-/*! \fn BrisiDok(cIdPos,cIdVD,dDatum,cBrojR)
- *  \brief
- *  \param cIdPos
- *  \param cIdVD
- *  \param dDatum
- *  \param cBrojR
- */
- 
-function BrisiDok(cIdPos,cIdVD, dDatum, cBrojR)
-*{
-local cDatum
 
-SELECT POS
-cDatum:=DTOS(dDatum)
+function BrisiDok(cIdPos,cIdVD, dDatum, cBrojR)
+local cDatum
+local _rec
+
+select pos
+cDatum := DTOS( dDatum )
+
 set order to tag "1"
-Seek cIdPos+cIDVD+cDatum+cBrojR
+
+seek cIdPos+cIDVD+cDatum+cBrojR
+
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+cIdVD+cDatum+cBrojR)
 	skip
 	nTTR:=recno()
 	skip -1
-        delete        // DOKS
-        sql_azur(.t.)
-        sql_delete()
-        go nTTR
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( ALIAS(), _rec )
+    go nTTR
 enddo
+
 select pos_doks
-delete       // DOKS
-sql_azur(.t.)
-sql_delete()
+_rec := dbf_get_rec()
+delete_rec_server_and_dbf( ALIAS(), _rec )
+
 return
-*}
 
 
 /*! \fn IspraviDV(cLast, dOrigD, dDatum, cVrijeme, cBroj)
@@ -619,14 +591,7 @@ do while (!EOF() .and. field->datum==dOrigD .and. field->idPos==cIdPos .and. fie
 enddo
 
 return 1
-*}
 
-
-*string IzFmkIni_ExePath_TOPS_PitanjePrijeAzuriranja;
-/*! \ingroup ini
- *  \var IzFmkIni_ExePath_TOPS_PitanjePrijeAzuriranja
- *  \brief Upit prije azuiranja racuna
- */
 
 /*! \fn AzurRacuna(cIdPos,cStalRac,cRadRac,cVrijeme,cNacPlac,cIdGost)
  *  \brief Azuriranje racuna ( _POS->POS, _POS->DOKS )
@@ -641,6 +606,8 @@ return 1
 function AzurRacuna(cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost)
 local cDatum
 local nStavki
+local _rec, _append
+local _cnt := 0
 
 lNaX:=.f.
 
@@ -659,146 +626,167 @@ endif
 
 SELECT _POS
 set order to tag "1"
-SEEK cIdPos+"42"+dtos(gDatum)+cRadRac
-Scatter()
+SEEK cIdPos + "42" + dtos(gDatum) + cRadRac
+
+set_global_memvars_from_dbf()
 
 select pos_doks
 
-_BrDok:=cStalRac
-_Vrijeme:=cVrijeme
-_IdVrsteP:=cNacPlac
-_IdGost:=cIdGost
-_IdOdj:=SPACE(LEN(_IdOdj))
-_M1:=OBR_NIJE
+_BrDok := cStalRac
+_Vrijeme := cVrijeme
+_IdVrsteP := cNacPlac
+_IdGost := cIdGost
+_IdOdj := SPACE( LEN( _IdOdj ))
+_M1 := OBR_NIJE
 
 //Append Blank  radi mreza ne idemo na ovu varijantu!
 set order to tag "1"
-seek cIdPos+"42"+dtos(gdatum)+cStalRac
+seek cIdPos + "42" + dtos(gdatum) + cStalRac
 
 if ( alltrim(field->idRadnik) != "////" )
 	MsgBeep("Nesto nije u redu zovite servis - radnik bi morao biti //// !!!")
 endif
 
-Gather()
-//sql_azur(.t.)
-//GathSQL()
+// ubaci zapis u tabelu
+_append := get_dbf_global_memvars()
+update_rec_server_and_dbf( ALIAS(), _append )
 
 SELECT _POS
+
 // uzmi gDatum za azuriranje
-cDatum:=dtos(gDatum)  
-private nIznRn:=0
+cDatum := DTOS(gDatum)  
+private nIznRn := 0
 
 do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+cRadRac)
-	Scatter()
-  	_Kolicina:=0
+
+    set_global_memvars_from_dbf()
+
+  	_Kolicina := 0
+
   	do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+cRadRac) .and._POS->(IdRoba+IdCijena)==(_IdRoba+_IdCijena) .and._POS->Cijena==_Cijena
-    		// saberi ukupnu kolicinu za jedan artikal
-    		if gRadniRac="D".and.gVodiTreb=="D".and.GT=OBR_NIJE
-      			// vodi se po trebovanjima, a za ovu stavku trebovanje nije izgenerisano
-      			replace kolicina with 0 // nuliraj kolicinu
-    		endif
+
+    	// saberi ukupnu kolicinu za jedan artikal
+    	if gRadniRac = "D" .and. gVodiTreb == "D" .and. GT = OBR_NIJE
+      		// vodi se po trebovanjima, a za ovu stavku trebovanje nije izgenerisano
+      		replace kolicina with 0 
+            // nuliraj kolicinu
+    	endif
 		
 		_Kolicina += _POS->Kolicina
-    		REPLACE m1 WITH "Z"
-    		if lNaX
-      			SKIP 1
-			nTRec:=RECNO()
-      			SKIP -1
-      			REPLACE idpos WITH "X "
-      			GO (nTRec)
-    		else
-      			SKIP 1
-    		endif
+
+    	replace m1 with "Z"
+
+    	if lNaX
+      		SKIP 1
+		    nTRec:=RECNO()
+      		SKIP -1
+      		replace idpos with "X "
+      		GO (nTRec)
+    	else
+      		SKIP 1
+    	endif
+
 	enddo
-  	_Prebacen:=OBR_NIJE
+
+  	_Prebacen := OBR_NIJE
+
   	SELECT ODJ
   	HSEEK _IdOdj
+
   	if odj->Zaduzuje=="S"
-    		_M1 := OBR_NIJE
+    	_M1 := OBR_NIJE
   	else
-    		// za robe (ako odjeljenje zaduzuje robe) ne pravim razduzenje
-    		// sirovina
-    		_M1 := OBR_JEST
+    	// za robe (ako odjeljenje zaduzuje robe) ne pravim razduzenje
+    	// sirovina
+    	_M1 := OBR_JEST
   	endif
-  	if ROUND(_kolicina,4)<>0
+
+  	if ROUND( _kolicina, 4) <> 0
+
 		SELECT POS
-		_BrDok:=cStalRac
-		_Vrijeme:=cVrijeme
-		_IdVrsteP:=cNacPlac
-		_IdGost:=cIdGost
+
+		_BrDok := cStalRac
+		_Vrijeme := cVrijeme
+		_IdVrsteP := cNacPlac
+		_IdGost := cIdGost
+        _rbr := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
+
 		append blank
-		//Sql_append()
+
+        _rec := dbf_get_rec()
+
 		if lNaX
-	  		_idpos:="X "
+            _idpos := "X "
 		endif
-		Gather()
-		//Sql_azur(.t.)
-		//GathSQL()
-		nIznRn+=POS->Kolicina * POS->cijena
+
+        _rec := get_dbf_global_memvars()
+        
+        update_rec_server_and_dbf( ALIAS(), _rec )
+
+		nIznRn += ( pos->kolicina * pos->cijena )
+
   	endif
+
   	select _pos
+
 enddo
-
-// ako se koristi varijanta evidentiranja podataka o nacinu placanja
-// nIznRn = iznos zakljucenog racuna
-// cStalRac = broj zakljucenog racuna
-// cVrijeme = vrijeme zakljucenog racuna
-
-if gEvidPl=="D"
-	AzurCek(aCKData, nIznRN, cStalRac, cVrijeme)
-	AzurSindKredit(aSKData, nIznRN, cStalRac, cVrijeme)
-	AzurGarPismo(aGPData, nIznRN, cStalRac, cVrijeme)
-endif
 
 return
 
 
 
+// ---------------------------------------------------------
+// azuriranje zaduzenja...
+// ---------------------------------------------------------
 function AzurPriprZ(cBrDok, cIdVd)
+local _rec, _app
+local _cnt := 0
 
 SELECT PRIPRZ
 GO TOP
-Scatter()
+
+set_global_memvars_from_dbf()
 
 select pos_doks
-APPEND BLANK
-sql_append()
+append blank
 
-_BrDok:=cBrDok 
-
-// ako je zaduzenje pitaj da li je roba na stanju...
-//g_roba_na_stanju(cIdVd)
+_BrDok := cBrDok 
 
 // zakljucene stavke
-if gBrojSto=="D"
-	if cIdVd<>VD_RN
+if gBrojSto == "D"
+	if cIdVd <> VD_RN
 		_zakljucen := "Z"
 	endif
 endif
 
-if cIdVd=="PD"
-	_IdVd:="16"
+if cIdVd == "PD"
+	_IdVd := "16"
 else
-	_IdVd:=cIdVd
+	_IdVd := cIdVd
 endif
 
-Gather()
-sql_azur(.t.)
-GathSQL()
+_app := get_dbf_global_memvars()
+update_rec_server_and_dbf( ALIAS(), _app )
+
 
 SELECT PRIPRZ
+
 // dodaj u datoteku POS
 do while !eof()   
 	
 	SELECT PRIPRZ
+
 	AzurRoba()
+
 	SELECT PRIPRZ 
 
-	Scatter ()
-      	SELECT POS
-      	APPEND BLANK
-      	sql_append()
-      	_BrDok := cBrDok
+    set_global_memvars_from_dbf()
+
+    SELECT POS
+    APPEND BLANK
+
+    _BrDok := cBrDok
+
 	if cIdVd=="PD"
 		_IdVd:="16"
 	else
@@ -806,31 +794,39 @@ do while !eof()
 	endif
 	
 	if cIdVD=="PD"
-        	// !prva stavka storno
+        // !prva stavka storno
 		_IdVd:="16"
-        	_IdDio:=_IdVrsteP
-        	_kolicina:=-_Kolicina
-      	endif
-      	Gather()
-      	sql_azur(.t.)
-      	GathSQL()
-      	if cIdVD=="PD"  // druga stavka
-        	append blank
-        	sql_append()
-        	// !druga stavka storno storna = "+"
-		_idvd:="16"
-        	// odjeljenje 2
-		_IdOdj:=_IdVrsteP  
-        	_IdDio:=""
-        	_IdVrsteP:=""
-        	_kolicina:=-_Kolicina
-        	Gather()
-        	sql_azur(.t.)
-        	GathSQL()
-	endif
+        _IdDio:=_IdVrsteP
+        _kolicina:=-_Kolicina
+    endif
 
-      	SELECT PRIPRZ
-      	Del_Skip()
+    _rbr := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
+
+    _app := get_dbf_global_memvars()
+
+    update_rec_server_and_dbf( ALIAS(), _app )
+
+    if cIdVD == "PD"  
+        
+        // druga stavka
+        append blank
+        
+        // !druga stavka storno storna = "+"
+        _rec := dbf_get_rec()
+        _rec["idvd"] := "16"
+		_rec["idodj"] := _rec["idvrstep"]  
+        _rec["iddio"] := ""
+        _rec["idvrstep"] := ""
+        _rec["kolicina"] := - _rec["kolicina"]
+        _rec["rbr"] := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
+
+        update_rec_server_and_dbf( ALIAS(), _rec )
+	
+    endif
+
+    SELECT PRIPRZ
+    Del_Skip()
+
 enddo
 
 SELECT PRIPRZ
@@ -844,7 +840,6 @@ if gFc_use == "D"
 endif
 
 return
-*}
 
 
 // -----------------------------------
@@ -947,6 +942,7 @@ set order to 2
 // IdVd+IdOdj+IdRadnik
 
 Seek cIdVd+cIdOdj+cIdDio
+
 if FOUND()      
 // .and. (Empty (cIdDio) .or. _POS->IdDio==cIdDio)
 	if _POS->IdRadnik <> cIdRadnik
@@ -989,7 +985,7 @@ endif
 SELECT _POS
 Set order to 1
 return .t.
-*}
+
 
 
 /*! \fn ReindPosPripr()
@@ -997,7 +993,6 @@ return .t.
  */
  
 function ReindPosPripr()
-*{
 
 MsgO("Sacekajte trenutak...") 
 O__POS
@@ -1009,7 +1004,7 @@ use
 MsgC()
 
 return
-*}
+
 
 
 /*! \fn DBZakljuci()
@@ -1033,10 +1028,13 @@ AADD(aDbf, {"IdRadnik", "C",  4, 0})
 AADD(aDbf, {"NazRadn",  "C", 30, 0})
 AADD(aDbf, {"Zaklj",    "N", 12, 2})
 AADD(aDbf, {"Otv",      "N", 12, 2})
+
 Dbcreate2(PRIVPATH+"ZAKSM", aDbf)
 
 select (F_ZAKSM)
+
 my_use ("zaksm", "ZAKSM", .t.)
+
 INDEX ON IdRadnik TAG ("1")           
 Set Order To tag "1"
 
@@ -1074,29 +1072,29 @@ select pos_doks
 SEEK "42"+DTOS(gDatum)+gSmjena
 do while !EOF() .and. pos_doks->IdVd=="42" .and. pos_doks->Datum==gDatum .and. pos_doks->Smjena == gSmjena
 	if pos_doks->IdPos <> gIdPos
-    		SKIP
+    	SKIP
 		LOOP
   	endif
   	SELECT ZAKSM
   	HSEEK pos_doks->IdRadnik
   	if FOUND()
-    		SELECT POS
-    		HSEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-    		nIzn := 0
-    		do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-      			nIzn += POS->(Kolicina*Cijena)
-      			SKIP
-    		enddo
-    		// azuriraj iznos zakljucenih racuna
-    		SELECT ZAKSM
-    		REPLACE Zaklj WITH Zaklj+nIzn
+    	SELECT POS
+    	HSEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+    	nIzn := 0
+    	do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+      		nIzn += POS->(Kolicina*Cijena)
+      		SKIP
+    	enddo
+    	// azuriraj iznos zakljucenih racuna
+    	SELECT ZAKSM
+    	REPLACE Zaklj WITH Zaklj+nIzn
 	endif
   	select pos_doks
 	SKIP
 enddo
 
 return
-*}
+
 
 
 /*! \fn UkloniRadne(cIdRadnik)
@@ -1193,67 +1191,53 @@ MsgO("Indeksi nisu u redu?! Sacekajte trenutak da reindeksiram...")
 if UPPER(cAlias)="_POS"
 	SELECT _POS
 	USE
-       	O__POS
-       	reindex
+    O__POS
+    reindex
 	USE
-       	O__POS
+    O__POS
 elseif UPPER(cAlias)="POS_DOKS"
-       	select pos_doks
+    select pos_doks
 	USE
-       	O_POS_DOKS
-       	reindex
+    O_POS_DOKS
+    reindex
 	USE
-       	O_POS_DOKS
+    O_POS_DOKS
 endif
 MsgC()
 
 return
-*}
 
 
 
-/*! \fn Del_Skip()
- *  \brief Namijenjena da se prevazidje problem kad se radi klasicni Delete i SKIP
- */ 
- 
 function Del_Skip()
-*{
 local nNextRec
-
 nNextRec:=0
 SKIP
 nNextRec:=RECNO()
 Skip -1
-DELETE
+delete
 GO nNextRec
 return
-*}
 
 
-/*! \fn GoTop2()
- *  \brief Skipuje prvi Deleted() slog nakon GO TOP
- */
- 
+
 function GoTop2()
-*{
 GO TOP
 if DELETED()
 	SKIP
 endif
 return
-*}
 
 
-/*! \fn pos_generisi_doks_iz_pos()
- *  \brief Generisanje DOKS-a iz POS-a
- */
  
 function pos_generisi_doks_iz_pos()
-*{
+local _rec
+local _app
 
 if !SigmaSif("GENDOKS")
 	return
 endif
+
 close all
 
 O_POS_DOKS
@@ -1269,26 +1253,28 @@ if Empty(ALLTRIM(cTipDok)) .and. Pitanje(,"Izbrisati doks ??","N")=="D"
 endif
 
 O_POS
-GO TOP
+go top
 
 do while !eof()
 	
-	if !Empty(ALLTRIM(cTipDok))
+	if !Empty( ALLTRIM( cTipDok ) )
 		if pos->idvd <> cTipDok
 			skip
 			loop
 		endif
 	endif
 	
-	Scatter()
-  	do while !eof() .and. _idpos==idpos .and. _idvd==idvd .and. _Datum==datum.and._brdok==brdok
-     		skip
+    _rec := dbf_get_rec()
+
+  	do while !eof() .and. _rec["idpos"] == field->idpos .and. _rec["idvd"] == field->idvd .and. _rec["datum"] == field->datum .and. _rec["brdok"] == field->brdok
+        skip
   	enddo
+
   	select pos_doks
 	
 	if !Empty(ALLTRIM(cTipDok))
 		set order to tag "1"
-		hseek _idpos + _idvd + DTOS(_datum)
+		hseek _rec["idpos"] + _rec["idvd"] + DTOS(_rec["datum"])
 		if Found()
 			select pos
 			skip
@@ -1296,20 +1282,27 @@ do while !eof()
 		endif
 	endif
   	
-	APPEND BLANK
-	if gSQL=="D"
-	  	sql_append()
-	endif
-  	replace idpos with _idpos,brdok with _brdok,idvd with _idvd,idradnik with _idradnik,smjena with _smjena,datum with _datum
-	if gSQL=="D"
-  		sql_azur(.t.)
-	  	replsql idpos with _idpos, brdok with _brdok, idvd with _idvd,idradnik with _idradnik,smjena with _smjena,datum with _datum
-	endif
-  	SELECT pos
+	append blank
+
+    _app := dbf_get_rec()
+    _app["idpos"] := _rec["idpos"]
+    _app["brdok"] := _rec["brdok"]
+    _app["idvd"] := _rec["idvd"]
+    _app["idradnik"] := _rec["idradnik"]
+    _app["smjena"] := _rec["smjena"]
+    _app["datum"] := _rec["datum"]
+  	
+    update_rec_server_and_dbf( ALIAS(), _app )
+	
+  	select pos
+
 enddo
+
 close all
+
 return
-*}
+
+
 
 
 /*! \fn SR_ImaRobu(cPom,cIdRoba)
@@ -1318,9 +1311,7 @@ return
  *  \param cIdRoba
  */
  
-function SR_ImaRobu(cPom,cIdRoba)
-*{
-
+function SR_ImaRobu( cPom, cIdRoba )
 local lVrati:=.f.
 local nArr:=SELECT()
 
@@ -1333,37 +1324,45 @@ endif
 
 SELECT (nArr)
 return (lVrati)
-*}
 
 
-/*! \fn Pos2_Pripr()
- *  \brief Prebaci racun iz POS u _PRIPR
- */
- 
+
+
 function Pos2_Pripr()
-*{
+local _rec
 
 select _pos_pripr
+
 Zapp()
+
 Scatter()
 
 SELECT POS
 seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-	Scatter ()
+
+	_rec := dbf_get_rec()
+    hb_hdel( _rec, "rbr" )
+	
   	select roba
   	HSEEK _IdRoba
-  	_RobaNaz:=roba->Naz
-  	_Jmj:=roba->Jmj
+  	_rec["robanaz"] := roba->naz
+  	_rec["jmj"] := roba->jmj
+
   	select _pos_pripr
-  	Append Blank // _PRIPR
-  	Gather()
+  	Append Blank 
+
+  	dbf_update_rec( _rec )
+
   	SELECT POS
   	SKIP
+
 enddo
 select _pos_pripr
 return
-*}
+
+
+
 
 /*! \fn NemaPrometa(cStariId, cNoviId)
  *  \brief Provjerava da li je bilo prometa
@@ -1372,26 +1371,10 @@ return
  */
  
 function NemaPrometa(cStariId, cNoviId)
-*{
+return .t.
 
-return .t.
-/*
-  if (cStariId == cNoviId)
-    return .t.
-  endif
-  
-  nPrev := SELECT()
-  SELECT _POS
-  Seek (cStariId)
-  SELECT (nPrev)
-  If _POS->(Found())
-    MsgBeep ("Postoje dokumenti s starim ID prodajnog mjesta!!!#"+;
-             "Promjena nije dozvoljena!!!")
-    Return .F.
-  EndIF
-*/
-return .t.
-*}
+
+
 
 /*! \fn Priprz2Pos()
  *  \brief prebaci iz priprz -> pos,doks
@@ -1400,8 +1383,9 @@ return .t.
  */
 
 function Priprz2Pos()
-*{
 local lNivel
+local _rec
+local _cnt := 0
 
 lNivel:=.f.
 
@@ -1412,32 +1396,29 @@ SET ORDER TO TAG "ID"
 SELECT PRIPRZ
 GO TOP
 
-Scatter()
+_rec := dbf_get_rec()
 
 select pos_doks
 APPEND BLANK
-sql_append()
-Gather()
 
-sql_azur(.t.)
-GathSQL()
-
+update_rec_server_and_dbf( ALIAS(), _rec )
 
 MsgO("prenos priprema->stanje")
+
 // upis inventure/nivelacije
 SELECT PRIPRZ  
+
 do while !eof()
-	Scatter()
+
+	_rec := dbf_get_rec()
 
 	// dodaj stavku u pos
   	SELECT POS
 	
 	APPEND BLANK
-	sql_append()
-	
-  	Gather()
-  	sql_azur(.t.)
-  	GathSQL()
+
+    _rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt ) ) , 5 ) 
+    update_rec_server_and_dbf( ALIAS(), _rec )
 	
   	SELECT PRIPRZ
 
@@ -1446,17 +1427,21 @@ do while !eof()
 
 	SELECT PRIPRZ
   	SKIP
+
 enddo
+
 MsgC()
 
 MsgO("brisem pripremu....")
+
 // ostalo je jos da izbrisemo stavke iz pomocne baze
 SELECT PRIPRZ
+
 Zapp()
 MsgC()
 
 return
-*}
+
 
 
 
@@ -1549,8 +1534,10 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 			endif
 		endif
 		
-    		SELECT odj 
-		HSEEK roba->IdOdj
+        if roba->( FIELDPOS("idodj") ) <> 0
+    	    SELECT odj 
+		    HSEEK roba->IdOdj
+        endif
 		
 		nNeplaca:=0
     		
@@ -1564,28 +1551,28 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 			nNeplaca+=pos->(kolicina*nCijena) 
 		endif
 
-    		SELECT pom
+    	SELECT pom
 		HSEEK pos_doks->(IdPos+IdRadnik+IdVrsteP)+pos->(IdOdj+IdRoba+IdCijena)
 		if !found()
-      			APPEND BLANK
-      			REPLACE IdPos WITH pos_doks->IdPos,IdRadnik WITH pos_doks->IdRadnik,IdVrsteP WITH pos_doks->IdVrsteP,IdOdj WITH pos->IdOdj,IdRoba WITH pos->IdRoba,IdCijena WITH pos->IdCijena,Kolicina WITH pos->Kolicina,Iznos WITH pos->Kolicina*POS->Cijena,Iznos3 WITH nNeplaca
+      		APPEND BLANK
+      		REPLACE IdPos WITH pos_doks->IdPos,IdRadnik WITH pos_doks->IdRadnik,IdVrsteP WITH pos_doks->IdVrsteP,IdOdj WITH pos->IdOdj,IdRoba WITH pos->IdRoba,IdCijena WITH pos->IdCijena,Kolicina WITH pos->Kolicina,Iznos WITH pos->Kolicina*POS->Cijena,Iznos3 WITH nNeplaca
       			
 			if gPopVar=="A"
-         			REPLACE Iznos2 WITH pos->nCijena
-      			endif
+         		REPLACE Iznos2 WITH pos->nCijena
+      		endif
 
-      			if roba->(fieldpos("K1")) <> 0
-              			REPLACE K2 WITH roba->K2,K1 WITH roba->K1
-      			endif
-    		else
-      			REPLACE Kolicina WITH Kolicina+POS->Kolicina,Iznos WITH Iznos+POS->Kolicina*POS->Cijena,Iznos3 WITH Iznos3+nNeplaca
-      			if gPopVar=="A"
-         			REPLACE Iznos2 WITH Iznos2+pos->nCijena
-      			endif
-    		endif
+      		if roba->(fieldpos("K1")) <> 0
+             	REPLACE K2 WITH roba->K2,K1 WITH roba->K1
+      		endif
+    	else
+      		REPLACE Kolicina WITH Kolicina+POS->Kolicina,Iznos WITH Iznos+POS->Kolicina*POS->Cijena,Iznos3 WITH Iznos3+nNeplaca
+      		if gPopVar=="A"
+         		REPLACE Iznos2 WITH Iznos2+pos->nCijena
+      		endif
+    	endif
     		
 		SELECT pos
-    		skip
+    	skip
   	enddo
   	
 	select pos_doks  
@@ -1643,9 +1630,9 @@ AADD(aDbf, {"Datum", "D", 8, 0})
 
 NaprPom (aDbf)
 
-my_use("POM", "POM", .t.)
+O_POM
 
-INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (PRIVPATH+"POM")
+INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (my_home()+"POM")
 set order to tag "1"
 
 return
@@ -1656,72 +1643,76 @@ return
 // priprz -> roba
 // ------------------------------------------
 static function AzurRoba()
+local _rec
 
 // u jednom dbf-u moze biti vise IdPos
 // ROBA ili SIROV
-select (cRSDbf)
+select ( cRSDbf )
 set order to tag "ID"
 
 // pozicioniran sam na robi
 hseek priprz->idroba  
 
 lNovi:=.f.
-if (!FOUND())
+if ( !FOUND() )
+
 	// novi artikal
 	// roba (ili sirov)
 	append blank
-	sql_append()
-	sql_azur(.t.)
 
-	SmReplace("id", priprz->idroba)
-	SmReplace("idodj", priprz->idodj)
-	
+    _rec := dbf_get_rec()
+    _rec["id"] := priprz->idroba
+    _rec["idodj"] := priprz->idodj
+
+else
+
+    _rec := dbf_get_rec()
+
 endif
 
-// azuriraj sifrarnik robe
-SmReplace("naz", priprz->RobaNaz)
-SmReplace("jmj", priprz->jmj)
+_rec["naz"] := priprz->robanaz
+_rec["jmj"] := priprz->jmj
 
 if !IsPDV() 
 	// u ne-pdv rezimu je bilo bitno da preknjizenje na pdv ne pokvari
 	// star cijene
 	if katops->idtarifa <> "PDV17"
-		SmReplace("cijena1", ROUND(priprz->cijena, 3))
+        _rec["cijena1"] := ROUND( priprz->cijena, 3 )        
 	endif
 else
 
 	if cIdVd == "NI"
 	  // nivelacija - u sifrarnik stavi novu cijenu
-	  SmReplace("cijena1", ROUND(priprz->ncijena, 3))
+	  _rec["cijena1"] := ROUND(priprz->ncijena, 3)
 	else
-	  SmReplace("cijena1", ROUND(priprz->cijena, 3))
+	  _rec["cijena1"] := ROUND(priprz->cijena, 3)
 	endif
 	
 endif
 
-SmReplace("idtarifa", priprz->idtarifa)
+_rec["idtarifa"] := priprz->idtarifa
 
 if roba->(FIELDPOS("K1"))<>0  .and. priprz->(FIELDPOS("K2"))<>0
-	SmReplace("k1", priprz->k1)
-	SmReplace("k2", priprz->k2)
+	_rec["k1"] := priprz->k1
+	_rec["k2"] := priprz->k2
 endif
 
 if roba->(fieldpos("K7"))<>0  .and. priprz->(FIELDPOS("K9"))<>0
-	SmReplace("k7", priprz->k7)
-	SmReplace("k8", priprz->k8)
-	SmReplace("k9", priprz->k9)
+	_rec["k7"] := priprz->k7
+	_rec["k8"] := priprz->k8
+	_rec["k9"] := priprz->k9
 endif
 
 if roba->(FIELDPOS("N1"))<>0  .and. priprz->(FIELDPOS("N2"))<>0
-	SmReplace("n1", priprz->n1)
-	SmReplace("n2", priprz->n2)
+	_rec["n1"] := priprz->n1
+	_rec["n2"] := priprz->n2
 endif
 
 if (roba->(FIELDPOS("BARKOD"))<>0 .and. priprz->(FIELDPOS("BARKOD"))<>0)
-	SmReplace("barkod", priprz->barkod)
+	_rec["barkod"] := priprz->barkod
 endif
 
-sql_azur(.t.)
+update_rec_server_and_dbf( ALIAS(), _rec )
 
 return
 
@@ -1731,6 +1722,7 @@ return
 // -------------------------------------
 function storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 local nTArea := SELECT()
+local _rec
 private GetList := {}
 
 if lSilent == nil
@@ -1795,17 +1787,18 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	
 	select pos
 
-	scatter()
+	_rec := dbf_get_rec()
+	hb_hdel( _rec, "rbr" ) 
 	
-	select _pos_pripr
+    select _pos_pripr
 	append blank
 	
-	_brdok := PADL( ALLTRIM(_brdok) + "S", 6 )
-	_kolicina := ( _kolicina * -1 )
-	_robanaz := roba->naz
-	_datum := gDatum
+	_rec["brdok"] := PADL( ALLTRIM( _rec["brdok"] ) + "S", 6 )
+	_rec["kolicina"] := ( _rec["kolicina"] * -1 )
+	_rec["robanaz"] := roba->naz
+	_rec["datum"] := gDatum
 
-	gather()
+	dbf_update_rec( _rec )
 
 	if _pos_pripr->(FIELDPOS("C_1")) <> 0
 		if EMPTY( cSt_fisc )
@@ -1843,6 +1836,7 @@ return
 // -------------------------------------
 function povrat_rn( cSt_rn, dSt_date )
 local nTArea := SELECT()
+local _rec
 private GetList := {}
 
 if EMPTY( cSt_rn )
@@ -1866,14 +1860,15 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	
 	select pos
 
-	scatter()
+	_rec := dbf_get_rec()
+	hb_hdel( _rec, "rbr" ) 
 	
-	select _pos_pripr
+    select _pos_pripr
 	append blank
 	
-	_robanaz := roba->naz
+	_rec["robanaz"] := roba->naz
 
-	gather()
+	dbf_update_rec( _rec )
 
 	select pos
 
@@ -1881,17 +1876,22 @@ do while !EOF() .and. field->idpos == gIdPos ;
 
 enddo
 
+
 // pobrisi racun iz POS i DOKS
 select pos
 go top
+
 seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
 
 do while !EOF() .and. field->idpos == gIdPos ;
 	.and. field->brdok == cSt_rn ;
 	.and. field->idvd == "42"
-	delete
-	sql_delete()
+
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( ALIAS(), _rec )
+
 	skip
+
 enddo
 
 select pos_doks
@@ -1901,9 +1901,12 @@ seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
 do while !EOF() .and. field->idpos == gIdPos ;
 	.and. field->brdok == cSt_rn ;
 	.and. field->idvd == "42"
-	delete
-	sql_delete()
+
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( ALIAS(), _rec )
+
 	skip
+
 enddo
 
 select ( nTArea )

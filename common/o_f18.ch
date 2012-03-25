@@ -85,11 +85,12 @@
 #xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
-#xcommand O_FIN_PRIPR     => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
-#xcommand O_PNALOG    => select (F_PNALOG);   my_usex ("pnalog")  ; set order to tag "1"
-#xcommand O_PSUBAN    => select (F_PSUBAN);   my_usex ("psuban")  ; set order to tag "1"
-#xcommand O_PANAL     => select (F_PANAL);    my_usex ("panal")   ; set order to tag "1"
-#xcommand O_PSINT     => select (F_PSINT);    my_usex ("psint")   ; set order to tag "1"
+#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
+#xcommand O_PNALOG       => select (F_PNALOG);     my_usex ("pnalog")    ; set order to tag "1"
+#xcommand O_PSUBAN       => select (F_PSUBAN);     my_usex ("psuban")    ; set order to tag "1"
+#xcommand O_PANAL        => select (F_PANAL);      my_usex ("panal")     ; set order to tag "1"
+#xcommand O_PSINT        => select (F_PSINT);      my_usex ("psint")     ; set order to tag "1"
+
 #xcommand O_SUBAN     => SELECT (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_KUF       => SELECT (F_KUF);      my_use("kuf")       ; set order to tag "ID"
 #xcommand O_KIF       => SELECT (F_KIF);      my_use("kif")       ; set order to tag "ID"
@@ -171,6 +172,7 @@
 
 #xcommand O_PFAKT          => select (F_FAKT)      ; my_use  ("fakt_pripr", "fakt_fakt"); set order to tag "1"
 #xcommand O_POMGN          => select(F_POMGN)      ; my_use ("pomgn"); set order to tag "4"
+#xcommand O_POM            => select(F_POM)        ; my_usex ("pom")
 #xcommand O_SDIM           => select(F_SDIM)       ; my_use ("sdim"); set order to tag "1"
 #xcommand O_KALPOS         => SELECT (F_KALPOS)    ; my_use ("kalpos"); set order to tag "1"
 #xcommand O_CROBA          => SELECT (F_CROBA)     ; my_use ("croba"); set order to tag "IDROBA"
@@ -291,12 +293,12 @@
 #xcommand O_POS       => SELECT (F_POS); my_use ("pos"); set order to tag "1"
 #xcommand O_RNGPLA    => SELECT (F_RNGPLA); my_use ("rngpla"); set order to tag "1"
 #xcommand O_PROMVP    => SELECT (F_PROMVP); my_use ("promvp"); set order to tag "1"
-#xcommand O__POS      => SELECT (F__POS)  ; my_use("_pos")  ; set order to tag "1"
+#xcommand O__POS      => SELECT (F__POS)  ; my_usex("_pos")  ; set order to tag "1"
 #xcommand O__POS_PRIPR  => SELECT (F__PRIPR); my_usex("_pos_pripr"); set order to tag "1"
 #xcommand O_PRIPRZ    => SELECT (F_PRIPRZ); my_usex("priprz"); set order to tag "1"
 #xcommand O_PRIPRG    => SELECT (F_PRIPRG); my_usex("priprg"); set order to tag "1"
 #xcommand O__POSP     => select(F__POSP)  ; my_usex("_posp") 
-#xcommand O__POS_DOKSP  => select(F__DOKSP)  ; my_usex("_pos_doksp")
+#xcommand O__POS_DOKSP  => select(F__DOKSP) ; my_usex("_pos_doksp")
 #xcommand O_K2C       => SELECT (F_K2C)   ; my_use("k2c")   ; set order to tag "1"
 #xcommand O_MJTRUR    => SELECT (F_MJTRUR); my_use("mjtrur"); set order to tag "1"
 #xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); my_use("robaiz"); set order to tag "1"

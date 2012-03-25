@@ -126,10 +126,10 @@ else
 		select fakt_pripr
     	else
       		cTxt3a:=cTxt3b:=cTxt3c:=""
-      		if val(podbr)=0  .and. val(rbr)==1
+      		if VAL(podbr) == 0  .and. VAL(rbr) == 1
         		aMemo:=ParsMemo(txt)
         		if len(aMemo)>0
-         			cTxt1:=padr(aMemo[1],40)
+         			cTxt1:=padr(aMemo[1], 40)
         		endif
         		if len(aMemo)>=5
           			cTxt2:=aMemo[2]

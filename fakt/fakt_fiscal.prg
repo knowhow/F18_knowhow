@@ -150,7 +150,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
     select fakt
 
     nSifRoba := _g_sdob( field->idroba )
-    cNazRoba := ALLTRIM( konvznwin( roba->naz, gFc_Konv) )
+    cNazRoba := ALLTRIM( to_xml_encoding( roba->naz ) )
     cBarKod := ALLTRIM( roba->barkod )
     nGrRoba := 1
     nPorStopa := 0
@@ -846,6 +846,7 @@ local lIno := .f.
 local cPOslob := ""
 local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local cKupacInfo := ""
+local lP_stampa := .f.
 local lPdvObveznik := .f.
 local nTotal
 local nF_total
@@ -862,8 +863,9 @@ O_ROBA
 O_SIFK
 O_SIFV
 
-// ako se ne koristi opcija fiscal, izadji !
-if gFc_use == "N"
+// ako se ne koristi opcija fiscal, 
+// ili ako operater ne treba da stampa racune, izadji !
+if gFc_use == "N" .or. gFc_fisc_print == "N"
     return
 endif
 
@@ -958,10 +960,15 @@ if !EMPTY( cPartnId )
         // jednostavno za njega nadji podatke
         lIno := .f.
         lPDVObveznik := .t.
+        lP_stamp := .f.
 
-    elseif LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob )
+    elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
 
         lIno := .t.
+
+        if !EMPTY( cPOslob )
+            lP_stamp := .t.
+        endif
     
     elseif LEN( cJibPartn ) = 12
 
@@ -972,12 +979,13 @@ if !EMPTY( cPartnId )
                 
         lIno := .f.
         lPDVObveznik := .t.
+        lP_stamp := .t.
 
     endif
 
-    // ako nije INO, onda setuj partnera
+    // ako treba stampati podatke partnera onda predji na naredni korak
 
-    if lIno = .f.
+    if lP_stamp == .t.
         
         nTarea := SELECT()
     
@@ -1082,7 +1090,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
 
     nF_pprice := roba->mpc
 
-    cF_artnaz := ALLTRIM( konvznwin( fp_f_naz(roba->naz), gFc_konv) )
+    cF_artnaz := ALLTRIM( to_xml_encoding( fp_f_naz(roba->naz)) )
     cF_artjmj := ALLTRIM( roba->jmj )
 
     nF_cijena := ABS ( field->cijena )
@@ -1584,7 +1592,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
 
     nF_pprice := roba->mpc
 
-    cF_artnaz := ALLTRIM( konvznwin( fp_f_naz(roba->naz), gFc_konv) )
+    cF_artnaz := ALLTRIM( to_xml_encoding( fp_f_naz(roba->naz) ) )
     cF_artjmj := ALLTRIM( roba->jmj )
 
     nF_cijena := ABS ( field->cijena )
@@ -1827,7 +1835,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
     endif
     
     nSifRoba := _g_sdob( field->idroba )
-    cNazRoba := ALLTRIM( konvznwin( roba->naz, gFC_konv) )
+    cNazRoba := ALLTRIM( to_xml_encoding( roba->naz ) )
     cBarKod := ALLTRIM( roba->barkod )
     nGrRoba := 1
     nPorStopa := 1
@@ -1925,8 +1933,15 @@ select fakt_doks
 go top
 seek cFirma + cTipDok + cBrDok
 
-if fakt_doks->(FIELDPOS("FISC_RN")) <> 0 .and. FOUND() .and. field->fisc_rn <> 0
-    nFisc_no := field->fisc_rn
+if fakt_doks->(FIELDPOS("FISC_RN")) <> 0 .and. FOUND() .and. ( field->fisc_rn <> 0 .or. field->fisc_st <> 0 )
+
+    // ako postoji broj reklamnog racuna, onda uzmi taj
+    if field->fisc_st <> 0
+        nFisc_no := field->fisc_st
+    else
+        nFisc_no := field->fisc_rn
+    endif
+
 endif
 
 select (nTArea)
@@ -1946,7 +1961,7 @@ if EMPTY( cEmail ) .or. cEmail == "-"
 endif
 
 cMessage := '"Racun: ' +  ALLTRIM(STR(nFisc_rn)) + ;
-    ', ' + cFakt_dok + ', ' + StrKzn( cKupac, "8", "W" ) + ;
+    ', ' + cFakt_dok + ', ' + to_xml_encoding( cKupac ) + ;
     ', iznos: ' + ALLTRIM(STR(nTotal,12,2)) + ' KM"' 
 
 email_send("F", nil, nil, cMessage, nil, cEml_file )

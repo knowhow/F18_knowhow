@@ -23,7 +23,7 @@ local _izbor:=1
 // PTXT compatibility  sa ver < 1.52
 gPtxtC50 := .t.
 
-AADD(_opc,"1. stanje robe                               ")
+AADD(_opc,"1. stanje robe                                          ") 
 AADD(_opcexe,{|| fakt_stanje_robe()})
 AADD(_opc,"2. lager lista - specifikacija   ")
 AADD(_opcexe,{|| fakt_lager_lista()})
@@ -37,7 +37,7 @@ AADD(_opc,"6. realizacija kumulativno po partnerima")
 AADD(_opcexe,{|| fakt_real_partnera()})
 AADD(_opc,"7. specifikacija prodaje")
 AADD(_opcexe,{|| fakt_real_kolicina()})
-AADD(_opc,"8. specifikacija prodaje po parternima ")
+AADD(_opc,"8. kolicinski pregled isporuke robe po partnerima ")
 AADD(_opcexe,{|| spec_kol_partn()})
 AADD(_opc,"9. realizacija maloprodaje ")
 AADD(_opcexe,{|| fakt_real_maloprodaje()})

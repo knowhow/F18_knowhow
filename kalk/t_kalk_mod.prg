@@ -103,7 +103,7 @@ else
 endif
 AADD(opc,   "6. udaljene lokacije  - razmjena podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","PRENOSDISKETE"))
-	AADD(opcexe, {|| KalkPrenosDiskete()})
+	AADD(opcexe, {|| kalk_udaljena_razmjena_podataka()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
@@ -289,7 +289,7 @@ public gAImpRKonto := PADR("1370", 7)
 public gAImpRight := 0
 public gKalks:=.f.
 public lPodBugom:=.f.
-public gVodiSamoTarife
+public gVodiSamoTarife := "N"
 public lSyncon47 := .f.
 public lKoristitiBK := .f.
 public lPrikPRUC := .f.

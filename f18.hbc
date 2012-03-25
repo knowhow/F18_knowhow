@@ -13,11 +13,14 @@
 #{darwin}libs=/Library/Frameworks/QtNetwork.framework/QtNetwork
 #{darwin}libs=/Library/Frameworks/QtWebKit.framework/QtWebKit
 
-libs=hbrtl hblang hbrdd hbrtl hbmacro hbpp rddcdx rddfpt rddntx
-libs=hbsqlit3 sqlite3
-libs=hbcommon hbct hbclipsm
+#libs=hbrtl hblang hbrdd hbrtl hbmacro hbpp rddcdx rddfpt rddntx
+#libs=hbsqlit3 sqlite3
+#libs=hbcommon 
+libs=hbct 
+#libs=hbclipsm
 libs=hbpgsql
-libs=hbdebug
+#libs=hbdebug
+libs=hbmzip minizip
 
 #gt=gtcrs
 {unix}gt=gtxwc

@@ -268,7 +268,7 @@ return nPom
  *  \param nRabat Rabat
  *  \param nNC Nabavna cijena
  */
-function MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
+function MpcBezPor( nMpcSaPP, aPorezi, nRabat, nNC )
 
 local nStopa
 local nPor1
@@ -283,23 +283,26 @@ local nMpcBezPor
 
 if IsPdv()
 
-if nRabat==nil
-	nRabat:=0
-endif
+    if nRabat == nil
+	    nRabat := 0
+    endif
 
-nPDV:=aPorezi[POR_PPP]
-if glUgost
-  nPP := aPorezi[POR_PP]
+    nPDV := aPorezi[POR_PPP]
+
+    if glUgost
+        nPP := aPorezi[POR_PP]
+    else
+        nPP := 0
+    endif
+
+    return nMpcSaPP / ( (nPDV + nPP)/100 + 1 )
+
 else
-  nPP := 0
-endif
 
-return nMpcSaPP / ( (nPDV + nPP)/100 + 1 )
+    // stari PPP obracun 
+    // suma nepregledna ...
+    return MpcBezPorO(nMpcSaPP, aPorezi, nRabat, nNc)
 
-else
- // stari PPP obracun 
- // suma nepregledna ...
- return MpcBezPorO(nMpcSaPP, aPorezi, nRabat, nNc)
 endif
 
 
@@ -310,7 +313,7 @@ endif
  *  \param nRabat Rabat
  *  \param nNC Nabavna cijena
  */
-function MpcBezPorO(nMpcSaPP, aPorezi, nRabat, nNC)
+function MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNC )
 *{
 local nPor1
 local nPor2

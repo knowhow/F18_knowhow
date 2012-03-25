@@ -21,7 +21,7 @@ opc:={}
 opcexe:={}
 Izbor:=1
 
-AADD(opc, "1. skip speed db-a")
+AADD(opc, "1. skip speed db-a                              ")
 AADD(opcexe, {|| SpeedSkip()}) 
 AADD(opc, "2. regeneracija fakt memo polja")
 AADD(opcexe, {|| fa_memo_regen()})
@@ -35,6 +35,8 @@ AADD(opc, "6. regeneracija doks iznos ukupno")
 AADD(opcexe, {|| do_uk_regen()})
 AADD(opc, "7. kontrola duplih partnera")
 AADD(opcexe, {|| chk_dpartn()})
+AADD(opc, "B. podesavanje brojaca dokumenta ")
+AADD(opcexe, {|| fakt_set_param_broj_dokumenta()})
 AADD(opc, "E. fakt export (r_exp) ")
 AADD(opcexe, {|| fkt_export()})
 

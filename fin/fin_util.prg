@@ -42,17 +42,6 @@ Izvjestaji()
 return
 
 
-/*! \fn PovratNaloga()
- *  \brief Povrat naloga
- */
-function PovratNaloga()
-
-//if gBezVracanja == "N"
-povrat_fin_naloga()
-//endif
-
-return
-
 
 /*! \fn Preknjizenje()
  *  \brief preknjizenje
@@ -125,6 +114,7 @@ FOR _i := 1 TO 3
     DO WHILE !EOF().and. INKEY() != 27
 
         SELECT nalog
+        GO TOP
         SEEK &_alias->(idfirma + idvn + brnal)
 
 		IF !Found()

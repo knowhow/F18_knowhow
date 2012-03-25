@@ -50,6 +50,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_DOCS
 my_usex ("docs", "rnal_docs", .f., "SEMAPHORE")
 
@@ -91,8 +97,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->doc_no } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -292,6 +300,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_DOC_IT
 my_usex ("doc_it", "rnal_doc_it", .f., "SEMAPHORE")
 
@@ -324,8 +338,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| STR( field->doc_no, 10 ) + STR( field->doc_it_no, 4 )  } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -502,6 +518,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_DOC_IT2
 my_usex ("doc_it2", "rnal_doc_it2", .f., "SEMAPHORE")
 
@@ -534,8 +556,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| STR( field->doc_no, 10 ) + STR( field->doc_it_no, 4 ) + STR( field->it_no, 4 )  } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -706,6 +730,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _count := 1
+    _step := 1
+    _offset := 1
+endif
+
 SELECT F_DOC_LOG
 my_usex ("doc_log", "rnal_doc_log", .f., "SEMAPHORE")
 
@@ -738,8 +768,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| STR( field->doc_no, 10 ) + STR( field->doc_log_no, 10 ) } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -907,6 +939,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_DOC_LIT
 my_usex ("doc_lit", "rnal_doc_lit", .f., "SEMAPHORE")
 
@@ -939,8 +977,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| STR( field->doc_no, 10 ) + STR( field->doc_log_no, 10 ) + STR( field->doc_lit_no, 4 ) } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -1121,6 +1161,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _step := 1
+    _offset := 1
+    _count := 1
+endif
+
 SELECT F_DOC_OPS
 my_usex ("doc_ops", "rnal_doc_ops", .f., "SEMAPHORE")
 
@@ -1153,8 +1199,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| STR( field->doc_no, 10 ) + STR( field->doc_it_no, 4 ) + STR( field->doc_it_el_, 10 ) + STR( field->doc_op_no, 4 ) } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 

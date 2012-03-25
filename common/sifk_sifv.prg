@@ -106,8 +106,8 @@ Box(, 3, 60, .f.)
 	m_x := nTekX
 	m_y := nTekY
 	
-	@ m_x + 2, m_y + 2 SAY "      Trazi:" GET cOldVal
-    @ m_x + 3, m_y + 2 SAY "Zamijeni sa:" GET cNewVal
+	@ m_x + 2, m_y + 2 SAY hb_Utf8ToStr("      Traži:") GET cOldVal
+    @ m_x + 3, m_y + 2 SAY              "Zamijeni sa:" GET cNewVal
 	
     read 
 BoxC()
@@ -116,7 +116,7 @@ if LastKey()==K_ESC
 	return 0
 endif
 
-if Pitanje(,"Izvrsiti zamjenu polja? (D/N)","D") == "N"
+if Pitanje( , "Izvrsiti zamjenu polja? (D/N)", "D") == "N"
 	return 0
 endif
 
@@ -420,10 +420,14 @@ _numtok := NUMTOKEN(vals, ",")
 for _i := 1 to _numtok
 
     _tmp := TOKEN(vals, "," , _i)    
+
     APPEND BLANK
 
     _sifv_rec["naz"] := get_sifv_naz(_tmp, sifk_rec) 
+    _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 200 )
+
     update_rec_server_and_dbf("sifv", _sifv_rec)
+
 next
  
 return .t.
@@ -447,7 +451,10 @@ SET ORDER TO TAG "ID"
 brisi_sifv_item(sifk_rec["id"], sifk_rec["oznaka"], id_sif)
 
 APPEND BLANK
+
 _sifv_rec["naz"] := get_sifv_naz(value, sifk_rec)
+_sifv_rec["naz"] := PADR( _sifv_rec["naz"], 200 )
+
 update_rec_server_and_dbf("sifv", _sifv_rec)
 
 return .t.
@@ -462,6 +469,8 @@ _sifv_rec["id"] := dbf_name
 _sifv_rec["oznaka"] := ozn
 _sifv_rec["idsif"] := id_sif
 return delete_rec_server_and_dbf("sifv", _sifv_rec, {"id", "oznaka", "idsif"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) + " AND IDSIF=" + _sql_quote(x["idsif"]) }, "ID" )
+
+
 
 // ----------------------------------------
 // ----------------------------------------

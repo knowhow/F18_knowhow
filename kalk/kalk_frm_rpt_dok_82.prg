@@ -13,29 +13,7 @@
 #include "kalk.ch"
 
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_82.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.2 $
- * $Log: rpt_82.prg,v $
- * Revision 1.2  2002/06/20 13:13:03  mirsad
- * dokumentovanje
- *
- *
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/rpt_82.prg
- *  \brief Stampa kalkulacije 82 - izlaz iz magacina diskont
- */
-
-
-/*! \fn StKalk82()
- *  \brief Stampa kalkulacije 82 - izlaz iz magacina diskont
- */
-
 function StKalk82()
-*{
 local nCol0:=nCol1:=nCol2:=0,npom:=0
 
 Private nMarza,nMarza2

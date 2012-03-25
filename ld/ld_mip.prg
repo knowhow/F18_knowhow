@@ -212,9 +212,11 @@ cIdRj := gRj
 cMj := gMjesec
 cGod := gGodina
 
-cPredNaz := SPACE(50)
-cPredJMB := SPACE(13)
-cPredSDJ := SPACE(20)
+cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, SPACE(50) )
+cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, SPACE(13) )
+cPredSDJ := fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, SPACE(20) )
+cTp_bol := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
+cBolPreko := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
 dDatPodn := DATE()
 
 nPorGodina := 2011
@@ -222,22 +224,6 @@ nBrZahtjeva := 1
 
 // otvori tabele
 ol_o_tbl()
-
-select params
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("i1",@cPredNaz)
-RPar("x9",@cPredSDJ)  
-RPar("x8",@cDoprDod)  
-RPar("x7",@cTp_bol)  
-RPar("x6",@cBolPreko)  
-
-cPredJMB := IzFmkIni("Specif","MatBr","--",KUMPATH)
-cPredJMB := PADR(cPredJMB, 13)
-
 
 Box("#MIP OBRAZAC ZA RADNIKE", 20, 75)
 
@@ -323,13 +309,12 @@ if cIsplSaberi == "D"
 	__ispl_s := 1
 endif
 
-// upisi vrijednosti
-select params
-WPar("i1", cPredNaz)
-WPar("x9", cPredSDJ)  
-WPar("x8", cDoprDod)  
-WPar("x7", cTP_bol)  
-WPar("x6", cBolPreko)  
+// upisi parametre...
+set_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
+set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
+set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
+set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
+set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
 
 select ld
 
@@ -400,11 +385,11 @@ return
 // ----------------------------------------
 static function _xml_export()
 local _cre, cMsg, _id_br, _naziv, _adresa, _mjesto, _lokacija
+local _a_files, _error
 
 if __xml == 1
 	return
 endif
-
 
 _id_br  := fetch_metric( "org_id_broj", NIL, PADR( "<POPUNI>", 13 ))
 _naziv  := fetch_metric( "org_naziv", NIL, PADR( "<POPUNI naziv>", 100 ))
@@ -446,27 +431,22 @@ if DirChange(_lokacija) != 0
 
 endif
 
-
 DirChange(_lokacija)
 
 // napuni xml fajl
 _fill_e_xml(_id_br + ".xml")
 
+// dodaj fajlove za zip fajl
+_a_files := {}
+AADD( _a_files, _lokacija + _id_br + ".xml" )
 
-_cmd := "zip " + _id_br + ".zip " + _id_br + ".xml"
-
-_ret := hb_run(_cmd)
-
-if _ret != 0
-   MsgBeep("Hmm ... neuspješna zip komanda  !?#"  + _cmd)
-   log_write("err: " + _cmd)
-endif
+// kompresuj zip fajl
+_error := zip_files( _lokacija, _id_br + ".zip", _a_files )
 
 cMsg := "Generacija obrasca završena.#"
 cMsg +=  _lokacija + _id_br + ".xml#"
 
 MsgBeep(cMsg)
-
 
 DirChange(my_home())
 open_folder(_lokacija)
@@ -531,7 +511,7 @@ xml_subnode("Obrazac1023", .f.)
 xml_subnode("Dio1", .f.)
 	
   xml_node("JibJmb", ALLTRIM(cPredJmb) )
-  xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz), "8", "U" ) )
+  xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz) ) )
   xml_node("DatumUpisa", xml_date(dDatPodn) )
   xml_node("BrojUposlenih", STR( nBrZahtjeva ) )
   xml_node("PeriodOd", xml_date( dD_start ) )
@@ -641,10 +621,10 @@ do while !EOF()
 	xml_subnode("PodaciOPrihodima", .f.)
 
 	xml_node("VrstaIsplate", ;
-		to_xml_encoding( ALLTRIM(cVr_ispl), "8", "U" ))
+		to_xml_encoding( ALLTRIM(cVr_ispl) ))
 	xml_node("Jmb", ALLTRIM(cR_jmb) )
 	xml_node("ImePrezime", ;
-		to_xml_encoding( ALLTRIM(cR_ime), "8", "U" ))
+		to_xml_encoding( ALLTRIM(cR_ime) ))
 	xml_node("DatumIsplate", xml_date(dD_ispl) )
 	xml_node("RadniSati", ;
 		STR( nR_sati, 12, 2 ) ) 
@@ -712,7 +692,7 @@ xml_subnode("Dio3", .t.)
 xml_subnode("Dio4IzjavaPoslodavca", .f.)
 xml_node("JibJmbPoslodavca", ALLTRIM(cPredJmb) )
 xml_node("DatumUnosa", xml_date( dDatPodn ) )
-xml_node("NazivPoslodavca", strkzn( ALLTRIM(cPredNaz), "8", "U" ) )
+xml_node("NazivPoslodavca", to_xml_encoding( ALLTRIM(cPredNaz) ) )
 xml_subnode("Dio4IzjavaPoslodavca", .t.)
 // dio4
 
@@ -752,56 +732,21 @@ return
 // stampa xml-a
 // ----------------------------------------
 static function _xml_print()
-local cOdtName := ""
-local cOutput := "c:\ld_out.odt"
-local cJavaStart := ALLTRIM( gJavaStart )
+local _template := "ld_mip.odt"
+local _xml_file := my_home() + "data.xml"
 
 if __xml == 0
 	return
 endif
 
-if FERASE(cOutput) <> 0
-	//
+// napuni xml fajl podacima
+_fill_xml( _xml_file )
+
+// generisi odt report
+if f18_odt_generate( _template, _xml_file )
+    // prikazi ga !
+    f18_odt_print()
 endif
-
-// napuni xml fajl
-_fill_xml()
-
-cOdtName := "ld_mip.odt"
-
-save screen to cScreen
-
-clear screen
-
-cJODRep := ALLTRIM( gJODRep )
-cT_Path := "C:\"
-
-if !EMPTY( gJODTemplate )
-	cT_Path := ALLTRIM( gJODTemplate )
-endif
-
-// stampanje labele
-cCmdLine := cJavaStart + " " + cJODRep + " " + ;
-	cT_Path + cOdtName + " c:\data.xml " + cOutput
-
-run &cCmdLine
-
-clear screen
-
-if !FILE(cOutput)
-	msgbeep("greska pri kreiranju izlaznog fajla !")
-	return
-endif
-
-cOOStart := '"' + ALLTRIM( gOOPath ) + ALLTRIM( gOOWriter ) + '"'
-cOOParam := ""
-
-// otvori report
-cCmdLine := "start " + cOOStart + " " + cOOParam + " " + cOutput
-
-run &cCmdLine
-
-restore screen from cScreen
 
 return
 
@@ -809,11 +754,11 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima izvjestaja
 // --------------------------------------------
-static function _fill_xml()
+static function _fill_xml( xml_file )
 local nTArea := SELECT()
 
 // otvori xml za upis
-open_xml("c:\data.xml")
+open_xml( xml_file )
 // upisi header
 xml_head()
 
@@ -891,9 +836,9 @@ do while !EOF()
 
 	xml_node("rbr", STR( ++nCnt ) )
 	xml_node("visp", ALLTRIM(field->vr_ispl) )
-	xml_node("r_ime", strkzn( ALLTRIM(field->r_ime), "8", "U" ) ) 
+	xml_node("r_ime", to_xml_encoding( ALLTRIM(field->r_ime) ) ) 
 	xml_node("r_jmb", ALLTRIM(field->r_jmb) )
-	xml_node("r_opc", strkzn( ALLTRIM(field->r_opc), "8", "U" ) )
+	xml_node("r_opc", to_xml_encoding( ALLTRIM(field->r_opc) ) )
 	
 	nR_sati := 0
 	nR_satib := 0
@@ -977,6 +922,10 @@ enddo
 xml_subnode("mip", .t.)
 
 select (nTArea)
+
+// zatvori xml fajl
+close_xml()
+
 return
 
 

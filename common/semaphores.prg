@@ -21,6 +21,7 @@ return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
 function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
+local _err
 local _pos
 local _version
 local _area
@@ -100,10 +101,17 @@ if (LEN(gaDBFs[_pos]) > 3)
 
 endif
 
-if used()
+if USED()
    use
 endif
-dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
+
+begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
+          dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
+ 
+recover using _err
+          log_write("err:" + _err:description + ":" + my_home() + table + " se ne moze otvoriti ?!")
+end sequence
+
 
 return
 

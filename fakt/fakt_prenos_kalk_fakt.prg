@@ -343,7 +343,7 @@ return nCijena
 static function _set_brdok( cIdRj, cTip, cBroj )
 
 // daj novi broj fakture....
-cBroj := FaNoviBroj( cIdRj , cTip )   
+cBroj := PADR( REPLICATE( "0", gNumDio ), 8 )
 
 return .t.
 
@@ -664,10 +664,10 @@ return
 static function SljedBrFakt()
 LOCAL nArr:=SELECT()
 IF EMPTY(cBrFakt)
-	    _datdok    := dDo
-    	_idpartner := cIdPartner
-    	cBrFakt := OdrediNBroj(cIdRJ,cTipFakt)
-    	SELECT (nArr)
+    _datdok := dDo
+    _idpartner := cIdPartner
+    cBrFakt := fakt_novi_broj_dokumenta( cIdRJ, cTipFakt )
+    SELECT (nArr)
 ENDIF
 return .t.
 

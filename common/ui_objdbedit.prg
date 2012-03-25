@@ -318,10 +318,13 @@ RETURN
 //-----------------------------------------------------
 //-----------------------------------------------------
 function StandTBKomande(TB, Ch, nRez, nPored, aPoredak)
-
-local cSmj,i,K,aUF
-local cLoc:=space(40)
+local _tr := hb_Utf8ToStr("Tra≈æi:"), _zam := "Zamijeni sa:" 
+local cSmj, i, K, aUF
+local cLoc := space(40)
 local cStVr, cNovVr, nRec, nOrder, xcpos, ycpos
+local _trazi_val, _zamijeni_val 
+local _sect, _pict
+local _rec, _saved
 
 DO CASE
 
@@ -332,10 +335,10 @@ DO CASE
        Box("bFind", 2, 50,.f.)
         Private GetList:={}
         set cursor on
-        cLoc:=PADR(cLoc,40)
-        cSmj:="+"
-        @ m_x+1,m_y+2 SAY "Trazi:" GET cLoc PICTURE "@!"
-        @ m_x+2,m_y+2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
+        cLoc := PADR(cLoc,40)
+        cSmj := "+"
+        @ m_x+1, m_y+2 SAY _tr GET cLoc PICTURE "@!"
+        @ m_x+2, m_y+2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
         read
        BoxC()
        if lastkey()<>K_ESC
@@ -381,39 +384,66 @@ DO CASE
           cKolona:=ImeKol[TB:ColPos,3]
           if valtype(&cKolona) $  "CD"
 
-            Box(, 2, 60,.f.)
+      
+            Box(, 2, 60, .f.)
              Private GetList:={}
              set cursor on
-             cStVr:=&cKolona
-             cNovVr:=cStVr
-             if  valtype(&cKolona)=="C"  .and. len(cStVr)>45
-              @ m_x+1,m_y+2 SAY "Trazi:      " GET cStVr  pict "@S45"
-              @ m_x+2,m_y+2 SAY "Zamijeni sa:" GET cNovVr pict "@S45"
-             else
-              @ m_x+1,m_y+2 SAY "Trazi:      " GET cStVr
-              @ m_x+2,m_y+2 SAY "Zamijeni sa:" GET cNovVr
-             endif
-             read
+
+                // svako polje ima svoj parametar
+                _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
+                _trazi_val := &cKolona 
+                _trazi_val := fetch_metric(_sect, "<>", _trazi_val)
+
+                _zamijeni_val := _trazi_val
+                _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
+                _zamijeni_val := fetch_metric(_sect, "<>", _zamijeni_val)
+
+                _pict := ""
+
+                if len(_trazi_val) > 45
+                   _pict := "@S45"
+                endif
+
+                @ m_x + 1, m_y+2 SAY PADR(_tr, 12) GET _trazi_val  pict _pict
+                @ m_x + 2, m_y+2 SAY PADR(_zam, 12) GET _zamijeni_val pict _pict
+                read
+
             BoxC()
+
 
             if lastkey()<>K_ESC
              nRec:=recno()
              nOrder:=indexord()
              set order to 0
              go top
+             _saved := .f.
              do while !eof()
-               if &cKolona==cStVr
-                   replace &cKolona with cNovVr
-                   //replsql &cKolona with cNovVr
+
+               if EVAL(FIELDBLOCK(cKolona)) ==  _trazi_val
+                   _rec := dbf_get_rec()
+                   _rec[LOWER(cKolona)]  := _zamijeni_val
+                   dbf_update_rec(_rec)
+
+                   if !_saved
+                       // snimi
+                       _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
+                       set_metric(_sect, "<>", _trazi_val)
+
+                       _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
+                       set_metric(_sect, "<>", _zamijeni_val)
+                       _saved := .t.
+                    endif
+
                endif
 
-               if valtype(cStVr)=="C" // samo za karaktere
-                cDio1:=left(cStVr,len(trim(cStVr))-2)
-                cDio2:=left(cNovVr,len(trim(cNovVr))-2)
-                if right(trim(cStVr),2)=="**" .and. cDio1 $ &cKolona
-                   replace &cKolona with strtran(&cKolona,cDio1,cDio2)
-                   //replsql &cKolona with strtran(&cKolona,cDio1,cDio2)
-                endif
+               if valtype(_trazi_val) == "C"
+                   _rec := dbf_get_rec()
+                   cDio1 := left(_trazi_val, len(trim(_trazi_val)) - 2)
+                   cDio2 := left(_zamijeni_val, len(trim(_zamijeni_val)) -2)
+                   if right(trim(_trazi_val), 2) == "**" .and. cDio1 $  _rec[LOWER(cKolona)]
+                       _rec[LOWER(cKolona)] := STRTRAN( _rec[LOWER(cKolona)], cDio1, cDio2)
+                       dbf_update_rec(_rec)
+                   endif
                endif
 
                skip
@@ -482,7 +512,7 @@ DO CASE
      nRez:=INDEXORD()
      Prozor1(12,20,17+nPored, 59, "UTVRDJIVANJE PORETKA", , , "GR+/N", "W/N,B/W, , , B/W", 2)
      FOR i:=1 TO nPored
-      @ 13+i,23 SAY PADR("poredak po "+aPoredak[i],33,"˙") + STR(i,1)
+      @ 13+i,23 SAY PADR("poredak po "+aPoredak[i],33,"√∫") + STR(i,1)
      NEXT
      @ 18,27 SAY "UREDITI TABELU PO BROJU:" GET nRez VALID nRez>0 .AND. nRez<nPored+1 PICT "9"
      READ
@@ -638,7 +668,7 @@ static function EditPolja( nX, nY, xIni, cNazPolja, ;
   endif
 
   //@ nX, nY GET &cPom77U VALID EVAL(bValid) WHEN EVAL(bWhen) COLOR "W+/BG,W+/B" pict cPict
-  if len(ImeKol[TB:Colpos])>=8  // ima joÁ getova
+  if len(ImeKol[TB:Colpos])>=8  // ima jo√ß getova
     aPom:=ImeKol[TB:Colpos,8]  // matrica
     for i:=1 to len(aPom)
       nY:=nY+nSirina+1

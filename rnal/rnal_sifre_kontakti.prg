@@ -67,7 +67,8 @@ endif
 
 set order to tag cTag
 set filter to
-cust_filter(nCust_id, cContDesc)
+
+cust_filter(nCust_id, cContDesc, @cId)
 
 cRet := PostojiSifra(F_CONTACTS, cTag, 10, 70, cHeader, @cId, dx, dy, ;
 		{|| key_handler( Ch ) })
@@ -186,7 +187,7 @@ return .t.
 // filter po cust_id
 // nCust_id - id customer
 // -------------------------------------------
-static function cust_filter( nCust_id, cContDesc )
+static function cust_filter( nCust_id, cContDesc, cId )
 local cFilter := ""
 
 if nCust_id > 0
@@ -203,7 +204,13 @@ if !EMPTY(cContDesc)
     
     if RIGHT( cContDesc ) == "$"
         // pretrazi po dijelu naziva	
-	    cFilter += _filter_quote( UPPER( LEFT( cContDesc, LEN( cContDesc ) - 1 ) ) ) + " $ ALLTRIM(UPPER(cont_desc))" 
+        
+        // vrati uslov u normalno stanje...
+        cContDesc := LEFT( cContDesc, LEN( cContDesc ) - 1 )
+        // setuj i id u normalno stanje
+        cId := cContDesc        
+        // setuj filter
+	    cFilter += _filter_quote( UPPER( cContDesc ) ) + " $ ALLTRIM(UPPER(cont_desc))" 
     else
 	    cFilter += " ALLTRIM(UPPER(cont_desc)) = " + cm2str(UPPER(cContDesc))
 	endif

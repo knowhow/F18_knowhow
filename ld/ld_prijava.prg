@@ -21,6 +21,8 @@ function ParObracun()
 local nX := 1
 local nPadL := 20
 
+O_LD_RJ
+
 Box(, 5, 50 )
 
     SET CURSOR ON

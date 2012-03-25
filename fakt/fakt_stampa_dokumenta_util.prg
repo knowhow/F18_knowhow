@@ -70,11 +70,14 @@ function pocni_stampu()
 	endif
 return
 
+
 function zavrsi_stampu()
 	if !lSSIP99 
 		EndPrint()
 	endif
 return
+
+
 
 function StampTXT(cIdFirma, cIdTipDok, cBrDok, lJFill)
 private InPicDEM:=PicDEM
@@ -91,6 +94,8 @@ else
 endif
     
 return
+
+
 
 
 // fakt_zagl_firma()

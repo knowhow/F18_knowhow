@@ -16,6 +16,7 @@
 function KalkPrenosDiskete()
 private Opc:={}
 private opcexe:={}
+
 AADD(opc,"1. prenos dokumenata   =>            ")
 AADD(opcexe, {|| PrDisk()})
 AADD(opc,"2. prijem dokumenata   <= ")

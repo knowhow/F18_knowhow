@@ -17,10 +17,10 @@ function gSjeciStr()
 
 Setpxlat()
 if gPrinter=="R"
-  	Beep(1)
-  	FF
+    Beep(1)
+    FF
 else
-	qqout(gSjeciStr)
+    qqout(gSjeciStr)
 endif
 konvtable()
 return
@@ -31,7 +31,7 @@ function gOtvorStr()
 
 Setpxlat()
 if gPrinter<>"R"
-	qqout(gOtvorStr)
+    qqout(gOtvorStr)
 endif
 konvtable()
 return
@@ -41,15 +41,15 @@ return
 function PaperFeed()
 
 if gVrstaRS <> "S"
-	for i:=1 to nFeedLines
-    		?
-  	next
-  	if gPrinter=="R"
-  		Beep(1)
-  		FF
-  	else  
-		gSjeciStr()
-  	endif
+    for i:=1 to nFeedLines
+            ?
+    next
+    if gPrinter=="R"
+        Beep(1)
+        FF
+    else  
+        gSjeciStr()
+    endif
 endif
 return
 
@@ -60,9 +60,9 @@ return
 function IncID(cId,cPadCh)
 
 if cPadCh==nil
-	cPadCh:=" "
+    cPadCh:=" "
 else
-	cPadCh:=cPadCh
+    cPadCh:=cPadCh
 endif
 
 return (PADL(VAL(ALLTRIM(cID))+1,LEN(cID),cPadCh))
@@ -74,9 +74,9 @@ return (PADL(VAL(ALLTRIM(cID))+1,LEN(cID),cPadCh))
 function DecID(cId,cPadCh)
 *{
 if cPadCh==nil
-	cPadCh:=" "
+    cPadCh:=" "
 else
-	cPadCh:=cPadCh
+    cPadCh:=cPadCh
 endif
 return (PADL(VAL(ALLTRIM(cID))-1,LEN(cID),cPadCh) )
 *}
@@ -94,8 +94,8 @@ SELECT F_VALUTE
 PushWA()
 lOpened:=.t.
 if !USED() 
-	O_VALUTE
-	lOpened:=.f.
+    O_VALUTE
+    lOpened:=.f.
 endif
 SET ORDER TO TAG "NAZ"       // tip
 GO TOP
@@ -107,7 +107,7 @@ Seek2("P")
 gStrValuta:=ALLTRIM(Naz2)
 
 if !lOpened
-	USE
+    USE
 end
 PopWA()
 return
@@ -283,7 +283,7 @@ LOCAL cbsstara:=ShemaBoja("B1")
              6+j+3,1,6+j+7,78,"IZBOR SETA CIJENA","B1")
  Prozor0()
  ShemaBoja(cbsstara)
- PrikStatus()
+ pos_status_traka()
 return
 *}
 
@@ -408,64 +408,64 @@ O_K2C
 
 Box(,10,75)
 do while .t.
-	@ m_x+1,m_y+3 SAY "Pritisnite tipku koju zelite programirati --> "
-  	nKey1:=INKEY(0)
-  	if nKey1==K_ESC
-     		EXIT
-  	endif
-  	if nKey1==K_ENTER
-    		MsgBeep("Ovu tipku ne mozete programirati")
-    		BoxCls()
-    		LOOP
-  	endif
-  	@ m_x+3,m_y+3 SAY "          Ponovite pritisak na istu tipku --> "
-  	nKey2:=INKEY(0)
-  	if nKey2==K_ESC
-     		EXIT
-  	endif
-  	if nKey1==K_ENTER
-    		MsgBeep("Ovu tipku ne mozete programirati")
-    		BoxCls()
-    		LOOP
-  	endif
-  	if nKey1<>nKey2
-    		Msg ("Pritisnute razlicite tipke! Ponovite proceduru", 10)
-    		BoxCLS ()
-    		LOOP
-  	endif
-  	fIzm:=.f.
-  	SELECT K2C
-	set order to 1
-  	SEEK STR(nKey1,4)
-  	if FOUND ()
-    		Beep(3)
-    		nIzb:=KudaDalje("Tipka je vec programirana!!!", aOpc)
-    		do case
-      			case nIzb==0 .or. nIzb==3
-        			LOOP
-      			case nIzb==1
-        			fIzm:=.t.
-      			case nIzb==2
-        			DELETE
-        			LOOP
-    		endcase
-  	endif
+    @ m_x+1,m_y+3 SAY "Pritisnite tipku koju zelite programirati --> "
+    nKey1:=INKEY(0)
+    if nKey1==K_ESC
+            EXIT
+    endif
+    if nKey1==K_ENTER
+            MsgBeep("Ovu tipku ne mozete programirati")
+            BoxCls()
+            LOOP
+    endif
+    @ m_x+3,m_y+3 SAY "          Ponovite pritisak na istu tipku --> "
+    nKey2:=INKEY(0)
+    if nKey2==K_ESC
+            EXIT
+    endif
+    if nKey1==K_ENTER
+            MsgBeep("Ovu tipku ne mozete programirati")
+            BoxCls()
+            LOOP
+    endif
+    if nKey1<>nKey2
+            Msg ("Pritisnute razlicite tipke! Ponovite proceduru", 10)
+            BoxCLS ()
+            LOOP
+    endif
+    fIzm:=.f.
+    SELECT K2C
+    set order to 1
+    SEEK STR(nKey1,4)
+    if FOUND ()
+            Beep(3)
+            nIzb:=KudaDalje("Tipka je vec programirana!!!", aOpc)
+            do case
+                case nIzb==0 .or. nIzb==3
+                    LOOP
+                case nIzb==1
+                    fIzm:=.t.
+                case nIzb==2
+                    DELETE
+                    LOOP
+            endcase
+    endif
 
-  	Scatter() // iz K2C
-  	@ m_x+5,m_y+3 SAY "Sifra robe koja se pridruzuje tipki:"
-  	@ m_x+6,m_y+13 GET _idroba VALID P_Roba(@_idroba,6,25).AND.NijeDuplo(_idroba, nKey1)
-  	READ
-  	if LASTKEY()=K_ESC
-     		EXIT
-  	endif
+    Scatter() // iz K2C
+    @ m_x+5,m_y+3 SAY "Sifra robe koja se pridruzuje tipki:"
+    @ m_x+6,m_y+13 GET _idroba VALID P_Roba(@_idroba,6,25).AND.NijeDuplo(_idroba, nKey1)
+    READ
+    if LASTKEY()=K_ESC
+            EXIT
+    endif
 
-  	SELECT K2C
-  	if !fIzm
-    		APPEND BLANK
-    		_KeyCode:=nKey1
-  	endif
-  	Gather()
-  	BoxCLS()
+    SELECT K2C
+    if !fIzm
+            APPEND BLANK
+            _KeyCode:=nKey1
+    endif
+    Gather()
+    BoxCLS()
 end
 BoxC()
 CLOSERET
@@ -488,9 +488,9 @@ set order to 2
 nCurrRec:=RECNO()
 HSEEK cIdRoba
 if FOUND().and.RECNO()<>nCurrRec
-	Beep(2)
-  	Msg("Roba je vec pridruzena drugoj tipki!", 15)
-  	lFlag := .f.
+    Beep(2)
+    Msg("Roba je vec pridruzena drugoj tipki!", 15)
+    lFlag := .f.
 endif
 GO(nCurrRec)
 return (lFlag)
@@ -605,25 +605,27 @@ endif
 
 return 0
 
-/*! \fn PrikStatus()
- *  \brief
- */
- 
-function PrikStatus()
-*{
 
-@ 1, 0 SAY "RADI:"+PADR(LTRIM(gKorIme),31)+" SMJENA:"+gSmjena+" CIJENE:"+gIdCijena+" DATUM:"+DTOC(gDatum)+IF(gVrstaRS=="S","   SERVER  "," KASA-PM:"+gIdPos)
+// ...........................................
+// prikazuje status pos modula... 
+// ...........................................
+function pos_status_traka()
+local _x := MAXROWS() - 3
+local _y := 0
 
-IF gIdPos=="X "
-	@ 23, 0 SAY PADC("$$$ --- PRODAJNO MJESTO X ! --- $$$",80,"±")
-ELSE
-	@ 23, 0 SAY REPLICATE("±",80)
-ENDIF
+@ 1, _y + 1 SAY "RADI:"+PADR(LTRIM(gKorIme),31)+" SMJENA:"+gSmjena+" CIJENE:"+gIdCijena+" DATUM:"+DTOC(gDatum)+IF(gVrstaRS=="S","   SERVER  "," KASA-PM:"+gIdPos)
 
-@ 22,1 SAY PADC ( Razrijedi (gKorIme), 78) COLOR INVERT
+if gIdPos=="X "
+    @ _x, _y + 1 SAY PADC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", MAXCOLS() - 2, "±" )
+else
+    @ _x, _y + 1 SAY REPLICATE( "±", MAXCOLS() - 2 )
+endif
+
+@ _x - 1, _y + 1 SAY PADC ( Razrijedi (gKorIme), MAXCOLS() - 2 ) COLOR INVERT
 
 return
-*}
+
+
 
 /*! \fn SetBoje(gVrstaRS)
  *  \brief
@@ -635,10 +637,10 @@ function SetBoje(gVrstaRS)
 
 // postavljanje boja (samo C/B kombinacija dolazi u obzir, ako nije server)
 IF gVrstaRS <> "S"
-	Invert := "N/W,W/N,,,W/N"
-  	Normal := "W/N,N/W,,,N/W"
-  	Blink  := "N****/W,W/N,,,W/N"
-  	Nevid  := "W/W,N/N"
+    Invert := "N/W,W/N,,,W/N"
+    Normal := "W/N,N/W,,,N/W"
+    Blink  := "N****/W,W/N,,,W/N"
+    Nevid  := "W/W,N/N"
 ENDIF
 
 return

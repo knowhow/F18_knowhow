@@ -231,18 +231,19 @@ enddo
 
 // </label>
 xml_subnode("label", .t.)
+
 // zatvori xml za upis
 close_xml()
 
 _template := ""
+
 // izaberi sablon
 if g_afile( _jod_templates, "_rg*.odt", @_template ) = 0
     return
 endif
 
 // pokreni generisanje template fajla i pokreni oo3
-_run_j_reports( _template )
-_run_o_office()
+_run_j_reports( _template, _data_xml )
 
 return
 
@@ -250,158 +251,11 @@ return
 // ---------------------------------------------------------
 // startanje jod reports
 // ---------------------------------------------------------
-static function _run_j_reports( template_file )
-local _chk_error := .f.
-local _sv_screen
-local _data_xml
-local _out_file
-local _template
-local _java_start
-local _jod_bin
+static function _run_j_reports( template_file, xml_file )
 
-// fetch parametara
-_java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
-_jod_bin := ALLTRIM( fetch_metric( "jodreports_bin", my_user(), "" ) )
-_jod_templates := ALLTRIM( fetch_metric( "jodreports_templates", my_user(), "" ) )
-
-_data_xml := my_home() + "data.xml"
-_out_file := my_home() + "rg-lab.odt"
-_template := _jod_templates + template_file
-
-#ifdef __PLATFORM_WINDOWS
-    _data_xml := '"' + _data_xml + '"'
-    _out_file := '"' + _out_file + '"'
-    _template := '"' + _template + '"'
-#endif
-
-if Pitanje( , "Provjeriti gresku ? (D/N)", "N" ) == "D"
-    _chk_error := .t.
+if f18_odt_generate( template_file, xml_file )
+    f18_odt_print()
 endif
-
-// pokreni generisanje i stampu
-save screen to _sv_screen
-
-clear screen
-
-// stampanje labele
-
-// cmdline: java -jar jodreports-cli.jar template.odt data.xml output.odt
-
-// java -jar jodreports-cli.jar
-_cmd_line := _java_start + " " + _jod_bin + " "
-// template file
-_cmd_line += _template + " " 
-// data.xml
-_cmd_line += _data_xml + " " 
-// output file
-_cmd_line += _out_file 
-
-? _cmd_line
-?
-
-run (_cmd_line)
-
-// zaustavi se da vidis o cemu se radi
-if _chk_error == .t.
-    inkey(0)
-endif
-
-restore screen from _sv_screen
 
 return
-
-
-// ------------------------------------------
-// pokreni open office 
-// ------------------------------------------
-static function _run_o_office()
-local _sv_screen
-local _oo_start, _oo_bin, _oo_writer_exe
-local _cmd_line
-local _out_file
-
-// fetch parametara
-_oo_bin := fetch_metric( "openoffice_bin", my_user(), "" )
-_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), "swriter" )
-
-_oo_start := ALLTRIM( _oo_bin ) + ALLTRIM( _oo_writer_exe )
-_out_file := my_home() + "rg-lab.odt"
-
-#ifdef __PLATFORM__WINDOWS
-    _oo_start := '"' + ALLTRIM( _oo_bin ) + ALLTRIM( _oo_writer_exe ) + '"'
-    _out_file := '"' + my_home() + "rg-lab.odt" + '"'
-#endif
-
-save screen to _sv_screen
-clear screen
-
-// otvori naljepnicu
-_cmd_line := _oo_start + " " + _out_file
-
-run (_cmd_line)
-
-restore screen from _sv_screen
-
-return
-
-
-// -----------------------------------------
-// uzmi labelu za stampu
-// -----------------------------------------
-static function _g_label( cPath, cLabel )
-local cFilter := "_rg*.odt"
-local nPx := m_x
-local nPy := m_y
-
-cLabel := "rg-1.odt"
-
-OpcF:={}
-
-aFiles := DIRECTORY( cPath + cFilter )
-
-// da li postoje templejti
-if LEN( aFiles )==0
-    MsgBeep("Ne postoji definisan niti jedan template !")
-    return 0
-endif
-
-// sortiraj po datumu
-ASORT(aFiles,,,{|x,y| x[3]>y[3]})
-AEVAL(aFiles,{|elem| AADD(OpcF, PADR(elem[1],15)+" "+dtos(elem[3]))},1)
-// sortiraj listu po datumu
-ASORT(OpcF,,,{|x,y| RIGHT(x,10)>RIGHT(y,10)})
-
-h:=ARRAY(LEN(OpcF))
-for i:=1 to LEN(h)
-    h[i]:=""
-next
-
-// selekcija fajla
-IzbF:=1
-lRet := .f.
-do while .t. .and. LastKey()!=K_ESC
-    IzbF:=Menu("imp", OpcF, IzbF, .f.)
-    if IzbF == 0
-            exit
-        else
-            cLabel := Trim(LEFT(OpcF[IzbF],15))
-            if Pitanje(,"Koristiti ovaj template ?","D")=="D"
-                IzbF:=0
-            lRet:=.t.
-        endif
-        endif
-enddo
-
-m_x := nPx
-m_y := nPy
-
-if lRet
-    return 1
-else
-    return 0
-endif
-
-return 1
-
-
 

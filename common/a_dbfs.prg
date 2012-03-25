@@ -48,10 +48,10 @@ AADD( gaDbfs, { F_OSTAV  ,  "OSTAV"   , "fin_ostav"   } )
 AADD( gaDbfs, { F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  } )
 AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )
 AADD( gaDbfs, { F__PARTN ,  "_PARTN"  , "fin__partn"  } )
-AADD( gaDbfs, { F_POM    ,  "POM"     , "fin_pom"     } )
-AADD( gaDbfs, { F_POM2   ,  "POM2"    , "fin_pom2"    } )
 AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"     } )
 AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"     } )
+AADD( gaDbfs, { F_TEMP12 ,  "TEMP12" , "temp12"     } )
+AADD( gaDbfs, { F_TEMP60 ,  "TEMP60" , "temp60"     } )
 
 
 AADD( gaDbfs, { F_FUNK   ,  "FUNK"    , "fin_funk"    } )
@@ -70,11 +70,15 @@ AADD( gaDbfs, { F_GPARAMS , "GPARAMS"  , "gparams"  } )
 AADD( gaDbfs, { F_KPARAMS , "KPARAMS"  , "kparams"  } )
 AADD( gaDbfs, { F_SECUR  , "SECUR"  , "secur"  } )
 
+// pomocne tabele
+AADD( gaDbfs, {  F_POM       , "POM"    , "pom"  } )
+AADD( gaDbfs, {  F_POM2      , "POM2"   , "pom2"  } )
+
 // sifrarnici
 AADD( gaDbfs, { F_TOKVAL  , "TOKVAL"  , "tokval"  } )
 
-AADD( gaDbfs, { F_SIFK  , "SIFK"  , "sifk", { |param| sifk_from_sql_server(param) }, "IDS", {"id", "oznaka"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) }, "ID2" })
-AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( param ) }, "IDS", {"id", "oznaka", "idsif", "naz"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) + " AND IDSIF=" + _sql_quote(x["idsif"] + " AND NAZ=" + _sql_quote(x["naz"])) }, "ID" })
+AADD( gaDbfs, { F_SIFK  , "SIFK"  , "sifk", { |param| sifk_from_sql_server(param) }, "IDS", {"id", "oznaka"}, { |x| sql_where_block( "sifk", x ) }, "id2" } )
+AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( param ) }, "IDS", {"id", "oznaka", "idsif", "naz"}, { |x| sql_where_block("sifv", x) }, "id" })
   
 // ROBA
 AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    , { | param | roba_from_sql_server(param)    }  , "IDS" } )
@@ -307,8 +311,8 @@ AADD( gaDbfs, { F_AMORT , "AMORT" , "os_amort", { |alg| os_amort_from_sql_server
 AADD( gaDbfs, { F_REVAL , "REVAL" , "os_reval", { |alg| os_reval_from_sql_server(alg) }, "IDS" } )
 
 // modul POS
-AADD( gaDbfs, {  F_POS_DOKS  , "POS_DOKS", "pos_doks" } )
-AADD( gaDbfs, {  F_POS       , "POS",      "pos_pos"      } )
+AADD( gaDbfs, {  F_POS_DOKS  , "POS_DOKS", "pos_doks", { |alg| pos_doks_from_sql_server(alg) }, "IDS", { "idpos", "idvd", "datum", "brdok" }, { |x| sql_where_block("pos_doks", x) }, "1" } )
+AADD( gaDbfs, {  F_POS       , "POS",      "pos_pos", { |alg| pos_pos_from_sql_server(alg) }, "IDS", {"idpos", "idvd", "datum", "brdok", "rbr" }, {|x| sql_where_block("pos_pos", x) }, "IDS_SEM" } )
 AADD( gaDbfs, {  F_RNGPLA    , "RNGPLA",   "pos_rngpla"   } )
 AADD( gaDbfs, {  F__POS      , "_POS", 	   "_pos_pos" } )
 AADD( gaDbfs, {  F__PRIPR    , "_POS_PRIPR",  "_pos_pripr" } )
@@ -320,10 +324,10 @@ AADD( gaDbfs, {  F_K2C       , "K2C", "pos_k2c" } )
 AADD( gaDbfs, {  F_MJTRUR    , "MJTRUR", "pos_mjtrur" } )
 AADD( gaDbfs, {  F_ROBAIZ    , "ROBAIZ", "pos_robaiz" } )
 AADD( gaDbfs, {  F_RAZDR     , "RAZDR",  "pos_razdr" } )
-AADD( gaDbfs, {  F_STRAD     , "STRAD",  "pos_strad" } )
-AADD( gaDbfs, {  F_OSOB      , "OSOB",   "pos_osob" } )
-AADD( gaDbfs, {  F_KASE      , "KASE",   "pos_kase" } )
-AADD( gaDbfs, {  F_ODJ       , "ODJ",    "pos_odj" } )
+AADD( gaDbfs, {  F_STRAD     , "STRAD",  "pos_strad", { |alg| pos_strad_from_sql_server( alg) }, "IDS" } )
+AADD( gaDbfs, {  F_OSOB      , "OSOB",   "pos_osob", { |alg| pos_osob_from_sql_server(alg) }, "IDS" } )
+AADD( gaDbfs, {  F_KASE      , "KASE",   "pos_kase", { |alg| pos_kase_from_sql_server(alg) }, "IDS" } )
+AADD( gaDbfs, {  F_ODJ       , "ODJ",    "pos_odj", { |alg| pos_odj_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, {  F_UREDJ     , "UREDJ",  "pos_uredj" } )
 AADD( gaDbfs, {  F_DIO       , "DIO",    "pos_dio" } )
 AADD( gaDbfs, {  F_MARS      , "MARS",   "pos_mars" } )
@@ -332,8 +336,7 @@ AADD( gaDbfs, {  F_DINTEG2   , "DINTEG2", "pos_dinteg2" } )
 AADD( gaDbfs, {  F_INTEG1    , "INTEG1" , "pos_integ1" } )
 AADD( gaDbfs, {  F_INTEG2    , "INTEG2" , "pos_integ2" } )
 AADD( gaDbfs, {  F_DOKSPF    , "DOKSPF" , "pos_dokspf" } )
-AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "pos_promvp" } )
-AADD( gaDbfs, {  F_POM       , "POM"    , "pos_pom"  } )
+AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "pos_promvp", {|alg| pos_promvp_from_sql_server(alg) }, "IDS" } )
 
 
 // modul MAT

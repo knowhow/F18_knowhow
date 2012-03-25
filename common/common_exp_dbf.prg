@@ -16,7 +16,7 @@ static cij_decimala:=3
 static izn_decimala:=2
 static kol_decimala:=3
 static lZaokruziti := .t.
-static cLauncher1 := 'start "C:\Program Files\OpenOffice.org 2.0\program\scalc.exe"'
+static cLauncher1 := '"C:\Program Files\LibreOffice 3.4\program\scalc.exe"'
 // zamjeniti tarabu sa brojem
 static cLauncher2 := ""
 static cLauncher := "officexp"
@@ -27,8 +27,8 @@ static cKonverzija := "4"
 
 // kreiraj tabelu u privpath
 function t_exp_create(aFields)
-*{
-local cExpTbl := "R_EXPORT.DBF"
+
+local cExpTbl := "r_export.dbf"
 close all
 
 ferase( PRIVPATH + cExpTbl )
@@ -37,56 +37,54 @@ ferase( PRIVPATH + cExpTbl )
 dbcreate2(PRIVPATH + "r_export", aFields)
 
 return
-*}
 
 
 // export tabele
-function tbl_export(cLauncher)
-*{
+function tbl_export( launch )
+local _cmd
 
 close all
 
-cLauncher := ALLTRIM(cLauncher)
+_cmd := ALLTRIM( launch )
+_cmd += " "
+_cmd += "r_export.dbf"
 
-if (cLauncher == "start")
-	cKom := cLauncher + " " + PRIVPATH
-else
-   	cKom := cLauncher + " " + PRIVPATH + "r_export.dbf"
-endif
+log_write( "Export r_export cmd: " + _cmd )
 
-MsgBeep("Tabela " + PRIVPATH + "R_EXPORT.DBF je formirana##" +;
+MsgBeep("Tabela " + my_home() + "R_EXPORT.DBF je formirana##" +;
         "Sa opcijom Open file se ova tabela ubacuje u excel #" +;
-	"Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" +;
-	"Tako dobijeni xls fajl mozete mijenjati #"+;
-	"prema svojim potrebama ...")
-	
-if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"	
-	run &cKom
+    "Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" +;
+    "Tako dobijeni xls fajl mozete mijenjati #"+;
+    "prema svojim potrebama ...")
+    
+if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"    
+    DirChange( my_home() )
+    if hb_run( _cmd ) <> 0
+        MsgBeep( "Problem sa pokretanjem ?!!!" )
+    endif
 endif
 
 return
-*}
 
 
 function set_launcher(cLauncher)
-*{
 local cPom
 
 cPom = UPPER(ALLTRIM(cLauncher))
 
 
 if (cPom == "OO") .or.  (cPom == "OOO") .or.  (cPom == "OPENOFFICE")
-	cLauncher := cLauncher1
-	return .f.
-	
+    cLauncher := cLauncher1
+    return .f.
+    
 elseif (LEFT(cPom,6) == "OFFICE" )
         // OFFICEXP, OFFICE97, OFFICE2003
-	cLauncher := msoff_start(SUBSTR(cPom, 7))
-	return .f.
+    cLauncher := msoff_start(SUBSTR(cPom, 7))
+    return .f.
 elseif (LEFT(cPom,5) == "EXCEL") 
         // EXCELXP, EXCEL97 
-	cLauncher := msoff_start(SUBSTR(cPom, 6))
-	return .f.
+    cLauncher := msoff_start(SUBSTR(cPom, 6))
+    return .f.
 endif
 
 return .t.
@@ -96,7 +94,7 @@ return .t.
 
 function msoff_start(cVersion)
 *{
-local cPom :=  'start "C:\Program Files\Microsoft Office\Office#\excel.exe"'
+local cPom :=  '"C:\Program Files\Microsoft Office\Office#\excel.exe"'
 
 if (cVersion == "XP")
   // office XP
@@ -119,7 +117,7 @@ else
 endif
 
 return
-*}
+
 
 
 
@@ -138,18 +136,18 @@ RPar("eL", @cLauncher)
 cLauncher := PADR(cLauncher, 70)
 
 Box(, 10, 70)
-	@ m_x+1, m_y+2 SAY "Parametri exporta:" COLOR "I"
-	
-	@ m_x+2, m_y+2  SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
-  	
-  	@ m_x+3, m_y+2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher(@cLauncher)
+    @ m_x+1, m_y+2 SAY "Parametri exporta:" COLOR "I"
+    
+    @ m_x+2, m_y+2  SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
+    
+    @ m_x+3, m_y+2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher(@cLauncher)
   
-  	read
+    read
 BoxC()
 
 if LastKey()==K_ESC
-	select (nTArea)
-	closeret
+    select (nTArea)
+    closeret
 endif
 
 WPar("eK", cKonverzija)

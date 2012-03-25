@@ -94,7 +94,8 @@ select sifk; set order to tag "ID2" // id + oznaka
 select _sifk
 do while !eof()
  scatter()
- select sifk; seek _SIFK->(ID+OZNAKA)
+ select sifk
+ seek _SIFK->(ID+OZNAKA)
  if !found()
   append blank
  endif
@@ -103,8 +104,10 @@ do while !eof()
  skip
 enddo
 
-select sifV
-set order to tag "ID"  //"ID","id+oznaka+IdSif",SIFPATH+"SIFV"
+select sifv
+
+//"ID","id+oznaka+IdSif",SIFPATH+"SIFV"
+set order to tag "ID"  
 
 select _SIFV
 do while !eof()

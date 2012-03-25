@@ -103,7 +103,7 @@ dDatOd:=ctod("")
 dDatDo:=date()
 qqTipDok:=space(20)
 
-Box("#SPECIFIKACIJA PRODAJE PO ARTIKLIMA",13,77)
+Box( "#SPECIFIKACIJA PRODAJE PO ARTIKLIMA", 16, 77 )
 	O_PARAMS
 	RPar("c1", @cIdFirma)
 	RPar("d1", @dDatOd)

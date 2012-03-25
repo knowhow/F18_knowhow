@@ -12,25 +12,7 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
- 
-
-/*! \file fmk/kalk/razdb/1g/fak_kal.prg
- *  \brief Prenos dokumenata iz modula FAKT u KALK
- */
-
-
-/*! \fn FaktKalk()
- *  \brief Meni opcija za prenos dokumenata iz modula FAKT u KALK
- */
-
 function FaktKalk()
-*{
 private Opc:={}
 private opcexe:={}
 
@@ -46,7 +28,6 @@ private Izbor:=1
 Menu_SC("faka")
 CLOSERET
 return
-*}
 
 
 
@@ -59,7 +40,6 @@ return
  */
 
 function ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor,lTest)
-*{
 LOCAL lVrati:=.t., nArr:=SELECT(), nRec:=RECNO(), lStartPrint:=.f., cPom3:=""
 LOCAL nR:=0
 

@@ -78,23 +78,8 @@ IF LASTKEY()==K_ESC
 	RETURN DE_CONT
 endif
 
-if pitanje(,"Aktivirati Win Report ?","N")=="N"
-	return
-endif
+f18_rtm_print( "cjen", "barkod", "id" )
 
-cKomLin:="delphirb "+IzFmkIni("Cjen","CjenRTM","cjen", SIFPATH)+TRIM(cCjenIzbor)
-if IsPlanika()
-	MsgO("kopi -> c:/sigma")
-		//kopiraj sa mreznog diska na c:
-		COPY FILE (PRIVPATH+"barkod.dbf") TO ("c:\sigma\barkod.dbf")
-		COPY FILE (PRIVPATH+"barkod.cdx") TO ("c:\sigma\barkod.cdx")
-	MsgC()
-	cKomLin += " c:\sigma\  barkod id"
-else
-	cKomLin += " "+PRIVPATH+"  barkod id"
-endif
-
-run &cKomLin
 return DE_CONT
 
 

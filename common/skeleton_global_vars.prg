@@ -25,17 +25,13 @@ if ( set_params == nil )
     set_params := .t.
 endif
 
-if ( gModul $ "#TOPS#HOPS#" )
-    return .t.
-endif   
-
 // setuj pdv parametre
 set_pdv_params()
 
 gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
 gFirma := fetch_metric( "org_id", nil, gFirma)
-gNFirma := PADR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
-gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
+gNFirma := hb_utf8tostr( PADR( fetch_metric( "org_naziv", nil, gNFirma ), 50 ) )
+gMjStr := hb_utf8tostr( fetch_metric( "org_mjesto", nil, gMjStr ) )
 gTS := fetch_metric( "tip_subjekta", nil, gTS )
 gTabela := fetch_metric( "tip_tabele", nil, gTabela )
 gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
@@ -50,7 +46,7 @@ if set_params == .t.
 
     Box(, 10, 70 )
 
-        @ m_x + _x, m_y + 2 SAY "Inicijalna podesenja organizacione jedinice ***" COLOR "I"
+        @ m_x + _x, m_y + 2 SAY "Inicijalna podesenja organizacije ***" COLOR "I"
 
         ++ _x
         ++ _x
@@ -82,7 +78,6 @@ if set_params == .t.
 
     // snimi parametre...
     if LastKey() <> K_ESC
-        set_metric( "org_naziv", nil, gNFirma ) 
         set_metric( "org_id", nil, gFirma ) 
         set_metric( "zaokruzenje", nil, gZaokr ) 
         set_metric( "tip_subjekta", nil, gTS ) 
@@ -102,9 +97,9 @@ return .t.
 // ----------------------------------------------------
 function set_pdv_params()
 
-if gModul $ "#TOPS#HOPS#"
-    return .t.
-endif 
+//if gModul $ "#TOPS#HOPS#"
+//    return .t.
+//endif 
 
 gPDV := fetch_metric( "pdv_global", nil, gPDV )
 ParPDV()
@@ -153,11 +148,7 @@ public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
 public gNovine := "N"
 
-if gModul<>"TOPS"
-    if goModul:oDataBase:cRadimUSezona == "RADP"
-        SetPDVBoje()
-    endif
-endif
+SetPDVBoje()
 
 return
 

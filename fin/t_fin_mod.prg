@@ -141,8 +141,8 @@ AADD(_opc, "K. kontrola zbira datoteka")
 AADD(_opcexe, {|| KontrZb()})
 
 AADD(_opc, "P. povrat dokumenta u pripremu")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","POVRATNALOGA"))
-	AADD(_opcexe, {|| PovratNaloga()})
+if (ImaPravoPristupa(goModul:oDatabase:cName, "UT", "POVRATNALOGA"))
+	AADD(_opcexe, {|| povrat_fin_naloga()})
 else
 	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif

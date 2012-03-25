@@ -1004,50 +1004,95 @@ CLOSERET
 
 
 function ld_obracun_napravljen_vise_puta()
-*{
-cMjesec  := gMjesec
-cGodina  := gGodina
-cObracun := gObracun
+local cMjesec := gMjesec
+local cGodina := gGodina
+local cObracun := gObracun
+local _data := {}
+local cIdRadn, nProlaz, _count
+local _i
 
-private cKBenef:=" ",cVPosla:=" "
+Box(,3,50)
 
-Box(,2,50)
- @ m_x+1, m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
- @ m_x+2, m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
- read; ESC_BCR
+    @ m_x+1, m_y+2 SAY " Mjesec: " GET cMjesec pict "99"
+    @ m_x+2, m_y+2 SAY " Godina: " GET cGodina pict "9999"
+    @ m_x+3, m_y+2 SAY "Obracun: " GET cObracun
+
+    read
+
+    ESC_BCR
+
 BoxC()
 
-// CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-// ----------- removao ovu liniju 21.11.2000. MS ------------
-
+O_RADN
 O_LD
-set order to tag "2"
 
-seek str(cgodina,4)+str(cmjesec,2)
-start print cret
-? Lokal("Radnici obradjeni vise puta za isti mjesec -"),cgodina,"/",cmjesec
-?
-? Lokal("RADNIK RJ     neto        sati")
-? "------ -- ------------- ----------"
-do while !eof() .and. str(cgodina,4)+str(cmjesec,2)==str(godina)+str(mjesec)
-  cIdRadn:=idradn
-  nProlaz:=0
-  do while !eof() .and. str(godina)+str(mjesec)==str(godina)+str(mjesec) .and. idradn==cidradn
-     ++nProlaz
-     skip
-  enddo
-  if nProlaz>1
-     seek str(cgodina,4)+str(cmjesec,2)+cidradn
-     do while !eof() .and. str(godina)+str(mjesec)==str(cgodina,4)+str(cmjesec,2) .and. idradn==cidradn
-        ? idradn,idrj,uneto,usati
+set order to tag "2"
+go top
+seek STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun
+
+Box(, 1, 60)
+
+_count := 0
+
+do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun == STR( field->godina, 4 ) + STR( field->mjesec, 2 ) + obr
+  
+    cIdRadn := idradn
+    nProlaz := 0
+
+    ++ _count
+    @ m_x + 1, m_y + 2 SAY "Radnik: " + cIdRadn
+
+    do while !EOF() .and. STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun == STR( field->godina, 4 ) + STR( field->mjesec, 2 ) + field->obr .and. field->idradn == cIdradn
+        ++ nProlaz
         skip
-     enddo
-  endif
+    enddo
+
+    if nProlaz > 1
+
+        select radn
+        hseek cIdRadn
+
+        select ld
+    
+        seek STR( cGodina, 4 ) + STR( cMjesec,2) + cObracun + cIdRadn
+
+        do while !EOF() .and. STR( field->godina, 4 ) + STR( field->mjesec, 2 ) + field->obr == STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun .and. field->idradn == cIdRadn
+            AADD( _data, { field->obr, field->idradn, PADR( ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ), 20 ), field->idrj, field->uneto, field->usati } )
+            skip
+        enddo
+
+    endif
+
 enddo
-end print
-closeret
+
+BoxC()
+
+// nemam sta prikazati
+if LEN( _data ) == 0
+    close all
+    return
+endif
+
+
+START PRINT CRET
+
+? Lokal("Radnici obradjeni vise puta za isti mjesec -"), cGodina, "/", cMjesec
+?
+? Lokal("OBR RADNIK                      RJ     neto        sati")
+? "--- ------ -------------------- -- ------------- ----------"
+
+for _i := 1 to LEN( _data )
+
+    ? PADR( _data[ _i, 1 ], 3 ), _data[ _i, 2 ], _data[ _i, 3 ], _data[ _i, 4 ], _data[ _i, 5 ], _data[ _i, 6 ]
+
+next
+
+FF
+END PRINT
+
+close all
 return
-*}
+
 
 
 

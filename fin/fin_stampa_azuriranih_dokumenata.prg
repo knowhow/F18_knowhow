@@ -20,7 +20,7 @@ opc[1]:="1. subanalitika        "
 opc[2]:="2. analitika/sintetika"
 
 do while .t.
-  izb:=menu("onal",opc,izb,.f.)
+  izb:=menu("onal", opc, izb, .f.)
   do case
      case izb==0
         exit
@@ -86,26 +86,29 @@ Box("",2,35)
  endif
  @ m_x+1,col()+1 SAY "-" GET cIdVN PICT "@!"
  @ m_x+1,col()+1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+
  if gDatNal=="D"
-  @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
+    @ m_x+2, m_y+2 SAY "Datum naloga:" GET dDatNal
  endif
  read
  ESC_BCR
 BoxC()
 
 select nalog
-seek cidfirma+cidvn+cbrnal
-NFOUND CRET  // ako ne postoji
+seek cidfirma + cidvn + cbrnal
+
+NFOUND CRET  
 dDatNal:=datnal
 
 SELECT SUBAN
-seek cidfirma+cidvn+cbrNal
+seek cIdfirma + cIdvn + cBrNal
 
 START PRINT CRET
 
-StSubNal("2")
+stampa_suban_dokument("2")
 
 END PRINT
+
 closeret
 return
 
@@ -118,8 +121,8 @@ return
  
 function StOSNal(fkum)
 
-if fkum==NIL
-  fkum:=.t.
+if fKum == NIL
+  fkum := .t.
 endif
 
 
@@ -130,35 +133,37 @@ M:="---- -------- ------- --------------------------------------------- --------
 if fkum  // stampa starog naloga - naloga iz kumulativa - datoteka anal
 
  select (F_ANAL)
- use ANAL alias PANAL
+ my_usex( "panal", "fin_anal")
  set order to tag "2"
+
  O_KONTO
  O_PARTN
  O_TNAL
  O_NALOG
 
- cIdVN:=space(2)
- cIdFirma:=gFirma
- cBrNal:=space(8)
+ cIdVN := space(2)
+ cIdFirma := gFirma
+ cBrNal := space(8)
 
  Box("",1,35)
-  @ m_x+1,m_y+2 SAY "Nalog:"
+  @ m_x+1, m_y+2 SAY "Nalog:"
   if gNW=="D"
-    @ m_x+1,col()+1 SAY cIdFirma
+    @ m_x+1, col()+1 SAY cIdFirma
   else
-    @ m_x+1,col()+1 GET cIdFirma
+    @ m_x+1, col()+1 GET cIdFirma
   endif
-  @ m_x+1,col()+1 SAY "-" GET cIdVN PICT "@!"
-  @ m_x+1,col()+1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
-  read; ESC_BCR
+  @ m_x+1, col()+1 SAY "-" GET cIdVN PICT "@!"
+  @ m_x+1, col()+1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+  read
+  ESC_BCR
  BoxC()
  select nalog
- seek cidfirma+cidvn+cbrnal
+ seek cidfirma + cidvn + cbrnal
  NFOUND CRET  // ako ne postoji
  dDatNal:=datnal
 
  select PANAL
- seek cidfirma+cidvn+cbrNal
+ seek cidfirma + cidvn + cbrNal
  START PRINT CRET
 
 else

@@ -24,7 +24,7 @@ static __SH_SLD_VAR
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-function stdokpdv(cIdFirma, cIdTipDok, cBrDok, lJFill)
+function StdokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
 local cFax
 local lPrepisDok := .f.
 

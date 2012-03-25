@@ -28,6 +28,8 @@ AADD(opcexe, {|| daterr_rpt() })
 AADD(opc, "4. regeneracija broja naloga u kumulativu")
 AADD(opcexe, {|| regen_tbl() })
 
+AADD(opc, "5. kontrola podataka nakon importa iz FMK")
+AADD(opcexe, {|| f18_test_data() })
 
 if is_fmkrules()
 	AADD(opc, "R. fmk pravila - rules ")

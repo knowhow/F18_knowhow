@@ -799,7 +799,7 @@ do case
 	case ALLTRIM(gFc_type) == "FPRINT"
 		
 		// napravi konverziju karaktera 852 -> win
-		cNaziv := KonvZnWin( cNaziv, gFc_konv )
+		cNaziv := to_xml_encoding( cNaziv )
 		
 endcase
 

@@ -13,11 +13,6 @@
 #include "kalk.ch"
 
 
-/*! \fn StKalk80(fBezNc)
- *  \brief Stampa dokumenta tipa 80 - direktno zaduzenje prodavnice
- *  \param fBezNc -
- */
-
 function StKalk80(fBezNc)
 local nCol1:=nCol2:=0,npom:=0
 

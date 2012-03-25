@@ -34,7 +34,7 @@ if !file(f18_ime_dbf("TIPPR"))
     my_use("TIPPR")
 endif
 
-CREATE_INDEX("ID","id",SIFPATH+"TIPPR")
+CREATE_INDEX("ID", "id", "TIPPR")
 
 if !file(f18_ime_dbf("TIPPR2"))
     DBCREATE2( 'TIPPR2', aDbf )
@@ -42,7 +42,7 @@ if !file(f18_ime_dbf("TIPPR2"))
     my_use("TIPPR2")
 endif
 
-CREATE_INDEX("ID","id",SIFPATH+"TIPPR2")
+CREATE_INDEX("ID","id", "TIPPR2")
 
 // modul LD koristi sopstveni sifrarnik radnih jedinica
 if !file(f18_ime_dbf("ld_rj"))

@@ -84,7 +84,7 @@
 #xcommand P_RPL_G            =>  gRPL_Gusto()
 
 
-#xcommand INI             =>  gPB_ON()
+#xcommand INI              =>  gPB_ON()
 #xcommand B_ON             =>  gPB_ON()
 #xcommand B_OFF            =>  gPB_OFF()
 #xcommand I_ON             =>  gPI_ON()
@@ -102,8 +102,8 @@
 
 
 
-#xcommand CLOSERET2   => close all; return
-#xcommand CLOSERET  => close all; return
+#xcommand CLOSERET2      => close all; return
+#xcommand CLOSERET       => close all; return
 
 
 #xcommand ESC_BCR   =>  if lastkey() == K_ESC;

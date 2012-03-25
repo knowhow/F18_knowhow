@@ -45,7 +45,7 @@ if VALTYPE(cId) == "C"
 endif
 
 // postavi filter...
-set_f_kol(cCustDesc)	
+set_f_kol( cCustDesc, @cId )	
 
 cRet := PostojiSifra(F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
 
@@ -66,7 +66,7 @@ return cRet
 // --------------------------------------------------
 // setovanje filtera nad tabelom customers
 // --------------------------------------------------
-static function set_f_kol(cCustDesc)
+static function set_f_kol( cCustDesc, cId )
 local cFilter := ""
 
 if !EMPTY(cCustDesc)
@@ -74,8 +74,14 @@ if !EMPTY(cCustDesc)
 	cCustDesc := ALLTRIM(cCustDesc)
 
     if RIGHT( cCustDesc ) == "$"
+
+        // vrati uslov u normalno stanje
+        cCustDesc := LEFT( cCustDesc, LEN( cCustDesc ) - 1 )
+        // vrati i id u normalno stanje
+        cId := cCustDesc
+
         // pretrazi po dijelu naziva	
-	    cFilter += _filter_quote( UPPER( LEFT( cCustDesc, LEN( cCustDesc ) - 1 ) ) ) + " $ ALLTRIM(UPPER(cust_desc))" 
+	    cFilter += _filter_quote( UPPER( cCustDesc ) ) + " $ ALLTRIM(UPPER(cust_desc))" 
     else
 	    cFilter += "ALLTRIM(UPPER(cust_desc)) = " + _filter_quote( UPPER(cCustDesc) )
 	endif

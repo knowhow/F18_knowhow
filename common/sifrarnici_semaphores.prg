@@ -131,11 +131,12 @@ function sifk_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "sifk"
+local _index_tag := "id2"
 
 _result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFK, {"id", ;
 				"sort", "naz", "oznaka", "veza", "f_unique", "izvor", "uslov", ;
 				"duzina", "f_decimal", "tip", "kvalid", "kwhen", "ubrowsu", ;
-				"k1", "k2", "k3", "k4" })
+				"k1", "k2", "k3", "k4" }, _index_tag )
 
 return _result
 
@@ -147,8 +148,10 @@ function sifv_from_sql_server(algoritam)
 local _result := .f.
 local _i
 local _tbl := "sifv"
+local _index_tag := "id"
+local _field_tag := "rpad(id, 8) || rpad(oznaka, 4) || rpad(idsif, 15) || rpad( naz, 200 )"
 
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", "idsif", "naz", "oznaka" })
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_SIFV, {"id", "idsif", "naz", "oznaka" }, _index_tag, _field_tag )
 
 return _result
 
@@ -402,6 +405,7 @@ local _fnd
 local _alias
 local _pos
 local _item
+local _deleted
 
 // pronadji alias tabele
 _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER( table ) } )
@@ -451,15 +455,20 @@ next
 _qry += " FROM fmk." + table
 
 if (algoritam == "IDS") 
+
     _ids := get_ids_from_semaphore(table)
 
     _qry += " WHERE "
+
     if LEN(_ids) < 1
        // nema id-ova
        _qry += "false"
     else
+
         _sql_ids := "("
+
         for _i := 1 to LEN(_ids)
+
             if _ids[_i] == "<FULL>/"
                 _sql_ids := "true"
                 _i := LEN(_ids)
@@ -482,6 +491,8 @@ if (algoritam == "IDS")
 
 endif
 
+log_write( "sifrarnik " + table + " qry: " + _qry )
+
 _qry_obj := _server:Query(_qry) 
 if _qry_obj:NetErr()
    MsgBeep("ajoj :" + _qry_obj:ErrorMsg())
@@ -499,8 +510,11 @@ DO CASE
      ZAP
 
   CASE algoritam == "IDS"
+
     _ids := get_ids_from_semaphore(table)
     SET ORDER TO TAG &(index_tag)
+
+    _deleted := 0
      // pobrisimo sve id-ove koji su drugi izmijenili
     do while .t.
        _fnd := .f.
@@ -509,33 +523,44 @@ DO CASE
           if found()
                _fnd := .t.
                DELETE
+               ++ _deleted
           endif
         next
         if ! _fnd 
             exit
         endif
     enddo
+    log_write( "IDS algoritam sifrarnik, delete local dbf, recs: " + ALLTRIM(STR(_deleted)))
+
 END CASE
 
-//@ _x + 4, _y + 2 SAY SECONDS() - _seconds 
 
-_counter := 1
+_counter := 0
+
 DO WHILE ! _qry_obj:Eof()
+
     append blank
+
     for _i:=1 to LEN(fields)
+
        _field_b := FIELDBLOCK( fields[_i])
        _field_type := VALTYPE( EVAL( _field_b ) )
+
        // replace dbf field
        if _field_type == "C"   
 			EVAL(_field_b, hb_Utf8ToStr(_qry_obj:FieldGet(_i))) 
        else
 		    EVAL(_field_b, _qry_obj:FieldGet(_i))
        endif 
+
     next
-    _qry_obj:Skip()
 
     _counter++
+    _qry_obj:Skip()
+
 ENDDO
+
+log_write( "sinhro sifrarnik " + table + " update local dbf, recs: " + ALLTRIM(STR( _counter )) )
 
 USE
 _qry_obj:Close()
@@ -547,6 +572,8 @@ if (gDebug > 5)
 endif
 
 lock_semaphore(table, "free")
+
+
 return .t. 
 
 

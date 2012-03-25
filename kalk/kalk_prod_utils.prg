@@ -391,6 +391,7 @@ function StaviMPCSif(nCijena, lUpit)
 local lAzuriraj
 local lRet := .f.
 local lIsteCijene
+local _rec
 
 IF lUpit==nil
  	lUpit:=.f.
@@ -441,7 +442,9 @@ endif
 if lAzuriraj
 	PushWa()
 	SELECT ROBA
-	replace &cMpc with nCijena
+    _rec := dbf_get_rec()
+    _rec[ cMpc ] := nCijena
+	update_rec_server_and_dbf( ALIAS(), _rec )
 	PopWa()
 	lRet := .t.
 endif

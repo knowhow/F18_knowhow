@@ -17,37 +17,42 @@
  *  \param cInd  - "1"-stampa pripreme, "2"-stampa azuriranog, "3"-stampa dnevnika
  *  \param lAuto
  */
- 
-function StSubNal(cInd,lAuto)
-LOCAL nArr:=SELECT(), aRez:={}, aOpis:={}
+
+function stampa_suban_dokument(cInd, lAuto)
+
+local nArr:=SELECT()
+local aRez:={}
+local aOpis:={}
+local _vrste_placanja, lJerry
 
 IF lAuto = NIL
 	lAuto := .f.
 ENDIF
+
 O_PARTN
 __par_len := LEN(partn->id)
 select (nArr)
 
-lJerry := ( IzFMKIni("FIN","JednovalutniNalogJerry","N",KUMPATH) == "D" )
+lJerry := .f.
 
-PicBHD:="@Z "+FormPicL(gPicBHD,15)
-PicDEM:="@Z "+FormPicL(gPicDEM,10)
+PicBHD := "@Z "+FormPicL(gPicBHD,15)
+PicDEM := "@Z "+FormPicL(gPicDEM,10)
 
 IF gNW=="N"
-     M:=IF(cInd=="3","------ ---------- --- ","")+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" -- ------------- ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
+     M := IIF(cInd=="3","------ ---------- --- ","")+"---- ------- " + REPL("-", __par_len) + " ----------------------------" + IIF(gVar1=="1" .and. lJerry, "-- " + REPL("-",20),"")+" -- ------------- ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
 ELSE
-     M:=IF(cInd=="3","------ ---------- --- ","")+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
+     M := IIF(cInd=="3","------ ---------- --- ","")+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
 ENDIF
 
 IF cInd $ "1#2"
      nUkDugBHD:=nUkPotBHD:=nUkDugDEM:=nUkPotDEM:=0
      nStr:=0
-//     nUkDug:=nUkPot:=0
 ENDIF
 
-   b2:={|| cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal}
-   // cVN:=VN; cFirma:=Firma1+Firma2
-   cIdFirma:=IdFirma; cIdVN:=IdVN; cBrNal:=BrNal
+b2:={|| cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal}
+cIdFirma:=IdFirma
+cIdVN:=IdVN
+cBrNal:=BrNal
 
 IF cInd $ "1#2" .and. !lAuto
      fin_zagl_11()
@@ -55,7 +60,7 @@ ENDIF
 
 DO WHILE !eof() .and. eval(b2)
       if !lAuto
-       if prow()>61+IF(cInd=="3",-7,0)+gPStranica
+       if prow() > 61 + IIF(cInd=="3",-7,0) + gPStranica
          if cInd=="3"
            PrenosDNal()
          else
@@ -64,6 +69,7 @@ DO WHILE !eof() .and. eval(b2)
          fin_zagl_11()
        endif
        P_NRED
+
        IF cInd=="3"
          @ prow(),0 SAY STR(++nRBrDN,6)
          @ prow(),pcol()+1 SAY cIdFirma+"-"+cIdVN+"-"+cBrNal
@@ -72,6 +78,7 @@ DO WHILE !eof() .and. eval(b2)
        ELSE
          @ prow(),0 SAY RBr
        ENDIF
+
        @ prow(),pcol()+1 SAY IdKonto
 
        if !empty(IdPartner)
@@ -186,9 +193,9 @@ DO WHILE !eof() .and. eval(b2)
             @ prow()+pok,nColDok say IF( i-1<=len(aOpis) , aOpis[i-1] , SPACE(20) )
           ENDIF
           if i==2 .and. ( !Empty(k1+k2+k3+k4) .or. grj=="D" .or. gtroskovi=="D" )
-            ?? " "+k1+"-"+k2+"-"+K3Iz256(k3)+"-"+k4
-            if IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-              ?? "("+Ocitaj(F_VRSTEP,k4,"naz")+")"
+            ?? " " + k1 + "-" + k2 + "-" + K3Iz256(k3) + "-" + k4
+            if _vrste_placanja
+              ?? "(" + Ocitaj(F_VRSTEP, k4, "naz" ) + ")"
             endif
             if gRj=="D"
 	    	?? " RJ:",idrj
@@ -202,16 +209,23 @@ DO WHILE !eof() .and. eval(b2)
       endif
 
       IF cInd=="1" .and. ASCAN(aNalozi,cIdFirma+cIdVN+cBrNal)==0  // samo ako se ne nalazi u psuban
-        select PSUBAN; Scatter(); select (nArr); Scatter()
-        SELECT PSUBAN; APPEND BLANK
-        Gather()  // stavi sve vrijednosti iz PRIPR u PSUBAN
+        select PSUBAN
+        Scatter()
+        select (nArr)
+        Scatter()
+        SELECT PSUBAN
+        APPEND BLANK
+        Gather()  
       ENDIF
       select (nArr)
       SKIP 1
    ENDDO
 
    IF cInd $ "1#2" .and. !lAuto
-     IF prow()>58+gPStranica; FF; fin_zagl_11();  endif
+     IF prow() > 58 + gPStranica
+          FF
+          fin_zagl_11()
+     endif
      P_NRED
      ?? M
      P_NRED
@@ -229,20 +243,23 @@ DO WHILE !eof() .and. eval(b2)
      if gPotpis=="D"
        IF prow()>58+gPStranica; FF; fin_zagl_11();  endif
        P_NRED
-       P_NRED; F12CPI
+       P_NRED
+       F12CPI
        P_NRED
        @ prow(),55 SAY "Obrada AOP "; ?? replicate("_",20)
        P_NRED
        @ prow(),55 SAY "Kontirao   "; ?? replicate("_",20)
      endif
      FF
+
    ELSEIF cInd=="3"
       if prow()>54+gPStranica
         PrenosDNal()
       endif
    ENDIF
+
+
 RETURN
-*}
 
 
 /*! \fn PrenosDNal()
@@ -250,7 +267,6 @@ RETURN
  */
  
 function PrenosDNal()
-*{
 ? m
   ? PADR("UKUPNO NA STRANI "+ALLTRIM(STR(nStr)),30)+":"
    @ prow(),nColIzn  SAY nTSDugBHD PICTURE picBHD
@@ -279,6 +295,5 @@ function PrenosDNal()
   FF
   nTSDugBHD:=nTSPotBHD:=nTSDugDEM:=nTSPotDEM:=0   // tekuca strana
 RETURN
-*}
 
 

@@ -333,7 +333,6 @@ endif
 if __radni_sati == "D"
 	? Lokal("NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena ")
 	?? ALLTRIM(STR((ld->radsat) - nRRSati))  + Lokal(" sati.")
-	? Lokal("          Uplaceno za tekuci mjesec: " + " sati.")
 	? Lokal("          Ostatak predhodnih obracuna: ") + GetStatusRSati(ld->idradn) + SPACE(1) + Lokal("sati")
 	?
 endif

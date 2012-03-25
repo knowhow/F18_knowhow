@@ -650,19 +650,9 @@ ENDIF
 IniRefresh()
 //Odstampaj izvjestaj
 
-if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
+if LastKey() != K_ESC 
 
- private cKomLin:="DelphiRB "+IzFmkIni("Specif","NazRTM","ldspec", KUMPATH)+" "+PRIVPATH+"  DUMMY 1"
- cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))
- if cPom!="-"
-  cKomLin += " lmarg:"+cPom
- endif
- cPom := alltrim(IzFmkIni("Specif","GornjaMargina","-",KUMPATH))
- if cPom!="-"
-  cKomLin += " tmarg:"+cPom
- endif
-
- run &cKomLin
+    f18_rtm_print( "ldspec", "DUMMY", "1" )
 
 endif
 

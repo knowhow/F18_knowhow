@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -78,27 +78,33 @@ return
 function fakt_mpc_iz_sifrarnika()
 local nCV:=0
 
-if RJ->tip=="N1"
-	nCV := roba->nc
-elseif RJ->tip=="M1"
-	nCV := roba->mpc
-elseif RJ->tip=="M2"
-	nCV := roba->mpc2
-elseif RJ->tip=="M3"
+if rj->( FIELDPOS("tip")) <> 0
+
+    if RJ->tip=="N1"
+	    nCV := roba->nc
+    elseif RJ->tip=="M1"
+	    nCV := roba->mpc
+    elseif RJ->tip=="M2"
+	    nCV := roba->mpc2
+    elseif RJ->tip=="M3"
     	nCV := roba->mpc3
-elseif RJ->tip=="M4"
+    elseif RJ->tip=="M4"
     	nCV := roba->mpc4
-elseif RJ->tip=="M5"
+    elseif RJ->tip=="M5"
     	nCV := roba->mpc5
-elseif RJ->tip=="M6"
+    elseif RJ->tip=="M6"
     	nCV := roba->mpc6
-else
-	if IzFMKINI("FAKT","ZaIzvjestajeDefaultJeMPC","N",KUMPATH)=="D"
+    else
+	    if IzFMKINI("FAKT","ZaIzvjestajeDefaultJeMPC","N",KUMPATH)=="D"
       		nCV := roba->mpc
     	else
       		nCV := roba->vpc
     	endif
+    endif
+else
+    nCV := roba->vpc
 endif
+
 return nCV
 
 
@@ -307,7 +313,7 @@ do while !EOF()
 	nRobaGr := 1
 	nPorSt := 1
 
-	cNaz := konvznwin( field->naz, gFc_Konv )
+	cNaz := to_xml_encoding( field->naz )
 
 	AADD( aRet, { ;
 		VAL(ALLTRIM(field->sifradob)), ;
@@ -346,8 +352,8 @@ do while !EOF()
 
 	select partn
 	
-	cNaz := konvznwin( partn->naz, gFC_Konv )
-	cAdr := konvznwin( partn->adresa, gFc_Konv )
+	cNaz := to_xml_encoding( partn->naz )
+	cAdr := to_xml_encoding( partn->adresa )
 
 	AADD( aRet, { ;
 		VAL(cPid), ;
@@ -418,4 +424,194 @@ if !FOUND()
 		duzina with nDuzina,;
 		f_decimal with 0
 endif
+
+
+// ------------------------------------------------------------
+// resetuje brojač dokumenta ako smo pobrisali dokument
+// ------------------------------------------------------------
+function fakt_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
+local _param
+local _broj := 0
+
+// param: fakt/10/10
+_param := "fakt" + "/" + firma + "/" + tip_dokumenta 
+_broj := fetch_metric( _param, nil, _broj )
+
+if VAL( PADR( broj_dokumenta, gNumDio ) ) == _broj
+    -- _broj
+    // smanji globalni brojac za 1
+    set_metric( _param, nil, _broj )
+endif
+
+return
+
+
+
+// ------------------------------------------------------------------
+// fakt, uzimanje novog broja za fakt dokument
+// ------------------------------------------------------------------
+function fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
+local _broj := 0
+local _broj_doks := 0
+local _param
+local _tmp, _rest
+local _ret := ""
+local _t_area := SELECT()
+
+if sufiks == nil
+    sufiks := ""
+endif
+
+// param: fakt/10/10
+_param := "fakt" + "/" + firma + "/" + tip_dokumenta 
+
+_broj := fetch_metric( _param, nil, _broj )
+
+// konsultuj i doks uporedo
+O_FAKT_DOKS
+set order to tag "1"
+go top
+seek firma + tip_dokumenta + "Ž"
+skip -1
+
+if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
+    _broj_doks := VAL( PADR( field->brdok, gNumDio ) )
+else
+    _broj_doks := 0
+endif
+
+// uzmi sta je vece, doks broj ili globalni brojac
+_broj := MAX( _broj, _broj_doks )
+
+// uvecaj broj
+++ _broj
+
+// ovo ce napraviti string prave duzine...
+_ret := PADL( ALLTRIM( STR( _broj ) ), gNumDio, "0" )
+
+if !EMPTY( sufiks )
+    _ret := _ret + sufiks
+endif
+
+_ret := PADR( _ret, 8 )
+
+// upisi ga u globalni parametar
+set_metric( _param, nil, _broj )
+
+select ( _t_area )
+return _ret
+
+
+// ------------------------------------------------------------
+// setuj broj dokumenta u pripremi ako treba !
+// ------------------------------------------------------------
+function fakt_set_broj_dokumenta()
+local _broj_dokumenta
+local _t_rec
+local _firma, _td, _null_brdok
+
+PushWa()
+
+select fakt_pripr
+go top
+
+_null_brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
+        
+if field->brdok <> _null_brdok 
+    // nemam sta raditi, broj je vec setovan
+    PopWa()
+    return .f.
+endif
+
+_firma := field->idfirma
+_td := field->idtipdok
+
+// daj mi novi broj dokumenta
+_broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _td )
+
+select fakt_pripr
+set order to tag "1"
+
+GO TOP
+do while !EOF()
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    if field->idfirma == _firma .and. field->idtipdok == _td .and. field->brdok == _null_brdok
+       replace field->brdok with _broj_dokumenta
+    endif
+
+    go (_t_rec)
+
+enddo
+
+PopWa()
+ 
+return .t.
+
+
+
+// ------------------------------------------------------------
+// provjerava da li dokument postoji na strani servera 
+// ------------------------------------------------------------
+function fakt_doks_exist( firma, tip_dok, br_dok )
+local _exist := .f.
+local _qry, _qry_ret, _table
+local _server := pg_server()
+
+_qry := "SELECT COUNT(*) FROM fmk.fakt_doks WHERE idfirma = " + _sql_quote( firma ) + " AND idtipdok = " + _sql_quote( tip_dok ) + " AND brdok = " + _sql_quote( br_dok )
+_table := _sql_query( _server, _qry )
+_qry_ret := _table:Fieldget(1)
+
+if _qry_ret > 0
+    _exist := .t.
+endif
+
+return _exist
+
+
+// ------------------------------------------------------------
+// setovanje parametra brojaca na admin meniju
+// ------------------------------------------------------------
+function fakt_set_param_broj_dokumenta()
+local _param
+local _broj := 0
+local _broj_old
+local _firma := gFirma
+local _tip_dok := "10"
+
+Box(, 2, 60 )
+
+    @ m_x + 1, m_y + 2 SAY "Dokument:" GET _firma
+    @ m_x + 1, col() + 1 SAY "-" GET _tip_dok
+
+    read
+
+    if LastKey() == K_ESC
+        BoxC()
+        return
+    endif
+
+    // param: fakt/10/10
+    _param := "fakt" + "/" + _firma + "/" + _tip_dok
+    _broj := fetch_metric( _param, nil, _broj )
+    _broj_old := _broj
+
+    @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "999999"
+
+    read
+
+BoxC()
+
+if LastKey() != K_ESC
+    // snimi broj u globalni brojac
+    if _broj <> _broj_old
+        set_metric( _param, nil, _broj )
+    endif
+endif
+
+return
+
 

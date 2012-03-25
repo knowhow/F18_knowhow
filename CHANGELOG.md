@@ -1,3 +1,102 @@
+0.9.72 2012-03-25, hernad
+ 
+  - close all print [#27235](http://redmine.bring.out.ba/issues/27235)
+
+0.9.71 2012-03-23, vsasa
+ 
+  - modul LD, radnici odradjeni više puta za jedan mjesec, korekcija izvještaja [#27220](http://redmine.bring.out.ba/issues/27220)
+  - sitne korekcije
+
+0.9.70 2012-03-23, vsasa
+ 
+  - modul LD, radnici odradjeni više puta za jedan mjesec [#27220](http://redmine.bring.out.ba/issues/27220)
+  - modul FAKT, fiskalni računi za partnere oslobođene po članu, ispis podataka [#27221](http://redmine.bring.out.ba/issues/27221)
+
+0.9.69 2012-03-23, vsasa
+ 
+  - modul LD, greška sa EVAL izrazima [#27199](http://redmine.bring.out.ba/issues/27199)
+
+0.9.68 2012-03-22, vsasa
+ 
+  - fakt, globalni brojač, finalizirana opcija [#27166](http://redmine.bring.out.ba/issues/27166)
+
+0.9.67 2012-03-21, vsasa
+ 
+  - fakt, globalni brojač, korekcije [#27166](http://redmine.bring.out.ba/issues/27166)
+  - sifk/sifv, korekcija bug-a ! [#27174](http://redmine.bring.out.ba/issues/27174)
+  - ostale sitne korekcije
+
+0.9.66 2012-03-15, hernad
+ 
+  - rezolucija 30 x 100 Lucida Console za manje rezolucije
+
+0.9.65 2012-03-15, hernad, vsasa
+  
+  - mogućnost podešenja fontova i rezolucije [#27127](http://redmine.bring.out.ba/issues/27127)
+  - korekcija IDS algoritma kod semafora [#27131](http://redmine.bring.out.ba/issues/27131)
+  - sitne korekcije
+
+0.9.64 2012-03-15, vsasa
+
+  - fakt, brojač dokumenata [#26954](http://redmine.bring.out.ba/issues/26954)
+  - korekcije ostalih sitnih grešaka
+
+0.9.63 2012-03-11, vsasa
+
+  - kontrola integriteta podataka fmk [#27063](http://redmine.bring.out.ba/issues/27063)
+  - modul POS, cišćenje, semafori [#27077](http://redmine.bring.out.ba/issues/27077)
+
+0.9.62 2012-03-07, vsasa
+
+  - modul MAT, korekcija početnog stanja i proširenje polja rbr [#26989](http://redmine.bring.out.ba/issues/26989)
+ 
+0.9.61 2012-03-05, vsasa
+
+  - modul MAT, korekcije i sitne dorade [#26970](http://redmine.bring.out.ba/issues/26970)
+  - modul FAKT, grupisanje partnera po vrsti isporuke robe [#26952](http://redmine.bring.out.ba/issues/26952)
+  - modul FAKT, količinski pregled isporuka robe [#26953](http://redmine.bring.out.ba/issues/26953)
+
+0.9.60 2012-03-02, vsasa
+
+  - modul FAKT, ispravka bug-a sa fiskalnim opcijama [#26950](http://redmine.bring.out.ba/issues/26950) 
+
+0.9.59 2012-02-29, vsasa
+
+  - modul LD, korekcije [#26643](http://redmine.bring.out.ba/issues/26643) 
+  - refactor fiskalnih parametara [#26250](http://redmine.bring.out.ba/issues/26250)
+  - korekcije sitnih grešaka...
+
+0.9.58 2012-02-28, vsasa
+
+  - modul LD, korekcija obracuna plate [#26643](http://redmine.bring.out.ba/issues/26643) 
+  - štampanje odt izvještaja [#26878](http://redmine.bring.out.ba/issues/26878)
+  - korekcije sitnih grešaka...
+
+0.9.57 2012-02-24, vsasa
+
+  - modul KALK, izvještaji TKV [#26698](http://redmine.bring.out.ba/issues/26698) i TKM [#26699](http://redmine.bring.out.ba/issues/26699)
+  - modul KALK, štampa odt obrazaca kalkulacija cijena za vp [#26700](http://redmine.bring.out.ba/issues/26700) i mp [#26701](http://redmine.bring.out.ba/issues/26701)
+  - korekcije sitnih grešaka...
+
+0.9.56 2012-02-22, vsasa
+
+  - modul LD, generisanje obrazaca MIP/GIP/OLP [#26674](http://redmine.bring.out.ba/issues/26674)
+  - modul KALK, korigovana obrada dokumenta tip-a 41, 42 [#26824](http://redmine.bring.out.ba/issues/26824)
+  - korekcije sitnih grešaka...
+
+0.9.55 2012-02-20, vsasa
+
+  - modul KALK, razmjena podataka između udaljenih lokacija [#26695](http://redmine.bring.out.ba/issues/26695) rewrite opcije.
+  - korekcije sitnih grešaka
+
+0.9.54 2012-02-15, hernad
+
+  - [#26732](http://redmine.bring.out.ba/issues/26732)
+
+0.9.53 2012-02-15, hernad, vsasa
+
+ - CRITICAL BUG: [#26722](http://redmine.bring.out.ba/issues/26722) broj veze fin,  [#26728](http://redmine.bring.out.ba/issues/26728) polja otvorene stavke
+
 0.9.52 2012-02-14, hernad
 
  - [#26688](http://redmine.bring.out.ba/issues/26688) fin povrat

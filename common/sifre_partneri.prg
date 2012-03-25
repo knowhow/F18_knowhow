@@ -282,28 +282,31 @@ return lRet
 
 // -----------------------------------
 // -----------------------------------
-function p_set_group(set_field)
-private Opc:={}
-private opcexe:={}
-private Izbor
+function p_set_group( set_field )
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+local _m_x, _m_y
 
-AADD(Opc, "VP  - veleprodaja          ")
-AADD(opcexe, {|| set_field := "VP ", Izbor := 0 } )
-AADD(Opc, "AMB - ambulantna dostava  ")
-AADD(opcexe, {|| set_field := "AMB", Izbor := 0 } )
-AADD(Opc, "SIS - sistemska kuca      ")
-AADD(opcexe, {|| set_field := "SIS", Izbor := 0 } )
-AADD(Opc, "OST - ostali      ")
-AADD(opcexe, {|| set_field := "OST", Izbor := 0 } )
+_m_x := m_x
+_m_y := m_y
 
-Izbor:=1
-Menu_Sc("pgr")
+AADD(_Opc, "VP  - veleprodaja          ")
+AADD(_opcexe, {|| set_field := "VP ", _izbor := 0 } )
+AADD(_Opc, "AMB - ambulantna dostava  ")
+AADD(_opcexe, {|| set_field := "AMB", _izbor := 0 } )
+AADD(_Opc, "SIS - sistemska kuca      ")
+AADD(_opcexe, {|| set_field := "SIS", _izbor := 0 } )
+AADD(_Opc, "OST - ostali      ")
+AADD(_opcexe, {|| set_field := "OST", _izbor := 0 } )
 
-m_x := 1
-m_y := 5
+f18_menu("pgr", .f., @_izbor, _opc, _opcexe )
+
+m_x := _m_x
+m_y := _m_y
 
 return .t.
-*}
+
 
 // vraca opis grupe
 function gr_opis(cGroup)
@@ -326,15 +329,15 @@ return cRet
 
 // -----------------------------------
 // -----------------------------------
-function p_gr(xVal, nX, nY)
+function p_gr( xVal, nX, nY )
 local cRet := ""
 local cPrn := ""
 
-cRet := gr_opis(xVal)
+cRet := gr_opis( xVal )
 cPrn := SPACE(2) + "-" + SPACE(1) + cRet
 
-@ nX, nY+25 SAY SPACE(40)
-@ nX, nY+25 SAY cPrn
+@ nX, nY + 25 SAY SPACE(40)
+@ nX, nY + 25 SAY cPrn
 
 return .t.
 

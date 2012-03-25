@@ -123,14 +123,14 @@ if empty(cidrj)
     hseek str(cGodina,4)+str(cmjesec,2)+cObracun
   ELSE
     Box(,2,30)
-     nSlog:=0; nUkupno:=RECCOUNT2()
+     nSlog:=0
      cSort1:="SortPrez(IDRADN)"
-     cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+     cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
+              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
      if lViseObr
-       cFilt+=".and. obr=cObracun"
+       cFilt+=".and. obr=" + _filter_quote( cObracun )
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF
@@ -140,15 +140,15 @@ else
     hseek str(cGodina,4)+cidrj+str(cmjesec,2)+cObracun
   ELSE
     Box(,2,30)
-     nSlog:=0; nUkupno:=RECCOUNT2()
+     nSlog:=0
      cSort1:="SortPrez(IDRADN)"
      cFilt := "IDRJ==cIdRj.and."+;
-              IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+              IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
+              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina) )
      if lViseObr
-       cFilt+=".and. obr=cObracun"
+       cFilt+=".and. obr=" + _filter_quote( cObracun )
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF
@@ -404,13 +404,12 @@ if empty(cIdRj)
   	else
     		Box(,2,30)
      		nSlog:=0
-		nUkupno:=RECCOUNT2()
      		cSort1:="SortPrez(IDRADN)"
-     		cFilt:=IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+     		cFilt:=IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina) )
      		if lViseObr
-       			cFilt+=".and. obr=cObracun"
+       			cFilt+=".and. obr=" + _filter_quote( cObracun ) 
      		endif
-     		INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     		INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     		BoxC()
     		go top
   	endif
@@ -421,13 +420,12 @@ else
   	else
     		Box(,2,30)
      		nSlog:=0
-		nUkupno:=RECCOUNT2()
      		cSort1:="SortPrez(IDRADN)"
-     		cFilt:="IDRJ==cIdRj.and."+IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+     		cFilt:="IDRJ==" + _filter_quote( cIdRj ) + ".and." + IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ))+".and."+IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina) )
      		if lViseObr
-       			cFilt+=".and. obr=cObracun"
+       			cFilt+=".and. obr=" + _filter_quote( cObracun )
      		endif
-     		INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     		INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     		BoxC()
     		go top
   	endif
@@ -748,15 +746,15 @@ if empty(cIdRj)
      		cSort1:="radn->idbanka+SortPrez(IDRADN)"
   	endif
 	if empty(cIdBanka)
-		cFilt:="radn->isplata==cIsplata.and."
+		cFilt:="radn->isplata==" + _filter_quote( cIsplata ) + ".and."
 	else
-		cFilt:="radn->isplata==cIsplata.and.radn->idBanka==cIdBanka.and."
+		cFilt:="radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
 	endif
-     	cFilt:=cFilt+IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+     	cFilt:=cFilt+IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec) )+".and."+IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
      	if lViseObr
-       		cFilt+=".and. obr=cObracun"
+       		cFilt+=".and. obr=" + _filter_quote( cObracun ) 
      	endif
-     	INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     	INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     	BoxC()
     	go top
 else
@@ -769,15 +767,15 @@ else
      		cSort1:="radn->idbanka+SortPrez(IDRADN)"
   	endif
 	if empty(cIdBanka)
-		cFilt:="radn->isplata==cIsplata.and."
+		cFilt:="radn->isplata==" + _filter_quote( cIsplata ) + ".and."
 	else
-		cFilt:="radn->isplata==cIsplata.and.radn->idBanka==cIdBanka.and."
+		cFilt:="radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
 	endif
-     	cFilt:=cFilt+"IDRJ==cIdRj.and."+IF(EMPTY(cMjesec),".t.","MJESEC==cMjesec")+".and."+IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+     	cFilt:=cFilt+"IDRJ==" + _filter_quote( cIdRj ) + ".and."+IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
      	if lViseObr
-       		cFilt+=".and. obr=cObracun"
+       		cFilt+=".and. obr=" + _filter_quote( cObracun )
      	endif
-     	INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+     	INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
     	BoxC()
     	go top
 endif

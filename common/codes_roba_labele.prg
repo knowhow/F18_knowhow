@@ -255,13 +255,9 @@ return nil
 //             gdje se vidi i precrtana stara cijena
 // -------------------------------------------------------------------
 static function PrintRLabele( cVarijanta )
-// pozovi delphi rb i odgovarajuci rtm-fajl 
-// (rlab1 / rlab2) za kreiranje labela
-private cKomLin
+local _rtm_naziv := ALLTRIM( "rlab" + cVarijanta )
 
-cKomLin:="delphirb "+"rlab"+cVarijanta+" "+PRIVPATH+"  rlabele 1"
-
-run &cKomLin
+f18_rtm_print( _rtm_naziv, "rlabele", "1" )
 
 return nil
 

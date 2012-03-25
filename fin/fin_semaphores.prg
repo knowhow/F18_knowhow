@@ -64,10 +64,17 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _count := 1
+    _step := 1
+endif
+
 SELECT F_SUBAN
 my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
 
-_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond" }
+_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond", "otvst", "idtipdok" }
+
 
 _sql_fields := sql_fields( _fields )
 
@@ -75,6 +82,10 @@ for _offset := 0 to _count STEP _step
 
 
 
+  if algoritam <> "IDS"
+    _qry += " ORDER BY " + _order
+    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -199,7 +210,7 @@ DO CASE
  CASE op == "ins"
 
     _qry := "INSERT INTO " + _tbl + ;
-                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_P, iznosbhd, iznosdem) " + ;
+                "(idfirma, idvn, brnal, rbr, datdok, datval, opis, idpartner, idkonto, d_p, iznosbhd, iznosdem, brdok, otvst, idtipdok, k1, k2, k3, k4, m1, m2, idrj, funk, fond) " + ;
                 "VALUES(" + _sql_quote( record["id_firma"] )  + "," +;
                             + _sql_quote( record["id_vn"] ) + "," +; 
                             + _sql_quote( record["br_nal"] ) + "," +; 
@@ -211,7 +222,19 @@ DO CASE
                             + _sql_quote( record["id_konto"] ) + "," +; 
                             + _sql_quote( record["d_p"] ) + "," +; 
                             + STR( record["iznos_bhd"], 17, 2) + "," + ;
-							+ STR( record["iznos_dem"], 17, 2) + ")" 
+							+ STR( record["iznos_dem"], 17, 2) + "," + ;
+                            + _sql_quote( record["br_dok"] ) + "," +; 
+                            + _sql_quote( record["otv_st"] ) + "," +; 
+                            + _sql_quote( record["id_tip_dok"] ) + "," +; 
+                            + _sql_quote( record["k1"] ) + "," +; 
+                            + _sql_quote( record["k2"] ) + "," +; 
+                            + _sql_quote( record["k3"] ) + "," +; 
+                            + _sql_quote( record["k4"] ) + "," +; 
+                            + _sql_quote( record["m1"] ) + "," +; 
+                            + _sql_quote( record["m2"] ) + "," +; 
+                            + _sql_quote( record["id_rj"] ) + "," +; 
+                            + _sql_quote( record["funk"] ) + "," +; 
+                            + _sql_quote( record["fond"] ) + ")" 
 
 END CASE
    
@@ -266,6 +289,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_ANAL
 my_usex ("anal", "fin_anal", .f., "SEMAPHORE")
 
@@ -305,8 +334,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -499,6 +530,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_SINT
 my_usex ("sint", "fin_sint", .f., "SEMAPHORE")
 
@@ -538,8 +575,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 
@@ -732,6 +771,12 @@ _seconds := SECONDS()
 
 _count := table_count( _tbl, "true" ) 
 
+if algoritam == "IDS"
+    _offset := 1
+    _step := 1
+    _count := 1
+endif
+
 SELECT F_NALOG
 my_usex ("nalog", "fin_nalog", .f., "SEMAPHORE")
 
@@ -771,8 +816,10 @@ for _offset := 0 to _count STEP _step
         _key_block := {|| field->idfirma + field->idvn + field->brnal } 
   endif
 
-  _qry += " ORDER BY " + _order
-  _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  if algoritam <> "IDS"
+     _qry += " ORDER BY " + _order
+     _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
+  endif
 
   DO CASE
 

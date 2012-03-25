@@ -112,11 +112,12 @@ AADD (aDbf, {"Kolicina", "N", 15, 3})
 AADD (aDbf, {"Iznos",    "N", 20, 5})
 AADD (aDbf, {"Iznos2",   "N", 20, 5})
 AADD (aDbf, {"Iznos3",   "N", 20, 5})
-NaprPom (aDbf)
-my_use ("pom", "POM")
-INDEX ON IdRadnik+IdVrsteP+IdRoba+IdCijena TAG ("1") TO (PRIVPATH+"POM")
-INDEX ON IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
-index ON BRISANO TAG "BRISAN"
+
+NaprPom ( aDbf )
+O_POM
+
+INDEX ON IdRadnik + IdVrsteP + IdRoba + IdCijena TAG ("1") TO (my_home()+"POM")
+INDEX ON IdRoba + IdCijena TAG ("2") TO (my_home()+"POM")
 set order to tag "1"
 
 o_tables()
@@ -415,15 +416,22 @@ do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
   SELECT POS
   Seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
   do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+
     IF (!empty(cIdDio).and.POS->IdDio<>cIdDio)
       skip
       loop
     EndIF
+
     select roba
     hseek pos->idroba
-    select odj
-    hseek roba->idodj
+
+    if roba->(FIELDPOS("idodj")) <> 0
+        select odj
+        hseek roba->idodj
+    endif
+
     nNeplaca:=0
+
     if right(odj->naz,5)=="#1#0#"  // proba!!!
      nNeplaca:=pos->(Kolicina*Cijena)
     elseif right(odj->naz,6)=="#1#50#"
@@ -435,6 +443,7 @@ do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
 
     SELECT POM
     HSEEK _IdRadnik+_IdVrsteP+POS->IdRoba+POS->IdCijena
+    
     IF !FOUND()
       APPEND BLANK
       REPLACE IdRadnik WITH _IdRadnik, IdVrsteP WITH _IdVrsteP, IdRoba WITH POS->IdRoba, IdCijena WITH POS->IdCijena, Kolicina WITH POS->KOlicina, Iznos WITH POS->Kolicina*POS->Cijena, iznos3 with nNeplaca

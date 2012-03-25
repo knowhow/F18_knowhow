@@ -206,7 +206,6 @@ public gnTMarg:=11 // gornja margina
 public gnTMarg2:=3 // vertik.pomj. stavki u fakturi var.9
 public gnTMarg3:=0 // vertik.pomj. totala fakture var.9
 public gnTMarg4:=0 // vertik.pomj. za donji dio fakture var.9
-public gMjStr:="Zenica"
 public gMjRJ:="N"
 public gDK1:="N"
 public gDK2:="N"
@@ -359,39 +358,10 @@ public gcF9USmece := "N"
 // time-out kod azuriranja
 public gAzurTimeOut := 150
 
-// fiskalni stampac
-public gFC_type := PADR( "FPRINT", 20 )
-public gFC_device := "P"
-public gFc_use := "N"
-public gFC_path := PADR("c:\fiscal\", 150)
-public gFC_path2 := PADR("", 150)
-public gFC_name := PADR("out.txt", 150 ) 
-public gFC_answ := PADR("",40)
-public gFC_Pitanje := "D"
-public gFC_error := "N"
-public gFC_cmd := PADR( "", 200 )
-public gFC_cp1 := PADR( "", 150 )
-public gFC_cp2 := PADR( "", 150 )
-public gFC_cp3 := PADR( "", 150 )
-public gFC_cp4 := PADR( "", 150 )
-public gFC_cp5 := PADR( "", 150 )
-public gFC_tout := 300
-public gFC_Konv := "5"
-public gFC_addr := PADR("", 30)
-public gFC_port := PADR("", 10)
-public giosa := PADR("1234567890123456", 16)
-public gFC_alen := 32
-public gFC_nftxt := "N"
-public gFC_acd := "D"
-public gFC_pdv := "D"
-public gFC_pinit := 10
-public gFC_chk := "1"
-public gFC_faktura := "N"
-public gFC_zbir := 0
-public gFc_dlist := "N"
-public gFc_pauto := 0
-public gFc_serial := PADR("010000", 15)
-public gFc_restart := "N"
+// parametri fiskalnog uredjaja
+public gFc_type, gFc_device, gFc_use, gFc_path, gFc_path2, gFc_name, gFc_answ, gFc_pitanje, gFc_error
+public gFc_fisc_print, gFc_operater, gFc_oper_pwd, gFc_tout, gIosa, gFc_alen, gFc_nftxt, gFc_acd, gFc_pdv
+public gFc_pinit, gFc_chk, gFc_faktura, gFc_zbir, gFc_dlist, gFc_pauto, gFc_serial, gFc_restart
 
 // stmpa na traku
 public gMpPrint := "N"
@@ -444,6 +414,9 @@ public gFPicHRow:=0
 public gFPicFRow:=0
 
 // citaj parametre sa db servera
+
+// fiskalni parametri
+fiscal_params_read()
 
 // parametri zaglavlja
 gFNaziv := fetch_metric( "org_naziv", nil, gFNaziv )
@@ -529,7 +502,6 @@ RPar("s5",@g11Str2T)
 RPar("xm",@g15Str2T)
 RPar("s6",@g20Str2T)
 RPar("uc",@gNazPotStr)
-RPar("s7",@gMjStr)
 RPar("tb",@gTabela)
 RPar("tf",@gTipF)
 RPar("vf",@gVarF)
@@ -630,40 +602,6 @@ RPar("s1", @gShSld)
 RPar("s2", @gFinKtoDug)
 RPar("s3", @gFinKtoPot)
 RPar("s4", @gShSldVar)
-
-cSection := "F"
-RPar("f1", @gFc_use)
-RPar("f2", @gFC_path)
-RPar("f3", @gFC_pitanje)
-RPar("f4", @gFC_tout)
-RPar("f5", @gFC_Konv)
-
-RPar("f6", @gFC_type)
-RPar("f7", @gFC_name)
-RPar("f8", @gFC_error)
-RPar("f9", @gFC_cmd)
-RPar("f0", @gFC_cp1)
-RPar("fa", @gFC_cp2)
-RPar("fb", @gFC_cp3)
-RPar("fc", @gFC_cp4)
-RPar("fd", @gFC_cp5)
-RPar("fe", @gFC_addr)
-RPar("ff", @gFC_port)
-RPar("fi", @giosa)
-RPar("fj", @gFC_alen)
-RPar("fn", @gFC_nftxt)
-RPar("fC", @gFC_acd)
-RPar("fO", @gFC_pdv)
-RPar("fD", @gFC_device)
-RPar("fT", @gFC_pinit)
-RPar("fX", @gFC_chk)
-RPar("fZ", @gFC_faktura)
-RPar("fk", @gFC_zbir)
-RPar("fS", @gFC_path2)
-RPar("fK", @gFC_dlist)
-RPar("fA", @gFC_pauto)
-RPar("fB", @gFC_answ)
-RPar("fY", @gFC_serial)
 
 cSection := "1"
 // varijable PDV

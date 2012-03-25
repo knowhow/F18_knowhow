@@ -13,90 +13,72 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
-
-/*! \file fmk/kalk/dok/1g/mnu_dok.prg
- *  \brief Meni opcija za stampu i pregled dokumenata
- */
-
-/*! \fn kalk_pregled_dokumenata()
- *  \brief Meni opcija za stampu i pregled dokumenata
- */
-
 function kalk_pregled_dokumenata()
-*{
-PRIVATE opc:={}
-PRIVATE opcexe:={}
+local _opc:={}
+local _opcexe:={}
+local _izbor := 1
 
-AADD(opc,"1. stampa azuriranog dokumenta              ")
-AADD(opcexe, {|| kalk_centr_stampa_dokumenta(.t.)})
-AADD(opc,"2. stampa liste dokumenata")
-AADD(opcexe, {|| StDoks()})
-AADD(opc,"3. pregled dokumenata po hronologiji obrade")
-AADD(opcexe, {|| BrowseHron()})
-AADD(opc,"4. pregled dokumenata - tabelarni pregled")
-AADD(opcexe, {|| browse_kalk_dok()})
-AADD(opc,"5. radni nalozi ")
-AADD(opcexe, {|| BrowseRn()})
-AADD(opc,"6. analiza kartica ")
-AADD(opcexe, {|| AnaKart()})
-AADD(opc,"7. stampa OLPP-a za azurirani dokument")
-AADD(opcexe, {|| StOLPPAz()})
+AADD(_opc,"1. stampa azuriranog dokumenta              ")
+AADD(_opcexe, {|| kalk_centr_stampa_dokumenta(.t.)})
+AADD(_opc,"2. stampa liste dokumenata")
+AADD(_opcexe, {|| StDoks()})
+AADD(_opc,"3. pregled dokumenata po hronologiji obrade")
+AADD(_opcexe, {|| BrowseHron()})
+AADD(_opc,"4. pregled dokumenata - tabelarni pregled")
+AADD(_opcexe, {|| browse_kalk_dok()})
+AADD(_opc,"5. radni nalozi ")
+AADD(_opcexe, {|| BrowseRn()})
+AADD(_opc,"6. analiza kartica ")
+AADD(_opcexe, {|| AnaKart()})
+AADD(_opc,"7. stampa OLPP-a za azurirani dokument")
+AADD(_opcexe, {|| StOLPPAz()})
+AADD(_opc,"8. kalkulacija cijena")
+AADD(_opcexe, {|| kalkulacija_cijena() })
 
-private Izbor:=1
-Menu_SC("razp")
-CLOSERET
+f18_menu( "razp", .f., _izbor, _opc, _opcexe )
+
+close all
 return
-*}
 
-/*! \fn kalk_ostale_operacije_doks()
- *  \brief Meni - opcija za povrat azuriranog dokumenta
- */
 
 function kalk_ostale_operacije_doks()
-*{
-private Opc:={}
-private opcexe:={}
-AADD(opc,"1. povrat dokumenta u pripremu")
+local _opc:={}
+local _opcexe:={}
+local _izbor := 1
+
+AADD(_opc,"1. povrat dokumenta u pripremu")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
-	AADD(opcexe, {|| Povrat_kalk_dokumenta()})
+    AADD(_opcexe, {|| Povrat_kalk_dokumenta()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 IF IsPlanika()
-	AADD(opc,"2. generacija tabele prodnc")
-	if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENPRODNC"))
-		AADD(opcexe, {|| GenProdNc()})
-	else
-		AADD(opcexe, {|| MsgBeep(cZabrana)})
-	endif
+    AADD(_opc,"2. generacija tabele prodnc")
+    if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENPRODNC"))
+        AADD(_opcexe, {|| GenProdNc()})
+    else
+        AADD(_opcexe, {|| MsgBeep(cZabrana)})
+    endif
 
-	AADD(opc,"3. Set roba.idPartner")
-	if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","SETIDPARTN"))
-		AADD(opcexe, {|| SetIdPartnerRoba()})
-	else
-		AADD(opcexe, {|| MsgBeep(cZabrana)})
-	endif
+    AADD(_opc,"3. Set roba.idPartner")
+    if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","SETIDPARTN"))
+        AADD(_opcexe, {|| SetIdPartnerRoba()})
+    else
+        AADD(_opcexe, {|| MsgBeep(cZabrana)})
+    endif
 endif
 
 AADD(opc,"4. pregled smeca ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","SMECEPREGLED"))
-	AADD(opcexe, {|| Pripr9View()})
+    AADD(_opcexe, {|| Pripr9View()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
 
+f18_menu( "mazd", .f., _izbor, _opc, _opcexe )
 
-private Izbor:=1
-Menu_SC("mazd")
-CLOSERET
+close all
 return
-*}
 

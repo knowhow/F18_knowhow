@@ -254,17 +254,10 @@ nBrZahtjeva := 1
 // otvori tabele
 ol_o_tbl()
 
-select params
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("i1",@cPredNaz)
-RPar("i2",@cPredAdr)  
-
-cPredJMB := IzFmkIni("Specif","MatBr","--",KUMPATH)
-cPredJMB := PADR(cPredJMB, 13)
+// upisi parametre...
+cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
+cPredAdr := fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr )
+cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
 Box("#OBRACUNSKI LISTOVI RADNIKA", 17, 75)
 
@@ -348,10 +341,10 @@ else
 	__xml := 0
 endif
 
-// upisi vrijednosti
-select params
-WPar("i1", cPredNaz)
-WPar("i2", cPredAdr)  
+// upisi parametre...
+set_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
+set_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr )
+set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
 select ld
 
@@ -503,6 +496,8 @@ return nRet
 // ----------------------------------------
 static function _xml_export( cTip )
 local cMsg
+local _id_br, _naziv, _adresa, _mjesto
+local _lokacija, _cre, _error, _a_files
 
 if __xml == 1
 	return
@@ -512,15 +507,63 @@ if cTip == "1"
 	return
 endif
 
+_id_br  := fetch_metric( "org_id_broj", NIL, PADR( "<POPUNI>", 13 ))
+_naziv  := fetch_metric( "org_naziv", NIL, PADR( "<POPUNI naziv>", 100 ))
+_adresa := fetch_metric( "org_adresa", NIL, PADR( "<POPUNI adresu>", 100 ))
+_mjesto   := fetch_metric( "org_mjesto", NIL, PADR( "<POPUNI mjesto>", 100 ))
+
+Box(, 6, 70)
+  @ m_x + 1, m_y + 2 SAY " - Firma/Organizacija - "
+  @ m_x + 3, m_y + 2 SAY " Id broj: " GET _id_br
+  @ m_x + 4, m_y + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
+  @ m_x + 5, m_y + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
+  @ m_x + 6, m_y + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
+  READ 
+BoxC()
+
+set_metric( "org_id_broj", NIL, _id_br)
+set_metric( "org_naziv", NIL, _naziv)
+set_metric( "org_adresa", NIL, _adresa)
+set_metric( "org_mjesto", NIL, _mjesto)
+
+if LASTKEY() == K_ESC
+   return .f.
+endif
+
+_id_br := ALLTRIM(_id_br)
+
+_lokacija := _path_quote( my_home() + "export" + SLASH )
+
+if DirChange(_lokacija) != 0
+
+   _cre := MakeDir (_lokacija)
+   if _cre != 0
+       MsgBeep("kreiranje " + _lokacija + " neuspjesno ?!")
+       log_write("dircreate err:" + _lokacija)
+       return .f.
+   endif
+
+endif
+
+DirChange(_lokacija)
+
 // napuni xml fajl
-_fill_e_xml()
+_fill_e_xml( _id_br + ".xml" )
 
-cMsg := "Export xml datoteke zavrsen. Datoteka se nalazi#"
-cMsg += "na lokaciji c:\export.xml#"
-cMsg += "Potrebno promjeniti naziv xml fajla u TIN.xml gdje je#"
-cMsg += "TIN id broj preduzeca, zatim zipovati fajl u TIN.zip."
+// setuj za zip kompresiju...
+_a_files := {}
+AADD( _a_files, _lokacija + _id_br + ".xml" )
 
-msgbeep( cMsg )
+// kompresuj fajl...
+_error := zip_files( _lokacija, _id_br + ".zip", _a_files )
+
+cMsg := "Generacija obrasca završena.#"
+cMsg +=  _lokacija + _id_br + ".xml#"
+
+MsgBeep(cMsg)
+
+DirChange(my_home())
+open_folder(_lokacija)
 
 return
 
@@ -528,65 +571,33 @@ return
 // ----------------------------------------
 // stampa xml-a
 // ----------------------------------------
-static function _xml_print( cTip )
-local cOdtName := ""
-local cOutput := "c:\ld_out.odt"
-local cJavaStart := ALLTRIM( gJavaStart )
+static function _xml_print( tip )
+local _template
+local _xml_file := my_home() + "data.xml"
 
 if __xml == 0
 	return
 endif
 
-ferase(cOutput)
-
 // napuni xml fajl
-_fill_xml( cTip )
+_fill_xml( tip, _xml_file )
 
 do case
-	case cTip == "1"
-		cOdtName := "ld_olp.odt"
-	case cTip == "2"
-		cOdtName := "ld_gip.odt"
-	case cTip == "3"
-		cOdtName := "ld_aop.odt"
-	case cTip == "4"
-		cOdtName := "ld_aop2.odt"
+	case tip == "1"
+		_template := "ld_olp.odt"
+	case tip == "2"
+		_template := "ld_gip.odt"
+	case tip == "3"
+		_template := "ld_aop.odt"
+	case tip == "4"
+		_template := "ld_aop2.odt"
 endcase
 
-save screen to cScreen
-
-clear screen
-
-cJODRep := ALLTRIM( gJODRep )
-cT_Path := "C:\"
-
-if !EMPTY( gJODTemplate )
-	cT_Path := ALLTRIM( gJODTemplate )
+// generisi report
+if f18_odt_generate( _template, _xml_file )
+    f18_odt_print()
 endif
 
-// stampanje labele
-cCmdLine := cJavaStart + " " + cJODRep + " " + ;
-	cT_Path + cOdtName + " c:\data.xml " + cOutput
-
-run &cCmdLine
-
-clear screen
-
-if !FILE(cOutput)
-	msgbeep("greska pri kreiranju izlaznog fajla !")
-    restore screen from cScreen
-	return
-endif
-
-cOOStart := '"' + ALLTRIM( gOOPath ) + ALLTRIM( gOOWriter ) + '"'
-cOOParam := ""
-
-// otvori naljepnicu
-cCmdLine := "start " + cOOStart + " " + cOOParam + " " + cOutput
-
-run &cCmdLine
-
-restore screen from cScreen
 
 return
 
@@ -606,7 +617,7 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima za export
 // --------------------------------------------
-static function _fill_e_xml()
+static function _fill_e_xml( file_name )
 local nTArea := SELECT()
 local nT_prih := 0
 local nT_pros := 0
@@ -624,7 +635,7 @@ local nT_klo := 0
 local nT_lodb := 0
 
 // otvori xml za upis
-open_xml( "c:\export.xml" )
+open_xml( file_name )
 
 // upisi header
 _xml_head()
@@ -664,13 +675,13 @@ do while !EOF()
 	xml_subnode("Dio1PodaciOPoslodavcuIPoreznomObvezniku", .f.)
 	
 	 xml_node("JIBJMBPoslodavca", ALLTRIM(cPredJmb) )
- 	 xml_node("Naziv", strkzn( ALLTRIM(cPredNaz), "8", "U" ) )
- 	 xml_node("AdresaSjedista", strkzn( ALLTRIM( cPredAdr ), "8", "U") )
+ 	 xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz) ) )
+ 	 xml_node("AdresaSjedista", to_xml_encoding( ALLTRIM( cPredAdr ) ) )
  	 xml_node("JMBZaposlenika", ALLTRIM( radn->matbr ) )
- 	 xml_node("ImeIPrezime", strkzn( ALLTRIM(radn->ime) + " " + ;
-	 	ALLTRIM(radn->naz), "8", "U" ) )
-	 xml_node("AdresaPrebivalista", strkzn( ALLTRIM(radn->streetname) + ;
-		" " + ALLTRIM(radn->streetnum), "8", "U" ) )
+ 	 xml_node("ImeIPrezime", to_xml_encoding( ALLTRIM(radn->ime) + " " + ;
+	 	ALLTRIM(radn->naz) ) )
+	 xml_node("AdresaPrebivalista", to_xml_encoding( ALLTRIM(radn->streetname) + ;
+		" " + ALLTRIM(radn->streetnum) ) )
 	 xml_node("PoreznaGodina", STR( nPorGodina ) )
 	 
 	 xml_node("PeriodOd", xml_date( dPerOd ) )
@@ -731,9 +742,9 @@ do while !EOF()
 
 		xml_node("Mjesec", STR( field->mj_ispl ) )
 		xml_node("IsplataZaMjesecIGodinu", ;
-			strkzn( ALLTRIM(field->ispl_za), "8", "U" ) )
+			to_xml_encoding( ALLTRIM(field->ispl_za) ) )
 		xml_node("VrstaIsplate", ;
-			strkzn( ALLTRIM(field->vr_ispl), "8", "U" ))
+			to_xml_encoding( ALLTRIM(field->vr_ispl) ))
 		xml_node("IznosPrihodaUNovcu", ;
 			STR( field->prihod, 12, 2 ) ) 
 		xml_node("IznosPrihodaUStvarimaUslugama", ;
@@ -760,7 +771,7 @@ do while !EOF()
 		xml_node("NetoPlaca", STR( field->neto, 12, 2 ) )
 		xml_node("DatumUplate", xml_date( field->datispl ) )
 		
-		//xml_node("opis", strkzn( ALLTRIM( field->naziv ), "8", "U") )
+		//xml_node("opis", to_xml_encoding( ALLTRIM( field->naziv ) ) )
 		//xml_node("uk", STR( field->ukupno, 12, 2 ) )
 
 		xml_subnode("PodaciOPrihodimaDoprinosimaIPorezu", .t.)
@@ -813,7 +824,7 @@ do while !EOF()
 	xml_subnode("Dio3IzjavaPoslodavcaIsplatioca", .f.)
 	 xml_node("JIBJMBPoslodavca", ALLTRIM(cPredJmb) )
  	 xml_node("DatumUnosa", xml_date( dDatUnosa ) )
- 	 xml_node("NazivPoslodavca", strkzn( ALLTRIM(cPredNaz), "8", "U" ) )
+ 	 xml_node("NazivPoslodavca", to_xml_encoding( ALLTRIM(cPredNaz) ) )
 	xml_subnode("Dio3IzjavaPoslodavcaIsplatioca", .t.)
 
 	xml_subnode("Dokument", .f.)
@@ -836,7 +847,7 @@ return
 // --------------------------------------------
 // filuje xml fajl sa podacima izvjestaja
 // --------------------------------------------
-static function _fill_xml( cTip )
+static function _fill_xml( cTip, xml_file )
 local nTArea := SELECT()
 local nT_prih := 0
 local nT_pros := 0
@@ -857,7 +868,7 @@ local nT_klo := 0
 local nT_lodb := 0
 
 // otvori xml za upis
-open_xml("c:\data.xml")
+open_xml( xml_file )
 // upisi header
 xml_head()
 
@@ -886,14 +897,14 @@ do while !EOF()
 
 	xml_subnode("radnik", .f.)
 
-	xml_node("ime", strkzn( ALLTRIM(radn->ime) + ;
+	xml_node("ime", to_xml_encoding( ALLTRIM(radn->ime) + ;
 		" (" + ALLTRIM(radn->imerod) + ;
-		") " + ALLTRIM(radn->naz), "8", "U" ) )
+		") " + ALLTRIM(radn->naz) ) )
 
 	xml_node("mb", ALLTRIM(radn->matbr) )
 	
-	xml_node("adr", strkzn( ALLTRIM(radn->streetname) + ;
-		" " + ALLTRIM(radn->streetnum), "8", "U" ) )
+	xml_node("adr", to_xml_encoding( ALLTRIM(radn->streetname) + ;
+		" " + ALLTRIM(radn->streetnum) ) )
 
 	nT_prih := 0
 	nT_pros := 0
@@ -961,14 +972,12 @@ do while !EOF()
 		xml_subnode("obracun", .f.)
 
 		xml_node("rbr", STR( ++nCnt ) )
-		xml_node("pl_opis", strkzn( ALLTRIM( field->mj_opis ), ;
-			"8", "U" ) )
+		xml_node("pl_opis", to_xml_encoding( ALLTRIM( field->mj_opis ) ) )
 		xml_node("mjesec", STR( field->mj_ispl ) )
 		xml_node("godina", STR( field->godina ) )
-		xml_node("isp_m", strkzn( ALLTRIM(field->mj_naz), "8", "U") )
-		xml_node("isp_z", strkzn( ALLTRIM(field->ispl_za), "8", "U" ) )
-		xml_node("isp_v", strkzn( g_v_ispl(ALLTRIM(field->vr_ispl));
-			, "8", "U" ))
+		xml_node("isp_m", to_xml_encoding( ALLTRIM(field->mj_naz) ) )
+		xml_node("isp_z", to_xml_encoding( ALLTRIM(field->ispl_za) ) )
+		xml_node("isp_v", to_xml_encoding( g_v_ispl(ALLTRIM(field->vr_ispl))))
 		xml_node("prihod", STR( field->prihod, 12, 2 ) ) 
 		xml_node("prih_o", STR( field->prihost, 12, 2 ) )
 		xml_node("bruto", STR( field->bruto, 12, 2 ) )
@@ -987,7 +996,7 @@ do while !EOF()
 		xml_node("p_izn", STR( field->izn_por, 12, 2 ) )
 		xml_node("uk", STR( field->ukupno, 12, 2 ) )
 		xml_node("d_isp", DTOC( field->datispl ) )
-		xml_node("opis", strkzn( ALLTRIM( field->naziv ), "8", "U") )
+		xml_node("opis", to_xml_encoding( ALLTRIM( field->naziv ) ) )
 
 		xml_subnode("obracun", .t.)
 		
@@ -1042,6 +1051,10 @@ enddo
 xml_subnode("rpt", .t.)
 
 select (nTArea)
+
+// zatvori xml fajl za upis
+close_xml()
+
 return
 
 

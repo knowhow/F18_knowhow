@@ -32,46 +32,51 @@ O_PARTN
 O_KONTO
 O_KALK_PRIPR
 O_RJ
+
 set order to tag "ID"
 select kalk_pripr
 
 Box(,3,60)
 
 do while .t.
+
   cIdFirma:=kalk_pripr->idfirma
 
-  SELECT RJ; GO TOP
+    SELECT RJ
+    GO TOP
 
-  IF kalk_pripr->idvd $ "97"
-	  LOCATE FOR konto==kalk_PRIPR->idkonto2
-	  if found()
-		  lRJKon97_2:=.t.
-		  cFF97_2:=id
-	  endif
-	  GO TOP
-	  LOCATE FOR konto==kalk_PRIPR->idkonto
-	  if found()
-		  lRJKon97:=.t.
-		  cFF97:=id
-	  endif
-  	  if !(lRJKon97.or.lRJKon97_2)
-		  // ako nijedan konto ne postoji u RJ.DBF u FAKT-u, nece se
-		  // formirati FAKT dokument za KALK 97-icu
-		  exit
-	  endif
-  ELSE
-	  IF kalk_pripr->idvd $ "11#12#13#95#96"
+    IF kalk_pripr->idvd $ "97"
 	    LOCATE FOR konto==kalk_PRIPR->idkonto2
-	  ELSE
+	    if found()
+		    lRJKon97_2:=.t.
+		    cFF97_2:=id
+	    endif
+	    GO TOP
 	    LOCATE FOR konto==kalk_PRIPR->idkonto
+	    if found()
+		    lRJKon97:=.t.
+		    cFF97:=id
+	    endif
+  	    if !(lRJKon97.or.lRJKon97_2)
+		    // ako nijedan konto ne postoji u RJ.DBF u FAKT-u, nece se
+		    // formirati FAKT dokument za KALK 97-icu
+		    exit
+	    endif
+    ELSE
+	  IF kalk_pripr->idvd $ "11#12#13#95#96"
+	    //LOCATE FOR konto==kalk_PRIPR->idkonto2
+	  ELSE
+	    //LOCATE FOR konto==kalk_PRIPR->idkonto
 	  ENDIF
 
-	  IF FOUND()
-	    lRJKonto:=.t.     // ovo znaci da se oznaka firme u FAKT-dokumentu
-	    cFaktFirma:=id    // uzima iz sifrarnika RJ koji se nalazi u FAKT-u
-	  ELSE
-	    cFaktFirma:=cIdFirma
-	  ENDIF
+	  //IF FOUND()
+	  //  lRJKonto:=.t.     
+        // ovo znaci da se oznaka firme u FAKT-dokumentu
+	  //  cFaktFirma:=id    
+        // uzima iz sifrarnika RJ koji se nalazi u FAKT-u
+	  //ELSE
+	  cFaktFirma:=cIdFirma
+	  //ENDIF
   ENDIF
 
   select kalk_pripr
@@ -85,12 +90,15 @@ do while .t.
 
   cIdTipDok:=kalk_pripr->idvd
   cBrDok:=kalk_pripr->brdok
+
   read
 
-  select XFAKT
-  private gNumDio:=5, cIdFakt:=""
+  select FAKT
+  private gNumDio:=5
+  private cIdFakt:=""
 
   if kalk_pripr->idvd $ "97"
+
     cBrFakt:=cidtipdok+"-"+right(alltrim(cBrDok),5)
 
     if lRJKon97
@@ -120,62 +128,59 @@ do while .t.
     endif
 
   elseif kalk_pripr->idvd $ "10#16#PR#RN"
-    cIdFakt:="01"
-    
-    //cBrFakt:=cidtipdok+"-"+right(alltrim(cBrDok),5)
-    cBrFakt:=right(alltrim(cBrDok),6)
-    
-    seek cFaktFirma+cidfakt+cBrFakt
+
+    cIdFakt := "01"    
+    cBrFakt := fakt_novi_broj_dokumenta( cFaktFirma, cIdFakt )
+
+    seek cFaktFirma + cIdFakt + cBrFakt
+
   else
+
     if kalk_pripr->idvd $ "11#12#13"
        cIdFakt:="13"
     elseif kalk_pripr->idvd $ "95#96"
        cIdFakt:="19"
     endif
-//    seek kalk_pripr->idfirma+cidfakt+"È"
-    seek cFaktFirma+cidfakt+"È"
-    skip -1
-    if  cidfakt<>idtipdok
-        cbrfakt:=padr("00001",len(brdok))
-    else
-       cbrfakt:=padl(alltrim(str(val(left(brdok,gNumDio))+1)),gNumDio,"0")+right(brdok,len(brdok)-gNumDio)
-    endif
-    seek cFaktFirma+cidfakt+cBrFakt
+
+    cBrFakt := fakt_novi_broj_dokumenta( cFaktFirma, cIdFakt )
+
+    seek cFaktFirma + cIdFakt + cBrFakt
+    
   endif
 
-  if kalk_pripr->idvd<>"97"
-  	@ m_x+2,m_y+2 SAY "Broj dokumenta u modulu FAKT: "+cFaktFirma+" - "+cidfakt+" - " + cBrFakt
-  	//read
-  	//if lastkey()==K_ESC; exit; endif
+  if kalk_pripr->idvd <> "97"
+
+  	@ m_x+2,m_y+2 SAY "Broj dokumenta u modulu FAKT: " + cFaktFirma + " - " + cIdFakt + " - " + cBrFakt
 
   	if found()
-     		Beep(4)
-     		Box(,1,50)
-      		@ m_x+1,m_y+2 SAY "U FAKT vec postoji ovaj dokument !!"
-      		inkey(0)
-     		BoxC()
-     		exit
+     	Beep(4)
+     	Box(,1,50)
+      	@ m_x + 1, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
+      	inkey(0)
+     	BoxC()
+     	exit
   	endif
+
   endif
 
-     select kalk_pripr
-     fFirst:=.t.
-     do while !eof() .and. cIdFirma+cIdTipDok+cBrDok==IdFirma+IdVD+BrDok
+  select kalk_pripr
+  fFirst:=.t.
+  do while !eof() .and. cIdFirma+cIdTipDok+cBrDok==IdFirma+IdVD+BrDok
 
-       private nKolicina:=kalk_pripr->(kolicina-gkolicina-gkolicin2)
-       if kalk_pripr->idvd $ "12#13"  // ove transakcije su storno otpreme
-           nKolicina:=-nKolicina
-       endif
+    private nKolicina:=kalk_pripr->(kolicina-gkolicina-gkolicin2)
+    if kalk_pripr->idvd $ "12#13"  // ove transakcije su storno otpreme
+        nKolicina:=-nKolicina
+    endif
 
-       if kalk_pripr->idvd $ "PR#RN"
-           if val(kalk_pripr->rbr)>899
-		skip
-		loop
-	   endif
-       endif
+    if kalk_pripr->idvd $ "PR#RN"
+        if val(kalk_pripr->rbr)>899
+		    skip
+		    loop
+	    endif
+    endif
 
-       select fakt_pripr
-       if kalk_pripr->idvd=="97"
+    select fakt_pripr
+    if kalk_pripr->idvd=="97"
 		if lRJKon97
 		       	hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
 		       	if found()
@@ -330,8 +335,10 @@ enddo
 Boxc()
 
 close all
-kalk_azuriraj_fakturu()
-close all
+
+//kalk_azuriraj_fakturu()
+//close all
+
 return
 
 
@@ -349,25 +356,24 @@ O_FAKT
 O_FAKT_DOKS
 O_VALUTE
 
-if !( FAKT->(flock()) ) .or. !( FAKT_DOKS->(flock()) )
-    Beep(4)
-    BoxC()
-    Msg("Azuriranje NE moze vrsiti vise korisnika istovremeno !",4)
-    close all
-endif
 
 select fakt
 seek fakt_pripr->(idfirma+idtipdok+brdok)
+
 if found()
   Beep(4)
   Msg("Dokument vec postoji pod istim brojem...",4)
   return
 endif
+
 append from fakt_pripr
 
 select fakt_pripr
+
 go top
+
 do while !eof()
+
   select fakt_doks
   append blank
   select fakt_pripr

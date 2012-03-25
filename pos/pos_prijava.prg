@@ -54,7 +54,7 @@ do while .t.
   endif
 
 ENDDO
-PrikStatus()
+pos_status_traka()
 CLOSE ALL
 return (cLevel)
 

@@ -28,9 +28,9 @@
 #define F18_SCREEN_INI_SECTION "F18_screen"
 
 #ifdef __PLATFORM__WINDOWS
-    #define F18_TEMPLATE_LOCATION "c:\\knowhowERP\\template\\"
+    #define F18_TEMPLATE_LOCATION "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
 #else
-    #define F18_TEMPLATE_LOCATION ""
+    #define F18_TEMPLATE_LOCATION hb_DirSepAdd(GetEnv( "HOME" )) + "knowhowERP" + SLASH + "template" + SLASH
 #endif
 
 #ifndef TEST

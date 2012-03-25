@@ -184,106 +184,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-if (nArea==-1 .or. nArea==(F_DOKS))
-
-	// DOKS.DBF
-	aDbf := {}
-	AADD ( aDbf, { "BRDOK",     "C",  6, 0} )
-	AADD ( aDbf, { "DATUM",     "D",  8, 0} )
-	AADD ( aDbf, { "IDGOST",    "C",  8, 0} )
-	AADD ( aDbf, { "IDPOS",     "C",  2, 0} )
-	AADD ( aDbf, { "IDRADNIK",  "C",  4, 0} )
-	AADD ( aDbf, { "IDVD",      "C",  2, 0} )
-	AADD ( aDbf, { "IDVRSTEP",  "C",  2, 0} )
-	AADD ( aDbf, { "M1",        "C",  1, 0} )
-	AADD ( aDbf, { "PLACEN",    "C",  1, 0} )
-	AADD ( aDbf, { "PREBACEN",  "C",  1, 0} )
-	AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
-	AADD ( aDbf, { "STO",       "C",  3, 0} )
-	AADD ( aDbf, { "VRIJEME",   "C",  5, 0} )
-	AADD ( aDbf, { "C_1",        "C",  6, 0} )
-	AADD ( aDbf, { "C_2",        "C", 10, 0} )
-	AADD ( aDbf, { "C_3",        "C", 50, 0} )
-	AADD ( aDbf, { "FISC_RN",    "N", 10, 0} )
-
-	if gStolovi == "D"
-		AADD ( aDbf, { "ZAK_BR",   "N",  6, 0} )
-		AADD ( aDbf, { "STO_BR",   "N",  3, 0} )
-	endif
-	
-	IF !FILE(f18_ime_dbf("pos_doks"))
-	  DBcreate2(KUMPATH+"POS_DOKS.DBF", aDbf)
-	ENDIF
-
-	// brojac dokumenata
-	CREATE_INDEX ("1", "IdPos+IdVd+dtos(datum)+BrDok", KUMPATH+"POS_DOKS")
-	// realizacija (kase, radnika, odjeljenja, dijela objekta, poreza)
-	// prenos realizacije u KALK
-	CREATE_INDEX ("2", "IdVd+DTOS(Datum)+Smjena", KUMPATH+"POS_DOKS")
-	// za gosta
-	CREATE_INDEX ("3", "IdGost+Placen+DTOS(Datum)", KUMPATH+"POS_DOKS")
-	CREATE_INDEX ("4", "IdVd+M1", KUMPATH+"POS_DOKS" )
-	CREATE_INDEX ("5", "Prebacen", KUMPATH+"POS_DOKS" )
-	CREATE_INDEX ("6", "dtos(datum)", KUMPATH+"POS_DOKS" )
-	CREATE_INDEX ("7", "IdPos+IdVD+BrDok", KUMPATH+"POS_DOKS" )
-	CREATE_INDEX ("TK", "IdPos+DTOS(Datum)+IdVd", KUMPATH+"POS_DOKS" )
-	CREATE_INDEX ("GOSTDAT", "IdPos+IdGost+DTOS(Datum)+IdVd+Brdok", KUMPATH+"POS_DOKS")
-	
-	// indexi za vodjenje kase po stolovima
-	if gStolovi == "D"
-		CREATE_INDEX ("STO", "IdPos+idvd+STR(STO_BR)+STR(ZAK_BR)+DTOS(datum)+brdok", KUMPATH+"POS_DOKS" )
-		CREATE_INDEX ("ZAK", "IdPos+idvd+STR(ZAK_BR)+STR(STO_BR)+DTOS(datum)+brdok", KUMPATH+"POS_DOKS" )
-	endif
-
-endif
-
-if (nArea==-1 .or. nArea==(F_POS))
-	// POS.DBF
-	aDbf := {}
-	AADD ( aDbf, { "BRDOK",     "C",  6, 0} )
-	AADD ( aDbf, { "CIJENA",    "N", 10, 3} )
-	AADD ( aDbf, { "DATUM",     "D",  8, 0} )
-	AADD ( aDbf, { "IDCIJENA",  "C",  1, 0} )
-	AADD ( aDbf, { "IDDIO",     "C",  2, 0} ) // gdje se roba izuzima
-	AADD ( aDbf, { "IDODJ",     "C",  2, 0} ) // sa IdDio daje tacno mjesto
-	AADD ( aDbf, { "IDPOS",     "C",  2, 0} )
-	AADD ( aDbf, { "IDRADNIK",  "C",  4, 0} )
-	AADD ( aDbf, { "IDROBA",    "C", 10, 0} )
-	AADD ( aDbf, { "IDTARIFA",  "C",  6, 0} )
-	AADD ( aDbf, { "IDVD",      "C",  2, 0} )
-	AADD ( aDbf, { "KOL2",      "N", 18, 3} )       // za inventuru, nivelaciju
-	AADD ( aDbf, { "KOLICINA",  "N", 18, 3} )
-	AADD ( aDbf, { "M1",        "C",  1, 0} )
-	AADD ( aDbf, { "MU_I",      "C",  1, 0} )
-	AADD ( aDbf, { "NCIJENA",   "N", 10, 3} )
-	AADD ( aDbf, { "PREBACEN",  "C",  1, 0} )
-	AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
-	AADD ( aDbf, { "C_1",        "C",  6, 0} )
-	AADD ( aDbf, { "C_2",        "C", 10, 0} )
-	AADD ( aDbf, { "C_3",        "C", 50, 0} )
-
-
-	// M1 ? cemu sluzi Z - zakljucen, S-odstampan
-	IF !FILE ( f18_ime_dbf("pos") )
-	  DBcreate2 ( KUMPATH + "POS.DBF", aDbf )
-	ENDIF
-
-	// veza prema DOKS
-	CREATE_INDEX ("1", "IdPos+IdVd+dtos(datum)+BrDok+IdRoba+IdCijena", KUMPATH+"POS")
-	// robno-materijalno pracenje odjeljenja
-	CREATE_INDEX ("2", "IdOdj+idroba+DTOS(Datum)", KUMPATH+"POS")
-	CREATE_INDEX ("3", "Prebacen", KUMPATH+"POS")
-	CREATE_INDEX ("4", "dtos(datum)", KUMPATH+"POS")
-	CREATE_INDEX ("5", "IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
-	CREATE_INDEX ("6", "IdRoba", KUMPATH+"POS")
-	if IsPlanika() .or. IsPlNS()
-		CREATE_INDEX ("7", "IdPos+IdVd+BrDok+DTOS(_DATAZ_)+IdDio+IdOdj", KUMPATH+"POS")
-	else
-		CREATE_INDEX ("7", "IdPos+IdVd+BrDok+DTOS(Datum)+IdDio+IdOdj", KUMPATH+"POS")
-	endif
-endif
-
-
 
 if (nArea==-1 .or. nArea==(F_RNGPLA))
 	// RNGPLA - izmirenje dugovanja po racunima gostiju
@@ -302,48 +202,6 @@ if (nArea==-1 .or. nArea==(F_RNGPLA))
 	ENDIF
 	CREATE_INDEX ("1", "IdGost", KUMPATH+"RNGPLA")
 endif
-
-
-if (nArea==-1 .or. nArea==(F_PROMVP))
-
-	
-	cImeDbf:=KUMPATH+"PROMVP.DBF"
-	cImeCdx:=KUMPATH+"PROMVP.CDX"
-	if FILE(f18_ime_dbf("promvp"))
-		
-		my_use("promvp")
-		if (FIELDPOS("polog01")==0 .or. FIELDPOS("_SITE_")==0)
-			USE
-			//stara struktura tabele
-			FERASE(cImeDbf)
-			FERASE(cImeCdx)
-		endif
-	endif
-	if !FILE(f18_ime_dbf("promvp"))
-	   aDbf := { {"pm",        "C",  2, 0}, ;
-		     {"datum",     "D",  8, 0}, ;
-		     {"polog01",   "N", 10, 2}, ;
-		     {"polog02",   "N", 10, 2}, ;
-		     {"polog03",   "N", 10, 2}, ;
-		     {"polog04",   "N", 10, 2}, ;
-		     {"polog05",   "N", 10, 2}, ;
-		     {"polog06",   "N", 10, 2}, ;
-		     {"polog07",   "N", 10, 2}, ;
-		     {"polog08",   "N", 10, 2}, ;
-		     {"polog09",   "N", 10, 2}, ;
-		     {"polog10",   "N", 10, 2}, ;
-		     {"polog11",   "N", 10, 2}, ;
-		     {"polog12",   "N", 10, 2}, ;
-		     {"ukupno",   "N", 10, 3}  ;
-		   }
-	   if gSql=="D"
-		AddOidFields(@aDbf)
-	   endif
-	   DBcreate2 (cImeDbf, aDbf)
-	endif
-	CREATE_INDEX ("1", "DATUM", cImeDbf)
-endif
-
 
 // _POS, _PRIPR, PRIPRZ, PRIPRG, _POSP
 aDbf := g_pos_pripr_fields()
@@ -444,58 +302,6 @@ if (nArea==-1 .or. nArea==(F_ROBAIZ))
 	CREATE_INDEX ("1", "IdRoba", PRIVPATH+"ROBAIZ")
 endif
 
-if (nArea==-1 .or. nArea==(F_STRAD))
-	// STRAD.DBF
-	IF ! FILE ( f18_ime_dbf("strad") )
-	   aDbf := {}
-	   AADD ( aDbf, { "ID",        "C",  2, 0} )
-	   AADD ( aDbf, { "NAZ",       "C", 15, 0} )
-	   AADD ( aDbf, { "PRIORITET", "C",  1, 0} )
-	   DBcreate2 ( SIFPATH + "STRAD.DBF", aDbf )
-	ENDIF
-	CREATE_INDEX ("ID", "ID", SIFPATH+"STRAD.DBF")
-	CREATE_INDEX ("NAZ", "NAZ", SIFPATH+"STRAD.DBF")
-endif
-
-if (nArea==-1 .or. nArea==(F_OSOB))
-	// OSOB.DBF
-	IF ! FILE ( f18_ime_dbf("osob") )
-	   aDbf := {}
-	   AADD ( aDbf, { "ID",        "C",  4, 0} )
-	   AADD ( aDbf, { "KORSIF",    "C",  6, 0} )     // KORISN.SIF
-	   AADD ( aDbf, { "NAZ",       "C", 40, 0} )
-	   AADD ( aDbf, { "STATUS",    "C",  2, 0} )
-	   DBcreate2 ( SIFPATH + "OSOB.DBF", aDbf )
-	ENDIF
-	CREATE_INDEX ("ID", "KorSif", SIFPATH+"OSOB")
-	CREATE_INDEX ("NAZ", "ID", SIFPATH+"OSOB")
-endif
-
-if (nArea==-1 .or. nArea==(F_KASE))
-	//KASE
-	IF !FILE(f18_ime_dbf("kase"))
-	   aDbf := {}
-	   AADD ( aDbf, {"ID" ,     "C",  2, 0} )
-	   AADD ( aDbf, {"NAZ",     "C", 15, 0} )
-	   AADD ( aDbf, {"PPATH",   "C", 50, 0} )
-	   DBcreate2 (SIFPATH+'KASE.DBF', aDbf)
-	ENDIF
-	CREATE_INDEX ("ID", "ID", SIFPATH+"KASE")
-endif
-
-if (nArea==-1 .or. nArea==(F_ODJ))
-	// ODJ - odjeljenja
-	IF ! FILE ( f18_ime_dbf("odj"))
-	   aDbf := {}
-	   AADD ( aDbf, {"ID" ,      "C",  2, 0} )
-	   AADD ( aDbf, {"NAZ",      "C", 25, 0} )
-	   AADD ( aDbf, {"ZADUZUJE", "C",  1, 0} )
-	   AADD ( aDbf, {"IDKONTO",  "C",  7, 0} )
-	   DBcreate2 (SIFPATH+'ODJ.DBF', aDbf)
-	ENDIF
-	CREATE_INDEX ("ID", "ID", SIFPATH+"ODJ")
-endif
-
 if (nArea==-1 .or. nArea==(F_DIO))
 	// DIO - dijelovi objekta - HOPS
 	IF ! FILE ( f18_ime_dbf("dio"))
@@ -541,6 +347,8 @@ endif
 return
 
 
+
+
 // -------------------------------------
 // -------------------------------------
 method obaza(i)
@@ -552,7 +360,7 @@ PUBLIC gSifPath := SIFPATH
 
 lIdiDalje:=.f.
 
-if ( i==F_DOKS .or. i==F_POS .or. i==F_RNGPLA .or. i==F__POS .or. i==F__PRIPR .or. i==F_PRIPRZ .or. i==F__POSP .or. i==F_DOKSPF) 
+if ( i==F_POS_DOKS .or. i==F_POS .or. i==F_RNGPLA .or. i==F__POS .or. i==F__PRIPR .or. i==F_PRIPRZ .or. i==F__POSP .or. i==F_DOKSPF) 
 	lIdiDalje:=.t.
 endif
 
@@ -708,7 +516,7 @@ method konvZn()
  aPriv := { F__POS, F__PRIPR, F_PRIPRZ, F_PRIPRG, F_K2C, F_MJTRUR, F_ROBAIZ,;
             F_RAZDR }
 
- aKum  := { F_DOKS, F_POS, F_RNGPLA }
+ aKum  := { F_POS_DOKS, F_POS, F_RNGPLA }
 
  aSif  := { F_ROBA, F_SIROV, F_SAST, F_STRAD, F_TARIFA, F_VALUTE,;
             F_VRSTEP, F_ODJ, F_DIO, F_UREDJ, F_RNGOST, F_MARS }
@@ -867,6 +675,10 @@ AADD ( aDbf, { "PREBACEN",  "C",  1, 0} )
 AADD ( aDbf, { "ROBANAZ",   "C", 40, 0} )
 AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
 AADD ( aDbf, { "STO",       "C",  3, 0} )
+AADD ( aDbf, { "STO_BR",    "N",  3, 0} )
+AADD ( aDbf, { "ZAK_BR",    "N",  4, 0} )
+AADD ( aDbf, { "FISC_RN",   "N", 10, 0} )
+
 AADD ( aDbf, { "VRIJEME",   "C",  5, 0} )
 
 AADD( aDBf, { 'K1'                  , 'C' ,   4 ,  0 })

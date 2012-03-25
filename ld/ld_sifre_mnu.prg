@@ -14,123 +14,121 @@
 
 
 function ld_sifrarnici()
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
 
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+o_ld_sif_tables()
 
-OSifre()
+AADD(_opc,"1. opci sifrarnici                     ")
+AADD(_opcexe, {|| MnuOpSif()})
+AADD(_opc,"2. specijalni sifrarnici")
+AADD(_opcexe, {|| MnuSpSif()})
 
-AADD(opc,"1. opci sifrarnici                     ")
-AADD(opcexe, {|| MnuOpSif()})
-AADD(opc,"2. specijalni sifrarnici")
-AADD(opcexe, {|| MnuSpSif()})
+f18_menu("sif", .f., _izbor, _opc, _opcexe )
 
-Menu_SC("sif")
 return
 
 
 
 function MnuOpSif()
-*{
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
 
-AADD(opc, lokal("1. radnici                            "))
+AADD(_opc, lokal("1. radnici                            "))
 if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITRADN"))
-	AADD(opcexe, {|| P_Radn()})
+    AADD(_opcexe, {|| P_Radn()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
-AADD(opc, lokal("5. radne jedinice"))
-AADD(opcexe, {|| P_LD_RJ()})
-AADD(opc, lokal("6. opstine"))
-AADD(opcexe, {|| P_Ops()})
-AADD(opc, lokal("9. vrste posla"))
-AADD(opcexe, {|| P_VPosla()})
-AADD(opc, lokal("B. strucne spreme"))
-AADD(opcexe, {|| P_StrSpr()})
-AADD(opc, lokal("C. kreditori"))
-AADD(opcexe, {|| P_Kred()})
-AADD(opc, lokal("F. banke"))
-AADD(opcexe, {|| P_Banke()})
-AADD(opc, lokal("G. sifk"))
-AADD(opcexe, {|| P_SifK()})
+AADD(_opc, lokal("5. radne jedinice"))
+AADD(_opcexe, {|| P_LD_RJ()})
+AADD(_opc, lokal("6. opstine"))
+AADD(_opcexe, {|| P_Ops()})
+AADD(_opc, lokal("9. vrste posla"))
+AADD(_opcexe, {|| P_VPosla()})
+AADD(_opc, lokal("B. strucne spreme"))
+AADD(_opcexe, {|| P_StrSpr()})
+AADD(_opc, lokal("C. kreditori"))
+AADD(_opcexe, {|| P_Kred()})
+AADD(_opc, lokal("F. banke"))
+AADD(_opcexe, {|| P_Banke()})
+AADD(_opc, lokal("G. sifk"))
+AADD(_opcexe, {|| P_SifK()})
 
 if (IsRamaGlas())
-	AADD(opc, lokal("H. radni nalozi") )
-	AADD(opcexe, {|| P_RNal()})
+    AADD(_opc, lokal("H. radni nalozi") )
+    AADD(_opcexe, {|| P_RNal()})
 endif
 
-gLokal:=ALLTRIM(gLokal)
+gLokal := ALLTRIM(gLokal)
 if gLokal <> "0"
-	AADD(opc, lokal("L. lokalizacija") )
-	AADD(opcexe, {|| P_Lokal()})
+    AADD(_opc, lokal("L. lokalizacija") )
+    AADD(_opcexe, {|| P_Lokal()})
 endif
-Menu_SC("op")
+
+f18_menu("op", .f., _izbor, _opc, _opcexe )
+
 return
 
 
 
 function MnuSpSif()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
 
+AADD(_opc,"1. parametri obracuna                  ")
+AADD(_opcexe, {|| P_ParObr()})
 
-AADD(opc,"1. parametri obracuna                  ")
-AADD(opcexe, {|| P_ParObr()})
-
-AADD(opc,"2. tipovi primanja")
+AADD(_opc,"2. tipovi primanja")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITTIPPR"))
-	AADD(opcexe, {|| P_TipPr()})
+    AADD(_opcexe, {|| P_TipPr()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-if lViseObr
-	AADD(opc,"3. tipovi primanja za obracun 2")
-	if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITTIPPR2"))
-		AADD(opcexe, {|| P_TipPr2()})
-	else
-		AADD(opcexe, {|| MsgBeep(cZabrana)})
-	endif
+AADD(_opc,"3. tipovi primanja / ostali obracuni")
+if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITTIPPR2"))
+    AADD(_opcexe, {|| P_TipPr2()})
+else
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"4. porezi")
-AADD(opcexe, {|| P_Por()})
-AADD(opc,"5. doprinosi")
-AADD(opcexe, {|| P_Dopr()})
-AADD(opc,"6. koef.benef.rst")
-AADD(opcexe, {|| P_KBenef()})
+AADD(_opc,"4. porezne stope ")
+AADD(_opcexe, {|| P_Por()})
+AADD(_opc,"5. doprinosi ")
+AADD(_opcexe, {|| P_Dopr()})
+AADD(_opc,"6. koef.benef.rst")
+AADD(_opcexe, {|| P_KBenef()})
 
-if gSihtarica=="D"
-	AADD(opc,"7. tipovi primanja u sihtarici")
-	AADD(opcexe, {|| P_TprSiht()})
-	AADD(opc,"8. norme radova u sihtarici   ")
-	AADD(opcexe, {|| P_NorSiht()})
+if gSihtarica == "D"
+    AADD(_opc,"7. tipovi primanja u sihtarici")
+    AADD(_opcexe, {|| P_TprSiht()})
+    AADD(_opc,"8. norme radova u sihtarici   ")
+    AADD(_opcexe, {|| P_NorSiht()})
 endif
 
 if gSihtGroup == "D"
-	AADD(opc,"8. lista konta   ")
-	AADD(opcexe, {|| p_konto()})
+    AADD(_opc,"8. lista konta   ")
+    AADD(_opcexe, {|| p_konto()})
 endif
 
-Menu_SC("spc")
+f18_menu("spc", .f., _izbor, _opc, _opcexe )
+
 return
 
-function OSifre()
+
+
+// otvaranje tabela sifrarnika 
+static function o_ld_sif_tables()
 
 O_SIFK
 O_SIFV
 O_BANKE
-
-if gSihtarica=="D"
-	O_TPRSIHT
-  	O_NORSIHT
-endif
-
+O_TPRSIHT
+O_NORSIHT
 O_RADN
 O_PAROBR
 O_TIPPR
@@ -142,12 +140,10 @@ O_KBENEF
 O_VPOSLA
 O_OPS
 O_KRED
-if lViseObr
-	O_TIPPR2
-endif
+O_TIPPR2
 
 if (IsRamaGlas())
-	O_RNAL
+    O_RNAL
 endif
 
 return

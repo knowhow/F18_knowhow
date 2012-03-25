@@ -385,7 +385,7 @@ STATIC PROCEDURE P_KonIz()
   @ m_x+18,m_y+2 SAY "<a-P> popuni bazu iz sifrarnika   <a-N> preuzmi iz drugog izvjestaja"
   @ m_x+19,m_y+2 SAY "<c-N> nova stavka                 <c-I> nuliranje po uslovu         "
   @ m_x+20,m_y+2 SAY "<c-T> brisi stavku              <Enter> ispravka stavke             "
-  ObjDBEdit("PKONIZ",20,77,{|| KonIzBlok()},"","Priprema redova za izvjestaj br."+cBrI+"ÕÕÕÕÕ<c-P> vidi komplet definiciju", , , , ,3)
+  ObjDBEdit("PKONIZ",20,77,{|| KonIzBlok()},"","Priprema redova za izvjestaj br."+cBrI+"√ç√ç√ç√ç√ç<c-P> vidi komplet definiciju", , , , ,3)
  BoxC()
 RETURN
 
@@ -483,7 +483,7 @@ STATIC FUNCTION KonIzBlok()
        lVrati:=DE_REFRESH
      ENDIF
    CASE Ch==K_ALT_N      // popuni iz drugog izvjestaja
-     IF Pitanje(,"Zelite li postojece zamijeniti podacima iz drugog izvjestaja?(D/N)","N")=="D"
+     IF Pitanje(,"Zelite li postojeƒáe zamijeniti podacima iz drugog izvje≈°taja?(D/N)","N")=="D"
        i:=1
        Box(,3,60)
         @ m_x+2, m_y+2 SAY "Preuzeti podatke iz izvjestaja br.? (1-99)" GET i VALID i>0 .and. i<100 .and. i<>nTekIzv PICT "99"
@@ -721,7 +721,7 @@ STATIC PROCEDURE PreuzmiProIzv()
       cId:=ID
       SELECT IZVJE
       HSEEK cid
-      IF FOUND() .and. Pitanje(,"Postoji izvj.br."+cid+" ! (D-zamijeniti ili N-dodati stavke ?)","D")=="D"
+      IF FOUND() .and. Pitanje(, "Postoji izvj.br." + cid + " ! (D-zamijeniti ili N-dodati stavke ?)","D")=="D"
         MsgO("Brisem izvj.br."+cId+"iz 'KOLIZ.DBF'!")
         SELECT KOLIZ
         HSEEK cid

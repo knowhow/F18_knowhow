@@ -231,8 +231,8 @@ return
 
 
 function RbrUNum(cRBr)
-if left(cRbr,1)>"9"
-   return  (asc(left(cRbr,1))-65+10)*100  + val(substr(cRbr,2,2))
+if left(cRbr, 1) > "9"
+   return  (ASC(LEFT(cRbr, 1) ) -65 + 10) * 100  + VAL(substr(cRbr, 2, 2))
 else
    return val(cRbr)
 endif
@@ -240,11 +240,11 @@ endif
 
 function RedniBroj(nRbr)
 local nOst
-if nRbr>999
-    nOst:=nRbr%100
-    return Chr(int(nRbr/100)-10+65)+padl(alltrim(str(nOst,2)),2,"0")
+if nRbr > 999
+    nOst := nRbr % 100
+    return Chr( INT( nRbr / 100 ) - 10 + 65) + PADL(alltrim (str(nOst, 2) ), 2, "0")
 else
-    return str(nRbr,3)
+    return STR(nRbr, 3, 0)
 endif
 
 

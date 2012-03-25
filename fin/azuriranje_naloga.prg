@@ -108,13 +108,13 @@ local _i
 local _n := 1
 
 _tbl_suban := "fin_suban"
-_tbl_anal := "fin_anal"
+_tbl_anal  := "fin_anal"
 _tbl_nalog := "fin_nalog"
-_tbl_sint := "fin_sint"
+_tbl_sint  := "fin_sint"
 
 lock_semaphore( _tbl_suban, "lock" )
-lock_semaphore( _tbl_anal, "lock" )
-lock_semaphore( _tbl_sint, "lock" )
+lock_semaphore( _tbl_anal,  "lock" )
+lock_semaphore( _tbl_sint,  "lock" )
 lock_semaphore( _tbl_nalog, "lock" )
    
 // -----------------------------------
@@ -129,19 +129,18 @@ if lOk = .t.
   GO TOP
   lOk := .t.
   sql_fin_suban_update("BEGIN")
+
+  // algoritam 2 IDS
+  _tmp_id := "#2" + field->idfirma + field->idvn + field->brnal
+  AADD( _ids_suban, _tmp_id )
+  
   do while !eof()
 
      record["id_firma"] := field->IdFirma
-     record["id_vn"] := field->IdVn
-     record["br_nal"] := field->BrNal
-     record["r_br"] := field->Rbr
+     record["id_vn"]    := field->IdVn
+     record["br_nal"]   := field->BrNal
+     record["r_br"]     := field->Rbr
      
-     _tmp_doc := record["id_firma"] + record["id_vn"] + record["br_nal"]
-     _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"] + record["r_br"]
-
-     // dodaj u IDS matricu ove stavke...
-     AADD( _ids_suban, _tmp_id )
-
      record["id_tip_dok"] := field->idtipdok
      record["otv_st"] := field->otvst
      record["dat_dok"] := field->DatDok
@@ -167,6 +166,7 @@ if lOk = .t.
        lOk := .f.
        exit
      endif
+
      SKIP
   enddo
 
@@ -183,7 +183,6 @@ if lOk = .t.
 
   SELECT PANAL
   GO TOP
-  sql_fin_anal_update("BEGIN")
 
   do while !eof()
  
@@ -225,7 +224,7 @@ if lOk = .t.
 
   SELECT PSINT
   GO TOP
-  sql_fin_sint_update("BEGIN")
+
   do while !eof()
  
    record["id_firma"] := field->IdFirma
@@ -266,17 +265,21 @@ if lOk = .t.
 
   SELECT PNALOG
   GO TOP
-  sql_fin_nalog_update("BEGIN")
+ 
+  _tmp_id := field->idfirma + field->idvn + field->brnal
+  AADD( _ids_nalog, _tmp_id )
+
+ 
   do while !eof()
  
-   record["id_firma"] := field->IdFirma
-   record["id_vn"] := field->IdVn
-   record["br_nal"] := field->BrNal
-   record["dat_nal"] := field->Datnal
-   record["dug_bhd"] := field->dugbhd
-   record["pot_bhd"] := field->potbhd
-   record["dug_dem"] := field->dugdem
-   record["pot_dem"] := field->potdem
+   record["id_firma"]  := field->IdFirma
+   record["id_vn"]     := field->IdVn
+   record["br_nal"]    := field->BrNal
+   record["dat_nal"]   := field->Datnal
+   record["dug_bhd"]   := field->dugbhd
+   record["pot_bhd"]   := field->potbhd
+   record["dug_dem"]   := field->dugdem
+   record["pot_dem"]   := field->potdem
 
    if !sql_fin_nalog_update("ins", record )
        lOk := .f.
@@ -292,56 +295,25 @@ endif
 
 if !lOk
 
-    // vrati sve promjene...    
+    // transakcija neuspjesna
+    // server nije azuriran 
     sql_fin_suban_update( "ROLLBACK" )
-    sql_fin_sint_update( "ROLLBACK" )
-    sql_fin_anal_update( "ROLLBACK" )
-    sql_fin_nalog_update( "ROLLBACK" )
 
 else
 
+    push_ids_to_semaphore( _tbl_suban , _ids_suban )
+    push_ids_to_semaphore( _tbl_sint  , _ids_sint  )
+    push_ids_to_semaphore( _tbl_anal  , _ids_anal  )
+    push_ids_to_semaphore( _tbl_nalog , _ids_nalog )
+
     // suban  
-    update_semaphore_version( _tbl_suban, .t. )
-    update_semaphore_version( _tbl_anal, .t.)
-    update_semaphore_version( _tbl_sint, .t.)
-    update_semaphore_version( _tbl_nalog, .t.)
+    update_semaphore_version( _tbl_suban , .t. )
+    update_semaphore_version( _tbl_anal  , .t. )
+    update_semaphore_version( _tbl_sint  , .t. )
+    update_semaphore_version( _tbl_nalog , .t. )
 
-    _n := 1
-
-    for _n := 1 to LEN( _ids_suban )
-        // pusiraj promjene u suban...
-        _ids_tmp := {}
-        AADD( _ids_tmp, _ids_suban[ _n ] ) 
-        push_ids_to_semaphore( _tbl_suban, _ids_tmp )
-    next
-
-    _n := 1
-
-    for _n := 1 to LEN( _ids_sint )
-        // pusiraj promjene u sint...
-        _ids_tmp := {}
-        AADD( _ids_tmp, _ids_sint[ _n ] ) 
-        push_ids_to_semaphore( _tbl_sint, _ids_tmp )
-    next
-
-    _n := 1
-
-    for _n := 1 to LEN( _ids_anal )
-        // pusiraj promjene u anal...
-        _ids_tmp := {}
-        AADD( _ids_tmp, _ids_anal[ _n ] ) 
-        push_ids_to_semaphore( _tbl_anal, _ids_tmp )
-    next
-
-    // tabela naloga ima samo jedan zapis...
-    AADD( _ids_doc, _tmp_doc )
-    push_ids_to_semaphore( _tbl_nalog, _ids_doc )
-   
-    // zavrsi transakcije... 
+ 
     sql_fin_suban_update("END")
-    sql_fin_anal_update("END")
-    sql_fin_sint_update("END")
-    sql_fin_nalog_update("END")
 
 endif
 

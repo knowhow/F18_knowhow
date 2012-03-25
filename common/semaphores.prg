@@ -531,7 +531,7 @@ function create_queries_from_ids(sql_tbl, sql_fields, sql_in)
 local _qry_1, _qry_2
 local _queries     := {}
 local _ids, _ids_2 := {}, _sql_ids := {}
-local _i
+local _i, _id
 local _ret := hb_hash()
 
 for _i := 1 to len(sql_in)
@@ -540,7 +540,7 @@ for _i := 1 to len(sql_in)
    AADD(_ids_2, NIL)
 next
  
-_ids := get_ids_from_semaphore( tbl )
+_ids := get_ids_from_semaphore( sql_tbl )
 
 // primjer
 // suban 00-11-2222 rbr 1, rbr 2 

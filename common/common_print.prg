@@ -83,7 +83,13 @@ DO CASE
    OTHERWISE
        // TODO: treba li f18_editor parametrizirati ?!   
        _cmd := "f18_editor " + f_name
+
+// #27234
+#ifdef __PLATFORM__UNIX
+       close all
+#endif
        hb_run (_cmd) 
+
 
 END CASE
 

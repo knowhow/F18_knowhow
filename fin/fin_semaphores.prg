@@ -76,9 +76,9 @@ SELECT (_dbf_wa)
 my_usex (_dbf_alias, _dbf_tbl, .f., "SEMAPHORE")
 
 if algoritam == "FULL"
-   full_synchro (_sql_tbl, _sql_fields, _sql_order, _dbf_alias, _dbf_tbl, _dbf_fields, _step)
+   full_synchro (_sql_tbl, _sql_fields, _sql_order, _dbf_tbl, _dbf_alias, _dbf_fields, _step)
 else
-   ids_synchro  (_sql_tbl, _sql_fields, _sql_in, _dbf_alias, _dbf_fields, _dbf_index_tags, _key_blocks)
+   ids_synchro  (_dbf_tbl, _sql_fields, _sql_in, _dbf_tbl, _dbf_alias, _dbf_fields, _dbf_index_tags, _key_blocks)
 endif
 
 USE

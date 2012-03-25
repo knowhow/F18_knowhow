@@ -527,7 +527,7 @@ RETURN _result
 
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
-function create_queries_from_ids(sql_tbl, sql_fields, sql_in)
+function create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
 local _qry_1, _qry_2
 local _queries     := {}
 local _ids, _ids_2 := {}, _sql_ids := {}
@@ -540,7 +540,7 @@ for _i := 1 to len(sql_in)
    AADD(_ids_2, NIL)
 next
  
-_ids := get_ids_from_semaphore( sql_tbl )
+_ids := get_ids_from_semaphore( dbf_tbl )
 
 // primjer
 // suban 00-11-2222 rbr 1, rbr 2 
@@ -681,10 +681,10 @@ return
 // -----------------------------------------------------------------------------------------------------
 // synchro na osnovu ids-ova
 // -----------------------------------------------------------------------------------------------------
-function ids_synchro(sql_tbl, sql_fields, sql_in, dbf_alias, dbf_fields, dbf_index_tags, key_blocks)
+function ids_synchro(sql_tbl, sql_fields, sql_in, dbf_tbl, dbf_alias, dbf_fields, dbf_index_tags, key_blocks)
 local _i, _ids_queries
 
-_ids_queries := create_queries_from_ids(sql_tbl, sql_fields, sql_in)
+_ids_queries := create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
 
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
@@ -705,7 +705,7 @@ return
 // ---------------------------------------------------------
 // napuni tablu sa servera
 // ---------------------------------------------------------
-function full_synchro(sql_table, sql_fields, sql_order, dbf_alias, dbf_table, dbf_fields, step_size)
+function full_synchro(sql_table, sql_fields, sql_order, dbf_table, dbf_alias, dbf_fields, step_size)
 local _seconds
 local _count
 local _offset

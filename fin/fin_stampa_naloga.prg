@@ -17,10 +17,14 @@
 function StNal(lAuto)
 return stampa_fin_document(lAuto)
 
+
 function stampa_fin_document(lAuto)
-private dDatNal:=date()
-StAnalNal(lAuto)
-SintStav(lAuto)
+private dDatNal := date()
+
+  StAnalNal(lAuto)
+
+  SintStav(lAuto)
+
 return
 
 
@@ -60,7 +64,7 @@ go top
 
 EOF CRET
 
-fizgenerisi:=.f.
+fIzgenerisi:=.f.
 
 if lAuto .or. field->idvn == "00" 
     fIzgenerisi := .t.
@@ -101,7 +105,7 @@ DO WHILE !EOF()
    endif
 
    HSEEK cIdFirma + cIdVN + cBrNal
-   if eof()
+   if EOF()
        closeret
    endif
 
@@ -119,7 +123,7 @@ DO WHILE !EOF()
      AADD(aNalozi, cIdFirma + cIdVN + cBrNal)  
      // lista naloga koji su otisli
      IF lAuto
-       @ m_x+2, m_y+2 SAY "Formirana sintetika i analitika za nalog:"+cIdFirma+"-"+cIdVN+"-"+cBrNal
+       @ m_x+2, m_y+2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
      ENDIF
    ENDIF
 
@@ -129,10 +133,11 @@ if lAuto
   BoxC()
 endif
 
-if fizgenerisi .and. !lAuto
+if fIzgenerisi .and. !lAuto
    Beep(2)
    Msg("Sve stavke su stavljene na stanje")
 endif
+
 
 closeret
 return
@@ -219,10 +224,11 @@ return
  
 function SintStav(lAuto)
 
-if lAuto==NIL
- lAuto:=.f.
+if lAuto == NIL
+ lAuto := .f.
 ENDIF
 
+altd()
 close all
 O_PSUBAN
 O_PARTN

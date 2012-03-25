@@ -85,11 +85,12 @@
 #xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
-#xcommand O_FIN_PRIPR     => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
-#xcommand O_PNALOG    => select (F_PNALOG);   my_usex ("pnalog")  ; set order to tag "1"
-#xcommand O_PSUBAN    => select (F_PSUBAN);   my_usex ("psuban")  ; set order to tag "1"
-#xcommand O_PANAL     => select (F_PANAL);    my_usex ("panal")   ; set order to tag "1"
-#xcommand O_PSINT     => select (F_PSINT);    my_usex ("psint")   ; set order to tag "1"
+#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
+#xcommand O_PNALOG       => select (F_PNALOG);     my_usex ("pnalog")    ; set order to tag "1"
+#xcommand O_PSUBAN       => select (F_PSUBAN);     my_usex ("psuban")    ; set order to tag "1"
+#xcommand O_PANAL        => select (F_PANAL);      my_usex ("panal")     ; set order to tag "1"
+#xcommand O_PSINT        => select (F_PSINT);      my_usex ("psint")     ; set order to tag "1"
+
 #xcommand O_SUBAN     => SELECT (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_KUF       => SELECT (F_KUF);      my_use("kuf")       ; set order to tag "ID"
 #xcommand O_KIF       => SELECT (F_KIF);      my_use("kif")       ; set order to tag "ID"

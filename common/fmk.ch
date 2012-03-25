@@ -102,8 +102,8 @@
 
 
 
-#xcommand CLOSERET2   => close all; return
-#xcommand CLOSERET  => close all; return
+#xcommand CLOSERET2      => close all; return
+#xcommand CLOSERET       => close all; return
 
 
 #xcommand ESC_BCR   =>  if lastkey() == K_ESC;

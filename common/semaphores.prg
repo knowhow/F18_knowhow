@@ -106,8 +106,9 @@ endif
 
 if USED()
   log_write("ERR ne mogu zatoriti dbf" + my_home() + table + " / excl=" + ToStr(excl))
+else
+  dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
 endif
-dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
 
 return
 

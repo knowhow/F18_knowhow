@@ -1,3 +1,7 @@
+0.9.72 2012-03-25, hernad
+ 
+  - close all print [#27235](http://redmine.bring.out.ba/issues/27235)
+
 0.9.71 2012-03-23, vsasa
  
   - modul LD, radnici odradjeni više puta za jedan mjesec, korekcija izvještaja [#27220](http://redmine.bring.out.ba/issues/27220)

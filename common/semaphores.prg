@@ -592,6 +592,8 @@ for _i := 1 to LEN(sql_in)
 
 next
 
+log_write("ret[qry]=" + pp(_queries))
+log_write("ret[ids]=" + pp(_ids_2))
 _ret["qry"] := _queries
 _ret["ids"] := _ids_2
 
@@ -606,20 +608,26 @@ local _counter
 local _fnd, _tmp_id, _rec
 
 // pobrisimo sve id-ove koji su drugi izmijenili
-SET ORDER TO TAG dbf_tag
+SET ORDER TO TAG (dbf_tag)
 
 _counter := 0
+
+if VALTYPE(ids) != "A"
+   Alert("ids type ? " + VALTYPE(ids))
+endif
 
 do while .t.
     _fnd := .f.
     for each _tmp_id in ids
         HSEEK _tmp_id
-        do while !EOF() .and. EVAL( key_block ) == _tmp_id
+        do while !EOF() .and. EVAL(key_block) == _tmp_id
+
             skip
             _rec := RECNO()
             skip -1 
             DELETE
-            go _rec 
+            go _rec
+ 
             _fnd := .t.
             ++ _counter
         enddo
@@ -690,13 +698,17 @@ _ids_queries := create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
 for _i := 1 TO LEN(_ids_queries["ids"])
+ 
+   // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
+   if _ids_queries["ids"][_i] != NIL
 
-   // pobrisi dbf
-   delete_dbf_ids( dbf_alias, dbf_index_tags[_i], key_blocks[_i], _ids_queries["ids"][_i])
+     // pobrisi dbf
+     delete_dbf_ids( dbf_alias, dbf_index_tags[_i], key_blocks[_i], _ids_queries["ids"][_i])
 
-   // dodaj sa servera
-   fill_dbf_from_server_qry( _dbf_alias, _queries["qry"][_i], dbf_fields)
+     // dodaj sa servera
+     fill_dbf_from_server_qry( dbf_alias, _ids_queries["qry"][_i], dbf_fields)
 
+   endif
 next
 
 return

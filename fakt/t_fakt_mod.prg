@@ -212,7 +212,7 @@ public gDK2:="N"
 public gIspPart:="N" // ispravka partnera u unosu novog dokumenta
 public gResetRoba:="D" // resetuj uvijek artikal, pri unosu stavki dokumenta 
 
-public g10Str:=HB_UTF8TOSTR("RAČUN/OTPREMNICA br.")
+public g10Str:=HB_UTF8TOSTR("POREZNA FAKTURA br.")
 public g10Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g10Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
@@ -240,19 +240,19 @@ public g12Str:=HB_UTF8TOSTR("OTPREMNICA br.")
 public g12Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g12Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g13Str:="OTPREMNICA U MP br."
+public g13Str:=HB_UTF8TOSTR( "OTPREMNICA U MP br." )
 public g13Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g13Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g21Str:="REVERS br."
+public g21Str:=HB_UTF8TOSTR( "REVERS br." )
 public g21Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g21Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g22Str:="ZAKLJ.OTPREMNICA br."
+public g22Str:=HB_UTF8TOSTR( "ZAKLJ.OTPREMNICA br." )
 public g22Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g22Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
-public g23Str:="ZAKLJ.OTPR.MP    br."
+public g23Str:=HB_UTF8TOSTR( "ZAKLJ.OTPR.MP    br." )
 public g23Str2T:="              Predao                  Odobrio                  Preuzeo"
 public g23Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
@@ -268,6 +268,7 @@ public g27Str:=HB_UTF8TOSTR("PREDRAČUN MP br.")
 public g27Str2T:="                                                               Direktor"
 public g27Str2R:="\tab \tab \tab Direktor:"
 public gNazPotStr:=SPACE(69)
+
 // lista kod dodatnog teksta
 public g10ftxt := PADR("", 100)
 public g11ftxt := PADR("", 100)
@@ -285,6 +286,9 @@ public g27ftxt := PADR("", 100)
 
 public gDodPar:="2"
 public gDatVal:="N"
+
+public gPdvDRb := "N"
+public gPdvDokVar := "1"
 
 // artikal sort - cdx
 public gArtCDX := SPACE(20)
@@ -348,9 +352,10 @@ public gcRabIDef := "1"
 public gcRabDok := SPACE(30)
 
 public gShSld := "N"
-public gFinKtoDug := PADR("2120", 7)
-public gFinKtoPot := PADR("5430", 7)
+public gFinKtoDug := PADR("2110", 7)
+public gFinKtoPot := PADR("4320", 7)
 public gShSldVar := 1
+
 // roba group na fakturi
 public glRGrPrn := "N"
 // brisanje dokumenta -> ide u smece
@@ -437,7 +442,56 @@ gStZagl := fetch_metric( "fakt_zagl_koristiti_txt", nil, gStZagl )
 gFPicHRow := fetch_metric( "fakt_zagl_pic_header", nil, gFPicHRow )
 gFPicFRow := fetch_metric( "fakt_zagl_pic_footer", nil, gFPicFRow )
 
+// parametri zaokruzenja
+gFZaok := fetch_metric( "fakt_zaokruzenje", nil, gFZaok )
+gZ_5pf := fetch_metric( "fakt_zaokruzenje_5_pf", nil, gZ_5pf )
+
+// izgled dokumenta
+gDodPar := fetch_metric( "fakt_datum_placanja_otpremnica", nil, gDoDPar )
+gDatVal := fetch_metric( "fakt_datum_placanja_svi_dokumenti", nil, gDatVal )
+gNumDio := fetch_metric( "fakt_numericki_dio_dokumenta", nil, gNumDio )
+gPSamoKol := fetch_metric( "fakt_prikaz_samo_kolicine", nil, gPSamoKol )
+gcF9usmece := fetch_metric( "fakt_povrat_u_smece", nil, gcF9usmece )
+gEmailInfo := fetch_metric( "fakt_email_nakon_racuna", nil, gEmailInfo )
+gERedova := fetch_metric( "fakt_dokument_dodati_redovi_po_listu", nil, gERedova )
+gnLMarg := fetch_metric( "fakt_dokument_lijeva_margina", nil, gnLMarg )
+gnTMarg := fetch_metric( "fakt_dokument_top_margina", nil, gnTMarg )
+gPDVDrb := fetch_metric( "fakt_dokument_delphirb_prikaz", nil, gPDVDrb )
+gPDVDokVar := fetch_metric( "fakt_dokument_txt_prikaz_varijanta", nil, gPDVDokVar )
+
+// obrada dokumenta
+glRGrPrn := fetch_metric( "fakt_ispis_grupacije_na_dokumentu", nil, glRGrPrn )
+gShSld := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca", nil, gShSld )
+gShSldVar := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", nil, gShSldVar )
+gFinKtoDug := fetch_metric( "konto_duguje", nil, gFinKtoDug )
+gFinKtoPot := fetch_metric( "konto_potrazuje", nil, gFinKtoPot )
+
+// potpisi
+g10Str := fetch_metric( "fakt_dokument_dok_10_naziv", nil, g10Str )
+g10Str2T := fetch_metric( "fakt_dokument_dok_10_potpis", nil, g10Str2T )
+g10ftxt := fetch_metric( "fakt_dokument_dok_10_txt_lista", nil, g10ftxt )
+g11Str := fetch_metric( "fakt_dokument_dok_11_naziv", nil, g11Str )
+g11Str2T := fetch_metric( "fakt_dokument_dok_11_potpis", nil, g11Str2T )
+g11ftxt := fetch_metric( "fakt_dokument_dok_11_txt_lista", nil, g11ftxt )
+g12Str := fetch_metric( "fakt_dokument_dok_12_naziv", nil, g12Str )
+g12Str2T := fetch_metric( "fakt_dokument_dok_12_potpis", nil, g12Str2T )
+g12ftxt := fetch_metric( "fakt_dokument_dok_12_txt_lista", nil, g12ftxt )
+g13Str := fetch_metric( "fakt_dokument_dok_13_naziv", nil, g13Str )
+g13Str2T := fetch_metric( "fakt_dokument_dok_13_potpis", nil, g13Str2T )
+g13ftxt := fetch_metric( "fakt_dokument_dok_13_txt_lista", nil, g13ftxt )
+g16Str := fetch_metric( "fakt_dokument_dok_16_naziv", nil, g16Str )
+g16Str2T := fetch_metric( "fakt_dokument_dok_16_potpis", nil, g16Str2T )
+g16ftxt := fetch_metric( "fakt_dokument_dok_16_txt_lista", nil, g16ftxt )
+g20Str := fetch_metric( "fakt_dokument_dok_20_naziv", nil, g20Str )
+g20Str2T := fetch_metric( "fakt_dokument_dok_20_potpis", nil, g20Str2T )
+g20ftxt := fetch_metric( "fakt_dokument_dok_20_txt_lista", nil, g20ftxt )
+g22Str := fetch_metric( "fakt_dokument_dok_22_naziv", nil, g22Str )
+g22Str2T := fetch_metric( "fakt_dokument_dok_22_potpis", nil, g22Str2T )
+g22ftxt := fetch_metric( "fakt_dokument_dok_22_txt_lista", nil, g22ftxt )
+
+
 O_PARAMS
+
 private cSection:="1"
 public cHistory:=" "
 public aHistory:={}
@@ -453,11 +507,7 @@ RPar("d2",@gnTMarg3)
 RPar("d3",@gnTMarg4)
 RPar("dc",@g13dcij)
 // dodatni parametri fakture broj otpremnice itd
-RPar("dp",@gDodPar)   
-RPar("dv",@gDatVal)
-RPar("er",@gERedova)
 RPar("fp",@gFPzag)
-RPar("fz",@gFZaok)
 RPar("if",@gImeF)
 RPar("im",@gIMenu)
 RPar("k1",@gDK1)
@@ -465,7 +515,6 @@ RPar("k2",@gDK2)
 // varijanta maloprodajne cijene
 RPar("mp",@gMP)       
 RPar("mr",@gMjRJ)
-RPar("nd",@gNumdio)
 RPar("PR",@gDetPromRj)
 Rpar("ff",@gFaktFakt)
 Rpar("nw",@gNW)
@@ -482,25 +531,14 @@ RPar("p1",@PicDem)
 RPar("p2",@PicKol)
 RPar("pk",@gPratik)
 RPar("pc",@gPratiC)
-RPar("pr",@gnLMarg)
 RPar("56",@gnLMargA5)
-RPar("pt",@gnTMarg)
 RPar("r1",@g10Str2R)
 RPar("r2",@g16Str2R)
 RPar("r5",@g06Str2R)
-
-RPar("s1",@g10Str)
-RPar("s9",@g16Str)
 RPar("r3",@g06Str)
-RPar("s2",@g11Str)
 RPar("xl",@g15Str)
-RPar("s3",@g20Str)
-RPar("s4",@g10Str2T)
-RPar("s8",@g16Str2T)
 RPar("r4",@g06Str2T)
-RPar("s5",@g11Str2T)
 RPar("xm",@g15Str2T)
-RPar("s6",@g20Str2T)
 RPar("uc",@gNazPotStr)
 RPar("tb",@gTabela)
 RPar("tf",@gTipF)
@@ -521,17 +559,11 @@ RPar("vz",@gVlZagl)
 RPar("x1",@g11Str2R)
 RPar("xn",@g15Str2R)
 RPar("x2",@g20Str2R)
-RPar("x3",@g12Str)
-RPar("x4",@g12Str2T)
 RPar("x5",@g12Str2R)
-RPar("x6",@g13Str)
-RPar("x7",@g13Str2T)
 RPar("x8",@g13Str2R)
 RPar("x9",@g21Str)
 RPar("xa",@g21Str2T)
 RPar("xb",@g21Str2R)
-RPar("xc",@g22Str)
-RPar("xd",@g22Str2T)
 RPar("xe",@g22Str2R)
 RPar("xC",@g23Str)
 RPar("xD",@g23Str2T)
@@ -547,15 +579,8 @@ RPar("xp",@g27Str2T)
 RPar("xr",@g27Str2R)
 
 // lista dodatni tekst
-RPar("ya",@g10ftxt)
-RPar("yb",@g11ftxt)
-RPar("yc",@g12ftxt)
-RPar("yd",@g13ftxt)
 RPar("ye",@g15ftxt)
-RPar("yf",@g16ftxt)
-RPar("yg",@g20ftxt)
 RPar("yh",@g21ftxt)
-RPar("yi",@g22ftxt)
 RPar("yI",@g23ftxt)
 RPar("yj",@g25ftxt)
 RPar("yk",@g26ftxt)
@@ -568,9 +593,6 @@ RPar("mT",@gMpRedTraka)
 RPar("mA",@gMpArtikal)
 RPar("mC",@gMpCjenPDV)
 
-// zaokruzenje 5 pf
-RPar("mZ",@gZ_5pf)
-
 // dodatni parametri fakture broj otpremnice itd
 RPar("za",@gZagl)   
 RPar("zb",@gbold)
@@ -579,38 +601,20 @@ RPar("HL",@gHLinija)
 RPar("rp",@gRabProc)
 RPar("pd",@gProtu13)
 RPar("a5",@gFormatA5)
-RPar("mn",@gMreznoNum)
 RPar("g1",@gKarC1)
 RPar("g2",@gKarC2)
 RPar("g3",@gKarC3)
 RPar("g4",@gKarN1)
 RPar("g5",@gKarN2)
-RPar("g6",@gPSamoKol)
 RPar("gC",@gArtCDX)
-RPar("gE",@gEmailInfo)
 RPar("rs",@gcRabDef)
 RPar("ir",@gcRabIDef)
 RPar("id",@gcRabDok)
 RPar("Fi",@gIspPart)
 RPar("Fr",@gResetRoba)
-RPar("Fx",@gcF9usmece)
 RPar("Fz",@gAzurTimeOut)
-RPar("F5",@glRGrPrn)
-
-cSection := "2"
-RPar("s1", @gShSld)
-RPar("s2", @gFinKtoDug)
-RPar("s3", @gFinKtoPot)
-RPar("s4", @gShSldVar)
 
 cSection := "1"
-// varijable PDV
-// DelphiRB - pdv faktura
-public gPdvDRb := "N"
-public gPdvDokVar := "1"
-
-Rpar("H1",@gPdvDrb)
-Rpar("H2",@gPdvDokVar)
 
 if valtype(gtabela)<>"N"
 	gTabela:=1
@@ -701,14 +705,6 @@ gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
 ::cRoba_Rj:=IzFmkIni('CROBA','CROBA_RJ','10#20',KUMPATH)
 
 ::lOpresaStampa:=IzFmkIni('Opresa','Remitenda','N',PRIVPATH)=="D"
-
-if !(goModul:oDatabase:lAdmin)
-	MsgO("Pakujem pripremu")
-		O_FAKT_PRIPR
-		__dbPack()
-		USE
-	MsgC()
-endif
 
 return
 

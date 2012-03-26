@@ -960,14 +960,14 @@ if !EMPTY( cPartnId )
         // jednostavno za njega nadji podatke
         lIno := .f.
         lPDVObveznik := .t.
-        lP_stamp := .f.
+        lP_stampa := .f.
 
     elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
 
         lIno := .t.
 
         if !EMPTY( cPOslob )
-            lP_stamp := .t.
+            lP_stampa := .t.
         endif
     
     elseif LEN( cJibPartn ) = 12
@@ -979,13 +979,13 @@ if !EMPTY( cPartnId )
                 
         lIno := .f.
         lPDVObveznik := .t.
-        lP_stamp := .t.
+        lP_stampa := .t.
 
     endif
 
     // ako treba stampati podatke partnera onda predji na naredni korak
 
-    if lP_stamp == .t.
+    if lP_stampa == .t.
         
         nTarea := SELECT()
     

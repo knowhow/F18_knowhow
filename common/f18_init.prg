@@ -198,7 +198,6 @@ write_dbf_version_to_config()
 
 check_server_db_version()
 
-altd()
 __server_log := .t.
 return .t.
 

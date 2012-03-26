@@ -40,9 +40,9 @@ O_SIFV
 O_ROBA
 O_KONTO
 
-dDatOd:=ctod("")
-dDatDo:=date()
-cPredh:="N"
+dDatOd := DATE()
+dDatDo := DATE()
+cPredh := "N"
 
 private cIdR:=cIdRoba
 
@@ -64,26 +64,25 @@ if !Empty(cRNT1)
 endif
 
 cIdPArtner:=space(6)
-cPVSS:="D"  // D-Prikaz Vrijednosti Samo u Saldu  (N-duguje,potrazuje,saldo)
+cPVSS := "D"  
+// D-Prikaz Vrijednosti Samo u Saldu  (N-duguje,potrazuje,saldo)
 
-if cIdKonto==NIL
-	cIdFirma:=gFirma
- 	cIdRoba:=space(10)
- 	cIdKonto:=padr("1310",gDuzKonto)
-	O_PARAMS
- 	private cSection:="1"
-	private cHistory:=" "
-	private aHistory:={}
- 	Params1()
-	RPar("c1",@cIdRoba)
-	RPar("c2",@cIdKonto)
-	RPar("c3",@cPredh)
- 	RPar("d1",@dDatOd)
-	RPar("d2",@dDatDo)
- 	RPar("c4",@cBrFDa)
- 	RPar("c5",@cPrikFCJ2)
- 	RPar("c6",@cPVSS)
- 	cIdKonto:=padr(cIdKonto,gDuzKonto)
+if cIdKonto == NIL
+
+	cIdFirma := gFirma
+ 	cIdRoba := SPACE(10)
+ 	cIdKonto := PADR( "1320", gDuzKonto )
+
+    cIdRoba := fetch_metric( "kalk_kartica_magacin_id_roba", my_user(), cIdRoba )
+    cIdKonto := fetch_metric( "kalk_kartica_magacin_id_konto", my_user(), cIdKonto )
+    dDatOd := fetch_metric( "kalk_kartica_magacin_datum_od", my_user(), dDatOd )
+    dDatDo := fetch_metric( "kalk_kartica_magacin_datum_do", my_user(), dDatDo )
+    cPredh := fetch_metric( "kalk_kartica_magacin_prethodni_promet", my_user(), cPredh )
+    cBrFDa := fetch_metric( "kalk_kartica_magacin_prikaz_broja_fakture", my_user(), cBrFDa )
+    cPrikFCJ2 := fetch_metric( "kalk_kartica_magacin_prikaz_fakturne_cijene", my_user(), cPrikFCJ2 )
+    cPVSS := fetch_metric( "kalk_kartica_magacin_prikaz_samo_saldo", my_user(), cPVSS )
+
+ 	cIdKonto := PADR( cIdKonto, gDuzKonto )
  
  	Box(,13+IF(lPoNarudzbi,2,0),60)
   	do while .t.
@@ -168,18 +167,17 @@ if cIdKonto==NIL
     		fVeci:=.t.
  	endif
 
- 	if Params2()
-   		WPar("c1",cIdRoba)
-		WPar("c2",cIdKonto)
-		WPar("c3",cPredh)
-   		WPar("d1",dDatOd)
-		WPar("d2",dDatDo)
-   		WPar("c4",@cBrFDa)
-   		WPar("c5",@cPrikFCJ2)
-   		WPar("c6",@cPVSS)
- 	endif
- 	select params
-	use
+    if LastKey() <> K_ESC
+        set_metric( "kalk_kartica_magacin_id_roba", my_user(), cIdRoba )
+        set_metric( "kalk_kartica_magacin_id_konto", my_user(), cIdKonto )
+        set_metric( "kalk_kartica_magacin_datum_od", my_user(), dDatOd )
+        set_metric( "kalk_kartica_magacin_datum_do", my_user(), dDatDo )
+        set_metric( "kalk_kartica_magacin_prethodni_promet", my_user(), cPredh )
+        set_metric( "kalk_kartica_magacin_prikaz_broja_fakture", my_user(), cBrFDa )
+        set_metric( "kalk_kartica_magacin_prikaz_fakturne_cijene", my_user(), cPrikFCJ2 )
+        set_metric( "kalk_kartica_magacin_prikaz_samo_saldo", my_user(), cPVSS )
+    endif
+
 endif
 
 lBezG2:=.f.

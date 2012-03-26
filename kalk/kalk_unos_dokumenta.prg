@@ -1813,14 +1813,33 @@ return
 
 
 
-/*! \fn kalk_centr_stampa_dokumenta()
- *  \param fstara
- *  \param cSeek
- *  \brief Centralna funkcija za stampu KALK dokumenta. Poziva odgovarajucu funkciju za stampu dokumenta u zavisnosti od tipa dokumenta i podesenja parametara varijante izgleda dokumenta
- */
+// ------------------------------------------------
+// otvara tabele za pregled izvjestaja
+// ------------------------------------------------
+static function _o_ctrl_tables( azurirana )
 
+O_KONCIJ
+O_ROBA
+O_TARIFA
+O_PARTN
+O_KONTO
+O_TDOK
+
+if azurirana 
+    O_SKALK   
+    // alias kalk_pripr
+else
+    O_KALK_PRIPR
+endif
+
+return
+
+
+
+// ---------------------------------------------------
+// centralna funkcija za stampu dokumenta
+// ---------------------------------------------------
 function kalk_centr_stampa_dokumenta()
-*{
 parameters fstara, cSeek, lAuto
 local nCol1
 local nCol2
@@ -1836,12 +1855,6 @@ PRIVATE PicDEM:= gPICDEM
 PRIVATE Pickol:= gPICKOL
 
 private nStr:=0
-O_KONCIJ
-O_ROBA
-O_TARIFA
-O_PARTN
-O_KONTO
-O_TDOK
 
 if (pcount()==0)
     fstara:=.f.
@@ -1858,11 +1871,8 @@ if (cSeek==nil)
     cSeek:=""
 endif
 
-if fstara
-    O_SKALK   // alias kalk_pripr
-else
-    O_KALK_PRIPR
-endif
+// otvori potrebne tabele
+_o_ctrl_tables( fstara )
 
 select kalk_pripr
 set order to tag "1"
@@ -1873,9 +1883,9 @@ fFaktD:=.f.
 
 do while .t.
 
-    cIdFirma:=IdFirma
-    cBrDok:=BrDok
-    cIdVD:=IdVD
+    cIdFirma := IdFirma
+    cBrDok := BrDok
+    cIdVD := IdVD
 
     if eof()
         exit
@@ -2090,6 +2100,9 @@ do while .t.
 
     FF
     END PRINT
+
+    // otvori tabele za pregled dokumenta
+    _o_ctrl_tables( fstara )
 
     if (cidvd $ "80#11#81#12#13#IP#19")
         fTopsD:=.t.

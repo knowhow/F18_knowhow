@@ -73,9 +73,6 @@ if !IsPDV()
     AADD(opcexe,{|| P_WinFakt()})
 endif
 
-AADD(opc,"8. parametri stampaca                          ")
-AADD(opcexe,{|| PushWa(), PPrint(), PopWa() })
-
 AADD(opc,"F. fiskalni parametri  ")
 AADD(opcexe,{|| fiscal_params_set() })
 
@@ -197,16 +194,19 @@ endif
 
 BoxC()
 
-
 gKomLin:=TRIM(gKomLin)
 
 if (LASTKEY()<>K_ESC)
+
+    set_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
+    set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
+    set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
+    set_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
+
     Wpar("ff",gFaktFakt)
     Wpar("nw",gNW)
     Wpar("NF",gFNar)
     Wpar("UF",gFUgRab)
-    Wpar("sk",gSamoKol)
-    Wpar("rP",gRokPl)
     Wpar("no",gNovine)
     Wpar("ds",gnDS)
     WPar("vz",gVlZagl)
@@ -214,10 +214,8 @@ if (LASTKEY()<>K_ESC)
     WPar("95",gKomLin)   
     WPar("k1",@gDk1)
     WPar("k2",@gDk2)
-    WPar("im",gIMenu)
     WPar("mr",gMjRJ)
     WPar("Fi",@gIspPart)
-    WPar("Fr",@gResetRoba)
     WPar("mP",gMpPrint)
     WPar("mL",gMpLocPort)
     WPar("mT",gMpRedTraka)
@@ -240,14 +238,14 @@ private cHistory:=" "
 private aHistory:={}
 private GetList:={}
 
-gFNaziv := PADR( gFNaziv, 250 )
-gFPNaziv := PADR( gFPNaziv, 250 )
+gFNaziv := PADR( hb_utf8tostr( gFNaziv ), 250 )
+gFPNaziv := PADR( hb_utf8tostr( gFPNaziv ), 250 )
 gFIdBroj := PADR(gFIdBroj, 13)
-gFText1 := PADR(gFText1, 72)
-gFText2 := PADR(gFText2, 72)
-gFText3 := PADR(gFText3, 72)
+gFText1 := PADR( hb_utf8tostr( gFText1 ), 72)
+gFText2 := PADR( hb_utf8tostr( gFText2 ), 72)
+gFText3 := PADR( hb_utf8tostr( gFText3 ), 72)
 gFTelefon := PADR(gFTelefon, 72)
-gFEmailWeb := PADR(gFEmailWeb, 72)
+gFEmailWeb := PADR( hb_utf8tostr( gFEmailWeb ), 72)
 
 Box( , 21, 77, .f., "Izgleda dokumenata - zaglavlje")
 
@@ -444,10 +442,10 @@ if (LASTKEY()<>K_ESC)
     set_metric( "fakt_prikaz_samo_kolicine", nil, gPSamoKol )
     set_metric( "fakt_povrat_u_smece", nil, gcF9usmece )
     set_metric( "fakt_email_nakon_racuna", nil, gEmailInfo )
+    set_metric( "fakt_varijanta_dokumenta_13", nil, gVar13 )
 
     WPar("pd",gProtu13)
     WPar("dc",g13dcij)
-    WPar("vo",gVar13)
     WPar("vn",gVarNum)
     WPar("pk",gPratik)
     WPar("pc",gPratiC)

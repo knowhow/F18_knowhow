@@ -39,9 +39,9 @@ O_SIFV
 O_ROBA
 O_KONTO
 
-cPredh:="N"
-dDatOd:=ctod("")
-dDatDo:=date()
+cPredh := "N"
+dDatOd := DATE()
+dDatDo := DATE()
 cPKN := "N"
 
 if IsDomZdr()
@@ -49,28 +49,27 @@ if IsDomZdr()
 endif
 
 if PCount()==0
-	O_PARTN
- 	cIdFirma:=gFirma
- 	cIdRoba:=space(10)
- 	cIdKonto:=padr("1320",7)
- 	cPredh:="N"
- 	cPrikazDob:="N"
+	
+    O_PARTN
+ 	
+    cIdFirma := gFirma
+ 	cIdRoba := space(10)
+ 	cIdKonto := padr( "1330", 7 )
+ 	cPredh := "N"
+ 	cPrikazDob := "N"
+
 	if IsPlanika()
 		cK9:=SPACE(3)
  	endif
-	O_PARAMS
- 	cBrFDa:="N"
- 	Private cSection:="4",cHistory:=" ",aHistory:={}
- 	Params1()
- 	RPar("c1",@cIdRoba)
-	RPar("c2",@cIdKonto)
-	RPar("c3",@cPredh)
- 	RPar("d1",@dDatOd)
-	RPar("d2",@dDatDo)
- 	RPar("c4",@cBrFDa)
 
- Box(,8+IF(lPoNarudzbi,2,0),60)
-  DO WHILE .t.
+    cIdRoba := fetch_metric( "kalk_kartica_prod_id_roba", my_user(), cIdRoba )
+    cIdKonto := fetch_metric( "kalk_kartica_prod_id_konto", my_user(), cIdKonto )
+    dDatOd := fetch_metric( "kalk_kartica_prod_datum_od", my_user(), dDatOd )
+    dDatDo := fetch_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
+    cPredh := fetch_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
+
+    Box(,8+IF(lPoNarudzbi,2,0),60)
+    DO WHILE .t.
     if gNW $ "DX"
      @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
     else
@@ -111,8 +110,20 @@ if PCount()==0
     if (!lPoNarudzbi.or.aUslN<>NIL)
       exit
     endif
+
   ENDDO
+
  BoxC()
+
+ if LastKey() != K_ESC
+
+    set_metric( "kalk_kartica_prod_id_roba", my_user(), cIdRoba )
+    set_metric( "kalk_kartica_prod_id_konto", my_user(), cIdKonto )
+    set_metric( "kalk_kartica_prod_datum_od", my_user(), dDatOd )
+    set_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
+    set_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
+
+ endif
 
  // skeniraj dokumente u procesu za konto
  pl_scan_dok_u_procesu(cIdKonto)
@@ -131,18 +142,6 @@ if PCount()==0
  else
     cIdr:=cidroba
  endif
-
- if Params2()
-  O_PARAMS
-  WPar("c1",cIdRoba)
-  WPar("c2",cIdkonto)
-  WPar("c3",cPredh)
-  WPar("d1",dDatOd)
-  WPar("d2",dDatDo)
-  WPar("c4",@cBrFDa)
- endif
- select params
- use
 
 else
   	cIdR:=cIdRoba

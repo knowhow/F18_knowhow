@@ -1844,6 +1844,7 @@ parameters fstara, cSeek, lAuto
 local nCol1
 local nCol2
 local nPom
+local _check
 
 nCol1:=0
 nCol2:=0
@@ -1881,11 +1882,17 @@ go top
 fTopsD:=.f.
 fFaktD:=.f.
 
+_check := "xxx"
+
 do while .t.
 
     cIdFirma := IdFirma
     cBrDok := BrDok
     cIdVD := IdVD
+
+    if ( cIdFirma + cIdVd + cBrDok ) == _check
+        exit
+    endif
 
     if eof()
         exit
@@ -2101,6 +2108,8 @@ do while .t.
     FF
     END PRINT
 
+    _check := cIdFirma + cIdVd + cBrDok
+    
     // otvori tabele za pregled dokumenta
     _o_ctrl_tables( fstara )
 

@@ -17,6 +17,7 @@ function my_usex(alias, table, new_area, _rdd, semaphore_param)
 return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 
 
+
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
@@ -89,12 +90,21 @@ if (LEN(gaDBFs[_pos]) > 3)
                  endif
                  EVAL( gaDBFs[_pos, 4], semaphore_param )
                  update_semaphore_version(table, .f.)
+
                  lock_semaphore(table, "free")
               endif
            endif
+
+
+           // sada bi lokalni cache morao biti ok
+           // idemo to provjeriti
+           check_after_synchro(table)
+
         endif
+
    else
-      // rdd = "SEMAPHORE" poziv is update from sql server procedure
+     // rdd = "SEMAPHORE" poziv is update from sql server procedure
+     // samo otvori tabelu
      if gDebug > 5
           log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area))
      endif
@@ -510,14 +520,17 @@ LOCAL _table_obj
 LOCAL _result
 LOCAL _qry
 LOCAL _server := pg_server()
-
 // provjeri prvo da li postoji uopšte ovaj site zapis
-_qry := "SELECT COUNT(*) FROM " + table + " WHERE " + condition
+_qry := "SELECT COUNT(*) FROM " + table 
+
+if condition != NIL
+  _qry += " WHERE " + condition
+endif
 
 _table_obj := _sql_query( _server, _qry )
 IF VALTYPE(_table_obj) == "L" 
-      log_write( "problem sa query-jem: " + _qry )
-      QUIT
+    log_write( "problem sa query-jem: " + _qry )
+    QUIT
 ENDIF
 
 _result := _table_obj:Fieldget(1)
@@ -727,6 +740,8 @@ _count := table_count( sql_table, "true" )
 _seconds := SECONDS()
 
 ZAP
+
+altd()
 
 for _offset := 0 to _count STEP step_size
 

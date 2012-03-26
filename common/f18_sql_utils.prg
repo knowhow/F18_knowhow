@@ -124,10 +124,17 @@ endif
 // ----------------------------------------
 function run_sql_query(qry, retry) 
 local _i, _qry_obj
+
 local _server := my_server()
 
 if retry == NIL
   retry := 1
+endif
+
+if VALTYPE(qry) != "C"
+   _msg := "qry ne valja VALTYPE(qry) =" + VALTYPE(qry)
+   MsgBeep(_msg)
+   quit
 endif
 
 for _i := 1 to retry
@@ -136,7 +143,7 @@ for _i := 1 to retry
    begin sequence with {|err| Break(err)}
        _qry_obj := _server:Query(qry)
    recove
-      log_write("ajoj ajoj: qry rokno !?!")
+      log_write("ajoj ajoj: qry ne radi !?!")
       my_server_logout()
       hb_IdleSleep(0.5)
       if my_server_login()

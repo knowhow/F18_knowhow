@@ -42,9 +42,9 @@ local _ids_queries
 _dbf_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond", "otvst", "idtipdok" }
 
 _sql_fields := sql_fields( _dbf_fields )
+_sql_order  := "idfirma, idvn, brnal, rbr"
 
 
-_sql_order := "idfirma, idvn, brnal, rbr"
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 AADD(_key_blocks, {|| field->idfirma + field->idvn + field->brnal + field->rbr }) 

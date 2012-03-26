@@ -40,13 +40,16 @@ if !USED()
     _opened := .t.
 endif   
 
-_cnt_dbf := RECCOUNT()
+// ovo ne moze prikazuje i deleted zapise
+//_cnt_dbf := RECCOUNT()
+// hoce li ovo usporiti otvaranje za velike tabele ?! 
+COUNT TO _cnt_dbf 
 
 
 if _cnt_sql <> _cnt_dbf
    lock_semaphore(_a_dbf_rec["table"], "lock")
 
-   log_write("ERR check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 2)) + " / " + _sql_table+ " cnt:" + to_str(_cnt_sql))
+   log_write("ERR check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)))
    // otvori ekskluzivno
    USE
    dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)

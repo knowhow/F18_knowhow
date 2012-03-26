@@ -24,7 +24,7 @@ return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
 local _err
 local _pos
-local _version
+local _version, _last_version
 local _area
 
 if new_area == NIL
@@ -82,22 +82,23 @@ if (LEN(gaDBFs[_pos]) > 3)
           endif
 
         else
-            // moramo osvjeziti cache
-           if _version < last_semaphore_version(table)
-             if lock_semaphore(table, "lock")
-                 if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
-                    semaphore_param:= gaDBFs[_pos, 5]
-                 endif
-                 EVAL( gaDBFs[_pos, 4], semaphore_param )
-                 update_semaphore_version(table, .f.)
 
-                 lock_semaphore(table, "free")
-              endif
+            _last_version := last_semaphore_version(table)
+            // moramo osvjeziti cache
+            if _version < _last_version
+               log_write("my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10))) 
+               if lock_semaphore(table, "lock")
+                  if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
+                       semaphore_param:= gaDBFs[_pos, 5]
+                  endif
+                  EVAL( gaDBFs[_pos, 4], semaphore_param )
+                  update_semaphore_version(table, .f.)
+
+                  lock_semaphore(table, "free")
+               endif
            endif
 
-
-           // sada bi lokalni cache morao biti ok
-           // idemo to provjeriti
+           // sada bi lokalni cache morao biti ok, idemo to provjeriti
            check_after_synchro(table)
 
         endif
@@ -651,7 +652,7 @@ do while .t.
     endif
 enddo
 
-log_write( dbf_alias + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )) )
+log_write( "delete_dbf_ids: " + dbf_alias + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )) )
 
 return
 
@@ -694,7 +695,7 @@ _qry_obj:Skip()
 
 ENDDO
 
-log_write( "dbf " + dbf_alias +  "upated from sql server rec cnt: " + ALLTRIM(STR( _counter )) )
+log_write( "fill_dbf_from_server_qry: " + dbf_alias +  " updated from sql server rec_cnt: " + ALLTRIM(STR( _counter )) )
 
 return
 
@@ -709,6 +710,8 @@ _ids_queries := create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
 
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
+
+log_write("ids_synchro - ids_queries: " + pp(_ids_queries))
 
 for _i := 1 TO LEN(_ids_queries["ids"])
  
@@ -740,8 +743,6 @@ _count := table_count( sql_table, "true" )
 _seconds := SECONDS()
 
 ZAP
-
-altd()
 
 for _offset := 0 to _count STEP step_size
 

@@ -1,3 +1,8 @@
+0.9.73 2012-03-26, vsasa
+ 
+  - modul FAKT/KALK, sql parametri [#27223](http://redmine.bring.out.ba/issues/27223)
+  - modul KALK, sitne korekcije
+
 0.9.72 2012-03-25, hernad
  
   - close all print [#27235](http://redmine.bring.out.ba/issues/27235)

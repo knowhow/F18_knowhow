@@ -13,61 +13,13 @@
 #include "kalk.ch"
 
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/prod/dok/1g/rpt_41.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.10 $
- * $Log: rpt_41.prg,v $
- * Revision 1.10  2004/05/13 10:28:40  sasavranic
- * Uvedena varijanta racunanja PRUCMP bez izbijanja PPP (sl.novine)
- *
- * Revision 1.9  2003/12/24 10:38:54  sasavranic
- * Uracunaj i snizenje ako ga je bilo na pregledu prometa za vise objekata - Planika
- *
- * Revision 1.8  2003/09/29 13:26:56  mirsadsubasic
- * sredjivanje koda za poreze u ugostiteljstvu
- *
- * Revision 1.7  2003/09/20 07:37:07  mirsad
- * sredj.koda za poreze u MP
- *
- * Revision 1.6  2003/09/08 08:41:43  ernad
- * porezi u ugostiteljstvu
- *
- * Revision 1.5  2003/02/10 02:18:49  mirsad
- * no message
- *
- * Revision 1.4  2002/07/19 13:57:23  mirsad
- * lPrikPRUC ubacio kao globalnu varijablu
- *
- * Revision 1.3  2002/06/25 08:44:24  ernad
- *
- *
- * ostranicavanje planika, doxy - grupa: Planika
- *
- * Revision 1.2  2002/06/21 07:49:36  mirsad
- * no message
- *
- *
- */
- 
-
-/*! \file fmk/kalk/prod/dok/1g/rpt_41.prg
- *  \brief Stampa dokumenta tipa 41
- */
-
-
-/*! \fn StKalk41()
- *  \brief Stampa dokumenta tipa 41
- */
-
 function StKalk41()
-*{
 local nCol0:=nCol1:=nCol2:=0
 local nPom:=0
 
 if IsPDV()
-	StKalk41PDV()
-	return
+    StKalk41PDV()
+    return
 endif
 
 Private nMarza,nMarza2,nPRUC,aPorezi
@@ -87,28 +39,28 @@ select kalk_pripr
 
 m:="--- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 if cidvd<>'47' .and. !lVoSaTa
-	m+=" ---------- ---------- ---------- ----------"
-  	IF lPrikPRUC
-    		m += " ----------"
-  	ENDIF
+    m+=" ---------- ---------- ---------- ----------"
+    IF lPrikPRUC
+            m += " ----------"
+    ENDIF
 endif
 
 ? m
 
 if cIdVd='47' .or. lVoSaTa
-	? "*R * ROBA     * Kolicina *    MPC   *   PPP %  *   PPU%   *   PP%    *  MPC     *"
-	? "*BR*          *          *          *   PPU    *   PPU    *   PP     *  SA Por  *"
-	? "*  *          *          *     ä    *     ä    *    ä     *          *    ä     *"
+    ? "*R * ROBA     * Kolicina *    MPC   *   PPP %  *   PPU%   *   PP%    *  MPC     *"
+    ? "*BR*          *          *          *   PPU    *   PPU    *   PP     *  SA Por  *"
+    ? "*  *          *          *     ä    *     ä    *    ä     *          *    ä     *"
 else
-	IF lPrikPRUC
-		? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  * POREZ NA *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
-		? "*BR*          *          *   U MP   *         *  MARZU   *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
-		? "*  *          *          *    ä     *         *     ä    *     ä    *     ä    *    ä     *          *    ä     *    ä     *    ä     *"
- 	ELSE
-   		? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
-   		? "*BR*          *          *   U MP   *         *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
-   		? "*  *          *          *    ä     *         *     ä    *     ä    *    ä     *          *    ä     *    ä     *    ä     *"
- 	ENDIF
+    IF lPrikPRUC
+        ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  * POREZ NA *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
+        ? "*BR*          *          *   U MP   *         *  MARZU   *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
+        ? "*  *          *          *    ä     *         *     ä    *     ä    *     ä    *    ä     *          *    ä     *    ä     *    ä     *"
+    ELSE
+        ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
+        ? "*BR*          *          *   U MP   *         *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
+        ? "*  *          *          *    ä     *         *     ä    *     ä    *    ä     *          *    ä     *    ä     *    ä     *"
+    ENDIF
 endif
 
 ? m
@@ -167,7 +119,7 @@ nPRUC:=nPor2
     @ prow(),4 SAY  ""
     ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
     IF lPoNarudzbi
-    	IspisPoNar(IF(cIdVd=="41",.f.,))
+        IspisPoNar(IF(cIdVd=="41",.f.,))
     ENDIF
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina PICTURE PicKol
@@ -216,8 +168,8 @@ nPRUC:=nPor2
     @ prow(),pcol()+1 SAY  nPor2*kolicina    picture piccdem
     @ prow(),pcol()+1 SAY  nPor3*kolicina   PICTURE PiccDEM
     if IDVD<>"47" .and. !lVoSaTa
-	@ prow(),pcol()+1 SAY  (mpcsapp-RabatV)*kolicina   picture picdem
-	@ prow(),pcol()+1 SAY  RabatV*kolicina   picture picdem
+    @ prow(),pcol()+1 SAY  (mpcsapp-RabatV)*kolicina   picture picdem
+    @ prow(),pcol()+1 SAY  RabatV*kolicina   picture picdem
     endif
     @ prow(),pcol()+1 SAY  mpcsapp*kolicina   picture picdem
 
@@ -243,8 +195,8 @@ endif
 @ prow(),pcol()+1   SAY  space(len(picproc))
 @ prow(),pcol()+1   SAY  nTot6        picture        PicDEM
 if cIDVD<>"47" .and. !lVoSaTa
-	@ prow(),pcol()+1   SAY  nTot8        picture        PicDEM
-	@ prow(),pcol()+1   SAY  nTot9        picture        PicDEM
+    @ prow(),pcol()+1   SAY  nTot8        picture        PicDEM
+    @ prow(),pcol()+1   SAY  nTot9        picture        PicDEM
 endif
 @ prow(),pcol()+1   SAY  nTot7        picture        PicDEM
 ? m
@@ -306,36 +258,36 @@ do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
   nUp:=0
   select tarifa
   hseek cIdtarifa
-	
+    
   Tarifa(kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi)
 
   select kalk_pripr
   fVTV:=.f.
   do while !eof() .and. cIdfirma+cIdVd+cBrDok==idFirma+idVd+brDok .and. idTarifa==cIdTarifa
-	
-	select roba
-	hseek kalk_pripr->idroba
-	select kalk_pripr
-	VtPorezi()
-	
-	Tarifa(kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi)
     
-    	// mpc bez poreza
-	nU1+=kalk_pripr->mpc*kolicina
-
-	aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
-
-    	// porez na promet
-    	nU2+=aIPor[1]*kolicina
-    	nU3+=aIPor[2]*kolicina
-    	nU4+=aIPor[3]*kolicina
-
-	nU5+= kalk_pripr->MpcSaPP * kolicina
-    	nUP+= rabatv*kolicina
-	
-	nTot6 += (kalk_pripr->mpc - kalk_pripr->nc ) * kolicina
+    select roba
+    hseek kalk_pripr->idroba
+    select kalk_pripr
+    VtPorezi()
     
-    	skip
+    Tarifa(kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi)
+    
+        // mpc bez poreza
+    nU1+=kalk_pripr->mpc*kolicina
+
+    aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
+
+        // porez na promet
+        nU2+=aIPor[1]*kolicina
+        nU3+=aIPor[2]*kolicina
+        nU4+=aIPor[3]*kolicina
+
+    nU5+= kalk_pripr->MpcSaPP * kolicina
+        nUP+= rabatv*kolicina
+    
+    nTot6 += (kalk_pripr->mpc - kalk_pripr->nc ) * kolicina
+    
+        skip
   enddo
   
   nTot1+=nU1
@@ -372,8 +324,8 @@ DokNovaStrana(125, @nStr, 4)
 @ prow(),pcol()+1   SAY nTot5 pict picdem
 ? m
 if cIdVd<>"47" .and. !lVoSaTa .and. !IsJerry()
-	? "RUC:"
-	@ prow(),pcol()+1 SAY nTot6 pict picdem
+    ? "RUC:"
+    @ prow(),pcol()+1 SAY nTot6 pict picdem
 ? m
 endif
 
@@ -382,72 +334,75 @@ return
 
 
 
-/*! \fn Naslov4x()
- *  \brief Naslovi za dokumente tipa 4x
- */
  
 function Naslov4x()
-*{
 local cSvediDatFakt
+
 B_ON
+
 IF CIDVD=="41"
-      	?? "IZLAZ IZ PRODAVNICE - KUPAC"
+        ?? "IZLAZ IZ PRODAVNICE - KUPAC"
 ELSEIF CIDVD=="49"
-	?? "IZLAZ IZ PRODAVNICE PO OSTALIM OSNOVAMA"
+    ?? "IZLAZ IZ PRODAVNICE PO OSTALIM OSNOVAMA"
 ELSEIF cIdVd=="43"
-	?? "IZLAZ IZ PRODAVNICE - KOMISIONA - PARAGON BLOK"
+    ?? "IZLAZ IZ PRODAVNICE - KOMISIONA - PARAGON BLOK"
 ELSEIF cIdVd=="47"
-	?? "PREGLED PRODAJE"
+    ?? "PREGLED PRODAJE"
 ELSE
-	?? "IZLAZ IZ PRODAVNICE - PARAGON BLOK"
+    ?? "IZLAZ IZ PRODAVNICE - PARAGON BLOK"
 ENDIF
+
 B_OFF
 
 P_COND
+
 ?
-IF IsJerry()
-	cSvediDatFakt := IzFmkIni("KALK","Jerry_KALK4x_SvediDatum","F",KUMPATH)
-    	?
-    	?? "KALK BR: "
-    	B_ON
-    	?? cIdFirma+"-"+cIdVD+"-"+cBrDok
-    	B_OFF
-    	?? "   ", P_TipDok(cIdVD,-2), SPACE(2),"Datum:",IF(cSvediDatFakt=="F",DatFaktP,DatDok)
-    	@ prow(),125 SAY "Str:"+str(++nStr,3)
-    	?
-ELSE
-	?? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
-    	@ prow(),125 SAY "Str:"+str(++nStr,3)
-ENDIF
-
-select PARTN; HSEEK cIdPartner
 
 IF IsJerry()
-	if cidvd=="41"
-     		?  "KUPAC: "
-    		B_ON
-     		?? cIdPartner,"-",naz
-     		B_OFF
-     		?? SPACE(6),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
-    	elseif cidvd=="43"
-     		?  "DOBAVLJAC KOMIS.ROBE: "
-     		B_ON
-     		?? cIdPartner,"-",naz
-     		B_OFF
-    	endif
- 	?
+    cSvediDatFakt := IzFmkIni("KALK","Jerry_KALK4x_SvediDatum","F",KUMPATH)
+    ?
+    ?? "KALK BR: "
+    B_ON
+    ?? cIdFirma+"-"+cIdVD+"-"+cBrDok
+    B_OFF
+    ?? "   ", P_TipDok(cIdVD,-2), SPACE(2),"Datum:",IF(cSvediDatFakt=="F",DatFaktP,DatDok)
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+    ?
 ELSE
-	if cidvd=="41"
-     		?  "KUPAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
-    	elseif cidvd=="43"
-     		?  "DOBAVLJAC KOMIS.ROBE:",cIdPartner,"-",naz
-    	endif
+    ?? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
 ENDIF
 
-select KONTO; HSEEK cIdKonto
-?  "Prodavnicki konto razduzuje:",cIdKonto,"-",naz
+select PARTN
+HSEEK cIdPartner
+
+IF IsJerry()
+    if cidvd=="41"
+        ?  "KUPAC: "
+        B_ON
+        ?? cIdPartner,"-", PADR( naz, 20 )
+        B_OFF
+        ?? SPACE(6),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
+    elseif cidvd=="43"
+        ?  "DOBAVLJAC KOMIS.ROBE: "
+        B_ON
+        ?? cIdPartner,"-", PADR( naz, 20 )
+        B_OFF
+    endif
+    ?
+ELSE
+    if cIdVd == "41"
+        ?  "KUPAC:", cIdPartner, "-", PADR( naz, 20 ), SPACE(5), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+    elseif cidvd=="43"
+        ?  "DOBAVLJAC KOMIS.ROBE:",cIdPartner,"-", PADR( naz, 20 )
+    endif
+ENDIF
+
+select KONTO
+HSEEK cIdKonto
+?  "Prodavnicki konto razduzuje:",cIdKonto,"-", PADR( naz, 30 )
 return nil
-*}
+
 
 
 

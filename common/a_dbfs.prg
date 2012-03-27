@@ -212,10 +212,7 @@ return .t.
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
 function set_a_dbf_fin_suban()
-local _alg, _tbl
-
-// temporary tabela - nema semafora
-_ret["temp"]     := .f.
+local _alg, _tbl 
 
 _tbl := "fin_suban"
 
@@ -223,6 +220,10 @@ __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "SUBAN"
 __f18_dbfs[_tbl]["wa"]    := F_SUBAN
+
+// temporary tabela - nema semafora
+__f18_dbfs[_tbl]["temp"]  := .f.
+
 
 
 __f18_dbfs[_tbl]["algoritam"] := {}
@@ -256,16 +257,14 @@ return .t.
 function set_a_dbf_fin_anal()
 local _alg, _tbl
 
-// temporary tabela - nema semafora
-_ret["temp"]     := .f.
-
 _tbl := "fin_anal"
 
 __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "ANAL"
 __f18_dbfs[_tbl]["wa"]    := F_ANAL
-
+// temporary tabela - nema semafora
+__f18_dbfs[_tbl]["temp"]  := .f.
 
 __f18_dbfs[_tbl]["algoritam"] := {}
 
@@ -298,16 +297,15 @@ return .t.
 function set_a_dbf_fin_sint()
 local _alg, _tbl
 
-// temporary tabela - nema semafora
-_ret["temp"]     := .f.
-
-
 _tbl := "fin_sint"
 
 __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "SINT"
 __f18_dbfs[_tbl]["wa"]    := F_SINT
+
+// temporary tabela - nema semafora
+__f18_dbfs[_tbl]["temp"]  := .f.
 
 
 __f18_dbfs[_tbl]["algoritam"] := {}
@@ -342,15 +340,15 @@ return .t.
 function set_a_dbf_fin_nalog()
 local _alg, _tbl
 
-// temporary tabela - nema semafora
-_ret["temp"]     := .f.
-
 _tbl := "fin_nalog"
 
 __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "NALOG"
 __f18_dbfs[_tbl]["wa"]    := F_NALOG
+
+// temporary tabela - nema semafora
+__f18_dbfs[_tbl]["temp"]  := .f.
 
 
 __f18_dbfs[_tbl]["algoritam"] := {}
@@ -377,6 +375,8 @@ function set_a_dbfs()
 local _dbf_fields, _sql_order
 
 public gaDbfs := {}
+
+__f18_dbfs := hb_hash()
 
 set_a_dbf_fin_suban()
 set_a_dbf_fin_anal()

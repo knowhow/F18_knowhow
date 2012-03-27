@@ -23,18 +23,45 @@ local _qry_obj
 local _server := pg_server()
 local _seconds
 local _x, _y
-local _dat, _ids
+local _ids
 local _fnd, _tmp_id
 local _count
-local _tbl
+local _sql_tbl, _dbf_tbl
 local _offset
 local _step := 15000
 local _retry := 3
-local _order := "idfirma, idvn, brnal, rbr"
+local _key_blocks := {} 
 local _key_block
-local _i, _fld, _fields, _sql_fields
+local _i, _fld, _dbf_fields, _sql_fields, _sql_order
+local _sql_in := {}
+local _queries
+local _dbf_index_tags := {}
+local _dbf_wa, _dbf_alias
+local _ids_queries
 
-_tbl := "fmk.fin_suban"
+_dbf_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond", "otvst", "idtipdok" }
+
+_sql_fields := sql_fields( _dbf_fields )
+_sql_order  := "idfirma, idvn, brnal, rbr"
+
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+AADD(_key_blocks, {|| field->idfirma + field->idvn + field->brnal + field->rbr }) 
+AADD(_sql_in, "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 4)")
+AADD(_dbf_index_tags, "4")
+
+// algoritam 2 - nivo dokumenta
+// -------------------------------------------------------------------------------
+AADD(_key_blocks, {|| field->idfirma + field->idvn + field->brnal})
+AADD(_sql_in, "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)")
+// oba algoritma koriste index tag 4
+AADD(_dbf_index_tags, "4")
+
+_dbf_wa    := F_SUBAN
+_dbf_alias := "SUBAN"
+_dbf_tbl   := "fin_suban" 
+_sql_tbl   := "fmk.fin_suban"
 
 _x := maxrows() - 15
 _y := maxcols() - 20
@@ -45,149 +72,20 @@ endif
 
 _seconds := SECONDS()
 
-_count := table_count( _tbl, "true" ) 
+SELECT (_dbf_wa)
+my_usex (_dbf_alias, _dbf_tbl, .f., "SEMAPHORE")
 
-if algoritam == "IDS"
-    _offset := 1
-    _count := 1
-    _step := 1
+if algoritam == "FULL"
+   full_synchro (_sql_tbl, _sql_fields, _sql_order, _dbf_tbl, _dbf_alias, _dbf_fields, _step)
+else
+   ids_synchro  (_dbf_tbl, _sql_fields, _sql_in, _dbf_tbl, _dbf_alias, _dbf_fields, _dbf_index_tags, _key_blocks)
 endif
-
-SELECT F_SUBAN
-my_usex ("suban", "fin_suban", .f., "SEMAPHORE")
-
-_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", ;
-        "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", ;
-        "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond", "otvst", "idtipdok" }
-
-_sql_fields := sql_fields( _fields )
-
-for _offset := 0 to _count STEP _step
-
-  _qry := "SELECT " + _sql_fields + " FROM " + _tbl
-
-  if algoritam == "DATE"
-    _dat :=  get_dat_from_semaphore( "fin_suban" )
-    _qry += " WHERE datdok >=" + _sql_quote(_dat)
-    _key_block := { || field->datdok }
-  endif
-
-  if algoritam == "IDS"
-		_ids := get_ids_from_semaphore( "fin_suban" )
-    	_qry += " WHERE "
-    	if LEN(_ids) < 1
-       		// nema id-ova
-      		_qry += "false"
-    	else
-        	_sql_ids := "("
-        	for _i := 1 to LEN(_ids)
-            	_sql_ids += _sql_quote(_ids[_i])
-            	if _i < LEN(_ids)
-            		_sql_ids += ","
-            	endif
-        	next
-        	_sql_ids += ")"
-        	_qry += " ( rpad( idfirma,2) || rpad( idvn, 2) || rpad( brnal, 8) || lpad( rbr, 4) ) IN " + _sql_ids
-     	endif
-
-        _key_block := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
-
-  endif
-
-  if algoritam <> "IDS"
-    _qry += " ORDER BY " + _order
-    _qry += " LIMIT " + STR(_step) + " OFFSET " + STR(_offset) 
-  endif
-
-  DO CASE
-
-   CASE (algoritam == "FULL") .and. (_offset==0)
-    
-    // "full" algoritam
-    log_write("dat_dok = nil full algoritam") 
-    ZAP
-
-   CASE algoritam == "DATE"
-
-    log_write("dat_dok <> nil date algoritam") 
-    // "date" algoritam  - brisi sve vece od zadanog datuma
-    SET ORDER TO TAG "8"
-    // tag je "DatDok" nije DTOS(DatDok)
-    seek _dat
-    do while !eof() .and. eval( _key_block )  >= _dat 
-        // otidji korak naprijed
-        SKIP
-        _rec := RECNO()
-        SKIP -1
-        DELETE
-        GO _rec  
-    enddo
-
-   CASE algoritam == "IDS"
-
-	SET ORDER TO TAG "4"
-
-	// CREATE_INDEX("4", "idFirma+IdVN+BrNal+Rbr", "SUBAN")
-    // pobrisimo sve id-ove koji su drugi izmijenili
-
-    _counter := 0
-
-    do while .t.
-       _fnd := .f.
-       for each _tmp_id in _ids
-          HSEEK _tmp_id
-          do while !EOF() .and. EVAL( _key_block ) == _tmp_id
-               skip
-               _rec := RECNO()
-               skip -1 
-               DELETE
-               go _rec 
-               _fnd := .t.
-               ++ _counter
-          enddo
-        next
-        if !_fnd 
-			 exit 
-		endif
-    enddo
-
-    log_write( "fin_suban local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
-
-  ENDCASE
-
-  log_write( "fin_suban update query: " + _qry )
-  
-  _qry_obj := run_sql_query( _qry, _retry ) 
-
-  _counter := 0
-
-  DO WHILE !_qry_obj:Eof()
-    
-    append blank
-   
-    for _i := 1 to LEN(_fields)
-        _fld := FIELDBLOCK(_fields[_i])
-        if VALTYPE(EVAL(_fld)) $ "CM"
-            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
-        else
-            EVAL(_fld, _qry_obj:FieldGet(_i))
-        endif
-    next 
-  
-    _qry_obj:Skip()
-
-    ++ _counter
-
-  ENDDO
-
-  log_write( "fin_suban update rec: " + ALLTRIM(STR( _counter )) )
-
-next
 
 USE
 
+
 if (gDebug > 5)
-    log_write("fin_suban synchro cache:" + STR(SECONDS() - _seconds))
+    log_write( _dbf_tbl + "synchro cache:" + STR(SECONDS() - _seconds))
 endif
 
 return .t. 
@@ -198,7 +96,6 @@ return .t.
 // fin_suban - update
 // ----------------------------------------------
 function sql_fin_suban_update( op, record )
-
 LOCAL _ret
 LOCAL _result
 LOCAL _qry

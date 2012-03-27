@@ -16,6 +16,9 @@
 thread static __server := NIL
 thread static __server_params := NIL
 
+// logiranje na server
+thread static __server_log := .f.
+
 static __f18_home := NIL
 static __f18_home_root := NIL
 
@@ -195,6 +198,7 @@ write_dbf_version_to_config()
 
 check_server_db_version()
 
+__server_log := .t.
 return .t.
 
 
@@ -604,6 +608,8 @@ return
 // ---------------
 function relogin()
 
+__server_log := .f.
+
 my_server_logout()
 
 _get_server_params_from_config()
@@ -618,8 +624,21 @@ return .t.
 // -------------------------------
 // -------------------------------
 function log_write(msg)
- FWRITE(__log_handle, msg + hb_eol())
+ 
+FWRITE(__log_handle, msg + hb_eol())
+
+if __server_log
+ server_log_write(msg)
+endif
+ 
 return
+
+function log_disable()
+__server_log := .f.
+
+function log_enable()
+__server_log := .f.
+
 
 function log_close()
  FCLOSE(__log_handle)

@@ -37,7 +37,7 @@ if oTable == NIL
     quit
 endif
 
-if oTable:Fieldget(1) == "false"
+if oTable:FieldGet(1) == "false"
 	return .f.
 endif
 

@@ -13,6 +13,8 @@ test_migrate()
 // test bug
 // ? ajoj
 
+fin_test()
+
 harbour_base()
 
 dbf_test()

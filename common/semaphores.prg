@@ -17,13 +17,14 @@ function my_usex(alias, table, new_area, _rdd, semaphore_param)
 return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 
 
+
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
 function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
 local _err
 local _pos
-local _version
+local _version, _last_version
 local _area
 
 if new_area == NIL
@@ -38,6 +39,7 @@ if VALTYPE(alias) == "N"
    // F_SUBAN
    _pos := ASCAN(gaDBFs,  { |x|  x[1]==alias} )
    alias := gaDBFs[_pos, 2]
+
 else
    // /home/test/suban.dbf => suban
    alias := UPPER(FILEBASE(alias))
@@ -49,6 +51,7 @@ else
    else
        _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
    endif
+
 endif
 
 // pozicija gdje je npr. SUBAN
@@ -79,20 +82,30 @@ if (LEN(gaDBFs[_pos]) > 3)
           endif
 
         else
+
+            _last_version := last_semaphore_version(table)
             // moramo osvjeziti cache
-           if _version < last_semaphore_version(table)
-             if lock_semaphore(table, "lock")
-                 if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
-                    semaphore_param:= gaDBFs[_pos, 5]
-                 endif
-                 EVAL( gaDBFs[_pos, 4], semaphore_param )
-                 update_semaphore_version(table, .f.)
-                 lock_semaphore(table, "free")
-              endif
+            if _version < _last_version
+               log_write("my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10))) 
+               if lock_semaphore(table, "lock")
+                  if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
+                       semaphore_param:= gaDBFs[_pos, 5]
+                  endif
+                  EVAL( gaDBFs[_pos, 4], semaphore_param )
+                  update_semaphore_version(table, .f.)
+
+                  lock_semaphore(table, "free")
+               endif
            endif
+
+           // sada bi lokalni cache morao biti ok, idemo to provjeriti
+           check_after_synchro(table)
+
         endif
+
    else
-      // rdd = "SEMAPHORE" poziv is update from sql server procedure
+     // rdd = "SEMAPHORE" poziv is update from sql server procedure
+     // samo otvori tabelu
      if gDebug > 5
           log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area))
      endif
@@ -358,8 +371,8 @@ _ret := _sql_query( _server, _qry )
 
 return _ret:Fieldget(1)
 
-//---------------------------------------
-//---------------------------------------
+//-------------------------------------------------
+//-------------------------------------------------
 function push_ids_to_semaphore( table, ids )
 local _tbl
 local _result
@@ -508,16 +521,237 @@ LOCAL _table_obj
 LOCAL _result
 LOCAL _qry
 LOCAL _server := pg_server()
-
 // provjeri prvo da li postoji uopšte ovaj site zapis
-_qry := "SELECT COUNT(*) FROM " + table + " WHERE " + condition
+_qry := "SELECT COUNT(*) FROM " + table 
+
+if condition != NIL
+  _qry += " WHERE " + condition
+endif
 
 _table_obj := _sql_query( _server, _qry )
 IF VALTYPE(_table_obj) == "L" 
-      log_write( "problem sa query-jem: " + _qry )
-      QUIT
+    log_write( "problem sa query-jem: " + _qry )
+    QUIT
 ENDIF
 
 _result := _table_obj:Fieldget(1)
 
 RETURN _result
+
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+function create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
+local _qry_1, _qry_2
+local _queries     := {}
+local _ids, _ids_2 := {}, _sql_ids := {}
+local _i, _id
+local _ret := hb_hash()
+
+for _i := 1 to len(sql_in)
+   AADD(_queries, "SELECT " + sql_fields + " FROM " + sql_tbl + " WHERE ")
+   AADD(_sql_ids, NIL)
+   AADD(_ids_2, NIL)
+next
+ 
+_ids := get_ids_from_semaphore( dbf_tbl )
+
+// primjer
+// suban 00-11-2222 rbr 1, rbr 2 
+// kompletan nalog (#2) 00-11-3333
+// Full synchro (#F)
+// _ids := { "00112222 1", "00112222 2", "#200113333", "#F" }
+
+for each _id in _ids
+
+    if LEFT(_id, 2) == "#2"
+       // algoritam 2
+       _id := SUBSTR(_id, 3)
+
+       if _sql_ids[2] == NIL
+          _sql_ids[2] := "("
+          _ids_2[2] := {}
+       endif
+
+       _sql_ids[2] += _sql_quote(_id) + ","
+       AADD(_ids_2[2], _id)
+ 
+    else
+
+      // algoritam 1 - default
+       if _sql_ids[1] == NIL
+          _sql_ids[1] := "("
+          _ids_2[1] := {}
+       endif
+
+       _sql_ids[1] += _sql_quote(_id) + ","
+       AADD(_ids_2[1], _id)
+
+    endif
+
+next
+
+
+for _i := 1 to LEN(sql_in)
+
+    if _sql_ids[_i] != NIL
+       // odsjeci zarez na kraju
+       _sql_ids[_i] := LEFT(_sql_ids[_i], LEN(_sql_ids[_i]) - 1)
+       _sql_ids[_i] += ")"
+       _queries[_i] +=  "(" + sql_in[_i]  + ") IN " + _sql_ids[_i]
+  
+    else
+       _queries[_i] := NIL
+    endif
+
+next
+
+log_write("ret[qry]=" + pp(_queries))
+log_write("ret[ids]=" + pp(_ids_2))
+_ret["qry"] := _queries
+_ret["ids"] := _ids_2
+
+return _ret
+
+
+// ------------------------------------------------------
+// sve ids-ove pobrisi iz dbf-a
+// ------------------------------------------------------
+function delete_dbf_ids(dbf_alias, dbf_tag, key_block, ids)
+local _counter
+local _fnd, _tmp_id, _rec
+
+// pobrisimo sve id-ove koji su drugi izmijenili
+SET ORDER TO TAG (dbf_tag)
+
+_counter := 0
+
+if VALTYPE(ids) != "A"
+   Alert("ids type ? " + VALTYPE(ids))
+endif
+
+do while .t.
+    _fnd := .f.
+    for each _tmp_id in ids
+        HSEEK _tmp_id
+        do while !EOF() .and. EVAL(key_block) == _tmp_id
+
+            skip
+            _rec := RECNO()
+            skip -1 
+            DELETE
+            go _rec
+ 
+            _fnd := .t.
+            ++ _counter
+        enddo
+    next
+
+    if !_fnd 
+            exit 
+    endif
+enddo
+
+log_write( "delete_dbf_ids: " + dbf_alias + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )) )
+
+return
+
+// -----------------------------------------------  
+// napuni dbf tabelu sa podacima sa servera
+// dbf_tabela mora biti otvorena i u tekucoj WA
+// -----------------------------------------------  
+function fill_dbf_from_server_qry(dbf_alias, sql_query, dbf_fields)
+local _counter := 0
+local _i, _fld
+local _server := pg_server()
+local _qry_obj
+local _retry := 3
+   
+_qry_obj := run_sql_query(sql_query, _retry ) 
+
+ 
+if !USED() .or. (dbf_alias != ALIAS())
+   Alert("dbf mora biti otvoren !")
+   log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + dbf_alias)
+   QUIT 
+endif
+
+DO WHILE !_qry_obj:EOF()
+
+append blank
+
+for _i := 1 to LEN(dbf_fields)
+    _fld := FIELDBLOCK(dbf_fields[_i])
+    if VALTYPE(EVAL(_fld)) $ "CM"
+        EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+    else
+        EVAL(_fld, _qry_obj:FieldGet(_i))
+    endif
+next 
+
+_qry_obj:Skip()
+
+++ _counter
+
+ENDDO
+
+log_write( "fill_dbf_from_server_qry: " + dbf_alias +  " updated from sql server rec_cnt: " + ALLTRIM(STR( _counter )) )
+
+return
+
+
+// -----------------------------------------------------------------------------------------------------
+// synchro na osnovu ids-ova
+// -----------------------------------------------------------------------------------------------------
+function ids_synchro(sql_tbl, sql_fields, sql_in, dbf_tbl, dbf_alias, dbf_fields, dbf_index_tags, key_blocks)
+local _i, _ids_queries
+
+_ids_queries := create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
+
+//  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
+//  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
+
+log_write("ids_synchro - ids_queries: " + pp(_ids_queries))
+
+for _i := 1 TO LEN(_ids_queries["ids"])
+ 
+   // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
+   if _ids_queries["ids"][_i] != NIL
+
+     // pobrisi dbf
+     delete_dbf_ids( dbf_alias, dbf_index_tags[_i], key_blocks[_i], _ids_queries["ids"][_i])
+
+     // dodaj sa servera
+     fill_dbf_from_server_qry( dbf_alias, _ids_queries["qry"][_i], dbf_fields)
+
+   endif
+next
+
+return
+
+
+// ---------------------------------------------------------
+// napuni tablu sa servera
+// ---------------------------------------------------------
+function full_synchro(sql_table, sql_fields, sql_order, dbf_table, dbf_alias, dbf_fields, step_size)
+local _seconds
+local _count
+local _offset
+local _qry
+
+_count := table_count( sql_table, "true" ) 
+_seconds := SECONDS()
+
+ZAP
+
+for _offset := 0 to _count STEP step_size
+
+  _qry :=  "SELECT " + sql_fields + " FROM " +	sql_table
+ 
+  _qry += " ORDER BY " + sql_order
+  _qry += " LIMIT " + STR(step_size) + " OFFSET " + STR(_offset) 
+
+  fill_dbf_from_server_qry(dbf_alias, _qry, dbf_fields)
+
+next
+

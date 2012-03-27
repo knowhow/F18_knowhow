@@ -41,9 +41,10 @@ LOCAL _where
 LOCAL _server := pg_server()
 local _key
 local _dbstruct
-local __pos
-local __dec
-local __len
+local _msg
+local _pos
+local _dec
+local _len
 
 _tbl := "fmk." + LOWER(table)
 
@@ -76,7 +77,6 @@ DO CASE
 
    CASE op == "ins"
 	
-	_dbstruct := {}
 	_dbstruct := DBSTRUCT()
 
     _qry := "INSERT INTO " + _tbl + "(" 
@@ -89,14 +89,23 @@ DO CASE
     _qry += " VALUES(" 
     
     for each _key in record:Keys
+
         // ako je polje numericko
 		if VALTYPE( record[_key] ) == "N"
-			
-			__pos := ASCAN( _dbstruct, {|_var| LOWER(_var[1]) == LOWER(_key)} )
-			__len := _dbstruct[ __pos, 3 ]
-			__dec := _dbstruct[ __pos, 4 ]
+			_pos := ASCAN( _dbstruct, {|_var| LOWER(_var[1]) == LOWER(_key)} )
+
+            if _pos == 0
+              _msg := "ERR: " + PROCNAME(0) + " nema kljuc " + _key + " u recordu: ##" + pp(record) + "## dbstruct:##" + pp(_dbstruct) 
+
+              MsgBeep(_msg)
+              log_write(_msg)
+            endif
+ 
+			_len := _dbstruct[ _pos, 3 ]
+			_dec := _dbstruct[ _pos, 4 ]
   
-			_qry += STR( record[_key], __len, __dec ) + ","
+			_qry += STR( record[_key], _len, _dec ) + ","
+
         else
 			_qry += _sql_quote( record[_key]) + ","
     	endif 	
@@ -124,10 +133,17 @@ endif
 // ----------------------------------------
 function run_sql_query(qry, retry) 
 local _i, _qry_obj
+
 local _server := my_server()
 
 if retry == NIL
   retry := 1
+endif
+
+if VALTYPE(qry) != "C"
+   _msg := "qry ne valja VALTYPE(qry) =" + VALTYPE(qry)
+   MsgBeep(_msg)
+   quit
 endif
 
 for _i := 1 to retry
@@ -136,7 +152,7 @@ for _i := 1 to retry
    begin sequence with {|err| Break(err)}
        _qry_obj := _server:Query(qry)
    recove
-      log_write("ajoj ajoj: qry rokno !?!")
+      log_write("ajoj ajoj: qry ne radi !?!")
       my_server_logout()
       hb_IdleSleep(0.5)
       if my_server_login()

@@ -11,20 +11,169 @@
 
 #include "fmk.ch"
 
+// ------------------------------------------------
+// na osnovu aliasa daj mi WA, dbf table_name
+//
+// moze se proslijediti: F_SUBAN, "SUBAN", "fin_suban"
+//
+// ret["wa"] = F_SUBAN, ret["alias"] = "SUBAN", 
+// ret["table"] = "fin_suban"
+// ---------------------------------------------------
+function get_a_dbf_rec(x_alias)
+local _pos
+local _ret := hb_hash()
+
+_ret["dbf_fields"]:= NIL
+_ret["sql_order"] := NIL
+
+_ret["wa"]    := NIL
+_ret["alias"] := NIL
+_ret["table"] := NIL
+
+if VALTYPE(x_alias) == "N"
+   // F_SUBAN
+
+   _ret["wa"] := x_alias
+   _pos := ASCAN(gaDBFs,  { |x|  x[1] == x_alias} )
+ 
+   if _pos < 1
+           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + table)
+           return _ret
+   endif
+   
+else
+
+   // /home/test/suban.dbf => suban
+   _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(FILEBASE(x_alias))} )
+   if _pos < 1
+
+       _pos := ASCAN(gaDBFs,  { |x|  x[3]==x_alias} )
+        
+       if _pos < 1
+           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + x_alias)
+          _ret["wa"]    := NIL
+          _ret["alias"] := NIL
+          _ret["table"] := NIL
+          return _ret
+       endif
+           
+   endif
+   
+endif
+
+_ret["wa"]        := gaDBFs[_pos,  1]
+_ret["alias"]     := gaDBFs[_pos,  2]
+_ret["table"]     := gaDBFs[_pos,  3]
+
+if LEN(gaDBFs[_pos]) > 8
+  _ret["dbf_fields"]:= gaDBFs[_pos,  9]
+  _ret["sql_order"] := gaDBFs[_pos, 10]
+endif
+
+// nije zadano - ja cu na osnovu strukture dbf-a
+//  napraviti dbf_fields
+if _ret["dbf_fields"] == NIL
+  set_dbf_fields_from_struct(@_ret)
+endif
+
+// {id, naz} => "id, naz"
+if _ret["sql_order"] == NIL 
+   if  LEN(gaDBFs[_pos]) > 5
+       _ret["sql_order"] := sql_order_from_key_fields(gaDBFs[_pos, 6])
+   else
+       // onda moze biti samo tabela sifarnik, bazirana na id-u
+       _ret["sql_order"] := "id"
+   endif
+endif
+
+return _ret
+
+// ----------------------------------------------
+// setujem "sql_order" hash na osnovu 
+// gaDBFS[_pos][6]
+// rec["dbf_fields"]
+// ----------------------------------------------
+function sql_order_from_key_fields(key_fields)
+local _i, _len
+local _sql_order
+
+_len := LEN(key_fields)
+
+_sql_order := ""
+for _i := 1 to _len
+   _sql_order += key_fields[_i]
+
+   if _i < _len
+      _sql_order += ","
+   endif
+next
+   
+return _sql_order    
+   
+
+// ----------------------------------------------
+// setujem "dbf_fields" hash na osnovu stukture
+// dbf-a 
+// rec["dbf_fields"]
+// ----------------------------------------------
+function set_dbf_fields_from_struct(rec)
+local _struct, _i
+local _opened := .t.
+local _fields :={}
+
+SELECT (rec["wa"])
+
+if !used()
+    dbUseArea( .f., "DBFCDX", my_home() + rec["table"], rec["alias"], .t. , .f.)
+    _opened := .t.
+endif
+
+_struct := DBSTRUCT()
+
+for _i := 1 to LEN(_struct)
+   AADD(_fields, LOWER(_struct[_i, 1]))
+next
+
+rec["dbf_fields"] := _fields
+
+if _opened
+   USE
+endif
+
+return .t.
+
+
 // ------------------
 // ------------------
 function set_a_dbfs()
+local _dbf_fields, _sql_order
 
 public gaDbfs := {}
 
 
 // modul FIN
-AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,  {|alg| fin_suban_from_sql_server(alg) }, "IDS" , {"idfirma", "idvn", "brnal", "rbr" }, { |x| sql_where_block("fin_suban", x) }, "4" })
+_dbf_fields := { "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond", "otvst", "idtipdok" }
+_sql_order := "idfirma, idvn, brnal, rbr"
+
+AADD( gaDbfs, { F_SUBAN  ,  "SUBAN"   , "fin_suban" ,;  // 1, 2, 3
+   {|alg| fin_suban_from_sql_server(alg) }, "IDS" , ;   // 4, 5
+   {"idfirma", "idvn", "brnal", "rbr" }, { |x| sql_where_block("fin_suban", x) }, "4", ; // 6, 7, 8
+   _dbf_fields, _sql_order  ; // 9, 10
+})
+
 // fin_anal: TAG "2", "idFirma+IdVN+BrNal+Rbr"
-AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",    {|alg| fin_anal_from_sql_server(alg)  }, "IDS", {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_anal", x) }, "2" } )
+AADD( gaDbfs, { F_ANAL   ,  "ANAL"    , "fin_anal",   ;
+      {|alg| fin_anal_from_sql_server(alg)  }, "IDS", ;
+      {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_anal", x) }, "2" ;
+      })
+
+
 // fin_sint: TAG "2", "idFirma+IdVN+BrNal+Rbr"
+
 AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|alg| fin_sint_from_sql_server(alg)  }, "IDS",  {"idfirma", "idvn", "brnal", "rbr"}, {|x| sql_where_block("fin_sint", x) }, "2" }  )
 // fin_nalog: tag "1", "IdFirma+IdVn+BrNal"
+
+
 AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS",  { "idfirma", "idvn", "brnal" }, {|x| sql_where_block("fin_nalog", x) }, "1" })
 
 
@@ -81,7 +230,10 @@ AADD( gaDbfs, { F_SIFK  , "SIFK"  , "sifk", { |param| sifk_from_sql_server(param
 AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( param ) }, "IDS", {"id", "oznaka", "idsif", "naz"}, { |x| sql_where_block("sifv", x) }, "id" })
   
 // ROBA
-AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    , { | param | roba_from_sql_server(param)    }  , "IDS" } )
+AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    ,     ;  // 1 2 3
+      { | param | roba_from_sql_server(param)   }  , "IDS";  // 4 5
+    })
+
 AADD( gaDbfs, { F_SAST     ,  "SAST"    , "sast"    , { | param | sast_from_sql_server(param)    }  , "IDS", {"id", "id2"}, { |x|  sql_where_block( "sast", x ) }, "idrbr" } )
 AADD( gaDbfs, { F_TARIFA   ,  "TARIFA"  , "tarifa"  , { | param | tarifa_from_sql_server(param)  }  , "IDS" } )
 AADD( gaDbfs, { F_KONCIJ   ,  "KONCIJ"  , "koncij"  , { | param | koncij_from_sql_server(param)  }  , "IDS" } )
@@ -111,8 +263,13 @@ AADD( gaDbfs, { F_RJ     ,  "RJ"      , "rj", { | param | rj_from_sql_server( pa
 AADD( gaDbfs, { F_TDOK   ,  "TDOK"    , "tdok", { | param | tdok_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_KONTO  ,  "KONTO"   , "konto", {| param | konto_from_sql_server(param) }, "IDS" } )
 AADD( gaDbfs, { F_VPRIH  ,  "VPRIH"   , "vpprih"   } )
+
 AADD( gaDbfs, { F_PARTN  ,  "PARTN"   , "partn", {| param | partn_from_sql_server(param) }, "IDS" } )
+
 AADD( gaDbfs, { F_TNAL   ,  "TNAL"    , "tnal", { | param | tnal_from_sql_server( param ) }, "IDS" } )
+
+
+
 AADD( gaDbfs, { F_PKONTO ,  "PKONTO"  , "pkonto", { | param | pkonto_from_sql_server(param) }, "IDS" } )
 AADD( gaDbfs, { F_VALUTE ,  "VALUTE"  , "valute", { | param | valute_from_sql_server( param ) }, "IDS" } )
 

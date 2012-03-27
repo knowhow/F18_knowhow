@@ -10,6 +10,7 @@
  */
 
 #include "fmk.ch"
+#include "f18_ver.ch"
 #include "set.ch"
 #include "f18_separator.ch"
 
@@ -17,6 +18,24 @@ static aBoxStack:={}
 static aPrStek:={}
 static aMenuStack:={}    
 static aMsgStack:={}
+
+function init_gui()
+
+public m_x := 0
+public m_y := 0
+
+public gNaslov  := "F18 " + F18_VER_DATE + "/ lib: " + FMK_LIB_VER
+
+public gModul   := "F18"
+public gVerzija := F18_VER
+
+public Invert   := .t.
+public Normal   :="GR+/B,R/N+,,,N/W"
+
+NaslEkran(.t.)
+
+return
+
 
 /*! \fn Menu(MenuId,Items,ItemNo,Inv)
  *
@@ -357,8 +376,6 @@ if LEN(aMsgStack)>0
 
   IF msg_x1 == NIL
      nLen:=aMsgPar[3]
-     //hernad
-     //RESTSCREEN(8, (MAXCOLS()-1-l-7)/2, 14, MAXCOLS()-1-(MAXCOLS()-l-7)/2,aMsgPar[4])
      RESTSCREEN(8, (MAXCOLS()-nLen-7) / 2, 14, MAXCOLS()-(MAXCOLS()-nLen-7) / 2, aMsgPar[4])
   ELSE
      RESTSCREEN (msg_x1, msg_y1, msg_x2, msg_y2, aMsgPar[4])
@@ -1410,37 +1427,6 @@ return cK1
 
 
 
-/*
-
-// \fn SecurR(cLevel, cStavka)
-//
-// \return A - moze sve, administrator, C - citaj, P - pisi, B - brisi, N - nedostupno, T - tekuca aktivnost - nije specijalno definisano
-//
-// \note return vrijednost moze biti i kombinacija  CP - citaj i pisi, ali ne brisi
-
- 
-function SecurR(cLevel,cStavka)
-local cK1:="AT", fZatv:=.f., nSelect
-
-nSelect:=select()
-
-SELECT (F_SECUR)
-if !used()
-  O_SECUR
-  fZatv:=.t.
-endif
-private cSection:=cLevel,cHistory:=" "; aHistory:={}
-RPar(padr(UPPER(cStavka),15),@cK1)
-
-if fzatv
-  use
-endif
-
-select(nSelect)
-return cK1
-*/
-
-
 // ---------------------------------------------
 // ---------------------------------------------
 function ZaSvakiSlucaj(cDir, fCdx, aDirs, fRecurse)
@@ -1552,7 +1538,7 @@ endif
 
 DISPBox(2, 0, 4, MAXCOLS()-1, B_DOUBLE + ' ' , NORMAL)
 
-if fbox
+if fBox
     DISPBox(5 ,0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE + "±", INVERT)
 endif
 
@@ -1603,10 +1589,10 @@ endif
 
 if (gFKolor=="D" .and. ISCOLOR())
 
-    Invert:="B/W,R/N+,,,R/B+"
-    Normal:="W/G,R/N+,,,N/W"
-    Blink:="R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
-    Nevid:="W/W,N/N"
+    Invert := "B/W,R/N+,,,R/B+"
+    Normal := "W/B,R/N+,,,N/W"
+    Blink  := "R"+REPLICATE("*",4)+"/W,W/B,,,W/RB"
+    Nevid  := "W/W,N/N"
 else
 
     Invert:="N/W,W/N,,,W/N"
@@ -1841,9 +1827,6 @@ do while .t.
      
 enddo
 return
-
-
-
 
 
 

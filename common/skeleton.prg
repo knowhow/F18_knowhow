@@ -63,11 +63,8 @@ endif
 
 SetNaslov(oApp)
 
-
-//if mpar37("/INSTALL",oApp)
-  oApp:oDatabase:lAdmin:=.t.
-  CreGParam()
-//endif
+oApp:oDatabase:lAdmin:=.t.
+CreGParam()
 
 set_global_vars_0_prije_prijave()
 
@@ -81,11 +78,8 @@ endif
 
 oApp:oDatabase:setgaDbfs()
 
-//if mpar37("/INSTALL",oApp)
-  oApp:oDatabase:install()
-//endif
+oApp:oDatabase:install()
 
-//IniGparam2()
 
 KonvTable()
 
@@ -199,7 +193,6 @@ gPTKONV:="0"
 gPicSif:="V"
 gcDirekt:="V"
 gSKSif:="D"
-//gArhDir:=ToUnix("C:"+SLASH+"SIGARH")
 gPFont:="Arial"
 
 private cSection:="1", cHistory:=" "; aHistory:={}
@@ -279,6 +272,8 @@ gNaslov:= oApp:cName + " F18, " + oApp:cPeriod
 return
 
 
+// -------------------------------------------------
+// -------------------------------------------------
 function InitE(oApp)
 
 if (oApp:cKorisn<>nil .and. oApp:cSifra==nil)
@@ -486,9 +481,9 @@ if !oApp:lStarted
 endif
 
 if (gfKolor=="D" .and. ISCOLOR())
-  Normal:="W/B,R/N+,,,N/W"
+  Normal := "W/B,R/N+,,,N/W"
 else
-  Normal:="W/N,N/W,,,N/W"
+  Normal := "W/N,N/W,,,N/W"
 endif
 
 CLOSERET

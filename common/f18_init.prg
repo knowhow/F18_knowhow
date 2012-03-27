@@ -78,12 +78,12 @@ mSetCursor( .t. )
 public gRj         := "N"
 public gReadOnly   := .f.
 public gSQL        := "N"
-public Invert      := .f.
 public gOModul     := NIL
 public cDirPriv    := ""
 public cDirRad     := ""
 public cDirSif     := ""
 public glBrojacPoKontima := .t.
+
 
 set_f18_home_root()
 
@@ -119,6 +119,7 @@ else
    QUIT
 endif
 
+init_gui()
 
 _get_server_params_from_config()
 

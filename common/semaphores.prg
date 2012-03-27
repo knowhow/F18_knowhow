@@ -739,10 +739,16 @@ local _count
 local _offset
 local _qry
 
+Box(, 5, 70)
+
+@ m_x + 1, m_y + 2 SAY "full synchro: " + sql_table + " => " + dbf_table
+
 _count := table_count( sql_table, "true" ) 
 _seconds := SECONDS()
 
 ZAP
+
+@ m_x + 3, m_y + 2 SAY _count
 
 for _offset := 0 to _count STEP step_size
 
@@ -753,5 +759,11 @@ for _offset := 0 to _count STEP step_size
 
   fill_dbf_from_server_qry(dbf_alias, _qry, dbf_fields)
 
+  @ m_x + 4, m_y + 2 SAY _offset
+  @ row(), col() + 2 SAY "/"
+  @ row(), col() + 2 SAY _count
 next
 
+BoxC()
+
+return .t.

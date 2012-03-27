@@ -20,7 +20,7 @@ return __f18_dbfs
 // tbl - dbf_table ili alias
 // -------------------------------------------------------
 function get_a_dbf_rec(tbl)
-local _rec, _keys, _dbf_tbl
+local _rec, _keys, _dbf_tbl, _key
 
 _dbf_tbl := "x"
 

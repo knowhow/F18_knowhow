@@ -45,7 +45,6 @@ function my_usex(alias, table, new_area, _rdd, semaphore_param)
 return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 
 
-
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
@@ -63,6 +62,7 @@ if excl == NIL
   excl := .f.
 endif
 
+/*
 if VALTYPE(alias) == "N"
    // F_SUBAN
    _pos := ASCAN(gaDBFs,  { |x|  x[1]==alias} )
@@ -89,12 +89,21 @@ if table == NIL
    // "fin_suban"
    table := gaDBFs[_pos, 3]
 endif
+*/
+
+if table == NIL
+  _a_dbf_rec := get_a_dbf_rec(alias)
+else
+  _a_dbf_rec := get_a_dbf_rec(table)
+endif
+
 
 if _rdd == NIL
   _rdd = "DBFCDX"
 endif
 
-if (LEN(gaDBFs[_pos]) > 3) 
+if !_a_dbf_rec["temp"] 
+
 
    // tabela je pokrivena semaforom
    if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
@@ -105,7 +114,7 @@ if (LEN(gaDBFs[_pos]) > 3)
           // semafor je resetovan
           // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
           if lock_semaphore(table, "lock")
-             EVAL( gaDBFs[_pos, 4], "FULL")
+             update_dbf_from_from_server(table, "FULL")
              update_semaphore_version(table, .f.)
              lock_semaphore(table, "free")
           endif
@@ -115,20 +124,18 @@ if (LEN(gaDBFs[_pos]) > 3)
             _last_version := last_semaphore_version(table)
             // moramo osvjeziti cache
             if _version < _last_version
+
                log_write("my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10))) 
                if lock_semaphore(table, "lock")
-                  if (semaphore_param == NIL) .and. LEN(gaDBFs[_pos]) > 4
-                       semaphore_param:= gaDBFs[_pos, 5]
-                  endif
-                  EVAL( gaDBFs[_pos, 4], semaphore_param )
+                  update_dbf_from_from_server(table, "IDS")
                   update_semaphore_version(table, .f.)
-
                   lock_semaphore(table, "free")
                endif
-           endif
 
-           // sada bi lokalni cache morao biti ok, idemo to provjeriti
-           check_after_synchro(table)
+            endif
+
+             // sada bi lokalni cache morao biti ok, idemo to provjeriti
+             check_after_synchro(table)
 
         endif
 
@@ -796,3 +803,35 @@ next
 BoxC()
 
 return .t.
+
+
+// ----------------------------------------------------------
+// dbf_fields - {"id", {"iznos", 12, 2} }
+// values - { "01", 15.5 }
+//
+// => "01       15.50"
+// ----------------------------------------------------------
+function set_dbf_id_from_dbf_fields(dbf_fields, values)
+local _t_field, _t_field_dec
+local _full_id := ""
+
+for each _field in dbf_fields
+
+    if VALTYPE( _field ) == "A"    
+        _t_field := _field[1]
+        _t_field_dec := _field[2]
+        _full_id += STR( values[ _t_field ], _t_field_dec )
+    else
+        _t_field := _field
+        if VALTYPE( values[ _t_field ] ) == "D"
+            _full_id += DTOS( values[ _t_field ] )
+        else
+            _full_id += values[ _t_field ]
+        endif
+    endif
+
+next
+
+return _full_id
+
+

@@ -329,6 +329,41 @@ return cOut
 
 // ---------------------------------------
 // ---------------------------------------
+function sql_where_from_dbf_key_fields(dbf_key_fields, rec)
+local _ret, _pos, _item, _key
+
+// npr dbf_key_fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+_ret := ""
+for each _item in dbf_key_fields
+
+   if !EMPTY(_ret)
+       _ret += " AND "
+   endif
+
+   if VALTYPE(_item) == "A"
+      // numeric
+      _key := LOWER(_item[1])
+      _ret += _item[1] + "=" + STR(rec[_key], _item[2])
+
+   elseif VALTYPE(_item) == "C"
+      _key := LOWER(_item)
+      _ret += _item + "=" + _sql_quote(rec[_key])
+ 
+   else
+       MsgBeep(PROCNAME(1) + "valtype _item ?!")
+       QUIT
+   endif
+
+next
+
+return _ret
+
+
+
+// ---------------------------------------
+// hernad izbaciti iz upotrebe !
+// koristiti gornju funkciju
+// ---------------------------------------
 function sql_where_block(table_name, x)
 local _ret, _pos, _fields, _item, _key
 
@@ -336,6 +371,7 @@ _pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
 
 if _pos == 0
    MsgBeep(PROCLINE(1) + "sql_where_block tbl ne postoji" + table_name)
+   log_write("ERR sql_where: " + table_name)
    QUIT
 endif
 

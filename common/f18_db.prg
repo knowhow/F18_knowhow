@@ -60,8 +60,9 @@ endif
 return .t.
 
 // ----------------------------------------------------------------------
+// algoritam = 1 - nivo zapisa, 2 - dokument ...
 // ----------------------------------------------------------------------
-function delete_rec_server_and_dbf(table, values, id_fields, where_block, order_key_tag)
+function delete_rec_server_and_dbf(table, values, algoritam, transaction)
 local _ids := {}
 local _pos
 local _full_id
@@ -69,86 +70,57 @@ local _dbf_pkey_search
 local _field
 local _where_str
 local _t_field, _t_field_dec
+local _a_dbf_rec, _alg
+
+if algoritam == NIL
+   algoritam = 1
+endif
+
+// nema zapoceta transakcija
+if transaction == NIL
+  // pocni i zavrsi trasakciju
+  transaction == "FULL"
+endif
 
 if table == NIL
    table := ALIAS()
 endif
 
+
+
 if values == NIL
   values := dbf_get_rec()
 endif
 
-// pronadji u tabeli koji je naziv te tabele
-_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
-if _pos == 0
-  _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER(table) } )
-endif 
-table  := gaDBFs[ _pos, 3 ] 
-_alias := gaDBFs[ _pos, 2 ]
+_a_dbf_rec := get_a_dbf_rec(table)
 
-if id_fields == NIL
-   if LEN(gaDBFs[_pos]) > 5
-       id_fields := gaDBFs[_pos, 6]
-   else
-       id_fields := { "id" }
-   endif
+if transaction $ "FULL#BEGIN"
+   sql_table_update(table, "BEGIN")
 endif
 
-if where_block == NIL
-   if LEN(gaDBFs[_pos]) > 6
-      where_block := gaDBFs[_pos, 7]
-   else
-      where_block := { |x| "ID=" + _sql_quote(x['id']) }
-   endif
-endif
-
-
-// tag po kome se primarni kljuc pretrazuje
-if order_key_tag == NIL
-   if LEN(gaDBFs[_pos]) > 7 
-      order_key_tag := gaDBFs[_pos, 8]
-   else
-      order_key_tag := "ID"
-   endif
-endif
-
-sql_table_update(table, "BEGIN")
+_alg :=  _a_dbf_rec["algoritam"][algoritam]
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
-   _where_str := EVAL(where_block, values)
+   _where_str := sql_where_from_dbf_key_fields(_alg["dbf_key_fields"], values)
 END SEQUENCE
 
 if sql_table_update(table, "del", nil, _where_str) 
 
     update_semaphore_version(table, .t.)
    
-    _full_id := ""
-
-    for each _field in id_fields
-
-        if VALTYPE( _field ) == "A"    
-            _t_field := _field[1]
-            _t_field_dec := _field[2]
-            _full_id += STR( values[ _t_field ], _t_field_dec )
-        else
-            _t_field := _field
-            if VALTYPE( values[ _t_field ] ) == "D"
-                _full_id += DTOS( values[ _t_field ] )
-            else
-                _full_id += values[ _t_field ]
-            endif
-        endif
-
-    next
+    
+    _full_id := set_dbf_ids(_alg["dbf_key_fields"], values)
 
     AADD(_ids, _full_id)
     push_ids_to_semaphore( table, _ids )
 
-    SELECT (_alias)
-    SET ORDER TO TAG (order_key_tag)
-    _dbf_pkey_search := ""
+    SELECT (_a_dbf_rec["alias"])
+    SET ORDER TO TAG (_alg["dbf_tag"])
 
-    for each _field in id_fields
+
+     /* ovo se bez potrebe ponavlja ... imamo _full_id ??!
+    _dbf_pkey_search := ""
+    for each _field in _alg["dbf_key_fields"]
 
         if VALTYPE( _field ) == "A"    
             _t_field := _field[1]
@@ -165,12 +137,17 @@ if sql_table_update(table, "del", nil, _where_str)
 
     next
 
+    */
+
+    
     if FLOCK()
-        SEEK _dbf_pkey_search
+        //SEEK _dbf_pkey_search
+        SEEK _full_id
         while FOUND()
             DELETE
             // sve dok budes nalazio pod ovim kljucem brisi
-            SEEK _dbf_pkey_search
+            //SEEK _dbf_pkey_search
+            SEEK _full_id
         enddo
     else
         sql_table_update(table, "ROLLBACK")
@@ -178,7 +155,9 @@ if sql_table_update(table, "del", nil, _where_str)
     endif
     DBUNLOCKALL() 
 
-    sql_table_update(table, "END")
+    if !transaction $ "FULL#END"
+       sql_table_update(table, "END")
+    endif
     return .t.
 
 else

@@ -122,46 +122,20 @@ if lOk = .t.
   
   MsgO("sql suban")
   
-  record := hb_hash()
-
   SELECT PSUBAN
   GO TOP
   lOk := .t.
   sql_fin_suban_update("BEGIN")
 
-  // algoritam 2 IDS
-  _tmp_id := "#2" + field->idfirma + field->idvn + field->brnal
-  AADD( _ids_suban, _tmp_id )
-  
+  record := dbf_get_rec()
+  // algoritam 2 - dokument nivo
+  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  AADD( _ids_suban, "#2" + _tmp_id )
+
   do while !eof()
 
-     record["id_firma"] := field->IdFirma
-     record["id_vn"]    := field->IdVn
-     record["br_nal"]   := field->BrNal
-     record["r_br"]     := field->Rbr
-     
-     record["id_tip_dok"] := field->idtipdok
-     record["otv_st"] := field->otvst
-     record["dat_dok"] := field->DatDok
-     record["dat_val"] := field->DatVal
-     record["opis"] := field->opis
-     record["id_partner"] := field->IdPartner
-     record["id_konto"] := field->IdKonto
-     record["d_p"] := field->d_p
-     record["iznos_bhd"] := field->iznosbhd
-     record["iznos_dem"] := field->iznosdem
-     record["br_dok"] := field->brdok
-     record["k1"] := field->k1
-     record["k2"] := field->k2
-     record["k3"] := field->k3
-     record["k4"] := field->k4
-     record["m1"] := field->m1
-     record["m2"] := field->m2
-     record["id_rj"] := field->idrj
-     record["funk"] := field->funk
-     record["fond"] := field->fond
-
-     if !sql_fin_suban_update("ins", record )
+     record := dbf_get_rec()
+     if !update_server_from_rec("fin_suban", "ins", record )
        lOk := .f.
        exit
      endif
@@ -178,31 +152,18 @@ if lOk = .t.
   
   MsgO("sql anal")
 
-  record := hb_hash()
 
   SELECT PANAL
   GO TOP
 
+  record := dbf_get_rec()
+  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  AADD( _ids_anal, "#2" + _tmp_id )
+
   do while !eof()
- 
-   record["id_firma"] := field->IdFirma
-   record["id_vn"] := field->IdVn
-   record["br_nal"] := field->BrNal
-   record["r_br"] := field->Rbr
 
-   _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"] + record["r_br"]
-
-   // dodaj u IDS matricu ove stavke...
-   AADD( _ids_anal, _tmp_id )
-
-   record["dat_nal"] := field->Datnal
-   record["id_konto"] := field->IdKonto
-   record["dug_bhd"] := field->dugbhd
-   record["pot_bhd"] := field->potbhd
-   record["dug_dem"] := field->dugdem
-   record["pot_dem"] := field->potdem
-
-   if !sql_fin_anal_update("ins", record )
+   record := dbf_get_rec()
+   if !update_server_from_rec("fin_anal", "ins", record )
        lOk := .f.
        exit
     endif
@@ -219,31 +180,19 @@ if lOk = .t.
   
   MsgO("sql sint")
 
-  record := hb_hash()
 
   SELECT PSINT
   GO TOP
 
+  record := dbf_get_rec()
+  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  AADD( _ids_sint, "#2" + _tmp_id )
+
+
   do while !eof()
  
-   record["id_firma"] := field->IdFirma
-   record["id_vn"] := field->IdVn
-   record["br_nal"] := field->BrNal
-   record["r_br"] := field->Rbr
-
-   _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"] + record["r_br"]
-
-   // dodaj u IDS matricu ove stavke...
-   AADD( _ids_sint, _tmp_id )
-
-   record["dat_nal"] := field->Datnal
-   record["id_konto"] := LEFT( field->IdKonto, 3 )
-   record["dug_bhd"] := field->dugbhd
-   record["pot_bhd"] := field->potbhd
-   record["dug_dem"] := field->dugdem
-   record["pot_dem"] := field->potdem
-
-   if !sql_fin_sint_update("ins", record )
+   record := dbf_get_rec()
+   if !update_server_from_rec("fin_sint", "ins", record )
        lOk := .f.
        exit
     endif
@@ -265,22 +214,14 @@ if lOk = .t.
   SELECT PNALOG
   GO TOP
  
-  _tmp_id := field->idfirma + field->idvn + field->brnal
+  record := dbf_get_rec()
+  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
   AADD( _ids_nalog, _tmp_id )
 
- 
   do while !eof()
  
-   record["id_firma"]  := field->IdFirma
-   record["id_vn"]     := field->IdVn
-   record["br_nal"]    := field->BrNal
-   record["dat_nal"]   := field->Datnal
-   record["dug_bhd"]   := field->dugbhd
-   record["pot_bhd"]   := field->potbhd
-   record["dug_dem"]   := field->dugdem
-   record["pot_dem"]   := field->potdem
-
-   if !sql_fin_nalog_update("ins", record )
+   record := dbf_get_rec()
+   if !update_server_from_rec("fin_nalog", "ins", record )
        lOk := .f.
        exit
     endif

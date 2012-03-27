@@ -85,7 +85,6 @@ IF !lStorno
     lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
 ENDIF
 
-MsgO("fin_suban -> fin_pripr: " + cIdfirma + cIdvn + cBrNal )
 
 select suban
 set order to tag "4"
@@ -124,93 +123,32 @@ ENDIF
 
 if !lStorno
 
-    select suban
-    set order to tag "4"
-    go top
-    seek cIdfirma + cIdvn + cBrNal
-    MsgO( "brisem subanalitiku..." )
+ _del_rec := hb_hash()
+ _del_rec["idfirma"] := cIdFirma
+ _del_rec["idvn"]    := cIdVn
+ _del_rec["brnal"]   := cBrNal 
 
-    _ok := .t.
 
-    do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
 
-        skip 1
-        _t_rec := RECNO()
-        skip -1
+ Box(, 5, 70)
 
-        _del_rec := dbf_get_rec()
-    
-        // pobrisi suban
-        _ok :=  delete_rec_server_and_dbf("suban", _del_rec )
+    @ m_x + 1, m_y + 2 SAY "delete fin_suban"
+    // algoritam 2  - nivo dokumenta
+    _ok := _ok .and. delete_rec_server_and_dbf("fin_suban", _del_rec, 2, "BEGIN")
 
-        go ( _t_rec )
+    @ m_x + 2, m_y + 2 SAY "delete fin_anal"
+    // algoritam 2  - nivo dokumenta
+    _ok := _ok .and. delete_rec_server_and_dbf("fin_anal", _del_rec, 2, "CONT" )
 
-    enddo
+    @ m_x + 3, m_y + 2 SAY "delete fin_sint"
+    // algoritam 2  - nivo dokumenta
+    _ok := _ok .and. delete_rec_server_and_dbf("fin_sint", _del_rec, 2, "CONT" )
 
-    MsgC()        
+    @ m_x + 4, m_y + 2 SAY "delete fin_nalog"
+    // algoritam 1 - jedini algoritam za naloge
+    _ok := _ok .and. delete_rec_server_and_dbf("fin_nalog", _del_rec, 1, "END" )
+ BoxC()
 
-    select sint
-    set order to tag "2"
-    go top
-    seek cIdfirma + cIdvn + cBrNal
-
-    MsgO( "brisem sintetiku..." )
-
-    _ok := .t.
-
-    do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-
-        _del_rec := dbf_get_rec()
-        _ok :=  delete_rec_server_and_dbf("sint", _del_rec )
-
-        go ( _t_rec )
-
-    enddo
-
-    MsgC()
-
-    select anal
-    set order to tag "2"
-    go top
-    seek cIdfirma + cIdvn + cBrNal
-
-    MsgO( "brisem analitiku..." )
-
-    _ok := .t.
-
-    do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and. cBrNal == field->BrNal
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-
-        _del_rec := dbf_get_rec()
-        _ok :=  delete_rec_server_and_dbf("anal", _del_rec )
-
-        go ( _t_rec )
-
-    enddo
-
-    MsgC()
-
-    MsgO( "brisem nalog....." )
-
-    select nalog
-    set order to tag "1"
-    go top
-    seek cIdfirma + cIdvn + cBrNal
-
-    if found()
-       // na kraju pobrisi nalog
-       _del_rec := dbf_get_rec() 
-       _ok := delete_rec_server_and_dbf("nalog", _del_rec )
-    endif
-
-    MsgC()
 
 endif
 

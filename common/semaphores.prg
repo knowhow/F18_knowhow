@@ -12,6 +12,34 @@
 #include "fmk.ch"
 #include "common.ch"
 
+thread static __my_use_semaphore := .t.
+
+// --------------------------------------
+// iskljuci logiku provjere semafora
+// neophodno u procedurama azuriranja
+// 
+// if azur_sql()
+//       my_use_semaphore_off()
+//       otvori_dbfs()
+//       azur_dbf()
+//       my_use_semaphore_on()
+// endif
+//
+// --------------------------------------
+function my_use_semaphore_off()
+__my_use_semaphore := .f.
+return
+
+function my_use_semaphore_on()
+__my_use_semaphore := .t.
+return
+
+function my_use_semaphore()
+return __my_use_semaphore
+
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
 function my_usex(alias, table, new_area, _rdd, semaphore_param)
 
 return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
@@ -69,10 +97,11 @@ endif
 if (LEN(gaDBFs[_pos]) > 3) 
 
    // tabela je pokrivena semaforom
-   if (_rdd != "SEMAPHORE")
+   if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
         _version :=  get_semaphore_version(table)
      
         if (_version == -1)
+
           // semafor je resetovan
           // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
           if lock_semaphore(table, "lock")

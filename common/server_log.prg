@@ -26,6 +26,7 @@ LOCAL _server := pg_server()
 
 _tbl := "fmk.log"
 
+msg  := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") : " + msg
 _qry := "INSERT INTO " + _tbl + "(user_code, msg) VALUES(" +  _sql_quote(_user) + "," +  _sql_quote(msg) + ")"
 _ret := _sql_query_no_log( _server, _qry )
 

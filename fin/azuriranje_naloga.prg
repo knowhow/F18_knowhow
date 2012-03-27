@@ -14,9 +14,10 @@
 static lIzgenerisi := .f.
 static cNal
 
+// ---------------------------------------------------
+// ---------------------------------------------------
 function fin_azur(lAuto)
-// PostgreSQL server object
-local oServer
+local oServer := pg_server()
 
 if Logirati(goModul:oDataBase:cName,"DOK", "AZUR")
     lLogAzur:=.t.
@@ -38,16 +39,8 @@ if !fin_azur_check(lAuto)
    return .f.
 endif
 
-oServer := pg_server()
 
-if oServer == NIL
-  CLEAR SCREEN 
-  ? "fin_azur oServer nil ?!"
-  INKEY(0)
-  QUIT
-endif
-
-msgo( "Azuriranje dokumenta u toku...." )
+MsgO( "Azuriranje dokumenta u toku...." )
 
 if fin_azur_sql(oServer)
     o_fin_za_azuriranje()
@@ -57,7 +50,7 @@ if fin_azur_sql(oServer)
         return .f.
    endif
 else
-    msgc()
+    MsgC()
     MsgBeep("Neuspjesno FIN/SQL azuriranje !?")
     return .f.
 endif
@@ -69,8 +62,12 @@ return .t.
 // -----------------------------
 // -----------------------------
 function o_fin_za_azuriranje()
+
 // otvori tabele
 close all
+
+my_use_semaphore_off()
+
 O_KONTO
 O_PARTN
 O_FIN_PRIPR
@@ -83,6 +80,8 @@ O_PSUBAN
 O_PANAL
 O_PSINT
 O_PNALOG
+
+my_use_semaphore_on()
 return
 
 
@@ -319,8 +318,8 @@ endif
 
 // otkljucaj sve tabele
 lock_semaphore(_tbl_suban, "free")
-lock_semaphore(_tbl_anal, "free")
-lock_semaphore(_tbl_sint, "free")
+lock_semaphore(_tbl_anal,  "free")
+lock_semaphore(_tbl_sint,  "free")
 lock_semaphore(_tbl_nalog, "free")
 
 return lOk
@@ -502,8 +501,6 @@ do while !eof()
     if (gDebug > 5)
      log_write("azuriram: " + cNal + " saldo " + STR(nSaldo, 17, 2))
     endif
-
-    // nalog je uravnotezen, azuriraj ga !
 
     pnalog_nalog(cNal)
     panal_anal(cNal)

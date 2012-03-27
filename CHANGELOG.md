@@ -1,3 +1,7 @@
+0.0.90 2012-03-27, hernad
+
+  - merge semaphore v1.1 brancha, haos-2 - ovo ne radi
+
 0.9.74 2012-03-27, vsasa
  
   - modul FAKT, adresa u parametrima [#27249](http://redmine.bring.out.ba/issues/27249)

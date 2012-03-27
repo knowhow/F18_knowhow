@@ -633,6 +633,12 @@ endif
  
 return
 
+function log_disable()
+__server_log := .f.
+
+function log_enable()
+__server_log := .f.
+
 
 function log_close()
  FCLOSE(__log_handle)

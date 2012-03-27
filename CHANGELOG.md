@@ -1,3 +1,7 @@
+0.9.74 2012-03-27, vsasa
+ 
+  - modul FAKT, adresa u parametrima [#27249](http://redmine.bring.out.ba/issues/27249)
+
 0.9.73 2012-03-26, vsasa
  
   - modul FAKT/KALK, sql parametri [#27223](http://redmine.bring.out.ba/issues/27223)

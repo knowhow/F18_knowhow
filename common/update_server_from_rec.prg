@@ -71,10 +71,10 @@ DO CASE
 
     for _i := 1 to LEN(_a_dbf_rec["dbf_fields"])
 
-        _qry + _a_dbf_rec["dbf_fields"][_i]
+        _qry += _a_dbf_rec["dbf_fields"][_i]
 
         if _i < LEN(_a_dbf_rec["dbf_fields"])
-            _qry + ","
+            _qry += ","
         endif
 
     next
@@ -88,10 +88,10 @@ DO CASE
             _qry += decimal_to_string( record[_tmp])
         else
             _qry += _sql_quote(record[_tmp])
-        next
+        endif
 
         if _i < LEN(_a_dbf_rec["dbf_fields"])
-            _qry + ","
+            _qry += ","
         endif
 
     next
@@ -119,7 +119,7 @@ endif
 // --------------------------------
 // 5.55 => "5.55", 6.666 => "6.666"
 // ---------------------------------
-function decimal_2_string( num )
+function decimal_to_string( num )
 local _i, _tmp
 
 // do 6 decimala

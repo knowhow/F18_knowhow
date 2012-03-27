@@ -125,7 +125,7 @@ if lOk = .t.
   SELECT PSUBAN
   GO TOP
   lOk := .t.
-  sql_fin_suban_update("BEGIN")
+  update_server_from_rec("fin_suban", "BEGIN")
 
   record := dbf_get_rec()
   // algoritam 2 - dokument nivo
@@ -237,7 +237,7 @@ if !lOk
 
     // transakcija neuspjesna
     // server nije azuriran 
-    sql_fin_suban_update( "ROLLBACK" )
+    update_server_from_rec("fin_suban", "ROLLBACK" )
 
 else
 
@@ -253,7 +253,7 @@ else
     update_semaphore_version( _tbl_nalog , .t. )
 
  
-    sql_fin_suban_update("END")
+    update_server_from_rec("fin_suban", "END")
 
 endif
 

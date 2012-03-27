@@ -11,12 +11,10 @@
 
 #include "fmk.ch"
 
-
 static __f18_dbfs := nil
 
-
 function f18_dbfs()
-reuturn __f18_dbfs
+return __f18_dbfs
 
 // -------------------------------------------------------
 // tbl - dbf_table ili alias
@@ -47,7 +45,7 @@ else
 
       endif    
    next 
-next
+endif
 
 if HB_HHASKEY(__f18_dbfs, tbl)
     // preferirani set parametara
@@ -232,17 +230,17 @@ __f18_dbfs[_tbl]["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }) 
+_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal + field->rbr }
 _alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal", "rbr" } 
-_alg["sql_in"]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 4)"
-_alg["dbf_tag"]   := "4"
+_alg["sql_in"]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 4)"
+_alg["dbf_tag"]        := "4"
 AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
 
 
 // algoritam 2 - dokument
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }) 
+_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }
 _alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal" } 
 _alg["sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
 _alg["dbf_tag"]    := "4"
@@ -261,7 +259,7 @@ local _alg, _tbl
 // temporary tabela - nema semafora
 _ret["temp"]     := .f.
 
-_tbl := "fin_suban"
+_tbl := "fin_anal"
 
 __f18_dbfs[_tbl] := hb_hash()
 
@@ -274,7 +272,7 @@ __f18_dbfs[_tbl]["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }) 
+_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
 _alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal", "rbr" } 
 _alg["sql_in"]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
 _alg["dbf_tag"]   := "2"
@@ -284,7 +282,7 @@ AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
 // algoritam 2 - dokument
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }) 
+_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }
 _alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal" } 
 _alg["sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
 _alg["dbf_tag"]    := "2"
@@ -317,7 +315,7 @@ __f18_dbfs[_tbl]["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }) 
+_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
 _alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal", "rbr" } 
 _alg["sql_in"]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
 _alg["dbf_tag"]   := "2"
@@ -327,7 +325,7 @@ AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
 // algoritam 2 - dokument
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }) 
+_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }
 _alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal" } 
 _alg["sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
 _alg["dbf_tag"]    := "2"
@@ -360,7 +358,7 @@ __f18_dbfs[_tbl]["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }) 
+_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
 _alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal", "rbr" } 
 _alg["sql_in"]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
 _alg["dbf_tag"]   := "1"
@@ -380,14 +378,17 @@ local _dbf_fields, _sql_order
 
 public gaDbfs := {}
 
-
 set_a_dbf_fin_suban()
+set_a_dbf_fin_anal()
+set_a_dbf_fin_sint()
+set_a_dbf_fin_nalog()
 
 
 // ---- legacy 
 
 _dbf_fields := NIL
 
+/*
 //{ "idfirma", "idvn", "brnal", "rbr", "datdok", "datval", "opis", "idpartner", "idkonto", "brdok", "d_p", "iznosbhd", "iznosdem", "k1", "k2", "k3", "k4", "m1", "m2", "idrj", "funk", "fond", "otvst", "idtipdok" }
 _sql_order := "idfirma, idvn, brnal, rbr"
 
@@ -412,6 +413,8 @@ AADD( gaDbfs, { F_SINT   ,  "SINT"    , "fin_sint",    {|alg| fin_sint_from_sql_
 
 
 AADD( gaDbfs, { F_NALOG  ,  "NALOG"   , "fin_nalog",   {|alg| fin_nalog_from_sql_server(alg) }, "IDS",  { "idfirma", "idvn", "brnal" }, {|x| sql_where_block("fin_nalog", x) }, "1" })
+
+*/
 
 
 // fin sifrarnici

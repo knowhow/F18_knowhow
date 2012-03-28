@@ -37,12 +37,14 @@ endif
 // isprazni kalk_pripr2
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
+
 zap
 use
 
 lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
 
 O_KALK_DOKS
+
 if fieldpos("ukstavki") <> 0
     lBrStDoks := .t.
 endif
@@ -120,7 +122,9 @@ return
 // ---------------------------------------------------------------------
 static function kalk_vrati_iz_pripr2()
 local lPrebaci := .f.
+local _rec
 
+O_KALK_PRIPR
 O_KALK_PRIPR2
 
 if field->idvd $ "18#19"  
@@ -129,7 +133,7 @@ if field->idvd $ "18#19"
         Beep(1)
         Box(,4,70)
         @ m_x+1,m_y+2 SAY "1. Cijene robe su promijenjene."
-        @ m_x+2,m_y+2 SAY "2. Formiran je dokument nivelacije:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
+        @ m_x+2,m_y+2 SAY "2. Formiran je dokument nivelacije:" + kalk_pripr2->(idfirma+"-"+idvd+"-"+brdok)
         @ m_x+3,m_y+2 SAY "3. Nove cijene su stavljene u sifrarnik."
         @ m_x+4,m_y+2 SAY "3. Obradite ovaj dokument."
         inkey(0)
@@ -154,8 +158,8 @@ elseif field->idvd $ "16" .and. gGen16 == "1"
     if kalk_pripr2->(reccount2())<>0
         Beep(1)
         Box(,4,70)
-        @ m_x+1,m_y+2 SAY "1. Roba je otpremljena u magacin "+pripr2->idkonto
-        @ m_x+2,m_y+2 SAY "2. Formiran je dokument dopreme:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
+        @ m_x+1,m_y+2 SAY "1. Roba je otpremljena u magacin "+kalk_pripr2->idkonto
+        @ m_x+2,m_y+2 SAY "2. Formiran je dokument dopreme:"+kalk_pripr2->(idfirma+"-"+idvd+"-"+brdok)
         @ m_x+3,m_y+2 SAY "3. Obradite ovaj dokument."
         inkey(0)
         BoxC()
@@ -167,8 +171,8 @@ elseif field->idvd $ "11"
     if kalk_pripr2->(reccount2())<>0
         Beep(1)
         Box(,4,70)
-        @ m_x+1,m_y+2 SAY "1. Roba je prenesena u prodavnicu "+pripr2->idkonto
-        @ m_x+2,m_y+2 SAY "2. Formiran je dokument zaduzenja:"+pripr2->(idfirma+"-"+idvd+"-"+brdok)
+        @ m_x+1,m_y+2 SAY "1. Roba je prenesena u prodavnicu "+kalk_pripr2->idkonto
+        @ m_x+2,m_y+2 SAY "2. Formiran je dokument zaduzenja:"+kalk_pripr2->(idfirma+"-"+idvd+"-"+brdok)
         @ m_x+3,m_y+2 SAY "3. Obradite ovaj dokument."
         inkey(0)
         BoxC()
@@ -177,10 +181,22 @@ elseif field->idvd $ "11"
 endif
 
 if lPrebaci == .t.
-    select kalk_pripr
-    append from kalk_pripr2
+
     select kalk_pripr2
-    zap
+    do while !EOF()
+
+        _rec := dbf_get_rec()
+        select kalk_pripr
+        append blank
+        dbf_update_rec( _rec )
+        select kalk_pripr2
+        skip
+
+    enddo
+
+    select kalk_pripr2
+    zap    
+
 endif
 
 return
@@ -225,14 +241,20 @@ if lGenerisi = .t.
     gAMat := lgAMat
 
     O_KALK_PRIPR
+
     if field->idvd $ "10#12#13#16#11#95#96#97#PR#RN" .and. gAFakt=="D"
+
         if field->idvd $ "16#96"
             cOdg := "N"
         endif
+
         if Pitanje(,"Formirati dokument u FAKT ?", cOdg)=="D"
+            
             P_Fakt()
             o_kalk_za_azuriranje()
+
         endif
+
     endif
 
 endif

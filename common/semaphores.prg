@@ -62,40 +62,21 @@ if excl == NIL
   excl := .f.
 endif
 
-/*
-if VALTYPE(alias) == "N"
-   // F_SUBAN
-   _pos := ASCAN(gaDBFs,  { |x|  x[1]==alias} )
-   alias := gaDBFs[_pos, 2]
-
-else
-   // /home/test/suban.dbf => suban
-   alias := UPPER(FILEBASE(alias))
-   
-   if table != NIL
-        // ako je naveden alias i ime tabele, onda je ime tabele "glavna" vrijednost
-       table := FILEBASE(table)
-       _pos := ASCAN(gaDBFs,  { |x|  x[3]==table} )
-   else
-       _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
-   endif
-
-endif
-
-// pozicija gdje je npr. SUBAN
-_area := gaDBFs[_pos, 1] 
-
-if table == NIL
-   // "fin_suban"
-   table := gaDBFs[_pos, 3]
-endif
-*/
-
 if table == NIL
   _a_dbf_rec := get_a_dbf_rec(alias)
 else
   _a_dbf_rec := get_a_dbf_rec(table)
 endif
+
+table := _a_dbf_rec["table"]
+
+if valtype(table) != "C"
+   _msg := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") table name VALTYPE = " + VALTYPE(type)
+   Alert(_msg)
+   log_write(_msg)
+   QUIT
+endif
+
 
 
 if _rdd == NIL

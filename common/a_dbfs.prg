@@ -47,9 +47,9 @@ else
    next 
 endif
 
-if HB_HHASKEY(__f18_dbfs, tbl)
+if HB_HHASKEY(__f18_dbfs, _dbf_tbl)
     // preferirani set parametara
-    _rec := f18_dbfs()[tbl]
+    _rec := __f18_dbfs[_dbf_tbl]
 else
     // legacy
     _rec := get_a_dbf_rec_legacy(tbl)
@@ -121,7 +121,11 @@ endif
 _ret["wa"]             := gaDBFs[_pos,  1]
 _ret["alias"]          := gaDBFs[_pos,  2]
 _ret["table"]          := gaDBFs[_pos,  3]
-_ret["dbf_key_fields"] := gaDBFs[_pos, 6]
+
+if LEN(gaDBFs[_pos]) > 5
+   _ret["dbf_key_fields"] := gaDBFs[_pos,  6]
+endif
+
 if LEN(gaDBFs[_pos]) > 8
   _ret["dbf_fields"]   := gaDBFs[_pos,  9]
   _ret["sql_order"]    := gaDBFs[_pos, 10]
@@ -186,6 +190,8 @@ function set_dbf_fields_from_struct(rec)
 local _struct, _i
 local _opened := .t.
 local _fields :={}
+
+altd()
 
 SELECT (rec["wa"])
 

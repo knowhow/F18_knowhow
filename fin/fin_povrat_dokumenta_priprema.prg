@@ -36,7 +36,7 @@ O_ANAL
 O_SINT
 O_NALOG
 
-if fin_pripr->RECCOUNT() <> 0
+if fin_pripr->(RECCOUNT()) <> 0
     MsgBeep("Priprema nije prazna !!!")
 endif
 

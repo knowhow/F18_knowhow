@@ -155,12 +155,13 @@ do case
             
             if gFC_faktura $ "D#X" .and. Pitanje(,"Stampati fakturu ?", "N") == "D"
             
-                      // stampaj dokument odmah nakon fiskalnog racuna
-                       StampTXT( cFFirma, cFTipDok, cFBrDok )
-                       o_fakt_edit()
-                       select fakt_pripr
+                // stampaj dokument odmah nakon fiskalnog racuna
+                StampTXT( cFFirma, cFTipDok, cFBrDok )
+                close all
+                o_fakt_edit()
+                select fakt_pripr
     
-             endif
+            endif
         
             if gFC_faktura $ "G#X" .and. ;
                 Pitanje(,"Stampati graficku fakturu ?", "N") == "D"

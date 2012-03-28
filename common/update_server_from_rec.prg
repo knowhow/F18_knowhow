@@ -31,7 +31,7 @@ _a_dbf_rec := get_a_dbf_rec(table)
 _dbf_fields := _a_dbf_rec["dbf_fields"]
 _sql_fields := sql_fields( _dbf_fields )
 
-_sql_order  := _d_dbf_rec["sql_order"]
+_sql_order  := _a_dbf_rec["sql_order"]
 
 
 _dbf_wa    := _a_dbf_rec["wa"]
@@ -42,9 +42,6 @@ _sql_tbl   := "fmk." + table
 
 // uvijek je algoritam 1 nivo recorda
 _alg := _a_dbf_rec["algoritam"][1]
-
-
-_tbl := "fmk." + _dbf_tbl
 
 _fields_string := ""
 
@@ -62,12 +59,12 @@ DO CASE
     _qry := "ROLLBACK;"
 
  CASE op == "del"
-    _qry := "DELETE FROM " + _tbl + ;
+    _qry := "DELETE FROM " + _sql_tbl + ;
              " WHERE " + _where
 
  CASE op == "ins"
 
-    _qry := "INSERT INTO " + _tbl +  "("  
+    _qry := "INSERT INTO " + _sql_tbl +  "("  
 
     for _i := 1 to LEN(_a_dbf_rec["dbf_fields"])
 

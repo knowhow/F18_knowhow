@@ -103,6 +103,7 @@ local _tbl_suban
 local _tbl_anal
 local _tbl_sint
 local _tbl_nalog
+local _msg
 local _i
 local _n := 1
 
@@ -118,13 +119,17 @@ lock_semaphore( _tbl_nalog, "lock" )
    
 // -----------------------------------
 
+Box(, 5, 60)
+
+_tmp_id := "x"
+
 if lOk = .t.
   
-  MsgO("sql suban")
-  
+ 
   SELECT PSUBAN
   GO TOP
   lOk := .t.
+ 
   update_server_from_rec("fin_suban", "BEGIN")
 
   record := dbf_get_rec()
@@ -132,6 +137,7 @@ if lOk = .t.
   _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
   AADD( _ids_suban, "#2" + _tmp_id )
 
+  @ m_x+1, m_y+2 SAY "fin_suban -> server: " + _tmp_id 
   do while !eof()
 
      record := dbf_get_rec()
@@ -143,14 +149,13 @@ if lOk = .t.
      SKIP
   enddo
 
-  MsgC()
 
 endif
 
 // idi dalje, na anal ... ako je ok
 if lOk = .t.
   
-  MsgO("sql anal")
+  @ m_x+2, m_y+2 SAY "fin_anal -> server" 
 
 
   SELECT PANAL
@@ -161,7 +166,6 @@ if lOk = .t.
   AADD( _ids_anal, "#2" + _tmp_id )
 
   do while !eof()
-
    record := dbf_get_rec()
    if !update_server_from_rec("fin_anal", "ins", record )
        lOk := .f.
@@ -170,7 +174,6 @@ if lOk = .t.
    SKIP
   enddo
 
-  MsgC()
 
 endif
 
@@ -178,8 +181,7 @@ endif
 // idi dalje, na sint ... ako je ok
 if lOk = .t.
   
-  MsgO("sql sint")
-
+  @ m_x+3, m_y+2 SAY "fin_sint -> server" 
 
   SELECT PSINT
   GO TOP
@@ -187,7 +189,6 @@ if lOk = .t.
   record := dbf_get_rec()
   _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
   AADD( _ids_sint, "#2" + _tmp_id )
-
 
   do while !eof()
  
@@ -199,7 +200,7 @@ if lOk = .t.
    SKIP
   enddo
 
-  MsgC()
+  
 
 endif
 
@@ -207,9 +208,7 @@ endif
 // idi dalje, na nalog ... ako je ok
 if lOk = .t.
   
-  MsgO("sql nalog")
-
-  record := hb_hash()
+  @ m_x+4, m_y+2 SAY "fin_nalog -> server" 
 
   SELECT PNALOG
   GO TOP
@@ -228,13 +227,16 @@ if lOk = .t.
    SKIP
   enddo
 
-  MsgC()
 
 endif
 
 
 if !lOk
 
+    _msg := "trasakcija " + _tmp_id + " neuspjesna ?!"
+
+    log_write(_msg)
+    MsgBeep(_msg)
     // transakcija neuspjesna
     // server nije azuriran 
     update_server_from_rec("fin_suban", "ROLLBACK" )
@@ -263,6 +265,7 @@ lock_semaphore(_tbl_anal,  "free")
 lock_semaphore(_tbl_sint,  "free")
 lock_semaphore(_tbl_nalog, "free")
 
+BoxC()
 return lOk
 
 

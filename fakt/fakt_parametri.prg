@@ -710,8 +710,8 @@ private  GetList:={}
 
 O_PARAMS
 
-g10Str:=PADR(g10Str,20)
-g16Str:=PADR(g16Str,20)
+g10Str := PADR(g10Str,20)
+g16Str := PADR(g16Str,20)
 g06Str:=PADR(g06Str,20)
 g11Str:=PADR(g11Str,20)
 g12Str:=PADR(g12Str,20)

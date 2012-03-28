@@ -846,7 +846,7 @@ local lIno := .f.
 local cPOslob := ""
 local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local cKupacInfo := ""
-local lP_stampa := .f.
+local _prikazi_partnera := .f.
 local lPdvObveznik := .f.
 local nTotal
 local nF_total
@@ -960,32 +960,33 @@ if !EMPTY( cPartnId )
         // jednostavno za njega nadji podatke
         lIno := .f.
         lPDVObveznik := .t.
-        lP_stampa := .f.
+        _prikazi_partnera := .f.
 
     elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
 
         lIno := .t.
 
         if !EMPTY( cPOslob )
-            lP_stampa := .t.
+            _prikazi_partnera := .t.
         endif
     
     elseif LEN( cJibPartn ) = 12
-
-        // ako je pdv obveznik
-        // dodaj "4" ispred id broja
-        
-        cJibPartn := "4" + ALLTRIM( cJibPartn )
                 
         lIno := .f.
         lPDVObveznik := .t.
-        lP_stampa := .t.
+        _prikazi_partnera := .t.
+
+    elseif LEN( cJibPartn ) > 12
+
+        lIno := .f.
+        lPDVObveznik := .f.
+        _prikazi_partnera := .t.
 
     endif
 
     // ako treba stampati podatke partnera onda predji na naredni korak
 
-    if lP_stampa == .t.
+    if _prikazi_partnera == .t.
         
         nTarea := SELECT()
     
@@ -993,6 +994,13 @@ if !EMPTY( cPartnId )
         seek cPartnId
 
         select (nTArea)
+
+        // ako je pdv obveznik
+        // dodaj "4" ispred id broja
+        
+        if LEN( ALLTRIM( cJibPartn ) ) == 12        
+            cJibPartn := "4" + ALLTRIM( cJibPartn )
+        endif
 
         // provjeri podatke partnera
         lPEmpty := .f.

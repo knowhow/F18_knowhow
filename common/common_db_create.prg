@@ -18,7 +18,6 @@
  */
  
 function CreRabDB()
-*{
 // RABAT.DBF
 aDbf:={}
 AADD(aDbf,{"IDRABAT"      , "C", 10, 0})
@@ -41,7 +40,6 @@ CREATE_INDEX("1", "IDRABAT+TIPRABAT+IDROBA", SIFPATH + "rabat.dbf", .t.)
 CREATE_INDEX("2", "IDRABAT+TIPRABAT+DTOS(DATUM)", SIFPATH + "rabat.dbf", .t.)
 
 return
-*}
 
 
 /*! \fn GetRabForArticle(cIdRab, cTipRab, cIdRoba, nTekIznos)

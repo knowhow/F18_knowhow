@@ -60,7 +60,26 @@ endif
 fPostoji := .t.
 
 select (F_TMP)
-USE (f18_ime_dbf(alias)) EXCLUSIVE
+//USE (f18_ime_dbf(alias)) EXCLUSIVE
+
+
+begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
+          dbUseArea( .f., "DBFCDX", f18_ime_dbf(alias), NIL, .t. , .f.)
+ 
+recover using _err
+
+          _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
+          Alert(_msg)
+               
+          ferase_dbf(alias) 
+
+          repair_dbfs()
+          QUIT
+end sequence
+
+
+
+
 
 if USED()
 	nOrder := ORDNUMBER( cTag )

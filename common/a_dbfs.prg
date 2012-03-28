@@ -217,7 +217,21 @@ local _fields :={}
 SELECT (rec["wa"])
 
 if !used()
-    dbUseArea( .f., "DBFCDX", my_home() + rec["table"], rec["alias"], .t. , .f.)
+
+begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
+          dbUseArea( .f., "DBFCDX", my_home() + rec["table"], rec["alias"], .t. , .f.)
+ 
+recover using _err
+
+          _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
+          Alert(_msg)
+               
+          rec["dbf_fields"] := NIL
+          return
+end sequence
+
+
+
     _opened := .t.
 endif
 

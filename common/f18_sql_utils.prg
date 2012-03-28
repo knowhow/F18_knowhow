@@ -19,6 +19,10 @@
 function sql_fields(fields)
 local  _i, _sql_fields := ""	
 
+if fields == NIL
+   return NIL
+endif
+
 for _i:=1 to LEN(fields)
    _sql_fields += fields[_i]
    if _i < LEN(fields)

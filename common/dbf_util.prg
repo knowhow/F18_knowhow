@@ -21,7 +21,8 @@ else
    return .f.
 endif
 
-
+// --------------------------------------------
+// --------------------------------------------
 function ferase_dbf(tbl_name)
 local _tmp
 
@@ -33,8 +34,11 @@ if FILE(tbl_name)
    endif
 endif
 
+log_write("brisem: " + tbl_name)
+
 _tmp := STRTRAN(tbl_name, DBFEXT, INDEXEXT)
 if FILE(_tmp)
+   log_write("brisem: " + _tmp)
    if FERASE(_tmp) != 0
         return .f.
    endif
@@ -42,6 +46,7 @@ endif
 
 _tmp := STRTRAN(tbl_name, DBFEXT, MEMOEXT)
 if FILE(_tmp)
+   log_write("brisem: " + _tmp)
    if FERASE(_tmp) != 0
         return .f.
    endif

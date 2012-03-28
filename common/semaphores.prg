@@ -143,7 +143,12 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
 recover using _err
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
           Alert(_msg)
+               
+          ferase_dbf(table)
+
+          repair_dbfs()
           QUIT
+
 end sequence
 
 
@@ -814,6 +819,11 @@ _count := table_count( _sql_table, "true" )
 _seconds := SECONDS()
 
 ZAP
+
+if _sql_fields == NIL
+   MsgBeep("sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć")
+   QUIT
+endif
 
 @ m_x + 3, m_y + 2 SAY _count
 

@@ -203,6 +203,18 @@ __server_log := .t.
 return .t.
 
 
+// ------------------------------------------
+// ------------------------------------------
+function repair_dbfs()
+local _ver
+
+_ver := read_dbf_version_from_config()
+
+cre_all_dbfs(_ver)
+
+return
+
+
 // ------------------------------------------------------------
 // vraca informacije iz inija vezane za screen rezoluciju
 // ------------------------------------------------------------

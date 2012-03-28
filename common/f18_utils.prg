@@ -50,18 +50,6 @@ alias := FILEBASE(alias)
 
 _a_dbf_rec := get_a_dbf_rec(alias)
 
-/*
-_pos:=ASCAN(gaDBFs,  { |x|  x[2]==UPPER(alias)} )
-
-if _pos == 0
-   ? "ajjoooj nemas u gaDBFs ovu stavku:", alias
-   ? "pretisni, al' ne pretis lonac"
-   inkey(0)
-   inkey(0)
-   quit
-endif
-*/
-
 alias := my_home() + _a_dbf_rec["table"] + "." + DBFEXT
 
 return alias

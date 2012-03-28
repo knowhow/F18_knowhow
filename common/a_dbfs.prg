@@ -167,11 +167,18 @@ function sql_order_from_key_fields(key_fields)
 local _i, _len
 local _sql_order
 
+// primjer: key_fields = {{"godina", 4}, "idrj", {"mjesec", 2}
+
 _len := LEN(key_fields)
 
 _sql_order := ""
 for _i := 1 to _len
-   _sql_order += key_fields[_i]
+
+   if VALTYPE(key_fields[_i]) == "A"
+      _sql_order += key_fields[_i, 1]
+   else
+      _sql_order += key_fields[_i]
+   endif
 
    if _i < _len
       _sql_order += ","
@@ -190,8 +197,6 @@ function set_dbf_fields_from_struct(rec)
 local _struct, _i
 local _opened := .t.
 local _fields :={}
-
-altd()
 
 SELECT (rec["wa"])
 
@@ -225,6 +230,7 @@ _tbl := "fin_suban"
 __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "SUBAN"
+__f18_dbfs[_tbl]["table"] := _tbl
 __f18_dbfs[_tbl]["wa"]    := F_SUBAN
 
 // temporary tabela - nema semafora
@@ -269,6 +275,7 @@ __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "ANAL"
 __f18_dbfs[_tbl]["wa"]    := F_ANAL
+__f18_dbfs[_tbl]["table"] := _tbl
 // temporary tabela - nema semafora
 __f18_dbfs[_tbl]["temp"]  := .f.
 
@@ -308,6 +315,7 @@ _tbl := "fin_sint"
 __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "SINT"
+__f18_dbfs[_tbl]["table"] := _tbl
 __f18_dbfs[_tbl]["wa"]    := F_SINT
 
 // temporary tabela - nema semafora
@@ -352,6 +360,7 @@ __f18_dbfs[_tbl] := hb_hash()
 
 __f18_dbfs[_tbl]["alias"] := "NALOG"
 __f18_dbfs[_tbl]["wa"]    := F_NALOG
+__f18_dbfs[_tbl]["table"] := _tbl
 
 // temporary tabela - nema semafora
 __f18_dbfs[_tbl]["temp"]  := .f.

@@ -15,7 +15,7 @@
 // --------------------------------------------------------
 // sinhronizacija sa servera
 // --------------------------------------------------------
-function update_dbf_from_from_server(table, algoritam)
+function update_dbf_from_server(table, algoritam)
 local _qry
 local _counter
 local _rec
@@ -47,8 +47,7 @@ _a_dbf_rec := get_a_dbf_rec(table)
 _dbf_fields := _a_dbf_rec["dbf_fields"]
 _sql_fields := sql_fields( _dbf_fields )
 
-_sql_order  := _d_dbf_rec["sql_order"]
-
+_sql_order  := _a_dbf_rec["sql_order"]
 
 _dbf_wa    := _a_dbf_rec["wa"]
 _dbf_alias := _a_dbf_rec["alias"]
@@ -69,9 +68,9 @@ SELECT (_dbf_wa)
 my_usex (_dbf_alias, table, .f., "SEMAPHORE")
 
 if algoritam == "FULL"
-   full_synchro (_sql_tbl, _sql_fields, _sql_order, table, _dbf_alias, _dbf_fields, _step)
+   full_synchro (table, _step)
 else
-   ids_synchro  (_dbf_tbl, _sql_fields, _sql_in, talbe, _dbf_alias, _dbf_fields, _dbf_index_tags, _key_blocks)
+   ids_synchro  (table)
 endif
 
 USE

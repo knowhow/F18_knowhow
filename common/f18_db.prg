@@ -42,6 +42,13 @@ if no_lock == NIL
    no_lock := .f.
 endif
 
+if !used()
+   _msg := "update_rec - nema otvoren dbf"
+   log_write(_msg)
+   Alert(_msg)
+   quit
+endif
+
 if no_lock .or. rlock()
     for each _key in vars:Keys
         // replace polja
@@ -71,9 +78,16 @@ local _field
 local _where_str
 local _t_field, _t_field_dec
 local _a_dbf_rec, _alg
+local _msg
+local _alg_tag := ""
+
 
 if algoritam == NIL
    algoritam = 1
+endif
+
+if algoritam > 1
+  _alg_tag := "#" + ALLTRIM(STR(algoritam))
 endif
 
 // nema zapoceta transakcija
@@ -86,8 +100,6 @@ if table == NIL
    table := ALIAS()
 endif
 
-
-
 if values == NIL
   values := dbf_get_rec()
 endif
@@ -98,7 +110,7 @@ if transaction $ "FULL#BEGIN"
    sql_table_update(table, "BEGIN")
 endif
 
-_alg :=  _a_dbf_rec["algoritam"][algoritam]
+_alg := _a_dbf_rec["algoritam"][algoritam]
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
    _where_str := sql_where_from_dbf_key_fields(_alg["dbf_key_fields"], values)
@@ -106,35 +118,15 @@ END SEQUENCE
 
 if sql_table_update(table, "del", nil, _where_str) 
 
-    update_semaphore_version(table, .t.)
    
     _full_id := get_dbf_primary_key(_alg["dbf_key_fields"], values)
     
-    AADD(_ids, _full_id)
+    AADD(_ids, _alg_tag + _full_id)
     push_ids_to_semaphore( table, _ids )
 
     SELECT (_a_dbf_rec["alias"])
     SET ORDER TO TAG (_alg["dbf_tag"])
 
-    _dbf_pkey_search := ""
-    for each _field in _alg["dbf_key_fields"]
-
-        if VALTYPE( _field ) == "A"    
-            _t_field := _field[1]
-            _t_field_dec := _field[2]
-            _dbf_pkey_search += STR( values[ _t_field ], _t_field_dec )
-        else
-            _t_field := _field
-            if VALTYPE( values[ _t_field ]) == "D"
-                _dbf_pkey_search += DTOS( values[ _t_field ] )
-            else
-                _dbf_pkey_search += values[ _t_field ]
-            endif
-        endif
-
-    next
-
-    
     if FLOCK()
         SEEK _full_id
         while FOUND()
@@ -144,19 +136,31 @@ if sql_table_update(table, "del", nil, _where_str)
         enddo
     else
         sql_table_update(table, "ROLLBACK")
+
+        _msg := table + "transakcija neuspjesna !"
+         Alert(_msg)
+        log_write(_msg)
+
         return .f.
     endif
     DBUNLOCKALL() 
+
+    update_semaphore_version(table, .t.)
 
     if !transaction $ "FULL#END"
        sql_table_update(table, "END")
     endif
     return .t.
 
-else
-    sql_table_update(table, "ROLLBACK")
-    return .f.
 endif
+
+_msg := table + "transakcija neuspjesna !"
+Alert(_msg)
+log_write(_msg)
+
+sql_table_update(table, "ROLLBACK")
+return .f.
+
 
 
 // -----------------------------------

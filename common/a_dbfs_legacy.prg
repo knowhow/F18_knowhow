@@ -19,12 +19,6 @@ function set_a_dbfs_legacy()
 _dbf_fields := NIL
 
 
-// fin sifrarnici
-AADD( gaDbfs, { F_OPS      , "OPS"       , "ops"       , { |param| opstine_from_sql_server( param )   }  , "IDS" } )
-AADD( gaDbfs, { F_BANKE    , "BANKE"     , "banke"     , { |param| banke_from_sql_server( param )     }  , "IDS" } )
-AADD( gaDbfs, { F_FMKRULES , "FMKRULES"  , "f18_rules" , { |param| f18_rules_from_sql_server( param ) }  , "IDS" } )
-
-
 AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )
 AADD( gaDbfs, { F_FIN_FIPRIPR , "FIN_PRIPR"   , "fin_pripr"  } )
 AADD( gaDbfs, { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  } )
@@ -68,9 +62,7 @@ AADD( gaDbfs, {  F_POM2      , "POM2"   , "pom2"  } )
 // sifrarnici
 AADD( gaDbfs, { F_TOKVAL  , "TOKVAL"  , "tokval"  } )
 
-AADD( gaDbfs, { F_SIFK  , "SIFK"  , "sifk", { |param| sifk_from_sql_server(param) }, "IDS", {"id", "oznaka"}, { |x| sql_where_block( "sifk", x ) }, "id2" } )
-AADD( gaDbfs, { F_SIFV , "SIFV"  , "sifv", { | param | sifv_from_sql_server( param ) }, "IDS", {"id", "oznaka", "idsif", "naz"}, { |x| sql_where_block("sifv", x) }, "id" })
-  
+ 
 // ROBA
 AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    ,     ;  // 1 2 3
       { | param | roba_from_sql_server(param)   }  , "IDS";  // 4 5
@@ -362,4 +354,100 @@ AADD(gaDBFs, { F_KALVIR ,  "KALVIR"  , "kalvir", { |alg| kalvir_from_sql_server(
 
 
 return
+
+
+// ------------------------------------------------
+// na osnovu aliasa daj mi WA, dbf table_name
+//
+// moze se proslijediti: F_SUBAN, "SUBAN", "fin_suban"
+//
+// ret["wa"] = F_SUBAN, ret["alias"] = "SUBAN", 
+// ret["table"] = "fin_suban"
+// ---------------------------------------------------
+function get_a_dbf_rec_legacy(x_alias)
+local _pos
+local _ret := hb_hash()
+
+
+// temporary table nema semafora
+_ret["temp"]     := .f.
+
+_ret["dbf_fields"]:= NIL
+_ret["sql_order"] := NIL
+
+_ret["wa"]    := NIL
+_ret["alias"] := NIL
+_ret["table"] := NIL
+
+if VALTYPE(x_alias) == "N"
+   // F_SUBAN
+
+   _ret["wa"] := x_alias
+   _pos := ASCAN(gaDBFs,  { |x|  x[1] == x_alias} )
+ 
+   if _pos < 1
+           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + table)
+           return _ret
+   endif
+   
+else
+
+   // /home/test/suban.dbf => suban
+   _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(FILEBASE(x_alias))} )
+   if _pos < 1
+
+       _pos := ASCAN(gaDBFs,  { |x|  x[3]==x_alias} )
+        
+       if _pos < 1
+           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + x_alias)
+          _ret["wa"]    := NIL
+          _ret["alias"] := NIL
+          _ret["table"] := NIL
+          return _ret
+       endif
+           
+   endif
+   
+endif
+
+_ret["wa"]             := gaDBFs[_pos,  1]
+_ret["alias"]          := gaDBFs[_pos,  2]
+_ret["table"]          := gaDBFs[_pos,  3]
+
+if LEN(gaDBFs[_pos]) > 5
+   _ret["dbf_key_fields"] := gaDBFs[_pos,  6]
+endif
+
+if LEN(gaDBFs[_pos]) > 8
+  _ret["dbf_fields"]   := gaDBFs[_pos,  9]
+  _ret["sql_order"]    := gaDBFs[_pos, 10]
+endif
+
+// nije zadano - ja cu na osnovu strukture dbf-a
+//  napraviti dbf_fields
+if _ret["dbf_fields"] == NIL
+  set_dbf_fields_from_struct(@_ret)
+endif
+
+// {id, naz} => "id, naz"
+if _ret["sql_order"] == NIL 
+   if  LEN(gaDBFs[_pos]) > 5
+       _ret["sql_order"] := sql_order_from_key_fields(gaDBFs[_pos, 6])
+   else
+       // onda moze biti samo tabela sifarnik, bazirana na id-u
+       _ret["sql_order"] := "id"
+   endif
+endif
+
+// moze li ovo ?hernad?
+_ret["sql_where_block"] := { |x| sql_where_block( _ret["table"], x) }
+ 
+if LEN(gaDBFs[_pos]) < 4
+   _ret["temp"] := .t.
+else
+   _ret["temp"] := .f.
+endif
+
+return _ret
+
 

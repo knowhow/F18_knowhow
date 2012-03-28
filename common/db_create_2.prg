@@ -133,9 +133,9 @@ if !file(f18_ime_dbf("sifk"))
 
 endif
 
-CREATE_INDEX("ID", "id + sort + naz", "sifk")
-CREATE_INDEX("ID2", "id + oznaka"   , "sifk")
-CREATE_INDEX("NAZ", "naz"           , "sifk")
+CREATE_INDEX("ID",  "id + sort + naz" , "sifk")
+CREATE_INDEX("ID2", "id + oznaka"     , "sifk")
+CREATE_INDEX("NAZ", "naz"             , "sifk")
 
 
 if !file(f18_ime_dbf("sifv.dbf"))  

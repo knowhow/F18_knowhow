@@ -54,11 +54,14 @@ endif // reccount()
 
 // uzmi iz sifv sve one kod kojih je ID=ROBA, idsif=2MON0002
 
-select sifv; set order to tag "IDIDSIF"
+select sifv
+set order to tag "IDIDSIF"
 seek padr(cSifrarnik,8) + cidsif
-do while !eof() .and. ID=padr(cSifrarnik,8) .and. idsif= padr(cidsif,len(cIdSif))
+
+do while !eof() .and. ID == padr(cSifrarnik,8) .and. idsif == padr(cidsif, len(cIdSif))
  Scatter()
- select _SifV; append blank
+ select _SifV
+ append blank
  Gather()
  select sifv
  skip

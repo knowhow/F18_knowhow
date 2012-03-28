@@ -49,6 +49,7 @@ return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
 function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
+local _msg
 local _err
 local _pos
 local _version, _last_version
@@ -69,6 +70,7 @@ else
 endif
 
 table := _a_dbf_rec["table"]
+alias := _a_dbf_rec["alias"]
 
 if valtype(table) != "C"
    _msg := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") table name VALTYPE = " + VALTYPE(type)
@@ -95,7 +97,7 @@ if !_a_dbf_rec["temp"]
           // semafor je resetovan
           // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
           if lock_semaphore(table, "lock")
-             update_dbf_from_from_server(table, "FULL")
+             update_dbf_from_server(table, "FULL")
              update_semaphore_version(table, .f.)
              lock_semaphore(table, "free")
           endif
@@ -108,7 +110,7 @@ if !_a_dbf_rec["temp"]
 
                log_write("my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10))) 
                if lock_semaphore(table, "lock")
-                  update_dbf_from_from_server(table, "IDS")
+                  update_dbf_from_server(table, "IDS")
                   update_semaphore_version(table, .f.)
                   lock_semaphore(table, "free")
                endif
@@ -139,7 +141,9 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
           dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
  
 recover using _err
-          log_write("err:" + _err:description + ":" + my_home() + table + " se ne moze otvoriti ?!")
+          _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+          Alert(_msg)
+          QUIT
 end sequence
 
 
@@ -557,16 +561,32 @@ RETURN _result
 
 
 // ----------------------------------------------------------------
+// sql_fields := { "id", "naz" }
+// sql_in     := "id"
+// dbf_tbl    := "konto"
+// sql_tbl    := "fmk.konto"
 // ----------------------------------------------------------------
-function create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
+function create_queries_from_ids(dbf_tbl)
+local _a_dbf_rec, _msg
 local _qry_1, _qry_2
 local _queries     := {}
-local _ids, _ids_2 := {}, _sql_ids := {}
+local _ids, _ids_2 := {}
+local _sql_ids := {}
 local _i, _id
 local _ret := hb_hash()
+local _sql_fields
+local _algoritam, _alg
 
-for _i := 1 to len(sql_in)
-   AADD(_queries, "SELECT " + sql_fields + " FROM " + sql_tbl + " WHERE ")
+_a_dbf_rec := get_a_dbf_rec(dbf_tbl)
+
+_sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
+_alg := _a_dbf_rec["algoritam"]
+
+
+_sql_tbl := "fmk." + dbf_tbl
+
+for _i := 1 to LEN(_alg)
+   AADD(_queries, "SELECT " + _sql_fields + " FROM " + _sql_tbl + " WHERE ")
    AADD(_sql_ids, NIL)
    AADD(_ids_2, NIL)
 next
@@ -581,41 +601,41 @@ _ids := get_ids_from_semaphore( dbf_tbl )
 
 for each _id in _ids
 
-    if LEFT(_id, 2) == "#2"
-       // algoritam 2
+    if LEFT(_id, 1) == "#"
+       // algoritam "#2" => algoritam 2
+       _algoritam := VAL(SUBSTR( _id, 2, 1))
        _id := SUBSTR(_id, 3)
-
-       if _sql_ids[2] == NIL
-          _sql_ids[2] := "("
-          _ids_2[2] := {}
-       endif
-
-       _sql_ids[2] += _sql_quote(_id) + ","
-       AADD(_ids_2[2], _id)
- 
     else
-
-      // algoritam 1 - default
-       if _sql_ids[1] == NIL
-          _sql_ids[1] := "("
-          _ids_2[1] := {}
-       endif
-
-       _sql_ids[1] += _sql_quote(_id) + ","
-       AADD(_ids_2[1], _id)
-
+       _algoritam := 1
     endif
 
+    // ne moze biti "#3" a da tabela ima definisana samo dva algoritma
+    if _algoritam > LEN(_alg)
+            _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + dbf_tbl
+            Alert(_msg)
+            log_write(_msg)
+            QUIT
+    endif
+
+
+    if _sql_ids[_algoritam] == NIL
+        _sql_ids[_algoritam] := "("
+        _ids_2[_algoritam] := {}
+    endif
+
+    _sql_ids[_algoritam] += _sql_quote(_id) + ","
+    AADD(_ids_2[_algoritam], _id)
+ 
 next
 
 
-for _i := 1 to LEN(sql_in)
+for _i := 1 to LEN(_alg)
 
     if _sql_ids[_i] != NIL
        // odsjeci zarez na kraju
        _sql_ids[_i] := LEFT(_sql_ids[_i], LEN(_sql_ids[_i]) - 1)
        _sql_ids[_i] += ")"
-       _queries[_i] +=  "(" + sql_in[_i]  + ") IN " + _sql_ids[_i]
+       _queries[_i] +=  "(" + _alg[_i]["sql_in"]  + ") IN " + _sql_ids[_i]
   
     else
        _queries[_i] := NIL
@@ -633,13 +653,28 @@ return _ret
 
 // ------------------------------------------------------
 // sve ids-ove pobrisi iz dbf-a
+// ids       := {"#20011", "#2012"}
+// algoritam := 2
 // ------------------------------------------------------
-function delete_dbf_ids(dbf_alias, dbf_tag, key_block, ids)
+function delete_dbf_ids(dbf_table, ids, algoritam)
+local _a_dbf_rec, _alg
 local _counter
 local _fnd, _tmp_id, _rec
+local _dbf_alias
+local _dbf_tag
+local _key_block
+
+
+_a_dbf_rec := get_a_dbf_rec(dbf_table)
+_alg := _a_dbf_rec["algoritam"]
+
+_dbf_alias := _a_dbf_rec["alias"]
+_dbf_tag := _alg[algoritam]["dbf_tag"]
+
+_key_block := _alg[algoritam]["dbf_key_block"]
 
 // pobrisimo sve id-ove koji su drugi izmijenili
-SET ORDER TO TAG (dbf_tag)
+SET ORDER TO TAG (_dbf_tag)
 
 _counter := 0
 
@@ -651,7 +686,7 @@ do while .t.
     _fnd := .f.
     for each _tmp_id in ids
         HSEEK _tmp_id
-        do while !EOF() .and. EVAL(key_block) == _tmp_id
+        do while !EOF() .and. EVAL(_key_block) == _tmp_id
 
             skip
             _rec := RECNO()
@@ -669,7 +704,7 @@ do while .t.
     endif
 enddo
 
-log_write( "delete_dbf_ids: " + dbf_alias + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )) )
+log_write( "delete_dbf_ids: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )) )
 
 return
 
@@ -677,19 +712,25 @@ return
 // napuni dbf tabelu sa podacima sa servera
 // dbf_tabela mora biti otvorena i u tekucoj WA
 // -----------------------------------------------  
-function fill_dbf_from_server_qry(dbf_alias, sql_query, dbf_fields)
+function fill_dbf_from_server(dbf_table, sql_query)
 local _counter := 0
 local _i, _fld
 local _server := pg_server()
 local _qry_obj
 local _retry := 3
-   
+local _a_dbf_rec
+local _dbf_alias, _dbf_fields
+
+_a_dbf_rec := get_a_dbf_rec(dbf_table)
+_dbf_alias := _a_dbf_rec["alias"]
+_dbf_fields := _a_dbf_rec["dbf_fields"]
+
 _qry_obj := run_sql_query(sql_query, _retry ) 
 
  
-if !USED() .or. (dbf_alias != ALIAS())
-   Alert("dbf mora biti otvoren !")
-   log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + dbf_alias)
+if !USED() .or. ( _dbf_alias != ALIAS() )
+   Alert(PROCNAME(1) + "(" + ALLTRIM(STR(PROCLINE(1))) + ") " + dbf_table + " dbf mora biti otvoren !")
+   log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + _dbf_alias)
    QUIT 
 endif
 
@@ -697,8 +738,8 @@ DO WHILE !_qry_obj:EOF()
 
 append blank
 
-for _i := 1 to LEN(dbf_fields)
-    _fld := FIELDBLOCK(dbf_fields[_i])
+for _i := 1 to LEN(_dbf_fields)
+    _fld := FIELDBLOCK(_dbf_fields[_i])
     if VALTYPE(EVAL(_fld)) $ "CM"
         EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
     else
@@ -712,18 +753,19 @@ _qry_obj:Skip()
 
 ENDDO
 
-log_write( "fill_dbf_from_server_qry: " + dbf_alias +  " updated from sql server rec_cnt: " + ALLTRIM(STR( _counter )) )
+log_write( dbf_table +  " updated from sql server rec_cnt: " + ALLTRIM(STR( _counter )) )
 
 return
 
 
 // -----------------------------------------------------------------------------------------------------
 // synchro na osnovu ids-ova
+// sql_in = { 'idfirma || td || brnal || rbr ', 'idfirma || td || brnal'} 
 // -----------------------------------------------------------------------------------------------------
-function ids_synchro(sql_tbl, sql_fields, sql_in, dbf_tbl, dbf_alias, dbf_fields, dbf_index_tags, key_blocks)
+function ids_synchro(dbf_table)
 local _i, _ids_queries
 
-_ids_queries := create_queries_from_ids(sql_tbl, sql_fields, sql_in, dbf_tbl)
+_ids_queries := create_queries_from_ids(dbf_table)
 
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
@@ -736,10 +778,10 @@ for _i := 1 TO LEN(_ids_queries["ids"])
    if _ids_queries["ids"][_i] != NIL
 
      // pobrisi dbf
-     delete_dbf_ids( dbf_alias, dbf_index_tags[_i], key_blocks[_i], _ids_queries["ids"][_i])
+     delete_dbf_ids( dbf_table, _ids_queries["ids"][_i], _i)
 
      // dodaj sa servera
-     fill_dbf_from_server_qry( dbf_alias, _ids_queries["qry"][_i], dbf_fields)
+     fill_dbf_from_server( dbf_table, _ids_queries["qry"][_i])
 
    endif
 next
@@ -750,17 +792,25 @@ return
 // ---------------------------------------------------------
 // napuni tablu sa servera
 // ---------------------------------------------------------
-function full_synchro(sql_table, sql_fields, sql_order, dbf_table, dbf_alias, dbf_fields, step_size)
+function full_synchro(dbf_table, step_size)
 local _seconds
 local _count
 local _offset
 local _qry
+local _sql_table, _sql_fields
+local _a_dbf_rec
+local _sql_order
+
+_sql_table  := "fmk." + dbf_table
+_a_dbf_rec  := get_a_dbf_rec(dbf_table) 
+_sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
+_sql_order  := _a_dbf_rec["sql_order"]
 
 Box(, 5, 70)
 
-@ m_x + 1, m_y + 2 SAY "full synchro: " + sql_table + " => " + dbf_table
+@ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
 
-_count := table_count( sql_table, "true" ) 
+_count := table_count( _sql_table, "true" ) 
 _seconds := SECONDS()
 
 ZAP
@@ -769,12 +819,12 @@ ZAP
 
 for _offset := 0 to _count STEP step_size
 
-  _qry :=  "SELECT " + sql_fields + " FROM " +	sql_table
+  _qry :=  "SELECT " + _sql_fields + " FROM " +	_sql_table
  
-  _qry += " ORDER BY " + sql_order
+  _qry += " ORDER BY " + _sql_order
   _qry += " LIMIT " + STR(step_size) + " OFFSET " + STR(_offset) 
 
-  fill_dbf_from_server_qry(dbf_alias, _qry, dbf_fields)
+  fill_dbf_from_server(dbf_table, _qry)
 
   @ m_x + 4, m_y + 2 SAY _offset
   @ row(), col() + 2 SAY "/"

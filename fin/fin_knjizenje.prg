@@ -226,6 +226,7 @@ return
  */
  
 function edit_fin_priprema()
+
 local _ostav := NIL 
 local _iznos_unesen := .f.
 
@@ -259,9 +260,9 @@ read
 
 ESC_RETURN 0
 
-if fNovi .and. (_idfirma<>idfirma .or. _idvn<>idvn)
+if fNovi .and. (_idfirma <> idfirma .or. _idvn<>idvn)
     _brnal := nextnal( _idfirma, _idvn )
-        select  fin_pripr
+    select  fin_pripr
 endif
 
 set key K_ALT_K to DinDem()
@@ -344,7 +345,6 @@ endif
                       WHEN {|| DinDEM( , , "_IZNOSBHD"), .t.} 
 
 
-
 read
 
 
@@ -362,8 +362,10 @@ ESC_RETURN 0
 set key K_ALT_K to
 
 _k3:=K3U256(_k3)
-_Rbr:=STR(nRbr,4)
+_Rbr:=STR(nRbr, 4)
 
+
+SELECT fin_pripr
 return 1
 
 // provjeri datum dokumenta na osnovu tek.sezona i upozori
@@ -609,7 +611,7 @@ case Ch==K_ALT_F5
    case Ch==K_ENTER
 
        Box("ist", MAXROWS()- 5, MAXCOLS() - 8,.f.)
-          set_global_vars_from_dbf()
+          set_global_vars_from_dbf("_")
 
           nRbr := VAL(_Rbr)
 
@@ -617,7 +619,7 @@ case Ch==K_ALT_F5
               BoxC()
               return DE_CONT
           else
-              dbf_update_rec(get_dbf_global_memvars(), .f.)
+              dbf_update_rec(get_dbf_global_memvars("_"), .f.)
               BrisiPBaze()
               BoxC()
               return DE_REFRESH
@@ -663,13 +665,17 @@ case Ch==K_ALT_F5
          BoxC()
          return DE_REFRESH
 
-     case Ch==K_CTRL_N  // nove stavke
+     case Ch==K_CTRL_N  
+
+        // nove stavke
         select fin_pripr
         nDug:=0
         nPot:=0
         nPrvi:=0
         go top
-        do while .not. eof() // kompletan nalog sumiram
+        do while .not. eof() 
+
+            // kompletan nalog sumiram
             if D_P='1'
                 nDug+=IznosBHD
             else

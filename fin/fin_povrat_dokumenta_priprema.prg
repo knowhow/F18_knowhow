@@ -17,6 +17,7 @@ local nRec
 local _del_rec, _ok
 local _field_ids, _where_block
 local _t_rec
+local _tbl
 
 if lStorno==NIL 
   lStorno:=.f.
@@ -128,25 +129,36 @@ if !lStorno
  _del_rec["idvn"]    := cIdVn
  _del_rec["brnal"]   := cBrNal 
 
-
+ _ok := .t.
 
  Box(, 5, 70)
 
-    @ m_x + 1, m_y + 2 SAY "delete fin_suban"
-    // algoritam 2  - nivo dokumenta
-    _ok := _ok .and. delete_rec_server_and_dbf("fin_suban", _del_rec, 2, "BEGIN")
+    my_use_semaphore_off()
 
-    @ m_x + 2, m_y + 2 SAY "delete fin_anal"
+    _tbl := "fin_suban"
+    @ m_x + 1, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta
-    _ok := _ok .and. delete_rec_server_and_dbf("fin_anal", _del_rec, 2, "CONT" )
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "BEGIN")
+    log_write("povrat u pripremu fin"  + " : " + cIdFirma + cIdVN + cBrNal)
 
-    @ m_x + 3, m_y + 2 SAY "delete fin_sint"
+    _tbl := "fin_anal"
+    @ m_x + 2, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta
-    _ok := _ok .and. delete_rec_server_and_dbf("fin_sint", _del_rec, 2, "CONT" )
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "CONT" )
 
-    @ m_x + 4, m_y + 2 SAY "delete fin_nalog"
+    _tbl := "fin_sint"
+    @ m_x + 3, m_y + 2 SAY "delete " + _tbl
+    // algoritam 2  - nivo dokumenta
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "CONT" )
+
+    _tbl := "fin_nalog"
+    @ m_x + 4, m_y + 2 SAY "delete " + _tbl
     // algoritam 1 - jedini algoritam za naloge
-    _ok := _ok .and. delete_rec_server_and_dbf("fin_nalog", _del_rec, 1, "END" )
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 1, "END" )
+
+
+     my_use_semaphore_on()
+
  BoxC()
 
 

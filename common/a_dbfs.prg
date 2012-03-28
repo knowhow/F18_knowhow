@@ -13,8 +13,118 @@
 
 static __f18_dbfs := nil
 
+// -------------------------------
+// -------------------------------
+function set_a_dbfs()
+local _dbf_fields, _sql_order
+local _alg
+
+public gaDbfs := {}
+
+__f18_dbfs := hb_hash()
+
+
+set_a_dbf_fin()
+
+set_a_dbf_sifarnici()
+
+set_a_dbf_sifk_sifv()
+
+set_a_dbf_sifarnici()
+
+
+
+
+set_a_dbfs_legacy()
+
+return
+
+
+// -------------------------------------------------------------
+// -------------------------------------------------------------
+function set_a_dbf_sifarnici()
+
+ set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES  )
+ set_a_dbf_sifarnik("ops"        , "OPS"       , F_OPS        )
+ set_a_dbf_sifarnik("banke"      , "BANKE"     , F_BANKE      )
+
+return
+
+
+// -------------------------------------------------------
+// -------------------------------------------------------
+function set_a_dbf_sifk_sifv()
+local _alg
+
+_alg := hb_hash()
+_alg["dbf_key_fields"] := { "id", "oznaka" } 
+_alg["dbf_tag"]        := "ID"
+_alg["sql_in" ]        := "rpad(id,8) || rpad(oznaka,4)"
+_alg["dbf_key_block" ] := {|| field->id  + field->oznaka}
+
+set_a_dbf_sifarnik("sifk"       , "SIFK"      , F_SIFK       ,  _alg)
+
+
+_alg := hb_hash()
+_alg["dbf_key_fields"] := { "id", "oznaka", "idsif", "naz" } 
+_alg["dbf_tag"]        := "ID"
+_alg["sql_in" ]        := "rpad(id,8) || rpad(oznaka,4) || rpad(idsif,15) || rpad(naz,50)"
+_alg["dbf_key_block" ] := {|| field->id + field->oznaka + field->idsif + field->naz}
+
+set_a_dbf_sifarnik("sifv"       , "SIFV"      , F_SIFV       , _alg)
+
+return
+
+
+// ------------------------------------
+// dodaj stavku u f18_dbfs
+// ------------------------------------
+function f18_dbfs_add(_tbl, _item)
+
+__f18_dbfs[_tbl] := _item
+return .t.
+
+
+
 function f18_dbfs()
 return __f18_dbfs
+
+
+// ----------------------------------------------------
+// sifarnici su svi na isti fol
+// ----------------------------------------------------
+function set_a_dbf_sifarnik(dbf_table, alias, wa, dbf_key_fields)
+local _alg, _item
+
+_item := hb_hash()
+
+_item["alias"] := alias
+_item["table"] := dbf_table
+_item["wa"]    := wa
+
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+_alg := hb_hash()
+
+if dbf_key_fields == NIL
+   _alg["dbf_key_fields"] := {"id"}
+   _alg["dbf_tag"]        := "ID"
+   _alg["sql_in" ]        := "id"
+   _alg["dbf_key_block" ] := {|| field->id }
+else
+   _alg["dbf_key_fields"] := dbf_key_fields
+endif
+
+
+AADD(_item["algoritam"], _alg)
+
+   
+f18_dbfs_add(dbf_table, @_item)
+return .t.
+
+
 
 // -------------------------------------------------------
 // tbl - dbf_table ili alias
@@ -63,100 +173,6 @@ if !HB_HHASKEY(_rec, "dbf_fields")
 endif
 
 return _rec
-
-// ------------------------------------------------
-// na osnovu aliasa daj mi WA, dbf table_name
-//
-// moze se proslijediti: F_SUBAN, "SUBAN", "fin_suban"
-//
-// ret["wa"] = F_SUBAN, ret["alias"] = "SUBAN", 
-// ret["table"] = "fin_suban"
-// ---------------------------------------------------
-function get_a_dbf_rec_legacy(x_alias)
-local _pos
-local _ret := hb_hash()
-
-
-// temporary table nema semafora
-_ret["temp"]     := .f.
-
-_ret["dbf_fields"]:= NIL
-_ret["sql_order"] := NIL
-
-_ret["wa"]    := NIL
-_ret["alias"] := NIL
-_ret["table"] := NIL
-
-if VALTYPE(x_alias) == "N"
-   // F_SUBAN
-
-   _ret["wa"] := x_alias
-   _pos := ASCAN(gaDBFs,  { |x|  x[1] == x_alias} )
- 
-   if _pos < 1
-           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + table)
-           return _ret
-   endif
-   
-else
-
-   // /home/test/suban.dbf => suban
-   _pos := ASCAN(gaDBFs,  { |x|  x[2]==UPPER(FILEBASE(x_alias))} )
-   if _pos < 1
-
-       _pos := ASCAN(gaDBFs,  { |x|  x[3]==x_alias} )
-        
-       if _pos < 1
-           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + x_alias)
-          _ret["wa"]    := NIL
-          _ret["alias"] := NIL
-          _ret["table"] := NIL
-          return _ret
-       endif
-           
-   endif
-   
-endif
-
-_ret["wa"]             := gaDBFs[_pos,  1]
-_ret["alias"]          := gaDBFs[_pos,  2]
-_ret["table"]          := gaDBFs[_pos,  3]
-
-if LEN(gaDBFs[_pos]) > 5
-   _ret["dbf_key_fields"] := gaDBFs[_pos,  6]
-endif
-
-if LEN(gaDBFs[_pos]) > 8
-  _ret["dbf_fields"]   := gaDBFs[_pos,  9]
-  _ret["sql_order"]    := gaDBFs[_pos, 10]
-endif
-
-// nije zadano - ja cu na osnovu strukture dbf-a
-//  napraviti dbf_fields
-if _ret["dbf_fields"] == NIL
-  set_dbf_fields_from_struct(@_ret)
-endif
-
-// {id, naz} => "id, naz"
-if _ret["sql_order"] == NIL 
-   if  LEN(gaDBFs[_pos]) > 5
-       _ret["sql_order"] := sql_order_from_key_fields(gaDBFs[_pos, 6])
-   else
-       // onda moze biti samo tabela sifarnik, bazirana na id-u
-       _ret["sql_order"] := "id"
-   endif
-endif
-
-// moze li ovo ?hernad?
-_ret["sql_where_block"] := { |x| sql_where_block( _ret["table"], x) }
- 
-if LEN(gaDBFs[_pos]) < 4
-   _ret["temp"] := .t.
-else
-   _ret["temp"] := .f.
-endif
-
-return _ret
 
 // ----------------------------------------------
 // setujem "sql_order" hash na osnovu 
@@ -219,186 +235,4 @@ endif
 
 return .t.
 
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
-function set_a_dbf_fin_suban()
-local _alg, _tbl 
-
-_tbl := "fin_suban"
-
-__f18_dbfs[_tbl] := hb_hash()
-
-__f18_dbfs[_tbl]["alias"] := "SUBAN"
-__f18_dbfs[_tbl]["table"] := _tbl
-__f18_dbfs[_tbl]["wa"]    := F_SUBAN
-
-// temporary tabela - nema semafora
-__f18_dbfs[_tbl]["temp"]  := .f.
-
-
-
-__f18_dbfs[_tbl]["algoritam"] := {}
-
-// algoritam 1 - default
-// -------------------------------------------------------------------------------
-_alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal + field->rbr }
-_alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal", "rbr" } 
-_alg["sql_in"]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 4)"
-_alg["dbf_tag"]        := "4"
-AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
-
-
-// algoritam 2 - dokument
-// -------------------------------------------------------------------------------
-_alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }
-_alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal" } 
-_alg["sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-_alg["dbf_tag"]    := "4"
-AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
-
-// za full sinhronizaciju trebamo jedinstveni poredak
-__f18_dbfs[_tbl]["sql_order"] := "idfirma, idvn, brnal, rbr"
-
-return .t.
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
-function set_a_dbf_fin_anal()
-local _alg, _tbl
-
-_tbl := "fin_anal"
-
-__f18_dbfs[_tbl] := hb_hash()
-
-__f18_dbfs[_tbl]["alias"] := "ANAL"
-__f18_dbfs[_tbl]["wa"]    := F_ANAL
-__f18_dbfs[_tbl]["table"] := _tbl
-// temporary tabela - nema semafora
-__f18_dbfs[_tbl]["temp"]  := .f.
-
-__f18_dbfs[_tbl]["algoritam"] := {}
-
-// algoritam 1 - default
-// -------------------------------------------------------------------------------
-_alg := hb_hash()
-_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
-_alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal", "rbr" } 
-_alg["sql_in"]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
-_alg["dbf_tag"]   := "2"
-AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
-
-
-// algoritam 2 - dokument
-// -------------------------------------------------------------------------------
-_alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }
-_alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal" } 
-_alg["sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-_alg["dbf_tag"]    := "2"
-AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
-
-// za full sinhronizaciju trebamo jedinstveni poredak
-__f18_dbfs[_tbl]["sql_order"] := "idfirma, idvn, brnal, rbr"
-
-return .t.
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
-function set_a_dbf_fin_sint()
-local _alg, _tbl
-
-_tbl := "fin_sint"
-
-__f18_dbfs[_tbl] := hb_hash()
-
-__f18_dbfs[_tbl]["alias"] := "SINT"
-__f18_dbfs[_tbl]["table"] := _tbl
-__f18_dbfs[_tbl]["wa"]    := F_SINT
-
-// temporary tabela - nema semafora
-__f18_dbfs[_tbl]["temp"]  := .f.
-
-
-__f18_dbfs[_tbl]["algoritam"] := {}
-
-// algoritam 1 - default
-// -------------------------------------------------------------------------------
-_alg := hb_hash()
-_alg["dbf_key_block"] := {|| field->idfirma + field->idvn + field->brnal + field->rbr } 
-_alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal", "rbr" } 
-_alg["sql_in"]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
-_alg["dbf_tag"]   := "2"
-AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
-
-
-// algoritam 2 - dokument
-// -------------------------------------------------------------------------------
-_alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->idvn + field->brnal }
-_alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal" } 
-_alg["sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-_alg["dbf_tag"]    := "2"
-AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
-
-// za full sinhronizaciju trebamo jedinstveni poredak
-__f18_dbfs[_tbl]["sql_order"] := "idfirma, idvn, brnal, rbr"
-
-return .t.
-
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
-function set_a_dbf_fin_nalog()
-local _alg, _tbl
-
-_tbl := "fin_nalog"
-
-__f18_dbfs[_tbl] := hb_hash()
-
-__f18_dbfs[_tbl]["alias"] := "NALOG"
-__f18_dbfs[_tbl]["wa"]    := F_NALOG
-__f18_dbfs[_tbl]["table"] := _tbl
-
-// temporary tabela - nema semafora
-__f18_dbfs[_tbl]["temp"]  := .f.
-
-
-__f18_dbfs[_tbl]["algoritam"] := {}
-
-// algoritam 1 - default
-// -------------------------------------------------------------------------------
-_alg := hb_hash()
-_alg["dbf_key_block" ] := {|| field->idfirma + field->idvn + field->brnal} 
-_alg["dbf_key_fields"] := { "idfirma", "idvn", "brnal"} 
-_alg["sql_in"]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-_alg["dbf_tag"]        := "1"
-AADD(__f18_dbfs[_tbl]["algoritam"], _alg)
-
-__f18_dbfs[_tbl]["sql_order"] := "idfirma, idvn, brnal"
-
-return .t.
-
-
-
-// -------------------------------
-// -------------------------------
-function set_a_dbfs()
-local _dbf_fields, _sql_order
-
-public gaDbfs := {}
-
-__f18_dbfs := hb_hash()
-
-set_a_dbf_fin_suban()
-set_a_dbf_fin_anal()
-set_a_dbf_fin_sint()
-set_a_dbf_fin_nalog()
-
-set_a_dbfs_legacy()
-
-
-return
 

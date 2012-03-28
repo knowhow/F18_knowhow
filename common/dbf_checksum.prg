@@ -61,7 +61,7 @@ if _cnt_sql <> _cnt_dbf
       MsgBeep(_msg)
       QUIT
    else
-      full_synchro(_sql_table, sql_fields(_dbf_fields), _a_dbf_rec["sql_order"], _a_dbf_rec["table"], _a_dbf_rec["alias"], _dbf_fields, 15000)
+      full_synchro(_a_dbf_rec["table"], 15000)
    endif
 
    USE

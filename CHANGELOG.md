@@ -1,3 +1,8 @@
+0.9.77 2012-03-29, vsasa
+ 
+  - LD zbrka sa našim slovima [#27310](http://redmine.bring.out.ba/issues/27310)
+  - uvedena tabela adresara [#27320](http://redmine.bring.out.ba/issues/27320)
+
 0.9.76 2012-03-28, vsasa
  
   - parametri FAKT, zbrka sa našim slovima [#27263](http://redmine.bring.out.ba/issues/27263)

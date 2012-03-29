@@ -12,8 +12,8 @@
 #define F18_VER_DEFINED
 
 
-#define F18_VER       "0.9.76"
-#define F18_VER_DATE  "28.03.2012"
+#define F18_VER       "0.9.77"
+#define F18_VER_DATE  "29.03.2012"
 
 #define FMK_LIB_VER   "0.9.97"
 
@@ -22,6 +22,6 @@
 #define F18_DBF_VER_PATCH  6
 
 #define SERVER_DB_VER_MAJOR  4
-#define SERVER_DB_VER_MINOR  2
-#define SERVER_DB_VER_PATCH  0
+#define SERVER_DB_VER_MINOR  3
+#define SERVER_DB_VER_PATCH  3
 

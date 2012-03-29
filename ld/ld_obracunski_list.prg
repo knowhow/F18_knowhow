@@ -255,9 +255,9 @@ nBrZahtjeva := 1
 ol_o_tbl()
 
 // upisi parametre...
-cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
-cPredAdr := fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr )
-cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
+cPredNaz := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz ) )
+cPredAdr := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr ) )
+cPredJMB := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB ) )
 
 Box("#OBRACUNSKI LISTOVI RADNIKA", 17, 75)
 

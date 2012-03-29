@@ -347,10 +347,12 @@ for each _item in dbf_key_fields
    if VALTYPE(_item) == "A"
       // numeric
       _key := LOWER(_item[1])
+      check_hash_key(rec, _key)              
       _ret += _item[1] + "=" + STR(rec[_key], _item[2])
 
    elseif VALTYPE(_item) == "C"
       _key := LOWER(_item)
+      check_hash_key(rec, _key)              
       _ret += _item + "=" + _sql_quote(rec[_key])
  
    else

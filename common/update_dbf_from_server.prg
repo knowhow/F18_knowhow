@@ -80,5 +80,3 @@ if (gDebug > 5)
 endif
 
 return .t. 
-
-

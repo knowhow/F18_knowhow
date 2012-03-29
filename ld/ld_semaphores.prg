@@ -70,23 +70,6 @@ return _result
 
 // -----------------------------------------
 // -----------------------------------------
-function ld_radkr_from_sql_server(algoritam)
-local _result := .f.
-local _i
-local _tbl := "ld_radkr"
-local _index_tag := "1"
-local _field_tag := " godina::char(4) || mjesec::char(2) || idradn || idkred || naosnovu"
- 
-_result := sifrarnik_from_sql_server( _tbl, algoritam, F_RADKR, ;
-        { "idradn", "mjesec", "godina", "idkred", "naosnovu", "iznos", ;
-            "placeno" }, _index_tag, _field_tag )
-
-return _result
-
-
-
-// -----------------------------------------
-// -----------------------------------------
 function ld_radsat_from_sql_server(algoritam)
 local _result := .f.
 local _i

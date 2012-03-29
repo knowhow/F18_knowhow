@@ -9,63 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fmk.ch"
-
-// --------------------------------------
-// uzima sva polja iz tekuceg dbf zapisa
-// --------------------------------------
-function dbf_get_rec()
-local _ime_polja, _i, _struct
-local _ret := hb_hash()
-
-_struct := DBSTRUCT()
-for _i := 1 to LEN(_struct)
-
-  _ime_polja := _struct[_i, 1]
-   
-  if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
-      _ret[ LOWER(_ime_polja) ] := EVAL( FIELDBLOCK(_ime_polja) )
-  endif
-
-next
-
-return _ret
-
-// ------------------------------
-// no_lock - ne zakljucavaj
-// ------------------------------
-function dbf_update_rec(vars, no_lock)
-local _key
-local _field_b
-
-if no_lock == NIL
-   no_lock := .f.
-endif
-
-if !used()
-   _msg := "update_rec - nema otvoren dbf"
-   log_write(_msg)
-   Alert(_msg)
-   quit
-endif
-
-if no_lock .or. rlock()
-    for each _key in vars:Keys
-        // replace polja
-        _field_b := FIELDBLOCK(_key)
-        // napuni field sa vrijednosti
-        EVAL( _field_b, vars[_key] ) 
-    next 
-    if !no_lock 
-         dbrunlock()
-    endif
-else
-    MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())
-    return .f.
-endif
-
-return .t.
-
 // ----------------------------------------------------------------------
 // algoritam = 1 - nivo zapisa, 2 - dokument ...
 // ----------------------------------------------------------------------
@@ -82,44 +25,12 @@ local _msg
 local _alg_tag := ""
 
 
-if algoritam == NIL
-   algoritam = 1
-endif
-
-if algoritam > 1
-  _alg_tag := "#" + ALLTRIM(STR(algoritam))
-endif
-
-// nema zapoceta transakcija
-if transaction == NIL
-  // pocni i zavrsi trasakciju
-  transaction := "FULL"
-endif
-
-if table == NIL
-   table := ALIAS()
-endif
-
-if values == NIL
-  values := dbf_get_rec()
-endif
-
-_a_dbf_rec := get_a_dbf_rec(table)
-
-if transaction $ "FULL#BEGIN"
-   sql_table_update(table, "BEGIN")
-endif
-
-_alg := _a_dbf_rec["algoritam"][algoritam]
-
-BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
-   _where_str := sql_where_from_dbf_key_fields(_alg["dbf_key_fields"], values)
-END SEQUENCE
+set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
 
 if sql_table_update(table, "del", nil, _where_str) 
 
    
-    _full_id := get_dbf_primary_key(_alg["dbf_key_fields"], values)
+    _full_id := get_dbf_rec_primary_key(_alg["dbf_key_fields"], values)
     
     AADD(_ids, _alg_tag + _full_id)
     push_ids_to_semaphore( table, _ids )
@@ -163,36 +74,37 @@ return .f.
 
 
 
-// -----------------------------------
-// -----------------------------------
+// ---------------------------------------
+// --------------------------------------
 function delete_all_dbf_and_server(table)
-local _rec := hb_hash()
+local _ids := {}
 local _pos
-local _table
+local _field
+local _where_str
+local _a_dbf_rec
+local _msg
+local _rec
 
 if table == NIL
    table := ALIAS()
 endif
 
-// pronadji u tabeli koji je naziv te tabele
-_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
+_a_dbf_rec := get_a_dbf_rec(table)
 
-if _pos == 0
-   MsgBeep("gaDBFs table ? :" + table)
-   quit
-endif
+sql_table_update( table, "BEGIN" )
 
-_table := gaDBFs[ _pos, 3 ] 
-
-sql_table_update( _table, "BEGIN" )
-
+_rec := hb_hash()
 _rec["id"] := NIL
 // ostala polja su nevazna za brisanje
 
 
-if sql_table_update( _table, "del", _rec, "true")
-   update_semaphore_version( _table, .t.)
-   sql_table_update( _table, "END")
+if sql_table_update( table, "del", _rec, "true")
+
+   altd()
+   push_ids_to_semaphore( table, {"#F"} )
+
+   update_semaphore_version( table, .t.)
+   sql_table_update( table, "END")
 
    // zapujemo dbf
    if FLOCK()
@@ -203,122 +115,154 @@ if sql_table_update( _table, "del", _rec, "true")
    return .t.
 
 else
-   sql_table_update( _table, "ROLLBACK")
+
+   _msg := table + "transakcija neuspjesna !"
+    Alert(_msg)
+   log_write(_msg)
+
+   sql_table_update( table, "ROLLBACK")
    return .f.
 endif
 
 return .t.
-
-// ------------------------------------
-// set_global_vars_from_dbf("w")
-// geerise public vars wId, wNaz ..
-// sa vrijednostima dbf polja Id, Naz 
-// -------------------------------------
-
-function set_global_memvars_from_dbf(zn)
-
-return set_global_vars_from_dbf(zn)
-
-// --------------------------------------------------
-// TODO: imee set_global_vars_from_dbf je legacy
-// --------------------------------------------------
-function set_global_vars_from_dbf(zn)
-
-local _i, _struct, _field, _var
-
-private cImeP, cVar
-
-if zn == NIL 
-  zn := "_"
-endif
-
-_struct := DBSTRUCT()
-
-for _i := 1 to LEN(_struct)
-   _field := _struct[_i, 1]
-
-    if !("#"+ _field +"#" $ "#BRISANO#_OID_#_COMMIT_#")
-        _var := zn + _field
-        // kreiram public varijablu sa imenom vrijednosti _var varijable
-        __MVPUBLIC(_var)
-        EVAL(MEMVARBLOCK(_var), EVAL(FIELDBLOCK(_field))) 
-
-    endif
-next
-
-return .t.
-
-
- 
-// -------------------------------------
-// --------------------------------------
-function get_dbf_global_memvars(zn)
-local _ime_polja, _i, _struct
-local _ret := hb_hash()
-
-if zn==nil
-  zn := "_"
-endif
-
-_struct := DBSTRUCT()
-for _i := 1 to len(_struct)
-
-  _ime_polja := _struct[_i, 1]
-   
-  if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
-
-     // punimo hash matricu sa vrijednostima public varijabli
-     // _ret["idfirma"] := wIdFirma, za zn = "w"
-      _ret[ LOWER(_ime_polja) ] := EVAL( MEMVARBLOCK( zn + _ime_polja) )
-
-      // oslobadja public ili private varijablu
-      __MVXRELEASE( zn + _ime_polja)
-  endif
-
-next
-
-return _ret
-
-
-
-// -----------------------------------------------------------------
-// -----------------------------------------------------------------
-function update_rec_on_server(table, values, id_fields, where_block)
-local _vars
-
-if values == NIL
-    // pokupi iz takuceg dbf zapisa vrijednosti
-    values := dbf_get_rec()
-endif
-
-return update_rec_server_and_dbf(table, values, id_fields, where_block, .t.)
 
 // ----------------------------------------------------------------------------------------------------------
-// vrsimo snimanje na server
+// update podataka za jedan dbf zapis na serveru
 //
-// mijenja zapis na serveru, pa u dbf-u 
+// mijenja zapis na serveru, pa ako je sve ok onda uradi update dbf-a 
 //
-// update_rec_server_and_dbf( table, values, 
-//                           {"id", "oznaka"}, 
-//                           {|x| "ID=" + _sql_quote(x["id"]) + "|| OZNAKA=" + _sql_quote(x["oznaka"]) })
-//
-//  server_only je pobezveze, radi gornje funkcije za koju nisam siguran da ikome treba
+// update_rec_server_and_dbf( table, values, 1, "FULL") 
 // -----------------------------------------------------------------------------------------------------------
-function update_rec_server_and_dbf(table, values, id_fields, where_block, server_only)
-local _key, _field, _field_b
-local _ok := .t.
-local _values_old := hb_hash()
+function update_rec_server_and_dbf(table, values, algoritam, transaction)
 local _ids := {}
 local _pos
-local _val_dbf, _val_mem
-local _changed_id, _values_dbf, _full_id_dbf, _full_id_mem 
-local _where_str, _where_str_2
+local _full_id_dbf, _full_id_mem
+local _dbf_pkey_search
+local _field
+local _where_str
 local _t_field, _t_field_dec
+local _a_dbf_rec, _alg
+local _msg
+local _values_dbf
+local _alg_tag := ""
 
-if !USED()
-   MsgBeep("mora biti otvorena neka tabela ?!")
+// trebmo where str za values rec
+set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
+
+
+_values_dbf := dbf_get_rec()
+
+// trebmo where str za stanje dbf-a
+set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
+
+
+sql_table_update(table, "BEGIN")
+
+// izbrisi sa servera stare vrijednosti za values
+if !sql_table_update(table, "del", nil, _where_str)
+ 
+   sql_table_update(table, "ROLLBACK")
+   _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno !"
+   log_write(_msg)
+   Alert(_msg)
+
    return .f.
 endif
+
+// izbrisi i stare vrijednosti za _values_dbf
+// ovo nam treba ako se uradi npr. ispravku ID-a sifre
+// id je u dbf = ID=id_stari, NAZ=stari
+//
+// ispravljamo i id, i naz, pa u values imamo
+// id je bio ID=id_novi.  NAZ=naz_novi
+//
+// nije dovoljno da uradimo delete where id=id_novi
+// trebamo uraditi i delete id=id_stari
+// to radimo upravo u sljedecoj sekvenci
+// 
+if !sql_table_update(table, "del", nil, _where_str_dbf)
+ 
+   sql_table_update(table, "ROLLBACK")
+   _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno !"
+   log_write(_msg)
+   Alert(_msg)
+
+   return .f.
+endif
+
+
+// dodaj nove
+if !sql_table_update(table, "ins", values)
+   sql_table_update(table, "ROLLBACK")
+
+   _msg := RECI_GDJE_SAM + "sql ins " + table + " neuspjesno !"
+   RaiseError(_msg)
+
+   return .f.
+endif
+
+// pripremiti semaphore ids-ove
+
+// stanje u dbf-u (_values_dbf)
+_full_id_dbf := ""
+
+// stanje podataka u mem rec varijabli values
+_full_id_mem := ""
+
+BEGIN SEQUENCE with { |err| err:cargo := { "var",  "id_fields", id_fields, "var", "values", values, "var", "_values_dbf", _values_dbf }, GlobalErrorHandler( err ) }
+
+  _full_id_dbf := get_dbf_rec_primary_key(_alg["dbf_key_fields"], _values_dbf)
+  _full_id_mem := get_dbf_rec_primary_key(_alg["dbf_key_fields"], values)
+
+END SEQUENCE
+
+// stavi id-ove na server
+AADD(_ids, _alg_tag + _full_id_dbf)
+AADD(_ids, _alg_tag + _full_id_mem)
+
+if !push_ids_to_semaphore(table, _ids)
+     sql_table_update(table, "ROLLBACK")
+
+    _msg := RECI_GDJE_SAM + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " !"
+    Alert(_msg)
+    log_write(_msg)
+
+    return .f.
+endif
+
+// azuriraj verziju semafora za tabelu
+if update_semaphore_version(table, .t.) < 0
+   sql_table_update(table, "ROLLBACK")
+
+   _msg := RECI_GDJE_SAM + "update semaphore " + table +  " !"
+   log_write(_msg)
+   Alert(_msg)
+
+   return .f.
+endif
+
+
+// na kraju, azuriraj lokalni dbf
+if dbf_update_rec(values)
+    sql_table_update(table, "END")
+    return .t.
+else
+    sql_table_update(_table, "ROLLBACK")
+
+    _msg := RECI_GDJE_SAM + "dbf_update_rec " + table +  " !"
+    Alert(_msg)
+    log_write(_msg)
+
+    return .f.
+endif
+
+return .t.
+
+
+// --------------------------------------------------------------------------------------------------------------
+// inicijalizacija varijabli koje koriste update and delete_from_server_and_dbf  funkcije
+// ---------------------------------------------------------------------------------------------------------------
+function set_table_values_algoritam_vars(table, values, algoritam, transaction, a_dbf_rec, alg, where_str, alg_tag)
 
 if table == NIL
    table := ALIAS()
@@ -328,168 +272,33 @@ if values == NIL
   values := dbf_get_rec()
 endif
 
-
-// proadji naziv tabele prema aliasu
-_pos := ASCAN( gaDBFs,  { |x|  x[2] == UPPER(table) } )
-if _pos == 0
-  _pos := ASCAN( gaDBFs,  { |x|  x[3] == LOWER(table) } )
+if algoritam == NIL
+   algoritam = 1
 endif
 
-if (_pos == 0)
-  MsgBeep( PROCNAME() + " / " + ALLTRIM(STR(PROCLINE(1), 0))  + " tabela: " + table)
-  QUIT
-endif
-    
-table := gaDBFs[ _pos, 3 ]
-
-if id_fields == NIL
-   if LEN(gaDBFs[_pos]) > 5
-       id_fields := gaDBFs[_pos, 6]
-   else
-       id_fields := { "id" }
-   endif
+// nema zapoceta transakcija
+if transaction == NIL
+  // pocni i zavrsi trasakciju
+  transaction := "FULL"
 endif
 
-if where_block == NIL
-   if LEN(gaDBFs[_pos]) > 6
-      where_block := gaDBFs[_pos, 7]
-   else
-      where_block := { |x| "ID=" + _sql_quote(x['id']) }
-   endif
+a_dbf_rec := get_a_dbf_rec(table)
+
+if transaction $ "FULL#BEGIN"
+   sql_table_update(table, "BEGIN")
 endif
 
-if server_only == NIL
-  server_only := .f.
-endif
+alg := a_dbf_rec["algoritam"][algoritam]
 
-sql_table_update(table, "BEGIN")
-
-_where_str := EVAL(where_block, values)
-if !sql_table_update(table, "del", nil, _where_str) 
-   sql_table_update(table, "ROLLBACK")
-   MsgBeep("mi imamos mnogos problemos - SQL del / 1")
-   return .f.
-endif
-
-if !sql_table_update(table, "ins", values)
-   sql_table_update(table, "ROLLBACK")
-   MsgBeep("mi imamos mnogos problemos - SQL ins / 1")
-   return .f.
-endif
-
-if update_semaphore_version(table, .t.) < 0
-   sql_table_update(table, "ROLLBACK")
-   MsgBeep("mi imamos mnogos problemos - update_semaphore_version / 1")
-   return .f.
-endif
-
-_full_id_dbf := ""
-_full_id_mem := ""
-_changed_id  := .f.
-_values_dbf  := hb_hash()
-
-BEGIN SEQUENCE with { |err| err:cargo := { "var",  "id_fields", id_fields, "var", "values", values, "var", "_values_dbf", _values_dbf }, GlobalErrorHandler( err ) }
-
-for each _field in id_fields
-
-    
-    if VALTYPE( _field ) == "A"
-
-        _t_field := _field[1]
-        _t_field_dec := _field[2]
-
-        _values_dbf[ _t_field ] := EVAL( FIELDBLOCK( _t_field ) )
-        if _values_dbf[_t_field] != values[ _t_field ]
-            _changed_id := .t.
-        endif
-
-        _full_id_dbf += STR(_values_dbf[ _t_field ], _t_field_dec)
-        _full_id_mem += STR( values[ _t_field ], _t_field_dec )
-
-    else   
-
-        _t_field := _field
-        _values_dbf[ _t_field ] := EVAL(FIELDBLOCK( _t_field ))
-
-        if _values_dbf[ _t_field ] != values[ _t_field ]
-            _changed_id := .t.
-        endif
-
-        if VALTYPE( _values_dbf[ _t_field ] ) == "D"       
-            _full_id_dbf += DTOS( _values_dbf[ _t_field ] )
-            _full_id_mem += DTOS( values[ _t_field ] )
-        else
-            _full_id_dbf += _values_dbf[ _t_field ]
-            _full_id_mem += values[ _t_field ]
-        endif
-
-    endif
-    
-next
+BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
+   where_str := sql_where_from_dbf_key_fields(_alg["dbf_key_fields"], values)
 END SEQUENCE
 
-
-// razlike izmedju dbf-a i values postoje
-if _changed_id
-    AADD(_ids, _full_id_dbf)
-    _where_str_2 := EVAL(where_block, _values_dbf)
-    if !sql_table_update(table, "del", NIL, _where_str_2)
-       sql_table_update(table, "ROLLBACK")
-       MsgBeep("mi imamos mnogos problemos - del / 2")
-       return .f.
-    endif
+if algoritam > 1
+  alg_tag := "#" + ALLTRIM(STR(algoritam))
 endif
 
-AADD(_ids, _full_id_mem)
-
-if !push_ids_to_semaphore(table, _ids)
-     sql_table_update(table, "ROLLBACK")
-     MsgBeep("mi imamos mnogos problemos - push_ids_to_semaphore / 2")
-     return .f.
-endif
-
-if server_only
-  sql_table_update(table, "END")
-  return .t.
-endif
-
-if dbf_update_rec(values)
-    sql_table_update(table, "END")
-    return .t.
-else
-    sql_table_update(_table, "ROLLBACK")
-    MsgBeep("mi imamos dbf problemos - moramo sql rollbackos")
-    return .f.
-endif
 
 return
 
-
-
-// --------------------------------------------
-// --------------------------------------------
-function get_dbf_primary_key(dbf_fields, values)
-local _dbf_pkey_search, _field
-local _t_field, _t_field_dec
-
-_dbf_pkey_search := ""
-    
-for each _field in dbf_fields
-
-    if VALTYPE( _field ) == "A"    
-        _t_field := _field[1]
-        _t_field_dec := _field[2]
-        _dbf_pkey_search += STR( values[ _t_field ], _t_field_dec )
-    else
-        _t_field := _field
-        if VALTYPE( values[ _t_field ]) == "D"
-            _dbf_pkey_search += DTOS( values[ _t_field ] )
-        else
-            _dbf_pkey_search += values[ _t_field ]
-        endif
-    endif
-
-next
-
-return _dbf_pkey_search
 

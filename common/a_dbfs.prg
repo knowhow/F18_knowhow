@@ -25,14 +25,10 @@ __f18_dbfs := hb_hash()
 
 
 set_a_dbf_fin()
-
-set_a_dbf_sifarnici()
+set_a_dbf_ld()
 
 set_a_dbf_sifk_sifv()
-
 set_a_dbf_sifarnici()
-
-
 
 
 set_a_dbfs_legacy()
@@ -44,34 +40,11 @@ return
 // -------------------------------------------------------------
 function set_a_dbf_sifarnici()
 
- set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES  )
+ set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES   )
  set_a_dbf_sifarnik("ops"        , "OPS"       , F_OPS        )
  set_a_dbf_sifarnik("banke"      , "BANKE"     , F_BANKE      )
+ set_a_dbf_sifarnik("refer"      , "REFER"     , F_REFER      )
 
-return
-
-
-// -------------------------------------------------------
-// -------------------------------------------------------
-function set_a_dbf_sifk_sifv()
-local _alg
-
-_alg := hb_hash()
-_alg["dbf_key_fields"] := { "id", "oznaka" } 
-_alg["dbf_tag"]        := "ID"
-_alg["sql_in" ]        := "rpad(id,8) || rpad(oznaka,4)"
-_alg["dbf_key_block" ] := {|| field->id  + field->oznaka}
-
-set_a_dbf_sifarnik("sifk"       , "SIFK"      , F_SIFK       ,  _alg)
-
-
-_alg := hb_hash()
-_alg["dbf_key_fields"] := { "id", "oznaka", "idsif", "naz" } 
-_alg["dbf_tag"]        := "ID"
-_alg["sql_in" ]        := "rpad(id,8) || rpad(oznaka,4) || rpad(idsif,15) || rpad(naz,50)"
-_alg["dbf_key_block" ] := {|| field->id + field->oznaka + field->idsif + field->naz}
-
-set_a_dbf_sifarnik("sifv"       , "SIFV"      , F_SIFV       , _alg)
 
 return
 
@@ -93,7 +66,7 @@ return __f18_dbfs
 // ----------------------------------------------------
 // sifarnici su svi na isti fol
 // ----------------------------------------------------
-function set_a_dbf_sifarnik(dbf_table, alias, wa, dbf_key_fields)
+function set_a_dbf_sifarnik(dbf_table, alias, wa, rec)
 local _alg, _item
 
 _item := hb_hash()
@@ -108,13 +81,17 @@ _item["algoritam"] := {}
 
 _alg := hb_hash()
 
-if dbf_key_fields == NIL
+if rec == NIL
    _alg["dbf_key_fields"] := {"id"}
    _alg["dbf_tag"]        := "ID"
    _alg["sql_in" ]        := "id"
    _alg["dbf_key_block" ] := {|| field->id }
+
 else
-   _alg["dbf_key_fields"] := dbf_key_fields
+   _alg["dbf_key_fields"] := rec["dbf_key_fields"]
+   _alg["dbf_tag"]        := rec["dbf_tag"]
+   _alg["sql_in" ]        := rec["sql_in"]
+   _alg["dbf_key_block" ] := rec["dbf_key_block"]
 endif
 
 
@@ -123,7 +100,6 @@ AADD(_item["algoritam"], _alg)
    
 f18_dbfs_add(dbf_table, @_item)
 return .t.
-
 
 
 // -------------------------------------------------------
@@ -171,6 +147,14 @@ endif
 if !HB_HHASKEY(_rec, "dbf_fields")
    set_dbf_fields_from_struct(@_rec)
 endif
+
+if !HB_HHASKEY(_rec, "sql_order")
+    
+    _rec["sql_order"] := sql_order_from_key_fields(_rec["algoritam"][1]["dbf_key_fields"])
+
+endif
+
+
 
 return _rec
 

@@ -161,7 +161,6 @@ AADD( gaDbfs, { F_LOGKD       , "LOGKD"         , "fakt_logkd"     } )
 AADD( gaDbfs, { F_BARKOD      , "BARKOD"        , "fakt_barkod"    } )
 AADD( gaDbfs, { F_RJ          , "RJ"            , "fakt_rj"        } )
 AADD( gaDbfs, { F_UPL         , "UPL"           , "fakt_upl"       } )
-AADD( gaDbfs, { F_REFER       , "REFER"         , "refer", {|alg| refer_from_sql_server(alg)}, "IDS" } )
 
 AADD( gaDbfs, { F_FAKT        , "FAKT"          , "fakt_fakt"      , { |alg| fakt_fakt_from_sql_server(alg) }  , "IDS", {"idfirma", "idtipdok", "brdok", "rbr"}, {|x| sql_where_block("fakt_fakt", x) }, "1" } )
 
@@ -234,10 +233,6 @@ AADD(gaDBFs, { F_ANAL, "SUBAN_2", "suban_2"  } )
 
 // "1","str(godina)+idrj+str(mjesec)+obr+idradn"
 AADD(gaDBFs, { F_LD      , "LD"      , "ld_ld",    { |alg| ld_ld_from_sql_server(alg) }, "IDS", {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" },  { |x| sql_where_block("ld_ld", x) }, "1"})
-
-// "2", "idradn + idkred + naosnovu + str(godina) + str(mjesec)"
-AADD(gaDBFs, { F_RADKR  , "RADKR"   , "ld_radkr", { |alg| ld_radkr_from_sql_server(alg) }, "IDS", { "idradn", "idkred", "naosnovu", {"godina", 4}, {"mjesec", 2 }}, { |x| sql_where_block("ld_radkr", x) }, "2" })
-
 
 //IF  lViseObr => TAG = "ID", index = "id+godina+obr" ;  !lViseObr => "ID", "id+godina"
 AADD(gaDBFs, { F_PAROBR ,  "PAROBR"  , "ld_parobr",   { |alg| ld_parobr_from_sql_server(alg) }, "IDS", { "id", "godina"}, {|x| sql_where_block("ld_parobr", x)}, "ID" })

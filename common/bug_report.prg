@@ -188,3 +188,18 @@ next
 
 return .t.
 
+
+function raiseError(cErrMsg)
+Local oErr
+
+   oErr := ErrorNew()
+   oErr:severity    := ES_ERROR
+   oErr:genCode     := EG_OPEN
+   oErr:subSystem   := "F18"
+   oErr:SubCode     := 1000
+   oErr:Description := cErrMsg
+
+   Eval( ErrorBlock(), oErr )
+
+return .t.
+

@@ -73,8 +73,8 @@ do while .t.
         else
                 // pobrisi sve rate kredita
                 _vals := hb_hash()
-                _vals["idradn"] := cIdRadn
-                _vals["idkred"] := cIdKred
+                _vals["idradn"]    := cIdRadn
+                _vals["idkred"]    := cIdKred
                 _vals["naosnovu"]  := cOsnov
                 delete_rec_server_and_dbf("RADKR", _vals,  { "idradn", "idkred", "naosnovu" }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND idkred=" + _sql_quote(x["idkred"]) + " AND naosnovu=" + _sql_quote(x["naosnovu"]) }, "2"  )
         endif

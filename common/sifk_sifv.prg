@@ -424,7 +424,7 @@ for _i := 1 to _numtok
     APPEND BLANK
 
     _sifv_rec["naz"] := get_sifv_naz(_tmp, sifk_rec) 
-    _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 200 )
+    _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
 
     update_rec_server_and_dbf("sifv", _sifv_rec)
 
@@ -453,7 +453,7 @@ brisi_sifv_item(sifk_rec["id"], sifk_rec["oznaka"], id_sif)
 APPEND BLANK
 
 _sifv_rec["naz"] := get_sifv_naz(value, sifk_rec)
-_sifv_rec["naz"] := PADR( _sifv_rec["naz"], 200 )
+_sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
 
 update_rec_server_and_dbf("sifv", _sifv_rec)
 
@@ -465,12 +465,11 @@ return .t.
 static function brisi_sifv_item(dbf_name, ozn, id_sif)
 local _sifv_rec := hb_hash()
 
-_sifv_rec["id"] := dbf_name
+_sifv_rec["id"]     := dbf_name
 _sifv_rec["oznaka"] := ozn
-_sifv_rec["idsif"] := id_sif
-return delete_rec_server_and_dbf("sifv", _sifv_rec, {"id", "oznaka", "idsif"}, { |x| "ID=" + _sql_quote(x["id"]) + " AND OZNAKA=" + _sql_quote(x["oznaka"]) + " AND IDSIF=" + _sql_quote(x["idsif"]) }, "ID" )
+_sifv_rec["idsif"]  := id_sif
 
-
+return delete_rec_server_and_dbf("sifv", _sifv_rec, 2)
 
 // ----------------------------------------
 // ----------------------------------------

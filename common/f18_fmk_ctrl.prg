@@ -28,7 +28,7 @@ local _c_ld := "D"
 local _c_pdv := "D"
 local _c_pos := "D"
 
-Box(, 6, 50 )
+Box(, 10, 50 )
 
     @ m_x + 1, m_y + 2 SAY "Provjeri sifrarnik ?" GET _c_sif VALID _c_sif $ "DN" PICT "@!"
     @ m_x + 2, m_y + 2 SAY "      Provjeri fin ?" GET _c_fin VALID _c_fin $ "DN" PICT "@!"
@@ -36,7 +36,7 @@ Box(, 6, 50 )
     @ m_x + 4, m_y + 2 SAY "     Provjeri kalk ?" GET _c_kalk VALID _c_kalk $ "DN" PICT "@!"
     @ m_x + 5, m_y + 2 SAY "       Provjeri ld ?" GET _c_ld VALID _c_ld $ "DN" PICT "@!"
     @ m_x + 6, m_y + 2 SAY "     Provjeri epdv ?" GET _c_pdv VALID _c_pdv $ "DN" PICT "@!"
-    @ m_x + 6, m_y + 2 SAY "      Provjeri pos ?" GET _c_pos VALID _c_pos $ "DN" PICT "@!"
+    @ m_x + 7, m_y + 2 SAY "      Provjeri pos ?" GET _c_pos VALID _c_pos $ "DN" PICT "@!"
 
     read
 
@@ -80,8 +80,6 @@ endif
 if _c_pos == "D"
     f18_pos_data( @_a_data, @_a_ctrl )
 endif
-
-
 
 // prikazi rezultat testa
 f18_pr_rezultat( _a_ctrl, _a_data, _a_sif )

@@ -34,8 +34,8 @@ return _sql_fields
 
  
 
-//----------------------------------------------
-// ----------------------------------------------
+//-------------------------------------------------
+// -------------------------------------------------
 function sql_table_update(table, op, record, where )
 LOCAL _ret
 LOCAL _result
@@ -50,7 +50,12 @@ local _pos
 local _dec
 local _len
 
+if table == NIL
+  table := ALIAS()
+endif
+
 _tbl := "fmk." + LOWER(table)
+
 
 DO CASE
    CASE op == "BEGIN"
@@ -193,9 +198,8 @@ local oResult, cMsg
 oResult := oServer:Query( cQuery )
 IF oResult:NetErr()
       cMsg := oResult:ErrorMsg()
-      if gDebug > 0 
-         log_write(cQuery)
-         log_write(cMsg)
+      if gDebug > 5 
+         log_write("err qry: " + cQuery + "err msg:" + cMsg)
       endif
       MsgBeep( cMsg )
       return .f.

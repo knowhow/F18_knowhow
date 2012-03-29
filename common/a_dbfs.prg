@@ -36,6 +36,24 @@ set_a_dbfs_legacy()
 return
 
 
+// ----------------------------------
+// ----------------------------------
+function set_a_dbfs_key_fields()
+local _key
+
+for each _key in __f18_dbfs:Keys
+
+  // nije zadano - ja cu na osnovu strukture dbf-a
+  //  napraviti dbf_fields
+  if !HB_HHASKEY(__f18_dbfs[_key], "dbf_fields")
+      set_dbf_fields_from_struct(@__f18_dbfs[_key])
+  endif
+
+next
+
+return .t.
+
+
 // -------------------------------------------------------------
 // -------------------------------------------------------------
 function set_a_dbf_sifarnici()
@@ -44,6 +62,24 @@ function set_a_dbf_sifarnici()
  set_a_dbf_sifarnik("ops"        , "OPS"       , F_OPS        )
  set_a_dbf_sifarnik("banke"      , "BANKE"     , F_BANKE      )
  set_a_dbf_sifarnik("refer"      , "REFER"     , F_REFER      )
+ set_a_dbf_sifarnik("partn"      , "PARTN"     , F_PARTN      )
+ set_a_dbf_sifarnik("tnal"       , "TNAL"      , F_TNAL       )
+ set_a_dbf_sifarnik("trfp"       , "TRFP"      , F_TRFP       )
+ set_a_dbf_sifarnik("trfp2"      , "TRFP2"     , F_TRFP2      )
+ set_a_dbf_sifarnik("trfp3"      , "TRFP3"     , F_TRFP3      )
+ set_a_dbf_sifarnik("epdv_sg_kif", "SG_KIF"    , F_SG_KIF     )
+ set_a_dbf_sifarnik("epdv_sg_kuf", "SG_KUF"    , F_SG_KUF     )
+ set_a_dbf_sifarnik("ld_radn"    , "RADN"      , F_RADN       )
+ set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
+ set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
+ set_a_dbf_sifarnik("dopr"       , "DOPR"      , F_DOPR       )
+ set_a_dbf_sifarnik("tippr"      , "TIPPR"     , F_TIPPR      )
+ set_a_dbf_sifarnik("tippr2"     , "TIPPR2"    , F_TIPPR2     )
+ set_a_dbf_sifarnik("kred"       , "KRED"      , F_KRED       )
+ set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
+ set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
+ set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
+ set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
 
 
 return
@@ -55,6 +91,7 @@ return
 function f18_dbfs_add(_tbl, _item)
 
 __f18_dbfs[_tbl] := _item
+
 return .t.
 
 
@@ -109,6 +146,10 @@ function get_a_dbf_rec(tbl)
 local _rec, _keys, _dbf_tbl, _key
 
 _dbf_tbl := "x"
+
+if VALTYPE(__f18_dbfs) <> "H"
+   Alert(RECI_GDJE_SAM + " " + tbl + "__f18_dbfs nije inicijalizirana")
+endif
 
 if HB_HHASKEY(__f18_dbfs, tbl)
    _dbf_tbl := tbl

@@ -97,7 +97,6 @@ SET DATE TO GERMAN
 log_write("== F18 start: " + hb_ValToStr(DATE()) + " / " + hb_ValToStr(TIME()) + " ==")
 SetgaSDbfs()
 set_global_vars_0()
-set_a_dbfs()
 
 PtxtSekvence()
 
@@ -193,7 +192,12 @@ log_write("home baze: " + my_home())
 
 _ver := read_dbf_version_from_config()
 
+set_a_dbfs()
 cre_all_dbfs(_ver)
+
+// inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
+set_a_dbfs_key_fields()
+
 
 write_dbf_version_to_config()
 

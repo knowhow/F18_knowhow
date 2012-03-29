@@ -29,10 +29,12 @@ _zap := ASCAN(_ids_queries["qry"], "UZMI_STANJE_SA_SERVERA")
 
 if _zap <> 0
    // postoji zahtjev za full synchro
-   altd()
    full_synchro(dbf_table)
+   
+   // otvoricu tabelu ponovo ... exlcusivno, ne bi to trebalo biti problem
+   reopen_exclusive(dbf_table)
+
    ADEL(_zap, _ids_queries["qry"])
-   full_synchro(dbf_table)
 endif
 
 for _i := 1 TO LEN(_ids_queries["ids"])
@@ -88,10 +90,10 @@ for _i := 1 TO LEN(ids)
     _sql_ids := "ARRAY[" + _sql_quote(ids[_i]) + "]"
 
     // full synchro
-    if _ids[_i] == "#F"
+    if ids[_i] == "#F"
             // svi raniji id-ovi su nebitni
             // brisemo kompletnu tabelu - radimo full synchro
-            _set_1 := ""
+            _set_1 := "set ids = "
             _set_2 := ""
     else
             // dodajemo postojece
@@ -340,7 +342,7 @@ return
 // => "01       15.50"
 // ----------------------------------------------------------
 function get_dbf_rec_primary_key(dbf_key_fields, rec)
-local _t_field, _t_field_dec
+local _field, _t_field, _t_field_dec
 local _full_id := ""
 
 for each _field in dbf_key_fields

@@ -23,17 +23,14 @@ local _qry
 local _sql_table, _sql_fields
 local _a_dbf_rec
 local _sql_order
+local _opened
 
 _sql_table  := "fmk." + dbf_table
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _sql_order  := _a_dbf_rec["sql_order"]
 
-if !used()
-  Alert("ERR: full synchro: " + dbf_table)
-  log_write("ERR: full synchro: " + dbf_table)
-  QUIT
-endif
+reopen_exclusive(dbf_table)
 
 Box(, 5, 70)
 
@@ -66,6 +63,8 @@ for _offset := 0 to _count STEP step_size
 next
 
 BoxC()
+
+close all
 
 return .t.
 

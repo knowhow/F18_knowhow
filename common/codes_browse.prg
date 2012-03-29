@@ -841,8 +841,10 @@ do while .t.
                     _vars["id"] := NoviID_A()
                 endif
 
-                update_rec_server_and_dbf(alias(), _vars)
-                update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N)
+                sql_table_update(nil, "BEGIN")
+                   update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
+                   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
+                sql_table_update(nil, "END")
 
                 set_global_vars_from_dbf("w")
 
@@ -895,13 +897,21 @@ endif
 
 _vars := get_dbf_global_memvars("w")
 
-if !update_rec_server_and_dbf(alias(), _vars)
+
+// -----------------------------------------------------------------------
+sql_table_update(nil, "BEGIN")
+
+if !update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
     if lNovi
         delete_with_rlock()
     endif
 else
-   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi)
+   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi, "CONT")
 endif
+
+sql_table_update(nil, "END")
+// ---------------------------------------------------------------------------
+
 
 set_global_vars_from_dbf("w")
 
@@ -1997,7 +2007,7 @@ select (nTArea)
 
 if Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
         
-    delete_all_dbf_and_server()   
+    delete_all_dbf_and_server(ALIAS())   
     select (nTArea)
 
 endif

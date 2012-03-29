@@ -33,16 +33,15 @@ _ret := _sql_query_no_log( _server, _qry )
 return .t.
 
 
-// pomoćna funkcija za sql query izvršavanje
-static function _sql_query_no_log( oServer, cQuery )
-local oResult, cMsg
+static function _sql_query_no_log( srv, qry )
+local _msg, _ret
 
-oResult := oServer:Query( cQuery )
-IF oResult:NetErr()
-      cMsg := oResult:ErrorMsg()
-      MsgBeep( cMsg )
+_ret := srv:Query( qry )
+IF _ret:NetErr()
+      _msg := _ret:ErrorMsg()
+      MsgBeep( _msg )
       return .f.
 ENDIF
-RETURN oResult
+RETURN _ret
 
 

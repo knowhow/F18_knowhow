@@ -347,11 +347,15 @@ return NIL
 //  iz ovoga se vidi da je "," nedozvoljen znak u ID-u
 // ------------------------------------------------------------------
 
-function USifk(dbf_name, ozna, id_sif, val)
+function USifk(dbf_name, ozna, id_sif, val, transaction )
 local _i
 local ntrec, numtok
 local _sifk_rec
+local _tran
 
+if transaction == NIL
+  transaction := "FULL"
+endif
 
 PushWa()
 
@@ -385,6 +389,13 @@ endif
 _sifk_rec := dbf_get_rec()
 id_sif := PADR(id_sif, SIFK_LEN_IDSIF)
 
+    
+if transaction == "FULL"
+   _tran := "BEGIN"
+    sql_table_update(nil, _tran)
+endif
+
+
 if sifk->veza == "N" 
    if !update_sifv_n_relation(_sifk_rec, id_sif, val) 
       return .f.
@@ -393,6 +404,11 @@ else
    if !update_sifv_1_relation(_sifk_rec, id_sif, val)
       return .f.
    endif
+endif
+ 
+if transaction == "FULL"
+   _tran := "END"
+    sql_table_update(nil, _tran)
 endif
 
 PopWa()
@@ -403,6 +419,7 @@ return .t.
 static function update_sifv_n_relation(sifk_rec, id_sif, vals) 
 local _i, _numtok, _tmp, _naz, _values
 local _sifv_rec
+
 
 _sifv_rec := hb_hash()           
 _sifv_rec["id"] := sifk_rec["id"]
@@ -426,7 +443,7 @@ for _i := 1 to _numtok
     _sifv_rec["naz"] := get_sifv_naz(_tmp, sifk_rec) 
     _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
 
-    update_rec_server_and_dbf("sifv", _sifv_rec)
+    update_rec_server_and_dbf("sifv", _sifv_rec, 1, "CONT")
 
 next
  
@@ -455,7 +472,7 @@ APPEND BLANK
 _sifv_rec["naz"] := get_sifv_naz(value, sifk_rec)
 _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
 
-update_rec_server_and_dbf("sifv", _sifv_rec)
+update_rec_server_and_dbf("sifv", _sifv_rec, 1, "CONT")
 
 return .t.
 
@@ -469,7 +486,7 @@ _sifv_rec["id"]     := dbf_name
 _sifv_rec["oznaka"] := ozn
 _sifv_rec["idsif"]  := id_sif
 
-return delete_rec_server_and_dbf("sifv", _sifv_rec, 2)
+return delete_rec_server_and_dbf("sifv", _sifv_rec, 2, "CONT")
 
 // ----------------------------------------
 // ----------------------------------------
@@ -529,7 +546,7 @@ return
  @param lNovi .t. - radi se o novom slogu
 
 */
-function update_sifk_na_osnovu_ime_kol_from_global_var(ime_kol, var_prefix, novi)
+function update_sifk_na_osnovu_ime_kol_from_global_var(ime_kol, var_prefix, novi, transaction)
 local _i
 local _alias
 local _field_b
@@ -541,7 +558,7 @@ for _i := 1 to len(ime_kol)
      _field_b :=  MEMVARBLOCK( var_prefix + "Sifk_" + SUBSTR(ime_kol[_i, 3], 7))
 
      if IzSifk( _alias, SUBSTR(ime_kol[_i, 3], 7), (_alias)->id) <> NIL
-         USifk( _alias, SUBSTR(ImeKol[_i, 3], 7), (_alias)->id, EVAL(_field_b) )
+         USifk( _alias, SUBSTR(ImeKol[_i, 3], 7), (_alias)->id, EVAL(_field_b), transaction)
      endif
    endif
 next

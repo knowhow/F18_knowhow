@@ -98,17 +98,9 @@ AADD( gaDbfs, { F_TDOK   ,  "TDOK"    , "tdok", { | param | tdok_from_sql_server
 AADD( gaDbfs, { F_KONTO  ,  "KONTO"   , "konto", {| param | konto_from_sql_server(param) }, "IDS" } )
 AADD( gaDbfs, { F_VPRIH  ,  "VPRIH"   , "vpprih"   } )
 
-AADD( gaDbfs, { F_PARTN  ,  "PARTN"   , "partn", {| param | partn_from_sql_server(param) }, "IDS" } )
-
-AADD( gaDbfs, { F_TNAL   ,  "TNAL"    , "tnal", { | param | tnal_from_sql_server( param ) }, "IDS" } )
-
-
-
 AADD( gaDbfs, { F_PKONTO ,  "PKONTO"  , "pkonto", { | param | pkonto_from_sql_server(param) }, "IDS" } )
 AADD( gaDbfs, { F_VALUTE ,  "VALUTE"  , "valute", { | param | valute_from_sql_server( param ) }, "IDS" } )
 
-AADD( gaDbfs, { F_TRFP2  ,  "TRFP2"   , "trfp2", { | param | trfp2_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_TRFP3  ,  "TRFP3"   , "trfp3", { | param | trfp3_from_sql_server( param ) }, "IDS" } )
 AADD( gaDbfs, { F_VKSG   ,  "VKSG"    , "vksg"   } )
 AADD( gaDbfs, { F_ULIMIT ,  "ULIMIT"  , "ulimit"  } )
 
@@ -124,7 +116,6 @@ AADD( gaDbfs, { F_KALK_DOKS   , "KALK_DOKS"    , "kalk_doks" , {|alg| kalk_doks_
 AADD( gaDbfs, { F_KALK_DOKS2  , "KALK_DOKS2"   , "kalk_doks2", { |alg| kalk_doks2_from_sql_server(alg) }, "IDS", {"idfirma", "idvd", "brdok"}, {|x| sql_where_block("kalk_doks2", x) }, "1" })
 
 // KALK sifrarnik
-AADD( gaDbfs, { F_TRFP ,       "TRFP"  , "trfp",   { | param | trfp_from_sql_server( param ) }, "IDS" } )
 
 AADD( gaDbfs, { F_KALKS  ,"KALKS" , "kalk_kalks"    } )
 AADD( gaDbfs, { F__KALK  ,"_KALK" , "_kalk_kalk"    } )
@@ -222,8 +213,6 @@ AADD(gaDBFs, { F_P_KUF, "P_KUF", "p_epdv_kuf"  } )
 AADD(gaDBFs, { F_KUF, "KUF", "epdv_kuf", {|alg| epdv_kuf_from_sql_server(alg)}, "IDS", {"br_dok"}, {|x| sql_where_block("epdv_kuf", x) }, "BR_DOK" } )
 AADD(gaDBFs, { F_KIF, "KIF", "epdv_kif", {|alg| epdv_kif_from_sql_server(alg)}, "IDS", {"br_dok"}, {|x| sql_where_block("epdv_kif", x) }, "BR_DOK" } )
 AADD(gaDBFs, { F_PDV, "PDV", "epdv_pdv", {|alg| epdv_pdv_from_sql_server(alg)}, "IDS"  } )
-AADD(gaDBFs, { F_SG_KIF, "SG_KIF", "epdv_sg_kif", {|alg| epdv_sg_kif_from_sql_server(alg)}, "IDS" } )
-AADD(gaDBFs, { F_SG_KUF, "SG_KUF", "epdv_sg_kuf", {|alg| epdv_sg_kuf_from_sql_server(alg)}, "IDS" } )
 AADD(gaDBFs, { F_R_KIF, "R_KIF", "epdv_r_kif"  } )
 AADD(gaDBFs, { F_R_KUF, "R_KUF", "epdv_r_kuf"  } )
 AADD(gaDBFs, { F_R_PDV, "R_PDV", "epdv_r_pdv"  } )
@@ -251,17 +240,6 @@ AADD(gaDBFs, { F_RADSAT ,  "RADSAT"  , "ld_radsat",   { |alg| ld_radsat_from_sql
 
 
 // ID bazirani sifrarnici
-AADD(gaDBFs, { F_RADN   ,  "RADN"    , "ld_radn"  ,     { |alg| ld_radn_from_sql_server(alg)  } , "IDS" } )
-AADD(gaDBFs, { F_LD_RJ  ,  "LD_RJ"   , "ld_rj"    ,     { |alg| ld_rj_from_sql_server(alg)    } , "IDS" } )
-AADD(gaDBFs, { F_POR    ,  "POR"     , "por"      ,     { |alg| por_from_sql_server(alg)      } , "IDS" } )
-AADD(gaDBFs, { F_DOPR   ,  "DOPR"    , "dopr"     ,     { |alg| dopr_from_sql_server(alg)     } , "IDS" } )
-AADD(gaDBFs, { F_TIPPR  ,  "TIPPR"   , "tippr"    ,     { |alg| tippr_from_sql_server(alg)    } , "IDS" } )
-AADD(gaDBFs, { F_TIPPR2 ,  "TIPPR2"  , "tippr2"   ,     { |alg| tippr2_from_sql_server(alg)   } , "IDS" } )
-AADD(gaDBFs, { F_KRED   ,  "KRED"    , "kred"     ,     { |alg| kred_from_sql_server(alg)     } , "IDS" } )
-AADD(gaDBFs, { F_STRSPR ,  "STRSPR"  , "strspr"   ,     { |alg| strspr_from_sql_server(alg)   } , "IDS" } )
-AADD(gaDBFs, { F_KBENEF ,  "KBENEF"  , "kbenef"   ,     { |alg| kbenef_from_sql_server(alg)   } , "IDS" } )
-AADD(gaDBFs, { F_VPOSLA ,  "VPOSLA"  , "vposla"   ,     { |alg| vposla_from_sql_server(alg)   } , "IDS" } )
-
 AADD(gaDBFs, { F_RADSIHT,  "RADSIHT" , "ld_radsiht",  { |alg| ld_radsiht_from_sql_server(alg) } , "IDS", { "idkonto", {"godina", 4}, {"mjesec", 2}, "idradn" }, { |x| sql_where_block("ld_radsiht", x) }, "2" } )
 
 AADD(gaDBFs, { F_NORSIHT,  "NORSIHT" , "ld_norsiht",  { |alg| ld_norsiht_from_sql_server(alg) } , "IDS" } )

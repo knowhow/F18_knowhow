@@ -51,6 +51,21 @@ return _result
 
 // -----------------------------------------
 // -----------------------------------------
+function adres_from_sql_server(algoritam)
+local _result := .f.
+local _i
+local _tbl := "adres"
+
+_result := sifrarnik_from_sql_server(_tbl, algoritam, F_ADRES, { "id", "naz", "rj", ;
+    "kontakt", "tel2", "tel3", "mjesto", "ptt", "adresa", "drzava", ;
+    "ziror", "zirod", "k7", "k8", "k9" } )
+
+return _result
+ 
+
+
+// -----------------------------------------
+// -----------------------------------------
 function vrstep_from_sql_server(algoritam)
 local _result := .f.
 local _i

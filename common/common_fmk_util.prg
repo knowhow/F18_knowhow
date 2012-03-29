@@ -305,10 +305,12 @@ RETURN
 function Adresar()
 
 PushWa()
+
 select (F_ADRES)
 if !used()
 	O_ADRES
 endif
+
 SELECT(F_SIFK)
 if !USED()
 	O_SIFK
@@ -320,23 +322,23 @@ if !USED()
 endif
  
 P_Adres()
+
 USE
 
 PopWa()
+
 return nil
 
 
 // --------------------------------
 // --------------------------------
 function P_Adres(cId,dx,dy)
-
-local fkontakt:=.f.
-
+local fkontakt := .f.
 private ImeKol:={}
 private Kol:={}
 
-if fieldpos("Kontakt")<>0
-  fKontakt:=.t.
+if fieldpos("Kontakt") <> 0
+  fKontakt := .t.
 endif
 
 AADD(ImeKol, { "Naziv firme", {|| id     } , "id" } )
@@ -344,29 +346,29 @@ AADD(ImeKol, { "Telefon "  , {|| naz } , "naz" } )
 AADD(ImeKol, { "Telefon 2"  , {|| tel2} , "tel2" })
 AADD(ImeKol, { "FAX      "  , {|| tel3} , "tel3" })
 if fkontakt
-  AADD(ImeKol, { "RJ "  , {|| rj  } , "rj" } )
+    AADD(ImeKol, { "RJ "  , {|| rj  } , "rj" } )
 endif
 AADD(ImeKol, { "Adresa"     , {|| adresa  } , "adresa"   } )
 AADD(ImeKol, { "Mjesto"     , {|| mjesto  } , "mjesto"   } )
 if fkontakt
-  AADD(ImeKol, { "PTT", {|| PTT } , "PTT"  } )
-  AADD(ImeKol, { "Drzava", {|| drzava     } , "drzava"  } )
+    AADD(ImeKol, { "PTT", {|| PTT } , "PTT"  } )
+    AADD(ImeKol, { "Drzava", {|| drzava     } , "drzava"  } )
 endif
 AADD(ImeKol, { "Dev.ziro-r.", {|| ziror   } , "ziror"   } )
 AADD(ImeKol, { "Din.ziro-r.", {|| zirod  } ,  "zirod"   } )
 
 if fkontakt
-  AADD(ImeKol, { "Kontakt", {|| kontakt     } , "kontakt"  } )
-  AADD(ImeKol, { "K7", {|| k7 } , "k7"  } )
-  AADD(ImeKol, { "K8", {|| k8 } , "k8"  } )
-  AADD(ImeKol, { "K9", {|| k9 } , "k9"  } )
+    AADD(ImeKol, { "Kontakt", {|| kontakt     } , "kontakt"  } )
+    AADD(ImeKol, { "K7", {|| k7 } , "k7"  } )
+    AADD(ImeKol, { "K8", {|| k8 } , "k8"  } )
+    AADD(ImeKol, { "K9", {|| k9 } , "k9"  } )
 endif
 
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-
+FOR i:=1 TO LEN(ImeKol)
+    AADD(Kol,i)
+NEXT
 
 PushWa()
-
 
 select sifk
 set order to tag "ID"
@@ -401,10 +403,12 @@ do while !eof() .and. ID="ADRES   "
  AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
 
  skip
+
 enddo
 PopWa()
 
-return PostojiSifra(F_ADRES,1,15,77,"Adresar:",@cId,dx,dy, {|Ch| AdresBlok(Ch)} )
+return PostojiSifra( F_ADRES, 1, MAXROWS()-15, MAXCOLS()-3,"Adresar:",@cId,dx,dy, {|Ch| AdresBlok(Ch)} )
+
 
 
 // ----------------------------------------------------
@@ -472,7 +476,7 @@ return DE_CONT
 function AdresBlok(Ch)
 
 if Ch==K_F8  // koverte
- PKoverte()
+    PKoverte()
 endif
 
 RETURN DE_CONT

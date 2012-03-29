@@ -17,6 +17,7 @@ cre_sifk_sifv(ver)
 cre_sifrarnici_1(ver)
 cre_roba(ver)
 cre_partn(ver)
+cre_adres(ver)
 
 // TODO: http://redmine.bring.out.ba/issues/25815
 cre_all_fin(ver)
@@ -42,22 +43,26 @@ local lShowMsg
 lShowMsg:=.f.
 
 if (nArea==nil)
-	nArea:=-1
+    nArea:=-1
 
-	if goModul:oDatabase:lAdmin
-		lShowMsg:=.t.
-	endif
+    if goModul:oDatabase:lAdmin
+        lShowMsg:=.t.
+    endif
 
 endif
 
 if lShowMsg
-	MsgO("Kreiram systemske tabele")
+    MsgO("Kreiram systemske tabele")
 endif
+
 CreGParam(nArea)
+
 CreParams(nArea)
-CreAdres(nArea)
+
+cre_adres()
+
 if lShowMsg
-	MsgC()
+    MsgC()
 endif
 
 return
@@ -66,7 +71,7 @@ function CreParams()
 close all
 
 if gReadOnly
-	return
+    return
 endif
 
 aDbf:={}
@@ -79,17 +84,17 @@ AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
 
 if !file(f18_ime_dbf("params"))
-	DBCREATE2(PRIVPATH+"params.dbf",aDbf)
+    DBCREATE2(PRIVPATH+"params.dbf",aDbf)
 endif
 CREATE_INDEX("ID","fsec+fh+fvar+rbr",PRIVPATH+"params.dbf",.t.)
-	
+    
 if !file(f18_ime_dbf("gparams"))
-	DBCREATE2(PRIVPATH+"gparams.dbf",aDbf)
+    DBCREATE2(PRIVPATH+"gparams.dbf",aDbf)
 endif
 CREATE_INDEX("ID","fsec+fh+fvar+rbr", PRIVPATH + "gparams.dbf",.t.)
 
 if !file(f18_ime_dbf("kparams"))
-	DBCREATE2(KUMPATH+"KPARAMS.dbf",aDbf)
+    DBCREATE2(KUMPATH+"KPARAMS.dbf",aDbf)
 endif
 CREATE_INDEX("ID", "fsec+fh+fvar+rbr", KUMPATH+"kparams.dbf", .t.)
 
@@ -103,7 +108,7 @@ AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
 cImeDBf:=ToUnix(KUMPATH+"secur.dbf")
 if !file(f18_ime_dbf(cImeDbF))
-	DBCREATE2(cImeDBF,aDbf)
+    DBCREATE2(cImeDBF,aDbf)
 endif
 CREATE_INDEX("ID","fsec+fh+fvar+rbr", cImeDBF, .t.)
 
@@ -111,34 +116,35 @@ return nil
 
 
 
-function CreAdres(nArea)
+function cre_adres( ver )
+local _alias
 
-if (nArea==nil)
-	nArea:=-1
+_alias := "adres"
+
+if !file(f18_ime_dbf( _alias ))
+    aDBF:={}
+    AADD(aDBf,{ 'ID'    , 'C' ,  50 ,   0 })
+    AADD(aDBf,{ 'RJ'    , 'C' ,  30 ,   0 })
+    AADD(aDBf,{ 'KONTAKT'    , 'C' ,  30 ,   0 })
+    AADD(aDBf,{ 'NAZ'        , 'C' ,  15 ,   0 })
+    AADD(aDBf,{ 'TEL2'       , 'C' ,  15 ,   0 })
+    AADD(aDBf,{ 'TEL3'       , 'C' ,  15 ,   0 })
+    AADD(aDBf,{ 'MJESTO'     , 'C' ,  15 ,   0 })
+    AADD(aDBf,{ 'PTT'        , 'C' ,  6 ,   0 })
+    AADD(aDBf,{ 'ADRESA'     , 'C' ,  50 ,   0 })
+    AADD(aDBf,{ 'DRZAVA'     , 'C' ,  22 ,   0 })
+    AADD(aDBf,{ 'ziror'     , 'C' ,  30 ,   0 })
+    AADD(aDBf,{ 'zirod'     , 'C' ,  30 ,   0 })
+    AADD(aDBf,{ 'K7'     , 'C' ,  1 ,   0 })
+    AADD(aDBf,{ 'K8'     , 'C' ,  2 ,   0 })
+    AADD(aDBf,{ 'K9'     , 'C' ,  3 ,   0 })
+    DBCREATE2( _alias, aDBf )
+    reset_semaphore_version( _alias )
+    my_use( _alias )
+ 
 endif
 
-if (nArea==-1 .or. nArea==F_KPARAMS)
-    if !file(f18_ime_dbf("adres"))
-	  aDBF:={}
-	  AADD(aDBf,{ 'ID'    , 'C' ,  50 ,   0 })
-	  AADD(aDBf,{ 'RJ'    , 'C' ,  30 ,   0 })
-	  AADD(aDBf,{ 'KONTAKT'    , 'C' ,  30 ,   0 })
-	  AADD(aDBf,{ 'NAZ'        , 'C' ,  15 ,   0 })
-	  AADD(aDBf,{ 'TEL2'       , 'C' ,  15 ,   0 })
-	  AADD(aDBf,{ 'TEL3'       , 'C' ,  15 ,   0 })
-	  AADD(aDBf,{ 'MJESTO'     , 'C' ,  15 ,   0 })
-	  AADD(aDBf,{ 'PTT'        , 'C' ,  6 ,   0 })
-	  AADD(aDBf,{ 'ADRESA'     , 'C' ,  50 ,   0 })
-	  AADD(aDBf,{ 'DRZAVA'     , 'C' ,  22 ,   0 })
-	  AADD(aDBf,{ 'ziror'     , 'C' ,  30 ,   0 })
-	  AADD(aDBf,{ 'zirod'     , 'C' ,  30 ,   0 })
-	  AADD(aDBf,{ 'K7'     , 'C' ,  1 ,   0 })
-	  AADD(aDBf,{ 'K8'     , 'C' ,  2 ,   0 })
-	  AADD(aDBf,{ 'K9'     , 'C' ,  3 ,   0 })
-	  DBCREATE2(SIFPATH+"ADRES.DBF",aDBf)
-	endif
-	CREATE_INDEX("ID","id+naz",SIFPATH+"ADRES.DBF")
-endif
+CREATE_INDEX("ID","id+naz", _alias )
 
 return
 
@@ -147,12 +153,12 @@ return
 function CreGparam(nArea)
 local aDbf
 if (nArea==nil)
-	nArea:=-1
+    nArea:=-1
 endif
 close all
 
 if gReadonly
-	return
+    return
 endif
 
 aDbf:={}
@@ -165,13 +171,13 @@ AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
 if (nArea==-1 .or. nArea==F_GPARAMS)
 
-	cImeDBf:= f18_ime_dbf("gparams")
+    cImeDBf:= f18_ime_dbf("gparams")
 
-	if !file(cImeDbf)
-		DBCREATE2(cImeDbf, aDbf)
-	endif
+    if !file(cImeDbf)
+        DBCREATE2(cImeDbf, aDbf)
+    endif
 
-	CREATE_INDEX("ID", "fsec+fh+fvar+rbr", cImeDBF )
+    CREATE_INDEX("ID", "fsec+fh+fvar+rbr", cImeDBF )
 endif
 
 return

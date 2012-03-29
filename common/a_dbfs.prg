@@ -87,8 +87,7 @@ AADD( gaDbfs, { F_TARIFA   ,  "TARIFA"  , "tarifa"  , { | param | tarifa_from_sq
 AADD( gaDbfs, { F_KONCIJ   ,  "KONCIJ"  , "koncij"  , { | param | koncij_from_sql_server(param)  }  , "IDS" } )
 
 AADD( gaDbfs, { F_BARKOD   , "BARKOD"  , "barkod"  } )
-
-
+AADD( gaDbfs, { F_ADRES    , "ADRES"   , "adres"  , { | param | adres_from_sql_server(param)    }  , "IDS" } )
 
 AADD( gaDbfs, { F_STRINGS  , "STRINGS"  , "strings"  } )
 AADD( gaDbfs, { F_RNAL     , "RNAL"  , "rnal"  } )

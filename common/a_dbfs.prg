@@ -23,11 +23,11 @@ public gaDbfs := {}
 
 __f18_dbfs := hb_hash()
 
-
 set_a_dbf_fin()
 set_a_dbf_fakt()
 set_a_dbf_ld()
 set_a_dbf_epdv()
+set_a_dbf_pos()
 
 set_a_dbf_sifk_sifv()
 set_a_dbf_sifarnici()

@@ -223,16 +223,16 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->brdok + field->rbr }
+_alg["dbf_key_block"]  := {|| field->idfirma + field->idtipdok + field->brdok + field->rbr }
 _alg["dbf_key_fields"] := {"idfirma", "idtipdok", "brdok", "rbr"}
-_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8) || lpad(rb,3)"
+_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8) || lpad(rbr,3)"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
 // algoritam 2 - nivo dokumenta
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->brdok}
+_alg["dbf_key_block"]  := {|| field->idfirma + field->brdok }
 _alg["dbf_key_fields"] := {"idfirma", "idtipdok", "brdok"}
 _alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
 _alg["dbf_tag"]        := "1"
@@ -264,7 +264,7 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->brdok}
+_alg["dbf_key_block"]  := {|| field->idfirma + field->idtipdok + field->brdok}
 _alg["dbf_key_fields"] := {"idfirma", "idtipdok", "brdok"}
 _alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
 _alg["dbf_tag"]        := "1"
@@ -274,4 +274,5 @@ _item["sql_order"] := "idfirma, idtipdok, brdok"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.
+
 

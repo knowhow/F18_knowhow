@@ -11,6 +11,8 @@
 
 #include "fin.ch"
 
+
+
 function povrat_fin_naloga(lStorno)
 local _rec
 local nRec
@@ -20,7 +22,7 @@ local _t_rec
 local _tbl
 
 if lStorno==NIL 
-  lStorno:=.f.
+    lStorno:=.f.
 endif
 
 if Logirati(goModul:oDataBase:cName, "DOK", "POVRAT" )
@@ -34,6 +36,10 @@ O_FIN_PRIPR
 O_ANAL
 O_SINT
 O_NALOG
+
+if fin_pripr->(RECCOUNT()) <> 0
+    MsgBeep("Priprema nije prazna !!!")
+endif
 
 SELECT SUBAN
 set order to tag "4"

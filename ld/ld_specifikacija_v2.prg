@@ -191,13 +191,13 @@ else
     lPDNE:=.f.
 endif
 
-cFirmNaz := fetch_metric("org_naziv", nil, cFirmNaz)
+cFirmNaz := HB_UTF8TOSTR( fetch_metric("org_naziv", nil, cFirmNaz) )
 cFirmNaz := PADR(cFirmNaz, 35)
 
-cFirmAdresa := fetch_metric("ld_firma_adresa", nil, cFirmAdresa)  
+cFirmAdresa := HB_UTF8TOSTR( fetch_metric("ld_firma_adresa", nil, cFirmAdresa) )
 cFirmAdresa := PADR(cFirmAdresa, 35)
 
-cFirmOpc := fetch_metric("ld_firma_opcina", nil, cFirmOpc)
+cFirmOpc := HB_UTF8TOSTR( fetch_metric("ld_firma_opcina", nil, cFirmOpc) )
 cFirmOpc := PADR(cFirmOpc, 35)
 
 cFirmVD := fetch_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD )
@@ -229,7 +229,7 @@ qqOpSt:=PadR(qqOpSt, 80)
 cIsplata := fetch_metric("ld_specifikacija_vrsta_isplate", nil, cIsplata)
 
 cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
-cMatBR:=padr(cMatBr,13) 
+cMatBR := padr(cMatBr,13) 
 
 dDatIspl := date()
 
@@ -247,56 +247,55 @@ do while .t.
             GET qqOpSt PICT "@!S20"
         
         if lViseObr
-                @ m_x+ 2,col()+1 SAY "Obr.:" GET cObracun ;
+            @ m_x+ 2,col()+1 SAY "Obr.:" GET cObracun ;
                 WHEN HelpObr(.t.,cObracun) ;
                 VALID ValObr(.t.,cObracun)
-            endif
+        endif
         
-            @ m_x+ 3,m_y+ 2 SAY "Period od:" GET nDanOd pict "99"
-            @ m_x+ 3,col()+1 SAY "/" GET nMjesecOd pict "99"
-            @ m_x+ 3,col()+1 SAY "/" GET nGodinaOd pict "9999"
-            @ m_x+ 3,col()+1 SAY "do:" GET nDanDo pict "99"
-            @ m_x+ 3,col()+1 SAY "/" GET nMjesecDo pict "99"
-            @ m_x+ 3,col()+1 SAY "/" GET nGodinaDo pict "9999"
+        @ m_x+ 3,m_y+ 2 SAY "Period od:" GET nDanOd pict "99"
+        @ m_x+ 3,col()+1 SAY "/" GET nMjesecOd pict "99"
+        @ m_x+ 3,col()+1 SAY "/" GET nGodinaOd pict "9999"
+        @ m_x+ 3,col()+1 SAY "do:" GET nDanDo pict "99"
+        @ m_x+ 3,col()+1 SAY "/" GET nMjesecDo pict "99"
+        @ m_x+ 3,col()+1 SAY "/" GET nGodinaDo pict "9999"
         
-        
-            @ m_x+ 4,m_y+ 2 SAY " Naziv: " GET cFirmNaz
-            @ m_x+ 5,m_y+ 2 SAY "Adresa: " GET cFirmAdresa
-            @ m_x+ 6,m_y+ 2 SAY "Opcina: " GET cFirmOpc
-            @ m_x+ 7,m_y+ 2 SAY "Vrsta djelatnosti: " GET cFirmVD
+        @ m_x+ 4,m_y+ 2 SAY " Naziv: " GET cFirmNaz
+        @ m_x+ 5,m_y+ 2 SAY "Adresa: " GET cFirmAdresa
+        @ m_x+ 6,m_y+ 2 SAY "Opcina: " GET cFirmOpc
+        @ m_x+ 7,m_y+ 2 SAY "Vrsta djelatnosti: " GET cFirmVD
             
-            @ m_x+ 4,m_y+ 52 SAY "ID.broj :" GET cMatBR
-            @ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
+        @ m_x+ 4,m_y+ 52 SAY "ID.broj :" GET cMatBR
+        @ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
             
         
         @ m_x+9,m_y+ 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
             GET cPrimDobra  PICT "@!S20"
             
         @ m_x+10,m_y+ 2 SAY "Dopr.pio (iz)" GET cDopr1
-            @ m_x+10,col()+ 2 SAY "Dopr.pio (na)" GET cDopr5
-            @ m_x+11,m_y+ 2 SAY "Dopr.zdr (iz)" GET cDopr2
-            @ m_x+11,col()+ 2 SAY "Dopr.zdr (na)" GET cDopr6
-            @ m_x+12,m_y+ 2 SAY "Dopr.nez (iz)" GET cDopr3
-            @ m_x+12,col()+ 2 SAY "Dopr.nez (na)" GET cDopr7
+        @ m_x+10,col()+ 2 SAY "Dopr.pio (na)" GET cDopr5
+        @ m_x+11,m_y+ 2 SAY "Dopr.zdr (iz)" GET cDopr2
+        @ m_x+11,col()+ 2 SAY "Dopr.zdr (na)" GET cDopr6
+        @ m_x+12,m_y+ 2 SAY "Dopr.nez (iz)" GET cDopr3
+        @ m_x+12,col()+ 2 SAY "Dopr.nez (na)" GET cDopr7
             
-            @ m_x+13,m_y+ 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
-            @ m_x+14,m_y+ 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
+        @ m_x+13,m_y+ 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
+        @ m_x+14,m_y+ 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
         
         @ m_x+15,m_y+ 2 SAY "Ost.obaveze: NAZIV                  USLOV"
-            @ m_x+16,m_y+ 2 SAY " 1." GET ccOO1
-            @ m_x+16,m_y+30 GET cnOO1
-            @ m_x+17,m_y+ 2 SAY " 2." GET ccOO2
-            @ m_x+17,m_y+30 GET cnOO2
-            @ m_x+18,m_y+ 2 SAY " 3." GET ccOO3
-            @ m_x+18,m_y+30 GET cnOO3
-            @ m_x+19,m_y+ 2 SAY " 4." GET ccOO4
-            @ m_x+19,m_y+30 GET cnOO4
+        @ m_x+16,m_y+ 2 SAY " 1." GET ccOO1
+        @ m_x+16,m_y+30 GET cnOO1
+        @ m_x+17,m_y+ 2 SAY " 2." GET ccOO2
+        @ m_x+17,m_y+30 GET cnOO2
+        @ m_x+18,m_y+ 2 SAY " 3." GET ccOO3
+        @ m_x+18,m_y+30 GET cnOO3
+        @ m_x+19,m_y+ 2 SAY " 4." GET ccOO4
+        @ m_x+19,m_y+30 GET cnOO4
             
         @ m_x+21, m_y+2 SAY "Isplata: 'A' doprinosi+porez, 'B' samo doprinosi, 'C' samo porez" GET cIsplata VALID cIsplata $ "ABC" PICT "@!"
 
         read
-            clvbox()
-            ESC_BCR
+        clvbox()
+        ESC_BCR
     BoxC()
     
     aUslRJ:=Parsiraj(qqIdRj,"IDRJ")

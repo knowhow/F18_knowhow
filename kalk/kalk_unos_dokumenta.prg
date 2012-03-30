@@ -2144,6 +2144,7 @@ if (fTopsD .and. !fstara .and. gTops!="0 ")
     END PRINT
 
     GenTops()
+
 endif
 
 if (fFaktD .and. !fstara .and. gFakt!="0 ")
@@ -2166,7 +2167,6 @@ if (fFaktD .and. !fstara .and. gFakt!="0 ")
     FF
     END PRINT
 
-    kalk_prenos_modem(.t.)
 endif
 
 closeret

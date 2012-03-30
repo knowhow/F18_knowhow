@@ -2,6 +2,22 @@
 
   - merge semaphore v1.1 brancha, haos-2 - ovo ne radi
 
+0.9.77 2012-03-29, vsasa
+ 
+  - LD zbrka sa našim slovima [#27310](http://redmine.bring.out.ba/issues/27310)
+  - uvedena tabela adresara [#27320](http://redmine.bring.out.ba/issues/27320)
+
+0.9.76 2012-03-28, vsasa
+ 
+  - parametri FAKT, zbrka sa našim slovima [#27263](http://redmine.bring.out.ba/issues/27263)
+  - modul FAKT, štampa fakture nakon fiskalnog računa [#27248](http://redmine.bring.out.ba/issues/27248)
+
+0.9.75 2012-03-28, vsasa
+ 
+  - modul KALK, obrada dokumenata 96/16 [#27284](http://redmine.bring.out.ba/issues/27284)
+  - modul KALK, automtasko ažuriranje fakt dokumenata [#27286](http://redmine.bring.out.ba/issues/27286)
+>>>>>>> origin/semaphores_v1.0
+
 0.9.74 2012-03-27, vsasa
  
   - modul FAKT, adresa u parametrima [#27249](http://redmine.bring.out.ba/issues/27249)

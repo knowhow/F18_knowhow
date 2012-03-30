@@ -868,6 +868,7 @@ if LEN( _a_fakt_doks ) > 1
 else
     
     // izbrisi pripremu
+    select fakt_pripr
     ZAP
     __dbpack()
 

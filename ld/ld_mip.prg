@@ -212,7 +212,7 @@ cIdRj := gRj
 cMj := gMjesec
 cGod := gGodina
 
-cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, SPACE(50) )
+cPredNaz := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, SPACE(50) ) )
 cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, SPACE(13) )
 cPredSDJ := fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, SPACE(20) )
 cTp_bol := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )

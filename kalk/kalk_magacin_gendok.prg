@@ -545,17 +545,17 @@ enddo
 nTArea := SELECT()
 
 if Logirati(goModul:oDataBase:cName,"DOK","GENERACIJA")
-	
-	select kalk_pripr
-	go top
-	cOpis := kalk_pripr->idfirma + "-" + ;
-		pripr->idvd + "-" + ;
-		pripr->brdok
+    
+    select kalk_pripr
+    go top
+    cOpis := kalk_pripr->idfirma + "-" + ;
+        pripr->idvd + "-" + ;
+        pripr->brdok
 
-	EventLog(nUser,goModul:oDataBase:cName,"DOK","GENERACIJA",;
-	nil,nil,nil,nil,;
-	cOpis,"","",pripr->datdok,date(),;
-	"","Opcija korekcije prodajnih cijena")
+    EventLog(nUser,goModul:oDataBase:cName,"DOK","GENERACIJA",;
+    nil,nil,nil,nil,;
+    cOpis,"","",pripr->datdok,date(),;
+    "","Opcija korekcije prodajnih cijena")
 endif
 
 select (nTArea)
@@ -566,13 +566,9 @@ return
 
 
 
-/*! \fn Otprema()
- *  \brief Kada je izvrsena otprema pravi se ulaz u drugi magacin
- */
-// ??????????? Kakva je razlika Otprema i Iz96u16 ???????????
 
 function Otprema()
-*{
+
 O_KONCIJ
 O_KALK_PRIPR2
 O_KALK_PRIPR
@@ -583,9 +579,11 @@ O_ROBA
 
 select kalk_pripr
 go top
+
 private cIdFirma:=idfirma,cIdVD:=idvd,cBrDok:=brdok
+
 if !(cidvd $ "96#95")  .or. empty(idkonto)
-  closeret
+    closeret
 endif
 
 private cBrUlaz:="0"
@@ -631,7 +629,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
     seek trim(kalk_pripr->idkonto)
     if koncij->naz<>"N1"     // ulaz u magacin sa vpc
      _VPC:=KoncijVPC()
-     _marza:=KoncijVPC()-pripr->nc
+     _marza:=KoncijVPC() - kalk_pripr->nc
      _tmarza:="A"
     else
      _VPC:=kalk_pripr->vpc
@@ -643,7 +641,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
    _fcj:=_fcj2:=_nc:=kalk_pripr->nc
    _rbr:=str(++nRbr,3)
    _kolicina:=kalk_pripr->kolicina
-   _BrFaktP:=trim(kalk_pripr->idkonto2)+"/"+pripr->brfaktp
+   _BrFaktP:=trim(kalk_pripr->idkonto2)+"/"+kalk_pripr->brfaktp
    _idkonto:=kalk_pripr->idkonto
    _idkonto2:=""
    _brdok:=cBrUlaz
@@ -658,6 +656,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
   select kalk_pripr
   skip
+
 enddo
 
 closeret

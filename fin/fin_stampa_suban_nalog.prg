@@ -97,13 +97,13 @@ DO WHILE !eof() .and. eval(b2)
        select (nArr)
 
        IF gVar1=="1" .and. lJerry
-         aRez:={PADR(cStr,30)}
-         cStr:=opis
-         aOpis:=SjeciStr(cStr,20)
+         aRez := {PADR(cStr,30)}
+         cStr := opis
+         aOpis := SjeciStr( cStr, 20 )
        ELSE
-         aRez:=SjeciStr(cStr,28)
-         cStr:=opis
-         aOpis:=SjeciStr(cStr,20)
+         aRez := SjeciStr( cStr, 28 )
+         cStr := opis
+         aOpis := SjeciStr( cStr, 20 )
        ENDIF
 
        @ prow(),pcol()+1 SAY Idpartner(idpartner)

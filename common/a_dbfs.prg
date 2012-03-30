@@ -32,7 +32,6 @@ set_a_dbf_epdv()
 set_a_dbf_sifk_sifv()
 set_a_dbf_sifarnici()
 
-
 set_a_dbfs_legacy()
 
 return

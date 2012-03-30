@@ -62,15 +62,15 @@ endif
 // indexi
 do case
 	case cTbl == "UGOV"
-		CREATE_INDEX("ID"      ,"Id+idpartner" ,cPath+"UGOV")
-		CREATE_INDEX("NAZ"     ,"idpartner+Id" ,cPath+"UGOV")
-		CREATE_INDEX("NAZ2"    ,"naz"          ,cPath+"UGOV")
-		CREATE_INDEX("PARTNER" ,"IDPARTNER"    ,cPath+"UGOV")
-		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,cPath+"UGOV")
+		CREATE_INDEX("ID"      ,"Id+idpartner" , "UGOV")
+		CREATE_INDEX("NAZ"     ,"idpartner+Id" , "UGOV")
+		CREATE_INDEX("NAZ2"    ,"naz"          , "UGOV")
+		CREATE_INDEX("PARTNER" ,"IDPARTNER"    , "UGOV")
+		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,  "UGOV")
 
 	case cTbl == "RUGOV"
-		CREATE_INDEX("ID","id+IdRoba",cPath+"RUGOV")
-		CREATE_INDEX("IDROBA","IdRoba",cPath+"RUGOV")
+		CREATE_INDEX("ID","id+IdRoba", "RUGOV")
+		CREATE_INDEX("IDROBA","IdRoba", "RUGOV")
 
 	case cTbl == "GEN_UG"
 		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)", cPath+"GEN_UG")

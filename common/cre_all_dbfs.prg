@@ -33,11 +33,33 @@ cre_all_mat(ver)
 
 cre_all_pos(ver)
 
-altd()
-_db := TDbEPdv():new()
+_db := TDbFin():new()
+_db:kreiraj()
+
+_db := TDbKalk():new()
 _db:kreiraj()
 
 
+_db := TDbFakt():new()
+_db:kreiraj()
+
+
+_db := TDbOs():new()
+_db:kreiraj()
+
+_db := TDbLd():new()
+_db:kreiraj()
+
+
+_db := TDbVirm():new()
+_db:kreiraj()
+
+
+_db := TDbEPdv():new()
+_db:kreiraj()
+
+_db := TDbPos():new()
+_db:kreiraj()
 
 return
 

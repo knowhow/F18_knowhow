@@ -153,26 +153,9 @@ AADD( gaDbfs, { F_BARKOD      , "BARKOD"        , "fakt_barkod"    } )
 AADD( gaDbfs, { F_RJ          , "RJ"            , "fakt_rj"        } )
 AADD( gaDbfs, { F_UPL         , "UPL"           , "fakt_upl"       } )
 
-AADD( gaDbfs, { F_FAKT        , "FAKT"          , "fakt_fakt"      , { |alg| fakt_fakt_from_sql_server(alg) }  , "IDS", {"idfirma", "idtipdok", "brdok", "rbr"}, {|x| sql_where_block("fakt_fakt", x) }, "1" } )
-
-AADD( gaDbfs, { F_FAKT_DOKS   , "FAKT_DOKS"     , "fakt_doks"      , { |alg| fakt_doks_from_sql_server(alg) }  , "IDS", {"idfirma", "idtipdok", "brdok"}, {|x| sql_where_block("fakt_doks", x) }, "1" } )
-
-AADD( gaDbfs, { F_FAKT_DOKS2  , "FAKT_DOKS2"    , "fakt_doks2"     , { |alg| fakt_doks2_from_sql_server(alg) } , "IDS", {"idfirma", "idtipdok", "brdok"}, {|x| sql_where_block("fakt_doks2", x) }, "1" } )
-
-AADD( gaDbfs, { F_FTXT        , "FTXT"          , "fakt_ftxt"      , { |alg| ftxt_from_sql_server(alg) } , "IDS", {"id"}, {|x| sql_where_block("fakt_ftxt", x)}, "ID" } )
 AADD( gaDbfs, { F_FAKT   ,"FAKT_S_PRIPR", "fakt_pripr"     } )
 AADD( gaDbfs, { F__FAKT  ,"_FAKT"   , "_fakt_fakt"    } )
 AADD( gaDbfs, { F_FAPRIPR,"FAKT_faPRIPR"   , "fakt_fapripr"    } )
-AADD( gaDbfs, { F_UGOV   ,"UGOV"    , "fakt_ugov", { | alg | ugov_from_sql_server( alg ) }, "IDS", {"id", "idpartner"}, {|x| sql_where_block("fakt_ugov", x)}, "ID" } )
-AADD( gaDbfs, { F_RUGOV  ,"RUGOV"   , "fakt_rugov", { | alg | rugov_from_sql_server( alg ) }, "IDS", {"id", "idroba"}, {|x| sql_where_block("fakt_rugov", x)}, "ID" } )
-AADD( gaDbfs, { F_GEN_UG ,"GEN_UG"  , "fakt_gen_ug", { | alg | gen_ug_from_sql_server( alg ) }, "IDS", {"dat_obr"}, {|x| sql_where_block("fakt_gen_ug", x)}, "DAT_OBR" } )
-AADD( gaDbfs, { F_G_UG_P, "GEN_UG_P", "fakt_gen_ug_p", { | alg | gen_ug_p_from_sql_server( alg ) }, "IDS", {"dat_obr", "idpartner", "id_ugov"}, {|x| sql_where_block("fakt_gen_ug_p", x)}, "DAT_OBR" } )
-AADD( gaDbfs, { F_RELAC  ,"RELAC"   , "fakt_relac"     } ) 
-AADD( gaDbfs, { F_VOZILA ,"VOZILA"  , "fakt_vozila"     } )
-AADD( gaDbfs, { F_KALPOS ,"KALPOS"  , "fakt_kalpos"     } )
-AADD( gaDbfs, { F_DRN ,   "DRN"     , "dracun"     } )
-AADD( gaDbfs, { F_RN ,   "RN"     , "racun"     } )
-AADD( gaDbfs, { F_DRNTEXT ,   "DRNTEXT"     , "dracuntext"     } )
 
 // modul RNAL
 AADD(gaDBFs, { F__DOCS, "_DOCS", "_rnal_docs"  } )

@@ -25,6 +25,7 @@ __f18_dbfs := hb_hash()
 
 
 set_a_dbf_fin()
+set_a_dbf_fakt()
 set_a_dbf_ld()
 set_a_dbf_epdv()
 

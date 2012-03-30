@@ -207,12 +207,6 @@ AADD(gaDBFs, { F_CONTACTS, "CONTACTS", "rnal_contacts", {|alg| rnal_contacts_fro
 AADD(gaDBFs, { F_OBJECTS, "OBJECTS", "rnal_objects", {|alg| rnal_objects_from_sql_server(alg) }, "IDS", { {"obj_id", 10} }, {|x| "OBJ_ID=" + STR( x["obj_id"], 10) }, "1" } )
 AADD(gaDBFs, { F_RAL, "RAL", "rnal_ral", {|alg| rnal_ral_from_sql_server(alg) }, "IDS", { {"id", 5}, {"gl_tick", 2} }, {|x| "ID=" + STR( x["id"], 10 ) + " AND GL_TICK=" + STR(x["gl_tick"], 2) }, "1" } )
 
-// modul EPDV
-AADD(gaDBFs, { F_P_KIF, "P_KIF", "p_epdv_kif"  } )
-AADD(gaDBFs, { F_P_KUF, "P_KUF", "p_epdv_kuf"  } )
-AADD(gaDBFs, { F_KUF, "KUF", "epdv_kuf", {|alg| epdv_kuf_from_sql_server(alg)}, "IDS", {"br_dok"}, {|x| sql_where_block("epdv_kuf", x) }, "BR_DOK" } )
-AADD(gaDBFs, { F_KIF, "KIF", "epdv_kif", {|alg| epdv_kif_from_sql_server(alg)}, "IDS", {"br_dok"}, {|x| sql_where_block("epdv_kif", x) }, "BR_DOK" } )
-AADD(gaDBFs, { F_PDV, "PDV", "epdv_pdv", {|alg| epdv_pdv_from_sql_server(alg)}, "IDS"  } )
 AADD(gaDBFs, { F_R_KIF, "R_KIF", "epdv_r_kif"  } )
 AADD(gaDBFs, { F_R_KUF, "R_KUF", "epdv_r_kuf"  } )
 AADD(gaDBFs, { F_R_PDV, "R_PDV", "epdv_r_pdv"  } )

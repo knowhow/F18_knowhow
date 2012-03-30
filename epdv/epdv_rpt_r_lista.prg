@@ -120,15 +120,15 @@ local aArr:={}
 
 close all
 
-ferase ( PRIVPATH + cTbl + ".CDX" )
+ferase_dbf (cTbl)
 
 get_r_fields(@aArr)
 
 // kreiraj tabelu
-dbcreate2(PRIVPATH + cTbl + ".DBF", aArr)
+dbcreate2(cTbl, aArr)
 
 // kreiraj indexe
-CREATE_INDEX("br_dok", "br_dok", PRIVPATH +  cTbl, .t.)
+CREATE_INDEX("br_dok", "br_dok", cTbl, .t.)
 
 return
 *}

@@ -112,7 +112,7 @@ else
 endif  
 Skloni(KUMPATH,"KIF.DBF",cSezona,finverse,fda,fnul)
 Skloni(KUMPATH,"KUF.DBF",cSezona,finverse,fda,fnul)
-Skloni(KUMPATH,"PDV.DBF",cSezona,finverse,fda,fnul)
+Skloni (KUMPATH,"PDV.DBF",cSezona,finverse,fda,fnul)
 
 fnul:=.f.
 Skloni(KUMPATH,"SG_KIF.DBF",cSezona,finverse,fda,fnul)
@@ -664,7 +664,7 @@ if (nArea==-1 .or. nArea == nArea2)
     cPath := ""
 	
 	if !FILE( f18_ime_dbf( cTable ) )
-		DBcreate2( cTable, aDbf )
+		DBcreate2(cTable, aDbf)
 		if ! ("p_" $ cTable )
 			reset_semaphore_version( "epdv_" + cTable )
 			my_use( cTable )
@@ -681,8 +681,8 @@ if (nArea==-1 .or. nArea == nArea2)
 		  CREATE_INDEX("datum","dtos(datum)+src_br_2", cPath + cTable)
 		  CREATE_INDEX("l_datum","lock+dtos(datum)+src_br_2", cPath + cTable)
 		  CREATE_INDEX("g_r_br","STR(g_r_br,6,0)+dtos(datum)", cPath + cTable)
-		  CREATE_INDEX("BR_DOK","STR(BR_DOK, 6, 0)+STR(r_br,6,0)", cPath + cTable)
-		  CREATE_INDEX("BR_DOK2","STR(BR_DOK, 6, 0)+dtos(datum)", cPath + cTable)
+		  CREATE_INDEX("BR_DOK","STR(BR_DOK,6,0)+STR(r_br,6,0)", cPath + cTable)
+		  CREATE_INDEX("BR_DOK2","STR(BR_DOK,6,0)+dtos(datum)", cPath + cTable)
 		
 		case (nArea2 == F_SG_KUF) .or. (nArea2 == F_SG_KIF)
 		   CREATE_INDEX("id","id", cPath + cTable)

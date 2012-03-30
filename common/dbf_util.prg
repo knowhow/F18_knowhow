@@ -147,9 +147,7 @@ local _a_dbf_rec
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 
 SELECT (_a_dbf_rec["wa"])
-if USED()
-   USE
-endif
+USE
 
 // otvori ekskluzivno
 dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)

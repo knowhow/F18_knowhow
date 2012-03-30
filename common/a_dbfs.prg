@@ -26,6 +26,7 @@ __f18_dbfs := hb_hash()
 
 set_a_dbf_fin()
 set_a_dbf_ld()
+set_a_dbf_epdv()
 
 set_a_dbf_sifk_sifv()
 set_a_dbf_sifarnici()
@@ -67,8 +68,7 @@ function set_a_dbf_sifarnici()
  set_a_dbf_sifarnik("trfp"       , "TRFP"      , F_TRFP       )
  set_a_dbf_sifarnik("trfp2"      , "TRFP2"     , F_TRFP2      )
  set_a_dbf_sifarnik("trfp3"      , "TRFP3"     , F_TRFP3      )
- set_a_dbf_sifarnik("epdv_sg_kif", "SG_KIF"    , F_SG_KIF     )
- set_a_dbf_sifarnik("epdv_sg_kuf", "SG_KUF"    , F_SG_KUF     )
+
  set_a_dbf_sifarnik("ld_radn"    , "RADN"      , F_RADN       )
  set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
  set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
@@ -80,6 +80,7 @@ function set_a_dbf_sifarnici()
  set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
  set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
  set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
+ set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
 
 
 return
@@ -98,6 +99,22 @@ return .t.
 
 function f18_dbfs()
 return __f18_dbfs
+
+
+// ----------------------------------------
+// temp tabele - semafori se ne koriste
+// ----------------------------------------
+function set_a_dbf_temp(table, alias, wa)
+local _item
+
+_item := hb_hash()
+
+_item["alias"] := alias
+_item["table"] := table
+_item["wa"]    := wa
+
+_item["temp"]  := .t.
+return .t.
 
 
 // ----------------------------------------------------
@@ -190,9 +207,7 @@ if !HB_HHASKEY(_rec, "dbf_fields")
 endif
 
 if !HB_HHASKEY(_rec, "sql_order")
-    
     _rec["sql_order"] := sql_order_from_key_fields(_rec["algoritam"][1]["dbf_key_fields"])
-
 endif
 
 

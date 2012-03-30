@@ -488,7 +488,7 @@ _dbf_fields := _a_dbf_rec["dbf_fields"]
 
 _qry_obj := run_sql_query(sql_query, _retry ) 
 
- 
+
 if !USED() .or. ( _dbf_alias != ALIAS() )
    Alert(PROCNAME(1) + "(" + ALLTRIM(STR(PROCLINE(1))) + ") " + dbf_table + " dbf mora biti otvoren !")
    log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + _dbf_alias)

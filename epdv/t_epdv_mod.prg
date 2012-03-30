@@ -48,8 +48,6 @@ close all
 
 SETKEY(K_SH_F1,{|| Calc()})
 
-CheckROnly(KUMPATH + "\PDV.DBF")
-
 @ 1,2 SAY padc( gNFirma, 50, "*")
 @ 4,5 SAY ""
 
@@ -150,10 +148,9 @@ public gL_kto_kup := PADR("211;", 100)
 public gKt_updv := PADR("260;", 100)
 public gKt_ipdv := PADR("560;", 100)
 
-//::super:setTGVars()
 
 O_PARAMS
-Rpar("p1",@gPicVrijednost)
+Rpar("p1", @gPicVrijednost)
 
 select (F_PARAMS)
 use
@@ -169,8 +166,3 @@ gGlBaza:="PDV.DBF"
 public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
 
 return
-
-
-
-
-

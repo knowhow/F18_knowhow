@@ -206,25 +206,22 @@ return
 *}
 
 static function cre_r_tbl()
-*{
-
 local aArr:={}
 
 close all
 
-ferase ( PRIVPATH + "R_" +  cTbl + ".CDX" )
-ferase ( PRIVPATH + "R_" +  cTbl + ".DBF" )
+ferase ( PRIVPATH + "R_" +  cTbl + ".cdx" )
+ferase ( PRIVPATH + "R_" +  cTbl + ".dbf" )
 
 get_r_fields(@aArr)
 
 // kreiraj tabelu
-dbcreate2(PRIVPATH + "R_" + cTbl + ".DBF", aArr)
+dbcreate2(PRIVPATH + "R_" + cTbl + ".dbf", aArr)
 
 // kreiraj indexe
-CREATE_INDEX("br_dok", "br_dok", PRIVPATH + "R_" +  cTbl, .t.)
+CREATE_INDEX("br_dok", "br_dok", "R_" +  cTbl, .t.)
 
 return
-*}
 
 // ------------------------------------------
 // napuni r_kuf

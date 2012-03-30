@@ -33,6 +33,11 @@ cre_all_mat(ver)
 
 cre_all_pos(ver)
 
+_db := TDbEPdv():new()
+_db:kreiraj()
+
+
+
 return
 
 

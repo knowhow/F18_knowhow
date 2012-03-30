@@ -25,12 +25,16 @@ local _a_dbf_rec
 local _sql_order
 local _opened
 
+if step_size == NIL
+  step_size := 15000
+endif
+
 _sql_table  := "fmk." + dbf_table
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _sql_order  := _a_dbf_rec["sql_order"]
 
-reopen_exclusive(dbf_table)
+reopen_exclusive(_a_dbf_rec["table"])
 
 Box(, 5, 70)
 

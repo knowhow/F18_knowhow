@@ -54,15 +54,24 @@ _item["temp"]  := .f.
 
 _item["algoritam"] := {}
 
-//CREATE_INDEX ("IDS_SEM", "IdPos+IdVd+dtos(datum)+BrDok+rbr", _alias )
-
 // algoritam 1 - default
+//CREATE_INDEX ("IDS_SEM", "IdPos+IdVd+dtos(datum)+BrDok+rbr", _alias )
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idpos + field->idvd + DTOS( field->datum ) + field->brdok + field->rbr }
 _alg["dbf_key_fields"] := {"idpos", "idvd", "datum", "brdok", "rbr"}
 _alg["sql_in"]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6) || lpad(rbr,5)"
 _alg["dbf_tag"]        := "IDS_SEM"
+AADD(_item["algoritam"], _alg)
+
+// algoritam 2 - dokument
+//CREATE_INDEX ("1", "IdPos+IdVd+dtos(datum)+BrDok+idroba", _alias )
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idpos + field->idvd + DTOS( field->datum ) + field->brdok }
+_alg["dbf_key_fields"] := { "idpos", "idvd", "datum", "brdok" } 
+_alg["sql_in" ]    := "rpad(idpos,2) || rpad(idvd, 2) || to_char(datum, 'YYYYMMDD') || rpad(brdok, 6)"
+_alg["dbf_tag"]    := "1"
 AADD(_item["algoritam"], _alg)
 
 _item["sql_order"] := "idpos, idvd, datum, brdok, rbr"

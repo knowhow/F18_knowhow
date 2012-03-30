@@ -23,14 +23,15 @@ public gaDbfs := {}
 
 __f18_dbfs := hb_hash()
 
+set_a_dbf_sif()
+set_a_dbf_sifk_sifv()
+
 set_a_dbf_fin()
 set_a_dbf_fakt()
 set_a_dbf_ld()
 set_a_dbf_epdv()
 set_a_dbf_pos()
 
-set_a_dbf_sifk_sifv()
-set_a_dbf_sifarnici()
 
 set_a_dbfs_legacy()
 
@@ -53,38 +54,6 @@ for each _key in __f18_dbfs:Keys
 next
 
 return .t.
-
-
-// -------------------------------------------------------------
-// -------------------------------------------------------------
-function set_a_dbf_sifarnici()
-
- set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES   )
- set_a_dbf_sifarnik("ops"        , "OPS"       , F_OPS        )
- set_a_dbf_sifarnik("banke"      , "BANKE"     , F_BANKE      )
- set_a_dbf_sifarnik("refer"      , "REFER"     , F_REFER      )
- set_a_dbf_sifarnik("partn"      , "PARTN"     , F_PARTN      )
- set_a_dbf_sifarnik("tnal"       , "TNAL"      , F_TNAL       )
- set_a_dbf_sifarnik("trfp"       , "TRFP"      , F_TRFP       )
- set_a_dbf_sifarnik("trfp2"      , "TRFP2"     , F_TRFP2      )
- set_a_dbf_sifarnik("trfp3"      , "TRFP3"     , F_TRFP3      )
-
- set_a_dbf_sifarnik("ld_radn"    , "RADN"      , F_RADN       )
- set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
- set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
- set_a_dbf_sifarnik("dopr"       , "DOPR"      , F_DOPR       )
- set_a_dbf_sifarnik("tippr"      , "TIPPR"     , F_TIPPR      )
- set_a_dbf_sifarnik("tippr2"     , "TIPPR2"    , F_TIPPR2     )
- set_a_dbf_sifarnik("kred"       , "KRED"      , F_KRED       )
- set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
- set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
- set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
- set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
- set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
- set_a_dbf_sifarnik("adres"      , "ADRES"     , F_ADRES      )
-
-
-return
 
 
 // ------------------------------------
@@ -165,7 +134,7 @@ return .t.
 // _only_basic_params - samo table, alias, wa
 // -------------------------------------------------------
 function get_a_dbf_rec(tbl, _only_basic_params)
-local _rec, _keys, _dbf_tbl, _key
+local _msg, _rec, _keys, _dbf_tbl, _key
 
 _dbf_tbl := "x"
 
@@ -206,6 +175,13 @@ if HB_HHASKEY(__f18_dbfs, _dbf_tbl)
 else
     // legacy
     _rec := get_a_dbf_rec_legacy(tbl)
+endif
+
+if !HB_HHASKEY(_rec, "table") .or. _rec["table"] == NIL
+   _msg := RECI_GDJE_SAM + " set_a_dbf nije definisan za table= " + tbl
+   Alert(_msg)
+   log_write(_msg)
+   QUIT
 endif
 
 

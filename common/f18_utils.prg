@@ -48,7 +48,7 @@ local _pos, _a_dbf_rec
 
 alias := FILEBASE(alias)
 
-_a_dbf_rec := get_a_dbf_rec(alias)
+_a_dbf_rec := get_a_dbf_rec(alias, .t.)
 
 alias := my_home() + _a_dbf_rec["table"] + "." + DBFEXT
 

@@ -265,7 +265,7 @@ AADD(aDBf,{ "u_pdv_uk" , "N" ,   18 ,  2 })
 
 // 71 obaveza za uplatu, ako ima
 // moze biti + (uplatiti) ili - (povrat)
-AADD(aDBf,{ "pdv_uplatiti" , "N" ,   18 ,  2 })
+AADD(aDBf,{ "pdv_uplati" , "N" ,   18 ,  2 })
 
 // 80 zahtjev za povrat
 //  D - da
@@ -662,7 +662,7 @@ if (nArea==-1 .or. nArea == nArea2)
 	endcase
 
     cPath := ""
-	
+
 	if !FILE( f18_ime_dbf( cTable ) )
 		DBcreate2(cTable, aDbf)
 		if ! ("p_" $ cTable )

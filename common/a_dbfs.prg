@@ -114,6 +114,8 @@ _item["table"] := table
 _item["wa"]    := wa
 
 _item["temp"]  := .t.
+
+f18_dbfs_add(table, @_item)
 return .t.
 
 
@@ -158,11 +160,17 @@ return .t.
 
 // -------------------------------------------------------
 // tbl - dbf_table ili alias
+//
+// _only_basic_params - samo table, alias, wa
 // -------------------------------------------------------
-function get_a_dbf_rec(tbl)
+function get_a_dbf_rec(tbl, _only_basic_params)
 local _rec, _keys, _dbf_tbl, _key
 
 _dbf_tbl := "x"
+
+if _only_basic_params == NIL
+   _only_basic_params = .f.
+endif
 
 if VALTYPE(__f18_dbfs) <> "H"
    Alert(RECI_GDJE_SAM + " " + tbl + "__f18_dbfs nije inicijalizirana")
@@ -200,6 +208,10 @@ else
 endif
 
 
+if _only_basic_params
+   return _rec
+endif
+
 // nije zadano - ja cu na osnovu strukture dbf-a
 //  napraviti dbf_fields
 if !HB_HHASKEY(_rec, "dbf_fields")
@@ -207,7 +219,9 @@ if !HB_HHASKEY(_rec, "dbf_fields")
 endif
 
 if !HB_HHASKEY(_rec, "sql_order")
-    _rec["sql_order"] := sql_order_from_key_fields(_rec["algoritam"][1]["dbf_key_fields"])
+    if HB_HHASKEY(_rec, "algoritam") 
+         _rec["sql_order"] := sql_order_from_key_fields(_rec["algoritam"][1]["dbf_key_fields"])
+    endif
 endif
 
 

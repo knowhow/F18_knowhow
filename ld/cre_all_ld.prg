@@ -152,7 +152,7 @@ if !file(f18_ime_dbf("STRSPR"))
 endif
 
 
-CREATE_INDEX("ID","id",SIFPATH+"strspr")
+CREATE_INDEX("ID","id", "strspr")
 
 if !file(f18_ime_dbf("KBENEF"))
    aDbf:={ {"id","C",1,0} ,;

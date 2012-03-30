@@ -24,12 +24,12 @@ set_a_dbf_epdv_kuf_kif("epdv_kif", "KIF", F_KIF)
 
 
 // tabele sa strukturom sifarnika (id je primarni ključ)
- set_a_dbf_sifarnik("epdv_sg_kif", "SG_KIF"    , F_SG_KIF     )
- set_a_dbf_sifarnik("epdv_sg_kuf", "SG_KUF"    , F_SG_KUF     )
+ set_a_dbf_sifarnik("epdv_sg_kif", "SG_KIF" , F_SG_KIF )
+ set_a_dbf_sifarnik("epdv_sg_kuf", "SG_KUF" , F_SG_KUF )
 
 // temp epdv tabele - ne idu na server
-set_a_dbf_temp("p_epdv_kif", "P_KIF", P_KIF)
-set_a_dbf_temp("p_epdv_kuf", "P_KUF", P_KUF)
+set_a_dbf_temp("epdv_p_kif", "P_KIF", F_P_KIF)
+set_a_dbf_temp("epdv_p_kuf", "P_KUF", F_P_KUF)
 
 return
 
@@ -45,7 +45,7 @@ _item := hb_hash()
 
 _item["alias"] := "PDV"
 _item["table"] := _tbl
-_item["wa"]    := wa
+_item["wa"]    := F_PDV
 
 // temporary tabela - nema semafora
 _item["temp"]  := .f.

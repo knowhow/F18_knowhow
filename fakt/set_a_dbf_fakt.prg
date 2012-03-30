@@ -25,17 +25,39 @@ set_a_dbf_fakt_ugov()
 set_a_dbf_fakt_rugov()
 
 set_a_dbf_fakt_gen_ug()
+set_a_dbf_fakt_gen_ug_p()
 
 // tabele sa strukturom sifarnika (id je primarni ključ)
-set_a_dbf_sifarnik("fakt_ftxt", "FTXT" , F_FTXT )
+set_a_dbf_sifarnik("fakt_ftxt"  , "FTXT"  , F_FTXT   )
+set_a_dbf_sifarnik("dest"       , "DEST"  , F_DEST   )
+set_a_dbf_sifarnik("lokal"      , "LOKAL" , F_LOKAL  )
+
 
 // temp fakt tabele - ne idu na server
-set_a_dbf_temp("fakt_relac"   ,   "RELAC"   , F_RELAC   )
-set_a_dbf_temp("fakt_vozila"  ,   "VOZILA"  , F_VOZILA  )
-set_a_dbf_temp("fakt_kalpos"  ,   "KALPOS"  , F_KALPOS  )
-set_a_dbf_temp("dracun"       ,   "DRN"     , F_DRN     )
-set_a_dbf_temp("racun"        ,   "RN"      , F_RN      )
-set_a_dbf_temp("dracuntext"   ,   "DRNTEXT" , F_DRNTEXT )
+set_a_dbf_temp("fakt_relac"   ,   "RELAC"        , F_RELAC   )
+set_a_dbf_temp("fakt_vozila"  ,   "VOZILA"       , F_VOZILA  )
+set_a_dbf_temp("fakt_kalpos"  ,   "KALPOS"       , F_KALPOS  )
+set_a_dbf_temp("dracun"       ,   "DRN"          , F_DRN     )
+set_a_dbf_temp("racun"        ,   "RN"           , F_RN      )
+set_a_dbf_temp("dracuntext"   ,   "DRNTEXT"      , F_DRNTEXT )
+set_a_dbf_temp("fakt_pripr"   ,   "FAKT_PRIPR"   , F_PRIPR   )
+set_a_dbf_temp("fakt_pripr2"  ,   "FAKT_PRIPR2"  , F_PRIPR2  )
+set_a_dbf_temp("fakt_pripr9"  ,   "FAKT_PRIPR9"  , F_PRIPR9  )
+set_a_dbf_temp("fiscal_fdevice"  ,   "FDEVICE"   , F_FDEVICE )
+set_a_dbf_temp("fakt_pormp"   ,   "PORMP"        , F_PORMP   )
+set_a_dbf_temp("_fakt_roba"   ,   "_ROBA"        , F__ROBA   )
+set_a_dbf_temp("_fakt_partn"  ,   "_PARTN"       , F__PARTN  )
+set_a_dbf_temp("fakt_logk"    ,   "LOGK"         , F_LOGK    )
+set_a_dbf_temp("fakt_logkd"   ,   "LOGKD"        , F_LOGKD   )
+set_a_dbf_temp("fakt_barkod"  ,   "BARKOD"       , F_BARKOD  )
+set_a_dbf_temp("fakt_rj"      ,   "RJ"           , F_RJ      )
+set_a_dbf_temp("fakt_upl"     ,   "UPL"          , F_UPL     )
+set_a_dbf_temp("fakt_s_pripr" ,   "FAKT_S_PRIPR" , F_FAKT    )
+set_a_dbf_temp("_fakt_fakt"   ,   "_FAKT"        , F__FAKT   )
+set_a_dbf_temp("fakt_fapripr" ,   "FAKT_FAPRIPR" , F_FAPRIPR )
+
+
+return
 
 
 // ----------------------------------------------------------
@@ -130,15 +152,15 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 
-// funkcija a_ugov() definise dbf polja
+// funkcija a_genug() definise dbf polja
 
-_alg["dbf_key_block"]  := {|| field->datobr}
-_alg["dbf_key_fields"] := {"datobr"}
-_alg["sql_in"]         := "to_char(datobr, 'YYYYMMDD')" 
+_alg["dbf_key_block"]  := {|| DTOS(field->dat_obr)}
+_alg["dbf_key_fields"] := {"dat_obr"}
+_alg["sql_in"]         := "to_char(dat_obr, 'YYYYMMDD')" 
 _alg["dbf_tag"]        := "DAT_OBR"
 AADD(_item["algoritam"], _alg)
 
-_item["sql_order"] := "datobr"
+_item["sql_order"] := "dat_obr"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.
@@ -155,7 +177,7 @@ _item := hb_hash()
 
 _item["alias"] := "GEN_UG_P"
 _item["table"] := _tbl
-_item["wa"]    := F_GEN_UG_P
+_item["wa"]    := F_G_UG_P
 
 // temporary tabela - nema semafora
 _item["temp"]  := .f.
@@ -165,13 +187,7 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-
-
-AADD( gaDbfs, { F_G_UG_P, "GEN_UG_P", "fakt_gen_ug_p", { | alg | gen_ug_p_from_sql_server( alg ) }, "IDS", 
-
- {|x| sql_where_block("fakt_gen_ug_p", x)}, "DAT_OBR" } )
-
-_alg["dbf_key_block"]  := {|| field->datobr}
+_alg["dbf_key_block"]  := {|| DTOS(field->dat_obr) + id_ugov + idpartner }
 _alg["dbf_key_fields"] := {"dat_obr", "id_ugov", "idpartner"}
 _alg["sql_in"]         := "to_char(dat_obr, 'YYYYMMDD') || rpad(id_ugov,10) || rpad(idpartner,6)" 
 

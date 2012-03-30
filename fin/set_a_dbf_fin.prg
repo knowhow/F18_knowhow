@@ -21,6 +21,8 @@ set_a_dbf_fin_anal()
 set_a_dbf_fin_sint()
 set_a_dbf_fin_nalog()
 
+set_a_dbf_temp("rules", "RULES", F_RULES)
+
 return
 
 

@@ -78,17 +78,9 @@ AADD( gaDbfs, { F_BARKOD   , "BARKOD"  , "barkod"  } )
 
 AADD( gaDbfs, { F_STRINGS  , "STRINGS"  , "strings"  } )
 AADD( gaDbfs, { F_RNAL     , "RNAL"  , "rnal"  } )
-
-// ? koje funkcije ovo koriste
-AADD( gaDbfs, { F_DEST     , "DEST"    , "dest", { | param | dest_from_sql_server( param ) }, "IDS" } )
-
-// ?
-AADD( gaDbfs, { F_LOKAL    , "LOKAL"  , "lokal", { | param | lokal_from_sql_server( param ) }, "IDS" } )
-
 AADD( gaDbfs, { F_DOKSRC   , "DOKSRC"  , "doksrc"  } )
 AADD( gaDbfs, { F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  } )
 AADD( gaDbfs, { F_RELATION , "RELATION"  , "relation"  } )
-AADD( gaDbfs, { F_RULES , "RULES"  , "rules"  } )
 AADD( gaDbfs, { F_P_UPDATE , "P_UPDATE"  , "p_update"  } )
 AADD( gaDbfs, { F__ROBA , "_ROBA"  , "_roba"  } )
 
@@ -140,23 +132,6 @@ AADD( gaDbfs, { F_R_UIO       , "R_UIO"       , "kalk_r_uio"     } )
 AADD( gaDbfs, { F_RPT_TMP     , "RPT_TMP"     , "kalk_rpt_tmp"     } )
 
 // modul FAKT
-AADD( gaDbfs, { F_PRIPR       , "FAKT_PRIPR"    , "fakt_pripr"     } )
-AADD( gaDbfs, { F_PRIPR2      , "FAKT_PRIPR2"   , "fakt_pripr2"    } )
-AADD( gaDbfs, { F_PRIPR2      , "FAKT_PRIPR9"   , "fakt_pripr9"    } )
-AADD( gaDbfs, { F_FDEVICE     , "FDEVICE"       , "fiscal_fdevice" } )
-AADD( gaDbfs, { F_PORMP       , "PORMP"         , "fakt_pormp"     } )
-AADD( gaDbfs, { F__ROBA       , "_ROBA"         , "_fakt_roba"     } )
-AADD( gaDbfs, { F__PARTN      , "_PARTN"        , "_fakt_partn"    } )
-AADD( gaDbfs, { F_LOGK        , "LOGK"          , "fakt_logk"      } )
-AADD( gaDbfs, { F_LOGKD       , "LOGKD"         , "fakt_logkd"     } )
-AADD( gaDbfs, { F_BARKOD      , "BARKOD"        , "fakt_barkod"    } )
-AADD( gaDbfs, { F_RJ          , "RJ"            , "fakt_rj"        } )
-AADD( gaDbfs, { F_UPL         , "UPL"           , "fakt_upl"       } )
-
-AADD( gaDbfs, { F_FAKT   ,"FAKT_S_PRIPR", "fakt_pripr"     } )
-AADD( gaDbfs, { F__FAKT  ,"_FAKT"   , "_fakt_fakt"    } )
-AADD( gaDbfs, { F_FAPRIPR,"FAKT_faPRIPR"   , "fakt_fapripr"    } )
-
 // modul RNAL
 AADD(gaDBFs, { F__DOCS, "_DOCS", "_rnal_docs"  } )
 AADD(gaDBFs, { F__DOC_IT, "_DOC_IT", "_rnal_doc_it"  } )

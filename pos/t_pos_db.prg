@@ -27,8 +27,6 @@ CLASS TDbPos INHERIT TDB
 	method open
 	method reindex
 	method del_pos_z
-	method integ
-	method chkinteg
 ENDCLASS
 
 
@@ -339,11 +337,6 @@ if (nArea==-1 .or. nArea==(F_MARS))
 	CREATE_INDEX ("2" , "ID+ID2" , SIFPATH+"MARS")
 endif
 
-// planika integritet
-if (gSql == "D")
-	CreDIntDB()
-endif
-
 return
 
 
@@ -392,11 +385,6 @@ if is_doksrc()
 	if i==F_DOKSRC .or. i==F_P_DOKSRC
 		lIdiDalje := .t.
 	endif
-endif
-
-// integritet
-if (gSql=="D" .and. (i==F_DINTEG1 .or. i==F_DINTEG2 .or. i==F_INTEG1 .or. i==F_INTEG2) )
-	lIdiDalje:=.t.
 endif
 
 if lIdiDalje
@@ -588,56 +576,6 @@ msgc()
 select (nTArea)
 return
 
-
-// -------------------------------------------
-// -------------------------------------------
-method integ
-
-if gSql == "N"
-	return
-endif
-
-if gAppSrv
-	return
-endif
-
-// vazi samo za prodavnicu
-if gSamoProdaja == "D"
-	lReindex := .f.
-	UpdInt1(.f., @lReindex)
-	UpdInt2(.f., @lReindex)
-else
-	return
-endif
-
-
-// -------------------------------------------
-// -------------------------------------------
-method chkinteg
-
-// ako je aplikacioni server onda izadji....
-if gAppSrv
-	return
-endif
-
-if gSql == "N"
-	return
-endif
-
-nRes1:=0
-nRes2:=0
-
-if gSamoProdaja == "N" .and. IzFmkIni("TOPS","INTEG","N",EXEPATH)=="D"
-	lReindex := .f.
-	BrisiError()
-	nRes1:=ChkInt1(.f., @lReindex)
-	nRes2:=ChkInt2(.f., @lReindex)
-	if (nRes1 + nRes2) <> 0
-		RptInteg(.f., .t.)
-	endif
-else
-	return
-endif
 
 
 // --------------------------------

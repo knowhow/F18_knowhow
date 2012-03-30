@@ -93,33 +93,6 @@ CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
 return
 
 
-// kreiranje tabele DOKSPF (POS tabela za podatke o kupcu)
-function dokspf_create()
-*{
-local aDbf:={}
-
-if !FILE(f18_ime_dbf( "dokspf" ))
-	AADD(aDbf, {"IDPOS", "C", 2, 0})
-	AADD(aDbf, {"IDVD",  "C", 2, 0})
-	AADD(aDbf, {"DATUM", "D", 8, 0})
-	AADD(aDbf, {"BRDOK", "C", 6, 0})
-	AADD(aDbf, {"KNAZ",  "C", 35, 0})
-	AADD(aDbf, {"KADR",  "C", 35, 0})
-	AADD(aDbf, {"KIDBR", "C", 13, 0})
-	AADD(aDbf, {"DATISP", "D", 8, 0})
-	if gSql == "D"
-		AddOidFields(@aDbf)
-	endif
-	DbCreate2(KUMPATH + "DOKSPF.DBF", aDbf)
-endif
-
-CREATE_INDEX("1", "idpos+idvd+DToS(datum)+brdok", KUMPATH + "DOKSPF")
-CREATE_INDEX("2", "knaz", KUMPATH + "DOKSPF")
-
-return
-*}
-
-
 /*! \fn get_drn_fields(aArr)
  *  \brief napuni matricu aArr sa specifikacijom polja tabele
  *  \param aArr - matrica

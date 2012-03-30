@@ -227,33 +227,6 @@ AADD( gaDbfs, { F_AMORT , "AMORT" , "os_amort", { |alg| os_amort_from_sql_server
 AADD( gaDbfs, { F_REVAL , "REVAL" , "os_reval", { |alg| os_reval_from_sql_server(alg) }, "IDS" } )
 
 // modul POS
-AADD( gaDbfs, {  F_POS_DOKS  , "POS_DOKS", "pos_doks", { |alg| pos_doks_from_sql_server(alg) }, "IDS", { "idpos", "idvd", "datum", "brdok" }, { |x| sql_where_block("pos_doks", x) }, "1" } )
-AADD( gaDbfs, {  F_POS       , "POS",      "pos_pos", { |alg| pos_pos_from_sql_server(alg) }, "IDS", {"idpos", "idvd", "datum", "brdok", "rbr" }, {|x| sql_where_block("pos_pos", x) }, "IDS_SEM" } )
-AADD( gaDbfs, {  F_RNGPLA    , "RNGPLA",   "pos_rngpla"   } )
-AADD( gaDbfs, {  F__POS      , "_POS", 	   "_pos_pos" } )
-AADD( gaDbfs, {  F__PRIPR    , "_POS_PRIPR",  "_pos_pripr" } )
-AADD( gaDbfs, {  F__POSP     , "_POSP",    "_pos_posp" } )
-AADD( gaDbfs, {  F__POSP     , "_POS_DOKSP",  "_pos_doksp" } )
-AADD( gaDbfs, {  F_PRIPRZ    , "PRIPRZ", "pos_priprz" } )
-AADD( gaDbfs, {  F_PRIPRG    , "PRIPRG", "pos_priprg" } )
-AADD( gaDbfs, {  F_K2C       , "K2C", "pos_k2c" } )
-AADD( gaDbfs, {  F_MJTRUR    , "MJTRUR", "pos_mjtrur" } )
-AADD( gaDbfs, {  F_ROBAIZ    , "ROBAIZ", "pos_robaiz" } )
-AADD( gaDbfs, {  F_RAZDR     , "RAZDR",  "pos_razdr" } )
-AADD( gaDbfs, {  F_STRAD     , "STRAD",  "pos_strad", { |alg| pos_strad_from_sql_server( alg) }, "IDS" } )
-AADD( gaDbfs, {  F_OSOB      , "OSOB",   "pos_osob", { |alg| pos_osob_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, {  F_KASE      , "KASE",   "pos_kase", { |alg| pos_kase_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, {  F_ODJ       , "ODJ",    "pos_odj", { |alg| pos_odj_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, {  F_UREDJ     , "UREDJ",  "pos_uredj" } )
-AADD( gaDbfs, {  F_DIO       , "DIO",    "pos_dio" } )
-AADD( gaDbfs, {  F_MARS      , "MARS",   "pos_mars" } )
-AADD( gaDbfs, {  F_DINTEG1   , "DINTEG1", "pos_dinteg1" } )
-AADD( gaDbfs, {  F_DINTEG2   , "DINTEG2", "pos_dinteg2" } )
-AADD( gaDbfs, {  F_INTEG1    , "INTEG1" , "pos_integ1" } )
-AADD( gaDbfs, {  F_INTEG2    , "INTEG2" , "pos_integ2" } )
-AADD( gaDbfs, {  F_DOKSPF    , "DOKSPF" , "pos_dokspf" } )
-AADD( gaDbfs, {  F_PROMVP    , "PROMVP" , "pos_promvp", {|alg| pos_promvp_from_sql_server(alg) }, "IDS" } )
-
 
 // modul MAT
 AADD(gaDBFs, { F_MAT_PRIPR,   "MAT_PRIPR",   "mat_pripr"   } )

@@ -248,6 +248,33 @@ endif
 CREATE_INDEX("ID", "ID", _alias )
 
 
+aDbf := {}
+AADD(aDbf, {"IDPOS", "C", 2, 0})
+AADD(aDbf, {"IDVD",  "C", 2, 0})
+AADD(aDbf, {"DATUM", "D", 8, 0})
+AADD(aDbf, {"BRDOK", "C", 6, 0})
+AADD(aDbf, {"KNAZ",  "C", 35, 0})
+AADD(aDbf, {"KADR",  "C", 35, 0})
+AADD(aDbf, {"KIDBR", "C", 13, 0})
+AADD(aDbf, {"DATISP", "D", 8, 0})
+
+_created := .f.
+_alias := "DOKSPF"
+_table_name := "pos_dokspf"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    _created := .t.
+endif
+
+if _created
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    use
+endif
+
+CREATE_INDEX( "1", "idpos+idvd+DToS(datum)+brdok", _alias )
+CREATE_INDEX( "2", "knaz", _alias )
 
 return 
 

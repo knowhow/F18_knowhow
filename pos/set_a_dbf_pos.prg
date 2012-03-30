@@ -19,6 +19,7 @@ function set_a_dbf_pos()
 set_a_dbf_pos_pos()
 set_a_dbf_pos_doks()
 set_a_dbf_pos_promvp()
+set_a_dbf_pos_dokspf()
 
 // tabele sa strukturom sifarnika (id je primarni ključ)
 set_a_dbf_sifarnik("pos_strad"  , "STRAD" , F_STRAD   )
@@ -27,11 +28,20 @@ set_a_dbf_sifarnik("pos_kase"   , "KASE"  , F_KASE  )
 set_a_dbf_sifarnik("pos_odj"    , "ODJ"   , F_ODJ  )
 
 // temp fakt tabele - ne idu na server
-set_a_dbf_temp("pos__pos"   ,   "_POS"        , F__POS  )
-set_a_dbf_temp("pos__posp"  ,   "_POSP"       , F__POSP  )
-set_a_dbf_temp("pos__pripr" ,   "_PRIPR"      , F__PRIPR  )
+set_a_dbf_temp("_pos_pos"   ,   "_POS"        , F__POS  )
+set_a_dbf_temp("_pos_posp"  ,   "_POSP"       , F__POSP  )
+set_a_dbf_temp("_pos_pripr" ,   "_PRIPR"      , F__PRIPR  )
 set_a_dbf_temp("pos_priprg" ,   "PRIPRG"      , F_PRIPRG  )
 set_a_dbf_temp("pos_priprz" ,   "PRIPRZ"      , F_PRIPRZ  )
+set_a_dbf_temp("pos_rngpla" ,   "RNGPLA"      , F_RNGPLA  )
+set_a_dbf_temp("pos_k2c"    ,   "K2C"         , F_K2C  )
+set_a_dbf_temp("pos_mjtrur" ,   "MJTRUR"      , F_MJTRUR  )
+set_a_dbf_temp("pos_robaiz" ,   "ROBAIZ"      , F_ROBAIZ  )
+set_a_dbf_temp("pos_razdr"  ,   "RAZDR"       , F_RAZDR  )
+set_a_dbf_temp("pos_uredj"  ,   "UREDJ"       , F_UREDJ  )
+set_a_dbf_temp("pos_dio"    ,   "DIO"         , F_DIO  )
+set_a_dbf_temp("pos_mars"   ,   "MARS"        , F_MARS  )
+
 
 return
 
@@ -151,5 +161,53 @@ _item["sql_order"] := "datum"
 f18_dbfs_add(_tbl, @_item)
 
 return .t.
+
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_pos_dokspf()
+local _item, _alg, _tbl 
+
+_tbl := "pos_dokspf"
+
+_item := hb_hash()
+
+_item["alias"] := "DOKSPF"
+_item["table"] := _tbl
+_item["wa"]    := F_DOKSPF
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+//CREATE_INDEX( "1", "idpos+idvd+DToS(datum)+brdok", _alias )
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idpos + field->idvd + DTOS(field->datum) + field->brdok }
+_alg["dbf_key_fields"] := {"idpos", "idvd", "datum", "brdok"}
+_alg["sql_in"]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6)"
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg)
+
+// algoritam 2
+//CREATE_INDEX( "2", "knaz", _alias )
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->knaz }
+_alg["dbf_key_fields"] := {"knaz"}
+_alg["sql_in"]         := "rpad( knaz, 35 )"
+_alg["dbf_tag"]        := "2"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "idpos, idvd, datum, brdok"
+
+f18_dbfs_add(_tbl, @_item)
+
+return .t.
+
+
 
 

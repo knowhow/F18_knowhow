@@ -23,11 +23,6 @@ close all
 // kreiram inicijalne podatke u sifrarnicima ako nema nista
 CrePosISifData()
 
-if IsPDV()
-	// kreiram poreznu fakturu
-	dokspf_create()
-endif
-
 // kreiraj priprz tabelu
 cre_priprz()
 

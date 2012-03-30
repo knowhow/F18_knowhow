@@ -113,27 +113,9 @@ if gStolovi == "D"
 	AADD(opcexe, {|| zak_sve_stolove()})
 endif
 
-if gSQL=="D"
-	AADD(opc,"Q. sql logovi")
-        AADD(opcexe,{|| MenuSQLLogs() })
-endif
-
-if gPosModem=="D"
-    	AADD(opc,"D. dialup/modem")
-	AADD(opcexe, {|| pos_menu_modem() })
-endif
-
-
 if KLevel<L_UPRAVN
 	AADD(opc,"T. programiranje tastature ")
 	AADD(opcexe,{|| ProgKeyboard() } )
-endif
-
-if gSQL=="D"
-	AADD(opc,"#. bug - zakrpe")
-	AADD(opcexe, {|| Zakrpe() })
-	AADD(opc,"I. INTEG testovi")
-	AADD(opcexe, {|| Mnu_Integ() })
 endif
 
 if (KLevel<L_UPRAVN)

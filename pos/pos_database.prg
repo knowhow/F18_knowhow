@@ -649,7 +649,11 @@ endif
 
 // ubaci zapis u tabelu
 _append := get_dbf_global_memvars()
-update_rec_server_and_dbf( ALIAS(), _append )
+
+// transakcija...
+sql_table_update( nil, "BEGIN")
+
+update_rec_server_and_dbf( ALIAS(), _append, 1, "CONT" )
 
 SELECT _POS
 
@@ -711,9 +715,8 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
 		_IdGost := cIdGost
         _rbr := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
 
-		append blank
-
-        _rec := dbf_get_rec()
+		//append blank
+        //_rec := dbf_get_rec()
 
 		if lNaX
             _idpos := "X "
@@ -721,7 +724,7 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
 
         _rec := get_dbf_global_memvars()
         
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 		nIznRn += ( pos->kolicina * pos->cijena )
 
@@ -730,6 +733,8 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
   	select _pos
 
 enddo
+
+sql_table_update( nil, "END" )
 
 return
 
@@ -765,9 +770,11 @@ else
 	_IdVd := cIdVd
 endif
 
-_app := get_dbf_global_memvars()
-update_rec_server_and_dbf( ALIAS(), _app )
+sql_table_update( nil, "BEGIN")
 
+_app := get_dbf_global_memvars()
+
+update_rec_server_and_dbf( ALIAS(), _app, 1, "CONT" )
 
 SELECT PRIPRZ
 
@@ -782,8 +789,8 @@ do while !eof()
 
     set_global_memvars_from_dbf()
 
-    SELECT POS
-    APPEND BLANK
+    //SELECT POS
+    //APPEND BLANK
 
     _BrDok := cBrDok
 
@@ -809,10 +816,10 @@ do while !eof()
     if cIdVD == "PD"  
         
         // druga stavka
-        append blank
+        //append blank
         
         // !druga stavka storno storna = "+"
-        _rec := dbf_get_rec()
+        _rec := hb_hash()
         _rec["idvd"] := "16"
 		_rec["idodj"] := _rec["idvrstep"]  
         _rec["iddio"] := ""
@@ -820,7 +827,7 @@ do while !eof()
         _rec["kolicina"] := - _rec["kolicina"]
         _rec["rbr"] := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
 
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
     endif
 
@@ -831,6 +838,8 @@ enddo
 
 SELECT PRIPRZ
 __dbPack()
+
+sql_table_update( nil, "END")
 
 if gFc_use == "D"
 	nTArea := SELECT()

@@ -343,12 +343,13 @@ function ZakljuciRT()
 
 O__POS_PRIPR
 
-if RecCount2()==0
-	CLOSERET
+if RecCount2() == 0
+	close all
+    return
 endif
 
 if gDirZaklj=="D" .or. Pitanje(,"Zakljuciti racun? D/N", "D")=="D"
-	SveNaJedan(_pos_pripr->BrDok)
+	SveNaJedan( _pos_pripr->BrDok )
 endif
 
 close all

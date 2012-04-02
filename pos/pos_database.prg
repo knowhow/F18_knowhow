@@ -88,17 +88,17 @@ if !used()
     O__POS_PRIPR
 endif
 
-select k2c
+select F_K2C
 if !used()
     O_K2C
 endif
 
-select mjtrur
+select F_MJTRUR
 if !used()
     O_MJTRUR 
 endif
 
-select uredj
+select F_UREDJ
 if !used()
     O_UREDJ 
 endif
@@ -186,8 +186,6 @@ return nStanje
  
 function OpenPos()
 
-close all
-
 O_PARTN
 O_VRSTEP
 O_DIO
@@ -208,7 +206,6 @@ return
 
 
 function o_pos_sifre()
-close all
 
 O_KASE
 O_UREDJ
@@ -228,7 +225,6 @@ return
 
  
 function O_InvNiv()
-close all
 
 O_UREDJ
 O_MJTRUR
@@ -289,9 +285,6 @@ return
 
  
 function o_pos_narudzba()
-
-close all
-
 if gPratiStanje $ "D!"
 	O_POS
 endif
@@ -311,7 +304,6 @@ return
 
 
 function O_StAzur()
-close all
 O__POS
 O_ODJ
 O_VRSTEP
@@ -647,7 +639,7 @@ _append := get_dbf_global_memvars()
 // transakcija...
 sql_table_update( nil, "BEGIN")
 
-update_rec_server_and_dbf( ALIAS(), _append, 1, "CONT" )
+update_rec_server_and_dbf( "pos_doks", _append, 1, "CONT" )
 
 SELECT _POS
 
@@ -718,7 +710,7 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
 
         _rec := get_dbf_global_memvars()
         
-        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+        update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
 		nIznRn += ( pos->kolicina * pos->cijena )
 
@@ -768,7 +760,7 @@ sql_table_update( nil, "BEGIN")
 
 _app := get_dbf_global_memvars()
 
-update_rec_server_and_dbf( ALIAS(), _app, 1, "CONT" )
+update_rec_server_and_dbf( "pos_doks", _app, 1, "CONT" )
 
 SELECT PRIPRZ
 
@@ -783,7 +775,7 @@ do while !eof()
 
     set_global_memvars_from_dbf()
 
-    //SELECT POS
+    SELECT POS
     //APPEND BLANK
 
     _BrDok := cBrDok
@@ -805,7 +797,7 @@ do while !eof()
 
     _app := get_dbf_global_memvars()
 
-    update_rec_server_and_dbf( ALIAS(), _app )
+    update_rec_server_and_dbf( "pos_pos", _app )
 
     if cIdVD == "PD"  
         
@@ -821,7 +813,7 @@ do while !eof()
         _rec["kolicina"] := - _rec["kolicina"]
         _rec["rbr"] := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
 
-        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+        update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 	
     endif
 
@@ -1404,7 +1396,7 @@ _rec := dbf_get_rec()
 select pos_doks
 APPEND BLANK
 
-update_rec_server_and_dbf( ALIAS(), _rec )
+update_rec_server_and_dbf( "pos_doks", _rec )
 
 MsgO("prenos priprema->stanje")
 
@@ -1421,7 +1413,7 @@ do while !eof()
 	APPEND BLANK
 
     _rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt ) ) , 5 ) 
-    update_rec_server_and_dbf( ALIAS(), _rec )
+    update_rec_server_and_dbf( "pos_pos", _rec )
 	
   	SELECT PRIPRZ
 
@@ -1879,6 +1871,7 @@ do while !EOF() .and. field->idpos == gIdPos ;
 
 enddo
 
+sql_table_update( nil, "BEGIN")
 
 // pobrisi racun iz POS i DOKS
 select pos
@@ -1886,31 +1879,21 @@ go top
 
 seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
 
-do while !EOF() .and. field->idpos == gIdPos ;
-	.and. field->brdok == cSt_rn ;
-	.and. field->idvd == "42"
-
+if FOUND()
     _rec := dbf_get_rec()
-    delete_rec_server_and_dbf( ALIAS(), _rec )
-
-	skip
-
-enddo
+    delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+endif
 
 select pos_doks
 go top
 seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
 
-do while !EOF() .and. field->idpos == gIdPos ;
-	.and. field->brdok == cSt_rn ;
-	.and. field->idvd == "42"
-
+if FOUND()
     _rec := dbf_get_rec()
-    delete_rec_server_and_dbf( ALIAS(), _rec )
+    delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+endif
 
-	skip
-
-enddo
+sql_table_update( nil, "END")
 
 select ( nTArea )
 	

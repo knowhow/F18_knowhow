@@ -20,7 +20,7 @@ _dbf_fields := NIL
 
 
 AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )
-AADD( gaDbfs, { F_FIN_FIPRIPR , "FIN_PRIPR"   , "fin_pripr"  } )
+AADD( gaDbfs, { F_FIN_PRIPR , "FIN_FIPRIPR"   , "fin_pripr"  } )
 AADD( gaDbfs, { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  } )
 AADD( gaDbfs, { F_IOS    ,  "IOS"     , "fin_ios"  } )
 AADD( gaDbfs, { F_OSTAV    ,  "ostav"     , "fin_ostav"  } )
@@ -28,7 +28,7 @@ AADD( gaDbfs, { F_PNALOG ,  "PNALOG"  , "fin_pnalog"  } )
 AADD( gaDbfs, { F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  } )
 AADD( gaDbfs, { F_PANAL  ,  "PANAL"   , "fin_panal"  } )
 AADD( gaDbfs, { F_PSINT  ,  "PSINT"   , "fin_psint"  } )
-AADD( gaDbfs, { F_FIN_PRIPRRP,  "FIN_PRIPRRP" , "fin_priprrp"  } )
+AADD( gaDbfs, { F_FIN_PRIPR,  "FIN_PRIPRRP" , "fin_pripr"  } )
 AADD( gaDbfs, { F_OSTAV  ,  "OSTAV"   , "fin_ostav"   } )
 AADD( gaDbfs, { F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  } )
 AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )

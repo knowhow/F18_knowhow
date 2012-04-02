@@ -87,6 +87,7 @@ ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
 for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
+altd()
 return PostojiSifra(F_STRAD,1,10,55,"Sifrarnik statusa radnika",@cid,dx,dy)
 
 

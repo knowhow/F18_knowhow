@@ -64,7 +64,7 @@ else
   select trfp
   set filter to
 endif
-return PostojiSifra(F_TRFP,1,15,76,"Parametri prenosa u FP",@cId,dx,dy,{|Ch| TRfpb(Ch)})
+return PostojiSifra(F_TRFP,1,15,76,"Parametri prenosa u FP", @cId, dx, dy, {|Ch| TRfpb(Ch)})
 select trfp
 set filter to
 

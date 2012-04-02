@@ -21,22 +21,25 @@ local _alg
 
 public gaDbfs := {}
 
+Alert(RECI_GDJE_SAM0 + " (set_a_dbfs) fix - ld, epdv, pos")
+
 __f18_dbfs := hb_hash()
 
 set_a_dbf_sif()
+set_a_dbf_params()
 set_a_dbf_sifk_sifv()
 
 set_a_dbf_fin()
-set_a_dbf_fakt()
-set_a_dbf_ld()
-set_a_dbf_epdv()
-set_a_dbf_pos()
+//set_a_dbf_fakt()
+
+//set_a_dbf_ld()
+//set_a_dbf_epdv()
+//set_a_dbf_pos()
 
 
 set_a_dbfs_legacy()
 
 return
-
 
 // ----------------------------------
 // ----------------------------------
@@ -265,7 +268,9 @@ if !used()
             Alert(_msg)
                 
             rec["dbf_fields"] := NIL
-            return
+            RaiseError(_msg)
+            QUIT
+
     end sequence
     _opened := .t.
 endif

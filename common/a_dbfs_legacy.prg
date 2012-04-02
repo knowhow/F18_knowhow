@@ -18,43 +18,13 @@ function set_a_dbfs_legacy()
 
 _dbf_fields := NIL
 
+AADD( gaDbfs, { F_FIN_PRIPR , "FIN_FIPRIPR"   , "fin_pripr"  } )
+
+AADD( gaDbfs, { F_FIN_PRIPR,  "FIN_PRIPRRP" , "fin_pripr"  } )
+
+
 
 /*
-AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )
-AADD( gaDbfs, { F_FIN_PRIPR , "FIN_FIPRIPR"   , "fin_pripr"  } )
-AADD( gaDbfs, { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  } )
-AADD( gaDbfs, { F_IOS    ,  "IOS"     , "fin_ios"  } )
-AADD( gaDbfs, { F_OSTAV    ,  "ostav"     , "fin_ostav"  } )
-AADD( gaDbfs, { F_PNALOG ,  "PNALOG"  , "fin_pnalog"  } )
-AADD( gaDbfs, { F_PSUBAN ,  "PSUBAN"  , "fin_psuban"  } )
-AADD( gaDbfs, { F_PANAL  ,  "PANAL"   , "fin_panal"  } )
-AADD( gaDbfs, { F_PSINT  ,  "PSINT"   , "fin_psint"  } )
-AADD( gaDbfs, { F_FIN_PRIPR,  "FIN_PRIPRRP" , "fin_pripr"  } )
-AADD( gaDbfs, { F_OSTAV  ,  "OSTAV"   , "fin_ostav"   } )
-AADD( gaDbfs, { F_OSUBAN ,  "OSUBAN"  , "fin_osuban"  } )
-AADD( gaDbfs, { F__KONTO ,  "_KONTO"  , "fin__konto"  } )
-AADD( gaDbfs, { F__PARTN ,  "_PARTN"  , "fin__partn"  } )
-AADD( gaDbfs, { F_KUF    ,  "FIN_KUF" , "fin_kuf"     } )
-AADD( gaDbfs, { F_KIF    ,  "FIN_KIF" , "fin_kif"     } )
-AADD( gaDbfs, { F_TEMP12 ,  "TEMP12" , "temp12"     } )
-AADD( gaDbfs, { F_TEMP60 ,  "TEMP60" , "temp60"     } )
-
-
-AADD( gaDbfs, { F_FUNK   ,  "FUNK"    , "fin_funk"    } )
-AADD( gaDbfs, { F_BUDZET ,  "BUDZET"  , "fin_budzet"  } )
-AADD( gaDbfs, { F_PAREK  ,  "PAREK"   , "fin_parek"   } )
-AADD( gaDbfs, { F_FOND   ,  "FOND"    , "fin_fond"    } )
-AADD( gaDbfs, { F_KONIZ  ,  "KONIZ"   , "fin_koniz"   } )
-AADD( gaDbfs, { F_IZVJE  ,  "IZVJE"   , "fin_izvje"   } )
-AADD( gaDbfs, { F_ZAGLI  ,  "ZAGLI"   , "fin_zagli"   } )
-AADD( gaDbfs, { F_KOLIZ  ,  "KOLIZ"   , "fin_koliz"   } )
-AADD( gaDbfs, { F_BUIZ   ,  "BUIZ"    , "fin_buiz"    } )
-
-// parametri
-AADD( gaDbfs, { F_PARAMS  ,  "PARAMS"   , "params"  } )
-AADD( gaDbfs, { F_GPARAMS , "GPARAMS"  , "gparams"  } )
-AADD( gaDbfs, { F_KPARAMS , "KPARAMS"  , "kparams"  } )
-AADD( gaDbfs, { F_SECUR  , "SECUR"  , "secur"  } )
 
 // pomocne tabele
 AADD( gaDbfs, {  F_POM2      , "POM2"   , "pom2"  } )
@@ -68,9 +38,6 @@ AADD( gaDbfs, { F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  } )
 AADD( gaDbfs, { F_RELATION , "RELATION"  , "relation"  } )
 AADD( gaDbfs, { F_P_UPDATE , "P_UPDATE"  , "p_update"  } )
 AADD( gaDbfs, { F__ROBA , "_ROBA"  , "_roba"  } )
-
-AADD( gaDbfs, { F_VKSG   ,  "VKSG"    , "vksg"   } )
-AADD( gaDbfs, { F_ULIMIT ,  "ULIMIT"  , "ulimit"  } )
 
 // r_export
 AADD( gaDbfs, { F_R_EXP ,  "R_EXPORT"  , "r_export"  } )
@@ -219,8 +186,8 @@ if VALTYPE(x_alias) == "N"
    _pos := ASCAN(gaDBFs,  { |x|  x[1] == x_alias} )
  
    if _pos < 1
-           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + table)
-           return _ret
+           RaiseError("f18_dbf_alias ?: " + x_alias)
+           QUIT
    endif
    
 else
@@ -236,7 +203,8 @@ else
           _ret["wa"]    := NIL
           _ret["alias"] := NIL
           _ret["table"] := NIL
-          return _ret
+          RaiseError("f18_dbf_alias ?: " + x_alias)
+          QUIT
        endif
            
    endif

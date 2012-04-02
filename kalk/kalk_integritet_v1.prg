@@ -27,7 +27,7 @@ if get_vars(@dDatOd, @dDatDo, @cKonto, @cFirma) == 0
 endif
 
 // kreiraj tabelu errors
-cre_errors()
+cre_tbl_errors()
 // brisi tabelu errors
 BrisiError()
 

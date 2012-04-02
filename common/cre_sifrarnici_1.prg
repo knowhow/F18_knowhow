@@ -173,8 +173,8 @@ if !file(f18_ime_dbf(cIme) )
         my_usex("banke")
         close all
 endif
-CREATE_INDEX("ID","id", SIFPATH + cIme)
-CREATE_INDEX("NAZ","naz", SIFPATH + cIme)
+CREATE_INDEX("ID","id", cIme)
+CREATE_INDEX("NAZ","naz", cIme)
 index_mcode(SIFPATH, cIme)
 
 // RNAL
@@ -184,10 +184,10 @@ if !file( f18_ime_dbf(cIme))
    AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
    add_f_mcode(@aDbf)
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  60 ,  0 })
-   DBCREATE2(SIFPATH+'RNAL.DBF', aDbf)
+   DBCREATE2('RNAL.DBF', aDbf)
 endif
-CREATE_INDEX("ID","id", SIFPATH + cIme)  // vrste naloga
-CREATE_INDEX("NAZ","naz", SIFPATH + cIme)
+CREATE_INDEX("ID","id", cIme)  // vrste naloga
+CREATE_INDEX("NAZ","naz", cIme)
 index_mcode(SIFPATH, cIme)
 
 // REFER

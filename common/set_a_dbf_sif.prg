@@ -12,34 +12,28 @@
 #include "fmk.ch"
 
 function set_a_dbf_sif()
-
+local _rec
 
 // tabele sa strukturom sifarnika (id je primarni ključ)
 set_a_dbf_sifarnik("adres"      , "ADRES"     , F_ADRES      )
 
-set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES   )
+_rec := hb_hash()
+_rec["dbf_key_fields"] := { {"rule_id", 10, 0} }
+_rec["dbf_tag"]        := "1"
+_rec["sql_in" ]        := "rule_id::char(10)"
+_rec["dbf_key_block" ] := {|| STR(field->rule_id, 10, 0) }
+set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES, _rec  )
+
+
+set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
+set_a_dbf_sifarnik("lokal"      , "LOKAL" , F_LOKAL  )
+
 set_a_dbf_sifarnik("ops"        , "OPS"       , F_OPS        )
 set_a_dbf_sifarnik("banke"      , "BANKE"     , F_BANKE      )
 set_a_dbf_sifarnik("refer"      , "REFER"     , F_REFER      )
 set_a_dbf_sifarnik("partn"      , "PARTN"     , F_PARTN      )
 set_a_dbf_sifarnik("tnal"       , "TNAL"      , F_TNAL       )
 set_a_dbf_sifarnik("tdok"       , "TDOK"      , F_TDOK       )
-set_a_dbf_sifarnik("trfp"       , "TRFP"      , F_TRFP       )
-set_a_dbf_sifarnik("trfp2"      , "TRFP2"     , F_TRFP2      )
-set_a_dbf_sifarnik("trfp3"      , "TRFP3"     , F_TRFP3      )
-
-set_a_dbf_sifarnik("ld_radn"    , "RADN"      , F_RADN       )
-set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
-set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
-set_a_dbf_sifarnik("dopr"       , "DOPR"      , F_DOPR       )
-set_a_dbf_sifarnik("tippr"      , "TIPPR"     , F_TIPPR      )
-set_a_dbf_sifarnik("tippr2"     , "TIPPR2"    , F_TIPPR2     )
-set_a_dbf_sifarnik("kred"       , "KRED"      , F_KRED       )
-set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
-set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
-set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
-set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
-set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
 
 set_a_dbf_sifarnik("roba"       , "ROBA"      , F_ROBA       )
 set_a_dbf_sifarnik("sast"       , "SAST"      , F_SAST       )
@@ -52,6 +46,20 @@ set_a_dbf_sifarnik("vprih"      , "VPRIH"     , F_VPRIH      )
 set_a_dbf_sifarnik("pkonto"     , "PKONTO"    , F_PKONTO     )
 set_a_dbf_sifarnik("valute"     , "VALUTE"    , F_VALUTE     )
 
+
+
+set_a_dbf_temp     ("rnal"       ,  "RNAL"        , F_RNAL       )
+set_a_dbf_temp     ("doksrc"     ,  "DOKSRC"      , F_DOKSRC     )
+set_a_dbf_temp     ("p_doksrc"   ,  "P_DOKSRC"    , F_P_DOKSRC   )
+set_a_dbf_temp     ("relation"   ,  "RELATION"    , F_RELATION   )
+set_a_dbf_temp     ("p_update"   ,  "P_UPDATE"    , F_P_UPDATE   )
+set_a_dbf_temp     ("_roba"      ,  "_ROBA"       , F__ROBA      )
+
+set_a_dbf_temp     ("barkod"     ,  "BARKOD"      , F_BARKOD     )
+set_a_dbf_temp     ("strings"    ,  "STRINGS"     , F_STRINGS    )
+
+set_a_dbf_temp     ("finmat"     ,  "FINMAT"      , F_FINMAT     )
+set_a_dbf_temp     ("r_export"   ,  "R_EXPORT"    , F_R_EXP      )
 
 
 return

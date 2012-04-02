@@ -35,7 +35,8 @@
 #define DE_DEL  6
 
 
-#define RECI_GDJE_SAM PROCNAME(1) + " (" + ALLTRIM(STR(PROCLINE(1))) + ")"
+#define RECI_GDJE_SAM   PROCNAME(1) + " (" + ALLTRIM(STR(PROCLINE(1))) + ")"
+#define RECI_GDJE_SAM0  PROCNAME(0) + " (" + ALLTRIM(STR(PROCLINE(0))) + ")"
  
 #command ESC_EXIT  => if lastkey()=K_ESC;
                       ;exit             ;

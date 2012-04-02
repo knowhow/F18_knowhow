@@ -263,19 +263,8 @@ if (nArea==-1 .or. nArea==(F_BUDZET))
         DBcreate2("BUDZET", aDbf)
     endif
     
-    SELECT F_BUDZET
-    MY_USE (KUMPATH+"BUDZET")
-    if FieldPos("IDKONTO")=0 // ne postoji polje "idkonto"
-        USE
-        save screen to cScr
-        cls
-        restore screen from cScr
-    endif
-    SELECT F_BUDZET
-    USE
-
-    CREATE_INDEX("1","IdRj+Idkonto",KUMPATH+"BUDZET")
-    CREATE_INDEX("2","Idkonto",KUMPATH+"BUDZET")
+    CREATE_INDEX("1", "IdRj+Idkonto", "BUDZET")
+    CREATE_INDEX("2", "Idkonto",      "BUDZET")
 endif
 
 
@@ -408,7 +397,7 @@ if (nArea==-1 .or. nArea==(F_IOS))
             DBcreate2(PRIVPATH+"IOS",aDbf)
     endif
 
-    CREATE_INDEX("1","IdFirma+IdKonto+IdPartner",PRIVPATH+"IOS") // IOS
+    CREATE_INDEX("1","IdFirma+IdKonto+IdPartner", "IOS") // IOS
 endif
 
 
@@ -455,7 +444,7 @@ if (nArea==-1 .or. nArea==(F_TRFP2))
             close all
     endif
 
-    CREATE_INDEX("ID","idvd+shema+Idkonto",SIFPATH+"TRFP2")
+    CREATE_INDEX("ID","idvd+shema+Idkonto", "TRFP2")
 endif
 
 if (nArea==-1 .or. nArea==(F_TRFP3))
@@ -477,7 +466,7 @@ if (nArea==-1 .or. nArea==(F_TRFP3))
             close all   
     endif
 
-    CREATE_INDEX("ID","shema+Idkonto",SIFPATH+"TRFP3")
+    CREATE_INDEX("ID","shema+Idkonto","TRFP3")
 endif
 
 
@@ -559,12 +548,12 @@ if (nArea==-1 .or. nArea==(F_KIF))
     AADD(aDBf,{ "IDVPRIH"             , "C" ,   3 ,  0 })
 
     if !FILE(f18_ime_dbf("fin_kif"))
-        DBcreate2(KUMPATH+"FIN_KIF.DBF",aDbf)
+        DBcreate2("FIN_KIF.DBF",aDbf)
     endif
     
-    CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KIF" )
-    CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KIF" )
-    CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KIF" )
+    CREATE_INDEX( "ID" , "id"     , "FIN_KIF" )
+    CREATE_INDEX( "ID2", "idrj+id", "FIN_KIF" )
+    CREATE_INDEX( "NAZ", "naz"    , "FIN_KIF" )
 endif
 
 
@@ -580,7 +569,7 @@ if (nArea==-1 .or. nArea==(F_TNAL))
         //close all 
     endif
     
-    CREATE_INDEX("ID","Id",SIFPATH+"VRSTEP.DBF")
+    CREATE_INDEX("ID","Id", "VRSTEP.DBF")
 endif
 
 

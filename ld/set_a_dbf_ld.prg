@@ -27,6 +27,20 @@ set_a_dbf_ld_radsat()
 set_a_dbf_ld_radsiht()
 
 // sifrarnici
+set_a_dbf_sifarnik("ld_radn"    , "RADN"      , F_RADN       )
+set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
+set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
+set_a_dbf_sifarnik("dopr"       , "DOPR"      , F_DOPR       )
+set_a_dbf_sifarnik("tippr"      , "TIPPR"     , F_TIPPR      )
+set_a_dbf_sifarnik("tippr2"     , "TIPPR2"    , F_TIPPR2     )
+set_a_dbf_sifarnik("kred"       , "KRED"      , F_KRED       )
+set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
+set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
+set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
+set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
+set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
+
+
 set_a_dbf_sifarnik("ld_norsiht"  , "NORSIHT" , F_NORSIHT   )
 set_a_dbf_sifarnik("ld_tprsiht"  , "TPRSIHT" , F_TPRSIHT   )
 

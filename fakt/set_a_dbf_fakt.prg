@@ -30,8 +30,6 @@ set_a_dbf_fakt_gen_ug_p()
 // tabele sa strukturom sifarnika (id je primarni ključ)
 set_a_dbf_sifarnik("fakt_ftxt"  , "FTXT"  , F_FTXT   )
 set_a_dbf_sifarnik("dest"       , "DEST"  , F_DEST   )
-set_a_dbf_sifarnik("lokal"      , "LOKAL" , F_LOKAL  )
-
 
 // temp fakt tabele - ne idu na server
 set_a_dbf_temp("fakt_relac"   ,   "RELAC"        , F_RELAC   )
@@ -196,7 +194,7 @@ _alg["dbf_tag"]        := "DAT_OBR"
 
 AADD(_item["algoritam"], _alg)
 
-_item["sql_order"] := "datobr, id_ugov, idpartner"
+_item["sql_order"] := "dat_obr, id_ugov, idpartner"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.

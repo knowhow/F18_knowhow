@@ -189,7 +189,9 @@ next
 return .t.
 
 
-function raiseError(cErrMsg)
+// -----------------------------------
+// -----------------------------------
+function RaiseError(cErrMsg)
 Local oErr
 
    oErr := ErrorNew()

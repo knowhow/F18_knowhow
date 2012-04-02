@@ -21,7 +21,7 @@ function CreDIntDB()
 ChkDTbl()
 
 // kreiraj tabelu errors
-cre_errors()
+cre_tbl_errors()
 
 // provjeri da li postoji tabela DINTEG1
 if !FILE(KUMPATH + "DINTEG1.DBF") .or. !FILE(KUMPATH + "DINTEG2.DBF")
@@ -140,7 +140,7 @@ return
 
 
 // kreiranje tabele errors
-function cre_errors()
+function cre_tbl_errors()
 // provjeri da li postoji tabela ERRORS.DBF
 if !FILE(PRIVPATH+"ERRORS.DBF")
 	aDbf := {}
@@ -148,11 +148,11 @@ if !FILE(PRIVPATH+"ERRORS.DBF")
 	AADD(aDbf, {"IDROBA", "C", 10, 0})
 	AADD(aDbf, {"DOKS", "C", 50, 0})
 	AADD(aDbf, {"OPIS", "C", 100, 0})
-	DBcreate2(PRIVPATH+"ERRORS.DBF", aDbf)
+	DBcreate2("ERRORS.DBF", aDbf)
 endif
 
 // kreiraj index za tabelu ERRORS
-CREATE_INDEX ("1", "IDROBA+TYPE", PRIVPATH+"ERRORS")
+CREATE_INDEX ("1", "IDROBA+TYPE", "ERRORS")
 
 return
 

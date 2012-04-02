@@ -76,6 +76,7 @@ if (RECCOUNT2() == 0)
     sql_table_update( nil, "BEGIN")
 
     select strad
+    append blank
     _rec := dbf_get_rec()
     _rec["id"] := "0"
     _rec["prioritet"] := "0"
@@ -83,12 +84,16 @@ if (RECCOUNT2() == 0)
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
+    append blank
+    _rec := dbf_get_rec()
     _rec["id"] := "1"
     _rec["prioritet"] := "1"
     _rec["naz"] := "Nivo upr."
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
+    append blank
+    _rec := dbf_get_rec()
     _rec["id"] := "3"
     _rec["prioritet"] := "3"
     _rec["naz"] := "Nivo prod."
@@ -111,6 +116,7 @@ if (RECCOUNT2() == 0)
    
     sql_table_update( nil, "BEGIN")
     
+    append blank
     _rec := dbf_get_rec()
     _rec["id"] := "0001"
     _rec["korsif"] := CryptSc( PADR( "PARSON", 6 ) )
@@ -119,6 +125,8 @@ if (RECCOUNT2() == 0)
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
+    append blank
+    _rec := dbf_get_rec()
     _rec["id"] := "0010"
     _rec["korsif"] := CryptSc( PADR( "P1", 6 ) )
     _rec["naz"] := "Prodavac 1"
@@ -126,6 +134,8 @@ if (RECCOUNT2() == 0)
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
+    append blank
+    _rec := dbf_get_rec() 
     _rec["id"] := "0011"
     _rec["korsif"] := CryptSc( PADR( "P2", 6 ) )
     _rec["naz"] := "Prodavac 2"

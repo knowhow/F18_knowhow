@@ -269,6 +269,7 @@ return .t.
 // inicijalizacija varijabli koje koriste update and delete_from_server_and_dbf  funkcije
 // ---------------------------------------------------------------------------------------------------------------
 static function set_table_values_algoritam_vars(table, values, algoritam, transaction, a_dbf_rec, alg, where_str, alg_tag)
+local _key
 
 if table == NIL
    table := ALIAS()
@@ -294,6 +295,18 @@ a_dbf_rec := get_a_dbf_rec(table)
 table := a_dbf_rec["table"]
 
 alg := a_dbf_rec["algoritam"][algoritam]
+
+for each _key in alg["dbf_key_fields"]
+   if VALTYPE(_key) == "C"
+         // ne gledaj numericke kljuceve, koji su array stavke
+        if VALTYPE(values[_key]) == "C"
+            // ako je dbf_fields_len['id'][2] = 6
+            // karakterna polja se moraju PADR-ovati
+            // values['id'] = '0' => '0     '
+            values[_key] := PADR(values[_key], a_dbf_rec["dbf_fields_len"][_key][2])
+        endif
+   endif
+next
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
    where_str := sql_where_from_dbf_key_fields(alg["dbf_key_fields"], values)

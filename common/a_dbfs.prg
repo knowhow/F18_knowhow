@@ -196,7 +196,9 @@ if !HB_HHASKEY(_rec, "dbf_fields")
 endif
 
 if !HB_HHASKEY(_rec, "sql_order")
-    if HB_HHASKEY(_rec, "algoritam") 
+    if HB_HHASKEY(_rec, "algoritam")
+         // dbf_key_fields stavke su "C" za datumska i char polja, "A" za numericka polja 
+         // npr: { {"godina", 4, 0}, "datum", "id" }
          _rec["sql_order"] := sql_order_from_key_fields(_rec["algoritam"][1]["dbf_key_fields"])
     endif
 endif
@@ -210,21 +212,21 @@ return _rec
 // gaDBFS[_pos][6]
 // rec["dbf_fields"]
 // ----------------------------------------------
-function sql_order_from_key_fields(key_fields)
+function sql_order_from_key_fields(dbf_key_fields)
 local _i, _len
 local _sql_order
 
-// primjer: key_fields = {{"godina", 4}, "idrj", {"mjesec", 2}
+// primjer: dbf_key_fields = {{"godina", 4}, "idrj", {"mjesec", 2}
 
-_len := LEN(key_fields)
+_len := LEN(dbf_key_fields)
 
 _sql_order := ""
 for _i := 1 to _len
 
-   if VALTYPE(key_fields[_i]) == "A"
-      _sql_order += key_fields[_i, 1]
+   if VALTYPE(dbf_key_fields[_i]) == "A"
+      _sql_order += dbf_key_fields[_i, 1]
    else
-      _sql_order += key_fields[_i]
+      _sql_order += dbf_key_fields[_i]
    endif
 
    if _i < _len
@@ -243,7 +245,7 @@ return _sql_order
 function set_dbf_fields_from_struct(rec)
 local _struct, _i
 local _opened := .t.
-local _fields :={}
+local _fields :={}, _fields_len
 
 if rec["temp"]
    // ovi mi podaci ne trebaju za temp tabele
@@ -270,11 +272,15 @@ endif
 
 _struct := DBSTRUCT()
 
+_fields_len := hb_hash()
 for _i := 1 to LEN(_struct)
    AADD(_fields, LOWER(_struct[_i, 1]))
+   // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
+   _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], _struct[_i, 3], _struct[_i, 4]}
 next
 
-rec["dbf_fields"] := _fields
+rec["dbf_fields"]     := _fields
+rec["dbf_fields_len"] := _fields_len
 
 if _opened
    USE

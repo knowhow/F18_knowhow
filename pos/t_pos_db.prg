@@ -25,8 +25,6 @@ CLASS TDbPos INHERIT TDB
 	method kreiraj	
 	method konvZn
 	method open
-	method reindex
-	method del_pos_z
 ENDCLASS
 
 
@@ -523,58 +521,58 @@ RETURN
 // -------------------------------------------
 method open
 
-if gPratiStanje $ "D!"
-  O_POS
+select F_POS
+if !used()
+    O_POS
 endif
 
-if gModul=="HOPS"
-  O_DIO
-  O_ROBAIZ
+select F_MJTRUR
+if !used()
+    O_MJTRUR
 endif
 
-O_MJTRUR
-O_UREDJ
-O_ODJ
-O_K2C
-O_ROBA
-O_SIFK
-O_SIFV
-O__POS_PRIPR
-O__POS
+select F_UREDJ
+if !used()
+    O_UREDJ
+endif
+
+select F_ODJ
+if !used()
+    O_ODJ
+endif
+
+select F_K2C
+if !used()
+    O_K2C
+endif
+
+select F_ROBA
+if !used()
+    O_ROBA
+endif
+
+select F_SIFK
+if !used()
+    O_SIFK
+endif
+
+select F_SIFV
+if !used()
+    O_SIFV
+endif
+
+select F__PRIPR
+if !used()
+    O__POS_PRIPR
+endif
+
+select F__POS
+if !used()
+    O__POS
+endif
 
 return .t.
 
-
-// --------------------------------------------
-// --------------------------------------------
-method reindex
-pos_reindex_all()
-return
-
-
-// --------------------------------------------
-// --------------------------------------------
-method del_pos_z
-local nTArea := SELECT()
-
-O__POS
-select _pos
-go top
-
-msgo("....brisem iz pomocne tabele _POS zakljucene stavke....")
-
-do while !EOF()
-	if _pos->gt == OBR_JEST
-		del_skip()
-	else
-		skip
-	endif
-enddo
-
-msgc()
-
-select (nTArea)
-return
 
 
 

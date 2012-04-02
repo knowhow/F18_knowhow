@@ -490,7 +490,7 @@ if i==F_TRFP .or. i==F_VALUTE .or. i==F_KONCIJ .or. i==F_SAST  .or. i==F_BARKOD
 	lIdiDalje:=.t.
 endif
 
-if i==F_PARAMS .or. i==F_GPARAMS .or. i==F_GPARAMSP .or. i==F_KORISN .or. i==F_MPARAMS .or. i==F_KPARAMS .or. i==F_SECUR .or. i==F_ADRES
+if i==F_PARAMS .or. i==F_GPARAMS .or. i==F_GPARAMSP .or. i==F_KORISN .or. i==F_MPARAMS .or. i==F_KPARAMS .or. i==F_ADRES
 	lIdiDalje:=.t.
 endif
 

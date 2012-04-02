@@ -55,14 +55,10 @@ private Kol:={}
 
 ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",25),{|| naz},"naz"},{"Konto u KALK",{|| IdKonto},"IdKonto"}}
 
-if gModul=="HOPS"
-    AADD (ImeKol, { "Zaduzuje R/S",{|| PADC (ZADUZuje, 12)}, "Zaduzuje", {|| .T.}, {|| wZaduzuje $ "RS"} })
-endif
-
 for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
-return PostojiSifra(F_ODJ,I_ID,10,40,"Sifarnik odjeljenja", @cId,dx,dy)
+return PostojiSifra(F_ODJ,1,10,40,"Sifarnik odjeljenja", @cId,dx,dy)
 
 
  
@@ -75,7 +71,7 @@ ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",25),{|| 
 for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
-return PostojiSifra(F_DIO,I_ID,10,55,"Sifrarnik dijelova objekta",@cid,dx,dy)
+return PostojiSifra(F_DIO,1,10,55,"Sifrarnik dijelova objekta",@cid,dx,dy)
 
 
  
@@ -85,13 +81,13 @@ private Kol:={}
 
 ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
           { PADC("Naziv",15), {|| naz},       "naz"       },;
-          { "Prioritet"     , {|| PADC(prioritet,9)}, "prioritet", {|| .T.}, {|| ("0" <= wPrioritet) .AND. (wPrioritet <= "3")} } ;
+          { "Prioritet"     , {|| PADC(prioritet,9)}, "prioritet", {|| .t.}, {|| ("0" <= wPrioritet) .AND. (wPrioritet <= "3")} } ;
         }
 
 for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
-return PostojiSifra(F_STRAD,I_ID,10,55,"Sifrarnik statusa radnika",@cid,dx,dy)
+return PostojiSifra(F_STRAD,1,10,55,"Sifrarnik statusa radnika",@cid,dx,dy)
 
 
 
@@ -109,7 +105,7 @@ for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
 
-return PostojiSifra(F_OSOB, I_ID2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob()})
+return PostojiSifra( F_OSOB, 2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob()})
 return
 
 
@@ -128,7 +124,7 @@ for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
 
-return PostojiSifra(F_UREDJ,I_ID,10,55,"Sifrarnik uredjaja",@cid,dx,dy)
+return PostojiSifra(F_UREDJ,1,10,55,"Sifrarnik uredjaja",@cid,dx,dy)
 
 
 
@@ -145,7 +141,7 @@ ImeKol:={{ "Uredjaj",     {|| iduredjaj }, "IdUredjaj", {|| .t.}, {|| P_Uredj(wI
 for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
-return PostojiSifra(F_MJTRUR, I_ID, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy)
+return PostojiSifra(F_MJTRUR, 1, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy)
 
 
  
@@ -161,76 +157,96 @@ for i:=1 to LEN(ImeKol)
     AADD(Kol,i)
 next
 
-return PostojiSifra(F_ROBAIZ,I_ID,10,55,"Sifrarnik iznimki kod izuzimanja robe",@cid,dx,dy)
+return PostojiSifra(F_ROBAIZ,1,10,55,"Sifrarnik iznimki kod izuzimanja robe",@cid,dx,dy)
 
 
 
 function EdOsob()
 local System:=(KLevel<L_UPRAVN)
 local nVrati:=DE_CONT
+local _rec
 
 do case
+
     case Ch==K_CTRL_N
+
         if gSamoProdaja=="D"
-                MsgBeep("SamoProdaja=D#Nemate ovlastenje za ovu opciju !")
-                nVrati:=DE_CONT
-            else
-                if System
-                    Scatter()
-                    _korsif:=space(6)
-                    if GetOsob(.t.)<>K_ESC
-                        // azuriranje OSOB.DBF
-                        _korsif:=CryptSC(_korsif)
-                        APPEND BLANK
-                    sql_append()
-                        Gather()
-                        GathSql()
-                    sql_azur(.t.)
+            MsgBeep("SamoProdaja=D#Nemate ovlastenje za ovu opciju !")
+            nVrati := DE_CONT
+        else
+         
+           if System
+
+                // setuj varijable globalne
+                set_global_memvars_from_dbf()
+
+                _korsif := SPACE(6)
+                
+                if GetOsob( .t. ) <> K_ESC
+
+                    // azuriranje OSOB.DBF
+                    _korsif := CryptSC( _korsif )
+
+                    APPEND BLANK
+                    
+                    // daj mi iz globalnih varijabli                    
+                    _rec := get_dbf_global_memvars()
+
+                    update_rec_server_and_dbf( ALIAS(), _rec )
+
                     nVrati:=DE_REFRESH
-                    endif
+
                 endif
             endif
+        endif
+
     case Ch==K_F2
-            if gSamoProdaja=="D"
-                    MsgBeep("SamoProdaja=D#Nemate ovlastenje za ovu opciju !")
-                    nVrati:=DE_CONT
-            else
-                if System
-                    Scatter()
+
+        if gSamoProdaja=="D"
+            MsgBeep("SamoProdaja=D#Nemate ovlastenje za ovu opciju !")
+            nVrati:=DE_CONT
+        else
+
+            if System
+
+                set_global_memvars_from_dbf()
+                _korsif:=CryptSC(_korsif)
+                    
+                if GetOsob( .f. ) <> K_ESC
+                    // azuriranje OSOB.DBF
                     _korsif:=CryptSC(_korsif)
-                    if GetOsob(.f.)<>K_ESC
-                            // azuriranje OSOB.DBF
-                            _korsif:=CryptSC(_korsif)
-                            Gather()
-                    GathSql()
-                    sql_azur(.t.)
-                            nVrati:=DE_REFRESH
-                    endif
+                    // daj mi iz globalnih varijabli                    
+                    _rec := get_dbf_global_memvars()
+                    update_rec_server_and_dbf( ALIAS(), _rec )
+                    nVrati:=DE_REFRESH
                 endif
             endif
-    case Ch==K_CTRL_T
-            if gSamoProdaja=="D"
-                MsgBeep("Nemate ovlastenje za ovu opciju !")
-                nVrati:=DE_CONT
-            else
-                if System
-                    if Pitanje(,"Izbrisati korisnika "+ trim(naz) +":"+CryptSC(korsif)+" D/N ?","N")=="D"
-                        // azuriranje OSOB.DBF
-                        SELECT osob
-                        DELETE
-                        sql_delete()
-                        nVrati:=DE_REFRESH
-                    endif
+        endif
+
+    case Ch == K_CTRL_T
+        if gSamoProdaja=="D"
+            MsgBeep("Nemate ovlastenje za ovu opciju !")
+            nVrati:=DE_CONT
+        else
+            if System
+                if Pitanje(,"Izbrisati korisnika "+ trim(naz) +":"+CryptSC(korsif)+" D/N ?","N")=="D"
+                    SELECT osob
+                    _rec := dbf_get_rec()
+                    delete_rec_server_and_dbf( ALIAS(), _rec )
+                    nVrati:=DE_REFRESH
                 endif
             endif
+        endif
     case Ch==K_ESC .or. Ch==K_ENTER
-            nVrati:=DE_ABORT
+        nVrati := DE_ABORT
 endcase
 
 if ch==K_ALT_R .or. ch==K_ALT_S .or. ch==K_CTRL_N .or. ch==K_F2 .or. ch==K_F4 .or. ch==K_CTRL_A .or. ch==K_CTRL_T .or. ch==K_ENTER
     ch:=0
 endif
+
 return nVrati
+
 
 
 
@@ -238,33 +254,39 @@ function GetOsob(fNovi)
 local cLevel
 
 Box("",4,60,.f.,"Unos novog korisnika,sifre")
-SET CURSOR ON
-if fNovi.or.KLevel=="0"
-    @ m_x+1,m_y+2 SAY "Sifra radnika (ID)." GET _id VALID vpsifra(_id)
-else
-    @ m_x+1,m_y+2 SAY "Sifra radnika (ID). "+_id
-endif
-@ m_x+2,m_y+2 SAY "Ime radnika........" GET _naz
-read
 
-SELECT strad
-HSEEK gStRad
-cLevel:=strad->prioritet
+    SET CURSOR ON
 
-SELECT strad
-HSEEK _status
-select osob
+    if fNovi.or.KLevel=="0"
+        @ m_x+1,m_y+2 SAY "Sifra radnika (ID)." GET _id VALID vpsifra(_id)
+    else
+        @ m_x+1,m_y+2 SAY "Sifra radnika (ID). " + _id
+    endif
 
-// level tekuceg korisnika > level
-if (cLevel>strad->prioritet)  
-    MsgBeep("Ne mozete mjenjati sifru")
-else
-    @ m_x+3,m_y+2 SAY "Sifra.............." GET _korsif PICTURE "@!" VALID vpsifra2(_korsif,_id)
-    @ m_x+4,m_y+2 SAY "Status............." GET _status VALID P_STRAD(@_status)
-endif
+    @ m_x+2,m_y+2 SAY "Ime radnika........" GET _naz
 
-READ
+    read
+
+    SELECT strad
+    HSEEK gStRad
+    cLevel := strad->prioritet
+
+    SELECT strad
+    HSEEK _status
+    select osob
+
+    // level tekuceg korisnika > level
+    if (cLevel > strad->prioritet)  
+        MsgBeep("Ne mozete mjenjati sifru")
+    else
+        @ m_x+3,m_y+2 SAY "Sifra.............." GET _korsif PICTURE "@!" VALID vpsifra2(_korsif,_id)
+        @ m_x+4,m_y+2 SAY "Status............." GET _status VALID P_STRAD(@_status)
+    endif
+
+    READ
+
 BoxC()
+
 return lastkey()
 
 
@@ -337,5 +359,7 @@ endif
 
 PopWa()
 return .t.
+
+
 
 

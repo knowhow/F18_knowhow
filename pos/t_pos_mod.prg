@@ -78,6 +78,9 @@ if gSamoProdaja == "N"
     cre_doksrc()
 endif
 
+// predradnje
+f_init_db()
+
 close all
 
 SETKEY(K_SH_F1,{|| Calc()})

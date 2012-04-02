@@ -391,7 +391,7 @@ if i==F_ROBA .or. i==F__ROBA .or. i==F_TARIFA .or. i==F_PARTN .or. i==F_FTXT .or
 	lIdiDalje:=.t.
 endif
 
-if i==F_UGOV .or. i==F_RUGOV .or. i==F_DEST  .or. i==F_SECUR .or. i==F_ADRES
+if i==F_UGOV .or. i==F_RUGOV .or. i==F_DEST .or. i==F_ADRES
 	lIdiDalje:=.t.
 endif
 

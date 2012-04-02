@@ -45,153 +45,6 @@ DBcreate2( "pom.dbf", aDbf )
 return
 
 
- 
-function pos_reindex_all()
-
-O_POS_DOKS
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_PROMVP
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_POS
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_ROBA
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_SAST
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_STRAD
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-SELECT(F_PARAMS)
-my_use("params")
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-SELECT(F_KPARAMS)
-my_use("kparams")
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-close
-
-O_OSOB
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_TARIFA
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_VALUTE
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_VRSTEP
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_KASE
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_ODJ
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-close
-
-O_DIO
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-close
-
-O_UREDJ
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_PARTN
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-O_MARS
-@ m_x+2,m_y+2 SAY padr(alias(),12)
-beep(1)
-reindex
-__dbpack()
-close
-
-function BrisiDSif(nAreaSif)
-local cId
-local nTRec
-
-GO TOP
-do while !EOF()
-	cId:=field->id
-	skip
-	if (field->id==cId)
-		do while !EOF() .and. (field->id==cId)
-			SKIP
-			nTRec:=RECNO()
-			SKIP -1
-			DELETE
-			GO nTRec
-		enddo
-	endif
-enddo
-
 
 function ChkTblPromVp()
 local cTbl
@@ -212,132 +65,89 @@ return
 
 
 function CrePosISifData()
+local _rec
+
 O_STRAD
-if (RECCOUNT2()==0)
+
+if (RECCOUNT2() == 0)
 	
 	MsgO("Kreiram ini STRAD")
-	APPEND BLANK
-	replace id WITH "0"
-	replace prioritet WITH "0"
-	replace naz WITH "Nivo admin"
+
+    sql_table_update( nil, "BEGIN")
+
+    select strad
+    _rec := dbf_get_rec()
+    _rec["id"] := "0"
+    _rec["prioritet"] := "0"
+    _rec["naz"] := "Nivo adm."
+
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
-	APPEND BLANK
-	replace id WITH "1"
-	replace prioritet WITH "1"
-	replace naz WITH "Nivo upravn"
-	
-	APPEND BLANK
-	replace id WITH "3"
-	replace prioritet WITH "3"
-	replace naz WITH "Nivo prod"
+    _rec["id"] := "1"
+    _rec["prioritet"] := "1"
+    _rec["naz"] := "Nivo upr."
+
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+    _rec["id"] := "3"
+    _rec["prioritet"] := "3"
+    _rec["naz"] := "Nivo prod."
+
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+    sql_table_update( nil, "END")
+
 	MsgC()
 	
 endif
-
-CLOSE ALL
 
 O_OSOB
 
-if (RECCOUNT2()==0)
+if (RECCOUNT2() == 0)
 	
 	MsgO("Kreiram ini OSOB")
-	APPEND BLANK
-	replace id with "0001"
-	replace korSif with CryptSc(PADR("PARSON",6))
-	replace naz with "Admin"
-	replace status with "0"
-	
-	APPEND BLANK
-	replace id with "0005"
-	replace korSif with CryptSc(PADR("UPRAVN",6))
-	replace naz with "Upravnik"
- 	replace status with "1"
+    
+    select osob
+   
+    sql_table_update( nil, "BEGIN")
+    
+    _rec := dbf_get_rec()
+    _rec["id"] := "0001"
+    _rec["korsif"] := CryptSc( PADR( "PARSON", 6 ) )
+    _rec["naz"] := "Admin"
+    _rec["status"] := "0"
 
-	APPEND BLANK
-	replace id with "0010"
-	replace korSif with CryptSc(PADR("P1",6))
-	replace naz with "Prodavac 1"
- 	replace status with "3"
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
-	APPEND BLANK
-	replace id with "0011"
-	replace korSif with CryptSc(PADR("P2",6))
-	replace naz with "Prodavac 2"
- 	replace status with "3"
+    _rec["id"] := "0010"
+    _rec["korsif"] := CryptSc( PADR( "P1", 6 ) )
+    _rec["naz"] := "Prodavac 1"
+    _rec["status"] := "3"
+
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+	
+    _rec["id"] := "0011"
+    _rec["korsif"] := CryptSc( PADR( "P2", 6 ) )
+    _rec["naz"] := "Prodavac 2"
+    _rec["status"] := "3"
+
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+	
+    sql_table_update( nil, "END")
+
 	MsgC()
+
 endif
 
 CLOSE ALL
-
-return
-
-function BrisiDupleSifre()
-local nTekRec
-
-nCounter:=0
-
-if !SigmaSif("BRDPLS")
-	return
-endif
-
-O_ROBA
-select roba
-set order to tag ID
-go top
-Box(,3,60)
-aPom:={}
-do while !eof()
-	if (_OID_ == 0)
-		// vec ova cinjenica govori nam da stavka nije u redu
-		skip
-		nTekRec := RECNO()
-		skip -1
-		AADD(aPom, {id, naz})
-		DELETE
-		// sljedeci zapis
-		nCounter++
-		go nTekRec
-		// idemo na vrh petlje
-		LOOP
-	endif
-	cId:=id
-	@ m_x+1, m_y+2 SAY cId
-	skip 
-	if (roba->id == cId)
-		// ako je dupli zapis, izbrisi drugi
-		// cinjenica je medjutim da nismo siguruni da smo izbrisali pravu sifru, ali pretpostavljam da ce se uvijek naci _OID_ = 0 sifre.
-		skip
-		nTekRec := RECNO()
-		skip  -1
-		AADD(aPom, {id, naz})
-		DELETE
-		nCounter++
-		// sljedeci zapis
-		go nTekRec
-		// idemo na vrh petlje
-		LOOP
-	else
-		skip -1
-	endif
-	skip
-enddo										BoxC()
-
-START PRINT CRET
-
-? "Pobrisanih sifara " + ALLTRIM(STR(nCounter))
-? "---------------------------"
-for i:=1 to LEN(aPom)
-	? aPom[i, 1] + " - " + aPom[i, 2] 
-next
-?
-
-END PRINT
 
 return
 
 
 
 function UzmiBkIzSez()
+local _rec
+
 if !SigmaSif("BKIZSEZ")
 	MsgBeep("Ne cackaj!")
 	return
@@ -381,7 +191,9 @@ do while !eof()
 	if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ((cUvijekUzmi == "D") .and. !empty(cBkSez))
 		
 		select roba
-		replace barkod with cBkSez
+        _rec := dbf_get_rec()
+        _rec["barkod"] := cBKSez
+        update_rec_server_and_dbf( ALIAS(), _rec )
 		
 		@ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
 	endif
@@ -394,5 +206,6 @@ enddo
 BoxC()
 
 MsgBeep("Setovao barkodove iz sezonskog podrucja")
+
 return
 

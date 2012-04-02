@@ -17,26 +17,26 @@
 function NaprPom(aDbf,cPom)
 
 if cPom == nil
-	cPom:="POM"
+    cPom:="POM"
 endif
 
 cPomDBF := my_home() + "pom.dbf"
 cPomCDX := my_home() + "pom.cdx"
 
 if File(cPomDBF)
-	FErase(cPomDBF)
+    FErase(cPomDBF)
 endif
 
 if File(cPomCDX)
-	FErase(cPomCDX)
+    FErase(cPomCDX)
 endif
 
 if File(UPPER(cPomDBF))
-	FErase(UPPER(cPomDBF))
+    FErase(UPPER(cPomDBF))
 endif
 
 if File (UPPER(cPomCDX))
-	FErase(UPPER(cPomCDX))
+    FErase(UPPER(cPomCDX))
 endif
 
 // kreiraj tabelu pom.dbf
@@ -51,13 +51,13 @@ local cTbl
 
 cTbl:=DbfName(F_PROMVP,.t.)+'.'+DBFEXT
 if (FILE(cTbl))
-	O_PROMVP
-	if (FIELDPOS("polog01")==0 .or. FIELDPOS("_SITE_")==0)
-		USE
-		goModul:oDatabase:kreiraj(F_PROMVP)
-		USE
-	endif
-	USE
+    O_PROMVP
+    if (FIELDPOS("polog01")==0 .or. FIELDPOS("_SITE_")==0)
+        USE
+        goModul:oDatabase:kreiraj(F_PROMVP)
+        USE
+    endif
+    USE
 endif
 
 return
@@ -70,8 +70,8 @@ local _rec
 O_STRAD
 
 if (RECCOUNT2() == 0)
-	
-	MsgO("Kreiram ini STRAD")
+    
+    MsgO("Kreiram ini STRAD")
 
     sql_table_update( nil, "BEGIN")
 
@@ -83,7 +83,7 @@ if (RECCOUNT2() == 0)
     _rec["naz"] := "Nivo adm."
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-	
+    
     append blank
     _rec := dbf_get_rec()
     _rec["id"] := "1"
@@ -102,15 +102,15 @@ if (RECCOUNT2() == 0)
 
     sql_table_update( nil, "END")
 
-	MsgC()
-	
+    MsgC()
+    
 endif
 
 O_OSOB
 
 if (RECCOUNT2() == 0)
-	
-	MsgO("Kreiram ini OSOB")
+    
+    MsgO("Kreiram ini OSOB")
     
     select osob
    
@@ -124,7 +124,7 @@ if (RECCOUNT2() == 0)
     _rec["status"] := "0"
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-	
+    
     append blank
     _rec := dbf_get_rec()
     _rec["id"] := "0010"
@@ -133,7 +133,7 @@ if (RECCOUNT2() == 0)
     _rec["status"] := "3"
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-	
+    
     append blank
     _rec := dbf_get_rec() 
     _rec["id"] := "0011"
@@ -142,10 +142,10 @@ if (RECCOUNT2() == 0)
     _rec["status"] := "3"
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-	
+    
     sql_table_update( nil, "END")
 
-	MsgC()
+    MsgC()
 
 endif
 
@@ -159,15 +159,15 @@ function UzmiBkIzSez()
 local _rec
 
 if !SigmaSif("BKIZSEZ")
-	MsgBeep("Ne cackaj!")
-	return
+    MsgBeep("Ne cackaj!")
+    return
 endif
 
 Box(,5,60)
-	cUvijekUzmi := "N"
-	@ 1+m_x, 2+m_y SAY "Uvijek uzmi BARKOD iz sezone (D/N)?" GET cUvijekUzmi PICT "@!" VALID cUvijekUzmi $ "DN"
-	
-	read
+    cUvijekUzmi := "N"
+    @ 1+m_x, 2+m_y SAY "Uvijek uzmi BARKOD iz sezone (D/N)?" GET cUvijekUzmi PICT "@!" VALID cUvijekUzmi $ "DN"
+    
+    read
 BoxC()
 
 O_ROBA
@@ -181,37 +181,37 @@ go top
 Box(,3,60)
 
 do while !eof()
-	
-	cIdRoba := roba->id
-	
-	select robasez
-	set order to tag "ID"
-	hseek cIdRoba
-	
-	if !Found()
-		select roba
-		skip
-		loop
-	endif
-	
-	cBkSez := robasez->barkod
-	
-	@ m_x+1,m_y+2 SAY "Roba : " + cIdRoba
-	
-	if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ((cUvijekUzmi == "D") .and. !empty(cBkSez))
-		
-		select roba
+    
+    cIdRoba := roba->id
+    
+    select robasez
+    set order to tag "ID"
+    hseek cIdRoba
+    
+    if !Found()
+        select roba
+        skip
+        loop
+    endif
+    
+    cBkSez := robasez->barkod
+    
+    @ m_x+1,m_y+2 SAY "Roba : " + cIdRoba
+    
+    if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ((cUvijekUzmi == "D") .and. !empty(cBkSez))
+        
+        select roba
         _rec := dbf_get_rec()
         _rec["barkod"] := cBKSez
         update_rec_server_and_dbf( ALIAS(), _rec )
-		
-		@ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
-	endif
-	
-	select roba
-	skip
-	
-enddo		
+        
+        @ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
+    endif
+    
+    select roba
+    skip
+    
+enddo       
 
 BoxC()
 

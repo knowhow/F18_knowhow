@@ -290,6 +290,9 @@ endif
 
 a_dbf_rec := get_a_dbf_rec(table)
 
+// ako je alias proslijedjen kao ulazni parametar, prebaci se na dbf_table
+table := a_dbf_rec["table"]
+
 alg := a_dbf_rec["algoritam"][algoritam]
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }

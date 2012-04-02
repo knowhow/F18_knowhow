@@ -42,17 +42,17 @@ local _table
 local _a_dbf_rec
 
 
-_a_dbf_rec := get_a_dbf_rec(table)
+_a_dbf_rec  := get_a_dbf_rec(table)
 
 _dbf_fields := _a_dbf_rec["dbf_fields"]
 _sql_fields := sql_fields( _dbf_fields )
 
 _sql_order  := _a_dbf_rec["sql_order"]
 
-_dbf_wa    := _a_dbf_rec["wa"]
-_dbf_alias := _a_dbf_rec["alias"]
+_dbf_wa     := _a_dbf_rec["wa"]
+_dbf_alias  := _a_dbf_rec["alias"]
 
-_sql_tbl   := "fmk." + table
+_sql_tbl    := "fmk." + table
 
 
 _x := maxrows() - 15

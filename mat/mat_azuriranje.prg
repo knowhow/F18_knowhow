@@ -182,16 +182,21 @@ local _tbl_anal
 local _tbl_sint
 local _tbl_nalog
 local _i
+local _ids_suban := {}
+local _ids_sint := {}
+local _ids_anal := {}
+local _ids_nalog := {}
+
 
 _tbl_suban := "mat_suban"
-_tbl_anal := "mat_anal"
+_tbl_anal  := "mat_anal"
 _tbl_nalog := "mat_nalog"
-_tbl_sint := "mat_sint"
+_tbl_sint  := "mat_sint"
 
-lock_semaphore( _tbl_suban, "lock" )
-lock_semaphore( _tbl_anal, "lock" )
-lock_semaphore( _tbl_sint, "lock" )
-lock_semaphore( _tbl_nalog, "lock" )
+lock_semaphore( _tbl_suban , "lock" )
+lock_semaphore( _tbl_anal  , "lock" )
+lock_semaphore( _tbl_sint  , "lock" )
+lock_semaphore( _tbl_nalog , "lock" )
    
 if _ok = .t.
   
@@ -202,79 +207,51 @@ if _ok = .t.
   select mat_psuban
   go top
 
-  sql_mat_suban_update("BEGIN")
+  sql_table_update(nil, "BEGIN")
   
-  do while !eof()
  
-     record["id_firma"] := field->IdFirma
-     record["id_vn"] := field->IdVn
-     record["br_nal"] := field->BrNal
-     _tmp_id := record["id_firma"] + record["id_vn"] + record["br_nal"]
+  record := dbf_get_rec()
+  _tmp_id := record["id_firma"] + record["idvn"] + record["brnal"]
+  AADD( _ids_suban, "#2" + _tmp_id )
 
-     record["r_br"] := field->Rbr
-     record["dat_dok"] := field->DatDok
-     record["id_roba"] := field->idroba
-     record["id_konto"] := field->idkonto
-     record["id_partner"] := field->IdPartner
-     record["d_p"] := field->d_p
-     record["iznos"] := field->iznos
-     record["iznos2"] := field->iznos2
-     record["id_tip_dok"] := field->IdTipDok
-     record["br_dok"] := field->brdok
-     record["u_i"] := field->u_i
-     record["kolicina"] := field->kolicina
-     record["id_zaduz"] := field->idzaduz
-     record["dat_kurs"] := field->datkurs
-     record["k1"] := field->k1
-     record["k2"] := field->k2
-     record["k3"] := field->k3
-     record["k4"] := field->k4
+  @ m_x+1, m_y+2 SAY "mat_suban -> server: " + _tmp_id 
+  do while !eof()
 
-     if !sql_mat_suban_update("ins", record )
-       _ok := .f.
+     record := dbf_get_rec()
+     if !update_server_from_rec("mat_suban", "ins", record )
+       _Ok := .f.
        exit
      endif
 
-     skip
-  
+     SKIP
   enddo
+
 
   MsgC()
 
 endif
 
 // idi dalje, na anal ... ako je ok
-if _ok = .t.
+if _ok == .t.
   
-  MsgO("sql mat_anal")
-
-  record := hb_hash()
 
   select mat_panal
   go top
-  
-  sql_mat_anal_update("BEGIN")
-  
-  do while !eof()
  
-   record["id_firma"] := field->IdFirma
-   record["id_vn"] := field->IdVn
-   record["br_nal"] := field->BrNal
-   record["r_br"] := field->Rbr
-   record["dat_nal"] := field->Datnal
-   record["id_konto"] := field->IdKonto
-   record["dug"] := field->dug
-   record["pot"] := field->pot
-   record["dug2"] := field->dug2
-   record["pot2"] := field->pot2
+  MsgO("sql mat_anal")
+  record := dbf_get_rec()
+  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  AADD( _ids_anal, "#2" + _tmp_id )
 
-   if !sql_mat_anal_update("ins", record )
-       _ok := .f.
+  do while !eof()
+   record := dbf_get_rec()
+   if !update_server_from_rec("mat_anal", "ins", record )
+       lOk := .f.
        exit
     endif
-   skip
+   SKIP
   enddo
-
+  
   MsgC()
 
 endif
@@ -285,31 +262,21 @@ if _ok = .t.
   
   MsgO("sql mat_sint")
 
-  record := hb_hash()
-
   select mat_psint
   go top
-  
-  sql_mat_sint_update("BEGIN")
-  
+ 
+  record := dbf_get_rec()
+  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  AADD( _ids_sint, "#2" + _tmp_id )
+
   do while !eof()
  
-   record["id_firma"] := field->IdFirma
-   record["id_vn"] := field->IdVn
-   record["br_nal"] := field->BrNal
-   record["r_br"] := field->Rbr
-   record["dat_nal"] := field->Datnal
-   record["id_konto"] := LEFT( field->IdKonto, 3 )
-   record["dug"] := field->dug
-   record["pot"] := field->pot
-   record["dug2"] := field->dug2
-   record["pot2"] := field->pot2
-
-   if !sql_mat_sint_update("ins", record )
-       _ok := .f.
+   record := dbf_get_rec()
+   if !update_server_from_rec("mat_sint", "ins", record )
+       lOk := .f.
        exit
     endif
-   skip
+   SKIP
   enddo
 
   MsgC()
@@ -325,29 +292,24 @@ if _ok = .t.
   record := hb_hash()
 
   select mat_pnalog
-  go top
 
-  sql_mat_nalog_update("BEGIN")
+
+  GO TOP
+ 
+  record := dbf_get_rec()
+  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  AADD( _ids_nalog, _tmp_id )
 
   do while !eof()
  
-   record["id_firma"] := field->IdFirma
-   record["id_vn"] := field->IdVn
-   record["br_nal"] := field->BrNal
-   record["dat_nal"] := field->Datnal
-   record["dug"] := field->dug
-   record["pot"] := field->pot
-   record["dug2"] := field->dug2
-   record["pot2"] := field->pot2
-
-   if !sql_mat_nalog_update("ins", record )
-       _ok := .f.
+   record := dbf_get_rec()
+   if !update_server_from_rec("mat_nalog", "ins", record )
+       lOk := .f.
        exit
     endif
-   skip
+   SKIP
   enddo
 
-  MsgC()
 
 endif
 
@@ -355,43 +317,33 @@ endif
 if ! _ok
 
     // vrati sve promjene...    
-    sql_mat_suban_update( "ROLLBACK" )
-    sql_mat_sint_update( "ROLLBACK" )
-    sql_mat_anal_update( "ROLLBACK" )
-    sql_mat_nalog_update( "ROLLBACK" )
+    sql_table_update(nil, "ROLLBACK" )
 
 else
 
     // dodaj ids
     AADD(_ids, _tmp_id) 
     
-    // suban  
+    push_ids_to_semaphore( _tbl_suban, _ids_suban )
+    push_ids_to_semaphore( _tbl_anal,  _ids_anal  )
+    push_ids_to_semaphore( _tbl_sint,  _ids_sint  )
+    push_ids_to_semaphore( _tbl_nalog, _ids_nalog )
+
     update_semaphore_version( _tbl_suban, .t.)
-    push_ids_to_semaphore( _tbl_suban, _ids )
-    sql_mat_suban_update("END")
-
-    // anal
-    update_semaphore_version( _tbl_anal, .t.)
-    push_ids_to_semaphore( _tbl_anal, _ids )
-    sql_mat_anal_update("END")
-    
-    // sint
-    update_semaphore_version( _tbl_sint, .t.)
-    push_ids_to_semaphore( _tbl_sint, _ids )
-    sql_mat_sint_update("END")
-    
-    // nalog
+    update_semaphore_version( _tbl_anal,  .t.)
+    update_semaphore_version( _tbl_sint,  .t.)
     update_semaphore_version( _tbl_nalog, .t.)
-    push_ids_to_semaphore( _tbl_nalog, _ids )
-    sql_mat_nalog_update("END")
+  
+    // otkljucaj sve tabele
+    lock_semaphore(_tbl_suban, "free")
+    lock_semaphore(_tbl_anal,  "free")
+    lock_semaphore(_tbl_sint,  "free")
+    lock_semaphore(_tbl_nalog, "free")
 
+
+
+    sql_table_update(nil, "END")
 endif
-
-// otkljucaj sve tabele
-lock_semaphore(_tbl_suban, "free")
-lock_semaphore(_tbl_anal, "free")
-lock_semaphore(_tbl_sint, "free")
-lock_semaphore(_tbl_nalog, "free")
 
 return _ok
 

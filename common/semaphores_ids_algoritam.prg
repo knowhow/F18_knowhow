@@ -31,7 +31,7 @@ if _zap <> 0
    // postoji zahtjev za full synchro
    full_synchro(dbf_table)
    
-   // otvoricu tabelu ponovo ... exlcusivno, ne bi to trebalo biti problem
+   // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
    reopen_exclusive(dbf_table)
 
    ADEL(_zap, _ids_queries["qry"])

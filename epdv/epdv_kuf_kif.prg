@@ -176,41 +176,14 @@ if lOk = .t.
   select ( __area )
   go top
 
-  if tbl == "KUF"
-  		sql_epdv_kuf_update("BEGIN")
-  elseif tbl == "KIF"
-  		sql_epdv_kif_update("BEGIN")
-  endif
+  sql_table_update(nil, "BEGIN")
 
   do while !eof()
-	  
-   record["datum"] := field->datum
+
+   record := dbf_get_rec()	  
    record["datum_2"] := DATE()
-   record["src"] := field->src
-   record["td_src"] := field->td_src
-   record["src_2"] := field->src_2
-   record["id_tar"] := field->id_tar
-   record["id_part"] := field->id_part
-   record["part_idbr"] := field->part_idbr
-   record["part_kat"] := field->part_kat
-   record["src_td"] := field->src_td
-   record["src_br"] := field->src_br
-   record["src_veza_b"] := field->src_veza_b
-   record["src_br_2"] := field->src_br_2
-   record["r_br"] := field->r_br
    record["br_dok"] := next_br_dok
    record["g_r_br"] := next_g_rbr
-   record["lock"] := field->lock
-   record["kat"] := field->kat
-   record["kat_2"] := field->kat_2
-   record["opis"] := field->opis
-   record["i_b_pdv"] := field->i_b_pdv
-   record["i_pdv"] := field->i_pdv
-   record["i_v_b_pdv"] := field->i_v_b_pdv
-   record["i_v_pdv"] := field->i_v_pdv
-   record["status"] := field->status
-   record["kat_p"] := field->kat_p
-   record["kat_p_2"] := field->kat_p_2
 
    if tbl == "KIF"
    		record["src_pm"] := field->src_pm
@@ -218,17 +191,10 @@ if lOk = .t.
                
    _tmp_id := PADR( ALLTRIM( STR( record["br_dok"], 6 ) ), 6 ) 
    
-   if tbl == "KUF"
-   	    if !sql_epdv_kuf_update( "ins", record )
+   if !sql_table_update(_tbl_epdv, "ins", record )
        		lOk := .f.
        		exit
-   		endif
-   elseif tbl == "KIF"
-   	    if !sql_epdv_kif_update( "ins", record )
-       		lOk := .f.
-       		exit
-   		endif
-   endif
+   	endif
 
    skip
 
@@ -241,11 +207,7 @@ endif
 if !lOk
 
 	// vrati sve nazad...  	
-	if tbl == "KUF"
-		sql_epdv_kuf_update("ROLLBACK")
-	elseif tbl == "KIF"
-		sql_epdv_kif_update("ROLLBACK")
-	endif
+	sql_table_update(nil, "ROLLBACK")
 
 else
 	
@@ -257,11 +219,7 @@ else
 	update_semaphore_version( _tbl_epdv, .t. )
 	push_ids_to_semaphore( _tbl_epdv, _ids ) 
   	
-	if tbl == "KUF"
-		sql_epdv_kuf_update("END")
-	elseif tbl == "KIF"
-		sql_epdv_kif_update("END")
-	endif
+	sql_table_update(nil, "END")
 
 endif
 

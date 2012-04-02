@@ -19,6 +19,7 @@ function set_a_dbfs_legacy()
 _dbf_fields := NIL
 
 
+/*
 AADD( gaDbfs, { F_FIN_PRIPR  ,  "FIN_PRIPR"   , "fin_pripr"  } )
 AADD( gaDbfs, { F_FIN_PRIPR , "FIN_FIPRIPR"   , "fin_pripr"  } )
 AADD( gaDbfs, { F_BBKLAS ,  "BBKLAS"  , "fin_bblkas"  } )
@@ -183,6 +184,7 @@ AADD(gaDBFs, { F_JPRIH  ,  "JPRIH"   , "jprih", { |alg| jprih_from_sql_server(al
 AADD(gaDBFs, { F_LDVIRM ,  "LDVIRM"  , "ldvirm", { |alg| ldvirm_from_sql_server( alg ) }, "IDS" } )
 AADD(gaDBFs, { F_KALVIR ,  "KALVIR"  , "kalvir", { |alg| kalvir_from_sql_server(alg) }, "IDS" } )
 
+*/
 
 return
 

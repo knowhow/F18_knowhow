@@ -112,11 +112,7 @@ _tbl_anal  := "fin_anal"
 _tbl_nalog := "fin_nalog"
 _tbl_sint  := "fin_sint"
 
-lock_semaphore( _tbl_suban, "lock" )
-lock_semaphore( _tbl_anal,  "lock" )
-lock_semaphore( _tbl_sint,  "lock" )
-lock_semaphore( _tbl_nalog, "lock" )
-   
+  
 // -----------------------------------
 
 Box(, 5, 60)
@@ -130,7 +126,14 @@ if lOk = .t.
   GO TOP
   lOk := .t.
  
-  update_server_from_rec("fin_suban", "BEGIN")
+
+  sql_table_update(nil, "BEGIN")
+
+  lock_semaphore( _tbl_suban, "lock" )
+  lock_semaphore( _tbl_anal,  "lock" )
+  lock_semaphore( _tbl_sint,  "lock" )
+  lock_semaphore( _tbl_nalog, "lock" )
+ 
 
   record := dbf_get_rec()
   // algoritam 2 - dokument nivo
@@ -254,16 +257,17 @@ else
     update_semaphore_version( _tbl_sint  , .t. )
     update_semaphore_version( _tbl_nalog , .t. )
 
+
+    // otkljucaj sve tabele
+    lock_semaphore(_tbl_suban, "free")
+    lock_semaphore(_tbl_anal,  "free")
+    lock_semaphore(_tbl_sint,  "free")
+    lock_semaphore(_tbl_nalog, "free")
+
  
-    update_server_from_rec("fin_suban", "END")
+    sql_table_update(nil, "END")
 
 endif
-
-// otkljucaj sve tabele
-lock_semaphore(_tbl_suban, "free")
-lock_semaphore(_tbl_anal,  "free")
-lock_semaphore(_tbl_sint,  "free")
-lock_semaphore(_tbl_nalog, "free")
 
 BoxC()
 return lOk

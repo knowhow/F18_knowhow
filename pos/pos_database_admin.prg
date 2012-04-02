@@ -78,25 +78,25 @@ if (RECCOUNT2() == 0)
     select strad
     append blank
     _rec := dbf_get_rec()
-    _rec["id"] := "0"
-    _rec["prioritet"] := "0"
-    _rec["naz"] := "Nivo adm."
+    _rec["id"] := PADR( "0", LEN( _rec["id"] ) )
+    _rec["prioritet"] := PADR( "0", LEN( _rec["prioritet"] ) )
+    _rec["naz"] := PADR( "Nivo adm.", LEN( _rec["naz"] ) )
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
     
     append blank
     _rec := dbf_get_rec()
-    _rec["id"] := "1"
-    _rec["prioritet"] := "1"
-    _rec["naz"] := "Nivo upr."
+    _rec["id"] := PADR( "1", LEN( _rec["id"] ) )
+    _rec["prioritet"] := PADR( "1", LEN( _rec["prioritet"] ) )
+    _rec["naz"] := PADR( "Nivo upr.", LEN( _rec["naz"] ) )
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
     append blank
     _rec := dbf_get_rec()
-    _rec["id"] := "3"
-    _rec["prioritet"] := "3"
-    _rec["naz"] := "Nivo prod."
+    _rec["id"] := PADR( "3", LEN( _rec["id"] ) )
+    _rec["prioritet"] := PADR( "3", LEN( _rec["prioritet"] ) )
+    _rec["naz"] := PADR( "Nivo prod.", LEN( _rec["naz"] ) )
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
@@ -118,28 +118,28 @@ if (RECCOUNT2() == 0)
     
     append blank
     _rec := dbf_get_rec()
-    _rec["id"] := "0001"
-    _rec["korsif"] := CryptSc( PADR( "PARSON", 6 ) )
-    _rec["naz"] := "Admin"
-    _rec["status"] := "0"
+    _rec["id"] := PADR( "0001", LEN( _rec["id"] ) )
+    _rec["korsif"] := PADR( CryptSc( PADR( "PARSON", 6 ) ), 6 )
+    _rec["naz"] := PADR( "Admin", LEN( _rec["naz"] ) )
+    _rec["status"] := PADR( "0", LEN( _rec["status"] ) )
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
     
     append blank
     _rec := dbf_get_rec()
-    _rec["id"] := "0010"
-    _rec["korsif"] := CryptSc( PADR( "P1", 6 ) )
-    _rec["naz"] := "Prodavac 1"
-    _rec["status"] := "3"
+    _rec["id"] := PADR( "0010", LEN( _rec["id"] ) )
+    _rec["korsif"] := PADR( CryptSc( PADR( "P1", 6 ) ), 6 )
+    _rec["naz"] := PADR( "Prodavac 1", LEN( _rec["naz"] ) )
+    _rec["status"] := PADR( "3", LEN( _rec["status"] ) )
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
     
     append blank
     _rec := dbf_get_rec() 
-    _rec["id"] := "0011"
-    _rec["korsif"] := CryptSc( PADR( "P2", 6 ) )
-    _rec["naz"] := "Prodavac 2"
-    _rec["status"] := "3"
+    _rec["id"] := PADR( "0011", LEN( _rec["id"] ) )
+    _rec["korsif"] := PADR( CryptSc( PADR( "P2", 6 ) ), 6 )
+    _rec["naz"] := PADR( "Prodavac 2", LEN( _rec["naz"] ) )
+    _rec["status"] := PADR( "3", LEN( _rec["status"] ) )
 
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
     

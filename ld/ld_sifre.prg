@@ -25,8 +25,6 @@ if PCount() = 0
     lPInfo := .t.
 endif
 
-altd()
-
 // filterisanje tabele radnika
 _radn_filter( .t. )
 

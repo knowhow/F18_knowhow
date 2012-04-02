@@ -120,7 +120,7 @@ Box(, 12,70,.f.)
 	
 	nX := 1
 
-   	scatter()
+    set_global_memvars_from_dbf()
 
 	if lNew == .t.
 		_idradn := __IDRADN
@@ -195,29 +195,26 @@ Box(, 12,70,.f.)
 
 	read
 	
+    sql_table_update( nil, "BEGIN" )
+
 	if lNew == .t. .and. LastKey() <> K_ESC
-		append blank
-		gather()
-		// snimiti u sql bazu
-		_vals := f18_scatter_global_vars()
-		if !sql_update_ld_pk_data( _vals ) 
-			delete
-		endif	
+		//append blank
+		_vals := get_dbf_global_memvars()
+		update_rec_server_and_dbf( "ld_pk_data", _vals, 1, "CONT" )
 	endif
 
 	if lNew == .f.
-		gather()
-		// snimiti u sql bazu
-		_vals := f18_scatter_global_vars()
-		if !sql_update_ld_pk_data( _vals ) 
-		endif	
+		_vals := get_dbf_global_memvars()
+		update_rec_server_and_dbf( "ld_pk_data", _vals, 1, "CONT" )
 		exit
 	endif
+
+    sql_table_update( nil, "END" )
 
 	if LastKey() == K_ESC
 		exit
 	endif
-	
+    
     enddo
 
 BoxC()

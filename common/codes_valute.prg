@@ -160,6 +160,7 @@ ImeKol := {}
 Kol := {}
 
 nTArea := SELECT()
+
 O_VALUTE
 
 AADD(ImeKol,   { "ID "       , {|| id }   , "id"        })
@@ -175,9 +176,10 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
+
 select (nTArea)
 
-return PostojiSifra(F_VALUTE,2,10,77,"Valute",@cid,dx,dy)
+return PostojiSifra(F_VALUTE, 2, 10, 77, "Valute", @cid, dx, dy)
 
 // -------------------------------------
 // sekundarna valuta

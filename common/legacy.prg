@@ -982,12 +982,14 @@ do while .t.
      otherwise
 
          if opcexe[nIzbor] <> nil
-             private xPom:=opcexe[nIzbor]
+             private xPom := opcexe[nIzbor]
 
-             if VALTYPE(xPom)="C"
-                xDummy:=&(xPom)
-             else
+             if VALTYPE(xPom) == "C"
+                xDummy := &(xPom)
+             elseif VALTYPE(xPom) == "B"
                 EVAL(xPom)
+             else
+                Alert(RECI_GDJE_SAM + " xPom ?!")
              endif
 
          endif  

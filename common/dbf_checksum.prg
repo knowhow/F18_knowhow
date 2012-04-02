@@ -32,8 +32,15 @@ _sql_table :=  my_server_params()["schema"] + "." + _a_dbf_rec["table"]
 
 _cnt_sql := table_count(_sql_table)
 
+begin sequence with { |err| Break(err) }
+  // pozicioniraj se po aliasu, a ne po workarea-i
+  SELECT (_a_dbf_rec["alias"])
+  USE 
+recover
+  SELECT (_a_dbf_rec["wa"])
+end sequence
 
-SELECT (_a_dbf_rec["wa"])
+
 if !USED()
     dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .t. , .f.)
     _opened := .t.

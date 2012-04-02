@@ -54,6 +54,7 @@ CREATE_INDEX("ID","id", "konto")
 CREATE_INDEX("NAZ","naz", "konto")
 index_mcode(SIFPATH, "KONTO")
 
+
 // VALUTE
 cIme := f18_ime_dbf("valute")
 if !file(cIme)
@@ -68,29 +69,26 @@ if !file(cIme)
         AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
         AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
         dbcreate2("valute", aDbf)
+
         reset_semaphore_version("valute")
+        my_use("valute")
         close all
-        my_use ('valute')
-        append blank
-        replace id with "000", naz with "KONVERTIBILNA MARKA", ;
-                NAZ2 WITH "KM", DATUM WITH CTOD("01.01.04"), TIP WITH "D",;
-                KURS1 WITH 1, KURS2 WITH 1, KURS3 WITH 1
-        append blank
-        replace id with "978", naz with "EURO", ;
-                NAZ2 WITH "EUR", DATUM WITH CTOD("01.01.04"), TIP WITH "P",;
-                KURS1 WITH 0.512, KURS2 WITH 0.512, KURS3 WITH 0.512
-        CLOSE ALL
+    
+        fill_tbl_valute()
+
 endif
+
 CREATE_INDEX("ID","id", "valute")
 CREATE_INDEX("NAZ","tip+id+dtos(datum)", "valute")
 CREATE_INDEX("ID2","id+dtos(datum)", "valute")
-index_mcode(SIFPATH, cIme)
+index_mcode(cIme)
+
 
 // TOKVAL
 if !file(f18_ime_dbf('tokval.dbf'))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,  8  ,  2 })
-    AADD(aDBf,{ 'NAZ'                 , 'N' ,  8 ,   2 })
+        AADD(aDBf,{ 'NAZ'                 , 'N' ,  8 ,   2 })
         AADD(aDBf,{ 'NAZ2'                , 'N' ,  8 ,   2 })
         dbcreate2( 'tokval', aDbf)
 endif
@@ -227,3 +225,43 @@ cre_relation()
 cre_fmkrules()
 
 return .t.
+
+
+// ----------------------------------------
+// ----------------------------------------
+function fill_tbl_valute()
+local _rec
+
+close all
+my_use ('valute')
+
+
+append blank
+_rec := dbf_get_rec()
+_rec["id"]    := "000" 
+_rec["naz"]   := "KONVERTIBILNA MARKA"
+_rec["naz2"]  := "KM"
+_rec["datum"] := CTOD("01.01.04")
+_rec["tip"]   := "D"
+_rec["kurs1"] := 1
+_rec["kurs2"] := 1
+_rec["kurs3"] := 1
+update_rec_server_and_dbf('valute', _rec)
+
+append blank
+_rec := dbf_get_rec()
+_rec["id"]    := "978" 
+_rec["naz"]   := "EURO"
+_rec["naz2"]  := "EUR"
+_rec["datum"] := CTOD("01.01.04")
+_rec["tip"]   := "P"
+_rec["kurs1"] := 0.512
+_rec["kurs2"] := 0.512
+_rec["kurs3"] := 0.512
+update_rec_server_and_dbf('valute', _rec)
+
+
+CLOSE ALL
+
+return .t.
+

@@ -32,13 +32,21 @@ local cImeCDX
 local nOrder
 local nPos
 local cImeDbf
+local _a_dbf_rec
+local _wa
 
 private cTag
 private cKljuciz
 
 close all
-  
+
+alias := FILEBASE(alias)
+ 
+_a_dbf_rec := get_a_dbf_rec(alias, .t.)
+_wa := _a_dbf_rec["wa"]
+
 cImeDbf := f18_ime_dbf(alias)
+
 
 if silent == nil
     silent := .f.
@@ -59,8 +67,7 @@ endif
 
 fPostoji := .t.
 
-select (F_TMP)
-//USE (f18_ime_dbf(alias)) EXCLUSIVE
+select (_wa)
 
 
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
@@ -84,7 +91,7 @@ end sequence
 if USED()
 	nOrder := ORDNUMBER( cTag )
 	cOrdKey := ORDKEY( cTag )
-	select (F_TMP)
+	select (_wa)
 	use
 else
 	log_write("create_index: Ne mogu otvoriti " + cImeDbf )
@@ -97,7 +104,7 @@ endif
 
 if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
 
-     SELECT(F_TMP)
+     SELECT(_wa)
      use
      USE (f18_ime_dbf(alias)) EXCLUSIVE
  
@@ -139,6 +146,7 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
 
 endif
 
+close all
 return
 
 

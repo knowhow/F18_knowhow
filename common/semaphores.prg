@@ -55,10 +55,6 @@ local _pos
 local _version, _last_version
 local _area
 
-if new_area == NIL
-   new_area := .f.
-endif
-
 if excl == NIL
   excl := .f.
 endif
@@ -67,6 +63,13 @@ if table == NIL
   _a_dbf_rec := get_a_dbf_rec(alias)
 else
   _a_dbf_rec := get_a_dbf_rec(table)
+endif
+
+
+if new_area == NIL
+   new_area := .f.
+   // pozicioniraj se na WA rezervisanu za ovu tabelu 
+   SELECT (_a_dbf_rec["wa"])
 endif
 
 table := _a_dbf_rec["table"]

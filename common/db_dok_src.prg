@@ -48,13 +48,13 @@ AADD(aDBf,{ "src_opis"            , "C" ,  30 ,  0 })
 
 // kreiraj u KUMPATH
 if !FILE( f18_ime_dbf(cDokSrcName) )
-	DBCREATE2(KUMPATH + cDokSrcName + ".dbf", aDbf)
+	DBCREATE2(cDokSrcName + ".dbf", aDbf)
 endif
 
 // indexi....
-CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", KUMPATH + cDokSrcName)
+CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName)
 
-CREATE_INDEX("2","src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", KUMPATH + cDokSrcName)
+CREATE_INDEX("2","src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName)
 
 // kreiraj u PRIVPATH
 if !FILE( f18_ime_dbf(cPDokSrcName))
@@ -245,7 +245,7 @@ return
 // -----------------------------------------
 function is_doksrc()
 local lRet := .f.
-if FILE(KUMPATH + "DOKSRC.DBF")
+if FILE("DOKSRC.DBF")
 	lRet := .t.
 endif
 return lRet
@@ -430,10 +430,10 @@ AADD(aDBf,{ "p_up_time"           , "C" ,  10 ,  0 })
 
 // kreiraj u KUMPATH
 if !FILE( f18_ime_dbf(cDbfName))
-	DBCREATE2(KUMPATH + cDbfName + ".DBF", aDbf)
+	DBCREATE2(cDbfName + ".DBF", aDbf)
 endif
 // indexi....
-CREATE_INDEX("1","modul+idkonto+p_updated", KUMPATH + cDbfName)
+CREATE_INDEX("1","modul+idkonto+p_updated", cDbfName)
 
 return
 

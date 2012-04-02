@@ -182,6 +182,13 @@ if sql_table_update(table, "del", nil, _where_str)
     push_ids_to_semaphore( table, _ids )
 
     SELECT (_a_dbf_rec["alias"])
+    
+    if ORDNUMBER(_alg["dbf_tag"]) < 1
+          _msg := RECI_GDJE_SAM0 + " " + _alg["dbf_tag"]
+          Alert(_msg)
+          log_write(_msg)
+          QUIT
+    endif
     SET ORDER TO TAG (_alg["dbf_tag"])
 
     if FLOCK()

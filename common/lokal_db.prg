@@ -44,10 +44,10 @@ if (nArea==-1 .or. nArea == F_LOKAL)
         close all
 	endif
 	
-	CREATE_INDEX("ID","id+STR(id_str,6,0)+naz",  SIFPATH+cTbl)
-	CREATE_INDEX("IDNAZ","id+naz",  SIFPATH+cTbl)
-	CREATE_INDEX("ID_STR","STR(id_str,6,0)+naz+id", SIFPATH+cTbl)
-	CREATE_INDEX("NAZ","naz+str(id_str,6,0)", SIFPATH+cTbl)
+	CREATE_INDEX("ID","id+STR(id_str,6,0)+naz",  cTbl)
+	CREATE_INDEX("IDNAZ","id+naz",  cTbl)
+	CREATE_INDEX("ID_STR","STR(id_str,6,0)+naz+id", cTbl)
+	CREATE_INDEX("NAZ","naz+str(id_str,6,0)", cTbl)
 endif
 
 return

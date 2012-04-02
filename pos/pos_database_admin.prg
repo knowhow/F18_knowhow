@@ -82,7 +82,7 @@ if (RECCOUNT2() == 0)
     _rec["prioritet"] := PADR( "0", LEN( _rec["prioritet"] ) )
     _rec["naz"] := PADR( "Nivo adm.", LEN( _rec["naz"] ) )
 
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
     
     append blank
     _rec := dbf_get_rec()
@@ -90,7 +90,7 @@ if (RECCOUNT2() == 0)
     _rec["prioritet"] := PADR( "1", LEN( _rec["prioritet"] ) )
     _rec["naz"] := PADR( "Nivo upr.", LEN( _rec["naz"] ) )
 
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
 
     append blank
     _rec := dbf_get_rec()
@@ -98,7 +98,7 @@ if (RECCOUNT2() == 0)
     _rec["prioritet"] := PADR( "3", LEN( _rec["prioritet"] ) )
     _rec["naz"] := PADR( "Nivo prod.", LEN( _rec["naz"] ) )
 
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
 
     sql_table_update( nil, "END")
 
@@ -123,7 +123,7 @@ if (RECCOUNT2() == 0)
     _rec["naz"] := PADR( "Admin", LEN( _rec["naz"] ) )
     _rec["status"] := PADR( "0", LEN( _rec["status"] ) )
 
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
     
     append blank
     _rec := dbf_get_rec()
@@ -132,7 +132,7 @@ if (RECCOUNT2() == 0)
     _rec["naz"] := PADR( "Prodavac 1", LEN( _rec["naz"] ) )
     _rec["status"] := PADR( "3", LEN( _rec["status"] ) )
 
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
     
     append blank
     _rec := dbf_get_rec() 
@@ -141,7 +141,7 @@ if (RECCOUNT2() == 0)
     _rec["naz"] := PADR( "Prodavac 2", LEN( _rec["naz"] ) )
     _rec["status"] := PADR( "3", LEN( _rec["status"] ) )
 
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
     
     sql_table_update( nil, "END")
 

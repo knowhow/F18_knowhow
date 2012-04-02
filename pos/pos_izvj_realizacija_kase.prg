@@ -62,12 +62,14 @@ endif
 
 ODbRpt()
 
+TblCrePom()
+// TblCrePom prilikom kreiranja 
+// indeksa zatvori sve tabele
+
+ODbRpt()
+
 SELECT osob
 SET ORDER TO TAG "NAZ"
-
-TblCrePom()
-// TblCrePom prilikom kreiranja indeksa zatvori sve tabele
-ODbRpt()
 
 cPVrstePl:="N"
 cAPrometa:="N"
@@ -103,7 +105,10 @@ else
 	Zagl(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj, cGotZir)
 endif // fZaklj
 
+ODbRpt()
+O_POM
 O_POS_DOKS
+
 SetFilter(@cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId)
 
 // fZaklj - zakljucenje smjene
@@ -459,16 +464,10 @@ if empty(cIdPos)
 endif
 
 return
-*}
 
 
-
-/*! \fn TblCrePom()
- *  \brief Kreiranje pomocne tabele za izvjestaj realizacije kase
- */
 
 static function TblCrePom()
-*{
 local aDbf := {}
 local cPomDbf
 
@@ -487,7 +486,7 @@ AADD(aDbf,{"K2"       ,"C",  4, 0})
 
 NaprPom(aDbf)
 
-cPomDbf := "POM.DBF"
+cPomDbf := "pom"
 
 CREATE_INDEX("1" ,"IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena",cPomDbf,.t.)
 CREATE_INDEX("2" ,"IdPos+IdOdj+IdRoba+IdCijena"                  ,cPomDbf,.f.)
@@ -496,7 +495,6 @@ CREATE_INDEX("4" ,"IdPos+IdVrsteP"                               ,cPomDbf,.f.)
 CREATE_INDEX("K1","IdPos+K1+idroba"                              ,cPomDbf,.f.)
 
 O_POM
-
 set order to tag "1"
 
 return

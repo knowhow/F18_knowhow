@@ -12,6 +12,7 @@
 
 #include "pos.ch"
 
+
 function pos_main_menu_prodavac()
 private opc:={}
 private opcexe:={}

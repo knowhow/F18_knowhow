@@ -77,11 +77,31 @@ return
 // otvori tabele potrebne za unos stavki u racun
 // ------------------------------------------------
 function o_edit_rn()
-O__POS
-O__POS_PRIPR
-O_K2C
-O_MJTRUR 
-O_UREDJ 
+
+select F__POS
+if !used()
+    O__POS
+endif
+
+select F__PRIPR
+if !used()
+    O__POS_PRIPR
+endif
+
+select k2c
+if !used()
+    O_K2C
+endif
+
+select mjtrur
+if !used()
+    O_MJTRUR 
+endif
+
+select uredj
+if !used()
+    O_UREDJ 
+endif
 
 o_pregled()
 
@@ -161,15 +181,12 @@ enddo
 select pos
 set order to tag "1"
 return nStanje
-*}
 
 
-/*! \fn OpenPos()
- *  \brief Uzmi datumski period, odredi vrste dokumenata
- */
  
 function OpenPos()
-*{
+
+close all
 
 O_PARTN
 O_VRSTEP
@@ -191,37 +208,25 @@ return
 
 
 function o_pos_sifre()
-
+close all
 O_KASE
 O_UREDJ
-if gModul=="HOPS"
-	O_MJTRUR
-  	O_ROBAIZ
-  	O_SAST
-  	O_DIO
-endif
 O_ODJ
 O_ROBA
 O_TARIFA
 O_VRSTEP
 O_VALUTE
 O_PARTN
-
 O_OSOB
 O_STRAD
-
 O_SIFK
 O_SIFV
-
 return
 
 
-/*! \fn O_InvNiv()
- *  \brief
- */
  
 function O_InvNiv()
-*{
+close all
 
 O_UREDJ
 O_MJTRUR
@@ -239,39 +244,32 @@ O_POS
 O__POS
 O_PRIPRZ
 return
-*}
 
 
-/*! \fn OpenZad()
- *  \brief
- */
+
  
 function OpenZad()
-*{
+close all
+
 O_UREDJ
 O_MJTRUR
 O_ODJ  
 O_DIO
 O_TARIFA
-
 O_POS_DOKS
 O_POS
 O__POS
 O_PRIPRZ
-
 O_SIFK
 O_SIFV
-
 O_ROBA 
 return
-*}
 
-/*! \fn ODbRpt()
- *  \brief Otvori database  za izvjestaje
- */
+
  
 function ODbRpt()
-*{
+
+close all
 
 O_OSOB
 O_SIFK
@@ -283,24 +281,17 @@ O_DIO
 O_KASE
 O_POS
 O_POS_DOKS
+
 return
-*}
 
 
-/*! \fn o_pos_narudzba()
- *  \brief
- */
  
 function o_pos_narudzba()
-*{
+
+close all
 
 if gPratiStanje $ "D!"
 	O_POS
-endif
-
-if gModul=="HOPS"
-	O_DIO 
-	O_ROBAIZ
 endif
 
 O_MJTRUR 
@@ -318,6 +309,7 @@ return
 
 
 function O_StAzur()
+close all
 O__POS
 O_ODJ
 O_VRSTEP

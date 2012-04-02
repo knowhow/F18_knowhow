@@ -74,32 +74,11 @@ gPrevPos:=gIdPos
 Fx:=4
 Fy:=8
 
-if gSql=="D"
-    O_Log()
-    CreDIntDB()
-endif
-
 if gSamoProdaja == "N"
     cre_doksrc()
 endif
 
-self:oDatabase:scan()
-
-// brisi sve iz _pos sto je zakljuceno....
-self:oDatabase:del_pos_z()
-
-/// fill init db podatke
-f_init_db()
-
 close all
-
-if gSql=="D"
-    if gSamoProdaja=="D"
-        self:oDataBase:integ()
-    else
-        self:oDataBase:chkinteg()
-    endif
-endif
 
 SETKEY(K_SH_F1,{|| Calc()})
 

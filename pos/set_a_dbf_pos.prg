@@ -41,6 +41,7 @@ set_a_dbf_temp("pos_razdr"  ,   "RAZDR"       , F_RAZDR  )
 set_a_dbf_temp("pos_uredj"  ,   "UREDJ"       , F_UREDJ  )
 set_a_dbf_temp("pos_dio"    ,   "DIO"         , F_DIO  )
 set_a_dbf_temp("pos_mars"   ,   "MARS"        , F_MARS  )
+set_a_dbf_temp("pom"        ,   "POM"         , F_POM  )
 
 
 return

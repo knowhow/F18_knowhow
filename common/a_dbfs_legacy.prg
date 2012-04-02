@@ -56,26 +56,10 @@ AADD( gaDbfs, { F_KPARAMS , "KPARAMS"  , "kparams"  } )
 AADD( gaDbfs, { F_SECUR  , "SECUR"  , "secur"  } )
 
 // pomocne tabele
-AADD( gaDbfs, {  F_POM       , "POM"    , "pom"  } )
 AADD( gaDbfs, {  F_POM2      , "POM2"   , "pom2"  } )
 
 // sifrarnici
-AADD( gaDbfs, { F_TOKVAL  , "TOKVAL"  , "tokval"  } )
-
- 
-// ROBA
-AADD( gaDbfs, { F_ROBA     ,  "ROBA"    , "roba"    ,     ;  // 1 2 3
-      { | param | roba_from_sql_server(param)   }  , "IDS";  // 4 5
-    })
-
-AADD( gaDbfs, { F_SAST     ,  "SAST"    , "sast"    , { | param | sast_from_sql_server(param)    }  , "IDS", {"id", "id2"}, { |x|  sql_where_block( "sast", x ) }, "idrbr" } )
-AADD( gaDbfs, { F_TARIFA   ,  "TARIFA"  , "tarifa"  , { | param | tarifa_from_sql_server(param)  }  , "IDS" } )
-AADD( gaDbfs, { F_KONCIJ   ,  "KONCIJ"  , "koncij"  , { | param | koncij_from_sql_server(param)  }  , "IDS" } )
-
 AADD( gaDbfs, { F_BARKOD   , "BARKOD"  , "barkod"  } )
-
-
-
 AADD( gaDbfs, { F_STRINGS  , "STRINGS"  , "strings"  } )
 AADD( gaDbfs, { F_RNAL     , "RNAL"  , "rnal"  } )
 AADD( gaDbfs, { F_DOKSRC   , "DOKSRC"  , "doksrc"  } )
@@ -83,15 +67,6 @@ AADD( gaDbfs, { F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  } )
 AADD( gaDbfs, { F_RELATION , "RELATION"  , "relation"  } )
 AADD( gaDbfs, { F_P_UPDATE , "P_UPDATE"  , "p_update"  } )
 AADD( gaDbfs, { F__ROBA , "_ROBA"  , "_roba"  } )
-
-AADD( gaDbfs, { F_VRSTEP , "VRSTEP"  , "vrstep", {| param | vrstep_from_sql_server( param ) }, "IDS"  } )
-AADD( gaDbfs, { F_RJ     ,  "RJ"      , "rj", { | param | rj_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_TDOK   ,  "TDOK"    , "tdok", { | param | tdok_from_sql_server( param ) }, "IDS" } )
-AADD( gaDbfs, { F_KONTO  ,  "KONTO"   , "konto", {| param | konto_from_sql_server(param) }, "IDS" } )
-AADD( gaDbfs, { F_VPRIH  ,  "VPRIH"   , "vpprih"   } )
-
-AADD( gaDbfs, { F_PKONTO ,  "PKONTO"  , "pkonto", { | param | pkonto_from_sql_server(param) }, "IDS" } )
-AADD( gaDbfs, { F_VALUTE ,  "VALUTE"  , "valute", { | param | valute_from_sql_server( param ) }, "IDS" } )
 
 AADD( gaDbfs, { F_VKSG   ,  "VKSG"    , "vksg"   } )
 AADD( gaDbfs, { F_ULIMIT ,  "ULIMIT"  , "ulimit"  } )

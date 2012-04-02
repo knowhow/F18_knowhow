@@ -30,7 +30,7 @@ set_a_dbf_sifarnik("pos_odj"    , "ODJ"   , F_ODJ  )
 // temp fakt tabele - ne idu na server
 set_a_dbf_temp("_pos_pos"   ,   "_POS"        , F__POS  )
 set_a_dbf_temp("_pos_posp"  ,   "_POSP"       , F__POSP  )
-set_a_dbf_temp("_pos_pripr" ,   "_PRIPR"      , F__PRIPR  )
+set_a_dbf_temp("_pos_pripr" ,   "_POS_PRIPR"  , F__PRIPR  )
 set_a_dbf_temp("pos_priprg" ,   "PRIPRG"      , F_PRIPRG  )
 set_a_dbf_temp("pos_priprz" ,   "PRIPRZ"      , F_PRIPRZ  )
 set_a_dbf_temp("pos_rngpla" ,   "RNGPLA"      , F_RNGPLA  )

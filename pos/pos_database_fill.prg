@@ -16,7 +16,7 @@
 // ----------------------------------
 // fill init db podatke
 // ----------------------------------
-function f_init_db()
+function pos_init_dbfs()
 
 close all
 
@@ -61,3 +61,6 @@ if lCreate
 endif
 
 return
+
+
+

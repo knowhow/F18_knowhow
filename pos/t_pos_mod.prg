@@ -79,7 +79,7 @@ if gSamoProdaja == "N"
 endif
 
 // predradnje
-f_init_db()
+pos_init_dbfs()
 
 close all
 

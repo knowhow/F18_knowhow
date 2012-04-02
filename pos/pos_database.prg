@@ -209,6 +209,7 @@ return
 
 function o_pos_sifre()
 close all
+
 O_KASE
 O_UREDJ
 O_ODJ
@@ -221,6 +222,7 @@ O_OSOB
 O_STRAD
 O_SIFK
 O_SIFV
+
 return
 
 

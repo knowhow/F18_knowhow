@@ -25,6 +25,8 @@ if PCount() = 0
     lPInfo := .t.
 endif
 
+altd()
+
 // filterisanje tabele radnika
 _radn_filter( .t. )
 
@@ -150,7 +152,7 @@ endif
 cFilter := "aktivan $ ' #D'"
 
 // pozicioniraj se na radnika
-select radn
+select RADN
 
 if lFiltered == .t. .and. gRadnFilter == "D"
     set filter to &cFilter
@@ -229,7 +231,7 @@ endif
 
 if (Ch==K_ALT_M)
     
-    Box(,4,60)
+    Box(, 4, 60)
         @ m_x+1,m_y+2 SAY "Postavljenje koef. minulog rada:"
         @ m_x+2,m_y+2 SAY "Pazite da ovu opciju ne izvrsite vise puta za isti mjesec !"
         @ m_x+4,m_y+2 SAY "Mjesec:" GET cmjesec pict "99"

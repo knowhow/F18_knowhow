@@ -2297,7 +2297,12 @@ FUNCTION SortIme(cId)
 local cVrati := ""
 local nArr := SELECT()
 
-O_RADN
+SELECT(F_RADN)
+if !USED()
+ reopen_exclusive("ld_radn")
+endif
+SET ORDER TO TAG "1"
+
 HSEEK cId
 
 cVrati:= ime + naz + imerod + id

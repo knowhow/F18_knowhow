@@ -16,6 +16,85 @@ local aDbf
 local _alias, _table_name
 local _created
 
+
+// -----------------------
+// RADN.DBF
+// -----------------------
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'IMEROD'              , 'C' ,  15 ,  0 })
+AADD(aDBf,{ 'IME'                 , 'C' ,  15 ,  0 })
+AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
+AADD(aDBf,{ 'KMINRAD'             , 'N' ,   7 ,  2 })
+AADD(aDBf,{ 'KLO'                 , 'N' ,   5 ,  2 })
+AADD(aDBf,{ 'SP_KOEF'             , 'N' ,   5 ,  2 })
+AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'IDVPOSLA'            , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'OSNBOL'              , 'N' ,  11 ,  4 })
+AADD(aDBf,{ 'IDSTRSPR'            , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'IDOPSST'             , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'IDOPSRAD'            , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'POL'                 , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'MATBR'               , 'C' ,  13 ,  0 })
+AADD(aDBf,{ 'DATOD'               , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'brknjiz'             , 'C' ,  12,   0 })
+AADD(aDBf,{ 'brtekr'              , 'C' ,  40,   0 })
+AADD(aDBf,{ 'Isplata'             , 'C' ,   2,   0 })
+AADD(aDBf,{ 'IdBanka'             , 'C' ,   6,   0 })
+AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'K2'                  , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'K3'                  , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'K4'                  , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'RMJESTO'             , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'POROL'               , 'N' ,   5 ,  2 })
+AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'STREETNAME'          , 'C' ,  40 ,  0 })
+AADD(aDBf,{ 'STREETNUM'           , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'HIREDFROM'           , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'HIREDTO'             , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'BEN_SRMJ'            , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'AKTIVAN'             , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'N1'                  , 'N' ,  12 ,  2 })
+AADD(aDBf,{ 'N2'                  , 'N' ,  12 ,  2 })
+AADD(aDBf,{ 'N3'                  , 'N' ,  12 ,  2 })
+AADD(aDBf,{ 'S1'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S2'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S3'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S4'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S5'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S6'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S7'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S8'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'S9'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'TROSK'               , 'C' ,   1 ,  0 })
+
+_alias := "RADN"
+_table_name := "ld_radn"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    close all
+endif
+
+CREATE_INDEX("1", "id" , _alias)
+CREATE_INDEX("2", "naz", _alias)
+
+// -------------------------------------
+// -------------------------------------
+_alias := "_RADN"
+_table_name := "_ld_radn"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    close all
+endif
+    
+
 aDBf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
@@ -56,7 +135,7 @@ if !file(f18_ime_dbf("ld_rj"))
     reset_semaphore_version("ld_rj")
     my_use("ld_rj")
 endif
-CREATE_INDEX("ID","id",KUMPATH+"LD_RJ")
+CREATE_INDEX("ID","id","LD_RJ")
 
 // KRED
 aDBf:={}
@@ -80,8 +159,8 @@ if !file(f18_ime_dbf("_KRED"))
    DBCREATE2( '_KRED',aDbf)
 endif
 
-CREATE_INDEX("ID","id",SIFPATH+"KRED")
-CREATE_INDEX("NAZ","naz",SIFPATH+"KRED")
+CREATE_INDEX("ID","id",   "KRED")
+CREATE_INDEX("NAZ","naz", "KRED")
 
 
 // POR
@@ -179,87 +258,9 @@ if !file(f18_ime_dbf("VPOSLA"))  // vrste posla
 
 endif
 
-CREATE_INDEX("ID","id",SIFPATH+"VPOSLA")
+CREATE_INDEX("ID","id", "VPOSLA")
 
 
-// -----------------------
-// RADN.DBF
-// -----------------------
-
-aDbf:={}
-AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-add_f_mcode(@aDbf)
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-AADD(aDBf,{ 'IMEROD'              , 'C' ,  15 ,  0 })
-AADD(aDBf,{ 'IME'                 , 'C' ,  15 ,  0 })
-AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
-AADD(aDBf,{ 'KMINRAD'             , 'N' ,   7 ,  2 })
-AADD(aDBf,{ 'KLO'                 , 'N' ,   5 ,  2 })
-AADD(aDBf,{ 'SP_KOEF'             , 'N' ,   5 ,  2 })
-AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'IDVPOSLA'            , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'OSNBOL'              , 'N' ,  11 ,  4 })
-AADD(aDBf,{ 'IDSTRSPR'            , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'IDOPSST'             , 'C' ,   4 ,  0 })
-AADD(aDBf,{ 'IDOPSRAD'            , 'C' ,   4 ,  0 })
-AADD(aDBf,{ 'POL'                 , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'MATBR'               , 'C' ,  13 ,  0 })
-AADD(aDBf,{ 'DATOD'               , 'D' ,   8 ,  0 })
-AADD(aDBf,{ 'brknjiz'             , 'C' ,  12,   0 })
-AADD(aDBf,{ 'brtekr'              , 'C' ,  40,   0 })
-AADD(aDBf,{ 'Isplata'             , 'C' ,   2,   0 })
-AADD(aDBf,{ 'IdBanka'             , 'C' ,   6,   0 })
-AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'K2'                  , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'K3'                  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'K4'                  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'RMJESTO'             , 'C' ,  30 ,  0 })
-AADD(aDBf,{ 'POROL'               , 'N' ,   5 ,  2 })
-AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'STREETNAME'          , 'C' ,  40 ,  0 })
-AADD(aDBf,{ 'STREETNUM'           , 'C' ,   6 ,  0 })
-AADD(aDBf,{ 'HIREDFROM'           , 'D' ,   8 ,  0 })
-AADD(aDBf,{ 'HIREDTO'             , 'D' ,   8 ,  0 })
-AADD(aDBf,{ 'BEN_SRMJ'            , 'C' ,  20 ,  0 })
-AADD(aDBf,{ 'AKTIVAN'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'N1'                  , 'N' ,  12 ,  2 })
-AADD(aDBf,{ 'N2'                  , 'N' ,  12 ,  2 })
-AADD(aDBf,{ 'N3'                  , 'N' ,  12 ,  2 })
-AADD(aDBf,{ 'S1'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S2'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S3'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S4'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S5'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S6'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S7'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S8'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'S9'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'TROSK'               , 'C' ,   1 ,  0 })
-
-_alias := "RADN"
-_table_name := "ld_radn"
-
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    close all
-endif
-
-CREATE_INDEX("1", "id", _alias)
-CREATE_INDEX("2", "naz", _alias)
-
-// -------------------------------------
-// -------------------------------------
-_alias := "_RADN"
-_table_name := "_ld_radn"
-
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    close all
-endif
-    
 // RADKR.DBF
 aDbf:={}
 AADD(aDBf,{ 'IDRadn'              , 'C' ,   6 ,  0 })
@@ -729,8 +730,8 @@ if !file(f18_ime_dbf("NORSIHT"))
 
 endif
 
-CREATE_INDEX("ID","id",KUMPATH+"NORSIHT")
-CREATE_INDEX("NAZ","NAZ",KUMPATH+"NORSIHT")
+CREATE_INDEX("ID","id","NORSIHT")
+CREATE_INDEX("NAZ","NAZ","NORSIHT")
 
 //TPRSIHT   - tipovi primanja koji odradjuju sihtaricu
 aDbf:={}
@@ -749,8 +750,8 @@ if !file(f18_ime_dbf("TPRSIHT"))
     my_use("TPRSIHT")
 endif
 
-CREATE_INDEX("ID","id",KUMPATH+"TPRSIHT")
-CREATE_INDEX("NAZ","NAZ",KUMPATH+"TPRSIHT")
+CREATE_INDEX("ID","id","TPRSIHT")
+CREATE_INDEX("NAZ","NAZ","TPRSIHT")
 
 
 

@@ -213,9 +213,9 @@ go top
 do while !eof()
 	
 	_firma := field->idfirma
-	_tdok := field->idtipdok
-	_broj := field->brdok
-	_cnt := 0
+	_tdok  := field->idtipdok
+	_broj  := field->brdok
+	_cnt   := 0
 
 	do while !EOF() .and. field->idfirma == _firma .and. field->idtipdok == _tdok .and. field->brdok == _broj
 					

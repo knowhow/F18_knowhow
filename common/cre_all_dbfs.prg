@@ -51,10 +51,8 @@ _db:kreiraj()
 _db := TDbLd():new()
 _db:kreiraj()
 
-
 //_db := TDbVirm():new()
 //_db:kreiraj()
-
 
 _db := TDbEPdv():new()
 _db:kreiraj()

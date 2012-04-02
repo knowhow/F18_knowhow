@@ -60,7 +60,7 @@ local cPkColor := "W+/G+"
 
 select pk_radn
 
-scatter()
+set_global_memvars_from_dbf()
 
 if lNew == .t.
 	
@@ -206,23 +206,14 @@ if LastKey() == K_ESC
 	return -1
 endif
 
-if lNew == .t.
-	append blank
-endif
+sql_table_update( nil, "BEGIN" )
 
-gather()
+_vals := get_dbf_global_memvars()
+update_rec_server_and_dbf( "ld_pk_radn", _vals, 1, "CONT" )
 
-// snimiti u sql bazu
-_vals := f18_scatter_global_vars()
-if !sql_update_ld_pk_radn( _vals ) 
-	if lNew == .t.
-		delete
-	endif
-endif	
+sql_table_update( nil, "END" )
 
 return field->lo_ufakt
-
-
 
 
 
@@ -230,22 +221,8 @@ return field->lo_ufakt
 // vraca naziv firme
 // ---------------------------------------
 static function _g_firma()
-local nTA := SELECT()
-local cFNaziv := ""
-local cFAdresa := ""
-
-O_PARAMS
-select params
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-RPar( "i1", @cFNaziv )
-RPar( "i2", @cFAdresa)  
-
-select (nTA)
-
+local cFNaziv := fetch_metric( "org_naziv", nil, PADR("", 50) )
+local cFAdresa := fetch_metric( "org_adresa", nil, PADR("", 50 ))
 return cFNaziv
 
 
@@ -253,11 +230,7 @@ return cFNaziv
 // vraca naziv firme
 // ---------------------------------------
 static function _g_f_jib()
-local cFJmb := ""
-
-cFJMB := IzFmkIni( "Specif", "MatBr", "--", KUMPATH )
-cFJMB := PADR( cFJMB, 13 )
-
+local cFJmb := fetch_metric( "org_id_broj", nil, PADR("", 13) )
 return cFJMB
 
 

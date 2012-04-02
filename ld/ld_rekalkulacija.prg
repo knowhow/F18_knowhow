@@ -19,21 +19,21 @@ local nArrm
 local nLjudi
 
 if Logirati(goModul:oDataBase:cName,"DOK","REKALKPRIMANJA")
-	lLogRekPrimanja:=.t.
+    lLogRekPrimanja:=.t.
 else
-	lLogRekPrimanja:=.f.
+    lLogRekPrimanja:=.f.
 endif
 
 Box(,4,60)
-	@ m_x+1,m_y+2 SAY "Ova opcija vrsi preracunavanja onih stavki  primanja koja"
-  	@ m_x+2,m_y+2 SAY "u svojoj formuli proracuna sadrze paramtre obracuna."
-  	@ m_x+4,m_y+2 SAY "               <ESC> Izlaz"
-  	inkey(0)
+    @ m_x+1,m_y+2 SAY "Ova opcija vrsi preracunavanja onih stavki  primanja koja"
+    @ m_x+2,m_y+2 SAY "u svojoj formuli proracuna sadrze paramtre obracuna."
+    @ m_x+4,m_y+2 SAY "               <ESC> Izlaz"
+    inkey(0)
 BoxC()
 
 if (LastKey()==K_ESC)
-	closeret
-	return
+    closeret
+    return
 endif
 
 cIdRj:=gRj
@@ -54,28 +54,28 @@ cStrSpr:=SPACE(3)
 nDimenzija:=0
 
 if lViseObr
-	nDimenzija:=1
+    nDimenzija:=1
 else
-	nDimenzija:=0
+    nDimenzija:=0
 endif
 
 Box(,3+nDimenzija,50)
-	@ m_x+1,m_y+2 SAY "Radna jedinica: "  GET cIdRJ
-	@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
-	@ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-	if lViseObr
-  		@ m_x+4,m_y+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
-	endif
-	read
-	ClvBox()
-	ESC_BCR
+    @ m_x+1,m_y+2 SAY "Radna jedinica: "  GET cIdRJ
+    @ m_x+2,m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
+    @ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+    if lViseObr
+        @ m_x+4,m_y+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
+    endif
+    read
+    ClvBox()
+    ESC_BCR
 BoxC()
 
 
 if lViseObr
-	O_TIPPRN
+    O_TIPPRN
 else
-  	O_TIPPR
+    O_TIPPR
 endif
 
 select ld
@@ -91,11 +91,13 @@ nLjudi:=0
 Box(,1,12)
 do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .and. if(lViseObr,cObracun==obr,.t.)
 
- Scatter()
- ParObr(_mjesec,_godina,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
+    set_global_memvars_from_dbf()
 
- select radn; hseek _idradn
- select ld
+    ParObr(_mjesec,_godina,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
+
+    select radn
+    hseek _idradn
+    select ld
 
  for i:=1 to cLDPolja
   cPom:=padl(alltrim(str(i)),2,"0")
@@ -144,122 +146,124 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
  // ako je nova varijanta obraèuna i ovo treba uvrstiti...
  if gVarObracun == "2"
 
-	nKLO := radn->klo
-	cTipRada := g_tip_rada( _idradn, _idrj )
-	nSPr_koef := 0
-	nTrosk := 0
-	nBrOsn := 0
-	cOpor := " "
-	cTrosk := " "
-	
-	// koristi troskove ?
-	if radn->(FIELDPOS("trosk")) <> 0
-		cTrosk := radn->trosk
-	endif
+    nKLO := radn->klo
+    cTipRada := g_tip_rada( _idradn, _idrj )
+    nSPr_koef := 0
+    nTrosk := 0
+    nBrOsn := 0
+    cOpor := " "
+    cTrosk := " "
+    
+    // koristi troskove ?
+    if radn->(FIELDPOS("trosk")) <> 0
+        cTrosk := radn->trosk
+    endif
 
-	// samostalni djelatnik
-	if cTipRada == "S"
-		if radn->(FIELDPOS("SP_KOEF")) <> 0
-			nSPr_koef := radn->sp_koef
-		endif
-	endif
+    // samostalni djelatnik
+    if cTipRada == "S"
+        if radn->(FIELDPOS("SP_KOEF")) <> 0
+            nSPr_koef := radn->sp_koef
+        endif
+    endif
 
-	// ako su ovi tipovi primanja - nema odbitka !
-	if cTipRada $ "A#U#P#S"
-		_ULicOdb := 0
-	endif
+    // ako su ovi tipovi primanja - nema odbitka !
+    if cTipRada $ "A#U#P#S"
+        _ULicOdb := 0
+    endif
 
-	// bruto osnova
-	_UBruto := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
+    // bruto osnova
+    _UBruto := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
 
-	// ugovor o djelu
-	if cTipRada == "U" .and. cTrosk <> "N"
-		nTrosk := ROUND2( _UBruto * (gUgTrosk / 100), gZaok2 )
-		if lInRS == .t.
-			nTrosk := 0
-		endif
-		_UBruto := _UBruto - nTrosk 
-	endif
+    // ugovor o djelu
+    if cTipRada == "U" .and. cTrosk <> "N"
+        nTrosk := ROUND2( _UBruto * (gUgTrosk / 100), gZaok2 )
+        if lInRS == .t.
+            nTrosk := 0
+        endif
+        _UBruto := _UBruto - nTrosk 
+    endif
 
-	// autorski honorar
-	if cTipRada == "A" .and. cTrosk <> "N"
-		nTrosk := ROUND2( _UBruto * (gAhTrosk / 100), gZaok2 )
-		if lInRS == .t.
-			nTrosk := 0
-		endif
-		_UBruto := _UBruto - nTrosk
-	endif
+    // autorski honorar
+    if cTipRada == "A" .and. cTrosk <> "N"
+        nTrosk := ROUND2( _UBruto * (gAhTrosk / 100), gZaok2 )
+        if lInRS == .t.
+            nTrosk := 0
+        endif
+        _UBruto := _UBruto - nTrosk
+    endif
 
-	nMinBO := _UBruto
-	if cTipRada $ " #I#N"
-		if _I01 = 0
-			// ne racunaj bruto osnovu
-		else
-			nMinBO := min_bruto( _Ubruto, _Usati )
-		endif
-	endif
+    nMinBO := _UBruto
+    if cTipRada $ " #I#N"
+        if _I01 = 0
+            // ne racunaj bruto osnovu
+        else
+            nMinBO := min_bruto( _Ubruto, _Usati )
+        endif
+    endif
 
-	// uiznos je sada sa uracunatim brutom i ostalim
-	
-	// ukupno doprinosi IZ place
-	nUDoprIZ := u_dopr_iz( nMinBO, cTipRada )
-	_UDopr := nUDoprIZ
-	_UDop_St := 31.0
+    // uiznos je sada sa uracunatim brutom i ostalim
+    
+    // ukupno doprinosi IZ place
+    nUDoprIZ := u_dopr_iz( nMinBO, cTipRada )
+    _UDopr := nUDoprIZ
+    _UDop_St := 31.0
 
-	// poreska osnovica
-	nPorOsnovica := ( (_UBruto - _Udopr) - _ulicodb )
+    // poreska osnovica
+    nPorOsnovica := ( (_UBruto - _Udopr) - _ulicodb )
 
-	if nPorOsnovica < 0 .or. !radn_oporeziv( _idradn, _idrj )
-		nPorOsnovica := 0
-	endif
+    if nPorOsnovica < 0 .or. !radn_oporeziv( _idradn, _idrj )
+        nPorOsnovica := 0
+    endif
 
-	// porez
-	_UPorez := izr_porez( nPorOsnovica, "B" )
-	_UPor_st := 10.0
+    // porez
+    _UPorez := izr_porez( nPorOsnovica, "B" )
+    _UPor_st := 10.0
 
-	// nema poreza
-	if !radn_oporeziv( _idradn, _idrj )
-		_uporez := 0
-		_upor_st := 0
-	endif
+    // nema poreza
+    if !radn_oporeziv( _idradn, _idrj )
+        _uporez := 0
+        _upor_st := 0
+    endif
 
-	// neto plata
-	_uneto2 := ROUND2( (_ubruto - _udopr) - _uporez , gZaok2)
+    // neto plata
+    _uneto2 := ROUND2( (_ubruto - _udopr) - _uporez , gZaok2)
 
-	if cTipRada $ " #I#N"
-		_uneto2 := min_neto( _uneto2, _usati )
-	endif
+    if cTipRada $ " #I#N"
+        _uneto2 := min_neto( _uneto2, _usati )
+    endif
 
-	_uiznos := ROUND2( _uneto2 + _UOdbici, gZaok2 )
+    _uiznos := ROUND2( _uneto2 + _UOdbici, gZaok2 )
 
-	if cTipRada $ "U#A" .and. cTrosk <> "N"
-		// kod ovih vrsta dodaj i troskove
-		_uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
-	endif
+    if cTipRada $ "U#A" .and. cTrosk <> "N"
+        // kod ovih vrsta dodaj i troskove
+        _uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
+    endif
 
-	if cTipRada $ "S"
-		// neto je za isplatu
-		_uIznos := _UNeto
-	endif
+    if cTipRada $ "S"
+        // neto je za isplatu
+        _uIznos := _UNeto
+    endif
 
  endif
 
- select ld
+    select ld
 
- Gather()
- 
- // obracun snimiti u sql bazu
- _vals := f18_scatter_global_vars()
- sql_update_ld_ld( _vals ) 
+    sql_table_update( nil, "BEGIN" )
 
- @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
+    // obracun snimiti u sql bazu
+    _vals := get_dbf_global_memvars()
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
+    
+    sql_table_update( nil, "END" )
+
+    @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
 
 skip
 
 enddo
 
 if lLogRekPrimanja
-	EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKPRIMANJA",nljudi,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija satnica i primanja")
+    EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKPRIMANJA",nljudi,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija satnica i primanja")
 endif
 
 Beep(1)
@@ -275,9 +279,9 @@ function RekalkProcenat()
 local i,nArrm,nLjudi
 
 if Logirati(goModul:oDataBase:cName,"DOK","REKALKPROCENAT")
-	lLogRekProcenat:=.t.
+    lLogRekProcenat:=.t.
 else
-	lLogRekProcenat:=.f.
+    lLogRekProcenat:=.f.
 endif
 
 Box(,4,60)
@@ -321,7 +325,7 @@ read; clvbox(); ESC_BCR
 BoxC()
 
 if cDN=="N"
-	return
+    return
 endif
 
 SELECT (F_TIPPR) ; USE
@@ -346,7 +350,9 @@ nStariIznos:=nNoviIznos:=0
 do while !eof() .and.  cgodina==godina .and. cidrj==idrj .and.;
          cmjesec=mjesec .and. IF(lViseObr,cObracun==obr,.t.)
 
- Scatter()
+
+ set_global_vars_from_dbf()
+
  ParObr(_mjesec,_godina,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
 
  select radn; hseek _idradn
@@ -404,20 +410,22 @@ for i:=1 to cLDPolja
      endif
    endif
 next
-select ld
+    select ld
 
+    sql_table_update( nil, "BEGIN" )
 
- Gather()
- // obracun snimiti u sql bazu
- _vals := f18_scatter_global_vars()
- sql_update_ld_ld( _vals ) 
+    // obracun snimiti u sql bazu
+    _vals := get_dbf_global_memvars()
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
+    
+    sql_table_update( nil, "END" )
 
- @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
- skip
+    @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
+    skip
 enddo
 
 if lLogRekProcenat
-	EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKPROCENAT",nljudi,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija primanja po zadatom procentu")
+    EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKPROCENAT",nljudi,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija primanja po zadatom procentu")
 endif
 
 
@@ -433,9 +441,9 @@ function RekalkFormula()
 local i,nArrm,nLjudi
 
 if Logirati(goModul:oDataBase:cName,"DOK","REKALKFORMULA")
-	lLogRekFormula:=.t.
+    lLogRekFormula:=.t.
 else
-	lLogRekFormula:=.f.
+    lLogRekFormula:=.f.
 endif
 
 
@@ -478,7 +486,7 @@ read; clvbox(); ESC_BCR
 BoxC()
 
 if cDN=="N"
-	return
+    return
 endif
 
 SELECT (F_TIPPR) ; USE
@@ -499,7 +507,8 @@ Box(,1,12)
 do while !eof() .and.  cgodina==godina .and. cidrj==idrj .and.;
          cmjesec=mjesec .and. IF(lViseObr,cObracun==obr,.t.)
 
- Scatter()
+ set_global_vars_from_dbf()
+
  ParObr(_mjesec,_godina,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
 
  select radn; hseek _idradn
@@ -549,18 +558,20 @@ for i:=1 to cLDPolja
 next
 select ld
 
+    sql_table_update( nil, "BEGIN" )
 
- Gather()
- // obracun snimiti u sql bazu
- _vals := f18_scatter_global_vars()
- sql_update_ld_ld( _vals ) 
+    // obracun snimiti u sql bazu
+    _vals := get_dbf_global_memvars()
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
+    
+    sql_table_update( nil, "END" )
 
- @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
- skip
+    @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
+    skip
 enddo
 
 if lLogRekFormula
-	EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKFORMULA",nljudi,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija primanja po zadatoj formuli")
+    EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKFORMULA",nljudi,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija primanja po zadatoj formuli")
 endif
 
 
@@ -570,18 +581,18 @@ BoxC()
 
 closeret
 return
-*}
+
 
 
 
 function RekalkSve()
-*{
+
 local i,nArrm,nLjudi
 
 if Logirati(goModul:oDataBase:cName,"DOK","REKALKSVE")
-	lLogRekSve:=.t.
+    lLogRekSve:=.t.
 else
-	lLogRekSve:=.f.
+    lLogRekSve:=.f.
 endif
 
 
@@ -634,7 +645,8 @@ Box(,1,12)
 do while !eof() .and.  cGodina==godina .and.  cmjesec=mjesec .and.;
          IF(lViseObr,cObracun==obr,.t.)
 
- Scatter()
+ set_global_vars_from_dbf()
+
  ParObr(_mjesec,_godina,IF(lViseObr,_obr,),_idrj)  // podesi parametre obra~una za ovaj mjesec
 
  select radn; hseek _idradn
@@ -646,18 +658,20 @@ do while !eof() .and.  cGodina==godina .and.  cmjesec=mjesec .and.;
  UkRadnik()  // filuje _USati,_UNeto,_UOdbici
  _UIznos:=_UNeto+_UOdbici
 
- Gather()
+    sql_table_update( nil, "BEGIN" )
 
- // obracun snimiti u sql bazu
- _vals := f18_scatter_global_vars()
- sql_update_ld_ld( _vals ) 
+    // obracun snimiti u sql bazu
+    _vals := get_dbf_global_memvars()
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
+    
+    sql_table_update( nil, "END" )
 
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
  skip
 enddo
 
 if lLogRekSve
-	EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKSVE",nljudi,nil,nil,nil,nil,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija neto sati neto primanja")
+    EventLog(nUser,goModul:oDataBase:cName,"DOK","REKALKSVE",nljudi,nil,nil,nil,nil,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Rekalkulacija neto sati neto primanja")
 endif
 
 

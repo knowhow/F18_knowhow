@@ -145,48 +145,6 @@ AADD(gaDBFs, { F_R_KUF, "R_KUF", "epdv_r_kuf"  } )
 AADD(gaDBFs, { F_R_PDV, "R_PDV", "epdv_r_pdv"  } )
 AADD(gaDBFs, { F_ANAL, "SUBAN_2", "suban_2"  } )
 
-// modul LD
-
-// "1","str(godina)+idrj+str(mjesec)+obr+idradn"
-AADD(gaDBFs, { F_LD      , "LD"      , "ld_ld",    { |alg| ld_ld_from_sql_server(alg) }, "IDS", {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" },  { |x| sql_where_block("ld_ld", x) }, "1"})
-
-//IF  lViseObr => TAG = "ID", index = "id+godina+obr" ;  !lViseObr => "ID", "id+godina"
-AADD(gaDBFs, { F_PAROBR ,  "PAROBR"  , "ld_parobr",   { |alg| ld_parobr_from_sql_server(alg) }, "IDS", { "id", "godina"}, {|x| sql_where_block("ld_parobr", x)}, "ID" })
-
-// "RJ" - "rj+STR(godina)+STR(mjesec)+status+obr"
-AADD(gaDBFs, { F_OBRACUNI, "OBRACUNI", "ld_obracuni", { |alg| ld_obracuni_from_sql_server(alg) } , "IDS", { "rj", {"godina", 4}, {"mjesec", 2}, "status", "obr" } , {|x| sql_where_block("ld_obracuni", x) }, "RJ" })
-
-// ld_pk_radn TAG "1", "idradn"
-AADD(gaDBFs, { F_PK_RADN,  "PK_RADN" , "ld_pk_radn",  { |alg| ld_pk_radn_from_sql_server(alg) } , "IDS", {"idradn"}, { |x| sql_where_block("ld_pk_radn", x)}, "1" })
-
-// ld_pk_data "1", "idradn+ident+STR(rbr, 2)"
-AADD(gaDBFs, { F_PK_DATA,  "PK_DATA" , "ld_pk_data",  { |alg| ld_pk_data_from_sql_server(alg) } , "IDS", {"idradn", "ident", {"rbr", 2}}, {|x| sql_where_block("ld_pk_data", x) }, "1" })
-
-// ld_radsat, tag "IDRADN", index: "idradn"
-AADD(gaDBFs, { F_RADSAT ,  "RADSAT"  , "ld_radsat",   { |alg| ld_radsat_from_sql_server(alg)  } , "IDS",  {"idradn"}, {|x| sql_where_block("ld_radsat", x) }, "IDRADN" })
-
-
-// ID bazirani sifrarnici
-AADD(gaDBFs, { F_RADSIHT,  "RADSIHT" , "ld_radsiht",  { |alg| ld_radsiht_from_sql_server(alg) } , "IDS", { "idkonto", {"godina", 4}, {"mjesec", 2}, "idradn" }, { |x| sql_where_block("ld_radsiht", x) }, "2" } )
-
-AADD(gaDBFs, { F_NORSIHT,  "NORSIHT" , "ld_norsiht",  { |alg| ld_norsiht_from_sql_server(alg) } , "IDS" } )
-AADD(gaDBFs, { F_TPRSIHT,  "TPRSIHT" , "ld_tprsiht",  { |alg| ld_tprsiht_from_sql_server(alg) } , "IDS" } )
-
-
-AADD(gaDBFs, { F__RADKR  , "_RADKR"  , "_ld_radkr"  } )
-AADD(gaDBFs, { F__RADN   , "_RADN"   , "_ld_radn"   } )
-AADD(gaDBFs, { F_LDSM    , "LDSM"    , "ld_ldsm"    } )
-
-// koristi se u reportima
-AADD(gaDBFs, { F_OPSLD   , "OPSLD"   , "ld_opsld"   } )
-
-AADD(gaDBFs, { F__LD     , "_LD"     , "_ld_ld"     } )
-AADD(gaDBFs, { F_REKLD   , "REKLD"   , "ld_rekld"   } )
-AADD(gaDBFs, { F_REKLDP  , "REKLDP"  , "ld_rekldp"  } )
-
-AADD(gaDBFs, { F_KRED    , "_KRED"   , "_ld_kred"   } )
-AADD(gaDBFs, { F_LDT22   , "LDT22"   , "ldt22"      } )
-
 
 // modul OS:
 // -----------------

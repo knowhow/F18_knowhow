@@ -114,6 +114,7 @@ _tbl_sint  := "fin_sint"
 
   
 // -----------------------------------
+my_use_semaphore_off()
 
 Box(, 5, 60)
 
@@ -140,6 +141,7 @@ if lOk = .t.
   _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
   AADD( _ids_suban, "#2" + _tmp_id )
 
+
   @ m_x+1, m_y+2 SAY "fin_suban -> server: " + _tmp_id 
   do while !eof()
 
@@ -154,6 +156,8 @@ if lOk = .t.
 
 
 endif
+
+hb_IdleSleep(10)
 
 // idi dalje, na anal ... ako je ok
 if lOk = .t.
@@ -181,6 +185,8 @@ if lOk = .t.
 endif
 
 
+hb_IdleSleep(2)
+
 // idi dalje, na sint ... ako je ok
 if lOk = .t.
   
@@ -207,7 +213,7 @@ if lOk = .t.
 
 endif
 
-
+hb_IdleSleep(2)
 // idi dalje, na nalog ... ako je ok
 if lOk = .t.
   
@@ -232,6 +238,7 @@ if lOk = .t.
 
 
 endif
+
 
 
 if !lOk
@@ -264,12 +271,15 @@ else
     lock_semaphore(_tbl_sint,  "free")
     lock_semaphore(_tbl_nalog, "free")
 
+    hb_idleSleep(10)
  
     sql_table_update(nil, "END")
 
 endif
 
 BoxC()
+my_use_semaphore_on()
+
 return lOk
 
 

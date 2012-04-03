@@ -473,15 +473,7 @@ ENDIF
 
 END PRINT
 
-#ifdef CAX
-    select opsld
-    use
-    select rekld
-    use
-    select ld
-#endif
-
-CLOSERET
+close all
 return
 
 

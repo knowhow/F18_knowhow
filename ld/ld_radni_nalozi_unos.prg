@@ -12,7 +12,8 @@
 #include "ld.ch"
 
 function UnosSatiPoRNal(nGodina,nMjesec,cIdRadn)
-private cRNal[8], nSati[8]
+private cRNal[8]
+private nSati[8]
 
 UcitajSateRNal(nGodina,nMjesec,cIdRadn)
 
@@ -37,28 +38,44 @@ read
 if (LASTKEY() != K_ESC)
 	SnimiSateRNal(nGodina,nMjesec,cIdRadn)
 endif
+
 @ m_x+10, m_y+2 CLEAR TO m_x+17,75
+
 return
+
 
 function SnimiSateRNal(nGodina,nMjesec,cIdRadn)
 local nArr:=SELECT()
 local nRec
 local i
+local _rec
+
 select radsiht
 seek str(nGodina,4)+str(nMjesec,2)+cIdRadn
+
 do while !eof() .and. str(field->godina,4)+str(field->mjesec,2)+field->idRadn==str(nGodina,4)+str(nMjesec,2)+cIdRadn
 	skip 1
 	nRec:=RECNO()
 	skip -1
-	delete
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( ALIAS(), _rec )
 	go (nRec)
 enddo
+
 for i:=1 to 8
 	if !EMPTY(cRNal[i])
 		append blank
-		replace godina with nGodina, mjesec with nMjesec, idRadn with cIdRadn, idRNal with cRNal[i], sati with nSati[i]
+        _rec := dbf_get_rec()
+        _rec["godina"] := nGodina
+        _rec["mjesec"] := nMjesec
+        _rec["idradn"] := cIdRadn
+        _rec["idrnal"] := cRnal[i]
+        _rec["sati"] := nSati[i]
+        update_rec_server_and_dbf( ALIAS(), _rec )
 	endif
 next
+
 select (nArr)
+
 return
 

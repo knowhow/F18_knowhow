@@ -1,3 +1,8 @@
+0.9.92 2012-04-03, vsasa
+ 
+  - LD korekcije (izvještaji, unos, brisanje kredita, itd...) [#27390](http://redmine.bring.out.ba/issues/27390)
+  - ostale sitne korekcije
+
 0.0.90 2012-03-27, hernad
 
   - merge semaphore v1.1 brancha, haos-2 - ovo ne radi

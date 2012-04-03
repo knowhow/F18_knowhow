@@ -205,15 +205,15 @@ BoxC()
 
 closeret
 return
-*}
 
 
-
+// ----------------------------------------
+// krediti key handler
+// ----------------------------------------
 function EddKred(Ch)
-*{
-local cDn:="N"
-local nRet:=DE_CONT
-local nRec:=RECNO()
+local cDn := "N"
+local nRet := DE_CONT
+local nRec := RECNO()
 local _placeno, _iznos, _rec
 
 if Logirati(goModul:oDataBase:cName,"KREDIT","EDITKREDIT")
@@ -225,9 +225,11 @@ endif
 select radkr
 
 do case
+
     case Ch==K_ENTER
 
         _vals := dbf_get_rec()
+
         _iznos := _vals["iznos"]
         _placeno := _vals["placeno"]
 
@@ -236,23 +238,25 @@ do case
             @ m_x + 1, m_y + 2 SAY "Rucna prepravka rate !"
             @ m_x + 3, m_y + 2 SAY "Iznos  " GET _iznos pict gpici
             @ m_x + 4, m_y + 2 SAY "Placeno" GET _placeno pict gpici
+            
             cNaOsnovu2 := cNaOsnovu
           
             @ m_x + 6, m_y + 2 SAY "Na osnovu" GET cNaOsnovu2
+            
             read
 
-            if (cNaOsnovu2 <> field->naosnovu) .and. Pitanje( , "Zelite li promijeniti osnov kredita ? (D/N)", "N") == "D"
+            if ( cNaOsnovu2 <> field->naosnovu ) .and. Pitanje( , "Zelite li promijeniti osnov kredita ? (D/N)", "N") == "D"
 
                 SEEK cIdRadn + cIdKred + cNaOsnovu
+
                 DO WHILE !EOF() .and. (field->idradn + field->idkred + field->naosnovu) == (cIdRadn + cIdKred + cNaOsnovu)
                     
                     SKIP 1
                     nRecK := RECNO()
                     SKIP -1
 
+                    _vals := dbf_get_rec()
                     _vals["naosnovu"] := cNaOsnovu2
-                    _vals["placeno"] := _placeno
-                    _vals["iznos"] := _iznos
 
                     update_rec_server_and_dbf( "RADKR", _vals )
 
@@ -260,21 +264,29 @@ do case
 
                 ENDDO
       
-                //_vals["naosnovu"] := cNaOsnovu := cNaOsnovu2
-
             endif
+
             read
 
         BoxC()
+
         GO (nRec)
-            
-        //update_rec_server_and_dbf( "RADKR", _vals )
+
+        _vals := dbf_get_rec()
+        _vals["naosnovu"] := cNaOsnovu2
+        _vals["placeno"] := _placeno
+        _vals["iznos"] := _iznos
+
+        update_rec_server_and_dbf( "RADKR", _vals )
             
         if lLogEditKredit
             EventLog(nUser,goModul:oDataBase:cName,"KREDIT","EDITKREDIT",radkr->placeno,radkr->iznos,nil,nil,"","","Rad:"+ALLTRIM(cIdRadn),Date(),Date(),"","Rucna ispravka rate kredita za radnika")
         endif
+
         select radkr
+
         nRet:=DE_REFRESH
+
     case Ch==K_CTRL_N
             nRet:=DE_REFRESH
     case Ch==K_CTRL_T
@@ -299,6 +311,7 @@ local GetList := {}
 local nTRata
 local nNRata
 local cNaOsnovu := SPACE(20)
+local _rec
 
 Box(,6, 60)
     
@@ -319,6 +332,7 @@ Box(,6, 60)
         ALLTRIM(STR( nTRata )) + " KM"
     @ m_x + 5, m_y + 2 SAY "rata kredita za obracun" GET nNRata VALID nNRata <> 0
     read
+
 BoxC()
 
 if nNRata <> nTRata
@@ -341,10 +355,11 @@ if nNRata <> nTRata
             .and. idradn=_idradn ;
             .and. naosnovu == cNaOsnovu
 
-            nTotalKr += iznos
+        nTotalKr += iznos
             
-            // brisi zapis
-            delete
+        // brisi zapis
+        _rec := dbf_get_rec()
+        delete_rec_server_and_dbf( ALIAS(), _rec )
 
         skip
     enddo
@@ -358,8 +373,8 @@ if nNRata <> nTRata
     
     do while .t.
         if nTeKMj + 1 > 12
-                nTekMj:=1
-                ++nTekGodina
+            nTekMj:=1
+            ++nTekGodina
         else
             nTekMj++
         endif
@@ -368,26 +383,29 @@ if nNRata <> nTRata
         
         if nIRata>0 .and. (nOstalo-nIRata<0)  
             // rata je pozitivna
-                nIRata:=nOstalo
+            nIRata:=nOstalo
         endif
         
         if nIRata<0 .and. (nOstalo-nIRata>0)  
             // rata je negativna
-                nIRata:=nOstalo
+            nIRata:=nOstalo
         endif
         
         if round(nIRata,2)<>0
             
             append blank
+            _rec := dbf_get_rec()
+            _rec["idradn"] := cIdRadn
+            _rec["mjesec"] := nTekMj
+            _rec["godina"] := nTekGodina
+            _rec["idkred"] := cKreditor
+            _rec["iznos"] := nIRata
+            _rec["naosnovu"] := cNaOsnovu
             
-            replace idradn with cIdRadn
-            replace mjesec with nTekMj
-            replace godina with nTekGodina
-            replace idkred with cKreditor
-            replace iznos with nIRata
-            replace naosnovu with cNaOsnovu
+            update_rec_server_and_dbf( ALIAS(), _rec )
 
             ++i
+
         endif
 
         nOstalo := nOstalo - nIRata
@@ -455,8 +473,8 @@ PopWa()
 return nIznos
 
 
+
 function Okreditu(_idradn, cIdkred, cNaOsnovu, _mjesec, _godina)
-*{
 // izbaci matricu vezano za kredit
 local nUkupno, nPlaceno, nNTXORd
 local fused:=.t.
@@ -507,15 +525,13 @@ endif
 PopWa()
 
 return {nUkupno,nPlaceno}
-*}
+
 
 
 
 
 function ListaKredita() //lista kredita
-*{
 private fSvi  // izlistaj sva preduzeca
-
 private nR:=nIzn:=nIznP:=0
 private nUkIzn:=nUkIznP:=nUkIRR:=0
 private nCol1:=10
@@ -524,11 +540,13 @@ private cIdRj
 
 O_KRED
 O_RADN
+
 if FIELDPOS("IDRJ")<>0
     lRjRadn:=.t.
     O_LD_RJ
     cIdRj:="  "
 endif
+
 O_RADKR
 private m:="----- "+replicate("-",_LR_)+" ------------------------------- "+replicate("-",39)
 
@@ -662,10 +680,10 @@ do while !eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
         select radn
         hseek cidradn
         select radkr
-        if prow()>60
-            FF
-            ZaglKred()
-        endif
+        //if prow()>60
+          //  FF
+          //  ZaglKred()
+        //endif
         ?
         ? str(++nRbr,4)+".",cIdRadn,RADNIK
 
@@ -734,10 +752,10 @@ do while !eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
         nUkIRR+=nIRR
     enddo
 
-    if prow()>62
-        FF
-        ZaglKred()
-    endif
+    //if prow()>62
+      //  FF
+      //  ZaglKred()
+    //endif
 
     ? m
     ? "UKUPNO:"
@@ -763,9 +781,8 @@ enddo  // eof()
 FF
 END PRINT
 
-CLOSERET
+close all
 return
-*}
 
 
 
@@ -817,7 +834,7 @@ else
 endif
 ? m
 return
-*}
+
 
 
 
@@ -859,12 +876,12 @@ set scope to
 
 PopwA()
 return
-*}
+
 
 
 
 function EdP_Krediti()
-*{
+
 if Ch==K_ENTER
     cIdKred:=radkr->idkred
     cNaOsnovu:=radkr->naosnovu
@@ -872,31 +889,7 @@ if Ch==K_ENTER
 endif
 
 return DE_CONT
-*}
 
-
-
-/*! \fn Bez0(cStr)
- *  \brief vraca string varijablu bez nula (e.g. "00005"  -> "5")
- *  \param cStr - string
- */
- 
-function Bez0(cStr)
-*{
-local nSjeci
-local i
-local n0:=0
-
-nSjeci:=1
-for i:=1 to LEN(cStr)
-    if SubStr(cStr,i,1) $ " 0"
-            nSjeci:=i+1
-        else
-            exit
-        endif
-next
-return SubStr(cStr,nSjeci)
-*}
 
 
 
@@ -908,7 +901,7 @@ return SubStr(cStr,nSjeci)
  */
  
 function GodMjesec(nGodina,nMjesec,nPomak)
-*{
+
 local nPGodina
 local nPMjesec
 local nVgodina:=0
@@ -938,7 +931,7 @@ else
     nPGodina:=nPGodina+nVGodina
 endif
 return {nPGodina,nPMjesec}
-*}
+
 
 
 
@@ -1056,15 +1049,13 @@ do while .t.
     endif
 enddo
 return dDatum-1  // vrati se unazad
-*}
 
 
-
-/*! \fn BrisiKredit()
- *  \brief Brisanje kredita za nekog radnika
- */
+// ----------------------------------------------------
+// Brisanje kredita za nekog radnika
+// ----------------------------------------------------
 function BrisiKredit()
-*{
+local _rec
 cIdRadn:=SPACE(_LR_)
 cIdKRed:=SPACE(_LK_)
 cNaOsnovu:=SPACE(20)
@@ -1091,34 +1082,41 @@ Box("#BRISANJE NEOTPLACENIH RATA KREDITA",9,77)
     ESC_BCR
 BoxC()
 
-if cBrisi=="D"
-    SELECT RADKR
-    SET ORDER TO TAG "2" // idradn+idkred+naosnovu+str(godina)+str(mjesec)
-    SEEK cIdRadn+cIdKred+cNaOsnovu
-    nStavki:=0
-    DO WHILE !EOF() .and. idradn+idkred+naosnovu==cIdRadn+cIdKred+cNaOsnovu
-            SKIP 1
-        nRec:=RECNO()
-        SKIP -1
-            IF placeno=0
-                ++nStavki
-                DELETE
-            ENDIF
-            GO (nRec)
-    ENDDO
-    IF nStavki>0
-            if lLogBrisiKredit
-                EventLog(nUser,goModul:oDataBase:cName,"KREDIT","BRISIKREDIT",nil,nil,nil,nil,"",ALLTRIM(STR(nStavki)),ALLTRIM(cIdRadn),Date(),Date(),"","Obrisan kredit")
-            endif
-            MsgBeep("Sve neotplacene rate (ukupno "+ALLTRIM(STR(nStavki))+") kredita izbrisane!")
-    ELSE
-            MsgBeep("Nista nije izbrisano. Za izabrani kredit ne postoje neotplacene rate!")
+if cBrisi == "N"
+    close all
+    return
+endif
+
+SELECT RADKR
+SET ORDER TO TAG "2" 
+// idradn+idkred+naosnovu+str(godina)+str(mjesec)
+SEEK cIdRadn+cIdKred+cNaOsnovu
+    
+nStavki := 0
+DO WHILE !EOF() .and. idradn+idkred+naosnovu==cIdRadn+cIdKred+cNaOsnovu
+    SKIP 1
+    nRec:=RECNO()
+    SKIP -1
+    IF placeno = 0
+        ++nStavki
+        _rec := dbf_get_rec()
+        delete_rec_server_and_dbf( ALIAS(), _rec )
     ENDIF
+    GO (nRec)
+ENDDO
+    
+IF nStavki>0
+    if lLogBrisiKredit
+        EventLog(nUser,goModul:oDataBase:cName,"KREDIT","BRISIKREDIT",nil,nil,nil,nil,"",ALLTRIM(STR(nStavki)),ALLTRIM(cIdRadn),Date(),Date(),"","Obrisan kredit")
+    endif
+    MsgBeep("Sve neotplacene rate (ukupno " + ALLTRIM(STR(nStavki)) + ") kredita izbrisane!")
+ELSE
+    MsgBeep("Nista nije izbrisano. Za izabrani kredit ne postoje neotplacene rate!")
 ENDIF
 
-CLOSERET
+close all
 return
-*}
+
 
 
 function OTblKredit()

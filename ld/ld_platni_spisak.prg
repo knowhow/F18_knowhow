@@ -488,9 +488,9 @@ for nDio := 1 to IF( cDrugiDio == "D", 2, 1 )
         endif
 
         // nova stranica
-        if prow() > 62 + gPStranica
-            FF
-        endif
+        //if prow() > 62 + gPStranica
+          //  FF
+        //endif
         
         ? STR( ++nRbr, 4 ) + ".", idradn, radn->matbr, RADNIK
         
@@ -570,16 +570,16 @@ for nDio := 1 to IF( cDrugiDio == "D", 2, 1 )
     enddo
 
     // nova stranica
-    if prow() > 60 + gPStranica
-        FF
-    endif
+    //if prow() > 60 + gPStranica
+      //  FF
+    //endif
 
     ? m
 
     ? SPACE(1) + Lokal("UKUPNO:")
     
-    if cPrikIzn=="D"
-        @ prow(),nC1 SAY nT4 pict gpici
+    if cPrikIzn == "D"
+        @ prow(), nC1 SAY nT4 pict gPici
     endif
     
     ? m

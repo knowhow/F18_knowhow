@@ -112,7 +112,8 @@ DO CASE
  
 			_len := _dbstruct[ _pos, 3 ]
 			_dec := _dbstruct[ _pos, 4 ]
-  
+ 
+            altd() 
 			_qry += STR( record[_key], _len, _dec ) + ","
 
         else

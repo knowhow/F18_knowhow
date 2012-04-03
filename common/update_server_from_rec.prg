@@ -82,7 +82,8 @@ DO CASE
         _tmp := _a_dbf_rec["dbf_fields"][_i]
 
         if VALTYPE(record[_tmp]) == "N"
-            _qry += decimal_to_string( record[_tmp])
+            _qry += STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
+            //_qry += decimal_to_string( record[_tmp])
         else
             _qry += _sql_quote(record[_tmp])
         endif
@@ -119,10 +120,12 @@ endif
 function decimal_to_string( num )
 local _i, _tmp
 
+num := ROUND(num, 8)
+
 // do 6 decimala
 for _i := 0 to 6
   _tmp := num * (10 ** _i) 
   if round( round(_tmp, 0) - round(_tmp, 7), 8) == 0
-      return ALLTRIM(STR( num, num, _i))
+      return ALLTRIM(STR( num, 20, _i))
   endif
 next

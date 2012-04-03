@@ -680,10 +680,10 @@ do while !eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
         select radn
         hseek cidradn
         select radkr
-        if prow()>60
-            FF
-            ZaglKred()
-        endif
+        //if prow()>60
+          //  FF
+          //  ZaglKred()
+        //endif
         ?
         ? str(++nRbr,4)+".",cIdRadn,RADNIK
 
@@ -752,10 +752,10 @@ do while !eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
         nUkIRR+=nIRR
     enddo
 
-    if prow()>62
-        FF
-        ZaglKred()
-    endif
+    //if prow()>62
+      //  FF
+      //  ZaglKred()
+    //endif
 
     ? m
     ? "UKUPNO:"
@@ -781,9 +781,8 @@ enddo  // eof()
 FF
 END PRINT
 
-CLOSERET
+close all
 return
-*}
 
 
 
@@ -835,7 +834,7 @@ else
 endif
 ? m
 return
-*}
+
 
 
 
@@ -877,12 +876,12 @@ set scope to
 
 PopwA()
 return
-*}
+
 
 
 
 function EdP_Krediti()
-*{
+
 if Ch==K_ENTER
     cIdKred:=radkr->idkred
     cNaOsnovu:=radkr->naosnovu
@@ -890,31 +889,7 @@ if Ch==K_ENTER
 endif
 
 return DE_CONT
-*}
 
-
-
-/*! \fn Bez0(cStr)
- *  \brief vraca string varijablu bez nula (e.g. "00005"  -> "5")
- *  \param cStr - string
- */
- 
-function Bez0(cStr)
-*{
-local nSjeci
-local i
-local n0:=0
-
-nSjeci:=1
-for i:=1 to LEN(cStr)
-    if SubStr(cStr,i,1) $ " 0"
-            nSjeci:=i+1
-        else
-            exit
-        endif
-next
-return SubStr(cStr,nSjeci)
-*}
 
 
 
@@ -926,7 +901,7 @@ return SubStr(cStr,nSjeci)
  */
  
 function GodMjesec(nGodina,nMjesec,nPomak)
-*{
+
 local nPGodina
 local nPMjesec
 local nVgodina:=0
@@ -956,7 +931,7 @@ else
     nPGodina:=nPGodina+nVGodina
 endif
 return {nPGodina,nPMjesec}
-*}
+
 
 
 

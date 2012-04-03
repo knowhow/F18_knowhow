@@ -437,9 +437,9 @@ nCnt := 0
 do while !EOF()
 
 	// n.str
-	if prow() > 64 
-		FF
-	endif
+	//if prow() > 64 
+	//	FF
+	//endif
 	
 	cGr_id := field->group
 
@@ -464,9 +464,9 @@ do while !EOF()
 	do while !EOF() .and. field->group == cGr_id
 
 		// n.str
-		if prow() > 64 
-			FF
-		endif
+		//if prow() > 64 
+		//	FF
+		//endif
 
 		? PADL( ALLTRIM(STR(++nCnt)) + ".", 5 )
 		@ prow(), pcol()+1 SAY PADR( _rad_ime(field->idradn), 30 )

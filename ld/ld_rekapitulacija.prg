@@ -283,9 +283,9 @@ if cMjesec == cMjesecDo
 
     ?
 
-    if prow() > 55 + gpStranica
-        FF
-    endif
+    //if prow() > 55 + gpStranica
+     //   FF
+    //endif
 
     private nDopr
     private nDopr2
@@ -301,9 +301,9 @@ if cMjesec == cMjesecDo
 
     cLinija := "---------------------------------"
 
-    if prow() > 49 + gPStranica
-        FF
-    endif
+    //if prow() > 49 + gPStranica
+      //  FF
+    //endif
 
     ? cLinija
 
@@ -398,15 +398,7 @@ ENDIF
 
 END PRINT
 
-#ifdef CAX
-    select opsld
-    use
-    select rekld
-    use
-    select ld
-#endif
-
-CLOSERET
+close all
 return
 
 

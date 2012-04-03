@@ -242,10 +242,10 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
   		endif
  	next
 
- 	if prow()>58+gPStranica
-    		FF
-    		Eval(bZagl)
- 	endif
+ 	//if prow()>58+gPStranica
+    //		FF
+    //		Eval(bZagl)
+ 	//endif
  
 	cRTipRada := ""
 	nPrKoef := 0
@@ -371,10 +371,10 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 	skip
 enddo
 
-if prow()>58+gpStranica
-	FF
-    	Eval(bZagl)
-endif
+//if prow()>58+gpStranica
+//	FF
+//    Eval(bZagl)
+//endif
 
 ? m
 ? SPACE(1) + Lokal("UKUPNO:")
@@ -411,7 +411,8 @@ ENDIF
 
 FF
 END PRINT
-CLOSERET
+
+close all
 return
 
 

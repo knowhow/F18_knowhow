@@ -708,40 +708,31 @@ else
 endif
 
 cIDBanka:=SPACE(LEN(radn->idbanka))
-
-O_PARAMS
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-RPar("VS",@cVarSort)
+cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
 
 Box(,10,50)
-@ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
-if lViseObr
+    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+    @ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
     @ m_x+2,col()+2 SAY "Obracun: "  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-endif
-@ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-@ m_x+4,m_y+2 SAY "Prored:"   GET  cProred  pict "@!"  valid cProred $ "DN"
-@ m_x+5,m_y+2 SAY "Prikaz iznosa:" GET cPrikIzn pict "@!" valid cPrikizn$"DN"
-@ m_x+6,m_y+2 SAY "Primanje (prazno-sve ukupno):" GET cIdTipPr valid empty(cIdTipPr).or.P_TipPr(@cIdTipPr)
-@ m_x+7,m_y+2 SAY "Banka (prazno-sve) :" GET cIdBanka valid empty(cIdBanka).or.P_Kred(@cIdBanka)
-@ m_x+8,m_y+2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
+    @ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+    @ m_x+4,m_y+2 SAY "Prored:"   GET  cProred  pict "@!"  valid cProred $ "DN"
+    @ m_x+5,m_y+2 SAY "Prikaz iznosa:" GET cPrikIzn pict "@!" valid cPrikizn$"DN"
+    @ m_x+6,m_y+2 SAY "Primanje (prazno-sve ukupno):" GET cIdTipPr valid empty(cIdTipPr).or.P_TipPr(@cIdTipPr)
+    @ m_x+7,m_y+2 SAY "Banka (prazno-sve) :" GET cIdBanka valid empty(cIdBanka).or.P_Kred(@cIdBanka)
+    @ m_x+8,m_y+2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
 
-// benjo, 08.04.2004, dodan uslov zbog ispadanja ako nije mupzedo
-if ( IsMupZeDo() )
-    @ m_x+9,m_y+2 SAY "Snimiti izvjestaj za banku (D/N)?"  GET cZaBanku VALID cZaBanku$"DN"  pict "@!"
-endif
+    if ( IsMupZeDo() )
+        @ m_x+9,m_y+2 SAY "Snimiti izvjestaj za banku (D/N)?"  GET cZaBanku VALID cZaBanku$"DN"  pict "@!"
+    endif
 
-read
-clvbox()
-ESC_BCR
+    read
+
+    clvbox()
+    ESC_BCR
+
 BoxC()
 
-WPar("VS",cVarSort)
-SELECT PARAMS
-USE
+set_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
 
 if (IsMupZeDo() .and. cZaBanku=="D")
     CreateFileBanka()
@@ -751,16 +742,12 @@ select ld
 //CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
 //CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
 
-if lViseObr
-    cObracun:=TRIM(cObracun)
-else
-    cObracun:=""
-endif
+cObracun:=TRIM(cObracun)
 
 if empty(cIdRj)
     cIdRj:=""
     Box(,2,30)
-        nSlog:=0
+    nSlog:=0
     nUkupno:=RECCOUNT2()
     if cVarSort=="1"
             cSort1:="radn->idbanka+IDRADN"
@@ -820,6 +807,7 @@ do while !eof()
     nStrana:=0
 
     Eval(bZagl)
+
     nT1:=0
     nT2:=0
     nT3:=0
@@ -827,11 +815,13 @@ do while !eof()
     nRbr:=0
 
     do while !eof() .and.  cGodina==godina .and. idrj=cIdRj .and. cMjesec=mjesec .and.!(lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun ) .and. radn->idBanka==cIdTBanka
+
         if lViseObr .and. EMPTY(cObracun)
             ScatterS(godina,mjesec,idrj,idradn)
         else
             Scatter()
         endif
+
         //select radn
         //hseek _idradn
         //select ld
@@ -841,20 +831,23 @@ do while !eof()
         else
             nIznosTP:=_i&cIdTipPr
         endif
+
         if nIznosTP=0
-                skip
-                loop
+            skip
+            loop
         endif
-        if prow()>62+gPStranica
-            FF
-            Eval(bZagl)
-        endif
+        
+        //if prow()>62+gPStranica
+          //  FF
+          //  Eval(bZagl)
+        //endif
+
         ? str(++nRbr,4)+".",idradn, RADNIK
         cZaBnkRadnik:=FormatSTR(RADNZABNK, 40)
         
         nC1:=pcol()+1
         if cPrikIzn=="D"
-                @ prow(),pcol()+1 SAY nIznosTP pict gpici
+            @ prow(),pcol()+1 SAY nIznosTP pict gpici
             cZaBnkIznos:=FormatSTR(ALLTRIM(STR(nIznosTP)),20)
         else
             @ prow(),pcol()+1 SAY space(len(gpici))
@@ -886,10 +879,11 @@ do while !eof()
         skip
     enddo
 
-    if prow()>60+gPStranica
-        FF
-        Eval(bZagl)
-    endif
+    //if prow()>60+gPStranica
+      //  FF
+      //  Eval(bZagl)
+    //endif
+
     ? m
     ? SPACE(1) + Lokal("UKUPNO:")
     if cPrikIzn=="D"
@@ -909,12 +903,14 @@ if (IsMupZeDo() .and. cZaBanku=="D")
 endif
 
 END PRINT
-CLOSERET
+
+close all
 return
-*}
+
 
 function ZIsplataTR()
-*{
+
+?
 P_12CPI
 
 select kred
@@ -1017,8 +1013,9 @@ return
 
 
 function CloseFileBanka(nHnd)
-*{
 FClose(nHnd)
 MsgBeep("Fajl pohranjen u " + cLokacija)
-*}
+return
+
+
 

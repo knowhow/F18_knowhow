@@ -54,6 +54,7 @@ local _err
 local _pos
 local _version, _last_version
 local _area
+local _force_erase := .f.
 
 if excl == NIL
   excl := .f.
@@ -145,10 +146,16 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
  
 recover using _err
 
+          altd()
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
           Alert(_msg)
-          
-          ferase_dbf(table)
+         
+          if _err:description == "Read error"
+             _force_erase := .t.
+          endif
+ 
+          ferase_dbf(alias, _force_erase)
+
 
           repair_dbfs()
           QUIT

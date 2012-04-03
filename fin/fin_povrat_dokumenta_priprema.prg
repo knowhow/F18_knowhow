@@ -144,22 +144,26 @@ if !lStorno
     _tbl := "fin_suban"
     @ m_x + 1, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta
+    select suban
     _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "BEGIN")
     log_write("povrat u pripremu fin"  + " : " + cIdFirma + cIdVN + cBrNal)
 
     _tbl := "fin_anal"
     @ m_x + 2, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta
+    select anal
     _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "CONT" )
 
     _tbl := "fin_sint"
     @ m_x + 3, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta
+    select sint
     _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "CONT" )
 
     _tbl := "fin_nalog"
     @ m_x + 4, m_y + 2 SAY "delete " + _tbl
     // algoritam 1 - jedini algoritam za naloge
+    select nalog
     _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 1, "END" )
 
 

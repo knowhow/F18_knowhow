@@ -23,7 +23,7 @@ static nSlogova:=0
 // -----------------------------------------------------
 // -----------------------------------------------------
 function create_index(cImeInd, cKljuc, alias, silent)
-
+local _force_erase := .f.
 local bErr
 local cFulDbf
 local nH
@@ -75,10 +75,21 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
  
 recover using _err
 
+          altd()
+ 
           _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
           Alert(_msg)
-               
-          ferase_dbf(alias) 
+         
+          // _err:GenCode = 23 
+          if _err:description == "Read error"
+             _force_erase := .t.
+          endif
+
+          // kada imamo pokusaj duplog otvaranja onda je
+          // _err:GenCode = 21
+          // _err:description = "Open error"
+ 
+          ferase_dbf(alias, _force_erase)
 
           repair_dbfs()
           QUIT

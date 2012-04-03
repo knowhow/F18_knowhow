@@ -172,6 +172,7 @@ if ALIAS() <> _a_dbf_rec["alias"]
    _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
    log_write(_msg)
    Alert(_msg)
+   RaiseError(_msg)
    QUIT
 endif
 
@@ -195,6 +196,7 @@ if sql_table_update(table, "del", nil, _where_str)
           _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG" + _alg["dbf_tag"]
           Alert(_msg)
           log_write(_msg)
+          RaiseError(_msg)
           QUIT
     endif
     SET ORDER TO TAG (_alg["dbf_tag"])

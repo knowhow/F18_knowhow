@@ -23,18 +23,26 @@ endif
 
 // --------------------------------------------
 // --------------------------------------------
-function ferase_dbf(tbl_name)
+function ferase_dbf(tbl_name, _silent)
 local _tmp, _odg
 
-_odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N") 
-
-if _odg == "L"
-   log_write("ferase_dbf quit: " + tbl_name) 
-   QUIT
+if _silent == NIL
+  _silent := .f.
 endif
 
-if _odg == "N"
-   return .f.
+if !_silent
+
+    _odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N") 
+
+    if _odg == "L"
+       log_write("ferase_dbf quit: " + tbl_name) 
+       QUIT
+    endif
+
+    if _odg == "N"
+       return .f.
+    endif
+
 endif
 
 log_write("ferase_dbf : " + tbl_name) 

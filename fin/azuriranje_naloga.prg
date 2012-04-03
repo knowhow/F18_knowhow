@@ -129,12 +129,21 @@ if lOk = .t.
  
 
   sql_table_update(nil, "BEGIN")
+  _ok := lock_semaphore( _tbl_suban, "lock" )
+  _ok := _ok .and. lock_semaphore( _tbl_anal,  "lock" )
+  _ok := _ok .and. lock_semaphore( _tbl_sint,  "lock" )
+  _ok := _ok .and. lock_semaphore( _tbl_nalog, "lock" )
+  if _ok
+    sql_table_update(nil, "END")
+  else
+    sql_table_update(nil, "ROLLBACK")
+    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+    return .f.
+  endif
 
-  lock_semaphore( _tbl_suban, "lock" )
-  lock_semaphore( _tbl_anal,  "lock" )
-  lock_semaphore( _tbl_sint,  "lock" )
-  lock_semaphore( _tbl_nalog, "lock" )
- 
+  sql_table_update(nil, "BEGIN")
+
+  hb_idleSleep(7)
 
   record := dbf_get_rec()
   // algoritam 2 - dokument nivo
@@ -157,7 +166,7 @@ if lOk = .t.
 
 endif
 
-hb_IdleSleep(10)
+hb_IdleSleep(7)
 
 // idi dalje, na anal ... ako je ok
 if lOk = .t.
@@ -213,7 +222,7 @@ if lOk = .t.
 
 endif
 
-hb_IdleSleep(2)
+hb_IdleSleep(7)
 // idi dalje, na nalog ... ako je ok
 if lOk = .t.
   
@@ -265,17 +274,20 @@ else
     update_semaphore_version( _tbl_nalog , .t. )
 
 
-    // otkljucaj sve tabele
-    lock_semaphore(_tbl_suban, "free")
-    lock_semaphore(_tbl_anal,  "free")
-    lock_semaphore(_tbl_sint,  "free")
-    lock_semaphore(_tbl_nalog, "free")
-
-    hb_idleSleep(10)
+      hb_idleSleep(10)
  
     sql_table_update(nil, "END")
 
 endif
+
+// otkljucaj sve tabele
+sql_table_update(nil, "BEGIN")
+lock_semaphore(_tbl_suban, "free")
+lock_semaphore(_tbl_anal,  "free")
+lock_semaphore(_tbl_sint,  "free")
+lock_semaphore(_tbl_nalog, "free")
+sql_table_update(nil, "END")
+
 
 BoxC()
 my_use_semaphore_on()

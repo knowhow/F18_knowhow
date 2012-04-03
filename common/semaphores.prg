@@ -25,12 +25,11 @@ local _user   := f18_user()
 
 
 // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
-
 _i := 0
 while .t.
 
     _i++
-	if get_semaphore_status(table) == "lock"
+	if ALLTRIM(get_semaphore_status(table)) == "lock"
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
 		MsgO(_err_msg)
          log_write(_err_msg)
@@ -45,9 +44,13 @@ while .t.
     endif
 
     if (_i >= SEMAPHORE_LOCK_RETRY_NUM)
-          _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ?!"
+         
+          _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ##" + ;
+                      "nasilno uklanjam lock !"
           MsgBeep(_err_msg)
+            
           log_write(_err_msg)
+          exit
           return .f.
     endif
 enddo
@@ -67,6 +70,7 @@ _ret := _sql_query( _server, _qry )
 if VALTYPE(_ret) == "L"
   // ERROR
   log_write("error :" + _qry)
+  Alert("error :" + _qry)
   QUIT
 endif
 

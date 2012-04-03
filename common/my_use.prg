@@ -162,7 +162,7 @@ do while .t.
 
      else
 
-            _last_version := last_semaphore_version(table))
+            _last_version := last_semaphore_version(table)
             // moramo osvjeziti cache
             if _version < _last_version
 
@@ -184,6 +184,7 @@ do while .t.
       // posljednja provjera ... mozda je neko 
       // u medjuvremenu mjenjao semafor
       _last_version := last_semaphore_version(table)
+      _version      := get_semaphore_version(table)
             
       if _version >= _last_version
             exit

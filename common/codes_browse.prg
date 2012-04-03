@@ -42,7 +42,7 @@ FOR _i:=1 TO LEN(aZabIsp)
 NEXT
 
 // provjeri da li treba logirati promjene
-if Logirati("FMK","SIF","PROMJENE")
+if Logirati("FMK", "SIF", "PROMJENE")
     _LOG_PROMJENE := .t.    
 endif
 
@@ -58,7 +58,7 @@ endif
 
 select (nDbf)
 if !used()
-   my_use(nDbf)
+   my_use(nDbf, nil, .f.)
 endif
 
 // setuj match_code polje...
@@ -112,6 +112,12 @@ if (fPonaz .and. (cNazSrch=="" .or. !TRIM(cNazSrch) == TRIM(naz))) .or. (!FOUND(
    IF TYPE("id") $ "U#UE"       
         cID:=(nDbf)->(FIELDGET(1))
    ELSE
+
+        if !(nDBf)->(USED())
+           Alert("not used ?!")
+           altd()
+        endif
+
         cID:=(nDbf)->id
         if fID_J
         __A_SIFV__[__PSIF_NIVO__,1]:=(nDBF)->ID_J

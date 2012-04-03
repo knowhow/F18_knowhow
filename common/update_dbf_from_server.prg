@@ -76,7 +76,7 @@ endif
 USE
 
 if (gDebug > 5)
-    log_write( table + "synchro cache:" + STR(SECONDS() - _seconds))
+    log_write( table + " synchro cache: " + STR(SECONDS() - _seconds))
 endif
 
 return .t. 

@@ -34,6 +34,7 @@ _a_dbf_rec  := get_a_dbf_rec(dbf_table)
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _sql_order  := _a_dbf_rec["sql_order"]
 
+altd()
 reopen_exclusive(_a_dbf_rec["table"])
 
 Box(, 5, 70)
@@ -68,7 +69,7 @@ next
 
 BoxC()
 
-close all
+//close all
 
 return .t.
 

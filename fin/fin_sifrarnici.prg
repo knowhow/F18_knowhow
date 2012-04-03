@@ -268,10 +268,13 @@ IF lBlag==NIL; lBlag:=.f.; ENDIF
 PushWa()
 select (F_SIFK)
 if !used()
-  O_SIFK; O_SIFV
+  O_SIFK
+  O_SIFV
 endif
 
-select sifk; set order to tag "ID"; seek "KONTO"
+select sifk
+set order to tag "ID"
+seek "KONTO"
 do while !eof() .and. ID="KONTO"
 
  AADD (ImeKol, {  IzSifKNaz("KONTO",SIFK->Oznaka) })

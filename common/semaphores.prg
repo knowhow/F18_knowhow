@@ -69,7 +69,7 @@ endif
 if new_area == NIL
    new_area := .f.
    // pozicioniraj se na WA rezervisanu za ovu tabelu 
-   SELECT (_a_dbf_rec["wa"])
+   //SELECT (_a_dbf_rec["wa"])
 endif
 
 table := _a_dbf_rec["table"]

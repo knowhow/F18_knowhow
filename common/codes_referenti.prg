@@ -15,12 +15,14 @@
 // ---------------------------------
 // otvaranje tabele REFER
 // ---------------------------------
-function p_refer(cId,dx,dy)
+function p_refer(cId, dx, dy)
 local nArr
+local _ret
+
 private ImeKol
 private Kol
 
-nArr:=SELECT()
+nArr := SELECT()
 O_REFER
 
 ImeKol:={}
@@ -35,7 +37,8 @@ for i:=1 to LEN(ImeKol)
 next
 
 select (nArr)
-return PostojiSifra(F_REFER,1,10,65,"Lista referenata",@cId,dx,dy)
+return PostojiSifra(F_REFER, 1, 10, 65, "Lista referenata", @cId, dx, dy)
+
 
 
 // ------------------------------------------------
@@ -44,6 +47,7 @@ return PostojiSifra(F_REFER,1,10,65,"Lista referenata",@cId,dx,dy)
 function g_refer( cReferId )
 local cNaz := ""
 local nTarea := SELECT()
+
 O_REFER
 seek cReferId
 if FOUND() .and. refer->id == cReferId
@@ -51,6 +55,4 @@ if FOUND() .and. refer->id == cReferId
 endif
 select (nTarea)
 return cNaz
-
-
 

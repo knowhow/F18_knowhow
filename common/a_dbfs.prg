@@ -21,7 +21,7 @@ local _alg
 
 public gaDbfs := {}
 
-Alert(RECI_GDJE_SAM0 + " (set_a_dbfs) fix - ld, epdv, pos")
+Alert(RECI_GDJE_SAM0 + " fix - ld, epdv, pos")
 
 __f18_dbfs := hb_hash()
 

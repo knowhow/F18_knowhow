@@ -38,8 +38,11 @@ PRIVATE ImeKol,Kol:={}
 ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
           { PADC("Naziv",20), {|| naz},      "naz"       };
         }
- FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
-return PostojiSifra(F_VRSTEP,1,10,55,"Sifrarnik vrsta placanja",@cid,dx,dy)
+
+FOR i:=1 TO LEN(ImeKol)
+  AADD(Kol,i)
+NEXT
+return PostojiSifra(F_VRSTEP, 1, 10, 55, "Sifrarnik vrsta placanja",@cid, dx, dy)
 
 
 

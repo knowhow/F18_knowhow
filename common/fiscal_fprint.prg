@@ -1028,7 +1028,7 @@ if LEN( aKupac ) > 0
 	cTmp += cSep
 
 	// 3. adresa
-	cTmp += ALLTRIM( PADR( aKupac[ 1, 3 ], 36 ) )
+	cTmp += ALLTRIM( PADR( aKupac[ 1, 3 ], 36 ) ) 
 	cTmp += cSep
 	
 	// 4. ptt, mjesto

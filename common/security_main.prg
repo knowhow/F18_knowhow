@@ -24,7 +24,7 @@ nResult := table_count(cTable, "privilege=" + _sql_quote( cFunkcija ) )
 
 if nResult == 0
     if gDebug > 9
-	   log_write( cTable + " " + "privilege = " + cFunkcija + " count =" + STR(nResult))
+	   log_write( cTable + " " + "privilege = " + cFunkcija + " count = " + STR(nResult))
     endif
 	return .t.
 endif

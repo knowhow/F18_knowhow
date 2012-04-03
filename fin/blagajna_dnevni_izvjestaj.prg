@@ -23,10 +23,11 @@ function Blagajna()
 local nRbr, nCOpis:=0, cOpis := ""
 local _idvn
 local _rec
+local _nCol1
 
 private pici := FormPicL("9," + gPicDEM, 12)
 
-lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
+lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N", PRIVPATH)=="D" )
 O_KONTO
 O_ANAL
 O_FIN_PRIPR
@@ -88,12 +89,12 @@ IF DABLAGAS
 ENDIF
 
 cDinDem:="1"
-Box(,3,60)
+Box(,3, 60)
  @ m_x+1,m_y+2 SAY ValDomaca()+"/"+ValPomocna()+" blagajnicki izvjestaj (1/2):" GET cDinDem
  read
  if cDinDem=="1"
    cIdKonto:=padr("2020",7)
-   pici:=FormPicL("9,"+gPicBHD,12)
+   pici:=FormPicL("9," + gPicBHD, 12)
  else
    cIdKonto:=padr("2050",7)
  endif
@@ -114,27 +115,29 @@ start print cret
 ?
 F12CPI
 ?? space(12)
-if cdindem=="1"
+if cDinDem=="1"
   ?? "("+ValDomaca()+")"
 else
   ?? "DEVIZNI ("+ValPomocna()+")"
 endif
-?? " BLAGAJNICKI IZVJESTAJ OD ", dDatDok
-?? space(8),"Broj:",cBrDok
+?? hb_Utf8ToStr(" BLAGAJNIČKI IZVJESTAJ OD "), dDatDok
+?? space(8), "Broj:", cBrDok
 ?
 ?
 nRbr:=0
 nDug:=nPot:=0
 nCol1:=20
+
 ? "    ------- ------------------------- --------------------- -------------- ---------------"
 ? "    * Redni*       Temeljnica        *        OPIS         *    ULAZ      *    IZLAZ     *"
 ? "    * broj *                         *                     *              *              *"
 ? "    *      *            *            *                     *              *              *"
 ? m:="    ------- ------------ ------------ --------------------- -------------- ---------------"
 do while !eof()
-  IF PROW() > 49+gPStranica
-    PZagBlag(nDug,nPot,m,cBrDok,pici,cDinDem,dDatDok)
+  IF PROW() > 49 + gPStranica
+    PZagBlag(nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok)
   ENDIF
+
   IF lSumiraj
     nPomD:=nPomP:=0
     cBrDok2:=brdok
@@ -150,18 +153,22 @@ do while !eof()
           exit
         endif
       endif
-      if cdindem=="1"  // dinari !!!!
+      if cDinDem=="1"  // dinari !!!!
+
         if d_p=="1"
           nPomD+=iznosbhd
         else
           nPomP+=iznosbhd
         endif
+
       else
+
         if d_p=="1"
           nPomD+=iznosdem
         else
           nPomP+=iznosdem
         endif
+
       endif
       IF !EMPTY(opis)
         cOpis += opis
@@ -169,8 +176,8 @@ do while !eof()
       ENDIF
       skip 1
     ENDDO
-    IF PROW() > 49+gPStranica-nStavki
-      PZagBlag(nDug,nPot,m,cBrDok,pici,cDinDem,dDatDok)
+    IF PROW() > 49 + gPStranica - nStavki
+      PZagBlag(nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok)
     ENDIF
     ? "    *",str(++nRbr,3)+". *"
     if nPomD<>0
@@ -178,49 +185,57 @@ do while !eof()
     else
       ?? space(12)+"* "+padr(cbrdok2,11)+"*"
     endif
+
     nCOpis:=pcol()+1
-    ?? " "+PADR(cOpis,20)
+    ?? " "+PADR(cOpis, 20)
+    altd()
     nCol1:=pcol()+1
+
     @ prow(),pcol()+1 SAY PADL(TRANSFORM(nPomD,pici),14)
     @ prow(),pcol()+1 SAY PADL(TRANSFORM(nPomP,pici),14)
     nDug += nPomD
     nPot += nPomP
     OstatakOpisa(cOpis,nCOpis)
+
   ELSE
+
     if idkonto<>cidkonto
       skip
       loop
     endif
-    ? "    *",str(++nRbr,3)+". *"
+
+    ? "    *",str(++nRbr, 3) + ". *"
     if d_p=="1"
       ?? " "+brdok+" *"+space(12)+"*"
     else
       ?? space(12)+"* "+padr(brdok,11)+"*"
     endif
+
     nCOpis:=pcol()+1
     ?? " "+PADR(cOpis:=ALLTRIM(opis),20)
     nCol1:=pcol()+1
+
     if cdindem=="1"  // dinari !!!!
 
       if d_p=="1"
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosbhd,pici),14)
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici),14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosbhd,pici), 14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici), 14)
         nDug+=iznosbhd
       else
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici),14)
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosbhd,pici),14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici), 14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosbhd,pici), 14)
         nPot+=iznosbhd
       endif
 
     else
 
       if d_p=="1"
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosdem,pici),14)
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici),14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosdem,pici), 14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici), 14)
         nDug+=iznosdem
       else
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici),14)
-        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosdem,pici),14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(0,pici), 14)
+        @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosdem,pici), 14)
         nPot+=iznosdem
       endif
 
@@ -230,6 +245,7 @@ do while !eof()
   ENDIF
 enddo
 select anal
+
 //CREATE_INDEX("ANALi1","IdFirma+IdKonto+dtos(DatNal)","ANAL")
 hseek cIdfirma+cIdkonto
 nDugSt:=nPotSt:=0
@@ -247,17 +263,17 @@ do while !eof() .and. idfirma==cIdfirma .and. idkonto==cIdkonto .and. datnal<=dD
 enddo
 ? m
 @ prow()+1,10 SAY "Promet blagajne:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(ndug,pici),14)
-@ prow(),pcol()+1 SAY PADL(TRANSFORM(npot,pici),14)
+@ prow(), ncol1 SAY PADL(TRANSFORM(ndug,pici), 14)
+@ prow(), pcol()+1 SAY PADL(TRANSFORM(npot,pici), 14)
 ? m
-@ prow()+1,10 SAY "Saldo od "+dtoc(ddatdok-1)+":"
-@ prow(),ncol1 SAY PADL(TRANSFORM(ndugst-npotst,pici),14)
+@ prow()+1, 10 SAY "Saldo od "+dtoc(ddatdok-1)+":"
+@ prow(), ncol1 SAY PADL(TRANSFORM(ndugst-npotst,pici), 14)
 ? m
-@ prow()+1,10 SAY "Ukupan primitak:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(ndugst-npotst+ndug,pici),14)
+@ prow()+1, 10 SAY "Ukupan primitak:"
+@ prow(), ncol1 SAY PADL(TRANSFORM(ndugst-npotst+ndug,pici), 14)
 
-@ prow()+1,10 SAY "Izdatak:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(npot,pici),14)
+@ prow()+1, 10 SAY "Izdatak:"
+@ prow(), ncol1 SAY PADL(TRANSFORM(npot,pici), 14)
 
 ? m
 @ prow()+1,10 SAY "Saldo na dan:"
@@ -268,8 +284,8 @@ enddo
 ? m
 ?
 ?
-@ prow()+1,25 SAY "  ___________________            ______________________"
-@ prow()+1,25 SAY "     Blagajna                           Kontrola       "
+@ prow()+1, 25 SAY "  ___________________            ______________________"
+@ prow()+1, 25 SAY "     Blagajna                           Kontrola       "
 FF
 end print
 closeret
@@ -281,8 +297,8 @@ function PZagBlag(nDug,nPot,m,cBrDok,pici,cDinDem,dDatDok)
 // -----------------------------
 ? m
 @ prow()+1,10 SAY "Promet blagajne, prenos:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(ndug,pici),14)
-@ prow(),pcol()+1 SAY PADL(TRANSFORM(npot,pici),14)
+@ prow(), ncol1 SAY PADL(TRANSFORM(ndug,pici),14)
+@ prow(), pcol()+1 SAY PADL(TRANSFORM(npot,pici),14)
 ? m
 FF
 // sljedeca stranica:
@@ -315,14 +331,15 @@ return
 
 // stampa blagajne na osnovu azuriranog dokumenta
 function blag_azur()
-
+local nCol1
 local nRbr:=0
 local nCOpis:=0
 local cOpis:=""
-private pici:=FormPicL("9,"+gPicDEM,12)
+local lSumiraj := .f.
+private pici:=FormPicL("9," + gPicDEM, 12)
 private cLine := ""
 
-lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
+//lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
 
 O_PARTN
 O_KONTO
@@ -331,7 +348,7 @@ O_SUBAN
 
 cDinDem:="1"
 
-Box(,4,60)
+Box(, 4, 60)
     @ m_x+1,m_y+2 SAY ValDomaca()+"/"+ValPomocna()+" blagajnicki izvjestaj (1/2):" GET cDinDem
     read
     if cDinDem=="1"
@@ -441,7 +458,7 @@ do while !eof() .and. field->idfirma == cIdFirma .and. field->idvn == cTipDok .a
             endif
         
             nCOpis:=pcol()+1
-            ?? " "+PADR(cOpis,20)
+            ?? " "+PADR(cOpis, 20)
             nCol1:=pcol()+1
             @ prow(),pcol()+1 SAY PADL(TRANSFORM(nPomD,pici),14)
             @ prow(),pcol()+1 SAY PADL(TRANSFORM(nPomP,pici),14)
@@ -449,11 +466,14 @@ do while !eof() .and. field->idfirma == cIdFirma .and. field->idvn == cTipDok .a
             nPot += nPomP
             OstatakOpisa(cOpis,nCOpis)
     ELSE
+
+        // lSumiraj := .f.
+
         if idkonto <> cIdkonto
             skip
             loop
         endif
-        ? "    *",str(++nRbr,3)+". *"
+        ? "    *", str(++nRbr,3)+". *"
         if d_p=="1"
             ?? " "+brdok+" *"+space(12)+"*"
         else
@@ -508,22 +528,22 @@ enddo
 
 ? cLine
 @ prow()+1,10 SAY "Promet blagajne:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(nDug,pici),14)
-@ prow(),pcol()+1 SAY PADL(TRANSFORM(nPot,pici),14)
+@ prow(),ncol1 SAY PADL(TRANSFORM(nDug, pici),14)
+@ prow(),pcol()+1 SAY PADL(TRANSFORM(nPot, pici),14)
 ? cLine
 @ prow()+1,10 SAY "Saldo od "+dtoc(dDatDok-1)+":"
-@ prow(),ncol1 SAY PADL(TRANSFORM(nDugst-nPotst,pici),14)
+@ prow(),ncol1 SAY PADL(TRANSFORM(nDugst-nPotst, pici),14)
 ? cLine
 @ prow()+1,10 SAY "Ukupan primitak:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(nDugSt-nPotSt+nDug,pici),14)
+@ prow(),ncol1 SAY PADL(TRANSFORM(nDugSt-nPotSt+nDug, pici),14)
 @ prow()+1,10 SAY "Izdatak:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(nPot,pici),14)
+@ prow(),ncol1 SAY PADL(TRANSFORM(nPot, pici), 14)
 ? cLine
 @ prow()+1,10 SAY "Saldo na dan:"
-@ prow(),ncol1 SAY PADL(TRANSFORM(nDugSt-nPotSt+nDug-nPot,pici),14)
+@ prow(),ncol1 SAY PADL(TRANSFORM(nDugSt-nPotSt+nDug-nPot, pici),14)
 ? cLine
 @ prow()+1,10 SAY "Slovima:"
-@ prow(),pcol()+1 SAY Slovima(round(ndugst-npotst+ndug-npot,2),iif(cdindem=="1",ValDomaca(),ValPomocna()))
+@ prow(),pcol()+1 SAY Slovima(round(ndugst-npotst+ndug-npot, 2),iif(cdindem=="1", ValDomaca(), ValPomocna()))
 ? cLine
 ?
 ?
@@ -600,8 +620,8 @@ else
     ?? "DEVIZNI ("+ValPomocna()+")"
 endif
 
-?? " BLAGAJNICKI IZVJESTAJ OD ", dDatDok
-?? space(8),"Broj:",cBrDok
+?? hb_Utf8ToStr(" BLAGAJNIČKI IZVJESTAJ OD "), dDatDok
+?? space(8),"Broj:", cBrDok
 ? SPACE(20)
 ?? "na osnovu dokumenta: " + cIdFirma + "-" + cTipDok + "-" + cBrDok
 ?

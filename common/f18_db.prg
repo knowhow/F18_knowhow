@@ -31,12 +31,18 @@ local _msg
 local _values_dbf
 local _alg_tag := ""
 
-// trbamo where str za values rec
+// trebamo where str za values rec
 set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
 
+if ALIAS() <> _a_dbf_rec["alias"]
+   _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
+   log_write(_msg)
+   Alert(_msg)
+   QUIT
+endif
 
 _values_dbf := dbf_get_rec()
-// trebmo where str za stanje dbf-a
+// trebamo where str za stanje dbf-a
 set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
 
 if transaction $ "FULL#BEGIN"
@@ -90,28 +96,22 @@ if !sql_table_update(table, "ins", values)
    return .f.
 endif
 
-// pripremiti semaphore ids-ove
-
 // stanje u dbf-u (_values_dbf)
-_full_id_dbf := ""
-
-// stanje podataka u mem rec varijabli values
-_full_id_mem := ""
-
 _full_id_dbf := get_dbf_rec_primary_key(_alg["dbf_key_fields"], _values_dbf)
+// stanje podataka u mem rec varijabli values
 _full_id_mem := get_dbf_rec_primary_key(_alg["dbf_key_fields"], values)
 
 
 // stavi id-ove na server
 AADD(_ids, _alg_tag + _full_id_mem)
-if _full_id_dbf != _full_id_mem
+if _full_id_dbf <> _full_id_mem
   AADD(_ids, _alg_tag + _full_id_dbf)
 endif
 
 if !push_ids_to_semaphore(table, _ids)
      sql_table_update(table, "ROLLBACK")
 
-    _msg := RECI_GDJE_SAM + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " !"
+    _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " !"
     Alert(_msg)
     log_write(_msg)
 
@@ -122,7 +122,7 @@ endif
 if update_semaphore_version(table, .t.) < 0
    sql_table_update(table, "ROLLBACK")
 
-   _msg := RECI_GDJE_SAM + "update semaphore " + table +  " !"
+   _msg := "ERR " + RECI_GDJE_SAM0 + "update semaphore " + table +  " !"
    log_write(_msg)
    Alert(_msg)
 
@@ -140,7 +140,7 @@ if dbf_update_rec(values)
 else
     sql_table_update(table, "ROLLBACK")
 
-    _msg := RECI_GDJE_SAM + "dbf_update_rec " + table +  " !"
+    _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " !"
     Alert(_msg)
     log_write(_msg)
 
@@ -184,7 +184,7 @@ if sql_table_update(table, "del", nil, _where_str)
     SELECT (_a_dbf_rec["alias"])
     
     if ORDNUMBER(_alg["dbf_tag"]) < 1
-          _msg := RECI_GDJE_SAM0 + " " + _alg["dbf_tag"]
+          _msg := "ERR : " + RECI_GDJE_SAM0 + " " + _alg["dbf_tag"]
           Alert(_msg)
           log_write(_msg)
           QUIT

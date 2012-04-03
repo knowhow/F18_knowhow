@@ -26,10 +26,18 @@ endif
 function ferase_dbf(tbl_name)
 local _tmp
 
+
+if Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " ?!", "N") == "N"
+   return .f.
+endif     
+
+log_write("ferase_dbf : " + tbl_name) 
 tbl_name := f18_ime_dbf(tbl_name)
+
 
 if FILE(tbl_name)
    if FERASE(tbl_name) != 0
+      log_write("ferase_dbf : " + tbl_name + "neuspjesno !") 
       return .f.
    endif
 endif
@@ -40,6 +48,7 @@ _tmp := STRTRAN(tbl_name, DBFEXT, INDEXEXT)
 if FILE(_tmp)
    log_write("brisem: " + _tmp)
    if FERASE(_tmp) != 0
+        log_write("ferase_dbf : " + _tmp + "neuspjesno !") 
         return .f.
    endif
 endif
@@ -48,6 +57,7 @@ _tmp := STRTRAN(tbl_name, DBFEXT, MEMOEXT)
 if FILE(_tmp)
    log_write("brisem: " + _tmp)
    if FERASE(_tmp) != 0
+        log_write("ferase_dbf : " + _tmp + "neuspjesno !") 
         return .f.
    endif
 endif

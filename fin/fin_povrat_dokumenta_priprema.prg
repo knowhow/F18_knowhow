@@ -16,7 +16,7 @@
 function povrat_fin_naloga(lStorno)
 local _rec
 local nRec
-local _del_rec, _ok
+local _del_rec, _ok := .t.
 local _field_ids, _where_block
 local _t_rec
 local _tbl
@@ -110,8 +110,8 @@ do while !eof() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and
        _rec["idfirma"]  := cIdFirma2
        _rec["idvn"]     := cIdVn2
        _rec["brnal"]    := cBrNal2
-       _rec["iznosbhd"] := -_iznosbhd
-       _rec["iznosdem"] := -_iznosdem
+       _rec["iznosbhd"] := -_rec["iznosbhd"]
+       _rec["iznosdem"] := -_rec["iznosdem"]
    endif
 
    APPEND BLANK

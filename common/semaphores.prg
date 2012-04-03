@@ -144,9 +144,10 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
           dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
  
 recover using _err
+
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
           Alert(_msg)
-               
+          
           ferase_dbf(table)
 
           repair_dbfs()
@@ -282,7 +283,7 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 _result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
 
 if _result <> 1
-  log_write( _tbl + " " + _user + "count =" + STR(_result))
+  log_write( RECI_GDJE_SAM0 + " tbl=" + _tbl + " user=" + _user + " table_count = " + STR(_result))
   return -1
 endif
 

@@ -243,6 +243,7 @@ local dN_date
 local dT_date
 local cGrDate
 local nCnt := 0
+local _rec
 
 if g_date( @dT_date, @dN_date, @cGrDate ) == 0
 	return
@@ -257,11 +258,15 @@ do while !EOF()
 	
 	if ( cGrDate == "D" )
 		if ( field->datum <= dT_date )
-			replace field->datum with dN_date
+            _rec := dbf_get_rec()
+            _rec["datum"] := dN_date
+            update_rec_server_and_dbf( ALIAS(), _rec )
 			++ nCnt 
 		endif
 	else
-		replace field->datum with dN_date
+        _rec := dbf_get_rec()
+        _rec["datum"] := dN_date
+        update_rec_server_and_dbf( ALIAS(), _rec )
 		++ nCnt 
 	endif
 	

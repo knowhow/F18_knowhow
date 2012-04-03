@@ -211,15 +211,16 @@ endif
  *  \param cStatus - status koji se provjerava
  */
 function AddStatusObr(cRJ,nGodina,nMjesec,cStatus)
-*{
+local _rec
 select obracuni
 append blank
-replace rj with cRJ
-replace godina with nGodina
-replace mjesec with nMjesec
-replace status with cStatus
+_rec := dbf_get_rec()
+_rec["rj"] := cRJ
+_rec["godina"] := nGodina
+_rec["mjesec"] := nMjesec
+_rec["status"] := cStatus
+update_rec_server_and_dbf( ALIAS(), _rec )
 return
-*}
 
 
 
@@ -231,16 +232,15 @@ return
  *  \param cStatus - status koji se provjerava
  */
 function ChStatusObr(cRJ,nGodina,nMjesec,cStatus)
-*{
+local _rec
 select obracuni
-Scatter()
-_rj:=cRJ
-_godina:=nGodina
-_mjesec:=nMjesec
-_status:=cStatus
-Gather()
+_rec := dbf_get_rec()
+_rec["rj"] := cRJ
+_rec["godina"] := nGodina
+_rec["mjesec"] := nMjesec
+_rec["status"] := cStatus
+update_rec_server_and_dbf( ALIAS(), _rec )
 return
-*}
 
 
 /*! \fn FmtMjesec(nMjesec)
@@ -255,7 +255,6 @@ else
 	cMj:=ALLTRIM(STR(nMjesec))
 endif
 return cMj
-*}
 
 
 /*! \fn GetObrStatus(cRJ,nGodina,nMjesec)
@@ -265,7 +264,6 @@ return cMj
  *  \param nMjesec - mjesec
  */
 function GetObrStatus(cRj,nGodina,nMjesec)
-*{
 local nArr
 
 nArr:=SELECT()
@@ -288,7 +286,6 @@ endif
 select (nArr)
 
 return cStatus
-*}
 
 
 /*! \fn ProsliObrOtvoren(cRj,nGodObr,nMjObr)
@@ -298,7 +295,6 @@ return cStatus
  *  \param nMjObr - mjesec
  */
 function ProsliObrOtvoren(cRJ,nGodObr,nMjObr)
-*{
 local lOtvoren
 if (nMjObr==1)
 	lOtvoren:=JelOtvoren(cRJ,nGodObr-1,12)
@@ -306,6 +302,5 @@ else
 	lOtvoren:=JelOtvoren(cRJ,nGodObr,nMjObr-1)
 endif
 return (lOtvoren)
-*}
 
 

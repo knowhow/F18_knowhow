@@ -83,6 +83,19 @@ _alg["dbf_key_fields"] := { "id", "oznaka", "idsif"}
 _alg["sql_in" ]        := "rpad(id,8) || rpad(oznaka,4) || rpad(idsif,15)"
 _alg["dbf_tag"]        := "ID"
 AADD(_item["algoritam"], _alg)
+
+
+// vidi cre_sifk_sifv()
+
+// algoritam 3 - brisi sve stavke sa kljucem id + oznaka + idsif
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->id + field->idsif}
+_alg["dbf_key_fields"] := { "id", "idsif"} 
+_alg["sql_in" ]        := "rpad(id,8) || rpad(idsif,15)"
+_alg["dbf_tag"]        := "IDIDSIF"
+AADD(_item["algoritam"], _alg)
+ 
  
 f18_dbfs_add(_tbl, @_item)
 

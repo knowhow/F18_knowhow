@@ -1982,9 +1982,32 @@ return
 // -------------------------------
 // -------------------------------
 static function sif_brisi_stavku()
+local _rec_dbf, _rec, _alias
 
 if Pitanje( , "Zelite li izbrisati ovu stavku ??","D")=="D"
-    delete_rec_server_and_dbf()
+    PushWa()
+
+    _alias := ALIAS()
+
+    sql_table_update(nil, "BEGIN")
+
+    _rec_dbf := dbf_get_rec()
+    delete_rec_server_and_dbf(ALIAS(), _rec_dbf, 1, "CONT")
+
+    SELECT (F_SIFV)
+    if !USED()
+         O_SIFV
+    endif
+   
+    _rec := hb_hash()
+    _rec["id"]    := PADR(_alias, 8)
+    _rec["idsif"] := PADR(_rec_dbf["id"], 15)
+    // id + idsif
+    delete_rec_server_and_dbf("sifv", _rec, 3, "CONT")
+
+    sql_table_update(nil, "END")
+
+    PopWa()
     return DE_REFRESH
 else
     return DE_CONT

@@ -24,12 +24,18 @@ endif
 // --------------------------------------------
 // --------------------------------------------
 function ferase_dbf(tbl_name)
-local _tmp
+local _tmp, _odg
 
+_odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N") 
 
-if Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " ?!", "N") == "N"
+if _odg == "L"
+   log_write("ferase_dbf quit: " + tbl_name) 
+   QUIT
+endif
+
+if _odg == "N"
    return .f.
-endif     
+endif
 
 log_write("ferase_dbf : " + tbl_name) 
 tbl_name := f18_ime_dbf(tbl_name)

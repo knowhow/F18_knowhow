@@ -400,7 +400,7 @@ DO CASE
 
                 _pict := ""
 
-                if len(_trazi_val) > 45
+                if VALTYPE(_trazi_val) == "C" .and. len(_trazi_val) > 45
                    _pict := "@S45"
                 endif
 

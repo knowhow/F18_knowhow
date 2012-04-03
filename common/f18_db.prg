@@ -168,6 +168,14 @@ local _alg_tag := ""
 
 set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
 
+if ALIAS() <> _a_dbf_rec["alias"]
+   _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
+   log_write(_msg)
+   Alert(_msg)
+   QUIT
+endif
+
+
 if transaction $ "FULL#BEGIN"
    sql_table_update(table, "BEGIN")
 endif
@@ -184,7 +192,7 @@ if sql_table_update(table, "del", nil, _where_str)
     SELECT (_a_dbf_rec["alias"])
     
     if ORDNUMBER(_alg["dbf_tag"]) < 1
-          _msg := "ERR : " + RECI_GDJE_SAM0 + " " + _alg["dbf_tag"]
+          _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG" + _alg["dbf_tag"]
           Alert(_msg)
           log_write(_msg)
           QUIT

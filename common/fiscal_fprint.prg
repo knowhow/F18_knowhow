@@ -166,14 +166,23 @@ return nRet
 // -------------------------------------------------
 // provjerava da li zadovoljava kolicina
 // -------------------------------------------------
-function _chk_qtty( nQtty )
-local lRet := .t.
+function _chk_qtty( rn_qtty )
+local _ret := .t.
 
-if nQtty > MAX_QT .or. nQtty < MIN_QT
-	lRet := .f.
+// ispitivanje vrijednosti
+if rn_qtty > MAX_QT .or. rn_qtty < MIN_QT
+	_ret := .f.
+    return _ret
 endif
 
-return lRet
+// ispitivanje decimala
+// fiskalni uredjeja dozvoljava unos na 3 decimale
+if ABS( rn_qtty ) - ABS( VAL( STR( rn_qtty, 12, 3 ) ) ) <> 0
+    _ret := .f.
+    return _ret
+endif
+
+return _ret
 
 
 // -------------------------------------------------

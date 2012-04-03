@@ -1,3 +1,8 @@
+0.9.78 2012-04-03, vsasa
+ 
+  - LD korekcije (izvještaji, unos, brisanje kredita, itd...) [#27390](http://redmine.bring.out.ba/issues/27390)
+  - ostale sitne korekcije
+
 0.9.77 2012-03-29, vsasa
  
   - LD zbrka sa našim slovima [#27310](http://redmine.bring.out.ba/issues/27310)

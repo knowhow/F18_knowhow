@@ -205,15 +205,15 @@ BoxC()
 
 closeret
 return
-*}
 
 
-
+// ----------------------------------------
+// krediti key handler
+// ----------------------------------------
 function EddKred(Ch)
-*{
-local cDn:="N"
-local nRet:=DE_CONT
-local nRec:=RECNO()
+local cDn := "N"
+local nRet := DE_CONT
+local nRec := RECNO()
 local _placeno, _iznos, _rec
 
 if Logirati(goModul:oDataBase:cName,"KREDIT","EDITKREDIT")
@@ -225,9 +225,11 @@ endif
 select radkr
 
 do case
+
     case Ch==K_ENTER
 
         _vals := dbf_get_rec()
+
         _iznos := _vals["iznos"]
         _placeno := _vals["placeno"]
 
@@ -236,23 +238,25 @@ do case
             @ m_x + 1, m_y + 2 SAY "Rucna prepravka rate !"
             @ m_x + 3, m_y + 2 SAY "Iznos  " GET _iznos pict gpici
             @ m_x + 4, m_y + 2 SAY "Placeno" GET _placeno pict gpici
+            
             cNaOsnovu2 := cNaOsnovu
           
             @ m_x + 6, m_y + 2 SAY "Na osnovu" GET cNaOsnovu2
+            
             read
 
-            if (cNaOsnovu2 <> field->naosnovu) .and. Pitanje( , "Zelite li promijeniti osnov kredita ? (D/N)", "N") == "D"
+            if ( cNaOsnovu2 <> field->naosnovu ) .and. Pitanje( , "Zelite li promijeniti osnov kredita ? (D/N)", "N") == "D"
 
                 SEEK cIdRadn + cIdKred + cNaOsnovu
+
                 DO WHILE !EOF() .and. (field->idradn + field->idkred + field->naosnovu) == (cIdRadn + cIdKred + cNaOsnovu)
                     
                     SKIP 1
                     nRecK := RECNO()
                     SKIP -1
 
+                    _vals := dbf_get_rec()
                     _vals["naosnovu"] := cNaOsnovu2
-                    _vals["placeno"] := _placeno
-                    _vals["iznos"] := _iznos
 
                     update_rec_server_and_dbf( "RADKR", _vals )
 
@@ -260,21 +264,29 @@ do case
 
                 ENDDO
       
-                //_vals["naosnovu"] := cNaOsnovu := cNaOsnovu2
-
             endif
+
             read
 
         BoxC()
+
         GO (nRec)
-            
-        //update_rec_server_and_dbf( "RADKR", _vals )
+
+        _vals := dbf_get_rec()
+        _vals["naosnovu"] := cNaOsnovu2
+        _vals["placeno"] := _placeno
+        _vals["iznos"] := _iznos
+
+        update_rec_server_and_dbf( "RADKR", _vals )
             
         if lLogEditKredit
             EventLog(nUser,goModul:oDataBase:cName,"KREDIT","EDITKREDIT",radkr->placeno,radkr->iznos,nil,nil,"","","Rad:"+ALLTRIM(cIdRadn),Date(),Date(),"","Rucna ispravka rate kredita za radnika")
         endif
+
         select radkr
+
         nRet:=DE_REFRESH
+
     case Ch==K_CTRL_N
             nRet:=DE_REFRESH
     case Ch==K_CTRL_T

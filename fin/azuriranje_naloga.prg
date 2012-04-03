@@ -143,7 +143,7 @@ if lOk = .t.
 
   sql_table_update(nil, "BEGIN")
 
-  hb_idleSleep(7)
+  //hb_idleSleep(7)
 
   record := dbf_get_rec()
   // algoritam 2 - dokument nivo
@@ -166,7 +166,7 @@ if lOk = .t.
 
 endif
 
-hb_IdleSleep(7)
+//hb_IdleSleep(7)
 
 // idi dalje, na anal ... ako je ok
 if lOk = .t.
@@ -194,7 +194,7 @@ if lOk = .t.
 endif
 
 
-hb_IdleSleep(2)
+//hb_IdleSleep(2)
 
 // idi dalje, na sint ... ako je ok
 if lOk = .t.
@@ -222,7 +222,7 @@ if lOk = .t.
 
 endif
 
-hb_IdleSleep(7)
+//hb_IdleSleep(7)
 // idi dalje, na nalog ... ako je ok
 if lOk = .t.
   
@@ -274,7 +274,7 @@ else
     update_semaphore_version( _tbl_nalog , .t. )
 
 
-      hb_idleSleep(10)
+    //hb_idleSleep(10)
  
     sql_table_update(nil, "END")
 

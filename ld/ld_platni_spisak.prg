@@ -13,6 +13,9 @@
 #include "ld.ch"
 
 
+// --------------------------------------
+// platni spisak
+// --------------------------------------
 function PlatSp()
 local nC1:=20
 local cVarSort:="2"
@@ -42,118 +45,103 @@ nIznosTO:=0
 // export za banku
 cZaBanku:="N"
 
-O_PARAMS
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("VS",@cVarSort)
-RPar("ni",@cNaslov)
-RPar("to",@cNaslovTO)
-
-cNaslov:=PADR(cNaslov,90)
-cNaslovTO:=PADR(cNaslovTO,90)
+// uzmi parametre iz sql/db
+cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
+cNaslov := fetch_metric( "ld_platni_spisak_naslov", my_user(), cNaslov )
+cNaslov := PADR( cNaslov, 90 )
+cNaslovTO := fetch_metric( "ld_platni_spisak_naslov_to", my_user(), cNaslovTO )
+cNaslovTO := PADR( cNaslovTO, 90 )
 
 Box(,13,60)
-@ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
-if lViseObr
-  @ m_x+ 2,col()+2 SAY "Obracun: "  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-endif
-@ m_x+ 3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-@ m_x+ 4,m_y+2 SAY "Prored:"   GET  cProred  pict "@!"  valid cProred $ "DN"
-@ m_x+ 5,m_y+2 SAY "Prikaz iznosa:" GET cPrikIzn pict "@!" valid cPrikizn$"DN"
-@ m_x+ 6,m_y+2 SAY "Prikaz u procentu %:" GET nprocenat pict "999.99"
-@ m_x+ 7,m_y+2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
-@ m_x+ 8,m_y+2 SAY "Naslov izvjestaja"  GET cNaslov pict "@S30"
-@ m_x+ 9,m_y+2 SAY "Naslov za topl.obrok"  GET cNaslovTO pict "@S30"
-@ m_x+10,m_y+2 SAY "Iznos (samo za topli obrok)"  GET nIznosTO pict gPicI
 
-@ m_x+11,m_y+2 SAY "Izlistati sve radnike (D/N)"  GET cSviRadn pict "@!" VALID cSviRadn $ "DN"
-
-read
-clvbox()
-ESC_BCR
-if nprocenat<>100
-  @ m_x+12,m_y+2 SAY "zaokruzenje" GET nZkk pict "99"
-  @ m_x+13,m_y+2 SAY "Prikazati i drugi spisak (za "+LTRIM(STR(100-nProcenat,6,2))+"%-tni dio)" GET cDrugiDio VALID cDrugiDio$"DN" PICT "@!"
+    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+    @ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
+    @ m_x+ 2,col()+2 SAY "Obracun: "  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+    @ m_x+ 3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+    @ m_x+ 4,m_y+2 SAY "Prored:"   GET  cProred  pict "@!"  valid cProred $ "DN"
+    @ m_x+ 5,m_y+2 SAY "Prikaz iznosa:" GET cPrikIzn pict "@!" valid cPrikizn$"DN"
+    @ m_x+ 6,m_y+2 SAY "Prikaz u procentu %:" GET nprocenat pict "999.99"
+    @ m_x+ 7,m_y+2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
+    @ m_x+ 8,m_y+2 SAY "Naslov izvjestaja"  GET cNaslov pict "@S30"
+    @ m_x+ 9,m_y+2 SAY "Naslov za topl.obrok"  GET cNaslovTO pict "@S30"
+    @ m_x+10,m_y+2 SAY "Iznos (samo za topli obrok)"  GET nIznosTO pict gPicI
+    @ m_x+11,m_y+2 SAY "Izlistati sve radnike (D/N)"  GET cSviRadn pict "@!" VALID cSviRadn $ "DN"
+    
+    read
+    clvbox()
+    ESC_BCR
+    if nProcenat <> 100
+        
+        @ m_x+12,m_y+2 SAY "zaokruzenje" GET nZkk pict "99"
+        @ m_x+13,m_y+2 SAY "Prikazati i drugi spisak (za "+LTRIM(STR(100-nProcenat,6,2))+"%-tni dio)" GET cDrugiDio VALID cDrugiDio$"DN" PICT "@!"
   
-  read
-else
-  cDrugiDio:="N"
-endif
+        read
+    else
+        cDrugiDio:="N"
+    endif
+
 BoxC()
 
- WPar("VS",cVarSort)
- cNaslov:=ALLTRIM(cNaslov)
- WPar("ni",cNaslov)
- cNaslovTO:=ALLTRIM(cNaslovTO)
- WPar("to",cNaslovTO)
- SELECT PARAMS; USE
+// snimi parametre u sql/db
+set_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
+set_metric( "ld_platni_spisak_naslov", my_user(), cNaslov )
+cNaslov := ALLTRIM( cNaslov )
+set_metric( "ld_platni_spisak_naslov_to", my_user(), cNaslovTO )
+cNaslovTO := ALLTRIM( cNaslovTO )
 
 if cSviRadn == "D"
     lSviRadnici := .t.
 endif
 
-
 IF nIznosTO<>0
-  cNaslov:=cNaslovTO
-  qqImaTO:=IzFMKIni("LD","UslovImaTopliObrok",'UPPER(RADN->K2)=="D"',KUMPATH)
+    cNaslov:=cNaslovTO
+    qqImaTO:=IzFMKIni("LD","UslovImaTopliObrok",'UPPER(RADN->K2)=="D"',KUMPATH)
 ENDIF
 
 IF !EMPTY(cNaslov)
-  cNaslov += (SPACE(1) + Lokal("za mjesec:")+STR(cMjesec,2)+". " + Lokal("godine:")+STR(cGodina,4)+".")
+    cNaslov += (SPACE(1) + Lokal("za mjesec:")+STR(cMjesec,2)+". " + Lokal("godine:")+STR(cGodina,4)+".")
 ENDIF
 
 select ld
 //CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
 //CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
 
-if lViseObr
-  cObracun:=TRIM(cObracun)
-else
-  cObracun:=""
-endif
+cObracun:=TRIM(cObracun)
 
-if empty(cidrj)
-  cidrj:=""
-  IF cVarSort=="1"
-    set order to tag (TagVO("2"))
-    hseek str(cGodina,4)+str(cmjesec,2)+cObracun
-  ELSE
-    Box(,2,30)
-     nSlog:=0
-     cSort1:="SortPrez(IDRADN)"
-     cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
-     if lViseObr
-       cFilt+=".and. obr=" + _filter_quote( cObracun )
-     endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
-    BoxC()
-    GO TOP
-  ENDIF
+if EMPTY( cIdRj )
+    cIdRj:=""
+    IF cVarSort=="1"
+        set order to tag (TagVO("2"))
+        hseek str(cGodina,4)+str(cmjesec,2)+cObracun
+    ELSE
+        Box(,2,30)
+            nSlog:=0
+            cSort1:="SortPrez(IDRADN)"
+            cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
+                IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
+            cFilt+=".and. obr=" + _filter_quote( cObracun )
+            INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+        BoxC()
+        GO TOP
+    ENDIF
 else
-  IF cVarSort=="1"
-    set order to tag (TagVO("1"))
-    hseek str(cGodina,4)+cidrj+str(cmjesec,2)+cObracun
-  ELSE
-    Box(,2,30)
-     nSlog:=0
-     cSort1:="SortPrez(IDRADN)"
-     cFilt := "IDRJ==cIdRj.and."+;
-              IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina) )
-     if lViseObr
-       cFilt+=".and. obr=" + _filter_quote( cObracun )
-     endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
-    BoxC()
-    GO TOP
-  ENDIF
+  
+    IF cVarSort=="1"
+        set order to tag (TagVO("1"))
+        hseek str(cGodina,4)+cidrj+str(cmjesec,2)+cObracun
+    ELSE
+        Box(,2,30)
+            nSlog:=0
+            cSort1:="SortPrez(IDRADN)"
+            cFilt := "IDRJ==cIdRj.and."+;
+                IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
+                IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina) )
+            cFilt+=".and. obr=" + _filter_quote( cObracun )
+            INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+        BoxC()
+        GO TOP
+    ENDIF
 endif
-
 
 EOF CRET
 
@@ -162,12 +150,13 @@ nStrana:=0
 m:="----- "+replicate("-",_LR_)+" ----------------------------------- ----------- -------------------------"
 bZagl:={|| ZPlatSp() }
 
-select ld_rj; hseek ld->idrj; select ld
+select ld_rj
+hseek ld->idrj
+select ld
 
 START PRINT CRET
 
-
-nPocRec:=RECNO()
+nPocRec := RECNO()
 
 FOR nDio:=1 TO IF(cDrugiDio=="D",2,1)
 
@@ -179,33 +168,39 @@ FOR nDio:=1 TO IF(cDrugiDio=="D",2,1)
 
     nT1:=nT2:=nT3:=nT4:=0
     nRbr:=0
+
     do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
-        IF lViseObr .and. EMPTY(cObracun)
+
+        if lViseObr .and. EMPTY(cObracun)
             ScatterS(godina,mjesec,idrj,idradn)
         else
             Scatter()
         endif
+
         select radn
         hseek _idradn
         select ld
-        if nIznosTO = 0      // isplata plate
+
+        if nIznosTO = 0      
+            // isplata plate
             if !lSviRadnici .and. !(empty(radn->isplata) .or. radn->isplata="BL")
-                    skip
-                    loop
+                skip
+                loop
             endif
-        else               // isplata toplog obroka
+        else               
+            // isplata toplog obroka
             if !(&qqImaTO)
-                    skip
-                    loop
+                skip
+                loop
             endif
         endif
         
-        if prow()>62+gpStranica
-            FF
-            Eval(bZagl)
-        endif
+        //if prow()>62+gpStranica
+          //  FF
+          //  Eval(bZagl)
+        //endif
         
-        ? str(++nRbr,4)+".",idradn, RADNIK
+        ? STR( ++nRbr, 4 ) + ".", idradn, RADNIK
  
         nC1:=pcol()+1
         IF nIznosTO<>0
@@ -213,28 +208,33 @@ FOR nDio:=1 TO IF(cDrugiDio=="D",2,1)
         ENDIF
         if cprikizn=="D"
             if nProcenat<>100
-                    IF nDio==1
-                        @ prow(),pcol()+1 SAY round(_uiznos*nprocenat/100,nzkk) pict gpici
-                    ELSE
-                        @ prow(),pcol()+1 SAY ROUND(_uiznos,nzkk)-round(_uiznos*nprocenat/100,nzkk) pict gpici
-                    ENDIF
+                IF nDio==1
+                    @ prow(),pcol()+1 SAY round(_uiznos*nprocenat/100,nzkk) pict gpici
+                ELSE
+                    @ prow(),pcol()+1 SAY ROUND(_uiznos,nzkk)-round(_uiznos*nprocenat/100,nzkk) pict gpici
+                ENDIF
             else
-                    @ prow(),pcol()+1 SAY _uiznos pict gpici
+                @ prow(),pcol()+1 SAY _uiznos pict gpici
             endif
         else
             @ prow(),pcol()+1 SAY space(len(gpici))
         endif
         
         @ prow(),pcol()+4 SAY replicate("_",22)
+
         if cProred=="D"
             ?
         endif
-        nT1+=_usati; nT2+=_uneto; nT3+=_uodbici
-        IF  NPROCENAT<>100
+
+        nT1 += _usati
+        nT2 += _uneto
+        nT3 += _uodbici
+
+        IF nProcenat <> 100
             IF nDio==1
-                    nT4 += round(_uiznos*nprocenat/100,nzkk)
+                nT4 += round(_uiznos*nprocenat/100,nzkk)
             ELSE
-                    nT4 += ( round(_uiznos,nzkk) - round(_uiznos*nprocenat/100,nzkk) )
+                nT4 += ( round(_uiznos,nzkk) - round(_uiznos*nprocenat/100,nzkk) )
             ENDIF
         ELSE
             nT4+=_uiznos
@@ -243,16 +243,18 @@ FOR nDio:=1 TO IF(cDrugiDio=="D",2,1)
         skip
     enddo
 
-    if prow()>60+gpStranica
-        FF
-        Eval(bZagl)
-    endif
+    //if prow()>60+gpStranica
+      //  FF
+      //  Eval(bZagl)
+    //endif
     
     ? m
     ? SPACE(1) + Lokal("UKUPNO:")
-    if cprikizn=="D"
-        @ prow(),nC1 SAY  nT4 pict gpici
+
+    if cPrikIzn == "D"
+        @ prow(), nC1 SAY nT4 pict gpici
     endif
+
     ? m
     
     ? p_potpis()
@@ -264,14 +266,17 @@ NEXT
 
 END PRINT
 
-CLOSERET
+close all
+return
 
 
 function ZPlatSp()
-*{
+?
 P_12CPI
+
 ? UPPER(gTS)+":",gnFirma
 ?
+
 if empty(cidrj)
     ? Lokal("Pregled za sve RJ ukupno:")
 else
@@ -288,6 +293,7 @@ IF !EMPTY(cNaslov)
     ? PADC(ALLTRIM(cNaslov),90)
     ? PADC(REPL("-",LEN(ALLTRIM(cNaslov))),90)
 ENDIF
+
 if nProcenat<>100
     ?
     ? Lokal("Procenat za isplatu:")
@@ -298,6 +304,7 @@ if nProcenat<>100
     endif
     ?
 endif
+
 ? m
 ? Lokal("Rbr   Sifra           Naziv radnika               ") + iif(cPrikIzn=="D",Lokal("ZA ISPLATU"),"          ")+"         " + Lokal("Potpis")
 ? m

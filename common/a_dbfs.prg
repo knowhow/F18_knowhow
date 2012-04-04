@@ -30,7 +30,7 @@ set_a_dbf_params()
 set_a_dbf_sifk_sifv()
 
 set_a_dbf_fin()
-//set_a_dbf_fakt()
+set_a_dbf_fakt()
 
 //set_a_dbf_ld()
 //set_a_dbf_epdv()

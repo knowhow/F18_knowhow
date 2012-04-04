@@ -74,18 +74,18 @@ if _created
 endif
 
 if !file(f18_ime_dbf("_roba"))
-        dbcreate2(PRIVPATH+'_roba.dbf',aDbf)
+        dbcreate2('_roba.dbf',aDbf)
 endif
 
 CREATE_INDEX("ID", "ID", "roba") 
 
 index_mcode(SIFPATH, "roba")
-CREATE_INDEX("NAZ","LEFT(naz,40)", SIFPATH+"roba")
-CREATE_INDEX("ID","id", PRIVPATH+"_roba") 
+CREATE_INDEX("NAZ","LEFT(naz,40)", "roba")
+CREATE_INDEX("ID","id", "_roba") 
 CREATE_INDEX("BARKOD","BARKOD", "roba") // roba, artikli
-CREATE_INDEX("SIFRADOB","SIFRADOB",SIFPATH+"roba") // roba, artikli
-CREATE_INDEX("ID_VSD","SIFRADOB", SIFPATH + "roba") // sifra dobavljaca
-CREATE_INDEX("PLU","str(fisc_plu, 10)", SIFPATH + "roba") // sifra dobavljaca
+CREATE_INDEX("SIFRADOB","SIFRADOB","roba") // roba, artikli
+CREATE_INDEX("ID_VSD","SIFRADOB",  "roba") // sifra dobavljaca
+CREATE_INDEX("PLU","str(fisc_plu, 10)",  "roba") // sifra dobavljaca
 
 close all
 O_ROBA
@@ -94,7 +94,7 @@ if used()
     if fieldpos("KATBR")<>0
     select (F_ROBA)
     use
-    CREATE_INDEX("KATBR","KATBR",SIFPATH+"roba") // roba, artikli
+    CREATE_INDEX("KATBR","KATBR","roba") // roba, artikli
     endif
 endif
 
@@ -118,8 +118,8 @@ if !file(f18_ime_dbf("tarifa"))
 		my_use("tarifa")
 		close all
 endif
-CREATE_INDEX("ID","id",  SIFPATH+"TARIFA")
-CREATE_INDEX("naz","naz", SIFPATH+"TARIFA")
+CREATE_INDEX("ID","id",  "TARIFA")
+CREATE_INDEX("naz","naz", "TARIFA")
 index_mcode(SIFPATH, "TARIFA")
 
 // SAST
@@ -146,15 +146,17 @@ O_SAST
 if used()
     if sast->(fieldpos("R_BR"))<>0
         use
-        CREATE_INDEX("IDRBR", "ID+STR(R_BR,4,0)+ID2", SIFPATH + "SAST")
+        CREATE_INDEX("IDRBR", "ID+STR(R_BR,4,0)+ID2",  "SAST")
     endif
     use
 endif
 
-CREATE_INDEX("NAZ", "ID2+ID", SIFPATH + "SAST")
+CREATE_INDEX("NAZ", "ID2+ID",  "SAST")
 
 
-if !file(f18_ime_dbf("barkod"))
+_table_name := "barkod"
+
+if !file(f18_ime_dbf(_table_name))
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
    AADD(aDBf,{ 'BARKOD'              , 'C' ,   13 ,  0 })
@@ -164,12 +166,12 @@ if !file(f18_ime_dbf("barkod"))
    AADD(aDBf,{ 'L3'                  , 'C' ,   40 ,  0})
    AADD(aDBf,{ 'VPC'                 , 'N' ,   12 ,  2 })
    AADD(aDBf,{ 'MPC'                 , 'N' ,   12 ,  2 })
-   dbcreate2(PRIVPATH+'BARKOD.DBF',aDbf)
+   dbcreate2( _table_name, aDbf)
 endif
 
-CREATE_INDEX("1","barkod+id",PRIVPATH+"BARKOD")
-CREATE_INDEX("ID","id+LEFT(naziv,40)",PRIVPATH+"BARKOD")
-CREATE_INDEX("Naziv","LEFT(Naziv,40)+id",PRIVPATH+"BARKOD")
+CREATE_INDEX("1","barkod+id", _table_name)
+CREATE_INDEX("ID","id+LEFT(naziv,40)", _table_name)
+CREATE_INDEX("Naziv","LEFT(Naziv,40)+id", _table_name)
 
 // kreiranje tabele strings
 cre_strings()

@@ -101,7 +101,6 @@ if !file(f18_ime_dbf("tnal"))
         add_f_mcode(@aDbf)
         AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
         dbcreate2('tnal',aDbf)
-        altd()
         reset_semaphore_version("tnal")
         my_use("tnal")
         close all

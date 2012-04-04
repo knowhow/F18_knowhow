@@ -188,7 +188,6 @@ do while !eof()
 
     nCOpis:=pcol()+1
     ?? " "+PADR(cOpis, 20)
-    altd()
     nCol1:=pcol()+1
 
     @ prow(),pcol()+1 SAY PADL(TRANSFORM(nPomD,pici),14)

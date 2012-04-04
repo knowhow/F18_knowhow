@@ -1491,13 +1491,7 @@ else
   HSEEK cSR
 endif
 
-// TODO: http://redmine.bring.out.ba/issues/25746
-// sta select(alias) vraca ?
-if SELECT("PRIPR") != 0
-  select fakt_pripr
-else
-  SELECT (F_PRIPR)
-endif
+select fakt_pripr
 
 return
 

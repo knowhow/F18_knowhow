@@ -115,7 +115,6 @@ if (fPonaz .and. (cNazSrch=="" .or. !TRIM(cNazSrch) == TRIM(naz))) .or. (!FOUND(
 
         if !(nDBf)->(USED())
            Alert("not used ?!")
-           altd()
         endif
 
         cID:=(nDbf)->id

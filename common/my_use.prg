@@ -116,7 +116,6 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
  
 recover using _err
 
-          altd()
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
           Alert(_msg)
          

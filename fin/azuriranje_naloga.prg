@@ -424,9 +424,7 @@ local nSaldo
 Box("ad", 10, MAXCOLS()-10)
 
 if lLogAzur
-    cOpis := fin_pripr->idfirma + "-" + ;
-        fin_pripr->idvn + "-" + ;
-        fin_pripr->brnal
+    cOpis := fin_pripr->idfirma + "-" +  fin_pripr->idvn + "-" + fin_pripr->brnal
 
     EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil, nil, nil, nil, cOpis, "", "", fin_pripr->datdok, Date(), ;
               "", "Azuriranje dokumenta - poceo !")
@@ -685,6 +683,7 @@ local nC := 0
 local _rec
 
 @ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
+
 SELECT SUBAN
 SET ORDER TO TAG "3"
 SELECT PSUBAN

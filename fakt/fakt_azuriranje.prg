@@ -60,9 +60,9 @@ if !used()
 endif
 
 if (PCount()==0)
-    select F_PRIPR
+    select F_FAKT_PRIPR
     if !used()
-        O_FAKT_S_PRIPR
+        O_FAKT_PRIPR
     endif
     select F_FAKT
     if !used()
@@ -243,6 +243,7 @@ return 0
 // -------------------------------------------------------------------
 static function fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 local _a_memo
+local _rec
 local _fakt_totals
 local _fakt_doks_data
 local _fakt_doks2_data
@@ -251,21 +252,19 @@ select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
 
-Box("#Proces azuriranja u toku",3,60)
+Box("#Proces azuriranja u toku", 3, 60)
 
 // azuriramo prvo u tabelu FAKT 
-do while !EOF() .and. field->idfirma == id_firma ;
-        .and. field->idtipdok == id_tip_dok ;
-        .and. field->brdok == br_dok
+do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
 
     select fakt_pripr
     
-    Scatter()
-
+    _rec := dbf_get_rec()
+    
     select fakt
-    AppBlank2( .f., .f. )   
+    APPEND BLANK
       
-    Gather2()
+    dbf_update_rec(_rec, .t.)
 
     select fakt_pripr
     skip
@@ -280,79 +279,52 @@ seek id_firma + id_tip_dok + br_dok
 // dodaj zapis u fakt_doks
 select fakt_doks
 set order to tag "1"
-hseek fakt_pripr->idfirma + fakt_pripr->idtipdok + fakt_pripr->brdok
+HSEEK id_firma + id_tip_dok + br_dok
 
+
+_rec["idfirma"]  := id_firma
+_rec["idtipdok"] := id_tip_dok
+_rec["brdok"]    := br_dok
+ 
 if !Found()
-    AppBlank2(.f.,.f.)
+   APPEND BLANK
+   dbf_update_rec(_rec, .t.)
 endif
 
-// dodaj zapis i u fakt_doks2   
 select fakt_doks2
 set order to tag "1"
-hseek fakt_pripr->idfirma + fakt_pripr->idtipdok + fakt_pripr->brdok
+HSEEK id_firma + id_tip_dok + br_dok
+
 if !Found()
-    AppBlank2( .f., .f. )
+   APPEND BLANK
+   dbf_update_rec(_rec, .t.)
 endif
+
 
 // daj mi podatke za tabelu fakt_doks   
-_fakt_doks_data := get_fakt_doks_data( fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok )
-
-// ubaci podatke u tabelu fakt_doks
-select fakt_doks
-    
-_field->IdFirma   := _fakt_doks_data["id_firma"]
-_field->BrDok     := _fakt_doks_data["br_dok"]
-_field->Rezerv    := _fakt_doks_data["rezerv"]
-_field->DatDok    := _fakt_doks_data["dat_dok"]
-_field->IdTipDok  := _fakt_doks_data["id_tip_dok"]
-_field->Partner   := _fakt_doks_data["partner"]
-_field->dindem    := _fakt_doks_data["din_dem"]
-_field->IdPartner := _fakt_doks_data["id_partner"]
-_field->idpm      := _fakt_doks_data["id_pm"]
-_field->IdVrsteP  := _fakt_doks_data["id_vrste_p"]
-_field->dok_veza  := _fakt_doks_data["dok_veza"]
-_field->oper_id   := _fakt_doks_data["oper_id"]
-_field->fisc_rn   := _fakt_doks_data["fisc_rn"]
-_field->fisc_st   := _fakt_doks_data["fisc_st"]
-_field->dat_isp   := _fakt_doks_data["dat_isp"]
-_field->dat_otpr  := _fakt_doks_data["dat_otpr"]
-_field->dat_val   := _fakt_doks_data["dat_val"]
-_field->DatPl     := _fakt_doks_data["dat_val"]
-    
-if ( _field->m1 == "Z" )
-    // skidam zauzece i dobijam normalan dokument
-    // REPLACE m1 WITH " " -- isto kao i gore
-    _field->m1 := " "
-endif
+_fakt_doks_data := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
 // izracunaj totale za fakturu
-_fakt_totals := calculate_fakt_total( fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok )
+_fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
     
 select fakt_doks
 // ubaci u fakt_doks totale
-_field->Iznos := _fakt_totals["iznos"] 
-_field->Rabat := _fakt_totals["rabat"]
+_fakt_doks_data["iznos"] := _fakt_totals["iznos"] 
+_fakt_doks_data["rabat"] := _fakt_totals["rabat"]
+
+dbf_update_rec(_fakt_doks_data, .t.) 
 
 // dodaj stavke i u fakt_doks2      
-_fakt_doks2_data := get_fakt_doks2_data( fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok )
+_fakt_doks2_data := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
 select fakt_doks2
 
-_field->idfirma := _fakt_doks2_data["id_firma"]
-_field->brdok := _fakt_doks2_data["br_dok"]
-_field->idtipdok := _fakt_doks2_data["id_tip_dok"]
-_field->k1 := _fakt_doks2_data["k1"]
-_field->k2 := _fakt_doks2_data["k2"]
-_field->k3 := _fakt_doks2_data["k3"]
-_field->k4 := _fakt_doks2_data["k4"]
-_field->k5 := _fakt_doks2_data["k5"]
-_field->n1 := _fakt_doks2_data["n1"]
-_field->n2 := _fakt_doks2_data["n2"]
-    
-if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
-    EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;
-            "-" + fakt_pripr->idtipdok + "-" + fakt_pripr->brdok, fakt_pripr->datdok, Date(),"","Azuriranje dokumenta")
-endif
+dbf_update_rec(_fakt_doks2_data, .t.)
+
+//if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
+//    EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;
+//            "-" + fakt_pripr->idtipdok + "-" + fakt_pripr->brdok, fakt_pripr->datdok, Date(),"","Azuriranje dokumenta")
+//endif
     
 select fakt_pripr
 
@@ -360,6 +332,8 @@ BoxC()
 
 return .t.
 
+// -----------------------------------------------
+// -----------------------------------------------
 static function _fakt_partner_memo( a_memo )
 local _return := ""
     
@@ -384,9 +358,9 @@ select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
 
-_fakt_data["id_firma"] := field->idfirma
-_fakt_data["br_dok"] := field->brdok
-_fakt_data["id_tip_dok"] := field->idtipdok
+_fakt_data["idfirma"] := field->idfirma
+_fakt_data["brdok"] := field->brdok
+_fakt_data["idtipdok"] := field->idtipdok
 
 _memo := ParsMemo( field->txt )
     
@@ -403,7 +377,8 @@ return _fakt_data
 
 
 
-
+// -------------------------------------------------------------
+// -------------------------------------------------------------
 function get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 local _fakt_data := hb_hash()
 local _memo 
@@ -412,15 +387,10 @@ select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
 
-_fakt_data["id_firma"] := field->idfirma
-_fakt_data["br_dok"] := field->brdok
-_fakt_data["id_tip_dok"] := field->idtipdok
-_fakt_data["dat_dok"] := field->datdok
+_fakt_data := dbf_get_rec()
 
 _memo := ParsMemo( field->txt )
-    
-_fakt_data["din_dem"] := field->dindem
-    
+        
 if ( field->idtipdok $ "10#20#27" .and. field->serbr = "*" )
     _fakt_data["rezerv"] := "*"
 else
@@ -428,10 +398,7 @@ else
 endif
 
 _fakt_data["partner"] := _fakt_partner_memo( _memo )
-_fakt_data["id_partner"] := field->idpartner
-_fakt_data["id_pm"] := field->idpm
     
-_fakt_data["dok_veza"] := field->dok_veza
 _fakt_data["oper_id"] := getUserId()
 
 if gFc_use == "D" .and. FieldPOS("fisc_rn") <> 0
@@ -442,11 +409,17 @@ else
     _fakt_data["fisc_st"] := 0
 endif
 
-_fakt_data["dat_isp"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
-_fakt_data["dat_otpr"] := if( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
-_fakt_data["dat_val"] := if( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
+_fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
+_fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
+_fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
 
-_fakt_data["id_vrste_p"] := field->idvrstep
+    
+if ( _field->m1 == "Z" )
+    // skidam zauzece i dobijam normalan dokument
+    // REPLACE m1 WITH " " -- isto kao i gore
+    _fakt_data["m1"] := " "
+endif
+
 
 return _fakt_data
 

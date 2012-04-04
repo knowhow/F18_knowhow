@@ -75,8 +75,6 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
  
 recover using _err
 
-          altd()
- 
           _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
           Alert(_msg)
          

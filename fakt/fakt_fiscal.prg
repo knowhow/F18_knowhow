@@ -1934,22 +1934,20 @@ return
 // vraca broj fiskalnog isjecka
 // --------------------------------------------------------
 function fisc_isjecak( cFirma, cTipDok, cBrDok )
-local nTArea := SELECT()
+local nTArea   := SELECT()
 local nFisc_no := 0
 
 select fakt_doks
 go top
 seek cFirma + cTipDok + cBrDok
 
-if fakt_doks->(FIELDPOS("FISC_RN")) <> 0 .and. FOUND() .and. ( field->fisc_rn <> 0 .or. field->fisc_st <> 0 )
-
+if  FOUND() 
     // ako postoji broj reklamnog racuna, onda uzmi taj
     if field->fisc_st <> 0
         nFisc_no := field->fisc_st
     else
         nFisc_no := field->fisc_rn
     endif
-
 endif
 
 select (nTArea)

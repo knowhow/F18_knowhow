@@ -1,3 +1,7 @@
+0.9.79 2012-04-04, vsasa
+ 
+  - semafori, lock bugfix [#27399](http://redmine.bring.out.ba/issues/27399)
+
 0.9.78 2012-04-03, vsasa
  
   - LD korekcije (izvještaji, unos, brisanje kredita, itd...) [#27390](http://redmine.bring.out.ba/issues/27390)

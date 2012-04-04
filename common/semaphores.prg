@@ -133,7 +133,7 @@ _i := 0
 while .t.
 
     _i++
-	if get_semaphore_status(table) == "lock"
+	if ALLTRIM( get_semaphore_status(table) ) == "lock"
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
 		MsgO(_err_msg)
          log_write(_err_msg)
@@ -148,9 +148,11 @@ while .t.
     endif
 
     if (_i >= SEMAPHORE_LOCK_RETRY_NUM)
-          _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ?!"
+          _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja #" + ;
+                        "nasilno ukljanjam lock !"
           MsgBeep(_err_msg)
           log_write(_err_msg)
+          exit
           return .f.
     endif
 enddo

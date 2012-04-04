@@ -15,6 +15,8 @@
 
 function fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine)
 local i
+local _w1 := 45
+local _x, _y
 
 ImeKol:={}
 
@@ -62,12 +64,15 @@ for i:=1 to len(ImeKol)
     AADD( Kol, i )
 next
 
-Box(, MAXROW() - 4, MAXCOL() - 3 )
+_x := MAXROWS() - 4
+_y := MAXCOLS() - 3
+Box( , _x, _y)
 
-@ m_x + MAXROW() - 4 - 3, m_y + 2 SAY " <ENTER> Stampa dokumenta        " + BROWSE_COL_SEP + " <P> Povrat dokumenta u pripremu    ³"
-@ m_x + MAXROW() - 4 - 2, m_y + 2 SAY " <N>     Stampa narudzbenice     " + BROWSE_COL_SEP + " <B> Stampa radnog naloga           ³ "
-@ m_x + MAXROW() - 4 - 1, m_y + 2 SAY " <S>     Storno dokument         " + BROWSE_COL_SEP + " <R> Rezervacija/Realizacija        ³"
-@ m_x + MAXROW() - 4,     m_y + 2 SAY " <R>  Stampa fiskalnog racuna    " + BROWSE_COL_SEP + " <F> otpremnica -> faktura          ³"
+
+@ m_x + _x - 4, m_y + 2 SAY PADR(" <ENTER> Stampa dokumenta", _w1) + BROWSE_COL_SEP + PADR(" <P> Povrat dokumenta u pripremu", _w1) + BROWSE_COL_SEP
+@ m_x + _x - 3, m_y + 2 SAY PADR(" <N>     Stampa narudzbenice", _w1) + BROWSE_COL_SEP + PADR(" <B> Stampa radnog naloga", _w1) + BROWSE_COL_SEP
+@ m_x + _x - 2, m_y + 2 SAY PADR(" <S>     Storno dokument", _w1) + BROWSE_COL_SEP + PADR(" -",_w1) + BROWSE_COL_SEP
+@ m_x + _x - 1, m_y + 2 SAY PADR(" <R>  Stampa fiskalnog racuna", _w1) + BROWSE_COL_SEP + PADR(" <F> otpremnica -> faktura", _w1) + BROWSE_COL_SEP
 
 fUPripremu:=.f.
 
@@ -103,10 +108,10 @@ for i := 1 to len(adImeKol)
     AADD(adKol,i)
 next
 
-ObjDbedit("", MAXROW() - 4, MAXCOL() - 3, {|| EdDatn (lOpcine) }, "", "", , , , , 2 )
+ObjDbedit("", MAXROW() - 4, MAXCOL() - 3, {|| fakt_tabela_komande (lOpcine) }, "", "", , , , , 2 )
 BoxC()
 
-if fupripremu
+if fUpripremu
     close all
     fakt_unos_dokumenta()
 endif

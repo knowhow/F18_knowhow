@@ -172,12 +172,12 @@
 #xcommand O__ROBA          => select(F__ROBA)      ; my_usex ("_roba")
 #xcommand O__SDIM          => select(F__SDIM)      ; my_use ("_sdim"); set order to tag "1"
 
-#xcommand O_PFAKT          => select (F_FAKT)      ; my_use  ("fakt_pripr", "fakt_fakt"); set order to tag "1"
-#xcommand O_POMGN          => select(F_POMGN)      ; my_use ("pomgn"); set order to tag "4"
-#xcommand O_POM            => select(F_POM)        ; my_usex ("pom")
-#xcommand O_SDIM           => select(F_SDIM)       ; my_use ("sdim"); set order to tag "1"
-#xcommand O_KALPOS         => SELECT (F_KALPOS)    ; my_use ("kalpos"); set order to tag "1"
-#xcommand O_CROBA          => SELECT (F_CROBA)     ; my_use ("croba"); set order to tag "IDROBA"
+#xcommand O_PFAKT          => select (F_FAKT)      ; my_use  ("fakt_pripr", "fakt_fakt", .f.); set order to tag "1"
+#xcommand O_POMGN          => select (F_POMGN)     ; my_use  ("pomgn"); set order to tag "4"
+#xcommand O_POM            => select (F_POM)       ; my_usex ("pom")
+#xcommand O_SDIM           => select (F_SDIM)      ; my_use  ("sdim"); set order to tag "1"
+#xcommand O_KALPOS         => SELECT (F_KALPOS)    ; my_use  ("kalpos"); set order to tag "1"
+#xcommand O_CROBA          => SELECT (F_CROBA)     ; my_use  ("croba"); set order to tag "IDROBA"
 
 #xcommand O_FADO           => select (F_FADO)      ; my_use  ("fado")    ; set order to tag "ID"
 #xcommand O_FADE           => select (F_FADE)      ; my_use  ("fade")    ; set order to tag "ID"

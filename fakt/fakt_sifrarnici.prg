@@ -975,6 +975,7 @@ StartPrint()
 StampaTabele(aKol,{|| BlokSLU()},,gTabela,,;
               ,"PREGLED BAZE PRIPREMLJENIH LABELA",,,,,)
 
+close all
 EndPrint()
 
 use

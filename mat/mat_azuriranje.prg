@@ -175,7 +175,7 @@ return
 static function _mat_azur_sql()
 local _ok := .t.
 local _ids := {}
-local record
+local _record
 local _tmp_id
 local _tbl_suban
 local _tbl_anal
@@ -202,7 +202,7 @@ if _ok = .t.
   
   MsgO("sql mat_suban")
   
-  record := hb_hash()
+  _record := hb_hash()
 
   select mat_psuban
   go top
@@ -210,15 +210,15 @@ if _ok = .t.
   sql_table_update(nil, "BEGIN")
   
  
-  record := dbf_get_rec()
-  _tmp_id := record["id_firma"] + record["idvn"] + record["brnal"]
+  _record := dbf_get_rec()
+  _tmp_id := _record["id_firma"] + _record["idvn"] + _record["brnal"]
   AADD( _ids_suban, "#2" + _tmp_id )
 
   @ m_x+1, m_y+2 SAY "mat_suban -> server: " + _tmp_id 
   do while !eof()
 
-     record := dbf_get_rec()
-     if !update_server_from_rec("mat_suban", "ins", record )
+     _record := dbf_get_rec()
+     if !sql_table_update("mat_suban", "ins", _record )
        _Ok := .f.
        exit
      endif
@@ -239,13 +239,13 @@ if _ok == .t.
   go top
  
   MsgO("sql mat_anal")
-  record := dbf_get_rec()
-  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  _record := dbf_get_rec()
+  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
   AADD( _ids_anal, "#2" + _tmp_id )
 
   do while !eof()
-   record := dbf_get_rec()
-   if !update_server_from_rec("mat_anal", "ins", record )
+   _record := dbf_get_rec()
+   if !sql_table_update("mat_anal", "ins", _record )
        lOk := .f.
        exit
     endif
@@ -265,14 +265,14 @@ if _ok = .t.
   select mat_psint
   go top
  
-  record := dbf_get_rec()
-  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  _record := dbf_get_rec()
+  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
   AADD( _ids_sint, "#2" + _tmp_id )
 
   do while !eof()
  
-   record := dbf_get_rec()
-   if !update_server_from_rec("mat_sint", "ins", record )
+   _record := dbf_get_rec()
+   if !sql_table_update("mat_sint", "ins", _record )
        lOk := .f.
        exit
     endif
@@ -289,21 +289,21 @@ if _ok = .t.
   
   MsgO("sql mat_nalog")
 
-  record := hb_hash()
+  _record := hb_hash()
 
   select mat_pnalog
 
 
   GO TOP
  
-  record := dbf_get_rec()
-  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  _record := dbf_get_rec()
+  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
   AADD( _ids_nalog, _tmp_id )
 
   do while !eof()
  
-   record := dbf_get_rec()
-   if !update_server_from_rec("mat_nalog", "ins", record )
+   _record := dbf_get_rec()
+   if !sql_table_update("mat_nalog", "ins", _record )
        lOk := .f.
        exit
     endif

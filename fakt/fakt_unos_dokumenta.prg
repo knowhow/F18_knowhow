@@ -691,6 +691,7 @@ do while !EOF()
   endif
 enddo
 FF
+close all 
 EndPrint()
 CLOSE ALL
 return     

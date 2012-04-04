@@ -72,7 +72,8 @@ return
 
 
 function zavrsi_stampu()
-	if !lSSIP99 
+	if !lSSIP99
+        close all 
 		EndPrint()
 	endif
 return

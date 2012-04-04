@@ -767,7 +767,7 @@ return
 // Ispravka azuriranih dokumenata (u tabelarnom pregledu)
 //
  
-function EdDatn(lOpcine)
+function fakt_tabela_komande(lOpcine)
 local nRet:=DE_CONT
 local _rec
 local cFilter
@@ -782,14 +782,17 @@ endif
 do case
  
   case Ch==K_ENTER 
+     refresh_fakt_tbl_dbfs()
      nRet := pr_pf(lOpcine)
 
   case Ch==K_ALT_P
      // print odt
+     refresh_fakt_tbl_dbfs()
      nRet := pr_odt(lOpcine)
 
   case Ch == K_F5
 
+    refresh_fakt_tbl_dbfs()
     // zatvori tabelu, pa otvori  
     select fakt_doks
     use
@@ -803,6 +806,7 @@ do case
 
   case CH == K_CTRL_V
     
+    refresh_fakt_tbl_dbfs()
     // setovanje broj fiskalnog isjecka
     select fakt_doks
     
@@ -838,6 +842,7 @@ do case
   
   case chr(Ch) $ "iI"
     
+    refresh_fakt_tbl_dbfs()
     // info dokument
     msgbeep( getfullusername( field->oper_id ) )
     return DE_CONT
@@ -845,6 +850,7 @@ do case
 
   case chr(Ch) $ "kK"
     
+    refresh_fakt_tbl_dbfs()
     // korekcija podataka na dokumentu
     if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok ) = .t.
         return DE_REFRESH
@@ -853,6 +859,7 @@ do case
   case chr(Ch) $ "rR"
 
 
+    refresh_fakt_tbl_dbfs()
     select fakt_doks
 
     // stampa fiskalnog racuna
@@ -881,6 +888,7 @@ do case
 
   case chr(Ch) $ "sS"
 
+     refresh_fakt_tbl_dbfs()
      // generisi storno dokument
      storno_dok( field->idfirma, field->idtipdok, field->brdok )
      
@@ -893,23 +901,28 @@ do case
   
   case UPPER(chr(Ch)) == "V"
     
+    refresh_fakt_tbl_dbfs()
     box_d_veza()
 
     return DE_CONT
 
   case UPPER(chr(Ch)) == "B"
+     refresh_fakt_tbl_dbfs()
      nRet:=pr_rn()  
      
   case chr(Ch) $ "nN"
+     refresh_fakt_tbl_dbfs()
      nRet:=pr_nar(lOpcine)
   
   case chr(Ch) $ "fF"
+     refresh_fakt_tbl_dbfs()
      if idtipdok $ "20"
        nRet:=generisi_fakturu(lOpcine)
      endif
      
   case chr(Ch) $ "vV"
 
+     refresh_fakt_tbl_dbfs()
      // ispravka valutiranja     
      if ( PADR(dindem, 3) <> PADR(ValDomaca(), 3) ) 
        
@@ -966,6 +979,7 @@ do case
   
   case chr(Ch) $ "pP"
      
+     refresh_fakt_tbl_dbfs()
      if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
          msgbeep( cZabrana )
          nRet := DE_CONT
@@ -1000,6 +1014,7 @@ do case
         nRet:=DE_REFRESH
      endif
 
+/*
   case chr(Ch) $ "qQ"
 
      select fakt_doks
@@ -1046,9 +1061,46 @@ do case
      go nTrec
      nRet:=DE_REFRESH
 
+*/
+
 endcase
 return nRet
 
+
+// --------------------------------     
+function refresh_fakt_tbl_dbfs()
+
+PushWa()
+close all
+
+
+O_VRSTEP
+
+O_OPS
+
+if glRadNal
+    O_RNAL
+endif
+
+O_FAKT
+O_PARTN
+O_FAKT_DOKS
+
+SET RELATION TO idvrstep INTO VRSTEP
+
+SET RELATION TO idpartner INTO PARTN
+
+if glRadNal
+    SET RELATION TO idfirma + idtipdok + brdok INTO FAKT
+endif
+
+O_FAKT_DOKS2
+O_VALUTE
+O_RJ
+
+PopWa()
+
+return .t.
 
 
 /*! \fn fakt_vt_porezi()

@@ -88,9 +88,9 @@ return
 // ----------------------
 // ----------------------
 function fin_azur_sql(oServer)
-local lOk := .t.
+local _ok := .t.
 local _ids := {}
-local record
+local _record
 local _tmp_id
 local _tmp_doc
 local _ids_doc := {}
@@ -120,75 +120,76 @@ Box(, 5, 60)
 
 _tmp_id := "x"
 
-if lOk = .t.
   
- 
-  SELECT PSUBAN
-  GO TOP
-  lOk := .t.
- 
-
-  sql_table_update(nil, "BEGIN")
-  _ok := lock_semaphore( _tbl_suban, "lock" )
-  _ok := _ok .and. lock_semaphore( _tbl_anal,  "lock" )
-  _ok := _ok .and. lock_semaphore( _tbl_sint,  "lock" )
-  _ok := _ok .and. lock_semaphore( _tbl_nalog, "lock" )
-  if _ok
-    sql_table_update(nil, "END")
-  else
-    sql_table_update(nil, "ROLLBACK")
-    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
-    return .f.
-  endif
-
-  sql_table_update(nil, "BEGIN")
-
-  //hb_idleSleep(7)
-
-  record := dbf_get_rec()
-  // algoritam 2 - dokument nivo
-  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
-  AADD( _ids_suban, "#2" + _tmp_id )
-
-
-  @ m_x+1, m_y+2 SAY "fin_suban -> server: " + _tmp_id 
-  do while !eof()
-
-     record := dbf_get_rec()
-     if !update_server_from_rec("fin_suban", "ins", record )
-       lOk := .f.
-       exit
-     endif
-
-     SKIP
-  enddo
-
-
+// ------------------------------------------------------------------
+// lock semaphores
+sql_table_update(nil, "BEGIN")
+_ok := lock_semaphore( _tbl_suban, "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_anal,  "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_sint,  "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_nalog, "lock" )
+if _ok
+sql_table_update(nil, "END")
+else
+sql_table_update(nil, "ROLLBACK")
+MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+return .f.
 endif
+// end lock semaphores --------------------------------------------------
+
+
+
+sql_table_update(nil, "BEGIN")
+
+SELECT PSUBAN
+GO TOP
+
+
+//hb_idleSleep(7)
+
+_record := dbf_get_rec()
+// algoritam 2 - dokument nivo
+_tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
+AADD( _ids_suban, "#2" + _tmp_id )
+
+
+@ m_x+1, m_y+2 SAY "fin_suban -> server: " + _tmp_id 
+do while !eof()
+
+    _record := dbf_get_rec()
+    if !sql_table_update("fin_suban", "ins", _record )
+    _ok := .f.
+    exit
+    endif
+
+    SKIP
+enddo
+
+
 
 //hb_IdleSleep(7)
 
 // idi dalje, na anal ... ako je ok
-if lOk = .t.
-  
-  @ m_x+2, m_y+2 SAY "fin_anal -> server" 
+if _ok == .t.
+
+@ m_x+2, m_y+2 SAY "fin_anal -> server" 
 
 
-  SELECT PANAL
-  GO TOP
+SELECT PANAL
+GO TOP
 
-  record := dbf_get_rec()
-  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
-  AADD( _ids_anal, "#2" + _tmp_id )
+_record := dbf_get_rec()
+_tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
+AADD( _ids_anal, "#2" + _tmp_id )
 
-  do while !eof()
-   record := dbf_get_rec()
-   if !update_server_from_rec("fin_anal", "ins", record )
-       lOk := .f.
-       exit
-    endif
-   SKIP
-  enddo
+do while !eof()
+_record := dbf_get_rec()
+if !sql_table_update("fin_anal", "ins", _record )
+    _ok := .f.
+    exit
+endif
+SKIP
+enddo
 
 
 endif
@@ -197,22 +198,22 @@ endif
 //hb_IdleSleep(2)
 
 // idi dalje, na sint ... ako je ok
-if lOk = .t.
+if lOk == .t.
   
   @ m_x+3, m_y+2 SAY "fin_sint -> server" 
 
   SELECT PSINT
   GO TOP
 
-  record := dbf_get_rec()
-  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  _record := dbf_get_rec()
+  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
   AADD( _ids_sint, "#2" + _tmp_id )
 
   do while !eof()
  
-   record := dbf_get_rec()
-   if !update_server_from_rec("fin_sint", "ins", record )
-       lOk := .f.
+   _record := dbf_get_rec()
+   if !sql_table_update("fin_sint", "ins", _record )
+       _ok := .f.
        exit
     endif
    SKIP
@@ -224,22 +225,22 @@ endif
 
 //hb_IdleSleep(7)
 // idi dalje, na nalog ... ako je ok
-if lOk = .t.
+if _ok == .t.
   
   @ m_x+4, m_y+2 SAY "fin_nalog -> server" 
 
   SELECT PNALOG
   GO TOP
  
-  record := dbf_get_rec()
-  _tmp_id := record["idfirma"] + record["idvn"] + record["brnal"]
+  _record := dbf_get_rec()
+  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
   AADD( _ids_nalog, _tmp_id )
 
   do while !eof()
  
-   record := dbf_get_rec()
-   if !update_server_from_rec("fin_nalog", "ins", record )
-       lOk := .f.
+   _record := dbf_get_rec()
+   if !sql_table_update("fin_nalog", "ins", _record )
+       _ok := .f.
        exit
     endif
    SKIP
@@ -248,9 +249,7 @@ if lOk = .t.
 
 endif
 
-
-
-if !lOk
+if !_ok
 
     _msg := "trasakcija " + _tmp_id + " neuspjesna ?!"
 
@@ -258,7 +257,7 @@ if !lOk
     MsgBeep(_msg)
     // transakcija neuspjesna
     // server nije azuriran 
-    update_server_from_rec("fin_suban", "ROLLBACK" )
+    sql_table_update(nil, "ROLLBACK" )
 
 else
 
@@ -292,7 +291,7 @@ sql_table_update(nil, "END")
 BoxC()
 my_use_semaphore_on()
 
-return lOk
+return _ok
 
 
 

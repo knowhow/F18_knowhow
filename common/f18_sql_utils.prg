@@ -36,7 +36,8 @@ return _sql_fields
 
 //-------------------------------------------------
 // -------------------------------------------------
-function sql_table_update(table, op, record, where )
+function sql_table_update(table, op, record, where_str )
+local _i, _tmp, _msg
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -44,82 +45,95 @@ LOCAL _tbl
 LOCAL _where
 LOCAL _server := pg_server()
 local _key
-local _dbstruct
-local _msg
 local _pos
 local _dec
 local _len
+local _a_dbf_rec, _alg
+local _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
 
-if table == NIL
-  table := ALIAS()
+if op $ "ins#del"
+
+    if table == NIL
+       table := ALIAS()
+    endif
+
+    _a_dbf_rec := get_a_dbf_rec(table)
+
+    _dbf_fields := _a_dbf_rec["dbf_fields"]
+    _sql_fields := sql_fields( _dbf_fields )
+
+    _sql_order  := _a_dbf_rec["sql_order"]
+
+    _dbf_wa    := _a_dbf_rec["wa"]
+    _dbf_alias := _a_dbf_rec["alias"]
+
+    _sql_tbl   := "fmk." + table
+
+    // uvijek je algoritam 1 nivo recorda
+    _alg := _a_dbf_rec["algoritam"][1]
+
+
+    if where_str == NIL
+        if record <> NIL
+            where_str := sql_where_from_dbf_key_fields(_alg["dbf_key_fields"], record)
+        endif
+    endif
+
 endif
-
-_tbl := "fmk." + LOWER(table)
-
 
 DO CASE
    CASE op == "BEGIN"
-    _qry := "BEGIN;"
+        _qry := "BEGIN;"
 
    CASE op == "END"
-    _qry := "COMMIT;" 
+        _qry := "COMMIT;" 
 
    CASE op == "ROLLBACK"
-    _qry := "ROLLBACK;"
+        _qry := "ROLLBACK;"
 
    CASE op == "del"
-    if (where == NIL) .and. (record == NIL .or. (record["id"] == NIL))
-      // brisi kompletnu tabelu
-      _where := "true"
-      MsgBeep(PROCNAME(1) + "/" + ALLTRIM(STR(PROCLINE(1))) + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!")
-      QUIT
-    else
-      if where == NIL
-         _where := "ID = " + _sql_quote(record["id"])
-      else
-         // moze biti "id = nesto and id_2 = nesto_drugo"
-         _where := where
-      endif
-    endif
-    _qry := "DELETE FROM " + _tbl + ;
-            " WHERE " + _where  
-
+        if (where_str == NIL) .and. (record == NIL .or. (record["id"] == NIL))
+            // brisi kompletnu tabel
+            _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
+            Alert(_msg)
+            log_write(_msg)
+            QUIT
+        endif
+        _qry := "DELETE FROM " + _sql_tbl + " WHERE " + where_str 
+        
    CASE op == "ins"
-	
-	_dbstruct := DBSTRUCT()
 
-    _qry := "INSERT INTO " + _tbl + "(" 
-    for each  _key in record:Keys
-       _qry +=  _key + ","
-    next 
-    // otkini zadnji zarez
-    _qry := SUBSTR( _qry, 1, LEN(_qry) - 1) + ")"
+        _qry := "INSERT INTO " + _sql_tbl +  "("  
+        for _i := 1 to LEN(_a_dbf_rec["dbf_fields"])
 
-    _qry += " VALUES(" 
-    
-    for each _key in record:Keys
+            _qry += _a_dbf_rec["dbf_fields"][_i]
 
-        // ako je polje numericko
-		if VALTYPE( record[_key] ) == "N"
-			_pos := ASCAN( _dbstruct, {|_var| LOWER(_var[1]) == LOWER(_key)} )
-
-            if _pos == 0
-              _msg := "ERR: " + PROCNAME(0) + " nema kljuc " + _key + " u recordu: ##" + pp(record) + "## dbstruct:##" + pp(_dbstruct) 
-
-              MsgBeep(_msg)
-              log_write(_msg)
+            if _i < LEN(_a_dbf_rec["dbf_fields"])
+                _qry += ","
             endif
- 
-			_len := _dbstruct[ _pos, 3 ]
-			_dec := _dbstruct[ _pos, 4 ]
- 
-			_qry += STR( record[_key], _len, _dec ) + ","
 
-        else
-			_qry += _sql_quote( record[_key]) + ","
-    	endif 	
-	next 
-    _qry := SUBSTR( _qry, 1, LEN(_qry) - 1) + ")"
+        next
+
+        _qry += ")  VALUES (" 
+        for _i := 1 to LEN(_a_dbf_rec["dbf_fields"])
+
+            _tmp := _a_dbf_rec["dbf_fields"][_i]
+
+            if VALTYPE(record[_tmp]) == "N"
+                _qry += STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
+                //_qry += decimal_to_string( record[_tmp])
+            else
+                _qry += _sql_quote(record[_tmp])
+            endif
+
+            if _i < LEN(_a_dbf_rec["dbf_fields"])
+                _qry += ","
+            endif
+
+        next
+        
+        _qry += ")"
+
 
 END CASE
    

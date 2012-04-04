@@ -230,7 +230,7 @@ AADD(_item["algoritam"], _alg)
 // algoritam 2 - nivo dokumenta
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idfirma + field->brdok }
+_alg["dbf_key_block"]  := {|| field->idfirma + field->idtipdok + field->brdok }
 _alg["dbf_key_fields"] := {"idfirma", "idtipdok", "brdok"}
 _alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
 _alg["dbf_tag"]        := "1"

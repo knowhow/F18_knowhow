@@ -314,6 +314,12 @@ local cOutfTxt
 local _f_path
 PRIVATE cPom
 
+// #27234
+#ifdef __PLATFORM__UNIX
+       close all
+#endif
+
+
 SET DEVICE TO SCREEN
 set printer off
 set printer to

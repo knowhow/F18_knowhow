@@ -41,10 +41,10 @@ drn_empty()
 
 // otvori tabele
 if PCount() == 4 .and. ( cIdtipdok <> nil )
-	o_fakt_edit(.t.)
 	lPrepisDok := .t.
+   o_fakt_edit(.t.)
 else
- 	o_fakt_edit()
+   o_fakt_edit(.f.)
 endif
 
 // otvori pomocne tabele racuna

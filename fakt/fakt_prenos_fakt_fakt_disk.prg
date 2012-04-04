@@ -240,7 +240,8 @@ if Pitanje(,"Prenijeti u datoteku prenosa fakt sa ovim kriterijom ?","D")=="D"
     	
 		skip
 	enddo
-  	
+  
+    close all	
 	EndPrint()
 
 	MsgC()

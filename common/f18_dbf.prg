@@ -37,6 +37,7 @@ return _ret
 function dbf_update_rec(vars, no_lock)
 local _key
 local _field_b
+local _msg
 
 if no_lock == NIL
    no_lock := .f.
@@ -52,9 +53,15 @@ endif
 if no_lock .or. rlock()
     for each _key in vars:Keys
         // replace polja
-        _field_b := FIELDBLOCK(_key)
-        // napuni field sa vrijednosti
-        EVAL( _field_b, vars[_key] ) 
+        if FIELDPOS(_key) == 0
+           _msg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + ALIAS()
+           Alert(_msg)
+           log_write(_msg)
+        else
+           _field_b := FIELDBLOCK(_key)
+           // napuni field sa vrijednosti
+           EVAL( _field_b, vars[_key] )
+        endif
     next 
     if !no_lock 
          dbrunlock()

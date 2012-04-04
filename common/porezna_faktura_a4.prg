@@ -317,6 +317,7 @@ a4_footer()
 
 if lStartPrint
 	FF
+    close all
 	EndPrint()
 endif
 

@@ -11,7 +11,13 @@
 
 #include "fakt.ch"
 
-function o_fakt_edit(cVar2)
+function o_fakt_edit(_open_pfakt)
+
+close all
+
+if _open_pfakt == NIL
+  _open_pfakt := .f.
+endif
 
 if glRadNal
     select F_RNAL
@@ -59,20 +65,26 @@ if !used()
     O_ROBA
 endif
 
-if (PCount()==0)
-    select F_FAKT_PRIPR
-    if !used()
-        O_FAKT_PRIPR
-    endif
-    select F_FAKT
-    if !used()
-        O_FAKT
-    endif
-else
+if _open_pfakt
+
+    // otvori fakt_fakt pod fakt_pripr aliasom
     select F_FAKT
     if !used()
         O_PFAKT
     endif
+
+else
+
+    select F_FAKT_PRIPR
+    if !used()
+        O_FAKT_PRIPR
+    endif
+
+    select F_FAKT
+    if !used()
+        O_FAKT
+    endif
+
 endif
 
 select F_FTXT
@@ -263,7 +275,6 @@ do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip
     
     select fakt
     APPEND BLANK
-      
     dbf_update_rec(_rec, .t.)
 
     select fakt_pripr
@@ -271,7 +282,6 @@ do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip
 
 enddo
 
-// to je bilo jednostavno ! idemo sada na tabelu fakt_doks
 select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
@@ -281,14 +291,20 @@ select fakt_doks
 set order to tag "1"
 HSEEK id_firma + id_tip_dok + br_dok
 
-
-_rec["idfirma"]  := id_firma
-_rec["idtipdok"] := id_tip_dok
-_rec["brdok"]    := br_dok
- 
 if !Found()
+
+   _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
+
+   SELECT fakt_doks
    APPEND BLANK
    dbf_update_rec(_rec, .t.)
+
+else
+
+    _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks : " + id_firma + _id_tip_dok + br_dok 
+    Alert(_msg)
+    log_write(_msg)
+
 endif
 
 select fakt_doks2
@@ -296,30 +312,20 @@ set order to tag "1"
 HSEEK id_firma + id_tip_dok + br_dok
 
 if !Found()
+
+   _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+
+   SELECT fakt_doks2
    APPEND BLANK
    dbf_update_rec(_rec, .t.)
+else
+
+   _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks2 : " + id_firma + _id_tip_dok + br_dok 
+   Alert(_msg)
+   log_write(_msg)
+
 endif
 
-
-// daj mi podatke za tabelu fakt_doks   
-_fakt_doks_data := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-
-// izracunaj totale za fakturu
-_fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
-    
-select fakt_doks
-// ubaci u fakt_doks totale
-_fakt_doks_data["iznos"] := _fakt_totals["iznos"] 
-_fakt_doks_data["rabat"] := _fakt_totals["rabat"]
-
-dbf_update_rec(_fakt_doks_data, .t.) 
-
-// dodaj stavke i u fakt_doks2      
-_fakt_doks2_data := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-
-select fakt_doks2
-
-dbf_update_rec(_fakt_doks2_data, .t.)
 
 //if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
 //    EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;
@@ -348,18 +354,25 @@ _return := PADR( _return, FAKT_DOKS_PARTNER_LENGTH )
 return _return
 
 
-
+// -------------------------------------------------------------
 // vraca hash matricu za fakt_doks2
+// -------------------------------------------------------------
 function get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 local _fakt_data := hb_hash()
 local _memo 
+
+select fakt_doks2
+_fakt_data := dbf_get_rec()
+_fakt_data["idfirma"]  := id_firma
+_fakt_data["idtipdok"] := id_tip_dok
+_fakt_data["brdok"]    := br_dok
 
 select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
 
-_fakt_data["idfirma"] := field->idfirma
-_fakt_data["brdok"] := field->brdok
+_fakt_data["idfirma"]  := field->idfirma
+_fakt_data["brdok"]    := field->brdok
 _fakt_data["idtipdok"] := field->idtipdok
 
 _memo := ParsMemo( field->txt )
@@ -375,19 +388,25 @@ _fakt_data["n2"] := if( LEN( _memo ) >= 17, VAL( ALLTRIM( _memo[17] ) ), 0 )
 return _fakt_data
 
 
-
-
 // -------------------------------------------------------------
 // -------------------------------------------------------------
 function get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-local _fakt_data := hb_hash()
+local _fakt_totals
+local _fakt_data 
 local _memo 
+
+select fakt_doks
+_fakt_data := dbf_get_rec()
+_fakt_data["idfirma"]  := id_firma
+_fakt_data["idtipdok"] := id_tip_dok
+_fakt_data["brdok"]    := br_dok
+
 
 select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
 
-_fakt_data := dbf_get_rec()
+_fakt_data["datdok"]  := field->datdok
 
 _memo := ParsMemo( field->txt )
         
@@ -421,6 +440,14 @@ if ( _field->m1 == "Z" )
 endif
 
 
+// izracunaj totale za fakturu
+_fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
+    
+// ubaci u fakt_doks totale
+_fakt_data["iznos"] := _fakt_totals["iznos"] 
+_fakt_data["rabat"] := _fakt_totals["rabat"]
+
+select fakt_doks
 return _fakt_data
 
 
@@ -490,11 +517,9 @@ return _fakt_total
 // azuriranje u sql tabele
 // --------------------------------------------------------------
 static function fakt_azur_sql( id_firma, id_tip_dok, br_dok )
-local lOk
+local _ok
 local record := hb_hash()
-local _tbl_fakt
-local _tbl_doks
-local _tbl_doks2
+local _tbl_fakt, _tbl_doks, _tbl_doks2
 local _i, _n
 local _tmp_id, _tmp_doc
 local _ids := {}
@@ -503,200 +528,136 @@ local _ids_doc := {}
 local _fakt_doks_data
 local _fakt_doks2_data
 local _fakt_totals
+local _record
+local _msg
+local _ids_fakt  := {}
+local _ids_doks  := {}
+local _ids_doks2 := {}
 
-_tbl_fakt := "fakt_fakt"
-_tbl_doks := "fakt_doks"
+
+_tbl_fakt  := "fakt_fakt"
+_tbl_doks  := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
 
-lock_semaphore( _tbl_fakt, "lock" )
-lock_semaphore( _tbl_doks, "lock" )
-lock_semaphore( _tbl_doks2, "lock" )
-
-lOk := .t.
-
-if lOk = .t.
-
-  // azuriraj fakt
-  MsgO("sql fakt_fakt")
-
-  select fakt_pripr
-  go top
-  seek id_firma + id_tip_dok + br_dok
-
-  sql_fakt_fakt_update("BEGIN")
-
-  do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
- 
-    record["id_firma"] := field->idfirma
-    record["id_tip_dok"] := field->idtipdok
-    record["br_dok"] := field->brdok
-    record["r_br"] := field->Rbr
-    record["dat_dok"] := field->datdok
-    record["id_partner"] := field->idpartner
-    record["din_dem"] := field->dindem
-    record["zaokr"] := field->zaokr
-    record["pod_br"] := field->podbr
-    record["id_roba"] := field->idroba
-    record["ser_br"] := field->serbr
-    record["kolicina"] := field->kolicina
-    record["cijena"] := field->cijena
-    record["rabat"] := field->rabat
-    record["porez"] := field->porez
-    record["txt"] := field->txt
-    record["k1"] := field->k1
-    record["k2"] := field->k2
-    record["m1"] := field->m1
-    record["id_vrste_p"] := field->idvrstep
-    record["id_pm"] := field->idpm
-    record["c1"] := field->c1
-    record["c2"] := field->c2
-    record["c3"] := field->c3
-    record["n1"] := field->n1
-    record["n2"] := field->n2
-    record["opis"] := field->opis
-    record["dok_veza"] := field->dok_veza
-                
-    _tmp_doc := record["id_firma"] + record["id_tip_dok"] + record["br_dok"]
-    _tmp_id := record["id_firma"] + record["id_tip_dok"] + record["br_dok"] + record["r_br"]
-
-    AADD( _ids, _tmp_id )    
-
-    if !sql_fakt_fakt_update( "ins", record )
-        lOk := .f.
-        exit
-    endif
-        
-    skip
-
-  enddo
-
-  MsgC()
-
-endif
-
-
-if lOk = .t.
- 
-   // azuriraj doks...
-  MsgO("sql fakt_doks")
-
-  // izracunaj totale za fakturu
-  _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
-  // daj mi podatke za tabelu doks  
-  _fakt_doks_data := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-  
-  record := hb_hash()
-
-  sql_fakt_doks_update("BEGIN")
-
-  record["id_firma"] := _fakt_doks_data["id_firma"]
-  record["id_tip_dok"] := _fakt_doks_data["id_tip_dok"]
-  record["br_dok"] := _fakt_doks_data["br_dok"]
-  record["dat_dok"] := _fakt_doks_data["dat_dok"]
-  record["partner"] := _fakt_doks_data["partner"]
-  record["id_partner"] := _fakt_doks_data["id_partner"]
-  record["din_dem"] := _fakt_doks_data["din_dem"]
-
-  record["iznos"] := _fakt_totals["iznos"]
-  record["rabat"] := _fakt_totals["rabat"]
-
-  record["rezerv"] := _fakt_doks_data["rezerv"]
-  record["m1"] := " "
-  record["id_vrste_p"] := _fakt_doks_data["id_vrste_p"]
-  record["dat_pl"] := _fakt_doks_data["dat_val"]
-  record["id_pm"] := _fakt_doks_data["id_pm"]
-  record["dok_veza"] := _fakt_doks_data["dok_veza"]
-  record["oper_id"] := _fakt_doks_data["oper_id"]
-  record["fisc_rn"] := _fakt_doks_data["fisc_rn"]
-  record["fisc_st"] := _fakt_doks_data["fisc_st"]
-  record["dat_isp"] := _fakt_doks_data["dat_isp"]
-  record["dat_otpr"] := _fakt_doks_data["dat_otpr"]
-  record["dat_val"] := _fakt_doks_data["dat_val"]
- 
-  if !sql_fakt_doks_update( "ins", record )
-       lOk := .f.
-  endif
-   
-  MsgC()
-
-endif
-
-
-if lOk = .t.
- 
-  // azuriraj doks2...
-  MsgO("sql fakt_doks2")
-
-  // daj mi podatke za fakt_doks2
-  _fakt_doks2_data := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-  
-  record := hb_hash()
-
-  sql_fakt_doks2_update("BEGIN")
-
-  record["id_firma"] := _fakt_doks2_data["id_firma"]
-  record["id_tip_dok"] := _fakt_doks2_data["id_tip_dok"]
-  record["br_dok"] := _fakt_doks2_data["br_dok"]
-  record["k1"] := _fakt_doks2_data["k1"]
-  record["k2"] := _fakt_doks2_data["k2"]
-  record["k3"] := _fakt_doks2_data["k3"]
-  record["k4"] := _fakt_doks2_data["k4"]
-  record["k5"] := _fakt_doks2_data["k5"]
-  record["n1"] := _fakt_doks2_data["n1"]
-  record["n2"] := _fakt_doks2_data["n2"]
-
-  if !sql_fakt_doks2_update( "ins", record )
-       lOk := .f.
-  endif
-   
-  MsgC()
-
-endif
-
-if !lOk
-
-    // vrati sve nazad...   
-    sql_fakt_fakt_update("ROLLBACK")
-    sql_fakt_doks_update("ROLLBACK")
-    sql_fakt_doks2_update("ROLLBACK")
-    
+// ------------------------------------------------------
+// lock semaphore
+sql_table_update(nil, "BEGIN")
+_ok := lock_semaphore( _tbl_fakt, "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_doks2,  "lock" )
+if _ok
+    sql_table_update(nil, "END")
 else
-    
-    // napravi update-e
-    // zavrsi transakcije 
+    sql_table_update(nil, "ROLLBACK")
+    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+    return .f.
+endif
+// ---end lock ---------------------------------------------
 
-    update_semaphore_version( _tbl_doks, .t. )
-    update_semaphore_version( _tbl_doks2, .t. )
-    update_semaphore_version( _tbl_fakt, .t. )
+Box(, 5, 60)
+_ok := .t.
 
-    for _n := 1 to LEN( _ids )
+// neka dbf-ovi ne "ganjaju" stanje semafora
+my_use_semaphore_off()
 
-        // pusiraj za svaku stavku posebno
-        _ids_tmp := {}
-        AADD( _ids_tmp, _ids[ _n ] )
+// -----------------------------------------------------------------------------------------------------
+sql_table_update(nil, "BEGIN")
 
-        push_ids_to_semaphore( _tbl_fakt, _ids_tmp ) 
+select fakt_pripr
+SET ORDER TO TAG "1"
 
-    next
+go top
+HSEEK id_firma + id_tip_dok + br_dok
 
-    // pusiraj i u fakt_doks, fakt_doks2
-    // dodaj ids za tabele fakt_doks, fakt_doks2 
-    AADD( _ids_doc, _tmp_doc )
-    push_ids_to_semaphore( _tbl_doks2, _ids_doc ) 
-    push_ids_to_semaphore( _tbl_doks, _ids_doc ) 
-    
-    // zavrsi transakcije...
-    sql_fakt_doks_update("END")
-    sql_fakt_doks2_update("END")
-    sql_fakt_fakt_update("END")
+if !FOUND()
+    Alert("ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
+    return
+endif
+
+_record := dbf_get_rec()
+// algoritam 2 - dokument nivo
+_tmp_id := _record["idfirma"] + _record["idtipdok"] + _record["brdok"]
+AADD( _ids_fakt, "#2" + _tmp_id )
+
+@ m_x+1, m_y+2 SAY "fakt_fakt -> server: " + _tmp_id 
+do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
+     _record := dbf_get_rec()
+     if !sql_table_update("fakt_fakt", "ins", _record )
+       _ok := .f.
+       exit
+     endif
+
+     SKIP
+enddo
+
+if _ok == .t.
+ 
+  @ m_x+2, m_y+2 SAY "fakt_doks -> server: " + _tmp_id 
+   // azuriraj doks...
+  // algoritam 2 - dokument nivo
+  AADD( _ids_doks, _tmp_id )
+  SELECT fakt_doks
+  _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
+  if !sql_table_update("fakt_doks", "ins", _record )
+       _ok := .f.
+  endif
+   
 
 endif
 
+if _ok == .t.
+ 
+  @ m_x+3, m_y+2 SAY "fakt_doks2 -> server: " + _tmp_id 
+   // azuriraj doks...
+  // algoritam 2 - dokument nivo
+  AADD( _ids_doks2, _tmp_id )
+
+  _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+  SELECT fakt_doks2
+  if !sql_table_update("fakt_doks2", "ins", _record )
+       _ok := .f.
+  endif
+   
+
+endif
+
+if !_ok
+    _msg := "trasakcija " + _tmp_id + " neuspjesna ?!"
+
+    log_write(_msg)
+    MsgBeep(_msg)
+    // transakcija neuspjesna
+    // server nije azuriran 
+    sql_table_update(nil, "ROLLBACK" )
+
+else
+
+    @ m_x+4, m_y+2 SAY "push ids to semaphore" + _tmp_id
+    push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
+    push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
+    push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
+
+    @ m_x+5, m_y+2 SAY "update semaphore version"
+    update_semaphore_version( _tbl_fakt , .t. )
+    update_semaphore_version( _tbl_doks  , .t. )
+    update_semaphore_version( _tbl_doks2  , .t. )
+
+    sql_table_update(nil, "END")
+
+endif
+
+
+// --- unlock -----------------------------------------
 lock_semaphore( _tbl_fakt, "free" )
 lock_semaphore( _tbl_doks, "free" )
 lock_semaphore( _tbl_doks2, "free" )
 
-return lOk
+BoxC()
+
+// --- neka dbf-ovi ponovo konsultuju semafore
+my_use_semaphore_off()
+
+return _ok
 
 
 

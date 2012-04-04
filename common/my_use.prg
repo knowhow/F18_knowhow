@@ -64,7 +64,8 @@ endif
 if table == NIL
   _a_dbf_rec := get_a_dbf_rec(alias)
 else
-  _a_dbf_rec := get_a_dbf_rec(table)
+   // uvijek atribute utvrdjujemo prema table atributu  
+   _a_dbf_rec := get_a_dbf_rec(table)
 endif
 
 
@@ -75,7 +76,13 @@ if new_area == NIL
 endif
 
 table := _a_dbf_rec["table"]
-alias := _a_dbf_rec["alias"]
+
+if alias == NIL
+   // za specificne primjene kada "varamo" sa aliasom
+   // my_use("fakt_pripr", "fakt_fakt")
+   // tada ne diramo alias
+   alias := _a_dbf_rec["alias"]
+endif
 
 if valtype(table) != "C"
    _msg := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") table name VALTYPE = " + VALTYPE(type)
@@ -83,7 +90,6 @@ if valtype(table) != "C"
    log_write(_msg)
    QUIT
 endif
-
 
 
 if _rdd == NIL
@@ -131,9 +137,7 @@ recover using _err
 
 end sequence
 
-
 return
-
 
 // -----------------------------------------------------
 // -----------------------------------------------------

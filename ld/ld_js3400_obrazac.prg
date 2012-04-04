@@ -18,7 +18,10 @@ static __mj_do
 static __god_od
 static __god_do
 static __por_per
-
+static __datum
+static __djl_broj
+static __op_jmb
+static __op_ime
 
 // ------------------------------------------
 // obrazac JS3400
@@ -61,6 +64,9 @@ cPredJMB := SPACE(13)
 cPredOpc := SPACE(30)
 cPredTel := SPACE(30)
 cPredEml := SPACE(50)
+cDjlBroj := SPACE(20)
+cOpJmb := SPACE(16)
+cOpIme := SPACE(50)
 
 nPorGodina := YEAR(DATE())
 dDatUnosa := DATE()
@@ -76,8 +82,11 @@ cPredJMB := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, 
 cPredOpc := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_opcina", NIL, cPredOpc ) )
 cPredTel := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_telefon", NIL, cPredTel ) )
 cPredEml := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_email", NIL, cPredEml ) )
+cDjlBroj := HB_UTF8TOSTR( fetch_metric( "obracun_plata_js_obrazac_djelovodni_broj", NIL, cDjlBroj ) )
+cOpJmb := HB_UTF8TOSTR( fetch_metric( "obracun_plata_js_obrazac_op_jmb", NIL, cOpJmb ) )
+cOpIme := HB_UTF8TOSTR( fetch_metric( "obracun_plata_js_obrazac_op_ime", NIL, cOpIme ) )
 
-Box("#JS-3400", 20, 75)
+Box("#JS-3400", 22, 75)
 
     @ m_x + _x, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
 
@@ -132,6 +141,11 @@ Box("#JS-3400", 20, 75)
     @ m_x + _x, col() + 2 SAY "Dat.unosa" GET dDatUnosa 
 
     ++ _x
+    @ m_x + _x, m_y + 2 SAY "Dj.broj:" GET cDjlBroj PICT "@S10"
+    @ m_x + _x, col() + 2 SAY "Podnosi:" GET cOpIme PICT "@S20"
+    @ m_x + _x, col() + 2 SAY "JMB:" GET cOpJmb 
+
+    ++ _x
     @ m_x + _x, m_y + 2 SAY "operacija: (O)snovna (P)onovljena " GET _oper VALID _oper $ "OP" PICT "@!"
     
     read
@@ -154,6 +168,10 @@ __mj_do := cMj_do
 __god_od := cGod_od
 __god_do := cGod_do
 __por_per := nPorGodina
+__datum := dDatPodnosenja
+__djl_broj := cDjlBroj
+__op_jmb := cOpJmb
+__op_ime := cOpIme
 
 // upisi parametre...
 set_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
@@ -162,6 +180,9 @@ set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 set_metric( "obracun_plata_preduzece_opcina", NIL, cPredOpc ) 
 set_metric( "obracun_plata_preduzece_telefon", NIL, cPredTel )
 set_metric( "obracun_plata_preduzece_email", NIL, cPredEml ) 
+set_metric( "obracun_plata_js_obrazac_djelovodni_broj", NIL, cDjlBroj )
+set_metric( "obracun_plata_js_obrazac_op_jmb", NIL, cOpJmb ) 
+set_metric( "obracun_plata_js_obrazac_op_ime", NIL, cOpIme ) 
 
 select ld
 
@@ -195,6 +216,27 @@ endif
 return _operacija
 
 
+// --------------------------------------
+// vraca period 
+// --------------------------------------
+static function g_per( datum )
+local _ret := ""
+local _tmp
+
+if EMPTY( DTOC( datum ) )
+    return _ret
+endif
+
+// mjesec
+_tmp := ALLTRIM( STR( MONTH( datum ) ) )
+_ret += _tmp
+
+_tmp := ALLTRIM( STR( YEAR( datum ) ) )
+_ret += "/" + _tmp
+
+return _ret
+
+
 
 // ----------------------------------------
 // stampa xml-a
@@ -208,7 +250,7 @@ _fill_xml( tip, _xml_file )
 
 do case
     case tip == "1"
-        _template := "ld_js3400.odt"
+        _template := "ld_js_1.odt"
 endcase
 
 // generisi report
@@ -252,6 +294,10 @@ xml_node( "p_opc", ALLTRIM(cPredOpc) )
 xml_node( "p_tel", ALLTRIM(cPredTel) )
 xml_node( "p_eml", ALLTRIM(cPredEml) )
 xml_node( "p_per", g_por_per() )
+xml_node( "datum", DTOC( __datum ) )
+xml_node( "pod_ime", to_xml_encoding( ALLTRIM( __op_ime ) ) )
+xml_node( "pod_jmb", to_xml_encoding( ALLTRIM( __op_jmb ) ) )
+xml_node( "dj_broj", to_xml_encoding( ALLTRIM( __djl_broj ) ) )
 
 select r_export
 set order to tag "1"
@@ -313,6 +359,8 @@ do while !EOF()
         " (" + ALLTRIM(radn->imerod) + ;
         ") " + ALLTRIM(radn->naz) ) )
 
+      xml_node("os_od", ALLTRIM( g_per( radn->hiredfrom ) ) )
+      xml_node("os_do", ALLTRIM( g_per( radn->hiredto ) ) )
       xml_node("mb", ALLTRIM(radn->matbr) )
       xml_node("rbr", STR( ++ nCnt ) )
       xml_node("sati", STR( nR_sati ) )
@@ -330,6 +378,8 @@ enddo
 // upisi totale za radnika
 xml_subnode("total", .f.)
 
+    xml_node("red", STR( nCnt ) )
+    xml_node("sati", STR( nT_sati, 12, 2 ) )
     xml_node("bruto", STR( nT_bruto, 12, 2 ) )
     xml_node("do_uk", STR( nT_dop_u, 12, 2 ) )
     xml_node("do_pio", STR( nT_d_pio, 12, 2 ) )

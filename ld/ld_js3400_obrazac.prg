@@ -217,22 +217,33 @@ return _operacija
 
 
 // --------------------------------------
-// vraca period 
+// vraca period osiguranja
 // --------------------------------------
-static function g_per( datum )
+static function g_osig( mjesec, od_do )
 local _ret := ""
 local _tmp
+local _day
 
-if EMPTY( DTOS( datum ) )
+if EMPTY( ALLTRIM( STR( mjesec ) ) )
     return _ret
 endif
 
-// mjesec
-_tmp := ALLTRIM( STR( MONTH( datum ) ) )
-_ret += _tmp
+if od_do == "1"
+    _day := "01"
+else
+    do case
+        case mjesec = 1 .or. mjesec = 3 .or. mjesec = 5 .or. mjesec = 7 .or. mjesec = 8 .or. mjesec = 10 .or. mjesec = 12
+            _day := "31"
+        case mjesec = 2
+            _day := "28"
+        case mjesec = 4 .or. mjesec = 6 .or. mjesec = 9 .or. mjesec = 11
+            _day := "30"
+    endcase
+endif
 
-_tmp := ALLTRIM( STR( YEAR( datum ) ) )
-_ret += "/" + _tmp
+// mjesec/dan
+_ret := PADL( ALLTRIM( STR( mjesec  ) ) , 2, "0" )
+_ret += "/" + _day
 
 return _ret
 
@@ -278,6 +289,7 @@ local nR_dop_u := 0
 local nR_d_zdr := 0
 local nR_d_pio := 0
 local nR_d_nez := 0
+local nOsig_od, nOsig_do
 
 // otvori xml za upis
 open_xml( xml_file )
@@ -322,7 +334,10 @@ do while !EOF()
     nR_d_zdr := 0
     nR_d_pio := 0
     nR_d_nez := 0
-        
+   
+    // startna vrijednost osiguranja
+    nOsig_od := field->mjesec
+     
     // prodji kroz radnike i saberi im vrijednosti...
     do while !EOF() .and. field->idradn == cT_radnik
 
@@ -348,6 +363,9 @@ do while !EOF()
         nR_d_nez += field->dop_nez
         nT_d_nez += field->dop_nez
 
+        // krajnja vrijednost osiguranja
+        nOsig_do := field->mjesec
+
         skip
 
     enddo
@@ -359,8 +377,8 @@ do while !EOF()
         " (" + ALLTRIM(radn->imerod) + ;
         ") " + ALLTRIM(radn->naz) ) )
 
-      xml_node("os_od", ALLTRIM( g_per( radn->hiredfrom ) ) )
-      xml_node("os_do", ALLTRIM( g_per( radn->hiredto ) ) )
+      xml_node("os_od", ALLTRIM( g_osig( nOsig_od, "1" ) ) )
+      xml_node("os_do", ALLTRIM( g_osig( nOsig_do, "2" ) ) )
       xml_node("mb", ALLTRIM(radn->matbr) )
       xml_node("rbr", STR( ++ nCnt ) )
       xml_node("sati", STR( nR_sati ) )

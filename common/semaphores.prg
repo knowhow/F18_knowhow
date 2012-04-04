@@ -29,11 +29,7 @@ _i := 0
 while .t.
 
     _i++
-<<<<<<< HEAD
 	if ALLTRIM(get_semaphore_status(table)) == "lock"
-=======
-	if ALLTRIM( get_semaphore_status(table) ) == "lock"
->>>>>>> semaphores_v1.0
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
 		MsgO(_err_msg)
          log_write(_err_msg)
@@ -48,14 +44,9 @@ while .t.
     endif
 
     if (_i >= SEMAPHORE_LOCK_RETRY_NUM)
-<<<<<<< HEAD
          
           _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ##" + ;
                       "nasilno uklanjam lock !"
-=======
-          _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja #" + ;
-                        "nasilno ukljanjam lock !"
->>>>>>> semaphores_v1.0
           MsgBeep(_err_msg)
             
           log_write(_err_msg)

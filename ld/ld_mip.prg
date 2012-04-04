@@ -202,6 +202,7 @@ local nOper := 1
 local cIsplSaberi := "D"
 local cNule := "N"
 local cMipView := "N"
+local _pojed := .f.
 
 // kreiraj pomocnu tabelu
 mip_tmp_tbl()
@@ -312,6 +313,13 @@ set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
 set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
 set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
 
+// ako je zadat radnik onda se stampa pojedinacni obrazac
+if !EMPTY( cRadnik )
+    _pojed := .t.
+    // mora se stampati, nema exporta...
+    __xml := 1
+endif
+
 select ld
 
 // sortiraj tabelu i postavi filter
@@ -330,7 +338,7 @@ endif
 
 // stampa izvjestaja xml/oo3
 if __xml == 1
-    _xml_print()
+    _xml_print( _pojed )
 else
     nBrZahtjeva := g_br_zaht()
     _xml_export()
@@ -727,12 +735,16 @@ return
 // ----------------------------------------
 // stampa xml-a
 // ----------------------------------------
-static function _xml_print()
+static function _xml_print( pojedinacni )
 local _template := "ld_mip.odt"
 local _xml_file := my_home() + "data.xml"
 
 if __xml == 0
     return
+endif
+
+if pojedinacni == .t.
+    _template := "ld_pmip.odt"
 endif
 
 // napuni xml fajl podacima

@@ -1,11 +1,20 @@
-0.9.92 2012-04-03, vsasa
- 
-  - LD korekcije (izvještaji, unos, brisanje kredita, itd...) [#27390](http://redmine.bring.out.ba/issues/27390)
-  - ostale sitne korekcije
+0.9.93 2012-04-04, hernad
+
+  - merge with 0.9.78
+  - FAKT semaphores v1.1
 
 0.0.90 2012-03-27, hernad
 
   - merge semaphore v1.1 brancha, haos-2 - ovo ne radi
+
+0.9.79 2012-04-04, vsasa
+ 
+  - semafori, lock bugfix [#27399](http://redmine.bring.out.ba/issues/27399)
+
+0.9.78 2012-04-03, vsasa
+ 
+  - LD korekcije (izvještaji, unos, brisanje kredita, itd...) [#27390](http://redmine.bring.out.ba/issues/27390)
+  - ostale sitne korekcije
 
 0.9.77 2012-03-29, vsasa
  

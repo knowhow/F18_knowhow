@@ -12,7 +12,8 @@
 #include "fin.ch"
 
 
-
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 function povrat_fin_naloga(lStorno)
 local _rec
 local nRec
@@ -44,8 +45,8 @@ endif
 SELECT SUBAN
 set order to tag "4"
 
-cIdFirma  :=gFirma
-cIdFirma2 :=gFirma
+cIdFirma         :=gFirma
+cIdFirma2        :=gFirma
 cIdVN := cIdVN2  := space(2)
 cBrNal:= cBrNal2 := space(8)
 

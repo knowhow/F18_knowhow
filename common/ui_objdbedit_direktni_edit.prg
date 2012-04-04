@@ -14,6 +14,7 @@
 #include "dbstruct.ch"
 #include "error.ch"
 #include "setcurs.ch"
+#include "f18_separator.ch"
 
 // ---------------------------------------------------------
 // ---------------------------------------------------------
@@ -59,17 +60,16 @@ LOCAL i,j,k
      END IF
    NEXT
    TB:headSep := CHR(220)
+
    //TB:colsep :=CHR(219)
-   TB:colsep :="³"
+   TB:colsep := BROWSE_COL_SEP
+
    if aParametri[6]==NIL
       TB:Freeze:=1
    else
       Tb:Freeze:=aParametri[6]
    endif
 RETURN
-
-
-
 
 
 

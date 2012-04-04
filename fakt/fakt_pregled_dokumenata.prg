@@ -226,7 +226,7 @@ seek cIdFirma + qqTipDok
 EOF CRET
 
 if cTabela == "D"
-  fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine )
+  fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
 else
   gaZagFix:={3, 3}
   stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, _vrste_pl,  cImeKup, lOpcine, aUslOpc)
@@ -763,14 +763,15 @@ return
 
 
 
-// EdDatN()
-// Ispravka azuriranih dokumenata (u tabelarnom pregledu)
-//
- 
-function fakt_tabela_komande(lOpcine)
+// -------------------------------------------------------- 
+// -------------------------------------------------------- 
+function fakt_tabela_komande(lOpcine, fakt_doks_filt)
 local nRet:=DE_CONT
 local _rec
-local cFilter
+local _filter
+
+_filter := fakt_doks_filt
+
 
 cFilter := DBFilter()
 
@@ -782,17 +783,17 @@ endif
 do case
  
   case Ch==K_ENTER 
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      nRet := pr_pf(lOpcine)
 
   case Ch==K_ALT_P
      // print odt
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      nRet := pr_odt(lOpcine)
 
   case Ch == K_F5
 
-    refresh_fakt_tbl_dbfs()
+    refresh_fakt_tbl_dbfs(_filter)
     // zatvori tabelu, pa otvori  
     select fakt_doks
     use
@@ -806,19 +807,19 @@ do case
 
   case CH == K_CTRL_V
     
-    refresh_fakt_tbl_dbfs()
+    refresh_fakt_tbl_dbfs(_filter)
     // setovanje broj fiskalnog isjecka
     select fakt_doks
     
     if field->fisc_rn <> 0
         msgbeep("veza: fiskalni racun vec setovana !")
         if Pitanje(,"Promjeniti postojecu vezu (D/N)?", "N") == "N"
-            return DE_CONT
+            return DE_REFRESH
         endif
     endif
     
     if Pitanje(,"Setovati novu vezu sa fiskalnim racunom (D/N)?") == "N"
-        return DE_CONT
+        return DE_REFRESH
     endif
     
     nFiscal := field->fisc_rn
@@ -842,15 +843,15 @@ do case
   
   case chr(Ch) $ "iI"
     
-    refresh_fakt_tbl_dbfs()
+    refresh_fakt_tbl_dbfs(_filter)
     // info dokument
     msgbeep( getfullusername( field->oper_id ) )
-    return DE_CONT
+    return DE_REFRESH
 
 
   case chr(Ch) $ "kK"
     
-    refresh_fakt_tbl_dbfs()
+    refresh_fakt_tbl_dbfs(_filter)
     // korekcija podataka na dokumentu
     if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok ) = .t.
         return DE_REFRESH
@@ -859,7 +860,7 @@ do case
   case chr(Ch) $ "rR"
 
 
-    refresh_fakt_tbl_dbfs()
+    refresh_fakt_tbl_dbfs(_filter)
     select fakt_doks
 
     // stampa fiskalnog racuna
@@ -869,7 +870,7 @@ do case
             
             msgbeep("Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze.")
             
-            return DE_CONT
+            return DE_REFRESH
         
         endif
         
@@ -888,7 +889,7 @@ do case
 
   case chr(Ch) $ "sS"
 
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      // generisi storno dokument
      storno_dok( field->idfirma, field->idtipdok, field->brdok )
      
@@ -896,43 +897,43 @@ do case
           fUPripremu:=.t.
           nRet:=DE_ABORT
      else
-          nRet := DE_CONT
+          nRet := DE_REFRESH
      endif
   
   case UPPER(chr(Ch)) == "V"
     
-    refresh_fakt_tbl_dbfs()
+    refresh_fakt_tbl_dbfs(_filter)
     box_d_veza()
 
-    return DE_CONT
+    return DE_REFRESH
 
   case UPPER(chr(Ch)) == "B"
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      nRet:=pr_rn()  
      
   case chr(Ch) $ "nN"
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      nRet:=pr_nar(lOpcine)
   
   case chr(Ch) $ "fF"
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      if idtipdok $ "20"
        nRet:=generisi_fakturu(lOpcine)
      endif
      
   case chr(Ch) $ "vV"
 
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      // ispravka valutiranja     
      if ( PADR(dindem, 3) <> PADR(ValDomaca(), 3) ) 
        
        if !SigmaSif("PRVAL")
             MsgBeep("!!! Opcija nedostupna !!!")
-            return DE_CONT
+            return DE_REFRESH
        endif
       
        if Pitanje(,"Izvrsiti ispravku valutiranja na dokumentu (D/N)?","N") == "N"
-          return DE_CONT
+          return DE_REFRESH
        endif
        
        O_FAKT 
@@ -973,16 +974,16 @@ do case
        
        MsgBeep("Opcija onemogucena !!! faktura je u domacoj valuti " + ValDomaca() )
        select fakt_doks
-       nRet := DE_CONT
+       nRet := DE_REFRESH
      
      endif
   
   case chr(Ch) $ "pP"
      
-     refresh_fakt_tbl_dbfs()
+     refresh_fakt_tbl_dbfs(_filter)
      if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
          msgbeep( cZabrana )
-         nRet := DE_CONT
+         nRet := DE_REFRESH
          return nRet
      endif
      
@@ -1068,7 +1069,7 @@ return nRet
 
 
 // --------------------------------     
-function refresh_fakt_tbl_dbfs()
+function refresh_fakt_tbl_dbfs(filter)
 
 PushWa()
 close all
@@ -1085,6 +1086,12 @@ endif
 O_FAKT
 O_PARTN
 O_FAKT_DOKS
+
+select fakt_doks
+set order to tag "1"
+go top
+
+SET FILTER TO &filter
 
 SET RELATION TO idvrstep INTO VRSTEP
 

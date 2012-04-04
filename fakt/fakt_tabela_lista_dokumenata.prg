@@ -13,7 +13,7 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
-function fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine)
+function fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine, cFilter)
 local i
 local _w1 := 45
 local _x, _y
@@ -108,7 +108,7 @@ for i := 1 to len(adImeKol)
     AADD(adKol,i)
 next
 
-ObjDbedit("", MAXROW() - 4, MAXCOL() - 3, {|| fakt_tabela_komande (lOpcine) }, "", "", , , , , 2 )
+ObjDbedit("", _x-3, _y, {|| fakt_tabela_komande (lOpcine, cFilter) }, "", "", , , , , 2 )
 BoxC()
 
 if fUpripremu

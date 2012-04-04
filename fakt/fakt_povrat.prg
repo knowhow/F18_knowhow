@@ -49,32 +49,6 @@ return _ret
 
 
 
-// ----------------------------------------------
-// provjerava stanje lock-ova tabela
-// ----------------------------------------------
-static function _chk_lock_status()
-
-select fakt
-if !FLock()
-    Msg("FAKT datoteka je zauzeta ", 3)
-    return .f.
-endif
-
-select fakt_doks2
-if !FLock()
-    Msg("DOKS2 datoteka je zauzeta ", 3)
-    return .f.
-endif
-
-select fakt_doks
-if !FLock()
-    Msg("DOKS datoteka je zauzeta ", 3)
-    return .f.
-endif
-
-return .t.
-
-
 // ----------------------------------------------------------------------------
 // povrat dokumenta prema kriteriju
 // ----------------------------------------------------------------------------
@@ -86,6 +60,9 @@ local _id_firma
 local _br_dok
 local _id_tip_dok
 local _del_rec, _ok, _field_ids, _where_block
+
+Alert( RECI_GDJE_SAM0 + " nije testirano ")
+return
 
 if PCOUNT() <> 0
     _vars["br_dok"] := PADR( br_dok, 200 )
@@ -120,11 +97,6 @@ if Pitanje("","Jeste li sigurni ???","N")=="N"
     return
 endif
 
-// provjeri stanje lock-ova
-if !_chk_lock_status()
-    close all
-    return
-endif
 
 // setuj filter
 _filter := _vars["uslov_dokumenti"]
@@ -235,14 +207,14 @@ local _area
 local _ret := .t.
 
 // provjeri pravila
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK" + vars["tip_dok"] ))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK" + vars["idtipdok"] ))
     
-    if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOKDATUM" + vars["tip_dok"] )) == .f.
+    if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOKDATUM" + vars["idtipdok"] )) == .f.
     
     _area := SELECT()
 
     select fakt
-    hseek vars["id_firma"] + vars["tip_dok"] + vars["br_dok"]
+    HSEEK vars["idfirma"] + vars["idtipdok"] + vars["brdok"]
     if FOUND()
         if fakt->datdok <> DATE()
             msgbeep("Datum dokumenta <> tekuci datum#Opcija onemogucena !")
@@ -267,12 +239,12 @@ endif
 // ako je fiskalni racun u vezi, ovo nema potrebe vracati
 // samo uz lozinku
 
-if gFc_use == "D" .and. vars["tip_dok"] $ "10#11"
+if gFc_use == "D" .and. vars["idtipdok"] $ "10#11"
 
     _area := SELECT()
     
     SELECT fakt_doks
-    hseek vars["id_firma"] + vars["tip_dok"] + vars["br_dok"]
+    hseek vars["idfirma"] + vars["idtipdok"] + vars["brdok"]
     
     if FOUND()
         if ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->iznos > 0 ) .or. ;
@@ -295,9 +267,9 @@ return _ret
 // vraca box sa uslovima povrata dokumenta
 // -----------------------------------------------------
 static function _get_povrat_vars( vars )
-local _firma := vars["id_firma"]
-local _tip_dok := vars["tip_dok"]
-local _br_dok := vars["br_dok"]
+local _firma := vars["idfirma"]
+local _tip_dok := vars["idtipdok"]
+local _br_dok := vars["brdok"]
 local _ret := .t.
 
 Box("", 1, 35)
@@ -320,9 +292,9 @@ if LastKey() == K_ESC
 endif
 
 // setuj varijable hash matrice
-vars["id_firma"] := _firma
-vars["tip_dok"] := _tip_dok
-vars["br_dok"] := _br_dok
+vars["idfirma"] := _firma
+vars["idtipdok"] := _tip_dok
+vars["brdok"] := _br_dok
 
 return _ret
 
@@ -344,13 +316,13 @@ IF test == nil
 ENDIF
 
 IF ( PCOUNT() == 0 )
-    _vars["id_firma"] := gFirma
-    _vars["tip_dok"] := SPACE(2)
-    _vars["br_dok"] := SPACE(8)
+    _vars["idfirma"] := gFirma
+    _vars["idtipdok"]  := SPACE(2)
+    _vars["brdok"]   := SPACE(8)
 ELSE
-    _vars["id_firma"] := id_firma
-    _vars["tip_dok"] := id_tip_dok
-    _vars["br_dok"] := br_dok
+    _vars["idfirma"] := id_firma
+    _vars["idtipdok"]  := id_tip_dok
+    _vars["brdok"]   := br_dok
 ENDIF
 
 O_FAKT
@@ -378,9 +350,9 @@ IF !_chk_povrat_zabrana( _vars )
 ENDIF
 
 // ovo su parametri dokumenta
-_id_firma := _vars["id_firma"]
-_id_tip_dok := _vars["tip_dok"]
-_br_dok := _vars["br_dok"]
+_id_firma   := _vars["idfirma"]
+_id_tip_dok := _vars["idtipdok"]
+_br_dok     := _vars["brdok"]
 
 IF Pitanje("","Dokument " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok + " povuci u pripremu (D/N) ?","D")=="N"
     CLOSE ALL
@@ -389,11 +361,6 @@ ENDIF
 
 SELECT fakt
 
-// provjeri stanje lock-ova
-if !_chk_lock_status()
-    close all
-    return 0
-endif
 
 SELECT fakt
 HSEEK _id_firma + _id_tip_dok + _br_dok
@@ -415,18 +382,19 @@ if ( fakt->m1 == "X" )
     endif
 endif
 
+
 // vrati dokument u pripremu    
 DO WHILE !EOF() .and. _id_firma == field->idfirma .and. _id_tip_dok == field->idtipdok .and. _br_dok == field->brdok
-            
+
     SELECT fakt
-        
+
     _rec := dbf_get_rec()
-            
+
     SELECT fakt_pripr
     APPEND BLANK
-       
+
     dbf_update_rec( _rec )
-            
+
     SELECT fakt
     SKIP
 
@@ -440,61 +408,34 @@ ENDIF
     
 IF ( _brisi_kum == "D" )
 
-    SELECT fakt
-    GO TOP
-    SEEK _id_firma + _id_tip_dok + _br_dok
 
-    MsgO("del fakt")
+ Box(, 5, 70)
 
-    DO WHILE !EOF() .and. _id_firma == field->idfirma .and. _id_tip_dok == field->idtipdok .and. _br_dok == field->brdok
-        
-        SKIP 1
-        _t_rec := RECNO()
-        SKIP -1
+    _ok := .t.
+    my_use_semaphore_off()
 
-        _del_rec := dbf_get_rec()
-        _ok := .t.
-        _ok := delete_rec_server_and_dbf( "fakt", _del_rec )
+    _tbl := "fakt_fakt"
+    @ m_x + 1, m_y + 2 SAY "delete " + _tbl
+    // algoritam 2  - nivo dokumenta
+    select fakt
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 2, "BEGIN")
+    log_write("povrat u pripremu fakt_fakt"  + " : " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok )
 
-        GO ( _t_rec )
-
-    ENDDO
-
-    MsgC()
-
-    // pobrisi sada doks i doks2
-    MsgO("del doks")
+    _tbl := "fakt_doks"
+    @ m_x + 2, m_y + 2 SAY "delete " + _tbl
     select fakt_doks
-    set order to tag "1"
-    go top
-    seek _id_firma + _id_tip_dok + _br_dok
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "CONT" )
 
-    if found()
-        _del_rec := dbf_get_rec()
-        _ok := delete_rec_server_and_dbf( "fakt_doks", _del_rec )
-    endif
-
-    MsgC()
-
-    MsgO("del doks2")
+    _tbl := "fakt_doks2"
+    @ m_x + 3, m_y + 2 SAY "delete " + _tbl
     select fakt_doks2
-    set order to tag "1"
-    go top
-    seek _id_firma + _id_tip_dok + _br_dok
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "END" )
 
-    if found()
-        _del_rec := dbf_get_rec()
-        _ok := delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
-    endif
+     my_use_semaphore_on()
 
-    MsgC()
+ BoxC()
 
-    IF !_ok
-        MsgBeep("Ajoooooooj del fakt/doks/doks2 nije ok ?! " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok )
-        CLOSE ALL
-        return 0
-    ENDIF
-          
+
 ENDIF 
 
 IF ( _brisi_kum == "N" )
@@ -515,6 +456,3 @@ ENDIF
 
 close all
 return 1
-
-
-

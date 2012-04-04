@@ -30,6 +30,9 @@ local _a_dbf_rec, _alg
 local _msg
 local _values_dbf
 local _alg_tag := ""
+local _ret
+
+_ret :=.t.
 
 // trebamo where str za values rec
 set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
@@ -45,6 +48,7 @@ _values_dbf := dbf_get_rec()
 // trebamo where str za stanje dbf-a
 set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
 
+lock_semaphore(table, "lock")
 if transaction $ "FULL#BEGIN"
    sql_table_update(table, "BEGIN")
 endif
@@ -58,10 +62,10 @@ if !sql_table_update(table, "del", nil, _where_str)
    log_write(_msg)
    Alert(_msg)
 
-   return .f.
+   _ret := .f.
 endif
 
-if _where_str_dbf != _where_str
+if _ret .and.  (_where_str_dbf != _where_str)
 
     // izbrisi i stare vrijednosti za _values_dbf
     // ovo nam treba ako se uradi npr. ispravku ID-a sifre
@@ -87,7 +91,7 @@ if _where_str_dbf != _where_str
 endif
 
 // dodaj nove
-if !sql_table_update(table, "ins", values)
+if _ret .and. !sql_table_update(table, "ins", values)
    sql_table_update(table, "ROLLBACK")
 
    _msg := RECI_GDJE_SAM + "sql ins " + table + " neuspjesno !"
@@ -115,39 +119,41 @@ if !push_ids_to_semaphore(table, _ids)
     Alert(_msg)
     log_write(_msg)
 
-    return .f.
+    _ret := .f.
 endif
 
 // azuriraj verziju semafora za tabelu
-if update_semaphore_version(table, .t.) < 0
+if _ret .and. update_semaphore_version(table, .t.) < 0
    sql_table_update(table, "ROLLBACK")
 
    _msg := "ERR " + RECI_GDJE_SAM0 + "update semaphore " + table +  " !"
    log_write(_msg)
    Alert(_msg)
 
-   return .f.
+   _ret := .f.
 endif
 
+if _ret
+    // na kraju, azuriraj lokalni dbf
+    if  dbf_update_rec(values)
+        if transaction $ "FULL#END"
+        sql_table_update(table, "END")
+        endif
 
-// na kraju, azuriraj lokalni dbf
-if dbf_update_rec(values)
-    if transaction $ "FULL#END"
-       sql_table_update(table, "END")
+        _ret := .t. 
+    else
+        sql_table_update(table, "ROLLBACK")
+
+        _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " !"
+        Alert(_msg)
+        log_write(_msg)
+
+        _ret := .f.
     endif
- 
-    return .t.
-else
-    sql_table_update(table, "ROLLBACK")
-
-    _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " !"
-    Alert(_msg)
-    log_write(_msg)
-
-    return .f.
 endif
 
-return .t.
+lock_semaphore(table, "free")
+return _ret
 
 
 // ----------------------------------------------------------------------
@@ -164,7 +170,9 @@ local _t_field, _t_field_dec
 local _a_dbf_rec, _alg
 local _msg
 local _alg_tag := ""
+local _ret
 
+_ret := .t.
 
 set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
 
@@ -177,6 +185,7 @@ if ALIAS() <> _a_dbf_rec["alias"]
 endif
 
 
+lock_semaphore(table, "lock")
 if transaction $ "FULL#BEGIN"
    sql_table_update(table, "BEGIN")
 endif
@@ -197,6 +206,8 @@ if sql_table_update(table, "del", nil, _where_str)
           Alert(_msg)
           log_write(_msg)
           RaiseError(_msg)
+          lock_semaphore(table, "free")
+
           QUIT
     endif
     SET ORDER TO TAG (_alg["dbf_tag"])
@@ -208,6 +219,16 @@ if sql_table_update(table, "del", nil, _where_str)
             // sve dok budes nalazio pod ovim kljucem brisi
             SEEK _full_id
         enddo
+        DBUNLOCKALL() 
+
+       update_semaphore_version(table, .t.)
+
+       if transaction $ "FULL#END"
+          sql_table_update(table, "END")
+       endif
+       _ret := .t.
+
+
     else
         sql_table_update(table, "ROLLBACK")
 
@@ -215,25 +236,22 @@ if sql_table_update(table, "del", nil, _where_str)
          Alert(_msg)
         log_write(_msg)
 
-        return .f.
+        _ret := .f.
     endif
-    DBUNLOCKALL() 
 
-    update_semaphore_version(table, .t.)
+else
 
-    if transaction $ "FULL#END"
-       sql_table_update(table, "END")
-    endif
-    return .t.
+   _msg := table + "transakcija neuspjesna !"
+   Alert(_msg)
+   log_write(_msg)
 
+   sql_table_update(table, "ROLLBACK")
+   _ret :=.f.
 endif
 
-_msg := table + "transakcija neuspjesna !"
-Alert(_msg)
-log_write(_msg)
+lock_semaphore(table, "free")
 
-sql_table_update(table, "ROLLBACK")
-return .f.
+return _ret
 
 
 
@@ -251,6 +269,7 @@ local _rec
 _a_dbf_rec := get_a_dbf_rec(table)
 reopen_exclusive(_a_dbf_rec["table"])
 
+lock_semaphore(table, "lock")
 sql_table_update( table, "BEGIN" )
 
 _rec := hb_hash()
@@ -280,6 +299,7 @@ else
    return .f.
 endif
 
+lock_semaphore(_tbl_suban, "free")
 return .t.
 
 // --------------------------------------------------------------------------------------------------------------
@@ -314,8 +334,16 @@ table := a_dbf_rec["table"]
 alg := a_dbf_rec["algoritam"][algoritam]
 
 for each _key in alg["dbf_key_fields"]
+
    if VALTYPE(_key) == "C"
+
          // ne gledaj numericke kljuceve, koji su array stavke
+        if !HB_HHASKEY(values, _key)
+             _msg := RECI_GDJE_SAM + " bug - nepostojeci kljuc u " + _key +  " : " + pp(values)
+             Alert(_msg)
+             QUIT
+        endif
+
         if VALTYPE(values[_key]) == "C"
             // ako je dbf_fields_len['id'][2] = 6
             // karakterna polja se moraju PADR-ovati

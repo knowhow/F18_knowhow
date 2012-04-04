@@ -96,7 +96,7 @@ Box( , _x, _y)
 @ m_x + _x - 2, m_y + 2 SAY hb_Utf8ToStr(" <a-A> Ažuriranje dok.    ") + BROWSE_COL_SEP + hb_Utf8ToStr(" <c-F9> Briši pripremu     ") + BROWSE_COL_SEP + " <F5>  Kontrola zbira  "
 @ m_x + _x - 1, m_y + 2 SAY " <R> Rezerv  <X> Prekid R " + BROWSE_COL_SEP + " <F10>  Ostale opcije      " + BROWSE_COL_SEP + " <F9> 20,12->10; 27->11"
 
-ObjDbedit( "PNal", MAXROWS() - 4, MAXCOLS() - 3 , {|| fakt_pripr_keyhandler()}, "", "Priprema...", , , , , 4)
+ObjDbedit( "PNal", _x, _y , {|| fakt_pripr_keyhandler()}, "", "Priprema...", , , , , 4)
 
 BoxC()
 

@@ -655,7 +655,7 @@ lock_semaphore( _tbl_doks2, "free" )
 BoxC()
 
 // --- neka dbf-ovi ponovo konsultuju semafore
-my_use_semaphore_off()
+my_use_semaphore_on()
 
 return _ok
 

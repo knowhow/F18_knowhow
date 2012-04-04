@@ -40,7 +40,8 @@ if gVarObracun == "2"
 	
 	AADD(opc,"-----------------------------------------")
 	AADD(opcexe,{|| nil})
-
+	AADD(opc,"J. prijave doprinosa (JS-3400)")
+	AADD(opcexe,{|| r_js3400_obrazac() })
 	AADD(opc,"O. obracunski listovi (obrasci OLP i GIP)")
 	AADD(opcexe,{|| r_obr_list() })
 	AADD(opc,"P. akontacije poreza (obrasci ASD i AUG)")

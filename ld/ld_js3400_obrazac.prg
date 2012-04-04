@@ -223,7 +223,7 @@ static function g_per( datum )
 local _ret := ""
 local _tmp
 
-if EMPTY( DTOC( datum ) )
+if EMPTY( DTOS( datum ) )
     return _ret
 endif
 

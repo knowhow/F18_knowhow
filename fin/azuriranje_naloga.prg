@@ -128,7 +128,9 @@ if lOk = .t.
   SELECT PSUBAN
   GO TOP
   lOk := .t.
+
   sql_fin_suban_update("BEGIN")
+
   do while !eof()
 
      record["id_firma"] := field->IdFirma
@@ -183,7 +185,9 @@ if lOk = .t.
 
   SELECT PANAL
   GO TOP
-  sql_fin_anal_update("BEGIN")
+
+  // izbacujem
+  //sql_fin_anal_update("BEGIN")
 
   do while !eof()
  
@@ -225,7 +229,10 @@ if lOk = .t.
 
   SELECT PSINT
   GO TOP
-  sql_fin_sint_update("BEGIN")
+
+  // izbacujem
+  //sql_fin_sint_update("BEGIN")
+
   do while !eof()
  
    record["id_firma"] := field->IdFirma
@@ -266,7 +273,10 @@ if lOk = .t.
 
   SELECT PNALOG
   GO TOP
-  sql_fin_nalog_update("BEGIN")
+
+  // izbacujem
+  //sql_fin_nalog_update("BEGIN")
+
   do while !eof()
  
    record["id_firma"] := field->IdFirma
@@ -294,9 +304,11 @@ if !lOk
 
     // vrati sve promjene...    
     sql_fin_suban_update( "ROLLBACK" )
-    sql_fin_sint_update( "ROLLBACK" )
-    sql_fin_anal_update( "ROLLBACK" )
-    sql_fin_nalog_update( "ROLLBACK" )
+
+    // ove izbacujem, ostaje samo jedna transakcije
+    //sql_fin_sint_update( "ROLLBACK" )
+    //sql_fin_anal_update( "ROLLBACK" )
+    //sql_fin_nalog_update( "ROLLBACK" )
 
 else
 
@@ -339,9 +351,12 @@ else
    
     // zavrsi transakcije... 
     sql_fin_suban_update("END")
-    sql_fin_anal_update("END")
-    sql_fin_sint_update("END")
-    sql_fin_nalog_update("END")
+
+    // ostaje samo jedna transakcija
+    // ove izbacujem
+    //sql_fin_anal_update("END")
+    //sql_fin_sint_update("END")
+    //sql_fin_nalog_update("END")
 
 endif
 

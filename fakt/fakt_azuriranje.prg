@@ -614,7 +614,8 @@ if lOk = .t.
   
   record := hb_hash()
 
-  sql_fakt_doks_update("BEGIN")
+  // ne treba ova transakcija
+  //sql_fakt_doks_update("BEGIN")
 
   record["id_firma"] := _fakt_doks_data["id_firma"]
   record["id_tip_dok"] := _fakt_doks_data["id_tip_dok"]
@@ -659,7 +660,8 @@ if lOk = .t.
   
   record := hb_hash()
 
-  sql_fakt_doks2_update("BEGIN")
+  // ne treba ova transakcija
+  //sql_fakt_doks2_update("BEGIN")
 
   record["id_firma"] := _fakt_doks2_data["id_firma"]
   record["id_tip_dok"] := _fakt_doks2_data["id_tip_dok"]
@@ -684,8 +686,11 @@ if !lOk
 
     // vrati sve nazad...   
     sql_fakt_fakt_update("ROLLBACK")
-    sql_fakt_doks_update("ROLLBACK")
-    sql_fakt_doks2_update("ROLLBACK")
+
+    // ove izbacujem
+    // samo jedna transakcija treba
+    //sql_fakt_doks_update("ROLLBACK")
+    //sql_fakt_doks2_update("ROLLBACK")
     
 else
     
@@ -712,9 +717,11 @@ else
     push_ids_to_semaphore( _tbl_doks2, _ids_doc ) 
     push_ids_to_semaphore( _tbl_doks, _ids_doc ) 
     
+    //sql_fakt_doks_update("END")
+    //sql_fakt_doks2_update("END")
+    
     // zavrsi transakcije...
-    sql_fakt_doks_update("END")
-    sql_fakt_doks2_update("END")
+    // ostavljam samo jednu transakciju
     sql_fakt_fakt_update("END")
 
 endif

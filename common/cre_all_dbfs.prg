@@ -20,15 +20,11 @@ cre_partn(ver)
 cre_adres(ver)
 
 
-Alert(RECI_GDJE_SAM0 + " fix: cre_all kalk, fakt, ld, mat, pos !")
 // TODO: http://redmine.bring.out.ba/issues/25815
 cre_all_fin(ver)
+cre_all_kalk(ver)
 cre_all_fakt(ver)
-_db := TDbFakt():new()
-_db:kreiraj()
 
-
-//cre_all_kalk(ver)
 
 
 //cre_all_ld(ver)
@@ -42,8 +38,11 @@ _db:kreiraj()
 _db := TDbFin():new()
 _db:kreiraj()
 
-//_db := TDbKalk():new()
-//_db:kreiraj()
+_db := TDbKalk():new()
+_db:kreiraj()
+
+_db := TDbFakt():new()
+_db:kreiraj()
 
 
 

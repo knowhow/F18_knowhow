@@ -821,7 +821,9 @@ if lOk = .t.
 
   record := hb_hash()
   
-  sql_kalk_doks_update("BEGIN")
+  // ostavljam samo jednu transakciju
+  // ovo ne treba!
+  //sql_kalk_doks_update("BEGIN")
 
   record["id_firma"] := field->idfirma
   record["id_vd"] := field->idvd
@@ -851,7 +853,10 @@ if !lOk
 
     // vrati promjene
     sql_kalk_kalk_update("ROLLBACK")
-    sql_kalk_doks_update("ROLLBACK")
+    
+    // ova mi ne treba transakcija
+    // koristit cu samo gornju
+    //sql_kalk_doks_update("ROLLBACK")
         
 else
 
@@ -875,7 +880,9 @@ else
     push_ids_to_semaphore( _tbl_doks, _ids ) 
 
     // zavrsi transakcije
-    sql_kalk_doks_update("END")
+    // ali mi ova ne treba, koristim samo kalk_doks transkaciju
+    //sql_kalk_doks_update("END")
+
     sql_kalk_kalk_update("END")
 
 endif

@@ -1,3 +1,9 @@
+0.9.80 2012-04-05, vsasa
+ 
+  - FIN, KALK, FAKT ažuriranje, jedna transakcija [#27435](http://redmine.bring.out.ba/issues/27435)
+  - LD, obrazac JS-3400 [#27178](http://redmine.bring.out.ba/issues/27178)
+  - LD, obrazac PMIP-1024 [#27179](http://redmine.bring.out.ba/issues/27179)
+
 0.9.79 2012-04-04, vsasa
  
   - semafori, lock bugfix [#27399](http://redmine.bring.out.ba/issues/27399)

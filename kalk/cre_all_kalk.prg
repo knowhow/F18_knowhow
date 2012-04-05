@@ -57,8 +57,8 @@ if _created
 endif
 
 CREATE_INDEX("1", "IdFirma+idvd+brdok", _alias)
-CREATE_INDEX("2","IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias)
-CREATE_INDEX("3","IdFirma+dtos(datdok)+podbr+idvd+brdok", _alias)
+CREATE_INDEX("2", "IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias)
+CREATE_INDEX("3", "IdFirma+dtos(datdok)+podbr+idvd+brdok", _alias)
 CREATE_INDEX("DAT","datdok", _alias)
 
 // za RN

@@ -21,11 +21,6 @@ set_a_dbf_fin_anal()
 set_a_dbf_fin_sint()
 set_a_dbf_fin_nalog()
 
-//set_a_dbf_sifarnik("trfp"       , "TRFP"      , F_TRFP       )
-
-set_a_dbf_sifarnik("trfp2"      , "TRFP2"     , F_TRFP2      )
-set_a_dbf_sifarnik("trfp3"      , "TRFP3"     , F_TRFP3      )
-
 set_a_dbf_temp("fin_konto"        , "_KONTO"   ,       F__KONTO   )
 set_a_dbf_temp("fin_partn"        , "_PARTN"   ,       F__PARTN   )
 

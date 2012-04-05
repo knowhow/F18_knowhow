@@ -44,36 +44,6 @@ AADD( gaDbfs, { F_R_EXP ,  "R_EXPORT"  , "r_export"  } )
 
 // finmat
 AADD( gaDbfs, { F_FINMAT ,  "FINMAT"  , "fin_mat"  } )
-
-//modul KALK
-AADD( gaDbfs, { F_KALK        , "KALK"         , "kalk_kalk" , {|alg| kalk_kalk_from_sql_server(alg) }, "IDS", {"idfirma", "idvd", "brdok", "rbr"}, {|x| sql_where_block("kalk_kalk", x) }, "1" })
-AADD( gaDbfs, { F_KALK_DOKS   , "KALK_DOKS"    , "kalk_doks" , {|alg| kalk_doks_from_sql_server(alg) }, "IDS", {"idfirma", "idvd", "brdok"}, {|x| sql_where_block("kalk_doks", x) }, "1" })
-AADD( gaDbfs, { F_KALK_DOKS2  , "KALK_DOKS2"   , "kalk_doks2", { |alg| kalk_doks2_from_sql_server(alg) }, "IDS", {"idfirma", "idvd", "brdok"}, {|x| sql_where_block("kalk_doks2", x) }, "1" })
-
-// KALK sifrarnik
-
-AADD( gaDbfs, { F_KALKS  ,"KALKS" , "kalk_kalks"    } )
-AADD( gaDbfs, { F__KALK  ,"_KALK" , "_kalk_kalk"    } )
-AADD( gaDbfs, { F_KALK_PRIPR  ,"KALK_PRIPR"   , "kalk_pripr"    } )
-AADD( gaDbfs, { F_KALK_PRIPR2  ,"KALK_PRIPR2"  , "kalk_pripr2"   } )
-AADD( gaDbfs, { F_KALK_PRIPR9  ,"KALK_PRIPR9"  , "kalk_pripr9"   } )
-AADD( gaDbfs, { F_PORMP       ,"PORMP"        , "kalk_pormp"     } )
-
-AADD( gaDbfs, { F_DOKSRC      , "KALK_DOKSRC"  , "kalk_doksrc"    } )
-AADD( gaDbfs, { F_P_DOKSRC    , "P_KALK_DOKSRC", "p_kalk_doksrc"   } )
-AADD( gaDbfs, { F_PPPROD      , "PPPROD"  , "kalk_ppprod"    } )
-AADD( gaDbfs, { F_OBJEKTI     , "OBJEKTI" , "kalk_objekti"     } )
-AADD( gaDbfs, { F_POBJEKTI    , "POBJEKTI" , "kalk_pobjekti"     } )
-AADD( gaDbfs, { F_PRODNC      , "PRODNC"  , "kalk_prodnc"     } )
-AADD( gaDbfs, { F_RVRSTA      , "RVRSTA"  , "kalk_rvrsta"     } )
-AADD( gaDbfs, { F_CACHE       , "CACHE"      , "kalk_cache"     } )
-AADD( gaDbfs, { F_PRIPT       , "PRIPT"      , "kalk_pript"     } )
-AADD( gaDbfs, { F_REKAP1      , "REKAP1"      , "kalk_rekap1"     } )
-AADD( gaDbfs, { F_REKAP2      , "REKAP2"      , "kalk_rekap2"     } )
-AADD( gaDbfs, { F_REKA22      , "REKA22"      , "kalk_reka22"     } )
-AADD( gaDbfs, { F_R_UIO       , "R_UIO"       , "kalk_r_uio"     } )
-AADD( gaDbfs, { F_RPT_TMP     , "RPT_TMP"     , "kalk_rpt_tmp"     } )
-
 // modul FAKT
 // modul RNAL
 AADD(gaDBFs, { F__DOCS, "_DOCS", "_rnal_docs"  } )

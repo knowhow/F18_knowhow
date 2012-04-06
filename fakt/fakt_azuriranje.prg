@@ -420,13 +420,24 @@ _fakt_data["partner"] := _fakt_partner_memo( _memo )
     
 _fakt_data["oper_id"] := getUserId()
 
-if gFc_use == "D" .and. FieldPOS("fisc_rn") <> 0
+//ovo nema nikakvog smisla. fisc_rn uvijek postoji u F18
+//takođe mi mije jasno zašto se ne uzmu oba polja onakva kakva jesu ?
+// ovdje uopšte mi nije jasna ova zbrka koja se pravi sa fisc_rn i fisc_st poljima
+// non stop se nešto gleda bez ikakve potrebe
+// u fisc_rn treba biti broj fiskalnog račun.
+
+// ako se radi o reklamoranom (storno računu) onda sadržan treba biti
+// fisc_rn - originalni račun koji se reklamira, fisc_st - broj reklamiranog računa
+
+//if gFc_use == "D" .and. FieldPOS("fisc_rn") <> 0
     _fakt_data["fisc_rn"] := field->fisc_rn
+//    _fakt_data["fisc_st"] := 0
+    // _fakt_data["fisc_st"] := field->fisc_st - ovio ne radi jer fisc_st ne postoji ?!
     _fakt_data["fisc_st"] := 0
-else
-    _fakt_data["fisc_rn"] := 0
-    _fakt_data["fisc_st"] := 0
-endif
+//else
+//    _fakt_data["fisc_rn"] := 0
+//    _fakt_data["fisc_st"] := 0
+//endif
 
 _fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
@@ -455,7 +466,7 @@ return _fakt_data
 // ----------------------------------------------------------
 // kalkulise ukupno za fakturu
 // ----------------------------------------------------------
-function calculate_fakt_total( id_firma, id_tipdok, br_dok )
+function calculate_fakt_total( id_firma, id_tipdok, br_dok)
 local _fakt_total := hb_hash()
 local _cij_sa_por := 0
 local _rabat := 0
@@ -470,17 +481,16 @@ seek id_firma + id_tipdok + br_dok
     
 _din_dem := field->dindem
 
+altd()
 do while !eof() .and. field->idfirma == id_firma ;
             .and. field->idtipdok == id_tipdok ;
             .and. field->brdok == br_dok
         
     if _din_dem == LEFT( ValBazna(), 3 )
         
-        _cij_sa_por := ROUND( field->kolicina * field->cijena * ;
-                        PrerCij() * ( 1 - field->rabat / 100), ZAOKRUZENJE )
+        _cij_sa_por := ROUND( field->kolicina * field->cijena * PrerCij() * ( 1 - field->rabat / 100), ZAOKRUZENJE )
         
-        _rabat := ROUND( field->kolicina * field->cijena * ;
-                    PrerCij() * field->rabat / 100 , ZAOKRUZENJE )
+        _rabat := ROUND( field->kolicina * field->cijena * PrerCij() * field->rabat / 100 , ZAOKRUZENJE )
         
         _dod_por := ROUND( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
         

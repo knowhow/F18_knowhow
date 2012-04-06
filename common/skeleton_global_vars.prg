@@ -155,6 +155,10 @@ return
 
 function SetPDVBoje()
 
+if VALTYPE(goModul:oDesktop) != "O"
+  return .f.
+endif
+
 if IsPDV()
     PDVBoje()
     goModul:oDesktop:showMainScreen()
@@ -164,7 +168,8 @@ else
     goModul:oDesktop:showMainScreen()
     StandardBoje()
 endif
-return
+
+return .t.
 
 
 

@@ -199,13 +199,35 @@ cre_all_dbfs(_ver)
 set_a_dbfs_key_fields()
 
 
+
 write_dbf_version_to_config()
 
 check_server_db_version()
 
 __server_log := .t.
+
+
+altd()
+set_all_gvars()
+
 return .t.
 
+
+// --------------------------------
+// --------------------------------
+function set_all_gvars()
+public goModul
+
+goModul := TFinMod():new()
+goModul:setgvars()
+
+goModul := TKalkMod():new()
+goModul:setgvars()
+
+goModul := TFaktMod():new()
+goModul:setgvars()
+
+return
 
 // ------------------------------------------
 // ------------------------------------------

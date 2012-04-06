@@ -294,13 +294,14 @@ public lSyncon47 := .f.
 public lKoristitiBK := .f.
 public lPrikPRUC := .f.
 public gDuzKonto
-if !::oDatabase:lAdmin
+if VALTYPE(::oDatabase) == "O" .and. !::oDatabase:lAdmin
 	O_KALK_PRIPR
 	gDuzKonto:=LEN(mkonto)
 	use
 else
 	gDuzKonto:=7
 endif
+
 public glZabraniVisakIP
 public glBrojacPoKontima := .f.
 public glEvidOtpis

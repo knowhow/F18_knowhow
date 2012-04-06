@@ -513,7 +513,11 @@ Box("knjn",21,77,.f.,"Unos novih stavki")
     // TODO: popni se u odnosu na negativne brojeve
     // TODO: VIDJETI ?? negativne su protustavke ????!!! zar to ima
     do while !bof()
-        if val(rbr)<0; skip -1; else; exit; endif
+        if val(rbr)<0
+           skip -1
+        else
+           exit
+        endif
     enddo
 
     cIdkont:=""
@@ -592,19 +596,18 @@ return DE_REFRESH
 
 
 
-
-
 /*! \fn EditAll()
  *  \brief Cirkularna ispravka stavki dokumenta u kalk_pripremi
  */
 
 function EditAll()
-*{
+
 // ovu opciju moze pozvati i asistent alt+F10 !
 PushWA()
 select kalk_pripr
 
-Box("anal",20,77,.f.,"Ispravka naloga")
+Box("anal", 20, 77, .f., "Ispravka naloga")
+
     nDug:=0
     nPot:=0
     do while !eof()
@@ -613,7 +616,7 @@ Box("anal",20,77,.f.,"Ispravka naloga")
         skip-1
         Scatter()
         _ERROR:=""
-        if left(_idkonto2,3)="XXX"
+        if left(_idkonto2,3) == "XXX"
             // 80-ka
             skip
             skip
@@ -621,7 +624,7 @@ Box("anal",20,77,.f.,"Ispravka naloga")
             skip-1
             Scatter()
             _ERROR:=""
-            if left(_idkonto2,3)="XXX"
+            if left(_idkonto2,3) == "XXX"
                 exit
             endif
         endif
@@ -662,7 +665,7 @@ Box("anal",20,77,.f.,"Ispravka naloga")
             Box("",21,77,.f.,"Protustavka")
                 seek _idfirma+_idvd+_brdok+_rbr
                 _Tbanktr:="X"
-                do while !eof() .and. _idfirma+_idvd+_brdok+_rbr==idfirma+idvd+brdok+rbr
+                do while !eof() .and. _idfirma+_idvd+_brdok+_rbr == idfirma+idvd+brdok+rbr
                     if left(idkonto2,3)=="XXX"
                         Scatter()
                         _TBankTr:=""
@@ -1840,7 +1843,7 @@ return
 // centralna funkcija za stampu dokumenta
 // ---------------------------------------------------
 function kalk_centr_stampa_dokumenta()
-parameters fstara, cSeek, lAuto
+parameters fStara, cSeek, lAuto
 local nCol1
 local nCol2
 local nPom
@@ -1849,10 +1852,11 @@ nCol1:=0
 nCol2:=0
 nPom:=0
 
-PRIVATE PicCDEM:=gPICCDEM
-PRIVATE PicProc:=gPICPROC
-PRIVATE PicDEM:= gPICDEM
-PRIVATE Pickol:= gPICKOL
+PRIVATE PicCDEM :=gPICCDEM
+PRIVATE PicProc :=gPICPROC
+PRIVATE PicDEM  := gPICDEM
+PRIVATE Pickol  := gPICKOL
+
 
 private nStr:=0
 
@@ -1868,8 +1872,10 @@ if (lAuto==nil)
 endif
 
 if (cSeek==nil)
-    cSeek:=""
+    cSeek := ""
 endif
+
+close all
 
 // otvori potrebne tabele
 _o_ctrl_tables( fstara )
@@ -1891,14 +1897,14 @@ do while .t.
         exit
     endif
 
-    if empty(cidvd+cbrdok+cidfirma)
+    if empty(cIdvd+cBrdok+cIdfirma)
         skip
         loop
     endif
     
     if !lAuto
     
-    if (cSeek=="")
+    if (cSeek == "")
         Box("",1,50)
             set cursor on
             @ m_x+1,m_y+2 SAY "Dokument broj:"
@@ -1925,12 +1931,12 @@ do while .t.
         HSEEK cIdFirma+cIdVD+cBrDok
     endif
 
-    if (cidvd=="24")
+    if (cIdvd == "24")
         Msg("Kalkulacija 24 ima samo izvjestaj rekapitulacije !")
         closeret
     endif
 
-    if (cSeek!='IZDOKS')
+    if (cSeek != 'IZDOKS')
         EOF CRET
     else
         private nStr:=1
@@ -2022,7 +2028,8 @@ do while .t.
             else
                 Stkalk95()
             endif
-        elseif (cidvd $ "41#42#43#47#49")   // realizacija prodavnice
+        elseif (cidvd $ "41#42#43#47#49")   
+            // realizacija prodavnice
             if (IsJerry() .and. cIdVd$"41#42#47")
                 StKalk47J()
             else
@@ -2063,9 +2070,11 @@ do while .t.
             StkalkPR()
         endif
 
-        if (cSeek!='IZDOKS')
+        if (cSeek != 'IZDOKS')
             exit
+
         else
+
             select kalk_doks
             skip
             if eof()
@@ -2073,9 +2082,10 @@ do while .t.
             endif
             ?
             ?
+
         endif
         
-        if (cidvd=="10".and.!((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")
+        if (cidvd == "10" .and. !((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")
             gPStranica:=gPSOld
             P_PO_P
         endif
@@ -2083,7 +2093,7 @@ do while .t.
     enddo // cSEEK
 
     if (gPotpis=="D")
-        if (prow()>57+gPStranica)
+        if (prow() > 57 + gPStranica)
             FF
             @ prow(),125 SAY "Str:"+str(++nStr,3)
         endif
@@ -2099,12 +2109,14 @@ do while .t.
     ?
 
     FF
+
+    // zapamti tabelu, zapis na kojima si stao
+    PushWa()
+    close all
     END PRINT
 
-    #ifdef __PLATFORM__UNIX
-        // otvori tabele za pregled dokumenta
-        _o_ctrl_tables( fstara )
-    #endif
+    _o_ctrl_tables( fstara )
+    PopWa()
 
     if (cidvd $ "80#11#81#12#13#IP#19")
         fTopsD:=.t.
@@ -2147,7 +2159,7 @@ if (fTopsD .and. !fstara .and. gTops!="0 ")
 
 endif
 
-if (fFaktD .and. !fstara .and. gFakt!="0 ")
+if (fFaktD .and. !fStara .and. gFakt!="0 ")
     start print cret
     o_kalk_edit()
     select kalk_pripr

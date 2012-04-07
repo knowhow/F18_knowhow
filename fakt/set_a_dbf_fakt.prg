@@ -18,8 +18,8 @@ function set_a_dbf_fakt()
 
 set_a_dbf_fakt_fakt()
 
-set_a_fakt_doks_doks2("fakt_doks", "FAKT_DOKS", F_FAKT_DOKS)
-set_a_fakt_doks_doks2("fakt_doks2", "FAKT_DOKS2", F_FAKT_DOKS2)
+set_a_fakt_doks_doks2("fakt_doks"  , "FAKT_DOKS"  , F_FAKT_DOKS)
+set_a_fakt_doks_doks2("fakt_doks2" , "FAKT_DOKS2" , F_FAKT_DOKS2)
 
 set_a_dbf_fakt_ugov()
 set_a_dbf_fakt_rugov()
@@ -247,7 +247,6 @@ function set_a_fakt_doks_doks2(tbl, alias, wa)
 local _item, _alg, _tbl 
 
 _tbl := tbl
-
 _item := hb_hash()
 
 _item["alias"] := alias

@@ -263,75 +263,74 @@ local _fakt_doks2_data
 close all
 o_fakt_edit()
 
-select fakt_pripr
-go top
-seek id_firma + id_tip_dok + br_dok
-
 Box("#Proces azuriranja u toku", 3, 60)
 
-// azuriramo prvo u tabelu FAKT 
-do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
+    @ m_x + 1, m_y + 2 SAY "fakt_pripr -> fakt_fakt"
 
     select fakt_pripr
-    
-    _rec := dbf_get_rec()
-    
-    select fakt
-    APPEND BLANK
-    dbf_update_rec(_rec, .t.)
+    HSEEK id_firma + id_tip_dok + br_dok
 
-    select fakt_pripr
-    skip
+    do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
 
-enddo
+        select fakt_pripr
+        
+        _rec := dbf_get_rec()
+        
+        select fakt
+        APPEND BLANK
+        dbf_update_rec(_rec, .t.)
 
-select fakt_pripr
-go top
-seek id_firma + id_tip_dok + br_dok
+        select fakt_pripr
+        skip
 
-// dodaj zapis u fakt_doks
-select fakt_doks
-set order to tag "1"
-HSEEK id_firma + id_tip_dok + br_dok
+    enddo
 
-if !Found()
+    @ m_x +2, m_y+2 SAY "fakt_doks " + id_firma + id_tip_dok + br_dok 
+  
+    select fakt_doks
+    set order to tag "1"
+    HSEEK id_firma + id_tip_dok + br_dok
+    if !Found()
 
-   _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
+        _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
-   SELECT fakt_doks
-   APPEND BLANK
-   dbf_update_rec(_rec, .t.)
+        SELECT fakt_doks
+        APPEND BLANK
+        dbf_update_rec(_rec, .t.)
 
-else
+    else
 
-    _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks : " + id_firma + _id_tip_dok + br_dok 
-    Alert(_msg)
-    log_write(_msg)
+        _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks : " + id_firma + id_tip_dok + br_dok 
+        Alert(_msg)
+        log_write(_msg)
 
-endif
+    endif
 
-select fakt_doks2
-set order to tag "1"
-HSEEK id_firma + id_tip_dok + br_dok
 
-if !Found()
+    @ m_x +3, m_y+2 SAY "fakt_doks2 " + id_firma + id_tip_dok + br_dok
 
-   _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+    select fakt_doks2
+    set order to tag "1"
+    HSEEK id_firma + id_tip_dok + br_dok
 
-   SELECT fakt_doks2
-   APPEND BLANK
-   dbf_update_rec(_rec, .t.)
-else
+    if !Found()
+        _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
-   _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks2 : " + id_firma + _id_tip_dok + br_dok 
-   Alert(_msg)
-   log_write(_msg)
+        SELECT fakt_doks2
+        APPEND BLANK
+        dbf_update_rec(_rec, .t.)
+    else
+        _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
+        Alert(_msg)
+        log_write(_msg)
+    endif
 
-endif
-
-select fakt_pripr
 
 BoxC()
+
+select fakt_pripr
+seek id_firma + id_tip_dok + br_dok
+
 
 return .t.
 
@@ -400,8 +399,7 @@ _fakt_data["brdok"]    := br_dok
 
 
 select fakt_pripr
-go top
-seek id_firma + id_tip_dok + br_dok
+HSEEK id_firma + id_tip_dok + br_dok
 
 _fakt_data["datdok"]  := field->datdok
 
@@ -440,13 +438,14 @@ _fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
 
-    
-if ( _field->m1 == "Z" )
+
+/*    
+if ( field->m1 == "Z" )
     // skidam zauzece i dobijam normalan dokument
     // REPLACE m1 WITH " " -- isto kao i gore
     _fakt_data["m1"] := " "
 endif
-
+*/
 
 // izracunaj totale za fakturu
 _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
@@ -455,7 +454,6 @@ _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
 _fakt_data["iznos"] := _fakt_totals["iznos"] 
 _fakt_data["rabat"] := _fakt_totals["rabat"]
 
-select fakt_doks
 return _fakt_data
 
 
@@ -478,10 +476,7 @@ seek id_firma + id_tipdok + br_dok
     
 _din_dem := field->dindem
 
-altd()
-do while !eof() .and. field->idfirma == id_firma ;
-            .and. field->idtipdok == id_tipdok ;
-            .and. field->brdok == br_dok
+do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tipdok .and. field->brdok == br_dok
         
     if _din_dem == LEFT( ValBazna(), 3 )
         
@@ -546,26 +541,8 @@ _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
 
-// ------------------------------------------------------
-// lock semaphore
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl_fakt, "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_doks2,  "lock" )
-if _ok
-    sql_table_update(nil, "END")
-else
-    sql_table_update(nil, "ROLLBACK")
-    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
-    return .f.
-endif
-// ---end lock ---------------------------------------------
-
 Box(, 5, 60)
 _ok := .t.
-
-// neka dbf-ovi ne "ganjaju" stanje semafora
-my_use_semaphore_off()
 
 // -----------------------------------------------------------------------------------------------------
 sql_table_update(nil, "BEGIN")
@@ -654,15 +631,7 @@ else
 endif
 
 
-// --- unlock -----------------------------------------
-lock_semaphore( _tbl_fakt, "free" )
-lock_semaphore( _tbl_doks, "free" )
-lock_semaphore( _tbl_doks2, "free" )
-
 BoxC()
-
-// --- neka dbf-ovi ponovo konsultuju semafore
-my_use_semaphore_on()
 
 return _ok
 
@@ -731,9 +700,13 @@ return lProtu
 // --------------------------------------------------
 function azur_fakt( lSilent )
 local _a_fakt_doks
-local __id_firma
-local __br_dok
-local __id_tip_dok
+local _id_firma
+local _br_dok
+local _id_tip_dok
+local _ok
+local _tbl_fakt  := "fakt_fakt"
+local _tbl_doks  := "fakt_doks"
+local _tbl_doks2 := "fakt_doks2"
 
 if ( lSilent == nil)
     lSilent := .f.
@@ -761,47 +734,80 @@ endif
 
 // generisi protu dokumente
 // ovo jos treba vidjeti koristi li se ??????????
-//lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
+// lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
 
-msgo( "Azuriranje dokumenata u toku ..." )
+_ok := .t.
+
+MsgO( "Azuriranje dokumenata u toku ..." )
+ 
+// neka dbf-ovi ne "ganjaju" stanje semafora
+my_use_semaphore_off()
+
+// ------------------------------------------------------
+// lock semaphore
+sql_table_update(nil, "BEGIN")
+_ok := lock_semaphore( _tbl_fakt, "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_doks2,  "lock" )
+if _ok
+    sql_table_update(nil, "END")
+else
+    sql_table_update(nil, "ROLLBACK")
+    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+    return .f.
+endif
+// ---end lock ---------------------------------------------
+
 
 // prodji kroz matricu sa dokumentima i azuriraj ih
 for _i := 1 to LEN( _a_fakt_doks )
 
-    __id_firma := _a_fakt_doks[ _i, 1 ]
-    __id_tip_dok := _a_fakt_doks[ _i, 2 ]
-    __br_dok := _a_fakt_doks[ _i, 3 ]
+    _id_firma   := _a_fakt_doks[ _i, 1 ]
+    _id_tip_dok := _a_fakt_doks[ _i, 2 ]
+    _br_dok     := _a_fakt_doks[ _i, 3 ]
     
     // provjeri da li postoji vec identican broj azuriran u bazi ?
-    if fakt_doks_exist( __id_firma, __id_tip_dok, __br_dok )
-        msgbeep( "Dokument " + __id_firma + "-" + __id_tip_dok + "-" + ALLTRIM(__br_dok) + " vec postoji azuriran u bazi !" )
-        return
+    if fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
+        MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + ALLTRIM(_br_dok) + " vec postoji azuriran u bazi !" )
+        _ok := .f.
     endif
+   
     
-    if fakt_azur_sql( __id_firma, __id_tip_dok, __br_dok  )
+    if _ok .and. fakt_azur_sql( _id_firma, _id_tip_dok, _br_dok  )
     
-        if !fakt_azur_dbf( __id_firma, __id_tip_dok, __br_dok )
-            msgc()
+        if _ok .and. !fakt_azur_dbf( _id_firma, _id_tip_dok, _br_dok )
             MsgBeep("Neuspjesno FAKT/DBF azuriranje !?")
-            return
+            _ok := .f.
         endif
 
     else
-        msgc()
         MsgBeep("Neuspjesno FAKT/SQL azuriranje !?")
-        return
+        _ok := .f.
     endif
+
 
 next
 
-msgc()
+MsgC()
+
+// --- unlock -----------------------------------------
+lock_semaphore( _tbl_fakt,  "free" )
+lock_semaphore( _tbl_doks,  "free" )
+lock_semaphore( _tbl_doks2, "free" )
+// -----------------------------------------------------
+
+my_use_semaphore_on()
+
+if !_ok
+   return .f.
+endif
 
 // prenos podataka fakt
 fakt_prenos_modem()
 
 select fakt_pripr
 
-msgo("brisem pripremu....")
+MsgO("brisem pripremu....")
 
 // provjeri sta treba pobrisati iz pripreme
 if LEN( _a_fakt_doks ) > 1
@@ -815,7 +821,7 @@ else
 
 endif
 
-msgc()
+MsgC()
     
 close all
 
@@ -1213,9 +1219,7 @@ set order to tag "1"
 go top
 seek id_firma + id_tip_dok + br_dok
 
-do while !EOF() .and. field->idfirma == id_firma ;
-        .and. field->idtipdok == id_tip_dok ;
-        .and. field->brdok == br_dok
+do while !EOF() .and. field->idfirma == id_firma  .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
     
     _rec := dbf_get_rec()
 

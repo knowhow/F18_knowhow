@@ -267,10 +267,11 @@ return _ret
 // vraca box sa uslovima povrata dokumenta
 // -----------------------------------------------------
 static function _get_povrat_vars( vars )
-local _firma := vars["idfirma"]
+
+local _firma   := vars["idfirma"]
 local _tip_dok := vars["idtipdok"]
-local _br_dok := vars["brdok"]
-local _ret := .t.
+local _br_dok  := vars["brdok"]
+local _ret     := .t.
 
 Box("", 1, 35)
 
@@ -292,12 +293,11 @@ if LastKey() == K_ESC
 endif
 
 // setuj varijable hash matrice
-vars["idfirma"] := _firma
+vars["idfirma"]  := _firma
 vars["idtipdok"] := _tip_dok
-vars["brdok"] := _br_dok
+vars["brdok"]    := _br_dok
 
 return _ret
-
 
 
 // ------------------------------------------------------
@@ -307,7 +307,6 @@ function povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 local _vars := hb_hash()
 local _brisi_kum := "D"
 local _rec, _del_rec, _ok
-local _id_tip_dok, _br_dok, _id_firma
 local _field_ids, _where_block
 local _t_rec
 
@@ -316,13 +315,13 @@ IF test == nil
 ENDIF
 
 IF ( PCOUNT() == 0 )
-    _vars["idfirma"] := gFirma
-    _vars["idtipdok"]  := SPACE(2)
-    _vars["brdok"]   := SPACE(8)
+    _vars["idfirma"]  := gFirma
+    _vars["idtipdok"] := SPACE(2)
+    _vars["brdok"]    := SPACE(8)
 ELSE
-    _vars["idfirma"] := id_firma
-    _vars["idtipdok"]  := id_tip_dok
-    _vars["brdok"]   := br_dok
+    _vars["idfirma"]  := id_firma
+    _vars["idtipdok"] := id_tip_dok
+    _vars["brdok"]    := br_dok
 ENDIF
 
 O_FAKT
@@ -349,27 +348,23 @@ IF !_chk_povrat_zabrana( _vars )
     RETURN 0
 ENDIF
 
+altd()
 // ovo su parametri dokumenta
-_id_firma   := _vars["idfirma"]
-_id_tip_dok := _vars["idtipdok"]
-_br_dok     := _vars["brdok"]
+id_firma   := _vars["idfirma"]
+id_tip_dok := _vars["idtipdok"]
+br_dok     := _vars["brdok"]
 
-IF Pitanje("","Dokument " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok + " povuci u pripremu (D/N) ?","D")=="N"
+IF Pitanje("","Dokument " + id_firma + "-" + id_tip_dok + "-" + br_dok + " povuci u pripremu (D/N) ?", "D") == "N"
     CLOSE ALL
     RETURN 0
 ENDIF
 
 SELECT fakt
-
-
-SELECT fakt
-HSEEK _id_firma + _id_tip_dok + _br_dok
+HSEEK id_firma + id_tip_dok + br_dok
 
 // da li dokument uopste postoji ?
 if !FOUND()
-    MsgBeep( "Trazeni dokument ne postoji !" )
-    close all
-    return 0
+    MsgBeep( "Trazeni dokument u fakt_fakt ne postoji !" )
 endif
 
 
@@ -384,7 +379,7 @@ endif
 
 
 // vrati dokument u pripremu    
-DO WHILE !EOF() .and. _id_firma == field->idfirma .and. _id_tip_dok == field->idtipdok .and. _br_dok == field->brdok
+DO WHILE !EOF() .and. id_firma == field->idfirma .and. id_tip_dok == field->idtipdok .and. br_dok == field->brdok
 
     SELECT fakt
 
@@ -414,12 +409,13 @@ IF ( _brisi_kum == "D" )
     _ok := .t.
     my_use_semaphore_off()
 
+    altd()
     _tbl := "fakt_fakt"
     @ m_x + 1, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta
     select fakt
     _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 2, "BEGIN")
-    log_write("povrat u pripremu fakt_fakt"  + " : " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok )
+    log_write("povrat u pripremu fakt_fakt"  + " : " + id_firma + "-" + id_tip_dok + "-" + br_dok )
 
     _tbl := "fakt_doks"
     @ m_x + 2, m_y + 2 SAY "delete " + _tbl
@@ -442,9 +438,9 @@ IF ( _brisi_kum == "N" )
     // u PRIPR resetujem flagove generacije, jer mi je dokument ostao u kumul.
     SELECT fakt_pripr
     SET ORDER TO TAG "1"
-    HSEEK _id_firma + _id_tip_dok + _br_dok 
+    HSEEK id_firma + id_tip_dok + br_dok 
     
-    DO WHILE !EOF() .and. fakt_pripr->( field->idfirma + field->idtipdok + field->brdok ) == ( _id_firma + _id_tip_dok + _br_dok )
+    DO WHILE !EOF() .and. fakt_pripr->( field->idfirma + field->idtipdok + field->brdok ) == ( id_firma + id_tip_dok + br_dok )
         IF ( fakt_pripr->m1 == "X" )
             _rec := dbf_get_rec()
             _rec["m1"] := SPACE(1)    

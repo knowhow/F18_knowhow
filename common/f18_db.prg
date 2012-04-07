@@ -143,7 +143,6 @@ if _ret
         _ret := .t. 
     else
         sql_table_update(table, "ROLLBACK")
-
         _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " !"
         Alert(_msg)
         log_write(_msg)
@@ -153,6 +152,7 @@ if _ret
 endif
 
 lock_semaphore(table, "free")
+
 return _ret
 
 
@@ -193,7 +193,6 @@ endif
 
 if sql_table_update(table, "del", nil, _where_str) 
 
-   
     _full_id := get_dbf_rec_primary_key(_alg["dbf_key_fields"], values)
     
     AADD(_ids, _alg_tag + _full_id)
@@ -246,7 +245,9 @@ else
    log_write(_msg)
 
    sql_table_update(table, "ROLLBACK")
+
    _ret :=.f.
+
 endif
 
 lock_semaphore(table, "free")
@@ -297,6 +298,7 @@ else
 
    sql_table_update( table, "ROLLBACK")
    return .f.
+
 endif
 
 lock_semaphore(_tbl_suban, "free")
@@ -322,8 +324,8 @@ endif
 
 // nema zapoceta transakcija
 if transaction == NIL
-  // pocni i zavrsi trasakciju
-  transaction := "FULL"
+   // pocni i zavrsi trasakciju
+   transaction := "FULL"
 endif
 
 a_dbf_rec := get_a_dbf_rec(table)
@@ -360,7 +362,6 @@ END SEQUENCE
 if algoritam > 1
   alg_tag := "#" + ALLTRIM(STR(algoritam))
 endif
-
 
 return
 

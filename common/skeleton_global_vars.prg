@@ -206,9 +206,10 @@ return
  */
 function IsPDV()
 
-if gPDV=="D"
+if gPDV == "D"
     return .t.
 endif
+
 return .f.
 
 

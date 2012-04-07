@@ -144,9 +144,6 @@ sql_table_update(nil, "BEGIN")
 SELECT PSUBAN
 GO TOP
 
-
-//hb_idleSleep(7)
-
 _record := dbf_get_rec()
 // algoritam 2 - dokument nivo
 _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
@@ -165,9 +162,6 @@ do while !eof()
     SKIP
 enddo
 
-
-
-//hb_IdleSleep(7)
 
 // idi dalje, na anal ... ako je ok
 if _ok == .t.
@@ -194,8 +188,6 @@ enddo
 
 endif
 
-
-//hb_IdleSleep(2)
 
 // idi dalje, na sint ... ako je ok
 if lOk == .t.
@@ -272,9 +264,6 @@ else
     update_semaphore_version( _tbl_sint  , .t. )
     update_semaphore_version( _tbl_nalog , .t. )
 
-
-    //hb_idleSleep(10)
- 
     sql_table_update(nil, "END")
 
 endif

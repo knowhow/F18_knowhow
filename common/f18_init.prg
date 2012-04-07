@@ -199,15 +199,12 @@ cre_all_dbfs(_ver)
 set_a_dbfs_key_fields()
 
 
-
 write_dbf_version_to_config()
 
 check_server_db_version()
 
 __server_log := .t.
 
-
-altd()
 set_all_gvars()
 
 return .t.
@@ -239,7 +236,6 @@ _ver := read_dbf_version_from_config()
 cre_all_dbfs(_ver)
 
 return
-
 
 // ------------------------------------------------------------
 // vraca informacije iz inija vezane za screen rezoluciju
@@ -445,8 +441,6 @@ server_params["port"]      := nPort
 server_params["password"]  := cPassword
 
 return lSuccess
-
-
 
 
 // ------------------

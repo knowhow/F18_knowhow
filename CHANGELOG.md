@@ -1,3 +1,7 @@
+0.9.94 2012-04-07, hernad
+
+  - merge 0.9.81
+
 0.9.93 2012-04-04, hernad
 
   - merge with 0.9.78
@@ -6,6 +10,16 @@
 0.0.90 2012-03-27, hernad
 
   - merge semaphore v1.1 brancha, haos-2 - ovo ne radi
+
+0.9.81 2012-04-07, hernad
+
+  - common: [#27474](http://redmine.bring.out.ba/issues/27474)
+
+0.9.80 2012-04-05, vsasa
+ 
+  - FIN, KALK, FAKT ažuriranje, jedna transakcija [#27435](http://redmine.bring.out.ba/issues/27435)
+  - LD, obrazac JS-3400 [#27178](http://redmine.bring.out.ba/issues/27178)
+  - LD, obrazac PMIP-1024 [#27179](http://redmine.bring.out.ba/issues/27179)
 
 0.9.79 2012-04-04, vsasa
  

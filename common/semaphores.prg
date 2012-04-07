@@ -31,13 +31,16 @@ while .t.
     _i++
 	if ALLTRIM(get_semaphore_status(table)) == "lock"
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
-		MsgO(_err_msg)
          log_write(_err_msg)
+         @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
          hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+         log_write( "call stack 1 " + PROCNAME(1) + ALLTRIM(STR(PROCLINE(1))))
+         log_write( "call stack 2 " + PROCNAME(2) + ALLTRIM(STR(PROCLINE(2))))
         MsgC()
     else
         if _i > 1
            _err_msg := ToStr(Time()) + " : table unlocked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
+           @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
            log_write(_err_msg)
         endif
         exit
@@ -164,6 +167,50 @@ _result := _tbl_obj:Fieldget(1)
 
 RETURN _result
 
+
+/* ------------------------------------------
+  get_semaphore_version_h( "konto")
+  -------------------------------------------
+*/
+function get_semaphore_version_h(table)
+LOCAL _tbl_obj
+LOCAL _qry
+local _tbl
+local _server := pg_server()
+local _user := f18_user()
+local _ret := hb_hash()
+
+_tbl := "fmk.semaphores_" + LOWER(table)
+
+_result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
+
+if _result <> 1
+  log_write( _tbl + " " + _user + "count =" + STR(_result))
+
+  _ret["version"]      := -1
+  _ret["last_version"] := -1
+
+  return _ret
+endif
+
+_qry := "SELECT   version, last_trans_version AS last_version"
+_qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+
+_tbl_obj := _sql_query( _server, _qry )
+
+if VALTYPE(_tbl_obj) == "L" 
+      MsgBeep( "problem sa:" + _qry)
+      QUIT
+endif
+
+_ret["version"]      := _tbl_obj:Fieldget(1)
+_ret["last_version"] := _tbl_obj:Fieldget(2)
+
+RETURN _ret
+
+
+
+
 /* ------------------------------------------
   reset_semaphore_version( "konto")
   set version to -1
@@ -209,12 +256,31 @@ LOCAL _user := f18_user()
 LOCAL _last
 LOCAL _server := pg_server()
 LOCAL _ver_user, _last_ver, _id_full
+local _versions
+local _pos
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 _result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
 
-_last_ver := get_semaphore_version(table, .t.)
+_versions := get_semaphore_version_h(table)
+
+_last_ver := _versions["last_version"]
+_version  := _versions["version"]
+
+if _last_ver > _version
+   // u međuvremenu je bilo update-a od strane drugih korisnika
+   _pos := ASCAN(gaDBFs,  { |x|  x[3]==table} )
+   if _pos < 1
+         Alert("NE VALJA ! update_semaphore_version gaDBFS ?? " + table)
+         QUIT
+   endif
+   // keshiraj
+   PushWA()
+   log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)))   
+   EVAL( gaDBFs[_pos, 4], "IDS")
+   PopWa()
+endif
 
 if increment == NIL
    increment := .t.

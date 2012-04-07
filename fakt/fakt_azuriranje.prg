@@ -260,6 +260,9 @@ local _fakt_totals
 local _fakt_doks_data
 local _fakt_doks2_data
 
+close all
+o_fakt_edit()
+
 select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
@@ -326,12 +329,6 @@ else
 
 endif
 
-
-//if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
-//    EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;
-//            "-" + fakt_pripr->idtipdok + "-" + fakt_pripr->brdok, fakt_pripr->datdok, Date(),"","Azuriranje dokumenta")
-//endif
-    
 select fakt_pripr
 
 BoxC()
@@ -1050,8 +1047,6 @@ return .f.
 
 
 
-
-
 // ------------------------------------------------
 // ------------------------------------------------
 function BrisiPripr()
@@ -1251,8 +1246,3 @@ if _count > 0
 endif
 
 return
-
-
-
-
-

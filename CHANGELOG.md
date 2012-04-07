@@ -1,3 +1,7 @@
+0.9.81 2012-04-07, hernad
+
+  - common: [#27474](http://redmine.bring.out.ba/issues/27474)
+
 0.9.80 2012-04-05, vsasa
  
   - FIN, KALK, FAKT ažuriranje, jedna transakcija [#27435](http://redmine.bring.out.ba/issues/27435)

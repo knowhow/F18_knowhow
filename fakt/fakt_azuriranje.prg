@@ -303,6 +303,7 @@ _fakt_doks_data := get_fakt_doks_data( fakt_pripr->idfirma, fakt_pripr->idtipdok
 // ubaci podatke u tabelu fakt_doks
 select fakt_doks
     
+rlock()
 _field->IdFirma   := _fakt_doks_data["id_firma"]
 _field->BrDok     := _fakt_doks_data["br_dok"]
 _field->Rezerv    := _fakt_doks_data["rezerv"]
@@ -328,19 +329,25 @@ if ( _field->m1 == "Z" )
     _field->m1 := " "
 endif
 
+dbrunlock()
+
 // izracunaj totale za fakturu
 _fakt_totals := calculate_fakt_total( fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok )
     
 select fakt_doks
+
+rlock()
 // ubaci u fakt_doks totale
 _field->Iznos := _fakt_totals["iznos"] 
 _field->Rabat := _fakt_totals["rabat"]
+dbrunlock()
 
 // dodaj stavke i u fakt_doks2      
 _fakt_doks2_data := get_fakt_doks2_data( fakt_pripr->idfirma, fakt_pripr->idtipdok, fakt_pripr->brdok )
 
 select fakt_doks2
 
+rlock()
 _field->idfirma := _fakt_doks2_data["id_firma"]
 _field->brdok := _fakt_doks2_data["br_dok"]
 _field->idtipdok := _fakt_doks2_data["id_tip_dok"]
@@ -351,6 +358,7 @@ _field->k4 := _fakt_doks2_data["k4"]
 _field->k5 := _fakt_doks2_data["k5"]
 _field->n1 := _fakt_doks2_data["n1"]
 _field->n2 := _fakt_doks2_data["n2"]
+dbrunlock()
     
 if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
     EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil,nil,nil,nil,"","","dokument: " + fakt_pripr->idfirma + ;

@@ -79,7 +79,7 @@ if oServer == NIL
 endif
 
 if kalk_azur_sql( oServer )
-    
+   
     o_kalk_za_azuriranje()
     
     if !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
@@ -676,6 +676,8 @@ return lViseDok
 
 
 static function o_kalk_za_azuriranje()
+
+close all
 
 O_KALK
 O_KALK_DOKS

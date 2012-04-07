@@ -190,13 +190,34 @@ log_write("home baze: " + my_home())
 _ver := read_dbf_version_from_config()
 
 cre_all_dbfs(_ver)
-
+set_all_gvars()
 write_dbf_version_to_config()
 
 check_server_db_version()
 
 return .t.
 
+
+
+
+// --------------------------------
+// backport iz v1.1 semaphorese
+// --------------------------------
+
+function set_all_gvars()
+public goModul
+
+
+goModul := TFinMod():new()
+goModul:setgvars()
+
+goModul := TKalkMod():new()
+goModul:setgvars()
+
+goModul := TFaktMod():new()
+goModul:setgvars()
+
+return
 
 // ------------------------------------------------------------
 // vraca informacije iz inija vezane za screen rezoluciju

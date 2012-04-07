@@ -247,6 +247,9 @@ local _fakt_totals
 local _fakt_doks_data
 local _fakt_doks2_data
 
+close all
+o_fakt_edit()
+
 select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
@@ -722,6 +725,10 @@ else
     
     // zavrsi transakcije...
     // ostavljam samo jednu transakciju
+
+    MsgO("dodajem idle 45 sec")
+    hb_idleSleep(45)
+    MsgC()
     sql_fakt_fakt_update("END")
 
 endif

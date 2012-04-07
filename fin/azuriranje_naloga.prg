@@ -208,6 +208,10 @@ if lOk = .t.
    record["dug_dem"] := field->dugdem
    record["pot_dem"] := field->potdem
 
+   MsgO("sllep")
+   hb_idleSleep(30)
+   MsgC()
+
    if !sql_fin_anal_update("ins", record )
        lOk := .f.
        exit

@@ -726,9 +726,6 @@ else
     // zavrsi transakcije...
     // ostavljam samo jednu transakciju
 
-    MsgO("dodajem idle 45 sec")
-    hb_idleSleep(45)
-    MsgC()
     sql_fakt_fakt_update("END")
 
 endif

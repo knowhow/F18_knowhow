@@ -112,6 +112,7 @@ if order_key_tag == NIL
    endif
 endif
 
+lock_semaphore(table, "lock")
 sql_table_update(table, "BEGIN")
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
@@ -174,15 +175,18 @@ if sql_table_update(table, "del", nil, _where_str)
         enddo
     else
         sql_table_update(table, "ROLLBACK")
+        lock_semaphore(table, "free")
         return .f.
     endif
     DBUNLOCKALL() 
 
     sql_table_update(table, "END")
+    lock_semaphore(table, "free")
     return .t.
 
 else
     sql_table_update(table, "ROLLBACK")
+    lock_semaphore(table, "free")
     return .f.
 endif
 
@@ -214,9 +218,11 @@ _rec["id"] := NIL
 // ostala polja su nevazna za brisanje
 
 
+lock_semaphore(table, "lock")
 if sql_table_update( _table, "del", _rec, "true")
    update_semaphore_version( _table, .t.)
    sql_table_update( _table, "END")
+   lock_semaphore(table, "free")
 
    // zapujemo dbf
    if FLOCK()
@@ -228,6 +234,7 @@ if sql_table_update( _table, "del", _rec, "true")
 
 else
    sql_table_update( _table, "ROLLBACK")
+   lock_semaphore(table, "free")
    return .f.
 endif
 
@@ -386,24 +393,29 @@ if server_only == NIL
   server_only := .f.
 endif
 
+lock_semaphore(table, "lock")
+
 sql_table_update(table, "BEGIN")
 
 _where_str := EVAL(where_block, values)
 if !sql_table_update(table, "del", nil, _where_str) 
    sql_table_update(table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - SQL del / 1")
+   lock_semaphore(table, "free")
    return .f.
 endif
 
 if !sql_table_update(table, "ins", values)
    sql_table_update(table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - SQL ins / 1")
+   lock_semaphore(table, "free")
    return .f.
 endif
 
 if update_semaphore_version(table, .t.) < 0
    sql_table_update(table, "ROLLBACK")
    MsgBeep("mi imamos mnogos problemos - update_semaphore_version / 1")
+   lock_semaphore(table, "free")
    return .f.
 endif
 
@@ -460,6 +472,7 @@ if _changed_id
     if !sql_table_update(table, "del", NIL, _where_str_2)
        sql_table_update(table, "ROLLBACK")
        MsgBeep("mi imamos mnogos problemos - del / 2")
+       lock_semaphore(table, "free")
        return .f.
     endif
 endif
@@ -469,20 +482,24 @@ AADD(_ids, _full_id_mem)
 if !push_ids_to_semaphore(table, _ids)
      sql_table_update(table, "ROLLBACK")
      MsgBeep("mi imamos mnogos problemos - push_ids_to_semaphore / 2")
+     lock_semaphore(table, "free")
      return .f.
 endif
 
 if server_only
   sql_table_update(table, "END")
+  lock_semaphore(table, "free")
   return .t.
 endif
 
 if dbf_update_rec(values)
     sql_table_update(table, "END")
+    lock_semaphore(table, "free")
     return .t.
 else
     sql_table_update(_table, "ROLLBACK")
     MsgBeep("mi imamos dbf problemos - moramo sql rollbackos")
+    lock_semaphore(table, "free")
     return .f.
 endif
 

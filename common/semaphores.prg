@@ -135,16 +135,16 @@ while .t.
     _i++
 	if ALLTRIM( get_semaphore_status(table) ) == "lock"
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
-		MsgO(_err_msg)
          log_write(_err_msg)
+         @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
          hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
          log_write( "call stack 1 " + PROCNAME(1) + ALLTRIM(STR(PROCLINE(1))))
          log_write( "call stack 2 " + PROCNAME(2) + ALLTRIM(STR(PROCLINE(2))))
-         log_write( "call stack 3 " + PROCNAME(3) + ALLTRIM(STR(PROCLINE(3))))
         MsgC()
     else
         if _i > 1
            _err_msg := ToStr(Time()) + " : table unlocked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
+           @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
            log_write(_err_msg)
         endif
         exit
@@ -378,7 +378,7 @@ if _last_ver > _version
    endif
    // keshiraj
    PushWA()
-   altd()
+   log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)))   
    EVAL( gaDBFs[_pos, 4], "IDS")
    PopWa()
 endif

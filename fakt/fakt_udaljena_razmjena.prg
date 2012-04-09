@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "fakt.ch"
 
 static __import_dbf_path 
 static __export_dbf_path
@@ -18,15 +18,18 @@ static __import_zip_name
 static __export_zip_name
 
 
-function kalk_udaljena_razmjena_podataka()
+// --------------------------------------------------------------------
+// fakt: udaljena razmjena podataka modul FAKT->FAKT
+// --------------------------------------------------------------------
+function fakt_udaljena_razmjena_podataka()
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
 __import_dbf_path := my_home() + "import_dbf" + SLASH
 __export_dbf_path := my_home() + "export_dbf" + SLASH
-__import_zip_name := "kalk_exp.zip"
-__export_zip_name := "kalk_exp.zip"
+__import_zip_name := "fakt_exp.zip"
+__export_zip_name := "fakt_exp.zip"
 
 AADD(_opc,"1. => export podataka               ")
 AADD(_opcexe, {|| _kalk_export() })
@@ -40,9 +43,9 @@ return
 
 
 // ----------------------------------------
-// export podataka modula KALK
+// export podataka modula FAKT
 // ----------------------------------------
-static function _kalk_export()
+static function _fakt_export()
 local _vars := hb_hash()
 local _exported_rec
 local _error
@@ -65,7 +68,7 @@ close all
 if _exported_rec > 0 
    
     // kompresuj ih u zip fajl za prenos
-    _error := _compress_files( "kalk" )
+    _error := _compress_files( "fakt" )
 
     // sve u redu
     if _error == 0
@@ -93,15 +96,15 @@ return
 
 
 // ----------------------------------------
-// import podataka modula KALK
+// import podataka modula FAKT
 // ----------------------------------------
-static function _kalk_import()
+static function _fakt_import()
 local _imported_rec
 local _vars := hb_hash()
 local _imp_file 
 
 // import fajl iz liste
-_imp_file := get_import_file( "kalk" )
+_imp_file := get_import_file( "fakt" )
 
 if _imp_file == NIL .or. EMPTY( _imp_file )
     MsgBeep( "Nema odabranog import fajla !????" )
@@ -160,11 +163,11 @@ return
 // -------------------------------------------
 static function _vars_export( vars )
 local _ret := .f.
-local _dat_od := fetch_metric( "kalk_export_datum_od", my_user(), DATE() - 30 )
-local _dat_do := fetch_metric( "kalk_export_datum_do", my_user(), DATE() )
-local _konta := fetch_metric( "kalk_export_lista_konta", my_user(), PADR( "1320;", 200 ) )
-local _vrste_dok := fetch_metric( "kalk_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
-local _exp_sif := fetch_metric( "kalk_export_sifrarnik", my_user(), "D" )
+local _dat_od := fetch_metric( "fakt_export_datum_od", my_user(), DATE() - 30 )
+local _dat_do := fetch_metric( "fakt_export_datum_do", my_user(), DATE() )
+local _rj := fetch_metric( "fakt_export_lista_rj", my_user(), PADR( "10;", 200 ) )
+local _vrste_dok := fetch_metric( "fakt_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
+local _exp_sif := fetch_metric( "fakt_export_sifrarnik", my_user(), "D" )
 local _x := 1
 
 Box(, 9, 70 )
@@ -184,7 +187,7 @@ Box(, 9, 70 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
+    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedece rj:" GET _rj PICT "@S30"
 
     ++ _x
     ++ _x
@@ -200,15 +203,15 @@ if LastKey() <> K_ESC
 
     _ret := .t.
 
-    set_metric( "kalk_export_datum_od", my_user(), _dat_od )
-    set_metric( "kalk_export_datum_do", my_user(), _dat_do )
-    set_metric( "kalk_export_lista_konta", my_user(), _konta )
-    set_metric( "kalk_export_vrste_dokumenata", my_user(), _vrste_dok )
-    set_metric( "kalk_export_sifrarnik", my_user(), _exp_sif )
+    set_metric( "fakt_export_datum_od", my_user(), _dat_od )
+    set_metric( "fakt_export_datum_do", my_user(), _dat_do )
+    set_metric( "fakt_export_lista_rj", my_user(), _rj )
+    set_metric( "fakt_export_vrste_dokumenata", my_user(), _vrste_dok )
+    set_metric( "fakt_export_sifrarnik", my_user(), _exp_sif )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
-    vars["konta"] := _konta
+    vars["rj"] := _rj
     vars["vrste_dok"] := _vrste_dok
     vars["export_sif"] := _exp_sif
     
@@ -223,13 +226,13 @@ return _ret
 // -------------------------------------------
 static function _vars_import( vars )
 local _ret := .f.
-local _dat_od := fetch_metric( "kalk_import_datum_od", my_user(), CTOD("") )
-local _dat_do := fetch_metric( "kalk_import_datum_do", my_user(), CTOD("") )
-local _konta := fetch_metric( "kalk_import_lista_konta", my_user(), PADR( "", 200 ) )
-local _vrste_dok := fetch_metric( "kalk_import_vrste_dokumenata", my_user(), PADR( "", 200 ) )
-local _zamjeniti_dok := fetch_metric( "kalk_import_zamjeniti_dokumente", my_user(), "N" )
-local _zamjeniti_sif := fetch_metric( "kalk_import_zamjeniti_sifre", my_user(), "N" )
-local _iz_fmk := fetch_metric( "kalk_import_iz_fmk", my_user(), "N" )
+local _dat_od := fetch_metric( "fakt_import_datum_od", my_user(), CTOD("") )
+local _dat_do := fetch_metric( "fakt_import_datum_do", my_user(), CTOD("") )
+local _rj := fetch_metric( "fakt_import_lista_rj", my_user(), PADR( "", 200 ) )
+local _vrste_dok := fetch_metric( "fakt_import_vrste_dokumenata", my_user(), PADR( "", 200 ) )
+local _zamjeniti_dok := fetch_metric( "fakt_import_zamjeniti_dokumente", my_user(), "N" )
+local _zamjeniti_sif := fetch_metric( "fakt_import_zamjeniti_sifre", my_user(), "N" )
+local _iz_fmk := fetch_metric( "fakt_import_iz_fmk", my_user(), "N" )
 local _x := 1
 
 Box(, 12, 70 )
@@ -249,7 +252,7 @@ Box(, 12, 70 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
+    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedece radne jedinice:" GET _rj PICT "@S30"
 
     ++ _x
     ++ _x
@@ -274,17 +277,17 @@ if LastKey() <> K_ESC
 
     _ret := .t.
 
-    set_metric( "kalk_import_datum_od", my_user(), _dat_od )
-    set_metric( "kalk_import_datum_do", my_user(), _dat_do )
-    set_metric( "kalk_import_lista_konta", my_user(), _konta )
-    set_metric( "kalk_import_vrste_dokumenata", my_user(), _vrste_dok )
-    set_metric( "kalk_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
-    set_metric( "kalk_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
-    set_metric( "kalk_import_iz_fmk", my_user(), _iz_fmk )
+    set_metric( "fakt_import_datum_od", my_user(), _dat_od )
+    set_metric( "fakt_import_datum_do", my_user(), _dat_do )
+    set_metric( "fakt_import_lista_rj", my_user(), _rj )
+    set_metric( "fakt_import_vrste_dokumenata", my_user(), _vrste_dok )
+    set_metric( "fakt_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
+    set_metric( "fakt_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
+    set_metric( "fakt_import_iz_fmk", my_user(), _iz_fmk )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
-    vars["konta"] := _konta
+    vars["rj"] := _rj
     vars["vrste_dok"] := _vrste_dok
     vars["zamjeniti_dokumente"] := _zamjeniti_dok
     vars["zamjeniti_sifre"] := _zamjeniti_sif
@@ -304,15 +307,15 @@ local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
-local _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
-local _usl_mkonto, _usl_pkonto
-local _id_partn, _p_konto, _m_konto
+local _dat_od, _dat_do, _rj, _vrste_dok, _export_sif
+local _usl_rj
+local _id_partn
 local _id_roba
 
 // uslovi za export ce biti...
 _dat_od := vars["datum_od"]
 _dat_do := vars["datum_do"]
-_konta := ALLTRIM( vars["konta"] )
+_rj := ALLTRIM( vars["rj"] )
 _vrste_dok := ALLTRIM( vars["vrste_dok"] )
 _export_sif := ALLTRIM( vars["export_sif"] )
  
@@ -327,34 +330,29 @@ _o_tables()
 
 Box(, 2, 65 )
 
-@ m_x + 1, m_y + 2 SAY "... export kalk dokumenata u toku"
+@ m_x + 1, m_y + 2 SAY "... export fakt dokumenata u toku"
 
-select kalk_doks
+select fakt_doks
 set order to tag "1"
 go top
 
 do while !EOF()
 
     _id_firma := field->idfirma
-    _id_vd := field->idvd
+    _id_vd := field->idtipdok
     _br_dok := field->brdok
     _id_partn := field->idpartner
-    _p_konto := field->pkonto
-    _m_konto := field->mkonto
 
     // provjeri uslove ?!??
 
     // lista konta...
-    if !EMPTY( _konta )
+    if !EMPTY( _rj )
 
-        _usl_mkonto := Parsiraj( ALLTRIM(_konta), "mkonto" )
-        _usl_pkonto := Parsiraj( ALLTRIM(_konta), "pkonto" )
+        _usl_rj := Parsiraj( ALLTRIM(_rj), "idfirma" )
 
-        if !( &_usl_mkonto )
-            if !( &_usl_pkonto )
-                skip
-                loop
-            endif
+        if !( &_usl_rj )
+            skip
+            loop
         endif
 
     endif
@@ -393,20 +391,20 @@ do while !EOF()
     ++ _cnt
     @ m_x + 2, m_y + 2 SAY PADR(  PADL( ALLTRIM(STR( _cnt )), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + ALLTRIM( _br_dok ), 50 )
 
-    // dodaj zapis i u tabelu e_kalk
-    select kalk
+    // dodaj zapis i u tabelu e_fakt
+    select fakt
     set order to tag "1"
     go top
     seek _id_firma + _id_vd + _br_dok
 
-    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idtipdok == _id_vd .and. field->brdok == _br_dok
 
         // uzmi robu...
         _id_roba := field->idroba
 
         // upisi zapis u tabelu e_kalk
         _app_rec := dbf_get_rec()
-        select e_kalk
+        select e_fakt
         append blank
         dbf_update_rec( _app_rec )
 
@@ -427,7 +425,7 @@ do while !EOF()
         endif
 
         // idi dalje...
-        select kalk
+        select fakt
         skip
 
     enddo
@@ -448,37 +446,7 @@ do while !EOF()
         endif
     endif
 
-    // i konta, naravno
-
-    // prvo M_KONTO
-    select konto
-    hseek _m_konto 
-    if FOUND() .and. _export_sif == "D"
-        _app_rec := dbf_get_rec()
-        select e_konto
-        set order to tag "ID"
-        seek _m_konto
-        if !FOUND()
-            append blank
-            dbf_update_rec( _app_rec )
-        endif
-    endif
-
-    // zatim P_KONTO
-    select konto
-    hseek _p_konto 
-    if FOUND() .and. _export_sif == "D"
-        _app_rec := dbf_get_rec()
-        select e_konto
-        set order to tag "ID"
-        seek _p_konto
-        if !FOUND()
-            append blank
-            dbf_update_rec( _app_rec )
-        endif
-    endif
-
-    select kalk_doks
+    select fakt_doks
     skip
 
 enddo
@@ -501,20 +469,20 @@ local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
-local _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
-local _usl_mkonto, _usl_pkonto
-local _roba_id, _partn_id, _konto_id
+local _dat_od, _dat_do, _rj, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
+local _roba_id, _partn_id, _rj
+local _usl_rj
 local _sif_exist
 local _fmk_import := .f.
 local _redni_broj := 0
 local _total_doks := 0
-local _total_kalk := 0
+local _total_fakt := 0
 local _gl_brojac := 0
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
 _dat_do := vars["datum_do"]
-_konta := vars["konta"]
+_rj := vars["rj"]
 _vrste_dok := vars["vrste_dok"]
 _zamjeniti_dok := vars["zamjeniti_dokumente"]
 _zamjeniti_sif := vars["zamjeniti_sifre"]
@@ -534,8 +502,8 @@ _o_tables()
 select e_doks
 _total_doks := RECCOUNT2()
 
-select e_kalk
-_total_kalk := RECCOUNT2()
+select e_fakt
+_total_fakt := RECCOUNT2()
 
 select e_doks
 set order to tag "1"
@@ -543,13 +511,13 @@ go top
 
 Box(, 3, 70 )
 
-@ m_x + 1, m_y + 2 SAY PADR( "... import kalk dokumenata u toku ", 69 ) COLOR "I"
-@ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", kalk/" + ALLTRIM(STR( _total_kalk ))
+@ m_x + 1, m_y + 2 SAY PADR( "... import fakt dokumenata u toku ", 69 ) COLOR "I"
+@ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", fakt/" + ALLTRIM(STR( _total_kalk ))
 
 do while !EOF()
 
     _id_firma := field->idfirma
-    _id_vd := field->idvd
+    _id_vd := field->idtipdok
     _br_dok := field->brdok
 
     // uslovi, provjera...
@@ -570,16 +538,13 @@ do while !EOF()
     endif
 
     // lista konta...
-    if !EMPTY( _konta )
+    if !EMPTY( _rj )
 
-        _usl_mkonto := Parsiraj( ALLTRIM(_konta), "mkonto" )
-        _usl_pkonto := Parsiraj( ALLTRIM(_konta), "pkonto" )
+        _usl_rj := Parsiraj( ALLTRIM(_rj), "idfirma" )
 
-        if !( &_usl_mkonto )
-            if !( &_usl_pkonto )
-                skip
-                loop
-            endif
+        if !( &_usl_rj )
+            skip
+            loop
         endif
 
     endif
@@ -599,15 +564,9 @@ do while !EOF()
 
             // dokumente iz kalk, kalk_doks brisi !
             _ok := .t.
-            _ok := del_kalk( _id_firma, _id_vd, _br_dok )
-            _ok := del_kalk_doks( _id_firma, _id_vd, _br_dok )
+            _ok := del_fakt( _id_firma, _id_vd, _br_dok )
+            _ok := del_fakt_doks( _id_firma, _id_vd, _br_dok )
 
-            //if !_ok
-              //  MsgBeep( "Doslo je do greske sa brisanjem podataka !!!#Dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok )
-              //  BoxC()
-              //  return 0
-            //endif
-            
         else
             select e_doks
             skip
@@ -623,9 +582,9 @@ do while !EOF()
     // cisti podbroj
     _app_rec["podbr"] := ""
 
-    select kalk_doks
+    select fakt_doks
     append blank
-    update_rec_server_and_dbf( "kalk_doks", _app_rec )
+    update_rec_server_and_dbf( "fakt_doks", _app_rec )
 
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -639,7 +598,7 @@ do while !EOF()
     // setuj novi redni broj stavke
     _redni_broj := 0
 
-    // prebaci mi stavke tabele KALK
+    // prebaci mi stavke tabele FAKT
     do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
         
         _app_rec := dbf_get_rec()
@@ -654,9 +613,9 @@ do while !EOF()
 
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
-        select kalk
+        select fakt
         append blank
-        update_rec_server_and_dbf( "kalk", _app_rec )
+        update_rec_server_and_dbf( "fakt", _app_rec )
 
         select e_kalk
         skip
@@ -680,9 +639,6 @@ if _cnt > 0
     // update tabele partnera
     update_table_partn( _zamjeniti_sif, _fmk_import )
 
-    // update tabele konta
-    update_table_konto( _zamjeniti_sif, _fmk_import )
-
     // odradi update tabela sifk, sifv
     update_sifk_sifv( _fmk_import )
 
@@ -697,6 +653,7 @@ endif
 return _ret
 
 
+
 // ---------------------------------------------------------------------
 // provjerava da li dokument vec postoji u prometu
 // ---------------------------------------------------------------------
@@ -704,7 +661,7 @@ static function _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 local _t_area := SELECT()
 local _ret := .t.
 
-select kalk_doks
+select fakt_doks
 go top
 seek id_firma + id_vd + br_dok
 
@@ -719,33 +676,24 @@ return _ret
 
 
 // ----------------------------------------------------------
-// brisi dokument iz kalk-a
+// brisi dokument iz fakt-a
 // ----------------------------------------------------------
-static function del_kalk( id_firma, id_vd, br_dok )
+static function del_fakt( id_firma, id_vd, br_dok )
 local _t_area := SELECT()
 local _del_rec, _t_rec 
 local _ret := .f.
 
-select kalk
+select fakt
 set order to tag "1"
 go top
 seek id_firma + id_vd + br_dok
 
-do while !EOF() .and. field->idfirma == id_firma .and. field->idvd == id_vd .and. field->brdok == br_dok
-
-    skip 1
-    _t_rec := RECNO()
-    skip -1
+if FOUND()
 
     _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "fakt", _del_rec, 2 )
 
-    delete_rec_server_and_dbf( ALIAS(), _del_rec )
-
-    _ret := .t.
-
-    go ( _t_rec )
-
-enddo
+endif
 
 select ( _t_area )
 return _ret
@@ -755,12 +703,12 @@ return _ret
 // ----------------------------------------------------------
 // brisi dokument iz doks-a
 // ----------------------------------------------------------
-static function del_kalk_doks( id_firma, id_vd, br_dok )
+static function del_fakt_doks( id_firma, id_vd, br_dok )
 local _t_area := SELECT()
 local _del_rec
 local _ret := .f.
 
-select kalk_doks
+select fakt_doks
 set order to tag "1"
 go top
 seek id_firma + id_vd + br_dok
@@ -769,7 +717,7 @@ if FOUND()
 
     _del_rec := dbf_get_rec()
 
-    delete_rec_server_and_dbf( ALIAS(), _del_rec )
+    delete_rec_server_and_dbf( "fakt_doks", _del_rec )
 
     _ret := .t.
 
@@ -777,7 +725,6 @@ endif
 
 select ( _t_area )
 return _ret
-
 
 
 // ----------------------------------------
@@ -794,13 +741,13 @@ endif
 _dir_create( use_path )
 
 // tabela kalk
-O_KALK
+O_FAKT
 copy structure extended to ( my_home() + "struct" )
 use
-create ( use_path + "e_kalk") from ( my_home() + "struct")
+create ( use_path + "e_fakt") from ( my_home() + "struct")
 
 // tabela doks
-O_KALK_DOKS
+O_FAKT_DOKS
 copy structure extended to ( my_home() + "struct" )
 use
 create ( use_path + "e_doks") from ( my_home() + "struct")
@@ -816,18 +763,6 @@ O_PARTN
 copy structure extended to ( my_home() + "struct" )
 use
 create ( use_path + "e_partn") from ( my_home() + "struct")
-
-// tabela partn
-O_PARTN
-copy structure extended to ( my_home() + "struct" )
-use
-create ( use_path + "e_partn") from ( my_home() + "struct")
-
-// tabela konta
-O_KONTO
-copy structure extended to ( my_home() + "struct" )
-use
-create ( use_path + "e_konto") from ( my_home() + "struct")
 
 // tabela sifk
 O_SIFK
@@ -850,11 +785,10 @@ return
 // ----------------------------------------------------
 static function _o_tables()
 
-O_KALK
-O_KALK_DOKS
+O_FAKT
+O_FAKT_DOKS
 O_SIFK
 O_SIFV
-O_KONTO
 O_PARTN
 O_ROBA
 
@@ -882,14 +816,14 @@ log_write("otvaram tabele importa i pravim imdekse...")
 // zatvori sve prije otvaranja ovih tabela
 close all
 
-_dbf_name := "e_kalk.dbf"
+_dbf_name := "e_fakt.dbf"
 if from_fmk
     _dbf_name := UPPER( _dbf_name )
 endif
 
-// otvori kalk tabelu
+// otvori fakt tabelu
 select ( 360 )
-use ( use_path + _dbf_name ) alias "e_kalk"
+use ( use_path + _dbf_name ) alias "e_fakt"
 index on ( idfirma + idvd + brdok ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
@@ -924,16 +858,6 @@ endif
 // otvori partn tabelu
 select ( 363 )
 use ( use_path + _dbf_name ) alias "e_partn"
-index on ( id ) tag "ID"
-
-_dbf_name := "e_konto.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
-// otvori konto tabelu
-select ( 364 )
-use ( use_path + _dbf_name ) alias "e_konto"
 index on ( id ) tag "ID"
 
 _dbf_name := "e_sifk.dbf"
@@ -971,14 +895,15 @@ return
 static function _file_list( use_path )
 local _a_files := {} 
 
-AADD( _a_files, use_path + "e_kalk.dbf" )
+AADD( _a_files, use_path + "e_fakt.dbf" )
 AADD( _a_files, use_path + "e_doks.dbf" )
 AADD( _a_files, use_path + "e_roba.dbf" )
 AADD( _a_files, use_path + "e_partn.dbf" )
-AADD( _a_files, use_path + "e_konto.dbf" )
 AADD( _a_files, use_path + "e_sifk.dbf" )
 AADD( _a_files, use_path + "e_sifv.dbf" )
 
 return _a_files
+
+
 
 

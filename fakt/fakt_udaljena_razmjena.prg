@@ -32,9 +32,9 @@ __import_zip_name := "fakt_exp.zip"
 __export_zip_name := "fakt_exp.zip"
 
 AADD(_opc,"1. => export podataka               ")
-AADD(_opcexe, {|| _kalk_export() })
+AADD(_opcexe, {|| _fakt_export() })
 AADD(_opc,"2. <= import podataka    ")
-AADD(_opcexe, {|| _kalk_import() })
+AADD(_opcexe, {|| _fakt_import() })
 
 f18_menu( "razmjena", .f., _izbor, _opc, _opcexe )
 
@@ -402,7 +402,7 @@ do while !EOF()
         // uzmi robu...
         _id_roba := field->idroba
 
-        // upisi zapis u tabelu e_kalk
+        // upisi zapis u tabelu e_fakt
         _app_rec := dbf_get_rec()
         select e_fakt
         append blank
@@ -512,7 +512,7 @@ go top
 Box(, 3, 70 )
 
 @ m_x + 1, m_y + 2 SAY PADR( "... import fakt dokumenata u toku ", 69 ) COLOR "I"
-@ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", fakt/" + ALLTRIM(STR( _total_kalk ))
+@ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", fakt/" + ALLTRIM(STR( _total_fakt ))
 
 do while !EOF()
 
@@ -562,7 +562,7 @@ do while !EOF()
 
         if _zamjeniti_dok == "D"
 
-            // dokumente iz kalk, kalk_doks brisi !
+            // dokumente iz fakt, fakt_doks brisi !
             _ok := .t.
             _ok := del_fakt( _id_firma, _id_vd, _br_dok )
             _ok := del_fakt_doks( _id_firma, _id_vd, _br_dok )
@@ -589,8 +589,8 @@ do while !EOF()
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
-    // zikni je u nasu tabelu kalk
-    select e_kalk
+    // zikni je u nasu tabelu fakt
+    select e_fakt
     set order to tag "1"
     go top
     seek _id_firma + _id_vd + _br_dok
@@ -617,7 +617,7 @@ do while !EOF()
         append blank
         update_rec_server_and_dbf( "fakt", _app_rec )
 
-        select e_kalk
+        select e_fakt
         skip
 
     enddo
@@ -740,7 +740,7 @@ endif
 // provjeri da li postoji direktorij, pa ako ne - kreiraj
 _dir_create( use_path )
 
-// tabela kalk
+// tabela fakt
 O_FAKT
 copy structure extended to ( my_home() + "struct" )
 use

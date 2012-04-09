@@ -817,12 +817,6 @@ copy structure extended to ( my_home() + "struct" )
 use
 create ( use_path + "e_partn") from ( my_home() + "struct")
 
-// tabela partn
-O_PARTN
-copy structure extended to ( my_home() + "struct" )
-use
-create ( use_path + "e_partn") from ( my_home() + "struct")
-
 // tabela konta
 O_KONTO
 copy structure extended to ( my_home() + "struct" )

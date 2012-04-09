@@ -383,7 +383,6 @@ do while !EOF()
     // ako je sve zadovoljeno !
     // dodaj zapis u tabelu e_doks
     _app_rec := dbf_get_rec()
-
     select e_doks
     append blank
     dbf_update_rec( _app_rec )    
@@ -429,6 +428,25 @@ do while !EOF()
         skip
 
     enddo
+
+    // fakt_doks2
+    select fakt_doks2
+    set order to tag "1"
+    go top
+    seek _id_firma + _id_vd + _br_dok
+
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idtipdok == _id_vd .and. field->brdok == _br_dok
+
+        _app_rec := dbf_get_rec()
+
+        select e_doks2
+        append blank
+        dbf_update_rec( _app_rec )
+
+        select fakt_doks2
+        skip
+
+    enddo 
 
     // e sada mozemo komotno ici na export partnera
     select partn
@@ -564,8 +582,7 @@ do while !EOF()
 
             // dokumente iz fakt, fakt_doks brisi !
             _ok := .t.
-            _ok := del_fakt( _id_firma, _id_vd, _br_dok )
-            _ok := del_fakt_doks( _id_firma, _id_vd, _br_dok )
+            _ok := del_fakt_doc( _id_firma, _id_vd, _br_dok )
 
         else
             select e_doks
@@ -578,13 +595,11 @@ do while !EOF()
     // zikni je u nasu tabelu doks
     select e_doks
     _app_rec := dbf_get_rec()
-
-    // cisti podbroj
-    _app_rec["podbr"] := ""
-
     select fakt_doks
-    append blank
-    update_rec_server_and_dbf( "fakt_doks", _app_rec )
+
+    sql_table_update( NIL, "BEGIN" )
+
+    update_rec_server_and_dbf( "fakt_doks", _app_rec, 1, "CONT" )
 
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -614,13 +629,34 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select fakt
-        append blank
-        update_rec_server_and_dbf( "fakt", _app_rec )
+        
+        update_rec_server_and_dbf( "fakt_fakt", _app_rec, 1, "CONT" )
 
         select e_fakt
         skip
 
     enddo
+
+    // upisi i doks2 tabelu
+    select e_doks2
+    set order to tag "1"
+    go top
+    seek _id_firma + _id_vd + _br_dok
+
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
+
+        _app_rec := dbf_get_rec()
+        
+        select fakt_doks2
+
+        update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "CONT" )
+        
+        select e_doks2
+        skip
+
+    enddo
+
+    sql_table_update( NIL, "END" )
 
     select e_doks
     skip
@@ -678,7 +714,7 @@ return _ret
 // ----------------------------------------------------------
 // brisi dokument iz fakt-a
 // ----------------------------------------------------------
-static function del_fakt( id_firma, id_vd, br_dok )
+static function del_fakt_doc( id_firma, id_vd, br_dok )
 local _t_area := SELECT()
 local _del_rec, _t_rec 
 local _ret := .f.
@@ -691,40 +727,26 @@ seek id_firma + id_vd + br_dok
 if FOUND()
 
     _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "fakt", _del_rec, 2 )
+
+    // transakcija...
+    sql_table_update( nil, "BEGIN" )
+
+    // pobrisi zapise...
+    delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
+
+    select fakt_doks
+    delete_rec_server_and_dbf( "fakt_doks", _del_rec, 2, "CONT" )
+    
+    select fakt_doks2
+    delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 2, "CONT" )
+
+    sql_table_update( nil, "END" )
 
 endif
 
 select ( _t_area )
 return _ret
 
-
-
-// ----------------------------------------------------------
-// brisi dokument iz doks-a
-// ----------------------------------------------------------
-static function del_fakt_doks( id_firma, id_vd, br_dok )
-local _t_area := SELECT()
-local _del_rec
-local _ret := .f.
-
-select fakt_doks
-set order to tag "1"
-go top
-seek id_firma + id_vd + br_dok
-
-if FOUND()
-
-    _del_rec := dbf_get_rec()
-
-    delete_rec_server_and_dbf( "fakt_doks", _del_rec )
-
-    _ret := .t.
-
-endif
-
-select ( _t_area )
-return _ret
 
 
 // ----------------------------------------
@@ -751,6 +773,12 @@ O_FAKT_DOKS
 copy structure extended to ( my_home() + "struct" )
 use
 create ( use_path + "e_doks") from ( my_home() + "struct")
+
+// tabela doks
+O_FAKT_DOKS2
+copy structure extended to ( my_home() + "struct" )
+use
+create ( use_path + "e_doks2") from ( my_home() + "struct")
 
 // tabela roba
 O_ROBA
@@ -787,6 +815,7 @@ static function _o_tables()
 
 O_FAKT
 O_FAKT_DOKS
+O_FAKT_DOKS2
 O_SIFK
 O_SIFV
 O_PARTN
@@ -824,6 +853,18 @@ endif
 // otvori fakt tabelu
 select ( 360 )
 use ( use_path + _dbf_name ) alias "e_fakt"
+index on ( idfirma + idvd + brdok ) tag "1"
+
+log_write("otvorio i indeksirao: " + use_path + _dbf_name )
+
+_dbf_name := "e_doks2.dbf"
+if from_fmk
+    _dbf_name := UPPER( _dbf_name )
+endif
+
+// otvori fakt tabelu
+select ( 359 )
+use ( use_path + _dbf_name ) alias "e_doks2"
 index on ( idfirma + idvd + brdok ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )

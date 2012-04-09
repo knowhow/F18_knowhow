@@ -518,6 +518,7 @@ do case
 
         AADD( _a_files, use_path + "e_fakt.dbf" )
         AADD( _a_files, use_path + "e_doks.dbf" )
+        AADD( _a_files, use_path + "e_doks2.dbf" )
         AADD( _a_files, use_path + "e_roba.dbf" )
         AADD( _a_files, use_path + "e_partn.dbf" )
         AADD( _a_files, use_path + "e_sifk.dbf" )

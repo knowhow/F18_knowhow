@@ -13,12 +13,6 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 // privatne varijable: 
 //  - fNovi
 //  - nRbr
@@ -127,7 +121,7 @@ endif
 
 if gVarEv=="1"
 	@ m_x+15+IF(lPoNarudzbi,1,0),m_y+2   SAY "F.CJ.(DEM/JM):"
- 	@ m_x+15+IF(lPoNarudzbi,1,0),m_y+50  GET _FCJ PICTURE gPicNC valid _fcj>0 when V_kol10()
+ 	@ m_x+15+IF(lPoNarudzbi,1,0),m_y+50  GET _FCJ PICTURE gPicNC valid _fcj > 0 when V_kol10()
 	@ m_x+17+IF(lPoNarudzbi,1,0),m_y+2   SAY "KASA-SKONTO(%):"
  	@ m_x+17+IF(lPoNarudzbi,1,0),m_y+40 GET _Rabat PICTURE PicDEM when DuplRoba()
 	if gNW<>"X"   .or. gVodiKalo=="D"
@@ -276,8 +270,11 @@ ENDIF
 
 read; ESC_RETURN K_ESC
 
-select koncij; seek trim(_IdKonto)
-select TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+select koncij
+seek trim(_IdKonto)
+select TARIFA
+hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+
 select kalk_pripr  // napuni tarifu
 _MKonto:=_Idkonto; _MU_I:="1"
 
@@ -305,7 +302,7 @@ IF gVarEv=="1"
    @ m_x+15,col()+2 GET _FCJ PICTURE gPicNC valid _fcj>0 when V_kol10()
 
    @ m_x+15,m_y+36   SAY "Rabat(%):"
-   @ m_x+15,col()+2 GET _Rabat PICTURE PicDEM valid {|| _FCJ2:=_FCJ*(1-_Rabat/100),NabCj(),nNCpom:=_NC,.t.}
+   @ m_x+15,col()+2 GET _Rabat PICTURE PicDEM valid {|| _FCJ2:=_FCJ*(1-_Rabat/100), NabCj(),nNCpom:=_NC,.t.}
  ENDIF
 
  @ m_x+17,m_y+2     SAY "NABAVNA CJENA:"

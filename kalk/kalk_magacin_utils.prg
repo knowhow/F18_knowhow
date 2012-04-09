@@ -582,17 +582,26 @@ return
  */
 
 function NabCj2(n1,n2)  
-*{
+
+IF ROUND(_FCJ, 6)  == 0
+   Alert("Fakturna cijene ne moze biti 0")
+   _FCJ := 1
+   return .f.
+endif
+
  IF glEkonomat
-   _fcj:=_fcj2:=_nc
-   _rabat:=0
+
+   _fcj   := _fcj2 := _nc
+   _rabat := 0
+
  ELSEIF ABS(n1-n2)>0.00001   // tj. ako je ukucana drugacija NC
+ 
    _rabat:=100-100*_NC/_FCJ
    _FCJ2:=_NC
    ShowGets()
  ENDIF
+
 return .t.
-*}
 
 
 

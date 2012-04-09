@@ -257,6 +257,9 @@ LOCAL _last
 LOCAL _server := pg_server()
 LOCAL _ver_user, _last_ver, _id_full
 local _versions
+local _a_dbf_rec
+
+_a_dbf_rec := get_a_dbf_rec(table)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
@@ -271,6 +274,11 @@ if _last_ver > _version
    // u međuvremenu je bilo update-a od strane drugih korisnika
    PushWA()
    log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)))   
+
+   // otvori tabelu
+   SELECT (_a_dbf_rec["wa"])
+   my_usex (_a_dbf_rec["alias"], table, .f., "SEMAPHORE")
+
    ids_synchro(table)
    PopWa()
 endif

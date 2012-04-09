@@ -348,7 +348,6 @@ IF !_chk_povrat_zabrana( _vars )
     RETURN 0
 ENDIF
 
-altd()
 // ovo su parametri dokumenta
 id_firma   := _vars["idfirma"]
 id_tip_dok := _vars["idtipdok"]
@@ -409,7 +408,6 @@ IF ( _brisi_kum == "D" )
     _ok := .t.
     my_use_semaphore_off()
 
-    altd()
     _tbl := "fakt_fakt"
     @ m_x + 1, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta

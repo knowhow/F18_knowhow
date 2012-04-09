@@ -1255,10 +1255,12 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
       cIdFirma:=idfirma;cIdVD:=idvd;cBrDok:=Brdok
       nRec:=recno()
       do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok
-         if cidvd $ "10#16#81#80"    // zaduzenje magacina,prodavnice
+         if cidvd $ "10#16#81#80"    
+           // zaduzenje magacina,prodavnice
            nUkIzF+=round(fcj*(1-Rabat/100)*kolicina,gZaokr)
          endif
-         if cidvd $ "11#12#13"    // magacin-> prodavnica,povrat
+         if cidvd $ "11#12#13"    
+           // magacin-> prodavnica,povrat
            nUkIzF+=round(fcj*kolicina,gZaokr)
          endif
          if cidvd $ "RN"
@@ -1426,8 +1428,11 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
          if koncij->naz=="N1"; _VPC:=_NC; endif
          _marza:=_VPC-_FCJ
          _TMarza:="A"
-         select roba; hseek _idroba
-         select tarifa; hseek _idtarifa; select kalk_pripr
+         select roba
+         hseek _idroba
+         select tarifa
+         hseek _idtarifa
+         select kalk_pripr
          Marza2()
          _TMarza2:="A"
          _Marza2:=nMarza2

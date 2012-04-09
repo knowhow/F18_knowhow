@@ -105,9 +105,9 @@ else
 	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif
 
-AADD(_opc,"6. udaljene lokacije - razmjena")
+AADD(_opc,"6. udaljene lokacije razmjena podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA"))
-	AADD(_opcexe,{|| faktprenosdiskete()})
+	AADD(_opcexe,{|| fakt_udaljena_razmjena_podataka() })
 else
 	AADD(_opcexe,{|| MsgBeep(cZabrana)})
 endif

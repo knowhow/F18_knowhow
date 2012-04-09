@@ -33,7 +33,7 @@ return
 // otvara listu fajlova za import
 // vraca naziv fajla za import
 // -----------------------------------------
-function get_import_file( modul )
+function get_import_file( modul, import_dbf_path )
 local _file
 local _filter
 
@@ -43,7 +43,7 @@ endif
 
 _filter := ALLTRIM( modul ) + "*.*"
 
-if _gFList( _filter, __import_dbf_path, @_file ) == 0
+if _gFList( _filter, import_dbf_path, @_file ) == 0
     _file := ""
 endif
 
@@ -417,8 +417,8 @@ return
 // ---------------------------------------------------
 // brise temp fajlove razmjene
 // ---------------------------------------------------
-function delete_exp_files( use_path )
-local _files := _file_list( use_path )
+function delete_exp_files( use_path, modul )
+local _files := _file_list( use_path, modul )
 local _file, _tmp
 
 MsgO( "Brisem tmp fajlove ..." )
@@ -492,18 +492,66 @@ endif
 
 return _file
 
+// ----------------------------------------------------
+// vraca listu fajlova koji se koriste kod prenosa
+// ----------------------------------------------------
+static function _file_list( use_path, modul )
+local _a_files := {} 
+
+if modul == NIL
+    modul := "kalk"
+endif
+
+do case
+
+    case modul == "kalk"
+        
+        AADD( _a_files, use_path + "e_kalk.dbf" )
+        AADD( _a_files, use_path + "e_doks.dbf" )
+        AADD( _a_files, use_path + "e_roba.dbf" )
+        AADD( _a_files, use_path + "e_partn.dbf" )
+        AADD( _a_files, use_path + "e_konto.dbf" )
+        AADD( _a_files, use_path + "e_sifk.dbf" )
+        AADD( _a_files, use_path + "e_sifv.dbf" )
+
+    case modul == "fakt"
+
+        AADD( _a_files, use_path + "e_fakt.dbf" )
+        AADD( _a_files, use_path + "e_doks.dbf" )
+        AADD( _a_files, use_path + "e_roba.dbf" )
+        AADD( _a_files, use_path + "e_partn.dbf" )
+        AADD( _a_files, use_path + "e_sifk.dbf" )
+        AADD( _a_files, use_path + "e_sifv.dbf" )
+
+
+    case modul == "fin"
+
+        AADD( _a_files, use_path + "e_suban.dbf" )
+        AADD( _a_files, use_path + "e_sint.dbf" )
+        AADD( _a_files, use_path + "e_anal.dbf" )
+        AADD( _a_files, use_path + "e_nalog.dbf" )
+        AADD( _a_files, use_path + "e_partn.dbf" )
+        AADD( _a_files, use_path + "e_konto.dbf" )
+        AADD( _a_files, use_path + "e_sifk.dbf" )
+        AADD( _a_files, use_path + "e_sifv.dbf" )
+
+endcase
+
+return _a_files
+
+
 
 // ------------------------------------------
 // kompresuj fajlove i vrati path 
 // ------------------------------------------
-function _compress_files( modul )
+function _compress_files( modul, export_dbf_path )
 local _files
 local _error
 local _zip_path, _zip_name, _file
 local __path, __name, __ext
 
 // lista fajlova za kompresovanje
-_files := _file_list( __export_dbf_path )
+_files := _file_list( export_dbf_path, modul )
 
 _file := zip_name( modul )
 
@@ -522,15 +570,15 @@ return _error
 // ------------------------------------------
 // dekompresuj fajlove i vrati path 
 // ------------------------------------------
-function _decompress_files( imp_file )
+function _decompress_files( imp_file, import_dbf_path, import_zip_name )
 local _zip_name, _zip_path
 local _error
 local __name, __path, __ext
 
 if ( imp_file == NIL )
 
-    _zip_path := __import_dbf_path
-    _zip_name := __import_zip_name
+    _zip_path := import_dbf_path
+    _zip_name := import_zip_name
 
 else
 

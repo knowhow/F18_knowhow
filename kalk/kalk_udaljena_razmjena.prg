@@ -53,7 +53,7 @@ if !_vars_export( @_vars )
 endif
 
 // pobrisi u folderu tmp fajlove ako postoje
-delete_exp_files( __export_dbf_path )
+delete_exp_files( __export_dbf_path, "kalk" )
 
 // exportuj podatake
 _exported_rec := __export( _vars )
@@ -65,13 +65,13 @@ close all
 if _exported_rec > 0 
    
     // kompresuj ih u zip fajl za prenos
-    _error := _compress_files( "kalk" )
+    _error := _compress_files( "kalk", __export_dbf_path )
 
     // sve u redu
     if _error == 0
         
         // pobrisi fajlove razmjene
-        delete_exp_files( __export_dbf_path )
+        delete_exp_files( __export_dbf_path, "kalk" )
 
         // otvori folder sa exportovanim podacima
         open_folder( __export_dbf_path )
@@ -101,7 +101,7 @@ local _vars := hb_hash()
 local _imp_file 
 
 // import fajl iz liste
-_imp_file := get_import_file( "kalk" )
+_imp_file := get_import_file( "kalk", __import_dbf_path )
 
 if _imp_file == NIL .or. EMPTY( _imp_file )
     MsgBeep( "Nema odabranog import fajla !????" )
@@ -120,7 +120,7 @@ if !import_file_exist( _imp_file )
 endif
 
 // dekompresovanje podataka
-if _decompress_files( _imp_file ) <> 0
+if _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
     // ako je bilo greske
     return
 endif
@@ -136,7 +136,7 @@ _imported_rec := __import( _vars )
 close all
 
 // brisi fajlove importa
-delete_exp_files( __import_dbf_path )
+delete_exp_files( __import_dbf_path, "kalk" )
 
 if ( _imported_rec > 0 )
 
@@ -958,21 +958,5 @@ return
 
 
 
-
-// ----------------------------------------------------
-// vraca listu fajlova koji se koriste kod prenosa
-// ----------------------------------------------------
-static function _file_list( use_path )
-local _a_files := {} 
-
-AADD( _a_files, use_path + "e_kalk.dbf" )
-AADD( _a_files, use_path + "e_doks.dbf" )
-AADD( _a_files, use_path + "e_roba.dbf" )
-AADD( _a_files, use_path + "e_partn.dbf" )
-AADD( _a_files, use_path + "e_konto.dbf" )
-AADD( _a_files, use_path + "e_sifk.dbf" )
-AADD( _a_files, use_path + "e_sifv.dbf" )
-
-return _a_files
 
 

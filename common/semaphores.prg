@@ -257,7 +257,6 @@ LOCAL _last
 LOCAL _server := pg_server()
 LOCAL _ver_user, _last_ver, _id_full
 local _versions
-local _pos
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
@@ -270,15 +269,9 @@ _version  := _versions["version"]
 
 if _last_ver > _version
    // u međuvremenu je bilo update-a od strane drugih korisnika
-   _pos := ASCAN(gaDBFs,  { |x|  x[3]==table} )
-   if _pos < 1
-         Alert("NE VALJA ! update_semaphore_version gaDBFS ?? " + table)
-         QUIT
-   endif
-   // keshiraj
    PushWA()
    log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)))   
-   EVAL( gaDBFs[_pos, 4], "IDS")
+   ids_synchro(table)
    PopWa()
 endif
 

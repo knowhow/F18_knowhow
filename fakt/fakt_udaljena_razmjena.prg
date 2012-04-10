@@ -510,6 +510,8 @@ if _iz_fmk == "D"
     _fmk_import := .t.
 endif
 
+altd()
+
 // otvaranje export tabela
 _o_exp_tables( __import_dbf_path, _fmk_import )
 
@@ -851,7 +853,7 @@ if from_fmk
 endif
 
 // otvori fakt tabelu
-select ( 360 )
+select ( 310 )
 use ( use_path + _dbf_name ) alias "e_fakt"
 index on ( idfirma + idtipdok + brdok ) tag "1"
 
@@ -863,7 +865,7 @@ if from_fmk
 endif
 
 // otvori fakt tabelu
-select ( 359 )
+select ( 311 )
 use ( use_path + _dbf_name ) alias "e_doks2"
 index on ( idfirma + idtipdok + brdok ) tag "1"
 
@@ -875,7 +877,7 @@ if from_fmk
 endif
 
 // otvori doks tabelu
-select ( 361 )
+select ( 312 )
 use ( use_path + _dbf_name ) alias "e_doks"
 index on ( idfirma + idtipdok + brdok ) tag "1"
 
@@ -887,7 +889,7 @@ if from_fmk
 endif
 
 // otvori roba tabelu
-select ( 362 )
+select ( 313 )
 use ( use_path + _dbf_name ) alias "e_roba"
 index on ( id ) tag "ID"
 
@@ -897,7 +899,7 @@ if from_fmk
 endif
 
 // otvori partn tabelu
-select ( 363 )
+select ( 314 )
 use ( use_path + _dbf_name ) alias "e_partn"
 index on ( id ) tag "ID"
 
@@ -907,7 +909,7 @@ if from_fmk
 endif
 
 // otvori konto sifk
-select ( 365 )
+select ( 315 )
 use ( use_path + _dbf_name ) alias "e_sifk"
 index on ( id + sort + naz ) tag "ID"
 index on ( id + oznaka ) tag "ID2"
@@ -918,7 +920,7 @@ if from_fmk
 endif
 
 // otvori konto tabelu
-select ( 366 )
+select ( 316 )
 use ( use_path + _dbf_name ) alias "e_sifv"
 index on ( id + oznaka + idsif + naz ) tag "ID"
 index on ( id + idsif ) tag "IDIDSIF"

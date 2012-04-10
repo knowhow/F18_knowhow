@@ -20,7 +20,7 @@
 function set_file_access()
 local _cmd 
 
-_cmd := "chmod u+w *.*"
+_cmd := "chmod ugo+w *.*"
 
 if hb_run( _cmd ) <> 0 
     MsgBeep( "Problem sa setovanjem privilegija fajla !????" )
@@ -598,7 +598,7 @@ endif
 log_write("dekompresujem fajl:" + _zip_path + _zip_name )
 
 // unzipuj fajlove
-_error := unzip_files( _zip_path, _zip_name, __import_dbf_path )
+_error := unzip_files( _zip_path, _zip_name, import_dbf_path )
 
 return _error
 

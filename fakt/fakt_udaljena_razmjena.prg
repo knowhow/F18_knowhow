@@ -850,16 +850,16 @@ close all
 // setuj ove tabele kao temp tabele
 
 _dbf_name := "e_fakt"
-set_a_dbf_temp( use_path + "e_fakt", "E_FAKT" , 310   )
-my_use( use_path + "e_fakt", "E_FAKT", .f. )
+select ( F_TMP_E_FAKT )
+my_use_temp( "E_FAKT", use_path + _dbf_name, .f., .t. )
 
 _dbf_name := "e_doks2"
-set_a_dbf_temp( use_path + "e_doks2", "E_DOKS2" , 311  )
-my_use( use_path + "e_fakt", "E_DOKS2", .f. )
+select ( F_TMP_E_DOKS2 )
+my_use_temp( "E_DOKS2", use_path + _dbf_name, .f., .t. )
 
 _dbf_name := "e_doks"
-set_a_dbf_temp( use_path + "e_doks", "E_DOKS" , 312  )
-my_use( use_path + "e_fakt", "E_DOKS", .f. )
+select ( F_TMP_E_DOKS )
+my_use_temp( "E_DOKS", use_path + _dbf_name, .f., .t. )
 
 log_write("otvorene sve import tabele i indeksirane...")
 

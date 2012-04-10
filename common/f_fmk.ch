@@ -320,6 +320,19 @@
 #define F_IZVJE    304
 #define F_ZAGLI    305
 #define F_KOLIZ    306
+#define F_TMP_E_DOKS    310
+#define F_TMP_E_DOKS2   311
+#define F_TMP_E_FAKT    312
+#define F_TMP_E_KALK    313
+#define F_TMP_E_SUBAN   314
+#define F_TMP_E_SINT    315
+#define F_TMP_E_ANAL    316
+#define F_TMP_E_NALOG   317
+#define F_TMP_E_ROBA    318
+#define F_TMP_E_KONTO   319
+#define F_TMP_E_PARTN   320
+#define F_TMP_E_SIFK    321
+#define F_TMP_E_SIFV    322
 #define D_S_TABELE 
 
 

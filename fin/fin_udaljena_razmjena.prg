@@ -343,7 +343,7 @@ do while !EOF()
 
     // lista dokumenata...
     if !EMPTY( _vrste_dok )
-        if !( field->idvd $ _vrste_dok )
+        if !( field->idvn $ _vrste_dok )
             skip
             loop
         endif
@@ -562,7 +562,7 @@ do while !EOF()
 
     // lista dokumenata...
     if !EMPTY( _vrste_dok )
-        if !( field->idvd $ _vrste_dok )
+        if !( field->idvn $ _vrste_dok )
             skip
             loop
         endif
@@ -606,7 +606,7 @@ do while !EOF()
     _redni_broj := 0
 
     // prebaci mi stavke tabele FIN
-    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvn == _id_vd .and. field->brnal == _br_dok
         
         _app_rec := dbf_get_rec()
 

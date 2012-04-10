@@ -850,8 +850,8 @@ if from_fmk
 endif
 
 // otvori kalk tabelu
-select ( 360 )
-use ( use_path + _dbf_name ) alias "e_kalk"
+select ( F_TMP_E_KALK )
+my_use_temp( "E_KALK", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvd + brdok ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
@@ -862,8 +862,8 @@ if from_fmk
 endif
 
 // otvori doks tabelu
-select ( 361 )
-use ( use_path + _dbf_name ) alias "e_doks"
+select ( F_TMP_E_DOKS )
+my_use_temp( "E_DOKS", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvd + brdok ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
@@ -874,8 +874,8 @@ if from_fmk
 endif
 
 // otvori roba tabelu
-select ( 362 )
-use ( use_path + _dbf_name ) alias "e_roba"
+select ( F_TMP_E_ROBA )
+my_use_temp( "E_ROBA", use_path + _dbf_name, .f., .t. )
 index on ( id ) tag "ID"
 
 _dbf_name := "e_partn.dbf"
@@ -884,8 +884,8 @@ if from_fmk
 endif
 
 // otvori partn tabelu
-select ( 363 )
-use ( use_path + _dbf_name ) alias "e_partn"
+select ( F_TMP_E_PARTN )
+my_use_temp( "E_PARTN", use_path + _dbf_name, .f., .t. )
 index on ( id ) tag "ID"
 
 _dbf_name := "e_konto.dbf"
@@ -894,8 +894,8 @@ if from_fmk
 endif
 
 // otvori konto tabelu
-select ( 364 )
-use ( use_path + _dbf_name ) alias "e_konto"
+select ( F_TMP_E_KONTO )
+my_use_temp( "E_KONTO", use_path + _dbf_name, .f., .t. )
 index on ( id ) tag "ID"
 
 _dbf_name := "e_sifk.dbf"
@@ -904,8 +904,8 @@ if from_fmk
 endif
 
 // otvori konto sifk
-select ( 365 )
-use ( use_path + _dbf_name ) alias "e_sifk"
+select ( F_TMP_E_SIFK )
+my_use_temp( "E_SIFK", use_path + _dbf_name, .f., .t. )
 index on ( id + sort + naz ) tag "ID"
 index on ( id + oznaka ) tag "ID2"
 
@@ -915,8 +915,8 @@ if from_fmk
 endif
 
 // otvori konto tabelu
-select ( 366 )
-use ( use_path + _dbf_name ) alias "e_sifv"
+select ( F_TMP_E_SIFV )
+my_use_temp( "E_SIFV", use_path + _dbf_name, .f., .t. )
 index on ( id + oznaka + idsif + naz ) tag "ID"
 index on ( id + idsif ) tag "IDIDSIF"
 

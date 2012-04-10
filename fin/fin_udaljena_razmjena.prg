@@ -883,89 +883,56 @@ log_write("otvaram fin tabele importa i pravim indekse...")
 close all
 
 _dbf_name := "e_suban.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori suban tabelu
-select ( 360 )
-use ( use_path + _dbf_name ) alias "e_suban"
+select ( F_TMP_E_SUBAN )
+my_use_temp( "E_SUBAN", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvn + brnal ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
 
 _dbf_name := "e_nalog.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori nalog tabelu
-select ( 361 )
-use ( use_path + _dbf_name ) alias "e_nalog"
+select ( F_TMP_E_NALOG )
+my_use_temp( "E_NALOG", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvn + brnal ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
 
 _dbf_name := "e_sint.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori sint tabelu
-select ( 362 )
-use ( use_path + _dbf_name ) alias "e_sint"
+select ( F_TMP_E_SINT )
+my_use_temp( "E_SINT", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvn + brnal ) tag "1"
 
 _dbf_name := "e_anal.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori anal tabelu
-select ( 359 )
-use ( use_path + _dbf_name ) alias "e_anal"
+select ( F_TMP_E_ANAL )
+my_use_temp( "E_ANAL", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvn + brnal ) tag "1"
 
-
 _dbf_name := "e_partn.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori partn tabelu
-select ( 363 )
-use ( use_path + _dbf_name ) alias "e_partn"
+select ( F_TMP_E_PARTN )
+my_use_temp( "E_PARTN", use_path + _dbf_name, .f., .t. )
 index on ( id ) tag "ID"
 
 _dbf_name := "e_konto.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori konto tabelu
-select ( 364 )
-use ( use_path + _dbf_name ) alias "e_konto"
+select ( F_TMP_E_KONTO )
+my_use_temp( "E_KONTO", use_path + _dbf_name, .f., .t. )
 index on ( id ) tag "ID"
 
 _dbf_name := "e_sifk.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori konto sifk
-select ( 365 )
-use ( use_path + _dbf_name ) alias "e_sifk"
+select ( F_TMP_E_SIFK )
+my_use_temp( "E_SIFK", use_path + _dbf_name, .f., .t. )
 index on ( id + sort + naz ) tag "ID"
 index on ( id + oznaka ) tag "ID2"
 
 _dbf_name := "e_sifv.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
 // otvori konto tabelu
-select ( 366 )
-use ( use_path + _dbf_name ) alias "e_sifv"
+select ( F_TMP_E_SIFV )
+my_use_temp( "E_SIFV", use_path + _dbf_name, .f., .t. )
 index on ( id + oznaka + idsif + naz ) tag "ID"
 index on ( id + idsif ) tag "IDIDSIF"
 

@@ -537,6 +537,8 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import fin dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa nalog/" + ALLTRIM(STR( _total_nalog )) + ", suban/" + ALLTRIM(STR( _total_suban ))
 
+my_use_semaphore_off()
+
 do while !EOF()
 
     _id_firma := field->idfirma
@@ -590,8 +592,7 @@ do while !EOF()
     _app_rec := dbf_get_rec()
 
     select nalog
-    append blank
-    update_rec_server_and_dbf( "fin_nalog", _app_rec, 1 )
+    update_rec_server_and_dbf( "fin_nalog", _app_rec, 1, "BEGIN" )
 
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -611,7 +612,7 @@ do while !EOF()
         _app_rec := dbf_get_rec()
 
         // setuj redni broj automatski...
-        _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 3 )
+        _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 4 )
 
         // uvecaj i globalni brojac stavki...
         _gl_brojac += _redni_broj
@@ -620,17 +621,82 @@ do while !EOF()
 
         select suban
         append blank
-        update_rec_server_and_dbf( "fin_suban", _app_rec, 1 )
+        update_rec_server_and_dbf( "fin_suban", _app_rec, 1, "CONT" )
 
         select e_suban
         skip
 
     enddo
 
+    // zikni je i u tabelu anal
+    select e_anal
+    set order to tag "1"
+    go top
+    seek _id_firma + _id_vd + _br_dok
+
+    // setuj novi redni broj stavke
+    _redni_broj := 0
+
+    // prebaci mi stavke tabele FIN
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvn == _id_vd .and. field->brnal == _br_dok
+
+        _app_rec := dbf_get_rec()
+
+        // setuj redni broj automatski...
+        _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 3 )
+
+        // uvecaj i globalni brojac stavki...
+        _gl_brojac += _redni_broj
+
+        @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
+
+        select anal
+        update_rec_server_and_dbf( "fin_anal", _app_rec, 1, "CONT" )
+
+        select e_anal
+        skip
+
+    enddo
+
+    // zikni je i u tabelu sint
+    select e_sint
+    set order to tag "1"
+    go top
+    seek _id_firma + _id_vd + _br_dok
+
+    // setuj novi redni broj stavke
+    _redni_broj := 0
+
+    // prebaci mi stavke tabele FIN
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvn == _id_vd .and. field->brnal == _br_dok
+
+        _app_rec := dbf_get_rec()
+
+        // setuj redni broj automatski...
+        _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 3 )
+
+        // uvecaj i globalni brojac stavki...
+        _gl_brojac += _redni_broj
+
+        @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
+
+        select sint
+        update_rec_server_and_dbf( "fin_sint", _app_rec, 1, "CONT" )
+
+        select e_sint
+        skip
+
+    enddo
+
+    // zavrsi transakciju
+    sql_table_update( nil, "END" )
+
     select e_nalog
     skip
 
 enddo
+
+my_use_semaphore_on()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
@@ -816,7 +882,7 @@ if ( from_fmk == NIL )
     from_fmk := .f.
 endif
 
-log_write("otvaram tabele importa i pravim imdekse...")
+log_write("otvaram fin tabele importa i pravim indekse...")
 
 // zatvori sve prije otvaranja ovih tabela
 close all

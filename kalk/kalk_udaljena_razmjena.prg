@@ -546,6 +546,8 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import kalk dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", kalk/" + ALLTRIM(STR( _total_kalk ))
 
+my_use_semaphore_off()
+
 do while !EOF()
 
     _id_firma := field->idfirma
@@ -623,8 +625,7 @@ do while !EOF()
     _app_rec["podbr"] := ""
 
     select kalk_doks
-    append blank
-    update_rec_server_and_dbf( "kalk_doks", _app_rec )
+    update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "BEGIN" )
 
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -654,18 +655,22 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select kalk
-        append blank
-        update_rec_server_and_dbf( "kalk", _app_rec )
+        update_rec_server_and_dbf( "kalk", _app_rec, 1, "CONT" )
 
         select e_kalk
         skip
 
     enddo
 
+    // zavrsi transakciju
+    sql_table_update( nil, "END" )
+
     select e_doks
     skip
 
 enddo
+
+my_use_semaphore_on()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
@@ -731,7 +736,9 @@ seek id_firma + id_vd + br_dok
 if FOUND()
 
     my_use_semaphore_off()
+
     _del_rec := dbf_get_rec()
+
     delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "BEGIN" )
 
     select kalk
@@ -802,7 +809,6 @@ copy structure extended to ( my_home() + "struct" )
 use
 create ( use_path + "e_sifv") from ( my_home() + "struct")
 
-
 return
 
 
@@ -822,8 +828,6 @@ O_ROBA
 return
 
 
-
-
 // ----------------------------------------------------
 // otvranje export tabela
 // ----------------------------------------------------
@@ -838,7 +842,7 @@ if ( from_fmk == NIL )
     from_fmk := .f.
 endif
 
-log_write("otvaram tabele importa i pravim imdekse...")
+log_write("otvaram kalk tabele importa i pravim indekse...")
 
 // zatvori sve prije otvaranja ovih tabela
 close all

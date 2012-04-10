@@ -651,12 +651,15 @@ do while !EOF()
         
         select fakt_doks2
 
-        update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "END" )
+        update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "CONT" )
         
         select e_doks2
         skip
 
     enddo
+
+    // zavrsi transakciju
+    sql_table_update( nil, "END" )
 
     select e_doks
     skip
@@ -841,7 +844,7 @@ if ( from_fmk == NIL )
     from_fmk := .f.
 endif
 
-log_write("otvaram tabele importa i pravim imdekse...")
+log_write("otvaram fakt tabele importa i pravim indekse...")
 
 // zatvori sve prije otvaranja ovih tabela
 close all

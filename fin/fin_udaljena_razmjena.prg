@@ -337,7 +337,6 @@ do while !EOF()
     _id_firma := field->idfirma
     _id_vd := field->idvn
     _br_dok := field->brnal
-    _id_partn := field->idpartner
 
     // provjeri uslove ?!??
 
@@ -351,14 +350,14 @@ do while !EOF()
 
     // datumski uslov...
     if _dat_od <> CTOD("") 
-        if ( field->datdok < _dat_od )
+        if ( field->datnal < _dat_od )
             skip
             loop
         endif
     endif
 
     if _dat_do <> CTOD("")
-        if ( field->datdok > _dat_do )
+        if ( field->datnal > _dat_do )
             skip
             loop
         endif
@@ -549,14 +548,14 @@ do while !EOF()
 
     // datumi...
     if _dat_od <> CTOD( "" ) 
-        if field->datdok < _dat_od
+        if field->datnal < _dat_od
             skip
             loop
         endif
     endif
 
     if _dat_do <> CTOD( "" )
-        if field->datdok > _dat_do
+        if field->datnal > _dat_do
             skip
             loop
         endif

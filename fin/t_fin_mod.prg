@@ -115,7 +115,7 @@ AADD(_opcexe, {|| MnuOstOperacije()})
 
 AADD(_opc, "7. udaljene lokacije - razmjena podataka ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA"))
-	AADD(_opcexe, {|| MnuUdaljeneLokacije()})
+	AADD(_opcexe, {|| fin_udaljena_razmjena_podataka()})
 else
 	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif

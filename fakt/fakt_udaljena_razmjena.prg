@@ -31,6 +31,10 @@ __export_dbf_path := my_home() + "export_dbf" + SLASH
 __import_zip_name := "fakt_exp.zip"
 __export_zip_name := "fakt_exp.zip"
 
+// kreiraj ove direktorije odmah
+_dir_create( __import_dbf_path )
+_dir_create( __export_dbf_path )
+
 AADD(_opc,"1. => export podataka               ")
 AADD(_opcexe, {|| _fakt_export() })
 AADD(_opc,"2. <= import podataka    ")
@@ -129,7 +133,7 @@ if _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
 endif
 
 #ifdef __PLATFORM__UNIX
-    set_file_access()
+    //set_file_access()
 #endif
 
 // import procedura
@@ -510,10 +514,8 @@ if _iz_fmk == "D"
     _fmk_import := .t.
 endif
 
-altd()
-
 // otvaranje export tabela
-_o_exp_tables( __import_dbf_path, _fmk_import )
+_o_exp_tables( __import_dbf_path, nil )
 
 // otvori potrebne tabele za import podataka
 _o_tables()
@@ -737,10 +739,10 @@ if FOUND()
     delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
 
     select fakt_doks
-    delete_rec_server_and_dbf( "fakt_doks", _del_rec, 2, "CONT" )
+    delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
     
     select fakt_doks2
-    delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 2, "CONT" )
+    delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
 
     sql_table_update( nil, "END" )
 
@@ -849,14 +851,14 @@ close all
 
 // setuj ove tabele kao temp tabele
 
-_dbf_name := "e_fakt"
-select ( F_TMP_E_FAKT )
-my_use_temp( "E_FAKT", use_path + _dbf_name, .f., .t. )
-index on ( idfirma + idtipdok + brdok ) tag "1"
-
 _dbf_name := "e_doks2"
 select ( F_TMP_E_DOKS2 )
 my_use_temp( "E_DOKS2", use_path + _dbf_name, .f., .t. )
+index on ( idfirma + idtipdok + brdok ) tag "1"
+
+_dbf_name := "e_fakt"
+select ( F_TMP_E_FAKT )
+my_use_temp( "E_FAKT", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idtipdok + brdok ) tag "1"
 
 _dbf_name := "e_doks"

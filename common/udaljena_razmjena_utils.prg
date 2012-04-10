@@ -523,6 +523,7 @@ do case
     case modul == "fakt"
 
         AADD( _a_files, use_path + "e_fakt.dbf" )
+        AADD( _a_files, use_path + "e_fakt.fpt" )
         AADD( _a_files, use_path + "e_doks.dbf" )
         AADD( _a_files, use_path + "e_doks2.dbf" )
         AADD( _a_files, use_path + "e_roba.dbf" )

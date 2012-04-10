@@ -847,83 +847,19 @@ log_write("otvaram tabele importa i pravim imdekse...")
 // zatvori sve prije otvaranja ovih tabela
 close all
 
-_dbf_name := "e_fakt.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
+// setuj ove tabele kao temp tabele
 
-// otvori fakt tabelu
-select ( 310 )
-use ( use_path + _dbf_name ) alias "e_fakt"
-index on ( idfirma + idtipdok + brdok ) tag "1"
+_dbf_name := "e_fakt"
+set_a_dbf_temp( use_path + "e_fakt", "E_FAKT" , 310   )
+my_use( use_path + "e_fakt", "E_FAKT", .f. )
 
-log_write("otvorio i indeksirao: " + use_path + _dbf_name )
+_dbf_name := "e_doks2"
+set_a_dbf_temp( use_path + "e_doks2", "E_DOKS2" , 311  )
+my_use( use_path + "e_fakt", "E_DOKS2", .f. )
 
-_dbf_name := "e_doks2.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
-// otvori fakt tabelu
-select ( 311 )
-use ( use_path + _dbf_name ) alias "e_doks2"
-index on ( idfirma + idtipdok + brdok ) tag "1"
-
-log_write("otvorio i indeksirao: " + use_path + _dbf_name )
-
-_dbf_name := "e_doks.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
-// otvori doks tabelu
-select ( 312 )
-use ( use_path + _dbf_name ) alias "e_doks"
-index on ( idfirma + idtipdok + brdok ) tag "1"
-
-log_write("otvorio i indeksirao: " + use_path + _dbf_name )
-
-_dbf_name := "e_roba.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
-// otvori roba tabelu
-select ( 313 )
-use ( use_path + _dbf_name ) alias "e_roba"
-index on ( id ) tag "ID"
-
-_dbf_name := "e_partn.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
-// otvori partn tabelu
-select ( 314 )
-use ( use_path + _dbf_name ) alias "e_partn"
-index on ( id ) tag "ID"
-
-_dbf_name := "e_sifk.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
-// otvori konto sifk
-select ( 315 )
-use ( use_path + _dbf_name ) alias "e_sifk"
-index on ( id + sort + naz ) tag "ID"
-index on ( id + oznaka ) tag "ID2"
-
-_dbf_name := "e_sifv.dbf"
-if from_fmk
-    _dbf_name := UPPER( _dbf_name )
-endif
-
-// otvori konto tabelu
-select ( 316 )
-use ( use_path + _dbf_name ) alias "e_sifv"
-index on ( id + oznaka + idsif + naz ) tag "ID"
-index on ( id + idsif ) tag "IDIDSIF"
+_dbf_name := "e_doks"
+set_a_dbf_temp( use_path + "e_doks", "E_DOKS" , 312  )
+my_use( use_path + "e_fakt", "E_DOKS", .f. )
 
 log_write("otvorene sve import tabele i indeksirane...")
 

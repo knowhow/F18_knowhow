@@ -852,14 +852,39 @@ close all
 _dbf_name := "e_fakt"
 select ( F_TMP_E_FAKT )
 my_use_temp( "E_FAKT", use_path + _dbf_name, .f., .t. )
+index on ( idfirma + idtipdok + brdok ) tag "1"
 
 _dbf_name := "e_doks2"
 select ( F_TMP_E_DOKS2 )
 my_use_temp( "E_DOKS2", use_path + _dbf_name, .f., .t. )
+index on ( idfirma + idtipdok + brdok ) tag "1"
 
 _dbf_name := "e_doks"
 select ( F_TMP_E_DOKS )
 my_use_temp( "E_DOKS", use_path + _dbf_name, .f., .t. )
+index on ( idfirma + idtipdok + brdok ) tag "1"
+
+_dbf_name := "e_roba"
+select ( F_TMP_E_ROBA )
+my_use_temp( "E_ROBA", use_path + _dbf_name, .f., .t. )
+index on ( id ) tag "ID"
+
+_dbf_name := "e_partn"
+select ( F_TMP_E_PARTN )
+my_use_temp( "E_PARTN", use_path + _dbf_name, .f., .t. )
+index on ( id ) tag "ID"
+
+_dbf_name := "e_sifk"
+select ( F_TMP_E_SIFK )
+my_use_temp( "E_SIFK", use_path + _dbf_name, .f., .t. )
+index on ( id + sort + naz ) tag "ID"
+index on ( id + oznaka ) tag "ID2"
+
+_dbf_name := "e_sifv"
+select ( F_TMP_E_SIFV )
+my_use_temp( "E_SIFV", use_path + _dbf_name, .f., .t. )
+index on ( id + oznaka + idsif + naz ) tag "ID"
+index on ( id + idsif ) tag "IDIDSIF"
 
 log_write("otvorene sve import tabele i indeksirane...")
 

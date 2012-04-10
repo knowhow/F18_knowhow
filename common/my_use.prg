@@ -46,6 +46,52 @@ function my_usex(alias, table, new_area, _rdd, semaphore_param)
 return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 
 
+// ---------------------------------------------------------------
+// uopste ne koristi logiku semafora, koristiti za temp tabele
+// kod opcija exporta importa
+// ---------------------------------------------------------------
+function my_use_temp(alias, table, new_area, excl)
+local _force_erase
+local _err
+
+if excl == NIL
+  excl := .f.
+endif
+
+if new_area == NIL
+   new_area := .f.
+endif
+
+
+if USED()
+   use
+endif
+
+begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
+          dbUseArea( new_area, "DBFCDX", table, alias, !excl, .f.)
+ 
+recover using _err
+
+          _msg := "ERR: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
+          Alert(_msg)
+         
+          if _err:description == "Read error"
+             _force_erase := .t.
+          endif
+ 
+          //ovo trazi a_dbf_rec definisan za tabelu pa iskljucujem
+          //ferase_dbf(alias, _force_erase)
+
+          QUIT
+
+end sequence
+
+return
+
+
+
+
+
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------

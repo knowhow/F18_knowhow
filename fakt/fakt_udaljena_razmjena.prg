@@ -666,7 +666,7 @@ do while !EOF()
 
 enddo
 
-my_use_semaphore_off()
+my_use_semaphore_on()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
@@ -733,8 +733,6 @@ if FOUND()
 
     _del_rec := dbf_get_rec()
 
-    my_use_semaphore_off()
-    
     // pobrisi zapise...
     delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "BEGIN" )
 
@@ -743,8 +741,6 @@ if FOUND()
     
     select fakt_doks2
     delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "END" )
-
-    my_use_semaphore_on()
 
 endif
 

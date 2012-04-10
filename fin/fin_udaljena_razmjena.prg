@@ -762,8 +762,6 @@ if FOUND()
     
     _del_rec := dbf_get_rec()
 
-    my_use_semaphore_off()
-    
     delete_rec_server_and_dbf( "fin_suban", _del_rec, 2, "BEGIN" )
 
     select nalog
@@ -774,8 +772,6 @@ if FOUND()
 
     select sint
     delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "END" )
-
-    my_use_semaphore_on()
 
     _ret := .t.
 

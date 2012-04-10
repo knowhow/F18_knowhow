@@ -459,7 +459,7 @@ return _ret
 // --------------------------------------------
 // vraca naziv zip fajla
 // --------------------------------------------
-function zip_name( modul )
+function zip_name( modul, export_dbf_path )
 local _file 
 local _ext := ".zip"
 local _count := 1
@@ -469,9 +469,13 @@ if modul == NIL
     modul := "kalk"
 endif
 
+if export_dbf_path == NIL
+    export_dbf_path := my_home()
+endif
+
 modul := ALLTRIM( LOWER( modul ) )
 
-_file := __export_dbf_path + modul + "_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
+_file := export_dbf_path + modul + "_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
 
 if FILE( _file )
     
@@ -479,7 +483,7 @@ if FILE( _file )
     do while _exist 
 
         ++ _count
-        _file := __export_dbf_path + modul + "_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
+        _file := export_dbf_path + modul + "_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
 
         if !FILE( _file )
             _exist := .f.
@@ -491,6 +495,8 @@ if FILE( _file )
 endif
 
 return _file
+
+
 
 // ----------------------------------------------------
 // vraca listu fajlova koji se koriste kod prenosa
@@ -554,7 +560,7 @@ local __path, __name, __ext
 // lista fajlova za kompresovanje
 _files := _file_list( export_dbf_path, modul )
 
-_file := zip_name( modul )
+_file := zip_name( modul, export_dbf_path )
 
 HB_FNameSplit( _file, @__path, @__name, @__ext ) 
 

@@ -359,7 +359,7 @@ do while !EOF()
 
     // lista dokumenata...
     if !EMPTY( _vrste_dok )
-        if !( field->idvd $ _vrste_dok )
+        if !( field->idtipdok $ _vrste_dok )
             skip
             loop
         endif
@@ -569,7 +569,7 @@ do while !EOF()
 
     // lista dokumenata...
     if !EMPTY( _vrste_dok )
-        if !( field->idvd $ _vrste_dok )
+        if !( field->idtipdok $ _vrste_dok )
             skip
             loop
         endif
@@ -614,7 +614,7 @@ do while !EOF()
     _redni_broj := 0
 
     // prebaci mi stavke tabele FAKT
-    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idtipdok == _id_vd .and. field->brdok == _br_dok
         
         _app_rec := dbf_get_rec()
 
@@ -643,7 +643,7 @@ do while !EOF()
     go top
     seek _id_firma + _id_vd + _br_dok
 
-    do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
+    do while !EOF() .and. field->idfirma == _id_firma .and. field->idtipdok == _id_vd .and. field->brdok == _br_dok
 
         _app_rec := dbf_get_rec()
         
@@ -853,7 +853,7 @@ endif
 // otvori fakt tabelu
 select ( 360 )
 use ( use_path + _dbf_name ) alias "e_fakt"
-index on ( idfirma + idvd + brdok ) tag "1"
+index on ( idfirma + idtipdok + brdok ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
 
@@ -865,7 +865,7 @@ endif
 // otvori fakt tabelu
 select ( 359 )
 use ( use_path + _dbf_name ) alias "e_doks2"
-index on ( idfirma + idvd + brdok ) tag "1"
+index on ( idfirma + idtipdok + brdok ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
 
@@ -877,7 +877,7 @@ endif
 // otvori doks tabelu
 select ( 361 )
 use ( use_path + _dbf_name ) alias "e_doks"
-index on ( idfirma + idvd + brdok ) tag "1"
+index on ( idfirma + idtipdok + brdok ) tag "1"
 
 log_write("otvorio i indeksirao: " + use_path + _dbf_name )
 

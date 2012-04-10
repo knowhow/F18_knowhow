@@ -696,10 +696,20 @@ if FOUND()
     
     _del_rec := dbf_get_rec()
 
-    delete_rec_server_and_dbf( "fin_suban", _del_rec, 2 )
-    delete_rec_server_and_dbf( "fin_nalog", _del_rec, 2 )
-    delete_rec_server_and_dbf( "fin_anal", _del_rec, 2 )
-    delete_rec_server_and_dbf( "fin_sint", _del_rec, 2 )
+    my_use_semaphore_off()
+    
+    delete_rec_server_and_dbf( "fin_suban", _del_rec, 2, "BEGIN" )
+
+    select nalog
+    delete_rec_server_and_dbf( "fin_nalog", _del_rec, 1, "CONT" )
+
+    select anal
+    delete_rec_server_and_dbf( "fin_anal", _del_rec, 2, "CONT" )
+
+    select sint
+    delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "END" )
+
+    my_use_semaphore_on()
 
     _ret := .t.
 

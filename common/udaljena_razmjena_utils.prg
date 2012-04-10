@@ -92,7 +92,9 @@ do while !EOF()
             append blank
         endif
 
-        update_rec_server_and_dbf( "konto", _app_rec )
+        sql_table_update(nil, "BEGIN")
+        update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
+        sql_table_update(nil, "END")
 
     endif
 
@@ -147,8 +149,9 @@ do while !EOF()
             append blank
         endif
 
-        update_rec_server_and_dbf( "partn", _app_rec )
-
+        sql_table_update(nil, "BEGIN")
+        update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
+        sql_table_update(nil, "END")
     endif
 
     select e_partn
@@ -201,7 +204,9 @@ do while !EOF()
             append blank
         endif
         
-        update_rec_server_and_dbf( "roba", _app_rec )
+        sql_table_update(nil, "BEGIN")
+        update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
+        sql_table_update(nil, "END")
 
     endif
 
@@ -348,7 +353,9 @@ do while !EOF()
     @ m_x + 3, m_y + 2 SAY "import sifk id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"]
     
     // uvijek update odradi friskog stanja sifk tabele
-    update_rec_server_and_dbf( "sifk", _app_rec )
+    sql_table_update(nil, "BEGIN")
+    update_rec_server_and_dbf( "sifk", _app_rec, 1, "CONT" )
+    sql_table_update(nil, "END")
         
     select e_sifk
     skip
@@ -373,7 +380,9 @@ do while !EOF()
     endif
 
     @ m_x + 3, m_y + 2 SAY "import sifv id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"] + ", sifra: " + _app_rec["idsif"]
-    update_rec_server_and_dbf( "sifv", _app_rec )
+    sql_table_update(nil, "BEGIN")
+    update_rec_server_and_dbf( "sifv", _app_rec, 1, "CONT" )
+    sql_table_update(nil, "END")
 
     select e_sifv
     skip

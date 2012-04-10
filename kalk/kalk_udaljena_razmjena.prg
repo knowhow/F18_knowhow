@@ -599,8 +599,7 @@ do while !EOF()
 
             // dokumente iz kalk, kalk_doks brisi !
             _ok := .t.
-            _ok := del_kalk( _id_firma, _id_vd, _br_dok )
-            _ok := del_kalk_doks( _id_firma, _id_vd, _br_dok )
+            _ok := del_kalk_doc( _id_firma, _id_vd, _br_dok )
 
             //if !_ok
               //  MsgBeep( "Doslo je do greske sa brisanjem podataka !!!#Dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok )
@@ -716,46 +715,10 @@ select (_t_area)
 return _ret
 
 
-
-
-// ----------------------------------------------------------
-// brisi dokument iz kalk-a
-// ----------------------------------------------------------
-static function del_kalk( id_firma, id_vd, br_dok )
-local _t_area := SELECT()
-local _del_rec, _t_rec 
-local _ret := .f.
-
-select kalk
-set order to tag "1"
-go top
-seek id_firma + id_vd + br_dok
-
-do while !EOF() .and. field->idfirma == id_firma .and. field->idvd == id_vd .and. field->brdok == br_dok
-
-    skip 1
-    _t_rec := RECNO()
-    skip -1
-
-    _del_rec := dbf_get_rec()
-
-    delete_rec_server_and_dbf( ALIAS(), _del_rec )
-
-    _ret := .t.
-
-    go ( _t_rec )
-
-enddo
-
-select ( _t_area )
-return _ret
-
-
-
 // ----------------------------------------------------------
 // brisi dokument iz doks-a
 // ----------------------------------------------------------
-static function del_kalk_doks( id_firma, id_vd, br_dok )
+static function del_kalk_doc( id_firma, id_vd, br_dok )
 local _t_area := SELECT()
 local _del_rec
 local _ret := .f.
@@ -767,10 +730,14 @@ seek id_firma + id_vd + br_dok
 
 if FOUND()
 
+    my_use_semaphores_off()
     _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "BEGIN" )
 
-    delete_rec_server_and_dbf( ALIAS(), _del_rec )
+    select kalk
+    delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "END" )
 
+    my_use_semaphores_on()
     _ret := .t.
 
 endif

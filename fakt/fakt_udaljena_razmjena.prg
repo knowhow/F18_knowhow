@@ -536,6 +536,8 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import fakt dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", fakt/" + ALLTRIM(STR( _total_fakt ))
 
+my_use_semaphores_off()
+
 do while !EOF()
 
     _id_firma := field->idfirma
@@ -600,10 +602,7 @@ do while !EOF()
     select e_doks
     _app_rec := dbf_get_rec()
     select fakt_doks
-
-    sql_table_update( NIL, "BEGIN" )
-
-    update_rec_server_and_dbf( "fakt_doks", _app_rec, 1, "CONT" )
+    update_rec_server_and_dbf( "fakt_doks", _app_rec, 1, "BEGIN" )
 
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -633,7 +632,6 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select fakt
-        
         update_rec_server_and_dbf( "fakt_fakt", _app_rec, 1, "CONT" )
 
         select e_fakt
@@ -660,12 +658,12 @@ do while !EOF()
 
     enddo
 
-    sql_table_update( NIL, "END" )
-
     select e_doks
     skip
 
 enddo
+
+my_use_semaphores_off()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
@@ -732,19 +730,18 @@ if FOUND()
 
     _del_rec := dbf_get_rec()
 
-    // transakcija...
-    sql_table_update( nil, "BEGIN" )
-
+    my_use_semaphore_off()
+    
     // pobrisi zapise...
-    delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
+    delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "BEGIN" )
 
     select fakt_doks
     delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
     
     select fakt_doks2
-    delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
+    delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "END" )
 
-    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
 endif
 

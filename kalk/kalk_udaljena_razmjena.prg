@@ -730,14 +730,14 @@ seek id_firma + id_vd + br_dok
 
 if FOUND()
 
-    my_use_semaphores_off()
+    my_use_semaphore_off()
     _del_rec := dbf_get_rec()
     delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "BEGIN" )
 
     select kalk
     delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "END" )
 
-    my_use_semaphores_on()
+    my_use_semaphore_on()
     _ret := .t.
 
 endif

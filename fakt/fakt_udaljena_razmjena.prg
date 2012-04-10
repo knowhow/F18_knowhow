@@ -536,7 +536,7 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import fakt dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", fakt/" + ALLTRIM(STR( _total_fakt ))
 
-my_use_semaphores_off()
+my_use_semaphore_off()
 
 do while !EOF()
 
@@ -651,7 +651,7 @@ do while !EOF()
         
         select fakt_doks2
 
-        update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "CONT" )
+        update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "END" )
         
         select e_doks2
         skip
@@ -663,7 +663,7 @@ do while !EOF()
 
 enddo
 
-my_use_semaphores_off()
+my_use_semaphore_off()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0

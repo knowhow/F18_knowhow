@@ -380,6 +380,7 @@ do while !EOF()
     endif
 
     @ m_x + 3, m_y + 2 SAY "import sifv id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"] + ", sifra: " + _app_rec["idsif"]
+
     sql_table_update(nil, "BEGIN")
     update_rec_server_and_dbf( "sifv", _app_rec, 1, "CONT" )
     sql_table_update(nil, "END")

@@ -377,7 +377,7 @@ do while !EOF()
 
     // dodaj zapis i u tabelu e_suban
     select suban
-    set order to tag "1"
+    set order to tag "4"
     go top
     seek _id_firma + _id_vd + _br_dok
 
@@ -434,7 +434,7 @@ do while !EOF()
 
     // dodaj zapis i u tabelu e_sint, e_anal
     select sint
-    set order to tag "1"
+    set order to tag "2"
     go top
     seek _id_firma + _id_vd + _br_dok
     do while !EOF() .and. field->idfirma == _id_firma .and. field->idvn == _id_vd .and. field->brnal == _br_dok
@@ -451,7 +451,7 @@ do while !EOF()
     enddo
 
     select anal
-    set order to tag "1"
+    set order to tag "2"
     go top
     seek _id_firma + _id_vd + _br_dok
     do while !EOF() .and. field->idfirma == _id_firma .and. field->idvn == _id_vd .and. field->brnal == _br_dok

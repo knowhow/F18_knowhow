@@ -270,7 +270,7 @@ _versions := get_semaphore_version_h(table)
 _last_ver := _versions["last_version"]
 _version  := _versions["version"]
 
-if _last_ver > _version
+if (_version > -1) .and. (_last_ver > _version)
    // u međuvremenu je bilo update-a od strane drugih korisnika
    PushWA()
    log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)))   

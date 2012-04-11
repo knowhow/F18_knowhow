@@ -797,7 +797,8 @@ if _ok = .t.
     _record["vpv"] := _doks_vpv
     _record["rabat"] := _doks_rabat
     _record["mpv"] := _doks_mpv
-    _record["pod_br"] := field->podbr
+    _record["podbr"] := field->podbr
+    _record["sifra"] := SPACE(6)
 
     // za ids-ove 
     _tmp_id := _record["idfirma"] + _record["idvd"] + _record["brdok"]
@@ -1012,36 +1013,31 @@ if _brisi_kum
     
     MsgO("Brisem dokument iz KALK-a")
 
+    my_use_semaphore_off()
+
     select kalk
     hseek _id_firma + _id_vd + _br_dok
 
-    do while !eof() .and. _id_firma == field->IdFirma .and. _id_vd == field->IdVD .and. _br_dok == field->BrDok
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
+    if FOUND()
 
         _del_rec := dbf_get_rec()
         _ok := .t.
-        _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
+        _ok := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "BEGIN" )
+    
+        select kalk_doks
+        hseek _id_firma + _id_vd + _br_dok
 
-        if !_ok
-            msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele kalk !!!!")
-            close all
-            return
-        endif
+        if FOUND()
+            
+            _del_rec := dbf_get_rec()
+            _ok := .t.
+            _ok := delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "END" )
         
-        go ( _t_rec )
+        endif
 
-    enddo
-
-    select kalk_doks
-    hseek _id_firma + _id_vd + _br_dok
-
-    if found()         
-        _del_rec := dbf_get_rec()
-        _ok := delete_rec_server_and_dbf( ALIAS(), _del_rec )
     endif
+
+    my_use_semaphore_on()
 
     if !_ok
         msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele doks !!!!")
@@ -1154,6 +1150,11 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         return .f.
     endif
 
+    // iskljuci semafore...
+    my_use_semaphore_off()
+
+    sql_table_update( nil, "BEGIN" )
+
     // idemo sada na brisanje dokumenata
     do while !EOF()
 
@@ -1161,34 +1162,31 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         _id_vd := field->idvd
         _br_dok := field->brdok
 
+        _del_rec := dbf_get_rec()
+        
         // prodji kroz dokument do kraja...
         do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
-
-            _del_rec := dbf_get_rec()
-            _ok := .t.
-            _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
-
-            if !_ok
-                msgbeep("Problem sa brisanjem tabele kalk !!!")
-                msgc()
-                close all
-                return .f.
-            endif
- 
             skip
-
         enddo
+        
+        _t_rec := RECNO()
 
-        // pobrsi mi sada tabelu kalk_doks
-        select kalk_doks
-        go top
-        seek _id_firma + _id_vd + _br_dok
+        _ok := .t.
+        _ok :=  delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
 
-        if found()
-            _del_rec := dbf_get_rec()
-            // brisi prvo tabelu kalk_doks            
-            _ok := .t.
-            _ok :=  delete_rec_server_and_dbf( ALIAS(), _del_rec )
+        if _ok
+            // pobrsi mi sada tabelu kalk_doks
+            select kalk_doks
+            go top
+            seek _id_firma + _id_vd + _br_dok
+
+            if found()
+                _del_rec := dbf_get_rec()
+                // brisi prvo tabelu kalk_doks            
+                _ok := .t.
+                _ok :=  delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
+            endif
+
         endif
 
         if !_ok
@@ -1199,8 +1197,12 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         endif
         
         select kalk
+        go ( _t_rec )
                         
     enddo
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
     msgc()
 

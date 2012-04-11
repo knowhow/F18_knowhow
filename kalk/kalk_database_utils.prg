@@ -30,8 +30,8 @@ return
 function Gen9999()
   if !(gRadnoPodr=="9999")  
     // sezonsko kumulativno podrucje za zbirne izvjeçtaje
-  	MsgBeep("Ova operacija se radi u 9999 podrucju")
-	return
+    MsgBeep("Ova operacija se radi u 9999 podrucju")
+    return
   endif
   
   nG0:=nG1:=YEAR(DATE())
@@ -150,7 +150,7 @@ local nRREC,fdupli:=.f.,dkolicina:=0,dfcj:=0
 private GetList:={}
  // pojava robe vise puta unutar kalkulacije!!!
  if ( (roba->tip $ "UTY") .or. empty(gMetodaNC) .or. gmagacin=="1" .or. (IsJerry() .and. _idvd="4") )
- 	return .t.
+    return .t.
  endif
  select kalk_pripr; set order to tag "3"
  nRRec:=recno()
@@ -251,10 +251,10 @@ else
 endif
 
 if ALLTRIM(cReturn) >= "99999"
-	cReturn := PADR( novasifra( ALLTRIM(cReturn) ), 5 )
+    cReturn := PADR( novasifra( ALLTRIM(cReturn) ), 5 )
 else
-	cReturn := UBrojDok( VAL( LEFT(cReturn, 5) ) + 1, ;
-		5, RIGHT(cReturn) )
+    cReturn := UBrojDok( VAL( LEFT(cReturn, 5) ) + 1, ;
+        5, RIGHT(cReturn) )
 endif
 
 return cReturn
@@ -267,37 +267,37 @@ function SljBrKalk(cTipKalk, cIdFirma, cSufiks)
 *{
 local cBrKalk:=space(8)
 if cSufiks==nil
-	cSufiks:=SPACE(3)
+    cSufiks:=SPACE(3)
 endif
 if gBrojac=="D"
-	if glBrojacPoKontima
-		select kalk_doks
-		set order to tag "1S"
-		seek cIdFirma+cTipKalk+cSufiks+"X"
-	else
-		select kalk
-		set order to tag "1"
-		seek cIdFirma+cTipKalk+"X"
-	endif
-	skip -1
-	
-	if cTipKalk<>field->idVD .or. glBrojacPoKontima .and. right(field->brDok,3)<>cSufiks
-		cBrKalk:=SPACE(gLenBrKalk)+cSufiks
-	else
-		cBrKalk:=field->brDok
-	endif
-	
-	if cTipKalk=="16" .and. glEvidOtpis
-		cBrKalk:=STRTRAN(cBrKalk,"-X","  ")
-	endif
-	
-	if ALLTRIM( cBrKalk ) >= "99999"
-		cBrKalk := PADR( novasifra( ALLTRIM(cBrKalk) ), 5 ) + ;
-			right( cBrKalk, 3 )
-	else
-		cBrKalk:=UBrojDok(val(left(cBrKalk,5)) + 1, ;
-			5, right(cBrKalk,3) )
-	endif
+    if glBrojacPoKontima
+        select kalk_doks
+        set order to tag "1S"
+        seek cIdFirma+cTipKalk+cSufiks+"X"
+    else
+        select kalk
+        set order to tag "1"
+        seek cIdFirma+cTipKalk+"X"
+    endif
+    skip -1
+    
+    if cTipKalk<>field->idVD .or. glBrojacPoKontima .and. right(field->brDok,3)<>cSufiks
+        cBrKalk:=SPACE(gLenBrKalk)+cSufiks
+    else
+        cBrKalk:=field->brDok
+    endif
+    
+    if cTipKalk=="16" .and. glEvidOtpis
+        cBrKalk:=STRTRAN(cBrKalk,"-X","  ")
+    endif
+    
+    if ALLTRIM( cBrKalk ) >= "99999"
+        cBrKalk := PADR( novasifra( ALLTRIM(cBrKalk) ), 5 ) + ;
+            right( cBrKalk, 3 )
+    else
+        cBrKalk:=UBrojDok(val(left(cBrKalk,5)) + 1, ;
+            5, right(cBrKalk,3) )
+    endif
 endif
 return cBrKalk
 
@@ -313,7 +313,7 @@ local i
 local lIdiDalje
 
 if nUvecaj == nil
-	nUvecaj := 1
+    nUvecaj := 1
 endif
 
 lIdiDalje := .f.
@@ -327,28 +327,28 @@ seek cIdFirma + cIdTipDok + "XXX"
 skip -1
 
 do while .t.
-	for i := 2 to LEN(ALLTRIM(field->brDok)) 
-		if !IsNumeric(SubStr(ALLTRIM(field->brDok),i,1))
-			lIdiDalje := .f.
-			skip -1
-			loop
-		else
-			lIdiDalje := .t.
-		endif
-	next
+    for i := 2 to LEN(ALLTRIM(field->brDok)) 
+        if !IsNumeric(SubStr(ALLTRIM(field->brDok),i,1))
+            lIdiDalje := .f.
+            skip -1
+            loop
+        else
+            lIdiDalje := .t.
+        endif
+    next
 
-	if lIdiDalje := .t.
-		cResult := field->brDok
-		exit
-	endif
-	
+    if lIdiDalje := .t.
+        cResult := field->brDok
+        exit
+    endif
+    
 enddo
 
 xx := 1
 
 for xx := 1 to nUvecaj
-	cResult := PADR( novasifra( ALLTRIM(cResult) ), 5 ) + ;
-		RIGHT( cResult, 3 )
+    cResult := PADR( novasifra( ALLTRIM(cResult) ), 5 ) + ;
+        RIGHT( cResult, 3 )
 next
 
 return cResult
@@ -438,79 +438,65 @@ endif
 PopWa()
 select kalk_pripr
 return
-*}
 
 
 
-/*! \fn renumeracija_kalk_pripr(cDok,cidvd)
- *  \brief Prenumerisanje stavki zadanog dokumenta u kalk_pripremi
- */
+// Prenumerisanje stavki zadanog dokumenta u kalk_pripremi
+function renumeracija_kalk_pripr( cDok, cIdvd )
+local _rbr
 
-function renumeracija_kalk_pripr(cDok,cidvd)
-*{
+O_KALK_PRIPR
 select kalk_pripr
 set order to
 go top
 
-nRbr:=0
+_rbr := 0
 do while !eof()
-  if Brdok==cDok .and. cidvd==idvd
-   replace rbr with RedniBroj(++nrbr)
-
-  endif
-  skip
+    if field->brdok == cDok .and. field->idvd == cIdvd
+        replace field->rbr with RedniBroj( ++ _rbr )
+    endif
+    skip
 enddo
 
 select kalk_pripr
 set order to tag "1"
 go top
 return
-*}
 
 
-
-/*! \fn IspitajPrekid()
- *  \brief Ispituje da li je pritisnuta tipka ESC. Koristi se u do while uslovu
- *  \return Ako je pritisnut ESC vraca .f., u suprotnom .t.
- */
 
 function IspitajPrekid()
-*{
- INKEY()
+INKEY()
 return IF(LASTKEY()==27,PrekSaEsc(),.t.)
-*}
 
 
 
 
 
-/*! \fn KaKaProd(nUlaz,nIzlaz,nMPV,nNV)
- *  \brief Kalkulacija stanja za karticu artikla u prodavnici
- */
-
+// Kalkulacija stanja za karticu artikla u prodavnici
 function KaKaProd(nUlaz,nIzlaz,nMPV,nNV)
-*{
-  if pu_i=="1"
+if pu_i=="1"
     nUlaz+=kolicina-GKolicina-GKolicin2
     nMPV+=mpcsapp*kolicina
     nNV+=nc*kolicina
-  elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
+elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
     nIzlaz+=kolicina
     nMPV-=mpcsapp*kolicina
     nNV-=nc*kolicina
-  elseif pu_i=="I"
+elseif pu_i=="I"
     nIzlaz+=gkolicin2
     nMPV-=mpcsapp*gkolicin2
     nNV-=nc*gkolicin2
-  elseif pu_i=="5"  .and. (idvd $ "12#13#22")    // povrat
+elseif pu_i=="5" .and. (idvd $ "12#13#22")    
+    // povrat
     nUlaz-=kolicina
     nMPV-=mpcsapp*kolicina
     nNV-=nc*kolicina
-  elseif pu_i=="3"    // nivelacija
+elseif pu_i=="3"    
+    // nivelacija
     nMPV+=mpcsapp*kolicina
-  endif
+endif
 return
-*}
 
 
 
@@ -519,7 +505,6 @@ return
  */
 
 function NCuMP(_idfirma,_idroba,_idkonto,nKolicina,dDatDok)
-*{
  LOCAL nArr:=SELECT()
   nKolS:=0
   nKolZN:=0
@@ -530,13 +515,13 @@ function NCuMP(_idfirma,_idroba,_idkonto,nKolicina,dDatDok)
   SELECT KALK
   PushWA()
   MsgO("Racunam stanje u prodavnici")
-  	KalkNabP(_idfirma,PADR(_idroba,LEN(idroba)),_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
+    KalkNabP(_idfirma,PADR(_idroba,LEN(idroba)),_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
   MsgC()
   SELECT KALK
   PopWA()
   SELECT (nArr)
 return nc2
-*}
+
 
 
 
@@ -572,8 +557,8 @@ local nTP, qqT1, qqT2, aUT1, aUT2
 O_KALK_PRIPR
 
 if !(kalk_pripr->idvd $ "10#81")
-	MsgBeep("Ova opcija vrijedi samo za dokumente tipa 10 i 81 !")
-	CLOSERET
+    MsgBeep("Ova opcija vrijedi samo za dokumente tipa 10 i 81 !")
+    CLOSERET
 endif
 
 nTP:=5
@@ -582,45 +567,45 @@ qqT2:=PADR(IzFmkIni("RasporedTroskova","UslovPoTarifamaT2","",KUMPATH),40)
 
 Box("#Obracun poreza pri uvozu",7,75)
 do while .t.
-	@ m_x+2, m_y+2 SAY "Porez je u trosku br.(1-5)" GET nTP PICT "9" VALID nTP>0 .and. nTP<6
-	@ m_x+3, m_y+2 SAY "Uslov za sifre tarifa grupe 1 (20%)" GET qqT1 PICT "@!S30"
-	@ m_x+4, m_y+2 SAY "Uslov za sifre tarifa grupe 2 (10%)" GET qqT2 PICT "@!S30"
-	read
-	aUT1:=Parsiraj(qqT1,"idTarifa")
-	aUT2:=Parsiraj(qqT2,"idTarifa")
-	if aUT1<>nil .and. aUT2<>nil
-		exit
-	endif
+    @ m_x+2, m_y+2 SAY "Porez je u trosku br.(1-5)" GET nTP PICT "9" VALID nTP>0 .and. nTP<6
+    @ m_x+3, m_y+2 SAY "Uslov za sifre tarifa grupe 1 (20%)" GET qqT1 PICT "@!S30"
+    @ m_x+4, m_y+2 SAY "Uslov za sifre tarifa grupe 2 (10%)" GET qqT2 PICT "@!S30"
+    read
+    aUT1:=Parsiraj(qqT1,"idTarifa")
+    aUT2:=Parsiraj(qqT2,"idTarifa")
+    if aUT1<>nil .and. aUT2<>nil
+        exit
+    endif
 enddo
 BoxC()
 
 if lastkey()<>K_ESC
-	// proracun poreza
-	select kalk_pripr
-	go top
-	do while !eof()
-		Scatter()
-		private cPom:=ImePoljaTroska(nTP)
-		
-		if gKalo=="1"
-			skol:=_kolicina-_gkolicina-_gkolicin2
-		else
-			skol:=_kolicina
-		endif
-		
-		if &aUT1
-			_t&cPom:="U"
-			_&cPom:=skol*_nc*0.2
-		elseif &aUT2
-			_t&cPom:="U"
-			_&cPom:=skol*_nc*0.1
-		endif
-		
-		NabCj()
-		
-		Gather()
-		skip 1
-	enddo
+    // proracun poreza
+    select kalk_pripr
+    go top
+    do while !eof()
+        Scatter()
+        private cPom:=ImePoljaTroska(nTP)
+        
+        if gKalo=="1"
+            skol:=_kolicina-_gkolicina-_gkolicin2
+        else
+            skol:=_kolicina
+        endif
+        
+        if &aUT1
+            _t&cPom:="U"
+            _&cPom:=skol*_nc*0.2
+        elseif &aUT2
+            _t&cPom:="U"
+            _&cPom:=skol*_nc*0.1
+        endif
+        
+        NabCj()
+        
+        Gather()
+        skip 1
+    enddo
 endif
 
 CLOSERET
@@ -743,23 +728,23 @@ else
 endif
 
 if (idvd $ "11#12#13")
-	if (roba->tip=="K")
-		nMarza2:=MPC-VPC*nPPP-nPrevoz
-	elseif (roba->tip=="X")
-		msgbeep("nije odradjeno")
-	else
-		nMarza2:=MPC-VPC-nPrevoz
-	endif
+    if (roba->tip=="K")
+        nMarza2:=MPC-VPC*nPPP-nPrevoz
+    elseif (roba->tip=="X")
+        msgbeep("nije odradjeno")
+    else
+        nMarza2:=MPC-VPC-nPrevoz
+    endif
 elseif ( (idvd $ "41#42#43#81") .or. (IsJerry() .and. idvd="4") )
-	if (roba->tip=="V")
-		nMarza2:=(MPC-roba->VPC)+roba->vpc*nPPP-NC
-	elseif (roba->tip=="X")
-		msgbeep("nije odradjeno")
-	else
-		nMarza2:=MPC-NC
-	endif
+    if (roba->tip=="V")
+        nMarza2:=(MPC-roba->VPC)+roba->vpc*nPPP-NC
+    elseif (roba->tip=="X")
+        msgbeep("nije odradjeno")
+    else
+        nMarza2:=MPC-NC
+    endif
 else
-	nMarza2:=MPC-VPC
+    nMarza2:=MPC-VPC
 endif
 return
 *}
@@ -828,27 +813,27 @@ nSelect:=SELECT()
 lUsedRoba:=.t.
 SELECT(F_ROBA)
 if !USED()
-	lUsedRoba:=.f.
-	O_ROBA
+    lUsedRoba:=.f.
+    O_ROBA
 else
-	SELECT(F_ROBA)
+    SELECT(F_ROBA)
 endif
 SEEK cIdRoba
 
 SELECT (nSelect)
 
 if field->pu_i=="1"
-	SumirajKolicinu(kolicina, 0, @nTotalUlaz,0)
+    SumirajKolicinu(kolicina, 0, @nTotalUlaz,0)
 elseif field->pu_i=="5"
-    	if field->idvd $ "12#13"
-     		SumirajKolicinu(-kolicina, 0, @nTotalUlaz,0)
-    	else
-     		SumirajKolicinu(0, kolicina, 0, @nTotalIzlaz)
-    	endif
+        if field->idvd $ "12#13"
+            SumirajKolicinu(-kolicina, 0, @nTotalUlaz,0)
+        else
+            SumirajKolicinu(0, kolicina, 0, @nTotalIzlaz)
+        endif
 elseif field->pu_i=="3"    
-	// nivelacija
+    // nivelacija
 elseif field->pu_i=="I"
-    	SumirajKolicinu(0, gkolicin2, 0, @nTotalIzlaz)
+        SumirajKolicinu(0, gkolicin2, 0, @nTotalIzlaz)
 endif
 
 
@@ -871,30 +856,30 @@ nSelect:=SELECT()
 lUsedRoba:=.t.
 SELECT(F_ROBA)
 if !USED()
-	lUsedRoba:=.f.
-	O_ROBA
+    lUsedRoba:=.f.
+    O_ROBA
 else
-	SELECT(F_ROBA)
+    SELECT(F_ROBA)
 endif
 SEEK cIdRoba
 
 SELECT (nSelect)
 if field->mu_i=="1"
-	if !(field->idVd $ "12#22#94")
-		SumirajKolicinu(field->kolicina-field->gKolicina-field->gKolicin2, 0, @nTotalUlaz, 0)
+    if !(field->idVd $ "12#22#94")
+        SumirajKolicinu(field->kolicina-field->gKolicina-field->gKolicin2, 0, @nTotalUlaz, 0)
 
-	else
-		SumirajKolicinu(0, -field->kolicina, 0, @nTotalIzlaz)
-	endif
+    else
+        SumirajKolicinu(0, -field->kolicina, 0, @nTotalIzlaz)
+    endif
      
 elseif field->mu_i=="5"
-	SumirajKolicinu(0, field->kolicina, 0, @nTotalIzlaz)
-	
+    SumirajKolicinu(0, field->kolicina, 0, @nTotalIzlaz)
+    
 elseif field->mu_i=="3"    
 
 elseif field->mu_i=="8"
-	// sta je mu_i==8 ??
-	SumirajKolicinu(-field->kolicina, -field->kolicina, @nTotUlaz, @nTotalIzlaz)
+    // sta je mu_i==8 ??
+    SumirajKolicinu(-field->kolicina, -field->kolicina, @nTotUlaz, @nTotalIzlaz)
 endif
 
 return
@@ -989,49 +974,49 @@ cOtpremnica:=SPACE(10)
 cIdKonto:="1320   "
 nBrojac:=0
 Box(,2,50)
-	@ 1+m_x, 2+m_y SAY "Prod.konto zaduzuje: " GET cIdKonto VALID !Empty(cIdKonto)
-	@ 2+m_x, 2+m_y SAY "Po otpremnici: " GET cOtpremnica
-	read
+    @ 1+m_x, 2+m_y SAY "Prod.konto zaduzuje: " GET cIdKonto VALID !Empty(cIdKonto)
+    @ 2+m_x, 2+m_y SAY "Po otpremnici: " GET cOtpremnica
+    read
 BoxC()
 
 select kalk_pripr
 go top
 do while !EOF()
-	aPorezi:={}
-	fMarza:=" "
-	++nBrojac
-	cKonto:=kalk_pripr->idKonto
-	cRoba:=kalk_pripr->idRoba
-	cTarifa:=kalk_pripr->idtarifa
-	select roba
-	seek cRoba
-	select tarifa
-	seek cTarifa
-	SetAPorezi(@aPorezi)
-	VTPorezi()
-	select kalk_pripr
-	Scatter()
-	select kalk_pripr9
-	append blank
-	_idvd:="11"
-	_brDok:=cBrDok
-	_idKonto:=cIdKonto
-	_idKonto2:=cKonto
-	_brFaktP:=cOtpremnica
-	_tPrevoz:="R"
-	_tMarza:="A"
-	_marza:=_vpc/(1+_PORVT)-_fcj
-	_tMarza2:="A"
-	_mpcsapp:=UzmiMpcSif()
-	VMPC(.f., fMarza)
-	VMPCSaPP(.f.,fMarza)
-	_MU_I:="5"
-	_PU_I:="1"
-	_mKonto:=cKonto
-	_pKonto:=cIdKonto
-	Gather()
-	select kalk_pripr
-	skip
+    aPorezi:={}
+    fMarza:=" "
+    ++nBrojac
+    cKonto:=kalk_pripr->idKonto
+    cRoba:=kalk_pripr->idRoba
+    cTarifa:=kalk_pripr->idtarifa
+    select roba
+    seek cRoba
+    select tarifa
+    seek cTarifa
+    SetAPorezi(@aPorezi)
+    VTPorezi()
+    select kalk_pripr
+    Scatter()
+    select kalk_pripr9
+    append blank
+    _idvd:="11"
+    _brDok:=cBrDok
+    _idKonto:=cIdKonto
+    _idKonto2:=cKonto
+    _brFaktP:=cOtpremnica
+    _tPrevoz:="R"
+    _tMarza:="A"
+    _marza:=_vpc/(1+_PORVT)-_fcj
+    _tMarza2:="A"
+    _mpcsapp:=UzmiMpcSif()
+    VMPC(.f., fMarza)
+    VMPCSaPP(.f.,fMarza)
+    _MU_I:="5"
+    _PU_I:="1"
+    _mKonto:=cKonto
+    _pKonto:=cIdKonto
+    Gather()
+    select kalk_pripr
+    skip
 
 enddo
 
@@ -1051,17 +1036,17 @@ O_KALK_PRIPR9
 select kalk_pripr9
 go top
 do while !EOF()
-	if (field->idvd=="11" .and. field->brdok==cBrDok)
-		Scatter()
-		select kalk_pripr
-		append blank
-		Gather()
-		select kalk_pripr9
-		delete
-		skip
-	else
-		skip
-	endif
+    if (field->idvd=="11" .and. field->brdok==cBrDok)
+        Scatter()
+        select kalk_pripr
+        append blank
+        Gather()
+        select kalk_pripr9
+        delete
+        skip
+    else
+        skip
+    endif
 enddo
 
 select (nArr)
@@ -1079,12 +1064,12 @@ cIdVD:=kalk_pripr->idvd
 go (nTRecNo)
 // ako se ne radi o 10-ci nista
 if (cIdVD <> "10")
-	return .f.
+    return .f.
 endif
 if IzFmkIni("KALK","AutoGen11","N",KUMPATH)=="D" .and. Pitanje(,"Formirati 11-ku (D/N)?","D")=="D"
-	return .t.
+    return .t.
 else
-	return .f.
+    return .f.
 endif
 return
 *}
@@ -1115,17 +1100,17 @@ O_TARIFA
 
 SET CURSOR ON
 Box(,5,60)
-	cUvijekUzmi := "N"
-	@ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!" VALID  EMPTY(cZaTarifu) .or. P_Tarifa(@cZaTarifu)
-	@ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get nZaokruzenje PICT "9"
-	@ 3+m_x, 3+m_y SAY "PDV tarifa " GET cPdvTarifa VALID P_Tarifa(@cPdvTarifa)
-	@ 4+m_x, 3+m_y SAY "Set cijena MPC (1), MPC2 (2) " GET cSetCijena VALID cSetCijena $ "12"
-	READ
-	
+    cUvijekUzmi := "N"
+    @ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!" VALID  EMPTY(cZaTarifu) .or. P_Tarifa(@cZaTarifu)
+    @ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get nZaokruzenje PICT "9"
+    @ 3+m_x, 3+m_y SAY "PDV tarifa " GET cPdvTarifa VALID P_Tarifa(@cPdvTarifa)
+    @ 4+m_x, 3+m_y SAY "Set cijena MPC (1), MPC2 (2) " GET cSetCijena VALID cSetCijena $ "12"
+    READ
+    
 BoxC()
 
 if Lastkey() == K_ESC
-	closeret
+    closeret
 endif
 
 
@@ -1139,71 +1124,71 @@ Box(,3,60)
 aPorezi := {}
 
 do while !eof()
-	
-	cIdRoba := roba->id
-	
-	SELECT robasez
-	set order to tag "ID"
-	hseek cIdRoba
-	
-	if !Found()
-		select roba
-		skip
-		loop
-	endif
+    
+    cIdRoba := roba->id
+    
+    SELECT robasez
+    set order to tag "ID"
+    hseek cIdRoba
+    
+    if !Found()
+        select roba
+        skip
+        loop
+    endif
 
-	cIdTarifa:=robasez->idtarifa
-	nMpcSaP1 := robasez->mpc
-	nMpcSaP2 := robasez->mpc2
+    cIdTarifa:=robasez->idtarifa
+    nMpcSaP1 := robasez->mpc
+    nMpcSaP2 := robasez->mpc2
 
-	if robasez->(FIELDPOS("zaniv2")) <> 0
-		nAkcizaPorez := robasez->zaniv2
-	else
-		nAkcizaPorez := 0
-	endif
-	
-	if !empty(cZaTarifu) .and. (cIdTarifa <> cZaTarifu)
-		select roba
-		skip
-		loop	
-	endif
-	
-	@ m_x+1,m_y+2 SAY "Roba / Tarifa : " + cIdRoba + "/" + cIdTarifa
+    if robasez->(FIELDPOS("zaniv2")) <> 0
+        nAkcizaPorez := robasez->zaniv2
+    else
+        nAkcizaPorez := 0
+    endif
+    
+    if !empty(cZaTarifu) .and. (cIdTarifa <> cZaTarifu)
+        select roba
+        skip
+        loop    
+    endif
+    
+    @ m_x+1,m_y+2 SAY "Roba / Tarifa : " + cIdRoba + "/" + cIdTarifa
 
-	// ako je konto prazan, onda gledaj samo sifrarnik
-	Tarifa( "", cIdRoba, @aPorezi, cIdTarifa)
-	
-	
-	// nc = 99999 jer je ne trebamo
-	nMpcBP1 := MpcBezPor( nMpcSaP1, aPorezi, , 99999)
-	nMpcBP2 := MpcBezPor( nMpcSaP2, aPorezi, , 99999)
+    // ako je konto prazan, onda gledaj samo sifrarnik
+    Tarifa( "", cIdRoba, @aPorezi, cIdTarifa)
+    
+    
+    // nc = 99999 jer je ne trebamo
+    nMpcBP1 := MpcBezPor( nMpcSaP1, aPorezi, , 99999)
+    nMpcBP2 := MpcBezPor( nMpcSaP2, aPorezi, , 99999)
 
-	nMpcBP1 -= nAkcizaPorez
-	nMpcBP2 -= nAkcizaPorez
-	
-	SELECT tarifa
-	SEEK cPdvTarifa
-	nPdvTarifa := tarifa->opp
-	
-	nPdvC1 := nMpcBP1 * ( 1 + nPdvTarifa/100 )
-	nPdvC1 := ROUND( nPdvC1, nZaokruzenje)
-		
-	nPdvC2 := nMpcBP2 * ( 1 + nPdvTarifa/100 )
-	nPdvC2 := ROUND( nPdvC2, nZaokruzenje)
+    nMpcBP1 -= nAkcizaPorez
+    nMpcBP2 -= nAkcizaPorez
+    
+    SELECT tarifa
+    SEEK cPdvTarifa
+    nPdvTarifa := tarifa->opp
+    
+    nPdvC1 := nMpcBP1 * ( 1 + nPdvTarifa/100 )
+    nPdvC1 := ROUND( nPdvC1, nZaokruzenje)
+        
+    nPdvC2 := nMpcBP2 * ( 1 + nPdvTarifa/100 )
+    nPdvC2 := ROUND( nPdvC2, nZaokruzenje)
 
-	SELECT ROBA
+    SELECT ROBA
 
-	if cSetCijena == "1"
-		replace mpc with nPdvC1
-	endif
+    if cSetCijena == "1"
+        replace mpc with nPdvC1
+    endif
 
         if cSetCijena == "2"
-		replace mpc2 with nPdvC2
-	endif
- 	
-	skip
-	
-enddo		
+        replace mpc2 with nPdvC2
+    endif
+    
+    skip
+    
+enddo       
 
 BoxC()
 
@@ -1235,17 +1220,17 @@ O_TARIFA
 nFaktor := 1.17
 SET CURSOR ON
 Box(,5,60)
-	cUvijekUzmi := "N"
-	@ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!" VALID  EMPTY(cZaTarifu) .or. P_Tarifa(@cZaTarifu)
-	@ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get nZaokruzenje PICT "9"
-	@ 4+m_x, 3+m_y SAY "Set cijena MPC (1), MPC2 (2) " GET cSetCijena VALID cSetCijena $ "12"
-	@ 5+m_x, 3+m_y SAY "Faktor sa kojim se cijena mnozi ?" GET nFaktor PICT  "999999.99999"
-	READ
-	
+    cUvijekUzmi := "N"
+    @ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!" VALID  EMPTY(cZaTarifu) .or. P_Tarifa(@cZaTarifu)
+    @ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get nZaokruzenje PICT "9"
+    @ 4+m_x, 3+m_y SAY "Set cijena MPC (1), MPC2 (2) " GET cSetCijena VALID cSetCijena $ "12"
+    @ 5+m_x, 3+m_y SAY "Faktor sa kojim se cijena mnozi ?" GET nFaktor PICT  "999999.99999"
+    READ
+    
 BoxC()
 
 if Lastkey() == K_ESC
-	closeret
+    closeret
 endif
 
 
@@ -1259,32 +1244,32 @@ Box(,3,60)
 aPorezi := {}
 
 do while !eof()
-	
-	cIdRoba := roba->id
-	cIdTarifa := roba->idtarifa
-	
-	@ m_x+1,m_y+2 SAY "Roba / Tarifa : " + cIdRoba + "/" + cIdTarifa
+    
+    cIdRoba := roba->id
+    cIdTarifa := roba->idtarifa
+    
+    @ m_x+1,m_y+2 SAY "Roba / Tarifa : " + cIdRoba + "/" + cIdTarifa
 
-	// ako je konto prazan, onda gledaj samo sifrarnik
-	//Tarifa( "", cIdRoba, @aPorezi, cIdTarifa)
-	
-	
+    // ako je konto prazan, onda gledaj samo sifrarnik
+    //Tarifa( "", cIdRoba, @aPorezi, cIdTarifa)
+    
+    
 
-	SELECT ROBA
+    SELECT ROBA
 
-	if cSetCijena == "1"
-	        nNovaCj := ROUND( mpc * nFaktor, nZaokruzenje)
-		replace mpc with nNovaCj
-	endif
+    if cSetCijena == "1"
+            nNovaCj := ROUND( mpc * nFaktor, nZaokruzenje)
+        replace mpc with nNovaCj
+    endif
 
         if cSetCijena == "2"
-	        nNovaCj := ROUND( mpc2 * nFaktor, nZaokruzenje)
-		replace mpc2 with nNovaCj
-	endif
- 	
-	skip
-	
-enddo		
+            nNovaCj := ROUND( mpc2 * nFaktor, nZaokruzenje)
+        replace mpc2 with nNovaCj
+    endif
+    
+    skip
+    
+enddo       
 
 BoxC()
 
@@ -1306,19 +1291,19 @@ select kalk
 set order to tag "1"
 hseek cIdFirma+cIdVd+cBrDok
 if Found()
-	MsgO("Kopiram dokument u pript...")
-	do while !EOF() .and. (kalk->(idfirma+idvd+brdok) == cIdFirma+cIdVd+cBrDok) 
-		Scatter()
-		select pript
-		append blank
-		Gather()
-		select kalk
-		skip
-	enddo
-	MsgC()
+    MsgO("Kopiram dokument u pript...")
+    do while !EOF() .and. (kalk->(idfirma+idvd+brdok) == cIdFirma+cIdVd+cBrDok) 
+        Scatter()
+        select pript
+        append blank
+        Gather()
+        select kalk
+        skip
+    enddo
+    MsgC()
 else
-	MsgBeep("Dokument " + cIdFirma + "-" + cIdVd + "-" + ALLTRIM(cBrDok) + " ne postoji !!!")
-	return 0
+    MsgBeep("Dokument " + cIdFirma + "-" + cIdVd + "-" + ALLTRIM(cBrDok) + " ne postoji !!!")
+    return 0
 endif
 
 return 1
@@ -1332,15 +1317,15 @@ function get_pu_i(cIdVd)
 local cRet := " "
 
 do case 
-	case cIdVd $ "11#15#80#81"
-		cRet := "1"
-	case cIdVd $ "12#41#42#43"
-		cRet := "5"
-	case cIdVd == "19"
-		cRet := "3"
-	case cIdVd == "IP"
-		cRet := "I"
-		
+    case cIdVd $ "11#15#80#81"
+        cRet := "1"
+    case cIdVd $ "12#41#42#43"
+        cRet := "5"
+    case cIdVd == "19"
+        cRet := "3"
+    case cIdVd == "IP"
+        cRet := "I"
+        
 endcase
 
 return cRet
@@ -1353,17 +1338,17 @@ function get_mu_i(cIdVd)
 local cRet := " "
 
 do case 
-	case cIdVd $ "10#12#16#94"
-		cRet := "1"
-	case cIdVd $ "11#14#82#95#96#97"
-		cRet := "5"
-	case cIdVd == "15"
-		cRet := "8"
-	case cIdVd == "18"
-		cRet := "3"
-	case cIdVd == "IM"
-		cRet := "I"
-		
+    case cIdVd $ "10#12#16#94"
+        cRet := "1"
+    case cIdVd $ "11#14#82#95#96#97"
+        cRet := "5"
+    case cIdVd == "15"
+        cRet := "8"
+    case cIdVd == "18"
+        cRet := "3"
+    case cIdVd == "IM"
+        cRet := "I"
+        
 endcase
 
 return cRet
@@ -1380,16 +1365,16 @@ local lRet := .f.
 select kalk
 
 if cIdVD $ "#80#81#41#42#43#12#19#IP" 
-	set order to tag "PU_I2"
+    set order to tag "PU_I2"
 else
-	set order to tag "MU_I2"
+    set order to tag "MU_I2"
 endif
 
 go top
 seek "P" + cFirma + cIdVd + cBRDok
 
 if FOUND()
-	lRet := .t.
+    lRet := .t.
 endif
 
 select kalk
@@ -1405,17 +1390,17 @@ function pl_scan_automatic()
 local nTArea := SELECT()
 
 if !isplanika()
-	return
+    return
 endif
 
 if o_p_update() == 0
-	return
+    return
 endif
 select p_update
 go top
 
 if p_update->(RecCount()) == 0
-	return
+    return
 endif
 
 go top
@@ -1423,21 +1408,21 @@ go top
 MsgBeep("!EOF()")
 
 do while !EOF()
-	
-	if field->p_updated == "N"
-	
-		scan_dok_u_procesu("P", field->idkonto)
-		
-		select p_update
-		
-		scatter()
-		_p_updated := "D"
-		gather()
-		
-	endif
-		
-	select p_update
-	skip
+    
+    if field->p_updated == "N"
+    
+        scan_dok_u_procesu("P", field->idkonto)
+        
+        select p_update
+        
+        scatter()
+        _p_updated := "D"
+        gather()
+        
+    endif
+        
+    select p_update
+    skip
 enddo
 
 c_p_update()
@@ -1453,20 +1438,20 @@ function pl_scan_dok_u_procesu(cKonto)
 local nTArea := SELECT()
 
 if !IsPlanika()
-	return
+    return
 endif
 
 // da li treba odraditi update za specifican konto
 if !EMPTY(cKonto) .and. scan_p_update("TOPS", cKonto)
-	// skeniraj dokumente u procesu
-    	scan_dok_u_procesu("P", cKonto)
-    	// dodaj da je skenirano za konto....
-	add_p_update("TOPS", cKonto, "D")
+    // skeniraj dokumente u procesu
+        scan_dok_u_procesu("P", cKonto)
+        // dodaj da je skenirano za konto....
+    add_p_update("TOPS", cKonto, "D")
 endif
 
 // da li treba uraditi update za sva konta
 if EMPTY(cKonto)
-	scan_dok_u_procesu("P")
+    scan_dok_u_procesu("P")
 endif
 
 select (nTArea)
@@ -1495,17 +1480,17 @@ O_KALK
 o_kalk_doks
 
 if cPMKonto == nil
-	cPMKonto := ""
+    cPMKonto := ""
 endif
 
 if cMagProd == nil
-	cMagProd := "P"
+    cMagProd := "P"
 endif
 
 select kalk
 
 if cMagProd == "P"
-	cPMU_I := "PU_I"
+    cPMU_I := "PU_I"
 endif
 
 cFldMPKonto := cMagProd + "KONTO"
@@ -1516,7 +1501,7 @@ go top
 cSeekUsl := "P"
 
 if !EMPTY(cPMKonto)
-	cSeekUsl += cPMKonto
+    cSeekUsl += cPMKonto
 endif
 
 seek cSeekUsl
@@ -1524,74 +1509,74 @@ seek cSeekUsl
 Box(, 2, 70)
 
 do while !EOF() .and. field->&cPMU_I == "P" ;
-		.and. IF(!EMPTY(cPMKonto), field->&cFldMPKonto == cPMKonto, .t.)
-	
-	cKIdFirma := kalk->idfirma
-	cKIdVd := kalk->idvd
-	cKBrDok := kalk->brdok
-	cKKonto := kalk->idkonto
+        .and. IF(!EMPTY(cPMKonto), field->&cFldMPKonto == cPMKonto, .t.)
+    
+    cKIdFirma := kalk->idfirma
+    cKIdVd := kalk->idvd
+    cKBrDok := kalk->brdok
+    cKKonto := kalk->idkonto
 
-	@ m_x+1, m_y+2 SAY "Dokument: " + cKIdFirma + "-" + cKIdVd + "-" + cKBrDok + SPACE(5) + "konto: " + cKKonto
+    @ m_x+1, m_y+2 SAY "Dokument: " + cKIdFirma + "-" + cKIdVd + "-" + cKBrDok + SPACE(5) + "konto: " + cKKonto
 
-	// provjeri da li je tops dokument na stanju
-	nDokNaStanju := tops_dok_na_stanju(cKIdFirma, cKIdVd, cKBrDok, cKKonto)
-		
-	select kalk
+    // provjeri da li je tops dokument na stanju
+    nDokNaStanju := tops_dok_na_stanju(cKIdFirma, cKIdVd, cKBrDok, cKKonto)
+        
+    select kalk
 
-	if nDokNaStanju == -1
-		MsgBeep(cKKonto + " nema podesene parametre u konciju!!!")
-		skip
-		loop
-	endif
+    if nDokNaStanju == -1
+        MsgBeep(cKKonto + " nema podesene parametre u konciju!!!")
+        skip
+        loop
+    endif
 
-	if nDokNaStanju == 2
-		
-		if EMPTY(cPMKonto)
-		  MsgBeep("Dokument " + kalk->idfirma + "-" + ;
-		      	  kalk->idvd + "-" + ALLTRIM(kalk->brdok) + ;
-			  " nije prenesen u TOPS !")
-		endif
-		
-	endif
-	
-	do while !EOF() .and. kalk->(&cPMU_I + idfirma + idvd + brdok) == "P" + cKIdFirma + cKIdVd + cKBrDok
-		
-		skip
-		nNRec := RECNO()
-		skip -1
-		
-		if nDokNaStanju == 1
-			
-			// funkcije koje setuju stanje...
-			Scatter()
-			_pu_i := get_pu_i(cKIdVd)
-			_mu_i := get_mu_i(cKIdVd)
-			Gather()
+    if nDokNaStanju == 2
+        
+        if EMPTY(cPMKonto)
+          MsgBeep("Dokument " + kalk->idfirma + "-" + ;
+                  kalk->idvd + "-" + ALLTRIM(kalk->brdok) + ;
+              " nije prenesen u TOPS !")
+        endif
+        
+    endif
+    
+    do while !EOF() .and. kalk->(&cPMU_I + idfirma + idvd + brdok) == "P" + cKIdFirma + cKIdVd + cKBrDok
+        
+        skip
+        nNRec := RECNO()
+        skip -1
+        
+        if nDokNaStanju == 1
+            
+            // funkcije koje setuju stanje...
+            Scatter()
+            _pu_i := get_pu_i(cKIdVd)
+            _mu_i := get_mu_i(cKIdVd)
+            Gather()
 
-			++ nCount
+            ++ nCount
 
-			cSeekDok := kalk->idfirma
-			cSeekDok += "-"
-			cSeekDok += kalk->idvd
-			cSeekDok += "-"
-			cSeekDok += ALLTRIM(kalk->brdok)
+            cSeekDok := kalk->idfirma
+            cSeekDok += "-"
+            cSeekDok += kalk->idvd
+            cSeekDok += "-"
+            cSeekDok += ALLTRIM(kalk->brdok)
 
-			nScanArr := ASCAN(aDokNaStanju, {|xVal| xVal[1] == cSeekDok })
-			if nScanArr == 0
-				AADD(aDokNaStanju, { cSeekDok, kalk->datdok })
-			endif
-			
-		endif
-		
-		if EMPTY(cPMKonto)
-			// upisi da je skenirano u p_update
-    			add_p_update("TOPS", kalk->pkonto, "D")
-		endif
+            nScanArr := ASCAN(aDokNaStanju, {|xVal| xVal[1] == cSeekDok })
+            if nScanArr == 0
+                AADD(aDokNaStanju, { cSeekDok, kalk->datdok })
+            endif
+            
+        endif
+        
+        if EMPTY(cPMKonto)
+            // upisi da je skenirano u p_update
+                add_p_update("TOPS", kalk->pkonto, "D")
+        endif
 
-		select kalk
-		
-		go (nNREC)
-	enddo
+        select kalk
+        
+        go (nNREC)
+    enddo
 enddo
 
 BoxC()
@@ -1609,8 +1594,8 @@ static function rpt_dok_na_stanju(aDoks)
 local i
 
 if LEN(aDoks) == 0
-	MsgBeep("Nema novih dokumenata na stanju !")
-	return
+    MsgBeep("Nema novih dokumenata na stanju !")
+    return
 endif
 
 START PRINT CRET
@@ -1620,7 +1605,7 @@ START PRINT CRET
 ?
 
 for i:=1 TO LEN(aDoks)
-	? aDoks[i, 1], aDoks[i, 2]
+    ? aDoks[i, 1], aDoks[i, 2]
 next
 
 ?
@@ -1652,12 +1637,12 @@ set order to tag "ID"
 hseek cKonto
 
 if FOUND()
-	cTKPath := ALLTRIM(field->kumtops)
-	cTSPath := ALLTRIM(field->siftops)
-	cTPm := field->idprodmjes
+    cTKPath := ALLTRIM(field->kumtops)
+    cTSPath := ALLTRIM(field->siftops)
+    cTPm := field->idprodmjes
 else
-	select (nTArea)
-	return -1
+    select (nTArea)
+    return -1
 endif
 
 AddBS(@cTKPath)
@@ -1665,20 +1650,20 @@ AddBS(@cTSPath)
 
 // otvori kalk_doksRC i kalk_doks
 if FILE(cTKPath + "DOKSRC.DBF")
-	select (248)
-	use (cTKPath + "DOKSRC") alias TDOKSRC
-	set order to tag "2"
+    select (248)
+    use (cTKPath + "DOKSRC") alias TDOKSRC
+    set order to tag "2"
 else
-	select (nTArea)
-	return -1
+    select (nTArea)
+    return -1
 endif
 if FILE(cTKPath + "DOKS.DBF")
-	select (249)
-	use (cTKPath + "DOKS") alias TDOKS
-	set order to tag "2"
+    select (249)
+    use (cTKPath + "DOKS") alias TDOKS
+    set order to tag "2"
 else
-	select (nTArea)
-	return -1
+    select (nTArea)
+    return -1
 endif
 
 select tdoksrc
@@ -1687,25 +1672,25 @@ seek PADR("KALK", 10) + cFirma + cIdvd + cBrDok
 
 // pronadji dokument TOPS - vezni
 if FOUND()
-	
-	cTBrDok := tdoksrc->brdok
-	cTIdPos := tdoksrc->idfirma
-	cTIdVd := tdoksrc->idvd
-	dTDatum := tdoksrc->datdok
+    
+    cTBrDok := tdoksrc->brdok
+    cTIdPos := tdoksrc->idfirma
+    cTIdVd := tdoksrc->idvd
+    dTDatum := tdoksrc->datdok
 
-	select tdoks
-	set order to tag "1"
-	go top
-	seek cTIdPos + cTIdVd + DTOS(dTDatum) + cTBrDok
+    select tdoks
+    set order to tag "1"
+    go top
+    seek cTIdPos + cTIdVd + DTOS(dTDatum) + cTBrDok
 
-	if FOUND()
-		if ALLTRIM(tdoks->sto) == "N"
-			nNaStanju := 0
-		endif
-	endif
-	
+    if FOUND()
+        if ALLTRIM(tdoks->sto) == "N"
+            nNaStanju := 0
+        endif
+    endif
+    
 else
-	nNaStanju := 2
+    nNaStanju := 2
 endif
 
 select (248)
@@ -1728,18 +1713,18 @@ local nNo := 5
 local cPredzn := "0"
 
 if Pitanje(,"Izvrsiti konverziju ?", "N") == "N"
-	return
+    return
 endif
 
 if !SigmaSif("SIFDOB")
-	msgbeep("Ne cackaj !!!")
-	return
+    msgbeep("Ne cackaj !!!")
+    return
 endif
 
 Box(,3,50)
-	@ m_x + 1, m_y + 2 SAY "velicina sifre" GET nNo PICT "9"
-	@ m_x + 2, m_y + 2 SAY "prefiks" GET cPredzn 
-	read
+    @ m_x + 1, m_y + 2 SAY "velicina sifre" GET nNo PICT "9"
+    @ m_x + 2, m_y + 2 SAY "prefiks" GET cPredzn 
+    read
 BoxC()
 
 O_ROBA
@@ -1747,23 +1732,23 @@ set order to tag "ID"
 go top
 
 do while !EOF()
-	
-	// sifra dobavljaca
-	cSDob := ALLTRIM( field->sifradob )
+    
+    // sifra dobavljaca
+    cSDob := ALLTRIM( field->sifradob )
  
- 	if !EMPTY( cSDob )
-		cNDob := PADL( cSDob, nNo, cPredzn )
- 		// ubaci novu sifru sa nulama
-		replace sifradob with PADR( cNDob, 8 )
-		++ nCount 
-	endif
-	
-	skip
+    if !EMPTY( cSDob )
+        cNDob := PADL( cSDob, nNo, cPredzn )
+        // ubaci novu sifru sa nulama
+        replace sifradob with PADR( cNDob, 8 )
+        ++ nCount 
+    endif
+    
+    skip
 
 enddo
 
 if nCount > 0
-	msgbeep("Konvertovano: " + ALLTRIM(STR(nCount)) + " zapisa !")
+    msgbeep("Konvertovano: " + ALLTRIM(STR(nCount)) + " zapisa !")
 endif
 
 return
@@ -1778,12 +1763,12 @@ local dD_t
 local dDate
 
 if ddoc_vars( @dD_f, @dD_t ) = 0
-	return
+    return
 endif
 
 if !SigmaSif("KALKDEL")
-	msgbeep("Ne cackaj !")
-	return
+    msgbeep("Ne cackaj !")
+    return
 endif
 
 o_kalk_doks
@@ -1796,13 +1781,13 @@ go top
 
 do while !EOF()
 
-	dDate := field->datdok
+    dDate := field->datdok
 
-	if ( dDate >= dD_f .and. dDate <= dD_t )
-		delete
-	endif
+    if ( dDate >= dD_f .and. dDate <= dD_t )
+        delete
+    endif
 
-	skip
+    skip
 enddo
 msgc()
 
@@ -1812,14 +1797,14 @@ set order to tag "1"
 go top
 
 do while !EOF()
-	
-	dDate := field->datdok
+    
+    dDate := field->datdok
 
-	if ( dDate >= dD_f .and. dDate <= dD_t )
-		delete
-	endif
+    if ( dDate >= dD_f .and. dDate <= dD_t )
+        delete
+    endif
 
-	skip
+    skip
 enddo
 msgc()
 
@@ -1838,13 +1823,13 @@ dDate_f := DATE()
 dDate_t := DATE()
 
 Box(,1, 60)
-	@ m_x + 1, m_y + 2 SAY "u periodu od:" GET dDate_f
-	@ m_x + 1, col() + 1 SAY "do:" GET dDate_t 
-	read
+    @ m_x + 1, m_y + 2 SAY "u periodu od:" GET dDate_f
+    @ m_x + 1, col() + 1 SAY "do:" GET dDate_t 
+    read
 BoxC()
 
 if LastKey() == K_ESC
-	return 0
+    return 0
 endif
 
 return 1
@@ -1865,24 +1850,24 @@ local lSilent := .t.
 local lWriteKParam := .t.
 
 Box(, 5, 60)
-	@ m_x + 1, m_y + 2 SAY "Dodaj podatke iz sezona:" ;
-		GET cSezone ;
-		PICT "@S25"
+    @ m_x + 1, m_y + 2 SAY "Dodaj podatke iz sezona:" ;
+        GET cSezone ;
+        PICT "@S25"
 
-	read
+    read
 BoxC()
 
 if LastKey() == K_ESC
-	return
+    return
 endif
 
 if EMPTY( cSezone )
-	return
+    return
 endif
 
 if !SigmaSif("KALKJ")
-	msgbeep("Ne cackaj!")
-	return
+    msgbeep("Ne cackaj!")
+    return
 endif
 
 // predji u tekucu sezonu i setuj path
@@ -1898,44 +1883,44 @@ goModul:oDataBase:logAgain( cR_sez, lSilent, lWriteKParam )
 aSezone := TokToNiz( ALLTRIM(cSezone), ";" )
 
 for i:=1 to LEN( aSezone )
-	
-	if ALLTRIM( aSezone[i] ) <> cR_sez
-	
-		o_p_tbl( cT_path, ALLTRIM( aSezone[i] ), cT_sez )
-	
-		msgo("prebacujem sezonu " + ALLTRIM( aSezone[i]))
+    
+    if ALLTRIM( aSezone[i] ) <> cR_sez
+    
+        o_p_tbl( cT_path, ALLTRIM( aSezone[i] ), cT_sez )
+    
+        msgo("prebacujem sezonu " + ALLTRIM( aSezone[i]))
 
-		O_KALK
-		o_kalk_doks
+        O_KALK
+        o_kalk_doks
 
-		select kalk_s
-		go top
-		do while !EOF()
-			scatter()
-			select kalk
-			append blank
-			Gather()
-			select kalk_s
-			skip
-		enddo
-	
-		select kalk_doks_s
-		go top
-		do while !EOF()
-			scatter()
-			select kalk_doks
-			append blank
-			Gather()
-			select kalk_doks_s
-			skip
-			++ nCnt
-		enddo
+        select kalk_s
+        go top
+        do while !EOF()
+            scatter()
+            select kalk
+            append blank
+            Gather()
+            select kalk_s
+            skip
+        enddo
+    
+        select kalk_doks_s
+        go top
+        do while !EOF()
+            scatter()
+            select kalk_doks
+            append blank
+            Gather()
+            select kalk_doks_s
+            skip
+            ++ nCnt
+        enddo
 
-		msgc()
+        msgc()
 
-		c_p_tbl()
+        c_p_tbl()
 
-	endif
+    endif
 
 next
 
@@ -1963,22 +1948,22 @@ local dD_to := CTOD("")
 
 Box(, 5, 60)
 
-	@ m_x + 1, m_y + 2 SAY "export sezone:" ;
-		GET cSezone ;
-		PICT "@S40"
+    @ m_x + 1, m_y + 2 SAY "export sezone:" ;
+        GET cSezone ;
+        PICT "@S40"
 
-	@ m_x + 3, m_y + 2 SAY "dokumenti (prazno-svi):" ;
-		GET cU_dok ;
-		PICT "@S30"
+    @ m_x + 3, m_y + 2 SAY "dokumenti (prazno-svi):" ;
+        GET cU_dok ;
+        PICT "@S30"
 
-	@ m_x + 4, m_y + 2 SAY "datum od:" GET dD_from
-	@ m_x + 4, col() + 1 SAY "do:" GET dD_to
-	
-	read
+    @ m_x + 4, m_y + 2 SAY "datum od:" GET dD_from
+    @ m_x + 4, col() + 1 SAY "do:" GET dD_to
+    
+    read
 BoxC()
 
 if LastKey() == K_ESC
-	return
+    return
 endif
 
 // kreiraj pomocnu tabelu
@@ -1989,71 +1974,71 @@ aSezone := TokToNiz( ALLTRIM(cSezone), ";" )
 
 // prodji kroz sezone i napuni podatke
 for i:=1 to LEN( aSezone )
-	
-	if ALLTRIM( aSezone[i] ) <> cT_sez
+    
+    if ALLTRIM( aSezone[i] ) <> cT_sez
 
-		// predji u sezonu
-		goModul:oDataBase:logAgain( ALLTRIM(aSezone[i]), ;
-			lSilent, lWriteKParam )
-		// vrati mi vrijednost o sezoni
-		cG_sez := ALLTRIM( aSezone[i] )
+        // predji u sezonu
+        goModul:oDataBase:logAgain( ALLTRIM(aSezone[i]), ;
+            lSilent, lWriteKParam )
+        // vrati mi vrijednost o sezoni
+        cG_sez := ALLTRIM( aSezone[i] )
 
-		o_tmp( cP_Path )
-	endif
+        o_tmp( cP_Path )
+    endif
 
-	msgo("exportujem sezonu " + ALLTRIM(aSezone[i]))
+    msgo("exportujem sezonu " + ALLTRIM(aSezone[i]))
 
-	O_KALK
-	select kalk
-	go top
+    O_KALK
+    select kalk
+    go top
 
-	do while !EOF() 
+    do while !EOF() 
 
-		if !EMPTY( cU_dok )
-			if kalk->idvd $ cU_dok
-				// idi dalje...
-			else
-				skip
-				loop
-			endif
-		endif
-		
-		select r_export
-		append blank
+        if !EMPTY( cU_dok )
+            if kalk->idvd $ cU_dok
+                // idi dalje...
+            else
+                skip
+                loop
+            endif
+        endif
+        
+        select r_export
+        append blank
 
-		replace field->idfirma with kalk->idfirma
-		replace field->idroba with kalk->idroba
-		replace field->rbr with kalk->rbr
-		replace field->idkonto with kalk->idkonto
-		replace field->idkonto2 with kalk->idkonto2
-		replace field->idvd with kalk->idvd
-		replace field->brdok with kalk->brdok
-		replace field->datdok with kalk->datdok
-		replace field->brfaktp with kalk->brfaktp
-		replace field->datfaktp with kalk->datfaktp
-		replace field->idpartner with kalk->idpartner
-		replace field->kolicina with kalk->kolicina
-		replace field->nc with kalk->nc
-		replace field->fcj with kalk->fcj
-		replace field->vpc with kalk->vpc
-		replace field->rabatv with kalk->rabatv
-		replace field->mpc with kalk->mpc
-		replace field->mpcsapp with kalk->mpcsapp
-		replace field->mkonto with kalk->mkonto
-		replace field->pkonto with kalk->pkonto
+        replace field->idfirma with kalk->idfirma
+        replace field->idroba with kalk->idroba
+        replace field->rbr with kalk->rbr
+        replace field->idkonto with kalk->idkonto
+        replace field->idkonto2 with kalk->idkonto2
+        replace field->idvd with kalk->idvd
+        replace field->brdok with kalk->brdok
+        replace field->datdok with kalk->datdok
+        replace field->brfaktp with kalk->brfaktp
+        replace field->datfaktp with kalk->datfaktp
+        replace field->idpartner with kalk->idpartner
+        replace field->kolicina with kalk->kolicina
+        replace field->nc with kalk->nc
+        replace field->fcj with kalk->fcj
+        replace field->vpc with kalk->vpc
+        replace field->rabatv with kalk->rabatv
+        replace field->mpc with kalk->mpc
+        replace field->mpcsapp with kalk->mpcsapp
+        replace field->mkonto with kalk->mkonto
+        replace field->pkonto with kalk->pkonto
 
-		select kalk
-		skip
-	enddo
+        select kalk
+        skip
+    enddo
 
-	msgc()
+    msgc()
 
 next
 
 // na kraju se vrati u tekuce radno podrucje
 if cG_sez <> cT_sez
-	goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
-	o_tmp( cP_path )
+    goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
+    o_tmp( cP_path )
 endif
 
 msgbeep( "Tabela R_EXPORT.DBF napunjena KALK podacima!")
@@ -2113,11 +2098,11 @@ return
 static function o_p_tbl( cPath, cSezona, cT_sezona )
 
 if cSezona = "RADP" .or. cSezona == cT_sezona
-	cSezona := ""
+    cSezona := ""
 endif
 
 if !EMPTY(cSezona)
-	cSezona := cSezona + SLASH
+    cSezona := cSezona + SLASH
 endif
 
 select (248)

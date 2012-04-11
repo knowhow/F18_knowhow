@@ -29,8 +29,6 @@ AADD(_opc,"4. proizvoljni izvjestaji")
 AADD(_opcexe, {|| ProizvKalk()})
 AADD(_opc,"5. export dokumenata")
 AADD(_opcexe, {|| krpt_export()})
-AADD(_opc,"6. integritet podataka")
-AADD(_opcexe, {|| m_integritet() })
 
 f18_menu( "izvj", .f., _izbor, _opc, _opcexe )
 

@@ -19,7 +19,6 @@
 // azuriranje u dbf, sql itd...
 // ---------------------------------------------------------------------
 function azur_kalk( lAuto )
-local oServer
 local lViseDok := .f.
 local aRezim := {}
 local aOstaju := {}
@@ -37,13 +36,13 @@ endif
 // isprazni kalk_pripr2
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
-
 zap
 use
 
 lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
 
-O_KALK_DOKS
+o_kalk_za_azuriranje()
+select kalk_doks
 
 if fieldpos("ukstavki") <> 0
     lBrStDoks := .t.
@@ -69,16 +68,7 @@ if lGenerisiZavisne = .t.
     kalk_zavisni_dokumenti()
 endif
 
-oServer := pg_server()
-
-if oServer == NIL
-    CLEAR SCREEN 
-    ? "kalk_azur oServer nil ?!"
-    INKEY(0)
-    QUIT
-endif
-
-if kalk_azur_sql( oServer )
+if kalk_azur_sql()
    
     o_kalk_za_azuriranje()
     
@@ -213,10 +203,7 @@ local cOdg := "D"
 local lgAFin := gAFin
 local lgAMat := gAMat
 
-
-O_KALK_DOKS
-O_KALK
-O_KALK_PRIPR
+o_kalk_za_azuriranje()
 
 // generisanje 11-ke iz 10-ke
 if Generisati11_ku()
@@ -518,8 +505,7 @@ local cBrDok
 local dDatDok
 local cIdZaduz2
 
-O_KALK
-O_KALK_PRIPR
+o_kalk_za_azuriranje()
 
 select kalk_pripr
 go top
@@ -675,9 +661,14 @@ return lViseDok
 
 
 
+// -------------------------------------------------
+// otvori tabele za azuriranje
+// -------------------------------------------------
 static function o_kalk_za_azuriranje()
 
 close all
+
+my_use_semaphore_off()
 
 O_KALK
 O_KALK_DOKS
@@ -697,15 +688,17 @@ if (( field->tprevoz == "R" .or. field->TCarDaz == "R" .or. field->TBankTr == "R
 
 endif
 
+my_use_semaphore_on()
+
 return
 
 
 
 // ----------------------
 // ----------------------
-static function kalk_azur_sql(oServer)
+static function kalk_azur_sql()
 local _ok := .t.
-local record := hb_hash()
+local _record := hb_hash()
 local _doks_nv := 0
 local _doks_vpv := 0
 local _doks_mpv := 0
@@ -1475,7 +1468,6 @@ enddo // bof()
 MsgC()
 
 closeret
-*}
 
 
 // ------------------------------------------------------------------

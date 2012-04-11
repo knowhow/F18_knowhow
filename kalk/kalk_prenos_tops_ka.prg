@@ -69,7 +69,7 @@ ENDIF
 O_KONCIJ
 go top
 
-if gModemVeza == "D"
+if gMultiPM == "D"
 	
 	OpcF:={}
 
@@ -120,7 +120,7 @@ O_TARIFA
 O_KALK_PRIPR
 O_KALK
 
-if gModemVeza == "D"
+if gMultiPM == "D"
 	Izb3:=1
   	fPrenesi:=.f.
   	do while .t.
@@ -375,7 +375,7 @@ if (lReplace .and. nReplaceBK > 0)
 	MsgBeep("Zamjena izvrsena na " + ALLTRIM(STR(nReplaceBK)) + " polja barkod !")
 endif
 
-if gModemVeza=="D" .and. fPrenesi
+if gMultiPM=="D" .and. fPrenesi
 	// pobrisi fajlove...
 	FileDelete(cTopsDBF)
 	FileDelete(STRTRAN(UPPER(cTopsDBF), ".DBF", ".TXT"))

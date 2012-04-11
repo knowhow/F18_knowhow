@@ -255,7 +255,7 @@ local _ret := .t.
 local _integ := {}
 local _ok := .t.
 
-if gModemVeza == "D"
+if gMultiPM == "D"
             
     for _n := 1 to LEN( pos_locations )  
         

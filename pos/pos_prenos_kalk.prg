@@ -175,7 +175,7 @@ local _h, _i
 local _izbor
 local _prenesi 
 
-if gModemVeza == "D"
+if gMultiPM == "D"
 
     _filter := 2
     _prodajno_mjesto := GetPm()
@@ -228,7 +228,7 @@ else
     MsgBeep ("Pripremi disketu za prenos ....#te pritisni neku tipku za nastavak!!!")
 endif
 
-if gModemVeza == "D"
+if gMultiPM == "D"
     
     // CITANJE
     _izbor := 1
@@ -663,7 +663,7 @@ while !eof()
     SKIP
 enddo
 
-if gModemVeza=="D"
+if gMultiPM == "D"
     close all
     cDestMod:=RIGHT(DTOS(dDatDo),4)  // 1998 1105  - 11 mjesec, 05 dan
     cDestMod:="TK"+cDestMod+"."

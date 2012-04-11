@@ -351,18 +351,22 @@ function kalk_par_zavisni_dokumenti()
 private  GetList:={}
 
 Box(,8,76,.f.,"NACINI FORMIRANJA ZAVISNIH DOKUMENATA")
-  @ m_x+1,m_y+2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin pict "@!" valid gAFin $ "DN0"
-  @ m_x+2,m_y+2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT pict "@!" valid gAMat $ "DN0"
-  @ m_x+3,m_y+2 SAY "Automatika formiranja FAKT dokum D/N" GET gAFakt pict "@!" valid gAFakt $ "DN"
-  @ m_x+4,m_y+2 SAY "Generisati 16-ku nakon 96  D/N (1/2) ?" GET gGen16  valid gGen16 $ "12"
-  @ m_x+5,m_y+2 SAY "Nakon stampe zaduzenja prodavnice prenos u TOPS 0-ne/1 /2 " GET gTops  valid gTops $ "0 /1 /2 /3 /99" pict "@!"
-  @ m_x+6,m_y+2 SAY "Nakon stampe zaduzenja prenos u FAKT 0-ne/1 /2 " GET gFakt  valid gFakt $ "0 /1 /2 /3 /99" pict "@!"
-  read
-  if gTops<>"0 ".or.gFakt<>"0 "
-    @ m_x+7,m_y+2 SAY "Mjesto na koje se prenose podaci za TOPS/FAKT " GET gTopsDest   pict "@!"
-    @ m_x+9,m_y+2 SAY "Koristi se modemska veza" GET gModemVeza  pict "@!" valid gModemVeza $ "DN"
+
+    @ m_x+1,m_y+2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin pict "@!" valid gAFin $ "DN0"
+    @ m_x+2,m_y+2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT pict "@!" valid gAMat $ "DN0"
+    @ m_x+3,m_y+2 SAY "Automatika formiranja FAKT dokum D/N" GET gAFakt pict "@!" valid gAFakt $ "DN"
+    @ m_x+4,m_y+2 SAY "Generisati 16-ku nakon 96  D/N (1/2) ?" GET gGen16  valid gGen16 $ "12"
+    @ m_x+5,m_y+2 SAY "Nakon stampe zaduzenja prodavnice prenos u TOPS 0-ne/1 /2 " GET gTops  valid gTops $ "0 /1 /2 /3 /99" pict "@!"
+    @ m_x+6,m_y+2 SAY "Nakon stampe zaduzenja prenos u FAKT 0-ne/1 /2 " GET gFakt  valid gFakt $ "0 /1 /2 /3 /99" pict "@!"
+
     read
-  endif
+
+    if gTops <> "0 " .or. gFakt <> "0 "
+        @ m_x+7,m_y+2 SAY "Mjesto na koje se prenose podaci za TOPS/FAKT " GET gTopsDest PICT "@!"
+        @ m_x+9,m_y+2 SAY "Koristi se vise prodajnih mjesta (D/N)" GET gMultiPM PICT "@!" VALID gMultiPM $ "DN"
+        read
+    endif
+
 BoxC()
 
 if lastkey() <> K_ESC
@@ -372,8 +376,8 @@ if lastkey() <> K_ESC
   	set_metric("kalk_generisi_16_nakon_96", f18_user(), gGen16)
   	set_metric("kalk_prenos_pos", f18_user(), gTops)
   	set_metric("kalk_prenos_fakt", f18_user(), gFakt)
-  	set_metric("kalk_destinacija_topska", f18_user(), gTopsDest)
-  	set_metric("kalk_modemska_veza", f18_user(), gModemVeza)
+  	set_metric("kalk_destinacija_topska", f18_user(), gTopsDest )
+  	set_metric("kalk_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
 endif
 
 return nil

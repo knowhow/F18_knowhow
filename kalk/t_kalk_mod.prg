@@ -191,6 +191,7 @@ public gPDVMagNab:="N"
 if IsPDV()
 	gPDVMagNab:="D"
 endif
+public gMultiPM := "D"
 public gRCRP := "C"
 public gPotpis:="N"
 public g10Porez:="N"
@@ -393,7 +394,7 @@ gVar13u11 := fetch_metric("kalk_varijanta_fakt_13_kalk_11_cijena", nil, gVar13u1
 gTops := fetch_metric("kalk_prenos_pos", f18_user(), gTops)
 gFakt := fetch_metric("kalk_prenos_fakt", f18_user(), gFakt)
 gTopsDest := fetch_metric("kalk_destinacija_topska", f18_user(), gTopsDest)
-gModemVeza := fetch_metric("kalk_modemska_veza", f18_user(), gModemVeza)
+gMultiPM := fetch_metric("kalk_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM)
 gMPCPomoc := fetch_metric("kalk_pomoc_sa_mpc", nil, gMPCPomoc)
 gKolicFakt := fetch_metric("kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt)
 gPromTar := fetch_metric("kalk_zabrana_promjene_tarifa", nil, gPromTar)

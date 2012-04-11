@@ -388,7 +388,7 @@ public gSifPath := my_home()
 public LocSIFPATH := my_home()
 public gServerPath := PADR("i:" + SLASH + "sigma", 40 )
 public gKalkDEST := PADR( "a:" + SLASH, 20 )
-public gModemVeza:="N"
+public gMultiPM:="D"
 public gUseChkDir:="N"
 public gStrValuta:=space(4)
 // upit o nacinu placanja
@@ -440,7 +440,7 @@ gPostDO := fetch_metric("ZasebneCjelineObjekta", nil, gPostDO)
 gIdDio := fetch_metric("OznakaDijelaObjekta", nil, gIdDio)
 gServerPath := fetch_metric("PutanjaServera", nil, gServerPath)
 gKalkDest := fetch_metric("KalkDestinacija", nil, gKalkDest)
-gModemVeza := fetch_metric("ModemskaVeza", nil, gModemVeza)
+gMultiPM := fetch_metric("pos_prenos_vise_prodajnih_mjesta", nil, gMultiPM )
 gUseChkDir := fetch_metric("KoristitiDirektorijProvjere", nil, gUseChkDir)
 gStrValuta := fetch_metric("StranaValuta", nil, gStrValuta)
 gLocPort := fetch_metric("OznakaLokalnogPorta", nil, gLocPort)

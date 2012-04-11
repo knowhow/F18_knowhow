@@ -704,7 +704,7 @@ return
 // ----------------------
 // ----------------------
 static function kalk_azur_sql(oServer)
-local lOk := .t.
+local _ok := .t.
 local record := hb_hash()
 local _doks_nv := 0
 local _doks_vpv := 0
@@ -713,187 +713,140 @@ local _doks_rabat := 0
 local _tbl_kalk
 local _tbl_doks
 local _i, _n
-local _tmp_id, _tmp_doc
+local _tmp_id
 local _ids := {}
-local _ids_doc := {}
-local _ids_tmp := {}
+local _ids_kalk := {}
+local _ids_doks := {}
+
+// ---------------------------------------------
+my_use_semaphore_off()
 
 _tbl_kalk := "kalk_kalk"
 _tbl_doks := "kalk_doks"
 
-lock_semaphore( _tbl_kalk, "lock" )
-lock_semaphore( _tbl_doks, "lock" )
+Box(, 5, 60)
 
-if lOk = .t.
+_tmp_id := "x"
 
-  // azuriraj kalk
-  MsgO("sql kalk_kalk")
+// ------------------------------------------------------------------
+// lock semaphores
 
-  O_KALK_PRIPR
+sql_table_update(nil, "BEGIN")
+_ok := lock_semaphore( _tbl_kalk, "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
 
-  select kalk_pripr
-  go top
+if _ok
+    sql_table_update(nil, "END")
+else
+    sql_table_update(nil, "ROLLBACK")
+    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+    return .f.
+endif
 
-  sql_kalk_kalk_update("BEGIN")
+// end lock semaphores --------------------------------------------------
 
-  do while !eof()
- 
-   record["id_firma"] := field->idfirma
-   record["id_vd"] := field->idvd
-   record["br_dok"] := field->brdok
-   record["r_br"] := field->rbr
-   record["dat_dok"] := field->datdok
-   record["br_fakt_p"] := field->brfaktp
-   record["dat_fakt_p"] := field->datfaktp
-   record["id_roba"] := field->idroba
-   record["id_konto"] := field->idkonto
-   record["id_konto2"] := field->idkonto2
-   record["id_zaduz"] := field->idzaduz
-   record["id_zaduz2"] := field->idzaduz2
-   record["id_partner"] := field->idpartner
-   record["dat_kurs"] := field->datkurs
-   record["kolicina"] := field->kolicina
-   record["g_kolicina"] := field->gkolicina
-   record["g_kolicina_2"] := field->gkolicin2
-   record["f_cj"] := field->fcj
-   record["f_cj2"] := field->fcj2
-   record["f_cj3"] := field->fcj3
-   record["t_rabat"] := field->trabat
-   record["rabat"] := field->rabat
-   record["t_prevoz"] := field->tprevoz
-   record["prevoz"] := field->prevoz
-   record["t_prevoz2"] := field->tprevoz2
-   record["prevoz2"] := field->prevoz2
-   record["t_banktr"] := field->tbanktr
-   record["banktr"] := field->banktr
-   record["t_spedtr"] := field->tspedtr
-   record["spedtr"] := field->spedtr
-   record["t_cardaz"] := field->tcardaz
-   record["cardaz"] := field->cardaz
-   record["t_zavtr"] := field->tzavtr
-   record["zavtr"] := field->zavtr
-   record["nc"] := field->nc
-   record["t_marza"] := field->tmarza
-   record["marza"] := field->marza
-   record["vpc"] := field->vpc
-   record["rabatv"] := field->rabatv
-   record["vpc_sa_p"] := field->vpcsap
-   record["t_marza2"] := field->tmarza2
-   record["marza2"] := field->marza2
-   record["mpc"] := field->mpc
-   record["id_tarifa"] := field->idtarifa
-   record["mpc_sa_pp"] := field->mpcsapp
-   record["m_konto"] := field->mkonto
-   record["p_konto"] := field->pkonto
-   record["rok_tr"] := field->roktr
-   record["mu_i"] := field->mu_i
-   record["pu_i"] := field->pu_i
-   record["error"] := field->error
-   record["pod_br"] := field->podbr
-                
-   _tmp_doc := record["id_firma"] + record["id_vd"] + record["br_dok"]
-   _tmp_id := record["id_firma"] + record["id_vd"] + record["br_dok"] + record["r_br"]
-   
-   AADD( _ids, _tmp_id )
+sql_table_update(nil, "BEGIN")
+  
+O_KALK_PRIPR
 
-   if !sql_kalk_kalk_update( "ins", record )
-       lOk := .f.
-       exit
-    
-    endif
-    
+select kalk_pripr
+go top
+
+_record := dbf_get_rec()
+// algoritam 2 - dokument nivo
+_tmp_id := _record["idfirma"] + _record["idvd"] + _record["brdok"]
+AADD( _ids_kalk, "#2" + _tmp_id )
+
+@ m_x + 1, m_y + 2 SAY "kalk_kalk -> server: " + _tmp_id 
+
+do while !eof()
+
     // setuj total varijable za upisivanje u tabelu doks   
     kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat ) 
-    
+ 
+    _record := dbf_get_rec()
+
+    if !sql_table_update("kalk_kalk", "ins", _record )
+        _ok := .f.
+        exit
+    endif
+
     SKIP
 
-  enddo
+enddo
 
-  MsgC()
+if _ok = .t.
 
-endif
+    // ubaci zapis u tabelu doks
+    select kalk_pripr
+    go top
 
-if lOk = .t.
-
-  // azuriraj doks...
-  MsgO("sql kalk_doks")
-
-  select kalk_pripr
-  go top
-
-  record := hb_hash()
+    _record := hb_hash()
   
-  // ostavljam samo jednu transakciju
-  // ovo ne treba!
-  //sql_kalk_doks_update("BEGIN")
+    _record["idfirma"] := field->idfirma
+    _record["idvd"] := field->idvd
+    _record["brdok"] := field->brdok
+    _record["datdok"] := field->datdok
+    _record["brfaktp"] := field->brfaktp
+    _record["idpartner"] := field->idpartner
+    _record["idzaduz"] := field->idzaduz
+    _record["idzaduz2"] := field->idzaduz2
+    _record["pkonto"] := field->pkonto
+    _record["mkonto"] := field->mkonto
+    _record["nv"] := _doks_nv
+    _record["vpv"] := _doks_vpv
+    _record["rabat"] := _doks_rabat
+    _record["mpv"] := _doks_mpv
+    _record["pod_br"] := field->podbr
 
-  record["id_firma"] := field->idfirma
-  record["id_vd"] := field->idvd
-  record["br_dok"] := field->brdok
-  record["dat_dok"] := field->datdok
-  record["br_fakt_p"] := field->brfaktp
-  record["id_partner"] := field->idpartner
-  record["id_zaduz"] := field->idzaduz
-  record["id_zaduz2"] := field->idzaduz2
-  record["p_konto"] := field->pkonto
-  record["m_konto"] := field->mkonto
-  record["nv"] := _doks_nv
-  record["vpv"] := _doks_vpv
-  record["rabat"] := _doks_rabat
-  record["mpv"] := _doks_mpv
-  record["pod_br"] := field->podbr
- 
-  if !sql_kalk_doks_update( "ins", record )
-       lOk := .f.
-  endif
+    // za ids-ove 
+    _tmp_id := _record["idfirma"] + _record["idvd"] + _record["brdok"]
+    AADD( _ids_doks, _tmp_id )
+
+    @ m_x + 2, m_y + 2 SAY "kalk_doks -> server: " + _tmp_id 
+
+    if !sql_table_update("kalk_doks", "ins", _record )
+         _ok := .f.
+         exit    
+    endif
    
-  MsgC()
-
 endif
 
-if !lOk
+if !_ok
 
-    // vrati promjene
-    sql_kalk_kalk_update("ROLLBACK")
-    
-    // ova mi ne treba transakcija
-    // koristit cu samo gornju
-    //sql_kalk_doks_update("ROLLBACK")
-        
+    _msg := "trasakcija " + _tmp_id + " neuspjesna ?!"
+
+    log_write(_msg)
+    MsgBeep(_msg)
+    // transakcija neuspjesna
+    // server nije azuriran 
+    sql_table_update(nil, "ROLLBACK" )
+
 else
 
-    // snimi promjene
+    push_ids_to_semaphore( _tbl_kalk , _ids_kalk )
+    push_ids_to_semaphore( _tbl_doks  , _ids_doks  )
 
-    update_semaphore_version( _tbl_doks, .t. )
-    update_semaphore_version( _tbl_kalk, .t. )
-    
-    for _n := 1 to LEN( _ids )
+    // kalk 
+    update_semaphore_version( _tbl_kalk , .t. )
+    update_semaphore_version( _tbl_doks  , .t. )
 
-        // dodaj za kalk po stavkama
-        _ids_tmp := {}
-        AADD( _ids_tmp, _ids[ _n ] )
-
-        push_ids_to_semaphore( _tbl_kalk, _ids_tmp ) 
-
-    next
-
-    // za doks ide _ids_doc
-    AADD( _ids_doc, _tmp_doc )
-    push_ids_to_semaphore( _tbl_doks, _ids ) 
-
-    // zavrsi transakcije
-    // ali mi ova ne treba, koristim samo kalk_doks transkaciju
-    //sql_kalk_doks_update("END")
-
-    sql_kalk_kalk_update("END")
+    sql_table_update(nil, "END")
 
 endif
 
-// otkljucaj tabele svakako
-lock_semaphore( _tbl_kalk, "free" )
-lock_semaphore( _tbl_doks, "free" )
+// otkljucaj sve tabele
+sql_table_update(nil, "BEGIN")
+lock_semaphore(_tbl_kalk, "free")
+lock_semaphore(_tbl_doks,  "free")
+sql_table_update(nil, "END")
 
-return lOk
+BoxC()
+
+// --------------------------------------------------
+my_use_semaphore_on()
+
+return _ok
 
 
 // ------------------------------------------------------------

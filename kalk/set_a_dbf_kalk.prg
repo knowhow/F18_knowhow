@@ -55,6 +55,8 @@ set_a_dbf_temp("kalk_rpt_tmp"  , "RPT_TMP"       , F_RPT_TMP       )
 
 return
 
+
+
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
 function set_a_dbf_kalk_kalk()
@@ -97,6 +99,9 @@ _item["sql_order"] := "idfirma, idvd, brdok, rbr"
 f18_dbfs_add(_tbl, @_item)
 return .t.
 
+
+
+
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
 function set_a_dbf_kalk_doks_doks2(table, alias, wa)
@@ -128,4 +133,7 @@ AADD(_item["algoritam"], _alg)
 _item["sql_order"] := "idfirma, idvd, brdok"
 
 f18_dbfs_add(_tbl, @_item)
+
 return .t.
+
+

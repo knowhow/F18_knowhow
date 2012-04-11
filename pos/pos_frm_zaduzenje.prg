@@ -145,7 +145,7 @@ endif
 
 fSadAz := .f.
 
-if (cIdVd<>VD_REK) .and. Kalk2Pos(@cIdVd, @cBrDok, @cRsDBF)
+if (cIdVd<>VD_REK) .and. pos_preuzmi_iz_kalk(@cIdVd, @cBrDok, @cRsDBF)
 	if priprz->(RecCount2()) > 0
     		if cBrDok<>nil .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","N")=="D"
         		if cIdVd $ "16#96#95#98"

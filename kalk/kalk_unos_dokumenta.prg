@@ -2160,7 +2160,7 @@ if (fTopsD .and. !fstara .and. gTops!="0 ")
     FF
     END PRINT
 
-    GenTops()
+    kalk_generisi_tops_dokumente()
 
 endif
 

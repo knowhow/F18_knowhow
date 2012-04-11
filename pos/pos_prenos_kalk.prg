@@ -12,155 +12,271 @@
 
 #include "pos.ch"
 
-static cIdPos
 
 
-function Kalk2Pos(cIdVd, cBrDok, cRSDbf)
-local cPrefix
-local Izb3
-local OpcF
-local cTxt 
-local cZadValid 
-local cInvValid 
-local cNivValid
-local cOtpValid
-local cKalkDestinacija
-local fRet:=.f.
-local cPM
-local cKalkDBF:=""
-local cKalkIdFirma := ""
-local cKalkBrDok := ""
-local cKalkPartner := ""
-local cKalkKto := ""
-local cKalkKto2 := ""
-local dKalkDat := CTOD("")
+// -----------------------------------------------------------
+// vrati mi vrstu dokumenta za import podataka
+// -----------------------------------------------------------
+static function _get_vd( tip_dokumenta )
+local _ret := "16"
 
-private H
+do case
+    case tip_dokumenta $ "11#80#81#IP"
+        _ret := "16"
+    case tip_dokumenta $ "19"
+        _ret := "NI"
+endcase
 
-cIdPos:=gIdPos
-cPm:=SPACE(2)
+return _ret
 
-cBrDok:=SPACE(LEN(field->brDok))
 
-fPrenesi:=.f.
-cOtpValid:="95"
 
-if gModul=="HOPS"
-	cZadValid:="10#16#11#12#13#80#81"
-	cOtpValid:="95"
-	cInvValid:="IM#IP"
-	cNivValid:="18#19"
-else
-	cZadValid:="11#12#13#80#81"
-	cInvValid:="IP"
-	cNivValid:="19"
-endif
+// ---------------------------------------------------------
+// preuzimanje podataka iz modula kalk
+// ---------------------------------------------------------
+function pos_preuzmi_iz_kalk( tip_dok, br_dok, rs_dbf )
+local _imp_table := ""
+local _destination := ""
+local _br_dok
+local _val_otpremnica 
+local _val_zaduzenje
+local _val_inventura
+local _val_nivelacija
+local _id_pos, _prodajno_mjesto
 
-cKalkDestinacija:=gKalkDest
+_id_pos := gIdPos
+_prodajno_mjesto := SPACE(2)
+_val_otpremnica := "95"
+_val_zaduzenje := "11#12#13#80#81"
+_val_inventura := "IP"
+_val_nivelacija := "19"
+
+_destination := gKalkDest
 
 SET CURSOR ON
 O_PRIPRZ
 
-cBrDok:=SPACE(LEN(field->brdok))
+_br_dok := SPACE( LEN( field->brdok ) )
 
-if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=="D"
-	
-	if !SelectKalkDbf(cBrDok, @cKalkDestinacija, @cKalkDbf)
-		return .f.
-	endif
+if priprz->( RecCount2() ) == 0 .and. Pitanje( , "Preuzeti dokumente iz KALK-a", "N" ) == "N"
+    return .f.
+endif
 
-	my_use (cKalkDbf, "KATOPS", .t.)
+// odaberi fajl za import
+if !get_import_file( _br_dok, @_destination, @_imp_table )
+    return .f.
+endif
 
-    	if katops->idvd $ "11#80#81"  
-		// radi se o zaduzenju koje se ovdje biljezi sa 16
-      		cIdVd:="16"
-		
-    	elseif katops->idvd=="19"
-      		cIdVd:="NI"
-		
-    	elseif katops->idvd=="IP"
-      		cIdVd:="16"
-    	endif
-	
-    	select pos_doks
-    	set order to 1
-	
-        cBrDok:=pos_naredni_dokument(cIdPos, cIdVd)
-	
-	select katops
-    	MsgO("kalk -> priprema, update roba")
+// otvori katops datoteku
+select ( F_TMP_KATOPS )
+my_use_temp( "KATOPS", _destination + _imp_table )
 
-	do while !eof()
-     		if (katops->idPos==cIdPos)
-			if (AzurRow(cIdVd, cBrDok, cRsDbf)==0)
-				exit
-			endif
-      		endif
-      		select katops
-      		skip
-    	enddo
-	MsgC()
+// daj mi vrstu dokumenta koju cu importovati
+_id_tip_dok := _get_vd( katops->idvd )
+   
+select pos_doks
+set order to tag "1"
+    
+// nadji sljedeci broj TOPS dokumenta
+_br_dok := pos_naredni_dokument( _id_pos, tip_dok )
+    
+select katops
+go top
+        
+MsgO( "kalk -> priprema, update roba ")
 
-    	// azuriraj i DOKSRC....
-	select katops
-	go top
+do while !EOF()
+    if ( katops->idpos == _id_pos )
+        if ( import_row( _id_tip_dok, _br_dok, "" ) == 0 )
+            exit
+        endif
+    endif
+    select katops
+    skip
+enddo
 
-	// ako postoje polja IDFIRMA itd... onda ih setuj
-	if katops->(FIELDPOS("idfirma")) <> 0
-		cKalkIdFirma := katops->idfirma
-		cKalkBrDok := katops->brdok
-		dKalkDat := katops->datdok
-		cKalkPartner := katops->idpartner
-		cKalkKto := katops->idkonto
-		cKalkKto2 := katops->idkonto2
-	endif
+select katops
+use
+    
+MsgC()
 
-	add_p_doksrc(gIdPos, cIdVd, cBrDok, gDatum, "KALK", ;
-		cKalkIdFirma, katops->idvd, cKalkBrDok, ;
-		dKalkDat, cKalkKto, cKalkKto2, ;
-		cKalkPartner, "Zaduzenje")
-	
-	if (gModemVeza=="N")
-     		select katops
-		use
-    	endif
+// pobrisi fajl importa nakon što smo ga importovali
+_brisi_fajlove_importa( _destination + _imp_table )
 
-endif // prenos sa disketa
+return .t.
 
-// kopiraj u chk
-if ( gModemVeza=="D" .and. fPrenesi )
-	if ( gUseChkDir == "D" )
-		select katops
-		use
-    		DirMak2(strtran(trim(cKalkDestinacija),":"+SLASH,":"+SLASH+"chk"+SLASH))
-    		copy file (cKalkDbf) TO (strtran(cKalkDbf,":"+SLASH,":"+SLASH+"chk"+SLASH))
-    		// odradjeno-postavi kopiraj u chk direktorij
-    		// npr c:\tops\prenos\2\x.dbf  -> npr c:\CHK\tops\prenos\2\x.dbf
-	else
-		// samo pobrisi fajl prenosa
-		FileDelete(cKalkDbf)
-		// i txt fajl
-		FileDelete(strtran(cKalkDbf, ".DBF", ".TXT"))
-	endif
+
+// ----------------------------------------------
+// brisi fajlove importa
+// ----------------------------------------------
+static function _brisi_fajlove_importa( import_file )
+        
+// samo pobrisi fajl prenosa
+FileDelete( import_file )
+// i txt fajl
+FileDelete(strtran( import_file, ".dbf", ".txt"))
+
+return
+
+ 
+// -----------------------------------------------
+// katops -> priprz
+// ----------------------------------------------   
+static function import_row( id_vd, br_dok, id_odj )
+local _t_area := SELECT()
+
+// tabela PRIPRZ = "priprema zaduzenja"
+select priprz
+append blank
+
+replace idroba with katops->idroba
+replace cijena with katops->mpc
+
+if id_vd == "NI"
+    // nova cijena
+    replace ncijena with katops->mpc2
+endif
+
+replace idtarifa with katops->idtarifa
+replace kolicina with katops->kolicina
+replace jmj with katops->jmj
+replace robanaz with katops->naziv
+replace k1 with katops->k1
+replace k2 with katops->k2
+replace k7 with katops->k7
+replace k8 with katops->k8
+replace k9 with katops->k9
+replace n1 with katops->n1
+replace n2 with katops->n2
+replace barkod with katops->barkod
+replace PREBACEN with OBR_NIJE
+replace IDRADNIK with gIdRadnik
+replace IdPos with KATOPS->IdPos
+replace IdOdj WITH id_odj
+replace IdVd WITH id_vd
+replace Smjena WITH gSmjena 
+replace BrDok with br_dok
+replace DATUM with gDatum
+
+select (_t_area)
+
+return 1
+
+
+// -----------------------------------------------
+// odaberi - setuj ime kalk dbf-a
+// -----------------------------------------------
+static function get_import_file( br_dok, destinacija, import_fajl )
+local _filter
+local _prodajno_mjesto, _id_pos, _prefix
+local _imp_files := {}
+local _opc := {}
+local _h, _i
+local _izbor
+local _prenesi 
+
+if gModemVeza == "D"
+
+    _filter := 2
+    _prodajno_mjesto := GetPm()
+
+    if !EMPTY( _prodajno_mjesto )
+        _id_pos := _prodajno_mjesto
+        _prefix := ( TRIM( _prodajno_mjesto ) ) + SLASH
+    else
+        _prefix := ""
+    endif
+    
+    destinacija := TRIM(gKalkDest) + _prefix
+    
+    // pobrisi fajlove starije od 7 dana
+    BrisiSFajlove( destinacija )
+    BrisiSFajlove( STRTRAN( destinacija, ":" + SLASH, ":" + SLASH + "chk" + SLASH))
+
+    _imp_files := DIRECTORY( destinacija + "kt*.dbf" )
+
+    ASORT( _imp_files,,,{|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })   
+    // datum + vrijeme
+    // KT0512.DBF = elem[1]
+        
+    AEVAL( _imp_files, {|elem| AADD( _opc, PADR( elem[1], 15 ) + UChkPostoji(trim( destinacija ) + trim(elem[1])) + " "+ dtoc(elem[3]) + " " + elem[4])},1)
+    
+    // sortiraj po X, R
+    if _filter == 1
+        ASORT( _opc,,,{|x,y| RIGHT(x,19) > RIGHT(y,19)})  
+        // R,X + datum + vrijeme
+    endif
+    
+    if _filter == 2
+        ASORT( _opc,,,{|x,y| RIGHT(x,17) > RIGHT(y,17)})  
+        // datum + vrijeme
+    endif
+    
+    _h := ARRAY( LEN( _opc ) )
+    for _i := 1 to LEN(_h)
+        _h[_i]:=""
+    next
+
+    // elem 3 - datum
+    // elem 4 - time
+    if LEN( _opc ) == 0
+        MsgBeep("U direktoriju za prenos nema podataka")
+        close all
+        return .f.
+    endif
+else    
+    MsgBeep ("Pripremi disketu za prenos ....#te pritisni neku tipku za nastavak!!!")
+endif
+
+if gModemVeza == "D"
+    
+    // CITANJE
+    _izbor := 1
+    _prenesi := .f.
+    do while .t.
+        _izbor := Menu("k2p", _opc, _izbor, .f.)
+        if _izbor == 0
+            exit
+        else
+            import_fajl := TRIM( destinacija ) + TRIM( LEFT( _opc[ _izbor ], 15 ) )
+            //SAVE SCREEN TO _screen
+            //Vidifajl(strtran(cKalkDBF,".DBF",".TXT"))  // vidi TK1109.TXT
+            //RESTORE SCREEN FROM _screen
+            if Pitanje(,"Zelite li izvrsiti prenos ?","D")=="D"
+                _prenesi:=.t.
+                _izbor := 0
+            endif
+        endif
+    enddo
+    
+    if !_prenesi
+        return .f.
+    endif
+    
+else    
+    
+    // nije modemska veza
+    // ako nije modemska veza
+    import_fajl := TRIM( destinacija ) + "katops.dbf"
+    _a_tmp1 := IscitajCRC( TRIM( destinacija ) + "crckt.crc" )
+    _a_tmp2 := IntegDbf( imp_fajl )
+
+    if !( _a_tmp1[1] == _a_tmp2[1] .and. _a_tmp1[2] == _a_tmp2[2] )
+        MsgBeep("CRC se ne slaze")
+        if Pitanje(, "Ipak zelite prenos (D/N)?", "N") == "N"
+            return .f.
+        endif
+    endif
+
 endif
 
 return .t.
-*}
 
 
-/*! \ingroup ini
- *  \var FmkIni_ExePath_POS_PrenosGetPm
- *  \param 0 - default ne uzimaj oznaku i ne pitaj nista
- *  \param N - ne uzimaj i postavi pitanje
- *  \param D - uzmi bez pitanja
- */
- 
-/*! \fn GetPm()
- *  \brief Uzmi oznaku prodajnog mjesta
- */
- 
+// -----------------------------------------
+// vrati prodajno mjesto
+// -----------------------------------------
 static function GetPm()
-*{
 local cPm
 local cPitanje
 
@@ -168,29 +284,22 @@ cPm:=cIdPos
 
 cPitanje:=IzFmkIni("POS","PrenosGetPm","0")
 if ((gVrstaRs<>"S") .and. (cPitanje=="0"))
-	return ""
+    return ""
 endif
 
 
 if (gVrstaRs=="S") .or. ((cPitanje=="D") .or. Pitanje(,"Postaviti oznaku prodajnog mjesta? (D/N)","N")=="D")
-	Box(,1,30)
-		SET CURSOR ON
-		@ m_x+1,m_Y+2 SAY "Oznaka prodajnog mjesta:" GET cPm
-		read
-	BoxC()
+    Box(,1,30)
+        SET CURSOR ON
+        @ m_x+1,m_Y+2 SAY "Oznaka prodajnog mjesta:" GET cPm
+        read
+    BoxC()
 endif
 return cPm
-*}
 
-/*! \fn Pos2Pos(cIdVd, cBrDok, cRSDbf) 
- *  \brief Prenos realizacije iz POS u POS
- *  \param cIdVd
- *  \param cBrDok
- *  \param cRSDbf
- */
+
 
 function Pos2Pos(cIdVd, cBrDok, cRSDbf)
-*{
 
 cIdPos:=gIdPos
 
@@ -212,25 +321,25 @@ select pos
 seek gIdPos+"16"+dtos(dDatum)
 
 do while !eof() .and. idpos+idvd+dtos(datum)==gIdPos+"16"+dtos(dDatum)
-	cPrenijeti:="N"
-     	cBrdok:=brdok
-    	beep(1)
-     	@ m_x+3,m_y+2 SAY "Prenijeti ulaz broj:"+cbrdok  GET cPrenijeti pict "@!" valid cprenijeti$"DN"
-     	do while !eof() .and. idpos+idvd+dtos(datum)==gIdPos+"16"+dtos(dDatum)
-        	if cprenijeti=="D"
-           		scatter()
-           		select pos2
-			append blank
-           		gather()
-         	endif
-         	skip
-     	enddo
+    cPrenijeti:="N"
+        cBrdok:=brdok
+        beep(1)
+        @ m_x+3,m_y+2 SAY "Prenijeti ulaz broj:"+cbrdok  GET cPrenijeti pict "@!" valid cprenijeti$"DN"
+        do while !eof() .and. idpos+idvd+dtos(datum)==gIdPos+"16"+dtos(dDatum)
+            if cprenijeti=="D"
+                scatter()
+                select pos2
+            append blank
+                gather()
+            endif
+            skip
+        enddo
 enddo
 
 BoxC()
 
 return .t.
-*}
+
 
 
 /*! \fn AutoRek2Kalk(cDate1, cDate2)
@@ -254,20 +363,20 @@ nD1 := LEN(cDate1)
 nD2 := LEN(cDate2)
 
 if ((nD1 < 10) .or. (nD2 < 10))
-	? "FORMAT DATUMA NEISPRAVAN...."
-	? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
-	Sleep(5)
-	return
+    ? "FORMAT DATUMA NEISPRAVAN...."
+    ? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
+    Sleep(5)
+    return
 endif
 
 if (!Empty(cDate1) .and. !Empty(cDate2))
-	dD1 := CToD(cDate1)
-	dD2 := CToD(cDate2)
-	? "Vrsim prenos reklamacija za datum od: " + DToC(dD1) + " do " + DToC(dD2)
-	// pozovi f-ju Real2Kalk() sa argumentima
-	Rek2Kalk(dD1, dD2)
-	? "Izvrsen prenos ..."
-	Sleep(1)
+    dD1 := CToD(cDate1)
+    dD2 := CToD(cDate2)
+    ? "Vrsim prenos reklamacija za datum od: " + DToC(dD1) + " do " + DToC(dD2)
+    // pozovi f-ju Real2Kalk() sa argumentima
+    Rek2Kalk(dD1, dD2)
+    ? "Izvrsen prenos ..."
+    Sleep(1)
 endif
 
 return
@@ -296,20 +405,20 @@ nD1 := LEN(cDate1)
 nD2 := LEN(cDate2)
 
 if ((nD1 < 10) .or. (nD2 < 10))
-	? "FORMAT DATUMA NEISPRAVAN...."
-	? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
-	Sleep(5)
-	return
+    ? "FORMAT DATUMA NEISPRAVAN...."
+    ? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
+    Sleep(5)
+    return
 endif
 
 if (!Empty(cDate1) .and. !Empty(cDate2))
-	dD1 := CToD(cDate1)
-	dD2 := CToD(cDate2)
-	? "Vrsim prenos realizacija za datum od: " + DToC(dD1) + " do " + DToC(dD2)
-	// pozovi f-ju Real2Kalk() sa argumentima
-	Real2Kalk(dD1, dD2)
-	? "Izvrsen prenos ..."
-	Sleep(1)
+    dD1 := CToD(cDate1)
+    dD2 := CToD(cDate2)
+    ? "Vrsim prenos realizacija za datum od: " + DToC(dD1) + " do " + DToC(dD2)
+    // pozovi f-ju Real2Kalk() sa argumentima
+    Real2Kalk(dD1, dD2)
+    ? "Izvrsen prenos ..."
+    Sleep(1)
 endif
 
 return
@@ -346,7 +455,7 @@ private cTmp := ""
 
 // ako je nil onda se radi o realizaciji
 if (cIdVd == nil)
-	cIdVd := "42"
+    cIdVd := "42"
 endif
 
 // prenos realizacija POS - KALK
@@ -359,35 +468,35 @@ cIdPos:=gIdPos
 
 
 if ((dDateOd == nil) .and. (dDateDo == nil))
-	dDatOd:=DATE()
-	dDatDo:=DATE()
+    dDatOd:=DATE()
+    dDatDo:=DATE()
 else
-	dDatOd:=dDateOd
-	dDatDo:=dDateDo
+    dDatOd:=dDateOd
+    dDatDo:=dDateDo
 endif
 
 // ako nije APPSRV prikazi box za prenos
 if !gAppSrv
-	SET CURSOR ON
-	Box(,4,70,.f.,"PRENOS REALIZACIJE POS->KALK")
-		@ m_x+1,m_y+2 SAY "Prodajno mjesto " GET cIdPos pict "@!" Valid !EMPTY(cIdPos).or.P_Kase(@cIdPos,5,20)
-		@ m_x+2,m_y+2 SAY "Prenos za period" GET dDatOd
-		@ m_x+2,col()+2 SAY "-" GET dDatDo
-		@ m_x+3,m_y+2 SAY "Uslov po artiklima:" GET cUslRoba PICT "@S40"
-		@ m_x+4,m_y+2 SAY "Artikle (U)kljuci / (I)skljuci iz prenosa:" GET cUslRMark PICT "@!" VALID cUslRMark $ "UI"
-	read
-	
-	ESC_BCR
-	BoxC()
+    SET CURSOR ON
+    Box(,4,70,.f.,"PRENOS REALIZACIJE POS->KALK")
+        @ m_x+1,m_y+2 SAY "Prodajno mjesto " GET cIdPos pict "@!" Valid !EMPTY(cIdPos).or.P_Kase(@cIdPos,5,20)
+        @ m_x+2,m_y+2 SAY "Prenos za period" GET dDatOd
+        @ m_x+2,col()+2 SAY "-" GET dDatDo
+        @ m_x+3,m_y+2 SAY "Uslov po artiklima:" GET cUslRoba PICT "@S40"
+        @ m_x+4,m_y+2 SAY "Artikle (U)kljuci / (I)skljuci iz prenosa:" GET cUslRMark PICT "@!" VALID cUslRMark $ "UI"
+    read
+    
+    ESC_BCR
+    BoxC()
 endif
 
 if gVrstaRS<>"S"
-	//sasa, ne znam sta je ovo znacilo
-	//cIdPos:=gIdPos
-	gIdPos:=cIdPos
+    //sasa, ne znam sta je ovo znacilo
+    //cIdPos:=gIdPos
+    gIdPos:=cIdPos
 else
-	// ako je server
-	gIdPos:=cIdPos
+    // ako je server
+    gIdPos:=cIdPos
 endif
 
 select pos_doks
@@ -414,7 +523,7 @@ AADD(aDBF,{"M1",       "C",  1, 0})
 
 select roba
 if roba->(FieldPos("barkod"))<>0
-	AADD(aDBF,{"BARKOD","C",13,0})
+    AADD(aDBF,{"BARKOD","C",13,0})
 endif
 
 select pos_doks
@@ -429,8 +538,8 @@ cKalkDbf:=ALLTRIM(gKalkDest)
 cKalkDbf+="TOPSKA.DBF"
 
 IF gVrstaRS=="S"
-	DirMak2(ALLTRIM(gKalkDest)+ALLTRIM(cIdPos))
-	cKalkDbf:=ToUnix(ALLTRIM(gKalkDest)+ALLTRIM(cIdPos)+SLASH+"TOPSKA.DBF")
+    DirMak2(ALLTRIM(gKalkDest)+ALLTRIM(cIdPos))
+    cKalkDbf:=ToUnix(ALLTRIM(gKalkDest)+ALLTRIM(cIdPos)+SLASH+"TOPSKA.DBF")
 endif
 DbCreate2(cKALKDBF,aDbf)
 my_use(cKALKDBF, "NEW", .t.)
@@ -441,157 +550,157 @@ select pos_doks
 nRbr:=0
 
 do while !eof() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum<=dDatDo
-	
-	if !EMPTY(cIdPos) .and. pos_doks->IdPos<>cIdPos
-    		SKIP
-		LOOP
-  	endif
-	
-	// ako su reklamacije prekoci sve sto je sto="P"
-	if IsPlanika() .and. cIdVd==VD_REK
-		if PADR(field->sto, 1) == "P"
-			skip
-			loop
-		endif
-	endif
-  	
-	SELECT pos
-  	SEEK pos_doks->(IdPos+IdVd+DTOS(datum)+BrDok)
-  	
-	do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==pos_doks->(IdPos+IdVd+DTOS(datum)+BrDok)
-    			
-		// uslov po robi
-		if !EMPTY( cUslRoba )
-			
-			// parsiraj uslov...
-			cTmp := Parsiraj( cUslRoba, "idroba" )
+    
+    if !EMPTY(cIdPos) .and. pos_doks->IdPos<>cIdPos
+            SKIP
+        LOOP
+    endif
+    
+    // ako su reklamacije prekoci sve sto je sto="P"
+    if IsPlanika() .and. cIdVd==VD_REK
+        if PADR(field->sto, 1) == "P"
+            skip
+            loop
+        endif
+    endif
+    
+    SELECT pos
+    SEEK pos_doks->(IdPos+IdVd+DTOS(datum)+BrDok)
+    
+    do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==pos_doks->(IdPos+IdVd+DTOS(datum)+BrDok)
+                
+        // uslov po robi
+        if !EMPTY( cUslRoba )
+            
+            // parsiraj uslov...
+            cTmp := Parsiraj( cUslRoba, "idroba" )
 
-			// ako je tacno !
-			if &cTmp
-				
-				if cUslRMark == "I"
-				
-					// ako iskljucujes, onda preskoci
-					
-					skip
-					loop
-					
-				endif
-			
-			else
-				// ako treba da je ukljucena roba
-				if cUslRMark == "U"
-				
-					skip
-					loop
-				
-				endif
-				
-			endif
-		
-		endif
-		
-		Scatter()
-    		// uzmi i barkod
-		if roba->(fieldpos("barkod"))<>0
-			select roba
-			set order to tag "ID"
-			hseek pos->idroba
-		endif
-		
-		select POM
-    		HSEEK POS->(IdPos+IdRoba+STR(cijena,13,4)+STR(nCijena,13,4))
-    		// seekuj i cijenu i popust (koji je pohranjen u ncijena)
-    		if !FOUND() .or. IdTarifa<>POS->IdTarifa .or. MPC<>POS->Cijena
-     			append blank
-      			
-			replace IdPos WITH POS->IdPos
-			replace IdRoba WITH POS->IdRoba
-			replace Kolicina WITH POS->Kolicina
-			replace IdTarifa WITH POS->IdTarifa
-			replace mpc With POS->Cijena
-			replace IdCijena WITH POS->IdCijena
-			replace Datum WITH dDatDo
-			replace DatPos with pos->datum
-			replace brdok with pos->brdok
-			
-			if gModul=="HOPS"	
-				replace IdVd With "47"
-			else
-				replace idvd with POS->IdVd
-			endif
-					
-			replace StMPC WITH pos->ncijena
-					
-			if roba->(FieldPos("barkod"))<>0
-				replace barkod with roba->barkod
-			endif
-						
-			if !EMPTY(pos_doks->idgost)
-				replace idpartner with pos_doks->idgost
-			endif
-      					
-			++nRbr
-    		else
-       			replace Kolicina WITH Kolicina + _Kolicina
-    		endif
-				
-    		select pos
-    		SKIP
-  	END
-  	select pos_doks
-  	SKIP
+            // ako je tacno !
+            if &cTmp
+                
+                if cUslRMark == "I"
+                
+                    // ako iskljucujes, onda preskoci
+                    
+                    skip
+                    loop
+                    
+                endif
+            
+            else
+                // ako treba da je ukljucena roba
+                if cUslRMark == "U"
+                
+                    skip
+                    loop
+                
+                endif
+                
+            endif
+        
+        endif
+        
+        Scatter()
+            // uzmi i barkod
+        if roba->(fieldpos("barkod"))<>0
+            select roba
+            set order to tag "ID"
+            hseek pos->idroba
+        endif
+        
+        select POM
+            HSEEK POS->(IdPos+IdRoba+STR(cijena,13,4)+STR(nCijena,13,4))
+            // seekuj i cijenu i popust (koji je pohranjen u ncijena)
+            if !FOUND() .or. IdTarifa<>POS->IdTarifa .or. MPC<>POS->Cijena
+                append blank
+                
+            replace IdPos WITH POS->IdPos
+            replace IdRoba WITH POS->IdRoba
+            replace Kolicina WITH POS->Kolicina
+            replace IdTarifa WITH POS->IdTarifa
+            replace mpc With POS->Cijena
+            replace IdCijena WITH POS->IdCijena
+            replace Datum WITH dDatDo
+            replace DatPos with pos->datum
+            replace brdok with pos->brdok
+            
+            if gModul=="HOPS"   
+                replace IdVd With "47"
+            else
+                replace idvd with POS->IdVd
+            endif
+                    
+            replace StMPC WITH pos->ncijena
+                    
+            if roba->(FieldPos("barkod"))<>0
+                replace barkod with roba->barkod
+            endif
+                        
+            if !EMPTY(pos_doks->idgost)
+                replace idpartner with pos_doks->idgost
+            endif
+                        
+            ++nRbr
+            else
+                replace Kolicina WITH Kolicina + _Kolicina
+            endif
+                
+            select pos
+            SKIP
+    END
+    select pos_doks
+    SKIP
 enddo
 
 SELECT POM 
 GO TOP
 while !eof()
-	Scatter()
-	SELECT TOPSKA
-	append blank
-	Gather()
-	SELECT POM
-	SKIP
+    Scatter()
+    SELECT TOPSKA
+    append blank
+    Gather()
+    SELECT POM
+    SKIP
 enddo
 
 if gModemVeza=="D"
-	close all
-	cDestMod:=RIGHT(DTOS(dDatDo),4)  // 1998 1105  - 11 mjesec, 05 dan
-	cDestMod:="TK"+cDestMod+"."
-	
-	if !gAppSrv	
-		cPm:=GetPm()
-	endif
-	
-	if (!gAppSrv .and. !EMPTY(cPm))
-		cPrefix:=(TRIM(cPm))+SLASH
-	else
-		cPrefix:=""
-	endif
-           	
-	if (cIdVd <> VD_REK)
-		realizacija_kase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
-	else
-		realizacija_kase(dDatOd, dDatDo) // pregled reklamacija
-	endif
-	
-	cDestMod:=StrTran(cKalkDbf,"TOPSKA.",cPrefix+cDestMod)
-  	FileCopy(cKalkDBF,cDestMod)
-  	cDestMod:=StrTran(cDestMod,".DBF",".TXT")
-  	FileCopy(PRIVPATH+"outf.txt",cDestMod)
-  	cDestMod:=StrTran(cDestMod,".TXT",".DBF")
-	if !gAppSrv  	
-		MsgBeep("Datoteka "+cDestMod+"je izgenerisana#Broj stavki "+str(nRbr,4))
-	else
-		? "Datoteka " + cDestMod + "je izgenerisana. Broj stavki: "+STR(nRbr,4)
-	endif
+    close all
+    cDestMod:=RIGHT(DTOS(dDatDo),4)  // 1998 1105  - 11 mjesec, 05 dan
+    cDestMod:="TK"+cDestMod+"."
+    
+    if !gAppSrv 
+        cPm:=GetPm()
+    endif
+    
+    if (!gAppSrv .and. !EMPTY(cPm))
+        cPrefix:=(TRIM(cPm))+SLASH
+    else
+        cPrefix:=""
+    endif
+            
+    if (cIdVd <> VD_REK)
+        realizacija_kase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
+    else
+        realizacija_kase(dDatOd, dDatDo) // pregled reklamacija
+    endif
+    
+    cDestMod:=StrTran(cKalkDbf,"TOPSKA.",cPrefix+cDestMod)
+    FileCopy(cKalkDBF,cDestMod)
+    cDestMod:=StrTran(cDestMod,".DBF",".TXT")
+    FileCopy(PRIVPATH+"outf.txt",cDestMod)
+    cDestMod:=StrTran(cDestMod,".TXT",".DBF")
+    if !gAppSrv     
+        MsgBeep("Datoteka "+cDestMod+"je izgenerisana#Broj stavki "+str(nRbr,4))
+    else
+        ? "Datoteka " + cDestMod + "je izgenerisana. Broj stavki: "+STR(nRbr,4)
+    endif
 else
-	close all
-	aPom:=IntegDbf(cKalkDBF)
-	NapraviCRC(trim(gKalkDEST)+"CRCTK.CRC" , aPom[1] , aPom[2] )
-	if !gAppSrv	
-		MsgBeep("Datoteka TOPSKA je izgenerisana#Broj stavki "+str(nRbr,4))
-	endif
+    close all
+    aPom:=IntegDbf(cKalkDBF)
+    NapraviCRC(trim(gKalkDEST)+"CRCTK.CRC" , aPom[1] , aPom[2] )
+    if !gAppSrv 
+        MsgBeep("Datoteka TOPSKA je izgenerisana#Broj stavki "+str(nRbr,4))
+    endif
 endif
 
 CLOSERET
@@ -608,7 +717,7 @@ function pos_sifre_katops()
 private cDirZip:=ToUnix("C:" + SLASH + "TOPS" + SLASH)
 
 if !SigmaSif("SIGMAXXX")
-	return
+    return
 endif
 
 cIdPos:=gIdPos
@@ -617,13 +726,13 @@ gFmkSif:=Trim(gFmkSif)
 AddBS(@gFmkSif)
 
 if !EMPTY(gFMKSif) 
-	if !FILE(gFmkSif + "ROBA.DBF")
-      		MsgBeep("Na lokaciji " + TRIM(gFmkSif) + "ROBA.DBF nema tabele")
-      		return
-  	endif
-	lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")
-  	AzurSifIzFmk("", lAddNew)
-  	return
+    if !FILE(gFmkSif + "ROBA.DBF")
+            MsgBeep("Na lokaciji " + TRIM(gFmkSif) + "ROBA.DBF nema tabele")
+            return
+    endif
+    lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")
+    AzurSifIzFmk("", lAddNew)
+    return
 endif
 
 O_PARAMS
@@ -637,16 +746,16 @@ Params1()
 cDirZip:=Padr(cDirZip,30)
 
 Box(,5,70) 
-	@ m_x+1,m_y+2 SAY "Lokacija arhive sifrarnika:"
-   	@ m_x+2,m_y+2 GET cDirZip
-   	read
+    @ m_x+1,m_y+2 SAY "Lokacija arhive sifrarnika:"
+    @ m_x+2,m_y+2 GET cDirZip
+    read
 BoxC()
 
 cDirZip:=TRIM(cDirZip)
 AddBS(@cDirZip) 
  
 if Params2()
-	WPar("Dz",cDirZip)
+    WPar("Dz",cDirZip)
 endif
 
 select params
@@ -672,189 +781,15 @@ O_SIFK
 O_SIFV
 
 if Pitanje(,"Osvjeziti sifrarnik iz arhive " + cDirZip + "ROBKNJ.ZIP"," ")=="D"
-	lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")
-	AzurSifIzFmk(cDirZip, lAddNew)	
-     	O_ROBA
-     	P_Roba()
+    lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")
+    AzurSifIzFmk(cDirZip, lAddNew)  
+        O_ROBA
+        P_Roba()
 endif
 
 closeret
 return
-*}
-	
-	
-// -----------------------------------------------
-// katops -> priprz
-// ----------------------------------------------	
-static function AzurRow(cIdVd, cBrDok, cRsDbf)
 
-// tabela PRIPRZ = "priprema zaduzenja"
-select priprz
-APPEND BLANK
-
-replace idroba with katops->idroba
-replace cijena with katops->mpc
-if cIdVd=="NI"
-	// nova cijena
-	replace ncijena with katops->mpc2
-endif
-
-if IsPlanika()
-	// setuj da nije na stanju samo zaduzenje kojem je
-	// idkonto2 = "XXX"
-	// to je prodavnica koja prima robu
-	if katops->(FIELDPOS("idkonto2")) <> 0
-		if katops->idvd == "80" .and. ALLTRIM(katops->idkonto2) == "XXX"
-			replace sto with "N"
-		endif
-	endif
-endif
-
-replace idtarifa with katops->idtarifa
-replace kolicina with katops->kolicina
-replace jmj with katops->jmj
-replace RobaNaz with katops->naziv
-
-if katops->(FIELDPOS("K1"))<>0  .and. priprz->(FIELDPOS("K2"))<>0
-	replace k1 with katops->k1
-	replace k2 with katops->k2
-endif
-if katops->(fieldpos("K7"))<>0  .and. priprz->(FIELDPOS("K9"))<>0
-	replace k7 with katops->k7
-	replace k8 with katops->k8
-	replace k9 with katops->k9
-endif
-
-if katops->(FIELDPOS("N1"))<>0  .and. priprz->(FIELDPOS("N1"))<>0
-	replace n1 with katops->n1
-	replace n2 with katops->n2
-endif
-
-if (katops->(FIELDPOS("BARKOD"))<>0 .and. priprz->(FIELDPOS("BARKOD"))<>0)
-	replace barkod with katops->barkod
-endif
-
-
-replace PREBACEN with OBR_NIJE
-replace IDRADNIK with gIdRadnik
-
-replace IdPos with KATOPS->IdPos
-replace IdOdj WITH cIdOdj
-replace IdVd WITH cIdVD
-
-replace Smjena WITH gSmjena 
-replace BrDok with cBrdok
-replace DATUM with gDatum
-
-return 1
-
-
-// -----------------------------------------------
-// odaberi - setuj ime kalk dbf-a
-// -----------------------------------------------
-static function SelectKalkDbf(cBrDok, cKalkDestinacija, cKalkDbf)
-
-local nFilter
-
-if gModemVeza=="D"
-	nFilter := 2
-	if ( gUseChkDir == "D" )
-		Box(,4,40)
-		@ 1+m_x, 2+m_y SAY "Listu sortirati po:"
-		@ 2+m_x, 2+m_y SAY "1. neprocitane/procitane"
-		@ 3+m_x, 2+m_y SAY "2. datum kreiranja fajla"
-		@ 4+m_x, 2+m_y SAY "sort ->" GET nFilter PICT "9" VALID nFilter >= 1 .and. nFilter <= 2
-		read
-		BoxC()
-	endif
-       	// modemska veza ide u odabir dokumenta
-       	OpcF:={}
-		
-	cPm:=GetPm()
-	if !EMPTY(cPm)
-		cIdPos:=cPm
-		cPrefix:=(TRIM(cPm))+SLASH
-	else
-		cPrefix:=""
-	endif
-	
-        cKalkDestinacija:=TRIM(gKalkDest)+cPrefix
-	
-	// pobrisi fajlove starije od 7 dana
-	BrisiSFajlove(cKalkDestinacija)
-        BrisiSFajlove(STRTRAN(cKalkDestinacija, ":" + SLASH, ":" + SLASH + "chk" + SLASH))
-
-	aFiles:=DIRECTORY(cKalkDestinacija+"KT*.dbf")
-
-        ASORT(aFiles,,,{|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })   // datum + vrijeme
-        //  KT0512.DBF = elem[1]
-        
-	AEVAL(aFiles,{|elem| AADD(OpcF, PADR(elem[1], 15) + UChkPostoji(trim(cKalkDestinacija) + trim(elem[1])) + " "+ dtoc(elem[3]) + " " + elem[4])},1)
-	
-	// sortiraj po X, R
-	if nFilter == 1
-		ASORT(OpcF,,,{|x,y| RIGHT(x,19) > RIGHT(y,19)})  // R,X + datum + vrijeme
-	endif
-	
-	if nFilter == 2
-		ASORT(OpcF,,,{|x,y| RIGHT(x,17) > RIGHT(y,17)})  // datum + vrijeme
-	endif
-	
-       	h:=ARRAY(LEN(OpcF))
-       	for i:=1 to len(h)
-           		h[i]:=""
-       	next
-       	// elem 3 - datum
-       	// elem 4 - time
-       	if len(OpcF)==0
-           		MsgBeep("U direktoriju za prenos nema podataka")
-           		close all
-           		return .f.
-       	endif
-	
-else
-   	MsgBeep ("Pripremi disketu za prenos ....#te pritisni neku tipku za nastavak!!!")
-	
-endif
-
-
-if gModemVeza=="D"
-	// CITANJE
- 	Izb3:=1
-       	fPrenesi:=.f.
-       	do while .t.
-        	Izb3:=Menu("k2p", opcF, Izb3, .f.)
-		if Izb3==0
-          		exit
-        	else
-          		cKalkDBF:=trim(cKalkDestinacija)+trim(left(opcf[izb3],15))
-          		save screen to cS
-          		Vidifajl(strtran(cKalkDBF,".DBF",".TXT"))  // vidi TK1109.TXT
-          		restore screen from cS
-          		if Pitanje(,"Zelite li izvrsiti prenos ?","D")=="D"
-				fPrenesi:=.t.
-              			Izb3:=0
-          		endif
-        	endif
-       	enddo
-	
-       	if !fPrenesi
-        	return .f.
-       	endif
-	
-else  	
-	// nije modemska veza
-	// ako nije modemska veza
-       	cKalkDBF:=trim(cKalkDestinacija)+"KATOPS.DBF"
-       	aPom1 := IscitajCRC( trim(cKalkDestinacija)+"CRCKT.CRC" )
-       	aPom2 := IntegDbf(cKalkDBF)
-       	if !(aPom1[1]==aPom2[1].and.aPom1[2]==aPom2[2])
-        	MsgBeep("CRC se ne slaze")
-        	if Pitanje(, "Ipak zelite prenos (D/N)?", "N") == "N"
-			return .f.
-		endif
-       	endif
-endif
-
-return .t.
+    
+   
 

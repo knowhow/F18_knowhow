@@ -97,7 +97,7 @@ return
 // ----------------------------------------------------------
 // generacija tops dokumenata na osnovu kalk dokumenata
 // ----------------------------------------------------------
-function GenTops( id_firma, id_tip_dok, br_dok )
+function kalk_generisi_tops_dokumente( id_firma, id_tip_dok, br_dok )
 local _katops_table := _get_katops_dbf()
 local _rbr, _dat_dok
 local _pos_locations
@@ -310,7 +310,7 @@ BoxC()
 if kalk_dokument_postoji( cIDFirma, cIDTipDokumenta, cBrojDokumenta )
 	if (gTops <> "0 " .and. Pitanje(,"Izgenerisati datoteku prenosa?","N") == "D")
         // generisi datoteku prenosa
-		GenTops( cIDFirma, cIDTipDokumenta, cBrojDokumenta )
+		kalk_generisi_tops_dokumente( cIDFirma, cIDTipDokumenta, cBrojDokumenta )
 	endif	
 endif
 

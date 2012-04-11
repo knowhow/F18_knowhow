@@ -807,7 +807,6 @@ if _ok = .t.
 
     if !sql_table_update("kalk_doks", "ins", _record )
          _ok := .f.
-         exit    
     endif
    
 endif

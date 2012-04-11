@@ -817,10 +817,12 @@ if !_ok
 
 else
 
+    @ m_x+4, m_y+2 SAY "push ids to semaphore"
     push_ids_to_semaphore( _tbl_kalk , _ids_kalk )
     push_ids_to_semaphore( _tbl_doks  , _ids_doks  )
 
     // kalk 
+    @ m_x+5, m_y+2 SAY "update semaphore version"
     update_semaphore_version( _tbl_kalk , .t. )
     update_semaphore_version( _tbl_doks  , .t. )
 

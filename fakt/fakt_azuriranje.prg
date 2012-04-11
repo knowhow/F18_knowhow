@@ -11,7 +11,8 @@
 
 #include "fakt.ch"
 
-function o_fakt_edit(_open_pfakt)
+
+function o_fakt_edit( _open_pfakt )
 
 close all
 
@@ -135,10 +136,7 @@ return nil
 
 
 
-/*! \fn SpojiDuple()
- *  \brief Spajanje duplih artikala unutar jednog dokumenta
- */
-
+// Spajanje duplih artikala unutar jednog dokumenta
 function SpojiDuple()
 local cIdRoba
 local nCnt 
@@ -154,36 +152,36 @@ if gOcitBarkod
     set order to tag "3"
     go top
     do while !eof()
-            nCnt:=0
-            cIdRoba:=idroba
-            nKolicina:=0
-            do while !eof() .and. idroba==cIdRoba
-                nKolicina+=kolicina
-                nCnt++
-                skip
-            enddo
+        nCnt:=0
+        cIdRoba:=idroba
+        nKolicina:=0
+        do while !eof() .and. idroba==cIdRoba
+            nKolicina+=kolicina
+            nCnt++
+            skip
+        enddo
             
         if (nCnt>1) // imamo duple!!!
-                if cSpojiti=="N"
-                    if Pitanje(,"Spojiti duple artikle ?","N")=="D"
-                            cSpojiti:="D"
-                    else
-                            cSpojiti:="0"
-                    endif
+            if cSpojiti=="N"
+                if Pitanje(,"Spojiti duple artikle ?","N")=="D"
+                    cSpojiti:="D"
+                else
+                    cSpojiti:="0"
                 endif
+            endif
                 
             if cSpojiti=="D"
-                    seek _idfirma + cIdRoba // idi na prvu stavku
-                    replace kolicina with nKolicina
-                    skip
-                    do while !eof() .and. idroba==cIdRoba
-                        replace kolicina with 0  
+                seek _idfirma + cIdRoba // idi na prvu stavku
+                replace kolicina with nKolicina
+                skip
+                do while !eof() .and. idroba==cIdRoba
+                    replace kolicina with 0  
                     // ostale stavke imaju kolicinu 0
-                        skip
-                    enddo
-                endif
-
+                    skip
+                enddo
             endif
+
+        endif
     enddo
 endif
 
@@ -191,15 +189,15 @@ if cSpojiti="D"
     select fakt_pripr
     go top
     do while !eof()
-            skip
-            nTrec:=RecNo()
-            skip -1
+        skip
+        nTrec:=RecNo()
+        skip -1
             
         // markirano za brisanje
         if (field->kolicina=0)  
-                delete
-            endif
-            go nTrec
+            delete
+        endif
+        go nTrec
     enddo
 endif
 
@@ -250,6 +248,8 @@ enddo
 return 0
 
 
+
+
 // -------------------------------------------------------------------
 // azuriranje u dbf tabele
 // -------------------------------------------------------------------
@@ -261,7 +261,12 @@ local _fakt_doks_data
 local _fakt_doks2_data
 
 close all
+
+my_use_semaphore_off()
+
 o_fakt_edit()
+
+my_use_semaphore_on()
 
 Box("#Proces azuriranja u toku", 3, 60)
 
@@ -520,7 +525,6 @@ return _fakt_total
 // --------------------------------------------------------------
 static function fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 local _ok
-local record := hb_hash()
 local _tbl_fakt, _tbl_doks, _tbl_doks2
 local _i, _n
 local _tmp_id, _tmp_doc
@@ -540,6 +544,8 @@ local _ids_doks2 := {}
 _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
+
+my_use_semaphore_off()
 
 Box(, 5, 60)
 _ok := .t.
@@ -631,6 +637,9 @@ else
 endif
 
 
+my_use_semaphore_on()
+
+
 BoxC()
 
 return _ok
@@ -716,7 +725,11 @@ if ( !lSilent .and. Pitanje( ,"Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" 
     return
 endif
 
+my_use_semaphore_off()
+
 o_fakt_edit()
+
+my_use_semaphore_on()
 
 select fakt_pripr
 use

@@ -184,7 +184,7 @@ endif
 
 SELECT POS
 HSEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-if !empty(doks->idvrstep)  
+if !empty(pos_doks->idvrstep)  
 	// predispozicija
 	fPred:=.t.
  	cNazDok := "PREDISPOZICIJA "
@@ -192,8 +192,8 @@ endif
 
 cNazDok := cNazDok + " "
 
-? PADC(cNazDok + IIF(Empty(DOKS->IdPos), "", ALLTRIM(DOKS->IdPos) + "-" ) + ;
-        ALLTRIM(DOKS->BrDok), nSir)
+? PADC(cNazDok + IIF(Empty(pos_doks->IdPos), "", ALLTRIM(pos_doks->IdPos) + "-" ) + ;
+        ALLTRIM(pos_doks->BrDok), nSir)
 
 SELECT ODJ
 HSEEK POS->IdOdj
@@ -205,13 +205,13 @@ EndIF
 
 SELECT POS
 if fpred
-	? PADC("PRENOS IZ ODJ: "+pos->idodj+"  U ODJ:"+doks->idvrstep,nSir)
+	? PADC("PRENOS IZ ODJ: "+pos->idodj+"  U ODJ:"+pos_doks->idvrstep,nSir)
 else
  	? PADC (ALLTRIM (ODJ->Naz)+IIF (!Empty (POS->IdDio),"-"+AllTrim (DIO->Naz),"");
         , nSir)
 endif
 
-? PADC (FormDat1 (DOKS->Datum), nSir)
+? PADC (FormDat1 (pos_doks->Datum), nSir)
 ?
 
 // setuj linije...
@@ -224,7 +224,7 @@ _get_line(@cLine, @cLine2)
 
 nFinZad := 0
 SELECT POS
-DO While ! Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
+DO While ! Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 	IF gVrstaRS == "S" .and. Prow() > 63-gPstranica
     		FF
    	EndIF

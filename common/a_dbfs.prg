@@ -21,7 +21,7 @@ local _alg
 
 public gaDbfs := {}
 
-Alert(RECI_GDJE_SAM0 + " fix - ld, epdv, pos")
+Alert(RECI_GDJE_SAM0 + " fix - ld, epdv")
 
 __f18_dbfs := hb_hash()
 
@@ -35,8 +35,7 @@ set_a_dbf_fakt()
 
 //set_a_dbf_ld()
 //set_a_dbf_epdv()
-//set_a_dbf_pos()
-
+set_a_dbf_pos()
 
 set_a_dbfs_legacy()
 

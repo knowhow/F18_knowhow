@@ -86,6 +86,7 @@ AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
 AADD ( aDbf, { "C_1",        "C",  6, 0} )
 AADD ( aDbf, { "C_2",        "C", 10, 0} )
 AADD ( aDbf, { "C_3",        "C", 50, 0} )
+AADD ( aDbf, { "RBR",        "C",  5, 0} )
 
 _created := .f.
 _alias := "POS"

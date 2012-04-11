@@ -51,7 +51,7 @@ _val_zaduzenje := "11#12#13#80#81"
 _val_inventura := "IP"
 _val_nivelacija := "19"
 
-_destination := gKalkDest
+_destination := ALLTRIM( gKalkDest )
 
 SET CURSOR ON
 O_PRIPRZ
@@ -67,9 +67,12 @@ if !get_import_file( _br_dok, @_destination, @_imp_table )
     return .f.
 endif
 
+// _imp_table u nasem slucaju sadrzi i putanju i naziv fajla
+//
 // otvori katops datoteku
+
 select ( F_TMP_KATOPS )
-my_use_temp( "KATOPS", _destination + _imp_table )
+my_use_temp( "KATOPS", _imp_table )
 
 // daj mi vrstu dokumenta koju cu importovati
 _id_tip_dok := _get_vd( katops->idvd )
@@ -101,7 +104,7 @@ use
 MsgC()
 
 // pobrisi fajl importa nakon što smo ga importovali
-_brisi_fajlove_importa( _destination + _imp_table )
+_brisi_fajlove_importa( _imp_table )
 
 return .t.
 
@@ -186,12 +189,11 @@ if gMultiPM == "D"
     else
         _prefix := ""
     endif
-    
-    destinacija := TRIM(gKalkDest) + _prefix
+
+    destinacija := ALLTRIM( gKalkDest ) + _prefix
     
     // pobrisi fajlove starije od 7 dana
     BrisiSFajlove( destinacija )
-    BrisiSFajlove( STRTRAN( destinacija, ":" + SLASH, ":" + SLASH + "chk" + SLASH))
 
     _imp_files := DIRECTORY( destinacija + "kt*.dbf" )
 
@@ -199,18 +201,10 @@ if gMultiPM == "D"
     // datum + vrijeme
     // KT0512.DBF = elem[1]
         
-    AEVAL( _imp_files, {|elem| AADD( _opc, PADR( elem[1], 15 ) + UChkPostoji(trim( destinacija ) + trim(elem[1])) + " "+ dtoc(elem[3]) + " " + elem[4])},1)
+    AEVAL( _imp_files, {|elem| AADD( _opc, PADR( elem[1], 15 ) + UChkPostoji() + " " + DTOC( elem[3] ) + " " + elem[4] ) }, 1 )
     
-    // sortiraj po X, R
-    if _filter == 1
-        ASORT( _opc,,,{|x,y| RIGHT(x,19) > RIGHT(y,19)})  
-        // R,X + datum + vrijeme
-    endif
-    
-    if _filter == 2
-        ASORT( _opc,,,{|x,y| RIGHT(x,17) > RIGHT(y,17)})  
-        // datum + vrijeme
-    endif
+    // datum + vrijeme
+    ASORT( _opc,,,{|x,y| RIGHT(x,17) > RIGHT(y,17)})  
     
     _h := ARRAY( LEN( _opc ) )
     for _i := 1 to LEN(_h)
@@ -219,11 +213,13 @@ if gMultiPM == "D"
 
     // elem 3 - datum
     // elem 4 - time
+
     if LEN( _opc ) == 0
         MsgBeep("U direktoriju za prenos nema podataka")
         close all
         return .f.
     endif
+
 else    
     MsgBeep ("Pripremi disketu za prenos ....#te pritisni neku tipku za nastavak!!!")
 endif

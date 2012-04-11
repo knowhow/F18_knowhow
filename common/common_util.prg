@@ -250,14 +250,9 @@ endif
 
 
 // da li postoji fajl u chk lokaciji, vraca oznaku
-// R - realizovan
 // X - nije obradjen
-function UChkPostoji(cFullFileName)
-if FILE(STRTRAN(cFullFileName,":" + SLASH, ":" + SLASH + "chk" + SLASH))
-	return "R"
-else
-   	return "X"
-endif
+function UChkPostoji()
+return "X"
 
 
 

@@ -350,7 +350,7 @@ return nil
 function kalk_par_zavisni_dokumenti()
 private  GetList:={}
 
-Box(,8,76,.f.,"NACINI FORMIRANJA ZAVISNIH DOKUMENATA")
+Box(, 10, 76, .f., "NACINI FORMIRANJA ZAVISNIH DOKUMENATA" )
 
     @ m_x+1,m_y+2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin pict "@!" valid gAFin $ "DN0"
     @ m_x+2,m_y+2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT pict "@!" valid gAMat $ "DN0"
@@ -377,7 +377,7 @@ if lastkey() <> K_ESC
   	set_metric("kalk_prenos_pos", f18_user(), gTops)
   	set_metric("kalk_prenos_fakt", f18_user(), gFakt)
   	set_metric("kalk_destinacija_topska", f18_user(), gTopsDest )
-  	set_metric("kalk_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
+  	set_metric("kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
 endif
 
 return nil

@@ -69,7 +69,7 @@ endif
 
 AADD(aNiz,{"Putanja korijenskog direktorija modula na serveru" , "gServerPath", , , })
 AADD(aNiz,{"Destinacija datoteke TOPSKA" , "gKALKDEST", , , })
-AADD(aNiz,{"Razmjena podataka, koristi se modemska veza D/N", "gMultiPM","gMultiPM $ 'DN'", "@!", })
+AADD(aNiz,{"Razmjena podataka, vise prodajnih jedinica (D/N)", "gMultiPM","gMultiPM $ 'DN'", "@!", })
 AADD(aNiz,{"Razmjena podataka, koristiti 'chk' direktorij D/N", "gUseChkDir","gUseChkDir$'DN'", "@!", })
 AADD(aNiz,{"Lokalni port za stampu racuna" , "gLocPort", , , })
 AADD(aNiz,{"Oznaka/ID gotovinskog placanja" , "gGotPlac",, "@!", })
@@ -94,7 +94,7 @@ if LASTKEY()<>K_ESC
     set_metric("OznakaDijelaObjekta", nil, gIdDio )
     set_metric("PutanjaServera", nil, gServerPath )     // pathove ne diraj
     set_metric("KalkDestinacija", nil, gKalkDest )       // pathove ne diraj
-    set_metric("pos_prenos_vise_prodajnih_mjesta", nil, gMultiPM )
+    set_metric("kalk_tops_prenos_vise_prodajnih_mjesta", my_user(), gMultiPM )
     set_metric("KoristitiDirektorijProvjere", nil, gUseChkDir ) // koristi chk direktorij
     set_metric("OznakaLokalnogPorta", nil, gLocPort )
     set_metric("OznakaGotovinskogPlacanja", nil, gGotPlac )

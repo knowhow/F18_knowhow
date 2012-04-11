@@ -14,64 +14,59 @@
 
 
 function kalk_razmjena_podataka()
-private Opc:={}
-private opcexe:={}
-AADD(opc,"1. generisi FIN,FAKT dokumente (kontiraj)      ")
-AADD(opcexe,{|| Rekapk(.t.)})
-AADD(opc,"2. iz FAKT generisi KALK dokumente")
-AADD(opcexe, {|| Faktkalk()})
-AADD(opc,"3. iz TOPS generisi KALK dokumente")
-AADD(opcexe, {|| r_tops_kalk()})
-AADD(opc,"4. sifrarnik KALK prebaci u TOPS")
-AADD(opcexe, {|| kalk_sifre_katops()} )
-AADD(opc,"5. sifrarnik TOPS prebaci u KALK")
-AADD(opcexe, {|| RobaFromTops()} )
-AADD(opc,"6. iz KALK generisi TOPS dokumente")
-AADD(opcexe, {|| Mnu_GenKaTOPS()} )
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-if IsPlanika()
-	AADD(opc,"7. TOPS, skeniranje dokumenata u procesu")
-	AADD(opcexe, {|| scan_dok_u_procesu() })
-endif
+AADD(_opc,"1. generisi FIN,FAKT dokumente (kontiraj)      ")
+AADD(_opcexe,{|| Rekapk(.t.)})
+AADD(_opc,"2. iz FAKT generisi KALK dokumente")
+AADD(_opcexe, {|| Faktkalk()})
+AADD(_opc,"3. iz TOPS generisi KALK dokumente")
+AADD(_opcexe, {|| r_tops_kalk()})
+AADD(_opc,"5. sifrarnik TOPS prebaci u KALK")
+AADD(_opcexe, {|| RobaFromTops()} )
+AADD(_opc,"6. iz KALK generisi TOPS dokumente")
+AADD(_opcexe, {|| Mnu_GenKaTOPS()} )
 
 if IsVindija()
-	AADD(opc,"7. import txt")
-	AADD(opcexe, {|| MnuImpTxt()} )
+	AADD(_opc,"7. import txt")
+	AADD(_opcexe, {|| MnuImpTxt()} )
 endif
 
-AADD(opc,"8. import csv fajl ")
-AADD(opcexe, {|| MnuImpCSV()} )
+AADD(_opc,"8. import csv fajl ")
+AADD(_opcexe, {|| MnuImpCSV()} )
 
-AADD(opc,"-----------------------------------")
-AADD(opcexe, nil )
+AADD(_opc,"-----------------------------------")
+AADD(_opcexe, nil )
 
-AADD(opc,"A. kontiraj dokumente za period")
-AADD(opcexe, {|| KontVise()} )
+AADD(_opc,"A. kontiraj dokumente za period")
+AADD(_opcexe, {|| KontVise()} )
 
-AADD(opc,"B. kontiraj automatski kalkulacije za period")
-AADD(opcexe, {|| kont_v_kalk()} )
+AADD(_opc,"B. kontiraj automatski kalkulacije za period")
+AADD(_opcexe, {|| kont_v_kalk()} )
 
-private Izbor:=1
-Menu_SC("rmod")
+f18_menu( "rmod", .f., _izbor, _opc, _opcexe )
 
-CLOSERET
+close all
 
 return
-*}
+
 
 
 function r_tops_kalk()
-*{
-private Opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc,"1. prenos tops->kalk                      ")
-AADD(opcexe, {|| UzmiIzTOPSa()})
-AADD(Opc,"2. tops->kalk 96 po normativima za period ")
-AADD(opcexe,{|| tops_nor_96() })
+AADD(_opc,"1. prenos tops->kalk                      ")
+AADD(_opcexe, {|| UzmiIzTOPSa()})
+AADD(_opc,"2. tops->kalk 96 po normativima za period ")
+AADD(_opcexe,{|| tops_nor_96() })
 
-Menu_SC("rpka")
+f18_menu( "rpka", .f., _izbor, _opc, _opcexe )
 
 return
-*}
+
+
+

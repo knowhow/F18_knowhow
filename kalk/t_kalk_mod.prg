@@ -232,10 +232,12 @@ public cRNT3:="TROSK 3 "
 public cRNT4:="TROSK 4 "
 public cRNT5:="TROSK 5 "
 
-public gTops:="0 "   // Koristim TOPS - 0 - ne prenosi se podaci,"1 " - prod mjes 1
-public gFakt:="0 "   // Koristim FAKT - 0 - ne prenosi se podaci,"1 " - prod mjes 1
-public gTopsDEST:=space(20)
-public gSetForm:="1"
+public gTops := "0 "   
+// Koristim TOPS - 0 - ne prenosi se podaci,"1 " - prod mjes 1
+public gFakt := "0 "   
+// Koristim FAKT - 0 - ne prenosi se podaci,"1 " - prod mjes 1
+public gTopsDEST := SPACE( 300 ) 
+public gSetForm := "1"
 
 public c10Var:="2"  // 1-stara varijanta izvjestaja, nova varijanta izvj
 public g80VRT:="1"

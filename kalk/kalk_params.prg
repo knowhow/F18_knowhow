@@ -350,7 +350,7 @@ return nil
 function kalk_par_zavisni_dokumenti()
 private  GetList:={}
 
-Box(, 10, 76, .f., "NACINI FORMIRANJA ZAVISNIH DOKUMENATA" )
+Box(, 12, 76, .f., "NACINI FORMIRANJA ZAVISNIH DOKUMENATA" )
 
     @ m_x+1,m_y+2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin pict "@!" valid gAFin $ "DN0"
     @ m_x+2,m_y+2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT pict "@!" valid gAMat $ "DN0"
@@ -362,8 +362,8 @@ Box(, 10, 76, .f., "NACINI FORMIRANJA ZAVISNIH DOKUMENATA" )
     read
 
     if gTops <> "0 " .or. gFakt <> "0 "
-        @ m_x+7,m_y+2 SAY "Mjesto na koje se prenose podaci za TOPS/FAKT " GET gTopsDest PICT "@!"
-        @ m_x+9,m_y+2 SAY "Koristi se vise prodajnih mjesta (D/N)" GET gMultiPM PICT "@!" VALID gMultiPM $ "DN"
+        @ m_x+8,m_y+2 SAY "Destinacija fajla za razmjenu:" GET gTopsDest PICT "@S40"
+        @ m_x+9,m_y+2 SAY "Koristi se vise prodajnih mjesta (D/N) ?" GET gMultiPM PICT "@!" VALID gMultiPM $ "DN"
         read
     endif
 

@@ -53,6 +53,8 @@ set_a_dbf_temp("kalk_reka22"   , "REKA22"        , F_REKA22        )
 set_a_dbf_temp("kalk_r_uio"    , "R_UIO"         , F_R_UIO         )
 set_a_dbf_temp("kalk_rpt_tmp"  , "RPT_TMP"       , F_RPT_TMP       )
 
+set_a_dbf_temp("katops"        , "KATOPS"        , F_TMP_KATOPS       )
+
 return
 
 

@@ -86,6 +86,29 @@ my_use_temp( "KATOPS", my_home() + dbf_table )
 return
 
 
+// -------------------------------------------------------
+// prenos prerequisites
+// -------------------------------------------------------
+static function _prenos_prereq()
+local _ret := .f.
+
+if ALLTRIM( gTops ) <> "0"
+	// provjeri i gTopsDest 
+	if EMPTY( ALLTRIM( gTopsDest ) )
+		MsgBeep( "Nije podesen direktorij za prenos podataka !" )
+	else
+		_ret := .t.
+	endif
+endif
+
+if _ret
+	if Pitanje(, "Generisati datoteku prenosa za modul TOPS (D/N) ?", "N" ) == "N"
+		_ret := .f.
+	endif
+endif
+
+return _ret
+
 
 // ----------------------------------------------------------
 // generacija tops dokumenata na osnovu kalk dokumenata
@@ -97,7 +120,8 @@ local _pos_locations
 local _from_kum := .t.
 local _total := 0
 
-if gTops<>"0 " .and. Pitanje(,"Izgenerisati datoteku prenosa za TOPS ?", "N" ) == "N"
+// provjeri uslove za prenos
+if !_prenos_prereq()
     select kalk_pripr
     return
 endif

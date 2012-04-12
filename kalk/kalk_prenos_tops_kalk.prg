@@ -15,277 +15,192 @@
 #define D_MAX_FILES     150
 
 
-// preuzimanje podataka iz TOPS-a
-function UzmiIzTopsa()
-local Izb3
-local OpcF
-local aPom1 := {}
-local aPom2 := {}
-local l42u11
-local cTopsKPath
-local cTopsKChkPath
-local cSrcOpis
-private h
+// -----------------------------------------------------------
+// otvaranje fajlova potrebnih kod importa podataka
+// -----------------------------------------------------------
+static function _o_imp_tables()
 
-// kreirati dokument 42 ili 11
-l42u11 := ( IzFMKINI("KALK", "POS42uKALK11", "N") == "D" )
-
-// primjer matrice:
-// [TOPSuKALK]    |=CHR(124)
-// UslovKontoIMarkerZaRazvrstReal=left(idroba,2)="90"|1320KF|KF;left(idroba,2)="91"|1320KF2|KF2
-// ----------------------------------------
-cRazdvoji := IzFMKIni("TOPSuKALK","UslovKontoIMarkerZaRazvrstReal","-",KUMPATH)
-
-IF ( cRazdvoji <> "-" )
-	// razdvajanje realizacije na vise konta
-  	// -------------------------------------
-  	lRazdvoji:=.t.
-  	aRazdvoji := TOKuNIZ(cRazdvoji, ";", "|")
-  	
-	AADD(aRazdvoji,{".t.","","",0})
-  	
-	FOR i:=1 TO LEN(aRazdvoji)
-    		DO WHILE LEN(aRazdvoji[i])<4
-      			DO CASE
-        			CASE LEN( aRazdvoji[i] ) < 1
-                                	AADD( aRazdvoji[i] , ".t." )
-        			CASE LEN( aRazdvoji[i] ) < 2
-                                	AADD( aRazdvoji[i] , "" )
-        			CASE LEN( aRazdvoji[i] ) < 3
-                                 	AADD( aRazdvoji[i] , "" )
-        			CASE LEN( aRazdvoji[i] ) < 4
-                                	AADD( aRazdvoji[i] , 0 )
-      			ENDCASE
-    		ENDDO
-  	NEXT
-ELSE
-
-	// standardni prenos
-	// -----------------
-  	lRazdvoji := .f.
-
-ENDIF
-
-O_KONCIJ
-go top
-
-if gMultiPM == "D"
-	
-	OpcF:={}
-
- 	select koncij
-	
- 	do while !EOF()
-    
-  		if !EMPTY(field->idprodmjes)
-   			
-			cTopsKPath := TRIM(gTopsDest) + TRIM(field->idprodmjes) + SLASH
-			cTopsKChkPath := STRTRAN(cTopsKPath, ":\", ":\chk\")
-			
-			// brisi fajlove iz prenosa....
-			BrisiSFajlove( cTopsKPath , 7)
-			// brisi fajlove iz chk lokacije...
-   			BrisiSFajlove( cTopsKChkPath, 7 )
-
-   			aFiles := DIRECTORY(cTopsKPath + "TK*.dbf")
-   			
-			ASORT(aFiles,,,{|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })
-			
-			AEVAL(aFiles, { |elem| AADD( OpcF, PADR(ALLTRIM(koncij->idprodmjes) + SLASH + TRIM(elem[1]), 20) + " " + UChkPostoji(cTopsKPath + TRIM(elem[1]) ) + " " + DTOC(elem[3]) + 	" " + elem[4] ) } , 1, D_MAX_FILES)  
-  		
-		endif
-  		
-		skip
- 	enddo
-
-	// R/X + datum + vrijeme
- 	ASORT(OpcF,,,{|x,y| right(x, 19) > right(y, 19) })  
- 	
-	h := ARRAY(LEN(OpcF))
- 	
-	for i:=1 to len(h)
-   		h[i]:=""
- 	next
- 	
-	if LEN(OpcF)==0
-   		MsgBeep("U direktoriju za prenos nema podataka")
-   		closeret
- 	endif
-else
-	MsgBeep("Pripremi disketu za prenos ....#te pritisni nesto za nastavak")
+select ( F_ROBA )
+if !used()
+	O_ROBA
 endif
 
-O_ROBA
-O_TARIFA
-O_KALK_PRIPR
-O_KALK
-
-if gMultiPM == "D"
-	Izb3:=1
-  	fPrenesi:=.f.
-  	do while .t.
-   		Izb3:=Menu("izdat",opcF,Izb3,.f.)
-		if Izb3==0
-     			exit
-   		else
-     			cTopsDBF := TRIM(gTopsDEST) + TRIM(left(opcf[Izb3], 15))
-     			
-			save screen to cS
-     			
-			Vidifajl(strtran(cTopsDBF, ".DBF", ".TXT"))  
-			// vidi TK1109.TXT
-     			
-			restore screen from cS
-     			
-			if Pitanje(,"Zelite li izvrsiti prenos ?","D")=="D"
-         			fPrenesi:=.t.
-         			Izb3:=0
-     			else
-         			// close all 
-				// vrati se u petlju
-         			loop
-     			endif
-   		endif
-  	enddo
-	
-  	if !fprenesi
-        	return .f.
-  	endif
-else
-	// CRC gledamo ako nije modemska veza
- 	cTOPSDBF:=TRIM(gTopsDEST) + "TOPSKA"
- 	aPom1 := IscitajCRC( trim(gTopsDest) + "CRCTK.CRC" )
- 	aPom2 := IntegDBF(cTopsDBF)
-	IF !(aPom1[1]==aPom2[1] .and. aPom1[2]==aPom2[2])
-   		Msg("CRCTK.CRC se ne slaze. Greska na disketi !",4)
-   		CLOSERET
- 	ENDIF
+select ( F_TARIFA )
+if !used()
+	O_TARIFA
 endif
 
-my_use (cTopsDBF, .t., "TOPSKA")
+select ( F_KALK_PRIPR )
+if !used()
+	O_KALK_PRIPR
+endif
+
+select ( F_KALK_DOKS )
+if !used()
+	O_KALK_DOKS
+endif
+
+select ( F_KALK )
+if !used()
+	O_KALK
+endif
+
+select ( F_KONCIJ )
+if !used()
+	O_KONCIJ
+endif
+
+return
+
+
+// --------------------------------------------------------
+// upit za konto
+// --------------------------------------------------------
+static function _box_konto()
+local _konto := PADR( "1320", 7 )
+local _t_area := SELECT()
+	
+select konto
+
+Box(, 3, 60 )
+	@ m_x+2, m_y+2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )
+  	read
+BoxC()
+
+select ( _t_area )
+return _konto
+
+
+// ----------------------------------------------------------------
+// nacin zamjene barkod-ova prilikom importa
+// ----------------------------------------------------------------
+static function _bk_replace()
+local _ret := 0
+local _x := 1
+
+Box(, 5, 60 )
+
+	@ m_x + _x, m_y + 2 SAY "Zamjena barkod-ova"
+	
+	++ _x
+	++ _x
+
+	@ m_x + _x, m_y + 2 SAY "0 - bez zamjene"
+
+	++ _x
+
+	@ m_x + _x, m_y + 2 SAY "1 - ubaci samo nove"
+	
+	++ _x
+
+	@ m_x + _x, m_y + 2 SAY "2 - zamjeni sve"
+
+	++ _x
+	++ _x
+
+	@ m_x + _x, m_y + 2 SAY SPACE(15) + "=> odabir" GET _ret PICT "9"
+	
+	read
+	
+BoxC()
+
+return
+
+
+
+// ------------------------------------------------------------
+// preuzimanje podataka iz POS-a
+// ------------------------------------------------------------
+function kalk_preuzmi_tops_dokumente()
+local _auto_razduzenje := "N"
+local _br_kalk, _idvd_pos
+local _id_konto2 := ""
+local _bk_replace
+
+// opcija za automatko svodjeje prodavnice na 0
+// ---------------------------------------------
+// prenese se tops promet u dokument 11
+// pa se prenese tops promet u dokument 42
+_auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
+
+// otvori tabele bitne za import podataka
+_o_imp_tables()
+
+// daj mi fajl za import
+if !get_imp_file( @_imp_file )
+	close all
+	return
+endif
+
+// otvori temp tabelu
+select ( F_TMP_TOPSKA )
+my_use_temp( "TOPSKA", _imp_file )
 
 go bottom
-cBRKALK:=LEFT(STRTRAN(DTOC(datum),".",""),4) + "/" + idpos
-// dobija se broj u formi 1210/1     - 1210 - posljednji, najveci datum
-cIdVd := TOPSKA->IdVd
 
-if (l42u11)
-	cPom:=IzFmkIni("POS42uKALK11","Kase"," ",KUMPATH)
-	if !(EMPTY(cPom) .or. topska->idPos$cPom)
-		l42u11:=.f.
-	endif
-endif
+// daj mi broj kalkulacije
+_br_kalk := LEFT( STRTRAN( DTOC( field->datum ), ".", "" ), 4 ) + "/" + ALLTRIM( field->idpos )
+_idvd_pos := field->idvd
 
-IF (cIdVD=="42" .and. l42u11) .or. (cIdVD=="12")
-	O_KONTO
-  	cIdKonto2:=PADR("1310",7)
-  	Box(,3,60)
-  		@ m_x+2, m_y+2 SAY "Magacinski konto:" GET cIdKonto2 VALID P_Konto(@cIdKonto2)
-  		READ
-  	BoxC()
-ENDIF
-
+// provjeri da li postoji podesenje za ovaj fajl importa
 select koncij
-locate for idprodmjes==topska->idpos
-if !found()
-	MsgBeep("U sifrarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :"+idProdMjes+"#Prenos nije izvrsen.")
-  	closeret
+locate for idprodmjes == topska->idpos
+
+if !FOUND()
+	MsgBeep("U sifrarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen.")
+  	close all
+	return
 endif
 
 select kalk
-IF (cIdVD=="42" .and. l42u11)
-	seek gFirma+"11"+"X"
+
+if ( _idvd_pos == "42" .and. _auto_razduzenje )
+
+	seek gFirma + "11" + "X"
   	skip -1
-  	if idvd<>"11"
-    		cBrKalk:=space(8)
+  	
+	if field->idvd <> "11"
+    	_br_kalk := SPACE( 8 )
   	else
-    		cBrKalk:=brdok
+    	_br_kalk := field->brdok
   	endif
-  	cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-ELSE
-  	seek gfirma+cIdVd+cBRKALK
-  	if found()
-		Msg("Vec postoji dokument pod brojem "+gfirma+"-"+cIdVd+"-"+cbrkalk+"#Prenos nece biti izvrsen")
-		closeret
+
+  	_br_kalk := UBrojDok( VAL( LEFT ( _br_kalk, 5 ) ) + 1, 5, RIGHT( _br_kalk, 3 ) )
+
+else
+	seek gfirma + _idvd_pos + _br_kalk
+
+  	if FOUND()
+		Msg("Vec postoji dokument pod brojem " + gFirma + "-" + _idvd_pos + "-" + _br_kalk + "#Prenos nece biti izvrsen" )
+		close all
+		return
 	endif
-ENDIF
+endif
 
 select topska
 go top
-if topska->(FieldPos("barkod"))<>0
-	if Pitanje(,"Mjenjati barkod-ove ?","N")=="D"
-		lReplace:=.t.
-		nReplaceBK:=0
-	else
-		lReplace:=.f.
-	endif
-	if lReplace .and. Pitanje(,"Mjenjati sve barkod-ove bez provjere ?","N")=="D"
-		lReplaceAll:=.t.
-	else
-		lReplaceAll:=.f.
-	endif
-else
-	lReplace:=.f.
+
+// nacin zamjene barkod-ova
+// 0 - ne mjenjaj
+// 1 - ubaci samo nove
+// 2 - zamjeni sve
+
+_bk_replace := _bk_replace()
+
+// konto magacina za razduzenje
+if ( _idvd_pos == "42" .and. _auto_razduzenje ) .or. ( _idvd_pos == "12" )
+	_id_konto2 := _box_konto()
 endif
 
-lSortNR:=.f.
+// konacno idemo na import
 
-if IsJerry()
-	if Pitanje(,"Napraviti sort rednih brojeva","D")=="D"
-		select kalk_pripr
-		go bottom
-		lSortNR:=.t.
-		nSortNR:=VAL(kalk_pripr->rbr)
-		go top
-		cKalkulacija:=SPACE(8)
-		Box(,4,60)
-		@ 1+m_x, 2+m_y SAY "Uslov za sortiranje rednih brojeva:"
-		@ 2+m_x, 2+m_y SAY "Zadnji redni broj u kalk_pripremi: " GET nSortNr PICT "999"
-		@ 3+m_x, 2+m_y SAY "0 - od pocetka"
-		@ 4+m_x, 2+m_y SAY "Priljepi na broj dokumenta: " GET cKalkulacija
-		read
-		BoxC()
-		if LastKey()==K_ESC
-			return
-		endif
-	endif
-endif
+_rbr := 0
 
-// pobrisi prvo p_doksrc
-zap_p_doksrc()
-
-nRbr:=0
 do while !eof()
-	if lRazdvoji
-    		FOR i:=1 TO LEN(aRazdvoji)
-      			cPom := aRazdvoji[i,1]
-      			IF &cPom
-        			cBrDok    := TRIM(cBrKalk)+aRazdvoji[i,3]
-        			cIdKonto  := aRazdvoji[i,2]
-        			IF EMPTY(cIdKonto)
-					cIdKonto := KONCIJ->id
-				ENDIF
-        			aRazdvoji[i,4] := aRazdvoji[i,4]+1
-        			cRBr      := STR(aRazdvoji[i,4],3)
-        			EXIT
-      			ENDIF
-    		NEXT
-  	else
-    		cBrDok    := cBrKalk
-    		cIdKonto  := KONCIJ->id
-    		if IsJerry() .and. lSortNR
-			cRbr:=STR(++nSortNr,3)
-			if !EMPTY(cKalkulacija)
-				cBrDok:=cKalkulacija
-			endif
-			if nSortNr>0
-				select kalk_pripr
-				go bottom
-			endif
-		else
-			cRBr      := STR(++nRBr,3)
-		endif
-  	endif
+	
+	cBrDok    := cBrKalk
+    cIdKonto  := KONCIJ->id
+	cRBr      := STR(++nRBr,3)
 	
 	IF (cIdVd=="42" .and. l42u11) .or. (cIdVd=="12")
 		// formiraj 11-ku umjesto 42-ke
@@ -347,23 +262,6 @@ do while !eof()
 	    	endif
 	endif
 	
-	select kalk_pripr
-
-	cSrcOpis := ""
-	if kalk_pripr->idvd == "42"
-		cSrcOpis := "Prodaja"
-	endif
-	if kalk_pripr->idvd == "12"
-		cSrcOpis := "Reklamacija"
-	endif
-	
-	// dodaj stavku i u p_doksrc
-	add_p_doksrc( gFirma, kalk_pripr->idvd, kalk_pripr->brdok, ;
-		pripr->datdok, "TOPS", topska->idpos, topska->idvd, ;
-		topska->brdok, topska->datpos, kalk_pripr->idkonto, "" ,;
-		topska->idpartner, cSrcOpis)
-
-	
 	select topska
   	skip
 enddo
@@ -386,6 +284,153 @@ IF IzFMKINI("KALK","PrimPak","N",KUMPATH)=="D"
 ENDIF
 
 return
+
+
+
+
+// ----------------------------------------------------------
+// daj mi sva prodajna mjesta iz koncija
+// ----------------------------------------------------------
+static function _prodajna_mjesta_iz_koncij()
+local _a_pm := {}
+local _scan
+
+select koncij
+go top
+
+do while !EOF()
+	// ako nije prazno
+	// ako je maloprodaja
+	if !EMPTY( field->idprodmjes ) .and. LEFT( field->tip, 1 ) == "M"
+		_scan := ASCAN( _a_pm, {|x| ALLTRIM(x) == ALLTRIM( field->idprodmjes ) })
+		if _scan == 0
+			AADD( _a_pm, ALLTRIM( field->idprodmjes ) )
+		endif
+	endif
+	skip
+enddo
+
+return _a_pm
+
+
+// ----------------------------------------------------------
+// selekcija fajla za import podataka
+// ----------------------------------------------------------
+static function get_import_file( import_file )
+local _opc := {}
+local _pos_kum_path
+local _prod_mjesta
+local _ret := .t.
+local _i, _imp_files, _opt, _h, _n
+local _imp_patt := "tk*.dbf"
+local _prenesi, _izbor, _a_tmp1, _a_tmp2
+
+if gMultiPM == "D"
+
+	// daj mi sva prodajna mjesta iz tabele koncij
+	_prod_mjesta := _prodajna_mjesta_iz_koncij()
+	
+	if LEN( _prod_mjesta ) == 0
+		// imamo problem, nema prodajnih mjesta
+		MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !!!" )
+		_ret := .f.
+		return _ret
+	endif
+
+	for _i := 1 to LEN( _prod_mjesta )
+
+			// putanja koju cu koristiti	
+			_pos_kum_path := ALLTRIM( gTopsDest ) + ALLTRIM( _prod_mjesta[ _i ] ) + SLASH
+			
+			// brisi sve fajlove starije od 28 dana
+			BrisiSFajlove( _pos_kum_path )
+			
+			// daj mi fajlove u matricu po pattern-u
+   			_imp_files := DIRECTORY( _pos_kum_path + _imp_patt )
+
+			ASORT( _imp_files,,, {|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })
+			
+			_opt := PADR( ALLTRIM( _prod_mjesta[ _i ] ) + SLASH + TRIM(elem[1]), 20) 
+			_opt += " " 
+			_opt += UChkPostoji() 
+			_opt += " " 
+			_opt += DTOC(elem[3]) 
+			_opt += " " 
+			_opt += elem[4] 
+
+			// dodaj u matricu za odabir
+			AEVAL( _imp_files, { |elem| AADD( _opt ) }, 1, D_MAX_FILES )  
+
+	next
+
+	// R/X + datum + vrijeme
+ 	ASORT( _opc ,,,{|x,y| RIGHT(x, 19) > RIGHT(y, 19) })  
+ 	
+	_h := ARRAY( LEN( _opc ) )
+ 	
+	for _n := 1 to LEN( _h )
+   		_h[ _n ] := ""
+ 	next
+
+	// ima li stavki za preuzimanje ? 	
+	if LEN( _opc ) == 0
+
+   		MsgBeep( "U direktoriju za prenos nema podataka" )
+		_ret := .f.
+		return _ret
+
+ 	endif
+
+else
+	MsgBeep( "Pripremi disketu za prenos ....#te pritisni nesto za nastavak" )
+endif
+
+if gMultiPM == "D"
+
+	_izbor := 1
+  	_prenesi := .f.
+
+	do while .t.
+
+   		_izbor := Menu( "izdat", _opc, _izbor, .f. )
+
+		if _izbor == 0
+     		exit
+   		else
+     		
+			import_file := ALLTRIM( gTopsDest ) + ALLTRIM( LEFT( _opc[ _izbor ], 15 ) )
+     			
+			if Pitanje(, "Zelite li izvrsiti prenos ?", "D" ) == "D"
+         		_prenesi := .t.
+         		_izbor := 0
+     		else
+         		loop
+     		endif
+   		endif
+  	enddo
+	
+  	if !_prenesi
+		_ret := .f.
+        return _ret
+  	endif
+
+else
+
+	// CRC gledamo ako nije modemska veza
+ 	import_file := ALLTRIM( gTopsDest ) + "topska.dbf"
+
+ 	_a_tmp1 := IscitajCRC( ALLTRIM( gTopsDest ) + "crctk.crc" )
+ 	_a_tmp2 := IntegDBF( import_file )
+
+	IF !( _a_tmp1[1] == _a_tmp2[1] .and. _a_tmp1[2] == _a_tmp2[2] ) 
+   		Msg("CRCTK.CRC se ne slaze. Greska na disketi !",4)
+		_ret := .f.
+		return _ret
+ 	ENDIF
+
+endif
+
+return _ret
 
 
 

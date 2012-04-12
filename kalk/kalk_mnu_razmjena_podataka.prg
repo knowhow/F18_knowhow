@@ -59,10 +59,10 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD(_opc,"1. prenos tops->kalk                      ")
-AADD(_opcexe, {|| UzmiIzTOPSa()})
-AADD(_opc,"2. tops->kalk 96 po normativima za period ")
-AADD(_opcexe,{|| tops_nor_96() })
+AADD(_opc,"1. prenos podataka pos->kalk                 ")
+AADD(_opcexe, {|| kalk_preuzmi_tops_dokumente()})
+AADD(_opc,"2. pos->kalk 96 po normativima za period ")
+AADD(_opcexe, {|| tops_nor_96() })
 
 f18_menu( "rpka", .f., _izbor, _opc, _opcexe )
 

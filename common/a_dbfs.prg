@@ -21,8 +21,6 @@ local _alg
 
 public gaDbfs := {}
 
-Alert(RECI_GDJE_SAM0 + " fix - ld, epdv")
-
 __f18_dbfs := hb_hash()
 
 set_a_dbf_sif()

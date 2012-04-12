@@ -157,7 +157,7 @@ endif
 
 select kalk
 
-if ( _idvd_pos == "42" .and. _auto_razduzenje )
+if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" )
 
 	seek gFirma + "11" + "X"
   	skip -1
@@ -191,7 +191,7 @@ go top
 _bk_replace := _bk_replace()
 
 // konto magacina za razduzenje
-if ( _idvd_pos == "42" .and. _auto_razduzenje ) .or. ( _idvd_pos == "12" )
+if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" ) .or. ( _idvd_pos == "12" )
 	_id_konto2 := _box_konto()
 endif
 
@@ -205,7 +205,7 @@ do while !eof()
     _id_konto := koncij->id
 	_rbr := STR( ++ _rbr, 3 )
 	
-	if ( _idvd_pos == "42" .and. _auto_razduzenje ) .or. ( _idvd_pos == "12" )
+	if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" ) .or. ( _idvd_pos == "12" )
 		// formiraj stavku 11	
 		import_row_11( _br_dok, _id_konto, _id_konto2, _rbr )
 	else
@@ -251,7 +251,7 @@ enddo
 
 close all
 
-if ( gMultiPM == "D" .and. _rbr > 0 )
+if ( gMultiPM == "D" .and. _rbr > 0 .and. _auto_razduzenje == "N" )
 	// pobrisi fajlove...
 	FileDelete( _imp_file )
 	FileDelete( STRTRAN( _imp_file ), ".dbf", ".txt" )

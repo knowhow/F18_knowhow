@@ -1,3 +1,8 @@
+0.9.83 2012-04-12, vsasa
+
+  - semafori, critical bugfix [#27559](http://redmine.bring.out.ba/issues/27559)
+  - LD, specifikacija primanja po mjesecima, bugfix [#27558](http://redmine.bring.out.ba/issues/27558)
+
 0.9.82 2012-04-12, vsasa
 
   - LD, unos i ispravka poreznih kartica [#27523](http://redmine.bring.out.ba/issues/27523)

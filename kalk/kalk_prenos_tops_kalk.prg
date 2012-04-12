@@ -116,6 +116,9 @@ local _auto_razduzenje := "N"
 local _br_kalk, _idvd_pos
 local _id_konto2 := ""
 local _bk_replace
+local _br_dok, _id_konto, _rbr
+local _bk_tmp
+local _app_rec
 
 // opcija za automatko svodjeje prodavnice na 0
 // ---------------------------------------------
@@ -127,7 +130,7 @@ _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(),
 _o_imp_tables()
 
 // daj mi fajl za import
-if !get_imp_file( @_imp_file )
+if !get_import_file( @_imp_file )
 	close all
 	return
 endif
@@ -198,91 +201,126 @@ _rbr := 0
 
 do while !eof()
 	
-	cBrDok    := cBrKalk
-    cIdKonto  := KONCIJ->id
-	cRBr      := STR(++nRBr,3)
+	_br_dok := _br_kalk
+    _id_konto := koncij->id
+	_rbr := STR( ++ _rbr, 3 )
 	
-	IF (cIdVd=="42" .and. l42u11) .or. (cIdVd=="12")
-		// formiraj 11-ku umjesto 42-ke
-		if (topska->kolicina<>0)
-			SELECT kalk_pripr
-			APPEND BLANK
-			replace idfirma  with gfirma          ,;
-			idvd     with "11"            ,;
-			brdok    with cBrDok          ,;
-			datdok   with topska->datum   ,;
-			datfaktp with topska->datum   ,;
-			kolicina with topska->kolicina,;
-			idkonto  with cIdKonto        ,;
-			idkonto2 with cIdKonto2       ,;
-			idroba   with topska->idroba  ,;
-			rbr      with cRBr            ,;
-			tmarza2  with "%"             ,;
-			idtarifa with topska->idtarifa,;
-			mpcsapp  with topska->(mpc-stmpc),;
-			tprevoz  with "R"
-		endif
+	if ( _idvd_pos == "42" .and. _auto_razduzenje ) .or. ( _idvd_pos == "12" )
+		// formiraj stavku 11	
+		import_row_11( _br_dok, _id_konto, _id_konto2, _rbr )
 	else
-		if (topska->kolicina<>0)		
-			SELECT kalk_pripr
-			APPEND BLANK
-			replace idfirma  with gfirma          ,;
-			idvd     with topska->IdVd    ,;
-			brdok    with cBrDok          ,;
-			datdok   with topska->datum   ,;
-			datfaktp with topska->datum   ,;
-			kolicina with topska->kolicina,;
-			idkonto  with cIdKonto        ,;
-			idroba   with topska->idroba  ,;
-			rbr      with cRBr            ,;
-			tmarza2  with "%"             ,;
-			idtarifa with topska->idtarifa,;
-			mpcsapp  with topska->mpc     ,;
-			RABATV   with topska->stmpc
-			if (cIdVd=="19")
-				REPLACE fcj with topska->stmpc
-			endif
-		endif
+		// formiraj stavku 42
+		import_row_42( _br_dok, _id_konto, _id_konto2, _rbr )
 	endif
   	
-	// a sada barkod ako ga ima
-	if lReplace
-	    	select roba
+	// zamjena barkod-a ako postoji
+	if _bk_replace > 0
+
+		select roba
 	   	set order to tag "ID"
-	    	seek topska->idroba
-	    	if Found()
-	    		cBarKod:=roba->barkod
-			if !EMPTY(topska->barkod) .and. topska->barkod<>cBarKod
-				MsgBeep("Postoji promjena barkod-a:##Artikal: "+ ALLTRIM(roba->id) + "-" + ALLTRIM(roba->naz) + "##KALK barkod -> " + roba->barkod + "##TOPS barkod -> " + topska->barkod)
-				if lReplaceAll .or. Pitanje(,"Zamjeniti barkod u sifrarniku ?","N")=="D"
-					replace roba->barkod with topska->barkod
-					++nReplaceBK
-				endif
+	    seek topska->idroba
+	    	
+		if Found()
+
+			_bk_tmp := roba->barkod
+
+			if _bk_replace == 2 .or. ( _bk_replace == 1 .and. !EMPTY( topska->barkod ) .and. topska->barkod <> _bk_tmp )
+				
+				my_use_semaphore_off()
+
+				sql_table_update( nil, "BEGIN" )	
+
+				_app_rec := dbf_get_rec()
+				_app_rec["barkod"] := topska->barkod
+
+				update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
+		
+				sql_table_update( nil, "END" )	
+				my_use_semaphore_on()
+
 			endif
-	    	endif
+
+	    endif
+
 	endif
 	
 	select topska
   	skip
-enddo
 
+enddo
 
 close all
 
-if (lReplace .and. nReplaceBK > 0)
-	MsgBeep("Zamjena izvrsena na " + ALLTRIM(STR(nReplaceBK)) + " polja barkod !")
-endif
-
-if gMultiPM=="D" .and. fPrenesi
+if ( gMultiPM == "D" .and. _rbr > 0 )
 	// pobrisi fajlove...
-	FileDelete(cTopsDBF)
-	FileDelete(STRTRAN(UPPER(cTopsDBF), ".DBF", ".TXT"))
+	FileDelete( _imp_file )
+	FileDelete( STRTRAN( _imp_file ), ".dbf", ".txt" )
 endif
 
-IF IzFMKINI("KALK","PrimPak","N",KUMPATH)=="D"
-	NaPrPak2()
-ENDIF
+return
 
+
+// ---------------------------------------------------------
+// formiraj stavku razduzenja magacina
+// ---------------------------------------------------------
+static function import_row_11( broj_dok, id_konto, id_konto2, r_br )
+local _tip_dok := "11"		
+local _t_area := SELECT()
+
+if ( topska->kolicina == 0 )
+	return
+endif
+
+select kalk_pripr
+append blank
+			
+replace field->idfirma with gFirma
+replace field->idvd with _tip_dok
+replace field->brdok with broj_dok         
+replace field->datdok with topska->datum  
+replace field->datfaktp with topska->datum   
+replace field->kolicina with topska->kolicina
+replace field->idkonto with id_konto        
+replace field->idkonto2 with id_konto2       
+replace field->idroba with topska->idroba  
+replace field->rbr with r_br           
+replace field->tmarza2 with "%"            
+replace field->idtarifa with topska->idtarifa
+replace field->mpcsapp with topska->( mpc - stmpc )
+replace field->prevoz with "R"
+
+select ( _t_area )
+return
+
+
+// ---------------------------------------------------------
+// formiraj stavku razduzenja prodavnice
+// ---------------------------------------------------------
+static function import_row_42( broj_dok, id_konto, id_konto2, r_br )
+local _t_area := SELECT()
+
+if ( topska->kolicina == 0 )
+	return
+endif
+
+select kalk_pripr
+append blank
+			
+replace field->idfirma with gFirma
+replace field->idvd with topska->idvd
+replace field->brdok with broj_dok         
+replace field->datdok with topska->datum  
+replace field->datfaktp with topska->datum   
+replace field->kolicina with topska->kolicina
+replace field->idkonto with id_konto        
+replace field->idroba with topska->idroba  
+replace field->rbr with r_br           
+replace field->tmarza2 with "%"            
+replace field->idtarifa with topska->idtarifa
+replace field->mpcsapp with topska->mpc
+replace field->rabatv with topska->stmpc
+	
+select ( _t_area )
 return
 
 
@@ -350,16 +388,12 @@ if gMultiPM == "D"
 
 			ASORT( _imp_files,,, {|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })
 			
-			_opt := PADR( ALLTRIM( _prod_mjesta[ _i ] ) + SLASH + TRIM(elem[1]), 20) 
-			_opt += " " 
-			_opt += UChkPostoji() 
-			_opt += " " 
-			_opt += DTOC(elem[3]) 
-			_opt += " " 
-			_opt += elem[4] 
-
 			// dodaj u matricu za odabir
-			AEVAL( _imp_files, { |elem| AADD( _opt ) }, 1, D_MAX_FILES )  
+			AEVAL( _imp_files, { |elem| PADR( ALLTRIM( _prod_mjesta[ _i ] ) + ;
+										SLASH + TRIM(elem[1]), 20) + " " + ;
+										UChkPostoji() + " " + DTOC(elem[3]) + " " + elem[4] ;
+ 								}, 1, D_MAX_FILES )  
+
 
 	next
 
@@ -433,105 +467,5 @@ endif
 return _ret
 
 
-
-
-// ---------------------------------------------
-// uzmi sifrarnik robe iz tops-a
-// ---------------------------------------------
-function RobaFromTops()
-local GetList := {}
-local cTopsSif := PADR("c:\tops\sif1\",100)
-local cPrenos := "N"
-local cPrepisi := "N"
-local cSinCjen := "D"
-local cTopsRoba
-
-Box(, 7, 70)
-	@ m_x + 1, m_y + 2 SAY "**** prenos sifrarnika iz tops-a"
-	@ m_x + 3, m_y + 2 SAY "lokacija sifrarnika tops-a" GET cTopsSif PICT "@S30" VALID !EMPTY(cTopsSif)
- 	@ m_x + 4, m_y + 2 SAY "prepisi istu robu iz tops-a (D/N)?" GET cPrepisi VALID cPrepisi $ "DN" PICT "@!"
- 	@ m_x + 5, m_y + 2 SAY "samo sinhroniziraj cijene (D/N)?" GET cSinCjen VALID cSinCjen $ "DN" PICT "@!"
-	@ m_x + 7, m_y + 2 SAY "izvrsiti prenos (D/N)?" GET cPrenos VALID cPrenos $ "DN" PICT "@!"
-	
-	read
-BoxC()
-
-if cPrenos == "N"
-	return
-endif
-
-cTopsSif := ALLTRIM(cTopsSif)
-
-// otvori tabelu roba.tops
-
-O_ROBA
-
-select 245
-use (cTopsSif + "ROBA") alias TROBA
-select troba
-
-set order to tag "1"
-
-go top
-
-nCnt := 0
-
-do while !EOF()
-
-	cTopsRoba := field->id
-	
-	select roba
-	hseek cTopsRoba
-
-	if cSinCjen == "N"
-	  if !Found() .and. roba->id <> cTopsRoba
-		
-		append blank
-		replace field->id with troba->id	
-	
-	  elseif Found() .and. roba->id == cTopsRoba .and. ;
-		cPrepisi == "N"
-		
-		select troba
-		skip
-		loop
-
-	  endif
-	endif
-	
-	// sinhronizacija cijena - samo
-	if cSinCjen == "D"
-	 
-	  if FOUND()
-	    replace field->mpc with troba->cijena1
-	    replace field->mpc2 with troba->cijena2
-	  endif
-	 
-	else
-
-	  replace field->id with troba->id
-	  replace field->naz with troba->naz
-	  replace field->mpc with troba->cijena1
-	  replace field->mpc2 with troba->cijena2
-	  replace field->idtarifa with troba->idtarifa
-	  replace field->barkod with troba->barkod
-	  replace field->jmj with troba->jmj
-	
-	endif
-
-	++ nCnt
-
-	select troba
-	skip
-enddo
-
-if nCnt > 0
-	msgbeep("Izmjenjeno " + ALLTRIM(STR(nCnt)) + " sifri !")
-endif
-
-select troba
-use
-
-return
 
 

@@ -19,15 +19,13 @@ local _opcexe := {}
 local _izbor := 1
 
 AADD(_opc,"1. generisi FIN,FAKT dokumente (kontiraj)      ")
-AADD(_opcexe,{|| Rekapk(.t.)})
+AADD(_opcexe, {|| Rekapk(.t.)})
 AADD(_opc,"2. iz FAKT generisi KALK dokumente")
 AADD(_opcexe, {|| Faktkalk()})
 AADD(_opc,"3. iz TOPS generisi KALK dokumente")
-AADD(_opcexe, {|| r_tops_kalk()})
-AADD(_opc,"5. sifrarnik TOPS prebaci u KALK")
-AADD(_opcexe, {|| RobaFromTops()} )
+AADD(_opcexe, {|| mnu_prenos_tops_u_kalk()})
 AADD(_opc,"6. iz KALK generisi TOPS dokumente")
-AADD(_opcexe, {|| Mnu_GenKaTOPS()} )
+AADD(_opcexe, {|| mnu_prenos_kalk_u_tops()} )
 
 if IsVindija()
 	AADD(_opc,"7. import txt")
@@ -54,7 +52,7 @@ return
 
 
 
-function r_tops_kalk()
+static function mnu_prenos_tops_u_kalk()
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1

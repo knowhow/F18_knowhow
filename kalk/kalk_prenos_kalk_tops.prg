@@ -360,7 +360,7 @@ return _file
 // ------------------------------------------------------------------
 // generisanje topska na osnovu azuriranog kalk dokumenta
 // ------------------------------------------------------------------
-function mnu_genkatops()
+function mnu_prenos_kalk_u_tops()
 local cIDFirma := gFirma
 local cIDTipDokumenta := "80"
 local cBrojDokumenta := SPACE(8)

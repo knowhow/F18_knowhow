@@ -1,3 +1,10 @@
+0.9.95 2012-04-12, vsasa
+
+  - ukinuo alerte u set_a_dbfs... 
+  - kalk, export podataka za POS [#27085](http://redmine.bring.out.ba/issues/27085)
+  - pos, import podataka iz KALK [#27085](http://redmine.bring.out.ba/issues/27085)
+  - sitne korekcije
+
 0.9.94 2012-04-07, hernad
 
   - merge 0.9.81

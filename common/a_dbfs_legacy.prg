@@ -169,7 +169,6 @@ else
        _pos := ASCAN(gaDBFs,  { |x|  x[3]==x_alias} )
         
        if _pos < 1
-           Alert("ovo nije smjelo da se desi f18_dbf_alias ?: " + x_alias)
           _ret["wa"]    := NIL
           _ret["alias"] := NIL
           _ret["table"] := NIL

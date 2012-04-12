@@ -54,7 +54,6 @@ set_a_dbf_temp("ld_opsld"    ,   "OPSLD"         , F_OPSLD  )
 set_a_dbf_temp("ld_rekld"    ,   "REKLD"         , F_REKLD  )
 set_a_dbf_temp("ld_rekldp"   ,   "REKLDP"        , F_REKLDP  )
 set_a_dbf_temp("ldt22"       ,   "LDT22"         , F_LDT22  )
-set_a_dbf_temp("mtemp"       ,   "MTEMP"         , F_TMP_1  )
 
 return
 

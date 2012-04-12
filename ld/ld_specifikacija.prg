@@ -889,7 +889,7 @@ for _i := 1 TO LEN( _struct )
 next
 
 // kreiraj tabelu
-DbCreate2( _table, _struct )
+DBCREATE( _table, _struct )
 
 return
 

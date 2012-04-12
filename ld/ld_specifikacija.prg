@@ -848,29 +848,26 @@ return
 *}
 
 static function TekRec2()
-*{
 nSlog++
 @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
 @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(0)
 return (NIL)
-*}
 
 
 function ImaUOps(cOStan,cORada)
-*{
 LOCAL lVrati:=.f.
  IF ( EMPTY(cOStan) .or. Ocitaj(F_RADN,_FIELD->IDRADN,"IDOPSST")==cOStan ) .and.;
     ( EMPTY(cORada) .or. Ocitaj(F_RADN,_FIELD->IDRADN,"IDOPSRAD")==cORada )
    lVrati:=.t.
  ENDIF
 RETURN lVrati
-*}
 
 
 
-
+// -----------------------------------------------
+// specifikacija po mjesecima
+// -----------------------------------------------
 function SpecifPoMjes()
-*{
 gnLMarg:=0
 gTabela:=1
 gOstr:="N"
@@ -883,11 +880,9 @@ cSamoAktivna:="D"
 
 O_LD
 
+// napravi mtemp tabelu
 PraviMTEMP()
 
-// copy structure extended to struct
-// USE
-// create MTEMP from struct
 CLOSE ALL
 
 O_LD_RJ
@@ -933,14 +928,8 @@ WPar("p4",cSamoAktivna)
 SELECT PARAMS
 USE
 
-SELECT 0
-#ifdef CAX
-    if !used()
-      AX_AutoOpen(.f.); usex (PRIVPATH+"MTEMP")  ; AX_AutoOpen(.t.)
-    endif
-  #else
-    usex (PRIVPATH+"MTEMP")
-  #endif
+SELECT 350
+use ( my_home() + "mtemp" ) alias "mtemp"
 
 // USEX MTEMP ALIAS MTEMP NEW
 
@@ -1348,31 +1337,31 @@ RETURN IF(!EMPTY(gaDodStavke),"PODVUCI"+"=",NIL)
 
 
 
-PROCEDURE PraviMTEMP()
- LOCAL i:=0
-  //benjo, 21.04.04, dodat uslov zbog toga jer na Win98 ne dozvoljava brisanje  
-  //                 datoteke ako je otvorena u nekom radnom podrucju.
-  if select("MTEMP")>0
-  	MTEMP->( dbclosearea() )
-  endif
-  
-  IF ferase(PRIVPATH+"MTEMP.DBF")==-1
+// -------------------------------------
+// napravi mtemp tabelu
+// -------------------------------------
+function PraviMTEMP()
+local _i := 0
+local _struct
+
+if ferase( my_home() + "mtemp.dbf") == -1
     MsgBeep("Ne mogu izbrisati MTEMP.DBF!")
-    ShowFError()
-  ENDIF
-  aDbf:=LD->(DBSTRUCT())
+endif
+  
+_struct := LD->( DBSTRUCT() )
 
-  // ovdje cemo sva numericka polja prosiriti za 4 mjesta
-  // (izuzeci su polja GODINA i MJESEC)
-  // ----------------------------------------------------
-  FOR i:=1 TO LEN(aDbf)
-    IF aDbf[i,2]=="N" .and. !( UPPER(TRIM(aDbf[i,1])) $ "GODINA#MJESEC" )
-      aDbf[i,3] += 4
-    ENDIF
-  NEXT
+// ovdje cemo sva numericka polja prosiriti za 4 mjesta
+// (izuzeci su polja GODINA i MJESEC)
+// ----------------------------------------------------
+for _i := 1 TO LEN( _struct )
+    if _struct[ _i, 2 ] == "N" .and. !( UPPER(TRIM( _struct[ _i, 1 ] ) ) $ "GODINA#MJESEC" )
+        _struct[ _i, 3 ] += 4
+    endif
+next
 
-  DBCREATE2 (PRIVPATH+"MTEMP", aDbf)
-RETURN
+dbcreate2( "mtemp", _struct )
+
+return
 
 
 

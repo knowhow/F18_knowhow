@@ -294,6 +294,7 @@ AADD(gaDBFs, { F_REKLDP  , "REKLDP"  , "ld_rekldp"  } )
 
 AADD(gaDBFs, { F_KRED    , "_KRED"   , "_ld_kred"   } )
 AADD(gaDBFs, { F_LDT22   , "LDT22"   , "ldt22"      } )
+AADD(gaDBFs, { F_TMP     , "MTEMP"   , "mtemp"      } )
 
 
 // modul OS:

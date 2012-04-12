@@ -335,6 +335,8 @@
 #define F_TMP_E_SIFV    322
 #define F_TMP_KATOPS    323
 #define F_TMP_TOPSKA    324
+#define F_TMP_1         325
+#define F_TMP_2         326
 #define D_S_TABELE 
 
 

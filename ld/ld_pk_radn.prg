@@ -206,12 +206,20 @@ if LastKey() == K_ESC
 	return -1
 endif
 
+if lNew == .t.
+    append blank
+endif
+
+my_use_semaphore_off()
+
 sql_table_update( nil, "BEGIN" )
 
 _vals := get_dbf_global_memvars()
 update_rec_server_and_dbf( "ld_pk_radn", _vals, 1, "CONT" )
 
 sql_table_update( nil, "END" )
+
+my_use_semaphore_on()
 
 return field->lo_ufakt
 

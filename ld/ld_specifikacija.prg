@@ -857,20 +857,48 @@ return (NIL)
 
 
 function ImaUOps(cOStan,cORada)
-*{
+
 LOCAL lVrati:=.f.
  IF ( EMPTY(cOStan) .or. Ocitaj(F_RADN,_FIELD->IDRADN,"IDOPSST")==cOStan ) .and.;
     ( EMPTY(cORada) .or. Ocitaj(F_RADN,_FIELD->IDRADN,"IDOPSRAD")==cORada )
    lVrati:=.t.
  ENDIF
 RETURN lVrati
-*}
 
 
 
 
+// -------------------------------------------------------
+// kreiranje mtemp tabele
+// -------------------------------------------------------
+static function _create_mtemp()
+local _i, _struct
+local _table := "mtemp"
+
+FERASE( my_home() + _table + ".dbf" )
+  
+_struct := LD->( DBSTRUCT() )
+
+// ovdje cemo sva numericka polja prosiriti za 4 mjesta
+// (izuzeci su polja GODINA i MJESEC)
+  
+for _i := 1 TO LEN( _struct )
+    if _struct[ _i, 2 ] == "N" .and. !( UPPER(ALLTRIM( _struct[ _i, 1 ] ) ) $ "GODINA#MJESEC" )
+        _struct[ _i, 3 ] += 4
+    endif
+next
+
+// kreiraj tabelu
+DbCreate2( _table, _struct )
+
+return
+
+
+// ---------------------------------------------------------
+// specifikacija primanja po mjesecima
+// ---------------------------------------------------------
 function SpecifPoMjes()
-*{
+
 gnLMarg:=0
 gTabela:=1
 gOstr:="N"
@@ -883,12 +911,10 @@ cSamoAktivna:="D"
 
 O_LD
 
-PraviMTEMP()
+// napravi pomocnu tabelu
+_create_mtemp()
 
-// copy structure extended to struct
-// USE
-// create MTEMP from struct
-CLOSE ALL
+close all
 
 O_LD_RJ
 O_STRSPR
@@ -911,17 +937,16 @@ cPrikKolUk:="D"
 
 Box(,7,77)
 
-@ m_x+1,m_y+2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-@ m_x+2,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-@ m_x+3,m_y+2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
+    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
+    @ m_x+2,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+    @ m_x+3,m_y+2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
+    @ m_x+4,m_y+2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim$"NVS0"
+    @ m_x+5,m_y+2 SAY "Ostala primanja za prikaz (navesti sifre npr. 25;26;27;):" GET qqOstPrim PICT "@S15"
+    @ m_x+6,m_y+2 SAY "Prikazati samo aktivna primanja ? (D/N)" GET cSamoAktivna PICT "@!" VALID cSamoAktivna$"DN"
+    @ m_x+7,m_y+2 SAY "Prikazati kolonu 'ukupno' ? (D/N)" GET cPrikKolUk PICT "@!" VALID cPrikKolUk$"DN"
 
-@ m_x+4,m_y+2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim$"NVS0"
-@ m_x+5,m_y+2 SAY "Ostala primanja za prikaz (navesti sifre npr. 25;26;27;):" GET qqOstPrim PICT "@S15"
-@ m_x+6,m_y+2 SAY "Prikazati samo aktivna primanja ? (D/N)" GET cSamoAktivna PICT "@!" VALID cSamoAktivna$"DN"
-@ m_x+7,m_y+2 SAY "Prikazati kolonu 'ukupno' ? (D/N)" GET cPrikKolUk PICT "@!" VALID cPrikKolUk$"DN"
-
-read
-ESC_BCR
+    read
+    ESC_BCR
 
 BoxC()
 
@@ -930,19 +955,13 @@ WPar("p1",cIdRadn)
 WPar("p2",cSvaPrim)
 WPar("p3",qqOstPrim)
 WPar("p4",cSamoAktivna)
+
 SELECT PARAMS
 USE
 
-SELECT 0
-#ifdef CAX
-    if !used()
-      AX_AutoOpen(.f.); usex (PRIVPATH+"MTEMP")  ; AX_AutoOpen(.t.)
-    endif
-  #else
-    usex (PRIVPATH+"MTEMP")
-  #endif
-
-// USEX MTEMP ALIAS MTEMP NEW
+// otvori mtemp tabelu...
+select ( F_TMP_1 )
+my_use_temp( "MTEMP", my_home() + "mtemp" )
 
 O_TIPPR
 
@@ -1346,33 +1365,6 @@ RETURN .t.
 static function FSvaki31()
 RETURN IF(!EMPTY(gaDodStavke),"PODVUCI"+"=",NIL)
 
-
-
-PROCEDURE PraviMTEMP()
- LOCAL i:=0
-  //benjo, 21.04.04, dodat uslov zbog toga jer na Win98 ne dozvoljava brisanje  
-  //                 datoteke ako je otvorena u nekom radnom podrucju.
-  if select("MTEMP")>0
-  	MTEMP->( dbclosearea() )
-  endif
-  
-  IF ferase(PRIVPATH+"MTEMP.DBF")==-1
-    MsgBeep("Ne mogu izbrisati MTEMP.DBF!")
-    ShowFError()
-  ENDIF
-  aDbf:=LD->(DBSTRUCT())
-
-  // ovdje cemo sva numericka polja prosiriti za 4 mjesta
-  // (izuzeci su polja GODINA i MJESEC)
-  // ----------------------------------------------------
-  FOR i:=1 TO LEN(aDbf)
-    IF aDbf[i,2]=="N" .and. !( UPPER(TRIM(aDbf[i,1])) $ "GODINA#MJESEC" )
-      aDbf[i,3] += 4
-    ENDIF
-  NEXT
-
-  DBCREATE2 (PRIVPATH+"MTEMP", aDbf)
-RETURN
 
 
 

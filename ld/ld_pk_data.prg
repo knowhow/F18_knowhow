@@ -194,22 +194,29 @@ Box(, 12,70,.f.)
 		GET _koef PICT "9.999"
 
 	read
+
+    my_use_semaphore_off()
 	
     sql_table_update( nil, "BEGIN" )
 
-	if lNew == .t. .and. LastKey() <> K_ESC
-		//append blank
-		_vals := get_dbf_global_memvars()
-		update_rec_server_and_dbf( "ld_pk_data", _vals, 1, "CONT" )
-	endif
+	if LastKey() <> K_ESC
 
-	if lNew == .f.
+        if lNew == .t.
+            append blank
+        endif
+
 		_vals := get_dbf_global_memvars()
 		update_rec_server_and_dbf( "ld_pk_data", _vals, 1, "CONT" )
-		exit
-	endif
+        
+        if lNew == .f.
+            exit
+        endif	
+
+    endif
 
     sql_table_update( nil, "END" )
+
+    my_use_semaphore_on()
 
 	if LastKey() == K_ESC
 		exit

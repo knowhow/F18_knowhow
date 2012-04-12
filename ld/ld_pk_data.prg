@@ -120,7 +120,7 @@ Box(, 12,70,.f.)
 	
 	nX := 1
 
-   	scatter()
+    set_global_memvars_from_dbf()
 
 	if lNew == .t.
 		_idradn := __IDRADN
@@ -195,23 +195,20 @@ Box(, 12,70,.f.)
 
 	read
 	
-	if lNew == .t. .and. LastKey() <> K_ESC
-		append blank
-		gather()
-		// snimiti u sql bazu
-		_vals := f18_scatter_global_vars()
-		if !sql_update_ld_pk_data( _vals ) 
-			delete
-		endif	
-	endif
+	if LastKey() <> K_ESC
 
-	if lNew == .f.
-		gather()
-		// snimiti u sql bazu
-		_vals := f18_scatter_global_vars()
-		if !sql_update_ld_pk_data( _vals ) 
-		endif	
-		exit
+        // uzmi vrijednosti iz globalnih varijabli
+        if lNew == .t.
+            append blank
+        endif
+
+        _vals := get_dbf_global_memvars()
+        update_rec_server_and_dbf( ALIAS(), _vals )
+        
+        if lNew == .f.
+            exit
+        endif
+
 	endif
 
 	if LastKey() == K_ESC

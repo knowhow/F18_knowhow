@@ -60,7 +60,7 @@ local cPkColor := "W+/G+"
 
 select pk_radn
 
-scatter()
+set_global_memvars_from_dbf()
 
 if lNew == .t.
 	
@@ -207,18 +207,13 @@ if LastKey() == K_ESC
 endif
 
 if lNew == .t.
-	append blank
+    append blank
 endif
 
-gather()
-
-// snimiti u sql bazu
-_vals := f18_scatter_global_vars()
-if !sql_update_ld_pk_radn( _vals ) 
-	if lNew == .t.
-		delete
-	endif
-endif	
+// uzmi vrijednosti iz globalnih varijabli
+_vals := get_dbf_global_memvars()
+update_rec_server_and_dbf( ALIAS(), _vals )
+	
 
 return field->lo_ufakt
 

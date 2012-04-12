@@ -147,12 +147,12 @@ do while .t.
 
        cFBrDok := fakt->brdok
 
-       select doks
+       select kalk_doks
        set order to tag "V_BRF"
        go top
        seek PADR( cFBrDok, 10 ) + "96"
 
-       if FOUND() .and. ALLTRIM(doks->brfaktp) == ALLTRIM(cFBrDok) .and. doks->idvd == "96"
+       if FOUND() .and. ALLTRIM(kalk_doks->brfaktp) == ALLTRIM(cFBrDok) .and. kalk_doks->idvd == "96"
             
         cTmp := fakt->idfirma + "-" + (cFBrDok)
         dTmpDate := fakt->datdok
@@ -162,12 +162,12 @@ do while .t.
         
         cTmpPartn := ALLTRIM( partn->naz )
         
-        select doks
+        select kalk_doks
         
         nScan := ASCAN(aNotIncl, {|xVar| xVar[1] == cTmp })
         
         if nScan == 0
-            AADD(aNotIncl, { cTmp, dTmpDate, cTmpPartn, doks->idvd + "-" + doks->brdok })
+            AADD(aNotIncl, { cTmp, dTmpDate, cTmpPartn, kalk_doks->idvd + "-" + kalk_doks->brdok })
         endif
         
         select fakt

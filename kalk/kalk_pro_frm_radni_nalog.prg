@@ -48,14 +48,15 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
     go nTrec
  enddo
 
- select doks; set order to tag "2"
+ select kalk_doks
+ set order to tag "2"
  //CREATE_INDEX("DOKSi2","IdFirma+MKONTO+idzaduz2+idvd+brdok","DOKS")
 
  seek _idfirma+_idkonto+_idzaduz2+"RN"
  // npr: 10 5100 564   RN
  if found()
    Beep(2)
-   Msg("Vec postoji dokument RN broj "+doks->brdok+" za ovaj radni nalog")
+   Msg("Vec postoji dokument RN broj "+kalk_doks->brdok+" za ovaj radni nalog")
    select kalk_pripr
    keyboard K_ESC
    nStrana:=3
@@ -68,10 +69,11 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
  do while !eof() .and.;
                  (_idfirma+_idkonto2+_idzaduz2 = idfirma+mkonto+idzaduz2)
 
-    select kalk; set order to tag "1"
-    seek doks->(idfirma+idvd+brdok)
+    select kalk
+    set order to tag "1"
+    seek kalk_doks->(idfirma+idvd+brdok)
     nKolicina:=0   ; nNabV:=0
-    do while !eof() .and. doks->(idfirma+idvd+brdok) == (idfirma+idvd+brdok)
+    do while !eof() .and. kalk_doks->(idfirma+idvd+brdok) == (idfirma+idvd+brdok)
 
           //CREATE_INDEX(PRIVPATH+"PRIPRi3","idFirma+idvd+brdok+idroba+rbr",PRIVPATH+"PRIPR")
           select kalk_pripr; set order to tag "3"
@@ -112,7 +114,8 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
 
     enddo
 
-    select doks; skip
+    select kalk_doks
+    skip
  enddo
 
  select kalk_pripr; set order to tag "1"; go top

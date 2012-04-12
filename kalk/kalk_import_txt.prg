@@ -1062,7 +1062,7 @@ do while !EOF()
 		loop
 	endif
 	
-	select doks
+	select kalk_doks
 
 	if nRight > 0
 		set order to tag "V_BRF2"
@@ -1235,7 +1235,7 @@ do while !EOF()
 	// radi datuma valute
 	if cTDok == "14"
 
-		select doks2
+		select kalk_doks2
 		hseek gFirma + cTDok + cBrojKalk
 		
 		if !FOUND()

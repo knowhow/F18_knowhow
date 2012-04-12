@@ -82,7 +82,7 @@ function Iz12u97()
   BoxC()
 
   // utvrdimo broj nove kalkulacije
-  SELECT DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
+  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
   IF cIdFirma+cIdVdI == IDFIRMA+IDVD
      cBrDokI := brdok
   ELSE
@@ -693,7 +693,7 @@ function Iz96u16()
   BoxC()
 
   // utvrdimo broj nove kalkulacije
-  SELECT DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
+  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
   IF cIdFirma+cIdVdI == IDFIRMA+IDVD
      cBrDokI := brdok
   ELSE
@@ -771,7 +771,7 @@ function Iz16u14()
   BoxC()
 
   // utvrdimo broj nove kalkulacije
-  SELECT DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
+  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
   IF cIdFirma+cIdVdI == IDFIRMA+IDVD
      cBrDokI := brdok
   ELSE

@@ -732,7 +732,7 @@ do while !EOF()
 		loop
 	endif
 	
-	select doks
+	select kalk_doks
 	set order to tag "V_BRF"
 	go top
 	seek cBrFakt

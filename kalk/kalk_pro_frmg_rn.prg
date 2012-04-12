@@ -36,7 +36,8 @@ cIdFirma:=left(cIdFirma,2)
 
 O_KALK_DOKS
 
-select doks; set order to tag "2"
+select kalk_doks
+set order to tag "2"
 //CREATE_INDEX("DOKSi2","IdFirma+MKONTO+idzaduz2+idvd+brdok","DOKS")
 
 Box(,19,77)

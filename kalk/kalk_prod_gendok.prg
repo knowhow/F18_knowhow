@@ -442,7 +442,7 @@ if (idvd!="19" .or. pkonto!=cIdKonto)
 	Msg("Ne postoji nivelacija za zadanu prodavnicu u periodu do unesenog datuma!",6)
 	CLOSERET
 else
-	cStBrDok:=DOKS->brdok
+	cStBrDok:=kalk_doks->brdok
 	Box(,4,60)
 	@ m_x+1, m_y+2 SAY "Nivel. broj "+cIdFirma+" - 19 -" GET cStBrDok
 	read
@@ -928,7 +928,7 @@ function Iz11u412()
   ENDIF
 
   // utvrdimo broj nove kalkulacije
-  SELECT DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
+  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
   IF cIdFirma+cIdVdI == IDFIRMA+IDVD
      cBrDokI := brdok
   ELSE
@@ -1025,7 +1025,7 @@ function Iz10u11()
 
 
   // utvrdimo broj nove kalkulacije
-  SELECT DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
+  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
   IF cIdFirma+cIdVdI == IDFIRMA+IDVD
      cBrDokI := brdok
   ELSE

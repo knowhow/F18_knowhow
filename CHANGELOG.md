@@ -1,3 +1,8 @@
+0.9.82 2012-04-12, vsasa
+
+  - LD, unos i ispravka poreznih kartica [#27523](http://redmine.bring.out.ba/issues/27523)
+  - LD, specifikacija primanja po mjesecima, bugfix [#27554](http://redmine.bring.out.ba/issues/27554)
+
 0.9.81 2012-04-07, hernad
 
   - common: [#27474](http://redmine.bring.out.ba/issues/27474)

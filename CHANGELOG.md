@@ -1,6 +1,7 @@
 0.9.95 2012-04-12, vsasa
 
   - ukinuo alerte u set_a_dbfs... 
+  - kalk, ažuriranje, povrat dokumenta (semafori 1.1) [#27518](http://redmine.bring.out.ba/issues/27518)
   - kalk, export podataka za POS [#27085](http://redmine.bring.out.ba/issues/27085)
   - pos, import podataka iz KALK [#27085](http://redmine.bring.out.ba/issues/27085)
   - sitne korekcije

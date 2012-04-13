@@ -24,8 +24,8 @@ cre_all_fin(ver)
 cre_all_kalk(ver)
 cre_all_fakt(ver)
 cre_all_ld(ver)
+cre_all_os(ver)
 
-//cre_all_os(ver)
 //cre_all_virm(ver)
 
 cre_all_epdv(ver)
@@ -50,8 +50,8 @@ _db:kreiraj()
 _db := TDbPos():new()
 _db:kreiraj()
 
-//_db := TDbOs():new()
-//_db:kreiraj()
+_db := TDbOs():new()
+_db:kreiraj()
 
 //_db := TDbVirm():new()
 //_db:kreiraj()

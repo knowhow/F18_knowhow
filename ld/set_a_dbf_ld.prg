@@ -210,8 +210,8 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idradn + field->ident + STR( field->rbr, 2 ) }
-_alg["dbf_key_fields"] := { "rj", "ident", {"rbr", 2} }
-_alg["sql_in"]         := "rpad(rj, 2) || rpad(ident, 16) || rbr::to_char(2)"
+_alg["dbf_key_fields"] := { "idradn", "ident", {"rbr", 2} }
+_alg["sql_in"]         := "rpad(idradn, 2) || rpad(ident, 16) || rbr::to_char(2)"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
  

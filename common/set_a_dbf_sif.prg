@@ -40,7 +40,6 @@ set_a_dbf_sifarnik("sast"       , "SAST"      , F_SAST       )
 set_a_dbf_sifarnik("tarifa"     , "TARIFA"    , F_TARIFA     )
 set_a_dbf_sifarnik("konto"      , "KONTO"     , F_KONTO      )
 set_a_dbf_sifarnik("koncij"     , "KONCIJ"    , F_KONCIJ     )
-set_a_dbf_sifarnik("tokval"     , "TOKVAL"    , F_TOKVAL     )
 set_a_dbf_sifarnik("vrstep"     , "VRSTEP"    , F_VRSTEP     )
 set_a_dbf_sifarnik("vprih"      , "VPRIH"     , F_VPRIH      )
 set_a_dbf_sifarnik("pkonto"     , "PKONTO"    , F_PKONTO     )
@@ -51,7 +50,7 @@ set_a_dbf_temp     ("relation"   ,  "RELATION"    , F_RELATION   )
 set_a_dbf_temp     ("_roba"      ,  "_ROBA"       , F__ROBA      )
 set_a_dbf_temp     ("barkod"     ,  "BARKOD"      , F_BARKOD     )
 set_a_dbf_temp     ("strings"    ,  "STRINGS"     , F_STRINGS    )
-
+set_a_dbf_temp     ("tokval"     ,  "TOKVAL"      , F_TOKVAL     )
 
 return
 

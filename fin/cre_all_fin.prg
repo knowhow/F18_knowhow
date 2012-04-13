@@ -228,6 +228,73 @@ CREATE_INDEX("1","IdFirma+IdVn+BrNal", _alias)
 
 
 
+aDbf:={}
+AADD(aDBf,{ "ID"      , "C" ,   5 ,  0 })
+AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
+ 
+_created := .f.
+_alias := "FUNK"
+_table_name := "fin_funk"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    _created := .t.
+endif
+
+if _created
+  reset_semaphore_version(_table_name)
+  my_usex(_alias)
+  USE
+endif
+     
+CREATE_INDEX("ID","id", _alias )
+CREATE_INDEX("NAZ","NAZ", _alias )
+
+aDbf:={}
+AADD(aDBf,{ "ID"      , "C" ,   4 ,  0 })
+AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
+ 
+_created := .f.
+_alias := "FOND"
+_table_name := "fin_fond"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    _created := .t.
+endif
+
+if _created
+  reset_semaphore_version(_table_name)
+  my_usex(_alias)
+  USE
+endif
+     
+CREATE_INDEX("ID","id", _alias )
+CREATE_INDEX("NAZ","NAZ", _alias )
+
+
+aDBf:={}
+AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
+AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+AADD(aDBf,{ "IZNOS"               , "N" ,  20 ,  2 })
+AADD(aDBf,{ "FOND"                , "C" ,   3 ,  0 })
+AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
+AADD(aDBf,{ "REBIZNOS"            , "N" ,  20 ,  2 })
+ 
+_created := .f.
+_alias := "BUDZET"
+_table_name := "fin_budzet"
+
+if !FILE(f18_ime_dbf( _alias ))
+    DBcreate2( _alias, aDbf)
+endif
+    
+CREATE_INDEX("1", "IdRj+Idkonto", _alias )
+CREATE_INDEX("2", "Idkonto",      _alias )
+
+
+
+return
 
 
 

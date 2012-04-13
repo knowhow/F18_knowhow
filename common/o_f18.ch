@@ -75,7 +75,6 @@
 #xcommand O_DRN       => select(F_DRN)      ; my_usex ("drn")      ; set order to tag "1"
 #xcommand O_RN        => select(F_RN)       ; my_usex ("rn")       ; set order to tag "1"
 #xcommand O_DRNTEXT   => select(F_DRNTEXT)  ; my_usex ("drntext")  ; set order to tag "1"
-#xcommand O_DOKSPF    => select(F_DOKSPF)   ; my_usex ("dokspf")   ; set order to tag "1"
 
 // tabele provjere integriteta
 #xcommand O_DINTEG1 => SELECT (F_DINTEG1)   ; my_usex ("dinteg1")  ; set order to tag "1"
@@ -311,7 +310,7 @@
 #xcommand O_DIO       => SELECT (F_DIO); my_use("dio"); set order to tag "ID"
 #xcommand O_UREDJ     => SELECT (F_UREDJ); my_use("uredj"); set order to tag "ID"
 #xcommand O_MARS      => SELECT (F_MARS); my_use("mars"); set order to tag "ID"
-
+#xcommand O_DOKSPF    => select (F_DOKSPF); my_use ("dokspf"); set order to tag "1"
 
 // modul MAT
 #xcommand O_MAT_PRIPR    =>  select(F_MAT_PRIPR); my_usex ("mat_pripr") ; set order to tag "1"

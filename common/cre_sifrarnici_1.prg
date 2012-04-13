@@ -83,17 +83,6 @@ CREATE_INDEX("NAZ","tip+id+dtos(datum)", "valute")
 CREATE_INDEX("ID2","id+dtos(datum)", "valute")
 index_mcode(cIme)
 
-
-// TOKVAL
-if !file(f18_ime_dbf("tokval"))
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,  8  ,  2 })
-        AADD(aDBf,{ 'NAZ'                 , 'N' ,  8 ,   2 })
-        AADD(aDBf,{ 'NAZ2'                , 'N' ,  8 ,   2 })
-        dbcreate2( 'tokval', aDbf)
-endif
-CREATE_INDEX("ID","id", "tokval")
-
 // TNAL
 if !file(f18_ime_dbf("tnal"))
         aDbf:={}
@@ -201,6 +190,81 @@ if !FILE(f18_ime_dbf("vrstep"))
     my_use("vrstep")
 endif	
 CREATE_INDEX("ID", "Id", "VRSTEP")
+
+// KONCIJ
+if !FILE(f18_ime_dbf("koncij"))
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "IDPRODMJES"          , "C" ,   2 ,  0 })
+    DBcreate2("KONCIJ",aDbf)
+    reset_semaphore_version("koncij")
+    my_use("koncij")
+endif
+CREATE_INDEX("ID","id", "KONCIJ" )
+
+//PKONTO.DBF
+if !FILE(f18_ime_dbf("pkonto"))
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
+    AADD(aDBf,{ "TIP"                 , "C" ,  1 ,   0 })
+    DBcreate2( "PKONTO", aDbf )
+    reset_semaphore_version("pkonto")
+    my_use("pkonto")    
+endif
+CREATE_INDEX("ID","ID", "PKONTO" )
+CREATE_INDEX("NAZ","TIP", "PKONTO" )
+
+//TRFP2.DBF
+if !FILE(f18_ime_dbf("trfp2"))
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
+    AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
+    AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "DOKUMENT"            , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "PARTNER"             , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "IDVD"                , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "IDTARIFA"            , "C" ,   6 ,  0 })
+    DBcreate2( "TRFP2", aDbf ) 
+    reset_semaphore_version("trfp2")
+    my_use("trfp2")
+endif
+CREATE_INDEX("ID","idvd+shema+Idkonto", "TRFP2")
+
+//TRFP3.DBF    
+if !FILE(f18_ime_dbf("trfp3"))
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
+    AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
+    AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
+    DBcreate2("TRFP3",aDbf)
+    reset_semaphore_version("trfp3")
+    my_use("trfp3")
+endif
+CREATE_INDEX("ID","shema+Idkonto","TRFP3")
+
+//VPRIH.DBF
+if !FILE(f18_ime_dbf("vprih"))
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   3,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,  20,  0 })
+    DBcreate2("VPRIH", aDbf) 
+endif
+CREATE_INDEX ("ID", "Id", "VPRIH")
+
+
+
+
+
 
 nArea := nil
 

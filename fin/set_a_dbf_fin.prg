@@ -16,46 +16,41 @@
 // -------------------------------------
 function set_a_dbf_fin()
 
+// kumulativne tabele
 set_a_dbf_fin_suban()
 set_a_dbf_fin_anal()
 set_a_dbf_fin_sint()
 set_a_dbf_fin_nalog()
 
+// sifrarnici
+set_a_dbf_temp("fin_funk"      , "FUNK"     ,       F_FUNK       )
+set_a_dbf_temp("fin_fond"      , "FOND"     ,       F_FOND       )
+
+// temporary
 set_a_dbf_temp("fin_konto"        , "_KONTO"   ,       F__KONTO   )
 set_a_dbf_temp("fin_partn"        , "_PARTN"   ,       F__PARTN   )
-
-set_a_dbf_temp("rules"       , "RULES"         , F_RULES      )
 set_a_dbf_temp("fin_pripr"   , "FIN_PRIPR"     , F_FIN_PRIPR  )
-
 set_a_dbf_temp("fin_psuban"    , "PSUBAN"   ,       F_PSUBAN     )
 set_a_dbf_temp("fin_panal"     , "PANAL"    ,       F_PANAL      )
 set_a_dbf_temp("fin_psint"     , "PSINT"    ,       F_PSINT      )
 set_a_dbf_temp("fin_pnalog"    , "PNALOG"   ,       F_PNALOG     )
-
-set_a_dbf_temp("fin_funk"      , "FUNK"     ,       F_FUNK       )
 set_a_dbf_temp("fin_budzet"    , "BUDZET"   ,       F_BUDZET     )
 set_a_dbf_temp("fin_parek"     , "PAREK"    ,       F_PAREK      )
-set_a_dbf_temp("fin_fond"      , "FOND"     ,       F_FOND       )
 set_a_dbf_temp("fin_koniz"     , "KONIZ"    ,       F_KONIZ      )
 set_a_dbf_temp("fin_izvje"     , "IZVJE"    ,       F_IZVJE      )
 set_a_dbf_temp("fin_zagli"     , "ZAGLI"    ,       F_ZAGLI      )
 set_a_dbf_temp("fin_koliz"     , "KOLIZ"    ,       F_KOLIZ      )
 set_a_dbf_temp("fin_buiz"      , "BUIZ"     ,       F_BUIZ       )
-
 set_a_dbf_temp("fin_bbklas"      , "BBKLAS"     ,       F_IOS       )
 set_a_dbf_temp("fin_ios"         , "IOS"        ,       F_BBKLAS    )
 set_a_dbf_temp("fin_ostav"       , "OSTAV"      ,       F_OSTAV     )
 set_a_dbf_temp("fin_osuban"      , "OSUBAN"     ,       F_OSUBAN    )
-
 set_a_dbf_temp("fin_kuf"         , "FIN_KUF"    ,       F_KUF       )
 set_a_dbf_temp("fin_kif"         , "FIN_KIF"    ,       F_KIF       )
-
 set_a_dbf_temp("temp12"         , "TEMP12"      ,       F_TEMP12    )
 set_a_dbf_temp("temp60"         , "TEMP60"      ,       F_TEMP60    )
-
 set_a_dbf_temp("vksg"           , "VKSG"        ,       F_VKSG      )
 set_a_dbf_temp("ulimit"         , "ULIMIT"      ,       F_ULIMIT    )
-
 
 return
 

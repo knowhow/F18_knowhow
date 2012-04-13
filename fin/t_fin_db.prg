@@ -215,59 +215,6 @@ cDirPriv := my_home()
 
 CreFmkPi()
 
-
-if (nArea==-1 .or. nArea==(F_FUNK))
-        //FUNK.DBF
-    
-    aDBf:={}
-    AADD(aDBf,{ "ID"      , "C" ,   5 ,  0 })
-    AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
-    
-    if !FILE(f18_ime_dbf("funk"))
-        DBcreate2("FUNK",aDbf)
-    endif
-    
-    CREATE_INDEX("ID","id",KUMPATH+"FUNK")
-    CREATE_INDEX("NAZ","NAZ",KUMPATH+"FUNK")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_FOND))
-    //FOND.DBF
-    
-    aDBf:={}
-    AADD(aDBf,{ "ID"      , "C" ,   3 ,  0 })
-    AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
-    
-    if !FILE(f18_ime_dbf("FOND"))
-        DBcreate2("FOND",aDbf)
-    endif
-    
-    CREATE_INDEX("ID","id", "FOND")
-    CREATE_INDEX("NAZ","NAZ", "FOND")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_BUDZET))
-    //BUDZET.DBF    
-    
-    aDBf:={}
-    AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
-    AADD(aDBf,{ "IZNOS"               , "N" ,  20 ,  2 })
-    AADD(aDBf,{ "FOND"                , "C" ,   3 ,  0 })
-    AADD(aDBf,{ "FUNK"                , "C" ,   5 ,  0 })
-    AADD(aDBf,{ "REBIZNOS"            , "N" ,  20 ,  2 })
-        
-    if !FILE(f18_ime_dbf("BUDZET"))
-        DBcreate2("BUDZET", aDbf)
-    endif
-    
-    CREATE_INDEX("1", "IdRj+Idkonto", "BUDZET")
-    CREATE_INDEX("2", "Idkonto",      "BUDZET")
-endif
-
-
 if (nArea==-1 .or. nArea==(F_PAREK))
     //PAREK.DBF
     
@@ -367,95 +314,6 @@ if (nArea==-1 .or. nArea==(F_IOS))
     CREATE_INDEX("1","IdFirma+IdKonto+IdPartner", "IOS") // IOS
 endif
 
-
-
-if (nArea==-1 .or. nArea==(F_PKONTO))
-    //PKONTO.DBF
-        
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
-    AADD(aDBf,{ "TIP"                 , "C" ,  1 ,   0 })
-        
-    if !FILE(f18_ime_dbf("pkonto"))
-        DBcreate2( "PKONTO", aDbf )
-        reset_semaphore_version("pkonto")
-        my_use("pkonto")    
-        close all
-    endif
-    
-    CREATE_INDEX("ID","ID", "PKONTO" )
-    CREATE_INDEX("NAZ","TIP", "PKONTO" )
-endif
-
-
-if (nArea==-1 .or. nArea==(F_TRFP2))
-    //TRFP2.DBF
-        
-        aDbf:={}
-        AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
-        AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-        AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
-        AADD(aDBf,{ "DOKUMENT"            , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "PARTNER"             , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "IDVD"                , "C" ,   2 ,  0 })
-        AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-        AADD(aDBf,{ "IDTARIFA"            , "C" ,   6 ,  0 })
-    
-    if !FILE(f18_ime_dbf("trfp2"))
-            DBcreate2( "TRFP2", aDbf ) 
-            reset_semaphore_version("trfp2")
-            my_use("trfp2")
-            close all
-    endif
-
-    CREATE_INDEX("ID","idvd+shema+Idkonto", "TRFP2")
-endif
-
-if (nArea==-1 .or. nArea==(F_TRFP3))
-    //TRFP3.DBF
-        
-        aDbf:={}
-        AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
-        AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-        AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
-        AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-    
-    if !FILE(f18_ime_dbf("trfp3"))
-            DBcreate2("TRFP3",aDbf)
-            reset_semaphore_version("trfp3")
-            my_use("trfp3")
-            close all   
-    endif
-
-    CREATE_INDEX("ID","shema+Idkonto","TRFP3")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_KONCIJ))
-    //KONCIJ.DBF
-
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
-    AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "NAZ"                 , "C" ,   2 ,  0 })
-    AADD(aDBf,{ "IDPRODMJES"          , "C" ,   2 ,  0 })
-   
-    if !FILE(f18_ime_dbf("koncij"))
-            DBcreate2("KONCIJ",aDbf)
-            reset_semaphore_version("koncij")
-            my_use("koncij")
-            close all   
-    endif
-
-    CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
-endif
-
 if (nArea==-1 .or. nArea==(F_VKSG))
     //VKSG.DBF
 
@@ -523,34 +381,6 @@ if (nArea==-1 .or. nArea==(F_KIF))
     CREATE_INDEX( "NAZ", "naz"    , "FIN_KIF" )
 endif
 
-
-if (nArea==-1 .or. nArea==(F_TNAL))
-    //VRSTEP.DBF
-
-    if !FILE(f18_ime_dbf("vrstep"))
-        aDbf:={{"ID",  "C",  2, 0}, ;
-                       {"NAZ", "C", 20, 0}}
-        DBcreate2("VRSTEP",aDbf)
-        //reset_semaphore_version("vrstep")
-        //my_use("vrstep")
-        //close all 
-    endif
-    
-    CREATE_INDEX("ID","Id", "VRSTEP.DBF")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_VPRIH))
-    //VPRIH.DBF
-
-    if !FILE(f18_ime_dbf("vprih"))
-        aDbf:={{"ID",  "C",  3, 0}, ;
-                       {"NAZ", "C", 20, 0}}
-        DBcreate2(SIFPATH+"VPRIH.DBF",aDbf) 
-    endif
-    
-    CREATE_INDEX ("ID", "Id", SIFPATH+"VPRIH.DBF")
-endif
 
 
 if (nArea==-1 .or. nArea==(F_ULIMIT))

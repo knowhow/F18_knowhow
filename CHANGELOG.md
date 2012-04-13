@@ -1,6 +1,10 @@
+1.0.2 2012-04-13, hernad
+
+  - debug lager lista, dbf_pack feature [#27600](http://redmine.bring.out.ba/issues/27600)
+
 1.0.0 2012-04-13, hernad
 
-  - debug valuta (fakt_doks->dinem)
+  - debug valuta (fakt_doks->dinem) [#27598](http://redmine.bring.out.ba/issues/27598)
 
 0.9.99 2012-04-13, hernad
 

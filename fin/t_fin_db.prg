@@ -328,39 +328,6 @@ if (nArea==-1 .or. nArea==(F__KONTO))
 endif
 
 
-if (nArea==-1 .or. nArea==(F_TNAL))
-    //TNAL.DBF
-    
-        aDbf:={}
-        AADD(aDBf,{ "ID"                  , "C" ,   2 ,  0 })
-        AADD(aDBf,{ "NAZ"                 , "C" ,  29 ,  0 })
-
-    if !FILE(f18_ime_dbf("tnal"))
-            DBcreate2(SIFPATH+"TNAL.DBF",aDbf)  
-    endif
-    
-    CREATE_INDEX("ID","id",SIFPATH+"TNAL")  // vrste naloga
-    CREATE_INDEX("NAZ","naz",SIFPATH+"TNAL")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_TDOK))
-    //TDOK.DBF
-
-    if !FILE(f18_ime_dbf("tdok"))
-        aDbf:={}
-        AADD(aDBf,{ "ID"                  , "C" ,   2 ,  0 })
-        AADD(aDBf,{ "NAZ"                 , "C" ,  13 ,  0 })
-        
-        DBCREATE2(SIFPATH+"TDOK.DBF",aDbf)
-    endif
-    
-    CREATE_INDEX("ID","id",SIFPATH+"TDOK")  // Tip dokumenta
-    CREATE_INDEX("NAZ","naz",SIFPATH+"TDOK")
-endif
-
-
-
 if (nArea==-1 .or. nArea==(F_BBKLAS))
     //BBKLAS.DBF
         

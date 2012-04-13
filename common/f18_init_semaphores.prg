@@ -16,13 +16,15 @@
 function f18_init_semaphores()
 local _key
 local _f18_dbf
+local _temp_tbl
 
 _f18_dbfs := f18_dbfs()
 
 
 for each _key in _f18_dbfs:Keys
 
-    if ! _f18_dbfs[_key]["temp"] 
+    _temp_tbl := _f18_dbfs[_key]["temp"]
+    if !_temp_tbl
          refresh_me(_f18_dbfs[_key])
     endif
 next
@@ -30,26 +32,57 @@ next
 // ----------------------------------------------------
 // ----------------------------------------------------
 function refresh_me(a_dbf_rec)
-local _wa, _del, _cnt
+local _wa, _del, _cnt, _msg_1, _msg_2
 
-Box(, 3, 60)
+Box(, 6, 60)
 
-_wa := a_dbf_rec["wa"]
-SELECT (_wa)
-my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f.)
 
-set delete off
+dbf_open_temp(a_dbf_rec, @_cnt, @_del)
 
-count to _del for deleted()
-_cnt := reccount()
+_msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
+_msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 
-USE
+@ m_x + 1, m_y + 2 SAY _msg_1
+@ m_x + 2, m_y + 2 SAY _msg_2
 
-@ m_x + 1, m_y + 2 SAY a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
-@ m_x + 2, m_y + 2 SAY "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
+log_write("prije synchro " +  _msg_1 + " " + _msg_2)
 
 SELECT (_wa)
 my_use(a_dbf_rec["alias"], a_dbf_rec["alias"])
 
+USE
+
+ 
+// ponovo otvori nakon sinhronizacije
+dbf_open_temp(a_dbf_rec, @_cnt, @_del)
+
+_msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
+_msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
+
+@ m_x + 4, m_y + 2 SAY _msg_1
+@ m_x + 5, m_y + 2 SAY _msg_2
+
+
+log_write("nakon synchro " +  _msg_1 + " " + _msg_2)
+
+USE
 
 BoxC()
+
+
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+static function dbf_open_temp(a_dbf_rec, cnt, del)
+
+SELECT (a_dbf_rec["wa"])
+my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f.)
+
+set deleted off
+
+count to del for deleted()
+cnt := reccount()
+
+USE
+set deleted on
+return
+

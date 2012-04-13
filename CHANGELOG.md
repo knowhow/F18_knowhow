@@ -1,3 +1,7 @@
+0.9.99 2012-04-13, hernad
+
+  - vratolomije
+
 0.9.98 2012-04-13, hernad 
 
   - [#27590](http://redmine.bring.out.ba/issues/27590)

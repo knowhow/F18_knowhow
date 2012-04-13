@@ -390,15 +390,15 @@ do while !eof()
     endif
     
     if !empty(cidfirma)
-     if idfirma<>cidfirma
+      if idfirma<>cidfirma
      	skip
-	loop
-	endif
+	    loop
+	  endif
     endif
 
     if !empty(qqPartn)
         select fakt_doks
-	hseek fakt->(IdFirma+idtipdok+brdok)
+        hseek fakt->(IdFirma+idtipdok+brdok)
         select fakt
 
 	if !(doks->partner=qqPartn)
@@ -459,13 +459,11 @@ do while !eof()
 	if prow()>61-iif(cProred="D",1,0)
   		Zaglfakt_lager_lista()
 	endif
-	//OL_Yield()
-
 
   if !empty(cIdRoba)
    if !(cSaldo0=="N" .and. (nUl-nIzl)==0)
      if fID_J
-         NSRNPIdRoba(substr(cIdRoba,11), (cSintetika=="D"))  
+         NSRNPIdRoba(substr(cIdRoba, 11), (cSintetika=="D"))  
 	 // desni dio sifre je interna sifra
      else
          NSRNPIdRoba(cIdRoba, (cSintetika=="D") )

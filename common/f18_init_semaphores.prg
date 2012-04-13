@@ -45,7 +45,7 @@ function refresh_me(a_dbf_rec)
 local _wa, _del, _cnt, _msg_1, _msg_2
 local _dbf_pack_algoritam
 
-Box(, 7, 60)
+Box( "#Molimo sacekajte...", 7, 60)
 
 
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)

@@ -1491,7 +1491,9 @@ else
   HSEEK cSR
 endif
 
-select fakt_pripr
+if cSr == NIL
+  select fakt_pripr
+endif
 
 return
 

@@ -41,7 +41,6 @@ static __font_width := 10
 function f18_init_app()
 
 REQUEST DBFCDX
-REQUEST DBFCDX
 
 #ifdef __PLATFORM__WINDOWS
 

@@ -76,15 +76,13 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 
-// funkcija a_ugov() definise dbf polja
-
 _alg["dbf_key_block"]  := {|| field->id + field->idpartner}
 _alg["dbf_key_fields"] := {"id", "idpartner"}
 _alg["sql_in"]         := "rpad(id,10) || rpad(idpartner,6)"
 _alg["dbf_tag"]        := "ID"
 AADD(_item["algoritam"], _alg)
 
-_item["sql_order"] := "id, idpartner, datod, datdo"
+_item["sql_order"] := "id, idpartner"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.
@@ -119,7 +117,7 @@ _alg["sql_in"]         := "rpad(id,10) || rpad(idroba,10)"
 _alg["dbf_tag"]        := "ID"
 AADD(_item["algoritam"], _alg)
 
-_item["sql_order"] := "id, idroba, dest"
+_item["sql_order"] := "id, idroba"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.

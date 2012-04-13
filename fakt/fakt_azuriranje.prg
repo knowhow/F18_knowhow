@@ -406,6 +406,7 @@ _fakt_data["brdok"]    := br_dok
 select fakt_pripr
 HSEEK id_firma + id_tip_dok + br_dok
 
+_fakt_data["dindem"]  := field->dindem
 _fakt_data["datdok"]  := field->datdok
 
 _memo := ParsMemo( field->txt )

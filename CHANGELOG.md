@@ -1,3 +1,7 @@
+1.0.0 2012-04-13, hernad
+
+  - debug valuta (fakt_doks->dinem)
+
 0.9.99 2012-04-13, hernad
 
   - vratolomije

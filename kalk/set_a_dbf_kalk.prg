@@ -24,6 +24,7 @@ set_a_dbf_kalk_doks_doks2("kalk_doks2" , "KALK_DOKS2" , F_KALK_DOKS2 )
 set_a_dbf_sifarnik("trfp"       , "TRFP"      , F_TRFP       )
 set_a_dbf_sifarnik("trfp2"      , "TRFP2"     , F_TRFP2      )
 set_a_dbf_sifarnik("trfp3"      , "TRFP3"     , F_TRFP3      )
+set_a_dbf_sifarnik("objekti"    , "OBJEKTI"   , F_OBJEKTI    )
 
 // temp kalk tabele - ne idu na server
 set_a_dbf_temp("kalk_kalks"    , "KALKS"          , F_KALKS        )
@@ -40,7 +41,6 @@ set_a_dbf_temp("p_kalk_doksrc" , "P_KALK_DOKSRC"  , F_P_DOKSRC     )
 
 set_a_dbf_temp("kalk_ppprod"   , "PPPROD"        , F_PPPROD        )
 
-set_a_dbf_temp("kalk_objekti"  , "OBJEKTI"       , F_OBJEKTI       )
 set_a_dbf_temp("kalk_pobjekti" , "POBJEKTI"      , F_POBJEKTI      )
 set_a_dbf_temp("kalk_prodnc"   , "PRODNC"        , F_PRODNC        )
 set_a_dbf_temp("kalk_rvrsta"   , "RVRSTA"        , F_RVRSTA        )

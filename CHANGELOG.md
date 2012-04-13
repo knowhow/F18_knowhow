@@ -1,3 +1,8 @@
+0.9.96 2012-04-13, vsasa
+
+  - kreiranje tabela, set_a_dbfs sređivanje (semafori 1.1) [#27575](http://redmine.bring.out.ba/issues/27575)
+  - sitne korekcije
+
 0.9.95 2012-04-12, vsasa
 
   - ukinuo alerte u set_a_dbfs... 

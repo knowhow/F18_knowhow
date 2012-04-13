@@ -41,8 +41,6 @@
 #xcommand O_VOZILA   => SELECT (F_VOZILA)  ;  my_use  ("vozila")    ; set order to tag "ID"
 #xcommand O_RELATION => SELECT (F_RELATION);  my_use  ("relation")  ; set order to tag "1"
 #xcommand O_FINMAT   => select (F_FINMAT)  ;  my_usex ("finmat")    ; set order to tag "1"
-
-#xcommand O_VPRIH    => SELECT (F_VPRIH)   ;  my_use ("vrprih")     ; set order to tag "ID"
 #xcommand O_ULIMIT   => SELECT (F_ULIMIT)  ;  my_use ("ulimit")     ; set order to tag "ID"
 #xcommand O_TIPBL    => SELECT (F_TIPBL)   ;  my_use ("tipbl")      ; set order to tag "1"
 #xcommand O_VRNAL    => SELECT (F_VRNAL)   ;  my_use ("vrnal")      ; set order to tag "1"
@@ -91,8 +89,6 @@
 #xcommand O_PSINT        => select (F_PSINT);      my_usex ("psint")     ; set order to tag "1"
 
 #xcommand O_SUBAN     => SELECT (F_SUBAN);    my_use("suban")     ; set order to tag "1"
-#xcommand O_KUF       => SELECT (F_KUF);      my_use("kuf")       ; set order to tag "ID"
-#xcommand O_KIF       => SELECT (F_KIF);      my_use("kif")       ; set order to tag "ID"
 #xcommand O_ANAL      => SELECT (F_ANAL);     my_use("anal")      ; set order to tag "1"
 #xcommand O_NALOG     => SELECT (F_NALOG);    my_use("nalog")     ; set order to tag "1"
 #xcommand O_SINT      => SELECT (F_SINT);     my_use("sint")      ; set order to tag "1"

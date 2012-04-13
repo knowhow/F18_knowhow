@@ -190,11 +190,6 @@ install_start(goModul, .f.)
 return
 
 
-/*! *void TDBFin::kreiraj(int nArea)
- *  \brief kreirane baze podataka FIN
- */
- 
-*void TDBFin::kreiraj(int nArea)
 
 method kreiraj(nArea)
 local cImeDbf
@@ -214,74 +209,6 @@ cDirSif := my_home()
 cDirPriv := my_home()
 
 CreFmkPi()
-
-aDbf:={}
-AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
-AADD(aDBf,{ "NAZ"                 , "C" ,  57 ,  0 })
-AADD(aDBf,{ "POZBILU"             , "C" ,   3 ,  0 })
-AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
-
-if !FILE(f18_ime_dbf("_konto"))
-    DBcreate2(PRIVPATH+"_KONTO.DBF",aDbf)
-endif
-
-if (nArea==-1 .or. nArea==(F_BBKLAS))
-    //BBKLAS.DBF
-        
-        aDbf:={}
-        AADD(aDBf,{ "IDKLASA"             , "C" ,   1 ,  0 })
-        AADD(aDBf,{ "POCDUG"              , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "POCPOT"              , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "TEKPDUG"             , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "TEKPPOT"             , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "KUMPDUG"             , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "KUMPPOT"             , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "SALPDUG"             , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "SALPPOT"             , "N" ,  17 ,  2 })
-    
-    if !FILE(f18_ime_dbf("bbklas"))
-            DBcreate2(PRIVPATH+"BBKLAS.DBF",aDbf)
-    endif
-    
-    CREATE_INDEX("1","IdKlasa", PRIVPATH+"BBKLAS")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_IOS))
-    //IOS.DBF
-
-    aDbf:={}
-        AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
-        AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
-        AADD(aDBf,{ "IDPARTNER"           , "C" ,   6 ,  0 })
-        AADD(aDBf,{ "IZNOSBHD"            , "N" ,  17 ,  2 })
-        AADD(aDBf,{ "IZNOSDEM"            , "N" ,  15 ,  2 })
-    
-    if !FILE(f18_ime_dbf("ios"))
-            DBcreate2(PRIVPATH+"IOS",aDbf)
-    endif
-
-    CREATE_INDEX("1","IdFirma+IdKonto+IdPartner", "IOS") // IOS
-endif
-
-if (nArea==-1 .or. nArea==(F_VKSG))
-    //VKSG.DBF
-
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
-    AADD(aDBf,{ "GODINA"              , "C" ,   4 ,  0 })
-    AADD(aDBf,{ "IDS"                 , "C" ,   7 ,  0 })
-
-    if !FILE(f18_ime_dbf("vksg"))
-        DBcreate2(SIFPATH+"VKSG.DBF",aDbf)
-    endif
-
-    CREATE_INDEX("1","id+DESCEND(godina)",SIFPATH+"VKSG")
-endif
-
-
-// kreiraj indexe tabele FMKRULES
-cre_rule_cdx()
 
 return
 

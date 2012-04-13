@@ -21,10 +21,13 @@ set_a_dbf_fin_suban()
 set_a_dbf_fin_anal()
 set_a_dbf_fin_sint()
 set_a_dbf_fin_nalog()
+set_a_dbf_fin_parek()
 
 // sifrarnici
-set_a_dbf_temp("fin_funk"      , "FUNK"     ,       F_FUNK       )
-set_a_dbf_temp("fin_fond"      , "FOND"     ,       F_FOND       )
+set_a_dbf_sifarnik("fin_funk"      , "FUNK"     ,       F_FUNK       )
+set_a_dbf_sifarnik("fin_fond"      , "FOND"     ,       F_FOND       )
+set_a_dbf_sifarnik("fin_buiz"      , "BUIZ"     ,       F_BUIZ       )
+set_a_dbf_sifarnik("fin_ulimit"    , "ULIMIT"   ,       F_ULIMIT     )
 
 // temporary
 set_a_dbf_temp("fin_konto"        , "_KONTO"   ,       F__KONTO   )
@@ -35,22 +38,17 @@ set_a_dbf_temp("fin_panal"     , "PANAL"    ,       F_PANAL      )
 set_a_dbf_temp("fin_psint"     , "PSINT"    ,       F_PSINT      )
 set_a_dbf_temp("fin_pnalog"    , "PNALOG"   ,       F_PNALOG     )
 set_a_dbf_temp("fin_budzet"    , "BUDZET"   ,       F_BUDZET     )
-set_a_dbf_temp("fin_parek"     , "PAREK"    ,       F_PAREK      )
 set_a_dbf_temp("fin_koniz"     , "KONIZ"    ,       F_KONIZ      )
 set_a_dbf_temp("fin_izvje"     , "IZVJE"    ,       F_IZVJE      )
 set_a_dbf_temp("fin_zagli"     , "ZAGLI"    ,       F_ZAGLI      )
 set_a_dbf_temp("fin_koliz"     , "KOLIZ"    ,       F_KOLIZ      )
-set_a_dbf_temp("fin_buiz"      , "BUIZ"     ,       F_BUIZ       )
 set_a_dbf_temp("fin_bbklas"      , "BBKLAS"     ,       F_IOS       )
 set_a_dbf_temp("fin_ios"         , "IOS"        ,       F_BBKLAS    )
 set_a_dbf_temp("fin_ostav"       , "OSTAV"      ,       F_OSTAV     )
 set_a_dbf_temp("fin_osuban"      , "OSUBAN"     ,       F_OSUBAN    )
-set_a_dbf_temp("fin_kuf"         , "FIN_KUF"    ,       F_KUF       )
-set_a_dbf_temp("fin_kif"         , "FIN_KIF"    ,       F_KIF       )
 set_a_dbf_temp("temp12"         , "TEMP12"      ,       F_TEMP12    )
 set_a_dbf_temp("temp60"         , "TEMP60"      ,       F_TEMP60    )
 set_a_dbf_temp("vksg"           , "VKSG"        ,       F_VKSG      )
-set_a_dbf_temp("ulimit"         , "ULIMIT"      ,       F_ULIMIT    )
 
 return
 
@@ -218,6 +216,40 @@ _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
 _item["sql_order"] := "idfirma, idvn, brnal"
+
+f18_dbfs_add(_tbl, @_item)
+return .t.
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_fin_parek()
+local _alg, _tbl
+local _itm
+
+_tbl := "fin_parek"
+
+_item := hb_hash()
+
+_item["alias"] := "PAREK"
+_item["wa"]    := F_PAREK
+_item["table"] := _tbl
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block" ] := {|| field->idpartija } 
+_alg["dbf_key_fields"] := { "idpartija" } 
+_alg["sql_in"]         := "rpad(idpartija,6)"
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "idpartija"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.

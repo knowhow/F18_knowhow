@@ -322,7 +322,7 @@ if !FILE(f18_ime_dbf("ulimit"))
     aDBf:={}
     AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
     AADD(aDBf,{ "IDPARTNER" , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "LIMIT"     , "N" ,  15 ,  2 })
+    AADD(aDBf,{ "F_LIMIT"   , "N" ,  15 ,  2 })
     DBcreate2( "ULIMIT", aDbf )
     reset_semaphore_version("fin_ulimit")
     my_use("ulimit")
@@ -331,6 +331,56 @@ endif
 CREATE_INDEX("ID","Id"          , "ULIMIT")
 CREATE_INDEX("2" ,"Id+idpartner", "ULIMIT")
 
+// _konto
+if !FILE(f18_ime_dbf("_konto"))
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "NAZ"                 , "C" ,  57 ,  0 })
+    AADD(aDBf,{ "POZBILU"             , "C" ,   3 ,  0 })
+    AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
+    DBcreate2( "_KONTO", aDbf )
+endif
+
+// BBKLAS
+if !FILE(f18_ime_dbf("bbklas"))
+    aDbf:={}
+    AADD(aDBf,{ "IDKLASA"             , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "POCDUG"              , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "POCPOT"              , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "TEKPDUG"             , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "TEKPPOT"             , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "KUMPDUG"             , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "KUMPPOT"             , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "SALPDUG"             , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "SALPPOT"             , "N" ,  17 ,  2 })
+    DBcreate2( "BBKLAS", aDbf )
+endif
+CREATE_INDEX("1","IdKlasa", "BBKLAS")
+
+//IOS
+if !FILE(f18_ime_dbf("ios"))
+    aDbf:={}
+    AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "IDPARTNER"           , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "IZNOSBHD"            , "N" ,  17 ,  2 })
+    AADD(aDBf,{ "IZNOSDEM"            , "N" ,  15 ,  2 })
+    DBcreate2( "IOS", aDbf )
+endif
+CREATE_INDEX("1","IdFirma+IdKonto+IdPartner", "IOS")
+
+// VKSG
+if !FILE(f18_ime_dbf("vksg"))
+    aDbf:={}
+    AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "GODINA"              , "C" ,   4 ,  0 })
+    AADD(aDBf,{ "IDS"                 , "C" ,   7 ,  0 })
+    DBcreate2( "VKSG", aDbf )
+endif
+CREATE_INDEX("1","id+DESCEND(godina)", "VKSG" )
+
+// kreiraj indexe tabele FMKRULES
+cre_rule_cdx()
 
 return
 

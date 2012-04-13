@@ -895,7 +895,7 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
 
      if fk3=="D" .and. !len(ck3)=0 .and. cBrza=="D" .and.;
         IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-       nLimit  := ABS( Ocitaj(F_ULIMIT,k3iz256(ck3)+cIdPartner,"limit") )
+       nLimit  := ABS( Ocitaj(F_ULIMIT,k3iz256(ck3)+cIdPartner,"f_limit") )
        nSLimit := ABS( nDugBHD-nPotBHD )
        ? "------------------------------"
        ? "LIMIT PO K3  :",TRANS(nLimit        ,"999999999999.99")

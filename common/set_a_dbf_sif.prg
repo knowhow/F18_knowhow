@@ -41,7 +41,6 @@ set_a_dbf_sifarnik("tarifa"     , "TARIFA"    , F_TARIFA     )
 set_a_dbf_sifarnik("konto"      , "KONTO"     , F_KONTO      )
 set_a_dbf_sifarnik("koncij"     , "KONCIJ"    , F_KONCIJ     )
 set_a_dbf_sifarnik("vrstep"     , "VRSTEP"    , F_VRSTEP     )
-set_a_dbf_sifarnik("vprih"      , "VPRIH"     , F_VPRIH      )
 set_a_dbf_sifarnik("pkonto"     , "PKONTO"    , F_PKONTO     )
 set_a_dbf_sifarnik("valute"     , "VALUTE"    , F_VALUTE     )
 

@@ -717,7 +717,7 @@ function P_ULIMIT(cId,dx,dy)
 PRIVATE ImeKol,Kol:={}
 ImeKol:={ { "ID "        , {|| id       }, "id"       , {|| .t.}, {|| vpsifra(wId)},,"999" },;
           { "ID partnera", {|| idpartner}, "idpartner", {|| .t.}, {|| P_Firma(@wIdPartner)} },;
-          { "Limit"      , {|| limit    }, "limit"      };
+          { "Limit"      , {|| f_limit    }, "f_limit"      };
         }
  FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
 return PostojiSifra(F_ULIMIT,1,10,55,"Sifrarnik limita po ugovorima",@cid,dx,dy)

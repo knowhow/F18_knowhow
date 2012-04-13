@@ -72,8 +72,6 @@
 #define F_ULIMIT   72
 #define F_FIDOKS   73
 #define F_FIDOKS2  74
-#define F_VPRIH    75
-#define F_TOKVAL   76
 #define F_P_UPDATE   77
 
 

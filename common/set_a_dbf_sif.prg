@@ -26,7 +26,7 @@ set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES, _rec  )
 
 
 set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
-set_a_dbf_sifarnik("lokal"      , "LOKAL" , F_LOKAL  )
+set_a_dbf_sifarnik("lokal"      , "LOKAL"     , F_LOKAL  )
 
 set_a_dbf_sifarnik("ops"        , "OPS"       , F_OPS        )
 set_a_dbf_sifarnik("banke"      , "BANKE"     , F_BANKE      )

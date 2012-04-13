@@ -207,6 +207,7 @@ __server_log := .t.
 
 set_all_gvars()
 
+f18_init_semaphores()
 return .t.
 
 

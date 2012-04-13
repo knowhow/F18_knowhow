@@ -11,7 +11,9 @@
 
 #include "fmk.ch"
 
-funciton f18_init_semahores()
+// ----------------------------------------------------
+// ----------------------------------------------------
+function f18_init_semaphores()
 local _key
 local _f18_dbf
 
@@ -21,20 +23,20 @@ _f18_dbfs := f18_dbfs()
 for each _key in _f18_dbfs:Keys
 
     if ! _f18_dbfs[_key]["temp"] 
-             refresh_me(_f18_dbfs[_key])
+         refresh_me(_f18_dbfs[_key])
     endif
 next
 
 // ----------------------------------------------------
 // ----------------------------------------------------
 function refresh_me(a_dbf_rec)
-local _del, _cnt
+local _wa, _del, _cnt
 
 Box(, 3, 60)
 
-
-SELECT a_dbf_rec["wa"]
-my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["alias"])
+_wa := a_dbf_rec["wa"]
+SELECT (_wa)
+my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f.)
 
 set delete off
 
@@ -43,11 +45,10 @@ _cnt := reccount()
 
 USE
 
-
 @ m_x + 1, m_y + 2 SAY a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 @ m_x + 2, m_y + 2 SAY "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 
-SELECT a_dbf_rec["wa"]
+SELECT (_wa)
 my_use(a_dbf_rec["alias"], a_dbf_rec["alias"])
 
 

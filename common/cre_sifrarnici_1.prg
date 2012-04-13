@@ -17,7 +17,6 @@
 function cre_sifrarnici_1(ver)
 local _created
 
-// RJ
 cIme := "rj.dbf" 
 
 if !file(f18_ime_dbf("rj"))
@@ -36,7 +35,6 @@ CREATE_INDEX("ID","id", "rj")
 CREATE_INDEX("NAZ","NAZ", "rj")
 index_mcode(KUMPATH, "rj")
 
-// KONTO
 if !file(f18_ime_dbf("konto"))
    aDbf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
@@ -55,7 +53,6 @@ CREATE_INDEX("NAZ","naz", "konto")
 index_mcode(SIFPATH, "KONTO")
 
 
-// VALUTE
 cIme := f18_ime_dbf("valute")
 if !file(cIme)
         aDbf:={}
@@ -83,8 +80,7 @@ CREATE_INDEX("NAZ","tip+id+dtos(datum)", "valute")
 CREATE_INDEX("ID2","id+dtos(datum)", "valute")
 index_mcode(cIme)
 
-
-// TOKVAL
+/*
 if !file(f18_ime_dbf("tokval"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,  8  ,  2 })
@@ -93,8 +89,8 @@ if !file(f18_ime_dbf("tokval"))
         dbcreate2( 'tokval', aDbf)
 endif
 CREATE_INDEX("ID","id", "tokval")
+*/
 
-// TNAL
 if !file(f18_ime_dbf("tnal"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
@@ -119,11 +115,10 @@ if !file(f18_ime_dbf("tdok"))
         my_use("tdok")
         close all
 endif
-CREATE_INDEX("ID","id", "TDOK")  // Tip dokumenta
+CREATE_INDEX("ID","id", "TDOK") 
 CREATE_INDEX("NAZ","naz", "TDOK")
 index_mcode(SIFPATH, "TDOK")
 
-// OPS
 if !file(f18_ime_dbf("ops"))
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
@@ -149,7 +144,6 @@ CREATE_INDEX("IDN0","IDN0", "ops")
 CREATE_INDEX("NAZ","naz", "ops")
 index_mcode(SIFPATH, "ops")
 
-// BANKE
 cIme:="banke"
 if !file(f18_ime_dbf(cIme) )
         aDbf:={}
@@ -167,7 +161,6 @@ CREATE_INDEX("ID","id", cIme)
 CREATE_INDEX("NAZ","naz", cIme)
 index_mcode(SIFPATH, cIme)
 
-// RNAL
 cIme:="rnal"
 if !file( f18_ime_dbf(cIme))
    aDBf:={}
@@ -176,11 +169,11 @@ if !file( f18_ime_dbf(cIme))
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  60 ,  0 })
    DBCREATE2('RNAL.DBF', aDbf)
 endif
-CREATE_INDEX("ID","id", cIme)  // vrste naloga
+CREATE_INDEX("ID","id", cIme)  
 CREATE_INDEX("NAZ","naz", cIme)
 index_mcode(SIFPATH, cIme)
 
-// REFER
+// referenti
 if !file( f18_ime_dbf("refer"))
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
@@ -191,7 +184,6 @@ endif
 CREATE_INDEX("ID","id", "refer") 
 CREATE_INDEX("NAZ","naz", "refer")
 
-// VRSTEP
 if !FILE(f18_ime_dbf("vrstep"))
     aDbf:={}
 	AADD(aDbf,{"ID" ,"C", 2,0})

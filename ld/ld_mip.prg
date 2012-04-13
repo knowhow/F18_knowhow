@@ -473,6 +473,7 @@ local nU_prih
 local nU_dopr
 local nU_lodb
 local nU_porez
+local _ima_bol_preko := .f.
 
 // otvori xml za upis
 open_xml(file)
@@ -562,6 +563,8 @@ do while !EOF()
     nL_odb := 0
     nOsnPor := 0
     nIznPor := 0
+
+    _ima_bol_preko := .f.
     
     do while !EOF() .and. field->idradn == cT_radnik
         
@@ -574,10 +577,13 @@ do while !EOF()
         cR_jmb := field->r_jmb
         cR_ime := field->r_ime
         dD_ispl := field->d_isp
-        
-        nR_sati += field->r_sati
-        nR_satib += field->r_satib
-        nR_satit += field->r_satit
+
+        if !_ima_bol_preko        
+            nR_sati += field->r_sati
+            nR_satib += field->r_satib
+            nR_satit += field->r_satit
+        endif
+
         nBruto += field->bruto
         nO_prih += field->o_prih
         nU_opor += field->u_opor
@@ -610,6 +616,8 @@ do while !EOF()
         // bol_preko = "1"
         if field->bol_preko == "1"
             
+            _ima_bol_preko := .t.
+
             nR_sati := field->r_sati
             nR_satib := field->r_satib
             
@@ -764,6 +772,7 @@ return
 // --------------------------------------------
 static function _fill_xml( xml_file )
 local nTArea := SELECT()
+local _ima_bol_preko := .f.
 
 // otvori xml za upis
 open_xml( xml_file )
@@ -868,6 +877,8 @@ do while !EOF()
     nOsn_por := 0
     nIzn_por := 0
 
+    _ima_bol_preko := .f.
+
     // provrti obracune
     do while !EOF() .and. field->idradn == cT_radnik
         
@@ -875,12 +886,16 @@ do while !EOF()
             skip 
             loop
         endif
-    
+         
         // za obrazac i treba zadnja isplata
         dD_isp := field->d_isp
-        nR_sati += field->r_sati
-        nR_satit += field->r_satit
-        nR_satib += field->r_satib
+ 
+        if !_ima_bol_preko        
+            nR_sati += field->r_sati
+            nR_satib += field->r_satib
+            nR_satit += field->r_satit
+        endif
+   
         nR_stuv := field->r_stuv
         cR_rmj := field->r_rmj
         nBruto += field->bruto
@@ -897,7 +912,25 @@ do while !EOF()
         nIzn_por += field->izn_por
         nU_d_pms += field->u_d_pms
 
+        // ako je isti radnik kao i ranije
+        // i bolovanje preko 42 dana
+        // uzmi puni fond sati sa stavke bolovanja
+        // bol_preko = "1"
+        if field->bol_preko == "1"
+            
+            _ima_bol_preko := .t.
+
+            nR_sati := field->r_sati
+            nR_satib := field->r_satib
+            
+            if nR_satiT <> 0
+                nR_satiT := field->r_sati
+            endif
+
+        endif
+ 
         skip
+
     enddo
     
     cStUv := ALLTRIM(STR(nR_Stuv,12,0)) + "/12"

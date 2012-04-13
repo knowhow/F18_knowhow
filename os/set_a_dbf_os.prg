@@ -15,6 +15,7 @@
 // -------------------------------------
 // -------------------------------------
 function set_a_dbf_os()
+local _alg
 
 // kumulativne tabele
 set_a_dbf_os_sii_promj( "os_promj", "PROMJ", F_PROMJ )
@@ -23,8 +24,17 @@ set_a_dbf_os_sii_promj( "sii_promj", "SII_PROMJ", F_SII_PROMJ )
 // tabele sa strukturom sifarnika (id je primarni ključ)
 // u našem slučaju to su i os i sii (glavne tabele)
 
-set_a_dbf_sifarnik("os_os", "OS" , F_OS )
-set_a_dbf_sifarnik("sii_sii", "SII" , F_SII )
+//OS CREATE_INDEX("1", "id+idam+dtos(datum)", _alias )
+_alg := hb_hash()
+_alg["dbf_key_fields"] := {"id"}
+_alg["dbf_tag"]        := "1"
+_alg["sql_in" ]        := "ID"
+_alg["dbf_key_block" ] := {|| field->id }
+
+
+set_a_dbf_sifarnik("os_os", "OS" , F_OS, _alg )
+set_a_dbf_sifarnik("sii_sii", "SII" , F_SII, _alg )
+
 set_a_dbf_sifarnik("os_k1" , "K1" , F_K1 )
 set_a_dbf_sifarnik("os_amort" , "AMORT" , F_AMORT )
 set_a_dbf_sifarnik("os_reval" , "REVAL" , F_REVAL )

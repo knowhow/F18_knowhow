@@ -1,3 +1,7 @@
+0.9.97 2012-04-13, hernad
+
+  - [#27589](http://redmine.bring.out.ba/issues/27589)
+
 0.9.96 2012-04-13, vsasa
 
   - kreiranje tabela, set_a_dbfs sređivanje (semafori 1.1) [#27575](http://redmine.bring.out.ba/issues/27575)

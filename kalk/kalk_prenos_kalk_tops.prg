@@ -78,7 +78,7 @@ AADD( _dbf,{"N2","N",12,2})
 AADD( _dbf,{"BARKOD","C",13,0})
 
 // kreiraj tabelu
-dbcreate2( dbf_table, _dbf )
+dbcreate( dbf_table, _dbf )
     
 select ( F_TMP_KATOPS )
 my_use_temp( "KATOPS", my_home() + dbf_table )

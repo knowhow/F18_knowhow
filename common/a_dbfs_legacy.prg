@@ -18,33 +18,8 @@ function set_a_dbfs_legacy()
 
 _dbf_fields := NIL
 
-AADD( gaDbfs, { F_FIN_PRIPR , "FIN_FIPRIPR"   , "fin_pripr"  } )
-
-AADD( gaDbfs, { F_FIN_PRIPR,  "FIN_PRIPRRP" , "fin_pripr"  } )
-
-
-
 /*
 
-// pomocne tabele
-AADD( gaDbfs, {  F_POM2      , "POM2"   , "pom2"  } )
-
-// sifrarnici
-AADD( gaDbfs, { F_BARKOD   , "BARKOD"  , "barkod"  } )
-AADD( gaDbfs, { F_STRINGS  , "STRINGS"  , "strings"  } )
-AADD( gaDbfs, { F_RNAL     , "RNAL"  , "rnal"  } )
-AADD( gaDbfs, { F_DOKSRC   , "DOKSRC"  , "doksrc"  } )
-AADD( gaDbfs, { F_P_DOKSRC , "P_DOKSRC"  , "p_doksrc"  } )
-AADD( gaDbfs, { F_RELATION , "RELATION"  , "relation"  } )
-AADD( gaDbfs, { F_P_UPDATE , "P_UPDATE"  , "p_update"  } )
-AADD( gaDbfs, { F__ROBA , "_ROBA"  , "_roba"  } )
-
-// r_export
-AADD( gaDbfs, { F_R_EXP ,  "R_EXPORT"  , "r_export"  } )
-
-// finmat
-AADD( gaDbfs, { F_FINMAT ,  "FINMAT"  , "fin_mat"  } )
-// modul FAKT
 // modul RNAL
 AADD(gaDBFs, { F__DOCS, "_DOCS", "_rnal_docs"  } )
 AADD(gaDBFs, { F__DOC_IT, "_DOC_IT", "_rnal_doc_it"  } )
@@ -96,8 +71,6 @@ AADD( gaDbfs, { F_INVENT, "INVENT", "os_invent" } )
 AADD( gaDbfs, { F_K1    , "K1"    , "os_k1", { |alg| os_k1_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_AMORT , "AMORT" , "os_amort", { |alg| os_amort_from_sql_server(alg) }, "IDS" } )
 AADD( gaDbfs, { F_REVAL , "REVAL" , "os_reval", { |alg| os_reval_from_sql_server(alg) }, "IDS" } )
-
-// modul POS
 
 // modul MAT
 AADD(gaDBFs, { F_MAT_PRIPR,   "MAT_PRIPR",   "mat_pripr"   } )

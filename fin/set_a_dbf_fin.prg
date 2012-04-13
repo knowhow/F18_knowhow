@@ -49,7 +49,7 @@ set_a_dbf_temp("fin_osuban"      , "OSUBAN"     ,       F_OSUBAN    )
 
 set_a_dbf_temp("fin_kuf"         , "FIN_KUF"    ,       F_KUF       )
 set_a_dbf_temp("fin_kif"         , "FIN_KIF"    ,       F_KIF       )
-
+set_a_dbf_temp("fin_pripr"       , "FIN_PRIPRRP",       F_FIN_PRIPR  )
 
 set_a_dbf_temp("temp12"         , "TEMP12"      ,       F_TEMP12    )
 set_a_dbf_temp("temp60"         , "TEMP60"      ,       F_TEMP60    )

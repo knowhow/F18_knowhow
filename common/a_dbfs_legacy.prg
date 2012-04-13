@@ -54,19 +54,6 @@ AADD(gaDBFs, { F_OBJECTS, "OBJECTS", "rnal_objects", {|alg| rnal_objects_from_sq
 AADD(gaDBFs, { F_RAL, "RAL", "rnal_ral", {|alg| rnal_ral_from_sql_server(alg) }, "IDS", { {"id", 5}, {"gl_tick", 2} }, {|x| "ID=" + STR( x["id"], 10 ) + " AND GL_TICK=" + STR(x["gl_tick"], 2) }, "1" } )
 
 
-// modul OS:
-// -----------------
-// OS tabele
-AADD( gaDbfs, { F_OS    , "OS"    , "os_os", { |alg| os_os_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("os_os", x) }, "1" } )
-AADD( gaDbfs, { F_PROMJ , "PROMJ" , "os_promj", { |alg| os_promj_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("os_promj", x) }, "1" } )
-// SII tabele
-AADD( gaDbfs, { F_SII    , "SII"    , "sii_sii", { |alg| sii_sii_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("sii_sii", x) }, "1" } )
-AADD( gaDbfs, { F_SII_PROMJ , "SII_PROMJ" , "sii_promj", { |alg| sii_promj_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("sii_promj", x) }, "1" } )
-AADD( gaDbfs, { F_INVENT, "INVENT", "os_invent" } )
-AADD( gaDbfs, { F_K1    , "K1"    , "os_k1", { |alg| os_k1_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, { F_AMORT , "AMORT" , "os_amort", { |alg| os_amort_from_sql_server(alg) }, "IDS" } )
-AADD( gaDbfs, { F_REVAL , "REVAL" , "os_reval", { |alg| os_reval_from_sql_server(alg) }, "IDS" } )
-
 // modul MAT
 AADD(gaDBFs, { F_MAT_PRIPR,   "MAT_PRIPR",   "mat_pripr"   } )
 AADD(gaDBFs, { F_MAT_INVENT,  "MAT_INVENT",  "mat_invent"  } )

@@ -86,6 +86,36 @@ endif
 return
 
 
+// -----------------------------------------
+// vraca naziv tabele na osnovu alias-a
+// -----------------------------------------
+function get_os_table_name( alias )
+local _ret := "os_os"
+
+if UPPER( alias ) == "OS"
+    _ret := "os_os"
+else
+    _ret := "sii_sii"
+endif
+
+return _ret
+
+
+
+// -----------------------------------------
+// vraca naziv tabele na osnovu alias-a
+// -----------------------------------------
+function get_promj_table_name( alias )
+local _ret := "os_promj"
+
+if UPPER( alias ) == "PROMJ"
+    _ret := "os_promj"
+else
+    _ret := "sii_promj"
+endif
+
+return _ret
+
 
 // ------------------------------------------------------
 // ------------------------------------------------------
@@ -119,6 +149,9 @@ o_os_sii_promj()
 select_os_sii()
 go top
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )        
+
 do while !eof()
 
     _sr_id := field->id
@@ -140,10 +173,13 @@ do while !eof()
     // brisi sta je otpisano
     // ali samo osnovna sredstva, sitan inventar ostaje u bazi...
     IF !EMPTY( _rec["datotp"] ) .and. gOsSii == "O"
+
         ?? "  brisem, otpisano"
-        delete_rec_server_and_dbf( ALIAS(), _rec )
+
+        delete_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
         go _t_rec
         LOOP
+
     ENDIF
 
     select_promj()
@@ -162,19 +198,36 @@ do while !eof()
     _rec["revd"] := 0
     _rec["revp"] := 0
 
-    update_rec_server_and_dbf( ALIAS(), _rec )
+    delete_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
 
     go _t_rec
 
 enddo 
+        
+sql_table_update( nil, "END" )        
+my_use_semaphore_on()
+
 
 // pobrisi sve promjene...
 select_promj()
+
+my_use_semaphore_off()
+
+sql_table_update( nil, "BEGIN" )        
+
 do while !EOF()
+
     _rec := dbf_get_rec()
-    delete_rec_server_and_dbf( ALIAS(), _rec )
+
+    delete_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "CONT" )
+
     skip
+
 enddo
+
+sql_table_update( nil, "END" )        
+
+my_use_semaphore_on()
 
 close all
 

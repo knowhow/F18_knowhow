@@ -85,7 +85,7 @@ index_mcode(cIme)
 
 
 // TOKVAL
-if !file(f18_ime_dbf('tokval.dbf'))
+if !file(f18_ime_dbf("tokval"))
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,  8  ,  2 })
         AADD(aDBf,{ 'NAZ'                 , 'N' ,  8 ,   2 })

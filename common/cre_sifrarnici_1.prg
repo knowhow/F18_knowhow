@@ -40,6 +40,8 @@ if !file(f18_ime_dbf("konto"))
    AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
    add_f_mcode(@aDbf)
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  57 ,  0 })
+   AADD(aDBf,{ "POZBILU"             , "C" ,   3 ,  0 })
+   AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
 
    dbcreate2('konto', aDbf)
 
@@ -170,6 +172,9 @@ if !file( f18_ime_dbf("refer"))
    AADD(aDBf,{ 'IDOPS'               , 'C' ,   4 ,  0 })
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  40 ,  0 })
    DBCREATE2( 'REFER', aDbf )
+   reset_semaphore_version("refer")
+   my_use("refer")
+   close all
 endif
 CREATE_INDEX("ID","id", "refer") 
 CREATE_INDEX("NAZ","naz", "refer")
@@ -181,6 +186,7 @@ if !FILE(f18_ime_dbf("vrstep"))
 	DBcreate2( "VRSTEP", aDbf )
     reset_semaphore_version("vrstep")
     my_use("vrstep")
+    close all
 endif	
 CREATE_INDEX("ID", "Id", "VRSTEP")
 
@@ -194,10 +200,11 @@ if !FILE(f18_ime_dbf("koncij"))
     DBcreate2("KONCIJ",aDbf)
     reset_semaphore_version("koncij")
     my_use("koncij")
+    close all
 endif
 CREATE_INDEX("ID","id", "KONCIJ" )
 
-//PKONTO.DBF
+//PKONTO
 if !FILE(f18_ime_dbf("pkonto"))
     aDbf:={}
     AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
@@ -205,11 +212,12 @@ if !FILE(f18_ime_dbf("pkonto"))
     DBcreate2( "PKONTO", aDbf )
     reset_semaphore_version("pkonto")
     my_use("pkonto")    
+    close all
 endif
 CREATE_INDEX("ID","ID", "PKONTO" )
 CREATE_INDEX("NAZ","TIP", "PKONTO" )
 
-//TRFP2.DBF
+//TRFP2
 if !FILE(f18_ime_dbf("trfp2"))
     aDbf:={}
     AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
@@ -226,10 +234,11 @@ if !FILE(f18_ime_dbf("trfp2"))
     DBcreate2( "TRFP2", aDbf ) 
     reset_semaphore_version("trfp2")
     my_use("trfp2")
+    close all
 endif
 CREATE_INDEX("ID","idvd+shema+Idkonto", "TRFP2")
 
-//TRFP3.DBF    
+//TRFP3    
 if !FILE(f18_ime_dbf("trfp3"))
     aDbf:={}
     AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
@@ -242,21 +251,9 @@ if !FILE(f18_ime_dbf("trfp3"))
     DBcreate2("TRFP3",aDbf)
     reset_semaphore_version("trfp3")
     my_use("trfp3")
+    close all
 endif
 CREATE_INDEX("ID","shema+Idkonto","TRFP3")
-
-//VPRIH.DBF
-if !FILE(f18_ime_dbf("vprih"))
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,   3,  0 })
-    AADD(aDBf,{ "NAZ"                 , "C" ,  20,  0 })
-    DBcreate2("VPRIH", aDbf) 
-endif
-CREATE_INDEX ("ID", "Id", "VPRIH")
-
-
-
-
 
 
 nArea := nil

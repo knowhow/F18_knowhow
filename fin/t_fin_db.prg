@@ -215,65 +215,15 @@ cDirPriv := my_home()
 
 CreFmkPi()
 
-if (nArea==-1 .or. nArea==(F_PAREK))
-    //PAREK.DBF
-    
-    aDBf:={}
-    AADD(aDBf,{ "IDPARTIJA"           , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "Idkonto"             , "C" ,   7 ,  0 })
-    
-    if !FILE(f18_ime_dbf("parek"))
-        DBcreate2(KUMPATH+"PAREK",aDbf)
-    endif
-
-    CREATE_INDEX("1","IdPartija",KUMPATH+"PAREK")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_BUIZ))
-    //BUIZ.DBF
-    
-    aDBf:={}
-    AADD(aDBf,{ "ID"        , "C" ,   7 ,  0 })
-    AADD(aDBf,{ "NAZ"       , "C" ,  10 ,  0 })
-    
-    if !FILE(f18_ime_dbf("buiz"))
-        DBcreate2(KUMPATH+"BUIZ",aDbf)
-    endif
-
-    CREATE_INDEX( "ID"  , "ID"  , KUMPATH+"BUIZ" )
-    CREATE_INDEX( "NAZ" , "NAZ" , KUMPATH+"BUIZ" )
-endif
-
-
-
 aDbf:={}
 AADD(aDBf,{ "ID"                  , "C" ,   7 ,  0 })
 AADD(aDBf,{ "NAZ"                 , "C" ,  57 ,  0 })
 AADD(aDBf,{ "POZBILU"             , "C" ,   3 ,  0 })
 AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
 
-
-if (nArea==-1 .or. nArea==(F_KONTO))
-    //KONTO.DBF
-    
-    if !FILE(f18_ime_dbf("konto"))
-        DBcreate2(SIFPATH+"KONTO.DBF",aDbf)
-    endif
-
-    CREATE_INDEX("ID","id",SIFPATH+"KONTO") // konta
-    CREATE_INDEX("NAZ","naz",SIFPATH+"KONTO")
+if !FILE(f18_ime_dbf("_konto"))
+    DBcreate2(PRIVPATH+"_KONTO.DBF",aDbf)
 endif
-
-
-if (nArea==-1 .or. nArea==(F__KONTO))
-    //_KONTO.DBF
-
-    if !FILE(f18_ime_dbf("_konto"))
-        DBcreate2(PRIVPATH+"_KONTO.DBF",aDbf)
-    endif
-endif
-
 
 if (nArea==-1 .or. nArea==(F_BBKLAS))
     //BBKLAS.DBF
@@ -329,73 +279,6 @@ if (nArea==-1 .or. nArea==(F_VKSG))
     CREATE_INDEX("1","id+DESCEND(godina)",SIFPATH+"VKSG")
 endif
 
-
-if (nArea==-1 .or. nArea==(F_KUF))
-    //KUF.DBF
-
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,   8 ,  0 })
-    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-    AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "DATPR"               , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "IDPARTN"             , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "DATFAKT"             , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "BRFAKT"              , "C" ,  20 ,  0 })
-    AADD(aDBf,{ "IZNOS"               , "N" ,  12 ,  2 })
-    AADD(aDBf,{ "IDVRSTEP"            , "C" ,   2 ,  0 })
-    AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
-
-    if !FILE(f18_ime_dbf("fin_kuf"))
-        DBcreate2(KUMPATH+"FIN_KUF.DBF",aDbf)
-    endif
-    
-    CREATE_INDEX( "ID" , "id"     , KUMPATH+"FIN_KUF" )
-    CREATE_INDEX( "ID2", "idrj+id", KUMPATH+"FIN_KUF" )
-    CREATE_INDEX( "NAZ", "naz"    , KUMPATH+"FIN_KUF" )
-endif
-
-if (nArea==-1 .or. nArea==(F_KIF))
-    //KIF.DBF
-
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,   8 ,  0 })
-    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-    AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "DATPR"               , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "IDPARTN"             , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "DATFAKT"             , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "BRFAKT"              , "C" ,  20 ,  0 })
-    AADD(aDBf,{ "IZNOS"               , "N" ,  12 ,  2 })
-    AADD(aDBf,{ "IDVRSTEP"            , "C" ,   2 ,  0 })
-    AADD(aDBf,{ "DATPL"               , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "PLACENO"             , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "IDVPRIH"             , "C" ,   3 ,  0 })
-
-    if !FILE(f18_ime_dbf("fin_kif"))
-        DBcreate2("FIN_KIF.DBF",aDbf)
-    endif
-    
-    CREATE_INDEX( "ID" , "id"     , "FIN_KIF" )
-    CREATE_INDEX( "ID2", "idrj+id", "FIN_KIF" )
-    CREATE_INDEX( "NAZ", "naz"    , "FIN_KIF" )
-endif
-
-
-
-if (nArea==-1 .or. nArea==(F_ULIMIT))
-    //ULIMIT.DBF
-
-    if !FILE(f18_ime_dbf("ulimit"))
-        aDbf:={{"ID"        , "C" ,  3 , 0 }, ;
-                   { "IDPARTNER" , "C" ,  6 , 0 }, ;
-                       { "LIMIT"     , "N" , 15 , 2 }}
-        DBcreate2(SIFPATH+"ULIMIT.DBF",aDbf)
-    endif
-    
-    CREATE_INDEX("ID","Id"          , SIFPATH+"ULIMIT.DBF")
-    CREATE_INDEX("2" ,"Id+idpartner", SIFPATH+"ULIMIT.DBF")
-endif
 
 // kreiraj indexe tabele FMKRULES
 cre_rule_cdx()

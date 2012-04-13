@@ -292,6 +292,44 @@ endif
 CREATE_INDEX("1", "IdRj+Idkonto", _alias )
 CREATE_INDEX("2", "Idkonto",      _alias )
 
+//PAREK (ekontomske kategorije - budzet)
+if !FILE(f18_ime_dbf("parek"))
+    aDBf:={}
+    AADD(aDBf,{ "IDPARTIJA"           , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "Idkonto"             , "C" ,   7 ,  0 })
+    DBcreate2("PAREK",aDbf)
+    reset_semaphore_version("fin_parek")
+    my_use("parek")
+    close all
+endif
+CREATE_INDEX("1","IdPartija","PAREK")
+
+//BUIZ
+if !FILE(f18_ime_dbf("buiz"))
+    aDBf:={}
+    AADD(aDBf,{ "ID"        , "C" ,   7 ,  0 })
+    AADD(aDBf,{ "NAZ"       , "C" ,  10 ,  0 })
+    DBcreate2("BUIZ",aDbf)
+    reset_semaphore_version("fin_buiz")
+    my_use("buiz")
+    close all
+endif
+CREATE_INDEX( "ID"  , "ID"  , "BUIZ" )
+CREATE_INDEX( "NAZ" , "NAZ" , "BUIZ" )
+
+//ULIMIT
+if !FILE(f18_ime_dbf("ulimit"))
+    aDBf:={}
+    AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
+    AADD(aDBf,{ "IDPARTNER" , "C" ,   6 ,  0 })
+    AADD(aDBf,{ "LIMIT"     , "N" ,  15 ,  2 })
+    DBcreate2( "ULIMIT", aDbf )
+    reset_semaphore_version("fin_ulimit")
+    my_use("ulimit")
+    close all
+endif
+CREATE_INDEX("ID","Id"          , "ULIMIT")
+CREATE_INDEX("2" ,"Id+idpartner", "ULIMIT")
 
 
 return

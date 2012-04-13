@@ -36,8 +36,6 @@ set_a_dbf_pos()
 set_a_dbf_epdv()
 set_a_dbf_os()
 
-set_a_dbfs_legacy()
-
 return
 
 // ----------------------------------

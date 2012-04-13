@@ -55,7 +55,7 @@ local _force_erase
 local _err
 
 if excl == NIL
-  excl := .f.
+  excl := .t.
 endif
 
 if new_area == NIL

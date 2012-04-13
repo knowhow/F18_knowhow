@@ -26,6 +26,7 @@
 
 #define F18_CLIENT_ID_INI_SECTION "client_id"
 #define F18_SCREEN_INI_SECTION "F18_screen"
+#define F18_DBF_INI_SECTION "F18_dbf"
 
 #ifdef __PLATFORM__WINDOWS
     #define F18_TEMPLATE_LOCATION "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH

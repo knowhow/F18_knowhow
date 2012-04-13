@@ -38,12 +38,13 @@ _wa := a_dbf_rec["wa"]
 SELECT (_wa)
 my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f.)
 
-set delete off
+set deleted off
 
 count to _del for deleted()
 _cnt := reccount()
 
 USE
+set deleted on
 
 @ m_x + 1, m_y + 2 SAY a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 @ m_x + 2, m_y + 2 SAY "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))

@@ -571,21 +571,6 @@ Postotak(0)
 end print
 close all
 
-// ovo nam u ovom momentu ne treba uopste !!!
-/*
-if !empty(goModul:oDataBase:cSezona) .and. Pitanje(,"Prebaciti dokument u radno podrucje","D")=="D"
-  O_FIN_PRIPRRP
-  O_FIN_PRIPR
-  select fin_priprrp
-  append from fin_pripr
-  select fin_pripr; zap
-  close all
-  if Pitanje(,"Prebaciti se na rad sa radnim podrucjem ?","D")=="D"
-      URadPodr()
-  endif
-endif
-*/
-
 return
 
 

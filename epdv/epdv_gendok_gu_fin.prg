@@ -199,7 +199,7 @@ my_use(cPomPath)
 // suban_2 tabelu koristicu za pretragu naloga
 select (F_ANAL)
 use	
-my_use ( "suban_2", "fin_suban" )
+my_use_temp( "SUBAN_2", my_home() + "fin_suban" )
 // "4","idFirma+IdVN+BrNal+Rbr
 
 SET ORDER TO TAG "4"

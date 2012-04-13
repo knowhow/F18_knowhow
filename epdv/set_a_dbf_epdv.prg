@@ -22,7 +22,6 @@ set_a_dbf_epdv_pdv()
 set_a_dbf_epdv_kuf_kif("epdv_kuf", "KUF", F_KUF)
 set_a_dbf_epdv_kuf_kif("epdv_kif", "KIF", F_KIF)
 
-
 // tabele sa strukturom sifarnika (id je primarni ključ)
 set_a_dbf_sifarnik("epdv_sg_kif", "SG_KIF" , F_SG_KIF )
 set_a_dbf_sifarnik("epdv_sg_kuf", "SG_KUF" , F_SG_KUF )
@@ -30,6 +29,9 @@ set_a_dbf_sifarnik("epdv_sg_kuf", "SG_KUF" , F_SG_KUF )
 // temp epdv tabele - ne idu na server
 set_a_dbf_temp("epdv_p_kif", "P_KIF", F_P_KIF)
 set_a_dbf_temp("epdv_p_kuf", "P_KUF", F_P_KUF)
+set_a_dbf_temp("epdv_r_kuf", "R_KUF", F_R_KUF)
+set_a_dbf_temp("epdv_r_kif", "R_KIF", F_R_KIF)
+set_a_dbf_temp("epdv_r_pdv", "R_PDV", F_R_PDV)
 
 return
 

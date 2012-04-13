@@ -383,7 +383,7 @@ if i==F_KORISN .or. i==F_PARAMS .or.  i==F_GPARAMS .or. i==F_GPARAMSP .or. i==F_
 	lIdiDalje:=.t.
 endif
 
-if i==F_FAKT  .or. i==F_FAKT_DOKS .or. i==F_FAKT_DOKS2 .or. i==F_FAKT_RJ .or. i==F_UPL
+if i==F_FAKT  .or. i==F_FAKT_DOKS .or. i==F_FAKT_DOKS2 .or. i==F_UPL
 	lIdiDalje:=.t.
 endif
 

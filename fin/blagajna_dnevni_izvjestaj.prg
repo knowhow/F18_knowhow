@@ -14,20 +14,17 @@
 
 #define DABLAGAS lBlagAsis .and. _IDVN == cBlagIDVN
 
-
-/*! \fn Blagajna()
- *  \brief Blagajna dnevni izvjestaj
- */
+// -----------------------------------------------------------------------------
+// Blagajna dnevni izvjestaj
+// -----------------------------------------------------------------------------
  
 function Blagajna()
 local nRbr, nCOpis:=0, cOpis := ""
 local _idvn
 local _rec
 local _nCol1
-
-private pici := FormPicL("9," + gPicDEM, 12)
-
-lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N", PRIVPATH)=="D" )
+//lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N", PRIVPATH)=="D" )
+lSumiraj := .f.
 O_KONTO
 O_ANAL
 O_FIN_PRIPR
@@ -153,7 +150,7 @@ do while !eof()
           exit
         endif
       endif
-      if cDinDem=="1"  // dinari !!!!
+      if cDinDem=="1"  
 
         if d_p=="1"
           nPomD+=iznosbhd
@@ -164,9 +161,9 @@ do while !eof()
       else
 
         if d_p=="1"
-          nPomD+=iznosdem
+           nPomD+=iznosdem
         else
-          nPomP+=iznosdem
+            nPomP+=iznosdem
         endif
 
       endif
@@ -214,7 +211,7 @@ do while !eof()
     ?? " "+PADR(cOpis:=ALLTRIM(opis),20)
     nCol1:=pcol()+1
 
-    if cdindem=="1"  // dinari !!!!
+    if cdindem=="1" 
 
       if d_p=="1"
         @ prow(),pcol()+1 SAY PADL(TRANSFORM(iznosbhd,pici), 14)
@@ -245,7 +242,8 @@ do while !eof()
 enddo
 select anal
 
-//CREATE_INDEX("ANALi1","IdFirma+IdKonto+dtos(DatNal)","ANAL")
+//TAG 1 - "IdFirma+IdKonto+dtos(DatNal)", "ANAL"
+
 hseek cIdfirma+cIdkonto
 nDugSt:=nPotSt:=0
 do while !eof() .and. idfirma==cIdfirma .and. idkonto==cIdkonto .and. datnal<=dDatDok
@@ -334,11 +332,12 @@ local nCol1
 local nRbr:=0
 local nCOpis:=0
 local cOpis:=""
-local lSumiraj := .f.
+local lSumiraj
 private pici:=FormPicL("9," + gPicDEM, 12)
 private cLine := ""
 
 //lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
+lSumiraj := .f.
 
 O_PARTN
 O_KONTO

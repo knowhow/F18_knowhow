@@ -172,6 +172,9 @@ endif
 if HB_HHASKEY(__f18_dbfs, _dbf_tbl)
     // preferirani set parametara
     _rec := __f18_dbfs[_dbf_tbl]
+else
+    _rec := hb_hash()
+    _rec["table"] := NIL
 endif
 
 if !HB_HHASKEY(_rec, "table") .or. _rec["table"] == NIL

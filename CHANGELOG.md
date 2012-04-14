@@ -1,3 +1,7 @@
+1.0.3 2012-04-13, vsasa, hernad
+
+  - [#27606](http://redmine.bring.out.ba/issues/27606)
+
 1.0.2 2012-04-13, hernad
 
   - debug lager lista, dbf_pack feature [#27600](http://redmine.bring.out.ba/issues/27600)

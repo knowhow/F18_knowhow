@@ -33,10 +33,6 @@ if (IsRamaGlas() .or. gModul=="FAKT" .and. glRadNal)
     O_RNAL
 endif
 
-if FILE(f18_ime_dbf("RULES"))
-    O_RULES
-endif
-
 return
 
 

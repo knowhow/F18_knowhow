@@ -295,12 +295,18 @@ Box("#Proces azuriranja u toku", 3, 60)
     select fakt_doks
     set order to tag "1"
     HSEEK id_firma + id_tip_dok + br_dok
+
     if !Found()
 
         _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
+        
+        // pobrisi sljedece clanove...
+        hb_hdel( _rec, "brisano" ) 
+        hb_hdel( _rec, "sifra" ) 
 
         SELECT fakt_doks
         APPEND BLANK
+
         dbf_update_rec(_rec, .t.)
 
     else
@@ -319,11 +325,14 @@ Box("#Proces azuriranja u toku", 3, 60)
     HSEEK id_firma + id_tip_dok + br_dok
 
     if !Found()
+
         _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
         SELECT fakt_doks2
         APPEND BLANK
+
         dbf_update_rec(_rec, .t.)
+
     else
         _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
         Alert(_msg)
@@ -361,12 +370,6 @@ return _return
 function get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 local _fakt_data := hb_hash()
 local _memo 
-
-select fakt_doks2
-_fakt_data := dbf_get_rec()
-_fakt_data["idfirma"]  := id_firma
-_fakt_data["idtipdok"] := id_tip_dok
-_fakt_data["brdok"]    := br_dok
 
 select fakt_pripr
 go top

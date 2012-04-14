@@ -19,6 +19,7 @@ function GlobalErrorHandler(err_obj)
 
 local _i, _err_code
 local _out_file
+local _msg, _log_msg := "BUG REPORT: "
 
 _err_code := err_obj:genCode
 
@@ -44,23 +45,53 @@ P_12CPI
 ? REPLICATE("=", 84) 
 
 
-? "Verzija programa:", F18_VER, F18_VER_DATE, FMK_LIB_VER
+_msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER
+? _msg
+
+_log_msg += _msg
+
 ?
 
-? "SubSystem/severity    :", err_obj:SubSystem, err_obj:severity
-? "GenCod/SubCode/OsCode :", err_obj:GenCode, err_obj:SubCode, err_obj:OsCode
-? "Opis                  :", err_obj:description
-? "ImeFajla              :", err_obj:filename
-? "Operacija             :", err_obj:operation
-? "Argumenti             :", err_obj:args
-? "canRetry/canDefault   :", err_obj:canRetry, err_obj:canDefault
+_msg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str(err_obj:severity)
+? _msg
+_log_msg += " ; " + _msg
+
+_msg := "GenCod/SubCode/OsCode : " + to_str(err_obj:GenCode) + " " + to_str(err_obj:SubCode) + " " + to_str(err_obj:OsCode)
+? _msg
+_log_msg += " ; " + _msg
+
+_msg := "Opis                  : " + err_obj:description
+? _msg
+_log_msg += " ; " + _msg
+
+_msg := "ImeFajla              : " + err_obj:filename
+? _msg
+_log_msg += " ; " + _msg
+
+
+_msg := "Operacija             : " + err_obj:operation
+? _msg
+_log_msg += " ; " + _msg
+
+_msg := "Argumenti             : " + to_str(err_obj:args)
+? _msg
+_log_msg += " ; " + _msg
+
+_msg := "canRetry/canDefault   : " + to_str(err_obj:canRetry) + " " + to_str( err_obj:canDefault)
+? _msg
+_log_msg += " ; " + _msg
 
 ? 
-? "CALL STACK:"
+_msg := "CALL STACK:"
+? _msg
+_log_msg += " ; " + _msg
+
 ? "---", REPLICATE("-", 80)
 for _i := 1 to 30
    if !empty(PROCNAME(_i))
-       ? STR(_i, 3), PROCNAME(_i) + " / " +   ALLTRIM(STR(ProcLine(_i), 6))
+       _msg := STR(_i, 3) + " " + PROCNAME(_i) + " / " + ALLTRIM(STR(ProcLine(_i), 6))
+       ? _msg
+       _log_msg += " ; " + _msg
    endif
 next
 ? "---", REPLICATE("-", 80)
@@ -73,24 +104,28 @@ server_db_version_info()
 server_info()
 
 if USED() 
-   current_dbf_info()
+   _msg := current_dbf_info()
 else
-   ? "USED() = false"
+   _msg := "USED() = false"
 endif
+? _msg
+_log_msg += " ; " + _msg
+
 
 if err_obj:cargo <> NIL
 
     ? "== CARGO" , REPLICATE("=", 50)
     for _i := 1 TO LEN(err_obj:cargo)
     if err_obj:cargo[_i] == "var"
-        ?  "* var ", err_obj:cargo[++_i], ":", pp(err_obj:cargo[++_i])
+        _msg :=  "* var " + to_str(err_obj:cargo[++_i])  + " : " + to_str( pp(err_obj:cargo[++_i]) )
+        ? _msg
+        _log_msg += " ; " + _msg
     endif
     next
     ? REPLICATE("-", 60)
 
 endif
     
-?
 ? "== END OF BUG REPORT =="
 
 
@@ -102,14 +137,19 @@ set console on
 
 close all
 
+log_write(_log_msg)
+
 run (_cmd := "f18_editor " + _out_file)
 
 // if Pitanje(, "Continue F18 ?", "N") == "D"
 //  BREAK(err_obj)
 // endif
 
+QUIT
 RETURN
 
+// ----------------------------------------------------
+// ----------------------------------------------------
 static function server_info()
 local _key
 local _server_vars := {"server_version", "TimeZone"}

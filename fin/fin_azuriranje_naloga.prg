@@ -190,7 +190,7 @@ endif
 
 
 // idi dalje, na sint ... ako je ok
-if lOk == .t.
+if _ok == .t.
   
   @ m_x+3, m_y+2 SAY "fin_sint -> server" 
 
@@ -215,7 +215,6 @@ if lOk == .t.
 
 endif
 
-//hb_IdleSleep(7)
 // idi dalje, na nalog ... ako je ok
 if _ok == .t.
   

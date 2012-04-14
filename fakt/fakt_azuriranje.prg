@@ -396,30 +396,34 @@ local _fakt_totals
 local _fakt_data 
 local _memo 
 
-select fakt_doks
-_fakt_data := dbf_get_rec()
+// definiši matricu za fakt_doks zapis
+_fakt_data := hb_hash()
 _fakt_data["idfirma"]  := id_firma
 _fakt_data["idtipdok"] := id_tip_dok
 _fakt_data["brdok"]    := br_dok
 
-
+// sljedeća polja ću uzeti iz pripreme
 select fakt_pripr
 HSEEK id_firma + id_tip_dok + br_dok
 
-_fakt_data["dindem"]  := field->dindem
-_fakt_data["datdok"]  := field->datdok
-
 _memo := ParsMemo( field->txt )
-        
-if ( field->idtipdok $ "10#20#27" .and. field->serbr = "*" )
-    _fakt_data["rezerv"] := "*"
-else
-    _fakt_data["rezerv"] := " "
-endif
 
+_fakt_data["datdok"]  := field->datdok
+_fakt_data["dindem"]  := field->dindem
+_fakt_data["rezerv"] := " "
+_fakt_data["m1"] := field->m1
+_fakt_data["idpartner"] := field->idpartner
 _fakt_data["partner"] := _fakt_partner_memo( _memo )
-    
 _fakt_data["oper_id"] := getUserId()
+_fakt_data["sifra"] := SPACE(6)
+_fakt_data["brisano"] := SPACE(1)
+_fakt_data["idvrstep"] := field->idvrstep
+_fakt_data["datpl"] := field->datdok
+_fakt_data["idpm"] := field->idpm
+_fakt_data["dok_veza"] := field->dok_veza
+_fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
+_fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
+_fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
 
 //ovo nema nikakvog smisla. fisc_rn uvijek postoji u F18
 //takođe mi mije jasno zašto se ne uzmu oba polja onakva kakva jesu ?
@@ -430,28 +434,8 @@ _fakt_data["oper_id"] := getUserId()
 // ako se radi o reklamoranom (storno računu) onda sadržan treba biti
 // fisc_rn - originalni račun koji se reklamira, fisc_st - broj reklamiranog računa
 
-//if gFc_use == "D" .and. FieldPOS("fisc_rn") <> 0
-    _fakt_data["fisc_rn"] := field->fisc_rn
-//    _fakt_data["fisc_st"] := 0
-    // _fakt_data["fisc_st"] := field->fisc_st - ovio ne radi jer fisc_st ne postoji ?!
-    _fakt_data["fisc_st"] := 0
-//else
-//    _fakt_data["fisc_rn"] := 0
-//    _fakt_data["fisc_st"] := 0
-//endif
-
-_fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
-_fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
-_fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
-
-
-/*    
-if ( field->m1 == "Z" )
-    // skidam zauzece i dobijam normalan dokument
-    // REPLACE m1 WITH " " -- isto kao i gore
-    _fakt_data["m1"] := " "
-endif
-*/
+_fakt_data["fisc_rn"] := field->fisc_rn
+_fakt_data["fisc_st"] := 0
 
 // izracunaj totale za fakturu
 _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )

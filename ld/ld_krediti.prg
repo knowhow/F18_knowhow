@@ -66,6 +66,7 @@ do while .t.
     private nRec := 0
 
     if found()
+
         if Pitanje( , "Stavke vec postoje. Zamijeniti novim podacima ?","D")=="N"
                 MsgBeep("Rate nisu formirane! Unesite novu osnovu kredita za zadanog kreditora!")
                 close all
@@ -76,8 +77,14 @@ do while .t.
                 _vals["idradn"]    := cIdRadn
                 _vals["idkred"]    := cIdKred
                 _vals["naosnovu"]  := cOsnov
-                delete_rec_server_and_dbf("RADKR", _vals,  { "idradn", "idkred", "naosnovu" }, {|x| "idradn=" + _sql_quote(x["idradn"]) + " AND idkred=" + _sql_quote(x["idkred"]) + " AND naosnovu=" + _sql_quote(x["naosnovu"]) }, "2"  )
+
+                my_use_semaphore_off()
+                sql_table_update( nil, "BEGIN" )
+                delete_rec_server_and_dbf("ld_radkr", _vals, 1, "CONT" )
+                sql_table_update( nil, "END" )
+                my_use_semaphore_on() 
         endif
+
     endif
 
 
@@ -88,6 +95,9 @@ do while .t.
     i := 0
     nTekMj := nMjesec-1
     
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
     do while .t.
 
         if nTeKMj + 1 > 12
@@ -120,7 +130,8 @@ do while .t.
             _vals["mjesec"]   := nTekMj
             _vals["godina"]   := nTekGodina
             _vals["iznos"]    := nIRata
-            update_rec_server_and_dbf( "RADKR", _vals)
+
+            update_rec_server_and_dbf( "ld_radkr", _vals, 1, "CONT" )
             ++i
 
         endif
@@ -129,7 +140,11 @@ do while .t.
         if round(nOstalo, 2) == 0
                 exit
         endif
+
     enddo
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_off()
     
     if lLogNoviKredit
         EventLog(nUser,goModul:oDataBase:cName,"KREDIT","NOVIKREDIT",nIznKred,nil,nil,nil,"","",ALLTRIM(cIdRadn)+" rata:"+STR(i,3),Date(),Date(),"","Definisan novi kredit")
@@ -249,6 +264,9 @@ do case
 
                 SEEK cIdRadn + cIdKred + cNaOsnovu
 
+                my_use_semaphore_off()
+                sql_table_update( nil, "BEGIN" )
+
                 DO WHILE !EOF() .and. (field->idradn + field->idkred + field->naosnovu) == (cIdRadn + cIdKred + cNaOsnovu)
                     
                     SKIP 1
@@ -258,11 +276,14 @@ do case
                     _vals := dbf_get_rec()
                     _vals["naosnovu"] := cNaOsnovu2
 
-                    update_rec_server_and_dbf( "RADKR", _vals )
+                    update_rec_server_and_dbf( "ld_radkr", _vals, 1, "CONT" )
 
                     GO (nRecK)
 
                 ENDDO
+
+                sql_table_update( nil, "END" )
+                my_use_semaphore_on()
       
             endif
 
@@ -277,7 +298,11 @@ do case
         _vals["placeno"] := _placeno
         _vals["iznos"] := _iznos
 
-        update_rec_server_and_dbf( "RADKR", _vals )
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
+        update_rec_server_and_dbf( "ld_radkr", _vals, 1, "CONT" )
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
             
         if lLogEditKredit
             EventLog(nUser,goModul:oDataBase:cName,"KREDIT","EDITKREDIT",radkr->placeno,radkr->iznos,nil,nil,"","","Rad:"+ALLTRIM(cIdRadn),Date(),Date(),"","Rucna ispravka rate kredita za radnika")
@@ -349,6 +374,9 @@ if nNRata <> nTRata
     seek cIdRadn+cKreditor+cNaOsnovu+STR(_godina,4)+STR(_mjesec,2)
 
     nTotalKr := 0
+
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
     
     // koliko ima rata kredita jos do kraja 
     do while !eof() .and. cKreditor==idkred ;
@@ -359,10 +387,11 @@ if nNRata <> nTRata
             
         // brisi zapis
         _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( ALIAS(), _rec )
+        delete_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
 
         skip
     enddo
+
 
     nOstalo := nTotalKr
     nTekMj:=_mjesec
@@ -402,7 +431,7 @@ if nNRata <> nTRata
             _rec["iznos"] := nIRata
             _rec["naosnovu"] := cNaOsnovu
             
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
 
             ++i
 
@@ -414,6 +443,9 @@ if nNRata <> nTRata
                 exit
         endif
     enddo
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
 endif
 
@@ -450,6 +482,9 @@ SEEK STR(_godina, 4) + STR(_mjesec, 2) + _idradn
 
 nIznos := 0
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 do while !eof() .and. _godina == godina .and. _mjesec == mjesec .and. idradn == _idradn
     
     nIznos += field->iznos
@@ -457,11 +492,14 @@ do while !eof() .and. _godina == godina .and. _mjesec == mjesec .and. idradn == 
     _vals := dbf_get_rec()
     _vals["placeno"] := iznos
     
-    update_rec_server_and_dbf( "ld_radkr", _vals )
+    update_rec_server_and_dbf( "ld_radkr", _vals, 1, "CONT" )
 
     skip
 
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 if !fUsed
     select radkr
@@ -1092,6 +1130,9 @@ SET ORDER TO TAG "2"
 // idradn+idkred+naosnovu+str(godina)+str(mjesec)
 SEEK cIdRadn+cIdKred+cNaOsnovu
     
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 nStavki := 0
 DO WHILE !EOF() .and. idradn+idkred+naosnovu==cIdRadn+cIdKred+cNaOsnovu
     SKIP 1
@@ -1100,11 +1141,14 @@ DO WHILE !EOF() .and. idradn+idkred+naosnovu==cIdRadn+cIdKred+cNaOsnovu
     IF placeno = 0
         ++nStavki
         _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( ALIAS(), _rec )
+        delete_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
     ENDIF
     GO (nRec)
 ENDDO
     
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 IF nStavki>0
     if lLogBrisiKredit
         EventLog(nUser,goModul:oDataBase:cName,"KREDIT","BRISIKREDIT",nil,nil,nil,nil,"",ALLTRIM(STR(nStavki)),ALLTRIM(cIdRadn),Date(),Date(),"","Obrisan kredit")
@@ -1120,7 +1164,7 @@ return
 
 
 function OTblKredit()
-*{
+
 O_LD_RJ
 O_KRED
 O_STRSPR
@@ -1128,5 +1172,5 @@ O_OPS
 O_RADN
 O_RADKR
 return
-*}
+
 

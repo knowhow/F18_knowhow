@@ -66,10 +66,16 @@ do while .t.
             _vals := get_dbf_global_memvars()
             _vals["varobr"] := gVarObracun          
 
-            if !update_rec_server_and_dbf( "ld_ld",  _vals ) 
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+
+            if !update_rec_server_and_dbf( "ld_ld",  _vals, "1", "CONT" ) 
                 delete_with_rlock()
             endif
 
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()
+            
         else
             if lNovi
                 delete_with_rlock()

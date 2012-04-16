@@ -120,7 +120,7 @@ return
 // ----------------------------------
 function OObracun()
 
-my_use_semaphore_off()
+//my_use_semaphore_off()
 
 select F_LD
 if !used()
@@ -196,7 +196,7 @@ endif
 
 O_TIPPRN
 
-my_use_semaphore_on()
+//my_use_semaphore_on()
 
 return
 

@@ -150,7 +150,7 @@ do while .t.
         endif
 
         @ m_x+10,m_y+2 SAY "K1" GET  cK1 pict "@!"
-        @ m_x+10,m_y+2 SAY "K2" GET  cK2 pict "@!"
+        @ m_x+10,col()+1 SAY "K2" GET  cK2 pict "@!"
 
   endif
 

@@ -85,6 +85,15 @@ _alg["sql_in"]         := "lpad(godina::char, 4) || rpad(idrj, 2) || lpad(mjesec
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
  
+// algoritam 2 - brisanje
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| STR(field->godina,4) + field->idrj + STR(field->mjesec,2) + field->obr }
+_alg["dbf_key_fields"] := { {"godina", 4}, "idrj", {"mjesec", 2 }, "obr" }
+_alg["sql_in"]         := "lpad(godina::char, 4) || rpad(idrj, 2) || lpad(mjesec::char,2) || rpad(obr,1)"
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg)
+ 
 f18_dbfs_add(_tbl, @_item)
 
 return

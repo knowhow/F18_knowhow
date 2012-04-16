@@ -127,7 +127,7 @@ do while .t.
             Postotak(0)
 
             sql_table_update( nil, "END" )
-            my_use_sempahore_on()
+            my_use_semaphore_on()
 
         else
                 MsgBeep("Neko vec koristi datoteku LD !!!")
@@ -197,30 +197,25 @@ do while .t.
     select ld
     
     seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
-   
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" ) 
 
-    do while STR(cGodina,4)+cIdRj+STR(cMjesec,2)==STR(Godina,4)+IdRj+STR(Mjesec,2) .and. if(lViseObr,cObracun==obr,.t.) 
-        skip
-        nRec:=RecNo()
-        skip -1
-        cIdRadn := field->idradn
+    if FOUND()
+   
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" ) 
+
         _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
-        go nRec
-    enddo
-    
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
- 
-    if lLogBrMjesec
-        EventLog(nUser,goModul:oDataBase:cName,"DOK","BRISIMJESEC",nil,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Brisanje obracuna za mjesec")
+        delete_rec_server_and_dbf( "ld_ld", _rec, 2, "CONT" )
+
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
+
     endif
-    
+
     MsgBeep("Obracun za " + STR(cMjesec,2) + " mjesec izbrisani !!!")
+    
     MsgC()
     exit
+
 enddo
 
 close all

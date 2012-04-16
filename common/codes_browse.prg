@@ -1993,16 +1993,19 @@ if Pitanje( , "Zelite li izbrisati ovu stavku ??","D")=="D"
     _rec_dbf := dbf_get_rec()
     delete_rec_server_and_dbf(ALIAS(), _rec_dbf, 1, "CONT")
 
-    SELECT (F_SIFV)
-    if !USED()
-         O_SIFV
-    endif
+    // ako postoji id polje, pobriši i sifv
+    if hb_hhaskey( _rec_dbf, "id" )
+        SELECT (F_SIFV)
+        if !USED()
+            O_SIFV
+        endif
    
-    _rec := hb_hash()
-    _rec["id"]    := PADR(_alias, 8)
-    _rec["idsif"] := PADR(_rec_dbf["id"], 15)
-    // id + idsif
-    delete_rec_server_and_dbf("sifv", _rec, 3, "CONT")
+        _rec := hb_hash()
+        _rec["id"]    := PADR(_alias, 8)
+        _rec["idsif"] := PADR(_rec_dbf["id"], 15)
+        // id + idsif
+        delete_rec_server_and_dbf("sifv", _rec, 3, "CONT")
+    endif
 
     sql_table_update(nil, "END")
 

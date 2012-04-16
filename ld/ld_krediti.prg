@@ -482,6 +482,9 @@ SEEK STR(_godina, 4) + STR(_mjesec, 2) + _idradn
 
 nIznos := 0
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 do while !eof() .and. _godina == godina .and. _mjesec == mjesec .and. idradn == _idradn
     
     nIznos += field->iznos
@@ -494,6 +497,9 @@ do while !eof() .and. _godina == godina .and. _mjesec == mjesec .and. idradn == 
     skip
 
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 if !fUsed
     select radkr

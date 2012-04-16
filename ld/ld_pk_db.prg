@@ -46,15 +46,22 @@ nCnt := 0
 
 o_pk_tbl()
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 // izbrisi pk_radn
 select pk_radn
 go top
 seek cIdRadn
 
 do while !EOF() .and. field->idradn == cIdRadn
-	delete
+
+	_del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "ld_pk_radn", _del_rec, 1, "CONT" )
+
 	++ nCnt
 	skip
+
 enddo
 
 // izbrisi pk_data
@@ -63,10 +70,18 @@ go top
 seek cIdRadn
 
 do while !EOF() .and. field->idradn == cIdRadn
+
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 1, "CONT" )
+
 	delete
 	++ nCnt
 	skip
+
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 if nCnt > 0 
 	msgbeep("Izbrisano " + ALLTRIM(STR(nCnt)) + " zapisa !")

@@ -146,7 +146,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->rj + STR( field->godina, 4 ) + STR( field->mjesec, 2 ) + field->status + field->obr }
 _alg["dbf_key_fields"] := { "rj", {"godina", 4}, {"mjesec", 2}, "status", "obr" }
-_alg["sql_in"]         := "rpad(rj, 2) || lpad(godina::to_char,4) || lpad(mjesec::to_char,2) || rpad(status, 1) || rpad(obr, 1)"
+_alg["sql_in"]         := "rpad(rj, 2) || lpad(godina::char,4) || lpad(mjesec::char,2) || rpad(status, 1) || rpad(obr, 1)"
 _alg["dbf_tag"]        := "RJ"
 AADD(_item["algoritam"], _alg)
  
@@ -211,7 +211,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idradn + field->ident + STR( field->rbr, 2 ) }
 _alg["dbf_key_fields"] := { "idradn", "ident", {"rbr", 2} }
-_alg["sql_in"]         := "rpad(idradn, 6) || rpad(ident, 1) || lpad(rbr::to_char,2)"
+_alg["sql_in"]         := "rpad(idradn, 6) || rpad(ident, 1) || lpad(rbr::char,2)"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
  
@@ -277,7 +277,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idkonto + STR(field->godina, 4) + STR(field->mjesec, 2) + field->idradn }
 _alg["dbf_key_fields"] := { "idkonto", {"godina", 4}, {"mjesec", 2}, "idradn" }
-_alg["sql_in"]         := "rpad(idkonto, 7) || lpad(godina::to_char,4) || lpad(mjesec::to_char,2) || rpad(idradn, 6)"
+_alg["sql_in"]         := "rpad(idkonto, 7) || lpad(godina::char,4) || lpad(mjesec::char,2) || rpad(idradn, 6)"
 _alg["dbf_tag"]        := "2"
 AADD(_item["algoritam"], _alg)
  

@@ -110,7 +110,7 @@ if kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
 		APPEND BLANK
 
         _rec := get_dbf_global_memvars()
-        update_rec_dbf( _rec )
+        dbf_update_rec( _rec )
 
 		select (nPArea)
 		SKIP

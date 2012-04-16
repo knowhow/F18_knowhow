@@ -1139,6 +1139,8 @@ StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
 
 select ld
 
+close all
+
 FF
 END PRINT
 

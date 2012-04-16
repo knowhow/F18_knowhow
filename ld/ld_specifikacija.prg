@@ -876,6 +876,11 @@ local _i, _struct
 local _table := "mtemp"
 local _ret := .t.
 
+// pobrisi tabelu
+if FILE( my_home() + _table + ".dbf" )
+    FERASE( my_home() + _table + ".dbf" )
+endif
+
 _struct := LD->( DBSTRUCT() )
 
 // ovdje cemo sva numericka polja prosiriti za 4 mjesta

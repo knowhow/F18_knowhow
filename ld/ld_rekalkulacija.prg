@@ -248,6 +248,7 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
 
     select ld
 
+    my_use_semaphore_off()
     sql_table_update( nil, "BEGIN" )
 
     // obracun snimiti u sql bazu
@@ -255,8 +256,9 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
     update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
     
     sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
-    @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
+    @ m_x+1,m_y+2 SAY ++nLjudi pict "99999"
 
 skip
 
@@ -412,6 +414,7 @@ for i:=1 to cLDPolja
 next
     select ld
 
+    my_use_semaphore_off()
     sql_table_update( nil, "BEGIN" )
 
     // obracun snimiti u sql bazu
@@ -419,6 +422,7 @@ next
     update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
     
     sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
     @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
     skip
@@ -558,6 +562,7 @@ for i:=1 to cLDPolja
 next
 select ld
 
+    my_use_semaphore_off()
     sql_table_update( nil, "BEGIN" )
 
     // obracun snimiti u sql bazu
@@ -565,6 +570,7 @@ select ld
     update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
     
     sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
     @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
     skip
@@ -658,6 +664,7 @@ do while !eof() .and.  cGodina==godina .and.  cmjesec=mjesec .and.;
  UkRadnik()  // filuje _USati,_UNeto,_UOdbici
  _UIznos:=_UNeto+_UOdbici
 
+    my_use_semaphore_off()
     sql_table_update( nil, "BEGIN" )
 
     // obracun snimiti u sql bazu
@@ -665,6 +672,7 @@ do while !eof() .and.  cGodina==godina .and.  cmjesec=mjesec .and.;
     update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
     
     sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
  skip

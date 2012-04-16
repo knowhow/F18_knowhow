@@ -874,9 +874,8 @@ RETURN lVrati
 static function _create_mtemp()
 local _i, _struct
 local _table := "mtemp"
+local _ret := .t.
 
-FERASE( my_home() + _table + ".dbf" )
-  
 _struct := LD->( DBSTRUCT() )
 
 // ovdje cemo sva numericka polja prosiriti za 4 mjesta
@@ -889,9 +888,14 @@ for _i := 1 TO LEN( _struct )
 next
 
 // kreiraj tabelu
-DBCREATE( _table, _struct )
+DbCreate( my_home() + _table + ".dbf", _struct )
 
-return
+if !FILE( my_home() + _table + ".dbf" )
+    MsgBeep( "Ne postoji " + _table + ".dbf !!!" )
+    _ret := .f.
+endif
+
+return _ret
 
 
 // ---------------------------------------------------------
@@ -912,7 +916,9 @@ cSamoAktivna:="D"
 O_LD
 
 // napravi pomocnu tabelu
-_create_mtemp()
+if !_create_mtemp()
+    return
+endif
 
 close all
 
@@ -921,16 +927,12 @@ O_STRSPR
 O_OPS
 O_RADN
 O_LD
-O_PARAMS
 
-private cSection:="6"
-private cHistory:=" "
-private aHistory:={}
+cIdRadn := fetch_metric("ld_spec_po_rasponu_id_radnik", my_user(), cIdRadn )
+cSvaPrim := fetch_metric("ld_spec_po_rasponu_sva_primanja", my_user(), cSvaPrim )
+qqOstPrim := fetch_metric("ld_spec_po_rasponu_ostala_primanja", my_user(), qqOstPrim)
+cSamoAktivna := fetch_metric("ld_spec_po_rasponu_samo_aktivna", my_user(), cSamoAktivna)
 
-RPar("p1",@cIdRadn)
-RPar("p2",@cSvaPrim)
-RPar("p3",@qqOstPrim)
-RPar("p4",@cSamoAktivna)
 qqOstPrim:=PADR(qqOstPrim,100)
 
 cPrikKolUk:="D"
@@ -951,13 +953,11 @@ Box(,7,77)
 BoxC()
 
 qqOstPrim:=TRIM(qqOstPrim)
-WPar("p1",cIdRadn)
-WPar("p2",cSvaPrim)
-WPar("p3",qqOstPrim)
-WPar("p4",cSamoAktivna)
 
-SELECT PARAMS
-USE
+set_metric("ld_spec_po_rasponu_id_radnik", my_user(), cIdRadn )
+set_metric("ld_spec_po_rasponu_sva_primanja", my_user(), cSvaPrim )
+set_metric("ld_spec_po_rasponu_ostala_primanja", my_user(), qqOstPrim)
+set_metric("ld_spec_po_rasponu_samo_aktivna", my_user(), cSamoAktivna)
 
 // otvori mtemp tabelu...
 select ( F_TMP_1 )
@@ -1128,15 +1128,9 @@ ELSE
  SELECT MTEMP
 ENDIF
 
-#ifdef CPOR
-StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
-     ,Lokal("Specifikacija primanja po mjesecima")+IF(lIsplaceni,"",Lokal("-neisplaceni")),;
-                             {|| FFor3()},IF(gOstr=="D",,-1),,,,,)
-#else
 StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
      ,Lokal("Specifikacija primanja po mjesecima"),;
                              {|| FFor3()},IF(gOstr=="D",,-1),,,,,,.f.)
-#endif
 
 select ld
 
@@ -1145,7 +1139,6 @@ END PRINT
 
 return
 
-*}
 
 static function FFor3()
  LOCAL nArr:=SELECT()

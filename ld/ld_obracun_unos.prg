@@ -120,6 +120,8 @@ return
 // ----------------------------------
 function OObracun()
 
+my_use_semaphore_off()
+
 select F_LD
 if !used()
     O_LD
@@ -192,8 +194,18 @@ if ( IsRamaGlas() )
     O_RNAL
 endif
 
+O_TIPRPRN
+
+my_use_semaphore_on()
+
 return
 
+
+
+
+// ------------------------------------------------------
+// otvori box za unos obracuna
+// ------------------------------------------------------
 function PrikaziBox(lSaveObracun)
 local nULicOdb
 local cTrosk
@@ -218,15 +230,6 @@ else
 endif
 
 OObracun()
-
-if lViseObr
-    O_TIPPRN
-else
-    select F_TIPPR
-    if !used()
-        O_TIPPR
-    endif
-endif
 
 lNovi:=.f.
 

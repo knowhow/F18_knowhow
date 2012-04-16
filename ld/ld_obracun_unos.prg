@@ -61,8 +61,6 @@ do while .t.
         if (nPom <> 0)
             
             // upisi tekucu varijantu obracuna
-            //_varobr := gVarObracun
-
             _vals := get_dbf_global_memvars()
             _vals["varobr"] := gVarObracun          
 

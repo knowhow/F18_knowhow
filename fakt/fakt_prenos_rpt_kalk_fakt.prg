@@ -12,24 +12,14 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-/*! \fn Fakt_Kalk(lFaktKalk)
- *  \brief Uporedni prikaz stanja Kalk<->Fakt 
- *  \param lFaktKalk
- */
- 
-function Fakt_Kalk(lFaktFakt)
-*{
+// -----------------------------------------------------
+// poredjenje fakt -> kalk
+// -----------------------------------------------------
+function uporedna_lista_fakt_kalk(lFaktFakt)
 local cIdFirma,qqRoba,nRezerv,nRevers
 local nul,nizl,nRbr,cRR,nCol1:=0
 local m:=""
 local cDirFakt, cDirKalk
-
 local cViseKonta
 private dDatOd, dDatDo
 private gDirKalk := ""
@@ -41,26 +31,20 @@ if lFaktFakt==nil
 endif
 
 O_FAKT_DOKS
+O_KALK
 O_KONTO
 O_TARIFA
 O_SIFK
 O_SIFV
 O_ROBA
 O_RJ
-
-
 O_FAKT
+
 // idroba
 set order to tag "3"
 
-
-cKalkFirma:=gFirma
-cIdfirma:=gFirma
-
-//direktorij kumulativ FAKT-a
-cF2F:=PADR(ToUnix("C:\SIGMA\FAKT\KUM1\"),40)
-
-cF2FS:=PADR(TRIM(goModul:oDatabase:cDirSif)+SLASH,40)
+cKalkFirma := gFirma
+cIdfirma := gFirma
 qqRoba:=""
 dDatOd:=ctod("")
 dDatDo:=date()
@@ -69,10 +53,12 @@ cRazlVr  := "D"
 cMP := "M"
 
 cViseKonta:=IzFmkIni("FAKT_Specif","Fakt_Kalk","11", nil, .f.)
+
 //prebacujem ovaj parametar na KumPath
 if EMPTY(cViseKonta)
 	cViseKonta:="11"
 endif
+
 cViseKonta:=IzFmkIni("FAKT","FaktKalk", cViseKonta, KUMPATH)
 
 lViseKonta:=.f.
@@ -86,61 +72,41 @@ if lViseKonta
 else
   cIdKonto := qqKonto := "1310   "
 endif
-*
-qqPartn:=space(20)
+
+qqPartn := space(20)
 private qqTipdok:="  "
 
 Box(,16,66)
-O_PARAMS
-private cSection:="6"
-private cHistory:=" "
-private aHistory:={}
-Params1()
-RPar("U1",@cIdFirma)
-RPar("U2",@qqRoba)
-RPar("U3",@dDatOd)
-RPar("U4",@dDatDo)
-RPar("U5",@cRazlKol)
-RPar("U6",@cRazlVr)
-RPar("U7",@cMP)
-RPar("U8",@qqKonto)
-RPar("U9",@cKalkFirma)
-RPar("t1",@cOpis1)
-RPar("t2",@cOpis2)
-RPar("fd",@cF2F)
 
-//RPar("fs",@cF2FS)
-cSection:="T"
-cHistory:=" "
-aHistory:={}
-
-//RPar("dk",@gDirKalk)
-if empty(gDirKalk)
-  gDirKalk:=trim(StrTran(goModul:oDatabase:cDirKum,"FAKT","KALK"))+"\"
-  WPar("dk",gDirKalk)
-//elseif .t.
-endif
-cSection:="6"
-cHistory:=" "
-aHistory:={}
-
+cIdFirma := fetch_metric("fakt_uporedna_lista_id_firma", my_user(), cIdFirma )
+qqRoba := fetch_metric( "fakt_uporedna_lista_roba", my_user(), qqRoba )
+dDatOd := fetch_metric( "fakt_uporedna_lista_datum_od", my_user(), dDatOd )
+dDatDo := fetch_metric( "fakt_uporedna_lista_datum_do", my_user(), dDatDo )
+cRazlKol := fetch_metric( "fakt_uporedna_lista_razlika_kolicina", my_user(), cRazlKol )
+cRazlVr := fetch_metric( "fakt_uporedna_lista_razlika_vrijednosti", my_user(), cRazlVr )
+cMp := fetch_metric( "fakt_uporedna_lista_mp", my_user(), cMP )
+qqKonto := fetch_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
+cKalk_firma := fetch_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
+cOpis1 := fetch_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
+cOpis2 := fetch_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
 
 if lFaktFakt
-  if Pitanje(,"Podesiti direktorij FAKT-a druge firme? (D/N)","N")=='D'
-    Box(,6,70)
-     @ m_x+1, m_y+2 SAY "Kum.dir.drugog FAKT-a:" GET cF2F  PICT "@!"
-     @ m_x+2, m_y+2 SAY "Sif.dir.drugog FAKT-a:" GET cF2FS PICT "@!"
-     @ m_x+3, m_y+2 SAY "Zaglavlje stanja u FAKT:" GET cOpis1 PICT "@!"
-     @ m_x+4, m_y+2 SAY "Zaglav.st.FAKT 2.firme :" GET cOpis2 PICT "@!"
-     READ
-    BoxC()
-  endif
+    if Pitanje(,"Podesiti direktorij FAKT-a druge firme? (D/N)","N")=='D'
+        Box(,6,70)
+            @ m_x+1, m_y+2 SAY "Kum.dir.drugog FAKT-a:" GET cF2F  PICT "@!"
+            @ m_x+2, m_y+2 SAY "Sif.dir.drugog FAKT-a:" GET cF2FS PICT "@!"
+            @ m_x+3, m_y+2 SAY "Zaglavlje stanja u FAKT:" GET cOpis1 PICT "@!"
+            @ m_x+4, m_y+2 SAY "Zaglav.st.FAKT 2.firme :" GET cOpis2 PICT "@!"
+            READ
+        BoxC()
+    endif
 endif
 
 
 if gNW$"DR"
- //cIdfirma:=gFirma
+    //cIdfirma:=gFirma
 endif
+
 qqRoba:=padr(qqRoba,60)
 qqKonto:=padr(qqKonto,IF(lViseKonta,60,7))
 qqPartn:=padr(qqPartn,20)
@@ -150,47 +116,50 @@ cRR:="N"
 
 private cTipVPC:="1"
 
-
 cK1:=cK2:=space(4)
 
 do while .t.
-  if lFaktFakt
-    @ m_x+1,m_y+2 SAY "RJ" GET cIdFirma valid cidfirma==gFirma .or. P_RJ(@cIdFirma)
-    @ m_x+3,m_y+2 SAY "RJ u FAKT druge firme"  GET cKalkFirma pict "@!S40"
-    @ m_x+4,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-    @ m_x+5,m_y+2 SAY "Od datuma"  get dDatOd
-    @ m_x+5,col()+1 SAY "do datuma"  get dDatDo
-    cRazlKol:="D"
-    cRazlVr:="N"
-  else
-    @ m_x+1,m_y+2 SAY "RJ" GET cIdFirma valid cidfirma==gFirma .or. P_RJ(@cIdFirma)
-    if lViseKonta
-      @ m_x+2,m_y+2 SAY "Konto u KALK"  GET qqKonto ;
-                        WHEN  {|| cIdKonto:=KontoIzRj (cIdFirma), qqKonto:=Iif (!Empty(cIdKonto),cIdKonto+" ;",qqKonto), .T.} PICT "@!S20"
+    
+    if lFaktFakt
+        @ m_x+1,m_y+2 SAY "RJ" GET cIdFirma valid cidfirma==gFirma .or. P_RJ(@cIdFirma)
+        @ m_x+3,m_y+2 SAY "RJ u FAKT druge firme"  GET cKalkFirma pict "@!S40"
+        @ m_x+4,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
+        @ m_x+5,m_y+2 SAY "Od datuma"  get dDatOd
+        @ m_x+5,col()+1 SAY "do datuma"  get dDatDo
+        cRazlKol:="D"
+        cRazlVr:="N"
     else
-      @ m_x+2,m_y+2 SAY "Konto u KALK"  GET qqKonto ;
+        @ m_x+1,m_y+2 SAY "RJ" GET cIdFirma valid cidfirma==gFirma .or. P_RJ(@cIdFirma)
+        if lViseKonta
+            @ m_x+2,m_y+2 SAY "Konto u KALK"  GET qqKonto ;
+                        WHEN  {|| cIdKonto:=KontoIzRj (cIdFirma), qqKonto:=Iif (!Empty(cIdKonto),cIdKonto+" ;",qqKonto), .T.} PICT "@!S20"
+        else
+            @ m_x+2,m_y+2 SAY "Konto u KALK"  GET qqKonto ;
                         WHEN  {|| cIdKonto:=KontoIzRj (cIdFirma), qqKonto:=Iif (!Empty(cIdKonto),cIdKonto,qqKonto), .T.} ;
                         VALID P_Konto (@qqKonto)
-    endif
-    @ m_x+3,m_y+2 SAY "Oznaka firme u KALK"  GET cKalkFirma pict "@!S40"
-    @ m_x+4,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-    @ m_x+5,m_y+2 SAY "Od datuma"  get dDatOd
-    @ m_x+5,col()+1 SAY "do datuma"  get dDatDo
-    @ m_x+6,m_y+2 SAY "Prikazi ako se razlikuju kolicine (D/N)" GET cRazlKol pict "@!" VALID cRazlKol $ "DN"
-    @ m_x+7,m_y+2 SAY "Prikazi ako se razlikuju vrijednosti (D/N)" GET cRazlVr pict "@!" VALID cRazlVr $ "DN"
-    if gVarC $ "12"
-      @ m_x+9,m_y+2 SAY "Stanje u FAKT prikazati sa Cijenom 1/2 (1/2) "  get cTipVpc pict "@!" valid cTipVPC $ "12"
-    endif
+        endif
+        @ m_x+3,m_y+2 SAY "Oznaka firme u KALK"  GET cKalkFirma pict "@!S40"
+        @ m_x+4,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
+        @ m_x+5,m_y+2 SAY "Od datuma"  get dDatOd
+        @ m_x+5,col()+1 SAY "do datuma"  get dDatDo
+        @ m_x+6,m_y+2 SAY "Prikazi ako se razlikuju kolicine (D/N)" GET cRazlKol pict "@!" VALID cRazlKol $ "DN"
+        @ m_x+7,m_y+2 SAY "Prikazi ako se razlikuju vrijednosti (D/N)" GET cRazlVr pict "@!" VALID cRazlVr $ "DN"
+        
+        if gVarC $ "12"
+            @ m_x+9,m_y+2 SAY "Stanje u FAKT prikazati sa Cijenom 1/2 (1/2) "  get cTipVpc pict "@!" valid cTipVPC $ "12"
+        endif
 
-    if fakt->(fieldpos("K1"))<>0 .and. gDK1=="D"
-     @ m_x+10,m_y+2 SAY "K1" GET  cK1 pict "@!"
-     @ m_x+10,m_y+2 SAY "K2" GET  cK2 pict "@!"
-    endif
+        @ m_x+10,m_y+2 SAY "K1" GET  cK1 pict "@!"
+        @ m_x+10,m_y+2 SAY "K2" GET  cK2 pict "@!"
+
   endif
 
   read
+
   ESC_BCR
+
   aUsl1:=Parsiraj(qqRoba,"IdRoba")
+
   if lViseKonta
     aUsl2:=Parsiraj(qqKonto,"MKONTO")
     if aUsl1<>nil .and. (lFaktFakt .or. aUsl2<>nil); exit; endif
@@ -203,27 +172,24 @@ enddo
 
 cSintetika:="N"
 
-Params2()
-if lViseKonta
-  qqKonto:=TRIM(qqKonto)
-endif
 qqRoba:=trim(qqRoba)
-WPar("U1",@cIdFirma)
-WPar("U2",@qqRoba)
-WPar("U3",@dDatOd)
-WPar("U4",@dDatDo)
-WPar("U5",@cRazlKol)
-WPar("U6",@cRazlVr)
-WPar("U7",@cMP)
-WPar("U8",@qqKonto)
-WPar("U9",@cKalkFirma)
-WPar("fd",@cF2F)
-WPar("fs",@cF2FS)
-WPar("t1",@cOpis1)
-WPar("t2",@cOpis2)
-select params; use
+
+// snimi parametre u sql/db
+set_metric("fakt_uporedna_lista_id_firma", my_user(), cIdFirma )
+set_metric( "fakt_uporedna_lista_roba", my_user(), qqRoba )
+set_metric( "fakt_uporedna_lista_datum_od", my_user(), dDatOd )
+set_metric( "fakt_uporedna_lista_datum_do", my_user(), dDatDo )
+set_metric( "fakt_uporedna_lista_razlika_kolicina", my_user(), cRazlKol )
+set_metric( "fakt_uporedna_lista_razlika_vrijednosti", my_user(), cRazlVr )
+set_metric( "fakt_uporedna_lista_mp", my_user(), cMP )
+set_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
+set_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
+set_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
+set_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
+
 
 if lFaktFakt
+
   //fakt-fakt uporedi
   cDirFakt:=SezRad(TRIM(cF2F))
   USE (cDirFakt+"FAKT") ALIAS KALK NEW
@@ -232,19 +198,6 @@ if lFaktFakt
     USE (SezRad(TRIM(cF2FS))+"ROBA") ALIAS ROBA2 NEW
   endif
   
-else
-
-	cDirKalk:=PADR(SezRad(gDirKalk),60)
-	Box(,2,60)
-	//@ m_x+1, m_y+2 SAY "Fakt kum:" GET cDirFakt  PICTURE "@S40"
-	@ m_x+1, m_y+2 SAY "Kalk kum:" GET cDirKalk  PICTURE "@S40"
-	READ
-	BoxC()
-	
-	cDirKalk:=ALLTRIM(cDirKalk)
-
-	//fakt-kalk uporedi
-	USE (cDirKalk+"KALK")
 endif
 
 aDbf := {}
@@ -253,14 +206,16 @@ AADD (aDbf, {"FST",    "N", 15, 5})
 AADD (aDbf, {"FVR",    "N", 15, 5})
 AADD (aDbf, {"KST",    "N", 15, 5})
 AADD (aDbf, {"KVR",    "N", 15, 5})
-DBCREATE2 (PRIVPATH+"POM", aDbf)
+DBCREATE2 ("POM", aDbf)
 
-USE (PRIVPATH+"POM") NEW
-Index On IdRoba to (PRIVPATH+"POMi1")
-SET INDEX to (PRIVPATH+"POMi1")
+select ( F_POM )
+my_use_temp( "POM", my_home() + "pom" )
+index on IdRoba to (my_home() + "pomi1")
+SET INDEX to (my_home() + "pomi1")
+
 BoxC()
 
-select FAKT
+select fakt
 
 private cFilt1:=""
 cFilt1 := aUsl1+IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
@@ -273,10 +228,6 @@ else
   SET FILTER TO
 endif
 
-
-*
-* samo da pozicioniram RJ
-*
 SELECT RJ
 HSEEK cIdFirma
 
@@ -581,21 +532,11 @@ else
   ? space(gnLMarg); ?? m
 endif
 
+close all
+
 FF
 END PRINT
 
-#ifdef CAX
-if lfaktfakt
-   	select roba2
-	use
-endif
-select kalk
-use
-select pom
-use
-#endif
-closeret
 return
-*}
 
 

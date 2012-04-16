@@ -400,7 +400,7 @@ ENDIF
 
 select KONTO
 HSEEK cIdKonto
-?  "Prodavnicki konto razduzuje:",cIdKonto,"-", PADR( naz, 30 )
+?  "Prodavnicki konto razduzuje:",cIdKonto,"-", PADR( naz, 60 )
 return nil
 
 

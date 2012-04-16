@@ -71,8 +71,14 @@ do while .t.
 
             if Pitanje(,"Sigurno zelite izbrisati ovaj zapis D/N","N")=="D"
 
+                my_use_semaphore_off()
+                sql_table_update( nil, "BEGIN" )
+
                 _rec := dbf_get_rec()
-                delete_rec_server_and_dbf( "ld_ld", _rec )
+                delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
+
+                sql_table_update( nil, "END" )
+                my_use_semaphore_on()
 
                 MsgBeep("Izbrisan obracun za radnika: " + cIdRadn + "  !!!")
 
@@ -89,23 +95,40 @@ do while .t.
         select ld
         set order to 0
         if FLock()
+
             go top
+
             Postotak(1, RecCount(),"Ukloni 0 zapise")
+
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+
             do while !eof()
+
                     nPom:=0
                     _rec := dbf_get_rec()
+
                     for i:=1 to cLDPolja
                         cPom := PadL(ALLTRIM(STR(i)),2,"0")
                         nPom += (ABS(_i&cPom) + ABS(_s&cPom))
-                    // ako su sve nule
+                        // ako su sve nule
                     next
+    
                     if (Round(nPom, 5)=0)
-                        delete_rec_server_and_dbf( ALIAS(), _rec )
+                        delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
                     endif
+    
                     Postotak(2, RecNo())
+
                     skip
+    
             enddo
+
             Postotak(0)
+
+            sql_table_update( nil, "END" )
+            my_use_sempahore_on()
+
         else
                 MsgBeep("Neko vec koristi datoteku LD !!!")
         endif
@@ -174,17 +197,23 @@ do while .t.
     select ld
     
     seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
-    
+   
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" ) 
+
     do while STR(cGodina,4)+cIdRj+STR(cMjesec,2)==STR(Godina,4)+IdRj+STR(Mjesec,2) .and. if(lViseObr,cObracun==obr,.t.) 
         skip
         nRec:=RecNo()
         skip -1
         cIdRadn := field->idradn
         _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( ALIAS(), _rec )
+        delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
         go nRec
     enddo
     
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+ 
     if lLogBrMjesec
         EventLog(nUser,goModul:oDataBase:cName,"DOK","BRISIMJESEC",nil,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Brisanje obracuna za mjesec")
     endif

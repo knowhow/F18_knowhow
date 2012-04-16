@@ -991,6 +991,9 @@ Box(,7,75)
             LOOP
         endif
                 
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
+
         // brisem ga iz sifrarnika radnika
         // -------------------------------
         select radn
@@ -1002,7 +1005,7 @@ Box(,7,75)
             nRec := RecNo()
             skip -1
             _rec := dbf_get_rec()            
-            delete_rec_server_and_dbf( ALIAS(), _rec )
+            delete_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
             go (nRec)
         enddo
                 
@@ -1017,7 +1020,7 @@ Box(,7,75)
             nRec:=RecNo()
             skip -1
             _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( ALIAS(), _rec )
+            delete_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
             go (nRec)
         enddo
                 
@@ -1032,7 +1035,7 @@ Box(,7,75)
             nRec:=RecNo()
             skip -1
             _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( ALIAS(), _rec )                
+            delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )                
             go (nRec)
         enddo
                 
@@ -1050,6 +1053,9 @@ Box(,7,75)
             go (nRec)
         enddo
     enddo
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
     set key K_F5 to
 

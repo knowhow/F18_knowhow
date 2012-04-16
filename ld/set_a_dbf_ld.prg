@@ -25,9 +25,9 @@ set_a_dbf_ld_pk_data()
 set_a_dbf_ld_pk_radn()
 set_a_dbf_ld_radsat()
 set_a_dbf_ld_radsiht()
+set_a_dbf_ld_radn()
 
 // sifrarnici
-set_a_dbf_sifarnik("ld_radn"    , "RADN"      , F_RADN       )
 set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
 set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
 set_a_dbf_sifarnik("dopr"       , "DOPR"      , F_DOPR       )
@@ -91,6 +91,40 @@ _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR(field->godina,4) + field->idrj + STR(field->mjesec,2) + field->obr }
 _alg["dbf_key_fields"] := { {"godina", 4}, "idrj", {"mjesec", 2 }, "obr" }
 _alg["sql_in"]         := "lpad(godina::char, 4) || rpad(idrj, 2) || lpad(mjesec::char,2) || rpad(obr,1)"
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg)
+ 
+_item["sql_order"] := "godina, idrj, mjesec, obr"
+
+f18_dbfs_add(_tbl, @_item)
+
+return
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_ld_radn()
+local _alg, _tbl 
+
+_tbl := "ld_radn"
+
+_item := hb_hash()
+
+_item["alias"] := "RADN"
+_item["table"] := _tbl
+_item["wa"]    := F_RADN
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->id }
+_alg["dbf_key_fields"] := { "id" }
+_alg["sql_in"]         := "rpad(id, 6)"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
  

@@ -69,7 +69,7 @@ do while .t.
             my_use_semaphore_off()
             sql_table_update( nil, "BEGIN" )
 
-            if !update_rec_server_and_dbf( "ld_ld",  _vals, "1", "CONT" ) 
+            if !update_rec_server_and_dbf( "ld_ld",  _vals, 1, "CONT" ) 
                 delete_with_rlock()
             endif
 

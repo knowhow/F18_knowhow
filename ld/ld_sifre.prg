@@ -245,6 +245,9 @@ if (Ch==K_ALT_M)
     select radn
     go top
 
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
     do while !eof()
 
         _rec := dbf_get_rec()
@@ -264,21 +267,29 @@ if (Ch==K_ALT_M)
             _rec["kminrad"] := 20
         endif
             
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
 
         skip
     enddo
     
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
+   
     MsgC()
     go top
     return DE_REFRESH
+
 elseif (Ch==K_CTRL_T)
+
     if ImaURadKr(radn->id,"2")
         Beep(1)
         Msg(Lokal("Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!"))
         return 7
     endif
+
 elseif (Ch==K_F2)
+
     if ImaURadKr(radn->id,"2")
         return 99
     endif

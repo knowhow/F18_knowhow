@@ -644,9 +644,18 @@ function FillR(xValue,xIzn)
 local _rec
 PushWa()
 select radn
+
 _rec := dbf_get_rec()
 _rec[LOWER(xValue)] := xIzn
-update_rec_server_and_dbf( ALIAS(), _rec )
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 PopWa()
 return xIzn
 
@@ -672,8 +681,15 @@ endif
 
 _rec := dbf_get_rec()
 _rec[ LOWER(xValue) ] := nRezult
-update_rec_server_and_dbf( ALIAS(), _rec ) 
- 
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" ) 
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 PopWa()
 
 return nRezult
@@ -692,7 +708,12 @@ if (radn->brbod <> _brbod)
             SELECT radn
             _vars := dbf_get_rec()
             _vars["brbod"] := _brbod
-            update_rec_server_and_dbf("radn", _vars)
+
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+            update_rec_server_and_dbf("ld_radn", _vars, 1, "CONT")
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()
 
     endif
 
@@ -711,9 +732,11 @@ if radn->kminrad <> k_min_rad
             select radn
             _fields := dbf_get_rec()     
             _fields["kminrad"] := k_min_rad
-
-            update_rec_server_and_dbf( "radn", _fields )
-
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+            update_rec_server_and_dbf("ld_radn", _vars, 1, "CONT")
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()
             select ld
     endif
 endif
@@ -732,7 +755,11 @@ if radn->idvposla <> _idvposla
         select radn
         _rec := dbf_get_rec()
         _rec["idvposla"] := _idvposla
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
+        update_rec_server_and_dbf("ld_radn", _vars, 1, "CONT")
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
         select ld
     endif
 endif

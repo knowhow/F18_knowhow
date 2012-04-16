@@ -102,11 +102,14 @@ local _rec, _predh_sati
 select radsat
 hseek id_radnik
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 if Found()
     _predh_sati := field->sati
     _rec := dbf_get_rec()
     _rec["sati"] := iznos_sati + _predh_sati
-    update_rec_server_and_dbf( ALIAS(), _rec )
+    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
 
 else
     append blank
@@ -115,7 +118,10 @@ else
     _rec["sati"] := iznos_sati
 endif
 
-update_rec_server_and_dbf( ALIAS(), _rec )
+update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 select ( _t_area )
 
@@ -136,7 +142,11 @@ if Found()
     
     _rec := dbf_get_rec()
     _rec["sati"] := iznos_sati
-    update_rec_server_and_dbf( ALIAS(), _rec )  
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )  
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
 endif
 
@@ -204,14 +214,22 @@ do case
         else
             _rec := dbf_get_rec()
             _rec["sati"] := nSati
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+            update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()
             return DE_REFRESH
         endif
 
     case CH == K_CTRL_T
         if Pitanje(,"izbrisati stavku ?","N") == "D"
             _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( ALIAS(), _rec )
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+            delete_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()
             return DE_REFRESH
         endif
     

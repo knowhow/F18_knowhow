@@ -111,7 +111,14 @@ Box(, nBoxX, nBoxY )
     endif
     
     _vals := get_dbf_global_memvars() 
-    update_rec_server_and_dbf( ALIAS(), _vals ) 
+
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
+    update_rec_server_and_dbf( "ld_radsiht", _vals, 1, "CONT" ) 
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
     // resetuj varijable
     cIdRadn := SPACE(6)

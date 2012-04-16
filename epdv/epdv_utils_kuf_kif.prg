@@ -153,7 +153,8 @@ return nLastBrdok + 1
 // ------------------------
 // ------------------------
 function rn_g_r_br(cTblName)
-local nRbr
+local nRbr, _rec
+local _table := "epdv_kuf"
 
 // TAG: datum : "dtos(datum)+src_br_2"
 
@@ -162,9 +163,10 @@ close all
 do case
 	case cTblName == "KUF"
 		O_KUF
+        _table := "epdv_kuf"
 	case cTblName == "KIF"
 		O_KIF
-	
+	    _table := "epdv_kif"
 endcase
 
 nRbr := 1
@@ -179,12 +181,27 @@ if !FLOCK()
 endif	 
 
 Box(,2, 35)
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 do while !eof()
+
 	@ m_x+1, m_y+2 SAY "Renumeracija: G_R_BR " + STR(nRbr, 4, 0)
-	replace g_r_br with nRbr
-	nRbr++
-	SKIP
+
+    _rec := dbf_get_rec()
+    _rec["g_r_br"] := nRbr
+    update_rec_server_and_dbf( _table, _rec, 1, "CONT" )
+
+	nRbr ++
+	
+    SKIP
+
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 BoxC()
 
 close all

@@ -94,13 +94,10 @@ _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR(field->br_dok, 6, 0) + STR(field->r_br, 6, 0) }
 _alg["dbf_key_fields"] := { {"br_dok", 6, 0}, {"r_br", 6, 0} }
 _alg["sql_in"]         := "lpad(br_dok::char(6), 6) || lpad(r_br::char(6),6)"
-
-
-
 _alg["dbf_tag"]        := "BR_DOK"
 AADD(_item["algoritam"], _alg)
 
-// algoritam 2 - default
+// algoritam 2 - povrat dokumenta 
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR(field->br_dok, 6, 0) }

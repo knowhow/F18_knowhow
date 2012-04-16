@@ -42,6 +42,7 @@ return pov_ku_ki("KIF", nBrDok)
 // -------------------------------------------
 function azur_ku_ki(cTbl)
 local nBrDok
+local _rec
 public _br_dok := 0
 
 if cTbl == "KUF"
@@ -91,7 +92,7 @@ if kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
 	// azuriraj podatke u dbf
 	do while !eof()
 	
-		Scatter()
+        set_global_memvars_from_dbf()
 	
 		// datum azuriranja
 		_datum_2 := DATE()
@@ -107,7 +108,9 @@ if kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
 	
 		SELECT (nKArea)
 		APPEND BLANK
-		Gather()
+
+        _rec := get_dbf_global_memvars()
+        update_rec_dbf( _rec )
 
 		select (nPArea)
 		SKIP
@@ -163,7 +166,6 @@ endif
 // npr. LOWER( "KUF" )
 _tbl_epdv := "epdv_" + LOWER( tbl )
 
-		
 lock_semaphore( _tbl_epdv, "lock" )
 
 lOk := .t.
@@ -176,7 +178,7 @@ if lOk = .t.
   select ( __area )
   go top
 
-  sql_table_update(nil, "BEGIN")
+  sql_table_update( nil, "BEGIN")
 
   do while !eof()
 
@@ -305,7 +307,13 @@ _ok := .t.
 
 MsgO("del " + cTbl )
 
-_ok := delete_rec_server_and_dbf( cTbl, _del_rec )
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+_ok := delete_rec_server_and_dbf( cTbl, _del_rec, 2, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
     
 MsgC()
 
@@ -335,6 +343,7 @@ return nBrDok
 // renumeracija rednih brojeva - priprema
 // --------------------------------------
 function renm_rbr(cTbl, lShow)
+local _rec
 
 if lShow == nil
 	lShow := .t.
@@ -359,8 +368,11 @@ SET ORDER TO TAG "datum"
 // "datum" - "dtos(datum)+src_br_2"
 GO TOP
 nRbr := 1
+
 do while !eof()
-	replace r_br with nRbr
+    _rec := dbf_get_rec()
+    _rec["r_br"] := nRbr
+    dbf_update_rec( _rec )
 	++nRbr
 	SKIP
 enddo
@@ -376,7 +388,7 @@ return
 // renumeracija rednih brojeva - priprema
 // --------------------------------------
 function renm_g_rbr(cTbl, lShow)
-local nRbr
+local nRbr, _rec
 local nLRbr
 
 if lShow == nil
@@ -423,8 +435,9 @@ do while !eof()
 
  	++nRbr
 	@ m_x+1, m_y+2 SAY cTbl + ":" + STR(nRbr, 8, 0)	
-	
-	replace g_r_br with nRbr
+    _rec := dbf_get_rec()
+    _rec["g_r_br"] := nRbr
+    dbf_update_rec( _rec )	
 	
 	++nRbr
 	SKIP

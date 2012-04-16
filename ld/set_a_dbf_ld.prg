@@ -215,6 +215,15 @@ _alg["sql_in"]         := "rpad(idradn, 6) || rpad(ident, 1) || lpad(rbr::char,2
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
  
+// algoritam 2 - brisanje podataka
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idradn }
+_alg["dbf_key_fields"] := { "idradn" }
+_alg["sql_in"]         := "rpad(idradn, 6)"
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg)
+ 
 f18_dbfs_add(_tbl, @_item)
 
 return

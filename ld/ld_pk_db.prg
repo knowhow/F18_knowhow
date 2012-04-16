@@ -69,16 +69,10 @@ select pk_data
 go top
 seek cIdRadn
 
-do while !EOF() .and. field->idradn == cIdRadn
-
+if FOUND()
     _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 1, "CONT" )
-
-	delete
-	++ nCnt
-	skip
-
-enddo
+    delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 2, "CONT" )
+endif
 
 sql_table_update( nil, "END" )
 my_use_semaphore_on()

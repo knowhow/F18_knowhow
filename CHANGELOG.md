@@ -1,3 +1,8 @@
+1.0.5 2012-04-16, vsasa
+
+  - ld, epdv, korekcije [#27597](http://redmine.bring.out.ba/issues/27597)
+  - ostale sitne korekcije
+
 1.0.4 2012-04-13, vsasa, hernad
 
   - idemo odmah na 1.0.4 ver posto je vsasa još nešto radio

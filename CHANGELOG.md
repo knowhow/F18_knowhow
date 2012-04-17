@@ -1,3 +1,9 @@
+1.0.6 2012-04-17, vsasa
+
+  - odt štampa dokumenta, korekcije [#26262](http://redmine.bring.out.ba/issues/26262)
+  - odt template lokacija za unix definisana
+  - kalk, razmjena tops->kalk, korekcije [#27085](http://redmine.bring.out.ba/issues/27085)
+
 1.0.5 2012-04-16, vsasa
 
   - ld, epdv, korekcije [#27597](http://redmine.bring.out.ba/issues/27597)

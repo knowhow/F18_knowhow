@@ -194,9 +194,9 @@ if !used()
 	O_SUBAN
 endif
 
-// radno podrucje analitike cu koristiti za
-// suban_2 tabelu
 // suban_2 tabelu koristicu za pretragu naloga
+// otvaramo je kroz temp podrucje
+
 select ( F_TMP_1 )
 if !used()
 	my_use_temp( "SUBAN_2", my_home() + "fin_suban", .f., .f. )
@@ -301,7 +301,7 @@ do while !eof()
 		if (ALLTRIM(UPPER(cIdPart)) == "#TD#")
 			// trazi dobavljaca
 			_id_part := trazi_dob (suban->(recno()), ;
-			        suban->idfirma, suban->idvn, suban->brnal, ;
+					suban->idfirma, suban->idvn, suban->brnal, ;
 				suban->brdok, suban->rbr)
 		else
 			_id_part := cIdPart
@@ -316,7 +316,7 @@ do while !eof()
 	
 	  case cKatP == "1" 
 	  
-	  	// samo pdv obveznici
+		// samo pdv obveznici
 		if lIno
 			lSkip := .t.
 		endif
@@ -331,13 +331,13 @@ do while !eof()
 			lSkip := .t.
 		endif
   
-	  	// samo ne-pdv obveznici, ako je ino preskoci
+		// samo ne-pdv obveznici, ako je ino preskoci
 		if lIno
 			lSkip := .t.
 		endif
 		
 	  case cKatP == "3"
-	  	// ino
+		// ino
 		if !lIno
 			lSkip := .t.
 		endif
@@ -377,7 +377,7 @@ do while !eof()
 	cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
 	@ m_x+3, m_y+2 SAY cPom 
 	
- 	cPom :="SUBAN cnt : " + STR(nCount, 6)
+	cPom :="SUBAN cnt : " + STR(nCount, 6)
 	@ m_x+4, m_y+2 SAY cPom
 	
 	
@@ -489,7 +489,7 @@ do while !eof()
 
 	do case
 	   case ALLTRIM(cSBrDok) == "#EXT#"
-	   	// extractuj ako je empty cBrDok
+		// extractuj ako je empty cBrDok
 		if EMPTY(cBrDok)
 			// ako nije stavljen broj dokumenta
 			// izvuci oznaku iz opisa
@@ -499,7 +499,7 @@ do while !eof()
 			_src_br := cBrDok
 			_src_br_2 := cBrDok
 		endif
-	   	
+		
 	   case !EMPTY(cSBrDok)
 		_src_br := cSBrDok
 		_src_br_2 := cSBrDok
@@ -767,9 +767,9 @@ nLen := LEN(cOpis)
 for i:=nLen to 1 step -1
    cChar := SUBSTR(cOpis, i, 1)
    if cChar $ " ."
-   	exit
+	exit
    else
-   	cPom := cChar + cPom 
+	cPom := cChar + cPom 
    endif
 next
 

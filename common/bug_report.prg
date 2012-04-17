@@ -104,10 +104,11 @@ server_db_version_info()
 server_info()
 
 if USED() 
-   _msg := current_dbf_info()
+   current_dbf_info()
 else
    _msg := "USED() = false"
 endif
+
 ? _msg
 _log_msg += " ; " + _msg
 

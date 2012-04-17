@@ -13,24 +13,29 @@
 #include "pos.ch"
 
 
+// -------------------------------------------
+// otvaranje tabela potrebnih za report
+// -------------------------------------------
 static function o_tables()
+
 O_SIFK
 O_SIFV
 O_DIO
 O_KASE
 O_ODJ
 O_ROBA
-IF !fZaklj
-	O_OSOB
-	set order to tag ("NAZ")
-EndIF
+O_OSOB
+set order to tag ("NAZ")
 O_VRSTEP
 O_POS
 O_POS_DOKS
+
 return
 
 
-
+// ------------------------------------------------
+// realizacija radnika
+// ------------------------------------------------
 function realizacija_radnik
 PARAMETERS lTekuci, fPrik, fZaklj
 
@@ -113,11 +118,14 @@ AADD (aDbf, {"Iznos",    "N", 20, 5})
 AADD (aDbf, {"Iznos2",   "N", 20, 5})
 AADD (aDbf, {"Iznos3",   "N", 20, 5})
 
-NaprPom ( aDbf )
-O_POM
+NaprPom( aDbf )
+
+select ( F_POM )
+my_use_temp( "POM", my_home() + "pom", .f., .f. )
 
 INDEX ON IdRadnik + IdVrsteP + IdRoba + IdCijena TAG ("1") TO (my_home()+"POM")
 INDEX ON IdRoba + IdCijena TAG ("2") TO (my_home()+"POM")
+
 set order to tag "1"
 
 o_tables()
@@ -227,8 +235,8 @@ IF fPrik $ "PO"
 
         if fPrikPrem=="D"
          select roba
-	 hseek pom->idroba
-	 select pom
+	 	hseek pom->idroba
+	 	select pom
          if !(roba->k2='X')
             if roba->k7='*'
                 nKolicPr+=pom->kolicina
@@ -359,19 +367,14 @@ IF lTekuci
 ELSE
   END PRINT
 ENDIF
+
 IF fZaklj
   C_RealRadn()
 Else
   CLOSE ALL
 Endif
 
-if IsPdv()
-	MsgBeep("Ako trebate izvjestaj realizacije sa prikazom PDV-a#"+;
-	    "koristite izvjestaje korisnika nivoa 'upravnik'")
-endif
-
 return .t.
-*}
 
 
 /*! \fn C_RealRadn()
@@ -379,23 +382,21 @@ return .t.
  */
 
 function C_RealRadn()
-*{
 SELECT DIO
-	USE
+USE
 SELECT KASE
-	USE
+USE
 select roba
-	USE
+USE
 SELECT VRSTEP
-	USE
+USE
 select pos_doks
-	USE
+USE
 SELECT POS
-	USE
+USE
 SELECT POM
-	USE
+USE
 return
-*}
 
 
 /*! \fn RadnIzvuci(cIdVd)

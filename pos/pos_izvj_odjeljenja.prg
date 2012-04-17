@@ -830,67 +830,80 @@ CLOSERET
  */
  
 function OdjIzvuci(cIdVd)
-*{
+
 select pos_doks
-Seek cIdVd+DTOS(dDat0)
-do While !Eof() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum<=dDat1
-  IF (Klevel>"0" .and. pos_doks->idpos="X") .or. ;
-     (pos_doks->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;
+seek cIdVd+DTOS(dDat0)
+
+do while !EOF() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= dDat1
+
+	if ( pos_doks->IdPos = "X" .and. AllTrim (cIdPos) <> "X") .or. ;
      (! Empty (cIdPos) .and. pos_doks->IdPos<>cIdPos)
-    Skip; Loop
-  EndIF
+    	skip
+		loop
+  	endif
 
-  SELECT POS
-  Seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-  do While !Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-    IF (!Empty (cIdOdj) .and. POS->IdOdj<>cIdOdj) .or.;
-       (!Empty (cIdDio) .and. POS->IdDio<>cIdDio) .or.;
-       !Tacno (aUsl1)
-      Skip; Loop
-    EndIF
+  	SELECT POS
+  	seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+  	do While !Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+    	IF (!Empty (cIdOdj) .and. POS->IdOdj<>cIdOdj) .or.;
+       		(!Empty (cIdDio) .and. POS->IdDio<>cIdDio) .or.;
+       		!Tacno (aUsl1)
+      		skip
+			loop
+    	EndIF
 
-    select roba
-	hseek pos->idroba
+    	select roba
+		hseek pos->idroba
     
-	if roba->( fieldpos("idodj")) <> 0
-		select odj
-		hseek roba->idodj
-	endif
+		if roba->( fieldpos("idodj")) <> 0
+			select odj
+			hseek roba->idodj
+		endif
 
-    nNeplaca:=0
-    if right(odj->naz,5)=="#1#0#"  // proba!!!
-     nNeplaca:=pos->(Kolicina*Cijena)
-    elseif right(odj->naz,6)=="#1#50#"
-     nNeplaca:=pos->(Kolicina*Cijena)/2
-    endif
-    if gPopVar="P"; nNeplaca+=pos->(Kolicina*NCijena); endif
+    	nNeplaca:=0
+    	if right(odj->naz,5)=="#1#0#"  // proba!!!
+     		nNeplaca:=pos->(Kolicina*Cijena)
+    	elseif right(odj->naz,6)=="#1#50#"
+     		nNeplaca:=pos->(Kolicina*Cijena)/2
+    	endif
+    	if gPopVar="P"
+			nNeplaca+=pos->(Kolicina*NCijena)
+		endif
 
-    SELECT POM; Hseek POS->(IdOdj+IdDio+IdPos+IdRoba+IdCijena)
-    IF Found()
-      Replace Kolicina WITH Kolicina+POS->Kolicina, ;
+    	SELECT POM
+		Hseek POS->(IdOdj+IdDio+IdPos+IdRoba+IdCijena)
+    	
+		IF Found()
+      		Replace Kolicina WITH Kolicina+POS->Kolicina, ;
               Iznos    WITH Iznos+POS->Kolicina*POS->Cijena,;
               iznos3   with nNeplaca
-      if gPopVar=="A"
-             replace Iznos2   with pos->(ncijena)
-      endif
+      		if gPopVar=="A"
+             	replace Iznos2   with pos->(ncijena)
+      		endif
 
-    Else
-      APPEND BLANK
-      Replace IdOdj  WITH POS->IdOdj,   IdDio    WITH POS->IdDio, ;
+    	Else
+      		APPEND BLANK
+      		Replace IdOdj  WITH POS->IdOdj,   IdDio    WITH POS->IdDio, ;
               IdRoba WITH POS->IdRoba,  IdCijena WITH POS->IdCijena, ;
               IdPos  WITH pos_doks->IdPos,  Kolicina WITH POS->Kolicina,;
               Iznos  WITH POS->Kolicina*POS->Cijena ,;
               iznos3 with iznos3+nNeplaca
-      if gPopVar=="A"
-              replace iznos2 with iznos2+pos->(ncijena)
-      endif
-    EndIF
-    SELECT POS
-    Skip
-  EndDO
-  select pos_doks;  Skip
-EndDO
-RETURN
-*}
+      		if gPopVar=="A"
+            	replace iznos2 with iznos2+pos->(ncijena)
+      		endif
+    	EndIF
+    	
+		SELECT POS
+    	Skip
+
+  	enddo
+
+  	select pos_doks
+	skip
+
+enddo
+
+return
+
 
 

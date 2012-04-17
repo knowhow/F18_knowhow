@@ -12,6 +12,7 @@
 
 #include "fmk.ch"
 
+static __table := "r_export"
 static cij_decimala:=3
 static izn_decimala:=2
 static kol_decimala:=3
@@ -19,22 +20,21 @@ static lZaokruziti := .t.
 static cLauncher1 := '"C:\Program Files\LibreOffice 3.4\program\scalc.exe"'
 // zamjeniti tarabu sa brojem
 static cLauncher2 := ""
-static cLauncher := "officexp"
+static cLauncher := "oo"
 // 4 : 852 => US ASCII
 static cKonverzija := "4"
 
 
 
-// kreiraj tabelu u privpath
-function t_exp_create(aFields)
+// kreiraj tabelu u home direktoriju
+function t_exp_create( field_list )
 
-local cExpTbl := "r_export.dbf"
 close all
 
-ferase( PRIVPATH + cExpTbl )
+ferase( my_home() + __table + ".dbf" )
 
 // kreiraj tabelu
-dbcreate2(PRIVPATH + "r_export", aFields)
+dbcreate2( my_home() + __table, field_list )
 
 return
 
@@ -47,11 +47,11 @@ close all
 
 _cmd := ALLTRIM( launch )
 _cmd += " "
-_cmd += "r_export.dbf"
+_cmd += __table + ".dbf"
 
-log_write( "Export r_export cmd: " + _cmd )
+log_write( "Export " + __table + " cmd: " + _cmd )
 
-MsgBeep("Tabela " + my_home() + "R_EXPORT.DBF je formirana##" +;
+MsgBeep("Tabela " + my_home() + __table + ".dbf" + "je formirana##" +;
         "Sa opcijom Open file se ova tabela ubacuje u excel #" +;
     "Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" +;
     "Tako dobijeni xls fajl mozete mijenjati #"+;
@@ -67,53 +67,54 @@ endif
 return
 
 
-function set_launcher(cLauncher)
-local cPom
+// -----------------------------------------------------
+// setovanje pokretaca za dbf tabelu
+// -----------------------------------------------------
+function set_launcher( launch )
+local _tmp
 
-cPom = UPPER(ALLTRIM(cLauncher))
+_tmp = UPPER(ALLTRIM( launch ))
 
-
-if (cPom == "OO") .or.  (cPom == "OOO") .or.  (cPom == "OPENOFFICE")
-    cLauncher := cLauncher1
+if ( _tmp == "OO" ) .or.  ( _tmp == "OOO" ) .or.  ( _tmp == "OPENOFFICE" )
+	launch := cLauncher1
     return .f.
     
-elseif (LEFT(cPom,6) == "OFFICE" )
-        // OFFICEXP, OFFICE97, OFFICE2003
-    cLauncher := msoff_start(SUBSTR(cPom, 7))
+elseif ( LEFT( _tmp, 6 ) == "OFFICE" )
+    // OFFICEXP, OFFICE97, OFFICE2003
+    launch := msoff_start( SUBSTR( _tmp, 7 ))
     return .f.
-elseif (LEFT(cPom,5) == "EXCEL") 
-        // EXCELXP, EXCEL97 
-    cLauncher := msoff_start(SUBSTR(cPom, 6))
+elseif (LEFT( _tmp, 5 ) == "EXCEL") 
+    // EXCELXP, EXCEL97 
+    launch := msoff_start(SUBSTR( _tmp, 6))
     return .f.
 endif
 
 return .t.
-*}
 
 
 
-function msoff_start(cVersion)
-*{
-local cPom :=  '"C:\Program Files\Microsoft Office\Office#\excel.exe"'
 
-if (cVersion == "XP")
+static function msoff_start( ver )
+local _tmp :=  '"C:\Program Files\Microsoft Office\Office#\excel.exe"'
+
+if (ver == "XP")
   // office XP
-  return STRTRAN(cPom,  "#", "10")
-elseif (cVersion == "2000")
+  return STRTRAN(_tmp,  "#", "10")
+elseif (ver == "2000")
   // office 2000
-  return STRTRAN(cPom, "#", "9")
-elseif (EMPTY(cVersion))
+  return STRTRAN(_tmp, "#", "9")
+elseif (EMPTY(ver))
   // instalacija office u /office/ direktoriju
-  return STRTRAN(cPom, "#", "")
-elseif (cVersion == "2003")
+  return STRTRAN(_tmp, "#", "")
+elseif (ver == "2003")
   // office 2003
-  return STRTRAN(cPom, "#", "11")
-elseif (cVersion == "97")
+  return STRTRAN(_tmp, "#", "11")
+elseif (ver == "97")
   // office 97
-  return STRTRAN(cPom, "#", "8")
+  return STRTRAN(_tmp, "#", "8")
 else
   // office najnoviji 2005?2006
-  return STRTRAN(cPom, "#", "12")
+  return STRTRAN(_tmp, "#", "12")
 endif
 
 return
@@ -125,14 +126,8 @@ return
 function exp_report()
 local nTArea := SELECT()
 
-O_PARAMS
-private cSection:="E"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("eK", @cKonverzija)
-RPar("eL", @cLauncher)
-
+cKonverzija := fetch_metric("export_dbf_konverzija", my_user(), cKonverzija)
+cLauncher := fetch_metric("export_dbf_launcher", my_user(), cLauncher)
 cLauncher := PADR(cLauncher, 70)
 
 Box(, 10, 70)
@@ -150,11 +145,9 @@ if LastKey()==K_ESC
     closeret
 endif
 
-WPar("eK", cKonverzija)
-WPar("eL", cLauncher)
-
-select params
-use
+// snimi parametre
+set_metric("export_dbf_konverzija", my_user(), cKonverzija)
+set_metric("export_dbf_launcher", my_user(), cLauncher)
 
 select (nTArea)
 return cLauncher

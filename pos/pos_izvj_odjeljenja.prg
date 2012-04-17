@@ -30,24 +30,29 @@ O_ROBA
 O_POS 
 O_POS_DOKS
 
-  aDbf := {}
-  AADD (aDbf, {"IdOdj"   , "C",  2, 0})
-  AADD (aDbf, {"IdDio"   , "C",  2, 0})
-  AADD (aDbf, {"IdPos"   , "C",  2, 0})
-  AADD (aDbf, {"IdRoba"  , "C",  8, 0})
-  AADD (aDbf, {"IdCijena", "C",  1, 0})
-  AADD (aDbf, {"Kolicina", "N", 15, 3})
-  AADD (aDbf, {"Iznos",    "N", 20, 5})
-  AADD (aDbf, {"Iznos2",    "N", 20, 5})
-  AADD (aDbf, {"Iznos3",    "N", 20, 5})
-  NaprPom (aDbf)
-  O_POM
-  INDEX ON IdOdj+IdDio+IdPos+IdRoba+IdCijena TAG ("1") TO (my_home()+"POM")
-  INDEX ON IdOdj+IdDio+IdRoba+IdCijena TAG ("2") TO (my_home()+"POM")
-  set order to tag "1"
+aDbf := {}
+AADD (aDbf, {"IdOdj"   , "C",  2, 0})
+AADD (aDbf, {"IdDio"   , "C",  2, 0})
+AADD (aDbf, {"IdPos"   , "C",  2, 0})
+AADD (aDbf, {"IdRoba"  , "C",  8, 0})
+AADD (aDbf, {"IdCijena", "C",  1, 0})
+AADD (aDbf, {"Kolicina", "N", 15, 3})
+AADD (aDbf, {"Iznos",    "N", 20, 5})
+AADD (aDbf, {"Iznos2",    "N", 20, 5})
+AADD (aDbf, {"Iznos3",    "N", 20, 5})
 
-  aNiz := {}
-  cIdPos := gIdPos
+NaprPom( aDbf )
+
+select (F_POM)
+my_use_temp( "POM", my_home() + "pom", .f., .f. )
+
+INDEX ON IdOdj+IdDio+IdPos+IdRoba+IdCijena TAG ("1") TO (my_home()+"POM")
+INDEX ON IdOdj+IdDio+IdRoba+IdCijena TAG ("2") TO (my_home()+"POM")
+
+set order to tag "1"
+
+aNiz := {}
+cIdPos := gIdPos
   IF gVrstaRS <> "K"
     AADD (aNiz, {"Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.P_Kase(@cIdPos)","@!",})
     if gModul=="HOPS"
@@ -844,8 +849,14 @@ do While !Eof() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum<=dDat1
       Skip; Loop
     EndIF
 
-    select roba; hseek pos->idroba
-    select odj; hseek roba->idodj
+    select roba
+	hseek pos->idroba
+    
+	if roba->( fieldpos("idodj")) <> 0
+		select odj
+		hseek roba->idodj
+	endif
+
     nNeplaca:=0
     if right(odj->naz,5)=="#1#0#"  // proba!!!
      nNeplaca:=pos->(Kolicina*Cijena)

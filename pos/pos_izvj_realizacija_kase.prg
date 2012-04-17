@@ -106,8 +106,8 @@ else
 endif // fZaklj
 
 ODbRpt()
-O_POM
-O_POS_DOKS
+
+select pos_doks
 
 SetFilter(@cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId)
 
@@ -116,7 +116,7 @@ if !fZaklj
 	KasaIzvuci("01", cSifraDob)
 endif
 
-KasaIzvuci("42", cSifraDob)
+KasaIzvuci( "42", cSifraDob )
 
 private nTotal:=0
 
@@ -469,7 +469,6 @@ return
 
 static function TblCrePom()
 local aDbf := {}
-local cPomDbf
 
 AADD(aDbf,{"IdPos"    ,"C",  2, 0})
 AADD(aDbf,{"IdRadnik" ,"C",  4, 0})
@@ -484,17 +483,20 @@ AADD(aDbf,{"Iznos3"   ,"N", 20, 5})
 AADD(aDbf,{"K1"       ,"C",  4, 0})
 AADD(aDbf,{"K2"       ,"C",  4, 0})
 
-NaprPom(aDbf)
+NaprPom( aDbf )
 
-cPomDbf := "pom"
+CREATE_INDEX("1" ,"IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena", "POM" )
+CREATE_INDEX("2" ,"IdPos+IdOdj+IdRoba+IdCijena"                  , "POM" )
+CREATE_INDEX("3" ,"IdPos+IdRoba+IdCijena"                        , "POM" )
+CREATE_INDEX("4" ,"IdPos+IdVrsteP"                               , "POM" )
+CREATE_INDEX("K1","IdPos+K1+idroba"                              , "POM" )
 
-CREATE_INDEX("1" ,"IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena",cPomDbf,.t.)
-CREATE_INDEX("2" ,"IdPos+IdOdj+IdRoba+IdCijena"                  ,cPomDbf,.f.)
-CREATE_INDEX("3" ,"IdPos+IdRoba+IdCijena"                        ,cPomDbf,.f.)
-CREATE_INDEX("4" ,"IdPos+IdVrsteP"                               ,cPomDbf,.f.)
-CREATE_INDEX("K1","IdPos+K1+idroba"                              ,cPomDbf,.f.)
+select ( F_POM )
+if used()
+	use
+endif
 
-O_POM
+my_use_temp( "POM", my_home() + "pom", .f., .f. )
 set order to tag "1"
 
 return

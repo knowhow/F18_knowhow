@@ -14,7 +14,7 @@
 
 
 
-function NaprPom(aDbf,cPom)
+function NaprPom( aDbf, cPom )
 
 if cPom == nil
     cPom:="POM"
@@ -40,7 +40,7 @@ if File (UPPER(cPomCDX))
 endif
 
 // kreiraj tabelu pom.dbf
-DBcreate2( "pom.dbf", aDbf )
+DBcreate( my_home() + "pom.dbf", aDbf )
 
 return
 

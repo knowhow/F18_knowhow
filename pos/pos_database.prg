@@ -1436,7 +1436,7 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 		endif
 
 		SELECT pom
-		HSEEK pos_doks->(IdPos+IdRadnik+IdVrsteP)+pos->(IdOdj+IdRoba+IdCijena)
+		HSEEK pos_doks->(IdPos+IdRadnik+IdVrsteP) + pos->(IdOdj+IdRoba+IdCijena)
 		
 		if !found()
 

@@ -139,7 +139,7 @@ Zapp()
 __dbPack()
 
 // vrati ili pobrisi ono sto je poceo raditi ili prekini s radom
-if !VratiPripr(cIdVd, gIdRadnik, cIdOdj, cIdDio)
+if !pos_vrati_dokument_iz_pripr(cIdVd, gIdRadnik, cIdOdj, cIdDio)
 	CLOSERET
 endif
 

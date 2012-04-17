@@ -59,15 +59,6 @@ if lSilent == nil
 	lSilent := .f.
 endif
 
-O_ROBA
-select ROBA
-go top
-
-// ako nema polja PLU izadji!
-if roba->(FIELDPOS("FISC_PLU")) = 0
-	return .f.
-endif
-
 if lSilent == .f. .and. !SigmaSIF("GENPLU")
 	msgbeep("NE DIRAJ !!!")
 	return .f.
@@ -80,6 +71,13 @@ endif
 if lSilent == .t.
 	lReset := .f.
 endif
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+O_ROBA
+select ROBA
+go top
 
 // prvo mi nadji zadnji PLU kod
 select roba
@@ -111,7 +109,7 @@ do while !EOF()
     
     _rec := dbf_get_rec()
     _rec["fisc_plu"] := nP_PLU
-    update_rec_server_and_dbf( ALIAS(), _rec )
+    update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
 
 	@ m_x + 1, m_y + 2 SAY PADR( "idroba: " + field->id + ;
 		" -> PLU: " + ALLTRIM( STR( nP_PLU ) ), 30 )
@@ -119,7 +117,11 @@ do while !EOF()
 	skip
 
 enddo
+
 BoxC()
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 if nPLU > 0
 	if lSilent == .f.

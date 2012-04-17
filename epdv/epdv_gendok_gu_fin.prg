@@ -146,9 +146,11 @@ do while !eof()
 enddo
 
 
+
+
 // ------------------------------------------
 // ------------------------------------------
-static function  gen_sg_item(cSezona)
+static function gen_sg_item(cSezona)
 local cPomPath
 local cPomSPath
 
@@ -165,7 +167,6 @@ local dDMax
 // za jedan dokument
 local dDMinD
 local dDMaxD
-
 
 // zavisni troskovi
 local nZ1
@@ -184,56 +185,46 @@ local nRecNoSuban
 // otvori suban tabelu
 // ------------------------------------------
 
-
 cPomPath := "SUBAN"
 cPomSPath := ""
-
-select (F_SUBAN)
-	
 cFinPath := cPomPath
-use
-my_use(cPomPath)
+
+select ( F_SUBAN )
+if !used()
+	O_SUBAN
+endif
 
 // radno podrucje analitike cu koristiti za
 // suban_2 tabelu
 // suban_2 tabelu koristicu za pretragu naloga
-select (F_ANAL)
-use	
-my_use_temp( "SUBAN_2", my_home() + "fin_suban" )
+select ( F_TMP_1 )
+if !used()
+	my_use_temp( "SUBAN_2", my_home() + "fin_suban", .f., .f. )
+endif
+
+select suban_2
 // "4","idFirma+IdVN+BrNal+Rbr
-
 SET ORDER TO TAG "4"
-
 	
-	SELECT F_PARTN
-	if used()
-		use
-	endif
-	my_use ( "PARTN")
-	SET ORDER TO TAG "ID"
-	
+SELECT F_PARTN
+if !used()
+	O_PARTN
+endif
 
-	SELECT F_TARIFA
-	if used()
-		use
-	endif
-	my_use ( "TARIFA")
-	SET ORDER TO TAG "ID"
+SELECT F_TARIFA
+if !used()
+	O_TARIFA
+endif
 
-	SELECT F_SIFK
-	if used()
-		use
-	endif
-	my_use ( "SIFK")
-	SET ORDER TO TAG "ID"
+SELECT F_SIFK
+if !used()
+	O_SIFK
+endif
 
-	SELECT F_SIFV
-	if used()
-		use
-	endif
-	my_use ( "SIFV")
-	SET ORDER TO TAG "ID"
-
+SELECT F_SIFV
+if !used()
+	O_SIFV
+endif
 	
 SELECT SUBAN
 PRIVATE cFilter := ""

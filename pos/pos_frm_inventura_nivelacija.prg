@@ -112,7 +112,7 @@ else
 	cUI_I:=R_I
 endif
 
-if !VratiPripr(cIdVd,gIdRadnik,cIdOdj,cIdDio)
+if !pos_vrati_dokument_iz_pripr(cIdVd,gIdRadnik,cIdOdj,cIdDio)
 	CLOSERET
 endif
 

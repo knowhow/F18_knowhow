@@ -65,7 +65,7 @@ endif
 
 // prije generisanja pobrisi prošli izlazni fajl...
 FERASE( __output_odt )
-log_write( "ODT report gen: pobrisao fajl " + __outpu_odt )
+log_write( "ODT report gen: pobrisao fajl " + __output_odt )
 
 // ovo ce nam biti template lokcija
 _template := my_home() + template
@@ -185,7 +185,11 @@ _cmd := ""
     if from_params 
         _cmd += _oo_line + " " + __output_odt
     else
-        _cmd += "open " + __output_odt
+		#ifdef __PLATFORM__DARWIN
+        	_cmd += "open " + __output_odt
+		#else
+			_cmd += "libreoffice " + __output_odt
+		#endif
     endif
 
 #else __PLATFORM__WINDOWS

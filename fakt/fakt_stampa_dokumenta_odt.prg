@@ -41,7 +41,7 @@ stdokpdv( cIdF, cIdVd, cBrDok, .t. )
 _gen_xml( _xml_file )
 
 // uzmi template koji ces koristiti
-if g_afile( _t_path, _filter, @_template, .t. ) == 0
+if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
     return
 endif
 

@@ -146,7 +146,7 @@ return __Run(cmd)
 // ---------------------------------------------------------------
 // vraca fajl iz matrice na osnovu direktorija prema filteru
 // ---------------------------------------------------------------
-function g_afile( cPath, cFilter, cFile, lSilent )
+function get_file_list_array( cPath, cFilter, cFile, lSilent )
 local nPx := m_x
 local nPy := m_y
 
@@ -164,7 +164,8 @@ aFiles := DIRECTORY( cPath + cFilter )
 
 // da li postoje templejti
 if LEN( aFiles )==0
-	MsgBeep("Ne postoji definisan niti jedan template !")
+	log_write( "template list: na lokaciji " + cPath + " ne postoji niti jedan template, po filteru: " + cFilter )
+    MsgBeep("Ne postoji definisan niti jedan template na lokciji:#" + cPath + "#po filteru: " + cFilter )
 	return 0
 endif
 

@@ -238,7 +238,7 @@ close_xml()
 _template := ""
 
 // izaberi sablon
-if g_afile( _jod_templates, "_rg*.odt", @_template ) = 0
+if get_file_list_array( _jod_templates, "_rg*.odt", @_template ) = 0
     return
 endif
 

@@ -78,7 +78,7 @@ static function _bk_replace()
 local _ret := 0
 local _x := 1
 
-Box(, 5, 60 )
+Box(, 7, 60 )
 
 	@ m_x + _x, m_y + 2 SAY "Zamjena barkod-ova"
 	
@@ -104,7 +104,7 @@ Box(, 5, 60 )
 	
 BoxC()
 
-return
+return _ret
 
 
 
@@ -119,6 +119,7 @@ local _bk_replace
 local _br_dok, _id_konto, _rbr
 local _bk_tmp
 local _app_rec
+local _imp_file := ""
 
 // opcija za automatko svodjeje prodavnice na 0
 // ---------------------------------------------
@@ -203,14 +204,14 @@ do while !eof()
 	
 	_br_dok := _br_kalk
     _id_konto := koncij->id
-	_rbr := STR( ++ _rbr, 3 )
+	_r_br := STR( ++ _rbr, 3 )
 	
 	if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" ) .or. ( _idvd_pos == "12" )
 		// formiraj stavku 11	
-		import_row_11( _br_dok, _id_konto, _id_konto2, _rbr )
+		import_row_11( _br_dok, _id_konto, _id_konto2, _r_br )
 	else
 		// formiraj stavku 42
-		import_row_42( _br_dok, _id_konto, _id_konto2, _rbr )
+		import_row_42( _br_dok, _id_konto, _id_konto2, _r_br )
 	endif
   	
 	// zamjena barkod-a ako postoji
@@ -254,7 +255,7 @@ close all
 if ( gMultiPM == "D" .and. _rbr > 0 .and. _auto_razduzenje == "N" )
 	// pobrisi fajlove...
 	FileDelete( _imp_file )
-	FileDelete( STRTRAN( _imp_file ), ".dbf", ".txt" )
+	FileDelete( STRTRAN( _imp_file , ".dbf", ".txt" ) )
 endif
 
 return
@@ -339,7 +340,7 @@ go top
 do while !EOF()
 	// ako nije prazno
 	// ako je maloprodaja
-	if !EMPTY( field->idprodmjes ) .and. LEFT( field->tip, 1 ) == "M"
+	if !EMPTY( field->idprodmjes ) .and. LEFT( field->naz, 1 ) == "M"
 		_scan := ASCAN( _a_pm, {|x| ALLTRIM(x) == ALLTRIM( field->idprodmjes ) })
 		if _scan == 0
 			AADD( _a_pm, ALLTRIM( field->idprodmjes ) )
@@ -374,7 +375,7 @@ if gMultiPM == "D"
 		_ret := .f.
 		return _ret
 	endif
-
+    
 	for _i := 1 to LEN( _prod_mjesta )
 
 			// putanja koju cu koristiti	
@@ -389,10 +390,10 @@ if gMultiPM == "D"
 			ASORT( _imp_files,,, {|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })
 			
 			// dodaj u matricu za odabir
-			AEVAL( _imp_files, { |elem| PADR( ALLTRIM( _prod_mjesta[ _i ] ) + ;
+			AEVAL( _imp_files, { |elem| AADD( _opc, PADR( ALLTRIM( _prod_mjesta[ _i ] ) + ;
 										SLASH + TRIM(elem[1]), 20) + " " + ;
 										UChkPostoji() + " " + DTOC(elem[3]) + " " + elem[4] ;
- 								}, 1, D_MAX_FILES )  
+ 								) }, 1, D_MAX_FILES )  
 
 
 	next

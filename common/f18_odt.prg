@@ -80,6 +80,13 @@ if EMPTY( _java_start ) .or. EMPTY( _jod_bin )
     return _ok
 endif
 
+// postoji li jodreports-cli.jar ?
+if !FILE( ALLTRIM(_jod_bin) )
+    log_write( "ODT report gen: " + _jod_bin + " ne postoji na lokaciji !")
+    MsgBeep( "Aplikacija " + _jod_bin + " ne postoji !" )
+    return _ok
+endif
+
 log_write( "ODT report gen: java cmd - " + _java_start )
 log_write( "ODT report gen: jod bin - " + _jod_bin )
 

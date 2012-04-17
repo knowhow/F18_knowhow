@@ -87,7 +87,7 @@ if IsPDV()
 endif
 
 // storno racuna
-SETKEY( K_F8, {|| storno_rn() })
+SETKEY( K_F8, {|| pos_storno_rn() })
 
 // <*> - ispravka tekuce narudzbe
 //       (ukljucujuci brisanje i ispravku vrijednosti)

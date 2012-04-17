@@ -513,7 +513,7 @@ enddo
 return 1
 
 
-/*! \fn AzurRacuna(cIdPos,cStalRac,cRadRac,cVrijeme,cNacPlac,cIdGost)
+/*! \fn azur_pos_racun(cIdPos,cStalRac,cRadRac,cVrijeme,cNacPlac,cIdGost)
  *  \brief Azuriranje racuna ( _POS->POS, _POS->DOKS )
  *  \param cIdPos
  *  \param cStalRac    - prilikom azuriranja daje se broj cStalRac
@@ -523,7 +523,7 @@ return 1
  *  \param cIdGost
  */
  
-function AzurRacuna(cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost)
+function azur_pos_racun(cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost)
 local cDatum
 local nStavki
 local _rec, _append
@@ -537,6 +537,7 @@ o_stazur()
 if (cNacPlac == nil)
 	cNacPlac := gGotPlac
 endif
+
 if (cIdGost == nil)
 	cIdGost := ""
 endif
@@ -556,7 +557,6 @@ _IdGost := cIdGost
 _IdOdj := SPACE( LEN( _IdOdj ))
 _M1 := OBR_NIJE
 
-//Append Blank  radi mreza ne idemo na ovu varijantu!
 set order to tag "1"
 seek cIdPos + "42" + dtos(gdatum) + cStalRac
 
@@ -1504,30 +1504,6 @@ endif
 PopWa()
 
 return lFound
-*}
-
-
-/*! \fn CreateTmpTblForDocReview()
- *  \brief Pravi pomocnu tabelu POM za stampu dokumenta iz pregleda dokumenata
- */
-function CreateTmpTblForDocReView()
-
-aDbf := {}
-AADD(aDbf, {"IdRoba",   "C", 10, 0})
-AADD(aDbf, {"IdCijena", "C",  1, 0})
-AADD(aDbf, {"Cijena",   "N", 10, 3})
-AADD(aDbf, {"NCijena",   "N", 10, 3})
-AADD(aDbf, {"Kolicina", "N", 10, 3})
-AADD(aDbf, {"Datum", "D", 8, 0})
-
-NaprPom (aDbf)
-
-O_POM
-
-INDEX ON IdRoba+IdCijena+Str(Cijena, 10, 3) TAG ("1") TO (my_home()+"POM")
-set order to tag "1"
-
-return
 
 
 // ------------------------------------------
@@ -1606,7 +1582,7 @@ return
 // -------------------------------------
 // storniranje racuna
 // -------------------------------------
-function storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
+function pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 local nTArea := SELECT()
 local _rec
 private GetList := {}
@@ -1717,10 +1693,11 @@ endif
 return
 
 
+
 // -------------------------------------
 // povrat racuna u pripremu
 // -------------------------------------
-function povrat_rn( cSt_rn, dSt_date )
+function pos_povrat_rn( cSt_rn, dSt_date )
 local nTArea := SELECT()
 local _rec
 private GetList := {}
@@ -1762,6 +1739,7 @@ do while !EOF() .and. field->idpos == gIdPos ;
 
 enddo
 
+my_use_semaphore_off()
 sql_table_update( nil, "BEGIN")
 
 // pobrisi racun iz POS i DOKS
@@ -1785,8 +1763,10 @@ if FOUND()
 endif
 
 sql_table_update( nil, "END")
+my_use_semaphore_on()
 
 select ( nTArea )
 	
 return
+
 

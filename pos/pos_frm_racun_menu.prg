@@ -410,16 +410,20 @@ CLOSERET
 return
 
 
+// ------------------------------------------------------------------
+// stampa i azuriranje racuna
+// ------------------------------------------------------------------
 function StampAzur(cIdPos, cRadRac)
 local cTime, _rec
 local nFis_err := 0
 private cPartner
 
 select pos_doks
+// naredni broj racuna
+cStalRac := pos_naredni_dokument( cIdPos, VD_RN )
 
-cStalRac := pos_naredni_dokument(cIdPos, VD_RN)
-
-// radi mreze rezervisem DOKS !
+// pravi se append u bazu
+// radnik "////"
 append blank
 
 _rec := dbf_get_rec()
@@ -429,7 +433,11 @@ _rec["brdok"] := cStalRac
 _rec["idradnik"] := "////"
 _rec["datum"] := gDatum
 
-update_rec_server_and_dbf( ALIAS(), _rec )
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 aVezani := {}
 AADD( aVezani, {pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum})
@@ -437,14 +445,15 @@ AADD( aVezani, {pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum})
 cPartner := cIdGost
 
 if IsPDV()
-	cTime:=PDVStampaRac(cIdPos, cRadRac, .f., cIdVrsteP, nil, aVezani)
+	cTime := pos_stampa_racuna_pdv( cIdPos, cRadRac, .f., cIdVrsteP, nil, aVezani )
 else
-	cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP, nil, aVezani)
+	cTime := pos_stampa_racuna( cIdPos, cRadRac, .f., cIdVrsteP, nil, aVezani )
 endif
 
 if (!EMPTY(cTime))
 	
-	AzurRacuna(cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
+	// azuriranje racuna
+	azur_pos_racun(cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
 	
 	// azuriranje podataka o kupcu
 	if IsPDV()
@@ -476,7 +485,7 @@ if (!EMPTY(cTime))
 		// ako postoji ERR vrati racun
 		if nErr > 0 .and. gFC_error == "D"
 			// vrati racun u pripremu...
-			povrat_rn( cStalRac, gDatum )
+			pos_povrat_rn( cStalRac, gDatum )
 		endif
 
 	endif
@@ -501,9 +510,13 @@ if EMPTY( cTime )
 	select pos_doks
 	SEEK gIdPos+"42"+DTOS(gDatum)+cStalRac
 	
-	if (pos_doks->idRadnik=="////")   
-      	_rec := dbf_get_rec()
-        delete_rec_server_and_dbf( ALIAS(), _rec )
+	if ( pos_doks->idRadnik == "////" )    
+      	my_use_semaphore_off()
+		sql_table_update( nil, "BEGIN" )
+		_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+		sql_table_update( nil, "END" )
+		my_use_semaphore_on()
 	endif
 
 endif

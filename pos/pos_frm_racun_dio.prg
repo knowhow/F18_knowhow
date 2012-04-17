@@ -171,12 +171,12 @@ cStalRac := pos_naredni_dokument (gIdPos, VD_RN)
 if fZakPol
 	if IsPDV()
 		aVezani:={{gIdPos, _pos->brdok, VD_RN, _pos->datum}}
-	 	cTime:=PDVStampaRac(gIdPos, cRadRac, nil, nil, _pos->datum, aVezani )
+	 	cTime:=pos_stampa_racuna_pdv(gIdPos, cRadRac, nil, nil, _pos->datum, aVezani )
 	else
-		cTime:=StampaRac(gIdPos, cRadRac)
+		cTime:=pos_stampa_racuna(gIdPos, cRadRac)
     	endif
 	if !EMPTY(cTime)
-      		AzurRacuna (gIdPos, cStalRac, cRadRac, cTime)
+      		azur_pos_racun (gIdPos, cStalRac, cRadRac, cTime)
     	else
       		SkloniIznRac()
       		MsgBeep ("Radni racun <" + ALLTRIM (cRadRac) + "> nije zakljucen!#" + "Ponovite proceduru zakljucenja kasnije!", 20)
@@ -189,9 +189,9 @@ endif
 for nCnt:=2 to nKoliko
 	// odredjivanje stvarnog broja racuna (iz RACUNI) u cBrojRn
     	cStalRac := IncID (cStalRac)
-    	cTime := StampaRac (gIdPos, aRacPriv [nCnt-1])
+    	cTime := pos_stampa_racuna(gIdPos, aRacPriv [nCnt-1])
     	if !EMPTY (cTime)
-      		AzurRacuna (gIdPos, cStalRac, aRacPriv[nCnt-1], cTime)
+      		azur_pos_racun(gIdPos, cStalRac, aRacPriv[nCnt-1], cTime)
     	else
       		SkloniIznRac()
       		MsgBeep ("Radni racun <" + ALLTRIM (aRacPriv[nCnt-1]) + "> nije zakljucen!#" +"Ponovite proceduru zakljucenja kasnije!", 20)

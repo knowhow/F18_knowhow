@@ -210,7 +210,7 @@ endif
 if UPPER(CHR(LASTKEY()))=="S"
     
     // storno racuna
-    storno_rn( .t., pos_doks->brdok, pos_doks->datum, ;
+    pos_storno_rn( .t., pos_doks->brdok, pos_doks->datum, ;
         PADR( ALLTRIM(STR(pos_doks->fisc_rn)), 10 ) )
 
     msgbeep("Storno racun se nalazi u pripremi !")

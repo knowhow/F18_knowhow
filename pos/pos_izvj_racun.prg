@@ -13,7 +13,7 @@
 #include "pos.ch"
 
 
-function StampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani)
+function pos_stampa_racuna(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani)
 
 local cDbf
 local cIdRadnik
@@ -535,9 +535,9 @@ select pos
 
 if !gStariObrPor
 	if IsPDV()
-		PDVStampaRac(cIdPos, pos_doks->brdok, .t., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill)
+		pos_stampa_racuna_pdv(cIdPos, pos_doks->brdok, .t., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill)
 	else
-		StampaRac(cIdPos, pos_doks->brdok, .t., pos_doks->idvrstep, pos_doks->datum, aVezani)
+		pos_stampa_racuna(cIdPos, pos_doks->brdok, .t., pos_doks->idvrstep, pos_doks->datum, aVezani)
 	endif
 	
 	return
@@ -1203,7 +1203,7 @@ return
 
 
 
-function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom, lOnlyFill)
+function pos_stampa_racuna_pdv(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom, lOnlyFill)
 local cTime
 
 if (lOnlyFill == nil)

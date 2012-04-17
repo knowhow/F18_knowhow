@@ -25,7 +25,7 @@ local cRSdbf
 local cLM:=""
 local nSir:=40
 local cSiroki := "D"
-
+local cPPar
 private cIdDio:=SPACE(2)
 private cIdOdj:=SPACE(2)
 private cDat0:=gDatum
@@ -33,10 +33,6 @@ private cDat1:=gDatum
 private cPocSt:="D"
 
 nMDBrDok:=VAL(IzFMKINI("KARTICA","MaxDuzinaBrDok","4",KUMPATH))
-
-if !IsPlanika()
-	cSiroki:=IzFMKINI("KARTICA","SirokiPapir","N",KUMPATH)
-endif
 
 O_KASE
 O_ODJ
@@ -49,21 +45,17 @@ O_POS
 cRoba:=SPACE(len(idroba))
 cIdPos:=gIdPos
 
-// prikaz partnera
-cPPar:="N"     
-
-O_PARAMS
-private cSection:="I"
-private cHistory:="K"
-private aHistory:={}
-RPar("d1",@cDat0)
-RPar("d2",@cDat1)
-RPar("ro",@cRoba)
-RPar("sp",@cPPar)
+cDat0 := fetch_metric("pos_kartica_datum_od", my_user(), cDat0 )
+cDat1 := fetch_metric("pos_kartica_datum_do", my_user(), cDat1 )
+cRoba := fetch_metric("pos_kartica_artikal", my_user(), cRoba )
+cPPar := fetch_metric("pos_kartica_prikaz_partnera", my_user(), "N" )
 
 set cursor on
+
 Box(,11,60)
+
 aNiz:={}
+
 if gVrstaRS <> "K"
 	@ m_x+1,m_y+2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  valid empty(cIdPos).or.P_Kase(cIdPos) pict "@!"
 endif
@@ -96,15 +88,15 @@ read
 @ m_x+9,m_y+2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt valid cpocst $ "DN" pict "@!"
 @ m_x+10,m_y+2 SAY "Prikaz partnera D/N ?" GET cPPar valid cPPar $ "DN" pict "@!"
 @ m_x+11,m_y+2 SAY "Siroki papir    D/N ?" GET cSiroki valid cSiroki $ "DN" pict "@!"
+
 read
+
 ESC_BCR
-SELECT params
-WPar("d1",cDat0)
-WPar("d2",cDat1)
-WPar("ro",cRoba)
-WPar("sp",cPPar)
-SELECT params
-use
+
+set_metric("pos_kartica_datum_od", my_user(), cDat0 )
+set_metric("pos_kartica_datum_do", my_user(), cDat1 )
+set_metric("pos_kartica_artikal", my_user(), cRoba )
+set_metric("pos_kartica_prikaz_partnera", my_user(), "N" )
 
 BoxC()
 
@@ -500,8 +492,10 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 // cidodj
 enddo 
 
-PaperFeed ()
+PaperFeed()
 END PRINT
-CLOSERET
+
+close all
+return
 
 

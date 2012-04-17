@@ -25,7 +25,7 @@ O_KASE
 O_ODJ
 O_ROBA
 O_OSOB
-set order to tag ("NAZ")
+set order to tag "NAZ"
 O_VRSTEP
 O_POS
 O_POS_DOKS
@@ -120,12 +120,15 @@ AADD (aDbf, {"Iznos3",   "N", 20, 5})
 
 NaprPom( aDbf )
 
+CREATE_INDEX("1" ,"idradnik + idvrstep + idroba + idcijena", "POM" )
+CREATE_INDEX("2" ,"idroba + idcijena", "POM" )
+
 select ( F_POM )
+if used()
+	use
+endif
+
 my_use_temp( "POM", my_home() + "pom", .f., .f. )
-
-INDEX ON IdRadnik + IdVrsteP + IdRoba + IdCijena TAG ("1") TO (my_home()+"POM")
-INDEX ON IdRoba + IdCijena TAG ("2") TO (my_home()+"POM")
-
 set order to tag "1"
 
 o_tables()

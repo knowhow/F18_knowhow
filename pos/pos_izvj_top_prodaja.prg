@@ -13,16 +13,7 @@
 #include "pos.ch"
 
 
-function pos_top_narudzbe()
-*{
-LOCAL   aNiz := {}, cPor, cZaduz, aVrsteP
-PRIVATE cIdPos, cRoba:=SPACE(60), dDat0, dDat1, nTop := 10, cSta := "I"
-dDat0 := dDat1 := DATE ()
-
-if IsPlanika()
-	cPrikOnlyPar:="D"
-endif
-
+static function _o_tables()
 O_ODJ
 O_KASE
 O_SIFK
@@ -30,6 +21,18 @@ O_SIFV
 O_ROBA
 O_POS
 O_POS_DOKS
+return
+
+
+
+function pos_top_narudzbe()
+local aNiz := {}, cPor, cZaduz, aVrsteP
+PRIVATE cIdPos, cRoba:=SPACE(60), dDat0, dDat1, nTop := 10, cSta := "I"
+dDat0 := dDat1 := DATE ()
+
+if IsPlanika()
+	cPrikOnlyPar:="D"
+endif
 
 aDbf := {}
 AADD (aDbf, {"IdRoba",   "C", 10, 0})
@@ -37,13 +40,21 @@ AADD (aDbf, {"Kolicina", "N", 15, 3})
 AADD (aDbf, {"Iznos",    "N", 20, 3})
 AADD (aDbf, {"Iznos2",    "N", 20, 3})
 AADD (aDbf, {"Iznos3",    "N", 20, 3})
-NaprPom (aDbf)
+NaprPom( aDbf )
 
-O_POM
-index on IdRoba TAG ("1") to (PRIVPATH+"POM")
-index on Descend (Str (Iznos,20,3)) TAG ("2") to (PRIVPATH+"POM")
-index on Descend (Str (Kolicina,15,3)) TAG ("3") to (PRIVPATH+"POM")
-set order to 1
+CREATE_INDEX("1" ,"idroba", "POM" )
+CREATE_INDEX("2" ,"STR(iznos,20,3)", "POM" )
+CREATE_INDEX("3" ,"STR(kolicina,15,3)", "POM" )
+
+select ( F_POM )
+if used()
+	use
+endif
+
+my_use_temp( "POM", my_home() + "pom", .f., .f. )
+set order to tag "1"
+
+_o_tables()
 
 private cIdPOS := gIdPos
 IF gVrstaRS <> "K"
@@ -81,10 +92,11 @@ IF !(aUsl1==".t.")
 ENDIF
 
 select pos_doks
-set order to 2        // IdVd+DTOS (Datum)+Smjena
+set order to tag "2"        
+// IdVd+DTOS (Datum)+Smjena
 
 START PRINT CRET
-
+?
 ZagFirma()
 
 ? PADC ("NAJPROMETNIJI ARTIKLI", 40)
@@ -106,10 +118,10 @@ IF cSta $ "IO"
   ?
   ? PADC ("POREDAK PO IZNOSU", 40)
   ?
-  ? PADR("ID ROBA", 10), PADR ("Naziv robe", 20), PADC ("Vrijednost ("+AllTrim(gDomValuta)+")",19)
+  ? PADR("ID ROBA", 10), PADR ("Naziv robe", 20), PADC ("Vrijednost",19)
   ? REPL("-", 10), REPL ("-", 20), REPL ("-", 19)
   nCnt := 1
-  Set order to 2
+  Set order to tag "2"
   GO TOP
   WHILE ! Eof() .and. nCnt <= nTop
     select roba
@@ -134,7 +146,7 @@ IF cSta $ "KO"
   ? PADR("ID ROBA", 10), PADR ("Naziv robe", 20), PADC ("Kolicina",15)
   ? REPL("-", 10), REPL ("-", 20), REPL ("-", 15)
   nCnt := 1
-  Set order to 3
+  Set order to tag "3"
   GO TOP
   WHILE ! Eof() .and. nCnt <= nTop
     select roba
@@ -150,13 +162,18 @@ IF cSta $ "KO"
     SKIP
   END
 ENDIF
+
 ?
+
 IF gVrstaRS == "K"
   PaperFeed ()
 ENDIF
+
 END PRINT
-CLOSERET
-*}
+
+close all
+return
+
 
 
 /*! \fn TopNizvuci(cIdVd,dDat0)
@@ -180,8 +197,12 @@ function TopNizvuci(cIdVd,dDat0)
     Seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
     While !Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
-      select roba; hseek pos->idroba
-      select odj; hseek roba->idodj
+      	select roba
+		hseek pos->idroba
+      	if roba->(FIELDPOS("idodj")) <> 0
+			select odj
+			hseek roba->idodj
+		endif
       nNeplaca:=0
       if right(odj->naz,5)=="#1#0#"  // proba!!!
        nNeplaca:=pos->(Kolicina*Cijena)
@@ -190,7 +211,8 @@ function TopNizvuci(cIdVd,dDat0)
       endif
       if gPopVar="P"; nNeplaca+=pos->(kolicina*NCijena); endif
 
-      SELECT POM ; Hseek POS->IdRoba
+      	SELECT POM
+		Hseek POS->IdRoba
       IF !FOUND ()
         APPEND BLANK
         REPLACE IdRoba   WITH POS->IdRoba, ;

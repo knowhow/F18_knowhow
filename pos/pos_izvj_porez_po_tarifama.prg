@@ -45,7 +45,6 @@ if (cIdOdj==nil)
 endif
 
 // otvaranje potrebnih baza
-///////////////////////////
 O_TARIFA
 
 if fSolo
@@ -59,7 +58,6 @@ if fSolo
 endif
 
 // maska za postavljanje uslova
-///////////////////////////////
 if gVrstaRS<>"S"
 	cIdPos:=gIdPos
 endif
@@ -92,7 +90,6 @@ if fSolo
 	enddo
 
 	// pravljenje izvjestaja
-	////////////////////////
 	START PRINT CRET
 	ZagFirma()
 
@@ -282,7 +279,6 @@ CLOSERET
  */
 
 function Porezi(cIdVd,cDat0,aTarife,cNaplaceno)
-*{
 if cNaplaceno==nil
 	cNaplaceno:="1"
 endif
@@ -313,8 +309,12 @@ do while !EOF().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=cDat1
 		
 			select roba
 			hseek pos->idroba
-			select odj
-			hseek roba->idodj
+			
+			if roba->(FIELDPOS("idodj")) <> 0
+				select odj
+				hseek roba->idodj
+			endif
+
 			nNeplaca:=0
 			
 			if right(odj->naz,5)=="#1#0#"  // proba!!!

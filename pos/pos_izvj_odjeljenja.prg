@@ -13,22 +13,24 @@
 #include "pos.ch"
 
 
+static function _o_tables()
+O_DIO
+O_ODJ
+O_SIFK
+O_SIFV
+O_KASE
+O_ROBA
+O_POS 
+O_POS_DOKS
+return
+
+
 
 function realizacija_odjeljenja()
 LOCAL   nSir:=IIF (gVrstaRS=="S", 80, 40)
 PRIVATE cIdOdj := SPACE(2), cPrikRobe := "D"
 PRIVATE cSmjena:=SPACE(1), cIdPos:=gIdPos, cIdDio := gIdDio
 PRIVATE dDat0:=gDatum, dDat1:=gDatum, aNiz, cRoba := SPACE (60)
-
-O_DIO
-O_ODJ
-O_SIFK
-O_SIFV
-
-O_KASE
-O_ROBA
-O_POS 
-O_POS_DOKS
 
 aDbf := {}
 AADD (aDbf, {"IdOdj"   , "C",  2, 0})
@@ -43,13 +45,15 @@ AADD (aDbf, {"Iznos3",    "N", 20, 5})
 
 NaprPom( aDbf )
 
+CREATE_INDEX("1" ,"idodj+iddio+idpos+idroba+idcijena", "POM" )
+CREATE_INDEX("2" ,"idodj+iddio+idroba+idcijena", "POM" )
+
 select (F_POM)
 my_use_temp( "POM", my_home() + "pom", .f., .f. )
-
-INDEX ON IdOdj+IdDio+IdPos+IdRoba+IdCijena TAG ("1") TO (my_home()+"POM")
-INDEX ON IdOdj+IdDio+IdRoba+IdCijena TAG ("2") TO (my_home()+"POM")
-
 set order to tag "1"
+
+// otvori ponovo tabele radi gornjeg indeksa
+_o_tables()
 
 aNiz := {}
 cIdPos := gIdPos

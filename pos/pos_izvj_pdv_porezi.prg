@@ -145,7 +145,7 @@ do while .t.
 	endif // fsolo
 
 	SELECT POS
-	SET ORDER TO 1
+	SET ORDER TO TAG "1"
 	
 	private cFilter:=".t."
 	
@@ -162,7 +162,7 @@ do while .t.
 	endif
 
 	select pos_doks
-	set order to 2
+	set order to tag "2"
 
 	m:=REPLICATE("-",12)+" "+REPLICATE("-",12)+" "+REPLICATE("-",12)
 
@@ -219,6 +219,8 @@ do while .t.
 
 enddo // petlja radi popusta
 
+select pos
+set filter to
 
 if gVrstaRS<>"S"
 	PaperFeed ()
@@ -228,8 +230,8 @@ if fSolo
 	END PRINT
 endif
 
-set filter to
-CLOSERET
-*}
+close all
+return
+
 
 

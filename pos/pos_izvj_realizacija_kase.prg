@@ -167,15 +167,9 @@ endif
 close all
 
 return .t.
-*}
 
 
-/*! \fn FrmRptVars(cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa)
- *  \brief Uzmi varijable potrebne za izvjestaj
- *  \return 0 - nije uzeo, 1 - uzeo uspjesno
- */
 function FrmRptVars(cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId)
-*{
 local aNiz
 
 aNiz:={}
@@ -243,10 +237,9 @@ do while .t.
 enddo
 
 return 1
-*}
+
 
 static function Zagl(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj,cGotZir)
-*{
 
 ?? gP12CPI
 

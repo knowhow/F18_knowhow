@@ -16,10 +16,11 @@
 static cKontrolnaTabela:=""
 static lCekaj:=.t.
 
+
 // ---------------------------------------------
 // Stanje prodajnog mjesta
 // ---------------------------------------------
-function pos_stanje_artikala_pm(cD, cS)
+function pos_stanje_artikala_pm( cD, cS )
 local nStanje
 local nSign:=1
 local cSt
@@ -27,12 +28,10 @@ local nVrijednost
 local nCijena:=0
 local cRSdbf
 local cVrstaRs
-
+local fZaklj
 // ovo su ulazni parametri
 private cDat := cD
 private cSmjena := cS
-
-
 private cIdDio:=SPACE(2)
 private cIdOdj:=SPACE(2)
 private cRoba:=SPACE(60)
@@ -44,18 +43,12 @@ private cKontrolisi
 
 cKontrolisi:="N"
 cK9:=SPACE(3)
-
 cVrstaRs:=gVrstaRs
 
-// zakrpa, izvjestaj za "S" ne ne daje sto zelim
-if (gModul=="TOPS" .and. gVrstaRs=="S")
-	cVrstaRs:="A"
-endif
-
-if (PCOUNT()==0)
-	fZaklj:=.f.
+if ( PCOUNT() == 0 )
+	fZaklj := .f.
 else
-	fZaklj:=.t.
+	fZaklj := .t.
 endif
 
 if !fZaklj
@@ -79,17 +72,9 @@ private cMink:="N"
 if fZaklj
 	// kod zakljucenja smjene
 	aUsl1:={}
-	if gModul=="HOPS"
-		cIdDio:=gIdDio
-	endif 
 else
 
-	if gModul=="HOPS"
-		cIdodj:="S "
-	else 
-		cIdodj:="R "
-	endif 
-
+	cIdodj:="R "
 	cIdPos:=gIdPos
 	aNiz:={}
 	
@@ -152,7 +137,7 @@ endif
 
 
 SELECT POS
-if ORDNUMBER("5")==0
+if ORDNUMBER("5") == 0
 	use
 	CREATE_INDEX("5","IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
 	select (F_POS)
@@ -193,8 +178,12 @@ go top
 
 nH:=0
 
-if ! fZaklj
+if !fZaklj
+	
+	START PRINT CRET
+	
 	Zagl(cIdOdj,cDat, cVrstaRs)
+
 endif
 
 Podvuci(cVrstaRs)
@@ -392,24 +381,19 @@ do while !eof()
 enddo
 
 if cVrstaRs<>"S"
+
 	Podvuci(cVrstaRs)
 	? "Ukupno stanje zaduzenja:", STR(nVrijednost,15,3)
 	Podvuci(cVrstaRs)
+	
 endif
 
-if fZaklj
-	END PRINT
-endif
+FF
+END PRINT
 
-if cVrstaRs<>"S"
-	PaperFeed()
-endif
-//
-if !fZaklj
-	END PRINT
-endif
+close all
+return
 
-CLOSERET
 
 
 /*! \fn Podvuci(cVrstaRs)
@@ -434,12 +418,12 @@ return
  */
 
 static function Zagl(cIdOdj,dDat, cVrstaRs)
+
 if dDat==NIL
   dDat:=gDatum
 endif
 
-START PRINT CRET
-
+?
 ZagFirma()
 
 P_10CPI
@@ -472,6 +456,7 @@ IF cVrstaRs == "S"
 Else
    ? cLM
 ENDIF
+
 return
 
 

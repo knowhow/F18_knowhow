@@ -57,6 +57,7 @@ if !FILE( my_home() + template )
     if FILE( F18_TEMPLATE_LOCATION + template )
         FileCopy( F18_TEMPLATE_LOCATION + template, my_home() + template )
     else
+        log_write( "ODT report gen: " + F18_TEMPLATE_LOCATION + template + " ne postoji." )
         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + " ne postoji !???" )
         return _ok
     endif
@@ -64,6 +65,7 @@ endif
 
 // prije generisanja pobrisi prošli izlazni fajl...
 FERASE( __output_odt )
+log_write( "ODT report gen: pobrisao fajl " + __outpu_odt )
 
 // ovo ce nam biti template lokcija
 _template := my_home() + template
@@ -77,6 +79,9 @@ if EMPTY( _java_start ) .or. EMPTY( _jod_bin )
     MsgBeep( "Nisu podeseni parametri jod-reports... ?!??" )
     return _ok
 endif
+
+log_write( "ODT report gen: java cmd - " + _java_start )
+log_write( "ODT report gen: jod bin - " + _jod_bin )
 
 // na windows masinama moramo radi DOS-a dodati ove navodnike
 #ifdef __PLATFORM__WINDOWS
@@ -98,7 +103,7 @@ _cmd += __output_odt
     endif
 #endif
 
-log_write( DTOC( DATE() ) + ": ODT report generisanje, cmd: " + _cmd )
+log_write( "ODT report gen, cmd: " + _cmd )
 
 SAVE SCREEN TO _screen
 CLEAR SCREEN
@@ -111,6 +116,7 @@ _error := hb_run( _cmd )
 RESTORE SCREEN FROM _screen
 
 if _error <> 0
+    log_write( "ODT report gen: greška - " + ALLTRIM( STR( _error )))
     MsgBeep( "Doslo je do greske prilikom generisanja reporta... !!!#" + "Greska: " + ALLTRIM(STR( _error )) )
     return _ok
 endif

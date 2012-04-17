@@ -31,7 +31,7 @@
 #ifdef __PLATFORM__WINDOWS
     #define F18_TEMPLATE_LOCATION "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
 #else
-    #define F18_TEMPLATE_LOCATION hb_DirSepAdd(GetEnv( "HOME" )) + "knowhowERP" + SLASH + "template" + SLASH
+    #define F18_TEMPLATE_LOCATION SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
 #endif
 
 #ifndef TEST

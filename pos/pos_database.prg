@@ -1483,13 +1483,7 @@ _rec["n1"] := priprz->n1
 _rec["n2"] := priprz->n2
 _rec["barkod"] := priprz->barkod
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 return
 

@@ -38,10 +38,12 @@ local cOdg
 local PrevDn
 local PrevUp
 local nSign
+
 if gSamoProdaja=="D" .and. (cIdVd<>VD_REK)
 	MsgBeep("Ne mozete vrsiti zaduzenja !")
    	return
 endif
+
 private ImeKol:={}
 private Kol:={}
 private oBrowse
@@ -145,20 +147,22 @@ endif
 
 fSadAz := .f.
 
-if (cIdVd<>VD_REK) .and. pos_preuzmi_iz_kalk(@cIdVd, @cBrDok, @cRsDBF)
-	if priprz->(RecCount2()) > 0
-    		if cBrDok<>nil .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","N")=="D"
-        		if cIdVd $ "16#96#95#98"
-          			StampZaduz(cIdVd, cBrDok)
-        		elseif cIdVd $ "IN#NI"
-          			StampaInv()
-        		endif
+if (cIdVd <> VD_REK) .and. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
 
-        		if Pitanje(,"Ako je sve u redu, zelite li staviti na stanje dokument ?"," ")=="D"
-          			fSadAz:=.t.
-        		endif
-    		endif
+	if priprz->(RecCount2()) > 0
+    	if cBrDok<>nil .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","N")=="D"
+        	if cIdVd $ "16#96#95#98"
+         		StampZaduz(cIdVd, cBrDok)
+        	elseif cIdVd $ "IN#NI"
+          		StampaInv()
+        	endif
+
+        	if Pitanje(,"Ako je sve u redu, zelite li staviti na stanje dokument ?"," ")=="D"
+          		fSadAz:=.t.
+        	endif
+    	endif
   	endif
+
 endif
 
 if cIdVD=="NI"
@@ -218,10 +222,13 @@ if !fSadAz
 	endif
 
 	SET CURSOR ON
+
 	do while .t.
+
   		do while !oBrowse:Stabilize() .and. ((Ch:=INKEY())==0)
 			//Ol_Yield()
   		enddo
+
   		_idroba:=SPACE (LEN (_idroba))
   		_Kolicina:= 0
   		_cijena:=0
@@ -229,6 +236,7 @@ if !fSadAz
   		_marza2:=0
   		_TMarza2:="%"
   		fMarza:=" "
+
 		@ m_x+2,m_y+25 SAY SPACE(40)
 		
 		if gDuzSifre <> nil .and. gDuzSifre > 0
@@ -242,16 +250,16 @@ if !fSadAz
 		
 		
   		if gZadCij=="D"
-    			@ m_x+ 3,m_y+35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
-    			@ m_x+ 3,m_y+56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
-    			@ m_x+ 3,col()+2 GET _Marza2 PICTURE "9999.99"
+    		@ m_x+ 3,m_y+35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
+    		@ m_x+ 3,m_y+56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
+    		@ m_x+ 3,col()+2 GET _Marza2 PICTURE "9999.99"
 
-    			if IzFMKIni("POREZI","PPUgostKaoPPU","N")=="D"
-      				@ m_x+ 3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_ncijena*(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100+tarifa->zpp/100),_cijena),fmarza:=" ",.t.}
-    			else
-      				@ m_x+3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
-    			endif
-    			@ m_x+ 4,m_y+35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2:=0, marza2(), ShowGets(), .t.}
+    		if IzFMKIni("POREZI","PPUgostKaoPPU","N")=="D"
+      			@ m_x+ 3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_ncijena*(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100+tarifa->zpp/100),_cijena),fmarza:=" ",.t.}
+    		else
+      			@ m_x+3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
+    		endif
+    		@ m_x+ 4,m_y+35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2:=0, marza2(), ShowGets(), .t.}
   		endif
 
   		READ
@@ -259,43 +267,42 @@ if !fSadAz
 		if (LASTKEY()==K_ESC)
     			EXIT
   		else
-    			if (gnDebug == 5)
-				MsgBeep("Pozivam prvo promjenu cijene u sifrarniku!")
-			endif
+			// stavi u sifranik robe			
 			StUSif()
-    			select PRIPRZ
-    			append blank
-    			SELECT (cRSdbf)
-    			_RobaNaz:=_field->Naz
+
+    		select PRIPRZ
+    		append blank
+    		SELECT (cRSdbf)
+
+    		_RobaNaz:=_field->Naz
 			_Jmj:=_field->Jmj
-    			_IdTarifa:=_field->IdTarifa
+   			_IdTarifa:=_field->IdTarifa
 			_Cijena:=if(EMPTY(_cijena),_field->mpc,_cijena)
-    			if ROBA->(FIELDPOS("BARKOD"))<>0
-				_barkod := _field->barkod
-			endif
-			
+			_barkod := _field->barkod
 			_n1 := _field->n1
 			_n2 := _field->n2
 			_k1 := _field->k1
 			_k2 := _field->k2
-			
-			if ROBA->(FIELDPOS("K7")) <> 0
-				_k7 := _field->k7
-				_k9 := _field->k9
-			endif
+			_k7 := _field->k7
+			_k9 := _field->k9
 			
 			if ROBA->(FIELDPOS("KATBR")) <> 0
 				_katbr := _field->katbr
 			endif
 			
 			SELECT PRIPRZ
-    			Gather() // PRIPRZ
-    			// reci mu da ide na kraj
-    			oBrowse:goBottom()
-    			oBrowse:refreshAll()
-    			oBrowse:dehilite()
+    		Gather() // PRIPRZ
+
+    		// reci mu da ide na kraj
+
+    		oBrowse:goBottom()
+    		oBrowse:refreshAll()
+    		oBrowse:dehilite()
+
   		endif
+
 	enddo
+
 	SETKEY(K_PGUP,PrevUp)
 	SETKEY(K_PGDN,PrevDn)
 	UnSetSpecZad()
@@ -305,47 +312,45 @@ if !fSadAz
 	
 endif // fSadAz
 
-SELECT PRIPRZ      
+SELECT PRIPRZ
+      
 // ZADRP
+
 if RecCount2()>0
+
 	select pos_doks
   	set order to 1
+
   	cBrDok:=pos_naredni_dokument(cIdPos,iif(cIdvd=="PD","16",cIdVd)," ",dDatRada)
+
   	SELECT PRIPRZ
-  	// reklamacije dodatni opis
-	if (IsPlanika() .and. cIdVd==VD_REK)
-		RekOpis()
-	endif
-  	Beep(4)
+ 
+ 	Beep(4)
+
 	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","N")=="D"
-        	StampZaduz(cIdVd, cBrDok)
+       	StampZaduz(cIdVd, cBrDok)
   	endif
+
   	if fSadAz.or.Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D")=="D"
-    		AzurPriprZ(cBrDok, cIdVD)
-		// azuriraj i dodatne podatke o reklamaciji
-  		if (IsPlanika() .and. cIdVd==VD_REK)
-			AzurRekOpis(cBrDok, cIdVD)
-		endif
+    	AzurPriprZ(cBrDok, cIdVD)
 	else
-    		SELECT _POS
-    		AppFrom("PRIPRZ",.f.)
-    		SELECT PRIPRZ
-    		Zapp()
-    		select priprz
+    	SELECT _POS
+    	AppFrom("PRIPRZ",.f.)
+    	SELECT PRIPRZ
+    	Zapp()
+    	select priprz
 		__dbPack()
-    		MsgBeep("Dokument nije stavljen na stanje!#"+"Ostavljen je za doradu!",20)
+    	MsgBeep("Dokument nije stavljen na stanje!#"+"Ostavljen je za doradu!",20)
   	endif
 endif
-CLOSERET
-*}
+
+close all
+return
 
 
-/*! \fn OsvPrikaz()
- *  \brief 
- */
+
+
 function OsvPrikaz()
-*{
-
 if gZadCij=="D"
 	nArr:=SELECT()
     	SELECT (F_TARIFA)
@@ -363,31 +368,33 @@ if gZadCij=="D"
     	_cijena:=&("ROBA->cijena"+gIdCijena)
 endif
 return
-*}
 
-/*! \fn StUSif()
- *  \brief 
- */
+
 function StUSif()
-*{
-if (gnDebug == 5)
-	MsgBeep("Mjenjam cijenu u sifrarniku")
-endif
+local _t_area := SELECT()
+local _rec
 
 if gZadCij=="D"
-	if _cijena<>&("ROBA->cijena"+gIdCijena).and.Pitanje(,"Staviti u sifrarnik novu cijenu? (D/N)","D")=="D"
-      		nArr:=SELECT()
-      		SELECT (F_ROBA)
-      		Scatter("s")
-		&("scijena"+gIdCijena):=_cijena
-		Gather("s")
-      		sql_azur(.t.)
-      		GathSQL("s")
-      		SELECT (nArr)
-    	endif
+	if _cijena <> roba->mpc .and. Pitanje(, "Staviti u sifrarnik novu cijenu? (D/N)", "D" )=="D"
+
+      	SELECT (F_ROBA)
+      	_rec := dbf_get_rec()
+		_rec["mpc"] := _cijena
+
+		my_use_semaphore_off()
+
+		sql_table_update( nil, "BEGIN" )
+		update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+		sql_table_update( nil, "END" )
+
+		my_use_semaphore_on()
+
+		select ( _t_area )
+    endif
 endif
+
 return
-*}
+
 
 
 /*! \fn SetSpecZad()

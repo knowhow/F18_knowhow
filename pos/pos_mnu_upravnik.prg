@@ -43,12 +43,7 @@ AADD(opc, "V. evidencija prometa po vrstama")
 AADD(opcexe, {|| FrmPromVp()})    
 
 AADD(opc, "R. prenos realizacije u KALK")
-AADD(opcexe, {|| Real2Kalk() })
-
-if IsPlanika()
-	AADD(opc, "O. prenos reklamacija u KALK")
-	AADD(opcexe, {|| Rek2Kalk() })
-endif
+AADD(opcexe, {|| pos_prenos_pos_kalk() })
 
 AADD(opc, "D. unos dokumenata")
 AADD(opcexe, {|| pos_menu_dokumenti()})    

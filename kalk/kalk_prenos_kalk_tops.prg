@@ -307,7 +307,7 @@ if gMultiPM == "D"
         _dir_create( _export )
 
         // pronadji mi naziv fajla koji je dozvoljen 
-        _dest_patt := get_export_file( _export, datum )
+        _dest_patt := get_topskalk_export_file( "2", _export, datum )
        
         // kopiraj katops.dbf
         _dest_file := _export + STRTRAN( _table_name, "katops.", _dest_patt + "." )
@@ -333,11 +333,17 @@ return _ret
 // ---------------------------------------------------------------
 // vraca naziv fajla za export
 // ---------------------------------------------------------------
-static function get_export_file( export_path, datum )
+function get_topskalk_export_file( topskalk, export_path, datum )
 local _file := ""
 local _prefix := "kt"
 local _i, _tmp
 local _tmp_date := RIGHT( DTOS( datum ), 4 )
+
+if topskalk == "1"
+	_prefix := "tk"
+else
+	_prefix := "kt"
+endif
 
 // naziv fajla treba da bude 
 // kt110401, kt110402 itd...

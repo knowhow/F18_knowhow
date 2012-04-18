@@ -134,14 +134,12 @@ ELSE
   MsgBeep ("Zaduzenje nema nijedne stavke!", 20)
 ENDIF
 return
-*}
 
 
-/*! \fn PrepisZad(cNazDok)
- *  \brief Prepis zaduzenja
- *  \param cNazDok  - naziv dokumenta
- */
- 
+
+// -------------------------------------------------------------
+// stampa dokumenta zaduzenja
+// -------------------------------------------------------------
 function PrepisZad(cNazDok)
 local fPred:=.f.
 local nSir := 80
@@ -152,25 +150,10 @@ local aTarife:={}
 local cRobaNaStanju := "N"
 local cLine
 local cLine2
-
-// ako je zaduzenje...
-if IsPlanika() .and. field->idvd == VD_ZAD .and. gSamoProdaja == "D"
-	if ALLTRIM(field->sto) == "N"
-		Scatter()
-		cRobaNaStanju := PADR(ALLTRIM(_sto), 1)
-		box_roba_stanje(@cRobaNaStanju)
-		if cRobaNaStanju == "D"
-			_sto := ""
-		else
-			_sto := cRobaNaStanju
-		endif
-		Gather()
-		sql_azur(.t.)
-		GathSQL()
-	endif
-endif
+local _t_area := SELECT()
 
 START PRINT CRET
+
 if gVrstaRS == "S"
 	P_INI
   	P_10CPI
@@ -181,9 +164,9 @@ else
   	cPicKol := "9999.999"
 endif
 
-
 SELECT POS
 HSEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+
 if !empty(pos_doks->idvrstep)  
 	// predispozicija
 	fPred:=.t.
@@ -275,16 +258,12 @@ EndIF
 ? cLM
 
 
-?? PADL("IZNOS DOKUMENTA ("+TRIM (gDomValuta)+")", ;
+?? PADL("IZNOS DOKUMENTA ", ;
           IIF (gVrstaRS=="S", 13, 11) + nRobaSir), ;
           TRANS (nFinZad, IIF(gVrstaRS=="S", "999,999,999,999.99", ;
 	  "9,999,999.99" ))
 ? cLine2
 ?
-
-if (IsPlanika() .and. cNazDok == "REKLAMACIJA ")
-	StDokROP()
-endif
 
 if gModul=="TOPS"
 	if IsPDV()
@@ -296,16 +275,22 @@ endif
 
 
 ?? " Primio", PADL ("Predao", nSir-9)
+
 SELECT OSOB
 HSEEK pos_doks->IdRadnik
+
 ? PADL (ALLTRIM (OSOB->Naz), nSir-9)
+
 IF gVrstaRS == "S"
 	FF
 Else
 	PaperFeed()
 EndIF
+
 END PRINT
-select pos_doks
+
+select ( _t_area )
+
 return
 
 

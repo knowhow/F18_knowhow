@@ -50,7 +50,7 @@ private aHistory:={}
 private cSection:="1"
 
 gServerPath := padr(gServerPath,40)
-gKalkDest := padr(gKalkDest,40)
+gKalkDest := padr(gKalkDest,300)
 gDuploKum := padr(gDuploKum,30)
 gDuploSif := padr(gDuploSif,30)
 gFMKSif := padr(gFmkSif,30)
@@ -68,7 +68,7 @@ if gModul=="HOPS"
 endif
 
 AADD(aNiz,{"Putanja korijenskog direktorija modula na serveru" , "gServerPath", , , })
-AADD(aNiz,{"Destinacija datoteke TOPSKA" , "gKALKDEST", , , })
+AADD(aNiz,{"Destinacija datoteke TOPSKA" , "gKALKDEST", , "@S40", })
 AADD(aNiz,{"Razmjena podataka, vise prodajnih jedinica (D/N)", "gMultiPM","gMultiPM $ 'DN'", "@!", })
 AADD(aNiz,{"Razmjena podataka, koristiti 'chk' direktorij D/N", "gUseChkDir","gUseChkDir$'DN'", "@!", })
 AADD(aNiz,{"Lokalni port za stampu racuna" , "gLocPort", , , })

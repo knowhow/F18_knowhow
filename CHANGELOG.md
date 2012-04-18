@@ -1,6 +1,10 @@
-1.0.8 2012-04-18, vsasa
+1.0.9 2012-04-18, vsasa, hernad
 
-  - close all, start.exe 
+  - kompenzacije [#27681](http://redmine.bring.out.ba/issues/27681)
+
+1.0.8 2012-04-17, hernad
+
+ - close all, start.exe 
 
 1.0.6 2012-04-17, vsasa
 

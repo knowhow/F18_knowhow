@@ -32,6 +32,11 @@ return .t.
 function GathSQL()
 return .t.
 
+function prnkod_on()
+return 
+
+function prnkod_off()
+return
 
 function rloptlevel()
 return 0

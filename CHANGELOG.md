@@ -1,3 +1,15 @@
+1.0.9 2012-04-18, vsasa, hernad
+
+  - kompenzacije [#27681](http://redmine.bring.out.ba/issues/27681)
+
+1.0.8 2012-04-17, hernad
+
+ - ?
+
+1.0.7 2012-04-17, vsasa
+
+ - ?
+
 1.0.6 2012-04-17, vsasa
 
   - odt štampa dokumenta, korekcije [#26262](http://redmine.bring.out.ba/issues/26262)

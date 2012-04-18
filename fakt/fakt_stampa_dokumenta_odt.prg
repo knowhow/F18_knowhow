@@ -24,6 +24,7 @@ static PIC_CIJENA := ""
 // stampa dokumenta u odt formatu
 // ------------------------------------------------
 function stdokodt( cIdf, cIdVd, cBrDok )
+
 local _t_path := my_home()
 local _filter := "f*.odt"
 local _template := ""
@@ -44,6 +45,8 @@ _gen_xml( _xml_file )
 if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
     return
 endif
+
+close all
 
 if f18_odt_generate( _template, _xml_file )
     f18_odt_print()

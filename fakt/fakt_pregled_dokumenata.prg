@@ -375,13 +375,17 @@ return DE_CONT
 // stampaj poresku fakturu u odt formatu
 function pr_odt(lOpcine)
 select fakt_doks
+
 nTrec:=recno()
 _cIdFirma:=idfirma
 _cIdTipDok:=idtipdok
 _cBrDok:=brdok
 close all
-o_fakt_edit()
+
 StDokOdt( _cidfirma, _cIdTipdok, _cbrdok )
+
+
+o_fakt_edit()
 select (F_FAKT_DOKS)
 use
 O_FAKT_DOKS

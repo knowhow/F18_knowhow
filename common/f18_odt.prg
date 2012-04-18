@@ -33,6 +33,7 @@ local _screen
 local _cmd, _java_start, _jod_bin
 local _error
 
+
 // xml fajl
 if ( xml_file == NIL )
     __xml_file := my_home() + __xml_name
@@ -103,12 +104,6 @@ _cmd := _java_start + " " + _jod_bin + " "
 _cmd += _template + " "
 _cmd += __xml_file + " "
 _cmd += __output_odt
-
-#ifdef __PLATFORM__WINDOWS
-    if test_mode
-        _cmd += " & pause"
-    endif
-#endif
 
 log_write( "ODT report gen, cmd: " + _cmd )
 
@@ -188,7 +183,7 @@ _cmd := ""
 		#ifdef __PLATFORM__DARWIN
         	_cmd += "open " + __output_odt
 		#else
-			_cmd += "xdg-open " + __output_odt
+			_cmd += "xdg-open " + __output_odt + "&"
 		#endif
     endif
 
@@ -197,11 +192,7 @@ _cmd := ""
     if from_params
         _cmd += _oo_line + " " + __output_odt 
     else
-        _cmd += __output_odt
-    endif
-
-    if test_mode
-        _cmd += " & pause"
+        _cmd += "c:\knowhowERP\util\start.exe /m "  + __output_odt 
     endif
 
 #endif
@@ -212,6 +203,8 @@ CLEAR SCREEN
 ? "Prikaz odt fajla u toku..."
 
 // pokreni komandu
+log_write(_cmd)
+
 _error := hb_run( _cmd )
 
 RESTORE SCREEN FROM _screen

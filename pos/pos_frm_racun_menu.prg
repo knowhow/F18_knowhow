@@ -370,12 +370,6 @@ O_StAzur()
 private cIdGost:=SPACE(8)
 private cIdVrsteP
 
-if gEvidPl=="D"
-	private aCKData:={}
-	private aSKData:={}
-	private aGPData:={}
-endif
-
 if gClanPopust
 	// ako je rijec o clanovima pusti da izaberem vrstu placanja
 	cIdVrsteP:=SPACE(2)

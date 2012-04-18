@@ -330,6 +330,7 @@ public grbCjen:=2
 public grbStId:="D"
 public grbReduk:=0
 public gRnInfo:="N"
+public aRabat
 
 self:cName := "TOPS"
 gModul := self:cName

@@ -105,12 +105,6 @@ _cmd += _template + " "
 _cmd += __xml_file + " "
 _cmd += __output_odt
 
-#ifdef __PLATFORM__WINDOWS
-    if test_mode
-        _cmd += " & pause"
-    endif
-#endif
-
 log_write( "ODT report gen, cmd: " + _cmd )
 
 SAVE SCREEN TO _screen
@@ -174,7 +168,7 @@ _oo_line := _oo_bin + _oo_writer
 // ako je windows sredi mi sa navodnicima
 #ifdef __PLATFORM__WINDOWS
     __output_odt := '"' + __output_odt + '"'
-    _oo_line := "start " + '"' + _oo_line + '"'
+    _oo_line := '"' + _oo_line + '"'
 #endif
 
 // slozi mi komadnu za startanje...
@@ -198,11 +192,7 @@ _cmd := ""
     if from_params
         _cmd += _oo_line + " " + __output_odt 
     else
-        _cmd += __output_odt
-    endif
-
-    if test_mode
-        _cmd += " & pause"
+        _cmd += "start " + __output_odt
     endif
 
 #endif

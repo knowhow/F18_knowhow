@@ -12,78 +12,17 @@
 
 #include "pos.ch"
 
-*string IzFmkIni_KumPath_POS_Polog1;
 
-/*! \fn *string IzFmkIni_KumPath_POS_Polog1
- *  \brief Title za oznaku vrste pologa; ako je prazno onda se ne koristi ova vrsta pologa
- *  \param InicijalneVrijednosti_1-7 - Polog KM, Polog Euro, Polog Krediti, Polog Kartice, Polog Virman, Cekovi, Troskovi
- *  \note na rspolaganju imamo ovakvih 12 parametara Polog1, Polog2 ... Polog12
- *  \ingroup Planika
- */
- 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/specif/planika/1g/promvp.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.7 $
- * $Log: promvp.prg,v $
- * Revision 1.7  2002/07/30 06:57:15  ernad
- *
- *
- * debug: Ogranicenje unosa na dvije decimale kod evidencije po vrstama placanja
- *
- * Revision 1.6  2002/07/09 08:46:02  ernad
- *
- *
- * evidencija prometa po vrstama placanja: debug, nadogradnja (sada pokaze poruku o ukupnom pologu nakon unosa)
- * bug je bio sto nije mogao unijeti promet danas za juce
- *
- * Revision 1.5  2002/07/03 07:31:12  ernad
- *
- *
- * planika, debug na terenu
- *
- * Revision 1.4  2002/06/30 11:08:53  ernad
- *
- *
- * razrada: kalk/specif/planika/rpt_ppp.prg; pos/prikaz privatnog direktorija na vrhu; doxy
- *
- * Revision 1.3  2002/06/25 09:34:24  ernad
- *
- *
- * /cl/sigma/fmk/svi/specif.prg ... generacija integralne dokumentacije sa posebnim osvrtom na specif Parametre
- *
- * Revision 1.2  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.1  2002/06/18 13:26:44  ernad
- * promvp.prg - Promet po vrstama placanja
- *
- *
- */
- 
-
-/*! \fn FrmPromVp()
- *  \brief Unos prometa po vrstama placanja u tabelu predvidjenu za to
- *  \ingroup Planika
- */
 
 function FrmPromVp()
-*{
 local cDN
-
 local nUkupno
 local nRealNaDan
 local i
 local nMaxLen
 local cIdPos
 local dDatum
-
 // 2-d matrica; aPromet[i,1] - naslov, aPromet[i,2] - vrijednost
 local aPromet
 
@@ -162,23 +101,27 @@ Box(,nMaxLen+4,60)
 BoxC()
 
 if (cDN=="D")
+
 	SELECT PROMVP
 	SET ORDER TO TAG "1"
 	SEEK dDatum
+
 	if !FOUND()
 		APPEND BLANK
 	endif
-	ReplaceRec(cIdPos, dDatum, aPromet, nUkupno)
+
+	ReplaceRec( cIdPos, dDatum, aPromet, nUkupno )
 	
 endif
 
-ShowInfoPolog(cIdPos, dDatum)
+ShowInfoPolog( cIdPos, dDatum )
 
 return 1
-*}
+
+
+
 
 static function SetATitle(aPromet, nMaxLen)
-*{
 local cTitle
 local i
 
@@ -210,10 +153,10 @@ for i:=1 to 12
 	endif
 next
 return
-*}
+
+
 
 static function LoadRec(cIdPos, dDatum, aPromet)
-*{
 
 cIdPos:=field->pm
 dDatum:=field->datum
@@ -231,56 +174,67 @@ aPromet[10,2]:=field->polog10
 aPromet[11,2]:=field->polog11
 aPromet[12,2]:=field->polog12
 
-
 return
-*}
+
+
 
 static function ReplaceRec(cIdPos, dDatum, aPromet, nUkupno)
-*{
 local nTRec
 local nPomRec
 
-nTRec:=RECNO()
+nTRec := RECNO()
 
 SELECT promvp
 SKIP
+
 // ako ima jos slogova sa zadatim datumom, njih treba izbrisati
 // moze da se desi ako su indeksi bili osteceni
-do while (!EOF() .and. dDatum==field->datum) 
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+do while ( !EOF() .and. dDatum == field->datum )  
+
 	SKIP
 	nPomRec:=RECNO()
 	SKIP -1
 
-	DELETE
-	sql_delete()
+	_rec := dbf_get_rec()
+	delete_rec_server_and_dbf( "pos_promvp", _rec, 1, "CONT" )
+
 	GO nPomRec
+
 enddo
 
 
 GO nTRec
-SmReplace("pm", cIdPos)
-SmReplace("datum", dDatum)
-SmReplace("polog01", aPromet[1,2])
-SmReplace("polog02", aPromet[2,2])
-SmReplace("polog03", aPromet[3,2])
-SmReplace("polog04", aPromet[4,2])
-SmReplace("polog05", aPromet[5,2])
-SmReplace("polog06", aPromet[6,2])
-SmReplace("polog07", aPromet[7,2])
-SmReplace("polog08", aPromet[8,2])
-SmReplace("polog09", aPromet[9,2])
-SmReplace("polog10", aPromet[10,2])
-SmReplace("polog11", aPromet[11,2])
-SmReplace("polog12", aPromet[12,2])
-SmReplace("ukupno", nUkupno)
+_rec := dbf_get_rec()
+_rec["pm"] := cIdPos
+_rec["datum"] := dDatum
+_rec["polog01"] := aPromet[ 1, 2]
+_rec["polog02"] := aPromet[ 2, 2]
+_rec["polog03"] := aPromet[ 3, 2]
+_rec["polog04"] := aPromet[ 4, 2]
+_rec["polog05"] := aPromet[ 5, 2]
+_rec["polog06"] := aPromet[ 6, 2]
+_rec["polog07"] := aPromet[ 7, 2]
+_rec["polog08"] := aPromet[ 8, 2]
+_rec["polog09"] := aPromet[ 9, 2]
+_rec["polog10"] := aPromet[10, 2]
+_rec["polog11"] := aPromet[11, 2]
+_rec["polog12"] := aPromet[12, 2]
+_rec["ukupno"] := nUkupno
+
+update_rec_server_and_dbf( "pos_promvp", _rec, 1, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on() 
 
 return
 
-*}
 
 
 static function ShowInfoPolog(cIdPos, dDatum)
-*{
 local nUkupno
 
 
@@ -308,4 +262,3 @@ endif
 
 return
 
-*}

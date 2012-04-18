@@ -12,6 +12,7 @@
 
 #include "pos.ch"
 
+
 // --------------------
 // otvori baze potrebne za 
 // pregled racuna

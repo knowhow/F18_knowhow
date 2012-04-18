@@ -349,12 +349,6 @@ do case
           		PrepisKumPr()
         	case pos_doks->IdVd == VD_PCS
           		PrepisPCS()
-			case pos_doks->IdVd == VD_CK
-				StDokCK()
-			case pos_doks->IdVd == VD_SK
-				pos_stdoksk()
-			case pos_doks->IdVd == VD_GP
-				StDokGP()
 			case pos_doks->IdVd == VD_ROP // reklamacija ostali podaci
 				StDokROP(.t.)
       	endcase

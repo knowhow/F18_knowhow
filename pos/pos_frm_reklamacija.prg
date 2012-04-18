@@ -17,7 +17,6 @@
  *  \brief Reklamacija dodatni podaci
  */
 function RekOpis()
-*{
 if Pitanje(,"Unjeti opis reklamacije?", "D") == "N"
 	return
 endif
@@ -26,14 +25,12 @@ endif
 GetRekOpis()
 
 return
-*}
 
 
 /*! \fn GetRekOpis()
  *  \brief Daj dodatne podatke o reklamaciji 
  */
 function GetRekOpis()
-*{
 private GetList:={}
 
 cRekOp1:=SPACE(20)
@@ -51,7 +48,6 @@ Box(,5, 60)
 BoxC()
 
 return
-*}
 
 
 /*! \fn AzurRekOpis(cBrDok, cIdVd)
@@ -60,33 +56,14 @@ return
  *  \param cIdVd - id vrsta dokumenta
  */
 function AzurRekOpis(cBrDok, cIdVd)
-*{
+
 // pri uslov za ispitivanje
 if !IsPlanika() .and. cIdVd<>VD_REK
 	return
 endif
-// drugi uslov za ispitivanje
-if (cRekOp1 == nil .or. cRekOp2 == nil .or. cRekOp3 == nil)
-	return
-endif
-
-// azuriraj dodatne podatke o reklamaciji
-// DOKS
-AzurDoksDokument(VD_ROP, gIdPos, cBrDok, , DATE())
-
-// POS
-// 1. ime i prezime (idradnik+idtarifa+idroba) + broj cipele (iznos)
-AzurPosDokument(VD_ROP, 1, 1, cBrDok, gIdPos, ALLTRIM(cRekOp1), VAL(ALLTRIM(cRekOp2)), 0, 0, DATE())
-// 2. opis greske
-
-cRekOp3 := ALLTRIM(cRekOp3)
-AzurPosDokument(VD_ROP, 2, 2, cBrDok, gIdPos, SUBSTR(cRekOp3, 1, 20), 0, 0, 0, Date())
-if (LEN(cRekOp3)>20)
-	AzurPosDokument(VD_ROP, 3, 2, cBrDok, gIdPos, SUBSTR(cRekOp3, 21, 20), 0, 0, 0, Date())
-endif
 
 return
-*}
+
 
 
 /*! \fn StDokROP(lPregled)
@@ -94,7 +71,6 @@ return
  *  \param lPregled - .t. stampa iz pregleda (pojavljuje se header)
  */
 function StDokROP(lPregled)
-*{
 local nArr
 nArr:=SELECT()
 

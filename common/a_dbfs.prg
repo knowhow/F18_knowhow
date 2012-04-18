@@ -262,6 +262,7 @@ if !used()
     recover using _err
 
             _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
+            log_write(_msg)
             Alert(_msg)
                 
             rec["dbf_fields"] := NIL

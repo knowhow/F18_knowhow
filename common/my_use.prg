@@ -169,6 +169,7 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
 recover using _err
 
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+          log_write(_msg)
           Alert(_msg)
          
           if _err:description == "Read error"
@@ -176,7 +177,6 @@ recover using _err
           endif
  
           ferase_dbf(alias, _force_erase)
-
 
           repair_dbfs()
           QUIT

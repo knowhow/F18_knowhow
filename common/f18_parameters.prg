@@ -24,7 +24,7 @@ local _left := 20
 
 // fetch parametara
 #IFDEF __PLATFORM__WINDOWS
-_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "c:\program files\libreoffice 3.4\program", 200 ) )
+_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
 _oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "swriter", 100 ) )
 _oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "scalc", 100 ) )
 _java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
@@ -32,9 +32,9 @@ _java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -
 _jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "c:\knowhowERP\util\jodreports-cli.jar", 200 ) )
 _jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
 #ELSE
-_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "/Applications/LibreOffice.app/Contents/MacOS/", 200 ) )
-_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "swriter", 100 ) )
-_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "scalc", 100 ) )
+_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
+_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "", 100 ) )
+_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "", 100 ) )
 _java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
 _java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
 _jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "/opt/knowhowERP/util/jodreports-cli.jar", 200 ) )

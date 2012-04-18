@@ -33,6 +33,7 @@ local _screen
 local _cmd, _java_start, _jod_bin
 local _error
 
+
 // xml fajl
 if ( xml_file == NIL )
     __xml_file := my_home() + __xml_name
@@ -188,7 +189,7 @@ _cmd := ""
 		#ifdef __PLATFORM__DARWIN
         	_cmd += "open " + __output_odt
 		#else
-			_cmd += "xdg-open " + __output_odt
+			_cmd += "xdg-open " + __output_odt + "&"
 		#endif
     endif
 

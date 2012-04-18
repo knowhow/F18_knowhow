@@ -246,7 +246,7 @@ do while !EOF() .and. field->idpos == cIdPos
 		select pos
 		append blank
 		
-		Scatter()
+		set_global_memvars_from_dbf()
 		
 		_idpos := cIdPos
 		_idvd := "16"
@@ -261,7 +261,13 @@ do while !EOF() .and. field->idpos == cIdPos
 		_smjena := "1"
 		_mu_i := "1"
 		
-		Gather()
+		_rec := get_dbf_global_memvars()
+
+		my_use_semaphore_off()
+		sql_table_update( nil, "BEGIN" )
+		update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+		sql_table_update( nil, "END" )
+		my_use_semaphore_on()
 
 		++ nCount
 
@@ -283,7 +289,7 @@ if nCount > 0
 	select pos_doks
 	append blank
 
-	Scatter()
+	set_global_memvars_from_dbf()
 
 	_idpos := cIdPos
 	_idvd := VD_ZAD
@@ -293,7 +299,13 @@ if nCount > 0
 	_prebacen := "1"
 	_smjena := "1"
 
-	Gather()
+	_rec := get_dbf_global_memvars()
+	
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+	update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
 
 endif
 

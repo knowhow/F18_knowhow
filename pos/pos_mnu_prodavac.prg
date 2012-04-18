@@ -18,44 +18,24 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-// obezbijedimo da se prodavac nalazi u radnom podrucju ! 
-if gRadnoPodr<>"RADP"
-	goModul:oDatabase:logAgain(STR(YEAR(DATE()),4),.t.,STR(YEAR(DATE()),4))
-endif
-
-if gRadniRac=="D"
-	AADD(opc,"1. narudzba                           ")
-    	AADD(opcexe,{|| pos_narudzba() })
-    	AADD(opc,"2. zakljuci racun")
-    	AADD(opcexe,{|| ZakljuciRacun() })
-else
-	private aRabat:={}
-    	AADD(opc,"1. priprema racuna                        ")
-    	AADD(opcexe,{|| pos_narudzba(), ZakljuciRacun() })
-	if gStolovi == "D"
-		AADD(opc,"2. zakljucenje - placanje stola ")
-    		AADD(opcexe,{|| g_zak_sto() })
-	endif
+AADD(opc,"1. priprema racuna                        ")
+AADD(opcexe,{|| pos_narudzba(), ZakljuciRacun() })
+	
+if gStolovi == "D"
+	AADD(opc,"2. zakljucenje - placanje stola ")
+    AADD(opcexe,{|| g_zak_sto() })
 endif
 
 AADD(opc,"3. promijeni nacin placanja")
 AADD(opcexe,{|| PromNacPlac() })
 AADD(opc,"4. prepis racuna           ")
 AADD(opcexe,{|| PrepisRacuna() })
-if (gModul == "HOPS" .and. gBrojSto=="D") .and. gRadniRac=="N"
-	AADD(opc,"5. zakljucivanje racuna    ")
-	AADD(opcexe,{|| MnuZakljRacuna() })
-endif
 AADD(opc,"T. trenutni pazar smjene")
 AADD(opcexe,{|| realizacija_radnik(.t., "P", .f.) })
-
 AADD(opc,"R. trenutna realizacija po robama")
 AADD(opcexe,{|| realizacija_radnik(.t.,"R",.f.) })
-
-if IsPdv()
-	AADD(opc,"P. porezna faktura za posljednji racun")
-	AADD(opcexe, {|| f7_pf_traka()})
-endif
+AADD(opc,"P. porezna faktura za posljednji racun")
+AADD(opcexe, {|| f7_pf_traka()})
 
 if gFc_use == "D"
 	AADD(opc,"T. kopija fiskalnog racuna")
@@ -63,13 +43,6 @@ if gFc_use == "D"
 endif	 
 
 Menu_SC("prod")
-
-if gRadniRac=="N" .and. gVodiTreb=="D"
-	O_DIO
-    O_ODJ
-    O__POS
-    Trebovanja()
-endif
 
 close all
 return

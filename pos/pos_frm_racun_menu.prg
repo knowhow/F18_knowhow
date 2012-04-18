@@ -532,7 +532,6 @@ return
  */
  
 function UpitNP(cIdPos, cIdVrsteP, cRadRac, cIdGost)
-*{
 local lGetPartner
 
 SELECT _POS
@@ -543,8 +542,8 @@ Box(,4,60)
 // vecina korisnika ne treba unos partnera
 lGetPartner:= .f.
 
-
 cDn:="D"
+
 do while .t.
 	set cursor on
 	
@@ -559,16 +558,11 @@ do while .t.
 	   endif  	
 	endif
 	
-	// ako se koristi varijanta evidentiranja podataka o vp pozovi formu
-	if gEvidPl=="D"
-		FrmVPGetData(cIdVrsteP, aCKData, aSKData, aGPData)
-	endif
-	
 	if lGetPartner
-    		@ m_x+2,m_y+2 SAY "Partner:" GET cIdGost PICT "@!" VALID P_Firma(@cIdGost)
-    		read
+    	@ m_x+2,m_y+2 SAY "Partner:" GET cIdGost PICT "@!" VALID P_Firma(@cIdGost)
+    	read
    	else
-    		cIdGost:=space(8)
+    	cIdGost:=space(8)
    	endif
 	
    	@ m_x+4,m_y+2 SAY "Ispravno D/N:" GET cDN PICT "@!" valid cDn $"DN"

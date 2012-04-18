@@ -1,3 +1,7 @@
+1.0.10  2012-04-18, hernad
+
+  - kompenz + odt stampa
+
 1.0.9 2012-04-18, vsasa, hernad
 
   - kompenzacije [#27681](http://redmine.bring.out.ba/issues/27681)

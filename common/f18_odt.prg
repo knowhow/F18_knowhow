@@ -192,7 +192,7 @@ _cmd := ""
     if from_params
         _cmd += _oo_line + " " + __output_odt 
     else
-        _cmd += "start " + __output_odt
+        _cmd += "c:\knowhowERP\util\start.exe '" + __output_odt + "'"
     endif
 
 #endif

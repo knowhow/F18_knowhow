@@ -167,8 +167,7 @@ _oo_line := _oo_bin + _oo_writer
 
 // ako je windows sredi mi sa navodnicima
 #ifdef __PLATFORM__WINDOWS
-    // start.exe ovo ne trpi
-    //__output_odt := '"' + __output_odt + '"'
+    __output_odt := '"' + __output_odt + '"'
     _oo_line := '"' + _oo_line + '"'
 #endif
 
@@ -193,7 +192,7 @@ _cmd := ""
     if from_params
         _cmd += _oo_line + " " + __output_odt 
     else
-        _cmd += "c:\knowhowERP\util\start.exe '" + __output_odt + "'"
+        _cmd += "c:\knowhowERP\util\start.exe /m "  __output_odt 
     endif
 
 #endif

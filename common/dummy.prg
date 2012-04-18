@@ -123,28 +123,6 @@ return lVrati
  */
  
 function O_Log()
-*{
-local cPom
-local cLogF
-
-cPom:=ToUnix(KUMPATH+SLASH+"SQL")
-DirMak2(cPom)
-
-cLogF:=cPom+SLASH+replicate("0",8)
-
-OKreSQLPar(cPom)
-
-public gSQLSite:=field->_SITE_
-public gSQLUser:=1
-use
-
-//postavi site
-Gw("SET SITE "+Str(gSQLSite))
-Gw("SET TODATABASE OFF")
-Gw("SET MODUL "+gModul)
-
-AImportLog()
-
 return
 
 

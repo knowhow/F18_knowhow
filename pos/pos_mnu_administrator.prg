@@ -25,8 +25,6 @@ private opc := {}
 private opcexe:={}
 private Izbor:=1
 
-ImportDSql()
-
 AADD(opc, "1. izvjestaji                       ")
 AADD(opcexe, {|| pos_izvjestaji() })
 AADD(opc, "2. pregled racuna")   

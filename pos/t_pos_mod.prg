@@ -228,12 +228,10 @@ set_roba_global_vars()
 
 // gPrevIdPos - predhodna vrijednost gIdPos
 public gPrevIdPos:="  "
-
 public gOcitBarcod:=.f.
 public gSmijemRaditi:='D'
 public gSamoProdaja:='N'
 public gZauzetSam:='N'
-
 // sifra radnika
 public gIdRadnik        
 // prezime i ime korisnika (iz OSOB)

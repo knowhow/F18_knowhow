@@ -46,8 +46,6 @@ set_a_dbf_temp("fin_bbklas"      , "BBKLAS"     ,       F_IOS       )
 set_a_dbf_temp("fin_ios"         , "IOS"        ,       F_BBKLAS    )
 set_a_dbf_temp("fin_ostav"       , "OSTAV"      ,       F_OSTAV     )
 set_a_dbf_temp("fin_osuban"      , "OSUBAN"     ,       F_OSUBAN    )
-set_a_dbf_temp("temp12"         , "TEMP12"      ,       F_TEMP12    )
-set_a_dbf_temp("temp60"         , "TEMP60"      ,       F_TEMP60    )
 set_a_dbf_temp("vksg"           , "VKSG"        ,       F_VKSG      )
 
 return

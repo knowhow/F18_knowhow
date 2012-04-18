@@ -120,7 +120,7 @@ return _ret
 // ---------------------------------------------------------
 // kreiranje tmp tabela
 // ---------------------------------------------------------
-static function _cre_tmp_tables()
+static function _cre_tmp_tables( force )
 local _dbf
 local _tmp1, _tmp2
 
@@ -133,20 +133,26 @@ AADD( _dbf , { "MARKER"   , "C" ,  1 , 0 } )
 _tmp1 := my_home() + "temp12.dbf"
 _tmp2 := my_home() + "temp60.dbf"
 
-if !FILE( _tmp1 )
+if force .or. !FILE( _tmp1 )
     DbCreate( _tmp1, _dbf )
 ENDIF
 
-if !FILE( _tmp2 )
+if force .or. !FILE( _tmp2 )
     DbCreate( _tmp2, _dbf )
 ENDIF
 
 // otvori tabele
 select ( F_TMP_1 )
-my_use_temp( "TEMP12", _tmp1, .f., .f. )
+if used()
+    use
+endif
+my_use_temp( "TEMP12", _tmp1, .f., .t. )
 
 select ( F_TMP_2 )
-my_use_temp( "TEMP60", _tmp2, .f., .f. )
+if used()
+    use
+endif
+my_use_temp( "TEMP60", _tmp2, .f., .t. )
 
 return
 
@@ -159,8 +165,8 @@ function kompenzacija()
 local _is_gen := .f.
 local _vars := hb_hash()
 local _i, _n
-local _row := MAXCOLS() - 4
-local _col := MAXCOLS() - 3
+local _row := MAXROWS() - 10
+local _col := MAXCOLS() - 6
 local _usl_kto, _usl_kto2
 
 picBHD := FormPicL(gPicBHD,16)
@@ -187,7 +193,7 @@ else
 endif
 
 // kreiraj temp tabele za kompenzacije
-_cre_tmp_tables()
+_cre_tmp_tables( _is_gen )
 
 // generisi stavke za kompenzaciju
 if _is_gen 
@@ -208,14 +214,15 @@ next
 
 Box(, _row, _col )
 
-    @ m_x, m_y + 20 SAY ' KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI" '
-    @ m_x + _row - 4, m_y + 1 SAY REPLICATE( "Í", 77 )
-    @ m_x + _row - 3, m_y + 1 SAY "<K> - izaberi/ukini racun za kompenzaciju"
-    @ m_x + _row - 2, m_y + 1 SAY "<CTRL>+<P> - stampanje kompenzacije               <T> - promijeni tabelu"
-    @ m_x + _row - 1, m_y + 1 SAY "<CTRL>+<N> - nova,   <CTRL>+<T> - brisanje,   <ENTER> - ispravka stavke "
+    @ m_x, m_y + 30 SAY ' KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI" '
 
-    for _n := 1 to 17
-        @ m_x + _n, m_y + 39 SAY "º"
+    @ m_x + _row - 4, m_y + 1 SAY REPLICATE( "=", _col )
+    @ m_x + _row - 3, m_y + 1 SAY "  <K> izaberi/ukini racun za kompenzaciju"
+    @ m_x + _row - 2, m_y + 1 SAY "<c+P> stampanje kompenzacije                  <T> promijeni tabelu"
+    @ m_x + _row - 1, m_y + 1 SAY "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
+
+    for _n := 1 to 25
+        @ m_x + _n, m_y + 68 SAY "|"
     next
 
     select temp60
@@ -223,17 +230,17 @@ Box(, _row, _col )
     select temp12
     go top
 
-    m_y += 40
+    m_y += 69
 
     do while .t.
 
         if ALIAS() == "TEMP12"
-            m_y -= 40
+            m_y -= 69
         elseif ALIAS() == "TEMP60"
-            m_y += 40
+            m_y += 69
         endif
 
-        ObjDbedit( "komp1", 15, 38, {|| key_handler() }, "", if( ALIAS() == "TEMP12", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , ,1)
+        ObjDbedit( "komp1", _row - 7, 66, {|| key_handler() }, "", if( ALIAS() == "TEMP12", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , ,1)
 
         if LASTKEY() == K_ESC
             exit
@@ -327,6 +334,10 @@ if EMPTY( _usl_partn )
     endif
 endif
 
+Box(, 2, 50 )
+
+_cnt := 0
+
 do while .t.
 
     if !EOF() .and. field->idfirma == _id_firma .and. ;
@@ -353,7 +364,7 @@ do while .t.
     _id_partner := field->idpartner
     _prosao := .f.
         
-    do whilesc !EOF() .and. field->IdFirma == _id_firma .and. field->idpartner == _id_partner ;
+    do while !EOF() .and. field->IdFirma == _id_firma .and. field->idpartner == _id_partner ;
                         .and. ( field->idkonto == _usl_kto .or. field->idkonto == _usl_kto2 )
 
         _id_konto := field->idkonto
@@ -378,6 +389,9 @@ do while .t.
 
         endif 
 
+        @ m_x + 1, m_y + 2 SAY "konto: " + PADR( _id_konto, 7 ) + " partner: " + _id_partner
+        @ m_x + 2, m_y + 2 SAY "cnt:" + ALLTRIM( STR( ++ _cnt ) ) + " suban cnt: " + ALLTRIM( STR( RECNO() ) )
+
         _d_bhd := 0
         _p_bhd := 0
         _d_dem := 0
@@ -387,7 +401,7 @@ do while .t.
 
             _br_dok := field->brdok
 
-            do whilesc !EOF() .and. field->IdFirma == _id_firma .and. field->idpartner == _id_partner ;
+            do while !EOF() .and. field->IdFirma == _id_firma .and. field->idpartner == _id_partner ;
                                 .and. ( field->idkonto == _usl_kto .or. field->idkonto == _usl_kto2 ) .and. field->brdok == _br_dok
                 if field->d_p == "1"
                     _d_bhd += field->iznosbhd
@@ -514,6 +528,8 @@ do while .t.
 
 enddo
 
+BoxC()
+
 return
 
 
@@ -521,68 +537,88 @@ return
 // obrada dogadjaja tastature
 // ---------------------------------------------------------------
 static function key_handler()
-local nTr2, GetList:={}, nRec:=RECNO(), nX:=m_x, nY:=m_y, nVrati:=DE_CONT
+local nTr2
+local GetList:={}
+local nRec:=RECNO()
+local nX:=m_x
+local nY:=m_y
+local nVrati:=DE_CONT
 
-IF ! ( (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0 )
- do case
+if ! ( (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0 )
+    
+    do case
 
-   case Ch==ASC("K") .or. Ch==ASC("k")    
-     REPLACE marker WITH IF( marker=="K" , " " , "K" )
-     nVrati := DE_REFRESH
+        case Ch == ASC("K") .or. Ch==ASC("k")    
+            replace field->marker with if( field->marker == "K" , " " , "K" )
+            nVrati := DE_REFRESH
 
-   case Ch==K_CTRL_P   
-     StKompenz()
-     nVrati := DE_CONT
+        case Ch == K_CTRL_P   
+            StKompenz()
+            nVrati := DE_CONT
 
-   case Ch==K_CTRL_N 
-      GO BOTTOM
-      SKIP 1
-      Scatter()
-      Box(, 5, 70)
-        @ m_x+2, m_y+2 SAY "Br.racuna " GET _brdok
-        @ m_x+3, m_y+2 SAY "Iznos     " GET _iznosbhd
-        READ
-      BoxC()
-      IF LASTKEY() == K_ESC
-        GO (nRec)
-      ELSE
-        APPEND BLANK; Gather()
-        nVrati := DE_REFRESH
-      ENDIF
+        case Ch == K_CTRL_N 
+            
+            GO BOTTOM
+            SKIP 1
+            Scatter()
+            Box(, 5, 70)
+                @ m_x+2, m_y+2 SAY "Br.racuna " GET _brdok
+                @ m_x+3, m_y+2 SAY "Iznos     " GET _iznosbhd
+                READ
+            BoxC()
+            IF LASTKEY() == K_ESC
+                GO (nRec)
+            ELSE
+                APPEND BLANK
+                Gather()
+                nVrati := DE_REFRESH
+            ENDIF
 
-   case Ch==K_CTRL_T                        // brisanje stavke
-      if Pitanje("p01","Zelite izbrisati ovu stavku ?","D")=="D"
-        delete
-        nVrati := DE_REFRESH
-      endif
+        case Ch==K_CTRL_T                
+            
+            if Pitanje("p01","Zelite izbrisati ovu stavku ?","D")=="D"
+                delete
+                __dbPack()
+                nVrati := DE_REFRESH
+            endif
 
-   case Ch==K_ENTER                        
-      Scatter()
-      Box(,5,70)
-        @ m_x+2, m_y+2 SAY "Br.racuna " GET _brdok
-        @ m_x+3, m_y+2 SAY "Iznos     " GET _iznosbhd
-        READ
-      BoxC()
-      IF LASTKEY() == K_ESC
-        GO (nRec)
-      ELSE
-        Gather()
-        nVrati := DE_REFRESH
-      ENDIF
+        case Ch == K_ENTER                        
+            
+            Scatter()
 
-   case Ch==ASC("T") .or. Ch==ASC("t")      // prebacivanje na drugu tabelu
-      IF ALIAS()=="TEMP12"
-        SELECT TEMP60; GO TOP
-      ELSEIF ALIAS()=="TEMP60"
-        SELECT TEMP12
-    GO TOP
-      ENDIF
-     nVrati := DE_ABORT
+            Box(,5,70)
+                @ m_x+2, m_y+2 SAY "Br.racuna " GET _brdok
+                @ m_x+3, m_y+2 SAY "Iznos     " GET _iznosbhd
+                READ
+            BoxC()
 
- endcase
-ENDIF
-m_x:=nX
-m_y:=nY
+            IF LASTKEY() == K_ESC
+                GO (nRec)
+            ELSE
+                Gather()
+                nVrati := DE_REFRESH
+            ENDIF
+
+        case Ch == ASC("T") .or. Ch == ASC("t")      
+
+            // prebacivanje na drugu tabelu
+            IF ALIAS()=="TEMP12"
+                SELECT TEMP60
+                GO TOP
+            ELSEIF ALIAS()=="TEMP60"
+                SELECT TEMP12
+                GO TOP
+            ENDIF
+
+            nVrati := DE_ABORT
+
+    endcase
+
+endif
+
+m_x := nX
+m_y := nY
+
 return nVrati
 
 

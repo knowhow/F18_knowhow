@@ -40,16 +40,6 @@ private Izbor:=1
 AADD(opc, "1. generacija dokumenta pocetnog stanja     ")
 AADD(opcexe, {|| p_poc_stanje() })
 
-if gModul=="HOPS" .and. gPosSirovine=="D"
-	AADD(Opc,"6. generisi utrosak sirovina")
-	AADD(opcexe,{|| GenUtrSir()})
-endif
-
-if gPosKalk=="D"
-	AADD(Opc, "K. prenos sifrarnika iz KALK->TOPS")
-	AADD(opcexe, {|| pos_sifre_katops() })
-endif
-
 Izbor:=1
 Menu_SC("gdok")
 return

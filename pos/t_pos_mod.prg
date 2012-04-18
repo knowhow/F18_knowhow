@@ -185,13 +185,6 @@ method srv()
 
 ? "Pokrecem POS: Applikacion server"
 
-if (mpar37("/IMPROBA",goModul))
-    if LEFT(self:cP5,3)=="/S="
-        AzurSifIzFmk(nil, .t., SUBSTR(self:cP5,4))
-        goModul:quit()
-    endif
-endif
-
 if (mpar37("/REAL2KALK", goModul))
 
     if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")

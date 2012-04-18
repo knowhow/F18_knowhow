@@ -320,69 +320,6 @@ return cVrati
 
 
 
-/*! \fn Zakljuci()
- *  \brief Zakljuci radnika
- */
- 
-function Zakljuci()
-*{
-LOCAL lFlag, cRacStr, cRed
-PRIVATE oBrowse, nOtv:=0, nZaklj:=0
-
-
-DBZakljuci()
-
-IF ZAKSM->(RecCount2()) > 0
-  SELECT ZAKSM
-  //Browsanje tabele  
-  GO TOP
-  ImeKol:={ { "Sifra",         {|| IdRadnik}},;
-            { "Prezime i ime", {|| NazRadn }},;
-            { "Zakljuceno",    {|| Zaklj }},;
-            { "Otvoreno"  ,    {|| Otv   }} ;
-          }
-  Kol:={1,2,3,4}
-  ObjDBedit ( , 10, 77, {|Ch| ZakljRadnik (Ch) }, ;
-              "  ZAKLJUCENJE RADNIKA  ", "", nil, ;
-              "<Z> - Zakljuci")
-  IF ZAKSM->(RecCount2()) > 0
-    // zakljucen je samo dio radnika - vrati se nazad
-    close all; return 0
-  ENDIF
-  // svi radnici su zakljuceni, idi na zakljucenje kase
-  IF Pitanje (, "Svi radnici su zakljuceni! Stampati pazar smjene?", "D")=="N"
-    close all; return 0
-  EndIF
-ELSE
-  IF Pitanje ("zsm", "Nema nezakljucenih radnika! Stampati pazar smjene? (D/N)", "D")=="N"
-    close all; return 0
-  ENDIF
-ENDIF
-
-Close All
-IF !realizacija_kase(.T.)
-  MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
-  close all; return 0
-EndIF
-
-if gModul=="HOPS"
-  // generisi utrosak sirovina za smjenu
-  GenUtrSir (gDatum, gDatum, gSmjena)
-endif
-
-// knjiga sanka ili trgovacka knjiga se mogu dobiti na izvjestajima
-IF gStamStaPun=="D" .and. gVrstaRS=="A"
-  pos_stanje_artikala(gDatum, gSmjena)
-EndIF
-
-// prebacivanje kumulativnih datoteka na server
-PrebNaServer()
-CLOSE ALL
-
-NovaSmjGas ()
-return (-1)
-*}
-
 
 /*! \fn ProgKeyboard()
 *

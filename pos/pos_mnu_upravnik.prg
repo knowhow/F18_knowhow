@@ -56,13 +56,6 @@ AADD(opcexe, {|| pos_menu_dokumenti()})
 AADD(opc, "R. robno-materijalno poslovanje")
 AADD(opcexe, {|| pos_menu_robmat() })
 
-if (gVSmjene=="D")
-	AADD(opc, "Z. zakljuci radnika")
-	AADD(opcexe, {|| Zakljuci() })
-	AADD(opc, "X. otvori narednu smjenu")
-	AADD(opcexe, {|| OtvoriSmjenu() })
-endif
-
 AADD(opc, "--------------")
 AADD(opcexe, nil)
 AADD(opc, "S. sifrarnici")
@@ -107,10 +100,6 @@ private Izbor:=1
 
 AADD(opc, "1. izvjestaji             ")
 AADD(opcexe,{|| pos_izvjestaji()})
-AADD(opc, "2. zakljuci radnika")
-AADD(opcexe,{|| Zakljuci()})
-AADD(opc, "3. otvori narednu smjenu")
-AADD(opcexe,{|| OtvoriSmjenu()})
 AADD(opc, "--------------------------")
 AADD(opcexe,nil)
 AADD(opc, "S. sifrarnici")
@@ -151,25 +140,17 @@ Izbor:=1
 
 AADD(opc, "Z. zaduzenje                       ")
 AADD(opcexe, {|| Zaduzenje() })
-
-if !IsPlanika()
-	// planika ne koristi ove stavke
-	AADD(opc, "I. inventura")
-	AADD(opcexe, {|| InventNivel(.t.) })
-	AADD(opc, "N. nivelacija")
-	AADD(opcexe, {|| InventNivel(.f.)})
-	AADD(opc, "P. predispozicija")
-	AADD(opcexe, {|| Zaduzenje("PD") })
-endif
-
-if gModul=="HOPS"
-	AADD(opc, "O. otpis")
-	AADD(opcexe, {|| Zaduzenje(VD_OTP) })
-endif
+AADD(opc, "I. inventura")
+AADD(opcexe, {|| InventNivel(.t.) })
+AADD(opc, "N. nivelacija")
+AADD(opcexe, {|| InventNivel(.f.)})
+AADD(opc, "P. predispozicija")
+AADD(opcexe, {|| Zaduzenje("PD") })
 AADD(opc, "R. reklamacija-povrat u magacin")
 AADD(opcexe, {|| Zaduzenje(VD_REK) })
 
 Menu_SC("pzdo")
+
 return
 
 

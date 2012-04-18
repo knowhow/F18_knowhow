@@ -311,8 +311,6 @@ gSmjena := SavegSmjena
 
 CLOSE ALL
 
-PrebNaServer()
-
 return .t.
 *}
 

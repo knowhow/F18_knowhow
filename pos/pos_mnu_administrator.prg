@@ -50,20 +50,6 @@ AADD(opcexe, {|| PosDiskete() })
 AADD(opc, "A. administracija pos-a")
 AADD(opcexe, {|| pos_admin_menu() })
 
-if gVSmjene=="D"
-	AADD(opc, "Z. zakljuci radnika")
-	AADD(opcexe, {|| Zakljuci() })
-	AADD(opc, "O. otvori narednu smjenu")
-	AADD(opcexe, {|| OdrediSmjenu() })
-endif
-
-if gVrstaRS == "S"
-	AADD(opc, "X. preuzmi podatke sa kasa")
-	AADD(opcexe, {|| PrebSaKase() })
-	AADD(opc, "Y. ponovo prenesi sa kasa ")
-	AADD(opcexe, {|| PobPaPren() })
-endif
-
 Menu_SC("adm")
 
 

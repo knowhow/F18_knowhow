@@ -192,7 +192,11 @@ do case
                     // daj mi iz globalnih varijabli                    
                     _rec := get_dbf_global_memvars()
 
-                    update_rec_server_and_dbf( ALIAS(), _rec )
+					my_use_semaphore_off()
+					sql_table_update( nil, "BEGIN" )
+                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+					sql_table_update( nil, "END" )
+					my_use_semaphore_on()
 
                     nVrati:=DE_REFRESH
 
@@ -217,8 +221,15 @@ do case
                     _korsif:=CryptSC(_korsif)
                     // daj mi iz globalnih varijabli                    
                     _rec := get_dbf_global_memvars()
-                    update_rec_server_and_dbf( ALIAS(), _rec )
+					
+					my_use_semaphore_off()
+					sql_table_update( nil, "BEGIN" )
+                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+					sql_table_update( nil, "END" )
+					my_use_semaphore_on()
+
                     nVrati:=DE_REFRESH
+
                 endif
             endif
         endif
@@ -232,7 +243,13 @@ do case
                 if Pitanje(,"Izbrisati korisnika "+ trim(naz) +":"+CryptSC(korsif)+" D/N ?","N")=="D"
                     SELECT osob
                     _rec := dbf_get_rec()
-                    delete_rec_server_and_dbf( ALIAS(), _rec )
+                    
+					my_use_semaphore_off()
+					sql_table_update( nil, "BEGIN" )
+                    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+					sql_table_update( nil, "END" )
+					my_use_semaphore_on()
+
                     nVrati:=DE_REFRESH
                 endif
             endif

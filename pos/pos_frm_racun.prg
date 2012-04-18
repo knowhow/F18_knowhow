@@ -296,37 +296,23 @@ endif
 
 
 if cLevel<="0"   
+
     // samo sistem administrator
     if ch==K_F1
-            MSgBeep("F5 - promjeni id racuna na X#"+"F2 - promjena broja za X pmjesto#"+"Ctrl-F9  - brisi fizicki#"+"Shift-F9 - brisi fizicki period")
-            return DE_CONT
+       	MSgBeep("Ctrl-F9  - brisi fizicki#"+"Shift-F9 - brisi fizicki period")
+     	return DE_CONT
     endif
+
     if ch==K_CTRL_F9
-            //if SigmaSif("BRISRN")
-            return BrisiRacun()
-        //endif
+      	return BrisiRacun()
     endif
-    if ch==K_F2
-        //if SigmaSif("PRBRRN")
-                return PromBrRN()
-        //endif
-    endif
+
     if ch==K_SH_F9
-        //if SigmaSif("BRSVE")
-                return  BrisiRNVP()
-        //endif
+    	return  BrisiRNVP()
     endif
-    if ch==K_F5
-        //if SigmaSif("STELA")
-            return PromIdPM()
-        //endif
-    endif
-    if ch==K_CTRL_F5
-        //if SigmaSif("STELA")
-                return PromIdPMVP()
-        //endif
-    endif
-endif // KLEVEL - vlasnik
+
+endif 
+
 return (DE_CONT)
 
 
@@ -359,39 +345,42 @@ return ( _iznos_rn )
  */
 function BrisiRacun()
 local _rec
+local _id_vd, _id_pos, _dat_dok, _br_dok
 
 if Pitanje(,"Potpuno - fizicki izbrisati racun?","N")=="N"
     return DE_CONT
 endif
 
 select pos_doks
-cBrojR:=pos_doks->BrDok
-cIdPos:=pos_doks->IdPos
-cDatum:=dtos(pos_doks->datum)
+_br_dok := field->BrDok
+_id_pos := field->IdPos
+_dat_dok := field->datum
+_id_vd := field->idvd
+
+_rec := dbf_get_rec()
 
 if empty(dMinDatProm)
-    dMinDatProm:=pos_doks->datum
+    dMinDatProm := field->datum
 else
-    dMinDatProm:=min(dMinDatProm,pos_doks->datum)
+    dMinDatProm := min( dMinDatProm, field->datum )
 endif
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+
 
 SELECT POS
 set order to tag "1"
-Seek cIdPos+VD_RN+cDatum+cBrojR
+seek _id_pos + VD_RN + DTOS(_dat_dok) + _br_dok
 
-// DOKS
-do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+VD_RN+cDatum+cBrojR)
-    skip
-    nTTR:=recno()
-    skip -1
-    _rec := dbf_get_rec()
-    delete_rec_server_and_dbf( ALIAS(), _rec )
-    go nTTR
-enddo
+if FOUND()
+    delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+endif
 
-select pos_doks
-_rec := dbf_get_rec()
-delete_rec_server_and_dbf( ALIAS(), _rec )      
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return (DE_REFRESH)
 

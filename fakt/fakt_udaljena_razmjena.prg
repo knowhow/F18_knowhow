@@ -172,9 +172,10 @@ local _dat_do := fetch_metric( "fakt_export_datum_do", my_user(), DATE() )
 local _rj := fetch_metric( "fakt_export_lista_rj", my_user(), PADR( "10;", 200 ) )
 local _vrste_dok := fetch_metric( "fakt_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
 local _exp_sif := fetch_metric( "fakt_export_sifrarnik", my_user(), "D" )
+local _prim_sif := fetch_metric( "fakt_export_duzina_primarne_sifre", my_user(), 0 )
 local _x := 1
 
-Box(, 9, 70 )
+Box(, 11, 70 )
 
     @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
 
@@ -194,6 +195,10 @@ Box(, 9, 70 )
     @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedece rj:" GET _rj PICT "@S30"
 
     ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Svoditi na primarnu sifru (duzina primarne sifre):" GET _prim_sif PICT "9"
+    
+    ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
@@ -212,12 +217,14 @@ if LastKey() <> K_ESC
     set_metric( "fakt_export_lista_rj", my_user(), _rj )
     set_metric( "fakt_export_vrste_dokumenata", my_user(), _vrste_dok )
     set_metric( "fakt_export_sifrarnik", my_user(), _exp_sif )
+    set_metric( "fakt_export_duzina_primarne_sifre", my_user(), _prim_sif )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
     vars["rj"] := _rj
     vars["vrste_dok"] := _vrste_dok
     vars["export_sif"] := _exp_sif
+    vars["prim_sif"] := _prim_sif
     
 endif
 
@@ -315,6 +322,7 @@ local _dat_od, _dat_do, _rj, _vrste_dok, _export_sif
 local _usl_rj
 local _id_partn
 local _id_roba
+local _prim_sif
 
 // uslovi za export ce biti...
 _dat_od := vars["datum_od"]
@@ -322,6 +330,7 @@ _dat_do := vars["datum_do"]
 _rj := ALLTRIM( vars["rj"] )
 _vrste_dok := ALLTRIM( vars["vrste_dok"] )
 _export_sif := ALLTRIM( vars["export_sif"] )
+_prim_sif := vars["prim_sif"]
  
 // kreiraj tabele exporta
 _cre_exp_tbls( __export_dbf_path )
@@ -400,20 +409,52 @@ do while !EOF()
     go top
     seek _id_firma + _id_vd + _br_dok
 
+    _r_br := 0
+
     do while !EOF() .and. field->idfirma == _id_firma .and. field->idtipdok == _id_vd .and. field->brdok == _br_dok
 
         // uzmi robu...
         _id_roba := field->idroba
 
+        // svodi na primarnu sifru
+        if _prim_sif > 0
+            _id_roba := PADR( _id_roba, _prim_sif )
+        endif
+
         // upisi zapis u tabelu e_fakt
         _app_rec := dbf_get_rec()
+        
+        if _prim_sif > 0 
+            _app_rec["rbr"] := PADL( ALLTRIM( STR( ++ _r_br ) ), 3 )
+            _app_rec["idroba"] := _id_roba
+        endif
+
+        // prvo potrazi da li postoji ovaj zapis...
         select e_fakt
-        append blank
-        dbf_update_rec( _app_rec )
+        
+        if _prim_sif > 0
+
+            go top
+            seek _id_firma + _id_vd + _br_dok + _id_roba
+        
+            if !FOUND()
+                append blank
+                dbf_update_rec( _app_rec )
+            else
+                replace field->kolicina with field->kolicina + _app_rec["kolicina"]
+            endif
+
+        else
+
+            append blank
+            dbf_update_rec( _app_rec )
+
+        endif
 
         // uzmi sada robu sa ove stavke pa je ubaci u e_roba
         select roba
         hseek _id_roba
+
         if FOUND() .and. _export_sif == "D"
             _app_rec := dbf_get_rec()        
             select e_roba
@@ -855,7 +896,7 @@ index on ( idfirma + idtipdok + brdok ) tag "1"
 _dbf_name := "e_fakt"
 select ( F_TMP_E_FAKT )
 my_use_temp( "E_FAKT", use_path + _dbf_name, .f., .t. )
-index on ( idfirma + idtipdok + brdok ) tag "1"
+index on ( idfirma + idtipdok + brdok + idroba ) tag "1"
 
 _dbf_name := "e_doks"
 select ( F_TMP_E_DOKS )

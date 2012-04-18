@@ -1,3 +1,7 @@
+1.0.8 2012-04-18, vsasa
+
+  - close all, start.exe 
+
 1.0.6 2012-04-17, vsasa
 
   - odt štampa dokumenta, korekcije [#26262](http://redmine.bring.out.ba/issues/26262)

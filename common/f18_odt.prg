@@ -212,6 +212,8 @@ CLEAR SCREEN
 ? "Prikaz odt fajla u toku..."
 
 // pokreni komandu
+log_write(_cmd)
+
 _error := hb_run( _cmd )
 
 RESTORE SCREEN FROM _screen

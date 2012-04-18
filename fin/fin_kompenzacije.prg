@@ -175,6 +175,16 @@ picDEM := FormPicL(gPicDEM,12)
 // otvori tabele
 _o_tables()
 
+// inicijalizuj hash matricu
+_vars["konto"] := ""
+_vars["konto2"] := ""
+_vars["partn"] := ""
+_vars["dat_od"] := DATE()
+_vars["dat_do"] := DATE()
+_vars["po_vezi"] := "D"
+_vars["prelom"] := "N"
+_vars["firma"] := gFirma
+
 if Pitanje(, "Izgenerisati stavke za kompenzaciju?", "N" ) == "D"
 
     _is_gen := .t.
@@ -183,13 +193,15 @@ if Pitanje(, "Izgenerisati stavke za kompenzaciju?", "N" ) == "D"
     if !_get_vars( @_vars )
         return    
     endif
-    
+
     _usl_kto := _vars["konto"]
     _usl_kto2 := _vars["konto2"]
 
 else
-    _usl_kto := PADR("", 7)
+
+    _usl_kto := PADR( "", 7 )
     _usl_kto2 := _usl_kto
+
 endif
 
 // kreiraj temp tabele za kompenzacije
@@ -201,14 +213,14 @@ if _is_gen
 endif
 
 // browsanje
-ImeKol:={ ;
-          {"Br.racuna", {|| brdok    }, "brdok"    } ,;
-          {"Iznos",     {|| iznosbhd }, "iznosbhd" } ,;
-          {"Marker",    {|| IF(marker=="K","ÛÛKÛÛÛ","      ") }, "marker" } ;
-        }
+ImeKol := { ;
+            {"Br.racuna", {|| brdok    }, "brdok"    } ,;
+            {"Iznos",     {|| iznosbhd }, "iznosbhd" } ,;
+            {"Marker",    {|| marker }, "marker" } ;
+          }
 
-Kol:={}
-for _i := 1 to LEN(ImeKol)
+Kol := {}
+for _i := 1 to LEN( ImeKol )
     AADD( Kol, _i )  
 next
 
@@ -240,7 +252,7 @@ Box(, _row, _col )
             m_y += 69
         endif
 
-        ObjDbedit( "komp1", _row - 7, 66, {|| key_handler() }, "", if( ALIAS() == "TEMP12", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , ,1)
+        ObjDbedit( "komp1", _row - 7, 66, {|| key_handler( _vars ) }, "", if( ALIAS() == "TEMP12", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , ,1)
 
         if LASTKEY() == K_ESC
             exit
@@ -297,11 +309,13 @@ if !EMPTY( _dat_do )
     _filter += " .and. DATDOK <= " + cm2str( _dat_do )
 endif    
 
+msgo( "setujem filter... " )
 if _filter == ".t."
     set filter to
 else
     set filter to &(_filter)
 endif
+msgc()
 
 seek _id_firma + _usl_kto + _usl_partn 
    
@@ -390,7 +404,6 @@ do while .t.
         endif 
 
         @ m_x + 1, m_y + 2 SAY "konto: " + PADR( _id_konto, 7 ) + " partner: " + _id_partner
-        @ m_x + 2, m_y + 2 SAY "cnt:" + ALLTRIM( STR( ++ _cnt ) ) + " suban cnt: " + ALLTRIM( STR( RECNO() ) )
 
         _d_bhd := 0
         _p_bhd := 0
@@ -413,12 +426,12 @@ do while .t.
 
                 skip
 
-             enddo
+            enddo
 
-             if _prelom == "D"
-                 Prelomi( @_d_bhd, @_p_bhd )
-                 Prelomi( @_d_dem, @_p_dem )
-             endif
+            if _prelom == "D"
+                Prelomi( @_d_bhd, @_p_bhd )
+                Prelomi( @_d_dem, @_p_dem )
+            endif
         
         else
 
@@ -432,6 +445,8 @@ do while .t.
 
         endif
            
+        @ m_x + 2, m_y + 2 SAY "cnt:" + ALLTRIM( STR( ++ _cnt ) ) + " suban cnt: " + ALLTRIM( STR( RECNO() ) )
+        
         if _otv_st == "9"
              _dug_bhd += _d_bhd
              _pot_bhd += _p_bhd
@@ -536,7 +551,7 @@ return
 // ---------------------------------------------------------------
 // obrada dogadjaja tastature
 // ---------------------------------------------------------------
-static function key_handler()
+static function key_handler( vars )
 local nTr2
 local GetList:={}
 local nRec:=RECNO()
@@ -549,11 +564,12 @@ if ! ( (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0 )
     do case
 
         case Ch == ASC("K") .or. Ch==ASC("k")    
+
             replace field->marker with if( field->marker == "K" , " " , "K" )
             nVrati := DE_REFRESH
 
         case Ch == K_CTRL_P   
-            StKompenz()
+            print_kompen( vars )
             nVrati := DE_CONT
 
         case Ch == K_CTRL_N 
@@ -623,329 +639,292 @@ return nVrati
 
 
 // stampa kompenzacije
-static function StKompenz()
+static function print_kompen( vars )
+local _id_pov := SPACE(6)
+local _id_partn := SPACE(6)
+local _br_komp := SPACE(10)
+local _x := 1
+local _dat_komp := DATE()
+local _rok_pl := 7
+local _valuta := "D"
+local _saldo
+local _ret := .t.
+local _filter := "komp*.odt"
+local _template := ""
+local _templates_path := F18_TEMPLATE_LOCATION
+local _xml_file := my_home() + "data.xml"
 
-LOCAL a1:={}, a2:={}, GetList:={}
- LOCAL cIdPov:=SPACE(6)
- LOCAL nLM:=5, nLin, nPocetak, i:=0, j:=0, k:=0
+// uzmi partnera 
+if !EMPTY( vars["partn"] )
+    _id_partn := vars["partn"]
+endif
 
- nUkup12:=0; nUkup60:=0; cBrKomp:=SPACE(10); nSaldo:=0; nRokPl:=7
- cVal:="D"; dKomp:=DATE()
+_id_pov := fetch_metric("fin_kompen_id_povjerioca", my_home(), _id_pov )
+_br_komp := fetch_metric("fin_kompen_broj", my_home(), _br_komp )
+_rok_pl := fetch_metric("fin_kompen_rok_placanja", my_home(), _rok_pl )
+_valuta := fetch_metric("fin_kompen_valuta", my_home(), _valuta )
 
- PushWA()
+Box(, 10, 50 )
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Datum kompenzacije: " GET _dat_komp
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Rok placanja (dana): " GET _rok_pl VALID _rok_pl >= 0 PICT "999"
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Valuta kompenzacije (D/P): " GET _valuta  valid _valuta $ "DP"  pict "!@"
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Broj kompenzacije: " GET _br_komp
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Sifra (ID) povjerioca: " GET _id_pov VALID P_Firma(@_id_pov) PICT "@!"
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "   Sifra (ID) duznika: " GET _id_partn VALID P_Firma(@_id_partn) PICT "@!"
+    READ
+BoxC()
 
- O_PARAMS
- Private cSection:="4",cHistory:=" ",aHistory:={}
- RPar("ip",@cIdPov)
- RPar("bk",@cBrKomp)
+if LastKey() == K_ESC
+    _ret := .f.
+    return _ret
+endif
 
- Box(,8,50)
-   @ m_x+2, m_y+2 SAY "Datum kompenzacije: " GET dKomp
-   @ m_x+3, m_y+2 SAY "Rok placanja (dana): " GET nRokPl VALID nRokPl>=0 PICT "999"
-   @ m_x+4, m_Y+2 SAY "Valuta kompenzacije (D/P): " GET cVal  valid cVal $ "DP"  pict "!@"
-   @ m_x+5, m_Y+2 SAY "Broj kompenzacije: " GET cBrKomp
-   @ m_x+6, m_Y+2 SAY "Sifra (ID) povjerioca: " GET cIdPov VALID P_Firma(@cIdPov) PICT "@!"
-   READ
- BoxC()
+// snimi parametre
+set_metric("fin_kompen_id_povjerioca", my_home(), _id_pov )
+set_metric("fin_kompen_broj", my_home(), _br_komp )
+set_metric("fin_kompen_rok_placanja", my_home(), _rok_pl )
+set_metric("fin_kompen_valuta", my_home(), _valuta )
 
- WPar("ip",cIdPov)
- WPar("bk",cBrKomp)
- select params
- use
+// dodaj u vars hash matricu jos stavki
+vars["id_pov"] := _id_pov
+vars["komp_broj"] := _br_komp
+vars["rok_pl"] := _rok_pl
+vars["valuta"] := _valuta
+vars["datum"] := _dat_komp
 
-  START PRINT RET
-  ?
-  P_10CPI
+// ako nema partnera u matrici, setuj ga !
+if EMPTY( vars["partn"] )
+    vars["partn"] := _id_partn
+endif
 
-  SELECT (F_PARTN)
-  HSEEK cIdPov
-  aPov1:=ALLTRIM(naz)
-  aPov2:=ALLTRIM(mjesto)
-  aPov3:=ALLTRIM(ziror)
-  aPov4:=ALLTRIM(dziror)
-  aPov5:=IzSifK( "PARTN" , "REGB" , id , .f. )
-  aPov6:=IzSifK( "PARTN" , "PORB" , id , .f. )
-  aPov7:=ALLTRIM(telefon)
-  aPov8:=ALLTRIM(adresa)
-  aPov10:=ALLTRIM(fax)
+// generisi xml fajl
+if !_gen_xml( vars, _xml_file )
+    _ret := .f.
+    return _ret
+endif
 
-  if cVal=="P"
-    aPov9:=ALLTRIM(IzFmkIni("KOMPEN","RacunPomValute","",KUMPATH))
-  else
-        aPov9:=aPov3
-  endif
+// generisi report i prikazi kompenzaciju
+// -------------------
+// daj mi listu template-a
+if get_file_list_array( _templates_path, _filter, @_template, .t. ) == 0
+    return
+endif
 
-  HSEEK qqPartner
-  aDuz5:=IzSifK( "PARTN" , "REGB" , id , .f. )
-  aDuz6:=IzSifK( "PARTN" , "PORB" , id , .f. )
-  aDuz7:=ALLTRIM(telefon)
-  aDuz8:=ALLTRIM(adresa)
-  aDuz10:=ALLTRIM(fax)
-
-  if empty(gFKomp)
-    for i:=1 to gnTMarg; QOUT(); next
-  else
-    nLin:=BrLinFajla(PRIVPATH+TRIM(gFKomp))
-    nPocetak:=0; nPreskociRedova:=0
-    FOR i:=1 TO nLin
-      aPom:=SljedLin(PRIVPATH+TRIM(gFKomp),nPocetak)
-      nPocetak:=aPom[2]
-      cLin:=aPom[1]
-      IF nPreskociRedova>0
-        --nPreskociRedova
-        LOOP
-      ENDIF
-      IF RIGHT(cLin,4)=="#T1#"
-        nLM:=LEN(cLin)-4
-
-        SELECT TEMP12; GO TOP; SELECT TEMP60; GO TOP
-
-        lTemp12:=.t.; lTemp60:=.t.; nBrSt:=0
-
-        SkipT12i60()
-
-        DO WHILE lTemp12 .or. lTemp60
-
-          ++nBrSt
-
-          IF lTemp60
-            ? SPACE(nLM) + "³"+STR(nBrSt,4)+".³"+brdok+"³"+STR(iznosbhd,17,2)
-            nUkup60+=iznosbhd
-          ELSE
-            ? SPACE(nLM) + "³     ³"+SPACE(10)+"³"+SPACE(17)
-          ENDIF
-
-          SELECT TEMP12
-          IF lTemp12
-            ?? "³"+STR(nBrSt,4)+".³"+brdok+"³"+STR(iznosbhd,17,2)+"³"
-            nUkup12+=iznosbhd
-          ELSE
-            ?? "³     ³"+SPACE(10)+"³"+SPACE(17)+"³"
-          ENDIF
-          SKIP 1
-
-          SELECT TEMP60; SKIP 1
-          SkipT12i60()
-
-        ENDDO
-
-        FOR j:=nBrSt+1 TO 11
-          ? SPACE(nLM) + "³     ³"+SPACE(10)+"³"+SPACE(17)+"³     ³"+SPACE(10)+"³"+SPACE(17)+"³"
-        NEXT
-        nSaldo:=ABS(nUkup12-nUkup60)
-
-      ELSE
-        ?
-        DO WHILE .t.
-          nPom:=AT("#", cLin)
-      nPom2:=AT("#%", cLin)
-      if nPom == nPom2 
-        nPom := 0
-      endif
-          IF nPom>0
-            cPom:=SUBSTR(cLin,nPom,4)
-            IF SUBSTR(cPom,2,2)=="LS"             // uslov za saldo
-              IF nSaldo==0 .or. nUkup60>nUkup12
-                nPreskociRedova := VAL(SUBSTR(cLin,nPom+4,2)) - 1
-                EXIT
-              ELSE     // nUkup60<nUkup12
-                cLin:=STUFF(cLin,nPom,7,"")
-                nPom:=AT("#",cLin)
-              ENDIF
-            ELSEIF SUBSTR(cPom,2,2)=="2S"             // uslov za saldo
-              IF nSaldo==0 .or. nUkup60<nUkup12
-                nPreskociRedova := VAL(SUBSTR(cLin,nPom+4,2)) - 1
-                EXIT
-              ELSE     // nUkup60>nUkup12
-                cLin:=STUFF(cLin,nPom,7,"")
-                nPom:=AT("#",cLin)
-              ENDIF
-            ENDIF
-          ENDIF
-          IF nPom>0
-            cPom:=SUBSTR(cLin,nPom,4)
-            aPom:=UzmiVar( SUBSTR(cPom,2,2) )
-            ?? LEFT(cLin,nPom-1)
-            cLin:=SUBSTR(cLin,nPom+4)
-            IF !EMPTY(aPom[1])
-              PrnKod_ON(aPom[1])
-            ENDIF
-            IF aPom[1]=="K"
-              cPom:=&(aPom[2])
-            ELSE
-              cPom:=&(aPom[2])
-              ?? cPom
-            ENDIF
-            IF !EMPTY(aPom[1])
-              PrnKod_OFF(aPom[1])
-            ENDIF
-          ELSE
-            ?? cLin
-            EXIT
-          ENDIF
-        ENDDO
-      ENDIF
-    NEXT
-  endif
-  FF
-  END PRINT
- PopWA()
-RETURN (NIL)
+// generisi i prikazi report
+if f18_odt_generate( _template, _xml_file )
+    f18_odt_print()
+endif
+     
+return _ret
 
 
+// --------------------------------------------------
+// generise xml fajl kompenzacije
+// --------------------------------------------------
+static function _gen_xml( vars, xml_file )
+local _ret := .t.
+local _id_pov, _br_komp, _rok_pl, _valuta
+local _dat_od, _dat_do, _partner
+local _temp_duz := .t.
+local _temp_pov := .t.
+local _br_st := 0
+local _ukupno_duz := 0
+local _ukupno_pov := 0
+local _broj_dok_duz, _broj_dok_pov
+local _iznos_duz, _iznos_pov
+local _dat_komp
 
-/*! \fn SkipT12i60()
- *  \brief 
- */
+_id_pov := vars["id_pov"]
+_br_komp := vars["komp_broj"]
+_rok_pl := vars["rok_pl"]
+_valuta := vars["valuta"]
+_partner := vars["partn"]
+_dat_od := vars["dat_od"]
+_dat_do := vars["dat_do"]
+_dat_komp := vars["datum"]
+
+// generisanje xml fajla
+// --------------------------------------------
+open_xml( xml_file )
+
+xml_head()
+
+xml_subnode("kompen", .f.)
+
+// povjerioc
+// ---------------------------------------------
+if !_fill_partn( _id_pov, "pov" )
+    return .f.
+endif
+
+// duznik
+// ---------------------------------------------
+if !_fill_partn( _partner, "duz" )
+    return .f.
+endif
+
+select temp12
+go top
+select temp60
+go top
+
+_skip_t_marker( @_temp_duz, @_temp_pov )
+
+xml_subnode("tabela", .f.)
+
+select temp60
+
+do while _temp_duz .or. _temp_pov
+
+    ++ _br_st 
+
+    xml_subnode( "item", .f. )
+    
+    _broj_stavke := ALLTRIM( STR( _br_st ) )
+         
+    _iznos_pov := 0
+    _iznos_duz := 0
+
+    _broj_dok_duz := ""
+    _broj_dok_pov := ""
+    
+    if _temp_pov
+        _broj_dok_pov := ALLTRIM( field->brdok )
+        _iznos_pov := field->iznosbhd
+    endif
+    
+    xml_node("rbr", _broj_stavke )
+    xml_node("dok_pov", to_xml_encoding( _broj_dok_pov ) )
+    xml_node("izn_pov", ALLTRIM( STR( _iznos_pov, 17, 2 ) ) )
+
+    select temp12
+
+    if _temp_duz
+        _broj_dok_duz := ALLTRIM( field->brdok )
+        _iznos_duz := field->iznosbhd
+    endif
+
+    xml_node("dok_duz", to_xml_encoding( _broj_dok_duz  ) )
+    xml_node("izn_duz", ALLTRIM( STR( _iznos_duz, 17, 2 ) ) )
+
+    xml_subnode( "item", .t. )
+
+    // totali
+    _ukupno_duz += _iznos_duz
+    _ukupno_pov += _iznos_pov
+
+    skip 1
+    
+    select temp60
+    skip 1
+
+    _skip_t_marker( @_temp_duz, @_temp_pov )
+
+enddo
  
-static function SkipT12i60()
+xml_subnode("tabela", .t.)
 
-LOCAL nArr:=SELECT()
+// ispisi jos totale i ostale podatke
+// ---------------------------------------------------------------------
+// totali
+xml_node("total_duz", ALLTRIM( STR( _ukupno_duz, 17, 2 ) ) )
+xml_node("total_pov", ALLTRIM( STR( _ukupno_pov, 17, 2 ) ) )
+xml_node("saldo", ALLTRIM( STR( ABS( _ukupno_duz - _ukupno_pov ), 17, 2 ) ) )
 
-  SELECT TEMP12
-  DO WHILE marker!="K" .and. !EOF(); SKIP 1; ENDDO
-  IF EOF(); lTemp12:=.f.; ENDIF
+// generalni podaci kompenzacije
+xml_node("broj", to_xml_encoding( ALLTRIM( _br_komp ) ) )
+xml_node("rok_pl", to_xml_encoding( ALLTRIM( STR( _rok_pl ) ) ) )
+xml_node("valuta", ALLTRIM( _valuta ) )
+xml_node("per_od", DTOC( _dat_od ) )
+xml_node("per_do", DTOC( _dat_do ) )
+xml_node("datum", DTOC( _dat_komp ) )
 
-  SELECT TEMP60
-  DO WHILE marker!="K" .and. !EOF(); SKIP 1; ENDDO
-  IF EOF(); lTemp60:=.f.; ENDIF
+xml_subnode( "kompen", .t. )
 
-  SELECT (nArr)
-RETURN (NIL)
+close_xml()
 
-
-
-/*! \fn UzmiVar(cVar)
- *  \brief Uzmi varijable 
- *  \param cVar - varijabla
- */
- 
-static function UzmiVar(cVar)
-
-LOCAL cVrati:=""
- DO CASE
-   CASE cVar=="01"
-       cVrati := { "UI", "PADR(aPov1,22)" }
-   CASE cVar=="02"
-       cVrati := { "UI", "PADR(PARTN->naz,22)" }
-   CASE cVar=="03"
-       cVrati := { "UI", "PADR(aPov2,22)" }
-   CASE cVar=="04"
-       cVrati := { "UI", "PADR(PARTN->mjesto,22)" }
-   CASE cVar=="05"
-       cVrati := { "UI", "PADR(aPov3,22)" }
-   CASE cVar=="06"
-       cVrati := { "UI", "PADR(PARTN->ziror,22)" }
-   CASE cVar=="07"
-       cVrati := { "UI", "PADR(aPov4,22)" }
-   CASE cVar=="08"
-       cVrati := { "UI", "PADR(PARTN->dziror,22)" }
-   CASE cVar=="09"
-       cVrati := { "I", "TRIM(cBrKomp)" }
-   CASE cVar=="10"
-       cVrati := { "I", "STR(nUkup60,21,2)" }
-   CASE cVar=="11"
-       cVrati := { "I", "STR(nUkup12,21,2)" }
-   CASE cVar=="12"
-       cVrati := { "I", "STR(nSaldo,17,2)" }
-   CASE cVar=="13"
-       cVrati := { "UI", "ALLTRIM(STR(nSaldo))" }
-   CASE cVar=="14"
-       cVrati := { "UI", "IF( cVal=='D' , aPov3 , aPov4 )" }
-   CASE cVar=="15"
-       cVrati := { "UI", "IF( nRokPl==0 , '  ' , ALLTRIM(STR(nRokPl)) )" }
-   CASE cVar=="16"
-       cVrati := { "UI", "IF( cVal=='D' , ValDomaca() , ValPomocna() )" }
-   CASE cVar=="17"
-       cVrati := { "UI", "SrediDat(dKomp)" }
-   CASE cVar=="18"
-       cVrati := { "UI", "SrediDat(dKomp)" }
-   CASE cVar=="19"
-       cVrati := { "", "IF( cVal=='D' , ValDomaca() , ValPomocna() )" }
-   CASE cVar=="20"
-       cVrati := { "", "ValDomaca()" }
-   CASE cVar=="21"
-       cVrati := { "", "ValPomocna()" }
-   CASE cVar=="23"
-       cVrati := { "UI", "PADR(aPov5,22)" }
-   CASE cVar=="24"
-       cVrati := { "UI", "PADR(aDuz5,22)" }
-   CASE cVar=="25"
-       cVrati := { "UI", "PADR(aPov6,22)" }
-   CASE cVar=="26"
-       cVrati := { "UI", "PADR(aDuz6,22)" }
-   CASE cVar=="27"
-       cVrati := { "UI", "PADR(aPov7,22)" }
-   CASE cVar=="28"
-       cVrati := { "UI", "PADR(aDuz7,22)" }
-   CASE cVar=="29"
-       cVrati := { "UI", "PADR(aPov8,22)" }
-   CASE cVar=="30"
-       cVrati := { "UI", "PADR(aDuz8,22)" }
-   CASE cVar=="31"
-       cVrati := { "UI", "PADR(aPov9,22)" }
-   CASE cVar=="32"
-       cVrati := { "UI", "PADR(aPov10,22)" }
-   CASE cVar=="33"
-       cVrati := { "UI", "PADR(aDuz10,22)" }
-   CASE cVar=="B1"
-       cVrati := { "K", "gPB_ON()" }
-   CASE cVar=="B0"
-       cVrati := { "K", "gPB_OFF()" }
-   CASE cVar=="U1"
-       cVrati := { "K", "gPU_ON()" }
-   CASE cVar=="U0"
-       cVrati := { "K", "gPU_OFF()" }
-   CASE cVar=="I1"
-       cVrati := { "K", "gPI_ON()" }
-   CASE cVar=="I0"
-       cVrati := { "K", "gPI_OFF()" }
- ENDCASE
-RETURN cVrati
+return _ret
 
 
+// -------------------------------------------------------
+// filuje partnera u xml fajl
+// -------------------------------------------------------
+static function _fill_partn( part_id, node_name )
+local _ret := .t.
 
-/*! \fn PrnKod_ON(cKod)
- *  \brief
- */
- 
-function PrnKod_ON(cKod)
+if node_name == NIL
+    node_name := "pov"
+endif
 
-LOCAL i:=0
-  FOR i:=1 TO LEN(cKod)
-    DO CASE
-      CASE SUBSTR(cKod,i,1)=="U"
-         gPU_ON()
-      CASE SUBSTR(cKod,i,1)=="I"
-         gPI_ON()
-      CASE SUBSTR(cKod,i,1)=="B"
-         gPB_ON()
-    ENDCASE
-  NEXT
-RETURN (NIL)
+select partn
+go top
+hseek part_id
+
+if !FOUND()
+    MsgBeep( "Partner " + part_id + " ne postoji u sifrarniku !")
+    return .f.
+endif
+
+xml_subnode( node_name, .f. )
+
+    // podaci povjerioca
+    // 
+    // <pov>
+    //   <id>-</id>
+    //   <....
+    // </pov>
+
+    xml_node("id", to_xml_encoding( ALLTRIM( field->id ) ) )
+    xml_node("naz", to_xml_encoding( ALLTRIM( field->naz ) ) )
+    xml_node("naz2", to_xml_encoding( ALLTRIM( field->naz2 ) ) )
+    xml_node("mjesto", to_xml_encoding( ALLTRIM( field->mjesto ) ) )
+    xml_node("d_ziror", to_xml_encoding( ALLTRIM( field->ziror ) ) )
+    xml_node("s_ziror", to_xml_encoding( ALLTRIM( field->dziror ) ) )
+    xml_node("tel", ALLTRIM( field->telefon ) )
+    xml_node("fax", ALLTRIM( field->fax ) )
+    xml_node("adr", to_xml_encoding ( ALLTRIM( field->adresa ) ) )
+    xml_node("ptt", ALLTRIM( field->ptt ) )
+
+    // iz sifk nesto ...
+    xml_node("id_broj", ALLTRIM( izsifk( "PARTN", "REGB", part_id, .f. ) ) ) 
+    xml_node("por_broj", ALLTRIM( izsifk( "PARTN", "PORB", part_id, .f. ) ) ) 
+  
+xml_subnode( node_name, .t. )
+
+return _ret
 
 
+// --------------------------------------
+// preskakanje markera
+// --------------------------------------
+static function _skip_t_marker( _mark_12, _mark_60 )
+local _t_arr := SELECT()
 
+select temp12
+do while field->marker != "K" .and. !EOF()
+    skip 1
+enddo
+if EOF()
+    _mark_12 := .f.
+endif
 
-/*! \fn PrnKod_OFF(cKod)
- *  \brief Iskljucivanje printerskog koda
- *  \param cKod - kod printera
- */
- 
-function PRNKod_OFF(cKod)
+select temp60
+do while field->marker != "K" .and. !EOF()
+    skip 1
+enddo
+if EOF()
+    _mark_60 := .f.
+endif
 
-LOCAL i:=0
-  FOR i:=1 TO LEN(cKod)
-    DO CASE
-      CASE SUBSTR(cKod,i,1)=="U"
-         gPU_OFF()
-      CASE SUBSTR(cKod,i,1)=="I"
-         gPI_OFF()
-      CASE SUBSTR(cKod,i,1)=="B"
-         gPB_OFF()
-    ENDCASE
-  NEXT
-RETURN (NIL)
+select ( _t_arr )
+
+return nil
 
 
 

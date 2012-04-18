@@ -174,7 +174,7 @@ _oo_line := _oo_bin + _oo_writer
 // ako je windows sredi mi sa navodnicima
 #ifdef __PLATFORM__WINDOWS
     __output_odt := '"' + __output_odt + '"'
-    _oo_line := '"' + _oo_line + '"'
+    _oo_line := "start " + '"' + _oo_line + '"'
 #endif
 
 // slozi mi komadnu za startanje...

@@ -878,11 +878,11 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
         if RecCount2()==0
                 _idFirma:=gFirma
         endif
-        @ m_x+1, col()+2 SAY " RJ:" GET _idFirma PICT "@!" VALID {|| EMPTY(_idFirma) .or. _idFirma==gFirma .or. P_RJ(@_idFirma) .and. V_Rj()}
+        @ m_x+1, col()+2 SAY " RJ:" GET _idFirma PICT "@!" VALID {|| EMPTY(_idFirma) .or. _idFirma==gFirma .or. P_RJ(@_idFirma) .and. V_Rj(), _idfirma := LEFT( _idfirma, 2 ), .t. }
 
         read
     else
-        @  m_x+1,m_y+2 SAY "Firma:" GET _IdFirma VALID P_Firma(@_IdFirma,1,20) .and. LEN(TRIM(_idFirma))<=2
+        @  m_x+1,m_y+2 SAY "Firma:" GET _IdFirma VALID {|| P_Firma(@_IdFirma,1,20) .and. LEN(TRIM(_idFirma)) <= 2, _idfirma := LEFT( _idfirma, 2 ), .t. }
     endif
     if gNW=="N"
         read

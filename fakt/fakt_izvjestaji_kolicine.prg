@@ -212,7 +212,7 @@ Box("#SPECIFIKACIJA PRODAJE PO PARTNERIMA",12,77)
         
     @ m_x + _x, m_y + 2 SAY "RJ            " GET cIdFirma ;
         VALID {|| EMPTY(cIdFirma) .or. ;
-        cIdFirma == gFirma .or. P_RJ( @cIdFirma ) }
+        cIdFirma == gFirma .or. P_RJ( @cIdFirma ), cIdFirma := LEFT( cIdFirma, 2), .t. }
         
     ++ _x
 

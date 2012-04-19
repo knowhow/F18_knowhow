@@ -133,7 +133,7 @@ Box( "#SPECIFIKACIJA PRODAJE PO ARTIKLIMA", 16, 77 )
  		
 		cIdFirma:=PADR(cIdFirma,2)
  		
-		@ m_x + nX, m_y+2 SAY "RJ            " GET cIdFirma valid {|| empty(cIdFirma) .or. cIdFirma==gFirma .or. P_RJ(@cIdFirma) }
+		@ m_x + nX, m_y+2 SAY "RJ            " GET cIdFirma valid {|| empty(cIdFirma) .or. cIdFirma==gFirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
  		
 		++nX
 		

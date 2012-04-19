@@ -1,3 +1,7 @@
+1.0.11 2012-04-19, vsasa
+
+  - fakt, radna jedinica na left 2 [#27710](http://redmine.bring.out.ba/issues/27710)
+
 1.0.10  2012-04-18, hernad
 
   - kompenz + odt stampa

@@ -12,18 +12,8 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-/*! \fn GKRacun()
- *  \brief Generisi Konsignacioni Racun
- */
- 
+
 function GKRacun()
-*{
 O_FAKT_PRIPR
 O_FAKT
 SET ORDER TO TAG "3"

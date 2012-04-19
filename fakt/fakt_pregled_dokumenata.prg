@@ -1176,7 +1176,7 @@ qqOpc:=padr(qqOpc,20)
 
 do while .t.
     cIdFirma:=padr(cidfirma,2)
-    @ m_x+1,m_y+2 SAY "RJ            " GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma) }
+    @ m_x+1,m_y+2 SAY "RJ            " GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
     @ m_x+2,m_y+2 SAY "Tip dokumenta " GET qqTipDok pict "@!S20"
     @ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
     @ m_x+3,col()+1 SAY "do"  get dDatDo

@@ -30,6 +30,10 @@ local _delphi_exe := "delphirb.exe"
 local _util_path
 local _error
 
+#ifdef __PLATFORM__UNIX
+	_f18_delphi_exe := "delphirb"
+#endif
+
 // provjera uslova
 
 if ( rtm_file == NIL )
@@ -69,7 +73,13 @@ endif
 
 // idemo na slaganje komande za report
 
-_cmd := _f18_delphi_exe
+_cmd := ""
+
+#ifdef __PLATFORM__UNIX
+	_cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#endif
+
+_cmd += _f18_delphi_exe
 _cmd += " "
 _cmd += rtm_file
 _cmd += " "
@@ -99,7 +109,7 @@ endif
 // pozicioniraj se na home direktorij tokom izvrsenja
 DirChange( my_home() )
 
-log_write( DTOC( DATE() ) + " f18_delphirb print, cmd: " + _cmd )
+log_write( DTOC( DATE() ) + " delphirb print, cmd: " + _cmd )
 
 _error := hb_run( _cmd )
     
@@ -127,7 +137,8 @@ local _drb := "delphirb.exe"
 #ifdef __PLATFORM__WINDOWS
     _util_path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #else
-    _util_path := hb_DirSepAdd( GetEnv( "HOME" ) ) + "knowhowERP" + SLASH + "util" + SLASH
+    _util_path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+	return _ok
 #endif
 
 // kopiraj delphirb u home path

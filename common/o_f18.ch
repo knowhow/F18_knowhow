@@ -34,7 +34,7 @@
 #xcommand O__ROBA    => select (F__ROBA)   ;  my_use  ("_roba")
 #xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
 #xcommand O_BANKE    => select (F_BANKE)   ;  my_use  ("banke")     ; set order to tag "ID"
-#xcommand O_BARKOD   => select (F_BARKOD)  ;  my_use  ("barkod")    ; set order to tag "1"
+#xcommand O_BARKOD   => select (F_BARKOD)  ;  my_usex ("barkod")    ; set order to tag "1"
 #xcommand O_RJ       => select (F_RJ)      ;  my_use  ("rj")        ; set order to tag "ID"
 #xcommand O_VRSTEP   => SELECT (F_VRSTEP)  ;  my_use  ("vrstep")    ; set order to tag "ID"
 #xcommand O_RELAC    => SELECT (F_RELAC)   ;  my_use  ("relac")     ; set order to tag "ID"

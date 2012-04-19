@@ -22,8 +22,8 @@ static _tr_cmd := "CMD"
 static _tr_plu := "PLU"
 static _tr_txt := "TXT"
 static _tr_rcp := "RCP"
-static _tr_cli := "CLIENTS.XML"
-static _tr_foo := "FOOTER.XML"
+static _tr_cli := "clients.XML"
+static _tr_foo := "footer.XML"
 
 // min/max vrijednosti
 static MAX_QT := 99999.999
@@ -749,7 +749,7 @@ do case
 		cRet := STRTRAN( cF_name, "TR$", cTriger )
 		cRet := UPPER( cRet )
 	
-		if ".XML" $ cTriger
+		if ".XML" $ UPPER( cTriger )
 			cRet := cTriger
 		endif
 
@@ -860,6 +860,10 @@ function hcp_fisc_no( cFPath, cFName, cError, lStorno )
 local cCmd
 local nFisc_no := 0
 local cFState := "BILL_S~1.XML"
+
+#ifdef __PLATFORM__UNIX
+	cFState := "bill_state.xml"
+#endif
 
 // posalji komandu za stanje fiskalnog racuna
 cCmd := 'CMD="RECEIPT_STATE"'

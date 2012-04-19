@@ -173,9 +173,16 @@ local _rj := fetch_metric( "fakt_export_lista_rj", my_user(), PADR( "10;", 200 )
 local _vrste_dok := fetch_metric( "fakt_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
 local _exp_sif := fetch_metric( "fakt_export_sifrarnik", my_user(), "D" )
 local _prim_sif := fetch_metric( "fakt_export_duzina_primarne_sifre", my_user(), 0 )
+local _exp_path := fetch_metric( "fakt_export_path", my_user(), PADR("", 300) )
+local _prom_rj_src := SPACE(2)
+local _prom_rj_dest := SPACE(2) 
 local _x := 1
 
-Box(, 11, 70 )
+if EMPTY( ALLTRIM( _exp_path ) )
+	_exp_path := PADR( __export_dbf_path, 300 )
+endif
+
+Box(, 13, 70 )
 
     @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
 
@@ -198,10 +205,20 @@ Box(, 11, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Svoditi na primarnu sifru (duzina primarne sifre):" GET _prim_sif PICT "9"
     
+ 	++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Promjena radne jedinice" GET _prom_rj_src
+    @ m_x + _x, col() + 1 SAY "u" GET _prom_rj_dest
+
     ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+
+	++ _x
+	++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
 
     read
 
@@ -218,6 +235,10 @@ if LastKey() <> K_ESC
     set_metric( "fakt_export_vrste_dokumenata", my_user(), _vrste_dok )
     set_metric( "fakt_export_sifrarnik", my_user(), _exp_sif )
     set_metric( "fakt_export_duzina_primarne_sifre", my_user(), _prim_sif )
+    set_metric( "fakt_export_path", my_user(), _exp_path )
+
+	// export path, set static var
+	__export_dbf_path := ALLTRIM( _exp_path )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
@@ -225,6 +246,8 @@ if LastKey() <> K_ESC
     vars["vrste_dok"] := _vrste_dok
     vars["export_sif"] := _exp_sif
     vars["prim_sif"] := _prim_sif
+    vars["rj_src"] := _prom_rj_src
+    vars["rj_dest"] := _prom_rj_dest
     
 endif
 
@@ -244,9 +267,14 @@ local _vrste_dok := fetch_metric( "fakt_import_vrste_dokumenata", my_user(), PAD
 local _zamjeniti_dok := fetch_metric( "fakt_import_zamjeniti_dokumente", my_user(), "N" )
 local _zamjeniti_sif := fetch_metric( "fakt_import_zamjeniti_sifre", my_user(), "N" )
 local _iz_fmk := fetch_metric( "fakt_import_iz_fmk", my_user(), "N" )
+local _imp_path := fetch_metric( "fakt_import_path", my_user(), PADR("", 300) )
 local _x := 1
 
-Box(, 12, 70 )
+if EMPTY( ALLTRIM( _imp_path) )
+	_imp_path := PADR( __import_dbf_path, 300 )
+endif
+
+Box(, 15, 70 )
 
     @ m_x + _x, m_y + 2 SAY "*** Uslovi importa dokumenata"
 
@@ -279,6 +307,11 @@ Box(, 12, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
 
+	++ _x
+	++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
+
     read
 
 BoxC()
@@ -295,6 +328,10 @@ if LastKey() <> K_ESC
     set_metric( "fakt_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
     set_metric( "fakt_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
     set_metric( "fakt_import_iz_fmk", my_user(), _iz_fmk )
+    set_metric( "fakt_import_path", my_user(), _imp_path )
+
+	// set static var
+	__import_dbf_path := ALLTRIM( _imp_path )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
@@ -323,6 +360,8 @@ local _usl_rj
 local _id_partn
 local _id_roba
 local _prim_sif
+local _rj_src, _rj_dest
+local _change_rj := .f.
 
 // uslovi za export ce biti...
 _dat_od := vars["datum_od"]
@@ -331,7 +370,14 @@ _rj := ALLTRIM( vars["rj"] )
 _vrste_dok := ALLTRIM( vars["vrste_dok"] )
 _export_sif := ALLTRIM( vars["export_sif"] )
 _prim_sif := vars["prim_sif"]
+_rj_src := vars["rj_src"]
+_rj_dest := vars["rj_dest"]
  
+// treba li mjenjati radne jedinice
+if !EMPTY( _rj_src ) .and. !EMPTY( _rj_dest )
+	_change_rj := .t.
+endif
+
 // kreiraj tabele exporta
 _cre_exp_tbls( __export_dbf_path )
 
@@ -396,6 +442,13 @@ do while !EOF()
     // ako je sve zadovoljeno !
     // dodaj zapis u tabelu e_doks
     _app_rec := dbf_get_rec()
+
+	if _change_rj
+		if _app_rec["idfirma"] == _rj_src
+			_app_rec["idfirma"] := _rj_dest
+		endif
+	endif
+
     select e_doks
     append blank
     dbf_update_rec( _app_rec )    
@@ -424,6 +477,12 @@ do while !EOF()
         // upisi zapis u tabelu e_fakt
         _app_rec := dbf_get_rec()
         
+		if _change_rj
+			if _app_rec["idfirma"] == _rj_src
+				_app_rec["idfirma"] := _rj_dest
+			endif
+		endif
+
         if _prim_sif > 0 
             _app_rec["rbr"] := PADL( ALLTRIM( STR( ++ _r_br ) ), 3 )
             _app_rec["idroba"] := _id_roba

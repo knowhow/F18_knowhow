@@ -41,26 +41,29 @@ O_FAKT_PRIPR
 lStrings := is_strings()
 
 SELECT FAKT_PRIPR
-private aStampati:=ARRAY(RECCOUNT())
+
+private aStampati := ARRAY( RECCOUNT() )
 
 GO TOP
 
-for i:=1 to LEN(aStampati)
-	aStampati[i]:="D"
+for i:=1 to LEN( aStampati )
+	aStampati[ i ] := "D"
 next
 
 // setuj kolone za pripremu...
-set_a_kol(@ImeKol, @Kol)
+set_a_kol( @ImeKol, @Kol )
 
-cBoxHead := "<SPACE> markiranje Í <ESC> kraj"
+cBoxHead := "<SPACE> markiranje    |    <ESC> kraj"
 cBoxFoot := "Priprema za labeliranje bar-kodova..."
 
 Box(,20,50)
+
 ObjDbedit("PLBK", 20, 50, {|| key_handler()}, cBoxHead, cBoxFoot, .t. , , , ,0)
+
 BoxC()
 
 if lStrings
-	if Pitanje(,"Stampa deklaracije (D/N)?", "D") == "D"
+	if Pitanje(, "Stampa deklaracije (D/N)?", "D" ) == "D"
 		lDelphi := .f.
 	endif
 endif
@@ -72,7 +75,7 @@ else
 	//label_2_deklar(aStampati)
 endif
 
-closeret
+close all
 return
 
 
@@ -89,7 +92,9 @@ return
 // -----------------------------------------------------
 // setovanje kolone opcije pregleda labela....
 // -----------------------------------------------------
-static function set_a_kol(aImeKol, aKol)
+static function set_a_kol( aImeKol, aKol )
+local _i
+
 aImeKol := {}
 aKol := {}
 
@@ -98,8 +103,8 @@ AADD(aImeKol, {"Kolicina"  ,{|| transform( Kolicina, "99999999.9" ) }} )
 AADD(aImeKol, {"Stampati?" ,{|| bk_stamp_dn( aStampati[RECNO()] ) }} )
 
 aKol:={}
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
+for _i:=1 to LEN(aImeKol)
+	AADD( aKol, _i )
 next
 
 return
@@ -108,8 +113,9 @@ return
 // --------------------------------
 // prikaz stampati ili ne stampati
 // --------------------------------
-static function bk_stamp_dn(cDN)
+static function bk_stamp_dn( cDN )
 local cRet := ""
+
 if cDN == "D"
 	cRet := "-> DA <-"
 else
@@ -126,14 +132,19 @@ return cRet
 // bar-kodova"
 // --------------------------------
 static function key_handler()
+
 if Ch==ASC(' ')
+
 	if aStampati[recno()]=="N"
 		aStampati[recno()] := "D"
 	else
 		aStampati[recno()] := "N"
 	endif
+
 	return DE_REFRESH
+
 endif
+
 return DE_CONT
 
 

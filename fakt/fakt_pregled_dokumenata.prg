@@ -94,11 +94,11 @@ qqTipDok := padr(qqTipDok,2)
 do while .t.
 
  if gNW$"DR"
-   cIdFirma:=padr(cidfirma,2)
-   @ m_x+1,m_y+2 SAY "RJ prazno svi" GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma) }
+   cIdFirma := PADR( cIdfirma, 2 )
+   @ m_x+1,m_y+2 SAY "RJ prazno svi" GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
    read
  else
-   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma), cIdFirma := LEFT(cIdFirma, 2 ), .t. }
  endif
 
  if !EMPTY(cIdFirma)

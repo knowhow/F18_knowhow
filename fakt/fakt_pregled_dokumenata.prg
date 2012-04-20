@@ -729,10 +729,6 @@ local _rekl_rn
 local _total
 local _txt := ""
 
-if fakt_doks->(FIELDPOS("FISC_RN")) = 0
-    return
-endif
-
 _fisc_rn := ALLTRIM( STR( fakt_doks->fisc_rn ) )
 _rekl_rn := ALLTRIM( STR( fakt_doks->fisc_st ) )
 _total := fakt_doks->iznos
@@ -740,7 +736,7 @@ _total := fakt_doks->iznos
 // samo za izlazne dokumente
 if fakt_doks->idtipdok $ "10#11"
     
-    if _fisc_rn == "0" .or. ( _fisc_rn <> "0" .and. _rekl_rn == "0" .and. _total < 0 )
+    if _fisc_rn == "0" .and. _rekl_rn == "0"
 
         _txt := "nema fiskalnog racuna !?!!!"
 

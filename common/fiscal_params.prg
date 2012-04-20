@@ -43,6 +43,9 @@ gFc_pauto := fetch_metric( "fisk_automatski_polog", NIL, gfc_pauto )
 gFc_chk := fetch_metric( "fisk_provjera_kolicine", NIL, gfc_chk )
 gFc_operater := fetch_metric( "fisk_operater_naziv", NIL, gfc_operater )
 gFc_oper_pwd := fetch_metric( "fisk_operater_pwd", NIL, gfc_oper_pwd )
+gFc_acd := fetch_metric( "fisk_vrsta_plu_koda", NIL, gfc_acd )
+gFc_print := fetch_metric( "fisk_inicijalni_plu_kod", NIL, gfc_pinit )
+
 
 // user
 gFc_path := fetch_metric( "fisk_direktorij", my_user(), gfc_path )
@@ -50,8 +53,6 @@ gFc_path2 := fetch_metric( "fisk_direktorij_2", my_user(), gfc_path2 )
 gFc_name := fetch_metric( "fisk_naziv_izlaznog_fajla", my_user(), gfc_name ) 
 gFc_answ := fetch_metric( "fisk_naziv_fajla_odgovora", my_user(), gfc_answ )
 gFc_nftxt := fetch_metric( "fisk_stampa_broja_veze", my_user(), gfc_nftxt )
-gFc_acd := fetch_metric( "fisk_vrsta_plu_koda", my_user(), gfc_acd )
-gFc_print := fetch_metric( "fisk_inicijalni_plu_kod", my_user(), gfc_pinit )
 gFc_faktura := fetch_metric( "fisk_stampa_txt_racuna", my_user(), gfc_faktura )
 gFc_fisc_print := fetch_metric( "fisk_stampa_fiskalnih_racuna", my_user(), gfc_fisc_print )
 
@@ -280,6 +281,8 @@ if ( LastKey() != K_ESC )
     set_metric( "fisk_provjera_kolicine", NIL, gfc_chk )
     set_metric( "fisk_operater_naziv", NIL, gfc_operater )
     set_metric( "fisk_operater_pwd", NIL, gfc_oper_pwd )
+    set_metric( "fisk_vrsta_plu_koda", NIL, gfc_acd )
+    set_metric( "fisk_inicijalni_plu_kod", NIL, gfc_pinit )
 
     // user
     set_metric( "fisk_direktorij", my_user(), gfc_path )
@@ -287,8 +290,6 @@ if ( LastKey() != K_ESC )
     set_metric( "fisk_naziv_izlaznog_fajla", my_user(), gfc_name )
     set_metric( "fisk_naziv_fajla_odgovora", my_user(), gfc_answ )
     set_metric( "fisk_stampa_broja_veze", my_user(), gfc_nftxt )
-    set_metric( "fisk_vrsta_plu_koda", my_user(), gfc_acd )
-    set_metric( "fisk_inicijalni_plu_kod", my_user(), gfc_pinit )
     set_metric( "fisk_stampa_txt_racuna", my_user(), gfc_faktura )
     set_metric( "fisk_stampa_fiskalnih_racuna", my_user(), gfc_fisc_print )
 

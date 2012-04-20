@@ -20,10 +20,7 @@ local _x, _y
 
 ImeKol:={}
 
-if FIELDPOS("FISC_RN")>0
-    AADD(ImeKol,{ " ", {|| g_fiscal_info(fisc_rn)} })
-endif
-
+AADD(ImeKol,{ " ", {|| g_fiscal_info( fisc_rn, fisc_st )} })
 AADD(ImeKol,{ "RJ",          {|| idfirma}  })
 AADD(ImeKol,{ "VD",          {|| idtipdok} })
 AADD(ImeKol,{ "Brdok",       {|| brdok+rezerv} })
@@ -123,10 +120,17 @@ return
 // ------------------------------------------
 // vraca info o fiskalnom racunu
 // ------------------------------------------
-static function g_fiscal_info( _f_rn )
+static function g_fiscal_info( _f_rn, _s_rn )
 local cInfo := " "
-if _f_rn > 0
+
+if _f_rn == 0 .and. _s_rn == 0
+	cInfo := " "
+else
     cInfo := "F"
 endif
+
 return cInfo
+
+
+
 

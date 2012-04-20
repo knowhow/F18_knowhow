@@ -210,23 +210,26 @@ return 1
 
 // --------------------
 // --------------------
-function Preduzece()
+function preduzece()
+local _t_arr := select()
 
-local nArr:=select()
-
-F10CPI
+P_10CPI
 B_ON
-? gTS+": "
-if gNW=="D"
- ?? gFirma, "-", hb_strtoutf8( gNFirma )
+
+? ALLTRIM( gTS ) + ": "
+
+if gNW == "D"
+    ?? gFirma, "-", hb_strtoutf8( ALLTRIM( gNFirma ) )
 else
- SELECT PARTN
- HSEEK cIdFirma
- ?? cIdFirma, partn->naz, partn->naz2
+    SELECT PARTN
+    HSEEK cIdFirma
+    ?? cIdFirma, ALLTRIM( partn->naz ), ALLTRIM( partn->naz2 )
 endif
+
 B_OFF
 ?
-select (nArr)
+
+select ( _t_arr )
 return
 
 

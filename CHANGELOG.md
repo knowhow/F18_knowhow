@@ -3,6 +3,7 @@
   - kalk, ispis zaglavlja [#27680](http://redmine.bring.out.ba/issues/27680)
   - tops, update fisc_rn polje, korekcija [#27721](http://redmine.bring.out.ba/issues/27721)
   - fakt, default radna jedinica [#27724](http://redmine.bring.out.ba/issues/27724)
+  - fin, asistent otvorenih stavki stavljen u funkciju
  
 1.0.11 2012-04-19, vsasa
 

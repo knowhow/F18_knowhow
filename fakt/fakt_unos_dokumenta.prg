@@ -712,6 +712,7 @@ local lTxtNaKraju := .f.
 local cAvRacun
 local cListaTxt := ""
 local _vrste_placanja := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
+local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
 
 lDoks2:=(IzFmkIni("FAKT","Doks2","D", KUMPATH)=="D")
 
@@ -859,10 +860,19 @@ endif
 
 _podbr := SPACE(2)
 
+altd()
+
 // prva stavka
 if (fNovi .and. (nRbr == 1 )) 
+
     nPom:= IIF(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
+
     _IdFirma := gFirma
+
+	if !EMPTY( _def_rj )
+		_idfirma := _def_rj
+	endif
+
     _IdTipDok := "10"
     _datdok   := date()
     _zaokr    := 2
@@ -873,18 +883,28 @@ endif
 
 if (nRbr==1 .and. VAL(_podbr) < 1)
 
+    if RecCount2() == 0
+       	_idFirma := gFirma
+    endif
+
+	if !EMPTY( _def_rj )
+		_idfirma := _def_rj
+	endif
+
     if gNW $ "DR"
-        @ m_x+1,m_y+2 SAY PADR( gNFirma, 20 )
-        if RecCount2()==0
-                _idFirma:=gFirma
-        endif
-        @ m_x+1, col()+2 SAY " RJ:" GET _idFirma PICT "@!" VALID {|| EMPTY(_idFirma) .or. _idFirma==gFirma .or. P_RJ(@_idFirma) .and. V_Rj(), _idfirma := LEFT( _idfirma, 2 ), .t. }
+
+        @ m_x+1, m_y+2 SAY PADR( gNFirma, 20 )
+		@ m_x+1, col()+2 SAY " RJ:" GET _idFirma PICT "@!" VALID {|| EMPTY(_idFirma) .or. _idFirma == gFirma .or. P_RJ(@_idFirma) .and. V_Rj(), _idfirma := LEFT( _idfirma, 2 ), .t. }
 
         read
+
     else
+
         @  m_x+1,m_y+2 SAY "Firma:" GET _IdFirma VALID {|| P_Firma(@_IdFirma,1,20) .and. LEN(TRIM(_idFirma)) <= 2, _idfirma := LEFT( _idfirma, 2 ), .t. }
+
     endif
-    if gNW=="N"
+
+    if gNW == "N"
         read
     endif
     

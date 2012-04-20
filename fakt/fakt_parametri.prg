@@ -89,6 +89,7 @@ return nil
  *  \brief Podesenja parametri-razno
  */
 function fakt_par_razno()
+local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
@@ -101,7 +102,9 @@ gKomLin:=PADR(gKomLin,70)
 Box(,21,77,.f.,"OSTALI PARAMETRI (RAZNO)")
 
 nX := 2
+
 if !IsPdv()
+
     @ m_x+nX, m_y+2 SAY "Naziv fajla zaglavlja (prazno bez zaglavlja)" GET gVlZagl VALID V_VZagl()
     nX++
     @ m_x+nX, m_y+2 SAY "Novi korisnicki interfejs D-da/N-ne/R-rudnik/T-test" GET gNW VALID gNW $ "DNRT" PICT "@!"
@@ -109,88 +112,88 @@ if !IsPdv()
     @ m_x+nX, m_y+2 SAY "Svaki izlazni fajl ima posebno ime ?" GET gImeF VALID gImeF $ "DN"
     nX++
     
-    @ m_x+nX, m_y+2 SAY "Komandna linija za RTF fajl:" GET gKomLin PICT "@S40"
-    nX++
 endif
 
-    @ m_x+nX, m_y+2 SAY "Inicijalna meni-opcija (1/2/.../G)" GET gIMenu VALID gIMenu $ "123456789ABCDEFG" PICT "@!"
-    nX := nX+3
-    
+@ m_x+nX, m_y+2 SAY "Inicijalna meni-opcija (1/2/.../G)" GET gIMenu VALID gIMenu $ "123456789ABCDEFG" PICT "@!"
+
+nX := nX + 2
+
+@ m_x + nX, m_y + 2 SAY "Default radna jedinica kod unosa dokumenta:" GET _def_rj     
+
+++ nX
+
 if !IsPdV()
+
     @ m_x+nX,m_y+2 SAY "Prikaz K1" GET gDk1 PICT "@!" VALID gDk1 $ "DN"
     @ m_x+nX,col()+2 SAY "Prikaz K2" GET gDk2 PICT "@!" VALID gDk2 $ "DN"
     nX++
     @ m_x+nX,m_y+2 SAY "Mjesto uzimati iz RJ (D/N)" GET gMjRJ PICT "@!" VALID gMjRJ $ "DN"
     nX++
+
 endif
     
-    @ m_x+nX,m_y+2 SAY "Omoguciti poredjenje FAKT sa FAKT druge firme (D/N) ?" GET gFaktFakt VALID gFaktFakt $ "DN" PICT "@!"
-    nX++
-    @ m_x+nX,m_y+2 SAY "Koriste li se artikli koji se vode po sintet.sifri, roba tipa 'S' (D/N) ?" GET gNovine VALID gNovine $ "DN" PICT "@!"
-    nX++
-    @ m_x+nX, m_y+2 SAY "Duzina sifre artikla sinteticki " GET gnDS VALID gnDS>0 PICT "9"
-    nX++
-
-    @ m_x+nX, m_y+2 SAY "Obrazac narudzbenice " GET gFNar VALID V_VNar()
-    nX++
+@ m_x+nX,m_y+2 SAY "Omoguciti poredjenje FAKT sa FAKT druge firme (D/N) ?" GET gFaktFakt VALID gFaktFakt $ "DN" PICT "@!"
+nX++
     
-    @ m_x+nX, m_y+2 SAY "Obrazac ugovor rabat " GET gFUgRab VALID V_VUgRab()
-    nX++
-
-    @ m_x+nX, m_y+2 SAY "Voditi samo kolicine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
-    nX++
+@ m_x+nX,m_y+2 SAY "Koriste li se artikli koji se vode po sintet.sifri, roba tipa 'S' (D/N) ?" GET gNovine VALID gNovine $ "DN" PICT "@!"
+nX++
     
-    @ m_x+nX, m_y+2 SAY "Tekuca vrijednost za rok placanja  " GET gRokPl PICT "999"
+@ m_x+nX, m_y+2 SAY "Duzina sifre artikla sinteticki " GET gnDS VALID gnDS>0 PICT "9"
+nX++
+
+@ m_x+nX, m_y+2 SAY "Voditi samo kolicine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
+nX++
+    
+@ m_x+nX, m_y+2 SAY "Tekuca vrijednost za rok placanja  " GET gRokPl PICT "999"
+nX++
+    
+if !IsPDV()
+ 	@ m_x+nX, m_y+2 SAY "Mogucnost ispravke partnera u novoj stavci (D/N)" GET gIspPart PICT "@!" VALID gIspPart$"DN"
     nX++
+else
+ 	gIspPart := "N"
+endif
     
-    if !IsPDV()
-        @ m_x+nX, m_y+2 SAY "Mogucnost ispravke partnera u novoj stavci (D/N)" GET gIspPart PICT "@!" VALID gIspPart$"DN"
-        nX++
-    else
-        gIspPart := "N"
-    endif
-    
-    @ m_x + nX, m_y+2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
+@ m_x + nX, m_y+2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
+nX ++
 
-    nX ++
-
-    @ m_x + nX, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
+@ m_x + nX, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
         GET gMPPrint ;
         PICT "@!" ;
         VALID gMPPrint $ "DNXT"
 
-    read
+read
 
-    if gMPPrint $ "DXT"
+if gMPPrint $ "DXT"
 
-        nX ++
+	nX ++
         
-        @ m_x + nX, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" ;
+    @ m_x + nX, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" ;
             GET gMPLocPort ;
             VALID gMPLocPort $ "1234567" PICT "@!"
         
-        nX ++
+    nX ++
         
-        @ m_x + nX, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
+    @ m_x + nX, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
             GET gMPRedTraka ;
             VALID gMPRedTraka $ "012"
     
-        nX ++
+  	nX ++
     
-        @ m_x + nX, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
+    @ m_x + nX, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
             GET gMPArtikal ;
             VALID gMPArtikal $ "DN" PICT "@!"
         
-        nX ++
+  	nX ++
     
-        @ m_x + nX, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
+    @ m_x + nX, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
             GET gMPCjenPDV ;
             VALID gMPCjenPDV $ "12"
     
 
-        read
+   	read
 
-    endif
+endif
 
 BoxC()
 
@@ -202,6 +205,7 @@ if (LASTKEY()<>K_ESC)
     set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
     set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
     set_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
+	set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
 
     Wpar("ff",gFaktFakt)
     Wpar("nw",gNW)
@@ -417,11 +421,6 @@ Box(, 23, 76, .f., "VARIJANTE OBRADE DOKUMENATA")
     @ m_x+17,m_y+2 SAY "Var.otpr.-12 sa porezom :" GET gV12Por PICT "@!" VALID gV12Por $ "DN"
     @ m_x+17,m_y+35 SAY "Var.fakt.po ugovorima (1/2) :" GET gVFU PICT "9" VALID gVFU $ "12"
     @ m_x+18,m_y+2 SAY "Var.fakt.rok plac. samo vece od 0 :" GET gVFRP0 PICT "@!" VALID gVFRP0 $ "DN"
-    @ m_x+19,m_y+2 SAY "Koristiti C1 (D/N)?" GET gKarC1 PICT "@!" VALID gKarC1$"DN"
-    @ m_x+19,col()+2 SAY "C2 (D/N)?" GET gKarC2 PICT "@!" VALID gKarC2$"DN"
-    @ m_x+19,col()+2 SAY "C3 (D/N)?" GET gKarC3 PICT "@!" VALID gKarC3$"DN"
-    @ m_x+19,col()+2 SAY "N1 (D/N)?" GET gKarN1 PICT "@!" VALID gKarN1$"DN"
-    @ m_x+19,col()+2 SAY "N2 (D/N)?" GET gKarN2 PICT "@!" VALID gKarN2$"DN"
     @ m_x+20,m_y+2 SAY "Prikaz samo kolicina na dokumentima (0/D/N)" GET gPSamoKol PICT "@!" VALID gPSamoKol $ "0DN"
     @ m_x+21,m_y+2 SAY "Pretraga artikla po indexu:" GET gArtCdx PICT "@!"
     @ m_x+22,m_y+2 SAY "Koristiti rabat iz sif.robe (polje N1) ?" GET gRabIzRobe PICT "@!" VALID gRabIzRobe $ "DN"

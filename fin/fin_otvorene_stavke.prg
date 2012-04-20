@@ -36,7 +36,7 @@ AADD(opcexe, {|| StKart(.t.)})
 AADD(opc, "8. kompenzacija")
 AADD(opcexe, {|| Kompenzacija()})
 AADD(opc, "9. asistent otvorenih stavki")
-AADD(opcexe, {|| GenAz()})
+AADD(opcexe, {|| fin_asistent_otv_st()})
 AADD(opc, "U. OASIST - undo")
 AADD(opcexe, {|| OStUndo()})
 
@@ -99,6 +99,7 @@ ENDDO
 BoxC()
 
 B:=0
+
 *
 
 if cPrelomljeno=="N"
@@ -289,17 +290,7 @@ RETURN
  *  \brief Zatvaranje stavki automatski
  */
 function AutoZat(lAuto, cKto, cPtn)
-
-cSecur:=SecurR(KLevel,"OSTAVKE")
-if ImaSlovo("X",cSecur)
-   MsgBeep("Opcija nedostupna !")
-   return
-endif
-cSecur:=SecurR(KLevel,"SGLEDAJ")
-if ImaSlovo("D",cSecur)
-   MsgBeep("Opcija nedostupna !")
-   return
-endif
+local _rec
 
 if lAuto == nil
     lAuto := .f.
@@ -369,18 +360,33 @@ seek cidfirma+cidkonto
 EOF CRET
 
 if cPobSt=="D" .and. Pitanje(,"Zelite li zaista pobrisati markere ??","N")=="D"
+
     MsgO("Brisem markere ...")
+
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+
     DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
         if !Empty(cIdPart)
             if (cIdPart <> idpartner)
-            skip
-            loop
+            	skip
+            	loop
+       	 	endif
         endif
-        endif
-            REPLACE OtvSt WITH " "
-            SKIP
+
+		_rec := dbf_get_rec()
+		_rec["otvst"] := " "
+		update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+
+        SKIP
+
     ENDDO
+
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
+
     MSgC()
+
 endif
 
 Box("count",1,30,.f.)
@@ -390,6 +396,10 @@ nC:=0
 
 seek cidfirma+cidkonto
 EOF CRET
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
 
    if !Empty(cIdPart)
@@ -414,24 +424,30 @@ DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
       SKIP
    ENDDO // partner, brdok
 
-   IF ABS(round(nDugBHD-nPotBHD,3)) <= gnLOSt .AND. cOtvSt=="1"
-      SEEK cIdFirma+cIdKonto+cIdPartner+cBrDok
-      @ m_x+1,m_y+12 SAY ++nC  // brojac zatvaranja
-      DO WHILESC !eof() .AND. cIdKonto=IdKonto .and. cIdPartner == IdPartner .and. cBrDok=BrDok
-            REPLACE OtvSt WITH "9"
+	IF ABS(round(nDugBHD-nPotBHD,3)) <= gnLOSt .AND. cOtvSt=="1"
+    	SEEK cIdFirma+cIdKonto+cIdPartner+cBrDok
+      	@ m_x+1,m_y+12 SAY ++nC  // brojac zatvaranja
+      	DO WHILESC !eof() .AND. cIdKonto=IdKonto .and. cIdPartner == IdPartner .and. cBrDok=BrDok
+			_rec := dbf_get_rec()
+			_rec["otvst"] := "9"
+			update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )	
             SKIP
-      ENDDO
-   ENDIF
+     	ENDDO
+   	ENDIF
 
 ENDDO
 
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 if lLogAZat
-    EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nDugBHD,nPotBHD,nC,nil,"","","F:"+cIdFirma+"- K:"+cIdKonto,Date(),Date(),"","Automatsko zatvaranje otvorenih stavki")
+	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nDugBHD,nPotBHD,nC,nil,"","","F:"+cIdFirma+"- K:"+cIdKonto,Date(),Date(),"","Automatsko zatvaranje otvorenih stavki")
 endif
 
-BoxC() // counter zatvaranja
+BoxC() 
+// counter zatvaranja
 
-closeret
+close all
 return
 
 
@@ -441,17 +457,6 @@ return
  */
  
 function RucnoZat()
-
-cSecur:=SecurR(KLevel,"OSTAVKE")
-if ImaSlovo("X",cSecur)
-   MsgBeep("Opcija nedostupna !")
-   return
-endif
-cSecur:=SecurR(KLevel,"SGLEDAJ")
-if ImaSlovo("D",cSecur)
-   MsgBeep("Opcija nedostupna !")
-   return
-endif
 
 cIdFirma:=gFirma
 O_PARTN
@@ -494,7 +499,6 @@ endif
 cIdFirma:=left(cIdFirma,2)
 
 O_SUBAN
-
 
 select SUBAN
 
@@ -568,7 +572,7 @@ ObjDbEdit("Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| EdRos()} ,"","",  .f. , NIL
 
 BoxC()
 
-closeret
+close all
 return
 
 
@@ -591,129 +595,160 @@ else
     lLogRucZat:=.f.
 endif
 
-
 do case
-  case Ch==K_ALT_E  .and. fieldpos("_OBRDOK")=0  // nema prebacivanja u
-                                                 // asistentu ot.st.
-     IF Pitanje(,"Preci u mod direktog unosa podataka u tabelu? (D/N)","D")=="D"
-         gTBDir:="D"
-         OSt_StatLin()
-         DaTBDirektni() // ELIB, promjeni tbrowse na edit rezim
-     ENDIF
+
+	case Ch == K_ALT_E  .and. fieldpos("_OBRDOK") = 0  
+		// nema prebacivanja u
+		// asistentu ot.st.
+     	IF Pitanje(,"Preci u mod direktog unosa podataka u tabelu? (D/N)","D")=="D"
+        	gTBDir:="D"
+         	OSt_StatLin()
+         	DaTBDirektni() 
+			// ELIB, promjeni tbrowse na edit rezim
+     	ENDIF
      
-  case Ch==K_ENTER
+  	case Ch==K_ENTER
 
-     cDn:="N"
-     Box(, 3, 50)
-       @ m_x+1, m_y + 2 SAY "Ne preporucuje se koristenje ove opcije !"
-       @ m_x+3, m_y + 2 SAY "Zelite li ipak nastaviti D/N" GET cDN pict "@!" valid cDn $ "DN"
-       read
-     BoxC()
+    	cDn:="N"
+     	Box(, 3, 50)
+       		@ m_x+1, m_y + 2 SAY "Ne preporucuje se koristenje ove opcije !"
+       		@ m_x+3, m_y + 2 SAY "Zelite li ipak nastaviti D/N" GET cDN pict "@!" valid cDn $ "DN"
+       		read
+     	BoxC()
 
-     if cDN=="D"
+     	if cDN=="D"
 
-         
-        if OtvSt<>"9"
-            cMark   := ""
-            _otv_st := "9" 
-        else
-            cMark   := "9"
-            _otv_st := " "
-        endif
-       
-        _rec := dbf_get_rec()
-        _rec["otvst"] := _otv_st
-        update_rec_server_and_dbf("fin_suban", _rec)
+        	if OtvSt<>"9"
+            	cMark   := ""
+            	_otv_st := "9" 
+        	else
+            	cMark   := "9"
+            	_otv_st := " "
+        	endif
+      
+			my_use_semaphore_off()
+			sql_table_update( nil, "BEGIN" )
+ 
+        	_rec := dbf_get_rec()
+        	_rec["otvst"] := _otv_st
+        	update_rec_server_and_dbf("fin_suban", _rec, 1, "CONT" )
+			
+			sql_table_update( nil, "END" )
+			my_use_semaphore_on()
 
-        if lLogRucZat
-            EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cMark,"",Date(),Date(),"","Rucno zatvaranje otvorenih stavki")
-        endif
+        	if lLogRucZat
+            	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cMark,"",Date(),Date(),"","Rucno zatvaranje otvorenih stavki")
+        	endif
 
-         nRet:=DE_REFRESH
+         	nRet := DE_REFRESH
 
-     else
+     	else
 
-         nRet:=DE_CONT
+        	nRet:=DE_CONT
 
-     endif
+     	endif
 
-  case (Ch==ASC("K") .or. Ch==ASC("k"))
+	case ( Ch == ASC("K") .or. Ch == ASC("k") )
    
-       if m1 <> "9"
-           _otv_st := "9"
-       else
-           _otv_st := " "
-       endif
+		if m1 <> "9"
+        	_otv_st := "9"
+       	else
+        	_otv_st := " "
+       	endif
+		
+		my_use_semaphore_off()
+		sql_table_update( nil, "BEGIN" )
+ 
+       	_rec := dbf_get_rec()
+       	_rec["m1"] := _otv_st
+       	update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+		
+		sql_table_update( nil, "END" )
+		my_use_semaphore_on()
 
-       _rec := dbf_get_rec()
-       _rec["m1"] := _otv_st
-       update_rec_server_and_dbf("fin_suban", _rec)
+      	nReti := DE_REFRESH
 
-      nRet:=DE_REFRESH
+  	case Ch == K_F2
+ 
+    	cBrDok:=BrDok
+     	cOpis:=opis
+     	dDatDok:=datdok
+    	dDatVal:=datval
+     	Box("eddok", 5, 70, .f.)
+       		@ m_x+1, m_y+2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
+       		@ m_x+2, m_y+2 SAY "Opis:" GET cOpis PICT "@S50"
+       		@ m_x+4, m_y+2 SAY "Datum dokumenta: " ;  ?? dDatDok
+       		@ m_x+5, m_y+2 SAY "Datum valute   :" GET dDatVal
+       		read
+     	BoxC()
 
-  case Ch==K_F2 
-     cBrDok:=BrDok
-     cOpis:=opis
-     dDatDok:=datdok
-     dDatVal:=datval
-     Box("eddok", 5, 70, .f.)
-       @ m_x+1, m_y+2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
-       @ m_x+2, m_y+2 SAY "Opis:" GET cOpis PICT "@S50"
-       @ m_x+4, m_y+2 SAY "Datum dokumenta: " ;  ?? dDatDok
-       @ m_x+5, m_y+2 SAY "Datum valute   :" GET dDatVal
-       read
-     BoxC()
+     	if lastkey() <> K_ESC
 
-     if lastkey() <> K_ESC
-            _rec := dbf_get_rec()
+			my_use_semaphore_off()
+			sql_table_update( nil, "BEGIN" )
+ 
+        	_rec := dbf_get_rec()
             _rec["brdok"] := cBrDok
             _rec["opis"]  := cOpis
             _rec["datval"] := dDatVal
-            update_rec_server_and_dbf("fin_suban", _rec)
-     endif
 
-     if lLogRucZat
-        EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cBrDok,"Ispravka br.veze",dDatDok,dDatVal,cOpis,"Rucno zatvaranje otvorenih stavki")
-     endif
+            update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+	
+			sql_table_update( nil, "END" )
+			my_use_semaphore_on()
 
-     nRet:=DE_REFRESH
+     	endif
 
-  case Ch==K_F5
+     	if lLogRucZat
+        	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cBrDok,"Ispravka br.veze",dDatDok,dDatVal,cOpis,"Rucno zatvaranje otvorenih stavki")
+     	endif
 
-     cPomBrDok := BrDok
+     	nRet := DE_REFRESH
 
-  case Ch==K_F6
+  	case Ch == K_F5
 
-     if fieldpos("_OBRDOK") <> 0  
-            // nalazimo se u asistentu
+    	cPomBrDok := BrDok
+
+  	case Ch == K_F6
+
+    	if fieldpos("_OBRDOK") <> 0  
+        	// nalazimo se u asistentu
             StAz()
-     else
-            if Pitanje(,"Zelite li da vezni broj "+ BrDok + " zamijenite brojem "+cPomBrDok+" ?","D") == "D"
-
-                    _rec := dbf_get_rec()
-                    _rec["brdok"] := cPomBrDok
-                    update_rec_server_and_dbf("fin_suban", _rec)
+     	else
+        	if Pitanje(,"Zelite li da vezni broj "+ BrDok + " zamijenite brojem "+cPomBrDok+" ?","D") == "D"
+	
+				my_use_semaphore_off()
+				sql_table_update( nil, "BEGIN" )
+ 
+            	_rec := dbf_get_rec()
+                _rec["brdok"] := cPomBrDok
+                update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+	
+				sql_table_update( nil, "END" )
+				my_use_semaphore_on()
 
             endif
-     endif
+     	endif
 
-     nRet:=DE_REFRESH
+     	nRet := DE_REFRESH
 
- case Ch==K_CTRL_P
+ 	case Ch == K_CTRL_P
 
-     PushWa()
-     StKart()
-     PopWA()
+    	PushWa()
+     	StKart()
+     	PopWA()
 
-     nRet:=DE_REFRESH
- case Ch==K_ALT_P
+     	nRet := DE_REFRESH
 
-     PushWa()
-     StBrVeze()
-     PopWA()
-     nRet:=DE_REFRESH
+	case Ch == K_ALT_P
+
+    	PushWa()
+     	StBrVeze()
+    	PopWA()
+     	nRet:=DE_REFRESH
 
 endcase
+
 return nRet
 
 
@@ -752,7 +787,7 @@ function StKart(fSolo,fTiho,bFilter)
 local nCol1:=72, cSvi:="N", cSviD:="N", lEx:=.f.
 
 IF fTiho==NIL
- fTiho:=.f.
+	fTiho:=.f.
 ENDIF
 
 private cIdPartner
@@ -779,24 +814,28 @@ IF lEx
    m := "-------- -------- -------- " + m
 ENDIF
 
-nStr:=0
-fVeci:=.f.
-cPrelomljeno:="N"
+nStr := 0
+fVeci := .f.
+cPrelomljeno := "N"
 
 if fTiho
-   cSvi:="D"
+
+	cSvi:="D"
+
 elseif fsolo
+
     O_SUBAN
     O_PARTN
     O_KONTO
-    cIdFirma:=gFirma
-    cIdkonto:=space(7)
-    cIdPartner:=space(6)
+    cIdFirma := gFirma
+    cIdkonto := space(7)
+    cIdPartner := space(6)
+
     Box(,5,60)
         if gNW=="D"
-        @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
+        	@ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
         else
-        @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+        	@ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
         endif
         @ m_x+2,m_y+2 SAY "Konto:               " GET cIdkonto   pict "@!"  valid P_kontoFin(@cIdkonto)
         @ m_x+3,m_y+2 SAY "Partner (prazno svi):" GET cIdpartner pict "@!"  valid empty(cIdpartner)  .or. ("." $ cidpartner) .or. (">" $ cidpartner) .or. P_Firma(@cIdPartner)
@@ -806,7 +845,7 @@ elseif fsolo
     Boxc()
 else
     if Pitanje(,"Zelite li napraviti ovaj izvjestaj za sve partnere ?","N")=="D"
-    cSvi:="D"
+    	cSvi:="D"
     endif
 endif
 
@@ -820,9 +859,9 @@ elseif !fsolo
 
     if type('TB')="O"
         if VALTYPE(aPPos[1])="C"
-        private cIdPartner:=aPPos[1]
+        	private cIdPartner:=aPPos[1]
         else
-        private cIdPartner:=EVAL(TB:getColumn(aPPos[1]):Block)
+        	private cIdPartner:=EVAL(TB:getColumn(aPPos[1]):Block)
         endif
     endif
 
@@ -832,65 +871,70 @@ else
         cidpartner:=strtran(cidpartner,".","")
         cIdPartner:=trim(cidPartner)
     endif
+
     if ">" $ cidpartner
         cidpartner:=strtran(cidpartner,">","")
         cIdPartner:=trim(cidPartner)
         fVeci:=.t.
     endif
+
     if empty(cIdpartner)
         cidpartner:=""
     endif
+
     cSvi := cIdpartner
 
 endif
 
 IF fTiho .or. lEx
 
-  // odredjivanje prirode zadanog konta (dug. ili pot.)
-  // --------------------------------------------------
-  select (F_TRFP2)
-  if !used()
-     O_TRFP2
-  endif
+	// odredjivanje prirode zadanog konta (dug. ili pot.)
+  	// --------------------------------------------------
 
-  HSEEK "99 "+LEFT(cIdKonto,1)
-  DO WHILE !EOF() .and. IDVD=="99" .and. TRIM(idkonto)!=LEFT(cIdKonto,LEN(TRIM(idkonto)))
-    SKIP 1
-  ENDDO
+  	select (F_TRFP2)
+  	if !used()
+  		O_TRFP2
+  	endif
 
-  IF IDVD=="99" .and. TRIM(idkonto)==LEFT(cIdKonto,LEN(TRIM(idkonto)))
-    cDugPot := D_P
-  ELSE
-    cDugPot:="1"
-    Box( , 3, 60)
-      @ m_x+2, m_y+2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
-      READ
-    Boxc()
-  ENDIF
-  fin_create_pom_table(fTiho)
+  	HSEEK "99 "+LEFT(cIdKonto,1)
+  	DO WHILE !EOF() .and. IDVD=="99" .and. TRIM(idkonto)!=LEFT(cIdKonto,LEN(TRIM(idkonto)))
+    	SKIP 1
+  	ENDDO
+
+  	IF IDVD=="99" .and. TRIM(idkonto)==LEFT(cIdKonto,LEN(TRIM(idkonto)))
+    	cDugPot := D_P
+  	ELSE
+    	cDugPot:="1"
+    	Box( , 3, 60)
+      		@ m_x+2, m_y+2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
+      		READ
+    	Boxc()
+ 	ENDIF
+
+  	fin_create_pom_table(fTiho)
 
 ENDIF
 
 
 if !fTiho
-  START PRINT RET
+	START PRINT RET
 endif
 
-nUkDugBHD := nUkPotBHD:=0
+nUkDugBHD := nUkPotBHD := 0
 
 select suban
 set order to tag "3"
 
 if cSvi=="D"
- seek cidfirma+cidkonto
+	seek cidfirma+cidkonto
 else
- seek cidfirma+cidkonto+cidpartner
+ 	seek cidfirma+cidkonto+cidpartner
 endif
 
 DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
 
-    if bFilter<>NIL
-        if ! eval(bFilter)
+	if bFilter <> NIL
+        if !eval(bFilter)
             SKIP
             LOOP
         endif
@@ -898,108 +942,114 @@ DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
 
     cidPartner := idpartner
 
-    nUDug2:=nUPot2:=0
-    nUDug:=nUPot:=0
-    fPrviprolaz:=.t.
+    nUDug2 := nUPot2 := 0
+    nUDug := nUPot := 0
+    fPrviprolaz := .t.
+
     DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner
 
-          if bFilter<>NIL
-            if ! eval(bFilter) ; skip; loop; endif
-          endif
+    	if bFilter<>NIL
+        	if !eval(bFilter)
+				skip
+				loop
+			endif
+       	endif
 
-          cBrDok:=BrDok; cOtvSt:=otvst
-          nDug2:=nPot2:=0
-          nDug:=nPot:=0
-          aFaktura:={ CTOD(""), CTOD(""), CTOD("") }
+        cBrDok:=BrDok; cOtvSt:=otvst
+        nDug2:=nPot2:=0
+        nDug:=nPot:=0
+        aFaktura:={ CTOD(""), CTOD(""), CTOD("") }
 
-          DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner ;
+        DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner ;
                      .and. brdok==cBrDok
-             IF D_P=="1"
+       		IF D_P=="1"
                 nDug+=IznosBHD
                 nDug2+=IznosDEM
-             ELSE
+            ELSE
                 nPot+=IznosBHD
                 nPot2+=IznosDEM
-             ENDIF
-             IF lEx .and. D_P==cDugPot
-               aFaktura[1]:=DATDOK
-               aFaktura[2]:=DATVAL
-             ENDIF
+            ENDIF
+            
+			IF lEx .and. D_P == cDugPot
+            	aFaktura[1] := DATDOK
+               aFaktura[2] := DATVAL
+            ENDIF
 
-             IF fTiho     // poziv iz procedure RekPPG()
-               // za izvjestaj maksuz radjen za Opresu³22.03.01.³
-               // ------------------------------------ÀÄ MSÄÄÄÄÄÙ
-               if afaktura[3] < iif( empty(DatVal), DatDok, DatVal )
-                         // datum zadnje promjene iif ubacen 03.11.2000 eh
-                         // ----------------------------------------------
-                 aFaktura[3]:=iif( empty(DatVal), DatDok, DatVal )
+            IF fTiho     
+				// poziv iz procedure RekPPG()
+               	// za izvjestaj maksuz radjen za Opresu³22.03.01.³
+               	// ------------------------------------ÀÄ MSÄÄÄÄÄÙ
+               	if afaktura[3] < iif( empty(DatVal), DatDok, DatVal )
+                	// datum zadnje promjene iif ubacen 03.11.2000 eh
+                    // ----------------------------------------------
+                 	aFaktura[3]:=iif( empty(DatVal), DatDok, DatVal )
                endif
-             ELSE
-               // kao u asist.otv.stavki - koristi npr. Exclusive³22.03.01.³
-               // -----------------------------------------------ÀÄ MSÄÄÄÄÄÙ
-               if afaktura[3] < DatDok
-                  aFaktura[3]:=DatDok
-               endif
-             ENDIF
+          	ELSE
+          		// kao u asist.otv.stavki - koristi npr. Exclusive³22.03.01.³
+               	// -----------------------------------------------ÀÄ MSÄÄÄÄÄÙ
+               	if afaktura[3] < DatDok
+                	aFaktura[3]:=DatDok
+               	endif
+            ENDIF
 
-             SKIP 1
-          ENDDO
+            SKIP 1
+    	ENDDO
 
-          if csvid=="N" .and. round(ndug-npot,2)==0
-             // nista
-          else
-           IF lEx
-             fPrviProlaz:=.f.
-             if cPrelomljeno=="D"
-                if (ndug-npot)>0
-                   nDug:=nDug-nPot
-                   nPot:=0
-                else
-                   nPot:=nPot-nDug
-                   nDug:=0
-                endif
-                if (ndug2-npot2)>0
-                   nDug2:=nDug2-nPot2
-                   nPot2:=0
-                else
-                   nPot2:=nPot2-nDug2
-                   nDug2:=0
-                endif
-             endif
-             //
-             SELECT POM
-             APPEND BLANK
-             Scatter()
-              _idpartner := cIdPartner
-              _datdok    := aFaktura[1]
-              _datval    := aFaktura[2]
-              _datzpr    := aFaktura[3]
-              if empty(_DatDok) .and. empty(_DatVal) 
-                   _DatVal:=_DatZPR
-              endif
-              _brdok     := cBrDok
-              _dug       := nDug
-              _pot       := nPot
-              _dug2      := nDug2
-              _pot2      := nPot2
-              _otvst     := cOtvSt
-             Gather()
-             SELECT SUBAN
-           ELSE
-             if !fTiho
-               IF prow() > 52 + gPStranica
-                    FF
+        if csvid=="N" .and. round(ndug-npot,2)==0
+        	// nista
+        else
+        	IF lEx
+            	fPrviProlaz:=.f.
+             	if cPrelomljeno=="D"
+                	if (ndug-npot)>0
+                   		nDug:=nDug-nPot
+                   		nPot:=0
+                	else
+                   		nPot:=nPot-nDug
+                   		nDug:=0
+                	endif
+                	if (ndug2-npot2)>0
+                   		nDug2:=nDug2-nPot2
+                   		nPot2:=0
+                	else
+                   		nPot2:=nPot2-nDug2
+                   		nDug2:=0
+                	endif
+         	endif
+            //
+            SELECT POM
+            APPEND BLANK
+            Scatter()
+            _idpartner := cIdPartner
+            _datdok    := aFaktura[1]
+            _datval    := aFaktura[2]
+            _datzpr    := aFaktura[3]
+            if empty(_DatDok) .and. empty(_DatVal) 
+            	_DatVal:=_DatZPR
+            endif
+            _brdok     := cBrDok
+            _dug       := nDug
+            _pot       := nPot
+            _dug2      := nDug2
+            _pot2      := nPot2
+            _otvst     := cOtvSt
+            Gather()
+            SELECT SUBAN
+     	ELSE
+        	if !fTiho
+            	IF prow() > 52 + gPStranica
+                	FF
                     ZagKStSif(.t.,lEx)
                     fPrviProlaz:=.f.
-               ENDIF
-               if fPrviProlaz
-                  ZagkStSif(,lEx)
-                  fPrviProlaz:=.f.
-               endif
-               ? padr(cBrDok,10)
-               nCol1:=pcol()+1
-             endif
-             if cPrelomljeno=="D"
+               	ENDIF
+               	if fPrviProlaz
+                	ZagkStSif(,lEx)
+                  	fPrviProlaz:=.f.
+               	endif
+               	? padr(cBrDok,10)
+               	nCol1:=pcol()+1
+        	endif
+            if cPrelomljeno=="D"
                 if (ndug-npot)>0
                    nDug:=nDug-nPot
                    nPot:=0
@@ -1014,8 +1064,8 @@ DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
                    nPot2:=nPot2-nDug2
                    nDug2:=0
                 endif
-             endif
-             if !fTiho
+          	endif
+            if !fTiho
                @ prow(),nCol1 SAY nDug PICTURE picBHD
                @ prow(),pcol()+1  SAY nPot PICTURE picBHD
                @ prow(),pcol()+1  SAY nDug-nPot PICTURE picBHD
@@ -1025,31 +1075,39 @@ DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto
                 @ prow(),pcol()+1  SAY nDug2-nPot2 PICTURE picdem
                ENDIF
                @ prow(),pcol()+2  SAY cOtvSt
-             endif
-             nUDug+=nDug; nUPot+=nPot
-             nUDug2+=nDug2; nUPot2+=nPot2
-           ENDIF
-          endif
+           	endif
+            nUDug+=nDug; nUPot+=nPot
+            nUDug2+=nDug2; nUPot2+=nPot2
+     	ENDIF
+  	endif
 
-    enddo // partner
+enddo 
+// partner
 
-    if !fTiho
-      IF prow()>58+gPStranica; FF; ZagKStSif(.t.,lEx); ENDIF
-      if !lEx .and. !fPrviProlaz  // bilo je stavki
-       ? M
-       ? "UKUPNO:"
-       @ prow(),nCol1 SAY nUDug PICTURE picBHD
-       @ prow(),pcol()+1 SAY nUPot PICTURE picBHD
-       @ prow(),pcol()+1 SAY nUDug-nUPot PICTURE picBHD
-       IF gVar1=="0"
-        @ prow(),pcol()+1 SAY nUDug2 PICTURE picdem
-        @ prow(),pcol()+1 SAY nUPot2 PICTURE picdem
-        @ prow(),pcol()+1 SAY nUDug2-nUPot2 PICTURE picdem
-       ENDIF
-       ? m
-      endif
-    endif
-  if fTiho
+if !fTiho
+      
+	IF prow()>58+gPStranica
+		FF
+		ZagKStSif(.t.,lEx)
+	ENDIF
+      
+	if !lEx .and. !fPrviProlaz  
+		// bilo je stavki
+       	? M
+       	? "UKUPNO:"
+       	@ prow(),nCol1 SAY nUDug PICTURE picBHD
+       	@ prow(),pcol()+1 SAY nUPot PICTURE picBHD
+       	@ prow(),pcol()+1 SAY nUDug-nUPot PICTURE picBHD
+       	IF gVar1=="0"
+        	@ prow(),pcol()+1 SAY nUDug2 PICTURE picdem
+       		@ prow(),pcol()+1 SAY nUPot2 PICTURE picdem
+        	@ prow(),pcol()+1 SAY nUDug2-nUPot2 PICTURE picdem
+       	ENDIF
+       	? m
+ 	endif
+endif
+  
+if fTiho
     // idu svi
   elseif fsolo // iz menija
     if (!fveci .and. idpartner=cSvi) .or. fVeci
@@ -1396,15 +1454,54 @@ SELECT SUBAN
 RETURN
 
 
-/*! \fn GenAZ()
- *  \brief 
- */
- 
-function GenAZ()
+// ------------------------------------------------------------------
+// kreiraj oext
+// ------------------------------------------------------------------
+static function _cre_oext_struct()
+local _table := "osuban"
+local _struct 
+local _ret := .t.
 
+FERASE( my_home() + _table + ".cdx" )
+
+select SUBAN
+set order to tag "3" 
+
+// uzmi suban strukturu
+_struct := suban->( DBSTRUCT() )
+
+// dodaj nova polja u strukturu
+AADD( _struct, { "_RECNO"   , "N",  8,  0 } )
+AADD( _struct, { "_PPK1"    , "C",  1,  0 } )
+AADD( _struct, { "_OBRDOK"  , "C", 10,  0 } )
+
+select ( F_OSUBAN )
+
+// kreiraj tabelu
+DbCreate( my_home() + "osuban.dbf", _struct )
+
+// otvori osuban ekskluzivno
+select ( F_OSUBAN )
+my_use_temp( "OSUBAN", my_home() + _table + ".dbf", .f., .t. )
+
+// kreiraj indekse
+index on IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr tag "1"
+index on idfirma+idkonto+idpartner+brdok tag "3"
+index on dtos(datdok)+dtos(iif(empty(DatVal),DatDok,DatVal)) tag "DATUM"
+
+
+return _ret
+
+
+
+// ----------------------------------------------------------------
+// asistent otvorenih stavki 
+// ----------------------------------------------------------------
+function fin_asistent_otv_st()
 local nSaldo
 local nSljRec
 local nOdem
+local _rec
 
 private cIdKonto
 private cIdFirma
@@ -1414,25 +1511,18 @@ private cBrDok
 O_KONTO
 O_PARTN
 O_SUBAN
-O_PARAMS
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
 
 // ovo su parametri kartice
-cIdFirma:=gFirma
-cIdKonto:=space(len(suban->idkonto))
-cIdPartner:=space(len(suban->idPartner))
-Params1()
-RPar("c4",@cIdFirma)
-RPar("c5",@cIdKonto)
-RPar("c6",@cIdPartner)
-select (F_PARAMS)
-use
+cIdFirma := gFirma
+cIdKonto := space(len(suban->idkonto))
+cIdPartner := space(len(suban->idPartner))
 
-cIdKonto:=padr(cidkonto,len(suban->idkonto))
-cIdPartner:=padr(cidpartner,len(suban->idPartner))
+cIdFirma := fetch_metric("fin_kartica_id_firma", my_user(), cIdFirma )
+cIdKonto := fetch_metric("fin_kartica_id_konto", my_user(), cIdKonto )
+cIdPartner := fetch_metric( "fin_kartica_id_partner", my_user(), cIdPartner ) 
+
+cIdKonto := padr(cidkonto,len(suban->idkonto))
+cIdPartner := padr(cidpartner,len(suban->idPartner))
 // kupci cDugPot:=1
 cDugPot:="1"
 
@@ -1443,99 +1533,89 @@ Box(,3,60)
     read
 BoxC()
 
-// !!!!! paziti na problem u mreznom radu
-
-select SUBAN
-set order to tag "3" //IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
-
-copy structure extended to OEXT
-select (F_OSUBAN)  // privremeno koristim ovu area
-use OEXT
-dbappend()  // dodaj _recno
-replace field_name with  '_RECNO',field_type with 'N', field_len with 8, field_dec with 0
-dbappend()  // dodaj _PPk1
-replace field_name with  '_PPK1',field_type with 'C', field_len with 1, field_dec with 0
-dbappend()  // dodaj _PPk1  // originalni broj dokumenta
-replace field_name with  '_OBRDOK',field_type with 'C', field_len with 10, field_dec with 0
-
-use
-
-if FErase(PRIVPATH+'OSUBAN.CDX')==-1
-    MsgBeep("Ne mogu izbrisati POM.DBF!")
-    ShowFError()
+if LastKey() == K_ESC 
+	return
 endif
-create (PRIVPATH+"OSUBAN") from OEXT
 
-select (F_OSUBAN)
-usex (PRIVPATH+"OSUBAN")
+set_metric("fin_kartica_id_firma", my_user(), cIdFirma )
+set_metric("fin_kartica_id_konto", my_user(), cIdKonto )
+set_metric( "fin_kartica_id_partner", my_user(), cIdPartner ) 
 
-index on IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr  tag "1"
+// kreiraj oext
+if !_cre_oext_struct()
+	return
+endif
 
-index on idfirma+idkonto+idpartner+brdok  tag "3"
-
-index on dtos(datdok)+dtos(iif(empty(DatVal),DatDok,DatVal))  tag "DATUM"
-//OSUBAN
 select suban
 seek cidfirma+cidkonto+cidpartner
 
 // ukupan broj storno racuna za partnera
 nBrojStornoRacuna := 0
+
 do while !eof() .and. idfirma+idkonto+idpartner=cidfirma+cidkonto+cidpartner
 
     cBrDok:=Brdok
     nSaldo:=0
 
-        // proracunaj saldo za partner+dokument
+   	// proracunaj saldo za partner+dokument
     do while !eof() .and. cidfirma+cidkonto+cidpartner+cbrdok=idfirma+idkonto+idpartner+brdok
-            if cDugPot=d_p .and. empty(brdok)
-                MsgBeep("Postoje nepopunjen brojevi veze :"+idvn+"-"+brdok+"/"+rbr+"##Morate ih popuniti !")
-                closeret
-            endif
-            if d_p="1"
+   		if cDugPot=d_p .and. empty(brdok)
+         	MsgBeep("Postoje nepopunjen brojevi veze :"+idvn+"-"+brdok+"/"+rbr+"##Morate ih popuniti !")
+            close all
+			return
+      	endif
+        if d_p="1"
             nsaldo+=iznosbhd
         else
             nsaldo-=iznosbhd
         endif
-            skip
+        skip
     enddo
-    // saldo za dokument + partner postoji
-        if round(nsaldo,4)<>0 
-            // napuni tabelu osuban za partner+dokument
-            seek cidfirma+cidkonto+cidpartner+cbrdok
-            lStorno:=.f.
-            do while !eof() .and. cIdfirma + cIdkonto + cIdpartner + cBrdok == idfirma+idkonto+idpartner+brdok
-                select suban
-                Scatter()
-                select osuban
-                append blank
-                __recno:=suban->(recno())
-                __PPk1 := ""
-                __OBRDOK := _Brdok
-                if (_iznosbhd<0 .and. _d_p==cDugPot)
-                    lStorno:=.t.
-                endif
 
-                if ((nSaldo>0 .and. cDugPot="2") ) .and. _d_p<>cDugPot
-                    // neko je bez veze zatvorio uplate (ili se mozda radi o avansima)
-                    _BrDok:='AVANS'
-                endif
-                Gather()
-                select suban
-                skip
-            enddo
+    // saldo za dokument + partner postoji
+    if round(nsaldo,4)<>0 
+   		// napuni tabelu osuban za partner+dokument
+        seek cidfirma+cidkonto+cidpartner+cbrdok
+        lStorno:=.f.
+
+        do while !eof() .and. cIdfirma + cIdkonto + cIdpartner + cBrdok == idfirma+idkonto+idpartner+brdok
+        	
+			select suban
+            Scatter()
+            
+			select osuban
+            append blank
+            
+			__recno:=suban->(recno())
+            __PPk1 := ""
+            __OBRDOK := _Brdok
+                
+			if (_iznosbhd<0 .and. _d_p==cDugPot)
+            	lStorno:=.t.
+            endif
+
+            if ((nSaldo>0 .and. cDugPot="2") ) .and. _d_p<>cDugPot
+            	// neko je bez veze zatvorio uplate (ili se mozda radi o avansima)
+                _BrDok := 'AVANS'
+            endif
+                
+			Gather()
+                
+			select suban
+            skip
+    	
+		enddo
 
         if lStorno
             ++nBrojStornoRacuna
         endif
+
     endif
+
 enddo
 
 select osuban 
 set order to tag "DATUM"
-
-//if nBrojStornoRacuna>0
-//  MsgBeep("debug: Broj storno racuna" + STR(nBrojStornoRacuna))
-//endif
 
 do while .t.
 
@@ -1543,13 +1623,14 @@ do while .t.
     select osuban
     go top
 
-        //varijabla koja kazuje da je racun/storno racun nadjen
+    //varijabla koja kazuje da je racun/storno racun nadjen
     fNasao:=.f.
     
-        // prvi krug  (nadji ukupno stvorene obaveze za jednog partnera
+   	// prvi krug  (nadji ukupno stvorene obaveze za jednog partnera
     nZatvori:=0
     // nijedan brdok dokument u bazi ne moze biti chr(200)+chr(255)
-        cZatvori:=chr(200)+chr(255)
+        
+	cZatvori:=chr(200)+chr(255)
     dDatDok:=CTOD("")
 
     nZatvoriStorno:=0
@@ -1557,274 +1638,314 @@ do while .t.
     dDatDokStorno:=CTOD("")
 
     // ovdje su sada sve stavke za jednog partnera, sortirane hronoloski
-        do while !eof()
+  	do while !eof()
 
-        // neobradjene stavke
+   		// neobradjene stavke
         if empty(_PPK1) 
 
             // nastanak duga
-                if !fNasao .and. d_p==cDugPot 
+            if !fNasao .and. d_p==cDugPot 
 
                 
-                if (iznosbhd>0)
-                  if nBrojStornoRacuna>0
-                    // prvo se moraju zatvoriti storno racuni
-                    // zato preskacemo sve pozitivne racune koji se nalaze ispred
+            	if (iznosbhd>0)
+                	if nBrojStornoRacuna>0
+                    	// prvo se moraju zatvoriti storno racuni
+                    	// zato preskacemo sve pozitivne racune koji se nalaze ispred
 
                         //MsgBeep("debug: pozitivne preskacem " + STR(nBrojStornoRacuna) + "  BrDok:" +  brdok )
-                    skip
-                    loop
-                  endif
-                  //racun
-                      nZatvori:=iznosbhd
-                      cZatvori:=brdok
-                  dDatDok:=datdok
-                  cZatvoriStorno:=chr(200)+chr(255)
+                    	skip
+                    	loop
+                  	endif
+                  	//racun
+                    nZatvori:=iznosbhd
+                    cZatvori:=brdok
+                  	dDatDok:=datdok
+                  	cZatvoriStorno:=chr(200)+chr(255)
                  
-                else
+             	else
 
-                  // storno racun
-                  nZatvoriStorno:=iznosbhd
-                  cZatvoriStorno:=brdok
-                  dDatDokStorno:=datdok
-                  cZatvori:=chr(200)+chr(255)
-                   --nBrojStornoRacuna
-                   //MsgBeep("debug: -- " + STR(nBrojStornoRacuna) + " / BrDok:" + BrDok)
+                	// storno racun
+                  	nZatvoriStorno:=iznosbhd
+                 	cZatvoriStorno:=brdok
+                 	dDatDokStorno:=datdok
+                  	cZatvori:=chr(200)+chr(255)
+                   	--nBrojStornoRacuna
+                   	//MsgBeep("debug: -- " + STR(nBrojStornoRacuna) + " / BrDok:" + BrDok)
 
-                endif
+              	endif
 
-                    fNasao:=.t.
-                    replace _PPK1 with "1" // prosli smo ovo
-                    go top // idi od pocetka da saberes czatvori
+              	fNasao:=.t.
+                
+				replace _PPK1 with "1" 
+				// prosli smo ovo
+                go top 
+				// idi od pocetka da saberes czatvori
 
-                    loop
+               	loop
 
-                elseif fNasao .and. (cZatvori == Brdok)
+         	elseif fNasao .and. (cZatvori == Brdok)
 
-                // sve ostale stavke koje su hronoloski starije
+            	// sve ostale stavke koje su hronoloski starije
                 //  koje imaju isti broj dokumenta kao nadjeni racun
                 // saberi
-                    if d_p==cDugPot
-                            nZatvori+=iznosbhd
-                    else
-                            nZatvori-=iznosbhd
-                    endif
-                    // prosli smo ovo - marker
-                replace _PPK1 with "1" 
 
-                elseif fNasao .and. (cZatvoriStorno == Brdok) 
-
-                    // isto vrijedi i za stavke iza storno racuna
-                // a koje imaju isti broj veze
                 if d_p==cDugPot
-                            nZatvoriStorno+=iznosbhd
-                    else
-                            nZatvoriStorno-=iznosbhd
-                    endif
-                    replace _PPK1 with "1" // prosli smo ovo
-
+                 	nZatvori+=iznosbhd
+                else
+                  	nZatvori-=iznosbhd
                 endif
 
-        endif // empty(_PPk1)
-        skip
+                // prosli smo ovo - marker
+                replace _PPK1 with "1" 
+
+          	elseif fNasao .and. (cZatvoriStorno == Brdok) 
+
+                // isto vrijedi i za stavke iza storno racuna
+                // a koje imaju isti broj veze
+                
+				if d_p==cDugPot
+                  	nZatvoriStorno+=iznosbhd
+                else
+                   	nZatvoriStorno-=iznosbhd
+                endif
+                    
+				replace _PPK1 with "1" 
+				// prosli smo ovo
+
+         	endif
+
+     	endif 
+		// empty(_PPk1)
+    	skip
     enddo
-    if !fNasao
-        // nema racuna za zatvoriti
+    	
+	if !fNasao
+    	// nema racuna za zatvoriti
         MsgBeep("prosao sve racune - nisam  nista nasao - izlazim")
-            exit 
+        exit 
     endif
 
     // drugi krug - sada se formiraju uplate
     //MsgBeep("2.krug: idem sada formirati uplate - zatvaranje racuna ")
     fNasao:=.f.
     go top
+
     do while !eof()
-            if empty(_PPK1)
 
-            // potrazna strana
-                if d_p<>cDugPot 
+    	if empty(_PPK1)
 
-                    nUplaceno:=iznosbhd
+       		// potrazna strana
+            if d_p<>cDugPot 
+
+            	nUplaceno:=iznosbhd
 
                 // prvo cemo se rijesiti storno racuna, ako ih ima
-                    if nUplaceno>0  .and. ABS(nZatvoriStorno)>0 .and. (dDatDokStorno<=datdok)
+                if nUplaceno>0  .and. ABS(nZatvoriStorno)>0 .and. (dDatDokStorno<=datdok)
 
-                            skip
-                            nSljRec:=recno()
-                            skip -1
-                             nOdem:=iznosdem-nZatvoriStorno*iznosdem/iznosbhd
+                	skip
+                    nSljRec:=recno()
+                    skip -1
+                    nOdem:=iznosdem-nZatvoriStorno*iznosdem/iznosbhd
                                     
-                             // zatvaram storno racun
-                             replace brdok with cZatvoriStorno, _PPk1 with "1", iznosbhd with nZatvoriStorno, iznosdem with iznosdem-nODem
-                             scatter()
-                             _iznosbhd := nuplaceno - nZatvoriStorno
-                             _iznosdem := nodem
+                    // zatvaram storno racun
+                    replace brdok with cZatvoriStorno
+					replace _PPk1 with "1"
+					replace iznosbhd with nZatvoriStorno
+					replace iznosdem with iznosdem-nODem
+                             
+					scatter()
+                    _iznosbhd := nuplaceno - nZatvoriStorno
+                  	_iznosdem := nodem
 
-                             if round(_iznosbhd,4)<>0 .and. round(nodem,4)<>0
-                                    // prebacujem ostatak uplate na novu stavku
-                                        append blank
-                                        _brdok:="AVANS"
-                                        __PPK1:=""
-                                        gather()
-                              endif
-                              nZatvoriStorno:=0
-                              go nSljRec 
-                              loop
+                  	if round(_iznosbhd,4)<>0 .and. round(nodem,4)<>0
+                    	// prebacujem ostatak uplate na novu stavku
+                        append blank
+                        _brdok:="AVANS"
+                        __PPK1:=""
+                        gather()
+                  	endif
+                              
+					nZatvoriStorno:=0
+                    go nSljRec 
+                    loop
 
-                elseif nUplaceno>0 .and. nZatvori>0  
+             	elseif nUplaceno>0 .and. nZatvori>0  
                     
-                        //pozitivni iznosi
-                        if  nZatvori>=nUplaceno  
+                	//pozitivni iznosi
+                    if nZatvori >= nUplaceno  
 
-                           replace brdok with cZatvori, _PPk1 with "1"
-                           nZatvori -= nUplaceno
+                    	replace brdok with cZatvori
+						replace _PPk1 with "1"
 
-                        elseif nZatvori<nUplaceno
+                        nZatvori -= nUplaceno
 
-                                //MsgBeep(" nZatvori < nUplaceno :" + STR(nZatvori) + "/" + STR(nUplaceno))
-                                // imamo i ostatak sredstava razbij uplatu !!
-                                skip
-                                nSljRec:=recno()
-                                skip -1
-                                nOdem := iznosdem - nZatvori * iznosdem/iznosbhd
-                                // alikvotni dio..HA HA HA
-                                replace brdok with czatvori, _PPk1 with "1", iznosbhd with nZatvori, iznosdem with iznosdem-nODem
-                                scatter()
-                                _iznosbhd:=nuplaceno-nZatvori
-                                _iznosdem:=nodem
-                                if round(_iznosbhd,4)<>0 .and. round(nodem,4)<>0
-                                    append blank
-                                    _brdok:="AVANS"
-                                    __PPK1:=""
-                                    gather()
-                                    //MsgBeep("AVANS-2" + STR(_iznosbhd)) 
-                                endif
-                                nZatvori:=0
-                                go nSljRec 
+                  	elseif nZatvori<nUplaceno
+
+                     	//MsgBeep(" nZatvori < nUplaceno :" + STR(nZatvori) + "/" + STR(nUplaceno))
+                        // imamo i ostatak sredstava razbij uplatu !!
+                        skip
+                        nSljRec:=recno()
+                        skip -1
+                        nOdem := iznosdem - nZatvori * iznosdem/iznosbhd
+                       	// alikvotni dio..HA HA HA
+                        replace brdok with czatvori
+						replace _PPk1 with "1"
+						replace iznosbhd with nZatvori
+						replace iznosdem with iznosdem-nODem
+                        scatter()
+                                
+						_iznosbhd:=nuplaceno-nZatvori
+                        _iznosdem:=nodem
+                                
+						if round(_iznosbhd,4)<>0 .and. round(nodem,4)<>0
+                         	append blank
+                            _brdok:="AVANS"
+                            __PPK1:=""
+                            gather()
+                            //MsgBeep("AVANS-2" + STR(_iznosbhd)) 
+                        endif
+                        
+						nZatvori:=0
+                        go nSljRec 
                         loop
-                    endif
-                        if nZatvori <= 0
-                            //MsgBeep(" nZatvori <=0 izlazim ! :" + STR(nZatvori) )
+                 	endif
+                 	
+					if nZatvori <= 0
+                     	//MsgBeep(" nZatvori <=0 izlazim ! :" + STR(nZatvori) )
                         exit
                     endif  // zavrsi sa ovim racunom
-                    endif  // nuplaceno>0 .and. nzatvori>0
+             	endif  // nuplaceno>0 .and. nzatvori>0
 
-                endif // d_p<>cdugpot
-            endif // _PPk1
-            skip
-    enddo
+         	endif // d_p<>cdugpot
+     	endif // _PPk1
+            
+		skip
+    
+	enddo
 
 enddo
 
 // !!! markiraj stavke koje su postale zatvorene
 set order to tag "3"
 go top
+
 do while !eof()
-    cBrDok:=brdok
+	
+	cBrDok:=brdok
     nSaldo:=0
     nsljrec:=recno()
-    do while !eof() .and. cidfirma+cidkonto+cidpartner+cbrdok=idfirma+idkonto+idpartner+brdok
-            if d_p="1"
+    
+	do while !eof() .and. cidfirma+cidkonto+cidpartner+cbrdok=idfirma+idkonto+idpartner+brdok
+    	if d_p="1"
             nsaldo+=iznosbhd
         else
             nsaldo-=iznosbhd
         endif
-            skip
+        skip
     enddo
     if round(nsaldo,4)=0
-            go nSljRec
-            do while !eof() .and. cidfirma+cidkonto+cidpartner+cbrdok=idfirma+idkonto+idpartner+brdok
-                replace otvst with "9"
-                skip
-            enddo
-    endif
+   		go nSljRec
+        do while !eof() .and. cidfirma+cidkonto+cidpartner+cbrdok=idfirma+idkonto+idpartner+brdok
+         	replace otvst with "9"
+            skip
+     	enddo
+  	endif
 enddo
 
 select suban
 use
 select osuban
 use
-usex ("osuban", "SUBAN", .f.) 
+
+// otvaram osuban kao suban alijas
+// radi stampe kartice itd...
+select ( F_SUBAN )
+my_use_temp("SUBAN", my_home() + "osuban", .f., .f. ) 
 
 select SUBAN
-set order to tag "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
+set order to tag "1" 
+// IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
 
 if reccount()=0
-    use
-    MsgBeep("Nema otvorenih stavki")
+	use
+    MsgBeep( "Nema otvorenih stavki" )
     return
 endif
 
 Box(,21,77)
 
-ImeKol:={}
-AADD(ImeKol,{ "O.Brdok",    {|| _OBrDok}                  })
-AADD(ImeKol,{ "Br.Veze",     {|| BrDok}                          })
-AADD(ImeKol,{ "Dat.Dok.",   {|| DatDok}                         })
-AADD(ImeKol,{ "Dat.Val.",   {|| DatVal}                         })
-AADD(ImeKol,{ PADR("Duguje "+ALLTRIM(ValDomaca()),18), {|| str((iif(D_P=="1",iznosbhd,0)),18,2)}     })
-AADD(ImeKol,{ PADR("Potraz."+ALLTRIM(ValDomaca()),18), {|| str((iif(D_P=="2",iznosbhd,0)),18,2)}     })
-AADD(ImeKol,{ "M1",         {|| m1}                          })
-AADD(ImeKol,{ PADR("Iznos "+ALLTRIM(ValPomocna()),14),  {|| str(iznosdem,14,2)}                       })
-AADD(ImeKol,{ "nalog",    {|| idvn+"-"+brnal+"/"+rbr}                  })
-AADD(ImeKol,{ "O",          {|| OtvSt}                          })
-AADD(ImeKol,{ "Partner",     {|| IdPartner}                          })
-Kol:={}
-for i:=1 to len(ImeKol); AADD(Kol,i); next
+	ImeKol:={}
+	AADD(ImeKol,{ "O.Brdok",    {|| _OBrDok}                  })
+	AADD(ImeKol,{ "Br.Veze",     {|| BrDok}                          })
+	AADD(ImeKol,{ "Dat.Dok.",   {|| DatDok}                         })
+	AADD(ImeKol,{ "Dat.Val.",   {|| DatVal}                         })
+	AADD(ImeKol,{ PADR("Duguje "+ALLTRIM(ValDomaca()),18), {|| str((iif(D_P=="1",iznosbhd,0)),18,2)}     })
+	AADD(ImeKol,{ PADR("Potraz."+ALLTRIM(ValDomaca()),18), {|| str((iif(D_P=="2",iznosbhd,0)),18,2)}     })
+	AADD(ImeKol,{ "M1",         {|| m1}                          })
+	AADD(ImeKol,{ PADR("Iznos "+ALLTRIM(ValPomocna()),14),  {|| str(iznosdem,14,2)}                       })
+	AADD(ImeKol,{ "nalog",    {|| idvn+"-"+brnal+"/"+rbr}                  })
+	AADD(ImeKol,{ "O",          {|| OtvSt}                          })
+	AADD(ImeKol,{ "Partner",     {|| IdPartner}                          })
+	
+	Kol:={}
+	for i:=1 to len(ImeKol)
+		AADD(Kol,i)
+	next
 
-private  bGoreRed:=NIL
-private  bDoleRed:=NIL
-private  bDodajRed:=NIL
-private  fTBNoviRed:=.f. // trenutno smo u novom redu ?
-private  TBCanClose:=.t. // da li se moze zavrsiti unos podataka ?
-private  TBAppend:="N"  // mogu dodavati slogove
-private  bZaglavlje:=NIL
-        // zaglavlje se edituje kada je kursor u prvoj koloni
-        // prvog reda
-private  TBSkipBlock:={|nSkip| SkipDBBK(nSkip)}
-private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
-private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
-private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
+	private  bGoreRed:=NIL
+	private  bDoleRed:=NIL
+	private  bDodajRed:=NIL
+	private  fTBNoviRed:=.f. // trenutno smo u novom redu ?
+	private  TBCanClose:=.t. // da li se moze zavrsiti unos podataka ?
+	private  TBAppend:="N"  // mogu dodavati slogove
+	private  bZaglavlje:=NIL
+    // zaglavlje se edituje kada je kursor u prvoj koloni
+    // prvog reda
+	private  TBSkipBlock:={|nSkip| SkipDBBK(nSkip)}
+	private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
+	private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
+	private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
                         // ovo se mo§e setovati u when/valid fjama
-private  TBScatter:="N"  // uzmi samo tekue polje
-adImeKol:={}
+	private  TBScatter:="N"  // uzmi samo tekue polje
+	adImeKol:={}
 
-for i:=1 TO LEN(ImeKol)
-   AADD(adImeKol,ImeKol[i])
-next
+	for i:=1 TO LEN(ImeKol)
+   		AADD(adImeKol,ImeKol[i])
+	next
 
-adKol:={}
+	adKol:={}
 
-for i:=1 to len(adImeKol)
-  AADD(adKol,i)
-next
+	for i:=1 to len(adImeKol)
+  		AADD(adKol,i)
+	next
 
-private bBKUslov:= {|| idFirma+idkonto+idpartner=cidFirma+cidkonto+cidpartner}
-private bBkTrazi:= {|| cIdFirma+cIdkonto+cIdPartner}
-// Brows ekey uslova
-private aPPos:={cIdPartner,1}  // pozicija kolone partner, broj veze
+	private bBKUslov:= {|| idFirma+idkonto+idpartner=cidFirma+cidkonto+cidpartner}
+	private bBkTrazi:= {|| cIdFirma+cIdkonto+cIdPartner}
+	// Brows ekey uslova
+	private aPPos:={cIdPartner,1}  // pozicija kolone partner, broj veze
 
-set cursor on
-@ m_x+16,m_y+1 SAY "****************  REZULTATI ASISTENTA ************"
-@ m_x+17,m_y+1 SAY REPL("Ä",78)
-@ m_x+18,m_y+1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
-@ m_x+19,m_y+1 SAY " <K> Ukljuci/iskljuci racun za kamate "
-@ m_x+20,m_y+1 SAY ' < F6 > Stampanje izvrsenih promjena  '
-private cPomBrDok := SPACE(10)
+	set cursor on
+	@ m_x+16,m_y+1 SAY "****************  REZULTATI ASISTENTA ************"
+	@ m_x+17,m_y+1 SAY REPL("Ä",78)
+	@ m_x+18,m_y+1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
+	@ m_x+19,m_y+1 SAY " <K> Ukljuci/iskljuci racun za kamate "
+	@ m_x+20,m_y+1 SAY ' < F6 > Stampanje izvrsenih promjena  '
+	private cPomBrDok := SPACE(10)
 
-seek EVAL(bBkTrazi)
-ObjDbEdit("Ost", 21, 77, {|| EdRos()} , "", "", .f. ,NIL, 1, {|| brdok<>_obrdok}, 6, 0, ;  // zadnji par: nGPrazno
+	seek EVAL(bBkTrazi)
+	ObjDbEdit("Ost", 21, 77, {|| EdRos()} , "", "", .f. ,NIL, 1, {|| brdok<>_obrdok}, 6, 0, ;  // zadnji par: nGPrazno
             NIL, {|nSkip| SkipDBBK(nSkip)} )
-
 
 BoxC()
 
 go top
+
 fPromjene:=.f.
-do while !eof()
-    if _obrdok<>brdok
-            fPromjene:=.t.
-            exit
+
+do while !eof()	
+	if _obrdok<>brdok
+     	fPromjene:=.t.
+        exit
     endif
     skip
 enddo
@@ -1837,60 +1958,95 @@ if fpromjene
 else
     select suban
     use
-    return  // izadji - nije bilo promjena
+    return  
+	// izadji - nije bilo promjena
 endif
 
+select osuban
+use
 select suban
 use
 
 MsgBeep("U slucaju da azurirate rezultate asistenta#program ce izmijeniti sadrzaj subanalitickih podataka !")
-if pitanje(,"Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!","N")=="D"
-    select (F_OSUBAN)
-    usex (PRIVPATH+"osuban")
+
+if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!","N" ) == "D"	
+
+	// ekskluzivno otvori
+	select ( F_OSUBAN )
+    my_use_temp( "OSUBAN", my_home() + "osuban", .f., .t. )
+
     O_SUBAN
+
     if !flock()
         MsgBeep("Program ne dozvoljava drugim korisnicima unos podataka !")
     else
-            select osuban
+
+     	select osuban
         go top
-            // prvi krug - provjeriti da neko nije slucajno dirao stavke ??!!-drugi korisnik
-            do while !eof()
-                select suban
+            
+		// prvi krug - provjeriti da neko nije slucajno dirao stavke ??!!-drugi korisnik
+        do while !eof()
+          	
+			select suban
             go osuban->_recno
-                if eof() .or. idfirma<>osuban->idfirma .or. idvn<>osuban->idvn .or. brnal<>osuban->brnal .or. idkonto<>osuban->idkonto .or. idpartner<>osuban->idpartner .or. d_p<>osuban->d_p
-                    MsgBeep("Izgleda da je drugi korisnik radio na ovom partneru#Prekidam operaciju !!!")
-                    closeret
-                endif
-                select osuban
-                skip
-            enddo
-            // drugi krug - sve je cisto brisi iz suban!
-            select osuban
-            go top
-            do while !eof()
-                select suban
+                
+			if eof() .or. idfirma<>osuban->idfirma .or. idvn<>osuban->idvn .or. brnal<>osuban->brnal .or. idkonto<>osuban->idkonto .or. idpartner<>osuban->idpartner .or. d_p<>osuban->d_p
+            	MsgBeep("Izgleda da je drugi korisnik radio na ovom partneru#Prekidam operaciju !!!")
+                close all
+            endif
+                
+			select osuban
+            skip
+       	enddo
+            
+		// drugi krug - sve je cisto brisi iz suban!
+        select osuban
+        go top
+            
+		do while !eof()
+          	
+			select suban
             go osuban->_Recno
-                IF !EOF()
-                DELETE
+            
+			IF !EOF()
+				_rec := dbf_get_rec()
+				my_use_semaphore_off()
+				sql_table_update( nil, "BEGIN" )
+				delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+				sql_table_update( nil, "END" )
+				my_use_semaphore_on()
             ENDIF
-                select osuban
+            
+			select osuban
             skip
-            enddo
-            // treci krug - dodaj iz osuban
-            go top
-            do while !eof()
-                scatter()
-                select suban
-                append blank
-                gather()
-                select osuban
+       	enddo
+            
+		// treci krug - dodaj iz osuban
+        go top
+        do while !eof()
+                
+			_rec := dbf_get_rec()
+
+            select suban
+			append blank
+			
+			my_use_semaphore_off()
+			sql_table_update( nil, "BEGIN" )
+			update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+			sql_table_update( nil, "END" )
+			my_use_semaphore_on()
+    		
+			select osuban
             skip
-            enddo
-            MsgBeep("Promjene su izvrsene - provjerite na kartici")
+
+      	enddo
+        
+		MsgBeep("Promjene su izvrsene - provjerite na kartici")
     endif
+
 endif
 
-closeret
+close all
 return
 
 
@@ -1927,6 +2083,7 @@ START PRINT CRET
 
 StampaTabele(aKol,,,0,,;
     ,"Rezultati asistenta otvorenih stavki za: "+idkonto+"/"+idpartner+" na datum:"+dtoc(Date()))
+
 END PRINT
 return .t.
 

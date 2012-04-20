@@ -44,7 +44,7 @@ gFc_chk := fetch_metric( "fisk_provjera_kolicine", NIL, gfc_chk )
 gFc_operater := fetch_metric( "fisk_operater_naziv", NIL, gfc_operater )
 gFc_oper_pwd := fetch_metric( "fisk_operater_pwd", NIL, gfc_oper_pwd )
 gFc_acd := fetch_metric( "fisk_vrsta_plu_koda", NIL, gfc_acd )
-gFc_print := fetch_metric( "fisk_inicijalni_plu_kod", NIL, gfc_pinit )
+gFc_pinit := fetch_metric( "fisk_inicijalni_plu_kod", NIL, gfc_pinit )
 
 
 // user

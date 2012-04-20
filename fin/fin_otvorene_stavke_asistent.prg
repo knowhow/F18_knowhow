@@ -94,13 +94,6 @@ local fgenerisano
 local nNaz:=1
 local nRec:=RECNO()
 
-/*
-if readvar() <> "_IZNOSDEM"
-  	MsgBeep("Morate se pozicionirati na polje strane valute !")
-  	return
-endif
-*/
-
 lAsist := .t.
 lSumirano := .f.
 nZbir := 0
@@ -168,11 +161,12 @@ AADD(aDBf,{ 'IZNOSBHD'            , 'N' ,  21 ,  2 })
 AADD(aDBf,{ 'UPLACENO'            , 'N' ,  21 ,  2 })
 AADD(aDBf,{ 'M2'                  , 'C' ,  1 , 0 })
 
-DBCREATE2('ostav.dbf', aDbf)
+DBCREATE(my_home() + 'ostav.dbf', aDbf )
 
-select (F_OSTAV)
+select ( F_OSTAV )
 
-my_usex ('OSTAV')
+my_use_temp("OSTAV", my_home() + "ostav", .f., .t. )
+
 index on dtos(DatDok) + DTOS(iif(empty(datval), datdok, datval)) + Brdok  tag "1"
 
 nUkDugBHD:=0
@@ -189,7 +183,9 @@ select (F_TRFP2)
 if !used()
 	O_TRFP2
 endif
+
 HSEEK "99 "+LEFT(cIdKonto,1)
+
 DO WHILE !EOF() .and. IDVD=="99" .and. TRIM(idkonto)!=LEFT(cIdKonto,LEN(TRIM(idkonto)))
 	SKIP 1
 ENDDO
@@ -316,7 +312,7 @@ IF fm3 .and. Pitanje("","Izgenerisati stavke u nalogu za knjizenje ?","D")=="D" 
   DO WHILE !EOF()
     IF m2=="3"
       replace m2 with ""
-      SELECT (F_PRIPR)
+      SELECT (F_FIN_PRIPR)
       if fgenerisano
          APPEND BLANK
       else
@@ -380,7 +376,7 @@ BoxC()
 
 if fgenerisano
   --nRbr
-  select (F_PRIPR)
+  select (F_FIN_PRIPR)
   Scatter()  // uzmi posljednji slog
   if fnovi
     MY_DELETE // izbrisi

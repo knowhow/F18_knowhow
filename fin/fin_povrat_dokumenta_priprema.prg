@@ -187,18 +187,17 @@ close all
 return
 
 
+// ----------------------------------------------------------
+// preknjizenje konta
+// ----------------------------------------------------------
+function prefin_unos_naloga()
+local fK1 := "N"
+local fk2 := "N"
+local fk3 := "N"
+local fk4 := "N"
+local cSK := "N"
 
-/*! \fn Prefin_unos_naloga()
- *  \brief Preknjizenje naloga
- */
-function Prefin_unos_naloga()
-
-local fK1:="N"
-local fk2:="N"
-local fk3:="N"
-local fk4:="N"
-local cSK:="N"
-nC:=50
+nC := 50
 
 O_PARAMS
 
@@ -214,13 +213,13 @@ RPar("k4",@fk4)
 select params
 use
 
-cIdFirma:=gFirma
-picBHD:=FormPicL("9 "+gPicBHD,20)
+cIdFirma := gFirma
+picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
 O_PARTN
 
-dDatOd:=CToD("")
-dDatDo:=CToD("")
+dDatOd := CToD("")
+dDatDo := CToD("")
 
 qqKonto:=SPACE(100)
 qqPartner:=SPACE(100)
@@ -268,11 +267,7 @@ do while .t.
  	endif
 	@ m_x+7,m_y+2 SAY "Datum dokumenta od" GET dDatOd
  	@ m_x+7,col()+2 SAY "do" GET dDatDo
-
-	// dodata mogucnost izbora i saldo (T), aMersed, 26.03.2004
  	@ m_x+8,m_y+2 SAY "Protustav/Storno/Saldo (P/S/T) " GET cPreknjizi valid cPreknjizi $ "PST" pict "@!"
- 	// ako je cPreknjizi T onda mora odrediti na koju stranu knjizi
- 	// posto moram provjeriti upravo upisanu varijablu ide READ
  	read
  	
 	if cPreknjizi=="T" 
@@ -300,14 +295,17 @@ do while .t.
  
  	aUsl1:=Parsiraj(qqKonto,"IdKonto")
  	aUsl2:=Parsiraj(qqPartner,"IdPartner")
+
 	if gRJ=="D" 
 		if cRascl=="D"
 			lRJRascl := .t.
 		endif
 	endif
+
 	if gRJ=="D"
  		aUsl3:=Parsiraj(qqIdRj,"IdRj")
 	endif
+
 	if aUsl1<>NIL .and. aUsl2<>NIL
 		exit
 	endif

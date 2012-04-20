@@ -204,7 +204,6 @@ return
 
 method setGVars()
 
-
 set_global_vars()
 set_roba_global_vars()
 
@@ -248,15 +247,12 @@ public bRuleBlock := g_rule_block_fin()
 ::super:setTGVars()
 
 O_PARAMS
+
 Rpar("br",@gBrojac)
-Rpar("ff",@gFirma)
-Rpar("ts",@gTS)
 RPar("du",@gDUFRJ)
 Rpar("fk",@gFKomp)
-Rpar("fn",@gNFirma)
 Rpar("Ra",@gRavnot)
 Rpar("dn",@gDatNal)
-Rpar("nw",@gNW)
 Rpar("bv",@gBezVracanja)
 Rpar("bi",@gBuIz)
 Rpar("p1",@gPicDEM)
@@ -271,7 +267,6 @@ Rpar("si",@gSAKrIz)
 Rpar("zx",@gKtoLimit)
 Rpar("zy",@gnKtoLimit)
 Rpar("OA",@gOAsDuPartn)
-
 Rpar("k1",@gK1)
 Rpar("k2",@gK2)
 Rpar("k3",@gK3)
@@ -282,19 +277,8 @@ Rpar("po",@gPotpis)
 Rpar("az",@gnKZBdana)
 Rpar("aT",@gAzurTimeout)
 
-if empty(gNFirma)
-	Beep(1)
-  	Box(,1,50)
-    		@ m_x+1,m_y+2 SAY "Unesi naziv firme:" GET gNFirma pict "@!"
-    		read
-  	BoxC()
-  	WPar("fn",gNFirma)
-endif
 select (F_PARAMS)
-
-#ifndef CAX
-	use
-#endif
+use
 
 public gModul
 public gTema

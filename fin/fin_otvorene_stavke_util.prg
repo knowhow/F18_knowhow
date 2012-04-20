@@ -11,11 +11,11 @@
 
 #include "fin.ch"
 
+
 /*! \fn OStUndo()
  *  \brief Otvorene stavke - UNDO operacija
  */
 function OStUndo()
-
 
 if !SigmaSif("SCUNDO")
 	MsgBeep("Nemate ovlastenja za koristenje ove operacije!")
@@ -84,6 +84,7 @@ return 1
  *  \brief glavna funkcija obrade dokumenta 
  */
 static function OStRunUndo(dDOd, dDDo, cIdPartn, cIdKonto, cDugPot, cVNal)
+local _rec
 
 select suban
 set order to tag "1"
@@ -102,6 +103,7 @@ cKupac:=""
 Box(, 3, 70)
 
 do while !EOF() .and. field->idkonto=cIdKonto .and. field->datdok <= dDatDo .and. if(!Empty(cIdPartn), field->idpartner=cIdPartn, .t.)
+
 	// uzmi broj prvog naloga
 	cBrNal := field->brnal
 	cTipNal := field->idvn
@@ -109,6 +111,7 @@ do while !EOF() .and. field->idkonto=cIdKonto .and. field->datdok <= dDatDo .and
 
 	select partn
 	hseek cKupac
+
 	select suban
 	
 	@ 1+m_x, 2+m_y SAY "Partner: " + partn->naz
@@ -148,24 +151,43 @@ do while !EOF() .and. field->idkonto=cIdKonto .and. field->datdok <= dDatDo .and
 		@ 3+m_x, 2+m_y SAY "Suma += " + ALLTRIM(STR(nIznBhd))
 		
 		skip
+				
+		my_use_semaphore_off()
+		sql_table_update( nil, "BEGIN" )
 		
 		// ako je sljedeci nalog razlicit, updateuj postojeci sa sumom
 		if (field->brnal<>cBrNal .or. field->idvn <> cTipNal)
+
 			skip -1
-			Scatter()
-			_iznosbhd := nIznBhd
-			_iznosdem := nIznDem
-			_brdok := ""
-			_otvst := ""
-			Gather()
+
+			_rec := dbf_get_rec()
+
+			_rec["iznosbhd"] := nIznBhd
+			_rec["iznosdem"] := nIznDem
+			_rec["brdok"] := ""
+			_rec["otvst"] := ""
+
+			update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+
 			skip
+
 		else
+
 			// izbrisi prethodnu stavku
 			skip -1
-			delete
+
+			_rec := dbf_get_rec()
+			delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+
 			skip
+
 		endif
+			
+		sql_table_update( nil, "END" )
+		my_use_semaphore_on()
+
 	enddo
+
 enddo
 
 BoxC()
@@ -180,11 +202,6 @@ return
  *  \brief Pokrece asistenta otvorenih stavki poslije azuriranja naloga
  */
 function OStAfterAzur(aPartList, cIdPart, cIdKonto, cDp)
-
-
-
-
-
 return
 
 

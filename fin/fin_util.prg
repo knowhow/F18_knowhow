@@ -32,57 +32,27 @@ endif
 return .t.
 
 
-/*! \fn Izvj0()
- *  \brief
- */
 function Izvj0()
-
 Izvjestaji()
-
 return
 
 
 
-/*! \fn Preknjizenje()
- *  \brief preknjizenje
- */
 function Preknjizenje()
-
-cSecur := SecurR(KLevel,"Preknjiz")
-cSecur2 := SecurR(KLevel,"SGLEDAJ")
-if ImaSlovo("X",cSecur) .or. ImaSlovo("D",cSecur2)
-	MsgBeep("Opcija nedostupna !")
-else
-	Prefin_unos_naloga()
-endif
+Prefin_unos_naloga()
 return
 
 
-/*! \fn Prebfin_kartica()
- *  \brief Prebacivanja kartica
- */
 function Prebfin_kartica()
-//cSecur:=SecurR(KLevel,"Prekart")
-//cSecur2:=SecurR(KLevel,"SGLEDAJ")
-//if ImaSlovo("TX",cSecur) .or. ImaSlovo("D",cSecur2)
-//	MsgBeep("Opcija nedostupna !")
-//else
-	fin_prekart()
-//endif
+fin_prekart()
 return
 
 
-/*! \fn GenPocStanja()
- *  \brief generacija pocetnog stanja
- */
 function GenPocStanja()
 PrenosFin()
 return
 
 
-/*! \fn ImaUSubanNemaUNalog()
- *  \brief Ispituje da li nalog postoji u SUBAN ako ga nema u NALOG
- */
 function ImaUSubanNemaUNalog()
 local _i
 local _area
@@ -221,21 +191,13 @@ local __brnal
 local __idfirma
 local __idvn
 local __t_date
-
 local dSubanDate
-
 local nTotErrors := 0
-
 local nNalCnt := 0
-
 local nMonth
-
 local nSubanKto
-
 local nGrDate
-
 local nGrMonth
-
 local nGrSaldo := 0
 
 close all
@@ -432,10 +394,11 @@ if dGrDate <> nil .and. nGrSaldo <> 0
 
 endif
 
+close all
+
 ff
 end print
 
-close all
 
 return
 

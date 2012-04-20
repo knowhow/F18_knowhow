@@ -1,3 +1,8 @@
+1.0.12 2012-04-20, vsasa
+
+  - kalk, ispis firme u zaglavlju
+  - tops, update fisc_rn polje, korekcija [#27721](http://redmine.bring.out.ba/issues/27721)
+ 
 1.0.11 2012-04-19, vsasa
 
   - fakt, radna jedinica na left 2 [#27710](http://redmine.bring.out.ba/issues/27710)

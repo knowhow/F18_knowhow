@@ -241,9 +241,7 @@ else
 	msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR(nFisc_no)) )
 	
 	if nFisc_no <> 0
-		// upisi broj fiskalnog racuna u doks
-		select pos_doks
-		replace field->fisc_rn with nFisc_no
+		_update_fisc_rn( nFisc_no )
 	endif
 
 endif
@@ -479,10 +477,8 @@ if gFc_error == "D" .and. cContinue <> "2"
 
 			msgbeep("Kreiran fiskalni racun: " + ;
 				ALLTRIM(STR( nFisc_no )))
-				
-			// upisi u doks vezu sa racunom
-			select pos_doks
-			replace field->fisc_rn with nFisc_no
+			
+            _update_fisc_rn( nFisc_no )	
 
 		endif
 	
@@ -641,16 +637,37 @@ if nErr = 0
 	// vrati broj racuna
 	nFisc_no := hcp_fisc_no( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
 			gFc_error, lStorno )
-	if nFisc_no > 0
-		// upisi u doks vezu sa racunom
-		select pos_doks
-		replace field->fisc_rn with nFisc_no
 	
-	endif
+    if nFisc_no > 0
+        _update_fisc_rn( nFisc_no )
+    endif
+
 endif
 
 
 return nErr
+
+// ------------------------------------------------
+// update broj fiskalnog racuna
+static function _update_fisc_rn( nFisc_no )
+local _rec
+
+select pos_doks
+
+_rec := dbf_get_rec()
+_rec["fisc_rn"] := nFisc_no
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
+return
+
+
 
 // --------------------------------------------
 // vrati vrstu placanja

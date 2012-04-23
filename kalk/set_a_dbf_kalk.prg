@@ -158,13 +158,13 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idvd + field->shema + field->idkonto + field->id }
-_alg["dbf_key_fields"] := { "idvd", "shema", "idkonto", "id" }
-_alg["sql_in"]         := " rpad( idvd,2) || rpad( shema,1)  || rpad(idkonto,8) || rpad(id,60)"
+_alg["dbf_key_block"]  := {|| field->idvd + field->shema + field->idkonto + field->id + field->idtarifa + field->idvn + field->naz }
+_alg["dbf_key_fields"] := { "idvd", "shema", "idkonto", "id", "idtarifa", "idvn", "naz" }
+_alg["sql_in"]         := " rpad( idvd,2) || rpad( shema,1)  || rpad(idkonto,8) || rpad(id,60) || rpad(idtarifa,6) || rpad(idvn,2) || rpad(naz,20) "
 _alg["dbf_tag"]        := "ID"
 AADD(_item["algoritam"], _alg)
 
-_item["sql_order"] := "idvd, shema, idkonto, id"
+_item["sql_order"] := "idvd, shema, idkonto, id, idtarifa"
 
 f18_dbfs_add(_tbl, @_item)
 

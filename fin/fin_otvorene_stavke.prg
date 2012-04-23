@@ -451,24 +451,30 @@ close all
 return
 
 
+static function _o_ruc_zat()
+O_PARTN
+O_KONTO
+if gRJ == "D"
+	O_RJ
+endif
+O_SUBAN
+return
 
-/*! \fn RucnoZat()
- *  \brief Rucno zatvaranje otvaranih stavki
- */
- 
+
+// ------------------------------------------------------------------------
+// rucno zatvaranje stavki 
+// ------------------------------------------------------------------------
 function RucnoZat()
 
+_o_ruc_zat()
+
 cIdFirma:=gFirma
-O_PARTN
-cIdPartner:=space(len(id))
+cIdPartner:=space(len(partn->id))
+
 picD:=FormPicL("9 "+gPicBHD,14)
 picDEM:=FormPicL("9 "+gPicDEM,9)
 
-if gRJ=="D"
-  O_RJ
-endif
-O_KONTO
-cIdKonto:=space(len(id))
+cIdKonto:=space(len(konto->id))
 
 Box(,7,66,)
 
@@ -498,8 +504,6 @@ endif
 
 cIdFirma:=left(cIdFirma,2)
 
-O_SUBAN
-
 select SUBAN
 
 // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
@@ -508,7 +512,6 @@ set order to tag "1"
 IF gRJ=="D" .and. !EMPTY(cIdRJ)
   SET FILTER TO IDRJ==cIdRj
 ENDIF
-
 
 Box(, MAXROWS() - 5, MAXCOLS() - 10 )
 
@@ -526,7 +529,7 @@ AADD(ImeKol,{ "nalog",      {|| idvn + "-" + brnal +"/" + rbr}                  
 Kol:={}
 
 for i := 1 to len(ImeKol)
- AADD(Kol, i)
+	AADD(Kol, i)
 next
 
 Private aPPos:={2,3}  
@@ -588,6 +591,9 @@ local cMark
 local cDn  := "N" 
 local nRet := DE_CONT
 local _otv_st := " "
+local _t_rec := RECNO()
+local _tb_filter := DbFilter()
+local _t_area := SELECT()
 
 if Logirati(goModul:oDataBase:cName,"DOK","ASISTENT")
     lLogRucZat:=.t.
@@ -674,6 +680,7 @@ do case
      	cOpis:=opis
      	dDatDok:=datdok
     	dDatVal:=datval
+
      	Box("eddok", 5, 70, .f.)
        		@ m_x+1, m_y+2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
        		@ m_x+2, m_y+2 SAY "Opis:" GET cOpis PICT "@S50"
@@ -734,20 +741,21 @@ do case
 
  	case Ch == K_CTRL_P
 
-    	PushWa()
      	StKart()
-     	PopWA()
-
+		
      	nRet := DE_REFRESH
 
 	case Ch == K_ALT_P
 
-    	PushWa()
      	StBrVeze()
-    	PopWA()
      	nRet:=DE_REFRESH
 
 endcase
+
+_o_ruc_zat()
+select ( _t_area )
+set filter to &(_tb_filter)
+go ( _t_rec )
 
 return nRet
 
@@ -1205,15 +1213,16 @@ function fin_create_pom_table(fTiho, nParLen)
 local i
 local nPartLen
 local _alias := "POM"
-local _ime_dbf
+local _ime_dbf := my_home() + "pom"
 local aDbf, aGod
 
-IF fTiho==NIL
+if fTiho==NIL
     fTiho:=.f.
-ENDIF
+endif
 
-select (F_POM)
-USE
+select ( F_POM )
+use
+
 if nParLen == nil
     nParLen := 6
 endif
@@ -1221,9 +1230,7 @@ endif
 // kreiranje pomocne baze POM.DBF
 // ------------------------------
 
-_ime_dbf := f18_ime_dbf(_alias)
-
-ferase_dbf(_ime_dbf)
+FERASE( _ime_dbf + ".dbf" )
 
 aDbf := {}
 AADD(aDBf,{ 'IDPARTNER'   , 'C' ,  nParLen ,  0 })
@@ -1246,11 +1253,12 @@ if fTiho
   AADD(aDBf, { 'GOD'+STR(VAL(aGod[i-1,1])-2, 4), 'N' , 15 ,  2 })
 endif
 
-DBCREATE2 (_ime_dbf, aDbf)
+DBCREATE( _ime_dbf + ".dbf", aDbf )
 
-my_usex (_alias)
+select ( F_POM )
+my_use_temp( _alias, _ime_dbf, .f., .t. )
 
-INDEX ON  IDPARTNER + DTOS(DATDOK) + DTOS( IIF(EMPTY(DATVAL), DATDOK, DATVAL)) + BRDOK TAG "1"
+index on ( IDPARTNER + DTOS(DATDOK) + DTOS( IIF(EMPTY(DATVAL), DATDOK, DATVAL) ) + BRDOK ) TAG "1"
 
 SET ORDER TO TAG "1" 
 GO TOP

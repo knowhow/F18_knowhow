@@ -2,6 +2,7 @@
 
   - fakt, ispis barkodova [#27731](http://redmine.bring.out.ba/issues/27731)
   - fin, parametri sql [#27733](http://redmine.bring.out.ba/issues/27733)
+  - kalk, prenos iz fakt [#27740](http://redmine.bring.out.ba/issues/27740)
  
 1.0.12 2012-04-20, vsasa
 

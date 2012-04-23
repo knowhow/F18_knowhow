@@ -1694,11 +1694,13 @@ return
 // import sifrarnika iz fmk
 // ---------------------------------------------
 function pos_import_fmk_roba()
-local _location := PADR( "", 300 )
+local _location := fetch_metric( "pos_import_fmk_roba_path", my_user(), PADR( "", 300 ) )
 local _cnt := 0
 local _rec
 
 O_ROBA
+
+_location := PADR( ALLTRIM( _location ), 300 ) 
 
 Box(, 1, 60)
     @ m_x + 1, m_y + 2 SAY "lokacija:" GET _location PICT "@S50"
@@ -1708,6 +1710,9 @@ BoxC()
 if LastKey() == K_ESC
     return
 endif
+
+// snimi parametar
+set_metric( "pos_import_fmk_roba_path", my_user(), _location )
 
 select ( F_TMP_1 )
 if used()

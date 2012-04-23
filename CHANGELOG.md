@@ -1,3 +1,8 @@
+1.0.13 2012-04-23, vsasa
+
+  - fakt, ispis barkodova [#27731](http://redmine.bring.out.ba/issues/27731)
+  - fin, parametri sql [#27733](http://redmine.bring.out.ba/issues/27733)
+ 
 1.0.12 2012-04-20, vsasa
 
   - kalk, ispis zaglavlja [#27680](http://redmine.bring.out.ba/issues/27680)

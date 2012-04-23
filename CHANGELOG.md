@@ -1,3 +1,7 @@
+1.0.16 2012-04-23, vsasa
+
+  - pos, import šifrarnika robe iz fmk-pos
+
 1.0.15 2012-04-23, vsasa
 
   - fakt, import podataka, udaljene lokacije - korekcije

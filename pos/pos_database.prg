@@ -1690,3 +1690,85 @@ select ( nTArea )
 return
 
 
+// ---------------------------------------------
+// import sifrarnika iz fmk
+// ---------------------------------------------
+function pos_import_fmk_roba()
+local _location := PADR( "", 300 )
+local _cnt := 0
+local _rec
+
+O_ROBA
+
+Box(, 1, 60)
+    @ m_x + 1, m_y + 2 SAY "lokacija:" GET _location PICT "@S50"
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    return
+endif
+
+select ( F_TMP_1 )
+if used()
+    use
+endif
+
+my_use_temp( "TOPS_ROBA", ALLTRIM( _location ), .f., .t. )
+index on ("id") tag "ID" 
+
+// ----------
+// predji na tops_roba
+
+select tops_roba
+set order to tag "ID"
+go top
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+Box(,1,60)
+
+do while !EOF() 
+
+    _id_roba := field->id
+
+    select roba
+    go top
+    seek _id_roba
+
+    if !FOUND()
+        append blank
+    endif
+    
+    _rec := dbf_get_rec()
+    _rec["mpc"] := tops_roba->cijena1
+    _rec["mpc2"] := tops_roba->cijena2
+
+    ++ _cnt
+    @ m_x + 1, m_y + 2 SAY "import roba: " + _rec["id"] + ":" + PADR( _rec["naz"], 20 ) + "..."
+    update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+    select tops_roba
+    skip
+
+enddo
+
+BoxC()
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
+select ( F_TMP_1 )
+use
+
+if _cnt > 0
+    msgbeep( "Update " + ALLTRIM( STR( _cnt ) ) + " zapisa !" )
+endif
+
+close all
+return
+
+
+
+

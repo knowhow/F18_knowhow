@@ -29,6 +29,8 @@ AADD(opcexe, {|| pos_menu_gendok() })
 Menu_SC("mrbm")
 return
 
+
+
 // --------------------------------------------
 // menij generacije dokumenata
 // --------------------------------------------
@@ -39,9 +41,14 @@ private Izbor:=1
 
 AADD(opc, "1. generacija dokumenta pocetnog stanja     ")
 AADD(opcexe, {|| p_poc_stanje() })
+AADD(opc, "2. import sifrarnika ROBA iz fmk-tops     ")
+AADD(opcexe, {|| pos_import_fmk_roba() })
+
 
 Izbor:=1
 Menu_SC("gdok")
+
 return
+
 
 

@@ -631,6 +631,7 @@ return .t.
 // -------------------------------------------------
 function UzorTxt()
 local cId := "  "
+local _user_name
 
 // INO kupci
 if IsPdv() .and. _IdTipDok $ "10#20" .and. IsIno(_IdPartner)
@@ -651,38 +652,51 @@ endif
 
 if (nRbr == 1 .and. val( _podbr ) < 1)
 	Box(,9,75)
- 		@ m_x+1,m_Y+1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId pict "@!"
+ 		
+		@ m_x+1,m_Y+1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId pict "@!"
  		read
  
  		if lastkey() <> K_ESC .and. !empty(cId)
-   			P_Ftxt(@cId)
-   			SELECT ftxt
+   			
+			P_Ftxt(@cId)
+   			
+			SELECT ftxt
    			SEEK cId
    			select fakt_pripr
-   			_txt2 := trim(ftxt->naz)
+   			
+			_txt2 := trim(ftxt->naz)
 
-   			if gSecurity == "D"
-				_txt2 += "Dokument izradio: " + GetFullUserName( GetUserID() ) 
-   			endif
-  
+			_user_name := GetFullUserName( GetUserID() )
+			if !EMPTY( _user_name ) .or. _user_name <> "?user?"
+				_txt2 += " Dokument izradio: " + _user_name 
+  			endif
+
   			select fakt_pripr
-  			IF glDistrib .and. _IdTipdok=="26"
+  		
+			IF glDistrib .and. _IdTipdok=="26"
     				IF cId $ IzFMKIni("FAKT", "TXTIzjaveZaObracunPoreza", ";" , KUMPATH)
       					_k2 := "OPOR"
     				ELSE
       					_k2 := ""
     				ENDIF
   			ENDIF
+
  		endif
+
  		setcolor(Invert)
+
  		private fUMemu:=.t.
+
  		_txt2:=MemoEdit(_txt2, m_x+3, m_y+1, m_x+9, m_y+76)
+
  		fUMemu:=NIL
  		
         setcolor(Normal)
+
  	BoxC()
 
 endif
+
 return
 
 
@@ -797,6 +811,7 @@ return
 // ---------------------------------------------------------
 function _add_to_txt( cId_txt, nCount, lAppend )
 local cTmp 
+local _user_name
 
 if lAppend == nil
 	lAppend := .f.
@@ -828,8 +843,11 @@ else
 	_txt2 := _txt2 + cTmp
 endif
 
-if nCount = 1 .and. gSecurity == "D"
-	_txt2 += " Dokument izradio: " + GetFullUserName( GetUserID() ) 
+if nCount = 1
+	_user_name := GetFullUserName( GetUserID() )
+	if !EMPTY( _user_name ) .or. _user_name <> "?user?"
+		_txt2 += " Dokument izradio: " + _user_name 
+	endif
 endif
   
 select fakt_pripr
@@ -842,39 +860,73 @@ endif
 
 return
 
+
 // ----------------------------
 // ino klauzula
 // ----------------------------
 function InoKlauzula()
+local _rec
 
 PushWa() 
 
-	SELECT FTXT
-	seek "IN"
-	if !found()
-		APPEND BLANK
-		replace id with "IN", ;
-		        naz with "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
-	endif
+SELECT FTXT
+seek "IN"
+	
+if !FOUND()
+
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+
+	APPEND BLANK
+	_rec := dbf_get_rec()	
+
+	_rec["id"] := "IN"
+	_rec["naz"] := "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
+
+	update_rec_server_and_dbf( "ftxt", _rec, 1, "CONT" )
+
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
+
+endif
+
 PopWa()
 
 return
+
 
 // ----------------------------
 // komision klauzula
 // ----------------------------
 function KmsKlauzula()
+local _rec
 
 PushWa() 
-	SELECT FTXT
-	seek "KS"
-	if !found()
-		APPEND BLANK
-		replace id with "KS", ;
-		        naz with "Dostava nije oporeziva, na osnovu Pravilnika o primjeni Zakona o PDV-u"+;
-			Chr(13)+Chr(10)+"clan 6. tacka 3."
-	endif
+	
+SELECT FTXT
+seek "KS"
+	
+if !FOUND()
+
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+
+	APPEND BLANK
+	_rec := dbf_get_rec()	
+
+	_rec["id"] := "KS"
+	_rec["naz"] := "Dostava nije oporeziva, na osnovu Pravilnika o primjeni Zakona o PDV-u" + CHR(13) + CHR(10) + "clan 6. tacka 3."
+
+	update_rec_server_and_dbf( "ftxt", _rec, 1, "CONT" )
+
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
+
+
+endif
+
 PopWa()
+return
 
 
 /*! \fn GetUsl(fNovi)
@@ -1127,7 +1179,16 @@ if FOUND()
 	endif
 
     if lFill == .t.
-		update_rec_server_and_dbf(nil, _vars)
+
+		// filuj robu...
+		my_use_semaphore_off()
+		sql_table_update( nil, "BEGIN" )
+
+		update_rec_server_and_dbf( "roba", _vars, 1, "CONT" )
+
+		sql_table_update( nil, "END" )
+		my_use_semaphore_on()
+
 	endif
 
 endif
@@ -1200,48 +1261,25 @@ return
 
 
 
-/*! \fn Tb_V_RBr()
- *  \brief
- */
  
 function Tb_V_RBr()
-*{
-replace Rbr with str(nRbr,3)
+replace Rbr with str( nRbr, 3 )
 return .t.
-*}
 
 
-/*! \fn Tb_W_IdRoba()
- *  \brief
- */
- 
+
 function Tb_W_IdRoba()
-*{
 _idroba:=padr(_idroba,15)
 return W_Roba()
-*}
 
 
-/*! \fn TbRobaNaz()
- *  \brief
- */
- 
 function TbRobaNaz()
-*{
 NSRNPIdRoba()
-// select roba; hseek fakt_pripr->idroba; select fakt_pripr
 return left(Roba->naz,25)
-*}
 
 
-/*! \fn ObracunajPP(cSetPor,dDatDok)
- *  \brief Obracunaj porez na promet 
- *  \param cSetPor
- *  \param dDatDok
- */
- 
+
 function ObracunajPP(cSetPor,dDatDok)
-*{
 
 select (F_FAKT_PRIPR)
 if !used()
@@ -1284,51 +1322,36 @@ enddo
 
 go top
 RETURN
-*}
 
 
 
-/*! \fn UCKalk()
- *  \brief Uzmi cijenu iz Kalk-a
- */
- 
+
 function UCKalk()
-*{
-LOCAL nArr:=SELECT(), aUlazi:={}, GetList:={}, cIdPartner:=_idpartner
-  LOCAL cSezona:="RADP", cPKalk:=""
-  PUBLIC gDirKalk:=""
-  O_PARAMS
-  private cSection:="T",cHistory:=" "; aHistory:={}
-  RPar("dk",@gDirKalk)
-  if empty(gDirKalk)
-    gDirKalk:=trim(strtran(goModul:oDataBase:cDirKum,"FAKT","KALK"))+"\"
-    WPar("dk",gDirKalk)
-  endif
-  select 99; use
-  Box("#ROBA:"+_IDROBA,4,50)
-    @ m_x+2, m_y+2 SAY "Sifra dobavljaca             :" GET cIdPartner
-    @ m_x+3, m_y+2 SAY "Sezona ('RADP'-tekuca godina):" GET cSezona
+local nArr:=SELECT()
+local aUlazi:={}
+local GetList:={}
+local cIdPartner:=_idpartner
+
+Box( "#ROBA:" + _IDROBA, 4, 50 )
+	@ m_x+2, m_y+2 SAY "Sifra dobavljaca             :" GET cIdPartner
     READ
-  BoxC()
-  SETLASTKEY(0)
-  select (F_KALK)
-  IF cSezona=="RADP"
-    cPKalk:=gDirKalk+"KALK"
-  ELSE
-    cPKalk:=gDirKalk+cSezona+"\KALK"
-  ENDIF
-  IF FILE(cPKalk+".DBF")
-    USE (cPKalk)
-  ELSE
-    MsgBeep("Baza '"+cPKalk+".DBF' ne postoji !")
-    SELECT (nArr); RETURN
-  ENDIF
-  set order to tag "7"   // "7","idroba"
-  seek _idroba
-  IF !FOUND()
-    USE; SELECT (nArr); RETURN
-  ENDIF
-  DO WHILE !EOF() .and. _idroba==idroba
+BoxC()
+  
+SETLASTKEY(0)
+  
+O_KALK
+set order to tag "7"   
+// "7","idroba"
+  
+seek _idroba
+  
+IF !FOUND()
+	USE
+	SELECT (nArr)
+	RETURN
+ENDIF
+  
+DO WHILE !EOF() .and. _idroba==idroba
     IF idpartner==cIdPartner .and. idvd=="10" .and. kolicina>0
       AADD( aUlazi , idfirma+"-"+idvd+"-"+brdok+"³"+;
                      DTOC(datdok)+"³"+;
@@ -1336,12 +1359,18 @@ LOCAL nArr:=SELECT(), aUlazi:={}, GetList:={}, cIdPartner:=_idpartner
                      STR(fcj,11,3)                     )
     ENDIF
     SKIP 1
-  ENDDO
-  USE
-  SELECT (nArr)
-  IF !( LEN(aUlazi)>0 ); RETURN; ENDIF
-  h:=ARRAY(LEN(aUlazi)); AFILL(h,"")
-  Box("#POSTOJECI ULAZI (KALK): ÍÍÍÍÍÍÍ <Enter>-izbor ",MIN(LEN(aUlazi),16)+3,51)
+ENDDO
+  
+USE
+SELECT (nArr)
+  
+IF !( LEN(aUlazi)>0 )
+	RETURN
+ENDIF
+  
+h:=ARRAY(LEN(aUlazi)); AFILL(h,"")
+  
+Box("#POSTOJECI ULAZI (KALK): ÍÍÍÍÍÍÍ <Enter>-izbor ",MIN(LEN(aUlazi),16)+3,51)
    @ m_x+1, m_y+2 SAY "    DOKUMENT   ³ DATUM  ³ KOLICINA  ³  CIJENA    "
    @ m_x+2, m_y+2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄ"
    nPom := 1
@@ -1351,52 +1380,56 @@ LOCAL nArr:=SELECT(), aUlazi:={}, GetList:={}, cIdPartner:=_idpartner
      _cijena  := VAL(ALLTRIM(RIGHT(aUlazi[nPom],11)))
      Menu("KCME",aUlazi,0,.f.)
    ENDIF
-  BoxC()
+BoxC()
 RETURN
-*}
+
 
 
  
 function ChSveStavke(fNovi)
 LOCAL _vrste_pl := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
 LOCAL nRec:=recno()
-  set order to
-  go top
-  do while !eof()
-    IF IDFIRMA+IDTIPDOK+BRDOK == _IDFIRMA+_IDTIPDOK+_BRDOK .or.;
+  
+set order to
+go top
+  
+do while !eof()
+	IF IDFIRMA+IDTIPDOK+BRDOK == _IDFIRMA+_IDTIPDOK+_BRDOK .or.;
        !fNovi .and. cOldKeyDok == IDFIRMA+IDTIPDOK+BRDOK
-      RLOCK()
-      _field->idfirma   := _IdFirma
-      _field->datdok    := _DatDok
-      _field->IdTipDok  := _IdTipDok
-      _field->brdok     := _BrDok
-      _field->dindem    := _dindem
-      _field->zaokr     := _zaokr
-      _field->idpartner := _idpartner
-      IF _vrste_pl == "D"
-       _field->idvrstep:=_idvrstep
-      ENDIF
-      IF glDistrib
-       _field->iddist   := _iddist
-       _field->idrelac  := _idrelac
-       _field->idvozila := _idvozila
-       _field->idpm     := _idpm
-       _field->marsruta := _marsruta
-       _field->ambp     := _ambp
-       _field->ambk     := _ambk
-      ENDIF
-      if glRadNal
-      	_field->idRNal:=_idRNal
-      endif
-      IF !(_idtipdok="0") .and. lPoNarudzbi
-       _field->idnar    := _idpartner
-      ENDIF
-      DBUNLOCK()
-    ENDIF
+    	RLOCK()
+      	_field->idfirma   := _IdFirma
+      	_field->datdok    := _DatDok
+      	_field->IdTipDok  := _IdTipDok
+      	_field->brdok     := _BrDok
+      	_field->dindem    := _dindem
+      	_field->zaokr     := _zaokr
+      	_field->idpartner := _idpartner
+      	IF _vrste_pl == "D"
+       		_field->idvrstep:=_idvrstep
+      	ENDIF
+      	IF glDistrib
+       		_field->iddist   := _iddist
+       		_field->idrelac  := _idrelac
+       		_field->idvozila := _idvozila
+       		_field->idpm     := _idpm
+       		_field->marsruta := _marsruta
+       		_field->ambp     := _ambp
+       		_field->ambk     := _ambk
+      	ENDIF
+      	if glRadNal
+      		_field->idRNal:=_idRNal
+      	endif
+      	IF !(_idtipdok="0") .and. lPoNarudzbi
+       		_field->idnar    := _idpartner
+      	ENDIF
+      	DBUNLOCK()
+ 	ENDIF
     skip
-  enddo
-  set order to tag "1"
-  go nRec
+enddo
+  
+set order to tag "1"
+go nRec
+
 RETURN
 
 
@@ -2182,14 +2215,16 @@ local cRet := ""
 
 cRet += trim(StIdROBA())+" "
 do case
-   case EOF()
-    cRet := ""
-   case  alltrim(podbr)=="."
-      aMemo:=ParsMemo(txt)
-      cRet += aMemo[1]
-   otherwise
-        select F_ROBA
-        if !used()
+   	case EOF()
+    	cRet := ""
+   	case  alltrim(podbr)=="."
+      	aMemo:=ParsMemo(txt)
+      	cRet += aMemo[1]
+	otherwise
+   		
+		select F_ROBA
+        
+		if !used()
             O_ROBA
         endif
 
@@ -2226,4 +2261,6 @@ enddo
 GO nTekRec
 
 return IIF(nBrStavki == 1, .t., .f.)
+
+
 

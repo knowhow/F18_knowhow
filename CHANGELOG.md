@@ -1,6 +1,6 @@
 1.0.14 2012-04-23, vsasa
 
-  - pos, indeksi pomoćnih tabela [#27731](http://redmine.bring.out.ba/issues/27731)
+  - pos, indeksi pomoćnih tabela [#27743](http://redmine.bring.out.ba/issues/27743)
  
 1.0.13 2012-04-23, vsasa
 

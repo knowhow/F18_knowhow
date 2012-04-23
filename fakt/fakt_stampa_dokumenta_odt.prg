@@ -61,6 +61,7 @@ return
 static function _gen_xml( xml_file )
 local i
 local cTmpTxt := ""
+local _id_broj 
 
 PIC_KOLICINA :=  PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA)), LEN_KOLICINA, "9")
 PIC_VRIJEDNOST := PADL(ALLTRIM(RIGHT(PicDem, LEN_VRIJEDNOST)), LEN_VRIJEDNOST, "9")
@@ -134,16 +135,30 @@ xml_node("dveza", to_xml_encoding(cTmp))
 // zaglavlje
 cTmp := ALLTRIM(get_dtxt_opis("I01"))
 xml_node("fnaz", to_xml_encoding(cTmp))
+
 cTmp := ALLTRIM(get_dtxt_opis("I02"))
 xml_node("fadr", to_xml_encoding(cTmp))
-xml_node("fid", ALLTRIM(get_dtxt_opis("I03")) )
+
+_id_broj := ALLTRIM( get_dtxt_opis("I03") )
+xml_node("fid", _id_broj )
+
+if LEN( _id_broj ) == 12
+	_id_broj := "4" + _id_broj
+	xml_node("fidp", _id_broj )
+else
+	xml_node("fidp", _id_broj )
+endif 
+
 xml_node("ftel", ALLTRIM(get_dtxt_opis("I10")) )
 xml_node("feml", ALLTRIM(get_dtxt_opis("I11")) )
 xml_node("fbnk", ALLTRIM(get_dtxt_opis("I09")) )
+
 cTmp := ALLTRIM(get_dtxt_opis("I12"))
 xml_node("fdt1", to_xml_encoding(cTmp))
+
 cTmp := ALLTRIM(get_dtxt_opis("I13"))
 xml_node("fdt2", to_xml_encoding(cTmp))
+
 cTmp := ALLTRIM(get_dtxt_opis("I14"))
 xml_node("fdt3", to_xml_encoding(cTmp))
 

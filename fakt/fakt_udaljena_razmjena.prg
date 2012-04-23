@@ -26,13 +26,12 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-__import_dbf_path := my_home() + "import_dbf" + SLASH
+__import_dbf_path := ""
 __export_dbf_path := my_home() + "export_dbf" + SLASH
 __import_zip_name := "fakt_exp.zip"
 __export_zip_name := "fakt_exp.zip"
 
 // kreiraj ove direktorije odmah
-_dir_create( __import_dbf_path )
 _dir_create( __export_dbf_path )
 
 AADD(_opc,"1. => export podataka               ")
@@ -106,6 +105,24 @@ static function _fakt_import()
 local _imported_rec
 local _vars := hb_hash()
 local _imp_file 
+local _imp_path := fetch_metric( "fakt_import_path", my_user(), PADR("", 300) )
+
+if EMPTY( __import_dbf_path )
+
+	Box(, 1, 70)
+		@ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
+		read 
+	BoxC()
+	
+	if LastKey() == K_ESC
+		return
+	endif	
+
+	// snimi u parametre
+	__import_dbf_path := ALLTRIM( _imp_path )
+	set_metric( "fakt_import_path", my_user(), _imp_path )
+
+endif
 
 // import fajl iz liste
 _imp_file := get_import_file( "fakt", __import_dbf_path )
@@ -702,7 +719,9 @@ do while !EOF()
     // zikni je u nasu tabelu doks
     select e_doks
     _app_rec := dbf_get_rec()
+
     select fakt_doks
+	append blank
     update_rec_server_and_dbf( "fakt_doks", _app_rec, 1, "CONT" )
 
     ++ _cnt
@@ -733,6 +752,7 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select fakt
+		append blank
         update_rec_server_and_dbf( "fakt_fakt", _app_rec, 1, "CONT" )
 
         select e_fakt
@@ -751,7 +771,7 @@ do while !EOF()
         _app_rec := dbf_get_rec()
         
         select fakt_doks2
-
+		append blank
         update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "CONT" )
         
         select e_doks2

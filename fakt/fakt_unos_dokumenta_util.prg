@@ -1567,13 +1567,17 @@ return cVrati
  
 function KontoIzRJ(cRJ)
 local cVrati:=SPACE(7)
- PushWA()
-   SELECT (F_RJ)
-     HSEEK cRJ
-     if FOUND()
-       cVrati:=RJ->konto
-     endif
- PopWA()
+
+PushWA()
+   
+SELECT (F_RJ)
+HSEEK cRJ
+     
+if FOUND()
+	cVrati:=RJ->konto
+endif
+ 
+PopWA()
 return cVrati
 
 

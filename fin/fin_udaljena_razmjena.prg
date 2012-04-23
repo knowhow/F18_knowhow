@@ -591,6 +591,7 @@ do while !EOF()
     _app_rec := dbf_get_rec()
 
     select nalog
+	append blank
     update_rec_server_and_dbf( "fin_nalog", _app_rec, 1, "BEGIN" )
 
     ++ _cnt
@@ -650,6 +651,7 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select anal
+		append blank
         update_rec_server_and_dbf( "fin_anal", _app_rec, 1, "CONT" )
 
         select e_anal
@@ -680,6 +682,7 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select sint
+		append blank
         update_rec_server_and_dbf( "fin_sint", _app_rec, 1, "CONT" )
 
         select e_sint

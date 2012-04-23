@@ -211,74 +211,41 @@ private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
 
-public gRavnot:="D"
-public gDatNal:="N"
-public gSAKrIz:="N"
-public gBezVracanja:="N"  // parametar zabrane povrata naloga u pripremu
-public gBuIz:="N"  // koristenje konta-izuzetaka u FIN-BUDZET-u
-public gPicDEM:= "9999999.99"
-public gPicBHD:= "999999999999.99"
-public gVar1:="0"
-public gRj:="N"
-public gTroskovi:="N"
-public gnRazRed:=3
-public gVSubOp:="N"
-public gnLMONI:=120
-public gKtoLimit:="N"
-public gnKtoLimit:=3
-public gFKomp:=PADR("KOMP.TXT",13)
+public gRavnot := "D"
+public gDatNal := "N"
+public gSAKrIz := "N"
+public gBezVracanja := "N"  
+public gBuIz := "N"  
+public gPicDEM := "9999999.99"
+public gPicBHD := "999999999999.99"
+public gVar1 := "1"
+public gRj := "N"
+public gTroskovi := "N"
+public gnRazRed := 3
+public gVSubOp := "N"
+public gnLMONI := 120
+public gKtoLimit := "N"
+public gnKtoLimit := 3
 public gDUFRJ:="N"
 public gBrojac:="1"
 public gK1:="N"
 public gK2:="N"
 public gK3:="N"
 public gK4:="N"
-public gDatVal:="N"
+public gDatVal:="D"
 public gnLOSt:=0
 public gPotpis:="N"
 public gnKZBDana:=0
 public gOAsDuPartn:="N"
 public gAzurTimeOut := 120
 public gMjRj := "N"
-
 public aRuleCols := g_rule_cols_fin()
 public bRuleBlock := g_rule_block_fin()
 
 ::super:setTGVars()
 
-O_PARAMS
-
-Rpar("br",@gBrojac)
-RPar("du",@gDUFRJ)
-Rpar("fk",@gFKomp)
-Rpar("Ra",@gRavnot)
-Rpar("dn",@gDatNal)
-Rpar("bv",@gBezVracanja)
-Rpar("bi",@gBuIz)
-Rpar("p1",@gPicDEM)
-Rpar("p2",@gPicBHD)
-Rpar("v1",@gVar1)
-Rpar("tr",@gTroskovi)
-Rpar("rj",@gRj)
-Rpar("rr",@gnRazRed)
-Rpar("so",@gVSubOp)
-Rpar("lm",@gnLMONI)
-Rpar("si",@gSAKrIz)
-Rpar("zx",@gKtoLimit)
-Rpar("zy",@gnKtoLimit)
-Rpar("OA",@gOAsDuPartn)
-Rpar("k1",@gK1)
-Rpar("k2",@gK2)
-Rpar("k3",@gK3)
-Rpar("k4",@gK4)
-Rpar("dv",@gDatVal)
-Rpar("li",@gnLOSt)
-Rpar("po",@gPotpis)
-Rpar("az",@gnKZBdana)
-Rpar("aT",@gAzurTimeout)
-
-select (F_PARAMS)
-use
+// procitaj parametre fin modula
+fin_read_params()
 
 public gModul
 public gTema
@@ -288,7 +255,7 @@ gModul:="FIN"
 gTema:="OSN_MENI"
 gGlBaza:="SUBAN.DBF"
 
-public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
+public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
 return
 

@@ -53,11 +53,11 @@ o_dracun()
 select fakt_pripr
 
 // barkod artikla
-private cPombk := IzFmkIni("SifRoba","PBarkod","0",SIFPATH)
-private lPBarkod:=.f.
+private cPombk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
+private lPBarkod := .f.
 
 if cPombk $ "12"  // pitanje, default "N"
-	lPBarkod := ( Pitanje(,"Zelite li ispis barkodova ?",iif(cPombk=="1","N","D"))=="D")
+	lPBarkod := ( Pitanje(,"Zelite li ispis barkodova ?", IIF( cPombk == "1", "N", "D" ) ) == "D" )
 endif
 
 if PCount() == 0 .or. ( cIdTipDok == nil .and. lJFill == .t. )

@@ -90,6 +90,7 @@ return nil
  */
 function fakt_par_razno()
 local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
+local _prik_bk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
@@ -155,6 +156,11 @@ else
 endif
     
 @ m_x + nX, m_y+2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
+
+nX ++
+
+@ m_x + nX, m_y+2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
+
 nX ++
 
 @ m_x + nX, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
@@ -206,6 +212,7 @@ if (LASTKEY()<>K_ESC)
     set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
     set_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
 	set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
+	set_metric("fakt_prikaz_barkod", my_user(), _prik_bk )
 
     Wpar("ff",gFaktFakt)
     Wpar("nw",gNW)

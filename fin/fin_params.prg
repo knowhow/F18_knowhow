@@ -15,20 +15,20 @@
 // meni parametara
 // -----------------------------------
 function mnu_fin_params()
-private opc := {}
-private opcexe := {}
-private izbor := 1
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-read_params()
+fin_read_params()
 
-AADD(opc, "1. osnovni parametri                        ")
-AADD(opcexe, {|| org_params() })
-AADD(opc, "2. parametri rada ")
-AADD(opcexe, {|| par_obrada() })
-AADD(opc, "3. parametri izgleda ")
-AADD(opcexe, {|| par_izgled() })
+AADD(_opc, "1. osnovni parametri                        ")
+AADD(_opcexe, {|| org_params() })
+AADD(_opc, "2. parametri rada ")
+AADD(_opcexe, {|| par_obrada() })
+AADD(_opc, "3. parametri izgleda ")
+AADD(_opcexe, {|| par_izgled() })
 
-Menu_sc("fin_param")
+f18_menu( "fin_param", .f., _izbor, _opc, _opcexe )
 
 return
 
@@ -129,7 +129,7 @@ Box(,23,70)
 BoxC()
 
 if LastKey() <> K_ESC
-	write_params()
+	fin_write_params()
 endif
 
 return
@@ -180,17 +180,13 @@ Box(, 15,70)
  	
 	++ nX
 	
-	@ m_x + nX, m_y + 2 SAY "Fajl obrasca kompenzacije" GET gFKomp valid V_FKomp()
-	
-	++ nX
-	
  	@ m_x + nX, m_y + 2 SAY "Lijeva marg.za obrazac 'Odobr. i nalog za isplatu' (br.znakova)" GET gnLMONI PICTURE "999"
 	
 	read
 BoxC()
 
 if LastKey() <> K_ESC
-	write_params()
+	fin_write_params()
 endif
 
 return
@@ -199,99 +195,85 @@ return
 // ----------------------------------
 // citanje parametara 
 // ----------------------------------
-function read_params()
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
+function fin_read_params()
 
-RPar("k1",@gK1)
-RPar("k2",@gK2)
-RPar("k3",@gK3)
-RPar("k4",@gK4)
-RPar("dv",@gDatVal)
-RPar("br",@gBrojac)
-RPar("li",@gnLOst)
-RPar("po",@gPotpis)
-RPar("du",@gDUFRJ)
-Rpar("fk",@gFKomp)
-Rpar("lm",@gnLMONI)
-Rpar("nw",@gNW)
-Rpar("bv",@gBezVracanja)
-Rpar("bi",@gBuIz)
-Rpar("p1",@gPicDEM)
-Rpar("p2",@gPicBHD)
-Rpar("v1",@gVar1)
-Rpar("rr",@gnRazRed)
-Rpar("so",@gVSubOp)
-Rpar("zx",@gKtoLimit)
-Rpar("zy",@gnKtoLimit)
-Rpar("az",@gnKZBDana)
-Rpar("OA",@gOAsDuPartn)
+// globalni parmetri
+gK1 := fetch_metric( "fin_unos_k1", nil, gK1 )
+gK2 := fetch_metric( "fin_unos_k2", nil, gK2 )
+gK3 := fetch_metric( "fin_unos_k3", nil, gK3 )
+gK4 := fetch_metric( "fin_unos_k4", nil, gK4 )
+gDatval := fetch_metric( "fin_evidencija_datum_valute", nil, gDatVal )
+gDatnal := fetch_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
+gRj := fetch_metric( "fin_evidencija_radne_jedinice", nil, gRj )
+gTroskovi := fetch_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
+gRavnot := fetch_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
+gBrojac := fetch_metric( "fin_vrsta_brojaca_naloga", nil, gBrojac )
+gnLOst := fetch_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
+gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
+gBezVracanja := fetch_metric("fin_zabrana_povrata_naloga", nil, gBezVracanja )
+gBuIz := fetch_metric("fin_budzet_konta_izuzeci", nil, gBuIz )
+gPicDem := fetch_metric("fin_picdem", nil, gPicDEM )
+gPicBHD := fetch_metric("fin_picbhd", nil, gPicBHD )
+gVar1 := fetch_metric("fin_izvjestaji_jednovalutno", nil, gVar1 )
+gSaKrIz := fetch_metric("fin_kreiranje_sintetike", nil, gSaKrIz )
+gnRazRed := fetch_metric("fin_razmak_izmedju_kartica", nil, gnRazRed )
+gVSubOp := fetch_metric("fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
+gOAsDuPartn := fetch_metric("fin_asistent_spoji_duple_uplate", nil, gOAsDuPartn )
+gAzurTimeOut := fetch_metric("fin_azuriranje_timeout", nil, gAzurTimeOut )
 
-gK1:=padr(gK1,1)
-gK2:=padr(gK2,1)
-gK3:=padr(gK3,1)
-gK4:=padr(gK4,1)
+// po user-u parametri
+gPotpis := fetch_metric( "fin_potpis_na_kraju_naloga", my_user(), gPotpis )
+gnKZBDana := fetch_metric("fin_automatska_kontrola_zbira", my_user(), gnKZBDana )
+gnLMONI := fetch_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
+gKtoLimit := fetch_metric("fin_unos_limit_konto", my_user(), gKtoLimit )
+gnKtoLimit := fetch_metric("fin_unos_limit_konto_iznos", my_user(), gnKtoLimit )
 
-gVar1:=padr(gVar1,1)
+gK1 := PADR( gK1, 1 )
+gK2 := PADR( gK2, 1 )
+gK3 := PADR( gK3, 1 )
+gK4 := PADR( gK4, 1 )
+
+gVar1 := PADR( gVar1, 1 )
 
 return
+
 
 // -------------------------------
 // snimanje parametara
 // -------------------------------
-function write_params()
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
+function fin_write_params()
 
-WPar("k1",gK1)
-WPar("k2",gK2)
-WPar("k3",gK3)
-WPar("k4",gK4)
-WPar("dv",gDatVal)
-WPar("br",gBrojac)
-WPar("li",gnLOst)
-WPar("po",gPotpis)
-WPar("du",gDUFRJ)
-Wpar("fk",gFKomp)
-Wpar("lm",gnLMONI)
-Wpar("Ra",gRavnot)
-Wpar("dn",gDatNal)
-Wpar("nw",gNW)
-Wpar("bv",gBezVracanja)
-Wpar("bi",gBuIz)
-Wpar("p1",gPicDEM)
-Wpar("p2",gPicBHD)
-Wpar("v1",gVar1)
-Wpar("tr",gTroskovi)
-Wpar("rj",gRj)
-Wpar("rr",gnRazRed)
-Wpar("so",gVSubOp)
-Wpar("si",gSAKrIz)
-Wpar("zx",gKtoLimit)
-Wpar("zy",gnKtoLimit)
-Wpar("az",gnKZBdana)
-Wpar("aT",gAzurTimeOut)
-Wpar("OA",gOAsDuPartn)
+// globalni parametri
+set_metric( "fin_unos_k1", nil, gK1 )
+set_metric( "fin_unos_k2", nil, gK2 )
+set_metric( "fin_unos_k3", nil, gK3 )
+set_metric( "fin_unos_k4", nil, gK4 )
+set_metric( "fin_evidencija_datum_valute", nil, gDatVal )
+set_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
+set_metric( "fin_evidencija_radne_jedinice", nil, gRj )
+set_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
+set_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
+set_metric( "fin_vrsta_brojaca_naloga", nil, gBrojac )
+set_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
+set_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
+set_metric( "fin_zabrana_povrata_naloga", nil, gBezVracanja )
+set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
+set_metric( "fin_picdem", nil, gPicDEM )
+set_metric( "fin_picbhd", nil, gPicBHD )
+set_metric( "fin_izvjestaji_jednovalutno", nil, gVar1 )
+set_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
+set_metric( "fin_razmak_izmedju_kartica", nil, gnRazRed )
+set_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
+set_metric( "fin_asistent_spoji_duple_uplate", nil, gOAsDuPartn )
+set_metric( "fin_azuriranje_timeout", nil, gAzurTimeOut )
+
+// po user-u
+set_metric( "fin_unos_limit_konto", my_user(), gKtoLimit )
+set_metric( "fin_unos_limit_konto_iznos", my_user(), gnKtoLimit )
+set_metric( "fin_automatska_kontrola_zbira", my_user(), gnKZBDana )
+set_metric( "fin_potpis_na_kraju_naloga", my_user(), gPotpis )
+set_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
 
 return
-
-
-// ---------------------------------------------
-// Ispravka fajla kompenzacije
-// ---------------------------------------------
-function v_fkomp()
-private cKom := "q "+ PRIVPATH + gFKomp
-if Pitanje(,"Zelite li izvrsiti ispravku obrasca kompenzacije ?","N")=="D"
-	if !empty(gFKomp)
-   		Box(, MAXROWS(), MAXCOLS())
-   			run &ckom
-   		BoxC()
- 	endif
-endif
-return .t.
 
 

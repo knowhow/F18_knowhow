@@ -28,7 +28,6 @@ set_a_dbf_temp("pom2"       ,  "POM2"        , F_POM2       )
 set_a_dbf_temp("dracun"     ,  "DRN"         , F_DRN        )
 set_a_dbf_temp("racun"      ,  "RN"          , F_RN         )
 set_a_dbf_temp("dracuntext" ,  "DRNTEXT"     , F_DRNTEXT    )
-set_a_dbf_temp("pom"        ,  "POM"         , F_POM        )
 
 return
 

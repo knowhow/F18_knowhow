@@ -1357,7 +1357,15 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 		if !found()
 
 			APPEND BLANK
-			REPLACE IdPos WITH pos_doks->IdPos,IdRadnik WITH pos_doks->IdRadnik,IdVrsteP WITH pos_doks->IdVrsteP,IdOdj WITH pos->IdOdj,IdRoba WITH pos->IdRoba,IdCijena WITH pos->IdCijena,Kolicina WITH pos->Kolicina,Iznos WITH pos->Kolicina*POS->Cijena,Iznos3 WITH nNeplaca
+			replace IdPos WITH pos_doks->IdPos
+			replace IdRadnik WITH pos_doks->IdRadnik
+			replace IdVrsteP WITH pos_doks->IdVrsteP
+			replace IdOdj WITH pos->IdOdj
+			replace IdRoba WITH pos->IdRoba
+			replace IdCijena WITH pos->IdCijena
+			replace Kolicina WITH pos->Kolicina
+			replace Iznos WITH pos->Kolicina * POS->Cijena
+			replace Iznos3 WITH nNeplaca
 				
 			if gPopVar=="A"
 				REPLACE Iznos2 WITH pos->nCijena
@@ -1369,7 +1377,9 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 
 		else
 
-			REPLACE Kolicina WITH Kolicina+POS->Kolicina,Iznos WITH Iznos+POS->Kolicina*POS->Cijena,Iznos3 WITH Iznos3+nNeplaca
+			replace Kolicina WITH Kolicina + POS->Kolicina
+			replace Iznos WITH Iznos + POS->Kolicina * POS->Cijena
+			replace Iznos3 WITH Iznos3+nNeplaca
 
 			if gPopVar=="A"
 				REPLACE Iznos2 WITH Iznos2+pos->nCijena

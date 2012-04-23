@@ -45,11 +45,12 @@ AADD (aDbf, {"Iznos3",    "N", 20, 5})
 
 NaprPom( aDbf )
 
-CREATE_INDEX("1" ,"idodj+iddio+idpos+idroba+idcijena", "POM" )
-CREATE_INDEX("2" ,"idodj+iddio+idroba+idcijena", "POM" )
-
 select (F_POM)
 my_use_temp( "POM", my_home() + "pom", .f., .f. )
+
+index on ( "idodj+iddio+idpos+idroba+idcijena" ) tag "1"
+index on ( "idodj+iddio+idroba+idcijena" ) tag "2"
+
 set order to tag "1"
 
 // otvori ponovo tabele radi gornjeg indeksa

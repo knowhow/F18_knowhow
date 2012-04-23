@@ -42,16 +42,17 @@ AADD (aDbf, {"Iznos2",    "N", 20, 3})
 AADD (aDbf, {"Iznos3",    "N", 20, 3})
 NaprPom( aDbf )
 
-CREATE_INDEX("1" ,"idroba", "POM" )
-CREATE_INDEX("2" ,"STR(iznos,20,3)", "POM" )
-CREATE_INDEX("3" ,"STR(kolicina,15,3)", "POM" )
-
 select ( F_POM )
 if used()
 	use
 endif
 
 my_use_temp( "POM", my_home() + "pom", .f., .f. )
+
+index on ( "idroba" ) tag "1"
+index on ( "STR(iznos,20,3)" ) tag "2"
+index on ( "STR(kolicina,15,3)" ) tag "3"
+
 set order to tag "1"
 
 _o_tables()

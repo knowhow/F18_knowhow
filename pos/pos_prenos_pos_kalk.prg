@@ -583,14 +583,14 @@ AADD(aDBF,{"BARKOD",   "C", 13, 0})
 select pos_doks
 NaprPom( aDbf )
 
-CREATE_INDEX("1" ,"idpos + idroba + STR( mpc, 13, 4 ) + STR(stmpc, 13, 4)", "POM" )
-
 select ( F_POM )
 if used()
 	use
 endif
 
 my_use_temp( "POM", my_home() + "pom", .f., .f. )
+
+index on ( "idpos + idroba + STR( mpc, 13, 4 ) + STR(stmpc, 13, 4)" ) tag "1"
 
 SET ORDER TO TAG "1"
 

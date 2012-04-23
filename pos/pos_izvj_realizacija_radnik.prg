@@ -120,15 +120,16 @@ AADD (aDbf, {"Iznos3",   "N", 20, 5})
 
 NaprPom( aDbf )
 
-CREATE_INDEX("1" ,"idradnik + idvrstep + idroba + idcijena", "POM" )
-CREATE_INDEX("2" ,"idroba + idcijena", "POM" )
-
 select ( F_POM )
 if used()
 	use
 endif
 
 my_use_temp( "POM", my_home() + "pom", .f., .f. )
+
+index on ( "idradnik + idvrstep + idroba + idcijena" ) tag "1"
+index on ( "idroba + idcijena" ) tag "2"
+
 set order to tag "1"
 
 o_tables()

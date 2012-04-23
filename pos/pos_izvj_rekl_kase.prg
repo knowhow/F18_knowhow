@@ -148,14 +148,8 @@ endif
 return
 *}
 
-/*! \fn TblCrePom()
- *  \brief Kreiranje pomocne tabele za izvjestaj realizacije kase
- */
-
 static function TblCrePom()
-*{
 local aDbf := {}
-local cPomDbf
 
 AADD(aDbf,{"IdPos"    ,"C",  2, 0})
 AADD(aDbf,{"IdRadnik" ,"C",  4, 0})
@@ -170,16 +164,20 @@ AADD(aDbf,{"Iznos3"   ,"N", 20, 5})
 AADD(aDbf,{"K1"       ,"C",  4, 0})
 AADD(aDbf,{"K2"       ,"C",  4, 0})
 
-NaprPom(aDbf)
+NaprPom( aDbf )
 
-cPomDbf := my_home() + "POM.DBF"
-CREATE_INDEX("1" ,"IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena",cPomDbf,.t.)
-CREATE_INDEX("2" ,"IdPos+IdOdj+IdRoba+IdCijena"                  ,cPomDbf,.f.)
-CREATE_INDEX("3" ,"IdPos+IdRoba+IdCijena"                        ,cPomDbf,.f.)
-CREATE_INDEX("4" ,"IdPos+IdVrsteP"                               ,cPomDbf,.f.)
-CREATE_INDEX("K1","IdPos+K1+idroba"                              ,cPomDbf,.f.)
+select ( F_POM )
+if used()
+	use
+endif
+my_use_temp( "POM", my_home() + "pom", .f., .t. )
 
-O_POM
+index on ( "IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena" ) tag "1"
+index on ( "IdPos+IdOdj+IdRoba+IdCijena" ) tag "2"
+index on ( "IdPos+IdRoba+IdCijena" ) tag "3"
+index on ( "IdPos+IdVrsteP" ) tag "4"
+index on ( "IdPos+K1+idroba" ) tag "K1"
+
 set order to tag "1"
 
 return

@@ -23,6 +23,7 @@ set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 public gDebug := 9
 
 f18_init_app()
+f18_app_parameters( .t. )
 
 // menu opcije...
 AADD( menuop, " 1) FIN   # finansijsko poslovanje                 " )

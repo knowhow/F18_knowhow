@@ -13,7 +13,7 @@
 
 
 // parametri aplikacije
-function f18_app_parameters()
+function f18_app_parameters( just_set )
 local _oo_bin, _oo_writer_exe, _oo_calc_exe
 local _java_bin, _java_start
 local _jod_bin, _jod_templates
@@ -24,61 +24,69 @@ local _left := 20
 
 // fetch parametara
 #IFDEF __PLATFORM__WINDOWS
-_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
-_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "swriter", 100 ) )
-_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "scalc", 100 ) )
-_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
-_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
-_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "c:\knowhowERP\util\jodreports-cli.jar", 200 ) )
-_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
+	_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
+	_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "swriter", 100 ) )
+	_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "scalc", 100 ) )
+	_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
+	_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
+	_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "c:\knowhowERP\util\jodreports-cli.jar", 200 ) )
+	_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
 #ELSE
-_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
-_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "", 100 ) )
-_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "", 100 ) )
-_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
-_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
-_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "/opt/knowhowERP/util/jodreports-cli.jar", 200 ) )
-_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
+	_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
+	_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "", 100 ) )
+	_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "", 100 ) )
+	_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
+	_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
+	_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "/opt/knowhowERP/util/jodreports-cli.jar", 200 ) )
+	_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
 #ENDIF
 
-clear screen
+if just_set == nil
+	just_set := .f.
+endif
 
-?
 
-_pos_x := 2
-_pos_y := 3
+if !just_set
+	clear screen
 
-// open office parametri
-@ _pos_x, _pos_y SAY "OpenOffice parametri ***" COLOR "I"
-@ _pos_x + _x, _pos_y SAY PADL( "bin direktorij:", _left )  GET _oo_bin PICT "@S100"
-++ _x
-@ _pos_x + _x, _pos_y SAY PADL( "writer aplikacija:", _left )  GET _oo_writer_exe PICT "@S100"
-++ _x
-@ _pos_x + _x, _pos_y SAY PADL( "calc aplikcija:", _left ) GET _oo_calc_exe PICT "@S100"
+	?
 
-++ _x
-++ _x
+	_pos_x := 2
+	_pos_y := 3
 
-@ _pos_x + _x, _pos_y SAY "Java parametri ***" COLOR "I"
-++ _x
-@ _pos_x + _x, _pos_y SAY PADL( "Java bin:", _left ) GET _java_bin PICT "@S100"
-++ _x
-@ _pos_x + _x, _pos_y SAY PADL( "Java start cmd:", _left ) GET _java_start PICT "@S100"
+	// open office parametri
+	@ _pos_x, _pos_y SAY "OpenOffice parametri ***" COLOR "I"
+	@ _pos_x + _x, _pos_y SAY PADL( "bin direktorij:", _left )  GET _oo_bin PICT "@S100"
+	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "writer aplikacija:", _left )  GET _oo_writer_exe PICT "@S100"
+	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "calc aplikcija:", _left ) GET _oo_calc_exe PICT "@S100"
+
+	++ _x
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Java parametri ***" COLOR "I"
+	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "Java bin:", _left ) GET _java_bin PICT "@S100"
+	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "Java start cmd:", _left ) GET _java_start PICT "@S100"
  
-++ _x
-++ _x
+	++ _x
+	++ _x
 
-@ _pos_x + _x, _pos_y SAY "JodReports parametri ***" COLOR "I"
-++ _x
-@ _pos_x + _x, _pos_y SAY PADL( "JodReports lokacija:", _left ) GET _jod_bin PICT "@S100"
-++ _x
-@ _pos_x + _x, _pos_y SAY PADL( "template lokacije:", _left ) GET _jod_templates PICT "@S100"
+	@ _pos_x + _x, _pos_y SAY "JodReports parametri ***" COLOR "I"
+	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "JodReports lokacija:", _left ) GET _jod_bin PICT "@S100"
+	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "template lokacije:", _left ) GET _jod_templates PICT "@S100"
  
-read
+	read
 
-IF LastKey() == K_ESC
-    return
-ENDIF
+	if LastKey() == K_ESC
+    	return
+	endif
+
+endif
 
 // snimi parametre u sql/db
 set_metric( "openoffice_bin", my_user(), _oo_bin )

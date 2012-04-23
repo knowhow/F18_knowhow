@@ -1,6 +1,8 @@
 1.0.14 2012-04-23, vsasa
 
   - pos, indeksi pomoćnih tabela [#27743](http://redmine.bring.out.ba/issues/27743)
+  - fin, otvorene stavke [#27742](http://redmine.bring.out.ba/issues/27742)
+  - kalk, šeme kontiranja, promjena definicije tabela [#27745](http://redmine.bring.out.ba/issues/27745)
  
 1.0.13 2012-04-23, vsasa
 

@@ -245,7 +245,7 @@ if !FILE(f18_ime_dbf("trfp"))
     my_use("trfp")
     close all
 endif
-CREATE_INDEX("ID", "idvd+shema+Idkonto", "TRFP")
+CREATE_INDEX("ID", "idvd+shema+Idkonto+id", "TRFP")
 index_mcode(NIL, "TRFP")
 
 
@@ -268,7 +268,7 @@ if !FILE(f18_ime_dbf("trfp2"))
     my_use("trfp2")
     close all
 endif
-CREATE_INDEX("ID","idvd+shema+Idkonto", "TRFP2")
+CREATE_INDEX("ID","idvd+shema+Idkonto+id", "TRFP2")
 
 //TRFP3    
 if !FILE(f18_ime_dbf("trfp3"))

@@ -20,9 +20,9 @@ set_a_dbf_kalk_kalk()
 
 set_a_dbf_kalk_doks_doks2("kalk_doks"  , "KALK_DOKS"  , F_KALK_DOKS  )
 set_a_dbf_kalk_doks_doks2("kalk_doks2" , "KALK_DOKS2" , F_KALK_DOKS2 )
+set_a_dbf_trfp( "trfp", "TRFP", F_TRFP )
+set_a_dbf_trfp( "trfp2", "TRFP2", F_TRFP2 )
 
-set_a_dbf_sifarnik("trfp"       , "TRFP"      , F_TRFP       )
-set_a_dbf_sifarnik("trfp2"      , "TRFP2"     , F_TRFP2      )
 set_a_dbf_sifarnik("trfp3"      , "TRFP3"     , F_TRFP3      )
 set_a_dbf_sifarnik("objekti"    , "OBJEKTI"   , F_OBJEKTI    )
 
@@ -131,6 +131,40 @@ _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
 _item["sql_order"] := "idfirma, idvd, brdok"
+
+f18_dbfs_add(_tbl, @_item)
+
+return .t.
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_trfp(table, alias, wa)
+local _item, _alg, _tbl 
+
+_tbl := table
+
+_item := hb_hash()
+
+_item["alias"] := alias
+_item["table"] := _tbl
+_item["wa"]    := wa
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idvd + field->shema + field->idkonto + field->id }
+_alg["dbf_key_fields"] := { "idvd", "shema", "idkonto", "id" }
+_alg["sql_in"]         := " rpad( idvd,2) || rpad( shema,1)  || rpad(idkonto,8) || rpad(id,60)"
+_alg["dbf_tag"]        := "ID"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "idvd, shema, idkonto, id"
 
 f18_dbfs_add(_tbl, @_item)
 

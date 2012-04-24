@@ -10,6 +10,7 @@
  */
 
 #include "pos.ch"
+#include "f18_ver.ch"
 
 EXTERNAL DESCEND
 EXTERNAL RIGHT
@@ -24,7 +25,7 @@ PUBLIC gKonvertPath:="D"
 cModul:="TOPS"
 PUBLIC goModul
 
-oPos := TPosMod():new(NIL, cModul, D_POS_VERZIJA, D_POS_PERIOD , cKorisn, cSifra, p3,p4,p5,p6,p7)
+oPos := TPosMod():new(NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3,p4,p5,p6,p7)
 goModul:=oPos
 
 oPos:run()

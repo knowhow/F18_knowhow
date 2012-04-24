@@ -16,11 +16,6 @@ EXTERNAL DESCEND
 EXTERNAL RIGHT
 
 
-
-/*! \fn MainFin(cKorisn, cSifra, p3, p4, p5, p6, p7)
- *  \brief Glavna funkcija Fin aplikacijskog modula
- */
- 
 function MainFin(cKorisn, cSifra, p3, p4, p5, p6, p7)
 local oFin
 local cModul

@@ -12,112 +12,57 @@
 
 #include "pos.ch"
 
-function Zakrpe()
-*{
 
-private Opc:={}
-private opcexe:={}
-private Izbor:=1
 
-AADD(opc,"1. doks ///                                          ")
-AADD(opcexe, {|| Zakrpa1()})
-AADD(opc,"2. postavi tarife u prometu kao u sifrarniku robe ")
-AADD(opcexe, {|| KorekTar()})
-AADD(opc,"3. cijene kasa <> cijene u fmk ")
-AADD(opcexe, {|| SynchroCijene()})
+function pos_zakrpe_mnu()
+local _Opc:={}
+local _opcexe:={}
+local _Izbor:=1
 
-Menu_SC("zakr")
-CLOSERET
-*}
+AADD(_opc,"1. doks ///                                          ")
+AADD(_opcexe, {|| Zakrpa1()})
+AADD(_opc,"2. postavi tarife u prometu kao u sifrarniku robe ")
+AADD(_opcexe, {|| KorekTar()})
+
+f18_menu( "zakr", .f., _izbor, _opc, _opcexe )
+
+close all
+return
+
+
 
 function Zakrpa1()
-*{
+local _rec
+
 if !SigmaSif("BUG1DOKS")
   return
 endif
 
 if Pitanje(,"Izbrisati DOKS - radnika '////'","N")=="D"
-   O_POS_DOKS
-   set order to 0
-   go top
-   nCnt:=0
-   do while !eof()
-       if IdRadnik='////'
-	    nCnt++
-	    delete
-	endif
-	skip
-   enddo
-   MsgBeep("Izbrisano "+str(nCnt)+" slogova")
+
+    O_POS_DOKS
+    set order to
+    go top
+    nCnt:=0
+    
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
+    do while !eof()
+        if field->idradnik == '////'
+	        nCnt ++
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+	    endif
+	    skip
+    enddo
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
+    MsgBeep( "Izbrisano " + STR( nCnt ) + " slogova" )
 
 endif
 return nil
-*}
-
-
-function SynchroCijene()
-*{
-local lCekaj
-
-CLOSE ALL
-O_ROBA
-
-MsgBeep("Sinhroniziraj cijene FMK roba i POS roba ...")
-
-
-SET CURSOR ON
-#ifdef PROBA
-cLokacija:=ToUnix("K:\PLANIKA\var\data1\sigma\SIF\ROBA")
-#else
-cLokacija:=ToUnix("I:/SIGMA/SIF/ROBA")
-#endif
-
-cLokacija:=PADR(cLokacija,40)
-Box(,2,60)
-@ m_x+1,m_y+2 SAY "Fmk sif."  GET cLokacija
-READ
-BoxC()
-
-cLokacija:=ALLTRIM(cLokacija)
-
-lCekaj:=.t.
-if (LASTKEY()==K_ESC)
-	return
-endif
-
-SELECT 0
-my_use( cLokacija,  "robafmk", .t. )
-SET ORDER TO TAG "ID"
-
-select roba
-GO TOP
-nCnt:=0
-do while !eof()
-	select robaFmk
-	SEEK roba->id
-	if FOUND()
-		if ROUND(roba->mpc, 2)<>ROUND(robaFmk->mpc, 2) 
-			select roba
-			if lCekaj
-				MsgBeep(roba->id+"##roba->cijena="+STR(roba->mpc, 6, 2)+" => fmk->mpc="+STR(robaFmk->mpc, 6, 2))
-				if (LASTKEY()==K_ESC)
-					lCekaj:=.f.
-				endif
-			endif
-			SmReplace("mpc", robaFmk->mpc)
-			++nCnt
-		endif
-	endif
-	select roba
-	skip
-enddo
-
-MsgBeep("Izvrsio sam "+STR(nCnt,4)+" promjena ")
-
-select robaFmk
-USE
-
-return
-
 
 

@@ -43,7 +43,7 @@ return pov_ku_ki("KIF", nBrDok)
 function azur_ku_ki(cTbl)
 local nBrDok
 local _rec
-public _br_dok := 0
+public __br_dok := 0
 
 if cTbl == "KUF"
 	o_kuf(.t.)
@@ -76,11 +76,11 @@ GO TOP
 
 // novi dokument je u pripremi i nema uopste postavljen
 // broj dokumenta
-if (br_dok == 0)
+if (field->br_dok == 0)
 	nNextBrDok := next_br_dok(cTbl)
 	nBrdok := nNextBrDok
 else
-	nBrDok := br_dok
+	nBrDok := field->br_dok
 endif
 
 // azuriraj u sql bazu
@@ -99,7 +99,8 @@ if kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
 		_g_r_br := nNextGRbr
 	
 		_br_dok := nBrDok
-	
+		__br_dok := _br_dok
+
 		++nCount
 		@ m_x+1, m_y+2 SAY PADR("Dodajem P_KIF -> KUF " + transform(nCount, "9999"), 40)
 		@ m_x+2, m_y+2 SAY PADR("   "+ cTbl +" G.R.BR: " + transform(nNextGRbr, "99999"), 40)
@@ -141,9 +142,9 @@ endif
 
 BoxC()
 
-MsgBeep("Azuriran je " + cTbl + " dokument " + STR( _br_dok, 6, 0) )
+MsgBeep("Azuriran je " + cTbl + " dokument " + STR( __br_dok, 6, 0) )
 
-return _br_dok
+return __br_dok
 
 
 
@@ -240,6 +241,7 @@ local _rec
 local _p_area
 local _k_area
 local _cnt
+local _table
 
 if (cTbl == "KUF")
 	o_kuf(.t.)
@@ -247,10 +249,12 @@ if (cTbl == "KUF")
 	_p_area := F_P_KUF
 	// kumulativ 
 	_k_area := F_KUF
+	_table := "epdv_kuf"
 else
 	o_kif(.t.)
 	_p_area := F_P_KIF
 	_k_area := F_KIF
+	_table := "epdv_kif"
 endif
 
 _cnt := 0
@@ -299,9 +303,12 @@ else
 	o_kif(.t.)
 endif	
 
+SELECT ( _k_area )
+set order to tag "BR_DOK"
+seek STR(nBrdok, 6, 0)
+
 // setuj zapis koji zelis obrisati
-_del_rec := hb_hash()
-_del_rec["br_dok"] := STR( nBrDok, 6 )
+_del_rec := dbf_get_rec()
 
 _ok := .t.
 
@@ -310,7 +317,7 @@ MsgO("del " + cTbl )
 my_use_semaphore_off()
 sql_table_update( nil, "BEGIN" )
 
-_ok := delete_rec_server_and_dbf( cTbl, _del_rec, 2, "CONT" )
+_ok := delete_rec_server_and_dbf( _table, _del_rec, 2, "CONT" )
 
 sql_table_update( nil, "END" )
 my_use_semaphore_on()

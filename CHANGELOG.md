@@ -1,3 +1,7 @@
+1.0.17 2012-04-24, vsasa
+
+  - pos, import šifrarnika robe iz fmk-pos [#27751](http://redmine.bring.out.ba/issues/27751)
+
 1.0.16 2012-04-23, vsasa
 
   - pos, import šifrarnika robe iz fmk-pos

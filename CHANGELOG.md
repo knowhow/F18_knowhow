@@ -1,6 +1,8 @@
 1.0.18 2012-04-24, vsasa
 
   - kalk, brojač po kontima [#27768](http://redmine.bring.out.ba/issues/27768)
+  - pos, korekcije semafora [#27773](http://redmine.bring.out.ba/issues/27773)
+  - fiskalne funkcije tremol, korekcije [#27771](http://redmine.bring.out.ba/issues/27771)
 
 1.0.17 2012-04-24, vsasa
 

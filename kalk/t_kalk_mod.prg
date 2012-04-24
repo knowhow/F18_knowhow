@@ -177,6 +177,7 @@ local cMrRs
 local cOdradjeno
 local cSekcija
 local cVar,cVal
+local _tmp
 
 set_global_vars()
 set_roba_global_vars()
@@ -424,7 +425,8 @@ lKoristitiBK := fetch_metric("kalk_koristiti_barkod_pri_unosu", nil, lKoristitiB
 lPrikPRUC := fetch_metric("kalk_prikazi_kolone_pruc", nil, lPrikPRUC)
 
 glZabraniVisakIP := fetch_metric("kalk_zabrani_visak_kod_ip", nil, glZabraniVisakIP)
-glBrojacPoKontima := fetch_metric("kalk_brojac_po_kontima", nil, glBrojacPoKontima)
+glBrojacPoKontima := fetch_metric("kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
+
 glEvidOtpis := fetch_metric("kalk_evidentiraj_otpis", nil, glEvidOtpis)
 gcSlObracun := fetch_metric("kalk_sl_obrazac", nil, gcSLObrazac)
 

@@ -198,34 +198,62 @@ return nil
 
 // kalk :: parametri razno
 function kalk_par_razno()
+local _brojac := "N"
+local _x := 1
 private  GetList:={}
 
-Box(,15,75,.f.,"RAZNO")
- @ m_x+1,m_y+2 SAY "Brojac kalkulacija D/N         " GET gBrojac pict "@!" valid gbrojac $ "DN"
- @ m_x+1,col()+2 SAY "duzina brojaca:" GET gLenBrKalk pict "9" VALID gLenBrKalk > 0 .and. gLenBrKalk < 10
- @ m_x+2,m_y+2 SAY "Potpis na kraju naloga D/N     " GET gPotpis valid gPotpis $ "DN"
- @ m_x+3,m_Y+2 SAY "Rok trajanja D/N               " GET gRokTr pict "@!" valid gRokTr $ "DN"
- @ m_x+4,m_y+2 SAY "Novi korisnicki interfejs D/N/X" GET gNW valid gNW $ "DNX" pict "@!"
- @ m_x+5,m_y+2 SAY "Varijanta evidencije (1-sa cijenama, 2-iskljucivo kolicinski)" GET gVarEv valid gVarEv $ "12" pict "9"
- @ m_x+6,m_y+2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela<3 PICT "9"
- @ m_x+7,m_y+2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
- @ m_x+8,m_y+2 SAY "F-ja za odredjivanje dzokera F1 u kontiranju" GET gFunKon1 PICT "@S28"
- @ m_x+9,m_y+2 SAY "F-ja za odredjivanje dzokera F2 u kontiranju" GET gFunKon2 PICT "@S28"
- @ m_x+10,m_y+2 SAY "Limit za otvorene stavke" GET gnLOst PICT "99999"
- @ m_x+11,m_y+2 SAY "Timeout kod azuriranja dokumenta (sec.)" GET gAzurTimeout PICT "99999"
- @ m_x+12,m_y+2 SAY "Timeout kod azuriranja fin.naloga (sec.)" GET gAzurFinTO PICT "99999"
- @ m_x+13,m_y+2 SAY "Auto obrada dokumenata iz cache tabele (D/N)" GET gCache VALID gCache $ "DN" PICT "@!"
+if glBrojacPoKontima
+    _brojac := "D"
+endif
 
-@ m_x+14,m_y+2 SAY "Kontrola odstupanja NC:" GET gNC_ctrl PICT "999.99"
-@ m_x+14, col() SAY "%" 
+Box(, 20, 75, .f., "RAZNO" )
 
-@ m_x+15,m_y+2 SAY "Indeks kod pretrage artikla:" GET gArtCDX PICT "@15"
+    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N         " GET gBrojac pict "@!" valid gbrojac $ "DN"
+    @ m_x + _x, col() + 2 SAY "duzina brojaca:" GET gLenBrKalk pict "9" VALID gLenBrKalk > 0 .and. gLenBrKalk < 10
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
+    ++ _x    
+    @ m_x + _x,m_y+2 SAY "Potpis na kraju naloga D/N     " GET gPotpis valid gPotpis $ "DN"
+    ++ _x
+    @ m_x + _x, m_Y+2 SAY "Rok trajanja D/N               " GET gRokTr pict "@!" valid gRokTr $ "DN"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Novi korisnicki interfejs D/N/X" GET gNW valid gNW $ "DNX" pict "@!"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Varijanta evidencije (1-sa cijenama, 2-iskljucivo kolicinski)" GET gVarEv valid gVarEv $ "12" pict "9"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela<3 PICT "9"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "F-ja za odredjivanje dzokera F1 u kontiranju" GET gFunKon1 PICT "@S28"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "F-ja za odredjivanje dzokera F2 u kontiranju" GET gFunKon2 PICT "@S28"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Limit za otvorene stavke" GET gnLOst PICT "99999"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Timeout kod azuriranja dokumenta (sec.)" GET gAzurTimeout PICT "99999"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Timeout kod azuriranja fin.naloga (sec.)" GET gAzurFinTO PICT "99999"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Auto obrada dokumenata iz cache tabele (D/N)" GET gCache VALID gCache $ "DN" PICT "@!"
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Kontrola odstupanja NC:" GET gNC_ctrl PICT "999.99"
+    @ m_x + _x, col() SAY "%" 
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Indeks kod pretrage artikla:" GET gArtCDX PICT "@15"
 	
-read
+    read
+
 BoxC()
 
-if lastkey()<>K_ESC
+if lastkey() <> K_ESC
+
+    if _brojac == "D"
+        glBrojacPoKontima := .t.
+    endif
+
 	set_metric("kalk_brojac_kalkulacija", nil, gBrojac)
+    set_metric("kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
   	set_metric("kalk_rok_trajanja", nil, gRokTr)
   	set_metric("kalk_potpis_na_kraju_naloga", nil, gPotpis)
   	set_metric("kalk_tip_tabele", nil, gTabela)

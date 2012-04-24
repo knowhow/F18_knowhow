@@ -657,19 +657,18 @@ return
 
 
 
-
-// --------------------------
-// --------------------------
-function SufBrKalk(cIdKonto)
-
-local nArr    := SELECT()
+// ---------------------------------------------
+// odredjuje sufiks broja dokumenta
+// ---------------------------------------------
+function SufBrKalk( cIdKonto )
+local nArr := SELECT()
 local cSufiks := SPACE(3)
 
 select koncij
 seek cIdKonto
 
-if found() 
-    if FIELDPOS("sufiks") <> 0
+if FOUND() 
+    if FIELDPOS( "sufiks" ) <> 0
         cSufiks := field->sufiks
     endif
 endif
@@ -677,16 +676,17 @@ select (nArr)
 
 return cSufiks
 
+
 // --------------------------
 // --------------------------
 function IsNumeric(cString)
-*{
-if AT(cString, "0123456789")<>0
+
+if AT(cString, "0123456789") <> 0
     lResult:=.t.
 else
     lResult:=.f.
 endif
 
 return lResult
-*}
+
 

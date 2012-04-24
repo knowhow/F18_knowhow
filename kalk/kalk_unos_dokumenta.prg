@@ -1133,51 +1133,59 @@ return K_ESC
 
 
 
-/*! \fn Get1Header()
- *  \brief Maska za unos/ispravku podataka zajednickih za sve stavke dokumenta
- */
-
 function Get1Header()
-*{
-if fnovi; _idfirma:=gFirma; endif
-if fnovi .and. _TBankTr=="X"; _TBankTr:="%"; endif  // izgenerisani izlazi
-if gNW $ "DX"
- @  m_x+1,m_y+2   SAY "Firma: ";?? gFirma,"-",gNFirma
-else
- @  m_x+1,m_y+2   SAY "Firma:"    get _IdFirma valid P_Firma(@_IdFirma,1,25) .and. len(trim(_idFirma))<=2
+
+if fnovi
+    _idfirma := gFirma
 endif
-@  m_x+2,m_y+2   SAY "KALKULACIJA: "
-@  m_x+2,col()   SAY "Vrsta:" get _IdVD valid P_TipDok(@_IdVD,2,25) pict "@!"
 
-read; ESC_RETURN 0
+if fnovi .and. _TBankTr=="X"
+    _TBankTr := "%"
+endif  
+// izgenerisani izlazi
 
-if fnovi .and. gBrojac=="D" .and. (_idfirma<>idfirma .or. _idvd<>idvd)
-    if glBrojacPoKontima .and. _idVD$"10#16#18#IM#14#95#96"
+if gNW $ "DX"
+    @  m_x+1, m_y+2 SAY "Firma: " 
+    ?? gFirma, "-", gNFirma
+else
+    @  m_x+1, m_y+2 SAY "Firma:" GET _IdFirma VALID P_Firma(@_IdFirma,1,25) .and. len(trim(_idFirma))<=2
+endif
+
+@  m_x+2, m_y+2 SAY "KALKULACIJA: "
+@  m_x+2, col() SAY "Vrsta:" get _IdVD valid P_TipDok(@_IdVD,2,25) pict "@!"
+
+read
+
+ESC_RETURN 0
+
+if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
+    if glBrojacPoKontima .and. _idvd $ "10#16#18#IM#14#95#96"
         Box("#Glavni konto",3,70)
-            if _idVD$"10#16#18#IM"
+            if _idvd $ "10#16#18#IM"
                 @ m_x+2, m_y+2 SAY "Magacinski konto zaduzuje" GET _idKonto VALID P_Konto(@_idKonto) PICT "@!"
                 read
-                cSufiks:=SufBrKalk(_idKonto)
+                cSufiks := SufBrKalk( _idKonto )
             else
                 @ m_x+2, m_y+2 SAY "Magacinski konto razduzuje" GET _idKonto2 VALID P_Konto(@_idKonto2) PICT "@!"
                 read
-                cSufiks:=SufBrKalk(_idKonto2)
+                cSufiks := SufBrKalk( _idKonto2 )
             endif
         BoxC()
-        _brDok:=SljBrKalk(_idVD,_idFirma,cSufiks)
+        _brDok := SljBrKalk( _idvd, _idfirma, cSufiks )
     else
-        _brDok:=SljBrKalk(_idVD,_idFirma)
+        _brDok := SljBrKalk( _idvd, _idfirma )
     endif
     select kalk_pripr
 endif
 
-@  m_x+2,m_y+40  SAY "Broj:"  get _BrDok  ;
-  valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }
+@ m_x+2, m_y+40  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }
 
-@  m_x+2,COL()+2 SAY "Datum:"   get  _DatDok
+@ m_x+2, COL()+2 SAY "Datum:" GET _DatDok
 
-@ m_x+4,m_y+2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
+@ m_x+4, m_y+2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
+
 read
+
 ESC_RETURN 0
 
 return 1

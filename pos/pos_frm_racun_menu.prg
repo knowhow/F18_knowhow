@@ -17,49 +17,14 @@ function pos_narudzba()
 
 SETKXLAT("'","-") 
 
-if gModul=="HOPS"
-	narudzba_hops()
-else
-	narudzba_tops()
-endif
+narudzba_tops()
 
 set key "'" to
 return
 
 
-function narudzba_hops()
-private Opc:={}
-private opcexe:={}
-private Izbor
-
-o_pos_narudzba()  
-
-if gRadniRac=="D"
-	AADD(opc,"1. dodaj na racun        ")
-	AADD(opcexe, {|| DodajNaRacun() })
-	AADD(opc,"2. otvori novi racun ")
-	AADD(opcexe, {|| NoviRacun() })
-	Izbor:=1
-	Menu_SC("nar")
-else
-	// ne koristi radne racune - ide drito
-	select _pos_pripr
-  	if RecCount2()<>0 .and. !Empty(BrDok)
-    		DodajNaRacun (_pos_pripr->BrDok)
-  	else
-    		NoviRacun()
-  	endif
-endif
-
-if gRadniRac=="D"
-	// ako se koriste radni racuni, po svakom zavrsetku unosa radnih racuna
-	Trebovanja()
-endif
-
-return
-
-
 function narudzba_tops()
+
 o_pos_narudzba()
 
 select _pos_pripr
@@ -75,6 +40,7 @@ close all
 return
 
 
+
 function DodajNaRacun(cBrojRn)
 set cursor on
 
@@ -82,20 +48,6 @@ if cBrojRn==nil
 	cBrojRn:=SPACE(6)
 else
 	cBrojRn:=cBrojRn
-endif
-
-if gModul=="HOPS"
-	if gRadniRac=="D"
-		set cursor on
-    		Box(, 2, 40)
-    		// unesi broj racuna
-    		@ m_x+1,m_y+3 SAY "Broj radnog racuna:" GET cBrojRn VALID P_RadniRac(@cBrojRn)
-    		READ
-    		BoxC()
-    		if LASTKEY()==K_ESC
-      			return
-    		endif
-  	endif
 endif
 
 UnesiNarudzbu(cBrojRn,_POS->Sto)
@@ -225,69 +177,65 @@ return
 
 
  
-function PostRoba(cId,dx,dy,lFlag)
-local aZabrane
-local i
-local vrati := .f.
-private ImeKol
-private Kol
+function PostRoba( cId, dx, dy, lFlag )
+local _zabrane
+local _i
+local _vrati := .f.
+private ImeKol := {}
+private Kol := {}
 
-sif_uv_naziv(@cId)
+sif_uv_naziv( @cId )
 
 UnSetSpecNar()
+
 SETKEY(K_PGDN, bPrevDn)
 SETKEY(K_PGUP, bPrevUp)
 
-PrevId:= GetList[1]:original        // cId
-ImeKol:={ { "Sifra"  , {|| id          }, "" },;
-          { "Naziv"  , {|| naz         }, "" },;
-          { "J.mj."  , {|| PADC(jmj,5) }, "" },;
-          { "Cijena" , {|| roba->mpc }, "" };
-        }
-if roba->(fieldpos("K7"))<>0
-	AADD (ImeKol,{ padc("K7",2 ), {|| k7 }, ""   })
-endif
-if roba->(fieldpos("BARKOD"))<>0
-    	AADD (ImeKol,{ "BARKOD" , {|| barkod }, ""   })
-endif
+PrevId:= GetList[1]:original
+	
+AADD( ImeKol, { "Sifra", {|| id }, "" })
+AADD( ImeKol, { PADC( "Naziv", 40 ), {|| PADR( naz, 40 ) }, "" })
+AADD( ImeKol, { PADC( "JMJ", 5 ), {|| PADC( jmj, 5 ) }, "" })
+AADD( ImeKol, { "Cijena", {|| roba->mpc }, "" })
+AADD( ImeKol, { "K7", {|| k7 }, "" })
+AADD( ImeKol, { "BARKOD", {|| barkod }, "" })
 
-Kol:={}
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
+for _i := 1 to LEN( ImeKol )
+	AADD( Kol, _i ) 
 next
 
 if KLEVEL == L_PRODAVAC
-	aZabrane:={K_CTRL_T,K_CTRL_N,K_F4,K_F2,K_CTRL_F9}
+	_zabrane := { K_CTRL_T, K_CTRL_N, K_F4, K_F2, K_CTRL_F9 }
 else
-  	aZabrane:={}
+  	_zabrane := {}
 endif
 
-// TODO
-BarKod(@cId)
+BarKod( @cId )
 
-Vrati := PostojiSifra(F_ROBA, "ID", MAXROWS() - 15, MAXCOLS() - 3, "Roba(artikli)", @cId, NIL, NIL, NIL, NIL, NIL, aZabrane)
+_vrati := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
 
-if LASTKEY()==K_ESC
-	cId:=PrevID
-  	Vrati:=.f.
+if LASTKEY() == K_ESC
+	cId := PrevID
+  	_vrati := .f.
 else
-	@ m_x+dx,m_y+dy SAY PADR (AllTrim (roba->Naz)+" ("+AllTrim (roba->Jmj)+")",50)
+	@ m_x + dx, m_y + dy SAY PADR (AllTrim (roba->Naz)+" ("+AllTrim (roba->Jmj)+")",50)
   
-	if roba->tip<>"T"
-    		_Cijena:=roba->mpc
+	if roba->tip <> "T"
+    	_Cijena := roba->mpc
   	endif
 endif
 
 //kontrolisi cijenu pri unosu narudzbe
-if IzFmkIni('TOPS','KontrolaCijenePriUnosu','N',KUMPATH)=='D'
-	if ! _Cijena<>0
-    		MsgBeep('Cijena 0.00, ne mogu napraviti racun !!!')
-    		Vrati:=.f.
+if fetch_metric( "pos_kontrola_cijene_pri_unosu_stavke", nil, "N" ) == "D"
+ 	if ! _Cijena <> 0
+    	MsgBeep( "Cijena 0.00, ne mogu napraviti racun !!!" )
+    	_vrati := .f.
   	endif
 endif
 
 SETKEY (K_PGDN, {|| DummyProc()})
 SETKEY (K_PGUP, {|| DummyProc()})
+
 SetSpecNar()
 
 if gDisplay=="D"
@@ -297,7 +245,7 @@ if gDisplay=="D"
 	Send2ComPort(ALLTRIM(roba->naz))
 endif
 
-return Vrati
+return _vrati
 
  
 function ZakljuciRacun()

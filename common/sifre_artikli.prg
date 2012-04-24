@@ -21,6 +21,7 @@ local cRet
 local bRoba
 local nTArea
 local lArtGroup := .f.
+local _naz_len := 40
 private ImeKol
 private Kol
 
@@ -36,33 +37,30 @@ nTArea := SELECT()
 
 O_ROBA
 
-if (IzFmkIni("Svi","SifAuto","N", SIFPATH)=="N") .or.;
-   (IzFmkIni("SifRoba","ID","D", SIFPATH)=="D")
-	AADD(ImeKol, {padc("ID",10),  {|| id }, iif(IzFmkIni("Svi","SifAuto","N", SIFPATH)="D","","id")  , {|| .t.}, {|| vpsifra(wId)} })
-endif
+AADD( ImeKol, { PADC( "ID", 10 ),  ;
+        {|| id }, ;
+        "id" , {|| .t.}, {|| vpsifra(wId) } } )
 
-if roba->(fieldpos("FISC_PLU")) <> 0
-	AADD( ImeKol, { padc("PLU kod", 8), ;
+AADD( ImeKol, { PADC( "PLU kod", 8 ), ;
 		{|| PADR(fisc_plu, 10)}, ;
 		"fisc_plu", {|| gen_plu(@wfisc_plu), .f.}, ;
 		{|| .t. } })
-endif
 
 // kataloski broj
 if roba->(fieldpos("KATBR"))<>0
-	AADD(ImeKol, {padc("KATBR",14 ), {|| PADR(katBr, 14)}, "katBr"   })
+	AADD( ImeKol, { PADC( "KATBR", 14 ), {|| PADR( katBr, 14 ) }, "katbr"   })
 endif
 
 // sifra dobavljaca
-if roba->(fieldpos("SIFRADOB"))<>0
-	AADD(ImeKol, {padc("S.dobav.",13 ), {|| PADR(sifraDob, 13)}, "sifraDob"   })
+if roba->(fieldpos( "SIFRADOB" )) <> 0
+	AADD( ImeKol, { PADC( "S.dobav.", 13 ), {|| PADR( sifraDob, 13 ) }, "sifradob"   })
 endif
 
 // naziv
 if glProvNazRobe
-	AADD(ImeKol, {padc("Naziv",40), {|| LEFT(naz, 40)},"naz",{|| .t.}, {|| VpNaziv(wNaz)}})
+	AADD( ImeKol, { PADC( "Naziv", _naz_len ), {|| LEFT( naz, _naz_len ) }, "naz", {|| .t.}, {|| VpNaziv(wNaz)}} )
 else
-	AADD(ImeKol, {padc("Naziv",40), {|| LEFT(naz, 40)},"naz",{|| .t.}, {|| .t.}})
+	AADD( ImeKol, { PADC( "Naziv", _naz_len ), {|| LEFT( naz, _naz_len ) }, "naz", {|| .t.}, {|| .t.}})
 endif
 
 // jedinica mjere

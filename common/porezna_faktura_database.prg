@@ -23,27 +23,24 @@ return
 
 // delete rn dbf's
 function del_rndbf()
-*{
+
 close all
+
 // drn.dbf
-FErase(PRIVPATH + "DRN.DBF")
-FErase(PRIVPATH + "DRN.CDX")
+FErase( my_home() + "drn.dbf" )
+FErase( my_home() + "drn.cdx" )
 
 // rn.dbf
-FErase(PRIVPATH + "RN.DBF")
-FErase(PRIVPATH + "RN.CDX")
+FErase( my_home() + "rn.dbf" )
+FErase( my_home() + "rn.cdx" )
 
 // drntext.dbf
-FErase(PRIVPATH + "DRNTEXT.DBF")
-FErase(PRIVPATH + "DRNTEXT.CDX")
+FErase( my_home() + "drntext.dbf" )
+FErase( my_home() + "drntext.cdx" )
 
 return 1
-*}
 
 
-/*! \fn drn_create()
- *  \brief kreiranje tabela RN i DRN
- */
 function drn_create()
 
 local cDRnName := "drn"
@@ -93,12 +90,7 @@ CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
 return
 
 
-/*! \fn get_drn_fields(aArr)
- *  \brief napuni matricu aArr sa specifikacijom polja tabele
- *  \param aArr - matrica
- */
 function get_drn_fields(aArr)
-*{
 if goModul:oDatabase:cName == "TOPS"
 	AADD(aArr, {"BRDOK",   "C",  6, 0})
 else
@@ -138,15 +130,10 @@ if glUgost
 endif
 
 return
-*}
 
 
-/*! \fn get_rn_fields(aArr)
- *  \brief napuni matricu aArr sa specifikacijom polja tabele
- *  \param aArr - matrica
- */
 function get_rn_fields(aArr)
-*{
+
 if goModul:oDatabase:cName == "TOPS"
 	AADD(aArr, {"BRDOK",   "C",  6, 0})
 else
@@ -174,22 +161,16 @@ AADD(aArr, {"C3",   "C", 100, 0})
 AADD(aArr, {"OPIS",   "C", 200, 0})
 
 return
-*}
 
-/*! \fn get_dtxt_fields(aArr)
- *  \brief napuni matricu aArr sa specifikacijom polja tabele
- *  \param aArr - matrica
- */
+
+
 function get_dtxt_fields(aArr)
-*{
 AADD(aArr, {"TIP",   "C",   3, 0})
 AADD(aArr, {"OPIS",  "C", 200, 0})
 return
-*}
 
 
 function add_drntext(cTip, cOpis)
-*{
 local lFound
 if !USED(F_DRNTEXT)
 	O_DRNTEXT
@@ -210,12 +191,10 @@ replace tip with cTip
 replace opis with cOpis
 
 return
-*}
 
 
 // dodaj u drn.dbf
 function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, nUkkol)
-*{
 local cnt1
 
 if !USED(F_DRN)
@@ -285,7 +264,6 @@ if glUgost
 endif
 
 return
-*}
 
 function add_drn_di(dDatIsp)
 
@@ -395,12 +373,10 @@ if ( ROUND(nPopNaTeretProdavca, 4) <> 0 )
 endif
 
 return
-*}
 
 
 // isprazni drn tabele
 function drn_empty()
-*{
 O_DRN
 select drn
 zap
@@ -414,22 +390,18 @@ select drntext
 zap
 
 return
-*}
 
 
 // otvori rn tabele
 function drn_open()
-*{
 O_DRN
 O_DRNTEXT
 O_RN
 return
-*}
 
 
 // provjera checksum-a
 function drn_csum()
-*{
 local nCSum
 local nRNSum
 
@@ -447,12 +419,10 @@ if nRNSum == nCSum
 endif
 
 return .f.
-*}
 
 
 // vrati vrijednost polja opis iz tabele drntext.dbf po id kljucu
 function get_dtxt_opis(cTip)
-*{
 local cRet
 
 O_DRNTEXT
@@ -466,19 +436,14 @@ endif
 cRet := RTRIM(opis)
 
 return cRet
-*}
 
 
 // azuriranje podataka o kupcu
 function AzurKupData(cIdPos)
-*{
 local cKNaziv
 local cKAdres
 local cKIdBroj
-
-O_DOKSPF
-// idpos+idvd+DToS(datum)+brdok
-SET ORDER TO TAG "1"
+local _rec
 
 O_DRN
 O_DRNTEXT
@@ -488,38 +453,49 @@ cKAdres := get_dtxt_opis("K02")
 cKIdBroj := get_dtxt_opis("K03")
 dDatIsp := get_drn_di()
 
-
 // nema poreske fakture
 if cKNaziv == "???"
 	return
 endif
 
+O_DOKSPF
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 select drn
 go top
 
 select dokspf
-
 SEEK cIdPos + "42" + DTOS(drn->datdok) + drn->brdok
+
 if !FOUND()
- append blank
- Sql_Append(.t.)
+    append blank
 endif
 
-SmReplace("idpos", cIdPos)
-SmReplace("idvd", "42")
-SmReplace("brdok", drn->brdok)
-SmReplace("datum", drn->datdok)
-if FIELDPOS("datisp")<>0
+_rec := dbf_get_rec()
+_rec["idpos"] := cIdPos
+_rec["idvd"] := "42"
+_rec["brdok"] := drn->brdok
+_rec["datum"] := drn->datdok
+
+if hb_hhaskey( _rec, "datisp" )
 	if dDatIsp <> nil
-		SmReplace("datisp", dDatIsp)
+        _rec["datisp"] := dDatIsp
 	endif
 endif
-SmReplace("knaz", cKNaziv)
-SmReplace("kadr", cKAdres)
-SmReplace("kidbr", cKIdBroj)
+
+_rec["knaz"] := cKNaziv
+_rec["kadr"] := cKAdres
+_rec["kidbr"] := cKIdBroj
+
+update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return
-*}
+
 
 
 // pretrazi tabelu kupaca i napuni matricu

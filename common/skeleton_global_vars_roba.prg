@@ -16,7 +16,7 @@
 function set_roba_global_vars()
 
 public gUVarPP
-public glProvNazRobe
+public glProvNazRobe := .f.
 public gRobaBlock
 public gPicCDem
 public PicDem
@@ -47,7 +47,7 @@ gUgostVarijanta := UPPER(IzFmkIni("UGOSTITELJSTVO","Varijanta","Rmarza_DLimit", 
 
 gUVarPP := IzFMKINI("POREZI","PPUgostKaoPPU","N", KUMPATH)
 
-glProvNazRobe := (IzFmkIni("ROBA","BezIstihNaziva","N")=="D")
+glProvNazRobe := fetch_metric( "sifrarnik_roba_provjera_istih_naziva", nil, glProvNazRobe ) 
 
 glAutoFillBK := (IzFmkIni("ROBA","AutoFillBarKod","N",SIFPATH)=="D")
 

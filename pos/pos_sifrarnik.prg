@@ -144,22 +144,6 @@ next
 return PostojiSifra(F_MJTRUR, 1, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy)
 
 
- 
-function P_RobaIz(cId,dx,dy)
-private ImeKol
-private Kol:={}
-
-ImeKol:={{"IdRoba",      {|| IdRoba }, "IdRoba", {|| .t.}, {|| P_Roba(wIdRoba)}},;
-         {"Dio objekta", {|| IdDio },  "IdDio",  {|| .t.}, {|| P_Dio(wIdDio)}} ;
-        }
-
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
-
-return PostojiSifra(F_ROBAIZ,1,10,55,"Sifrarnik iznimki kod izuzimanja robe",@cid,dx,dy)
-
-
 
 function EdOsob()
 local System:=(KLevel<L_UPRAVN)

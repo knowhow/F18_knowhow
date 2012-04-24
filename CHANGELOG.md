@@ -1,3 +1,7 @@
+1.0.18 2012-04-24, vsasa
+
+  - kalk, brojač po kontima [#27768](http://redmine.bring.out.ba/issues/27768)
+
 1.0.17 2012-04-24, vsasa
 
   - pos, import šifrarnika robe iz fmk-pos [#27751](http://redmine.bring.out.ba/issues/27751)

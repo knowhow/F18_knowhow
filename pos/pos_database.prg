@@ -1747,6 +1747,14 @@ do while !EOF()
     endif
     
     _rec := dbf_get_rec()
+
+    _rec["id"] := tops_roba->id
+
+    _rec["naz"] := tops_roba->naz
+    _rec["jmj"] := tops_roba->jmj
+    _rec["idtarifa"] := tops_roba->idtarifa
+    _rec["barkod"] := tops_roba->barkod
+
     _rec["mpc"] := tops_roba->cijena1
     _rec["mpc2"] := tops_roba->cijena2
 

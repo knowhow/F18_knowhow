@@ -15,7 +15,7 @@
 // kreiranje tabela - svi moduli 
 // -----------------------------------
 function cre_sifrarnici_1(ver)
-local _created
+local _created, _table_name, _alias
 
 cIme := "rj.dbf" 
 
@@ -194,21 +194,39 @@ CREATE_INDEX("ID", "Id", "VRSTEP")
 // ------------------------------------------------
 // KONCIJ
 // ------------------------------------------------
-if !FILE(f18_ime_dbf("koncij"))
+_created := .f.
+_table_name := "koncij"
+_alias := "KONCIJ"
+
+if !FILE(f18_ime_dbf( _table_name ))
+
     aDbf:={}
+
     AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
     add_f_mcode(@aDbf)
     AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
     AADD(aDBf,{ 'NAZ'                 , 'C' ,   2 ,  0 })
     AADD(aDBf,{ 'IDPRODMJES'          , 'C' ,   2 ,  0 })
     AADD(aDBf,{ 'REGION'              , 'C' ,   2 ,  0 })
-    DBcreate2("KONCIJ",aDbf)
-    reset_semaphore_version("koncij")
-    my_use("koncij")
+
+    DBcreate2( _alias, aDbf )
+    _created := .t.
+
+endif
+
+// 0.4.7
+if ver["current"] < 0407
+    modstru( { "*" + _table_name, "A SUFIKS C 3 0" } )
+endif
+
+if _created
+    reset_semaphore_version( _table_name )
+    my_use( _table_name )
     close all
 endif
-CREATE_INDEX("ID","id", "KONCIJ" )
-index_mcode( NIL, "KONCIJ")
+
+CREATE_INDEX("ID","id", _alias )
+index_mcode( NIL, _alias )
 
 
 //PKONTO

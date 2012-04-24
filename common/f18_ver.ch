@@ -18,9 +18,9 @@
 
 #define F18_DBF_VER_MAJOR  0
 #define F18_DBF_VER_MINOR  4
-#define F18_DBF_VER_PATCH  6
+#define F18_DBF_VER_PATCH  7
 
 #define SERVER_DB_VER_MAJOR  4
 #define SERVER_DB_VER_MINOR  4
-#define SERVER_DB_VER_PATCH  3
+#define SERVER_DB_VER_PATCH  4
 

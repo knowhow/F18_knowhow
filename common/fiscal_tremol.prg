@@ -13,8 +13,6 @@
 #include "fmk.ch"
 
 static _razmak1 := " "
-static _inp_dir := ""
-static _answ_dir := ""
 static _nema_out := -20
 
 // fiskalne funkcije TREMOL fiskalizacije 
@@ -92,7 +90,7 @@ cBr_zahtjeva := aData[1, 1]
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 // otvori xml
 open_xml( cXml )
@@ -293,7 +291,7 @@ cBr_zahtjeva := "0"
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 // otvori xml
 open_xml( cXml )
@@ -331,7 +329,7 @@ cBr_zahtjeva := "0"
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 // otvori xml
 open_xml( cXml )
@@ -383,7 +381,7 @@ cBr_zahtjeva := "0"
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 // otvori xml
 open_xml( cXml )
@@ -690,7 +688,6 @@ static function _read_out( cFPath, cFName, nTimeOut )
 local lOut := .t.
 local cTmp
 local nTime
-local cAnswer := ""
 local nRCnt := 0
 
 if nTimeOut == nil
@@ -698,12 +695,7 @@ if nTimeOut == nil
 endif
 
 nTime := nTimeOut
-
-if !EMPTY( _answ_dir )
-	cAnswer := _answ_dir + SLASH
-endif
-
-cTmp := cFPath + cAnswer + STRTRAN( cFName, "xml", "out" )
+cTmp := cFPath + STRTRAN( cFName, "xml", "out" )
 
 Box(,1,50)
 
@@ -769,7 +761,7 @@ local cErrDesc := ""
 local _o_file
 
 // primjer: c:\fiscal\00001.out
-cF_name := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "xml", "out" )
+cF_name := cFPath + STRTRAN( cFName, "xml", "out" )
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
 // prikaza greske tipa OUT fajlovi...

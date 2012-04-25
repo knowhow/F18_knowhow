@@ -208,7 +208,7 @@ nVr_placanja := 0
 	// odjeljenje
 	cTmp += _razmak1 + 'DEP="' + cDep + '"'
 	// naziv artikla
-	cTmp += _razmak1 + 'DSC="' + hb_strtoutf8( cRoba_naz ) + '"'
+	cTmp += _razmak1 + 'DSC="' + to_xml_encoding( cRoba_naz ) + '"'
 	// cijena artikla
 	cTmp += _razmak1 + 'PRC="' + ALLTRIM( STR( nCijena, 12, 2 )) + '"'
 	//  kolicina artikla 
@@ -380,11 +380,11 @@ for i:=1 to LEN( aKupac )
 
 	cTmp := 'IBK="' + aKupac[i, 1] + '"'
 	cTmp += _razmak1 + 'NAME="' + ;
-		ALLTRIM( hb_strtoutf8( aKupac[i, 2] ) ) + '"'
+		ALLTRIM( to_xml_encoding( aKupac[i, 2] ) ) + '"'
 	cTmp += _razmak1 + 'ADDRESS="' + ;
-		ALLTRIM( hb_strtoutf8( aKupac[i, 3] ) ) + '"'
+		ALLTRIM( to_xml_encoding( aKupac[i, 3] ) ) + '"'
 	cTmp += _razmak1 + 'TOWN="' + ;
-		ALLTRIM( hb_strtoutf8( aKupac[i, 5] ) ) + '"'
+		ALLTRIM( to_xml_encoding( aKupac[i, 5] ) ) + '"'
 	
 	xml_snode( "DATA", cTmp )
 

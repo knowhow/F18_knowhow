@@ -1,3 +1,9 @@
+1.0.20 2012-04-25, vsasa
+
+  - hcp, xml encoding kod slanja xml fajla [#27789](http://redmine.bring.out.ba/issues/27789)
+  - kalk, prikaz fin naloga jednovalutno [#27786](http://redmine.bring.out.ba/issues/27786)
+  - pos, prikaz računa opcija "P" ispravljena [#27787](http://redmine.bring.out.ba/issues/27787)
+ 
 1.0.19 2012-04-25, vsasa
 
   - pos, korekcije [#27773](http://redmine.bring.out.ba/issues/27773)

@@ -32,7 +32,7 @@ static nSw6
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
 function nar_print(lStartPrint)
-*{
+
 // ako je nil onda je uvijek .t.
 if lStartPrint == nil
 	lStartPrint := .t.
@@ -41,7 +41,6 @@ endif
 PIC_KOLICINA(PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA())), LEN_KOLICINA(), "9"))
 PIC_VRIJEDNOST(PADL(ALLTRIM(RIGHT(PicDem, LEN_VRIJEDNOST())), LEN_VRIJEDNOST(), "9"))
 PIC_CIJENA(PADL(ALLTRIM(RIGHT(PicCDem, LEN_CIJENA())), LEN_CIJENA(), "9"))
-
 
 drn_open()
 
@@ -59,12 +58,11 @@ endif
 
 narudzba(lStartPrint)
 return
-*}
+
 
 
 // stampa narudzbenice
 function narudzba(lStartPrint)
-*{
 local cBrDok
 local dDatDok
 local aRNaz
@@ -407,20 +405,16 @@ return
 // funkcija za ispis podataka o kupcu
 // ----------------------------------------
 static function nar_header()
-*{
 local cPom, cPom2
-
 local cLin
 local cPartMjesto
 local cPartPTT
-
 local cNaziv, cNaziv2
 local cAdresa, cAdresa2
 local cIdBroj, cIdBroj2
 local cMjesto, cMjesto2
 local cTelFax, cTelFax2
 local aKupac, aDobavljac
-
 local cDatDok
 local cDatIsp
 local cDatVal
@@ -429,7 +423,7 @@ local cBrNar
 local cBrOtp
 local nPRowsDelta
 
-nPRowsDelta:= prow()
+nPRowsDelta := prow()
 
 drn_open()
 select drn
@@ -443,29 +437,30 @@ if EMPTY(datIsp)
 	// jednak datumu dokumenta
 	cDatIsp := DTOC(datDok)
 else
-        cDatIsp := DToC(datisp)
+	cDatIsp := DToC(datisp)
 endif
 
 cDatVal := DToC(field->datval)
 cBrDok := field->brdok
 
-cBrNar :=get_dtxt_opis("D06") 
-cBrOtp :=get_dtxt_opis("D05") 
+cBrNar := get_dtxt_opis("D06") 
+cBrOtp := get_dtxt_opis("D05") 
 
+cNaziv := get_dtxt_opis("K01")
+cAdresa := get_dtxt_opis("K02")
+cIdBroj := get_dtxt_opis("K03")
+cDestinacija := get_dtxt_opis("D08")
 
-cNaziv:=get_dtxt_opis("K01")
-cAdresa:=get_dtxt_opis("K02")
-cIdBroj:=get_dtxt_opis("K03")
-cDestinacija:=get_dtxt_opis("D08")
+cTelFax := "tel: "
+cPom := ALLTRIM(get_dtxt_opis("K13"))
 
-cTelFax:="tel: "
-cPom:=ALLTRIM(get_dtxt_opis("K13"))
-if empty(cPom)
+if EMPTY( cPom )
 	cPom:="-"
 endif
+
 cTelFax += cPom
-cPom:=ALLTRIM(get_dtxt_opis("K14"))
-if empty(cPom)
+cPom := ALLTRIM(get_dtxt_opis("K14"))
+if EMPTY( cPom )
 	cPom:="-"
 endif
 cTelFax += ", fax: " + cPom
@@ -484,6 +479,7 @@ endif
 
 // gFirma sadrzi podatke o maticnoj firmi
 seek gFirma
+
 cNaziv2  := ALLTRIM(partn->naz)
 cMjesto2 := ALLTRIM(partn->ptt) + " " + ALLTRIM(partn->mjesto)
 cAdresa2 := ALLTRIM(partn->adresa)
@@ -493,7 +489,6 @@ cIdBroj2 := get_dtxt_opis("I03")
 cTelFax2 := "tel: " + ALLTRIM(partn->telefon)  + ", fax: " + ALLTRIM(partn->fax)
 
 PopWa()
-
 
 cMjesto:= ALLTRIM(cMjesto)
 if !EMPTY(cPTT)

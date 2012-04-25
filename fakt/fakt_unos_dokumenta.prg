@@ -401,14 +401,16 @@ do case
         return DE_REFRESH
         
     case Ch==K_ALT_N
-        if lDirty
+       	
+		if lDirty
             MsgBeep("Podaci su mjenjani nakon posljednje stampe##"+;
             "Molimo ponovite stampu dokumenta da bi podaci#" +;
             "na narudzbenici bili azurni")
             return DE_CONT
         endif
+
         select fakt_pripr
-        nRec:=RECNO()
+        nRec := RECNO()
         GO TOP
         nar_print(.t.)
         o_fakt_edit()

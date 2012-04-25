@@ -562,14 +562,7 @@ return (lFlag)
 *}
 
 
-/*! \fn IspraviNarudzbu()
- *  \brief Ispravka racuna, narudzbe
- */  
- 
 function IspraviNarudzbu()
-*{
-
-//
 // Koristi privatnu varijablu oBrowse iz UNESINARUDZBU
 
 local cGetId
@@ -607,15 +600,10 @@ _Kolicina:=nGetKol
 
 SetSpecNar()
 return
-*}
 
 
-/*! \fn BrisStavNar(oBrowse)
- *  \param oBrowse
- */
  
 function BrisStavNar(oBrowse)
-*{
 //      Brise stavku narudzbe
 //      Koristi privatni parametar OBROWSE iz SHOWBROWSE
 select _pos_pripr
@@ -636,7 +624,9 @@ nPopust-=_pos_pripr->(Kolicina*NCijena)
 @ m_x+4,m_y+70 SAY nPopust pict "99999.99" COLOR Invert
 @ m_x+5,m_y+70 SAY nIznNar-nPopust pict "99999.99" COLOR Invert
 
-DELETE    // _PRIPR
+DELETE    
+__dbPack()
+// _PRIPR
 
 oBrowse:refreshAll()
 

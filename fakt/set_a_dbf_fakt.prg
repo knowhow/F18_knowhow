@@ -23,7 +23,6 @@ set_a_fakt_doks_doks2("fakt_doks2" , "FAKT_DOKS2" , F_FAKT_DOKS2)
 
 set_a_dbf_fakt_ugov()
 set_a_dbf_fakt_rugov()
-
 set_a_dbf_fakt_gen_ug()
 set_a_dbf_fakt_gen_ug_p()
 
@@ -146,8 +145,8 @@ _alg := hb_hash()
 
 // funkcija a_genug() definise dbf polja
 
-_alg["dbf_key_block"]  := {|| DTOS(field->dat_obr)}
-_alg["dbf_key_fields"] := {"dat_obr"}
+_alg["dbf_key_block"]  := {|| DTOS( field->dat_obr ) }
+_alg["dbf_key_fields"] := { "dat_obr" }
 _alg["sql_in"]         := "to_char(dat_obr, 'YYYYMMDD')" 
 _alg["dbf_tag"]        := "DAT_OBR"
 AADD(_item["algoritam"], _alg)
@@ -155,6 +154,7 @@ AADD(_item["algoritam"], _alg)
 _item["sql_order"] := "dat_obr"
 
 f18_dbfs_add(_tbl, @_item)
+
 return .t.
 
 

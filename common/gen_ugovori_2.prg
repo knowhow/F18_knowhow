@@ -212,7 +212,13 @@ if lSetParams
     _rec["kto_dob"] := cKtoPot
     _rec["opis"] := cOpis
 
-    //update_rec_server_and_dbf( ALIAS(), _rec )
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+
+    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "CONT" )
+
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
 
 endif
 
@@ -312,6 +318,7 @@ go top
 seek DTOS(dDatObr) + cIdArt
 
 if Found()    
+
     _rec := dbf_get_rec()
     _rec["fakt_br"] := nFaktBr
     _rec["saldo"] := nSaldo
@@ -320,7 +327,13 @@ if Found()
     _rec["dat_val"] := dDatVal
     _rec["brdok_od"] := cFaktOd
     _rec["brdok_do"] := cFaktDo
-    //update_rec_server_and_dbf( ALIAS(), _rec )
+
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "CONT" )
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
+
 endif
 
 BoxC()
@@ -882,7 +895,7 @@ dPPromKup := g_dpprom_part(cUPartn, cKtoDug)
 dPPromDob := g_dpprom_part(cUPartn, cKtoPot)
 
 // dodaj stavku u gen_ug_p
-//a_to_gen_p(dDatObr, cUId, cUPartn, nSaldoKup,nSaldoDob, dPUplKup, dPPromKup, dPPromDob,nFaktIzn, nFaktPdv )
+a_to_gen_p( dDatObr, cUId, cUPartn, nSaldoKup,nSaldoDob, dPUplKup, dPPromKup, dPPromDob,nFaktIzn, nFaktPdv )
 
 // uvecaj broj faktura
 ++ nFaktBr
@@ -987,7 +1000,8 @@ endif
 
 // izbrisi pripremu
 O_FAKT_PRIPR
-BrisiPripr()
+
+fakt_brisanje_pripreme()
 
 return
 
@@ -1004,4 +1018,7 @@ go bottom
 dGen := field->dat_gen
 select (nTArea)
 return dGen
+
+
+
 

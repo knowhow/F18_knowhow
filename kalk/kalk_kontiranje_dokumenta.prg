@@ -707,7 +707,6 @@ return lRet
  */
 
 function Konto(nBroj, cDef, cTekst)
-*{
 private GetList:={}
 
 if (nBroj==1 .and. len(ckonto1)<>0) .or. ;
@@ -733,13 +732,11 @@ endif
   BoxC()
 
 return 0
-*}
 
 
 // Primjer SetKonto(1, IsInoDob(finmat->IdPartner) , "30", "31")
 //
 function SetKonto(nBroj, lValue, cTrue , cFalse)
-*{
 local cPom
 
 
@@ -764,7 +761,6 @@ endif
     endif
 
 return 0
-*}
 
 
 
@@ -778,7 +774,6 @@ return 0
  */
 
 function RJ(nBroj,cDef,cTekst)
-*{
 private GetList:={}
 
 if (nBroj==1 .and. len(cRJ1)<>0) .or. (nBroj==2 .and. len(cRj2)<>0)
@@ -799,7 +794,6 @@ endif
   BoxC()
 
 return 0
-*}
 
 
 
@@ -1020,7 +1014,6 @@ return
  */
 
 function RekapK()
-*{
 parameters fStara, cIdFirma, cIdVd, cBrDok, lAuto
 
 local fprvi
@@ -1463,20 +1456,6 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
            endif
       endif
      
-      // cemu ovo ????
-      /*
-      // ------------- azuriraj NC,VPC,MPC
-      select ROBA  
-
-      HSEEK kalk_pripr->idroba
-      if found()
-        if kalk_pripr->IdVD $ "10"  
-            // azuriranje NC za ulaz u magacin
-            replace NC with kalk_pripr->NC
-        endif
-      endif
-      */
-
       select kalk_pripr
       skip
    enddo // brdok
@@ -1484,7 +1463,6 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
    if cIdVd=="24"
     ? m
    else
-     // problemi kompatibilnosti - kija
      if fStara
        exit
      endif

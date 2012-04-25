@@ -299,7 +299,7 @@ do case
 
     case Ch==K_CTRL_F9
         
-        BrisiPripr()
+        fakt_brisanje_pripreme()
         lDirty:=.t.
         return DE_REFRESH
         

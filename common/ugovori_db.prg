@@ -268,6 +268,8 @@ function a_to_gen_p(dDatObr, cIdUgov, cUPartner,  ;
                     nSaldoKup, nSaldoDob, dPUplKup,;
 		    dPPromKup, dPPromDob, nFaktIzn, nFaktPdv)
 
+local _rec
+
 select gen_ug_p
 set order to tag "dat_obr"
 seek DTOS(dDatObr) + cIdUgov + cUPartner
@@ -289,7 +291,11 @@ _rec["d_p_prom_d"] := dPPromDob
 _rec["f_iznos"] := nFaktIzn
 _rec["f_iznos_pd"] := nFaktPDV
 
-update_rec_server_and_dbf( ALIAS(), _rec )
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( "fakt_gen_ug_p", _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on() 
 
 return 
 

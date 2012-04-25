@@ -957,74 +957,68 @@ enddo
 return 0
 
 
+// ---------------------------------------------------------------------
 // brisi stavke iz kumulativa koje se vec nalaze u pripremi
+// ---------------------------------------------------------------------
 function kum_brisi_duple()
-local cSeek
+local _seek
+local _ctrl_seek
+local _rec
+
 select fakt_pripr
 go top
 
-cKontrola := "XXX"
+_ctrl_seek := "XXX"
 
 do while !EOF()
     
-    cSeek := fakt_pripr->(idfirma + idtipdok + brdok)
+    _seek := fakt_pripr->(idfirma + idtipdok + brdok)
     
-    if cSeek == cKontrola
+    if _seek == _ctrl_seek
         skip
         loop
     endif
     
-    if dupli_dokument(cSeek)
+    if dupli_dokument( _seek )
         
-        // provjeri da li je tabela zakljucana
         select fakt_doks
         
-        if !FLock()
-            Msg("DOKS datoteka je zauzeta ", 3)
-            return 1
-        endif
-        
         MsgO("Brisem stavke iz kumulativa ... sacekajte trenutak!")
-        // brisi doks
-        set order to tag "1"
-        go top
-        seek cSeek
-        if Found()
-            do while !eof() .and. fakt_doks->(idfirma+idtipdok+brdok) == cSeek
-                    skip 1
-                nRec:=RecNo()
-                skip -1
-                    DbDelete2()
-                    go nRec
-                enddo
-            endif
         
-        // brisi iz fakt
-        select fakt
+		// brisi doks
         set order to tag "1"
         go top
-        seek cSeek
-        if Found()
-            do while !EOF() .and. fakt->(idfirma + idtipdok + brdok) == cSeek
-                
-                skip 1
-                nRec:=RecNo()
-                skip -1
-                DbDelete2()
-                go nRec
-            enddo
-        endif
+        seek _seek
+        
+		if Found()
+
+			_rec := dbf_get_rec()
+			delete_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )			
+
+        	// brisi iz fakt
+        	select fakt
+        	set order to tag "1"
+        	go top
+        	seek _seek
+        	
+			if Found()
+				_rec := dbf_get_rec()
+				delete_rec_server_and_dbf( "fakt_fakt", _rec, 2, "CONT" )
+            endif
+     	endif
+
         MsgC()
+
     endif
     
-    cKontrola := cSeek
+    _ctrl_seek := _seek
     
     select fakt_pripr
     skip
+
 enddo
 
 return 0
-
 
 
 
@@ -1053,10 +1047,9 @@ endif
 return .f.
 
 
-
 // ------------------------------------------------
 // ------------------------------------------------
-function BrisiPripr()
+function fakt_brisanje_pripreme()
 local _id_firma, _tip_dok, _br_dok
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
@@ -1091,12 +1084,12 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
     // logiraj ako je potrebno brisanje dokumenta iz pripreme !
     if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
     
-    cOpis := "dokument: " + _id_firma + "-" + _tip_dok + "-" + ALLTRIM( _br_dok )
+    	cOpis := "dokument: " + _id_firma + "-" + _tip_dok + "-" + ALLTRIM( _br_dok )
 
-    EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", ;
-        nil, nil, nil, nil, ;
-        "","", cOpis, DATE(), DATE(), "", ;
-        "Brisanje kompletnog dokumenta iz pripreme")
+    	EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", ;
+        	nil, nil, nil, nil, ;
+        	"","", cOpis, DATE(), DATE(), "", ;
+       	 	"Brisanje kompletnog dokumenta iz pripreme")
     endif
 
 endif

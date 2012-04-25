@@ -120,15 +120,16 @@ local _pos_locations
 local _from_kum := .t.
 local _total := 0
 
-// provjeri uslove za prenos
-if !_prenos_prereq()
-    select kalk_pripr
-    return
-endif
-
 if PCOUNT() == 0
     // generisanje iz pripreme
     _from_kum := .f.
+endif
+
+// provjeri uslove za prenos
+if !_prenos_prereq()
+	_o_gen_tables( _from_kum )
+    select kalk_pripr
+    return
 endif
 
 // otvori tabele

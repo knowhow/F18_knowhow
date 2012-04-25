@@ -431,10 +431,9 @@ go ( _rec_no )
 return (DE_CONT)
 
 
-
-/*! \fn PreglSRacun()
- *  \brief Pregled stalnog racuna
- */
+// ----------------------------------------------------------
+// pregled racuna iz pregleda racuna, opcija "P"
+// ----------------------------------------------------------
 function PreglSRacun()
 local oBrowse
 local cPrevCol
@@ -444,6 +443,7 @@ private Kol
 
 cPrevCol:=SETCOLOR(INVERT)
 SELECT F__PRIPR
+
 if !used()
 	O__POS_PRIPR
 endif
@@ -465,6 +465,9 @@ do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+d
 
   	_rec["robanaz"] := roba->naz
   	_rec["jmj"] := roba->jmj
+
+	// pobrisi mi polje "rbr" koje pos koristi
+	hb_hdel( _rec, "rbr" )
 
   	select _pos_pripr
   	append Blank 

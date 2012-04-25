@@ -346,6 +346,7 @@ return ( _iznos_rn )
 function BrisiRacun()
 local _rec
 local _id_vd, _id_pos, _dat_dok, _br_dok
+local _t_area := SELECT()
 
 if Pitanje(,"Potpuno - fizicki izbrisati racun?","N")=="N"
     return DE_CONT
@@ -381,6 +382,8 @@ endif
 
 sql_table_update( nil, "END" )
 my_use_semaphore_on()
+
+select ( _t_area )
 
 return (DE_REFRESH)
 

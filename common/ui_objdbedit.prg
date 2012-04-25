@@ -490,8 +490,6 @@ DO CASE
 
                  IF EMPTY(cUslov77) .or. &cUslov77
                    replace &cKolona with cVrijednost
-                   sql_azur(.t.)
-                   //replsql &cKolona with cVrijednost
                  ENDIF
                  skip
                enddo

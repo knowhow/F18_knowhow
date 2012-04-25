@@ -29,28 +29,29 @@ o_pos_narudzba()
 
 select _pos_pripr
 
-if reccount2()<>0 .and. !empty(BrDok)
-	DodajNaRacun(_pos_pripr->brdok)
+if reccount2() <> 0 .and. !EMPTY( field->brdok )
+	DodajNaRacun( _pos_pripr->brdok )
 else
 	NoviRacun()
 endif
 
 set key "'" to
 close all
+
 return
 
 
 
-function DodajNaRacun(cBrojRn)
+function DodajNaRacun( cBrojRn )
 set cursor on
 
-if cBrojRn==nil
-	cBrojRn:=SPACE(6)
+if cBrojRn == nil
+	cBrojRn := SPACE(6)
 else
-	cBrojRn:=cBrojRn
+	cBrojRn := cBrojRn
 endif
 
-UnesiNarudzbu(cBrojRn,_POS->Sto)
+UnesiNarudzbu( cBrojRn, _POS->Sto )
 
 return
 
@@ -64,28 +65,10 @@ local dx:=3
 
 SELECT _POS
 set cursor on
-cBrojRn := pos_naredni_dokument(gIdPos, VD_RN)
 
-if gModul="HOPS"
-	if gBrojSto $ "DN"
-		set cursor on
-  		if gRadniRac=="D"
-    			Box(,6,60)
-    			@ m_x+1,m_y+4  SAY "Radni racun br. "
-    			@ ROW(),COL() SAY " "+ALLTRIM(cBrojRn)+" " COLOR INVERT
-  		else
-    			Box(,2,60)
-			dx:=1
-  		endif
-  		@ m_x+dx,m_y+10 SAY "Sto broj:" GET cSto VALID IIF (gBrojSto=="N", .T., ! Empty (cSto))
-  		READ
-  		BoxC ()
-  		if LASTKEY()==K_ESC
-    			return
- 		endif
-	endif
-else
-	if gStolovi == "D"
+cBrojRn := pos_naredni_dokument( gIdPos, VD_RN )
+
+if gStolovi == "D"
 		set cursor on
 		Box(, 6, 40)
 			cStZak := "N"
@@ -113,8 +96,7 @@ else
 			zak_sto(VAL(cSto))
 		endif
 		
-	endif
-endif 
+endif
 
 UnesiNarudzbu(cBrojRn, cSto)
 
@@ -247,15 +229,14 @@ endif
 
 return _vrati
 
- 
-function ZakljuciRacun()
 
-if gModul=="HOPS"
-	ZakljuciRH()
-else
-	ZakljuciRT()
-endif
-return
+// --------------------------------------------
+// zakljucenje racuna
+// --------------------------------------------
+function ZakljuciRacun()
+local _ret
+_ret := ZakljuciRT()
+return _ret
 
 
  
@@ -284,16 +265,21 @@ else
         	SveNaJedan(_pos_pripr->BrDok)
     	endif
 endif
-CLOSERET
 
- 
+close all
+return
+
+// --------------------------------------------------------------
+// zakljuci racun tops
+// --------------------------------------------------------------
 function ZakljuciRT()
+local _ret := .f.
 
 O__POS_PRIPR
 
-if RecCount2() == 0
+if _pos_pripr->(RECCOUNT()) == 0
 	close all
-    return
+    return _ret
 endif
 
 if gDirZaklj=="D" .or. Pitanje(,"Zakljuciti racun? D/N", "D")=="D"
@@ -301,7 +287,9 @@ if gDirZaklj=="D" .or. Pitanje(,"Zakljuciti racun? D/N", "D")=="D"
 endif
 
 close all
-return
+
+_ret := .t.
+return _ret
 
 
  
@@ -345,9 +333,10 @@ endif
 
 _Pripr2_Pos(cIdVrsteP)
 
-StampAzur(gIdPos, cRacBroj)
+StampAzur( gIdPos, cRacBroj )
+
 // odstampaj i azuriraj
-CLOSERET
+close all
 
 return
 
@@ -363,6 +352,8 @@ private cPartner
 select pos_doks
 // naredni broj racuna
 cStalRac := pos_naredni_dokument( cIdPos, VD_RN )
+
+gDatum := DATE()
 
 // pravi se append u bazu
 // radnik "////"
@@ -382,7 +373,7 @@ sql_table_update( nil, "END" )
 my_use_semaphore_on()
 
 aVezani := {}
-AADD( aVezani, {pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum})
+AADD( aVezani, { pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum })
 
 cPartner := cIdGost
 

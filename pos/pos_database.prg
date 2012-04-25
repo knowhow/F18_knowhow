@@ -689,7 +689,7 @@ do while !eof()
     set_global_memvars_from_dbf()
 
     SELECT POS
-    //APPEND BLANK
+    APPEND BLANK
 
     _BrDok := cBrDok
 
@@ -736,12 +736,13 @@ do while !eof()
 
 enddo
 
-SELECT PRIPRZ
-__dbPack()
-
 // zavrsi transakciju
 sql_table_update( nil, "END")
 my_use_semaphore_on()
+
+
+SELECT PRIPRZ
+__dbPack()
 
 // ova opcija ce setovati plu kodove u sifrarniku ako nisu vec setovani
 if gFc_use == "D" .and. gFc_acd == "P" 

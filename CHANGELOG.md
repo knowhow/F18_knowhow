@@ -1,3 +1,7 @@
+1.0.19 2012-04-25, vsasa
+
+  - pos, korekcije [#27773](http://redmine.bring.out.ba/issues/27773)
+ 
 1.0.18 2012-04-24, vsasa
 
   - kalk, brojač po kontima [#27768](http://redmine.bring.out.ba/issues/27768)

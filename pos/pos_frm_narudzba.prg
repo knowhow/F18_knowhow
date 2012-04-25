@@ -42,13 +42,6 @@ if ( cSto == nil )
     cSto := ""
 endif
 
-if gDisplay=="D"
-    Send2ComPort(CHR(10)+CHR(13))
-    Send2ComPort(CHR(10)+CHR(13))
-    Send2ComPort(CHR(30)+"PRIPREMA RACUNA"+CHR(22)+CHR(13))
-    Send2ComPort("Sigma-com software")
-endif
-
 
 AADD( ImeKol, { PADR( "Artikal", 10 ), { || idroba } } )
 AADD( ImeKol, { PADC( "Naziv", 50 ), { || PADR( robanaz, 50 ) } } )
@@ -99,102 +92,36 @@ SetSpecNar()
 @ m_x+4,m_y+50 SAY "Popust:"
 @ m_x+5,m_y+50 SAY "UKUPNO:"
 
-if gModul=="HOPS"
-    if (gRadniRac=="D")
-            select _pos_pripr
-            if RecCount2()>0
-                GO TOP
-                if _pos_pripr->IdRadnik<>gIdRadnik
-                    // u hopsu se radni racuni drze u _POS-u do zakljucenja
-                    _Pripr2_Pos()
-                    select _pos_pripr
-                    Zapp()
-                __dbPack()
-                endif
-            endif
-            // ako je vec poceo raditi, nek nastavi
-            SELECT _POS    
-            
-        // "_POSi3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba"
-        set order to tag "3" 
-            Seek "42"+gIdRadnik+OBR_NIJE
-            do while !eof().and._POS->(IdVd+IdRadnik+GT)==(VD_RN+gIdRadnik+OBR_NIJE)
-                if _POS->BrDok==cBrojRn    // _POS->Prebacen == OBR_NIJE
-                    Scatter()
-                    select _pos_pripr
-                Append Blank // _pripr
-                    Gather()
-                SELECT _POS
-                    Del_Skip()
-                else
-                    SKIP
-                //sasa, brisi iz pos sve sto je "Z" zakljuceno
-                //Del_Skip()
-                endif
-            enddo
-            set order to tag "1"
-    else
-            
-        // prije ulaska u pripremu vrati u _PRIPR 
-        // sve iz _POS sto nije "Z"-zakljuceno
+   
+SELECT _POS
+set order to tag "3"
+//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
+SEEK VD_RN + gIdRadnik
         
-        SELECT _POS
-        Set order to tag "3"
-
-        //"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
-        SEEK "42"+gIdRadnik
+do while !eof() .and. _pos->(IdVd+IdRadnik) == (VD_RN + gIdRadnik)
             
-        do while !eof().and._POS->(IdVd+IdRadnik)==(VD_RN+gIdRadnik)
+	if !(_pos->m1 == "Z")
                 
-            if !(_POS->m1=="Z")
-                    // mora biti Z, jer se odmah zakljucuje
-                    Scatter()
-                    select _pos_pripr
-                Append Blank  // pripr
-                    Gather()
-                    SELECT _POS
-                    Del_Skip()
-                else
-                    skip
-                //Del_Skip()
-                endif
-            
-            enddo
-            
-        set order to tag "1"
-        
-    endif  // gradnirac
-else
-    
-    SELECT _POS
-    set order to tag "3"
-    //"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
-    SEEK VD_RN + gIdRadnik
-        
-    do while !eof() .and. _pos->(IdVd+IdRadnik) == (VD_RN + gIdRadnik)
-            
-        if !(_pos->m1 == "Z")
-                // mora biti Z, jer se odmah zakljucuje
-                Scatter()
-                select _pos_pripr
-                Append Blank // pripr
-                Gather()
-                SELECT _POS
-                Del_Skip()
-        else
-            
-            //sasa, brisanje iz _pos sve sto je Zakljuceno
-            //SKIP
-            
-            delete
-            skip
+		// mora biti Z, jer se odmah zakljucuje
+        Scatter()
+        select _pos_pripr
+        append blank 
+		// pripr
+                
+		Gather()
+       	SELECT _POS
+       	Del_Skip()
 
-        endif
-    enddo
-    
-    set order to tag "1"
+  	else
+            
+      	delete
+        skip
 
-endif
+ 	endif
+
+enddo
+    
+set order to tag "1"
 
 nIznNar:=0
 nPopust:=0
@@ -205,26 +132,28 @@ GO TOP
 do while !eof()
     
     if (idradnik+idpos+idvd+smjena)<>(gIdRadnik+gidpos+VD_RN+gSmjena)
-            // _PRIPR
+       	// _PRIPR
         delete  
     else
-            nIznNar+=_pos_pripr->(Kolicina*Cijena)
-            nPopust+=_pos_pripr->(Kolicina*NCijena)
+      	nIznNar+=_pos_pripr->(Kolicina*Cijena)
+       	nPopust+=_pos_pripr->(Kolicina*NCijena)
     endif
     
     SKIP
+
 enddo
 
 SET ORDER TO
 GO TOP
 
 // iz _PRIPR
-Scatter()  
+Scatter() 
+ 
 _IdPos:=gIdPos
 _IdVd:=VD_RN
 _BrDok:=cBrojRn
-gDatum:=DATE()
-_Datum:=gDatum
+gDatum := DATE()
+_Datum := gDatum
 _Sto:=cSto
 _Smjena:=gSmjena
 _IdRadnik:=gIdRadnik
@@ -237,6 +166,7 @@ if gStolovi == "D"
 endif
 
 do while .t.
+
     @ m_x+3,m_y+70 SAY nIznNar pict "99999.99" COLOR Invert
     @ m_x+4,m_y+70 SAY nPopust pict "99999.99" COLOR Invert
     @ m_x+5,m_y+70 SAY nIznNar-nPopust pict "99999.99" COLOR Invert
@@ -287,23 +217,7 @@ do while .t.
     
     @ m_x+4,m_y+25 SAY space (11)
 
-    if gDisplay=="D"
-        Send2ComPort(CHR(10)+CHR(13))
-        Send2ComPort(CHR(10)+CHR(13))
-        //Send2ComPort(CHR(22))
-        Send2ComPort(CHR(30) + "KOL:" + ALLTRIM(STR(_kolicina,10,2)) + " ,CIJ:" + ALLTRIM(STR(_cijena,10,2)))
-        Send2ComPort(CHR(22))
-        Send2ComPort(CHR(13))
-        Send2ComPort("TOTAL: " + ALLTRIM(STR(_kolicina*_cijena,10,2)))
-    endif
-
-
-    if LASTKEY()==K_ESC
-        
-        if gDisplay=="D"
-            Send2ComPort(CHR(10)+CHR(13))
-            Send2ComPort(CHR(10)+CHR(13))
-        endif
+    if LASTKEY() == K_ESC
         
         EXIT
         
@@ -361,6 +275,7 @@ do while .t.
 
             // _PRIPR
             Gather()
+
             // utvrdi stanje racuna
             nIznNar+=Cijena*Kolicina
             nPopust+=NCijena*Kolicina
@@ -372,29 +287,18 @@ do while .t.
             
             // nije nadjeno odjeljenje ??
             select _pos_pripr
-            if gModul=="HOPS"
-                    MsgBeep("Za robu "+ALLTRIM(_IdRoba)+" nije odredjeno odjeljenje!#"+"Narucivanje nije moguce!")
-            else
-                    MsgBeep("Za robu "+ALLTRIM (_IdRoba)+" nije odredjeno odjeljenje!#"+"Izdavanje nije moguce!")
-            endif
+            MsgBeep("Za robu " + ALLTRIM(_IdRoba) + " nije odredjeno odjeljenje!#" + "Izdavanje nije moguce!" )
+
         endif
+
     endif
+
 enddo
 
 CancelKeys(aAutoKeys)
 SETKEY(K_PGDN,bPrevDn)
 SETKEY(K_PGUP,bPrevUp)
 UnSetSpecNar()
-
-if gModul=="HOPS"
-    if gRadniRac=="D"
-        SELECT _POS
-        AppFrom("_PRIPR",.f.)
-        select _pos_pripr
-        Zapp()
-        __dbPack()
-    endif
-endif 
 
 BoxC()
 

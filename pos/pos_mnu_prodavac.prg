@@ -19,7 +19,7 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. priprema racuna                        ")
-AADD(opcexe,{|| pos_narudzba(), ZakljuciRacun() })
+AADD(opcexe, {|| pos_narudzba(), ZakljuciRacun(), .t. } )
 	
 if gStolovi == "D"
 	AADD(opc,"2. zakljucenje - placanje stola ")

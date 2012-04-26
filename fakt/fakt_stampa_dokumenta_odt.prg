@@ -32,10 +32,18 @@ local _xml_file := my_home() + "data.xml"
 local _file_pdf := "fakt_" + cIdF + "_" + cIdVd + "_" + ALLTRIM(cBrDok) + ".pdf"
 local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
 local _ext_path
+local _gen_pdf := .t.
 
 IF !EMPTY( _jod_templates_path )
     _t_path := ALLTRIM( _jod_templates_path )
 ENDIF
+
+// treba li generisati pdf fajl
+if !EMPTY( ALLTRIM( _ext_pdf ) )
+	if Pitanje(, "Generisati PDF dokument ?", "D" ) == "N"
+		_gen_pdf := .f.
+	endif
+endif
 
 // samo napuni pomocne tabele
 stdokpdv( cIdF, cIdVd, cBrDok, .t. )
@@ -53,7 +61,7 @@ close all
 if f18_odt_generate( _template, _xml_file )
 
 	// konvertuj odt u pdf
-	if !EMPTY( ALLTRIM( _ext_pdf ) )
+	if _gen_pdf
 
 		_ext_path := ALLTRIM( _ext_pdf )
 

@@ -324,56 +324,59 @@ local _has_semaphore := .f.
 local cSmj, i, K, aUF
 local cLoc := space(40)
 local cStVr, cNovVr, nRec, nOrder, xcpos, ycpos
-local _trazi_val, _zamijeni_val 
+local _trazi_val, _zamijeni_val, _trazi_usl 
 local _sect, _pict
 local _rec, _saved
 
 DO CASE
 
-  CASE Ch==K_CTRL_F
+	CASE Ch == K_CTRL_F
  
-     bTekCol:=(TB:getColumn(TB:colPos)):Block
-     if valtype(EVAL(bTekCol))=="C"
-       Box("bFind", 2, 50,.f.)
-        Private GetList:={}
-        set cursor on
-        cLoc := PADR(cLoc,40)
-        cSmj := "+"
-        @ m_x+1, m_y+2 SAY _tr GET cLoc PICTURE "@!"
-        @ m_x+2, m_y+2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
-        read
-       BoxC()
-       if lastkey()<>K_ESC
+    	bTekCol :=( TB:getColumn( TB:colPos ) ):Block
+     	
+		if valtype(EVAL(bTekCol))=="C"
 
-        cLoc:=TRIM(cLoc)
-        aUf:=nil
-        if right(cLoc,1)==";"
-          Beep(1)
-          aUF:=parsiraj(cLoc,"EVAL(bTekCol)")
-        endif
-        Tb:hitTop:=TB:hitBottom:=.f.
-        do while !(Tb:hitTop .or. TB:hitBottom)
-         if aUF<>NIL
-          if Tacno(aUF)
-            exit
-          endif
-         else
-          if UPPER(LEFT(EVAL(bTekCol),LEN(cLoc)))==cLoc
-            exit
-          endif
-         endif
-          if cSmj="+"
-           Tb:down()
-           Tb:Stabilize()
-          else
-           Tb:Up()
-           Tb:Stabilize()
-          endif
+       		Box("bFind", 2, 50,.f.)
+        		Private GetList:={}
+        		set cursor on
+        		cLoc := PADR(cLoc,40)
+        		cSmj := "+"
+        		@ m_x+1, m_y+2 SAY _tr GET cLoc PICT "@!"
+        		@ m_x+2, m_y+2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
+        		read
+       		BoxC()
 
-        enddo
-        Tb:hitTop:=TB:hitBottom:=.f.
-       endif
-     endif
+       		if lastkey() <> K_ESC
+
+        		cLoc:=TRIM(cLoc)
+        		aUf:=nil
+        		if right(cLoc,1)==";"
+          			Beep(1)
+          			aUF:=parsiraj(cLoc,"EVAL(bTekCol)")
+        		endif
+        		Tb:hitTop:=TB:hitBottom:=.f.
+        		do while !(Tb:hitTop .or. TB:hitBottom)
+         			if aUF<>NIL
+          				if Tacno(aUF)
+            				exit
+          				endif
+         			else
+          				if UPPER(LEFT(EVAL(bTekCol),LEN(cLoc)))==cLoc
+           					exit
+          				endif
+         			endif
+          			if cSmj="+"
+           				Tb:down()
+           				Tb:Stabilize()
+          			else
+           				Tb:Up()
+           				Tb:Stabilize()
+          			endif
+
+        		enddo
+        		Tb:hitTop:=TB:hitBottom:=.f.
+       		endif
+     	endif
 
 	// ------------------
 	// trazi-zamjeni opcija nad string, datum poljima
@@ -513,71 +516,114 @@ DO CASE
      		endif
     	endif
 
+	// trazi i zamjeni numeričke vrijednosti u tabeli
+	// -----------------------
 	CASE Ch==K_ALT_S
     
-    IF (gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS"))
-     Msg("Nemate pravo na koristenje ove opcije",15)
-    
-    ELSE
+    	if ( gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS") )
+     		Msg("Nemate pravo na koristenje ove opcije",15)
+    	else
 
-     private cKolona
-     if len(Imekol[TB:colPos])>2
-       if !empty(ImeKol[TB:colPos,3])
-          cKolona:=ImeKol[TB:ColPos,3]
-          if valtype(&cKolona)=="N"
+     		private cKolona
 
-            Box(, 3, 66,.f.)
-             Private GetList:={}
-             set cursor on
-             private cVrijednost:=&cKolona
-             private cUslov77:=SPACE(80)
-             @ m_x+1,m_y+2 SAY "Postavi na:" GET cVrijednost
-             @ m_x+2,m_y+2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET cUslov77 PICT "@S20" VALID EMPTY(cUslov77) .or. EvEr( cUslov77, "Greska! Neispravno postavljen uslov!")
-             read
-            BoxC()
+			// imamo li semafor na tabeli ?
+			_has_semaphore := alias_has_semaphore()
 
-            if lastkey()<>K_ESC
-             nRec:=recno()
-             nOrder:=indexord()
-             set order to 0
-             if Pitanje(,"Promjena ce se izvrsiti u " + IIF(EMPTY(cUslov77),"svim ","") + "stavkama" + IIF(!EMPTY(cUslov77), " koje obuhvata uslov","") + ". Zelite nastaviti ?","N")=="D"
-               go top
-               do while !eof()
+     		if LEN( Imekol[ TB:colPos ] ) > 2
 
-                 IF EMPTY(cUslov77) .or. &cUslov77
-                   replace &cKolona with cVrijednost
-                 ENDIF
-                 skip
-               enddo
+       			if !EMPTY( ImeKol[ TB:colPos, 3 ] )
 
-             endif
-             dbsetorder(nOrder)
-             go nRec
-             TB:RefreshAll()
-            endif
-          endif
-       endif
-     endif
-    ENDIF
+          			cKolona := ImeKol[ TB:ColPos, 3 ]
 
-  CASE Ch == K_CTRL_U .and. nPored > 1
+          			if VALTYPE( &cKolona ) == "N"
+
+            			Box(, 3, 66, .f. )
+
+             				private GetList:={}
+             				set cursor on
+
+                			_trazi_val := &cKolona 
+             				_trazi_usl := SPACE(80)
+
+             				@ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
+             				@ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
+												PICT "@S20" ;
+												VALID EMPTY( _trazi_usl ) .or. EvEr( _trazi_usl, "Greska! Neispravno postavljen uslov!" )
+
+             				read
+
+            			BoxC()
+
+            			if LASTKEY() <> K_ESC
+
+             				nRec := recno()
+             				nOrder := indexord()
+
+             				set order to 0
+
+             				if Pitanje(, "Promjena ce se izvrsiti u " + IIF( EMPTY( _trazi_usl ), "svim ", "" ) + "stavkama" + IIF( !EMPTY( _trazi_usl ), " koje obuhvata uslov","") + ". Zelite nastaviti ?","N")=="D"
+
+								if _has_semaphore
+									my_use_semaphore_off()
+									sql_table_update( nil, "BEGIN" )
+								endif
+
+               					go top
+
+               					do while !eof()
+
+                	 				IF EMPTY( _trazi_usl ) .or. &(_trazi_usl )
+
+										_rec := dbf_get_rec()
+										_rec[ LOWER( cKolona ) ] := _trazi_val
+
+										if _has_semaphore
+											update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+										else
+											dbf_update_rec( _rec )
+										endif
+
+                 					ENDIF
+
+                 					skip
+
+               					enddo
+
+								if _has_semaphore
+									sql_table_update( nil, "END" )
+									my_use_semaphore_on()
+								endif
+	
+             				endif
+			
+             				dbsetorder(nOrder)
+            	 			go nRec
+             				TB:RefreshAll()
+
+            			endif
+          			endif
+       			endif
+     		endif
+    	endif
+
+  	CASE Ch == K_CTRL_U .and. nPored > 1
      
-     Private GetList:={}
-     nRez:=INDEXORD()
-     Prozor1(12,20,17+nPored, 59, "UTVRDJIVANJE PORETKA", , , "GR+/N", "W/N,B/W, , , B/W", 2)
-     FOR i:=1 TO nPored
-      @ 13+i,23 SAY PADR("poredak po "+aPoredak[i],33,"ú") + STR(i,1)
-     NEXT
-     @ 18,27 SAY "UREDITI TABELU PO BROJU:" GET nRez VALID nRez>0 .AND. nRez<nPored+1 PICT "9"
-     READ
-     Prozor0()
+    	Private GetList:={}
+     	nRez:=INDEXORD()
+     	Prozor1(12,20,17+nPored, 59, "UTVRDJIVANJE PORETKA", , , "GR+/N", "W/N,B/W, , , B/W", 2)
+     	FOR i:=1 TO nPored
+      		@ 13+i,23 SAY PADR("poredak po "+aPoredak[i],33,"ú") + STR(i,1)
+     	NEXT
+     	@ 18,27 SAY "UREDITI TABELU PO BROJU:" GET nRez VALID nRez>0 .AND. nRez<nPored+1 PICT "9"
+     	READ
+    	Prozor0()
 
-     IF LASTKEY()!=K_ESC
-       DBSETORDER(nRez+1)
-       nRez:=DE_REFRESH
-     ELSE
-       nRez:=DE_CONT
-     ENDIF
+     	IF LASTKEY()!=K_ESC
+       		DBSETORDER(nRez+1)
+      		nRez:=DE_REFRESH
+     	ELSE
+       		nRez:=DE_CONT
+     	ENDIF
 
 ENDCASE
 

@@ -52,17 +52,15 @@ return _ret
 // ----------------------------------------------------------------------------
 // povrat dokumenta prema kriteriju
 // ----------------------------------------------------------------------------
-function Povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
+function povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 local nRec
+local _t_rec
 local _vars := hb_hash()
 local _filter
 local _id_firma
 local _br_dok
 local _id_tip_dok
 local _del_rec, _ok, _field_ids, _where_block
-
-Alert( RECI_GDJE_SAM0 + " nije testirano ")
-return
 
 if PCOUNT() <> 0
     _vars["br_dok"] := PADR( br_dok, 200 )
@@ -81,7 +79,7 @@ O_FAKT_PRIPR
 O_FAKT_DOKS
 O_FAKT_DOKS2
 
-SELECT fakt
+SELECT fakt_doks
 SET ORDER TO TAG "1"
 
 // daj uslove za povrat dokumenta
@@ -96,7 +94,6 @@ if Pitanje("","Jeste li sigurni ???","N")=="N"
     close all
     return
 endif
-
 
 // setuj filter
 _filter := _vars["uslov_dokumenti"]
@@ -117,7 +114,14 @@ endif
 
 GO TOP
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 DO WHILE !EOF()
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
 
     _id_firma := field->idfirma
     _id_tip_dok := field->idtipdok
@@ -132,9 +136,6 @@ DO WHILE !EOF()
         loop
     endif
 
-    SELECT fakt
-    SEEK _id_firma + _id_tip_dok + _br_dok
-        
     // prebaci u pripremu...
     DO WHILE !EOF() .and. _id_firma == field->idfirma .AND. ;
             _id_tip_dok == field->idtipdok .AND. _br_dok == field->brdok
@@ -148,52 +149,52 @@ DO WHILE !EOF()
 
         SELECT fakt        
         SKIP
+    
     ENDDO
 
     // sada pobrisi iz kumulativa...
+    MsgO("Brisem dokumente iz kumulativa: " + _id_firma + "-" + _id_tip_dok + "-" + PADR( _brdok, 10 ) )
+
     SELECT fakt
     GO TOP
     SEEK _id_firma + _id_tip_dok + _br_dok
- 
-    MsgO("del fakt")
 
-    DO WHILE !EOF() .and. _id_firma == field->idfirma .AND. ;
-            _id_tip_dok == field->idtipdok .AND. _br_dok == field->brdok
+    if FOUND() 
 
+        // brisi fakt....
         _del_rec := dbf_get_rec()
-        _ok := .t.
-        _ok := delete_rec_server_and_dbf( "fakt", _del_rec  )
+        delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
     
-        SKIP
+        // brisi fakt_doks
+        select fakt_doks
+        go top
+        seek _id_firma + _id_tip_dok + _br_dok
 
-    ENDDO
+        if FOUND()
+            _del_rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
+        endif
+
+        select fakt_doks2
+        go top
+        seek _id_firma + _id_tip_dok + _br_dok
+
+        if FOUND()
+            _del_rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
+        endif
+
+    endif
     
     MsgC()
     
-    // pobrisi doks i doks2
-
-    _del_rec := hb_hash()
-    _del_rec["idfirma"] := _id_firma
-    _del_rec["idtipdok"] := _id_tip_dok
-    _del_rec["brdok"] := _br_dok
-    
-    MsgO("del doks")
-    _ok := delete_rec_server_and_dbf( "fakt_doks", _del_rec )
-    MsgC()
-
-    MsgO("del doks2")
-    _ok := delete_rec_server_and_dbf( "fakt_doks2", _del_rec )
-    MsgC()
-
-    IF !_ok
-        MsgBeep("Ajoooooooj del fakt/doks/doks2 nije ok ?! " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok )
-        CLOSE ALL
-        RETURN
-    ENDIF
-
     SELECT fakt_doks
+    GO ( _t_rec )
 
-ENDDO 
+enddo 
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 close all
 return
@@ -298,6 +299,7 @@ vars["idtipdok"] := _tip_dok
 vars["brdok"]    := _br_dok
 
 return _ret
+
 
 
 // ------------------------------------------------------
@@ -450,3 +452,8 @@ ENDIF
 
 close all
 return 1
+
+
+
+
+

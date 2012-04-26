@@ -25,8 +25,7 @@ if !USED()
   O_FAKT_DOKS
 endif
 
-
-START PRINT CRET DOCNAME "FAKT_stampa_dokumenata_na_dan_" + DTOC(date())
+START PRINT CRET
 ?
 
 P_COND
@@ -106,8 +105,8 @@ do while !eof() .and. if( !EMPTY( cIdFirma ), IdFirma == cIdFirma, .t. )
 
   cDinDem := fakt_doks->dindem
 
-  if !empty(cImekup)
-     if !(partner == cImeKup)
+  if !empty( ALLTRIM( cImekup ) ) 
+     if !( field->partner = ALLTRIM( cImeKup ) )
         skip 
         loop
      endif

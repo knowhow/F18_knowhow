@@ -25,12 +25,12 @@ local dDatod, dDatdo
 local _tmp := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
 local _vrste_pl := .f.
 local lOpcine := .t.
+private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
+private cFilter := ".t."
 
 if _tmp == "D"
     _vrste_pl := .t.
 endif
-
-private cImekup, cidfirma, qqTipDok, cBrFakDok, qqPartn
 
 if _vrste_pl
     O_VRSTEP
@@ -78,85 +78,83 @@ endif
 
 Box( , 12 + IF( _vrste_pl .or. lOpcine .or. glRadNal, 6, 0 ), 77 )
 
-cIdFirma := fetch_metric("fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
-qqTipDok := fetch_metric("fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
-dDatOd := fetch_metric("fakt_stampa_liste_datum_od", _curr_user, dDatOd )
-dDatDo := fetch_metric("fakt_stampa_liste_datum_do", _curr_user, dDatDo )
-cTabela := fetch_metric("fakt_stampa_liste_tabelarni_pregled", _curr_user, cTabela )
-cImeKup := fetch_metric("fakt_stampa_liste_ime_kupca", _curr_user, cImeKup )
-qqPartn := fetch_metric("fakt_stampa_liste_partner", _curr_user, qqPartn )
-cBrFakDok := fetch_metric("fakt_stampa_liste_broj_dokumenta", _curr_user, cBrFakDok )
+    cIdFirma := fetch_metric("fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
+    qqTipDok := fetch_metric("fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
+    dDatOd := fetch_metric("fakt_stampa_liste_datum_od", _curr_user, dDatOd )
+    dDatDo := fetch_metric("fakt_stampa_liste_datum_do", _curr_user, dDatDo )
+    cTabela := fetch_metric("fakt_stampa_liste_tabelarni_pregled", _curr_user, cTabela )
+    cImeKup := fetch_metric("fakt_stampa_liste_ime_kupca", _curr_user, cImeKup )
+    qqPartn := fetch_metric("fakt_stampa_liste_partner", _curr_user, qqPartn )
+    cBrFakDok := fetch_metric("fakt_stampa_liste_broj_dokumenta", _curr_user, cBrFakDok )
 
-cImeKup := padr(cImeKup,20)
-qqPartn := padr(qqPartn,20)
-qqTipDok := padr(qqTipDok,2)
+    cImeKup := PADR( cImeKup, 20 )
+    qqPartn := PADR( qqPartn, 20 )
+    qqTipDok := PADR( qqTipDok, 2 )
 
-do while .t.
+    do while .t.
 
- if gNW$"DR"
-   cIdFirma := PADR( cIdfirma, 2 )
-   @ m_x+1,m_y+2 SAY "RJ prazno svi" GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
-   read
- else
-   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma), cIdFirma := LEFT(cIdFirma, 2 ), .t. }
- endif
+    if gNW $ "DR"
+        cIdFirma := PADR( cIdfirma, 2 )
+        @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
+        read
+    else
+        @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma), cIdFirma := LEFT(cIdFirma, 2 ), .t. }
+    endif
 
- if !EMPTY(cIdFirma)
-    @ m_x+2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok pict "@!"
- else
-    cIdfirma:=""
-    qqtipdok:="  "
- endif
-
- @ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
- @ m_x+3,col()+1 SAY "do"  get dDatDo
- @ m_x+5,m_y+2 SAY "Ime kupca pocinje sa (prazno svi)"  get cImeKup pict "@!"
- @ m_x+6,m_y+2 SAY "Uslov po sifri kupca (prazno svi)"  get qqPartn pict "@!" ;
-    valid {|| aUslSK:=Parsiraj(@qqPartn,"IDPARTNER","C",NIL,F_PARTN), .t.}
- @ m_x+7,m_y+2 SAY "Broj dokumenta (prazno svi)"  get cBrFakDok pict "@!"
- @ m_x+9,m_y+2 SAY "Tabelarni pregled"  get cTabela valid cTabela $ "DN" pict "@!"
- cRTarifa:="N"
- @ m_x+11,m_y+2 SAY "Rekapitulacija po tarifama ?"  get cRTarifa valid cRtarifa $"DN" pict "@!"
- IF _vrste_pl
-   @ m_x+12,m_y+2 SAY "----------------------------------------"
-   @ m_x+13,m_y+2 SAY "Za fakture (Tip dok.10):"
-   @ m_x+14,m_y+2 SAY "Nacin placanja:" GET qqVrsteP
-   @ m_x+15,m_y+2 SAY "Datum valutiranja od" GET dDatVal0
-   @ m_x+15,col()+2 SAY "do" GET dDatVal1
-   @ m_x+16,m_y+2 SAY "----------------------------------------"
- ENDIF
- @ m_x+17,m_y+2 SAY "Opcina (prazno-sve): "  get cOpcina
- if glRadNal
-   @ m_x + 18, m_y + 2 SAY "Radni nalog (prazno-svi): "  get cRadniNalog valid EMPTY(cRadniNalog) .or. P_RNal(@cRadniNalog)
- endif
+    @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok pict "@!"
+    @ m_x + 3, m_y + 2 SAY "Od datuma " GET dDatOd
+    @ m_x + 3, col() + 1 SAY "do" GET dDatDo
+    @ m_x + 5, m_y + 2 SAY "Ime kupca pocinje sa (prazno svi)" GET cImeKup pict "@!"
+    @ m_x + 6, m_y + 2 SAY "Uslov po sifri kupca (prazno svi)" GET qqPartn pict "@!" ;
+                VALID {|| aUslSK := Parsiraj( @qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .t. }
+    @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok pict "@!"
+    @ m_x + 9, m_y + 2 SAY "Tabelarni pregled" GET cTabela valid cTabela $ "DN" pict "@!"
  
- read
+    cRTarifa := "N"
 
- ESC_BCR
+    @ m_x + 11, m_y + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa valid cRtarifa $"DN" pict "@!"
 
- aUslBFD := Parsiraj(cBrFakDok,"BRDOK","C")
- aUslSK := Parsiraj(qqPartn,"IDPARTNER","C")
- aUslVrsteP := Parsiraj(qqVrsteP,"IDVRSTEP","C")
- aUslOpc := Parsiraj(cOpcina,"IDOPS","C")
- if glRadNal
-    //aUslRadNal:=
- endif
- if (!lOpcine .or. aUslOpc <> NIL) .and. aUslBFD<>NIL .and. aUslSK<>NIL .and. ( !_vrste_pl .or. aUslVrsteP <> NIL )
-    exit
- endif
-enddo
+    IF _vrste_pl
+        @ m_x + 12, m_y + 2 SAY "----------------------------------------"
+        @ m_x + 13, m_y + 2 SAY "Za fakture (Tip dok.10):"
+        @ m_x + 14, m_y + 2 SAY "Nacin placanja:" GET qqVrsteP
+        @ m_x + 15, m_y + 2 SAY "Datum valutiranja od" GET dDatVal0
+        @ m_x + 15, col() + 2 SAY "do" GET dDatVal1
+        @ m_x + 16, m_y + 2 SAY "----------------------------------------"
+    ENDIF
 
-qqTipDok := trim(qqTipDok)
-qqPartn := trim(qqPartn)
+    @ m_x + 17, m_y + 2 SAY "Opcina (prazno-sve): "  get cOpcina
+    
+    if glRadNal
+        @ m_x + 18, m_y + 2 SAY "Radni nalog (prazno-svi): "  get cRadniNalog valid EMPTY(cRadniNalog) .or. P_RNal(@cRadniNalog)
+    endif
+ 
+    read
 
-set_metric("fakt_stampa_liste_id_firma", f18_user(), cIdFirma )
-set_metric("fakt_stampa_liste_dokumenti", f18_user(), qqTipDok )
-set_metric("fakt_stampa_liste_datum_od", f18_user(), dDatOd )
-set_metric("fakt_stampa_liste_datum_do", f18_user(), dDatDo )
-set_metric("fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
-set_metric("fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
-set_metric("fakt_stampa_liste_partner", f18_user(), qqPartn )
-set_metric("fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
+    ESC_BCR
+
+    aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
+    aUslSK := Parsiraj( qqPartn, "IDPARTNER", "C" )
+    aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
+    aUslOpc := Parsiraj( cOpcina, "IDOPS", "C" )
+    
+    if (!lOpcine .or. aUslOpc <> NIL) .and. aUslBFD<>NIL .and. aUslSK<>NIL .and. ( !_vrste_pl .or. aUslVrsteP <> NIL )
+        exit
+    endif
+
+    enddo
+
+    qqTipDok := TRIM( qqTipDok )
+    qqPartn := TRIM( qqPartn )
+
+    set_metric( "fakt_stampa_liste_id_firma", f18_user(), cIdFirma )
+    set_metric( "fakt_stampa_liste_dokumenti", f18_user(), qqTipDok )
+    set_metric( "fakt_stampa_liste_datum_od", f18_user(), dDatOd )
+    set_metric( "fakt_stampa_liste_datum_do", f18_user(), dDatDo )
+    set_metric( "fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
+    set_metric( "fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
+    set_metric( "fakt_stampa_liste_partner", f18_user(), qqPartn )
+    set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
 
 BoxC()
 
@@ -164,72 +162,70 @@ select fakt_doks
 set order to tag "1"
 go top
 
-Private cFilter:=".t."
-
-IF !EMPTY(dDatVal0) .or. !EMPTY(dDatVal1)
-  cFilter+=".and. (!idtipdok='10'.or.datpl>="+cm2str(dDatVal0)+".and. datpl<="+cm2str(dDatVal1)+")"
+IF !EMPTY( dDatVal0 ) .or. !EMPTY( dDatVal1 )
+    cFilter += ".and. ( !idtipdok='10' .or. datpl>=" + _filter_quote( dDatVal0 ) + ".and. datpl<=" + _filter_quote( dDatVal1 ) + ")"
 ENDIF
 
-IF !EMPTY(qqVrsteP)
-  cFilter += ".and. (!idtipdok='10'.or."+aUslVrsteP+")"
+IF !EMPTY( qqVrsteP )
+    cFilter += ".and. (!idtipdok='10' .or. " + aUslVrsteP + ")"
 ENDIF
 
-if !empty(qqTipDok)
-   cFilter+=".and. idtipdok=="+cm2str(qqTipDok)
-endif
-if !empty(dDatOd) .or. !empty(dDatDo)
-  cFilter+=".and.  datdok>="+cm2str(dDatOd)+".and. datdok<="+cm2str(dDatDo)
+if !EMPTY( qqTipDok )
+   cFilter += ".and. idtipdok==" + _filter_quote( qqTipDok )
 endif
 
-if cTabela == "D"  
+if !EMPTY( dDatOd ) .or. !EMPTY( dDatDo )
+    cFilter += ".and. datdok>=" + _filter_quote( dDatOd ) + ".and. datdok<=" + _filter_quote( dDatDo )
+endif
 
-  if !empty(cImekup)
-    cFilter+=".and. partner="+cm2str(trim(cImeKup))
-  endif
+if !EMPTY( cImekup )
+    cFilter += ".and. partner=" + _filter_quote( TRIM( cImeKup ) )
+endif
 
-  cFilter+=".and. IdFirma="+cm2str(cIdFirma)
+if !EMPTY( cIdFirma )
+    cFilter += ".and. IdFirma=" + _filter_quote( cIdFirma )
+endif
 
-  cFilter+=".and. PARTN->("+aUslOpc+")"
-
+if !EMPTY( cOpcina )
+    cFilter += ".and. PARTN->(" + aUslOpc + ")"
 endif
 
 // ako je rijec o radnim nalozima postavi filter u tabeli FAKT na polje idrnal
 if glRadNal .and. !Empty(cRadniNalog)
-    cFilter+=".and. FAKT->idrnal==" + Cm2Str(cRadniNalog)
+    cFilter += ".and. fakt->idrnal==" + _filter_quote( cRadniNalog )
 endif
 
-if !empty(cBrFakDok)
-  cFilter+=".and."+aUslBFD
+if !EMPTY( cBrFakDok )
+    cFilter += ".and." + aUslBFD
 endif
 
-if !empty(qqPartn)
-  cFilter+=".and."+aUslSK
+if !EMPTY( qqPartn )
+    cFilter += ".and." + aUslSK
 endif
-
 
 if cFilter == ".t..and."
-    cFilter := substr(cFilter, 9)
+    cFilter := SUBSTR( cFilter, 9 ) 
 endif
 
-if cFilter==".t."
+if cFilter == ".t."
     set Filter to
 else
     set Filter to &cFilter
 endif
 
-@ MAXROW() - 4, MAXCOL() - 3 SAY str(rloptlevel(), 2)
+@ MAXROW() - 4, MAXCOL() - 3 SAY STR( rloptlevel(), 2 )
 
-qqTipDok := trim(qqTipDok)
+qqTipDok := TRIM( qqTipDok )
 
 seek cIdFirma + qqTipDok
 
 EOF CRET
 
 if cTabela == "D"
-  fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
+    fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
 else
-  gaZagFix:={3, 3}
-  stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, _vrste_pl,  cImeKup, lOpcine, aUslOpc)
+    gaZagFix := { 3, 3 }
+    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, _vrste_pl,  cImeKup, lOpcine, aUslOpc)
 endif
 
 close all
@@ -473,6 +469,9 @@ if FOUND()
     
 endif
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 //
 // prvo prekopiraj doks podatke
 // 
@@ -481,17 +480,14 @@ go top
 seek cFirma + cTipDok + cBrFakt
 
 _rec := dbf_get_rec()
-
-append blank
-
 // tip dokumneta treba da bude 10 jer se radi o fakturi
 _rec["idtipdok"] := "10"
 _rec["brdok"] := cNBrFakt
 _rec["datdok"] := dDatFakt
 
+append blank
 // update podataka na server
-update_rec_server_and_dbf( ALIAS(), _rec )
-
+update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
 
 // 
 // sada odradi istu stvar za stavke fakture iz tabele fakt
@@ -548,7 +544,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma 
     endif
     
     // upisi podatke u db
-    update_rec_server_and_dbf( ALIAS(), _rec )
+    update_rec_server_and_dbf( "fakt_fakt", _rec, 1, "CONT" )
 
     go ( nFRec )
     
@@ -556,6 +552,8 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma 
 
 enddo
 
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 if isugovori()
 
@@ -570,7 +568,11 @@ if isugovori()
         if FOUND() .and. field->idpartner == cPart
             _rec := dbf_get_rec()
             _rec["dat_l_fakt"] := DATE()
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "BEGIN" )
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()
         endif
         
     endif
@@ -646,12 +648,14 @@ if lDok_veza .and. !EMPTY( cDok_veza )
 else
     
     if EMPTY( cTxt )
+
         // uzmi iz fakt->memo polja broj veze
         SELECT F_FAKT
         if !USED()
-                _open_fakt := .t.
-                O_FAKT
+            _open_fakt := .t.
+            O_FAKT
         endif
+
         SEEK cIdFirma + cTipDok + cBrDok
         cTxt := field->txt
 
@@ -782,17 +786,16 @@ endif
 
 do case
  
-  case Ch==K_ENTER 
-     refresh_fakt_tbl_dbfs(_filter)
+  case Ch == K_ENTER 
+     refresh_fakt_tbl_dbfs( _filter )
      nRet := pr_pf(lOpcine)
 
-  case Ch==K_ALT_P
+  case Ch == K_ALT_P
      // print odt
-     refresh_fakt_tbl_dbfs(_filter)
+     refresh_fakt_tbl_dbfs( _filter )
      nRet := pr_odt(lOpcine)
 
   case Ch == K_F5
-
     refresh_fakt_tbl_dbfs(_filter)
     // zatvori tabelu, pa otvori  
     select fakt_doks
@@ -834,10 +837,14 @@ do case
     BoxC()
     
     if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
         _rec := dbf_get_rec()
         _rec["fisc_rn"] := nFiscal
         _rec["fisc_st"] := nRekl
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+        sql_table_update( nil, "BEGIN" )
+        my_use_semaphore_on()
         return DE_REFRESH
     endif
   
@@ -921,63 +928,6 @@ do case
        nRet:=generisi_fakturu(lOpcine)
      endif
      
-  case chr(Ch) $ "vV"
-
-     refresh_fakt_tbl_dbfs(_filter)
-     // ispravka valutiranja     
-     if ( PADR(dindem, 3) <> PADR(ValDomaca(), 3) ) 
-       
-       if !SigmaSif("PRVAL")
-            MsgBeep("!!! Opcija nedostupna !!!")
-            return DE_REFRESH
-       endif
-      
-       if Pitanje(,"Izvrsiti ispravku valutiranja na dokumentu (D/N)?","N") == "N"
-          return DE_REFRESH
-       endif
-       
-       O_FAKT 
-       seek  fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok
-       
-       nPom1 := 0
-       nPom2 := 0
-       nPom3 := 0
-       nDugD := 0
-       nRabD := 0
-       
-       do while !EOF() .and. fakt->(idfirma+idtipdok+brdok)==fakt_doks->(idfirma+idtipdok+brdok)
-         
-            nPrCij := fakt->cijena
-            
-            v_pretvori("D", fakt->DinDem, fakt->DatDok, @nPrCij ) 
-            
-            replace cijena with nPrCij 
-                
-            nPom1 := round( kolicina*Cijena*PrerCij() / UBaznuValutu(datdok) * (1-Rabat/100), ZAOKRUZENJE)
-            nPom2 := ROUND( kolicina*Cijena*PrerCij()/UBaznuValutu(datdok)*Rabat/100 , ZAOKRUZENJE)
-            nPom3 := ROUND( nPom1 * Porez/100, ZAOKRUZENJE)
-            nDugD += nPom1 + nPom3
-            nRabD += nPom2 
-            
-            skip
-            
-      enddo
-       
-       select fakt_doks
-       
-       replace iznos with nDugD
-       replace rabat with nRabD
-      
-       nRet := DE_REFRESH
-     
-     else
-       
-       MsgBeep("Opcija onemogucena !!! faktura je u domacoj valuti " + ValDomaca() )
-       select fakt_doks
-       nRet := DE_REFRESH
-     
-     endif
-  
   case chr(Ch) $ "pP"
      
      refresh_fakt_tbl_dbfs(_filter)
@@ -1015,55 +965,6 @@ do case
         nRet:=DE_REFRESH
      endif
 
-/*
-  case chr(Ch) $ "qQ"
-
-     select fakt_doks
-     nTrec      := recno()
-     _cIdFirma  := idfirma
-     _cIdTipDok := idtipdok
-     _cBrDok    := brdok
-     close all
-     if _cidtipdok$"20#27"
-       nR_tmp := Povrat_fakt_dokumenta(.t.,_cidfirma,_cIdTipdok,_cbrdok)
-     elseif _cidtipdok $ "01#19"
-       O_FAKT_DOKS
-       seek _cidfirma+_cidtipdok+_cbrdok
-       if rezerv="*"
-         cZnak:=""
-       else
-         cZnak:="*"
-       endif
-       do while !eof() .and. idfirma+idtipdok+brdok==_cidfirma+_cidtipdok+_cbrdok
-          replace rezerv with cZnak
-          skip
-       enddo
-       O_FAKT
-       seek  _cidfirma+_cidtipdok+_cbrdok
-       do while !eof() .and. idfirma+idtipdok+brdok==_cidfirma+_cidtipdok+_cbrdok
-          replace serbr with cznak
-          skip
-       enddo
-       close all
-     endif
-     select (F_FAKT_DOKS)
-     use
-     O_FAKT_DOKS
-     if lOpcine
-       O_PARTN
-       select fakt_doks
-       set relation to idpartner into PARTN
-     endif
-     if cFilter==".t."
-        set Filter to
-     else
-        set Filter to &cFilter
-     endif
-     go nTrec
-     nRet:=DE_REFRESH
-
-*/
-
 endcase
 return nRet
 
@@ -1074,9 +975,7 @@ function refresh_fakt_tbl_dbfs(filter)
 PushWa()
 close all
 
-
 O_VRSTEP
-
 O_OPS
 
 if glRadNal
@@ -1139,7 +1038,6 @@ return
  */
 
 function fakt_real_partnera()
-*{
 O_FAKT_DOKS
 O_PARTN
 O_VALUTE

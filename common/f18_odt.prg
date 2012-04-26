@@ -12,6 +12,7 @@
 #include "fmk.ch"
 
 static __output_odt
+static __output_pdf
 static __output_name := "out.odt"
 static __xml_file
 static __xml_name := "data.xml"
@@ -218,6 +219,151 @@ endif
 _ok := .t.
 
 return _ok
+
+
+
+// ------------------------------------------------------------------
+// konvertovanje odt fajla u pdf
+// 
+// koristi se jodreports util: jodconverter-cli.jar
+// java -jar jodconverter-cli.jar input_file_odt output_file_pdf
+// ------------------------------------------------------------------
+function f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
+local _ret := .f.
+local _converter := "jodconverter-cli.jar"
+local _conv_util
+local _cmd
+local _java_start, _jod_bin, _screen, _error
+
+// input fajl
+if ( input_file == NIL )
+    __output_odt := my_home() + __output_name
+else
+    __output_odt := input_file
+endif
+
+// output fajl
+if ( output_file == NIL )
+	__output_pdf := my_home() + STRTRAN( __output_name, ".odt", ".pdf" )
+else
+	__output_pdf := output_file
+endif
+
+// overwrite izlaznog fajla
+if ( overwrite_file == NIL )
+	overwrite_file := .t.
+endif
+
+// konverter
+#ifdef __PLATFORM__WINDOWS
+	_conv_util := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + _converter
+	__output_odt := '"' + __output_odt + '"'
+	__output_pdf := '"' + __output_pdf + '"'
+#else
+	_conv_util := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + _converter
+#endif
+
+// provjeri izlazni fajl
+_ret := _check_out_pdf( @__output_pdf, overwrite_file )
+
+if !_ret
+	return _ret
+endif  
+
+// uzmi sada parametre...
+_java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
+_jod_bin := ALLTRIM( fetch_metric( "jodconverter_bin", my_user(), "" ) )
+
+// provjeri da li postoje ?
+if EMPTY( _java_start ) .or. EMPTY( _jod_bin )
+    MsgBeep( "Nisu podeseni parametri jod-converter... ?!??" )
+    return _ret
+endif
+
+// postoji li jodreports-cli.jar ?
+if !FILE( ALLTRIM( _jod_bin ) )
+    log_write( "ODT report conv: " + _jod_bin + " ne postoji na lokaciji !")
+    MsgBeep( "Aplikacija " + _jod_bin + " ne postoji !" )
+    return _ret
+endif
+
+log_write( "ODT report convert start" )
+
+// na windows masinama moramo radi DOS-a dodati ove navodnike
+#ifdef __PLATFORM__WINDOWS
+    _jod_bin := '"' + _jod_bin + '"'
+#endif
+
+// slozi mi komandu za generisanje...
+_cmd := _java_start + " " + _jod_bin + " " 
+_cmd += __output_odt + " "
+_cmd += __output_pdf
+
+log_write( "ODT report convert, cmd: " + _cmd )
+
+SAVE SCREEN TO _screen
+CLEAR SCREEN
+
+? "Konvertovanje ODT dokumenta u toku..."
+
+// pokreni generisanje reporta
+_error := hb_run( _cmd )
+
+RESTORE SCREEN FROM _screen
+ 
+if _error <> 0
+    log_write( "ODT report convert: greška - " + ALLTRIM( STR( _error )))
+    MsgBeep( "Doslo je do greske prilikom konvertovanja dokumenta... !!!#" + "Greska: " + ALLTRIM(STR( _error )) )
+    return _ret
+endif
+
+_ret := .t.
+
+return _ret
+
+
+
+// ----------------------------------------------------------------
+// provjera izlaznog fajla
+// ----------------------------------------------------------------
+static function _check_out_pdf( out_file, overwrite )
+local _ret := .f.
+local _i, _ext, _tmp, _wo_ext
+
+if ( overwrite == NIL )
+	overwrite := .t.
+endif
+
+// u slucaju overwrite-a
+if overwrite
+	FERASE( out_file )
+	_ret := .t.
+	return _ret
+endif
+
+// ekstenzija fajla
+_ext := RIGHT( ALLTRIM( out_file ), 4 )
+
+// fajl bez ekstenzije
+_wo_ext := LEFT( ALLTRIM( out_file ), LEN( ALLTRIM( out_file) ) - LEN( _ext ) )
+
+// vidi da dodaš neki sufiks
+for _i := 1 to 99
+	
+	_tmp := _wo_ext + PADL( ALLTRIM(STR(_i)), 2, "0" ) + _ext
+
+	if !FILE( _tmp )
+
+		// imamo novi izlazni fajl
+		out_file := _tmp
+
+		exit
+
+	endif
+
+next
+
+return _ret
 
 
 

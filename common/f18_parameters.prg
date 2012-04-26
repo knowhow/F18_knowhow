@@ -16,7 +16,7 @@
 function f18_app_parameters( just_set )
 local _oo_bin, _oo_writer_exe, _oo_calc_exe
 local _java_bin, _java_start
-local _jod_bin, _jod_templates
+local _jod_bin, _jod_templates, _jod_convert_bin
 local _x := 1
 local _pos_x
 local _pos_y
@@ -30,6 +30,7 @@ local _left := 20
 	_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
 	_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
 	_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "c:\knowhowERP\util\jodreports-cli.jar", 200 ) )
+	_jod_convert_bin := fetch_metric( "jodconverter_bin", my_user(), PADR( "c:\knowhowERP\util\jodconverter-cli.jar", 200 ) )
 	_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
 #ELSE
 	_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
@@ -38,6 +39,7 @@ local _left := 20
 	_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
 	_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
 	_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "/opt/knowhowERP/util/jodreports-cli.jar", 200 ) )
+	_jod_convert_bin := fetch_metric( "jodconverter_bin", my_user(), PADR( "/opt/knowhowERP/util/jodconverter-cli.jar", 200 ) )
 	_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
 #ENDIF
 
@@ -78,7 +80,7 @@ if !just_set
 	++ _x
 	@ _pos_x + _x, _pos_y SAY PADL( "JodReports lokacija:", _left ) GET _jod_bin PICT "@S100"
 	++ _x
-	@ _pos_x + _x, _pos_y SAY PADL( "template lokacije:", _left ) GET _jod_templates PICT "@S100"
+	@ _pos_x + _x, _pos_y SAY PADL( "JodConverter lokacija:", _left ) GET _jod_convert_bin PICT "@S100"
  
 	read
 
@@ -95,6 +97,7 @@ set_metric( "openoffice_calc", my_user(), _oo_calc_exe )
 set_metric( "java_bin", my_user(), _java_bin )
 set_metric( "java_start_cmd", my_user(), _java_start )
 set_metric( "jodreports_bin", my_user(), _jod_bin )
+set_metric( "jodconverter_bin", my_user(), _jod_convert_bin )
 set_metric( "jodreports_templates", my_user(), _jod_templates )
 
 return

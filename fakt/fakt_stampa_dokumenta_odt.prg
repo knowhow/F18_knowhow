@@ -24,12 +24,12 @@ static PIC_CIJENA := ""
 // stampa dokumenta u odt formatu
 // ------------------------------------------------
 function stdokodt( cIdf, cIdVd, cBrDok )
-
 local _t_path := my_home()
 local _filter := "f*.odt"
 local _template := ""
 local _jod_templates_path := F18_TEMPLATE_LOCATION
 local _xml_file := my_home() + "data.xml"
+local _file_pdf := my_home() + "fakt_" + cIdF + "_" + cIdVd + "_" + ALLTRIM(cBrDok) + ".pdf"
 
 IF !EMPTY( _jod_templates_path )
     _t_path := ALLTRIM( _jod_templates_path )
@@ -49,7 +49,13 @@ endif
 close all
 
 if f18_odt_generate( _template, _xml_file )
+
+	// konvertuj odt u pdf
+	//f18_convert_odt_to_pdf( NIL, _file_pdf )
+
+	// printaj odt
     f18_odt_print()
+
 endif
 
 return

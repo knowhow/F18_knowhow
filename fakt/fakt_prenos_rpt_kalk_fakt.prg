@@ -54,11 +54,10 @@ dDatDo:=date()
 cRazlKol := "D"
 cRazlVr  := "D"
 cMP := "M"
+cIdKonto := PADR( "1320", 7 )
 
 cViseKonta := ""
 lViseKonta := .f.
-
-cIdKonto := qqKonto := "1310   "
 
 qqPartn := space(20)
 private qqTipdok:="  "
@@ -76,6 +75,9 @@ qqKonto := fetch_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
 cKalk_firma := fetch_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
 cOpis1 := fetch_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
 cOpis2 := fetch_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
+cIdKonto := fetch_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
+
+qqKonto := cIdKonto
 
 if lFaktFakt
     if Pitanje(,"Podesiti direktorij FAKT-a druge firme? (D/N)","N")=='D'
@@ -158,9 +160,9 @@ do while .t.
   	endif
 enddo
 
-cSintetika:="N"
+cSintetika := "N"
 
-qqRoba:=trim(qqRoba)
+qqRoba := TRIM( qqRoba )
 
 // snimi parametre u sql/db
 set_metric("fakt_uporedna_lista_id_firma", my_user(), cIdFirma )
@@ -174,7 +176,7 @@ set_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
 set_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
 set_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
 set_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
-
+set_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
 
 if lFaktFakt
 
@@ -197,8 +199,13 @@ AADD (aDbf, {"KVR",    "N", 15, 5})
 DBCREATE( my_home() + "pom", aDbf )
 
 select ( F_POM )
-my_use_temp( "POM", my_home() + "pom" )
+if used()
+	use
+endif
+
+my_use_temp( "POM", my_home() + "pom", .f., .t. )
 index on IdRoba to (my_home() + "pomi1")
+
 SET INDEX to (my_home() + "pomi1")
 
 BoxC()
@@ -315,7 +322,7 @@ do while !EOF()
 	if !EMPTY( cIdRoba )
     	NSRNPIdRoba( cIdRoba, cSintetika == "D" )
     	SELECT ROBA
-   	 	if cTipVPC == "2" .and.  roba->(fieldpos("vpc2")<>0)
+   	 	if cTipVPC == "2" .and.  roba->( fieldpos("vpc2") <> 0 )
         	_cijena:=roba->vpc2
     	else
      		_cijena := if ( !EMPTY(cIdFirma) , fakt_mpc_iz_sifrarnika(), roba->vpc )

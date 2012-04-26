@@ -317,8 +317,10 @@ RETURN
 
 //-----------------------------------------------------
 //-----------------------------------------------------
-function StandTBKomande(TB, Ch, nRez, nPored, aPoredak)
+function StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
 local _tr := hb_Utf8ToStr("Traži:"), _zam := "Zamijeni sa:" 
+local _last_srch := "N"
+local _has_semaphore := .f.
 local cSmj, i, K, aUF
 local cLoc := space(40)
 local cStVr, cNovVr, nRec, nOrder, xcpos, ycpos
@@ -373,91 +375,145 @@ DO CASE
        endif
      endif
 
-  CASE Ch==K_ALT_R
+	// ------------------
+	// trazi-zamjeni opcija nad string, datum poljima
+	CASE Ch == K_ALT_R
 
-    IF (gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS"))
-     Msg("Nemate pravo na koristenje ove opcije",15)
-    ELSE
-     private cKolona
-     if len(Imekol[TB:colPos])>2
-       if !empty(ImeKol[TB:colPos,3])
-          cKolona:=ImeKol[TB:ColPos,3]
-          if valtype(&cKolona) $  "CD"
+    	IF ( gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS") )
+    		Msg("Nemate pravo na koristenje ove opcije",15)
+    	ELSE
+			
+			// da li tabela ima semafor ?
+			_has_semaphore := alias_has_semaphore()
 
-      
-            Box(, 2, 60, .f.)
-             Private GetList:={}
-             set cursor on
+     		private cKolona
 
-                // svako polje ima svoj parametar
-                _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
-                _trazi_val := &cKolona 
-                _trazi_val := fetch_metric(_sect, "<>", _trazi_val)
+     		if LEN( Imekol[ TB:colPos ] ) > 2
 
-                _zamijeni_val := _trazi_val
-                _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
-                _zamijeni_val := fetch_metric(_sect, "<>", _zamijeni_val)
+       			if !EMPTY( ImeKol[ TB:colPos, 3 ] )
 
-                _pict := ""
+          			cKolona := ImeKol[ TB:ColPos, 3 ]
 
-                if VALTYPE(_trazi_val) == "C" .and. len(_trazi_val) > 45
-                   _pict := "@S45"
-                endif
+          			if VALTYPE( &cKolona ) $ "CD"
 
-                @ m_x + 1, m_y+2 SAY PADR(_tr, 12) GET _trazi_val  pict _pict
-                @ m_x + 2, m_y+2 SAY PADR(_zam, 12) GET _zamijeni_val pict _pict
-                read
+      					Box(, 3, 60, .f.)
+             				
+							private GetList:={}
+             				set cursor on
 
-            BoxC()
+                			@ m_x + 1, m_y+2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
 
+							read
 
-            if lastkey()<>K_ESC
-             nRec:=recno()
-             nOrder:=indexord()
-             set order to 0
-             go top
-             _saved := .f.
-             do while !eof()
+                			// svako polje ima svoj parametar
+                			_sect := "_brow_fld_find_" + ALLTRIM( LOWER( cKolona ) )
+                			_trazi_val := &cKolona 
+                			
+							if _last_srch == "D"
+								_trazi_val := fetch_metric(_sect, "<>", _trazi_val )
+							endif
 
-               if EVAL(FIELDBLOCK(cKolona)) ==  _trazi_val
-                   _rec := dbf_get_rec()
-                   _rec[LOWER(cKolona)]  := _zamijeni_val
-                   dbf_update_rec(_rec)
+                			_zamijeni_val := _trazi_val
+                			_sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
+								
+							if _last_srch == "D"
+                				_zamijeni_val := fetch_metric(_sect, "<>", _zamijeni_val)
+							endif
 
-                   if !_saved
-                       // snimi
-                       _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
-                       set_metric(_sect, "<>", _trazi_val)
+                			_pict := ""
 
-                       _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
-                       set_metric(_sect, "<>", _zamijeni_val)
-                       _saved := .t.
-                    endif
+                			if VALTYPE( _trazi_val ) == "C" .and. LEN( _trazi_val ) > 45
+                   				_pict := "@S45"
+                			endif
 
-               endif
+                			@ m_x + 2, m_y+2 SAY PADR( _tr, 12) GET _trazi_val PICT _pict
+                			@ m_x + 3, m_y+2 SAY PADR( _zam, 12) GET _zamijeni_val PICT _pict
+                			
+							read
 
-               if valtype(_trazi_val) == "C"
-                   _rec := dbf_get_rec()
-                   cDio1 := left(_trazi_val, len(trim(_trazi_val)) - 2)
-                   cDio2 := left(_zamijeni_val, len(trim(_zamijeni_val)) -2)
-                   if right(trim(_trazi_val), 2) == "**" .and. cDio1 $  _rec[LOWER(cKolona)]
-                       _rec[LOWER(cKolona)] := STRTRAN( _rec[LOWER(cKolona)], cDio1, cDio2)
-                       dbf_update_rec(_rec)
-                   endif
-               endif
+            			BoxC()
 
-               skip
-             enddo
-             dbsetorder(nOrder)
-             go nRec
-             TB:RefreshAll()
-            endif
-          endif
-       endif
-     endif
-    ENDIF
+            			if LASTKEY() <> K_ESC
+             				
+							nRec := recno()
+             				nOrder := indexord()
+             				
+							set order to 0
+             				go top
+             				
+							_saved := .f.
 
-  CASE Ch==K_ALT_S
+							if _has_semaphore
+								my_use_semaphore_off()
+								sql_table_update( nil, "BEGIN" )
+							endif
+
+             				do while !eof()
+
+               					if EVAL(FIELDBLOCK(cKolona)) == _trazi_val
+                   				
+									_rec := dbf_get_rec()
+                   					_rec[ LOWER(cKolona) ] := _zamijeni_val
+                   				
+									if _has_semaphore
+										update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+									else
+										dbf_update_rec(_rec)
+									endif
+
+                   					if !_saved .and. _last_srch == "D"
+                      	 				// snimi
+                       					_sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
+                       					set_metric( _sect, "<>", _trazi_val )
+
+                       					_sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
+                       					set_metric( _sect, "<>", _zamijeni_val )
+                       					_saved := .t.
+                    				endif
+
+               					endif
+
+               					if VALTYPE( _trazi_val ) == "C"
+                   			
+									_rec := dbf_get_rec()
+
+                   					cDio1 := left(_trazi_val, len(trim(_trazi_val)) - 2)
+                   					cDio2 := left(_zamijeni_val, len(trim(_zamijeni_val)) -2)
+
+                   					if right(trim(_trazi_val), 2) == "**" .and. cDio1 $  _rec[LOWER(cKolona)]
+
+                       					_rec[LOWER(cKolona)] := STRTRAN( _rec[LOWER(cKolona)], cDio1, cDio2)
+
+										if _has_semaphore
+											update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+										else
+                       						dbf_update_rec(_rec)
+										endif
+
+                   					endif
+
+               					endif
+
+               					skip
+
+             				enddo
+
+							if _has_semaphore
+								sql_table_update( nil, "END" )
+								my_use_semaphore_on()
+							endif
+             				
+							dbsetorder( nOrder )
+             				go nRec
+             				TB:RefreshAll()
+
+            			endif
+          			endif
+       			endif
+     		endif
+    	endif
+
+	CASE Ch==K_ALT_S
     
     IF (gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS"))
      Msg("Nemate pravo na koristenje ove opcije",15)

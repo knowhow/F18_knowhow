@@ -207,6 +207,51 @@ endif
 
 return _rec
 
+
+// ---------------------------------------------------
+// da li alias ima semafor ?
+// ---------------------------------------------------
+function alias_has_semaphore( alias )
+local _ret := .f.
+local _msg, _rec, _keys, _dbf_tbl, _key
+
+// ako nema parametra uzmi tekuci alias na kome se nalazimo
+if ( alias == NIL )
+	alias := ALIAS()
+endif
+
+_dbf_tbl := "x"
+
+for each _key IN __f18_dbfs:Keys
+	if VALTYPE( alias ) == "N"
+        // zadana je workarea
+        if __f18_dbfs[_key]["wa"] == alias
+            _dbf_tbl := _key
+			exit
+        endif
+	else 
+		if __f18_dbfs[_key]["alias"] == UPPER( alias )
+        	_dbf_tbl := _key
+			exit
+        endif
+    endif    
+next 
+
+if HB_HHASKEY( __f18_dbfs, _dbf_tbl )
+
+    _rec := __f18_dbfs[ _dbf_tbl ]
+	if _rec["temp"] == .f.
+		// tabela ima semafor
+		_ret := .t.
+	endif
+
+endif
+
+return _ret
+
+
+
+
 // ----------------------------------------------
 // setujem "sql_order" hash na osnovu 
 // gaDBFS[_pos][6]

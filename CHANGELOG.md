@@ -1,3 +1,11 @@
+1.0.21 2012-04-26, vsasa
+
+  - alt+R, alt+S opcije bugfix [#27804](http://redmine.bring.out.ba/issues/27804)
+  - odt konvertovanje u pdf [#27662](http://redmine.bring.out.ba/issues/27662)
+  - ld specifikacija 1000 stranica - bugfix [#27809](http://redmine.bring.out.ba/issues/27809)
+  - štampa template fajlova, provjera verzije template-a [#27810](http://redmine.bring.out.ba/issues/27810)
+  - ostale sitne korekcije
+ 
 1.0.20 2012-04-25, vsasa
 
   - hcp, xml encoding kod slanja xml fajla [#27789](http://redmine.bring.out.ba/issues/27789)

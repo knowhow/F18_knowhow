@@ -91,6 +91,7 @@ return nil
 function fakt_par_razno()
 local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
 local _prik_bk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
+local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PADR("", 300) )
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
@@ -100,7 +101,7 @@ O_PARAMS
 
 gKomLin:=PADR(gKomLin,70)
 
-Box(,21,77,.f.,"OSTALI PARAMETRI (RAZNO)")
+Box(, 21, 77, .f., "OSTALI PARAMETRI (RAZNO)" )
 
 nX := 2
 
@@ -163,6 +164,10 @@ nX ++
 
 nX ++
 
+@ m_x + nX, m_y+2 SAY "ODT fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
+
+nX ++
+
 @ m_x + nX, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
         GET gMPPrint ;
         PICT "@!" ;
@@ -212,9 +217,10 @@ if (LASTKEY()<>K_ESC)
     set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
     set_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
 	set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
-	set_metric("fakt_prikaz_barkod", my_user(), _prik_bk )
-
-    Wpar("ff",gFaktFakt)
+	set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
+	set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
+    
+	Wpar("ff",gFaktFakt)
     Wpar("nw",gNW)
     Wpar("NF",gFNar)
     Wpar("UF",gFUgRab)

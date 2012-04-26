@@ -29,7 +29,9 @@ local _filter := "f*.odt"
 local _template := ""
 local _jod_templates_path := F18_TEMPLATE_LOCATION
 local _xml_file := my_home() + "data.xml"
-local _file_pdf := my_home() + "fakt_" + cIdF + "_" + cIdVd + "_" + ALLTRIM(cBrDok) + ".pdf"
+local _file_pdf := "fakt_" + cIdF + "_" + cIdVd + "_" + ALLTRIM(cBrDok) + ".pdf"
+local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
+local _ext_path
 
 IF !EMPTY( _jod_templates_path )
     _t_path := ALLTRIM( _jod_templates_path )
@@ -51,7 +53,18 @@ close all
 if f18_odt_generate( _template, _xml_file )
 
 	// konvertuj odt u pdf
-	//f18_convert_odt_to_pdf( NIL, _file_pdf )
+	if !EMPTY( ALLTRIM( _ext_pdf ) )
+
+		_ext_path := ALLTRIM( _ext_pdf )
+
+		if LEFT( ALLTRIM( _ext_pdf ), 4 ) == "HOME"
+			// bacaj u HOME path
+			_ext_path := my_home() 
+		endif 
+
+		f18_convert_odt_to_pdf( NIL, _ext_path + _file_pdf )
+
+	endif
 
 	// printaj odt
     f18_odt_print()

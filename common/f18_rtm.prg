@@ -161,20 +161,54 @@ return _ok
 // napomena: template = "nalplac", bez ekstenzije
 // ---------------------------------------------------------
 static function copy_rtm_template( template )
-local _ok := .t.
+local _ret := .f.
 local _rtm_ext := ".rtm"
+local _a_source, _a_template
+local _src_size, _src_date, _src_time
+local _temp_size, _temp_date, _temp_time
+local _copy := .f.
+
 
 if !FILE( my_home() + template + _rtm_ext )
+	_copy := .t.
+else
+	
+	// fajl postoji na lokaciji
+	// ispitaj velicinu, datum vrijeme...
+	_a_source := DIRECTORY( my_home() + template + _rtm_ext )
+	_a_template := DIRECTORY( F18_TEMPLATE_LOCATION + template + _rtm_ext ) 	
+
+	// datum, vrijeme, velicina
+	_src_size := ALLTRIM( STR( _a_source[1, 2] ) )
+	_src_date := DTOS( _a_source[1, 3] )
+	_src_time := _a_source[1, 4]
+
+	_temp_size := ALLTRIM( STR( _a_template[1, 2] ) )
+	_temp_date := DTOS( _a_template[1, 3] )
+	_temp_time := _a_template[1, 4]
+
+	// treba ga kopirati
+	if _temp_date + _temp_time > _src_date + _src_time
+		_copy := .t.
+	endif
+
+endif
+
+// treba ga kopirati
+if _copy
+
     if !FILE( F18_TEMPLATE_LOCATION + template + _rtm_ext )
         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + _rtm_ext + " ne postoji !????" )
-        _ok := .f.
-        return _ok
+        return _ret
     else
         FILECOPY( F18_TEMPLATE_LOCATION + template + _rtm_ext, my_home() + template + _rtm_ext )
     endif
+
 endif
 
-return _ok
+_ret := .t.
+
+return _ret
 
 
 

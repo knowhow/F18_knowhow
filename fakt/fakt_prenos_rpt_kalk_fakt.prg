@@ -191,6 +191,16 @@ if lFaktFakt
   
 endif
 
+select ( F_POM )
+if used()
+	use
+endif
+
+// pobrisi pom tabele
+FERASE( my_home() + "pom.dbf" )
+FERASE( my_home() + "pom.cdx")
+FERASE( my_home() + "pomi1.cdx")
+
 aDbf := {}
 AADD (aDbf, {"IdRoba", "C", 10, 0})
 AADD (aDbf, {"FST",    "N", 15, 5})

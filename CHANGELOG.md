@@ -1,3 +1,7 @@
+1.0.22 2012-04-27, vsasa
+
+  - fakt, pregled dokumenata [#27813](http://redmine.bring.out.ba/issues/27813)
+ 
 1.0.21 2012-04-26, vsasa
 
   - alt+R, alt+S opcije bugfix [#27804](http://redmine.bring.out.ba/issues/27804)

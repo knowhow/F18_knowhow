@@ -35,6 +35,7 @@ set_a_dbf_ld()
 set_a_dbf_pos()
 set_a_dbf_epdv()
 set_a_dbf_os()
+set_a_dbf_virm()
 
 return
 

@@ -12,30 +12,8 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_15.prg,v $
- *
- *
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/rpt_15.prg
- *  \brief Stampa dokumenta tipa 15
- */
 
 
-/*! \fn StKalk15()
- *  \brief Stampa kalkulacije 15
- */
-
-
-
-***********************************************************************************
-* stampa kalkulacije 15 / magacin po vpc
-***********************************************************************************
 function StKalk15(fZaTops)
 local nCol0:=nCol1:=nCol2:=0,npom:=0, n11BezNC, nRecPrva:=0
 

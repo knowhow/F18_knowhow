@@ -13,27 +13,7 @@
 #include "kalk.ch"
 
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_14.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.2 $
- * $Log: rpt_14.prg,v $
- * Revision 1.2  2002/06/20 13:13:03  mirsad
- * dokumentovanje
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/rpt_14.prg
- *  \brief Stampa dokumenta tipa 14
- */
-
-
-/*! \fn StKalk14()
- *  \brief Stampa kalkulacije 14
- */
-
 function StKalk14()
-*{
 local nCol1:=nCol2:=0,npom:=0
 
 Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
@@ -42,8 +22,10 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
 dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
 P_10CPI
 B_ON
+
 if cidvd=="14".or.cidvd=="74"
   ?? "IZLAZ KUPCU PO VELEPRODAJI"
 elseif cidvd=="15"
@@ -59,7 +41,7 @@ P_COND
 @ prow(),125 SAY "Str:"+str(++nStr,3)
 select PARTN; HSEEK cIdPartner
 
-?  "KUPAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
+?  "KUPAC:",cIdPartner,"-", PADR( naz, 20 ), SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
 
 if cidvd=="94"
  select konto; hseek cidkonto2

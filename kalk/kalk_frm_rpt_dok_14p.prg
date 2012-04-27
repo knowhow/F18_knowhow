@@ -12,20 +12,7 @@
 
 #include "kalk.ch"
 
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \fn StKalk14PDV()
- *  \brief Stampa kalkulacije 14
- */
-
 function StKalk14PDV()
-*{
 local nCol1:=nCol2:=0,npom:=0
 
 Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
@@ -34,6 +21,7 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
 dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
 P_10CPI
 B_ON
 
@@ -44,23 +32,32 @@ elseif cidvd=="15"
 else
   	?? "STORNO IZLAZA KUPCU PO VELEPRODAJI"
 endif
+
 ?
 B_OFF
 P_COND
 ??
-? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,", Datum:",DatDok
-@ prow(),125 SAY "Str:"+str(++nStr,3)
-select PARTN; HSEEK cIdPartner
 
-?  "KUPAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
+? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,", Datum:",DatDok
+
+@ prow(),125 SAY "Str:"+str(++nStr,3)
+
+select PARTN
+HSEEK cIdPartner
+
+?  "KUPAC:", cIdPartner, "-", PADR( naz, 20 ), SPACE(5), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
 if cidvd=="94"
- select konto; hseek cidkonto2
- ?  "Storno razduzenja KONTA:",cIdKonto,"-",naz
+	select konto
+	hseek cidkonto2
+ 	?  "Storno razduzenja KONTA:", cIdKonto, "-", ALLTRIM( naz )
 else
- select konto; hseek cidkonto2
- ?  "KONTO razduzuje:",kalk_pripr->mkonto , "-",naz
- if !empty(kalk_pripr->Idzaduz2); ?? " Rad.nalog:",kalk_pripr->Idzaduz2; endif
+ 	select konto
+	hseek cidkonto2
+ 	?  "KONTO razduzuje:", kalk_pripr->mkonto, "-", ALLTRIM( naz )
+ 	if !empty(kalk_pripr->Idzaduz2)
+		?? " Rad.nalog:", kalk_pripr->Idzaduz2
+	endif
 endif
 
 select kalk_pripr

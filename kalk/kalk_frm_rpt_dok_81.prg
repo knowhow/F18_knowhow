@@ -39,7 +39,7 @@ P_COND2
 @ prow(),125 SAY "Str:"+str(++nStr,3)
 select PARTN; HSEEK cIdPartner
 
-?  "DOBAVLJAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
+?  "DOBAVLJAC:",cIdPartner,"-",padr(naz,20),SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
 
 select KONTO; HSEEK cIdKonto
 ?  "KONTO zaduzuje :",cIdKonto,"-",naz

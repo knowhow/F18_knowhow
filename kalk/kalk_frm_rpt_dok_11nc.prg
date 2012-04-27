@@ -12,36 +12,7 @@
 
 #include "kalk.ch"
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/prod/dok/1g/rpt_11nc.prg,v $
- * $Author: mirsadsubasic $ 
- * $Revision: 1.5 $
- * $Log: rpt_11nc.prg,v $
- * Revision 1.5  2003/09/29 13:26:56  mirsadsubasic
- * sredjivanje koda za poreze u ugostiteljstvu
- *
- * Revision 1.4  2003/09/20 07:37:07  mirsad
- * sredj.koda za poreze u MP
- *
- * Revision 1.3  2002/07/19 13:57:23  mirsad
- * lPrikPRUC ubacio kao globalnu varijablu
- *
- * Revision 1.2  2002/06/21 07:49:36  mirsad
- * no message
- */
- 
-
-/*! \file fmk/kalk/prod/dok/1g/rpt_11nc.prg
- *  \brief Stampa kalkulacije 11 / magacin po nabavnim cjenama
- */
-
-
-/*! \fn StKalk11_1()
- *  \brief Stampa kalkulacije 11 / magacin po nabavnim cjenama
- */
-
 function StKalk11_1()
-*{
 local nCol0:=nCol1:=nCol2:=0,npom:=0
 
 Private nMarza,nMarza2

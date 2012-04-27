@@ -394,7 +394,7 @@ elseif cidvd=="95"
  ? space(nLijevo),"OTPIS MAGACIN"
  if (!EMPTY(cIdPartner) .and. IsVindija())
     B_OFF
-    ?? " -", RTRIM(cIdPartner), "("+RTRIM(partn->naz)+")"
+    ?? " -", RTRIM(cIdPartner), "("+PADR(partn->naz, 20)+")"
     B_ON
  endif
  ?

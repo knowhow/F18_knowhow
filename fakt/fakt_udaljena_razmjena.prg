@@ -52,6 +52,7 @@ static function _fakt_export()
 local _vars := hb_hash()
 local _exported_rec
 local _error
+local _a_data := {}
 
 // uslovi exporta
 if !_vars_export( @_vars )
@@ -62,7 +63,7 @@ endif
 delete_exp_files( __export_dbf_path, "fakt" )
 
 // exportuj podatake
-_exported_rec := __export( _vars )
+_exported_rec := __export( _vars, @_a_data )
 
 // zatvori sve tabele prije operacije pakovanja
 close all
@@ -90,7 +91,12 @@ endif
 DirChange( my_home() )
 
 if ( _exported_rec > 0 )
+
     MsgBeep( "Exportovao " + ALLTRIM(STR( _exported_rec )) + " dokumenta." )
+	
+	// printaj izvjestaj
+	print_imp_exp_report( _a_data )
+
 endif
 
 close all
@@ -106,6 +112,7 @@ local _imported_rec
 local _vars := hb_hash()
 local _imp_file 
 local _imp_path := fetch_metric( "fakt_import_path", my_user(), PADR("", 300) )
+local _a_data := {}
 
 if EMPTY( __import_dbf_path )
 
@@ -154,7 +161,7 @@ endif
 #endif
 
 // import procedura
-_imported_rec := __import( _vars )
+_imported_rec := __import( _vars, @_a_data )
 
 // zatvori sve
 close all
@@ -171,12 +178,118 @@ if ( _imported_rec > 0 )
 
     MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
 
+	// printaj izvjestaj
+	print_imp_exp_report( _a_data )
+
 endif
 
 // vrati se na home direktorij nakon svega
 DirChange( my_home() )
 
 return
+
+
+// -------------------------------------------------------------
+// -------------------------------------------------------------
+function print_imp_exp_report( data )
+local _i, _cnt
+local _line
+local _x_docs, _import_docs, _delete_docs, _exp_docs
+local _descr
+
+// struktura data
+// data[1] = opis
+// data[2] = broj dokumenta
+// data[3] = idpartner
+// data[4] = opis partner
+// data[5] = iznos
+// data[6] = datum dokumenta
+
+START PRINT CRET
+
+?
+
+P_10CPI
+P_COND
+
+? "REZUTATI OPERACIJE IMPORT/EXPORT PODATAKA"
+?
+
+_line := REPLICATE("-", 70)
+
+? _line
+? PADR( "R.br", 5 ), PADC( "Operacija", 10 ), PADC( "Dokument", 16 ), PADC( "Datum", 8 ), PADR( "Partner opis", 30 ), PADC( "Iznos", 12 )
+? _line
+
+_cnt := 0
+
+_x_docs := 0
+_import_docs := 0
+_delete_docs := 0
+_exp_docs := 0
+
+for _i := 1 to LEN( data )
+
+	_desrc := ALLTRIM( data[ _i, 1 ] ) 
+
+	if _descr == "x"
+		++ _x_docs
+	elseif _descr == "import"
+		++ _import_docs
+	elseif _descr == "export"
+		++ _exp_docs
+	elseif _descr == "delete"
+		++ _delete_docs
+	endif
+
+	// r.br
+	? PADL( ALLTRIM( STR( ++ _cnt ) ), 4, "0" ) + "."
+
+	// opis
+	@ prow(), pcol() + 1 SAY PADL( _descr, 10 )
+
+	// dokument
+	@ prow(), pcol() + 1 SAY PADR( data[ _i, 2 ], 16 )
+
+	// datum
+	@ prow(), pcol() + 1 SAY DTOC( data[ _i, 6 ] )
+
+	// partner
+	@ prow(), pcol() + 1 SAY PADR( data[ _i, 4 ], 27 ) + "..."
+
+	// iznos
+	@ prow(), pcol() + 1 SAY STR( data[ _i, 5 ], 12, 2 )
+
+
+next
+
+
+? _line
+
+if _import_docs > 0
+	? "Broj importovanih dokumenta: " + ALLTRIM( STR( _import_docs ) )
+endif
+
+if _exp_docs > 0
+	? "Broj exportovanih dokumenta: " + ALLTRIM( STR( _exp_docs ) )
+endif
+
+if _delete_docs > 0
+	? "    Broj brisanih dokumenta: " + ALLTRIM( STR( _delete_docs ) )
+endif
+
+if _x_docs > 0
+	? "  Broj prekocenih dokumenta: " + ALLTRIM( STR( _x_docs ) )
+endif
+
+? _line
+
+
+FF
+END PRINT
+
+return
+
 
 
 // -------------------------------------------
@@ -381,7 +494,7 @@ return _ret
 // -------------------------------------------
 // export podataka
 // -------------------------------------------
-static function __export( vars )
+static function __export( vars, a_details )
 local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
@@ -488,6 +601,9 @@ do while !EOF()
 			_app_rec["idfirma"] := _rj_dest
 		endif
 	endif
+
+	// dodaj u detalje
+	add_to_details( @a_details, _app_rec, "export" )
 
     select e_doks
     append blank
@@ -622,11 +738,25 @@ endif
 return _ret
 
 
+// ----------------------------------------------------------------
+// dodaj u matricu sa detaljima
+// ----------------------------------------------------------------
+static function add_to_details( details, rec, descr )
+
+AADD( details, { descr, ;
+				rec["idfirma"] + "-" + rec["idtipdok"] + "-" + rec["brdok"], ;
+				rec["idpartner"], ;
+				rec["partner"], ;
+				rec["iznos"], ;
+				rec["datdok"] } )
+
+return
+
 
 // ----------------------------------------
 // import podataka
 // ----------------------------------------
-static function __import( vars )
+static function __import( vars, a_details )
 local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
@@ -743,13 +873,25 @@ do while !EOF()
         if _zamjeniti_dok == "D"
 
             // dokumente iz fakt, fakt_doks brisi !
+
+			select e_doks
+			_app_rec := dbf_get_rec()
+
+			add_to_details( @a_details, _app_rec, "delete" )
+
             _ok := .t.
             _ok := del_fakt_doc( _id_firma, _id_vd, _br_dok )
 
         else
+
             select e_doks
-            skip
+
+			_app_rec := dbf_get_rec()
+           	add_to_details( @a_details, _app_rec, "x" )
+ 
+			skip
             loop
+
         endif
 
     endif
@@ -757,6 +899,9 @@ do while !EOF()
     // zikni je u nasu tabelu doks
     select e_doks
     _app_rec := dbf_get_rec()
+
+	// dodaj u detalje
+	add_to_details( @a_details, _app_rec, "import" )
 
     select fakt_doks
 	append blank

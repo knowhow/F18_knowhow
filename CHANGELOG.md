@@ -1,6 +1,7 @@
 1.0.22 2012-04-27, vsasa
 
   - fakt, pregled dokumenata [#27813](http://redmine.bring.out.ba/issues/27813)
+  - virm, semafori [#27815](http://redmine.bring.out.ba/issues/27815)
  
 1.0.21 2012-04-26, vsasa
 

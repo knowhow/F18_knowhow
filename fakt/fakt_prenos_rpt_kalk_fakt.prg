@@ -55,6 +55,7 @@ cRazlKol := "D"
 cRazlVr  := "D"
 cMP := "M"
 cIdKonto := PADR( "1320", 7 )
+qqKonto := cIdKonto
 
 cViseKonta := ""
 lViseKonta := .f.
@@ -77,7 +78,7 @@ cOpis1 := fetch_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
 cOpis2 := fetch_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
 cIdKonto := fetch_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
 
-qqKonto := cIdKonto
+cIdKonto := qqKonto
 
 if lFaktFakt
     if Pitanje(,"Podesiti direktorij FAKT-a druge firme? (D/N)","N")=='D'

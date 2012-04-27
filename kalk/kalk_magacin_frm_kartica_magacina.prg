@@ -14,38 +14,54 @@
 
 
 function KMag()
-local nR1,nR2,nR3,cidfirma:=space(2),cidroba:=space(10),ckonto:=space(7)
+local nR1
+local nR2
+local nR3
+local cIdFirma := space(2)
+local cIdroba := space(10)
+local cKonto := space(7)
 private GetList:={}
+
 select  roba
 nR1:=recno()
+
 select kalk_pripr
 nR2:=recno()
+
 select tarifa
 nR3:=recno()
-if empty(kalk_pripr->mkonto)
-   box(,2,50)
-     cidfirma:=gfirma
-     @ m_x+1,m_y+2 SAY "KARTICA MAGACIN"
-     @ m_x+2,m_y+2 SAY "Kartica konto-artikal" GET ckonto
-     @ m_x+2,col()+2 SAY "-" GET cidroba
-     read
-   BoxC()
+
+if EMPTY( kalk_pripr->mkonto )
+   	Box(,2,50)
+    	cIdFirma := gfirma
+     	@ m_x+1,m_y+2 SAY "KARTICA MAGACIN"
+     	@ m_x+2,m_y+2 SAY "Kartica konto-artikal" GET cKonto
+     	@ m_x+2,col()+2 SAY "-" GET cIdRoba
+     	read
+   	BoxC()
 else
-   cidfirma:=kalk_pripr->idfirma
-   ckonto:=kalk_pripr->mkonto
-   cidroba:=kalk_pripr->idroba
+	cIdFirma := kalk_pripr->idfirma
+   	cKonto := kalk_pripr->mkonto
+   	cIdRoba := kalk_pripr->idroba
 endif
 
 close all
-Karticam(cIdFirma,cidroba,ckonto)
+
+KarticaM( cIdFirma, cIdRoba, cKonto )
+
 o_kalk_edit()
+
 select roba
 go nR1
+
 select kalk_pripr
 go nR2
+
 select tarifa
 go nR3
+
 select kalk_pripr
+
 return
 
 

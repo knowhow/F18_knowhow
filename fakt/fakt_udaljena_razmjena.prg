@@ -188,6 +188,7 @@ local _dat_od := fetch_metric( "fakt_export_datum_od", my_user(), DATE() - 30 )
 local _dat_do := fetch_metric( "fakt_export_datum_do", my_user(), DATE() )
 local _rj := fetch_metric( "fakt_export_lista_rj", my_user(), PADR( "10;", 200 ) )
 local _vrste_dok := fetch_metric( "fakt_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
+local _br_dok := fetch_metric( "fakt_export_brojevi_dokumenata", my_user(), PADR("", 300) )
 local _exp_sif := fetch_metric( "fakt_export_sifrarnik", my_user(), "D" )
 local _prim_sif := fetch_metric( "fakt_export_duzina_primarne_sifre", my_user(), 0 )
 local _exp_path := fetch_metric( "fakt_export_path", my_user(), PADR("", 300) )
@@ -209,6 +210,10 @@ Box(, 13, 70 )
     @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
     
     ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata:" GET _br_dok PICT "@S40"
+    
+	++ _x
 
     @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
     @ m_x + _x, col() + 1 SAY "do" GET _dat_do
@@ -253,6 +258,7 @@ if LastKey() <> K_ESC
     set_metric( "fakt_export_sifrarnik", my_user(), _exp_sif )
     set_metric( "fakt_export_duzina_primarne_sifre", my_user(), _prim_sif )
     set_metric( "fakt_export_path", my_user(), _exp_path )
+	set_metric( "fakt_export_brojevi_dokumenata", my_user(), _br_dok )
 
 	// export path, set static var
 	__export_dbf_path := ALLTRIM( _exp_path )
@@ -265,6 +271,7 @@ if LastKey() <> K_ESC
     vars["prim_sif"] := _prim_sif
     vars["rj_src"] := _prom_rj_src
     vars["rj_dest"] := _prom_rj_dest
+	vars["brojevi_dok"] := _br_dok
     
 endif
 
@@ -281,6 +288,7 @@ local _dat_od := fetch_metric( "fakt_import_datum_od", my_user(), CTOD("") )
 local _dat_do := fetch_metric( "fakt_import_datum_do", my_user(), CTOD("") )
 local _rj := fetch_metric( "fakt_import_lista_rj", my_user(), PADR( "", 200 ) )
 local _vrste_dok := fetch_metric( "fakt_import_vrste_dokumenata", my_user(), PADR( "", 200 ) )
+local _br_dok := fetch_metric( "fakt_import_brojevi_dokumenata", my_user(), PADR( "", 300 ) )
 local _zamjeniti_dok := fetch_metric( "fakt_import_zamjeniti_dokumente", my_user(), "N" )
 local _zamjeniti_sif := fetch_metric( "fakt_import_zamjeniti_sifre", my_user(), "N" )
 local _iz_fmk := fetch_metric( "fakt_import_iz_fmk", my_user(), "N" )
@@ -302,7 +310,11 @@ Box(, 15, 70 )
     
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
+    @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata (prazno-sve):" GET _br_dok PICT "@S30"
+    
+	++ _x
+    
+	@ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
     @ m_x + _x, col() + 1 SAY "do" GET _dat_do
 
     ++ _x
@@ -346,6 +358,7 @@ if LastKey() <> K_ESC
     set_metric( "fakt_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
     set_metric( "fakt_import_iz_fmk", my_user(), _iz_fmk )
     set_metric( "fakt_import_path", my_user(), _imp_path )
+	set_metric( "fakt_import_brojevi_dokumenata", my_user(), _br_dok )
 
 	// set static var
 	__import_dbf_path := ALLTRIM( _imp_path )
@@ -357,6 +370,7 @@ if LastKey() <> K_ESC
     vars["zamjeniti_dokumente"] := _zamjeniti_dok
     vars["zamjeniti_sifre"] := _zamjeniti_sif
     vars["import_iz_fmk"] := _iz_fmk
+    vars["brojevi_dok"] := _br_dok
     
 endif
 
@@ -373,11 +387,11 @@ local _id_firma, _id_vd, _br_dok
 local _app_rec
 local _cnt := 0
 local _dat_od, _dat_do, _rj, _vrste_dok, _export_sif
-local _usl_rj
+local _usl_rj, _usl_br_dok
 local _id_partn
 local _id_roba
 local _prim_sif
-local _rj_src, _rj_dest
+local _rj_src, _rj_dest, _brojevi_dok
 local _change_rj := .f.
 
 // uslovi za export ce biti...
@@ -389,6 +403,7 @@ _export_sif := ALLTRIM( vars["export_sif"] )
 _prim_sif := vars["prim_sif"]
 _rj_src := vars["rj_src"]
 _rj_dest := vars["rj_dest"]
+_brojevi_dok := vars["brojevi_dok"]
  
 // treba li mjenjati radne jedinice
 if !EMPTY( _rj_src ) .and. !EMPTY( _rj_dest )
@@ -432,6 +447,14 @@ do while !EOF()
         endif
 
     endif
+
+	if !EMPTY( _brojevi_dok )
+		_usl_br_dok := Parsiraj( ALLTRIM( _brojevi_dok), "brdok" )
+		if !( &_usl_br_dok )
+			skip
+			loop
+		endif
+	endif
 
     // lista dokumenata...
     if !EMPTY( _vrste_dok )
@@ -610,13 +633,14 @@ local _app_rec
 local _cnt := 0
 local _dat_od, _dat_do, _rj, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
 local _roba_id, _partn_id
-local _usl_rj
+local _usl_rj, _usl_br_dok
 local _sif_exist
 local _fmk_import := .f.
 local _redni_broj := 0
 local _total_doks := 0
 local _total_fakt := 0
 local _gl_brojac := 0
+local _brojevi_dok
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
@@ -626,6 +650,7 @@ _vrste_dok := vars["vrste_dok"]
 _zamjeniti_dok := vars["zamjeniti_dokumente"]
 _zamjeniti_sif := vars["zamjeniti_sifre"]
 _iz_fmk := vars["import_iz_fmk"]
+_brojevi_dok := vars["brojevi_dok"]
  
 if _iz_fmk == "D"
     _fmk_import := .t.
@@ -690,6 +715,19 @@ do while !EOF()
         endif
 
     endif
+
+    // brojevi dokumenata
+    if !EMPTY( _brojevi_dok )
+
+        _usl_br_dok := Parsiraj( ALLTRIM(_brojevi_dok), "brdok" )
+
+        if !( &_usl_br_dok )
+            skip
+            loop
+        endif
+
+    endif
+
 
     // lista dokumenata...
     if !EMPTY( _vrste_dok )

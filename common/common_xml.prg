@@ -151,7 +151,7 @@ return cRet
 function open_xml( cFile )
 
 if cFile == nil
-	cFile := PRIVPATH + "data.xml"
+	cFile := my_home() + "data.xml"
 endif
 
 set printer to (cFile)

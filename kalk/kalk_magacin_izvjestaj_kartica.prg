@@ -19,8 +19,7 @@ static __txt2
 // ----------------------------------------
 // kartica magacina
 // ----------------------------------------
-function KarticaM()
-parameters cIdFirma,cIdRoba,cIdKonto
+function KarticaM( cIdFirma, cIdRoba, cIdKonto )
 local nNV:=0
 local nVPV:=0
 local cLine
@@ -40,11 +39,17 @@ O_SIFV
 O_ROBA
 O_KONTO
 
-dDatOd := DATE()
-dDatDo := DATE()
+if cIdFirma == NIL
+	dDatOd := CTOD("")
+	dDatDo := CTOD("")
+else
+	dDatOd := DATE()
+	dDatDo := DATE()
+endif
+
 cPredh := "N"
 
-private cIdR:=cIdRoba
+private cIdR := cIdRoba
 
 cPkN := "N"
 cBrFDa:="N"
@@ -189,22 +194,23 @@ endif
 O_KONCIJ
 O_KALK
 
-nKolicina:=0
+nKolicina := 0
+
 select kalk
 set order to tag "3"
 
-private cFilt:=".t."
+private cFilt := ".t."
 
-if lPoNarudzbi .and. aUslN<>".t."
-	cFilt+=".and."+aUslN
+if lPoNarudzbi .and. aUslN <> ".t."
+	cFilt += ".and." + aUslN
 endif
 
 if !empty(cIdPartner)
-  	cFilt+=".and.IdPartner==" + Cm2Str(cIdPartner)
+  	cFilt += ".and.IdPartner==" + Cm2Str(cIdPartner)
 endif
 
 if IsDomZdr() .and. !Empty(cKalkTip)
-	cFilt+=".and. tip==" + Cm2Str(cKalkTip)
+	cFilt += ".and. tip==" + Cm2Str(cKalkTip)
 endif
 
 if !EMPTY(cRNT1) .and. !EMPTY(cRNalBroj)
@@ -215,7 +221,7 @@ if !(cFilt==".t.")
   	set filter to &cFilt
 endif
 
-hseek cIdFirma+cIdKonto+cIdR
+hseek cIdFirma + cIdKonto + cIdR
 EOF CRET
 
 select koncij
@@ -223,9 +229,11 @@ seek trim(cIdKonto)
 
 select kalk
 
-gaZagFix:={7+IF(lPoNarudzbi.and.!EMPTY(qqIdNar),3,0),4}
-start print cret
-nLen:=1
+gaZagFix := { 7 + IF( lPoNarudzbi .and. !EMPTY( qqIdNar ), 3, 0 ), 4 }
+
+START PRINT CRET
+
+nLen := 1
 
 if IsPDV()
 
@@ -236,9 +244,8 @@ if IsPDV()
 	
 else
 
-  IF gVarEv=="2"
+  IF gVarEv == "2"
 	m:="-------- ----------- ------ ------ ---------- ---------- ----------"
-
   ELSE
 	m:="-------- ----------- ------ ------ ---------- ---------- ---------- ---------- ----------"
  	
@@ -263,7 +270,7 @@ else
   
 endif
 
-private nTStrana:=0
+private nTStrana := 0
 
 if IsPDV()
 	ZaglPDV()
@@ -272,11 +279,12 @@ else
 endif
 
 do while !eof() .and. iif(fVeci,idfirma+mkonto+idroba>=cIdFirma+cIdKonto+cIdR , idfirma+mkonto+idroba=cIdFirma+cIdKonto+cIdR)
-	if mkonto<>cIdKonto .or. idfirma<>cIdFirma
+
+	if field->mkonto <> cIdKonto .or. field->idfirma <> cIdFirma
   		exit
 	endif
 	
-	cIdRoba:=idroba
+	cIdRoba := idroba
 	select roba
 	hseek cIdRoba
 
@@ -308,6 +316,7 @@ do while !eof() .and. iif(fVeci,idfirma+mkonto+idroba>=cIdFirma+cIdKonto+cIdR , 
 	nColFCJ2:=68
 	cLastPar:=""
 	cSKGrup:=""
+
 	do while !eof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+mkonto+idroba
 		nNVd:=nNVp:=nVPVd:=nVPVp:=0
   		IF lBezG2 .and. idvd=="14"

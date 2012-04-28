@@ -215,7 +215,17 @@ P_COND
 ? "REZUTATI OPERACIJE IMPORT/EXPORT PODATAKA"
 ?
 
-_line := REPLICATE("-", 70)
+_line := REPLICATE( "-", 5 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 10 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 16 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 8 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 30 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
 
 ? _line
 ? PADR( "R.br", 5 ), PADC( "Operacija", 10 ), PADC( "Dokument", 16 ), PADC( "Datum", 8 ), PADR( "Partner opis", 30 ), PADC( "Iznos", 12 )
@@ -230,7 +240,7 @@ _exp_docs := 0
 
 for _i := 1 to LEN( data )
 
-	_desrc := ALLTRIM( data[ _i, 1 ] ) 
+	_descr := ALLTRIM( data[ _i, 1 ] ) 
 
 	if _descr == "x"
 		++ _x_docs
@@ -243,7 +253,7 @@ for _i := 1 to LEN( data )
 	endif
 
 	// r.br
-	? PADL( ALLTRIM( STR( ++ _cnt ) ), 4, "0" ) + "."
+	? PADL( ALLTRIM( STR( ++ _cnt ) ), 4 ) + "."
 
 	// opis
 	@ prow(), pcol() + 1 SAY PADL( _descr, 10 )

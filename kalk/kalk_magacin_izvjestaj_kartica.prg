@@ -19,7 +19,8 @@ static __txt2
 // ----------------------------------------
 // kartica magacina
 // ----------------------------------------
-function KarticaM( cIdFirma, cIdRoba, cIdKonto )
+function KarticaM()
+parameters cIdFirma, cIdRoba, cIdKonto
 local nNV:=0
 local nVPV:=0
 local cLine

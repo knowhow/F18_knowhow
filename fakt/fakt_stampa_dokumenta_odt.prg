@@ -32,10 +32,12 @@ local _xml_file := my_home() + "data.xml"
 local _file_pdf := ""
 local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
 local _ext_path
-local _gen_pdf := .t.
+local _gen_pdf := .f.
 
 if ( cIdF <> nil )
     _file_pdf := "fakt_" + cIdF + "_" + cIdVd + "_" + ALLTRIM(cBrDok) + ".pdf"
+else
+    _file_pdf := "fakt_priprema.pdf"
 endif
 
 IF !EMPTY( _jod_templates_path )
@@ -44,8 +46,8 @@ ENDIF
 
 // treba li generisati pdf fajl
 if !EMPTY( ALLTRIM( _ext_pdf ) )
-	if Pitanje(, "Generisati PDF dokument ?", "N" ) == "N"
-		_gen_pdf := .f.
+	if Pitanje(, "Generisati PDF dokument ?", "N" ) == "D"
+		_gen_pdf := .t.
 	endif
 endif
 

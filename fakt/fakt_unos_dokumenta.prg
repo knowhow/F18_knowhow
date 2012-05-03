@@ -752,7 +752,7 @@ h:= {}
 ASIZE(h, LEN(aPom))
 AFILL(h, "")
 
-private nRokPl:=0
+private nRokPl := 0
 private cOldKeyDok:=_idfirma+_idtipdok+_brdok
 
 _txt1:=_txt2:=_txt3a:=_txt3b:=_txt3c:=""   // txt1  -  naziv robe,usluge
@@ -1041,6 +1041,11 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
             endif
 
             if (gDodPar=="1" .or. gDatVal=="D")
+                
+                if fNovi .and. gRokPl > 0
+                    // uzmi default vrijednost za rok placanja
+                    nRokPl := gRokPl    
+                endif
                     
                 @ m_x + 7, m_y + 51 SAY "Rok plac.(dana):" ;
                     GET nRokPl ;
@@ -1508,43 +1513,45 @@ return cList
  *  \param cVar
  *  \param fNovi
  */
-function FRokPl(cVar, fNovi)
-local fOtp:=.f.
-local lRP0:=.t.
+function FRokPl( cVar, fNovi )
+local fOtp := .f.
+local lRP0 := .t.
 
 if IzFMKINI('FAKT','DatumRokPlacanja','F') == "O"
     // F  - faktura, O -  otpremnica
     fOtp := .t.
 endif
+
 // ako je dozvoljen rok.placanja samo > 0
 if gVFRP0 == "D"
-    lRP0:=.f.
+    lRP0 := .f.
 endif
 
-if cVar=="0"   // when
-    if nRokPl<0
-            return .t.   // ne diraj nista
+if cVar == "0"   
+    if nRokPl < 0
+        return .t.   
+        // ne diraj nista
     endif
     if !fNovi
         if EMPTY(_datpl)
-                nRokPl:=0
+            nRokPl := 0
         else
-                if fOtp
-                    nRokPl:=_datpl-_datotp
-                else
-                    nRokPl:=_datpl-_datdok
-                endif
+            if fOtp
+                nRokPl := _datpl - _datotp
+            else
+                nRokPl := _datpl - _datdok
+            endif
         endif
-  
-
-      else  // ako je novi, a koristi se rok placanja iz Partn/ROKP
+    else  
+        // ako je novi, a koristi se rok placanja iz Partn/ROKP
         // i ne koriste se Rabatne skale - odnosno ili jedno ili drugo
         if IzFmkIni("Svi", "RokPlIzSifPartn", "N", SIFPATH) = "D" .and. !IsRabati()
-            nRokPl:=IzSifk("PARTN", "ROKP", _IdPartner, .f.)
+            nRokPl := IzSifk("PARTN", "ROKP", _IdPartner, .f.)
         endif
-      endif
 
-elseif cVar=="1"  // valid
+    endif
+
+elseif cVar == "1"  
     // ako je rama-glas
     if !lRP0
         if nRokPl < 1
@@ -1552,35 +1559,37 @@ elseif cVar=="1"  // valid
             return .f.
         endif
     endif
-    if nRokPl<0  // moras unijeti pozitivnu vrijednost ili 0
-            MsgBeep("Unijeti broj dana !")
-            return .f.
+    if nRokPl < 0  // moras unijeti pozitivnu vrijednost ili 0
+        MsgBeep("Unijeti broj dana !")
+        return .f.
     endif
-    if nRokPl=0 .and. gRokPl<0
-            // exclusiv, ako je 0 ne postavljaj rok placanja !
-            _datPl:=ctod("")
+
+    if nRokPl = 0 .and. gRokPl < 0
+        // exclusiv, ako je 0 ne postavljaj rok placanja !
+        _datPl := CTOD("")
     else
-            if fOtp
-                _datPl:=_datotp+nRokPl
-            else
-                _datPl:=_datdok+nRokPl
-            endif
+        if fOtp
+            _datPl := _datotp + nRokPl
+        else
+            _datPl := _datdok + nRokPl
+        endif
     endif
-else  // cVar=="2" - postavi datum placanja
-    if EMPTY(_datpl)
-            nRokPl:=0
+else  
+    // cVar=="2" - postavi datum placanja
+    if EMPTY( _datpl )
+        nRokPl := 0
     else
-            if fotp
-                nRokPl:=_datpl-_datotp
-            else
-                nRokPl:=_datpl-_datdok
-            endif
+        if fotp
+            nRokPl := _datpl - _datotp
+        else
+            nRokPl := _datpl - _datdok
+        endif
     endif
 endif
 
 ShowGets()
 return .t.
-*}
+
 
 
 /* \fn ArgToStr()

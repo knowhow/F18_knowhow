@@ -1,3 +1,7 @@
+1.0.26 2012-05-03, vsasa
+
+  - fakt, tekuća vrijednost za rok plaćanja stavljena u funkciju [#27851](http://redmine.bring.out.ba/issues/27851)
+ 
 1.0.25 2012-05-03, vsasa
 
   - fakt, unos destinacije na fakturi [#27851](http://redmine.bring.out.ba/issues/27851)

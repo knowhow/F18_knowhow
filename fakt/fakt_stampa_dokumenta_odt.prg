@@ -44,7 +44,7 @@ ENDIF
 
 // treba li generisati pdf fajl
 if !EMPTY( ALLTRIM( _ext_pdf ) )
-	if Pitanje(, "Generisati PDF dokument ?", "D" ) == "N"
+	if Pitanje(, "Generisati PDF dokument ?", "N" ) == "N"
 		_gen_pdf := .f.
 	endif
 endif

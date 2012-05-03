@@ -338,7 +338,7 @@ public gFNar:=PADR("NAR.TXT",12)
 public gFUgRab:=PADR("UGRAB.TXT",12)
 
 public gSamokol:="N"
-public gRokPl:=0
+public gRokPl := 0
 public gRabIzRobe := "N"
 
 public gKarC1:="N"

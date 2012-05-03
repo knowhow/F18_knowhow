@@ -172,9 +172,10 @@ delete_exp_files( __import_dbf_path, "fakt" )
 if ( _imported_rec > 0 )
 
     // nakon uspjesnog importa...
-
-    // brisi zip fajl...
-    delete_zip_files( _imp_file )
+    if Pitanje(, "Pobrisati fajl razmjne ?", "D" ) == "D"
+        // brisi zip fajl...
+        delete_zip_files( _imp_file )
+    endif
 
     MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
 
@@ -624,7 +625,7 @@ do while !EOF()
 
     // dodaj zapis i u tabelu e_fakt
     select fakt
-    set order to tag "1"
+    set order to tag "2"
     go top
     seek _id_firma + _id_vd + _br_dok
 
@@ -1159,7 +1160,7 @@ log_write("otvaram fakt tabele importa i pravim indekse...")
 close all
 
 // setuj ove tabele kao temp tabele
-
+altd()
 _dbf_name := "e_doks2"
 select ( F_TMP_E_DOKS2 )
 my_use_temp( "E_DOKS2", use_path + _dbf_name, .f., .t. )
@@ -1168,7 +1169,8 @@ index on ( idfirma + idtipdok + brdok ) tag "1"
 _dbf_name := "e_fakt"
 select ( F_TMP_E_FAKT )
 my_use_temp( "E_FAKT", use_path + _dbf_name, .f., .t. )
-index on ( idfirma + idtipdok + brdok + idroba ) tag "1"
+index on ( idfirma + idtipdok + brdok + rbr ) tag "1"
+index on ( idfirma + idtipdok + brdok + idroba ) tag "2"
 
 _dbf_name := "e_doks"
 select ( F_TMP_E_DOKS )

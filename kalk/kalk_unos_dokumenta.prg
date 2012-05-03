@@ -307,7 +307,8 @@ do case
         o_kalk_edit()
         return DE_REFRESH
     case Ch==K_CTRL_T
-        if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
+        
+        if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
                 
             cStavka := kalk_pripr->rbr
             cArtikal := kalk_pripr->idroba
@@ -316,7 +317,9 @@ do case
             nVpc := kalk_pripr->vpc
 
             delete
+            _t_rec := RECNO()
             __dbPack()
+            go ( _t_rec )
 
             if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
                     
@@ -341,8 +344,11 @@ do case
             endif
 
             return DE_REFRESH
+
         endif
+
         return DE_CONT
+
     case IsDigit(Chr(Ch))
         Msg("Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>")
         return DE_CONT

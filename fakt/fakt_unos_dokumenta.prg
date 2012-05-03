@@ -181,15 +181,15 @@ do case
     
     return DE_CONT
     
-    case (Ch==K_CTRL_T)
+    case ( Ch == K_CTRL_T )
 
         if BrisiStavku() == 1
-                return DE_REFRESH
+            return DE_REFRESH
         else
             return DE_CONT
         endif
 
-    case Ch==K_ENTER 
+    case Ch == K_ENTER 
 
         Box("ist", MAXROWS()-10, MAXCOLS()-10, .f.)
 
@@ -462,7 +462,7 @@ local _log_stavka
 local _log_artikal, _log_kolicina, _log_cijena
 local _log_datum
 local _t_area
-local _rec
+local _rec, _t_rec
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     MsgBeep(cZabrana)
@@ -485,7 +485,9 @@ if Pitanje(, "Zelite izbrisati ovu stavku ?","D") == "D"
     _log_datum := field->datdok
 
     delete
+    _t_rec := RECNO()
     __dbPack()
+    go ( _t_rec )
 
     _t_area := SELECT()
 

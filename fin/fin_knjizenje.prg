@@ -575,34 +575,37 @@ case Ch==K_ALT_F5
     return DE_REFRESH
 
   case Ch==K_CTRL_T
-     if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
 
-      cBDok :=field->idfirma + "-" + field->idvn + "-" + field->brnal
-      cStavka := field->rbr
-      cBKonto := field->idkonto
-      cBDP := field->d_p
-      dBDatnal := field->datdok
-      cBIznos := STR(field->iznosbhd)
+    if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
 
-      delete
-      __dbPack()
+        cBDok :=field->idfirma + "-" + field->idvn + "-" + field->brnal
+        cStavka := field->rbr
+        cBKonto := field->idkonto
+        cBDP := field->d_p
+        dBDatnal := field->datdok
+        cBIznos := STR(field->iznosbhd)
+
+        delete
+        _t_rec := RECNO()
+        __dbPack()
+        go ( _t_rec )
  
-      BrisiPBaze()
+        BrisiPBaze()
       
-      if lLogBrisanje
-        EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE",;
-        nil,nil,nil,nil,;
-        cBDok, "konto: " + cBKonto + " dp=" + cBDP +;
-        " iznos=" + cBIznos + " KM", "",;
-        dBDatNal,;
-        Date(),;
-        "", "Obrisana stavka broj " + cStavka + " naloga!")     
-      endif
-      return DE_REFRESH
-     endif
-     return DE_CONT
+        if lLogBrisanje
+            EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE",;
+                nil,nil,nil,nil,;
+                cBDok, "konto: " + cBKonto + " dp=" + cBDP +;
+                " iznos=" + cBIznos + " KM", "",;
+                dBDatNal,;
+                Date(),;
+                "", "Obrisana stavka broj " + cStavka + " naloga!")     
+        endif
+        return DE_REFRESH
+    endif
+    return DE_CONT
 
-   case Ch==K_F5 
+    case Ch==K_F5 
 
       // kontrola zbira za jedan nalog
       KontrZbNal()

@@ -92,14 +92,20 @@ function fakt_par_razno()
 local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
 local _prik_bk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PADR("", 300) )
+local _unos_dest := "N"
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
 private GetList:={}
 
-O_PARAMS
+// unos destinacije
+gDest := fetch_metric( "fakt_unos_destinacije", nil, gDest )
+if gDest
+    _unos_dest := "D"
+endif
 
-gKomLin:=PADR(gKomLin,70)
+O_PARAMS
+gKomLin := PADR( gKomLin, 70 )
 
 Box(, 21, 77, .f., "OSTALI PARAMETRI (RAZNO)" )
 
@@ -168,6 +174,10 @@ nX ++
 
 nX ++
 
+@ m_x + nX, m_y+2 SAY "Unos destinacije na fakturi (D/N) ?" GET _unos_dest VALID _unos_dest $ "DN" PICT "@!"
+
+nX ++
+
 @ m_x + nX, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
         GET gMPPrint ;
         PICT "@!" ;
@@ -219,6 +229,13 @@ if (LASTKEY()<>K_ESC)
 	set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
 	set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
 	set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
+
+    if _unos_dest == "D"
+        gDest := .t.
+    else
+        gDest := .f.    
+    endif
+	set_metric( "fakt_unos_destinacije", nil, gDest )
     
 	Wpar("ff",gFaktFakt)
     Wpar("nw",gNW)

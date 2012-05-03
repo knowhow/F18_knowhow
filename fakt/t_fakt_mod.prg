@@ -382,6 +382,7 @@ public gZ_5pf := "N"
 public zaokruzenje := 2
 public i_id := 1
 public nl := hb_eol()
+public gDest := .f.
 
 // firma naziv
 public gFNaziv:=SPACE(250) 
@@ -458,6 +459,7 @@ gnLMarg := fetch_metric( "fakt_dokument_lijeva_margina", nil, gnLMarg )
 gnTMarg := fetch_metric( "fakt_dokument_top_margina", nil, gnTMarg )
 gPDVDrb := fetch_metric( "fakt_dokument_delphirb_prikaz", nil, gPDVDrb )
 gPDVDokVar := fetch_metric( "fakt_dokument_txt_prikaz_varijanta", nil, gPDVDokVar )
+gDest := fetch_metric( "fakt_unos_destinacije", nil, gDest )
 
 // obrada dokumenta
 glRGrPrn := fetch_metric( "fakt_ispis_grupacije_na_dokumentu", nil, glRGrPrn )
@@ -648,8 +650,6 @@ IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'barkod') , SIFPATH)
 
 public glDistrib := .f.
 //(IzFmkIni("FAKT","Distribucija","N",KUMPATH)=="D")
-public gDest := .f.
-//(IzFmkIni("FAKT","Destinacija", "N", KUMPATH)=="D")
 public gPovDob := "0"
 //IzFmkIni("FAKT_TipDok01","StampaPovrataDobavljacu_DefaultOdgovor","0",KUMPATH)
 

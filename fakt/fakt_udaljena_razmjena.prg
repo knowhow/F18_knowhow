@@ -1161,7 +1161,6 @@ log_write("otvaram fakt tabele importa i pravim indekse...")
 close all
 
 // setuj ove tabele kao temp tabele
-altd()
 _dbf_name := "e_doks2"
 select ( F_TMP_E_DOKS2 )
 my_use_temp( "E_DOKS2", use_path + _dbf_name, .f., .t. )

@@ -250,6 +250,8 @@ if lastkey() <> K_ESC
 
     if _brojac == "D"
         glBrojacPoKontima := .t.
+    else
+        glBrojacPoKontima := .f.
     endif
 
 	set_metric("kalk_brojac_kalkulacija", nil, gBrojac)

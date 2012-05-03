@@ -1,3 +1,7 @@
+1.0.24 2012-05-03, vsasa
+
+  - fakt, alt+P iz pripreme, bugfix [#27843](http://redmine.bring.out.ba/issues/27843)
+ 
 1.0.23 2012-05-03, vsasa
 
   - prenos fakt->fakt po broju dokumenta [#27833](http://redmine.bring.out.ba/issues/27833)

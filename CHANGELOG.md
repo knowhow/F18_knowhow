@@ -1,3 +1,8 @@
+1.0.23 2012-05-03, vsasa
+
+  - prenos fakt->fakt po broju dokumenta [#27833](http://redmine.bring.out.ba/issues/27833)
+  - kalk, kartica artikla F5 [#27802](http://redmine.bring.out.ba/issues/27802)
+ 
 1.0.22 2012-04-27, vsasa
 
   - fakt, pregled dokumenata [#27813](http://redmine.bring.out.ba/issues/27813)

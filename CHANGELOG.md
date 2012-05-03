@@ -1,6 +1,7 @@
 1.0.24 2012-05-03, vsasa
 
   - fakt, alt+P iz pripreme, bugfix [#27843](http://redmine.bring.out.ba/issues/27843)
+  - fakt, import podataka udaljena razmjena - korekcije [#27846](http://redmine.bring.out.ba/issues/27846)
  
 1.0.23 2012-05-03, vsasa
 

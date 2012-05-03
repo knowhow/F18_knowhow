@@ -625,7 +625,7 @@ do while !EOF()
 
     // dodaj zapis i u tabelu e_fakt
     select fakt
-    set order to tag "2"
+    set order to tag "1"
     go top
     seek _id_firma + _id_vd + _br_dok
 
@@ -657,6 +657,7 @@ do while !EOF()
 
         // prvo potrazi da li postoji ovaj zapis...
         select e_fakt
+        set order to tag "2"
         
         if _prim_sif > 0
 

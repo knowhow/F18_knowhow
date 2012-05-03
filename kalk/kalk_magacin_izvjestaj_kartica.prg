@@ -40,14 +40,13 @@ O_SIFV
 O_ROBA
 O_KONTO
 
-if cIdFirma == NIL
+if cIdFirma != NIL
 	dDatOd := CTOD("")
-	dDatDo := CTOD("")
 else
 	dDatOd := DATE()
-	dDatDo := DATE()
 endif
 
+dDatDo := DATE()
 cPredh := "N"
 
 private cIdR := cIdRoba

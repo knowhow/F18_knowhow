@@ -1,3 +1,7 @@
+1.0.25 2012-05-03, vsasa
+
+  - fakt, unos destinacije na fakturi [#27851](http://redmine.bring.out.ba/issues/27851)
+ 
 1.0.24 2012-05-03, vsasa
 
   - fakt, alt+P iz pripreme, bugfix [#27843](http://redmine.bring.out.ba/issues/27843)

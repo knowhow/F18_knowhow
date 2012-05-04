@@ -462,21 +462,34 @@ return
  */
 
 function ObSetVPC(nNovaVrijednost)
-*{
-  local nArr:=SELECT()
-  private cPom:="VPC"
-  if koncij->naz=="P2"
-    cPom:="PLC"
-  elseif koncij->naz=="V2"
+local nArr := SELECT()
+local _rec
+private cPom:="VPC"
+  
+if koncij->naz=="P2"
+	cPom:="PLC"
+elseif koncij->naz=="V2"
     cPom:="VPC2"
-  else
+else
     cPom:="VPC"
-  endif
-  select roba
-   replace &cPom with nNovaVrijednost
-  select (nArr)
+endif
+  
+select roba
+_rec := dbf_get_rec()
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+   
+_rec[ LOWER( cPom ) ] := nNovaVrijednost
+
+update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+ 
+select (nArr)
 return .t.
-*}
+
 
 
 
@@ -769,59 +782,76 @@ return .t.
 // Trenutan pozicija u tabeli ROBA (roba->tip)
 
 function V_RabatV()
-*{
 local nPom, nMPCVT
 local nRVPC:=0
 private getlist:={}, cPom:="VPC"
 
- if koncij->naz=="P2"
+if koncij->naz=="P2"
    cPom:="PLC"
- elseif koncij->naz=="V2"
+elseif koncij->naz=="V2"
    cPom:="VPC2"
- else
+else
    cPom:="VPC"
- endif
+endif
 
- if roba->tip $ "UTY"
+if roba->tip $ "UTY"
     return .t.
- endif
+endif
 
- nRVPC:=KoncijVPC()
- if round(nRVPC-_vpc,4)<>0  .and. gMagacin=="2"
-   if nRVPC==0
-      Beep(1)
-      Box(,3,60)
-      @ m_x+1,m_Y+2 SAY "Roba u sifrarniku ima "+cPom+" = 0 !??"
-      @ m_x+3,m_y+2 SAY "Unesi "+cPom+" u sifrarnik:" GET _vpc pict picdem
-      read
-      select roba; replace &cPom with _VPC
-      select kalk_pripr
-      BoxC()
-   endif
- endif
- if roba->tip=="V" // roba tarife
+nRVPC := KoncijVPC()
+if round(nRVPC-_vpc,4)<>0  .and. gMagacin=="2"
+	if nRVPC==0
+    	Beep(1)
+      	Box(,3,60)
+      	@ m_x+1,m_Y+2 SAY "Roba u sifrarniku ima "+cPom+" = 0 !??"
+      	@ m_x+3,m_y+2 SAY "Unesi "+cPom+" u sifrarnik:" GET _vpc pict picdem
+
+      	read
+
+      	select roba
+		_rec := dbf_get_rec()
+
+		my_use_semaphore_off()
+		sql_table_update( nil, "BEGIN" )
+
+		_rec[LOWER(cPom)] := _vpc
+		update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+		sql_table_update( nil, "END" )
+		my_use_semaphore_on()
+
+      	select kalk_pripr
+      	BoxC()
+
+   	endif
+endif
+ 
+if roba->tip=="V" // roba tarife
    nMarza:=_VPC/(1+_PORVT)-_VPC*_RabatV/100-_NC
- elseif roba->tip="X"
+elseif roba->tip="X"
    nMarza:=_VPC*(1-_RabatV/100)-_NC- _MPCSAPP/(1+_PORVT)*_porvt
- else
+else
    nMarza:=_VPC/(1+_PORVT)*(1-_RabatV/100)-_NC
- endif
- if IsPDV()
+endif
+ 
+if IsPDV()
  	@ m_x+15,m_y+41  SAY "PC b.pdv.-RAB:"
- else
+else
  	@ m_x+15,m_y+41  SAY "VPC b.p.-RAB:"
- endif
- if roba->tip=="V"
+endif
+ 
+if roba->tip=="V"
    @ m_x+15,col()+1 SAY _Vpc/(1+_PORVT)-_VPC*_RabatV/100 pict picdem
- elseif roba->tip=="X"
+elseif roba->tip=="X"
    @ m_x+15,col()+1 SAY _Vpc*(1-_RabatV/100) - _MPCSAPP/(1+_PORVT)*_PORVT pict picdem
- else
+else
    @ m_x+15,col()+1 SAY _Vpc/(1+_PORVT)*(1-_RabatV/100) pict picdem
- endif
- ShowGets()
+endif
+ 
+ShowGets()
 
 return .t.
-*}
+
 
 
 

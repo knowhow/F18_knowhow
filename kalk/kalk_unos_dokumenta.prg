@@ -229,6 +229,12 @@ do case
         endif
         o_kalk_edit()
         return DE_REFRESH
+
+    case Ch == K_SH_F9
+
+        renumeracija_kalk_pripr( nil, nil, .f. )
+        return DE_REFRESH
+
     case Ch==K_ALT_P
         close all
         IzbDokOLPP()
@@ -844,6 +850,7 @@ return DE_REFRESH
 function MeniF11()
 private opc:={}
 private opcexe:={}
+
 AADD(opc, "1. preuzimanje kalkulacije iz druge firme        ")
 AADD(opcexe, {|| IzKalk2f()})
 AADD(opc, "2. ubacivanje troskova-uvozna kalkulacija")
@@ -858,13 +865,19 @@ AADD(opc, "6. brisi sve protu-stavke")
 AADD(opcexe, {|| ProtStErase()})
 AADD(opc, "7. setuj sve NC na 0")
 AADD(opcexe, {|| SetNcTo0()})
+AADD(opc, "8. renumeracija kalk priprema")
+AADD(opcexe, {|| renumeracija_kalk_pripr( nil, nil, .f. )})
 
 close all
 private am_x:=m_x,am_y:=m_y
 private Izbor:=1
+
 Menu_SC("osop2")
-m_x:=am_x; m_y:=am_y
+m_x := am_x
+m_y := am_y
+
 o_kalk_edit()
+
 return DE_REFRESH
 
 

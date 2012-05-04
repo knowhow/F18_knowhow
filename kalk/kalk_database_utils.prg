@@ -441,26 +441,42 @@ return
 
 
 
+// -------------------------------------------------------------
 // Prenumerisanje stavki zadanog dokumenta u kalk_pripremi
-function renumeracija_kalk_pripr( cDok, cIdvd )
+// -------------------------------------------------------------
+function renumeracija_kalk_pripr( cDok, cIdvd, silent )
 local _rbr
 
-O_KALK_PRIPR
+if silent == NIL
+    silent := .t.
+endif
+
+if !silent
+    if Pitanje(, "Renumerisati pripremu ?", "N" ) == "N"
+        return
+    endif
+endif
+
+select (F_KALK_PRIPR)
+if !used()
+    O_KALK_PRIPR
+endif
+
 select kalk_pripr
 set order to
 go top
 
 _rbr := 0
+
 do while !eof()
-    if field->brdok == cDok .and. field->idvd == cIdvd
-        replace field->rbr with RedniBroj( ++ _rbr )
-    endif
+    replace field->rbr with RedniBroj( ++ _rbr )
     skip
 enddo
 
 select kalk_pripr
 set order to tag "1"
 go top
+
 return
 
 
@@ -468,8 +484,6 @@ return
 function IspitajPrekid()
 INKEY()
 return IF(LASTKEY()==27,PrekSaEsc(),.t.)
-
-
 
 
 

@@ -2,6 +2,7 @@
 
   - ld, specifkacija, ako nema obračuna poruka [#27868](http://redmine.bring.out.ba/issues/27868)
   - barkod parametri u modulu FAKT [#27796](http://redmine.bring.out.ba/issues/27796)
+  - FAKT, KALK, opcije smeća [#27874](http://redmine.bring.out.ba/issues/27874)
   - ostale sitne korekcije
  
 1.0.26 2012-05-03, vsasa

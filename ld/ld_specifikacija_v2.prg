@@ -390,10 +390,17 @@ IF !EMPTY(cObracun)
    cFilt += ( ".and. OBR==" + cm2str(cObracun) )
 ENDIF
 
- SET FILTER TO &cFilt
+SET FILTER TO &cFilt
 
- GO TOP
- HSEEK STR(nGodina,4)+STR(nMjesec,2)
+GO TOP
+HSEEK STR(nGodina,4)+STR(nMjesec,2)
+
+IF !FOUND()
+	MsgBeep("Obracun za ovaj mjesec ne postoji !")
+	close all
+	return .t.
+ENDIF
+ 
  
  nUNeto:=0
  nUNetoOsnova:=0

@@ -549,18 +549,18 @@ if Logirati(goModul:oDataBase:cName,"DOK","GENERACIJA")
     select kalk_pripr
     go top
     cOpis := kalk_pripr->idfirma + "-" + ;
-        pripr->idvd + "-" + ;
-        pripr->brdok
+        kalk_pripr->idvd + "-" + ;
+        kalk_pripr->brdok
 
     EventLog(nUser,goModul:oDataBase:cName,"DOK","GENERACIJA",;
     nil,nil,nil,nil,;
-    cOpis,"","",pripr->datdok,date(),;
+    cOpis,"","",kalk_pripr->datdok,date(),;
     "","Opcija korekcije prodajnih cijena")
 endif
 
 select (nTArea)
 
-CLOSERET
+close all
 return
 
 
@@ -659,9 +659,9 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
 enddo
 
-closeret
+close all
 return
-*}
+
 
 
 
@@ -670,7 +670,7 @@ return
  */
  
 function Iz96u16()
-*{
+
   o_kalk_edit()
   cIdFirma    := gFirma
   cIdVdU      := "96"
@@ -815,8 +815,8 @@ function Iz16u14()
     SKIP 1
   ENDDO
 
-CLOSERET
+close all
 return
-*}
+
 
 

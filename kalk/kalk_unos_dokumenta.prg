@@ -12,68 +12,27 @@
 
 #include "kalk.ch"
 
-static cENTER:=chr(K_ENTER)+chr(K_ENTER)+chr(K_ENTER)
+static cENTER := CHR(K_ENTER) + CHR(K_ENTER) + CHR(K_ENTER)
 
 
 
 function kalk_unos_dokumenta()
-local izbor:=1
-
 PRIVATE PicCDEM:=gPicCDEM
 PRIVATE PicProc:=gPicProc
 PRIVATE PicDEM:= gPICDEM
 PRIVATE Pickol:= gPICKOL
 PRIVATE lAsistRadi:=.f.
 
-if gNW=="N"
-
-private opc[6]
-
-Opc[1]:="1. unos               "
-Opc[2]:="2. stampa"
-Opc[3]:="3. rekapitulacija"
-Opc[4]:="4. kontiranje"
-Opc[5]:="5. azuriranje"
-Opc[6]:="6. kurs:"+KursLis
-
-do while .t.
- Izbor:=menu("knjiz",opc,Izbor,.f.)
-
-   do case
-     case Izbor==0
-       EXIT
-     case izbor == 1
-         kalk_unos_stavki_dokumenta()
-     case izbor == 2
-         kalk_centr_stampa_dokumenta()
-     case izbor == 3
-         RekapK()
-     case izbor == 4
-         kalk_kontiranje_naloga()
-     case izbor == 5
-         azur_kalk() 
-     case izbor == 6
-       if KursLis=="1"  // prva vrijednost
-         KursLis:="2"
-       else
-         KursLis:="1"
-       endif
-       Opc[6]:="6. kurs:"+KursLis
-   endcase
-
-enddo
-
-else  // gnw=="D"
-   kalk_unos_stavki_dokumenta()
-endif
+kalk_unos_stavki_dokumenta()
 
 close all
 return
 
 
 
-
-
+// ----------------------------------------------------------------
+// unos stavki kalkulacije
+// ----------------------------------------------------------------
 function kalk_unos_stavki_dokumenta(lAObrada)
 local nMaxCol := MAXCOLS()-3
 local nMaxRow := MAXROWS()-4
@@ -140,10 +99,12 @@ for i:=1 to LEN(ImeKol)
 next
 
 Box(, nMaxRow, nMaxCol )
+
     @ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku    ³ <K> kalkulacija cijena"
     @ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje       ³ "
     @ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa pripreme  ³ "
     @ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije ³ "
+
     IF gCijene=="1" .and. gMetodaNC==" "
         Soboslikar({{nMaxRow-3,m_y+1,nMaxRow,m_y+77}},23,14)
     ENDIF
@@ -151,6 +112,7 @@ Box(, nMaxRow, nMaxCol )
     PRIVATE lAutoAsist:=.f.
 
     ObjDbedit("PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler(lAutoObr)},"<F5>-kartica magacin, <F6>-kartica prodavnica","Priprema...", , , , ,4)
+
 BoxC()
 
 CLOSERET
@@ -253,10 +215,16 @@ PRIVATE PicDEM:= gPicDEM
 PRIVATE Pickol:= gPicKol
 
 select kalk_pripr
+
 do case
-    case Ch==K_ALT_H
+
+	case Ch == K_SH_F1
+		calc()
+
+    case Ch == K_ALT_H
         Savjetnik()
-    case Ch==K_ALT_K
+
+    case Ch == K_ALT_K
         close all
         RekapK()
         if Pitanje(,"Zelite li izvrsiti kontiranje ?","D")=="D"
@@ -965,11 +933,11 @@ do while .t.
 
 @ m_x+1,m_y+1 CLEAR TO m_x+20,m_y+77
 
-setkey(K_PGDN,{|| NIL})
-setkey(K_PGUP,{|| NIL})
+SETKEY( K_PGDN, {|| NIL} )
+SETKEY( K_PGUP, {|| NIL} )
 
 // konvertovanje valute - ukljuci
-setkey(K_CTRL_K,{|| a_val_convert() })
+SETKEY( K_CTRL_K, {|| a_val_convert() } )
 
 if nStrana==1
   nR:=GET1(fnovi)
@@ -977,20 +945,20 @@ elseif nStrana==2
   nR:=GET2(fnovi)
 endif
 
-setkey(K_PGDN,NIL)
-setkey(K_PGUP,NIL)
+SETKEY( K_PGDN, NIL )
+SETKEY( K_PGUP, NIL )
 
 // konvertovanje valute - iskljuci
-setkey(K_CTRL_K,NIL)
+SETKEY( K_CTRL_K, NIL )
 
 set escape on
 
-if nR==K_ESC
-  exit
-elseif nR==K_PGUP
-  --nStrana
-elseif nR==K_PGDN .or. nR==K_ENTER
-  ++nStrana
+if nR == K_ESC
+	exit
+elseif nR == K_PGUP
+  	--nStrana
+elseif nR == K_PGDN .or. nR == K_ENTER
+  	++nStrana
 endif
 
 if nStrana==0
@@ -1001,15 +969,15 @@ endif
 
 enddo
 
-if lastkey()<>K_ESC
- _Rbr:=RedniBroj(nRbr)
- _Dokument:=P_TipDok(_IdVD,-2)
-  return 1
+if lastkey() <> K_ESC
+	_Rbr := RedniBroj( nRbr )
+ 	_Dokument := P_TipDok( _IdVD, -2 )
+  	return 1
 else
-  return 0
+  	return 0
 endif
 return
-*}
+
 
 
 

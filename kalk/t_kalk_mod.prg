@@ -46,27 +46,17 @@ method mMenu()
 
 private Izbor
 
-SETKEY(K_SH_F1,{|| Calc()})
-Izbor:=1
+SETKEY( K_SH_F1, {|| Calc()} )
 
-// provjeri da li je read only
-CheckROnly(KUMPATH + "\KALK.DBF")
+Izbor := 1
 
-O_KALK_DOKS
-select kalk_doks
-gDuzKonto:=LEN(mkonto) 
-select kalk_doks
-
-// skeniranje prodavnica automatsko...
-pl_scan_automatic()
-use
+gDuzKonto := 7 
 
 gRobaBlock:={|Ch| RobaBlock(Ch)}
+
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
 
 ::mMenuStandard()
-
-//::quit()
 
 return nil
 

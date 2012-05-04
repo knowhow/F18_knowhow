@@ -439,6 +439,44 @@ PopWa()
 select kalk_pripr
 return
 
+// -------------------------------------------------
+// brisanje pripreme od do
+// -------------------------------------------------
+function kalk_pripr_brisi_od_do()
+local _ret := .f.
+local _od := 0
+local _do := 0
+
+select kalk_pripr
+go top
+
+_od := VAL( ALLTRIM( field->rbr ) )
+_do := 0
+
+Box(, 1, 60 )
+    @ m_x + 1, m_y + 2 SAY "Brisi stavke od" GET _od PICT "9999"
+    @ m_x + 1, col() + 1 SAY "do" GET _do PICT "9999"
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    return _ret
+endif
+
+do while !EOF()
+    if VAL( ALLTRIM( field->rbr ) ) >= _od .and. VAL( ALLTRIM( field->rbr ) ) <= _do
+        delete
+    endif 
+    skip
+enddo
+
+__dbPack()
+select kalk_pripr
+go top
+
+_ret := .t.
+return _ret
+
 
 
 // -------------------------------------------------------------

@@ -235,6 +235,12 @@ do case
         renumeracija_kalk_pripr( nil, nil, .f. )
         return DE_REFRESH
 
+    case Ch == K_SH_F8
+        
+        if kalk_pripr_brisi_od_do()
+            return DE_REFRESH
+        endif
+
     case Ch==K_ALT_P
         close all
         IzbDokOLPP()

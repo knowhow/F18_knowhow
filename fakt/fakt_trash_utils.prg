@@ -72,7 +72,7 @@ do case
 	case Ch==K_CTRL_T 
 		// brisanje dokumenta iz pripr9
 		bris_smece(idfirma, idtipdok, brdok)
-      		return DE_REFRESH
+      	return DE_REFRESH
 	case Ch==K_CTRL_F9 
 		// brisanje kompletnog pripr9
 		bris_svo_smece()
@@ -91,11 +91,12 @@ static function PovPr9()
 local nArr
 nArr:=SELECT()
 
-povrat_smece(idfirma, idtipdok, brdok)
+povrat_smece( idfirma, idtipdok, brdok )
 
 select (nArr)
 
 return DE_CONT
+
 
 
 static function P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
@@ -280,9 +281,18 @@ enddo
 select fakt_pripr
 go top
 
+do while !EOF()
 
-select fakt_pripr9
-append from pripr
+	_rec := dbf_get_rec()
+
+	select fakt_pripr9
+	append blank
+	dbf_update_rec( _rec )
+
+	select fakt_pripr
+	skip
+
+enddo
 
 select fakt_pripr
 zap

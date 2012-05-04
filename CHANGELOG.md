@@ -1,3 +1,9 @@
+1.0.27 2012-05-04, vsasa
+
+  - ld, specifkacija, ako nema obračuna poruka [#27868](http://redmine.bring.out.ba/issues/27868)
+  - barkod parametri u modulu FAKT [#27796](http://redmine.bring.out.ba/issues/27796)
+  - ostale sitne korekcije
+ 
 1.0.26 2012-05-03, vsasa
 
   - fakt, tekuća vrijednost za rok plaćanja stavljena u funkciju [#27858](http://redmine.bring.out.ba/issues/27858)

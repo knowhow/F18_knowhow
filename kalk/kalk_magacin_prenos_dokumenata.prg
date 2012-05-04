@@ -43,37 +43,31 @@ return
  */
  
 function mag_fa_ka_prenos_10_14()
-*{
-local nRabat:=0
-local cIdFirma:=gFirma
-local cIdTipDok:="10"
-local cBrDok:=SPACE(8)
-local cBrKalk:=SPACE(8)
-local cFaktFirma:=gFirma
-local dDatPl:=ctod("")
-local fDoks2:=.f.
-
-PRIVATE lVrsteP := ( IzFmkIni("FAKT","VrstePlacanja","N",SIFPATH)=="D" )
+local nRabat := 0
+local cIdFirma := gFirma
+local cIdTipDok := "10"
+local cBrDok := SPACE(8)
+local cBrKalk := SPACE(8)
+local cFaktFirma := gFirma
+local dDatPl := CTOD("")
+local fDoks2 := .t.
+private lVrsteP := fetch_metric( "fakt_unos_vrste_placanja", nil, "N" ) == "D"
 
 O_KONCIJ
 O_KALK_PRIPR
 O_KALK
 O_KALK_DOKS
-if file(KUMPATH+"DOKS2.DBF")
-    fDoks2:=.t.
-    O_KALK_DOKS2
-endif
+O_KALK_DOKS2
 O_ROBA
 O_KONTO
 O_PARTN
 O_TARIFA
-
 O_FAKT
 
-dDatKalk:=date()
-cIdKonto:=padr("1200",7)
-cIdKonto2:=padr("1310",7)
-cIdZaduz2:=space(6)
+dDatKalk := DATE()
+cIdKonto := PADR("1200",7)
+cIdKonto2 := PADR("1310",7)
+cIdZaduz2 := SPACE(6)
 
 if glBrojacPoKontima
     Box("#FAKT->KALK",3,70)
@@ -82,10 +76,7 @@ if glBrojacPoKontima
     BoxC()
     cSufiks:=SufBrKalk(cIdKonto2)
     cBrKalk:=SljBrKalk("14", cIdFirma, cSufiks)
-    //cBrKalk:=GetNextKalkDoc(cIdFirma, "14")
 else
-    //******* izbaceno koristenje stare funkcije !!!
-    //cBrKalk:=SljBrKalk("14",cIdFirma)
     cBrKalk:=GetNextKalkDoc(cIdFirma, "14")
 endif
 
@@ -93,116 +84,131 @@ Box(,15,60)
 
 do while .t.
 
-  nRBr:=0
-  @ m_x+1,m_y+2   SAY "Broj kalkulacije 14 -" GET cBrKalk pict "@!"
-  @ m_x+1,col()+2 SAY "Datum:" GET dDatKalk
-  //@ m_x+3,m_y+2   SAY "Konto zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
-  @ m_x+4,m_y+2   SAY "Konto razduzuje:" GET cIdKonto2 pict "@!" when !glBrojacPoKontima valid P_Konto(@cIdKonto2)
-  if gNW<>"X"
-   @ m_x+4,col()+2 SAY "Razduzuje:" GET cIdZaduz2  pict "@!"      valid empty(cidzaduz2) .or. P_Firma(@cIdZaduz2)
-  endif
+	nRBr:=0
+  	@ m_x+1,m_y+2   SAY "Broj kalkulacije 14 -" GET cBrKalk pict "@!"
+  	@ m_x+1,col()+2 SAY "Datum:" GET dDatKalk
+  	@ m_x+4,m_y+2   SAY "Konto razduzuje:" GET cIdKonto2 pict "@!" when !glBrojacPoKontima valid P_Konto(@cIdKonto2)
 
-  cFaktFirma:=IF(cIdKonto2==gKomKonto,gKomFakt,cIdFirma)
-  @ m_x+6,m_y+2 SAY "Broj fakture: " GET cFaktFirma
-  @ m_x+6,col()+2 SAY "- "+cidtipdok
-  @ m_x+6,col()+2 SAY "-" GET cBrDok
-  read
-  if lastkey()==K_ESC
-    exit
-  endif
+  	if gNW<>"X"
+  		@ m_x+4,col()+2 SAY "Razduzuje:" GET cIdZaduz2  pict "@!"      valid empty(cidzaduz2) .or. P_Firma(@cIdZaduz2)
+  	endif
 
-  select fakt
-  seek cFaktFirma+cIdTipDok+cBrDok
-  if !found()
-     Beep(4)
-     @ m_x+14,m_y+2 SAY "Ne postoji ovaj dokument !!"
-     inkey(4)
-     @ m_x+14,m_y+2 SAY space(30)
-     loop
-  else
-     IF lVrsteP
-       cIdVrsteP := idvrstep
-     ENDIF
-     aMemo:=parsmemo(txt)
-     if len(aMemo)>=5
-       @ m_x+10,m_y+2 SAY padr(trim(amemo[3]),30)
-       @ m_x+11,m_y+2 SAY padr(trim(amemo[4]),30)
-       @ m_x+12,m_y+2 SAY padr(trim(amemo[5]),30)
-     else
-        cTxt:=""
-     endif
-     if len(aMemo)>=9
-       dDatPl:=ctod(aMemo[9])
-     endif
+  	cFaktFirma := IF( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
+  	@ m_x+6,m_y+2 SAY "Broj fakture: " GET cFaktFirma
+  	@ m_x+6,col()+2 SAY "- "+cidtipdok
+  	@ m_x+6,col()+2 SAY "-" GET cBrDok
+  	
+	read
+  	
+	if lastkey()==K_ESC
+    	exit
+  	endif
 
-     cIdPartner:=space(6)
-     if !empty(idpartner)
-       cIdPartner:=idpartner
-     endif
-     private cBeze:=" "
-     @ m_x+14,m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid P_Firma(@cIdPartner)
-     @ m_x+15,m_y+2 SAY "<ENTER> - prenos" GET cBeze
-     read; ESC_BCR
+  	select fakt
+  	seek cFaktFirma+cIdTipDok+cBrDok
 
-     select kalk_pripr
-     locate for BrFaktP=cBrDok // faktura je vec prenesena
-     if found()
-      Beep(4)
-      @ m_x+8,m_y+2 SAY "Dokument je vec prenesen !!"
-      inkey(4)
-      @ m_x+8,m_y+2 SAY space(30)
-      loop
-     endif
-     go bottom
-     if brdok==cBrKalk
-     nRbr:=val(Rbr)
-     endif
-     select fakt
-     IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
-       MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
-       LOOP
-     ENDIF
+  	if !found()
+    	Beep(4)
+     	@ m_x+14,m_y+2 SAY "Ne postoji ovaj dokument !!"
+     	inkey(4)
+     	@ m_x+14,m_y+2 SAY space(30)
+     	loop
+  	else
 
-     if fdoks2
-        select kalk_doks2; hseek cidfirma+"14"+cbrkalk
-        if !found()
-           append blank
-           replace idvd with "14",;   // izlazna faktura
+    	IF lVrsteP
+       		cIdVrsteP := idvrstep
+     	ENDIF
+
+     	aMemo := ParsMemo( txt )
+
+     	if LEN( aMemo ) >= 5
+       		@ m_x + 10, m_y + 2 SAY PADR( TRIM( aMemo[3] ), 30 )
+       		@ m_x + 11, m_y + 2 SAY PADR( TRIM( aMemo[4] ), 30 )
+       		@ m_x + 12, m_y + 2 SAY PADR( TRIM( aMemo[5] ), 30 )
+     	else
+        	cTxt:=""
+    	endif
+
+     	if len(aMemo)>=9
+       		dDatPl:=ctod(aMemo[9])
+     	endif
+
+     	cIdPartner:=space(6)
+     	if !empty(idpartner)
+       		cIdPartner:=idpartner
+     	endif
+
+     	private cBeze:=" "
+
+     	@ m_x+14,m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid P_Firma(@cIdPartner)
+     	@ m_x+15,m_y+2 SAY "<ENTER> - prenos" GET cBeze
+
+    	read
+		ESC_BCR
+
+     	select kalk_pripr
+     	locate for BrFaktP = cBrDok 
+
+		// faktura je vec prenesena     
+		if found()
+      		Beep(4)
+      		@ m_x+8,m_y+2 SAY "Dokument je vec prenesen !!"
+     	 	inkey(4)
+      		@ m_x+8,m_y+2 SAY space(30)
+      		loop
+     	endif
+     	go bottom
+     	if brdok==cBrKalk
+    		nRbr:=val(Rbr)
+     	endif
+     	select fakt
+     	IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+cIdTipDok+cBrDok+"'==IdFirma+IdTipDok+BrDok","IDROBA",F_ROBA)
+      		MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
+       		LOOP
+     	ENDIF
+
+     	if fdoks2
+        	select kalk_doks2
+			hseek cidfirma + "14" + cbrkalk
+        	if !found()
+           		append blank
+           		replace idvd with "14",;   // izlazna faktura
                    brdok with cBrKalk,;
                    idfirma with cidfirma
-        endif
-        replace DatVal with dDatPl
-        IF lVrsteP
-          replace k2 with cIdVrsteP
-        ENDIF
-        select fakt
+        	endif
+        	replace DatVal with dDatPl
+        	IF lVrsteP
+          		replace k2 with cIdVrsteP
+        	ENDIF
+        	select fakt
 
-     endif
+     	endif
 
-     do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-       select ROBA
-       hseek fakt->idroba
+     	do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
 
-       select tarifa
-       hseek roba->idtarifa
+       		select ROBA
+       		hseek fakt->idroba
 
-       if (RobaZastCijena(roba->idTarifa) .and. !IsPdvObveznik(cIdPartner))
-            // nije pdv obveznik
-        // roba ima zasticenu cijenu
-            nRabat := 0
-       else
-        nRabat:= fakt->rabat
-       endif
+       		select tarifa
+       		hseek roba->idtarifa
 
-       select fakt
-       if alltrim(podbr)=="."  .or. roba->tip $ "UY"
-          skip
-      loop
-       endif
+       		if (RobaZastCijena(roba->idTarifa) .and. !IsPdvObveznik(cIdPartner))
+            	// nije pdv obveznik
+        		// roba ima zasticenu cijenu
+            	nRabat := 0
+       		else
+        		nRabat:= fakt->rabat
+       		endif
 
-       select kalk_pripr
-       APPEND BLANK
-       replace idfirma with cIdFirma,;
+       		select fakt
+       		if alltrim(podbr)=="."  .or. roba->tip $ "UY"
+          		skip
+      			loop
+       		endif
+
+       		select kalk_pripr
+       		APPEND BLANK
+       		replace idfirma with cIdFirma,;
                rbr     with str(++nRbr,3),;
                idvd with "14",;   // izlazna faktura
                brdok with cBrKalk,;
@@ -221,20 +227,27 @@ do while .t.
                vpc with fakt->cijena,;
                rabatv with nRabat,;
                mpc with fakt->porez
-       select fakt
-       skip
-     enddo
-     @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
-     if gBrojac=="D"
-      cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-     endif
-     inkey(4)
-     @ m_x+8,m_y+2 SAY space(30)
-  endif
+       		select fakt
+       		skip
+     	enddo
+
+     	@ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+
+     	if gBrojac == "D"
+      		cBrKalk := UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
+     	endif
+
+     	inkey(4)
+
+     	@ m_x + 8, m_y + 2 SAY space(30)
+
+  	endif
 
 enddo
+
 BoxC()
-closeret
+
+close all
 return
 
 

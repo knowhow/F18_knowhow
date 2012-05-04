@@ -844,6 +844,60 @@ my_use_semaphore_on()
 return _ok
 
 
+
+// -----------------------------------------------------------
+// napuni matricu sa podacima pripreme
+// -----------------------------------------------------------
+static function _pripr_2_arr()
+local _arr := {}
+local _scan
+
+select kalk_pripr
+go top
+
+do while !EOF()
+
+	_scan := ASCAN( _arr, { | var | var[1] == field->idfirma .and. ;
+									var[2] == field->idvd .and. ;
+									var[3] == field->brdok  } )
+
+	if _scan == 0
+		AADD( _arr, { field->idfirma, field->idvd, field->brdok, 0 } )
+	endif
+
+	skip
+
+enddo
+
+return _arr
+
+
+// ----------------------------------------------------------
+// provjeri da li već postoje dokumenti u smeću 
+// ----------------------------------------------------------
+static function _provjeri_smece( arr )
+local _i
+local _ctrl 
+
+for _i := 1 to LEN( arr )
+
+	_ctrl := arr[ _i, 1 ] + arr[ _i, 2 ] + arr[ _i, 3 ]
+
+    select kalk_pripr9
+    seek _ctrl
+    
+    if FOUND()
+		// setuj u matrici da ovaj dokument postoji
+		arr[ _i, 4 ] := 1
+    endif
+
+next
+
+return
+
+
+
+
 // ------------------------------------------------------------
 // azuriranje kalk_pripr9 tabele
 // koristi se za smece u vecini slucajeva
@@ -854,45 +908,66 @@ local cPametno := "D"
 local cIdFirma
 local cIdvd
 local cBrDok
-
-if Pitanje("p1","Zelite li pripremu prebaciti u smece (D/N) ?","N")=="N"
-    return
-endif
+local _a_pripr
+local _i, _rec, _scan
+local _id_firma, _id_vd, _br_dok
 
 O_KALK_PRIPR9
 O_KALK_PRIPR
 
-do while !eof()
+select kalk_pripr
+go top
 
-    cIdFirma:=idfirma
-    cIdvd:=idvd
-    cBrdok:=brdok
+if kalk_pripr->(RECCOUNT()) == 0
+	return
+endif
 
-    // ???????
-    do while !eof() .and. cIdfirma == field->idfirma ;
-            .and. cIdvd == field->idvd ;
-            .and. cBrdok == brdok
-        skip
-    enddo
+if Pitanje("p1", "Zelite li pripremu prebaciti u smece (D/N) ?", "N" ) == "N"
+    return
+endif
 
-    select kalk_pripr9
-    seek cIdFirma+cIdVD+cBrDok
-    
-    if found()
-        Beep(1)
-        Msg("U smecu vec postoji "+cidfirma+"-"+cidvd+"-"+cbrdok)
-        close all
-        return
-    endif
+// prebaci iz pripreme dokumente u matricu
+_a_pripr := _pripr_2_arr()
 
-    select kalk_pripr
-enddo 
+// usaglasi dokumente sa smecem
+// da li vec neki dokumenti postoje
+_provjeri_smece( @_a_pripr )
+
+// sada imamo stanje sta treba prenjeti a sta ne...
 
 select kalk_pripr 
 go top
 
-select kalk_pripr9
-append from kalk_pripr
+do while !EOF()
+
+	_scan := ASCAN( _a_pripr, { |var| var[1] == field->idfirma .and. ;
+									var[2] == field->idvd .and. ;
+									var[3] == field->brdok } ) 
+
+	if _scan > 0 .and. _a_pripr[ _scan, 4 ] == 0
+		
+		// treba ga prebaciti !
+		_id_firma := field->idfirma
+		_id_vd := field->idvd
+		_br_dok := field->brdok
+
+		do while !EOF() .and. field->idfirma + field->idvd + field->brdok == _id_firma + _id_vd + _br_dok
+
+			_rec := dbf_get_rec()		
+
+			select kalk_pripr9
+			append blank
+
+			dbf_update_rec( _rec )
+			
+			select kalk_pripr
+			skip
+
+		enddo
+
+	endif
+
+enddo
 
 select kalk_pripr
 go top
@@ -1208,11 +1283,14 @@ close all
 return .t.
 
 
+
+
 // ------------------------------------------------------------------
 // iz kalk_pripr 9 u kalk_pripr
 // ------------------------------------------------------------------
-function Povrat9(cIdFirma, cIdVd, cBrDok)
+function Povrat9( cIdFirma, cIdVd, cBrDok )
 local nRec
+local _rec
 
 lSilent := .t.
 
@@ -1220,7 +1298,8 @@ O_KALK_PRIPR9
 O_KALK_PRIPR
 
 SELECT kalk_pripr9
-set order to tag "1"  // idFirma+IdVD+BrDok+RBr
+set order to tag "1"  
+// idFirma+IdVD+BrDok+RBr
 
 if ((cIdFirma == nil) .and. (cIdVd == nil) .and. (cBrDok == nil))
     lSilent := .f.
@@ -1233,8 +1312,8 @@ if !lSilent
 endif
 
 if !lSilent
-    Box("",1,35)
-        @ m_x+1,m_y+2 SAY "Dokument:"
+	Box("",1,35)
+    	@ m_x+1,m_y+2 SAY "Dokument:"
         if gNW $ "DX"
             @ m_x+1,col()+1 SAY cIdFirma
         else
@@ -1246,50 +1325,56 @@ if !lSilent
         ESC_BCR
     BoxC()
 
-  if cBrDok="."
-  private qqBrDok:=qqDatDok:=qqIdvD:=space(80)
-  qqIdVD:=padr(cidvd+";",80)
-  Box(,3,60)
-   do while .t.
-    @ m_x+1,m_y+2 SAY "Vrste dokum.   "  GEt qqIdVD pict "@S40"
-    @ m_x+2,m_y+2 SAY "Broj dokumenata"  GEt qqBrDok pict "@S40"
-    @ m_x+3,m_y+2 SAY "Datumi         " GET  qqDatDok pict "@S40"
-    read
-    private aUsl1:=Parsiraj(qqBrDok,"BrDok","C")
-    private aUsl2:=Parsiraj(qqDatDok,"DatDok","D")
-    private aUsl3:=Parsiraj(qqIdVD,"IdVD","C")
-    if aUsl1<>NIL .and. aUsl2<>NIL .and. ausl3<>NIL
-      exit
-    endif
-   enddo
-  Boxc()
+  	if cBrDok="."
+  		private qqBrDok:=qqDatDok:=qqIdvD:=space(80)
+  		qqIdVD:=padr(cidvd+";",80)
+ 	 	Box(,3,60)
+   			do while .t.
+    			@ m_x+1,m_y+2 SAY "Vrste dokum.   "  GEt qqIdVD pict "@S40"
+    			@ m_x+2,m_y+2 SAY "Broj dokumenata"  GEt qqBrDok pict "@S40"
+    			@ m_x+3,m_y+2 SAY "Datumi         " GET  qqDatDok pict "@S40"
+    			read
+    			private aUsl1:=Parsiraj(qqBrDok,"BrDok","C")
+    			private aUsl2:=Parsiraj(qqDatDok,"DatDok","D")
+    			private aUsl3:=Parsiraj(qqIdVD,"IdVD","C")
+    			if aUsl1<>NIL .and. aUsl2<>NIL .and. ausl3<>NIL
+      				exit
+    			endif
+   			enddo
+  		Boxc()
 
- if Pitanje(,"Povuci u pripremu dokumente sa ovim kriterijom ?","N")=="D"
-    select kalk_pripr9
-    if !flock(); Msg("PRIPR9 - SMECE je zauzeta ",3); closeret; endif
-    PRIVATE cFilt1:=""
-    cFilt1 := "IDFIRMA=="+cm2str(cIdFirma)+".and."+aUsl1+".and."+aUsl2+".and."+aUsl3
-    cFilt1 := STRTRAN(cFilt1,".t..and.","")
-    IF !(cFilt1==".t.")
-      SET FILTER TO &cFilt1
-    ENDIF
-    go top
-    MsgO("Prolaz kroz SMECE...")
-    do while !eof()
-      select kalk_pripr9; Scatter()
-      select kalk_pripr
-      append ncnl;_ERROR:="";  Gather2()
-      select kalk_pripr9
-      skip; nRec:=recno(); skip -1
-      dbdelete2()
-      go nRec
-    enddo
-    MsgC()
-  endif
-  closeret
-endif
+ 		if Pitanje(,"Povuci u pripremu dokumente sa ovim kriterijom ?","N")=="D"
+    		select kalk_pripr9
+    		PRIVATE cFilt1:=""
+    		cFilt1 := "IDFIRMA=="+cm2str(cIdFirma)+".and."+aUsl1+".and."+aUsl2+".and."+aUsl3
+    		cFilt1 := STRTRAN(cFilt1,".t..and.","")
+    		IF !(cFilt1==".t.")
+     			SET FILTER TO &cFilt1
+    		ENDIF
 
-endif // lSilent
+    		go top
+    		MsgO("Prolaz kroz SMECE...")
+
+    		do while !eof()
+      			select kalk_pripr9
+				Scatter()
+      			select kalk_pripr
+      			append ncnl
+				_ERROR:=""
+			  	Gather2()
+      			select kalk_pripr9
+      			skip
+				nRec := recno()
+				skip -1
+      			dbDelete2()
+      			go nRec
+    		enddo
+    		MsgC()
+  		endif
+  		close all
+		return
+	endif
+endif 
 
 if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
     if !lSilent
@@ -1305,33 +1390,40 @@ hseek cIdFirma+cIdVd+cBrDok
 EOF CRET
 
 MsgO("PRIPREMA")
+
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-   select kalk_pripr9; Scatter()
-   select kalk_pripr
-   append ncnl;_ERROR:="";  Gather2()
-   select kalk_pripr9
-   skip
+   	select kalk_pripr9
+	Scatter()
+   	select kalk_pripr
+   	append ncnl
+	_ERROR:=""
+	Gather2()
+   	select kalk_pripr9
+  	skip
 enddo
 
 select kalk_pripr9
 seek cidfirma+cidvd+cBrDok
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-   skip 1; nRec:=recno(); skip -1
-   dbdelete2()
-   go nRec
+	skip 1
+	nRec:=recno()
+	skip -1
+   	dbdelete2()
+   	go nRec
 enddo
 use
 MsgC()
 
 if !lSilent
-    closeret
+    close all
+	return
 endif
 
 O_KALK_PRIPR9
 select kalk_pripr9
 
 return
-*}
+
 
 
 // ------------------------------------------------------------------

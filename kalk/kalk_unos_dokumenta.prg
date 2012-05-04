@@ -701,8 +701,8 @@ private opc[9]
 
 opc[1]:="1. prenos dokumenta fakt->kalk                                  "
 opc[2]:="2. povrat dokumenta u pripremu"
-opc[3]:="3. kalk_priprema -> smece"
-opc[4]:="4. smece    -> kalk_priprema"
+opc[3]:="3. priprema -> smece"
+opc[4]:="4. smece    -> priprema"
 opc[5]:="5. najstariji dokument iz smeca u pripremu"
 opc[6]:="6. generacija dokumenta inventure magacin "
 opc[7]:="7. generacija dokumenta inventure prodavnica"
@@ -833,7 +833,6 @@ enddo
 m_x:=am_x; m_y:=am_y
 o_kalk_edit()
 return DE_REFRESH
-*}
 
 
 
@@ -843,7 +842,6 @@ return DE_REFRESH
  */
 
 function MeniF11()
-*{
 private opc:={}
 private opcexe:={}
 AADD(opc, "1. preuzimanje kalkulacije iz druge firme        ")
@@ -868,14 +866,14 @@ Menu_SC("osop2")
 m_x:=am_x; m_y:=am_y
 o_kalk_edit()
 return DE_REFRESH
-*}
+
 
 
 /*! \fn ProtStErase()
  *  \brief Brisi sve protustavke
  */
 function ProtStErase()
-*{
+
 if Pitanje(,"Pobrisati protustavke dokumenta (D/N)?", "N") == "N"
     return
 endif
@@ -892,14 +890,14 @@ enddo
 
 go top
 return
-*}
+
 
 
 /*! \fn SetNcTo0()
  *  \brief Setuj sve NC na 0
  */
 function SetNcTo0()
-*{
+
 if Pitanje(, "Setovati NC na 0 (D/N)?", "N") == "N"
     return
 endif
@@ -916,7 +914,7 @@ enddo
 
 go top
 return
-*}
+
 
 
 
@@ -985,10 +983,9 @@ return
  */
 
 function Get1()
-*{
 parameters fnovi
 
-private pIzgSt:=.f.   // izgenerisane stavke postoje
+private pIzgSt:=.f.   
 private Getlist:={}
 
 if Get1Header() == 0

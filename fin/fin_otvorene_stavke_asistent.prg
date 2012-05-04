@@ -185,8 +185,6 @@ Box(, 20, 77)
 
 	@ m_x, m_y + 25 SAY "KONSULTOVANJE OTVORENIH STAVKI"
 
-	altd()
-
 	// kreiraj tabelu ostav
 	_cre_ostav()
 

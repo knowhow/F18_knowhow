@@ -864,7 +864,6 @@ endif
 
 _podbr := SPACE(2)
 
-altd()
 
 // prva stavka
 if (fNovi .and. (nRbr == 1 )) 

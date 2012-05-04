@@ -28,12 +28,22 @@ static __my_error_handler := NIL
 static __global_error_handler := NIL
 static __test_mode := .f.
 
-static __max_rows := 40
-static __max_cols := 140
+static __max_rows := 35
+static __max_cols := 120
 
+#ifdef  __PLATFORM__WINDOWS
 static __font_name := "Lucida Console"
-static __font_size := 20
+#endif
+
+#ifdef  __PLATFORM__LINUX
+  static __font_name := "terminus"
+#else
+  static __font_name := "fixed"
+#endif
+
+static __font_size  := 20
 static __font_width := 10
+
 
 // ---------------------------------
 // 
@@ -103,19 +113,7 @@ __my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }
 
 __global_error_handler := ERRORBLOCK(__my_error_handler)
 
-_get_screen_resolution_from_config()
-
-hb_gtInfo( HB_GTI_FONTNAME , font_name())
-hb_gtInfo( HB_GTI_FONTWIDTH, font_width())
-hb_gtInfo( HB_GTI_FONTSIZE , font_size())
-
-
-if setmode(maxrows(), maxcols())
-   log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
-else
-   log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
-   QUIT
-endif
+set_screen_dimensions()
 
 init_gui()
 
@@ -132,6 +130,65 @@ _write_server_params_to_config()
 post_login()
 
 return .t.
+
+
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+static function set_screen_dimensions()
+
+local _pix_width  := hb_gtInfo( HB_GTI_DESKTOPWIDTH )
+local _pix_height := hb_gtInfo( HB_GTI_DESKTOPHEIGHT)
+
+if _pix_width <= 800 .and. _pix_height <= 600
+
+/*
+   font_size(18)
+   font_width(9)
+
+   maxrows(31)
+   maxcols(80)
+*/
+
+   font_size(16)
+   font_width(8)
+
+   maxrows(35)
+   maxcols(100)
+
+elseif  _pix_width <= 1024 .and. _pix_height <= 768
+
+   font_size(20)
+   font_width(10)
+
+   maxrows(35)
+   maxcols(100)
+
+
+elseif _pix_width >= 1440 .and. _pix_height >= 900
+
+   font_size(24)
+   font_width(12)
+   maxrows(35)
+   maxcols(120)
+
+endif
+
+
+_get_screen_resolution_from_config()
+
+hb_gtInfo( HB_GTI_FONTNAME , font_name())
+hb_gtInfo( HB_GTI_FONTWIDTH, font_width())
+hb_gtInfo( HB_GTI_FONTSIZE , font_size())
+
+if setmode(maxrows(), maxcols())
+   log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+else
+   log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+   QUIT
+endif
+
+return
+
 
 
 // -------------------------------------
@@ -188,6 +245,8 @@ local _ver
 // ~/.F18/empty38/
 set_f18_home( my_server_params()["database"] )
 log_write("home baze: " + my_home())
+
+hb_gtInfo( HB_GTI_WINTITLE, "[ "+ my_server_params()["user"] + " ][ "+ my_server_params()["database"] +" ]" )
 
 _ver := read_dbf_version_from_config()
 
@@ -281,23 +340,54 @@ ENDIF
 
 return .t.
 
-
+// ---------------------------------------
 // vraca maksimalni broj redova
-function maxrows()
+// ---------------------------------------
+function maxrows(x)
+
+if VALTYPE(x) == "N"
+  __max_rows := x
+endif
+
 return __max_rows
 
-
+// -----------------------------------
 // vraca maksimalni broj kolona
-function maxcols()
+// ----------------------------------
+function maxcols(x)
+
+if VALTYPE(x) == "N"
+  __max_cols := x
+endif
+
 return __max_cols
 
-function font_name()
+// -------------------------
+// -------------------------
+function font_name(x)
+
+if VALTYPE(x) == "C"
+  __font_name := x
+endif
 return __font_name
 
-function font_width()
+// -------------------------
+// -------------------------
+function font_width(x)
+
+if VALTYPE(x) == "N"
+  __font_width := x
+endif
 return __font_width
 
-function font_size()
+
+// -------------------------
+// -------------------------
+function font_size(x)
+
+if VALTYPE(x) == "N"
+  __font_size := x
+endif
 return __font_size
 
 // ------------------------------------------
@@ -629,7 +719,7 @@ log_write( "direct login: " + ;
         STR(my_server_params()["port"])  + " / " + ; 
         my_server_params()["schema"])
 
-MsgBeep(hb_Utf8ToStr("Neuspješna prijava na server."))
+MsgBeep("Neuspješna prijava na server.")
 
 log_close() 
 

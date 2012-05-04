@@ -34,14 +34,9 @@ _temp_qry := "SELECT fetchmetrictext(" + _sql_quote(sect)  + ")"
 
 _table := _sql_query( _server, _temp_qry )
 
-//if _table == NIL
-//	MsgBeep( "problem sa: " + _temp_qry )
-//    return .f.
-//endif
 _ret := _table:Fieldget(1)
 
 if _ret == "!!notfound!!"
-   // NOT FOUND metric, raise exception
    return default_value
 else 
    return str_to_val(_ret, default_value)
@@ -82,7 +77,7 @@ local _val_type := VALTYPE(default_value)
 
 do case
 	case _val_type == "C"
-		return str_val
+		return HB_UTF8TOSTR( str_val )
 	case _val_type == "N"
 		return VAL(str_val)
 	case _val_type == "D"

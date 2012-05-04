@@ -472,29 +472,28 @@ gRokPl := fetch_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl
 gResetRoba := fetch_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
 gIMenu := fetch_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
 
-
 // potpisi
-g10Str := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_10_naziv", nil, g10Str ) )
-g10Str2T := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_10_potpis", nil, g10Str2T ) )
-g10ftxt := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_10_txt_lista", nil, g10ftxt ) )
-g11Str := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_11_naziv", nil, g11Str ) )
-g11Str2T := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_11_potpis", nil, g11Str2T ) )
-g11ftxt := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_11_txt_lista", nil, g11ftxt ) )
-g12Str := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_12_naziv", nil, g12Str ) )
-g12Str2T := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_12_potpis", nil, g12Str2T ) )
-g12ftxt := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_12_txt_lista", nil, g12ftxt ) )
-g13Str := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_13_naziv", nil, g13Str ) )
-g13Str2T := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_13_potpis", nil, g13Str2T ) )
-g13ftxt := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_13_txt_lista", nil, g13ftxt ) )
-g16Str := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_16_naziv", nil, g16Str ) )
-g16Str2T := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_16_potpis", nil, g16Str2T ) )
-g16ftxt := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_16_txt_lista", nil, g16ftxt ) )
-g20Str := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_20_naziv", nil, g20Str ) )
-g20Str2T := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_20_potpis", nil, g20Str2T ) )
-g20ftxt := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_20_txt_lista", nil, g20ftxt ) )
-g22Str := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_22_naziv", nil, g22Str ) )
-g22Str2T := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_22_potpis", nil, g22Str2T ) )
-g22ftxt := HB_UTF8TOSTR( fetch_metric( "fakt_dokument_dok_22_txt_lista", nil, g22ftxt ) )
+g10Str := fetch_metric( "fakt_dokument_dok_10_naziv", nil, g10Str )
+g10Str2T := fetch_metric( "fakt_dokument_dok_10_potpis", nil, g10Str2T ) 
+g10ftxt := fetch_metric( "fakt_dokument_dok_10_txt_lista", nil, g10ftxt ) 
+g11Str := fetch_metric( "fakt_dokument_dok_11_naziv", nil, g11Str ) 
+g11Str2T := fetch_metric( "fakt_dokument_dok_11_potpis", nil, g11Str2T ) 
+g11ftxt := fetch_metric( "fakt_dokument_dok_11_txt_lista", nil, g11ftxt ) 
+g12Str := fetch_metric( "fakt_dokument_dok_12_naziv", nil, g12Str ) 
+g12Str2T := fetch_metric( "fakt_dokument_dok_12_potpis", nil, g12Str2T ) 
+g12ftxt := fetch_metric( "fakt_dokument_dok_12_txt_lista", nil, g12ftxt ) 
+g13Str := fetch_metric( "fakt_dokument_dok_13_naziv", nil, g13Str ) 
+g13Str2T := fetch_metric( "fakt_dokument_dok_13_potpis", nil, g13Str2T ) 
+g13ftxt := fetch_metric( "fakt_dokument_dok_13_txt_lista", nil, g13ftxt ) 
+g16Str := fetch_metric( "fakt_dokument_dok_16_naziv", nil, g16Str ) 
+g16Str2T := fetch_metric( "fakt_dokument_dok_16_potpis", nil, g16Str2T ) 
+g16ftxt := fetch_metric( "fakt_dokument_dok_16_txt_lista", nil, g16ftxt ) 
+g20Str := fetch_metric( "fakt_dokument_dok_20_naziv", nil, g20Str ) 
+g20Str2T := fetch_metric( "fakt_dokument_dok_20_potpis", nil, g20Str2T ) 
+g20ftxt := fetch_metric( "fakt_dokument_dok_20_txt_lista", nil, g20ftxt )
+g22Str := fetch_metric( "fakt_dokument_dok_22_naziv", nil, g22Str ) 
+g22Str2T := fetch_metric( "fakt_dokument_dok_22_potpis", nil, g22Str2T ) 
+g22ftxt := fetch_metric( "fakt_dokument_dok_22_txt_lista", nil, g22ftxt ) 
 
 O_PARAMS
 
@@ -623,6 +622,7 @@ endif
 
 select params
 use
+
 cSekcija:="SifRoba"
 cVar:="PitanjeOpis"
 IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'D') , SIFPATH)
@@ -658,7 +658,7 @@ cPom := IzFMKINI("POREZI","PPUgostKaoPPU","-",KUMPATH)
 IF cPom <> "-"
   gUVarPP:=cPom
 ENDIF
-gSQL:=IzFmkIni("Svi","SQLLog","N",KUMPATH)
+gSQL:="N"
 
 if IzFmkIni("FAKT","ReadOnly","N", PRIVPATH)=="D"
    gReadOnly:=.t.
@@ -671,10 +671,7 @@ if IzFmkIni("FMK","TerminalServer","N")=="D"
 endif
 
 public lPoNarudzbi := .f.
-//lPoNarudzbi:= ( IzFMKINI("FAKT","10PoNarudzbi","N",KUMPATH)=="D" )
-
 public lSpecifZips := .f. 
-//lSpecifZips:= ( IzFmkIni("FAKT_Specif","ZIPS","N")=="D" )
 
 public gModul:="FAKT"
 gGlBaza:="FAKT.DBF"

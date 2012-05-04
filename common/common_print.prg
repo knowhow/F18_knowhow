@@ -20,6 +20,8 @@ endif
 
 set_print_f_name(@f_name)
 
+read_printer_params()
+
 PtxtSekvence()
 
 if (document_name == nil)
@@ -109,6 +111,15 @@ static function set_print_f_name(f_name)
     endif
 return f_name
 
+
+// -----------------------------------------------------------
+// procitaj parametre za stampac
+// -----------------------------------------------------------
+static function read_printer_params()
+// read params
+gPStranica := fetch_metric( "print_dodatni_redovi_po_stranici", nil, 0 )
+
+return
 
 
 // ----------------------------------------

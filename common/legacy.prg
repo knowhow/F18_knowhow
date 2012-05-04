@@ -761,6 +761,9 @@ WPar("PP",gPPort)
 WPar("r-",gPStranica)
 Wpar("pt",gPPTK)
 
+// upisi u glavne parametre sql/db
+set_metric( "print_dodatni_redovi_po_stranici", nil, gPStranica )
+
 select gparams
 use
 

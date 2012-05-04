@@ -79,6 +79,9 @@ AADD(opcexe,{|| fiscal_params_set() })
 AADD(opc,"L. lista fiskalnih uredjaja  ")
 AADD(opcexe,{|| p_fdevice() })
 
+AADD(opc,"P. parametri labeliranja, barkod stampe  ")
+AADD(opcexe,{|| label_params() })
+
 
 Menu_SC("parf")
 

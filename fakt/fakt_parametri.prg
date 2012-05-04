@@ -275,14 +275,14 @@ private cHistory:=" "
 private aHistory:={}
 private GetList:={}
 
-gFNaziv := PADR( hb_utf8tostr( gFNaziv ), 250 )
-gFPNaziv := PADR( hb_utf8tostr( gFPNaziv ), 250 )
+gFNaziv := PADR( gFNaziv , 250 )
+gFPNaziv := PADR( gFPNaziv, 250 )
 gFIdBroj := PADR(gFIdBroj, 13)
-gFText1 := PADR( hb_utf8tostr( gFText1 ), 72)
-gFText2 := PADR( hb_utf8tostr( gFText2 ), 72)
-gFText3 := PADR( hb_utf8tostr( gFText3 ), 72)
+gFText1 := PADR( gFText1, 72)
+gFText2 := PADR( gFText2, 72)
+gFText3 := PADR( gFText3, 72)
 gFTelefon := PADR(gFTelefon, 72)
-gFEmailWeb := PADR( hb_utf8tostr( gFEmailWeb ), 72)
+gFEmailWeb := PADR( gFEmailWeb, 72)
 
 Box( , 21, 77, .f., "Izgleda dokumenata - zaglavlje")
 

@@ -51,7 +51,6 @@ SETKEY(K_SH_F1,{|| Calc()})
 @ 1,2 SAY padc( gNFirma, 50, "*")
 @ 4,5 SAY ""
 
-epdv_set_params()
 
 ::mMenuStandard()
 
@@ -148,6 +147,8 @@ public gL_kto_kup := PADR("211;", 100)
 public gKt_updv := PADR("260;", 100)
 public gKt_ipdv := PADR("560;", 100)
 
+// iscitaj parametre
+epdv_set_params()
 
 O_PARAMS
 Rpar("p1", @gPicVrijednost)

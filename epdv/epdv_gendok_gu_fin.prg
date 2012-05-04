@@ -704,8 +704,7 @@ GO (nRecNo)
 // pa onda skoci dva unazad i dva unaprijed ...
 SKIP i
 
-
-cKto := LEFT(idkonto, 3 ) 
+cKto := LEFT( idkonto, 3 ) 
 
 // 543 i 260 moraju imati identicnu oznaku broja dokumenta
 // ili u samom broju ili u opisu 

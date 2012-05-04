@@ -218,9 +218,6 @@ select kalk_pripr
 
 do case
 
-	case Ch == K_SH_F1
-		calc()
-
     case Ch == K_ALT_H
         Savjetnik()
 

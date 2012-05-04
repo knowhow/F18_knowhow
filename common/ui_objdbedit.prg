@@ -330,6 +330,10 @@ local _rec, _saved
 
 DO CASE
 
+	CASE Ch == K_SH_F1
+
+		calc()
+
 	CASE Ch == K_CTRL_F
  
     	bTekCol :=( TB:getColumn( TB:colPos ) ):Block

@@ -104,33 +104,13 @@ local _opcexe := {}
 local _izbor := 1
 
 AADD(_opc, "1. unos/ispravka                ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","UNOS"))
-    AADD(_opcexe, {|| def_siht()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| def_siht()})
 AADD(_opc, "2. pregled unesenih sihtarica")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","PRINT"))
-    AADD(_opcexe, {|| get_siht()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| get_siht()})
 AADD(_opc, "3. pregled ukupnih sati po siht.")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","PRINT"))
-    AADD(_opcexe, {|| get_siht2()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| get_siht2()})
 AADD(_opc, "4. brisanje sihtarice ")
-
-if (ImaPravoPristupa(goModul:oDatabase:cName,"SIHT","BRISANJE"))
-    AADD(_opcexe, {|| del_siht()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
+AADD(_opcexe, {|| del_siht()})
 
 f18_menu( "sobr", .f., _izbor, _opc, _opcexe )
 

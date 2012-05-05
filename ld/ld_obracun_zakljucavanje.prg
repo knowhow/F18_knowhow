@@ -13,12 +13,8 @@
 #include "ld.ch"
 
 
-/*! \fn DlgZakljucenje()
- *  \brief Dijalog za zakljucavanje i otvaranje obracuna
- */
- 
+
 function DlgZakljucenje()
-*{
 
 O_OBRACUNI
 O_LD_RJ
@@ -45,7 +41,7 @@ Box(,9,40)
 
 	if (cOdgovor=="D")
 		if (cStatus=="Z")
-			if (!ImaPravoPristupa(goModul:oDatabase:cName,"DOK","ZAKLJUCIOBR"))
+			if (!f18_privgranted( "ld_unos_podataka" ))
 				MsgBeep("Vi nemate pravo na zakljucenje obracuna!")
 			else
 				ZakljuciObr(cRadnaJedinica,nGodObr,nMjObr,"Z")
@@ -61,7 +57,7 @@ Box(,9,40)
 BoxC()
 
 return
-*}
+
 
 
 
@@ -96,7 +92,7 @@ if !Found()
 endif
 
 if JelZakljucen(cRj,nGodina,nMjesec)
-	if (!ImaPravoPristupa(goModul:oDatabase:cName,"DOK","OTVORIOBR-P"))
+	if (!f18_privgranted("ld_unos_podataka"))
 		MsgBeep("Vi nemate pravo na ponovno otvaranje zakljucenog obracuna!")
 		return
 	endif
@@ -116,7 +112,7 @@ if JelZakljucen(cRj,nGodina,nMjesec)
 endif
 
 return
-*}
+
 
 
 /*! \fn ZakljuciObr(cRj,nGodina,nMjesec,cStatus)
@@ -128,7 +124,7 @@ return
  */
 
 function ZakljuciObr(cRJ,nGodina,nMjesec,cStatus)
-*{
+
 if Logirati("LD","DOK","ZAKLJUCIOBR")
 	lLogZakljObracun:=.t.
 else
@@ -164,7 +160,7 @@ if JelOtvoren(cRj,nGodina,nMjesec)
 endif
 
 return
-*}
+
 
 
 /*! \fn JelZakljucen(cRJ,nGodina,nMjesec)
@@ -174,7 +170,7 @@ return
  *  \param nMjesec - mjesec
  */
 function JelZakljucen(cRJ,nGodina,nMjesec)
-*{
+
 select obracuni
 hseek (cRJ+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec))
 if (Found() .and. field->status=="X" .or. Found() .and. field->status=="Z")
@@ -182,7 +178,7 @@ if (Found() .and. field->status=="X" .or. Found() .and. field->status=="Z")
 else
 	return .f.
 endif
-*}
+return
 
 
 /*! \fn JelOtvoren(cRJ,nGodina,nMjesec)
@@ -192,7 +188,7 @@ endif
  *  \param nMjesec - mjesec
  */
 function JelOtvoren(cRJ,nGodina,nMjesec)
-*{
+
 select obracuni
 hseek cRJ+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
 if (Found() .and. field->status=="P" .or. Found() .and. field->status=="U")
@@ -200,7 +196,7 @@ if (Found() .and. field->status=="P" .or. Found() .and. field->status=="U")
 else
 	return .f.
 endif
-*}
+return
 
 
 /*! \fn AddStatusObr(cRJ,nGodina,nMjesec,cStatus)
@@ -212,14 +208,22 @@ endif
  */
 function AddStatusObr(cRJ,nGodina,nMjesec,cStatus)
 local _rec
+
 select obracuni
 append blank
+
 _rec := dbf_get_rec()
 _rec["rj"] := cRJ
 _rec["godina"] := nGodina
 _rec["mjesec"] := nMjesec
 _rec["status"] := cStatus
-update_rec_server_and_dbf( ALIAS(), _rec )
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 return
 
 
@@ -239,7 +243,13 @@ _rec["rj"] := cRJ
 _rec["godina"] := nGodina
 _rec["mjesec"] := nMjesec
 _rec["status"] := cStatus
-update_rec_server_and_dbf( ALIAS(), _rec )
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 return
 
 

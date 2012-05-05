@@ -19,21 +19,15 @@ local _opcexe := {}
 local _izbor := 1
 local _priv := f18_privgranted( "ld_unos_podataka" ) 
 
+if !_priv
+    MsgBeep( F18_SECUR_WARRNING )
+    return .t.
+endif
+
 AADD(_opc, "1. unos                              ")
-
-if _priv
-    AADD(_opcexe, {|| ld_unos_obracuna()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana) })
-endif
-
+AADD(_opcexe, {|| ld_unos_obracuna()})
 AADD(_opc, "2. administracija obracuna           ")
-
-if _priv
-    AADD(_opcexe, {|| ld_obracun_mnu_admin()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana) })
-endif
+AADD(_opcexe, {|| ld_obracun_mnu_admin()})
 
 f18_menu( "obr", .f., _izbor, _opc, _opcexe )
 

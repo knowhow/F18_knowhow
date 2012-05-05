@@ -21,7 +21,7 @@ AADD(opc,"1. partneri                          ")
 if (ImaPravoPristupa("FMK","SIF","PARTNOPEN"))
 	AADD(opcexe, {|| P_Firma()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 if (goModul:oDataBase:cName <> "FIN")
@@ -29,7 +29,7 @@ if (goModul:oDataBase:cName <> "FIN")
 	if (ImaPravoPristupa("FMK","SIF","KONTOOPEN"))
 		AADD(opcexe, {|| P_Konto() } )
 	else
-		AADD(opcexe, {|| MsgBeep(cZabrana)})
+		AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 	endif
 else
 	AADD(opc, "2. ----------------- ")
@@ -40,56 +40,56 @@ AADD(opc,"3. tipovi naloga")
 if (ImaPravoPristupa("FMK","SIF","TIPNALOPEN"))
 	AADD(opcexe, {|| P_VN() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 AADD(opc,"4. tipovi dokumenata")
 if (ImaPravoPristupa("FMK","SIF","TIPDOKOPEN"))
 	AADD(opcexe, {|| P_TipDok() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 AADD(opc,"5. valute")
 if (ImaPravoPristupa("FMK","SIF","VALUTEOPEN"))
 	AADD(opcexe, {|| P_Valuta() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 AADD(opc,"6. radne jedinice")
 if (ImaPravoPristupa("FMK","SIF","RJOPEN"))
 	AADD(opcexe, {|| P_RJ() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 AADD(opc,"7. opcine")
 if (ImaPravoPristupa("FMK","SIF","OPCINEOPEN"))
 	AADD(opcexe, {|| P_Ops() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 AADD(opc,"8. banke")
 if (ImaPravoPristupa("FMK","SIF","BANKEOPEN"))
 	AADD(opcexe, {|| P_Banke() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 AADD(opc,"9. sifk - karakteristike")  
 if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
 	AADD(opcexe, {|| P_SifK() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 AADD(opc,"10. vrste placanja")  
 if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
 	AADD(opcexe, {|| P_VrsteP() } )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
 if (IsRamaGlas() .or.  gModul=="FAKT".and. glRadNal )

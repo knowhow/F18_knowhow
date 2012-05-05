@@ -26,35 +26,35 @@ AADD( _opc, "1. novi kredit                        ")
 if _priv
 	AADD( _opcexe, {|| NoviKredit()})
 else
-	AADD( _opcexe, {|| MsgBeep(cZabrana)})
+	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
 AADD( _opc, "2. pregled/ispravka kredita")
 if _priv
 	AADD( _opcexe, {|| EditKredit()})
 else
-	AADD( _opcexe, {|| MsgBeep(cZabrana)})
+	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
 AADD( _opc, "3. lista kredita za jednog kreditora")
 if _priv_pr
     AADD( _opcexe, {|| ListaKredita()})
 else
-	AADD( _opcexe, {|| MsgBeep(cZabrana)})
+	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
 AADD( _opc, "4. brisanje kredita")
 if _priv
 	AADD( _opcexe, {|| BrisiKredit()})
 else
-	AADD( _opcexe, {|| MsgBeep(cZabrana)})
+	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
 AADD( _opc, "5. specifikacija kredita po kreditorima")
 if _priv_pr
     AADD( _opcexe, {|| sp_kredita() })
 else
-	AADD( _opcexe, {|| MsgBeep(cZabrana) })
+	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
 f18_menu( "kred", .f., _izbor, _opc, _opcexe )

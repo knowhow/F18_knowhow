@@ -20,7 +20,7 @@ local _izbor := 1
 
 // imamo li pravo pristupa ovoj opciji
 if !f18_privgranted( "ld_podesenje_parametara" )
-    MsgBeep( cZabrana )
+    MsgBeep( F18_SECUR_WARRNING )
     return .t.
 endif
 

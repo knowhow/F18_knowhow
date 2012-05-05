@@ -14,73 +14,71 @@
 
  
 function SifFmkRoba()
-private Opc:={}
-private opcexe:={}
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc,"1. roba                               ")
+AADD( _opc,"1. roba                               ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","ROBAOPEN"))
-	AADD(opcexe, {|| P_Roba()})
+    AADD( _opcexe, {|| P_Roba()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"2. tarife")
+AADD( _opc,"2. tarife")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","TARIFAOPEN"))
-	AADD(opcexe, {|| P_Tarifa()})
+    AADD( _opcexe, {|| P_Tarifa()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"3. konta - tipovi cijena")
+AADD( _opc,"3. konta - tipovi cijena")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","KONC1OPEN"))
-	AADD(opcexe, {|| P_Koncij()} )
+    AADD( _opcexe, {|| P_Koncij()} )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"4. konta - atributi / 2 ")
+AADD( _opc,"4. konta - atributi / 2 ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","KONC2OPEN"))
-	AADD(opcexe, {|| P_Koncij2()} )
+    AADD( _opcexe, {|| P_Koncij2()} )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"5. trfp - sheme kontiranja u fin")
+AADD( _opc,"5. trfp - sheme kontiranja u fin")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","TRFPOPEN"))
-	AADD(opcexe, {|| P_TrFP()} )
+    AADD( _opcexe, {|| P_TrFP()} )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"6. sastavnice")
+AADD( _opc,"6. sastavnice")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SASTOPEN"))
-	AADD(opcexe, {|| P_Sast()} )
+    AADD( _opcexe, {|| P_Sast()} )
 else
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING) })
 endif
 
-AADD(opc,"8. sifk - karakteristike")  
+AADD( _opc,"8. sifk - karakteristike")  
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SIFKOPEN"))
-	AADD(opcexe, {|| P_SifK()} )
+    AADD( _opcexe, {|| P_SifK()} )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"9. strings - karakteristike ")  
+AADD( _opc,"9. strings - karakteristike ")  
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","STROPEN"))
-	AADD(opcexe, {|| p_strings()} )
+    AADD( _opcexe, {|| p_strings()} )
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-
-CLOSE ALL
+close all
 OFmkRoba()
 
-private Izbor:=1
-gMeniSif:=.t.
-Menu_SC("srob")
-gMeniSif:=.f.
+f18_menu( "srob", .f., _izbor, _opc, _opcexe )
 
-CLOSERET
+close all
 return
-*}
+

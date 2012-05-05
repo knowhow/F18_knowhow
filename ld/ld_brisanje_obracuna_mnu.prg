@@ -18,33 +18,19 @@ local _opc:={}
 local _opcexe:={}
 local _izbor:=1
 
+if !_priv
+    MsgBeep( F18_SECUR_WARRNING )
+    return .t.
+endif
+
 AADD(_opc, "1. brisanje obracuna za jednog radnika       ")
-if _priv
-    AADD(_opcexe, {|| BrisiRadnika() })
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana) })
-endif
-
+AADD(_opcexe, {|| BrisiRadnika() })
 AADD(_opc, "2. brisanje obracuna za jedan mjesec   ")
-if _priv
-    AADD(_opcexe, {|| BrisiMjesec()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| BrisiMjesec()})
 AADD(_opc, "3. brisanje nepotrebnih sezona         ")
-if _priv
-    AADD(_opcexe, {|| PrenosLD()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| PrenosLD()})
 AADD(_opc, "4. totalno brisanje radnika iz evidencije")
-if _priv
-    AADD(_opcexe, {|| TotBrisRadn()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
+AADD(_opcexe, {|| TotBrisRadn()})
 
 f18_menu("bris", .f., _izbor, _opc, _opcexe )
 

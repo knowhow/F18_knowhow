@@ -139,14 +139,14 @@ if _priv_pr
 	    AADD(opcexe, {|| Rekap(.t.)})
     endif
 else
-    AADD( opcexe, {|| MsgBeep(cZabrana) })
+    AADD( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
 AADD(opc,   Lokal("B. kartica plate")) 
 if _priv_pr
     AADD(opcexe, {|| KartPl()})
 else
-    AADD( opcexe, {|| MsgBeep(cZabrana) })
+    AADD( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
 AADD(opc,"------------------------------------")
@@ -253,7 +253,6 @@ public _LK_:=6
 public lViseObr := .t.
 public lVOBrisiCDX := .f.
 public cLdPolja := 40
-public cZabrana := F18_SECUR_WARRNING
 public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
 
 // bazni parametri obracuna...

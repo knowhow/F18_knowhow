@@ -38,7 +38,7 @@ local _izbor:=1
 local _priv := f18_privgranted( "ld_korekcija_sifrarnika" )
 
 if !_priv
-    MsgBeep( cZabrana )
+    MsgBeep( F18_SECUR_WARRNING )
     return .t.
 endif
 
@@ -84,7 +84,7 @@ local _izbor := 1
 local _priv := f18_privgranted( "ld_korekcija_sifrarnika" )
 
 if !_priv
-    MsgBeep( cZabrana )
+    MsgBeep( F18_SECUR_WARRNING )
     return .t.
 endif
 

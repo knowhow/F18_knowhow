@@ -18,6 +18,12 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
+// imamo li pravo pristupa ovoj opciji
+if !f18_privgranted( "ld_podesenje_parametara" )
+    MsgBeep( cZabrana )
+    return .t.
+endif
+
 O_LD_RJ
 O_PARAMS
 
@@ -25,51 +31,20 @@ private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
 
-
 AADD(_opc, "1. osnovni podaci organizacione jedinice                        ")
 AADD(_opcexe, {|| org_params() })
-
 AADD(_opc, "2. RJ, mjesec, godina...         ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETFIRMA"))
-	AADD(_opcexe, {|| ld_set_firma()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| ld_set_firma()})
 AADD(_opc, "3. postavka zaokruzenja, valute, formata prikaza iznosa...  ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETFORMA"))
-	AADD(_opcexe, {|| ld_set_forma()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| ld_set_forma()})
 AADD(_opc, "4. postavka nacina obracuna ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETOBRACUN"))
-	AADD(_opcexe, {|| ld_set_obracun()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| ld_set_obracun()})
 AADD(_opc, "5. postavka formula (uk.prim.,uk.sati,godisnji) i koeficijenata ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETFORMULE"))
-	AADD(_opcexe, {|| ld_set_formule()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| ld_set_formule()})
 AADD(_opc, "6. postavka parametara izgleda dokumenata ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETPRIKAZ"))
-	AADD(_opcexe, {|| ld_set_prikaz()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| ld_set_prikaz()})
 AADD(_opc, "7. parametri - razno ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"PARAM","SETRAZNO"))
-	AADD(_opcexe, {|| ld_set_razno()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
+AADD(_opcexe, {|| ld_set_razno()})
 
 f18_menu( "par", .f., _izbor, _opc, _opcexe )
 

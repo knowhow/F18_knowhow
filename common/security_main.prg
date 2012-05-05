@@ -14,13 +14,24 @@
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-function ImaPravoPristupa( cObjekat, cKomponenta, cFunkcija )
+function ImaPravoPristupa( obj, komponenta, funct )
 local _ret
+_ret := f18_privgranted( funct )
+return _ret
 
-_ret := f18_privgranted( cFunkcija )
+// ---------------------------------------------------
+// da li postoji privilegija ?
+// ---------------------------------------------------
+function f18_privilege_exist( funct )
+local _table := "public.privgranted"
+local _count
+local _ret := .f.
 
-if !_ret
+_count := table_count( _table, "privilege=" + _sql_quote( funct ) ) 
+
+if _count > 0
     _ret := .t.
+	return _ret
 endif
 
 return _ret
@@ -34,16 +45,14 @@ local _tmp
 local _table := "public.privgranted"
 local oTable
 local oServer := pg_server()
-local _count
 local _ret := .f.
 
 if funct == NIL
     return _ret
 endif
 
-_count := table_count( _table, "privilege=" + _sql_quote( funct ) ) 
-
-if _count == 0
+if !f18_privilege_exist( funct )
+    _ret := .t.
 	return _ret
 endif
 

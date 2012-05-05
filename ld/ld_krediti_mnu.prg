@@ -12,44 +12,54 @@
 
 #include "ld.ch"
 
-
+// ----------------------------------------
+// meni krediti
+// ----------------------------------------
 function ld_krediti()
-private izbor:=1
-private opc:={}
-private opcexe:={}
+local _izbor:=1
+local _opc:={}
+local _opcexe:={}
+local _priv := f18_privgranted( "ld_obrada_kredita" )
+local _priv_pr := f18_privgranted( "ld_pregled_podataka" )
 
-AADD(opc, "1. novi kredit                        ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"KREDIT","NOVIKREDIT"))
-	AADD(opcexe, {|| NoviKredit()})
+AADD( _opc, "1. novi kredit                        ")
+if _priv
+	AADD( _opcexe, {|| NoviKredit()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD( _opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "2. pregled/ispravka kredita")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"KREDIT","EDITKREDIT"))
-	AADD(opcexe, {|| EditKredit()})
+AADD( _opc, "2. pregled/ispravka kredita")
+if _priv
+	AADD( _opcexe, {|| EditKredit()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD( _opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "3. lista kredita za jednog kreditora")
-AADD(opcexe, {|| ListaKredita()})
-
-AADD(opc, "4. brisanje kredita")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"KREDIT","BRISIKREDIT"))
-	AADD(opcexe, {|| BrisiKredit()})
+AADD( _opc, "3. lista kredita za jednog kreditora")
+if _priv_pr
+    AADD( _opcexe, {|| ListaKredita()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD( _opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "5. specifikacija kredita po kreditorima")
-AADD(opcexe, {|| sp_kredita()})
+AADD( _opc, "4. brisanje kredita")
+if _priv
+	AADD( _opcexe, {|| BrisiKredit()})
+else
+	AADD( _opcexe, {|| MsgBeep(cZabrana)})
+endif
 
-Menu_SC("kred")
+AADD( _opc, "5. specifikacija kredita po kreditorima")
+if _priv_pr
+    AADD( _opcexe, {|| sp_kredita() })
+else
+	AADD( _opcexe, {|| MsgBeep(cZabrana) })
+endif
+
+f18_menu( "kred", .f., _izbor, _opc, _opcexe )
 
 return
-
-*}
 
 
 

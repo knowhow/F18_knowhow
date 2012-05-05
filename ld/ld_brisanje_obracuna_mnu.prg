@@ -13,39 +13,40 @@
 #include "ld.ch"
 
 function ld_brisanje_obr()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _priv := f18_privgranted( "ld_brisanje_podataka" )
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
 
-AADD(opc, "1. brisanje obracuna za jednog radnika       ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","BRISIRADNIKA"))
-	AADD(opcexe, {|| BrisiRadnika()})
+AADD(_opc, "1. brisanje obracuna za jednog radnika       ")
+if _priv
+    AADD(_opcexe, {|| BrisiRadnika() })
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana) })
 endif
 
-AADD(opc, "2. brisanje obracuna za jedan mjesec   ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","BRISIMJESEC"))
-	AADD(opcexe, {|| BrisiMjesec()})
+AADD(_opc, "2. brisanje obracuna za jedan mjesec   ")
+if _priv
+    AADD(_opcexe, {|| BrisiMjesec()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "3. brisanje nepotrebnih sezona         ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","PRENOSLD"))
-	AADD(opcexe, {|| PrenosLD()})
+AADD(_opc, "3. brisanje nepotrebnih sezona         ")
+if _priv
+    AADD(_opcexe, {|| PrenosLD()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "4. totalno brisanje radnika iz evidencije")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","TOTBRISRADN"))
-	AADD(opcexe, {|| TotBrisRadn()})
+AADD(_opc, "4. totalno brisanje radnika iz evidencije")
+if _priv
+    AADD(_opcexe, {|| TotBrisRadn()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-Menu_SC("bris")
+f18_menu("bris", .f., _izbor, _opc, _opcexe )
 
 return
 

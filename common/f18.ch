@@ -34,6 +34,8 @@
     #define F18_TEMPLATE_LOCATION SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
 #endif
 
+#define F18_SECUR_WARRNING "Opcija nije dostupna za ovaj nivo !#Da bi koristili opciju potrebna podesenja privilegija"
+
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED
       #include "f18_release.ch"

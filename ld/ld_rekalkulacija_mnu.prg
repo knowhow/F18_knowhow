@@ -12,49 +12,39 @@
 
 #include "ld.ch"
 
+
+
 function ld_rekalkulacija()
-private opc:={}
-private opcexe:={}
-private izbor:=1
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
+local _priv := f18_privgranted( "ld_unos_podataka" )
 
-if GetObrStatus(gRj,gGodina,gMjesec)$"ZX"
-	MsgBeep("Obracun zakljucen! Ne mozete vrsiti ispravku podataka!!!")
-	return
+if !_priv
+    MsgBeep( F18_SECUR_WARRNING )
+    return .t.
+endif
+
+if GetObrStatus(gRj,gGodina,gMjesec) $ "ZX"
+    MsgBeep("Obracun zakljucen! Ne mozete vrsiti ispravku podataka!!!")
+    return
 elseif GetObrStatus(gRj,gGodina,gMjesec)=="N"
-	MsgBeep("Nema otvorenog obracuna za "+ALLTRIM(STR(gMjesec))+"."+ALLTRIM(STR(gGodina)))
-	return
+    MsgBeep("Nema otvorenog obracuna za "+ALLTRIM(STR(gMjesec))+"."+ALLTRIM(STR(gGodina)))
+    return
 endif
 
-AADD(opc, "1. rekalkulacija satnica i primanja               ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","REKALKPRIMANJA"))
-	AADD(opcexe, {|| RekalkPrimanja()})
-else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
+AADD( _opc, "1. rekalkulacija satnica i primanja               ")
+AADD( _opcexe, {|| RekalkPrimanja()})
+AADD( _opc, "2. ponovo izracunaj neto sati/neto iznos/odbici")
+AADD( _opcexe, {|| RekalkSve()})
+AADD( _opc, "3. rekalkulacija odredjenog primanja za procenat")
+AADD( _opcexe, {|| RekalkProcenat()})
+AADD( _opc, "4. rekalkulacija odredjenog primanja po formuli")
+AADD( _opcexe, {|| RekalkFormula()})
 
-AADD(opc, "2. ponovo izracunaj neto sati/neto iznos/odbici")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","REKALKSVE"))
-	AADD(opcexe, {|| RekalkSve()})
-else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
-
-AADD(opc, "3. rekalkulacija odredjenog primanja za procenat")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","REKALKPROCENAT"))
-	AADD(opcexe, {|| RekalkProcenat()})
-else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
-
-AADD(opc, "4. rekalkulacija odredjenog primanja po formuli")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","REKALKFORMULA"))
-	AADD(opcexe, {|| RekalkFormula()})
-else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
-
-Menu_SC("rklk")
+f18_menu( "rklk", .f., _izbor, _opc, _opcexe )
 
 return
-*}
+
+
 

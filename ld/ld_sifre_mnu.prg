@@ -35,13 +35,15 @@ function MnuOpSif()
 local _opc:={}
 local _opcexe:={}
 local _izbor:=1
+local _priv := f18_privgranted( "ld_korekcija_sifrarnika" )
+
+if !_priv
+    MsgBeep( cZabrana )
+    return .t.
+endif
 
 AADD(_opc, lokal("1. radnici                            "))
-if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITRADN"))
-    AADD(_opcexe, {|| P_Radn()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
+AADD(_opcexe, {|| P_Radn()})
 AADD(_opc, lokal("5. radne jedinice"))
 AADD(_opcexe, {|| P_LD_RJ()})
 AADD(_opc, lokal("6. opstine"))
@@ -62,7 +64,8 @@ if (IsRamaGlas())
     AADD(_opcexe, {|| P_RNal()})
 endif
 
-gLokal := ALLTRIM(gLokal)
+gLokal := ALLTRIM( gLokal )
+
 if gLokal <> "0"
     AADD(_opc, lokal("L. lokalizacija") )
     AADD(_opcexe, {|| P_Lokal()})
@@ -77,25 +80,20 @@ return
 function MnuSpSif()
 local _opc:={}
 local _opcexe:={}
-local _izbor:=1
+local _izbor := 1
+local _priv := f18_privgranted( "ld_korekcija_sifrarnika" )
+
+if !_priv
+    MsgBeep( cZabrana )
+    return .t.
+endif
 
 AADD(_opc,"1. parametri obracuna                  ")
 AADD(_opcexe, {|| P_ParObr()})
-
 AADD(_opc,"2. tipovi primanja")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITTIPPR"))
-    AADD(_opcexe, {|| P_TipPr()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| P_TipPr()})
 AADD(_opc,"3. tipovi primanja / ostali obracuni")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITTIPPR2"))
-    AADD(_opcexe, {|| P_TipPr2()})
-else
-    AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(_opcexe, {|| P_TipPr2()})
 AADD(_opc,"4. porezne stope ")
 AADD(_opcexe, {|| P_Por()})
 AADD(_opc,"5. doprinosi ")

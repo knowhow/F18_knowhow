@@ -16,62 +16,68 @@
 // osnovna funkcija za poziv izvjestaja - menij
 // ----------------------------------------------------
 function ld_izvjestaji()
+local _opc:={}
+local _opcexe:={}
+local _Izbor:=1
+local _priv_pr := f18_privgranted( "ld_pregled_podataka" )
 
-private opc:={}
-private opcexe:={}
-private Izbor:=1
-
-AADD(opc,"1. kartice                                           ")
-AADD(opcexe,{|| MnuIzvK()})
-AADD(opc,"2. rekapitulacije")
-AADD(opcexe,{|| MnuIzvR()})
-AADD(opc,"3. pregledi")
-AADD(opcexe,{|| MnuIzvP()})
-AADD(opc,"4. specifikacije")
-AADD(opcexe,{|| MnuIzvS()})
-if gVarObracun == "2"
-	AADD(opc,"4i. specifikacije spec.tipovi rada")
-	AADD(opcexe,{|| m_spec_o()})
-endif
-AADD(opc,"5. ostali izvjestaji")
-AADD(opcexe,{|| MnuIzvO()})
-
-if gVarObracun == "2"
-	
-	AADD(opc,"-----------------------------------------")
-	AADD(opcexe,{|| nil})
-	AADD(opc,"J. prijave doprinosa (JS-3400)")
-	AADD(opcexe,{|| r_js3400_obrazac() })
-	AADD(opc,"O. obracunski listovi (obrasci OLP i GIP)")
-	AADD(opcexe,{|| r_obr_list() })
-	AADD(opc,"P. akontacije poreza (obrasci ASD i AUG)")
-	AADD(opcexe,{|| r_ak_list() })
-	AADD(opc,"M. mjesecni obrazac MIP-1023")
-	AADD(opcexe,{|| r_mip_obr() })
-	
-	AADD(opc,"E. poreska kartica : export")
-	AADD(opcexe,{|| pk_export() })
-
+if !_priv_pr
+    MsgBeep( F18_SECUR_WARRNING )
+    return .t.
 endif
 
-Menu_SC("izvj")
+AADD( _opc,"1. kartice                                           ")
+AADD( _opcexe,{|| MnuIzvK() })
+AADD( _opc,"2. rekapitulacije")
+AADD( _opcexe,{|| MnuIzvR() })
+AADD( _opc,"3. pregledi")
+AADD( _opcexe,{|| MnuIzvP() })
+AADD( _opc,"4. specifikacije")
+AADD( _opcexe,{|| MnuIzvS() })
+
+if gVarObracun == "2"
+    AADD( _opc,"4i. specifikacije spec.tipovi rada")
+    AADD( _opcexe,{|| m_spec_o() })
+endif
+
+AADD( _opc,"5. ostali izvjestaji")
+AADD( _opcexe,{|| MnuIzvO() })
+
+if gVarObracun == "2"
+    
+    AADD( _opc,"-----------------------------------------")
+    AADD( _opcexe,{|| nil})
+    AADD( _opc,"J. prijave doprinosa (JS-3400)")
+    AADD( _opcexe,{|| r_js3400_obrazac() })
+    AADD( _opc,"O. obracunski listovi (obrasci OLP i GIP)")
+    AADD( _opcexe,{|| r_obr_list() })
+    AADD( _opc,"P. akontacije poreza (obrasci ASD i AUG)")
+    AADD( _opcexe,{|| r_ak_list() })
+    AADD( _opc,"M. mjesecni obrazac MIP-1023")
+    AADD( _opcexe,{|| r_mip_obr() })
+    AADD( _opc,"E. poreska kartica : export")
+    AADD( _opcexe,{|| pk_export() })
+
+endif
+
+f18_menu( "izvj", .f., _izbor, _opc, _opcexe )
 
 return
 
 // ----------------------------------------
 // izvjestaji kartice
 // ----------------------------------------
-function MnuIzvK()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+static function MnuIzvK()
+local _opc:={}
+local _opcexe:={}
+local _Izbor:=1
 
-AADD(opc,"1. kartice plate                      ")
-AADD(opcexe,{|| KartPl()})
-AADD(opc,"2. kartica plate za period (za m4)")
-AADD(opcexe,{|| UKartPl()})
+AADD( _opc,"1. kartice plate                      ")
+AADD( _opcexe,{|| KartPl()})
+AADD( _opc,"2. kartica plate za period (za m4)")
+AADD( _opcexe,{|| UKartPl()})
 
-Menu_SC("kart")
+f18_menu( "kart", .f., _izbor, _opc, _opcexe )
 return
 
 
@@ -79,17 +85,17 @@ return
 // -----------------------------------------
 // menij - izvjestaji specifikacije 2
 // -----------------------------------------
-function m_spec_o()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+static function m_spec_o()
+local _opc:={}
+local _opcexe:={}
+local _Izbor:=1
 
-AADD(opc,"1. specifikacija za samostalne poduzetnike     ")
-AADD(opcexe,{|| SpecPlS()})
-AADD(opc,"2. specifikacija ostale samostalne djelatnosti")
-AADD(opcexe,{|| SpecPlU()})
+AADD( _opc,"1. specifikacija za samostalne poduzetnike     ")
+AADD( _opcexe,{|| SpecPlS()})
+AADD( _opc,"2. specifikacija ostale samostalne djelatnosti")
+AADD( _opcexe,{|| SpecPlU()})
 
-Menu_SC("spec2")
+f18_menu( "spec2", .f., _izbor, _opc, _opcexe )
 
 return
 
@@ -97,16 +103,16 @@ return
 // -----------------------------------------
 // menij - izvjestaji specifikacije
 // -----------------------------------------
-function MnuIzvS()
+static function MnuIzvS()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. specifikacija uz isplatu plata                 ")
 if gVarObracun == "2"
-	AADD(opcexe,{|| SpecPl2()})
+    AADD(opcexe,{|| SpecPl2()})
 else
-	AADD(opcexe,{|| Specif()})
+    AADD(opcexe,{|| Specif()})
 endif
 
 AADD(opc,"2. specifikacija po opstinama i RJ")
@@ -128,7 +134,7 @@ return
 // -------------------------------------
 // menij - pregledi
 // -------------------------------------
-function MnuIzvP()
+static function MnuIzvP()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -160,7 +166,7 @@ return
 // --------------------------------------------
 // menij ostali izvjestaji
 // --------------------------------------------
-function MnuIzvO()
+static function MnuIzvO()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -169,8 +175,8 @@ AADD(opc,"1. lista radnika sa netom po opst.stanovanja  ")
 AADD(opcexe,{|| SpRadOpSt()})
 
 if (IsRamaGlas())
-	AADD(opc,"2. pregled plata po radnim nalozima    ")
-	AADD(opcexe,{|| PlatePoRNalozima()})
+    AADD(opc,"2. pregled plata po radnim nalozima    ")
+    AADD(opcexe,{|| PlatePoRNalozima()})
 endif
 
 AADD(opc,"S. pregled utroska po sihtaricama")
@@ -184,24 +190,22 @@ Menu_SC("ost")
 return
 
 
-function MnuIzvR()
-*{
-
+static function MnuIzvR()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. rekapitulacija                         ")
 if gVarObracun == "2"
-	AADD(opcexe,{|| Rekap2(.f.)})
+    AADD(opcexe,{|| Rekap2(.f.)})
 else
-	AADD(opcexe,{|| Rekap(.f.)})
+    AADD(opcexe,{|| Rekap(.f.)})
 endif
 AADD(opc,"2. rekapitulacija za sve rj")
 if gVarObracun == "2"
-	AADD(opcexe,{|| Rekap2(.t.)})
+    AADD(opcexe,{|| Rekap2(.t.)})
 else
-	AADD(opcexe,{|| Rekap(.t.)})
+    AADD(opcexe,{|| Rekap(.t.)})
 endif
 AADD(opc,"3. rekapitulacija po koeficijentima")
 AADD(opcexe,{|| RekapBod()})
@@ -212,7 +216,7 @@ AADD(opcexe,{|| RekTekRac()})
 
 Menu_SC("rekap")
 return
-*}
+
 
 
 

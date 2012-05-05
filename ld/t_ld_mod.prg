@@ -99,44 +99,59 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenuStandard
+local _priv_pr := f18_privgranted( "ld_pregled_podataka" )
 private opc:={}
 private opcexe:={}
 
 AADD(opc,   Lokal("1. obracun (unos, ispravka...)              "))
 AADD(opcexe, {|| ld_obracun()} )
+
 AADD(opc,   Lokal("2. brisanje"))
 AADD(opcexe, {|| ld_brisanje_obr()})
+
 AADD(opc,   Lokal("3. rekalkulacija"))
 AADD(opcexe, {|| ld_rekalkulacija()})
+
 AADD(opc,   Lokal("4. izvjestaji"))
 AADD(opcexe, {|| ld_izvjestaji()})
+
 AADD(opc,   Lokal("5. krediti"))
 AADD(opcexe, {|| ld_krediti()})
 
-if IzFmkIni("LD", "Korekcije", "N", KUMPATH)=="D"
-	AADD(opc,   "6. ostalo - korekcije obracuna ")
-	AADD(opcexe, {|| ld_ostale_opcije_menu()})
+AADD(opc,"------------------------------------")
+AADD(opcexe, nil)
+
+AADD(opc,   Lokal("7. sifrarnici"))
+AADD(opcexe, {|| ld_sifrarnici()})
+
+AADD(opc,   Lokal("9. administriranje baze podataka")) 
+AADD(opcexe, {|| ld_administracija()})
+
+AADD(opc,"------------------------------------")
+AADD(opcexe, nil)
+
+// najcesece koristenje opcije
+AADD(opc,   Lokal("A. rekapitulacija"))
+if _priv_pr
+    if gVarObracun == "2"
+	    AADD(opcexe, {|| Rekap2(.t.)})
+    else
+	    AADD(opcexe, {|| Rekap(.t.)})
+    endif
+else
+    AADD( opcexe, {|| MsgBeep(cZabrana) })
+endif
+
+AADD(opc,   Lokal("B. kartica plate")) 
+if _priv_pr
+    AADD(opcexe, {|| KartPl()})
+else
+    AADD( opcexe, {|| MsgBeep(cZabrana) })
 endif
 
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
-AADD(opc,   Lokal("7. sifrarnici"))
-AADD(opcexe, {|| ld_sifrarnici()})
-AADD(opc,   Lokal("9. administriranje baze podataka")) 
-AADD(opcexe, {|| ld_administracija()})
-AADD(opc,"------------------------------------")
-AADD(opcexe, nil)
-// najcesece koristenje opcije
-AADD(opc,   Lokal("A. rekapitulacija"))
-if gVarObracun == "2"
-	AADD(opcexe, {|| Rekap2(.t.)})
-else
-	AADD(opcexe, {|| Rekap(.t.)})
-endif
-AADD(opc,   Lokal("B. kartica plate")) 
-AADD(opcexe, {|| KartPl()})
-AADD(opc,"------------------------------------")
-AADD(opcexe, nil)
+
 AADD(opc,   Lokal("X. parametri     "))
 AADD(opcexe, {|| ld_parametri()})
 
@@ -238,7 +253,7 @@ public _LK_:=6
 public lViseObr := .t.
 public lVOBrisiCDX := .f.
 public cLdPolja := 40
-public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+public cZabrana := F18_SECUR_WARRNING
 public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
 
 // bazni parametri obracuna...

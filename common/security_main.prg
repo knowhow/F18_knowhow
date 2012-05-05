@@ -42,7 +42,6 @@ return _ret
 // ---------------------------------------------------
 function f18_privgranted( funct )
 local _tmp
-local _table := "public.privgranted"
 local oTable
 local oServer := pg_server()
 local _ret := .f.
@@ -56,7 +55,7 @@ if !f18_privilege_exist( funct )
 	return _ret
 endif
 
-_tmp := "SELECT granted FROM " + _table + " WHERE privilege = " + _sql_quote( funct )
+_tmp := "SELECT checkprivilege( " + _sql_quote( funct ) + " ) "
 
 oTable := _sql_query( oServer, _tmp )
 

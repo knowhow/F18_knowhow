@@ -74,6 +74,7 @@ function p_partneri(cId, dx, dy)
 local cN2Fin
 local i
 local cRet
+local _standard_prof := f18_privgranted( "standard_profile" )
 
 PushWa()
 
@@ -96,7 +97,7 @@ AADD(ImeKol, { PADR("Naziv", 35),  {|| padr(naz, 35) },  "naz"} )
 cN2Fin := IzFMkIni('FIN', 'PartnerNaziv2','N')
 
 if cN2Fin=="D"
- AADD(ImeKol, { PADR("Naziv2", 25), {|| naz2},     "naz2"      } )
+    AADD(ImeKol, { PADR("Naziv2", 25), {|| naz2},     "naz2"      } )
 endif
 
 AADD(ImeKol, { PADR("PTT", 5),      {|| PTT},     "ptt"      } )
@@ -108,42 +109,39 @@ AADD(ImeKol, { PADR("Ziro R ", 22), {|| ZIROR},   "ziror"  , {|| .t.},{|| .t. } 
 Kol:={}
 
 if IzFMkIni('SifPartn','DZIROR','N')=="D"
- if partn->(fieldpos("DZIROR")) <> 0
-   AADD (ImeKol,{ padr("Dev ZR", 22 ), {|| DZIROR}, "Dziror" })
- endif
+    if partn->(fieldpos("DZIROR")) <> 0
+        AADD (ImeKol,{ padr("Dev ZR", 22 ), {|| DZIROR}, "Dziror" })
+    endif
 endif
 
 
 if IzFMKINI('SifPartn','Telefon','D')=="D"
- AADD(Imekol,{ PADR("Telefon",12),  {|| TELEFON}, "telefon"  } )
+    AADD(Imekol,{ PADR("Telefon",12),  {|| TELEFON}, "telefon"  } )
 endif
 
 if IzFMKINI('SifPartn','Fax','D')=="D"
-if partn->(fieldpos("FAX"))<>0
-  AADD (ImeKol,{ padr("Fax",12 ), {|| fax}, "fax" })
-endif
+    AADD (ImeKol,{ padr("Fax",12 ), {|| fax}, "fax" })
 endif
 
 if IzFMKINI('SifPartn','MOBTEL','D')=="D"
-if partn->(fieldpos("MOBTEL")) <> 0
-  AADD (ImeKol,{ padr("MobTel", 20 ), {|| mobtel}, "mobtel" })
-endif
+    if partn->(fieldpos("MOBTEL")) <> 0
+        AADD (ImeKol,{ padr("MobTel", 20 ), {|| mobtel}, "mobtel" })
+    endif
 endif
 
 if partn->(fieldpos("ID2")) <> 0
-  AADD (ImeKol,{ padr("Id2", 6 ), {|| id2}, "id2" })
+    AADD (ImeKol,{ padr("Id2", 6 ), {|| id2}, "id2" })
 endif
 
 if partn->(fieldpos("idops")) <> 0
-  AADD (ImeKol,{ padr("Opstina", 6 ), {|| idops}, "idops", {|| .t.}, {|| p_ops(@widops)} })
+    AADD (ImeKol,{ padr("Opstina", 6 ), {|| idops}, "idops", {|| .t.}, {|| p_ops(@widops)} })
 endif
 
-if partn->(fieldpos("idrefer")) <> 0
-  AADD (ImeKol,{ padr("Referent", 10 ), {|| idrefer}, "idrefer", {|| .t.}, {|| p_refer(@widrefer)} })
+if !_standard_prof
+    AADD (ImeKol,{ padr("Referent", 10 ), {|| idrefer}, "idrefer", {|| .t.}, {|| p_refer(@widrefer)} })
 endif
 
-
-if partn->(fieldpos("_kup")) <> 0
+if !_standard_prof
 	
 	AADD(ImeKol, { "kup?", {|| _kup }, "_kup", ;
 		{|| .t.}, {|| _v_dn( w_kup ) }})

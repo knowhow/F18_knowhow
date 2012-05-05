@@ -15,7 +15,15 @@
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 function ImaPravoPristupa( cObjekat, cKomponenta, cFunkcija )
-return f18_privgranted( cFunkcija )
+local _ret
+
+_ret := f18_privgranted( cFunkcija )
+
+if !_ret
+    _ret := .t.
+endif
+
+return _ret
 
 
 // ---------------------------------------------------
@@ -27,7 +35,7 @@ local _table := "public.privgranted"
 local oTable
 local oServer := pg_server()
 local _count
-local _ret := .t.
+local _ret := .f.
 
 if funct == NIL
     return _ret
@@ -48,8 +56,8 @@ if oTable == NIL
     quit
 endif
 
-if oTable:FieldGet(1) == "false"
-	_ret := .f.
+if oTable:FieldGet(1) == .t.
+	_ret := .t.
     return _ret
 endif
 

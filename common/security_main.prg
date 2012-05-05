@@ -11,37 +11,49 @@
 
 #include "fmk.ch"
 
+
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 function ImaPravoPristupa( cObjekat, cKomponenta, cFunkcija )
-local cTmpQry
-local cTable := "public.privgranted"
+return f18_privgranted( cFunkcija )
+
+
+// ---------------------------------------------------
+// da li korisnik ima dozvoljen pristup
+// ---------------------------------------------------
+function f18_privgranted( funct )
+local _tmp
+local _table := "public.privgranted"
 local oTable
 local oServer := pg_server()
-local nResult
+local _count
+local _ret := .t.
 
-nResult := table_count(cTable, "privilege=" + _sql_quote( cFunkcija ) ) 
-
-if nResult == 0
-    if gDebug > 9
-	   log_write( cTable + " " + "privilege = " + cFunkcija + " count = " + STR(nResult))
-    endif
-	return .t.
+if funct == NIL
+    return _ret
 endif
 
-cTmpQry := "SELECT granted FROM " + cTable + " WHERE privilege = " + _sql_quote( cFunkcija )
+_count := table_count( _table, "privilege=" + _sql_quote( funct ) ) 
 
-oTable := _sql_query( oServer, cTmpQry )
+if _count == 0
+	return _ret
+endif
+
+_tmp := "SELECT granted FROM " + _table + " WHERE privilege = " + _sql_quote( funct )
+
+oTable := _sql_query( oServer, _tmp )
+
 if oTable == NIL
-	log_write( PROCLINE(1) + " : " + cTmpQry)
+	log_write( PROCLINE(1) + " : " + _tmp )
     quit
 endif
 
 if oTable:FieldGet(1) == "false"
-	return .f.
+	_ret := .f.
+    return _ret
 endif
 
-return .t.
+return _ret
 
 
 

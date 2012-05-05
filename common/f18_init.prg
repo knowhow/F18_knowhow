@@ -32,13 +32,15 @@ static __max_rows := 35
 static __max_cols := 120
 
 #ifdef  __PLATFORM__WINDOWS
-static __font_name := "Lucida Console"
-#endif
-
-#ifdef  __PLATFORM__LINUX
-  static __font_name := "terminus"
+    static __font_name := "Lucida Console"
 #else
-  static __font_name := "fixed"
+
+    #ifdef  __PLATFORM__LINUX
+          static __font_name := "terminus"
+    #else
+          static __font_name := "fixed"
+    #endif
+
 #endif
 
 static __font_size  := 20

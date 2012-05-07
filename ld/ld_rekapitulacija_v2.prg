@@ -512,7 +512,7 @@ do while !eof() .and. eval(bUSlov)
     select vposla
     hseek _idvposla
 
-    ParObr(ld->mjesec, ld->godina, IF(lViseObr,cObracun,),ld->idrj)
+    ParObr( ld->mjesec, ld->godina, cObracun, ld->idrj )
 
     select ld
 
@@ -536,9 +536,9 @@ do while !eof() .and. eval(bUSlov)
         
     endif
 
-    if (IsRamaGlas() .and. cK4 <> "S")
+    if ( IsRamaGlas() .and. cK4 <> "S" )
     
-        if (cK4="P" .and. !radn->k4="P" .or. cK4="N".and.radn->k4="P")
+        if ( cK4="P" .and. !radn->k4 = "P" .or. cK4 = "N" .and. radn->k4 = "P" )
             select ld
             skip 1
             loop

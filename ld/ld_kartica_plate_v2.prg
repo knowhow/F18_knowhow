@@ -25,6 +25,7 @@ local cTprLine
 local cDoprLine 
 local cMainLine 
 local _radni_sati := fetch_metric("ld_radni_sati", nil, "N" ) 
+local _a_benef := {}
 private cLMSK := ""	
 
 __radni_sati := _radni_sati
@@ -363,22 +364,26 @@ if gPrBruto $ "D#X"
 	endif
 	
 	select (F_KBENEF)
-	
 	if !used()
 		O_KBENEF
 	endif
 
-	nBO:=0
-	nBFO:=0
+	nBO := 0
+	nBFO := 0
 	
 	nOsnZaBr := nOsnNeto
 	
 	nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
 	if UBenefOsnovu()
-		nTmp2 := nOsnZaBr - (&gBFForm)
+		
+        nTmp2 := nOsnZaBr - IF( !EMPTY( gBFForm),  &(gBFForm), 0 )
 		nBFo := bruto_osn( nTmp2, cRTipRada, nLicOdbitak )
-	endif
+
+        _benef_st := BenefStepen()
+	    add_to_a_benef( @_a_benef, ALLTRIM(radn->k3 ), _benef_st, nBFO )
+
+    endif
 
 	nBoMin := nBo
 
@@ -497,11 +502,11 @@ if gPrBruto $ "D#X"
 			endif
 
 		else
-			nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
-			if nPom0<>0
-				nPom2:=parobr->k3/100*aNeta[nPom0,2]
+			nPom0 := ASCAN( _a_benef, {|x| x[1] == idkbenef})
+			if nPom0 <> 0
+				nPom2 := _a_benef[ nPom0, 3 ]
 			else
-				nPom2:=0
+				nPom2 := 0
 			endif
 			if round(nPom2,gZaok2)<>0
 				@ prow(),pcol()+1 SAY nPom2 pict gpici

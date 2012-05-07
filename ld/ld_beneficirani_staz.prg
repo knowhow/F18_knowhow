@@ -42,7 +42,11 @@ if EMPTY( cTmp )
     return 0
 endif
 
-O_KBENEF
+select F_KBENEF
+if !used()
+    O_KBENEF
+endif
+
 select kbenef
 go top
 seek cTmp
@@ -54,6 +58,30 @@ endif
 select (nTArea)
 
 return nRet
+
+
+
+// --------------------------------------------------------------
+// dodaj u matricu benef
+// --------------------------------------------------------------
+function add_to_a_benef( a_benef, benef_id, benef_st, osnovica )
+local _scan
+
+// a_benef[1] = benef_id
+// a_benef[2] = benef_stepen
+// a_benef[3] = osnova
+
+altd()
+_scan := ASCAN( a_benef, { | var | var[1] == benef_id } )
+
+if _scan == 0
+    AADD( a_benef, { benef_id, benef_st, osnovica } )
+else
+    a_benef[ _scan, 3 ] := a_benef[ _scan, 3 ] + osnovica
+endif
+
+return
+
 
 
 

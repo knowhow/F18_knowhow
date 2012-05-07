@@ -24,6 +24,7 @@ local cDoprSpace := SPACE(3)
 local cTprLine 
 local cDoprLine 
 local cMainLine 
+local _a_benef
 private cLMSK := ""	
 
 cTprLine := _gtprline()
@@ -140,10 +141,10 @@ if !used()
 	O_KBENEF
 endif
 
-nBO:=0
-nBFO:=0
-nBSaTr:=0
-nTrosk:=0
+nBO := 0
+nBFO := 0
+nBSaTr := 0
+nTrosk := 0
 
 nOsnZaBr := nOsnNeto
 	
@@ -221,9 +222,9 @@ do while !eof()
 		endif
 
 	else
-		nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
+		nPom0:=ASCAN(_a_benef,{|x| x[1]==idkbenef})
 		if nPom0<>0
-			nPom2:=parobr->k3/100*aNeta[nPom0,2]
+			nPom2:=aNeta[_a_benef,3]
 		else
 			nPom2:=0
 		endif

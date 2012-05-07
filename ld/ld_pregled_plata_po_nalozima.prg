@@ -213,6 +213,7 @@ return
 *******************************************
 function BrutoP(aSati,nUkSati)
 local nPom, nPom2, nBruto, nPorDopr, i, nBO, nPor, nC1, nPorOl, nDopr, nPom0
+local aNeta := {}
 
 nBruto:=_UNETO
 nPorDopr:=0

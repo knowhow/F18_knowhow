@@ -18,6 +18,7 @@ static __var_obr
 // ----------------------------------------
 // ----------------------------------------
 function Rekap2(lSvi)
+local _a_benef := {}
 private nC1:=20
 private i
 private cTPNaz
@@ -211,7 +212,7 @@ endif
 //   
 //   itd...
 
-_calc_totals( lSvi )
+_calc_totals( lSvi, @_a_benef )
 
 if nLjudi == 0
     nLjudi := 9999999
@@ -301,9 +302,9 @@ endif
 ? cMainLine
 
 cLinija := cDoprLine
-// obracunaj i prikazi doprinose
-obr_doprinos( @nDopr, @nDopr2, cRTipRada )
 
+// obracunaj i prikazi doprinose
+obr_doprinos( @nDopr, @nDopr2, cRTipRada, _a_benef )
 
 // oporezivi dohodak
 nTOporDoh := nURadn_bo - nUDoprIz
@@ -487,9 +488,10 @@ return
 // -----------------------------------------------------
 // napravi obracun
 // -----------------------------------------------------
-static function _calc_totals(lSvi)
+static function _calc_totals( lSvi, a_benef )
 local i
 local cTpr
+local _benef_st
 
 nPorol := 0
 nRadn_bo := 0
@@ -662,9 +664,16 @@ do while !eof() .and. eval(bUSlov)
     nURadn_bo += nRadn_bo
 
     if UBenefOsnovu()
-        // beneficirani
+
+        // beneficirani staz za radnika
         nRadn_bbo := bruto_osn( _oosnneto - if(!Empty(gBFForm), &gBFForm, 0), cTipRada, nKoefLO, nRSpr_koef )
         nURadn_bbo += nRadn_bbo
+
+        // uzmi stepen za radnika koji je ?
+        _benef_st := BenefStepen() 
+        // upisi osnovicu...
+        add_to_a_benef( @a_benef, ALLTRIM( radn->k3 ), _benef_st, nRadn_bbo )
+
     endif
 
     // da bi dobio osnovicu za poreze

@@ -1289,7 +1289,6 @@ do while !eof()
                 if !EMPTY( dopr->idkbenef ) .and. cBen_stopa == dopr->idkbenef
                     nU_d_pms += ;
                       ROUND( nBr_benef * nDoprTmp / 100, 4)
-            
                 else
                     nU_d_pms += ;
                       ROUND( nMBruto * nDoprTmp / 100, 4)

@@ -472,11 +472,6 @@ if gPrBruto $ "D#X"
 			? cDoprLine
 		endif
 		
-		if ("BENEF" $ dopr->naz .and. nBFO == 0)
-			skip
-			loop
-		endif
-		
 		if dopr->id == "1X"
 			? cLMSK + "2. " + id, "-", naz
 		else
@@ -487,15 +482,9 @@ if gPrBruto $ "D#X"
 		
 		if empty(idkbenef) 
 			// doprinos udara na neto
-			if ("BENEF" $ dopr->naz .and. nBFO <> 0)
-				@ prow(),pcol()+1 SAY nBFO pict gpici
-				nC1:=pcol()+1
-				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBFO,gZaok2)) pict gpici
-			else
-				@ prow(),pcol()+1 SAY nBoMin pict gpici
-				nC1:=pcol()+1
-				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBOMin,gZaok2)) pict gpici
-			endif
+			@ prow(),pcol()+1 SAY nBoMin pict gpici
+			nC1:=pcol()+1
+			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBOMin,gZaok2)) pict gpici
 			
 			if dopr->id == "1X"
 				nUkDoprIz += nPom

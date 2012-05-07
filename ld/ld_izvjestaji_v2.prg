@@ -995,6 +995,7 @@ local cTipRada := " "
   @ m_x+3,m_y+2   SAY "Mjesec od: "                     GET cMjesecOd PICT "99"
   @ m_x+3,col()+2 SAY "do"                              GET cMjesecDo PICT "99"
   @ m_x+4,m_y+2   SAY "Godina: "                        GET cGodina   PICT "9999"
+  @ m_x+4,col()+2 SAY "Obracun: "                       GET cObracun
   @ m_x+5,m_y+2   SAY "Doprinosi (npr. '3X;')"          GET cDopr PICT "@!"
   @ m_x+6,m_y+2   SAY "Obracunati doprinosi za (naziv)" GET cNazDopr PICT "@!"
   @ m_x+7,m_y+2   SAY "Po kantonu (S-stanovanja,R-rada)" GET cPoOps VALID cPoOps$"SR" PICT "@!"
@@ -1051,7 +1052,10 @@ local cTipRada := " "
  INDEX ON &cSort TO "TMPLD" FOR &cFilt
 
  GO TOP
- IF EOF(); MsgBeep("Nema podataka!"); CLOSERET; ENDIF
+ IF EOF()
+    MsgBeep("Nema podataka!")
+    CLOSERET
+ ENDIF
 
  START PRINT CRET
   gOstr:="D"; gTabela:=1
@@ -1094,25 +1098,30 @@ CLOSERET
 
 
 static function FFor7()
- IF OPS->idkan <> cKanton .and. LEN(cKanton)>0
+ 
+IF OPS->idkan <> cKanton .and. LEN(cKanton)>0
    lSubTot7:=.t.
    cSubTot7:=cKanton
- ENDIF
- cKanton:=OPS->idkan
- xNetoUk:=xDoprUk:=0
- cRadnik := RADN->(padr(  trim(naz)+" ("+trim(imerod)+") "+ime,32))
- cIdRadn := IDRADN
- nKLO := 0
- cTipRada := ""
- if gVarObracun == "2"
+ENDIF
+ 
+cKanton:=OPS->idkan
+xNetoUk:=xDoprUk:=0
+cRadnik := RADN->(padr(  trim(naz)+" ("+trim(imerod)+") "+ime,32))
+cIdRadn := IDRADN
+nKLO := 0
+cTipRada := ""
+ 
+if gVarObracun == "2"
  	nKLO := radn->klo
 	cTipRada := g_tip_rada( ld->idradn, ld->idrj )
- endif
- FOR i:=cMjesecOd TO cMjesecDo
+endif
+ 
+FOR i:=cMjesecOd TO cMjesecDo
    cPom:="xneto"+ALLTRIM(STR(i)); &cPom:=0
    cPom:="xdopr"+ALLTRIM(STR(i)); &cPom:=0
- NEXT
- DO WHILE !EOF() .and. OPS->idkan==cKanton .and. IDRADN==cIdRadn
+NEXT
+ 
+DO WHILE !EOF() .and. OPS->idkan==cKanton .and. IDRADN==cIdRadn
    nTekMjes:=mjesec
    _uneto:=0
    DO WHILE !EOF() .and. OPS->idkan==cKanton .and. IDRADN==cIdRadn .and. mjesec==nTekMjes
@@ -1131,8 +1140,10 @@ static function FFor7()
    &cPom   := nDopr
    xdoprUk += nDopr
    SKIP 1
- ENDDO
- SKIP -1
+ENDDO
+
+SKIP -1
+
 RETURN .t.
 
 
@@ -1224,9 +1235,9 @@ DO WHILE !EOF()
         LOOP
     ENDIF
    
-    if !EMPTY( field->idkbenef )
+    if !EMPTY( dopr->idkbenef )
    	    // beneficirani
-	    nPom := MAX( dlimit, round( iznos/100 * get_benef_osnovica( _a_benef, field->idkbenef ), gZaok2 ) )
+	    nPom := MAX( dlimit, round( iznos/100 * get_benef_osnovica( _a_benef, dopr->idkbenef ), gZaok2 ) )
     else
     	nPom := MAX( dlimit, round( iznos/100 * nBO, gZaok2 ) )
     endif

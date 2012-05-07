@@ -104,17 +104,25 @@ return
 
 
 
-function PrikKBOBenef()
+function PrikKBOBenef( a_benef )
+local _i
+local _ben_osn := 0
 
-if nUBNOsnova == 0
+if a_benef == NIL .or. LEN( a_benef ) == 0
     return
 endif
 
-nBO:=0
-? Lokal("Koef. Bruto osnove benef.(KBO):"),transform(parobr->k3,"999.99999%")
-? space(3),Lokal("BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO =")
-@ prow(),pcol()+1 SAY nBo:=round2(parobr->k3/100*nUBNOsnova,gZaok2) pict gpici
+for _i := 1 to LEN( a_benef )
+    _ben_osn += a_benef[ _i, 3 ]
+next
+
+nBO := 0
+
+? Lokal("Koef. Bruto osnove benef.(KBO):"), transform( parobr->k3 ,"999.99999%" )
+? space(3), Lokal("BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO =")
+@ prow(), pcol() + 1 SAY nBo := ROUND2( parobr->k3 / 100 * _ben_osn, gZaok2 ) pict gpici
 ?
+
 return
 
 

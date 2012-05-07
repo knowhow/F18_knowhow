@@ -18,6 +18,7 @@ static __var_obr
 // ----------------------------------------
 // ----------------------------------------
 function Rekap(lSvi)
+local _a_benef := {}
 private nC1:=20
 private i
 private cTPNaz
@@ -192,7 +193,7 @@ else
 endif
 
 // napravi obracun
-napr_obracun(lSvi)
+napr_obracun( lSvi, @_a_benef )
 
 if nLjudi==0
     nLjudi:=9999999
@@ -261,7 +262,7 @@ if cMjesec == cMjesecDo
     
     PrikKBO()
     
-    PrikKBOBenef()
+    PrikKBOBenef( _a_benef )
 
 endif
 
@@ -291,7 +292,7 @@ if cMjesec == cMjesecDo
     private nDopr2
     
     // obracunaj i prikazi doprinose
-    obr_doprinos( @nDopr, @nDopr2 )
+    obr_doprinos( @nDopr, @nDopr2, nil, _a_benef )
 
     if cUmPD == "D"
         P_10CPI
@@ -300,10 +301,6 @@ if cMjesec == cMjesecDo
     ?
 
     cLinija := "---------------------------------"
-
-    //if prow() > 49 + gPStranica
-      //  FF
-    //endif
 
     ? cLinija
 
@@ -1224,9 +1221,10 @@ return
 // -----------------------------------------------------
 // napravi obracun
 // -----------------------------------------------------
-function napr_obracun(lSvi)
+function napr_obracun( lSvi, a_benef )
 local i
 local cTpr
+local _bn_osnova, _bn_stepen
 
 nPorOl:=0
 nUPorOl:=0
@@ -1425,7 +1423,13 @@ do while !eof() .and. eval(bUSlov)
     // ostalo - osonova za obracun doprinosa
 
     if UBenefOsnovu()
-        nUBNOsnova += _oUNeto - if(!Empty(gBFForm), &gBFForm, 0)
+        
+        _bn_osnova := _oUNeto - if(!Empty(gBFForm), &gBFForm, 0)
+        nUBNOsnova += _bn_osnova
+        
+        _bn_stepen := BenefStepen()
+        add_to_a_benef( @a_benef, ALLTRIM(radn->k3), _bn_stepen, _bn_osnova )
+
     endif
 
     cTR := IF( RADN->isplata$"TR#SK", RADN->idbanka,;

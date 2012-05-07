@@ -124,12 +124,6 @@ endif
 
 do while !eof()
 
-    // ako je BENEF i ako je osnova 0 preskoci ovaj doprinos
-    if ("BENEF" $ naz) .and. nUBNOsnova == 0
-            skip
-            loop 
-    endif
-
     if gVarObracun == "2"
         if EMPTY(dopr->tiprada) .and. cRTipRada $ tr_list()
             // ovo je ok
@@ -310,19 +304,10 @@ do while !eof()
 
                 nBo := nUMRadn_bo
                 
-                // ako je beneficirani
-                if "BENEF" $ dopr->naz
-                    nBo := nURadn_bbo
-                endif
-
             else
 
-               if "BENEF" $ dopr->naz
-                    nBO := bruto_osn( nUBNOsnova, cRTipRada, nKoefLO )
-                   else
-                    nBO := bruto_osn( nTmpOsn, cRTipRada, nKoefLO )
-                   endif
-                endif
+               nBO := bruto_osn( nTmpOsn, cRTipRada, nKoefLO )
+            endif
             
                 @ prow(),nC1 SAY nBO pict gpici
             
@@ -366,7 +351,7 @@ do while !eof()
             endif
     endif 
 
-    if right(id,1)=="X" .or. "BENEF" $ dopr->naz
+    if right(id,1) == "X"
             ? cLinija
             IF !lGusto
                 ?

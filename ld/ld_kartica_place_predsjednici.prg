@@ -224,7 +224,7 @@ do while !eof()
 	else
 		nPom0:=ASCAN(_a_benef,{|x| x[1]==idkbenef})
 		if nPom0<>0
-			nPom2:=aNeta[_a_benef,3]
+			nPom2:=_a_benef[nPom0,3]
 		else
 			nPom2:=0
 		endif

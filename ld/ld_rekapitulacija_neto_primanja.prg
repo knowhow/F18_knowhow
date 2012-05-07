@@ -256,9 +256,9 @@ IF cVarijanta!="3"
     ?
 ENDIF
 
-StampaTabele(aKol,{|| FSvaki4()},,gTabela,,;
+StampaTabele(aKol,{|| FSvaki4() }, , gTabela, ,;
      ,"Rekapitulacija neto primanja",;
-                             {|| FFor4()},IF(gOstr=="D",,-1),,cOdvLin=="D",,,)
+                             {|| FFor4() }, IF( gOstr == "D",,-1 ),, cOdvLin=="D" ,,,)
 
 ?
 
@@ -287,45 +287,69 @@ return
 
 
 static function FFor4()
- cIdRadn:=IDRADN
- cNaziv:=Ocitaj(F_RADN,cIdRadn,"TRIM(NAZ)+' '+TRIM(IME)")
- FOR i:=1 TO nPoljaPr
-   cPom77:="SI"+ALLTRIM(STR(i))
-   IF TYPE(cPom77)=="N"; &cPom77:=0; ENDIF
- NEXT
- siu:=0; ssn:=0; sin:=0; siz:=0
- DO WHILE !EOF() .and. IDRADN==cIdRadn
-   FOR i:=1 TO nPoljaPr
-     cPom77:="SI"+ALLTRIM(STR(i))
-     cPom77I:="I"+RIGHT("00"+ALLTRIM(STR(i)),2)
-     IF TYPE(cPom77)=="N"
-       &cPom77 := &cPom77 + &cPom77I
-       siu := siu + &cPom77I
-     ENDIF
-   NEXT
-   IF cPKPN=="D"
-     if !(lViseObr .and. obr<>"1")
-       ssn += usati
-     endif
-     sin += uneto
-   ENDIF
-   IF cPKZI=="D"
-     siz += uiznos
-   ENDIF
-   SKIP 1
- ENDDO
- SKIP -1
+
+cIdRadn := IDRADN
+cNaziv := Ocitaj( F_RADN, cIdRadn, "TRIM(NAZ)+' '+TRIM(IME)" )
+
+FOR i:=1 TO nPoljaPr
+    cPom77:="SI"+ALLTRIM(STR(i))
+    IF TYPE(cPom77) == "N"
+        &cPom77 := 0
+    ENDIF
+NEXT
+ 
+siu := 0
+ssn := 0
+sin := 0
+siz := 0
+ 
+DO WHILE !EOF() .and. IDRADN==cIdRadn
+
+    FOR i:=1 TO nPoljaPr
+
+        cPom77 := "SI" + ALLTRIM( STR(i) )
+        cPom77I := "I" + RIGHT("00" + ALLTRIM(STR(i)), 2 )
+
+        IF TYPE( cPom77 ) == "N"
+            &cPom77 := &cPom77 + &cPom77I
+            siu := siu + &cPom77I
+        ENDIF
+
+    NEXT
+
+    IF cPKPN == "D"
+        if !( lViseObr .and. obr <> "1" )
+            ssn += usati
+        endif
+        sin += uneto
+    ENDIF
+
+    IF cPKZI == "D"
+        siz += uiznos
+    ENDIF
+
+    SKIP 1
+ 
+ENDDO
+SKIP -1
+
 RETURN .t.
 
 
 
 static function FFor43()
  LOCAL nUNeto,nBo,nPom,nPor,nPorOps,nDopr
+
  cIdRadn:=IDRADN
- SELECT RADN; HSEEK cidradn
- SELECT VPOSLA; HSEEK LD->idvposla
- SELECT KBENEF; HSEEK vposla->idkbenef
+
+ SELECT RADN
+ HSEEK cidradn
+ SELECT VPOSLA
+ HSEEK LD->idvposla
+ SELECT KBENEF
+ HSEEK vposla->idkbenef
  SELECT LD
+
  if !empty(cvposla) .and. cvposla<>left(idvposla,2) .or.;
     !empty(ckbenef) .and. ckbenef<>kbenef->id
    return .f.
@@ -335,7 +359,9 @@ static function FFor43()
    cPom77:="SI"+ALLTRIM(STR(i))
    IF TYPE(cPom77)=="N"; &cPom77:=0; ENDIF
  NEXT
- siu:=0; ssn:=0; sin:=0
+ siu := 0
+ ssn := 0
+ sin := 0
  DO WHILE !EOF() .and. IDRADN==cIdRadn
    FOR i:=1 TO nPoljaPr
      cPom77:="SI"+ALLTRIM(STR(i))
@@ -354,7 +380,8 @@ static function FFor43()
 
  nUNeto:=siu
  nBo:=round2(parobr->k3/100*MAX(nUNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
- SELECT POR; GO TOP
+ SELECT POR
+ GO TOP
  nPom:=nPor:=nPorOps:=0
  do while !eof()
    nPom:=max(dlimit,iznos/100*MAX(nUNeto,PAROBR->prosld*gPDLimit/100))
@@ -362,7 +389,8 @@ static function FFor43()
    skip 1
  enddo
 
- SELECT DOPR; GO TOP
+ SELECT DOPR
+ GO TOP
  nPom:=nDopr:=0
  do while !eof()
    nPom:=max(dlimit,iznos/100*nBO)
@@ -380,10 +408,13 @@ static function FFor43()
 
  SKIP -1
  ++nRBr
+
 RETURN IF(siu<>0,.t.,.f.)
 
 
 
 static function FSvaki4()
-RETURN
+return
+
+
 

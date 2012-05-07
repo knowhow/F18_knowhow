@@ -156,6 +156,18 @@ do CASE
 
      log_write( _msg + "1")
  
+  case _pix_width >= 1280 .and. _pix_height >= 950
+
+
+     font_size(22)
+     font_width(11)
+
+     maxrows(38)
+     maxcols(115)
+
+     log_write( _msg + "2long")
+
+
   case _pix_width >= 1280 .and. _pix_height >= 800
 
 

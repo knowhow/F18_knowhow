@@ -547,14 +547,14 @@ return
 
 
 
-
-/*! \fn PrenosNo2()
- *  \brief Prenos FAKT -> KALK 10 po normativima
- */
-
+// ----------------------------------------------------------------------
+// Prenos FAKT -> KALK 10 po normativima
+// ----------------------------------------------------------------------
 function PrenosNo2()
-*{
-local cIdFirma:=gFirma,cIdTipDok:="10;11;12;      ",cBrDok:=cBrKalk:=space(8)
+local cIdFirma := gFirma
+local cIdTipDok := "10;11;12;      "
+local cBrDok := SPACE(8)
+local cBrKalk := SPACE(8)
 
 O_KALK_PRIPR
 O_KALK
@@ -565,121 +565,156 @@ O_TARIFA
 O_SAST
 O_FAKT
 
-dDatKalk:=date()
-cIdKonto:=padr("5100",7)
-cIdZaduz2:=space(6)
+dDatKalk := DATE()
+cIdKonto := PADR( "5100", 7 )
+cIdZaduz2 := SPACE(6)
 
-cBrkalk:=space(8)
 if gBrojac=="D"
- select kalk
- select kalk; set order to tag "1";seek cidfirma+"10X"
- skip -1
- if idvd<>"10"
-   cbrkalk:=space(8)
- else
-   cbrkalk:=brdok
- endif
+    select kalk
+    set order to tag "1"
+    seek cIdFirma + "10X"
+    skip -1
+    if idvd<>"10"
+        cBrKalk := space(8)
+    else
+        cBrKalk := brdok
+    endif
 endif
+
 Box(,15,60)
 
-if gBrojac=="D"
- cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-endif
+    if gBrojac == "D"
+        cBrKalk := UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
+    endif
 
-do while .t.
+    do while .t.
 
-  nRBr:=0
-  nRbr2:=900
-  @ m_x+1,m_y+2   SAY "Broj kalkulacije 10 -" GET cBrKalk pict "@!"
-  @ m_x+1,col()+2 SAY "Datum:" GET dDatKalk
-  @ m_x+4,m_y+2   SAY "Konto got. proizvoda zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
+        nRBr:=0
+        nRbr2:=900
+        @ m_x+1,m_y+2   SAY "Broj kalkulacije 10 -" GET cBrKalk pict "@!"
+        @ m_x+1,col()+2 SAY "Datum:" GET dDatKalk
+        @ m_x+4,m_y+2   SAY "Konto got. proizvoda zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
 
-  cFaktFirma:=cIdFirma
-  dDatFOd:=ctod("")
-  dDatFDo:=date()
-  @ m_x+6,m_y+2 SAY "RJ u FAKT: " GET  cFaktFirma
-  @ m_x+7,m_Y+2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
-  @ m_x+8,m_y+2 SAY "period od" GET dDAtFOd
-  @ m_x+8,col()+2 SAY "do" GET dDAtFDo
-  read
-  if lastkey()==K_ESC; exit; endif
+        cFaktFirma:=cIdFirma
+        dDatFOd:=ctod("")
+        dDatFDo:=date()
+        @ m_x+6,m_y+2 SAY "RJ u FAKT: " GET  cFaktFirma
+        @ m_x+7,m_Y+2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
+        @ m_x+8,m_y+2 SAY "period od" GET dDAtFOd
+        @ m_x+8,col()+2 SAY "do" GET dDAtFDo
+        read
+        
+        if lastkey() == K_ESC
+            exit
+        endif
 
-  select fakt
-  seek cFaktFirma
-  IF !ProvjeriSif("!eof() .and. '"+cFaktFirma+"'==IdFirma","IDROBA",F_ROBA,"idtipdok $ '"+cIdTipdok+"' .and. dDatFOd<=datdok .and. dDatFDo>=datdok")
-    MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
-    LOOP
-  ENDIF
-  do while !eof() .and. cFaktFirma==IdFirma
+        select fakt
+        seek cFaktFirma
+        if !ProvjeriSif("!eof() .and. '"+cFaktFirma+"'==IdFirma","IDROBA",F_ROBA,"idtipdok $ '"+cIdTipdok+"' .and. dDatFOd<=datdok .and. dDatFDo>=datdok")
+            MsgBeep("U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!")
+            loop
+        endif
 
-    if idtipdok $ cIdTipdok .and. dDatFOd<=datdok .and. dDatFDo>=datdok // pripada odabranom intervalu
+        do while !EOF() .and. cFaktFirma==IdFirma
 
-       select ROBA; hseek fakt->idroba
-       if roba->tip="P"  // radi se o proizvodu
+            if idtipdok $ cIdTipdok .and. dDatFOd<=datdok .and. dDatFDo>=datdok // pripada odabranom intervalu
 
-          select roba; hseek fakt->idroba
-          select kalk_pripr
-          locate for idroba==fakt->idroba
-          if found()
-            replace kolicina with kolicina + fakt->kolicina
-          else
+                select roba
+                hseek fakt->idroba
+                if roba->tip="P"  
+                    // radi se o proizvodu
+
+                    select roba
+                    hseek fakt->idroba
+                    
+                    select kalk_pripr
+                    locate for idroba==fakt->idroba
+                    if found()
+                        replace kolicina with kolicina + fakt->kolicina
+                    else
+                        select kalk_pripr
+                        append blank
+                        replace idfirma with cIdFirma,;
+                                rbr     with str(++nRbr,3),;
+                                idvd with "10",;   // izlazna faktura
+                                brdok with cBrKalk,;
+                                datdok with dDatKalk,;
+                                idtarifa with ROBA->idtarifa,;
+                                brfaktp with "",;
+                                datfaktp with dDatKalk,;
+                                idkonto   with cidkonto,;
+                                datkurs with dDatKalk,;
+                                idroba with fakt->idroba,;
+                                vpc with fakt->cijena,;
+                                rabatv with fakt->rabat,;
+                                kolicina with fakt->kolicina,;
+                                mpc with fakt->porez
+                    endif
+
+                endif 
+            endif  
+
+            select fakt
+            skip
+        enddo
+
+        select kalk_pripr
+        go top
+  
+        do while !eof()
+            select sast
+            hseek  kalk_pripr->idroba
+            do while !eof() .and. id==kalk_pripr->idroba 
+                // setaj kroz sast
+                // utvr|ivanje nabavnih cijena po sastavnici !!!!!
+                select roba
+                hseek sast->id2
+                
+                select kalk_pripr
+                // roba->nc - nabavna cijena sirovine
+                // sast->kolicina - kolicina po jedinici mjera
+                replace fcj with fcj + (roba->nc*sast->kolicina)
+       
+                select sast
+                skip
+            enddo
+
+            select roba 
+            // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
+            hseek kalk_pripr->idroba
+            
+            if FOUND()
+                _rec := dbf_get_rec()     
+                _rec["nc"] := kalk_pripr->fcj
+                my_use_semaphore_off()
+                sql_table_update( nil, "BEGIN" )
+                update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+                sql_table_update( nil, "END" )
+                my_use_semaphore_on()
+            endif
+
             select kalk_pripr
-            append blank
-            replace idfirma with cIdFirma,;
-                     rbr     with str(++nRbr,3),;
-                     idvd with "10",;   // izlazna faktura
-                     brdok with cBrKalk,;
-                     datdok with dDatKalk,;
-                     idtarifa with ROBA->idtarifa,;
-                     brfaktp with "",;
-                     datfaktp with dDatKalk,;
-                     idkonto   with cidkonto,;
-                     datkurs with dDatKalk,;
-                     idroba with fakt->idroba,;
-                     vpc with fakt->cijena,;
-                     rabatv with fakt->rabat,;
-                     kolicina with fakt->kolicina,;
-                     mpc with fakt->porez
-          endif
+            skip
 
-       endif // roba->tip == "P"
-    endif  // $ cidtipdok
-    select fakt
-    skip
-  enddo
+        enddo
+        
+        @ m_x+10,m_y+2 SAY "Dokumenti su preneseni !!"
+        
+        if gBrojac=="D"
+            cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
+        endif
+        
+        inkey(4)
+        @ m_x+8,m_y+2 SAY space(30)
 
-  select kalk_pripr   ; go top
-  do while !eof()
-     select sast
-     hseek  kalk_pripr->idroba
-     do while !eof() .and. id==kalk_pripr->idroba // setaj kroz sast
-       // utvr|ivanje nabavnih cijena po sastavnici !!!!!
-       select roba; hseek sast->id2
-       select kalk_pripr
-       // roba->nc - nabavna cijena sirovine
-       // sast->kolicina - kolicina po jedinici mjera
-       replace fcj with fcj + (roba->nc*sast->kolicina)
-       select sast
-       skip
-     enddo
-     select roba // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
-     hseek kalk_pripr->idroba
-     replace nc with kalk_pripr->fcj
-     select kalk_pripr
-     skip
-  enddo
-  @ m_x+10,m_y+2 SAY "Dokumenti su preneseni !!"
-  if gBrojac=="D"
-   cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-  endif
-  inkey(4)
-  @ m_x+8,m_y+2 SAY space(30)
-
-enddo
+    enddo
+    
 Boxc()
-closeret
+
+close all
+
 return
-*}
+
 
 
 

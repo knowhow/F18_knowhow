@@ -395,6 +395,7 @@ return (nRows + nStRedova)
 static function KartPlDN(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
 local nKRedova
 local m := _gtprline()
+local _a_benef := {}
 
 // koliko redova ima kartica
 nKRedova := kart_redova()
@@ -656,7 +657,9 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	
 	if UBenefOsnovu()
 		nBFo:=round2(parobr->k3/100*MAX(_UNeto-(&gBFForm),PAROBR->prosld*gPDLimit/100),gZaok2)
-	endif
+	    _bn_stepen := BenefStepen()
+        add_to_a_benef( @_a_benef, ALLTRIM(radn->k3), _bn_stepen, nBFO )
+    endif
 	
 	IF lSkrivena
 		? m
@@ -771,33 +774,17 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 			? m
 		endif
 		
-		if ("BENEF" $ dopr->naz .and. nBFO == 0)
-			skip
-			loop
-		endif
-		
 		? cLMSK+id,"-",naz
 		@ prow(),pcol()+1 SAY iznos pict "99.99%"
 		
 		if empty(idkbenef) 
 			// doprinos udara na neto
-			if ("BENEF" $ dopr->naz .and. nBFO <> 0)
-				@ prow(),pcol()+1 SAY nBFO pict gpici
-				nC1:=pcol()+1
-				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBFO,gZaok2)) pict gpici
-			else
-				@ prow(),pcol()+1 SAY nBO pict gpici
-				nC1:=pcol()+1
-				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
-			endif
+			@ prow(),pcol()+1 SAY nBO pict gpici
+			nC1:=pcol()+1
+			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
 		else
-			nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
-			if nPom0<>0
-				nPom2:=parobr->k3/100*aNeta[nPom0,2]
-			else
-				nPom2:=0
-			endif
-			if round(nPom2,gZaok2)<>0
+			nPom2 := get_benef_osnovica( _a_benef, idkbenef )
+            if round(nPom2,gZaok2)<>0
 				@ prow(),pcol()+1 SAY nPom2 pict gpici
 				nC1:=pcol()+1
 				nPom:=max(dlimit,round(iznos/100*nPom2,gZaok2))
@@ -902,6 +889,7 @@ static function KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
 local nKRedova
 local nOsnNeto
 local nOsnOstalo
+local _a_benef := {}
 local m := _gtprline()
 
 // koliko redova ima kartica

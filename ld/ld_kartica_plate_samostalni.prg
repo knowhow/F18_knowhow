@@ -23,6 +23,8 @@ local cDoprSpace := SPACE(3)
 local cTprLine 
 local cDoprLine 
 local cMainLine 
+local _bn_stepen, _bn_osnova
+local _a_benef := {}
 private cLMSK := ""	
 
 cTprLine := _gtprline()
@@ -134,6 +136,12 @@ if gPrBruto=="D"
 	
 	nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
+    if UBenefOsnovu()
+        _bn_osnova := bruto_osn( nOsnZaBr - if(!Empty(gBFForm), &gBFForm, 0), cRTipRada, nLicOdbitak, nRPrKoef )
+        _bn_stepen := BenefStepen()
+        add_to_a_benef( @_a_benef, ALLTRIM( radn->k3 ), _bn_stepen, _bn_osnova )
+    endif
+
 	? cMainLine
 	? cLMSK + "1. OSNOVA ZA OBRACUN:"
 
@@ -198,27 +206,16 @@ if gPrBruto=="D"
 		
 		if empty(idkbenef) 
 			// doprinos udara na neto
-			if ("BENEF" $ dopr->naz .and. nBFO <> 0)
-				@ prow(),pcol()+1 SAY nBFO pict gpici
-				nC1:=pcol()+1
-				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBFO,gZaok2)) pict gpici
-			else
-				@ prow(),pcol()+1 SAY nBo pict gpici
-				nC1:=pcol()+1
-				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
-			endif
+			@ prow(),pcol()+1 SAY nBo pict gpici
+			nC1:=pcol()+1
+			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
 			
 			if dopr->id == "1X"
 				nUkDoprIz += nPom
 			endif
 
 		else
-			nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
-			if nPom0<>0
-				nPom2:=parobr->k3/100*aNeta[nPom0,2]
-			else
-				nPom2:=0
-			endif
+            nPom2 := get_benef_osnovica( _a_benef, idkbenef )
 			if round(nPom2,gZaok2)<>0
 				@ prow(),pcol()+1 SAY nPom2 pict gpici
 				nC1:=pcol()+1

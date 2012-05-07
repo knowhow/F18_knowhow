@@ -188,12 +188,7 @@ do while !eof()
 		endif
 
 	else
-		nPom0 := ASCAN( _a_benef,{|x| x[1] == idkbenef})
-		if nPom0<>0
-			nPom2 := _a_benef[ nPom0, 3 ]
-		else
-			nPom2 := 0
-		endif
+        nPom2 := get_benef_osnovica( _a_benef, idkbenef )		
 		if round(nPom2,gZaok2)<>0
 			@ prow(),pcol()+1 SAY nPom2 pict gpici
 			nC1:=pcol()+1

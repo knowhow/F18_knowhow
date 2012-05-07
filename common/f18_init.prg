@@ -137,43 +137,68 @@ return .t.
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
 static function set_screen_dimensions()
+local _msg
 
 local _pix_width  := hb_gtInfo( HB_GTI_DESKTOPWIDTH )
 local _pix_height := hb_gtInfo( HB_GTI_DESKTOPHEIGHT)
 
-if _pix_width <= 800 .and. _pix_height <= 600
+_msg := "screen res: " + ALLTRIM(to_str(_pix_width)) + " " + ALLTRIM(to_str(_pix_height)) + " varijanta: "
 
-/*
-   font_size(18)
-   font_width(9)
-
-   maxrows(31)
-   maxcols(80)
-*/
-
-   font_size(16)
-   font_width(8)
-
-   maxrows(35)
-   maxcols(100)
-
-elseif  _pix_width <= 1024 .and. _pix_height <= 768
-
-   font_size(20)
-   font_width(10)
-
-   maxrows(35)
-   maxcols(100)
+do CASE
 
 
-elseif _pix_width >= 1440 .and. _pix_height >= 900
+  case _pix_width >= 1440 .and. _pix_height >= 900
 
-   font_size(24)
-   font_width(12)
-   maxrows(35)
-   maxcols(120)
+     font_size(24)
+     font_width(12)
+     maxrows(35)
+     maxcols(120)
 
-endif
+     log_write( _msg + "1")
+ 
+  case _pix_width >= 1280 .and. _pix_height >= 800
+
+
+     font_size(22)
+     font_width(11)
+
+     maxrows(35)
+     maxcols(115)
+
+     log_write( _msg + "2")
+
+  case  _pix_width >= 1024 .and. _pix_height >= 768
+
+     font_size(20)
+     font_width(10)
+
+     maxrows(35)
+     maxcols(100)
+     
+     log_write( _msg + "3")
+
+
+  otherwise
+
+     // case _pix_width >= 800 .and. _pix_height >= 600
+
+    /*
+    font_size(18)
+    font_width(9)
+
+    maxrows(31)
+    maxcols(80)
+    */
+
+    font_size(16)
+    font_width(8)
+
+    maxrows(35)
+    maxcols(100)
+     
+    log_write( _msg + "4")
+
+endcase
 
 
 _get_screen_resolution_from_config()

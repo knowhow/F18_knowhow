@@ -1,3 +1,7 @@
+1.0.29 2012-05-07, vsasa, hernad
+
+  - linux terminus podrska za 1440x900, 1280x800, 1280x1024, 1024x768, 800x600 [#27880](http://redmine.bring.out.ba/issues/27880)
+
 1.0.28 2012-05-07, vsasa
 
   - kalk fakt prenos proizvodnja bugfix [#27902](http://redmine.bring.out.ba/issues/27902)

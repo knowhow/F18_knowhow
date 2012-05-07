@@ -1231,6 +1231,18 @@ RETURN ( RADN->(naz+ime+imerod) + idradn)
 
 
 
+static function _specpr_o_tbl()
+O_TIPPR
+O_KRED
+O_RADKR
+SET ORDER TO TAG "1"
+O_LD_RJ
+O_RADN
+O_LD
+return
+
+
+
 function SpecPrimRJ()
 local _alias, _table_name
 
@@ -1240,15 +1252,9 @@ cObracun:=" "
 qqRj:=""
 qqPrimanja:=""
 
-O_TIPPR
-O_KRED
-O_RADKR
-SET ORDER TO TAG "1"
-O_LD_RJ
-O_RADN
-O_LD
-O_PARAMS
+_specpr_o_tbl()
 
+O_PARAMS
 Private cSection:="5",cHistory:=" ",aHistory:={}
 
 cMjesecOd := STR(cMjesecOd,2)
@@ -1318,14 +1324,15 @@ aDbf:={    {"IDPRIM"     ,  "C" ,  2, 0 } ,;
             {"IZNOS"      ,  "N" , 18, 4 } ;
          }
  
-DBCREATE2(f18_ime_dbf(_table_name), aDbf)
+DBCREATE2( f18_ime_dbf(_table_name), aDbf )
 
 select F_LDT22
-usex (_alias)
+my_usex( _alias )
 
-CREATE_INDEX("1", "idprim+idkred+idrj", _alias) 
- 
+CREATE_INDEX("1", "idprim+idkred+idrj", _alias ) 
 use
+
+_specpr_o_tbl()
 O_LDT22
 
 set order to tag "1"

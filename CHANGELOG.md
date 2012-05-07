@@ -1,3 +1,8 @@
+1.0.28 2012-05-07, vsasa
+
+  - kalk fakt prenos proizvodnja bugfix [#27902](http://redmine.bring.out.ba/issues/27902)
+  - kalk F6 kartica prodavnice bugfix [#27896](http://redmine.bring.out.ba/issues/27896)
+ 
 1.0.27 2012-05-04, vsasa
 
   - ld, specifkacija, ako nema obračuna poruka [#27868](http://redmine.bring.out.ba/issues/27868)

@@ -1228,6 +1228,7 @@ do while !eof()
         endif
         
         nBr_benef := 0
+        cBen_stopa := ""
 
         // beneficirani radnici
         if UBenefOsnovu()
@@ -1237,7 +1238,8 @@ do while !eof()
 
             // benef.stepen
             nStUv := benefstepen()
-        
+            cBen_stopa := ALLTRIM( radn->k3 )        
+            
             if radn->(FIELDPOS("BEN_SRMJ")) <> 0
                 cR_rmj := ALLTRIM( radn->ben_srmj )
             endif
@@ -1251,6 +1253,7 @@ do while !eof()
                 cTipRada, nL_odb )
             // vrati parametre
             gBFForm := cFFtmp
+        
         endif
  
         // ocitaj doprinose, njihove iznose
@@ -1280,8 +1283,10 @@ do while !eof()
             aD_Dopr := TokToNiz( cDoprDod, ";" )
             
             for m:=1 to LEN(aD_dopr)
+
                 nDoprTmp := get_dopr( aD_dopr[m], cTipRada )
-                if "BENEF" $ dopr->naz
+
+                if !EMPTY( dopr->idkbenef ) .and. cBen_stopa == dopr->idkbenef
                     nU_d_pms += ;
                       ROUND( nBr_benef * nDoprTmp / 100, 4)
             
@@ -1300,7 +1305,7 @@ do while !eof()
             
             for c:=1 to LEN(aD2_dopr)
                 nDoprTmp := get_dopr( aD2_dopr[c], cTipRada )
-                if "BENEF" $ dopr->naz
+                if !EMPTY( dopr->idkbenef ) .and. cBen_stopa == dopr->idkbenef
                     nU_dn_dz += ;
                        ROUND( nBr_benef * nDoprTmp / 100, 4)
                 else
@@ -1311,7 +1316,6 @@ do while !eof()
         endif
 
         nUM_prih := ( nBruto - nU_d_iz )
-
         nPorOsn := ( nBruto - nU_d_iz ) - nL_odb
 
         // ako je neoporeziv radnik, nema poreza

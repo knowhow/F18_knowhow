@@ -357,14 +357,7 @@ do while !eof()
         else
 
             // beneficirani doprinosi 
-
-            nPom0 := ASCAN( a_benef, { |x| x[1] == idkbenef } )
-            
-            if nPom0 <> 0
-                nPom2 := a_benef[ nPom0, 3 ]
-            else
-                nPom2:=0
-            endif
+            nPom2 := get_benef_osnovica( a_benef, idkbenef )
             
             if Round2( nPom2, gZaok2 ) <> 0
                 @ prow(), pcol() + 1 SAY nPom2 pict gpici

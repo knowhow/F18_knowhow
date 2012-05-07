@@ -60,6 +60,26 @@ select (nTArea)
 return nRet
 
 
+// --------------------------------------------------------------
+// vraca iznos doprinosa, osnovice za beneficirani staž
+// --------------------------------------------------------------
+function get_benef_osnovica( a_benef, benef_id )
+local _iznos := 0
+local _scan
+
+if a_benef == NIL .or. LEN( a_benef ) == 0
+    return _iznos
+endif
+
+_scan := ASCAN( a_benef, {|var| var[1] == benef_id } )
+
+if a_benef[ _scan, 3 ] <> 0
+    _iznos := a_benef[ _scan, 3 ]
+endif
+
+return _iznos
+
+
 
 // --------------------------------------------------------------
 // dodaj u matricu benef
@@ -71,7 +91,6 @@ local _scan
 // a_benef[2] = benef_stepen
 // a_benef[3] = osnova
 
-altd()
 _scan := ASCAN( a_benef, { | var | var[1] == benef_id } )
 
 if _scan == 0

@@ -1126,8 +1126,8 @@ static function FFor7()
    xnetoUk += _uneto
    // doprinos
    PoDoIzSez(godina,mjesec)
-   nDopr   := IzracDopr(cDopr, nKLO, cTipRada)
-   cPom    := "xdopr"+ALLTRIM(STR(mjesec))
+   nDopr   := IzracDopr( cDopr, nKLO, cTipRada )
+   cPom    := "xdopr" + ALLTRIM(STR(mjesec))
    &cPom   := nDopr
    xdoprUk += nDopr
    SKIP 1
@@ -1152,9 +1152,10 @@ RETURN aVrati
 // ------------------------------------------
 // izracunava doprinose
 // ------------------------------------------
-function IzracDopr(cDopr, nKLO, cTipRada, nSpr_koef )
+function IzracDopr( cDopr, nKLO, cTipRada, nSpr_koef )
 LOCAL nArr:=SELECT(), nDopr:=0, nPom:=0, nPom2:=0, nPom0:=0, nBO:=0, nBFOsn:=0
-  
+local _a_benef := {}
+ 
 if nKLO == nil
 	nKLO := 0
 endif
@@ -1170,19 +1171,29 @@ endif
 ParObr(mjesec,godina,IF(lViseObr,cObracun,),cIdRj)
   
 if gVarObracun == "2"
-	nBo:=bruto_osn( MAX(_UNeto,PAROBR->prosld*gPDLimit/100), cTipRada, nKlo, nSPr_koef ) 
+
+	nBo := bruto_osn( MAX(_UNeto,PAROBR->prosld*gPDLimit/100), cTipRada, nKlo, nSPr_koef ) 
+
 	if UBenefOsnovu()
+
 		if !EMPTY(gBFForm)
 			gBFForm := STRTRAN(gBFForm,"_","")
 		endif
-		nBFOsn := bruto_osn(_UNeto - IF(!EMPTY(gBFForm), &gBFForm,0), cTipRada, nKlo, nSPr_koef)
+
+		nBFOsn := bruto_osn( _UNeto - IF(!EMPTY(gBFForm), &gBFForm,0), cTipRada, nKlo, nSPr_koef)
+
+        _benef_st := BenefStepen()
+        add_to_a_benef( @_a_benef, ALLTRIM(radn->k3), _benef_st, nBFOsn )
+
 	endif
+
 	if cTipRada $ " #I#N"
 		// minimalni bruto osnov
 		if calc_mbruto()
 			nBo := min_bruto( nBo, ld->usati )
 		endif
 	endif
+
 else
   	nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
 endif
@@ -1190,39 +1201,53 @@ endif
 SELECT DOPR
 GO TOP
 
-DO WHILE !EOF()  // doprinosi
-  if gVarObracun == "2"
-   if cTipRada $ "I#N" .and. EMPTY( dopr->tiprada )
-   	// ovo je uredu !
-   elseif dopr->tiprada <> cTipRada 
-   	skip 1
-	loop
-   endif
-  endif 
-   IF !(id $ cDopr)
-   	SKIP 1
-	LOOP
-   ENDIF
-   PozicOps(DOPR->poopst)   // ? mozda ovo rusi koncepciju zbog sorta na LD-u
-   IF !ImaUOp("DOPR",DOPR->id)
-     SKIP 1; LOOP
-   ENDIF
-   
-   if "BENEF" $ dopr->naz
-   	// beneficirani
-	nPom:=max(dlimit,round(iznos/100*nBFOsn,gZaok2))
-   else
-   	nPom:=max(dlimit,round(iznos/100*nBO,gZaok2))
-   endif
+DO WHILE !EOF()  
 
-   if round(iznos,4)=0 .and. dlimit>0  // fuell boss
-     // kartica plate
-     nPom:=1*dlimit   
-   endif
-   nDopr+=nPom
-   SKIP 1
-  ENDDO // doprinosi
-  SELECT (nArr)
+    if gVarObracun == "2"
+        if cTipRada $ "I#N" .and. EMPTY( dopr->tiprada )
+   	        // ovo je uredu !
+        elseif dopr->tiprada <> cTipRada 
+   	        skip 1
+	        loop
+        endif
+    endif 
+    
+    IF !(id $ cDopr)
+   	    SKIP 1
+	    LOOP
+    ENDIF
+
+    PozicOps( DOPR->poopst )   // ? mozda ovo rusi koncepciju zbog sorta na LD-u
+
+    IF !ImaUOp("DOPR",DOPR->id)
+        SKIP 1
+        LOOP
+    ENDIF
+   
+    if !EMPTY( field->idkbenef )
+   	    // beneficirani
+	    nPom := MAX( dlimit, round( iznos/100 * get_benef_osnovica( _a_benef, field->idkbenef ), gZaok2 ) )
+    else
+    	nPom := MAX( dlimit, round( iznos/100 * nBO, gZaok2 ) )
+    endif
+
+    if round(iznos,4) = 0 .and. dlimit > 0  
+        // fuell boss
+        // kartica plate
+        nPom := 1 * dlimit   
+    endif
+
+    nDopr += nPom
+
+    // resetuj matricu a_benef, posto nam treba za radnika
+    _a_benef := {}
+
+    SKIP 1
+
+ENDDO 
+
+SELECT (nArr)
+
 RETURN (nDopr)
 
 

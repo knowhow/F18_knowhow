@@ -97,6 +97,7 @@ local cRepSr := "N"
 local cRTipRada := " "
 local cMatBr
 local _proizv_ini
+local _a_benef := {}
 
 private aSpec:={}
 private cFNTZ:="D"
@@ -530,6 +531,9 @@ ENDIF
     
     nBrutoOsBenef += nPojBrBenef
 
+    _benef_st := BenefStepen()
+    add_to_a_benef( @_a_benef, ALLTRIM(radn->k3), _benef_st, nPojBrBenef )
+
     gBFForm := cFFtmp
 
    endif
@@ -553,7 +557,7 @@ ENDIF
 
  DO WHILE !EOF()
    
-   IF DOPR->poopst=="1" .and. lPDNE
+   IF DOPR->poopst == "1" .and. lPDNE
      
      nBOO:=0
      
@@ -572,12 +576,12 @@ ENDIF
     
     nkDopPX += iznos
     
-    if "BENEF" $ NAZ
-        // beneficirani 
-        nDodDoprP += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
+    if !EMPTY( field->idkbenef )
+        nDodDoprP += ROUND2( MAX( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100 ), gZaok2 ) 
     else
-        nDodDoprP += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
-        endif
+        nDodDoprP += ROUND2( MAX( DLIMIT, nBOO * iznos / 100 ), gZaok2 )
+    endif
+   
    ENDIF
    
    // dodatni doprinos ZDR
@@ -585,11 +589,11 @@ ENDIF
     
     nkDopZX += iznos
     
-    if "BENEF" $ NAZ
+    if !EMPTY( field->idkbenef )
         // beneficirani 
-        nDodDoprZ += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
+        nDodDoprZ += ROUND2( MAX( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100), gZaok2 )
     else
-        nDodDoprZ += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
+        nDodDoprZ += ROUND2( MAX( DLIMIT, nBOO * iznos / 100), gZaok2 )
         endif
    ENDIF
   

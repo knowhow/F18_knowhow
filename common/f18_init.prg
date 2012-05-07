@@ -152,7 +152,7 @@ do CASE
      font_size(24)
      font_width(12)
      maxrows(35)
-     maxcols(120)
+     maxcols(119)
 
      log_write( _msg + "1")
  

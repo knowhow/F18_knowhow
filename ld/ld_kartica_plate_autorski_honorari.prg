@@ -22,6 +22,7 @@ local cDoprSpace := SPACE(3)
 local cTprLine 
 local cDoprLine 
 local cMainLine 
+local _a_benef := {}
 private cLMSK := ""	
 
 cTprLine := _gtprline()
@@ -100,6 +101,12 @@ nOsnZaBr := nOsnNeto
 	
 nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
+if UBenefOsnovu()
+    _bn_osnova := bruto_osn( nOsnZaBr - if(!Empty(gBFForm), &gBFForm, 0), cRTipRada, nLicOdbitak )
+    _bn_stepen := BenefStepen()
+    add_to_a_benef( @_a_benef, ALLTRIM( radn->k3 ), _bn_stepen, _bn_osnova )
+endif
+
 // izracunava bruto sa troskovima 30%
 nBSaTr := ( nBo * 1.2500 )
 // troskovi su
@@ -172,26 +179,20 @@ do while !eof()
 		
 	if empty(idkbenef) 
 		// doprinos udara na neto
-		if ("BENEF" $ dopr->naz .and. nBFO <> 0)
-			@ prow(),pcol()+1 SAY nBFO pict gpici
-			nC1:=pcol()+1
-			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBFO,gZaok2)) pict gpici
-		else
-			@ prow(),pcol()+1 SAY nBo pict gpici
-			nC1:=pcol()+1
-			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
-		endif
+		@ prow(),pcol()+1 SAY nBo pict gpici
+		nC1:=pcol()+1
+		@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
 			
 		if dopr->id == "1X"
 			nUkDoprIz += nPom
 		endif
 
 	else
-		nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
+		nPom0 := ASCAN( _a_benef,{|x| x[1] == idkbenef})
 		if nPom0<>0
-			nPom2:=parobr->k3/100*aNeta[nPom0,2]
+			nPom2 := _a_benef[ nPom0, 3 ]
 		else
-			nPom2:=0
+			nPom2 := 0
 		endif
 		if round(nPom2,gZaok2)<>0
 			@ prow(),pcol()+1 SAY nPom2 pict gpici

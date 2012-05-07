@@ -2,6 +2,7 @@
 
   - linux terminus podrska za 1440x900, 1280x800, 1280x1024, 1024x768, 800x600 [#27880](http://redmine.bring.out.ba/issues/27880)
   - ld, beneficirani staž po više stopa [#27909](http://redmine.bring.out.ba/issues/27909)
+  - kompenzacije, proširen broj dokumenta [#27906](http://redmine.bring.out.ba/issues/27906)
 
 1.0.28 2012-05-07, vsasa
 

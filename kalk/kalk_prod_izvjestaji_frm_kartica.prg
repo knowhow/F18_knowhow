@@ -12,41 +12,53 @@
 
 #include "kalk.ch"
 
+
 function KPro()
-local nR1,nR2,nR3,cidfirma:=space(2),cidroba:=space(10),ckonto:=space(7)
-private GetList:={}
+local nR1
+local nR2
+local nR3
+local cIdFirma := SPACE(2)
+local cIdRoba := SPACE(10)
+local cKonto := SPACE(7)
+private GetList := {}
 
 select  roba
-nR1:=recno()
+nR1 := recno()
 select kalk_pripr
-nR2:=recno()
+nR2 := recno()
 select tarifa
-nR3:=recno()
+nR3 := recno()
 
-if empty(kalk_pripr->pkonto)
-   box(,2,50)
-     cidfirma:=gfirma
-     @ m_x+1,m_y+2 SAY "KARTICA PRODAVNICA"
-     @ m_x+2,m_y+2 SAY "Kartica konto-artikal" GET ckonto
-     @ m_x+2,col()+2 SAY "-" GET cidroba
-     read
-   BoxC()
+if EMPTY( kalk_pripr->pkonto )
+    Box(,2,50)
+        cIdFirma := gFirma
+        @ m_x+1,m_y+2 SAY "KARTICA PRODAVNICA"
+        @ m_x+2,m_y+2 SAY "Kartica konto-artikal" GET cKonto
+        @ m_x+2,col()+2 SAY "-" GET cIdRoba
+        read
+    BoxC()
 else
-   cidfirma:=kalk_pripr->idfirma
-   ckonto:=kalk_pripr->pkonto
-   cidroba:=kalk_pripr->idroba
+    cIdFirma := kalk_pripr->idfirma
+    cKonto := kalk_pripr->pkonto
+    cIdRoba := kalk_pripr->idroba
 endif
 
 close all
-Karticap(cIdFirma,cidroba,ckonto)
+
+KarticaP( cIdFirma, cIdRoba, cKonto )
+
 o_kalk_edit()
 select roba
 go nR1
+
 select kalk_pripr
 go nR2
+
 select tarifa
 go nR3
+
 select kalk_pripr
+
 return
-*}
+
 

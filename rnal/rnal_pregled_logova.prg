@@ -113,7 +113,7 @@ local cPom
 // napravi string iz rnlog/rnlog_it
 cLogDesc := g_log_desc( doc_log->doc_no , ;
 			doc_log->doc_log_no , ;
-			doc_log_type )
+			doc_log_ty )
 
 cPom := STRTRAN(cLogDesc, "#", ",")
 
@@ -165,11 +165,11 @@ return DE_CONT
 static function set_a_kol(aImeKol, aKol)
 aImeKol := {}
 
-AADD(aImeKol, {"dat./vr./oper.", {|| DTOC(doc_log_date) + " / " + PADR(doc_log_time, 5) + " " + PADR( getusername( operater_id ), 10) + ".." }, "datum", {|| .t.}, {|| .t.} })
+AADD(aImeKol, {"dat./vr./oper.", {|| DTOC(doc_log_da) + " / " + PADR(doc_log_ti, 5) + " " + PADR( getusername( operater_i ), 10) + ".." }, "datum", {|| .t.}, {|| .t.} })
 
-AADD(aImeKol, {"prom.tip" , {|| PADR(s_log_type(doc_log_type), 12) }, "tip", {|| .t.}, {|| .t.} })
+AADD(aImeKol, {"prom.tip" , {|| PADR(s_log_type(doc_log_ty), 12) }, "tip", {|| .t.}, {|| .t.} })
 
-AADD(aImeKol, {"kratki opis" , {|| PADR(doc_log_desc, 30) + ".." }, "opis", {|| .t.}, {|| .t.} })
+AADD(aImeKol, {"kratki opis" , {|| PADR(doc_log_de, 30) + ".." }, "opis", {|| .t.}, {|| .t.} })
 
 aKol:={}
 

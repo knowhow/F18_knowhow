@@ -189,12 +189,7 @@ method setGVars()
 set_global_vars()
 set_roba_global_vars()
 
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
 public gPicVrijednost := "9999999.99"
-
 // rnal - specif params section
 // firma podaci
 public gFNaziv:=SPACE(40)
@@ -223,12 +218,12 @@ public gDefNVM := 560
 public gDefCity := "Sarajevo"
 
 // export parametri
-public gExpOutDir := PADR("c:\temp\", 150)
+public gExpOutDir := PADR( my_home(), 300 )
 public gExpAlwOvWrite := "N"
-public gFaKumDir := PADR( STRTRAN( KUMPATH, "\RNAL\", "\FAKT\" ), 150 )
-public gFaPrivDir := PADR( STRTRAN( PRIVPATH, "\RNAL\", "\FAKT\" ), 150 )
-public gPoKumDir := PADR( STRTRAN( KUMPATH, "\SIGMA\RNAL\", "\KASE\TOPS\" ), 150 )
-public gPoPrivDir := PADR( STRTRAN( PRIVPATH, "\SIGMA\RNAL\", "\KASE\TOPS\" ), 150 )
+public gFaKumDir := SPACE(300)
+public gFaPrivDir := SPACE(300)
+public gPoKumDir := SPACE(300)
+public gPoPrivDir := SPACE(300)
 public gAddToDim := 3
 
 // default joker glass type
@@ -256,39 +251,9 @@ public gGnMax := 6000
 public gGnStep := 30
 public gGnUse := "D"
 
+rnal_set_params()
+
 ::super:setTGVars()
-
-O_KPARAMS
-
-// sekcija "5"
-cSection := "5"
-Rpar( "p1", @gPicVrijednost )
-Rpar( "a1", @gFnd_reset )
-Rpar( "a3", @gMaxWidth )
-Rpar( "a4", @gMaxHeigh )
-Rpar( "a5", @gDefNVM )
-Rpar( "to", @gInsTimeOut )
-Rpar( "g0", @gGnUse )
-Rpar( "g1", @gGnMin )
-Rpar( "g2", @gGnMax )
-Rpar( "g3", @gGnStep )
-
-
-// sekcija "E"
-cSection := "E"
-Rpar( "od", @gExpOutDir )
-Rpar( "ao", @gExpAlwOvWrite )
-Rpar( "ad", @gAddToDim )
-Rpar( "pd", @gFaPrivDir )
-Rpar( "kd", @gFaKumDir )
-Rpar( "tp", @gPoPrivDir )
-Rpar( "tk", @gPoKumDir )
-
-cSection := "1"
-
-select (F_PARAMS)
-
-use
 
 public gModul
 public gTema

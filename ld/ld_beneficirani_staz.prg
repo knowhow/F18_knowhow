@@ -73,7 +73,7 @@ endif
 
 _scan := ASCAN( a_benef, {|var| var[1] == benef_id } )
 
-if a_benef[ _scan, 3 ] <> 0
+if _scan <> 0 .and. a_benef[ _scan, 3 ] <> 0
     _iznos := a_benef[ _scan, 3 ]
 endif
 

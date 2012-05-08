@@ -36,7 +36,7 @@ return
 
 
 // --------------------------------------
-// parametri zaokruzenja, formata prikaza
+// parametri zaokruzenja
 // --------------------------------------
 function ed_zf_params()
 local cDimPict := "99999.99"
@@ -171,31 +171,6 @@ nX += 1
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL("Dodaj (mm) na bruseno staklo:", 45) GET gAddToDim PICT "9999.99" 
-
-
-nX += 2
-
-@ m_x + nX, m_y + 2 SAY PADL("****** export FMK parametri", nLeft)
-
-nX += 2
-
-@ m_x + nX, m_y + 2 SAY PADL("FAKT kumulativ:", 20) GET gFaKumDir PICT "@S45"
-
-nX += 1
-
-@ m_x + nX, m_y + 2 SAY PADL("FAKT privatni:", 20) GET gFaPrivDir PICT "@S45"
-
-nX += 1
-
-@ m_x + nX, m_y + 2 SAY PADL("POS kumulativ:", 20) GET gPoKumDir PICT "@S45"
-
-nX += 1
-
-@ m_x + nX, m_y + 2 SAY PADL("POS privatni:", 20) GET gPoPrivDir PICT "@S45"
-
-nX += 2
-
-@ m_x + nX, m_y + 2 SAY PADL("****** ostali parametri", nLeft)
 
 read
 
@@ -371,30 +346,22 @@ return
 // --------------------------------------
 function read_fi_params()
 
-SELECT F_KPARAMS
+gFNaziv := fetch_metric( "org_naziv", nil, gFNaziv )
+gFAdresa := fetch_metric( "org_adresa", nil, gFAdresa )
+gFIdBroj := fetch_metric( "org_pdv_broj", nil, gFIdBroj )
+    
+gFBanka1 := fetch_metric( "fakt_zagl_banka_1", nil, gFBanka1 )
+gFBanka2 := fetch_metric( "fakt_zagl_banka_2", nil, gFBanka2 )
+gFBanka3 := fetch_metric( "fakt_zagl_banka_3", nil, gFBanka3 )
+gFBanka4 := fetch_metric( "fakt_zagl_banka_4", nil, gFBanka4 )
+gFBanka5 := fetch_metric( "fakt_zagl_banka_5", nil, gFBanka5 )
+    
+gFTelefon := fetch_metric( "fakt_zagl_telefon", nil, gFTelefon )
+gFEmail := set_metric( "fakt_zagl_email", nil, gFEmail )
 
-if !used()
-	O_KPARAMS
-endif
+gFPrRed1 := fetch_metric( "fakt_zagl_dtxt_1", nil, gFPrRed1 )
+gFPrRed2 := fetch_metric( "fakt_zagl_dtxt_2", nil, gFPrRed2 )
 
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("F1", @gFNaziv)
-RPar("F2", @gFAdresa)
-RPar("F3", @gFIdBroj)
-RPar("F4", @gFTelefon)
-RPar("F5", @gFEmail)
-RPar("F8", @gFPrRed1)
-RPar("F9", @gFPrRed2)
-RPar("B1", @gFBanka1)
-RPar("B2", @gFBanka2)
-RPar("B3", @gFBanka3)
-RPar("B4", @gFBanka4)
-RPar("B5", @gFBanka5)
-
-close
 return
 
 
@@ -402,29 +369,22 @@ return
 // upisi parametre firme
 // --------------------------------
 function write_fi_params()
-SELECT F_KPARAMS
 
-if !used()
-	O_KPARAMS
-endif
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
+set_metric( "org_naziv", nil, gFNaziv )
+set_metric( "org_adresa", nil, gFAdresa )
+set_metric( "org_pdv_broj", nil, gFIdBroj )
+    
+set_metric( "fakt_zagl_banka_1", nil, gFBanka1 )
+set_metric( "fakt_zagl_banka_2", nil, gFBanka2 )
+set_metric( "fakt_zagl_banka_3", nil, gFBanka3 )
+set_metric( "fakt_zagl_banka_4", nil, gFBanka4 )
+set_metric( "fakt_zagl_banka_5", nil, gFBanka5 )
+    
+set_metric( "fakt_zagl_telefon", nil, gFTelefon )
+set_metric( "fakt_zagl_email", nil, gFEmail )
 
-WPar("F1", gFNaziv)
-WPar("F2", gFAdresa)
-WPar("F3", gFIdBroj)
-WPar("F4", gFTelefon)
-WPar("F5", gFEmail)
-WPar("F8", gFPrRed1)
-WPar("F9", gFPrRed2)
-WPar("B1", gFBanka1)
-WPar("B2", gFBanka2)
-WPar("B3", gFBanka3)
-WPar("B4", gFBanka4)
-WPar("B5", gFBanka5)
-
-close
+set_metric( "fakt_zagl_dtxt_1", nil, gFPrRed1 )
+set_metric( "fakt_zagl_dtxt_2", nil, gFPrRed2 )
 
 return
 
@@ -433,23 +393,22 @@ return
 // citaj paramtre izgleda dokumenta
 // --------------------------------------
 function read_doc_params()
-
-SELECT F_KPARAMS
-
-if !used()
-	O_KPARAMS
-endif
-
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("D1", @gDg_margina)
-RPar("D2", @gDl_margina)
-RPar("D3", @gDd_redovi)
-
-close
+gDg_margina := fetch_metric( "rnal_stampa_desna_margina", nil, gDg_margina )
+gDl_margina := fetch_metric( "rnal_stampa_lijeva_margina", nil, gDl_margina )
+gDd_redovi := fetch_metric( "rnal_stampa_dodatni_redovi", nil, gDd_redovi )
 return
+
+
+// ----------------------------------
+// upisi parametre izgleda dokumenta
+// ----------------------------------
+function write_doc_params()
+set_metric( "rnal_stampa_desna_margina", nil, gDg_margina )
+set_metric( "rnal_stampa_lijeva_margina", nil, gDl_margina )
+set_metric( "rnal_stampa_dodatni_redovi", nil, gDd_redovi )
+return
+
+
 
 
 // --------------------------------------
@@ -468,30 +427,38 @@ gGlLamiJoker := PADR( "LA", 20 )
 gAopKaljenje := PADR( "<A_KA>", 20 )
 gAopBrusenje := PADR( "<A_BR>", 20 )
 
-SELECT F_KPARAMS
+gGlassJoker := fetch_metric( "rnal_staklo_joker", nil, gGlassJoker )
+gFrameJoker := fetch_metric( "rnal_dist_joker", nil, gFrameJoker )
+gGlLamiJoker := fetch_metric( "rnal_lami_staklo_joker", nil, gGlLamiJoker )
 
-if !used()
-	O_KPARAMS
-endif
+gAopKaljenje := fetch_metric( "rnal_aop_kaljenje", nil, gAopKaljenje )
+gAopBrusenje := fetch_metric( "rnal_aop_brusenje", nil, gAopBrusenje )
 
-private cSection:="7"
-private cHistory:=" "
-private aHistory:={}
+gDefGlType := fetch_metric( "rnal_def_gl_type", nil, gDefGlType )
+gDefGlTick := fetch_metric( "rnal_def_gl_tick", nil, gDefGlTick )
 
-RPar("e1", @gGlassJoker)
-RPar("e2", @gFrameJoker)
-
-RPar("g1", @gGlLamiJoker)
-
-RPar("a1", @gAopKaljenje)
-RPar("a2", @gAopBrusenje)
-
-RPar("P7", @gDefGlType)
-RPar("P8", @gDefGlTick)
-
-
-close
 return
+
+
+
+// ---------------------------------------
+// upisi parametre elemenata i atributa
+// ---------------------------------------
+function write_elat_params()
+
+set_metric( "rnal_staklo_joker", nil, gGlassJoker )
+set_metric( "rnal_dist_joker", nil, gFrameJoker )
+set_metric( "rnal_lami_staklo_joker", nil, gGlLamiJoker )
+
+set_metric( "rnal_aop_kaljenje", nil, gAopKaljenje )
+set_metric( "rnal_aop_brusenje", nil, gAopBrusenje )
+
+set_metric( "rnal_def_gl_type", nil, gDefGlType )
+set_metric( "rnal_def_gl_tick", nil, gDefGlTick )
+
+return
+
+
 
 
 // --------------------------------------
@@ -499,109 +466,9 @@ return
 // --------------------------------------
 function read_ex_params()
 
-SELECT F_KPARAMS
-
-if !used()
-	O_KPARAMS
-endif
-
-private cSection:="E"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("od", @gExpOutDir)
-RPar("ao", @gExpAlwOvWrite)
-RPar("ad", @gAddToDim)
-RPar("pd", @gFaPrivDir)
-RPar("kd", @gFaKumDir)
-RPar("tp", @gPoPrivDir)
-RPar("tk", @gPoKumDir)
-
-close
-return
-
-
-
-// --------------------------------------
-// citaj parametre ostale
-// --------------------------------------
-function read_ost_params()
-
-SELECT F_KPARAMS
-
-if !used()
-	O_KPARAMS
-endif
-
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("a1", @gFnd_reset )
-
-RPar("a3", @gMaxWidth )
-RPar("a4", @gMaxHeigh )
-
-RPar("a5", @gDefNVM)
-
-RPar("to", @gInsTimeOut)
-
-RPar("g0", @gGnUse)
-RPar("g1", @gGnMin)
-RPar("g2", @gGnMax)
-RPar("g3", @gGnStep)
-
-close
-return
-
-
-// ----------------------------------
-// upisi parametre izgleda dokumenta
-// ----------------------------------
-function write_doc_params()
-SELECT F_KPARAMS
-
-if !used()
-	O_KPARAMS
-endif
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
-
-WPar("D1", gDg_margina)
-WPar("D2", gDl_margina)
-WPar("D3", gDd_redovi)
-
-close
-
-return
-
-
-// ---------------------------------------
-// upisi parametre elemenata i atributa
-// ---------------------------------------
-function write_elat_params()
-SELECT F_KPARAMS
-
-if !used()
-	O_KPARAMS
-endif
-private cSection:="7"
-private cHistory:=" "
-private aHistory:={}
-
-WPar("e1", gGlassJoker)
-WPar("e2", gFrameJoker)
-
-WPar("g1", gGlLamiJoker)
-
-WPar("a1", gAopKaljenje)
-WPar("a2", gAopBrusenje)
-
-WPar("P7", gDefGlType)
-WPar("P8", gDefGlTick)
-
-close
+gExpOutDir := fetch_metric( "rnal_export_lokacija", my_user(), gExpOutDir )
+gExpAlwOvWrite := fetch_metric( "rnal_export_overwrite_file", my_user(), gExpAlwOvWrite )
+gAddToDim := fetch_metric( "rnal_dodatak_na_dimenzije", nil, gAddToDim )
 
 return
 
@@ -611,57 +478,51 @@ return
 // upisi parametre exporta
 // ----------------------------------
 function write_ex_params()
-SELECT F_KPARAMS
 
-if !used()
-	O_KPARAMS
-endif
-private cSection:="E"
-private cHistory:=" "
-private aHistory:={}
-
-WPar("od", gExpOutDir)
-WPar("ao", gExpAlwOvWrite)
-WPar("ad", gAddToDim)
-WPar("pd", gFaPrivDir)
-WPar("kd", gFaKumDir)
-WPar("tp", gPoPrivDir)
-WPar("tk", gPoKumDir)
-
-close
+set_metric( "rnal_export_lokacija", my_user(), gExpOutDir )
+set_metric( "rnal_export_overwrite_file", my_user(), gExpAlwOvWrite )
+set_metric( "rnal_dodatak_na_dimenzije", nil, gAddToDim )
 
 return
 
+
+
+// --------------------------------------
+// citaj parametre ostale
+// --------------------------------------
+function read_ost_params()
+
+gFnd_reset := fetch_metric( "rnal_reset_kod_pretrage", my_user(), gFnd_reset )
+
+gMaxWidth := fetch_metric( "rnal_maksimalna_sirina_stakla", nil, gMaxWidth )
+gMaxHeigh := fetch_metric("rnal_maksimalna_visina_stakla", nil, gMaxHeigh )
+
+gDefNVM := fetch_metric("rnal_default_nadmorska_visina", nil, gDefNVM )
+
+gInsTimeOut := fetch_metric("rnal_ins_timeout", nil, gInsTimeOut )
+
+gGnUse := fetch_metric( "rnal_gn_tabela", nil, gGnUse )
+gGnMin := fetch_metric( "rnal_gn_min", nil, gGnMin )
+gGnMax := fetch_metric( "rnal_gn_max", nil, gGnMax )
+gGnStep := fetch_metric("rnal_gn_step", nil, gGnStep )
+
+return
 
 
 // ----------------------------------
 // upisi parametre ostalo
 // ----------------------------------
 function write_ost_params()
-SELECT F_KPARAMS
 
-if !used()
-	O_KPARAMS
-endif
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
-
-WPar("a1", gFnd_reset )
-
-WPar("a3", gMaxWidth )
-WPar("a4", gMaxHeigh )
-
-WPar("a5", gDefNVM )
-
-WPar("to", gInsTimeOut )
-
-WPar("g0", gGnUse )
-WPar("g1", gGnMin )
-WPar("g2", gGnMax )
-WPar("g3", gGnStep )
-
-close
+set_metric( "rnal_reset_kod_pretrage", my_user(), gFnd_reset )
+set_metric( "rnal_maksimalna_sirina_stakla", nil, gMaxWidth )
+set_metric("rnal_maksimalna_visina_stakla", nil, gMaxHeigh )
+set_metric("rnal_default_nadmorska_visina", nil, gDefNVM )
+set_metric("rnal_ins_timeout", nil, gInsTimeOut )
+set_metric( "rnal_gn_tabela", nil, gGnUse )
+set_metric( "rnal_gn_min", nil, gGnMin )
+set_metric( "rnal_gn_max", nil, gGnMax )
+set_metric("rnal_gn_step", nil, gGnStep )
 
 return
 
@@ -675,21 +536,10 @@ gPIC_VAL := "9999.99"
 gPIC_DIM := "9999.99"
 gPIC_QTTY := "99999"
 
-SELECT F_KPARAMS
+gPic_val := fetch_metric("rnal_pict_val", nil, gPIC_VAL)
+gPic_dim := fetch_metric("rnal_pict_dim", nil, gPIC_DIM)
+gPic_qtty := fetch_metric("rnal_pict_qtty", nil, gPIC_QTTY)
 
-if !used()
-	O_KPARAMS
-endif
-
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("P1", @gPIC_VAL)
-RPar("P2", @gPIC_DIM)
-RPar("P3", @gPIC_QTTY)
-
-close
 return
 
 
@@ -697,20 +547,10 @@ return
 // upisi paramtre zaokruzenja
 // ------------------------------------
 function write_zf_params()
-SELECT F_KPARAMS
 
-if !used()
-	O_KPARAMS
-endif
-private cSection:="5"
-private cHistory:=" "
-private aHistory:={}
-
-WPar("P1", gPIC_VAL)
-WPar("P2", gPIC_DIM)
-WPar("P3", gPIC_QTTY)
-
-close
+set_metric("rnal_pict_val", nil, gPIC_VAL)
+set_metric("rnal_pict_dim", nil, gPIC_DIM)
+set_metric("rnal_pict_qtty", nil, gPIC_QTTY)
 
 return
 

@@ -204,7 +204,7 @@ if LastKey() <> K_ESC
     sql_table_update( nil, "BEGIN" )
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
     sql_table_update( nil, "END" )
-    my_use_sempahore_on()
+    my_use_semaphore_on()
 	nRet := DE_REFRESH
 
 endif

@@ -18,6 +18,13 @@ local _rec
 set_a_dbf_sifarnik("adres"      , "ADRES"     , F_ADRES      )
 
 _rec := hb_hash()
+_rec["dbf_key_fields"] := { "id", "id2" }
+_rec["dbf_tag"]        := "ID"
+_rec["sql_in" ]        := "padr( id, 10 ) || padr(id2, 10)"
+_rec["dbf_key_block" ] := {|| field->id + field->id2 }
+set_a_dbf_sifarnik("sast"  , "SAST"  , F_SAST, _rec  )
+
+_rec := hb_hash()
 _rec["dbf_key_fields"] := { {"rule_id", 10, 0} }
 _rec["dbf_tag"]        := "1"
 _rec["sql_in" ]        := "rule_id::char(10)"
@@ -36,7 +43,6 @@ set_a_dbf_sifarnik("tnal"       , "TNAL"      , F_TNAL       )
 set_a_dbf_sifarnik("tdok"       , "TDOK"      , F_TDOK       )
 
 set_a_dbf_sifarnik("roba"       , "ROBA"      , F_ROBA       )
-set_a_dbf_sifarnik("sast"       , "SAST"      , F_SAST       )
 set_a_dbf_sifarnik("tarifa"     , "TARIFA"    , F_TARIFA     )
 set_a_dbf_sifarnik("konto"      , "KONTO"     , F_KONTO      )
 set_a_dbf_sifarnik("koncij"     , "KONCIJ"    , F_KONCIJ     )
@@ -51,5 +57,7 @@ set_a_dbf_temp     ("barkod"     ,  "BARKOD"      , F_BARKOD     )
 set_a_dbf_temp     ("strings"    ,  "STRINGS"     , F_STRINGS    )
 
 return
+
+
 
 

@@ -201,19 +201,30 @@ Box(,6,65)
 BoxC()
 
 if (LastKey() <> K_ESC)
+
     select sast
     set order to
     go top
+
     do while !EOF()
+
         if PADR( field->id2, 10 ) == PADR( cOldS, 10 )
             if ROUND(nKolic - field->kolicina, 5) = 0
                 _rec := dbf_get_rec()
                 _rec["kolicina"] := nKolic2
-                update_rec_server_and_dbf( ALIAS(), _rec )    
+
+                my_use_semaphore_off()
+                sql_table_update( nil, "BEGIN" )
+                update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+                sql_table_update( nil, "END" )
+                my_use_semaphore_on()    
             endif
         endif
+
         skip
+
     enddo
+
     set order to tag "idrbr"
 endif
 
@@ -286,18 +297,29 @@ if Pitanje(, "Kopirati postojece sastavnice u novi proizvod", "N") == "D"
         set order to tag "idrbr"
         seek cIdTek
         nCnt := 0
+
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
+
         do while !eof() .and. (id == cIdTek)
             ++ nCnt
             nTRec := recno()
             _rec := dbf_get_rec()
             _rec["id"] := cNoviProizvod
             append blank
-            update_rec_server_and_dbf( ALIAS(), _rec )
+
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
             go (nTrec)
             skip
         enddo
+
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
+
         select roba
         set order to tag "idun"
+
     endif
 endif
 
@@ -321,6 +343,7 @@ local _t_rec
 local _rec
 
 _d_n := "0"
+
 Box(,5,40)
     @ m_x+1,m_Y+2 SAY "Sta ustvari zelite:"
     @ m_x+3,m_Y+2 SAY "0. Nista !"
@@ -334,32 +357,44 @@ if LastKey() == K_ESC
     return 7
 endif
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 if _d_n $ "12" .and. Pitanje(,"Sigurno zelite izbrisati definisane sastavnice ?","N")=="D"
+
     select sast
-    zap
+    do while !EOF()
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+        _rec := dbf_get_rec()
+        delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+        go (_t_rec)
+    enddo
+
 endif
 
 if _d_n $ "2" .and. Pitanje(,"Sigurno zelite izbrisati proizvode ?","N")=="D"
 
     select roba  
 
-    // filter je na roba->tip="P"
+    // filter je na roba->tip = "P"
     do while !eof()
-        
         skip
-        
         _t_rec := RecNo()
-        
         skip -1
         
         _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( ALIAS(), _rec )
+        delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
         
         go ( _t_rec )
 
     enddo
 
 endif
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return
 

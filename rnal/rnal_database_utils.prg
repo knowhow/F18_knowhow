@@ -470,3 +470,114 @@ my_use_semaphore_on()
 return .t.
 
 
+// ------------------------------------------------------------
+// resetuje brojač dokumenta ako smo pobrisali dokument
+// ------------------------------------------------------------
+function rnal_reset_doc_no( doc_no )
+local _param
+local _broj := 0
+
+// param: rnal_doc_no
+_param := "rnal_doc_no"
+_broj := fetch_metric( _param, nil, _broj )
+
+if doc_no == _broj
+    -- _broj
+    // smanji globalni brojac za 1
+    set_metric( _param, nil, _broj )
+endif
+
+return
+
+
+
+// ------------------------------------------------------------------
+// rnal, uzimanje novog broja za rnal dokument
+// ------------------------------------------------------------------
+function rnal_novi_broj_dokumenta()
+local _broj := 0
+local _broj_doks := 0
+local _param
+local _tmp, _rest
+local _ret := ""
+local _t_area := SELECT()
+
+// param: rnal_doc_no
+_param := "rnal_doc_no"
+
+_broj := fetch_metric( _param, nil, _broj )
+
+// konsultuj i doks uporedo
+O_DOCS
+set order to tag "1"
+go top
+seek "X"
+skip -1
+
+_broj_doks := field->doc_no
+
+// uzmi sta je vece, doks broj ili globalni brojac
+_broj := MAX( _broj, _broj_doks )
+
+// uvecaj broj
+++ _broj
+
+// upisi ga u globalni parametar
+set_metric( _param, nil, _broj )
+
+select ( _t_area )
+return _broj
+
+
+
+// ------------------------------------------------------------
+// provjerava da li dokument postoji na strani servera 
+// ------------------------------------------------------------
+function rnal_doc_no_exist( doc_no )
+local _exist := .f.
+local _qry, _qry_ret, _table
+local _server := pg_server()
+
+_qry := "SELECT COUNT(*) FROM fmk.rnal_docs WHERE doc_no = " + _sql_quote( doc_no ) 
+_table := _sql_query( _server, _qry )
+_qry_ret := _table:Fieldget(1)
+
+if _qry_ret > 0
+    _exist := .t.
+endif
+
+return _exist
+
+
+// ------------------------------------------------------------
+// setovanje parametra brojaca na admin meniju
+// ------------------------------------------------------------
+function rnal_set_param_broj_dokumenta()
+local _param
+local _broj := 0
+local _broj_old
+
+Box(, 2, 60 )
+
+    // param: rnal_doc_no
+    _param := "rnal_doc_no"
+    _broj := fetch_metric( _param, nil, _broj )
+    _broj_old := _broj
+
+    @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "9999999999"
+
+    read
+
+BoxC()
+
+if LastKey() != K_ESC
+    // snimi broj u globalni brojac
+    if _broj <> _broj_old
+        set_metric( _param, nil, _broj )
+    endif
+endif
+
+return
+
+
+

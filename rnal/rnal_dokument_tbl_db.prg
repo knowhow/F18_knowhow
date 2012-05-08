@@ -20,20 +20,20 @@ function d_rpt_dbfs()
 close all
 
 // t_docit.dbf
-FErase(PRIVPATH + "T_DOCIT.DBF")
-FErase(PRIVPATH + "T_DOCIT.CDX")
+FErase( my_home() + "t_docit.dbf")
+FErase( my_home() + "t_docit.cdx")
 
 // t_docit2.dbf
-FErase(PRIVPATH + "T_DOCIT2.DBF")
-FErase(PRIVPATH + "T_DOCIT2.CDX")
+FErase( my_home() + "t_docit2.dbf")
+FErase( my_home() + "t_docit2.cdx")
 
 // t_docop.dbf
-FErase(PRIVPATH + "T_DOCOP.DBF")
-FErase(PRIVPATH + "T_DOCOP.CDX")
+FErase( my_home() + "t_docop.dbf")
+FErase( my_home() + "t_docop.cdx")
 
 // t_pars.dbf
-FErase(PRIVPATH + "T_PARS.DBF")
-FErase(PRIVPATH + "T_PARS.CDX")
+FErase( my_home() + "t_pars.dbf")
+FErase( my_home() + "t_pars.cdx")
 
 return 1
 
@@ -42,10 +42,10 @@ return 1
 // kreiranje print tabela
 // ------------------------------------
 function t_rpt_create()
-local cT_DOCIT := "T_DOCIT.DBF"
-local cT_DOCIT2 := "T_DOCIT2.DBF"
-local cT_DOCOP := "T_DOCOP.DBF"
-local cT_PARS := "T_PARS.DBF"
+local cT_DOCIT := "t_docit.dbf"
+local cT_DOCIT2 := "t_docit2.dbf"
+local cT_DOCOP := "t_docop.dbf"
+local cT_PARS := "t_pars.dbf"
 local aT_DOCIT:={}
 local aT_DOCIT2:={}
 local aT_DOCOP:={}

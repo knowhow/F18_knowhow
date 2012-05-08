@@ -598,7 +598,11 @@ ENDIF
    ENDIF
   
 
+   // resetuj benef matricu
+   _a_benef := {}
+
    SKIP 1
+
  ENDDO
 
  nkD1X := Ocitaj( F_DOPR , cDopr1 , "iznos" , .t. )

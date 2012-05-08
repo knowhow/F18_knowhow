@@ -139,6 +139,7 @@ local _rec, _id_fields, _where_bl
 select _docs
 set order to tag "1"
 go top
+
 set_global_memvars_from_dbf("d")
 
 if __doc_stat <> 3
@@ -153,13 +154,13 @@ else
     append blank
 endif
 
-_rec := dbf_get_rec()
 _rec := get_dbf_global_memvars("d")
 
-_id_fields := { {"doc_no", 10} }
-_where_bl := { |x| "DOC_NO=" + STR( x["doc_no"], 10) } 
-        
-update_rec_server_and_dbf( "docs", _rec, _id_fields, _where_bl )
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
         
 set order to tag "1"
 
@@ -182,6 +183,9 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     _rec := dbf_get_rec()
@@ -190,16 +194,17 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     append blank
     
-    _id_fields := { { "doc_no", 10 }, {"doc_it_no", 4 } }
-    _where_bl := { |x| "DOC_NO=" + STR( x["doc_no"], 10) + " AND DOC_IT_NO=" + STR( x["doc_it_no"], 4) } 
-        
-    update_rec_server_and_dbf( nil, _rec, _id_fields, _where_bl )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
     
     select _doc_it
     
     skip
     
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -219,6 +224,10 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     _rec := dbf_get_rec()
@@ -226,16 +235,18 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     select doc_it2
     
     append blank
-        
-    _id_fields := { { "doc_no", 10 }, {"doc_it_no", 4 }, {"it_no", 4} }
-    _where_bl := { |x| "DOC_NO=" + STR( x["doc_no"], 10) + " AND DOC_IT_NO=" + STR( x["doc_it_no"], 4) + " AND IT_NO=" + STR( x["it_no"], 4) } 
-        
-    update_rec_server_and_dbf( nil, _rec, _id_fields, _where_bl )
+       
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
     
     select _doc_it2
     
     skip    
+
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -256,6 +267,10 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     // ako ima operacija...
@@ -266,16 +281,17 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
         select doc_ops
         append blank
  
-        _id_fields := { { "doc_no", 10 }, {"doc_it_no", 4 }, {"doc_it_el_", 10}, { "doc_op_no", 4 } }
-        _where_bl := { |x| "DOC_NO=" + STR( x["doc_no"], 10) + " AND DOC_IT_NO=" + STR( x["doc_it_no"], 4) + " AND DOC_IT_EL_=" + STR( x["doc_it_el_"], 10) + " AND DOC_OP_NO=" + STR(x["doc_op_no"], 4) } 
-        
-        update_rec_server_and_dbf( nil, _rec, _id_fields, _where_bl )
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
         
     endif
     
     select _doc_ops
     skip
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -360,14 +376,18 @@ seek docno_str( nDoc_no )
 
 if FOUND()
     
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
     _rec := dbf_get_rec()
     _rec["doc_status"] := nMarker
  
-    _id_fields := { {"doc_no", 10} }
-    _where_bl := { |x| "DOC_NO=" + STR( x["doc_no"], 10) } 
-        
-    update_rec_server_and_dbf( nil, _rec, _id_fields, _where_bl )
-    
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+ 
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
+   
 endif
 
 select (nTArea)
@@ -547,6 +567,9 @@ return
 static function doc_erase( nDoc_no )
 local _del_rec, _field_ids, _where_bl
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 // DOCS
 select docs
 set order to tag "1"
@@ -555,13 +578,8 @@ seek docno_str( nDoc_no )
 
 if FOUND()
 
-    _del_rec := hb_hash()
-    _del_rec["doc_no"] := field->doc_no
-
-    _field_ids := { {"doc_no", 10} }
-    _where_bl := {|x| "DOC_NO=" + STR( x["doc_no"], 10 ) }
-
-    delete_rec_server_and_dbf( "docs", _del_rec, _field_ids, _where_bl,  "1" )
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "docs", _del_rec, 1, "CONT" )
 
 endif
 
@@ -572,20 +590,20 @@ go top
 seek docno_str( nDoc_no )
 
 if FOUND()
-    do while !eof() .and. (field->doc_no == nDoc_no)
 
-        _del_rec := hb_hash()
-        _del_rec["doc_no"] := field->doc_no
-        _del_rec["doc_it_no"] := field->doc_it_no
+    do while !eof() .and. ( field->doc_no == nDoc_no )
 
-        _field_ids := { {"doc_no", 10}, {"doc_it_no", 4} }
-        _where_bl := {|x| "DOC_NO=" + STR( x["doc_no"], 10 ) + " AND DOC_IT_NO=" + STR( x["doc_it_no"], 4) }
+        skip 1
+        _t_rec := RECNO()
+        skip -1
 
-        delete_rec_server_and_dbf( "doc_it", _del_rec, _field_ids, _where_bl,  "1" )
+        _del_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( "doc_it", _del_rec, 1, "CONT" )
 
-        SKIP
+        go ( _t_rec )
 
     enddo
+
 endif
 
 // DOC_IT2
@@ -596,17 +614,15 @@ seek docno_str( nDoc_no )
 
 if FOUND()
     do while !eof() .and. (field->doc_no == nDoc_no)
-        _del_rec := hb_hash()
-        _del_rec["doc_no"] := field->doc_no
-        _del_rec["doc_it_no"] := field->doc_it_no
-        _del_rec["it_no"] := field->it_no
 
-        _field_ids := { {"doc_no", 10}, {"doc_it_no", 4}, {"it_no", 4} }
-        _where_bl := {|x| "DOC_NO=" + STR( x["doc_no"], 10 ) + " AND DOC_IT_NO=" + STR( x["doc_it_no"], 4) + " AND IT_NO=" + STR( x["it_no"], 4) }
+        skip 1
+        _t_rec := RECNO()
+        skip -1
 
-        delete_rec_server_and_dbf( "doc_it2", _del_rec, _field_ids, _where_bl,  "1" )
+        _del_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( "doc_it2", _del_rec, 1, "CONT" )
 
-        SKIP
+        go (_t_rec)
     enddo
 endif
 
@@ -617,18 +633,17 @@ go top
 seek docno_str( nDoc_no )
 
 if FOUND()
+
     do while !eof() .and. (field->doc_no == nDoc_no)
-        _del_rec := hb_hash()
-        _del_rec["doc_no"] := field->doc_no
-        _del_rec["doc_it_no"] := field->doc_it_no
-        _del_rec["doc_op_no"] := field->doc_op_no
 
-        _field_ids := { {"doc_no", 10}, {"doc_it_no", 4}, {"doc_op_no", 10} }
-        _where_bl := {|x| "DOC_NO=" + STR( x["doc_no"], 10 ) + " AND DOC_IT_NO=" + STR( x["doc_it_no"], 4) + " AND DOC_OP_NO=" + STR( x["doc_op_no"], 10) }
+        skip 1
+        _t_rec := RECNO()
+        skip -1
 
-        delete_rec_server_and_dbf( "doc_ops", _del_rec, _field_ids, _where_bl,  "1" )
+        _del_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( "doc_ops", _del_rec, 1, "CONT" )
 
-        SKIP
+        go (_t_rec)
     enddo
 endif
 
@@ -748,10 +763,11 @@ if docs->(fieldpos("DOC_TIME")) <> 0
     _rec["doc_time"] := PADR( TIME(), 5 )
 endif
 
-_field_ids := { {"doc_no", 10} }
-_where_bl := {|x| "DOC_NO=" + STR( x["doc_no"], 10 ) }
-
-update_rec_server_and_dbf( "docs", _rec, _field_ids, _where_bl )
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 DBUnlock()
 
@@ -793,6 +809,7 @@ _rec["doc_no"] := nDoc_no
 if EMPTY( _rec["doc_time"] )
     _rec["doc_time"] := PADR( TIME(), 5 )
 endif
+
 dbf_update_rec( _rec )
 
 // _DOC_IT

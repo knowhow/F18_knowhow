@@ -299,9 +299,13 @@ cIdField := "_" + cIdField
 
 &cIdField := nId
 
-_rec := hb_hash()
 _rec := get_dbf_global_memvars()        
-dbf_update_rec( _rec )
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
         
 DBUnlock()
 
@@ -314,16 +318,16 @@ return 1
 // kreiranje tabele PRIVPATH + _TMP1
 // ------------------------------------------
 function cre_tmp1( aFields )
-local cTbName := "_TMP1"
+local cTbName := "_tmp1"
 
 if LEN(aFields) == 0
 	MsgBeep("Nema definicije polja u matrici!")
 	return
 endif
 
-_del_tmp( PRIVPATH + cTbName + ".DBF" )  
+_del_tmp( my_home() + cTbName + ".dbf" )  
 
-DBcreate2(PRIVPATH + cTbName + ".DBF", aFields)
+DBcreate( my_home() + cTbName + ".dbf", aFields )
 
 return
 
@@ -331,16 +335,16 @@ return
 // kreiranje tabele PRIVPATH + _TMP1
 // ------------------------------------------
 function cre_tmp2( aFields )
-local cTbName := "_TMP2"
+local cTbName := "_tmp2"
 
 if LEN(aFields) == 0
 	MsgBeep("Nema definicije polja u matrici!")
 	return
 endif
 
-_del_tmp( PRIVPATH + cTbName + ".DBF" )  
+_del_tmp( my_home() + cTbName + ".dbf" )  
 
-DBcreate2(PRIVPATH + cTbName + ".DBF", aFields)
+DBcreate( my_home() + cTbName + ".dbf", aFields )
 
 return
 
@@ -388,7 +392,13 @@ endif
 
 // odmah zamjeni u tabeli docs, jer se na njoj nalazis
 if field->doc_no == old_doc
-	replace field->doc_no with _new_no
+    _rec := dbf_get_rec()
+    _rec["doc_no"] := _new_no
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+	update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 else
 	_repl := .t.
 endif
@@ -397,6 +407,9 @@ if _repl == .f.
 	msgbeep("Nisam nista zamjenio !!!")
 	return .f.
 endif
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
 
 // doc_it
 select doc_it
@@ -408,7 +421,9 @@ seek docno_str( old_doc )
 if FOUND()
 	set order to 0
 	do while !EOF() .and. field->doc_no == old_doc
-		replace field->doc_no with _new_no
+        _rec := dbf_get_rec()
+        _rec["doc_no"] := _new_no
+	    update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
 		skip
 	enddo
 endif
@@ -423,7 +438,9 @@ seek docno_str( old_doc )
 if FOUND()
 	set order to 0
 	do while !EOF() .and. field->doc_no == old_doc
-		replace field->doc_no with _new_no
+        _rec := dbf_get_rec()
+        _rec["doc_no"] := _new_no
+	    update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
 		skip
 	enddo
 endif
@@ -438,10 +455,17 @@ seek docno_str( old_doc )
 if FOUND()
 	set order to 0
 	do while !EOF() .and. field->doc_no == old_doc
-		replace field->doc_no with _new_no
+        _rec := dbf_get_rec()
+        _rec["doc_no"] := _new_no
+	    update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
 		skip
 	enddo
 endif
+
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return .t.
 

@@ -44,8 +44,13 @@ set_a_dbf_rnal_relation()
 set_a_dbf_temp("rnal__docs"    ,   "_DOCS"       , F__DOCS   )
 set_a_dbf_temp("rnal__doc_it"  ,   "_DOC_IT"     , F__DOC_IT  )
 set_a_dbf_temp("rnal__doc_it2" ,   "_DOC_IT2"    , F__DOC_IT2  )
-set_a_dbf_temp("rnal__doc_ops"  ,  "_DOC_OPS"    , F__DOC_OPS  )
+set_a_dbf_temp("rnal__doc_ops" ,   "_DOC_OPS"    , F__DOC_OPS  )
 set_a_dbf_temp("rnal__fnd_par" ,   "_FND_PAR"    , F__FND_PAR  )
+set_a_dbf_temp("t_docit"       ,   "T_DOCIT"     , F_T_DOCIT  )
+set_a_dbf_temp("t_docit2"      ,   "T_DOCIT2"    , F_T_DOCIT2  )
+set_a_dbf_temp("t_docop"       ,   "T_DOCOP"     , F_T_DOCOP  )
+set_a_dbf_temp("t_pars"        ,   "T_PARS"      , F_T_PARS  )
+
 
 
 return

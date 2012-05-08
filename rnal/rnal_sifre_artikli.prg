@@ -696,7 +696,11 @@ if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
     _rec["art_lab_de"] := cArt_lab_desc
     _rec["match_code"] := cArt_mcode
     
-    update_rec_server_and_dbf( nil, _rec )
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
     set order to tag "1"
     set filter to &cDBFilter
@@ -833,7 +837,10 @@ if FOUND()
 
     _del_rec := dbf_get_rec()
 
-    delete_rec_server_and_dbf( nil, _del_rec )
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
+    delete_rec_server_and_dbf( ALIAS(), _del_rec, 1, "CONT" )
 
     select elements
     set order to tag "1"
@@ -852,7 +859,7 @@ if FOUND()
         do while !EOF() .and. field->el_id == nEl_id
             
             _del_rec := dbf_get_rec()
-            delete_rec_server_and_dbf( nil, _del_rec )
+            delete_rec_server_and_dbf( ALIAS(), _del_rec, 1, "CONT" )
 
             skip
         enddo
@@ -865,19 +872,24 @@ if FOUND()
         do while !EOF() .and. field->el_id == nEl_id
             
             _del_rec := dbf_get_rec()
-
-            delete_rec_server_and_dbf( nil, _del_rec )
+            delete_rec_server_and_dbf( ALIAS(), _del_rec, 1, "CONT" )
 
             skip
         enddo
         
         select elements
         
-        delete
+        _del_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( ALIAS(), _del_rec, 1, "CONT" )
+        
         skip
     
     enddo
-    
+ 
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
+   
 endif
 
 select articles
@@ -913,6 +925,9 @@ set order to tag "1"
 go top
 seek artid_str( nArt_id ) 
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 do while !EOF() .and. field->art_id == nArt_id
 
     nOldEl_id := field->el_id
@@ -930,7 +945,7 @@ do while !EOF() .and. field->art_id == nArt_id
     _rec["art_id"] := nArtNewid
     _rec["e_gr_id"] := nElGr_id
     
-    update_rec_server_and_dbf( "elements", _rec )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
     // atributi...
     _clone_att( nOldEl_id, nElNewid )
@@ -942,6 +957,9 @@ do while !EOF() .and. field->art_id == nArt_id
     go (nElRecno)
     
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return nArtNewid
 
@@ -977,7 +995,7 @@ do while !EOF() .and. field->el_id == nOldEl_id
     _rec["el_att_id"] := nNewAttId
     _rec["el_id"] := nNewEl_id
     
-    update_rec_server_and_dbf( "e_att", _rec )
+    update_rec_server_and_dbf( "e_att", _rec, 1, "CONT" )
 
     select e_att
     go (nElRecno)
@@ -1016,7 +1034,7 @@ do while !EOF() .and. field->el_id == nOldEl_id
     _rec["el_op_id"] := nNewAopid
     _rec["el_id"] := nNewEl_id
     
-    update_rec_server_and_dbf( "e_aops", _rec )
+    update_rec_server_and_dbf( "e_aops", _rec, 1, "CONT" )
     
     select e_aops
     go (nElRecno)
@@ -1568,8 +1586,12 @@ if FOUND()
             _rec["art_desc"] := cArt_desc
             _rec["match_code"] := cArt_mcode
             _rec["art_full_d"] := cArt_full_desc
-            
-            update_rec_server_and_dbf( "articles", _rec )
+        
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )    
+            update_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()    
         
             return 1
         
@@ -1639,9 +1661,13 @@ if lChange == .t.
     _rec["art_desc"] := cArt_desc
     _rec["match_code"] := cArt_mcode
     _rec["art_full_d"] := cArt_full_desc
-            
+
+    my_use_semaphore_off()            
+    sql_table_update( nil, "BEGIN" )
     update_rec_server_and_dbf( "articles", _rec )
-        
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
     return 1
         
 endif

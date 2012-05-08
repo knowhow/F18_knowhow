@@ -13,36 +13,6 @@
 #include "rnal.ch"
 
 
-// --------------------------------------
-// kreira tabelu ral
-// --------------------------------------
-function c_tbl_ral()
-local aDbf := {}
-local cPath := SIFPATH
-local cTable := "RAL"
-
-AADD( aDbf, { "id", "N", 5, 0 })
-AADD( aDbf, { "gl_tick", "N", 2, 0 })
-AADD( aDbf, { "descr", "C", 50, 0 })
-AADD( aDbf, { "en_desc", "C", 50, 0 })
-AADD( aDbf, { "col_1", "N", 8, 0 })
-AADD( aDbf, { "col_2", "N", 8, 0 })
-AADD( aDbf, { "col_3", "N", 8, 0 })
-AADD( aDbf, { "col_4", "N", 8, 0 })
-AADD( aDbf, { "colp_1", "N", 12, 5 })
-AADD( aDbf, { "colp_2", "N", 12, 5 })
-AADD( aDbf, { "colp_3", "N", 12, 5 })
-AADD( aDbf, { "colp_4", "N", 12, 5 })
-
-if !FILE( f18_ime_dbf(cTable) )
-	DbCreate2( cPath + cTable, aDbf )
-endif
-
-CREATE_INDEX("1", "STR(id,5)+STR(gl_tick,2)", cPath + cTable, .t.)
-CREATE_INDEX("2", "descr", cPath + cTable, .t.)
-
-return
-
 
 // --------------------------------------
 // otvara sifranik ral

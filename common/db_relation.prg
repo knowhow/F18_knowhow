@@ -16,17 +16,24 @@
 // -----------------------------------------
 // kreiranje tabele relacija
 // -----------------------------------------
-function cre_relation()
+function cre_relation( ver )
 local aDbf
+local _table, _alias 
 
 aDbf := g_rel_tbl()
 
-if !FILE( SIFPATH + "relation.dbf" )
-	DBCREATE2( SIFPATH + "RELATION.DBF", aDbf)
+_table := "relation"
+_alias := "RELATION"
+
+if !FILE( f18_ime_dbf( _table ) )
+    DBCREATE2( _alias, aDbf)
+    reset_semaphore_version(_table_name)
+    my_use( _alias )
+    USE
 endif
 
-CREATE_INDEX( "1", "TFROM+TTO+TFROMID", SIFPATH + "RELATION" )
-CREATE_INDEX( "2", "TTO+TFROM+TTOID", SIFPATH + "RELATION" )
+CREATE_INDEX( "1", "TFROM+TTO+TFROMID", _alias )
+CREATE_INDEX( "2", "TTO+TFROM+TTOID", _alias )
 
 return
 

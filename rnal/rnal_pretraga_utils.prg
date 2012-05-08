@@ -30,22 +30,23 @@ static _direkt_mod
 //        3 |   ATT      |    5    |   11    | 
 // -------------------------------------------
 // ----------------------------------------------------------------------
-function _cre_fnd_par()
-local cFndDbf := "_fnd_par"
+function _cre_fnd_par( ver )
+local _table := "rnal__fnd_par"
+local _alias := "_FND_PAR"
 local aDbf := {}
 
-if !FILE(f18_ime_dbf(cFndDbf))
+if !FILE( f18_ime_dbf( _table ) )
     
     AADD(aDbf, { "fnd_par_no", "N", 4, 0})
     AADD(aDbf, { "fnd_par_type", "C", 10, 0})
     AADD(aDbf, { "fnd_att", "C", 10, 0})
     AADD(aDbf, { "fnd_val", "C", 10, 0})
 
-    DBcreate2(PRIVPATH + cFndDbf + ".DBF", aDbf)
+    DBcreate2( _table, aDbf )
 
 endif
 
-CREATE_INDEX("1", "STR(fnd_par_no, 4)", PRIVPATH + cFndDbf, .t.)
+CREATE_INDEX( "1", "STR(fnd_par_no, 4)", _alias )
 
 return
 

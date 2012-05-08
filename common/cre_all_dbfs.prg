@@ -29,8 +29,8 @@ cre_all_virm(ver)
 cre_all_epdv(ver)
 
 //cre_all_mat(ver)
-//cre_all_rnal(ver)
 
+cre_all_rnal(ver)
 cre_all_pos(ver)
 
 _db := TDbFin():new()
@@ -60,8 +60,8 @@ _db:kreiraj()
 //_db := TDbMat():new()
 //_db:kreiraj()
 
-//_db := TDbRnal():new()
-//_db:kreiraj()
+_db := TDbRnal():new()
+_db:kreiraj()
 
 return
 

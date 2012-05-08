@@ -16,7 +16,7 @@
 // ----------------------------------
 // kreiranje tabela "rules"
 // ----------------------------------
-function cre_fmkrules()
+function cre_fmkrules( ver )
 
 local cTbl := "fmkrules"
 

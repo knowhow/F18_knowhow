@@ -13,23 +13,6 @@
 #include "rnal.ch"
 
 
-// -----------------------------------------------
-// kreiranje rules index-a specificnih za rnal
-// -----------------------------------------------
-function c_rule_cdx()
-
-// ELEMENT CODE
-CREATE_INDEX( "ELCODE", "MODUL_NAME+RULE_OBJ+RULE_C3+RULE_C4", ;
-	SIFPATH + "FMKRULES", .t. )
-// ARTICLES NEW
-CREATE_INDEX( "RNART1", "MODUL_NAME+RULE_OBJ+RULE_C3+STR(RULE_NO,5)", ;
-	SIFPATH + "FMKRULES", .t. )
-// ITEMS
-CREATE_INDEX( "ITEM1", "MODUL_NAME+RULE_OBJ+RULE_C5+STR(RULE_NO,5)", ;
-	SIFPATH + "FMKRULES", .t. )
-
-return
-
 
 // -----------------------------------------------
 // generisi standardna RNAL pravila

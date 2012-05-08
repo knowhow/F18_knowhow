@@ -36,6 +36,7 @@ set_a_dbf_pos()
 set_a_dbf_epdv()
 set_a_dbf_os()
 set_a_dbf_virm()
+set_a_dbf_rnal()
 
 return
 

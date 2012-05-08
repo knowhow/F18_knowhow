@@ -865,6 +865,7 @@ if lNewRec
 	endif
 	
 	_e_gr_id := 0
+
 endif
 
 if EMPTY( cType )
@@ -891,10 +892,13 @@ endif
 
 if EMPTY(cType) .and. LastKey() == K_ESC .and. lNewRec
 
-	_rec := hb_hash()
     _rec := get_dbf_global_memvars()
 
-	delete
+	my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+	my_use_semaphore_on()
 	
 	return 0
 	
@@ -917,10 +921,13 @@ if !EMPTY(cType)
 
 endif
 
-_rec := hb_hash()
 _rec := get_dbf_global_memvars()
 
-update_rec_server_and_dbf( nil, _rec )
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 if lNewRec
 	// nafiluj odmah atribute za ovu grupu...
@@ -947,9 +954,14 @@ BoxC()
 
 
 if LastKey() <> K_ESC
-    _rec := hb_hash()
     _rec := get_dbf_global_memvars()
-    update_rec_server_and_dbf( nil, _rec )
+
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
 endif
 
 
@@ -989,9 +1001,13 @@ do while !EOF() .and. field->e_gr_id == __gr_id ;
 	_e_gr_at_id := e_gr_att->e_gr_at_id
 	_e_gr_vl_id := 0
 
-    _rec := hb_hash()
     _rec := get_dbf_global_memvars()
-    update_rec_server_and_dbf( nil, _rec )
+    
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 	
     select e_gr_att
 	skip
@@ -1059,19 +1075,27 @@ BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
 	
-    _rec := hb_hash()
     _rec := get_dbf_global_memvars()
-
-	delete
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 	
 	return 0
 	
 endif
 
-_rec := hb_hash()
 _rec := get_dbf_global_memvars()
-update_rec_server_and_dbf( nil, _rec )
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+ 
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 return 1
 
 
@@ -1131,17 +1155,23 @@ BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
     
-    _rec := hb_hash()
     _rec := get_dbf_global_memvars()
-	delete
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+	delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 	
 	return 0
 	
 endif
 
-_rec := hb_hash()
 _rec := get_dbf_global_memvars()
-update_rec_server_and_dbf( nil, _rec )
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 	
 return 1
 

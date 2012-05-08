@@ -2,6 +2,7 @@
 
   - ld, beneficirani staž po više stopa [#27909](http://redmine.bring.out.ba/issues/27909)
   - rnal, semafori 1.1 [#25915](http://redmine.bring.out.ba/issues/25915)
+  - sastavnice [#27933](http://redmine.bring.out.ba/issues/27933)
  
 1.0.29 2012-05-07, vsasa, hernad
 

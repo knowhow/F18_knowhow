@@ -359,7 +359,8 @@ local nDoc_log_no
 local cDoc_log_type
 
 select _tmp1
-if RECCOUNT2() == 0
+
+if RECCOUNT() == 0
 	return
 endif
 
@@ -410,7 +411,7 @@ local nDoc_log_no
 local cDoc_log_type
 
 select _doc_it
-if RECCOUNT2() == 0
+if RECCOUNT() == 0
 	return
 endif
 
@@ -456,7 +457,7 @@ local nDoc_log_no
 local cDoc_log_type
 
 select _doc_ops
-if RECCOUNT2() == 0
+if RECCOUNT() == 0
 	return
 endif
 

@@ -141,7 +141,7 @@ if l_new_doc
 	_doc_pay_id := 1
 	_doc_paid := "D"
 	_doc_pay_de := SPACE( LEN(_doc_pay_de) )
-	_doc_status := 0
+	_doc_status := 10
 	_doc_sh_des := SPACE( LEN( _doc_sh_des ) )
 	
 	cCustId := PADR("", 10)

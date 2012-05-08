@@ -45,9 +45,7 @@ local nBoxX := maxrows() - 10
 local nBoxY := maxcols() - 10
 
 if lst_args( @nSort ) == 0
-	
 	return 0
-	
 endif
 
 private aDocs := {}
@@ -69,6 +67,8 @@ _set_sort()
 go top
 
 set_a_kol(@ImeKol, @Kol)
+
+select docs
 
 ObjDbedit("lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5)
 
@@ -803,7 +803,13 @@ Box(,1, 50)
 BoxC()
 
 if LastKey() <> K_ESC
-	replace field->fmk_doc with cValue
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    _rec := dbf_get_rec()
+    _rec["fmk_doc"] := cValue
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 endif
 
 m_x := nX

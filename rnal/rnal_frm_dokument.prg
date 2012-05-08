@@ -66,6 +66,7 @@ select _doc_ops
 go top
 select _docs
 go top
+
 _doc := _docs->doc_no
 
 // ispisi header i footer
@@ -528,18 +529,14 @@ do case
             if field->doc_status == 3
                 _g_doc_desc( @cDesc )
             endif
-            
-            // uzmi novi broj dokumenta
-            nDocNoNew := _new_doc_no()
 
-            // ako je baza zauzeta...
-            if nDocNoNew == -1
-                return DE_CONT
+            nDocNoNew := _docs->doc_no
+    
+            if rnal_set_broj_dokumenta( @nDocNoNew )
+                // filuj sve tabele sa novim brojem
+                fill__doc_no( nDocNoNew )
             endif
 
-            // filuj sve tabele sa novim brojem
-            fill__doc_no( nDocNoNew )
-            
             // insertuj nalog u kumulativ
             if doc_insert( cDesc ) == 1
                 
@@ -570,17 +567,13 @@ do case
             
         select _docs
         
-        // uzmi novi broj dokumenta
-        nDocNoNew := _new_doc_no()
+        nDocNoNew := _docs->doc_no
 
-        // ako je baza zauzeta
-        if nDocNoNew == -1
-            return DE_CONT
+        if rnal_set_broj_dokumenta( @nDocNoNew )
+            // filuj sve tabele sa novim brojem
+            fill__doc_no( nDocNoNew )
         endif
 
-        // filuj sve tabele sa novim brojem
-        fill__doc_no( nDocNoNew )
-        
         select _docs
         go top
         
@@ -604,17 +597,13 @@ do case
             
         select _docs
         
-        // uzmi novi broj dokumenta
-        nDocNoNew := _new_doc_no()
+        nDocNoNew := _docs->doc_no
 
-        // ako je baza zauzeta
-        if nDocNoNew == -1
-            return DE_CONT
+        if rnal_set_broj_dokumenta( @nDocNoNew )
+            // filuj sve tabele sa novim brojem
+            fill__doc_no( nDocNoNew )
         endif
 
-        // filuj sve tabele sa novim brojem
-        fill__doc_no( nDocNoNew )
-        
         select _docs
         go top
         
@@ -733,6 +722,7 @@ nDoc_status := field->doc_status
 
 // brisi dokument
 delete
+__dbPack()
 
 select _doc_it
 go top
@@ -740,6 +730,7 @@ do while !EOF()
     delete
     skip
 enddo
+__dbPack()
 
 select _doc_ops
 go top
@@ -747,30 +738,12 @@ do while !EOF()
     delete
     skip
 enddo
+__dbPack()
 
 if nDoc_status == 3
 
     // ukloni marker sa azuriranog dokumenta (busy)
-
     set_doc_marker( nDoc_no, 0 )
-
-elseif nDoc_status == 0
-    
-    // treba ga brisati i iz azuriranih naloga
-    // jer je zauzeo vec broj
-
-    select docs
-    go top
-    seek docno_str( nDoc_no )
-
-    if FOUND() .and. field->doc_no == nDoc_no
-        
-        _vals := dbf_get_rec()
-        _id_fields := { {"doc_no", 10} }
-        _where_bl := {|x| "DOC_NO=" + STR(x["doc_no"], 10) }
-        delete_rec_server_and_dbf( "docs", _vals, _id_fields, _where_bl, "1" )
-
-    endif
 
 endif
 
@@ -798,6 +771,7 @@ endif
 nDoc_it_no := field->doc_it_no
 
 delete
+__dbPack()
 
 select _doc_ops
 set order to tag "1"
@@ -810,6 +784,7 @@ do while !EOF() .and. field->doc_no == _doc ;
     delete
     skip
 enddo
+__dbPack()
 
 select _doc_it
 
@@ -830,6 +805,7 @@ if !lSilent .and. Pitanje(,"Izbrisati stavku (D/N)?", "D") == "N"
 endif
 
 delete
+__dbPack()
 
 return 1
 
@@ -866,5 +842,7 @@ if lVal == .f.
     MsgBeep("Unos polja obavezan !!!")
 endif
 return
+
+
 
 

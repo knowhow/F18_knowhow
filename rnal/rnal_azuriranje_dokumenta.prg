@@ -54,7 +54,7 @@ __doc_desc := cDesc
 __doc_no := _docs->doc_no
 __doc_stat := _docs->doc_status
 
-if __doc_stat < 3 .and. !doc_exist( __doc_no )
+if __doc_stat < 3 .and. !rnal_doc_no_exist( __doc_no )
     
     MsgBeep("Nalog " + ALLTRIM(STR( __doc_no )) + " nije moguce azurirati !!!#Status dokumenta = " + ALLTRIM(STR(__doc_stat)) )
     
@@ -84,6 +84,8 @@ if __doc_stat == 3
     
     // brisi dokument iz kumulativa
     doc_erase( __doc_no )
+
+    O_DOCS
     
 endif
 
@@ -111,10 +113,13 @@ endif
 // sve je ok brisi pripremu
 select _docs
 zap
+
 select _doc_it
 zap
+
 select _doc_it2
 zap
+
 select _doc_ops
 zap
 
@@ -134,31 +139,28 @@ return 1
 // azuriranje DOCS
 // --------------------------------------------------
 static function _docs_insert( nDoc_no )
-local _rec, _id_fields, _where_bl
+local _rec
 
 select _docs
 set order to tag "1"
 go top
 
-set_global_memvars_from_dbf("d")
+_rec := dbf_get_rec()
 
-if __doc_stat <> 3
-    // pronadji zauzeti slog ( 3 + nDoc_no )
-    select docs
-    set order to tag "A"
-    go top
-    seek d_busy() + docno_str( nDoc_no )
-else
-    select docs
-    set order to tag "1"
+select docs
+set order to tag "1"
+go top
+seek docno_str( nDoc_no )
+
+if !FOUND()
     append blank
 endif
 
-_rec := get_dbf_global_memvars("d")
-
 my_use_semaphore_off()
 sql_table_update( nil, "BEGIN" )
+
 update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+
 sql_table_update( nil, "END" )
 my_use_semaphore_on()
         
@@ -565,7 +567,7 @@ return
 // brisi sve vezano za dokument iz kumulativa
 //-----------------------------------------------
 static function doc_erase( nDoc_no )
-local _del_rec, _field_ids, _where_bl
+local _del_rec
 
 my_use_semaphore_off()
 sql_table_update( nil, "BEGIN" )
@@ -577,10 +579,8 @@ go top
 seek docno_str( nDoc_no )
 
 if FOUND()
-
     _del_rec := dbf_get_rec()
     delete_rec_server_and_dbf( "docs", _del_rec, 1, "CONT" )
-
 endif
 
 // DOC_IT
@@ -590,20 +590,8 @@ go top
 seek docno_str( nDoc_no )
 
 if FOUND()
-
-    do while !eof() .and. ( field->doc_no == nDoc_no )
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-
-        _del_rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "doc_it", _del_rec, 1, "CONT" )
-
-        go ( _t_rec )
-
-    enddo
-
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "doc_it", _del_rec, 2, "CONT" )
 endif
 
 // DOC_IT2
@@ -613,17 +601,8 @@ go top
 seek docno_str( nDoc_no )
 
 if FOUND()
-    do while !eof() .and. (field->doc_no == nDoc_no)
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-
-        _del_rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "doc_it2", _del_rec, 1, "CONT" )
-
-        go (_t_rec)
-    enddo
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "doc_it2", _del_rec, 2, "CONT" )
 endif
 
 // DOC_OP
@@ -633,19 +612,12 @@ go top
 seek docno_str( nDoc_no )
 
 if FOUND()
-
-    do while !eof() .and. (field->doc_no == nDoc_no)
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-
-        _del_rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "doc_ops", _del_rec, 1, "CONT" )
-
-        go (_t_rec)
-    enddo
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "doc_ops", _del_rec, 2, "CONT" )
 endif
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return
 
@@ -674,106 +646,6 @@ select (nArea)
 
 return lRet
 
-
-
-// -----------------------------------------
-// novi broj dokumenta
-// mrezni rad....
-// -----------------------------------------
-function _new_doc_no()
-local nTArea
-local nNewDocNo
-local _rec, _field_ids, _where_bl
-
-private getlist:={}
-
-nTArea := SELECT()
-
-select _docs
-go top
-
-if ( field->doc_no <> 0 .or. EOF() )
-
-    // vec postoji odredjen broj
-    return field->doc_no
-    
-endif
-
-// novi dokument
-// koji nema svog broja, u pripremi
-
-select docs
-
-if !docs->(FLOCK())
-
-    if gInsTimeOut == nil
-        nTime := 150
-    else
-        nTime := gInsTimeOut
-    endif
-
-    Box(,1,40)
-
-    // daj mu 10 sekundi
-        do while nTime > 0
-            
-        InkeySc(.125)
-            
-        @ m_x + 1, m_y + 2 SAY "timeout: " + ALLTRIM(STR(nTime)) 
-
-        -- nTime
-            
-        if docs->(FLOCK())
-                exit
-            endif
-
-        sleep(1)
-
-    enddo
-    
-    BoxC()
-
-        if nTime == 0 .AND. ! docs->(FLOCK())
-            
-        Beep(2)
-            MsgBeep("Nemoguce odrediti broj dokumenta!#Pokusajte ponovo...")
-            return -1
-        
-    endif
-endif
-
-select docs
-set order to tag "1"
-go bottom
-
-nNewBrNal := field->doc_no + 1
-
-// pravi se fizicki append u bazi dokumenata da bi se sacuvalo mjesto
-// za ovaj dokument
-select docs
-
-appblank2(.f., .f.)   
-
-_rec := dbf_get_rec()
-_rec["doc_status"] := 3
-_rec["doc_no"] := nNewBrNal
-
-// vrijeme dokumenta
-if docs->(fieldpos("DOC_TIME")) <> 0
-    _rec["doc_time"] := PADR( TIME(), 5 )
-endif
-
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
-DBUnlock()
-
-select (nTArea)
-
-return nNewBrNal
 
 
 

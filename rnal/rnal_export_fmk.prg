@@ -95,9 +95,7 @@ endif
 // sumirati stavke da ili ne
 _g_sumbox( @lSumirati )
 
-
 // select pripreme fakt
-select (245)
 O_FAKT_PRIPR
 
 // provjeri da li je priprema FAKT prazna

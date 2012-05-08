@@ -195,7 +195,7 @@ DO WHILE .T.
 
      CASE nRez==DE_REFRESH
        TB:RefreshAll()
-       @ m_x + 1, m_y + yw-6 SAY STR(RecCount2(),5)
+       @ m_x + 1, m_y + yw-6 SAY STR( RECCOUNT(), 5 )
 
      CASE Ch==K_ESC
         
@@ -258,7 +258,7 @@ ENDIF
 @ m_x + params["xw"] + 1,  m_y + 2   SAY params["msg_bott"] COLOR "GR+/B"
 
 @ m_x + params["xw"] + 1,  col() + 1 SAY IIF(!lIzOBJDB, REPL(BROWSE_PODVUCI_2, 42),"")
-@ m_x + 1, m_y + params["yw"] - 6    SAY STR(RecCount2(), 5)
+@ m_x + 1, m_y + params["yw"] - 6    SAY STR( RECCOUNT(), 5)
 
 
 TB := TBRowseDB( m_x + 2 + params["prazno"], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width) 

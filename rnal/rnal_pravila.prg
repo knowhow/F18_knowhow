@@ -66,16 +66,26 @@ go bottom
 nNrec := field->rule_id + 1
 
 append blank
-replace rule_id with nNrec
-replace modul_name with cModul
-replace rule_obj with cRuleObj
-replace rule_no with 1
-replace rule_name with cRuleName
-replace rule_ermsg with cErrMsg
-replace rule_level with nLevel
-replace rule_c3 with cRuleC3
-replace rule_c4 with cRuleC4
-replace rule_c7 with cRule
+
+_rec := dbf_get_rec()
+_rec["rule_id"] := nNrec
+_rec["modul_name"] := cModul
+_rec["rule_obj"] := cRuleObj
+_rec["rule_no"] := 1
+_rec["rule_name"] := cRuleName
+_rec["rule_ermsg"] := cErrMsg
+_rec["rule_level"] := nLevel
+_rec["rule_c3"] := cRuleC3
+_rec["rule_c4"] := cRuleC4
+_rec["rule_c7"] := cRule
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return
 

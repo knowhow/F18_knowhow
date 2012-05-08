@@ -549,6 +549,30 @@ endif
 return _exist
 
 
+
+// ------------------------------------------------------------
+// setuj broj dokumenta u pripremi ako treba !
+// ------------------------------------------------------------
+function rnal_set_broj_dokumenta( doc_no )
+local _null_brdok
+
+select _docs
+go top
+
+_null_brdok := 0
+        
+if field->doc_no <> _null_brdok 
+    // nemam sta raditi, broj je vec setovan
+    return .f.
+endif
+
+// daj mi novi broj dokumenta
+doc_no := rnal_novi_broj_dokumenta()
+
+return .t.
+
+
+
 // ------------------------------------------------------------
 // setovanje parametra brojaca na admin meniju
 // ------------------------------------------------------------

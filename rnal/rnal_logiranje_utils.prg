@@ -162,12 +162,20 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace int_1 with aArr[1, 1]
-replace int_2 with aArr[1, 2]
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["int_1"] := aArr[1, 1]
+_rec["int_2"] := aArr[1, 2]
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return
 
@@ -208,14 +216,23 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace date_1 with aArr[1, 2]
-replace int_1 with aArr[1, 1]
-replace char_1 with aArr[1, 3]
-replace char_2 with aArr[1, 4]
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["date_1"] := aArr[1, 2]
+_rec["int_1"] := aArr[1, 1]
+_rec["char_1"] := aArr[1, 3]
+_rec["char_2"] := aArr[1, 4]
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -255,12 +272,21 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace int_1 with aArr[1, 1]
-replace char_1 with aArr[1, 2]
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["int_1"] := aArr[1, 1]
+_rec["char_1"] := aArr[1, 2]
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -301,13 +327,22 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace int_1 with aArr[1, 1]
-replace char_1 with aArr[1, 2]
-replace char_2 with aArr[1, 3]
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["int_1"] := aArr[1, 1]
+_rec["char_1"] := aArr[1, 2]
+_rec["char_2"] := aArr[1, 3]
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -467,16 +502,25 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace art_id with nArt_id
-replace num_1 with nArt_qtty
-replace num_2 with nArt_heigh
-replace num_3 with nArt_width
-replace char_1 with cDoc_desc
-replace char_2 with cDoc_sch
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["art_id"] := nArt_id
+_rec["num_1"] := nArt_qtty
+_rec["num_2"] := nArt_heigh
+_rec["num_3"] := nArt_width
+_rec["char_1"] := cDoc_desc
+_rec["char_2"] := cDoc_sch
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -494,16 +538,26 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace art_id with nArt_id
-replace char_1 with cArt_desc
-replace num_1 with nQty
-replace num_2 with nDamage
-replace int_1 with nDoc_it_no
-replace int_2 with nGlass_no
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["art_id"] := nArt_id
+_rec["num_1"] := nQty
+_rec["num_2"] := nDamage
+_rec["int_1"] := nDoc_it_no
+_rec["int_2"] := nGlass_no
+_rec["char_1"] := cArt_desc
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
+
 
 return
 
@@ -522,13 +576,22 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace int_1 with nAop_id
-replace int_2 with nAop_att_id
-replace char_1 with cDoc_op_desc
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["int_1"] := nAop_id
+_rec["int_2"] := nAop_att_id
+_rec["char_1"] := cDoc_op_desc
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return
 
@@ -582,11 +645,21 @@ nDoc_lit_no := _inc_lit_no( nDoc_no , nDoc_log_no )
 select doc_lit
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_lit_no with nDoc_lit_no
-replace int_1 with nDoc_status
-replace doc_lit_ac with cAction
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_lit_no"] := nDoc_lit_no
+_rec["int_1"] := nDoc_status
+_rec["doc_lit_ac"] := cAction
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
+
 
 return
 
@@ -603,13 +676,22 @@ nOperId := GetUserID( f18_user() )
 select doc_log
 append blank
 
-replace doc_no with nDoc_no
-replace doc_log_no with nDoc_log_no
-replace doc_log_da with DATE()
-replace doc_log_ti with PADR(TIME(), 5)
-replace doc_log_ty with cDoc_log_type
-replace operater_i with nOperId
-replace doc_log_de with cDesc
+_rec := dbf_get_rec()
+
+_rec["doc_no"] := nDoc_no
+_rec["doc_log_no"] := nDoc_log_no
+_rec["doc_log_da"] := DATE()
+_rec["doc_log_ti"] := PADR( TIME(), 5 )
+_rec["doc_log_ty"] := cDoc_log_type
+_rec["operater_i"] := nOperId
+_rec["doc_log_de"] := cDesc
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 select (nTArea)
 return

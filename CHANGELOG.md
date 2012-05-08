@@ -1,3 +1,8 @@
+1.0.30 2012-05-08, vsasa
+
+  - ld, beneficirani staž po više stopa [#27909](http://redmine.bring.out.ba/issues/27909)
+  - rnal, semafori 1.1 [#25915](http://redmine.bring.out.ba/issues/25915)
+ 
 1.0.29 2012-05-07, vsasa, hernad
 
   - linux terminus podrska za 1440x900, 1280x800, 1280x1024, 1024x768, 800x600 [#27880](http://redmine.bring.out.ba/issues/27880)

@@ -1230,6 +1230,9 @@ do while !eof()
         nBr_benef := 0
         cBen_stopa := ""
 
+        // beneficirani staz
+        _a_benef := {}
+
         // beneficirani radnici
         if UBenefOsnovu()
             
@@ -1251,6 +1254,9 @@ do while !eof()
             nBr_Benef := bruto_osn( nNeto - ;
                 IF(!EMPTY(gBFForm),&gBFForm,0), ;
                 cTipRada, nL_odb )
+            
+            add_to_a_benef( @_a_benef, cBen_stopa, nStUv, nBr_Benef )
+
             // vrati parametre
             gBFForm := cFFtmp
         
@@ -1288,7 +1294,7 @@ do while !eof()
 
                 if !EMPTY( dopr->idkbenef ) .and. cBen_stopa == dopr->idkbenef
                     nU_d_pms += ;
-                      ROUND( nBr_benef * nDoprTmp / 100, 4)
+                      ROUND( get_benef_osnovica( _a_benef, dopr->idkbenef ) * nDoprTmp / 100, 4)
                 else
                     nU_d_pms += ;
                       ROUND( nMBruto * nDoprTmp / 100, 4)

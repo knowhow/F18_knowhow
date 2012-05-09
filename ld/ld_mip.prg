@@ -211,11 +211,12 @@ cIdRj := gRj
 cMj := gMjesec
 cGod := gGodina
 
-cPredNaz := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, SPACE(50) ) )
+cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, SPACE(50) )
 cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, SPACE(13) )
 cPredSDJ := fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, SPACE(20) )
 cTp_bol := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
 cBolPreko := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
+cDoprDod := fetch_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod )
 dDatPodn := DATE()
 
 nPorGodina := 2011
@@ -312,6 +313,7 @@ set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
 set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
 set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
+set_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod )
 
 // ako je zadat radnik onda se stampa pojedinacni obrazac
 if !EMPTY( cRadnik )
@@ -1283,7 +1285,7 @@ do while !eof()
         // zbirni je zbir ova tri doprinosa
         nU_d_iz := ROUND( nU_d_pio + nU_d_zdr + nU_d_nez, 4 )
         
-        // dodatni doprinosi iz 
+        // dodatni doprinosi iz beneficije
         if !EMPTY( cDoprDod )
 
             aD_Dopr := TokToNiz( cDoprDod, ";" )
@@ -1295,9 +1297,9 @@ do while !eof()
                 if !EMPTY( dopr->idkbenef ) .and. cBen_stopa == dopr->idkbenef
                     nU_d_pms += ;
                       ROUND( get_benef_osnovica( _a_benef, dopr->idkbenef ) * nDoprTmp / 100, 4)
-                else
-                    nU_d_pms += ;
-                      ROUND( nMBruto * nDoprTmp / 100, 4)
+                //else
+                  //  nU_d_pms += ;
+                    //  ROUND( nMBruto * nDoprTmp / 100, 4)
                 endif
 
             next

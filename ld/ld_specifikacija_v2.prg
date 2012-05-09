@@ -402,514 +402,504 @@ IF !FOUND()
 	return .t.
 ENDIF
  
+nUNeto:=0
+nUNetoOsnova:=0
+nPorNaPlatu:=0
+nKoefLO := 0
+nURadnika:=0
+nULicOdbitak := 0
+nDodDoprZ := 0
+nDodDoprP := 0
  
- nUNeto:=0
- nUNetoOsnova:=0
- nPorNaPlatu:=0
- nKoefLO := 0
- nURadnika:=0
- nULicOdbitak := 0
-
- DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
+DO WHILE STR( nGodina, 4 ) + STR( nMjesec, 2 ) == STR( godina, 4 ) + STR( mjesec, 2 )
    
-   SELECT RADN
-   HSEEK LD->idradn
-   cRTR := g_tip_rada( ld->idradn, ld->idrj )
-   nRSpr_koef := 0
-   if cRTR == "S"
-    nRSpr_koef := radn->sp_koef
-   endif
+    SELECT RADN
+    HSEEK LD->idradn
+    cRTR := g_tip_rada( ld->idradn, ld->idrj )
+    nRSpr_koef := 0
+    if cRTR == "S"
+        nRSpr_koef := radn->sp_koef
+    endif
     
-   if cRTR $ "I#N" .and. EMPTY(cRTipRada)
-    // ovo je uredu...
-    // jer je i ovo nesamostalni rad
-   elseif cRTipRada <> cRTR
-    select ld
-    skip
-    loop
-   endif
-
-   // provjeri da li se radi o republici srpskoj
-   if cRepSr == "N"
-    if in_rs( radn->idopsst, radn->idopsrad )
+    if cRTR $ "I#N" .and. EMPTY(cRTipRada)
+        // ovo je uredu...
+        // jer je i ovo nesamostalni rad
+    elseif cRTipRada <> cRTR
         select ld
         skip
         loop
     endif
-   else
-    if !in_rs( radn->idopsst, radn->idopsrad )
-        select ld
-        skip
-        loop
-    endif
-   endif
 
-   SELECT LD
-   
-   IF ! ( RADN->(&aUslOpSt) )
-     SKIP 1
-     LOOP
-   ENDIF
-  
-   //nKoefLO := (gOsnLOdb * radn->klo)
-   nKoefLO := ld->ulicodb
-
-   nULicOdbitak += nKoefLO
-
-   nP77 := IF( !EMPTY(cMRad)  , LD->&("I"+cMRad)  , 0 )
-   nP78 := IF( !EMPTY(cPorOl) , LD->&("I"+cPorOl) , 0 )
-
-   //nP79 := IF( !EMPTY(cBolPr) , LD->&("I"+cBolPr) , 0 )
-   nP79:=0
-   IF !EMPTY(cBolPr) .or. !EMPTY(cBolPr)
-     FOR t:=1 TO 99
-       cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
-       IF LD->( FIELDPOS( "I" + cPom ) ) <= 0
-         EXIT
-       ENDIF
-       nP79 += IF( cPom $ cBolPr   , LD->&("I"+cPom) , 0 )
-     NEXT
-   ENDIF
-
-   nP80 := nP81 := nP82 := nP83 := nP84 := nP85 := 0
-   
-   IF LD->uneto>0  // zbog npr.bol.preko 42 dana koje ne ide u neto
-     IF LEN(aPom)<1 .or. ( nPom := ASCAN(aPom,{|x| x[1]==LD->brbod}) ) == 0
-       AADD( aPom , { LD->brbod , 1 , nP77 , LD->uneto } )
-     ELSE
-       if ! ( lViseObr .and. EMPTY(cObracun) .and. LD->obr$"23456789" )
-         aPom[nPom,2] += 1  // broj radnika
-       endif
-       aPom[nPom,3] += nP77  // minuli rad
-       aPom[nPom,4] += LD->uneto // neto
-     ENDIF
-   ENDIF
-
-   nPrDobra := 0
-   IF !EMPTY(cPrimDobra) 
-     FOR t:=1 TO 99
-       cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
-       IF LD->( FIELDPOS( "I" + cPom ) ) <= 0
-         EXIT
-       ENDIF
-       nPrDobra += IF( cPom $ cPrimDobra, LD->&("I"+cPom), 0 )
-     NEXT
-   ENDIF
-
-   nUNeto+=ld->uneto
-   nNetoOsn:=MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
-   nUNetoOsnova+=nNetoOsn
-  
-   // prvo doprinosi i bruto osnova ....
-   nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
-   
-   // pojedinacni bruto - dobra ili usluge
-   nPojBrDobra := 0
-   if nPrDobra > 0
-    nPojBrDobra := bruto_osn( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
-   endif
-
-   nMPojBrOsn := nPojBrOsn
-
-   if calc_mbruto()
-       // minimalni bruto 
-       nMPojBrOsn := min_bruto( nPojBrOsn, field->usati )
-   endif
-
-   nBrutoOsnova += nPojBrOsn
-   nBrutoDobra += nPojBrDobra
-
-   nMBrutoOsnova += nMPojBrOsn
-
-   // beneficirani radnici
-   if UBenefOsnovu()
-    
-    cFFTmp := gBFForm
-    gBFForm := STRTRAN( gBFForm, "_", "" )
-    
-    nPojBrBenef := bruto_osn( nNetoOsn - IF(!EMPTY(gBFForm),&gBFForm,0), cRTR, nKoefLO, nRSpr_koef )
-    
-    nBrutoOsBenef += nPojBrBenef
-
-    _benef_st := BenefStepen()
-    add_to_a_benef( @_a_benef, ALLTRIM(radn->k3), _benef_st, nPojBrBenef )
-
-    gBFForm := cFFtmp
-
-   endif
- 
-
- // ukupno na ruke sto ide radniku...
- //uNaRuke += ld->_uiznos
-
- // ukupno bruto
- nPom := nMBrutoOsnova
-
- nDodDoprZ := 0
- nDodDoprP := 0
- nkDopZX := 0
- nkDopPX := 0
-
- UzmiIzIni(cIniName, 'Varijable', 'U017', FormNum2(nPom,16,gPici2), 'WRITE')
-
- SELECT DOPR
- GO TOP
-
- DO WHILE !EOF()
-   
-   IF DOPR->poopst == "1" .and. lPDNE
-     
-     nBOO:=0
-     
-     FOR i:=1 TO LEN(aOps)
-       IF ! ( DOPR->id $ aOps[i,2] )
-         nBOO += aOps[i,3]
-       ENDIF
-     NEXT
-     nBOO := bruto_osn( nBOO, cRTR, nKoefLO )
-   ELSE
-     nBOO := nMBrutoOsnova
-   ENDIF
-
-   // dodatni doprinos PIO
-   IF ID $ cDodDoprP
-    
-    nkDopPX += iznos
-    
-    if !EMPTY( field->idkbenef )
-        nDodDoprP += ROUND2( MAX( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100 ), gZaok2 ) 
-    else
-        nDodDoprP += ROUND2( MAX( DLIMIT, nBOO * iznos / 100 ), gZaok2 )
-    endif
-   
-   ENDIF
-   
-   // dodatni doprinos ZDR
-   IF ID $ cDodDoprZ
-    
-    nkDopZX += iznos
-    
-    if !EMPTY( field->idkbenef )
-        // beneficirani 
-        nDodDoprZ += ROUND2( MAX( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100), gZaok2 )
-    else
-        nDodDoprZ += ROUND2( MAX( DLIMIT, nBOO * iznos / 100), gZaok2 )
+    // provjeri da li se radi o republici srpskoj
+    if cRepSr == "N"
+        if in_rs( radn->idopsst, radn->idopsrad )
+            select ld
+            skip
+            loop
         endif
-   ENDIF
+    else
+        if !in_rs( radn->idopsst, radn->idopsrad )
+            select ld
+            skip
+            loop
+        endif
+    endif
+
+    SELECT LD
+   
+    IF ! ( RADN->(&aUslOpSt) )
+        SKIP 1
+        LOOP
+    ENDIF
   
-   SKIP 1
+    //nKoefLO := (gOsnLOdb * radn->klo)
+    nKoefLO := ld->ulicodb
 
- ENDDO
+    nULicOdbitak += nKoefLO
 
- // resetuj benef matricu
- _a_benef := {}
+    nP77 := IF( !EMPTY(cMRad)  , LD->&("I"+cMRad)  , 0 )
+    nP78 := IF( !EMPTY(cPorOl) , LD->&("I"+cPorOl) , 0 )
 
- nkD1X := Ocitaj( F_DOPR , cDopr1 , "iznos" , .t. )
- nkD2X := Ocitaj( F_DOPR , cDopr2 , "iznos" , .t. )
- nkD3X := Ocitaj( F_DOPR , cDopr3 , "iznos" , .t. )
- nkD5X := Ocitaj( F_DOPR , cDopr5 , "iznos" , .t. )
- nkD6X := Ocitaj( F_DOPR , cDopr6 , "iznos" , .t. )
- nkD7X := Ocitaj( F_DOPR , cDopr7 , "iznos" , .t. )
+    //nP79 := IF( !EMPTY(cBolPr) , LD->&("I"+cBolPr) , 0 )
+    nP79:=0
+    IF !EMPTY(cBolPr) .or. !EMPTY(cBolPr)
+        FOR t:=1 TO 99
+            cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
+            IF LD->( FIELDPOS( "I" + cPom ) ) <= 0
+                EXIT
+            ENDIF
+            nP79 += IF( cPom $ cBolPr   , LD->&("I"+cPom) , 0 )
+        NEXT
+    ENDIF
 
- //stope na bruto
+    nP80 := nP81 := nP82 := nP83 := nP84 := nP85 := 0
+   
+    IF LD->uneto>0  // zbog npr.bol.preko 42 dana koje ne ide u neto
+        IF LEN(aPom)<1 .or. ( nPom := ASCAN(aPom,{|x| x[1]==LD->brbod}) ) == 0
+            AADD( aPom , { LD->brbod , 1 , nP77 , LD->uneto } )
+        ELSE
+            if ! ( lViseObr .and. EMPTY(cObracun) .and. LD->obr$"23456789" )
+                aPom[nPom,2] += 1  // broj radnika
+            endif
+            aPom[nPom,3] += nP77  // minuli rad
+            aPom[nPom,4] += LD->uneto // neto
+        ENDIF
+    ENDIF
+
+    nPrDobra := 0
+    IF !EMPTY(cPrimDobra) 
+        FOR t:=1 TO 99
+            cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
+            IF LD->( FIELDPOS( "I" + cPom ) ) <= 0
+                EXIT
+            ENDIF
+            nPrDobra += IF( cPom $ cPrimDobra, LD->&("I"+cPom), 0 )
+        NEXT
+    ENDIF
+
+    nUNeto+=ld->uneto
+    nNetoOsn:=MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
+    nUNetoOsnova+=nNetoOsn
+  
+    // prvo doprinosi i bruto osnova ....
+    nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
+   
+    // pojedinacni bruto - dobra ili usluge
+    nPojBrDobra := 0
+    if nPrDobra > 0
+        nPojBrDobra := bruto_osn( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
+    endif
+
+    nMPojBrOsn := nPojBrOsn
+
+    if calc_mbruto()
+        // minimalni bruto 
+        nMPojBrOsn := min_bruto( nPojBrOsn, field->usati )
+    endif
+
+    nBrutoOsnova += nPojBrOsn
+    nBrutoDobra += nPojBrDobra
+    nMBrutoOsnova += nMPojBrOsn
+
+    // reset matrice
+    _a_benef := {}
+
+    // beneficirani radnici
+    if UBenefOsnovu()
+    
+        cFFTmp := gBFForm
+        gBFForm := STRTRAN( gBFForm, "_", "" )
+    
+        nPojBrBenef := bruto_osn( nNetoOsn - IF(!EMPTY(gBFForm),&gBFForm,0), cRTR, nKoefLO, nRSpr_koef )
+    
+        nBrutoOsBenef += nPojBrBenef
+
+        _benef_st := BenefStepen()
+        add_to_a_benef( @_a_benef, ALLTRIM(radn->k3), _benef_st, nPojBrBenef )
+
+        gBFForm := cFFtmp
+
+    endif
  
- nPom:=nKD1X+nKD2X+nKD3X
- UzmiIzIni(cIniName,'Varijable','D11B',FormNum2(nPom,16,gpici3)+"%" , 'WRITE')
- nPom:=nKD1X
- UzmiIzIni(cIniName,'Varijable','D11_1B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
- nPom:=nKD2X
- UzmiIzIni(cIniName,'Varijable','D11_2B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
- nPom:=nKD3X
- UzmiIzIni(cIniName,'Varijable','D11_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
 
- nPom:=nKD5X+nKD6X+nKD7X+nkDopZX+nkDopPX
- UzmiIzIni(cIniName,'Varijable','D12B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
- nPom:=nKD5X
- UzmiIzIni(cIniName,'Varijable','D12_1B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
- nPom:=nKD6X
- UzmiIzIni(cIniName,'Varijable','D12_2B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
- nPom:=nKD7X
- UzmiIzIni(cIniName,'Varijable','D12_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    // ukupno na ruke sto ide radniku...
+    //uNaRuke += ld->_uiznos
 
- nPom:=nkDopPX
- UzmiIzIni(cIniName,'Varijable','D12_4B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    // ukupno bruto
+    nPom := nMBrutoOsnova
 
- nPom:=nkDopZX
- UzmiIzIni(cIniName,'Varijable','D12_5B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    nkDopZX := 0
+    nkDopPX := 0
 
- nDopr1X := round2(nMBrutoOsnova * nkD1X / 100, gZaok2)
- nDopr2X := round2(nMBrutoOsnova * nkD2X / 100, gZaok2)
- nDopr3X := round2(nMBrutoOsnova * nkD3X / 100, gZaok2)
- nDopr5X := round2(nMBrutoOsnova * nkD5X / 100, gZaok2)
- nDopr6X := round2(nMBrutoOsnova * nkD6X / 100, gZaok2)
- nDopr7X := round2(nMBrutoOsnova * nkD7X / 100, gZaok2)
+    UzmiIzIni(cIniName, 'Varijable', 'U017', FormNum2(nPom,16,gPici2), 'WRITE')
 
- nPojDoprIZ := round2((nMPojBrOsn * nkD1X /100), gZaok2 ) + ;
+    SELECT DOPR
+    GO TOP
+
+    DO WHILE !EOF()
+   
+        IF DOPR->poopst == "1" .and. lPDNE
+            nBOO:=0
+            FOR i:=1 TO LEN(aOps)
+                IF ! ( DOPR->id $ aOps[i,2] )
+                    nBOO += aOps[i,3]
+                ENDIF
+            NEXT
+            nBOO := bruto_osn( nBOO, cRTR, nKoefLO )
+        ELSE
+            nBOO := nMBrutoOsnova
+        ENDIF
+
+        // dodatni doprinos PIO
+        IF ID $ cDodDoprP
+            nkDopPX += iznos
+            if !EMPTY( field->idkbenef )
+                nDodDoprP += ROUND2( MAX( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100 ), gZaok2 ) 
+            else
+                nDodDoprP += ROUND2( MAX( DLIMIT, nBOO * iznos / 100 ), gZaok2 )
+            endif
+        ENDIF
+   
+        // dodatni doprinos ZDR
+        IF ID $ cDodDoprZ
+            nkDopZX += iznos
+            if !EMPTY( field->idkbenef )
+                // beneficirani 
+                nDodDoprZ += ROUND2( MAX( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100), gZaok2 )
+            else
+                nDodDoprZ += ROUND2( MAX( DLIMIT, nBOO * iznos / 100), gZaok2 )
+            endif
+        ENDIF
+  
+        SKIP 1
+
+    ENDDO
+
+    nkD1X := Ocitaj( F_DOPR , cDopr1 , "iznos" , .t. )
+    nkD2X := Ocitaj( F_DOPR , cDopr2 , "iznos" , .t. )
+    nkD3X := Ocitaj( F_DOPR , cDopr3 , "iznos" , .t. )
+    nkD5X := Ocitaj( F_DOPR , cDopr5 , "iznos" , .t. )
+    nkD6X := Ocitaj( F_DOPR , cDopr6 , "iznos" , .t. )
+    nkD7X := Ocitaj( F_DOPR , cDopr7 , "iznos" , .t. )
+
+    //stope na bruto
+    nPom:=nKD1X+nKD2X+nKD3X
+    UzmiIzIni(cIniName,'Varijable','D11B',FormNum2(nPom,16,gpici3)+"%" , 'WRITE')
+    nPom:=nKD1X
+    UzmiIzIni(cIniName,'Varijable','D11_1B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    nPom:=nKD2X
+    UzmiIzIni(cIniName,'Varijable','D11_2B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    nPom:=nKD3X
+    UzmiIzIni(cIniName,'Varijable','D11_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+
+    nPom:=nKD5X+nKD6X+nKD7X+nkDopZX+nkDopPX
+    UzmiIzIni(cIniName,'Varijable','D12B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    nPom:=nKD5X
+    UzmiIzIni(cIniName,'Varijable','D12_1B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    nPom:=nKD6X
+    UzmiIzIni(cIniName,'Varijable','D12_2B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+    nPom:=nKD7X
+    UzmiIzIni(cIniName,'Varijable','D12_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+
+    nPom:=nkDopPX
+    UzmiIzIni(cIniName,'Varijable','D12_4B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+
+    nPom:=nkDopZX
+    UzmiIzIni(cIniName,'Varijable','D12_5B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+
+    nDopr1X := round2(nMBrutoOsnova * nkD1X / 100, gZaok2)
+    nDopr2X := round2(nMBrutoOsnova * nkD2X / 100, gZaok2)
+    nDopr3X := round2(nMBrutoOsnova * nkD3X / 100, gZaok2)
+    nDopr5X := round2(nMBrutoOsnova * nkD5X / 100, gZaok2)
+    nDopr6X := round2(nMBrutoOsnova * nkD6X / 100, gZaok2)
+    nDopr7X := round2(nMBrutoOsnova * nkD7X / 100, gZaok2)
+
+    nPojDoprIZ := round2((nMPojBrOsn * nkD1X /100), gZaok2 ) + ;
         round2((nMPojBrOsn * nkD2X / 100), gZaok2) + ;
         round2((nMPojBrOsn* nkD3X / 100), gZaok2 )
 
- // iznos doprinosa
+    // iznos doprinosa
  
- nPom:=nDopr1X+nDopr2X+nDopr3X
+    nPom:=nDopr1X+nDopr2X+nDopr3X
  
- // ukupni doprinosi iz plate
- nUkDoprIZ := nPom  
+    // ukupni doprinosi iz plate
+    nUkDoprIZ := nPom  
 
- UzmiIzIni(cIniName,'Varijable','D11I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
- nPom:=nDopr1X
- UzmiIzIni(cIniName,'Varijable','D11_1I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
- nPom:=nDopr2X
- UzmiIzIni(cIniName,'Varijable','D11_2I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
- nPom:=nDopr3X
- UzmiIzIni(cIniName,'Varijable','D11_3I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    UzmiIzIni(cIniName,'Varijable','D11I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    nPom:=nDopr1X
+    UzmiIzIni(cIniName,'Varijable','D11_1I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    nPom:=nDopr2X
+    UzmiIzIni(cIniName,'Varijable','D11_2I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    nPom:=nDopr3X
+    UzmiIzIni(cIniName,'Varijable','D11_3I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
- nPom:=nDopr5X+nDopr6X+nDopr7X+nDodDoprP+nDodDoprZ
- UzmiIzIni(cIniName,'Varijable','D12I',FormNum2(_ispl_d(nPom,cIsplata),16,gPici2) , 'WRITE')
- nPom:=nDopr5X
- UzmiIzIni(cIniName,'Varijable','D12_1I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
- nPom:=nDopr6X
- UzmiIzIni(cIniName,'Varijable','D12_2I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
- nPom:=nDopr7X
- UzmiIzIni(cIniName,'Varijable','D12_3I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    nPom:=nDopr5X+nDopr6X+nDopr7X+nDodDoprP+nDodDoprZ
+    UzmiIzIni(cIniName,'Varijable','D12I',FormNum2(_ispl_d(nPom,cIsplata),16,gPici2) , 'WRITE')
+    nPom:=nDopr5X
+    UzmiIzIni(cIniName,'Varijable','D12_1I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    nPom:=nDopr6X
+    UzmiIzIni(cIniName,'Varijable','D12_2I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    nPom:=nDopr7X
+    UzmiIzIni(cIniName,'Varijable','D12_3I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
- // dodatni doprinos zdr i pio
- nPom:=nDodDoprP
- UzmiIzIni(cIniName,'Varijable','D12_4I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    // dodatni doprinos zdr i pio
+    nPom:=nDodDoprP
+    UzmiIzIni(cIniName,'Varijable','D12_4I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
- nPom:=nDodDoprZ
- UzmiIzIni(cIniName,'Varijable','D12_5I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+    nPom:=nDodDoprZ
+    UzmiIzIni(cIniName,'Varijable','D12_5I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
- nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
+    nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
  
- if nPojPorOsn >= 0 .and. radn_oporeziv( radn->id, ld->idrj )
+    if nPojPorOsn >= 0 .and. radn_oporeziv( radn->id, ld->idrj )
+        // osnovica za porez na platu
+        //nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
+        nPorOsnovica += nPojPorOsn
+    endif
 
-    // osnovica za porez na platu
-    //nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
-    nPorOsnovica += nPojPorOsn
- endif
+    // osnovica mora biti veca od 0
+    if nPorOsnovica < 0
+        nPorOsnovica := 0
+    endif
 
- // osnovica mora biti veca od 0
- if nPorOsnovica < 0
-    nPorOsnovica := 0
- endif
+    // resetuj varijable
+    nPorNaPlatu := 0
+    nPorezOstali := 0
 
- // resetuj varijable
- nPorNaPlatu := 0
- nPorezOstali := 0
+    //porez na platu i ostali porez
+    SELECT POR
+    GO TOP
 
- //porez na platu i ostali porez
- SELECT POR
- GO TOP
+    DO WHILE !EOF()
 
- DO WHILE !EOF()
-
-     PozicOps(POR->poopst)
+        PozicOps(POR->poopst)
      
-     IF !ImaUOp("POR",POR->id)
-       SKIP 1
-       LOOP
-     ENDIF
-     IF por->por_tip == "B"
-       nPorNaPlatu  += POR->iznos * MAX(nPorOsnovica,PAROBR->prosld*gPDLimit/100) / 100
-     ENDIF
-     SKIP 1
-   ENDDO
+        IF !ImaUOp("POR",POR->id)
+            SKIP 1
+            LOOP
+        ENDIF
+        IF por->por_tip == "B"
+            nPorNaPlatu  += POR->iznos * MAX(nPorOsnovica,PAROBR->prosld*gPDLimit/100) / 100
+        ENDIF
+        SKIP 1
+    ENDDO
 
-   SELECT LD
+    SELECT LD
    
-   nURadnika++
-   nPorOlaksice+=nP78
-   nBolPreko+=nP79
-   nObustave+=nP80
-   nOstaleObaveze+=nP81
-   nOstOb1+=nP82
-   nOstOb2+=nP83
-   nOstOb3+=nP84
-   nOstOb4+=nP85
+    nURadnika++
+    nPorOlaksice+=nP78
+    nBolPreko+=nP79
+    nObustave+=nP80
+    nOstaleObaveze+=nP81
+    nOstOb1+=nP82
+    nOstOb2+=nP83
+    nOstOb3+=nP84
+    nOstOb4+=nP85
    
-   IF lPDNE
-     nOps := ASCAN( aOps , {|x| x[1]==RADN->idopsst} )
-     IF nOps>0
-       aOps[nOps,3] += MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
-     ELSE
-       AADD( aOps , { RADN->idopsst, "", MAX(ld->uneto,PAROBR->prosld*gPDLimit/100) } )
-     ENDIF
-   ENDIF
+    IF lPDNE
+        nOps := ASCAN( aOps , {|x| x[1]==RADN->idopsst} )
+        IF nOps>0
+            aOps[nOps,3] += MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
+        ELSE
+            AADD( aOps , { RADN->idopsst, "", MAX(ld->uneto,PAROBR->prosld*gPDLimit/100) } )
+        ENDIF
+    ENDIF
    
-   SKIP 1
+    SKIP 1
  
- ENDDO
+ENDDO
 
- nPorNaPlatu:=round2(nPorNaPlatu,gZaok2)
+nPorNaPlatu:=round2(nPorNaPlatu,gZaok2)
  
- // obustave iz place
- UzmiIzIni(cIniName,'Varijable','O18I', FormNum2(-nObustave,16,gPici2), 'WRITE')
+// obustave iz place
+UzmiIzIni(cIniName,'Varijable','O18I', FormNum2(-nObustave,16,gPici2), 'WRITE')
 
- // Ostale obaveze = OstaleObaveze.1
+// Ostale obaveze = OstaleObaveze.1
 
- ASORT( aPom , , , {|x,y| x[1]>y[1]} )
- FOR i:=1 TO LEN(aPom)
-   IF gVarSpec=="1"
-     IF i<=nGrupaPoslova
-       aSpec[i,1]:=aPom[i,1]; aSpec[i,2]:=aPom[i,2]; aSpec[i,3]:=aPom[i,3]
-       aSpec[i,4]:=aPom[i,4]
-     ELSE
-       aSpec[nGrupaPoslova,2]+=aPom[i,2]; aSpec[nGrupaPoslova,3]+=aPom[i,3]
-       aSpec[nGrupaPoslova,4]+=aPom[i,4]
-     ENDIF
-   ELSE     // gVarSpec=="2"
-     DO CASE
-       CASE aPom[i,1] <= nLimG5
-         aSpec[5,1]:=aPom[i,1]; aSpec[5,2]+=aPom[i,2]
-         aSpec[5,3]+=aPom[i,3]; aSpec[5,4]+=aPom[i,4]
-       CASE aPom[i,1] <= nLimG4
-         aSpec[4,1]:=aPom[i,1]; aSpec[4,2]+=aPom[i,2]
-         aSpec[4,3]+=aPom[i,3]; aSpec[4,4]+=aPom[i,4]
-       CASE aPom[i,1] <= nLimG3
-         aSpec[3,1]:=aPom[i,1]; aSpec[3,2]+=aPom[i,2]
-         aSpec[3,3]+=aPom[i,3]; aSpec[3,4]+=aPom[i,4]
-       CASE aPom[i,1] <= nLimG2
-         aSpec[2,1]:=aPom[i,1]; aSpec[2,2]+=aPom[i,2]
-         aSpec[2,3]+=aPom[i,3]; aSpec[2,4]+=aPom[i,4]
-       CASE aPom[i,1] <= nLimG1
-         aSpec[1,1]:=aPom[i,1]; aSpec[1,2]+=aPom[i,2]
-         aSpec[1,3]+=aPom[i,3]; aSpec[1,4]+=aPom[i,4]
-     ENDCASE
-   ENDIF
-   aSpec[nGrupaPoslova+1,2]+=aPom[i,2]; aSpec[nGrupaPoslova+1,3]+=aPom[i,3]
-   aSpec[nGrupaPoslova+1,4]+=aPom[i,4]
- NEXT
+ASORT( aPom , , , {|x,y| x[1]>y[1]} )
+FOR i:=1 TO LEN(aPom)
+    IF gVarSpec=="1"
+        IF i<=nGrupaPoslova
+            aSpec[i,1]:=aPom[i,1]; aSpec[i,2]:=aPom[i,2]; aSpec[i,3]:=aPom[i,3]
+            aSpec[i,4]:=aPom[i,4]
+        ELSE
+            aSpec[nGrupaPoslova,2]+=aPom[i,2]; aSpec[nGrupaPoslova,3]+=aPom[i,3]
+            aSpec[nGrupaPoslova,4]+=aPom[i,4]
+        ENDIF
+    ELSE     // gVarSpec=="2"
+        DO CASE
+            CASE aPom[i,1] <= nLimG5
+                aSpec[5,1]:=aPom[i,1]; aSpec[5,2]+=aPom[i,2]
+                aSpec[5,3]+=aPom[i,3]; aSpec[5,4]+=aPom[i,4]
+            CASE aPom[i,1] <= nLimG4
+                aSpec[4,1]:=aPom[i,1]; aSpec[4,2]+=aPom[i,2]
+                aSpec[4,3]+=aPom[i,3]; aSpec[4,4]+=aPom[i,4]
+            CASE aPom[i,1] <= nLimG3
+                aSpec[3,1]:=aPom[i,1]; aSpec[3,2]+=aPom[i,2]
+                aSpec[3,3]+=aPom[i,3]; aSpec[3,4]+=aPom[i,4]
+            CASE aPom[i,1] <= nLimG2
+                aSpec[2,1]:=aPom[i,1]; aSpec[2,2]+=aPom[i,2]
+                aSpec[2,3]+=aPom[i,3]; aSpec[2,4]+=aPom[i,4]
+            CASE aPom[i,1] <= nLimG1
+                aSpec[1,1]:=aPom[i,1]; aSpec[1,2]+=aPom[i,2]
+                aSpec[1,3]+=aPom[i,3]; aSpec[1,4]+=aPom[i,4]
+        ENDCASE
+    ENDIF
+    aSpec[nGrupaPoslova+1,2]+=aPom[i,2]; aSpec[nGrupaPoslova+1,3]+=aPom[i,3]
+    aSpec[nGrupaPoslova+1,4]+=aPom[i,4]
+NEXT
 
- // ukupno radnika
- UzmiIzIni(cIniName,'Varijable','U016', str(nURadnika,0) ,'WRITE')
- // ukupno neto
- UzmiIzIni(cIniName,'Varijable','U018',FormNum2(nUNETO,16,gPici2),'WRITE')
+// ukupno radnika
+UzmiIzIni(cIniName,'Varijable','U016', str(nURadnika,0) ,'WRITE')
+// ukupno neto
+UzmiIzIni(cIniName,'Varijable','U018',FormNum2(nUNETO,16,gPici2),'WRITE')
+UzmiIzIni(cIniName,'Varijable','D13N', " ", 'WRITE')
+ 
+SELECT POR
+SEEK "01"
+ 
+UzmiIzIni(cIniName,'Varijable','D13_1N',FormNum2(POR->IZNOS,16,gpici3)+"%",'WRITE')
 
- UzmiIzIni(cIniName,'Varijable','D13N', " ", 'WRITE')
- SELECT POR; SEEK "01"
- UzmiIzIni(cIniName,'Varijable','D13_1N',FormNum2(POR->IZNOS,16,gpici3)+"%",'WRITE')
+nPom=nPorNaPlatu-nPorOlaksice
+UzmiIzIni(cIniName,'Varijable','D13I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
+nPom=nPorNaPlatu
+UzmiIzIni(cIniName,'Varijable','D13_1I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
+nPom:=nPorOlaksice
+UzmiIzIni(cIniName,'Varijable','D13_2I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
+nPom:=nBolPreko
+UzmiIzIni(cIniName,'Varijable','N17I',FormNum2(nPom,16,gPici2),'WRITE')
 
- nPom=nPorNaPlatu-nPorOlaksice
- UzmiIzIni(cIniName,'Varijable','D13I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
- nPom=nPorNaPlatu
- UzmiIzIni(cIniName,'Varijable','D13_1I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
- nPom:=nPorOlaksice
- UzmiIzIni(cIniName,'Varijable','D13_2I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
- nPom:=nBolPreko
- UzmiIzIni(cIniName,'Varijable','N17I',FormNum2(nPom,16,gPici2),'WRITE')
+nPorOlaksice   := ABS( nPorOlaksice   )
+nBolPreko      := ABS( nBolPreko      )
+nObustave      := ABS( nObustave      )
+nOstOb1        := ABS( nOstOb1        )
+nOstOb2        := ABS( nOstOb2        )
+nOstOb3        := ABS( nOstOb3        )
+nOstOb4        := ABS( nOstOb4        )
+nOstaleObaveze := ABS( IF( nOstaleObaveze==0, nOstOb1+nOstOb2+nOstOb3+nOstOb4, nOstaleObaveze ) )
 
- nPorOlaksice   := ABS( nPorOlaksice   )
- nBolPreko      := ABS( nBolPreko      )
- nObustave      := ABS( nObustave      )
- nOstOb1        := ABS( nOstOb1        )
- nOstOb2        := ABS( nOstOb2        )
- nOstOb3        := ABS( nOstOb3        )
- nOstOb4        := ABS( nOstOb4        )
- nOstaleObaveze := ABS( IF( nOstaleObaveze==0, nOstOb1+nOstOb2+nOstOb3+nOstOb4, nOstaleObaveze ) )
-
- if cIsplata == "A"
+if cIsplata == "A"
     // sve obaveze
     nPom := nDopr1X+nDopr2x+nDopr3x+;
             nDopr5x+nDopr6x+nDopr7x+;
             nPorNaPlatu+nPorezOstali-;
             nPorOlaksice+nOstaleOBaveze+nDodDoprP+nDodDoprZ
 
- elseif cIsplata == "B"
+elseif cIsplata == "B"
     // samo doprinosi
     nPom := nDopr1X+nDopr2x+nDopr3x+;
             nDopr5x+nDopr6x+nDopr7x+;
             nDodDoprP+nDodDoprZ
 
- elseif cIsplata == "C"
+elseif cIsplata == "C"
     // samo porez
     nPom := nPorNaPlatu+nPorezOstali-nPorOlaksice+nOstaleOBaveze
 
- endif
+endif
 
- // ukupno obaveze
- UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
+// ukupno obaveze
+UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- nPom := nMBrutoOsnova - nBrutoDobra
- nUUNR := nPom
- UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
+nPom := nMBrutoOsnova - nBrutoDobra
+nUUNR := nPom
+UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
  
- // ukupno ostalo
- nPom := nBrutoDobra
- nUUsluge := nPom
- UzmiIzIni(cIniName,'Varijable','UNUS', FormNum2(nPom,16,gPici2), 'WRITE')
+// ukupno ostalo
+nPom := nBrutoDobra
+nUUsluge := nPom
+UzmiIzIni(cIniName,'Varijable','UNUS', FormNum2(nPom,16,gPici2), 'WRITE')
 
- // ukupno ostalo
- nPom := nUUNR + nUUsluge
- UzmiIzIni(cIniName,'Varijable','UNUK', FormNum2(nPom,16,gPici2), 'WRITE')
+// ukupno ostalo
+nPom := nUUNR + nUUsluge
+UzmiIzIni(cIniName,'Varijable','UNUK', FormNum2(nPom,16,gPici2), 'WRITE')
 
- // ukupno placa_i_obaveze = obaveze + ukupno_neto + poreskeolaksice
- nPom := nPom + nUNETO + nPorOlaksice
- UzmiIzIni(cIniName,'Varijable','U16I', FormNum2(nPom,16,gPici2), 'WRITE')
+// ukupno placa_i_obaveze = obaveze + ukupno_neto + poreskeolaksice
+nPom := nPom + nUNETO + nPorOlaksice
+UzmiIzIni(cIniName,'Varijable','U16I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- // obustave
- nPom := nObustave
- UzmiIzIni(cIniName,'Varijable','O18I', FormNum2(nPom,16,gPici2), 'WRITE')
+// obustave
+nPom := nObustave
+UzmiIzIni(cIniName,'Varijable','O18I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- // neto za isplatu  = neto  + nPorOlaksice
- // -----------------------------------------
- // varijanta D - specificno za FEB jer treba da izbazi bol.preko.42
- // dana iz neta za isplatu na specifikaciji, vec je uracunat u netu.
+// neto za isplatu  = neto  + nPorOlaksice
+// -----------------------------------------
+// varijanta D - specificno za FEB jer treba da izbazi bol.preko.42
+// dana iz neta za isplatu na specifikaciji, vec je uracunat u netu.
 
- if IzFmkIni('LD','BolPreko42IzbaciIz19','N',KUMPATH)=='D'
+if IzFmkIni('LD','BolPreko42IzbaciIz19','N',KUMPATH)=='D'
     nPom := nUNETO + nPorOlaksice - nObustave
- else
+else
     nPom := nUNETO + nBolPreko + nPorOlaksice - nObustave
- endif
- UzmiIzIni(cIniName,'Varijable','N19I', FormNum2(nPom,16,gPici2), 'WRITE')
-
- // PIO iz + PIO na placu
- nPom:=nDopr1x+nDopr5x+nDodDoprP
- UzmiIzIni(cIniName,'Varijable','D20', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
-
- // zdravsveno iz + zdravstveno na placu
- nPom:=nDopr2x+nDopr6x+nDodDoprZ
- nPom2 := nPom
- UzmiIzIni(cIniName,'Varijable','D21', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+endif
  
- // zdravstvo za RS
- nPom := nPom2 * 0.09
- nD21a := nPom
- UzmiIzIni(cIniName,'Varijable','D21a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+UzmiIzIni(cIniName,'Varijable','N19I', FormNum2(nPom,16,gPici2), 'WRITE')
 
+// PIO iz + PIO na placu
+nPom:=nDopr1x+nDopr5x+nDodDoprP
+UzmiIzIni(cIniName,'Varijable','D20', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+
+// zdravsveno iz + zdravstveno na placu
+nPom:=nDopr2x+nDopr6x+nDodDoprZ
+nPom2 := nPom
+UzmiIzIni(cIniName,'Varijable','D21', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
- // nezaposlenost iz + nezaposlenost na placu
- nPom:=nDopr3x+nDopr7x
- nPom2 := nPom
- UzmiIzIni(cIniName,'Varijable','D22', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+// zdravstvo za RS
+nPom := nPom2 * 0.09
+nD21a := nPom
+UzmiIzIni(cIniName,'Varijable','D21a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+
+// nezaposlenost iz + nezaposlenost na placu
+nPom:=nDopr3x+nDopr7x
+nPom2 := nPom
+UzmiIzIni(cIniName,'Varijable','D22', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
- // nezaposlenost za RS
- nPom := nPom2 * 0.30
- nD22a := nPom
- UzmiIzIni(cIniName,'Varijable','D22a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
+// nezaposlenost za RS
+nPom := nPom2 * 0.30
+nD22a := nPom
+UzmiIzIni(cIniName,'Varijable','D22a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
- nPom=nPorNaPlatu-nPorOlaksice
- UzmiIzIni(cIniName,'Varijable','P23', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
+nPom=nPorNaPlatu-nPorOlaksice
+UzmiIzIni(cIniName,'Varijable','P23', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
 
+nPom=nPorezOstali
+UzmiIzIni(cIniName,'Varijable','O14_1I', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
 
- nPom=nPorezOstali
- UzmiIzIni(cIniName,'Varijable','O14_1I', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
+nPom=nOstaleObaveze + nPorezOstali
+UzmiIzIni(cIniName,'Varijable','O14I', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
 
- nPom=nOstaleObaveze + nPorezOstali
- UzmiIzIni(cIniName,'Varijable','O14I', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
-
- // ukupno za RS obaveze
- if cIsplata == "A"
+// ukupno za RS obaveze
+if cIsplata == "A"
     nPom := nDopr1x+nDopr5x+nD21a+nD22a+nPorNaPlatu
- elseif cIsplata == "B"
+elseif cIsplata == "B"
     nPom := nDopr1x+nDopr5x+nD21a+nD22a
- elseif cIsplata == "C"
+elseif cIsplata == "C"
     nPom := nPorNaPlatu
- endif
+endif
  
- UzmiIzIni(cIniName,'Varijable','URSOB', FormNum2(nPom,16,gPici2), 'WRITE')
+UzmiIzIni(cIniName,'Varijable','URSOB', FormNum2(nPom,16,gPici2), 'WRITE')
  
- IniRefresh()
- //Odstampaj izvjestaj
+IniRefresh()
+//Odstampaj izvjestaj
 
 if LastKey() != K_ESC
 
@@ -934,6 +924,7 @@ if LastKey() != K_ESC
 endif
 
 close all
+
 return .t.
 
 

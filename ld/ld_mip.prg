@@ -1284,7 +1284,7 @@ do while !eof()
 
         // zbirni je zbir ova tri doprinosa
         nU_d_iz := ROUND( nU_d_pio + nU_d_zdr + nU_d_nez, 4 )
-        
+
         // dodatni doprinosi iz beneficije
         if !EMPTY( cDoprDod )
 
@@ -1295,11 +1295,7 @@ do while !eof()
                 nDoprTmp := get_dopr( aD_dopr[m], cTipRada )
 
                 if !EMPTY( dopr->idkbenef ) .and. cBen_stopa == dopr->idkbenef
-                    nU_d_pms += ;
-                      ROUND( get_benef_osnovica( _a_benef, dopr->idkbenef ) * nDoprTmp / 100, 4)
-                //else
-                  //  nU_d_pms += ;
-                    //  ROUND( nMBruto * nDoprTmp / 100, 4)
+                    nU_d_pms += ROUND( get_benef_osnovica( _a_benef, dopr->idkbenef ) * nDoprTmp / 100, 4 )
                 endif
 
             next

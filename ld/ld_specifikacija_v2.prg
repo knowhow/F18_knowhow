@@ -597,13 +597,12 @@ ENDIF
         endif
    ENDIF
   
-
-   // resetuj benef matricu
-   _a_benef := {}
-
    SKIP 1
 
  ENDDO
+
+ // resetuj benef matricu
+ _a_benef := {}
 
  nkD1X := Ocitaj( F_DOPR , cDopr1 , "iznos" , .t. )
  nkD2X := Ocitaj( F_DOPR , cDopr2 , "iznos" , .t. )

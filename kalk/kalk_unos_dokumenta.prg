@@ -13,15 +13,20 @@
 #include "kalk.ch"
 
 static cENTER := CHR(K_ENTER) + CHR(K_ENTER) + CHR(K_ENTER)
+static __box_x
+static __box_y
 
 
 
 function kalk_unos_dokumenta()
-PRIVATE PicCDEM:=gPicCDEM
-PRIVATE PicProc:=gPicProc
-PRIVATE PicDEM:= gPICDEM
-PRIVATE Pickol:= gPICKOL
-PRIVATE lAsistRadi:=.f.
+private PicCDEM:=gPicCDEM
+private PicProc:=gPicProc
+private PicDEM:= gPICDEM
+private Pickol:= gPICKOL
+private lAsistRadi:=.f.
+
+__box_x := MAXROWS() - 8
+__box_y := MAXCOLS() - 6
 
 kalk_unos_stavki_dokumenta()
 
@@ -34,8 +39,8 @@ return
 // unos stavki kalkulacije
 // ----------------------------------------------------------------
 function kalk_unos_stavki_dokumenta(lAObrada)
-local nMaxCol := MAXCOLS()-3
-local nMaxRow := MAXROWS()-4
+local nMaxCol := MAXCOLS() - 3
+local nMaxRow := MAXROWS() - 4
 
 O_PARAMS
 
@@ -54,6 +59,7 @@ endif
 private cSection:="K"
 private cHistory:=" "
 private aHistory:={}
+
 select 99
 use
 
@@ -87,27 +93,27 @@ ImeKol:={ ;
           { "E"         , {|| error                    }, "error"       } ;
         }
 
-IF lPoNarudzbi
+if lPoNarudzbi
     AADD( ImeKol , { "Br.nar." , {|| brojnar   }, "brojnar"   } )
     AADD( ImeKol , { "Narucioc" , {|| idnar   }, "idnar"   } )
-ENDIF
+endif
 
-Kol:={}
+Kol := {}
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol, i)
+for i := 1 to LEN( ImeKol )
+    AADD( Kol, i )
 next
 
 Box(, nMaxRow, nMaxCol )
 
-    @ m_x+nMaxRow-3,m_y+2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku    ³ <K> kalkulacija cijena"
-    @ m_x+nMaxRow-2,m_y+2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje       ³ "
-    @ m_x+nMaxRow-1,m_y+2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa pripreme  ³ "
-    @ m_x+nMaxRow,m_y+2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije ³ "
+    @ m_x + nMaxRow-3, m_y + 2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku    ³ <K> kalkulacija cijena"
+    @ m_x + nMaxRow-2, m_y + 2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje       ³ "
+    @ m_x + nMaxRow-1, m_y + 2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa pripreme  ³ "
+    @ m_x + nMaxRow, m_y + 2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije ³ "
 
-    IF gCijene=="1" .and. gMetodaNC==" "
+    if gCijene=="1" .and. gMetodaNC==" "
         Soboslikar({{nMaxRow-3,m_y+1,nMaxRow,m_y+77}},23,14)
-    ENDIF
+    endif
 
     PRIVATE lAutoAsist:=.f.
 
@@ -115,7 +121,7 @@ Box(, nMaxRow, nMaxCol )
 
 BoxC()
 
-CLOSERET
+close all
 return
 
 
@@ -199,20 +205,23 @@ go top
 return
 
 
-
-
+// -------------------------------------------------------------
+// obrada dogadjaja tastature u pripremi kalkulacija
+// -------------------------------------------------------------
 function kalk_pripr_key_handler()
-local nTr2,cSekv,nkekk
-local isekv
+local nTr2
+local cSekv
+local nKekk
+local iSekv
 
-if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. eof()
+if ( Ch == K_CTRL_T .or. Ch == K_ENTER ) .and. EOF()
     return DE_CONT
 endif
 
-PRIVATE PicCDEM:=gPicCDEM
-PRIVATE PicProc:=gPicProc
-PRIVATE PicDEM:= gPicDEM
-PRIVATE Pickol:= gPicKol
+PRIVATE PicCDEM := gPicCDEM
+PRIVATE PicProc := gPicProc
+PRIVATE PicDEM := gPicDEM
+PRIVATE Pickol := gPicKol
 
 select kalk_pripr
 
@@ -242,48 +251,86 @@ do case
         endif
 
     case Ch==K_ALT_P
+
         close all
         IzbDokOLPP()
         // StPripr()
         o_kalk_edit()
+
         return DE_REFRESH
+
     case Ch==K_ALT_L
+
         close all
+
         label_bkod()
         o_kalk_edit()
+
         return DE_REFRESH
+
     case Ch==K_ALT_Q
+
         if Pitanje(,"Stampa naljepnica(labela) za robu ?","D")=="D"
+
             CLOSE ALL
+
             RLabele()
             o_kalk_edit()       
+
             return DE_REFRESH
+
         endif
+
         return DE_CONT
-    case Ch==K_ALT_A
+
+    case Ch == K_ALT_A
+
         if IsJerry()
             JerryMP()
         endif
+
         close all
+
         azur_kalk()
         o_kalk_edit()
-        if kalk_pripr->(RECCOUNT())==0 .and. IzFMKINI("Indikatori","ImaU_KALK","N",PRIVPATH)=="D"
+
+        if kalk_pripr->(RECCOUNT())==0 .and. IzFMKINI("Indikatori","ImaU_KALK","N",PRIVPATH) == "D"
+
             O__KALK
+
+            select _kalk
+            do while !EOF()
+                _rec := dbf_get_rec()
+                select kalk_pripr
+                append blank
+                dbf_update_rec( _rec )
+                select _kalk
+                skip            
+            enddo
+            
             SELECT kalk_pripr
-            APPEND FROM _KALK
+            
             UzmiIzINI(PRIVPATH+"FMK.INI","Indikatori","ImaU_KALK","N","WRITE")
             close all
+
             o_kalk_edit()
             MsgBeep("Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!")
+
         endif
+
         return DE_REFRESH
-    case Ch==K_CTRL_P
+
+    case Ch == K_CTRL_P
+
         close all
         kalk_centr_stampa_dokumenta()
+
         close all
         o_kalk_edit()
+
         return DE_REFRESH
-    case Ch==K_CTRL_T
+
+    case Ch == K_CTRL_T
         
         if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
                 
@@ -294,6 +341,7 @@ do case
             nVpc := kalk_pripr->vpc
 
             delete
+
             _t_rec := RECNO()
             __dbPack()
             go ( _t_rec )
@@ -396,120 +444,135 @@ endcase
 return DE_CONT
 
 
-/*! \fn EditStavka()
- *  \brief Ispravka stavke dokumenta u kalk_pripremi
- */
-
+// ------------------------------------------------------------
+// ispravka stavke
+// ------------------------------------------------------------
 function EditStavka()
-if reccount2()==0
+
+if RecCount() == 0
     Msg("Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>")
-        return DE_CONT
+    return DE_CONT
 endif
 
 Scatter()
 
-if left(_idkonto2,3)="XXX"
+if LEFT( _idkonto2, 3 ) = "XXX"
     Beep(2)
-        Msg("Ne mozete ispravljati protustavke")
-        return DE_CONT
+    Msg("Ne mozete ispravljati protustavke")
+    return DE_CONT
 endif
 
-nRbr:=RbrUNum(_Rbr);_ERROR:=""
+nRbr := RbrUNum( _Rbr )
+_ERROR := ""
 
-Box("ist",20,77,.f.)
+Box( "ist", __box_x, __box_y, .f. )
+
 if EditPRIPR(.f.)==0
     BoxC()
-        return DE_CONT
+    return DE_CONT
 else
     BoxC()
-        if _ERROR<>"1"
+    if _ERROR<>"1"
         _ERROR:="0"
     endif       // stavka onda postavi ERROR
-        if _idvd=="16"
-            _oldval:=_vpc*_kolicina  // vrijednost prosle stavke
-        else
-            _oldval:=_mpcsapp*_kolicina  // vrijednost prosle stavke
-        endif
-        _oldvaln:=_nc*_kolicina
-        Gather()
-        if _idvd $ "16#80" .and. !empty(_idkonto2)
-            cIdkont:=_idkonto
-                cIdkont2:=_idkonto2
-                _idkonto:=cidkont2
-                _idkonto2:="XXX"
-                _kolicina:=-kolicina
+    if _idvd=="16"
+        _oldval:=_vpc*_kolicina  // vrijednost prosle stavke
+    else
+        _oldval:=_mpcsapp*_kolicina  // vrijednost prosle stavke
+    endif
+
+    _oldvaln := _nc * _kolicina
+
+    Gather()
+        
+    if _idvd $ "16#80" .and. !empty(_idkonto2)
+        cIdkont := _idkonto
+        cIdkont2:=_idkonto2
+        _idkonto:=cidkont2
+        _idkonto2:="XXX"
+        _kolicina:=-kolicina
           
-        Box("",21,77,.f.,"Protustavka")
-                    seek _idfirma+_idvd+_brdok+_rbr
-                    _Tbanktr:="X"
-                    do while !eof() .and. _idfirma+_idvd+_brdok+_rbr==idfirma+idvd+brdok+rbr
-                        if left(idkonto2,3)=="XXX"
-                            Scatter()
-                            _TBankTr:=""
-                            exit
-                        endif
-                        skip
-                    enddo
-                    _idkonto:=cidkont2
-                    _idkonto2:="XXX"
-                    if _idvd=="16"
-                        if IsPDV()
+        Box( "", __box_x, __box_y, .f., "Protustavka" )
+            seek _idfirma+_idvd+_brdok+_rbr
+            _Tbanktr:="X"
+            do while !eof() .and. _idfirma+_idvd+_brdok+_rbr==idfirma+idvd+brdok+rbr
+                if left(idkonto2,3)=="XXX"
+                    Scatter()
+                    _TBankTr:=""
+                    exit
+                endif
+                skip
+            enddo
+                   
+            _idkonto:=cidkont2
+            _idkonto2:="XXX"
+                    
+            if _idvd=="16"
+                if IsPDV()
                     Get1_16bPDV()
                 else
                     Get1_16b()
                 endif
-                    else
-                        Get1_80b()
-                    endif
-                    if _TBanktr=="X"
-                        append ncnl
-                    endif
-                    if _ERROR<>"1"
+            else
+                Get1_80b()
+            endif
+                    
+            if _TBanktr=="X"
+                append ncnl
+            endif
+
+            if _ERROR<>"1"
                 _ERROR:="0"
-            endif       // stavka onda postavi ERROR
-                    Gather()
-                BoxC()
-        endif
-        return DE_REFRESH
+            endif       
+
+            Gather()
+
+        BoxC()
+    endif
+    return DE_REFRESH
+
 endif
+
 return DE_CONT
 
 
-
-/*! \fn NovaStavka()
- *  \brief Unos nove stavke dokumenta u kalk_pripremi
- */
-
+// --------------------------------------------------
+// unos nove stavke
+// --------------------------------------------------
 function NovaStavka()
+
 // isprazni kontrolnu matricu
 aNC_ctrl := {}
     
-Box("knjn",21,77,.f.,"Unos novih stavki")   
-    _TMarza:="A"
+Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )    
+
+    _TMarza := "A"
+
     // ipak idi na zadnju stavku !
     go bottom
 
-    if left(idkonto2,3)="XXX"
+    if LEFT( field->idkonto2, 3 ) = "XXX"
         skip -1
     endif
         
     // TODO: popni se u odnosu na negativne brojeve
     // TODO: VIDJETI ?? negativne su protustavke ????!!! zar to ima
-    do while !bof()
-        if val(rbr)<0
+    do while !BOF()
+        if VAL( field->rbr ) < 0
            skip -1
         else
            exit
         endif
     enddo
 
-    cIdkont:=""
-    cIdkont2:=""
+    cIdkont := ""
+    cIdkont2 := ""
         
     do while .t.
 
         Scatter()
-        _ERROR:=""
+
+        _ERROR := ""
            
         if _idvd $ "16#80" .and. _idkonto2="XXX"
             _idkonto:=cidkont
@@ -522,11 +585,12 @@ Box("knjn",21,77,.f.,"Unos novih stavki")
         if !(_IdVD $ "10#81")
             _Prevoz:=_Prevoz2:=_Banktr:=_SpedTr:=_CarDaz:=_ZavTr:=0
         endif
+
         _NC:=_VPC:=_VPCSaP:=_MPC:=_MPCSaPP:=0
            
-        nRbr:=RbrUNum(_Rbr)+1
+        nRbr := RbrUNum( _Rbr ) + 1
 
-        if EditPRIPR(.t.)==0
+        if EditPRIPR( .t. )==0
              exit
         endif
            
@@ -538,20 +602,24 @@ Box("knjn",21,77,.f.,"Unos novih stavki")
         // stavka onda postavi ERROR
            
         if _idvd=="16"
-            _oldval:=_vpc*_kolicina  // vrijednost prosle stavke
+            _oldval := _vpc*_kolicina  // vrijednost prosle stavke
         else
-            _oldval:=_mpcsapp*_kolicina  // vrijednost prosle stavke
+            _oldval := _mpcsapp*_kolicina  // vrijednost prosle stavke
         endif
-        _oldvaln:=_nc*_kolicina
+
+        _oldvaln := _nc*_kolicina
+
         Gather()
            
-        if _idvd $ "16#80" .and. !empty(_idkonto2)
+        if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
+
             cIdkont:=_idkonto
             cIdkont2:=_idkonto2
             _idkonto:=cidkont2
             _idkonto2:="XXX"
             _kolicina:=-kolicina
-            Box("",21,77,.f.,"Protustavka")
+
+            Box( "", _box_x, _box_y, .f., "Protustavka" )
                 if _idvd=="16"
                     if IsPDV()
                         Get1_16bPDV()
@@ -568,9 +636,12 @@ Box("knjn",21,77,.f.,"Unos novih stavki")
                 // stavka onda postavi ERROR
                 Gather()
             BoxC()
+
             _idkonto:=cidkont
             _idkonto2:=cidkont2
+
         endif
+
     enddo
 
 BoxC()
@@ -579,20 +650,20 @@ return DE_REFRESH
 
 
 
-/*! \fn EditAll()
- *  \brief Cirkularna ispravka stavki dokumenta u kalk_pripremi
- */
-
+// ---------------------------------------------------------
+// ispravka svih stavki
+// ---------------------------------------------------------
 function EditAll()
 
 // ovu opciju moze pozvati i asistent alt+F10 !
 PushWA()
 select kalk_pripr
 
-Box("anal", 20, 77, .f., "Ispravka naloga")
+Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
 
-    nDug:=0
-    nPot:=0
+    nDug := 0
+    nPot := 0
+
     do while !eof()
         skip
         nTR2:=RECNO()
@@ -645,7 +716,7 @@ Box("anal", 20, 77, .f., "Ispravka naloga")
             _idkonto2:="XXX"
             _kolicina:=-kolicina
               
-            Box("",21,77,.f.,"Protustavka")
+            Box( "", __box_x, __box_y, .f., "Protustavka" )
                 seek _idfirma+_idvd+_brdok+_rbr
                 _Tbanktr:="X"
                 do while !eof() .and. _idfirma+_idvd+_brdok+_rbr == idfirma+idvd+brdok+rbr
@@ -699,7 +770,6 @@ lAutoAsist := .f.
 lAsistRadi:=.t.
 cSekv := CHR(K_CTRL_A)
 keyboard cSekv
-
 return DE_REFRESH
 
 
@@ -939,47 +1009,49 @@ return
 
 //ulaz _IdFirma, _IdRoba, ...., nRBr (val(_RBr))
 function EditPripr(fNovi)
-private nMarza:=0,nMarza2:=0,nR
-private PicDEM:="9999999.99999999",PicKol:=gPicKol
-nStrana:=1
+private nMarza := 0
+private nMarza2 := 0
+private nR
+private PicDEM := "9999999.99999999"
+private PicKol := gPicKol
+
+nStrana := 1
 
 do while .t.
 
-@ m_x+1,m_y+1 CLEAR TO m_x+20,m_y+77
+    @ m_x + 1, m_y + 1 CLEAR TO m_x+20,m_y+77
 
-SETKEY( K_PGDN, {|| NIL} )
-SETKEY( K_PGUP, {|| NIL} )
+    SETKEY( K_PGDN, {|| NIL} )
+    SETKEY( K_PGUP, {|| NIL} )
+    // konvertovanje valute - ukljuci
+    SETKEY( K_CTRL_K, {|| a_val_convert() } )
 
-// konvertovanje valute - ukljuci
-SETKEY( K_CTRL_K, {|| a_val_convert() } )
+    if nStrana==1
+        nR:=GET1(fnovi)
+    elseif nStrana==2
+        nR:=GET2(fnovi)
+    endif
 
-if nStrana==1
-  nR:=GET1(fnovi)
-elseif nStrana==2
-  nR:=GET2(fnovi)
-endif
+    SETKEY( K_PGDN, NIL )
+    SETKEY( K_PGUP, NIL )
+    // konvertovanje valute - iskljuci
+    SETKEY( K_CTRL_K, NIL )
 
-SETKEY( K_PGDN, NIL )
-SETKEY( K_PGUP, NIL )
+    set escape on
 
-// konvertovanje valute - iskljuci
-SETKEY( K_CTRL_K, NIL )
+    if nR == K_ESC
+	    exit
+    elseif nR == K_PGUP
+  	    --nStrana
+    elseif nR == K_PGDN .or. nR == K_ENTER
+  	    ++nStrana
+    endif
 
-set escape on
-
-if nR == K_ESC
-	exit
-elseif nR == K_PGUP
-  	--nStrana
-elseif nR == K_PGDN .or. nR == K_ENTER
-  	++nStrana
-endif
-
-if nStrana==0
-     nStrana++
-elseif nStrana>=3
-     exit
-endif
+    if nStrana==0
+        nStrana++
+    elseif nStrana>=3
+        exit
+    endif
 
 enddo
 
@@ -990,6 +1062,7 @@ if lastkey() <> K_ESC
 else
   	return 0
 endif
+
 return
 
 
@@ -1004,8 +1077,8 @@ return
 function Get1()
 parameters fnovi
 
-private pIzgSt:=.f.   
-private Getlist:={}
+private pIzgSt := .f.   
+private Getlist := {}
 
 if Get1Header() == 0
     return K_ESC
@@ -1088,7 +1161,7 @@ else
     return K_ESC
 endif
 return
-*}
+
 
 
 

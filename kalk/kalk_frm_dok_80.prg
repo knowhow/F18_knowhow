@@ -17,21 +17,22 @@
 
 function Get1_80()
 private aPorezi:={}
+
 if nRbr==1 .and. fnovi
-  _DatFaktP:=_datdok
+    _DatFaktP:=_datdok
 endif
 
-if nRbr==1  .or. !fnovi
+if nRbr==1 .or. !fnovi
  @  m_x+7,m_y+2   SAY "Dokument - Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP
 
- @ m_x+9,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
+ @ m_x+9,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto, MAXROWS() - 8, 5 ) pict "@!"
  if gNW<>"X"
-   @ m_x+9,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
+   @ m_x+9,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz, MAXROWS() - 8, 5 )
  endif
- @ m_x+10,m_y+2   SAY "Prenos na konto    " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto(@_IdKonto2,21,5) pict "@!"
+ @ m_x+10,m_y+2   SAY "Prenos na konto    " GET _IdKonto2   valid empty(_idkonto2) .or. P_Konto( @_IdKonto2, MAXROWS() - 8, 5 ) pict "@!"
  if gNW<>"X"
-   @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz2,21,5)
+   @ m_x+10,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz2  pict "@!" valid empty(_idZaduz) .or. P_Firma( @_IdZaduz2, MAXROWS() - 8, 5 )
  endif
 
  read

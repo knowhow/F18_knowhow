@@ -1,3 +1,7 @@
+1.0.32 2012-05-10, vsasa
+
+  - ld, beneficirani staž po više stopa, specifikacija, mip itd.. [#27909](http://redmine.bring.out.ba/issues/27909)
+ 
 1.0.31 2012-05-09, vsasa
 
   - ld, beneficirani staž po više stopa, specifikacija, mip itd.. [#27909](http://redmine.bring.out.ba/issues/27909)

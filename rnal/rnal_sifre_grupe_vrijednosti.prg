@@ -19,7 +19,7 @@ static __wo_id
 // -------------------------------------------------------------
 // otvara sifrarnik artikala
 // -------------------------------------------------------------
-function s_e_gr_val(cId, nE_gr_at_id, cE_gr_vl_desc, lwo_ID, dx, dy)
+function s_e_gr_val( cId, nE_gr_at_id, cE_gr_vl_desc, lwo_ID, dx, dy )
 local nTArea
 local cHeader
 local nCdx := 1
@@ -49,12 +49,12 @@ __wo_id := lwo_ID
 select e_gr_val
 set order to tag "1"
 
-set_a_kol(@ImeKol, @Kol)
-gr_att_filter(nE_gr_at_id, cE_gr_vl_desc)
+set_a_kol( @ImeKol, @Kol )
+gr_att_filter( nE_gr_at_id, cE_gr_vl_desc )
 
 go top
 
-cRet := PostojiSifra(F_E_GR_VAL, 1, MAXROWS()-10, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+cRet := PostojiSifra( F_E_GR_VAL, 1, MAXROWS()-10, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler(Ch) } )
 
 if VALTYPE(cE_gr_vl_desc) == "N"
 	cE_gr_vl_desc := STR(cE_gr_vl_desc, 10)
@@ -115,11 +115,11 @@ return
 // nE_gr_at_id - id atributa grupe
 // nE_gr_vl_desc - description vrijednosti...
 // ------------------------------------------------------
-static function gr_att_filter(nE_gr_at_id, cE_gr_vl_desc)
+static function gr_att_filter( nE_gr_at_id, cE_gr_vl_desc )
 local cFilter := ""
 
 if nE_gr_at_id > 0
-	cFilter += "e_gr_at_id == " + e_gr_at_str(nE_gr_at_id)
+	cFilter += "e_gr_at_id == " + e_gr_at_str( nE_gr_at_id )
 endif
 
 if !EMPTY( cE_gr_vl_desc )
@@ -128,7 +128,7 @@ if !EMPTY( cE_gr_vl_desc )
 		cFilter += " .and. "
 	endif
 
-	cFilter += "UPPER(e_gr_vl_fu) = " + cm2str( UPPER(ALLTRIM(cE_gr_vl_desc)) )
+	cFilter += "UPPER( e_gr_vl_fu ) = " + _filter_quote( UPPER( ALLTRIM( cE_gr_vl_desc ) ) )
 endif
 
 if !EMPTY(cFilter)

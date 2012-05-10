@@ -740,7 +740,7 @@ return
 // convert art_id to string
 // -------------------------------
 function artid_str(nId)
-return ALLTRIM( STR(nId, 10) )
+return STR(nId, 10)
 
 
 // -------------------------------

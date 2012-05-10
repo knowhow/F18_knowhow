@@ -80,7 +80,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->doc_no, 10) }
 _alg["dbf_key_fields"] := { { "doc_no", 10 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10 )"
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -114,7 +114,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 ) + STR( field->doc_it_no, 4 ) + STR( field->art_id, 10 ) }
 _alg["dbf_key_fields"] := { { "doc_no", 10 }, {"doc_it_no", 4 }, { "art_id", 10 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10) || rpad( doc_it_no::char(4),4)  || rpad(art_id::char(10),10) "
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10) || lpad( doc_it_no::char(4),4)  || lpad(art_id::char(10),10) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -123,7 +123,7 @@ AADD(_item["algoritam"], _alg)
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 )  }
 _alg["dbf_key_fields"] := { { "doc_no", 10 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10 )"
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -158,7 +158,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 ) + STR( field->doc_it_no, 4 ) + STR( field->it_no, 4 ) }
 _alg["dbf_key_fields"] := { { "doc_no", 10 }, {"doc_it_no", 4 }, { "it_no", 4 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10) || rpad( doc_it_no::char(4),4)  || rpad(it_no::char(4),4) "
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10) || lpad( doc_it_no::char(4),4)  || lpad(it_no::char(4),4) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -167,7 +167,7 @@ AADD(_item["algoritam"], _alg)
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 )  }
 _alg["dbf_key_fields"] := { { "doc_no", 10 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10 )"
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -201,7 +201,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 ) + STR( field->doc_it_no, 4 ) + STR( field->doc_op_no, 4 ) }
 _alg["dbf_key_fields"] := { { "doc_no", 10 }, {"doc_it_no", 4 }, { "doc_op_no", 4 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10) || rpad( doc_it_no::char(4),4)  || rpad( doc_op_no::char(4),4) "
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10) || lpad( doc_it_no::char(4),4)  || lpad( doc_op_no::char(4),4) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -210,7 +210,7 @@ AADD(_item["algoritam"], _alg)
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 )  }
 _alg["dbf_key_fields"] := { { "doc_no", 10 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10 )"
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -245,7 +245,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->doc_no, 10) + STR(field->doc_log_no, 10) + DTOS(field->doc_log_da) + doc_log_ti }
 _alg["dbf_key_fields"] := { { "doc_no", 10 }, { "doc_log_no", 10 }, "doc_log_da", "doc_log_ti" }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10 ) || rpad( doc_log_no::char(10), 10 ) || to_char( doc_log_da, 'YYYYMMDD' ) || rpad( doc_log_ti, 8 )"
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10 ) || lpad( doc_log_no::char(10), 10 ) || to_char( doc_log_da, 'YYYYMMDD' ) || rpad( doc_log_ti, 8 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -281,7 +281,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 ) + STR( field->doc_log_no, 10 ) + STR( field->doc_lit_no, 10 ) }
 _alg["dbf_key_fields"] := { { "doc_no", 10 }, {"doc_log_no", 10 }, { "doc_lit_no", 10 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10) || rpad( doc_log_no::char(10),10)  || rpad( doc_lit_no::char(10),10) "
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10) || lpad( doc_log_no::char(10),10)  || lpad( doc_lit_no::char(10),10) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -290,7 +290,7 @@ AADD(_item["algoritam"], _alg)
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| STR( field->doc_no, 10 )  }
 _alg["dbf_key_fields"] := { { "doc_no", 10 } }
-_alg["sql_in"]         := "rpad( doc_no::char(10), 10 )"
+_alg["sql_in"]         := "lpad( doc_no::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -326,7 +326,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->art_id, 10) }
 _alg["dbf_key_fields"] := { { "art_id", 10 } }
-_alg["sql_in"]         := "rpad( art_id::char(10), 10 ) "
+_alg["sql_in"]         := "lpad( art_id::char(10), 10 ) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -363,7 +363,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->art_id, 10 ) + STR( field->el_no, 4) + STR( field->el_id, 10 ) + STR( field->e_gr_id, 10 ) }
 _alg["dbf_key_fields"] := { { "art_id", 10 }, { "el_no", 4 }, { "el_id", 10 }, { "e_gr_id", 10 } }
-_alg["sql_in"]         := "rpad( art_id::char(10), 10 ) || rpad( el_no::char(4), 4 ) || rpad( el_id::char(10), 10 ) || rpad( e_gr_id::char(10), 10 ) "
+_alg["sql_in"]         := "lpad( art_id::char(10), 10 ) || lpad( el_no::char(4), 4 ) || lpad( el_id::char(10), 10 ) || lpad( e_gr_id::char(10), 10 ) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -373,7 +373,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->art_id, 10 ) }
 _alg["dbf_key_fields"] := { { "art_id", 10 } }
-_alg["sql_in"]         := "rpad( art_id::char(10), 10 ) "
+_alg["sql_in"]         := "lpad( art_id::char(10), 10 ) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -409,9 +409,9 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 
-_alg["dbf_key_block"]  := {|| STR(field->el_id, 10) + STR( field->el_op_id, 10) }
-_alg["dbf_key_fields"] := { { "el_id", 10 }, { "el_op_id", 10 } }
-_alg["sql_in"]         := "rpad( el_id::char(10), 10 ) || rpad( el_op_id::char(10), 10 )"
+_alg["dbf_key_block"]  := {|| STR(field->el_id, 10) + STR( field->el_op_id, 10) + STR( field->aop_id, 10 ) + STR( field->aop_att_id, 10 ) }
+_alg["dbf_key_fields"] := { { "el_id", 10 }, { "el_op_id", 10 }, { "aop_id", 10 }, { "aop_att_id", 10 } }
+_alg["sql_in"]         := "lpad( el_id::char(10), 10 ) || lpad( el_op_id::char(10), 10 ) || lpad( aop_id::char(10), 10) || lpad( aop_att_id::char(10), 10 ) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -445,9 +445,9 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 
-_alg["dbf_key_block"]  := {|| STR(field->el_id, 10) + STR( field->el_att_id, 10) }
-_alg["dbf_key_fields"] := { { "el_id", 10 }, { "el_att_id", 10 } }
-_alg["sql_in"]         := "rpad( el_id::char(10), 10 ) || rpad( el_att_id::char(10), 10 )"
+_alg["dbf_key_block"]  := {|| STR(field->el_id, 10) + STR( field->el_att_id, 10) + STR( field->e_gr_at_id, 10 ) + STR( field->e_gr_vl_id, 10 ) }
+_alg["dbf_key_fields"] := { { "el_id", 10 }, { "el_att_id", 10 }, { "e_gr_at_id", 10 }, { "e_gr_vl_id", 10 } }
+_alg["sql_in"]         := "lpad( el_id::char(10), 10 ) || lpad( el_att_id::char(10), 10 ) || lpad( e_gr_at_id::char(10), 10 ) || lpad( e_gr_vl_id::char(10), 10 ) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -484,7 +484,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->e_gr_id, 10) }
 _alg["dbf_key_fields"] := { { "e_gr_id", 10 } }
-_alg["sql_in"]         := "rpad( e_gr_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( e_gr_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -519,7 +519,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->e_gr_at_id, 10) }
 _alg["dbf_key_fields"] := { { "e_gr_at_id", 10 } }
-_alg["sql_in"]         := "rpad( e_gr_at_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( e_gr_at_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -557,7 +557,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->e_gr_vl_id, 10) }
 _alg["dbf_key_fields"] := { { "e_gr_vl_id", 10 } }
-_alg["sql_in"]         := "rpad( e_gr_vl_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( e_gr_vl_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -595,7 +595,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->cust_id, 10) }
 _alg["dbf_key_fields"] := { { "cust_id", 10 } }
-_alg["sql_in"]         := "rpad( cust_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( cust_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -632,7 +632,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->cont_id, 10) }
 _alg["dbf_key_fields"] := { { "cont_id", 10 } }
-_alg["sql_in"]         := "rpad( cont_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( cont_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -670,7 +670,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->obj_id, 10) }
 _alg["dbf_key_fields"] := { { "obj_id", 10 } }
-_alg["sql_in"]         := "rpad( obj_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( obj_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -706,7 +706,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->aop_id, 10) }
 _alg["dbf_key_fields"] := { { "aop_id", 10 } }
-_alg["sql_in"]         := "rpad( aop_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( aop_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -743,7 +743,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->aop_att_id, 10) }
 _alg["dbf_key_fields"] := { { "aop_att_id", 10 } }
-_alg["sql_in"]         := "rpad( aop_att_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( aop_att_id::char(10), 10 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -778,7 +778,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->id, 5) + STR(field->gl_tick, 2) }
 _alg["dbf_key_fields"] := { { "id", 5 }, { "gl_tick", 2 } }
-_alg["sql_in"]         := "rpad( id::char(5), 5 ) || rpad( gl_tick::char(2), 2 )"
+_alg["sql_in"]         := "lpad( id::char(5), 5 ) || lpad( gl_tick::char(2), 2 )"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 

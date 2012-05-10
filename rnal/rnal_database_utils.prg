@@ -248,52 +248,17 @@ if lAuto == nil
 	lAuto := .f.
 endif
 
-if !(FLOCK())
-	
-	if gInsTimeOut == nil
-		nTime := 150     
-	else
-		nTime := gInsTimeOut
-	endif
-	
-      	Box(,1,40)
-
-	do while nTime > 0
-        	
-		InkeySc(.125)
-         	
-		@ m_x + 1, m_y + 2 SAY "timeout: " + ALLTRIM(STR(nTime))
-
-		-- nTime
-         	
-		if FLOCK()
-          		exit
-        	endif
-
-		sleep(1)
-
-      	enddo
-
-	BoxC()
-	
-      	if nTime == 0 .AND. !(FLOCK())
-        	Beep (2)
-         	MsgBeep("Dodavanje nove stavke onemoguceno !!!#Pokusajte ponovo...")
-         	return 0
-      	endif
-endif
-
 if cIdField == "ART_ID"
 	cIndex := "1"
 else
 	cIndex := "2"
 endif
 
-_inc_id(@nId, cIdField, cIndex, lAuto )
+_inc_id( @nId, cIdField, cIndex, lAuto )
 
 set_global_memvars_from_dbf()
 
-appblank2(.f., .f.)   
+append blank
 
 cIdField := "_" + cIdField
 
@@ -307,8 +272,6 @@ update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 sql_table_update( nil, "END" )
 my_use_semaphore_on()
         
-DBUnlock()
-
 select (nTArea)
 
 return 1

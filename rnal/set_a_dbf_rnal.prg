@@ -361,11 +361,23 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 
-_alg["dbf_key_block"]  := {|| STR(field->art_id, 10) + STR( field->el_no, 4) + STR( field->el_id, 10 ) }
-_alg["dbf_key_fields"] := { { "art_id", 10 }, { "el_no", 4 }, { "el_id", 10 } }
-_alg["sql_in"]         := "rpad( art_id::char(10), 10 ) || rpad( el_no::char(4), 4 ) || rpad( el_id::char(10), 10 )"
+_alg["dbf_key_block"]  := {|| STR(field->art_id, 10 ) + STR( field->el_no, 4) + STR( field->el_id, 10 ) + STR( field->e_gr_id, 10 ) }
+_alg["dbf_key_fields"] := { { "art_id", 10 }, { "el_no", 4 }, { "el_id", 10 }, { "e_gr_id", 10 } }
+_alg["sql_in"]         := "rpad( art_id::char(10), 10 ) || rpad( el_no::char(4), 4 ) || rpad( el_id::char(10), 10 ) || rpad( e_gr_id::char(10), 10 ) "
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
+
+// algoritam 2 - brisanje kompletnog artikla
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+
+_alg["dbf_key_block"]  := {|| STR(field->art_id, 10 ) }
+_alg["dbf_key_fields"] := { { "art_id", 10 } }
+_alg["sql_in"]         := "rpad( art_id::char(10), 10 ) "
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg)
+
+
 
 _item["sql_order"] := "art_id, el_no, el_id"
 

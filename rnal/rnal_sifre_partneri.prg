@@ -47,7 +47,7 @@ endif
 // postavi filter...
 set_f_kol( cCustDesc, @cId )	
 
-cRet := PostojiSifra(F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+cRet := PostojiSifra(F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 5, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
 
 if !EMPTY(cCustDesc)
 	set filter to

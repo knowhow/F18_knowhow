@@ -114,7 +114,7 @@ endif
 
 if l_open_dbedit
     
-    set_a_kol(@ImeKol, @Kol)
+    set_a_kol( @ImeKol, @Kol )
 
     cOptions += "cN-novi "
     cOptions += "cT-brisi "
@@ -740,7 +740,7 @@ return
 // convert art_id to string
 // -------------------------------
 function artid_str(nId)
-return STR(nId, 10)
+return ALLTRIM( STR(nId, 10) )
 
 
 // -------------------------------

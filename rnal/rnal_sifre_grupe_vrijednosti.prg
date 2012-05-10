@@ -54,7 +54,7 @@ gr_att_filter(nE_gr_at_id, cE_gr_vl_desc)
 
 go top
 
-cRet := PostojiSifra(F_E_GR_VAL, 1, 16, 70, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+cRet := PostojiSifra(F_E_GR_VAL, 1, MAXROWS()-10, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
 
 if VALTYPE(cE_gr_vl_desc) == "N"
 	cE_gr_vl_desc := STR(cE_gr_vl_desc, 10)

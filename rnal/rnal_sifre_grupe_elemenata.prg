@@ -41,7 +41,7 @@ set order to tag "1"
 
 set_a_kol(@ImeKol, @Kol)
 	
-cRet := PostojiSifra(F_E_GROUPS, 1, 8, 70, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+cRet := PostojiSifra(F_E_GROUPS, 1, MAXROWS()-10, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
 
 select (nTArea)
 

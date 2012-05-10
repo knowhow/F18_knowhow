@@ -67,7 +67,7 @@ set order to tag cTag
 set filter to
 obj_filter(nCust_id, cObjDesc)
 
-cRet := PostojiSifra(F_OBJECTS, cTag, MAXROWS()-15, MAXCOLS()-10, cHeader, @cId, dx, dy, {|| key_handler( Ch ) })
+cRet := PostojiSifra(F_OBJECTS, cTag, MAXROWS()-15, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) })
 
 if LastKey() == K_ESC
 	cId := 0

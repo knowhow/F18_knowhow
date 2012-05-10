@@ -16,6 +16,8 @@ static art_id
 static el_gr_id
 static l_auto_tab
 static __el_schema
+static __box_x
+static __box_y
 
 // ----------------------------------------------
 // otvara formu za definisanje elemenata
@@ -37,6 +39,9 @@ private nEl_id := 0
 private nEl_gr_id := 0
 private ImeKol
 private Kol
+
+__box_x := MAXROWS() - 5
+__box_y := MAXCOLS() - 5
 
 if lNew == nil
 	lNew := .f.
@@ -61,29 +66,31 @@ if nArtType <> 0
 	
 endif
 
+// bilo x = 21
+// bilo y = 77
 
-Box(, 21, 77)
+Box(, __box_x, __box_y )
 
 @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str(art_id) + " "
-@ m_x + 20, m_y + 1 SAY REPLICATE("Í", 77) COLOR cLineClr
-@ m_x + 16, m_y + 1 SAY "<c+N> nova"
-@ m_x + 17, m_y + 1 SAY "<F2> ispravka"
-@ m_x + 18, m_y + 1 SAY "<c+T> brisi"
-@ m_x + 21, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
+
+@ m_x + __box_x - 1, m_y + 1 SAY REPLICATE( "Í", __box_y + 1 ) COLOR cLineClr
+
+@ m_x + __box_x - 4, m_y + 1 SAY "<c+N> nova"
+@ m_x + __box_x - 3, m_y + 1 SAY "<F2> ispravka"
+@ m_x + __box_x - 2, m_y + 1 SAY "<c+T> brisi"
+@ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
 
 // na dnu dodaj i schemu da se zna sta se pravi...
 
 _sh_piccode( __el_schema ) 
 
-
-// uspravna crta
-for i:=1 to 19
-	@ m_x + i, m_y + 21 SAY "º" COLOR cLineClr
+// vertikalna crta
+for i := 1 to ( __box_x - 2 )
+	@ m_x + i, m_y + __box_x SAY "º" COLOR cLineClr
 next
 
-// vertikalna crta
-@ m_x + 10, m_y + 22 SAY REPLICATE("Í", 56) COLOR cLineClr
-
+// horizontalna crta
+@ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY REPLICATE( "Í", ( __box_y - __box_x ) + 1 ) COLOR cLineClr
 
 select e_att
 go top
@@ -91,45 +98,53 @@ select e_aops
 go top
 select elements
 go top
-m_y += 21
+
+m_y += __box_x
 
 do while .t.
 	
 	if ALIAS() == "ELEMENTS"
 		
-		nX := 16
-		nY := 20
-		m_y -= 21
+        // bilo: 16
+		nX := __box_x - 5
+        // bilo: 20
+		nY := __box_x - 1
+
+        // bilo: 21
+		m_y -= __box_x
 		
-		_say_tbl_desc( m_x + 1, ;
-				m_y + 1, ;
-				cCol2, ;
-				"** elementi", ;
-				11 )
+		_say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** elementi", 11 )
 		
-		elem_kol(@ImeKol, @Kol)
+        elem_kol( @ImeKol, @Kol )
+
 		elem_filter( art_id )
 
 	elseif ALIAS() == "E_ATT"
 		
-		nX := 10
-		nY := 56
-		m_y += 21
+        // bilo: 10
+		nX := (  __box_x / 2 )
+        // bilo: 56
+		nY := ( __box_y - __box_x ) + 1
+
+        // bilo: 21
+		m_y += __box_x
 		
-		_say_tbl_desc( m_x + 1, ;
-				m_y + 1, ;
-				cCol2, ;
-				"** atributi", ;
-				20 )
-		
-		e_att_kol(@ImeKol, @Kol)
-		e_att_filter(nEl_id)
+		_say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** atributi", 20 )
+	
+		e_att_kol( @ImeKol, @Kol )
+
+		e_att_filter( nEl_id )
 	
 	elseif ALIAS() == "E_AOPS"
-	
-		nX := 10
-		nY := 56
-		m_x += 10
+
+        // bilo: 10	
+		nX := ( __box_x / 2 ) - 1
+
+        // bilo: 56
+		nY := ( __box_y - __box_x ) + 1
+        
+        // bilo: 10
+		m_x += (  __box_x / 2 )
 		
 		_say_tbl_desc( m_x + 1, ;
 				m_y + 1, ;
@@ -175,7 +190,8 @@ do while .t.
 	
 	// pomjeri koordinatu
 	if ALIAS() == "ELEMENTS"
-		m_x -= 10
+        // bilo: 10
+		m_x -= ( __box_x / 2 )
 	endif
 
 	
@@ -342,9 +358,6 @@ go top
 return
 
 
-
-
-
 // -----------------------------------------
 // kolone tabele "elements"
 // -----------------------------------------
@@ -352,8 +365,8 @@ static function elem_kol(aImeKol, aKol, nArt_id)
 aKol := {}
 aImeKol := {}
 
-AADD(aImeKol, {"rb", {|| el_no }, "el_no", {|| _inc_id(@wel_id, "EL_ID"), .f.}, {|| .t.}})
-AADD(aImeKol, {PADC("el.grupa", 15), {|| PADR(g_e_gr_desc( e_gr_id ), 15 ) }, "e_gr_id"})
+AADD(aImeKol, { "rb", {|| el_no }, "el_no", {|| _inc_id(@wel_id, "EL_ID"), .f.}, {|| .t.}} )
+AADD(aImeKol, { PADC("el.grupa", __box_x), {|| PADR(g_e_gr_desc( e_gr_id ), __box_x ) }, "e_gr_id" })
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)
@@ -387,7 +400,7 @@ static function _last_elno( nArtId )
 local nLast_rec := 0
 
 go top
-seek artid_str( nArtId ) + STR(9999, 4)
+seek artid_str( nArtId ) + STR( 9999, 4 )
 
 skip -1
 
@@ -440,7 +453,7 @@ return
 // convert el_id to string
 // -------------------------------
 function elid_str(nId)
-return STR(nId, 10)
+return ALLTRIM( STR(nId, 10) )
 
 
 
@@ -484,6 +497,7 @@ do case
 			if field->el_id == 0
 				
 				MsgBeep("Nema unesenih elemenata !!!!")
+
 				nRet := DE_CONT
 				
 			else
@@ -532,7 +546,7 @@ do case
 				//set filter to &cTBFilter
 				
 			else
-			
+		
 				//set filter to &cTBFilter
 				go top
 			
@@ -710,15 +724,19 @@ return
 // prikazi piccode na formi unosa
 // ---------------------------------------------
 static function _sh_piccode( cSchema )
-local nX := 22
-local nY := 33
+local _desc_len := 35
+local nX := __box_x + 1
+local nY := __box_y - _desc_len
 local cSchClr := "GR+/B"
 
+// prvo ocisti
+@ nX, nY SAY SPACE( _desc_len )
+
+// ispisi
 @ nX, nY SAY "|"
 @ nX, col() + 1 SAY "shema: "
 @ nX, col() + 1 SAY PADR( g_a_piccode( cSchema ), 25 ) ;
 			COLOR cSchClr
-
 
 return
 
@@ -1130,7 +1148,6 @@ endif
 set_global_memvars_from_dbf()
 
 if lNewRec
-
 	_el_id := nEl_id
 	_aop_id := 0
 	_aop_att_id := 0
@@ -1182,12 +1199,19 @@ return 1
 // brisanje elementa
 // ----------------------------------------------
 static function elem_del()
+local _rec
 
 if Pitanje(,"Izbrisati stavku ???", "N") == "N"
 	return DE_CONT
 endif
 
-delete
+_rec := dbf_get_rec()
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 
 return DE_REFRESH
 
@@ -1197,12 +1221,18 @@ return DE_REFRESH
 // brisanje atributa elementa
 // ----------------------------------------------
 static function e_att_del()
+local _rec
 
 if Pitanje(,"Izbrisati stavku ???", "N") == "N"
 	return DE_CONT
 endif
 
-delete
+_rec := dbf_get_rec()
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return DE_REFRESH
 
@@ -1212,12 +1242,18 @@ return DE_REFRESH
 // brisanje dodatne operacije elementa
 // ----------------------------------------------
 static function e_aops_del()
+local _rec
 
 if Pitanje(,"Izbrisati stavku ???", "N") == "N"
 	return DE_CONT
 endif
 
-delete
+_rec := dbf_get_rec()
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 return DE_REFRESH
 

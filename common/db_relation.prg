@@ -27,7 +27,7 @@ _alias := "RELATION"
 
 if !FILE( f18_ime_dbf( _table ) )
     DBCREATE2( _alias, aDbf)
-    reset_semaphore_version(_table_name)
+    reset_semaphore_version( _table )
     my_use( _alias )
     USE
 endif

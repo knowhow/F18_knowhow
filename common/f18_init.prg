@@ -790,7 +790,7 @@ local _msg_time
 
 _msg_time := DTOC( DATE() ) 
 _msg_time += ", " 
-_msg_time += PADR( TIME(), 5 ) 
+_msg_time += PADR( TIME(), 8 ) 
 _msg_time += ": " 
  
 // time ide samo u fajl, ne na server

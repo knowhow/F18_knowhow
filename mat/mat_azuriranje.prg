@@ -208,7 +208,6 @@ if _ok = .t.
   go top
 
   sql_table_update(nil, "BEGIN")
-  
  
   _record := dbf_get_rec()
   _tmp_id := _record["id_firma"] + _record["idvn"] + _record["brnal"]
@@ -340,9 +339,8 @@ else
     lock_semaphore(_tbl_sint,  "free")
     lock_semaphore(_tbl_nalog, "free")
 
-
-
     sql_table_update(nil, "END")
+
 endif
 
 return _ok

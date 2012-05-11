@@ -262,6 +262,28 @@ endif
 
 CREATE_INDEX("1","IdRoba", "mat_invent") // Inventura
 
+
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,  7  ,  0 })
+AADD(aDBf,{ 'TIP_NC'              , 'C' ,  1 ,   0 })
+AADD(aDBf,{ 'TIP_PC'              , 'C' ,  1 ,   0 })
+ 
+_created := .f.
+_alias := "KARKON"
+_table_name := "mat_karkon"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2( _alias, aDbf )
+    _created := .t.
+endif
+
+if _created
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    use
+endif
+
+CREATE_INDEX( "ID","ID", _alias )
  
 return
 

@@ -1572,6 +1572,43 @@ popwa()
 return
 
 
+
+// -------------------------------------------------------
+// kreiranje mtemp tabele
+// -------------------------------------------------------
+static function _create_ld_tmp()
+local _i, _struct
+local _table := "_ld"
+local _ret := .t.
+
+// pobrisi tabelu
+if FILE( my_home() + _table + ".dbf" )
+    FERASE( my_home() + _table + ".dbf" )
+endif
+
+_struct := LD->( DBSTRUCT() )
+
+// ovdje cemo sva numericka polja prosiriti za 4 mjesta
+// (izuzeci su polja GODINA i MJESEC)
+  
+for _i := 1 TO LEN( _struct )
+    if _struct[ _i, 2 ] == "N" .and. !( UPPER(ALLTRIM( _struct[ _i, 1 ] ) ) $ "GODINA#MJESEC" )
+        _struct[ _i, 3 ] += 4
+    endif
+next
+
+// kreiraj tabelu
+DbCreate( my_home() + _table + ".dbf", _struct )
+
+if !FILE( my_home() + _table + ".dbf" )
+    MsgBeep( "Ne postoji " + _table + ".dbf !!!" )
+    _ret := .f.
+endif
+
+return _ret
+
+
+
 function UKartPl()
 local nC1:=20
 local i
@@ -1585,32 +1622,10 @@ cRazdvoji := "N"
 
 O_LD
 
-COPY STRUCTURE extended TO struct
-USE
- 
-SELECT 400             
-// ovo malo siri strukturu
- 
-USE struct             
-// naime, polja sa satima su premala za
-GO TOP                 
-// rekapitulairanje vise mjeseci
- 
-WHILE !EOF()
-    IF LEN (Trim (Field_Name))==3 .and. Left (Field_Name, 1)="S"
-        REPLACE field_Len WITH field_Len + 3
-    ENDIF
-    SKIP
-ENDDO
-SELECT struct
-USE
- 
-FERASE( my_home() + "_ld.cdx" )
-cPom := "_ld"
+// kreiraj tmp tabelu _ld
+_create_ld_tmp()
 
-CREATE (cPom) from struct
-use (cPom)
- 
+my_use( "_ld" )
 index on idradn + idrj tag "1"
  
 close all
@@ -1622,6 +1637,7 @@ O_RADKR
 O_KRED
 O__LD
 set order to tag "1"
+
 O_LD
 
 cIdRadn := SPACE(_LR_)

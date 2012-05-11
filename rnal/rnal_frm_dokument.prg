@@ -17,7 +17,8 @@ static _doc_it
 static __item_no
 static __art_id
 static l_auto_tab
-
+static __dok_x
+static __dok_y
 
 // ---------------------------------------------
 // edit dokument
@@ -56,7 +57,13 @@ local cCol2 := "W+/G"
 private ImeKol
 private Kol
 
-Box(, MAXROWS()-5, MAXCOLS()-5)
+// x: 22
+// y: 77
+
+__dok_x := MAXROWS() - 5
+__dok_y := MAXCOLS() - 5
+
+Box(, __dok_x, __dok_y )
 
 l_auto_tab := .f.
 
@@ -72,18 +79,24 @@ _doc := _docs->doc_no
 // ispisi header i footer
 header_footer()
 
-m_y += 50
+// bilo: 50
+m_y += ( __dok_x * 2 )
+// bilo: 6
 m_x += 6
 
 do while .t.
 
     if ALIAS() == "_DOCS"
         
+        // bilo: 6
         nX := 6
-        nY := 78
+        // bilo: 78
+        nY := __dok_y + 1
         
+        // bilo: 6
         m_x -= 6
-        m_y -= 50
+        // bilo: 50
+        m_y -= ( __dok_x * 2 )
     
         // prikazi naslov tabele
         _say_tbl_desc( m_x + 1, ;
@@ -96,9 +109,12 @@ do while .t.
         
     elseif ALIAS() == "_DOC_IT"
 
-        nX := 15
-        nY := 49
+        // bilo: 15
+        nX := ( __dok_x - 10 )
+        // bilo: 49
+        nY := ( ( __dok_x * 2 ) - 1 )
         
+        // bilo: 6
         m_x += 6
         
         _say_tbl_desc( m_x + 1 , ;
@@ -111,24 +127,20 @@ do while .t.
 
     elseif ALIAS() == "_DOC_OPS"
 
-        nX := 15
-        nY := 28
-        m_y += 50
+        // bilo: 15
+        nX := ( __dok_x - 10 )
+        // bilo: 28
+        nY := ( ( __dok_x * 2 ) - 5 )
+        // bilo: 50
+        m_y += ( __dok_x * 2 )
         
         _say_tbl_desc( m_x + 1,  m_y + 1,  cCol2,   "*** dod.oper.",  20 )
     
-        docop_kol(@ImeKol, @Kol)
+        docop_kol( @ImeKol, @Kol )
         
     endif
     
     ObjDBedit("docum", nX, nY, {|Ch| key_handler(Ch)},"","",,,,,1)
-
-    if ALIAS() == "_DOCS"
-        
-        //m_x -= 6
-        //m_y -= 50
-        
-    endif
 
     if LastKey() == K_ESC
     
@@ -202,15 +214,18 @@ endif
 
 cHeader += SPACE(5)
 cHeader += "operater: "
-cHeader += ALLTRIM( f18_user() )
+cHeader += PADR( ALLTRIM( f18_user() ), 30 )
 
 @ m_x, m_y + 2 SAY cHeader
-@ m_x + 6, m_y + 1 SAY REPLICATE("Í", 78) COLOR cLineClr
-@ m_x + 21, m_y + 1 SAY REPLICATE("Í", 78) COLOR cLineClr
-@ m_x + 22, m_y + 1 SAY cFooter
 
-for i := 7 to 20
-    @ m_x + i, m_y + 50 SAY "º" COLOR cLineClr
+@ m_x + 6, m_y + 1 SAY REPLICATE( "Í", __dok_y + 1 ) COLOR cLineClr
+
+@ m_x + __dok_x - 1, m_y + 1 SAY REPLICATE( "Í", __dok_y + 1 ) COLOR cLineClr
+
+@ m_x + __dok_x, m_y + 1 SAY cFooter
+
+for i := 7 to ( __dok_x - 2 )
+    @ m_x + i, m_y + ( __dok_x * 2 ) SAY "º" COLOR cLineClr
 next
 
 select (nTArea)

@@ -85,20 +85,10 @@ return nReturn
 static function _get_params( cFile, cImpView )
 local nX := 1
 local cImpOk := "D"
-private GetList:={}
-private cSection:="E"
-private cHistory:=" "
-private aHistory:={}
+local GetList := {}
 
-O_PARAMS
-
-cFile := PADR("c:\temp\elba.txt", 100)
-
-RPar("i1", @cFile)
-//RPar("i2", @cFile)
-//RPar("i3", @cFile)
-
-
+cFile := PADR( "c:\temp\elba.txt", 300 )
+cFile := fetch_metric( "import_elba_lokacija_fajla", my_user(), cFile )
 cImpView := "D"
 
 Box(, 9, 65)
@@ -132,10 +122,7 @@ endif
 select params
 
 cFile := ALLTRIM( cFile )
-
-WPar("i1", cFile)
-//WPar("i2", cFile)
-// ...
+set_metric( "import_elba_lokacija_fajla", my_user(), cFile )
 
 return 1
 

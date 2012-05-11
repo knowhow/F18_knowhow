@@ -1,7 +1,11 @@
-1.0.32 2012-05-10, vsasa
+1.0.32 2012-05-11, vsasa
 
   - ld, beneficirani staž po više stopa, specifikacija, mip itd.. [#27909](http://redmine.bring.out.ba/issues/27909)
- 
+  - ld, mip, olp, pregled, prvi seek ispravljen [#27950](http://redmine.bring.out.ba/issues/27950)
+  - rnal, semafori, maske za unos modifikovane [#27978](http://redmine.bring.out.ba/issues/27978)
+  - import elba, sql/db parametar
+  - ostale sitne korekcije ...
+
 1.0.31 2012-05-09, vsasa
 
   - ld, beneficirani staž po više stopa, specifikacija, mip itd.. [#27909](http://redmine.bring.out.ba/issues/27909)

@@ -537,7 +537,7 @@ do case
             @ m_x + __unos_x - 5, m_y + 1 SAY "ZBIR NALOGA:"
             @ m_x + __unos_x - 5, m_y + 14 SAY nDug PICTURE PicDEM
             @ m_x + __unos_x - 5, m_y + 35 SAY nPot PICTURE PicDEM
-            @ m_x + __unox_x - 5, m_y + 56 SAY nDug-nPot PICTURE PicDEM
+            @ m_x + __unos_x - 5, m_y + 56 SAY nDug-nPot PICTURE PicDEM
 
             select mat_pripr
             APPEND BLANK

@@ -210,7 +210,7 @@ if _ok = .t.
   sql_table_update(nil, "BEGIN")
  
   _record := dbf_get_rec()
-  _tmp_id := _record["id_firma"] + _record["idvn"] + _record["brnal"]
+  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
   AADD( _ids_suban, "#2" + _tmp_id )
 
   @ m_x+1, m_y+2 SAY "mat_suban -> server: " + _tmp_id 

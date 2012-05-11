@@ -51,34 +51,34 @@ cBrNal:= cBrNal2 := space(4)
 
 Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
 
- @ m_x + 1, m_y + 2 SAY "Nalog:"
+    @ m_x + 1, m_y + 2 SAY "Nalog:"
 
- if gNW=="D"
-      @ m_x+1,col()+1 SAY cIdFirma PICT "@!"
- else
-      @ m_x+1,col()+1 GET cIdFirma PICT "@!"
- endif
+    if gNW=="D"
+        @ m_x+1,col()+1 SAY cIdFirma PICT "@!"
+    else
+        @ m_x+1,col()+1 GET cIdFirma PICT "@!"
+    endif
 
- @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
- @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID !EMPTY( cBrNal )
+    @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
+    @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID !EMPTY( cBrNal )
 
- IF lStorno
+    IF lStorno
 
-   @ m_x+3,m_y+2 SAY "Broj novog naloga (naloga storna):"
+        @ m_x+3,m_y+2 SAY "Broj novog naloga (naloga storna):"
 
-   if gNW=="D"
-       @ m_x+3, col()+1 SAY cIdFirma2
-   else
-       @ m_x+3, col()+1 GET cIdFirma2
-   endif
+        if gNW=="D"
+            @ m_x+3, col()+1 SAY cIdFirma2
+        else
+            @ m_x+3, col()+1 GET cIdFirma2
+    endif
 
-   @ m_x + 3, col() + 1 SAY "-" GET cIdVN2 PICT "@!"
-   @ m_x + 3, col() + 1 SAY "-" GET cBrNal2
+    @ m_x + 3, col() + 1 SAY "-" GET cIdVN2 PICT "@!"
+    @ m_x + 3, col() + 1 SAY "-" GET cBrNal2
 
- ENDIF
+    endif
 
- read
- ESC_BCR
+    read
+    ESC_BCR
 
 BoxC()
 
@@ -90,14 +90,15 @@ endif
 
 lBrisi := .t.
 
-IF !lStorno
+if !lStorno
     lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
-ENDIF
+endif
 
 MsgO("Punim pripremu sa mat_suban: " + cIdfirma + cIdvn + cBrNal )
 
 select MAT_SUBAN
 seek cIdfirma + cIdvn + cBrNal
+
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
 
    select mat_pripr
@@ -132,42 +133,66 @@ if !lBrisi
     return
 endif
 
-_del_rec := hb_hash()
-_del_rec["idfirma"] := cIdFirma
-_del_rec["idvn"]    := cIdVn
-_del_rec["brnal"]   := cBrNal 
-
 if !lStorno
-
-    _ok := .t.
-
-    _field_ids := {"idfirma", "idvn", "brnal"}
-    _where_block := { |x| "IDFIRMA=" + _sql_quote(x["idfirma"]) + " AND IDVN=" + _sql_quote(x["idvn"]) + " AND BRNAL=" + _sql_quote(x["brnal"]) } 
-
-    MsgO("del mat_suban")
-    // SUBAN TAG = "4"
-    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_suban", _del_rec, _field_ids, _where_block,  "4" )
-    MsgC()
-
-    MsgO("del mat_anal")
-    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_anal", _del_rec, _field_ids, _where_block,  "2" )
-    MsgC()
-
-    MsgO("del mat_sint")
-    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_sint", _del_rec, _field_ids, _where_block,  "2" )
-    MsgC()
-
-    MsgO("del mat_nalog")
-    _ok :=  _ok .and. delete_rec_server_and_dbf("mat_nalog", _del_rec, _field_ids, _where_block,  "1" )
-    MsgC()
-
-endif
-
-if !_ok
-  MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
+    brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
 endif
 
 close all
+return
+
+
+// ---------------------------------------------------------
+// brisanje mat naloga iz kumulativa
+// ---------------------------------------------------------
+function brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
+local _del_rec
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
+select mat_suban
+set order to tag "4"
+go top
+seek cIdFirma + cIdVn + cBrNal
+
+if FOUND()
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "mat_suban", _del_rec, 2, "CONT" )
+endif
+
+select mat_sint
+set order to tag "2"
+go top
+seek cIdFirma + cIdVn + cBrNal
+
+if FOUND()
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "mat_sint", _del_rec, 2, "CONT" )
+endif
+
+select mat_anal
+set order to tag "2"
+go top
+seek cIdFirma + cIdVn + cBrNal
+
+if FOUND()
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "mat_anal", _del_rec, 2, "CONT" )
+endif
+
+select mat_nalog
+set order to tag "1"
+go top
+seek cIdFirma + cIdVn + cBrNal
+
+if FOUND()
+    _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "mat_nalog", _del_rec, 1, "CONT" )
+endif
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+
 return
 
 

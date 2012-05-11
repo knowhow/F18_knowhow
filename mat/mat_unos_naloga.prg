@@ -15,14 +15,15 @@
 static PicDEM:="9999999.99"
 static PicBHD:="999999999.99"
 static PicKol:="999999.999"
-
+static PicUN := "999999999.99"
+static __unos_x
+static __unos_y
 
 // -----------------------------------------------------
 // knjizenje naloga 
 // -----------------------------------------------------
 function mat_knjizenje_naloga()
-public gPotpis:="N"
-PicUN:="999999999.99"
+public gPotpis := "N"
 private fK1:=fk2:=fk3:=fk4:="N"
 
 O_PARAMS
@@ -35,6 +36,7 @@ RPar("k2",@fk2)
 RPar("k3",@fk3)
 RPar("k4",@fk4)
 RPar("po",@gPotpis)
+
 select params
 use
 
@@ -51,6 +53,9 @@ return
 // -----------------------------------------
 function mat_unos_naloga()
 
+__unos_x := MAXROWS() - 5
+__unos_y := MAXCOLS() - 5
+
 mat_o_edit()
 
 ImeKol:={ ;
@@ -66,12 +71,12 @@ ImeKol:={ ;
        }
 
 IF gNW=="R"
- AADD(ImeKol,{"Datum",               {|| DatDok                       }, "datdok" })
+    AADD(ImeKol,{"Datum",               {|| DatDok                       }, "datdok" })
 ELSE
- AADD(ImeKol,{"Cijena ",             {|| transform(Cijena,"99999.999") }           })
- AADD(ImeKol,{"Iznos "+ValDomaca(), {|| transform(Iznos,"9999999.9") }           })
- AADD(ImeKol,{"Iznos "+ValPomocna(),  {|| transform(Iznos2,"9999999.9")}           })
- AADD(ImeKol,{"Datum",               {|| DatDok                       }, "datdok" })
+    AADD(ImeKol,{"Cijena ",             {|| transform(Cijena,"99999.999") }           })
+    AADD(ImeKol,{"Iznos "+ValDomaca(), {|| transform(Iznos,"9999999.9") }           })
+    AADD(ImeKol,{"Iznos "+ValPomocna(),  {|| transform(Iznos2,"9999999.9")}           })
+    AADD(ImeKol,{"Datum",               {|| DatDok                       }, "datdok" })
 ENDIF
 
 Kol:={}
@@ -79,12 +84,14 @@ for i := 1 to LEN(ImeKol)
     AADD(Kol,i)
 next
 
-Box(, MAXROWS()-4, MAXCOLS()-3)
+Box(, __unos_x, __unos_y )
 
-@ m_x + MAXROWS()-4-2, m_y + 2 SAY " <c-N>  Nove Stavke       ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku "
-@ m_x + MAXROWS()-4-1, m_y + 2 SAY " <c-A>  Ispravka naloga   ³ <c-P> Stampa naloga    ³ <a-A> Azuriranje   "
-@ m_x + MAXROWS()-4, m_y + 2 SAY " <c-F9> Brisi pripremu    ³ <F5>  Kontrola zbira   ³                    "
-ObjDbedit( "PNal", MAXROWS()-4, MAXCOLS()-3, {|| mat_pripr_key_handler()},"","Priprema..", , , , ,3)
+    @ m_x + __unos_x - 2, m_y + 2 SAY " <c-N>  Nove Stavke       ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku "
+    @ m_x + __unos_x - 1, m_y + 2 SAY " <c-A>  Ispravka naloga   ³ <c-P> Stampa naloga    ³ <a-A> Azuriranje   "
+    @ m_x + __unos_x, m_y + 2 SAY " <c-F9> Brisi pripremu    ³ <F5>  Kontrola zbira   ³                    "
+
+    ObjDbedit( "PNal", __unos_x, __unos_y, { || mat_pripr_key_handler() }, "", "Priprema..", , , , , 3 )
+
 BoxC()
 
 close all
@@ -120,46 +127,53 @@ return
 
 
 static function EditPRIPR(fNovi)
-   private nKurs:=0
-   if fnovi .and. nRbr==1; _idfirma:=gFirma; endif
+private nKurs:=0
+   
+if fnovi .and. nRbr == 1
+    _idfirma := gFirma
+endif
 
-   if gNW$"DR"
-    @  m_x+1,m_y+2   SAY "Firma: "; ?? gFirma,"-",gNFirma
-   else
-    @  m_x+1,m_y+2   SAY "Firma:"    get _IdFirma valid {|| P_Firma(@_IdFirma,1,20),_idfirma:=left(_idfirma,2),.t.}
-   endif
+if gNW$"DR"
+    @  m_x+1, m_y+2 SAY "Firma: "
+    ?? gFirma, "-", gNFirma
+else
+    @  m_x+1, m_y+2 SAY "Firma:" GET _IdFirma VALID {|| P_Firma( @_IdFirma, 1, 20 ), _idfirma := left( _idfirma, 2 ), .t. }
+endif
 
-   @  m_x+3,m_y+2   SAY "NALOG:   Vrsta:"  get _IdVN    valid P_VN(@_IdVN,3,23)
-   read; ESC_RETURN 0
+@ m_x+3, m_y+2 SAY "NALOG:   Vrsta:"  get _IdVN    valid P_VN(@_IdVN,3,23)
+read
+ESC_RETURN 0
 
-   if fnovi .and. (_idfirma<>idfirma .or. _idvn<>idvn)
-     select mat_nalog; seek _idfirma+_idvn+"X"; skip -1
-     if idvn<>_idvn
-       _brnal:="0000"
-     else
-       _brnal:=brnal
-     endif
-     _brnal:=NovaSifra(_brnal)
-     select  mat_pripr
-   endif
+if fnovi .and. (_idfirma<>idfirma .or. _idvn<>idvn)
+    select mat_nalog
+    seek _idfirma + _idvn + "X"
+    skip -1
+    if idvn<>_idvn
+        _brnal:="0000"
+    else
+        _brnal:=brnal
+    endif
+    _brnal:=NovaSifra(_brnal)
+    select  mat_pripr
+endif
 
 
-   @  m_x+3,m_y+52  SAY "Broj:"   get _BrNal   valid mat_dupli_nalog(_BrNal,_IdVN,_IdFirma) .and. !empty(_BrNal)
+@  m_x+3,m_y+52  SAY "Broj:"   get _BrNal   valid mat_dupli_nalog(_BrNal,_IdVN,_IdFirma) .and. !empty(_BrNal)
+@  m_x+5,m_y+2  SAY "Redni broj stavke naloga:" get nRbr picture "9999"
 
-   @  m_x+5,m_y+2  SAY "Redni broj stavke naloga:" get nRbr picture "9999"
-
-   if  gKupZad=="D"
+if gKupZad=="D"
     @ m_x+7,m_y+2    SAY "Dobavljac/Kupac" get _IdPartner valid empty(_IdPartner) .or. P_Firma(@_IdPartner,24)
     @ m_x+7,m_y+40   SAY "Zaduzuje " GET _IdZaduz pict "@!" valid empty(_IdZaduz) .or. P_Firma(@_IdZaduz,24)
-   endif
+endif
 
-   @  m_x+9,m_y+2  SAY "DOKUMENT:"
-   if gNW=="N"
-    @  m_x+9,m_y+12 SAY "Tip :" get _IdTipDok valid P_TipDok(@_IdTipDok)
-    @  m_x+9,m_y+24 SAY "Broj:"   get _BrDok
-   else
-    @  m_x+9,m_y+13 SAY "Broj:"   get _BrDok
-   endif
+@  m_x+9,m_y+2  SAY "DOKUMENT:"
+   
+if gNW=="N"
+    @ m_x+9,m_y+12 SAY "Tip :" get _IdTipDok valid P_TipDok(@_IdTipDok)
+    @ m_x+9,m_y+24 SAY "Broj:"   get _BrDok
+else
+    @ m_x+9,m_y+13 SAY "Broj:"   get _BrDok
+endif
 
    if fk1=="D"; @  m_x+9,col()+2 SAY "K1" GET _k1 pict "@!" ; endif
    if fk2=="D"; @  m_x+9,col()+2 SAY "K2" GET _k2 pict "@!" ; endif
@@ -208,16 +222,19 @@ return 1
 
 
 function Cijena()
-local nArr:=SELECT(),cPom1:=" ",cPom2:=" "
+local nArr := SELECT()
+local cPom1 := " "
+local cPom2 := " "
 
 // da vidimo osobine unesenog konta, ako postoje
 SELECT KARKON
 SEEK _idkonto
 if found()
-  cPom1:=tip_nc
-  cPom2:=tip_pc
+    cPom1:=tip_nc
+    cPom2:=tip_pc
 endif
 SELECT (nArr)
+
 // ako se radi o ulazu
 if _u_i=="1"
   // ako nije po kontu definisan tip cijene, gledamo u parametre
@@ -271,25 +288,22 @@ return .t.
 
 
 function SredCij()
- LOCAL nArr:=SELECT(),nFin:=0,nMat:=0
- SELECT mat_suban
- #ifndef C50
- SET ORDER TO TAG "3"
- #else
- SET ORDER TO 3
- #endif
-  SEEK _idfirma+_idkonto+_idroba
-  DO WHILE !EOF().and.(_idfirma+_idkonto+_idroba==idfirma+idkonto+idroba).and.dtos(datdok)<=dtos(_datdok)
+LOCAL nArr:=SELECT(),nFin:=0,nMat:=0
+SELECT mat_suban
+SET ORDER TO TAG "3"
+SEEK _idfirma+_idkonto+_idroba
+DO WHILE !EOF().and.(_idfirma+_idkonto+_idroba==idfirma+idkonto+idroba).and.dtos(datdok)<=dtos(_datdok)
     IF u_i=="1"  // ulaz
-      nFin+=iznos
-      nMat+=kolicina
+        nFin+=iznos
+        nMat+=kolicina
     ELSE  // izlaz
-      nFin-=iznos
-      nMat-=kolicina
+        nFin-=iznos
+        nMat-=kolicina
     ENDIF
     SKIP 1
-  ENDDO
- SELECT(nArr)
+ENDDO
+ 
+SELECT(nArr)
 RETURN (nFin/nMat)
 
 
@@ -335,9 +349,11 @@ return .t.
 
 
 function V_Kol(fnovi)
-if fNovi; _Cijena:=0; endif
+if fNovi
+    _Cijena := 0
+endif
 if fnovi .and. _idvn $ gNalPr .and. _u_i=="2"
-      _cijena:=roba->mpc
+      _cijena := roba->mpc
 endif
 return .t.
 
@@ -346,168 +362,249 @@ function mat_pripr_key_handler()
 local nTr2
 
 if (Ch==K_CTRL_T .or. Ch==K_ENTER)  .and. empty(BrNal)
-  return DE_CONT
+    return DE_CONT
 endif
 
 select mat_pripr
+
 do case
-  case Ch==K_CTRL_T
-     if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-      delete
-      mat_brisi_pbaze()
-      return DE_REFRESH
-     endif
-     return DE_CONT
 
-   case Ch==K_F5 // kontrola zbira za jedan mat_nalog
-      PushWa()
-      Box("kzb",8,60,.f.,"Kontrola zbira naloga")
-      set cursor on
-      cFirma:=IdFirma; cIdVN:=IdVN; cBrNal:=BrNal
-
-      @ m_x+1,m_y+1 SAY "       Firma:" GET cFirma
-      //VALID P_Firma(@cFirma,1,20) .and. len(trim(cFirma))<=2
-      @ m_x+2,m_y+1 SAY "Vrsta mat_naloga:" GET cIdVn valid P_VN(@cIdVN,2,20)
-      @ m_x+3,m_y+1 SAY " Broj mat_naloga:" GET cBrNal
-      READ; if lastkey()==K_ESC; BoxC(); PopWA(); return DE_CONT; endif
-      cFirma:=left(cFirma,2)
-      #ifndef C50
-      set order to tag "2"
-      #else
-      set order to 2
-      #endif
-      seek cFirma+cIdVn+cBrNal
-      dug:=Pot:=0
-      if !(IdFirma+IdVn+BrNal==cFirma+cIdVn+cBrNal)
-        Msg("Ovaj nalog nije unesen ...",10)
-        BoxC()
-        PopWa()
+    case Ch == K_CTRL_T
+        if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
+            delete
+            __dbPack()
+            mat_brisi_pbaze()
+            return DE_REFRESH
+        endif
         return DE_CONT
-      endif
-      do while !eof() .and. (IdFirma+IdVn+BrNal==cFirma+cIdVn+cBrNal)
-        if D_P=="1"; dug+=Iznos; else; pot+=Iznos; endif
-        skip
-      enddo
-      @ m_x+5,m_y+2 SAY "Zbir naloga:"
-      @ m_x+6,m_y+2 SAY "     Duguje:"
-      @ m_x+6,COL()+2 SAY Dug PICTURE gPicDEM()
-      @ m_x+7,m_y+2 SAY "  Potrazuje:"
-      @ m_x+7,COL()+2 SAY Pot  PICTURE gPicDEM()
-      @ m_x+8,m_y+2 SAY "      Saldo:"
-      @ m_x+8,COL()+2 SAY Dug-Pot  PICTURE gPicDEM()
-      Inkey(0)
-     BoxC()
-     PopWA()
-     return DE_CONT
 
-   case Ch==K_ENTER
-    Box("ist",20,75,.f.)
-    Scatter()
-    nRbr:=VAL(_Rbr)
-    if EditPRIPR(.f.)==0
-     BoxC()
-     return DE_CONT
-    else
-     Gather()
-     mat_brisi_pbaze()
-     BoxC()
-     return DE_REFRESH
-    endif
+    case Ch == K_F5 
 
-   case Ch==K_CTRL_A
+        // kontrola zbira za jedan mat_nalog
+        PushWa()
+
+        Box("kzb",8,60,.f.,"Kontrola zbira naloga")
+
+        set cursor on
+
+        cFirma:=IdFirma
+        cIdVN:=IdVN
+        cBrNal:=BrNal
+
+        @ m_x+1,m_y+1 SAY "       Firma:" GET cFirma
+        //VALID P_Firma(@cFirma,1,20) .and. len(trim(cFirma))<=2
+        @ m_x+2,m_y+1 SAY "Vrsta mat_naloga:" GET cIdVn valid P_VN(@cIdVN,2,20)
+        @ m_x+3,m_y+1 SAY " Broj mat_naloga:" GET cBrNal
+
+        READ
+
+        if LastKey() == K_ESC
+            BoxC()
+            PopWA()
+            return DE_CONT
+        endif
+
+        cFirma := LEFT( cFirma, 2 )
+
+        set order to tag "2"
+        seek cFirma + cIdVn + cBrNal
+
+        dug := 0
+        pot := 0
+
+        if !( IdFirma + IdVn + BrNal == cFirma + cIdVn + cBrNal )
+            Msg("Ovaj nalog nije unesen ...",10)
+            BoxC()
+            PopWa()
+            return DE_CONT
+        endif
+
+        zbir_mat_naloga( @dug, @pot, cFirma, cIdVn, cBrNal )
+
+        @ m_x+5,m_y+2 SAY "Zbir naloga:"
+        @ m_x+6,m_y+2 SAY "     Duguje:"
+        @ m_x+6,COL()+2 SAY Dug PICTURE gPicDEM()
+        @ m_x+7,m_y+2 SAY "  Potrazuje:"
+        @ m_x+7,COL()+2 SAY Pot  PICTURE gPicDEM()
+        @ m_x+8,m_y+2 SAY "      Saldo:"
+        @ m_x+8,COL()+2 SAY Dug-Pot  PICTURE gPicDEM()
+
+        Inkey(0)
+        BoxC()
+        PopWA()
+
+        return DE_CONT
+
+    case Ch == K_ENTER
+        
+        Box( "ist", __unos_x - 5, __unos_y - 5, .f. )
+        
+        Scatter()
+        nRbr := VAL( _Rbr )
+        if EditPRIPR( .f. ) == 0
+            BoxC()
+            return DE_CONT
+        else
+            Gather()
+            mat_brisi_pbaze()
+            BoxC()
+            return DE_REFRESH
+        endif
+
+    case Ch == K_CTRL_A
+
         PushWA()
         select mat_pripr
         go top
-        Box("anal",20,75,.f.,"Ispravka naloga")
-        nDug:=0; nPot:=0
+
+        Box("anal", __unos_x - 5, __unos_y - 5,.f.,"Ispravka naloga")
+
+        nDug:=0
+        nPot:=0
+
         do while !eof()
-           skip; nTR2:=RECNO(); skip-1
-           Scatter()
-           nRbr:=VAL(_Rbr)
-           @ m_x+1,m_y+1 CLEAR to m_x+18,m_y+74
-           if EditPRIPR(.f.)==0
-             exit
-           else
-             mat_brisi_pbaze()
-           endif
-           if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
-           @ m_x+20,m_y+1 SAY "ZBIR NALOGA:"
-           @ m_x+20,m_y+14 SAY nDug PICTURE PicDEM
-           @ m_x+20,m_y+35 SAY nPot PICTURE PicDEM
-           @ m_x+20,m_y+56 SAY nDug-nPot PICTURE PicDEM
+        
+            skip
+            nTR2:=RECNO()
+            skip-1
+        
+            Scatter()
+        
+            nRbr := VAL( _Rbr )
+            
+            @ m_x + 1, m_y + 1 CLEAR TO m_x + ( __unos_x - 7 ), m_y + ( __unos_y - 4 )
+            
+            if EditPRIPR(.f.)==0
+                exit
+            else
+                mat_brisi_pbaze()
+            endif
 
-           select mat_pripr
-           Gather()
-           go nTR2
-         enddo
-         PopWA()
-         BoxC()
-         return DE_REFRESH
+            if d_p = '1'
+                nDug += _Iznos
+            else
+                nPot += _Iznos
+            endif
 
-     case Ch==K_CTRL_N  // nove stavke
-        nDug:=nPot:=nPrvi:=0
+            @ m_x + __unos_x - 5, m_y + 1 SAY "ZBIR NALOGA:"
+            @ m_x + __unos_x - 5, m_y + 14 SAY nDug PICTURE PicDEM
+            @ m_x + __unos_x - 5, m_y + 35 SAY nPot PICTURE PicDEM
+            @ m_x + __unos_x - 5, m_y + 56 SAY nDug-nPot PICTURE PicDEM
 
-        do while .not. eof() // kompletan mat_nalog sumiram
-           if D_P='1'; nDug+=Iznos; else; nPot+=Iznos; endif
-           skip
+            select mat_pripr
+            Gather()
+            go nTR2
+
         enddo
-        go bottom
-        Box("knjn",20,77,.f.,"Knjizenje naloga - nove stavke")
-        do while .t.
-           Scatter()
-           nRbr:=VAL(_Rbr)+1
-           @ m_x+1,m_y+1 CLEAR to m_x+18,m_y+78
-           if EditPRIPR(.t.)==0
-             exit
-           else
-             mat_brisi_pbaze()
-           endif
-           if D_P='1'; nDug+=_Iznos; else; nPot+=_Iznos; endif
-           @ m_x+20,m_y+1 SAY "ZBIR NALOGA:"
-           @ m_x+20,m_y+14 SAY nDug PICTURE PicDEM
-           @ m_x+20,m_y+35 SAY nPot PICTURE PicDEM
-           @ m_x+20,m_y+56 SAY nDug-nPot PICTURE PicDEM
 
-           select mat_pripr
-           APPEND BLANK
-           Gather()
+        PopWA()
+        BoxC()
+
+        return DE_REFRESH
+
+    case Ch==K_CTRL_N  // nove stavke
+
+        nDug := 0 
+        nPot := 0
+        nPrvi := 0
+
+        zbir_mat_naloga( @nDug, @nPot )
+
+        go bottom
+
+        Box( "knjn", __unos_x - 5, __unos_y - 5, .f., "Knjizenje naloga - nove stavke" )
+
+        do while .t.
+
+            Scatter()
+
+            nRbr:=VAL(_Rbr)+1
+
+            @ m_x + 1, m_y + 1 CLEAR TO m_x + ( __unos_x - 7 ), m_y + ( __unos_y - 4 )
+
+            if EditPRIPR(.t.)==0
+                exit
+            else
+                mat_brisi_pbaze()
+            endif
+
+            if field->d_p = '1'
+                nDug+=_Iznos
+            else
+                nPot+=_Iznos
+            endif
+
+            @ m_x + __unos_x - 5, m_y + 1 SAY "ZBIR NALOGA:"
+            @ m_x + __unos_x - 5, m_y + 14 SAY nDug PICTURE PicDEM
+            @ m_x + __unos_x - 5, m_y + 35 SAY nPot PICTURE PicDEM
+            @ m_x + __unox_x - 5, m_y + 56 SAY nDug-nPot PICTURE PicDEM
+
+            select mat_pripr
+            APPEND BLANK
+
+            Gather()
+
         enddo
 
         BoxC()
         return DE_REFRESH
 
-   case Ch=K_CTRL_F9
-        if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-             zap
-             mat_brisi_pbaze()
+   case Ch == K_CTRL_F9
+
+        if Pitanje(,"Zelite li izbrisati pripremu !!????","N") == "D"
+            zap
+            __dbPack()
+            mat_brisi_pbaze()
         endif
+
         return DE_REFRESH
 
-   case Ch==K_CTRL_P
-     close all
-     mat_st_nalog()
-     mat_o_edit()
-     return DE_REFRESH
+    case Ch == K_CTRL_P
+        
+        close all
+        mat_st_nalog()
+        mat_o_edit()
+        return DE_REFRESH
 
-   case Ch==K_ALT_A
-     close all
-     azur_mat()
-     mat_o_edit()
-     return DE_REFRESH
+    case Ch == K_ALT_A
+        close all
+        azur_mat()
+        mat_o_edit()
+        return DE_REFRESH
+
 endcase
+
+
+
+// kalkulise zbir mat naloga dug/pot
+function zbir_mat_naloga( duguje, potrazuje, firma, vn, broj )
+        
+do while !EOF() .and. if( firma <> NIL, field->idfirma + field->idvn + field->brnal == firma + vn + broj  , .t. )
+    if field->d_p = "1"
+        duguje += field->iznos
+        potrazuje += 0
+    else
+        duguje += 0
+        potrazuje += field->iznos
+    endif
+    skip
+enddo
+
+return
+
 
 
 
 function mat_dupli_nalog(cBrNal,cVN,cIdFirma)
 PushWa()
 select mat_nalog
-seek cIdFirma+cVN+cBrNal
-if found()
-   MsgO(" Dupli nalog ! ")
-   Beep(3)
-   MsgC()
-   PopWa()
-   return .f.
+seek cIdFirma + cVN + cBrNal
+if FOUND()
+    MsgO(" Dupli nalog ! ")
+    Beep(3)
+    MsgC()
+    PopWa()
+    return .f.
 endif
 PopWa()
 return .t.
@@ -550,53 +647,59 @@ O_TNAL
 O_ROBA
 
 if fnovi
- O_MAT_PRIPR
- O_mat_psuban
- select mat_psuban; zapp()
- SELECT mat_pripr
- #ifndef C50
- set order to tag "2"
- #else
- set order to 2
- #endif
- go top
- if empty(BrNal); Msg("PRIPR je prazna!",15); return; endif
-else
- O_MAT_SUBAN2
-endif
 
+    O_MAT_PRIPR
+    O_MAT_PSUBAN
+    select mat_psuban
+    zapp()
+    SELECT mat_pripr
+    set order to tag "2"
+    go top
+    if empty(BrNal)
+        Msg("PRIPR je prazna!",15)
+        return
+    endif
+else
+    O_MAT_SUBAN2
+endif
 
 if gkonto=="N"  .and. g2Valute=="D"
- M:="---- ------- ---------- ------------------ --- -------- ------- ---------- ----------"+IF(gNW=="R",""," ---------- ---------- ------------ ------------")
+    M:="---- ------- ---------- ------------------ --- -------- ------- ---------- ----------"+IF(gNW=="R",""," ---------- ---------- ------------ ------------")
 else
- M:="---- ------- ------ ---------- ---------------------------------------- -- --------"+IF(gNW=="R",""," ----------")+" ---------- ----------"+IF(gNW=="R",""," ------------ ------------")
+    M:="---- ------- ------ ---------- ---------------------------------------- -- --------"+IF(gNW=="R",""," ----------")+" ---------- ----------"+IF(gNW=="R",""," ------------ ------------")
 endif
-DO WHILE !EOF()
-   cIdFirma:=IdFirma; cIdVN:=IdVN; cBrNal:=BrNal
 
-   Box("",1,50)
+DO WHILE !EOF()
+   
+    cIdFirma := IdFirma
+    cIdVN := IdVN
+    cBrNal := BrNal
+
+    Box("",1,50)
      set cursor on
      set confirm off
      @ m_x+1,m_y+2 SAY "Nalog broj:" GET cIdFirma
      @ m_x+1,col()+1 SAY "-" GET cIdVn
      @ m_x+1,col()+1 SAY "-" GET cBrNal
-     read; ESC_BCR
+     read
+     ESC_BCR
      set confirm on
-   BoxC()
+    BoxC()
 
-   HSEEK cIdFirma+cIdVN+cBrNal             // HSEEK
-   IF EOF(); CLOSERET; ENDIF
-//   SEEK cIdFirma+cIdVN+cBrNal
-//   NFOUND CRET
+    HSEEK cIdFirma+cIdVN+cBrNal             // HSEEK
+    if EOF()
+        close all
+        return
+    endif
 
-   START PRINT CRET
-   ?
-   nStr:=0
-   nUkDug:=nUkPot:=0
-   nUkDug2:=nUkPot2:=0
-   b2:={|| cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal}
-   Zagl11()
-   DO WHILE !eof() .and. eval(b2)   // mat_nalog
+    START PRINT CRET
+    ?
+    nStr:=0
+    nUkDug:=nUkPot:=0
+    nUkDug2:=nUkPot2:=0
+    b2:={|| cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal}
+    Zagl11()
+    DO WHILE !eof() .and. eval(b2)   // mat_nalog
       nDug:=nPot:=0
       nDug2:=nPot2:=0
       cBrDok:=BrDok
@@ -907,23 +1010,30 @@ return
 
 
 function mat_brisi_pbaze()
-  PushWA()
-  SELECT (F_MAT_PSUBAN)
-  ZAP
-  SELECT (F_MAT_PANAL)
-  ZAP
-  SELECT (F_MAT_PSINT)
-  ZAP
-  SELECT (F_MAT_PNALOG)
-  ZAP
-  PopWA()
+PushWA()
+  
+SELECT (F_MAT_PSUBAN)
+ZAP
+  
+SELECT (F_MAT_PANAL)
+ZAP
+  
+SELECT (F_MAT_PSINT)
+ZAP
+  
+SELECT (F_MAT_PNALOG)
+ZAP
+  
+PopWA()
 return nil
 
 
 
 
 static function OsvCijSif()
-local nArr:=SELECT(),cPom1:=" ",cPom2:=" "
+local nArr := SELECT()
+local cPom1 := " "
+local cPom2 := " "
 local _vars
 
 SELECT ROBA
@@ -938,11 +1048,11 @@ ENDIF
 SELECT KARKON
 SEEK _idkonto
 if found()
-  	cPom1:=tip_nc
-  	cPom2:=tip_pc
+  	cPom1 := tip_nc
+  	cPom2 := tip_pc
 endif
-SELECT ROBA
 
+SELECT ROBA
 _vars := dbf_get_rec()
 
 // ako se radi o ulazu
@@ -951,30 +1061,30 @@ if _u_i=="1"
   if cPom1==" "
     if gCijena=="1"
       IF field->nc <> _cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["NC"] := _Cijena
+        _vars["nc"] := _Cijena
       ENDIF
     elseif gCijena=="2"
       IF field->vpc <> _cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["VPC"] := _Cijena
+        _vars["vpc"] := _Cijena
       ENDIF
     elseif gCijena=="3"
       IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["MPC"] := _Cijena
+        _vars["mpc"] := _Cijena
       ENDIF
     elseif gCijena=="P"
     endif
   else // u suprotnom gledamo u karakteristiku konta "tip_nc" <=> cPom1
     if cPom1=="1"
       IF field->nc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["NC"] := _Cijena
+        _vars["nc"] := _Cijena
       ENDIF
     elseif cPom1=="2"
       IF field->vpc <> _cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["VPC"] := _Cijena
+        _vars["vpc"] := _Cijena
       ENDIF
     elseif cPom1=="3"
       IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["MPC"] := _Cijena
+        _vars["mpc"] := _Cijena
       ENDIF
     elseif cPom1=="P"
     endif
@@ -984,39 +1094,43 @@ else   // tj. ako se radi o izlazu
   if cPom2==" "
     if gCijena=="1"
       IF field->nc <> _cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["NC"] := _Cijena
+        _vars["nc"] := _Cijena
       ENDIF
     elseif gCijena=="2"
       IF field->vpc <> _cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["VPC"] := _Cijena
+        _vars["vpc"] := _Cijena
       ENDIF
     elseif gCijena=="3"
       IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["MPC"] := _Cijena
+        _vars["mpc"] := _Cijena
       ENDIF
     elseif gCijena=="P"
     endif
   else // u suprotnom gledamo u karakteristiku konta "tip_pc" <=> cPom2
     if cPom2=="1"
       IF field->nc<>_cijena .and. Pitanje("","Zelite li ovu nabavnu cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["NC"] := _Cijena
+        _vars["nc"] := _Cijena
       ENDIF
     elseif cPom2=="2"
       IF field->vpc<>_cijena .and. Pitanje("","Zelite li ovu (VP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["VPC"] := _Cijena
+        _vars["vpc"] := _Cijena
       ENDIF
     elseif cPom2=="3"
       IF field->mpc <> _cijena .and. Pitanje("","Zelite li ovu (MP) cijenu postaviti kao tekucu ? (D/N)","D")=="D"
-        _vars["MPC"] := _Cijena
+        _vars["mpc"] := _Cijena
       ENDIF
     elseif cPom2=="P"
     endif
   endif
 endif
 
-update_rec_server_and_dbf("roba", _vars)
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( "roba", _vars, 1, "CONT" )
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 SELECT (nArr)
-RETURN
+return
 
 

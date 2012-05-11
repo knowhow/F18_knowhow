@@ -119,8 +119,6 @@ if LastKey() == K_ESC .or. cImpOk == "N"
 	return 0
 endif
 
-select params
-
 cFile := ALLTRIM( cFile )
 set_metric( "import_elba_lokacija_fajla", my_user(), cFile )
 

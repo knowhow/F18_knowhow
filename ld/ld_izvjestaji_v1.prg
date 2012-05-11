@@ -2420,15 +2420,6 @@ FUNCTION Obr2_9()
 RETURN lViseObr .and. !EMPTY(cObracun) .and. cObracun<>"1"
 
 
-FUNCTION TagVO(cT,cI)
-  IF cI==NIL; cI:=""; ENDIF
-  IF lViseObr .and. cT $ "12"
-    IF cI=="I" .or. EMPTY(cObracun)
-      cT := cT + "U"
-    ENDIF
-  ENDIF
-RETURN cT
-
 
 
 function SvratiUFajl()

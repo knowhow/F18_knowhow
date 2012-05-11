@@ -624,6 +624,22 @@ return
 
 
 
+function TagVO( cT, cI )
+
+if cI == NIL
+    cI := ""
+endif
+
+if lViseObr .and. cT $ "12"
+    if cI == "I" .or. EMPTY( cObracun )
+        cT := cT + "U"
+    endif
+endif
+
+return cT
+
+
+
 function NaDiskete()
 
 cIdRj    := gRj

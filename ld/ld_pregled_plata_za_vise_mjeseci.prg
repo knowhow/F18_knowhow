@@ -35,43 +35,38 @@ return
 // ---------------------------------------------------------
 // sortiranje tabele LD
 // ---------------------------------------------------------
-static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
+static function ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
 local cFilter := ""
-
 private cObracun := cObr
 
-if lViseObr
-	if !EMPTY(cObracun)
-		cFilter += "obr == " + cm2str(cObracun)
-	endif
+if !EMPTY( cObracun )
+	cFilter += "obr == " + _filter_quote( cObracun )
 endif
 
-if !EMPTY(cRj)
+if !EMPTY( cRj )
 
-	if !EMPTY(cFilter)
+	if !EMPTY( cFilter )
 		cFilter += " .and. "
 	endif
 	
-	cFilter += Parsiraj(cRj,"IDRJ")
+	cFilter += Parsiraj( cRj, "IDRJ" )
 
 endif
 
-if !EMPTY(cFilter)
+if !EMPTY( cFilter )
 	set filter to &cFilter
 	go top
 endif
 
-if EMPTY(cRadnik) 
-	INDEX ON str(godina)+SortPrez(idradn)+str(mjesec)+idrj TO "TMPLD"
+if EMPTY( cRadnik ) 
+	INDEX ON STR(godina) + SortPrez(idradn) + STR(mjesec) + idrj TO "TMPLD"
 	go top
-	seek str(cGodina,4)
+	seek STR( cGodina, 4 )
 else
-	set order to tag (TagVO("2"))
+	set order to tag ( TagVO( "2" ) )
 	go top
-	seek str(cGodina,4)+str(cMjesec,2)+cRadnik
+	seek STR( cGodina, 4 ) + STR( cMjesec, 2 ) + cObracun + cRadnik
 endif
-
-
 
 return
 

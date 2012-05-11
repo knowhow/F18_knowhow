@@ -61,7 +61,7 @@ cGod_do := gGodina
 // otvori tabele
 ol_o_tbl()
 
-Box("#PREGLED TROSKOVA PO SIHTARICAMA", 11, 75)
+Box( "#PREGLED TROSKOVA PO SIHTARICAMA", 11, 75 )
 
 @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
 @ m_x + 2, m_y + 2 SAY "Period od:" GET cMj_od pict "99"

@@ -45,22 +45,17 @@ return
 function ol_sort(cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
 			cRadnik, cTipRpt, cObr )
 local cFilter := ""
-
 private cObracun := cObr
 
-if lViseObr
-	if !EMPTY(cObr)
-		cFilter += "obr == " + cm2str(cObr)
-	endif
+if !EMPTY(cObr)
+	cFilter += "obr == " + cm2str(cObr)
 endif
 
-if !EMPTY(cRj)
-	
-	if !EMPTY(cFilter)
+if !EMPTY( cRj )	
+	if !EMPTY( cFilter )
 		cFilter += " .and. "
 	endif
-	
-	cFilter += Parsiraj(cRj,"IDRJ")
+	cFilter += Parsiraj( cRj, "IDRJ" )
 endif
 
 if !EMPTY(cFilter)
@@ -70,17 +65,17 @@ endif
 
 if EMPTY(cRadnik) 
 	if cTipRpt $ "1#2"
-		INDEX ON SortPrez(idradn)+str(godina)+str(mjesec)+idrj TO "TMPLD"
+		INDEX ON SortPrez(idradn) + STR(godina) + STR(mjesec) + idrj TO "TMPLD"
 	   	go top
 	else
-		INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
+		INDEX ON STR(godina) + STR(mjesec) + SortPrez(idradn) + idrj TO "TMPLD"
 		go top
-		seek str(cGod_od,4)+str(cMj_od,2)+cRadnik
+		seek STR( cGod_od, 4 ) + STR( cMj_od, 2 ) + cRadnik
 	endif
 else
-	set order to tag (TagVO("2"))
+	set order to tag ( TagVO("2") )
 	go top
-	seek str(cGod_od,4)+str(cMj_od,2)+cRadnik
+	seek STR( cGod_od, 4 ) + STR( cMj_od, 2 ) + cObracun + cRadnik
 endif
 
 return

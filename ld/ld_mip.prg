@@ -47,9 +47,9 @@ if EMPTY(cRadnik)
     go top
     seek str(cGod,4) + str(cMj,2) + cRadnik
 else
-    set order to tag (TagVO("2"))
+    set order to tag ( TagVO("2") )
     go top
-    seek str(cGod,4)+str(cMj,2)+cRadnik
+    seek STR( cGod, 4 ) + STR( cMj, 2 ) + cObracun + cRadnik
 endif
 
 return

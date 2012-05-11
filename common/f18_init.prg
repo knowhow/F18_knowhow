@@ -786,11 +786,18 @@ return .t.
 // -------------------------------
 // -------------------------------
 function log_write(msg)
+local _msg_time
+
+_msg_time := DTOC( DATE() ) 
+_msg_time += ", " 
+_msg_time += PADR( TIME(), 5 ) 
+_msg_time += ": " 
  
-FWRITE(__log_handle, msg + hb_eol())
+// time ide samo u fajl, ne na server
+FWRITE( __log_handle, _msg_time + msg + hb_eol() )
 
 if __server_log
- server_log_write(msg)
+    server_log_write( msg )
 endif
  
 return

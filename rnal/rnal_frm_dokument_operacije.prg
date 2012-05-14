@@ -81,10 +81,10 @@ set_opc_box( nGetBoxX, 50 )
 @ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz, nGetBoxY - 2)
 @ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
 
-set_global_memvars_from_dbf()
-
 do while .t.
 
+    set_global_memvars_from_dbf()
+    
     nFuncRet := _e_box_item( nGetBoxX, nGetBoxY )
     
     if nFuncRet == 1
@@ -100,7 +100,6 @@ do while .t.
         
         dbf_update_rec( _rec )
             
-        
         if l_new_ops
             loop
         endif
@@ -193,9 +192,9 @@ if l_new_ops
     _doc_it_el_no := 0
     _aop_id := 0
     _aop_att_id := 0
-    _doc_op_des := PADR("", LEN( _doc_op_des ))
+    _doc_op_des := PADR("", LEN( field->doc_op_des ))
     _doc_it_no := __item_no
-    _aop_value := PADR("", LEN( _aop_value ))
+    _aop_value := PADR("", LEN( field->aop_value ))
     
     cAop := PADR("", 10)
     cAopAtt := PADR("", 10)

@@ -1,6 +1,7 @@
 1.0.33 2012-05-11, vsasa
 
   - mat, semafori v.1.1 [#27986](http://redmine.bring.out.ba/issues/27986)
+  - ostale sitne korekcije
  
 1.0.32 2012-05-11, vsasa
 

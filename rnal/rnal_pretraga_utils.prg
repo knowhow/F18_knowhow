@@ -30,15 +30,15 @@ static _direkt_mod
 //        3 |   ATT      |    5    |   11    | 
 // -------------------------------------------
 // ----------------------------------------------------------------------
-function _cre_fnd_par( ver )
+function _cre_fnd_par( ver, force )
 local _table := "rnal__fnd_par"
 local _alias := "_FND_PAR"
 local aDbf := {}
 
-if !FILE( f18_ime_dbf( _table ) )
+if !FILE( f18_ime_dbf( _table ) ) 
     
     AADD(aDbf, { "fnd_par_no", "N", 4, 0})
-    AADD(aDbf, { "fnd_par_type", "C", 10, 0})
+    AADD(aDbf, { "fnd_par_ty", "C", 10, 0})
     AADD(aDbf, { "fnd_att", "C", 10, 0})
     AADD(aDbf, { "fnd_val", "C", 10, 0})
 
@@ -226,25 +226,25 @@ aKol:={}
 // tip atributa...
 AADD(aImeKol, ;
     { PADC( "Tip", 6),;
-    {|| PADR(g_fnd_par_type( fnd_par_type ), 6)} })
+    {|| PADR(g_fnd_par_type( fnd_par_ty ), 6)} })
 
 // atribut
 AADD(aImeKol, ;
     {PADC("Atribut", 20),;
-    {|| IF(ALLTRIM(fnd_par_type) == "ATT", ALLTRIM(g_egr_by_att(VAL(fnd_att), .t. )) + "/" + PADR(g_gr_at_desc(VAL(fnd_att), nil, .t.), 15), IF( ALLTRIM(fnd_par_type) == "AOP" , PADR( ALLTRIM(g_aop_desc(VAL(fnd_att), .t.)), 20), PADR("----->", 20) ) ) },;
+    {|| IF(ALLTRIM(fnd_par_ty) == "ATT", ALLTRIM(g_egr_by_att(VAL(fnd_att), .t. )) + "/" + PADR(g_gr_at_desc(VAL(fnd_att), nil, .t.), 15), IF( ALLTRIM(fnd_par_ty) == "AOP" , PADR( ALLTRIM(g_aop_desc(VAL(fnd_att), .t.)), 20), PADR("----->", 20) ) ) },;
     "fnd_att",;
-    {|| ALLTRIM(fnd_par_type) $ "ATT#AOP" .or. not_att_msg() },;
-    {|| IF(ALLTRIM(fnd_par_type) == "ATT", s_e_gr_att( @wfnd_att, nil, @wfnd_att , .t. ), IF( ALLTRIM(fnd_par_type) == "AOP", s_aops(@wfnd_att, @wfnd_att, .t.) , .t.  )), to_str(@wfnd_att), go_right() },;
+    {|| ALLTRIM(fnd_par_ty) $ "ATT#AOP" .or. not_att_msg() },;
+    {|| IF(ALLTRIM(fnd_par_ty) == "ATT", s_e_gr_att( @wfnd_att, nil, @wfnd_att , .t. ), IF( ALLTRIM(fnd_par_ty) == "AOP", s_aops(@wfnd_att, @wfnd_att, .t.) , .t.  )), to_str(@wfnd_att), go_right() },;
     "V" })
 
 
 // vrijednost atributa
 AADD(aImeKol, ;
     {PADC("Vrijednost", 35), ;
-    {|| IF( ALLTRIM(fnd_par_type) == "ATT" , PADR(g_e_gr_vl_desc(val(fnd_val), .t.), 35), IF( ALLTRIM(fnd_par_type) == "AOP", PADR(g_aop_att_desc(val(fnd_val), .t.), 35), PADR(fnd_val, 35)))  },;
+    {|| IF( ALLTRIM(fnd_par_ty) == "ATT" , PADR(g_e_gr_vl_desc(val(fnd_val), .t.), 35), IF( ALLTRIM(fnd_par_ty) == "AOP", PADR(g_aop_att_desc(val(fnd_val), .t.), 35), PADR(fnd_val, 35)))  },;
     "fnd_val",;
     {|| .t. },;
-    {|| IF(ALLTRIM(fnd_par_type) == "ATT" , EMPTY(wfnd_val) .or. s_e_gr_val(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , IF( ALLTRIM(fnd_par_type) == "AOP", EMPTY(wfnd_val) .or. s_aops_att(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , .t.)), to_str(@wfnd_val) },;
+    {|| IF(ALLTRIM(fnd_par_ty) == "ATT" , EMPTY(wfnd_val) .or. s_e_gr_val(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , IF( ALLTRIM(fnd_par_ty) == "AOP", EMPTY(wfnd_val) .or. s_aops_att(@wfnd_val, VAL(fnd_att), @wfnd_val, .t.) , .t.)), to_str(@wfnd_val) },;
     "V"  })
 
 for i:=1 to LEN(aImeKol)
@@ -345,7 +345,7 @@ append blank
 
 Scatter()
 _fnd_par_no := nFndParNo
-_fnd_par_type := PADR(cFndParType, 10)
+_fnd_par_ty := PADR(cFndParType, 10)
 Gather()
 
 go top

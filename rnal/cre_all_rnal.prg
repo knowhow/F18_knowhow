@@ -444,7 +444,7 @@ cre_fmkrules( ver )
 c_rule_cdx()
 
 // kreiranje tabele pretraga parametri
-_cre_fnd_par( ver )
+_cre_fnd_par( ver, .t. )
 // kreiraj relacije
 cre_relation( ver )
 

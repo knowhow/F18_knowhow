@@ -193,7 +193,7 @@ if l_new_ops
     _doc_it_el_no := 0
     _aop_id := 0
     _aop_att_id := 0
-    _doc_op_desc := PADR("", LEN(_doc_op_desc))
+    _doc_op_des := PADR("", LEN( _doc_op_des ))
     _doc_it_no := __item_no
     _aop_value := PADR("", LEN( _aop_value ))
     

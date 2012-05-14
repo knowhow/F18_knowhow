@@ -264,6 +264,16 @@ if lInfo == .f.
     END PRINT
 endif
 
+select F_RADN
+if !used()
+    O_RADN
+endif
+
+select F_RADSIHT
+if !used()
+    O_RADSIHT
+endif
+
 go top
 set filter to
 
@@ -385,6 +395,16 @@ endif
 
 FF
 END PRINT
+
+select F_RADN
+if !used()
+    O_RADN
+endif
+
+select F_RADSIHT
+if !used()
+    O_RADSIHT
+endif
 
 go top
 set filter to

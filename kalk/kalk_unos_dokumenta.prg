@@ -1944,13 +1944,12 @@ PRIVATE PicCDEM :=gPICCDEM
 PRIVATE PicProc :=gPICPROC
 PRIVATE PicDEM  := gPICDEM
 PRIVATE Pickol  := gPICKOL
-
-
 private nStr:=0
 
 if (pcount()==0)
     fstara:=.f.
 endif
+
 if (fStara == nil)
     fStara := .f.
 endif
@@ -1985,7 +1984,7 @@ do while .t.
         exit
     endif
 
-    if empty(cIdvd+cBrdok+cIdfirma)
+    if empty( cIdvd + cBrdok + cIdfirma )
         skip
         loop
     endif
@@ -2010,18 +2009,26 @@ do while .t.
 
     endif
     
-    if (!empty(cSeek) .and. cSeek!='IZDOKS')
+    if ( !EMPTY( cSeek ) .and. cSeek != 'IZDOKS' )
         HSEEK cSeek
-        cidfirma:=substr(cSeek,1,2)
+        cIdfirma:=substr(cSeek,1,2)
         cIdvd:=substr(cSeek,3,2)
         cBrDok:=padr(substr(cSeek,5,8) ,8)
     else
-        HSEEK cIdFirma+cIdVD+cBrDok
+        HSEEK cIdFirma + cIdVD + cBrDok
+    endif
+
+    // provjeri da li kalkulacija ima sve cijene ?
+    if !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
+        MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obracun!#Stampanje onemoguceno." )
+        close all
+        return
     endif
 
     if (cIdvd == "24")
         Msg("Kalkulacija 24 ima samo izvjestaj rekapitulacije !")
-        closeret
+        close all
+        return
     endif
 
     if (cSeek != 'IZDOKS')
@@ -2036,12 +2043,13 @@ do while .t.
     do while .t.
     
         if (cidvd=="10".and.!((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")
-            gPSOld:=gPStranica
-            gPStranica:=VAL(IzFmkIni("KALK","A3_GPSTRANICA","-20",EXEPATH))
+            gPSOld := gPStranica
+            gPStranica := VAL(IzFmkIni("KALK","A3_GPSTRANICA","-20",EXEPATH))
             P_PO_L
         endif
     
-        if (cSeek=='IZDOKS')  // stampaj sve odjednom !!!
+        if (cSeek=='IZDOKS')  
+            // stampaj sve odjednom !!!
             if (prow()>42)
                 ++nStr
                 FF
@@ -2269,8 +2277,41 @@ if (fFaktD .and. !fStara .and. gFakt!="0 ")
 
 endif
 
-closeret
+close all
 return nil
+
+
+
+// ---------------------------------------------------------------------
+// provjerava da li kalkulacija ima sve potrebne cijene
+// ---------------------------------------------------------------------
+function kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
+local _ok := .t.
+local _area := SELECT()
+local _t_rec := RECNO()
+
+do while !EOF() .and. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
+
+    if field->idvd $ "11#41#42"
+        if field->fcj == 0
+            _ok := .f.
+            exit
+        endif
+    elseif field->idvd $ "16#96#94#95#14"
+        if field->nc == 0
+            _ok := .f.
+            exit
+        endif
+    endif
+
+    skip
+
+enddo
+
+select ( _area )
+go ( _t_rec )
+
+return _ok
 
 
 

@@ -1,6 +1,7 @@
 1.0.34 2012-05-14, vsasa
 
   - rnal, korekcije [#25977](http://redmine.bring.out.ba/issues/25977)
+  - kalk, stavka - protustavka, bugfix [#27665](http://redmine.bring.out.ba/issues/27665)
  
 1.0.33 2012-05-11, vsasa
 

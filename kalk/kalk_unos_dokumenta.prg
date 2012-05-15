@@ -492,6 +492,9 @@ else
         _idkonto2:="XXX"
         _kolicina:=-kolicina
           
+        nRbr := RbrUNum( _rbr ) + 1
+        _rbr := RedniBroj( nRbr )
+
         Box( "", __box_x, __box_y, .f., "Protustavka" )
             seek _idfirma+_idvd+_brdok+_rbr
             _Tbanktr:="X"
@@ -601,26 +604,34 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
         endif       
         // stavka onda postavi ERROR
            
-        if _idvd=="16"
-            _oldval := _vpc*_kolicina  // vrijednost prosle stavke
+        if _idvd == "16"
+            _oldval := _vpc * _kolicina  
+            // vrijednost prosle stavke
         else
-            _oldval := _mpcsapp*_kolicina  // vrijednost prosle stavke
+            _oldval := _mpcsapp*_kolicina  
+            // vrijednost prosle stavke
         endif
 
-        _oldvaln := _nc*_kolicina
+        _oldvaln := _nc * _kolicina
 
         Gather()
            
         if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
 
-            cIdkont:=_idkonto
-            cIdkont2:=_idkonto2
-            _idkonto:=cidkont2
-            _idkonto2:="XXX"
-            _kolicina:=-kolicina
+            cIdkont := _idkonto
+            cIdkont2 := _idkonto2
 
-            Box( "", _box_x, _box_y, .f., "Protustavka" )
-                if _idvd=="16"
+            _idkonto := cIdKont2
+            _idkonto2 := "XXX"
+            _kolicina := -kolicina
+
+            // uvecaj redni broj stavke
+            nRbr := RbrUNum( _rbr ) + 1
+            _Rbr := RedniBroj( nRbr )
+            
+            Box( "", __box_x, __box_y, .f., "Protustavka" )
+
+                if _idvd == "16"
                     if IsPDV()
                         Get1_16bPDV()
                     else
@@ -629,12 +640,16 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
                 else
                     Get1_80b()
                 endif
+
                 append blank
+
                 if _ERROR <> "1"
                     _ERROR := "0"
                 endif       
+
                 // stavka onda postavi ERROR
                 Gather()
+
             BoxC()
 
             _idkonto:=cidkont

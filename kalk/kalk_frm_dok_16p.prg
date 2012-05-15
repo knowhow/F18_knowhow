@@ -158,7 +158,7 @@ IF gVarEv=="1"          ///////////////////////////// sa cijenama
     
 ENDIF
 
-nStrana:=2
+nStrana := 2
 
 _marza:=_vpc-_nc
 _MKonto:=_Idkonto
@@ -169,26 +169,22 @@ _PU_I:=""
 set key K_ALT_K to
 
 return lastkey()
-*}
 
 
 
-
-/*! \fn Get1_16bPDV()
- *  \brief
- */
 
 // _odlval nalazi se u knjiz, filuje staru vrijednost
 // _odlvalb nalazi se u knjiz, filuje staru vrijednost nabavke
 function Get1_16bPDV()
-*{
 local cSvedi:=" "
-
 fnovi:=.t.
 private PicDEM:="9999999.99999999",PicKol:="999999.999"
+
 Beep(1)
+
 @ m_x+2,m_Y+2 SAY "PROTUSTAVKA   (svedi na staru vrijednost - kucaj S):"
 @ m_x+2,col()+2 GET cSvedi valid csvedi $ " S" pict "@!"
+
 read
 
 @ m_x+11,m_y+66 SAY "Tarif.brĿ"
@@ -196,12 +192,18 @@ read
                   valid  {|| P_Roba(@_IdRoba),Reci(12,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=ROBA->idtarifa,.t.}
 @ m_x+12,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
 
-read; ESC_RETURN K_ESC
-select TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
-select koncij; seek trim(_idkonto)
-select kalk_pripr  // napuni tarifu
+read
+ESC_RETURN K_ESC
+select TARIFA
+hseek _IdTarifa  
+// postavi TARIFA na pravu poziciju
+select koncij
+seek trim(_idkonto)
+select kalk_pripr  
+// napuni tarifu
 
-_PKonto:=_Idkonto
+_PKonto := _Idkonto
+
 DatPosljP()
 DuplRoba()
 
@@ -209,12 +211,15 @@ private fMarza:=" "
 
 @ m_x+13,m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
 
-select koncij; seek trim(_idkonto)
-select ROBA; HSEEK _IdRoba
-_VPC:=KoncijVPC()
-_TMarza2:="%"
-_TCarDaz:="%"
-_CarDaz:=0
+select koncij
+seek trim(_idkonto)
+select ROBA
+HSEEK _IdRoba
+
+_VPC := KoncijVPC()
+_TMarza2 := "%"
+_TCarDaz := "%"
+_CarDaz := 0
 
 select kalk_pripr
 
@@ -223,20 +228,22 @@ select kalk_pripr
 
 IF gVarEv=="1"
 
- @ m_x+14,m_y+2    SAY "NAB.CJ   "  GET _NC  picture  gPicNC  when V_kol10()
+    @ m_x+14,m_y+2    SAY "NAB.CJ   "  GET _NC  picture  gPicNC  when V_kol10()
 
- private _vpcsappp:=0
+    private _vpcsappp:=0
 
- if !IsMagPNab()
+    if !IsMagPNab()
 
-    @ m_x+15,m_y+2   SAY "PROD. CIJ " get _VPC    picture PicDEM
+        @ m_x+15,m_y+2   SAY "PROD. CIJ " get _VPC    picture PicDEM
 
- else // vodi se po nc
-    _VPC:=_nc; marza:=0
- endif
+    else 
+        // vodi se po nc
+        _vpc := _nc
+        marza:=0
+    endif
 
- cBeze:=" "
- @ m_x+17,m_y+2 GET cBeze valid  SvediM(cSvedi)
+    cBeze:=" "
+    @ m_x+17, m_y+2 GET cBeze valid SvediM(cSvedi)
 
 ENDIF
 
@@ -244,20 +251,23 @@ read
 
 IF gVarEv=="1"
 
- if !IsMagPNab()
-   SetujVPC(_vpc)
- endif
+    if !IsMagPNab()
+        SetujVPC(_vpc)
+    endif
 
 ENDIF
 
-nStrana:=2
-_marza:=_vpc-_nc
-_MKonto:=_Idkonto;_MU_I:="1"
-_PKonto:=""; _PU_I:=""
-_ERROR:="0"
-nStrana:=3
+nStrana := 2
+_marza := _vpc-_nc
+_MKonto := _Idkonto
+_MU_I := "1"
+_PKonto := ""
+_PU_I := ""
+_ERROR := "0"
+nStrana := 3
+
 return lastkey()
-*}
+
 
 
 

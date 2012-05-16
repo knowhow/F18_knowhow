@@ -287,7 +287,7 @@ local _po_vezi := vars["po_vezi"]
 local _sa_datumom := vars["sa_datumom"]
 local _prelom := vars["prelom"]
 local _id_firma := vars["firma"]
-local _filter
+local _filter, __opis_br_dok
 local _id_konto, _id_partner, _prolaz, _prosao
 local _otv_st, _t_id_konto
 local _br_dok
@@ -405,7 +405,7 @@ do while .t.
               
             append blank
 
-            __opis_br_dok := ALLTRIM( field->brdok )
+            __opis_br_dok := ALLTRIM( suban->brdok )
             
             if EMPTY( __opis_br_dok )
                 __opis_br_dok := "??????"

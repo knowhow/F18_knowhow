@@ -233,8 +233,8 @@ Box(, _row, _col )
     @ m_x + _row - 2, m_y + 1 SAY "<c+P> stampanje kompenzacije                  <T> promijeni tabelu"
     @ m_x + _row - 1, m_y + 1 SAY "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
 
-    for _n := 1 to 25
-        @ m_x + _n, m_y + 68 SAY "|"
+    for _n := 1 to ( _row - 4 )
+        @ m_x + _n, m_y + ( _col / 2 ) SAY "|"
     next
 
     select temp60
@@ -242,17 +242,17 @@ Box(, _row, _col )
     select temp12
     go top
 
-    m_y += 69
+    m_y += ( _col / 2 ) + 1
 
     do while .t.
 
         if ALIAS() == "TEMP12"
-            m_y -= 69
+            m_y -= ( _col / 2 ) + 1
         elseif ALIAS() == "TEMP60"
-            m_y += 69
+            m_y += ( _col / 2 ) + 1
         endif
 
-        ObjDbedit( "komp1", _row - 7, 66, {|| key_handler( _vars ) }, "", if( ALIAS() == "TEMP12", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , ,1)
+        ObjDbedit( "komp1", _row - 7, ( _col / 2 ) - 1 , {|| key_handler( _vars ) }, "", if( ALIAS() == "TEMP12", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , ,1)
 
         if LASTKEY() == K_ESC
             exit

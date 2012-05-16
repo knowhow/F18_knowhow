@@ -15,19 +15,22 @@
 
 
 function kalk_mnu_generacija_dokumenta()
-*{
-private Opc:={}
-private opcexe:={}
-AADD(opc,"1. magacin - generacija dokumenata    ")
-AADD(opcexe, {|| GenMag()})
-AADD(opc,"2. prodavnica - generacija dokumenata")
-AADD(opcexe, {|| GenProd()})
-AADD(opc,"3. proizvodnja - generacija dokumenata")
-AADD(opcexe, {|| GenProizvodnja()})
-AADD(opc,"4. storno dokument")
-AADD(opcexe, {|| storno_kalk_dokument()})
-private Izbor:=1
-Menu_SC("mgend")
-CLOSERET
+local _Opc:={}
+local _opcexe:={}
+local _Izbor:=1
+
+AADD(_opc,"1. magacin - generacija dokumenata    ")
+AADD(_opcexe, {|| GenMag()})
+AADD(_opc,"2. prodavnica - generacija dokumenata")
+AADD(_opcexe, {|| GenProd()})
+AADD(_opc,"3. proizvodnja - generacija dokumenata")
+AADD(_opcexe, {|| GenProizvodnja()})
+AADD(_opc,"4. storno dokument")
+AADD(_opcexe, {|| storno_kalk_dokument()})
+
+f18_menu( "mgend", .f., _izbor, _opc, _opcexe )
+
+close all
 return
-*}
+
+

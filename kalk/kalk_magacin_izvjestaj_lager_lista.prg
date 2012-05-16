@@ -735,27 +735,27 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
        				replace vpc with nc
     			NEXT
   		else
-    			if round(nUlaz-nIzlaz,4) <> 0 .and. cSrKolNula $ "01"
+    	    if round(nUlaz-nIzlaz,4) <> 0 .and. cSrKolNula $ "01"
        				
-				append blank
+			    append blank
        				
-				replace idfirma with cidfirma, idroba with cIdRoba,;
+			    replace idfirma with cidfirma, idroba with cIdRoba,;
                			idkonto with cIdKonto,;
                			datdok with dDatDo+1,;
                			idtarifa with roba->idtarifa,;
                			datfaktp with dDatDo+1,;
                			kolicina with nUlaz-nIzlaz,;
                			idvd with "16", ;
-				brdok with cBRPST
+			        	brdok with cBRPST
 				
-				replace nc with (nNVU-nNVI)/(nUlaz-nIzlaz)
-				replace vpc with (nVPVU-nVPVI)/(nUlaz-nIzlaz)
+			    replace nc with (nNVU-nNVI)/(nUlaz-nIzlaz)
+			    replace vpc with (nVPVU-nVPVI)/(nUlaz-nIzlaz)
 
-				if IsMagPNab()
-               				replace vpc with nc
-       				endif
+			    if IsMagPNab()
+                    replace vpc with nc
+       		    endif
     			
-			elseif cSrKolNula $ "12" .and. round(nUlaz-nIzlaz,4) = 0
+		    elseif cSrKolNula $ "12" .and. round(nUlaz-nIzlaz,4) = 0
 				
 				// kontrolna opcija
 				// kolicina 0, nabavna cijena <> 0
@@ -803,7 +803,9 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 
 			endif
   		endif
+
   		select kalk
+
 	endif
 
 	nCol1:=pcol()+1
@@ -1482,24 +1484,8 @@ return
  */
 
 function PocStMag()
-*{
-LLM(.t.)
-         if !empty(goModul:oDataBase:cSezonDir) .and. Pitanje(,"Prebaciti dokument u radno podrucje","D")=="D"
-          O_KALK_PRIPRRP
-          O_KALK_PRIPR
-          if reccount2()<>0
-            select kalk_priprrp
-            append from kalk_pripr
-            select kalk_pripr; zap
-            close all
-            if Pitanje(,"Prebaciti se na rad sa radnim podrucjem ?","D")=="D"
-               URadPodr()
-            endif
-          endif
-        endif
-        close all
+LLM( .t. )
 return
-*}
 
 
 /*! \fn IsInGroup(cGr, cPodGr, cIdRoba)
@@ -1509,7 +1495,6 @@ return
  *  \param cIdRoba - id roba
  */
 function IsInGroup(cGr, cPodGr, cIdRoba)
-*{
 bRet := .f.
 
 if Empty(cGr)
@@ -1535,6 +1520,5 @@ if bRet
 endif
 
 return bRet
-*}
 
 

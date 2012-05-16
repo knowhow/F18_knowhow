@@ -1066,19 +1066,22 @@ if (IsPlanika())
 endif
 
 FF
-end print
+END PRINT
+
+_o_tables()
+O_KALK_PRIPR
 
 if fimagresaka
-  MsgBeep("Pogledajte artikle za koje je u izvjestaju stavljena oznaka ERR - GRESKA")
+    MsgBeep("Pogledajte artikle za koje je u izvjestaju stavljena oznaka ERR - GRESKA")
 endif
 
 if fPocStanje
- if fimagresaka .and. Pitanje(,"Nulirati pripremu (radi ponavljanja procedure) ?","D")=="D"
-   select kalk_pripr
-   zap
- else
-   renumeracija_kalk_pripr(cBrPst,"16")
- endif
+    if fimagresaka .and. Pitanje(,"Nulirati pripremu (radi ponavljanja procedure) ?","D")=="D"
+        select kalk_pripr
+        zap
+    else
+        renumeracija_kalk_pripr( cBrPst, "16" )
+    endif
 endif
 
 // lansiraj report....
@@ -1086,13 +1089,11 @@ if lExpDbf == .t.
 	tbl_export( cLaunch ) 
 endif
 
-
 gPicDem := cPicDem
 gPicCDem := cPicCDem
 gPicKol := cPicKol
 
-
-closeret
+close all
 return
 
 

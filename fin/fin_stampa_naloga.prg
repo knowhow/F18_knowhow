@@ -15,37 +15,29 @@
 // izbaciti StNal
 
 function StNal(lAuto)
-return stampa_fin_document(lAuto)
+return stampa_fin_document( lAuto )
 
 
-function stampa_fin_document(lAuto)
+function stampa_fin_document( lAuto )
 private dDatNal := date()
 
-  StAnalNal(lAuto)
-
-  SintStav(lAuto)
+StAnalNal( lAuto )
+SintStav( lAuto )
 
 return
 
 
 
-/*! \fn StAnalNal(lAuto)
- *  \brief Stampanje analitickog naloga
- *  \param lAuto
- */
- 
-function StAnalNal(lAuto)
+function StAnalNal( lAuto )
 local _print_opt := "V"
 local _izgenerisi := .f.
-
 private aNalozi:={}
 
-if lAuto==NIL
-	lAuto:=.f.
-ENDIF
+if lAuto == NIL
+	lAuto := .f.
+endif
 
 O_VRSTEP
-
 O_FIN_PRIPR
 O_KONTO
 O_PARTN
@@ -65,9 +57,9 @@ go top
 
 EOF CRET
 
-_izgenerisi:=.f.
+_izgenerisi := .f.
 
-if lAuto .or. field->idvn == "00" 
+if lAuto 
     _izgenerisi := .t.
 endif
 
@@ -75,73 +67,74 @@ if lAuto
    _print_opt := "D"
 endif
  
-
 if lAuto
 	Box(, 3, 75)
    	@ m_x+0, m_y+2 SAY "PROCES FORMIRANJA SINTETIKE I ANALITIKE"
 endif
 
 DO WHILE !EOF()
+
 	cIdFirma:=IdFirma
 	cIdVN:=IdVN
 	cBrNal:=BrNal
+
    	if !_izgenerisi
-     	Box("",2,50)
-       set cursor on
-       @ m_x+1, m_y+2 SAY "Nalog broj:"
-       if gNW=="D"
-           cIdFirma := gFirma
-           @ m_x+1, col()+1 SAY cIdFirma
-       else
-           @ m_x+1, col()+1 GET cIdFirma
-       endif
-       @ m_x+1, col()+1 SAY "-" GET cIdVn
-       @ m_x+1, col()+1 SAY "-" GET cBrNal
-       if gDatNal == "D"
-        @ m_x+2, m_y+2 SAY "Datum naloga:" GET dDatNal
-       endif
-       read
-       ESC_BCR
-     BoxC()
-   endif
+        Box("",2,50)
+        set cursor on
+        @ m_x+1, m_y+2 SAY "Nalog broj:"
+        if gNW=="D"
+            cIdFirma := gFirma
+            @ m_x+1, col()+1 SAY cIdFirma
+        else
+            @ m_x+1, col()+1 GET cIdFirma
+        endif
+        @ m_x+1, col()+1 SAY "-" GET cIdVn
+        @ m_x+1, col()+1 SAY "-" GET cBrNal
+        if gDatNal == "D"
+            @ m_x+2, m_y+2 SAY "Datum naloga:" GET dDatNal
+        endif
+        read
+        ESC_BCR
+        BoxC()
+    endif
 
-   HSEEK cIdFirma + cIdVN + cBrNal
-   if EOF()
-       closeret
-   endif
+    HSEEK cIdFirma + cIdVN + cBrNal
+    if EOF()
+        close all
+        return
+    endif
 
-   if !_izgenerisi
-     f18_start_print(NIL, @_print_opt)
-   endif
+    if !_izgenerisi
+        f18_start_print(NIL, @_print_opt)
+    endif
 
-   stampa_suban_dokument("1", lAuto)
+    stampa_suban_dokument( "1", lAuto )
 
-   if !_izgenerisi
-     close all
-     f18_end_print(NIL, @_print_opt)
-   endif
+    if !_izgenerisi
+        close all
+        f18_end_print(NIL, @_print_opt)
+    endif
 
-   IF ASCAN(aNalozi, cIdFirma + cIdVN + cBrNal) == 0
-     AADD(aNalozi, cIdFirma + cIdVN + cBrNal)  
-     // lista naloga koji su otisli
-     IF lAuto
-       @ m_x+2, m_y+2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
-     ENDIF
-   ENDIF
+    IF ASCAN(aNalozi, cIdFirma + cIdVN + cBrNal) == 0
+        AADD(aNalozi, cIdFirma + cIdVN + cBrNal)  
+        // lista naloga koji su otisli
+        IF lAuto
+            @ m_x+2, m_y+2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
+        ENDIF
+    ENDIF
 
 ENDDO   
 
 if lAuto
-  BoxC()
+    BoxC()
 endif
 
 if _izgenerisi .and. !lAuto
-   Beep(2)
-   Msg("Sve stavke su stavljene na stanje")
+    Beep(2)
+    Msg("Sve stavke su stavljene na stanje")
 endif
 
-CLOSE ALL
-
+close all
 return
 
 

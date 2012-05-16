@@ -1,3 +1,8 @@
+1.0.35 2012-05-16, vsasa
+
+  - fin, kalk, početna stanja, korekcije [#28021](http://redmine.bring.out.ba/issues/28021)
+  - fin, kompenzacija [#28029](http://redmine.bring.out.ba/issues/28029)
+ 
 1.0.34 2012-05-14, vsasa
 
   - rnal, korekcije [#25977](http://redmine.bring.out.ba/issues/25977)

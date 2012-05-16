@@ -3,6 +3,7 @@
   - rnal, korekcije [#25977](http://redmine.bring.out.ba/issues/25977)
   - kalk, stavka - protustavka, bugfix [#27665](http://redmine.bring.out.ba/issues/27665)
   - kalk, kontrola cijena prije štampe [#27953](http://redmine.bring.out.ba/issues/27953)
+  - fakt, generisanje faktura na osnovu ugovora [#28021](http://redmine.bring.out.ba/issues/28021)
  
 1.0.33 2012-05-11, vsasa
 

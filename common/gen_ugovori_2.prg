@@ -34,9 +34,9 @@ dLFakt := g_lst_fakt()
 // datum posljenje uplate u fin
 dDatLUpl := CToD("")
 // konto kupac
-cKtoDug := PADR("2110", 7)
+cKtoDug := fetch_metric( "ugovori_konto_duguje", nil, PADR("2110", 7) )
 // konto dobavljac
-cKtoPot := PADR("5410", 7)
+cKtoPot := fetch_metric( "ugovori_konto_potrazuje", nil, PADR("5410", 7) )
 // opis
 cOpis := PADR("", 100)
 // artikal
@@ -128,6 +128,10 @@ ESC_RETURN 0
 
 dDatObr := mo_ye(nMjesec, nGodina)
 
+// snimi parametre
+set_metric( "ugovori_konto_duguje", nil, cKtoDug )
+set_metric( "ugovori_konto_potrazuje", nil, cKtoPot )
+
 return 1
 
 
@@ -164,9 +168,6 @@ local cDatLFakt
 local dLFakt
 local __where, _rec
 local _count := 0
-
-msgbeep("bug sa opcijom, pogledaj #27002")
-return
 
 // otvori tabele
 o_ugov()
@@ -531,7 +532,7 @@ local cPom
 select gen_ug
 set order to tag "dat_obr"
 go top
-seek DTOS(dDat)
+seek DTOS( dDat )
 
 if Found()
     
@@ -543,9 +544,9 @@ if Found()
     cPom += "#"
     cPom += "PDV: " + ALLTRIM(STR(field->saldo_pdv))
     cPom += "#"
-    cPom += "Fakture od: " + gen_ug->brdok_od + " - " + gen_ug->brdok_do
+    cPom += "Fakture od: " + ALLTRIM( gen_ug->brdok_od ) + " - " + ALLTRIM( gen_ug->brdok_do )
 
-    MsgBeep(cPom)
+    MsgBeep( cPom )
 endif
 
 return
@@ -905,13 +906,18 @@ set order to tag "dat_obr"
 seek DTOS(dDatGen)
 
 if Found()
-    _rec := dbf_get_rec()
+    
+	_rec := dbf_get_rec()
     // broj prve fakture
     if EMPTY( field->brdok_od )
         _rec["brdok_od"] := cBrDok
     endif
     _rec["brdok_do"] := cBrDok
-    //update_rec_server_and_dbf( ALIAS(), _rec )
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
 endif
 
 // vrati se na pripremu i pregledaj djokere na _TXT
@@ -994,7 +1000,7 @@ if IsDocExists(cFirma, "10", gen_ug->brdok_od) .and. ;
     IsDocExists(cFirma, "10", gen_ug->brdok_do)
     
     cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-    Povrat_fakt_po_kriteriju(cBrDokOdDo, nil, nil, cFirma)
+    Povrat_fakt_po_kriteriju( cBrDokOdDo, nil, nil, cFirma )
 
 endif
 
@@ -1004,6 +1010,7 @@ O_FAKT_PRIPR
 fakt_brisanje_pripreme()
 
 return
+
 
 
 // ------------------------------------------------

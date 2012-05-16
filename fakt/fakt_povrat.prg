@@ -16,7 +16,7 @@
 // box - uslovi za povrat dokumenta prema kriteriju
 // -----------------------------------------------------
 static function _get_vars( vars )
-local _tip_dok := vars["rj"]
+local _tip_dok := vars["tip_dok"]
 local _br_dok := vars["br_dok"]
 local _datumi := vars["datumi"]
 local _rj := vars["rj"]
@@ -40,9 +40,9 @@ vars["rj"] := _rj
 vars["tip_dok"] := _tip_dok
 vars["br_dok"] := _br_dok
 vars["datumi"] := _datumi
-vars["uslov_dokumenti"] := Parsiraj( _br_dok, "BrDok", "C" )
-vars["uslov_datumi"] := Parsiraj( _datumi, "DatDok", "D" )
-vars["uslov_tipovi"] := Parsiraj( _tip_dok, "IdTipdok", "C" )
+vars["uslov_dokumenti"] := Parsiraj( _br_dok, "brdok", "C" )
+vars["uslov_datumi"] := Parsiraj( _datumi, "datdok", "D" )
+vars["uslov_tipovi"] := Parsiraj( _tip_dok, "idtipdok", "C" )
 
 return _ret
 
@@ -60,18 +60,33 @@ local _filter
 local _id_firma
 local _br_dok
 local _id_tip_dok
-local _del_rec, _ok, _field_ids, _where_block
+local _del_rec, _ok
 
 if PCOUNT() <> 0
+
     _vars["br_dok"] := PADR( br_dok, 200 )
-    _vars["datumi"] := PADR( dat_dok , 200 )
+
+	if dat_dok == NIL
+		dat_dok := CTOD("")
+	endif
+
+    _vars["datumi"] := PADR( DTOC( dat_dok ) , 200 )
+	
+	if tip_dok == NIL
+		tip_dok := ";"
+	endif
+
     _vars["tip_dok"] := PADR( tip_dok, 200 )
+
     _vars["rj"] := gFirma
+
 else
+
     _vars["br_dok"] := SPACE( 200 )
     _vars["datumi"] := SPACE( 200 )
     _vars["tip_dok"] := SPACE( 200 )
     _vars["rj"] := gFirma
+
 endif
 
 O_FAKT
@@ -97,7 +112,11 @@ endif
 
 // setuj filter
 _filter := _vars["uslov_dokumenti"]
-_filter += " .and. " + _vars["uslov_datumi"]
+
+if !EMPTY( _vars["uslov_datumi"] )
+	_filter += " .and. " + _vars["uslov_datumi"]
+endif
+
 _filter += " .and. " + _vars["uslov_tipovi"]
 
 if !EMPTY( _vars["rj"] )
@@ -153,7 +172,7 @@ DO WHILE !EOF()
     ENDDO
 
     // sada pobrisi iz kumulativa...
-    MsgO("Brisem dokumente iz kumulativa: " + _id_firma + "-" + _id_tip_dok + "-" + PADR( _brdok, 10 ) )
+    MsgO("Brisem dokumente iz kumulativa: " + _id_firma + "-" + _id_tip_dok + "-" + PADR( _br_dok, 10 ) )
 
     SELECT fakt
     GO TOP

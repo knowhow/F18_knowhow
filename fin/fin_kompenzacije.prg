@@ -34,6 +34,7 @@ local _dat_do := CTOD("")
 local _usl_kto := PADR("", 7)
 local _usl_kto2 := PADR("", 7)
 local _usl_partn := PADR("", 6)
+local _sa_datumom := "D"
 local _po_vezi := "D"
 local _prelom := "N"
 local _x := 1
@@ -47,7 +48,7 @@ _dat_od := fetch_metric("fin_komen_datum_od", my_user(), _dat_od )
 _dat_do := fetch_metric("fin_komen_datum_do", my_user(), _dat_do )
 _po_vezi := fetch_metric("fin_komen_po_vezi", my_user(), _po_vezi )
 _prelom := fetch_metric("fin_komen_prelomljeno", my_user(), _prelom )
-
+_sa_datumom := fetch_metric("fin_komen_br_racuna_sa_datumom", my_user(), _sa_datumom )
 
 Box( "", 18, 65 )
 
@@ -82,6 +83,10 @@ Box( "", 18, 65 )
         @ m_x + _x, m_y + 2 SAY "Sabrati po brojevima veze D/N ?"  GET _po_vezi valid _po_vezi $ "DN" pict "@!"
         @ m_x + _x, col() + 2 SAY "Prikaz prebijenog stanja " GET _prelom valid _prelom $ "DN" pict "@!"
 
+        ++ _x
+
+        @ m_x + _x, m_y + 2 SAY "Prikaz datuma sa brojem racuna (D/N) ?"  GET _sa_datumom valid _sa_datumom $ "DN" pict "@!"
+
         read
         ESC_BCR
 
@@ -104,6 +109,7 @@ set_metric("fin_komen_datum_od", my_user(), _dat_od )
 set_metric("fin_komen_datum_do", my_user(), _dat_do )
 set_metric("fin_komen_po_vezi", my_user(), _po_vezi )
 set_metric("fin_komen_prelomljeno", my_user(), _prelom )
+set_metric("fin_komen_br_racuna_sa_datumom", my_user(), _sa_datumom )
 
 vars["konto"] := _usl_kto
 vars["konto2"] := _usl_kto2
@@ -113,6 +119,7 @@ vars["dat_do"] := _dat_do
 vars["po_vezi"] := _po_vezi
 vars["prelom"] := _prelom
 vars["firma"] := _id_firma
+vars["sa_datumom"] := _sa_datumom
 
 return _ret
 
@@ -277,6 +284,7 @@ local _usl_partn := vars["partn"]
 local _dat_od := vars["dat_od"]
 local _dat_do := vars["dat_do"]
 local _po_vezi := vars["po_vezi"]
+local _sa_datumom := vars["sa_datumom"]
 local _prelom := vars["prelom"]
 local _id_firma := vars["firma"]
 local _filter
@@ -396,7 +404,18 @@ do while .t.
             endif
               
             append blank
-            replace field->brdok with suban->brdok
+
+            __opis_br_dok := ALLTRIM( field->brdok )
+            
+            if EMPTY( __opis_br_dok )
+                __opis_br_dok := "??????"
+            endif
+
+            if _sa_datumom == "D"
+                __opis_br_dok += " od " + DTOC( suban->datdok )
+            endif
+
+            replace field->brdok with __opis_br_dok
 
             _t_id_konto := _id_konto 
             select suban
@@ -835,6 +854,7 @@ xml_subnode("tabela", .t.)
 // totali
 xml_node("total_duz", ALLTRIM( STR( _ukupno_duz, 17, 2 ) ) )
 xml_node("total_pov", ALLTRIM( STR( _ukupno_pov, 17, 2 ) ) )
+xml_node("total_komp", ALLTRIM( STR( MIN( ABS( _ukupno_duz ), ABS( _ukupno_pov ) ), 17, 2 ) ) )
 xml_node("saldo", ALLTRIM( STR( ABS( _ukupno_duz - _ukupno_pov ), 17, 2 ) ) )
 
 // generalni podaci kompenzacije

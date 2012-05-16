@@ -126,7 +126,7 @@ local _tmp1, _tmp2
 
 // struktura tabele
 _dbf := {}
-AADD( _dbf , { "BRDOK"    , "C" , 30 , 0 } )
+AADD( _dbf , { "BRDOK"    , "C" , 50 , 0 } )
 AADD( _dbf , { "IZNOSBHD" , "N" , 17 , 2 } )
 AADD( _dbf , { "MARKER"   , "C" ,  1 , 0 } )
  

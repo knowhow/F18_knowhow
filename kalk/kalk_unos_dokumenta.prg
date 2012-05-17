@@ -724,13 +724,19 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
         _oldval:=_mpcsapp*_kolicina  // vrijednost prosle stavke
         _oldvaln:=_nc*_kolicina
         Gather()
+        
         if _idvd $ "16#80" .and. !empty(_idkonto2)
+            
             cIdkont:=_idkonto
             cIdkont2:=_idkonto2
             _idkonto:=cidkont2
             _idkonto2:="XXX"
             _kolicina:=-kolicina
-              
+                         
+            // uvecaj redni broj stavke
+            nRbr := RbrUNum( _rbr ) + 1
+            _Rbr := RedniBroj( nRbr )
+  
             Box( "", __box_x, __box_y, .f., "Protustavka" )
                 seek _idfirma+_idvd+_brdok+_rbr
                 _Tbanktr:="X"
@@ -985,12 +991,15 @@ endif
 O_KALK_PRIPR
 select kalk_pripr
 go top
+
 do while !EOF()
     if "XXX" $ idkonto2
         delete
     endif
     skip
 enddo
+
+__dbPack()
 
 go top
 return
@@ -1034,17 +1043,17 @@ nStrana := 1
 
 do while .t.
 
-    @ m_x + 1, m_y + 1 CLEAR TO m_x+20,m_y+77
+    @ m_x + 1, m_y + 1 CLEAR TO m_x + __box_x, m_y + __box_y
 
     SETKEY( K_PGDN, {|| NIL} )
     SETKEY( K_PGUP, {|| NIL} )
     // konvertovanje valute - ukljuci
     SETKEY( K_CTRL_K, {|| a_val_convert() } )
 
-    if nStrana==1
-        nR:=GET1(fnovi)
+    if nStrana == 1
+        nR := GET1( fnovi )
     elseif nStrana==2
-        nR:=GET2(fnovi)
+        nR := GET2( fnovi )
     endif
 
     SETKEY( K_PGDN, NIL )
@@ -1100,18 +1109,22 @@ if Get1Header() == 0
 endif
 
 if _idvd=="10"
-    if nRbr==1
+
+    if nRbr == 1 .and. !IsPDV()
         if gVarEv=="2" .or. glEkonomat .or. Pitanje(,"Skracena varijanta (bez troskova) D/N ?","D")=="D"
-                gVarijanta:="1"
+                gVarijanta := "1"
         else
-                gVarijanta:="2"
+                gVarijanta := "2"
         endif
     endif
+
     if IsPDV()
-        return if( gVarijanta=="1", Get1_10sPDV(), Get1_10PDV() )
+        //return if( gVarijanta == "1", Get1_10sPDV(), Get1_10PDV() )
+        return Get1_10PDV()
     else
-        return if( gVarijanta=="1", Get1_10s(), Get1_10() )
+        return if( gVarijanta == "1", Get1_10s(), Get1_10() )
     endif
+
 elseif _idvd=="11"
     return GET1_11()
 elseif _idvd=="12"
@@ -1178,6 +1191,27 @@ endif
 return
 
 
+// ----------------------------------------------------------
+// ispisuje naziv sifre na zeljenoj lokaciji
+// ----------------------------------------------------------
+function ispisi_naziv_sifre( area, id, x, y, len )
+local _naz := ""
+local _t_area := SELECT()
+
+if EMPTY( id )
+    return .t.
+endif
+
+select ( area )
+    
+if (area)->(fieldpos("naz")) <> 0
+    _naz := ALLTRIM( field->naz )
+endif
+
+@ x, y SAY PADR( _naz, len )
+
+select ( _t_area )
+return .t.
 
 
 
@@ -1187,12 +1221,10 @@ return
  */
 
 function Get2()
-*{
 parameters fnovi
+
 if _idvd $ "10"
-    if IsPDV()
-        return Get2_10PDV()
-    else
+    if !IsPDV()
         return Get2_10()
     endif
 elseif _idvd == "81"
@@ -1203,7 +1235,7 @@ elseif _idvd == "PR"
   return Get2_PR()
 endif
 return K_ESC
-*}
+
 
 
 
@@ -1217,17 +1249,18 @@ endif
 if fnovi .and. _TBankTr=="X"
     _TBankTr := "%"
 endif  
+
 // izgenerisani izlazi
 
 if gNW $ "DX"
-    @  m_x+1, m_y+2 SAY "Firma: " 
+    @  m_x + 1, m_y + 2 SAY "Firma: " 
     ?? gFirma, "-", gNFirma
 else
-    @  m_x+1, m_y+2 SAY "Firma:" GET _IdFirma VALID P_Firma(@_IdFirma,1,25) .and. len(trim(_idFirma))<=2
+    @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID P_Firma(@_IdFirma,1,25) .and. len(trim(_idFirma))<=2
 endif
 
-@  m_x+2, m_y+2 SAY "KALKULACIJA: "
-@  m_x+2, col() SAY "Vrsta:" get _IdVD valid P_TipDok(@_IdVD,2,25) pict "@!"
+@  m_x + 2, m_y + 2 SAY "KALKULACIJA: "
+@  m_x + 2, col() SAY "Vrsta:" get _idvd valid P_TipDok( @_idvd, 2, 25 ) PICT "@!"
 
 read
 
@@ -1253,11 +1286,11 @@ if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
     select kalk_pripr
 endif
 
-@ m_x+2, m_y+40  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }
+@ m_x + 2, m_y + 40  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }
 
-@ m_x+2, COL()+2 SAY "Datum:" GET _DatDok
+@ m_x + 2, COL() + 2 SAY "Datum:" GET _DatDok
 
-@ m_x+4, m_y+2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
+@ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
 
 read
 

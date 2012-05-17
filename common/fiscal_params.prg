@@ -191,7 +191,7 @@ Box(, _box_x, _box_y )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Izl.dir:" GET gFC_path VALID !EMPTY(gFC_path) PICT "@S60"
+    @ m_x + _x, m_y + 2 SAY "Izl.dir:" GET gFC_path VALID _valid_fiscal_path( gFC_path ) PICT "@S60"
     @ m_x + _x, col() + 1 SAY "Izl.fajl:" GET gFC_name VALID !EMPTY(gFC_name) PICT "@S30"
         
     ++ _x
@@ -299,5 +299,30 @@ return
 
 
 
+// -------------------------------------------------------
+// validacija path-a izlaznih fajlova
+// -------------------------------------------------------
+static function _valid_fiscal_path( fiscal_path )
+local _ok := .t.
+local _cre
+
+fiscal_path := ALLTRIM( fiscal_path )
+
+if EMPTY( fiscal_path )
+    MsgBeep( "Izlazni direktorij mora biti definisan ?!!!" )
+    _ok := .f.
+    return _ok
+endif
+
+if DirChange( fiscal_path ) != 0
+    // probaj kreirati direktorij...
+    _cre := MakeDir( fiscal_path )
+    if _cre != 0
+        MsgBeep( "kreiranje " + fiscal_path + " neuspjesno ?!" )
+        _ok := .f.
+    endif
+endif
+
+return _ok
 
 

@@ -85,6 +85,7 @@ local _interv_1, _interv_2, _interv_3
 local _dug_1, _dug_2, _pot_1, _pot_2
 local _saldo_1, _saldo_2
 local _id_roba, _roba_naz
+local _ima_poc_stanje := .f.
 
 select mat_suban
 //"IdFirma+IdKonto+IdRoba+dtos(DatDok)"
@@ -152,6 +153,10 @@ do while !EOF()
         
             // logika izvjestaja
                     
+            if field->idvn == "00"
+                _ima_poc_stanje := .t.
+            endif
+
             if field->u_i == "1"
                 _ulaz := field->kolicina
                 _izlaz := 0
@@ -168,29 +173,27 @@ do while !EOF()
                 _dug := 0
             endif
 
-            // ako je samo ulaz, onda izlaze uvijek resetuj...
-            
             _saldo_k += _ulaz - _izlaz  
             _saldo_i += _dug - _pot  
 
             // ovo ce vratiti interval u odnosu na datum dokumenta
             _interval := _get_interval( field->datdok, _datum )
 
-            // prvi interval
+            // prvi interval, gledamo samo pozitivne ulaze
             if _interval <= param["interval_1"]
                 // ovo je interval do 6 mjeseci npr..
-                if ! (field->idvn $ _skip_docs )
-                    _int_i_1 += _dug - _pot
-                    _int_k_1 += _ulaz - _izlaz  
+                if ! ( field->idvn $ _skip_docs ) .and. field->kolicina > 0
+                    _int_i_1 += _dug //- _pot
+                    _int_k_1 += _ulaz //- _izlaz  
                 endif
             endif
 
-            // drugi interval
+            // drugi interval, gledamo samo pozitivne ulaze opet
             if _interval > param["interval_1"] .and. _interval <= param["interval_2"]
                 // ovo je interval od 6 do 12 mj, npr..  
-                if ! (field->idvn $ _skip_docs )
-                    _int_i_2 += _dug - _pot
-                    _int_k_2 += _ulaz - _izlaz 
+                if ! ( field->idvn $ _skip_docs ) .and. field->kolicina > 0
+                    _int_i_2 += _dug //- _pot
+                    _int_k_2 += _ulaz //- _izlaz 
                 endif
             endif
     
@@ -210,6 +213,21 @@ do while !EOF()
             _int_k_2 := 0
             _int_i_2 := 0
         ENDIF
+
+        // ako je saldo manji od prvog intervala
+        if _saldo_k < _int_k_1
+
+            _int_k_1 := _saldo_k
+            _int_i_1 := _saldo_i
+    
+            // ostale intervale resetuj
+            _int_k_2 := 0
+            _int_i_2 := 0
+
+            _int_k_3 := 0
+            _int_i_3 := 0
+
+        endif
 
         // treci interval je
         _int_k_3 := ( _saldo_k - _int_k_1 - _int_k_2 )

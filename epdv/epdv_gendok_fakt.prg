@@ -372,16 +372,20 @@ do while !eof()
 			endif
 		endif
 
-		// ako je avansna faktura setuj na PDV7AV
-		if ALLTRIM( fakt->idvrstep ) == "AV"
-			cDokTar := "PDV7AV"
-		endif
-		
 		// ako je oslobodjen po clanu... PDV0
 		if lOslPoClanu == .t.
 			cDokTar := "PDV0  "
 		endif
 
+		// ako je avansna faktura setuj na PDV7AV ili PDV0AV
+		if ALLTRIM( fakt->idvrstep ) == "AV"
+            if lIno .or. lOslPoClanu
+                cDokTar := "PDV0AV"
+            else
+			    cDokTar := "PDV7AV"
+            endif
+		endif
+		
 		_id_tar := cDokTar
 			
 		if !empty(cTarFormula)
@@ -459,7 +463,6 @@ do while !eof()
 		// uzmi iz dokumenta
 		_id_tar := cDokTar
 	endif
-
 	
 	PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa(_id_tar) / 100 )
 	

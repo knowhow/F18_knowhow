@@ -182,40 +182,51 @@ do while !EOF()
             // prvi interval, gledamo samo pozitivne ulaze
             if _interval <= param["interval_1"]
                 // ovo je interval do 6 mjeseci npr..
-                if ! ( field->idvn $ _skip_docs ) .and. field->kolicina > 0
-                    _int_i_1 += _dug //- _pot
-                    _int_k_1 += _ulaz //- _izlaz  
+                if ( ! ( field->idvn $ _skip_docs ) .and. field->kolicina > 0 ) .or. field->idvn == "03"
+                    _int_i_1 += _dug 
+                    _int_k_1 += _ulaz 
                 endif
             endif
 
             // drugi interval, gledamo samo pozitivne ulaze opet
             if _interval > param["interval_1"] .and. _interval <= param["interval_2"]
                 // ovo je interval od 6 do 12 mj, npr..  
-                if ! ( field->idvn $ _skip_docs ) .and. field->kolicina > 0
-                    _int_i_2 += _dug //- _pot
-                    _int_k_2 += _ulaz //- _izlaz 
+                if ( ! ( field->idvn $ _skip_docs ) .and. field->kolicina > 0 ) .or. field->idvn == "03"
+                    _int_i_2 += _dug 
+                    _int_k_2 += _ulaz 
                 endif
             endif
     
             // treci interval
-            // se racuna na osnovu salda i gornja dva
-
+            if _interval > param["interval_2"]
+                // ovo je interval preko 12 mj, npr..  
+                if field->kolicina > 0 .or. field->idvn == "03"
+                    _int_i_3 += _dug 
+                    _int_k_3 += _ulaz 
+                endif
+            endif
+    
             skip
 
         enddo
         
-        IF ( _int_k_1 <= 0 )
+        if ( _int_k_1 <= 0 )
             _int_k_1 := 0
             _int_i_1 := 0
-        ENDIF
+        endif
 
-        IF ( _int_k_2 <= 0 )
+        if ( _int_k_2 <= 0 )
             _int_k_2 := 0
             _int_i_2 := 0
-        ENDIF
+        endif
+
+        if ( _int_k_3 <= 0 )
+            _int_k_3 := 0
+            _int_i_3 := 0
+        endif
 
         // ako je saldo manji od prvog intervala
-        if _saldo_k < _int_k_1
+        if ( _int_k_1 > 0 ) .and. ( _saldo_k < _int_k_1 )
 
             _int_k_1 := _saldo_k
             _int_i_1 := _saldo_i
@@ -227,19 +238,50 @@ do while !EOF()
             _int_k_3 := 0
             _int_i_3 := 0
 
+        // ako je saldo manji od drugog intervala
+        elseif ( _int_k_1 == 0 .and. _int_k_2 > 0 ) .and. ( _saldo_k < _int_k_2 )
+
+            // ostale intervale resetuj
+            _int_k_1 := 0
+            _int_i_1 := 0
+
+            // a drugi setuj na ovaj iznos 
+            _int_k_2 := _saldo_k
+            _int_i_2 := _saldo_i
+
+            _int_k_3 := 0
+            _int_i_3 := 0
+
+        // ako je saldo manji od treceg intervala
+        elseif ( _int_k_1 == 0 .and. _int_k_2 == 0 .and. _int_k_3 > 0 ) .and. ( _saldo_k < _int_k_3 )
+
+            // ostale intervale resetuj
+            _int_k_1 := 0
+            _int_i_1 := 0
+
+            _int_k_2 := 0
+            _int_i_2 := 0
+
+            // a drugi setuj na ovaj iznos 
+            _int_k_3 := _saldo_k
+            _int_i_3 := _saldo_i
+
+        else
+
+            // ako nije nista od toga racunaj treci interval ovako
+            _int_k_3 := ( _saldo_k - _int_k_1 - _int_k_2 )
+            _int_i_3 := ( _saldo_i - _int_i_1 - _int_i_2 )
+ 
         endif
 
-        // treci interval je
-        _int_k_3 := ( _saldo_k - _int_k_1 - _int_k_2 )
-        _int_i_3 := ( _saldo_i - _int_i_1 - _int_i_2 )
-        
+       
         // ako je negativan onda je nula
         if _int_k_3 < 0
             _int_k_3 := 0
             _int_i_3 := 0
         endif
    
-        if ROUND( _int_i_1 + _int_i_2 + _int_i_3 + _saldo_i, 2 ) == 0 .and. param["prikaz_nule"] == "N"    
+        if ROUND( _saldo_k, 2 ) == 0 .and. param["prikaz_nule"] == "N"    
             // preskoci...
         else
             // ubaci u pomocnu tabelu podatke
@@ -264,16 +306,9 @@ return
 // vraca interval u odnosu na tekuci datum i datum dokumenta
 // --------------------------------------------------------------
 static function _get_interval( dat_dok, datum )
-local _month_dok
-local _month_datum
 local _ret := 1
 
-_month_dok := MONTH( dat_dok ) 
-_month_datum := MONTH( datum )
-
-if _month_datum > _month_dok
-    _ret := ( _month_datum - _month_dok )
-endif
+_ret := ( datum - dat_dok ) / 30
 
 return _ret
 

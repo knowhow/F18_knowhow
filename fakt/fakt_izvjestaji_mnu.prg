@@ -41,8 +41,11 @@ AADD(_opc,"8. kolicinski pregled isporuke robe po partnerima ")
 AADD(_opcexe,{|| spec_kol_partn()})
 AADD(_opc,"9. realizacija maloprodaje ")
 AADD(_opcexe,{|| fakt_real_maloprodaje()})
-AADD(_opc,"10. fiskalni izvjestaji i komande ")
-AADD(_opcexe,{|| fisc_rpt()})
+
+if gFc_use == "D"
+    AADD(_opc,"10. fiskalni izvjestaji i komande ")
+    AADD(_opcexe,{|| fisc_rpt()})
+endif
 
 //if IsRudnik() 
 	AADD(_opc,"R. specificni izvjestaji (rmu)")

@@ -1,7 +1,13 @@
-1.0.35 2012-05-16, vsasa
+1.0.35 2012-05-18, vsasa
 
   - fin, kalk, početna stanja, korekcije [#28021](http://redmine.bring.out.ba/issues/28021)
   - fin, kompenzacija [#28029](http://redmine.bring.out.ba/issues/28029)
+  - ePDV, avnansne fakture [#27954](http://redmine.bring.out.ba/issues/27954)
+  - fiskalne funkcije [#27052](http://redmine.bring.out.ba/issues/27052)
+  - to_us_encoding [#27344](http://redmine.bring.out.ba/issues/27344)
+  - fakt, ažuriranje duplog dokumenta [#28057](http://redmine.bring.out.ba/issues/28057)
+  - kalk, unos dokumenta tipa "10" raširen ekran [#27455](http://redmine.bring.out.ba/issues/27455)
+  - mat, izvještaj po ročnosti korigovan [#28044](http://redmine.bring.out.ba/issues/28044)
  
 1.0.34 2012-05-14, vsasa
 

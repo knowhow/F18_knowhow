@@ -1152,20 +1152,17 @@ endif
 
 @ m_x + 13, m_y + 2 SAY "R.br: " GET nRbr  PICT "9999"
 
-
-//@ m_x + 13, col() + 2 SAY "Podbr.:"  GET _PodBr VALID V_Podbr()
-
 cDSFINI := IzFMKINI('SifRoba','DuzSifra','10', SIFPATH)
 
 @ m_x + 15, m_y + 2  SAY "Artikal: " ;
     GET _IdRoba ;
     PICT "@!S10" ;
-    WHEN {|| _idroba:=padr(_idroba, VAL(cDSFINI)), W_Roba()} ;
-    VALID {|| _idroba:= iif(len(trim(_idroba))<10, left(_idroba,10), _idroba), V_Roba(), GetUsl(fnovi), NijeDupla(fNovi) }
+    WHEN {|| _idroba := PADR( _idroba, VAL( cDSFINI )), W_Roba() } ;
+    VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < 10, LEFT( _idroba, 10 ), _idroba ), V_Roba(), artikal_kao_usluga(fnovi), NijeDupla(fNovi) }
 
 RKOR2:=0
 
-RKOR2+=GetKarC3N2(row()+1)
+RKOR2 += GetKarC3N2( row() + 1 )
 
 if (fakt_pripr->(fieldpos("K1"))<>0 .and. gDK1=="D")
     @ m_x+15+RKOR2,m_y+66 SAY "K1" GET _K1 pict "@!"
@@ -1176,7 +1173,7 @@ if (fakt_pripr->(fieldpos("K2"))<>0 .and. gDK2=="D")
 endif
 
 if (gSamokol!="D" .and. !glDistrib)
-            @ m_x + 16 + RKOR2, m_y+2  SAY JokSBr()+" "  get _serbr pict "@s15"  when _podbr <> " ."
+    @ m_x + 16 + RKOR2, m_y+2  SAY JokSBr()+" "  get _serbr pict "@s15"  when _podbr <> " ."
 endif
 
 if (gVarC $ "123" .and. _idtipdok $ "10#12#20#21#25")

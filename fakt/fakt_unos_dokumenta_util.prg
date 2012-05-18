@@ -454,14 +454,13 @@ function W_Roba()
 private Getlist:={}
 
 if _podbr == " ."
-     	@ m_x + 15, m_y + 2  SAY "Roba     " ;
-     		GET _txt1 ;
-		PICT "@!"
-     	read
-     	return .f.
+    @ m_x + 15, m_y + 2  SAY "Roba     " GET _txt1 PICT "@!"
+    read
+    return .f.
 else
-     	return .t.
+    return .t.
 endif
+return
 
 
 // ----------------------------------------------
@@ -473,9 +472,9 @@ local nArr
 private cVarIDROBA
 
 if fID_J
-	cVarIDROBA:="_IDROBA_J"
+	cVarIDROBA := "_IDROBA_J"
 else
-  	cVarIDROBA:="_IDROBA"
+  	cVarIDROBA := "_IDROBA"
 endif
 
 
@@ -483,24 +482,24 @@ if lPrikTar == nil
 	lPrikTar := .t.
 endif
 
-if right(trim(&cVarIdRoba),2)="++"
+if RIGHT( TRIM( &cVarIdRoba ), 2 ) = "++"
 	cPom:=padr(left(&cVarIdRoba,len(trim(&cVarIdRoba))-2),len(&cVarIdRoba))
   	select roba
 	seek cPom
   	if found()
-      		//BrowseKart(cPom)    
+      	//BrowseKart(cPom)    
 		// prelistaj kalkulacije
-      		//&cVarIdRoba:=cPom
+      	//&cVarIdRoba:=cPom
   	endif
 endif
 
-if right(trim(&cVarIdRoba),2)="--"
+if RIGHT( TRIM ( &cVarIdRoba ), 2 ) = "--"
 	cPom:=padr(left(&cVarIdRoba,len(trim(&cVarIdRoba))-2),len(&cVarIdRoba))
   	select roba
 	seek cPom
   	if found()
-      		FaktStanje(roba->id)    // prelistaj kalkulacije
-      		&cVarIdRoba:=cPom
+      	FaktStanje(roba->id)    // prelistaj kalkulacije
+      	&cVarIdRoba:=cPom
   	endif
 endif
 
@@ -929,42 +928,45 @@ PopWa()
 return
 
 
-/*! \fn GetUsl(fNovi)
- *  \brief get usluga
- *  \param fNovi
- */
- 
-function GetUsl(fNovi)
+// -------------------------------------------------------
+// usluga na unosu dokumenta
+// -------------------------------------------------------
+function artikal_kao_usluga( fNovi )
 private GetList:={}
 
+if !( roba->tip = "U" )
+    devpos(m_x+15,m_y+25)
+    ?? space(40)
+    devpos(m_x+15,m_y+25)
 
-if !(roba->tip="U")
- devpos(m_x+15,m_y+25)
- ?? space(40)
- devpos(m_x+15,m_y+25)
-
- ?? trim(LEFT(roba->naz, 40) ), "(" + roba->jmj + ")"
+    ?? TRIM( LEFT( roba->naz, 40 ) ), "(" + roba->jmj + ")"
 endif
 
 if roba->tip $ "UT" .and. fnovi
-  _kolicina:=1
+    _kolicina := 1
 endif
 
-if roba->tip=="U"
-  _txt1 := PADR( IIF( fNovi , LEFT(ROBA->naz, 40) , _txt1 ) , 320 )
-  IF fNovi
-    _cijena := ROBA->vpc
-    if !_idtipdok$"11#15#27"
-        _porez  := TARIFA->ppp
+if roba->tip == "U"
+
+    _txt1 := PADR( IIF( fNovi, roba->naz , _txt1 ) , 320 )
+
+    if fNovi
+        _cijena := roba->vpc
+        if !( _idtipdok $ "11#15#27" )
+            _porez := tarifa->ppp
+        endif
     endif
-  ENDIF
 
-  @ row(), m_y+25 GET _txt1 pict "@S40"
-  read
+    @ row() - 1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
+    
+    read
 
-  _txt1:=trim(_txt1)
+    _txt1 := TRIM( _txt1 )
+
 else
-  _txt1:=""
+
+    _txt1 := ""
+
 endif
 
 return .t.

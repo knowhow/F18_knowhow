@@ -696,7 +696,7 @@ return lProtu
 // centralna funkcija za azuriranje fakture
 // --------------------------------------------------
 function azur_fakt( lSilent )
-local _a_fakt_doks
+local _a_fakt_doks := {}
 local _id_firma
 local _br_dok
 local _id_tip_dok
@@ -710,7 +710,7 @@ if ( lSilent == nil)
 endif
 
 if ( !lSilent .and. Pitanje( ,"Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
-    return
+    return _a_fakt_doks
 endif
 
 my_use_semaphore_off()
@@ -730,7 +730,7 @@ _a_fakt_doks := _fakt_dokumenti()
 
 if LEN( _a_fakt_doks ) == 0
     MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
-    return
+    return _a_fakt_doks
 endif
 
 // generisi protu dokumente
@@ -750,13 +750,15 @@ sql_table_update(nil, "BEGIN")
 _ok := lock_semaphore( _tbl_fakt, "lock" )
 _ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
 _ok := _ok .and. lock_semaphore( _tbl_doks2,  "lock" )
+
 if _ok
     sql_table_update(nil, "END")
 else
     sql_table_update(nil, "ROLLBACK")
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
-    return .f.
+    return _a_fakt_doks
 endif
+
 // ---end lock ---------------------------------------------
 
 
@@ -800,7 +802,7 @@ lock_semaphore( _tbl_doks2, "free" )
 my_use_semaphore_on()
 
 if !_ok
-   return .f.
+   return _a_fakt_doks
 endif
 
 // prenos podataka fakt

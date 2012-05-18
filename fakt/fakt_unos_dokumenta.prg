@@ -283,16 +283,18 @@ do case
             
         o_fakt_edit() 
         
-        if gFc_use == "D" .and. cFTipDok $ "10#11"
+        if gFc_use == "D" .and. cFTipDok $ "10#11" .and. aFakt_dok <> NIL
             
-            if aFakt_dok <> nil .and. LEN( aFakt_dok ) > 0
+            if LEN( aFakt_dok ) > 0
+
                 cFirma := aFakt_dok[ 1, 1 ] 
                 cFTipDok := aFakt_dok[ 1, 2 ] 
                 cFBrDok := aFakt_dok[ 1, 3 ] 
-            endif
+      
+                lFisMark := .t.         
             
-            lFisMark := .t.         
-        
+            endif
+      
         endif
         
         return DE_REFRESH

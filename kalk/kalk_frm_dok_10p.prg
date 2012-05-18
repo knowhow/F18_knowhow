@@ -38,7 +38,7 @@ if nRbr == 1  .or. !fNovi .or. gMagacin == "1"
 
 	@ m_x + _x, m_y + 2 SAY "DOBAVLJAC:" get _IdPartner pict "@!" valid {|| empty(_IdPartner) .or. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ), _ino_dob( _idpartner ) }
  	
-	@ m_x + _x, 60 SAY "Faktura dobavljaca - Broj:" get _BrFaktP
+	@ m_x + _x, 50 SAY "Broj fakture:" get _BrFaktP
  	
 	@ m_x + _x, col() + 1 SAY "Datum:" get _DatFaktP
  	

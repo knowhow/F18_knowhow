@@ -47,7 +47,7 @@ if nRbr == 1  .or. !fNovi .or. gMagacin == "1"
     ++ _x
     _kord_x := m_x + _x
 
-    @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje" GET _IdKonto valid {|| P_Konto( @_IdKonto), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 50, 60 ) } pict "@!"
+    @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje" GET _IdKonto valid {|| P_Konto( @_IdKonto), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } pict "@!"
  	
     if gNW <> "X"
   		@ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma( @_IdZaduz )

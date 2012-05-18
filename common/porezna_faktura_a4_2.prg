@@ -90,10 +90,10 @@ do while !EOF()
 	if prow() > nDodRedova + 48 - nSlTxtRow
 		++nStr
 		NStr(cLine, nStr, cRazmak, .t.)
-    	endif	
+    endif	
 	
 	// uzmi naziv u matricu
-	aArtNaz := SjeciStr(rn->robanaz, 40)
+	aArtNaz := SjeciStr( rn->robanaz, 40 )
 	
 	// PRVI RED
 	

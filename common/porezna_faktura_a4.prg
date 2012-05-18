@@ -113,6 +113,7 @@ local aRNaz
 local cArtikal
 local cSlovima
 local cLine
+local _i
 
 // lijeva margina
 private nLMargina
@@ -250,12 +251,16 @@ do while !EOF()
 	
 	
 	if LEN(aNazivDobra) > 1
-	    // DRUGI RED
-	    ? RAZMAK
-	    ?? " "
-	    ?? SPACE(LEN_RBR)
-	    ?? PADR(aNazivDobra[2], LEN_NAZIV)
-	endif
+	    
+        // OSTALI REDOVI
+        for _i := 2 to LEN( aNazivDobra )
+	        ? RAZMAK
+	        ?? " "
+	        ?? SPACE( LEN_RBR )
+	        ?? PADR( aNazivDobra[ _i ], LEN_NAZIV )
+        next
+	
+    endif
 	
 	// opis
 	if !EMPTY( rn->opis )
@@ -264,6 +269,7 @@ do while !EOF()
 		?? SPACE(LEN_RBR)
 		?? ALLTRIM(rn->opis)
 	endif
+
 	// c1, c2, c3
 	if !EMPTY( rn->c1 ) .or. !EMPTY( rn->c2 ) .or. !EMPTY( rn->c3 )
 		? RAZMAK
@@ -276,10 +282,11 @@ do while !EOF()
 	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr)
 		++nStr
 		Nstr_a4(nStr, .t.)
-    	endif	
+    endif	
 
-	SELECT rn
+	select rn
 	skip
+
 enddo
 
 // provjeri za novu stranicu

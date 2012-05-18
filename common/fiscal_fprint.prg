@@ -1024,16 +1024,16 @@ if LEN( aKupac ) > 0
 	cTmp += cSep
 
 	// 2. naziv
-	cTmp += ALLTRIM( PADR( aKupac[ 1, 2 ], 36 ) )
+	cTmp += ALLTRIM( PADR( to_us_encoding( aKupac[ 1, 2 ] ), 36 ) )
 	cTmp += cSep
 
 	// 3. adresa
-	cTmp += ALLTRIM( PADR( aKupac[ 1, 3 ], 36 ) ) 
+	cTmp += ALLTRIM( PADR( to_us_encoding( aKupac[ 1, 3 ] ), 36 ) ) 
 	cTmp += cSep
 	
 	// 4. ptt, mjesto
-	cTmp += ALLTRIM( aKupac[ 1, 4 ] ) + " " + ;
-		ALLTRIM( aKupac[ 1, 5 ] )
+	cTmp += ALLTRIM( to_us_encoding( aKupac[ 1, 4 ] ) ) + " " + ;
+		ALLTRIM( to_us_encoding( aKupac[ 1, 5 ] ) )
 
 	cTmp += cSep
 	cTmp += cSep

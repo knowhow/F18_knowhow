@@ -1,6 +1,41 @@
 #include "fmk.ch"
 
 
+// -----------------------------------------------------
+// konvertuje nase karaktere u US format
+// -----------------------------------------------------
+function to_us_encoding( cp852_str )
+local _us_str
+local _cnt
+local _arr := _get_us_codes_array()
+
+_us_str := hb_strtoutf8( cp852_str )
+
+for _cnt := 1 to LEN( _arr )
+	_us_str := STRTRAN( _us_str, _arr[ _cnt, 1 ], _arr[ _cnt, 2 ] )
+next
+
+return _us_str
+
+
+// -------------------------------------------------
+// vraca matricu sa US kodovima
+// -------------------------------------------------
+static function _get_us_codes_array()
+local _arr := {}
+
+AADD( _arr, { "Ž", "Z" } )
+AADD( _arr, { "ž", "z" } )
+AADD( _arr, { "Č", "C" } )
+AADD( _arr, { "č", "c" } )
+AADD( _arr, { "Ć", "C" } )
+AADD( _arr, { "ć", "c" } )
+AADD( _arr, { "Đ", "Dj" } )
+AADD( _arr, { "đ", "dj" } )
+AADD( _arr, { "Š", "S" } )
+AADD( _arr, { "š", "s" } )
+
+return _arr
 
 
 // --------------------------------------------------------------------

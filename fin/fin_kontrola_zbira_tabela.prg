@@ -19,7 +19,6 @@
 //              .f. ako nije
 // --------------------------------
 function KontrZb(bDat, lSilent)
-
 local lRet := .t.
 local nSaldo := 0
 local nSintD := 0
@@ -30,6 +29,7 @@ local nNalD := 0
 local nNalP := 0
 local nAnalP := 0
 local nAnalD := 0
+local _line
 
 if (bDat == nil)
 	bDat := .f.
@@ -60,24 +60,40 @@ O_SINT
 O_ANAL
 
 if !lSilent
- Box("KZD",9,77,.f.)
- set cursor off
-	@ m_x+1,m_y+11 say "³"+PADC("NALOZI",16)+"³"+PADC("SINTETIKA",16)+"³"+PADC("ANALITIKA",16)+"³"+PADC("SUBANALITIKA",16)
-	@ m_x+2,m_y+1  say REPLICATE("Ä",10)+"Å"+REPLICATE("Ä",16)+"Å"+REPLICATE("Ä",16)+"Å"+REPLICATE("Ä",16)+"Å"+REPLICATE("Ä",16)
-	@ m_x+3,m_y+1 say "duguje "+ValDomaca()
-	@ m_x+4,m_y+1 say "potraz."+ValDomaca()
-	@ m_x+5,m_y+1 say "saldo  "+ValDomaca()
-	@ m_x+7,m_y+1 say "duguje "+ValPomocna()
-	@ m_x+8,m_y+1 say "potraz."+ValPomocna()
-	@ m_x+9,m_y+1 say "saldo  "+ValPomocna()
-	FOR i:=11 TO 65 STEP 17
-  		FOR j:=3 TO 9
-    			@ m_x+j,m_y+i SAY "³"
-  		NEXT
-	NEXT
+
+    Box( "KZD", 11, 77, .f. )
+
+        set cursor off
+
+	    _line := REPLICATE("Ä",10) + "Å" + REPLICATE("Ä",16) + "Å" + REPLICATE("Ä",16) + "Å" + REPLICATE("Ä",16) + "Å" + REPLICATE("Ä",16)
+
+	    @ m_x + 1, m_y + 11 SAY "³" + PADC( "NALOZI", 16 ) + ;
+                                "³" + PADC( "SINTETIKA", 16 ) + ;
+                                "³" + PADC( "ANALITIKA", 16 ) + ;
+                                "³" + PADC( "SUBANALITIKA", 16 )
+
+	    @ m_x + 2, m_y + 1 SAY _line
+
+	    @ m_x + 3, m_y + 1 SAY "duguje " + ValDomaca()
+	    @ m_x + 4, m_y + 1 SAY "potraz." + ValDomaca()
+	    @ m_x + 5, m_y + 1 SAY "saldo  " + ValDomaca()
+	    @ m_x + 7, m_y + 1 SAY "duguje " + ValPomocna()
+	    @ m_x + 8, m_y + 1 SAY "potraz." + ValPomocna()
+	    @ m_x + 9, m_y + 1 SAY "saldo  " + ValPomocna()
+
+	    @ m_x + 10, m_y + 1 SAY _line
+
+	    @ m_x + 11, m_y + 1 SAY "ESC - izlaz"
+
+	    FOR i := 11 TO 65 STEP 17
+  		    FOR j := 3 TO 9
+    			@ m_x + j, m_y + i SAY "³"
+  		    NEXT
+	    NEXT
 	
-	picBHD:=FormPicL("9 "+gPicBHD,16)
-	picDEM:=FormPicL("9 "+gPicDEM,16)
+	    picBHD:=FormPicL("9 "+gPicBHD,16)
+	    picDEM:=FormPicL("9 "+gPicDEM,16)
+
 endif
 
 select nalog
@@ -212,23 +228,20 @@ if !lSilent
 	@ m_x+7,m_y+63 SAY nDu2 PICTURE picDEM
 	@ m_x+8,m_y+63 SAY nPo2 PICTURE picDEM
 	@ m_x+9,m_y+63 SAY nDu2-nPo2 PICTURE picDEM
-	Inkey(0)
+	while Inkey(0.1) != K_ESC
+    end
 	BoxC()
 endif
 
 // provjeri da li su podaci tacni !
-if (ROUND(nSaldo, 2) > 0) .or. ( ROUND(nSubD + nNalD + nAnalD + nSintD, 2) <> ROUND(nSubP + nNalP + nAnalP + nSintP, 2) )
+if ( ROUND(nSaldo, 2) > 0) .or. ( ROUND(nSubD + nNalD + nAnalD + nSintD, 2) <> ROUND(nSubP + nNalP + nAnalP + nSintP, 2) )
 	lRet := .f.
 endif
 
-// upisi u params podatak o datumu povlacenja...
-private cSection:="9"
-private cHistory:=" "
-private aHistory:={}
-
-O_PARAMS
-WPar("kd", DATE())
-use
+if gnKZBdana > 0
+    // upisi u params podatak o datumu povlacenja...
+    set_metric( "fin_kontrola_zbira_datum", nil, DATE() )
+endif
 
 if lSilent
 	MsgC()
@@ -253,28 +266,24 @@ if gnKZBdana == 0
 	return
 endif
 
-O_PARAMS
-RPar("kd", @dLastDate)
+// uzmi datum zadnjeg povlacenja kontrole zbira
+dLastDate := fetch_metric( "fin_kontrola_zbira_datum", nil, dLastdate )
 
 // ako je manje od KZBdana ne pozivaj opciju...
-if (dDate - dLastDate) <= gnKZBdana
+if ( dDate - dLastDate ) <= gnKZBdana
 	select (nTArea)
 	return
 endif
 
-lKzbOk := kontrzb(nil, .t.)
+lKzbOk := kontrzb( nil, .t. )
 
 if !lKzbOk
-	MsgBeep("Kontrola zbira datoteka je uocila greske!#Pregledajte greske...")
+	MsgBeep("Kontrola zbira datoteka je pronasla greske!#Pregledajte greske...")
 	kontrzb()
 endif
 
 select (nTArea)
 return
-
-
-
-
 
 
 

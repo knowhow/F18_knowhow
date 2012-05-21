@@ -210,7 +210,6 @@ lURp:=fURp
 
 ::oApp:SetGVars()
 
-JelReadOnly()
 return
 
 

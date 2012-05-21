@@ -17,19 +17,14 @@
 // postavi globalne varijable
 // --------------------------------------------
 function set_global_vars_0()
-
 public ZGwPoruka:=""
 public GW_STATUS:="-"
-
 public GW_HANDLE:=0
-
 public gModul:=""
 public gVerzija:=""
 public gAppSrv:=.f.
-public gSQL:="N"
-
-public gSQLLogBase:=ToUnix("c:"+SLASH+"sigma")
-
+public gSQL := "N"
+public gSQLLogBase := ""
 public ZGwPoruka:=""
 public GW_STATUS:="-"
 public GW_HANDLE:=0
@@ -37,7 +32,7 @@ public gReadOnly:=.f.
 public gProcPrenos:="N"
 public gInstall:=.f.
 public gfKolor:="D"
-public gPrinter:="1"
+public gPrinter := "E"
 public gPtxtSw := nil
 public gPDFSw := nil
 public gMeniSif:=.f.
@@ -49,97 +44,62 @@ public gPicSif:="V"
 public gcDirekt:="V"
 public gSKSif:="D"
 public gSezona:="    "
-
 public gShemaVF:="B5"
-
 //counter - za testiranje
 public gCnt1:=0
-
 PUBLIC m_x
 PUBLIC m_y
 PUBLIC h[20]
 PUBLIC lInstal:=.f.
-
 //  .t. - korisnik je SYSTEM
 PUBLIC System   
 PUBLIC aRel:={}
-
 PUBLIC cDirRad
 PUBLIC cDirSif
 PUBLIC cDirPriv
 PUBLIC gNaslov
-
 public gSezonDir:=""
 public gRadnoPodr:="RADP"
-
 public ImeKorisn:="" 
 public SifraKorisn:=""
 public KLevel:="9"
-
-public gArhDir
-
-gArhDir:=""
-
-public gPFont
-gPFont:="Arial"
-
+public gArhDir := ""
+public gPFont := "Arial"
 public gKodnaS:="8"
 public gWord97:="N"
 public g50f:=" "
-
-PUBLIC StaraBoja
-StarBoja:=SETCOLOR()
-
+PUBLIC StaraBoja := SETCOLOR()
 public System:=.f.
 public gGlBaza:=""
 public gSQL
 public gSqlLogBase
-
 PUBLIC  Invert:="N/W,R/N+,,,R/B+"
 PUBLIC  Normal:="GR+/N,R/N+,,,N/W"
 PUBLIC  Blink:="R****/W,W/B,,,W/RB"
 PUBLIC  Nevid:="W/W,N/N"
 PUBLIC gVeryBusyInterval
-
-PUBLIC gKonvertPath
-
-gKonvertPath:=IzFmkIni('FMK','KonvertPath','N', EXEPATH )
-
-PUBLIC gSifk
-gSifk:=.t.
-
+PUBLIC gKonvertPath := "N"
+PUBLIC gSifk := .t.
 PUBLIC gHostOS
+
 #ifdef __WINDOWS
-gHostOS:="Linux"
+    gHostOS:="Linux"
 #else
-gHostOS:="WindowsXP"
+    gHostOS:="WindowsXP"
 #endif
 
 public cBteksta
 public cBokvira
 public cBnaslova
 public cBshema:="B1"
-public gCekaScreenSaver
-
-gCekaScreenSaver:=VAL(IzFMKINI("SCREENSAVER","CekajMinuta","5"))
-
+public gCekaScreenSaver := 5
 // ne koristi lokale
 public gLokal:="0"
-
 // pdf stampa
 public gPDFPrint := "N"
 public gPDFPAuto := "D"
 public gPDFViewer := SPACE(150)
 public gDefPrinter := SPACE(150)
-
-// windows parametri
-public gOOPath := PADR("c:\Program Files\OpenOffice.org 3\program\", 200)
-public gOOWriter := PADR("swriter.exe", 100)
-public gOOSpread := PADR("scalc.exe", 100)
-public gJavaPath := SPACE(200)
-public gJavaStart := PADR("java -Xmx128m -jar",200)
-public gJODRep := PADR("c:\bout\java\jodrep.jar", 200)
-public gJODTemplate := PADR("c:\", 200)
 
 return
 
@@ -151,31 +111,29 @@ function set_global_vars_0_prije_prijave(fSve)
 
 local cImeDbf
 
-if fsve==nil
-  fSve:=.t.
+if fsve == nil
+    fSve := .t.
 endif
 
 if fSve
-public gSezonDir:=""
-public gRadnoPodr:="RADP"
-public ImeKorisn:="" 
-public SifraKorisn:=""
-public KLevel:="9"
+    public gSezonDir:=""
+    public gRadnoPodr:="RADP"
+    public ImeKorisn:="" 
+    public SifraKorisn:=""
+    public KLevel:="9"
+    public gPTKONV:="0 "
+    public gPicSif:="V", gcDirekt:="V", gShemaVF:="B5", gSKSif:="D"
 
-public gPTKONV:="0 "
-public gPicSif:="V", gcDirekt:="V", gShemaVF:="B5", gSKSif:="D"
+    //public gPFont:="Arial"
 
-//public gPFont:="Arial"
+    public gKodnaS:="8"
+    public gWord97:="N"
+    public g50f:=" "
 
-public gKodnaS:="8"
-public gWord97:="N"
-public g50f:=" "
-
-endif // fsve
+endif 
 
 public gKesiraj:="N" // ako je mrezni dir kesiraj na C,D
 public gFKolor:="D"
-
 
 O_GPARAMS
 private cSection:="1",cHistory:=" "; aHistory:={}
@@ -196,13 +154,6 @@ if fsve
   Rpar("pV",@gPDFViewer)
   Rpar("pA",@gPDFPAuto)
   Rpar("dP",@gDefPrinter)
-  Rpar("oP",@gOOPath)
-  Rpar("oW",@gOOWriter)
-  Rpar("oS",@gOOSpread)
-  Rpar("oJ",@gJavaPath)
-  Rpar("jS",@gJavaStart)
-  Rpar("jR",@gJODRep)
-  Rpar("jT",@gJODTemplate)
 endif
 
 Rpar("FK",@gFKolor)
@@ -215,13 +166,10 @@ return nil
 
 
 
-/* \fn SetScGVar2(()
- * \fn postavljanje varijabli koje traze setovane *PATH varijable Db-a
- */
 function set_global_vars_0_nakon_prijave()
-
-gSql:=IzFmkIni("Svi", "SQLLog", "N", KUMPATH)
-gSqlLogBase:=IzFmkIni("SQL","SQLLogBase", ToUnix("c:\sigma"), EXEPATH)
+gSql := "N"
+gSqlLogBase:=""
+return
 
 
 
@@ -304,109 +252,22 @@ function IniPrinter()
 // postavi shift F2 kao hotkey
 
 if gModul $ "EPDV"
-	public gPrinter := "R"
+	gPrinter := "R"
 else
-   	public gPrinter := "E"
+   	gPrinter := "E"
 endif
 
-init_epson_print_codes()
-
-public gMeniSif := .f.
-public gValIz := "280 "
-public gValU := "000 "
-public gKurs := "1"
-
-if file(ToUnix("\gparams.dbf"))
-
-O_GPARAMS
-O_PARAMS
-
-private cSection:="1",cHistory:=" "
-aHistory:={}
-
-RPar("px",@gPrinter)
-RPar("vi",@gValIz)
-RPar("vu",@gValU)
-RPar("vk",@gKurs)
-select params
-use
-
-select gParams
-private cSection:="P", cHistory := gPrinter
-aHistory:={}
-
-RPar_Printer()
-
-/// EPSON STAMPACI
-private cSection:="P", cHistory:="E"
-aHistory:={}
-
-gPINI:="xx"
-cPom:="xx"
-RPAR("01",@cPom)
-if cPom=="xx"
-    WPar_Printer()
+if gPrinter == "R"
+    PtxtSekvence()
+else
+    init_epson_print_codes()
 endif
 
-// HP STAMPACI  
-private cSection:="P", cHistory:="H"
-aHistory:={}
-
-cPom:="xx"
-RPAR("01",@cPom)
-if cPom=="xx"
-    InigHP()   
-    WPar_Printer()
+if gPicSif == "8"
+    SETKEY( K_CTRL_F2, {|| PPrint()} )
+else
+    SETKEY( K_SH_F2, {|| PPrint()} )
 endif
-
-/// ZA POS, stampac tipa 0 !!!!  
-private cSection:="P",cHistory:="0"; aHistory:={}
-gPINI:="xx"
-RPAR("01",@gPINI)
-if gPINI=="xx"
-    WPAR("01","")
-    WPAR("02","")
-    WPAR("03","")
-    WPAR("04","")
-    WPAR("05","")
-    WPAR("06","")
-    WPAR("07","")
-    WPAR("08","")
-    WPAR("09","")
-    WPAR("10","")
-    WPAR("11","")
-    WPAR("12","")
-    WPAR("13","")
-
-    WPAR("14","")
-    WPAR("15","")
-    WPAR("16","")
-    WPAR("17","")
-
-    WPAR("PP","1")
-endif
-
-
-private cSection:="P",cHistory:=gPrinter; aHistory:={}
-gPINI:=""
-RPAR("01",@gPINI)
-
-
-select gParams; use
-
-endif // postoji gparams
-
-IF !EMPTY(gPPTK)
-    SetGParams("1"," ","pt","gPTKonv",gPPTK)
-ENDIF
-
-release cSection,cHistory,aHistory
-
-IF gPicSif=="8"
-    SETKEY(K_CTRL_F2,{|| PPrint()})
-ELSE
-    SETKEY(K_SH_F2,{|| PPrint()})
-ENDIF
 
 return
 
@@ -415,6 +276,6 @@ return
 // FMK_LIB_VER - defined in fmk.ch
 // ---------------------------------
 function fmklibver()
-
 return FMK_LIB_VER
+
 

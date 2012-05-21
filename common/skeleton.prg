@@ -14,37 +14,17 @@
 #include "achoice.ch"
 #include "fileio.ch"
 
-/*
-    Inicijalizacija systema, bazne funkcije
-    prebaciti u potpunosti na objektni model (ionako se koristi oApp)
-*/
-
-/* SC_START(oApp, lSezone)
- */
 
 
-*string FmkIni_ExePath_FMK_ReadOnly;
-
-/*! \var *string FmkIni_ExePath_FMK_ReadOnly
- *  \param D-baza ce se otvoriti u readonly rezimu, N-tekuca vrijednost
- *  \note postavlja vrijednost globalne var. gReadOnly
- *  \sa SC_START,gReadOnly
- */
-
-
-/* SC_START(oApp, lSezone)
- * Inicijalizacija sclib sistema
- *
- */
 function SC_START(oApp, lSezone)
 local cImeDbf
 local _i
 public gAppSrv
 
 if !oApp:lStarted  
-  RDDSETDEFAULT( RDDENGINE )
-  ? "startujem oApp:db()"
-  oApp:initdb()
+    RDDSETDEFAULT( RDDENGINE )
+    ? "startujem oApp:db()"
+    oApp:initdb()
 endif
 
 SetgaSDbfs()
@@ -54,83 +34,74 @@ set_global_vars_0()
 gModul   := oApp:cName
 gVerzija := oApp:cVerzija
 
-gAppSrv:=.f.
+gAppSrv := .f.
 
 if mpar37("/APPSRV", oApp)
-  ? "Pokrecem App Serv ..."
-  gAppSrv:=.t.
+    ? "Pokrecem App Serv ..."
+    gAppSrv := .t.
 endif
 
 SetNaslov(oApp)
 
 oApp:oDatabase:lAdmin:=.t.
+
 CreGParam()
 
 set_global_vars_0_prije_prijave()
 
 // inicijalizacija, prijava
-InitE(oApp)
+InitE( oApp )
 
 set_global_vars_0_nakon_prijave()
+
 if oApp:lTerminate
-  return
+    return
 endif
 
 oApp:oDatabase:setgaDbfs()
 
 oApp:oDatabase:install()
 
-
 KonvTable()
 
 if lSezone
-  oApp:oDatabase:loadSezonaRadimUSezona()
-        if gAppSrv
-    ? "Pokrecem App Serv ..."
-    oApp:setGVars()
-    gAppSrv:=.t.
-    oApp:srv()
-  endif
+    oApp:oDatabase:loadSezonaRadimUSezona()
+    if gAppSrv
+        ? "Pokrecem App Serv ..."
+        oApp:setGVars()
+        gAppSrv:=.t.
+        oApp:srv()
+    endif
     oApp:oDatabase:radiUSezonskomPodrucju(mpar37("/XN",oApp))
-  gProcPrenos:="D"
-
+    gProcPrenos:="D"
 else
-        if gAppSrv
-    cPars:=mparstring(oApp)
-    cKom:="{|| RunAppSrv("+cPars+")}"
-    ? "Pokrecem App Serv ..."
-    gAppSrv:=.t.
-    oApp:SetGVars()
-    Eval(&cKom)
-  endif
-
+    if gAppSrv
+        cPars:=mparstring(oApp)
+        cKom:="{|| RunAppSrv("+cPars+")}"
+        ? "Pokrecem App Serv ..."
+        gAppSrv:=.t.
+        oApp:SetGVars()
+        Eval(&cKom)
+    endif
 endif 
 
 // epoha je u stvari 1999, 2000 itd
 SET EPOCH TO 1960  
+
 IniPrinter()
-JelReadOnly()
 
 if (lSezone .and. mpar37("/XN",oApp))
-        SetOznNoGod()
+    SetOznNoGod()
 endif
 
-gReadOnly:=(IzFmkIni("FMK","ReadOnly","N")=="D")
+gReadOnly := .f.
 
 SET EXCLUSIVE OFF
 
 //Setuj globalne varijable varijable modula 
 oApp:setGVars()
 
-
-oApp:oDataBase:setSigmaBD(IzFmkIni("Svi","SigmaBD","c:"+SLASH+"sigma",EXEPATH))
-
-//if (gSecurity=="D")
-  //AddSecgaSDBFs()
-  //LoginScreen()
-  //ShowUser()
-  //public nUser:=GetUserID()
-//endif
+oApp:oDataBase:setSigmaBD( IzFmkIni("Svi","SigmaBD","c:"+SLASH+"sigma",EXEPATH) )
 
 return
 
@@ -144,6 +115,7 @@ RDDSETDEFAULT(RDDENGINE)
 
 set exclusive on
 oApp:oDatabase:lAdmin:=.t.
+
 @ 10,30 SAY ""
 
 CreSystemDB()
@@ -161,12 +133,12 @@ if Pitanje(,"Izvrsiti instalaciju fajlova (D/N) ?","N")=="D"
     oApp:oDatabase:kreiraj()
 endif
 
-gPrinter:="R"
-
+gPrinter := "R"
 init_epson_print_codes()
 
 O_GPARAMS
 O_PARAMS
+
 gMeniSif:=.f.
 gValIz:="280 "
 gValU:="000 "
@@ -175,10 +147,12 @@ gKurs:="1"
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
+
 RPar("px",@gPrinter)
 RPar("vi",@gValIz)
 RPar("vu",@gValU)
 RPar("vk",@gKurs)
+
 select params
 use
 
@@ -186,6 +160,7 @@ select gparams
 private cSection:="P"
 private cHistory:=gPrinter
 private aHistory:={}
+
 RPar_Printer()
 
 gPTKONV:="0"
@@ -195,6 +170,7 @@ gSKSif:="D"
 gPFont:="Arial"
 
 private cSection:="1", cHistory:=" "; aHistory:={}
+
 Rpar("pt",@gPTKonv)
 Rpar("pS",@gPicSif)
 Rpar("SK",@gSKSif)
@@ -211,7 +187,6 @@ IBatchRun(oApp)
 
 @ 10,30 SAY ""
 oApp:oDatabase:mInstall()
-
 
 return
 

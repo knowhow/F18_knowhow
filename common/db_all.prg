@@ -432,14 +432,6 @@ endif
 
 return
 
-function JelReadOnly()
-IF !( "U" $ TYPE("gGlBaza") )
-	IF !EMPTY(gGlBaza)
-      			gReadOnly := ( FILEATTR(ToUnix(cDirRad+SLASH+gGlBaza))==1 )
-    ENDIF
-ENDIF
-return nil
-
 
 function CheckROnly( cFileName )
 if FILEATTR(cFileName) == 1 

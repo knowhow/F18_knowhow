@@ -117,13 +117,9 @@ DO CASE
         // sa epson kodovima
 
         #ifdef __PLATFORM__WINDOWS
-
             direct_print_windows( f_name, _port )
-
         #else
-
             direct_print_unix( f_name, _port )        
-
         #endif
 
     OTHERWISE
@@ -380,7 +376,6 @@ return ""
 // ----------------------------------------
 // ---------------------------------------
 function gPFF()
-
 qqout( hb_eol() + gPFF)
 setprc(0,0)
 return ""
@@ -389,7 +384,6 @@ return ""
 // ----------------------------------------
 // ---------------------------------------
 function gpO_Port()
-
 qqout(gPO_Port)
 return ""
 
@@ -397,7 +391,6 @@ return ""
 // ----------------------------------------
 // ---------------------------------------
 function gpO_Land()
-
 qqout(gPO_Land)
 return ""
 
@@ -405,7 +398,6 @@ return ""
 // ----------------------------------------
 // ---------------------------------------
 function gRPL_Normal()
-
 Setpxlat()
 qqout(gRPL_Normal)
 konvtable(iif(gPrinter="R",.t.,NIL))
@@ -415,38 +407,15 @@ return ""
 // ----------------------------------------
 // ---------------------------------------
 function gRPL_Gusto()
-
 Setpxlat()
 qqout(gRPL_Gusto)
 konvtable(iif(gPrinter="R",.t.,NIL))
 return ""
 
 
-
-// ----------------------------------------
-// ---------------------------------------
-function CurToExtBase(ccExt)
- 
-LOCAL nArr:=SELECT()
-  PRIVATE cFilter:=DBFILTER()
-  copy structure extended to struct
-  SELECT 0
-  create ("TEMP") from struct
-  IF !EMPTY(cFilter)
-    APPEND FROM (ALIAS(nArr)) FOR &cFilter
-  ELSE
-    APPEND FROM (ALIAS(nArr))
-  ENDIF
-  USE
-  COPY FILE ("TEMP.DBF") TO (ccExt)
- SELECT (nArr)
-return
-
-
 // ----------------------------------------
 // ---------------------------------------
 function RPar_Printer()
-
 RPAR("01",@gPINI)
 RPAR("02",@gPCOND)
 RPAR("03",@gPCOND2)
@@ -470,7 +439,6 @@ if empty(gPPort)
 endif
 RPar("r-",@gPStranica)
 RPar("pt",@gPPTK)
-
 return
 
 
@@ -490,17 +458,13 @@ WPAR("10",gPRESET)
 WPAR("11",gPFF)
 WPAR("12",gPU_ON)
 WPAR("13",gPU_OFF)
-
 WPAR("14",gPO_Port)
 WPAR("15",gPO_Land)
 WPAR("16",gRPL_Normal)
 WPAR("17",gRPL_Gusto)
-
 WPAR("PP",gPPort)
-
 WPar("r-",gPStranica)
 WPar("pt",gPPTK)
-
 return
 
 
@@ -509,49 +473,49 @@ return
 // Inicijaliziraj globalne varijable za Epson stampace (matricne) ESC/P2
 // ----------------------------------------------------------------------------
 function init_epson_print_codes()
-public gPIni:=""
-public gPCond:="P"
-public gPCond2:="M"
-public gP10CPI:="P"
-public gP12CPI:="M"
-public gPB_ON:="G"
-public gPB_OFF:="H"
-public gPI_ON:="4"
-public gPI_OFF:="5"
-public gPU_ON:="-1"
-public gPU_OFF:="-0"
-public gPPort:="1"
-public gPStranica:=0
-public gPPTK:="  "
-public gPO_Port:=""
-public gPO_Land:=""
+public gPIni := ""
+public gPCond := "P"
+public gPCond2 := "M"
+public gP10CPI := "P"
+public gP12CPI := "M"
+public gPB_ON := "G"
+public gPB_OFF := "H"
+public gPI_ON := "4"
+public gPI_OFF := "5"
+public gPU_ON := "-1"
+public gPU_OFF := "-0"
+public gPPort := "1"
+public gPStranica := 0
+public gPPTK := "  "
+public gPO_Port := ""
+public gPO_Land := ""
 public gRPL_Normal := "0"
-public gRPL_Gusto  := "3"+CHR(24)
-public gPReset:=""
-public gPFF:=Chr(12)  
+public gRPL_Gusto := "3" + CHR(24)
+public gPReset := ""
+public gPFF := Chr(12)  
 return
 
 
 // ----------------------------------------
 // ---------------------------------------
 function InigHP()
-public gPINI:=  Chr(27)+"(17U(s4099T&l66F"
-public gPCond:= Chr(27)+"(s4102T(s18H"
-public gPCond2:=Chr(27)+"(s4102T(s22H"
-public gP10CPI:=Chr(27)+"(s4099T(s10H"
-public gP12CPI:=Chr(27)+"(s4099T(s12H"
-public gPB_ON:= Chr(27)+"(s3B"
-public gPB_OFF:=Chr(27)+"(s0B"
-public gPI_ON:=Chr(27)+"(s1S"
-public gPI_OFF:=Chr(27)+"(s0S"
-public gPU_ON:=Chr(27)+"&d0D"
-public gPU_OFF:=Chr(27)+"&d@"
-public gPRESET:=""
-public gPFF:=CHR(12)
-public gPO_Port:= "&l0O"
-public gPO_Land:= "&l1O"
-public gRPL_Normal:="&l6D&a3L"
-public gRPL_Gusto :="&l8D(s12H&a6L"
+public gPINI := Chr(27)+"(17U(s4099T&l66F"
+public gPCond := Chr(27)+"(s4102T(s18H"
+public gPCond2 := Chr(27)+"(s4102T(s22H"
+public gP10CPI := Chr(27)+"(s4099T(s10H"
+public gP12CPI := Chr(27)+"(s4099T(s12H"
+public gPB_ON := Chr(27)+"(s3B"
+public gPB_OFF := Chr(27)+"(s0B"
+public gPI_ON := Chr(27)+"(s1S"
+public gPI_OFF := Chr(27)+"(s0S"
+public gPU_ON := Chr(27)+"&d0D"
+public gPU_OFF := Chr(27)+"&d@"
+public gPRESET := ""
+public gPFF := CHR(12)
+public gPO_Port := "&l0O"
+public gPO_Land := "&l1O"
+public gRPL_Normal := "&l6D&a3L"
+public gRPL_Gusto := "&l8D(s12H&a6L"
 return
 
 
@@ -575,40 +539,54 @@ gPO_Port    := GetPStr( gPO_Port    )
 gPO_Land    := GetPStr( gPO_Land    )
 gRPL_Normal := GetPStr( gRPL_Normal )
 gRPL_Gusto  := GetPStr( gRPL_Gusto  )
-
 return
+
 
 // ----------------------------------------
 // ----------------------------------------
 function SetGParams(cs ,ch ,cid ,cvar     ,cval)
 local cPosebno:="N"
 private GetList:={}
+
 PushWa()
- private cSection:=cs, cHistory:=ch; aHistory:={}
- // ----------------------------------------------------------
- // TODO: cPosebno vazi samo za cSection "1" i cHistory " " ?!
- // ----------------------------------------------------------
- select (F_PARAMS);USE
- O_PARAMS
- RPar("p?",@cPosebno)
- select params; use
- if cPosebno=="D" .and. !file(PRIVPATH+"gparams.dbf")
-   cScr:=""; save screen to cscr
-   CopySve("gpara*.*",SLASH,PRIVPATH); restore screen from cScr
- endif
- if cPosebno=="D"
-   select (F_GPARAMSP)
-   use
-   O_GPARAMSP
- else
-   select (F_GPARAMS)
-   use
-   O_GPARAMS
- endif
- &cVar:=cVal
- Wpar(cId,&cVar)
- KonvTable()
- select gparams
- use
+ 
+private cSection := cs
+private cHistory := ch
+private aHistory := {}
+
+// ----------------------------------------------------------
+// TODO: cPosebno vazi samo za cSection "1" i cHistory " " ?!
+// ----------------------------------------------------------
+select (F_PARAMS)
+USE
+O_PARAMS
+RPar("p?",@cPosebno)
+select params
+use
+ 
+if cPosebno=="D" .and. !file( my_home() + "gparams.dbf" )
+    cScr := ""
+    save screen to cscr
+    CopySve( "gpara*.*", SLASH, my_home() )
+    restore screen from cScr
+endif
+ 
+if cPosebno=="D"
+    select (F_GPARAMSP)
+    use
+    O_GPARAMSP
+else
+    select (F_GPARAMS)
+    use
+    O_GPARAMS
+endif
+ 
+&cVar:=cVal
+Wpar(cId,&cVar)
+KonvTable()
+select gparams
+use
 PopWa()
 return
+
+

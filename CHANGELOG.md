@@ -1,6 +1,7 @@
 1.0.36 2012-05-21, vsasa
 
   - direktna štampa na epson štampače [#28072](http://redmine.bring.out.ba/issues/28072)
+  - fin, kontrola zbira [#25823](http://redmine.bring.out.ba/issues/25823)
  
 1.0.35 2012-05-18, vsasa
 

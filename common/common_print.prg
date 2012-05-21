@@ -15,7 +15,7 @@
 function f18_start_print(f_name, print_opt, document_name)
 
 if print_opt == NIL
-  print_opt := "V"
+    print_opt := "V"
 endif
 
 set_print_f_name(@f_name)
@@ -25,21 +25,25 @@ read_printer_params()
 PtxtSekvence()
 
 if (document_name == nil)
-  document_name :=  gModul + '_' + DTOC(DATE()) 
+    document_name :=  gModul + '_' + DTOC(DATE()) 
 endif
 
 if print_opt != "D"
-   // D - dummy
 
-   // vraca prazan string u slucaju <ESC>
-   print_opt :=IzlazPrn(print_opt)
+    // D - dummy
+    // vraca prazan string u slucaju <ESC>
+    print_opt := print_dialog_box( print_opt )
+
 endif
 
-if empty(print_opt) 
-   return ""
+if EMPTY( print_opt ) 
+    return ""
 endif
 
-private GetList:={}
+// setuj print kodove
+set_print_codes( print_opt )
+
+private GetList := {}
 
 MsgO("Priprema izvjestaja...")
 
@@ -51,21 +55,45 @@ set device to printer
 
 set printer to (f_name)
 set printer on
-GpIni(document_name)
+
+GpIni( document_name )
 
 return print_opt
 
-// ----------------------------------------
-// ----------------------------------------
-function f18_end_print(f_name, print_opt)
 
-local _cmd
+// --------------------------------------------------------
+// setuje ispravne print kodove kod stampe dokumenta
+// --------------------------------------------------------
+static function set_print_codes( print_opt )
+
+do case
+
+    case print_opt == "E"
+
+        gPrinter := "E"
+        init_epson_print_codes()
+
+    otherwise
+
+        gPrinter := "R"
+        PtxtSekvence()
+
+endcase
+
+return
+
+
+
+// ----------------------------------------
+// ----------------------------------------
+function f18_end_print( f_name, print_opt )
+local _cmd := ""
 
 if print_opt == NIL
-   print_opt := "V"
+    print_opt := "V"
 endif
 
-set_print_f_name(@f_name)
+set_print_f_name( @f_name )
 
 SET DEVICE TO SCREEN
 set printer off
@@ -78,38 +106,61 @@ Tone(440, 2)
 MsgC()
 
 DO CASE
+    
+    CASE print_opt == "D"
+        // dummy ne printaj nista
 
-   CASE print_opt == "D"
-      // dummy ne printaj nista
-	
-   OTHERWISE
-       // TODO: treba li f18_editor parametrizirati ?!   
-       _cmd := "f18_editor " + f_name
+    CASE print_opt == "E"
 
-// #27234
-#ifdef __PLATFORM__UNIX
-       close all
-#endif
-       hb_run (_cmd) 
+        //DirChange( my_home() )
+        
+        // printanje direktno na lpt port
+        // epson kodovi
+        #ifdef __PLATFORM__WINDOWS
 
+            _cmd := "copy " + f_name + " > LPT1"
+	        hb_run( _cmd )
+
+        #else
+        
+            _cmd := "lpr " + f_name
+	        hb_run( _cmd )
+
+        #endif
+
+    OTHERWISE
+
+        // TODO: treba li f18_editor parametrizirati ?!   
+        _cmd := "f18_editor " + f_name
+
+        // #27234
+        #ifdef __PLATFORM__UNIX
+            close all
+        #endif
+
+        hb_run (_cmd) 
 
 END CASE
 
 return
 
+
+
 static function set_print_f_name(f_name)
 
-    if f_name == NIL
-       f_name := "outf.txt"
+if f_name == NIL
+    f_name := "outf.txt"
 
-        // jos nije setovan my_home()
-        if my_home() == NIL
-           f_name := my_home_root() + f_name
-        else
-           f_name := my_home() + f_name
-        endif
+    // jos nije setovan my_home()
+    if my_home() == NIL
+        f_name := my_home_root() + f_name
+    else
+        f_name := my_home() + f_name
     endif
+endif
+
 return f_name
+
 
 
 // -----------------------------------------------------------
@@ -126,18 +177,18 @@ return
 // izbaci ini seqvencu za printer
 //  * posalji i docname 
 // ----------------------------------------
-function GpIni(document_name)
+function GpIni( document_name )
 
-if document_name == nil .or. gPrinter<>"R"
- document_name := ""
+if document_name == nil .or. gPrinter <> "R"
+    document_name := ""
 endif
 
 Setpxlat()
 
-QQOUT(gPini)
+QQOUT( gPini )
 
-if !empty(document_name)
- qqout("#%DOCNA#" + document_name)
+if !EMPTY(document_name)
+    QQOUT( "#%DOCNA#" + document_name )
 endif
 
 return 
@@ -380,10 +431,10 @@ return
 
 
 
-/*! \fn InigEpson()
- *  \brief Inicijaliziraj globalne varijable za Epson stampace (matricne) ESC/P2
- */
-function InigEpson()
+// ----------------------------------------------------------------------------
+// Inicijaliziraj globalne varijable za Epson stampace (matricne) ESC/P2
+// ----------------------------------------------------------------------------
+function init_epson_print_codes()
 public gPIni:=""
 public gPCond:="P"
 public gPCond2:="M"
@@ -403,8 +454,7 @@ public gPO_Land:=""
 public gRPL_Normal := "0"
 public gRPL_Gusto  := "3"+CHR(24)
 public gPReset:=""
-public gPFF:=Chr(12)
-  
+public gPFF:=Chr(12)  
 return
 
 
@@ -422,15 +472,12 @@ public gPI_ON:=Chr(27)+"(s1S"
 public gPI_OFF:=Chr(27)+"(s0S"
 public gPU_ON:=Chr(27)+"&d0D"
 public gPU_OFF:=Chr(27)+"&d@"
-
 public gPRESET:=""
 public gPFF:=CHR(12)
-
 public gPO_Port:= "&l0O"
 public gPO_Land:= "&l1O"
 public gRPL_Normal:="&l6D&a3L"
 public gRPL_Gusto :="&l8D(s12H&a6L"
-
 return
 
 

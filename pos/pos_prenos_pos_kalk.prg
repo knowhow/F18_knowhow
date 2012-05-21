@@ -297,7 +297,7 @@ local nD2
 // inicijalizuj port za stampu i sekvence stampaca (EPSON)
 // radi globalnih varijabli
 private gPPort:="8"
-InigEpson()
+init_epson_print_codes()
 
 nD1 := LEN(cDate1)
 nD2 := LEN(cDate2)
@@ -338,7 +338,7 @@ local nD2
 // inicijalizuj port za stampu i sekvence stampaca (EPSON)
 // radi globalnih varijabli
 private gPPort:="8"
-InigEpson()
+init_epson_print_codes()
 
 nD1 := LEN(cDate1)
 nD2 := LEN(cDate2)

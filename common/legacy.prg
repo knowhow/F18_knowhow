@@ -142,7 +142,7 @@ cOutfTXT:=IzFMKIni('Printeri', 'DirektnoOUTFTXT','N')
 
 if !(lUFajl)
 
-	cDirekt:=IzlazPrn(cDirekt)
+	cDirekt:=print_dialog_box(cDirekt)
 	cKom:="LPT"+gPPort
 
 	if cDirekt = "R"
@@ -161,18 +161,18 @@ if !(lUFajl)
 		PtxtSekvence()
 	endif
 
-        // transformisi cKom varijablu za portove > 4
-        GPPortTransform(@cKom)
+    // transformisi cKom varijablu za portove > 4
+    GPPortTransform(@cKom)
 
 	set confirm on
 
 else
-	cDirekt:="V"
+	cDirekt := "V"
 endif
 
 cPrinter := cDirekt
 
-if cDirekt=="D" .and. gPrinter<>"R" .and. gPrinter<>"G" .and. cOutfTxt<>"D"
+if cDirekt=="D" .and. gPrinter <> "R" .and. gPrinter <> "G" .and. cOutfTxt <> "D"
 	do while .t.
 		if InRange(VAL(gPPort),5,7)  .or. ;
 		   (val(gPPort)=8 ) .or. ;

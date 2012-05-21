@@ -140,31 +140,30 @@ return
 
 function ISC_START(oApp, lSezone)
 
-
 RDDSETDEFAULT(RDDENGINE)
 
 set exclusive on
 oApp:oDatabase:lAdmin:=.t.
 @ 10,30 SAY ""
 
-//SetDirs(oApp)
 CreSystemDB()
     
 set_global_vars_0_nakon_prijave(.f.)
-
-//IniGparam2(.f.)
 
 oApp:oDatabase:loadSezonaRadimUSezona()
 oApp:oDatabase:radiUSezonskomPodrucju()
   
 oApp:setGVars()
+
 @ 10,20 SAY ""
+
 if Pitanje(,"Izvrsiti instalaciju fajlova (D/N) ?","N")=="D"
     oApp:oDatabase:kreiraj()
 endif
 
 gPrinter:="R"
-InigEpson()
+
+init_epson_print_codes()
 
 O_GPARAMS
 O_PARAMS

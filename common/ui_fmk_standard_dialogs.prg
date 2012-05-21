@@ -116,54 +116,57 @@ SET(_SET_DEVICE,cPom)
 return cOdg
 
 
+
+
 // ----------------------------
-//  IzlazPrn(cDirekt)
+//  print_dialog_box(cDirekt)
 //  \param cDirekt
-// ----------------------------
- 
-function IzlazPrn(cDirekt)
+// ---------------------------- 
+function print_dialog_box( cDirekt )
+
 if gAppSrv
 	return cDirekt
 endif
 
 set confirm off
 set cursor on
+
 if !gAppSrv
-	cDirekt := UpitPrinter(@cDirekt)
+	cDirekt := select_print_mode( @cDirekt )
 endif
 
 return cDirekt
 
 
 
-/*! \fn UpitPrinter(cDirekt)
- *  \brief
- *  \param cDirekt   
- */
- 
-function UpitPrinter(cDirekt)
-
+function select_print_mode( cDirekt )
 local nWidth
 
 nWidth:=35
    
 Tone(400,2)
+
 // radi pozicioniranja dijaloga na sredinu ekrana
-m_x:=8
-m_y:=38-ROUND(nWidth/2,0)
+m_x := 8
+m_y := 38 - ROUND( nWidth / 2, 0 ) 
+
 @ m_x, m_y SAY ""
 
 if gcDirekt <> "B"
 
-    Box(,6,nWidth)
-	@ m_x+1,m_y+2 SAY "   Izlaz direktno na printer:" GET cDirekt ;
+    Box(, 6, nWidth )
+
+	    @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt ;
 			pict "@!" valid cDirekt $ "DNERV"
 
-	@ m_x+2,m_y+2 SAY "----------------------------------" 
-	@ m_x+4,m_y+2 SAY "V - prikaz izvjestaja u editoru"
-	@ m_x+5,m_y+2 SAY "R - direktna stampa"
-	@ m_x+6,m_y+2 SAY "---------- O P C I J E -----------"
-	read
+	    @ m_x + 2, m_y + 2 SAY "----------------------------------" 
+	    @ m_x + 3, m_y + 2 SAY "E - direktna stampa na LPT1"
+	    @ m_x + 4, m_y + 2 SAY "V - prikaz izvjestaja u editoru"
+	    @ m_x + 5, m_y + 2 SAY "R - ptxt stampa"
+	    @ m_x + 6, m_y + 2 SAY "---------- O P C I J E -----------"
+
+	    read
+
     BoxC()
 
     if LASTKEY() == K_ESC
@@ -171,6 +174,7 @@ if gcDirekt <> "B"
     else
         return cDirekt
     endif
+
 else
 
 	Box (, 3, 60)
@@ -183,6 +187,7 @@ else
 
 endif
 
+return
 
 
 /*! \fn GetLozinka(nSiflen)

@@ -300,22 +300,21 @@ return
 // ------------------------------------
 // ------------------------------------
 function IniPrinter()
-
-*
-* procitaj gPrinter, gpini, itd..
-* postavi shift F2 kao hotkey
+// procitaj gPrinter, gpini, itd..
+// postavi shift F2 kao hotkey
 
 if gModul $ "EPDV"
 	public gPrinter := "R"
-elseif gModul $ "TOPS#HOPS"
-   	public gPrinter:="0"
 else
-   	public gPrinter:="R"
+   	public gPrinter := "E"
 endif
 
-InigEpson()
+init_epson_print_codes()
 
-public gMeniSif:=.f., gValIz:="280 ", gValU:="000 ", gKurs:="1"
+public gMeniSif := .f.
+public gValIz := "280 "
+public gValU := "000 "
+public gKurs := "1"
 
 if file(ToUnix("\gparams.dbf"))
 
@@ -398,18 +397,19 @@ select gParams; use
 endif // postoji gparams
 
 IF !EMPTY(gPPTK)
-  SetGParams("1"," ","pt","gPTKonv",gPPTK)
+    SetGParams("1"," ","pt","gPTKonv",gPPTK)
 ENDIF
 
 release cSection,cHistory,aHistory
 
 IF gPicSif=="8"
-  SETKEY(K_CTRL_F2,{|| PPrint()})
+    SETKEY(K_CTRL_F2,{|| PPrint()})
 ELSE
-  SETKEY(K_SH_F2,{|| PPrint()})
+    SETKEY(K_SH_F2,{|| PPrint()})
 ENDIF
 
 return
+
 
 // ---------------------------------
 // FMK_LIB_VER - defined in fmk.ch

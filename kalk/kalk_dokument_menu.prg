@@ -69,7 +69,7 @@ IF IsPlanika()
     endif
 endif
 
-AADD(opc,"4. pregled smeca ")
+AADD(_opc,"4. pregled smeca ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","SMECEPREGLED"))
     AADD(_opcexe, {|| Pripr9View()})
 else

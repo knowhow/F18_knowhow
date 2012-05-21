@@ -47,6 +47,7 @@ local _opcexe:={}
 local _izbor := 1
 
 AADD(_opc,"1. povrat dokumenta u pripremu")
+
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
     AADD(_opcexe, {|| Povrat_kalk_dokumenta()})
 else
@@ -71,7 +72,7 @@ endif
 
 AADD(_opc,"4. pregled smeca ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","SMECEPREGLED"))
-    AADD(_opcexe, {|| Pripr9View()})
+    AADD(_opcexe, {|| kalk_pripr9view() })
 else
     AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif

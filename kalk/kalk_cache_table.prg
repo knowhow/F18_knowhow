@@ -17,7 +17,7 @@
 // ----------------------------------------
 function cre_cache()
 local aFld := {}
-local cTbl := PRIVPATH + SLASH + "CACHE.DBF"
+local cTbl := "cache.dbf"
 
 AADD( aFld, { "idkonto", "C", 7, 0 } )
 AADD( aFld, { "idroba", "C", 10, 0 } )
@@ -147,11 +147,6 @@ static function _g_kto( cMList, cPList, dDatGen, cAppendSif, ;
 local GetList:={}
 local nTArea := SELECT()
 
-O_PARAMS
-private cSection := "Q"
-private cHistory := " "
-private aHistory:={}
-
 cMList := PADR("1310;13101;", 250)
 cPList := PADR("1320;", 250)
 dDatGen := DATE()
@@ -159,11 +154,12 @@ cAppendSif := "D"
 nT_kol := 100.00
 nT_ncproc := 17.00
 
-RPar("mk", @cMList)
-RPar("pk", @cPList)
-RPar("as", @cAppendSif)
-RPar("np", @nT_ncproc)
-RPar("nk", @nT_kol)
+cMList := fetch_metric( "kalk_import_txt_magacin_konta", my_user(), cMList )
+cPList := fetch_metric( "kalk_import_txt_prodavnica_konta", my_user(), cPList )
+cAppendSif := fetch_metric( "kalk_import_txt_dodaj_sifru", my_user(), cAppendSif )
+nT_ncproc := fetch_metric( "kalk_import_txt_def_procenat", my_user(), nT_ncproc )
+nT_kol := fetch_metric( "kalk_import_txt_def_kolicina", my_user(), nT_kol )
+dDatGen := fetch_metric( "kalk_import_txt_datum", my_user(), dDatgen )
 
 cMList := PADR( cMList, 250 )
 cPList := PADR( cPList, 250 )
@@ -193,12 +189,12 @@ if LastKey() == K_ESC
 	return 0
 endif
 
-WPar("mk", cMList)
-WPar("pk", cPList)
-WPar("dg", dDatGen)
-WPar("as", cAppendSif)
-WPar("np", nT_ncproc)
-WPar("nk", nT_kol)
+set_metric( "kalk_import_txt_magacin_konta", my_user(), cMList )
+set_metric( "kalk_import_txt_prodavnica_konta", my_user(), cPList )
+set_metric( "kalk_import_txt_dodaj_sifru", my_user(), cAppendSif )
+set_metric( "kalk_import_txt_def_procenat", my_user(), nT_ncproc )
+set_metric( "kalk_import_txt_def_kolicina", my_user(), nT_kol )
+set_metric( "kalk_import_txt_datum", my_user(), dDatgen )
 
 select (nTArea)
 
@@ -716,6 +712,7 @@ do case
 		// brisi stavku iz tabele
 		if Pitanje(,"Brisati stavku ?", "N") == "D"
 			delete
+			__dbPack()
 			return DE_REFRESH
 		endif
 	
@@ -735,7 +732,7 @@ do case
 		if nOdst <> 0
 			
 			private cFilter := "odst " + ALLTRIM(cSign) ;
-				+ cm2str( nOdst )
+				+ _filter_quote( nOdst )
 			set filter to &cFilter
 			go top
 
@@ -782,6 +779,7 @@ if lNew
 	_z_nv := 0
 
 	append blank
+
 endif
 
 Box(,5,60)

@@ -68,7 +68,7 @@ endif
 
 private lAutoAsist:=.f.
 
-ObjDbedit("PRIPR9",20,77,{|| ka_pripr9_key_handler()},"<P>-povrat dokumenta u pripremu","Pregled smeca...", , , , ,4)
+ObjDbedit("KALK_PRIPR9",20,77,{|| ka_pripr9_key_handler()},"<P>-povrat dokumenta u pripremu","Pregled smeca...", , , , ,4)
 BoxC()
 
 
@@ -83,14 +83,14 @@ function ka_pripr9_key_handler()
 do case
 	case Ch==K_CTRL_T // brisanje dokumenta iz kalk_pripr9
 		ErPripr9(idfirma, idvd, brdok)
-      		return DE_REFRESH
+      	return DE_REFRESH
 	case Ch==K_CTRL_F9 // brisanje kompletnog kalk_pripr9
 		ErP9All()
 		return DE_REFRESH
 	case chr(Ch) $ "pP" // povrat dokumenta u kalk_pripremu
 		PovPr9()
 		ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
-     		return DE_REFRESH
+     	return DE_REFRESH
 endcase
 return DE_CONT
 
@@ -148,5 +148,41 @@ go top
 
 return
 
+
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+function ErPripr9(cIdF, cIdVd, cBrDok)
+
+if Pitanje(,"Sigurno zelite izbrisati dokument?","N")=="N"
+    return
+endif
+
+select kalk_pripr9
+seek cIdF+cIdVd+cBrDok
+
+do while !eof() .and. cIdF==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
+    skip 1
+    nRec:=RecNo()
+    skip -1
+    dbdelete2()
+    go nRec
+enddo
+
+return
+
+
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+function ErP9All()
+
+if Pitanje(,"Sigurno zelite izbrisati sve zapise?","N")=="N"
+    return
+endif
+
+select kalk_pripr9
+go top
+zap
+
+return
 
 

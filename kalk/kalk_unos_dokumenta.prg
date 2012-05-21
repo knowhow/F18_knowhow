@@ -855,7 +855,7 @@ do while .t.
             case izbor == 2
                 Povrat_kalk_dokumenta()
             case izbor == 3
-                Azur9()
+                azur_kalk_pripr9()
             case izbor == 4
                 Povrat9()
             case izbor == 5

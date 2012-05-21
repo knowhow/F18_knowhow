@@ -902,7 +902,7 @@ return
 // azuriranje kalk_pripr9 tabele
 // koristi se za smece u vecini slucajeva
 // ------------------------------------------------------------
-function Azur9()
+function azur_kalk_pripr9()
 local lGen := .f.
 local cPametno := "D" 
 local cIdFirma
@@ -1378,7 +1378,8 @@ endif
 
 if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
     if !lSilent
-        CLOSERET
+        close all
+		return
     else
         return
     endif
@@ -1435,17 +1436,18 @@ local nRec
 O_KALK_PRIPR9
 O_KALK_PRIPR
 
-//CREATE_INDEX(PRIVPATH+"PRIPR9i3","dtos(datdok)+mu_i+pu_i",PRIVPATH+"PRIPR9")
-SELECT kalk_pripr9; set order to tag "3"  // str(datdok)
+SELECT kalk_pripr9
+set order to tag "3"
 cidfirma:=gfirma
 cIdVD:=space(2)
 cBrDok:=space(8)
 
 if Pitanje(,"Povuci u pripremu najstariji dokument ?","N")=="N"
-  closeret
+	close all
+	return
 endif
+
 select kalk_pripr9
-if !flock(); Msg("PRIPR9 - SMECE je zauzeta ",3); closeret; endif
 go top
 
 cidfirma:=idfirma
@@ -1453,28 +1455,35 @@ cIdVD:=idvd
 cBrDok:=brdok
 
 MsgO("PRIPREMA")
+
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-  select kalk_pripr9; Scatter()
-  select kalk_pripr
-  append ncnl;_ERROR:="";  Gather2()
-  select kalk_pripr9
-  skip
+  	select kalk_pripr9
+	Scatter()
+  	select kalk_pripr
+  	append blank
+	_ERROR:=""
+	Gather()
+ 	select kalk_pripr9
+  	skip
 enddo
-//CREATE_INDEX(PRIVPATH+"PRIPR9i1","idFirma+IdVD+BrDok+RBr",PRIVPATH+"PRIPR9")
 
 set order to tag "1"
 select kalk_pripr9
 seek cidfirma+cidvd+cBrDok
+
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-   skip 1; nRec:=recno(); skip -1
-   dbdelete2()
-   go nRec
+   	skip 1
+	nRec:=recno()
+	skip -1
+   	dbdelete2()
+   	go nRec
 enddo
 use
 MsgC()
 
-closeret
-*}
+close all
+return
+
 
 
 
@@ -1482,120 +1491,135 @@ closeret
 // iz kalk u kalk_pripr najnoviju kalkulaciju
 // ------------------------------------------------------------------
 function Pnajn()
-local nRec,cbrsm, fbof, nVraceno:=0
+local nRec
+local cBrsm
+local fbof
+local nVraceno:=0
+local _rec, _del_rec
 
 O_KALK_DOKS
 O_KALK
 O_KALK_PRIPR
 
-SELECT kalk; set order to tag "5"  // str(datdok)
-cidfirma:=gfirma
+SELECT kalk
+set order to tag "5"  
+// str(datdok)
+cIdfirma:=gfirma
 cIdVD:=space(2)
 cBrDok:=space(8)
 
-if !flock(); Msg("KALK je zauzeta ",3); closeret; endif
 go bottom
-cidfirma:=idfirma
-dDatDok:=datdok
+cIdfirma := idfirma
+dDatDok := datdok
 
-if eof(); Msg("Na stanju nema dokumenata.."); closeret; endif
+if EOF()
+	Msg("Na stanju nema dokumenata..")
+	close all
+	return
+endif
 
 if Pitanje(,"Vratiti u pripremu dokumente od "+dtoc(dDatDok)+" ?","N")=="N"
-  closeret
+	close all
+	return
 endif
+
 select kalk
 
 MsgO("Povrat dokumenata od "+dtoc(dDatDok)+" u pripremu")
-do while !bof() .and. cIdFirma==IdFirma .and. datdok==dDatDok
- cIDFirma:=idfirma; cIdvd:=idvd; cBrDok:=brdok
- cBrSm:=""
- do while !bof() .and. cIdFirma==IdFirma .and. cidvd==idvd .and. cbrdok==brdok
-  select kalk; Scatter()
-  if !( _tbanktr=="X")
-   select kalk_pripr                           // izlaz, a izgenerisana je
-   append ncnl;  _ERROR:=""; Gather2()    // u tom slucaju nemoj je
-   nVraceno++
-  elseif  _tbanktr=="X" .and. (_mu_i=="5" .or. _pu_i=="5")
-    select kalk_pripr
-    if rbr<>_rbr  .or. (idfirma+idvd+brdok)<>_idfirma+_idvd+_brdok
-      nVraceno++
-      append ncnl; _ERROR:=""
-    else // na{tiklaj na postojecu stavku
-      _kolicina+=kalk_pripr->kolicina
-    endif
-    _TBankTr:="";_ERROR:=""; Gather2()
 
-  elseif  _tbanktr=="X" .and. (_mu_i=="3" .or. _pu_i=="3")
-   if cBrSm<>(cBrSm:=idfirma+"-"+idvd+"-"+brdok)     // vracati, samo je izbrisi
-     Beep(1)
-     Msg("Dokument: "+cbrsm+" je izgenerisan,te je izbrisan bespovratno")
-   endif
-  endif
+do while !BOF() .and. cIdFirma==IdFirma .and. datdok==dDatDok
+	cIDFirma:=idfirma
+	cIdvd:=idvd
+	cBrDok:=brdok
+ 	cBrSm:=""
+
+ 	do while !bof() .and. cIdFirma==IdFirma .and. cidvd==idvd .and. cbrdok==brdok
+
+  		select kalk
+
+		_rec := dbf_get_rec()
+  		
+		if !( _rec["tbanktr"] == "X" )
+
+   			select kalk_pripr                           
+   			append blank
+
+			_rec["error"] := ""
+			dbf_update_rec( _rec )    
+
+   			nVraceno ++
+
+  		elseif _rec["tbanktr"] == "X" .and. ( _rec["mu_i"] == "5" .or. _rec["pu_i"] == "5" )
+
+    		select kalk_pripr
+
+    		if rbr <> _rec["rbr"] .or. ( idfirma + idvd + brdok) <> _rec["idfirma"] + _rec["idvd"] + _rec["brdok"]
+      			nVraceno++
+      			append blank
+				_rec["error"] := ""
+    		else 
+      			_rec["kolicinai"] += kalk_pripr->kolicina
+    		endif
+
+			_rec["error"] := ""
+			_rec["tbanktr"] := ""
+			
+			dbf_update_rec( _rec )
+
+  		elseif _rec["tbanktr"] == "X" .and. ( _rec["mu_i"] == "3" .or. _rec["pu_i"] == "3" )
+   			if cBrSm <> (cBrSm := idfirma + "-" + idvd + "-" + brdok )     
+     			Beep(1)
+     			Msg("Dokument: "+cbrsm+" je izgenerisan,te je izbrisan bespovratno")
+   			endif
+  		endif
   
-  select kalk
-  skip -1
+  		select kalk
+  		skip -1
   
-  if bof()
-    fBof:=.t.
-    nRec:=0
-  else
-    fBof:=.f.
-    nRec:=recno()
-    skip 1
-  endif
+  		if BOF()
+    		fBof:=.t.
+    		nRec:=0
+  		else
+    		fBof:=.f.
+    		nRec:=recno()
+    		skip 1
+  		endif
 
-  select kalk_doks
-  seek kalk->(idfirma+idvd+brdok)   // izbrisi u kalk_doks
-  if found()
-    delete
-  endif
+  		select kalk_doks
+  		seek kalk->(idfirma+idvd+brdok)
 
-  select kalk
-  dbdelete2()
-  go nRec
-  if fBof
-    exit
-  endif
- enddo
- //if nVraceno>0; exit; endif  // vrati sve od tog datuma
-enddo // bof()
+  		if found()
+			_del_rec := dbf_get_rec()
+			my_use_semaphore_off()
+			sql_table_update( nil, "BEGIN" )
+			delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
+			sql_table_update( nil, "END" )
+			my_use_semaphore_on()
+    		delete
+  		endif
+
+  		select kalk
+		_del_rec := dbf_get_rec()
+		my_use_semaphore_off()
+		sql_table_update( nil, "BEGIN" )
+		delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 1, "CONT" )
+		sql_table_update( nil, "END" )
+		my_use_semaphore_on()
+    
+  		go nRec
+
+ 	 	if fBof
+    		exit
+  		endif
+
+ 	enddo
+
+enddo 
+
 MsgC()
 
-closeret
-
-
-// ------------------------------------------------------------------
-// ------------------------------------------------------------------
-function ErPripr9(cIdF, cIdVd, cBrDok)
-if Pitanje(,"Sigurno zelite izbrisati dokument?","N")=="N"
-    return
-endif
-
-select kalk_pripr9
-seek cIdF+cIdVd+cBrDok
-
-do while !eof() .and. cIdF==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-    skip 1
-    nRec:=RecNo()
-    skip -1
-    dbdelete2()
-    go nRec
-enddo
-
+close all
 return
 
 
-// ------------------------------------------------------------------
-// ------------------------------------------------------------------
-function ErP9All()
-
-if Pitanje(,"Sigurno zelite izbrisati sve zapise?","N")=="N"
-    return
-endif
-
-select kalk_pripr9
-go top
-zap
-
-return
 

@@ -88,6 +88,7 @@ return
 // ----------------------------------------
 function f18_end_print( f_name, print_opt )
 local _cmd := ""
+local _port := get_printer_port( print_opt )
 
 if print_opt == NIL
     print_opt := "V"
@@ -112,19 +113,16 @@ DO CASE
 
     CASE print_opt == "E"
 
-        //DirChange( my_home() )
-        
         // printanje direktno na lpt port
-        // epson kodovi
+        // sa epson kodovima
+
         #ifdef __PLATFORM__WINDOWS
 
-            _cmd := "copy " + f_name + " > LPT1"
-	        hb_run( _cmd )
+            direct_print_windows( f_name, _port )
 
         #else
-        
-            _cmd := "lpr " + f_name
-	        hb_run( _cmd )
+
+            direct_print_unix( f_name, _port )        
 
         #endif
 
@@ -144,6 +142,82 @@ END CASE
 
 return
 
+// ----------------------------------------------
+// vraca port na koji ce se stampati
+// ----------------------------------------------
+static function get_printer_port( print_opt )
+local _port := "1"
+
+do case
+    case print_opt == "E"
+        _port := "1"
+    case print_opt == "F"
+        _port := "2"
+    case print_opt == "G"
+        _port := "3"
+endcase
+
+return _port
+
+// --------------------------------------------------------------
+// direktna stampa na unix-u
+// --------------------------------------------------------------
+static function direct_print_unix( f_name, port_number )
+local _cmd
+local _printer := "epson"
+local _printer_name
+local _err
+            
+if port_number == NIL
+    port_number := "1"
+endif
+
+_printer_name := _printer + "_" + port_number
+
+// ispitaj da li printer postoji
+// lpq | grep epson_1 
+_cmd := "lpq | grep " + _printer_name
+
+_err := hb_run( _cmd )
+if _err <> 0
+    MsgBeep( "Printer " + _printer_name + " nije podesen !!!" )
+    return
+endif
+
+// stampaj
+_cmd := "lpr -P " 
+_cmd += _printer_name + " "
+_cmd += f_name
+
+_err := hb_run( _cmd )
+
+if _err <> 0
+    MsgBeep( "Greska sa direktnom stampom !!!" )
+endif
+
+return
+
+
+// --------------------------------------------------------------
+// direktna stampa na windows-u
+// --------------------------------------------------------------
+static function direct_print_windows( f_name, port_number )
+local _cmd
+local _err
+            
+if port_number == NIL
+    port_number := "1"
+endif
+
+_cmd := "copy " + f_name + " > LPT" + port_number 
+
+_err := hb_run( _cmd )
+
+if _err <> 0
+    MsgBeep( "Greska sa direktnom stampom !!!" )
+endif
+
+return
 
 
 static function set_print_f_name(f_name)

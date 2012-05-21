@@ -11,27 +11,17 @@
 
 #include "fmk.ch"
 
-// fmk.ini/EXPATH: Printeri_DirektnoOUTFTXT - D/N
-//  * D - ide direktno na stampac
-//  * N - ne ide
-
 static cPrinter := "D" 
-
 static nZagrada:=0 
-
 static cKom:="" 
-
 static nSekundi:=0 
-
 static cTekprinter:="" 
-
 static cFName:="outf.txt" 
-
 
 
 function SetgaSDBFs()
 
-PUBLIC gaSDBFs :={ ;
+PUBLIC gaSDBFs := { ;
  {F_GPARAMS  , "GPARAMS",  P_ROOTPATH },; 
  {F_GPARAMSP , "GPARAMS",  P_PRIVPATH},;
  {F_PARAMS   , "PARAMS"  , P_PRIVPATH},;
@@ -45,7 +35,10 @@ PUBLIC gaSDBFs :={ ;
  {F_TMP      , "TMP"     , P_PRIVPATH},;
  {F_SQLPAR   , "SQLPAR"  , P_KUMSQLPATH};
 }
+
 return
+
+
 
 /*! \fn PreuzSezSPK(cSif)
  *  \brief Preuzimanje sifre iz sezone
@@ -53,10 +46,7 @@ return
  */
  
 function PreuzSezSPK(cSif)
-*{
-*static string
 static cSezNS:="1998"
-*;
  LOCAL nObl:=SELECT()
  Box(,3,70)
   cSezNS:=PADR(cSezNS,4)

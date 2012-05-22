@@ -28,7 +28,7 @@ public gPI_OFF:="#%IOFF_#"
 public gPFF   :="#%NSTR_#"
 public gPO_Port:="#%PORTR#"
 public gPO_Land:="#%LANDS#"
-
+public gPPort := "1"
 public gRPL_Normal:=""
 public gRPL_Gusto:=""
 

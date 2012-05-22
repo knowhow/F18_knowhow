@@ -163,3 +163,30 @@ endif
 
 return "?" + _type + "?"
 
+
+// --------------------------------------
+// aktiviranje vpn podrske 
+// --------------------------------------
+function vpn_support()
+local _cmd
+local _err
+
+#ifdef __PLATFORM__WINDOWS 
+    msgbeep("Opcija nije omogucena !")
+    return
+#endif
+
+_cmd := 'nmcli con up id "bringout podrska" ' 
+
+_err := hb_run( _cmd )
+
+if _err <> 0
+    msgbeep( "Problem sa pokretanjem vpn konekcije !" )
+    return
+endif
+
+return
+
+
+
+

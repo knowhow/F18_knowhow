@@ -41,6 +41,7 @@ AADD( menuop, " P) Parametri aplikacije")
 AADD( menuop, " R) ReLogin")
 AADD( menuop, " W) Pregled F18.log-a")
 AADD( menuop, " X) Erase / full synchro tabela")
+AADD( menuop, " V) VPN podrska")
 
 do while .t.
 
@@ -78,6 +79,8 @@ do while .t.
             view_log()
 	 	case mnu_choice == 15
             full_table_synchro()
+	 	case mnu_choice == 16
+            vpn_support()
 	endcase
  	loop
 enddo

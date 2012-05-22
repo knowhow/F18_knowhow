@@ -75,7 +75,7 @@ do case
     AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
     AADD(opc,"12. non-fiscal racun - test")
     AADD(opcexe,{|| fp_nf_txt( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
-    			"TEST") })
+    			"TEST ČĆŽĐŠ XXX") })
     AADD(opc,"13. test fisc. email")
     AADD(opcexe,{|| _fisc_eml_test() })
 

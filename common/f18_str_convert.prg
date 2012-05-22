@@ -46,7 +46,8 @@ local _win_str
 local _cnt
 local _arr := _get_win_1250_codes_array()
 
-_win_str := hb_strtoutf8( cp852_str )
+//_win_str := hb_strtoutf8( cp852_str )
+_win_str := cp852_str
 
 for _cnt := 1 to LEN( _arr )
 	_win_str := STRTRAN( _win_str, _arr[ _cnt, 1 ], _arr[ _cnt, 2 ] )
@@ -61,16 +62,16 @@ return _win_str
 static function _get_win_1250_codes_array()
 local _arr := {}
 
-AADD( _arr, { "1", "" } )
-AADD( _arr, { "2", "ç" } )
-AADD( _arr, { "3", "" } )
-AADD( _arr, { "4", "" } )
-AADD( _arr, { "5", "¬" } )
-AADD( _arr, { "6", "" } ) 
-AADD( _arr, { "7", "§" } )
-AADD( _arr, { "8", "¦" } )
-AADD( _arr, { "9", "ð" } )
-AADD( _arr, { "0", "Ñ" } )
+AADD( _arr, { "Č", "" } )
+AADD( _arr, { "č", "ç" } )
+AADD( _arr, { "Ć", "" } )
+AADD( _arr, { "ć", "" } )
+AADD( _arr, { "Ž", "¬" } )
+AADD( _arr, { "ž", "" } ) 
+AADD( _arr, { "Đ", "§" } )
+AADD( _arr, { "đ", "¦" } )
+AADD( _arr, { "Š", "ð" } )
+AADD( _arr, { "š", "Ñ" } )
 
 return _arr
 

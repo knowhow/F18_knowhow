@@ -362,7 +362,7 @@ cFName := fp_filename( "0" )
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aTxt := _fp_nf_txt( to_win1250_encoding( cTxt ) )
+aTxt := _fp_nf_txt( konvznwin_old( cTxt, "5" ) )
 
 _a_to_file( cFPath, cFName, aStruct, aTxt )
 

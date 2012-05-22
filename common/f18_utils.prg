@@ -170,18 +170,32 @@ return "?" + _type + "?"
 function vpn_support()
 local _cmd
 local _err
+local _conn_name := PADR( "bringout podrska", 50 )
 
 #ifdef __PLATFORM__WINDOWS 
     msgbeep("Opcija nije omogucena !")
     return
 #endif
 
-_cmd := 'nmcli con up id "bringout podrska" ' 
+_conn_name := fetch_metric( "vpn_support_conn_name", my_user(), _conn_name )
+
+Box(, 1, 65 )
+    @ m_x + 1, m_y + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !EMPTY( _conn_name )
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    return
+endif
+
+set_metric( "vpn_support_conn_name", my_user(), _conn_name )
+
+_cmd := 'nmcli con up id "' + ALLTRIM( _conn_name ) + '"' 
 
 _err := hb_run( _cmd )
 
 if _err <> 0
-    msgbeep( "Problem sa pokretanjem vpn konekcije !" )
+    msgbeep( "Problem sa pokretanjem vpn konekcije:#" + ALLTRIM( _conn_name ) + " !???" )
     return
 endif
 

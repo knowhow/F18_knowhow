@@ -362,7 +362,7 @@ cFName := fp_filename( "0" )
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aTxt := _fp_nf_txt( konvznwin_old( cTxt, "5" ) )
+aTxt := _fp_nf_txt( cTxt )
 
 _a_to_file( cFPath, cFName, aStruct, aTxt )
 
@@ -1024,7 +1024,7 @@ if LEN( aKupac ) > 0
 	cTmp += cSep
 
 	// 2. naziv
-	cTmp += ALLTRIM( PADR( to_us_encoding( aKupac[ 1, 2 ] ), 36 ) )
+	cTmp += ALLTRIM( PADR( konvznwin_old( aKupac[ 1, 2 ] , "5" ), 36 ) )
 	cTmp += cSep
 
 	// 3. adresa

@@ -81,7 +81,7 @@ AADD( _dbf,{"BARKOD","C",13,0})
 dbcreate( dbf_table, _dbf )
     
 select ( F_TMP_KATOPS )
-my_use_temp( "KATOPS", my_home() + dbf_table )
+my_use_temp( "KATOPS", dbf_table )
 
 return
 
@@ -137,7 +137,7 @@ _o_gen_tables( _from_kum )
 
 // kreiraj tabelu katops
 // ona ce se kreirati u privatnom direktoriju...
-_cre_katops_dbf( _katops_table )
+_cre_katops_dbf( my_home() + _katops_table )
 
 select kalk_pripr
 set order to tag "1"

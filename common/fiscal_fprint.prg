@@ -1024,7 +1024,7 @@ if LEN( aKupac ) > 0
 	cTmp += cSep
 
 	// 2. naziv
-	cTmp += ALLTRIM( PADR( konvznwin_old( aKupac[ 1, 2 ] , "5" ), 36 ) )
+	cTmp += ALLTRIM( PADR( to_us_encoding( aKupac[ 1, 2 ] ), 36 ) )
 	cTmp += cSep
 
 	// 3. adresa

@@ -134,7 +134,6 @@ if Pitanje(,"Izvrsiti instalaciju fajlova (D/N) ?","N")=="D"
 endif
 
 gPrinter := "R"
-init_epson_print_codes()
 
 O_GPARAMS
 O_PARAMS

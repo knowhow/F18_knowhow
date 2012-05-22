@@ -32,7 +32,7 @@ public gReadOnly:=.f.
 public gProcPrenos:="N"
 public gInstall:=.f.
 public gfKolor:="D"
-public gPrinter := "E"
+public gPrinter := "R"
 public gPtxtSw := nil
 public gPDFSw := nil
 public gMeniSif:=.f.
@@ -253,14 +253,12 @@ function IniPrinter()
 
 if gModul $ "EPDV"
 	gPrinter := "R"
-else
-   	gPrinter := "E"
 endif
 
-if gPrinter == "R"
-    PtxtSekvence()
-else
+if gPrinter == "E"
     init_epson_print_codes()
+else
+    PtxtSekvence()
 endif
 
 if gPicSif == "8"

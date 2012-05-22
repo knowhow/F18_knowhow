@@ -239,6 +239,7 @@ if _rbr > 0
     // napravi i prebaci izlazne fajlove gdje trebaju
     _exp_file := _kreiraj_fajl_prenosa( _dat_dok, _pos_locations, _rbr )
 
+	close all
     // ispisi report
     _print_report( id_firma, id_tip_dok, br_dok, _rbr, _total, _exp_file )
 

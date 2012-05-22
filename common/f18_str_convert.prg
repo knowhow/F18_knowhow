@@ -38,6 +38,46 @@ AADD( _arr, { "š", "s" } )
 return _arr
 
 
+// -----------------------------------------------------
+// konvertuje nase karaktere u windows-1250 format
+// -----------------------------------------------------
+function to_win1250_encoding( cp852_str )
+local _win_str
+local _cnt
+local _arr := _get_win_1250_codes_array()
+
+_win_str := hb_strtoutf8( cp852_str )
+
+for _cnt := 1 to LEN( _arr )
+	_win_str := STRTRAN( _win_str, _arr[ _cnt, 1 ], _arr[ _cnt, 2 ] )
+next
+
+return _win_str
+
+
+// -------------------------------------------------
+// vraca matricu sa windows 1250 kodovima
+// -------------------------------------------------
+static function _get_win_1250_codes_array()
+local _arr := {}
+
+AADD( _arr, { "1", "" } )
+AADD( _arr, { "2", "ç" } )
+AADD( _arr, { "3", "" } )
+AADD( _arr, { "4", "" } )
+AADD( _arr, { "5", "¬" } )
+AADD( _arr, { "6", "" } ) 
+AADD( _arr, { "7", "§" } )
+AADD( _arr, { "8", "¦" } )
+AADD( _arr, { "9", "ð" } )
+AADD( _arr, { "0", "Ñ" } )
+
+return _arr
+
+
+
+
+
 // --------------------------------------------------------------------
 // pretvara specijalne string karaktere u xml encoding kraktere
 // npr: Č -> &#262; itd...

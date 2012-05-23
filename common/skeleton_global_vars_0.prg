@@ -101,6 +101,9 @@ public gPDFPAuto := "D"
 public gPDFViewer := SPACE(150)
 public gDefPrinter := SPACE(150)
 
+// setuje globalne varijable printera
+init_print_variables()
+
 return
 
 
@@ -256,7 +259,7 @@ if gModul $ "EPDV"
 endif
 
 if gPrinter == "E"
-    init_epson_print_codes()
+    set_epson_print_codes()
 else
     PtxtSekvence()
 endif

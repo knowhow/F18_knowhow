@@ -71,7 +71,7 @@ do case
     case print_opt == "E"
 
         gPrinter := "E"
-        init_epson_print_codes()
+        set_epson_print_codes()
 
     otherwise
 
@@ -469,30 +469,58 @@ return
 
 
 
+// ------------------------------------------
+// incijalizacija print varijabli
+// ------------------------------------------
+function init_print_variables()
+public gPIni := ""
+public gPCond
+public gPCond2
+public gP10CPI
+public gP12CPI
+public gPB_ON
+public gPB_OFF
+public gPI_ON
+public gPI_OFF
+public gPU_ON
+public gPU_OFF
+public gPPort := "1"
+public gPStranica := 0
+public gPPTK
+public gPO_Port 
+public gPO_Land 
+public gRPL_Normal
+public gRPL_Gusto
+public gPReset 
+public gPFF
+return
+
+
+
 // ----------------------------------------------------------------------------
 // Inicijaliziraj globalne varijable za Epson stampace (matricne) ESC/P2
 // ----------------------------------------------------------------------------
-function init_epson_print_codes()
-public gPIni := ""
-public gPCond := "P"
-public gPCond2 := "M"
-public gP10CPI := "P"
-public gP12CPI := "M"
-public gPB_ON := "G"
-public gPB_OFF := "H"
-public gPI_ON := "4"
-public gPI_OFF := "5"
-public gPU_ON := "-1"
-public gPU_OFF := "-0"
-public gPPort := "1"
-public gPStranica := 0
-public gPPTK := "  "
-public gPO_Port := ""
-public gPO_Land := ""
-public gRPL_Normal := "0"
-public gRPL_Gusto := "3" + CHR(24)
-public gPReset := ""
-public gPFF := Chr(12)  
+function set_epson_print_codes()
+gPIni := ""
+gPCond := "P"
+gPCond2 := "M"
+gP10CPI := "P"
+gP12CPI := "M"
+gPB_ON := "G"
+gPB_OFF := "H"
+gPI_ON := "4"
+gPI_OFF := "5"
+gPU_ON := "-1"
+gPU_OFF := "-0"
+gPPort := "1"
+gPStranica := 0
+gPPTK := "  "
+gPO_Port := ""
+gPO_Land := ""
+gRPL_Normal := "0"
+gRPL_Gusto := "3" + CHR(24)
+gPReset := ""
+gPFF := Chr(12)  
 return
 
 

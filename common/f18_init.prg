@@ -95,7 +95,6 @@ public cDirRad     := ""
 public cDirSif     := ""
 public glBrojacPoKontima := .t.
 
-
 set_f18_home_root()
 
 if ( __log_handle := FCREATE(F18_LOG_FILE) ) == -1

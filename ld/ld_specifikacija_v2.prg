@@ -192,13 +192,13 @@ else
     lPDNE:=.f.
 endif
 
-cFirmNaz := HB_UTF8TOSTR( fetch_metric("org_naziv", nil, cFirmNaz) )
+cFirmNaz := fetch_metric("org_naziv", nil, cFirmNaz)
 cFirmNaz := PADR(cFirmNaz, 35)
 
-cFirmAdresa := HB_UTF8TOSTR( fetch_metric("ld_firma_adresa", nil, cFirmAdresa) )
-cFirmAdresa := PADR(cFirmAdresa, 35)
+cFirmAdresa := fetch_metric("ld_firma_adresa", nil, cFirmAdresa)
+cFirmAdresa := PADR( cFirmAdresa, 35 )
 
-cFirmOpc := HB_UTF8TOSTR( fetch_metric("ld_firma_opcina", nil, cFirmOpc) )
+cFirmOpc := fetch_metric("ld_firma_opcina", nil, cFirmOpc)
 cFirmOpc := PADR(cFirmOpc, 35)
 
 cFirmVD := fetch_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD )

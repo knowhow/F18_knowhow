@@ -163,7 +163,7 @@ OpcF:={}
 aFiles := DIRECTORY( cPath + cFilter )
 
 // da li postoje templejti
-if LEN( aFiles )==0
+if LEN( aFiles ) == 0
 	log_write( "template list: na lokaciji " + cPath + " ne postoji niti jedan template, po filteru: " + cFilter )
     MsgBeep("Ne postoji definisan niti jedan template na lokciji:#" + cPath + "#po filteru: " + cFilter )
 	return 0
@@ -181,20 +181,27 @@ for i:=1 to LEN(h)
 next
 
 // selekcija fajla
-IzbF:=1
+IzbF := 1
 lRet := .f.
-do while .t. .and. LastKey()!=K_ESC
-	IzbF:=Menu("imp", OpcF, IzbF, .f.)
-	if IzbF == 0
+
+if LEN( opcF ) > 1
+    do while .t. .and. LastKey() != K_ESC
+	    IzbF := Menu( "imp", OpcF, IzbF, .f. )
+	    if IzbF == 0
         	exit
         else
-        	cFile := Trim(LEFT(OpcF[IzbF],15))
+        	cFile := TRIM( LEFT( OpcF[ IzbF ], 15 ) )
         	if lSilent == .t. .or. (lSilent == .f. .and. Pitanje(,"Koristiti ovaj fajl ?","D")=="D" )
-        		IzbF:=0
-			lRet:=.t.
-		endif
+        		IzbF := 0
+			    lRet := .t.
+		    endif
         endif
-enddo
+    enddo
+else
+    cFile := TRIM( LEFT( OpcF[ IzbF ], 15 ) )
+    lRet := .t.
+    IzbF := 0
+endif
 
 m_x := nPx
 m_y := nPy

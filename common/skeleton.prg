@@ -29,7 +29,6 @@ endif
 
 SetgaSDbfs()
 
-altd()
 set_global_vars_0()
 
 gModul   := oApp:cName

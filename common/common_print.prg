@@ -491,7 +491,7 @@ public gPO_Port
 public gPO_Land 
 public gRPL_Normal
 public gRPL_Gusto
-public gPReset 
+public gPReset := ""
 public gPFF
 return
 

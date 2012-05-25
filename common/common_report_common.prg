@@ -26,7 +26,7 @@ if ( nSlijediRedovaZajedno == nil )
     nSlijediRedovaZajedno := 1
 endif
 
-if ( nSlijediRedovaZajedno == -1 ) .or. ( PROW() > ( 62 + gPStranica - nSlijediRedovaZajedno ) )
+if ( nSlijediRedovaZajedno == -1 ) .or. ( PROW() > ( 59 + gPStranica - nSlijediRedovaZajedno ) )
     
     if ( nSlijediRedovaZajedno <> -1 )
         FF

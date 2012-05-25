@@ -79,26 +79,36 @@ DO WHILE !EOF()
 	cBrNal:=BrNal
 
    	if !_izgenerisi
+
         Box("",2,50)
+
         set cursor on
+
         @ m_x+1, m_y+2 SAY "Nalog broj:"
+
         if gNW=="D"
             cIdFirma := gFirma
             @ m_x+1, col()+1 SAY cIdFirma
         else
             @ m_x+1, col()+1 GET cIdFirma
         endif
+
         @ m_x+1, col()+1 SAY "-" GET cIdVn
         @ m_x+1, col()+1 SAY "-" GET cBrNal
+
         if gDatNal == "D"
             @ m_x+2, m_y+2 SAY "Datum naloga:" GET dDatNal
         endif
+
         read
+
         ESC_BCR
         BoxC()
+
     endif
 
     HSEEK cIdFirma + cIdVN + cBrNal
+
     if EOF()
         close all
         return
@@ -212,6 +222,7 @@ select(nArr)
 return
 
 
+
 /*! \fn SintStav(lAuto)
  *  \brief Formiranje sintetickih stavki
  *  \param lAuto
@@ -220,8 +231,8 @@ return
 function SintStav(lAuto)
 
 if lAuto == NIL
- lAuto := .f.
-ENDIF
+	lAuto := .f.
+endif
 
 O_PSUBAN
 O_PARTN
@@ -242,11 +253,12 @@ select PSUBAN
 set order to tag "2"
 go top
 
-if empty(BrNal)
-   closeret
+if EMPTY( BrNal )
+	closeret
 endif
 
-A:=0
+A := 0
+
 // svi nalozi
 DO WHILE !eof()  
 
@@ -267,8 +279,10 @@ DO WHILE !eof()
          ENDIF
 
          SELECT PANAL     // analitika
+
          seek cidfirma+cidvn+cbrnal+cidkonto
          fNasao:=.f.
+
          DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal ;
                     .and. IdKonto==cIdKonto
            if gDatNal=="N"
@@ -284,6 +298,7 @@ DO WHILE !eof()
            endif
            skip
          enddo
+
          if !fNasao
             append blank
          endif
@@ -297,7 +312,9 @@ DO WHILE !eof()
 
          SELECT PSINT
          seek cidfirma+cidvn+cbrnal+left(cidkonto,3)
+
          fNasao:=.f.
+
          DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal ;
                    .and. left(cidkonto,3)==idkonto
            if gDatNal=="N"
@@ -314,6 +331,7 @@ DO WHILE !eof()
 
            skip
          enddo
+
          if !fNasao
              append blank
          endif
@@ -328,6 +346,7 @@ DO WHILE !eof()
 
         SELECT PSUBAN
         skip
+
    ENDDO  // nalog
 
    SELECT PNALOG    // datoteka naloga
@@ -338,6 +357,7 @@ DO WHILE !eof()
            DugDEM WITH nD2,PotDEM WITH nP2
 
    private cDN:="N"
+
    if !lAuto
      Box(, 2, 58)
        @ m_x+1, m_y+2 SAY "Stampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN pict "@!" valid cDN $ "DN"
@@ -347,14 +367,17 @@ DO WHILE !eof()
        read
      BoxC()
    endif
+
    if cDN=="D"
      select panal
      seek cIdfirma + cIdvn +cBrnal
      StOSNal(.f.)    // stampa se priprema
    endif
+
    SELECT PSUBAN
 
-ENDDO  // svi nalozi
+ENDDO  
+// svi nalozi
 
 select PANAL
 go top
@@ -380,4 +403,5 @@ enddo
 
 close all
 return
+
 

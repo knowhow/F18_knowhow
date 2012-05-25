@@ -2325,12 +2325,12 @@ local _t_rec := RECNO()
 
 do while !EOF() .and. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
 
-    if field->idvd $ "11#41#42"
+    if field->idvd $ "11#41#42#RN"
         if field->fcj == 0
             _ok := .f.
             exit
         endif
-    elseif field->idvd $ "16#96#94#95#14"
+    elseif field->idvd $ "16#96#94#95#14#"
         if field->nc == 0
             _ok := .f.
             exit

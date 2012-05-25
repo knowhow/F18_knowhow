@@ -284,7 +284,7 @@ endif
 
 @  m_x+8, m_y + COL() + 2  SAY "Datum:" GET _DatDok VALID chk_sezona() 
 
-if cDatVal=="D"
+if gDatVal == "D"
     @  m_x+8,col()+2 SAY "Valuta" GET _DatVal
 endif
 

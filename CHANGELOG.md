@@ -1,3 +1,8 @@
+1.0.38 2012-05-28, vsasa
+
+  - fakt, setovanje fiskalnog računa nakon štampe [#28160](http://redmine.bring.out.ba/issues/28160)
+  - fakt, štampa template-a fakture [#28154](http://redmine.bring.out.ba/issues/28154)
+ 
 1.0.37 2012-05-25, vsasa
 
   - kalk, paginacija dokumenata [#28146](http://redmine.bring.out.ba/issues/28146)

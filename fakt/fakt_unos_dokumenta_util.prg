@@ -2015,29 +2015,6 @@ return (lRetFlag)
 *}
 
 
-/*! \fn EdOtpr(Ch)
- *  \brief Ispravka otpremnica
- *  \param Ch
- */
-
-function EdOtpr(Ch)
-local cDn:="N",nRet:=DE_CONT
-do case
-    case Ch==ASC(" ") .or. Ch==K_ENTER
-        Beep(1)
-        if m1=" "    // iz DOKS
-                replace m1 with "*"
-                nSuma+=Iznos
-        else
-                replace m1 with " "
-                nSuma-=Iznos
-        endif
-        @ m_x+1,m_Y+55 SAY nSuma pict picdem
-        nRet:=DE_REFRESH
-endcase
-
-return nRet
-
 
 /*! \fn renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
  *  \brief

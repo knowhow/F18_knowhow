@@ -288,8 +288,8 @@ return
 // pretvaranje otpremnice u fakturu
 // ----------------------------------------------
 function fakt_generisi_racun_iz_otpremnice()
-local _otpr_tip := "12"
-local _firma, _id_partner, _suma, _partn_naz
+local _id_partner
+local _suma := 0
 
 select fakt_pripr
 use
@@ -324,6 +324,7 @@ for i := 1 to LEN( ImeKol )
     AADD( Kol, i )
 next
 
+_otpr_tip := "12"
 _firma := gFirma
 _suma := 0
 _partn_naz := SPACE(20)
@@ -340,17 +341,25 @@ Box(, 20, 75 )
 
     seek _firma + _otpr_tip
 
-    do while !EOF() .and. field->idfirma + field->idtipdok = _firma + "12"
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
+    do while !EOF() .and. field->idfirma + field->idtipdok = _firma + _otpr_tip
         if field->m1 <> "Z"
-            replace field->m1 with " "
+            _rec := dbf_get_rec()
+            _rec["m1"] := " "
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
         endif
         skip
     enddo
 
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
     seek _firma + _otpr_tip
 
     BrowseKey( m_x + 5, m_y + 1, m_x + 19, m_y+ 73, ImeKol, ;
-                {|Ch| EdOtpr(Ch)}, "idfirma+idtipdok = _firma + _otpr_tip",;
+                {|Ch| EdOtpr(Ch, @_suma)}, "idfirma+idtipdok = _firma + _otpr_tip",;
                 _firma + _otpr_tip, 2, , , {|| partner = _partn_naz } )
 BoxC()
 
@@ -371,6 +380,39 @@ o_fakt_edit()
 select fakt_pripr
 
 return .t.
+
+
+
+function EdOtpr( ch, suma )
+local cDn := "N"
+local nRet := DE_CONT
+
+do case
+    case Ch==ASC(" ") .or. Ch==K_ENTER
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
+
+        Beep(1)
+        _rec := dbf_get_rec()
+        if field->m1 = " "    
+            // iz DOKS
+            _rec["m1"] := "*"
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+            suma += field->iznos
+        else
+            _rec["m1"] := " "
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+            suma -= field->iznos
+        endif
+        @ m_x+1, m_Y + 55 SAY suma pict picdem
+        nRet := DE_REFRESH
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
+
+endcase
+
+return nRet
+
 
 
 // ---------------------------------------------------------
@@ -399,7 +441,6 @@ local _vp_mp
 local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
-
 
 // sumirati stavke ?
 _sumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"
@@ -457,7 +498,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         set order to tag "1"
             
         // broj dokumenta za racun
-        _broj_dokumenta := SPACE( LEN( field->brdok ) )
+        _broj_dokumenta := PADR( REPLICATE( "0", 5 ), 8 )
             
         select fakt
         seek dxIdFirma + "12" + dxBrDok

@@ -65,11 +65,11 @@ MsgC()
 
 CLOSE ALL
 return
-*}
+
+
+
 
 static function ApndInvItem(cIdRj, cIdRoba, cBrDok, nKolicina, cRbr)
-*{
-
 APPEND BLANK
 REPLACE idFirma WITH cIdRj
 REPLACE idRoba  WITH cIdRoba
@@ -91,18 +91,20 @@ endif
 
 REPLACE brDok WITH cBrDok
 REPLACE dinDem WITH ValDomaca()
+
 SELECT roba
 SEEK cIdRoba
+
 select fakt_pripr
 REPLACE cijena WITH roba->vpc
+
 return
-*}
+
 
 static function AddTxt(cTxt, cStr)
-*{
 cTxt:=cTxt+Chr(16)+cStr+Chr(17)
 return nil
-*}
+
 
 
 
@@ -113,12 +115,13 @@ return nil
  *  \brief Generacija dokumenta 19 tj. otpreme iz mag na osnovu dok. IM
  */
 function GDokInvManjak(cIdRj, cBrDok)
-*{
 local nRBr
 local nRazlikaKol
 local cRBr
 local cNoviBrDok
-nRBr:=0
+
+nRBr := 0
+
 O_FAKT
 O_FAKT_PRIPR
 O_ROBA
@@ -128,6 +131,7 @@ cNoviBrDok := PADR( REPLICATE("0", gNumDio), 8 )
 SELECT fakt
 SET ORDER TO TAG "1"
 HSEEK cIdRj+"IM"+cBrDok
+
 do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
     nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
     if (ROUND(nRazlikaKol,5)>0)
@@ -141,14 +145,17 @@ do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
     SELECT fakt
     skip 1
 enddo
+
 if (nRBr>0)
     MsgBeep("U pripremu je izgenerisan dokument otpreme manjka "+cIdRj+"-19-"+cNoviBrDok)
 else
     MsgBeep("Inventurom nije evidentiran manjak pa nije generisan nikakav dokument!")
 endif
+
 CLOSE ALL
+
 return
-*}
+
 
 
 
@@ -162,7 +169,6 @@ return
  */
  
 static function ApndInvMItem(cIdRj, cIdRoba, cBrDok, nKolicina, cRbr)
-*{
 APPEND BLANK
 REPLACE idFirma WITH cIdRj
 REPLACE idRoba  WITH cIdRoba
@@ -186,7 +192,7 @@ REPLACE brDok WITH cBrDok
 REPLACE dinDem WITH ValDomaca()
 REPLACE cijena WITH roba->vpc
 return
-*}
+
 
 
 
@@ -197,12 +203,13 @@ return
  *  \brief Generacija dokumenta 01 tj.primke u magacin na osnovu dok. IM
  */
 function GDokInvVisak(cIdRj, cBrDok)
-*{
 local nRBr
 local nRazlikaKol
 local cRBr
 local cNoviBrDok
-nRBr:=0
+
+nRBr := 0
+
 O_FAKT
 O_FAKT_PRIPR
 O_ROBA
@@ -225,14 +232,16 @@ do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
     SELECT fakt
     skip 1
 enddo
+
 if (nRBr>0)
     MsgBeep("U pripremu je izgenerisan dokument dopreme viska "+cIdRj+"-01-"+cNoviBrDok)
 else
     MsgBeep("Inventurom nije evidentiran visak pa nije generisan nikakav dokument!")
 endif
+
 CLOSE ALL
 return
-*}
+
 
 
 
@@ -247,7 +256,6 @@ return
  */
 
 static function ApndInvVItem(cIdRj, cIdRoba, cBrDok, nKolicina, cRbr)
-*{
 APPEND BLANK
 REPLACE idFirma WITH cIdRj
 REPLACE idRoba  WITH cIdRoba
@@ -275,272 +283,246 @@ return
 
 
 
+
 // ----------------------------------------------
 // pretvaranje otpremnice u fakturu
 // ----------------------------------------------
-function Iz20u10()
-local nOrder
-local cBrDok := ""
-local cIdTipDok := ""
-local lSumirati := .t.
-local _vp_mp := 1
-local _n_tip_dok := "10"
+function fakt_generisi_racun_iz_otpremnice()
+local _otpr_tip := "12"
+local _firma, _id_partner, _suma, _partn_naz
 
 select fakt_pripr
 use
+
 O_FAKT_PRIPR
 go top
 
-if reccount2() == 0
+// ako je priprema prazna, nemam sta raditi
+if RecCount2() <> 0
+    close all
+    o_fakt_edit()
+    select fakt_pripr
+    return .t.
+endif
 
-   select fakt_doks
-   set order to tag "2"  
-   // idfirma+idtipdok+partner
+select fakt_doks
+set order to tag "2"  
+// idfirma+idtipdok+partner
 
-   ImeKol:={}
-   // browsuj tip dokumenta
-   AADD(ImeKol,{ "TD",     {|| IdTipdok}               })
-   AADD(ImeKol,{ "Broj",   {|| BrDok}                  })
-   AADD(ImeKol,{ "Datdok",  {|| DatDok}                })
-   AADD(ImeKol,{ "Partner", {|| left(partner,20)}      })
-   AADD(ImeKol,{ "Iznos",  {|| str(iznos,11,2)}        })
-   AADD(ImeKol,{ "Marker",  {|| M1 }                   })
-   Kol:={}
-   for i:=1 to len(ImeKol); AADD(Kol,i); next
+ImeKol := {}
+// browsuj tip dokumenta
+AADD( ImeKol, { "TD",     {|| idtipdok }   })
+AADD( ImeKol, { "Broj",   {|| brdok }  })
+AADD( ImeKol, { "Datdok",  {|| datdok  }  })
+AADD( ImeKol, { "Partner", {|| LEFT( partner, 20 )}  })
+AADD( ImeKol, { "Iznos",  {|| STR( iznos, 11, 2 )}  })
+AADD( ImeKol, { "Marker",  {|| m1 }  })
+   
+Kol:={}
+   
+for i := 1 to LEN( ImeKol )
+    AADD( Kol, i )
+next
 
-   cIdrj:=gFirma
-   nSuma:=0
-   cPartner:=space(20)
-   Box(,20,75)
-    @ m_x+1,m_y+2 SAY "PREGLED OTPREMNICA:"
-    @ m_x+3,m_y+2 SAY "Radna jedinica" GET  cIdRj pict "@!"
-    @ m_x+3,col()+2 SAY "Naziv partnera - kljucni dio:" GET cPartner pict "@!"
+_firma := gFirma
+_suma := 0
+_partn_naz := SPACE(20)
+   
+Box(, 20, 75 )
+
+    @ m_x + 1, m_y + 2 SAY "PREGLED OTPREMNICA:"
+    @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _firma pict "@!"
+    @ m_x + 3, col() + 2 SAY "Naziv partnera - kljucni dio:" GET _partn_naz pict "@!"
+
     read
-    cPartner:=trim(cPartner)
-    seek cidrj+"12"
-    do while !eof() .and. IdFirma+IdTipdok=cidrj+"12"
-      IF m1 <> "Z"
-        replace m1 with " "
-      EndIF
-      skip
+
+    _partn_naz := TRIM( _partn_naz )
+
+    seek _firma + _otpr_tip
+
+    do while !EOF() .and. field->idfirma + field->idtipdok = _firma + "12"
+        if field->m1 <> "Z"
+            replace field->m1 with " "
+        endif
+        skip
     enddo
 
-    seek cidrj+"12"
-    BrowseKey(m_x+5,m_y+1,m_x+19,m_y+73,ImeKol,{|Ch| EdOtpr(Ch)},"IdFirma+idtipdok=cIdrj+'12'",;
-              cIdRj+"12",2,,,{|| partner=cPartner} )
-   BoxC()
+    seek _firma + _otpr_tip
 
-    if Pitanje(,"Formirati fakturu na osnovu gornjih otpremnica ?","N")=="D"
+    BrowseKey( m_x + 5, m_y + 1, m_x + 19, m_y+ 73, ImeKol, ;
+                {|Ch| EdOtpr(Ch)}, "idfirma+idtipdok = _firma + _otpr_tip",;
+                _firma + _otpr_tip, 2, , , {|| partner = _partn_naz } )
+BoxC()
+
+if Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
      
-        lSumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"
-        
-        Box(, 5, 50 )
-            @ m_x + 1, m_y + 2 SAY "Formirati:"
-            @ m_x + 3, m_y + 2 SAY " (1) racun veleprodaje"
-            @ m_x + 4, m_y + 2 SAY " (2) racun maloprodaje"
-            @ m_x + 5, m_y + 2 SAY "                     ===>" GET _vp_mp PICT "9" VALID _vp_mp > 0 .AND. _vp_mp < 3
-            read
-        BoxC()
+    _formiraj_racun( _firma, _otpr_tip, _partn_naz )
     
-        if _vp_mp == 1
-            _n_tip_dok := "10"
-        else
-            _n_tip_dok := "11"
-        endif
-
-      cVezOtpr := ""
-      select fakt_pripr
-      select fakt_doks  // order 2 !!!
-      seek cidrj + "12" + cPartner
-      dNajnoviji:=CTOD("")
-      do while !eof() .and. IdFirma+IdTipdok=cidrj+"12" ;
-               .and. fakt_doks->Partner=cPartner
-         
-        skip
-        nTrec0:=recno()
-        skip -1
-         
-        if m1="*"
-
-            cIdPart := fakt_doks->idpartner
-        
-            if dNajnoviji < fakt_doks->datDok
-                dNajnoviji := fakt_doks->datDok
-            endif
-            // scatter()
-            nOldIznos:=iznos   // ???!
-            
-            cVezOtpr += Trim ( FAKT_DOKS->BrDok )+", "
-            REPLACE IdTipDok WITH "22"      // promijeni naslov
-            REPLACE m1       WITH " "       // skini zvjezdicu iz browsa
-            
-            dxIdFirma := fakt_doks->IdFirma    // za provozat FAKT
-            dxBrDok   := fakt_doks->BrDok
-            
-
-            select fakt_doks 
-            set order to tag "1"
-            
-            // nadji sljedeci broj  10-ke ili 11-ke
-            
-            IF gMreznoNum == "N"
-               dbseek( dxidfirma + _n_tip_dok + "È", .t. )
-               skip -1
-               if _n_tip_dok <> idtipdok
-                  cBrDok:=UBrojDok(1,gNumDio,"")
-               else
-                  cBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, ;
-                                    gNumDio, ;
-                                    right(brdok,len(brdok)-gNumDio) ;
-                                  )
-               endif
-            ELSE
-            // ostavi prazno za mreznu numeraciju
-                cBrDok := SPACE(LEN(brdok))
-            ENDIF
-            
-            SELECT FAKT
-            seek dxIdFirma + "12" + dxBrDok
-            
-            do while !eof() .and. (dxIdFirma+"12"+dxBrDok) == ;
-                (idfirma+idtipdok+brdok)
-               
-                skip
-                nTrec:=recno()
-                skip -1
-               
-                Scatter()
-                replace IdTipDok WITH "22"
-               
-                if gMreznoNum == "N"
-                    _Brdok:=cBrdok
-                else
-                    _Brdok:=SPACE (LEN (BrDok))
-                endif
-
-                _datdok := date()
-                _m1 := "X"
-                _idtipdok := _n_tip_dok
-               
-                if _vp_mp == 2
-                    // radi se o mp racunu, izracunaj cijenu sa pdv
-                    _cijena := ROUND( _uk_sa_pdv( field->idtipdok, field->idpartner, field->cijena ), 2 )
-                endif
-
-                select fakt_pripr
-               
-                locate for idroba==fakt->idroba
-
-                if found() .and. lSumirati == .t. ;
-                    .and. fakt_pripr->cijena = fakt->cijena
-
-                     _kolicina:=fakt_pripr->kolicina+fakt->kolicina
-
-                else
-                    // append blank
-                    appblank2( .t., .f. )
-                endif
-               
-                Gather2()
-
-                select fakt
-                go nTrec
-            
-            enddo
-        endif
-        select fakt_doks
-        set order to tag "2"
-        
-        go nTrec0
-    enddo   // doks
-    
-    IF !Empty (cVezOtpr)
-        cVezOtpr := "Racun formiran na osnovu otpremnica: " +;
-                     LEFT (cVezOtpr, LEN (cVezOtpr)-2)+"."     // skine ", "
-    ENDIF
     select fakt_pripr
-    renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
+    renumeracija_fakt_pripr()
 
     select fakt_doks
     set order to tag "1"
 
-    endif // formirati
-
-else // stara varijanta
-
-    if  idtipdok $ "12#20#13#01#27"
-
-        if idtipdok="27"
-            cNoviTip:="11"
-        elseif idtipdok="01"
-            cNoviTip:="19"
-        else
-            cNoviTip:="10"
-        endif
-
-        if Pitanje(,"Zelite li dokument pretvoriti u "+cNoviTip,"D")=="D"
-            Box(,5,60)
-            cIdTipDok:=idtipdok
-            ccBrDok := BrDok
-            IF gMreznoNum == "N"
-                @ m_x+1,m_y+2 SAY "Dokument: "; ?? idfirma+"-"+idtipdok+"-"+brdok,"   ", Datdok
-                // select FAKT; go top
-                select fakt_doks; go top
-                seek fakt_pripr->idfirma+cNoviTip+"È"
-                skip -1
-                if  cNoviTip<>idtipdok
-                    cBrDok:=UBrojDok(1,gNumDio,"")
-                else
-                    cBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, ;
-                           gNumDio, ;
-                           right(brdok,len(brdok)-gNumDio) ;
-                         )
-                endif
-                cBrDok:=padr(cbrdok,8)
-            ELSE
-                cBrDok:=SPACE (LEN (BrDok))
-            ENDIF
-            select fakt_pripr; PushWa()
-
-            go top
-            nTrecc:=0
-            do while !eof()
-                skip; nTrecc:=recno(); skip -1
-                replace  brdok with cbrdok, idtipdok with cNoviTip, datdok with date()
-                if cidtipdok=="12"  // otpremnica u racun
-                    replace serbr with "*"
-                endif
-                if cidtipdok=="13"  //
-                        replace kolicina with -kolicina
-                endif
-                go nTRecc
-            enddo
-            PopWa()
-            IF gMreznoNum == "N"
-                    @ m_x+3,m_y+2 SAY "Dokument: "
-                    ?? idfirma+"-"+idtipdok+"-"+brdok,"   ", Datdok
-            ELSE
-                    @ m_x+3,m_y+2 SAY "Dokument: "
-                    ?? idfirma+"-"+cidtipdok+"-"+ccBrDok,"   ", Datdok, "- PREBACEN"
-            ENDIF
-            inkey(0)
-            BoxC()
-        endif
-
-        IsprUzorTxt()
-
-    else
-        Msg("Ova opcija je za promjenu 20,12,13 -> 10 i 27 -> 11")
-        return .f.
-    endif
-
-endif
+endif 
 
 close all
 o_fakt_edit()
-
 select fakt_pripr
+
 return .t.
+
+
+// ---------------------------------------------------------
+// vrati tip racuna koji zelis formirati
+// ---------------------------------------------------------
+static function _formiraj_tip_racuna()
+local _vp_mp := 1
+    
+Box(, 5, 50 )
+    @ m_x + 1, m_y + 2 SAY "Formirati:"
+    @ m_x + 3, m_y + 2 SAY " (1) racun veleprodaje"
+    @ m_x + 4, m_y + 2 SAY " (2) racun maloprodaje"
+    @ m_x + 5, m_y + 2 SAY "                     ===>" GET _vp_mp PICT "9" VALID _vp_mp > 0 .AND. _vp_mp < 3
+    read
+BoxC()
+    
+return _vp_mp
+
+
+// --------------------------------------------------------------
+// formiranje racuna
+// --------------------------------------------------------------
+static function _formiraj_racun( firma, otpr_tip, partn_naz )
+local _sumirati
+local _vp_mp
+local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
+local _veza_otpremnice, _broj_dokumenta
+local _id_partner, _rec
+
+
+// sumirati stavke ?
+_sumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"
+
+// koju vrsta racuna da napravim ? 
+_vp_mp := _formiraj_tip_racuna()
+
+if _vp_mp == 1
+    _n_tip_dok := "10"
+else
+    _n_tip_dok := "11"
+endif
+
+_veza_otpremnice := ""
+      
+select fakt_doks  
+seek firma + otpr_tip + partn_naz
+      
+_dat_max := CTOD("")
+
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+      
+do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
+               .and. fakt_doks->partner = partn_naz
+         
+    skip
+    _t_rec := RECNO()
+    skip -1
+         
+    if field->m1 = "*"
+
+        _id_partner := fakt_doks->idpartner
+        
+        if _dat_max < fakt_doks->datdok
+            _dat_max := fakt_doks->datdok
+        endif
+            
+        _postojeci_iznos := fakt_doks->iznos               
+        _veza_otpremnice += TRIM( fakt_doks->brdok ) + ", "
+            
+        // promijeni naslov
+        // skini zvjezdicu iz browsa
+        _rec := dbf_get_rec()
+        _rec["idtipdok"] := "22"
+        _rec["m1"] := " "
+
+        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+
+        dxIdFirma := fakt_doks->IdFirma    
+        // za provozat FAKT
+        dxBrDok   := fakt_doks->BrDok
+            
+        select fakt_doks 
+        set order to tag "1"
+            
+        // broj dokumenta za racun
+        _broj_dokumenta := SPACE( LEN( field->brdok ) )
+            
+        select fakt
+        seek dxIdFirma + "12" + dxBrDok
+            
+        do while !EOF() .and. (dxIdFirma + otpr_tip + dxBrDok) == ;
+                (idfirma+idtipdok+brdok)
+               
+            skip
+            _t_fakt_rec := recno()
+            skip -1
+             
+              
+            _fakt_rec := dbf_get_rec()
+            _fakt_rec["idtipdok"] := "22"
+            update_rec_server_and_dbf( "fakt_fakt", _fakt_rec, 1, "CONT" )
+
+            _fakt_rec := dbf_get_rec()
+            _fakt_rec["brdok"] := _broj_dokumenta
+            _fakt_rec["datdok"] := DATE()
+            _fakt_rec["m1"] := "X"
+            _fakt_rec["idtipdok"] := _n_tip_dok
+               
+            if _vp_mp == 2
+                // radi se o mp racunu, izracunaj cijenu sa pdv
+                _fakt_rec["cijena"] := ROUND( _uk_sa_pdv( field->idtipdok, field->idpartner, field->cijena ), 2 )
+            endif
+
+            select fakt_pripr
+            locate for idroba == fakt->idroba
+
+            if FOUND() .and. _sumirati == .t. .and. fakt_pripr->cijena = fakt->cijena
+
+                _fakt_rec["kolicina"] := fakt_pripr->kolicina + fakt->kolicina
+
+            else
+                // append blank
+                appblank2( .t., .f. )
+            endif
+               
+            dbf_update_rec( _fakt_rec )
+
+            select fakt
+
+            go ( _t_fakt_rec )
+            
+        enddo
+    endif
+        
+    select fakt_doks
+    set order to tag "2"
+        
+    go _t_rec
+
+enddo   
+    
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
+ 
+if !EMPTY( _veza_otpremnice )
+    _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + ;
+                     LEFT ( _veza_otpremnice, LEN ( _veza_otpremnice ) - 2 ) + "."
+endif
+    
+return
+
 
 
 

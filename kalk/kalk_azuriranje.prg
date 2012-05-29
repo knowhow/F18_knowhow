@@ -432,6 +432,7 @@ do while !eof()
             _TBankTr := "X"
             _mkonto  := _idkonto
             _mu_i    := "1"
+            _rbr := PADL( STR( 900 + VAL( ALLTRIM( _rbr ) ), 3 ), 3 )
             Gather()
         endif
    
@@ -762,6 +763,22 @@ do while !eof()
     if !sql_table_update("kalk_kalk", "ins", _record )
         _ok := .f.
         exit
+    endif
+
+    if _record["idvd"] == "97"
+
+        altd()
+        // dodaj zapis za 97-cu
+        _record["tbanktr"] := "X"
+        _record["mkonto"] := _record["idkonto"]
+        _record["mu_i"] := "1"
+        _record["rbr"] := PADL( STR( 900 + VAL( ALLTRIM( _record["rbr"] ) ), 3 ), 3 )
+    
+        if !sql_table_update("kalk_kalk", "ins", _record )
+            _ok := .f.
+            exit
+        endif
+
     endif
 
     SKIP

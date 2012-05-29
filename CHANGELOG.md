@@ -1,3 +1,9 @@
+1.0.39 2012-05-30, vsasa
+
+  - kalk, ažuriranje dokumenta tipa "97" [#28196](http://redmine.bring.out.ba/issues/28196)
+  - kalk, prenos dokumenta "97" u fakt isključen za sada [#28194](http://redmine.bring.out.ba/issues/28194)
+  - fakt, parametri prikaza cijena - bugfix [#28189](http://redmine.bring.out.ba/issues/28189)
+ 
 1.0.38 2012-05-28, vsasa
 
   - fakt, setovanje fiskalnog računa nakon štampe [#28160](http://redmine.bring.out.ba/issues/28160)

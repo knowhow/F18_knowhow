@@ -290,6 +290,8 @@ return
 function fakt_generisi_racun_iz_otpremnice()
 local _id_partner
 local _suma := 0
+local _veza_otpr := ""
+local _datum_max := DATE()
 
 select fakt_pripr
 use
@@ -365,10 +367,10 @@ BoxC()
 
 if Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
      
-    _formiraj_racun( _firma, _otpr_tip, _partn_naz )
+    _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
     
     select fakt_pripr
-    renumeracija_fakt_pripr()
+    renumeracija_fakt_pripr( _veza_otpr, _datum_max )
 
     select fakt_doks
     set order to tag "1"
@@ -435,13 +437,15 @@ return _vp_mp
 // --------------------------------------------------------------
 // formiranje racuna
 // --------------------------------------------------------------
-static function _formiraj_racun( firma, otpr_tip, partn_naz )
+static function _formiraj_racun( firma, otpr_tip, partn_naz, veza_otpr, datum_max )
 local _sumirati
 local _vp_mp
 local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
-
+       
+_broj_dokumenta := PADR( REPLICATE( "0", 5 ), 8 )
+         
 // sumirati stavke ?
 _sumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"
 
@@ -480,26 +484,32 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         endif
             
         _postojeci_iznos := fakt_doks->iznos               
-        _veza_otpremnice += TRIM( fakt_doks->brdok ) + ", "
+        _veza_otpremnice += ALLTRIM( fakt_doks->brdok ) + ", "
             
         // promijeni naslov
         // skini zvjezdicu iz browsa
         _rec := dbf_get_rec()
         _rec["idtipdok"] := "22"
         _rec["m1"] := " "
+        
+        __t_rec := RECNO()
+
+        // vidi za broj dokumenta da li je ok ?
+        //if fakt_doks_exist( _rec["idfirma"], _rec["idtipdok"], _rec["brdok"] )
+          //  _rec["brdok"] := fakt_novi_broj_dokumenta( _rec["idfirma"], _rec["idtipdok"], "" )
+          //  select fakt_doks
+          //  set order to tag "2"  
+          //  go ( __t_rec )
+        //endif
 
         update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
 
-        dxIdFirma := fakt_doks->IdFirma    
-        // za provozat FAKT
-        dxBrDok   := fakt_doks->BrDok
+        dxIdFirma := fakt_doks->idfirma    
+        dxBrDok   := fakt_doks->brdok
             
         select fakt_doks 
         set order to tag "1"
-            
-        // broj dokumenta za racun
-        _broj_dokumenta := PADR( REPLICATE( "0", 5 ), 8 )
-            
+               
         select fakt
         seek dxIdFirma + "12" + dxBrDok
             
@@ -509,10 +519,11 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             skip
             _t_fakt_rec := recno()
             skip -1
-             
               
             _fakt_rec := dbf_get_rec()
             _fakt_rec["idtipdok"] := "22"
+            _fakt_rec["brdok"] := dxBrDok
+
             update_rec_server_and_dbf( "fakt_fakt", _fakt_rec, 1, "CONT" )
 
             _fakt_rec := dbf_get_rec()
@@ -550,7 +561,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
     select fakt_doks
     set order to tag "2"
         
-    go _t_rec
+    go ( _t_rec )
 
 enddo   
     
@@ -558,8 +569,13 @@ sql_table_update( nil, "END" )
 my_use_semaphore_on()
  
 if !EMPTY( _veza_otpremnice )
+
     _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + ;
                      LEFT ( _veza_otpremnice, LEN ( _veza_otpremnice ) - 2 ) + "."
+
+    veza_otpr := _veza_otpremnice
+    datum_max := _dat_max
+
 endif
     
 return
@@ -569,7 +585,6 @@ return
 
 
 function Iz22u10()
-*{
 local cIdFirma:=gFirma
 local cVDok:="22"
 local cBrojDokumenta:=SPACE(8)

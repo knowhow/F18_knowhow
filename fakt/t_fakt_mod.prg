@@ -443,10 +443,6 @@ gStZagl := fetch_metric( "fakt_zagl_koristiti_txt", nil, gStZagl )
 gFPicHRow := fetch_metric( "fakt_zagl_pic_header", nil, gFPicHRow )
 gFPicFRow := fetch_metric( "fakt_zagl_pic_footer", nil, gFPicFRow )
 
-// parametri zaokruzenja
-gFZaok := fetch_metric( "fakt_zaokruzenje", nil, gFZaok )
-gZ_5pf := fetch_metric( "fakt_zaokruzenje_5_pf", nil, gZ_5pf )
-
 // izgled dokumenta
 gDodPar := fetch_metric( "fakt_datum_placanja_otpremnica", nil, gDoDPar )
 gDatVal := fetch_metric( "fakt_datum_placanja_svi_dokumenti", nil, gDatVal )
@@ -495,6 +491,13 @@ g22Str := fetch_metric( "fakt_dokument_dok_22_naziv", nil, g22Str )
 g22Str2T := fetch_metric( "fakt_dokument_dok_22_potpis", nil, g22Str2T ) 
 g22ftxt := fetch_metric( "fakt_dokument_dok_22_txt_lista", nil, g22ftxt ) 
 
+// parametri cijena
+gPicCDem := fetch_metric( "fakt_prikaz_cijene", NIL, gPicCDem )
+gPicDem := fetch_metric( "fakt_prikaz_iznosa", NIL, gPicDem )
+gPicKol := fetch_metric( "fakt_prikaz_kolicine", NIL, gPicKol )
+gFZaok := fetch_metric( "fakt_zaokruzenje", NIL, gFZaok )
+gZ_5pf := fetch_metric( "fakt_zaokruzenje_5_pf", NIL, gZ_5pf )
+
 O_PARAMS
 
 private cSection:="1"
@@ -528,9 +531,6 @@ Rpar("rR",@gRabIzRobe)
 Rpar("no",@gNovine)
 Rpar("ds",@gnDS)
 Rpar("ot",@gOdvT2)
-RPar("p0",@PicCDem)
-RPar("p1",@PicDem)
-RPar("p2",@PicKol)
 RPar("pk",@gPratik)
 RPar("pc",@gPratiC)
 RPar("56",@gnLMargA5)

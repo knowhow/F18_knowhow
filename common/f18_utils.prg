@@ -169,7 +169,7 @@ return "?" + _type + "?"
 // --------------------------------------
 function vpn_support()
 local _conn_name := PADR( "bringout podrska", 50 )
-local _status := 0
+local _status := 1
 local _ok
 
 #ifdef __PLATFORM__WINDOWS 
@@ -219,7 +219,7 @@ local _cmd
 local _err
 local _up_dn := "up"
 
-if status == 1
+if status == 0
 	_up_dn := "down"
 endif
 

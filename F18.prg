@@ -11,6 +11,7 @@
 
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 local menuop := {}
+local menuexec := {}
 local mnu_choice
 local mnu_left := 2
 local mnu_top := 2
@@ -25,66 +26,123 @@ public gDebug := 9
 f18_init_app()
 f18_app_parameters( .t. )
 
-// menu opcije...
-AADD( menuop, " 1) FIN   # finansijsko poslovanje                 " )
-AADD( menuop, " 2) KALK  # robno-materijalno poslovanje")
-AADD( menuop, " 3) FAKT  # fakturisanje")
-AADD( menuop, " 4) ePDV  # elektronska evidencija PDV-a")
-AADD( menuop, " 5) LD    # obracun plata")
-AADD( menuop, " 6) RNAL  # radni nalozi")
-AADD( menuop, " 7) OS/SII# osnovna sredstva i sitan inventar")
-AADD( menuop, " 8) POS   # maloprodajna kasa")
-AADD( menuop, " 9) MAT   # materijalno")
-AADD( menuop, "10) VIRM  # virmani")
-AADD( menuop, "--------------------------")
-AADD( menuop, " P) Parametri aplikacije")
-AADD( menuop, " R) ReLogin")
-AADD( menuop, " W) Pregled F18.log-a")
-AADD( menuop, " X) Erase / full synchro tabela")
-AADD( menuop, " V) VPN podrska")
+// glavni menij
 
 do while .t.
 
 	clear screen
+
+	// resetuj...
+	menuop := {}
+	menuexec := {}
+
+	// setuj odabir
+	set_menu_choices( @menuop, @menuexec, p3, p4, p5, p6, p7 )
+
+	// daj mi odabir
  	mnu_choice := ACHOICE( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t. )
 
  	do case
+
 		case mnu_choice == 0
     		exit
-		case mnu_choice == 1
-			MainFin(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 2
-			MainKalk(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 3
-			MainFakt(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 4
-			MainEPdv(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 5
-			MainLd(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 6
-			MainRnal(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 7
-			MainOs(my_user(), "dummy", p3, p4, p5, p6, p7)
-		case mnu_choice == 8
-			MainPos(my_user(), "dummy", p3, p4, p5, p6, p7)
- 		case mnu_choice == 9
-			MainMat(my_user(), "dummy", p3, p4, p5, p6, p7)
-       	case mnu_choice == 10
-			MainVirm(my_user(), "dummy", p3, p4, p5, p6, p7)
-        case mnu_choice == 12
-            f18_app_parameters()
-        case mnu_choice == 13
-            relogin()
-	 	case mnu_choice == 14
-            view_log()
-	 	case mnu_choice == 15
-            full_table_synchro()
-	 	case mnu_choice == 16
-            vpn_support()
+		case mnu_choice > 0 
+			eval( menuexec[ mnu_choice ] )
 	endcase
+
  	loop
+
 enddo
 
 log_close()
 
 return
+
+
+// -----------------------------------------------------------------------------
+// setuje matricu sa odabirom za menij
+// -----------------------------------------------------------------------------
+static function set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
+local _count := 0
+local _brojac
+
+if f18_use_module( "fin" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") FIN   # finansijsko poslovanje                 " )
+	AADD( menuexec, {|| MainFin( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "kalk" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") KALK  # robno-materijalno poslovanje" )
+	AADD( menuexec, {|| MainKalk( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "fakt" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") FAKT  # fakturisanje" )
+	AADD( menuexec, {|| MainFakt( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "epdv" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") ePDV  # elektronska evidencija PDV-a" )
+	AADD( menuexec, {|| MainEpdv( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "ld" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") LD    # obracun plata" )
+	AADD( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "rnal" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") RNAL  # radni nalozi" )
+	AADD( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "os" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") OS/SII# osnovna sredstva i sitan inventar" )
+	AADD( menuexec, {|| MainOs( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "pos" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") POS   # maloprodajna kasa" )
+	AADD( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "mat" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") MAT   # materijalno" )
+	AADD( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "virm" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ") VIRM  # virmani" )
+	AADD( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+AADD( menuop, "---------------------------------------------" )
+AADD( menuexec, {|| nil } )
+
+// ostale opcije...
+AADD( menuop, " P) Parametri aplikacije" )
+AADD( menuexec, {|| f18_app_parameters() } )
+AADD( menuop, " R) ReLogin" )
+AADD( menuexec, {|| relogin() } )
+AADD( menuop, " W) Pregled F18.log-a" )
+AADD( menuexec, {|| view_log() } )
+AADD( menuop, " X) Erase / full synchro tabela" )
+AADD( menuexec, {|| full_table_synchro() } )
+AADD( menuop, " V) VPN podrska" )
+AADD( menuexec, {|| vpn_support() } )
+
+return
+
+
+
+

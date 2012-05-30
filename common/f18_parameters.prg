@@ -21,6 +21,7 @@ local _x := 1
 local _pos_x
 local _pos_y
 local _left := 20
+local _modules := hb_hash()
 
 // fetch parametara
 #IFDEF __PLATFORM__WINDOWS
@@ -43,12 +44,24 @@ local _left := 20
 	_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
 #ENDIF
 
+// parametri modula koristenih na glavnom meniju...
+_modules["fin"] := fetch_metric( "main_menu_fin", my_user(), "D" )
+_modules["kalk"] := fetch_metric( "main_menu_kalk", my_user(), "D" )
+_modules["fakt"] := fetch_metric( "main_menu_fakt", my_user(), "D" )
+_modules["ld"] := fetch_metric( "main_menu_ld", my_user(), "D" )
+_modules["epdv"] := fetch_metric( "main_menu_epdv", my_user(), "D" )
+_modules["virm"] := fetch_metric( "main_menu_virm", my_user(), "D" )
+_modules["os"] := fetch_metric( "main_menu_os", my_user(), "D" )
+_modules["rnal"] := fetch_metric( "main_menu_rnal", my_user(), "N" )
+_modules["mat"] := fetch_metric( "main_menu_mat", my_user(), "N" )
+_modules["pos"] := fetch_metric( "main_menu_pos", my_user(), "N" )
+
 if just_set == nil
 	just_set := .f.
 endif
 
-
 if !just_set
+
 	clear screen
 
 	?
@@ -56,13 +69,20 @@ if !just_set
 	_pos_x := 2
 	_pos_y := 3
 
-	// open office parametri
-	@ _pos_x, _pos_y SAY "OpenOffice parametri ***" COLOR "I"
-	@ _pos_x + _x, _pos_y SAY PADL( "bin direktorij:", _left )  GET _oo_bin PICT "@S100"
+	@ _pos_x, _pos_y SAY "Odabir modula za glavni menij ***" COLOR "I"
+
+	@ _pos_x + _x, _pos_y SAY SPACE(2) + "FIN:" GET _modules["fin"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "KALK:" GET _modules["kalk"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "FAKT:" GET _modules["fakt"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "ePDV:" GET _modules["epdv"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "LD:" GET _modules["ld"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "VIRM:" GET _modules["virm"] PICT "@!"
+	
 	++ _x
-	@ _pos_x + _x, _pos_y SAY PADL( "writer aplikacija:", _left )  GET _oo_writer_exe PICT "@S100"
-	++ _x
-	@ _pos_x + _x, _pos_y SAY PADL( "calc aplikcija:", _left ) GET _oo_calc_exe PICT "@S100"
+	@ _pos_x + _x, _pos_y SAY SPACE(2) + "OS/SII:" GET _modules["os"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "POS:" GET _modules["pos"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "MAT:" GET _modules["mat"] PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "RNAL:" GET _modules["rnal"] PICT "@!"
 
 	++ _x
 	++ _x
@@ -90,6 +110,7 @@ if !just_set
 
 endif
 
+
 // snimi parametre u sql/db
 set_metric( "openoffice_bin", my_user(), _oo_bin )
 set_metric( "openoffice_writer", my_user(), _oo_writer_exe )
@@ -100,6 +121,33 @@ set_metric( "jodreports_bin", my_user(), _jod_bin )
 set_metric( "jodconverter_bin", my_user(), _jod_convert_bin )
 set_metric( "jodreports_templates", my_user(), _jod_templates )
 
+// parametri modula...
+set_metric( "main_menu_fin", my_user(), _modules["fin"] )
+set_metric( "main_menu_kalk", my_user(), _modules["kalk"] )
+set_metric( "main_menu_fakt", my_user(), _modules["fakt"] )
+set_metric( "main_menu_ld", my_user(), _modules["ld"] )
+set_metric( "main_menu_virm", my_user(), _modules["virm"] )
+set_metric( "main_menu_os", my_user(), _modules["os"] )
+set_metric( "main_menu_epdv", my_user(), _modules["epdv"] )
+set_metric( "main_menu_rnal", my_user(), _modules["rnal"] )
+set_metric( "main_menu_mat", my_user(), _modules["mat"] )
+set_metric( "main_menu_pos", my_user(), _modules["pos"] )
+
+
 return
+
+
+// ---------------------------------------------------------------------
+// koristi se pojedini od modula na osnovu parametara
+// ---------------------------------------------------------------------
+function f18_use_module( module_name )
+local _ret := .f.
+
+if fetch_metric( "main_menu_" + module_name, my_user(), "D" ) == "D"
+	_ret := .t.
+endif
+
+return _ret
+
 
 

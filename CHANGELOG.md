@@ -1,3 +1,7 @@
+1.0.41 2012-05-31, hernad  
+ 
+  - 1024 x 1280 rezolucija font setovan na 24
+
 1.0.40 2012-05-31, vsasa
 
   - f18 glavni meni, redizajn koda [#28235](http://redmine.bring.out.ba/issues/28235)

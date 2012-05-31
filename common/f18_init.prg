@@ -180,11 +180,12 @@ do CASE
 
   case  _pix_width >= 1024 .and. _pix_height >= 768
 
-     font_size(20)
-     font_width(10)
-
-     maxrows(35)
-     maxcols(100)
+     font_size(21)
+     //font_width(100)
+     //font_name("terminus")
+     font_name("ubuntu mono")
+     maxrows(33)
+     maxcols(96)
      
      log_write( _msg + "3")
 

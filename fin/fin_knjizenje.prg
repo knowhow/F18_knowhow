@@ -23,16 +23,14 @@ static __par_len
 // Unos fin naloga
 // ---------------------------------------------
 function fin_unos_naloga()
-local izbor
-
-private opc[4]
-
-cTekucaRj:=GetTekucaRJ()
-
-lBlagAsis := .f.
-cBlagIDVN := "66"
-
-private fK1:=fk2:=fk3:=fk4:=cDatVal:="N",gnLOst:=0,gPotpis:="N"
+private KursLis := "1"
+private fK1:="N"
+private fk2:="N"
+private fk3:="N"
+private fk4:="N"
+private cDatVal:="N"
+private gnLOst:=0
+private gPotpis:="N"
 
 O_PARAMS
 Private cSection:="1",cHistory:=" ",aHistory:={}
@@ -47,48 +45,15 @@ RPar("po",@gPotpis)
 select params
 use
 
-private KursLis:="1"
+cTekucaRj := GetTekucaRJ()
+lBlagAsis := .f.
+cBlagIDVN := "66"
 
-if gNW=="N"
- Opc[1]:="1. knjizenje naloga    "
- Opc[2]:="2. stampa naloga"
- Opc[3]:="3. azuriranje podataka"
- Opc[4]:="4. kurs "+KursLis
+KnjNal()
 
- Izbor:=1
- do while .t.
-
- h[1]:= h[2]:= h[3]:= h[4]:= ""
-
- Izbor:=menu("knjiz",opc,Izbor,.f.)
-
-   do case
-     case Izbor==0
-         EXIT
-     case izbor == 1
-         KnjNal()
-     case izbor == 2
-         StNal()
-     case izbor == 3
-         fin_azur()
-     case izbor == 4
-       // prva vrijednost
-       if KursLis=="1"  
-         KursLis:="2"
-       else
-         KursLis:="1"
-       endif
-       opc[4]:= "4. kurs " + KursLis
-   endcase
-
- enddo
-
-else 
-  // gNW=="D"
-  KnjNal()
-endif
-closeret
+close all
 return
+
 
 /*! \fn KnjNal()
  *  \brief Otvara pripremu za knjizenje naloga
@@ -97,8 +62,11 @@ return
 function KnjNal()
 local _sep := BROWSE_COL_SEP
 local _w := 25
+local _d := MAXCOLS() - 6
+local _opt_row
 
 o_fin_edit()
+
 ImeKol:={ ;
           {"F.",            {|| IdFirma }, "IdFirma" } ,;
           {"VN",            {|| IdVN    }, "IdVN" } ,;
@@ -120,34 +88,50 @@ ImeKol:={ ;
 
 
 Kol:={}
-for i:=1 to 16
-    AADD(Kol,i)
+
+for i := 1 to 16
+    AADD( Kol, i )
 next
 
-if gRj=="D" .and. fin_pripr->(FIELDPOS("IDRJ")) <> 0
-    AADD(ImeKol, { "RJ", {|| IdRj}, "IdRj" }  )
-    AADD(Kol, 17)
-ENDIF
+if gRj == "D" .and. fin_pripr->( FIELDPOS("IDRJ") ) <> 0
+    AADD( ImeKol, { "RJ", {|| IdRj }, "IdRj" } )
+    AADD( Kol, 17 )
+endif
 
-Box( , MAXROWS() - 4, MAXCOLS() - 6)
+Box( , MAXROWS() - 4, MAXCOLS() - 6 )
 
-  @ m_x + MAXROWS() - 6, m_y + 2 SAY PADR(" <c-N> Nove Stavke", _w) + _sep + PADR(" <ENT> Ispravi stavku", _w)  + _sep + PADR(hb_Utf8ToStr(" <c-T> Briši Stavku"), _w) + _sep + PADR( " P - povrat naloga", _w) + _sep 
+	_opt_d := ( _d / 4 )
 
-  @ m_x + MAXROWS() - 5, m_y + 2 SAY PADR(" <c-A> ispravi sve stavke", _w) + _sep + PADR(hb_Utf8ToStr(" <c-P> Štampa Naloga"), _w) + _sep + PADR(hb_Utf8ToStr(" <a-A> Ažuriranje"), _w) + _sep + PADR(hb_Utf8ToStr(" X Ažur bez štampe"), _w) + _sep
+	_opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
+	_opt_row += PADR( " <ENT> Ispravka", _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr( " <c+T> Briši stavku" ), _opt_d ) + _sep
+	_opt_row += " <P> Povrat naloga"
 
-  @ m_x + MAXROWS() - 4, m_y + 2 SAY PADR(hb_Utf8ToStr(" <c-F9> Briši pripremu"), _w) + _sep + PADR(" <F5>  Kontrola zbira", _w)  + _sep + PADR(" <a-F5> PrDat", _w) + _sep + PADR(" <a-B> Blagajna", _w) + _sep + PADR(" <F10> Ostalo", _w) + _sep
+	@ m_x + MAXROWS() - 6, m_y + 2 SAY _opt_row
 
-  ObjDbedit("PN2", MaxRows() - 4, MaxCols() - 6,  {|| edit_fin_pripr()}, "", "Priprema...", , , , ,3)
+	_opt_row := PADR( "<c+A> Ispravka stavki", _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr(" <c+P> Štampa naloga"), _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr(" <a+A> Ažuriranje"), _opt_d ) + _sep
+	_opt_row += hb_utf8tostr(" <x> Ažur.bez stampe")
+
+	@ m_x + MAXROWS() - 5, m_y + 2 SAY _opt_row
+
+	_opt_row := PADR( hb_utf8tostr("<c+F9> Briši sve"), _opt_d ) + _sep
+	_opt_row += PADR( " <F5> Kontrola zbira", _opt_d ) + _sep
+	_opt_row += PADR( " <a+F5> Pr.dat", _opt_d ) + _sep
+	_opt_row += "<a+B> Blag. <F10> Ost."
+
+	@ m_x + MAXROWS() - 4, m_y + 2 SAY _opt_row
+
+	ObjDbedit( "PN2", MaxRows() - 4, MaxCols() - 6, {|| edit_fin_pripr() }, "", "Priprema...", , , , , 3 )
 
 BoxC()
 
-closeret
+close all
 return
 
 
-/*! \fn WRbr()
- *  \brief Sredjivaje rednog broja u pripremi 
- */
+
 function WRbr()
 local _rec
 local _rec_2

@@ -11,6 +11,7 @@
 
 
 #include "kalk.ch"
+#include "f18_separator.ch"
 
 static cENTER := CHR(K_ENTER) + CHR(K_ENTER) + CHR(K_ENTER)
 static __box_x
@@ -41,6 +42,8 @@ return
 function kalk_unos_stavki_dokumenta(lAObrada)
 local nMaxCol := MAXCOLS() - 3
 local nMaxRow := MAXROWS() - 4
+local _opt_row, _opt_d
+local _sep := BROWSE_COL_SEP
 
 O_PARAMS
 
@@ -106,16 +109,39 @@ next
 
 Box(, nMaxRow, nMaxCol )
 
-    @ m_x + nMaxRow-3, m_y + 2 SAY "<c-N>  Nove Stavke      ³<ENT> Ispravi stavku    ³<c-T>  Brisi Stavku    ³ <K> kalkulacija cijena"
-    @ m_x + nMaxRow-2, m_y + 2 SAY "<c-A>  Ispravka Naloga  ³<c-P> Stampa Kalkulacije³<a-A> Azuriranje       ³ "
-    @ m_x + nMaxRow-1, m_y + 2 SAY "<a-K>  Rekap+Kontiranje ³<c-F9> Brisi pripremu   ³<a-P> Stampa pripreme  ³ "
-    @ m_x + nMaxRow, m_y + 2 SAY "<c-F8> Raspored troskova³<A> Asistent            ³<F10>,<F11> Ost.opcije ³ "
+	_opt_d := ( nMaxCol / 4 )
+	
+	_opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
+	_opt_row += PADR( "<ENT> Ispravka", _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<c+T> Brisi stavku"), _opt_d ) + _sep
+	_opt_row += "<K> Kalk.cijena"
 
-    if gCijene=="1" .and. gMetodaNC==" "
-        Soboslikar({{nMaxRow-3,m_y+1,nMaxRow,m_y+77}},23,14)
+    @ m_x + nMaxRow - 3, m_y + 2 SAY _opt_row
+    
+	_opt_row := PADR( "<c+A> Ispravka", _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<c+P> Stampa dok."), _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<a+A> Azuriranje"), _opt_d ) + _sep
+
+	@ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
+ 
+	_opt_row := PADR( "<a+K> Kontiranje", _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<c+F9> Brisi sve"), _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<a+P> Stampa pripreme"), _opt_d ) + _sep
+   
+	@ m_x + nMaxRow - 1, m_y + 2 SAY _opt_row
+ 
+	_opt_row := PADR( hb_utf8tostr("<c+F8> Rasp.troskova"), _opt_d ) + _sep
+	_opt_row += PADR( "<A> Asistent", _opt_d ) + _sep
+	_opt_row += PADR( "<F10> Dodatne opc.", _opt_d ) + _sep
+	_opt_row += "<F11> Dodatne opc./2"
+   
+	@ m_x + nMaxRow, m_y + 2 SAY _opt_row
+
+    if gCijene == "1" .and. gMetodaNC == " "
+        Soboslikar({{ nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 }}, 23, 14 )
     endif
 
-    PRIVATE lAutoAsist:=.f.
+    private lAutoAsist:=.f.
 
     ObjDbedit("PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler(lAutoObr)},"<F5>-kartica magacin, <F6>-kartica prodavnica","Priprema...", , , , ,4)
 

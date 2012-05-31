@@ -15,12 +15,12 @@
 static lDoks2 := .t.
 static lDirty := .t.
 
-
 // -----------------------------------------------------------------
 // Glavna funkcija za poziv pripreme i knjizenje fakture
 // -----------------------------------------------------------------
 function fakt_unos_dokumenta()
 local i, _x_pos, _y_pos, _x, _y
+local _sep := BROWSE_COL_SEP
 
 // da li je ocitan barkod
 private ImeKol, Kol
@@ -89,18 +89,132 @@ cFBrDok  := field->brdok
 
 _x := MAXROWS() - 4
 _y := MAXCOLS() - 3
-Box( , _x, _y)
 
-@ m_x + _x - 4, m_y + 2 SAY " <c-N> Nove Stavke        " + BROWSE_COL_SEP + " <ENT> Ispravi stavku      " + BROWSE_COL_SEP + " <c-T> Brisi Stavku "
-@ m_x + _x - 3, m_y + 2 SAY " <c-A> Ispravka Dokumenta " + BROWSE_COL_SEP + hb_Utf8ToStr(" <c-P> Štampa (TXT)        ") + BROWSE_COL_SEP + " <a-F10> Asistent  "
-@ m_x + _x - 2, m_y + 2 SAY hb_Utf8ToStr(" <a-A> Ažuriranje dok.    ") + BROWSE_COL_SEP + hb_Utf8ToStr(" <c-F9> Briši pripremu     ") + BROWSE_COL_SEP + " <F5>  Kontrola zbira  "
-@ m_x + _x - 1, m_y + 2 SAY " <R> Rezerv  <X> Prekid R " + BROWSE_COL_SEP + " <F10>  Ostale opcije      " + BROWSE_COL_SEP + " <F9> 20,12->10; 27->11"
+Box( , _x, _y )
 
-ObjDbedit( "PNal", _x, _y , {|| fakt_pripr_keyhandler()}, "", "Priprema...", , , , , 4)
+	_opt_d := ( _y / 4 ) 
+	
+	_opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
+	_opt_row += PADR( "<ENT> Ispravka", _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<c+T> Briši stavku"), _opt_d ) + _sep
+
+	@ m_x + _x - 4, m_y + 2 SAY _opt_row
+
+	_opt_row := PADR( "<c+A> Ispravka dok.", _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<c+P> Štampa (txt)"), _opt_d ) + _sep
+	_opt_row += PADR( "<a+F10> Asistent", _opt_d ) + _sep
+
+	@ m_x + _x - 3, m_y + 2 SAY _opt_row 
+
+	_opt_row := PADR( hb_utf8tostr("<a+A> Ažuriranje"), _opt_d ) + _sep
+	_opt_row += PADR( hb_utf8tostr("<c+F9> Briši sve"), _opt_d ) + _sep
+	_opt_row += PADR( "<F5> Kontrola zbira", _opt_d ) + _sep
+	_opt_row += "<T> total dokumenta"
+
+	@ m_x + _x - 2, m_y + 2 SAY _opt_row
+
+	_opt_row := PADR( "<R> Rezervacija", _opt_d ) + _sep
+	_opt_row += PADR( "<X> Prekid rez.", _opt_d ) + _sep
+	_opt_row += PADR( "<F10> Ostale opcije", _opt_d ) + _sep
+	_opt_row += "<F9> Konverzije"
+
+	@ m_x + _x - 1, m_y + 2 SAY _opt_row
+
+	ObjDbedit( "PNal", _x, _y , {|| fakt_pripr_keyhandler()}, "", "Priprema...", , , , , 4)
 
 BoxC()
 
 close all
+return
+
+
+// -----------------------------------------------
+// izvuci mi total dokumenta
+// -----------------------------------------------
+static function _total_dokumenta()
+local _x, _y
+local __x := 1
+local _left := 20
+local _doc_total := hb_hash()
+
+if fakt_pripr->( RECCOUNT() ) == 0 .or. ! ( fakt_pripr->idtipdok $ "10#11#20" )
+	return
+endif
+
+_x := MAXROWS() - 20
+_y := MAXCOLS() - 50
+
+// izvuci mi dokument u temp tabele
+stdokpdv( nil, nil, nil, .t. )
+
+// sracunaj totale...
+_calc_totals( @_doc_total )
+
+// prikazi box
+Box(, _x, _y )
+
+	@ m_x + __x, m_y + 2 SAY PADR( "TOTAL DOKUMENTA:", _y - 2 ) COLOR "I"
+	
+	++ __x
+	++ __x
+	
+	@ m_x + __x, m_y + 2 SAY PADL( "Osnovica: ", _left ) + STR( _doc_total["osn"], 12, 2 )
+
+	++ __x
+	
+	@ m_x + __x, m_y + 2 SAY PADL( "Popust: ", _left ) + STR( _doc_total["pop"], 12, 2 )
+	
+	++ __x
+	
+	@ m_x + __x, m_y + 2 SAY PADL( "Osnovica - popust: ", _left ) + STR( _doc_total["osn_pop"], 12, 2 )
+	
+	++ __x
+	
+	@ m_x + __x, m_y + 2 SAY PADL( "PDV: ", _left ) + STR( _doc_total["pdv"], 12, 2 )
+	
+	++ __x
+
+	@ m_x + __x, m_y + 2 SAY REPLICATE( "=", _left ) 
+	
+	++ __x
+	
+	@ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV: ", _left ) + STR( _doc_total["total"], 12, 2 )
+
+	while Inkey(0.1) != K_ESC
+   	end
+
+BoxC()
+
+return
+
+
+// ------------------------------------------------
+// sracunaj total na osnovu stampe dokumenta
+// ------------------------------------------------
+static function _calc_totals( hash )
+local _t_area := SELECT()
+
+hash["osn"] := 0
+hash["pop"] := 0
+hash["osn_pop"] := 0
+hash["pdv"] := 0
+hash["total"] := 0
+
+select drn
+go top
+
+if RECCOUNT() <> 0
+	
+	hash["osn"] := field->ukbezpdv
+	hash["pop"] := field->ukpopust
+	hash["osn_pop"] := field->ukbpdvpop
+	hash["pdv"] := field->ukpdv
+	hash["total"] := field->ukupno
+
+endif
+
+select ( _t_area )
+
 return
 
 
@@ -180,7 +294,14 @@ do case
         endif
     
     return DE_CONT
-    
+   
+
+	case UPPER(CHR(Ch)) == "T"
+
+		// total dokumenta box
+		_total_dokumenta()
+		return DE_CONT
+ 
     case ( Ch == K_CTRL_T )
 
         if BrisiStavku() == 1
@@ -306,31 +427,48 @@ do case
         return DE_REFRESH
         
     case Ch == K_F5
-            // kontrola zbira
-            nRec:=RecNo()
-            Box(,12,72)
-                nDug2:=nRab2:=nPor2:=0
-                cDinDem:=dindem
-                nC:=1
-                KonZbira()
-                if nC>9
-                        InkeySc(0)
-                        @ m_x+1,m_y+2 CLEAR to m_x+12,m_y+70
-                        nC:=1
-                @ m_x,m_y+2 SAY ""
-                endif
-            @ m_x+nC,m_y+2 SAY Replicate("-",65)
-                    @ m_x+nC+1,m_y+2   SAY "Ukupno   "
-                    @ m_x+nC+1,col()+1 SAY nDug2      pict "9999999.99"
-                    @ m_x+nC+1,col()+1 SAY nRab2      pict "9999999.99"
-                    @ m_x+nC+1,col()+1 SAY nDug2-nRab2 pict "9999999.99"
-                    @ m_x+nC+1,col()+1 SAY nPor2 pict          "9999999.99"
-                    @ m_x+nC+1,col()+1 SAY nDug2-nRab2+nPor2 pict "9999999.99"
-                    @ m_x+nC+1,col()+1 SAY "("+cDinDem+")"
-                InkeySc(0)
-            BoxC()
-            go nRec
-            return DE_CONT
+            
+		// kontrola zbira
+            
+		nRec:=RecNo()
+            
+		Box(, 12, 72 )
+            
+			nDug2 := 0 
+			nRab2 := 0
+			nPor2 := 0
+            cDinDem := dindem
+            nC := 1
+
+            KonZbira()
+                
+			if nC > 9
+
+				while Inkey(0.1) != K_ESC
+    			end
+
+                @ m_x + 1, m_y + 2 CLEAR to m_x + 12, m_y + 70
+                nC := 1
+                @ m_x, m_y + 2 SAY ""
+
+            endif
+            
+			@ m_x + nC, m_y + 2 SAY Replicate("-",65)
+            @ m_x + nC + 1, m_y + 2   SAY "Ukupno   "
+            @ m_x + nC + 1, col() + 1 SAY nDug2      pict "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY nRab2      pict "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY nDug2-nRab2 pict "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY nPor2 pict          "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY nDug2-nRab2+nPor2 pict "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY "("+cDinDem+")"
+		
+			while Inkey(0.1) != K_ESC
+    		end
+
+     	BoxC()
+            
+		go nRec
+        return DE_CONT
         
     case UPPER(Chr(Ch))  $ "RX"
             go top
@@ -1717,25 +1855,31 @@ return cVrati
  */
 
 function KonZbira(lVidi)
-*{
+
 if lVidi==nil
     lVidi:=.t.
 endif
- go top
- if lVidi
-   @ m_x+nC++,m_y+15 SAY "  Uk     Rabat     Uk-Rabat   Por.na Pr  Ukupno"
-   ++nC
- endif
- do while !eof()
+ 
+go top
+if lVidi
+	@ m_x+nC++,m_y+15 SAY "  Uk     Rabat     Uk-Rabat   Por.na Pr  Ukupno"
+   	++nC
+endif
+ 
+do while !eof()
+
    cRbr:=rbr
    nDug:=0; nRab:=0; nPor:=0
+
    do while rbr==cRbr
      nDug+=round( cijena*kolicina*PrerCij() , ZAOKRUZENJE)
      nRab+=round((cijena*kolicina*PrerCij())*Rabat/100 , ZAOKRUZENJE)
      nPor+=round((cijena*kolicina*PrerCij())*(1-Rabat/100)*Porez/100, ZAOKRUZENJE)
      skip
    enddo
+
    nDug2+=nDug; nRab2+=nRab; nPor2+=nPor
+
    if lVidi
      @ m_x+nC,m_y+2 SAY  "R.br:"
      @ m_x+nC,col()+1 SAY cRbr
@@ -1745,16 +1889,21 @@ endif
      @ m_x+nC,col()+1 SAY nPor pict          "9999999.99"
      @ m_x+nC,col()+1 SAY nDug-nRab+nPor pict "9999999.99"
      ++nC
+
      if nC>10
-        InkeySc(0)
+
+		while Inkey(0.1) != K_ESC
+    	end
+
         @ m_x+1,m_y+2 CLEAR to m_x+12,m_y+70
         nC:=1
-    @ m_x,m_y+2 SAY ""
+	    @ m_x,m_y+2 SAY ""
+
      endif
    endif
  enddo
 return
-*}
+
 
 
 /*! \fn JeStorno10()

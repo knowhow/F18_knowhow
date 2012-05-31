@@ -1,3 +1,8 @@
+1.0.40 2012-05-31, vsasa
+
+  - f18 glavni meni, redizajn koda [#28235](http://redmine.bring.out.ba/issues/28235)
+  - fakt, realizacija partnera [#28233](http://redmine.bring.out.ba/issues/28233)
+ 
 1.0.39 2012-05-30, vsasa
 
   - kalk, ažuriranje dokumenta tipa "97" [#28196](http://redmine.bring.out.ba/issues/28196)

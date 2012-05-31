@@ -149,20 +149,27 @@ do CASE
   case _pix_width >= 1440 .and. _pix_height >= 900
 
      font_size(24)
-     font_width(12)
+     font_width(100)
      maxrows(35)
      maxcols(119)
 
      log_write( _msg + "1")
  
-  case _pix_width >= 1280 .and. _pix_height >= 950
+  case _pix_width >= 1280 .and. _pix_height >= 820
 
-     font_size(22)
-     font_width(11)
+     font_size(24)
+     font_width(100)
+     maxrows(35)
+     maxcols(105)
 
-     maxrows(38)
-     maxcols(115)
-
+     /*
+     moguca je opcija ko zeli veci font
+     font_name("ubuntu mono")
+     font_size(26)
+     font_width(13)
+     maxrows(36)
+     maxcols(98)
+     */
      log_write( _msg + "2long")
 
   case _pix_width >= 1280 .and. _pix_height >= 800
@@ -178,7 +185,6 @@ do CASE
 
      font_size(20)
      font_width(100)
-     font_name("terminus")
      maxrows(35)
      maxcols(100)
      

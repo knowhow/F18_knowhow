@@ -899,7 +899,8 @@ endif
 UzmiIzIni(cIniName,'Varijable','URSOB', FormNum2(nPom,16,gPici2), 'WRITE')
  
 IniRefresh()
-//Odstampaj izvjestaj
+
+close all
 
 if LastKey() != K_ESC
 
@@ -922,8 +923,6 @@ if LastKey() != K_ESC
     f18_rtm_print( ALLTRIM( cSpecRtm ), "DUMMY", "1" )
 
 endif
-
-close all
 
 return .t.
 

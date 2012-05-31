@@ -3,6 +3,7 @@
   - f18 glavni meni, redizajn koda [#28235](http://redmine.bring.out.ba/issues/28235)
   - f18, čekiranje tabela [#28235](http://redmine.bring.out.ba/issues/28235)
   - fakt, realizacija partnera [#28233](http://redmine.bring.out.ba/issues/28233)
+  - fakt, prikaz totala dokumenta u pripremi [#28094](http://redmine.bring.out.ba/issues/28094)
  
 1.0.39 2012-05-30, vsasa
 

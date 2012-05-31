@@ -1014,7 +1014,6 @@ return .t.
  */
 
 function fakt_vt_porezi()
-*{
 public _ZPP:=0
 if roba->tip=="V"
   public _OPP:=0,_PPP:=tarifa->ppp/100
@@ -1029,41 +1028,41 @@ else
   public _PORVT:=0
 endif
 return
-*}
 
 
-/*! \fn fakt_real_partnera()
- *  \brief Realizacija po partnerima
- *  \todo Prebaciti u /RPT
- */
+
+
 
 function fakt_real_partnera()
+
 O_FAKT_DOKS
 O_PARTN
 O_VALUTE
 O_RJ
 
-cIdfirma:=gFirma
-dDatOd:=ctod("")
-dDatDo:=date()
-qqTipDok:="10;"
+cIdfirma := gFirma
+dDatOd := CTOD("")
+dDatDo := DATE()
+
+qqTipDok := "10;"
+
 Box(,11,77)
 
-O_PARAMS
-private cSection:="N",cHistory:=" "; aHistory:={}
-//Params1()
-RPar("c1",@cIdFirma)
-RPar("d1",@dDatOd)
-RPar("d2",@dDatDo)
-cTabela:="N"
-cBrFakDok:=SPACE(40)
-cImeKup:=space(20)
-qqPartn:=space(20)
-qqOpc:=space(20)
-RPar("TA",@cTabela)
-RPar("KU",@cImeKup)
-RPar("sk",@qqPartn)
-RPar("BD",@cBrFakDok)
+cTabela := "N"
+cBrFakDok := SPACE(40)
+cImeKup := SPACE(20)
+
+qqPartn := SPACE(20)
+qqOpc := SPACE(20)
+
+cTabela := fetch_metric("fakt_real_tabela", my_user(), cTabela )
+cImeKup := fetch_metric("fakt_real_ime_kupca", my_user(), cImeKup )
+qqPartn := fetch_metric("fakt_real_partner", my_user(), qqPartn )
+cBrFakDok := fetch_metric("fakt_real_broj_dok", my_user(), cBrFakDok )
+cIdFirma := fetch_metric("fakt_real_id_firma", my_user(), cIdFirma )
+dDatOd := fetch_metric("fakt_real_datum_od", my_user(), dDatOd )
+dDatDo := fetch_metric("fakt_real_datum_do", my_user(), dDatDo )
+
 qqPartn:=padr(qqPartn,20)
 qqTipDok:=padr(qqTipDok,40)
 qqOpc:=padr(qqOpc,20)
@@ -1090,21 +1089,19 @@ enddo
 qqTipDok:=trim(qqTipDok)
 qqPartn:=trim(qqPartn)
 
-Params2()
-WPar("c1",cIdFirma)
-WPar("d1",dDatOd)
-WPar("d2",dDatDo)
-WPar("TA",cTabela)
-WPar("sk",qqPartn)
-WPar("BD",cBrFakDok)
-select params
-use
+set_metric("fakt_real_tabela", my_user(), cTabela )
+set_metric("fakt_real_ime_kupca", my_user(), cImeKup )
+set_metric("fakt_real_partner", my_user(), qqPartn )
+set_metric("fakt_real_broj_dok", my_user(), cBrFakDok )
+set_metric("fakt_real_id_firma", my_user(), cIdFirma )
+set_metric("fakt_real_datum_od", my_user(), dDatOd )
+set_metric("fakt_real_datum_do", my_user(), dDatDo )
 
 BoxC()
 
 select fakt_doks
 
-Private cFilter:=".t."
+private cFilter:=".t."
 
 if !empty(dDatOd) .or. !empty(dDatDo)
     cFilter+=".and.  datdok>="+cm2str(dDatOd)+".and. datdok<="+cm2str(dDatDo)
@@ -1136,8 +1133,6 @@ else
   set Filter to &cFilter
 endif
 
-
-
 EOF CRET
 
 //gaZagFix:={3,3}
@@ -1145,6 +1140,7 @@ START PRINT CRET
 
 private nStrana:=0
 private m:="---- ------ -------------------------- ------------ ------------ ------------"
+
 fakt_zagl_real_partnera()
 
 set order to tag "6"
@@ -1196,8 +1192,8 @@ do while !eof() .and. IdFirma=cIdFirma
     endif
 
     ? space(gnLMarg)
-    ?? Str(++nC,4)+".", cIdPartner, partn->naz
-    nCol1:=pcol()+1
+    ?? Str(++nC,4)+".", cIdPartner, PADR( partn->naz, 25 )
+    nCol1 := pcol() + 1
     @ prow(),pcol()+1 SAY str(nIznos+nRabat,12,2)
     @ prow(),pcol()+1 SAY str(nRabat,12,2)
     @ prow(),pcol()+1 SAY str(nIznos,12,2)

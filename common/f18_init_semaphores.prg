@@ -19,6 +19,7 @@ static __dbf_pack_v1 := 700
 static __dbf_pack_v2 := 10
 
 
+
 // ----------------------------------------------------
 // ----------------------------------------------------
 function f18_init_semaphores()
@@ -27,17 +28,51 @@ local _f18_dbf
 local _temp_tbl
 
 _get_dbf_from_config()
-
 _f18_dbfs := f18_dbfs()
 
 
 for each _key in _f18_dbfs:Keys
 
     _temp_tbl := _f18_dbfs[_key]["temp"]
+
     if !_temp_tbl
-         refresh_me(_f18_dbfs[_key])
+
+		_tbl_base := _table_base( _f18_dbfs[_key] )
+
+		// radi os/sii
+		if _tbl_base == "sii"
+			_tbl_base := "os"
+		endif
+
+		if !EMPTY( _tbl_base ) .and. _tbl_base $ "#fin#fakt#kalk#os#ld#virm#rnal#mat#pos#epdv#" .and. !f18_use_module( _tbl_base )
+			// preskoci...
+		else
+			refresh_me(_f18_dbfs[_key])
+		endif
+
     endif
+
 next
+
+
+static function _table_base( a_dbf_rec )
+local _table := ""
+local _sep := "_"
+local _arr
+
+// vrati ce osnovu tabele
+// fakt_fakt -> fakt
+// fakt_doks -> fakt
+
+if _sep $ a_dbf_rec["table"]
+	_arr := toktoniz( a_dbf_rec["table"], _sep )	
+	if LEN( _arr ) > 1
+		_table := _arr[1]
+	endif
+endif
+
+return _table
+
 
 // ----------------------------------------------------
 // ----------------------------------------------------

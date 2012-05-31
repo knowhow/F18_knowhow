@@ -20,38 +20,39 @@
  *  \param nSlijediRedovaZajedno - koliko nakon ove funkcije redova zelimo odstampati, nakon preloma se treba zajedno odstmpati "nSlijediRedova"; za vrijednost -1 stampa bez obzira na trenutnu poziciju (koristiti za stampu na prvoj strani) 
  */
  
-function DokNovaStrana(nColumn, nStr, nSlijediRedovaZajedno)
+function DokNovaStrana( nColumn, nStr, nSlijediRedovaZajedno )
 
-
-if (nSlijediRedovaZajedno==nil)
-	nSlijediRedovaZajedno:=1
+if ( nSlijediRedovaZajedno == nil )
+    nSlijediRedovaZajedno := 1
 endif
 
-if (nSlijediRedovaZajedno==-1) .or. (PROW()>(62+gPStranica-nSlijediRedovaZajedno))
-	
-	if (nSlijediRedovaZajedno<>-1)
-		FF
-	endif
-	
-	@ prow(), nColumn SAY "Str:"+str(++nStr,3)
+if ( nSlijediRedovaZajedno == -1 ) .or. ( PROW() > ( 59 + gPStranica - nSlijediRedovaZajedno ) )
+    
+    if ( nSlijediRedovaZajedno <> -1 )
+        FF
+    endif
+    
+    @ prow(), nColumn SAY "Str:" + STR( ++nStr, 3 )
+
 endif
 
 return
 
 
 
-function NovaStrana(bZagl, nOdstampatiStrana)
+
+function NovaStrana( bZagl, nOdstampatiStrana )
 
 
 if (nOdstampatiStrana==nil)
-	nOdstampatiStrana:=1
+    nOdstampatiStrana:=1
 endif
 
 if PROW()>(62+gPStranica-nOdstampatiStrana)
-	FF
-	if (bZagl<>nil)
-		EVAL(bZagl)
-	endif
+    FF
+    if (bZagl<>nil)
+        EVAL(bZagl)
+    endif
 endif
 return
 
@@ -92,13 +93,13 @@ local nOArr:=select()
 
 ?? "Firma: "
 B_ON
-	?? gNFirma
+    ?? gNFirma
 B_OFF
 if !empty(cidrj)
-	select rj
-	hseek cidrj
-	select(nOArr)
-	?? "  RJ",rj->naz
+    select rj
+    hseek cidrj
+    select(nOArr)
+    ?? "  RJ",rj->naz
 endif
 
 return

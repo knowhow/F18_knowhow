@@ -1,7 +1,25 @@
+1.0.39 2012-05-30, vsasa
+
+  - kalk, ažuriranje dokumenta tipa "97" [#28196](http://redmine.bring.out.ba/issues/28196)
+  - kalk, prenos dokumenta "97" u fakt isključen za sada [#28194](http://redmine.bring.out.ba/issues/28194)
+  - fakt, parametri prikaza cijena - bugfix [#28189](http://redmine.bring.out.ba/issues/28189)
+ 
+1.0.38 2012-05-28, vsasa
+
+  - fakt, setovanje fiskalnog računa nakon štampe [#28160](http://redmine.bring.out.ba/issues/28160)
+  - fakt, štampa template-a fakture [#28154](http://redmine.bring.out.ba/issues/28154)
+ 
+1.0.37 2012-05-25, vsasa
+
+  - kalk, paginacija dokumenata [#28146](http://redmine.bring.out.ba/issues/28146)
+  - fin, unos datuma valute - bugfix [#28151](http://redmine.bring.out.ba/issues/25151)
+  - ostale sitne korekcije
+ 
 1.0.36 2012-05-21, vsasa
 
   - direktna štampa na epson štampače [#28072](http://redmine.bring.out.ba/issues/28072)
   - fin, kontrola zbira [#25823](http://redmine.bring.out.ba/issues/25823)
+  - ostale sitne korekcije
  
 1.0.35 2012-05-18, vsasa
 

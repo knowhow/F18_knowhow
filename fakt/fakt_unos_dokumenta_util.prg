@@ -2015,29 +2015,6 @@ return (lRetFlag)
 *}
 
 
-/*! \fn EdOtpr(Ch)
- *  \brief Ispravka otpremnica
- *  \param Ch
- */
-
-function EdOtpr(Ch)
-local cDn:="N",nRet:=DE_CONT
-do case
-    case Ch==ASC(" ") .or. Ch==K_ENTER
-        Beep(1)
-        if m1=" "    // iz DOKS
-                replace m1 with "*"
-                nSuma+=Iznos
-        else
-                replace m1 with " "
-                nSuma-=Iznos
-        endif
-        @ m_x+1,m_Y+55 SAY nSuma pict picdem
-        nRet:=DE_REFRESH
-endcase
-
-return nRet
-
 
 /*! \fn renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
  *  \brief
@@ -2045,7 +2022,7 @@ return nRet
  *  \param dNajnoviji - datum posljednje radjene otpremnice
  */
  
-function renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
+function renumeracija_fakt_pripr( veza_otpremnica, datum_max )
 //poziva se samo pri generaciji otpremnica u fakturu
 local dDatDok
 local lSetujDatum:=.f.
@@ -2055,29 +2032,30 @@ private cSetPor:="N"
 select fakt_pripr
 set order to tag "1"
 go top
+
 if RecCount2 () == 0
     return
 endif
 
-nRbr:=999
+nRbr := 999
 go bottom
-do while !bof()
-    replace rbr with str(--nRbr,3)
+do while !BOF()
+    replace rbr with str( --nRbr, 3 )
     skip -1
 enddo
 
-nRbr:=0
-do while !eof()
+nRbr := 0
+do while !EOF()
     skip
     nTrec:=recno()
     skip -1
     if Empty(podbr)
         replace rbr WITH str(++nRbr, 3, 0)
     else
-            if nRbr==0
+        if nRbr==0
             nRbr := 1
         endif
-            replace rbr with str(nRbr, 3, 0)
+        replace rbr with str(nRbr, 3, 0)
     endif
     go nTrec
 enddo
@@ -2085,6 +2063,7 @@ enddo
 go top
 
 Scatter()
+
 _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
 _dest := SPACE(150)
 _m_dveza := SPACE(500)
@@ -2094,12 +2073,13 @@ if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
 else
     _BrOtp:=space(8)
 endif
+
 _DatOtp:=ctod("")
 _BrNar:=space(8)
 _DatPl:=ctod("")
 
-if cVezOtpr==nil
-    cVezOtpr:= ""
+if veza_otpremnica == nil
+    veza_otpremnica := ""
 endif
 
 aMemo:=ParsMemo(_txt)
@@ -2152,8 +2132,8 @@ Box("#PARAMETRI DOKUMENTA:",10,75)
   if gDodPar=="1" .or. gDatVal=="D"
    nRokPl:=gRokPl
    @  m_x+6,m_y+2 SAY "Datum fakture  :" GET _DatDok
-   if dNajnoviji<>NIL
-    @  m_x+6,m_y+35 SAY "Datum posljednje otpremnice:" GET dNajnoviji WHEN .f. COLOR "GR+/B"
+   if datum_max <> NIL
+    @  m_x+6,m_y+35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .f. COLOR "GR+/B"
    endif
    @ m_x+7,m_y+2 SAY "Rok plac.(dana):" GET nRokPl PICT "999" WHEN FRokPl("0",.t.) VALID FRokPl("1",.t.)
    @ m_x+8,m_y+2 SAY "Datum placanja :" GET _DatPl VALID FRokPl("2",.t.)
@@ -2168,8 +2148,8 @@ dDatDok := _Datdok
 
 UzorTxt()
 
-if !Empty (cVezOtpr)
-  _txt2 += Chr(13)+Chr(10)+cVezOtpr
+if !Empty (veza_otpremnica)
+  _txt2 += Chr(13)+Chr(10)+veza_otpremnica
 endif
 
 _txt:=Chr(16)+trim(_txt1)+Chr(17) + Chr(16)+_txt2+Chr(17)+;
@@ -2179,7 +2159,7 @@ _txt:=Chr(16)+trim(_txt1)+Chr(17) + Chr(16)+_txt2+Chr(17)+;
       Chr(16)+dtoc(_DatOtp)+Chr(17) +;
       Chr(16)+_BrNar+Chr(17) +;
       Chr(16)+dtoc(_DatPl)+Chr(17)+;
-      IIF(Empty (cVezOtpr), "", Chr(16)+cVezOtpr+Chr(17))+;
+      IIF(Empty (veza_otpremnica), "", Chr(16)+veza_otpremnica+Chr(17))+;
       Chr(16)+Chr(17)+;
       Chr(16)+Chr(17)+;
       Chr(16)+Chr(17)+;

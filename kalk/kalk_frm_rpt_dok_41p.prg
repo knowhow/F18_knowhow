@@ -219,7 +219,7 @@ do while !eof() .and. cIdFirma == field->idfirma .and. cBrDok == field->brdok .a
 
 enddo
 
-DokNovaStrana(125, @nStr, 3)
+DokNovaStrana( 125, @nStr, 3 )
 
 ? _line
 

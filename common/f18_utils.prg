@@ -168,9 +168,9 @@ return "?" + _type + "?"
 // aktiviranje vpn podrske 
 // --------------------------------------
 function vpn_support()
-local _cmd
-local _err
 local _conn_name := PADR( "bringout podrska", 50 )
+local _status := 1
+local _ok
 
 #ifdef __PLATFORM__WINDOWS 
     msgbeep("Opcija nije omogucena !")
@@ -178,9 +178,17 @@ local _conn_name := PADR( "bringout podrska", 50 )
 #endif
 
 _conn_name := fetch_metric( "vpn_support_conn_name", my_user(), _conn_name )
+_status := fetch_metric( "vpn_support_last_status", my_user(), _status )
 
-Box(, 1, 65 )
+if _status == 0
+	_status := 1
+else
+	_status := 0
+endif
+
+Box(, 2, 65 )
     @ m_x + 1, m_y + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !EMPTY( _conn_name )
+    @ m_x + 2, m_y + 2 SAY "[1] aktivirati [0] prekinuti" GET _status PICT "9"
     read
 BoxC()
 
@@ -190,16 +198,42 @@ endif
 
 set_metric( "vpn_support_conn_name", my_user(), _conn_name )
 
-_cmd := 'nmcli con up id "' + ALLTRIM( _conn_name ) + '"' 
+// startaj vpn konekciju
+_ok := _vpn_start_stop( _status, _conn_name )
+
+// ako je sve ok snimi parametar u bazu
+if _ok == 0
+	set_metric( "vpn_support_last_status", my_user(), _status )
+endif
+
+return
+
+
+
+// ------------------------------------------------
+// stopira ili starta vpn konekciju
+// status : 0 - off, 1 - on
+// ------------------------------------------------
+static function _vpn_start_stop( status, conn_name )
+local _cmd
+local _err
+local _up_dn := "up"
+
+if status == 0
+	_up_dn := "down"
+endif
+
+_cmd := 'nmcli con ' + _up_dn + ' id "' + ALLTRIM( conn_name ) + '"' 
 
 _err := hb_run( _cmd )
 
 if _err <> 0
-    msgbeep( "Problem sa pokretanjem vpn konekcije:#" + ALLTRIM( _conn_name ) + " !???" )
-    return
+    msgbeep( "Problem sa vpn konekcijom:#" + ALLTRIM( conn_name ) + " !???" )
+    return _err
 endif
 
-return
+return _err
+
 
 
 

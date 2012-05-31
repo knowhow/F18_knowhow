@@ -12,11 +12,6 @@
 #include "fin.ch"
 
 
-/*! \fn StSubNal(cInd,lAuto)
- *  \brief Stapmanje subanalitickog naloga
- *  \param cInd  - "1"-stampa pripreme, "2"-stampa azuriranog, "3"-stampa dnevnika
- *  \param lAuto
- */
 
 function stampa_suban_dokument(cInd, lAuto)
 

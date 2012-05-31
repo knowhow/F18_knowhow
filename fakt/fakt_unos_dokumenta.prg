@@ -357,7 +357,8 @@ do case
     case Ch==K_F9
 #endif
 
-        Iz20u10() 
+        fakt_generisi_racun_iz_otpremnice() 
+
         lDirty:=.t.
         return DE_REFRESH
      

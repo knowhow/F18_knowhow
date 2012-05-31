@@ -46,23 +46,30 @@ do while .t.
     GO TOP
 
     IF kalk_pripr->idvd $ "97"
-	    LOCATE FOR konto==kalk_PRIPR->idkonto2
-	    if found()
-		    lRJKon97_2:=.t.
-		    cFF97_2:=id
-	    endif
-	    GO TOP
-	    LOCATE FOR konto==kalk_PRIPR->idkonto
-	    if found()
-		    lRJKon97 := .t.
-		    cFF97 := id
-	    endif
-  	    if !(lRJKon97.or.lRJKon97_2)
+
+	    //LOCATE FOR konto == kalk_PRIPR->idkonto2
+
+	    //if found()
+		  //  lRJKon97_2 := .t.
+		  //  cFF97_2 := id
+	    //endif
+
+	    //GO TOP
+	    //LOCATE FOR konto == kalk_PRIPR->idkonto
+
+	    //if found()
+		  //  lRJKon97 := .t.
+		  //  cFF97 := id
+	    //endif
+
+  	    //if !(lRJKon97.or.lRJKon97_2)
 		    // ako nijedan konto ne postoji u RJ.DBF u FAKT-u, nece se
 		    // formirati FAKT dokument za KALK 97-icu
 		    exit
-	    endif
+	    //endif
+
     ELSE
+
 	    IF kalk_pripr->idvd $ "11#12#13#95#96"
 	        //LOCATE FOR konto==kalk_PRIPR->idkonto2
 	    ELSE
@@ -79,6 +86,7 @@ do while .t.
 	    cFaktFirma := cIdFirma
 
 	    //ENDIF
+
     ENDIF
 
     select kalk_pripr

@@ -73,10 +73,10 @@ public System:=.f.
 public gGlBaza:=""
 public gSQL
 public gSqlLogBase
-PUBLIC  Invert:="N/W,R/N+,,,R/B+"
-PUBLIC  Normal:="GR+/N,R/N+,,,N/W"
-PUBLIC  Blink:="R****/W,W/B,,,W/RB"
-PUBLIC  Nevid:="W/W,N/N"
+PUBLIC Invert:="N/W,R/N+,,,R/B+"
+PUBLIC Normal:="GR+/N,R/N+,,,N/W"
+PUBLIC Blink:="R****/W,W/B,,,W/RB"
+PUBLIC Nevid:="W/W,N/N"
 PUBLIC gVeryBusyInterval
 PUBLIC gKonvertPath := "N"
 PUBLIC gSifk := .t.

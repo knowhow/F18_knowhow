@@ -31,6 +31,7 @@ gPO_Land:="#%LANDS#"
 gPPort := "1"
 gRPL_Normal:=""
 gRPL_Gusto:=""
+gPPTK := " "
 
 return
 

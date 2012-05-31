@@ -21,7 +21,8 @@ local _x := 1
 local _pos_x
 local _pos_y
 local _left := 20
-local _modules := hb_hash()
+local _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat
+local _pos
 
 // fetch parametara
 #IFDEF __PLATFORM__WINDOWS
@@ -45,16 +46,16 @@ local _modules := hb_hash()
 #ENDIF
 
 // parametri modula koristenih na glavnom meniju...
-_modules["fin"] := fetch_metric( "main_menu_fin", my_user(), "D" )
-_modules["kalk"] := fetch_metric( "main_menu_kalk", my_user(), "D" )
-_modules["fakt"] := fetch_metric( "main_menu_fakt", my_user(), "D" )
-_modules["ld"] := fetch_metric( "main_menu_ld", my_user(), "D" )
-_modules["epdv"] := fetch_metric( "main_menu_epdv", my_user(), "D" )
-_modules["virm"] := fetch_metric( "main_menu_virm", my_user(), "D" )
-_modules["os"] := fetch_metric( "main_menu_os", my_user(), "D" )
-_modules["rnal"] := fetch_metric( "main_menu_rnal", my_user(), "N" )
-_modules["mat"] := fetch_metric( "main_menu_mat", my_user(), "N" )
-_modules["pos"] := fetch_metric( "main_menu_pos", my_user(), "N" )
+_fin := fetch_metric( "main_menu_fin", my_user(), "D" )
+_kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
+_fakt := fetch_metric( "main_menu_fakt", my_user(), "D" )
+_ld := fetch_metric( "main_menu_ld", my_user(), "D" )
+_epdv := fetch_metric( "main_menu_epdv", my_user(), "D" )
+_virm := fetch_metric( "main_menu_virm", my_user(), "D" )
+_os := fetch_metric( "main_menu_os", my_user(), "D" )
+_rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
+_mat := fetch_metric( "main_menu_mat", my_user(), "N" )
+_pos := fetch_metric( "main_menu_pos", my_user(), "N" )
 
 if just_set == nil
 	just_set := .f.
@@ -71,18 +72,18 @@ if !just_set
 
 	@ _pos_x, _pos_y SAY "Odabir modula za glavni menij ***" COLOR "I"
 
-	@ _pos_x + _x, _pos_y SAY SPACE(2) + "FIN:" GET _modules["fin"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "KALK:" GET _modules["kalk"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "FAKT:" GET _modules["fakt"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "ePDV:" GET _modules["epdv"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "LD:" GET _modules["ld"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "VIRM:" GET _modules["virm"] PICT "@!"
+	@ _pos_x + _x, _pos_y SAY SPACE(2) + "FIN:" GET _fin PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "KALK:" GET _kalk PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "FAKT:" GET _fakt PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "ePDV:" GET _epdv PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "LD:" GET _ld PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "VIRM:" GET _virm PICT "@!"
 	
 	++ _x
-	@ _pos_x + _x, _pos_y SAY SPACE(2) + "OS/SII:" GET _modules["os"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "POS:" GET _modules["pos"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "MAT:" GET _modules["mat"] PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "RNAL:" GET _modules["rnal"] PICT "@!"
+	@ _pos_x + _x, _pos_y SAY SPACE(2) + "OS/SII:" GET _os PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "POS:" GET _pos PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "MAT:" GET _mat PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
 
 	++ _x
 	++ _x
@@ -122,17 +123,16 @@ set_metric( "jodconverter_bin", my_user(), _jod_convert_bin )
 set_metric( "jodreports_templates", my_user(), _jod_templates )
 
 // parametri modula...
-set_metric( "main_menu_fin", my_user(), _modules["fin"] )
-set_metric( "main_menu_kalk", my_user(), _modules["kalk"] )
-set_metric( "main_menu_fakt", my_user(), _modules["fakt"] )
-set_metric( "main_menu_ld", my_user(), _modules["ld"] )
-set_metric( "main_menu_virm", my_user(), _modules["virm"] )
-set_metric( "main_menu_os", my_user(), _modules["os"] )
-set_metric( "main_menu_epdv", my_user(), _modules["epdv"] )
-set_metric( "main_menu_rnal", my_user(), _modules["rnal"] )
-set_metric( "main_menu_mat", my_user(), _modules["mat"] )
-set_metric( "main_menu_pos", my_user(), _modules["pos"] )
-
+set_metric( "main_menu_fin", my_user(), _fin )
+set_metric( "main_menu_kalk", my_user(), _kalk )
+set_metric( "main_menu_fakt", my_user(), _fakt )
+set_metric( "main_menu_ld", my_user(), _ld )
+set_metric( "main_menu_virm", my_user(), _virm )
+set_metric( "main_menu_os", my_user(), _os )
+set_metric( "main_menu_epdv", my_user(), _epdv )
+set_metric( "main_menu_rnal", my_user(), _rnal )
+set_metric( "main_menu_mat", my_user(), _mat )
+set_metric( "main_menu_pos", my_user(), _pos )
 
 return
 

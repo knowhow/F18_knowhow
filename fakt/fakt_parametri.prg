@@ -416,9 +416,9 @@ BoxC()
 
 if (LASTKEY()<>K_ESC)
 
-    set_metric( "fakt_prikaz_cijene", NIL, gPicCDem )
-    set_metric( "fakt_prikaz_iznosa", NIL, gPicDem )
-    set_metric( "fakt_prikaz_kolicine", NIL, gPicKol )
+    set_metric( "fakt_prikaz_cijene", NIL, PicCDem )
+    set_metric( "fakt_prikaz_iznosa", NIL, PicDem )
+    set_metric( "fakt_prikaz_kolicine", NIL, PicKol )
     set_metric( "fakt_zaokruzenje", NIL, gFZaok )
     set_metric( "fakt_zaokruzenje_5_pf", NIL, gZ_5pf )
 

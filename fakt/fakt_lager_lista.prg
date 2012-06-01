@@ -663,9 +663,9 @@ if cPoTar=="D"
 	?
 	z0:="Rekapitulacija stanja po tarifama:"
 	? z0
-	m:="------"+REPL(" "+REPL("-",LEN(gPicProc)),3)+REPL(" "+REPL("-",LEN(gPicDem)),5)
+	m:="------"+REPL(" "+REPL("-",LEN(gPicProc)),3)+REPL(" "+REPL("-",LEN(PicDem)),5)
 	? m
-	z1:="Tarifa"+PADC("PPP%",LEN(gPicProc)+1)+PADC("PPU%",LEN(gPicProc)+1)+PADC("PP%",LEN(gPicProc)+1)+PADC("MPV",LEN(gPicDem)+1)+PADC("PPP",LEN(gPicDem)+1)+PADC("PPU",LEN(gPicDem)+1)+PADC("PP",LEN(gPicDem)+1)+PADC("MPV+por",LEN(gPicDem)+1)
+	z1:="Tarifa"+PADC("PPP%",LEN(gPicProc)+1)+PADC("PPU%",LEN(gPicProc)+1)+PADC("PP%",LEN(gPicProc)+1)+PADC("MPV",LEN(PicDem)+1)+PADC("PPP",LEN(PicDem)+1)+PADC("PPU",LEN(PicDem)+1)+PADC("PP",LEN(PicDem)+1)+PADC("MPV+por",LEN(PicDem)+1)
 	? z1
 	? m
 	ASORT(aPorezi,{|x,y| x[1]<y[1]})
@@ -687,7 +687,7 @@ if cPoTar=="D"
 		nPor1:=ROUND(nMPV/(_ZPP+(1+_OPP)*(1+_PPP))*_OPP, ZAOKRUZENJE)
 		nPor2:=ROUND(nMPV/(_ZPP+(1+_OPP)*(1+_PPP)*(1+_OPP))*_PPP, ZAOKRUZENJE)
 		nPor3:=ROUND(nMPV/(_ZPP+(1+_OPP)*(1+_PPP))*_ZPP, ZAOKRUZENJE)
-		? aPorezi[i,1], TRANS(100*_OPP,gPicProc), TRANS(100*_PPP,gPicProc), TRANS(100*_ZPP,gPicProc), TRANS(nMPV0,gPicDem), TRANS(nPor1,gPicDem), TRANS(nPor2,gPicDem), TRANS(nPor3,gPicDem), TRANS(nMPV,gPicDem)
+		? aPorezi[i,1], TRANS(100*_OPP,gPicProc), TRANS(100*_PPP,gPicProc), TRANS(100*_ZPP,gPicProc), TRANS(nMPV0,PicDem), TRANS(nPor1,PicDem), TRANS(nPor2,PicDem), TRANS(nPor3,PicDem), TRANS(nMPV,PicDem)
 		nUMPV+=nMPV
 		nUMPV0+=nMPV0
 		nUPor1+=nPor1
@@ -695,7 +695,7 @@ if cPoTar=="D"
 		nUPor3+=nPor3
 	next
 	? m
-	? PADR("UKUPNO:",3*(LEN(gPicProc)+1)+6), TRANS(nUMPV0,gPicDem), TRANS(nUPor1,gPicDem), TRANS(nUPor2,gPicDem), TRANS(nUPor3,gPicDem), TRANS(nUMPV,gPicDem)
+	? PADR("UKUPNO:",3*(LEN(gPicProc)+1)+6), TRANS(nUMPV0,PicDem), TRANS(nUPor1,PicDem), TRANS(nUPor2,PicDem), TRANS(nUPor3,PicDem), TRANS(nUMPV,PicDem)
 	?
 endif
 

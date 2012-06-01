@@ -309,6 +309,8 @@ return .t.
 // ---------------------------------------------------------------------------------------------------------------
 static function set_table_values_algoritam_vars(table, values, algoritam, transaction, a_dbf_rec, alg, where_str, alg_tag)
 local _key
+local _count := 0
+local _use_tag := .f.
 
 if table == NIL
    table := ALIAS()
@@ -337,9 +339,10 @@ alg := a_dbf_rec["algoritam"][algoritam]
 
 for each _key in alg["dbf_key_fields"]
 
-   if VALTYPE(_key) == "C"
+    ++ _count
+    if VALTYPE(_key) == "C"
 
-         // ne gledaj numericke kljuceve, koji su array stavke
+        // ne gledaj numericke kljuceve, koji su array stavke
         if !HB_HHASKEY(values, _key)
              _msg := RECI_GDJE_SAM + " bug - nepostojeci kljuc u " + _key +  " : " + pp(values)
              Alert(_msg)
@@ -351,15 +354,26 @@ for each _key in alg["dbf_key_fields"]
             // karakterna polja se moraju PADR-ovati
             // values['id'] = '0' => '0     '
             values[_key] := PADR(values[_key], a_dbf_rec["dbf_fields_len"][_key][2])
+        
+            // provjeri prvi dio kljuca
+            // ako je # onda obavezno setuj tag
+            if _count == 1
+                if PADR( values[_key], 1 ) == "#"
+                    _use_tag := .t.
+                endif
+            endif    
+
         endif
+
    endif
+
 next
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
    where_str := sql_where_from_dbf_key_fields(alg["dbf_key_fields"], values)
 END SEQUENCE
 
-if algoritam > 1
+if algoritam > 1 .or. _use_tag == .t.
   alg_tag := "#" + ALLTRIM(STR(algoritam))
 endif
 

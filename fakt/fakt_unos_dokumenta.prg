@@ -136,6 +136,7 @@ local _x, _y
 local __x := 1
 local _left := 20
 local _doc_total := hb_hash()
+local _t_area := SELECT()
 
 if fakt_pripr->( RECCOUNT() ) == 0 .or. ! ( fakt_pripr->idtipdok $ "10#11#20" )
 	return
@@ -185,6 +186,7 @@ Box(, _x, _y )
 
 BoxC()
 
+select ( _t_area )
 return
 
 
@@ -300,7 +302,7 @@ do case
 
 		// total dokumenta box
 		_total_dokumenta()
-		return DE_CONT
+		return DE_REFRESH
  
     case ( Ch == K_CTRL_T )
 

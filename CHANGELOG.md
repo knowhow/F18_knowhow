@@ -1,3 +1,7 @@
+1.0.43 2012-06-01, vsasa
+
+  - fakt, opcija "T" refresh [#28262](http://redmine.bring.out.ba/issues/28262)
+ 
 1.0.42 2012-06-01, vsasa
 
   - fakt, setovanje prikaza cijena [#28260](http://redmine.bring.out.ba/issues/28260)

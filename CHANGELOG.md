@@ -1,3 +1,7 @@
+1.0.42 2012-06-01, vsasa
+
+  - fakt, setovanje prikaza cijena [#28260](http://redmine.bring.out.ba/issues/28260)
+ 
 1.0.41 2012-05-31, hernad  
  
   - 1024 x 1280 rezolucija font setovan na 24

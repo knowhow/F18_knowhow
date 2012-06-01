@@ -68,7 +68,7 @@ static function set_print_codes( print_opt )
 
 do case
 
-    case print_opt == "E"
+    case print_opt $ "E#F#G"
 
         gPrinter := "E"
         set_epson_print_codes()
@@ -111,7 +111,7 @@ DO CASE
     CASE print_opt == "D"
         // dummy ne printaj nista
 
-    CASE print_opt == "E"
+    CASE print_opt $ "E#F#G"
 
         // printanje direktno na lpt port
         // sa epson kodovima

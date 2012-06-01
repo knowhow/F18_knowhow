@@ -157,10 +157,10 @@ if gcDirekt <> "B"
     Box(, 6, nWidth )
 
 	    @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt ;
-			pict "@!" valid cDirekt $ "DNERV"
+			pict "@!" valid cDirekt $ "DEFGRV"
 
 	    @ m_x + 2, m_y + 2 SAY "----------------------------------" 
-	    @ m_x + 3, m_y + 2 SAY "E - direktna stampa na LPT1"
+	    @ m_x + 3, m_y + 2 SAY "E - direktna stampa na LPT1 (F,G)"
 	    @ m_x + 4, m_y + 2 SAY "V - prikaz izvjestaja u editoru"
 	    @ m_x + 5, m_y + 2 SAY "R - ptxt stampa"
 	    @ m_x + 6, m_y + 2 SAY "---------- O P C I J E -----------"

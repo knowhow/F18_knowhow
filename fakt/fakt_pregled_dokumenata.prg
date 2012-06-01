@@ -416,8 +416,18 @@ local i
 local cPart
 local aMemo := {}
 local _rec
+local _t_area := SELECT()
 
 if Pitanje(,"Generisati fakturu na osnovu ponude ?", "D") == "N"
+    return DE_CONT
+endif
+
+O_FAKT_PRIPR
+O_FAKT
+
+if fakt_pripr->( RECCOUNT() ) <> 0
+    MsgBeep( "Priprema mora biti prazna !!!" )
+    select ( _t_area )
     return DE_CONT
 endif
 
@@ -429,71 +439,25 @@ cTipDok := field->idtipdok
 cFirma := field->idfirma
 cBrFakt := field->brdok
 cPart := field->idpartner
-dDatFakt := field->datdok
-dDatVal := field->datdok
-dDatIsp := field->datdok
-
-cNBrFakt := cBrFakt
+dDatFakt := DATE()
+dDatVal := DATE()
+dDatIsp := DATE()
+cNBrFakt := PADR( "00000", 8 )
 
 // uslovi generisanja...
-Box(, 7, 55)
+Box(, 5, 55)
     
     @ m_x + 1, m_y + 2 SAY "*** Parametri fakture "  
     
     @ m_x + 3, m_y + 2 SAY "  Datum fakture: " GET dDatFakt VALID !EMPTY(dDatFakt) 
-    
     @ m_x + 4, m_y + 2 SAY "   Datum valute: " GET dDatVal VALID !EMPTY(dDatVal) 
     @ m_x + 5, m_y + 2 SAY " Datum isporuke: " GET dDatIsp VALID !EMPTY(dDatIsp) 
-    
-
-    @ m_x + 7, m_y + 2 SAY "   Broj fakture: " GET cBrFakt VALID !EMPTY(cBrFakt)
 
     read
 
 BoxC()
 
-// postavi filter 
-set filter to
-go top
-seek cFirma + "10" + cBrFakt
-
-if FOUND()
-    
-    msgbeep("dokument vec postoji !!!!")
-    
-    if pitanje(, "Naci sljedeci broj dokumenta ?", "D") == "N"
-        return DE_CONT
-    endif
-
-    cNBrFakt := fakt_novi_broj_dokumenta( cFirma, "10" ) 
-    
-endif
-
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-
-//
-// prvo prekopiraj doks podatke
-// 
-select fakt_doks
-go top
-seek cFirma + cTipDok + cBrFakt
-
-_rec := dbf_get_rec()
-// tip dokumneta treba da bude 10 jer se radi o fakturi
-_rec["idtipdok"] := "10"
-_rec["brdok"] := cNBrFakt
-_rec["datdok"] := dDatFakt
-
-append blank
-// update podataka na server
-update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
-
-// 
-// sada odradi istu stvar za stavke fakture iz tabele fakt
-//
-
-O_FAKT
+// dokument ubaci u pripremu...
 select fakt
 set order to tag "1"
 go top
@@ -502,15 +466,11 @@ seek cFirma + cTipDok + cBrFakt
 do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
 
     ++ nCnt
-    
-    nFRec := RECNO()
 
     _rec := dbf_get_rec()
-
+   
     aMemo := ParsMemo( _rec["txt"] )
 
-    append blank
-    
     _rec["idtipdok"] := "10"
     _rec["brdok"] := cNBrFakt
     _rec["datdok"] := dDatFakt
@@ -543,17 +503,23 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma 
 
     endif
     
-    // upisi podatke u db
-    update_rec_server_and_dbf( "fakt_fakt", _rec, 1, "CONT" )
+    select fakt_pripr
+    append blank
+    dbf_update_rec( _rec )
 
-    go ( nFRec )
-    
+    select fakt
     skip
 
 enddo
 
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+if nCnt > 0
+    MsgBeep( "Dokument formiran i nalazi se u pripremi. Obradite ga !" )
+endif
+    
+// sada imamo dokument u pripremi...
+
+// mozemo ga automatski azurirati po zelji... 
+// ostavljam ovo za sada...
 
 if isugovori()
 
@@ -570,7 +536,7 @@ if isugovori()
             _rec["dat_l_fakt"] := DATE()
             my_use_semaphore_off()
             sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "BEGIN" )
+            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "CONT" )
             sql_table_update( nil, "END" )
             my_use_semaphore_on()
         endif
@@ -595,8 +561,6 @@ endif
 
 go nTrec
    
-msgbeep("Formiran dokument 10-" + cNBrFakt )
-
 return DE_REFRESH
 
 
@@ -604,7 +568,6 @@ return DE_REFRESH
 
 
 function pr_choice()
-*{
 local nSelected
 private Opc:={}
 private opcexe:={}

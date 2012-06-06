@@ -13,24 +13,7 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/rpt_95nv.prg
- *  \brief Stampa kalkulacije tipa 95, varijanta samo po nabavnim cijenama
- */
-
-
-/*! \fn StKalk95_1()
- *  \brief Stampa kalkulacije tipa 95, varijanta samo po nabavnim cijenama
- */
-
 function StKalk95_1()
-*{
 local cKto1
 local cKto2
 local cIdZaduz2
@@ -76,7 +59,7 @@ select konto
 hseek cKto1
 
 
-? PADL(cPom, 14), cKto1 + "- " + konto->naz
+? PADL(cPom, 14), cKto1 + "- " + PADR( konto->naz, 20 )
 
 if !empty(cKto2)
 
@@ -88,16 +71,12 @@ if !empty(cKto2)
 
 	select konto
 	hseek cKto2
-        ? PADL(cPom, 14), cKto2 + "- " + konto->naz
+        ? PADL(cPom, 14), cKto2 + "- " + PADR( konto->naz, 20 )
 endif
 if !empty(cIdZaduz2)
 	? PADL("Rad.nalog:", 14), cIdZaduz2
 endif
 ?
-if is_uobrada()
-	select kalk_pripr
-	? "Odobrenje:", odobr_no
-endif
 
 select kalk_pripr
 m:="--- ----------- --------------------------- ---------- ----------- -----------"

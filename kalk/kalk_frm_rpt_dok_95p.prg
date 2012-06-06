@@ -13,23 +13,11 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-/*! \fn StKalk95_1()
- *  \brief Stampa kalkulacije tipa 95, varijanta samo po nabavnim cijenama
- */
-
 function StKalk95_PDV()
-*{
 local cKto1
 local cKto2
 local cIdZaduz2
 local cPom
-
 local nCol1:=0
 local nCol2:=0
 local nPom:=0
@@ -64,10 +52,6 @@ endif
 
 select kalk_pripr
 
-if is_uobrada()
-	? "Odobrenje:", PADR(odobr_no,10)
-endif
-
 if cIdVd $ "95#96#97"
 	cPom:= "Razduzuje:"
 	cKto1:= cIdKonto2
@@ -83,7 +67,7 @@ hseek cKto1
 
 
 ?
-? PADL(cPom, 14), cKto1 + "- " + konto->naz
+? PADL(cPom, 14), cKto1 + "- " + PADR( konto->naz, 20 )
 
 if !empty(cKto2)
 
@@ -95,11 +79,9 @@ if !empty(cKto2)
 
 	select konto
 	hseek cKto2
-        ? PADL(cPom, 14), cKto2 + "- " + konto->naz
+    ? PADL(cPom, 14), cKto2 + "- " + PADR( konto->naz, 20 )
 endif
 ?
-
-
 
 select kalk_pripr
 

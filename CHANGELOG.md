@@ -1,7 +1,8 @@
-1.0.44 2012-06-01, vsasa
+1.0.44 2012-06-07, vsasa
 
   - semafori i šifre koje počinju sa "#" [#28084](http://redmine.bring.out.ba/issues/28084)
   - fakt, generisanje faktura na osnovu ponuda, opcija "F"  [#28271](http://redmine.bring.out.ba/issues/28271)
+  - štampanje delphirb procesa odvojeno na unix-u [#28311](http://redmine.bring.out.ba/issues/28311)
  
 1.0.43 2012-06-01, vsasa
 

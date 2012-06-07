@@ -100,6 +100,11 @@ if !EMPTY( table_name )
 
 endif
 
+#ifdef __PLATFORM__UNIX
+	_cmd += " "
+	_cmd += "&"
+#endif
+
 #ifdef __PLATFORM__WINDOWS
     if test_mode
         _cmd += " & pause"

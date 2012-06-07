@@ -232,24 +232,24 @@ return
  *  \note koristi lokalne varijable
  */
 
-function VRoba_lv(fNovi, aPorezi)
-*{
+function VRoba_lv( fNovi, aPorezi )
+
 P_Roba(@_IdRoba)
-Reci(12,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40)
 
 if fNovi .or. IsJerry()
-  // nadji odgovarajucu tarifu regiona
-  cTarifa:=Tarifa(_IdKonto,_IdRoba, @aPorezi)
+    // nadji odgovarajucu tarifu regiona
+    cTarifa:=Tarifa(_IdKonto,_IdRoba, @aPorezi)
 else
-  // za postojece dokumente uzmi u obzir unesenu tarifu
-  SELECT TARIFA
-  seek _IdTarifa
-  SetAPorezi(@aPorezi)
+    // za postojece dokumente uzmi u obzir unesenu tarifu
+    SELECT TARIFA
+    seek _IdTarifa
+    SetAPorezi(@aPorezi)
 endif
 
 if fNovi .or. (gVodiSamoTarife=="D") .or. IsJerry()
    _IdTarifa:=cTarifa
 endif
+
 return .t.
 
 

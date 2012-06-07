@@ -208,7 +208,7 @@ return .t.
 // ---------------------------------------
 // validacija unosa preracuna
 // ---------------------------------------
-static function _val_konv( cDn )
+function _val_konv( cDn )
 local lRet := .t.
 
 if cDN $ "DN"
@@ -225,7 +225,7 @@ return .t.
 // --------------------------------------
 // konverzija fakturne cijene
 // --------------------------------------
-static function _set_konv( nFcj, cPretv )
+function _set_konv( nFcj, cPretv )
 
 if cPretv == "D"
 	a_val_convert()	

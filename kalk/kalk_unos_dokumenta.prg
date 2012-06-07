@@ -1145,7 +1145,6 @@ if _idvd=="10"
     endif
 
     if IsPDV()
-        //return if( gVarijanta == "1", Get1_10sPDV(), Get1_10PDV() )
         return Get1_10PDV()
     else
         return if( gVarijanta == "1", Get1_10s(), Get1_10() )
@@ -1186,7 +1185,7 @@ elseif _idvd=="19"
 elseif _idvd $ "41#42#43#47#49"
     return GET1_41()
 elseif _idvd == "81"
-    return GET1_81()
+    return get1_81()
 elseif _idvd == "80"
     return GET1_80()
 elseif _idvd=="24"
@@ -1253,13 +1252,12 @@ if _idvd $ "10"
     if !IsPDV()
         return Get2_10()
     endif
-elseif _idvd == "81"
-  return Get2_81()
 elseif _idvd == "RN"
   return Get2_RN()
 elseif _idvd == "PR"
   return Get2_PR()
 endif
+
 return K_ESC
 
 

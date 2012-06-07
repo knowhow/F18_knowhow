@@ -385,11 +385,11 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     xml_node( "pcsap", STR( field->mpcsapp, 12, 2 ) )
 
     // troskovi
-    _pr_tr_prev := nPrevoz / field->fcj2 * 100
-    _pr_tr_bank := nBankTr / field->fcj2 * 100
-    _pr_tr_sped := nSpedTr / field->fcj2 * 100
-    _pr_tr_car := nCarDaz / field->fcj2 * 100
-    _pr_tr_zav := nZavTr / field->fcj2 * 100
+    _pr_tr_prev := if( nPrevoz <> 0, nPrevoz / field->fcj2 * 100, 0 )
+    _pr_tr_bank := if( nBankTr <> 0, nBankTr / field->fcj2 * 100, 0 )
+    _pr_tr_sped := if( nSpedTr <> 0, nSpedTr / field->fcj2 * 100, 0 )
+    _pr_tr_car := if( nCarDaz <> 0, nCarDaz / field->fcj2 * 100, 0 )
+    _pr_tr_zav := if( nZavTr <> 0, nZavTr / field->fcj2 * 100, 0 )
     _pr_tr_svi := ( _pr_tr_prev + _pr_tr_bank + _pr_tr_sped + _pr_tr_car + _pr_tr_zav )
  
     // procenti troskova

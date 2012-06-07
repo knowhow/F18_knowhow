@@ -168,18 +168,32 @@ do while .t.
      	ENDIF
 
      	if fdoks2
-        	select kalk_doks2
+        	
+            select kalk_doks2
 			hseek cidfirma + "14" + cbrkalk
-        	if !found()
+        	
+            if !found()
            		append blank
-           		replace idvd with "14",;   // izlazna faktura
-                   brdok with cBrKalk,;
-                   idfirma with cidfirma
-        	endif
-        	replace DatVal with dDatPl
+                _rec := dbf_get_rec()
+                _rec["idvd"] := "14"
+                _rec["idfirma"] := cIdFirma
+                _rec["brdok"] := cBrKalk
+        	else
+                _rec := dbf_get_rec()
+            endif
+
+            _rec["datval"] := dDatPl
+
         	IF lVrsteP
-          		replace k2 with cIdVrsteP
+                _rec["k2"] := cIdVrsteP
         	ENDIF
+
+            my_use_semaphore_off()
+            sql_table_update( nil, "BEGIN" )
+            update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "CONT" )
+            sql_table_update( nil, "END" )
+            my_use_semaphore_on()
+
         	select fakt
 
      	endif
@@ -249,6 +263,7 @@ BoxC()
 
 close all
 return
+
 
 
 static function _o_prenos_tbls()

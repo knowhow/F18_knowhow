@@ -184,7 +184,7 @@ endif
 
 xml_node("ftel", ALLTRIM(get_dtxt_opis("I10")) )
 xml_node("feml", ALLTRIM(get_dtxt_opis("I11")) )
-xml_node("fbnk", ALLTRIM(get_dtxt_opis("I09")) )
+xml_node("fbnk", to_xml_encoding( ALLTRIM(get_dtxt_opis("I09")) ) )
 
 cTmp := ALLTRIM(get_dtxt_opis("I12"))
 xml_node("fdt1", to_xml_encoding(cTmp))

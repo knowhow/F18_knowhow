@@ -1,3 +1,8 @@
+1.0.45 2012-06-07, vsasa
+
+  - kalk, unos dokumenanata 80 i 81, sređivanje forme [#27455](http://redmine.bring.out.ba/issues/27455)
+  - ostale sitne dorade
+
 1.0.44 2012-06-07, vsasa
 
   - semafori i šifre koje počinju sa "#" [#28084](http://redmine.bring.out.ba/issues/28084)

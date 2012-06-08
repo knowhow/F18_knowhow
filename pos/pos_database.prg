@@ -561,7 +561,7 @@ _M1 := OBR_NIJE
 set order to tag "1"
 seek cIdPos + "42" + dtos(gdatum) + cStalRac
 
-if ( alltrim(field->idRadnik) != "////" )
+if ( ALLTRIM( field->idRadnik ) != "////" )
 	MsgBeep("Nesto nije u redu zovite servis - radnik bi morao biti //// !!!")
 endif
 
@@ -569,7 +569,7 @@ endif
 _append := get_dbf_global_memvars()
 
 // transakcija...
-sql_table_update( nil, "BEGIN")
+sql_table_update( nil, "BEGIN" )
 
 update_rec_server_and_dbf( "pos_doks", _append, 1, "CONT" )
 
@@ -579,7 +579,7 @@ SELECT _POS
 cDatum := DTOS(gDatum)  
 private nIznRn := 0
 
-do while !eof() .and. _POS->( IdPos+IdVd+DTOS(Datum)+BrDok ) == ( cIdPos + "42" + cDatum + cRadRac )
+do while !eof() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos + "42" + cDatum + cRadRac )
 
     set_global_memvars_from_dbf()
 
@@ -919,19 +919,111 @@ SELECT ZAKSM
 return
 
 
+// ------------------------------------------------------------------
+// pos, uzimanje novog broja za tops dokument
+// ------------------------------------------------------------------
+function pos_novi_broj_dokumenta( id_pos, tip_dokumenta, dat_dok )
+local _broj := 0
+local _broj_doks := 0
+local _param
+local _tmp, _rest
+local _ret := ""
+local _t_area := SELECT()
 
-/*! \fn pos_naredni_dokument(cIdPos,cIdVd,cPadCh,dDat)
- *  \brief Naredni broj dokumenta
- *  \param cIdPos
- *  \param cIdVd
- *  \param cPadCh
- *  \param dDat
- *  \return cBrDok
- */
- 
-function pos_naredni_dokument(cIdPos,cIdVd,cPadCH,dDat)
-*{
+if dat_dok == NIL
+    dat_dok := gDatum
+endif
 
+// param: pos/10/10
+_param := "pos" + "/" + id_pos + "/" + tip_dokumenta 
+_broj := fetch_metric( _param, nil, _broj )
+
+// konsultuj i doks uporedo
+O_POS_DOKS
+set order to tag "1"
+go top
+seek id_pos + tip_dokumenta + DTOS( dat_dok ) + "Ž"
+skip -1
+
+if field->idpos == id_pos .and. field->idvd == tip_dokumenta .and. DTOS( field->datum ) == DTOS( dat_dok )
+    _broj_doks := VAL( field->brdok )
+else
+    _broj_doks := 0
+endif
+
+// ako je tip sezone na mjesecnom nivou
+//if gSezonaTip == "M"
+  //  if MONTH( field->datum ) < MONTH( dat_dok )
+        // resetuj brojace...
+    //    _broj_doks := 0
+    //    _broj := 0
+  //  endif
+//endif
+
+// uzmi sta je vece, doks broj ili globalni brojac
+_broj := MAX( _broj, _broj_doks )
+
+// uvecaj broj
+++ _broj
+
+// ovo ce napraviti string prave duzine...
+_ret := PADL( ALLTRIM( STR( _broj ) ), 6  )
+
+// upisi ga u globalni parametar
+set_metric( _param, nil, _broj )
+
+select ( _t_area )
+return _ret
+
+
+// ------------------------------------------------------------
+// setovanje parametra brojaca na admin meniju
+// ------------------------------------------------------------
+function pos_set_param_broj_dokumenta()
+local _param
+local _broj := 0
+local _broj_old
+local _id_pos := gIdPos
+local _tip_dok := "42"
+
+Box(, 2, 60 )
+
+    @ m_x + 1, m_y + 2 SAY "Dokument:" GET _id_pos
+    @ m_x + 1, col() + 1 SAY "-" GET _tip_dok
+
+    read
+
+    if LastKey() == K_ESC
+        BoxC()
+        return
+    endif
+
+    // param: pos/10/10
+    _param := "pos" + "/" + _id_pos + "/" + _tip_dok
+    _broj := fetch_metric( _param, nil, _broj )
+    _broj_old := _broj
+
+    @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "999999"
+
+    read
+
+BoxC()
+
+if LastKey() != K_ESC
+    // snimi broj u globalni brojac
+    if _broj <> _broj_old
+        set_metric( _param, nil, _broj )
+    endif
+endif
+
+return
+
+
+// -----------------------------------------------------------------
+// ovo je stara funkcija za dodjeljivanje broja...
+// ostavljam je za slucaj da sta bude potrebno 
+// -----------------------------------------------------------------
+function pos_naredni_dokument( cIdPos, cIdVd, cPadCH, dDat )
 local cBrDok
 local cFilter
 local nRecs:=RecCount2()

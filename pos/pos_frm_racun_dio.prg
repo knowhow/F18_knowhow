@@ -12,34 +12,8 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/frm_rdio.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.3 $
- * $Log: frm_rdio.prg,v $
- * Revision 1.3  2002/06/15 08:17:46  sasa
- * no message
- *
- *
- */
- 
-
-/*! \fn RazdRac(cRadRac,fZakPol,nKoliko,cAuto,cZagl)
- *  \brief Dijeljenje radnog racuna!
- *  \param cRadRac
- *  \param fZakPol -> ako je .t. zakljuci i polazni racun
- *  \param nKoliko
- *  \param cAuto
- *  \param cZagl
- *  \return
- */
 
 function RazdRac(cRadRac,fZakPol,nKoliko,cAuto,cZagl)
-*{
-
 local aRacPriv:={}
 local nKol
 local nCnt
@@ -116,7 +90,7 @@ endif
 // prvo odredi brojeve (radne) za racune na koje se dijeli ovaj
 // naravno, osim onog od kog se krenulo
 SELECT _POS
-cNarBr := pos_naredni_dokument (gIdPos, VD_RN)
+cNarBr := pos_novi_broj_dokumenta( gIdPos, VD_RN )
 AADD (aRacPriv, cNarbr)
 for nCnt := 3 to nKoliko
 	cNarBr := IncID (cpos_naredni_dokument)
@@ -166,7 +140,7 @@ end
 
 // stampaj racune
 SELECT DOKS
-cStalRac := pos_naredni_dokument (gIdPos, VD_RN)
+cStalRac := pos_novi_broj_dokumenta( gIdPos, VD_RN )
 
 if fZakPol
 	if IsPDV()

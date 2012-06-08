@@ -81,7 +81,7 @@ select pos_doks
 set order to tag "1"
     
 // nadji sljedeci broj TOPS dokumenta
-_br_dok := pos_naredni_dokument( _id_pos, tip_dok )
+_br_dok := pos_novi_broj_dokumenta( _id_pos, tip_dok )
     
 select katops
 go top

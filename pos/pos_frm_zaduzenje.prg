@@ -314,14 +314,12 @@ endif // fSadAz
 
 SELECT PRIPRZ
       
-// ZADRP
-
-if RecCount2()>0
+if RecCount2() > 0 
 
 	select pos_doks
   	set order to 1
 
-  	cBrDok:=pos_naredni_dokument(cIdPos,iif(cIdvd=="PD","16",cIdVd)," ",dDatRada)
+  	cBrDok := pos_novi_broj_dokumenta( cIdPos, iif( cIdvd == "PD", "16", cIdVd ) )
 
   	SELECT PRIPRZ
  

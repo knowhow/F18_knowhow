@@ -162,7 +162,7 @@ O_TARIFA
 
 select pos_doks
 
-cNDokBr := pos_naredni_dokument( cIdPos, VD_ZAD )
+cNDokBr := pos_novi_broj_dokumenta( cIdPos, VD_ZAD )
 __dok_br := cNDokBr
 
 select pos_sez

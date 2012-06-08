@@ -127,7 +127,7 @@ endif
 // 1) formiranje pomocne baze sa knjiznim stanjima artikala
 
 if fPocInv    
-	cBrDok:=DOKS->(pos_naredni_dokument(gIdPos,cIdVd))
+	cBrDok := pos_novi_broj_dokumenta( gIdPos, cIdVd )  
 	fPreuzeo:=.f.
 	if !fPreuzeo
 		if gModul=="HOPS"

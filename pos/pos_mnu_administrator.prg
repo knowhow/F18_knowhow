@@ -12,13 +12,10 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 
+// --------------------------------------------------------
+// pos : administrativni menij
+// --------------------------------------------------------
 function pos_main_menu_admin()
 local nSetPosPM
 private opc := {}
@@ -85,6 +82,9 @@ AADD(opcexe, {|| UzmiBkIzSez()})
 AADD(opc, "6. set pdv cijene na osnovu tarifa iz sezone ")
 AADD(opcexe, {|| set_pdv_cijene()})
 
+AADD(opc, "R. setovanje brojaca dokumenata")
+AADD(opcexe, {|| pos_set_param_broj_dokumenta() })
+
 if gStolovi == "D"
 	AADD(opc, "7. zakljucivanje postojecih racuna ")
 	AADD(opcexe, {|| zak_sve_stolove()})
@@ -104,6 +104,7 @@ if (KLevel<L_UPRAVN)
 endif
 
 Menu_SC("aadm")
+
 return .f.
 
 

@@ -56,7 +56,9 @@ UnesiNarudzbu( cBrojRn, _POS->Sto )
 return
 
 
- 
+// --------------------------------------------
+// unos novog racuna 
+// --------------------------------------------
 function NoviRacun()
 local cBrojRn
 local cBr2 
@@ -66,39 +68,44 @@ local dx:=3
 SELECT _POS
 set cursor on
 
-cBrojRn := pos_naredni_dokument( gIdPos, VD_RN )
+// novi broj racuna...
+cBrojRn := "PRIPRE"
+
+//pos_novi_broj_dokumenta( gIdPos, VD_RN )
 
 if gStolovi == "D"
-		set cursor on
-		Box(, 6, 40)
-			cStZak := "N"
-			@ m_x+2, m_y+10 SAY "Unesi broj stola:" GET cSto VALID (!Empty(cSto) .and. VAL(cSto) > 0) PICT "999"
-  			read
-			if LastKey()==K_ESC
-				MsgBeep("Unos stola obavezan !")
-				return
-			endif
-			// daj mi info o trenutnom stanju stola
-			nStStanje := g_stanje_stola(VAL(cSto))
-			@ m_x+4, m_y+2 SAY "Prethodno stanje stola:   " + ALLTRIM(STR(nStStanje)) + " KM"
-  			if nStStanje > 0
-				@ m_x+6, m_y+2 SAY "Zakljuciti prethodno stanje (D/N)?" GET cStZak VALID cStZak$"DN" PICT "@!"
-			endif
-			read
-		BoxC()
-		
-		if LastKey() == K_ESC
-			MsgBeep("Unos novih stavki prekinut !")
+
+    set cursor on
+	Box(, 6, 40)
+		cStZak := "N"
+		@ m_x+2, m_y+10 SAY "Unesi broj stola:" GET cSto VALID (!Empty(cSto) .and. VAL(cSto) > 0) PICT "999"
+  		read
+		if LastKey()==K_ESC
+			MsgBeep("Unos stola obavezan !")
 			return
 		endif
-		
-		if cStZak == "D"
-			zak_sto(VAL(cSto))
+		// daj mi info o trenutnom stanju stola
+		nStStanje := g_stanje_stola(VAL(cSto))
+		@ m_x+4, m_y+2 SAY "Prethodno stanje stola:   " + ALLTRIM(STR(nStStanje)) + " KM"
+  		if nStStanje > 0
+			@ m_x+6, m_y+2 SAY "Zakljuciti prethodno stanje (D/N)?" GET cStZak VALID cStZak$"DN" PICT "@!"
 		endif
+		read
+	BoxC()
+		
+	if LastKey() == K_ESC
+		MsgBeep("Unos novih stavki prekinut !")
+		return
+	endif
+		
+	if cStZak == "D"
+		zak_sto(VAL(cSto))
+	endif
 		
 endif
 
-UnesiNarudzbu(cBrojRn, cSto)
+// unesi stavke narudzbe
+UnesiNarudzbu( cBrojRn, cSto )
 
 return
 
@@ -292,46 +299,47 @@ _ret := .t.
 return _ret
 
 
- 
-function SveNaJedan(cRacBroj)
+// -------------------------------------------------
+// zakljucivanje racuna - sve na jedan 
+// -------------------------------------------------
+function SveNaJedan( cRacBroj )
+private cIdGost := SPACE(8)
+private cIdVrsteP
 
-if cRacBroj==nil
-	cRacBroj:=SPACE(6)
+if cRacBroj == nil
+	cRacBroj := SPACE(6)
 else
-	cRacBroj:=cRacBroj
+	cRacBroj := cRacBroj
 endif
 
-O_StAzur()
-
-private cIdGost:=SPACE(8)
-private cIdVrsteP
+o_stazur()
 
 if gClanPopust
 	// ako je rijec o clanovima pusti da izaberem vrstu placanja
-	cIdVrsteP:=SPACE(2)
+	cIdVrsteP := SPACE(2)
 else
-	cIdVrsteP:=gGotPlac
+	cIdVrsteP := gGotPlac
 endif
 
-if gUpitNP=="D"
-	UpitNP(gIdPos, @cIdVrsteP, cRacBroj, @cIdGost)
+if gUpitNP == "D"
+	UpitNP( gIdPos, @cIdVrsteP, cRacBroj, @cIdGost )
 endif
 	
 if gRadniRac=="D"
 	set cursor on
   	Box(,2,40)
-  	@ m_x+1,m_y+3 SAY "Broj radnog racuna:" GET cRacBroj VALID P_RadniRac (@cRacBroj)
-  	READ
-	ESC_BCR
+  	    @ m_x + 1, m_y + 3 SAY "Broj radnog racuna:" GET cRacBroj VALID P_RadniRac( @cRacBroj )
+  	    READ
+	    ESC_BCR
   	BoxC()
 endif
 
 // prebaci iz prip u pos
-if (LEN(aRabat) > 0)
-	ReCalcRabat(cIdVrsteP)
+if ( LEN( aRabat ) > 0 )
+    ReCalcRabat( cIdVrsteP )
 endif
 
-_Pripr2_Pos(cIdVrsteP)
+_Pripr2_Pos( cIdVrsteP )
 
 StampAzur( gIdPos, cRacBroj )
 
@@ -341,22 +349,25 @@ close all
 return
 
 
+
 // ------------------------------------------------------------------
 // stampa i azuriranje racuna
 // ------------------------------------------------------------------
-function StampAzur(cIdPos, cRadRac)
+function StampAzur( cIdPos, cRadRac )
 local cTime, _rec
 local nFis_err := 0
 private cPartner
 
 select pos_doks
-// naredni broj racuna
-cStalRac := pos_naredni_dokument( cIdPos, VD_RN )
+
+// naredni broj racuna, nova funkcija koja konsultuje sql/db
+cStalRac := pos_novi_broj_dokumenta( cIdPos, VD_RN )
 
 gDatum := DATE()
 
 // pravi se append u bazu
 // radnik "////"
+select pos_doks
 append blank
 
 _rec := dbf_get_rec()

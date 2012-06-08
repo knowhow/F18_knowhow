@@ -222,7 +222,7 @@ do while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
 	cRadRac := _POS->BrDok
 	Scatter ()
 	select pos_doks
-	cBrDok := _BrDok := pos_naredni_dokument (gIdPos, VD_RN)
+	cBrDok := _BrDok := pos_novi_broj_dokumenta( gIdPos, VD_RN )
 	_Vrijeme  := cVrijeme
 	_IdVrsteP := cIdVrsteP
 	_IdOdj    := SPACE (LEN (_IdOdj))

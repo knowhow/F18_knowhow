@@ -1,3 +1,8 @@
+1.0.46 2012-06-08, vsasa
+
+  - pos, brojač dokumenta na osnovu sql/db [#28328](http://redmine.bring.out.ba/issues/28328)
+  - ostale sitne dorade
+
 1.0.45 2012-06-07, vsasa
 
   - kalk, unos dokumenanata 80 i 81, sređivanje forme [#27455](http://redmine.bring.out.ba/issues/27455)

@@ -36,7 +36,7 @@ endif
 
 // izvrsi funkciju koja filuje tabelu rLabele 
 // podacima a vraca varijantu ( 1-5 )
-if (gModul == "KALK")
+if ( gModul == "KALK" )
 	KaFillRLabele( cKolicina )
 else
 	FaFillRLabele()
@@ -44,7 +44,7 @@ endif
 
 CLOSE ALL
 
-if (cVarijanta>"0" .and. cVarijanta<"3")
+if (cVarijanta > "0" .and. cVarijanta < "3" )
 	PrintRLabele( cVarijanta )
 endif
 
@@ -63,23 +63,24 @@ cVarijanta := "1"
 cKolicina := "N"
 lOpened := .t.
 
-if (gModul=="KALK")
+if ( gModul == "KALK" )
 
-	SELECT(F_KALK_PRIPR)
-	if !USED()
+	SELECT ( F_KALK_PRIPR )
+	if !used()
 		O_KALK_PRIPR
-		lOpened:=.f.
+		lOpened := .f.
 	endif
 
 	PushWa()
 	SELECT kalk_pripr
 	GO TOP
-	cIdVd:=kalk_pripr->idVd
+
+	cIdVd := kalk_pripr->idVd
 	
 	PopWa()
 	
-	if (cIdVd=="19")
-		cVarijanta:="2"
+	if ( cIdVd == "19" )
+		cVarijanta := "2"
 	endif
 endif
 
@@ -117,20 +118,26 @@ return 1
 // Kreira tabelu rLabele u privatnom direktoriju
 // -------------------------------------------------------------
 static function CreTblRLabele()
-local cPom, aDbf
+local aDbf
+local _tbl
+local _dbf
+local _cdx
 
-SELECT(F_RLABELE)
-cPom:=PRIVPATH+"rLabele"
-if (FILE(cPom+".dbf") .and. FERASE(cPom+".dbf")==-1)
-	MsgBeep("Ne mogu izbrisati"+cPom+".dbf !")
-	ShowFError()
-endif
-if (FILE(cPom+".cdx") .and. FERASE(cPom+".cdx")==-1)
-	MsgBeep("Ne mogu izbrisati"+cPom+".cdx !")
-	ShowFError()
+SELECT ( F_RLABELE )
+
+_tbl := "rlabele"
+_dbf := my_home() + _tbl + ".dbf"
+_cdx := my_home() + _tbl + ".cdx"
+
+if ( FILE( _dbf ) .and. FERASE( _dbf ) == -1 )
+    MsgBeep( "Ne mogu izbrisati " + _dbf + " !" )
 endif
 
-aDBf:={}
+if ( FILE( _cdx ) .and. FERASE( _cdx ) == -1 )
+	MsgBeep( "Ne mogu izbrisati " + _cdx + " !")
+endif
+
+aDBf := {}
 AADD(aDBf,{ 'idRoba'		, 'C', 10, 0 })
 AADD(aDBf,{ 'naz'		, 'C', 40, 0 })
 AADD(aDBf,{ 'idTarifa'		, 'C',  6, 0 })
@@ -152,10 +159,11 @@ AADD(aDBf,{ 'porez'		, 'N',  8, 2 })
 AADD(aDBf,{ 'porez2'		, 'N',  8, 2 })
 AADD(aDBf,{ 'porez3'		, 'N',  8, 2 })
 
-DbCreate2(cPom+'.dbf',aDbf)
-usex (cPom)
-index on idRoba tag "1"
+DbCreate( _dbf, aDbf )
+my_use_temp( "RLABELE", ALLTRIM( _dbf ), .f., .t. )
+index on ("idroba") tag "1" 
 set order to tag "1"
+
 return nil
 
 

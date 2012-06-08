@@ -32,9 +32,15 @@ if !used()
 endif
 
 if from_kum == .t.
-    O_SKALK
+    select F_KALK
+    if !used()
+        O_SKALK
+    endif
 else
-    O_KALK_PRIPR
+    select F_KALK_PRIPR
+    if !used()
+        O_KALK_PRIPR
+    endif
 endif
 
 return
@@ -44,10 +50,14 @@ return
 // -------------------------------------------
 // kreiraj tabelu za prenos u TOPS
 // -------------------------------------------
-static function _cre_katops_dbf( dbf_table )
+static function _cre_katops_dbf( dbf_table, from_kum )
 local _dbf
 
-_o_gen_tables()
+if from_kum == NIL
+    from_kum := .f.
+endif
+
+_o_gen_tables( from_kum )
 
 select kalk_pripr
 go top
@@ -120,6 +130,8 @@ local _pos_locations
 local _from_kum := .t.
 local _total := 0
 
+close all
+
 if PCOUNT() == 0
     // generisanje iz pripreme
     _from_kum := .f.
@@ -127,9 +139,11 @@ endif
 
 // provjeri uslove za prenos
 if !_prenos_prereq()
+
 	_o_gen_tables( _from_kum )
     select kalk_pripr
     return
+
 endif
 
 // otvori tabele
@@ -137,7 +151,7 @@ _o_gen_tables( _from_kum )
 
 // kreiraj tabelu katops
 // ona ce se kreirati u privatnom direktoriju...
-_cre_katops_dbf( my_home() + _katops_table )
+_cre_katops_dbf( my_home() + _katops_table, _from_kum )
 
 select kalk_pripr
 set order to tag "1"

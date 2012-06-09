@@ -224,9 +224,11 @@ function ParPrBase()
 local aNiz:={}
 local cPrevPSS
 local cPom:=""
-private cIdPosOld:=gIdPos
 
-cPrevPSS:=gPocStaSmjene
+private _max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", nil, 0 )
+private cIdPosOld := gIdPos
+
+cPrevPSS := gPocStaSmjene
 
 set cursor on
 
@@ -234,44 +236,44 @@ aNiz:={}
 AADD (aNiz, {"Da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
 AADD (aNiz, {"Dopustiti dupli unos artikala na racunu (D/N)" , "gDupliArt", "gDupliArt$'DN'", "@!", })
 AADD (aNiz, {"Ako se dopusta dupli unos, da li se radnik upozorava(D/N)" , "gDupliUpoz", "gDupliUpoz$'DN'", "@!", })
-AADD (aNiz, {"Da li u u objektu postoje odjeljenja (D/N)" , "gVodiodj", "gVodiOdj(@gVodiOdj)", "@!",})
 AADD (aNiz, {"Da li se prati pocetno stanje smjene (D/N)" , "gPocStaSmjene", "gPocStaSmjene$'DN!'", "@!", })
-AADD (aNiz, {"Da li se po zakljucenju smjene stampa ukupni pazar (D/N)" , "gStamPazSmj", "gStamPazSmj$'DN'", "@!", })
-AADD (aNiz, {"Da li se prati stanje zaliha robe na prodajnim mjestima (D/N/!)" , "gPratiStanje", "gPratiStanje$'DN!'", "@!", })
-AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje odjeljenja (D/N)" , "gStamStaPun", "gStamStaPun$'DN'", "@!", })
-AADD (aNiz, {"Voditi po smjenama (D/N)" , "gVSmjene", "gVsmjene$'DN'", "@!", })
-AADD (aNiz, {"Tip sezona M-mjesec G-godina" , "gSezonaTip", "gSezonaTip$'MG'", "@!", })
+
 if KLevel=="0"
     AADD (aNiz, {"Upravnik moze ispravljati cijene" , "gSifUpravn", "gSifUpravn$'DN'", "@!", })
 endif
+
 AADD (aNiz, {"Ako je Bar Cod generisi <ENTER> " , "gEntBarCod", "gEntBarCod$'DN'", "@!", })
+
 If (!IsPlanika())
     // generisao bug pri unosu reklamacije
     AADD (aNiz, {"Pri unosu zaduzenja azurirati i cijene (D/N)? " , "gZadCij", "gZadCij$'DN'", "@!", })
 else
     gZadCij:="N"
 endif
+
 AADD (aNiz, {"Pri azuriranju pitati za nacin placanja (D/N)? " , "gUpitNP", "gUpitNP$'DN'", "@!", })
-AADD (aNiz, {"Stampa na POS displej (D/N)? " , "gDisplay", "gDisplay$'DN'", "@!", })
-AADD (aNiz, {"Evidentiranje podataka o vrstama placanja (D/N)? " , "gEvidPl", "gEvidPl$'DN'", "@!", })
-AADD (aNiz, {"Provjera prostora na disku (D/N)? " , "gDiskFree", "gDiskFree$'DN'", "@!", })
+
 if IsPDV()
     AADD (aNiz, {"Stampati poreske fakture (D/N)? " , "gPorFakt", "gPorFakt$'DN'", "@!", })
-
 endif
 
 AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", })
 AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", })
 AADD (aNiz, {"Nakon stampe ispis informacija o racunu (D/N)? " , "gRnInfo", "gRnInfo$'DN'", "@!", })
+AADD (aNiz, {"Maksimalna kolicina pri unosu racuna (0 - bez provjere) " , "_max_qtty", "_max_qtty >= 0", "999999", })
 
-VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
+VarEdit( aNiz, 2, 2, MAXROWS(), MAXCOLS(),"PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
 
-if LASTKEY()<>K_ESC
+if LASTKEY() <> K_ESC
+
     MsgO("Azuriram parametre")
-    set_metric("VodiTrebovanja", nil, gVodiTreb)
+
+    set_metric( "VodiTrebovanja", nil, gVodiTreb )
+
     if (!IsPlanika())
-        set_metric("AzuriranjeCijena", nil, gZadCij)
+        set_metric("AzuriranjeCijena", nil, gZadCij )
     endif
+
     set_metric("VodiOdjeljenja", nil, gVodiOdj)
     set_metric("Stolovi", nil, gStolovi)
     set_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj)
@@ -294,6 +296,8 @@ if LASTKEY()<>K_ESC
     set_metric("SlobodniProstorDiska", nil, gDiskFree )
     set_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
     set_metric("RacunInfo", nil, gRnInfo )
+    set_metric( "pos_maksimalna_kolicina_na_unosu", nil, _max_qtty )
+
     if IsPDV()
         set_metric("StampatiPoreskeFakture", nil, gPorFakt )
     endif

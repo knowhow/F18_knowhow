@@ -132,7 +132,7 @@ if gDisplay=="D"
 endif
 
 // Ispisi iznos racuna velikim slovima
-PisiIznRac(nIznos-nNeplaca)
+ispisi_iznos_racuna_box( nIznos - nNeplaca )
 
 START PRINT2 CRET gLocPort,SPACE(5)
 
@@ -552,7 +552,7 @@ if fEkran
   		START PRINT CRET
   	endif
 else
-  	PisiIznRac(nIznos-nNeplaca)
+  	ispisi_iznos_racuna_box( nIznos - nNeplaca )
   	START PRINT2 CRET gLocPort, SPACE (5)
 endif
 

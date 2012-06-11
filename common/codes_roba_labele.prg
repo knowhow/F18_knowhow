@@ -263,7 +263,7 @@ return nil
 //             gdje se vidi i precrtana stara cijena
 // -------------------------------------------------------------------
 static function PrintRLabele( cVarijanta )
-local _rtm_naziv := ALLTRIM( "rlab" + cVarijanta )
+local _rtm_naziv := ALLTRIM( "rLab" + cVarijanta )
 
 f18_rtm_print( _rtm_naziv, "rlabele", "1" )
 

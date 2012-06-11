@@ -14,38 +14,53 @@
 
 
 function pos_main_menu_prodavac()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc,"1. priprema racuna                        ")
-AADD(opcexe, {|| pos_narudzba(), ZakljuciRacun(), .t. } )
+AADD(_opc,"1. priprema racuna                        ")
+AADD(_opcexe, {|| pos_narudzba(), zakljuciracun(), .t. } )
 	
 if gStolovi == "D"
-	AADD(opc,"2. zakljucenje - placanje stola ")
-    AADD(opcexe,{|| g_zak_sto() })
+	AADD(_opc,"2. zakljucenje - placanje stola ")
+    AADD(_opcexe,{|| g_zak_sto() })
 endif
 
-AADD(opc,"3. promijeni nacin placanja")
-AADD(opcexe,{|| PromNacPlac() })
-AADD(opc,"4. prepis racuna           ")
-AADD(opcexe,{|| PrepisRacuna() })
-AADD(opc,"T. trenutni pazar smjene")
-AADD(opcexe,{|| realizacija_radnik(.t., "P", .f.) })
-AADD(opc,"R. trenutna realizacija po robama")
-AADD(opcexe,{|| realizacija_radnik(.t.,"R",.f.) })
-AADD(opc,"P. porezna faktura za posljednji racun")
-AADD(opcexe, {|| f7_pf_traka()})
+//AADD(opc,"3. promijeni nacin placanja")
+//AADD(opcexe,{|| PromNacPlac() })
+
+AADD(_opc,"2. pregled azuriranih racuna  ")
+AADD(_opcexe,{|| PrepisRacuna() })
+
+AADD(_opc,"-------------------------------------------")
+AADD(_opcexe,{|| nil })
+
+AADD(_opc,"5. trenutna realizacija radnika")
+AADD(_opcexe,{|| realizacija_radnik( .t., "P", .f. ) })
+
+AADD(_opc,"6. trenutna realizacija po artiklima")
+AADD(_opcexe,{|| realizacija_radnik( .t., "R", .f. ) })
+
+//AADD(opc,"7. porezna faktura za posljednji racun")
+//AADD(opcexe, {|| f7_pf_traka()})
+
+AADD(_opc,"-------------------------------------------")
+AADD(_opcexe,{|| nil })
+
 
 if gFc_use == "D"
-	AADD(opc,"T. kopija fiskalnog racuna")
-	AADD(opcexe, {|| fisc_rn_kopija()})
+
+	AADD(_opc,"F. fiskalne opcije za prodavaca")
+	AADD(_opcexe, {|| fisc_rpt( .t. ) })
+
 endif	 
 
-Menu_SC("prod")
+f18_menu( "prod", .f., _izbor, _opc, _opcexe )
 
 close all
 return
+
+
 
 
 

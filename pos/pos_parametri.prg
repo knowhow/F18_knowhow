@@ -227,6 +227,7 @@ local aNiz:={}
 local cPrevPSS
 local cPom:=""
 
+private _konstantni_unos := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" )
 private _max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", nil, 0 )
 private cIdPosOld := gIdPos
 
@@ -238,7 +239,7 @@ aNiz:={}
 AADD (aNiz, {"Da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
 AADD (aNiz, {"Dopustiti dupli unos artikala na racunu (D/N)" , "gDupliArt", "gDupliArt$'DN'", "@!", })
 AADD (aNiz, {"Ako se dopusta dupli unos, da li se radnik upozorava(D/N)" , "gDupliUpoz", "gDupliUpoz$'DN'", "@!", })
-AADD (aNiz, {"Da li se prati pocetno stanje smjene (D/N)" , "gPocStaSmjene", "gPocStaSmjene$'DN!'", "@!", })
+AADD (aNiz, {"Da li se prati pocetno stanje smjene (D/N/!)" , "gPocStaSmjene", "gPocStaSmjene$'DN!'", "@!", })
 
 if KLevel=="0"
     AADD (aNiz, {"Upravnik moze ispravljati cijene" , "gSifUpravn", "gSifUpravn$'DN'", "@!", })
@@ -263,6 +264,7 @@ AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", 
 AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", })
 AADD (aNiz, {"Nakon stampe ispis informacija o racunu (D/N)? " , "gRnInfo", "gRnInfo$'DN'", "@!", })
 AADD (aNiz, {"Maksimalna kolicina pri unosu racuna (0 - bez provjere) " , "_max_qtty", "_max_qtty >= 0", "999999", })
+AADD (aNiz, {"Unos racuna bez izlaska iz pripreme (D/N) " , "_konstantni_unos", "_konstantni_unos$'DN'", "@!", })
 
 VarEdit( aNiz, 2, 2, MAXROWS(), MAXCOLS(),"PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
 
@@ -299,11 +301,14 @@ if LASTKEY() <> K_ESC
     set_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
     set_metric("RacunInfo", nil, gRnInfo )
     set_metric( "pos_maksimalna_kolicina_na_unosu", nil, _max_qtty )
+	set_metric( "pos_konstantni_unos_racuna", my_user(), _konstantni_unos )
 
     if IsPDV()
         set_metric("StampatiPoreskeFakture", nil, gPorFakt )
     endif
+
     MsgC()
+
 endif
 
 return

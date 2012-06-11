@@ -206,7 +206,7 @@ do while .t.
     // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
     
-    cParticip:="N"
+    cParticip := "N"
     
     @ m_x + 4, m_y + 25 SAY space (11)
 

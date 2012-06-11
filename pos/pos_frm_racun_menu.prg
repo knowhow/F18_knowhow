@@ -15,12 +15,13 @@
 
 function pos_narudzba()
 
-SETKXLAT("'","-") 
+SETKXLAT( "'", "-" ) 
 
 narudzba_tops()
 
 set key "'" to
 return
+
 
 
 function narudzba_tops()
@@ -43,6 +44,7 @@ return
 
 
 function DodajNaRacun( cBrojRn )
+
 set cursor on
 
 if cBrojRn == nil
@@ -70,8 +72,6 @@ set cursor on
 
 // novi broj racuna...
 cBrojRn := "PRIPRE"
-
-//pos_novi_broj_dokumenta( gIdPos, VD_RN )
 
 if gStolovi == "D"
 
@@ -252,7 +252,19 @@ return _vrati
 // --------------------------------------------
 function ZakljuciRacun()
 local _ret
+local _ne_zatvaraj := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" )
+
 _ret := ZakljuciRT()
+
+if _ne_zatvaraj == "D" .and. _ret == .t.
+
+	// jednostavno ponavljaj ove procedure, do ESC
+	pos_narudzba()
+
+	zakljuciracun()
+
+endif
+
 return _ret
 
 

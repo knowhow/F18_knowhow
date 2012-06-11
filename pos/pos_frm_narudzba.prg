@@ -19,6 +19,7 @@ parameters cBrojRn, cSto
 
 local _max_cols := MAXCOLS()
 local _max_rows := MAXROWS()
+local _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
 
 private ImeKol := {}
 private Kol := {}
@@ -168,7 +169,7 @@ do while .t.
     // ispisi i iznos velikim brojevima na dnu...
     ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( _max_rows - 12 ), _max_cols - 2 )
 
-    do while !oBrowse:Stabilize() .and. ((Ch:=INKEY())==0)
+    do while !oBrowse:Stabilize() .and. ( ( Ch := INKEY() ) == 0 ) 
     enddo
 
     _idroba := SPACE( LEN( _idroba ) )
@@ -184,26 +185,26 @@ do while .t.
     endif
     
     @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
-            PICT "@!S10" ;
-            WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } ;
-            VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
+   		PICT "@!S10" ;
+        WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } ;
+        VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
  
     @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena ;
-            PICT "99999.999" ;
-            WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
+      	PICT "99999.999" ;
+        WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
     @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
-            PICT "999999.999" ;
-            WHEN {|| Popust( m_x + 4, m_y + 28 ), ;
-                _kolicina := IIF( gOcitBarcod, 1, _kolicina ), ;
-                _kolicina := IIF( _idroba = PADR( "PLDUG", 7 ), 1, _kolicina ), ;
-                IIF( _idroba = PADR("PLDUG", 7 ), .f., .t. ) } ;
-            VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( _kolicina ) 
+      	PICT "999999.999" ;
+        WHEN {|| Popust( m_x + 4, m_y + 28 ), ;
+       		_kolicina := IIF( gOcitBarcod, IIF( _tb == "D" .and. _kolicina <> 0, _kolicina, 1 ), _kolicina ), ;
+            _kolicina := IIF( _idroba = PADR( "PLDUG", 7 ), 1, _kolicina ), ;
+            IIF( _idroba = PADR("PLDUG", 7 ), .f., .t. ) } ;
+      	VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( _kolicina ) 
     
     nRowPos := 5
     
     // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
-    read
+	read
     
     cParticip:="N"
     
@@ -691,7 +692,7 @@ return (DE_CONT)
  *  \param aMsg
  */
  
-function GetReader2(oGet, GetList, oMenu, aMsg)
+function GetReader2( oGet, GetList, oMenu, aMsg )
 local nKey
 local nRow
 local nCol
@@ -699,7 +700,7 @@ local nCol
 if (GetPreValSC(oGet, aMsg))
         oGet:setFocus()
     do while ( oGet:exitState == GE_NOEXIT )
-            if (gOcitBarcod .and. gEntBarCod=="D")
+            if ( gOcitBarcod .and. gEntBarCod == "D")
                 oGet:exitState:=GE_ENTER
                 exit
             endif

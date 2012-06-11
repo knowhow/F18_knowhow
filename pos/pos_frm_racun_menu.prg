@@ -165,22 +165,25 @@ cId := PADR( ALLTRIM(cId) + "." , 10)
 return
 
 
+
+
  
 function PostRoba( cId, dx, dy, lFlag )
 local _zabrane
 local _i
 local _vrati := .f.
+local _tezina := 0
 private ImeKol := {}
 private Kol := {}
 
 sif_uv_naziv( @cId )
 
 UnSetSpecNar()
+ 
+SETKEY( K_PGDN, bPrevDn )
+SETKEY( K_PGUP, bPrevUp )
 
-SETKEY(K_PGDN, bPrevDn)
-SETKEY(K_PGUP, bPrevUp)
-
-PrevId:= GetList[1]:original
+PrevId := GetList[1]:original
 	
 AADD( ImeKol, { "Sifra", {|| id }, "" })
 AADD( ImeKol, { PADC( "Naziv", 40 ), {|| PADR( naz, 40 ) }, "" })
@@ -199,7 +202,9 @@ else
   	_zabrane := {}
 endif
 
-BarKod( @cId )
+if !tezinski_barkod( @cId, @_tezina )
+	barkod( @cId )
+endif
 
 _vrati := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
 
@@ -209,14 +214,19 @@ if LASTKEY() == K_ESC
 else
 	@ m_x + dx, m_y + dy SAY PADR (AllTrim (roba->Naz)+" ("+AllTrim (roba->Jmj)+")",50)
   
+	if _tezina <> 0
+		_kolicina := _tezina
+	endif
+
 	if roba->tip <> "T"
-    	_Cijena := roba->mpc
+    	_cijena := roba->mpc
   	endif
+
 endif
 
 //kontrolisi cijenu pri unosu narudzbe
 if fetch_metric( "pos_kontrola_cijene_pri_unosu_stavke", nil, "N" ) == "D"
- 	if ! _Cijena <> 0
+ 	if ! _cijena <> 0
     	MsgBeep( "Cijena 0.00, ne mogu napraviti racun !!!" )
     	_vrati := .f.
   	endif

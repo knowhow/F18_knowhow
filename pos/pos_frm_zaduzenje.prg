@@ -34,6 +34,7 @@
 function Zaduzenje
 parameters cIdVd
 
+local _from_kalk := .f.
 local cOdg
 local PrevDn
 local PrevUp
@@ -104,12 +105,6 @@ if gvodiodj=="D"
   	endif
 endif
 
-if gModul=="HOPS"
-	if gPostDO=="D"
-    		@ m_x+5,m_y+3 SAY "Dio objekta:" GET cIdDio VALID P_Dio (@cIdDio, 3, 28)
-  	endif
-endif
-
 @ m_x+6,m_y+3 SAY " Datum dok:" GET dDatRada PICT "@D" VALID dDatRada<=DATE()
 READ
 ESC_BCR
@@ -141,7 +136,7 @@ Zapp()
 __dbPack()
 
 // vrati ili pobrisi ono sto je poceo raditi ili prekini s radom
-if !pos_vrati_dokument_iz_pripr(cIdVd, gIdRadnik, cIdOdj, cIdDio)
+if !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
 	CLOSERET
 endif
 
@@ -149,8 +144,10 @@ fSadAz := .f.
 
 if (cIdVd <> VD_REK) .and. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
 
+	_from_kalk := .t.
+
 	if priprz->(RecCount2()) > 0
-    	if cBrDok<>nil .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","N")=="D"
+    	if cBrDok <> NIL .and. Pitanje(,"Odstampati prenesni dokument na stampac ?", "N" ) == "D"
         	if cIdVd $ "16#96#95#98"
          		StampZaduz(cIdVd, cBrDok)
         	elseif cIdVd $ "IN#NI"
@@ -319,7 +316,9 @@ if RecCount2() > 0
 	select pos_doks
   	set order to 1
 
-  	cBrDok := pos_novi_broj_dokumenta( cIdPos, iif( cIdvd == "PD", "16", cIdVd ) )
+	if !_from_kalk
+		cBrDok := pos_novi_broj_dokumenta( cIdPos, iif( cIdvd == "PD", "16", cIdVd ) )
+	endif
 
   	SELECT PRIPRZ
  

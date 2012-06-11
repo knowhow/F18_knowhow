@@ -78,7 +78,6 @@ if !file(f18_ime_dbf("_roba"))
 endif
 
 CREATE_INDEX("ID", "ID", "roba") 
-
 index_mcode(SIFPATH, "roba")
 CREATE_INDEX("NAZ","LEFT(naz,40)", "roba")
 CREATE_INDEX("ID","id", "_roba") 

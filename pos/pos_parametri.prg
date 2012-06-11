@@ -34,6 +34,8 @@ AADD(_opc,"7. fiskalni parametri")
 AADD(_opcexe,{|| fiscal_params_set()})
 AADD(_opc,"8. podesenja organizacije")
 AADD(_opcexe,{|| org_params()})
+AADD(_opc,"9. podesenja barkod-a")
+AADD(_opcexe,{|| label_params()})
 
 f18_menu("par", .f., _izbor, _opc, _opcexe )
 

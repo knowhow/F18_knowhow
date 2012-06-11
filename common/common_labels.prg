@@ -152,6 +152,11 @@ local _prefix := fetch_metric( "labeliranje_barkod_prefix", nil, SPACE(10) )
 local _auto_gen := fetch_metric( "labeliranje_barkod_automatsko_generisanje", nil, "N" ) 
 local _auto_formula := fetch_metric( "labeliranje_barkod_auto_formula", nil, SPACE(10) )
 local _ean_code := fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, SPACE(10) )
+local _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
+local _tb_prefix := fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, SPACE(6) )
+local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
+local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
+local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
 
 _box_x := 20
 _box_y := 70
@@ -182,7 +187,20 @@ Box(, _box_x, _box_y )
 	@ m_x + _x, m_y + 2 SAY "Automatsko generisanje, auto formula:" GET _auto_formula
 	@ m_x + _x, col() + 1 SAY "EAN:" GET _ean_code
 
+	++ _x
 
+	@ m_x + _x, m_y + 2 SAY "Koristenje tezinskog barkod-a (D/N)" GET _tb VALID _tb $ "DN" PICT "@!"
+	
+	++ _x
+	
+	@ m_x + _x, m_y + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix
+	
+	++ _x
+	
+	@ m_x + _x, m_y + 2 SAY "Tezinski: duzina barkod-a" GET _bk_len PICT "99"
+	@ m_x + _x, col() + 2 SAY "duzina tezine:" GET _tez_len PICT "99"
+	@ m_x + _x, col() + 2 SAY "djelitelj:" GET _tez_div PICT "99999999"
+	
 	read
 
 BoxC()
@@ -196,6 +214,11 @@ if LastKey() <> K_ESC
 	set_metric( "labeliranje_barkod_automatsko_generisanje", nil, _auto_gen ) 
 	set_metric( "labeliranje_barkod_auto_formula", nil, _auto_formula )
 	set_metric( "labeliranje_barkod_auto_ean_kod", nil, _ean_code )
+	set_metric( "barkod_tezinski_barkod", nil, _tb )
+	set_metric( "barkod_prefiks_tezinskog_barkoda", nil, _tb_prefix )
+	set_metric( "barkod_tezinski_duzina_barkoda", nil, _bk_len )
+	set_metric( "barkod_tezinski_duzina_tezina", nil, _tez_len )
+	set_metric( "barkod_tezinski_djelitelj", nil, _tez_div )
 
 endif
 

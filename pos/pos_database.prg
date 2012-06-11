@@ -1549,7 +1549,6 @@ if ( !FOUND() )
 
     _rec := dbf_get_rec()
     _rec["id"] := priprz->idroba
-    _rec["idodj"] := priprz->idodj
 
 else
 

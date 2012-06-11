@@ -49,11 +49,7 @@ cBroj:=RIGHT(cRacun,LEN(cRacun)-AT("-",cRacun))
 cBroj:=PADL(cBroj,6)
 
 AADD(ImeKol, { "Broj racuna", {|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}}) 
-
-if pos_doks->(FIELDPOS("FISC_RN")) <> 0
-    AADD(ImeKol, { "Fisk.rn",{|| fisc_rn}} )
-endif
-
+AADD(ImeKol, { "Fisk.rn",{|| fisc_rn}} )
 AADD(ImeKol, { "Iznos", {|| STR (SR_Iznos(), 13, 2)}} )
 AADD(ImeKol, { IIF(gStolovi == "D", "Sto", "Smj"), ;
     {|| IIF(gStolovi == "D", sto_br , smjena)}})
@@ -134,7 +130,7 @@ if LASTKEY()==K_ESC
 endif
 
 return(.t.)
-*}
+
 
 
 /*! \fn EdPRacuni()

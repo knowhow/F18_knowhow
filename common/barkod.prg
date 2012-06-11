@@ -81,21 +81,14 @@
 
 
 function DodajBK(cBK)
-*{
 if empty(cBK) .and. IzFmkIni("BARKOD", "Auto", "N", SIFPATH)=="D" .and. IzFmkIni("BARKOD","Svi","N",SIFPATH)=="D" .and. (Pitanje(,"Formirati Barkod ?","N")=="D")
 	cBK:=NoviBK_A()
 endif
 return .t.
 
-*}
 
-
-/*! \fn KaLabelBKod()
- *  \brief Priprema i labeliranje bar-kodova
- */
 
 function KaLabelBKod()
-*{
 local cIBK
 local cPrefix
 local cSPrefix
@@ -453,40 +446,109 @@ else
  return  str( 10 - n4 , 1)   // n5
 endif
 
-// -------------------------
-// -------------------------
-function Barkod(cId)
 
-// postoje barcodovi!!!!!!!!!!!!!
-*
-local cIdRoba:=""
 
-gOcitBarCod:=.f.
+
+// --------------------------------------------------------------------------------------
+// provjerava i pozicionira sifranik artikala na polje barkod po trazeno uslovu
+// --------------------------------------------------------------------------------------
+function barkod( cId )
+local cIdRoba := ""
+
+gOcitBarCod := .f.
+
 PushWa()
-select ("ROBA")
-if !empty(cId) .and. fieldpos("BARKOD")<>0
-  set order to tag "BARKOD"
-  seek trim(cid)
-  if found() .and. trim(cid)==trim(barkod) // ista je duzina sifre
-      cId:=Id  // nasao sam sifru po barkodu
-     gOcitBarCod:=.t.
-  endif
 
-  // trazi alternativne sifre
-  cIDRoba:=""
-  ImauSifV("ROBA","BARK", cId, @cIdRoba)
-  if !empty(cIdRoba)
-    select roba
-    set order to tag "ID"
-    seek cId  
-// nasao sam sifru !!
-    cId:=cIdRoba
-    gOcitBarCod:=.t.
-  endif
+select roba
+
+if !EMPTY( cId )
+
+	set order to tag "BARKOD"
+	go top
+  	seek cId
+
+  	if FOUND() .and. ALLTRIM(cId) == ALLTRIM( field->barkod ) 
+    	cId := Id  
+     	gOcitBarCod := .t.
+	endif
 
 endif
-cId:=padr(cId,10)
+
+cId := PADR( cId, 10 )
+
+select roba
+set order to tag "ID"
+
 PopWa()
+
 return
+
+
+
+// --------------------------------------------------------------------------------------
+// provjerava tezinski barod
+// --------------------------------------------------------------------------------------
+function tezinski_barkod( id, tezina )
+local _ocitao := .f.
+local _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
+local _tb_prefix := ALLTRIM( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
+local _tb_barkod, _tb_tezina
+local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
+local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
+local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+local _val_tezina := 0
+
+gOcitBarCod := _ocitao
+
+if _tb == "N" 
+	return _ocitao
+endif
+
+if EMPTY( id ) 
+	return _ocitao
+endif
+
+if ( PADR( id, LEN( _tb_prefix ) ) == _tb_prefix ) 
+	// ... ovo je ok
+else
+	return _ocitao
+endif
+
+// odrezi ocitano na 7, tu je barkod koji trebam pretraziti
+_tb_barkod := LEFT( id, _bk_len )
+_tb_tezina := RIGHT( id, _tez_len )
+
+PushWa()
+
+select roba
+set order to tag "BARKOD"
+seek _tb_barkod
+  	
+if FOUND() .and. ALLTRIM( _tb_barkod ) == ALLTRIM( field->barkod ) 
+
+    	id := roba->id  
+     	_ocitao := .t.
+
+		gOcitBarCod := _ocitao
+
+		// sredi mi i tezinu...
+		if !EMPTY( _tb_tezina )
+
+			_val_tezina := VAL( _tb_tezina )
+			tezina := ( _val_tezina / _tez_div )
+
+		endif
+
+endif
+
+id := PADR( id, 10 )
+
+select roba
+set order to tag "ID"
+
+PopWa()
+
+return _ocitao
+
 
 

@@ -20,14 +20,14 @@ set_a_dbf_sifarnik("adres"      , "ADRES"     , F_ADRES      )
 _rec := hb_hash()
 _rec["dbf_key_fields"] := { "id", "id2" }
 _rec["dbf_tag"]        := "ID"
-_rec["sql_in" ]        := "padr( id, 10 ) || padr(id2, 10)"
+_rec["sql_in" ]        := "rpad( id, 10 ) || rpad(id2, 10)"
 _rec["dbf_key_block" ] := {|| field->id + field->id2 }
 set_a_dbf_sifarnik("sast"  , "SAST"  , F_SAST, _rec  )
 
 _rec := hb_hash()
 _rec["dbf_key_fields"] := { {"rule_id", 10, 0} }
 _rec["dbf_tag"]        := "1"
-_rec["sql_in" ]        := "rule_id::char(10)"
+_rec["sql_in" ]        := "rpad(rule_id::char(10),10)"
 _rec["dbf_key_block" ] := {|| STR(field->rule_id, 10, 0) }
 set_a_dbf_sifarnik("f18_rules"  , "FMKRULES"  , F_FMKRULES, _rec  )
 

@@ -16,6 +16,10 @@
 
 function UnesiNarudzbu()
 parameters cBrojRn, cSto
+
+local _max_cols := MAXCOLS()
+local _max_rows := MAXROWS()
+
 private ImeKol := {}
 private Kol := {}
 private nRowPos
@@ -30,18 +34,17 @@ private bPrevDn
 
 o_edit_rn()
 
-SELECT _POS
+select _pos
 
-aRabat:={}
+aRabat := {}
 
 if ( cBrojRn == nil )
-    cBrojRn:=""
+    cBrojRn := ""
 endif
 
 if ( cSto == nil )
     cSto := ""
 endif
-
 
 AADD( ImeKol, { PADR( "Artikal", 10 ), { || idroba } } )
 AADD( ImeKol, { PADC( "Naziv", 50 ), { || PADR( robanaz, 50 ) } } )
@@ -56,27 +59,21 @@ for i := 1 to LEN( ImeKol )
 next
 
 AADD( aUnosMsg, "<*> - Ispravka stavke")
-AADD( aUnosMsg, "Storno/povrat - negativna kolicina")
+AADD( aUnosMsg, "Storno - neg.kolicina")
 
-if gModul=="HOPS"
-    if gRadniRac=="D"
-            AADD( aUnosMsg, "</> - Pregled racuna")
-    endif
-endif
+Box(, _max_rows - 3, _max_cols - 3 , , aUnosMsg )
 
-Box(, MAXROWS() - 4, MAXCOLS() - 3 , , aUnosMsg )
+@ m_x, m_y + 23 SAY PADC ("RACUN BR: " + ALLTRIM( cBrojRn ), 40 ) COLOR Invert
 
-@ m_x, m_y + 23 SAY PADC ("RACUN BR: " + ALLTRIM(cBrojRn), 40) COLOR Invert
+oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
 
-oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + MAXROWS() - 8, m_y + MAXCOLS() - 2, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
-
-oBrowse:autolite:=.f.
-aAutoKeys:=HangKeys ()
-bPrevDn:=SETKEY(K_PGDN, {|| DummyProc()})
-bPrevUp:=SETKEY(K_PGUP, {|| DummyProc()})
+oBrowse:autolite := .f.
+aAutoKeys := HangKeys()
+bPrevDn := SETKEY( K_PGDN, {|| DummyProc() })
+bPrevUp := SETKEY( K_PGUP, {|| DummyProc() })
 
 if IsPDV()
-    SETKEY(K_F7, {|| f7_pf_traka()})
+    SETKEY( K_F7, {|| f7_pf_traka() })
 endif
 
 // storno racuna
@@ -88,66 +85,62 @@ SETKEY( K_F8, {|| pos_storno_rn() })
 
 SetSpecNar()
 
-@ m_x+3,m_y+50 SAY "Ukupno:"
-@ m_x+4,m_y+50 SAY "Popust:"
-@ m_x+5,m_y+50 SAY "UKUPNO:"
+@ m_x + 3, m_y + ( _max_cols - 30 ) SAY "UKUPNO:"
+@ m_x + 4, m_y + ( _max_cols - 30 ) SAY "POPUST:"
+@ m_x + 5, m_y + ( _max_cols - 30 ) SAY " TOTAL:"
 
-   
-SELECT _POS
+// ispis velikim brojevima iznosa racuna
+// na dnu forme...
+ispisi_iznos_veliki_brojevi( 0, m_x + ( _max_rows - 12 ), _max_cols - 2 )
+
+select _pos
 set order to tag "3"
+
 //"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
-SEEK VD_RN + gIdRadnik
+seek VD_RN + gIdRadnik
         
 do while !eof() .and. _pos->(IdVd+IdRadnik) == (VD_RN + gIdRadnik)
-            
+
 	if !(_pos->m1 == "Z")
-                
+
 		// mora biti Z, jer se odmah zakljucuje
         Scatter()
         select _pos_pripr
         append blank 
-		// pripr
-                
 		Gather()
        	SELECT _POS
        	Del_Skip()
-
   	else
-            
       	delete
         skip
-
  	endif
-
 enddo
     
 set order to tag "1"
 
-nIznNar:=0
-nPopust:=0
+nIznNar := 0
+nPopust := 0
 
 select _pos_pripr
-GO TOP
+go top
 
-do while !eof()
+do while !EOF()
     
-    if (idradnik+idpos+idvd+smjena)<>(gIdRadnik+gidpos+VD_RN+gSmjena)
-       	// _PRIPR
+    if ( idradnik + idpos + idvd + smjena ) <> ( gIdRadnik + gidpos + VD_RN + gSmjena )
         delete  
     else
-      	nIznNar+=_pos_pripr->(Kolicina*Cijena)
-       	nPopust+=_pos_pripr->(Kolicina*NCijena)
+      	nIznNar += _pos_pripr->( kolicina * cijena )
+       	nPopust += _pos_pripr->( kolicina * ncijena )
     endif
     
-    SKIP
+    skip
 
 enddo
 
-SET ORDER TO
-GO TOP
+set order to
+go top
 
-// iz _PRIPR
-Scatter() 
+scatter() 
  
 _IdPos:=gIdPos
 _IdVd:=VD_RN
@@ -167,45 +160,45 @@ endif
 
 do while .t.
 
-    @ m_x+3,m_y+70 SAY nIznNar pict "99999.99" COLOR Invert
-    @ m_x+4,m_y+70 SAY nPopust pict "99999.99" COLOR Invert
-    @ m_x+5,m_y+70 SAY nIznNar-nPopust pict "99999.99" COLOR Invert
+    _show_total( nIznNar, nPopust, m_x + 2 )
+
     // brisi staru cijenu
-    @ m_x+3,m_y+15 SAY SPACE (10)   
+    @ m_x + 3, m_y + 15 SAY SPACE(10)   
+    
+    // ispisi i iznos velikim brojevima na dnu...
+    ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( _max_rows - 12 ), _max_cols - 2 )
 
     do while !oBrowse:Stabilize() .and. ((Ch:=INKEY())==0)
     enddo
 
-    _idroba:=SPACE(LEN(_idroba))
-    _Kolicina:=0
-    // resetuj i velicinu
+    _idroba := SPACE( LEN( _idroba ) )
+    _Kolicina := 0
 
-    @ m_x+2,m_y+25 SAY SPACE (40)
+    @ m_x + 2, m_y + 25 SAY SPACE (40)
     set cursor on
 
     if gDuzSifre <> nil .and. gDuzSifre > 0
-        cDSFINI := ALLTRIM(STR(gDuzSifre))
+        cDSFINI := ALLTRIM( STR( gDuzSifre ) )
     else
         cDSFINI := IzFMKINI('SifRoba','DuzSifra','10')
     endif
     
-    @ m_x+2,m_y+5 SAY " Artikal:" GET _idroba ;
+    @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
             PICT "@!S10" ;
-            WHEN {|| _idroba := padr(_idroba,VAL(cDSFINI)),.t.} ;
-            VALID PostRoba(@_idroba, 2, 27) .and. NarProvDuple (_idroba)
+            WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } ;
+            VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
  
-    @ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena ;
+    @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena ;
             PICT "99999.999" ;
             WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
-    @ m_x+4, m_y+5 SAY "Kolicina:" GET _Kolicina ;
+    @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
             PICT "999999.999" ;
-            WHEN {|| Popust(m_x+4,m_y+28), ;
-                _kolicina := iif(gOcitBarcod, 1, _kolicina), ;
-                _kolicina := iif(_idroba='PLDUG  ', 1, _kolicina), ;
-                iif( _idroba = 'PLDUG  ', .f., .t.) } ;
-            VALID KolicinaOK(_Kolicina) .and. CheckQtty(_Kolicina) 
-            //SEND READER := {|g| GetReader2(g)}
+            WHEN {|| Popust( m_x + 4, m_y + 28 ), ;
+                _kolicina := IIF( gOcitBarcod, 1, _kolicina ), ;
+                _kolicina := IIF( _idroba = PADR( "PLDUG", 7 ), 1, _kolicina ), ;
+                IIF( _idroba = PADR("PLDUG", 7 ), .f., .t. ) } ;
+            VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( _kolicina ) 
     
     nRowPos := 5
     
@@ -213,26 +206,25 @@ do while .t.
     read
     
     cParticip:="N"
-    // apoteke !!!
     
-    @ m_x+4,m_y+25 SAY space (11)
+    @ m_x + 4, m_y + 25 SAY space (11)
 
     if LASTKEY() == K_ESC
-        
         EXIT
-        
     else
         
         SELECT ODJ
         HSEEK SPACE(2)
         
-        if gVodiOdj=="N" .or. FOUND()
+        if gVodiOdj == "N" .or. FOUND()
             
             select _pos_pripr
-            append blank 
+            append blank
+ 
             _RobaNaz:=ROBA->Naz
             _Jmj:=ROBA->Jmj
             _IdTarifa:=ROBA->IdTarifa
+
             if !(roba->tip=="T")
                     _Cijena:=ROBA->mpc
             endif
@@ -277,8 +269,8 @@ do while .t.
             Gather()
 
             // utvrdi stanje racuna
-            nIznNar+=Cijena*Kolicina
-            nPopust+=NCijena*Kolicina
+            nIznNar += cijena * kolicina
+            nPopust += ncijena * kolicina
             oBrowse:goBottom()
             oBrowse:refreshAll()
             oBrowse:dehilite()
@@ -295,48 +287,42 @@ do while .t.
 
 enddo
 
-CancelKeys(aAutoKeys)
-SETKEY(K_PGDN,bPrevDn)
-SETKEY(K_PGUP,bPrevUp)
+CancelKeys( aAutoKeys )
+SETKEY( K_PGDN, bPrevDn )
+SETKEY( K_PGUP, bPrevUp )
+
 UnSetSpecNar()
 
 BoxC()
 
 return (.t.)
 
+// ----------------------------------------------
+// obrada popusta
+// ----------------------------------------------
+function Popust( nx, ny )
+local nC1 := 0
+local nC2 := 0
 
-
-/*! \fn Popust(nx,ny)
- *  \brief
- *  \param nx
- *  \param ny
- *  \return
- */
-function Popust(nx,ny)
-*{
-
-local nC1:=0
-local nC2:=0
-
-FrmGetRabat(aRabat, _cijena)
-ShowRabatOnForm(nx, ny)
+FrmGetRabat( aRabat, _cijena )
+ShowRabatOnForm( nx, ny )
 
 return
-*}
 
 
 
-function CheckQtty(nAmount)
-*{
 
-nTotAmount:=VAL(IzFmkIni("POS","MaxKolicina","100",KUMPATH))
+function pos_check_qtty( qtty )
+local _max_qtty
 
-if nTotAmount==0
+_max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", nil, 0 )
+
+if _max_qtty == 0
     return .t.
 endif
 
-if nAmount > nTotAmount 
-    if Pitanje(,"Da li je ovo ispravna kolicina: " + ALLTRIM(STR(nAmount)),"N")=="D"
+if qtty > _max_qtty
+    if Pitanje(, "Da li je ovo ispravna kolicina: " + ALLTRIM(STR( qtty )), "N" ) == "D"
         return .t.
     else
         return .f.
@@ -344,7 +330,7 @@ if nAmount > nTotAmount
 else
     return .t.
 endif
-*}
+
 
 
 /*! \fn HangKeys()
@@ -352,8 +338,6 @@ endif
  */
  
 function HangKeys()
-*{
-
 local aKeysProcs:={}
 local bPrevSet
 
@@ -366,7 +350,7 @@ do while !eof()
         SKIP
 enddo
 return (aKeysProcs)
-*}
+
 
 
 /*! \fn CancelKeys(aPrevSets)
@@ -375,11 +359,9 @@ return (aKeysProcs)
  */
  
 function CancelKeys(aPrevSets)
-*{
-
 local i:=1
 
-nPrev:=SELECT()
+nPrev := SELECT()
 
 SELECT K2C
 GoTop2()
@@ -389,18 +371,14 @@ do while !eof()
 enddo
 SELECT (nPrev)
 return
-*}
 
-/*! \fn SetSpecNar()
- *  \brief Definisi ponasanje tipke "*" koja nas uvodi u rezim ispravki
- */
- 
+
+
 function SetSpecNar()
-*{
 
-bPrevZv:=SETKEY(ASC("*"), {|| IspraviNarudzbu()})
+bPrevZv := SETKEY( ASC("*"), {|| IspraviNarudzbu() })
 
-if gModul=="HOPS"
+if gModul == "HOPS"
     // provjeriti parametar kako se vode racuni trgovacki ili hotelski
     if (gRadniRac=="D")
             bPrevKroz := SETKEY (ASC ("/"), { || PreglRadni (cBrojRn) })
@@ -408,15 +386,11 @@ if gModul=="HOPS"
 endif
 
 return .t.
-*}
 
 
-/*! \fn UnSetSpecNar()
- *  \brief VratiSpecifikaciju kakva je bila prije ove procedure
- */
- 
+
+
 function UnSetSpecNar()
-*{
 
 SETKEY(ASC ("*"), bPrevZv)
 
@@ -428,113 +402,96 @@ endif
 
 return .f.
 
-*}
 
-
-/*! \fn KolicinaOK(nKol)
- */
+// --------------------------------------------------------
+// provjerava trenutnu kolicinu artikla u kasi...
+// --------------------------------------------------------
 static function KolicinaOK(nKol)
-*{
-
-local nSelect:=SELECT()
+local nSelect := SELECT()
 local nStanje
-local lFlag:=.t.
+local lFlag := .t.
+local _msg
 
-if LASTKEY()==K_UP
+if LASTKEY() == K_UP
     return .t.
 endif
 
-if IsPlNS() 
-    if gFissta=="D" .and. gFisStorno=="N"
-        // sasa: ovo ne treba ovdje
-        //if (nKol < 0)
-        //  MsgBeep("Storno nije dozvoljen. Ponovite unos!")
-        //  return .f.
-        //endif
-    endif
-endif
-
-if (nKol==0)
-    MsgBeep("Nepravilan unos kolicine robe! Ponovite unos!", 15)
+if ( nKol == 0 )
+    MsgBeep( "Nepravilan unos kolicine robe! Ponovite unos!", 15 )
     return .f.
-
 endif
 
-if gPratiStanje=="N".or.roba->Tip $ "TU"
-    return (.t.)
-else
-    // gprati stanje D, !
-    if gModul=="TOPS"  // ovo cemo samo za TOPS!!
-            select pos
-            set order to tag "5"  
-        //"5", "IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
-            seek _IdPos+_idroba
-            nStanje:=0
-            do while !eof() .and. POS->(IdPos+IdRoba)==(_IdPos+_IdRoba)
-                // uzmi samo stavke do tekuceg datuma
-            if (pos->datum > gDatum )
-                skip
-                loop
-            endif
+if gPratiStanje == "N" .or. roba->tip $ "TU"
+    return .t.
+endif
+
+select pos
+set order to tag "5"  
+//"5", "IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
             
-            // provjeri da li je dokument na stanju...
-            if IsPlanika() .and. pos->idvd == VD_ZAD
-                if !roba_na_stanju(pos->idpos, pos->idvd, ;
-                        pos->brdok, pos->datum)
-                    skip
-                    loop
-                endif
-            endif
-            
-            if POS->idvd $ "16#00"
-                    nStanje += POS->Kolicina
-                elseif Pos->idvd $ "IN"
-                    nStanje += POS->Kol2 - POS->Kolicina
-                elseif POS->idvd $ "42#01#96"
-                    nStanje -= POS->Kolicina
-                endif
-                SKIP
-            enddo
-            select pos
-        set order to tag "1"
-            select (nSelect)
-            if nKol>nStanje
-                MsgBeep("Trenutno na stanju artikla :"+_IdRoba+" "+str(nStanje,12,2))
-                if gPratiStanje="!"
-                    lFlag:=.f.
-                endif
-            endif
+seek _IdPos+_idroba
+nStanje := 0
+
+do while !eof() .and. POS->(IdPos+IdRoba)==(_IdPos+_IdRoba)
+    // uzmi samo stavke do tekuceg datuma
+    if (pos->datum > gDatum )
+        skip
+        loop
     endif
+            
+    if pos->idvd $ "16#00"
+        nStanje += POS->Kolicina
+    elseif Pos->idvd $ "IN"
+        nStanje += POS->Kol2 - POS->Kolicina
+    elseif POS->idvd $ "42#01#96"
+        nStanje -= POS->Kolicina
+    endif
+                
+    skip
+
+enddo
+            
+select pos
+set order to tag "1"
+            
+select (nSelect)
+            
+if ( nKol > nStanje )
+    
+    _msg := "Artikal: " + _idroba + " Trenutno na stanju: " + STR( nStanje, 12, 2 )
+
+    if gPratiStanje = "!"
+        _msg += "#Unos artikla onemogucen !!!"
+        lFlag := .f.
+    endif
+
+    MsgBeep( _msg )
+
 endif
 
-
-return (lFlag)
-*}
+return lFlag
 
 
-/*! \fn NarProvDuple()
- *  \brief 
- */
+
 static function NarProvDuple()
-*{
-
 local nPrevRec
 local lFlag:=.t.
 
-if gDupliArt=="D".and.gDupliUpoz=="N"
+if gDupliArt == "D" .and. gDupliUpoz == "N"
     // mogu dupli i nema upozorenja
     return .t.
 endif
 
 select _pos_pripr
-nPrevRec:=RECNO()
+nPrevRec := RECNO()
 
-if _idroba='PLDUG  ' .and. reccount2()<>0
+if _idroba = PADR( "PLDUG", 7 ) .and. reccount2() <> 0
     return .f.
 endif
 
 set order to tag "1"
-seek 'PLDUG  '
+seek PADR( "PLDUG", 7 )
+
 if FOUND()
     MsgBeep('PLDUG mora biti jedina stavka !')
     SET ORDER TO
@@ -559,12 +516,11 @@ endif
 SET ORDER TO
 GO (nPrevRec)
 return (lFlag)
-*}
+
 
 
 function IspraviNarudzbu()
 // Koristi privatnu varijablu oBrowse iz UNESINARUDZBU
-
 local cGetId
 local nGetKol
 local aConds
@@ -572,21 +528,21 @@ local aProcs
 
 UnSetSpecNar()
 
-OpcTipke({"<Enter>-Ispravi stavku","<B>-Brisi stavku","<Esc>-Zavrsi"})
+OpcTipke( { "<Enter>-Ispravi stavku", "<B>-Brisi stavku", "<Esc>-Zavrsi" } )
 
-oBrowse:autolite:=.t.
+oBrowse:autolite := .t.
 oBrowse:configure()
 
 // spasi ono sto je bilo u GET-u
-cGetId:=_idroba
-nGetKol:=_Kolicina
+cGetId := _idroba
+nGetKol := _Kolicina
 
-aConds:={{|Ch| Ch == ASC ("b") .OR. Ch == ASC ("B")},{|Ch| Ch == K_ENTER}}
-aProcs:={{|| BrisStavNar (oBrowse)},{|| EditStavNar (oBrowse)}}
+aConds := { { |Ch| UPPER(CHR(Ch)) == "B" }, { |Ch| Ch == K_ENTER } }
+aProcs := { { || BrisStavNar(oBrowse) }, { || EditStavNar (oBrowse) } }
 
-ShowBrowse(oBrowse,aConds,aProcs)
+ShowBrowse( oBrowse, aConds, aProcs )
 
-oBrowse:autolite:=.f.
+oBrowse:autolite := .f.
 oBrowse:dehilite()
 oBrowse:stabilize()
 
@@ -595,20 +551,32 @@ Prozor0()
 
 // OpcTipke (aUnosMsg)
 // vrati sto je bilo u GET-u
-_idroba:=cGetId
-_Kolicina:=nGetKol
+_idroba := cGetId
+_kolicina := nGetKol
 
 SetSpecNar()
+
+return
+
+
+// ---------------------------------------------------------------------
+// ispisuje total na vrhu prozora unosa racuna
+// ---------------------------------------------------------------------
+static function _show_total( iznos, popust, row )
+// osvjezi cijene
+@ m_x + row + 0, m_y + ( MAXCOLS() - 12 ) SAY iznos PICT "99999.99" COLOR Invert
+@ m_x + row + 1, m_y + ( MAXCOLS() - 12 ) SAY popust PICT "99999.99" COLOR Invert
+@ m_x + row + 2, m_y + ( MAXCOLS() - 12 ) SAY iznos - popust PICT "99999.99" COLOR Invert
 return
 
 
  
-function BrisStavNar(oBrowse)
+function BrisStavNar( oBrowse )
 //      Brise stavku narudzbe
 //      Koristi privatni parametar OBROWSE iz SHOWBROWSE
 select _pos_pripr
 
-if RecCount2()==0
+if RecCount2() == 0
     MsgBeep ("Narudzba nema nijednu stavku!#Brisanje nije moguce!", 20)
     return (DE_REFRESH)
 endif
@@ -616,17 +584,14 @@ endif
 Beep (2)
 
 // ponovo izracunaj ukupno
-nIznNar-=_pos_pripr->(Kolicina*Cijena)
-nPopust-=_pos_pripr->(Kolicina*NCijena)
+nIznNar -= _pos_pripr->( kolicina * cijena )
+nPopust -= _pos_pripr->( kolicina * ncijena )
 
-// osvjezi cijene
-@ m_x+3,m_y+70 SAY nIznNar pict "99999.99" COLOR Invert
-@ m_x+4,m_y+70 SAY nPopust pict "99999.99" COLOR Invert
-@ m_x+5,m_y+70 SAY nIznNar-nPopust pict "99999.99" COLOR Invert
+_show_total( nIznNar, nPopust, m_x + 2 )
+ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
 
 DELETE    
 __dbPack()
-// _PRIPR
 
 oBrowse:refreshAll()
 
@@ -635,19 +600,13 @@ do while !oBrowse:stable
 enddo
 
 return (DE_REFRESH)
-*}
 
 
-/*! \fn EditStavNar()
- *  \brief
- */
- 
+
+
 function EditStavNar()
-*{
-
 //      Vrsi editovanje stavke narudzbe, i to samo artikla ili samo kolicine
 //      Koristi privatni parametar OBROWSE iz SHOWBROWSE
-
 private GetList:={}
 
 select _pos_pripr
@@ -655,39 +614,24 @@ if RecCount2() == 0
     MsgBeep ("Narudzba nema nijednu stavku!#Ispravka nije moguca!", 20)
     return (DE_CONT)
 endif
+
 Scatter()
 
 set cursor on
+
 Box (, 3, 75)
-@ m_x+1,m_y+4 SAY "   Artikal:" GET _idroba PICTURE "@K" VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
-@ m_x+2,m_y+3 SAY "     Cijena:" GET _Cijena  picture "99999.999" when roba->tip=="T"
-@ m_x+3,m_y+3 SAY "   kolicina:" GET _Kolicina VALID KolicinaOK (_Kolicina)
+    
+    @ m_x+1,m_y+4 SAY "   Artikal:" GET _idroba PICTURE "@K" VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
+    @ m_x+2,m_y+3 SAY "     Cijena:" GET _Cijena  picture "99999.999" when roba->tip=="T"
+    @ m_x+3,m_y+3 SAY "   kolicina:" GET _Kolicina VALID KolicinaOK (_Kolicina)
 
-READ
+    READ
 
-cParticip:="D"
-if _nCijena==0
-    cParticip:="N"
-endif
-// apoteke !!!
-select odj
-hseek roba->idodj 
-select _pos_pripr
-if RIGHT(odj->naz,5)=="#1#0#" .or. RIGHT(odj->naz,6)=="#1#50#"
-    set cursor on
-        @ m_x+3,m_y+25 SAY "particip:" GET cParticip pict "@!" valid cParticip $ "DN"
-        read
-        if cParticip=="D"
-            _Ncijena:=1
-        else
-            _NCijena:=0
-        endif
-else
-        @ m_x+3,m_Y+25  SAY SPACE(11)
-endif
+    select _pos_pripr
+    @ m_x+3,m_Y+25  SAY SPACE(11)
 
-if LASTKEY()<>K_ESC
-    if (_pos_pripr->IdRoba<>_IdRoba) .or. roba->tip=="T"
+    if LASTKEY() <> K_ESC
+        if (_pos_pripr->IdRoba<>_IdRoba) .or. roba->tip=="T"
             SELECT ODJ
             HSEEK ROBA->IdOdj
             // LOCATE FOR IdTipMT == ROBA->IdTreb
@@ -700,41 +644,44 @@ if LASTKEY()<>K_ESC
                 endif
                 _IdTarifa:=ROBA->IdTarifa
                 if gVodiOdj=="D"
-                _IdOdj:=ROBA->IdOdj
-            else
-                _IdOdj:=SPACE(2)
-            endif
-            nIznNar+=(_cijena*_kolicina)-cijena*kolicina
+                    _IdOdj:=ROBA->IdOdj
+                else
+                    _IdOdj:=SPACE(2)
+                endif
+            
+                nIznNar+=(_cijena*_kolicina)-cijena*kolicina
                 nPopust+=(_ncijena*_kolicina)  - ncijena*kolicina
-                Gather () //_PRIPR
+                Gather () 
             else
                 MsgBeep ("Za robu "+ALLTRIM (_IdRoba)+" nije odredjeno odjeljenje!#"+"Narucivanje nije moguce!!!", 15)
                 select _pos_pripr
                 return (DE_CONT)
             endif
-    endif
-    if (_pos_pripr->Kolicina<>_Kolicina)
+        endif
+        
+        if (_pos_pripr->Kolicina<>_Kolicina)        
             // azuriraj narudzbu
             nIznNar+=(_cijena*_kolicina) - cijena*kolicina
             nPopust+=(_ncijena*_kolicina) - ncijena*kolicina
             REPLACE Kolicina WITH _Kolicina
+        endif
+    
     endif
-    if (gPopVar=="A" .and. _pos_pripr->ncijena<> _NCijena)
-            // samo za apoteke
-            replace ncijena with _ncijena
-    endif
-endif
+
 BoxC()
-@ m_x+3,m_y+70 SAY nIznNar pict "99999.99" COLOR Invert
-@ m_x+4,m_y+70 SAY nPopust pict "99999.99" COLOR Invert
-@ m_x+5,m_y+70 SAY nIznNar-nPopust pict "99999.99" COLOR Invert
+
+// ispisi totale...
+_show_total( nIznNar, nPopust, m_x + 2 )
+ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
+
 oBrowse:refreshCurrent()
+
 do while !oBrowse:stable 
     oBrowse:Stabilize()
 enddo
 
 return (DE_CONT)
-*}
+
 
 
 /*! \fn GetReader2(oGet,GetList,oMenu,aMsg)
@@ -745,8 +692,6 @@ return (DE_CONT)
  */
  
 function GetReader2(oGet, GetList, oMenu, aMsg)
-*{
-
 local nKey
 local nRow
 local nCol
@@ -779,5 +724,4 @@ if (GetPreValSC(oGet, aMsg))
 endif
 
 return
-*}
 

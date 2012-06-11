@@ -111,27 +111,176 @@ if !lOpened
 end
 PopWA()
 return
-*}
+
+
+//-----------------------------------------------------
+// ispisuje iznos racuna velikim brojevima
+//-----------------------------------------------------
+function ispisi_iznos_veliki_brojevi( iznos, row, col )
+local _iznos
+local _cnt, _char, _next_y
+
+if col == nil
+    col := 76
+endif
+
+_iznos := ALLTRIM( TRANSFORM( iznos, "9999999.99" ) )
+_next_y := m_y + col
+
+// ocisti iznos 
+@ m_x + row + 0, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
+@ m_x + row + 1, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
+@ m_x + row + 2, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
+@ m_x + row + 3, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
+@ m_x + row + 4, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
+
+for _cnt := LEN( _iznos ) TO 1 STEP -1
+
+    _char := SUBSTR( _iznos, _cnt, 1 )
+
+    do case
+        case _char = "1"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY " лл"
+            @ m_x + row + 1, _Next_Y SAY "  л"
+            @ m_x + row + 2, _Next_Y SAY "  л"
+            @ m_x + row + 3, _Next_Y SAY "  л"
+            @ m_x + row + 4, _Next_Y SAY "лллл"
+
+        case _char = "2"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY "лллл"
+            @ m_x + row + 1, _Next_Y SAY "   л"
+            @ m_x + row + 2, _Next_Y SAY "лллл"
+            @ m_x + row + 3, _Next_Y SAY "л"
+            @ m_x + row + 4, _Next_Y SAY "лллл"
+
+        case _char = "3"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY " ллл"
+            @ m_x + row + 1, _Next_Y SAY "   л"
+            @ m_x + row + 2, _Next_Y SAY "  лл"
+            @ m_x + row + 3, _Next_Y SAY "   л"
+            @ m_x + row + 4, _Next_Y SAY "лллл"
+        
+        case _char = "4"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY "л"
+            @ m_x + row + 1, _Next_Y SAY "л  л"
+            @ m_x + row + 2, _Next_Y SAY "лллл"
+            @ m_x + row + 3, _Next_Y SAY "   л"
+            @ m_x + row + 4, _Next_Y SAY "   л"
+
+        case _char = "5"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY "лллл"
+            @ m_x + row + 1, _Next_Y SAY "л"
+            @ m_x + row + 2, _Next_Y SAY "лллл"
+            @ m_x + row + 3, _Next_Y SAY "   л"
+            @ m_x + row + 4, _Next_Y SAY "лллл"
+
+        case _char = "6"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY "лллл"
+            @ m_x + row + 1, _Next_Y SAY "л"
+            @ m_x + row + 2, _Next_Y SAY "лллл"
+            @ m_x + row + 3, _Next_Y SAY "л  л"
+            @ m_x + row + 4, _Next_Y SAY "лллл"
+
+        case _char = "7"
+
+            _next_y -= 5
+         
+            @ m_x + row + 0, _Next_Y SAY "лллл"
+            @ m_x + row + 1, _Next_Y SAY "   л"
+            @ m_x + row + 2, _Next_Y SAY "  л"
+            @ m_x + row + 3, _Next_Y SAY " л"
+            @ m_x + row + 4, _Next_Y SAY "л"
+
+        case _char = "8"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY "лллл"
+            @ m_x + row + 1, _Next_Y SAY "л  л"
+            @ m_x + row + 2, _Next_Y SAY " лл "
+            @ m_x + row + 3, _Next_Y SAY "л  л"
+            @ m_x + row + 4, _Next_Y SAY "лллл"
+        
+        case _char = "9"
+
+            _next_y -= 5
+         
+            @ m_x + row + 0, _Next_Y SAY "лллл"
+            @ m_x + row + 1, _Next_Y SAY "л  л"
+            @ m_x + row + 2, _Next_Y SAY "лллл"
+            @ m_x + row + 3, _Next_Y SAY "   л"
+            @ m_x + row + 4, _Next_Y SAY "лллл"
+
+        case _char = "0"
+
+            _next_y -= 5
+
+            @ m_x + row + 0, _Next_Y SAY " лл "
+            @ m_x + row + 1, _Next_Y SAY "л  л"
+            @ m_x + row + 2, _Next_Y SAY "л  л"
+            @ m_x + row + 3, _Next_Y SAY "л  л"
+            @ m_x + row + 4, _Next_Y SAY " лл"
+
+        case _char = "."
+
+            _next_y -= 2
+
+            @ m_x + row + 4, _Next_Y SAY "л"
+
+        case _char = "-"
+
+            _next_y -= 4
+
+            @ m_x + row + 2, _Next_Y SAY "ллл"
+
+    endcase
+next
+
+return
 
 
 
-/*! \fn PisiIznRac(nIznos)
- *  \brief Ispisuje iznos racuna velikim slovima
- */
+//-----------------------------------------------------
+// ispisuje iznos racuna u box-u
+//-----------------------------------------------------
+function ispisi_iznos_racuna_box( iznos )
+local cIzn
+local nCnt, Char, NextY
+local nPrevRow := ROW()
+local nPrevCol := COL()
 
-function PisiIznRac(nIznos)
-*{
-LOCAL cIzn, nCnt, Char, NextY, nPrevRow := ROW(), nPrevCol := COL()
 SETPOS (0,0)
 
 Box (, 9, 77)
-cIzn := ALLTRIM (TRANSFORM (nIznos, "9999999.99"))
-@ m_x,m_y+28 SAY "  IZNOS RACUNA JE  " COLOR INVERT
-NextY := m_y + 76
-FOR nCnt := LEN (cIzn) TO 1 STEP -1
-   Char := SUBSTR (cIzn, nCnt, 1)
-   DO CASE
-      CASE Char = "1"
+
+    cIzn := ALLTRIM (TRANSFORM ( iznos, "9999999.99" ))
+
+    @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR INVERT
+
+    NextY := m_y + 76
+
+    FOR nCnt := LEN (cIzn) TO 1 STEP -1
+        Char := SUBSTR (cIzn, nCnt, 1)
+        DO CASE
+        CASE Char = "1"
          NextY -= 6
          @ m_x+2, NextY SAY " лл"
          @ m_x+3, NextY SAY "  л"
@@ -141,7 +290,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "  л"
          @ m_x+8, NextY SAY "  л"
          @ m_x+9, NextY SAY "ллллл"
-      CASE Char = "2"
+        CASE Char = "2"
          NextY -= 8
          @ m_x+2, NextY SAY "ллллллл"
          @ m_x+3, NextY SAY "      л"
@@ -151,7 +300,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "л"
          @ m_x+8, NextY SAY "л     л"
          @ m_x+9, NextY SAY "ллллллл"
-      CASE Char = "3"
+        CASE Char = "3"
          NextY -= 8
          @ m_x+2, NextY SAY " лллллл"
          @ m_x+3, NextY SAY "      л"
@@ -161,7 +310,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "      л"
          @ m_x+8, NextY SAY "      л"
          @ m_x+9, NextY SAY "ллллллл"
-      CASE Char = "4"
+        CASE Char = "4"
          NextY -= 8
          @ m_x+2, NextY SAY "л"
          @ m_x+3, NextY SAY "л"
@@ -171,7 +320,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "      л"
          @ m_x+8, NextY SAY "      л"
          @ m_x+9, NextY SAY "      л"
-      CASE Char = "5"
+        CASE Char = "5"
          NextY -= 8
          @ m_x+2, NextY SAY "ллллллл"
          @ m_x+3, NextY SAY "л"
@@ -181,7 +330,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "      л"
          @ m_x+8, NextY SAY "л     л"
          @ m_x+9, NextY SAY "ллллллл"
-      CASE Char = "6"
+        CASE Char = "6"
          NextY -= 8
          @ m_x+2, NextY SAY "ллллллл"
          @ m_x+3, NextY SAY "л"
@@ -191,7 +340,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "л     л"
          @ m_x+8, NextY SAY "л     л"
          @ m_x+9, NextY SAY "ллллллл"
-      CASE Char = "7"
+        CASE Char = "7"
          NextY -= 8
          @ m_x+2, NextY SAY "ллллллл"
          @ m_x+3, NextY SAY "      л"
@@ -201,7 +350,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "  л"
          @ m_x+8, NextY SAY " л"
          @ m_x+9, NextY SAY "л"
-      CASE Char = "8"
+        CASE Char = "8"
          NextY -= 8
          @ m_x+2, NextY SAY "ллллллл"
          @ m_x+3, NextY SAY "л     л"
@@ -211,7 +360,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "л     л"
          @ m_x+8, NextY SAY "л     л"
          @ m_x+9, NextY SAY "ллллллл"
-      CASE Char = "9"
+        CASE Char = "9"
          NextY -= 8
          @ m_x+2, NextY SAY "ллллллл"
          @ m_x+3, NextY SAY "л     л"
@@ -221,7 +370,7 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "      л"
          @ m_x+8, NextY SAY "л     л"
          @ m_x+9, NextY SAY "ллллллл"
-      CASE Char = "0"
+        CASE Char = "0"
          NextY -= 8
          @ m_x+2, NextY SAY " ллллл "
          @ m_x+3, NextY SAY "л     л"
@@ -231,17 +380,19 @@ FOR nCnt := LEN (cIzn) TO 1 STEP -1
          @ m_x+7, NextY SAY "л     л"
          @ m_x+8, NextY SAY "л     л"
          @ m_x+9, NextY SAY " ллллл"
-      CASE Char = "."
+        CASE Char = "."
          NextY -= 4
          @ m_x+9, NextY SAY "ллл"
-      CASE Char = "-"
+        CASE Char = "-"
          NextY -= 6
          @ m_x+5, NextY SAY "ллллл"
-   ENDCASE
+    ENDCASE
 NEXT
+
 SETPOS (nPrevRow, nPrevCol)
+
 return
-*}
+
 
 /*! \fn SkloniIznosRac()
     \brief Pravo korisna funkcija ... ?!?

@@ -1,7 +1,10 @@
 1.0.48 2012-06-11, vsasa
 
   - težinski barkod [#28340](http://redmine.bring.out.ba/issues/28340)
-  - pos, sitne korekcije
+  - pos, fiskalne opcije za prodavača [#28348](http://redmine.bring.out.ba/issues/28348)
+  - pos, unos računa bez izlaska iz pripreme [#28350](http://redmine.bring.out.ba/issues/28350)
+  - sastavnice, loša postavka semafora - bugfix [#28343](http://redmine.bring.out.ba/issues/28343)
+  - pos, mnoštvo sitnih korekcija
 
 1.0.47 2012-06-11, vsasa
 

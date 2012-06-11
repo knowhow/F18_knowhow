@@ -1,3 +1,9 @@
+1.0.47 2012-06-11, vsasa
+
+  - pos, unos računa, sređivanje forme [#28335](http://redmine.bring.out.ba/issues/28335)
+  - kalk, štampanje labela sa cijenama [#28333](http://redmine.bring.out.ba/issues/28333)
+  - ostale sitne dorade
+
 1.0.46 2012-06-08, vsasa
 
   - pos, brojač dokumenta na osnovu sql/db [#28328](http://redmine.bring.out.ba/issues/28328)

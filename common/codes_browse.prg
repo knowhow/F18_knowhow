@@ -210,7 +210,7 @@ if cId <> NIL
     elseif RIGHT(TRIM(cId), 1) $ "./$"
          sif_point_or_slash(@cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch)
 
-    elseif LEN(trim(cId)) > 10 .and. fieldpos("BARKOD") <> 0 
+    elseif LEN(trim(cId)) > 10 .and. fieldpos("BARKOD") <> 0 .and. !EMPTY( cId ) 
          SeekBarKod(@cId, @cIdBk, .f.)
 
     else 

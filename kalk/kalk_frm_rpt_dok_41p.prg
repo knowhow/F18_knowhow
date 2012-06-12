@@ -117,6 +117,10 @@ do while !eof() .and. cIdFirma == field->idfirma .and. cBrDok == field->brdok .a
 
     ?? TRIM(LEFT(roba->naz, 40)), "(", roba->jmj, ")"
 
+	if lKoristitiBK .and. !EMPTY( roba->barkod )
+		?? ", BK: " + roba->barkod
+	endif
+
     if lPoNarudzbi
         IspisPoNar( if(cIdVd == "41", .f., ))
     endif

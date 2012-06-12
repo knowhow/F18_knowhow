@@ -13,24 +13,8 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/prod/dok/1g/rpt_11.prg
- *  \brief Stampa dokumenta tipa 11
- */
-
-
-/*! \fn StKalk11_2(fZaTops)
- *  \brief Stampa dokumenta tipa 11
- */
 
 function StKalk11_2(fZaTops)
-*{
 local nCol0:=nCol1:=nCol2:=0,npom:=0, n11BezNC
 private aPorezi
 
@@ -138,13 +122,18 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     @ prow(),4 SAY  ""
     ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
 
+	if lKoristitiBK .and. !EMPTY( roba->barkod )
+		?? ", BK: " + roba->barkod
+	endif
+
     if gRokTr=="D"
-	?? space(4),"Rok Tr.:",RokTr
+		?? space(4),"Rok Tr.:",RokTr
     endif
 
     IF lPoNarudzbi
       IspisPoNar()
     ENDIF
+
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
 

@@ -94,7 +94,7 @@ _kord_x := m_x + _x
 
 if lKoristitiBK
     @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!S10" ;
-        WHEN {|| _IdRoba := PADR( _idroba, gDuzSifIni ), .t. } ;
+        WHEN {|| _IdRoba := PADR( _idroba, VAL( gDuzSifIni ) ), .t. } ;
         VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
 else
     @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;

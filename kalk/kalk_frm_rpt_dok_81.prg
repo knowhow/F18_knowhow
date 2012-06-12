@@ -154,9 +154,15 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     nTotC+= (nUC:=nPor1 * (Kolicina-Gkolicina-GKolicin2) )
 
     // prvi red
-    @ prow()+1,0 SAY  Rbr PICTURE "999"
-    @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    @ prow()+1,4 SAY IdRoba
+    @ prow()+1,0 SAY rbr PICT "999"
+    @ prow(),4 SAY ""
+	?? TRIM(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
+	
+	if lKoristitiBK .and. !EMPTY( roba->barkod )
+		?? ", BK: " + ROBA->barkod 
+	endif
+
+	@ prow()+1,4 SAY IdRoba
     nCol1:=pcol()+1
     if !fZaTops
      @ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM
@@ -421,10 +427,17 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     // prvi red
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
-    IF lPoNarudzbi
+
+	if lKoristitiBK .and. !EMPTY( roba->barkod )
+		?? ", BK: " + roba->barkod
+	endif
+    
+	if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
+    
+	IF lPoNarudzbi
       IspisPoNar()
     ENDIF
+
     @ prow()+1,4 SAY IdRoba
     nCol1:=pcol()+1
     @ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM

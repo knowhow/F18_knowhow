@@ -124,20 +124,24 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
             nTotB+=round( cistaMar*tarifa->vpp/100,gZaokr)  // porez na razliku u cijeni
         endif
         // total porez
-    nTotP+=(nUP:=nPDV * kolicina)
+    	nTotP+=(nUP:=nPDV * kolicina)
         // total mpcsapp
-    nTotM+=(nUM:=MPCsaPP * kolicina)
+    	nTotM+=(nUM:=MPCsaPP * kolicina)
     
         // 1. PRVI RED
-    @ prow()+1,0 SAY  Rbr PICTURE "999"
-        @ prow(),4 SAY  ""
-    ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
+    	@ prow()+1,0 SAY rbr PICTURE "999"
+        @ prow(),4 SAY ""
+
+    	?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
+
         if roba->(fieldpos("KATBR"))<>0
             ?? " KATBR:", roba->katbr
         endif
-    if is_uobrada()
-        ?? " JCI broj:", jci_no
-    endif
+
+		if lKoristitiBK .and. !EMPTY( roba->barkod )
+			?? ", BK: " + roba->barkod
+		endif
+
         IF lPoNarudzbi
             IspisPoNar()
         ENDIF

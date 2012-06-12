@@ -178,7 +178,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""
     ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    IF lPoNarudzbi
+    if lKoristitiBK .and. !EMPTY( roba->barkod )
+		?? ", BK: " + roba->barkod
+	endif
+	IF lPoNarudzbi
       IspisPoNar(.f.)
     ENDIF
     @ prow()+1,4 SAY IdRoba

@@ -206,6 +206,7 @@ private  GetList:={}
 if glBrojacPoKontima
     _brojac := "D"
 endif
+
 if lKoristitiBK 
 	_unos_barkod := "D"
 endif
@@ -266,7 +267,7 @@ if lastkey() <> K_ESC
 		lKoristitiBK := .f.
 	endif
 
-	set_metric("kalk_koristiti_barkod_pri_unosu", nil, lKoristitiBK )
+	set_metric("kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
 	set_metric("kalk_brojac_kalkulacija", nil, gBrojac)
     set_metric("kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
   	set_metric("kalk_rok_trajanja", nil, gRokTr)

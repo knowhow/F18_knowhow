@@ -119,16 +119,15 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     endif
 
     KTroskovi()
-
     RptSeekRT()
 
     Tarifa(field->pkonto,field->idroba,@aPorezi)
-    aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
-
+    
+	aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
 
     DokNovaStrana(125, @nStr, 2)
 
-    if gKalo=="1"
+    if gKalo == "1"
         SKol:=Kolicina-GKolicina-GKolicin2
     else
         SKol:=Kolicina
@@ -139,12 +138,22 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     nTotA+= (nUA:=MPC   * (Kolicina-Gkolicina-GKolicin2) )
     nTotB+= (nUB:=MPCSAPP* (Kolicina-Gkolicina-GKolicin2) )
 
-    @ prow()+1,0 SAY  Rbr PICTURE "999"
-    @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
-    IF lPoNarudzbi
-      IspisPoNar()
+    @ prow() + 1, 0 SAY rbr PICT "999"
+    @ prow(), 4 SAY ""
+	?? TRIM( LEFT( ROBA->naz, 40 )), "(", ROBA->jmj, ")"
+    
+	if lKoristitiBK .and. !EMPTY( roba->barkod )
+		?? ", BK: " + ROBA->barkod 
+	endif
+
+	if gRokTr=="D"
+		?? space(4), "Rok Tr.:", RokTr
+	endif
+    
+	IF lPoNarudzbi
+    	IspisPoNar()
     ENDIF
+
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+35  SAY Kolicina             PICTURE PicCDEM
     nCol1:=pcol()+1

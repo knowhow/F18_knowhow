@@ -360,7 +360,7 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
 
     // podaci artikla
     xml_node( "art_id", to_xml_encoding( ALLTRIM( field->idroba ) ) )
-    xml_node( "art_naz", to_xml_encoding( ALLTRIM( roba->naz ) ) )
+    xml_node( "art_naz", to_xml_encoding( ALLTRIM( roba->naz ) ) + IIF( lKoristitiBK, ", BK: " + roba->barkod , "" ) )
     xml_node( "art_jmj", to_xml_encoding( ALLTRIM( roba->jmj ) ) )
     xml_node( "tarifa", to_xml_encoding( ALLTRIM( field->idtarifa ) ) )
     xml_node( "rbr", PADL( ALLTRIM( STR( ++_redni_broj ) ), 4 ) + "." )

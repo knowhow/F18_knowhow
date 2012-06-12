@@ -12,24 +12,7 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/rpt_10.prg
- *  \brief Stampa dokumenta tipa 10
- */
-
-
-/*! \fn StKalk10_2()
- *  \brief Stampa dokumenta tipa 10, varijanta sa troskovima u kolonama
- */
-
 function StKalk10_2()
-*{
 local nCol1:=nCol2:=0,npom:=0
 
 Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2

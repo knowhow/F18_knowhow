@@ -26,7 +26,8 @@ private Kol := {}
 private nRowPos
 private oBrowse
 private aAutoKeys:={}
-private nIznNar:=0
+private nPopust := 0
+private nIznNar := 0
 private bPrevZv
 private bPrevKroz
 private aUnosMsg:={}
@@ -331,6 +332,9 @@ do while !EOF()
     skip
 enddo
 
+nIznNar := _iznos
+nPopust := _popust
+
 // ispisi i iznos velikim brojevima na dnu...
 ispisi_iznos_veliki_brojevi( ( _iznos - _popust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
     
@@ -610,20 +614,15 @@ function BrisStavNar( oBrowse )
 select _pos_pripr
 
 if RecCount2() == 0
-    MsgBeep ("Narudzba nema nijednu stavku!#Brisanje nije moguce!", 20)
+    MsgBeep ("Priprema racuna je prazna !!!#Brisanje nije moguce!", 20)
     return (DE_REFRESH)
 endif
 
 Beep (2)
 
 // ponovo izracunaj ukupno
-if field->kolicina < 0
-	nIznNar += _pos_pripr->( kolicina * cijena )
-	nPopust += _pos_pripr->( kolicina * ncijena )
-else
-	nIznNar -= _pos_pripr->( kolicina * cijena )
-	nPopust -= _pos_pripr->( kolicina * ncijena )
-endif
+nIznNar -= _pos_pripr->( kolicina * cijena )
+nPopust -= _pos_pripr->( kolicina * ncijena )
 
 _show_total( nIznNar, nPopust, m_x + 2 )
 ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
@@ -659,7 +658,7 @@ set cursor on
 
 Box (, 3, 75)
     
-    @ m_x+1,m_y+4 SAY "   Artikal:" GET _idroba PICTURE "@K" VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
+    @ m_x+1,m_y+4 SAY "    Artikal:" GET _idroba PICTURE "@K" VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
     @ m_x+2,m_y+3 SAY "     Cijena:" GET _Cijena  picture "99999.999" when roba->tip=="T"
     @ m_x+3,m_y+3 SAY "   kolicina:" GET _Kolicina VALID KolicinaOK (_Kolicina)
 
@@ -697,10 +696,10 @@ Box (, 3, 75)
             endif
         endif
         
-        if (_pos_pripr->Kolicina<>_Kolicina)        
+        if (_pos_pripr->Kolicina <> _Kolicina)        
             // azuriraj narudzbu
-            nIznNar+=(_cijena*_kolicina) - cijena*kolicina
-            nPopust+=(_ncijena*_kolicina) - ncijena*kolicina
+            nIznNar += (_cijena*_kolicina) - cijena * kolicina
+            nPopust += (_ncijena*_kolicina) - ncijena * kolicina
             REPLACE Kolicina WITH _Kolicina
         endif
     

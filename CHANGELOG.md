@@ -4,6 +4,9 @@
                          [#28360](http://redmine.bring.out.ba/issues/28360)
                          [#28358](http://redmine.bring.out.ba/issues/28358)
   - rnal, podatak o naljepnici [#28362](http://redmine.bring.out.ba/issues/28362)
+  - fiskalne opcije fprint, brisanje plu kodova [#28365](http://redmine.bring.out.ba/issues/28365)
+  - kalk, fakt, barkodovi [#28363](http://redmine.bring.out.ba/issues/28363)
+  - kalk, ispis barkodova na dokumentima [#28364](http://redmine.bring.out.ba/issues/28364)
 
 1.0.48 2012-06-11, vsasa
 

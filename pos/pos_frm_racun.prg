@@ -83,8 +83,8 @@ else
     cFilter+=".and. IdRadnik="+cm2str(gIdRadnik)+".and. Idpos="+cm2str(gIdPos)
 endif
 
-if kLevel==L_PRODAVAC
-    cFilter+='.and. Datum='+cm2str(dDat)
+if kLevel == L_PRODAVAC .and. dDat <> NIL
+    cFilter += '.and. Datum=' + cm2str(dDat)
 endif
 
 if qIdRoba<>nil.and.!EMPTY(qIdRoba)
@@ -94,7 +94,7 @@ endif
 SET FILTER TO &cFilter
 
 if !EMPTY(cBroj)
-    SEEK2(cIdPos+"42"+dtos(dDat)+cBroj)
+    SEEK2( cIdPos + "42" + dtos(dDat) + cBroj )
     if FOUND()
             cBroj:=ALLTRIM(pos_doks->IdPos)+"-"+ALLTRIM(pos_doks->BrDok)
             dDat:=pos_doks->datum

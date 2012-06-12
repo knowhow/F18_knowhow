@@ -1591,13 +1591,35 @@ update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 return
 
 
+// ---------------------------------------------------------------
+// koriguje broj racuna
+// ---------------------------------------------------------------
+static function _fix_rn_no( racun )
+local _a_rn := {}
+
+if !EMPTY( racun ) .and. ( "-" $ racun )
+
+	_a_rn := TokToNiz( racun, "-" )
+
+	if !EMPTY( _a_rn[2] )
+		racun := PADR( ALLTRIM(_a_rn[2]), 6 )
+	endif 
+
+endif
+
+return .t.
+
+
 // -------------------------------------
 // storniranje racuna
 // -------------------------------------
 function pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 local nTArea := SELECT()
 local _rec
+local _datum := gDatum
+local _danasnji := "D"
 private GetList := {}
+private aVezani:={}
 
 if lSilent == nil
 	lSilent := .f.
@@ -1612,10 +1634,18 @@ if cSt_fisc == nil
 	cSt_fisc := SPACE(10)
 endif
 
-Box(,3,55)
+Box(, 4, 55 )
 	
-	@ m_x + 1, m_y + 2 SAY "stornirati pos racun broj:" GET cSt_rn 
-	@ m_x + 2, m_y + 2 SAY "od datuma:" GET dSt_date
+	@ m_x + 1, m_y + 2 SAY "Racun je danasnji ?" GET _danasnji VALID _danasnji $ "DN" PICT "@!"
+	
+	read
+
+	if _danasnji == "N"
+		_datum := NIL
+	endif
+
+	@ m_x + 2, m_y + 2 SAY "stornirati pos racun broj:" GET cSt_rn VALID {|| PRacuni( @_datum, @cSt_rn, .t. ), _fix_rn_no( @cSt_rn ), dSt_date := _datum,  .t. }
+	@ m_x + 3, m_y + 2 SAY "od datuma:" GET dSt_date
 	
 	read
 	
@@ -1623,11 +1653,11 @@ Box(,3,55)
 
 	if EMPTY( cSt_fisc )
 		select pos_doks
-		seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
+		seek gIdPos + "42" + DTOS( dSt_date ) + cSt_rn
 		cSt_fisc := PADR( ALLTRIM( STR( pos_doks->fisc_rn )), 10 )
 	endif
 
-	@ m_x + 3, m_y + 2 SAY "broj fiskalnog isjecka:" GET cSt_fisc
+	@ m_x + 4, m_y + 2 SAY "broj fiskalnog isjecka:" GET cSt_fisc
 	
 	read
 

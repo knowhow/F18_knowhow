@@ -773,22 +773,21 @@ return
 // prepis racuna 
 // ---------------------------------------------
 function PrepisRacuna()
-local cPolRacun:=SPACE(9)
-local cIdPos:=SPACE(LEN(gIdPos))
+local cPolRacun := SPACE(9)
+local cIdPos := SPACE(LEN(gIdPos))
 local nPoz
-private aVezani:={}
+private aVezani := {}
 private dDatum
 private cVrijeme
 
 O__POS_PRIPR
-
 O_StAzur()
 
 Box (, 3, 60)
 
 	dDat := gDatum
 
-	if (klevel<>L_PRODAVAC)
+	if (klevel <> L_PRODAVAC)
   		@ m_x+1,m_y+4 SAY "Datum:" GET dDat
 	endif
 

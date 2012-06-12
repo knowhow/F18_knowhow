@@ -1,3 +1,9 @@
+1.0.49 2012-06-12, vsasa
+
+  - pos, korekcije unosa [#28361](http://redmine.bring.out.ba/issues/28361)
+                         [#28360](http://redmine.bring.out.ba/issues/28360)
+                         [#28358](http://redmine.bring.out.ba/issues/28358)
+ 
 1.0.48 2012-06-11, vsasa
 
   - težinski barkod [#28340](http://redmine.bring.out.ba/issues/28340)

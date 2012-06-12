@@ -221,7 +221,7 @@ do case
         set filter to
         set relation to
         
-        if _set_sif_id(@nArt_id, "ART_ID") == 0
+        if _set_sif_id( @nArt_id, "ART_ID" ) == 0
             return DE_CONT
         endif
         
@@ -1586,6 +1586,7 @@ if FOUND()
             _rec["art_desc"] := cArt_desc
             _rec["match_code"] := cArt_mcode
             _rec["art_full_d"] := cArt_full_desc
+            _rec["art_lab_de"] := cArt_lab_desc
         
             my_use_semaphore_off()
             sql_table_update( nil, "BEGIN" )    

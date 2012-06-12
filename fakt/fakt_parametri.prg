@@ -95,6 +95,7 @@ function fakt_par_razno()
 local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
 local _prik_bk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PADR("", 300) )
+local _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
 local _unos_dest := "N"
 private cSection:="1"
 private cHistory:=" "
@@ -147,6 +148,9 @@ endif
 nX++
     
 @ m_x+nX,m_y+2 SAY "Koriste li se artikli koji se vode po sintet.sifri, roba tipa 'S' (D/N) ?" GET gNovine VALID gNovine $ "DN" PICT "@!"
+nX++
+
+@ m_x+nX,m_y+2 SAY "Unos dokumenata pomocu barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
 nX++
     
 @ m_x+nX, m_y+2 SAY "Duzina sifre artikla sinteticki " GET gnDS VALID gnDS>0 PICT "9"
@@ -232,6 +236,7 @@ if (LASTKEY()<>K_ESC)
 	set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
 	set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
 	set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
+	set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
 
     if _unos_dest == "D"
         gDest := .t.

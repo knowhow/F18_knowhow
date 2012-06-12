@@ -1295,13 +1295,11 @@ endif
 
 @ m_x + 13, m_y + 2 SAY "R.br: " GET nRbr  PICT "9999"
 
-cDSFINI := IzFMKINI('SifRoba','DuzSifra','10', SIFPATH)
-
 @ m_x + 15, m_y + 2  SAY "Artikal: " ;
     GET _IdRoba ;
     PICT "@!S10" ;
-    WHEN {|| _idroba := PADR( _idroba, VAL( cDSFINI )), W_Roba() } ;
-    VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < 10, LEFT( _idroba, 10 ), _idroba ), V_Roba(), artikal_kao_usluga(fnovi), NijeDupla(fNovi) }
+    WHEN {|| _idroba := PADR( _idroba, VAL( gDuzSifIni )), W_Roba() } ;
+    VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), LEFT( _idroba, VAL(gDuzSifIni) ), _idroba ), V_Roba(), artikal_kao_usluga(fnovi), NijeDupla(fNovi) }
 
 RKOR2:=0
 

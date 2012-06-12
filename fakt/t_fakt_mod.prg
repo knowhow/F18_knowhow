@@ -498,6 +498,11 @@ PicKol := fetch_metric( "fakt_prikaz_kolicine", NIL, PicKol )
 gFZaok := fetch_metric( "fakt_zaokruzenje", NIL, gFZaok )
 gZ_5pf := fetch_metric( "fakt_zaokruzenje_5_pf", NIL, gZ_5pf )
 
+// unos artikala na dokument pomocu barkod-a
+if fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" ) == "D"
+	gDuzSifIni := "13"
+endif
+
 O_PARAMS
 
 private cSection:="1"

@@ -60,9 +60,7 @@ gPickol := "999999.999"
 gFPicCDem := "0"
 gFPicDem := "0"
 gFPicKol := "0"
-
-gDuzSifINI := 10
-//IzFmkIni('Sifroba','DuzSifra','10',SIFPATH)
+gDuzSifINI := "10"
 
 return
 

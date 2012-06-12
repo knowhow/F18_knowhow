@@ -412,6 +412,12 @@ glEkonomat := fetch_metric("kalk_voditi_samo_ekonomat", nil, glEkonomat)
 lPoNarudzbi := fetch_metric("kalk_dokument_10_po_narudzbi", nil, lPoNarudzbi)
 gVodiSamoTarife := fetch_metric("kalk_vodi_samo_tarife", nil, gVodiSamoTarife)
 lKoristitiBK := fetch_metric("kalk_koristiti_barkod_pri_unosu", nil, lKoristitiBK)
+
+if lKoristitiBK
+	// ako se koristi barkod onda je duzina robe 13
+	gDuzSifIni := "13"
+endif
+
 lPrikPRUC := fetch_metric("kalk_prikazi_kolone_pruc", nil, lPrikPRUC)
 
 glZabraniVisakIP := fetch_metric("kalk_zabrani_visak_kod_ip", nil, glZabraniVisakIP)

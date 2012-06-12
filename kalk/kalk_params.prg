@@ -199,11 +199,15 @@ return nil
 // kalk :: parametri razno
 function kalk_par_razno()
 local _brojac := "N"
+local _unos_barkod := "N"
 local _x := 1
 private  GetList:={}
 
 if glBrojacPoKontima
     _brojac := "D"
+endif
+if lKoristitiBK 
+	_unos_barkod := "D"
 endif
 
 Box(, 20, 75, .f., "RAZNO" )
@@ -212,6 +216,8 @@ Box(, 20, 75, .f., "RAZNO" )
     @ m_x + _x, col() + 2 SAY "duzina brojaca:" GET gLenBrKalk pict "9" VALID gLenBrKalk > 0 .and. gLenBrKalk < 10
     ++ _x
     @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Koristiti BARCOD pri unosu kalkulacija (D/N)" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
     ++ _x    
     @ m_x + _x,m_y+2 SAY "Potpis na kraju naloga D/N     " GET gPotpis valid gPotpis $ "DN"
     ++ _x
@@ -254,6 +260,13 @@ if lastkey() <> K_ESC
         glBrojacPoKontima := .f.
     endif
 
+	if _unos_barkod == "D"
+		lKoristitiBK := .t.
+	else
+		lKoristitiBK := .f.
+	endif
+
+	set_metric("kalk_koristiti_barkod_pri_unosu", nil, lKoristitiBK )
 	set_metric("kalk_brojac_kalkulacija", nil, gBrojac)
     set_metric("kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
   	set_metric("kalk_rok_trajanja", nil, gRokTr)
@@ -270,6 +283,7 @@ if lastkey() <> K_ESC
   	set_metric("kalk_limit_za_otvorene_stavke", f18_user(), gnLOst)
   	set_metric("kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk)
   	set_metric("kalk_index_za_pretragu_artikala", f18_user(), gArtCDX)
+
 endif
 
 return .t.

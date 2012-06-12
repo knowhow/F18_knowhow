@@ -441,12 +441,14 @@ local _rec
 private ImeKol
 private Kol
 
-cPrevCol:=SETCOLOR(INVERT)
+cPrevCol := SETCOLOR(INVERT)
+
 SELECT F__PRIPR
 
 if !used()
 	O__POS_PRIPR
 endif
+
 select _pos_pripr
 
 Zapp()
@@ -456,12 +458,12 @@ Scatter()
 SELECT POS
 seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
-do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok) == pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
 	_rec := dbf_get_rec()
 
   	select roba
-  	HSEEK _IdRoba
+  	HSEEK _rec["idroba"]
 
   	_rec["robanaz"] := roba->naz
   	_rec["jmj"] := roba->jmj
@@ -482,20 +484,28 @@ enddo
 select _pos_pripr
 GO TOP
 
-ImeKol:={{"Sifra",{|| idroba}},{"Naziv",{|| LEFT(RobaNaz,30)}},{"Kolicina",{|| STR(Kolicina,7,2)}},{"Cijena",{|| STR(Cijena,7,2)}},{"Iznos",{|| STR(Kolicina*Cijena,11,2)}}}
+ImeKol := { { "Sifra", {|| idroba} }, ;
+			{ "Naziv", {|| LEFT(RobaNaz,30) } }, ;
+			{ "Kolicina", {|| STR(Kolicina,7,2)}}, ;
+			{ "Cijena", {|| STR(Cijena,7,2)}}, ;
+			{ "Iznos", {|| STR(Kolicina*Cijena,11,2)}} }
 
-Kol:={1,2,3,4,5}
-Box(,15,73)
+Kol := {1,2,3,4,5}
+
+Box(, 15, 73 )
+
 @ m_x+1,m_y+19 SAY PADC ("Pregled "+IIF(gRadniRac=="D","stalnog ","")+"racuna "+TRIM(pos_doks->IdPos)+"-"+ LTRIM (pos_doks->BrDok),30) COLOR INVERT
 
-oBrowse:=FormBrowse(m_x+2,m_y+1,m_x+15,m_y+73,ImeKol,Kol,{"Í","Ä","³"},0)
-ShowBrowse(oBrowse,{},{})
+	oBrowse:=FormBrowse(m_x+2,m_y+1,m_x+15,m_y+73,ImeKol,Kol,{"Í","Ä","³"},0)
+	ShowBrowse(oBrowse,{},{})
 
-select _pos_pripr
-Zapp()
+	select _pos_pripr
+	Zapp()
 BoxC()
+	
 SETCOLOR (cPrevCol)
 select pos_doks
+
 return
 
 

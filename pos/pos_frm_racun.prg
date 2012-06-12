@@ -14,27 +14,29 @@
 
 
 
-function PRacuni(dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba)
+function PRacuni( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
 local i
 private fMark:=.f.
 private cFilter
 private ImeKol := {}
 private Kol := {}
 
-if cPrefixFilter==NIL
-    cPrefixFilter:=""
-endif
-cFilter:=cPrefixFilter+" IdVd=='42'"
-if fPrep==nil
-    fPrep:=.f.
-else
-    fPrep:=fPrep
+if cPrefixFilter == NIL
+    cPrefixFilter := ""
 endif
 
-if cBroj==nil
-    cRacun:=SPACE(LEN(POS->BrDok))
+cFilter := cPrefixFilter + " IdVd=='42'"
+
+if fPrep == NIL
+    fPrep := .f.
 else
-    cRacun:=ALLTRIM(cBroj)
+    fPrep := fPrep
+endif
+
+if cBroj == NIL
+    cRacun := SPACE(LEN(POS->BrDok))
+else
+    cRacun := ALLTRIM(cBroj)
 endif
 
 cIdPos:=LEFT(cRacun,AT("-",cRacun)-1)
@@ -68,7 +70,6 @@ select pos_doks
 if fScope=nil
     fScope:=.t.
 endif
-
 
 if fScope
     SET SCOPEBOTTOM TO "W"
@@ -149,21 +150,21 @@ local nTrec2
 local _rec
 
 // M->Ch je iz OBJDB, fMark je iz PRacuni
-if M->Ch==0
+if M->Ch == 0
     return (DE_CONT)
 endif
-if (LASTKEY()==K_ESC).or.(LASTKEY()==K_ENTER )
-    return (DE_ABORT)
 
+if ( LASTKEY() == K_ESC ) .or. ( LASTKEY() == K_ENTER )
+    return (DE_ABORT)
 endif
 
 O_DIO
 O_ODJ
-
 O_STRAD
+
 select strad
 hseek gStrad
-cLevel:=prioritet
+cLevel := prioritet
 use
 select pos_doks
 
@@ -185,12 +186,10 @@ if fMark .and. (LastKey()==Asc("+"))
     return DE_REFRESH
 endif
 
-if UPPER(CHR(LASTKEY()))=="P"
-    PreglSRacun(pos_doks->IdPos,pos_doks->datum,pos_doks->BrDok)
+if UPPER(CHR(LASTKEY())) == "P"
+    PreglSRacun( pos_doks->IdPos, pos_doks->datum, pos_doks->BrDok )
     return DE_REFRESH
 endif
-
-
 
 if UPPER(CHR(LASTKEY()))=="F"
     // stampa poreske fakture

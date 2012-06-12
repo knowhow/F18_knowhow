@@ -1634,18 +1634,14 @@ Box(,3,55)
 BoxC()
 
 if LastKey() == K_ESC
-
 	select ( nTArea )
 	return
-
 endif
 
 if EMPTY( cSt_rn )
 	select ( nTArea )
 	return
 endif
-
-//cSt_rn := PADL( ALLTRIM(cSt_rn), 6 )
 
 // napuni pripremu sa stavkama racuna za storno
 select pos
@@ -1667,7 +1663,7 @@ do while !EOF() .and. field->idpos == gIdPos ;
     select _pos_pripr
 	append blank
 	
-	_rec["brdok"] := PADL( ALLTRIM( _rec["brdok"] ) + "S", 6 )
+	_rec["brdok"] :=  "PRIPRE"
 	_rec["kolicina"] := ( _rec["kolicina"] * -1 )
 	_rec["robanaz"] := roba->naz
 	_rec["datum"] := gDatum
@@ -1697,7 +1693,7 @@ if lSilent == .f.
 	oBrowse:refreshAll()
 	oBrowse:dehilite()
 
-	do while !oBrowse:Stabilize().and.((Ch:=INKEY())==0)
+	do while !oBrowse:Stabilize() .and. ( ( Ch := INKEY() ) == 0 )
 	enddo
 
 endif

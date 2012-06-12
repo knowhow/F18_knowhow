@@ -769,7 +769,9 @@ return
 
 
 
- 
+// ---------------------------------------------
+// prepis racuna 
+// ---------------------------------------------
 function PrepisRacuna()
 local cPolRacun:=SPACE(9)
 local cIdPos:=SPACE(LEN(gIdPos))
@@ -779,39 +781,47 @@ private dDatum
 private cVrijeme
 
 O__POS_PRIPR
+
 O_StAzur()
+
 Box (, 3, 60)
 
-dDat:=gDatum
+	dDat := gDatum
 
-if (klevel<>L_PRODAVAC)
-  @ m_x+1,m_y+4 SAY "Datum:" GET dDat
-endif
+	if (klevel<>L_PRODAVAC)
+  		@ m_x+1,m_y+4 SAY "Datum:" GET dDat
+	endif
 
-set cursor on
-@ m_x+2,m_y+4 SAY "Racun:" GET cPolRacun VALID PRacuni (@dDat,@cPolRacun, .T.)
-READ; ESC_BCR
+	set cursor on
+	
+	@ m_x+2,m_y+4 SAY "Racun:" GET cPolRacun VALID PRacuni( @dDat, @cPolRacun, .t. )
+	
+	READ
+	ESC_BCR
+
 BoxC()
 
-IF LEN (aVezani) > 0
-  ASORT (aVezani,,, {|x, y| x[1]+dtos(x[4])+x[2] < y[1]+dtos(y[4])+y[2]})
-  cIdPos := aVezani [1][1]
-  cPolRacun := dtos(aVezani[1,4])+aVezani [1][2]
+IF LEN(aVezani) > 0
+	ASORT (aVezani,,, {|x, y| x[1]+dtos(x[4])+x[2] < y[1]+dtos(y[4])+y[2]})
+  	cIdPos := aVezani [1][1]
+ 	cPolRacun := dtos(aVezani[1,4])+aVezani [1][2]
 ELSE
-  nPoz := AT ("-", cPolRacun)
-  if npoz<>0
-    cIdPos := PADR (AllTrim (LEFT (cPolRacun, nPoz-1)), LEN (gIdPos))
-  else
-    cIdPos:=gIdPos
-  endif
-  cPolRacun := PADL (AllTrim (SUBSTR (cPolRacun, nPoz+1)), 6)
-  aVezani:={{cIdPos, cPolRacun,"",dDat}}
-  cPolRacun:=dtos(dDat)+cPolRacun
-  // stampaprep sadrzi 2-param kao dtos(datum)+brdok
+  	nPoz := AT ("-", cPolRacun)
+  	if npoz<>0
+    	cIdPos := PADR (AllTrim (LEFT (cPolRacun, nPoz-1)), LEN (gIdPos))
+  	else
+    	cIdPos:=gIdPos
+  	endif
+  	cPolRacun := PADL (AllTrim (SUBSTR (cPolRacun, nPoz+1)), 6)
+  	aVezani:={{cIdPos, cPolRacun,"",dDat}}
+  	cPolRacun:=dtos(dDat)+cPolRacun
+ 	// stampaprep sadrzi 2-param kao dtos(datum)+brdok
 ENDIF
 
-StampaPrep (cIdPos, cPolRacun, aVezani)
+StampaPrep( cIdPos, cPolRacun, aVezani )
+
 close all
+
 return
 
 

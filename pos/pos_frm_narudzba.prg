@@ -78,7 +78,7 @@ if IsPDV()
 endif
 
 // storno racuna
-SETKEY( K_F8, {|| pos_storno_rn() })
+SETKEY( K_F8, {|| pos_storno_rn(), _refresh_total() })
 
 // <*> - ispravka tekuce narudzbe
 //       (ukljucujuci brisanje i ispravku vrijednosti)
@@ -168,6 +168,10 @@ do while .t.
     
     // ispisi i iznos velikim brojevima na dnu...
     ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( _max_rows - 12 ), _max_cols - 2 )
+
+	do while !oBrowse:stable 
+    	oBrowse:Stabilize()
+	enddo
 
     do while !oBrowse:Stabilize() .and. ( ( Ch := INKEY() ) == 0 ) 
     enddo
@@ -309,6 +313,34 @@ FrmGetRabat( aRabat, _cijena )
 ShowRabatOnForm( nx, ny )
 
 return
+
+
+// ----------------------------------------------
+//  
+// ----------------------------------------------
+static function _refresh_total()
+local _iznos := 0
+local _popust := 0
+
+select _pos_pripr
+go top
+
+do while !EOF()
+    _iznos += _pos_pripr->( kolicina * cijena )
+    _popust += _pos_pripr->( kolicina * ncijena )
+    skip
+enddo
+
+// ispisi i iznos velikim brojevima na dnu...
+ispisi_iznos_veliki_brojevi( ( _iznos - _popust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
+    
+// ispisi i na gornjem totalu...
+_show_total( _iznos, _popust, m_x + 2 )
+
+select _pos_pripr
+go top
+
+return .t.
 
 
 
@@ -585,8 +617,13 @@ endif
 Beep (2)
 
 // ponovo izracunaj ukupno
-nIznNar -= _pos_pripr->( kolicina * cijena )
-nPopust -= _pos_pripr->( kolicina * ncijena )
+if field->kolicina < 0
+	nIznNar += _pos_pripr->( kolicina * cijena )
+	nPopust += _pos_pripr->( kolicina * ncijena )
+else
+	nIznNar -= _pos_pripr->( kolicina * cijena )
+	nPopust -= _pos_pripr->( kolicina * ncijena )
+endif
 
 _show_total( nIznNar, nPopust, m_x + 2 )
 ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )

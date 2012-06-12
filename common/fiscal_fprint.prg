@@ -393,8 +393,8 @@ if !lSilent
 	endif
 
 	// daj mi vrijednost plu do koje cu resetovati...
-	Box(,1,40)
-		@ m_x+1,m_y+2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu
+	Box(,1,50)
+		@ m_x + 1, m_y + 2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu PICT "9999999999"
 		read
 	BoxC()
 

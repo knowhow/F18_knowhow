@@ -619,8 +619,8 @@ set_metric( _param_time, nil, TIME() )
 // ovo je bitno za FP550 uredjaj
 // MP55LD ce ignorisati, nece se nista desiti!
 
-// ako je dinamicki PLU
-if gFC_acd == "D"
+// ako je dinamicki PLU i tip izvjestaja "Z"
+if gFC_acd == "D" .and. _rpt_type == "Z"
 
 	msgo("Nuliram stanje uredjaja ...")
 

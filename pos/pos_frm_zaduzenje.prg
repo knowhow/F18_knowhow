@@ -69,10 +69,10 @@ endif
 // koristim ga kod sirovinskog zaduzenja odjeljenja
 // ma kako se ono vodilo
 
-if cIdVd==nil
-	cIdVd:="16"
+if cIdVd == NIL
+	cIdVd := "16"
 else
-   	cIdVd:=cIdVd
+   	cIdVd := cIdVd
 endif
 
 ImeKol := { { "Sifra",    {|| idroba},      "idroba" }, ;
@@ -86,46 +86,52 @@ Kol:={1, 2, 3, 4, 5}
 OpenZad()
 
 Box(, 6, 60)
-cIdOdj:=SPACE(2)
-cIdDio:=SPACE(2)
-cRazlog:=SPACE(40)
-cIdOdj2:=SPACE(2)
-cIdPos:=gIdPos
 
-SET CURSOR ON
+	cIdOdj:=SPACE(2)
+	cIdDio:=SPACE(2)
+	cRazlog:=SPACE(40)
+	cIdOdj2:=SPACE(2)
+	cIdPos:=gIdPos
 
-if gVrstaRS=="S"
-	@ m_x+1,m_y+3 SAY "Prodajno mjesto:" GET cIdPos pict "@!" valid cIdPos<="X ".and. !EMPTY(cIdPos)
-endif
+	SET CURSOR ON
 
-if gvodiodj=="D"
-	@ m_x+3,m_y+3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj (@cIdOdj, 3, 28)
-  	if cIdVD=="PD"
+	if gVrstaRS=="S"
+		@ m_x+1,m_y+3 SAY "Prodajno mjesto:" GET cIdPos pict "@!" valid cIdPos<="X ".and. !EMPTY(cIdPos)
+	endif
+
+	if gvodiodj=="D"
+		@ m_x+3,m_y+3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj (@cIdOdj, 3, 28)
+  		if cIdVD=="PD"
     		@ m_x+4,m_y+3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj (@cIdOdj2, 4, 28)
-  	endif
-endif
+  		endif
+	endif
 
-@ m_x+6,m_y+3 SAY " Datum dok:" GET dDatRada PICT "@D" VALID dDatRada<=DATE()
-READ
-ESC_BCR
+	@ m_x+6,m_y+3 SAY " Datum dok:" GET dDatRada PICT "@D" VALID dDatRada <= DATE()
+	
+	READ
+	ESC_BCR
+
 BoxC()
 
 SELECT ODJ
-cRSDbf:="ROBA"
-if ODJ->Zaduzuje=="S" .or. cRobSir=="S"
+
+cRSDbf := "ROBA"
+
+if ODJ->Zaduzuje == "S" .or. cRobSir == "S"
 	cRSdbf:="SIROV"
 	bRSblok:={|x,y| P_Roba(@_IdRoba, x, y)}
   	cUI_I:=S_I 
 	cUI_U:=S_U
 else
-  	cRSdbf:="ROBA"
-  	bRSblok:={|x,y| Barkod(@_IdRoba), P_Roba (@_IdRoba, x, y)}
-  	cUI_I:=R_I
-	cUI_U:=R_U
+  	cRSdbf := "ROBA"
+  	bRSblok := {|x,y| Barkod(@_IdRoba), P_Roba (@_IdRoba, x, y)}
+  	cUI_I := R_I
+	cUI_U := R_U
 endif
 
 SELECT PRIPRZ
-if RecCount2()>0
+
+if RecCount2() > 0
 	//ako je sta bilo ostalo, spasi i oslobodi pripremu
   	SELECT _POS
   	AppFrom("PRIPRZ",.f.)
@@ -137,42 +143,50 @@ __dbPack()
 
 // vrati ili pobrisi ono sto je poceo raditi ili prekini s radom
 if !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
-	CLOSERET
+	close all
+	return
 endif
 
 fSadAz := .f.
 
-if (cIdVd <> VD_REK) .and. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
+if ( cIdVd <> VD_REK ) .and. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
 
 	_from_kalk := .t.
 
-	if priprz->(RecCount2()) > 0
+	if priprz->( RecCount2() ) > 0
     	if cBrDok <> NIL .and. Pitanje(,"Odstampati prenesni dokument na stampac ?", "N" ) == "D"
         	if cIdVd $ "16#96#95#98"
-         		StampZaduz(cIdVd, cBrDok)
+         		StampZaduz( cIdVd, cBrDok )
         	elseif cIdVd $ "IN#NI"
           		StampaInv()
         	endif
 
         	if Pitanje(,"Ako je sve u redu, zelite li staviti na stanje dokument ?"," ")=="D"
-          		fSadAz:=.t.
+          		fSadAz := .t.
         	endif
     	endif
   	endif
 
 endif
 
-if cIdVD=="NI"
-	// cidodj, ciddio - prosljedjujem ove priv varijable u InventNivel
+if cIdVD == "NI"
+	
+ 	// cidodj, ciddio - prosljedjujem ove priv varijable u InventNivel
   	close all
-  	InventNivel(.f., .t., fSadaz, dDatRada)  
+
+  	InventNivel( .f., .t., fSadaz, dDatRada )   
+
 	// drugi parametar - poziv iz zaduzenja
-        // treci odmah podatke azurirati
+    // treci odmah podatke azurirati
   	return
-elseif cIdVD=="IN"
+
+elseif cIdVD == "IN"
+
   	close all
-  	InventNivel(.t., .t., fSadAz, dDatRada)
+  	InventNivel( .t., .t., fSadAz, dDatRada )
+
   	return
+
 endif
 
 select (F_PRIPRZ)
@@ -182,22 +196,29 @@ if !used()
 endif
 
 if !fSadAz
+
 	// browsanje dokumenta ...........
 	SELECT PRIPRZ
 	SET ORDER TO
 	go  top
-	Box (,20,77,,{"<*> - Ispravka stavke ","Storno - negativna kolicina"})
-	@ m_x,m_y+4 SAY PADC( "PRIPREMA "+NaslovDok(cIdVd)+" NA ODJELJENJE "+ALLTRIM(ODJ->Naz)+IIF(!Empty(cIdDio), "-"+DIO->Naz,""), 70) COLOR Invert
 
-	oBrowse:=FormBrowse( m_x+6, m_y+1, m_x+19, m_y+77, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
+	Box (,20,77,,{"<*> - Ispravka stavke ","Storno - negativna kolicina"})
+	@ m_x, m_y + 4 SAY PADC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
+						ALLTRIM( ODJ->Naz ) + IIF( !Empty( cIdDio ), ;
+						"-" + DIO->Naz, "" ), 70 ) COLOR Invert
+
+	oBrowse := FormBrowse( m_x+6, m_y+1, m_x+19, m_y+77, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
 	oBrowse:autolite:=.f.
 
 	PrevDn:=SETKEY(K_PGDN,{|| DummyProc()})
 	PrevUp:=SETKEY(K_PGUP,{|| DummyProc()})
+
 	SetSpecZad()
 
 	SELECT PRIPRZ
+
 	Scatter()
+
 	_IdPos:=cIdPos
 	_IdVrsteP:=cIdOdj2
 	// vrste placanja su iskoristene za idodj2
@@ -242,20 +263,18 @@ if !fSadAz
 			cDSFINI:=IzFMKIni('SifRoba','DuzSifra','10')
 		endif
 
-		@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba pict "@!S"+cDSFINI when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID EVAL (bRSblok, 2, 25).and.(gDupliArt=="D" .or. ZadProvDuple(_idroba))
-		@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" WHEN{|| OsvPrikaz(),ShowGets(),.t.} VALID ZadKolOK(_Kolicina)
-		
+		@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba pict "@!S" + cDSFINI ;
+					WHEN {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} ;
+					VALID EVAL (bRSblok, 2, 25) .and. (gDupliArt=="D" .or. ZadProvDuple(_idroba))
+		@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICT "999999.999" ;
+					WHEN{|| OsvPrikaz(),ShowGets(),.t.} ;
+					VALID ZadKolOK(_Kolicina)
 		
   		if gZadCij=="D"
     		@ m_x+ 3,m_y+35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
     		@ m_x+ 3,m_y+56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
     		@ m_x+ 3,col()+2 GET _Marza2 PICTURE "9999.99"
-
-    		if IzFMKIni("POREZI","PPUgostKaoPPU","N")=="D"
-      			@ m_x+ 3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_ncijena*(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100+tarifa->zpp/100),_cijena),fmarza:=" ",.t.}
-    		else
-      			@ m_x+3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
-    		endif
+      		@ m_x+3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
     		@ m_x+ 4,m_y+35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2:=0, marza2(), ShowGets(), .t.}
   		endif
 
@@ -264,15 +283,17 @@ if !fSadAz
 		if (LASTKEY()==K_ESC)
     			EXIT
   		else
+
 			// stavi u sifranik robe			
 			StUSif()
 
     		select PRIPRZ
     		append blank
+
     		SELECT (cRSdbf)
 
-    		_RobaNaz:=_field->Naz
-			_Jmj:=_field->Jmj
+    		_RobaNaz := _field->Naz
+			_Jmj := _field->Jmj
    			_IdTarifa:=_field->IdTarifa
 			_Cijena:=if(EMPTY(_cijena),_field->mpc,_cijena)
 			_barkod := _field->barkod
@@ -283,12 +304,10 @@ if !fSadAz
 			_k7 := _field->k7
 			_k9 := _field->k9
 			
-			if ROBA->(FIELDPOS("KATBR")) <> 0
-				_katbr := _field->katbr
-			endif
-			
 			SELECT PRIPRZ
-    		Gather() // PRIPRZ
+    		
+			Gather() 
+			// PRIPRZ
 
     		// reci mu da ide na kraj
 
@@ -304,10 +323,9 @@ if !fSadAz
 	SETKEY(K_PGDN,PrevDn)
 	UnSetSpecZad()
 
-	// kraj browsanja
 	BoxC()
 	
-endif // fSadAz
+endif
 
 SELECT PRIPRZ
       
@@ -317,7 +335,7 @@ if RecCount2() > 0
   	set order to 1
 
 	if !_from_kalk
-		cBrDok := pos_novi_broj_dokumenta( cIdPos, iif( cIdvd == "PD", "16", cIdVd ) )
+		cBrDok := pos_novi_broj_dokumenta( cIdPos, IIF( cIdvd == "PD", "16", cIdVd ) )
 	endif
 
   	SELECT PRIPRZ

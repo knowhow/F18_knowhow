@@ -20,6 +20,7 @@ function kalkulacija_cijena( azurirana )
 local _vars
 local _template
 local _tip := "V"
+local _predisp := .f.
 
 if azurirana == NIL
     azurirana := .t.
@@ -57,6 +58,11 @@ elseif _vars["tip_dok"] $ "80#81"
     _tip := "M"
     _template := "kalk_mp.odt"
 
+	if mp_predispozicija( _vars["id_firma"], _vars["tip_dok"], _vars["br_dok"] )
+		_template := "kalk_mp_pred.odt"
+		_predisp := .t.
+	endif
+
 endif
 
 // ima li template fajla ?
@@ -73,6 +79,13 @@ endif
 
 // sta raditi ?
 do case
+
+	case _predisp == .t.
+		
+        // generisi i stampaj kalkulaciju predispoziciju
+        if gen_kalk_predispozicija_xml( _vars ) > 0
+            st_kalkulacija_cijena_odt( _template )
+        endif
 
     case _tip == "M"
         
@@ -91,6 +104,35 @@ do case
 endcase
 
 return
+
+
+// da li se radi o dokumentu predispozicije
+static function mp_predispozicija( firma, tip_dok, br_dok )
+local _ret := .f.
+local _t_area := SELECT()
+local _rec
+
+if tip_dok <> "80"
+	return _ret
+endif
+
+select kalk_pripr
+go top
+seek firma + tip_dok + br_dok
+
+_rec := RECNO()
+
+do while !EOF() .and. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
+	if field->idkonto2 = "XXX"
+		_ret := .t.
+		exit	
+	endif
+	skip
+enddo
+
+select ( _t_area )
+return _ret
+
 
 
 // ----------------------------------------------
@@ -211,6 +253,217 @@ if azurirani
 endif
 
 return .t.
+
+// ---------------------------------------------
+// generisanje xml fajla za kalk_mp_pred
+// ---------------------------------------------
+static function gen_kalk_predispozicija_xml( vars )
+local _firma := vars["id_firma"]
+local _tip_dok := vars["tip_dok"]
+local _br_dok := vars["br_dok"]
+local _generated := 0
+local _xml_file := my_home() + "data.xml"
+local _t_rec
+local _redni_broj := 0
+local _porezna_stopa, _porez
+local _s_kolicina, _tmp, _a_porezi
+local _u_porez, _t_porez, _u_pv, _t_pv, _u_pv_porez, _t_pv_porez, _t_kol
+local _razd_id, _razd_naz
+local _zad_id, _zad_naz
+local _dio
+
+private nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
+private aPorezi := {}
+
+// seek-uj i ostale bitne tabele
+select konto
+hseek kalk_pripr->pkonto
+
+_razd_id := kalk_pripr->pkonto
+_razd_naz := konto->naz
+
+go top
+hseek kalk_pripr->idkonto2
+
+_zad_id := kalk_pripr->idkonto2
+_zad_naz := konto->naz
+
+select tdok
+hseek kalk_pripr->idvd
+
+select kalk_pripr
+
+// zapamti prvi zapis
+_t_rec := RECNO()
+
+// napuni mi xml fajl...
+open_xml( _xml_file )
+// upisi standardni xml header
+xml_head()
+
+// <kalkulacija>
+xml_subnode("kalk", .f. )
+
+// osnovni podaci organizacije
+xml_node( "org_id", ALLTRIM( gFirma ) )
+xml_node( "org_naziv", to_xml_encoding( ALLTRIM( gNFirma ) ) )
+
+// podaci dokumenta
+xml_node( "dok_naziv", to_xml_encoding( ALLTRIM( tdok->naz ) ) )
+xml_node( "dok_tip", field->idvd )
+xml_node( "dok_broj", to_xml_encoding( ALLTRIM( _br_dok ) ) )
+xml_node( "dok_datum", DTOC( field->datdok ) )
+
+// podaci o kontima / zaduzuje
+xml_node( "zad_id", to_xml_encoding( ALLTRIM( _zad_id ) ) )
+xml_node( "zad_naz", to_xml_encoding( ALLTRIM( _zad_naz ) ) )
+
+// podaci o kontima / razduzuje
+xml_node( "razd_id", to_xml_encoding( ALLTRIM( _razd_id ) ) )
+xml_node( "razd_naz", to_xml_encoding( ALLTRIM( _razd_naz ) ) )
+
+xml_node( "rn_broj", to_xml_encoding( ALLTRIM( field->brfaktp ) ) )
+xml_node( "rn_datum", DTOC( field->datfaktp ) )
+
+// 2 dijela predispozicije
+for _dio := 1 to 2
+
+	if _dio == 1
+		xml_subnode( "razd", .f. )
+	else
+		xml_subnode( "zad", .f. )
+	endif
+	
+	// resetuj redni broj
+	_redni_broj := 0
+
+	// opet se vrati na pocetak dokumenta
+	select kalk_pripr
+	go top
+	seek _firma + _tip_dok + _br_dok
+
+	_u_nv := _t_nv := _u_marza := _t_marza := 0
+	_u_porez := _t_porez := 0
+	_u_pv := _t_pv := _u_pv_porez := _t_pv_porez := 0
+	_t_kol := 0
+
+	// prodji kroz dokument...
+	do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .and. _br_dok == field->brdok 
+  
+		if _dio == 1
+			if field->idkonto2 = "XXX"
+				skip
+				loop
+			endif
+		else
+			if field->idkonto2 <> "XXX"
+				skip
+				loop
+			endif
+		endif
+
+    	++ _generated 
+
+    	// kalkulisi troskove
+   	 	KTroskovi()
+    	// pozicioniraj se na robu, tarifu itd...
+    	RptSeekRT()
+    	// porezna stopa
+    	_porezna_stopa := tarifa->opp
+    	// napuni matricu sa porezima
+    	Tarifa( field->pkonto, field->idroba, @aPorezi )
+    	// racunaj poreze...
+    	_a_porezi := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+    	// iznos poreza
+   	 	_porez := _a_porezi[ 1 ]
+
+    	_s_kolicina := field->kolicina - field->gkolicina - field->gkolicin2
+    	_t_kol += _s_kolicina
+
+		// nabavna vrijednost
+    	_u_nv := ROUND( field->nc * _s_kolicina, gZaokr )
+    	_t_nv += _u_nv
+
+    	// marza
+    	_u_marza := ROUND( nMarza2 * _s_kolicina, gZaokr )
+    	_t_marza += _u_marza
+
+    	// prodajna cijena
+    	_u_pv := ROUND( field->mpc * _s_kolicina, gZaokr )
+   	 	_t_pv += _u_pv
+
+    	// total porez
+    	_u_porez := ( _porez * field->kolicina )
+    	_t_porez += _u_porez
+
+    	// prodajna vrijednost sa porezom
+    	_u_pv_porez := ( field->mpcsapp * field->kolicina )
+    	_t_pv_porez += _u_pv_porez
+
+    	xml_subnode("stavka", .f. )
+
+    	// podaci artikla
+    	xml_node( "art_id", to_xml_encoding( ALLTRIM( field->idroba ) ) )
+    	xml_node( "art_naz", to_xml_encoding( ALLTRIM( roba->naz ) ) + IIF( lKoristitiBK, ", BK: " + roba->barkod , "" ) )
+    	xml_node( "art_jmj", to_xml_encoding( ALLTRIM( roba->jmj ) ) )
+    	xml_node( "tarifa", to_xml_encoding( ALLTRIM( field->idtarifa ) ) )
+    	xml_node( "rbr", PADL( ALLTRIM( STR( ++_redni_broj ) ), 4 ) + "." )
+
+    	// kolicine
+    	xml_node( "kol", STR( field->kolicina, 12, 2 ) )
+    	xml_node( "g_kol", STR( field->gkolicina, 12, 2 ) )
+    	xml_node( "g_kol2", STR( field->gkolicin2, 12, 2 ) )
+    	xml_node( "skol", STR( _s_kolicina, 12, 2 ) )
+    
+    	// jedinicne cijene itd...
+    
+    	xml_node( "nc", STR( field->nc, 12, 2 ) )
+    	xml_node( "marzap", STR( nMarza2 / field->nc * 100, 12, 2 ) )
+    	xml_node( "marza", STR( nMarza2, 12, 2 ) )
+    	xml_node( "pc", STR( field->mpc, 12, 2 ) )
+    	xml_node( "por_st", STR( _porezna_stopa, 12, 2 ) )
+    	xml_node( "porez", STR( _porez, 12, 2 ) )
+    	xml_node( "pcsap", STR( field->mpcsapp, 12, 2 ) )
+
+    	// ukupne ostale cijene ...
+    	xml_node( "unv", STR( _u_nv, 12, 2 ) )
+    	xml_node( "umarza", STR( _u_marza, 12, 2 ) )
+    	xml_node( "upv", STR( _u_pv, 12, 2 ) )
+    	xml_node( "upor", STR( _u_porez, 12, 2 ) )
+    	xml_node( "upvp", STR( _u_pv_porez, 12, 2 ) )
+
+    	xml_subnode("stavka", .t. )
+
+    	skip
+
+	enddo
+
+	// ukupne vrijednosti za dokument
+	xml_node( "tkol", STR( _t_kol, 12, 2 ) )
+	xml_node( "tnv", STR( _t_nv, 12, 2 ) )
+	xml_node( "tmarza", STR( _t_marza, 12, 2 ) )
+	xml_node( "tpv", STR( _t_pv, 12, 2 ) )
+	xml_node( "tpor", STR( _t_porez, 12, 2 ) )
+	xml_node( "tpvp", STR( _t_pv_porez, 12, 2 ) )
+
+	if _dio == 1
+		xml_subnode( "razd", .t. )
+	else
+		xml_subnode( "zad", .t. )
+	endif
+
+next
+
+// zatvori subnode...
+xml_subnode("kalk", .t. )
+
+// zatvori xml fajl
+close_xml()
+
+return _generated
+
+
+
 
 
 

@@ -667,7 +667,8 @@ do case
  
        	_rec := dbf_get_rec()
        	_rec["m1"] := _otv_st
-       	update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+       	
+		update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
 		
 		sql_table_update( nil, "END" )
 		my_use_semaphore_on()
@@ -676,15 +677,16 @@ do case
 
   	case Ch == K_F2
  
-    	cBrDok:=BrDok
-     	cOpis:=opis
-     	dDatDok:=datdok
-    	dDatVal:=datval
+    	cBrDok := BrDok
+     	cOpis := opis
+     	dDatDok := datdok
+    	dDatVal := datval
 
      	Box("eddok", 5, 70, .f.)
        		@ m_x+1, m_y+2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
        		@ m_x+2, m_y+2 SAY "Opis:" GET cOpis PICT "@S50"
-       		@ m_x+4, m_y+2 SAY "Datum dokumenta: " ;  ?? dDatDok
+       		@ m_x+4, m_y+2 SAY "Datum dokumenta: " 
+			?? dDatDok
        		@ m_x+5, m_y+2 SAY "Datum valute   :" GET dDatVal
        		read
      	BoxC()

@@ -947,6 +947,12 @@ if cTipDok $ "#10#11#"
         cVr_placanja := "0"
     endif
 
+	if cTipDok == "11" .and. PADR( _vr_plac, 2 ) == "VR"
+		// virmansko placanje
+		cPartnId := ""
+		cVr_placanja := "3"
+	endif
+
 endif
 
 if !EMPTY( cPartnId )

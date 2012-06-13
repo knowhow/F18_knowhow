@@ -174,7 +174,7 @@ endif
 
 // ako se ne koriste uredjaji, ali se koristi generalni 
 // broj uredjaja unutar preduzeca
-if f_device == nil .and. gFc_dev_id > 0
+if f_device == 0 .and. gFc_dev_id > 0
 	f_device := gFc_dev_id
 endif
 

@@ -220,7 +220,9 @@ private aPorezi := {}
 private PicDEM := "9999999.99999999" 
 
 fnovi := .t.
+
 PicKol := "999999.999"
+
 Beep(1)
 
 @ m_x + _x, m_y + 2 SAY "PROTUSTAVKA   ( S - svedi M - mpc sifr i ' ' - ne diraj ):"
@@ -239,6 +241,7 @@ _kord_x := m_x + _x
     GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa(@_IdTarifa)
 
 read
+
 ESC_RETURN K_ESC
 
 select koncij
@@ -246,7 +249,7 @@ seek trim(_idkonto)
 
 select kalk_pripr 
 
-_PKonto:=_Idkonto
+_PKonto := _Idkonto
 
 DatPosljP()
 DuplRoba()
@@ -267,9 +270,9 @@ if _mpcsapp == 0
     _MPCSapp := UzmiMPCSif()
 endif
 
-_TMarza2:="%"
-_TCarDaz:="%"
-_CarDaz:=0
+_TMarza2 := "%"
+_TCarDaz := "%"
+_CarDaz := 0
 
 select kalk_pripr
 
@@ -300,6 +303,7 @@ endif
 SayPorezi_lv( _x, aPorezi)
 
 ++ _x
+
 if IsPDV()
     @ m_x + _x, m_y+2 SAY "P.CIJENA SA PDV:"
 else
@@ -310,6 +314,7 @@ endif
      valid {|| Svedi(cSvedi), VMpcSapp_lv(nil, nil, aPorezi) }
 
 read
+
 ESC_RETURN K_ESC
 
 select koncij
@@ -319,13 +324,15 @@ StaviMPCSif(_mpcsapp,.t.)
 
 select kalk_pripr
 
-_PKonto:=_Idkonto
+_PKonto := _Idkonto
 _PU_I := "1"
 _MKonto:=""
 _MU_I:=""
 
 nStrana := 3
 return lastkey()
+
+
 
 
 

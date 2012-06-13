@@ -533,8 +533,8 @@ else
                 skip
             enddo
                    
-            _idkonto:=cidkont2
-            _idkonto2:="XXX"
+            _idkonto := cIdKont2
+            _idkonto2 := "XXX"
                     
             if _idvd=="16"
                 if IsPDV()

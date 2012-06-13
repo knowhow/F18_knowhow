@@ -281,6 +281,13 @@ START PRINT CRET
 ? SPACE(2) + "Broj prenesenih stavki: " + ALLTRIM(STR( broj_stavki ))
 ? SPACE(2) + "Saldo: " + ALLTRIM(STR( total_prenosa, 10, 2 ) )
 ?
+?
+
+if tip_dok == "80" .and. total_prenosa == 0
+	? SPACE(2) + "Predispozicija"
+endif
+
+?
 
 END PRINT
 

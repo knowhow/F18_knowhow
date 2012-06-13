@@ -88,6 +88,7 @@ go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 // ovo je partner
 cPartner := field->idgost
+cVr_placanja := _get_vr_pl( field->idvrstep )
 
 if !EMPTY( cPartner )
 	
@@ -97,11 +98,6 @@ if !EMPTY( cPartner )
 	select partn
 	go top
 	seek cPartner
-
-	//if !EMPTY( partn->jib )
-	  // AADD( aKupac, { partn->jib, partn->naz, ;
-		//partn->adresa, partn->ptt, partn->mjesto } )
-	//endif
 
 endif
 
@@ -513,17 +509,13 @@ local nTotal := 0
 local cPartner := ""
 local cVrsta_pl := "0"
 
-//O_DRN
-// vraca ukupan iznos racuna
-//nTotal := get_rb_ukupno()
-
 select pos_doks
 set order to tag "1"
 go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 // ovo je partner
 cPartner := field->idgost
-cVrsta_pl := _hcp_vr_pl( field->idvrstep )
+cVrsta_pl := _get_vr_pl( field->idvrstep )
 
 if !EMPTY( cPartner )
 	
@@ -672,12 +664,12 @@ return
 // --------------------------------------------
 // vrati vrstu placanja
 // --------------------------------------------
-static function _hcp_vr_pl( cIdVrsta )
+static function _get_vr_pl( cIdVrsta )
 local cVrsta := "0"
 local nTArea := SELECT()
 local cVrstaNaz := ""
 
-if EMPTY(cIdVrsta) .or. cIdVrsta == "01"
+if EMPTY( cIdVrsta ) .or. cIdVrsta == "01"
 	// ovo je gotovina
 	return cVrsta
 endif
@@ -696,6 +688,8 @@ do case
 		cVrsta := "2"
 	case "VAUCER" $ cVrsteNaz
 		cVrsta := "3"
+    case "VIRMAN" $ cVrsteNaz
+        cVrsta := "3"
 	otherwise
 		cVrsta := "0"
 endcase 

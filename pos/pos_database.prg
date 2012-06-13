@@ -242,30 +242,38 @@ O_ROBA
 return
 
 
+
 // -----------------------------------------------------------------------
 // vraca iznos racuna
 // -----------------------------------------------------------------------
 function pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 local _iznos := 0
+local _popust := 0
+local _total := 0
 
 if PCOUNT() == 0
+
 	cIdPos := pos_doks->IdPos
 	cIdVD := pos_doks->IdVD
 	dDatum := pos_doks->Datum
 	cBrDok := pos_doks->BrDok
+
 endif
 
 SELECT POS
 Seek2( cIdPos + cIdVd + DTOS(dDatum) + cBrDok )
 
-do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+cIdVd+dtos(dDatum)+cBrDok)
-	_iznos += POS->(Kolicina * Cijena)
+do while !EOF() .and. POS->( IdPos + IdVd + DTOS( datum ) + BrDok ) == ( cIdPos + cIdVd + DTOS( dDatum ) + cBrDok )
+	_iznos += POS->( kolicina * cijena )
+	_popust += POS->( kolicina * ncijena )
 	SKIP
 enddo
 
+_total := ( _iznos - _popust )
+
 select pos_doks
 
-return _iznos
+return _total
 
 
 

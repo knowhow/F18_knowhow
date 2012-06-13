@@ -7,6 +7,7 @@
   - fiskalne opcije fprint, brisanje plu kodova [#28365](http://redmine.bring.out.ba/issues/28365)
   - kalk, fakt, barkodovi [#28363](http://redmine.bring.out.ba/issues/28363)
   - kalk, ispis barkodova na dokumentima [#28364](http://redmine.bring.out.ba/issues/28364)
+  - pos, storniranje računa [#28366](http://redmine.bring.out.ba/issues/28366)
 
 1.0.48 2012-06-11, vsasa
 

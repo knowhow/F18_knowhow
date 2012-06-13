@@ -63,7 +63,7 @@ return nErr
 
 
 // -------------------------------------
-// stampa fiskalnog racuna FLINK
+// stampa fiskalnog racuna FPRINT
 // -------------------------------------
 function _fprint_rn( cIdPos, dDat, cBrRn )
 local aRn := {}
@@ -86,9 +86,16 @@ select pos_doks
 set order to tag "1"
 go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
+
 // ovo je partner
 cPartner := field->idgost
 cVr_placanja := _get_vr_pl( field->idvrstep )
+
+// ako je vrsta placanja <> gotovina
+if cVr_placanja <> "0"
+	// vrati mi iznos racuna
+	nTotal := pos_iznos_racuna( cIdPos, "42", dDat, cBrRn )
+endif
 
 if !EMPTY( cPartner )
 	
@@ -684,11 +691,11 @@ cVrstaNaz := ALLTRIM( vrstep->naz )
 do case 
 	case "KARTICA" $ cVrstaNaz
 		cVrsta := "1"
-	case "CEK" $ cVrsteNaz
+	case "CEK" $ cVrstaNaz
 		cVrsta := "2"
-	case "VAUCER" $ cVrsteNaz
+	case "VAUCER" $ cVrstaNaz
 		cVrsta := "3"
-    case "VIRMAN" $ cVrsteNaz
+    case "VIRMAN" $ cVrstaNaz
         cVrsta := "3"
 	otherwise
 		cVrsta := "0"

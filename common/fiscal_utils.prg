@@ -172,6 +172,12 @@ if f_device == nil
 	f_device := 0
 endif
 
+// ako se ne koriste uredjaji, ali se koristi generalni 
+// broj uredjaja unutar preduzeca
+if f_device == nil .and. gFc_dev_id > 0
+	f_device := gFc_dev_id
+endif
+
 if f_device > 0
 	_ret := _ret + "_dev_" + ALLTRIM( STR( f_device ) )
 endif

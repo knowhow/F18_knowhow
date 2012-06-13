@@ -207,3 +207,5 @@ next
 select (nTArea)
 
 return PostojiSifra(F_FDEVICE,1,10,65,"Lista fiskalnih uredjaja",@cId,dx,dy)
+
+

@@ -26,28 +26,25 @@ set_defaults()
 // imamo ovdje podjelu parametara koji treba da budu globalni
 // i oni koji to nisu...
 
-// global
-gFc_use := fetch_metric( "fiskalne_opcije", NIL, gfc_use )
-gFc_type := fetch_metric( "fiskalne_opcije_tip", NIL, gfc_type )
-gFc_dlist := fetch_metric( "fiskalne_opcije_lista_uredjaja", NIL, gfc_dlist )
-gFc_pdv := fetch_metric( "fisk_pdv_korisnik", NIL, gfc_pdv )
-gFc_device := fetch_metric( "fisk_vrsta_uredjaja", NIL, gfc_device )
-gFc_tout := fetch_metric( "fisk_timeout_komande", NIL, gfc_tout )
-gIosa := fetch_metric( "fisk_iosa_broj_uredjaja", NIL, giosa )
-gFc_serial := fetch_metric( "fisk_serijski_broj_uredjaja", NIL, gfc_serial )
-gFc_error := fetch_metric( "fisk_citaj_odgovor", NIL, gfc_error )
-gFc_pitanje := fetch_metric( "fisk_pitanje_prije_stampe", NIL, gfc_pitanje )
-gFc_alen := fetch_metric( "fisk_duzina_naziva_artikla", NIL, gfc_alen )
-gFc_zbir := fetch_metric( "fisk_zbirni_vp_racuni", NIL, gfc_zbir )
-gFc_pauto := fetch_metric( "fisk_automatski_polog", NIL, gfc_pauto )
-gFc_chk := fetch_metric( "fisk_provjera_kolicine", NIL, gfc_chk )
-gFc_operater := fetch_metric( "fisk_operater_naziv", NIL, gfc_operater )
-gFc_oper_pwd := fetch_metric( "fisk_operater_pwd", NIL, gfc_oper_pwd )
-gFc_acd := fetch_metric( "fisk_vrsta_plu_koda", NIL, gfc_acd )
-gFc_pinit := fetch_metric( "fisk_inicijalni_plu_kod", NIL, gfc_pinit )
-
-
-// user
+gFc_use := fetch_metric( "fiskalne_opcije", my_user(), gfc_use )
+gFc_type := fetch_metric( "fiskalne_opcije_tip", my_user(), gfc_type )
+gFc_dlist := fetch_metric( "fiskalne_opcije_lista_uredjaja", my_user(), gfc_dlist )
+gFc_pdv := fetch_metric( "fisk_pdv_korisnik", my_user(), gfc_pdv )
+gFc_device := fetch_metric( "fisk_vrsta_uredjaja", my_user(), gfc_device )
+gFc_dev_id := fetch_metric( "fisk_broj_uredjaja", my_user(), gfc_dev_id )
+gFc_tout := fetch_metric( "fisk_timeout_komande", my_user(), gfc_tout )
+gIosa := fetch_metric( "fisk_iosa_broj_uredjaja", my_user(), giosa )
+gFc_serial := fetch_metric( "fisk_serijski_broj_uredjaja", my_user(), gfc_serial )
+gFc_error := fetch_metric( "fisk_citaj_odgovor", my_user(), gfc_error )
+gFc_pitanje := fetch_metric( "fisk_pitanje_prije_stampe", my_user(), gfc_pitanje )
+gFc_alen := fetch_metric( "fisk_duzina_naziva_artikla", my_user(), gfc_alen )
+gFc_zbir := fetch_metric( "fisk_zbirni_vp_racuni", my_user(), gfc_zbir )
+gFc_pauto := fetch_metric( "fisk_automatski_polog", my_user(), gfc_pauto )
+gFc_chk := fetch_metric( "fisk_provjera_kolicine", my_user(), gfc_chk )
+gFc_operater := fetch_metric( "fisk_operater_naziv", my_user(), gfc_operater )
+gFc_oper_pwd := fetch_metric( "fisk_operater_pwd", my_user(), gfc_oper_pwd )
+gFc_acd := fetch_metric( "fisk_vrsta_plu_koda", my_user(), gfc_acd )
+gFc_pinit := fetch_metric( "fisk_inicijalni_plu_kod", my_user(), gfc_pinit )
 gFc_path := fetch_metric( "fisk_direktorij", my_user(), gfc_path )
 gFc_path2 := fetch_metric( "fisk_direktorij_2", my_user(), gfc_path2 )
 gFc_name := fetch_metric( "fisk_naziv_izlaznog_fajla", my_user(), gfc_name ) 
@@ -67,6 +64,7 @@ static function set_defaults()
 gFC_pdv := "D"
 gFC_type := PADR( "FPRINT", 20 )
 gFC_device := "P"
+gFc_dev_id := 0
 gFc_use := "N"
 gFC_path := PADR("c:\fiscal\", 150)
 gFC_path2 := PADR("", 150)
@@ -99,7 +97,7 @@ return
 // -----------------------------------------------------
 function fiscal_params_set()
 local _x := 1
-local _box_x := 5
+local _box_x := 6
 local _box_y := 60
 local _set_param := "D"
 
@@ -113,7 +111,7 @@ Box(, _box_x, _box_y )
     read
 
     if LastKey() != K_ESC
-        set_metric( "fiskalne_opcije", NIL, gfc_use )
+        set_metric( "fiskalne_opcije", my_user(), gfc_use )
     endif
 
     if gFc_use == "D"
@@ -124,10 +122,15 @@ Box(, _box_x, _box_y )
         // idemo dalje...
         @ m_x + _x, m_y + 2 SAY "Koristi se lista uredjaja (D/N) ?" GET gFc_dlist VALID gFc_dlist $ "DN" PICT "@!"
         
+		++ _x
+
+        @ m_x + _x, m_y + 2 SAY "Broj uredjaja:" GET gFc_dev_id PICT "999"
+
         read
 
         if LastKey() != K_ESC
-            set_metric( "fiskalne_opcije_lista_uredjaja", NIL, gfc_dlist )
+            set_metric( "fiskalne_opcije_lista_uredjaja", my_user(), gfc_dlist )
+			set_metric( "fisk_broj_uredjaja", my_user(), gFc_dev_id )
         endif
 
         if gFc_dlist == "N"
@@ -266,25 +269,22 @@ if ( LastKey() != K_ESC )
     // imamo ovdje podjelu parametara koji treba da budu globalni
     // i oni koji to nisu...
 
-    // global
-    set_metric( "fiskalne_opcije_tip", NIL, gfc_type )
-    set_metric( "fisk_pdv_korisnik", NIL, gfc_pdv )
-    set_metric( "fisk_vrsta_uredjaja", NIL, gfc_device )
-    set_metric( "fisk_timeout_komande", NIL, gfc_tout )
-    set_metric( "fisk_iosa_broj_uredjaja", NIL, giosa )
-    set_metric( "fisk_serijski_broj_uredjaja", NIL, gfc_serial )
-    set_metric( "fisk_citaj_odgovor", NIL, gfc_error )
-    set_metric( "fisk_pitanje_prije_stampe", NIL, gfc_pitanje )
-    set_metric( "fisk_duzina_naziva_artikla", NIL, gfc_alen )
-    set_metric( "fisk_zbirni_vp_racuni", NIL, gfc_zbir )
-    set_metric( "fisk_automatski_polog", NIL, gfc_pauto )
-    set_metric( "fisk_provjera_kolicine", NIL, gfc_chk )
-    set_metric( "fisk_operater_naziv", NIL, gfc_operater )
-    set_metric( "fisk_operater_pwd", NIL, gfc_oper_pwd )
-    set_metric( "fisk_vrsta_plu_koda", NIL, gfc_acd )
-    set_metric( "fisk_inicijalni_plu_kod", NIL, gfc_pinit )
-
-    // user
+    set_metric( "fiskalne_opcije_tip", my_user(), gfc_type )
+    set_metric( "fisk_pdv_korisnik", my_user(), gfc_pdv )
+    set_metric( "fisk_vrsta_uredjaja", my_user(), gfc_device )
+    set_metric( "fisk_timeout_komande", my_user(), gfc_tout )
+    set_metric( "fisk_iosa_broj_uredjaja", my_user(), giosa )
+    set_metric( "fisk_serijski_broj_uredjaja", my_user(), gfc_serial )
+    set_metric( "fisk_citaj_odgovor", my_user(), gfc_error )
+    set_metric( "fisk_pitanje_prije_stampe", my_user(), gfc_pitanje )
+    set_metric( "fisk_duzina_naziva_artikla", my_user(), gfc_alen )
+    set_metric( "fisk_zbirni_vp_racuni", my_user(), gfc_zbir )
+    set_metric( "fisk_automatski_polog", my_user(), gfc_pauto )
+    set_metric( "fisk_provjera_kolicine", my_user(), gfc_chk )
+    set_metric( "fisk_operater_naziv", my_user(), gfc_operater )
+    set_metric( "fisk_operater_pwd", my_user(), gfc_oper_pwd )
+    set_metric( "fisk_vrsta_plu_koda", my_user(), gfc_acd )
+    set_metric( "fisk_inicijalni_plu_kod", my_user(), gfc_pinit )
     set_metric( "fisk_direktorij", my_user(), gfc_path )
     set_metric( "fisk_direktorij_2", my_user(), gfc_path2 )
     set_metric( "fisk_naziv_izlaznog_fajla", my_user(), gfc_name )

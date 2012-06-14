@@ -299,10 +299,9 @@ use
 O_FAKT_PRIPR
 go top
 
-// ako je priprema prazna, nemam sta raditi
+// ako je priprema prazna
 if RecCount2() <> 0
-    close all
-    o_fakt_edit()
+    _generisi_racun_iz_pripreme()
     select fakt_pripr
     return .t.
 endif
@@ -382,6 +381,74 @@ o_fakt_edit()
 select fakt_pripr
 
 return .t.
+
+
+// -----------------------------------------------------------
+// generise racun na osnovu podataka iz pripreme
+// -----------------------------------------------------------
+static function _generisi_racun_iz_pripreme()
+local _novi_tip, _tip_dok, _br_dok 
+local _t_rec
+
+if !( field->idtipdok $ "12#20#13#01#27" )
+	Msg( "Ova opcija je za promjenu 20,12,13 -> 10 i 27 -> 11 ")
+    return .f.
+endif
+
+if field->idtipdok = "27"
+	_novi_tip := "11"
+elseif field->idtipdok = "01"
+	_novi_tip := "19"
+else
+    _novi_tip := "10"
+endif
+
+if Pitanje(, "Zelite li dokument pretvoriti u " + _novi_tip + " ? (D/N)", "D" ) == "N"
+	return .f.
+endif
+         
+Box(, 5, 60 )
+            
+	_tip_dok := field->idtipdok
+    _br_dok := PADR( REPLICATE("0", 5 ), 8 )
+            
+    select fakt_pripr
+	PushWa()
+
+   	go top
+    _t_rec := 0
+            
+	do while !EOF()
+
+    	skip
+		_t_rec := RECNO()
+		skip -1
+
+       	replace field->brdok with _br_dok
+		replace field->idtipdok with _novi_tip
+		replace field->datdok with DATE()
+
+      	if _tip_dok == "12"  
+			// otpremnica u racun ???
+            replace serbr with "*"
+      	endif
+                
+		if _tip_dok == "13"  
+        	replace kolicina with -kolicina
+        endif
+                
+		go ( _t_rec )
+   	
+	enddo
+            
+	PopWa()
+                    
+BoxC()
+
+IsprUzorTxt()
+
+return .t.
+
 
 
 

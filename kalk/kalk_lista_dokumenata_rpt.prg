@@ -308,6 +308,7 @@ endif
 if lImaUkSt
 	@ prow(),pcol()+1 SAY str(nUkStavki,6)
 endif
+? m
 
 FF
 END PRINT

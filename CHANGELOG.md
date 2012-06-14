@@ -1,3 +1,11 @@
+1.0.52 2012-06-15, vsasa
+
+  - pos, ažuriranje bez rezervacije broja [#28397](http://redmine.bring.out.ba/issues/28397)
+
+1.0.51 2012-06-14, vsasa
+
+  - pos, korekcija izvještaja i indeksnih fajlova [#28396](http://redmine.bring.out.ba/issues/28396)
+ 
 1.0.50 2012-06-14, vsasa
 
   - fakt, mp faktura vrsta plaćanja [#28383](http://redmine.bring.out.ba/issues/28383)

@@ -40,6 +40,7 @@ AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
 _created := .f.
 _alias := "KALK_DOKS"
 _table_name := "kalk_doks"
+
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
     _created := .t.

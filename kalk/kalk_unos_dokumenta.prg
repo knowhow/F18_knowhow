@@ -1247,7 +1247,13 @@ endif
 select ( area )
     
 if (area)->(fieldpos("naz")) <> 0
+
     _naz := ALLTRIM( field->naz )
+
+	if (area)->(fieldpos("jmj")) <> 0
+		_naz += " (" + ALLTRIM( field->jmj ) + ")"
+	endif
+
 endif
 
 @ x, y SAY PADR( _naz, len )

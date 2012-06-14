@@ -18,11 +18,15 @@
 // -------------------------------------------------
 function roba_ocitaj_barkod( id_roba )
 local _t_area := SELECT()
-local _bk
-select roba
-seek id_roba
-_bk := field->barkod
-select ( _t_area )
+local _bk := ""
+
+if !EMPTY( id_roba )
+	select roba
+	seek id_roba
+	_bk := field->barkod
+	select ( _t_area )
+endif
+
 return _bk
 
 

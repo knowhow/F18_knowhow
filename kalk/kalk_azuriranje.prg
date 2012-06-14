@@ -318,10 +318,13 @@ if !(IsMagPNab() .or. IsMagSNab())
     Niv_10()  
 endif
     
-Niv_11()  // nivelacija 11,81
+Niv_11() 
+// nivelacija 11,81
 
-Otprema() // iz otpreme napravi ulaza
-Iz13u11()  // prenos iz prodavnice u prodavnicu
+Otprema() 
+// iz otpreme napravi ulaza
+Iz13u11()  
+// prenos iz prodavnice u prodavnicu
     
 // inventura magacina - manjak / visak
 InvManj()

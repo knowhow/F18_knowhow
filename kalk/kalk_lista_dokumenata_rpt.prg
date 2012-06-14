@@ -37,6 +37,7 @@ return
 
 function SStDoks()
 local lImaUkSt:=.f.
+local _head
 
 O_KALK_DOKS
 O_PARTN
@@ -63,60 +64,64 @@ qqBrDok:=PADR(qqBrDok,60)
 
 cImeKup:=space(20)
 cIdPartner:=space(6)
+
 do while .t.
- if gNW=="X"
-   cIdFirma:=padr(cidfirma,2)
-   @ m_x+1,m_y+2 SAY "Firma - prazno svi" GET cIdFirma valid {|| .t. }
-   read
- endif
- if !empty(cidfirma)
-    @ m_x+2,m_y+2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqVD pict "@!"
-    qqVD:="  "
- else
-    cIdfirma:=""
- endif
- @ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
- @ m_x+3,col()+1 SAY "do"  get dDatDo
- @ m_x+5,m_y+2 SAY "Partner"  get cIdPartner pict "@!" valid empty(cidpartner) .or. P_Firma(@cIdPartner)
- @ m_x+7,m_y+2 SAY "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
- @ m_x+9,m_y+2 SAY "Izvrsiti stampanje sadrzaja ovih dokumenata ?"  get cStampaj pict "@!" valid cStampaj$"DN"
- read
- ESC_BCR
- aUsl1:=Parsiraj(qqBrDok,"BRDOK")
- if aUsl1<>NIL; exit; endif
+	if gNW=="X"
+   		cIdFirma:=padr(cidfirma,2)
+   		@ m_x+1,m_y+2 SAY "Firma - prazno svi" GET cIdFirma valid {|| .t. }
+   		read
+ 	endif
+ 	if !empty(cidfirma)
+    	@ m_x+2,m_y+2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqVD pict "@!"
+    	qqVD:="  "
+ 	else
+    	cIdfirma:=""
+ 	endif
+ 	@ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
+ 	@ m_x+3,col()+1 SAY "do"  get dDatDo
+ 	@ m_x+5,m_y+2 SAY "Partner"  get cIdPartner pict "@!" valid empty(cidpartner) .or. P_Firma(@cIdPartner)
+ 	@ m_x+7,m_y+2 SAY "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
+ 	@ m_x+9,m_y+2 SAY "Izvrsiti stampanje sadrzaja ovih dokumenata ?"  get cStampaj pict "@!" valid cStampaj$"DN"
+ 	read
+ 	ESC_BCR
+	aUsl1:=Parsiraj(qqBrDok,"BRDOK")
+	if aUsl1<>NIL
+		exit
+	endif
 enddo
 
-qqVD:=trim(qqVD)
-qqBrDok:=TRIM(qqBrDok)
+qqVD := TRIM( qqVD )
+qqBrDok := TRIM( qqBrDok )
 Params2()
 WPar("c1",cIdFirma)
 WPar("c2",qqVD)
 WPar("c3",qqBrDok)
 WPar("d1",dDatOd)
 WPar("d2",dDatDo)
-select params; use
+select params
+use
 
 BoxC()
 
 select kalk_doks
 
-if fieldpos("ukstavki")<>0
+if fieldpos("ukstavki") <> 0
 	lImaUkSt:=.t.
 endif
 
 private cFilt:=".t."
 
 if !empty(dDatOd) .or. !empty(dDatDo)
- cFilt+=".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
+	cFilt+=".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
 endif
 if !empty(qqVD)
-  cFilt+=".and. idvd=="+cm2str(qqVD)
+  	cFilt+=".and. idvd=="+cm2str(qqVD)
 endif
 if !empty(cIdPartner)
-  cFilt+=".and. idpartner=="+cm2str(cIdPartner)
+  	cFilt+=".and. idpartner=="+cm2str(cIdPartner)
 endif
 if !empty(qqBrDok)
-  cFilt+=(".and."+aUsl1)
+  	cFilt+=(".and."+aUsl1)
 endif
 set filter to &cFilt
 
@@ -124,97 +129,179 @@ qqVD:=trim(qqVD)
 
 seek cIdFirma+qqVD
 
-if cStampaj=="D"
-   kalk_centr_stampa_dokumenta(.t.,"IZDOKS")
-   closeret
+if cStampaj == "D"
+	kalk_centr_stampa_dokumenta( .t., "IZDOKS" )
+   	close all
+	return
 endif
 
 EOF CRET
 
+gaZagFix := { 6, 3 }
 
-gaZagFix:={6,3}
 START PRINT CRET
 ?
 
 Preduzece()
-if gduzkonto>7
- P_COND2
+
+if gDuzKonto > 7
+	P_COND2
 else
- P_COND
+ 	P_COND
 endif
+
 ?? "KALK: Stampa dokumenata na dan:",date(),space(10),"za period",dDatOd,"-",dDatDo
-if !empty(qqVD); ?? space(2),"za tipove dokumenta:",trim(qqVD); endif
-if !empty(qqBrDok); ?? space(2),"za brojeve dokumenta:",trim(qqBrDok); endif
-m:="----- -------- -------------- "+replicate("-",gDuzKonto)+" "+replicate("-",gDuzKonto)+" ------- ------ ----- ------------ ------------ ------------ ------------"
-if fieldpos("sifra")<>0
-   m+=" ------"
+
+if !empty(qqVD)
+	?? space(2),"za tipove dokumenta:",trim(qqVD)
 endif
-if lImaUkSt
-   m+=" ------"
+if !empty(qqBrDok)
+	?? space(2),"za brojeve dokumenta:",trim(qqBrDok)
 endif
+
+m := ""
+m += REPLICATE( "-", 5 )
+m += SPACE(1)
+m += REPLICATE( "-", 8 )
+m += SPACE(1)
+m += REPLICATE( "-", 16 )
+m += SPACE(1)
+m += REPLICATE( "-", 7 )
+m += SPACE(1)
+m += REPLICATE( "-", 7 )
+m += SPACE(1)
+m += REPLICATE( "-", 6 )
+m += SPACE(1)
+m += REPLICATE( "-", 6 )
+m += SPACE(1)
+m += REPLICATE( "-", 6 )
+m += SPACE(1)
+m += REPLICATE( "-", 12 )
+m += SPACE(1)
+m += REPLICATE( "-", 12 )
+m += SPACE(1)
+m += REPLICATE( "-", 12 )
+m += SPACE(1)
+m += REPLICATE( "-", 12 )
+m += SPACE(1)
+m += REPLICATE( "-", 6 )
 
 ? m
-? "  Rbr  DatDok      DOKUMENT    "+padc("M-konto",gduzkonto)+;
-  " "+padc("P-konto",gduzkonto)+" Partner ZAD   ZAD2      NV          VPV          RABATV         MPV"
-if fieldpos("sifra")<>0
-   ?? "      Op.  "
-endif
-if lImaUkSt
-   ?? " Stavki"
-endif
 
+_head := ""
+_head += PADC( "Rbr", 5 )
+_head += SPACE(1)
+_head += PADC( "Datum", 8 )
+_head += SPACE(1)
+_head += PADC( "Dokument", 16 )
+_head += SPACE(1)
+_head += PADC( "M-konto", 7 )
+_head += SPACE(1)
+_head += PADC( "P-konto", 7 )
+_head += SPACE(1)
+_head += PADC( "Part.", 6 )
+_head += SPACE(1)
+_head += PADC( "Zad.", 6 )
+_head += SPACE(1)
+_head += PADC( "Zad.2", 6 )
+_head += SPACE(1)
+_head += PADC( "NV", 12 )
+_head += SPACE(1)
+_head += PADC( "VPV", 12 )
+_head += SPACE(1)
+_head += PADC( "RABATV", 12 )
+_head += SPACE(1)
+_head += PADC( "MPV", 12 )
+_head += SPACE(1)
+_head += PADC( "Op.", 6 )
+
+? _head
 ? m
 
-nC:=0
-nCol1:=30
-nNV:=nVPV:=nRabat:=nMPV:=0
-nUkStavki:=0
-do while !eof() .and. IdFirma=cIdFirma
-  ? Str(++nC,4)+".",datdok,idfirma+"-"+idVd+"-"+brdok,mkonto,pkonto,idpartner,idzaduz,idzaduz2
-  nCol1:=pcol()+1
-  @ prow(),pcol()+1 SAY str(nv,12,2)
-  @ prow(),pcol()+1 SAY str(vpv,12,2)
-  @ prow(),pcol()+1 SAY str(rabat,12,2)
-  @ prow(),pcol()+1 SAY str(mpv,12,2)
+nC := 0
+nCol1 := 30
+nNV := nVPV := nRabat := nMPV := 0
+nUkStavki := 0
+
+do while !EOF() .and. IdFirma = cIdFirma
   
-  if fieldpos("sifra")<>0
-    @ prow(),pcol()+1 SAY padr(iif(empty(sifra),space(2),left(CryptSC(sifra),2)),6)
-  endif
-  nNV+=NV
-  nVPV+=VPV
-  nRabat+=Rabat
-  nMPV+=MPV
-  if lImaUkSt
-	if field->ukStavki==0
-		nStavki:=0
+	? Str( ++nC, 4 ) + "."
+
+	@ prow(), pcol() + 1 SAY field->datdok
+	@ prow(), pcol() + 1 SAY PADR( field->idfirma + "-" + field->idVd + "-" + field->brdok, 16)
+
+	if field->idvd == "80"
+		
 		select kalk
-		set order to tag "1"
-		seek kalk_doks->(idFirma+idVd+brDok)
-		do while !eof() .and. idFirma+idVd+brDok==kalk_doks->(idFirma+idVd+brDok)
-			nStavki:=nStavki+1
-			skip 1
-		enddo
+		go top
+		seek kalk_doks->idfirma + kalk_doks->idvd + kalk_doks->brdok
+		
+		if !EMPTY( kalk->idkonto2 )
+			@ prow(), pcol() + 1 SAY PADR( ALLTRIM(field->idkonto) + "->" + ALLTRIM( field->idkonto2), 15)
+		else
+			@ prow(), pcol() + 1 SAY PADR( kalk_doks->mkonto, 7 )
+			@ prow(), pcol() + 1 SAY PADR( kalk_doks->pkonto, 7 )
+		endif
+
 		select kalk_doks
-		Scatter()
-		_ukStavki:=nStavki
-		Gather()
+
 	endif
-  	nUkStavki+=field->ukStavki
-	@ prow(),pcol()+1 SAY str(field->ukStavki,6)
-  endif
-  skip
+
+	@ prow(), pcol() + 1 SAY PADR( field->idpartner, 6 )
+	@ prow(), pcol() + 1 SAY PADR( field->idzaduz, 6 )
+	@ prow(), pcol() + 1 SAY PADR( field->idzaduz2, 6 )
+  
+	nCol1 := pcol() + 1
+
+  	@ prow(),pcol()+1 SAY str(nv,12,2)
+  	@ prow(),pcol()+1 SAY str(vpv,12,2)
+  	@ prow(),pcol()+1 SAY str(rabat,12,2)
+  	@ prow(),pcol()+1 SAY str(mpv,12,2)
+  
+  	if fieldpos("sifra")<>0
+    	@ prow(),pcol()+1 SAY padr(iif(empty(sifra),space(2),left(CryptSC(sifra),2)),6)
+  	endif
+
+  	nNV+=NV
+ 	nVPV+=VPV
+  	nRabat+=Rabat
+ 	nMPV+=MPV
+
+  	if lImaUkSt
+		if field->ukStavki==0
+			nStavki:=0
+			select kalk
+			set order to tag "1"
+			seek kalk_doks->(idFirma+idVd+brDok)
+			do while !eof() .and. idFirma+idVd+brDok==kalk_doks->(idFirma+idVd+brDok)
+				nStavki:=nStavki+1
+				skip 1
+			enddo
+			select kalk_doks
+			Scatter()
+			_ukStavki:=nStavki
+			Gather()	
+		endif
+  		nUkStavki+=field->ukStavki
+		@ prow(),pcol()+1 SAY str(field->ukStavki,6)
+	endif
+
+  	skip
+
 enddo
 
 ? m
 ? "UKUPNO "
-  @ prow(),nCol1 SAY str(nnv,12,2)
-  @ prow(),pcol()+1 SAY str(nvpv,12,2)
-  @ prow(),pcol()+1 SAY str(nrabat,12,2)
-  @ prow(),pcol()+1 SAY str(nmpv,12,2)
+
+@ prow(),nCol1 SAY str(nnv,12,2)
+@ prow(),pcol()+1 SAY str(nvpv,12,2)
+@ prow(),pcol()+1 SAY str(nrabat,12,2)
+@ prow(),pcol()+1 SAY str(nmpv,12,2)
 
 if fieldpos("sifra")<>0
    ?? "       "
 endif
+
 if lImaUkSt
 	@ prow(),pcol()+1 SAY str(nUkStavki,6)
 endif
@@ -222,9 +309,9 @@ endif
 FF
 END PRINT
 
-closeret
+close all
 return
-*}
+
 
 
 /*! \fn kalk_gen_doks_iz_kalk()

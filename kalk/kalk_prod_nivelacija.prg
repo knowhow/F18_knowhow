@@ -12,29 +12,17 @@
 
 #include "kalk.ch"
 
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/prod/db/1g/nivel.prg
- *  \brief Automatsko generisanje dokumenta nivelacije pri azuriranju 11 ili 81
- */
-
-
-/*! \fn Niv_11()
- *  \brief Automatsko generisanje dokumenta nivelacije pri azuriranju 11 ili 81
- */
-
+// ---------------------------------------------------------------------
+// automatsko formiranje nivelacije na osnovu ulaznog dokumenta
+// ---------------------------------------------------------------------
 function Niv_11()
-*{
+local _sufix
+
 O_TARIFA
 O_KONCIJ
 O_KALK_PRIPR2
 O_KALK_PRIPR
+O_KALK_DOKS
 O_KALK
 O_SIFK
 O_SIFV
@@ -42,43 +30,57 @@ O_ROBA
 
 select kalk_pripr
 go top
-private cIdFirma:=idfirma,cIdVD:=idvd,cBrDok:=brdok
-if !(cidvd $ "11#81") .and. !empty(gMetodaNC)
-  closeret
+
+private cIdFirma := field->idfirma
+private cIdVD := field->idvd
+private cBrDok := field->brdok
+
+if !( cIdvd $ "11#81" ) .and. !empty( gMetodaNC )
+	close all
+	return
 endif
 
-private cBrNiv:="0"
+private cBrNiv := "0"
+
 select kalk
-seek cidfirma+"19"+Chr(254)
+seek cIdFirma + "19" + CHR(254)
 skip -1
 if idvd<>"19"
      cBrNiv:=space(8)
 else
      cBrNiv:=brdok
 endif
-cBrNiv:=UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
+                
+_sufix := SufBrKalk( kalk_pripr->idkonto )
+select kalk_pripr
+
+cBrNiv := SljBrKalk( "19", gFirma, _sufix )
+// cBrNiv := UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
 
 select kalk_pripr
 go top
-private nRBr:=0
-cPromjCj:="D"
-fNivelacija:=.f.
+private nRBr := 0
+cPromjCj := "D"
+fNivelacija := .f.
 do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
-  scatter()
-  select koncij; seek trim(_idkonto)
-  select roba; hseek _idroba
-  select tarifa; hseek roba->idtarifa
-  select roba
+  	scatter()
+  	select koncij
+	seek trim(_idkonto)
+  	select roba
+	hseek _idroba
+  	select tarifa
+	hseek roba->idtarifa
+  	select roba
 
-  privat nMPC:=0
-  nMPC:=UzmiMPCSif()
-  if gCijene="2"
-   /////// utvrdjivanje fakticke mpc
-   faktMPC(@nMPC,_idfirma+_pkonto+_idroba)
-   select kalk_pripr
-  endif
+  	private nMPC:=0
+  	nMPC:=UzmiMPCSif()
+  	if gCijene="2"
+   		/////// utvrdjivanje fakticke mpc
+   		faktMPC(@nMPC,_idfirma+_pkonto+_idroba)
+   		select kalk_pripr
+  	endif
 
-  if _mpcsapp<>nMPC // izvrsiti nivelaciju
+  	if _mpcsapp<>nMPC // izvrsiti nivelaciju
 
    if !fNivelacija   // prva stavka za nivelaciju
      cPromCj:=Pitanje(,"Postoje promjene cijena. Staviti nove cijene u sifrarnik ?","D")

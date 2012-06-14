@@ -47,11 +47,11 @@ if used()
 	use
 endif
 
-my_use_temp( "POM", my_home() + "pom", .f., .f. )
+my_use_temp( "POM", my_home() + "pom", .f., .t. )
 
-index on ( "idroba" ) tag "1"
-index on ( "STR(iznos,20,3)" ) tag "2"
-index on ( "STR(kolicina,15,3)" ) tag "3"
+index on ( idroba ) tag "1"
+index on ( STR(iznos,20,3) ) tag "2"
+index on ( STR(kolicina,15,3) ) tag "3"
 
 set order to tag "1"
 
@@ -123,45 +123,50 @@ IF cSta $ "IO"
   ? REPL("-", 10), REPL ("-", 20), REPL ("-", 19)
   nCnt := 1
   Set order to tag "2"
-  GO TOP
-  WHILE ! Eof() .and. nCnt <= nTop
+  GO BOTTOM
+  DO WHILE !BOF() .and. nCnt <= nTop
     select roba
     HSEEK POM->IdRoba
     if IsPlanika() .and. cPrikOnlyPar=="D" .and. roba->jmj<>"PAR" 
     	select POM
-	skip
-	loop
+	    skip -1
+	    loop
     endif
     ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Iznos, 19, 2)
     SELECT POM
     nCnt ++
-    SKIP
-  END
+    SKIP -1
+  ENDDO
 ENDIF
 
 IF cSta $ "KO"
-  SELECT POM
-  ?
-  ? PADC ("POREDAK PO KOLICINI", 40)
-  ?
-  ? PADR("ID ROBA", 10), PADR ("Naziv robe", 20), PADC ("Kolicina",15)
-  ? REPL("-", 10), REPL ("-", 20), REPL ("-", 15)
-  nCnt := 1
-  Set order to tag "3"
-  GO TOP
-  WHILE ! Eof() .and. nCnt <= nTop
-    select roba
-    HSEEK POM->IdRoba
-    if IsPlanika() .and. cPrikOnlyPar=="D" .and. roba->jmj<>"PAR" 
-    	select POM
-	skip
-	loop
-    endif
-    ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Kolicina, 15, 3)
+
     SELECT POM
-    nCnt ++
-    SKIP
-  END
+    ?
+    ? PADC ("POREDAK PO KOLICINI", 40)
+    ?
+    ? PADR("ID ROBA", 10), PADR ("Naziv robe", 20), PADC ("Kolicina",15)
+    ? REPL("-", 10), REPL ("-", 20), REPL ("-", 15)
+    
+    nCnt := 1
+
+    set order to tag "3"
+    GO BOTTOM
+
+    DO WHILE !BOF() .and. nCnt <= nTop
+        select roba
+        HSEEK POM->IdRoba
+        if IsPlanika() .and. cPrikOnlyPar=="D" .and. roba->jmj<>"PAR" 
+    	    select POM
+	        skip -1
+	        loop
+        endif
+        ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Kolicina, 15, 3)
+        SELECT POM
+        nCnt ++
+        SKIP -1
+    ENDDO
+
 ENDIF
 
 ?
@@ -182,61 +187,72 @@ return
  */
 
 function TopNizvuci(cIdVd,dDat0)
-*{
-  select pos_doks
-  Seek cIdVd+DTOS (dDat0)
-  do While !Eof() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum <= dDat1
 
-    IF (Klevel>"0" .and. pos_doks->idpos="X") .or. ;
+select pos_doks
+seek cIdVd+DTOS (dDat0)
+  
+do While !EOF() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum <= dDat1
+    
+    if (Klevel>"0" .and. pos_doks->idpos="X") .or. ;
         (pos_doks->IdPos="X" .and. AllTrim(cIdPos)<>"X") .or. ;
         (!Empty(cIdPos) .and. pos_doks->IdPos<>cIdPos)
-       Skip; Loop
-    EndIF
-
+        skip
+        loop
+    endif
 
     SELECT POS
-    Seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-    While !Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+    seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+    
+    while !Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
-      	select roba
+        select roba
 		hseek pos->idroba
       	if roba->(FIELDPOS("idodj")) <> 0
 			select odj
 			hseek roba->idodj
 		endif
-      nNeplaca:=0
-      if right(odj->naz,5)=="#1#0#"  // proba!!!
-       nNeplaca:=pos->(Kolicina*Cijena)
-      elseif right(odj->naz,6)=="#1#50#"
-       nNeplaca:=pos->(Kolicina*Cijena)/2
-      endif
-      if gPopVar="P"; nNeplaca+=pos->(kolicina*NCijena); endif
+        nNeplaca:=0
+        if right(odj->naz,5)=="#1#0#"  // proba!!!
+            nNeplaca:=pos->(Kolicina*Cijena)
+        elseif right(odj->naz,6)=="#1#50#"
+            nNeplaca:=pos->(Kolicina*Cijena)/2
+        endif
+      
+        if gPopVar="P"
+            nNeplaca += pos->(kolicina*NCijena)
+        endif
 
       	SELECT POM
-		Hseek POS->IdRoba
-      IF !FOUND ()
-        APPEND BLANK
-        REPLACE IdRoba   WITH POS->IdRoba, ;
+        go top
+		hseek POS->IdRoba
+        
+        IF !FOUND ()
+            APPEND BLANK
+            REPLACE IdRoba   WITH POS->IdRoba, ;
                 Kolicina WITH POS->Kolicina, ;
                 Iznos    WITH POS->Kolicina*POS->Cijena,;
                 iznos3   with nNeplaca
-         if gPopVar=="P"
+            if gPopVar=="P"
                 replace iznos2   with pos->ncijena*pos->kolicina
-         endif
-      ELSE
-        REPLACE Kolicina WITH Kolicina+POS->Kolicina, ;
+            endif
+        ELSE
+            REPLACE Kolicina WITH Kolicina+POS->Kolicina, ;
                 Iznos WITH Iznos+POS->Kolicina*POS->Cijena,;
                 iznos3 with iznos3+nNePlaca
-       if gPopVar=="P"
+            if gPopVar=="P"
                 replace iznos2   with iznos2 + pos->ncijena*pos->kolicina
-       endif
-      END
-      SELECT POS
-      SKIP
+            endif
+        END
+
+        SELECT POS
+        SKIP
+
     EndDO
     select pos_doks
     SKIP
-  EndDO
+
+EndDO
+
 return
 *}
 

@@ -125,10 +125,10 @@ if used()
 	use
 endif
 
-my_use_temp( "POM", my_home() + "pom", .f., .f. )
+my_use_temp( "POM", my_home() + "pom", .f., .t. )
 
-index on ( "idradnik + idvrstep + idroba + idcijena" ) tag "1"
-index on ( "idroba + idcijena" ) tag "2"
+index on ( idradnik + idvrstep + idroba + idcijena ) tag "1"
+index on ( idroba + idcijena ) tag "2"
 
 set order to tag "1"
 
@@ -447,6 +447,7 @@ do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
     endif
 
     SELECT POM
+    GO TOP
     HSEEK _IdRadnik+_IdVrsteP+POS->IdRoba+POS->IdCijena
     
     IF !FOUND()
@@ -468,5 +469,5 @@ do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
   SKIP
 EndDO
 return
-*}
+
 

@@ -127,13 +127,15 @@ private nTotal2:=0
 private nTotal3:=0
 
 if (cRD $ "RB")
+
 	SELECT POM
-	SET ORDER TO 1
+	SET ORDER TO TAG "1"
+
 	if (fPrik $ "PO")
 		RealPoRadn(fPrik, @nTotal2, @nTotal3)
 	endif
-endif   
 
+endif   
 
 if (cRD $ "OB") 
 	// prikaz realizacije po odjeljenjima
@@ -141,12 +143,15 @@ if (cRD $ "OB")
 endif 
 
 if !fZaklj
+
 	//Porezi po tarifama
+
 	if IsPDV()
 		PDVPorPoTar(dDat0, dDat1, cIdPos, nil, cIdodj)
 	else
 		PorPoTar(dDat0, dDat1, cIdPos, nil, cIdodj)
 	endif
+
 	if ROUND(ABS(nTotal2)+ABS(nTotal3),4)<>0
 		ODbRpt()
 		if IsPDV()
@@ -155,6 +160,7 @@ if !fZaklj
 			PorPoTar(dDat0,dDat1,cIdPos,"3")  // STA JE OVO? => APOTEKE!!
 		endif	
 	endif
+
 endif
 
 if fZaklj
@@ -405,11 +411,13 @@ nTotal2:=0
 nTotal3:=0
 
 SELECT POM
-SET ORDER TO 4
+SET ORDER TO TAG "4"
 GO TOP
 
 do while !eof()
+
 	_IdPos:=pom->IdPos
+
 	if EMPTY(cIdPos)
 		SELECT kase
 		HSEEK _IdPos
@@ -443,17 +451,21 @@ do while !eof()
 			nTotPos2+=nTotVP2
 			nTotPos3+=nTotVP3
 	enddo
+
 	TotalKasa(_IdPos, nTotPos, nTotPos2, nTotPos3, 0, "N", "-")
 	
 	nTotal+=nTotPos
 	nTotal2+=nTotPos2
 	nTotal3+=nTotPos3
+
 enddo
 
 if empty(cIdPos)
+
 	? REPL ("=", LEN_TRAKA)
 	? PADC ("SVE KASE", 20) + STR (nTotal, 20, 2)
 	? REPL ("=", LEN_TRAKA)
+
 endif
 
 return
@@ -483,15 +495,14 @@ if used()
 	use
 endif
 
-my_use_temp( "POM", my_home() + "pom", .f., .f. )
+my_use_temp( "POM", my_home() + "pom", .f., .t. )
 set order to tag "1"
 
-index on ( "IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena" ) tag "1"
-index on ( "IdPos+IdOdj+IdRoba+IdCijena" ) tag "2"
-index on ( "IdPos+IdRoba+IdCijena" ) tag "3"
-index on ( "IdPos+IdVrsteP" ) tag "4"
-index on ( "IdPos+K1+idroba" ) tag "K1"
-
+index on ( IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena ) tag "1"
+index on ( IdPos+IdOdj+IdRoba+IdCijena ) tag "2"
+index on ( IdPos+IdRoba+IdCijena ) tag "3"
+index on ( IdPos+IdVrsteP ) tag "4"
+index on ( IdPos+K1+idroba ) tag "K1"
 
 return
 
@@ -501,16 +512,18 @@ return
  */
 
 static function RealPoRadn()
-*{
+
 ?
 ? "SIFRA PREZIME I IME RADNIKA"
 ? "-----",REPLICATE("-", 34)
+
 nTotal:=0
 nTotal2:=0
 nTotal3:=0
 
 SELECT pom
 GO TOP
+
 do while !eof()
 	nTotPos:=0
 	nTotPos2:=0
@@ -702,7 +715,7 @@ if !fZaklj.and.fPrik$"RO"
 	endif
 endif
 return
-*}
+
 
 static function set_zagl()
 local cLinija
@@ -745,7 +758,7 @@ return
  */
 
 static function RealPoOdj(fPrik, nTotal2, nTotal3)
-*{
+
 if (fPrik $ "PO")
 	// daj mi pazar
 	?
@@ -930,10 +943,10 @@ if (fPrik $ "RO").or.cK1=="D"
 	endif
 endif
 return
-*}
+
+
 
 static function TotalKasa(cIdPos, nTotPos, nTotPos2, nTotPos3, nTotPosk, cK1, cPodvuci)
-*{
 
 ? REPL(cPodvuci, LEN_TRAKA)
 if cK1=="D"

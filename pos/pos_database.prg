@@ -1405,7 +1405,8 @@ if !gAppSrv
 	MsgO("formiram pomocnu tabelu izvjestaja...")
 endif
 
-SEEK cIdVd+DTOS(dDat0)
+SEEK cIdVd + DTOS(dDat0)
+
 do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 
 	if ( !EMPTY(cIdPos) .and. pos_doks->IdPos <> cIdPos ) .or. ( !EMPTY(cSmjena) .and. pos_doks->Smjena <> cSmjena )
@@ -1417,6 +1418,7 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 	SEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
   
 	do while !eof().and.pos->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+
 		if (!EMPTY(cIdOdj).and.pos->IdOdj<>cIdOdj).or.(!EMPTY(cIdDio).and.pos->IdDio<>cIdDio)
 			SKIP 
 			loop
@@ -1452,8 +1454,9 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 			nNeplaca+=pos->(kolicina*nCijena) 
 		endif
 
-		SELECT pom
-		HSEEK pos_doks->(IdPos+IdRadnik+IdVrsteP) + pos->(IdOdj+IdRoba+IdCijena)
+		SELECT pom  
+        GO TOP
+		seek pos_doks->IdPos + pos_doks->IdRadnik + pos_doks->IdVrsteP + pos->IdOdj + pos->IdRoba + pos->IdCijena
 		
 		if !found()
 
@@ -1480,7 +1483,7 @@ do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
 
 			replace Kolicina WITH Kolicina + POS->Kolicina
 			replace Iznos WITH Iznos + POS->Kolicina * POS->Cijena
-			replace Iznos3 WITH Iznos3+nNeplaca
+			replace Iznos3 WITH Iznos3 + nNeplaca
 
 			if gPopVar=="A"
 				REPLACE Iznos2 WITH Iznos2+pos->nCijena

@@ -172,11 +172,11 @@ if used()
 endif
 my_use_temp( "POM", my_home() + "pom", .f., .t. )
 
-index on ( "IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena" ) tag "1"
-index on ( "IdPos+IdOdj+IdRoba+IdCijena" ) tag "2"
-index on ( "IdPos+IdRoba+IdCijena" ) tag "3"
-index on ( "IdPos+IdVrsteP" ) tag "4"
-index on ( "IdPos+K1+idroba" ) tag "K1"
+index on ( IdPos+IdRadnik+IdVrsteP+IdOdj+IdRoba+IdCijena ) tag "1"
+index on ( IdPos+IdOdj+IdRoba+IdCijena ) tag "2"
+index on ( IdPos+IdRoba+IdCijena ) tag "3"
+index on ( IdPos+IdVrsteP ) tag "4"
+index on ( IdPos+K1+idroba ) tag "K1"
 
 set order to tag "1"
 

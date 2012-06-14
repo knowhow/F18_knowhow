@@ -532,116 +532,106 @@ return 1
  *  \param cIdGost
  */
  
-function azur_pos_racun(cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost)
+function azur_pos_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost )
 local cDatum
 local nStavki
 local _rec, _append
 local _cnt := 0
+local _kolicina := 0
+local _idroba, _idcijena, _cijena
+private nIznRn := 0
 
 // iskljuci mi semafore
 my_use_semaphore_off()
 
 o_stazur()
 
-if (cNacPlac == nil)
+if ( cNacPlac == NIL )
 	cNacPlac := gGotPlac
 endif
 
-if (cIdGost == nil)
+if ( cIdGost == NIL )
 	cIdGost := ""
 endif
 
-SELECT _POS
+select _pos
 set order to tag "1"
-SEEK cIdPos + "42" + dtos(gDatum) + cRadRac
+seek cIdPos + "42" + DTOS( gDatum ) + cRadRac
 
-set_global_memvars_from_dbf()
-
-select pos_doks
-
-_BrDok := cStalRac
-_Vrijeme := cVrijeme
-_IdVrsteP := cNacPlac
-_IdGost := cIdGost
-_IdOdj := SPACE( LEN( _IdOdj ))
-_M1 := OBR_NIJE
-
-set order to tag "1"
-seek cIdPos + "42" + dtos(gdatum) + cStalRac
-
-if ( ALLTRIM( field->idRadnik ) != "////" )
-	MsgBeep("Nesto nije u redu zovite servis - radnik bi morao biti //// !!!")
+if !FOUND()
+    MsgBeep( "Problem sa podacima tabele _POS, nema stavi !!!#Azuriranje nije moguce !" )
+    return
 endif
 
-// ubaci zapis u tabelu
-_append := get_dbf_global_memvars()
+// azuriraj racun u POS_DOKS
+select pos_doks
+append blank
+_rec := dbf_get_rec()
+_rec["idpos"] := cIdPos
+_rec["idvd"] := VD_RN
+_rec["datum"] := gDatum
+_rec["brdok"] := cStalRac
+_rec["vrijeme"] := cVrijeme
+_rec["idvrstep"] := cNacPlac
+_rec["idgost"] := cIdGost
+_rec["idradnik"] := _pos->idradnik
+_rec["m1"] := OBR_NIJE
+_rec["prebacen"] := OBR_JEST
+_rec["smjena"] := _pos->smjena
 
-// transakcija...
 sql_table_update( nil, "BEGIN" )
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
-update_rec_server_and_dbf( "pos_doks", _append, 1, "CONT" )
+// azuriranje stavki u POS
 
-SELECT _POS
+select _pos
+cDatum := DTOS( gDatum )  
 
-// uzmi gDatum za azuriranje
-cDatum := DTOS(gDatum)  
-private nIznRn := 0
+do while !EOF() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos + "42" + cDatum + cRadRac )
 
-do while !eof() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos + "42" + cDatum + cRadRac )
+    nIznRn += ( _pos->kolicina * _pos->cijena )
+	
+    select pos
+	append blank
 
-    set_global_memvars_from_dbf()
+    _rec := dbf_get_rec()
 
-	_kolicina := 0
+    _rec["idpos"] := cIdPos
+    _rec["idvd"] := VD_RN
+    _rec["datum"] := gDatum
+    _rec["brdok"] := cStalRac
+    _rec["rbr"] := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
+    _rec["m1"] := OBR_JEST
+	_rec["prebacen"] := OBR_NIJE
+    _rec["iddio"] := _pos->iddio 
+    _rec["idodj"] := _pos->idodj
+    _rec["idcijena"] := _pos->idcijena
+    _rec["idradnik"] := _pos->idradnik
+    _rec["idroba"] := _pos->idroba
+    _rec["idtarifa"] := _pos->idtarifa
+    _rec["kolicina"] := _pos->kolicina
+    _rec["mu_i"] := _pos->mu_i
+    _rec["ncijena"] := _pos->ncijena
+    _rec["cijena"] := _pos->cijena
+    _rec["smjena"] := _pos->smjena
+    _rec["c_1"] := _pos->c_1
+    _rec["c_2"] := _pos->c_2
+    _rec["c_3"] := _pos->c_3
 
-	do while !eof() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos + "42" + cDatum + cRadRac ) ;
-					.and. _POS->( IdRoba + IdCijena ) == ( _IdRoba + _IdCijena) .and. _POS->Cijena == _Cijena
-
-		replace field->m1 with "Z"
-		_kolicina += _pos->kolicina
-		
-		SKIP
-
-	enddo
-
-	_prebacen := OBR_NIJE
-
-	SELECT ODJ
-	HSEEK _IdOdj
-
-	if odj->Zaduzuje == "S"
-		_m1 := OBR_NIJE
-	else
-		// za robe (ako odjeljenje zaduzuje robe) ne pravim razduzenje
-		// sirovina
-		_m1 := OBR_JEST
-	endif
-
-	if ROUND( _kolicina, 4) <> 0
-
-		SELECT POS
-		APPEND BLANK
-
-		_BrDok := cStalRac
-		_Vrijeme := cVrijeme
-		_IdVrsteP := cNacPlac
-		_IdGost := cIdGost
-        _rbr := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
-        
-		// ucitaj memorijske varijable
-		_rec := get_dbf_global_memvars()
-        
-        update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
-
-		nIznRn += ( pos->kolicina * pos->cijena )
-
-	endif
+    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
 	select _pos
+    skip
 
 enddo
 
 sql_table_update( nil, "END" )
 my_use_semaphore_on()
+
+// pobrisi _pos
+select _pos
+zap
+__dbPack()
 
 return
 

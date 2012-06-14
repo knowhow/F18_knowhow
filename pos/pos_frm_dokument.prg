@@ -239,15 +239,16 @@ do case
 
 		return DE_CONT
 
-	case Ch==K_CTRL_F9
+	case Ch == K_CTRL_F9
 
 		O_STRAD
         select strad
 		hseek gStrad
-        cLevel:=prioritet
+        cLevel := prioritet
         use
 
 		select pos_doks
+
 		_id_pos := field->idpos
 		_id_vd := field->idvd
 		_br_dok := field->brdok
@@ -258,10 +259,11 @@ do case
          	return DE_CONT
         endif
 		
-		if pitanje(,"Zelite li zaista izbrisati dokument","N")=="D"
+		if pitanje(,"Zelite li zaista izbrisati dokument","N") == "D"
            	
-			select POS
+			select pos
            	set order to tag "1"
+            go top
            	seek _id_pos + _id_vd + DTOS( _dat_dok ) + _br_dok
 
 			if FOUND() 
@@ -271,7 +273,7 @@ do case
 	           	my_use_semaphore_off()
 				sql_table_update( nil, "BEGIN" )
 	
-				update_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+				delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
 
 				select pos_doks
 				set order to tag "1"
@@ -280,7 +282,7 @@ do case
 
 				if FOUND() 
 					_rec := dbf_get_rec()		
-					update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+					delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 				endif
 
 				sql_table_update( nil, "END" )

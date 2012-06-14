@@ -387,6 +387,7 @@ cStalRac := pos_novi_broj_dokumenta( cIdPos, VD_RN )
 
 gDatum := DATE()
 
+/*
 // pravi se append u bazu
 // radnik "////"
 select pos_doks
@@ -404,9 +405,11 @@ sql_table_update( nil, "BEGIN" )
 update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 sql_table_update( nil, "END" )
 my_use_semaphore_on()
+*/
 
 aVezani := {}
-AADD( aVezani, { pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum })
+//AADD( aVezani, { pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum })
+AADD( aVezani, { cIdPos, cRadRac, cIdVrsteP, gDatum })
 
 cPartner := cIdGost
 
@@ -419,7 +422,7 @@ endif
 if (!EMPTY(cTime))
 	
 	// azuriranje racuna
-	azur_pos_racun(cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
+	azur_pos_racun( cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost )
 	
 	// azuriranje podataka o kupcu
 	if IsPDV()

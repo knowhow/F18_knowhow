@@ -96,28 +96,6 @@ SetSpecNar()
 ispisi_iznos_veliki_brojevi( 0, m_x + ( _max_rows - 12 ), _max_cols - 2 )
 
 select _pos
-set order to tag "3"
-
-//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
-seek VD_RN + gIdRadnik
-        
-do while !eof() .and. _pos->(IdVd+IdRadnik) == (VD_RN + gIdRadnik)
-
-	if !(_pos->m1 == "Z")
-
-		// mora biti Z, jer se odmah zakljucuje
-        Scatter()
-        select _pos_pripr
-        append blank 
-		Gather()
-       	SELECT _POS
-       	Del_Skip()
-  	else
-      	delete
-        skip
- 	endif
-enddo
-    
 set order to tag "1"
 
 nIznNar := 0

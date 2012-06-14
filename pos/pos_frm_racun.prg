@@ -290,7 +290,7 @@ if KLevel="0".and.(cLast=="D".or.cLast == "S" .or. cLast=="V" )
 endif
 
 
-if cLevel<="0"   
+if cLevel <= "0"   
 
     // samo sistem administrator
     if ch==K_F1
@@ -303,7 +303,7 @@ if cLevel<="0"
     endif
 
     if ch==K_SH_F9
-    	return  BrisiRNVP()
+    	return BrisiRNVP()
     endif
 
 endif 
@@ -343,11 +343,12 @@ local _rec
 local _id_vd, _id_pos, _dat_dok, _br_dok
 local _t_area := SELECT()
 
-if Pitanje(,"Potpuno - fizicki izbrisati racun?","N")=="N"
+if Pitanje(,"Potpuno - fizicki izbrisati racun?","N") == "N"
     return DE_CONT
 endif
 
 select pos_doks
+
 _br_dok := field->BrDok
 _id_pos := field->IdPos
 _dat_dok := field->datum

@@ -1251,7 +1251,10 @@ if (area)->(fieldpos("naz")) <> 0
     _naz := ALLTRIM( field->naz )
 
 	if (area)->(fieldpos("jmj")) <> 0
-		_naz := PADR( _naz, len - 6 ) + " (" + ALLTRIM( field->jmj ) + ")"
+		if LEN( _naz ) >= len
+			_naz := PADR( _naz, len - 6 )
+		endif
+		_naz += " (" + ALLTRIM( field->jmj ) + ")"
 	endif
 
 endif

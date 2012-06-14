@@ -71,37 +71,42 @@ o_kalk_edit()
 private gVarijanta := "2"
 private PicV := "99999999.9"
 
-ImeKol:={ ;
-          { "F."        , {|| IdFirma                  }, "IdFirma"     } ,;
-          { "VD"        , {|| IdVD                     }, "IdVD"        } ,;
-          { "BrDok"     , {|| BrDok                    }, "BrDok"       } ,;
-          { "R.Br"      , {|| Rbr                      }, "Rbr"         } ,;
-          { "Dat.Kalk"  , {|| DatDok                   }, "DatDok"      } ,;
-          { "Dat.Fakt"  , {|| DatFaktP                 }, "DatFaktP"    } ,;
-          { "K.zad. "   , {|| IdKonto                  }, "IdKonto"     } ,;
-          { "K.razd."   , {|| IdKonto2                 }, "IdKonto2"    } ,;
-          { "IdRoba"    , {|| IdRoba                   }, "IdRoba"      } ,;
-          { "Kolicina"  , {|| transform(Kolicina,picv) }, "kolicina"    } ,;
-          { "IdTarifa"  , {|| idtarifa                 }, "idtarifa"    } ,;
-          { "F.Cj."     , {|| transform(FCJ,picv)      }, "fcj"         } ,;
-          { "F.Cj2."    , {|| transform(FCJ2,picv)     }, "fcj2"        } ,;
-          { "Nab.Cj."   , {|| transform(NC,picv)       }, "nc"          } ,;
-          { "VPC"       , {|| transform(VPC,picv)      }, "vpc"         } ,;
-          { "VPCj.sa P.", {|| transform(VPCsaP,picv)   }, "vpcsap"      } ,;
-          { "MPC"       , {|| transform(MPC,picv)      }, "mpc"         } ,;
-          { "MPC sa PP" , {|| transform(MPCSaPP,picv)  }, "mpcsapp"     }, ;
-          { "RN"        , {|| idzaduz2                 }, "idzaduz2"    }, ;
-          { "Br.Fakt"   , {|| brfaktp                  }, "brfaktp"     }, ;
-          { "Partner"   , {|| idpartner                }, "idpartner"   }, ;
-          { "E"         , {|| error                    }, "error"       } ;
-        }
+private ImeKol := {}
+private Kol := {}
+
+// definisi strukturu pripreme
+AADD( ImeKol, { "F." , {|| idfirma   }, "idfirma"   } )
+AADD( ImeKol, { "VD"        , {|| IdVD                     }, "IdVD"        } )
+AADD( ImeKol, { "BrDok"     , {|| BrDok                    }, "BrDok"       } )
+AADD( ImeKol, { "R.Br"      , {|| Rbr                      }, "Rbr"         } )
+AADD( ImeKol, { "Dat.Kalk"  , {|| DatDok                   }, "DatDok"      } )
+AADD( ImeKol, { "Dat.Fakt"  , {|| DatFaktP                 }, "DatFaktP"    } )
+AADD( ImeKol, { "K.zad. "   , {|| IdKonto                  }, "IdKonto"     } )
+AADD( ImeKol, { "K.razd."   , {|| IdKonto2                 }, "IdKonto2"    } )
+AADD( ImeKol, { "IdRoba"    , {|| IdRoba                   }, "IdRoba"      } )
+
+if lKoristitiBK
+	AADD( ImeKol, { "Barkod"    , {|| roba_ocitaj_barkod( idroba ) }, "IdRoba" } )
+endif
+
+AADD( ImeKol, { "Kolicina"  , {|| transform(Kolicina,picv) }, "kolicina"    } )
+AADD( ImeKol, { "IdTarifa"  , {|| idtarifa                 }, "idtarifa"    } )
+AADD( ImeKol, { "F.Cj."     , {|| transform(FCJ,picv)      }, "fcj"         } )
+AADD( ImeKol, { "F.Cj2."    , {|| transform(FCJ2,picv)     }, "fcj2"        } )
+AADD( ImeKol, { "Nab.Cj."   , {|| transform(NC,picv)       }, "nc"          } )
+AADD( ImeKol, { "VPC"       , {|| transform(VPC,picv)      }, "vpc"         } )
+AADD( ImeKol, { "VPCj.sa P.", {|| transform(VPCsaP,picv)   }, "vpcsap"      } )
+AADD( ImeKol, { "MPC"       , {|| transform(MPC,picv)      }, "mpc"         } )
+AADD( ImeKol, { "MPC sa PP" , {|| transform(MPCSaPP,picv)  }, "mpcsapp"     } )
+AADD( ImeKol, { "RN"        , {|| idzaduz2                 }, "idzaduz2"    } )
+AADD( ImeKol, { "Br.Fakt"   , {|| brfaktp                  }, "brfaktp"     } )
+AADD( ImeKol, { "Partner"   , {|| idpartner                }, "idpartner"   } )
+AADD( ImeKol, { "E"         , {|| error                    }, "error"       } )
 
 if lPoNarudzbi
     AADD( ImeKol , { "Br.nar." , {|| brojnar   }, "brojnar"   } )
     AADD( ImeKol , { "Narucioc" , {|| idnar   }, "idnar"   } )
 endif
-
-Kol := {}
 
 for i := 1 to LEN( ImeKol )
     AADD( Kol, i )
@@ -501,10 +506,13 @@ if EditPRIPR(.f.)==0
     BoxC()
     return DE_CONT
 else
+
     BoxC()
+
     if _ERROR<>"1"
         _ERROR:="0"
     endif       // stavka onda postavi ERROR
+
     if _idvd=="16"
         _oldval:=_vpc*_kolicina  // vrijednost prosle stavke
     else
@@ -515,12 +523,13 @@ else
 
     Gather()
         
-    if _idvd $ "16#80" .and. !empty(_idkonto2)
-        cIdkont := _idkonto
-        cIdkont2:=_idkonto2
-        _idkonto:=cidkont2
-        _idkonto2:="XXX"
-        _kolicina:=-kolicina
+    if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
+        
+		cIdkont := _idkonto
+        cIdkont2 := _idkonto2
+        _idkonto := cIdkont2
+        _idkonto2 := "XXX"
+        _kolicina := -kolicina
           
         nRbr := RbrUNum( _rbr ) + 1
         _rbr := RedniBroj( nRbr )
@@ -529,9 +538,9 @@ else
             seek _idfirma+_idvd+_brdok+_rbr
             _Tbanktr:="X"
             do while !eof() .and. _idfirma+_idvd+_brdok+_rbr==idfirma+idvd+brdok+rbr
-                if left(idkonto2,3)=="XXX"
+                if LEFT( idkonto2, 3 ) == "XXX"
                     Scatter()
-                    _TBankTr:=""
+                    _TBankTr := ""
                     exit
                 endif
                 skip
@@ -550,7 +559,7 @@ else
                 Get1_80b()
             endif
                     
-            if _TBanktr=="X"
+            if _TBanktr == "X"
                 append ncnl
             endif
 
@@ -561,7 +570,9 @@ else
             Gather()
 
         BoxC()
+
     endif
+
     return DE_REFRESH
 
 endif
@@ -612,7 +623,11 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
             _idkonto := cIdkont
             _idkonto2 := cIdkont2
         endif
-           
+        
+		if fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" ) == "D"
+			_idroba := SPACE(10)
+		endif
+
         _Kolicina := _GKolicina := _GKolicin2 := 0
         _FCj := _FCJ2 := _Rabat := 0
            
@@ -717,7 +732,7 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
             // 80-ka
             skip
             skip
-            nTR2:=RECNO()
+            nTR2 := RECNO()
             skip-1
             Scatter()
             _ERROR:=""

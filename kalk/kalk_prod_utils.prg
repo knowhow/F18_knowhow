@@ -362,18 +362,18 @@ return
 function UzmiMPCSif()
 local nCV := 0
   
-if koncij->naz == "M2" .and. roba->(fieldpos("mpc2"))<>0
+if koncij->naz == "M2"
 	nCV := roba->mpc2
-elseif koncij->naz=="M3" .and. roba->(fieldpos("mpc3"))<>0
-    nCV:=roba->mpc3
-elseif koncij->naz=="M4" .and. roba->(fieldpos("mpc4"))<>0
-    nCV:=roba->mpc4
-elseif koncij->naz=="M5" .and. roba->(fieldpos("mpc5"))<>0
-    nCV:=roba->mpc5
-elseif koncij->naz=="M6" .and. roba->(fieldpos("mpc6"))<>0
-    nCV:=roba->mpc6
-elseif roba->(fieldpos("mpc"))<>0
-    nCV:=roba->mpc
+elseif koncij->naz == "M3"
+    nCV := roba->mpc3
+elseif koncij->naz == "M4" .and. roba->(fieldpos("mpc4"))<>0
+    nCV := roba->mpc4
+elseif koncij->naz == "M5" .and. roba->(fieldpos("mpc5"))<>0
+    nCV := roba->mpc5
+elseif koncij->naz == "M6" .and. roba->(fieldpos("mpc6"))<>0
+    nCV := roba->mpc6
+elseif roba->(fieldpos("mpc")) <> 0
+    nCV := roba->mpc
 endif
 
 return nCV
@@ -384,17 +384,18 @@ return nCV
 // ------------------------------------
 // StaviMPCSif(nCijena, lUpit)
 // ------------------------------------
-function StaviMPCSif(nCijena, lUpit)
+function StaviMPCSif( nCijena, lUpit )
 local lAzuriraj
 local lRet := .f.
 local lIsteCijene
 local _rec
 
-IF lUpit==nil
- 	lUpit:=.f.
+IF lUpit == nil
+ 	lUpit := .f.
 ENDIF
  
 private cMpc := ""
+
 do case 
   case koncij->naz=="M2"
       cMpc := "mpc2"

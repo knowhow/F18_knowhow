@@ -125,7 +125,7 @@ select tarifa
 seek roba->idtarifa
 
 select koncij
-seek trim(_idkonto)
+seek trim( _idkonto )
 
 select kalk_pripr  
 
@@ -246,28 +246,27 @@ read
 ESC_RETURN K_ESC
 
 select koncij
-seek trim(_idkonto)
+seek trim( _idkonto )
 
 select kalk_pripr 
 
-_PKonto := _Idkonto
+_pkonto := _idkonto
 
 DatPosljP()
-DuplRoba()
 
-private fMarza:=" "
+private fMarza := " "
 
 ++ _x
 @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
 select koncij
-seek trim(_idkonto)
+seek TRIM( _idkonto )
 
 select ROBA
-HSEEK _IdRoba
+hseek _idroba
 
 // ako nije popunjeno
-_MPCSapp := UzmiMPCSif()
+_mpcsapp := UzmiMPCSif()
 
 _TMarza2 := "%"
 _TCarDaz := "%"
@@ -277,7 +276,9 @@ select kalk_pripr
 
 // NC
 ++ _x
+
 _kord_x := m_x + _x
+
 @ m_x + _x, m_y + 2 SAY "NABAVNA CIJENA:"
 @ m_x + _x, m_y + _unos_left GET _NC PICT PicDEM when VKol( _kord_x )
 
@@ -299,6 +300,7 @@ endif
     VALID VMpc_lv(nil, nil, aPorezi)
            
 ++ _x
+
 SayPorezi_lv( _x, aPorezi)
 
 ++ _x
@@ -310,14 +312,14 @@ else
 endif
 
 @ m_x + _x, m_y + _unos_left GET _MPCSaPP PICT PicDEM ;
-     valid {|| Svedi(cSvedi), VMpcSapp_lv(nil, nil, aPorezi) }
+     valid {|| Svedi( cSvedi ), VMpcSapp_lv(nil, nil, aPorezi) }
 
 read
 
 ESC_RETURN K_ESC
 
 select koncij
-seek trim(_idkonto)
+seek TRIM( _idkonto )
 
 StaviMPCSif( _mpcsapp, .t. )
 
@@ -325,10 +327,11 @@ select kalk_pripr
 
 _PKonto := _Idkonto
 _PU_I := "1"
-_MKonto:=""
-_MU_I:=""
+_MKonto := ""
+_MU_I := ""
 
 nStrana := 3
+
 return lastkey()
 
 
@@ -340,22 +343,23 @@ function Svedi(cSvedi)
 if cSvedi == "M"
 
     select koncij
-    seek trim(_idkonto)
-    select ROBA
-    HSEEK _IdRoba
-    _MPCSapp := UzmiMPCSif()
+    seek TRIM( _idkonto )
+    select roba
+    hseek _idroba
+    _mpcsapp := UzmiMPCSif()
     
 elseif cSvedi == "S"
 
-    if _mpcsapp<>0
-        _kolicina:=-round(_oldval/_mpcsapp,4)
+    if _mpcsapp <> 0
+        _kolicina := -round(_oldval/_mpcsapp,4)
     else
-        _kolicina:=99999999
+        _kolicina := 99999999
     endif
-    if _kolicina<>0
-        _nc:=abs(_oldvaln/_kolicina)
+
+    if _kolicina <> 0
+        _nc := abs( _oldvaln/_kolicina )
     else
-        _nc:=0
+        _nc := 0
    endif
 endif
 

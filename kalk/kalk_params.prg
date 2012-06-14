@@ -201,6 +201,7 @@ function kalk_par_razno()
 local _brojac := "N"
 local _unos_barkod := "N"
 local _x := 1
+local _reset_roba := fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" )
 private  GetList:={}
 
 if glBrojacPoKontima
@@ -248,7 +249,9 @@ Box(, 20, 75, .f., "RAZNO" )
     @ m_x + _x, col() SAY "%" 
     ++ _x
     @ m_x + _x,m_y+2 SAY "Indeks kod pretrage artikla:" GET gArtCDX PICT "@15"
-	
+	++ _x
+    @ m_x + _x,m_y+2 SAY "Reset artikla prilikom unosa dokumenta:" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
+
     read
 
 BoxC()
@@ -284,6 +287,7 @@ if lastkey() <> K_ESC
   	set_metric("kalk_limit_za_otvorene_stavke", f18_user(), gnLOst)
   	set_metric("kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk)
   	set_metric("kalk_index_za_pretragu_artikala", f18_user(), gArtCDX)
+	set_metric( "kalk_reset_artikla_kod_unosa", my_user(), _reset_roba )
 
 endif
 

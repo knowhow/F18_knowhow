@@ -12,72 +12,19 @@
 
 #include "fmk.ch"
 
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_BARKOD_EAN
-  * \brief Omogucava automatsko formiranje barkodova pri labeliranju
-  * \param  - ne formiraj barkod ako ga nema, default vrijednost
-  * \param 13 - ako nema barkoda sam formira interni barkod pri labeliranju
-  */
-*string FmkIni_SifPath_BARKOD_EAN;
 
+// -------------------------------------------------
+// ocitaj barkod
+// -------------------------------------------------
+function roba_ocitaj_barkod( id_roba )
+local _t_area := SELECT()
+local _bk
+select roba
+seek id_roba
+_bk := field->barkod
+select ( _t_area )
+return _bk
 
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_BARKOD_NazRTM
-  * \brief Definise naziv rtm-fajla koji definise izgled labele barkoda
-  * \param barkod - default vrijednost
-  */
-*string FmkIni_SifPath_BARKOD_NazRTM;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_BARKOD_Prefix
-  * \brief Ovim parametrom se moze definisati prefiks internog barkoda
-  * \param  - bez prefiksa, default vrijednost
-  */
-*string FmkIni_SifPath_BARKOD_Prefix;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_BarKod_Auto
-  * \brief Odredjuje da li ce se moci automatski formirati barkodovi
-  * \param N - default vrijednost
-  * \param D - omogucena automatika formiranja barkodova
-  */
-*string FmkIni_SifPath_BarKod_Auto;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_BarKod_AutoFormula
-  * \brief Formula za automatsko odredjivanje novog barkoda
-  * \param ID - na osnovu sifre robe, default vrijednost
-  */
-*string FmkIni_SifPath_BarKod_AutoFormula;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_BarKod_JMJ
-  * \brief Da li ce se na labeli barkoda prikazivati pored naziva i jedinica mjere artikla
-  * \param D - da, default vrijednost
-  * \param N - ne prikazuj jedinicu mjere
-  */
-*string FmkIni_SifPath_BarKod_JMJ;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_Barkod_BrDok
-  * \brief Da li ce se na labelama striktno prikazivati broj dokumenta
-  * \param D - da, default vrijednost
-  * \param N - omogucava editovanje proizvoljnog teksta prije ispisa labela
-  */
-*string FmkIni_SifPath_Barkod_BrDok;
-
-
-/*! \ingroup ini
-  * \var *string FmkIni_SifPath_Barkod_Prefix
-  * \brief Ovim parametrom se moze definisati prefiks internog barkoda
-  * \param  - bez prefiksa, default vrijednost
-  */
-*string FmkIni_SifPath_Barkod_Prefix;
 
 
 function DodajBK(cBK)

@@ -10,6 +10,7 @@
  */
 
 #include "fakt.ch"
+#include "f18_separator.ch"
 
 function IzSifre(fSilent)
 local nPos
@@ -1846,20 +1847,20 @@ return lRet
  
 function SKCKalk(lSet)
 // knjizna obavijest obavezno, a mo§e se podesiti i za ostale dokumente
-if _idtipdok=="25" .or.;
-     IzFMKIni("FAKT","TipDok"+_idtipdok+"_OmoguciUzimanjeFCJizKALK", "N", KUMPATH)=="D"
+if _idtipdok == "25" .or.;
+    IzFMKIni("FAKT","TipDok"+_idtipdok+"_OmoguciUzimanjeFCJizKALK", "N", KUMPATH)=="D"
     if lSet
-      SET KEY K_ALT_K to UCKalk()
-      @ row()+1, 27 SAY REPLICATE("-", 26)
-      @ row()+1, 27 SAY BROWSE_COL_SEP+" <a-K> uzmi FCJ iz KALK "+BROWSE_COL_SEP
-      @ row()+1, 27 SAY REPLICATE("-", 26)
+        SET KEY K_ALT_K to UCKalk()
+        @ row()+1, 27 SAY REPLICATE("-", 26)
+        @ row()+1, 27 SAY BROWSE_COL_SEP + " <a-K> uzmi FCJ iz KALK " + BROWSE_COL_SEP
+        @ row()+1, 27 SAY REPLICATE("-", 26)
     else
-      SET KEY K_ALT_K TO
-      @ row()+1, 27 SAY "                          "
-      @ row()+1, 27 SAY "                          "
-      @ row()+1, 27 SAY "                          "
+        SET KEY K_ALT_K TO
+        @ row()+1, 27 SAY "                          "
+        @ row()+1, 27 SAY "                          "
+        @ row()+1, 27 SAY "                          "
     endif
-  endif
+endif
 return .t.
 
 

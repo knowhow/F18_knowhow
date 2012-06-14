@@ -1,3 +1,10 @@
+1.0.50 2012-06-14, vsasa
+
+  - fakt, mp faktura vrsta plaćanja [#28383](http://redmine.bring.out.ba/issues/28383)
+  - kalk, mp predispozicija u odt [#28322](http://redmine.bring.out.ba/issues/28322)
+  - fiskalne opcije prebačene na parametre po korisniku [#28380](http://redmine.bring.out.ba/issues/28380)
+  - fakt, predračun u račun iz pripreme [#28345](http://redmine.bring.out.ba/issues/28345)
+ 
 1.0.49 2012-06-12, vsasa
 
   - pos, korekcije unosa [#28361](http://redmine.bring.out.ba/issues/28361)

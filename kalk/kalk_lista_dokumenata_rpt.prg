@@ -245,6 +245,9 @@ do while !EOF() .and. IdFirma = cIdFirma
 
 		select kalk_doks
 
+	else
+		@ prow(), pcol() + 1 SAY PADR( kalk_doks->mkonto, 7 )
+		@ prow(), pcol() + 1 SAY PADR( kalk_doks->pkonto, 7 )
 	endif
 
 	@ prow(), pcol() + 1 SAY PADR( field->idpartner, 6 )

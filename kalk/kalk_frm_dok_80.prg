@@ -144,9 +144,9 @@ if fNovi
 
     _mpcsapp := UzmiMPCSif()
 
-    _TMarza2:="%"
-    _TCarDaz:="%"
-    _CarDaz:=0
+    _TMarza2 := "%"
+    _TCarDaz := "%"
+    _CarDaz := 0
 
 endif
 
@@ -193,7 +193,7 @@ ESC_RETURN K_ESC
 select koncij
 seek trim(_idkonto)
 
-StaviMPCSif(_MpcSapp, .t.)
+StaviMPCSif( _MpcSapp, .t. )
 
 select kalk_pripr
 
@@ -203,6 +203,7 @@ _MKonto:=""
 _MU_I:=""
 
 nStrana := 3
+
 return lastkey()
 
 
@@ -265,10 +266,8 @@ seek trim(_idkonto)
 select ROBA
 HSEEK _IdRoba
 
-if _mpcsapp == 0  
-    // ako nije popunjeno
-    _MPCSapp := UzmiMPCSif()
-endif
+// ako nije popunjeno
+_MPCSapp := UzmiMPCSif()
 
 _TMarza2 := "%"
 _TCarDaz := "%"
@@ -320,7 +319,7 @@ ESC_RETURN K_ESC
 select koncij
 seek trim(_idkonto)
 
-StaviMPCSif(_mpcsapp,.t.)
+StaviMPCSif( _mpcsapp, .t. )
 
 select kalk_pripr
 

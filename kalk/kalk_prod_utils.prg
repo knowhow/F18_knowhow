@@ -354,33 +354,30 @@ local nOrder
   PopWa()
   //dbsetorder(nOrder)
 return
-*}
 
 
 
 
-/*! \fn UzmiMPCSif()
- *  \brief
- */
 
 function UzmiMPCSif()
-*{
- LOCAL nCV:=0
-  if koncij->naz=="M2" .and. roba->(fieldpos("mpc2"))<>0
-    nCV:=roba->mpc2
-  elseif koncij->naz=="M3" .and. roba->(fieldpos("mpc3"))<>0
+local nCV := 0
+  
+if koncij->naz == "M2" .and. roba->(fieldpos("mpc2"))<>0
+	nCV := roba->mpc2
+elseif koncij->naz=="M3" .and. roba->(fieldpos("mpc3"))<>0
     nCV:=roba->mpc3
-  elseif koncij->naz=="M4" .and. roba->(fieldpos("mpc4"))<>0
+elseif koncij->naz=="M4" .and. roba->(fieldpos("mpc4"))<>0
     nCV:=roba->mpc4
-  elseif koncij->naz=="M5" .and. roba->(fieldpos("mpc5"))<>0
+elseif koncij->naz=="M5" .and. roba->(fieldpos("mpc5"))<>0
     nCV:=roba->mpc5
-  elseif koncij->naz=="M6" .and. roba->(fieldpos("mpc6"))<>0
+elseif koncij->naz=="M6" .and. roba->(fieldpos("mpc6"))<>0
     nCV:=roba->mpc6
-  elseif roba->(fieldpos("mpc"))<>0
+elseif roba->(fieldpos("mpc"))<>0
     nCV:=roba->mpc
-  endif
+endif
+
 return nCV
-*}
+
 
 
 
@@ -444,7 +441,15 @@ if lAzuriraj
 	SELECT ROBA
     _rec := dbf_get_rec()
     _rec[ cMpc ] := nCijena
-	update_rec_server_and_dbf( ALIAS(), _rec )
+
+	my_use_semaphore_off()
+	sql_table_update( nil, "BEGIN" )
+
+	update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+	sql_table_update( nil, "END" )
+	my_use_semaphore_on()
+
 	PopWa()
 	lRet := .t.
 endif

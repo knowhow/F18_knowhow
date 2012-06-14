@@ -652,7 +652,11 @@ if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
      _vars := dbf_get_rec()
      _vars[cPom] := nNovaVrijednost
 
-     update_rec_server_and_dbf("roba", _vars)
+	 my_use_semaphore_off()
+	 sql_table_update( nil, "BEGIN" )
+     update_rec_server_and_dbf("roba", _vars, 1, "CONT" )
+	 sql_table_update( nil, "END" )
+	 my_use_semaphore_on()
 
      select kalk_pripr
    endif

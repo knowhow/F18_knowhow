@@ -68,8 +68,8 @@ use
 
 o_kalk_edit()
 
-private gVarijanta:="2"
-private PicV:="99999999.9"
+private gVarijanta := "2"
+private PicV := "99999999.9"
 
 ImeKol:={ ;
           { "F."        , {|| IdFirma                  }, "IdFirma"     } ,;
@@ -152,6 +152,7 @@ return
 
 
 
+
 function o_kalk_edit()
 
 select F_KALK_DOKS
@@ -229,6 +230,9 @@ set order to tag "1"
 go top
 
 return
+
+
+
 
 
 // -------------------------------------------------------------
@@ -586,6 +590,7 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
         
     // TODO: popni se u odnosu na negativne brojeve
     // TODO: VIDJETI ?? negativne su protustavke ????!!! zar to ima
+
     do while !BOF()
         if VAL( field->rbr ) < 0
            skip -1
@@ -603,23 +608,23 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
 
         _ERROR := ""
            
-        if _idvd $ "16#80" .and. _idkonto2="XXX"
-            _idkonto:=cidkont
-            _idkonto2:=cidkont2
+        if _idvd $ "16#80" .and. _idkonto2 = "XXX"
+            _idkonto := cIdkont
+            _idkonto2 := cIdkont2
         endif
            
-        _Kolicina:=_GKolicina:=_GKolicin2:=0
-        _FCj:=_FCJ2:=_Rabat:=0
+        _Kolicina := _GKolicina := _GKolicin2 := 0
+        _FCj := _FCJ2 := _Rabat := 0
            
-        if !(_IdVD $ "10#81")
-            _Prevoz:=_Prevoz2:=_Banktr:=_SpedTr:=_CarDaz:=_ZavTr:=0
+        if !( _idvd $ "10#81" )
+            _Prevoz := _Prevoz2 := _Banktr := _SpedTr := _CarDaz := _ZavTr := 0
         endif
 
-        _NC:=_VPC:=_VPCSaP:=_MPC:=_MPCSaPP:=0
+        _NC := _VPC := _VPCSaP := _MPC := _MPCSaPP := 0
            
         nRbr := RbrUNum( _Rbr ) + 1
 
-        if EditPRIPR( .t. )==0
+        if EditPRIPR( .t. ) == 0
              exit
         endif
            
@@ -628,14 +633,11 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
         if _error <> "1"
             _error := "0"
         endif       
-        // stavka onda postavi ERROR
            
         if _idvd == "16"
             _oldval := _vpc * _kolicina  
-            // vrijednost prosle stavke
         else
             _oldval := _mpcsapp*_kolicina  
-            // vrijednost prosle stavke
         endif
 
         _oldvaln := _nc * _kolicina
@@ -678,8 +680,8 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
 
             BoxC()
 
-            _idkonto:=cidkont
-            _idkonto2:=cidkont2
+            _idkonto := cIdkont
+            _idkonto2 := cIdkont2
 
         endif
 
@@ -1291,9 +1293,11 @@ read
 ESC_RETURN 0
 
 if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
-    if glBrojacPoKontima .and. _idvd $ "10#16#18#IM#14#95#96"
-        Box("#Glavni konto",3,70)
-            if _idvd $ "10#16#18#IM"
+
+    if glBrojacPoKontima
+
+        Box( "#Glavni konto", 3, 70 )
+            if _idvd $ "10#16#18#IM#"
                 @ m_x+2, m_y+2 SAY "Magacinski konto zaduzuje" GET _idKonto VALID P_Konto(@_idKonto) PICT "@!"
                 read
                 cSufiks := SufBrKalk( _idKonto )
@@ -1303,11 +1307,17 @@ if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
                 cSufiks := SufBrKalk( _idKonto2 )
             endif
         BoxC()
+
         _brDok := SljBrKalk( _idvd, _idfirma, cSufiks )
+
     else
+
         _brDok := SljBrKalk( _idvd, _idfirma )
+
     endif
+
     select kalk_pripr
+
 endif
 
 @ m_x + 2, m_y + 40  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }

@@ -444,8 +444,8 @@ do while !eof() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= _dat_do
         LOOP
     endif
     
-    SELECT pos
-    SEEK pos_doks->( IdPos + IdVd + DTOS( datum ) + BrDok )
+    select pos
+    seek pos_doks->( IdPos + IdVd + DTOS( datum ) + BrDok )
     
     do while !EOF() .and. pos->( IdPos + IdVd + DTOS( datum ) + Brdok) == pos_doks->( IdPos + IdVd + DTOS( datum ) + BrDok )
                 
@@ -477,10 +477,12 @@ do while !eof() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= _dat_do
         hseek pos->idroba
         
         select pom
-        HSEEK POS->( IdPos + IdRoba + STR( cijena, 13, 4 ) + STR( ncijena, 13, 4 ) )
+        set order to tag "1"
+        go top
+        seek pos->idpos + pos->idroba + STR( pos->cijena, 13, 4 ) + STR( pos->ncijena, 13, 4 )
 
 		_kol += pos->kolicina
-		_iznos += pos->cijena
+		_iznos += ( pos->kolicina * pos->cijena )
             
 		// seekuj i cijenu i popust (koji je pohranjen u ncijena)
         if !FOUND() .or. IdTarifa <> POS->IdTarifa .or. MPC <> POS->Cijena
@@ -499,13 +501,16 @@ do while !eof() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= _dat_do
             replace idvd with POS->IdVd
             replace StMPC WITH pos->ncijena
             replace barkod with roba->barkod
+
             if !EMPTY(pos_doks->idgost)
                 replace idpartner with pos_doks->idgost
             endif
                         
             ++ _r_br
       	else
-         	replace Kolicina WITH Kolicina + _Kolicina
+            _rec := dbf_get_rec()
+            _rec["kolicina"] := _rec["kolicina"] + pos->kolicina
+            dbf_update_rec( _rec )
         endif
                 
         select pos
@@ -552,7 +557,7 @@ START PRINT CRET
 ? "Broj stavki:", ALLTRIM( STR( broj_stavki ) )
 ? 
 ? "Ukupna kolicina:", ALLTRIM( STR( kolicina, 12, 2 ) )
-? "  U kupan iznos:", ALLTRIM( STR( kolicina * iznos, 12, 2 ) )
+? "  U kupan iznos:", ALLTRIM( STR( iznos, 12, 2 ) )
 
 FF
 END PRINT
@@ -589,9 +594,9 @@ if used()
 	use
 endif
 
-my_use_temp( "POM", my_home() + "pom", .f., .f. )
+my_use_temp( "POM", my_home() + "pom", .f., .t. )
 
-index on ( "idpos + idroba + STR( mpc, 13, 4 ) + STR(stmpc, 13, 4)" ) tag "1"
+index on ( idpos + idroba + STR( mpc, 13, 4 ) + STR(stmpc, 13, 4) ) tag "1"
 
 SET ORDER TO TAG "1"
 

@@ -539,7 +539,7 @@ do while !EOF()
                 endif
 
                 if "#V#" $  trfp->naz  // stavi datum valutiranja
-                    replace datval with ddatVal
+                    replace datval with dDatVal
                     replace opis with strtran( trfp->naz, "#V#", "" )
                     IF lVrsteP
                         replace k4 with cIdVrsteP
@@ -1058,17 +1058,14 @@ local fprvi
 local n1:=n2:=n3:=n4:=n5:=n6:=n7:=n8:=n9:=na:=nb:=0
 local nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTota:=nTotb:=0
 local nCol1:=nCol2:=nCol3:=0
-
 // kontira se vise kalkulacija
 local lViseKalk := .f.
-
 private aPorezi
-aPorezi:={}
 
-dummy()
+aPorezi := {}
 
-if pcount()==0
-    fstara:=.f.
+if pcount() == 0
+    fstara := .f.
 endif
 
 if lAuto == nil
@@ -1077,171 +1074,169 @@ endif
 
 lVoSaTa := .f.
 
-
 // prvi prolaz
 
-fprvi:=.t.  
-do while  .t.
+fprvi := .t.  
 
-O_FINMAT
-O_KONTO
-O_PARTN
-O_TDOK
-O_ROBA
-O_TARIFA
+do while .t.
 
-if fStara
-    // otvara se KALK sa aliasom priprema
-    SELECT F_KALK
-    if !used()
-        O_SKALK  
+    O_FINMAT
+    O_KONTO
+    O_PARTN
+    O_TDOK
+    O_ROBA
+    O_TARIFA
+
+    if fStara
+        // otvara se KALK sa aliasom priprema
+        SELECT F_KALK
+        if !used()
+            O_SKALK  
+        endif
+    else
+        SELECT F_KALK_PRIPR
+        if !used()
+            O_KALK_PRIPR
+        endif
     endif
-else
-    SELECT F_KALK_PRIPR
-    if !used()
-        O_KALK_PRIPR
-    endif
-endif
 
-select finmat
-zap
+    select finmat
+    zap
 
-select KALK_PRIPR
-// idfirma+ idvd + brdok+rbr
-set order to tag "1" 
+    select KALK_PRIPR
+    // idfirma+ idvd + brdok+rbr
+    set order to tag "1" 
 
-if fPrvi
-    // nisu prosljedjeni parametri
-    if cIdFirma == nil
+    if fPrvi
+        // nisu prosljedjeni parametri
+        if cIdFirma == nil
     
+            cIdFirma:=IdFirma
+            cIdVD:=IdVD
+            cBrdok:=brdok
+            if empty(cIdFirma)
+                cIdFirma:=gFirma
+            endif
+            lViseKalk := .f.
+        
+        else
+            // parametri su prosljedjeni RekapK funkciji
+            lViseKalk := .t.
+        endif
+        fPrvi:=.f.
+        
+    endif
+
+    if fStara
+
+        if !lViseKalk
+
+            Box("",1, 50)
+                set cursor on
+                @ m_x+1,m_y+2 SAY "Dokument broj:"
+                if gNW $ "DX"
+                    @ m_x+1,col()+2  SAY cIdFirma
+                else
+                    @ m_x+1,col()+2 GET cIdFirma
+                endif
+                @ m_x+1,col()+1 SAY "-" GET cIdVD
+                @ m_x+1,col()+1 SAY "-" GET cBrDok
+                read
+                ESC_BCR
+            BoxC()
+        endif
+    
+        HSEEK cIdFirma+cIdVd+cBrDok
+    else
+        go top
         cIdFirma:=IdFirma
         cIdVD:=IdVD
         cBrdok:=brdok
-        if empty(cIdFirma)
-            cIdFirma:=gFirma
-        endif
-        lViseKalk := .f.
-        
-    else
-        // parametri su prosljedjeni RekapK funkciji
-        lViseKalk := .t.
     endif
-    fPrvi:=.f.
-        
-endif
 
-if fStara
+    EOF CRET
 
-    if !lViseKalk
+    if fStara .and. lAuto == .f.
+    
+        // - info o izabranom dokumentu -
+        Box("#DOKUMENT "+cIdFirma+"-"+cIdVd+"-"+cBrDok,8,77)
 
-        Box("",1, 50)
-        set cursor on
-            @ m_x+1,m_y+2 SAY "Dokument broj:"
-        if gNW $ "DX"
-            @ m_x+1,col()+2  SAY cIdFirma
-        else
-            @ m_x+1,col()+2 GET cIdFirma
-        endif
-        @ m_x+1,col()+1 SAY "-" GET cIdVD
-        @ m_x+1,col()+1 SAY "-" GET cBrDok
-        read
-        ESC_BCR
+            cDalje:="D"
+            cAutoRav := gAutoRavn
+
+            SELECT PARTN
+            HSEEK KALK_PRIPR->IDPARTNER
+            SELECT KONTO
+            HSEEK KALK_PRIPR->MKONTO
+            cPom:=naz
+            SELECT KONTO
+            HSEEK KALK_PRIPR->PKONTO
+            select kalk_pripr
+            @ m_x+2, m_y+2 SAY "DATUM------------>"             COLOR "W+/B"
+            @ m_x+2, col()+1 SAY DTOC(DATDOK)                   COLOR "N/W"
+            @ m_x+3, m_y+2 SAY "PARTNER---------->"             COLOR "W+/B"
+            @ m_x+3, col()+1 SAY IDPARTNER + "-" + PADR( partn->naz, 20 ) COLOR "N/W"
+            @ m_x+4, m_y+2 SAY "KONTO MAGACINA--->"             COLOR "W+/B"
+            @ m_x+4, col()+1 SAY MKONTO+"-"+PADR(cPom,49)       COLOR "N/W"
+            @ m_x+5, m_y+2 SAY "KONTO PRODAVNICE->"             COLOR "W+/B"
+            @ m_x+5, col()+1 SAY PKONTO+"-"+PADR(KONTO->naz,49) COLOR "N/W"
+            @ m_x+7, m_y+2 SAY "Automatski uravnotezi dokument? (D/N)" GET cAutoRav VALID cAutoRav$"DN" PICT "@!"
+            @ m_x+8, m_y+2 SAY "Zelite li kontirati dokument? (D/N)" GET cDalje VALID cDalje$"DN" PICT "@!"
+    
+            READ
         BoxC()
-    endif
-    
-    HSEEK cIdFirma+cIdVd+cBrDok
-else
-    go top
-    cIdFirma:=IdFirma
-    cIdVD:=IdVD
-    cBrdok:=brdok
-endif
-
-EOF CRET
-
-if fStara .and. lAuto == .f.
-    
-    // - info o izabranom dokumentu -
-    Box("#DOKUMENT "+cIdFirma+"-"+cIdVd+"-"+cBrDok,8,77)
-    cDalje:="D"
-    
-    cAutoRav := gAutoRavn
-
-    SELECT PARTN
-    HSEEK KALK_PRIPR->IDPARTNER
-    SELECT KONTO
-    HSEEK KALK_PRIPR->MKONTO
-    cPom:=naz
-    SELECT KONTO
-    HSEEK KALK_PRIPR->PKONTO
-    select kalk_pripr
-    @ m_x+2, m_y+2 SAY "DATUM------------>"             COLOR "W+/B"
-    @ m_x+2, col()+1 SAY DTOC(DATDOK)                   COLOR "N/W"
-    @ m_x+3, m_y+2 SAY "PARTNER---------->"             COLOR "W+/B"
-    @ m_x+3, col()+1 SAY IDPARTNER + "-" + PADR( partn->naz, 20 ) COLOR "N/W"
-    @ m_x+4, m_y+2 SAY "KONTO MAGACINA--->"             COLOR "W+/B"
-    @ m_x+4, col()+1 SAY MKONTO+"-"+PADR(cPom,49)       COLOR "N/W"
-    @ m_x+5, m_y+2 SAY "KONTO PRODAVNICE->"             COLOR "W+/B"
-    @ m_x+5, col()+1 SAY PKONTO+"-"+PADR(KONTO->naz,49) COLOR "N/W"
-    @ m_x+7, m_y+2 SAY "Automatski uravnotezi dokument? (D/N)" GET cAutoRav VALID cAutoRav$"DN" PICT "@!"
-    @ m_x+8, m_y+2 SAY "Zelite li kontirati dokument? (D/N)" GET cDalje VALID cDalje$"DN" PICT "@!"
-    
-    READ
-    BoxC()
-    IF LASTKEY()==K_ESC .or. cDalje<>"D"
-        if lViseKalk
-            exit
-        else
+        
+        IF LASTKEY()==K_ESC .or. cDalje<>"D"
+            if lViseKalk
+                exit
+            else
                 LOOP
-        endif
-    ENDIF
-endif
-
-if cIdVd=="24"
-    START PRINT CRET
-    ?
-endif
-
-nStr:=0
-nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTota:=nTotb:=nTotC:=0
-
-do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
-    cBrDok:=BrDok
-    cIdPartner:=IdPartner
-    cBrFaktP:=BrFaktP
-    dDatFaktP:=DatFaktP
-    dDatKurs:=DatKurs
-    cIdKonto:=IdKonto
-    cIdKonto2:=IdKonto2
-    
-    if cIdVd=="24" .and. (prow()==0 .or. prow()>55)
-        if prow()-gPStranica>55
-            FF
-        endif
-        P_COND
-        ?? "KALK: REKAPITULACIJA NA DAN:",date()
-        @ prow(),125 SAY "Str:"+str(++nStr,3)
+            endif
+        ENDIF
     endif
 
     if cIdVd=="24"
+        START PRINT CRET
         ?
-        ? "KALKULACIJA BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
-        select PARTN
-        HSEEK cIdPartner
     endif
 
-    if cIDVD == "24"
+    nStr:=0
+    nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTota:=nTotb:=nTotC:=0
+
+    do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
+        cBrDok:=BrDok
+        cIdPartner:=IdPartner
+        cBrFaktP:=BrFaktP
+        dDatFaktP:=DatFaktP
+        dDatKurs:=DatKurs
+        cIdKonto:=IdKonto
+        cIdKonto2:=IdKonto2
+    
+        if cIdVd=="24" .and. (prow()==0 .or. prow()>55)
+            if prow()-gPStranica>55
+                FF
+            endif
+            P_COND
+            ?? "KALK: REKAPITULACIJA NA DAN:",date()
+            @ prow(),125 SAY "Str:"+str(++nStr,3)
+        endif
+
+        if cIdVd=="24"
+            ?
+            ? "KALKULACIJA BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
+            select PARTN
+            HSEEK cIdPartner
             ?  "KUPAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
-    endif
+        endif
 
-    select KONTO
-    HSEEK cIdKonto
+        select KONTO
+        HSEEK cIdKonto
 
-    HSEEK cIdKonto2
-    select KALK_PRIPR
+        HSEEK cIdKonto2
+        select KALK_PRIPR
 
-    m:=""
-    if cidvd == "24"
+        m:=""
+        if cidvd == "24"
             m:="---- -------------- -------------- -------------- -------------- -------------- ---------- ---------- ---------- ---------- ----------"
             P_COND2
             ? m
@@ -1251,26 +1246,26 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
             else
             ? "*R. * "+left(c24T1,12)+" * "+left(c24T2,12)+" * "+left(c24T3,12)+" * "+left(c24T4,12)+" * "+left(c24T5,12)+" *   FV     * POREZ    *  POREZ   *   FV     * PRIHOD  *"
                 ? "*Br.* "+left(c24T6,12)+" * "+left(c24T7,12)+" * "+space(12)+" * "+space(12)+" * "+space(12)+" * BEZ POR  *   %      *          * SA POR   *         *"
-        endif
-        ? m
-    endif
-
-    IF lVoSaTa
-            cIdd:=idpartner+idkonto+idkonto2
-    ELSE
-            cIdd:=idpartner+brfaktp+idkonto+idkonto2
-    ENDIF
-
-    do whilesc !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
-
-        if cIdVd == "97"
-            if field->tbanktr == "X"
-                skip
-                loop
             endif
+            ? m
         endif
+
+        IF lVoSaTa
+            cIdd:=idpartner+idkonto+idkonto2
+        ELSE
+            cIdd:=idpartner+brfaktp+idkonto+idkonto2
+        ENDIF
+
+        do whilesc !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
+
+            if cIdVd == "97"
+                if field->tbanktr == "X"
+                    skip
+                    loop
+                endif
+            endif
             
-        if gMagacin<>"1" .and. ( !lVoSaTa .and. idpartner+brfaktp+idkonto+idkonto2<>cidd .or. lVoSaTa .and. idpartner+idkonto+idkonto2<>cidd )
+            if gMagacin<>"1" .and. ( !lVoSaTa .and. idpartner+brfaktp+idkonto+idkonto2<>cidd .or. lVoSaTa .and. idpartner+idkonto+idkonto2<>cidd )
                 set device to screen
                 if ! ( (idvd $ "16#80" )  .and. !empty(idkonto2)  )
                     if !idvd $ "24"
@@ -1284,9 +1279,10 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
             endif
 
             // iznosi troskova koji se izracunavaju u KTroskovi()
-            Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
+            private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
             nFV:=FCj*Kolicina
+
             if gKalo=="1"
                 SKol:=Kolicina-GKolicina-GKolicin2
             else
@@ -1294,62 +1290,62 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
             endif
 
             if cidvd=="24" .and. prow()>62
-            FF
-            @ prow(),125 SAY "Str:"+str(++nStr,3)
-        endif
-
-        select ROBA
-        HSEEK KALK_PRIPR->IdRoba
-        select TARIFA
-        HSEEK KALK_PRIPR->idtarifa
-        select KALK_PRIPR
-
-        if cIdVd == "24"
-            Tarifa(pkonto, idroba, @aPorezi, kalk_pripr->idtarifa)
-        else
-            Tarifa(pkonto, idroba, @aPorezi)
-        endif
-        
-        KTroskovi()
-
-        if cidvd=="24"
-            @ prow()+1,0 SAY  Rbr PICTURE "999"
-        endif
-
-        if cidvd=="24"
-            nCol1:=pcol()+6
-            @ prow(),pcol()+6 SAY n1:=prevoz    pict picdem
-            @ prow(),pcol()+5 SAY n2:=banktr    pict picdem
-            @ prow(),pcol()+5 SAY n3:=spedtr    pict picdem
-            @ prow(),pcol()+5 SAY n4:=cardaz    pict picdem
-            @ prow(),pcol()+5 SAY n5:=zavtr     pict picdem
-            @ prow(),pcol()+1 SAY n6:=fcj       pict picdem
-            
-            if IsPDV()
-                @ prow(),pcol()+1 SAY tarifa->opp   pict picproc
-            else
-                @ prow(),pcol()+1 SAY tarifa->vpp   pict picproc
+                FF
+                @ prow(),125 SAY "Str:"+str(++nStr,3)
             endif
+
+            select ROBA
+            HSEEK KALK_PRIPR->IdRoba
+            select TARIFA
+            HSEEK KALK_PRIPR->idtarifa
+            select KALK_PRIPR
+
+            if cIdVd == "24"
+                Tarifa(pkonto, idroba, @aPorezi, kalk_pripr->idtarifa)
+            else
+                Tarifa(pkonto, idroba, @aPorezi)
+            endif
+        
+            KTroskovi()
+
+            if cidvd=="24"
+                @ prow()+1,0 SAY  Rbr PICTURE "999"
+            endif
+
+            if cidvd=="24"
+                nCol1:=pcol()+6
+                @ prow(),pcol()+6 SAY n1:=prevoz    pict picdem
+                @ prow(),pcol()+5 SAY n2:=banktr    pict picdem
+                @ prow(),pcol()+5 SAY n3:=spedtr    pict picdem
+                @ prow(),pcol()+5 SAY n4:=cardaz    pict picdem
+                @ prow(),pcol()+5 SAY n5:=zavtr     pict picdem
+                @ prow(),pcol()+1 SAY n6:=fcj       pict picdem
             
-            @ prow(),pcol()+1 SAY n7:=nc-fcj    pict picdem
-            @ prow(),pcol()+1 SAY n8:=nc        pict picdem
-            @ prow(),pcol()+1 SAY n9:=marza     pict picdem
-            @ prow()+1,nCol1  SAY nA:=mpc       pict picdem
-            @ prow(),pcol()+5 SAY nB:=mpcsapp pict picdem
-            @ prow(),pcol()+5 SAY nJCI:=fcj3 pict picdem
-            nTot1+=n1; nTot2+=n2; nTot3+=n3; nTot4+=n4
-            nTot5+=n5; nTot6+=n6; nTot7+=n7; nTot8+=n8
-            nTot9+=n9; nTotA+=na; nTotB+=nB; nTotC+=nJCI
-        endif
+                if IsPDV()
+                    @ prow(),pcol()+1 SAY tarifa->opp   pict picproc
+                else
+                    @ prow(),pcol()+1 SAY tarifa->vpp   pict picproc
+                endif
+            
+                @ prow(),pcol()+1 SAY n7:=nc-fcj    pict picdem
+                @ prow(),pcol()+1 SAY n8:=nc        pict picdem
+                @ prow(),pcol()+1 SAY n9:=marza     pict picdem
+                @ prow()+1,nCol1  SAY nA:=mpc       pict picdem
+                @ prow(),pcol()+5 SAY nB:=mpcsapp pict picdem
+                @ prow(),pcol()+5 SAY nJCI:=fcj3 pict picdem
+                nTot1+=n1; nTot2+=n2; nTot3+=n3; nTot4+=n4
+                nTot5+=n5; nTot6+=n6; nTot7+=n7; nTot8+=n8
+                nTot9+=n9; nTotA+=na; nTotB+=nB; nTotC+=nJCI
+            endif
 
-        VtPorezi()
+            VtPorezi()
     
-        aIPor:=RacPorezeMP(aPorezi, mpc, mpcSaPP, nc)
+            aIPor:=RacPorezeMP(aPorezi, mpc, mpcSaPP, nc)
 
-        select finmat
-        append blank
+            select finmat
+            append blank
     
-        replace IdFirma   with kalk_PRIPR->IdFirma,;
+            replace IdFirma   with kalk_PRIPR->IdFirma,;
                 IdKonto   with kalk_PRIPR->IdKonto,;
                 IdKonto2  with kalk_pripr->IdKonto2,;
                 IdTarifa  with kalk_pripr->IdTarifa,;
@@ -1365,7 +1361,7 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
                 GKV       with round(kalk_PRIPR->(GKolicina*FCJ2),gZaokr),;   // vrijednost transp.kala
                 GKV2      with round(kalk_PRIPR->(GKolicin2*FCJ2),gZaokr)   // vrijednost ostalog kala
     
-        replace Prevoz    with round(kalk_PRIPR->(nPrevoz*SKol),gZaokr) ,;
+            replace Prevoz    with round(kalk_PRIPR->(nPrevoz*SKol),gZaokr) ,;
                 CarDaz    with round(kalk_PRIPR->(nCarDaz*SKol),gZaokr) ,;
                 BankTr    with round(kalk_PRIPR->(nBankTr*SKol),gZaokr) ,;
                 SpedTr    with round(kalk_PRIPR->(nSpedTr*SKol),gZaokr) ,;
@@ -1375,205 +1371,191 @@ do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
                 VPV       with round(kalk_PRIPR->(VPC*(Kolicina-GKolicina-GKolicin2)),gZaokr)        // vpv se formira nad stvarnom kolicinom
         
            
-       nPom := kalk_pripr->(RabatV/100*VPC*Kolicina)
-       nPom := round(nPom, gZaokr)
-       replace RABATV  with nPom
+            nPom := kalk_pripr->(RabatV/100*VPC*Kolicina)
+            nPom := round(nPom, gZaokr)
+            replace RABATV  with nPom
 
-       if IsPDV() .and.  kalk_pripr->idvd == "24"
-         nPom := kalk_pripr->(FCJ3 * Skol)
-         nPom := round(nPom, gZaokr)
-         replace VPVSAP with nPom
-       else
-         nPom := kalk_pripr->(VPCSaP*Kolicina)
-         nPom := round(nPom, gZaokr)
-         replace VPVSAP with  nPom
-       endif
+            if IsPDV() .and.  kalk_pripr->idvd == "24"
+                nPom := kalk_pripr->(FCJ3 * Skol)
+                nPom := round(nPom, gZaokr)
+                replace VPVSAP with nPom
+            else
+                nPom := kalk_pripr->(VPCSaP*Kolicina)
+                nPom := round(nPom, gZaokr)
+                replace VPVSAP with  nPom
+            endif
        
-       nPom := kalk_pripr->(nMarza2*(Kolicina-GKolicina-GKolicin2))
-       nPom := round(nPom, gZaokr)
-       replace Marza2 with nPom
+            nPom := kalk_pripr->(nMarza2*(Kolicina-GKolicina-GKolicin2))
+            nPom := round(nPom, gZaokr)
+            replace Marza2 with nPom
 
-       if kalk_pripr->idvd $ "14#94" 
-        nPom := kalk_pripr->(VPC*(1-RabatV/100)*MPC/100*Kolicina)
-       else
-        nPom := kalk_pripr->(MPC*(Kolicina-GKolicina-GKolicin2))
-       endif
-       nPom := round(nPom, gZaokr)
-       replace MPV with nPom
+            if kalk_pripr->idvd $ "14#94" 
+                nPom := kalk_pripr->(VPC*(1-RabatV/100)*MPC/100*Kolicina)
+            else
+                nPom := kalk_pripr->(MPC*(Kolicina-GKolicina-GKolicin2))
+            endif
+            nPom := round(nPom, gZaokr)
+            replace MPV with nPom
         
-      // PDV
+            // PDV
 
-      nPom := kalk_pripr->(aIPor[1]*(Kolicina-GKolicina-GKolicin2))
-      nPom := round(nPom, gZaokr)
-      replace Porez with nPom 
+            nPom := kalk_pripr->(aIPor[1]*(Kolicina-GKolicina-GKolicin2))
+            nPom := round(nPom, gZaokr)
+            replace Porez with nPom 
     
-      // ugostiteljstvo porez na potr
-      replace Porez2    with round(kalk_PRIPR->(aIPor[3]*(Kolicina-GKolicina-GKolicin2)),gZaokr)  
+            // ugostiteljstvo porez na potr
+            replace Porez2    with round(kalk_PRIPR->(aIPor[3]*(Kolicina-GKolicina-GKolicin2)),gZaokr)  
     
 
-      nPom := kalk_pripr->(MPCSaPP*(Kolicina-GKolicina-GKolicin2))
-      nPom := round(nPom, gZaokr)
-      replace MPVSaPP with nPom
+            nPom := kalk_pripr->(MPCSaPP*(Kolicina-GKolicina-GKolicin2))
+            nPom := round(nPom, gZaokr)
+            replace MPVSaPP with nPom
         
-      // porezv je aIPor[2] koji se ne koristi
-      nPom := kalk_pripr->(aIPor[2]*(Kolicina-GKolicina-GKolicin2))
-      nPom := round(nPom, gZaokr)
-      replace Porezv with nPom 
+            // porezv je aIPor[2] koji se ne koristi
+            nPom := kalk_pripr->(aIPor[2]*(Kolicina-GKolicina-GKolicin2))
+            nPom := round(nPom, gZaokr)
+            replace Porezv with nPom 
       
-      replace idroba    with kalk_pripr->idroba
-      replace  Kolicina  with kalk_pripr->(Kolicina-GKolicina-GKolicin2)
+            replace idroba    with kalk_pripr->idroba
+            replace  Kolicina  with kalk_pripr->(Kolicina-GKolicina-GKolicin2)
 
+            if !(kalk_pripr->IdVD $ "IM#IP")
+                replace   FV        with round(nFV,gZaokr) 
+                replace   Rabat     with round(kalk_pripr->(nFV*Rabat/100),gZaokr)
+            endif
 
-      
-      if !(kalk_pripr->IdVD $ "IM#IP")
-        replace   FV        with round(nFV,gZaokr) 
-        replace   Rabat     with round(kalk_pripr->(nFV*Rabat/100),gZaokr)
-      endif
-
-      if idvd == "IP"
-        replace  GKV2  with round(kalk_pripr->((Gkolicina-Kolicina)*MPcSAPP),gZaokr),;
+            if idvd == "IP"
+                replace  GKV2  with round(kalk_pripr->((Gkolicina-Kolicina)*MPcSAPP),gZaokr),;
                         GKol2 with kalk_pripr->(Gkolicina-Kolicina)
-      endif
+            endif
 
-      if idvd $ "14#94"
-        replace  MPVSaPP   with  kalk_pripr->( VPC*(1-RabatV/100)*(Kolicina-GKolicina-GKolicin2) )
-      endif
+            if idvd $ "14#94"
+                replace  MPVSaPP   with  kalk_pripr->( VPC*(1-RabatV/100)*(Kolicina-GKolicina-GKolicin2) )
+            endif
       
-      if !empty(kalk_pripr->mu_i)
-           select tarifa
-           hseek roba->idtarifa
-           select finmat
-           if IsPDV()
-            replace UPOREZV with  round(kalk_pripr->(nMarza*kolicina*TARIFA->OPP/100/(1+TARIFA->OPP/100)),gZaokr)
-           else
-            replace UPOREZV with  round(kalk_pripr->(nMarza*kolicina*TARIFA->VPP/100/(1+TARIFA->VPP/100)),gZaokr)
-           endif
-           select tarifa
-           hseek roba->idtarifa
-           select finmat
-          endif
+            if !empty(kalk_pripr->mu_i)
+                select tarifa
+                hseek roba->idtarifa
+                select finmat
+                if IsPDV()
+                    replace UPOREZV with  round(kalk_pripr->(nMarza*kolicina*TARIFA->OPP/100/(1+TARIFA->OPP/100)),gZaokr)
+                else
+                    replace UPOREZV with  round(kalk_pripr->(nMarza*kolicina*TARIFA->VPP/100/(1+TARIFA->VPP/100)),gZaokr)
+                endif
+                select tarifa
+                hseek roba->idtarifa
+                select finmat
+            endif
 
-          if gKalo=="2" .and.  kalk_pripr->idvd $ "10#81"  // kalo ima vrijednost po NC
-               replace GKV   with round(kalk_pripr->(GKolicina*NC),gZaokr),;   // vrijednost transp.kala
+            if gKalo=="2" .and.  kalk_pripr->idvd $ "10#81"  // kalo ima vrijednost po NC
+                replace GKV   with round(kalk_pripr->(GKolicina*NC),gZaokr),;   // vrijednost transp.kala
                        GKV2  with round(kalk_pripr->(GKolicin2*NC),gZaokr),;   // vrijednost ostalog kala
                        GKol  with round(kalk_pripr->GKolicina,gZaokr),;
                        GKol2 with round(kalk_pripr->GKolicin2,gZaokr) ,;
                        POREZV with round(nMarza*kalk_pripr->(GKolicina+Gkolicin2),gZaokr) // negativna marza za kalo
-          endif
+            endif
 
-
-          if kalk_pripr->idvd=="24"
-            replace mpv     with kalk_pripr->mpc,;
+            if kalk_pripr->idvd=="24"
+                replace mpv     with kalk_pripr->mpc,;
                     mpvsapp with kalk_pripr->mpcsapp
-          endif
-          if kalk_pripr->IDVD $ "18#19"
+            endif
+            
+            if kalk_pripr->IDVD $ "18#19"
                 replace Kolicina with 0
-          endif
+            endif
 
-      if (kalk_pripr->IdVD $ "41#42")
-            // popust maloprodaje se smjesta ovdje
-        REPLACE Rabat WITH kalk_pripr->RabatV * kalk_pripr->kolicina
-        if ALLTRIM(gnFirma) == "TEST FIRMA"
-           MsgBeep("Popust MP = finmat->rabat " + STR(Rabat, 10,2))
-        endif
-      endif
+            if (kalk_pripr->IdVD $ "41#42")
+                // popust maloprodaje se smjesta ovdje
+                REPLACE Rabat WITH kalk_pripr->RabatV * kalk_pripr->kolicina
+                if ALLTRIM(gnFirma) == "TEST FIRMA"
+                    MsgBeep("Popust MP = finmat->rabat " + STR(Rabat, 10,2))
+                endif
+            endif
 
-      if !IsPdv()
+            if !IsPdv()
 
-              if glUgost
-                  REPLACE prucmp WITH round(kalk_pripr->(aIPor[2]*(Kolicina-GKolicina-GKolicin2)),gZaokr)
-                  REPLACE porpot WITH round(kalk_pripr->(aIPor[3]*(Kolicina-GKolicina-GKolicin2)),gZaokr)
-              endif
+                if glUgost
+                    REPLACE prucmp WITH round(kalk_pripr->(aIPor[2]*(Kolicina-GKolicina-GKolicin2)),gZaokr)
+                    REPLACE porpot WITH round(kalk_pripr->(aIPor[3]*(Kolicina-GKolicina-GKolicin2)),gZaokr)
+                endif
 
 
-           if  idvd $ "14#94"
-             /// ppp porezi
-                 if  gVarVP=="2"  // unazad VPC - preracunata stopa
-                   replace POREZV with round(TARIFA->VPP/100/(1+tarifa->vpp/100)*iif(nMarza<0,0,nMarza)*Kolicina,gZaokr)
-                 endif
-           endif
-      endif
+                if  idvd $ "14#94"
+                    /// ppp porezi
+                    if  gVarVP=="2"  // unazad VPC - preracunata stopa
+                        replace POREZV with round(TARIFA->VPP/100/(1+tarifa->vpp/100)*iif(nMarza<0,0,nMarza)*Kolicina,gZaokr)
+                    endif
+                endif
+            endif
      
-      select kalk_pripr
-      skip
-   enddo // brdok
+            select kalk_pripr
+            skip
+        enddo // brdok
 
-   if cIdVd=="24"
-    ? m
-   else
-     if fStara
-       exit
-     endif
-   endif
+        if cIdVd=="24"
+            ? m
+        else
+            if fStara
+                exit
+            endif
+        endif
 
- enddo // idfirma,idvd
+    enddo // idfirma,idvd
  
- if cidvd=="24" .and. prow()>60
-    FF
-    @ prow(),125 SAY "Str:"+str(++nStr,3)
- endif
-
- if cidvd=="24"
-   ?
-   ? m
-  @ prow()+1,0      SAY  "Ukup."+cIdVD+":"
- endif
-
- if cidvd=="24"
-  @ prow(),nCol1    SAY  nTot1         picture   picdem
-  @ prow(),pcol()+5 SAY  nTot2         picture   picdem
-  @ prow(),pcol()+5 SAY  nTot3         picture   picdem
-  @ prow(),pcol()+5 SAY  nTot4         picture   picdem
-  @ prow(),pcol()+5 SAY  nTot5         picture   picdem
-  @ prow(),pcol()+1 SAY  nTot6         picture   picdem
-  @ prow(),pcol()+1 SAY  space(len(picproc))
-  @ prow(),pcol()+1  SAY  nTot7        picture   picdem
-  @ prow(),pcol()+1  SAY  nTot8        picture   picdem
-  @ prow(),pcol()+1  SAY  nTot9        picture   picdem
-  @ prow()+1,nCol1   SAY  nTota         picture   picdem
-  @ prow(),pcol()+5  SAY  nTotb         picture   picdem
-  @ prow(),pcol()+5  SAY  nTotC         picture   picdem
- endif
-
- if cidvd=="24"
-  ? m
- endif
-
-if cIdVd=="24"
-    ?
-endif
-
-if cIdVd=="24"
-    END PRINT
-endif
-
-if !fStara .or. lAuto == .t.
-    exit
-else
-
-    cIdFirma:=idfirma
-    cIdVd:=idvd
-    cBrdok:=brdok
-
-    if !lViseKalk
-        close all
+    if cidvd=="24" .and. prow()>60
+        FF
+        @ prow(),125 SAY "Str:"+str(++nStr,3)
     endif
 
-    kalk_kontiranje_naloga(.f., nil, lViseKalk)
-    
-    // automatska ravnoteza naloga
-    if cAutoRav == "D"
-        KZbira( .t. )
+    if cidvd == "24"
+        ?
+        ? m
+        @ prow()+1,0      SAY  "Ukup."+cIdVD+":"
+        @ prow(),nCol1    SAY  nTot1         picture   picdem
+        @ prow(),pcol()+5 SAY  nTot2         picture   picdem
+        @ prow(),pcol()+5 SAY  nTot3         picture   picdem
+        @ prow(),pcol()+5 SAY  nTot4         picture   picdem
+        @ prow(),pcol()+5 SAY  nTot5         picture   picdem
+        @ prow(),pcol()+1 SAY  nTot6         picture   picdem
+        @ prow(),pcol()+1 SAY  space(len(picproc))
+        @ prow(),pcol()+1  SAY  nTot7        picture   picdem
+        @ prow(),pcol()+1  SAY  nTot8        picture   picdem
+        @ prow(),pcol()+1  SAY  nTot9        picture   picdem
+        @ prow()+1,nCol1   SAY  nTota         picture   picdem
+        @ prow(),pcol()+5  SAY  nTotb         picture   picdem
+        @ prow(),pcol()+5  SAY  nTotC         picture   picdem
+        ? m
+        ?
+        END PRINT
     endif
 
-    // ne vrti se ukrug u ovoj do wile petlji
-    if lViseKalk
+    if !fStara .or. lAuto == .t.
         exit
+    else
+
+        cIdFirma:=idfirma
+        cIdVd:=idvd
+        cBrdok:=brdok
+
+        if !lViseKalk
+            close all
+        endif
+
+        kalk_kontiranje_naloga(.f., nil, lViseKalk)
+    
+        // automatska ravnoteza naloga
+        if cAutoRav == "D"
+            KZbira( .t. )
+        endif
+
+        // ne vrti se ukrug u ovoj do wile petlji
+        if lViseKalk
+            exit
+        endif
+
     endif
 
-endif
-
-enddo // do while .t.
+enddo 
 
 if fStara .and. !lViseKalk
     select kalk_pripr
@@ -1581,18 +1563,12 @@ if fStara .and. !lViseKalk
 endif
 
 if !lViseKalk
-    closeret
+    close all
+    return
 endif
 
 return
 
-
-static function dummy()
-  
-if (1==2)
-    IsPdvObveznik("XYZ")
-endif
-return nil
 
 // -----------------------------------
 // kontiraj vise dokumenata u jedan

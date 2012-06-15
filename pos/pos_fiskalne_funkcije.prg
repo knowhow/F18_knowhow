@@ -235,16 +235,18 @@ if nErr <> 0
 	msgbeep("Postoji greska !!!")
 
 else
-	if gFC_nftxt == "D"
+	
+    if gFC_nftxt == "D"
 		// printaj non-fiscal tekst
 		// u ovom slucaju broj racuna
 		fp_nf_txt( ALLTRIM( gFC_path), ALLTRIM( gFC_name), cNF_txt )
 	endif
-
-	msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR(nFisc_no)) )
 	
-	if nFisc_no <> 0
+    if nFisc_no <> 0
 		_update_fisc_rn( nFisc_no )
+    	msgo( "Kreiran fiskalni racun broj: " + ALLTRIM( STR( nFisc_no ) ) )
+	    sleep(2)
+        msgc()
 	endif
 
 endif

@@ -1,3 +1,8 @@
+1.0.53 2012-06-15, vsasa
+
+  - pos, update broj fiskalnog računa nakon štampe, korekcije
+  - kalk, predispozicija, svođenje mpc sa porezom, korekcije
+
 1.0.52 2012-06-15, vsasa
 
   - pos, ažuriranje bez rezervacije broja [#28397](http://redmine.bring.out.ba/issues/28397)

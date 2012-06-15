@@ -213,7 +213,7 @@ return lastkey()
 // _odlval nalazi se u knjiz, filuje staru vrijenost
 // _odlvalb nalazi se u knjiz, filuje staru vrijenost nabavke
 function Get1_80b()
-local cSvedi := "M"
+local cSvedi := fetch_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), " " )
 local _x := 2
 local _kord_x := 0
 local _unos_left := 40
@@ -231,8 +231,10 @@ Beep(1)
 
 read
 
-_x := 12
+// zapamti zadnji unos
+set_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), cSvedi )
 
+_x := 12
 _kord_x := m_x + _x 
 
 @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
@@ -267,7 +269,6 @@ hseek _idroba
 
 // ako nije popunjeno
 _mpcsapp := UzmiMPCSif()
-
 _TMarza2 := "%"
 _TCarDaz := "%"
 _CarDaz := 0
@@ -311,8 +312,8 @@ else
     @ m_x + _x, m_y+2 SAY "MPC SA POREZOM:"
 endif
 
-@ m_x + _x, m_y + _unos_left GET _MPCSaPP PICT PicDEM ;
-     valid {|| Svedi( cSvedi ), VMpcSapp_lv(nil, nil, aPorezi) }
+@ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
+     valid {|| Svedi( cSvedi ), VMpcSapp_lv( nil, nil, aPorezi ) }
 
 read
 

@@ -377,8 +377,7 @@ return .t.
  *  \note koriste se lokalne varijable
  */
 
-function VMpcSaPP_lv(fRealizacija, fMarza, aPorezi, lShowGets)
-*{
+function VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
 local nPom
 
 if lShowGets == nil
@@ -386,22 +385,22 @@ if lShowGets == nil
 endif
 
 if fRealizacija==NIL
-  fRealizacija:=.f.
+    fRealizacija:=.f.
 endif
 
 if fRealizacija
-   nPom:=_mpcsapp
+    nPom := _mpcsapp
 else
-   nPom:=_mpcsapp
+    nPom := _mpcsapp
 endif
 
 if fMarza==nil 
-  fMarza:=" "
+    fMarza := " "
 endif
 
-if _mpcsapp<>0 .and. empty(fMarza)
-  _mpc:= MpcBezPor (nPom, aPorezi, , _nc) - _rabatv
-  _marza2:=0
+if _mpcsapp <> 0 .and. EMPTY( fMarza )
+  _mpc := MpcBezPor (nPom, aPorezi, , _nc) - _rabatv
+  _marza2 := 0
   if fRealizacija
     Marza2R()
   else  

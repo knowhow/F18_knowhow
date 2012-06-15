@@ -124,7 +124,7 @@ DO WHILE !eof() .and. eval(b2)
          @ prow(),pcol()+1 SAY padr(BrDok,11)
        endif
        @ prow(),pcol()+1 SAY DatDok
-       if cDatVal=="D"
+       if gDatVal=="D"
          @ prow(),pcol()+1 SAY DatVal
        else
          @ prow(),pcol()+1 SAY space(8)

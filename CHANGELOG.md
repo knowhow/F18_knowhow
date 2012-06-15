@@ -1,3 +1,7 @@
+1.0.55 2012-06-15, vsasa
+
+  - fin, datum valute, bugfix
+ 
 1.0.54 2012-06-15, vsasa
 
   - fakt, setovanje broja fiskalnog računa, bugfix BEGIN/END transakcija

@@ -219,7 +219,7 @@ return
 function DnevnikNaloga()
 
 LOCAL cMjGod:=""
- private fK1:=fk2:=fk3:=fk4:=cDatVal:="N",gnLOst:=0,gPotpis:="N"
+ private fK1:=fk2:=fk3:=fk4:="N",gnLOst:=0,gPotpis:="N"
  private nColIzn:=20
   O_PARAMS
   Private cSection:="1",cHistory:=" ",aHistory:={}
@@ -228,7 +228,6 @@ LOCAL cMjGod:=""
   RPar("k2",@fk2)
   RPar("k3",@fk3)
   RPar("k4",@fk4)
-  RPar("dv",@cDatVal)
   RPar("li",@gnLOSt)
   RPar("po",@gPotpis)
   select params

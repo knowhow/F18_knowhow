@@ -28,7 +28,6 @@ private fK1:="N"
 private fk2:="N"
 private fk3:="N"
 private fk4:="N"
-private cDatVal:="N"
 private gnLOst:=0
 private gPotpis:="N"
 
@@ -39,7 +38,6 @@ RPar("k1",@fk1)
 RPar("k2",@fk2)
 RPar("k3",@fk3)
 RPar("k4",@fk4)
-RPar("dv",@cDatVal)
 RPar("li",@gnLOSt)
 RPar("po",@gPotpis)
 select params

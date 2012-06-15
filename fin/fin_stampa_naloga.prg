@@ -223,6 +223,17 @@ return
 
 
 
+static function _o_tables()
+O_PSUBAN
+O_PARTN
+O_PANAL
+O_PSINT
+O_PNALOG
+O_KONTO
+O_TNAL
+return
+
+
 /*! \fn SintStav(lAuto)
  *  \brief Formiranje sintetickih stavki
  *  \param lAuto
@@ -234,13 +245,7 @@ if lAuto == NIL
 	lAuto := .f.
 endif
 
-O_PSUBAN
-O_PARTN
-O_PANAL
-O_PSINT
-O_PNALOG
-O_KONTO
-O_TNAL
+_o_tables()
 
 select PANAL
 zap
@@ -254,13 +259,14 @@ set order to tag "2"
 go top
 
 if EMPTY( BrNal )
-	closeret
+	close all
+    return
 endif
 
 A := 0
 
 // svi nalozi
-DO WHILE !eof()  
+DO WHILE !EOF()  
 
    nStr:=0
    nD1:=nD2:=nP1:=nP2:=0
@@ -356,27 +362,32 @@ DO WHILE !eof()
            DugBHD WITH nD1,PotBHD WITH nP1,;
            DugDEM WITH nD2,PotDEM WITH nP2
 
-   private cDN:="N"
+   private cDN := "N"
 
-   if !lAuto
-     Box(, 2, 58)
-       @ m_x+1, m_y+2 SAY "Stampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN pict "@!" valid cDN $ "DN"
-       if gDatNal=="D"
-        @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
-       endif
-       read
-     BoxC()
-   endif
+    if !lAuto
+        Box(, 2, 58)
+            @ m_x+1, m_y+2 SAY "Stampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN pict "@!" valid cDN $ "DN"
+            if gDatNal == "D"
+                @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
+            endif
+            read
+        BoxC()
+    endif
 
-   if cDN=="D"
-     select panal
-     seek cIdfirma + cIdvn +cBrnal
-     StOSNal(.f.)    // stampa se priprema
-   endif
+    _rec_suban := psuban->(RECNO())
+    
+    if cDN == "D"
+        select panal
+        seek cIdfirma + cIdvn + cBrnal
+        StOSNal(.f.)    // stampa se priprema
+    endif
 
-   SELECT PSUBAN
+    _o_tables()
+    SELECT PSUBAN
+    go ( _rec_suban )
 
 ENDDO  
+
 // svi nalozi
 
 select PANAL

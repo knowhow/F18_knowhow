@@ -1,3 +1,7 @@
+1.0.54 2012-06-15, vsasa
+
+  - fakt, setovanje broja fiskalnog računa, bugfix BEGIN/END transakcija
+ 
 1.0.53 2012-06-15, vsasa
 
   - pos, update broj fiskalnog računa nakon štampe, korekcije

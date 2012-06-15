@@ -800,14 +800,19 @@ do case
     BoxC()
     
     if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
+
         my_use_semaphore_off()
         sql_table_update( nil, "BEGIN" )
+
         _rec := dbf_get_rec()
         _rec["fisc_rn"] := nFiscal
         _rec["fisc_st"] := nRekl
+
         update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
-        sql_table_update( nil, "BEGIN" )
+
+        sql_table_update( nil, "END" )
         my_use_semaphore_on()
+
         return DE_REFRESH
     endif
   

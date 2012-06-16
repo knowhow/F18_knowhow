@@ -43,7 +43,7 @@ return
 
 
 
-function DodajNaRacun( cBrojRn )
+function dodajnaracun( cBrojRn )
 
 set cursor on
 
@@ -53,7 +53,7 @@ else
 	cBrojRn := cBrojRn
 endif
 
-UnesiNarudzbu( cBrojRn, _POS->Sto )
+UnesiNarudzbu( cBrojRn, _pos->sto )
 
 return
 
@@ -61,13 +61,13 @@ return
 // --------------------------------------------
 // unos novog racuna 
 // --------------------------------------------
-function NoviRacun()
+function noviracun()
 local cBrojRn
 local cBr2 
-local cSto:=SPACE(3)
-local dx:=3
+local cSto := SPACE(3)
+local dx := 3
 
-SELECT _POS
+select _pos
 set cursor on
 
 // novi broj racuna...
@@ -76,6 +76,7 @@ cBrojRn := "PRIPRE"
 if gStolovi == "D"
 
     set cursor on
+
 	Box(, 6, 40)
 		cStZak := "N"
 		@ m_x+2, m_y+10 SAY "Unesi broj stola:" GET cSto VALID (!Empty(cSto) .and. VAL(cSto) > 0) PICT "999"
@@ -105,7 +106,7 @@ if gStolovi == "D"
 endif
 
 // unesi stavke narudzbe
-UnesiNarudzbu( cBrojRn, cSto )
+unesinarudzbu( cBrojRn, cSto )
 
 return
 

@@ -101,38 +101,27 @@ set order to tag "1"
 nIznNar := 0
 nPopust := 0
 
+
+_calc_current_total( @nIznNar, @nPopust )
+
 select _pos_pripr
-go top
-
-do while !EOF()
-    
-    if ( idradnik + idpos + idvd + smjena ) <> ( gIdRadnik + gidpos + VD_RN + gSmjena )
-        delete  
-    else
-      	nIznNar += _pos_pripr->( kolicina * cijena )
-       	nPopust += _pos_pripr->( kolicina * ncijena )
-    endif
-    
-    skip
-
-enddo
-
 set order to
 go top
 
+// uzmi varijable _pos_pripr
 scatter() 
  
-_IdPos:=gIdPos
-_IdVd:=VD_RN
-_BrDok:=cBrojRn
 gDatum := DATE()
-_Datum := gDatum
-_Sto:=cSto
-_Smjena:=gSmjena
-_IdRadnik:=gIdRadnik
-_IdCijena:=gIdCijena
-_Prebacen:=OBR_NIJE
-_MU_I:= R_I
+_idpos := gIdPos
+_idvd := VD_RN
+_brdok := cBrojRn
+_datum := gDatum
+_sto := cSto
+_smjena := gSmjena
+_idradnik := gIdRadnik
+_idcijena := gIdCijena
+_prebacen := OBR_NIJE
+_mu_i := R_I
 
 if gStolovi == "D"
     _sto_br := VAL(cSto)
@@ -156,15 +145,16 @@ do while .t.
     enddo
 
     _idroba := SPACE( LEN( _idroba ) )
-    _Kolicina := 0
+    _kolicina := 0
 
     @ m_x + 2, m_y + 25 SAY SPACE (40)
     set cursor on
 
-    if gDuzSifre <> nil .and. gDuzSifre > 0
+    // duzina naziva robe na unosu...
+    if gDuzSifre > 0
         cDSFINI := ALLTRIM( STR( gDuzSifre ) )
     else
-        cDSFINI := IzFMKINI('SifRoba','DuzSifra','10')
+        cDSFINI := "10"
     endif
     
     @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
@@ -189,86 +179,36 @@ do while .t.
     // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
     
-    cParticip := "N"
-    
     @ m_x + 4, m_y + 25 SAY space (11)
 
+    // zakljuci racun
     if LASTKEY() == K_ESC
         EXIT
-    else
-        
-        SELECT ODJ
-        HSEEK SPACE(2)
-        
-        if gVodiOdj == "N" .or. FOUND()
-            
-            select _pos_pripr
-            append blank
- 
-            _RobaNaz:=ROBA->Naz
-            _Jmj:=ROBA->Jmj
-            _IdTarifa:=ROBA->IdTarifa
-
-            if !(roba->tip=="T")
-                    _Cijena:=ROBA->mpc
-            endif
-            
-            if gVodiOdj=="D"
-                _IdOdj:=ROBA->IdOdj
-            else
-                _IdOdj:=SPACE(2)
-            endif
-            
-            if gModul=="HOPS"
-                    
-                if gVodiTreb=="D".and.ROBA->Tip<>"I"
-                        
-                    // I -inventar
-                        _GT:=OBR_NIJE
-                        
-                    if gRadniRac=="D"
-                        _M1:="S"
-                    else
-                        _M1:=" "
-                    endif
-                    else
-                        // za inventar se ne pravi trebovanje, ni u kom slucaju
-                        _GT := OBR_JEST
-                    endif
-                
-                    SELECT ROBAIZ
-                HSEEK (_IdRoba)
-                    
-                if FOUND()
-                        _IdDio:=ROBAIZ->IdDio
-                    else
-                        _IdDio:=gIdDio
-                    endif
-                    
-                select _pos_pripr
-                
-            endif
-
-            // _PRIPR
-            Gather()
-
-            // utvrdi stanje racuna
-            nIznNar += cijena * kolicina
-            nPopust += ncijena * kolicina
-            oBrowse:goBottom()
-            oBrowse:refreshAll()
-            oBrowse:dehilite()
-            
-        else   
-            
-            // nije nadjeno odjeljenje ??
-            select _pos_pripr
-            MsgBeep("Za robu " + ALLTRIM(_IdRoba) + " nije odredjeno odjeljenje!#" + "Izdavanje nije moguce!" )
-
-        endif
-
     endif
+    
+    // dodaj stavku racuna
+    select _pos_pripr
+    append blank
+ 
+    _robanaz := roba->naz
+    _jmj := roba->jmj
+    _idtarifa := roba->idtarifa
+    _idodj := SPACE(2)
 
+    if !( roba->tip == "T" )
+        _cijena := roba->mpc
+    endif
+            
+    // _pos_pripr
+    Gather()
+
+    // utvrdi stanje racuna
+    nIznNar += cijena * kolicina
+    nPopust += ncijena * kolicina
+    oBrowse:goBottom()
+    oBrowse:refreshAll()
+    oBrowse:dehilite()
+            
 enddo
 
 CancelKeys( aAutoKeys )
@@ -280,6 +220,8 @@ UnSetSpecNar()
 BoxC()
 
 return (.t.)
+
+
 
 // ----------------------------------------------
 // obrada popusta
@@ -301,14 +243,8 @@ static function _refresh_total()
 local _iznos := 0
 local _popust := 0
 
-select _pos_pripr
-go top
-
-do while !EOF()
-    _iznos += _pos_pripr->( kolicina * cijena )
-    _popust += _pos_pripr->( kolicina * ncijena )
-    skip
-enddo
+// izracunaj trenutni total...
+_calc_current_total( @_iznos, @_popust )
 
 nIznNar := _iznos
 nPopust := _popust
@@ -324,6 +260,29 @@ go top
 
 return .t.
 
+
+// --------------------------------------------------------------
+// izracunava trenutni total u pripremi
+// --------------------------------------------------------------
+static function _calc_current_total( iznos, popust )
+local _t_area := SELECT()
+local _iznos := 0
+local _popust := 0
+
+select _pos_pripr
+go top
+
+do while !EOF()
+    _iznos += _pos_pripr->( kolicina * cijena )
+    _popust += _pos_pripr->( kolicina * ncijena )
+    skip
+enddo
+
+iznos := _iznos
+popust := _popust
+
+select ( _t_area )
+return
 
 
 

@@ -260,7 +260,7 @@ if PCOUNT() == 0
 
 endif
 
-SELECT POS
+select pos
 Seek2( cIdPos + cIdVd + DTOS(dDatum) + cBrDok )
 
 do while !EOF() .and. POS->( IdPos + IdVd + DTOS( datum ) + BrDok ) == ( cIdPos + cIdVd + DTOS( dDatum ) + cBrDok )
@@ -337,14 +337,13 @@ cRet:=STR(nIznos,13,2)
 return (cRet)
 
 
-
-
-function _Pripr2_POS(cIdVrsteP)
+// -------------------------------------------------------------
+// prebacuje stavke iz tabele _pos_pripr u tabelu _pos
+// -------------------------------------------------------------
+function _pripr2_pos( cIdVrsteP )
 local cBrdok
 local nTrec := 0
 local nPopust
-
-// prebacit ce u _POS sadrzaj _PRIPR
 
 if cIdVrsteP == nil
 	cIdVrsteP := ""
@@ -364,9 +363,9 @@ do while !eof()
 	select _pos
 	append blank
 	
-	if (gRadniRac=="N")
-		// u _PRIPR mora biti samo jedan dokument!!!
-		_brdok:=cBrDok   
+	if ( gRadniRac == "N" )
+		// u _pos_pripr mora biti samo jedan dokument!!!
+		_brdok := cBrDok   
 	endif
 
 	_IdVrsteP := cIdVrsteP
@@ -382,11 +381,14 @@ do while !eof()
 	
 	select _pos_pripr
 	skip
+
 enddo
 
+// pobrisi mi _pos_pripr
 select _pos_pripr
-Zapp () 
+Zapp() 
 __dbPack()
+
 return
 
 
@@ -834,64 +836,66 @@ local cBrDok
 
 do case
 	case cIdVd == VD_ZAD
-			cSta:="zaduzenja"
+        cSta := "zaduzenja"
 	case cIdVd == VD_OTP
-			cSta:="otpisa"
+		cSta := "otpisa"
 	case cIdVd == VD_INV
-			cSta:="inventure"
+		cSta := "inventure"
 	case cIdVd == VD_NIV
-			cSta:="nivelacije"
+		cSta := "nivelacije"
 	otherwise 
-		cSta:="ostalo"
+		cSta := "ostalo"
 endcase
 
-SELECT _POS
-set order to 2         
+select _pos
+set order to tag "2"         
 // IdVd+IdOdj+IdRadnik
 
-Seek cIdVd+cIdOdj+cIdDio
+seek cIdVd+cIdOdj+cIdDio
 
 if FOUND()      
 // .and. (Empty (cIdDio) .or. _POS->IdDio==cIdDio)
-	if _POS->IdRadnik <> cIdRadnik
-			// ne mogu dopustiti da vise radnika radi paralelno inventuru, nivelaciju
-			// ili zaduzenje
-			MsgBeep ("Drugi radnik je poceo raditi pripremu "+cSta+"#"+"AKO NASTAVITE, PRIPREMA SE BRISE!!!", 30)
-			if Pitanje(,"Zelite li nastaviti?", " ")=="N"
-				return .f.
-			endif
-			// xIdRadnik := _POS->IdRadnik
-			do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)     
-			// IdRadnik, xIdRadnik
+	if _pos->idradnik <> cIdRadnik
+		// ne mogu dopustiti da vise radnika radi paralelno inventuru, nivelaciju
+		// ili zaduzenje
+		MsgBeep ("Drugi radnik je poceo raditi pripremu "+cSta+"#"+"AKO NASTAVITE, PRIPREMA SE BRISE!!!", 30)
+		if Pitanje(,"Zelite li nastaviti?", " ")=="N"
+			return .f.
+		endif
+		// xIdRadnik := _POS->IdRadnik
+		do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)     
+		    // IdRadnik, xIdRadnik
+			Del_Skip()
+		enddo
+		MsgBeep("Izbrisana je priprema "+cSta)
+	else
+		Beep (3)
+		if Pitanje(,"Poceli ste pripremu! Zelite li nastaviti? (D/N)"," ") == "N"
+			// brisanje prethodne pripreme
+			do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
 				Del_Skip()
 			enddo
-			MsgBeep("Izbrisana je priprema "+cSta)
-	else
-			Beep (3)
-			if Pitanje(,"Poceli ste pripremu! Zelite li nastaviti? (D/N)"," ") == "N"
-				// brisanje prethodne pripreme
-				do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
-					Del_Skip()
-				enddo
-				MsgBeep ("Priprema je izbrisana ... ")
-			else
-				// vrati ono sto je poceo raditi
-				SELECT _POS
-				do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
-					Scatter()
-					SELECT PRIPRZ
-					Append Blank
-					Gather()
-					SELECT _POS
-					Del_Skip()
-				enddo
+			MsgBeep ("Priprema je izbrisana ... ")
+		else
+			// vrati ono sto je poceo raditi
+			SELECT _POS
+			do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
+				Scatter()
 				SELECT PRIPRZ
-				GO TOP
-			endif
+				Append Blank
+				Gather()
+				SELECT _POS
+				Del_Skip()
+			enddo
+			SELECT PRIPRZ
+			GO TOP
+		endif
 	endif
 endif
+
 SELECT _POS
-Set order to 1
+Set order to tag "1"
+
 return .t.
 
 
@@ -948,15 +952,6 @@ if field->idpos == id_pos .and. field->idvd == tip_dokumenta .and. DTOS( field->
 else
     _broj_doks := 0
 endif
-
-// ako je tip sezone na mjesecnom nivou
-//if gSezonaTip == "M"
-  //  if MONTH( field->datum ) < MONTH( dat_dok )
-        // resetuj brojace...
-    //    _broj_doks := 0
-    //    _broj := 0
-  //  endif
-//endif
 
 // uzmi sta je vece, doks broj ili globalni brojac
 _broj := MAX( _broj, _broj_doks )
@@ -1017,88 +1012,6 @@ endif
 return
 
 
-// -----------------------------------------------------------------
-// ovo je stara funkcija za dodjeljivanje broja...
-// ostavljam je za slucaj da sta bude potrebno 
-// -----------------------------------------------------------------
-function pos_naredni_dokument( cIdPos, cIdVd, cPadCH, dDat )
-local cBrDok
-local cFilter
-local nRecs:=RecCount2()
-local cBrDok1
-local nObr:=0
-
-if dDat==nil
-	dDat:=gDatum
-endif
-
-set order to tag "1"
-seek cIdPos+cIdVd+chr(254)
-
-if ( IdPos+IdVd )<>( cIdPos+cIdVd )
-	skip -1
-endif
-
-if (IdPos+IdVd)<>(cIdPos+cIdVd) .or. (year(dDat)>year(datum)) .or. (gSezonaTip=="M" .and. month(dDat)>month(datum) ) // m-tip i mjesec razlicit
-	cBrDok:=SPACE(LEN(BrDok))
-else
-	cBrDok:=BrDok
-endif
-
-cBrdok:=(IncID(cBrDok,cPadCh))
-cBrDok1:=cBrDok
-nObr:=0
-
-do while .t.
-	if nObr>nRecs
-		// reindeksiraj pa trazi ispocetka
-		Reind_PB()
-		cBrDok:=cBrDok1
-		nObr:=0
-	endif
-	SEEK cidpos+cidvd+dtos(dDat)+cbrdok
-	if FOUND()
-		++nObr
-		cBrDok:=IncID (cBrDok, cPadCh)
-	else
-		EXIT
-	endif
-enddo
-return cBrDok
-
-
-
-
-/*! \fn Reind_PB()
- *  \brief Reindeksiraj _POS i DOKS 
- */
- 
-function Reind_PB()
-
-local cAlias:=ALIAS(SELECT())
-
-MsgO("Indeksi nisu u redu?! Sacekajte trenutak da reindeksiram...")   
-
-if UPPER(cAlias)="_POS"
-	SELECT _POS
-	USE
-    O__POS
-    reindex
-	USE
-    O__POS
-elseif UPPER(cAlias)="POS_DOKS"
-    select pos_doks
-	USE
-    O_POS_DOKS
-    reindex
-	USE
-    O_POS_DOKS
-endif
-MsgC()
-
-return
-
-
 
 function Del_Skip()
 local nNextRec
@@ -1125,9 +1038,10 @@ function pos_generisi_doks_iz_pos()
 local _rec
 local _app
 
-if !SigmaSif("GENDOKS")
+//if !SigmaSif("GENDOKS")
+// ovo je opasno !!!!
 	return
-endif
+//endif
 
 close all
 
@@ -1140,7 +1054,7 @@ Box(,1,60)
 BoxC()
 
 if Empty(ALLTRIM(cTipDok)) .and. Pitanje(,"Izbrisati doks ??","N")=="D"
-	ZAPP()
+	//ZAPP()
 endif
 
 O_POS
@@ -1219,17 +1133,20 @@ return (lVrati)
 
 
 
-function Pos2_Pripr()
+function pos2_pripr()
 local _rec
 
 select _pos_pripr
 
 Zapp()
+__dbPack()
 
-Scatter()
+go top
+scatter()
 
-SELECT POS
-seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+select pos
+seek pos_doks->( IdPos+IdVd+dtos(datum)+BrDok )
+
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
 	_rec := dbf_get_rec()
@@ -1241,15 +1158,17 @@ do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd
 	_rec["jmj"] := roba->jmj
 
 	select _pos_pripr
-	Append Blank 
+	append blank 
 
 	dbf_update_rec( _rec )
 
-	SELECT POS
-	SKIP
+	select pos
+	skip
 
 enddo
+
 select _pos_pripr
+
 return
 
 
@@ -1334,6 +1253,8 @@ MsgO("brisem pripremu....")
 SELECT PRIPRZ
 
 Zapp()
+__dbPack()
+
 MsgC()
 
 return

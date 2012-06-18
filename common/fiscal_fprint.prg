@@ -278,6 +278,8 @@ local cType := "F"
 
 
 Box(,10,60)
+
+    SET CURSOR ON
 	
 	@ m_x + 1, m_y + 2 SAY "Za datum od:" GET dD_from 
 	@ m_x + 1, col() + 1 SAY "vrijeme od (hh:mm):" GET cTH_from
@@ -652,8 +654,6 @@ if gFC_acd == "D" .and. _rpt_type == "Z"
 	// setuj brojac PLU na 0 u parametrima !
 	auto_plu( .t., .t., nDevice )
 	msgbeep("Stanje fiskalnog uredjaju je nulirano.")
-
-
 
 endif
 
@@ -1658,9 +1658,9 @@ return
 function fp_d_out( cFile )
 
 if FILE( cFile )
- if FERASE( cFile ) = -1
-	msgbeep("Greska sa brisanjem izlaznog fajla !")
- endif
+    if FERASE( cFile ) = -1
+	    msgbeep("Greska sa brisanjem izlaznog fajla !")
+    endif
 endif
 
 return
@@ -1711,15 +1711,22 @@ do while nTime > 0
 	
 	-- nTime
 
+	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
+		ALLTRIM( STR(nTime) ), 48)
+
 	if FILE( cF_name )
 		// fajl se pojavio - izadji iz petlje !
 		exit
 	endif
 
-	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
-		ALLTRIM( STR(nTime) ), 48)
+    if nTime == 0 .or. LastKey() == K_ESC
+        BoxC()
+        nFisc_no := 0
+        return -9
+    endif
 
 	sleep(1)
+
 enddo
 
 BoxC()

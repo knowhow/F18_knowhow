@@ -543,6 +543,9 @@ local lIno := .f.
 local cPOslob := ""
 local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
 local nU_total
+local _cnt := 0
+local lPDVObveznik := .f.
+local _prikazi_partnera := .f.
 
 O_FAKT_DOKS
 O_FAKT
@@ -551,8 +554,8 @@ O_SIFK
 O_SIFV
 
 // ako se ne koristi opcija fiscal, izadji !
-if gFc_use == "N"
-    return
+if gFc_use == "N" .or. gFc_fisc_print == "N"
+    return 0
 endif
 
 select fakt_doks
@@ -572,6 +575,8 @@ nTRec := RECNO()
 do while !EOF() .and. field->idfirma == cFirma ;
     .and. field->idtipdok == cTipDok ;
     .and. field->brdok == cBrDok
+    
+    ++ _cnt
 
     if field->kolicina > 0
         lStorno := .f.
@@ -580,6 +585,11 @@ do while !EOF() .and. field->idfirma == cFirma ;
     
     skip
 enddo
+
+if _cnt == 0
+    MsgBeep( "Za ovaj racun ne postoje stavke u tabeli FAKT !#Stampa nije moguca..." )
+    return 0
+endif
 
 // koji je broj racuna koji storniramo
 if lStorno 
@@ -612,24 +622,38 @@ if !EMPTY( cPartnId )
     cJibPartn := ALLTRIM( IzSifK( "PARTN" , "REGB", cPartnId, .f. ) )
     cPOslob := ALLTRIM( IzSifK( "PARTN" , "PDVO", cPartnId, .f. ) )
 
-    if LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob )
+    if cTipDok $ "#11#"
         
+        // ovo je NN kupac
+        // jednostavno za njega nadji podatke
+        lIno := .f.
+        lPDVObveznik := .t.
+
+        _prikazi_partnera := .f.
+
+    elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
+
         lIno := .t.
+
+        if !EMPTY( cPOslob )
+            _prikazi_partnera := .t.
+        endif
     
     elseif LEN( cJibPartn ) = 12
-
-        // ako je pdv obveznik
-        // dodaj "4" ispred id broja
-        
-        cJibPartn := "4" + ALLTRIM( cJibPartn )
-        
+                
         lIno := .f.
+        lPDVObveznik := .t.
+        _prikazi_partnera := .t.
+
+    elseif LEN( cJibPartn ) > 12
+
+        lIno := .f.
+        lPDVObveznik := .f.
+        _prikazi_partnera := .t.
 
     endif
 
-    // ako nije INO, onda setuj partnera
-
-    if lIno = .f.
+    if _prikazi_partnera
         
         nTarea := SELECT()
     
@@ -641,6 +665,7 @@ if !EMPTY( cPartnId )
         // provjeri podatke partnera
         lPEmpty := .f.
         lPEmpty := EMPTY( cJibPartn )
+
         if !lPEmpty
             lPEmpty := EMPTY( partn->naz )
         endif
@@ -828,6 +853,7 @@ return nErr
 
 
 
+
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na FPRINT uredjaj
 // -------------------------------------------------------------
@@ -866,7 +892,7 @@ O_SIFV
 // ako se ne koristi opcija fiscal, 
 // ili ako operater ne treba da stampa racune, izadji !
 if gFc_use == "N" .or. gFc_fisc_print == "N"
-    return
+    return 0
 endif
 
 select fakt_doks
@@ -949,7 +975,7 @@ if cTipDok $ "#10#11#"
 
 	if cTipDok == "11" .and. PADR( _vr_plac, 2 ) == "VR"
 		// virmansko placanje
-		cPartnId := ""
+        cPartnId := ""
 		cVr_placanja := "3"
 	endif
 

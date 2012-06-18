@@ -83,13 +83,14 @@ local lKupac := .f.
 local nErr_no := 0
 local cOperacija := ""
 local cCmd := ""
+local _del_all := .t.
 
 if aKupac <> nil .and. LEN( aKupac ) > 0
 	lKupac := .t.
 endif
 
 // brisi tmp fajlove ako su ostali...
-hcp_d_tmp()
+hcp_d_tmp( _del_all )
 
 if nTotal == nil
 	nTotal := 0
@@ -279,16 +280,32 @@ return nErr_no
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
-function hcp_d_tmp()
-local cTmp 
+function hcp_d_tmp( del_all )
+local cTmp, cF_path
+
+if del_all == NIL
+    del_all := .f.
+endif
 
 msgo("brisem tmp fajlove...")
 
+// input direktorij...
 cF_path := ALLTRIM( gFc_path ) + _inp_dir + SLASH
 cTmp := "*.*"
 
-AEVAL( DIRECTORY(cF_path + cTmp), {|aFile| FERASE( cF_path + ;
+AEVAL( DIRECTORY( cF_path + cTmp ), {|aFile| FERASE( cF_path + ;
 	ALLTRIM( aFile[1]) ) })
+
+if del_all
+
+    // output direktorij...
+    cF_path := ALLTRIM( gFc_path ) + _answ_dir + SLASH
+    cTmp := "*.*"
+
+    AEVAL( DIRECTORY(cF_path + cTmp), {|aFile| FERASE( cF_path + ;
+    	ALLTRIM( aFile[1]) ) })
+
+endif
 
 sleep(1)
 
@@ -991,6 +1008,7 @@ Box(,1,50)
 do while nTime > 0
 	
 	-- nTime
+	sleep(1)
 
 	if FILE( cTmp )
 		// fajl se pojavio - izadji iz petlje !
@@ -1000,7 +1018,12 @@ do while nTime > 0
 	@ m_x + 1, m_y + 2 SAY PADR( "Cekam odgovor OK: " + ;
 		ALLTRIM( STR(nTime) ), 48)
 
-	sleep(1)
+    if nTime == 0 .or. LastKey() == K_ESC
+        BoxC()
+        lOk := .f.
+        return lOk
+    endif
+
 enddo
 
 BoxC()
@@ -1107,6 +1130,11 @@ do while nTime > 0
 
 	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
 		ALLTRIM( STR(nTime) ), 48)
+
+    if nTime == 0 .or. LastKey() == K_ESC
+        BoxC()
+        return -9
+    endif
 
 	sleep(1)
 enddo
@@ -1230,6 +1258,11 @@ do while nTime > 0
 
 	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
 		ALLTRIM( STR(nTime) ), 48)
+
+    if nTime == 0 .or. LastKey() == K_ESC
+        BoxC()
+        return -9
+    endif
 
 	sleep(1)
 enddo

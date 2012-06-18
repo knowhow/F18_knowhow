@@ -607,7 +607,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             select fakt_pripr
             locate for idroba == fakt->idroba
 
-            if FOUND() .and. _sumirati == .t. .and. fakt_pripr->cijena = fakt->cijena
+            if FOUND() .and. _sumirati == .t. .and. ROUND( fakt_pripr->cijena, 2 ) = ROUND( fakt->cijena, 2 )
 
                 _fakt_rec["kolicina"] := fakt_pripr->kolicina + fakt->kolicina
 

@@ -1,6 +1,7 @@
 1.0.56 2012-06-18, vsasa
 
   - fiskalne funkcije, čišćenja [#28409](http://redmine.bring.out.ba/issues/28409)
+  - fakt, spajanje stavki kod 12 -> 11 [#28370](http://redmine.bring.out.ba/issues/28370)
  
 1.0.55 2012-06-15, vsasa
 

@@ -2,6 +2,7 @@
 
   - fiskalne funkcije, čišćenja [#28409](http://redmine.bring.out.ba/issues/28409)
   - fakt, spajanje stavki kod 12 -> 11 [#28370](http://redmine.bring.out.ba/issues/28370)
+  - fakt, unos dodatnog teksta, hendliranje [#28407](http://redmine.bring.out.ba/issues/28407)
  
 1.0.55 2012-06-15, vsasa
 

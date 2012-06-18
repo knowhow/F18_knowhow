@@ -1,10 +1,14 @@
+1.0.56 2012-06-18, vsasa
+
+  - fiskalne funkcije, čišćenja [#28409](http://redmine.bring.out.ba/issues/28409)
+ 
 1.0.55 2012-06-15, vsasa
 
   - fin, datum valute, bugfix
  
 1.0.54 2012-06-15, vsasa
 
-  - fakt, setovanje broja fiskalnog računa, bugfix BEGIN/END transakcija
+  - fakt, setovanje veze sa fiskalnim računom, bugfix [#28410](http://redmine.bring.out.ba/issues/28410)
  
 1.0.53 2012-06-15, vsasa
 

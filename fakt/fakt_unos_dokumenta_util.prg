@@ -10,7 +10,11 @@
  */
 
 #include "fakt.ch"
+#include "memoedit.ch"
 #include "f18_separator.ch"
+
+static slChanged := .f.
+
 
 function IzSifre(fSilent)
 local nPos
@@ -651,6 +655,7 @@ if IsPdv() .and. _IdTipDok == "12" .and. IsProfil(_IdPartner, "KMS")
 endif
 
 if (nRbr == 1 .and. val( _podbr ) < 1)
+
 	Box(,9,75)
  		
 		@ m_x+1,m_Y+1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId pict "@!"
@@ -662,12 +667,14 @@ if (nRbr == 1 .and. val( _podbr ) < 1)
    			
 			SELECT ftxt
    			SEEK cId
+
    			select fakt_pripr
    			
 			_txt2 := trim(ftxt->naz)
 
-			_user_name := GetFullUserName( GetUserID() )
-			if !EMPTY( _user_name ) .or. _user_name <> "?user?"
+			_user_name := ALLTRIM( GetFullUserName( GetUserID() ) )
+
+			if !EMPTY( _user_name ) .and. _user_name <> "?user?"
 				_txt2 += " Dokument izradio: " + _user_name 
   			endif
 
@@ -763,47 +770,56 @@ endif
  
 // prva stavka fakture 
 
-if (nRbr==1 .and. val(_podbr)<1)
+if ( nRbr == 1 .and. VAL( _podbr ) < 1 )
 
-  Box(, 11, 75)
-     do while .t.
+    Box(, 11, 75)
 
-	@ m_x + 1, m_y + 1 SAY "Odaberi uzorak teksta iz sifrarnika:" ;
-	 	GET cId pict "@!"
+        do while .t.
+
+	        @ m_x + 1, m_y + 1 SAY "Odaberi uzorak teksta iz sifrarnika:" ;
+	 	        GET cId pict "@!"
  	
-	@ m_x + 11, m_y + 1 SAY "<c+W> dodaj tekst na fakturu, unesi novi  <ESC> izadji i snimi"
+	        @ m_x + 11, m_y + 1 SAY "<c+W> dodaj tekst na fakturu, unesi novi  <ESC> izadji i snimi"
 	
-	read
+	        read
 
-    if LastKey() == K_ESC
-        exit
-    endif
+            if LastKey() == K_ESC
+                exit
+            endif
  
- 	if lastkey() <> K_ESC .and. !EMPTY( cId ) 
-	  	if cId <> "MX"
-   			P_Ftxt(@cId)
-			_add_to_txt( cId, nCount, .t. )
-			++ nCount
-			cId := "  "
-		endif
-   	endif
+ 	        if lastkey() <> K_ESC .and. !EMPTY( cId ) 
+	  	        if cId <> "MX"
+   			        P_Ftxt(@cId)
+			        _add_to_txt( cId, nCount, .t. )
+			        ++ nCount
+			        cId := "  "
+		        endif
+   	        endif
 
- 	setcolor(Invert)
- 	private fUMemu:=.t.
+ 	        setcolor(Invert)
+ 	        private fUMemu:=.t.
 
- 	_txt2:=MemoEdit(_txt2,m_x+3,m_y+1,m_x+9,m_y+76)
- 	fUMemu:=NIL
- 	setcolor(Normal)     
-        if LastKey() == K_ESC
-	    exit
-	endif
+ 	        _txt2 := MemoEdit( _txt2, m_x+3, m_y+1, m_x+9, m_y+76 )
+
+ 	        fUMemu := NIL
+        	setcolor( normal )     
+            
+            if LastKey() == K_CTRL_W
+                if Pitanje(, "Nastaviti sa unosom teksta ? (D/N)", "N" ) == "N"
+                    exit
+                endif
+            endif    
+
+            if LastKey() == K_ESC
+	            exit
+	        endif
      
-     enddo
-  BoxC()
-
+        enddo
+    BoxC()
 endif
 
 return
+
 
 
 // ---------------------------------------------------------
@@ -844,20 +860,12 @@ else
 endif
 
 if nCount = 1
-	_user_name := GetFullUserName( GetUserID() )
-	if !EMPTY( _user_name ) .or. _user_name <> "?user?"
+	_user_name := ALLTRIM( GetFullUserName( GetUserID() ) )
+	if !EMPTY( _user_name ) .and. _user_name <> "?user?"
 		_txt2 += " Dokument izradio: " + _user_name 
 	endif
 endif
   
-select fakt_pripr
-if nCount = 1 .and. glDistrib .and. _IdTipdok=="26"
-	_k2 :=""
-	if cId_txt $ IzFMKIni("FAKT","TXTIzjaveZaObracunPoreza",";",KUMPATH)
-		_k2 := "OPOR"
-	endif
-endif
-
 return
 
 
@@ -1635,17 +1643,17 @@ return cPom2 + cPom + "/" + PADL(ALLTRIM(STR(nBrM)), 2, "0")
  *  \param bFunc
  */
  
-function IsprUzorTxt(fSilent,bFunc)
+function IsprUzorTxt( fSilent, bFunc )
 local cListaTxt := ""
 
-if fSilent==nil
-    fSilent:=.f.
+if fSilent == nil
+    fSilent := .f.
 endif
 
-lDoks2 := ( IzFMKINI("FAKT","Doks2","N",KUMPATH)=="D" )
+lDoks2 := .t.
 
 if !fSilent
-  Scatter()
+    Scatter()
 endif
 
 if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
@@ -1657,7 +1665,7 @@ _DatOtp:=ctod(""); _BrNar:=space(8); _DatPl:=ctod("")
 
 _VezOtpr := ""
 _txt1:=_txt2:=_txt3a:=_txt3b:=_txt3c:=""        // txt1  -  naziv robe,usluge
-nRbr:=RbrUNum(RBr)
+nRbr := RbrUNum(RBr)
 
 if lDoks2
   d2k1 := SPACE(15)
@@ -1716,7 +1724,9 @@ if !fSilent
     UzorTxt2( cListaTxt )
 endif
 
-if bFunc<>nil; EVAL(bFunc); endif
+if bFunc <> nil
+    EVAL(bFunc)
+endif
 
 _txt:=Chr(16)+trim(_txt1)+Chr(17) + Chr(16)+_txt2+Chr(17)+;
       Chr(16)+trim(_txt3a)+Chr(17) + Chr(16)+_txt3b+Chr(17)+;
@@ -1733,9 +1743,11 @@ _txt:=Chr(16)+trim(_txt1)+Chr(17) + Chr(16)+_txt2+Chr(17)+;
       IF( lDoks2 , Chr(16)+d2k5+Chr(17) , "" )+;
       IF( lDoks2 , Chr(16)+d2n1+Chr(17) , "" )+;
       IF( lDoks2 , Chr(16)+d2n2+Chr(17) , "" )
+
 if !fSilent
-  Gather()
+    Gather()
 endif
+
 return
 
 

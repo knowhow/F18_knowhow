@@ -779,7 +779,7 @@ if ( nRbr == 1 .and. VAL( _podbr ) < 1 )
 	        @ m_x + 1, m_y + 1 SAY "Odaberi uzorak teksta iz sifrarnika:" ;
 	 	        GET cId pict "@!"
  	
-	        @ m_x + 11, m_y + 1 SAY "<c+W> dodaj tekst na fakturu, unesi novi  <ESC> izadji i snimi"
+	        @ m_x + 11, m_y + 1 SAY "<c+W> dodaj novi ili snimi i izadji <ESC> ponisti"
 	
 	        read
 
@@ -803,17 +803,17 @@ if ( nRbr == 1 .and. VAL( _podbr ) < 1 )
 
  	        fUMemu := NIL
         	setcolor( normal )     
-            
+        
+            if LastKey() == K_ESC
+                exit
+            endif
+ 
             if LastKey() == K_CTRL_W
                 if Pitanje(, "Nastaviti sa unosom teksta ? (D/N)", "N" ) == "N"
                     exit
                 endif
             endif    
 
-            if LastKey() == K_ESC
-	            exit
-	        endif
-     
         enddo
     BoxC()
 endif

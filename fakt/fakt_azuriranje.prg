@@ -538,9 +538,6 @@ my_use_semaphore_off()
 Box(, 5, 60)
 _ok := .t.
 
-// -----------------------------------------------------------------------------------------------------
-sql_table_update(nil, "BEGIN")
-
 select fakt_pripr
 SET ORDER TO TAG "1"
 
@@ -548,9 +545,13 @@ go top
 HSEEK id_firma + id_tip_dok + br_dok
 
 if !FOUND()
+    my_use_semaphore_on()
     Alert("ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
     return
 endif
+
+// -----------------------------------------------------------------------------------------------------
+sql_table_update(nil, "BEGIN")
 
 _record := dbf_get_rec()
 // algoritam 2 - dokument nivo

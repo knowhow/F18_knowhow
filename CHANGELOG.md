@@ -1,3 +1,7 @@
+1.0.57 2012-06-19, vsasa
+
+  - fin, fakt, kalk, povrat dokumenta u pripremu [#28424](http://redmine.bring.out.ba/issues/28424)
+ 
 1.0.56 2012-06-18, vsasa
 
   - fiskalne funkcije, čišćenja [#28409](http://redmine.bring.out.ba/issues/28409)

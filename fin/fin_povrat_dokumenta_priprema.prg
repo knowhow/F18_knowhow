@@ -141,12 +141,13 @@ if !lStorno
  Box(, 5, 70)
 
     my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
 
     _tbl := "fin_suban"
     @ m_x + 1, m_y + 2 SAY "delete " + _tbl
     // algoritam 2  - nivo dokumenta
     select suban
-    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "BEGIN")
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "CONT")
     log_write("povrat u pripremu fin"  + " : " + cIdFirma + cIdVN + cBrNal)
 
     _tbl := "fin_anal"
@@ -165,10 +166,10 @@ if !lStorno
     @ m_x + 4, m_y + 2 SAY "delete " + _tbl
     // algoritam 1 - jedini algoritam za naloge
     select nalog
-    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 1, "END" )
+    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 1, "CONT" )
 
-
-     my_use_semaphore_on()
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
  BoxC()
 

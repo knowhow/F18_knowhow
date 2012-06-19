@@ -423,33 +423,33 @@ ENDIF
     
 IF ( _brisi_kum == "D" )
 
+    Box(, 5, 70)
 
- Box(, 5, 70)
+        _ok := .t.
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
 
-    _ok := .t.
-    my_use_semaphore_off()
+        _tbl := "fakt_fakt"
+        @ m_x + 1, m_y + 2 SAY "delete " + _tbl
+        // algoritam 2  - nivo dokumenta
+        select fakt
+        _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 2, "CONT")
+        log_write("povrat u pripremu fakt_fakt"  + " : " + id_firma + "-" + id_tip_dok + "-" + br_dok )
 
-    _tbl := "fakt_fakt"
-    @ m_x + 1, m_y + 2 SAY "delete " + _tbl
-    // algoritam 2  - nivo dokumenta
-    select fakt
-    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 2, "BEGIN")
-    log_write("povrat u pripremu fakt_fakt"  + " : " + id_firma + "-" + id_tip_dok + "-" + br_dok )
+        _tbl := "fakt_doks"
+        @ m_x + 2, m_y + 2 SAY "delete " + _tbl
+        select fakt_doks
+        _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "CONT" )
 
-    _tbl := "fakt_doks"
-    @ m_x + 2, m_y + 2 SAY "delete " + _tbl
-    select fakt_doks
-    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "CONT" )
+        _tbl := "fakt_doks2"
+        @ m_x + 3, m_y + 2 SAY "delete " + _tbl
+        select fakt_doks2
+        _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "CONT" )
 
-    _tbl := "fakt_doks2"
-    @ m_x + 3, m_y + 2 SAY "delete " + _tbl
-    select fakt_doks2
-    _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "END" )
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
 
-     my_use_semaphore_on()
-
- BoxC()
-
+    BoxC()
 
 ENDIF 
 

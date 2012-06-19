@@ -1104,6 +1104,7 @@ if _brisi_kum
     MsgO("Brisem dokument iz KALK-a")
 
     my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
 
     select kalk
     hseek _id_firma + _id_vd + _br_dok
@@ -1112,7 +1113,7 @@ if _brisi_kum
 
         _del_rec := dbf_get_rec()
         _ok := .t.
-        _ok := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "BEGIN" )
+        _ok := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
     
         select kalk_doks
         hseek _id_firma + _id_vd + _br_dok
@@ -1121,12 +1122,24 @@ if _brisi_kum
             
             _del_rec := dbf_get_rec()
             _ok := .t.
-            _ok := delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "END" )
+            _ok := delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
+        
+        endif
+
+        select kalk_doks2
+        hseek _id_firma + _id_vd + _br_dok
+
+        if FOUND()
+            
+            _del_rec := dbf_get_rec()
+            _ok := .t.
+            _ok := delete_rec_server_and_dbf( "kalk_doks2", _del_rec, 1, "CONT" )
         
         endif
 
     endif
 
+    sql_table_update( nil, "END" )
     my_use_semaphore_on()
 
     if !_ok

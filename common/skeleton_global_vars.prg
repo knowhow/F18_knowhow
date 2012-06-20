@@ -97,10 +97,6 @@ return .t.
 // ----------------------------------------------------
 function set_pdv_params()
 
-//if gModul $ "#TOPS#HOPS#"
-//    return .t.
-//endif 
-
 gPDV := fetch_metric( "pdv_global", nil, gPDV )
 ParPDV()
 set_metric( "pdv_global", nil, gPDV )

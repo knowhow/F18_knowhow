@@ -218,7 +218,7 @@ return 1
 // --------------------
 // --------------------
 function preduzece()
-local _t_arr := select()
+local _t_arr := SELECT()
 
 P_10CPI
 B_ON
@@ -226,7 +226,7 @@ B_ON
 ? ALLTRIM( gTS ) + ": "
 
 if gNW == "D"
-    ?? gFirma, "-", hb_strtoutf8( ALLTRIM( gNFirma ) )
+    ?? gFirma, "-", ALLTRIM( gNFirma )
 else
     SELECT PARTN
     HSEEK cIdFirma
@@ -247,6 +247,7 @@ if left(cRbr, 1) > "9"
 else
    return val(cRbr)
 endif
+
 
 
 function RedniBroj(nRbr)
@@ -273,6 +274,9 @@ local cVrati:=""
 cVrati:=TRIM(cTxt3a)
 select fakt_pripr
 return cVrati
+
+
+
 
 // -------------------------------------------------
 // potpis na dokumentima
@@ -307,6 +311,8 @@ else
 endif
 
 return
+
+
 
 // ovo treba ukinuti skroz
 function OtkljucajBug()

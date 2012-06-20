@@ -51,11 +51,15 @@ if !EMPTY( ALLTRIM( _ext_pdf ) )
 	endif
 endif
 
+MsgO( "formiram stavke racuna..." )
+
 // samo napuni pomocne tabele
 stdokpdv( cIdF, cIdVd, cBrDok, .t. )
 
 // generisi xml fajl
 _gen_xml( _xml_file )
+
+MsgC()
 
 // uzmi template koji ces koristiti
 if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0

@@ -1034,6 +1034,7 @@ if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (
 endif
 
 O_KALK_DOKS
+O_KALK_DOKS2
 O_KALK
 set order to tag "1"
 

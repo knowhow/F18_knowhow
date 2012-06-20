@@ -1,3 +1,11 @@
+1.0.59 2012-06-20, vsasa
+
+  - direktna štampa na epson, lpq ispravka [#28072](http://redmine.bring.out.ba/issues/28072)
+ 
+1.0.58 2012-06-20, vsasa
+
+  - kalk, povrat dokumenta u pripremu, bugfix [#28424](http://redmine.bring.out.ba/issues/28424)
+ 
 1.0.57 2012-06-19, vsasa
 
   - fin, fakt, kalk, povrat dokumenta u pripremu [#28424](http://redmine.bring.out.ba/issues/28424)

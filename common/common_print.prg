@@ -171,8 +171,8 @@ endif
 _printer_name := _printer + "_" + port_number
 
 // ispitaj da li printer postoji
-// lpq | grep epson_1 
-_cmd := "lpq | grep " + _printer_name
+// lpq -P epson_1 | grep epson_1 
+_cmd := "lpq -P " + _printer_name + " | grep " + _printer_name
 
 _err := hb_run( _cmd )
 if _err <> 0

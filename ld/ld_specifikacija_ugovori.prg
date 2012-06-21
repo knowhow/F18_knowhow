@@ -24,7 +24,7 @@ local k:=0
 local nPom
 local uNaRuke
 local aOps:={}
-local _proizv_ini := my_home() + "proizvj.ini"
+local _proizvj_ini := my_home() + "proizvj.ini"
 local cMatBr := SPACE(13)
 private aSpec:={}
 private gPici:="9,999,999,999,999,999"+IF(gZaok>0,PADR(".",gZaok+1,"9"),"")

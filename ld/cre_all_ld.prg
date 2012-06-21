@@ -218,6 +218,7 @@ if !file(f18_ime_dbf("DOPR"))
 endif
 
 CREATE_INDEX("ID","id",SIFPATH+"DOPR")
+CREATE_INDEX("1","id+naz+tiprada",SIFPATH+"DOPR")
 
 if !file(f18_ime_dbf("STRSPR"))
     aDbf:={ {"id","C",3,0} ,;

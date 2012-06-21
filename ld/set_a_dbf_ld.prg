@@ -190,7 +190,8 @@ _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->id + field->naz + field->tiprada }
 _alg["dbf_key_fields"] := { "id", "naz", "tiprada" }
 _alg["sql_in"]         := "rpad(id, 2) || rpad(naz, 20) || rpad(tiprada, 1)"
-_alg["dbf_tag"]        := "ID"
+_alg["dbf_tag"]        := "1"
+
 AADD(_item["algoritam"], _alg)
  
 f18_dbfs_add(_tbl, @_item)

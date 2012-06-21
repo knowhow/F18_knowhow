@@ -72,6 +72,7 @@ private cSredCij:="N"
 private cPrikazDob:="N"
 private cPlVrsta:=SPACE(1)
 private cPrikK2:="N"
+private aPorezi
 
 if IsDomZdr()
 	private cKalkTip:=SPACE(1)
@@ -168,9 +169,6 @@ if !lPocStanje
 
 endif
 
-// skeniraj dokumente u procesu za konto
-pl_scan_dok_u_procesu(cIdKonto)
-
 CLOSE ALL
 
 if (cKontrolnaTabela=="D")
@@ -188,6 +186,7 @@ endif
 O_SIFK
 O_SIFV
 O_ROBA
+O_TARIFA
 O_KONTO
 O_PARTN
 O_KONCIJ
@@ -276,13 +275,17 @@ nCol1:=50
 nCol0:=50
 nRbr:=0
 
-Eval(bZagl)
-do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
-	cIdRoba:=Idroba
-	if lSMark .and. SkLoNMark("ROBA",cIdroba)
+Eval( bZagl )
+
+do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and. IspitajPrekid()
+	
+    cIdRoba := field->Idroba
+	
+    if lSMark .and. SkLoNMark("ROBA",cIdroba)
    		skip
    		loop
 	endif
+
 	select roba
 	hseek cIdRoba
 	
@@ -320,6 +323,7 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 	endif
 
 	select KALK
+
 	nPKol:=0
 	nPNV:=0
 	nPMPV:=0
@@ -330,95 +334,126 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 	nNVU:=0
 	nNVI:=0
 	nRabat:=0
+
 	if cTU=="N" .and. roba->tip $ "TU"
 		skip
 		loop
 	endif
 
-	do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba .and. IspitajPrekid()
-		if lSMark .and. SkLoNMark("ROBA",cIdroba)
-     			skip
-     			loop
+	do while !EOF() .and. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba .and. IspitajPrekid()
+	    
+        if lSMark .and. SkLoNMark("ROBA",cIdroba)
+     		skip
+     		loop
   		endif
+
   		if cPredhStanje=="D"
-    			if datdok<dDatOd
-     				if pu_i=="1"
-       					SumirajKolicinu(kolicina, 0, @nPKol, 0, lPocStanje, lPrikK2)
-       					nPMPV+=mpcsapp*kolicina
-       					nPNV+=nc*(kolicina)
-     				elseif pu_i=="5"
-       					SumirajKolicinu(-kolicina, 0, @nPKol, 0, lPocStanje, lPrikK2)
-       					nPMPV-=mpcsapp*kolicina
-       					nPNV-=nc*kolicina
-     				elseif pu_i=="3"    
-       					// nivelacija
-       					nPMPV+=field->mpcsapp*field->kolicina
-     				elseif pu_i=="I"
-       					SumirajKolicinu(-gKolicin2, 0, @nPKol, 0, lPocStanje, lPrikK2)
-       					nPMPV-=mpcsapp*gkolicin2
-       					nPNV-=nc*gkolicin2
-     				endif
-    			endif
+    		if field->datdok < dDatOd
+     			if field->pu_i == "1"
+
+       				SumirajKolicinu( field->kolicina, 0, @nPKol, 0, lPocStanje, lPrikK2)
+       				nPMPV += field->mpcsapp * field->kolicina
+       				nPNV += field->nc * (field->kolicina)
+
+     			elseif field->pu_i=="5"
+                    
+                    aPorezi := {}        
+                    Tarifa( field->pkonto, field->idroba, @aPorezi )
+                    aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+                    nPor1 := aIPor[1]
+                    VtPorezi()
+
+       				SumirajKolicinu( -(field->kolicina), 0, @nPKol, 0, lPocStanje, lPrikK2)
+
+       				nPMPV -= ( field->mpc + nPor1 ) * field->kolicina
+       				nPNV -= field->nc * field->kolicina
+
+     			elseif field->pu_i=="3"    
+       				// nivelacija
+       				nPMPV += field->mpcsapp * field->kolicina
+     			elseif pu_i == "I"
+       				SumirajKolicinu(-(field->gKolicin2), 0, @nPKol, 0, lPocStanje, lPrikK2)
+       				nPMPV -= field->mpcsapp * field->gkolicin2
+       				nPNV -= field->nc * field->gkolicin2
+     			endif
+    		endif
   		else
-    			if field->datdok<ddatod .or. field->datdok>ddatdo
-      				skip
-      				loop
-    			endif
+    		if field->datdok < dDatod .or. field->datdok > dDatdo
+      			skip
+      			loop
+    		endif
   		endif 
 
   		if cTU=="N" .and. roba->tip $ "TU"
   			skip
 			loop
   		endif
-  		if !empty(cGrupacija)
-    			if cGrupacija<>roba->k1
-      				skip
-      				loop
-    			endif
-  		endif
-  		if DatDok>=dDatOd  // nisu predhodni podaci
-  			if pu_i=="1"
-    				SumirajKolicinu(kolicina, 0, @nUlaz, 0, lPocStanje, lPrikK2)
-    				nCol1:=pcol()+1
-    				nMPVU+=mpcsapp*kolicina
-    				nNVU+=nc*(kolicina)
-  			elseif pu_i=="5"
-    				if idvd $ "12#13"
-     					SumirajKolicinu(-kolicina, 0, @nUlaz, 0, lPocStanje, lPrikK2)
-     					nMPVU-=mpcsapp*kolicina
-     					nNVU-=nc*kolicina
-    				else
-     					SumirajKolicinu(0, kolicina, 0, @nIzlaz, lPocStanje, lPrikK2)
-     					nMPVI+=mpcsapp*kolicina
-     					nNVI+=nc*kolicina
-    				endif
 
-  			elseif pu_i=="3"    
-			        // nivelacija
-    				nMPVU+=mpcsapp*kolicina
-  			elseif pu_i=="I"
-    				SumirajKolicinu(0, gkolicin2, 0, @nIzlaz, lPocStanje, lPrikK2)
-    				nMPVI+=mpcsapp*gkolicin2
-    				nNVI+=nc*gkolicin2
+  		if !empty(cGrupacija)
+    		if cGrupacija<>roba->k1
+      			skip
+      			loop
+    		endif
+  		endif
+
+  		if field->DatDok >= dDatOd  
+            // nisu predhodni podaci
+  			if field->pu_i == "1"
+    			SumirajKolicinu( field->kolicina, 0, @nUlaz, 0, lPocStanje, lPrikK2)
+    			nCol1 := pcol()+1
+    			nMPVU += field->mpcsapp * field->kolicina
+    			nNVU += field->nc * ( field->kolicina )
+  			elseif field->pu_i == "5"
+                    
+                aPorezi := {}        
+                Tarifa( field->pkonto, field->idroba, @aPorezi )
+                aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+                nPor1 := aIPor[1]
+                VtPorezi()
+
+    			if idvd $ "12#13"
+     				SumirajKolicinu( -(field->kolicina), 0, @nUlaz, 0, lPocStanje, lPrikK2)
+     				nMPVU -= field->mpcsapp * field->kolicina
+     				nNVU -= field->nc * field->kolicina
+    			else
+     				SumirajKolicinu( 0, field->kolicina, 0, @nIzlaz, lPocStanje, lPrikK2)
+     				nMPVI += ( field->mpc + nPor1 ) * field->kolicina
+     				nNVI += field->nc * field->kolicina
+    			endif
+
+  			elseif field->pu_i=="3"    
+			    // nivelacija
+    			nMPVU += field->mpcsapp * field->kolicina
+  			elseif field->pu_i=="I"
+    	        SumirajKolicinu(0, field->gkolicin2, 0, @nIzlaz, lPocStanje, lPrikK2)
+    			nMPVI += field->mpcsapp * field->gkolicin2
+    			nNVI += field->nc * field->gkolicin2
 			endif
   		endif
 		skip
 	enddo
 	
 	//ne prikazuj stavke 0
-	if cNula=="D" .or. round(nMPVU-nMPVI+nPMPV,4)<>0 
-		if PROW()>61+gPStranica
+	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 4 ) <> 0 
+		
+        if PROW()>61+gPStranica
 			FF
 			eval(bZagl)
 		endif
-		select roba
+		
+        select roba
 		hseek cidroba
-		select KALK
-		aNaz:=Sjecistr(roba->naz,20)
+		
+        select kalk
+		aNaz := Sjecistr( roba->naz, 20 )
+
 		? str(++nRbr,4)+".",cIdRoba
+
 		nCr:=pcol()+1
+
 		@ prow(),pcol()+1 SAY aNaz[1]
 		@ prow(),pcol()+1 SAY roba->jmj
+
 		if lPoNarudzbi .and. cPKN=="D"
   			@ prow(),pcol()+1 SAY cIdNar
 		endif
@@ -455,11 +490,10 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 				replace TMarza2 with "A"
 				
 				if koncij->NAZ=="N1"
-             				replace vpc with nc
-     				endif
+             		replace vpc with nc
+     			endif
 			
-			elseif cSrKolNula $ "12" .and. ;
-				round(nUlaz-nIzlaz,4) = 0
+			elseif cSrKolNula $ "12" .and. round(nUlaz-nIzlaz,4) = 0
 				
 				if ( nMPVU - nMPVI + nPMPV ) <> 0
 					
@@ -480,8 +514,8 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 					replace TMarza2 with "A"
 				
 					if koncij->NAZ=="N1"
-             					replace vpc with nc
-     					endif
+             			replace vpc with nc
+     				endif
 					
 					// 2 stavka (plus i razlika mpv)
 					append blank
@@ -501,40 +535,56 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 					replace TMarza2 with "A"
 				
 					if koncij->NAZ=="N1"
-             					replace vpc with nc
-     					endif
+             			replace vpc with nc
+     				endif
 			
 				endif
 
 			endif
   			
 			select KALK
+
 		endif
 
-		nCol1:=pcol()+1
-		@ prow(),pcol()+1 SAY nMPVU pict gPicDem
-		@ prow(),pcol()+1 SAY nMPVI pict gPicDem
-		@ prow(),pcol()+1 SAY nMPVU-NMPVI+nPMPV pict gPicDem
+		nCol1 := pcol()+1
+
+		@ prow(), pcol()+1 SAY nMPVU pict gPicDem
+		@ prow(), pcol()+1 SAY nMPVI pict gPicDem
+		@ prow(), pcol()+1 SAY nMPVU - NMPVI + nPMPV pict gPicDem
+
 		select koncij
 		seek trim(cIdKonto)
+
 		select roba
 		hseek cidroba
-		_mpc:=UzmiMPCSif()
-		select KALK
-		if round(nUlaz-nIzlaz+nPKOL,4)<>0
- 			@ prow(),pcol()+1 SAY (nMPVU-nMPVI+nPMPV)/(nUlaz-nIzlaz+nPKol) pict gpiccdem
- 			if round((nMPVU-nMPVI+nPMPV)/(nUlaz-nIzlaz+nPKol),4) <> round(_mpc,4)
-   				?? " ERR"
- 			endif
+
+		_mpc := UzmiMPCSif()
+
+		select kalk
+
+		if ROUND( nUlaz - nIzlaz + nPKOL, 4 ) <> 0
+
+ 			// mpcsapdv
+            @ prow(), pcol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) pict gpiccdem
+
+ 			//if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
+   			//	?? " ERR"
+ 			//endif
+
 		else
- 			@ prow(),pcol()+1 SAY 0 pict gpicdem
- 			if round((nMPVU-nMPVI+nPMPV),4)<>0
+
+            // stanje artikla je 0
+
+ 			@ prow(), pcol() + 1 SAY 0 pict gpicdem
+
+ 			if ROUND(( nMPVU - nMPVI + nPMPV ), 4 ) <> 0
    				?? " ERR"
-   				lImaGresaka:=.t.
+   				lImaGresaka := .t.
  			endif
+
 		endif
 
-		if cSredCij=="D"
+		if cSredCij == "D"
 			@ prow(), pcol()+1 SAY (nNVU-nNVI+nPNV+nMPVU-nMPVI+nPMPV)/(nUlaz-nIzlaz+nPKol)/2 PICT "9999999.99"
 		endif
 
@@ -545,6 +595,7 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
   			endif
   			@ prow(),nCol0-1 SAY ""
 		endif
+
 		if (cKontrolnaTabela=="D")
 			AzurKontrolnaTabela(cIdRoba, nUlaz-nIzlaz+nPkol, nMpvU-nMpvI+nPMpv)
 		endif
@@ -552,20 +603,26 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 		if cPredhStanje=="D"
  			@ prow(),pcol()+1 SAY nPMPV pict gpicdem
 		endif
-		if cPNab=="D"
- 			@ prow(),pcol()+1 SAY space(len(gpickol))
- 			@ prow(),pcol()+1 SAY space(len(gpickol))
- 			if round(nulaz-nizlaz+nPKol,4)<>0
-  				@ prow(),pcol()+1 SAY (nNVU-nNVI+nPNV)/(nUlaz-nIzlaz+nPKol) pict gpicdem
- 			else
-  				@ prow(),pcol()+1 SAY space(len(gpicdem))
+
+		if cPNab == "D"
+
+ 			@ prow(), pcol()+1 SAY space(len(gpickol))
+ 			@ prow(), pcol()+1 SAY space(len(gpickol))
+
+ 			if round( nUlaz - nIzlaz + nPKol, 4 ) <> 0
+  				@ prow(), pcol()+1 SAY (nNVU-nNVI+nPNV)/(nUlaz-nIzlaz+nPKol) pict gpicdem
+ 			else 
+  				@ prow(), pcol()+1 SAY space(len(gpicdem))
  			endif
- 			@ prow(),nCol1 SAY nNVU pict gpicdem
+
+ 			@ prow(), nCol1 SAY nNVU pict gpicdem
  			//@ prow(),pcol()+1 SAY space(len(gpicdem))
- 			@ prow(),pcol()+1 SAY nNVI pict gpicdem
- 			@ prow(),pcol()+1 SAY nNVU-nNVI+nPNV pict gpicdem
- 			@ prow(),pcol()+1 SAY _MPC pict gpiccdem
+ 			@ prow(), pcol()+1 SAY nNVI pict gpicdem
+ 			@ prow(), pcol()+1 SAY nNVU-nNVI+nPNV pict gpicdem
+ 			@ prow(), pcol()+1 SAY _mpc pict gpiccdem
+
 		endif
+
 		nTULaz+=nUlaz
 		nTIzlaz+=nIzlaz
 		nTPKol+=nPKol
@@ -586,6 +643,7 @@ do while !eof() .and. cIdFirma+cIdKonto==idfirma+pkonto .and. IspitajPrekid()
 		endif
 		
 	endif 
+
 enddo
 
 ? __line
@@ -629,7 +687,7 @@ if lPocStanje
    		select kalk_pripr
    		zap
  	else
-   		renumeracija_kalk_pripr(cBrPSt,"80")
+   		renumeracija_kalk_pripr( cBrPSt, "80" )
  	endif
 endif
 
@@ -637,14 +695,13 @@ gPicDem := cPicDem
 gPicKol := cPicKol
 gPicCDem := cPicCDem
 
-closeret
+close all
 return
 
 
 
 // zaglavlje llp
 function ZaglLLP(lSint)
-*{
 if lSint==NIL
 	lSint:=.f.
 endif
@@ -851,15 +908,19 @@ static function CreTblKontrola()
 local aDbf
 local cCdx
 
-aDbf:={}
-cTblKontrola:=ToUnix("c:/sigma/kontrola.dbf")
-cCdx:=ToUnix("c:/sigma/kontrola")
+aDbf := {}
+cTblKontrola := my_home() + "kontrola.dbf"
+
 AADD(aDbf, { "ID", "C", 10, 0})
 AADD(aDbf, { "kolicina", "N", 12, 2})
 AADD(aDbf, { "Mpv", "N", 10, 2})
-DBCREATE2( cTblKontrola , aDbf)
-CREATE_INDEX("id","id", cCdx) 
+
+DBCREATE( cTblKontrola , aDbf )
+my_use_temp( "KONTROLA", cTblKontrola, .f., .t. )
+index on id tag "ID"
+
 return
+
 
 // azuriranje kontrolne tabele
 static function AzurKontrolnaTabela(cIdRoba, nStanje, nMpv)
@@ -867,7 +928,7 @@ local nArea
 
 nArea:=SELECT()
 
-SELECT (F_KONTROLA)
+SELECT (F_TMP_1)
 
 if !USED()
 	USE (cTblKontrola)
@@ -881,4 +942,5 @@ REPLACE Mpv WITH nMpv
 
 SELECT(nArea)
 return
+
 

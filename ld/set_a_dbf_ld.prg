@@ -19,6 +19,7 @@ function set_a_dbf_ld()
 // kumulativ
 set_a_dbf_ld_ld()
 set_a_dbf_ld_parobr()
+set_a_dbf_ld_dopr()
 set_a_dbf_ld_radkr()
 set_a_dbf_ld_obracuni()
 set_a_dbf_ld_pk_data()
@@ -30,7 +31,6 @@ set_a_dbf_ld_radn()
 // sifrarnici
 set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
 set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
-set_a_dbf_sifarnik("dopr"       , "DOPR"      , F_DOPR       )
 set_a_dbf_sifarnik("tippr"      , "TIPPR"     , F_TIPPR      )
 set_a_dbf_sifarnik("tippr2"     , "TIPPR2"    , F_TIPPR2     )
 set_a_dbf_sifarnik("kred"       , "KRED"      , F_KRED       )
@@ -163,6 +163,40 @@ AADD(_item["algoritam"], _alg)
 f18_dbfs_add(_tbl, @_item)
 
 return
+
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_ld_dopr()
+local _alg, _tbl 
+
+_tbl := "dopr"
+
+_item := hb_hash()
+
+_item["alias"] := "DOPR"
+_item["table"] := _tbl
+_item["wa"]    := F_DOPR
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->id + field->naz + field->tiprada }
+_alg["dbf_key_fields"] := { "id", "naz", "tiprada" }
+_alg["sql_in"]         := "rpad(id, 2) || rpad(naz, 20) || rpad(tiprada, 1)"
+_alg["dbf_tag"]        := "ID"
+AADD(_item["algoritam"], _alg)
+ 
+f18_dbfs_add(_tbl, @_item)
+
+return
+
 
 
 

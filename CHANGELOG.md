@@ -1,3 +1,7 @@
+1.0.61 2012-06-21, vsasa
+
+  - kalk, kartica prodavnica [#28431](http://redmine.bring.out.ba/issues/28431)
+ 
 1.0.60 2012-06-21, vsasa
 
   - ld, korekcije [#28441](http://redmine.bring.out.ba/issues/28441)

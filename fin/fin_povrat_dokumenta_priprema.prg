@@ -38,8 +38,9 @@ O_ANAL
 O_SINT
 O_NALOG
 
-if fin_pripr->(RECCOUNT()) <> 0
-    MsgBeep("Priprema nije prazna !!!")
+if fin_pripr->(RECCOUNT() ) <> 0
+    MsgBeep("Priprema nije prazna !!!#Povrat naloga onemogucen!")
+	return
 endif
 
 SELECT SUBAN
@@ -85,7 +86,8 @@ BoxC()
 
 
 if Pitanje(,"Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + IIF(lStorno," stornirati"," povuci u pripremu") + " (D/N) ?","D") == "N"
-   closeret
+    close all
+	return
 endif
 
 lBrisi:=.t.

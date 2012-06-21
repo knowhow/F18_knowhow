@@ -34,6 +34,7 @@ local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
 local _proizvj_ini := my_home() + "proizvj.ini"
+local cMatBr := SPACE(13)
 private aSpec:={}
 private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999"+IF(gZaok>0,PADR(".",gZaok+1,"9"),"")
@@ -170,8 +171,8 @@ set_metric("ld_specifikacija_doprinos_3", nil, cDopr3)
 qqIdRj := TRIM(qqIdRj)
 qqOpSt := TRIM(qqOpSt)
 
-set_metric("ld_specifikacija_rj", nil, qqIdRJ)
-set_metric("ld_specifikacija_opcine", nil, qqOpSt)
+set_metric( "ld_specifikacija_rj", nil, qqIdRJ)
+set_metric( "ld_specifikacija_opcine", nil, qqOpSt)
 set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
 
 PoDoIzSez(nGodina,nMjesec)

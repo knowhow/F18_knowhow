@@ -1,3 +1,10 @@
+1.0.60 2012-06-21, vsasa
+
+  - ld, korekcije [#28441](http://redmine.bring.out.ba/issues/28441)
+                  [#28443](http://redmine.bring.out.ba/issues/28443)
+                  [#28444](http://redmine.bring.out.ba/issues/28444)
+  - fin, povrat naloga [#28445](http://redmine.bring.out.ba/issues/28445)
+ 
 1.0.59 2012-06-20, vsasa
 
   - direktna štampa na epson, lpq ispravka [#28072](http://redmine.bring.out.ba/issues/28072)

@@ -33,6 +33,7 @@ local uNaRuke
 local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
+local _proizvj_ini := my_home() + "proizvj.ini"
 private aSpec:={}
 private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999"+IF(gZaok>0,PADR(".",gZaok+1,"9"),"")
@@ -80,31 +81,31 @@ cRadn:=SPACE(_LR_)
 
 OSpecif()
 
-select params
-
-private cSection:="S"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("i1",@cFirmNaz)
+cFirmNaz := fetch_metric("org_naziv", nil, cFirmNaz)
 cFirmNaz := PADR(cFirmNaz, 35)
-RPar("i2",@cFirmAdresa)  
-cFirmAdresa := PADR(cFirmAdresa, 35)
-RPar("i3",@cFirmOpc)
+
+cFirmAdresa := fetch_metric("ld_firma_adresa", nil, cFirmAdresa)
+cFirmAdresa := PADR( cFirmAdresa, 35 )
+
+cFirmOpc := fetch_metric("ld_firma_opcina", nil, cFirmOpc)
 cFirmOpc := PADR(cFirmOpc, 35)
-RPar("i0",@cFirmVD)
+
+cFirmVD := fetch_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD )
 cFirmVD := PADR(cFirmVD, 50)
-RPar("d1",@cDopr1)
-RPar("d2",@cDopr2)
-RPar("d3",@cDopr3)
-RPar("qj",@qqIdRJ)
-RPar("st",@qqOpSt)
 
-qqIdRj:=PadR(qqIdRj,80) 
-qqOpSt:=PadR(qqOpSt,80)
+cDopr1 := fetch_metric("ld_specifikacija_doprinos_1", nil, cDopr1)
+cDopr2 := fetch_metric("ld_specifikacija_doprinos_2", nil, cDopr2)
+cDopr3 := fetch_metric("ld_specifikacija_doprinos_3", nil, cDopr3)
 
-cMatBr:=IzFmkIni("Specif","MatBr","--",KUMPATH)
-cMatBR:=padr(cMatBr,13) 
+qqIdRj := fetch_metric("ld_specifikacija_rj", nil, qqIdRJ)
+qqOpSt := fetch_metric("ld_specifikacija_opcine", nil, qqOpSt)
+
+qqIdRj := PadR(qqIdRj, 80) 
+qqOpSt := PadR(qqOpSt, 80)
+
+cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+cMatBR := padr(cMatBr,13) 
+
 dDatIspl := date()
 
 do while .t.
@@ -117,76 +118,65 @@ do while .t.
 		@ m_x+ 2,m_y+ 2 SAY "Opstina stanov.(prazno-sve): " ;
 		 	GET qqOpSt PICT "@!S20"
 		
-		if lViseObr
-       			@ m_x+ 2,col()+1 SAY "Obr.:" GET cObracun ;
+       	@ m_x+ 2,col()+1 SAY "Obr.:" GET cObracun ;
 				WHEN HelpObr(.t.,cObracun) ;
 				VALID ValObr(.t.,cObracun)
-     		endif
      	
-     		@ m_x+ 3,m_y+ 2 SAY "Period od:" GET nDanOd pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nMjesecOd pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nGodinaOd pict "9999"
-     		@ m_x+ 3,col()+1 SAY "do:" GET nDanDo pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nMjesecDo pict "99"
-     		@ m_x+ 3,col()+1 SAY "/" GET nGodinaDo pict "9999"
+     	@ m_x+ 3,m_y+ 2 SAY "Period od:" GET nDanOd pict "99"
+     	@ m_x+ 3,col()+1 SAY "/" GET nMjesecOd pict "99"
+     	@ m_x+ 3,col()+1 SAY "/" GET nGodinaOd pict "9999"
+     	@ m_x+ 3,col()+1 SAY "do:" GET nDanDo pict "99"
+     	@ m_x+ 3,col()+1 SAY "/" GET nMjesecDo pict "99"
+     	@ m_x+ 3,col()+1 SAY "/" GET nGodinaDo pict "9999"
      	
-		
-     		@ m_x+ 4,m_y+ 2 SAY " Naziv: " GET cFirmNaz
-     		@ m_x+ 5,m_y+ 2 SAY "Adresa: " GET cFirmAdresa
-     		@ m_x+ 6,m_y+ 2 SAY "Opcina: " GET cFirmOpc
-     		@ m_x+ 7,m_y+ 2 SAY "Vrsta djelatnosti: " GET cFirmVD
+     	@ m_x+ 4,m_y+ 2 SAY " Naziv: " GET cFirmNaz
+     	@ m_x+ 5,m_y+ 2 SAY "Adresa: " GET cFirmAdresa
+     	@ m_x+ 6,m_y+ 2 SAY "Opcina: " GET cFirmOpc
+     	@ m_x+ 7,m_y+ 2 SAY "Vrsta djelatnosti: " GET cFirmVD
      		
-     		@ m_x+ 4,m_y+ 52 SAY "ID.broj :" GET cMatBR
-     		@ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
+     	@ m_x+ 4,m_y+ 52 SAY "ID.broj :" GET cMatBR
+     	@ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
      		
-		
-     		@ m_x+ 8,m_y+ 2 SAY "Poduzetnik:" GET cRadn ;
+     	@ m_x+ 8,m_y+ 2 SAY "Poduzetnik:" GET cRadn ;
 			VALID P_RADN(@cRadn)
      		
-		
 		@ m_x+10,m_y+ 2 SAY "          Doprinos pio (iz+na):" GET cDopr1
-     		@ m_x+11,m_y+ 2 SAY "    Doprinos zdravstvo (iz+na):" GET cDopr2
-     		@ m_x+12,m_y+ 2 SAY "Doprinos nezaposlenost (iz+na):" GET cDopr3
+     	@ m_x+11,m_y+ 2 SAY "    Doprinos zdravstvo (iz+na):" GET cDopr2
+     	@ m_x+12,m_y+ 2 SAY "Doprinos nezaposlenost (iz+na):" GET cDopr3
      		
 		read
      		
 		clvbox()
-     		ESC_BCR
+     	ESC_BCR
    	
 	BoxC()
    	
-	aUslRJ:=Parsiraj(qqIdRj,"IDRJ")
-   	aUslOpSt:=Parsiraj(qqOpSt,"IDOPSST")
+	aUslRJ := Parsiraj(qqIdRj,"IDRJ")
+   	aUslOpSt := Parsiraj(qqOpSt,"IDOPSST")
    	
 	if (aUslRJ<>nil .and. aUslOpSt<>nil)
 		EXIT
 	endif
 enddo
 
-WPar("i1",cFirmNaz)
-WPar("i2",cFirmAdresa)
-WPar("i3",cFirmOpc)
-WPar("i0",cFirmVD)
-WPar("d1",cDopr1)
-WPar("d2",cDopr2)
-WPar("d3",cDopr3)
+set_metric("org_naziv", nil, cFirmNaz)
+set_metric("ld_firma_adresa", nil, cFirmAdresa)
+set_metric("ld_firma_opcina", nil, cFirmOpc)
+set_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD)
+set_metric("ld_specifikacija_doprinos_1", nil, cDopr1)
+set_metric("ld_specifikacija_doprinos_2", nil, cDopr2)
+set_metric("ld_specifikacija_doprinos_3", nil, cDopr3)
 
-qqIdRj:=TRIM(qqIdRj)
-qqOpSt:=TRIM(qqOpSt)
+qqIdRj := TRIM(qqIdRj)
+qqOpSt := TRIM(qqOpSt)
 
-WPar("qj",qqIdRJ)
-WPar("st",qqOpSt)
-
-select params
-use
+set_metric("ld_specifikacija_rj", nil, qqIdRJ)
+set_metric("ld_specifikacija_opcine", nil, qqOpSt)
+set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
 
 PoDoIzSez(nGodina,nMjesec)
 
-// fmk.ini parametri
-cPom:=KUMPATH+"fmk.ini"
-UzmiIzIni(cPom,'Specif',"MatBr",cMatBr,'WRITE')
-
-cIniName:=EXEPATH+'proizvj.ini'
+cIniName := _proizvj_ini 
 
 UzmiIzIni(cIniName,'Varijable',"NAZ", cFirmNaz ,'WRITE')
 UzmiIzIni(cIniName,'Varijable',"ADRESA", cFirmAdresa ,'WRITE')
@@ -205,11 +195,7 @@ UzmiIzIni(cIniName,'Varijable',"DANDO",Razrijedi(strtran(str(nDanDo,2)," ","0"))
 UzmiIzIni(cIniName,'Varijable',"MATBR",Razrijedi(cMatBR),'WRITE')
 UzmiIzIni(cIniName,'Varijable',"DATISPL",DTOC(dDatIspl),'WRITE')
 
-if lViseObr
-	cObracun:=TRIM(cObracun)
-else
-	cObracun:=""
-endif
+cObracun:=TRIM(cObracun)
 
 ParObr(nMjesec,nGodina,cObracun,LEFT(qqIdRJ,2))
 
@@ -378,6 +364,8 @@ UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
 IniRefresh()
 //Odstampaj izvjestaj
 
+close all
+
 if lastkey() != K_ESC 
 
     cSpecRtm := "specbs"
@@ -385,7 +373,6 @@ if lastkey() != K_ESC
 
 endif
 
-close all
 return
 
 

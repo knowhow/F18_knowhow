@@ -36,10 +36,8 @@ local cFilter := ""
 
 private cObracun := cObr
 
-if lViseObr
-	if !EMPTY(cObr)
-		cFilter += "ld->obr == " + cm2str(cObr)
-	endif
+if !EMPTY(cObr)
+	cFilter += "ld->obr == " + cm2str(cObr)
 endif
 	
 if !EMPTY(cRj)
@@ -142,34 +140,27 @@ cPredJMB := SPACE(13)
 // otvori tabele
 o_tables()
 
-select params
+cPredNaz := fetch_metric("org_naziv", nil, cPredNaz)
+cPredNaz := PADR(cPredNaz, 35)
 
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
+cPredAdr := fetch_metric("ld_firma_adresa", nil, cPredAdr )
+cPredAdr := PADR( cPredAdr, 35 )
 
-RPar("i1",@cPredNaz)
-RPar("i2",@cPredAdr)  
+cPredJMB := fetch_metric( "ld_specifikacija_maticni_broj", nil, cPredJMB )
+cPredJMB := padr( cPredJMB, 13 ) 
 
-cPredJMB := IzFmkIni("Specif","MatBr","--",KUMPATH)
-cPredJMB := PADR(cPredJMB, 13)
 
 Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75)
 
 @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj pict "@S25"
 @ m_x + 2, m_y + 2 SAY "Za mjesec:" GET cMjesec pict "99"
 @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina pict "9999"
-
-if lViseObr
-  	@ m_x+3,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-endif
-
+@ m_x+3,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
 @ m_x + 4, m_y + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn ;
 	VALID EMPTY(cIdRadn) .or. P_Radn( @cIdRadn )
 
 @ m_x + 5, m_y + 2 SAY "   Doprinos zdr: " GET cDopr1X
 @ m_x + 6, m_y + 2 SAY "   Doprinos pio: " GET cDopr2X
-
 @ m_x + 8, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz pict "@S30"
 @ m_x + 8, col()+1 SAY "JID: " GET cPredJMB
 @ m_x + 9, m_y + 2 SAY "Adresa: " GET cPredAdr pict "@S30"
@@ -192,10 +183,9 @@ if lastkey() == K_ESC
 	return
 endif
 
-// upisi vrijednosti
-select params
-WPar("i1", cPredNaz)
-WPar("i2", cPredAdr)  
+set_metric( "org_naziv", nil, ALLTRIM( cPredNaz ) )
+set_metric( "ld_firma_adresa", nil, ALLTRIM( cPredAdr ) )
+set_metric( "ld_specifikacija_maticni_broj", nil, ALLTRIM( cPredJMB ) )
 
 select ld
 
@@ -435,6 +425,8 @@ elseif cTipRada == "2"
 elseif cTipRada == "3"
 	cRtm := "pdn1033"
 endif
+
+close all
 
 // stampaj akontaciju poreza delphi
 f18_rtm_print( ALLTRIM(cRtm), "r_export", "1" )

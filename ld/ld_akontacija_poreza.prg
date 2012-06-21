@@ -149,7 +149,6 @@ cPredAdr := PADR( cPredAdr, 35 )
 cPredJMB := fetch_metric( "ld_specifikacija_maticni_broj", nil, cPredJMB )
 cPredJMB := padr( cPredJMB, 13 ) 
 
-
 Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75)
 
 @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj pict "@S25"

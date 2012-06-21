@@ -4,6 +4,7 @@
                   [#28443](http://redmine.bring.out.ba/issues/28443)
                   [#28444](http://redmine.bring.out.ba/issues/28444)
   - fin, povrat naloga [#28445](http://redmine.bring.out.ba/issues/28445)
+  - kalk, lista dokumenata uslov po kontima [#28437](http://redmine.bring.out.ba/issues/28437)
  
 1.0.59 2012-06-20, vsasa
 

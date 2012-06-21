@@ -36,71 +36,99 @@ return
  */
 
 function SStDoks()
-local lImaUkSt:=.f.
+local lImaUkSt := .f.
 local _head
+local _pkonto, _mkonto
+local _qqmkonto, _qqpkonto
 
 O_KALK_DOKS
 O_PARTN
 O_KALK
 
-cIdfirma:=gFirma
-dDatOd:=ctod("")
-dDatDo:=date()
-qqVD=""
+cIdfirma := gFirma
+dDatOd := CTOD("")
+dDatDo := DATE()
+_mkonto := SPACE( 300 )
+_pkonto := SPACE( 300 )
+_qqpkonto := ""
+_qqmkonto := ""
+
+qqVD := ""
+
 Box(,9,75)
-private cStampaj:="N"
-qqBrDok:=""
-O_PARAMS
-private cSection:="N",cHistory:=" "; aHistory:={}
-Params1()
-RPar("c1",@cIdFirma)
-RPar("c2",@qqVD)
-RPar("c3",@qqBrDok)
-RPar("d1",@dDatOd)
-RPar("d2",@dDatDo)
 
-qqVD:=padr(qqVD,2)
-qqBrDok:=PADR(qqBrDok,60)
+	private cStampaj := "N"
+	qqBrDok := ""
 
-cImeKup:=space(20)
-cIdPartner:=space(6)
+	cIdFirma := fetch_metric( "kalk_lista_dokumenata_firma", my_user(), cIdFirma )
+	qqVD := fetch_metric( "kalk_lista_dokumenata_vd", my_user(), qqVD )
+	qqBrDok := fetch_metric( "kalk_lista_dokumenata_brdok", my_user(), qqBrDok )
+	dDatOd := fetch_metric( "kalk_lista_dokumenata_datum_od", my_user(), dDatOd )
+	dDatDo := fetch_metric( "kalk_lista_dokumenata_datum_do", my_user(), dDatDo )
+	_mkonto := fetch_metric( "kalk_lista_dokumenata_mkonto", my_user(), _mkonto )
+	_pkonto := fetch_metric( "kalk_lista_dokumenata_pkonto", my_user(), _pkonto )
+	
+	qqVD := padr(qqVD,2)
+	qqBrDok := PADR(qqBrDok,60)
 
-do while .t.
+	cImeKup := space(20)
+	cIdPartner := space(6)
+
+	do while .t.
+
 	if gNW=="X"
    		cIdFirma:=padr(cidfirma,2)
    		@ m_x+1,m_y+2 SAY "Firma - prazno svi" GET cIdFirma valid {|| .t. }
    		read
  	endif
+
  	if !empty(cidfirma)
     	@ m_x+2,m_y+2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqVD pict "@!"
     	qqVD:="  "
  	else
     	cIdfirma:=""
  	endif
+
  	@ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
  	@ m_x+3,col()+1 SAY "do"  get dDatDo
- 	@ m_x+5,m_y+2 SAY "Partner"  get cIdPartner pict "@!" valid empty(cidpartner) .or. P_Firma(@cIdPartner)
- 	@ m_x+7,m_y+2 SAY "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
+ 	@ m_x+5,m_y+2 SAY "Partner" GET cIdPartner pict "@!" valid empty(cidpartner) .or. P_Firma(@cIdPartner)
+ 	@ m_x+6,m_y+2 SAY " Magacinska konta:" GET _mkonto pict "@S30"
+ 	@ m_x+7,m_y+2 SAY "Prodavnicka konta:" GET _pkonto pict "@S30"
+ 	@ m_x+8,m_y+2 SAY "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
  	@ m_x+9,m_y+2 SAY "Izvrsiti stampanje sadrzaja ovih dokumenata ?"  get cStampaj pict "@!" valid cStampaj$"DN"
+
  	read
+
  	ESC_BCR
-	aUsl1:=Parsiraj(qqBrDok,"BRDOK")
-	if aUsl1<>NIL
+
+	aUsl1 := Parsiraj(qqBrDok,"BRDOK")
+
+	if !EMPTY( _mkonto )
+		_qqmkonto := Parsiraj( _mkonto, "mkonto" )
+	endif
+
+	if !EMPTY( _pkonto )
+		_qqpkonto := Parsiraj( _pkonto, "pkonto" )
+	endif
+
+
+	if aUsl1 <> NIL
 		exit
 	endif
-enddo
 
-qqVD := TRIM( qqVD )
-qqBrDok := TRIM( qqBrDok )
-Params2()
-WPar("c1",cIdFirma)
-WPar("c2",qqVD)
-WPar("c3",qqBrDok)
-WPar("d1",dDatOd)
-WPar("d2",dDatDo)
-select params
-use
+	enddo
 
+	qqVD := TRIM( qqVD )
+	qqBrDok := TRIM( qqBrDok )
+
+	set_metric( "kalk_lista_dokumenata_firma", my_user(), cIdFirma )
+	set_metric( "kalk_lista_dokumenata_vd", my_user(), qqVD )
+	set_metric( "kalk_lista_dokumenata_brdok", my_user(), qqBrDok )
+	set_metric( "kalk_lista_dokumenata_datum_od", my_user(), dDatOd )
+	set_metric( "kalk_lista_dokumenata_datum_do", my_user(), dDatDo )
+	set_metric( "kalk_lista_dokumenata_mkonto", my_user(), _mkonto )
+	set_metric( "kalk_lista_dokumenata_pkonto", my_user(), _pkonto )
+	
 BoxC()
 
 select kalk_doks
@@ -112,17 +140,29 @@ endif
 private cFilt:=".t."
 
 if !empty(dDatOd) .or. !empty(dDatDo)
-	cFilt+=".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
+	cFilt += ".and. DatDok>=" + cm2str(dDatOd) + ".and. DatDok<=" + cm2str(dDatDo)
 endif
+
 if !empty(qqVD)
   	cFilt+=".and. idvd=="+cm2str(qqVD)
 endif
+
 if !empty(cIdPartner)
   	cFilt+=".and. idpartner=="+cm2str(cIdPartner)
 endif
+
 if !empty(qqBrDok)
   	cFilt+=(".and."+aUsl1)
 endif
+
+if !EMPTY( _qqmkonto )
+	cFilt += ( ".and." + _qqmkonto )
+endif
+
+if !EMPTY( _qqpkonto )
+	cFilt += ( ".and." + _qqpkonto )
+endif
+
 set filter to &cFilt
 
 qqVD:=trim(qqVD)

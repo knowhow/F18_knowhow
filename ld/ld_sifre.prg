@@ -478,13 +478,16 @@ if EMPTY(cTip)
 endif
 return .t.
 
+
 // ---------------------------------------- 
 // valid dop_tip
 // ---------------------------------------- 
 function v_dop_tip( cTip)
+
 if EMPTY(cTip)
     msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto#R - neto na ruke")
 endif
+
 return .t.
 
 
@@ -728,10 +731,11 @@ AADD(ImeKol, { padr("Donji limit",12), {||  dlimit}, "dlimit" })
 
 AADD(ImeKol, { padr("PoOpst",6), {||  poopst}, "poopst" })
 
+AADD(ImeKol, { "p.tip", {|| por_tip}, "por_tip" } )
+
 // nove stope i iznosi....
 if POR->(FIELDPOS("ALGORITAM")) <> 0 .and. _st_stopa == "D"
 
-    AADD(ImeKol, { "p.tip", {|| por_tip}, "por_tip", {|| .t.}, {|| v_dop_tip(wpor_tip)} } )
     AADD(ImeKol, { "St.1", {|| s_sto_1}, "s_sto_1", {|| wh_por(walgoritam)} } )
     AADD(ImeKol, { "Izn.1", {|| s_izn_1}, "s_izn_1", {|| wh_por(walgoritam) } } )
     AADD(ImeKol, { "St.2", {|| s_sto_2}, "s_sto_2", {|| wh_por(walgoritam)} } )
@@ -828,19 +832,11 @@ private kol := {}
 AADD(ImeKol, { padr("Id",2), {|| id}, "id" } )
 AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
 AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos" } )
-
-if DOPR->(FIELDPOS("DOP_TIP")) <> 0
-    AADD(ImeKol, { padr("d.tip", 6), {||  dop_tip}, "dop_tip", {|| .t.}, {|| v_dop_tip(wdop_tip) } }  )
-endif
-
-if DOPR->(FIELDPOS("TIPRADA")) <> 0
-    AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#N#P#U#A#R" .or. MsgTipRada() } }  )
-endif
-
+AADD(ImeKol, { padr("d.tip", 6), {||  dop_tip}, "dop_tip", {|| .t.}, {|| v_dop_tip(wdop_tip) } }  )
+AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#N#P#U#A#R" .or. MsgTipRada() } }  )
 AADD(ImeKol, { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } } )
 AADD(ImeKol, { padr("Donji limit",12), {||  dlimit}, "dlimit" } )
 AADD(ImeKol, { padr("PoOpst",6), {||  poopst}, "poopst" }  )
-
 
 for i:=1 to LEN(ImeKol)
     AADD(Kol, i)

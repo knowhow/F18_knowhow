@@ -1018,7 +1018,7 @@ do while nTime > 0
 	@ m_x + 1, m_y + 2 SAY PADR( "Cekam odgovor OK: " + ;
 		ALLTRIM( STR(nTime) ), 48)
 
-    if nTime == 0 .or. LastKey() == K_ESC
+    if nTime == 0 .or. LastKey() == K_ALT_Q
         BoxC()
         lOk := .f.
         return lOk
@@ -1131,7 +1131,7 @@ do while nTime > 0
 	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
 		ALLTRIM( STR(nTime) ), 48)
 
-    if nTime == 0 .or. LastKey() == K_ESC
+    if nTime == 0 .or. LastKey() == K_ALT_Q
         BoxC()
         return -9
     endif

@@ -1714,18 +1714,18 @@ do while nTime > 0
 	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
 		ALLTRIM( STR(nTime) ), 48)
 
-	if FILE( cF_name )
+	sleep(1)
+	
+    if FILE( cF_name )
 		// fajl se pojavio - izadji iz petlje !
 		exit
 	endif
 
-    if nTime == 0 .or. LastKey() == K_ESC
+    if nTime == 0 .or. LastKey() == K_ALT_Q
         BoxC()
         nFisc_no := 0
         return -9
     endif
-
-	sleep(1)
 
 enddo
 

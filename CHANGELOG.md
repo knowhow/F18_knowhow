@@ -2,7 +2,7 @@
 
   - kalk, kartica prodavnica [#28431](http://redmine.bring.out.ba/issues/28431)
   - fiskalne funkcije, prekid opcije čitanja fajla odgovora ALT_Q
-  - roba, ubacio kolone mpc4 - mpc9
+  - roba, ubacio kolone mpc4 - mpc9 [#28446](http://redmine.bring.out.ba/issue/28446)
  
 1.0.60 2012-06-21, vsasa
 

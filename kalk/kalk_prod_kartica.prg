@@ -191,11 +191,11 @@ START PRINT CRET
 
 ?
 
-nLen:=1
+nLen := 1
 
 if IsPDV()
 
-    _set_zagl(@cLine, @cTxt1, ;
+    _set_zagl( @cLine, @cTxt1, ;
             lPoNarudzbi, cPKN )
     __line := cLine
     __txt1 := cTxt1
@@ -214,6 +214,7 @@ Zagl()
 nCol1 := 10
 nUlaz := nIzlaz := 0
 nMPV := nNV := 0
+nMPVP := 0
 fPrviProl := .t.
 
 do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma + cIdKonto + cIdR
@@ -234,6 +235,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
     hseek roba->idtarifa
 
     ? __line
+
     ? "Artikal:", cIdRoba, "-", TRIM( LEFT( roba->naz, 40)) + ; 
         iif( lKoristitiBK, " BK: " + roba->barkod, "" ) + " (" + ALLTRIM( roba->jmj ) + ")"
 
@@ -242,6 +244,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
     endif
 
     ? __line
+
     select kalk
 
     nCol1 := 10
@@ -317,6 +320,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
 
             endif   
 
+            nMPVP += field->mpcsapp * field->kolicina
             nMPV += field->mpcsapp * field->kolicina
             nNV += field->nc * field->kolicina
 
@@ -349,15 +353,22 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
                 @ prow(), pcol()+1 SAY field->kolicina pict pickol
                 @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
                 @ prow(), pcol()+1 SAY field->nc pict piccdem
+
+                // bilo ranije
                 //@ prow(), pcol()+1 SAY field->vpc * ( 1 - field->rabatv / 100 )  pict piccdem
+
                 // cista pc sa popustom
                 @ prow(), pcol()+1 SAY field->mpc pict piccdem
+                
                 // cista mpc sa popustom
-                @ prow(), pcol()+1 SAY field->mpc + nPor1 pict piccdem
+                //@ prow(), pcol()+1 SAY field->mpc + nPor1 pict piccdem
+
+                @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
 
             endif
-
-            nMPV -= ( field->mpc + nPor1 ) * field->kolicina
+            
+            nMPVP -= ( field->mpc + nPor1 ) * field->kolicina 
+            nMPV -= field->mpcsapp * field->kolicina
             nNV -= field->nc * field->kolicina
 
             if field->datdok >= dDatOd
@@ -382,6 +393,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
                 @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
             endif
 
+            nMPVP -= field->mpcsapp * field->gkolicin2
             nMPV -= field->mpcsapp * field->gkolicin2
             nNV -= field->nc * field->gkolicin2
 
@@ -409,6 +421,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
                 @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
             endif
 
+            nMPVP -= field->mpcsapp * field->kolicina
             nMPV -= field->mpcsapp * field->kolicina
             nNV -= field->nc * field->kolicina
 
@@ -435,6 +448,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
                 @ prow(), pcol()+1 SAY field->fcj + field->mpcsapp pict piccdem
             endif
 
+            nMPVP += field->mpcsapp * field->kolicina
             nMPV += field->mpcsapp * field->kolicina
 
             if field->datdok >= dDatod
@@ -469,6 +483,10 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
 
     ? __line
     ?
+    ? REPLICATE( "-", 60 )
+    ? "     Ukupna vrijednost popusta u mp:", STR( ABS( nMPVP - nMPV ), 12, 2 )
+    ? "Ukupna prodajna vrijednost - popust:", STR( nMPVP, 12, 2 )
+    ? REPLICATE( "-", 60 )
     ?
 
 enddo

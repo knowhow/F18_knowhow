@@ -365,7 +365,10 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
        				SumirajKolicinu( -(field->kolicina), 0, @nPKol, 0, lPocStanje, lPrikK2)
 
-       				nPMPV -= ( field->mpc + nPor1 ) * field->kolicina
+                    // vrijednost sa popustom
+       				//nPMPV -= ( field->mpc + nPor1 ) * field->kolicina
+
+       				nPMPV -= field->mpcsapp * field->kolicina
        				nPNV -= field->nc * field->kolicina
 
      			elseif field->pu_i=="3"    
@@ -417,7 +420,9 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
      				nNVU -= field->nc * field->kolicina
     			else
      				SumirajKolicinu( 0, field->kolicina, 0, @nIzlaz, lPocStanje, lPrikK2)
-     				nMPVI += ( field->mpc + nPor1 ) * field->kolicina
+     				// vrijednost sa popustom
+                    //nMPVI += ( field->mpc + nPor1 ) * field->kolicina
+     				nMPVI += field->mpcsapp * field->kolicina
      				nNVI += field->nc * field->kolicina
     			endif
 
@@ -567,9 +572,9 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
  			// mpcsapdv
             @ prow(), pcol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) pict gpiccdem
 
- 			//if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
-   			//	?? " ERR"
- 			//endif
+ 			if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
+   				?? " ERR"
+ 			endif
 
 		else
 

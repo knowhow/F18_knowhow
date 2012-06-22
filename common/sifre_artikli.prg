@@ -92,26 +92,27 @@ if roba->(fieldpos("vpc2"))<>0
 	endif
 endif
 
-AADD(ImeKol, {padc("MPC",10 ), {|| transform(MPC,"999999.999")}, "mpc", NIL, NIL,NIL, gPicCDEM  })
-
 if roba->(fieldpos("PLC"))<>0  .and. IzFMkIni("SifRoba","PlanC","N", SIFPATH)=="D"
 	AADD(ImeKol, {padc("Plan.C",10 ), {|| transform(PLC,"999999.999")}, "PLC", NIL, NIL,NIL, gPicCDEM    })
 endif
 
-for i:=2 to 10
-	cPom:="MPC"+ALLTRIM(STR(i))
-	cPom2:='{|| transform('+cPom+',"999999.999")}'
-	if roba->( fieldpos( cPom ) )  <>  0
-		if i>1  // parametriziraj
-			cPrikazi:=IzFMkIni('SifRoba',cPom,'D', SIFPATH)
-		else
-			cPrikazi:="D"
+AADD(ImeKol, { PADC("MPC1",10 ), {|| transform(MPC,"999999.999")}, "mpc", NIL, NIL,NIL, gPicCDEM  })
+
+for i := 2 to 10
+
+	cPom := "mpc" + ALLTRIM(STR(i))
+	cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
+
+	if roba->( FieldPos( cPom ) )  <>  0
+		
+		cPrikazi := fetch_metric( "roba_prikaz_" + cPom, nil, "D" )  
+
+		if cPrikazi == "D"
+			AADD( ImeKol, { PADC( UPPER(cPom), 10 ), &(cPom2), cPom , nil, nil, nil, gPicCDEM } )
 		endif
 
-		if cPrikazi=="D"
-			AADD(ImeKol, {padc(cPom,10 ), &(cPom2) , cPom , nil, nil, nil, gPicCDEM })
-		endif
 	endif
+
 next
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWNC"))
@@ -119,7 +120,6 @@ if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWNC"))
 endif
 
 AADD(ImeKol, {"Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa) }   })
-
 AADD(ImeKol, {"Tip",{|| " "+Tip+" "}, "Tip", {|| .t.}, {|| wTip $ " TUCKVPSXY" } ,NIL,NIL,NIL,NIL, 27 } )
 
 if roba->(fieldpos("BARKOD"))<>0

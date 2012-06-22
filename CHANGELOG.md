@@ -1,6 +1,8 @@
 1.0.61 2012-06-21, vsasa
 
   - kalk, kartica prodavnica [#28431](http://redmine.bring.out.ba/issues/28431)
+  - fiskalne funkcije, prekid opcije čitanja fajla odgovora ALT_Q
+  - roba, ubacio kolone mpc4 - mpc9
  
 1.0.60 2012-06-21, vsasa
 

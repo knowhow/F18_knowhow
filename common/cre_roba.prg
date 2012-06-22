@@ -67,6 +67,11 @@ if ver["current"] < 00201
    modstru( {"*" + _table_name, "A IDKONTO C 7 0"})
 endif
 
+// 0.4.8
+if ver["current"] < 00408
+   modstru( {"*" + _table_name, "A MPC4 N 18 8", "A MPC5 N 18 8", "A MPC6 N 18 8", "A MPC7 N 18 8", "A MPC8 18 8", "A MPC9 N 18 8"})
+endif
+
 if _created 
   reset_semaphore_version(_table_name)
   my_usex(_alias)
@@ -74,7 +79,7 @@ if _created
 endif
 
 if !file(f18_ime_dbf("_roba"))
-        dbcreate2('_roba.dbf',aDbf)
+	dbcreate2('_roba.dbf',aDbf)
 endif
 
 CREATE_INDEX("ID", "ID", "roba") 

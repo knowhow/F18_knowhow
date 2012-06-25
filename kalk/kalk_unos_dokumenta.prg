@@ -303,7 +303,7 @@ do case
 
         return DE_REFRESH
 
-    case Ch==K_ALT_Q
+    case UPPER(CHR(Ch)) == "Q"
 
         if Pitanje(,"Stampa naljepnica(labela) za robu ?","D")=="D"
 

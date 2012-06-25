@@ -22,6 +22,9 @@
 function RLabele()
 local cVarijanta
 local cKolicina
+local _tkm_no
+local _xml_file := my_home() + "data.xml"
+local _template := "rlab1.odt"
 
 cVarijanta := "1"
 cKolicina := "N"
@@ -29,9 +32,13 @@ cKolicina := "N"
 // kreiraj tabelu rLabele
 CreTblRLabele()
 
-if GetVars( @cVarijanta, @cKolicina ) == 0 
+if GetVars( @cVarijanta, @cKolicina, @_tkm_no ) == 0 
 	close all
 	return
+endif
+
+if cVarijanta == "2"
+    _template := "rlab2.odt"
 endif
 
 // izvrsi funkciju koja filuje tabelu rLabele 
@@ -42,19 +49,28 @@ else
 	FaFillRLabele()
 endif
 
+// generisi xml fajl sa podacima labele
+_gen_xml( _xml_file, _tkm_no )
+
 CLOSE ALL
 
-if (cVarijanta > "0" .and. cVarijanta < "3" )
-	PrintRLabele( cVarijanta )
+if f18_odt_generate( _template, _xml_file )
+	// printaj odt
+    f18_odt_print()
 endif
+
+
+//if ( cVarijanta > "0" .and. cVarijanta < "3" )
+//	PrintRLabele( cVarijanta )
+//endif
 
 return
 
 
-// --------------------------------------------------
+// ------------------------------------------------------
 // uslovi generisanja labela
-// --------------------------------------------------
-static function GetVars( cVarijanta, cKolicina )
+// ------------------------------------------------------
+static function GetVars( cVarijanta, cKolicina, tkm_no )
 local lOpened
 local cIdVd
 
@@ -62,6 +78,7 @@ cIdVd := "XX"
 cVarijanta := "1"
 cKolicina := "N"
 lOpened := .t.
+tkm_no := SPACE(20)
 
 if ( gModul == "KALK" )
 
@@ -84,17 +101,19 @@ if ( gModul == "KALK" )
 	endif
 endif
 
-Box(, 6, 65)
+Box(, 7, 65 )
 	
-	@ m_x+1, m_y+2 SAY "Broj labela zavisi od kolicine artikla (D/N):" ;
+	@ m_x + 1, m_y + 2 SAY "Broj labela zavisi od kolicine artikla (D/N):" ;
 		GET cKolicina VALID cKolicina $ "DN" PICT "@!"
 
-	@ m_x+3, m_y+2 SAY "1 - standardna naljepnica"
-	@ m_x+4, m_y+2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
+	@ m_x + 3, m_y + 2 SAY "1 - standardna naljepnica"
+	@ m_x + 4, m_y + 2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
 	
-	@ m_x+6, m_y+3 SAY "Odaberi zeljenu varijantu " ;
+	@ m_x + 6, m_y + 3 SAY "Odaberi zeljenu varijantu " ;
 		GET cVarijanta VALID cVarijanta $ "12"
-	
+    
+    @ m_x + 7, m_y + 2 SAY "Broj TKM:" GET tkm_no 	
+
 	read
 
 BoxC()
@@ -139,23 +158,23 @@ endif
 
 aDBf := {}
 AADD(aDBf,{ 'idRoba'		, 'C', 10, 0 })
-AADD(aDBf,{ 'naz'		, 'C', 40, 0 })
+AADD(aDBf,{ 'naz'		    , 'C', 40, 0 })
 AADD(aDBf,{ 'idTarifa'		, 'C',  6, 0 })
 AADD(aDBf,{ 'barkod'		, 'C', 20, 0 })
-AADD(aDBf,{ 'evBr'		, 'C', 10, 0 })
+AADD(aDBf,{ 'evBr'		    , 'C', 10, 0 })
 AADD(aDBf,{ 'cijena'		, 'N', 10, 2 })
 AADD(aDBf,{ 'sCijena'		, 'N', 10, 2 })
 AADD(aDBf,{ 'skrNaziv'		, 'C', 20, 0 })
 AADD(aDBf,{ 'brojLabela'	, 'N',  6, 0 })
-AADD(aDBf,{ 'jmj'		, 'C',  3, 0 })
-AADD(aDBf,{ 'katBr'		, 'C', 20, 0 })
-AADD(aDBf,{ 'cAtribut'		, 'C', 30, 0 })
-AADD(aDBf,{ 'cAtribut2'		, 'C', 30, 0 })
-AADD(aDBf,{ 'nAtribut'		, 'N', 10, 2 })
-AADD(aDBf,{ 'nAtribut2'		, 'N', 10, 2 })
-AADD(aDBf,{ 'vpc'		, 'N',  8, 2 })
-AADD(aDBf,{ 'mpc'		, 'N',  8, 2 })
-AADD(aDBf,{ 'porez'		, 'N',  8, 2 })
+AADD(aDBf,{ 'jmj'		    , 'C',  3, 0 })
+AADD(aDBf,{ 'katBr'		    , 'C', 20, 0 })
+AADD(aDBf,{ 'catribut'		, 'C', 30, 0 })
+AADD(aDBf,{ 'catribut2'		, 'C', 30, 0 })
+AADD(aDBf,{ 'natribut'		, 'N', 10, 2 })
+AADD(aDBf,{ 'natribut2'		, 'N', 10, 2 })
+AADD(aDBf,{ 'vpc'		    , 'N',  8, 2 })
+AADD(aDBf,{ 'mpc'		    , 'N',  8, 2 })
+AADD(aDBf,{ 'porez'		    , 'N',  8, 2 })
 AADD(aDBf,{ 'porez2'		, 'N',  8, 2 })
 AADD(aDBf,{ 'porez3'		, 'N',  8, 2 })
 
@@ -206,37 +225,36 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 	select rLabele
 	seek kalk_pripr->idroba
 	
-	if ( cKolicina == "D" .or. ( cKolicina == "N" .and. !found() ) )
+	if ( cKolicina == "D" .or. ( cKolicina == "N" .and. !FOUND() ) )
 		
-	  for i := 1 to nBr_labela
+	    for i := 1 to nBr_labela
 		
-		select rLabele
-		append blank
+		    select rlabele
+		    append blank
 		
-		Scatter()
+		    Scatter()
 		
-		_idRoba := kalk_pripr->idRoba
-		_naz := LEFT(roba->naz, 40)
-		_idTarifa := kalk_pripr->idTarifa
-		_evBr := kalk_pripr->brDok
+		    _idroba := kalk_pripr->idroba
+		    _naz := LEFT( roba->naz, 40 )
+		    _idtarifa := kalk_pripr->idtarifa
+		    _evbr := kalk_pripr->brdok
+            _jmj := roba->jmj
 
-		if roba->(FIELDPOS("barkod")) <> 0
-			if !EMPTY( roba->barkod )
-				_barkod := roba->barkod
-			endif
-		endif
+      	    if !EMPTY( roba->barkod )
+			    _barkod := roba->barkod
+		    endif
 		
-		if (kalk_pripr->idVd=="19")
-			_cijena:=kalk_pripr->mpcSaPP+pripr->fCj
-			_sCijena:=kalk_pripr->fCj
-		else
-			_cijena:=kalk_pripr->mpcSaPP
-			_sCijena:=_cijena
-		endif
+		    if ( kalk_pripr->idVd == "19" )
+			    _cijena := kalk_pripr->mpcsapp + kalk_pripr->fcj
+			    _scijena := kalk_pripr->fcj
+		    else
+			    _cijena := kalk_pripr->mpcsapp
+			    _scijena := _cijena
+		    endif
 		
-		Gather()
+		    Gather()
 	   
-	   next
+	    next
 	
 	endif
 	
@@ -268,4 +286,50 @@ local _rtm_naziv := ALLTRIM( "rLab" + cVarijanta )
 f18_rtm_print( _rtm_naziv, "rlabele", "1" )
 
 return nil
+
+
+// ----------------------------------------------------------
+// generisi xml na osnovu tabele rlabele
+// ----------------------------------------------------------
+static function _gen_xml( xml_file, tkm_no )
+local _t_area := SELECT()
+
+open_xml( xml_file )
+xml_head()
+
+xml_subnode( "lab", .f. )
+
+select rlabele
+set order to tag "1"
+go top
+
+xml_node( "pred", to_xml_encoding( ALLTRIM(gNFirma) ) )
+xml_node( "tkm", to_xml_encoding( ALLTRIM( tkm_no ) ) )
+xml_node( "dok", to_xml_encoding( ALLTRIM( rlabele->evbr ) ) )
+
+do while !EOF()
+    
+    xml_subnode( "data", .f. )
+
+    // filuj podatke iz tabele
+    xml_node( "id", to_xml_encoding( ALLTRIM( rlabele->idroba ))  )
+    xml_node( "naz", PADR( to_xml_encoding( ALLTRIM( rlabele->naz )), 28  ) )
+    xml_node( "jmj", to_xml_encoding( ALLTRIM( rlabele->jmj ))  )
+    xml_node( "bk", to_xml_encoding( ALLTRIM( rlabele->barkod ))  )
+    xml_node( "c1", ALLTRIM( STR( rlabele->cijena, 12, 2 ) )  )
+    xml_node( "c2", ALLTRIM( STR( rlabele->scijena, 12, 2 ) )  )
+
+    xml_subnode( "data", .t. )
+
+    skip 
+enddo
+
+xml_subnode( "lab", .t. )
+
+close_xml()
+
+select ( _t_area )
+return
+
+
 

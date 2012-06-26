@@ -1308,7 +1308,7 @@ endif
     GET _IdRoba ;
     PICT "@!S10" ;
     WHEN {|| _idroba := PADR( _idroba, VAL( gDuzSifIni )), W_Roba() } ;
-    VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), LEFT( _idroba, VAL(gDuzSifIni) ), _idroba ), V_Roba(), artikal_kao_usluga(fnovi), NijeDupla(fNovi) }
+    VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), LEFT( _idroba, VAL(gDuzSifIni) ), _idroba ), V_Roba(), artikal_kao_usluga(fnovi), NijeDupla(fNovi), zadnji_izlazi_info( _idpartner, _idroba, "F" ) }
 
 RKOR2:=0
 

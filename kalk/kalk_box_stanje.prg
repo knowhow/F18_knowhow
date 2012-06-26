@@ -12,44 +12,33 @@
 
 #include "kalk.ch"
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/db/1g/box_st.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.2 $
- * $Log: box_st.prg,v $
- * Revision 1.2  2002/06/18 14:02:38  mirsad
- * dokumentovanje (priprema za doxy)
- *
- *
- */
 
-/*! \file fmk/kalk/db/1g/box_st.prg
- *  \brief Racunanje i prikaz stanja robe
- */
-
-/*! \fn KalkStanje(cIdRoba)
- *  \brief Racunanje i prikaz stanja robe
- */
 
 function KalkStanje(cIdRoba)
-*{
 local nUl,nIzl,nRezerv,nRevers,fOtv:=.f.,nIOrd,nFRec, aStanje
 local aZN := { CTOD("") , 0 , 0 , 0 } // zadnja nabavka
+
 select roba
+
 select (F_KALK)
-if !used()
-   O_KALK; fOtv:=.t.
+if !USED()
+    O_KALK
+    fOtv := .t.
 else
-  nIOrd:=indexord()
-  nFRec:=recno()
+    nIOrd := indexord()
+    nFRec := recno()
 endif
+
 // "7","Idroba")
 set order to tag "7"
-SEEK cIdRoba
+seek cIdRoba
 
-aStanje:={}
+aStanje := {}
+
 //{idkonto, nUl,nIzl }         KALK
+
 nUl:=nIzl:=0
+
 do while !eof()  .and. cIdRoba==IdRoba
    nUlaz:=nIzlaz:=0
    IF !EMPTY(mkonto)
@@ -101,15 +90,19 @@ PRIVATE ZN_Rabat  := aZN[3]           // rabat po zadnjoj nabavci
 PRIVATE ZN_NabCij := aZN[4]           // nabavna cijena po zadnjoj nabavci
 
 if fotv
- selec kalk; use
+    select kalk
+    use
 else
-  dbsetorder(nIOrd)
-  go nFRec
+    dbsetorder(nIOrd)
+    go nFRec
 endif
+
 select roba
+
 BoxStanje(aStanje, cIdRoba)      // nUl,nIzl
+
 return
-*}
+
 
 
 
@@ -118,7 +111,6 @@ return
  */
 
 function BoxStanje(aStanje,cIdroba)
-*{
 local picdem:="9999999.999", nR, nC, nTSta := 0, nTUl := 0, nTIzl := 0,;
       npd, cDiv := " ³ ", nLen, nRPoc:=0
 
@@ -133,8 +125,8 @@ local picdem:="9999999.999", nR, nC, nTSta := 0, nTUl := 0, nTIzl := 0,;
  aDodPar := {}
  FOR i:=1 TO 6
    cI := ALLTRIM(STR(i))
-   cPomZ := IzFMKINI( "BoxStanje" , "ZaglavljeStanje"+cI , "" , KUMPATH )
-   cPomF := IzFMKINI( "BoxStanje" , "FormulaStanje"+cI   , "" , KUMPATH )
+   cPomZ := IzFMKINI( "BoxStanje" , "ZaglavljeStanje" + cI , "" , KUMPATH )
+   cPomF := IzFMKINI( "BoxStanje" , "FormulaStanje" + cI   , "" , KUMPATH )
    IF !EMPTY( cPomF )
      AADD( aDodPar , { cPomZ , cPomF } )
    ENDIF

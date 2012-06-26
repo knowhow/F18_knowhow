@@ -86,11 +86,11 @@ if lKoristitiBK
     @ m_x + _x, m_y + 2 SAY "Artikal  " GET _idroba ;
         PICT "@!S10" ;
         WHEN {|| _idroba := PADR( _idroba, VAL( gDuzSifIni )), .t. } ;
-        VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
+        VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), zadnji_ulazi_info( _idpartner, _idroba, "P" ) }
 else
     @ m_x + _x, m_y + 2 SAY "Artikal  " GET _idroba ;
         PICT "@!"  ;
-        VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) } 
+        VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), zadnji_ulazi_info( _idpartner, _idroba, "P" ) } 
 endif
 
 @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa ;

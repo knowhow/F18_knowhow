@@ -95,7 +95,7 @@ if lKoristitiBK
 			_idroba := iif(len(trim(_idroba))<10,left(_idroba,10),_idroba), ;
 			P_Roba(@_IdRoba), ;
 			ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-			_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa), ;
+			_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa), zadnji_ulazi_info( _idpartner, _idroba, "M" ),  ;
 		.t. }
 else
 	@ m_x + _x, m_y + 2  SAY "Artikal  " GET _IdRoba ;
@@ -105,7 +105,7 @@ else
 			fix_sifradob(@_idroba,5,"0"), ;
 			P_Roba(@_IdRoba, nil, nil, gArtCDX ), ;
 			ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-			_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa), ;
+			_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa), zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
 		.t. }
 
 endif

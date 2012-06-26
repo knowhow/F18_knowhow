@@ -12,22 +12,8 @@
 
 #include "kalk.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-/*! \file fmk/kalk/sif/1g/sifre.prg
- *  \brief Sifrarnici
- */
 
-/*! \fn kalk_sifrarnik()
- *  \brief Glavni menij za izbor sifrarnika
- */
- 
 function kalk_sifrarnik()
-*{
 PRIVATE PicDem
 PicDem:=gPICDem
 close all
@@ -66,84 +52,78 @@ private Izbor:=1
 Menu_SC("msif")
 CLOSERET
 return .f.
-*}
 
 
 
-/*! \fn kalk_serv_functions()
- *  \brief Servisne funkcije 
- */
- 
+
 function kalk_serv_functions()
-*{
 Msg("Nije u upotrebi")
 closeret
 return
-*}
 
 
-/*! \fn RobaBlock(Ch)
- *  \brief Obrada funkcija nad sifrarnikom robe
- *  \param Ch - Pritisnuti taster
- */
- 
+
 function RobaBlock(Ch)
-*{
 LOCAL cSif:=ROBA->id, cSif2:=""
 
 if Ch==K_CTRL_T .and. gSKSif=="D"
 
- // provjerimo da li je sifra dupla
- PushWA()
- SET ORDER TO TAG "ID"
- SEEK cSif
- SKIP 1
- cSif2:=ROBA->id
- PopWA()
- IF !(cSif==cSif2)
-   // ako nije dupla provjerimo da li postoji u kumulativu
-   if ima_u_kalk_kumulativ(cSif,"7")
-     Beep(1)
-     Msg("Stavka se ne moze brisati jer se vec nalazi u dokumentima!")
-     return 7
-   endif
- ENDIF
+    // provjerimo da li je sifra dupla
+    PushWA()
+    SET ORDER TO TAG "ID"
+    SEEK cSif
+    SKIP 1
+    cSif2:=ROBA->id
+    PopWA()
+    IF !(cSif==cSif2)
+        // ako nije dupla provjerimo da li postoji u kumulativu
+        if ima_u_kalk_kumulativ(cSif,"7")
+            Beep(1)
+            Msg("Stavka se ne moze brisati jer se vec nalazi u dokumentima!")
+            return 7
+        endif
+    ENDIF
 
-elseif Ch==K_ALT_M
-   return  MpcIzVpc()
+elseif Ch == K_ALT_M
+    return MpcIzVpc()
 
 elseif Ch==K_F2 .and. gSKSif=="D"
- if ima_u_kalk_kumulativ(cSif,"7")
-   return 99
- endif
 
-elseif Ch==K_F8  // cjenovnik
+    if ima_u_kalk_kumulativ(cSif,"7")
+        return 99
+    endif
+
+elseif Ch == K_F8  
+    // cjenovnik
  
- PushWa()
- nRet:=CjenR()
- OSifBaze()
- SELECT ROBA
- PopWA()
- return nRet
+    PushWa()
+    nRet:=CjenR()
+    OSifBaze()
+    SELECT ROBA
+    PopWA()
+    return nRet
 
-elseif upper(Chr(Ch))=="O"
- if roba->(fieldpos("strings")) == 0
- 	return 6
- endif
- TB:Stabilize()
- PushWa()
- m_strings(roba->strings, roba->id)
- select roba
- PopWa()
- return 7
+elseif upper(Chr(Ch)) == "O"
+    
+    if roba->(fieldpos("strings")) == 0
+ 	    return 6
+    endif
+    TB:Stabilize()
+    PushWa()
+    m_strings(roba->strings, roba->id)
+    select roba
+    PopWa()
+    return 7
 
-elseif upper(Chr(Ch))=="S"
+elseif upper(Chr(Ch)) == "S"
 
-  TB:Stabilize()  // problem sa "S" - exlusive, htc
-  PushWa()
-  KalkStanje(roba->id)
-  PopWa()
-  return 6  // DE_CONT2
+    TB:Stabilize()  
+    // problem sa "S" - exlusive, htc
+    PushWa()
+    KalkStanje( roba->id )
+    PopWa()
+    return 6  
+    // DE_CONT2
 
 endif
 

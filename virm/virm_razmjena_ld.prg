@@ -74,15 +74,13 @@ return
 // ------------------------------------------------------------------------
 function virm_prenos_ld( prenos_ld )
 local _poziv_na_broj
-local _ko_txt := ""
-local _poz_br := ""
 local _dat_virm := DATE()
 local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "D" ) 
 local _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" ) 
 local _dod_opis1, _dod_opis2, _racun_upl
 local _per_od, _per_do
 local _id_banka, _dod_opis
-local _r_br, _izr_formula
+local _r_br
 
 private _mjesec, _godina, broj_radnika
 
@@ -157,14 +155,15 @@ obrada_kredita( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
 // obrada tekucih racuna
 obrada_tekuci_racun( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
 
-FillJPrih()  
 // popuni polja javnih prihoda
+filljprih()  
 
 close all
 return
 
-
-
+// ---------------------------------------------------------------------------------------------
+// obrada podataka za isplate na tekuci racun
+// ---------------------------------------------------------------------------------------------
 static function obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 local _oznaka := "IS_"
 local _id_kred, _rec
@@ -276,7 +275,9 @@ enddo
 return
 
 
-
+// ----------------------------------------------------------------------------------------------------
+// obrada virmana za regularnu isplatu plata, doprinosi, porezi itd...
+// ----------------------------------------------------------------------------------------------------
 static function obrada_plate( godina, mjesec, dat_virm, r_br, dod_opis, per_od, per_do )
 local _broj_radnika
 local _formula, _izr_formula
@@ -487,8 +488,9 @@ endif
 return
 
 
-
-
+// --------------------------------------------------------------------------------------
+// obrada virmana za kredite
+// --------------------------------------------------------------------------------------
 static function obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nula )
 local _oznaka := "KRED"
 local _id_kred, _rec
@@ -589,11 +591,11 @@ return
 // kao formulu pri prenosu...
 // --------------------------------------------
 function RLD( cId, nIz12, qqPartn )
-local nPom1:=0
-local nPom2:=0
+local nPom1 := 0
+local nPom2 := 0
 
 if nIz12 == NIL
-    nIz12:=1
+    nIz12 := 1
 endif
 
 // prolazim kroz rekld i trazim npr DOPR1XSA01

@@ -2,6 +2,7 @@
 
   - kalk, štampanje labela sa cijenama [#28351](http://redmine.bring.out.ba/issues/28351)
   - kalk, fakt, pomoć sa rabatom kod izlaza i ulaza [#28464](http://redmine.bring.out.ba/issues/28464)
+  - virm, generisanje virmana - čišćenje opcije [#28476](http://redmine.bring.out.ba/issues/28476)
  
 1.0.61 2012-06-21, vsasa
 

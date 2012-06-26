@@ -313,18 +313,23 @@ return 1
 
 
 function SetPrimaoc()
-_kome_zr:=_IdBanka2
-select partn; seek _u_korist
- //--- Uslov za ispis adrese u polju primaoca (MUP ZE-DO)
- if IzFmkIni("Primaoc","UnosAdrese","N",KUMPATH)=="D"
-    _kome_txt:=trim(naz) + ", " + trim(mjesto) + ", " + adresa
- else
-    _kome_txt:=trim(naz) + ", " + mjesto
- endif
+
+_kome_zr := _idbanka2
+
+select partn
+seek _u_korist
+ 
+//--- Uslov za ispis adrese u polju primaoca (MUP ZE-DO)
+if IzFmkIni("Primaoc","UnosAdrese","N",KUMPATH)=="D"
+    _kome_txt := ALLTRIM( naz ) + ", " + ALLTRIM( mjesto ) + ", " + ALLTRIM( adresa )
+else
+    _kome_txt := ALLTRIM( naz ) + ", " + ALLTRIM( mjesto )
+endif
+
 select virm_pripr
 
 return .t.
-*}
+
 
 
 function UplDob()
@@ -520,55 +525,82 @@ if cDefault = NIL
     cDefault := "??FFFX"
 endif
 
-aBanke := ASifv( "PARTN", "BANK", cIdPartn )
+aBanke := array_from_sifv( "PARTN", "BANK", cIdPartn )
+
 PushWa()
+
 select banke
 
 nTIzbor := 1
 
 for i := 1 to LEN( aBanke )
-  if LEFT( aBanke[i], LEN(cDefault) ) = cDefault
-      nTIzbor := i
-      if fSilent
-        cDefault := LEFT( aBanke[nTIzbor], 16 )
-        PopWA()
-        return .t.
-      endif
-  endif
-  seek (LEFT( aBanke[i], 3 ))
-  aBanke[i] := PADR( TRIM( aBanke[i] ) + ":" + PADR( naz, 20 ), 50 )
+
+    if LEFT( aBanke[i], LEN( cDefault ) ) = cDefault
+        nTIzbor := i
+        if fSilent
+            cDefault := LEFT( aBanke[ nTIzbor ], 16 )
+            PopWA()
+            return .t.
+        endif
+    endif
+
+    seek ( LEFT( aBanke[i], 3 ) )
+
+    aBanke[i] := PADR( TRIM( aBanke[i] ) + ":" + PADR( naz, 20 ), 50 )
+
 next
 
 PopWa()
-Izbor := nTIzbor
+
+select virm_pripr
+
+izbor := nTIzbor
 
 if LEN( aBanke ) > 1
+    // ako ima vise banaka...
     if !fSilent
-        MsgBeep("Partner "+ cIdPartn +" ima racune kod vise banaka, Odaberite banku ")
+        MsgBeep( "Partner " + cIdPartn + " ima racune kod vise banaka, odaberite banku." )
     endif
-    private h[LEN(aBanke)]
-    AFILL(h,"")
+    
+    private h[ LEN( aBanke ) ]
+    
+    AFILL( h, "" )
+    
     do while .t.
-        Izbor := menu( "ab-1", aBanke, Izbor, .f., "1" )
-        if Izbor = 0
+
+        izbor := menu( "ab-1", aBanke, izbor, .f., "1" )
+
+        if izbor = 0
             exit
         else
-            nTIzbor := Izbor
-            Izbor := 0
+            nTIzbor := izbor
+            izbor := 0
         endif
+
     enddo
-    Izbor := nTIzbor
+
+    izbor := nTIzbor
+
     m_x := n1
     m_y := n2
 
 elseif LEN( aBanke ) == 1
-    cDefault := LEFT( aBanke[Izbor], 16 )
+
+    // ako je jedna banka...
+
+    cDefault := LEFT( aBanke[izbor], 16 )
     return .t.
+
 else
+
+    // potrazi ga u partn->ziror
+
     cDefault := ""
     select partn
     hseek cIdpartn
+
     cDefault := partn->ziror
+
     if !EMPTY( cDefault )
         return .t.
     else
@@ -576,49 +608,45 @@ else
         cDefault := ""
         return .t.
     endif
+
 endif
 
-cDefault := LEFT( aBanke[Izbor], 16 )
+cDefault := LEFT( aBanke[izbor], 16 )
 
 return .t.
 
 
 
-
-/*!
- @function ASifv
- @abstract Formira matricu vrijednosti ...
- @discussion - poziv ASifv("ROBA","BARK","2MON001")
-               => {"32323232323233","4434343434343"}
- @param cDBF ime DBF-a
- @param cOznaka oznaka BARK , GR1 itd
- @param cIDSif   2MON001 - interna sifra
-*/
-function ASifv(cDBF,cOznaka,cIdSif)
-*{
-local aSifV:={}
+// ------------------------------------------------------------------
+// formiranje matrice na osnovu podataka iz tabele sifv
+// ------------------------------------------------------------------
+function array_from_sifv( cDBF, cOznaka, cIdSif )
+local aSifV := {}
 
 PushWa()
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
 
-xVal:=NIL
+cDBF := PADR( cDBF, 8 )
+cOznaka := PADR( cOznaka, 4 )
+
+xVal := NIL
 
 select sifv
-PushWa() // spasi stanje sifv
+PushWa() 
+
 set order to tag "ID"
-//"ID","id+oznaka+IdSif+Naz",SIFPATH+"SIFV"
-hseek cDbf + coznaka + cIdSif
-do while !eof() .and. ID+Oznaka+IdSif=cDbf+coznaka+cIdSif
-  AADD(aSifV,naz)
-  skip
+// "ID", "id+oznaka+IdSif+Naz"
+hseek cDbf + cOznaka + cIdSif
+
+do while !EOF() .and. field->id + field->oznaka + field->idsif = cDbf + cOznaka + cIdSif
+    if !EMPTY( naz )
+        AADD( aSifV, ALLTRIM( naz ) )
+    endif
+    skip
 enddo
 
-PopWa()   // sifv
-
 PopWa()
-return ASifV
-*}
+
+return aSifv
 
 
 
@@ -687,69 +715,70 @@ for i:=len(cIdJPrih) to 1 step -1
 next
 PopWa()
 return aRez
-*}
 
 
 
-/*
- // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
- // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-*/
+// setovanje varijabli: _kome_zr , _kome_txt, _budzorg
+// pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
+// 
+// formula moze biti:
+// ------------------------------
+// 712221-103
+// 712221-1-103
+
 function SetJPVar()
-local cPom2 := ""
+local _tmp_1 := ""
+local _tmp_2 := ""
+local _idjprih
+local aJPrih
 
-_IdJPrih := TOKEN(vrprim->racun, "-", 1)
+_idjprih := TOKEN( vrprim->racun, "-", 1 )
 
-cPom := TOKEN(vrprim->racun, "-", 2) 
+_tmp_1 := TOKEN( vrprim->racun, "-", 2 ) 
 // <- moze biti opcina, kanton ili entitet ili nista
 
-cPom2 := TOKEN(vrprim->racun, "-", 3) 
+_tmp_2 := TOKEN( vrprim->racun, "-", 3 ) 
 // <- moze se iskoristiti za opcinu
 
-cPom := TRIM(cPom)
-cPom2 := TRIM(cPom2) 
+_tmp_1 := ALLTRIM( _tmp_1 )
+_tmp_2 := ALLTRIM( _tmp_2 ) 
 
-//    ako je cPom kanton ili entitet a
-
-if LEN(cPom) == 3 
+if LEN( _tmp_1 ) == 3 
     
-    _IdOps := cPom
-        aJPrih := JPrih(_IdJPrih, _IdOps, "", "")
+    _idops := _tmp_1
+    aJPrih := JPrih( _idjprih, _idops, "", "" )
+    
     _kome_zr := aJPrih[1]
-    //_kome_txt := aJPrih[2]
-    _BudzORg:=  aJPrih[3]
+    _budzorg:=  aJPrih[3]
 
-elseif LEN(cPom) == 2
+elseif LEN( _tmp_1 ) == 2
 
     // nivo kantona
-        // _IdOps:=space(3)
-        _IdOps := IF( LEN(cPom2) == 3, cPom2, OpcRada() )
-        aJPrih := JPrih( _IdJPrih, "", cPom, "")
+    _idops := IF( LEN( _tmp_2 ) == 3, _tmp_2, OpcRada() )
+    aJPrih := JPrih( _idjprih, "", _tmp_1, "" )
     _kome_zr := aJPrih[1]
-    //_kome_txt := aJPrih[2]
-    _BudzORg := aJPrih[3]
+    _budzorg := aJPrih[3]
 
-elseif LEN(cPom) == 1
+elseif LEN( _tmp_1 ) == 1
 
     // nivo entiteta
-        // _IdOps:=space(3)
-        _IdOps := IF( LEN(cPom2) == 3, cPom2, OpcRada() )
-        aJPrih := JPrih( _IdJPrih, "", "", cPom )
+    _idops := IF( LEN( _tmp_2 ) == 3, _tmp_2, OpcRada() )
+    aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
     _kome_zr := aJPrih[1]
-    //_kome_txt := aJPrih[2]
-    _BudzORg := aJPrih[3]
+    _budzorg := aJPrih[3]
     
-elseif LEN(cPom) == 0
+elseif LEN( _tmp_1 ) == 0
     
     // jedinstveni uplatni racun
-        _IdOps := space(3)
-        _IdJprih := padr(_idjprih, 6) 
-        // duzina sifre javnog prihoda
-        aJPrih := JPrih( _IdJPrih, "", "", cPom )
+    _idops := SPACE(3)
+    _idjprih := PADR( _idjprih, 6 ) 
+    // duzina sifre javnog prihoda
+    aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
     _kome_zr := aJPrih[1]
-    //_kome_txt := aJPrih[2]
-    _BudzORg:=  aJPrih[3]
+    _budzorg:=  aJPrih[3]
+
 endif
+
 return
 
 
@@ -764,43 +793,62 @@ select virm_pripr
 go top
 
 do while !eof()
+    
     select vrprim
     seek virm_pripr->svrha_pl
+    
     select virm_pripr
     Scatter()
-    if vrprim->Idpartner="JP" // javni prihod
+    
+    if vrprim->idpartner = "JP" 
+        // javni prihod
         SetJPVar()
     endif
 
-    _IznosSTR := ""
-    _IznosSTR := "=" + IF( _iznos == 0 .and. gINulu == "N", SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos), ".", "," ) ) )
+    _iznosstr := ""
+    _iznosstr := "=" + IF( _iznos == 0 .and. gINulu == "N", SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos), ".", "," ) ) )
 
     Gather()
+
     skip
+
 enddo
+
 return
 
 
 
 function OpcRada()
-*{
-  LOCAL cVrati:="   ", cOR:="", nArr:=SELECT()
-  cOR:=IzFmkIni("VIRM","OpcRada","XXXX",KUMPATH)
-  IF EMPTY(cOR); RETURN ""; ENDIF
-  SELECT (F_OPS)
-  IF !USED()
+local cVrati := "   "
+local cOR := ""
+local nArr := SELECT()
+  
+cOR := IzFmkIni("VIRM","OpcRada","XXXX",KUMPATH)
+  
+IF EMPTY(cOR)
+    RETURN ""
+ENDIF
+  
+SELECT (F_OPS)
+  
+IF !USED()
     O_OPS
     SEEK cOR
-    IF FOUND(); cVrati := IDJ; ENDIF
+    IF FOUND()
+        cVrati := IDJ
+    ENDIF
     USE
-  ELSE
+ELSE
     PushWA()
-     SET ORDER TO TAG "ID"
-     SEEK cOR
-     IF FOUND(); cVrati := IDJ; ENDIF
+    SET ORDER TO TAG "ID"
+    SEEK cOR
+    IF FOUND()
+        cVrati := IDJ
+    ENDIF
     PopWA()
-  ENDIF
-  SELECT (nArr)
+ENDIF
+  
+SELECT (nArr)
 RETURN cVrati
 
 

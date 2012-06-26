@@ -77,7 +77,8 @@ local _poziv_na_broj
 local _dat_virm := DATE()
 local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "D" ) 
 local _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" ) 
-local _dod_opis1, _dod_opis2, _racun_upl
+local _dod_opis1 := "D"
+local _racun_upl
 local _per_od, _per_do
 local _id_banka, _dod_opis
 local _r_br
@@ -94,9 +95,6 @@ _o_tables()
 _godina := fetch_metric( "virm_godina", my_user(), YEAR( DATE() ) )
 _mjesec := fetch_metric( "virm_mjesec", my_user(), MONTH( DATE() ) ) 
 _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
-// dodati na opis "plate za mjesec ...."
-_dod_opis1 := fetch_metric( "virm_dodatni_opis_virmana_1", NIL, "N" ) 
-_dod_opis2 := fetch_metric( "virm_dodatni_opis_virmana_2", NIL, "N" ) 
 _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
 
 // period od-do
@@ -138,11 +136,7 @@ set_metric( "virm_poziv_na_broj", my_user(), _poziv_na_broj )
 set_metric( "virm_generisanje_nule", my_user(), _bez_nula ) 
 set_metric( "virm_isplate_za_radnike_posebno", my_user(), _ispl_posebno ) 
 
-if _dod_opis1 == "D"
-    _dod_opis := ", za " + STR( _mjesec, 2 ) + "." + STR( _godina, 4 )
-else
-    _dod_opis := ""
-endif
+_dod_opis := ", za " + STR( _mjesec, 2 ) + "." + STR( _godina, 4 )
 
 _r_br := 0
 
@@ -257,13 +251,14 @@ do while !EOF() .and. field->id = _oznaka
         replace field->kome_sj with _kome_sjed
         replace field->kome_zr with _kome_zr
         replace field->dat_upl with dat_virm
-        replace field->svrha_doz with TRIM( vrprim->pom_txt ) + " " + dod_opis + " " + _isplata_opis
+        replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + " " + ALLTRIM( dod_opis ) + " " + _isplata_opis
         replace field->u_korist with _id_kred
 
         if _ispl_posebno == "D"
             // jedan radnik
-            replace field->svrha_doz with TRIM( svrha_doz ) + ", Tekuci rn:" + TRIM( rekld->opis )
+            replace field->svrha_doz with TRIM( svrha_doz ) + ", tekuci rn:" + TRIM( rekld->opis )
         endif
+
     endif
  
     select rekld
@@ -313,7 +308,7 @@ do while !EOF()
         loop
     endif
      
-    _svrha_placanja := field->id
+    _svrha_placanja := ALLTRIM( field->id )
 
     select vrprim
     hseek ldvirm->id
@@ -345,7 +340,7 @@ do while !EOF()
         replace field->kome_txt with vrprim->naz
 
         _tmp_opis := TRIM( vrprim->pom_txt ) + ;
-                IF( !EMPTY( dod_opis ), " " + dod_opis, "" ) + ;
+                IF( !EMPTY( dod_opis ), " " + ALLTRIM( dod_opis ), "" ) + ;
                 IF( !EMPTY( broj_radnika ), " " + broj_radnika, "" ) 
 
         // resetuj varijable
@@ -367,12 +362,17 @@ do while !EOF()
         else
 
             if vrprim->dobav == "D"
+                
                 _kome_zr := PADR( _kome_zr, 3 )
+                
                 select partn
                 seek vrprim->idpartner
+                
                 select virm_pripr
+                
                 MsgBeep( "Odrediti racun za partnera :" + vrprim->idpartner )
                 OdBanku( vrprim->idpartner, @_kome_zr )
+
             else
                 _kome_zr := vrprim->racun
             endif
@@ -503,7 +503,7 @@ local _kred_opis := ""
 
 // odraditi kredite
 select rekld
-seek STR( godina, 4 ) + STR( mjesec, 2 ) + "KRED"
+seek STR( godina, 4 ) + STR( mjesec, 2 ) + _oznaka
 
 do while !EOF() .and. field->id = _oznaka
 
@@ -572,7 +572,7 @@ do while !EOF() .and. field->id = _oznaka
         replace field->kome_sj with _kome_sjed
         replace field->kome_zr with _kome_zr
         replace field->dat_upl with dat_virm
-        replace field->svrha_doz with TRIM( vrprim->pom_txt ) + " " + dod_opis + " " + _kred_opis
+        replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + " " + ALLTRIM( dod_opis ) + " " + _kred_opis
         replace field->u_korist with _id_kred
 
     endif
@@ -611,6 +611,7 @@ return 0
 
 
 
+
 // --------------------------------------
 // Rekapitulacija LD-a
 // --------------------------------------
@@ -630,6 +631,7 @@ PushWA()
 if cIdPartner == NIL
     cIdPartner := ""
 endif
+
 if cOpis == NIL
     cOpis := ""
 endif
@@ -646,56 +648,73 @@ go top
 
 if qqPartn == NIL
     
-    hseek STR(nGodina, 4) + STR(nMjesec, 2) + cId
+    hseek STR( nGodina, 4) + STR( nMjesec, 2) + cId
     
     if lGroup == .t.
     
-        do while !EOF() .and. STR(nGodina, 4) == godina ;
-                .and. STR(nMjesec, 2) == mjesec ;
+        do while !EOF() .and. STR( nGodina, 4 ) == field->godina ;
+                .and. STR( nMjesec, 2 ) == field->mjesec ;
                 .and. id = cId
         
-                nIzn1 += iznos1
-                nIzn2 += iznos2
+                nIzn1 += field->iznos1
+                nIzn2 += field->iznos2
         
                 skip
         enddo
         
     else
-        nIzn1 := iznos1
-        nIzn2 := iznos2
+
+        nIzn1 := field->iznos1
+        nIzn2 := field->iznos2
+
     endif
     
-    cIdPartner:=idpartner
-    cOpis:=opis
+    cIdPartner := field->idpartner
+    cOpis := field->opis
 
 else
-    nIzn1 := nIzn2 := nRadnika := 0
-    aUslP := Parsiraj(qqPartn,"IDPARTNER")
-    seek STR(nGodina, 4) + STR(nMjesec, 2) + cId
-    do while !eof() .and.;
-            godina+mjesec+id = STR(nGodina, 4) + STR(nMjesec, 2) + cId
+
+    nIzn1 := 0
+    nIzn2 := 0
+    nRadnika := 0
+    aUslP := Parsiraj( qqPartn, "IDPARTNER" )
+
+    seek STR( nGodina, 4 ) + STR( nMjesec, 2 ) + cId
+
+    do while !EOF() .and. field->godina + field->mjesec + field->id = STR( nGodina, 4 ) + STR( nMjesec, 2 ) + cId
+        
         if &aUslP
-                nIzn1 += iznos1
-                nIzn2 += iznos2
-                if LEFT(opis,1)=="("
-                    cOpis    := opis
-                    cOpis    := STRTRAN(cOpis,"(","")
-                    cOpis    := ALLTRIM(STRTRAN(cOpis,")",""))
-                    nRadnika += VAL(cOpis)
-                endif
+                
+            nIzn1 += field->iznos1
+            nIzn2 += field->iznos2
+                
+            if LEFT( field->opis, 1 ) == "("
+
+                cOpis := field->opis
+                cOpis := STRTRAN( cOpis, "(", "" )
+                cOpis := ALLTRIM( STRTRAN( cOpis, ")", "" ))
+                nRadnika += VAL( cOpis )
+
+            endif
+
         endif
+
         skip 1
+
     enddo
     
-    cIdPartner:=""
-    IF nRadnika>0
-        cOpis:="("+ALLTRIM(STR(nRadnika))+")"
-    ELSE
-        cOpis:=""
-    ENDIF
+    cIdPartner := ""
+
+    if nRadnika > 0
+        cOpis := "(" + ALLTRIM( STR( nRadnika )) + ")"
+    else
+        cOpis := ""
+    endif
+
 endif
 
 PopWA()
+
 return
 
 

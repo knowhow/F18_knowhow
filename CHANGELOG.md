@@ -1,3 +1,8 @@
+1.0.62 2012-06-26, vsasa
+
+  - kalk, štampanje labela sa cijenama [#28463](http://redmine.bring.out.ba/issues/28463)
+  - kalk, fakt, pomoć sa rabatom kod izlaza i ulaza [#28464](http://redmine.bring.out.ba/issues/28464)
+ 
 1.0.61 2012-06-21, vsasa
 
   - kalk, kartica prodavnica [#28431](http://redmine.bring.out.ba/issues/28431)

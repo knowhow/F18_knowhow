@@ -149,6 +149,9 @@ else
     AADD( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
+AADD(opc,   Lokal("V. generisanje virmana ")) 
+AADD(opcexe, {|| ld_gen_virm() })
+
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 

@@ -520,8 +520,6 @@ if cDefault = NIL
     cDefault := "??FFFX"
 endif
 
-altd()
-
 aBanke := ASifv( "PARTN", "BANK", cIdPartn )
 PushWa()
 select banke
@@ -757,28 +755,31 @@ return
 
 
 function fillJprih()
+
 // drugi krug; popuni polja vezana za javne prihode ....
-select vrprim; set order to tag "ID"
+select vrprim
+set order to tag "ID"
+
 select virm_pripr
 go top
+
 do while !eof()
-  select vrprim
-  seek virm_pripr->svrha_pl
-  select virm_pripr
-  Scatter()
-  if vrprim->Idpartner="JP" // javni prihod
-    SetJPVar()
-  endif
+    select vrprim
+    seek virm_pripr->svrha_pl
+    select virm_pripr
+    Scatter()
+    if vrprim->Idpartner="JP" // javni prihod
+        SetJPVar()
+    endif
 
-  //09.02.2001
-  _IznosSTR :=""
-  _IznosSTR:="="+IF( _iznos==0.and.gINulu=="N" , SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos),".",",")) )
+    _IznosSTR := ""
+    _IznosSTR := "=" + IF( _iznos == 0 .and. gINulu == "N", SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos), ".", "," ) ) )
 
-  Gather()
-  skip
+    Gather()
+    skip
 enddo
 return
-*}
+
 
 
 function OpcRada()

@@ -89,6 +89,12 @@ return
 // ----------------------------------------
 // ----------------------------------------
 method setGVars()
+virm_set_global_vars()
+return
+
+
+
+function virm_set_global_vars()
 
 set_global_vars()
 
@@ -107,6 +113,5 @@ gIDU := fetch_metric("virm_sys_datum_uplate", nil, gIDU )
 gDatum := fetch_metric("virm_init_datum_uplate", nil, gDatum )
 
 return
-
 
 

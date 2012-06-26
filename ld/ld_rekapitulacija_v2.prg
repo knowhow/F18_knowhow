@@ -472,9 +472,20 @@ IF lGusto
     gPStranica-=nDSGusto
 ENDIF
 
+close all
 END PRINT
 
-close all
+if Pitanje(, "Generisati virmane za ovaj obracun plate ? (D/N)", "N" ) == "D"
+
+    virm_set_global_vars()
+    virm_prenos_ld( .t. )
+    // otvori pripremu virmana...
+    unos_virmana()
+    
+    close all
+
+endif
+
 return
 
 

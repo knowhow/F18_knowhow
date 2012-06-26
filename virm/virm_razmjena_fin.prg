@@ -41,7 +41,9 @@ Box(,5,70)
  @ m_x+2,m_y+2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid  OdBanku(gFirma,@cIdBanka)
  read
  cKo_zr:=cIdBanka
- select partn; seek gFirma; select pripr
+ select partn
+ seek gFirma
+ select fin_pripr
  cKo_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
  @ m_x+3,m_y+2 SAY "Konta za koja se prave virmani ?"  GET qqKonto pict "@!S30"
  @ m_x+4,m_y+2 SAY "Dodatak na opis:" GET cDOpis
@@ -179,9 +181,12 @@ do while !eof()
 enddo
 
 select virm_pripr
-FillJPrih()  // popuni polja javnih prihoda
+
+FillJPrih()  
+// popuni polja javnih prihoda
+
 return
-*}
+
 
 
 

@@ -1109,6 +1109,26 @@ END PRINT
 close all
 return
 
+// -------------------------------------------
+// generisanje virman iz modula LD
+// -------------------------------------------
+function ld_gen_virm()
+
+O_VIRM_PRIPR
+zap
+__dbPack()
+
+MsgBeep( "Opcija podrazumjeva da ste prozvali rekapitulaciju plate" )
+
+virm_set_global_vars()
+virm_prenos_ld( .t. )
+// otvori pripremu virmana...
+unos_virmana()
+    
+close all
+
+return
+
 
 
 

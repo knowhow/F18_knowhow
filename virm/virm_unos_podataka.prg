@@ -502,81 +502,88 @@ return
 
 
 
-/*
-Odabir zeljene banke ...........
-*/
-function OdBanku(cIdPartn , cDefault , fsilent)
-*{
+function OdBanku( cIdPartn , cDefault , fsilent )
 // Odaberi banku
 local n1,n2
-local Izbor , nTIzbor
+local Izbor, nTIzbor
 private aBanke
 private GetList:={}
 
-if fsilent=NIL
- fsilent:=.t.
+if fsilent = NIL
+    fsilent := .t.
 endif
-n1:=m_x ; n2:=m_y
 
-if cDefault=NIL
- cDefault:="??FFFX"
+n1 := m_x
+n2 := m_y
+
+if cDefault = NIL
+    cDefault := "??FFFX"
 endif
-aBanke:=ASifv("PARTN","BANK",cIdPartn)
+
+altd()
+
+aBanke := ASifv( "PARTN", "BANK", cIdPartn )
 PushWa()
 select banke
 
+nTIzbor := 1
 
-nTIzbor:=1
-for i:=1 to len(aBanke)
-  if left(aBanke[i], len(cDefault) ) = cDefault
-      nTIzbor:=i
+for i := 1 to LEN( aBanke )
+  if LEFT( aBanke[i], LEN(cDefault) ) = cDefault
+      nTIzbor := i
       if fSilent
-        cDefault:=left(aBanke[nTIzbor],16)
+        cDefault := LEFT( aBanke[nTIzbor], 16 )
         PopWA()
         return .t.
       endif
   endif
-  seek(left(aBanke[i],3))
-  aBanke[i]:=padr(trim(aBanke[i])+":"+naz,50)
+  seek (LEFT( aBanke[i], 3 ))
+  aBanke[i] := PADR( TRIM( aBanke[i] ) + ":" + PADR( naz, 20 ), 50 )
 next
-PopWa()
-Izbor:=nTIzbor
-if len(aBanke)>1
- if !fSilent
-    MsgBeep("Partner "+ cIdPartn +" ima racune kod vise banaka, Odaberite banku ")
- endif
- private h[LEN(aBanke)]
- AFILL(h,"")
- do while .t.
-  Izbor:=menu("ab-1",aBanke,Izbor,.f.,"1")
-  if Izbor=0
-    exit
-  else
-    nTIzbor:=Izbor
-    Izbor:=0
-  endif
- enddo
- Izbor:=nTIzbor
- m_x := n1 ; m_y := n2
 
-elseif len(aBanke)==1
- cDefault:=left(aBanke[Izbor],16)
- return .t.
+PopWa()
+Izbor := nTIzbor
+
+if LEN( aBanke ) > 1
+    if !fSilent
+        MsgBeep("Partner "+ cIdPartn +" ima racune kod vise banaka, Odaberite banku ")
+    endif
+    private h[LEN(aBanke)]
+    AFILL(h,"")
+    do while .t.
+        Izbor := menu( "ab-1", aBanke, Izbor, .f., "1" )
+        if Izbor = 0
+            exit
+        else
+            nTIzbor := Izbor
+            Izbor := 0
+        endif
+    enddo
+    Izbor := nTIzbor
+    m_x := n1
+    m_y := n2
+
+elseif LEN( aBanke ) == 1
+    cDefault := LEFT( aBanke[Izbor], 16 )
+    return .t.
 else
- cDefault:=""
- select partn; hseek cidpartn; cDefault:=partn->ziror
- if !empty(cDefault)
-   return .t.
- else
-   MsgBeep("Nema unesena nitijedna banka za partnera "+cIdPartn)
-   cDefault:=""
-   return .t.
- endif
+    cDefault := ""
+    select partn
+    hseek cIdpartn
+    cDefault := partn->ziror
+    if !EMPTY( cDefault )
+        return .t.
+    else
+        MsgBeep( "Nema unesena nitijedna banka za partnera " + cIdPartn )
+        cDefault := ""
+        return .t.
+    endif
 endif
 
-cDefault:=left(aBanke[Izbor],16)
+cDefault := LEFT( aBanke[Izbor], 16 )
+
 return .t.
-*}
+
 
 
 

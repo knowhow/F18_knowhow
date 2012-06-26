@@ -198,7 +198,7 @@ public cFormula:=""
 public gRJ:="01"
 public gnHelpObr:=0
 public gMjesec:=1
-public gObracun := " "
+public gObracun := "1"
 // varijanta obracuna u skladu sa zak.promjenama
 public gVarObracun := "2"
 // default vrijednost osnovnog licnog odbitka 

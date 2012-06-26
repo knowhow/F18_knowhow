@@ -27,62 +27,72 @@ O_VRPRIM
 O_LDVIRM
 O_VIRM_PRIPR
 
-cKome_Txt:=""
-lOpresa := .t. 
-//( IzFMKINI("VIRM","Opresa","N",PRIVPATH) == "D" )
-cPozBr:=""
+cKome_Txt := ""
+lOpresa := .f. 
+cPozBr := ""
 
-qqKonto:=padr("6;",60)
-dDatVir:=date()
+qqKonto := PADR( "6;", 60 )
+dDatVir := DATE()
 
-private _godina:=val(IzFmkIni("LDVIRM","Godina",str(year(date()),4), KUMPATH))
-private _mjesec:=val(IzFmkIni("LDVIRM","Mjesec",str(mont(date()),2), KUMPATH))
-private cBezNula:="D"
-private cIsplPos:="N"
+private _godina := fetch_metric( "virm_godina", my_user(), STR(YEAR(DATE()), 4 ) )
+private _mjesec := fetch_metric( "virm_mjesec", my_user(), STR(MONTH(DATE()), 2 ) ) 
+private cBezNula := "D"
+private cIsplPos := "N"
 
-cPNaBr:=IzFmkIni("LDVIRM","PozivNaBr"," ", KUMPATH)
-cPnabr:=padr(cPnabr,10)
+cPNaBr := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
+
 // dodati na opis "plate za mjesec ...."
-cOpisPlus1:=IzFmkIni("LDVIRM","OpisPlus1","D", KUMPATH)
-cOpisPlus2:=IzFmkIni("LDVIRM","OpisPlus2","D", KUMPATH)
-cKo_ZR:=IzFmkIni("LDVIRM","KoRacun"," ", KUMPATH)
-dPod:=ctod("")
-dPdo:=ctod("")
+cOpisPlus1 := fetch_metric( "virm_dodatni_opis_virmana_1", nil, "N" ) 
+cOpisPlus2 := fetch_metric( "virm_dodatni_opis_virmana_2", nil, "N" ) 
+
+cKo_ZR := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
+
+dPod := CTOD("")
+dPdo := CTOD("")
 
 
 Box(,10,70)
- @ m_x+1,m_y+2 SAY "PRENOS REKAPITULACIJE IZ LD -> VIRM"
 
- cIdBanka:=padr(cko_zr,3)
- @ m_x+2,m_y+2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid  OdBanku(gFirma,@cIdBanka)
- read
- cKo_zr:=cIdBanka
- select partn 
- seek gFirma
- select virm_pripr
- cKo_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
+    @ m_x + 1, m_y + 2 SAY "PRENOS REKAPITULACIJE IZ LD -> VIRM"
 
- @ m_x+3,m_y+2 SAY "Poziv na broj " GET cPNABR
- @ m_x+4,m_y+2 SAY "Godina" GET _godina pict "9999"
- @ m_x+5,m_y+2 SAY "Mjesec" GET _mjesec  pict "99"
- @ m_x+7,m_y+2 SAY "Datum" GET dDatVir
- @ m_x+8,m_y+2 SAY "Porezni period od" GET dPOd
- @ m_x+8,col()+2 SAY "do" GET dPDo
- @ m_x+9,m_y+2 SAY "Isplate prebaciti pojedinacno za svakog radnika (D/N)?" GET cIsplPos VALID cIsplPos$"DN" PICT "@!"
- @ m_x+10,m_y+2 SAY "Formirati samo stavke sa iznosima vecim od 0 (D/N)?" GET cBezNula VALID cBezNula$"DN" PICT "@!"
- read; ESC_BCR
+    cIdBanka := PADR( cKo_zr, 3 )
+
+    @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid OdBanku( gFirma, @cIdBanka )
+    read
+
+    cKo_zr := cIdBanka
+
+    select partn 
+    seek gFirma
+
+    select virm_pripr
+
+    cKo_txt := TRIM(partn->naz) + ", " + TRIM(partn->mjesto) + ", " + TRIM(partn->adresa) + ", " + TRIM(partn->telefon)
+
+    @ m_x+3,m_y+2 SAY "Poziv na broj " GET cPNABR
+    @ m_x+4,m_y+2 SAY "Godina" GET _godina pict "9999"
+    @ m_x+5,m_y+2 SAY "Mjesec" GET _mjesec  pict "99"
+    @ m_x+7,m_y+2 SAY "Datum" GET dDatVir
+    @ m_x+8,m_y+2 SAY "Porezni period od" GET dPOd
+    @ m_x+8,col()+2 SAY "do" GET dPDo
+    @ m_x+9,m_y+2 SAY "Isplate prebaciti pojedinacno za svakog radnika (D/N)?" GET cIsplPos VALID cIsplPos$"DN" PICT "@!"
+    @ m_x+10,m_y+2 SAY "Formirati samo stavke sa iznosima vecim od 0 (D/N)?" GET cBezNula VALID cBezNula$"DN" PICT "@!"
+    
+    read
+
+    ESC_BCR
+
 BoxC()
+    
+set_metric( "virm_zr_uplatioca", my_user(), cKo_zr ) 
+set_metric( "virm_godina", my_user(), _godina )
+set_metric( "virm_mjesec", my_user(), _mjesec ) 
+set_metric( "virm_poziv_na_broj", my_user(), cPNaBr ) 
 
-// upisi u fmk.ini
-UzmiIzIni(KUMPATH+"fmk.ini","LDVIRM","PozivNaBr",cPNaBr, "WRITE")
-UzmiIzIni(KUMPATH+"fmk.ini","LDVIRM","KoRacun",cKo_ZR, "WRITE")
-UzmiIzIni(KUMPATH+"fmk.ini","LDVIRM","Godina",str(_godina,4), "WRITE")
-UzmiIzIni(KUMPATH+"fmk.ini","LDVIRM","Mjesec",str(_mjesec,2), "WRITE")
-
-if cOpisPlus1=="D"
-  cDOpis:=", za "+STR(_MJESEC,2)+"." +str(_godina,4)
+if cOpisPlus1 == "D"
+    cDOpis := ", za " + STR(_MJESEC,2)+"." +str(_godina,4)
 else
-  cDOpis:=""
+    cDOpis := ""
 endif
 
 cDOBrRad:=""  // opis, broj radnika

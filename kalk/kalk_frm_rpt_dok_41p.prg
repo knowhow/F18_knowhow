@@ -76,13 +76,9 @@ do while !eof() .and. cIdFirma == field->idfirma .and. cBrDok == field->brdok .a
   
     Tarifa( pkonto, idRoba, @aPorezi )
     
-    if IsPdv()
-        // uracunaj i popust
-        // racporezemp( matrica, mp_bez_pdv, mp_sa_pdv, nc )
-        aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
-    else
-        aIPor := RacPorezeMP( aPorezi, mpc, mpcSaPP, field->nc )
-    endif
+    // uracunaj i popust
+    // racporezemp( matrica, mp_bez_pdv, mp_sa_pdv, nc )
+    aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
 
     nPor1 := aIPor[1]
     

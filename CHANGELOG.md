@@ -1,3 +1,7 @@
+1.0.63 2012-06-27, vsasa
+
+  - kalk, fin stanje prodavnice, mpv-popust kolona dodata 
+ 
 1.0.62 2012-06-26, vsasa
 
   - kalk, štampanje labela sa cijenama [#28351](http://redmine.bring.out.ba/issues/28351)

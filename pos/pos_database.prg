@@ -854,7 +854,7 @@ set order to tag "2"
 seek cIdVd+cIdOdj+cIdDio
 
 if FOUND()      
-// .and. (Empty (cIdDio) .or. _POS->IdDio==cIdDio)
+    // .and. (Empty (cIdDio) .or. _POS->IdDio==cIdDio)
 	if _pos->idradnik <> cIdRadnik
 		// ne mogu dopustiti da vise radnika radi paralelno inventuru, nivelaciju
 		// ili zaduzenje
@@ -869,8 +869,10 @@ if FOUND()
 		enddo
 		MsgBeep("Izbrisana je priprema "+cSta)
 	else
+
 		Beep (3)
-		if Pitanje(,"Poceli ste pripremu! Zelite li nastaviti? (D/N)"," ") == "N"
+
+		if Pitanje(, "Poceli ste pripremu! Zelite li nastaviti? (D/N)", "D" ) == "N"
 			// brisanje prethodne pripreme
 			do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
 				Del_Skip()

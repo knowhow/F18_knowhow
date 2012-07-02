@@ -329,7 +329,7 @@ if !fSadAz
                     "VRATI PRIPREMU " + cNazDok + "E" })
 
         if i == 1     
-            
+
             // ostavi je za kasnije
             SELECT _POS
             AppFrom( "PRIPRZ", .f. )
@@ -341,20 +341,37 @@ if !fSadAz
 
         elseif i == 3 
 
-            // obrisati pripremu
-            SELECT PRIPRZ
-            Zapp()
-            __dbPack()
-            // reset brojaca dokumenta...
-            pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
-            close all
-            return
+            if Pitanje(, "Sigurno zelite izbrisati pripremu dokumenta (D/N) ?", "N" ) == "D"
+
+                // obrisati pripremu
+                SELECT PRIPRZ
+                Zapp()
+                __dbPack()
+                // reset brojaca dokumenta...
+                pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
+                close all
+                return
+
+            else
+
+                // ostavi je za kasnije
+                SELECT _POS
+                AppFrom( "PRIPRZ", .f. )
+                SELECT PRIPRZ
+                Zapp()
+                __dbPack()
+                close all
+                return
+
+            endif
 
         elseif i == 4     
+
             // vracamo se na pripremu
             SELECT PRIPRZ
             GO TOP
             LOOP
+
         endif
 
         if i == 2 
@@ -366,6 +383,7 @@ if !fSadAz
     enddo  
 endif 
 
+// azuriraj pripremu u POS
 Priprz2Pos()
 
 close all
@@ -452,7 +470,7 @@ return lVrati
 // ---------------------------------------------------------
 // ispravka ili unos nove stavke u pipremi
 // ---------------------------------------------------------
-function EdPrInv( nInd )
+function edprinv( nInd )
 local nVrati := 0
 local aNiz := {}
 local nRec := RECNO()
@@ -469,7 +487,7 @@ endif
 
 SET CURSOR ON
 
-Box(, 5, 70, .t. )
+Box(, 7, 70, .t. )
 
 @ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
 
@@ -550,6 +568,7 @@ do while .t.
 
     read
 
+
     if LastKey() == K_ESC
         exit
     endif
@@ -576,6 +595,9 @@ do while .t.
     _jmj := _r_jmj
 
     Gather()
+   
+    @ m_x + 1, m_y + 31 SAY PADR( "", 35 ) 
+    @ m_x + 7, m_y + 2 SAY "... zadnji artikal: " + ALLTRIM( _idroba ) + " - " + PADR( _robanaz, 25 ) + "..." 
     
     if nInd == 1
         nVrati := 1

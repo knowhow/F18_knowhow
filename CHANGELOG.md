@@ -1,3 +1,7 @@
+1.0.64 2012-07-02, vsasa
+
+  - pos, opcije inventure, korekcije [#28525](http://redmine.bring.out.ba/issues/28525)
+ 
 1.0.63 2012-06-27, vsasa
 
   - kalk, fin stanje prodavnice, mpv-popust kolona dodata 

@@ -375,6 +375,110 @@ O_POS_DOKS
 return
 
 
+
+// -------------------------------------------------------------------
+// prenos popisa robe za kalk
+// -------------------------------------------------------------------
+function pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
+local _r_br, _rec
+local _kol
+local _iznos
+local _t_area := SELECT()
+local _count
+
+// ako nije inventura onda nemoj nista raditi...
+if id_vd <> VD_INV
+    return
+endif
+
+// napravi pom tabelu
+_cre_pom_table()
+
+// otvori opet tabele jer je indeks gore zatvorio
+_o_real_table()
+
+select pos_doks
+set order to tag "1"  
+// IdVd+DTOS (Datum)+Smjena
+go top
+seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
+
+if !FOUND()
+    MsgBeep( "Dokument: " + id_pos + "-" + id_vd + "-" + PADL( br_dok, 6 ) + " ne postoji !" )
+    return
+endif
+
+_r_br := 0
+_kol := 0
+_iznos := 0
+
+select pos
+set order to tag "1"
+go top
+seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
+
+if !FOUND()
+    MsgBeep( "POS tabela nema stavki !" )
+    select ( _t_area )
+    return
+endif
+
+do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
+                    field->datum == dat_dok .and. field->brdok == br_dok 
+   
+    _id_roba := field->idroba
+
+    select roba
+    hseek _id_roba
+ 
+    select pom
+    append blank
+
+    _rec := dbf_get_rec()
+
+    _rec["idpos"] := pos->idpos
+    _rec["idvd"] := pos->idvd
+    _rec["datum"] := pos->datum
+    _rec["brdok"] := pos->brdok
+    _rec["kolicina"] := pos->kolicina
+    _rec["kol2"] := pos->kol2
+    _rec["mpc"] := pos->cijena
+    _rec["stmpc"] := pos->ncijena
+    _rec["barkod"] := roba->barkod
+    
+    dbf_update_rec( _rec )
+ 
+    ++ _r_br
+
+    select pos
+    skip
+
+enddo
+
+if _r_br == 0
+    MsgBeep( "Ne postoji niti jedna stavka u eksport tabeli !" )
+    select ( _t_area )
+    return
+endif
+
+select pom
+use
+
+if gMultiPM == "D"
+
+	_file := _cre_topska_multi( id_pos, dat_dok, dat_dok, id_vd, "popis" )
+
+    MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + ALLTRIM(STR( _r_br )) )	
+
+endif
+
+select ( _t_area )
+
+return
+
+
+
+
 // --------------------------------------------------------------------
 // prenos podataka za modul kalk
 // --------------------------------------------------------------------
@@ -574,6 +678,7 @@ local aDbf:={}
 AADD(aDBF,{"IdPos",    "C",  2, 0})
 AADD(aDBF,{"IDROBA",   "C", 10, 0})
 AADD(aDBF,{"kolicina", "N", 13, 4})
+AADD(aDBF,{"kol2", "N", 13, 4})
 AADD(aDBF,{"MPC",      "N", 13, 4})
 AADD(aDBF,{"STMPC",    "N", 13, 4})
 AADD(aDBF,{"IDTARIFA", "C",  6, 0})
@@ -596,22 +701,28 @@ endif
 
 my_use_temp( "POM", my_home() + "pom", .f., .t. )
 
-index on ( idpos + idroba + STR( mpc, 13, 4 ) + STR(stmpc, 13, 4) ) tag "1"
+index on ( idpos + idroba + STR( mpc, 13, 4 ) + STR( stmpc, 13, 4) ) tag "1"
 
 SET ORDER TO TAG "1"
 
 return
 
 
+
+
 // --------------------------------------------------------------------------
 // kreira izlazni fajl za multi prodajna mjesta režim
 // --------------------------------------------------------------------------
-static function _cre_topska_multi( id_pos, datum_od, datum_do, v_dok )
+static function _cre_topska_multi( id_pos, datum_od, datum_do, v_dok, prefix )
 local _prefix := "tk"
 local _export_location
 local _table_name
 local _table_path
 local _dest_file := ""
+
+if prefix != NIL
+    _prefix := prefix
+endif
 
 if RIGHT( ALLTRIM( gKalkDest ) , 1 ) <> SLASH
     gKalkDest := ALLTRIM( gKalkDest ) + SLASH
@@ -629,17 +740,15 @@ _export_location := ALLTRIM( gKalkDest) + _id_pm + SLASH
 _dir_create( ALLTRIM( gKalkDest ) )
 
 // "tk1203"
-_table_name := get_topskalk_export_file( "1", _export_location, datum_do ) 
+_table_name := get_topskalk_export_file( "1", _export_location, datum_do, prefix ) 
     
 _dest_file := _export_location + _table_name + ".dbf"
 
 // kopiraj pom u fajl koji treba    
 if FileCopy( my_home() + "pom.dbf", _dest_file )
-
 endif
 
 if FileCopy( my_home() + "outf.txt", STRTRAN( _dest_file, ".dbf", ".txt" ) )
-
 endif
  
 return _dest_file

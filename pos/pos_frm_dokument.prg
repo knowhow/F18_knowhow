@@ -102,10 +102,7 @@ endif
 
 AADD(ImeKol, {"Vrsta", {|| IdVd}})
 AADD(ImeKol, {"Broj ",{||PADR(IF(!Empty(IdPos),trim(IdPos)+"-","")+alltrim(BrDok),9)}} )
-
-if pos_doks->(FIELDPOS("FISC_RN")) <> 0
-	AADD(ImeKol, {"Fisk.rn", {|| fisc_rn}})
-endif
+AADD(ImeKol, {"Fisk.rn", {|| fisc_rn}})
 
 if IzFMKIni("TOPS","StAzurDok_PrikazKolonePartnera","N",EXEPATH)=="D"
 	select pos_doks
@@ -128,11 +125,6 @@ if IsPlanika()
   // reklamacije (R)ealizovane, (P)riprema
   AADD(ImeKol,{"Rekl",{||if(idvd == VD_REK, sto, "   ")}})
   AADD(ImeKol,{"Na stanju",{||if(idvd == VD_ZAD, if(EMPTY(sto), "da ", "NE "), "   ")}})
-endif
-
-if !EMPTY(gRNALKum)
-	// pregled radnih naloga - veza
-	AADD(ImeKol,{"RNAL",{|| sh_rnal(idpos, datum, idvd, brdok) }})
 endif
 
 AADD(ImeKol,{"Radnik",{||IdRadnik}})
@@ -178,7 +170,7 @@ if klevel<="1"
 	AADD( aOpc, "<F2> - promjena vrste placanja" )
 endif
 
-ObjDBedit( "pos_doks" , 19, 77, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
+ObjDBedit( "pos_doks" , MAXROWS() - 5, MAXCOLS() - 3, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
 
 close all
 
@@ -186,7 +178,7 @@ return
 
 
 
-function PrepDokProc(dDat0, dDat1)
+function PrepDokProc( dDat0, dDat1 )
 local cLevel
 local cOdg
 local nRecNo
@@ -254,7 +246,7 @@ do case
 		_br_dok := field->brdok
 		_dat_dok := field->datum
         
-		if clevel <> "0"
+		if cLevel <> "0"
          	MsgBeep("Nedozvoljena operacija !")
          	return DE_CONT
         endif
@@ -355,7 +347,7 @@ do case
 				StDokROP(.t.)
       	endcase
 		
-	case (Ch==ASC("F") .or. Ch==ASC("f"))
+	case Ch == ASC("F") .or. Ch == ASC("f")
 
 		// stampa poreske fakture
 		aVezani:={{IdPos, BrDok, IdVd, datum}}
@@ -369,7 +361,7 @@ do case
 
 		return (DE_REFRESH)
 
-	case gStolovi == "D" .and. (Ch==Asc("Z").or.Ch==Asc("z"))
+	case gStolovi == "D" .and. ( Ch == ASC("Z") .or. Ch == ASC("z") )
 		
 		if pos_doks->idvd == "42"
 
@@ -415,13 +407,20 @@ do case
 
 		endif
 
-		return (DE_CONT)
+		return ( DE_CONT )
 
    	
-	case Ch==K_CTRL_P
+	case Ch == K_CTRL_P
 
       	pos_stampa_dokumenta()
 			
+    case Ch == ASC("E") .or. Ch == ASC("e")
+        
+        // export dokumenta
+        pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
+
+        return (DE_CONT)
+
 endcase
 	
 // vrati se tamo gdje si bio

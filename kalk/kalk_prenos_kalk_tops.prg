@@ -356,7 +356,7 @@ return _ret
 // ---------------------------------------------------------------
 // vraca naziv fajla za export
 // ---------------------------------------------------------------
-function get_topskalk_export_file( topskalk, export_path, datum )
+function get_topskalk_export_file( topskalk, export_path, datum, prefix )
 local _file := ""
 local _prefix := "kt"
 local _i, _tmp
@@ -366,6 +366,10 @@ if topskalk == "1"
 	_prefix := "tk"
 else
 	_prefix := "kt"
+endif
+
+if prefix != NIL
+    _prefix := prefix
 endif
 
 // naziv fajla treba da bude 

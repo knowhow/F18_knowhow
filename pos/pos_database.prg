@@ -1013,6 +1013,28 @@ return
 
 
 
+// ------------------------------------------------------------
+// resetuje brojač dokumenta ako smo pobrisali dokument
+// ------------------------------------------------------------
+function pos_reset_broj_dokumenta( id_pos, tip_dok, broj_dok )
+local _param
+local _broj := 0
+
+// param: fakt/10/10
+_param := "pos" + "/" + id_pos + "/" + tip_dok
+_broj := fetch_metric( _param, nil, _broj )
+
+if VAL( ALLTRIM( broj_dok ) ) == _broj
+    -- _broj
+    // smanji globalni brojac za 1
+    set_metric( _param, nil, _broj )
+endif
+
+return
+
+
+
+
 function Del_Skip()
 local nNextRec
 nNextRec:=0
@@ -1208,10 +1230,21 @@ sql_table_update( nil, "BEGIN" )
 SELECT PRIPRZ
 GO TOP
 
-_rec := dbf_get_rec()
-
 select pos_doks
 APPEND BLANK
+
+_rec := dbf_get_rec()
+_rec["idpos"] := priprz->idpos
+_rec["idvd"] := priprz->idvd
+_rec["datum"] := priprz->datum
+_rec["brdok"] := priprz->brdok
+_rec["vrijeme"] := priprz->vrijeme
+_rec["idvrstep"] := priprz->idvrstep 
+_rec["idgost"] := priprz->idgost
+_rec["idradnik"] := priprz->idradnik
+_rec["m1"] := priprz->m1
+_rec["prebacen"] := priprz->prebacen
+_rec["smjena"] := priprz->smjena
 
 update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
@@ -1222,12 +1255,33 @@ SELECT PRIPRZ
 
 do while !eof()
 
-	_rec := dbf_get_rec()
 
 	// dodaj stavku u pos
 	SELECT POS	
 	APPEND BLANK
 
+	_rec := dbf_get_rec()
+    _rec["idpos"] := priprz->idpos
+    _rec["idvd"] := priprz->idvd
+    _rec["datum"] := priprz->datum
+    _rec["brdok"] := priprz->brdok
+    _rec["m1"] := priprz->m1
+	_rec["prebacen"] := priprz->prebacen
+    _rec["iddio"] := priprz->iddio 
+    _rec["idodj"] := priprz->idodj
+    _rec["idcijena"] := priprz->idcijena
+    _rec["idradnik"] := priprz->idradnik
+    _rec["idroba"] := priprz->idroba
+    _rec["idtarifa"] := priprz->idtarifa
+    _rec["kolicina"] := priprz->kolicina
+    _rec["kol2"] := priprz->kol2
+    _rec["mu_i"] := priprz->mu_i
+    _rec["ncijena"] := priprz->ncijena
+    _rec["cijena"] := priprz->cijena
+    _rec["smjena"] := priprz->smjena
+    _rec["c_1"] := priprz->c_1
+    _rec["c_2"] := priprz->c_2
+    _rec["c_3"] := priprz->c_3
     _rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt ) ) , 5 ) 
 
     update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )

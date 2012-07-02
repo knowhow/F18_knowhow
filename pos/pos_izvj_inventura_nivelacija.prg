@@ -12,13 +12,7 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
- 
+
 // --------------------------------------------------------------------
 // Ova funkcija se koristi i za Stampu zaduzenja i za stampu inventure
 // -------------------------------------------------------------------- 
@@ -310,34 +304,36 @@ endif
   PaperFeed ()
   END PRINT
 RETURN
-*}
 
-/*! \fn PrepisInvNiv(fInvent)
- */
+
+
+
+
 function PrepisInvNiv(fInvent)
-*{
 // prepisace azuriranu fakturu
 
 private cIdOdj, cRsDBF, cRsBlok
 if finvent
-	private cIdVd:="IN"
+	private cIdVd := "IN"
 else
- 	private cIdVd:="NI"
+ 	private cIdVd := "NI"
 endif
 
 select pos
+
 PushWa()
 use
 
 select pos_doks
+
 // otvori pos sa aliasom PRIPRZ, te je pozicioniraj na pravo mjesto
 select (F_POS)
-use pos alias priprz
-set order to 1
-HSEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+my_use( "priprz", "POS" )
+set order to tag "1"
+HSEEK pos_doks->( IdPos + IdVd + dtos(datum) + BrDok )
 
+cIdOdj := priprz->idodj
 
-cidodj:=priprz->idodj
 SELECT ODJ
 hseek cidodj
 
@@ -355,14 +351,13 @@ ENDIF
 
 StampaInv(.f. , .t.)  // drugi parametar kaze da se radi o azuriranom dok
 
-select priprz
-use  // zatvori alias
-
+O_POS_DOKS
 O_POS
-PopWa()  // vrati pos gdje je bio
+
+PopWa()  
+// vrati pos gdje je bio
 
 select pos_doks
-
 return
-*}
+
 

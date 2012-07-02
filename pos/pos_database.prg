@@ -1175,6 +1175,7 @@ seek pos_doks->( IdPos + IdVd + DTOS(datum) + BrDok )
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
 	_rec := dbf_get_rec()
+
     hb_hdel( _rec, "rbr" )
 	
 	select roba
@@ -1182,6 +1183,7 @@ do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd
 
 	_rec["robanaz"] := roba->naz
 	_rec["jmj"] := roba->jmj
+    _rec["barkod"] := roba->barkod
 
 	select priprz
 	append blank 

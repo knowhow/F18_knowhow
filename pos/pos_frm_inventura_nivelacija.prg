@@ -321,6 +321,13 @@ if !fSadAz
                 { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka" }, 2, , , )
 
         // 3) nakon prekida rada na inventuri (<Esc>) utvrdjuje se da li je inventura zavrsena
+
+        // ako je priprema prazna, nemam sta raditi...
+        if priprz->( RECCOUNT() ) == 0
+            pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
+            close all
+            return
+        endif
  
         i := KudaDalje( "ZAVRSAVATE SA PRIPREMOM " + cNazDok + "E. STA RADITI S NJOM?", { ;
                     "NASTAVICU S NJOM KASNIJE", ;

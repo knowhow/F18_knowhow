@@ -85,8 +85,6 @@ close all
 
 SETKEY(K_SH_F1,{|| Calc()})
 
-MsgBeep("Ukoliko je predhodni put u toku rada#bilo problema  (nestanak struje, blokirao racunar...),## kucajte lozinku IB, pa <ENTER> !")
-
 do while (.t.)
 
     m_x:=Fx

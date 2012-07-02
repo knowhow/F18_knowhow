@@ -440,6 +440,9 @@ do case
             pos_povrat_dokumenta( _id_pos, _id_vd, _dat_dok, _br_dok )
 
             select pos_doks
+            
+            MsgBeep( "Dokument je vracen u pripremu inventure..." )
+
             return ( DE_REFRESH )
 
         endif

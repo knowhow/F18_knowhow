@@ -441,6 +441,8 @@ do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
     _rec["datum"] := pos->datum
     _rec["brdok"] := pos->brdok
     _rec["kolicina"] := pos->kolicina
+    _rec["idroba"] := pos->idroba
+    _rec["idtarifa"] := pos->idtarifa
     _rec["kol2"] := pos->kol2
     _rec["mpc"] := pos->cijena
     _rec["stmpc"] := pos->ncijena
@@ -466,7 +468,7 @@ use
 
 if gMultiPM == "D"
 
-	_file := _cre_topska_multi( id_pos, dat_dok, dat_dok, id_vd, "popis" )
+	_file := _cre_topska_multi( id_pos, dat_dok, dat_dok, id_vd, "tk_p" )
 
     MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + ALLTRIM(STR( _r_br )) )	
 

@@ -46,88 +46,180 @@ set order to tag "4"
 
 MsgO("Generacija dokumenta IP - "+cbrdok)
 
-select koncij; seek trim(cidkonto)
+select koncij
+seek trim(cidkonto)
 select kalk
+
 hseek cidfirma+cidkonto
+
 do while !eof() .and. cidfirma+cidkonto==idfirma+pkonto
 
-cIdRoba:=Idroba
-nUlaz:=nIzlaz:=0
-nMPVU:=nMPVI:=nNVU:=nNVI:=0
-nRabat:=0
-select roba
-hseek cidroba
-select kalk
-do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
+    cIdRoba:=Idroba
+    nUlaz:=nIzlaz:=0
+    nMPVU:=nMPVI:=nNVU:=nNVI:=0
+    nRabat:=0
+    
+    select roba
+    hseek cidroba
+    
+    select kalk
+    
+    do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
 
-  if ddatdok<datdok  // preskoci
-      skip
-      loop
-  endif
-  if roba->tip $ "UT"
-      skip
-      loop
-  endif
+        if ddatdok<datdok  // preskoci
+            skip
+            loop
+        endif
+    
+        if roba->tip $ "UT"
+            skip
+            loop
+        endif
 
-  if pu_i=="1"
-    nUlaz+=kolicina-GKolicina-GKolicin2
-    nMPVU+=mpcsapp*kolicina
-    nNVU+=nc*kolicina
+        if pu_i=="1"
+            nUlaz+=kolicina-GKolicina-GKolicin2
+            nMPVU+=mpcsapp*kolicina
+            nNVU+=nc*kolicina
 
-  elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-    nIzlaz+=kolicina
-    nMPVI+=mpcsapp*kolicina
-    nNVI+=nc*kolicina
+        elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
+            nIzlaz+=kolicina
+            nMPVI+=mpcsapp*kolicina
+            nNVI+=nc*kolicina
 
-  elseif pu_i=="5"  .and. (idvd $ "12#13#22")    
-    // povrat
-    nUlaz-=kolicina
-    nMPVU-=mpcsapp*kolicina
-    nnvu-=nc*kolicina
+        elseif pu_i=="5"  .and. (idvd $ "12#13#22")    
+            // povrat
+            nUlaz-=kolicina
+            nMPVU-=mpcsapp*kolicina
+            nNvu-=nc*kolicina
 
-  elseif pu_i=="3"    // nivelacija
-    nMPVU+=mpcsapp*kolicina
+        elseif pu_i=="3"    // nivelacija
+            nMPVU+=mpcsapp*kolicina
 
-  elseif pu_i=="I"
-    nIzlaz+=gkolicin2
-    nMPVI+=mpcsapp*gkolicin2
-    nNVI+=nc*gkolicin2
-  endif
-  skip
+        elseif pu_i=="I"
+            nIzlaz+=gkolicin2
+            nMPVI+=mpcsapp*gkolicin2
+            nNVI+=nc*gkolicin2
+        endif
+        skip
+    enddo
+
+    if (round(nulaz-nizlaz,4)<>0) .or. (round(nmpvu-nmpvi,4)<>0)
+        select roba
+        hseek cidroba
+        select kalk_pripr
+        scatter()
+        append ncnl
+        _idfirma:=cidfirma; _idkonto:=cidkonto; _pkonto:=cidkonto; _pu_i:="I"
+        _idroba:=cidroba; _idtarifa:=roba->idtarifa
+        _idvd:="IP"; _brdok:=cbrdok
+
+        _rbr:=RedniBroj(++nrbr)
+        _kolicina:=_gkolicina:=nUlaz-nIzlaz
+        if cNulirati == "D"
+            _kolicina := 0
+        endif
+        _datdok:=_DatFaktP:=ddatdok
+        _ERROR:=""
+        _fcj:=nmpvu-nmpvi // stanje mpvsapp
+        if round(nulaz-nizlaz,4)<>0
+            _mpcsapp:=round((nMPVU-nMPVI)/(nulaz-nizlaz),3)
+            _nc:=round((nnvu-nnvi)/(nulaz-nizlaz),3)
+        else
+            _mpcsapp:=0
+        endif
+        Gather2()
+        select kalk
+    endif
+
 enddo
 
-if (round(nulaz-nizlaz,4)<>0) .or. (round(nmpvu-nmpvi,4)<>0)
- select roba; hseek cidroba
- select kalk_pripr
- scatter()
- append ncnl
- _idfirma:=cidfirma; _idkonto:=cidkonto; _pkonto:=cidkonto; _pu_i:="I"
- _idroba:=cidroba; _idtarifa:=roba->idtarifa
- _idvd:="IP"; _brdok:=cbrdok
+MsgC()
 
- _rbr:=RedniBroj(++nrbr)
- _kolicina:=_gkolicina:=nUlaz-nIzlaz
- if cNulirati == "D"
-   _kolicina := 0
- endif
- _datdok:=_DatFaktP:=ddatdok
- _ERROR:=""
- _fcj:=nmpvu-nmpvi // stanje mpvsapp
- if round(nulaz-nizlaz,4)<>0
-  _mpcsapp:=round((nMPVU-nMPVI)/(nulaz-nizlaz),3)
-  _nc:=round((nnvu-nnvi)/(nulaz-nizlaz),3)
- else
-  _mpcsapp:=0
- endif
- Gather2()
- select kalk
+close all
+return
+
+
+// ---------------------------------------------------------------------------
+// inventurno stanje artikla 
+// ---------------------------------------------------------------------------
+function kalk_ip_roba( id_konto, id_roba, dat_dok, kolicina, nc, fc, mpcsapp )
+local _t_area := SELECT()
+local _ulaz, _izlaz, _mpvu, _mpvi, _rabat, _nvu, _nvi
+
+_ulaz := 0
+_izlaz := 0
+_mpvu := 0
+_mpvi := 0
+_rabat := 0
+_nvu := 0
+_nvi := 0
+
+kolicina := 0
+nc := 0
+fc := 0
+mpcsapp := 0
+
+select roba
+hseek id_roba
+
+if roba->tip $ "UI"
+    select ( _t_area )
+    return
 endif
 
+select kalk
+set order to tag "4"
+hseek gFirma + id_konto + id_roba 
+
+do while !EOF() .and. field->idfirma == gFirma .and. field->pkonto == id_konto .and. field->idroba == id_roba
+
+    if dat_dok < field->datdok  
+        // preskoci
+        skip
+        loop
+    endif
+    
+    if field->pu_i == "1"
+        _ulaz += field->kolicina - field->gkolicina - field->gkolicin2
+        _mpvu += field->mpcsapp * field->kolicina
+        _nvu += field->nc * field->kolicina
+
+    elseif field->pu_i == "5" .and. !( field->idvd $ "12#13#22" )
+        _izlaz += field->kolicina
+        _mpvi += field->mpcsapp * field->kolicina
+        _nvi += field->nc * field->kolicina
+
+    elseif field->pu_i == "5" .and. ( field->idvd $ "12#13#22" )      
+        // povrat
+        _ulaz -= field->kolicina
+        _mpvu -= field->mpcsapp * field->kolicina
+        _nvu -= field->nc * field->kolicina
+
+    elseif field->pu_i == "3"   
+        // nivelacija
+        _mpvu += field->mpcsapp * field->kolicina
+
+    elseif field->pu_i == "I"
+        _izlaz += field->gkolicin2
+        _mpvi += field->mpcsapp * field->gkolicin2
+        _nvi += field->nc * field->gkolicin2
+    endif
+    
+    skip
+
 enddo
-MsgC()
-closeret
+ 
+
+if ROUND( _ulaz - _izlaz, 4 ) <> 0
+    kolicina := _ulaz - _izlaz
+    fcj := _mpvu - _mpvi 
+    mpcsapp := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 3 )
+    nc := ROUND( ( _nvu - _nvi ) / ( _ulaz - _izlaz ), 3 )
+endif
+ 
 return
-*}
+
+
 
 
 // generacija inventure - razlike postojece inventure

@@ -172,6 +172,7 @@ if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" )
   	_br_kalk := UBrojDok( VAL( LEFT ( _br_kalk, 5 ) ) + 1, 5, RIGHT( _br_kalk, 3 ) )
 
 else
+
 	seek gfirma + _idvd_pos + _br_kalk
 
   	if FOUND()
@@ -179,6 +180,7 @@ else
 		close all
 		return
 	endif
+
 endif
 
 select topska
@@ -206,13 +208,22 @@ do while !eof()
     _id_konto := koncij->id
 	_r_br := STR( ++ _rbr, 3 )
 	
-	if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" ) .or. ( _idvd_pos == "12" )
-		// formiraj stavku 11	
-		import_row_11( _br_dok, _id_konto, _id_konto2, _r_br )
-	else
-		// formiraj stavku 42
-		import_row_42( _br_dok, _id_konto, _id_konto2, _r_br )
-	endif
+	if ( _idvd_pos == "42" .or. _idvd_pos == "12" )
+
+		if _auto_razduzenje == "D"
+            // formiraj stavku 11	
+		    import_row_11( _br_dok, _id_konto, _id_konto2, _r_br )
+        else
+		    // formiraj stavku 42
+		    import_row_42( _br_dok, _id_konto, _id_konto2, _r_br )
+        endif
+
+	elseif ( _idvd_pos == "IN" )
+
+        // inventura
+        import_row_ip( _br_dok, _id_konto, _id_konto2, _r_br )
+
+    endif
   	
 	// zamjena barkod-a ako postoji
 	if _bk_replace > 0
@@ -259,6 +270,63 @@ if ( gMultiPM == "D" .and. _rbr > 0 .and. _auto_razduzenje == "N" )
 endif
 
 return
+
+
+// ---------------------------------------------------------
+// formiraj stavku inventure prodavnice
+// ---------------------------------------------------------
+static function import_row_ip( broj_dok, id_konto, id_konto2, r_br )
+local _tip_dok := "IP"		
+local _t_area := SELECT()
+local _kolicina := 0
+local _nc := 0
+local _fc := 0
+local _mpcsapp := 0
+local _marzap := 15
+
+if ( topska->kol2 == 0 )
+	return
+endif
+
+// sracunaj za ovu stavku stanje inventurno u kalk-u
+kalk_ip_roba( id_konto, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp )
+
+if _kolicina == 0
+
+    // nema ga na stanju... 
+    // morat cemo preci na rucni rad racunice
+
+    _kolicina := 1
+    _mpcsapp := topska->mpc
+    _nc := ROUND( _mpcsapp * ( 1 + ( _marzap / 100 ) ), 2 )
+
+endif
+
+select kalk_pripr
+append blank
+			
+replace field->idfirma with gFirma
+replace field->idvd with _tip_dok
+replace field->brdok with broj_dok         
+replace field->datdok with topska->datum  
+replace field->datfaktp with topska->datum  
+replace field->gkolicina with _kolicina
+replace field->kolicina with topska->kol2
+replace field->idkonto with id_konto        
+replace field->idkonto2 with id_konto
+replace field->pkonto with id_konto       
+replace field->idroba with topska->idroba  
+replace field->rbr with r_br           
+replace field->idtarifa with topska->idtarifa
+replace field->mpcsapp with _mpcsapp
+replace field->nc with _nc
+replace field->fcj with _fc
+replace field->pu_i with "I"
+
+select ( _t_area )
+return
+
+
 
 
 // ---------------------------------------------------------
@@ -361,7 +429,7 @@ local _pos_kum_path
 local _prod_mjesta
 local _ret := .t.
 local _i, _imp_files, _opt, _h, _n
-local _imp_patt := "tk*.dbf"
+local _imp_patt := "t*.dbf"
 local _prenesi, _izbor, _a_tmp1, _a_tmp2
 
 if gMultiPM == "D"
@@ -432,8 +500,8 @@ if gMultiPM == "D"
 		if _izbor == 0
      		exit
    		else
-     		
-			import_file := ALLTRIM( gTopsDest ) + ALLTRIM( LEFT( _opc[ _izbor ], 15 ) )
+			
+            import_file := ALLTRIM( gTopsDest ) + ALLTRIM( LEFT( _opc[ _izbor ], 20 ) )
      			
 			if Pitanje(, "Zelite li izvrsiti prenos ?", "D" ) == "D"
          		_prenesi := .t.

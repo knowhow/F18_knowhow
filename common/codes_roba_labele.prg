@@ -196,9 +196,17 @@ return nil
 static function KaFillRLabele( cKolicina )
 local cDok
 local nBr_labela := 0
+local _predisp := .f.
 
 O_KALK_PRIPR
 O_ROBA
+
+select kalk_pripr
+go top
+
+if mp_predispozicija( field->idfirma, field->idvd, field->brdok )
+    _predisp := .t.
+endif
 
 select kalk_pripr
 go top
@@ -207,6 +215,17 @@ cDok := ( field->idFirma + field->idVd + field->brDok )
 
 do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 	field->brDok ) )
+
+    // ako je rijec o predispozicijama onda generisi za onaj
+    // konto kojem ide roba
+    // a to je konto kojem je idkonto2 = "XXX"
+
+    if _predisp 
+	    if field->idkonto2 <> "XXX"
+            skip
+            loop
+        endif
+    endif
 	
 	nBr_labela := field->kolicina
 

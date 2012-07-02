@@ -107,7 +107,7 @@ return
 
 
 // da li se radi o dokumentu predispozicije
-static function mp_predispozicija( firma, tip_dok, br_dok )
+function mp_predispozicija( firma, tip_dok, br_dok )
 local _ret := .f.
 local _t_area := SELECT()
 local _rec

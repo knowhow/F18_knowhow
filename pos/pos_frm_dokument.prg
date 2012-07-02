@@ -421,6 +421,32 @@ do case
 
         return (DE_CONT)
 
+    case Ch == ASC("P") .or. Ch == ASC("p")
+             
+        _id_pos := field->idpos
+        _id_vd := field->idvd
+        _br_dok := field->brdok
+        _dat_dok := field->datum
+
+        if Pitanje(, "Dokument " + _id_pos + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "N" ) == "N"
+            return ( DE_CONT )
+        endif
+
+        if field->idvd == VD_INV
+
+            // povrat dokumenta u pripremu
+            pos_2_priprz()
+            // pobrisi dokument sa servera i dbf-a
+            pos_povrat_dokumenta( _id_pos, _id_vd, _dat_dok, _br_dok )
+
+            select pos_doks
+            return ( DE_REFRESH )
+
+        endif
+
+        return (DE_CONT)
+
+
 endcase
 	
 // vrati se tamo gdje si bio

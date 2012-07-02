@@ -1156,6 +1156,51 @@ return (lVrati)
 
 
 
+// -------------------------------------------
+// pos -> priprz
+// -------------------------------------------
+function pos_2_priprz()
+local _rec
+local _t_area := SELECT()
+
+O_PRIPRZ
+select priprz
+
+Zapp()
+__dbPack()
+
+select pos
+seek pos_doks->( IdPos + IdVd + DTOS(datum) + BrDok )
+
+do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+
+	_rec := dbf_get_rec()
+    hb_hdel( _rec, "rbr" )
+	
+	select roba
+	HSEEK _rec["idroba"]
+
+	_rec["robanaz"] := roba->naz
+	_rec["jmj"] := roba->jmj
+
+	select priprz
+	append blank 
+
+	dbf_update_rec( _rec )
+
+	select pos
+	skip
+
+enddo
+
+select ( _t_area )
+return
+
+
+
+
+
+
 
 function pos2_pripr()
 local _rec
@@ -1707,6 +1752,46 @@ if lSilent == .f.
 endif
 
 return
+
+
+
+// ----------------------------------------------------------------
+// povrat dokumenta u pripremu POS
+// ----------------------------------------------------------------
+function pos_povrat_dokumenta( id_pos, id_vd, dat_dok, br_dok )
+local _t_area := SELECT()
+local _rec
+
+select pos
+set order to tag "1"
+go top
+seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
+
+if FOUND()
+
+    _rec := dbf_get_rec()
+    
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+
+    delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+
+    select pos_doks
+    seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
+
+    if FOUND()
+        _rec := dbf_get_rec()
+        delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+    endif
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+
+endif
+
+select ( _t_area )
+return
+
 
 
 

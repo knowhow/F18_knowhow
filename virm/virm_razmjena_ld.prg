@@ -355,7 +355,7 @@ do while !EOF()
             SetJPVar()
 
             __kome_zr := _kome_zr
-            __kome_zr := _kome_txt
+            __kome_txt := _kome_txt
             __budz_org := _budzorg
             __org_jed := gOrgJed  
 
@@ -377,6 +377,7 @@ do while !EOF()
                 _kome_zr := vrprim->racun
             endif
 
+            __kome_zr := _kome_zr
             __budz_org := "" 
             __org_jed := ""
             _per_od := ctod("")

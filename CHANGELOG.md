@@ -1,3 +1,7 @@
+1.0.66 2012-07-03, vsasa
+
+  - virm, generisanje virmana, bugfix [#28542](http://redmine.bring.out.ba/issues/28542)
+ 
 1.0.65 2012-07-03, vsasa
 
   - kalk, fin stanje prodavnice uslov za robu [#28538](http://redmine.bring.out.ba/issues/28538)

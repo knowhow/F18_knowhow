@@ -1,3 +1,7 @@
+1.0.65 2012-07-03, vsasa
+
+  - kalk, fin stanje prodavnice uslov za robu [#28538](http://redmine.bring.out.ba/issues/28538)
+ 
 1.0.64 2012-07-02, vsasa
 
   - pos, opcije inventure, korekcije [#28525](http://redmine.bring.out.ba/issues/28525)

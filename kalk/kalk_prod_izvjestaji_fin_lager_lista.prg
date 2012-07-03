@@ -20,39 +20,59 @@ local nKolIzlaz
 PicDem:=REPLICATE("9", VAL(gFPicDem)) + gPicDem
 PicCDem:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDem
 
-cIdFirma:=gFirma
-cIdKonto:=padr("1320",gDuzKonto)
+cIdFirma := gFirma
+cIdKonto := padr("1320",gDuzKonto)
 
 ODbKalk()
 
-dDatOd:=ctod("")
-dDatDo:=date()
-qqRoba:=space(60)
+dDatOd := ctod("")
+dDatDo := date()
+qqRoba := space(200)
 qqTarifa:=qqidvd:=space(60)
 private cPNab:="N"
 private cNula:="D",cErr:="N"
 private cTU:="2"
 
 Box(,9,60)
+
     do while .t.
+
         if gNW $ "DX"
             @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
         else
             @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
         endif
+
         @ m_x+2,m_y+2 SAY "Konto   " GET cIdKonto valid P_Konto(@cIdKonto)
         @ m_x+4,m_y+2 SAY "Tarife  " GET qqTarifa pict "@!S50"
         @ m_x+5,m_y+2 SAY "Vrste dokumenata  " GET qqIDVD pict "@!S30"
+        @ m_x+6,m_y+2 SAY "Roba  " GET qqRoba pict "@!S30"
         @ m_x+7,m_y+2 SAY "Datum od " GET dDatOd
         @ m_x+7,col()+2 SAY "do" GET dDatDo
         @ m_x+8,m_y+2  SAY "Prikaz: roba tipa T / dokumenati IP (1/2)" GET cTU  valid cTU $ "12"
+
         read
+
         ESC_BCR
-        private aUsl2:=Parsiraj(qqTarifa,"IdTarifa")
-        private aUsl3:=Parsiraj(qqIDVD,"idvd")
-        if aUsl2<>NIL; exit; endif
-        if aUsl3<>NIL; exit; endif
+
+        private aUsl2 := Parsiraj( qqTarifa, "idtarifa" )
+        private aUsl3 := Parsiraj( qqIDVD, "idvd" )
+        private aUsl4 := Parsiraj( qqRoba, "idroba" )
+
+        if aUsl2 <> NIL
+            exit
+        endif
+        
+        if aUsl3 <> NIL
+            exit
+        endif
+
+        if aUsl4 <> NIL
+            exit
+        endif
+
     enddo
+
 BoxC()
 
 //ovo je napusteno ...
@@ -69,16 +89,23 @@ cFilt1 := "Idfirma="+cm2str(cidfirma)+".and. Pkonto="+cm2str(cIdkonto)+".and. Da
 //cFilt1:="Pkonto="+cm2str(cIdkonto)
 //set order to tag "D"
 //set scopebottom to dDatDo
+
 if !empty(dDatOd)
     //set order to tag "D"
     //set scopetop to  dDatOd
     cFilt1+=".and. DatDok>="+cm2str(dDatOd)
 endif
-if aUsl2<>".t."
-    cFilt1+=".and."+aUsl2
+
+if aUsl2 <> ".t."
+    cFilt1 += ".and." + aUsl2
 endif
-if aUsl3<>".t."
-    cFilt1+=".and."+ausl3
+
+if aUsl3 <> ".t."
+    cFilt1 += ".and." + aUsl3
+endif
+
+if aUsl4 <> ".t."
+    cFilt1 += ".and." + aUsl4
 endif
 
 select KALK

@@ -1,6 +1,7 @@
 1.0.65 2012-07-03, vsasa
 
   - kalk, fin stanje prodavnice uslov za robu [#28538](http://redmine.bring.out.ba/issues/28538)
+  - kalk, fin, provjera postojanja dokumenta na serveru prije ažuriranja [#28540](http://redmine.bring.out.ba/issues/28540)
  
 1.0.64 2012-07-02, vsasa
 

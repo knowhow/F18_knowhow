@@ -90,7 +90,26 @@ function MsgNCRazd()
 //ne moze raditi
 //if round(nab-> kalk->kolicina) .and. round(nab->nc-kalk->nc,3)<>0;  Msg("U dokumentu "+kalk->(idfirma+"-"+idvd+"-"+brdok)+" nije dobra NC po metodi razduzenja !"); endif
 return
-*}
+
+
+
+// ------------------------------------------------------------
+// postoji kalk dokument ?
+// ------------------------------------------------------------
+function kalk_doc_exist( id_firma, id_vd, br_dok )
+local _exist := .f.
+local _server := pg_server()
+local _tbl, _result
+
+_tbl := "fmk.kalk_doks"
+_result := table_count( _tbl, "idfirma=" + _sql_quote( id_firma ) + " AND idvd=" + _sql_quote( id_vd ) + " AND brdok=" + _sql_quote( br_dok ) ) 
+
+if _result <> 0
+    _exist := .t.
+endif
+
+return _exist
+
 
 
 /*! \fn P_Kalk(cIdFirma,cIdVD,cBrDok)

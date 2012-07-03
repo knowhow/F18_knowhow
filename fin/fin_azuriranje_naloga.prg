@@ -19,6 +19,8 @@ static cNal
 // ---------------------------------------------------
 function fin_azur(lAuto)
 local oServer := pg_server()
+local _nalozi, _i
+local _id_firma, _id_vn, _br_nal 
 
 if Logirati(goModul:oDataBase:cName,"DOK", "AZUR")
     lLogAzur:=.t.
@@ -36,10 +38,24 @@ if fin_pripr->( RECCOUNT() == 0 ) .or. ( !lAuto .and. Pitanje("pAz", "Izvrsiti a
     return
 endif
 
+select fin_pripr
+go top
+
+// postoji li nalog na serveru ?
+if fin_doc_exist( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
+    MsgBeep( "Nalog " + fin_pripr->idfirma + "-" + fin_pripr->idvn + "-" + fin_pripr->brnal + ;
+        " vec postoji u bazi!#Promijenite broj naloga pa ponovite proceduru." )
+    return .f.
+endif
+
+// daj mi sve naloge iz pripreme u matricu...
+// za azuriranje vise naloga od jednom...
+// to-do
+//_nalozi := get_fin_nalozi()
+
 if !fin_azur_check(lAuto)
    return .f.
 endif
-
 
 MsgO( "Azuriranje dokumenta u toku...." )
 
@@ -59,6 +75,32 @@ endif
 MsgC()
 
 return .t.
+
+// ------------------------------------------------
+// popunjava sve u matricu iz pripreme
+// ------------------------------------------------
+static function get_fin_nalozi()
+local _data := {}
+local _scan
+
+select fin_pripr
+go top
+
+do while !EOF()
+    
+    _scan := ASCAN( _data, { |var| var[1] == fin_pripr->idfirma .and. var[2] == fin_pripr->idvn .and. var[3] == fin_pripr->brnal  })
+    
+    if _scan == 0
+        AADD( _data, { fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal } )
+    endif
+
+    skip
+enddo
+
+go top
+
+return _data
+
 
 // -----------------------------
 // -----------------------------
@@ -88,7 +130,7 @@ return
 
 // ----------------------
 // ----------------------
-function fin_azur_sql(oServer)
+function fin_azur_sql( oServer )
 local _ok := .t.
 local _ids := {}
 local _record
@@ -113,14 +155,12 @@ _tbl_anal  := "fin_anal"
 _tbl_nalog := "fin_nalog"
 _tbl_sint  := "fin_sint"
 
-  
 // -----------------------------------
 my_use_semaphore_off()
 
-Box(, 5, 60)
+Box(, 5, 60 )
 
 _tmp_id := "x"
-
   
 // ------------------------------------------------------------------
 // lock semaphores
@@ -129,18 +169,17 @@ _ok := lock_semaphore( _tbl_suban, "lock" )
 _ok := _ok .and. lock_semaphore( _tbl_anal,  "lock" )
 _ok := _ok .and. lock_semaphore( _tbl_sint,  "lock" )
 _ok := _ok .and. lock_semaphore( _tbl_nalog, "lock" )
+
 if _ok
-sql_table_update(nil, "END")
+    sql_table_update(nil, "END")
 else
-sql_table_update(nil, "ROLLBACK")
-MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
-return .f.
+    sql_table_update(nil, "ROLLBACK")
+    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+    return .f.
 endif
 // end lock semaphores --------------------------------------------------
 
-
-
-sql_table_update(nil, "BEGIN")
+sql_table_update( nil, "BEGIN" )
 
 SELECT PSUBAN
 GO TOP
@@ -150,14 +189,15 @@ _record := dbf_get_rec()
 _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
 AADD( _ids_suban, "#2" + _tmp_id )
 
-
 @ m_x+1, m_y+2 SAY "fin_suban -> server: " + _tmp_id 
-do while !eof()
+
+do while !EOF()
 
     _record := dbf_get_rec()
+
     if !sql_table_update("fin_suban", "ins", _record )
-    _ok := .f.
-    exit
+        _ok := .f.
+        exit
     endif
 
     SKIP
@@ -167,25 +207,24 @@ enddo
 // idi dalje, na anal ... ako je ok
 if _ok == .t.
 
-@ m_x+2, m_y+2 SAY "fin_anal -> server" 
+    @ m_x+2, m_y+2 SAY "fin_anal -> server" 
 
 
-SELECT PANAL
-GO TOP
+    SELECT PANAL
+    GO TOP
 
-_record := dbf_get_rec()
-_tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
-AADD( _ids_anal, "#2" + _tmp_id )
+    _record := dbf_get_rec()
+    _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
+    AADD( _ids_anal, "#2" + _tmp_id )
 
-do while !eof()
-_record := dbf_get_rec()
-if !sql_table_update("fin_anal", "ins", _record )
-    _ok := .f.
-    exit
-endif
-SKIP
-enddo
-
+    do while !eof()
+        _record := dbf_get_rec()
+        if !sql_table_update("fin_anal", "ins", _record )
+            _ok := .f.
+            exit
+        endif
+        SKIP
+    enddo
 
 endif
 
@@ -193,51 +232,48 @@ endif
 // idi dalje, na sint ... ako je ok
 if _ok == .t.
   
-  @ m_x+3, m_y+2 SAY "fin_sint -> server" 
+    @ m_x+3, m_y+2 SAY "fin_sint -> server" 
 
-  SELECT PSINT
-  GO TOP
+    SELECT PSINT
+    GO TOP
 
-  _record := dbf_get_rec()
-  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
-  AADD( _ids_sint, "#2" + _tmp_id )
+    _record := dbf_get_rec()
+    _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
+    AADD( _ids_sint, "#2" + _tmp_id )
 
-  do while !eof()
+    do while !eof()
  
-   _record := dbf_get_rec()
-   if !sql_table_update("fin_sint", "ins", _record )
-       _ok := .f.
-       exit
-    endif
-   SKIP
-  enddo
-
-  
+        _record := dbf_get_rec()
+        if !sql_table_update("fin_sint", "ins", _record )
+            _ok := .f.
+            exit
+        endif
+        SKIP
+    enddo
 
 endif
 
 // idi dalje, na nalog ... ako je ok
 if _ok == .t.
   
-  @ m_x+4, m_y+2 SAY "fin_nalog -> server" 
+    @ m_x+4, m_y+2 SAY "fin_nalog -> server" 
 
-  SELECT PNALOG
-  GO TOP
+    SELECT PNALOG
+    GO TOP
  
-  _record := dbf_get_rec()
-  _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
-  AADD( _ids_nalog, _tmp_id )
+    _record := dbf_get_rec()
+    _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
+    AADD( _ids_nalog, _tmp_id )
 
-  do while !eof()
+    do while !eof()
  
-   _record := dbf_get_rec()
-   if !sql_table_update("fin_nalog", "ins", _record )
-       _ok := .f.
-       exit
-    endif
-   SKIP
-  enddo
-
+        _record := dbf_get_rec()
+        if !sql_table_update("fin_nalog", "ins", _record )
+            _ok := .f.
+            exit
+        endif
+        SKIP
+    enddo
 
 endif
 
@@ -276,8 +312,8 @@ lock_semaphore(_tbl_sint,  "free")
 lock_semaphore(_tbl_nalog, "free")
 sql_table_update(nil, "END")
 
-
 BoxC()
+
 my_use_semaphore_on()
 
 return _ok
@@ -506,7 +542,7 @@ return .f.
 
 // --------------------------------
 // --------------------------------
-function nalog_postoji_u_suban(cNal)
+function nalog_postoji_u_suban( cNal )
 
 select  SUBAN
 SET ORDER TO TAG "4"  
@@ -997,6 +1033,26 @@ endif
 return .f.
 
 
+
+// ------------------------------------------------------------
+// postoji fin nalog ?
+// ------------------------------------------------------------
+function fin_doc_exist( id_firma, id_vn, br_nal )
+local _exist := .f.
+local _server := pg_server()
+local _tbl, _result
+
+_tbl := "fmk.fin_nalog"
+_result := table_count( _tbl, "idfirma=" + _sql_quote( id_firma ) + " AND idvn=" + _sql_quote( id_vn ) + " AND brnal=" + _sql_quote( br_nal ) ) 
+
+if _result <> 0
+    _exist := .t.
+endif
+
+return _exist
+
+
+
 // --------------------------------
 // validacija broja naloga
 // --------------------------------
@@ -1126,6 +1182,9 @@ Box(,2,50)
 
 @ m_x + 1, m_y + 2 SAY "Konvertovanje u toku... "
 
+my_use_semaphore_off()
+sql_table_update( nil, "BEGIN" )
+
 nCnt := 0
 do while !EOF()
 
@@ -1135,7 +1194,7 @@ do while !EOF()
         
         _rec := dbf_get_rec()
         _rec["brnal"] := PADL( ALLTRIM( xValue ), 8, "0" )
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
         ++ nCnt
 
     endif
@@ -1145,6 +1204,9 @@ do while !EOF()
     skip
 
 enddo
+
+sql_table_update( nil, "END" )
+my_use_semaphore_on()
 
 BoxC()
 

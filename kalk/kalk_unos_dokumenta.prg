@@ -2388,7 +2388,7 @@ do while !EOF() .and. field->idfirma + field->idvd + field->brdok == firma + tip
             _ok := .f.
             exit
         endif
-    elseif field->idvd $ "16#96#94#95#14#"
+    elseif field->idvd $ "16#96#94#95#14#80#"
         if field->nc == 0
             _ok := .f.
             exit

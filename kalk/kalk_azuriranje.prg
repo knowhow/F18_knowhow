@@ -33,6 +33,16 @@ if !lAuto .and. Pitanje(, "Zelite li izvrsiti azuriranje KALK dokumenta (D/N) ?"
     return
 endif
 
+O_KALK_PRIPR
+select kalk_pripr
+go top
+
+if kalk_doc_exist( kalk_pripr->idfirma, kalk_pripr->idvd, kalk_pripr->brdok )
+    MsgBeep( "Dokument " + kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + ;
+             ALLTRIM(kalk_pripr->brdok) + " vec postoji u bazi !#Promjenite broj dokumenta pa ponovite proceduru." )
+    return
+endif
+
 // isprazni kalk_pripr2
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2

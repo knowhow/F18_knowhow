@@ -126,10 +126,6 @@ endif
 return nCV
 
 
-
-
-
-
 // -------------------------------------------------
 // -------------------------------------------------
 function IsDocExists(cIdFirma, cIdTipDok, cBrDok)

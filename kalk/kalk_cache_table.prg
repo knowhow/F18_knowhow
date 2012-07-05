@@ -360,9 +360,9 @@ for i := 1 to LEN( aKto )
 
 	 replace idkonto with cIdKonto
 	 replace idroba with cIdRoba
-	 replace ulaz with nUKol_poz
+	 replace ulaz with nUKol_poz + nT_kol
 	 replace izlaz with nIKol_poz
-	 replace stanje with nKol_poz
+	 replace stanje with nKol_poz + nT_kol
 	 replace nvu with nUVr_poz
 	 replace nvi with nIVr_poz
 	 replace nv with nSnc
@@ -470,9 +470,9 @@ for i := 1 to LEN( aKto )
 
 	 replace idkonto with cIdKonto
 	 replace idroba with cIdRoba
-	 replace ulaz with nUlKol
+	 replace ulaz with nUlKol + nT_kol
 	 replace izlaz with nIzlkol
-	 replace stanje with nKolicina
+	 replace stanje with nKolicina + nT_kol
 	 replace nvu with nUlNv
 	 replace nvi with nIzlNv
 	 replace nv with nSnc

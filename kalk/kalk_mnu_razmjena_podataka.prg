@@ -27,10 +27,8 @@ AADD(_opcexe, {|| mnu_prenos_tops_u_kalk()})
 AADD(_opc,"6. iz KALK generisi TOPS dokumente")
 AADD(_opcexe, {|| mnu_prenos_kalk_u_tops()} )
 
-if IsVindija()
-	AADD(_opc,"7. import txt")
-	AADD(_opcexe, {|| MnuImpTxt()} )
-endif
+AADD(_opc,"7. import txt")
+AADD(_opcexe, {|| MnuImpTxt()} )
 
 AADD(_opc,"8. import csv fajl ")
 AADD(_opcexe, {|| MnuImpCSV()} )

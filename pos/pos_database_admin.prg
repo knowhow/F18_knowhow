@@ -17,7 +17,7 @@
 function NaprPom( aDbf, cPom )
 
 if cPom == nil
-    cPom:="POM"
+    cPom := "POM"
 endif
 
 cPomDBF := my_home() + "pom.dbf"

@@ -680,16 +680,6 @@ return
 // -------------------------------------------------------------
 static function _cre_pom_table()
 local aDbf:={}
-local _tmp := my_home() + "pom.dbf"
-
-select (F_POM)
-if USED()
-    use
-endif
-
-// pobrisi pom fajl
-FERASE( _tmp )
-FERASE( STRTRAN( _tmp, ".dbf", ".cdx" ) )
 
 AADD(aDBF,{"IdPos",    "C",   2, 0})
 AADD(aDBF,{"IDROBA",   "C",  10, 0})

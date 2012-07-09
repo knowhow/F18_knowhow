@@ -501,48 +501,61 @@ return
  *  \param cRadRac
  */
  
-function UpitNP(cIdPos, cIdVrsteP, cRadRac, cIdGost)
-local lGetPartner
+function UpitNP( id_pos, id_vrsta_p, radni_racun, id_partner )
+local _def_partner := .f.
+local _ok := "D"
+local _x
 
-SELECT _POS
-seek cIdPos+"42"+DTOS(gDatum)+cRadRac
+select _pos
+seek id_pos + "42" + DTOS( gDatum ) + radni_racun
 
-Box(,4,60)
-
-// vecina korisnika ne treba unos partnera
-lGetPartner:= .f.
-
-cDn:="D"
+Box(, 4, 60 )
 
 do while .t.
+
+    _x := 1
+
 	set cursor on
 	
-   	@ m_x+1,m_y+2 SAY "Nacin placanja " GET cIdVrsteP pict "@!" valid p_Vrstep(@cIdVrstep)
+    // 01 - gotovina
+    // KT - kartica
+    // VR - virman
+    // CK - cek
+    // ...
+
+   	@ m_x + _x, m_y + 2 SAY "Odaberi nacin placanja:" GET id_vrsta_p PICT "@!" VALID p_vrstep( @id_vrsta_p )
+
    	read
 	 
-	if gFc_use == "D"
-		lGetPartner:=.t.
-	else
-	   if cIdVrstep<>gGotPlac .and. IzFMKINI("POS","PartnerPlacanje","N")=="D"
-		lGetPartner:=.t.
-	   endif  	
-	endif
+    // ako nije rijec o gotovini ponudi partnera
+	if id_vrsta_p <> gGotPlac
+        _def_partner := .t.
+	endif  	
 	
-	if lGetPartner
-    	@ m_x+2,m_y+2 SAY "Partner:" GET cIdGost PICT "@!" VALID P_Firma(@cIdGost)
-    	read
+	if _def_partner
+        ++ _x
+    	@ m_x + _x, m_y + 2 SAY "Kupac:" GET id_partner PICT "@!" VALID P_Firma( @id_partner )
+    	read 
    	else
-    	cIdGost:=space(8)
+    	id_partner := SPACE(6)
    	endif
 	
-   	@ m_x+4,m_y+2 SAY "Ispravno D/N:" GET cDN PICT "@!" valid cDn $"DN"
+    ++ _x
+   	@ m_x + _x, m_y + 2 SAY "Unos ispravan (D/N) ?" GET _ok PICT "@!" VALID _ok $"DN"
+
    	read
-   	if (cDN=="D")
+
+   	if ( _ok == "D" )
 		exit
 	endif
+
 enddo
+
 BoxC()
+
 return
+
+
 
 
 function ZakljuciDio()

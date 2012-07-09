@@ -209,6 +209,8 @@ _head += PADL( "RABAT", 13 )
 
 do while .t.
 
+    _n := 4
+
     Box(, 5 + ul_count, 60 )
 
         @ m_x + 1, m_y + 2 SAY PADR( "*** Pregled rabata", 59 ) COLOR "I"

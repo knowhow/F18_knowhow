@@ -447,6 +447,7 @@ do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
     _rec["mpc"] := pos->cijena
     _rec["stmpc"] := pos->ncijena
     _rec["barkod"] := roba->barkod
+    _rec["robanaz"] := roba->naz
     
     dbf_update_rec( _rec )
  
@@ -607,6 +608,7 @@ do while !eof() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= _dat_do
             replace idvd with POS->IdVd
             replace StMPC WITH pos->ncijena
             replace barkod with roba->barkod
+            replace robanaz with roba->naz
 
             if !EMPTY(pos_doks->idgost)
                 replace idpartner with pos_doks->idgost
@@ -614,9 +616,11 @@ do while !eof() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= _dat_do
                         
             ++ _r_br
       	else
+
             _rec := dbf_get_rec()
             _rec["kolicina"] := _rec["kolicina"] + pos->kolicina
             dbf_update_rec( _rec )
+
         endif
                 
         select pos
@@ -676,24 +680,36 @@ return
 // -------------------------------------------------------------
 static function _cre_pom_table()
 local aDbf:={}
+local _tmp := my_home() + "pom.dbf"
 
-AADD(aDBF,{"IdPos",    "C",  2, 0})
-AADD(aDBF,{"IDROBA",   "C", 10, 0})
-AADD(aDBF,{"kolicina", "N", 13, 4})
-AADD(aDBF,{"kol2", "N", 13, 4})
-AADD(aDBF,{"MPC",      "N", 13, 4})
-AADD(aDBF,{"STMPC",    "N", 13, 4})
-AADD(aDBF,{"IDTARIFA", "C",  6, 0})
-AADD(aDBF,{"IDCIJENA", "C",  1, 0})
-AADD(aDBF,{"IDPARTNER","C", 10, 0})
-AADD(aDBF,{"DATUM",    "D",  8, 0})
-AADD(aDBF,{"DATPOS",   "D",  8, 0})
-AADD(aDBF,{"IdVd",     "C",  2, 0})
-AADD(aDBF,{"BRDOK",    "C", 10, 0})
-AADD(aDBF,{"M1",       "C",  1, 0})
-AADD(aDBF,{"BARKOD",   "C", 13, 0})
+select (F_POM)
+if USED()
+    use
+endif
+
+// pobrisi pom fajl
+FERASE( _tmp )
+FERASE( STRTRAN( _tmp, ".dbf", ".cdx" ) )
+
+AADD(aDBF,{"IdPos",    "C",   2, 0})
+AADD(aDBF,{"IDROBA",   "C",  10, 0})
+AADD(aDBF,{"ROBANAZ",  "C", 250, 0})
+AADD(aDBF,{"kolicina", "N",  13, 4})
+AADD(aDBF,{"kol2",     "N",  13, 4})
+AADD(aDBF,{"MPC",      "N",  13, 4})
+AADD(aDBF,{"STMPC",    "N",  13, 4})
+AADD(aDBF,{"IDTARIFA", "C",   6, 0})
+AADD(aDBF,{"IDCIJENA", "C",   1, 0})
+AADD(aDBF,{"IDPARTNER","C",  10, 0})
+AADD(aDBF,{"DATUM",    "D",   8, 0})
+AADD(aDBF,{"DATPOS",   "D",   8, 0})
+AADD(aDBF,{"IdVd",     "C",   2, 0})
+AADD(aDBF,{"BRDOK",    "C",  10, 0})
+AADD(aDBF,{"M1",       "C",   1, 0})
+AADD(aDBF,{"BARKOD",   "C",  13, 0})
 
 select pos_doks
+
 NaprPom( aDbf )
 
 select ( F_POM )

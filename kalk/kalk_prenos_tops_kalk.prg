@@ -116,10 +116,12 @@ local _auto_razduzenje := "N"
 local _br_kalk, _idvd_pos
 local _id_konto2 := ""
 local _bk_replace
-local _br_dok, _id_konto, _rbr
+local _br_dok, _id_konto, _r_br
 local _bk_tmp
 local _app_rec
 local _imp_file := ""
+local _roba_data := {}
+local _count := 0
 
 // opcija za automatko svodjeje prodavnice na 0
 // ---------------------------------------------
@@ -200,14 +202,24 @@ endif
 
 // konacno idemo na import
 
-_rbr := 0
+_r_br := "0"
+
+MsgO( "Prenos stavki POS -> KALK priprema ... sacekajte !" )
 
 do while !eof()
 	
 	_br_dok := _br_kalk
     _id_konto := koncij->id
-	_r_br := STR( ++ _rbr, 3 )
-	
+
+    _n_rbr := RbrUNum( _r_br ) + 1
+    _r_br := RedniBroj( _n_rbr )
+    
+    // provjeri da li roba postoji u sifraniku
+    // ako ne postoji, dodaj...
+    // dodaj u kontrolnu matricu ove informacije
+
+    kalk_import_roba( @_roba_data, ALLTRIM( koncij->naz ) )
+    	
 	if ( _idvd_pos == "42" .or. _idvd_pos == "12" )
 
 		if _auto_razduzenje == "D"
@@ -256,20 +268,72 @@ do while !eof()
 
 	endif
 	
+    ++ _count
+
 	select topska
   	skip
 
 enddo
 
+MsgC()
+
 close all
 
-if ( gMultiPM == "D" .and. _rbr > 0 .and. _auto_razduzenje == "N" )
+if ( gMultiPM == "D" .and. _count > 0 .and. _auto_razduzenje == "N" )
 	// pobrisi fajlove...
 	FileDelete( _imp_file )
 	FileDelete( STRTRAN( _imp_file , ".dbf", ".txt" ) )
 endif
 
 return
+
+// --------------------------------------------
+// import robe u sifrarnik robe
+// --------------------------------------------
+static function kalk_import_roba( a_roba, tip_cijene )
+local _t_area := SELECT()
+local _rec, _mpc_naz
+
+// ako nema ovog polja, nista ne radi !
+if topska->(FIELDPOS("robanaz")) == 0
+    return
+endif
+
+select roba
+hseek topska->idroba
+
+if !FOUND()
+
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    
+    append blank
+    _rec := dbf_get_rec()
+
+    _rec["id"] := topska->idroba
+    _rec["naz"] := topska->robanaz
+    _rec["idtarifa"] := topska->idtarifa
+    
+    if ALLTRIM( tip_cijene ) == "M1" .or. EMPTY( tip_cijene )
+        _rec["mpc"] := topska->mpc
+    else
+        // M3 -> mpc3
+        _mpc_naz := STRTRAN( tip_cijene, "M", "mpc" )
+        _rec[ _mpc_naz ] := topska->mpc
+    endif
+
+    update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
+    
+    // dodaj u kontrolnu matricu
+    AADD( a_roba, { topka->idroba, topska->robanaz, topska->cijena } )
+
+endif
+
+select ( _t_area )
+return 
 
 
 // ---------------------------------------------------------
@@ -282,7 +346,7 @@ local _kolicina := 0
 local _nc := 0
 local _fc := 0
 local _mpcsapp := 0
-local _marzap := 15
+local _marzap := 50
 
 if ( topska->kol2 == 0 )
 	return
@@ -296,9 +360,8 @@ if _kolicina == 0
     // nema ga na stanju... 
     // morat cemo preci na rucni rad racunice
 
-    _kolicina := 1
     _mpcsapp := topska->mpc
-    _nc := ROUND( _mpcsapp * ( 1 + ( _marzap / 100 ) ), 2 )
+    _nc := ROUND( _mpcsapp * ( _marzap / 100 ), 2 )
 
 endif
 
@@ -310,8 +373,9 @@ replace field->idvd with _tip_dok
 replace field->brdok with broj_dok         
 replace field->datdok with topska->datum  
 replace field->datfaktp with topska->datum  
-replace field->gkolicina with _kolicina
 replace field->kolicina with topska->kol2
+replace field->gkolicina with _kolicina
+replace field->gkolicin2 with ( gkolicina - kolicina )
 replace field->idkonto with id_konto        
 replace field->idkonto2 with id_konto
 replace field->pkonto with id_konto       
@@ -322,6 +386,7 @@ replace field->mpcsapp with _mpcsapp
 replace field->nc with _nc
 replace field->fcj with _fc
 replace field->pu_i with "I"
+replace field->error with "0"
 
 select ( _t_area )
 return

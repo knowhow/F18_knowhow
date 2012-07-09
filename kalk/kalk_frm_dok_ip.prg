@@ -416,11 +416,10 @@ endif
 
 // proracunava knjizno stanje robe na prodavnici
 // kada je dokument prenesen iz tops-a onda ovo ne bi trebalo da radi 
-// setujem ovo polje _err = "0" (kada radim prenos iz TOPS-a)
-if !EMPTY( gMetodaNC ) .and. _error <> "0"
+if !EMPTY( gMetodaNC ) .and. _nc = 0 .and. _mpcsapp = 0
     knjizst()
 endif
- 
+
 select tarifa
 hseek _idtarifa  
 

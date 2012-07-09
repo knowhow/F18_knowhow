@@ -114,11 +114,11 @@ else
     bMarkF:=NIL
 endif
 
-ObjDBedit( "racun" , MAXROWS() - 4, MAXCOLS() - 3, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI  ", "", nil,cFnc,,bMarkF)
+ObjDBedit( "racun" , MAXROWS() - 10, MAXCOLS() - 3, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI  ", "", nil,cFnc,,bMarkF)
 
 SET FILTER TO
 
-cBroj:=ALLTRIM(pos_doks->IdPos)+"-"+AllTrim (pos_doks->BrDok)
+cBroj := ALLTRIM( pos_doks->IdPos ) + "-"+ AllTrim( pos_doks->BrDok )
 
 if cBroj='-'  // nema racuna
     cBroj:=SPACE(9)

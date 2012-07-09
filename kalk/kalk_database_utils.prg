@@ -392,70 +392,88 @@ return nMarza2
 
 
 
+
 /*! \fn KnjizSt()
  *  \brief Proracun knjiznog stanja za zadanu robu i prodavnicu 
  */
 
 function KnjizSt()
-*{
+
 local nUlaz:=nIzlaz:=0
 local nMPVU:=nMPVI:=nNVU:=nNVI:=0
-local cIdRoba:=_Idroba
-local cidfirma:=_idfirma
-local cidkonto:=_idkonto
-local nRabat:=0
-select roba; hseek cidroba; select kalk
+local cIdRoba := _idroba
+local cIdfirma := _idfirma
+local cIdkonto := _idkonto
+local nRabat := 0
+
+select roba
+hseek cIdRoba
+select kalk
+
 PushWa()
+
 set order to tag "4"
-hseek cidfirma+cidkonto+cidroba
-do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
 
-  if _Datdok<datdok  // preskoci
-      skip; loop
-  endif
-  if roba->tip $ "UT"
-      skip; loop
-  endif
+hseek cIdfirma + cIdKonto + cIdroba
 
-  if pu_i=="1"
-    nUlaz+=kolicina-GKolicina-GKolicin2
-    nMPVU+=mpcsapp*kolicina
-    nNVU+=nc*kolicina
+do while !EOF() .and. cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba
 
-  elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-    nIzlaz+=kolicina
-    nMPVI+=mpcsapp*kolicina
-    nNVI+=nc*kolicina
+    if _datdok < field->datdok  
+        // preskoci
+        skip
+        loop
+    endif
+    
+    if roba->tip $ "UT"
+        skip
+        loop
+    endif
 
+    if field->pu_i == "1"
+        nUlaz += field->kolicina - field->GKolicina - field->GKolicin2
+        nMPVU += field->mpcsapp * field->kolicina
+        nNVU += field->nc * field->kolicina
 
-  elseif pu_i=="5"  .and. (idvd $ "12#13#22")    // povrat
-    nUlaz-=kolicina
-    nMPVU-=mpcsapp*kolicina
-    nnvu-=nc*kolicina
+    elseif field->pu_i == "5" .and. !( field->idvd $ "12#13#22")
+        nIzlaz += field->kolicina
+        nMPVI += field->mpcsapp * field->kolicina
+        nNVI += field->nc * field->kolicina
 
-  elseif pu_i=="3"    // nivelacija
-    nMPVU+=mpcsapp*kolicina
+    elseif field->pu_i == "5" .and. ( field->idvd $ "12#13#22")    
+        // povrat
+        nUlaz -= field->kolicina
+        nMPVU -= field->mpcsapp * field->kolicina
+        nNvu -= field->nc * field->kolicina
 
-  elseif pu_i=="I"
-    nIzlaz+=gkolicin2
-    nMPVI+=mpcsapp*gkolicin2
-    nNVI+=nc*gkolicin2
-  endif
+    elseif field->pu_i == "3"    
+        // nivelacija
+        nMPVU += field->mpcsapp * field->kolicina
 
-  skip
+    elseif field->pu_i == "I"
+        nIzlaz += field->gkolicin2
+        nMPVI += field->mpcsapp * field->gkolicin2
+        nNVI += field->nc * field->gkolicin2
+    endif
+
+    skip
+
 enddo
 
-_gkolicina:=nUlaz-nIzlaz
-_fcj:=nmpvu-nmpvi // stanje mpvsapp
-if round(nulaz-nizlaz,4)<>0
-  _mpcsapp:=round((nMPVU-nMPVI)/(nulaz-nizlaz),3)
-  _nc:=round((nnvu-nnvi)/(nulaz-nizlaz),3)
+_gkolicina := nUlaz - nIzlaz
+_fcj := nMpvu - nMpvi 
+
+// stanje mpvsapp
+
+if round( nUlaz - nIzlaz, 4 ) <> 0
+    _mpcsapp := ROUND((nMPVU-nMPVI)/(nUlaz-nIzlaz),3)
+    _nc := ROUND((nNvu-nNvi)/(nUlaz-nIzlaz),3)
 else
-  _mpcsapp:=0
+    _mpcsapp := 0
 endif
 
 PopWa()
 select kalk_pripr
+
 return
 
 // -------------------------------------------------

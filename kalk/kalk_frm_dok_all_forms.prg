@@ -12,32 +12,36 @@
 
 #include "kalk.ch"
 
-function VRoba(lSay)
-P_Roba(@_IdRoba)
+function VRoba( lSay )
 
-if lSay==NIL
-	lSay:=.t.
+P_Roba( @_IdRoba )
+
+if lSay == NIL
+	lSay := .t.
 endif
 
 if lSay
-	Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40)
+	Reci( 11, 23, TRIM( LEFT( roba->naz, 40 )) + " (" + ALLTRIM( roba->jmj ) + ")", 40 )
 endif
 
 if fNovi .or. IsJerry() .or. IsPlanika()
 	// nadji odgovarajucu tarifu regiona
-	cTarifa:=Tarifa(_IdKonto,_IdRoba,@aPorezi)
+	cTarifa := Tarifa( _idkonto, _idroba, @aPorezi )
 else
 	// za postojece dokumente uzmi u obzir unesenu tarifu
 	SELECT TARIFA
-	seek _IdTarifa
-	SetAPorezi(@aPorezi)
+	seek _idtarifa
+	SetAPorezi( @aPorezi )
 endif
 
 if fNovi .or. ( gVodiSamoTarife == "D" ) .or. IsJerry() .or. IsPlanika()
-	_IdTarifa := cTarifa
+	_idtarifa := cTarifa
 endif
 
 return .t.
+
+
+
 
 
 /*! \fn WMpc(fRealizacija,fMarza)

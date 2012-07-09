@@ -164,13 +164,13 @@ endif
 //set scopebottom to "W"
 go top
 
-aOpc:={"<Enter> - Odabir", "<T> - trazi", "<c-F> - trazi po koloni","<c-P>   - Stampaj listu"}
+aOpc := { "<ENTER> Odabir", "<E> eksport" }
 
-if klevel<="1"
+if klevel <= "1"
 	AADD( aOpc, "<F2> - promjena vrste placanja" )
 endif
 
-ObjDBedit( "pos_doks" , MAXROWS() - 5, MAXCOLS() - 3, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
+ObjDBedit( "pos_doks" , MAXROWS() - 10, MAXCOLS() - 3, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
 
 close all
 
@@ -416,8 +416,10 @@ do case
 			
     case Ch == ASC("E") .or. Ch == ASC("e")
         
-        // export dokumenta
-        pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
+        if Pitanje(, "Eksportovati dokument (D/N) ?", "N" ) == "D"
+            // export dokumenta
+            pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
+        endif
 
         return (DE_CONT)
 

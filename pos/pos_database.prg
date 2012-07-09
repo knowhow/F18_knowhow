@@ -1273,6 +1273,8 @@ lNivel:=.f.
 SELECT (cRsDbf)
 SET ORDER TO TAG "ID"
 
+MsgO( "Azuriranje priprema -> kumulativ u toku... sacekajte..." )
+
 my_use_semaphore_off()
 sql_table_update( nil, "BEGIN" )
 
@@ -1297,13 +1299,10 @@ _rec["smjena"] := priprz->smjena
 
 update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
-MsgO("prenos priprema->stanje")
-
 // upis inventure/nivelacije
 SELECT PRIPRZ  
 
 do while !eof()
-
 
 	// dodaj stavku u pos
 	SELECT POS	

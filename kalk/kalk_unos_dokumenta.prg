@@ -126,6 +126,7 @@ Box(, nMaxRow, nMaxCol )
 	_opt_row := PADR( "<c+A> Ispravka", _opt_d ) + _sep
 	_opt_row += PADR( hb_utf8tostr("<c+P> Stampa dok."), _opt_d ) + _sep
 	_opt_row += PADR( hb_utf8tostr("<a+A> Azuriranje"), _opt_d ) + _sep
+	_opt_row += "<Q> Etikete"
 
 	@ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
  

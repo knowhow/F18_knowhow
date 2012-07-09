@@ -13,29 +13,14 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
+function StKalkIP( fZaTops )
+local nCol1 := nCol2 := 0
+local nPom := 0
 
-/*! \file fmk/kalk/prod/rpt/1g/rpt_ip.prg
- *  \brief Stampa dokumenta tipa IP
- */
+private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2,aPorezi
 
-
-/*! \fn StKalkIP(fZaTops)
- *  \brief Stampa dokumenta tipa IP
- *  \param fZaTops -
- */
-
-function StKalkIP(fZaTops)
-*{
-local nCol1:=nCol2:=0,npom:=0
-
-Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2,aPorezi
 // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+
 aPorezi:={}
 nStr:=0
 cIdPartner:=IdPartner
@@ -50,8 +35,8 @@ if fzatops==NIL
 endif
 
 if !fZaTops
-	cSamoObraz:=Pitanje(,"Prikaz samo obrasca inventure (D-da,N-ne,S-sank lista) ?",,"DNS")
-	if cSamoObraz=="S"
+	cSamoObraz := Pitanje(,"Prikaz samo obrasca inventure (D-da,N-ne,S-sank lista) ?",,"DNS")
+	if cSamoObraz == "S"
 		StObrazSL()
 		return
 	endif
@@ -64,9 +49,12 @@ select konto
 hseek cidkonto
 select kalk_pripr
 
-?? "INVENTURA PRODAVNICA ",cidkonto,"-",konto->naz
+?? "INVENTURA PRODAVNICA ", cIdkonto, "-", ALLTRIM( konto->naz )
+
 IspisNaDan(10)
+
 P_COND
+
 ?
 ? "DOKUMENT BR. :",cIdFirma+"-"+cIdVD+"-"+cBrDok, SPACE(2),"Datum:",DatDok
 ?
@@ -105,8 +93,6 @@ nTotVisak := 0
 nTotManjak := 0
 
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
-
-
 
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
@@ -152,12 +138,9 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 		@ prow()+1,4 SAY IdTarifa+space(4)
 	endif
 
-
-
 	if cSamoObraz=="D"
 		@ prow(),pcol()+nPosKol SAY Kolicina  PICTURE replicate("_",len(PicKol))
 		@ prow(),pcol()+1 SAY GKolicina  PICTURE replicate(" ",len(PicKol))
-
 	else
 		@ prow(),pcol()+nPosKol SAY Kolicina  PICTURE PicKol
 		@ prow(),pcol()+1 SAY GKolicina  PICTURE PicKol
@@ -235,11 +218,22 @@ endif
 
 ? m
 
+? "Rekapitulacija:"
+? "---------------"
+? "  popisana kolicina:", STR( nTotKol, 18, 2 )
+? "popisana vrijednost:", STR( nTotC, 18, 2 )
+? "   knjizna kolicina:", STR( nTotGKol, 18, 2 )
+? " knjizna vrijednost:", STR( nTotB, 18, 2 )
+? "          + (visak):", STR( nTotVisak, 18, 2 )
+? "         - (manjak):", STR( nTotManjak, 18, 2 )
+
+? m
+
 // Visak
-RekTarife(.t.)
+RekTarife( .t. )
 
 // Manjak
-RekTarife(.f.)
+//RekTarife( .f. )
 
 if !fZaTops
 	?
@@ -249,8 +243,9 @@ if !fZaTops
 	? "     2 - storno izlaza za kolicinu viska"
 	?
 endif
+
 return
-*}
+
 
 
 
@@ -260,7 +255,6 @@ return
  */
 
 function StObrazSL()
-*{
 local nCol1:=nCol2:=0,npom:=0
 
 Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
@@ -346,7 +340,6 @@ endif
 
 ? m
 return
-*}
 
 
 

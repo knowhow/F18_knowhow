@@ -1,6 +1,7 @@
 1.0.66 2012-07-03, vsasa
 
   - virm, generisanje virmana, bugfix [#28542](http://redmine.bring.out.ba/issues/28542)
+  - kalk, pos, čišćenje opcija inventure [#28525](http://redmine.bring.out.ba/issues/28525)
  
 1.0.65 2012-07-03, vsasa
 

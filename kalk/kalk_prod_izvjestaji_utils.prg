@@ -13,18 +13,20 @@
 #include "kalk.ch"
 
 
-function RekTarife(lVisak)
+function RekTarife( lVisak )
+
 if IsPDV()
 	RekTarPDV()
 else
-	RekTarPPP(lVisak)
+	RekTarPPP( lVisak )
 endif
+
 return
 
 
 // PDV obracun
 function RekTarPDV()
-*{
+local _pict := "99999999999.99"
 local nKolona
 local aPKonta
 local nIznPRuc
@@ -36,37 +38,42 @@ IF prow()> 55 + gPStranica
 endif
 
 nRec:=recno()
+
 select kalk_pripr
 set order to tag "2"
 seek cIdFirma+cIdVd+cBrDok
+
 m:="------ ----------"
 
-nKolona :=3
+nKolona := 3
 
 if glUgost
 	nKolona += 2
 endif
 
-for i:=1 to nKolona
- m += " ----------" 
+for i := 1 to nKolona
+    m += " --------------" 
 next
 
 ? m
+
 if !glUgost
- ?  "* Tar.*  PDV%    *    MPV   *    PDV   *   MPV   *"
- ?  "*     *          *  bez PDV *   iznos  *  sa PDV *"
+    ?  "* Tar.*  PDV%    *      MPV     *      PDV     *     MPV     *"
+    ?  "*     *          *    bez PDV   *     iznos    *    sa PDV   *"
 else
- ?  "* Tar.*   PDV    *  Por potr *   MPV   *    PDV   *  Porez   *   MPV   *"
- ?  "*     *   (%)    *    (%)    * bez PDV *   iznos  *  na potr.*  sa PDV *"
+    ?  "* Tar.*   PDV    *    Por potr   *     MPV     *      PDV     *    Porez     *     MPV     *"
+    ?  "*     *   (%)    *      (%)      *   bez PDV   *     iznos    *    na potr.  *    sa PDV   *"
 endif
+
 ? m
 
-aPKonta:=PKontoCnt(cIdFirma+cIdvd+cBrDok)
-nCntKonto:=len(aPKonta)
+aPKonta := PKontoCnt(cIdFirma+cIdvd+cBrDok)
+nCntKonto := len(aPKonta)
 
 aPorezi:={}
 
-for i:=1 to nCntKonto
+for i := 1 to nCntKonto
+
 	seek cIdFirma+cIdVd+cBrdok
 
 	nTot1:=0
@@ -78,22 +85,24 @@ for i:=1 to nCntKonto
 	nTot5:=0
 	nTot6:=0
 	nTot7:=0
+
 	do while !eof() .and. cIdFirma+cIdVd+cBrDok==idfirma+idvd+brdok
-  		if aPKonta[i]<>field->PKONTO
+  		
+        if aPKonta[i]<>field->PKONTO
     			skip
     			loop
   		endif
 
-  		cIdtarifa:=idTarifa
+  		cIdtarifa := idTarifa
+
   		// mpv
 		nU1:=0
-		
 		// pdv
 		nU2:=0
 
 		if glUgost
-		  // porez na potrosnju
-		  nU2b:=0
+		    // porez na potrosnju
+		    nU2b:=0
 		endif
 		
 		// mpv sa porezom
@@ -101,13 +110,15 @@ for i:=1 to nCntKonto
 		
 	  	select tarifa
 		hseek cIdtarifa
+
 	  	select kalk_pripr
+
   		do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok .and. idTarifa==cIdTarifa
 
-	    		if aPKonta[i]<>field->PKONTO
-      				skip
-      				loop
-	    		endif
+	        if aPKonta[i]<>field->PKONTO
+      			skip
+      			loop
+	    	endif
     	
 			select roba
 			hseek kalk_pripr->idroba
@@ -115,54 +126,66 @@ for i:=1 to nCntKonto
 			Tarifa(kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi, cIdTarifa)
 			select kalk_pripr
 		
-			nMpc:=DokMpc(field->idvd, aPorezi)
+			nMpc := DokMpc(field->idvd, aPorezi)
+
 			if field->idvd=="19"
-    				// nova cijena
-    				nMpcsaPdv1:=field->mpcSaPP+field->fcj
-    				nMpc1:=MpcBezPor(nMpcsaPdv1,aPorezi,,field->nc)
-    				aIPor1:=RacPorezeMP(aPorezi, nMpc1, nMpcsaPdv1, field->nc)
+    			// nova cijena
+    			nMpcsaPdv1:=field->mpcSaPP+field->fcj
+    			nMpc1:=MpcBezPor(nMpcsaPdv1,aPorezi,,field->nc)
+    			aIPor1:=RacPorezeMP(aPorezi, nMpc1, nMpcsaPdv1, field->nc)
     
-    				// stara cijena
-    				nMpcsaPdv2:=field->fcj
-    				nMpc2:=MpcBezPor(nMpcsaPdv2,aPorezi,,field->nc)
-    				aIPor2:=RacPorezeMP(aPorezi,nMpc2,nMpcsaPdv2,field->nc)
+    			// stara cijena
+    			nMpcsaPdv2:=field->fcj
+    			nMpc2:=MpcBezPor(nMpcsaPdv2,aPorezi,,field->nc)
+    			aIPor2:=RacPorezeMP(aPorezi,nMpc2,nMpcsaPdv2,field->nc)
 				aIPor:={0,0,0}
 				aIPor[1]:=aIPor1[1]-aIPor2[1]
 			else
 				aIPor:=RacPorezeMP(aPorezi,nMpc,field->mpcSaPP,field->nc)
 			endif
+
 			nKolicina:=DokKolicina(field->idvd)
 			nU1+=nMpc*nKolicina
 			nU2+=aIPor[1]*nKolicina
+
 			if glUgost
-			 nU2b+=aIPor[3]*nKolicina
+			    nU2b+=aIPor[3]*nKolicina
 			endif
-    			nU3+=field->mpcSaPP*nKolicina
+    			
+            nU3+=field->mpcSaPP*nKolicina
 			// ukupna bruto marza
 			nTot6+=(nMpc-kalk_pripr->nc)*nKolicina
-    			skip 1
+    		skip 1
 	  	enddo
+
 		nTot1+=nU1
 		nTot2+=nU2
+
 		if glUgost
-		 nTot2b += nU2b
+		    nTot2b += nU2b
 		endif
-		nTot3+=nU3
+		
+        nTot3+=nU3
   
 		? cIdTarifa
   
 		@ prow(),pcol()+1   SAY aPorezi[POR_PPP] pict picproc
+
 		if glUgost
 		    @ prow(),pcol()+1   SAY aPorezi[POR_PP] pict picproc
 		endif
   
 		nCol1:=pcol()+1
-		@ prow(),pcol()+1   SAY nU1 pict picdem
-		@ prow(),pcol()+1   SAY nU2 pict picdem
+
+		@ prow(),pcol()+1   SAY nU1 pict _pict
+		@ prow(),pcol()+1   SAY nU2 pict _pict
+
 		if glUgost
-		  @ prow(),pcol()+1   SAY nU2b pict picdem
+		  @ prow(),pcol()+1   SAY nU2b pict _pict
 		endif
-		@ prow(),pcol()+1   SAY nU3 pict picdem
+
+		@ prow(),pcol()+1   SAY nU3 pict _pict
+
 	enddo
 
 	if prow()>56+gPStranica
@@ -172,19 +195,26 @@ for i:=1 to nCntKonto
 	
 	? m
 	? "UKUPNO "+aPKonta[i]
-	@ prow(),nCol1      SAY nTot1 pict picdem
-	@ prow(),pcol()+1   SAY nTot2 pict picdem
+
+	@ prow(),nCol1      SAY nTot1 pict _pict
+	@ prow(),pcol()+1   SAY nTot2 pict _pict
+
 	if glUgost
-	   @ prow(),pcol()+1   SAY nTot2b pict picdem
+	   @ prow(),pcol()+1   SAY nTot2b pict _pict
 	endif
-	@ prow(),pcol()+1   SAY nTot3 pict picdem
+
+	@ prow(),pcol()+1   SAY nTot3 pict _pict
+
 	? m
+
 next
 
 set order to tag "1"
 go nRec
+
 return
-*}
+
+
 
 /*! \fn PKontoCnt(cSeek)
  *  \brief Kreira niz prodavnickih konta koji se nalaze u zadanom dokumentu

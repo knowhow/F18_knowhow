@@ -582,17 +582,7 @@ do while .t.
         
     // priprz
     if nInd == 0
-
-		select priprz
-		set order to tag "1"
-		go top
-
-		seek _idroba
-
-		if !FOUND()
-        	append blank 
-		endif
-
+        append blank 
     endif
     
     // pronadji tarifu i barkod za ovaj artikal

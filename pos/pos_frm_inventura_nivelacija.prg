@@ -650,7 +650,9 @@ local _t_area := SELECT()
 local _t_rec := RECNO()
 
 select priprz
-locate for idroba = id_roba
+set order to tag "1"
+go top
+seek id_roba
 
 if FOUND()
     _ok := .f.

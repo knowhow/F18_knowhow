@@ -203,10 +203,12 @@ else
   	_zabrane := {}
 endif
 
+// trazi prvo tezinski pa onda regularni barkod
 if !tezinski_barkod( @cId, @_tezina )
 	barkod( @cId )
 endif
 
+// otvori sifrarnik
 _vrati := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
 
 if LASTKEY() == K_ESC
@@ -237,13 +239,6 @@ SETKEY (K_PGDN, {|| DummyProc()})
 SETKEY (K_PGUP, {|| DummyProc()})
 
 SetSpecNar()
-
-if gDisplay=="D"
-	Send2ComPort(CHR(10)+CHR(13))
-	Send2ComPort(CHR(10)+CHR(13))
-	Send2ComPort(CHR(30)+"ARTIKAL: " + ALLTRIM(roba->id) + CHR(22) + CHR(13))
-	Send2ComPort(ALLTRIM(roba->naz))
-endif
 
 return _vrati
 

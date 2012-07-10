@@ -448,6 +448,8 @@ local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
 local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
 local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
 local _val_tezina := 0
+local _a_prefix
+local _i
 
 gOcitBarCod := _ocitao
 
@@ -459,10 +461,16 @@ if EMPTY( id )
 	return _ocitao
 endif
 
-if ( PADR( id, LEN( _tb_prefix ) ) == _tb_prefix ) 
-	// ... ovo je ok
+// matrica sa prefiksima...
+// "55"
+// "21"
+// itd...
+_a_prefix := TokToNiz( _tb_prefix, ";" )
+
+if ASCAN( _a_prefix, { |var| var == PADR( id, LEN( var ) ) } ) <> 0
+    // ovo je ok...
 else
-	return _ocitao
+    return _ocitao            
 endif
 
 // odrezi ocitano na 7, tu je barkod koji trebam pretraziti

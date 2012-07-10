@@ -151,7 +151,7 @@ local _auto_gen := fetch_metric( "labeliranje_barkod_automatsko_generisanje", ni
 local _auto_formula := fetch_metric( "labeliranje_barkod_auto_formula", nil, SPACE(10) )
 local _ean_code := fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, SPACE(10) )
 local _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
-local _tb_prefix := fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, SPACE(6) )
+local _tb_prefix := PADR( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, SPACE(100) ), 100 )
 local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
 local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
 local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
@@ -191,7 +191,7 @@ Box(, _box_x, _box_y )
 	
 	++ _x
 	
-	@ m_x + _x, m_y + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix
+	@ m_x + _x, m_y + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix PICT "@S30"
 	
 	++ _x
 	
@@ -213,7 +213,7 @@ if LastKey() <> K_ESC
 	set_metric( "labeliranje_barkod_auto_formula", nil, _auto_formula )
 	set_metric( "labeliranje_barkod_auto_ean_kod", nil, _ean_code )
 	set_metric( "barkod_tezinski_barkod", nil, _tb )
-	set_metric( "barkod_prefiks_tezinskog_barkoda", nil, _tb_prefix )
+	set_metric( "barkod_prefiks_tezinskog_barkoda", nil, ALLTRIM( _tb_prefix ) )
 	set_metric( "barkod_tezinski_duzina_barkoda", nil, _bk_len )
 	set_metric( "barkod_tezinski_duzina_tezina", nil, _tez_len )
 	set_metric( "barkod_tezinski_djelitelj", nil, _tez_div )

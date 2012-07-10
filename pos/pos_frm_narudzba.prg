@@ -172,7 +172,7 @@ do while .t.
        		_kolicina := IIF( gOcitBarcod, IIF( _tb == "D" .and. _kolicina <> 0, _kolicina, 1 ), _kolicina ), ;
             _kolicina := IIF( _idroba = PADR( "PLDUG", 7 ), 1, _kolicina ), ;
             IIF( _idroba = PADR("PLDUG", 7 ), .f., .t. ) } ;
-      	VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( _kolicina ) 
+      	VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( @_kolicina ) 
     
     nRowPos := 5
     
@@ -299,6 +299,8 @@ if qtty > _max_qtty
     if Pitanje(, "Da li je ovo ispravna kolicina: " + ALLTRIM(STR( qtty )), "N" ) == "D"
         return .t.
     else
+        // resetuj na 0
+        qtty := 0
         return .f.
     endif
 else

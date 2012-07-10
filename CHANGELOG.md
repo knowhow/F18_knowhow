@@ -1,3 +1,7 @@
+1.0.68 2012-07-10, vsasa
+
+  - kalk, pos, čišćenje opcija inventure [#28525](http://redmine.bring.out.ba/issues/28525)
+ 
 1.0.67 2012-07-09, vsasa
 
   - kalk, pos, čišćenje opcija inventure [#28525](http://redmine.bring.out.ba/issues/28525)

@@ -328,7 +328,7 @@ if !FOUND()
     my_use_semaphore_on()
     
     // dodaj u kontrolnu matricu
-    AADD( a_roba, { topka->idroba, topska->robanaz, topska->cijena } )
+    AADD( a_roba, { topska->idroba, topska->robanaz, topska->cijena } )
 
 endif
 

@@ -94,10 +94,10 @@ nTotManjak := 0
 
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
+do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 	// !!!!!!!!!!!!!!!
-	if idpartner+brfaktp+idkonto+idkonto2<>cidd
+	if idpartner + brfaktp + idkonto + idkonto2 <> cIdd
 		Beep(2)
 		Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
 	endif
@@ -106,74 +106,68 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 	select ROBA
 	HSEEK kalk_pripr->IdRoba
+
 	select TARIFA
 	HSEEK kalk_pripr->IdTarifa
+
 	select kalk_pripr
 
-	if prow()-gPStranica>59
+	if ( prow() - gPStranica ) > 59
 		FF
-		@ prow(),125 SAY "Str:"+str(++nStr,3)
+		@ prow(), 125 SAY "Str:" + STR( ++nStr, 3 )
 	endif
 
-	SKol:=Kolicina
+	SKol := Kolicina
 
-	@ prow()+1,0 SAY  Rbr PICTURE "XXX"
-	@ prow(),4 SAY  ""
+	@ prow() + 1, 0 SAY field->rbr PICT "XXX"
+	@ prow(), 4 SAY  ""
 
-	if (IsJerry())
-		?? idroba, LEFT(ROBA->naz,40 - 13),"("+ROBA->jmj+")"
+	?? field->idroba, TRIM( LEFT( roba->naz, 40 )), "(", roba->jmj, ")"
+
+	if gRokTr == "D"
+		?? SPACE(4), "Rok Tr.:", field->roktr
+	endif
+
+	nPosKol := 30
+	@ prow() + 1, 4 SAY field->idtarifa + SPACE(4)
+
+	if cSamoObraz == "D"
+		@ prow(), pcol() + nPosKol SAY field->kolicina PICT replicate("_",len(PicKol))
+		@ prow(), pcol() + 1 SAY field->gkolicina PICT replicate(" ",len(PicKol))
 	else
-		?? idroba, trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
+		@ prow(), pcol() + nPosKol SAY field->kolicina PICT PicKol
+		@ prow(), pcol() + 1 SAY field->gkolicina PICT PicKol
 	endif
 
-	if gRokTr=="D"
-		?? space(4),"Rok Tr.:",RokTr
-	endif
+	nC1 := pcol()
 
-	if (IsJerry())
-		nPosKol:=1
-		@ prow(),pcol()+1 SAY IdTarifa
+	if cSamoObraz == "D"
+		@ prow(), pcol() + 1 SAY field->fcj PICT replicate(" ",len(PicDEM))
+		@ prow(), pcol() + 1 SAY field->kolicina * field->mpcsapp PICT replicate("_",len(PicDEM))
+		@ prow(), pcol() + 1 SAY field->Kolicina - field->gkolicina PICT replicate(" ",len(PicKol))
 	else
-		nPosKol:=30
-		@ prow()+1,4 SAY IdTarifa+space(4)
+		@ prow(), pcol() + 1 SAY field->fcj PICT Picdem // knjizna vrijednost
+		@ prow(), pcol() + 1 SAY field->kolicina * field->mpcsapp PICT Picdem
+		@ prow(), pcol() + 1 SAY field->kolicina - field->gkolicina PICT PicKol
 	endif
 
-	if cSamoObraz=="D"
-		@ prow(),pcol()+nPosKol SAY Kolicina  PICTURE replicate("_",len(PicKol))
-		@ prow(),pcol()+1 SAY GKolicina  PICTURE replicate(" ",len(PicKol))
-	else
-		@ prow(),pcol()+nPosKol SAY Kolicina  PICTURE PicKol
-		@ prow(),pcol()+1 SAY GKolicina  PICTURE PicKol
-	endif
+	@ prow(), pcol() + 1 SAY field->mpcsapp PICT PicCDEM
 
-	nC1:=pcol()
-
-	if cSamoObraz=="D"
-		@ prow(),pcol()+1 SAY fcj           PICTURE replicate(" ",len(PicDEM))
-		@ prow(),pcol()+1 SAY kolicina*mpcsapp    PICTURE replicate("_",len(PicDEM))
-		@ prow(),pcol()+1 SAY Kolicina-GKolicina  PICTURE replicate(" ",len(PicKol))
-	else
-		@ prow(),pcol()+1 SAY fcj           PICTURE Picdem // knjizna vrijednost
-		@ prow(),pcol()+1 SAY kolicina*mpcsapp    PICTURE Picdem
-		@ prow(),pcol()+1 SAY Kolicina-GKolicina  PICTURE PicKol
-	endif
-
-	@ prow(),pcol()+1 SAY MPCSAPP             PICTURE PicCDEM
-
-	nTotb+=fcj
-	nTotc+=kolicina*mpcsapp
-	nTot4+= (nU4:= MPCSAPP*Kolicina-fcj)
-	nTotKol+=kolicina
-	nTotGKol+=gkolicina
+	nTotbi += field->fcj
+	nTotc += field->kolicina * field->mpcsapp
+	nTot4 += ( nU4 := ( field->MPCSAPP * field->Kolicina ) - field->fcj )
+	nTotKol += field->kolicina
+	nTotGKol += field->gkolicina
 	
 	if cSamoObraz=="D"
-		@ prow(),pcol()+1 SAY nU4  pict replicate(" ",len(PicDEM))
+		@ prow(),pcol()+1 SAY nU4 pict replicate(" ",len(PicDEM))
 	else
+
 		if ( nU4 < 0 ) 
 			
 			// manjak
 			@ prow(),pcol()+1 SAY 0 PICT picdem	
-			@ prow(),pcol()+1 SAY nU4  PICT picdem
+			@ prow(),pcol()+1 SAY nU4 PICT picdem
 			nTotManjak += nU4	
 		else
 			

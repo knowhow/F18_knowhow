@@ -238,6 +238,59 @@ go top
 return
 
 
+// -------------------------------------------------------
+// provjeri i ispisi duple stavke iz pripreme
+// -------------------------------------------------------
+static function _kalk_pripr_duple_stavke()
+local _data := {}
+local _scan
+
+O_ROBA
+O_KALK_PRIPR
+
+select kalk_pripr
+go top
+
+do while !EOF()
+
+    select roba
+    hseek kalk_pripr->idroba
+
+    select kalk_pripr
+
+    _scan := ASCAN( _data, {|var| var[1] == kalk_pripr->idroba } )
+
+    if _scan == 0
+        AADD( _data, { kalk_pripr->idroba, roba->naz, roba->barkod } )    
+    endif
+
+    skip
+
+enddo
+
+go top
+
+if LEN( _data ) > 0
+
+    START PRINT CRET
+    
+    ? "Sljedeci artikli u pripremi su dupli:"
+    ? PADR("-", 65)
+    ? PADR( "ID", 10 ) + " " + PADR( "NAZIV", 40 ) + " " + PADR( "BARKOD", 13 )
+    ? PADR("-", 65)
+    
+    for _i := 1 to LEN( _data )
+        ? ALLTRIM( STR( _i, 3 ) ) + "."
+        @ prow(), pcol() + 1 SAY _data[ _i, 1 ]
+        @ prow(), pcol() + 1 SAY PADR( _data[ _i, 2 ], 40 )
+        @ prow(), pcol() + 1 SAY _data[ _i, 3 ]
+    next
+
+    END PRINT
+
+endif
+
+return
 
 
 
@@ -1008,6 +1061,8 @@ AADD(opc, "7. setuj sve NC na 0")
 AADD(opcexe, {|| SetNcTo0()})
 AADD(opc, "8. renumeracija kalk priprema")
 AADD(opcexe, {|| renumeracija_kalk_pripr( nil, nil, .f. )})
+AADD(opc, "9. provjeri duple stavke u pripremi")
+AADD(opcexe, {|| _kalk_pripr_duple_stavke() })
 
 close all
 private am_x:=m_x,am_y:=m_y
@@ -1026,7 +1081,7 @@ return DE_REFRESH
 /*! \fn ProtStErase()
  *  \brief Brisi sve protustavke
  */
-function ProtStErase()
+ function ProtStErase()
 
 if Pitanje(,"Pobrisati protustavke dokumenta (D/N)?", "N") == "N"
     return

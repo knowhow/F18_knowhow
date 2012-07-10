@@ -561,7 +561,7 @@ do while .t.
 
     if cIdVd == VD_INV
 
-        @ nLX, m_y + 3 SAY "Pop. kolicina:" GET _kol2 PICT _pict
+        @ nLX, m_y + 3 SAY "Pop. kolicina:" GET _kol2 PICT _pict VALID _pop_kol( _kol2 )
 
         nLX ++
 
@@ -622,6 +622,23 @@ BoxC()
 go nRec
 
 return nVrati
+
+
+
+
+// ----------------------------------------------
+// provjera popisane kolicine 
+// ----------------------------------------------
+function _pop_kol( kol )
+local _ok := .t.
+
+if kol > 200
+    if Pitanje(, "Da li je kolicina " + ALLTRIM( STR( kol, 12, 2) ) + " ispravna kolicina ?", "N" ) == "N"
+        _ok := .f.    
+    endif
+endif
+
+return _ok
 
 
 

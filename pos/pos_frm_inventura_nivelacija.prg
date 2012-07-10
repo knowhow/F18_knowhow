@@ -541,12 +541,16 @@ do while .t.
         
         @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba PICT "@!S" + _duz_sif ;
             WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
-            VALID {|| &cRSblok , _artikal_u_pripremi( _idroba ), RacKol( _idodj, _idroba, @_kolicina ), _inv_set_cijene( cIdVd, _idroba ), .t. }
+            VALID {|| &cRSblok , ;
+                    RacKol( _idodj, _idroba, @_kolicina ), ;
+                    _inv_set_cijene( cIdVd, _idroba ), ;
+                    _artikal_u_pripremi( _idroba ) }
         
         nLX ++
         
         if cIdVd == VD_INV
-            @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict
+            // ovo mi treba samo informativno kod inventure...
+            @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict WHEN .f.
         else
             @ nLX, m_y + 3 SAY "     Kolicina:" GET _kolicina PICT _pict
         endif

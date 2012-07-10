@@ -157,7 +157,7 @@ if mag_prod == "M"
     _u_i := "mu_i"
 endif
 
-_qry := "SELECT idkonto, idvd, brdok, datdok, nc, rabat FROM fmk.kalk_kalk WHERE idfirma = " + ;
+_qry := "SELECT idkonto, idvd, brdok, datdok, fcj, rabat FROM fmk.kalk_kalk WHERE idfirma = " + ;
         _sql_quote( gfirma ) + ;
         " AND idpartner = " + _sql_quote( partner ) + ;
         " AND idroba = " + _sql_quote( roba ) + ;
@@ -174,7 +174,7 @@ for _i := 1 to _table:LastRec()
     AADD( _data, { oRow:Fieldget( oRow:Fieldpos("idkonto") ), ;
                     oRow:Fieldget( oRow:Fieldpos("idvd") ) + "-" + ALLTRIM( oRow:Fieldget( oRow:Fieldpos("brdok") ) ), ;
                     oRow:Fieldget( oRow:Fieldpos("datdok") ), ;
-                    oRow:Fieldget( oRow:Fieldpos("nc") ), ;
+                    oRow:Fieldget( oRow:Fieldpos("fcj") ), ;
                     oRow:Fieldget( oRow:Fieldpos("rabat") ) } )
 
 

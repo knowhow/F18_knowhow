@@ -52,7 +52,7 @@ AADD( ImeKol, { PADR( "Artikal", 10 ), { || idroba } } )
 AADD( ImeKol, { PADC( "Naziv", 50 ), { || PADR( robanaz, 50 ) } } )
 AADD( ImeKol, { "JMJ", { || jmj } } )
 AADD( ImeKol, { "Tarifa", { || idtarifa } } )
-AADD( ImeKol, { "Kolicina", { || STR( kolicina, 8, 2 ) } } )
+AADD( ImeKol, { "Kolicina", { || STR( kolicina, 8, 3 ) } } )
 AADD( ImeKol, { "Cijena", { || STR( cijena, 8, 2 ) } } )
 AADD( ImeKol, { "Ukupno", { || STR( kolicina * cijena, 10, 2 ) } } )
 

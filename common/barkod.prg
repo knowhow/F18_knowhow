@@ -475,7 +475,7 @@ endif
 
 // odrezi ocitano na 7, tu je barkod koji trebam pretraziti
 _tb_barkod := LEFT( id, _bk_len )
-_tb_tezina := RIGHT( id, _tez_len )
+_tb_tezina := PADR( RIGHT( id, _tez_len ), _tez_len - 1 )
 
 PushWa()
 
@@ -494,7 +494,7 @@ if FOUND() .and. ALLTRIM( _tb_barkod ) == ALLTRIM( field->barkod )
 		if !EMPTY( _tb_tezina )
 
 			_val_tezina := VAL( _tb_tezina )
-			tezina := ( _val_tezina / _tez_div )
+			tezina := ROUND( ( _val_tezina / _tez_div ), 4 )
 
 		endif
 

@@ -1,3 +1,7 @@
+1.0.70 2012-07-11, vsasa
+
+  - korekcija težinski barkodovi, fprint količina na 3 decimale [#28614](http://redmine.bring.out.ba/issues/28614)
+ 
 1.0.69 2012-07-10, vsasa
 
   - pretraga barkod-a bugfix, težinski barkod [#28607](http://redmine.bring.out.ba/issues/28607)

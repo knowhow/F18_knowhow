@@ -1,3 +1,8 @@
+1.0.69 2012-07-10, vsasa
+
+  - pretraga barkod-a bugfix, težinski barkod [#28607](http://redmine.bring.out.ba/issues/28607)
+                                              [#28609](http://redmine.bring.out.ba/issues/28609)
+ 
 1.0.68 2012-07-10, vsasa
 
   - kalk, pos, čišćenje opcija inventure [#28525](http://redmine.bring.out.ba/issues/28525)

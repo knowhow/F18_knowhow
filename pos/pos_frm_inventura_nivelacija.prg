@@ -451,8 +451,7 @@ do case
 
     case Ch == K_CTRL_N  
 
-        // unos nove stavke
-        EdPrInv(0)
+        EdPrInv( 0 )
         lVrati := DE_REFRESH
 
     case Ch == K_CTRL_T
@@ -494,13 +493,13 @@ endif
 
 SET CURSOR ON
 
-Box(, 7, 70, .t. )
-
-@ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
-
 select priprz
 
 do while .t.
+    
+    Box(, 7, 70, .t. )
+
+    @ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
 
     Scatter()
 
@@ -579,8 +578,8 @@ do while .t.
 
     read
 
-
     if LastKey() == K_ESC
+        BoxC()
         exit
     endif
         
@@ -609,15 +608,26 @@ do while .t.
    
     @ m_x + 1, m_y + 31 SAY PADR( "", 35 ) 
     @ m_x + 7, m_y + 2 SAY "... zadnji artikal: " + ALLTRIM( _idroba ) + " - " + PADR( _robanaz, 25 ) + "..." 
-    
+   
+    if nInd == 0
+        
+        TB:RefreshAll()
+
+        DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
+            Tb:stabilize()
+        ENDDO
+
+    endif
+ 
     if nInd == 1
         nVrati := 1
+        BoxC()
         exit
     endif
 
-enddo
+    BoxC()
 
-BoxC()
+enddo
 
 go nRec
 

@@ -153,7 +153,7 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 	@ prow(), pcol() + 1 SAY field->mpcsapp PICT PicCDEM
 
-	nTotbi += field->fcj
+	nTotb += field->fcj
 	nTotc += field->kolicina * field->mpcsapp
 	nTot4 += ( nU4 := ( field->MPCSAPP * field->Kolicina ) - field->fcj )
 	nTotKol += field->kolicina

@@ -243,6 +243,7 @@ return
 // -------------------------------------------------------
 static function _kalk_pripr_duple_stavke()
 local _data := {}
+local _dup := {}
 local _scan
 
 O_ROBA
@@ -261,7 +262,9 @@ do while !EOF()
     _scan := ASCAN( _data, {|var| var[1] == kalk_pripr->idroba } )
 
     if _scan == 0
-        AADD( _data, { kalk_pripr->idroba, roba->naz, roba->barkod } )    
+        AADD( _data, { kalk_pripr->idroba } )    
+    else
+        AADD( _dup, { kalk_pripr->idroba, roba->naz, roba->barkod } )    
     endif
 
     skip
@@ -270,7 +273,7 @@ enddo
 
 go top
 
-if LEN( _data ) > 0
+if LEN( _dup ) > 0
 
     START PRINT CRET
     
@@ -279,11 +282,11 @@ if LEN( _data ) > 0
     ? PADR( "ID", 10 ) + " " + PADR( "NAZIV", 40 ) + " " + PADR( "BARKOD", 13 )
     ? PADR("-", 65)
     
-    for _i := 1 to LEN( _data )
-        ? ALLTRIM( STR( _i, 3 ) ) + "."
-        @ prow(), pcol() + 1 SAY _data[ _i, 1 ]
-        @ prow(), pcol() + 1 SAY PADR( _data[ _i, 2 ], 40 )
-        @ prow(), pcol() + 1 SAY _data[ _i, 3 ]
+    for _i := 1 to LEN( _dup )
+        ? ALLTRIM( STR( _i, 5 ) ) + "."
+        @ prow(), pcol() + 1 SAY _dup[ _i, 1 ]
+        @ prow(), pcol() + 1 SAY PADR( _dup[ _i, 2 ], 40 )
+        @ prow(), pcol() + 1 SAY _dup[ _i, 3 ]
     next
 
     END PRINT

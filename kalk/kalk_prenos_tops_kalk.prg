@@ -206,7 +206,7 @@ _r_br := "0"
 
 MsgO( "Prenos stavki POS -> KALK priprema ... sacekajte !" )
 
-do while !eof()
+do while !EOF()
 	
 	_br_dok := _br_kalk
     _id_konto := koncij->id
@@ -317,7 +317,10 @@ if !FOUND()
     _rec["naz"] := topska->robanaz
     _rec["idtarifa"] := topska->idtarifa
     _rec["barkod"] := topska->barkod
-    _rec["jmj"] := topska->jmj
+
+    if topska->(FIELDPOS("jmj")) <> 0
+        _rec["jmj"] := topska->jmj
+    endif
     
     if ALLTRIM( tip_cijene ) == "M1" .or. EMPTY( tip_cijene )
         _rec["mpc"] := topska->mpc
@@ -371,27 +374,39 @@ if _kolicina == 0
 endif
 
 select kalk_pripr
-append blank
+locate for field->idroba == topska->idroba
+
+if !FOUND()
+    
+    append blank
 			
-replace field->idfirma with gFirma
-replace field->idvd with _tip_dok
-replace field->brdok with broj_dok         
-replace field->datdok with topska->datum  
-replace field->datfaktp with topska->datum  
-replace field->kolicina with topska->kol2
-replace field->gkolicina with _kolicina
-replace field->gkolicin2 with ( gkolicina - kolicina )
-replace field->idkonto with id_konto        
-replace field->idkonto2 with id_konto
-replace field->pkonto with id_konto       
-replace field->idroba with topska->idroba  
-replace field->rbr with r_br           
-replace field->idtarifa with topska->idtarifa
-replace field->mpcsapp with _mpcsapp
-replace field->nc with _nc
-replace field->fcj with _fc
-replace field->pu_i with "I"
-replace field->error with "0"
+    replace field->idfirma with gFirma
+    replace field->idvd with _tip_dok
+    replace field->brdok with broj_dok         
+    replace field->datdok with topska->datum  
+    replace field->datfaktp with topska->datum  
+    replace field->kolicina with topska->kol2
+    replace field->gkolicina with _kolicina
+    replace field->gkolicin2 with ( gkolicina - kolicina )
+    replace field->idkonto with id_konto        
+    replace field->idkonto2 with id_konto
+    replace field->pkonto with id_konto       
+    replace field->idroba with topska->idroba  
+    replace field->rbr with r_br           
+    replace field->idtarifa with topska->idtarifa
+    replace field->mpcsapp with _mpcsapp
+    replace field->nc with _nc
+    replace field->fcj with _fc
+    replace field->pu_i with "I"
+    replace field->error with "0"
+
+else
+
+    // samo appenduj kolicinu
+    replace field->kolicina with field->kolicina + topska->kol2
+    replace field->gkolicin2 with ( gkolicina - kolicina )
+ 
+endif
 
 select ( _t_area )
 return

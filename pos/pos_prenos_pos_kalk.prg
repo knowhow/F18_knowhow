@@ -448,6 +448,7 @@ do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
     _rec["stmpc"] := pos->ncijena
     _rec["barkod"] := roba->barkod
     _rec["robanaz"] := roba->naz
+    _rec["jmj"] := roba->jmj
     
     dbf_update_rec( _rec )
  
@@ -697,6 +698,7 @@ AADD(aDBF,{"IdVd",     "C",   2, 0})
 AADD(aDBF,{"BRDOK",    "C",  10, 0})
 AADD(aDBF,{"M1",       "C",   1, 0})
 AADD(aDBF,{"BARKOD",   "C",  13, 0})
+AADD(aDBF,{"JMJ",      "C",   3, 0})
 
 select pos_doks
 

@@ -287,6 +287,9 @@ endif
 
 return
 
+
+
+
 // --------------------------------------------
 // import robe u sifrarnik robe
 // --------------------------------------------
@@ -313,6 +316,8 @@ if !FOUND()
     _rec["id"] := topska->idroba
     _rec["naz"] := topska->robanaz
     _rec["idtarifa"] := topska->idtarifa
+    _rec["barkod"] := topska->barkod
+    _rec["jmj"] := topska->jmj
     
     if ALLTRIM( tip_cijene ) == "M1" .or. EMPTY( tip_cijene )
         _rec["mpc"] := topska->mpc
@@ -328,7 +333,7 @@ if !FOUND()
     my_use_semaphore_on()
     
     // dodaj u kontrolnu matricu
-    AADD( a_roba, { topska->idroba, topska->robanaz, topska->cijena } )
+    AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc } )
 
 endif
 

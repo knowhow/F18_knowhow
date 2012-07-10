@@ -418,8 +418,8 @@ if !EMPTY( cId )
 	go top
   	seek cId
 
-  	if FOUND() .and. ALLTRIM(cId) == ALLTRIM( field->barkod ) 
-    	cId := Id  
+  	if FOUND() .and. PADR( cId, 13, "" ) == field->barkod 
+    	cId := field->id  
      	gOcitBarCod := .t.
 	endif
 

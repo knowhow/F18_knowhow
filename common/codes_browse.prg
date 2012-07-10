@@ -201,7 +201,7 @@ static function sif_seek(cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId)
 
 if cId <> NIL 
         
-    if VALTYPE(cId)=="N"       
+    if VALTYPE(cId) == "N"       
          seek STR(cId)
         
     elseif RIGHT(trim(cId), 1) == "*"
@@ -211,18 +211,20 @@ if cId <> NIL
          sif_point_or_slash(@cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch)
 
     elseif LEN(trim(cId)) > 10 .and. fieldpos("BARKOD") <> 0 .and. !EMPTY( cId ) 
-         SeekBarKod(@cId, @cIdBk, .f.)
+         //SeekBarKod( @cId, @cIdBk, .f. )
+         barkod( @cId )
 
     else 
     
         // SEEK PO ID , SEEK PO ID_J
         seek cId
         
-        if found()
+        if FOUND()
             cId := &(FIELDNAME(1))
-        elseif !found() .and. fieldpos("barkod")<>0 .and. !EMPTY(cId)
+        elseif !FOUND() .and. fieldpos("barkod")<>0 .and. !EMPTY(cId)
             // pretrazi po barkod-u
-            SeekBarKod( @cId, @cIdBk, .t. )
+            //SeekBarKod( @cId, @cIdBk, .t. )
+            barkod( @cId )
         endif
 
     endif
@@ -1928,10 +1930,11 @@ RETURN (NIL)
 
 
 
-function SeekBarKod(cId,cIdBk,lNFGR)
+function SeekBarKod( cId, cIdBk, lNFGR )
 local nRec
-if lNFGR==nil
-    lNFGR:=.f.
+
+if lNFGR == nil
+    lNFGR := .f.
 endif
 if lNFGR
     nRec:=RECNO()
@@ -1976,6 +1979,7 @@ if lNFGR .and. !FOUND()
     set order to tag "ID"
     go (nRec)
 endif
+
 return
 
 // -------------------------------

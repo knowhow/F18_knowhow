@@ -329,9 +329,6 @@ endif
 // idemo sada na upis rn u fiskalni fajl
 nErr := fc_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, lStorno, gFc_error )
 
-// pokreni komandu ako postoji
-_fc_cmd()
-
 return nErr
 
 

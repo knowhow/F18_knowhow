@@ -16,6 +16,7 @@
 // pos komande
 static F_POS_RN := "POS_RN"
 
+
 // --------------------------------------------------------
 // fiskalni racun pos (FLINK)
 // cFPath - putanja do fajla
@@ -128,8 +129,7 @@ return nErr
 // brisi fajl greske ako postoji prije kucanja racuna
 // --------------------------------------------------------
 static function _f_err_delete( cFPath, cFName )
-local cTmp
-cTmp := cFPath + "printe~1\" + cFName 
+local cTmp := cFPath + "printe~1\" + cFName 
 
 FERASE(cTmp)
 
@@ -219,7 +219,7 @@ return aArr
 
 
 // ----------------------------------------
-// vraca popunjenu matricu za ispis raèuna
+// vraca popunjenu matricu za ispis racuna
 // ----------------------------------------
 static function __pos_rn( aData, lStorno )
 local aArr := {}

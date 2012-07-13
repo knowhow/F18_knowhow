@@ -12,7 +12,7 @@
 
 #include "fakt.ch"
 
-static LEN_KOLICINA := 8
+static LEN_KOLICINA := 12
 static LEN_CIJENA := 10
 static LEN_VRIJEDNOST := 12
 static PIC_KOLICINA := ""

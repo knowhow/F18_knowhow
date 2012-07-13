@@ -1,3 +1,7 @@
+1.0.71 2012-07-13, vsasa
+
+  - štampa fakture odt, txt, dužina za polje količine [#28614](http://redmine.bring.out.ba/issues/28614)
+ 
 1.0.70 2012-07-11, vsasa
 
   - korekcija težinski barkodovi, fprint količina na 3 decimale [#28614](http://redmine.bring.out.ba/issues/28614)

@@ -20,7 +20,7 @@ static LEN_UKUPNO := 99
 static LEN_KUPAC := 35
 static LEN_DATUM := 34
 
-static LEN_KOLICINA := 8
+static LEN_KOLICINA := 12
 // 9999999.99
 static LEN_CIJENA := 10
 static LEN_VRIJEDNOST := 12

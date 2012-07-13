@@ -885,9 +885,9 @@ do while !EOF() .and. (id == cUId)
 enddo
 
 // saldo kupca
-nSaldoKup := g_p_saldo(cUPartn, cKtoDug)
+nSaldoKup := get_fin_partner_saldo(cUPartn, cKtoDug)
 // saldo dobavljaca
-nSaldoDob := g_p_saldo(cUPartn, cKtoPot)
+nSaldoDob := get_fin_partner_saldo(cUPartn, cKtoPot)
 // datum zadnje uplate kupca
 dPUplKup := g_dpupl_part(cUPartn, cKtoDug)
 // datum zadnje promjene kupac

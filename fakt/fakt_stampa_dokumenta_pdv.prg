@@ -920,10 +920,10 @@ endif
 __SH_SLD_VAR := gShSldVar
 
 // saldo kupca
-nSaldoKup := g_p_saldo( cPartn, __KTO_DUG )
+nSaldoKup := get_fin_partner_saldo( cPartn, __KTO_DUG )
 		
 // saldo dobavljaca
-nSaldoDob := g_p_saldo( cPartn, __KTO_POT )
+nSaldoDob := get_fin_partner_saldo( cPartn, __KTO_POT )
 
 // datum zadnje uplate kupca
 dPUplKup := g_dpupl_part( cPartn, __KTO_DUG )

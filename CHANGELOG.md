@@ -1,6 +1,7 @@
 1.0.71 2012-07-13, vsasa
 
   - štampa fakture odt, txt, dužina za polje količine [#28614](http://redmine.bring.out.ba/issues/28614)
+  - stanje kupaca i dobavljača za fakturu, saldo kupca dobavljača iz sql [#28614](http://redmine.bring.out.ba/issues/28614)
  
 1.0.70 2012-07-11, vsasa
 

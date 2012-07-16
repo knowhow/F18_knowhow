@@ -315,7 +315,7 @@ if !fSadAz
 
         SET CURSOR ON
 
-        ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv() }, ;
+        ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
                 "Broj dokumenta: " + cBrDok , ;
                 "PRIPREMA " + cNazDok + "E", nil, ;
                 { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka" }, 2, , , )
@@ -401,7 +401,7 @@ return
 // ---------------------------------------------
 // Ispravka nivelacije ili inventure
 // ---------------------------------------------
-function EditInvNiv()
+function EditInvNiv( dat_inv_niv )
 local nRec := RECNO()
 local i := 0
 local lVrati := DE_CONT
@@ -451,7 +451,7 @@ do case
 
     case Ch == K_CTRL_N  
 
-        EdPrInv( 0 )
+        EdPrInv( 0, dat_inv_niv )
         lVrati := DE_REFRESH
 
     case Ch == K_CTRL_T
@@ -476,7 +476,7 @@ return lVrati
 // ---------------------------------------------------------
 // ispravka ili unos nove stavke u pipremi
 // ---------------------------------------------------------
-function edprinv( nInd )
+function edprinv( nInd, datum )
 local nVrati := 0
 local aNiz := {}
 local nRec := RECNO()
@@ -528,7 +528,7 @@ do while .t.
         _idpos := gIdPos
         _cijena := 0
         _ncijena := 0
-        _datum := gDatum
+        _datum := datum
         _smjena := gSmjena
         _mu_i := cUI_I
 

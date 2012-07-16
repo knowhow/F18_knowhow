@@ -608,19 +608,36 @@ local _log_artikal, _log_kolicina, _log_cijena
 local _log_datum
 local _t_area
 local _rec, _t_rec
+local _tek, _prva
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     MsgBeep(cZabrana)
     return 0
 endif
     
-if Pitanje(, "Zelite izbrisati ovu stavku ?","D") == "D"
+if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
 
     if ( RecCount2() == 1 ) .or. JedinaStavka()
         // potreba za resetom brojaca na prethodnu vrijednost ?
         fakt_reset_broj_dokumenta( field->idfirma, field->idtipdok, field->brdok )
     endif
-    
+   
+    // ako je prva stavka...
+    if field->rbr == PADL( "1", 3 ) .and. ( RECCOUNT() > 1 )
+
+        _prva := dbf_get_rec()
+
+        skip
+                
+        _tek := dbf_get_rec()
+        _tek["txt"] := _prva["txt"]
+        _tek["rbr"] := _prva["rbr"]
+        dbf_update_rec( _tek )
+
+        skip -1
+
+    endif 
+
     // uzmi opis dokumenta za logiranje
     _log_opis := "dokument: " + field->idfirma + "-" + field->idtipdok + "-" + field->brdok
     _log_stavka := field->rbr
@@ -630,8 +647,10 @@ if Pitanje(, "Zelite izbrisati ovu stavku ?","D") == "D"
     _log_datum := field->datdok
 
     delete
+
     _t_rec := RECNO()
     __dbPack()
+
     go ( _t_rec )
 
     _t_area := SELECT()

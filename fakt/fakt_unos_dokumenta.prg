@@ -432,14 +432,14 @@ do case
             
 		// kontrola zbira
             
-		nRec:=RecNo()
+		nRec := RecNo()
             
-		Box(, 12, 72 )
+		Box(, 12, MAXCOLS() - 5 )
             
 			nDug2 := 0 
 			nRab2 := 0
 			nPor2 := 0
-            cDinDem := dindem
+            cDinDem := field->dindem
             nC := 1
 
             KonZbira()
@@ -449,20 +449,22 @@ do case
 				while Inkey(0.1) != K_ESC
     			end
 
-                @ m_x + 1, m_y + 2 CLEAR to m_x + 12, m_y + 70
+                @ m_x + 1, m_y + 2 CLEAR TO m_x + 12, MAXCOLS() - 5
+                
                 nC := 1
+                
                 @ m_x, m_y + 2 SAY ""
 
             endif
             
-			@ m_x + nC, m_y + 2 SAY Replicate("-",65)
-            @ m_x + nC + 1, m_y + 2   SAY "Ukupno   "
-            @ m_x + nC + 1, col() + 1 SAY nDug2      pict "9999999.99"
-            @ m_x + nC + 1, col() + 1 SAY nRab2      pict "9999999.99"
-            @ m_x + nC + 1, col() + 1 SAY nDug2-nRab2 pict "9999999.99"
-            @ m_x + nC + 1, col() + 1 SAY nPor2 pict          "9999999.99"
-            @ m_x + nC + 1, col() + 1 SAY nDug2-nRab2+nPor2 pict "9999999.99"
-            @ m_x + nC + 1, col() + 1 SAY "("+cDinDem+")"
+			@ m_x + nC, m_y + 2 SAY Replicate( "-", MAXCOLS() - 10 )
+            @ m_x + nC + 1, m_y + 2 SAY PADR( "Ukupno   ", 30 )
+            @ m_x + nC + 1, col() + 1 SAY nDug2 PICT "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY nRab2 PICT "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY nDug2 - nRab2 PICT "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY nPor2 PICT "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY ( nDug2 - nRab2 ) + nPor2 PICT "9999999.99"
+            @ m_x + nC + 1, col() + 1 SAY "(" + cDinDem + ")"
 		
 			while Inkey(0.1) != K_ESC
     		end
@@ -1854,75 +1856,107 @@ next
 select partn
 
 return cVrati
-*}
 
 
 
-/*! \fn KonZbira(lVidi)
- *  \brief 
- *  \param lVidi - ako je .t. ili nil mora da postoji i privatna varijabla nC:=1
- */
+// pregled stavki pripremi u formi kontrole zbira datoteka
+// prikazi - ako je .t. ili nil mora da postoji i privatna varijabla nC := 1
+function KonZbira( prikazi )
+local _len_y := MAXCOLS() - 5
+local _txt := ""
+local _id_roba, _t_area
 
-function KonZbira(lVidi)
-
-if lVidi==nil
-    lVidi:=.t.
+if prikazi == NIL
+    prikazi := .t.
 endif
  
 go top
-if lVidi
-	@ m_x+nC++,m_y+15 SAY "  Uk     Rabat     Uk-Rabat   Por.na Pr  Ukupno"
-   	++nC
+
+if prikazi
+    
+    _txt := PADR( "R.br", 4 )
+    _txt += SPACE(1)
+    _txt += PADC( hb_utf8tostr("Šifra/naziv"), 25 )
+    _txt += SPACE(1)
+    _txt += PADL( "Ukupno", 10 )
+    _txt += SPACE(1)
+    _txt += PADL( "Rabat", 10 )
+    _txt += SPACE(1)
+    _txt += PADL( "Uk-Rabat", 10 )
+    _txt += SPACE(1)
+    _txt += PADL( "Porez", 10 )
+    _txt += SPACE(1)
+    _txt += PADL( "TOTAL", 10 )
+    
+	@ m_x + ( nC ++ ), m_y + 2 SAY _txt
+
+   	++ nC
+
 endif
  
-do while !eof()
+do while !EOF()
 
-   cRbr:=rbr
-   nDug:=0; nRab:=0; nPor:=0
+    cRbr := field->rbr
+    _id_roba := field->idroba
 
-   do while rbr==cRbr
-     nDug+=round( cijena*kolicina*PrerCij() , ZAOKRUZENJE)
-     nRab+=round((cijena*kolicina*PrerCij())*Rabat/100 , ZAOKRUZENJE)
-     nPor+=round((cijena*kolicina*PrerCij())*(1-Rabat/100)*Porez/100, ZAOKRUZENJE)
-     skip
-   enddo
+    _t_area := SELECT()
+    select roba
+    hseek _id_roba
 
-   nDug2+=nDug; nRab2+=nRab; nPor2+=nPor
+    select ( _t_area )
+    
+    nDug := 0
+    nRab := 0
+    nPor := 0
+ 
+    do while field->rbr == cRbr
+        nDug += ROUND( field->cijena * field->kolicina * PrerCij(), ZAOKRUZENJE )
+        nRab += ROUND( ( field->cijena * field->kolicina * PrerCij() ) * field->rabat/100 , ZAOKRUZENJE )
+        nPor += ROUND( ( field->cijena * field->kolicina * PrerCij() ) * ( 1 - field->rabat / 100 ) * field->porez / 100, ZAOKRUZENJE )
+        skip
+    enddo
 
-   if lVidi
-     @ m_x+nC,m_y+2 SAY  "R.br:"
-     @ m_x+nC,col()+1 SAY cRbr
-     @ m_x+nC,col()+1 SAY nDug      pict "9999999.99"
-     @ m_x+nC,col()+1 SAY nRab      pict "9999999.99"
-     @ m_x+nC,col()+1 SAY nDug-nRab pict "9999999.99"
-     @ m_x+nC,col()+1 SAY nPor pict          "9999999.99"
-     @ m_x+nC,col()+1 SAY nDug-nRab+nPor pict "9999999.99"
-     ++nC
+    nDug2 += nDug
+    nRab2 += nRab
+    nPor2 += nPor
 
-     if nC>10
+    if prikazi
 
-		while Inkey(0.1) != K_ESC
-    	end
+        @ m_x + nC, m_y + 2 SAY cRbr + "."
+        @ m_x + nC, col() + 1 SAY PADR( ALLTRIM( _id_roba ) + "-" + ALLTRIM( roba->naz ), 25 )
+        @ m_x + nC, col() + 1 SAY nDug PICT "9999999.99"
+        @ m_x + nC, col() + 1 SAY nRab PICT "9999999.99"
+        @ m_x + nC, col() + 1 SAY nDug - nRab PICT "9999999.99"
+        @ m_x + nC, col() + 1 SAY nPor PICT "9999999.99"
+        @ m_x + nC, col() + 1 SAY ( nDug - nRab ) + nPor PICT "9999999.99"
 
-        @ m_x+1,m_y+2 CLEAR to m_x+12,m_y+70
-        nC:=1
-	    @ m_x,m_y+2 SAY ""
+        ++nC
 
-     endif
-   endif
- enddo
+        if nC > 10
+
+		    while Inkey(0.1) != K_ESC
+    	    end
+
+            @ m_x + 1, m_y + 2 CLEAR TO m_x + 12, _len_y
+            
+            nC := 1
+	        
+            @ m_x, m_y + 2 SAY ""
+
+        endif
+    endif
+enddo
+
 return
 
 
 
 /*! \fn JeStorno10()
  *  \brief True je distribucija i TipDokumenta=10  i krajnji desni dio broja dokumenta="S"
- */
- 
+ */ 
 function JeStorno10()
-*{
 return glDistrib .and. _idtipdok=="10" .and. UPPER(RIGHT(TRIM(_BrDok),1))=="S"
-*}
+
 
 
 /*! \fn RabPor10()

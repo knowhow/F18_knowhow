@@ -3,6 +3,7 @@
   - štampa fakture odt, txt, dužina za polje količine [#28639](http://redmine.bring.out.ba/issues/28639)
   - stanje kupaca i dobavljača za fakturu, saldo kupca dobavljača iz sql [#28635](http://redmine.bring.out.ba/issues/28635)
   - pos, inventura/nivelacija datum rada = datum dokumenta [#28640](http://redmine.bring.out.ba/issues/28640)
+  - fakt, F5 - kontrola zbira dokumenta [#28578](http://redmine.bring.out.ba/issues/28578)
  
 1.0.70 2012-07-11, vsasa
 

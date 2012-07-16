@@ -268,6 +268,37 @@ _ok := .t.
 return _ok
 
 
+// ------------------------------------------------------
+// otvaranje dokumenta na osnovu ekstenzije
+// ------------------------------------------------------
+function f18_open_mime_document( document )
+local _cmd := ""
+
+#ifdef __PLATFORM__UNIX
+
+	#ifdef __PLATFORM__DARWIN
+        	_cmd += "open " + document
+	#else
+			_cmd += "xdg-open " + document + " &"
+	#endif
+
+#else __PLATFORM__WINDOWS
+
+    document := '"' + document + '"'
+    _cmd += "c:\knowhowERP\util\start.exe /m " + document
+
+#endif
+
+_error := hb_run( _cmd )
+
+if _error <> 0
+    MsgBeep( "Problem sa otvaranjem dokumenta !!!!#Greska: " + ALLTRIM(STR( _error )) )
+    return _error
+endif
+
+return 0
+
+
 
 // ------------------------------------------------------------------
 // konvertovanje odt fajla u pdf

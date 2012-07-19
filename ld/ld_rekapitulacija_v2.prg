@@ -478,6 +478,13 @@ END PRINT
 if Pitanje(, "Generisati virmane za ovaj obracun plate ? (D/N)", "N" ) == "D"
 
     virm_set_global_vars()
+    // uzmi parametre iz sql/db
+    
+    // setuj parametre za prenos godina/mjesec
+    set_metric( "virm_godina", my_user(), cGodina )
+    set_metric( "virm_mjesec", my_user(), cMjesec ) 
+    
+    // prenesi
     virm_prenos_ld( .t. )
     // otvori pripremu virmana...
     unos_virmana()

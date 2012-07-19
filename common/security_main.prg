@@ -75,7 +75,7 @@ return _ret
 // vraca id user-a
 function GetUserID()
 local cTmpQry
-local cTable := "public.usr_bak"
+local cTable := "public.usr"
 local oTable
 local nResult
 local oServer := pg_server()
@@ -98,7 +98,7 @@ endif
 // vraca username usera iz sec.systema
 function GetUserName( nUser_id )
 local cTmpQry
-local cTable := "public.usr_bak"
+local cTable := "public.usr"
 local oTable
 local cResult
 local oServer := pg_server()
@@ -114,14 +114,14 @@ endif
 if oTable:eof()
   return "?user?"
 else
-  return oTable:Fieldget(1)
+  return hb_utf8tostr( oTable:Fieldget(1) )
 endif
 
 
 // vraca full username usera iz sec.systema
 function GetFullUserName( nUser_id )
 local cTmpQry
-local cTable := "public.usr_bak"
+local cTable := "public.usr"
 local oTable
 local oServer := pg_server()
 
@@ -136,7 +136,7 @@ endif
 if oTable:eof()
   return "?user?"
 else
-  return oTable:Fieldget(1)
+  return hb_utf8tostr( oTable:Fieldget(1) )
 endif
 
 

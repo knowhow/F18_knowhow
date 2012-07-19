@@ -127,9 +127,9 @@ xml_node("u_zaokr", show_number( field->zaokr, PIC_VRIJEDNOST ) )
 xml_node("u_tottp", show_number( field->ukupno - field->ukpoptp, PIC_VRIJEDNOST ) )
 // dokument iz tabele
 xml_node("dbr", ALLTRIM( field->brdok ) )
-xml_node("ddat", DTOC( field->datdok ) )
-xml_node("ddval", DTOC( field->datval ) )
-xml_node("ddisp", DTOC( field->datisp ) )
+xml_node("ddat", if( DTOC( field->datdok ) != DTOC( CTOD( "" ) ), DTOC( field->datdok ), "" ) )
+xml_node("ddval", if( DTOC( field->datval ) != DTOC( CTOD( "" ) ), DTOC( field->datval ), "" ) )
+xml_node("ddisp", if( DTOC( field->datisp ) != DTOC( CTOD( "" ) ), DTOC( field->datisp ), "" ) )
 xml_node("dvr", ALLTRIM( field->vrijeme ) )
 
 // dokument iz teksta

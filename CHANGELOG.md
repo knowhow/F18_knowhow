@@ -1,3 +1,7 @@
+1.0.72 2012-07-19, vsasa
+
+  - fakt, štampa odt fakutre, datum ako je prazno upiši prazno u xml [#28577](http://redmine.bring.out.ba/issues/28577)
+ 
 1.0.71 2012-07-16, vsasa
 
   - štampa fakture odt, txt, dužina za polje količine [#28639](http://redmine.bring.out.ba/issues/28639)

@@ -986,7 +986,7 @@ if !EMPTY( cPartnId )
     cJibPartn := ALLTRIM( IzSifK( "PARTN" , "REGB", cPartnId, .f. ) )
     cPOslob := ALLTRIM( IzSifK( "PARTN" , "PDVO", cPartnId, .f. ) )
 
-    if cTipDok $ "#11#"
+    if ( cTipDok $ "#11#" .and. cVr_placanja <> "3" )
         
         // ovo je NN kupac
         // jednostavno za njega nadji podatke

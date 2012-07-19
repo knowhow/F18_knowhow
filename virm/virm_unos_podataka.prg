@@ -144,38 +144,46 @@ do case
          return DE_REFRESH
 
      case Ch==K_CTRL_N  // nove stavke
-        nDug:=nPot:=nPrvi:=0
+
+        nDug := 0
+        nPot := 0
+        nPrvi := 0
+
         go bottom
-        Box("c-n",20,77,.f.,"Unos novih stavki")
+
+        Box( "c-N", MAXROWS() - 8, MAXCOLS() - 5, .f., "Unos novih stavki" )
+
         do while .t.
-           Scatter()
-           _Rbr:=_Rbr+1
-           @ m_x+1,m_y+1 CLEAR to m_x+19,m_y+76
-           if _virm_edit_pripr(.t.)==0
-             exit
-           endif
-           inkey(10)
-           select virm_pripr
-           APPEND BLANK
-           Gather()
+
+            Scatter()
+            _rbr := _rbr + 1
+            @ m_x + 1, m_y + 1 CLEAR TO m_x + ( MAXROWS() - 9 ), m_y + ( MAXCOLS() - 6 )
+            if _virm_edit_pripr(.t.)==0
+                exit
+            endif
+            inkey(10)
+            select virm_pripr
+            APPEND BLANK
+            Gather()
         enddo
 
         BoxC()
         return DE_REFRESH
 
-   case Ch==K_ENTER
-       Box("ent",20,75,.f.)
-       Scatter()
-       if _virm_edit_pripr(.f.)==0
-        BoxC()
-        return DE_CONT
-       else
-        Gather()
-        BoxC()
-        return DE_REFRESH
-       endif
+    case Ch == K_ENTER
+       
+        Box( "ent", MAXROWS() - 8, MAXCOLS() - 5, .f. )
+        Scatter()
+        if _virm_edit_pripr(.f.)==0
+            BoxC()
+            return DE_CONT
+        else
+            Gather()
+            BoxC()
+            return DE_REFRESH
+        endif
 
-   case Ch=K_CTRL_F9
+    case Ch = K_CTRL_F9
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
              zap
         endif
@@ -190,12 +198,13 @@ return DE_CONT
 static function _virm_edit_pripr( fNovi )
 
 set cursor on
-@ m_x+1,m_y+2 SAY "Svrha placanja :" GET _svrha_pl pict "@!" valid P_Vrprim(@_svrha_pl)
+@ m_x + 1, m_y + 2 SAY "Svrha placanja :" GET _svrha_pl pict "@!" valid P_Vrprim(@_svrha_pl)
 
 read
+
 ESC_RETURN 0
 
-if fnovi
+if fNovi
     IF EMPTY(gDatum)
       IF gIDU=="D"
         _dat_upl:=date()  // gdatum
@@ -205,11 +214,11 @@ if fnovi
     ELSE
       _dat_upl:=gdatum
     ENDIF
-   _mjesto :=gmjesto
-   _svrha_doz:=PADR(vrprim->pom_txt,LEN(_svrha_doz))
+   _mjesto := gmjesto
+   _svrha_doz := PADR(vrprim->pom_txt,LEN(_svrha_doz))
 endif
 
-@ m_x+2,m_y+col()+2 SAY "R.br:" GET _Rbr pict "999"
+@ m_x+2, m_y + col() + 2 SAY "R.br:" GET _Rbr pict "999"
 
 
 _IdBanka:=left(_ko_zr,3)

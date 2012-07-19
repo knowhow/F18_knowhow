@@ -250,6 +250,7 @@ do while !EOF() .and. field->id = _oznaka
         replace field->ko_zr with _ko_zr
         replace field->kome_sj with _kome_sjed
         replace field->kome_zr with _kome_zr
+        replace field->pnabr with _poziv_na_broj
         replace field->dat_upl with dat_virm
         replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + " " + ALLTRIM( dod_opis ) + " " + _isplata_opis
         replace field->u_korist with _id_kred

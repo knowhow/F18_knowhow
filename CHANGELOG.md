@@ -1,3 +1,7 @@
+1.0.74 2012-07-20, vsasa
+
+  - kalk, 41-42 dokumenti, idtarifa sa dokumenta umjesto iz šifrarnika [#28707](http://redmine.bring.out.ba/issues/28707)
+ 
 1.0.73 2012-07-20, vsasa
 
   - fiskalne funkcije flink dorađene [#28699](http://redmine.bring.out.ba/issues/28699)

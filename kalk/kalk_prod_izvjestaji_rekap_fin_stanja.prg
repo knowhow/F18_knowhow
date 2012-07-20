@@ -188,7 +188,7 @@ do while !eof() .and. cIdFirma==idfirma .and. IspitajPrekid()
 		hseek kalk->idtarifa
 		select kalk
 
-  		Tarifa(pkonto,idroba,@aPorezi)
+  		Tarifa( pkonto, idroba, @aPorezi, idtarifa )
   		VtPorezi()
 
   		nBezP:=0

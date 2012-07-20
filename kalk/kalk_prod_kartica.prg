@@ -334,7 +334,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
 
             nIzlaz += field->kolicina
 
-            Tarifa( field->pkonto, field->idroba, @aPorezi )
+            Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
             aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
             nPor1 := aIPor[1]
             VtPorezi()

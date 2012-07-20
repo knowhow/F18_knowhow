@@ -358,7 +358,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
      			elseif field->pu_i=="5"
                     
                     aPorezi := {}        
-                    Tarifa( field->pkonto, field->idroba, @aPorezi )
+                    Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                     aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                     nPor1 := aIPor[1]
                     VtPorezi()
@@ -409,7 +409,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
   			elseif field->pu_i == "5"
                     
                 aPorezi := {}        
-                Tarifa( field->pkonto, field->idroba, @aPorezi )
+                Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                 aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                 nPor1 := aIPor[1]
                 VtPorezi()

@@ -74,7 +74,7 @@ do while !eof() .and. cIdFirma == field->idfirma .and. cBrDok == field->brdok .a
     MarzaMPR()
     KTroskovi()
   
-    Tarifa( pkonto, idRoba, @aPorezi )
+    Tarifa( pkonto, idRoba, @aPorezi, _idtarifa )
     
     // uracunaj i popust
     // racporezemp( matrica, mp_bez_pdv, mp_sa_pdv, nc )
@@ -393,7 +393,7 @@ do while !EOF() .and. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd 
     select tarifa
     hseek cIdtarifa
     
-    Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi )
+    Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, kalk_pripr->idtarifa )
 
     select kalk_pripr
 
@@ -408,7 +408,7 @@ do while !EOF() .and. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd 
 
         SetStPor_()
     
-        Tarifa( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi )
+        Tarifa( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi, kalk_pripr->idtarifa )
     
         // mpc bez poreza sa uracunatim popustom
         nU1 += field->mpc * field->kolicina

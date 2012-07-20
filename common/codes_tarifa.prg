@@ -81,7 +81,6 @@ return cRet
  */
  
 function Tarifa(cIdKonto, cIdRoba, aPorezi, cIdTar)
-*{
 local cTarifa
 local lUsedRoba
 local lUsedTarifa

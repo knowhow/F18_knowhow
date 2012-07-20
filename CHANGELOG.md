@@ -1,3 +1,8 @@
+1.0.73 2012-07-20, vsasa
+
+  - fiskalne funkcije flink dorađene [#28699](http://redmine.bring.out.ba/issues/28699)
+  - ostale sitne dorade
+ 
 1.0.72 2012-07-19, vsasa
 
   - fakt, štampa odt fakutre, datum ako je prazno upiši prazno u xml [#28577](http://redmine.bring.out.ba/issues/28577)

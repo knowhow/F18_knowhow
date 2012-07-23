@@ -1,3 +1,7 @@
+1.0.75 2012-07-23, hernad
+
+  - oper_id bug, fakt_doks partner prosiren, u slucaju data_width numerickih polja RaiseError [#28718](http://redmine.bring.out.ba/issues/28718)
+
 1.0.74 2012-07-20, vsasa
 
   - kalk, 41-42 dokumenti, idtarifa sa dokumenta umjesto iz šifrarnika [#28707](http://redmine.bring.out.ba/issues/28707)

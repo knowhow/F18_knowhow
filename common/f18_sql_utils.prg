@@ -37,7 +37,7 @@ return _sql_fields
 //-------------------------------------------------
 // -------------------------------------------------
 function sql_table_update(table, op, record, where_str )
-local _i, _tmp, _msg
+local _i, _tmp, _tmp_2, _msg
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -120,8 +120,14 @@ DO CASE
             _tmp := _a_dbf_rec["dbf_fields"][_i]
 
             if VALTYPE(record[_tmp]) == "N"
-                _qry += STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
-                //_qry += decimal_to_string( record[_tmp])
+                   _tmp_2 := STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
+                   if LEFT(_tmp_2, 1) == "*"
+                      _msg := "err_num_width - field: " + _tmp + "  value:" + ALLTRIM(STR(record[_tmp])) + " / width: " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][2])) + " : " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][3]))
+                      log_write(_msg)
+                      RaiseError(_msg)
+                   else
+                      _qry += _tmp_2
+                   endif
             else
                 _qry += _sql_quote(record[_tmp])
             endif

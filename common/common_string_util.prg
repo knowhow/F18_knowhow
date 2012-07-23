@@ -243,13 +243,16 @@ local i,cPom,fPoc
  fPoc:=.f.
  cPom:=""
  for i:=1 to len(cTxt)
-   if  substr(cTxt,i,1)==Chr(16)
+   if  substr(cTxt, i, 1) == Chr(16)
+
      fPoc:=.t.
-   elseif  substr(cTxt,i,1)==Chr(17)
+   elseif  substr(cTxt,i,1) == Chr(17)
+
      fPoc:=.f.
      AADD(aMemo,cPom)
      cPom:=""
    elseif fPoc
+
       cPom:=cPom+substr(cTxt,i,1)
    endif
  next

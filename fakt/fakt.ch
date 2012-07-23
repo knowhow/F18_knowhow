@@ -8,4 +8,4 @@
 #define __g10Str2T g10Str2T
 #define __g10Str g10Str
 
-#define FAKT_DOKS_PARTNER_LENGTH 30
+#define FAKT_DOKS_PARTNER_LENGTH 100

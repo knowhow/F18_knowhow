@@ -142,6 +142,7 @@ AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })
 _created := .f.
 _alias := "FAKT_DOKS"
 _table_name := "fakt_doks"
+
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
     _created := .t.
@@ -150,6 +151,12 @@ endif
 // 0.4.3
 if ver["current"] < 0403
     modstru({"*" + _table_name, "A FISC_ST N 10 0"})
+endif
+
+// 0.5.0
+if ver["current"] < 0500
+    modstru({"*" + _table_name, "C PARTNER C 30 0 PARTNER C 100 0"})
+    modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
 endif
 
 if _created 

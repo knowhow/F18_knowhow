@@ -332,7 +332,7 @@ do while !EOF()
 
     // filuj podatke iz tabele
     xml_node( "id", to_xml_encoding( ALLTRIM( rlabele->idroba ))  )
-    xml_node( "naz", PADR( to_xml_encoding( ALLTRIM( rlabele->naz )), 28  ) )
+    xml_node( "naz", to_xml_encoding( PADR(ALLTRIM( rlabele->naz), 28) ))
     xml_node( "jmj", to_xml_encoding( ALLTRIM( rlabele->jmj ))  )
     xml_node( "bk", to_xml_encoding( ALLTRIM( rlabele->barkod ))  )
     xml_node( "c1", ALLTRIM( STR( rlabele->cijena, 12, 2 ) )  )

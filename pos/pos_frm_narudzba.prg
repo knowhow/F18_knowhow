@@ -48,6 +48,9 @@ if ( cSto == nil )
     cSto := ""
 endif
 
+CLEAR TYPEAHEAD
+SET CONFIRM OFF
+
 AADD( ImeKol, { PADR( "Artikal", 10 ), { || idroba } } )
 AADD( ImeKol, { PADC( "Naziv", 50 ), { || PADR( robanaz, 50 ) } } )
 AADD( ImeKol, { "JMJ", { || jmj } } )
@@ -127,6 +130,7 @@ if gStolovi == "D"
     _sto_br := VAL(cSto)
 endif
 
+
 do while .t.
 
     _show_total( nIznNar, nPopust, m_x + 2 )
@@ -164,14 +168,11 @@ do while .t.
 
     @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
       	PICT "999999.999" ;
-        WHEN {|| Popust( m_x + 4, m_y + 28 ), ;
-       		_kolicina := IIF( gOcitBarcod, IIF( _tb == "D" .and. _kolicina <> 0, _kolicina, 1 ), _kolicina ), ;
-            _kolicina := IIF( _idroba == PADR( "PLDUG", 7 ), 1, _kolicina ), IIF( _idroba == PADR("PLDUG", 7 ), .f., .t. ) } ;
-      	VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( @_kolicina ) 
+        WHEN when_pos_kolicina(_tb) ;
+     	VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( @_kolicina ) 
     
     nRowPos := 5
     
-    // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
     
     @ m_x + 4, m_y + 25 SAY space (11)
@@ -230,6 +231,22 @@ ShowRabatOnForm( nx, ny )
 
 return
 
+// ---------------------------------------------
+// ---------------------------------------------
+static function when_pos_kolicina(tb)
+
+Popust( m_x + 4, m_y + 28 )
+
+if gOcitBarCod
+       	 if tb == "D" .and. _kolicina <> 0
+                 // _kolicina vec setovana
+         else
+                // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
+                _kolicina := 1
+         endif
+endif
+
+return .t.
 
 // ----------------------------------------------
 //  

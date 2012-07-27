@@ -219,7 +219,7 @@ return
 static function set_print_f_name(f_name)
 
 if f_name == NIL
-    f_name := "outf.txt"
+    f_name := OUTF_FILE
 
     // jos nije setovan my_home()
     if my_home() == NIL

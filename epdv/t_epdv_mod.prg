@@ -46,7 +46,7 @@ method mMenu()
 
 close all
 
-SETKEY(K_SH_F1,{|| Calc()})
+set_hot_keys()
 
 @ 1,2 SAY padc( gNFirma, 50, "*")
 @ 4,5 SAY ""

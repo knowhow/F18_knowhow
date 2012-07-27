@@ -83,7 +83,7 @@ pos_init_dbfs()
 
 close all
 
-SETKEY(K_SH_F1,{|| Calc()})
+set_hot_keys()
 
 do while (.t.)
 
@@ -132,7 +132,7 @@ do while (.t.)
     if fPRviPut .and. gVSmjene=="N" // ne vodi vise smjena
         fPrviPut:=.f.
     else
-        KLevel:=PosPrijava(Fx, Fy)
+        KLevel := PosPrijava(Fx, Fy)
         pos_status_traka()
         if !PPrenosPos()
             self:lTerminate := .t.
@@ -214,7 +214,6 @@ SetNaslov(self)
 NaslEkran(.t.)
 
 return
-
 
 
 // ---------------------------------------------
@@ -573,5 +572,3 @@ endif
 SetBoje( gVrstaRS )
 
 return
-
-

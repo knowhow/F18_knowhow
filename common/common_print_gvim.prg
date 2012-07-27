@@ -23,8 +23,6 @@ static txt_in_name
 static txt_out_name
 static desktop_path
 
-
-
 // ----------------------------------------------------
 // dodaje opciju u matricu opcija...
 // aOpt - matrica koja se proslijedjuje po referenci
@@ -169,7 +167,7 @@ par_2 := gcDirekt
 par_3 := gPTKonv
 par_4 := gKodnaS
 
-txt_in_name := "outf.txt"
+txt_in_name := OUTF_FILE
 
 if ( cOut_name == nil )
 	txt_out_name := txt_in_name

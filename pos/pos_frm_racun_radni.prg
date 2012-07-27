@@ -127,7 +127,6 @@ return (nIznos)
  */
  
 function AutoKeys()
-*{
 
 local nPrev
 
@@ -150,6 +149,5 @@ GETLIST[1]:assign()
 keyboard CHR(K_ENTER)
 select (nprev)
 return
-*}
 
 

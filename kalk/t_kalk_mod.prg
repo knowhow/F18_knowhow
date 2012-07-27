@@ -46,7 +46,7 @@ method mMenu()
 
 private Izbor
 
-SETKEY( K_SH_F1, {|| Calc()} )
+set_hot_keys()
 
 Izbor := 1
 

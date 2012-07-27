@@ -758,7 +758,7 @@ _dest_file := _export_location + _table_name + ".dbf"
 if FileCopy( my_home() + "pom.dbf", _dest_file )
 endif
 
-if FileCopy( my_home() + "outf.txt", STRTRAN( _dest_file, ".dbf", ".txt" ) )
+if FileCopy( my_home() + OUTF_FILE, STRTRAN( _dest_file, ".dbf", ".txt" ) )
 endif
  
 return _dest_file

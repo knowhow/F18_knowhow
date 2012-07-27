@@ -52,9 +52,7 @@ return
 // ----------------------------------------
 method mMenu()
 
-SETKEY(K_SH_F1,{|| Calc()})
-
-CheckROnly(ToUnix(KUMPATH + "\SUBAN.DBF"))
+set_hot_keys()
 
 O_NALOG
 select NALOG

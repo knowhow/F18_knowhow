@@ -367,7 +367,6 @@ return 1
 
 
 static function Header(dDan, nStr)
-*{
 local b1
 local b2
 local b3
@@ -386,20 +385,17 @@ EVAL(b3)
 ? " R.  *  SIFRA   *      N A Z I V    A R T I K L A        *JMJ* KOLICINA *   MPC-PPP  *"
 ? " BR. * ARTIKLA  *                                        *   *          *            *"
 ? cLinija
+
 return
-*}
 
 static function Footer(cPodvuci, nUk, nUkKol)
-*{
 ? cLinija
 ? PADR("UKUPNO:",60), TRANS(nUkKol, "9999999999"), SPACE(1), TRANS(nUk,"999999999.99")
 ? cLinija
 
 return
-*}
 
 static function CopyZaSlanje(dDan)
-*{
 local cS
 local cLokS
 local cNf
@@ -430,5 +426,4 @@ else
 endif
 
 return
-*}
 

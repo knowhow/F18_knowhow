@@ -69,7 +69,7 @@ closeret
  */
  
 static function PrDisk()
-*{
+
 local nRec
 PRIVATE cLokPren    := "A:\"
 PRIVATE cFZaPredaju := "FAKT"
@@ -335,7 +335,6 @@ aFajlovi:={ PRIVPATH+"_fakt.*", PRIVPATH+"_roba.*", PRIVPATH+"_SIF?.*", PRIVPATH
 Zipuj(aFajlovi,cFZaPredaju,cLokPren)
 
 return
-*}
 
 
 

@@ -13,11 +13,11 @@
 #include "hbgtinfo.ch"
 #include "hbcompat.ch"
 
-thread static __server := NIL
-thread static __server_params := NIL
+static __server := NIL
+static __server_params := NIL
 
 // logiranje na server
-thread static __server_log := .f.
+static __server_log := .f.
 
 static __f18_home := NIL
 static __f18_home_root := NIL
@@ -97,10 +97,7 @@ public glBrojacPoKontima := .t.
 
 set_f18_home_root()
 
-if ( __log_handle := FCREATE(F18_LOG_FILE) ) == -1
-    ? "Cannot create log file: " + F18_LOG_FILE
-    QUIT
-endif
+log_create()
 
 SET DATE TO GERMAN
 
@@ -135,7 +132,7 @@ return .t.
 
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
-static function set_screen_dimensions()
+function set_screen_dimensions()
 local _msg
 
 local _pix_width  := hb_gtInfo( HB_GTI_DESKTOPWIDTH )
@@ -804,11 +801,25 @@ return
 
 function log_disable()
 __server_log := .f.
+return
 
 function log_enable()
 __server_log := .f.
+return
 
+// -------------------------------------------------
+// -------------------------------------------------
+function log_create()
 
+if ( __log_handle := FCREATE(F18_LOG_FILE) ) == -1
+    ? "Cannot create log file: " + F18_LOG_FILE
+    QUIT
+endif
+
+return
+
+// -------------------------------------------------
+// -------------------------------------------------
 function log_close()
  FCLOSE(__log_handle)
 return .t.
@@ -826,7 +837,6 @@ return __log_handle
 
 
 // ----------------------------
-//
 // ----------------------------
 function view_log()
 local _cmd
@@ -837,3 +847,10 @@ FILECOPY( F18_LOG_FILE, _out_file)
 run (_cmd := "f18_editor " + _out_file)
 
 return .t.
+
+// ------------------------------------------------
+// ------------------------------------------------
+function set_hot_keys()
+
+SETKEY(K_SH_F1,{|| Calc()})
+SETKEY(K_F4, {|| new_f18_session_thread()})

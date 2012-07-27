@@ -59,7 +59,7 @@ ENDIF
 os_set_datum_obrade()
 set_os_info()
 
-SETKEY(K_SH_F1,{|| Calc()})
+set_hot_keys()
 
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
 @ 4,5 SAY ""

@@ -47,7 +47,8 @@ private lPodBugom
 
 public gSQL:="N"
 
-SETKEY(K_SH_F1,{|| Calc()})
+set_hot_keys()
+
 Izbor:=1
 
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")

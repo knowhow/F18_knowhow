@@ -78,9 +78,8 @@ method mMenu()
 
 private Izbor
 
-CheckROnly(KUMPATH + "\LD.DBF")
+set_hot_keys()
 
-SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
 
 ::chk_db()

@@ -13,10 +13,6 @@
 
 static __output_odt
 static __output_pdf
-static __output_name := "out.odt"
-static __xml_file
-static __xml_name := "data.xml"
-
 
 // -------------------------------------------------------------------
 // generisanje odt reporta putem jodreports
@@ -37,14 +33,14 @@ local _error
 
 // xml fajl
 if ( xml_file == NIL )
-    __xml_file := my_home() + __xml_name
+    __xml_file := my_home() + DATA_XML_FILE
 else
     __xml_file := xml_file
 endif
 
 // output fajl
 if ( output_file == NIL )
-    __output_odt := my_home() + __output_name
+    __output_odt := my_home() + OUT_ODT_FILE
 else
     __output_odt := output_file
 endif
@@ -191,7 +187,7 @@ local _oo_bin, _oo_writer, _oo_line
 local _screen, _error
 
 if ( output_file == NIL )
-    __output_odt := my_home() + __output_name
+    __output_odt := my_home() + OUT_ODT_FILE
 else
     __output_odt := output_file
 endif
@@ -315,14 +311,14 @@ local _java_start, _jod_bin, _screen, _error
 
 // input fajl
 if ( input_file == NIL )
-    __output_odt := my_home() + __output_name
+    __output_odt := my_home() + OUT_ODT_FILE
 else
     __output_odt := input_file
 endif
 
 // output fajl
 if ( output_file == NIL )
-	__output_pdf := my_home() + STRTRAN( __output_name, ".odt", ".pdf" )
+	__output_pdf := my_home() + STRTRAN(OUT_ODT_FILE, ".odt", ".pdf" )
 else
 	__output_pdf := output_file
 endif

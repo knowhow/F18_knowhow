@@ -53,9 +53,7 @@ method mMenu()
 
 close all
 
-SETKEY(K_SH_F1,{|| Calc()})
-
-CheckROnly(KUMPATH + SLASH + "DOCS.DBF")
+set_hot_keys()
 
 O_DOCS
 select docs 

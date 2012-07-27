@@ -120,11 +120,12 @@ SET FILTER TO
 
 cBroj := ALLTRIM( pos_doks->IdPos ) + "-"+ AllTrim( pos_doks->BrDok )
 
-if cBroj='-'  // nema racuna
+if cBroj='-'  
+    // nema racuna
     cBroj:=SPACE(9)
 endif
 
-dDat:=pos_doks->datum
+dDat := pos_doks->datum
 
 if LASTKEY()==K_ESC
     return(.f.)

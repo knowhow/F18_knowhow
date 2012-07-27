@@ -151,8 +151,9 @@ endif
 return
 
 
-
-*void TAppMod::gProc(char Ch)
+// -----------------------------------------
+// *void TAppMod::gProc(char Ch)
+// -----------------------------------------
 
 method gProc(Ch)
 local lPushWa
@@ -163,9 +164,13 @@ do case
   case (Ch==K_SH_F12)
     InfoPodrucja()
 
-  case (Ch==K_SH_F1  .or. Ch==K_CTRL_F1)
+  case (Ch==K_SH_F1)
     Calc()
-    
+ 
+  case (Ch==K_F4)
+    new_f18_session_thread()
+
+     
   case (Ch==K_SH_F2 .or. Ch==K_CTRL_F2)
     PPrint()
     

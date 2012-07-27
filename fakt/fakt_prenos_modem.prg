@@ -112,7 +112,6 @@ MsgBeep("Datoteka "+cDestMod+"je izgenerisana")
 
 endif
 return nil
-*}
 
 
 /*! \fn PovModem()

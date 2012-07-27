@@ -15,8 +15,8 @@ static cPrinter := "D"
 static nZagrada:=0 
 static cKom:="" 
 static nSekundi:=0 
-static cTekprinter:="" 
-static cFName:="outf.txt" 
+static cTekprinter := "" 
+static cFName
 
 
 function SetgaSDBFs()
@@ -109,6 +109,8 @@ local cOutfTXT
 if lUFajl==nil
 	lUFajl:=.f.
 endif
+
+cFName := OUTF_FILE
 
 if cF<>nil
 	cFName:=cF

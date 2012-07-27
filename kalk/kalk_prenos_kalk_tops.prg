@@ -339,7 +339,7 @@ if gMultiPM == "D"
         
         // kopiraj txt fajl
         _dest_file := STRTRAN( _dest_file, ".dbf", ".txt" )
-        FileCopy( my_home() + "outf.txt", _dest_file )
+        FileCopy( my_home() + OUTF_FILE, _dest_file )
     
     next 
 

@@ -134,7 +134,7 @@ return
 // -------------------------------------------
 static function _get_varE( cCmd )
 local cScript := IzFmkIni("Ruby","Err2Mail","c:\scruby\err2mail.rb", EXEPATH)
-local cRptFile := PRIVPATH + "outf.txt"
+local cRptFile := PRIVPATH + OUTF_FILE
 
 cCmd := cScript + " " + cRptFile
 

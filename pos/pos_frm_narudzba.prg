@@ -113,10 +113,10 @@ scatter()
  
 gDatum := DATE()
 _idpos := gIdPos
-_idvd := VD_RN
+_idvd  := VD_RN
 _brdok := cBrojRn
 _datum := gDatum
-_sto := cSto
+_sto   := cSto
 _smjena := gSmjena
 _idradnik := gIdRadnik
 _idcijena := gIdCijena
@@ -158,20 +158,15 @@ do while .t.
     endif
     
     @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
-   		PICT "@!S10" ;
-        WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } ;
-        VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
+   		PICT "@!S10"  WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
  
-    @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena ;
-      	PICT "99999.999" ;
-        WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
+    @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
     @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
       	PICT "999999.999" ;
         WHEN {|| Popust( m_x + 4, m_y + 28 ), ;
        		_kolicina := IIF( gOcitBarcod, IIF( _tb == "D" .and. _kolicina <> 0, _kolicina, 1 ), _kolicina ), ;
-            _kolicina := IIF( _idroba = PADR( "PLDUG", 7 ), 1, _kolicina ), ;
-            IIF( _idroba = PADR("PLDUG", 7 ), .f., .t. ) } ;
+            _kolicina := IIF( _idroba == PADR( "PLDUG", 7 ), 1, _kolicina ), IIF( _idroba == PADR("PLDUG", 7 ), .f., .t. ) } ;
       	VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( @_kolicina ) 
     
     nRowPos := 5
@@ -362,8 +357,6 @@ if gModul == "HOPS"
 endif
 
 return .t.
-
-
 
 
 function UnSetSpecNar()

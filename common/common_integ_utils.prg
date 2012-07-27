@@ -257,12 +257,12 @@ return
  *  \param cRptFile - report fajl
  */
 function GetSendVars(cScript, cPSite, cRptFile)
-*{
+
 cScript := IzFmkIni("Ruby","Err2Mail","c:\sigma\err2mail.rb", EXEPATH)
 cPSite := ALLTRIM(STR(gSqlSite))
 cRptFile := PRIVPATH + "outf.txt"
+
 return
-*}
 
 
 
@@ -270,15 +270,12 @@ return
  *  \brief Brisanje tabele Errors.dbf
  */
 function BrisiError()
-*{
+
 O_ERRORS
 select errors
 zap
+
 return
-*}
-
-
-
 
 /*! \fn EmptDInt(nInteg)
  *  \brief Da li je prazna tabela dinteg

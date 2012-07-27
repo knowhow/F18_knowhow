@@ -134,10 +134,10 @@ SET FILTER TO
 select _pos_pripr
 return
 
-
+// ------------------------------------------
 // pretraga sifre po nazivu uvijek
+// ------------------------------------------
 function sif_uv_naziv(cId)
-*{
 local nIdLen
 // prvo prekontrolisati uslove
 
@@ -168,7 +168,8 @@ return
 
 
 
- 
+// -------------------------------------- 
+// -------------------------------------- 
 function PostRoba( cId, dx, dy, lFlag )
 local _zabrane
 local _i
@@ -184,7 +185,9 @@ UnSetSpecNar()
 SETKEY( K_PGDN, bPrevDn )
 SETKEY( K_PGUP, bPrevUp )
 
-PrevId := GetList[1]:original
+if VALTYPE(GetList) == "A" .and. LEN(GetList)>1
+  PrevId := GetList[1]:original
+endif
 	
 AADD( ImeKol, { "Sifra", {|| id }, "" })
 AADD( ImeKol, { PADC( "Naziv", 40 ), {|| PADR( naz, 40 ) }, "" })
@@ -229,7 +232,7 @@ endif
 
 //kontrolisi cijenu pri unosu narudzbe
 if fetch_metric( "pos_kontrola_cijene_pri_unosu_stavke", nil, "N" ) == "D"
- 	if ! _cijena <> 0
+ 	if ROUND(_cijena, 5) == 0
     	MsgBeep( "Cijena 0.00, ne mogu napraviti racun !!!" )
     	_vrati := .f.
   	endif

@@ -19,7 +19,6 @@ static __dbf_pack_v1 := 700
 static __dbf_pack_v2 := 10
 
 
-
 // ----------------------------------------------------
 // ----------------------------------------------------
 function f18_init_semaphores()
@@ -30,6 +29,11 @@ local _temp_tbl
 _get_dbf_from_config()
 _f18_dbfs := f18_dbfs()
 
+
+if f18_session()['id'] > 1
+   // child sesije ne osvjezavaju bazu
+   return .t.
+endif
 
 for each _key in _f18_dbfs:Keys
 
@@ -44,9 +48,7 @@ for each _key in _f18_dbfs:Keys
 			_tbl_base := "os"
 		endif
 
-		if !EMPTY( _tbl_base ) .and. _tbl_base $ "#fin#fakt#kalk#os#ld#virm#rnal#mat#pos#epdv#" .and. !f18_use_module( _tbl_base )
-			// preskoci...
-		else
+		if !EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
 			refresh_me(_f18_dbfs[_key])
 		endif
 
@@ -54,15 +56,18 @@ for each _key in _f18_dbfs:Keys
 
 next
 
+return .t.
 
+// -----------------------------------------
+// vratice osnovu naziva tabele
+// fakt_fakt -> fakt
+// fakt_doks -> fakt
+// -----------------------------------------
 static function _table_base( a_dbf_rec )
 local _table := ""
 local _sep := "_"
 local _arr
 
-// vrati ce osnovu tabele
-// fakt_fakt -> fakt
-// fakt_doks -> fakt
 
 if _sep $ a_dbf_rec["table"]
 	_arr := toktoniz( a_dbf_rec["table"], _sep )	
@@ -118,7 +123,7 @@ if hocu_li_pack(_cnt, _del)
 
 
    SELECT (_wa)
-   my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"])
+   my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
 
    PACK
    USE
@@ -133,7 +138,7 @@ BoxC()
 static function dbf_open_temp(a_dbf_rec, cnt, del)
 
 SELECT (a_dbf_rec["wa"])
-my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f.)
+my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
 
 set deleted off
 

@@ -25,6 +25,12 @@ local _a_dbf_rec
 local _sql_order
 local _opened
 
+
+if f18_session()['id'] > 1
+    log_write("full_synchro u child thread se ne radi, preskocena tabela: "  + dbf_table)  
+    return .f.
+endif
+
 if step_size == NIL
   step_size := 15000
 endif
@@ -67,8 +73,6 @@ for _offset := 0 to _count STEP step_size
 next
 
 BoxC()
-
-//close all
 
 return .t.
 

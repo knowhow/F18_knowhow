@@ -9,15 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "inkey.ch"
+
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
-local menuop := {}
-local menuexec := {}
-local mnu_choice
-local mnu_left := 2
-local mnu_top := 2
-local mnu_bottom := 23
-local mnu_right := 65
-local _server
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
@@ -26,7 +20,23 @@ public gDebug := 9
 f18_init_app()
 f18_app_parameters( .t. )
 
-// glavni menij
+set_hot_keys()
+
+module_menu(p3, p4, p5, p6, p7)
+log_close()
+
+return
+
+// ----------------------------
+// ----------------------------
+function module_menu(p3, p4, p5, p6, p7)
+local menuop := {}
+local menuexec := {}
+local mnu_choice
+local mnu_left := 2
+local mnu_top := 2
+local mnu_bottom := 23
+local mnu_right := 65
 
 do while .t.
 
@@ -54,13 +64,9 @@ do while .t.
 
 enddo
 
-log_close()
-
-return
-
 
 // -----------------------------------------------------------------------------
-// setuje matricu sa odabirom za menij
+// setuje matricu sa odabirom za meni
 // -----------------------------------------------------------------------------
 static function set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
 local _count := 0
@@ -142,7 +148,3 @@ AADD( menuop, " V) VPN podrska" )
 AADD( menuexec, {|| vpn_support() } )
 
 return
-
-
-
-

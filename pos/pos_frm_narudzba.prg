@@ -33,6 +33,8 @@ private bPrevKroz
 private aUnosMsg:={}
 private bPrevUp
 private bPrevDn
+private GetList:={}
+
 
 o_edit_rn()
 
@@ -64,7 +66,9 @@ for i := 1 to LEN( ImeKol )
 next
 
 AADD( aUnosMsg, "<*> - Ispravka stavke")
-AADD( aUnosMsg, "Storno - neg.kolicina")
+//AADD( aUnosMsg, "Storno - neg.kolicina")
+AADD( aUnosMsg, "<F8> storno")
+AADD( aUnosMsg, "<F9> fiskalne funkcije")
 
 Box(, _max_rows - 3, _max_cols - 3 , , aUnosMsg )
 
@@ -83,6 +87,7 @@ endif
 
 // storno racuna
 SETKEY( K_F8, {|| pos_storno_rn(), _refresh_total() })
+SETKEY( K_F9, {|| fisc_rpt(.t.) })
 
 // <*> - ispravka tekuce narudzbe
 //       (ukljucujuci brisanje i ispravku vrijednosti)
@@ -210,7 +215,7 @@ enddo
 CancelKeys( aAutoKeys )
 SETKEY( K_PGDN, bPrevDn )
 SETKEY( K_PGUP, bPrevUp )
-
+SETKEY( K_F9, NIL)
 UnSetSpecNar()
 
 BoxC()

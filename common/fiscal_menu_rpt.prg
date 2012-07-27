@@ -18,6 +18,9 @@
 // ---------------------------------------------------------
 function fisc_rpt( low_level )
 local nDevice := 0
+local _m_x
+local _m_y
+
 private izbor := 1
 private opc := {}
 private opcexe := {}
@@ -258,11 +261,14 @@ do case
 
 endcase
 
+_m_x := m_x
+_m_y := m_y
+
 Menu_SC("izvf")
 
+m_x := _m_x
+m_y := _m_y
 
 return
-
-
 
 

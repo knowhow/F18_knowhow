@@ -20,6 +20,10 @@ thread static __f18_session := { 'id' => 1 }
 // ---------------------------------------
 function  new_f18_session_thread()
 
+if Pitanje(, "Pokrenuti novu F18 sesiju ?", "N") == "N"
+   return 
+endif
+
 hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @start_new_session())
 
 return
@@ -38,7 +42,6 @@ return
 function start_new_session()
 local _w, _cnt
 local p1 := p2 := p3 := p4 := p5 := NIL
-
 
 #ifdef  __PLATFORM__WINDOWS 
 _w := hb_gtCreate("WVT")

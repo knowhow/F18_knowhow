@@ -1,8 +1,8 @@
 1.1.0  2012-07-30, hernad
 
+- multi session F18 [#28770](http://redmine.bring.out.ba/issues/28770)
 - barcod ENTER [#28758](http://redmine.bring.out.ba/issues/28758)
-
-
+- fiskalne funkcije prodavca POS [#28755](http://redmine.bring.out.ba/issues/28755)
 
 1.0.76 2012-07-25, hernad
 

@@ -151,6 +151,7 @@ do while .t.
     endif
     
     private cDn:="N"
+
     Box(, 5, 60)
         set confirm off
         @ m_x+1, m_y+2 SAY "Za radnika "+cIdRadn+" kredit je formiran na "+STR(i,3)+" rata"
@@ -158,7 +159,7 @@ do while .t.
         read
     BoxC()
 
-    set confirm on
+    //set confirm on
 
     close all
 

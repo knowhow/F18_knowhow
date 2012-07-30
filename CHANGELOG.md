@@ -1,3 +1,9 @@
+1.1.0  2012-07-30, hernad
+
+- barcod ENTER [#28758](http://redmine.bring.out.ba/issues/28758)
+
+
+
 1.0.76 2012-07-25, hernad
 
  - [#28742](http://redmine.bring.out.ba/issues/28742) naljepnice PADR bug

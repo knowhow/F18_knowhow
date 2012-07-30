@@ -57,7 +57,7 @@ Box(,3,LEN(cPitanje)+6,.f.)
  READ
 BoxC()
 set escape on
-set confirm on
+//set confirm on
 
 SET(_SET_DEVICE,cPom)
 return cOdgovor
@@ -101,7 +101,8 @@ else
   cOdg:=cOdgDefault
 endif
 
-set escape off; set confirm off
+set escape off
+set confirm off
 Box("",5,nDuz+4,.f.)
  set cursor on
  @ m_x+2,m_y+3 SAY PADR(cPitanje,nDuz) GET cOdg PICTURE "@!" VALID cOdg $ 'DNAO'
@@ -109,7 +110,8 @@ Box("",5,nDuz+4,.f.)
  @ m_x+5,m_y+3 SAY PADC("                  N - NE  ,  O - NE sve do kraja",nDuz)
  READ
 BoxC()
-set escape on; set confirm on
+set escape on
+//set confirm on
 
 SET(_SET_DEVICE,cPom)
 

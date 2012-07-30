@@ -15,7 +15,6 @@
 #include "fileio.ch"
 
 
-
 function SC_START(oApp, lSezone)
 local cImeDbf
 local _i
@@ -270,7 +269,9 @@ SET KEY K_INS  TO ToggleINS()
 SET MESSAGE TO 24 CENTER
 SET DATE GERMAN
 SET SCOREBOARD OFF
-SET CONFIRM ON
+
+//SET CONFIRM ON
+
 SET WRAP ON
 SET ESCAPE ON
 SET SOFTSEEK ON

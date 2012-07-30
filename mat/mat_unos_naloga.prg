@@ -683,10 +683,10 @@ DO WHILE !EOF()
      @ m_x+1,col()+1 SAY "-" GET cBrNal
      read
      ESC_BCR
-     set confirm on
+     //set confirm on
     BoxC()
 
-    HSEEK cIdFirma+cIdVN+cBrNal             // HSEEK
+    HSEEK cIdFirma+cIdVN+cBrNal
     if EOF()
         close all
         return

@@ -50,8 +50,6 @@ if ( cSto == nil )
     cSto := ""
 endif
 
-CLEAR TYPEAHEAD
-SET CONFIRM OFF
 
 AADD( ImeKol, { PADR( "Artikal", 10 ), { || idroba } } )
 AADD( ImeKol, { PADC( "Naziv", 50 ), { || PADR( robanaz, 50 ) } } )
@@ -138,6 +136,7 @@ endif
 
 do while .t.
 
+    SET CONFIRM OFF
     _show_total( nIznNar, nPopust, m_x + 2 )
 
     // brisi staru cijenu

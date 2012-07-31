@@ -22,7 +22,7 @@ then
   TAG_OS="Windows"
   F18_EXE="F18.exe"
 else
-  TAG_OS="Ubuntu"
+  TAG_OS="Ubuntu_$HOSTTYPE"
   F18_EXE="F18"
 fi
 

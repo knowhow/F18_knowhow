@@ -1,3 +1,7 @@
+1.1.2  2012-07-31, hernad
+
+ - kratki barkodovi kod unosa pos racuna [#28789](http://redmine.bring.out.ba/issues/28789)
+
 1.1.1  2012-07-31, hernad
 
  - [#28783](http://redmine.bring.out.ba/issues/28783)

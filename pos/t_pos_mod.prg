@@ -571,4 +571,7 @@ endif
 
 SetBoje( gVrstaRS )
 
+// setuj parametar tezinski_barkod
+param_tezinski_barkod(.t.)
+
 return

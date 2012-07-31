@@ -9,9 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "pos.ch"
-
+#include "getexit.ch"
 
 
 function UnesiNarudzbu()
@@ -19,7 +18,7 @@ parameters cBrojRn, cSto
 
 local _max_cols := MAXCOLS()
 local _max_rows := MAXROWS()
-local _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
+local _read_barkod
 
 private ImeKol := {}
 private Kol := {}
@@ -34,7 +33,6 @@ private aUnosMsg:={}
 private bPrevUp
 private bPrevDn
 private GetList:={}
-
 
 o_edit_rn()
 
@@ -166,15 +164,18 @@ do while .t.
     endif
    
     @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
-   		PICT PICT_POS_ARTIKAL  WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
+   		PICT PICT_POS_ARTIKAL ;
+        WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } ;
+        VALID valid_pos_racun_artikal(@_kolicina) 
  
     @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
     @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
       	PICT "999999.999" ;
-        WHEN when_pos_kolicina(_tb) ;
-     	VALID KolicinaOK( _kolicina ) .and. pos_check_qtty( @_kolicina ) 
-    
+        WHEN when_pos_kolicina(@_kolicina) ;
+     	VALID valid_pos_kolicina(@_kolicina)
+
+   
     nRowPos := 5
     
 	read
@@ -235,23 +236,57 @@ ShowRabatOnForm( nx, ny )
 
 return
 
+
+// ----------------------------------------------
+// validacija artikla na racunu
+// ----------------------------------------------
+static function valid_pos_racun_artikal(kolicina)
+local _ok, _read_barkod
+local _get_kolicina
+
+_ok := pos_postoji_roba( @_idroba, 2, 27, @_read_barkod ) .and. NarProvDuple( _idroba )
+
+// get objekt kolicine
+_get_kolicina := GetList[3]
+
+if gOcitBarCod  .and. (LEN(_read_barkod) < 13)
+
+   // iscitani barkod je kratki
+
+   when_pos_kolicina(@kolicina)
+   valid_pos_kolicina(@kolicina)
+
+   _get_kolicina:PreBlock := {|| .f.}
+
+endif
+
+return _ok
+ 
+
 // ---------------------------------------------
 // ---------------------------------------------
-static function when_pos_kolicina(tb)
+static function when_pos_kolicina(kolicina)
 
 Popust( m_x + 4, m_y + 28 )
 
 if gOcitBarCod
-       	 if tb == "D" .and. _kolicina <> 0
+       	 if param_tezinski_barkod() == "D" .and. kolicina <> 0
                  // _kolicina vec setovana
          else
                 // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
-                _kolicina := 1
+                kolicina := 1
          endif
 endif
 
 return .t.
 
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+static function valid_pos_kolicina(kolicina)
+
+return KolicinaOK( kolicina ) .and. pos_check_qtty( @kolicina ) 
+
+ 
 // ----------------------------------------------
 //  
 // ----------------------------------------------
@@ -611,7 +646,7 @@ set cursor on
 
 Box (, 3, 75)
     
-    @ m_x+1,m_y+4 SAY "    Artikal:" GET _idroba PICTURE PICT_POS_ARTIKAL VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
+    @ m_x+1,m_y+4 SAY "    Artikal:" GET _idroba PICTURE PICT_POS_ARTIKAL VALID pos_postoji_roba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
     @ m_x+2,m_y+3 SAY "     Cijena:" GET _Cijena  picture "99999.999" when roba->tip=="T"
     @ m_x+3,m_y+3 SAY "   kolicina:" GET _Kolicina VALID KolicinaOK (_Kolicina)
 

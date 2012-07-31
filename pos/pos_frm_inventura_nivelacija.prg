@@ -535,7 +535,7 @@ do while .t.
         @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
             PICT PICT_POS_ARTIKAL ;
             WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
-            VALID {|| PostRoba( @_IdRoba, 1, 31 ) ,  RacKol( _idodj, _idroba, @_kolicina ), _set_cijena_artikla( cIdVd, _idroba ), _postoji_artikal_u_pripremi( _idroba ) }
+            VALID {|| pos_postoji_roba( @_IdRoba, 1, 31 ) ,  RacKol( _idodj, _idroba, @_kolicina ), _set_cijena_artikla( cIdVd, _idroba ), _postoji_artikal_u_pripremi( _idroba ) }
                     
         nLX ++
         

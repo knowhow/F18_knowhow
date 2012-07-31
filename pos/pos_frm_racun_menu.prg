@@ -23,7 +23,6 @@ set key "'" to
 return
 
 
-
 function narudzba_tops()
 
 o_pos_narudzba()
@@ -134,116 +133,6 @@ SET FILTER TO
 select _pos_pripr
 return
 
-// ------------------------------------------
-// pretraga sifre po nazivu uvijek
-// ------------------------------------------
-function sif_uv_naziv(cId)
-local nIdLen
-// prvo prekontrolisati uslove
-
-// parametar
-if gSifUvPoNaz == "N"
-	return
-endif
-// ako je uneseno prazno
-if Empty(cId)
-	return
-endif
-
-// ako je unesena puna duzina polja
-if LEN(ALLTRIM(cID)) == 10
-	return
-endif
-
-// ako postoji tacka na kraju
-if RIGHT(ALLTRIM(cID),1) == "."
-	return
-endif
-
-// dodaj tacku
-cId := PADR( ALLTRIM(cId) + "." , 10)
-
-return
-
-
-
-
-// -------------------------------------- 
-// -------------------------------------- 
-function PostRoba( cId, dx, dy, lFlag )
-local _zabrane
-local _i
-local _vrati := .f.
-local _tezina := 0
-private ImeKol := {}
-private Kol := {}
-
-sif_uv_naziv( @cId )
-
-UnSetSpecNar()
- 
-SETKEY( K_PGDN, bPrevDn )
-SETKEY( K_PGUP, bPrevUp )
-
-if VALTYPE(GetList) == "A" .and. LEN(GetList)>1
-  PrevId := GetList[1]:original
-endif
-	
-AADD( ImeKol, { "Sifra", {|| id }, "" })
-AADD( ImeKol, { PADC( "Naziv", 40 ), {|| PADR( naz, 40 ) }, "" })
-AADD( ImeKol, { PADC( "JMJ", 5 ), {|| PADC( jmj, 5 ) }, "" })
-AADD( ImeKol, { "Cijena", {|| roba->mpc }, "" })
-AADD( ImeKol, { "K7", {|| k7 }, "" })
-AADD( ImeKol, { "BARKOD", {|| barkod }, "" })
-
-for _i := 1 to LEN( ImeKol )
-	AADD( Kol, _i ) 
-next
-
-if KLEVEL == L_PRODAVAC
-	_zabrane := { K_CTRL_T, K_CTRL_N, K_F4, K_F2, K_CTRL_F9 }
-else
-  	_zabrane := {}
-endif
-
-// trazi prvo tezinski pa onda regularni barkod
-if !tezinski_barkod( @cId, @_tezina )
-	barkod( @cId )
-endif
-
-// otvori sifrarnik
-_vrati := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
-
-if LASTKEY() == K_ESC
-	cId := PrevID
-  	_vrati := .f.
-else
-	@ m_x + dx, m_y + dy SAY PADR (AllTrim (roba->Naz)+" ("+AllTrim (roba->Jmj)+")",50)
-  
-	if _tezina <> 0
-		_kolicina := _tezina
-	endif
-
-	if roba->tip <> "T"
-    	_cijena := roba->mpc
-  	endif
-
-endif
-
-//kontrolisi cijenu pri unosu narudzbe
-if fetch_metric( "pos_kontrola_cijene_pri_unosu_stavke", nil, "N" ) == "D"
- 	if ROUND(_cijena, 5) == 0
-    	MsgBeep( "Cijena 0.00, ne mogu napraviti racun !!!" )
-    	_vrati := .f.
-  	endif
-endif
-
-SETKEY (K_PGDN, {|| DummyProc()})
-SETKEY (K_PGUP, {|| DummyProc()})
-
-SetSpecNar()
-
-return _vrati
 
 
 // --------------------------------------------

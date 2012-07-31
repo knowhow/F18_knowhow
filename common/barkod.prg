@@ -405,6 +405,7 @@ endif
 // --------------------------------------------------------------------------------------
 function barkod( cId )
 local cIdRoba := ""
+local _barkod := ""
 
 gOcitBarCod := .f.
 
@@ -421,6 +422,7 @@ if !EMPTY( cId )
   	if FOUND() .and. PADR( cId, 13, "" ) == field->barkod 
     	cId := field->id  
      	gOcitBarCod := .t.
+        _barkod := ALLTRIM(field->barkod)
 	endif
 
 endif
@@ -432,7 +434,7 @@ set order to tag "ID"
 
 PopWa()
 
-return
+return _barkod
 
 
 
@@ -441,7 +443,7 @@ return
 // --------------------------------------------------------------------------------------
 function tezinski_barkod( id, tezina )
 local _ocitao := .f.
-local _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
+local _tb := param_tezinski_barkod()
 local _tb_prefix := ALLTRIM( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
 local _tb_barkod, _tb_tezina
 local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )

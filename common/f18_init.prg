@@ -853,4 +853,4 @@ return .t.
 function set_hot_keys()
 
 SETKEY(K_SH_F1,{|| Calc()})
-SETKEY(K_F4, {|| new_f18_session_thread()})
+SETKEY(K_F3, {|| new_f18_session_thread()})

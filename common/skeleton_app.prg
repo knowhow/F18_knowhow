@@ -167,7 +167,7 @@ do case
   case (Ch==K_SH_F1)
     Calc()
  
-  case (Ch==K_F4)
+  case (Ch==K_F3)
     new_f18_session_thread()
 
      

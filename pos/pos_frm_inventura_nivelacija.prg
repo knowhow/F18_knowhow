@@ -13,7 +13,6 @@
 #include "pos.ch"
 
 function InventNivel()
-
 parameters fInvent, fIzZad, fSadAz, dDatRada, stanje_dn
 
 local i:=0
@@ -21,6 +20,12 @@ local j:=0
 local fPocInv:=.f.
 local fPreuzeo:=.f.
 local cNazDok
+
+private bPrevZv
+private bPrevKroz
+private bPrevUp
+private bPrevDn
+
 
 private cRSdbf
 private cRSblok
@@ -107,7 +112,7 @@ SELECT ODJ
 
 cZaduzuje := "R"
 cRSdbf := "ROBA"
-cRSblok := "P_Roba( @_IdRoba, 1, 31 )"
+//cRSblok := "P_Roba( @_IdRoba, 1, 31 )"
 cUI_U := R_U
 cUI_I := R_I
 
@@ -168,19 +173,6 @@ if fPocInv
 
             do while !EOF() .and. pos->( idodj + idroba ) == ( cIdOdj + _idroba ) .and. pos->datum <= dDatRada
 
-                if ALLTRIM( gIdPos ) == "X"
-                    if !( ALLTRIM( pos->idpos ) == "X" )
-                        skip
-                        loop
-                    endif
-                else
-                    if ALLTRIM( pos->idpos ) == "X".and.!gColleg == "D"
-                        // ako je kolegium, u inventuru ulazi i razduzenja X-a
-                        skip
-                        loop
-                    endif
-                endif
-                    
                 if !EMPTY( cIdDio ) .and. pos->iddio <> cIdDio
                     skip
                     loop
@@ -496,8 +488,10 @@ SET CURSOR ON
 select priprz
 
 do while .t.
-    
-    Box(, 7, 70, .t. )
+   
+    set confirm off
+ 
+    Box(, 7, maxcols()-5 , .t. )
 
     @ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
 
@@ -537,19 +531,17 @@ do while .t.
     nLX := m_x + 1
 		
     if nInd == 0
-        
-        @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba PICT "@!S" + _duz_sif ;
+       
+        @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
+            PICT PICT_POS_ARTIKAL ;
             WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
-            VALID {|| &cRSblok , ;
-                    RacKol( _idodj, _idroba, @_kolicina ), ;
-                    _inv_set_cijene( cIdVd, _idroba ), ;
-                    _artikal_u_pripremi( _idroba ) }
-        
+            VALID {|| PostRoba( @_IdRoba, 1, 31 ) ,  RacKol( _idodj, _idroba, @_kolicina ), _set_cijena_artikla( cIdVd, _idroba ), _postoji_artikal_u_pripremi( _idroba ) }
+                    
         nLX ++
         
         if cIdVd == VD_INV
             // ovo mi treba samo informativno kod inventure...
-            @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict WHEN .f.
+            @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict WHEN { || IIF(gOcitBarCod, .t., .f.) }
         else
             @ nLX, m_y + 3 SAY "     Kolicina:" GET _kolicina PICT _pict
         endif
@@ -655,7 +647,7 @@ return _ok
 // -----------------------------------------------
 // setovanje cijene iz sifrarnika
 // -----------------------------------------------
-function _inv_set_cijene( id_vd, id_roba )
+function _set_cijena_artikla( id_vd, id_roba )
 local _t_area := SELECT()
 
 if id_vd == VD_INV
@@ -675,7 +667,7 @@ return .t.
 // -------------------------------------------------------
 // provjeri da li postoji ovaj zapis vec u pripremi...
 // -------------------------------------------------------
-function _artikal_u_pripremi( id_roba )
+function _postoji_artikal_u_pripremi( id_roba )
 local _ok := .t.
 local _t_area := SELECT()
 local _t_rec := RECNO()

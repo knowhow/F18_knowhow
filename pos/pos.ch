@@ -56,4 +56,7 @@
 #define I_ID         1
 #define I_ID2        2
 
+//#define PICT_POS_ARTIKAL "@K"
+#define PICT_POS_ARTIKAL "@!S10"
 
+                    

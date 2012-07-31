@@ -164,9 +164,9 @@ do while .t.
     else
         cDSFINI := "10"
     endif
-    
+   
     @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
-   		PICT "@!S10"  WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
+   		PICT PICT_POS_ARTIKAL  WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } VALID PostRoba( @_idroba, 2, 27 ) .and. NarProvDuple( _idroba )
  
     @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
@@ -611,7 +611,7 @@ set cursor on
 
 Box (, 3, 75)
     
-    @ m_x+1,m_y+4 SAY "    Artikal:" GET _idroba PICTURE "@K" VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
+    @ m_x+1,m_y+4 SAY "    Artikal:" GET _idroba PICTURE PICT_POS_ARTIKAL VALID PostRoba(@_idroba, 1, 27) .AND. (_IdRoba==_pos_pripr->IdRoba .OR. NarProvDuple ())
     @ m_x+2,m_y+3 SAY "     Cijena:" GET _Cijena  picture "99999.999" when roba->tip=="T"
     @ m_x+3,m_y+3 SAY "   kolicina:" GET _Kolicina VALID KolicinaOK (_Kolicina)
 

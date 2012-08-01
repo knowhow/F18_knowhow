@@ -159,7 +159,7 @@ do while .t.
         read
     BoxC()
 
-    //set confirm on
+    set confirm on
 
     close all
 

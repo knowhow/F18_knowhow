@@ -1,3 +1,7 @@
+1.1.3  2012-07-31, hernad
+
+ - saga o barkodovima, ponovo vracen set confirm on [#28789](http://redmine.bring.out.ba/issues/28789)
+
 1.1.2  2012-07-31, hernad
 
  - kratki barkodovi kod unosa pos racuna [#28789](http://redmine.bring.out.ba/issues/28789)

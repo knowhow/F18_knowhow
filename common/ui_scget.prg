@@ -9,10 +9,11 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "set.ch"
 #include "inkey.ch"
 #include "getexit.ch"
+
+thread static  __get_list
 
 #define K_UNDO          K_CTRL_U
 
@@ -891,4 +892,40 @@ if (nSec==0)
 else
 	return INKEY(nSec)
 endif
+
+
+// --------------------------------------------------------------------
+// sva polja disableujemo osim onoga na koje zelimo "skociti"
+// -------------------------------------------------------------------
+function get_field_set_focus(f_name)
+local _i
+
+__get_list := {}
+
+for _i:=1 TO LEN(GetList)
+   AADD(__get_list, GetList[_i]:PreBlock)
+
+   if GetList[_i]:name() == f_name
+      GetList[_i]:PreBlock := {|| restore_get_list(), .t.}
+   else
+      GetList[_i]:PreBlock := {|| .f.}
+   endif
+next
+
+// -----------------------------------------------------------------
+// -----------------------------------------------------------------
+function restore_get_list()
+local _i
+
+  for _i := 1 TO LEN(GetList)
+     GetList[_i]:PreBlock := __get_list[_i]
+  next
+
+  for _i := LEN(GetList) TO 1 STEP -1
+     ADEL(__get_list, _i)
+  next
+
+  __get_list := NIL
+  
+return .t. 
 

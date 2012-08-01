@@ -67,6 +67,9 @@ endif
 // trazi prvo tezinski pa onda regularni barkod
 if !tezinski_barkod( @cId, @_tezina )
 	_barkod := barkod( @cId )
+else
+    // da se zna da je ocitan tezinski barkod
+    _barkod := PADR("T", 13)
 endif
 
 // otvori sifrarnik

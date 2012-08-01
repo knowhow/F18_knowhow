@@ -134,7 +134,7 @@ endif
 
 do while .t.
 
-    SET CONFIRM OFF
+    SET CONFIRM ON
     _show_total( nIznNar, nPopust, m_x + 2 )
 
     // brisi staru cijenu
@@ -168,7 +168,8 @@ do while .t.
         WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } ;
         VALID valid_pos_racun_artikal(@_kolicina) 
  
-    @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
+    @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  ;
+        WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
     @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
       	PICT "999999.999" ;
@@ -242,22 +243,11 @@ return
 // ----------------------------------------------
 static function valid_pos_racun_artikal(kolicina)
 local _ok, _read_barkod
-local _get_kolicina
 
 _ok := pos_postoji_roba( @_idroba, 2, 27, @_read_barkod ) .and. NarProvDuple( _idroba )
 
-// get objekt kolicine
-_get_kolicina := GetList[3]
-
-if gOcitBarCod  .and. (LEN(_read_barkod) < 13)
-
-   // iscitani barkod je kratki
-
-   when_pos_kolicina(@kolicina)
-   valid_pos_kolicina(@kolicina)
-
-   _get_kolicina:PreBlock := {|| .f.}
-
+if gOcitBarCod  
+   hb_keyput(K_ENTER)
 endif
 
 return _ok

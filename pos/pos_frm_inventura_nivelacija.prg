@@ -475,6 +475,7 @@ local nRec := RECNO()
 local _r_tar, _r_barkod, _r_jmj, _r_naz
 local _duz_sif := "10"
 local _pict := "9999999.99"
+local _last_read_var
 
 // slijedi ispravka stavke ( nInd == 1 ) 
 // ili petlja unosa stavki ( nInd == 0 )
@@ -489,7 +490,7 @@ select priprz
 
 do while .t.
    
-    set confirm off
+    set confirm on
  
     Box(, 7, maxcols()-5 , .t. )
 
@@ -529,21 +530,26 @@ do while .t.
     endif
 
     nLX := m_x + 1
-		
+	
+
     if nInd == 0
+
        
         @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
             PICT PICT_POS_ARTIKAL ;
             WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
-            VALID {|| pos_postoji_roba( @_IdRoba, 1, 31 ) ,  RacKol( _idodj, _idroba, @_kolicina ), _set_cijena_artikla( cIdVd, _idroba ), _postoji_artikal_u_pripremi( _idroba ) }
-                    
+            VALID valid_pos_inv_niv(cIdVd)
+
+                   
         nLX ++
         
         if cIdVd == VD_INV
             // ovo mi treba samo informativno kod inventure...
-            @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict WHEN { || IIF(gOcitBarCod, .t., .f.) }
+            @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict ;
+               WHEN { || .f. }
         else
-            @ nLX, m_y + 3 SAY "     Kolicina:" GET _kolicina PICT _pict
+            @ nLX, m_y + 3 SAY "     Kolicina:" GET _kolicina PICT _pict ;
+               WHEN { || .t. }
         endif
             
         nLX ++
@@ -552,23 +558,27 @@ do while .t.
 
     if cIdVd == VD_INV
 
-        @ nLX, m_y + 3 SAY "Pop. kolicina:" GET _kol2 PICT _pict VALID _pop_kol( _kol2 )
+        @ nLX, m_y + 3 SAY "Pop. kolicina:" GET _kol2 PICT _pict ;
+              VALID _pop_kol( _kol2 ) ;
+              WHEN { || .t.}
 
         nLX ++
 
     endif
 
-    @ nLX, m_y + 3 SAY "       Cijena:" GET _cijena PICT _pict
+    @ nLX, m_y + 3 SAY "       Cijena:" GET _cijena PICT _pict ;
+         WHEN { || .t.}
 
     if cIdVd == VD_NIV
 
         nLX ++
 
-        @ nLX, m_y + 3 SAY "  Nova cijena:" GET _ncijena PICT _pict
+        @ nLX, m_y + 3 SAY "  Nova cijena:" GET _ncijena PICT _pict ;
+           WHEN { || .t.}
 
     endif
 
-    read
+    READ
 
     if LastKey() == K_ESC
         BoxC()
@@ -625,7 +635,26 @@ go nRec
 
 return nVrati
 
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+static function valid_pos_inv_niv(cIdVd, get_next)
 
+pos_postoji_roba( @_IdRoba, 1, 31) 
+RacKol( _idodj, _idroba, @_kolicina )
+_set_cijena_artikla( cIdVd, _idroba )
+if !_postoji_artikal_u_pripremi( _idroba )
+    return .f.
+endif
+
+if cIdVD == VD_INV
+   get_field_set_focus("_kol2")
+else
+   get_field_set_focus("_cijena")
+endif
+
+return .t.
+
+ 
 
 
 // ----------------------------------------------

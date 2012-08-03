@@ -913,9 +913,7 @@ seek ( cFirma + cTipDok + cBrDok )
 nTRec := RECNO()
 
 // da li se radi o storno racunu ?
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
+do while !EOF() .and. field->idfirma == cFirma .and. field->idtipdok == cTipDok .and. field->brdok == cBrDok
 
     ++ _rn_cnt
 
@@ -937,8 +935,7 @@ endif
 if lStorno == .t. 
 
     Box(,1,60)
-        @ m_x + 1, m_y + 2 SAY "Reklamiramo fisk.racun:" ;
-            GET nNRekRn PICT "999999999" VALID ( nNRekRn > 0 )
+        @ m_x + 1, m_y + 2 SAY "Reklamiramo fisk.racun:"  GET nNRekRn PICT "999999999" VALID ( nNRekRn > 0 )
         read
     BoxC()
 
@@ -968,14 +965,13 @@ if cTipDok $ "#10#11#"
 
     // ako je vrsta placanja = "G" gotovina
     // reset na vrstu placanja 0 - gotovina i izbaci partnera iz igre na racunu
-    if cTipDok $ "#10#" .and. PADR( _vr_plac, 1 ) == "G"
+    if _vr_plac == "G "
         cPartnId := ""
         cVr_placanja := "0"
     endif
 
-	if cTipDok == "11" .and. PADR( _vr_plac, 2 ) == "VR"
+	if cTipDok == "11" .and. _vr_plac == "VR"
 		// virmansko placanje
-        cPartnId := ""
 		cVr_placanja := "3"
 	endif
 
@@ -986,13 +982,20 @@ if !EMPTY( cPartnId )
     cJibPartn := ALLTRIM( IzSifK( "PARTN" , "REGB", cPartnId, .f. ) )
     cPOslob := ALLTRIM( IzSifK( "PARTN" , "PDVO", cPartnId, .f. ) )
 
-    if ( cTipDok $ "#11#" .and. cVr_placanja <> "3" )
-        
-        // ovo je NN kupac
-        // jednostavno za njega nadji podatke
+    if cTipDok == "11"
+
+        if  cVr_placanja == "3" 
+           _prikazi_partnera := .t.
+        else 
+           _prikazi_partnera := .f.
+        endif
+
+        // ovo je NN kupac,  jednostavno za njega nadji podatke
+ 
+        // hernad: ne razumijem ovo gore sto je napisano
+
         lIno := .f.
         lPDVObveznik := .t.
-        _prikazi_partnera := .f.
 
     elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
 
@@ -1002,7 +1005,7 @@ if !EMPTY( cPartnId )
             _prikazi_partnera := .t.
         endif
     
-    elseif LEN( cJibPartn ) = 12
+    elseif LEN( cJibPartn ) == 12
                 
         lIno := .f.
         lPDVObveznik := .t.
@@ -1050,18 +1053,14 @@ if !EMPTY( cPartnId )
             lPEmpty := EMPTY( partn->mjesto )
         endif
           
-        if cTipDok $ "#10#"
-          if lPEmpty
-            msgbeep("!!! Podaci partnera nisu kompletirani !!!#Prekidam operaciju")
+        if lPEmpty
+            msgbeep("!!! Podaci partnera nisu kompletirani !!!#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju")
             return 0
-          endif
         endif
 
-        if cTipDok $ "#10#"
-           // ubaci u matricu podatke o partneru
-           AADD( aKupac, { cJibPartn, partn->naz, partn->adresa, ;
-            partn->ptt, partn->mjesto } )
-        endif
+         // ubaci u matricu podatke o partneru
+         AADD( aKupac, { cJibPartn, partn->naz, partn->adresa, ;
+         partn->ptt, partn->mjesto } )
 
         // setuj kupac info
         cKupacInfo := ALLTRIM( partn->naz )
@@ -1084,11 +1083,8 @@ nTotal := _uk_sa_pdv( cTipDok, cPartnId, nIznos )
 nF_total := 0
 
 // upisi u matricu stavke
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
+do while !EOF() .and. field->idfirma == cFirma .and. field->idtipdok == cTipDok  .and. field->brdok == cBrDok
 
-    // nastimaj se na robu ...
     select roba
     seek fakt->idroba
 
@@ -1133,13 +1129,11 @@ do while !EOF() .and. field->idfirma == cFirma ;
     cF_artnaz := ALLTRIM( to_xml_encoding( fp_f_naz(roba->naz)) )
     cF_artjmj := ALLTRIM( roba->jmj )
 
-    nF_cijena := ABS ( field->cijena )
-    
-    if cTipDok $ "10#"
+    if cTipDok == "10"
         // moramo uzeti cijenu sa pdv-om
-        nF_cijena := ABS( _uk_sa_pdv( cTipDok, cPartnId, ;
-            field->cijena ) )
-
+        nF_cijena := ABS( _uk_sa_pdv( cTipDok, cPartnId, field->cijena ) )
+    else
+        nF_cijena := ABS ( field->cijena )
     endif
     
     nF_kolicina := ABS ( field->kolicina )
@@ -1158,7 +1152,7 @@ do while !EOF() .and. field->idfirma == cFirma ;
 
     // ako je za ino kupca onda ide nulta stopa
     // oslobodi ga poreza
-    if lIno = .t.
+    if lIno == .t.
         cF_tarifa := "PDV0"
     endif
 
@@ -1173,14 +1167,9 @@ do while !EOF() .and. field->idfirma == cFirma ;
     // ako se radi o robi sa zasticenom cijenom
     // ovaj total ce se napuniti u matricu
     if field->dindem == LEFT(ValBazna(), 3)
-        nF_total += Round( nF_kolicina * ;
-            nF_cijena * PrerCij() * ;
-            (1 - nF_rabat/100), ZAOKRUZENJE )
-        else
-        nF_total += round( nF_kolicina * ;
-            nF_cijena * ;
-            PrerCij() * ;
-            (1-nF_rabat/100), ZAOKRUZENJE)
+        nF_total += Round(nF_kolicina *  nF_cijena * PrerCij() *  (1 - nF_rabat / 100), ZAOKRUZENJE)
+    else
+        nF_total += round(nF_kolicina *  nF_cijena * PrerCij() * (1 - nF_rabat / 100), ZAOKRUZENJE)
     endif
 
     // 1 - broj racuna
@@ -1249,8 +1238,7 @@ endif
 fp_d_answer( ALLTRIM(gFc_path), ALLTRIM(gFc_name), __device )
 
 // ispisi racun
-fp_pos_rn( ALLTRIM( gFC_path ), ;
-    ALLTRIM( gFC_name ), aStavke, aKupac, lStorno, cError  )
+fp_pos_rn( ALLTRIM( gFC_path ), ALLTRIM( gFC_name ), aStavke, aKupac, lStorno, cError  )
 
 // procitaj gresku!
 nErr := fp_r_error( ALLTRIM( gFC_path ), ALLTRIM( gFC_name), ;

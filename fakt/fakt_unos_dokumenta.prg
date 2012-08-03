@@ -1418,7 +1418,7 @@ if (gSamokol != "D")
                  when _podbr<>" ." .and. !_idtipdok $ "15"
             
             @ m_x+18+RKOR+RKOR2,col()+1  GET TRabat ;
-                 when {||  trabat:="%",  !_idtipdok$ "11#27#15" .and. _podbr <> " ."} ;
+                 when {||  trabat := "%",  !_idtipdok$ "11#27#15" .and. _podbr <> " ."} ;
                  valid trabat $ "% AUCI" .and. V_Rabat() ;
                  pict "@!"
         
@@ -1575,42 +1575,6 @@ else
 endif
 
 _Rbr:=RedniBroj(nRbr)
-
-if lPoNarudzbi
-    if lGenStavke
-            pIzgSt:=.t.
-            // vise od jedne stavke
-            for i:=1 to LEN(aNabavke)-1
-                // generisi sve izuzev posljednje
-                APPEND BLANK
-                _rbr:=RedniBroj(nRBr)
-                _kolicina:=aNabavke[i,3]
-                _idnar:=aNabavke[i,4]
-                _brojnar:=aNabavke[i,5]
-                if nRBr<>1
-                    _txt:=""
-                endif
-                Gather()
-                ++nRBr
-            next
-            // posljednja je tekuca
-            _rbr:=RedniBroj(nRbr)
-            _kolicina:=aNabavke[i,3]
-            _idnar:=aNabavke[i,4]
-            _brojnar:=aNabavke[i,5]
-    else
-            // jedna ili nijedna
-            if LEN(aNabavke)>0
-                // jedna
-                _kolicina:=aNabavke[1,3]
-                _idnar:=aNabavke[1,4]
-                _brojnar:=aNabavke[1,5]
-            elseif _kolicina==0
-                // nije izabrana kolicina -> kao da je prekinut unos tipkom Esc
-                return 0
-            endif
-    endif
-endif
 
 return 1
 
@@ -1771,9 +1735,9 @@ endif
  *  \brief Prerada cijene
  *  \brief Ako je u polje SERBR unesen podatak KJ/KG iznos se dobija kao KOLICINA*CIJENA*PrerCij()  - varijanta R - Rudnik
  *  \return nVrati
- */
- 
+ */ 
 function PrerCij()
+
 local cSBr := ALLTRIM(_field->serbr)
 local nVrati:=1
 

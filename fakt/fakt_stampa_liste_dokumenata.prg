@@ -183,7 +183,7 @@ do while !eof() .and. if( !EMPTY( cIdFirma ), IdFirma == cIdFirma, .t. )
   endif
 
   if lVrsteP
-      @ prow(),pcol()+1 SAY idvrstep+"-"+LEFT(VRSTEP->naz,4)
+      @ prow(),pcol()+1 SAY idvrstep + "-" + LEFT(VRSTEP->naz,4)
   endif
 
   if fieldpos("DATPL") <> 0

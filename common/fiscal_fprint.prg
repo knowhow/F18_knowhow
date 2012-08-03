@@ -176,7 +176,7 @@ if rn_qtty > MAX_QT .or. rn_qtty < MIN_QT
 endif
 
 // ispitivanje decimala
-// fiskalni uredjeja dozvoljava unos na 3 decimale
+// fiskalni uredjaj dozvoljava unos na 3 decimale
 if ABS( rn_qtty ) - ABS( VAL( STR( rn_qtty, 12, 3 ) ) ) <> 0
     _ret := .f.
     return _ret

@@ -780,7 +780,6 @@ do while !eof()
 
     if _record["idvd"] == "97"
 
-        altd()
         // dodaj zapis za 97-cu
         _record["tbanktr"] := "X"
         _record["mkonto"] := _record["idkonto"]

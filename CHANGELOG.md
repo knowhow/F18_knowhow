@@ -1,3 +1,8 @@
+1.1.4  2012-07-31, hernad
+
+ - fiskalni racun FAKT IdTipDok=11, nacin placanja=VR [#28823](http://redmine.bring.out.ba/issues/28823)
+ - rabat omogucen kod IdTipDok=27, ponuda u maloprodaji
+
 1.1.3  2012-07-31, hernad
 
  - saga o barkodovima, ponovo vracen set confirm on [#28789](http://redmine.bring.out.ba/issues/28789)

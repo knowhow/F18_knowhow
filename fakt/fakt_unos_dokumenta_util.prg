@@ -218,27 +218,35 @@ if _idtipdok=="13" .and. ( gVar13=="2" .or. glCij13Mpc ) .or. _idtipdok=="19" .a
   ELSE
     _cijena:=MPC
   ENDIF
-elseif lRJ .and. rj->tip="M"  // baratamo samo sa mp.cijenama
+
+elseif lRJ .and. rj->tip="M"  
+   // baratamo samo sa mp.cijenama
    _cijena:=fakt_mpc_iz_sifrarnika()
 
 elseif _idtipdok$"11#15#27"
+
   if gMP=="1"
     _Cijena:=MPC
+
   elseif gMP=="2"
-      _Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100),;
-                   VAL(IzFMKIni("FAKT","ZaokruzenjeMPCuDiskontu","2",KUMPATH)))
+      _Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100), VAL(IzFMKIni("FAKT","ZaokruzenjeMPCuDiskontu","2", KUMPATH)))
   elseif gMP=="3"
     _Cijena:=MPC2
+
   elseif gMP=="4"
     _Cijena:=MPC3
+
   elseif gMP=="5"
     _Cijena:=MPC4
+
   elseif gMP=="6"
     _Cijena:=MPC5
+
   elseif gMP=="7"
     _Cijena:=MPC6
   endif
 else
+
   if cTipVPC=="1"
     _Cijena:=vpc
   elseif fieldpos("vpc2")<>0
@@ -246,7 +254,9 @@ else
      _Cijena:=vpc2
    elseif gVarc=="2"
      _Cijena:=vpc
-     if vpc<>0; _Rabat:= (vpc-vpc2) / vpc * 100; endif
+     if _Cijena <> 0
+           _Rabat:= (vpc-vpc2) / _Cijena * 100
+     endif
    elseif gVarc=="3"
      _Cijena:=nc
    endif
@@ -289,7 +299,8 @@ if _podbr<>" ."
 
 	NSRNPIdRoba(_IDROBA)
   	select ROBA
-	if !(roba->tip="U")  // usluge ne diraj
+	if !(roba->tip="U") 
+        // usluge ne diraj
   		if _idtipdok=="13" .and. (gVar13=="2".or.glCij13Mpc).and.gVarNum=="1"
       			if gVar13=="2" .and. _idtipdok=="13"
         			_cijena := fakt_mpc_iz_sifrarnika()
@@ -324,7 +335,9 @@ if _podbr<>" ."
       			endif
     		elseif cRjtip="M"
        			_cijena:=fakt_mpc_iz_sifrarnika()
+
     		elseif _idtipdok$"11#15#27"
+
       			if gMP=="1"
         			_Cijena:=MPC
       			elseif gMP=="2"
@@ -340,12 +353,14 @@ if _podbr<>" ."
       			elseif gMP=="7"
         			_Cijena:=MPC6
       			endif
+
     		elseif _idtipdok=="25" .and. _cijena<>0
       			// za knjiznu obavijest: 
 			// ne dirati cijenu ako je vec odredjena
     		elseif cRjTip="V".and._idTipDok $ "10#20" 
 			//ako se radi o racunima i predracunima
 			_cijena:=fakt_vpc_iz_sifrarnika()
+
 		else
       			if cTipVPC=="1"
         			_Cijena:=vpc
@@ -582,43 +597,57 @@ return .t.
  */
  
 function V_Rabat()
+
 if trabat $ " U"
+
   if _Cijena*_Kolicina<>0
    _rabat:=_rabat*100/(_Cijena*_Kolicina)
   else
    _rabat:=0
   endif
+
 elseif trabat="A"
+
   if _Cijena<>0
    _rabat:=_rabat*100/_Cijena
   else
    _rabat:=0
   endif
-elseif trabat="C" // zadata je nova cijena
+
+elseif trabat == "C" 
+
+  // zadata je nova cijena
   if _Cijena<>0
    _rabat:= (_cijena-_rabat)/_cijena*100
   else
    _rabat:=0
   endif
-elseif trabat="I" // zadat je zeljeni iznos (kolicina*cijena)
+
+elseif trabat == "I" 
+
+  // zadat je zeljeni iznos (kolicina*cijena)
   if _kolicina*_Cijena<>0
    _rabat:= (_kolicina*_cijena-_rabat)/(_kolicina*_cijena)*100
   else
    _rabat:=0
   endif
+
 endif
 
-if _Rabat>99
+if _Rabat > 99
   Beep(2)
-  Msg("Rabat ne moze biti ovoliki !!",6)
+  Msg("Rabat ne moze biti > 99% !!",6)
   _rabat:=0
 endif
-if _idtipdok$"11#15#27"
+
+if _idtipdok $ "11#15#27"
    _porez:=0
 else
+
  if roba->tip=="V"
   _porez:=0
  endif
+
 endif
 
 // setuj novu cijenu u sifrarnik i rabat ako postoji
@@ -1176,7 +1205,7 @@ if FOUND()
 			_vars["vpc"] := nCijena
 			lFill := .t.
 		endif
-	elseif cIdTipDok $ "#11#13#" .and. nCijena <> 0
+	elseif cIdTipDok $ "11#13#" .and. nCijena <> 0
 		if field->mpc <> nCijena .and. ;
 			Pitanje(,"Postaviti novu MPC u sifrarnik ?", "N") == "D"
 			_vars["mpc"] := nCijena
@@ -1214,7 +1243,7 @@ return
  */
  
 function IniVars()
-*{
+
 set cursor on
 
 // varijable koje se inicijalizuju iz baze
@@ -1241,7 +1270,6 @@ endif
 IF len (aMemo)>=10
   _VezOtpr := aMemo [10]
 EndIF
-*}
 
 
 

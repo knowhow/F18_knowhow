@@ -1325,8 +1325,8 @@ endif
 
 @ m_x + 13, m_y + 2 SAY "R.br: " GET nRbr  PICT "9999"
 
-@ m_x + 15, m_y + 2  SAY "Artikal: " ;
-    GET _IdRoba ;
+// ARTIKAL
+@ m_x + 15, m_y + 2  SAY "Artikal: " GET _IdRoba ;
     PICT "@!S10" ;
     WHEN {|| _idroba := PADR( _idroba, VAL( gDuzSifIni )), W_Roba() } ;
     VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), LEFT( _idroba, VAL(gDuzSifIni) ), _idroba ), V_Roba(), artikal_kao_usluga(fnovi), NijeDupla(fNovi), zadnji_izlazi_info( _idpartner, _idroba, "F" ) }
@@ -1335,6 +1335,7 @@ RKOR2:=0
 
 RKOR2 += GetKarC3N2( row() + 1 )
 
+// K1, K2, SERBR
 if (fakt_pripr->(fieldpos("K1"))<>0 .and. gDK1=="D")
     @ m_x+15+RKOR2,m_y+66 SAY "K1" GET _K1 pict "@!"
 endif
@@ -1347,6 +1348,7 @@ if (gSamokol!="D" .and. !glDistrib)
     @ m_x + 16 + RKOR2, m_y+2  SAY JokSBr()+" "  get _serbr pict "@s15"  when _podbr <> " ."
 endif
 
+// CIJENA
 if (gVarC $ "123" .and. _idtipdok $ "10#12#20#21#25")
     @  m_x + 16 + RKOR2, m_y + 59  SAY "Cijena (1/2/3):" GET cTipVPC
 endif
@@ -1355,10 +1357,10 @@ RKOR:=0
 
 lGenStavke:=.f.
 
+// KOLICINA
 if ( _m1=="X" .and.  !fnovi )
     
     // ako je racun, onda ne moze biti cijena 0 !
-    
     @ m_x+18 + RKOR2, m_y + 2  SAY "Kolicina "
     @ row(),col()+1 SAY _kolicina pict pickol
     
@@ -1367,7 +1369,7 @@ if ( _m1=="X" .and.  !fnovi )
     endif
 else
     
-    if (glDistrib .or. lPoNarudzbi)
+    if (glDistrib)
             read
             ESC_return 0
     endif
@@ -1375,8 +1377,7 @@ else
     cPako:="(PAKET)"  
     // naziv jedinice mjere veceg pakovanja
     
-    @ m_x+18 + RKOR2, m_y + 2 SAY "Kolicina " ;
-        GET _kolicina ;
+    @ m_x+18 + RKOR2, m_y + 2 SAY "Kolicina "  GET _kolicina ;
         PICT pickol ;
         VALID V_Kolicina()
     
@@ -1387,7 +1388,7 @@ private trabat:="%"
 if (gSamokol != "D")
 
     // samo kolicine
-    if (_idtipdok=="19" .and. IzFMKIni("FAKT","19KaoRacunParticipacije","N",KUMPATH)=="D")
+    if (_idtipdok=="19" .and. IzFMKIni("FAKT", "19KaoRacunParticipacije","N",KUMPATH)=="D")
             
         _trabat:="I"
         _rabat:=_kolicina*_cijena*(1-_rabat/100)
@@ -1403,6 +1404,7 @@ if (gSamokol != "D")
              WHEN  _podbr<>" ." .and. SKCKalk(.t.) ;
              VALID SKCKalk(.f.) .and. c_cijena(_cijena, _idtipdok, fNovi)
 
+
         if ( PADR(_dindem, 3) <> PADR(ValDomaca(), 3) ) 
             @ m_x+18+ RKOR + RKOR2, col() + 2 SAY "Pr"  GET cPretvori ;
                 PICT "@!" ;
@@ -1410,23 +1412,16 @@ if (gSamokol != "D")
         endif
 
              
-        if !(_idtipdok $ "12#13").or.(_idtipdok=="12".and.gV12Por=="D")
+        if !(_idtipdok $ "12#13") .or. (_idtipdok=="12".and. gV12Por=="D")
             @  m_x+18+RKOR+RKOR2, col() + 2  SAY "Rabat" get _Rabat ;
                  pict PicCDem ;
-                 when _podbr<>" ." .and. !_idtipdok$"15#27"
+                 when _podbr<>" ." .and. !_idtipdok $ "15"
             
             @ m_x+18+RKOR+RKOR2,col()+1  GET TRabat ;
-                 when {||  trabat:="%",!_idtipdok$"11#15#27" .and. _podbr<>" ."} ;
+                 when {||  trabat:="%",  !_idtipdok$ "11#27#15" .and. _podbr <> " ."} ;
                  valid trabat $ "% AUCI" .and. V_Rabat() ;
                  pict "@!"
         
-        if !IsPdv()
-            // nista porez kada je PDV rezim
-                @ m_x+18+RKOR+RKOR2,col()+2 SAY "Porez" GET _Porez ;
-                 pict "99.99" ;
-                 when {|| if( fNovi .and. _idtipdok=="10" .and. IzFMKIni("FAKT","PPPNuditi","N",KUMPATH)=="D".and.ROBA->tip!="U" , _porez := TARIFA->opp , ), _podbr<>" ." .and. !(roba->tip $ "KV") .and. !_idtipdok$"11#15#27"} ;
-                 valid V_Porez()
-        endif
         
     endif
         
@@ -1434,8 +1429,8 @@ if (gSamokol != "D")
 
     private cId:="  "
 
-
-endif //gSamokol=="D"  // samo kolicine
+//gSamokol=="D"  // samo kolicine
+endif 
 
 read
 

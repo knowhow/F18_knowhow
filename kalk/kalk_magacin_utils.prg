@@ -830,7 +830,8 @@ if round(nRVPC-_vpc,4)<>0  .and. gMagacin=="2"
    	endif
 endif
  
-if roba->tip=="V" // roba tarife
+// roba tarife
+if roba->tip=="V" 
    nMarza:=_VPC/(1+_PORVT)-_VPC*_RabatV/100-_NC
 elseif roba->tip="X"
    nMarza:=_VPC*(1-_RabatV/100)-_NC- _MPCSAPP/(1+_PORVT)*_porvt

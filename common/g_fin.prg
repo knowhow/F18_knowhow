@@ -119,7 +119,7 @@ nSKup := get_fin_partner_saldo( cPartner, cKKup )
 nSDob := get_fin_partner_saldo( cPartner, cKDob )
 dDate := g_dpupl_part( cPartner, cKKup )
 
-nSaldo := nSKup - nSDob
+nSaldo := nSKup + nSDob
 
 if nSaldo = 0
 	return
@@ -148,7 +148,7 @@ Box(, 9, 50)
 	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
     	++nX
 
-	@ m_x + nX, m_y + 2 SAY "Total (1-2) = " + ALLTRIM(STR(nSaldo,12,2)) + " KM" COLOR IF(nSaldo > 100, "W/R+", "W/G+")
+	@ m_x + nX, m_y + 2 SAY "Total (1+2) = " + ALLTRIM(STR(nSaldo,12,2)) + " KM" COLOR IF(nSaldo > 100, "W/R+", "W/G+")
 	
 	nX += 2
 

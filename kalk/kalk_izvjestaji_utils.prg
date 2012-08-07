@@ -227,9 +227,9 @@ do while .t.
                 _line += " "
                 _line += DTOC( ulazi[ _i, 3 ])
                 _line += " "
-                _line += STR( ulazi[ _i, 4 ], 12, 2 ) 
+                _line += STR( ulazi[ _i, 4 ], 12, 3 ) 
                 _line += " "
-                _line += STR( ulazi[ _i, 5 ], 12, 2 ) + "%"
+                _line += STR( ulazi[ _i, 5 ], 12, 3 ) + "%"
 
                 @ m_x + _n, m_y + 2 SAY _line
                 ++ _n

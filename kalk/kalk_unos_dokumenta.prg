@@ -264,7 +264,7 @@ do while !EOF()
     if _scan == 0
         AADD( _data, { kalk_pripr->idroba } )    
     else
-        AADD( _dup, { kalk_pripr->idroba, roba->naz, roba->barkod } )    
+        AADD( _dup, { kalk_pripr->idroba, roba->naz, roba->barkod, kalk_pripr->rbr } )    
     endif
 
     skip
@@ -278,12 +278,13 @@ if LEN( _dup ) > 0
     START PRINT CRET
     
     ? "Sljedeci artikli u pripremi su dupli:"
-    ? PADR("-", 65)
-    ? PADR( "ID", 10 ) + " " + PADR( "NAZIV", 40 ) + " " + PADR( "BARKOD", 13 )
-    ? PADR("-", 65)
+    ? REPLICATE( "-", 80 )
+    ? PADR("R.br", 5 ) + " " + PADR( "Rb.st", 5 ) + " " + PADR( "ID", 10 ) + " " + PADR( "NAZIV", 40 ) + " " + PADR( "BARKOD", 13 )
+    ? REPLICATE( "-", 80 )
     
     for _i := 1 to LEN( _dup )
-        ? ALLTRIM( STR( _i, 5 ) ) + "."
+        ? PADL( ALLTRIM( STR( _i, 5 ) ) + ".", 5 )
+        @ prow(), pcol() + 1 SAY PADR( _dup[ _i, 4 ], 5 )
         @ prow(), pcol() + 1 SAY _dup[ _i, 1 ]
         @ prow(), pcol() + 1 SAY PADR( _dup[ _i, 2 ], 40 )
         @ prow(), pcol() + 1 SAY _dup[ _i, 3 ]

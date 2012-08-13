@@ -65,56 +65,62 @@ endif
 set_mc_imekol(nDbf)
 
 nOrderSif := indexord() 
-nOrdId    := ORDNUMBER("ID")
+nOrdId := ORDNUMBER("ID")
 
-sif_set_order(nNTX, nOrdId, @fID_j)
+sif_set_order( nNTX, nOrdId, @fID_j )
 
-sif_seek(@cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, nOrdId) 
+sif_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, nOrdId )  
 
 if dx <> NIL .and. dx < 0
-     // u slucaju negativne vrijednosti vraca se vrijednost polja
-      // koje je na poziciji ABS(i)
-      if !FOUND()
-          go bottom
-          skip  // id na eof, tamo su prazne vrijednosti
-          cRet := &(FIELDNAME(-dx))
-          skip -1
-      else
-          cRet := &(FIELDNAME(-dx))
-      endif
+    // u slucaju negativne vrijednosti vraca se vrijednost polja
+    // koje je na poziciji ABS(i)
+    if !FOUND()
+        go bottom
+        skip  // id na eof, tamo su prazne vrijednosti
+        cRet := &(FIELDNAME(-dx))
+        skip -1
+    else
+        cRet := &(FIELDNAME(-dx))
+    endif
 
-      PopSifV()
-      PopWa()
-      return cRet
+    PopSifV()
+    PopWa()
+
+    return cRet
+
 endif
 
-if !empty(cUslovSrch)
+if !EMPTY( cUslovSrch )
     // postavi filter u sifrarniku
-    SetSifFilt(cUslovSrch)  
+    SetSifFilt( cUslovSrch )  
 endif
 
-if (fPonaz .and. (cNazSrch=="" .or. !TRIM(cNazSrch) == TRIM(naz))) .or. (!FOUND() .and. cNaslov<>NIL)  .or. cId==NIL .or.  (cNaslov<>NIL .and. LEFT(cNaslov, 1)="#")  
+if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
+    .or. cId == NIL ;
+    .or. ( !FOUND() .and. cNaslov <> NIL ) ;
+    .or. ( cNaslov <> NIL .and. LEFT( cNaslov, 1 ) = "#" )   
   
-  // if cID== nil - pregled sifrarnika
+    // if cID == nil - pregled sifrarnika
 
-  lPrviPoziv:=.t.
-  if eof() 
-     skip -1
-  endif
-  if cId==NIL 
-     // idemo bez parametara
-     go top
-  endif
+    lPrviPoziv := .t.
 
+    if EOF() 
+        skip -1
+    endif
 
-   ObjDbedit(, nVisina, nSirina,  {|| EdSif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)}, cNaslov, "", invert, _komande,  1, bPodvuci, , , aPoredak)
+    if cId == NIL 
+        // idemo bez parametara
+        go top
+    endif
 
-   IF TYPE("id") $ "U#UE"       
+    ObjDbedit(, nVisina, nSirina,  {|| EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )}, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
+
+    IF TYPE("id") $ "U#UE"       
         cID:=(nDbf)->(FIELDGET(1))
-   ELSE
+    ELSE
 
         if !(nDBf)->(USED())
-           Alert("not used ?!")
+            Alert("not used ?!")
         endif
 
         cID:=(nDbf)->id
@@ -197,38 +203,45 @@ return .t.
 
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
-static function sif_seek(cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId)
+static function sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
+local _bk := ""
+local _order := indexord() 
 
-if cId <> NIL 
+if cId == NIL
+    return
+endif 
         
-    if VALTYPE(cId) == "N"       
-         seek STR(cId)
-        
-    elseif RIGHT(trim(cId), 1) == "*"
-         sif_katbr_zvjezdica(@cId, @cIdBK, fId_j)
-        
-    elseif RIGHT(TRIM(cId), 1) $ "./$"
-         sif_point_or_slash(@cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch)
-
-    elseif LEN(trim(cId)) > 10 .and. fieldpos("BARKOD") <> 0 .and. !EMPTY( cId ) 
-         //SeekBarKod( @cId, @cIdBk, .f. )
-         barkod( @cId )
-
-    else 
+if VALTYPE(cId) == "N"       
+    seek STR(cId)
+    return
+endif
     
-        // SEEK PO ID , SEEK PO ID_J
-        seek cId
-        
-        if FOUND()
-            cId := &(FIELDNAME(1))
-        elseif !FOUND() .and. fieldpos("barkod")<>0 .and. !EMPTY(cId)
-            // pretrazi po barkod-u
-            //SeekBarKod( @cId, @cIdBk, .t. )
-            barkod( @cId )
-        endif
+if RIGHT( TRIM( cId ), 1) == "*"
+    sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
+    return
+endif    
 
-    endif
+if RIGHT( TRIM(cId), 1) $ "./$"
+    sif_point_or_slash( @cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch )
+    return
+endif
 
+// glavni seek
+// id, barkod
+
+seek cId
+
+if FOUND()
+    // po id-u
+    cId := &(FIELDNAME(1))
+    return
+endif
+            
+// po barkod-u
+if LEN( cId ) > 10
+    barkod( @cId )
+    ordsetfocus( _order )
+    return
 endif
 
 return
@@ -239,15 +252,18 @@ return
 // ----------------------------------------------------
 static function sif_katbr_zvjezdica(cId, cIdBK, fId_j)
 
+cId := PADR( cId, 10 )
+
 if  fieldpos("KATBR")<>0 
     set order to tag "KATBR"
-    seek LEFT(cId, len(trim(cId))-1)
-    cId:=id
+    seek LEFT( cId, len(trim(cId)) - 1 )
+    cId := id
 else
     seek CHR(250)+CHR(250)+CHR(250)
 endif
 
 if !FOUND()
+
     // trazi iz sifranika karakteristika
     cIdBK := LEFT(cId,len(trim(cId))-1)
     cId   := ""
@@ -273,8 +289,11 @@ endif
 return .t.
 
 
+
 static function sif_point_or_slash(cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch)
 local _filter
+
+cId := PADR( cId, 10 )
 
 if nOrdid <> 0
     set order to tag "NAZ"

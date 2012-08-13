@@ -409,8 +409,6 @@ local _barkod := ""
 
 gOcitBarCod := .f.
 
-PushWa()
-
 select roba
 
 if !EMPTY( cId )
@@ -428,11 +426,6 @@ if !EMPTY( cId )
 endif
 
 cId := PADR( cId, 10 )
-
-select roba
-set order to tag "ID"
-
-PopWa()
 
 return _barkod
 

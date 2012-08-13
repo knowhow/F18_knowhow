@@ -5,7 +5,8 @@
  - PostojiSifra(), barkod pretraga ispravljena [#28860](http://redmine.bring.out.ba/issues/28860)
  - pos, unos stavki, polje ukupno sada vidljivo u pripremi [#28863](http://redmine.bring.out.ba/issues/28863)
  - pos, prikaz barkod polja unutar browse-a šifrarnika iz računa [#28862](http://redmine.bring.out.ba/issues/28862)
- - pos, unos inventure - bugfix [#28863](http://redmine.bring.out.ba/issues/28863)
+ - pos, unos inventure - bugfix [#28874](http://redmine.bring.out.ba/issues/28874)
+ - roba, nedozvoljen unos duplog barkod-a u šifrarnik [#28788](http://redmine.bring.out.ba/issues/28788)
 
 1.1.4  2012-07-31, hernad
 

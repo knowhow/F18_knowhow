@@ -18,4 +18,4 @@
 #define F18_LOG_FILE "F18" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".log"
 #define OUTF_FILE "outf" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".txt"
 #define OUT_ODT_FILE "out" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".odt"
-#define DATE_XML__FILE "data" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + "xml"
+#define DATA_XML_FILE "data" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".xml"

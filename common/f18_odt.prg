@@ -30,7 +30,6 @@ local _screen
 local _cmd, _java_start, _jod_bin
 local _error
 
-
 // xml fajl
 if ( xml_file == NIL )
     __xml_file := my_home() + DATA_XML_FILE
@@ -79,9 +78,6 @@ if !FILE( ALLTRIM(_jod_bin) )
     MsgBeep( "Aplikacija " + _jod_bin + " ne postoji !" )
     return _ok
 endif
-
-log_write( "ODT report gen: java cmd - " + _java_start )
-log_write( "ODT report gen: jod bin - " + _jod_bin )
 
 // na windows masinama moramo radi DOS-a dodati ove navodnike
 #ifdef __PLATFORM__WINDOWS

@@ -592,6 +592,7 @@ do while .t.
     
     // pronadji tarifu i barkod za ovaj artikal
     select (cRSdbf)
+    set order to tag "ID"
     hseek _idroba
 
     _r_tar := field->idtarifa
@@ -638,11 +639,14 @@ return nVrati
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
 static function valid_pos_inv_niv(cIdVd, get_next)
+local _area := SELECT()
 
 pos_postoji_roba( @_IdRoba, 1, 31) 
 RacKol( _idodj, _idroba, @_kolicina )
 _set_cijena_artikla( cIdVd, _idroba )
+
 if !_postoji_artikal_u_pripremi( _idroba )
+    select ( _area )
     return .f.
 endif
 
@@ -652,6 +656,7 @@ else
    get_field_set_focus("_cijena")
 endif
 
+select ( _area )
 return .t.
 
  

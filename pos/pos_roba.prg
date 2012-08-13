@@ -110,6 +110,9 @@ SetSpecNar()
 
 barkod := _barkod
 
+select roba
+set order to tag "ID"
+
 return _vrati
 
 

@@ -1,3 +1,8 @@
+1.1.5  2012-08-11, vsasa
+
+ - kalk, štampa kalkulacije cijena odt, bugfix [#28741](http://redmine.bring.out.ba/issues/28741)
+ - fakt, ispis salda kupac/dobavljač, ubačen uslov idfirma [#28635](http://redmine.bring.out.ba/issues/28635)
+
 1.1.4  2012-07-31, hernad
 
  - fiskalni racun FAKT IdTipDok=11, nacin placanja=VR [#28823](http://redmine.bring.out.ba/issues/28823)

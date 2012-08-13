@@ -33,6 +33,8 @@ local _i
 local _barkod := ""
 local _vrati := .f.
 local _tezina := 0
+local _order
+local _area := SELECT()
 private ImeKol := {}
 private Kol := {}
 
@@ -51,8 +53,8 @@ AADD( ImeKol, { "Sifra", {|| id }, "" })
 AADD( ImeKol, { PADC( "Naziv", 40 ), {|| PADR( naz, 40 ) }, "" })
 AADD( ImeKol, { PADC( "JMJ", 5 ), {|| PADC( jmj, 5 ) }, "" })
 AADD( ImeKol, { "Cijena", {|| roba->mpc }, "" })
-AADD( ImeKol, { "BARKOD", {|| barkod }, "" })
-AADD( ImeKol, { "K7", {|| k7 }, "" })
+AADD( ImeKol, { "BARKOD", {|| roba->barkod }, "" })
+AADD( ImeKol, { "K7", {|| roba->k7 }, "" })
 
 for _i := 1 to LEN( ImeKol )
 	AADD( Kol, _i ) 
@@ -71,6 +73,8 @@ else
     // da se zna da je ocitan tezinski barkod
     _barkod := PADR("T", 13)
 endif
+
+select ( _area )
 
 // otvori sifrarnik
 _vrati := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
@@ -107,6 +111,7 @@ SetSpecNar()
 barkod := _barkod
 
 return _vrati
+
 
 // ------------------------------------------
 // pretraga sifre po nazivu uvijek

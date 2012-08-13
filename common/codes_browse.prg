@@ -49,16 +49,15 @@ endif
 private nOrdId
 
 PushWa()
-
 PushSifV()
 
 if invert == NIL
-   invert := .t.
+    invert := .t.
 endif
 
 select (nDbf)
 if !used()
-   my_use(nDbf, nil, .f.)
+    my_use(nDbf, nil, .f.)
 endif
 
 // setuj match_code polje...

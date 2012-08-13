@@ -79,7 +79,7 @@ return _max
 // --------------------------------------------
 // datum posljednje promjene kupac / dobavljac
 // --------------------------------------------
-function g_dpprom_part( id_partner, id_konto )
+function g_dpprom_part( id_partner, id_konto, id_firma )
 local _qry, _qry_ret, _table
 local _server := pg_server()
 local _data := {}

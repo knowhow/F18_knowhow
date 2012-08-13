@@ -17,7 +17,7 @@
 // ----------------------------------------
 // vraca saldo partnera
 // ----------------------------------------
-function get_fin_partner_saldo( id_partner, id_konto )
+function get_fin_partner_saldo( id_partner, id_konto, id_firma )
 local _qry, _qry_ret, _table
 local _server := pg_server()
 local _data := {}
@@ -26,7 +26,8 @@ local _saldo := 0
 
 _qry := "SELECT SUM( CASE WHEN d_p = '1' THEN iznosbhd ELSE -iznosbhd END ) AS saldo FROM fmk.fin_suban " + ;
         " WHERE idpartner = " + _sql_quote( id_partner ) + ;
-        " AND idkonto = " + _sql_quote( id_konto ) 
+        " AND idkonto = " + _sql_quote( id_konto ) + ;
+        " AND idfirma = " + _sql_quote( id_firma )
 
 _table := _sql_query( _server, _qry )
 _table:Refresh()
@@ -46,7 +47,7 @@ return _saldo
 // -----------------------------------------
 // datum posljednje uplate partnera
 // -----------------------------------------
-function g_dpupl_part( id_partner, id_konto )
+function g_dpupl_part( id_partner, id_konto, id_firma )
 local _qry, _qry_ret, _table
 local _server := pg_server()
 local _data := {}
@@ -56,6 +57,7 @@ local _max := CTOD("")
 _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
         " WHERE idpartner = " + _sql_quote( id_partner ) + ;
         " AND idkonto = " + _sql_quote( id_konto ) + ;
+        " AND idfirma = " + _sql_quote( id_firma ) + ;
         " AND d_p = '2' "
 
 _table := _sql_query( _server, _qry )
@@ -86,7 +88,8 @@ local _max := CTOD("")
 
 _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
         " WHERE idpartner = " + _sql_quote( id_partner ) + ;
-        " AND idkonto = " + _sql_quote( id_konto )
+        " AND idkonto = " + _sql_quote( id_konto ) + ;
+        " AND idfirma = " + _sql_quote( id_firma )
 
 _table := _sql_query( _server, _qry )
 _table:Refresh()

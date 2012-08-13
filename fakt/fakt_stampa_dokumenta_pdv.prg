@@ -21,7 +21,6 @@ static __FIN_KUM
 // show saldo varijanta
 static __SH_SLD_VAR
 
-
 // ----------------------------------------------------
 // ----------------------------------------------------
 function StdokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
@@ -920,20 +919,19 @@ endif
 __SH_SLD_VAR := gShSldVar
 
 // saldo kupca
-nSaldoKup := get_fin_partner_saldo( cPartn, __KTO_DUG )
+nSaldoKup := get_fin_partner_saldo( cPartn, __KTO_DUG, gFirma )
 		
 // saldo dobavljaca
-nSaldoDob := get_fin_partner_saldo( cPartn, __KTO_POT )
+nSaldoDob := get_fin_partner_saldo( cPartn, __KTO_POT, gFirma )
 
 // datum zadnje uplate kupca
-dPUplKup := g_dpupl_part( cPartn, __KTO_DUG )
+dPUplKup := g_dpupl_part( cPartn, __KTO_DUG, gFirma )
 
 // datum zadnje promjene kupac
-dPPromKup := g_dpprom_part( cPartn, __KTO_DUG )
+dPPromKup := g_dpprom_part( cPartn, __KTO_DUG, gFirma )
 
 // datum zadnje promjene dobavljac
-dPPromDob := g_dpprom_part( cPartn, __KTO_POT )
-
+dPPromDob := g_dpprom_part( cPartn, __KTO_POT, gFirma )
 
 
 // -------------------------------------------------------

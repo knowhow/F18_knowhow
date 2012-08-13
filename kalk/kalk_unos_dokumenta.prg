@@ -86,7 +86,7 @@ AADD( ImeKol, { "K.razd."   , {|| IdKonto2                 }, "IdKonto2"    } )
 AADD( ImeKol, { "IdRoba"    , {|| IdRoba                   }, "IdRoba"      } )
 
 if lKoristitiBK
-	AADD( ImeKol, { "Barkod"    , {|| roba_ocitaj_barkod( idroba ) }, "IdRoba" } )
+    AADD( ImeKol, { "Barkod"    , {|| roba_ocitaj_barkod( idroba ) }, "IdRoba" } )
 endif
 
 AADD( ImeKol, { "Kolicina"  , {|| transform(Kolicina,picv) }, "kolicina"    } )
@@ -114,34 +114,34 @@ next
 
 Box(, nMaxRow, nMaxCol )
 
-	_opt_d := ( nMaxCol / 4 )
-	
-	_opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
-	_opt_row += PADR( "<ENT> Ispravka", _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr("<c+T> Brisi stavku"), _opt_d ) + _sep
-	_opt_row += "<K> Kalk.cijena"
+    _opt_d := ( nMaxCol / 4 )
+    
+    _opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
+    _opt_row += PADR( "<ENT> Ispravka", _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr("<c+T> Brisi stavku"), _opt_d ) + _sep
+    _opt_row += "<K> Kalk.cijena"
 
     @ m_x + nMaxRow - 3, m_y + 2 SAY _opt_row
     
-	_opt_row := PADR( "<c+A> Ispravka", _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr("<c+P> Stampa dok."), _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr("<a+A> Azuriranje"), _opt_d ) + _sep
-	_opt_row += "<Q> Etikete"
+    _opt_row := PADR( "<c+A> Ispravka", _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr("<c+P> Stampa dok."), _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr("<a+A> Azuriranje"), _opt_d ) + _sep
+    _opt_row += "<Q> Etikete"
 
-	@ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
+    @ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
  
-	_opt_row := PADR( "<a+K> Kontiranje", _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr("<c+F9> Brisi sve"), _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr("<a+P> Stampa pripreme"), _opt_d ) + _sep
+    _opt_row := PADR( "<a+K> Kontiranje", _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr("<c+F9> Brisi sve"), _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr("<a+P> Stampa pripreme"), _opt_d ) + _sep
    
-	@ m_x + nMaxRow - 1, m_y + 2 SAY _opt_row
+    @ m_x + nMaxRow - 1, m_y + 2 SAY _opt_row
  
-	_opt_row := PADR( hb_utf8tostr("<c+F8> Rasp.troskova"), _opt_d ) + _sep
-	_opt_row += PADR( "<A> Asistent", _opt_d ) + _sep
-	_opt_row += PADR( "<F10> Dodatne opc.", _opt_d ) + _sep
-	_opt_row += "<F11> Dodatne opc./2"
+    _opt_row := PADR( hb_utf8tostr("<c+F8> Rasp.troskova"), _opt_d ) + _sep
+    _opt_row += PADR( "<A> Asistent", _opt_d ) + _sep
+    _opt_row += PADR( "<F10> Dodatne opc.", _opt_d ) + _sep
+    _opt_row += "<F11> Dodatne opc./2"
    
-	@ m_x + nMaxRow, m_y + 2 SAY _opt_row
+    @ m_x + nMaxRow, m_y + 2 SAY _opt_row
 
     if gCijene == "1" .and. gMetodaNC == " "
         Soboslikar({{ nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 }}, 23, 14 )
@@ -582,7 +582,7 @@ else
         
     if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
         
-		cIdkont := _idkonto
+        cIdkont := _idkonto
         cIdkont2 := _idkonto2
         _idkonto := cIdkont2
         _idkonto2 := "XXX"
@@ -681,9 +681,9 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
             _idkonto2 := cIdkont2
         endif
         
-		if fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" ) == "D"
-			_idroba := SPACE(10)
-		endif
+        if fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" ) == "D"
+            _idroba := SPACE(10)
+        endif
 
         _Kolicina := _GKolicina := _GKolicin2 := 0
         _FCj := _FCJ2 := _Rabat := 0
@@ -1166,11 +1166,11 @@ do while .t.
     set escape on
 
     if nR == K_ESC
-	    exit
+        exit
     elseif nR == K_PGUP
-  	    --nStrana
+        --nStrana
     elseif nR == K_PGDN .or. nR == K_ENTER
-  	    ++nStrana
+        ++nStrana
     endif
 
     if nStrana==0
@@ -1182,11 +1182,11 @@ do while .t.
 enddo
 
 if lastkey() <> K_ESC
-	_Rbr := RedniBroj( nRbr )
- 	_Dokument := P_TipDok( _IdVD, -2 )
-  	return 1
+    _Rbr := RedniBroj( nRbr )
+    _Dokument := P_TipDok( _IdVD, -2 )
+    return 1
 else
-  	return 0
+    return 0
 endif
 
 return
@@ -1309,12 +1309,12 @@ if (area)->(fieldpos("naz")) <> 0
 
     _naz := ALLTRIM( field->naz )
 
-	if (area)->(fieldpos("jmj")) <> 0
-		if LEN( _naz ) >= len
-			_naz := PADR( _naz, len - 6 )
-		endif
-		_naz += " (" + ALLTRIM( field->jmj ) + ")"
-	endif
+    if (area)->(fieldpos("jmj")) <> 0
+        if LEN( _naz ) >= len
+            _naz := PADR( _naz, len - 6 )
+        endif
+        _naz += " (" + ALLTRIM( field->jmj ) + ")"
+    endif
 
 endif
 
@@ -1820,53 +1820,54 @@ static function NazProdObj()
 return cVrati
 
 
-function IzbDokOLPP()
-O_SIFK
-O_SIFV
-O_ROBA
-O_TARIFA
-O_PARTN
-O_KONTO
-O_KALK_PRIPR
 
-select kalk_pripr
-set order to tag "1"
-go top
+
+function IzbDokOLPP()
 
 do while .t.
 
- cIdFirma:=IdFirma; cBrDok:=BrDok; cIdVD:=IdVD
+    o_kalk_edit()
 
- if eof();  exit  ; endif
+    select kalk_pripr
+    set order to tag "1"
+    go top
 
- if empty(cidvd+cbrdok+cidfirma) .or. ! (cIdVd $ "11#19#81#80")
-   skip; loop
- endif
+    cIdFirma := field->IdFirma
+    cBrDok := field->BrDok
+    cIdVD := field->IdVD
 
- Box("",2,50)
-  set cursor on
-  @ m_x+1,m_y+2 SAY "Dokument broj:"
-  if gNW $ "DX"
-   @ m_x+1,col()+2  SAY cIdFirma
-  else
-   @ m_x+1,col()+2 GET cIdFirma
-  endif
-  @ m_x+1,col()+1 SAY "-" GET cIdVD  VALID cIdVd $ "11#19#81#80"  PICT "@!"
-  @ m_x+1,col()+1 SAY "-" GET cBrDok
-  read; ESC_BCR
+    if eof()
+        exit
+    endif
 
- BoxC()
+    if empty(cidvd+cbrdok+cidfirma) .or. ! (cIdVd $ "11#19#81#80")
+        skip; loop
+    endif
 
- HSEEK cIdFirma+cIdVD+cBrDok
- EOF CRET
+    Box("",2,50)
+        set cursor on
+        @ m_x+1,m_y+2 SAY "Dokument broj:"
+        if gNW $ "DX"
+            @ m_x+1,col()+2  SAY cIdFirma
+        else
+            @ m_x+1,col()+2 GET cIdFirma
+        endif
+        @ m_x+1,col()+1 SAY "-" GET cIdVD  VALID cIdVd $ "11#19#81#80"  PICT "@!"
+        @ m_x+1,col()+1 SAY "-" GET cBrDok
+        read; ESC_BCR
 
- KalkStOLPP()
+    BoxC()
+
+    HSEEK cIdFirma+cIdVD+cBrDok
+    EOF CRET
+
+    KalkStOLPP()
 
 enddo
 
-CLOSERET
+close all
 return
-*}
+
 
 
 

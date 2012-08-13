@@ -28,9 +28,9 @@ local nTotPDV:=0
 local ii:=0
 local nArr
 
-gOstr:="D"
-gnRedova:=gPStranica + 64
-picdem:="99999999.99"
+gOstr := "D"
+gnRedova := gPStranica + 64
+picdem := "99999999.99"
 
 SELECT kalk_pripr
 
@@ -48,10 +48,16 @@ nC5:=0
 
 // radi 80-ke prodji 2 puta
 for ik:=1 to 2
+
+    o_kalk_edit()
+
 	START PRINT RET
 	?
+
 	nU1:=nU2:=nU3:=0
+
 	if ik=2 
+
 		// drugi konto
    		HSEEK cIdFirma+cIdVD+cBrDok
    		do while !eof()  .and. pkonto==cPrviKTO
@@ -63,8 +69,9 @@ for ik:=1 to 2
 	
 	ZOLPDV()
 	
-	private nColR:=10
-	aRekPor:={}
+	private nColR := 10
+	aRekPor := {}
+
 	DO WHILE !EOF() .and. cIdfirma+cIdVd+cBrDok==IDFIRMA+IDVD+BRDOK
 		if (pkonto==cPrviKTO  .and. ik=2) .or. (pkonto != cPrviKTO  .and. ik=1)
         		// ako se po drugi put nalazis u petlji i stavka je prvi konto
@@ -220,9 +227,11 @@ for ik:=1 to 2
 	enddo
 	
 	select (nArr)
-	FF
+	
+    FF
 	END PRINT
-	if cIdVd<>"80"    
+	
+    if cIdVd<>"80"    
 		// ako nije 80-ka samo jednom prodji
 		exit
 	endif

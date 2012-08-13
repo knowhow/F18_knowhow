@@ -3,6 +3,9 @@
  - kalk, štampa kalkulacije cijena odt, bugfix [#28741](http://redmine.bring.out.ba/issues/28741)
  - fakt, ispis salda kupac/dobavljač, ubačen uslov idfirma [#28635](http://redmine.bring.out.ba/issues/28635)
  - PostojiSifra(), barkod pretraga ispravljena [#28860](http://redmine.bring.out.ba/issues/28860)
+ - pos, unos stavki, polje ukupno sada vidljivo u pripremi [#28863](http://redmine.bring.out.ba/issues/28863)
+ - pos, prikaz barkod polja unutar browse-a šifrarnika iz računa [#28862](http://redmine.bring.out.ba/issues/28862)
+ - pos, unos inventure - bugfix [#28863](http://redmine.bring.out.ba/issues/28863)
 
 1.1.4  2012-07-31, hernad
 

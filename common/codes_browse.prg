@@ -1674,30 +1674,36 @@ RETURN (NIL)
 
 
 // ---------------------------------------------------------------------
-//   VpSifra(wId)
+//  VpSifra(wId)
 //  Stroga kontrola ID-a sifre pri unosu nove ili ispravci postojece!
 //  wId - ID koji se provjerava
 // --------------------------------------------------------------------
-function VpSifra(wId, cTag)
+function VpSifra( wId, cTag )
 local nRec := RecNo()
 local nRet := .t.
-local cUpozorenje := " !!! Ovaj ID vec postoji !!! "
+local cUpozorenje
 
 if cTag == NIL
    cTag := "ID"
 endif
 
+// ako nije tag = ID, dozvoli i dupli unos, moze biti barkod polje
+if cTag <> "ID" .and. EMPTY( wId )
+    return nRet
+endif
+
+cUpozorenje := "Vrijednost polja " + cTag + " vec postoji !!!"
+
 PushWa()
 
 SET ORDER TO TAG (cTag)
-
 seek wId
 
-if (FOUND() .and. Ch==K_CTRL_N)
-    MsgBeep(cUpozorenje)
+if ( FOUND() .and. Ch == K_CTRL_N )
+    MsgBeep( cUpozorenje )
     nRet := .f.
 
-elseif (gSKSif=="D" .and. FOUND())   
+elseif ( gSKSif == "D" .and. FOUND() )    
     // nasao na ispravci ili dupliciranju
     if nRec <> RecNo()
         MsgBeep(cUpozorenje)
@@ -1706,14 +1712,17 @@ elseif (gSKSif=="D" .and. FOUND())
         // bio isti zapis, idi na drugi
         skip 1
         if (!EOF() .and. wId==id)
-        MsgBeep(cUpozorenje)
+            MsgBeep(cUpozorenje)
             nRet := .f.
         endif
     endif
 endif
 
 PopWa()
+
 return nRet
+
+
 
 /*! \fn VpNaziv(wNaziv)
  *  \brief Stroga kontrola naziva sifre pri unosu nove ili ispravci postojece sifre

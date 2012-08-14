@@ -638,9 +638,10 @@ do case
         nRet := DE_CONT
     
     case Ch == K_CTRL_L
-        
+       
+        nTArea := SELECT() 
         st_label( .t., _docs->doc_no )
-        
+        select (nTArea)
         nRet := DE_CONT
 endcase
 

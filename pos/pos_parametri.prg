@@ -300,8 +300,11 @@ if LASTKEY() <> K_ESC
     set_metric("SlobodniProstorDiska", nil, gDiskFree )
     set_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
     set_metric("RacunInfo", nil, gRnInfo )
+
     set_metric( "pos_maksimalna_kolicina_na_unosu", nil, _max_qtty )
-	set_metric( "pos_konstantni_unos_racuna", my_user(), _konstantni_unos )
+	max_kolicina_kod_unosa(.t.)
+
+    set_metric( "pos_konstantni_unos_racuna", my_user(), _konstantni_unos )
 
     if IsPDV()
         set_metric("StampatiPoreskeFakture", nil, gPorFakt )

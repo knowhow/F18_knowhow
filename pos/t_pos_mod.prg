@@ -573,5 +573,7 @@ SetBoje( gVrstaRS )
 
 // setuj parametar tezinski_barkod
 param_tezinski_barkod(.t.)
+// maksimalna kolicina kod unosa racuna
+max_kolicina_kod_unosa(.t.)
 
 return

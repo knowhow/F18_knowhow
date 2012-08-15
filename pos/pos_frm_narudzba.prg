@@ -12,6 +12,20 @@
 #include "pos.ch"
 #include "getexit.ch"
 
+static __max_kolicina := NIL
+
+// ----------------------------------------------------------
+// maksimalna kolicina na unosu racuna
+// ----------------------------------------------------------
+function max_kolicina_kod_unosa( read_par )
+
+if read_par != NIL
+    __max_kolicina := fetch_metric( "pos_maksimalna_kolicina_na_unosu", nil, 0 )
+endif
+
+return __max_kolicina
+
+
 
 function UnesiNarudzbu()
 parameters cBrojRn, cSto
@@ -264,12 +278,12 @@ static function when_pos_kolicina(kolicina)
 Popust( m_x + 4, m_y + 28 )
 
 if gOcitBarCod
-       	 if param_tezinski_barkod() == "D" .and. kolicina <> 0
-                 // _kolicina vec setovana
-         else
-                // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
-                kolicina := 1
-         endif
+    if param_tezinski_barkod() == "D" .and. kolicina <> 0
+        // _kolicina vec setovana
+    else
+        // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
+        kolicina := 1
+    endif
 endif
 
 return .t.
@@ -330,11 +344,17 @@ select ( _t_area )
 return
 
 
-
+// ----------------------------------------------------
+// provjera kolicine na unosu racuna
+// ----------------------------------------------------
 function pos_check_qtty( qtty )
 local _max_qtty
 
-_max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", nil, 0 )
+_max_qtty := max_kolicina_kod_unosa() 
+
+if _max_qtty == 0
+    _max_qtty := 99999
+endif
 
 if _max_qtty == 0
     return .t.

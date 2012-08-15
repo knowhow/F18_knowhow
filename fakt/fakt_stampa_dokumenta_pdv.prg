@@ -344,7 +344,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 		cC1 := fakt_pripr->c1
 		cC2 := fakt_pripr->c2
 		cC3 := fakt_pripr->c3
-		cOpis := hb_StrToUtf8(fakt_pripr->opis)
+		cOpis := fakt_pripr->opis
 	endif
 
 	// rn Veleprodaje

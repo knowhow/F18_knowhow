@@ -13,6 +13,7 @@
  - pos, storno po fiskalnom računu [#28864](http://redmine.bring.out.ba/issues/28864)
  - pos, provjera količine kod unosa računa [#28729](http://redmine.bring.out.ba/issues/28729)
  - provjera rednih brojeva dokumenta [#28847](http://redmine.bring.out.ba/issues/28847)
+ - fakt, štampa fakture txt, polje opis [#28773](http://redmine.bring.out.ba/issues/28773)
 
 1.1.4  2012-07-31, hernad
 

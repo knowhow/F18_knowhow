@@ -224,21 +224,33 @@ return
 
 
 
-
+// --------------------------------------------------------------------------
 // generacija inventure - razlike postojece inventure
+// postojeca inventura se kopira u pomocnu tabelu i sluzi kao usporedba
+// svi artikli koji se nadju unutar ove inventure ce biti preskoceni
+// i zanemareni u novoj inventuri
+// --------------------------------------------------------------------------
 function gen_ip_razlika()
+local _rec
+local nUlaz
+local nIzlaz
+local nMPVU
+local nMPVI
+local nNVU
+local nNVI 
+local nRabat
 
 O_KONTO
 
-Box(,4,50)
-	cIdFirma:=gFirma
-	cIdkonto:=padr("1320",7)
-	dDatDok:=date()
-	cOldBrDok:=SPACE(8)
+Box(, 4, 50 )
+	cIdFirma := gFirma
+	cIdkonto := PADR( "1330", 7 )
+	dDatDok := DATE()
+	cOldBrDok := SPACE(8)
 	cIdVd := "IP"
-	@ m_x+1,m_Y+2 SAY "Prodavnica:" GET cIdKonto valid P_Konto(@cIdKonto)
-	@ m_x+2,m_Y+2 SAY "Datum do  :" GET dDatDok
-	@ m_x+3,m_y+2 SAY "Dokument " + cIdFirma + "-" + cIdVd GET cOldBrDok
+	@ m_x+1, m_y+2 SAY "Prodavnica:" GET cIdKonto valid P_Konto(@cIdKonto)
+	@ m_x+2, m_y+2 SAY "Datum do  :" GET dDatDok
+	@ m_x+3, m_y+2 SAY "Dokument " + cIdFirma + "-" + cIdVd GET cOldBrDok
 	read
 	ESC_BCR
 BoxC()
@@ -247,119 +259,163 @@ if Pitanje(,"Generisati inventuru (D/N)","D") == "N"
 	return
 endif
 
+msgo( "kopiram postojecu inventuru ... " ) 
+
 // prvo izvuci postojecu inventuru u PRIPT
-if cp_dok_pript(cIdFirma, cIdVd, cOldBrDok) == 0
+// ona ce sluziti za usporedbu...
+if cp_dok_pript( cIdFirma, cIdVd, cOldBrDok ) == 0
+    msgc()
 	return
 endif
 
+msgc()
+
+// otvori potrebne tabele
 O_TARIFA
 O_SIFK
 O_SIFV
 O_ROBA
 O_KONCIJ
-O_kalk_pripr
+O_KALK_PRIPR
 O_PRIPT
 O_KALK
 
-private cBrDok:=SljBroj(cIdFirma, "IP", 8)
+private cBrDok := SljBroj( cIdFirma, "IP", 8 )
 
 nRbr := 0
 set order to tag "4"
 
-MsgO("Generacija dokumenta IP - " + cBrDok)
+MsgO("Generacija dokumenta IP - " + cBrDok )
 
 select koncij
-seek trim(cIdKonto)
+seek TRIM( cIdKonto )
+
 select kalk
 hseek cIdFirma + cIdKonto
-do while !eof() .and. cIdFirma + cIdKonto == idfirma + pkonto
-	cIdRoba:=Idroba
+
+do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
+
+	cIdRoba := field->idroba
 	
 	select pript
 	set order to tag "2"
-	hseek cIdFirma+"IP"+cOldBrDok+cIdRoba
+	hseek cIdFirma + "IP" + cOldBrDok + cIdRoba
 	
-	// ako nadjes dokument u pript prekoci ga u INVENTURI!!!	
+	// ako nadjes robu u dokumentu u pript prekoci ga u INVENTURI!!!	
 	if Found()
 		select kalk
 		skip
 		loop
 	endif
 	
-	nUlaz:=nIzlaz:=0
-	nMPVU:=nMPVI:=nNVU:=nNVI:=0
-	nRabat:=0
+	nUlaz := 0
+    nIzlaz := 0
+	nMPVU := 0
+    nMPVI := 0
+    nNVU := 0
+    nNVI := 0
+	nRabat := 0
+
 	select roba
-	hseek cidroba
+	hseek cIdRoba
+
 	select kalk
-	do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
-		if ddatdok<datdok  // preskoci
-      			skip
-      			loop
+
+	do while !EOF() .and. cIdfirma + cIdkonto + cIdroba == idFirma + pkonto + idroba
+	    
+        if dDatdok < field->datdok  
+            // preskoci
+      		skip
+      		loop
   		endif
-  		if roba->tip $ "UT"
-      			skip
-      			loop
+  		
+        if roba->tip $ "UT"
+      		skip
+      		loop
   		endif
 		
-		if pu_i=="1"
-    			nUlaz+=kolicina-GKolicina-GKolicin2
-    			nMPVU+=mpcsapp*kolicina
-    			nNVU+=nc*kolicina
-  		elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-    			nIzlaz+=kolicina
-    			nMPVI+=mpcsapp*kolicina
-    			nNVI+=nc*kolicina
-  		elseif pu_i=="5"  .and. (idvd $ "12#13#22")    
-    			// povrat
-    			nUlaz-=kolicina
-    			nMPVU-=mpcsapp*kolicina
-    			nnvu-=nc*kolicina
-  		elseif pu_i=="3"    // nivelacija
-   			nMPVU+=mpcsapp*kolicina
-		elseif pu_i=="I"
-    			nIzlaz+=gkolicin2
-    			nMPVI+=mpcsapp*gkolicin2
-    			nNVI+=nc*gkolicin2
+		if field->pu_i == "1"
+    		nUlaz += kolicina-GKolicina-GKolicin2
+    		nMPVU += mpcsapp*kolicina
+    		nNVU += nc*kolicina
+  		elseif field->pu_i == "5"  .and. !( field->idvd $ "12#13#22")
+    		nIzlaz += kolicina
+    		nMPVI += mpcsapp*kolicina
+    		nNVI += nc*kolicina
+  		elseif field->pu_i == "5"  .and. ( field->idvd $ "12#13#22")    
+    		// povrat
+    		nUlaz -= kolicina
+    		nMPVU -= mpcsapp*kolicina
+    		nNvu -= nc*kolicina
+  		elseif field->pu_i == "3"    
+            // nivelacija
+   			nMPVU += mpcsapp*kolicina
+		elseif field->pu_i == "I"
+    		nIzlaz += gkolicin2
+    		nMPVI += mpcsapp*gkolicin2
+    		nNVI += nc*gkolicin2
   		endif
-  		skip
-	enddo
+  		
+        skip
+	
+    enddo
 
-	if (round(nulaz-nizlaz,4)<>0) .or. (round(nmpvu-nmpvi,4)<>0)
+	if ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .or. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
+
 		select roba
-		hseek cidroba
+		hseek cIdRoba
+
  		select kalk_pripr
- 		scatter()
- 		append ncnl
- 		_idfirma:=cidfirma
-		_idkonto:=cidkonto
-		_pkonto:=cidkonto
-		_pu_i:="I"
- 		_idroba:=cidroba
-		_idtarifa:=roba->idtarifa
- 		_idvd:="IP"
-		_brdok:=cbrdok
-		_rbr:=RedniBroj(++nrbr)
-		// kolicinu odmah setuj na 0
-		_kolicina:=0
+        append blank
+
+        _rec := dbf_get_rec()
+
+ 		_rec["idfirma"] := cIdfirma
+		_rec["idkonto"] := cIdkonto
+		_rec["pkonto"] := cIdkonto
+		_rec["pu_i"] := "I"
+ 		_rec["idroba"] := cIdroba
+		_rec["idtarifa"] := roba->idtarifa
+ 		_rec["idvd"] := "IP"
+		_rec["brdok"] := cBrdok
+		_rec["rbr"] := RedniBroj(++nRbr)
+		
+        // kolicinu odmah setuj na 0
+		_rec["kolicina"] := 0
+
 		// popisana kolicina je trenutno stanje
-		_gkolicina:=nUlaz-nIzlaz
-		_datdok:=_DatFaktP:=ddatdok
-		_ERROR:=""
-		_fcj:=nmpvu-nmpvi // stanje mpvsapp
- 		if round(nulaz-nizlaz,4)<>0
-  			_mpcsapp:=round((nMPVU-nMPVI)/(nulaz-nizlaz),3)
-  			_nc:=round((nnvu-nnvi)/(nulaz-nizlaz),3)
+		_rec["gkolicina"] := nUlaz - nIzlaz
+		
+        _rec["datdok"] := dDatDok 
+        _rec["datfaktp"] := dDatdok
+
+		_rec["error"] := ""
+		_rec["fcj"] := nMpvu-nMpvi 
+        // stanje mpvsapp
+
+ 		if Round( nUlaz - nIzlaz, 4 ) <> 0
+  			_rec["mpcsapp"] := Round((nMPVU - nMPVI)/(nUlaz - nIzlaz),3)
+  			_rec["nc"] := round((nNvu - nNvi)/( nUlaz - nIzlaz ),3)
  		else
-  			_mpcsapp:=0
+  			_rec["mpcsapp"] := 0
  		endif
- 		Gather2()
+
+ 		dbf_update_rec( _rec )
+
  		select kalk
+
 	endif
+
 enddo
+
 MsgC()
 
-closeret
+select kalk_pripr
+if RECCOUNT() > 0
+    MsgBeep( "Dokument inventure formiran u pripremi, obradite ga!" )
+endif
+
+close all
 return
 
 

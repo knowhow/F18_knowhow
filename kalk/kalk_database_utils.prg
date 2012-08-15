@@ -1364,21 +1364,26 @@ BoxC()
 
 MsgBeep("Formirao nove cijene, pomnozio sa faktorom !")
 
-closeret
-*}
+close all
+return
+
 
 
 
 // kopiraj stavke u pript tabelu iz KALK
-function cp_dok_pript(cIdFirma, cIdVd, cBrDok)
-*{
+function cp_dok_pript( cIdFirma, cIdVd, cBrDok )
+
 // kreiraj pript
 crepriptdbf()
+
 O_PRIPT
 O_KALK
+
 select kalk
 set order to tag "1"
+
 hseek cIdFirma+cIdVd+cBrDok
+
 if Found()
     MsgO("Kopiram dokument u pript...")
     do while !EOF() .and. (kalk->(idfirma+idvd+brdok) == cIdFirma+cIdVd+cBrDok) 

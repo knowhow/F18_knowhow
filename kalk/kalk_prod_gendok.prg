@@ -15,109 +15,103 @@
 
 
 function GenProd()
-private Opc:={}
-private opcexe:={}
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc, "1. pocetno stanje                                ")
-AADD(opcexe, {|| PocStProd()})
-AADD(opc, "2. inventure    ")
-AADD(opcexe, {|| MnuPInv()})
-AADD(opc, "3. nivelacije")
-AADD(opcexe, {|| MnuPNivel()})
-AADD(opc, "-----------------------------------------------")
-AADD(opcexe, {|| nil})
-
-if IsPDV()
-	AADD(opc, "4. generisi poc.stanja PPP->PDV17")
-	AADD(opcexe, {|| GetPstPDV()})
-endif
-
-AADD(opc, "5. preknjizenje stanja na drugi konto")
-AADD(opcexe, {|| GetPreknj()})
+AADD(_opc, "1. pocetno stanje                                ")
+AADD(_opcexe, {|| PocStProd()})
+AADD(_opc, "2. inventure    ")
+AADD(_opcexe, {|| MnuPInv()})
+AADD(_opc, "3. nivelacije")
+AADD(_opcexe, {|| MnuPNivel()})
+AADD(_opc, "-----------------------------------------------")
+AADD(_opcexe, {|| nil})
 
 if IsPDV()
-	AADD(opc, "6. set roba tarifa PPP->PDV17")
-	AADD(opcexe, {|| roba_pdv17()})
+    AADD(_opc, "4. generisi poc.stanja PPP->PDV17")
+    AADD(_opcexe, {|| GetPstPDV()})
 endif
 
-AADD(opc, "7. setuj mpc po uzoru na postojecu za % ")
-AADD(opcexe, {|| set_mpc_2()})
+AADD(_opc, "5. preknjizenje stanja na drugi konto")
+AADD(_opcexe, {|| GetPreknj()})
 
-private Izbor:=1
-Menu_SC("gdpr")
+if IsPDV()
+    AADD(_opc, "6. set roba tarifa PPP->PDV17")
+    AADD(_opcexe, {|| roba_pdv17()})
+endif
 
-return
-*}
+AADD(_opc, "7. setuj mpc po uzoru na postojecu za % ")
+AADD(_opcexe, {|| set_mpc_2()})
 
+f18_menu( "gdpr", nil, _izbor, _opc, _opcexe )
 
-function MnuPNivel()
-*{
-private Opc:={}
-private OpcExe:={}
-
-AADD(opc, "1. nivelacija prema zadatnom %                  ")
-AADD(opcexe, {|| NivPoProc()})
-AADD(opc, "2. vrati na cijene prije posljednje nivelacije")
-AADD(opcexe, {|| VratiZadNiv()})
-AADD(opc, "---------------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "3. generacija nivelacije za sve prodavnice")
-AADD(opcexe, {|| get_nivel_p() })
-AADD(opc, "4. pregled promjene cijena (roba->zanivel)")
-AADD(opcexe, {|| rpt_zanivel() })
-AADD(opc, "5. pregled efekata nivelacije za sve prodavnice")
-AADD(opcexe, {|| result_nivel_p()})
-AADD(opc, "6. azuriranje nivelacije za sve prodavnice")
-AADD(opcexe, {|| obr_nivel_p()})
-AADD(opc, "7. setovanje mpc nakon obradjenih nivelacija")
-AADD(opcexe, {|| set_mpc_iz_zanivel()})
-AADD(opc, "8. kopiranje podataka n.cijena 2 -> n.cijena 1")
-AADD(opcexe, {|| zaniv2_zaniv()})
-AADD(opc, "9. stampa obrazaca o prom.cijena za sve prod.")
-AADD(opcexe, {|| o_pr_cijena()})
-AADD(opc, "---------------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "10. PDV nivelacija - zadrzi cijene")
-AADD(opcexe, {|| get_zcnivel()})
-
-
-private Izbor:=1
-Menu_SC("pmn")
 return
 
 
+static function MnuPNivel()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-function MnuPInv()
-private Opc:={}
-private OpcExe:={}
+AADD(_opc, "1. nivelacija prema zadatnom %                  ")
+AADD(_opcexe, {|| NivPoProc()})
+AADD(_opc, "2. vrati na cijene prije posljednje nivelacije")
+AADD(_opcexe, {|| VratiZadNiv()})
+AADD(_opc, "---------------------------------------------")
+AADD(_opcexe, {|| nil})
+AADD(_opc, "3. generacija nivelacije za sve prodavnice")
+AADD(_opcexe, {|| get_nivel_p() })
+AADD(_opc, "4. pregled promjene cijena (roba->zanivel)")
+AADD(_opcexe, {|| rpt_zanivel() })
+AADD(_opc, "5. pregled efekata nivelacije za sve prodavnice")
+AADD(_opcexe, {|| result_nivel_p()})
+AADD(_opc, "6. azuriranje nivelacije za sve prodavnice")
+AADD(_opcexe, {|| obr_nivel_p()})
+AADD(_opc, "7. setovanje mpc nakon obradjenih nivelacija")
+AADD(_opcexe, {|| set_mpc_iz_zanivel()})
+AADD(_opc, "8. kopiranje podataka n.cijena 2 -> n.cijena 1")
+AADD(_opcexe, {|| zaniv2_zaniv()})
+AADD(_opc, "9. stampa obrazaca o prom.cijena za sve prod.")
+AADD(_opcexe, {|| o_pr_cijena()})
+AADD(_opc, "---------------------------------------------")
+AADD(_opcexe, {|| nil})
+AADD(_opc, "10. PDV nivelacija - zadrzi cijene")
+AADD(_opcexe, {|| get_zcnivel()})
 
-AADD(opc, "1. dokument inventure                       ")
-AADD(opcexe, {|| IP()})
-AADD(opc, "2. inventura-razlika prema postojecoj IP ")
-AADD(opcexe, {|| gen_ip_razlika()})
-AADD(opc, "3. na osnovu IP generisi 80-ku ")
-AADD(opcexe, {|| gen_ip_80()})
+f18_menu( "pmn", nil, _izbor, _opc, _opcexe  )
 
-
-private Izbor:=1
-Menu_SC("pmi")
 return
-*}
 
 
 
+static function MnuPInv()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-/*! \fn GenNivP()
- *  \brief Generisanje 19-ke na osnovu azuriranog dokumenta IP
- */
+AADD(_opc, "1. dokument inventure                       ")
+AADD(_opcexe, {|| IP()})
+AADD(_opc, "2. inventura-razlika prema postojecoj IP ")
+AADD(_opcexe, {|| gen_ip_razlika()})
+AADD(_opc, "3. na osnovu IP generisi 80-ku ")
+AADD(_opcexe, {|| gen_ip_80()})
+
+f18_menu( "pmi", nil, _izbor, _opc, _opcexe )
+
+return
+
+
+
 
 function GenNivP()
-*{
+
 O_KONTO
 O_TARIFA
 O_SIFK
 O_SIFV
 O_ROBA
+
 Box(,4,70)
 
 cIdFirma:=gFirma
@@ -125,12 +119,15 @@ cIdVD:="19"
 cOldDok:=space(8)
 cIdkonto:=padr("1320",7)
 dDatDok:=date()
+
 @ m_x+1,m_Y+2 SAY "Prodavnica:" GET  cidkonto valid P_Konto(@cidkonto)
 @ m_x+2,m_Y+2 SAY "Datum     :  " GET  dDatDok
 @ m_x+4,m_y+2 SAY "Dokument na osnovu koga se vrsi inventura:" GET cIdFirma
 @ m_x+4,col()+2 SAY "-" GET cIdVD
 @ m_x+4,col()+2 SAY "-" GET cOldDok
-read;ESC_BCR
+
+read
+ESC_BCR
 
 BoxC()
 
@@ -223,20 +220,13 @@ select kalk; set order to tag "1"; go nTrec
 
  skip
 enddo
-closeret
+
+close all
 return
-*}
 
 
-
-
-
-/*! \fn NivPoProc()
- *  \brief Generisanje dokumenta tipa 19 tj. nivelacije na osnovu zadanog %
- */
-
+// Generisanje dokumenta tipa 19 tj. nivelacije na osnovu zadanog %
 function NivPoProc()
-*{
 local nStopa:=0.0
 local nZaokr:=1
 
@@ -263,9 +253,9 @@ read
 ESC_BCR
 
 if cVarijanta=="3"
-	@ m_x+7,m_Y+2 SAY "Stopa promjene cijena (- za smanjenje)      :" GET nStopa PICT "999.99%"
-	read
-	ESC_BCR
+    @ m_x+7,m_Y+2 SAY "Stopa promjene cijena (- za smanjenje)      :" GET nStopa PICT "999.99%"
+    read
+    ESC_BCR
 endif
 
 BoxC()
@@ -287,125 +277,117 @@ hseek cidfirma+cidkonto
 
 do while !eof() .and. cIdFirma+cIdKonto==idFirma+pKonto
 
-	cIdRoba:=idRoba
-	nUlaz:=nIzlaz:=0
-	nMPVU:=nMPVI:=nNVU:=nNVI:=0
-	nRabat:=0
-	select roba
-	hseek cIdRoba
-	select kalk
+    cIdRoba:=idRoba
+    nUlaz:=nIzlaz:=0
+    nMPVU:=nMPVI:=nNVU:=nNVI:=0
+    nRabat:=0
+    select roba
+    hseek cIdRoba
+    select kalk
 
-	do while !eof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+pKonto+idRoba
+    do while !eof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+pKonto+idRoba
 
-		if dDatDok<datDok  // preskoci
-			skip
-			loop
-		endif
-		if roba->tip $ "UT"
-			skip
-			loop
-		endif
+        if dDatDok<datDok  // preskoci
+            skip
+            loop
+        endif
+        if roba->tip $ "UT"
+            skip
+            loop
+        endif
 
-		if pu_i=="1"
-			nUlaz+=kolicina-gKolicina-gKolicin2
-			nMPVU+=mpcSaPp*kolicina
-			nNVU+=nc*kolicina
+        if pu_i=="1"
+            nUlaz+=kolicina-gKolicina-gKolicin2
+            nMPVU+=mpcSaPp*kolicina
+            nNVU+=nc*kolicina
 
-		elseif pu_i=="5"  .and. !(idVd $ "12#13#22")
-			nIzlaz+=kolicina
-			nMPVI+=mpcSaPp*kolicina
-			nNVI+=nc*kolicina
+        elseif pu_i=="5"  .and. !(idVd $ "12#13#22")
+            nIzlaz+=kolicina
+            nMPVI+=mpcSaPp*kolicina
+            nNVI+=nc*kolicina
 
-		elseif pu_i=="5"  .and. (idVd $ "12#13#22")    // povrat
-			nUlaz-=kolicina
-			nMPVU-=mpcSaPp*kolicina
-			nNVU-=nc*kolicina
+        elseif pu_i=="5"  .and. (idVd $ "12#13#22")    // povrat
+            nUlaz-=kolicina
+            nMPVU-=mpcSaPp*kolicina
+            nNVU-=nc*kolicina
 
-		elseif pu_i=="3"    // nivelacija
-			nMPVU+=mpcSaPp*kolicina
+        elseif pu_i=="3"    // nivelacija
+            nMPVU+=mpcSaPp*kolicina
 
-		elseif pu_i=="I"
-			nIzlaz+=gKolicin2
-			nMPVI+=mpcSaPp*gKolicin2
-			nNVI+=nc*gKolicin2
-		endif
+        elseif pu_i=="I"
+            nIzlaz+=gKolicin2
+            nMPVI+=mpcSaPp*gKolicin2
+            nNVI+=nc*gKolicin2
+        endif
 
-		skip
-	enddo
+        skip
+    enddo
 
-	select roba
-	hseek cIdRoba
+    select roba
+    hseek cIdRoba
 
-	select kalk
+    select kalk
 
-	if (cVarijanta="1" .and. roba->n1=0)
-		//skip
-		loop
-	endif
+    if (cVarijanta="1" .and. roba->n1=0)
+        //skip
+        loop
+    endif
 
-	if (cVarijanta="2" .and. roba->n2=0)
-		//skip
-		loop
-	endif
+    if (cVarijanta="2" .and. roba->n2=0)
+        //skip
+        loop
+    endif
 
 
-	if (round(nUlaz-nIzlaz,4)<>0) .or. (round(nMpvU-nMpvI,4)<>0)
-		PushWA()
-		select kalk_pripr
-		scatter()
-		append ncnl
-		_idfirma:=cIdFirma
-		_pkonto:=_idKonto:=cIdKonto
-		_mkonto:=""
-		_mu_i:=""
-		_pu_i:="3"
-		_idroba:=cIdRoba
-		_idtarifa:=roba->idtarifa
-		_idvd:="19"
-		_brdok:=cBrDok
-		_rbr:=RedniBroj(++nRbr)
-		_kolicina:=nUlaz-nIzlaz
-		_datdok:=_datKurs:=_DatFaktP:=dDatDok
-		_error:="0"
-		_fcj:=UzmiMPCSif()
+    if (round(nUlaz-nIzlaz,4)<>0) .or. (round(nMpvU-nMpvI,4)<>0)
+        PushWA()
+        select kalk_pripr
+        scatter()
+        append ncnl
+        _idfirma:=cIdFirma
+        _pkonto:=_idKonto:=cIdKonto
+        _mkonto:=""
+        _mu_i:=""
+        _pu_i:="3"
+        _idroba:=cIdRoba
+        _idtarifa:=roba->idtarifa
+        _idvd:="19"
+        _brdok:=cBrDok
+        _rbr:=RedniBroj(++nRbr)
+        _kolicina:=nUlaz-nIzlaz
+        _datdok:=_datKurs:=_DatFaktP:=dDatDok
+        _error:="0"
+        _fcj:=UzmiMPCSif()
 
-		if cVarijanta=="1"  // roba->n1
-			_mpcsapp := ROUND( -_fcj*roba->N1/100 , nZaokr )
-		elseif cVarijanta=="2"
-			_mpcsapp := ROUND( -_fcj*roba->N2/100 , nZaokr )
-		else
-			_mpcsapp := ROUND( _fcj*nStopa/100 , nZaokr )
-		endif
+        if cVarijanta=="1"  // roba->n1
+            _mpcsapp := ROUND( -_fcj*roba->N1/100 , nZaokr )
+        elseif cVarijanta=="2"
+            _mpcsapp := ROUND( -_fcj*roba->N2/100 , nZaokr )
+        else
+            _mpcsapp := ROUND( _fcj*nStopa/100 , nZaokr )
+        endif
 
-		private aPorezi:={}
-		private fNovi:=.t.
-		VRoba(.f.)
-		//P_Tarifa(@_idTarifa)
-		select kalk_pripr
-	
-		Gather2()
-		select kalk
-		PopWA()
-	endif
+        private aPorezi:={}
+        private fNovi:=.t.
+        VRoba(.f.)
+        //P_Tarifa(@_idTarifa)
+        select kalk_pripr
+    
+        Gather2()
+        select kalk
+        PopWA()
+    endif
 
 enddo
 
 MsgC()
-CLOSERET
+close all
 return
-*}
 
 
 
-
-
-
-/*! \fn VratiZadNiv()
- *  \brief Generise novu 19-ku tj.nivelaciju na osnovu vec azurirane
- */
-
+// Generise novu 19-ku tj.nivelaciju na osnovu vec azurirane
 function VratiZadNiv()
-*{
 local nSlog:=0,nPom:=0,cStBrDok:=""
 
 O_KONTO
@@ -432,22 +414,22 @@ SEEK cIdFirma+"20"
 skip -1
 
 do while (!BOF() .and. idvd=="19")
-	if (pkonto==cIdKonto .and. datdok<=dDatDok)
-		exit
-	endif
-	skip -1
+    if (pkonto==cIdKonto .and. datdok<=dDatDok)
+        exit
+    endif
+    skip -1
 enddo
 
 if (idvd!="19" .or. pkonto!=cIdKonto)
-	Msg("Ne postoji nivelacija za zadanu prodavnicu u periodu do unesenog datuma!",6)
-	CLOSERET
+    Msg("Ne postoji nivelacija za zadanu prodavnicu u periodu do unesenog datuma!",6)
+    CLOSERET
 else
-	cStBrDok:=kalk_doks->brdok
-	Box(,4,60)
-	@ m_x+1, m_y+2 SAY "Nivel. broj "+cIdFirma+" - 19 -" GET cStBrDok
-	read
-	ESC_BCR
-	BoxC()
+    cStBrDok:=kalk_doks->brdok
+    Box(,4,60)
+    @ m_x+1, m_y+2 SAY "Nivel. broj "+cIdFirma+" - 19 -" GET cStBrDok
+    read
+    ESC_BCR
+    BoxC()
 endif
 
 O_KALK_PRIPR
@@ -486,22 +468,16 @@ DO WHILE !EOF().and.idvd=="19".and.brdok==cStBrDok
 ENDDO
 MsgC()
 
-CLOSERET
+close all
 return
-*}
 
 
 
 
 
 
-/*! \fn KorekMPC()
- *  \brief Generisanje nivelacije radi korekcije MPC
- */
-
+// Generisanje nivelacije radi korekcije MPC
 function KorekMPC()
-*{
-//pravljenje nivelacije za prodavnicu
  LOCAL dDok:=date(), nPom:=0
  PRIVATE cMagac:="1320   "
  O_KONTO
@@ -556,8 +532,8 @@ nPosljVPC := nUlazVPC
 do while !eof() .and. gFirma+cidkonto+cidroba==idFirma+pkonto+idroba
 
   if roba->tip $ "TU"
-  	skip
-  	loop
+    skip
+    loop
   endif
   if cSravnitiD=="D"
      if datdok>dDok
@@ -650,39 +626,31 @@ BoxC()
 nTArea := SELECT()
 
 if Logirati(goModul:oDataBase:cName,"DOK","GENERACIJA")
-	
-	select kalk_pripr
-	go top
-	cOpis := kalk_pripr->idfirma + "-" + ;
-		pripr->idvd + "-" + ;
-		pripr->brdok
+    
+    select kalk_pripr
+    go top
+    cOpis := kalk_pripr->idfirma + "-" + ;
+        pripr->idvd + "-" + ;
+        pripr->brdok
 
-	EventLog(nUser,goModul:oDataBase:cName,"DOK","GENERACIJA",;
-	nil,nil,nil,nil,;
-	cOpis,"","",pripr->datdok,date(),;
-	"","Opcija korekcije nabanih cijena")
+    EventLog(nUser,goModul:oDataBase:cName,"DOK","GENERACIJA",;
+    nil,nil,nil,nil,;
+    cOpis,"","",pripr->datdok,date(),;
+    "","Opcija korekcije nabanih cijena")
 endif
 select (nTArea)
 
 if lGenerisao
-	MsgBeep("Generisana nivelacija u kalk_pripremi - obradite je!")
+    MsgBeep("Generisana nivelacija u kalk_pripremi - obradite je!")
 endif
 
-CLOSERET
+close all
 return
 
 
-
-
-
-
-
-/*! \fn Iz13u11()
- *  \brief Generisanje dokumenta tipa 11 na osnovu 13-ke
- */
-
+// Generisanje dokumenta tipa 11 na osnovu 13-ke
 function Iz13u11()
-*{
+
 O_KONTO
 O_KALK_PRIPR
 O_KALK_PRIPR2
@@ -742,22 +710,14 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
   skip
 enddo
 
-closeret
+close all
 return
-*}
 
 
 
-
-
-
-/*! \fn Gen41S()
- *  \brief Generisanje stavki u 42-ki na osnovu storna 41-ica
- *  \todo Prebaciti u specif za KALKT (Opresa)
- */
-
+// Generisanje stavki u 42-ki na osnovu storna 41-ica
 function Gen41S()
-*{
+
 O_KALK_PRIPR
 select kalk_pripr
 if idvd<>"42"
@@ -878,18 +838,11 @@ ENDDO // konto
 
 close all
 return .t.
-*}
 
 
-
-
-
-/*! \fn Iz11u412()
- *  \brief Generisanje dokumenta tipa 41 ili 42 na osnovu 11-ke
- */
-
+// Generisanje dokumenta tipa 41 ili 42 na osnovu 11-ke
 function Iz11u412()
-*{
+
   o_kalk_edit()
   cIdFirma := gFirma
   cIdVdU   := "11"
@@ -985,19 +938,13 @@ endif
     SKIP 1
   ENDDO
 
-CLOSERET
+close all
 return
-*}
 
 
-
-
-/*! \fn Iz10u11()
- *  \brief Generisanje dokumenta tipa 11 na osnovu 10-ke
- */
-
+// Generisanje dokumenta tipa 11 na osnovu 10-ke
 function Iz10u11()
-*{
+
   o_kalk_edit()
   cIdFirma := gFirma
   cIdVdU   := "10"
@@ -1089,14 +1036,13 @@ endif
     SKIP 1
   ENDDO
 
-CLOSERET
+close all
 return
-*}
+
 
 
 // generisi 80-ku na osnovu IP-a
 function gen_ip_80()
-*{
 local cIdFirma := gFirma
 local cTipDok := "IP"
 local cIpBrDok := SPACE(8)
@@ -1105,29 +1051,30 @@ local nCnt:=0
 local cNxt80:=SPACE(8)
 
 Box(,5,65)
-	@ 1+m_x, 2+m_y SAY "Postojeci dokument IP -> " + cIdFirma + "-" + cTipDok + "-" GET cIpBrDok VALID !Empty(cIpBrDok)
-	@ 2+m_x, 2+m_y SAY "Datum dokumenta" GET dDat80 VALID !Empty(dDat80)
-	read
+    @ 1+m_x, 2+m_y SAY "Postojeci dokument IP -> " + cIdFirma + "-" + cTipDok + "-" GET cIpBrDok VALID !Empty(cIpBrDok)
+    @ 2+m_x, 2+m_y SAY "Datum dokumenta" GET dDat80 VALID !Empty(dDat80)
+    read
 BoxC()
 
 if LastKey()==K_ESC
-	return
+    return
 endif
 
 if Pitanje(,"Generisati 80-ku (D/N)?","D") == "N"
-	return
+    return
 endif
 
 // kopiraj dokument u pript
-if cp_dok_pript(cIdFirma, cTipDok, cIpBrDok) == 0
-	return
+if cp_dok_pript( cIdFirma, cTipDok, cIpBrDok ) == 0
+    return
 endif
 
 O_KALK_DOKS
 O_KALK
+O_PRIPT
 O_KALK_PRIPR
 
-cNxt80 := GetNextKalkDoc(gFirma, "80")
+cNxt80 := GetNextKalkDoc( gFirma, "80" )
 
 // obradi dokument u kalk_pripremu -> konvertuj u 80
 select pript
@@ -1135,31 +1082,36 @@ set order to tag "2"
 go top
 
 Box(,1,30)
+
 do while !EOF()
-	Scatter()
-	select kalk_pripr
-	append blank
-	
-	_gkolicina := 0
-	_gkolicin2 := 0
-	_idvd := "80"
-	_error := "0"
-	_tmarza2 := "A"
-	_datdok := dDat80
-	_datfaktp := dDat80
-	_datkurs := dDat80
-	_brdok := cNxt80
-	
-	Gather()
-	
-	++ nCnt
-	@ 1+m_x, 2+m_y SAY ALLTRIM(STR(nCnt))
-	
-	select pript
-	skip
+
+    Scatter()
+
+    select kalk_pripr
+    append blank
+    
+    _gkolicina := 0
+    _gkolicin2 := 0
+    _idvd := "80"
+    _error := "0"
+    _tmarza2 := "A"
+    _datdok := dDat80
+    _datfaktp := dDat80
+    _datkurs := dDat80
+    _brdok := cNxt80
+    
+    Gather()
+    
+    ++ nCnt
+    @ 1+m_x, 2+m_y SAY ALLTRIM(STR(nCnt))
+    
+    select pript
+    skip
 enddo
+
 BoxC()
+
 return
-*}
+
 
 

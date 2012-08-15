@@ -32,7 +32,7 @@ set_a_dbf_temp("_kalk_kalk"    , "_KALK"          , F__KALK        )
 set_a_dbf_temp("kalk_pripr"    , "KALK_PRIPR"     , F_KALK_PRIPR   )
 set_a_dbf_temp("kalk_pripr2"   , "KALK_PRIPR2"    , F_KALK_PRIPR2  )
 set_a_dbf_temp("kalk_pripr9"   , "KALK_PRIPR9"    , F_KALK_PRIPR9  )
-set_a_dbf_temp("kalk_pript"    , "PRIPT"          ,  F_PRIPT       )
+set_a_dbf_temp("kalk_pript"    , "PRIPT"          , F_PRIPT       )
 
 set_a_dbf_temp("kalk_pormp"    , "PORMP"          , F_PORMP        )
 

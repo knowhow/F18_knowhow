@@ -660,20 +660,28 @@ return
 
 
 function CrePriptDbf()
+local _pript_tbl := "kalk_pript"
 
 close all
 
-FErase( f18_ime_dbf( "KALK_PRIPT" ))
+FErase( my_home() + _pript_tbl + ".dbf" )
+FErase( my_home() + _pript_tbl + ".cdx" )
 
 O_KALK_PRIPR
-select kalk_pripr
 
 // napravi pript sa strukturom tabele kalk_pripr
-copy structure to ("struct")
-create ("kalk_pript") from ("struct")
+copy structure extended to ( my_home() + "struct" )
+create ( my_home() + _pript_tbl ) from ( my_home() + "struct" )
 
-create_index("1","idfirma+idvd+brdok", "kalk_pript")
-create_index("2","idfirma+idvd+brdok+idroba", "kalk_pript")
+use
+
+select ( F_PRIPT )
+my_use_temp( "PRIPT", my_home() + _pript_tbl, .f., .t. )
+
+index on ( idfirma + idvd + brdok ) tag "1"
+index on ( idfirma + idvd + brdok + idroba ) tag "2"
+
+use
 
 return
 

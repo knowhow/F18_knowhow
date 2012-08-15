@@ -285,6 +285,7 @@ local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" )
 private _kome_zr := ""
 private _kome_txt := ""
 private _budzorg := ""
+private _idjprih := ""
  
 select partn 
 seek gFirma
@@ -327,6 +328,7 @@ do while !EOF()
     if _bez_nula == "N" .or. _izr_formula > 0
 
         append blank
+
         replace field->rbr with ++ r_br
         replace field->mjesto with gMjesto
         replace field->svrha_pl with _svrha_placanja
@@ -349,7 +351,7 @@ do while !EOF()
         _kome_txt := ""
         _budzorg := ""
        
-        if vrprim->idpartner = "JP  " 
+        if PADR( vrprim->idpartner, 2 ) == "JP" 
 
             // javni prihodi
             // setuj varijable _kome_zr, _kome_txt , _budzorg
@@ -358,7 +360,8 @@ do while !EOF()
             __kome_zr := _kome_zr
             __kome_txt := _kome_txt
             __budz_org := _budzorg
-            __org_jed := gOrgJed  
+            __org_jed := gOrgJed
+            __id_jprih := _idjprih  
 
         else
 
@@ -381,6 +384,7 @@ do while !EOF()
             __kome_zr := _kome_zr
             __budz_org := "" 
             __org_jed := ""
+            __id_jprih := ""
             _per_od := ctod("")
             _per_do := ctod("")
 
@@ -393,6 +397,7 @@ do while !EOF()
         replace field->pdo with per_do
         replace field->budzorg with __budz_org
         replace field->bpo with __org_jed
+        replace field->idjprih with __id_jprih
 
     endif
 

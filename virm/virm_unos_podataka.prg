@@ -143,7 +143,9 @@ do case
          BoxC()
          return DE_REFRESH
 
-     case Ch==K_CTRL_N  // nove stavke
+     case Ch == K_CTRL_N  
+        
+        // nove stavke
 
         nDug := 0
         nPot := 0
@@ -151,13 +153,13 @@ do case
 
         go bottom
 
-        Box( "c-N", MAXROWS() - 8, MAXCOLS() - 5, .f., "Unos novih stavki" )
+        Box( "c-N", MAXROWS() - 11, MAXCOLS() - 5, .f., "Unos novih stavki" )
 
         do while .t.
 
             Scatter()
             _rbr := _rbr + 1
-            @ m_x + 1, m_y + 1 CLEAR TO m_x + ( MAXROWS() - 9 ), m_y + ( MAXCOLS() - 6 )
+            @ m_x + 1, m_y + 1 CLEAR TO m_x + ( MAXROWS() - 12 ), m_y + ( MAXCOLS() - 5 )
             if _virm_edit_pripr(.t.)==0
                 exit
             endif
@@ -172,7 +174,7 @@ do case
 
     case Ch == K_ENTER
        
-        Box( "ent", MAXROWS() - 8, MAXCOLS() - 5, .f. )
+        Box( "ent", MAXROWS() - 11, MAXCOLS() - 5, .f. )
         Scatter()
         if _virm_edit_pripr(.f.)==0
             BoxC()
@@ -270,32 +272,39 @@ ESC_RETURN 0
  _IznosSTR:="="+IF( _iznos==0.and.gINulu=="N" , SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos),".",",")) )
 
 
-if vrprim->Idpartner="JP" // javni prihod
-  _VUPl:="0"
+if vrprim->Idpartner = "JP" 
+    
+    // javni prihod
+    
+    _vupl := "0"
 
-  // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
-  // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-  SetJPVar()
-  _kome_txt:=vrprim->naz
+    // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
+    // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
+    SetJPVar()
+    
+    _kome_txt := vrprim->naz
 
-  @ m_x+5,m_y+2 SAY "Primaoc (partner/banka):" + trim(_kome_txt)
-  if fnovi
-
-    if len(_IdJPrih)<6
-       MsgBeep("Sifra prihoda mora biti 6 cifara ?")
-       _IdJPrih := padr(_IdJPrih , 6)
-    endif
-  endif
+    @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + trim(_kome_txt)
   
-  @ m_x+13 , m_y+20 SAY replicate("-",56)
-  @ m_x+14 , m_y+20 SAY "Broj por.obveznika" GET _bpo
-  @ m_x+14 , col()+2 SAY "V.uplate " GET _VUpl
-  @ m_x+15 , m_y+20 SAY "Vrsta prihoda     " GET _IdJPrih
-  @ m_x+17 , m_y+20 SAY "      Opcina      " GET _IdOps
-  @ m_x+15 , m_y+60 SAY "Od:" GET _POd
-  @ m_x+16 , m_y+60 SAY "Do:" GET _PDo
-  @ m_x+17 , m_y+55 SAY "Budz.org" GET _BudzOrg
-  @ m_x+18 , m_y+20 SAY "Poziv na broj:    " GET _PNaBr
+    if fnovi
+
+        if len(_IdJPrih) < 6
+            MsgBeep("Sifra prihoda mora biti 6 cifara ?")
+            _IdJPrih := PADR( _IdJPrih , 6)
+        endif
+    endif
+  
+    @ m_x + 13, m_y + 20 SAY replicate("-",56)
+    
+    @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
+    @ m_x + 14, col() + 2 SAY "V.uplate " GET _VUpl
+
+    @ m_x + 15, m_y + 20 SAY "Vrsta prihoda     " GET _IdJPrih
+    @ m_x + 17, m_y + 20 SAY "      Opcina      " GET _IdOps
+    @ m_x + 15, m_y + 60 SAY "Od:" GET _POd
+    @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
+    @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
+    @ m_x + 18, m_y + 20 SAY "Poziv na broj:    " GET _PNaBr
   
   read
   
@@ -738,7 +747,6 @@ return aRez
 function SetJPVar()
 local _tmp_1 := ""
 local _tmp_2 := ""
-local _idjprih
 local aJPrih
 
 _idjprih := TOKEN( vrprim->racun, "-", 1 )

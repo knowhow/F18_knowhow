@@ -8,6 +8,7 @@
  - pos, unos inventure - bugfix [#28874](http://redmine.bring.out.ba/issues/28874)
  - roba, nedozvoljen unos duplog barkod-a u šifrarnik [#28788](http://redmine.bring.out.ba/issues/28788)
  - kalk, specifične opcije kod IP [#28834](http://redmine.bring.out.ba/issues/28834)
+ - virm, generisanje virmana, fali id javnog prihoda [#28684](http://redmine.bring.out.ba/issues/28684)
 
 1.1.4  2012-07-31, hernad
 

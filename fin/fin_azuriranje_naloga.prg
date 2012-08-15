@@ -342,6 +342,15 @@ if LEN( ALLTRIM( field->brnal ) ) < 8
     return .f.
 endif
 
+go top
+
+// provjera rednih brojeva u nalogu
+if !provjeri_redni_broj() 
+    MsgBeep( "Redni brojevi naloga nisu ispravni !!!" )
+    select ( _t_area )
+    return .f.
+endif
+
 select ( _t_area )
 
 // provjeri da li se u pripremi nalazi vise dokumenata... razlicitih

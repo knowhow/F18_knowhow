@@ -726,6 +726,15 @@ use
 O_FAKT_PRIPR
 go top
 
+// provjeri redne brojeve dokumenta
+if !provjeri_redni_broj()
+    MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
+    return _a_fakt_doks
+endif
+
+select fakt_pripr
+go top
+
 // ubaci mi matricu sve dokumente iz pripreme
 _a_fakt_doks := _fakt_dokumenti()
 

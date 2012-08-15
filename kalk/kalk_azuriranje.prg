@@ -43,6 +43,15 @@ if kalk_doc_exist( kalk_pripr->idfirma, kalk_pripr->idvd, kalk_pripr->brdok )
     return
 endif
 
+select kalk_pripr
+go top
+
+// provjeri redne brojeve
+if !provjeri_redni_broj()
+    MsgBeep( "Redni brojevi dokumenta nisu ispravni !!!" )
+    return 
+endif
+
 // isprazni kalk_pripr2
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2

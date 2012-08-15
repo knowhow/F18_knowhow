@@ -260,6 +260,29 @@ else
 endif
 
 
+// ------------------------------------------------
+// provjera rednog broja u tabeli
+// ------------------------------------------------
+function provjeri_redni_broj()
+local _ok := .t.
+local _tmp
+
+do while !EOF()
+
+    _tmp := field->rbr
+    
+    skip 1
+
+    if _tmp == field->rbr
+        _ok := .f.
+        return _ok        
+    endif
+
+enddo
+
+return _ok
+
+
 
 // da li postoji fajl u chk lokaciji, vraca oznaku
 // X - nije obradjen

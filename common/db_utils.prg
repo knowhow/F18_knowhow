@@ -9,13 +9,4 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-/*
-
-fin/o_fin.ch:#xcommand O_DEST     => select(F_DEST);  MY_USE  (STRTRAN(KUMPATH,"FIN","FAKT")+"DEST")     ; set order to tag "1"
-
-podrzati ovo: .t. - new
-USEX (PRIVPATH+"POM", "ANAL", .t.)
-
-*/
-
 

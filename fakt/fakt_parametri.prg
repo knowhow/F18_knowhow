@@ -120,8 +120,6 @@ if !IsPdv()
 
     @ m_x+nX, m_y+2 SAY "Naziv fajla zaglavlja (prazno bez zaglavlja)" GET gVlZagl VALID V_VZagl()
     nX++
-    @ m_x+nX, m_y+2 SAY "Novi korisnicki interfejs D-da/N-ne/R-rudnik/T-test" GET gNW VALID gNW $ "DNRT" PICT "@!"
-    nX++
     @ m_x+nX, m_y+2 SAY "Svaki izlazni fajl ima posebno ime ?" GET gImeF VALID gImeF $ "DN"
     nX++
     
@@ -251,7 +249,6 @@ if (LASTKEY()<>K_ESC)
 	set_metric( "fakt_unos_destinacije", nil, gDest )
     
 	Wpar("ff",gFaktFakt)
-    Wpar("nw",gNW)
     Wpar("NF",gFNar)
     Wpar("UF",gFUgRab)
     Wpar("no",gNovine)

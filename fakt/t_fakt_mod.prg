@@ -192,7 +192,6 @@ public gProtu13:="N"
 
 public gFPzag:=0
 public gZnPrec:="="
-public gNW:="D"  // new vawe
 public gNovine:="N"        // novine/stampa u asortimanu
 public gnDS:=5             // duzina sifre artikla - sinteticki
 public gFaktFakt:="N"
@@ -531,7 +530,6 @@ RPar("mp",@gMP)
 RPar("mr",@gMjRJ)
 RPar("PR",@gDetPromRj)
 Rpar("ff",@gFaktFakt)
-Rpar("nw",@gNW)
 Rpar("NF",@gFNar)
 Rpar("UF",@gFUgRab)
 Rpar("rR",@gRabIzRobe)

@@ -96,17 +96,17 @@ do while (.t.)
         return
     endif
 
-    if !PPrenosPos()
-        self:lTerminate := .t.
-        return
-    endif
+    //if !PPrenosPos()
+      //  self:lTerminate := .t.
+      //  return
+    //endif
 
     SETPOS (Fx, Fy)
 
-    if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
-        Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
-        loop
-    endif
+    //if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
+    //    Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
+    //    loop
+    //endif
 
     if gVsmjene=="N"
         gSmjena:="1"
@@ -120,6 +120,7 @@ do while (.t.)
 enddo
 
 pos_status_traka()
+
 SETPOS(Fx, Fy)
 fPrviPut:=.t.
 
@@ -134,18 +135,20 @@ do while (.t.)
     else
         KLevel := PosPrijava(Fx, Fy)
         pos_status_traka()
-        if !PPrenosPos()
-            self:lTerminate := .t.
-        endif
+        //if !PPrenosPos()
+          //  self:lTerminate := .t.
+        //endif
     endif
 
     SETPOS (Fx, Fy)
+
     pos_main_menu_level(KLevel,Fx,Fy)
 
     if self:lTerminate
         // zavrsi run!
         exit
     endif
+
 enddo
 
 close all

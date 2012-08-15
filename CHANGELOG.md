@@ -14,6 +14,7 @@
  - pos, provjera količine kod unosa računa [#28729](http://redmine.bring.out.ba/issues/28729)
  - provjera rednih brojeva dokumenta [#28847](http://redmine.bring.out.ba/issues/28847)
  - fakt, štampa fakture txt, polje opis [#28773](http://redmine.bring.out.ba/issues/28773)
+ - pos, opcije sezona trenutno isključene [#28763](http://redmine.bring.out.ba/issues/28763)
 
 1.1.4  2012-07-31, hernad
 

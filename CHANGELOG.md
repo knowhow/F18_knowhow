@@ -10,6 +10,7 @@
  - kalk, specifične opcije kod IP [#28834](http://redmine.bring.out.ba/issues/28834)
  - virm, generisanje virmana, fali id javnog prihoda [#28684](http://redmine.bring.out.ba/issues/28684)
  - ld, štampa ostalih specifikacija, delphi štampa 1000 stranica [#28897](http://redmine.bring.out.ba/issues/28897)
+ - pos, storno po fiskalnom računu [#28864](http://redmine.bring.out.ba/issues/28864)
 
 1.1.4  2012-07-31, hernad
 

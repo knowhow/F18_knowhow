@@ -1634,6 +1634,73 @@ endif
 return .t.
 
 
+
+// ---------------------------------------------------------------
+// storniranje racuna po fiskalnom isjecku
+// ---------------------------------------------------------------
+function pos_storno_fisc_no()
+local nTArea := SELECT()
+local _rec
+local _datum, _broj_rn
+local _fisc_broj := 0
+private GetList := {}
+private aVezani:={}
+
+Box(, 1, 55 )
+	@ m_x + 1, m_y + 2 SAY "broj fiskalnog isjecka:" GET _fisc_broj PICT "9999999999"
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	select ( nTArea )
+	return
+endif
+
+if _fisc_broj <= 0
+	select ( nTArea )
+	return
+endif
+
+select ( nTArea )
+
+select pos_doks
+set order to tag "FISC"
+go top
+seek STR( _fisc_broj, 10 )
+
+if !FOUND()
+    MsgBeep( "Ne postoji racun sa zeljenom vezom fiskalnog racuna !!!" )
+    select (nTArea )
+    return
+endif
+
+_datum := pos_doks->datum
+_broj_rn := pos_doks->brdok
+
+select pos_doks
+set order to tag "1"
+
+// filuj stavke storno racuna
+__fill_storno( _datum, _broj_rn, STR( _fisc_broj, 10 ) )
+
+select (nTArea)
+
+// ovo refreshira pripremu
+oBrowse:goBottom()
+oBrowse:refreshAll()
+oBrowse:dehilite()
+
+do while !oBrowse:Stabilize() .and. ( ( Ch := INKEY() ) == 0 )
+enddo
+
+return
+
+
+
+
+
+
+
 // -------------------------------------
 // storniranje racuna
 // -------------------------------------
@@ -1648,12 +1715,15 @@ private aVezani:={}
 if lSilent == nil
 	lSilent := .f.
 endif
+
 if cSt_rn == nil
 	cSt_rn := SPACE(6)
 endif
+
 if dSt_date == nil
 	dSt_date := DATE()
 endif
+
 if cSt_fisc == nil
 	cSt_fisc := SPACE(10)
 endif
@@ -1697,17 +1767,45 @@ if EMPTY( cSt_rn )
 	return
 endif
 
+select ( nTArea )
+
+// filuj stavke storno racuna
+__fill_storno( dSt_date, cSt_rn, cSt_fisc )
+
+if lSilent == .f.
+
+	// ovo refreshira pripremu
+	oBrowse:goBottom()
+	oBrowse:refreshAll()
+	oBrowse:dehilite()
+
+	do while !oBrowse:Stabilize() .and. ( ( Ch := INKEY() ) == 0 )
+	enddo
+
+endif
+
+return
+
+
+// --------------------------------------------------
+// filuje pripremu sa storno stavkama
+// --------------------------------------------------
+static function __fill_storno( rn_datum, storno_rn, broj_fiscal )
+local _t_area := SELECT()
+local _t_roba, _rec
+
 // napuni pripremu sa stavkama racuna za storno
 select pos
-seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
+seek gIdPos + "42" + DTOS( rn_datum ) + storno_rn
 
 do while !EOF() .and. field->idpos == gIdPos ;
-	.and. field->brdok == cSt_rn ;
+	.and. field->brdok == storno_rn ;
 	.and. field->idvd == "42"
 
-	cT_roba := field->idroba
+	_t_roba := field->idroba
+
 	select roba
-	seek cT_roba
+	seek _t_roba
 	
 	select pos
 
@@ -1725,10 +1823,10 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	dbf_update_rec( _rec )
 
 	if _pos_pripr->(FIELDPOS("C_1")) <> 0
-		if EMPTY( cSt_fisc )
-			replace field->c_1 with cSt_rn
+		if EMPTY( broj_fiscal )
+			replace field->c_1 with storno_rn
 		else
-			replace field->c_1 with cSt_fisc
+			replace field->c_1 with broj_fiscal
 		endif
 	endif
 
@@ -1738,19 +1836,7 @@ do while !EOF() .and. field->idpos == gIdPos ;
 
 enddo
 
-select ( nTArea )
-
-if lSilent == .f.
-
-	// ovo refreshira pripremu
-	oBrowse:goBottom()
-	oBrowse:refreshAll()
-	oBrowse:dehilite()
-
-	do while !oBrowse:Stabilize() .and. ( ( Ch := INKEY() ) == 0 )
-	enddo
-
-endif
+select ( _t_area )
 
 return
 

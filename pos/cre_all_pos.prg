@@ -63,6 +63,7 @@ CREATE_INDEX ("TK", "IdPos+DTOS(Datum)+IdVd", _alias )
 CREATE_INDEX ("GOSTDAT", "IdPos+IdGost+DTOS(Datum)+IdVd+Brdok", _alias )
 CREATE_INDEX ("STO", "IdPos+idvd+STR(STO_BR)+STR(ZAK_BR)+DTOS(datum)+brdok", _alias )
 CREATE_INDEX ("ZAK", "IdPos+idvd+STR(ZAK_BR)+STR(STO_BR)+DTOS(datum)+brdok", _alias )
+CREATE_INDEX ("FISC", "STR(fisc_rn,10)+idpos+idvd", _alias )
 
 aDbf := {}
 AADD ( aDbf, { "BRDOK",     "C",  6, 0} )

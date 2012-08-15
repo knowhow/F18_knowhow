@@ -203,7 +203,7 @@ if UPPER(CHR(LASTKEY()))=="F"
     return DE_REFRESH
 endif
 
-if UPPER(CHR(LASTKEY()))=="S"
+if UPPER(CHR(LASTKEY())) == "S"
     
     // storno racuna
     pos_storno_rn( .t., pos_doks->brdok, pos_doks->datum, ;
@@ -225,7 +225,7 @@ if UPPER(CHR(LASTKEY()))=="Z"
 endif
 
 // setovanje veze sa brojem fiskalnog racuna
-if ch == K_CTRL_R
+if ch == K_CTRL_V
     
     // ako nema polja ... nista
     if pos_doks->(FIELDPOS("FISC_RN")) = 0
@@ -243,7 +243,12 @@ if ch == K_CTRL_R
     
         _rec := dbf_get_rec()
         _rec["fisc_rn"] := nFisc_no
-        update_rec_server_and_dbf( "pos_doks", _rec )   
+        
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
+        update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )   
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
         
         return DE_CONT
     
@@ -251,7 +256,7 @@ if ch == K_CTRL_R
 
 endif
 
-cLast:=UPPER(CHR(LASTKEY()))
+cLast := UPPER(CHR(LASTKEY()))
 if KLevel="0".and.(cLast=="D".or.cLast == "S" .or. cLast=="V" )
     if Pitanje(,"Ispraviti vrijeme racuna ?","N")=="D"
         dOrigD:=Datum

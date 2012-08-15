@@ -77,11 +77,10 @@ aAutoKeys := HangKeys()
 bPrevDn := SETKEY( K_PGDN, {|| DummyProc() })
 bPrevUp := SETKEY( K_PGUP, {|| DummyProc() })
 
-if IsPDV()
-    SETKEY( K_F7, {|| f7_pf_traka() })
-endif
+SETKEY( K_F6, {|| f7_pf_traka() })
 
 // storno racuna
+SETKEY( K_F7, {|| pos_storno_fisc_no(), _refresh_total() })
 SETKEY( K_F8, {|| pos_storno_rn(), _refresh_total() })
 SETKEY( K_F9, {|| fisc_rpt(.t.) })
 
@@ -216,7 +215,12 @@ enddo
 CancelKeys( aAutoKeys )
 SETKEY( K_PGDN, bPrevDn )
 SETKEY( K_PGUP, bPrevUp )
+
+SETKEY( K_F6, NIL)
+SETKEY( K_F7, NIL)
+SETKEY( K_F8, NIL)
 SETKEY( K_F9, NIL)
+
 UnSetSpecNar()
 
 BoxC()

@@ -984,15 +984,11 @@ if !EMPTY( cPartnId )
 
     if cTipDok == "11"
 
-        if  cVr_placanja == "3" 
+        if cVr_placanja == "3" 
            _prikazi_partnera := .t.
         else 
            _prikazi_partnera := .f.
         endif
-
-        // ovo je NN kupac,  jednostavno za njega nadji podatke
- 
-        // hernad: ne razumijem ovo gore sto je napisano
 
         lIno := .f.
         lPDVObveznik := .t.

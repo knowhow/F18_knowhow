@@ -370,7 +370,7 @@ close all
 if lastkey() != K_ESC 
 
     cSpecRtm := "specbs"
-    f18_rtm_print( cSpecRtm )
+    f18_rtm_print( ALLTRIM( cSpecRtm ), "DUMMY", "1" )
 
 endif
 

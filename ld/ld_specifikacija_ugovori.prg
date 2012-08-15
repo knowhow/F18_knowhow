@@ -476,7 +476,7 @@ close all
 if lastkey() != K_ESC
 
     cSpecRtm := "specbu"
-    f18_rtm_print( cSpecRtm )
+    f18_rtm_print( cSpecRtm, "DUMMY", "1" )
 
 endif
 

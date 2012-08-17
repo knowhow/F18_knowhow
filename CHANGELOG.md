@@ -1,3 +1,7 @@
+1.1.6  2012-08-17, vsasa
+
+ - fakt, štampa odt faktura od-do [#28910](http://redmine.bring.out.ba/issues/28910)
+ 
 1.1.5  2012-08-11, vsasa
 
  - kalk, štampa kalkulacije cijena odt, bugfix [#28741](http://redmine.bring.out.ba/issues/28741)

@@ -142,7 +142,8 @@ return
 // --------------------------------
 static function key_handler(Ch)
 local GetList:={}
-local nRec:=0
+local nRec := 0
+local _t_area := SELECT()
 
 do case
 	case ( Ch == K_CTRL_T )
@@ -205,7 +206,16 @@ do case
   		I_ListaUg()
 
 	case ( Ch == K_ALT_L )
+
+        nRec := RECNO()
+
   		kreiraj_adrese_iz_ugovora()
+
+        O_RUGOV
+        O_DEST
+        O_UGOV
+
+        go (nRec)
 
 endcase
 

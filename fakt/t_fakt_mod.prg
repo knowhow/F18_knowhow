@@ -686,7 +686,6 @@ gPartnBlock:={|Ch| FaPartnBlock(Ch)}
 
 public glCij13Mpc:=(IzFmkIni("FAKT","Cijena13MPC","D", KUMPATH)=="D")
 
-public gcLabKomLin:=IzFmkIni("FAKT","PozivZaLabeliranje","labelira labelu",KUMPATH)
 public gNovine:=(IzFmkIni("STAMPA","Opresa","N",KUMPATH))
 
 public glRadNal := .f.

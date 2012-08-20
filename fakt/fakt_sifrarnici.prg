@@ -101,158 +101,170 @@ LOCAL cSif:=ROBA->id, cSif2:=""
 LOCAL nArr:=SELECT()
 
 
-if UPPER(Chr(Ch))=="K"
- //PushWa()
- //BrowseKart(roba->id)
- //PopWa()
- return 6  // DE_CONT2
+if UPPER(Chr(Ch)) == "K"
+    //PushWa()
+    //BrowseKart(roba->id)
+    //PopWa()
+    return 6  // DE_CONT2
 
 elseif upper(Chr(Ch))=="S"
-  TB:Stabilize()  // problem sa "S" - exlusive, htc
-  PushWa()
-  FaktStanje(roba->id)
-  PopWa()
-  return 6  // DE_CONT2
+    TB:Stabilize()  // problem sa "S" - exlusive, htc
+    PushWa()
+    FaktStanje(roba->id)
+    PopWa()
+    return 6  // DE_CONT2
 
 elseif upper(Chr(Ch))=="O"
-  if roba->(fieldpos("strings")) == 0
-  	return 6
-  endif
-  TB:Stabilize()
-  PushWa()
-  m_strings(roba->strings, roba->id)
-  select roba
-  PopWa()
-  return 7
+    if roba->(fieldpos("strings")) == 0
+  	    return 6
+    endif
+    TB:Stabilize()
+    PushWa()
+    m_strings(roba->strings, roba->id)
+    select roba
+    PopWa()
+    return 7
 
 elseif upper(CHR(ch)) == "P"
-  return gen_all_plu()
+    return gen_all_plu()
 
 elseif Ch==K_ALT_M
-  if pitanje(,"Formirati MPC na osnovu VPC ? (D/N)","N")=="D"
-      private GetList:={}, nZaokNa:=1, cMPC:=" ", cVPC:=" "
-      Scatter()
-      select tarifa; hseek _idtarifa; select roba
 
-      Box(,4,70)
-        @ m_x+2, m_y+2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC$" 2"
-        @ m_x+3, m_y+2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC$" 23"
-        READ
-        IF EMPTY(cVPC); cVPC:=""; ENDIF
-        IF EMPTY(cMPC); cMPC:=""; ENDIF
-      BoxC()
+    if pitanje(,"Formirati MPC na osnovu VPC ? (D/N)","N")=="D"
+        
+        private GetList:={}
+        private nZaokNa:=1
+        private cMPC:=" "
+        private cVPC:=" "
+        
+        Scatter()
+        
+        select tarifa
+        hseek _idtarifa
+        select roba
 
-      Box(,6,70)
-        @ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(LEFT(roba->naz,40))
-        @ m_X+2, m_y+2 SAY "TARIFA"
-        @ m_X+2, col()+2 SAY _idtarifa
-        @ m_X+3, m_y+2 SAY "VPC"+cVPC
-        @ m_X+3, col()+1 SAY _VPC&cVPC pict picdem
-        @ m_X+4, m_y+2 SAY "Postojeca MPC"+cMPC
-        @ m_X+4, col()+1 SAY roba->MPC&cMPC pict picdem
-        @ m_X+5, m_y+2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict "9"
-        @ m_X+6, m_y+2 SAY "MPC"+cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict picdem
-        read
-      BoxC()
-      if lastkey()<>K_ESC
-         Gather()
-         IF Pitanje(,"Zelite li isto uraditi za sve artikle kod kojih je MPC"+cMPC+"=0 ? (D/N)","N")=="D"
-           nRecAM:=RECNO()
-           Postotak(1,RECCOUNT2(),"Formiranje cijena")
-           nStigaoDo:=0
-           GO TOP
-           DO WHILE !EOF()
-             IF ROBA->MPC&cMPC == 0
-               Scatter()
-                select tarifa; hseek _idtarifa; select roba
-                _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa)
-               Gather()
-             ENDIF
-             Postotak(2,++nStigaoDo)
-             SKIP 1
-           ENDDO
-           Postotak(0)
-           GO (nRecAM)
-         ENDIF
-         return DE_REFRESH
-      endif
-  elseif pitanje(,"Formirati VPC na osnovu MPC ? (D/N)","N")=="D"
-      private GetList:={}, nZaokNa:=1, cMPC:=" ", cVPC:=" "
-      Scatter()
-      select tarifa; hseek _idtarifa; select roba
+        Box(,4,70)
+            @ m_x+2, m_y+2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC$" 2"
+            @ m_x+3, m_y+2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC$" 23"
+            READ
+            IF EMPTY(cVPC); cVPC:=""; ENDIF
+            IF EMPTY(cMPC); cMPC:=""; ENDIF
+        BoxC()
 
-      Box(,4,70)
-        @ m_x+2, m_y+2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC$" 2"
-        @ m_x+3, m_y+2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC$" 23"
-        READ
-        IF EMPTY(cVPC); cVPC:=""; ENDIF
-        IF EMPTY(cMPC); cMPC:=""; ENDIF
-      BoxC()
+        Box(,6,70)
+            @ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(LEFT(roba->naz,40))
+            @ m_X+2, m_y+2 SAY "TARIFA"
+            @ m_X+2, col()+2 SAY _idtarifa
+            @ m_X+3, m_y+2 SAY "VPC"+cVPC
+            @ m_X+3, col()+1 SAY _VPC&cVPC pict picdem
+            @ m_X+4, m_y+2 SAY "Postojeca MPC"+cMPC
+            @ m_X+4, col()+1 SAY roba->MPC&cMPC pict picdem
+            @ m_X+5, m_y+2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict "9"
+            @ m_X+6, m_y+2 SAY "MPC"+cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict picdem
+            read
+        BoxC()
+        if lastkey()<>K_ESC
+            Gather()
+            IF Pitanje(,"Zelite li isto uraditi za sve artikle kod kojih je MPC"+cMPC+"=0 ? (D/N)","N")=="D"
+                nRecAM:=RECNO()
+                Postotak(1,RECCOUNT2(),"Formiranje cijena")
+                nStigaoDo:=0
+                GO TOP
+                DO WHILE !EOF()
+                    IF ROBA->MPC&cMPC == 0
+                        Scatter()
+                        select tarifa; hseek _idtarifa; select roba
+                        _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa)
+                        Gather()
+                    ENDIF
+                    Postotak(2,++nStigaoDo)
+                    SKIP 1
+                ENDDO
+                Postotak(0)
+                GO (nRecAM)
+            ENDIF
+            return DE_REFRESH
+        endif
+    elseif pitanje(,"Formirati VPC na osnovu MPC ? (D/N)","N")=="D"
+        private GetList:={}, nZaokNa:=1, cMPC:=" ", cVPC:=" "
+        Scatter()
+        select tarifa; hseek _idtarifa; select roba
 
-      Box(,6,70)
-        @ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(LEFT(roba->naz,40))
-        @ m_X+2, m_y+2 SAY "TARIFA"
-        @ m_X+2, col()+2 SAY _idtarifa
-        @ m_X+3, m_y+2 SAY "MPC"+cMPC
-        @ m_X+3, col()+1 SAY _MPC&cMPC pict picdem
-        @ m_X+4, m_y+2 SAY "Postojeca VPC"+cVPC
-        @ m_X+4, col()+1 SAY roba->VPC&cVPC pict picdem
-        @ m_X+5, m_y+2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _VPC&cVPC:=round(_MPC&cMPC / ((1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100)),nZaokNa),.t.} pict "9"
-        @ m_X+6, m_y+2 SAY "VPC"+cVPC GET _VPC&cVPC WHEN {|| _VPC&cVPC:=round(_MPC&cMPC / ((1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100)),nZaokNa),.t.} pict picdem
-        read
-      BoxC()
-      if lastkey()<>K_ESC
-         Gather()
-         IF Pitanje(,"Zelite li isto uraditi za sve artikle kod kojih je VPC"+cVPC+"=0 ? (D/N)","N")=="D"
-           nRecAM:=RECNO()
-           Postotak(1,RECCOUNT2(),"Formiranje cijena")
-           nStigaoDo:=0
-           GO TOP
-           DO WHILE !EOF()
-             IF ROBA->VPC&cVPC == 0
-               Scatter()
-                select tarifa; hseek _idtarifa; select roba
-                _VPC&cVPC:=round(_MPC&cMPC / ((1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100)),nZaokNa)
-               Gather()
-             ENDIF
-             Postotak(2,++nStigaoDo)
-             SKIP 1
-           ENDDO
-           Postotak(0)
-           GO (nRecAM)
-         ENDIF
-         return DE_REFRESH
-      endif
-  endif
-  return DE_CONT
+        Box(,4,70)
+            @ m_x+2, m_y+2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC$" 2"
+            @ m_x+3, m_y+2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC$" 23"
+            READ
+            IF EMPTY(cVPC); cVPC:=""; ENDIF
+            IF EMPTY(cMPC); cMPC:=""; ENDIF
+        BoxC()
 
-elseif Ch==K_CTRL_T .and. gSKSif=="D"
- // provjerimo da li je sifra dupla
- PushWA()
- SET ORDER TO TAG "ID"
- SEEK cSif
- SKIP 1
- cSif2:=ROBA->id
- PopWA()
- IF !(cSif==cSif2)
-   // ako nije dupla provjerimo da li postoji u kumulativu
-   if ima_u_fakt_kumulativ(cSif,"3")
-     Beep(1)
-     Msg("Stavka artikla/robe se ne moze brisati jer se vec nalazi u dokumentima!")
-     return 7
-   endif
- ENDIF
+        Box(,6,70)
+            @ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(LEFT(roba->naz,40))
+            @ m_X+2, m_y+2 SAY "TARIFA"
+            @ m_X+2, col()+2 SAY _idtarifa
+            @ m_X+3, m_y+2 SAY "MPC"+cMPC
+            @ m_X+3, col()+1 SAY _MPC&cMPC pict picdem
+            @ m_X+4, m_y+2 SAY "Postojeca VPC"+cVPC
+            @ m_X+4, col()+1 SAY roba->VPC&cVPC pict picdem
+            @ m_X+5, m_y+2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _VPC&cVPC:=round(_MPC&cMPC / ((1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100)),nZaokNa),.t.} pict "9"
+            @ m_X+6, m_y+2 SAY "VPC"+cVPC GET _VPC&cVPC WHEN {|| _VPC&cVPC:=round(_MPC&cMPC / ((1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100)),nZaokNa),.t.} pict picdem
+            read
+        BoxC()
+
+        if lastkey()<>K_ESC
+            Gather()
+            IF Pitanje(,"Zelite li isto uraditi za sve artikle kod kojih je VPC"+cVPC+"=0 ? (D/N)","N")=="D"
+                nRecAM:=RECNO()
+                Postotak(1,RECCOUNT2(),"Formiranje cijena")
+                nStigaoDo:=0
+                GO TOP
+                DO WHILE !EOF()
+                    IF ROBA->VPC&cVPC == 0
+                        Scatter()
+                        select tarifa; hseek _idtarifa; select roba
+                        _VPC&cVPC:=round(_MPC&cMPC / ((1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100)),nZaokNa)
+                        Gather()
+                    ENDIF
+                    Postotak(2,++nStigaoDo)
+                    SKIP 1
+                ENDDO
+                Postotak(0)
+                GO (nRecAM)
+            ENDIF
+            return DE_REFRESH
+        endif
+    endif
+    return DE_CONT
+
+elseif Ch == K_CTRL_T .and. gSKSif=="D"
+    // provjerimo da li je sifra dupla
+    PushWA()
+    SET ORDER TO TAG "ID"
+    SEEK cSif
+    SKIP 1
+    cSif2:=ROBA->id
+    PopWA()
+    IF !(cSif==cSif2)
+        // ako nije dupla provjerimo da li postoji u kumulativu
+        if ima_u_fakt_kumulativ(cSif,"3")
+            Beep(1)
+            Msg("Stavka artikla/robe se ne moze brisati jer se vec nalazi u dokumentima!")
+            return 7
+        endif
+    ENDIF
 
 elseif Ch==K_F2 .and. gSKSif=="D"
- if ima_u_fakt_kumulativ(cSif,"3")
-   return 99
- endif
+    if ima_u_fakt_kumulativ(cSif,"3")
+        return 99
+    endif
 
 else // nista od magicnih tipki
- return DE_CONT
+    return DE_CONT
 endif
 
 RETURN DE_CONT
+
+
 
 /*! \fn FaktStanje(cIdRoba)
  *  \brief Stanje robe fakt-a
@@ -525,14 +537,10 @@ IF gNW=="T"
    	O_FADE
 ENDIF
 
-IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-	O_VRSTEP
-ENDIF
+O_VRSTEP
+O_OPS
 
-IF IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D"
-	O_OPS
-ENDIF
-RETURN
+return
 
 
 
@@ -544,26 +552,28 @@ RETURN
  
 function ima_u_fakt_kumulativ(cKljuc,cTag)
 
-  LOCAL lVrati:=.f., lUsed:=.t., nArr:=SELECT()
-  SELECT (F_FAKT)
-  IF !USED()
+LOCAL lVrati:=.f., lUsed:=.t., nArr:=SELECT()
+SELECT (F_FAKT)
+  
+IF !USED()
     lUsed:=.f.
     O_FAKT
-  ELSE
+ELSE
     PushWA()
-  ENDIF
-  IF !EMPTY(INDEXKEY(VAL(cTag)+1))
+ENDIF
+  
+IF !EMPTY(INDEXKEY(VAL(cTag)+1))
     SET ORDER TO TAG (cTag)
     seek cKljuc
     lVrati:=found()
-  ENDIF
+ENDIF
 
-  IF !lUsed
+IF !lUsed
     USE
-  ELSE
+ELSE
     PopWA()
-  ENDIF
-  select (nArr)
+ENDIF
+select (nArr)
 RETURN lVrati
 
 
@@ -776,227 +786,6 @@ do case
 
 endcase
 return nRet
-
-
-
-
-/*! \fn LabelU()
- *  \brief Labeliranje ugovora
- */
- 
-function FaktLabelU()
-
-PushWA()
-cIdRoba   := DFTidroba
-cPartneri := SPACE(80)
-cPTT      := SPACE(80)
-cMjesta   := SPACE(80)
-cNSort    := "4"
-dDatDo    := DATE()
-cG_dat    := "D"
-
-Box(,11,77)
-DO WHILE .t.
- @ m_x+0, m_y+5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
- @ m_x+2, m_y+2 SAY "Artikal  :" GET cIdRoba  VALID P_Roba(@cIdRoba) PICT "@!"
- @ m_x+3, m_y+2 SAY "Partner  :" GET cPartneri PICT "@S50!"
- @ m_x+4, m_y+2 SAY "Mjesto   :" GET cMjesta   PICT "@S50!"
- @ m_x+5, m_y+2 SAY "PTT      :" GET cPTT      PICT "@S50!"
- @ m_x+6, m_y+2 SAY "Gledati tekuci datum (D/N):" GET cG_dat ;
- 	VALID cG_dat $ "DN" PICT "@!"
- @ m_x+7, m_y+2 SAY "Nacin sortiranja (1-kolicina+mjesto+naziv ,"
- @ m_x+8, m_y+2 SAY "                  2-mjesto+naziv+kolicina ,"
- @ m_x+9, m_y+2 SAY "                  3-PTT+mjesto+naziv+kolicina),"
- @ m_x+10, m_y+2 SAY "                  4-kolicina+PTT+mjesto+naziv)," 
- @ m_x+11, m_y+2 SAY "                  5-idpartner)," ;
- 	GET cNSort VALID cNSort$"12345" PICT "9"
- READ
- IF LASTKEY()==K_ESC; BoxC(); RETURN; ENDIF
- aUPart := Parsiraj( cPartneri , "IDPARTNER" )
- aUPTT  := Parsiraj( cPTT      , "PTT"       )
- aUMjes := Parsiraj( cMjesta   , "MJESTO" )
- if aUPart<>NIL .and. aUMjes<>NIL .and. aUPTT<>NIL
-   EXIT
- else
- endif
-ENDDO
-BoxC()
-
-aDbf := {}
-AADD (aDbf, {"IDROBA", "C",  10, 0})
-AADD (aDbf, {"IdPartner", "C",  6, 0})
-AADD (aDbf, {"Destin"  , "C", 6, 0})
-AADD (aDbf, {"Kolicina", "N",  12, 2})
-AADD (aDbf, {"Naz" , "C", 60, 0})
-AADD (aDbf, {"Naz2", "C", 60, 0})
-AADD (aDBf, {"PTT" , 'C' ,   5 ,  0 })
-AADD (aDBf, {"MJESTO" , 'C' ,  16 ,  0 })
-AADD (aDBf, {"ADRESA" , 'C' ,  40 ,  0 })
-AADD (aDBf, {"TELEFON", 'C' ,  12 ,  0 })
-AADD (aDBf, {"FAX"    , 'C' ,  12 ,  0 })
-
-Dbcreate2(PRIVPATH + "LABELU.DBF",aDbf)
-
-select (F_LABELU)
-usex (PRIVPATH+"labelu")
-
-index ON BRISANO TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
-index on str(kolicina,12,2)+mjesto+naz     tag "1"
-index on mjesto+naz+str(kolicina,12,2)     tag "2"
-index on ptt+mjesto+naz+str(kolicina,12,2) tag "3"
-index on str(kolicina,12,2)+ptt+mjesto+naz tag "4"
-index on idpartner tag "5"
-
-if is_dest()
-	select dest
-	set filter to
-endif
-
-select ugov
-set filter to
-
-select rugov
-set filter to
-
-set filter to idroba == cIdRoba
-go top
-
-MsgO("Kreiram LABELU")
-
-do while !eof()
-
-	select ugov
-	set order to tag "ID"
-	go top
-	seek rugov->id
-
-	// stampati samo ugovore kod kojih je LAB_PRN <> "N"
-	if ugov->(FIELDPOS("LAB_PRN")) <> 0
-		if field->lab_prn == "N" .or. !(&aUPart) 
-			select rugov
-			skip 1
-			loop
-		endif
-	else
-		if field->aktivan != "D" .or. !(&aUPart)
-    			select rugov
-			skip 1
-			loop
-  		endif
-	endif
-
-	// pogledaj i datum ugovora, ako je istekao 
-	// ne stampaj labelu
-	if cG_dat == "D" .and. ( dDatDo > ugov->datdo )
-		select rugov
-		skip 1
-		loop
-	endif
-
-  	select partn
-	seek ugov->idpartner
-  	
-	if !(&aUMjes) .or. !(&aUPTT)
-    		select rugov
-		skip 1
-		loop
-  	endif
-
-  	select labelu
-  	append blank
-	
-  	replace idpartner with ugov->idpartner
-	replace kolicina  with rugov->kolicina
-	replace idroba    with rugov->idroba
-
-  	if is_dest() .and. !EMPTY( rugov->dest )
-     		
-		select dest
-		set order to tag "ID"
-		go top
-		seek ugov->idpartner + rugov->dest
-
-     		select labelu
-		replace destin with dest->id
-		replace naz with dest->naziv
-		replace naz2 with dest->naziv2
-		replace ptt with dest->ptt
-		replace mjesto with dest->mjesto
-		replace telefon with dest->telefon
-		replace fax with dest->fax
-     		replace adresa with dest->adresa
-		
-	else  
-		
-		// nije naznacena destinacija
-     		select labelu
-		replace naz with partn->naz
-		replace naz2 with partn->naz2
-		replace ptt with partn->ptt
-		replace mjesto with partn->mjesto
-		replace telefon with partn->telefon
-		replace fax with partn->fax
-		replace adresa with partn->adresa
-		
-  	endif
-
-  	select rugov
-  	skip
-
-enddo
-
-MsgC()
-
-select labelu
-SET ORDER TO TAG (cNSort)
-GO TOP
-
-aKol:={}
-
-if lSpecifZips
-	AADD( aKol, { "Sifra izdanja", {|| IDROBA       }, .f., "C", 13, 0, 1, 1} )
-else
- 	AADD( aKol, { "Roba"         , {|| IDROBA       }, .f., "C", 10, 0, 1, 1} )
-endif
-
-AADD( aKol, { "Partner"      , {|| IdPartner    }, .f., "C",  6, 0, 1, 2} )
-AADD( aKol, { "Dest."        , {|| Destin       }, .f., "C",  6, 0, 1, 3} )
-AADD( aKol, { "Kolicina"     , {|| Kolicina     }, .t., "N", 12, 2, 1, 4} )
-AADD( aKol, { "Naziv"        , {|| Naz          }, .f., "C", 60, 0, 1, 5} )
-AADD( aKol, { "Naziv2"       , {|| Naz2         }, .f., "C", 60, 0, 1, 6} )
-AADD( aKol, { "PTT"          , {|| PTT          }, .f., "C",  5, 0, 1, 7} )
-AADD( aKol, { "Mjesto"       , {|| MJESTO       }, .f., "C", 16, 0, 1, 8} )
-AADD( aKol, { "Adresa"       , {|| ADRESA       }, .f., "C", 40, 0, 1, 9} )
-AADD( aKol, { "Telefon"      , {|| TELEFON      }, .f., "C", 12, 0, 1,10} )
-AADD( aKol, { "Fax"          , {|| FAX          }, .f., "C", 12, 0, 1,11} )
-
-StartPrint()
-
-StampaTabele(aKol,{|| BlokSLU()},,gTabela,,;
-              ,"PREGLED BAZE PRIPREMLJENIH LABELA",,,,,)
-
-close all
-EndPrint()
-
-use
-
-PopWA()
-
-if Pitanje(, "Aktivirati modul za stampu ?"," ") == "D"
-	private cKomLin := gcLabKomLin + " " + PRIVPATH + "  labelu " + cNSort
- 	run &cKomLin
-endif
-
-return
-
-
-
-/*! \fn BlokSLU()
- */
-function BlokSLU()
-
-RETURN
-
 
 
 /*! \fn ZipsTemp()

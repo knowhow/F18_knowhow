@@ -205,7 +205,7 @@ do case
   		I_ListaUg()
 
 	case ( Ch == K_ALT_L )
-  		FaktLabelu()
+  		kreiraj_adrese_iz_ugovora()
 
 endcase
 

@@ -145,8 +145,8 @@ END CASE
    
 _ret := _sql_query( _server, _qry)
 
-log_write( "sql_table_update(), qry: " + _qry, 6 )
-log_write( "sql_table_update(), VALTYPE(_ret): " + VALTYPE(_ret), 6 )
+log_write( "sql_table_update(), qry: " + _qry, 3 )
+log_write( "sql_table_update(), VALTYPE(_ret): " + VALTYPE(_ret), 3 )
 
 if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.

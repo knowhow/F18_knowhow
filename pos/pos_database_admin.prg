@@ -73,6 +73,7 @@ if (RECCOUNT2() == 0)
     
     MsgO("Kreiram ini STRAD")
 
+    my_use_semaphore_off()
     sql_table_update( nil, "BEGIN")
 
     select strad
@@ -101,6 +102,7 @@ if (RECCOUNT2() == 0)
     update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
 
     sql_table_update( nil, "END")
+    my_use_semaphore_on()
 
     MsgC()
     
@@ -114,6 +116,7 @@ if (RECCOUNT2() == 0)
     
     select osob
    
+    my_use_semaphore_off()
     sql_table_update( nil, "BEGIN")
     
     append blank
@@ -144,6 +147,7 @@ if (RECCOUNT2() == 0)
     update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
     
     sql_table_update( nil, "END")
+    my_use_semaphore_on()
 
     MsgC()
 
@@ -201,9 +205,15 @@ do while !eof()
     if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ((cUvijekUzmi == "D") .and. !empty(cBkSez))
         
         select roba
+
         _rec := dbf_get_rec()
         _rec["barkod"] := cBKSez
-        update_rec_server_and_dbf( ALIAS(), _rec )
+
+        my_use_semaphore_off()
+        sql_table_update( nil, "BEGIN" )
+        update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+        sql_table_update( nil, "END" )
+        my_use_semaphore_on()
         
         @ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
     endif
@@ -218,4 +228,6 @@ BoxC()
 MsgBeep("Setovao barkodove iz sezonskog podrucja")
 
 return
+
+
 

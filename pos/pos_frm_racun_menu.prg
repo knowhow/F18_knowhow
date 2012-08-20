@@ -275,26 +275,6 @@ cStalRac := pos_novi_broj_dokumenta( cIdPos, VD_RN )
 
 gDatum := DATE()
 
-/*
-// pravi se append u bazu
-// radnik "////"
-select pos_doks
-append blank
-
-_rec := dbf_get_rec()
-_rec["idpos"] := gIdPos
-_rec["idvd"] := VD_RN
-_rec["brdok"] := cStalRac
-_rec["idradnik"] := "////"
-_rec["datum"] := gDatum
-
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-*/
-
 aVezani := {}
 //AADD( aVezani, { pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum })
 AADD( aVezani, { cIdPos, cRadRac, cIdVrsteP, gDatum })
@@ -566,7 +546,11 @@ Box (, 7, 70)
     _rec := dbf_get_rec()
     _rec["idvrstep"] := cIdVrsPla
     _rec["idgost"] := cPartner    
-    update_rec_server_and_dbf( ALIAS(), _rec )
+    my_use_semaphore_off()
+    sql_table_update( nil, "BEGIN" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    sql_table_update( nil, "END" )
+    my_use_semaphore_on()
 
 BoxC()
 

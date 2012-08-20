@@ -343,41 +343,32 @@ return (cRet)
 function _pripr2_pos( cIdVrsteP )
 local cBrdok
 local nTrec := 0
-local nPopust
+local _rec
 
 if cIdVrsteP == nil
 	cIdVrsteP := ""
 endif
 
-nPopust := 0
-
 select _pos_pripr
 go top
 
-cBrdok:=brdok
+cBrdok := field->brdok
 
-do while !eof()
+do while !EOF()
 	
-	Scatter()
-	
+	_rec := dbf_get_rec()
+
 	select _pos
 	append blank
 	
 	if ( gRadniRac == "N" )
 		// u _pos_pripr mora biti samo jedan dokument!!!
-		_brdok := cBrDok   
+		_rec["brdok"] := cBrDok   
 	endif
 
-	_IdVrsteP := cIdVrsteP
-	
-	if ( IsPlanika() .and. nPopust > 0 ;
-		.and. gPopust == 0 .and. gPopIznP == 0 ;
-		.and. !gClanPopust )
-		
-		_ncijena := ROUND( _cijena * nPopust / 100, gPopDec )
-	endif
-	
-	gather()
+	_rec["idvrstep"] := cIdVrsteP
+
+    dbf_update_rec( _rec )
 	
 	select _pos_pripr
 	skip
@@ -562,6 +553,7 @@ seek cIdPos + "42" + DTOS( gDatum ) + cRadRac
 
 if !FOUND()
     MsgBeep( "Problem sa podacima tabele _POS, nema stavi !!!#Azuriranje nije moguce !" )
+    my_use_semaphore_on()
     return
 endif
 

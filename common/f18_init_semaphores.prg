@@ -96,7 +96,7 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 1, m_y + 2 SAY _msg_1
 @ m_x + 2, m_y + 2 SAY _msg_2
 
-log_write("prije synchro " +  _msg_1 + " " + _msg_2)
+log_write("prije synchro " +  _msg_1 + " " + _msg_2, 5)
 
 SELECT (_wa)
 my_use(a_dbf_rec["alias"], a_dbf_rec["alias"])
@@ -114,7 +114,7 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 5, m_y + 2 SAY _msg_2
 
 
-log_write("nakon synchro " +  _msg_1 + " " + _msg_2)
+log_write("nakon synchro " +  _msg_1 + " " + _msg_2, 5 )
 
 USE
 

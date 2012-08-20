@@ -820,8 +820,18 @@ return .t.
 
 // -------------------------------
 // -------------------------------
-function log_write(msg)
+function log_write( msg, level )
 local _msg_time
+
+if level == NIL
+    // uzmi defaultni
+    level := log_level()
+endif
+
+// treba li logirati ?
+if level > log_level() 
+    return
+endif
 
 _msg_time := DTOC( DATE() ) 
 _msg_time += ", " 
@@ -837,6 +847,7 @@ endif
  
 return
 
+
 function log_disable()
 __server_log := .f.
 return
@@ -844,6 +855,7 @@ return
 function log_enable()
 __server_log := .f.
 return
+
 
 // -------------------------------------------------
 // -------------------------------------------------

@@ -172,12 +172,12 @@ for _offset := 0 to _count STEP _step
 
     CASE (algoritam == "FULL") .and. (_offset  == 0)
         
-        log_write(_tbl  + " : refresh full algoritam") 
+        log_write(_tbl  + " : refresh full algoritam", 2 ) 
         ZAP
     
     CASE algoritam == "DATE"
 
-        log_write("dat_dok <> nil date algoritam") 
+        log_write("dat_dok <> nil date algoritam", 2) 
         // "date" algoritam  - brisi sve vece od zadanog datuma
         SET ORDER TO TAG "5"
         // tag je "DatDok" nije DTOS(DatDok)
@@ -217,11 +217,11 @@ for _offset := 0 to _count STEP _step
             endif
         enddo
 
-        log_write( "fakt_doks local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+        log_write( "fakt_doks local dbf, deleted rec: " + ALLTRIM(STR( _counter )), 2 )
 
   ENDCASE
 
-  log_write( "fakt_doks, update qry: " + _qry )
+  log_write( "fakt_doks, update qry: " + _qry, 5 )
   _qry_obj := run_sql_query( _qry, _retry )
 
   _counter := 0
@@ -247,7 +247,7 @@ for _offset := 0 to _count STEP _step
 
   ENDDO
 
-  log_write( "fakt_doks update, dbf update rec: " + ALLTRIM( STR( _counter )) )
+  log_write( "fakt_doks update, dbf update rec: " + ALLTRIM( STR( _counter )), 2 )
 
 next
 
@@ -312,8 +312,8 @@ END CASE
    
 _ret := _sql_query( _server, _qry)
 
-log_write(_qry)
-log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
+log_write("sql fakt_doks update, qry: " + _qry, 5 )
+log_write("sql fakt_doks update, _sql_query VALTYPE(_ret) = " + VALTYPE(_ret), 5 )
 
 if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.
@@ -408,12 +408,12 @@ for _offset := 0 to _count STEP _step
     CASE (algoritam == "FULL") .and. (_offset == 0)
         
         // "full" algoritam
-        log_write("dat_dok = nil full algoritam") 
+        log_write("dat_dok = nil full algoritam", 2) 
         ZAP
     
     CASE algoritam == "DATE"
 
-        log_write("dat_dok <> nil date algoritam") 
+        log_write("dat_dok <> nil date algoritam", 2) 
         // "date" algoritam  - brisi sve vece od zadanog datuma
         SET ORDER TO TAG "5"
         // tag je "DatDok" nije DTOS(DatDok)
@@ -455,11 +455,11 @@ for _offset := 0 to _count STEP _step
             endif
         enddo
 
-        log_write( "fakt_doks2 local dbf, deleted rec: " + ALLTRIM(STR( _counter )) )
+        log_write( "fakt_doks2 local dbf, deleted rec: " + ALLTRIM(STR( _counter )), 2 )
 
   ENDCASE
 
-  log_write( "fakt_doks2 db qry: " + _qry )
+  log_write( "fakt_doks2 db qry: " + _qry, 5 )
   _qry_obj := run_sql_query( _qry, _retry )
 
   _counter := 0
@@ -480,7 +480,7 @@ for _offset := 0 to _count STEP _step
 
   ENDDO
 
-  log_write( "fakt_doks2 update rec: " + ALLTRIM( STR( _counter ) ) )
+  log_write( "fakt_doks2 update rec: " + ALLTRIM( STR( _counter ) ), 2 )
 
 next
 
@@ -535,8 +535,8 @@ END CASE
    
 _ret := _sql_query( _server, _qry)
 
-log_write(_qry)
-log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
+log_write( "fakt fakt_doks2 update qry: " + _qry, 5 )
+log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret), 5 )
 
 if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.

@@ -1155,7 +1155,7 @@ if ( from_fmk == NIL )
     from_fmk := .f.
 endif
 
-log_write("otvaram fakt tabele importa i pravim indekse...")
+log_write("otvaram fakt tabele importa i pravim indekse...", 9 )
 
 // zatvori sve prije otvaranja ovih tabela
 close all
@@ -1199,7 +1199,7 @@ my_use_temp( "E_SIFV", use_path + _dbf_name, .f., .t. )
 index on ( id + oznaka + idsif + naz ) tag "ID"
 index on ( id + idsif ) tag "IDIDSIF"
 
-log_write("otvorene sve import tabele i indeksirane...")
+log_write("otvorene sve import tabele i indeksirane...", 9 )
 
 return
 

@@ -311,9 +311,9 @@ Box("#Proces azuriranja u toku", 3, 60)
 
     else
 
-        _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks : " + id_firma + id_tip_dok + br_dok 
+        _msg := "ERR: " + RECI_GDJE_SAM0 + "  nema zapisa u fakt_doks : " + id_firma + id_tip_dok + br_dok 
         Alert(_msg)
-        log_write(_msg)
+        log_write( _msg, 5 )
 
     endif
 
@@ -334,9 +334,9 @@ Box("#Proces azuriranja u toku", 3, 60)
         dbf_update_rec(_rec, .t.)
 
     else
-        _msg := "ERR: " + RECI_GDJE_SAM0 + "  odakle fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
+        _msg := "ERR: " + RECI_GDJE_SAM0 + " nema zapisa u fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
         Alert(_msg)
-        log_write(_msg)
+        log_write( _msg, 5 )
     endif
 
 
@@ -601,10 +601,10 @@ if _ok == .t.
 endif
 
 if !_ok
-    _msg := "trasakcija " + _tmp_id + " neuspjesna ?!"
+    _msg := "FAKT azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
 
-    log_write(_msg)
-    MsgBeep(_msg)
+    log_write( _msg, 2 )
+    MsgBeep(_msg )
     // transakcija neuspjesna
     // server nije azuriran 
     sql_table_update(nil, "ROLLBACK" )

@@ -845,9 +845,9 @@ endif
 
 if !_ok
 
-    _msg := "trasakcija " + _tmp_id + " neuspjesna ?!"
+    _msg := "kalk azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
 
-    log_write(_msg)
+    log_write( _msg, 2 )
     MsgBeep(_msg)
     // transakcija neuspjesna
     // server nije azuriran 
@@ -1130,6 +1130,8 @@ if _brisi_kum
 
     if FOUND()
 
+        log_write( "kalk povrat dokumenta: " + _id_firma + _id_vd + _br_dok, 2 )
+
         _del_rec := dbf_get_rec()
         _ok := .t.
         _ok := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
@@ -1285,7 +1287,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         _br_dok := field->brdok
 
         _del_rec := dbf_get_rec()
-        
+
         // prodji kroz dokument do kraja...
         do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
             skip
@@ -1303,6 +1305,9 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
             seek _id_firma + _id_vd + _br_dok
 
             if found()
+
+                log_write( "kalk, brisanje vise dokumenata: " + _id_firma + _id_vd + _br_dok , 2 )
+
                 _del_rec := dbf_get_rec()
                 // brisi prvo tabelu kalk_doks            
                 _ok := .t.

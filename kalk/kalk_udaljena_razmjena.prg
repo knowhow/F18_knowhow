@@ -839,7 +839,7 @@ if ( from_fmk == NIL )
     from_fmk := .f.
 endif
 
-log_write("otvaram kalk tabele importa i pravim indekse...")
+log_write("otvaram kalk tabele importa i pravim indekse...", 9 )
 
 // zatvori sve prije otvaranja ovih tabela
 close all
@@ -854,7 +854,7 @@ select ( F_TMP_E_KALK )
 my_use_temp( "E_KALK", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvd + brdok ) tag "1"
 
-log_write("otvorio i indeksirao: " + use_path + _dbf_name )
+log_write("otvorio i indeksirao: " + use_path + _dbf_name, 5 )
 
 _dbf_name := "e_doks.dbf"
 if from_fmk
@@ -866,7 +866,7 @@ select ( F_TMP_E_DOKS )
 my_use_temp( "E_DOKS", use_path + _dbf_name, .f., .t. )
 index on ( idfirma + idvd + brdok ) tag "1"
 
-log_write("otvorio i indeksirao: " + use_path + _dbf_name )
+log_write("otvorio i indeksirao: " + use_path + _dbf_name, 5 )
 
 _dbf_name := "e_roba.dbf"
 if from_fmk
@@ -920,7 +920,7 @@ my_use_temp( "E_SIFV", use_path + _dbf_name, .f., .t. )
 index on ( id + oznaka + idsif + naz ) tag "ID"
 index on ( id + idsif ) tag "IDIDSIF"
 
-log_write("otvorene sve import tabele i indeksirane...")
+log_write("otvorene sve import tabele i indeksirane...", 9 )
 
 return
 

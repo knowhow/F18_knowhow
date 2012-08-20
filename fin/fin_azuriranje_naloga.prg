@@ -279,9 +279,9 @@ endif
 
 if !_ok
 
-    _msg := "trasakcija " + _tmp_id + " neuspjesna ?!"
+    _msg := "FIN azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
 
-    log_write(_msg)
+    log_write( _msg, 2 )
     MsgBeep(_msg)
     // transakcija neuspjesna
     // server nije azuriran 
@@ -423,8 +423,8 @@ do while !eof()
 
 
     if nalog_postoji_u_suban(cNal)
-            log_write("nalog postoji u suban " + cNal)
-            return .f.
+        log_write("nalog vec postoji u suban " + cNal, 5 )
+        return .f.
     endif
    
     SELECT PSUBAN
@@ -499,9 +499,7 @@ do while !eof()
         skip
     enddo
 
-    if (gDebug > 5)
-     log_write("azuriram: " + cNal + " saldo " + STR(nSaldo, 17, 2))
-    endif
+    log_write( "azuriram fin nalog: " + cNal + " saldo " + STR(nSaldo, 17, 2), 5 )
 
     pnalog_nalog(cNal)
     panal_anal(cNal)

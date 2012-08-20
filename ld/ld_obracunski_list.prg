@@ -534,7 +534,7 @@ if DirChange(_lokacija) != 0
    _cre := MakeDir (_lokacija)
    if _cre != 0
        MsgBeep("kreiranje " + _lokacija + " neuspjesno ?!")
-       log_write("dircreate err:" + _lokacija)
+       log_write("dircreate err:" + _lokacija, 6)
        return .f.
    endif
 

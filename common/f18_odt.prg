@@ -57,7 +57,7 @@ endif
 
 // prije generisanja pobrisi prošli izlazni fajl...
 FERASE( __output_odt )
-log_write( "ODT report gen: pobrisao fajl " + __output_odt )
+log_write( "ODT report gen: pobrisao fajl " + __output_odt, 7 )
 
 // ovo ce nam biti template lokcija
 _template := my_home() + template
@@ -74,7 +74,7 @@ endif
 
 // postoji li jodreports-cli.jar ?
 if !FILE( ALLTRIM(_jod_bin) )
-    log_write( "ODT report gen: " + _jod_bin + " ne postoji na lokaciji !")
+    log_write( "ODT report gen: " + _jod_bin + " ne postoji na lokaciji !", 7 )
     MsgBeep( "Aplikacija " + _jod_bin + " ne postoji !" )
     return _ok
 endif
@@ -93,7 +93,7 @@ _cmd += _template + " "
 _cmd += __xml_file + " "
 _cmd += __output_odt
 
-log_write( "ODT report gen, cmd: " + _cmd )
+log_write( "ODT report gen, cmd: " + _cmd, 7 )
 
 SAVE SCREEN TO _screen
 CLEAR SCREEN
@@ -106,7 +106,7 @@ _error := hb_run( _cmd )
 RESTORE SCREEN FROM _screen
 
 if _error <> 0
-    log_write( "ODT report gen: greška - " + ALLTRIM( STR( _error )))
+    log_write( "ODT report gen: greška - " + ALLTRIM( STR( _error )), 7 )
     MsgBeep( "Doslo je do greske prilikom generisanja reporta... !!!#" + "Greska: " + ALLTRIM(STR( _error )) )
     return _ok
 endif
@@ -243,7 +243,7 @@ CLEAR SCREEN
 ? "Prikaz odt fajla u toku..."
 
 // pokreni komandu
-log_write(_cmd)
+log_write( _cmd, 7 )
 
 _error := hb_run( _cmd )
 
@@ -352,12 +352,12 @@ endif
 
 // postoji li jodreports-cli.jar ?
 if !FILE( ALLTRIM( _jod_bin ) )
-    log_write( "ODT report conv: " + _jod_bin + " ne postoji na lokaciji !")
+    log_write( "ODT report conv: " + _jod_bin + " ne postoji na lokaciji !", 7 )
     MsgBeep( "Aplikacija " + _jod_bin + " ne postoji !" )
     return _ret
 endif
 
-log_write( "ODT report convert start" )
+log_write( "ODT report convert start", 9 )
 
 // na windows masinama moramo radi DOS-a dodati ove navodnike
 #ifdef __PLATFORM__WINDOWS
@@ -369,7 +369,7 @@ _cmd := _java_start + " " + _jod_bin + " "
 _cmd += __output_odt + " "
 _cmd += __output_pdf
 
-log_write( "ODT report convert, cmd: " + _cmd )
+log_write( "ODT report convert, cmd: " + _cmd, 7 )
 
 SAVE SCREEN TO _screen
 CLEAR SCREEN
@@ -382,7 +382,7 @@ _error := hb_run( _cmd )
 RESTORE SCREEN FROM _screen
  
 if _error <> 0
-    log_write( "ODT report convert: greška - " + ALLTRIM( STR( _error )))
+    log_write( "ODT report convert: greška - " + ALLTRIM( STR( _error )), 7 )
     MsgBeep( "Doslo je do greske prilikom konvertovanja dokumenta... !!!#" + "Greska: " + ALLTRIM(STR( _error )) )
     return _ret
 endif

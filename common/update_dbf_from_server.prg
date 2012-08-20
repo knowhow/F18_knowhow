@@ -54,7 +54,6 @@ _dbf_alias  := _a_dbf_rec["alias"]
 
 _sql_tbl    := "fmk." + table
 
-
 _x := maxrows() - 15
 _y := maxcols() - 20
 
@@ -75,8 +74,9 @@ endif
 
 USE
 
-if (gDebug > 5)
-    log_write( table + " synchro cache: " + STR(SECONDS() - _seconds))
-endif
+log_write( table + " synchro cache: " + STR(SECONDS() - _seconds), 3 )
 
 return .t. 
+
+
+

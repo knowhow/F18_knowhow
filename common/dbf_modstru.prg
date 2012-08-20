@@ -35,7 +35,7 @@ modstru(_ret)
 
 // ------------------------------------------------------------------
 //  Modstru({"*fin_budzet", "C IDKONTO C 10 0",  "A IDKONTO2 C 7 0"})
-
+// ------------------------------------------------------------------
 function modstru(a_commands)
 local _path, _ime_dbf
 local _brisi_dbf := .f.,  _rename_dbf := NIL
@@ -48,8 +48,6 @@ local _full_name
 close all
 
 SET AUTOPEN OFF
-
-log_write("modifikacija struktura - start")
 
 _ime_dbf:=""
 _path := my_home()
@@ -69,7 +67,7 @@ for each _lin in a_commands
        // fin_budzet
        _ime_dbf := ALLTRIM(_lin)
 
-       log_write( "ime fajla: " + _path + _ime_dbf )
+       log_write( "MODSTRU, ime fajla: " + _path + _ime_dbf, 5 )
 
        _full_name := _path + _ime_dbf + "." + DBFEXT       
        if file(_full_name)
@@ -77,8 +75,8 @@ for each _lin in a_commands
            USE  (_path + _ime_dbf) ALIAS OLDDBF EXCLUSIVE
        else
            _ime_dbf := "*"
-           MsgBeep("modstru ERROR" +  _full_name)
-           log_write("modstru ERROR" +  _full_name)
+           MsgBeep( "MODSTRU, greska: " +  _full_name )
+           log_write( "MODSTRU, greska: " +  _full_name, 5 )
            QUIT
        endif
 
@@ -87,9 +85,8 @@ for each _lin in a_commands
        _curr_stru := DBSTRUCT()
        _new_stru := ACLONE(_curr_stru)      
 
-
         if empty(_ime_dbf)
-            log_write( "Nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !" )
+            log_write( "MODSTRU, nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !", 3 )
             close all
             return .f.
         endif
@@ -98,7 +95,7 @@ for each _lin in a_commands
     else
          _op := Rjec(@_lin)
          if !chs_op(_op, @_lin, @_curr_stru, @_new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
-              log_write("modstru problem :" + _ime_dbf )
+              log_write( "MODSTRU, problem: " + _ime_dbf, 2 )
          endif
     endif
 next
@@ -108,6 +105,7 @@ kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_c
 SET AUTOPEN ON 
 close all
 return
+
 
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
@@ -134,17 +132,17 @@ DO CASE
           _len := VAL(Rjec(@lin))
           _dec := VAL(Rjec(@lin))
           if !(_len > 0 .and. _len > _dec) .or. ( _tip == "C" .and. _dec > 0) .or. !(_tip $ "CNDM")
-                log_write( "Greska: Dodavanje polja, linija: " + _l )
+                log_write( "MODSTRU, greska: dodavanje polja, linija: " + _l, 5 )
                 return .f.
           endif
 
           _pos := ASCAN(curr_stru, {|x| x[1]== _ime_p})
           if _pos <> 0
-                log_write( "Greska: Polje " + _ime_p + " vec postoji u DBF-u, linija: " + _l )
+                log_write( "MODSTRU, greska: polje " + _ime_p + " vec postoji u DBF-u, linija: " + _l, 5 )
                 return .f.
           endif
 
-          log_write( "Dodajem polje: " + _ime_p + ", tip: " + _tip + ", duzina: " + ALLTRIM(STR(_len )) + ", dec: " + ALLTRIM( STR( _dec )) )
+          log_write( "MODSTRU, dodajem polje: " + _ime_p + ", tip: " + _tip + ", duzina: " + ALLTRIM(STR(_len )) + ", dec: " + ALLTRIM( STR( _dec )), 5 )
           AADD(new_stru, { _ime_p, _tip, _len, _dec} )
          
          stru_changed := .t.
@@ -154,13 +152,13 @@ DO CASE
           _ime_p :=upper(Rjec(@_lin))
           _pos := ASCAN(new_stru, {|x| x[1]== _ime_p})
           if _pos<>0
-                log_write( "Brisem polje: " + _ime_p )
+                log_write( "MODSTRU, brisem polje: " + _ime_p, 5 )
                 ADEL (stru_new, _pos)
                 // prepakuj array
                 Prepakuj(@_stru_new)  
                 stru_changed := .t.
           else
-                log_write( "Greska: Brisanje nepostojeceg polja, linija: " + _l )
+                log_write( "MODSTRU, greska: brisanje nepostojeceg polja, linija: " + _l, 5 )
                 return .f.
           endif
 
@@ -173,7 +171,7 @@ DO CASE
            
           _pos := ASCAN(curr_stru, {|x| x[1]== _ime_p .and. x[2]== _tip .and. x[3]== _len .and. x[4]== _dec})
            if _pos ==0
-                log_write( "Greska: zadana je promjena nepostojeceg polja, linija: " + _l )
+                log_write( "MODSTRU, greska: zadana je promjena nepostojeceg polja, linija: " + _l, 5 )
                 return .f.
            endif
 
@@ -184,7 +182,7 @@ DO CASE
                  
            _pos_2 := ASCAN( curr_stru, {|x| x[1]== _ime_p_2})
            if _pos_2 <> 0 .and.  _ime_p <> _ime_p_2
-                log_write( "Greska: zadana je promjena u postojece polje, linija: " + _l )
+                log_write( "MODSTRU, greska: zadana je promjena u postojece polje, linija: " + _l, 5 )
                 return .f.
            endif
            stru_changed :=.t.
@@ -206,7 +204,7 @@ DO CASE
             endif
                 
             if !stru_changed
-                log_write( "Greska: Neispravna konverzija, linija: " + _l )
+                log_write( "MODSTRU, greska: neispravna konverzija, linija: " + _l, 5 )
                 return .f.
             endif
 
@@ -219,12 +217,12 @@ DO CASE
             _pos := ASCAN(new_stru, {|x| x[1]==_ime_p.and. x[2]==_tip .and. x[3]==_len .and. x[4]==_dec})
             new_stru[_pos] := { _ime_p_2, _tip_2, _len_2, _dec_2 }
 
-            log_write( "Vrsim promjenu: " + _ime_p + ", tip: " + _tip + ", duzina: " + ALLTRIM( STR(_len)) + ", dec: " + ALLTRIM(STR( _dec )) + " -> " + _ime_p_2 + ", tip: " + _tip_2 + ", duzina: " + ALLTRIM(STR(_len_2)) + ", dec: " +  ALLTRIM(STR(_dec_2)))
+            log_write( "MODSTRU, vrsim promjenu: " + _ime_p + ", tip: " + _tip + ", duzina: " + ALLTRIM( STR(_len)) + ", dec: " + ALLTRIM(STR( _dec )) + " -> " + _ime_p_2 + ", tip: " + _tip_2 + ", duzina: " + ALLTRIM(STR(_len_2)) + ", dec: " +  ALLTRIM(STR(_dec_2)), 5 )
  
              stru_changed := .t.          
 
     OTHERWISE
-           log_write( "greska nepostojeca operacija: " + op )
+           log_write( "MODSTRU, greska nepostojeca operacija: " + op, 5 )
            return .f.
 
 END CASE
@@ -250,10 +248,10 @@ if brisi_dbf
      use
 
      ferase(_f + DBFEXT)
-     log_write( "BRISEM : " + _f + DBFEXT )
+     log_write( "MODSTRU, brisem: " + _f + DBFEXT, 5 )
 
      ferase(_f +  MEMOEXT)
-     log_write( "BRISEM : " + _f + MEMOEXT )
+     log_write( "MODSTRU, brisem: " + _f + MEMOEXT, 5 )
 
      brisi_dbf := .f.
      return
@@ -268,7 +266,7 @@ if rename_dbf != NIL
        _ime_old := _f  +  _ext
        _ime_new := path + rename_dbf + _ext
        if FRENAME(_ime_old, _ime_new) == 0
-          log_write( "PREIMENOVAO : " + _ime_old + " U " + _ime_new )
+          log_write( "MODSTRU, preimenovao: " + _ime_old + " U " + _ime_new, 5 )
        endif
 
      next

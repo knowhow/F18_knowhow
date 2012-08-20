@@ -76,7 +76,7 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
 recover using _err
 
           _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
-          log_write(_msg)
+          log_write( _msg, 3 )
           Alert(_msg)
          
           // _err:GenCode = 23 
@@ -104,7 +104,7 @@ if USED()
 	select (_wa)
 	use
 else
-	log_write("create_index: Ne mogu otvoriti " + cImeDbf )
+	log_write("create_index: Ne mogu otvoriti " + cImeDbf, 3 )
 	fPostoji := .f.
 endif
 
@@ -122,9 +122,7 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
           MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))
      endif
    
-     if gDebug > 5 
-	    log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd )
-     endif
+	 log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd, 7 )
 
      nPom:=RAT( SLASH, cImeInd)
     
@@ -143,7 +141,7 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
 
      	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
 
-        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " / alias=" + alias + " / used() = " + hb_valToStr(USED()))     
+        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 7 )     
      	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
      	USE
 

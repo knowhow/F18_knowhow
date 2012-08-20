@@ -138,13 +138,9 @@ set console on
 
 close all
 
-log_write(_log_msg)
+log_write( _log_msg, 1 )
 
 run (_cmd := "f18_editor " + _out_file)
-
-// if Pitanje(, "Continue F18 ?", "N") == "D"
-//  BREAK(err_obj)
-// endif
 
 QUIT
 RETURN

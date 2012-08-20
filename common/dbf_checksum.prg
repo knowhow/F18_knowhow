@@ -51,33 +51,35 @@ endif
 // hoce li ovo usporiti otvaranje za velike tabele ?! 
 COUNT TO _cnt_dbf 
 
-
 if _cnt_sql <> _cnt_dbf
-   lock_semaphore(_a_dbf_rec["table"], "lock")
+   
+    lock_semaphore(_a_dbf_rec["table"], "lock")
 
-   log_write("ERR check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)))
-   // otvori ekskluzivno
-   USE
-   dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)
+    log_write( "ERR check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)), 2 )
+    
+    // otvori ekskluzivno
+    USE
+    dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)
 
-   _dbf_fields :=  _a_dbf_rec["dbf_fields"]
+    _dbf_fields :=  _a_dbf_rec["dbf_fields"]
 
-   if _dbf_fields == NIL
-      _msg := "setuj dbf_fields u gaDBFS za " + _a_dbf_rec["table"] + " !##Ne mogu full synchro uraditi bez toga"
-      log_write(_msg)
-      MsgBeep(_msg)
-      QUIT
-   else
-      full_synchro(_a_dbf_rec["table"], 15000)
-   endif
+    if _dbf_fields == NIL
+        _msg := "setuj dbf_fields u gaDBFS za " + _a_dbf_rec["table"] + " !##Ne mogu full synchro uraditi bez toga"
+        log_write( _msg, 2 )
+        MsgBeep( _msg )
+        QUIT
+    else
+        full_synchro(_a_dbf_rec["table"], 15000)
+    endif
 
-   USE
-   lock_semaphore(_a_dbf_rec["table"], "free")
+    USE
+    lock_semaphore(_a_dbf_rec["table"], "free")
 endif
 
 if _opened
-   USE
+    USE
 endif
 
-
 return 
+
+

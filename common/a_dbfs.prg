@@ -183,7 +183,7 @@ endif
 if !HB_HHASKEY(_rec, "table") .or. _rec["table"] == NIL
    _msg := RECI_GDJE_SAM + " set_a_dbf nije definisan za table= " + tbl
    Alert(_msg)
-   log_write(_msg)
+   log_write( _msg, 2 )
    QUIT
 endif
 
@@ -206,9 +206,8 @@ if !HB_HHASKEY(_rec, "sql_order")
     endif
 endif
 
-
-
 return _rec
+
 
 
 // ---------------------------------------------------
@@ -310,7 +309,7 @@ if !used()
     recover using _err
 
             _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
-            log_write(_msg)
+            log_write( _msg, 2 )
             Alert(_msg)
                 
             rec["dbf_fields"] := NIL

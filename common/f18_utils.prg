@@ -34,7 +34,7 @@ if _len == 0
 	_create := DIRMAKE( location )
 
 	if _create <> 0
-		log_write("problem sa kreiranjem direktorija: " + location )
+		log_write("f18_create_dir(), problem sa kreiranjem direktorija: " + location, 5 )
 	endif	
 
 endif

@@ -23,7 +23,7 @@ _ids_queries := create_queries_from_ids(dbf_table)
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
-log_write("ids_synchro - ids_queries: " + pp(_ids_queries))
+log_write("ids_synchro - ids_queries: " + pp(_ids_queries), 5 )
 
 _zap := ASCAN(_ids_queries["qry"], "UZMI_STANJE_SA_SERVERA")
 
@@ -71,7 +71,7 @@ if LEN(ids) < 1
    return .f.
 endif
 
-log_write( "push ids: " + table + " / " + pp(ids) )
+log_write( "push ids: " + table + " / " + pp(ids), 5 )
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
@@ -105,7 +105,7 @@ for _i := 1 TO LEN(ids)
 
 next
 
-log_write( "push ids qry: " + _qry )
+log_write( "push ids qry: " + _qry, 5 )
 
 _ret := _sql_query( _server, _qry )
 
@@ -236,7 +236,7 @@ for each _id in _ids
         if _algoritam > LEN(_alg)
                 _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + dbf_tbl
                 Alert(_msg)
-                log_write(_msg)
+                log_write(_msg, 5 )
                 RaiseError(_msg)
                 QUIT
         endif
@@ -266,8 +266,8 @@ for _i := 1 to LEN(_alg)
 
 next
 
-log_write("ret[qry]=" + pp(_queries))
-log_write("ret[ids]=" + pp(_ids_2))
+log_write("ret[qry]=" + pp(_queries), 5 )
+log_write("ret[ids]=" + pp(_ids_2), 5 )
 _ret["qry"] := _queries
 _ret["ids"] := _ids_2
 
@@ -327,7 +327,7 @@ do while .t.
     endif
 enddo
 
-log_write( "delete_ids_in_dbf: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )) )
+log_write( "delete_ids_in_dbf: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )), 5 )
 
 return
 

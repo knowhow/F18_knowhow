@@ -164,7 +164,7 @@ aFiles := DIRECTORY( cPath + cFilter )
 
 // da li postoje templejti
 if LEN( aFiles ) == 0
-	log_write( "template list: na lokaciji " + cPath + " ne postoji niti jedan template, po filteru: " + cFilter )
+	log_write( "template list: na lokaciji " + cPath + " ne postoji niti jedan template, po filteru: " + cFilter, 9 )
     MsgBeep("Ne postoji definisan niti jedan template na lokciji:#" + cPath + "#po filteru: " + cFilter )
 	return 0
 endif

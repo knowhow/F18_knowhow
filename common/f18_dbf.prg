@@ -44,8 +44,8 @@ if no_lock == NIL
 endif
 
 if !used()
-   _msg := "update_rec - nema otvoren dbf"
-   log_write(_msg)
+   _msg := "dbf_update_rec - nema otvoren dbf"
+   log_write( _msg, 1 )
    Alert(_msg)
    quit
 endif
@@ -56,7 +56,7 @@ if no_lock .or. rlock()
         if FIELDPOS(_key) == 0
            _msg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + ALIAS()
            Alert(_msg)
-           log_write(_msg)
+           log_write( _msg, 1 )
         else
            _field_b := FIELDBLOCK(_key)
            // napuni field sa vrijednosti

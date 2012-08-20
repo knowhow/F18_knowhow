@@ -65,7 +65,7 @@ ENDIF
 _arr := gADBFs
 // a_dbfs()
 
-log_write_db(my_home())
+log_write_db( my_home() )
 
 do while .t.
 
@@ -82,7 +82,7 @@ do while .t.
         begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
           _used := .f. 
           if used()
-             log_write_db("_db_thread USED!:" + to_str(TIME()) + " / " + to_str(_i) + " : "  + to_str(_area) + " : " + to_str( _alias ))
+            log_write_db("_db_thread USED!:" + to_str(TIME()) + " / " + to_str(_i) + " : "  + to_str(_area) + " : " + to_str( _alias ))
           else
               log_write_db("_db_thread :" + to_str(TIME()) + " / " + to_str(_i) + " : "  + to_str(_area) + " : " + to_str( _alias ))
               my_use(_alias)
@@ -116,6 +116,9 @@ return  my_use("partn")
 
 return .t.
 
+
 function log_write_db(cMsg)
-  FWRITE(_log_db_handle, cMsg + hb_eol())
+FWRITE( _log_db_handle, cMsg + hb_eol() )
 return
+
+

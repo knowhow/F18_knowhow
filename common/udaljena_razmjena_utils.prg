@@ -405,7 +405,7 @@ if DirChange( use_path ) != 0
     _cre := MakeDir ( use_path )
     if _cre != 0
         MsgBeep("kreiranje " + use_path + " neuspjesno ?!")
-        log_write("dircreate err:" + use_path )
+        log_write("dircreate err:" + use_path, 7 )
         _ret := .f.
     endif
 endif
@@ -606,7 +606,7 @@ else
 
 endif
 
-log_write("dekompresujem fajl:" + _zip_path + _zip_name )
+log_write("dekompresujem fajl:" + _zip_path + _zip_name, 7 )
 
 // unzipuj fajlove
 _error := unzip_files( _zip_path, _zip_name, import_dbf_path )

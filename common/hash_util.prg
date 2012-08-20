@@ -17,7 +17,7 @@ local _msg
 if !HB_HHASKEY(rec, key)
     _msg := RECI_GDJE_SAM + " record ne sadrzi key:" + key + " rec=" + pp(rec)
     Alert(_msg)
-    log_write(_msg)
+    log_write( _msg, 7 )
     RaiseError(_msg)
     QUIT
 endif

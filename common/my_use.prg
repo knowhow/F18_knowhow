@@ -133,7 +133,7 @@ endif
 if valtype(table) != "C"
    _msg := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") table name VALTYPE = " + VALTYPE(type)
    Alert(_msg)
-   log_write(_msg)
+   log_write( _msg, 5 )
    QUIT
 endif
 
@@ -151,9 +151,7 @@ if !_a_dbf_rec["temp"]
    else
      // rdd = "SEMAPHORE" poziv is update from sql server procedure
      // samo otvori tabelu
-     if gDebug > 5
-          log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area))
-     endif
+     log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 1 )
      _rdd := "DBFCDX" 
    endif
 
@@ -169,7 +167,7 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
 recover using _err
 
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
-          log_write(_msg)
+          log_write( _msg, 1 )
           Alert(_msg)
          
           if _err:description == "Read error"
@@ -215,7 +213,7 @@ do while .t.
             // moramo osvjeziti cache
             if _version < _last_version
 
-                log_write("my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10))) 
+                log_write( "my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 3 ) 
                 sql_table_update(nil, "BEGIN")
                 if lock_semaphore(table, "lock")
                     update_dbf_from_server(table, "IDS")
@@ -244,6 +242,7 @@ enddo
 // sada bi lokalni cache morao biti ok, idemo to provjeriti
 check_after_synchro(table)
 
-
 return .t.
+
+
 

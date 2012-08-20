@@ -35,7 +35,7 @@ if !_silent
     _odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N") 
 
     if _odg == "L"
-       log_write("ferase_dbf quit: " + tbl_name) 
+       log_write( "ferase_dbf quit: " + tbl_name, 3 ) 
        QUIT
     endif
 
@@ -45,33 +45,31 @@ if !_silent
 
 endif
 
-log_write("ferase_dbf : " + tbl_name) 
+log_write( "ferase_dbf : " + tbl_name, 3 ) 
 tbl_name := f18_ime_dbf(tbl_name)
 
 
 if FILE(tbl_name)
    if FERASE(tbl_name) != 0
-      log_write("ferase_dbf : " + tbl_name + "neuspjesno !") 
+      log_write("ferase_dbf : " + tbl_name + "neuspjesno !", 3 ) 
       return .f.
    endif
 endif
 
-log_write("brisem: " + tbl_name)
-
 _tmp := STRTRAN(tbl_name, DBFEXT, INDEXEXT)
 if FILE(_tmp)
-   log_write("brisem: " + _tmp)
+   log_write("ferase_dbf, brisem: " + _tmp, 3 )
    if FERASE(_tmp) != 0
-        log_write("ferase_dbf : " + _tmp + "neuspjesno !") 
+        log_write("ferase_dbf : " + _tmp + "neuspjesno !", 3 ) 
         return .f.
    endif
 endif
 
 _tmp := STRTRAN(tbl_name, DBFEXT, MEMOEXT)
 if FILE(_tmp)
-   log_write("brisem: " + _tmp)
+   log_write("ferase, brisem: " + _tmp, 3 )
    if FERASE(_tmp) != 0
-        log_write("ferase_dbf : " + _tmp + "neuspjesno !") 
+        log_write("ferase_dbf : " + _tmp + "neuspjesno !", 3 ) 
         return .f.
    endif
 endif

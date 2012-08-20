@@ -49,7 +49,7 @@ _cmd := ALLTRIM( launch )
 _cmd += " "
 _cmd += __table + ".dbf"
 
-log_write( "Export " + __table + " cmd: " + _cmd )
+log_write( "Export " + __table + " cmd: " + _cmd, 9 )
 
 MsgBeep("Tabela " + my_home() + __table + ".dbf" + "je formirana##" +;
         "Sa opcijom Open file se ova tabela ubacuje u excel #" +;

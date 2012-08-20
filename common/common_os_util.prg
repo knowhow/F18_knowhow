@@ -320,7 +320,8 @@ local _cmd
    _cmd := "open " + folder
 #endif
 
-log_write(_cmd)
+log_write( "open folder cmd line: " + _cmd, 9 )
+
 hb_run(_cmd)
 
 return .t.

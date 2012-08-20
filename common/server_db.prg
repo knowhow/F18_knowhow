@@ -21,9 +21,7 @@ local _server:= pg_server()
 
 _qry := "SELECT u2.knowhow_package_version('fmk')"
 
-if gDebug > 9 
-  log_write(_qry)
-endif
+log_write( _qry, 9 )
 _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "L"
@@ -49,7 +47,7 @@ if (_f18_required_server_num > _server_db_num)
 
    _msg := "F18 klijent trazi verziju " + _f18_required_server_str + " server db je verzije: " + _server_db_str
 
-   log_write(_msg)
+   log_write( _msg, 3 )
 
    MsgBeep(_msg)
 
@@ -57,4 +55,5 @@ if (_f18_required_server_num > _server_db_num)
 endif
 
 return .t.
+
 

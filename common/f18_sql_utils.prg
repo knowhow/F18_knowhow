@@ -96,7 +96,7 @@ DO CASE
             // brisi kompletnu tabel
             _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
             Alert(_msg)
-            log_write(_msg)
+            log_write( _msg, 2 )
             QUIT
         endif
         _qry := "DELETE FROM " + _sql_tbl + " WHERE " + where_str 
@@ -123,7 +123,7 @@ DO CASE
                    _tmp_2 := STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
                    if LEFT(_tmp_2, 1) == "*"
                       _msg := "err_num_width - field: " + _tmp + "  value:" + ALLTRIM(STR(record[_tmp])) + " / width: " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][2])) + " : " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][3]))
-                      log_write(_msg)
+                      log_write( _msg, 2 )
                       RaiseError(_msg)
                    else
                       _qry += _tmp_2
@@ -145,10 +145,8 @@ END CASE
    
 _ret := _sql_query( _server, _qry)
 
-if (gDebug > 5)
-   log_write(_qry)
-   log_write("_sql_query VALTYPE(_ret) = " + VALTYPE(_ret))
-endif
+log_write( "sql_table_update(), qry: " + _qry, 6 )
+log_write( "sql_table_update(), VALTYPE(_ret): " + VALTYPE(_ret), 6 )
 
 if VALTYPE(_ret) == "L"
    // u slucaju ERROR-a _sql_query vraca  .f.
@@ -177,11 +175,11 @@ endif
 
 for _i := 1 to retry
 
-   log_write( "qry: " + qry )
+   log_write( "run_sql_query(), qry: " + qry, 2 )
    begin sequence with {|err| Break(err)}
        _qry_obj := _server:Query(qry)
    recove
-      log_write("ajoj ajoj: qry ne radi !?!")
+      log_write( "run_sql_query(), ajoj ajoj: qry ne radi !?!", 2 )
       my_server_logout()
       hb_IdleSleep(0.5)
       if my_server_login()
@@ -190,8 +188,8 @@ for _i := 1 to retry
    end sequence
 
    if _qry_obj:NetErr()
-       log_write("ajoj :" + _qry_obj:ErrorMsg())
-       log_write("error na:" + qry)
+       log_write("run_sql_query(), ajoj: " + _qry_obj:ErrorMsg(), 2 )
+       log_write("run_sql_query(), error na sljedecem upitu: " + qry, 2 )
        my_server_logout()
        hb_IdleSleep(0.5)
        if my_server_login()
@@ -219,12 +217,13 @@ oResult := oServer:Query( cQuery )
 IF oResult:NetErr()
       cMsg := oResult:ErrorMsg()
       if gDebug > 5 
-         log_write("err qry: " + cQuery + "err msg:" + cMsg)
+         log_write("_sql_query(), error qry: " + cQuery + "err msg:" + cMsg, 3 )
       endif
       MsgBeep( cMsg )
       return .f.
 ENDIF
 RETURN oResult
+
 
 // -------------------------------------
 // setovanje sql schema path-a

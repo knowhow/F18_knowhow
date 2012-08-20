@@ -39,7 +39,7 @@ set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_d
 
 if ALIAS() <> _a_dbf_rec["alias"]
    _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
-   log_write(_msg)
+   log_write( _msg, 2 )
    Alert(_msg)
    QUIT
 endif
@@ -58,8 +58,8 @@ endif
 if !sql_table_update(table, "del", nil, _where_str)
  
    sql_table_update(table, "ROLLBACK")
-   _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno !"
-   log_write(_msg)
+   _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
+   log_write( _msg, 1 )
    Alert(_msg)
 
    _ret := .f.
@@ -81,8 +81,8 @@ if _ret .and.  (_where_str_dbf != _where_str)
     if !sql_table_update(table, "del", nil, _where_str_dbf)
     
         sql_table_update(table, "ROLLBACK")
-        _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno !"
-        log_write(_msg)
+        _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
+        log_write( _msg, 1 )
         Alert(_msg)
 
         return .f.
@@ -92,12 +92,11 @@ endif
 
 // dodaj nove
 if _ret .and. !sql_table_update(table, "ins", values)
-   sql_table_update(table, "ROLLBACK")
-
-   _msg := RECI_GDJE_SAM + "sql ins " + table + " neuspjesno !"
-   RaiseError(_msg)
-
-   return .f.
+    sql_table_update(table, "ROLLBACK")
+    _msg := RECI_GDJE_SAM + "sql ins " + table + " neuspjesno ! ROLLBACK"
+    log_write( _msg, 1 )
+    RaiseError(_msg)
+    return .f.
 endif
 
 // stanje u dbf-u (_values_dbf)
@@ -112,24 +111,24 @@ if ( _full_id_dbf <> _full_id_mem ) .and. !EMPTY( _full_id_dbf )
 endif
 
 if !push_ids_to_semaphore(table, _ids)
-     sql_table_update(table, "ROLLBACK")
-
-    _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " !"
-    Alert(_msg)
-    log_write(_msg)
-
+     
+    sql_table_update(table, "ROLLBACK")
+    _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " ! ROLLBACK"
+    log_write( _msg, 1 )
+    Alert( _msg )
     _ret := .f.
+
 endif
 
 // azuriraj verziju semafora za tabelu
 if _ret .and. update_semaphore_version(table, .t.) < 0
-   sql_table_update(table, "ROLLBACK")
 
-   _msg := "ERR " + RECI_GDJE_SAM0 + "update semaphore " + table +  " !"
-   log_write(_msg)
-   Alert(_msg)
+    sql_table_update(table, "ROLLBACK")
+    _msg := "ERR " + RECI_GDJE_SAM0 + "update semaphore " + table +  " ! ROLLBACK"
+    log_write( _msg, 1 )
+    Alert(_msg)
+    _ret := .f.
 
-   _ret := .f.
 endif
 
 if _ret
@@ -142,10 +141,9 @@ if _ret
         _ret := .t. 
     else
         sql_table_update(table, "ROLLBACK")
-        _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " !"
+        _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " ! ROLLBACK"
+        log_write( _msg, 1 )
         Alert(_msg)
-        log_write(_msg)
-
         _ret := .f.
     endif
 endif
@@ -177,7 +175,7 @@ set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_d
 
 if ALIAS() <> _a_dbf_rec["alias"]
    _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
-   log_write(_msg)
+   log_write( _msg, 1 )
    Alert(_msg)
    RaiseError(_msg)
    QUIT
@@ -202,7 +200,7 @@ if sql_table_update(table, "del", nil, _where_str)
     if ORDNUMBER(_alg["dbf_tag"]) < 1
           _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG" + _alg["dbf_tag"]
           Alert(_msg)
-          log_write(_msg)
+          log_write( _msg, 1 )
           RaiseError(_msg)
           lock_semaphore(table, "free")
 
@@ -230,18 +228,18 @@ if sql_table_update(table, "del", nil, _where_str)
     else
         sql_table_update(table, "ROLLBACK")
 
-        _msg := table + "transakcija neuspjesna !"
-         Alert(_msg)
-        log_write(_msg)
+        _msg := table + "transakcija neuspjesna ! ROLLBACK"
+        log_write( _msg, 1 )
+        Alert(_msg)
 
         _ret := .f.
     endif
 
 else
 
-   _msg := table + "transakcija neuspjesna !"
+   _msg := table + "transakcija neuspjesna ! ROLLBACK"
    Alert(_msg)
-   log_write(_msg)
+   log_write(_msg, 1)
 
    sql_table_update(table, "ROLLBACK")
 
@@ -291,9 +289,9 @@ if sql_table_update( table, "del", _rec, "true")
 
 else
 
-   _msg := table + "transakcija neuspjesna !"
+   _msg := table + "transakcija neuspjesna ! ROLLBACK"
     Alert(_msg)
-   log_write(_msg)
+   log_write(_msg, 1 )
 
    sql_table_update( table, "ROLLBACK")
    return .f.

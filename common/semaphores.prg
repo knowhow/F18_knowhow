@@ -31,17 +31,17 @@ while .t.
     _i++
 	if ALLTRIM(get_semaphore_status(table)) == "lock"
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
-         log_write(_err_msg)
+         log_write(_err_msg, 2)
          @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
          hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-         log_write( "call stack 1 " + PROCNAME(1) + ALLTRIM(STR(PROCLINE(1))))
-         log_write( "call stack 2 " + PROCNAME(2) + ALLTRIM(STR(PROCLINE(2))))
+         log_write( "call stack 1 " + PROCNAME(1) + ALLTRIM(STR(PROCLINE(1))), 2 )
+         log_write( "call stack 2 " + PROCNAME(2) + ALLTRIM(STR(PROCLINE(2))), 2 )
         MsgC()
     else
         if _i > 1
            _err_msg := ToStr(Time()) + " : table unlocked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
            @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
-           log_write(_err_msg)
+           log_write(_err_msg, 2 )
         endif
         exit
     endif
@@ -52,7 +52,7 @@ while .t.
                       "nasilno uklanjam lock !"
           MsgBeep(_err_msg)
             
-          log_write(_err_msg)
+          log_write( _err_msg, 2 )
           exit
           return .f.
     endif
@@ -65,14 +65,11 @@ if status == "lock"
    _qry += "UPDATE fmk.semaphores_" + table + " SET algorithm='locked_by_me' WHERE user_code=" + _sql_quote(_user) + ";" 
 endif
 
-if gDebug > 9 
-  log_write(_qry)
-endif
 _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "L"
   // ERROR
-  log_write("error :" + _qry)
+  log_write("lock_semaphore(), error: " + _qry, 7 )
   Alert("error :" + _qry)
   QUIT
 endif
@@ -87,16 +84,13 @@ local _ret
 local _server := pg_server()
 local _user   := f18_user()
 
-_qry := "SELECT algorithm FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(_user)
+_qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(_user)
 
-if gDebug > 10 
-  log_write(_qry)
-endif
 _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "L"
-   log_write("error :" + _qry)
-  QUIT
+    log_write( "get_semaphore_status(), error: " + _qry, 6 )
+    QUIT
 endif
 
 return _ret:Fieldget( 1 )
@@ -111,9 +105,8 @@ local _server:= pg_server()
 
 _qry := "SELECT last_trans_version FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(f18_user())
 
-if gDebug > 9 
-  log_write(_qry)
-endif
+log_write( "last_semaphore_version(), qry: " + _qry, 7 )
+
 _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "L"
@@ -144,7 +137,7 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 _result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
 
 if _result <> 1
-  log_write( RECI_GDJE_SAM0 + " tbl=" + _tbl + " user=" + _user + " table_count = " + STR(_result))
+  log_write( RECI_GDJE_SAM0 + " tbl=" + _tbl + " user=" + _user + " table_count = " + STR(_result), 7 )
   return -1
 endif
 
@@ -185,7 +178,7 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 _result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
 
 if _result <> 1
-  log_write( _tbl + " " + _user + "count =" + STR(_result))
+  log_write( _tbl + " " + _user + "count =" + STR(_result), 7 )
 
   _ret["version"]      := -1
   _ret["last_version"] := -1
@@ -273,7 +266,7 @@ _version  := _versions["version"]
 if (_version > -1) .and. (_last_ver > _version)
    // u međuvremenu je bilo update-a od strane drugih korisnika
    PushWA()
-   log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)))   
+   log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)), 2 )   
 
    // otvori tabelu
    SELECT (_a_dbf_rec["wa"])
@@ -390,7 +383,7 @@ endif
 
 _table_obj := _sql_query( _server, _qry )
 IF VALTYPE(_table_obj) == "L" 
-    log_write( "problem sa query-jem: " + _qry )
+    log_write( "table_count(), error: " + _qry, 7 )
     QUIT
 ENDIF
 
@@ -420,30 +413,30 @@ _qry_obj := run_sql_query(sql_query, _retry )
 
 if !USED() .or. ( _dbf_alias != ALIAS() )
    Alert(PROCNAME(1) + "(" + ALLTRIM(STR(PROCLINE(1))) + ") " + dbf_table + " dbf mora biti otvoren !")
-   log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + _dbf_alias)
+   log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + _dbf_alias, 2 )
    QUIT 
 endif
 
 DO WHILE !_qry_obj:EOF()
 
-append blank
+    append blank
 
-for _i := 1 to LEN(_dbf_fields)
-    _fld := FIELDBLOCK(_dbf_fields[_i])
-    if VALTYPE(EVAL(_fld)) $ "CM"
-        EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
-    else
-        EVAL(_fld, _qry_obj:FieldGet(_i))
-    endif
-next 
+    for _i := 1 to LEN(_dbf_fields)
+        _fld := FIELDBLOCK(_dbf_fields[_i])
+        if VALTYPE(EVAL(_fld)) $ "CM"
+            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+        else
+            EVAL(_fld, _qry_obj:FieldGet(_i))
+        endif
+    next 
 
-_qry_obj:Skip()
+    _qry_obj:Skip()
 
-++ _counter
+    ++ _counter
 
 ENDDO
 
-log_write( dbf_table +  " updated from sql server rec_cnt: " + ALLTRIM(STR( _counter )) )
+log_write( dbf_table +  " updated from sql server rec_cnt: " + ALLTRIM(STR( _counter )), 3 )
 
 return
 

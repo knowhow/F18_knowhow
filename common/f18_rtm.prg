@@ -114,7 +114,7 @@ endif
 // pozicioniraj se na home direktorij tokom izvrsenja
 DirChange( my_home() )
 
-log_write( DTOC( DATE() ) + " delphirb print, cmd: " + _cmd )
+log_write( "delphirb print, cmd: " + _cmd, 7 )
 
 _error := hb_run( _cmd )
     

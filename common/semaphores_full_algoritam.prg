@@ -27,7 +27,7 @@ local _opened
 
 
 if f18_session()['id'] > 1
-    log_write("full_synchro u child thread se ne radi, preskocena tabela: "  + dbf_table)  
+    log_write("full_synchro u child thread se ne radi, preskocena tabela: "  + dbf_table, 3 )  
     return .f.
 endif
 

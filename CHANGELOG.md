@@ -3,6 +3,7 @@
  - fakt, štampa odt faktura od-do [#28910](http://redmine.bring.out.ba/issues/28910)
  - ugovori, labeliranje [#28918](http://redmine.bring.out.ba/issues/28918)
  - semafori, push ids - bugfix [#28915](http://redmine.bring.out.ba/issues/28915)
+ - log_write() sa parametrom nivoa, ini parametar [#28722](http://redmine.bring.out.ba/issues/28722)
  
 1.1.5  2012-08-11, vsasa
 

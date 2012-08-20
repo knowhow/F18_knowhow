@@ -105,10 +105,9 @@ _full_id_dbf := get_dbf_rec_primary_key(_alg["dbf_key_fields"], _values_dbf)
 // stanje podataka u mem rec varijabli values
 _full_id_mem := get_dbf_rec_primary_key(_alg["dbf_key_fields"], values)
 
-
 // stavi id-ove na server
 AADD(_ids, _alg_tag + _full_id_mem)
-if _full_id_dbf <> _full_id_mem
+if ( _full_id_dbf <> _full_id_mem ) .and. !EMPTY( _full_id_dbf )
   AADD(_ids, _alg_tag + _full_id_dbf)
 endif
 

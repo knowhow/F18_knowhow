@@ -46,6 +46,8 @@ static __max_cols := 120
 static __font_size  := 20
 static __font_width := 10
 
+static __log_level := 3
+
 
 // ---------------------------------
 // 
@@ -112,6 +114,8 @@ __my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }
 __global_error_handler := ERRORBLOCK(__my_error_handler)
 
 set_screen_dimensions()
+
+_get_log_level_from_config()
 
 init_gui()
 
@@ -332,6 +336,29 @@ cre_all_dbfs(_ver)
 
 return
 
+// -----------------------------------------------------------
+// vraca informaciju o nivou logiranja aplikcije
+// -----------------------------------------------------------
+static function _get_log_level_from_config()
+local _var_name
+local _ini_params := hb_hash()
+local _section := "Logging"
+
+_ini_params["log_level"] := nil
+
+IF !f18_ini_read( _section, @_ini_params, .t. )
+    MsgBeep("logging: problem sa ini read")
+    return
+ENDIF
+
+// setuj varijable iz inija
+IF _ini_params["log_level"] != nil
+    log_level( VAL( _ini_params["log_level"] ) )
+ENDIF
+
+return .t.
+
+
 // ------------------------------------------------------------
 // vraca informacije iz inija vezane za screen rezoluciju
 // ------------------------------------------------------------
@@ -425,6 +452,17 @@ if VALTYPE(x) == "N"
   __font_size := x
 endif
 return __font_size
+
+// ----------------------------
+// vraca nivo logiranja
+// ----------------------------
+function log_level(x)
+
+if VALTYPE(x) == "N"
+  __log_level := x
+endif
+return __log_level
+
 
 // ------------------------------------------
 // ------------------------------------------

@@ -26,9 +26,11 @@ _ids_queries := create_queries_from_ids(dbf_table)
 
 log_write("ids_synchro - ids_queries: " + pp(_ids_queries), 5 )
 
-_zap := ASCAN(_ids_queries["qry"], "UZMI_STANJE_SA_SERVERA")
+do while .t.
 
-if _zap <> 0
+  _zap := ASCAN(_ids_queries["qry"], "UZMI_STANJE_SA_SERVERA")
+
+  if _zap <> 0
 
    // postoji zahtjev za full synchro
    nuliraj_ids(dbf_table)
@@ -40,7 +42,14 @@ if _zap <> 0
 
    ADEL(_zap, _ids_queries["qry"])
 
-endif
+   // ponovo kreiraj _ids_queries u slucaju da je bilo jos azuriranja
+   _ids_queries := create_queries_from_ids(dbf_table)
+  
+  else
+     exit
+  endif
+
+enddo
 
 for _i := 1 TO LEN(_ids_queries["ids"])
  

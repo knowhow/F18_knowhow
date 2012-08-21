@@ -295,7 +295,7 @@ if (_result == 0)
 
 else
 
-   nuliraj_ids(table)
+   nuliraj_ids( table, _ver_user )
 
 endif
 
@@ -317,7 +317,7 @@ return _ret:Fieldget(1)
 
 // --------------------------------------
 // --------------------------------------
-function nuliraj_ids(table)
+function nuliraj_ids(table, ver_user)
 local _tbl
 local _ret
 local _user := f18_user()
@@ -325,8 +325,12 @@ local _server := pg_server()
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
- _qry := "UPDATE " + _tbl + ;
-              " SET version=" + STR(_ver_user) + ", ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user) 
+_qry := "UPDATE " + _tbl + " SET " 
+
+if  ver_user <> NIL
+  _qry += " version=" + STR(ver_user) + ","
+endif
+_qry += " ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user) 
  
 _ret := _sql_query( _server, _qry )
  

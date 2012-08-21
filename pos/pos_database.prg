@@ -561,10 +561,6 @@ else
     return 
 endif
     
-msgo("pos azuriranje sleep")
-sleep(10)
-msgc()
- 
 // ---end lock ---------------------------------------------
 
 

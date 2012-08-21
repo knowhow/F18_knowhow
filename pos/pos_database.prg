@@ -550,7 +550,6 @@ o_stazur()
 sql_table_update(nil, "BEGIN")
 _ok := lock_semaphore( _tbl_pos, "lock" )
 _ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_dokspf,  "lock" )
 
 if _ok
     sql_table_update(nil, "END")
@@ -649,7 +648,6 @@ sql_table_update( nil, "END" )
 // --- unlock -----------------------------------------
 lock_semaphore( _tbl_pos,  "free" )
 lock_semaphore( _tbl_doks,  "free" )
-lock_semaphore( _tbl_dokspf, "free" )
 // -----------------------------------------------------
 
 my_use_semaphore_on()

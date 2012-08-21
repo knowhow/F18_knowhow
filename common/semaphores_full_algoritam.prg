@@ -35,6 +35,9 @@ if step_size == NIL
   step_size := 15000
 endif
 
+// prije fullsync otkljucaj tabelu
+lock_semaphore( dbf_table, "free" )
+
 _sql_table  := "fmk." + dbf_table
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
@@ -50,6 +53,8 @@ _count := table_count( _sql_table, "true" )
 _seconds := SECONDS()
 
 ZAP
+
+altd()
 
 if _sql_fields == NIL
    MsgBeep("sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć")

@@ -560,7 +560,11 @@ else
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return 
 endif
-
+    
+msgo("pos azuriranje sleep")
+sleep(10)
+msgc()
+ 
 // ---end lock ---------------------------------------------
 
 

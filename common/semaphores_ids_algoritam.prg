@@ -102,14 +102,15 @@ for _i := 1 TO LEN(ids)
     else
             // dodajemo postojece
             _set_1 := "SET ids = ids || "
-            _set_2 := " AND ((ids IS NULL) OR NOT (" + _sql_ids + " <@ ids)) ;"
+            _set_2 := " AND ((ids IS NULL) OR NOT (" + _sql_ids + " <@ ids))"
     endif
 
-    _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE user_code <> " + _sql_quote(_user) + _set_2
+    _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE user_code <> " + _sql_quote(_user) + _set_2 + ";"
 
 next
 
-_qry += "; UPDATE " + _tbl + " SET ids='#F'  WHERE user_code <> " + _sql_quote(_user) + " AND char_length(ids)>200"
+_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND array_length(ids,1) > 10"
+
 _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "O"

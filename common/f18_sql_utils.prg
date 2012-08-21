@@ -216,11 +216,11 @@ local oResult, cMsg
 oResult := oServer:Query( cQuery )
 IF oResult:NetErr()
       cMsg := oResult:ErrorMsg()
-      if gDebug > 5 
-         log_write("_sql_query(), error qry: " + cQuery + "err msg:" + cMsg, 3 )
-      endif
+      log_write("_sql_query(), error qry: " + cQuery + "err msg:" + cMsg, 3 )
       MsgBeep( cMsg )
       return .f.
+ELSE
+      log_write("_sql_query(), qry: " + cQuery, 7 )
 ENDIF
 RETURN oResult
 
@@ -239,10 +239,8 @@ local _msg
 _result := _server:Query( _qry )
 IF _result:NetErr()
       _msg := _result:ErrorMsg()
-      if gDebug > 0 
-         log_write(_qry)
-         log_write(_msg)
-      endif
+      log_write(_qry, 5)
+      log_write(_msg, 5)
       MsgBeep( _msg )
       return .f.
 ENDIF

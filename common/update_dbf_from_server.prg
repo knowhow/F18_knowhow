@@ -70,9 +70,13 @@ if algoritam == "FULL"
    full_synchro (table, _step)
 else
 
-    sql_table_update(nil, "BEGIN")
-
     if lock_semaphore(table, "lock")
+ 
+        //mi sa SQL transakcijom nista ne dobijamo
+        // s obzirom da nasa aplikacija koristi nas lock-free mehanizam
+        // cak sta vise transakcija nam smeta da ostali useri "vide" da smo 
+        // zakljucali tabelu
+        //sql_table_update(nil, "BEGIN")
         
         if "pos_pos" $ table
             msgo("semaphore ids sleep")
@@ -82,9 +86,10 @@ else
 
         ids_synchro  (table)
         lock_semaphore(table, "free")
-        sql_table_update(nil, "END")
+        update_semaphore_version(table, .f.)
+        //sql_table_update(nil, "END")
     else
-        sql_table_update(nil, "ROLLBACK")
+        //sql_table_update(nil, "ROLLBACK")
     endif
 
 endif

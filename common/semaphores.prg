@@ -263,6 +263,8 @@ _versions := get_semaphore_version_h(table)
 _last_ver := _versions["last_version"]
 _version  := _versions["version"]
 
+/*
+ako je ranije izvrseno lockovanje onda je ovo nemoguca situacija ?!
 if (_version > -1) .and. (_last_ver > _version)
    // u međuvremenu je bilo update-a od strane drugih korisnika
    PushWA()
@@ -272,9 +274,9 @@ if (_version > -1) .and. (_last_ver > _version)
    SELECT (_a_dbf_rec["wa"])
    my_usex (_a_dbf_rec["alias"], table, .f., "SEMAPHORE")
 
-   ids_synchro(table)
    PopWa()
 endif
+*/
 
 if increment == NIL
    increment := .t.

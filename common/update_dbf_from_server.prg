@@ -62,16 +62,18 @@ if algoritam == NIL
 endif
 
 _seconds := SECONDS()
-
-SELECT (_dbf_wa)
-my_usex (_dbf_alias, table, .f., "SEMAPHORE")
-
 if algoritam == "FULL"
+
+   SELECT (_dbf_wa)
+   my_usex (_dbf_alias, table, .f., "SEMAPHORE")
    full_synchro (table, _step)
 else
 
     if lock_semaphore(table, "lock")
  
+        SELECT (_dbf_wa)
+        my_usex (_dbf_alias, table, .f., "SEMAPHORE")
+
         //mi sa SQL transakcijom nista ne dobijamo
         // s obzirom da nasa aplikacija koristi nas lock-free mehanizam
         // cak sta vise transakcija nam smeta da ostali useri "vide" da smo 

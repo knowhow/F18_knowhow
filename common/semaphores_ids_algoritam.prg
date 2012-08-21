@@ -109,7 +109,7 @@ for _i := 1 TO LEN(ids)
 
 next
 
-_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND array_length(ids,1) > 10"
+_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND ids IS NOT NULL AND array_length(ids,1) > 10"
 
 _ret := _sql_query( _server, _qry )
 

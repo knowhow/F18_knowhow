@@ -197,15 +197,15 @@ do while .t.
 
         // semafor je resetovan
         // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
-        sql_table_update(nil, "BEGIN")
-        if lock_semaphore(table, "lock")
+        //sql_table_update(nil, "BEGIN")
+        //if lock_semaphore(table, "lock")
             update_dbf_from_server(table, "FULL")
             update_semaphore_version(table, .f.)
-            lock_semaphore(table, "free")
-            sql_table_update(nil, "END")
-        else
-            sql_table_update(nil, "ROLLBACK")
-        endif
+            //lock_semaphore(table, "free")
+            //sql_table_update(nil, "END")
+        //else
+            //sql_table_update(nil, "ROLLBACK")
+        //endif
 
      else
 
@@ -214,15 +214,15 @@ do while .t.
             if _version < _last_version
 
                 log_write( "my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 3 ) 
-                sql_table_update(nil, "BEGIN")
-                if lock_semaphore(table, "lock")
+                //sql_table_update(nil, "BEGIN")
+                //if lock_semaphore(table, "lock")
                     update_dbf_from_server(table, "IDS")
                     update_semaphore_version(table, .f.)
-                    lock_semaphore(table, "free")
-                    sql_table_update(nil, "END")
-                else
-                    sql_table_update(nil, "ROLLBACK")
-                endif
+                    //lock_semaphore(table, "free")
+                    //sql_table_update(nil, "END")
+                //else
+                    //sql_table_update(nil, "ROLLBACK")
+                //endif
 
             endif
 

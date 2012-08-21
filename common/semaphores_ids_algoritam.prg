@@ -55,6 +55,8 @@ next
 
 return
 
+
+
 //-------------------------------------------------
 // stavi id-ove za dbf tabelu na server
 //-------------------------------------------------
@@ -85,8 +87,8 @@ if _result < 1
    return .t.
 endif
 
-_qry := ""
 
+_qry := ""    
 for _i := 1 TO LEN(ids)
 
     _sql_ids := "ARRAY[" + _sql_quote(ids[_i]) + "]"
@@ -107,8 +109,7 @@ for _i := 1 TO LEN(ids)
 
 next
 
-log_write( "push ids qry: " + _qry, 5 )
-
+_qry += "; UPDATE " + _tbl + " SET ids='#F'  WHERE user_code <> " + _sql_quote(_user) + " AND char_length(ids)>200"
 _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "O"
@@ -116,6 +117,7 @@ if VALTYPE(_ret) == "O"
 else
   return .f.
 endif
+
 
 //---------------------------------------
 // vrati matricu id-ova za dbf tabelu

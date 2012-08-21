@@ -444,6 +444,8 @@ local cKNaziv
 local cKAdres
 local cKIdBroj
 local _rec
+local _ok
+local _tbl := "pos_dokspf"
 
 O_DRN
 O_DRNTEXT
@@ -461,6 +463,23 @@ endif
 O_DOKSPF
 
 my_use_semaphore_off()
+
+// ------------------------------------------------------
+// lock semaphore
+sql_table_update(nil, "BEGIN")
+_ok := lock_semaphore( _tbl, "lock" )
+
+if _ok
+    sql_table_update(nil, "END")
+else
+    sql_table_update(nil, "ROLLBACK")
+    my_use_semaphore_on()
+    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+    return 
+endif
+    
+// ---end lock ---------------------------------------------
+
 sql_table_update( nil, "BEGIN" )
 
 select drn
@@ -492,6 +511,10 @@ _rec["kidbr"] := cKIdBroj
 update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT" )
 
 sql_table_update( nil, "END" )
+
+// oslobodi lock
+lock_semaphore( _tbl, "free" )
+
 my_use_semaphore_on()
 
 return

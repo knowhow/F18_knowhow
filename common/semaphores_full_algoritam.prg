@@ -54,8 +54,6 @@ _seconds := SECONDS()
 
 ZAP
 
-altd()
-
 if _sql_fields == NIL
    MsgBeep("sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć")
    QUIT

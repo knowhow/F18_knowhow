@@ -84,12 +84,6 @@ else
         // zakljucali tabelu
         //sql_table_update(nil, "BEGIN")
         
-        if "pos_pos" $ table .or. "fakt_fakt" $ table
-            msgo("semaphore ids sleep")
-            sleep(10)
-            msgc()
-        endif
-
         ids_synchro  (table)
         lock_semaphore(table, "free")
         update_semaphore_version(table, .f.)

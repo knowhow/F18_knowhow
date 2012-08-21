@@ -264,16 +264,12 @@ _last_ver := _versions["last_version"]
 _version  := _versions["version"]
 
 // u medjuvremenu je bilo update-a od strane drugih korisnika
-//if (_version > -1) .and. (_last_ver > _version)
-   //PushWA()
-   //log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)), 2 )   
-   // otvori tabelu
-   //SELECT (_a_dbf_rec["wa"])
-   //PopWa()
-//endif
-
-if (_version > -1)
-    update_dbf_from_server(table, "IDS")
+if (_version > -1) .and. (_last_ver > _version)
+   PushWA()
+   log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)), 2 )   
+   SELECT (_a_dbf_rec["wa"])
+   ids_synchro(table)
+   PopWa()
 endif
 
 if increment == NIL

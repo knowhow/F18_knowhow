@@ -603,7 +603,7 @@ _rec["prebacen"] := OBR_JEST
 _rec["smjena"] := _pos->smjena
 
 sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
 
 // azuriranje stavki u POS
 
@@ -641,7 +641,7 @@ do while !EOF() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos
     _rec["c_2"] := _pos->c_2
     _rec["c_3"] := _pos->c_3
 
-    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT", .f. )
 
 	select _pos
     skip

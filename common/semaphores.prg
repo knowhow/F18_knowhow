@@ -236,9 +236,9 @@ return _ret:Fieldget(1)
 
 
 /*
-  ------------------------------------------
-  update_semaphore_version( "konto")
-  -------------------------------------------
+  --------------------------------------------------------------------------------------------
+  update_semaphore_version( "konto", .t. - increment version)
+  -------------------------------------------------------------------------------------------
 */
 function update_semaphore_version(table, increment)
 LOCAL _ret
@@ -251,8 +251,7 @@ LOCAL _server := pg_server()
 LOCAL _ver_user, _last_ver, _id_full
 local _versions
 local _a_dbf_rec
-
-altd()
+local _full_sync := .f.
 
 _a_dbf_rec := get_a_dbf_rec(table)
 
@@ -270,7 +269,7 @@ if (_version > -1) .and. (_last_ver > _version)
    PushWA()
    log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)), 2 )   
    SELECT (_a_dbf_rec["wa"])
-   ids_synchro(table)
+   _full_sync := ids_synchro(table)
    PopWa()
 endif
 
@@ -295,9 +294,8 @@ if (_result == 0)
    _ret := _sql_query( _server, _qry)
 
 else
-    _qry := "UPDATE " + _tbl + ;
-                " SET version=" + STR(_ver_user) + ", ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user) 
-    _ret := _sql_query( _server, _qry )
+
+   nuliraj_ids(table)
 
 endif
 
@@ -316,6 +314,25 @@ _qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user)
 _ret := _sql_query( _server, _qry )
 
 return _ret:Fieldget(1)
+
+// --------------------------------------
+// --------------------------------------
+function nuliraj_ids(table)
+local _tbl
+local _ret
+local _user := f18_user()
+local _server := pg_server()
+
+_tbl := "fmk.semaphores_" + LOWER(table)
+
+ _qry := "UPDATE " + _tbl + ;
+              " SET version=" + STR(_ver_user) + ", ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user) 
+ 
+_ret := _sql_query( _server, _qry )
+ 
+return _ret
+
+
 
 //---------------------------------------
 // date algoritam

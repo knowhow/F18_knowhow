@@ -18,7 +18,7 @@
 //
 // update_rec_server_and_dbf( table, values, 1, "FULL") 
 // -----------------------------------------------------------------------------------------------------------
-function update_rec_server_and_dbf(table, values, algoritam, transaction)
+function update_rec_server_and_dbf(table, values, algoritam, transaction, lock)
 local _ids := {}
 local _pos
 local _full_id_dbf, _full_id_mem
@@ -34,6 +34,10 @@ local _ret
 
 _ret :=.t.
 
+if lock == NIL
+   lock := .t.
+endif
+
 // trebamo where str za values rec
 set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
 
@@ -48,7 +52,10 @@ _values_dbf := dbf_get_rec()
 // trebamo where str za stanje dbf-a
 set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
 
-lock_semaphore(table, "lock")
+if lock
+   lock_semaphore(table, "lock")
+endif
+
 if transaction $ "FULL#BEGIN"
    sql_table_update(table, "BEGIN")
 endif
@@ -148,7 +155,9 @@ if _ret
     endif
 endif
 
-lock_semaphore(table, "free")
+if lock
+  lock_semaphore(table, "free")
+endif
 
 return _ret
 

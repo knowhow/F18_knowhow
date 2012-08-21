@@ -17,6 +17,7 @@
 function ids_synchro(dbf_table)
 local _i, _ids_queries
 local _zap
+local _full_sync := .f.
 
 _ids_queries := create_queries_from_ids(dbf_table)
 
@@ -30,8 +31,10 @@ _zap := ASCAN(_ids_queries["qry"], "UZMI_STANJE_SA_SERVERA")
 if _zap <> 0
 
    // postoji zahtjev za full synchro
-   full_synchro(dbf_table)
-   
+   nuliraj_ids(dbf_table)
+   full_synchro(dbf_table)   
+   _full_sync := .t.
+
    // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
    reopen_exclusive(dbf_table)
 
@@ -55,7 +58,7 @@ for _i := 1 TO LEN(_ids_queries["ids"])
    endif
 next
 
-return
+return _full_sync
 
 
 

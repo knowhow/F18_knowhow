@@ -67,8 +67,9 @@ if algoritam == "FULL"
 
     SELECT (_dbf_wa)
     my_usex (_dbf_alias, table, .f., "SEMAPHORE")
+    nuliraj_ids(table )
     full_synchro (table, _step)
-    update_semaphore_version( table, .f. )
+    update_semaphore_version( table, .f., .f. )
 
 else
 

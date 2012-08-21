@@ -200,7 +200,10 @@ do while .t.
         //sql_table_update(nil, "BEGIN")
         //if lock_semaphore(table, "lock")
             update_dbf_from_server(table, "FULL")
-            update_semaphore_version(table, .f.)
+
+            // nemoj nulirati IDS nakon full sync
+            update_semaphore_version(table, .f., .f.)
+
             //lock_semaphore(table, "free")
             //sql_table_update(nil, "END")
         //else

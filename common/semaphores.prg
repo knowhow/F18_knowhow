@@ -413,12 +413,12 @@ RETURN _result
 // dbf_tabela mora biti otvorena i u tekucoj WA
 // -----------------------------------------------  
 function fill_dbf_from_server(dbf_table, sql_query)
-local _counter := 0
+local _counter := 1
 local _i, _fld
 local _server := pg_server()
 local _qry_obj
 local _retry := 3
-local _a_dbf_rec
+local _a_dbf_rec, _msg
 local _dbf_alias, _dbf_fields
 
 _a_dbf_rec := get_a_dbf_rec(dbf_table)
@@ -446,7 +446,10 @@ DO WHILE !_qry_obj:EOF()
             EVAL(_fld, _qry_obj:FieldGet(_i))
         endif
     next 
-
+                
+    _msg := ToStr(Time()) + " : sync fill : " + dbf_table + " : " + ALLTRIM( STR( _counter ) )
+    @ maxrows() - 1, maxcols() - 70 SAY PADR( _msg, 53 )
+ 
     _qry_obj:Skip()
 
     ++ _counter

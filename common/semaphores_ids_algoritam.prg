@@ -300,7 +300,7 @@ return _ret
 // ------------------------------------------------------
 function delete_ids_in_dbf(dbf_table, ids, algoritam)
 local _a_dbf_rec, _alg
-local _counter
+local _counter, _msg
 local _fnd, _tmp_id, _rec
 local _dbf_alias
 local _dbf_tag
@@ -330,6 +330,9 @@ do while .t.
         HSEEK _tmp_id
         do while !EOF() .and. EVAL(_key_block) == _tmp_id
 
+            _msg := ToStr(Time()) + " : sync del : " + dbf_table + " : " + _tmp_id
+            @ maxrows() - 1, maxcols() - 70 SAY PADR( _msg, 53 )
+ 
             skip
             _rec := RECNO()
             skip -1 
@@ -338,7 +341,8 @@ do while .t.
  
             _fnd := .t.
             ++ _counter
-        enddo
+ 
+       enddo
     next
 
     if !_fnd 

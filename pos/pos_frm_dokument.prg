@@ -186,7 +186,9 @@ local ctIdPos
 local dtDatum
 local _rec, _id_pos, _id_vd, _dat_dok, _br_dok
 local _tbl_filter := DbFilter()
-local _rec_no
+local _rec_no, _ok
+local _tbl_pos := "pos_pos"
+local _tbl_doks := "pos_doks"
 static cIdPos
 static cIdVd
 static cBrDok
@@ -259,10 +261,24 @@ do case
            	seek _id_pos + _id_vd + DTOS( _dat_dok ) + _br_dok
 
 			if FOUND() 
-
-				_rec := dbf_get_rec()
+                _ok := .t.
 
 	           	my_use_semaphore_off()
+                
+                sql_table_update(nil, "BEGIN")
+                _ok := lock_semaphore( _tbl_pos, "lock" )
+                _ok := _ok .and. lock_semaphore( _tbl_doks, "lock" )
+                
+                if _ok
+                    sql_table_update(nil, "END")
+                else
+                    sql_table_update(nil, "ROLLBACK")
+                    my_use_semaphore_on()
+                    return DE_CONT
+                endif
+ 
+				_rec := dbf_get_rec()
+
 				sql_table_update( nil, "BEGIN" )
 	
 				delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
@@ -278,6 +294,10 @@ do case
 				endif
 
 				sql_table_update( nil, "END" )
+
+                lock_semaphore( _tbl_pos, "free" )
+                lock_semaphore( _tbl_doks, "free" )
+
            		my_use_semaphore_on()
 
            		return DE_REFRESH

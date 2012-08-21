@@ -69,7 +69,21 @@ my_usex (_dbf_alias, table, .f., "SEMAPHORE")
 if algoritam == "FULL"
    full_synchro (table, _step)
 else
-   ids_synchro  (table)
+
+    sql_table_update(nil, "BEGIN")
+
+    msgo("semaphore ids sleep")
+    sleep(5)
+    msgc()
+
+    if lock_semaphore(table, "lock")
+        ids_synchro  (table)
+        lock_semaphore(table, "free")
+        sql_table_update(nil, "END")
+    else
+        sql_table_update(nil, "ROLLBACK")
+    endif
+
 endif
 
 USE

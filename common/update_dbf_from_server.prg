@@ -62,11 +62,14 @@ if algoritam == NIL
 endif
 
 _seconds := SECONDS()
+
 if algoritam == "FULL"
 
-   SELECT (_dbf_wa)
-   my_usex (_dbf_alias, table, .f., "SEMAPHORE")
-   full_synchro (table, _step)
+    SELECT (_dbf_wa)
+    my_usex (_dbf_alias, table, .f., "SEMAPHORE")
+    full_synchro (table, _step)
+    update_semaphore_version( table, .f. )
+
 else
 
     if lock_semaphore(table, "lock")
@@ -80,7 +83,7 @@ else
         // zakljucali tabelu
         //sql_table_update(nil, "BEGIN")
         
-        if "pos_pos" $ table
+        if "pos_pos" $ table .or. "fakt_fakt" $ table
             msgo("semaphore ids sleep")
             sleep(10)
             msgc()

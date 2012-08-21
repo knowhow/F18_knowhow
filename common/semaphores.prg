@@ -273,7 +273,7 @@ _version  := _versions["version"]
 //endif
 
 if (_version > -1)
-  dbf_semaphore_synchro(table)
+    update_dbf_from_server(table, "IDS")
 endif
 
 if increment == NIL

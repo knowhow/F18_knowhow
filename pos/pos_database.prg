@@ -532,12 +532,37 @@ local _rec, _append
 local _cnt := 0
 local _kolicina := 0
 local _idroba, _idcijena, _cijena
+local _tbl_pos := "pos_pos"
+local _tbl_doks := "pos_doks"
+local _tbl_dokspf := "pos_dokspf"
+local _ok
 private nIznRn := 0
+
+_ok := .t.
 
 // iskljuci mi semafore
 my_use_semaphore_off()
 
 o_stazur()
+
+// ------------------------------------------------------
+// lock semaphore
+sql_table_update(nil, "BEGIN")
+_ok := lock_semaphore( _tbl_pos, "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
+_ok := _ok .and. lock_semaphore( _tbl_dokspf,  "lock" )
+
+if _ok
+    sql_table_update(nil, "END")
+else
+    sql_table_update(nil, "ROLLBACK")
+    my_use_semaphore_on()
+    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
+    return 
+endif
+
+// ---end lock ---------------------------------------------
+
 
 if ( cNacPlac == NIL )
 	cNacPlac := gGotPlac
@@ -620,6 +645,13 @@ do while !EOF() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos
 enddo
 
 sql_table_update( nil, "END" )
+
+// --- unlock -----------------------------------------
+lock_semaphore( _tbl_pos,  "free" )
+lock_semaphore( _tbl_doks,  "free" )
+lock_semaphore( _tbl_dokspf, "free" )
+// -----------------------------------------------------
+
 my_use_semaphore_on()
 
 // pobrisi _pos

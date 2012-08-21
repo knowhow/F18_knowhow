@@ -252,6 +252,8 @@ LOCAL _ver_user, _last_ver, _id_full
 local _versions
 local _a_dbf_rec
 
+altd()
+
 _a_dbf_rec := get_a_dbf_rec(table)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
@@ -286,7 +288,7 @@ if increment
 endif
 
 if (_result == 0)
-   _id_full := "ARRAY[" + _sql_quote("<FULL>/") + "]"
+   _id_full := "ARRAY[" + _sql_quote("#F") + "]"
 
    _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
                "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"

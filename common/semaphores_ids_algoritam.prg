@@ -104,7 +104,7 @@ for _i := 1 TO LEN(ids)
     else
             // dodajemo postojece
             _set_1 := "SET ids = ids || "
-            _set_2 := " AND ((ids IS NULL) OR NOT (" + _sql_ids + " <@ ids))"
+            _set_2 := " AND ((ids IS NULL) OR NOT ( (" + _sql_ids + " <@ ids) OR ids = ARRAY['#F'] ) )"
     endif
 
     _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE user_code <> " + _sql_quote(_user) + _set_2 + ";"

@@ -39,6 +39,8 @@ endif
 
 for _i := 1 TO LEN(_ids_queries["ids"])
  
+   log_write("ids_synchro - ids_queries: " + pp( _ids_queries["ids"][_i]  ), 9 )
+   
    // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
    if _ids_queries["ids"][_i] != NIL
 

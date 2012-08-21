@@ -237,6 +237,7 @@ do while .t.
             exit
       endif
                         
+      log_write( "dbf_semaphore_synchro, _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
 enddo
 
 // sada bi lokalni cache morao biti ok, idemo to provjeriti

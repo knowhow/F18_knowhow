@@ -72,11 +72,14 @@ else
 
     sql_table_update(nil, "BEGIN")
 
-    msgo("semaphore ids sleep")
-    sleep(5)
-    msgc()
-
     if lock_semaphore(table, "lock")
+        
+        if "pos_pos" $ table
+            msgo("semaphore ids sleep")
+            sleep(10)
+            msgc()
+        endif
+
         ids_synchro  (table)
         lock_semaphore(table, "free")
         sql_table_update(nil, "END")

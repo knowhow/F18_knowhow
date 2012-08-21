@@ -263,20 +263,18 @@ _versions := get_semaphore_version_h(table)
 _last_ver := _versions["last_version"]
 _version  := _versions["version"]
 
-/*
-ako je ranije izvrseno lockovanje onda je ovo nemoguca situacija ?!
-if (_version > -1) .and. (_last_ver > _version)
-   // u međuvremenu je bilo update-a od strane drugih korisnika
-   PushWA()
-   log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)), 2 )   
-
+// u medjuvremenu je bilo update-a od strane drugih korisnika
+//if (_version > -1) .and. (_last_ver > _version)
+   //PushWA()
+   //log_write("update_semaphore_version " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)), 2 )   
    // otvori tabelu
-   SELECT (_a_dbf_rec["wa"])
-   my_usex (_a_dbf_rec["alias"], table, .f., "SEMAPHORE")
+   //SELECT (_a_dbf_rec["wa"])
+   //PopWa()
+//endif
 
-   PopWa()
+if (_version > -1)
+  dbf_semaphore_synchro(table)
 endif
-*/
 
 if increment == NIL
    increment := .t.

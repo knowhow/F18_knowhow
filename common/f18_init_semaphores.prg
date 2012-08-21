@@ -48,7 +48,7 @@ for each _key in _f18_dbfs:Keys
 			_tbl_base := "os"
 		endif
 
-		if !EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
+		if !EMPTY( _tbl_base ) .and. f18_use_module( _tbl_base )
 			refresh_me(_f18_dbfs[_key])
 		endif
 

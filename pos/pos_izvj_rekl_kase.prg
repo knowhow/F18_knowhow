@@ -60,7 +60,7 @@ do while !EOF() .and. idvd == VD_REK
 	? STR(nCnt, 3)
 	?? SPACE(2) + DTOC(field->datum)
 	?? SPACE(2) + PADR(ALLTRIM(field->idvd) + "-" +  ALLTRIM(field->brdok),10)
-	?? SPACE(2) + DokIznos(.t., field->idpos, field->idvd, field->datum, field->brdok)
+	?? SPACE(2) + pos_iznos_dokumenta(.t., field->idpos, field->idvd, field->datum, field->brdok)
 	skip
 enddo
 

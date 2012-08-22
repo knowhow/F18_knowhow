@@ -256,46 +256,6 @@ if ch == K_CTRL_V
 
 endif
 
-cLast := UPPER(CHR(LASTKEY()))
-if KLevel="0".and.(cLast=="D".or.cLast == "S" .or. cLast=="V" )
-    if Pitanje(,"Ispraviti vrijeme racuna ?","N")=="D"
-        dOrigD:=Datum
-        dDatum:=Datum
-        cVrijeme:=Vrijeme
-        cIBroj:="N"
-        nNBrDok:=0
-        set cursor on
-        Box(,5,60)
-            if cLast $ "SV"
-                @ m_x+1,m_y+2 say "     Vrijeme" get cVrijeme
-            endif
-            if cLast $ "DV"
-                @ m_x+2,m_y+2 say "Datum racuna" get dDatum
-            endif
-            
-            @ m_x+3, m_y+2 say "Ispravka broja D/N" get cIBroj PICT "@!"
-        READ
-
-        if cIBroj=="D"
-            @ m_x+5, m_y+2 SAY "Novi broj" GET nNBrDok PICT "999999"
-            READ
-            cNBrDok:=PADL(ALLTRIM(STR(nNBrDok)),6)
-        else
-            cNBrDok:=nil
-        endif
-        BoxC()
-        if (LASTKEY()==K_ESC)
-            return DE_CONT
-        endif
-            if dOrigD<>dDatum .and. lastkey()!=K_ESC
-                IspraviDV(cLast, dOrigD, dDatum, cVrijeme, cNBrDok)
-            endif 
-        endif 
-
-        return DE_REFRESH
-endif
-
-
 if cLevel <= "0"   
 
     // samo sistem administrator

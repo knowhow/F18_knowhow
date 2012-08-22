@@ -13,15 +13,27 @@
 #include "pos.ch"
 
 
+
 // ------------------------------------------------------
 // pregled racuna - browse racuna sa opcijom P
 // ------------------------------------------------------
 function pos_pregled_racuna( admin )
+local _datum := NIL
+local _danas := "D"
 private aVezani := {}
 
 O_StAzur()
 
-PRacuni()
+Box(, 1, 50)
+    @ m_x + 1, m_y + 2 SAY "Samo danasnji ? (D/N)" GET _danas VALID _danas $ "DN" PICT "!@"
+    read
+BoxC()
+
+if _danas == "D"
+    _datum := DATE()
+endif
+
+PRacuni( _datum )
 
 close all
 

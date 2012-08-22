@@ -22,6 +22,10 @@ local _datum := NIL
 local _danas := "D"
 private aVezani := {}
 
+if admin == NIL
+    admin := .f.
+endif
+
 O_StAzur()
 
 Box(, 1, 50)
@@ -255,6 +259,8 @@ if UPPER(CHR(LASTKEY()))=="Z"
 endif
 
 // setovanje veze sa brojem fiskalnog racuna
+// ovo bi trebao da radi samo ADMIN !!!!!!!!!
+// sad moze svako
 if ch == K_CTRL_V
     
     // ako nema polja ... nista
@@ -270,7 +276,7 @@ if ch == K_CTRL_V
     BoxC()
 
     if LastKey() <> K_ESC
-    
+   
         _rec := dbf_get_rec()
         _rec["fisc_rn"] := nFisc_no
         
@@ -280,29 +286,11 @@ if ch == K_CTRL_V
         sql_table_update( nil, "END" )
         my_use_semaphore_on()
         
-        return DE_CONT
+        return DE_REFRESH
     
     endif
 
 endif
-
-if cLevel <= "0"   
-
-    // samo sistem administrator
-    if ch==K_F1
-       	MSgBeep("Ctrl-F9  - brisi fizicki#"+"Shift-F9 - brisi fizicki period")
-     	return DE_CONT
-    endif
-
-    if ch==K_CTRL_F9
-      	return BrisiRacun()
-    endif
-
-    if ch==K_SH_F9
-    	return BrisiRNVP()
-    endif
-
-endif 
 
 return (DE_CONT)
 
@@ -330,53 +318,5 @@ select pos_doks
 return ( _iznos_rn )
 
 
-
-/*! \fn BrisiRacun()
- *  \brief Brisanje racuna
- */
-function BrisiRacun()
-local _rec
-local _id_vd, _id_pos, _dat_dok, _br_dok
-local _t_area := SELECT()
-
-if Pitanje(,"Potpuno - fizicki izbrisati racun?","N") == "N"
-    return DE_CONT
-endif
-
-select pos_doks
-
-_br_dok := field->BrDok
-_id_pos := field->IdPos
-_dat_dok := field->datum
-_id_vd := field->idvd
-
-_rec := dbf_get_rec()
-
-if empty(dMinDatProm)
-    dMinDatProm := field->datum
-else
-    dMinDatProm := min( dMinDatProm, field->datum )
-endif
-
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-
-delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
-
-
-SELECT POS
-set order to tag "1"
-seek _id_pos + VD_RN + DTOS(_dat_dok) + _br_dok
-
-if FOUND()
-    delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
-endif
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
-select ( _t_area )
-
-return (DE_REFRESH)
 
 

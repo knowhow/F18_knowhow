@@ -281,7 +281,7 @@ do case
 
 				sql_table_update( nil, "BEGIN" )
 	
-				delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+				delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT", .f. )
 
 				select pos_doks
 				set order to tag "1"
@@ -290,7 +290,7 @@ do case
 
 				if FOUND() 
 					_rec := dbf_get_rec()		
-					delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+					delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
 				endif
 
 				sql_table_update( nil, "END" )

@@ -165,7 +165,7 @@ return _ret
 // ----------------------------------------------------------------------
 // algoritam = 1 - nivo zapisa, 2 - dokument ...
 // ----------------------------------------------------------------------
-function delete_rec_server_and_dbf(table, values, algoritam, transaction)
+function delete_rec_server_and_dbf(table, values, algoritam, transaction, lock)
 local _ids := {}
 local _pos
 local _full_id
@@ -177,6 +177,10 @@ local _a_dbf_rec, _alg
 local _msg
 local _alg_tag := ""
 local _ret
+
+if lock == NIL
+    lock := .t.
+endif
 
 _ret := .t.
 
@@ -190,8 +194,10 @@ if ALIAS() <> _a_dbf_rec["alias"]
    QUIT
 endif
 
+if lock
+    lock_semaphore(table, "lock")
+endif
 
-lock_semaphore(table, "lock")
 if transaction $ "FULL#BEGIN"
    sql_table_update(table, "BEGIN")
 endif
@@ -256,7 +262,9 @@ else
 
 endif
 
-lock_semaphore(table, "free")
+if lock
+    lock_semaphore(table, "free")
+endif
 
 return _ret
 

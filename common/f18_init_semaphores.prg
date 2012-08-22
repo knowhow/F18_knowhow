@@ -49,7 +49,7 @@ for each _key in _f18_dbfs:Keys
 		endif
 
 		if !EMPTY( _tbl_base ) .and. f18_use_module( _tbl_base )
-			refresh_me(_f18_dbfs[_key])
+			refresh_me( _f18_dbfs[_key] )
 		endif
 
     endif
@@ -99,10 +99,9 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 log_write( "refresh_me(), prije synchro " +  _msg_1 + " " + _msg_2, 5 )
 
 SELECT (_wa)
-my_use(a_dbf_rec["alias"], a_dbf_rec["alias"])
+my_use( a_dbf_rec["alias"], a_dbf_rec["alias"], NIL, NIL, NIL, NIL, .t. )
 
 USE
-
  
 // ponovo otvori nakon sinhronizacije
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)

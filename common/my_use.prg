@@ -41,9 +41,13 @@ return __my_use_semaphore
 
 // --------------------------------------------------------------
 // --------------------------------------------------------------
-function my_usex(alias, table, new_area, _rdd, semaphore_param)
+function my_usex(alias, table, new_area, _rdd, semaphore_param, check_recno)
 
-return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
+if check_recno == NIL
+    check_recno := .f.
+endif
+
+return my_use(alias, table, new_area, _rdd, semaphore_param, .t., check_recno)
 
 
 // ---------------------------------------------------------------
@@ -95,7 +99,7 @@ return
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
-function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
+function my_use(alias, table, new_area, _rdd, semaphore_param, excl, check_recno)
 local _msg
 local _err
 local _pos
@@ -105,6 +109,10 @@ local _force_erase := .f.
 
 if excl == NIL
   excl := .f.
+endif
+
+if check_recno == NIL
+    check_recno := .f.
 endif
 
 if table == NIL
@@ -147,7 +155,7 @@ if !_a_dbf_rec["temp"]
 
    // tabela je pokrivena semaforom
    if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
-        dbf_semaphore_synchro(table)
+        dbf_semaphore_synchro(table, check_recno)
    else
      // rdd = "SEMAPHORE" poziv is update from sql server procedure
      // samo otvori tabelu
@@ -185,8 +193,12 @@ return
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function dbf_semaphore_synchro(table)
+function dbf_semaphore_synchro(table, check_recno)
 local _version, _last_version
+
+if check_recno == NIL
+    check_recno := .f.
+endif
 
 // uzmimo od tabele stanje svog semafora
 _version :=  get_semaphore_version(table)
@@ -235,8 +247,10 @@ do while .t.
       log_write( "dbf_semaphore_synchro, _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
 enddo
 
-// sada bi lokalni cache morao biti ok, idemo to provjeriti
-check_after_synchro(table)
+if check_recno
+    // sada bi lokalni cache morao biti ok, idemo to provjeriti
+    check_after_synchro(table)
+endif
 
 return .t.
 

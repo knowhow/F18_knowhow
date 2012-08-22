@@ -113,6 +113,8 @@ barkod := _barkod
 select roba
 set order to tag "ID"
 
+select ( _area )
+
 return _vrati
 
 

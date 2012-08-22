@@ -13,7 +13,25 @@
 #include "pos.ch"
 
 
+// ------------------------------------------------------
+// pregled racuna - browse racuna sa opcijom P
+// ------------------------------------------------------
+function pos_pregled_racuna( admin )
+private aVezani := {}
 
+O_StAzur()
+
+PRacuni()
+
+close all
+
+return
+
+
+
+// -----------------------------------------------------------------------
+// tabela sa listom racuna
+// -----------------------------------------------------------------------
 function PRacuni( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
 local i
 private fMark:=.f.

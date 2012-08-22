@@ -62,7 +62,7 @@ gRNALKum := padr(gRNALKum,100)
 set cursor on
 
 AADD(aNiz,{"Vrsta radne stanice (K-kasa, A-samostalna kasa, S-server)" , "gVrstaRS", "gVrstaRS$'KSA'", "@!", })
-AADD(aNiz,{"Oznaka/ID prodajnog mjesta" , "gIdPos", "NemaPrometa(cIdPosOld,gIdPos)", "@!", })
+AADD(aNiz,{"Oznaka/ID prodajnog mjesta" , "gIdPos",, "@!", })
 
 if gModul=="HOPS" 
     AADD(aNiz,{"Ima li objekat zasebne cjeline (dijelove) D/N", "gPostDO","gPostDO$'DN'", "@!", })

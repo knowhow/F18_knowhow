@@ -199,7 +199,8 @@ close all
 EndPrint()
 
 // stampaj labelu...
-f18_rtm_print( "labelu", "labelu", _n_sort )
+// pozovi funkciju stampanja rtm fajla kroz labeliranje.exe
+f18_rtm_print( "labelu", "labelu", _n_sort, NIL, "labeliranje" )
 
 PopWA()
 

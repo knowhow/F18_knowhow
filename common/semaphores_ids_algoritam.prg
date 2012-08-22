@@ -305,7 +305,7 @@ local _fnd, _tmp_id, _rec
 local _dbf_alias
 local _dbf_tag
 local _key_block
-
+local _i
 
 _a_dbf_rec := get_a_dbf_rec(dbf_table)
 _alg := _a_dbf_rec["algoritam"]
@@ -324,6 +324,19 @@ if VALTYPE(ids) != "A"
    Alert("ids type ? " + VALTYPE(ids))
 endif
 
+/*
+for _i := 1 to 3
+    if !FLOCK()
+        _msg := "Ne mogu lock-ovati tabelu " + ALIAS()
+        MsgBeep( _msg )
+        log_write( _msg, 1 )
+    else
+        exit
+    endif
+    sleep(2)
+next
+*/
+
 do while .t.
     _fnd := .f.
     for each _tmp_id in ids
@@ -336,7 +349,7 @@ do while .t.
             skip
             _rec := RECNO()
             skip -1 
-            DELETE
+            delete_with_rlock()            
             go _rec
  
             _fnd := .t.
@@ -349,6 +362,8 @@ do while .t.
             exit 
     endif
 enddo
+
+//DBUNLOCK()
 
 log_write( "delete_ids_in_dbf: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )), 5 )
 

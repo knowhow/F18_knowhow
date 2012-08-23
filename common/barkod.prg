@@ -155,7 +155,6 @@ return
 /*! \fn KaEdPrLBK()
  *  \brief Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
  *  \sa KaLabelBKod()
- *  \todo spojiti KaLabelBKod i FaLabelBkod
  */
 
 function KaEdPrLBK()

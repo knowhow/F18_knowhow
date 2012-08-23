@@ -269,13 +269,13 @@ do while !EOF()
 		if ( field->datum <= dT_date )
             _rec := dbf_get_rec()
             _rec["datum"] := dN_date
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 			++ nCnt 
 		endif
 	else
         _rec := dbf_get_rec()
         _rec["datum"] := dN_date
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 		++ nCnt 
 	endif
 	

@@ -536,6 +536,7 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import fin dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa nalog/" + ALLTRIM(STR( _total_nalog )) + ", suban/" + ALLTRIM(STR( _total_suban ))
 
+?? todo: hernad: ??? ((()))))  begin fali ? f18_lock takodje
 my_use_semaphore_off()
 
 do while !EOF()

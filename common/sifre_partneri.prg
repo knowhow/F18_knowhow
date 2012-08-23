@@ -507,7 +507,7 @@ if !FOUND()
     _rec["duzina"] := 16
     _rec["veza"] := "N"
 
-    if !update_rec_server_and_dbf("sifk", _rec) 
+    if !update_rec_server_and_dbf("sifk", _rec, 1, "FULL") 
         delete_with_rlock()
     endif
 endif

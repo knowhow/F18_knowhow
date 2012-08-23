@@ -22,6 +22,7 @@ if !used()
 	O_TARIFA
 endif
 
+x?()=)=()=?() ((( hernad: todo treba f18_lock tables
 my_use_semaphore_off()
 sql_table_update( nil, "BEGIN" )
 

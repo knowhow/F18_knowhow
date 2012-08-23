@@ -213,13 +213,7 @@ if lSetParams
     _rec["kto_dob"] := cKtoPot
     _rec["opis"] := cOpis
 
-	my_use_semaphore_off()
-	sql_table_update( nil, "BEGIN" )
-
-    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "CONT" )
-
-	sql_table_update( nil, "END" )
-	my_use_semaphore_on()
+    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
 
 endif
 
@@ -329,10 +323,7 @@ if Found()
     _rec["brdok_od"] := cFaktOd
     _rec["brdok_do"] := cFaktDo
 
-	my_use_semaphore_off()
-	sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "CONT" )
-	sql_table_update( nil, "END" )
+    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
 	my_use_semaphore_on()
 
 endif
@@ -913,10 +904,7 @@ if Found()
         _rec["brdok_od"] := cBrDok
     endif
     _rec["brdok_do"] := cBrDok
-	my_use_semaphore_off()
-	sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-	sql_table_update( nil, "END" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	my_use_semaphore_on()
 endif
 

@@ -453,6 +453,7 @@ DO CASE
 							_saved := .f.
 
 							if _has_semaphore
+                                (()(((((()))) hernad: namjerno greska treba f18_lock 
 								my_use_semaphore_off()
 								sql_table_update( nil, "BEGIN" )
 							endif

@@ -499,7 +499,7 @@ endif
 
 _vars := get_dbf_global_memvars()
 
-if !update_rec_server_and_dbf(ALIAS(), _vars)
+if !update_rec_server_and_dbf(ALIAS(), _vars, 1, "FULL")
    delete_with_rlock()
 else
 	if lNovi
@@ -803,7 +803,7 @@ do case
 
       	APPEND BLANK
         _vars := get_dbf_global_memvars()
-        if !update_rec_server_and_dbf(ALIAS(), _vars)
+        if !update_rec_server_and_dbf(ALIAS(), _vars, 1, "FULL")
                 delete_with_rlock()
         endif
 
@@ -818,7 +818,7 @@ do case
   case Ch==K_CTRL_T
 
      if Pitanje( , "Izbrisati stavku ?","N") == "D"      
-       delete_rec_server_and_dbf() 
+       delete_rec_server_and_dbf(ALIAS(), nil, 1, "FULL") 
        lTrebaOsvUg:=.t.
        nRet:=DE_REFRESH
      else

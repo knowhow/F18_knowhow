@@ -195,8 +195,8 @@ Box(, 12,70,.f.)
 
 	read
 
-    my_use_semaphore_off()
-	
+
+    f18_lock_tables({"ld_pk_data"})	
     sql_table_update( nil, "BEGIN" )
 
 	if LastKey() <> K_ESC
@@ -214,9 +214,8 @@ Box(, 12,70,.f.)
 
     endif
 
+    f18_free_tables({"ld_pk_data"})	
     sql_table_update( nil, "END" )
-
-    my_use_semaphore_on()
 
 	if LastKey() == K_ESC
 		exit

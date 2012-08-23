@@ -484,11 +484,7 @@ if !FOUND()
     _rec["naz"] := kred->naz
     _rec["ziror"] := kred->ziro
 
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( "partn", _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    update_rec_server_and_dbf( "partn", _rec, 1, "FULL")
 
 endif
 

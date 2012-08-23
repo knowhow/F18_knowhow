@@ -324,11 +324,11 @@ do while !eof() .and. cObracun==obr .and. godina=cGodina .and. mjesec=cMjesec
     select ld
     seek STR(_godina)+STR(_mjesec)+_idradn+_idrj
     if !Found()
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
     else   // postoji zapis
         if cDodati == "N"  
             // ne dodaji na postojeci obracun
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
         else
             private cPom := ""
             set_global_memvars_from_dbf("w") 
@@ -341,7 +341,7 @@ do while !eof() .and. cObracun==obr .and. godina=cGodina .and. mjesec=cMjesec
             wuodbici += _uodbici
             wuiznos += _uiznos
             _rec := get_dbf_global_memvars( "w" )
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
         endif
     endif
     

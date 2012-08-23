@@ -648,13 +648,7 @@ select radn
 _rec := dbf_get_rec()
 _rec[LOWER(xValue)] := xIzn
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-
-update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" )
 
 PopWa()
 return xIzn
@@ -682,13 +676,7 @@ endif
 _rec := dbf_get_rec()
 _rec[ LOWER(xValue) ] := nRezult
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-
-update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" ) 
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" ) 
 
 PopWa()
 
@@ -709,11 +697,7 @@ if (radn->brbod <> _brbod)
             _vars := dbf_get_rec()
             _vars["brbod"] := _brbod
 
-            my_use_semaphore_off()
-            sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf("ld_radn", _vars, 1, "CONT")
-            sql_table_update( nil, "END" )
-            my_use_semaphore_on()
+            update_rec_server_and_dbf("ld_radn", _vars, 1, "FULL")
 
     endif
 
@@ -732,11 +716,7 @@ if radn->kminrad <> k_min_rad
             select radn
             _fields := dbf_get_rec()     
             _fields["kminrad"] := k_min_rad
-            my_use_semaphore_off()
-            sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf("ld_radn", _vars, 1, "CONT")
-            sql_table_update( nil, "END" )
-            my_use_semaphore_on()
+            update_rec_server_and_dbf("ld_radn", _vars, 1, "FULL")
             select ld
     endif
 endif
@@ -755,11 +735,7 @@ if radn->idvposla <> _idvposla
         select radn
         _rec := dbf_get_rec()
         _rec["idvposla"] := _idvposla
-        my_use_semaphore_off()
-        sql_table_update( nil, "BEGIN" )
-        update_rec_server_and_dbf("ld_radn", _vars, 1, "CONT")
-        sql_table_update( nil, "END" )
-        my_use_semaphore_on()
+        update_rec_server_and_dbf("ld_radn", _vars, 1, "FULL")
         select ld
     endif
 endif

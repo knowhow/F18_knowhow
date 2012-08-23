@@ -866,13 +866,28 @@ do while .t.
                     _vars["id"] := NoviID_A()
                 endif
 
+                my_use_semaphore_off()
+
+                if sql_table_update(nil, "BEGIN")
+                    lock_semaphore( "sifv", "lock" )
+                    lock_semaphore( "sifk", "lock" )
+                    sql_table_update(nil, "END")
+                else
+                    log_write( "ERROR: nisam uspio lokovati tabele sifk, sifv", 2 )
+                    exit
+                endif
+                
                 sql_table_update(nil, "BEGIN")
-                   update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
-                   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
+                update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
+                update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
                 sql_table_update(nil, "END")
 
-                set_global_vars_from_dbf("w")
+                lock_semaphore( "sifk", "free" )
+                lock_semaphore( "sifv", "free" )
 
+                my_use_semaphore_on()
+
+                set_global_vars_from_dbf("w")
 
                 if lastkey()==K_PGUP
                      skip -1
@@ -924,17 +939,22 @@ _vars := get_dbf_global_memvars("w")
 
 
 // -----------------------------------------------------------------------
-sql_table_update(nil, "BEGIN")
+if f18_lock_tabele({"sifv", "sifk"})
 
-if !update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
-    if lNovi
-        delete_with_rlock()
+    sql_table_update(nil, "BEGIN")
+
+    if !update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
+        if lNovi
+           delete_with_rlock()
+        endif
+        sql_table_update(nil, "ROLLBACK")
     endif
-else
-   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi, "CONT")
-endif
+    update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi, "CONT")
 
-sql_table_update(nil, "END")
+    f18_free_tabele({"sifv", "sifk"})
+    sql_table_update(nil, "END")
+    
+endif
 // ---------------------------------------------------------------------------
 
 

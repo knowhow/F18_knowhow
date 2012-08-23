@@ -911,8 +911,6 @@ seek "IN"
 	
 if !FOUND()
 
-	my_use_semaphore_off()
-	sql_table_update( nil, "BEGIN" )
 
 	APPEND BLANK
 	_rec := dbf_get_rec()	
@@ -920,10 +918,7 @@ if !FOUND()
 	_rec["id"] := "IN"
 	_rec["naz"] := "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
 
-	update_rec_server_and_dbf( "ftxt", _rec, 1, "CONT" )
-
-	sql_table_update( nil, "END" )
-	my_use_semaphore_on()
+	update_rec_server_and_dbf( "ftxt", _rec, 1, "FULL" )
 
 endif
 
@@ -945,19 +940,14 @@ seek "KS"
 	
 if !FOUND()
 
-	my_use_semaphore_off()
-	sql_table_update( nil, "BEGIN" )
-
 	APPEND BLANK
 	_rec := dbf_get_rec()	
 
 	_rec["id"] := "KS"
 	_rec["naz"] := "Dostava nije oporeziva, na osnovu Pravilnika o primjeni Zakona o PDV-u" + CHR(13) + CHR(10) + "clan 6. tacka 3."
 
-	update_rec_server_and_dbf( "ftxt", _rec, 1, "CONT" )
+	update_rec_server_and_dbf( "ftxt", _rec, 1, "FULL" )
 
-	sql_table_update( nil, "END" )
-	my_use_semaphore_on()
 
 
 endif
@@ -1221,13 +1211,7 @@ if FOUND()
     if lFill == .t.
 
 		// filuj robu...
-		my_use_semaphore_off()
-		sql_table_update( nil, "BEGIN" )
-
-		update_rec_server_and_dbf( "roba", _vars, 1, "CONT" )
-
-		sql_table_update( nil, "END" )
-		my_use_semaphore_on()
+		update_rec_server_and_dbf( "roba", _vars, 1, "FULL" )
 
 	endif
 

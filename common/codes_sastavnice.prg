@@ -213,11 +213,7 @@ if (LastKey() <> K_ESC)
                 _rec := dbf_get_rec()
                 _rec["kolicina"] := nKolic2
 
-                my_use_semaphore_off()
-                sql_table_update( nil, "BEGIN" )
-                update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-                sql_table_update( nil, "END" )
-                my_use_semaphore_on()    
+                update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
             endif
         endif
 
@@ -298,7 +294,7 @@ if Pitanje(, "Kopirati postojece sastavnice u novi proizvod", "N") == "D"
         seek cIdTek
         nCnt := 0
 
-        my_use_semaphore_off()
+        f18_lock_tabele( {"sast"} )
         sql_table_update( nil, "BEGIN" )
 
         do while !eof() .and. (id == cIdTek)
@@ -314,8 +310,8 @@ if Pitanje(, "Kopirati postojece sastavnice u novi proizvod", "N") == "D"
             skip
         enddo
 
+        f18_free_tabele({"sast"})     
         sql_table_update( nil, "END" )
-        my_use_semaphore_on()
 
         select roba
         set order to tag "idun"

@@ -534,11 +534,7 @@ if isugovori()
         if FOUND() .and. field->idpartner == cPart
             _rec := dbf_get_rec()
             _rec["dat_l_fakt"] := DATE()
-            my_use_semaphore_off()
-            sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "CONT" )
-            sql_table_update( nil, "END" )
-            my_use_semaphore_on()
+            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL" )
         endif
         
     endif
@@ -801,17 +797,12 @@ do case
     
     if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
 
-        my_use_semaphore_off()
-        sql_table_update( nil, "BEGIN" )
-
         _rec := dbf_get_rec()
         _rec["fisc_rn"] := nFiscal
         _rec["fisc_st"] := nRekl
 
-        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
 
-        sql_table_update( nil, "END" )
-        my_use_semaphore_on()
 
         return DE_REFRESH
     endif

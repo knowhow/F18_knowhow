@@ -624,6 +624,7 @@ do while !EOF()
     // cisti podbroj
     _app_rec["podbr"] := ""
 
+    f18_lock_tables({"kalk_doks", "kalk_kalk"})
     select kalk_doks
     update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "BEGIN" )
 
@@ -655,7 +656,7 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select kalk
-        update_rec_server_and_dbf( "kalk", _app_rec, 1, "CONT" )
+        update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
 
         select e_kalk
         skip
@@ -663,6 +664,7 @@ do while !EOF()
     enddo
 
     // zavrsi transakciju
+    f18_free_tables({"kalk_doks", "kalk_kalk"})
     sql_table_update( nil, "END" )
 
     select e_doks
@@ -670,7 +672,6 @@ do while !EOF()
 
 enddo
 
-my_use_semaphore_on()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0

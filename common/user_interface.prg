@@ -343,9 +343,7 @@ nLen := Len(cText)
 
 msg_x1:=8
 msg_x2:=14
-// hernad
-//msg_y1:=( MAXCOLS() - 1 - nLen - 7 )/2
-//msg_y2:= MAXCOLS() - 1 - msg_y1
+
 msg_y1:=( MAXCOLS()  - nLen - 7 )/2
 msg_y2:= MAXCOLS() - msg_y1
 

@@ -462,25 +462,8 @@ endif
 
 O_DOKSPF
 
-my_use_semaphore_off()
 
-// ------------------------------------------------------
-// lock semaphore
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl, "lock" )
-
-if _ok
-    sql_table_update(nil, "END")
-    log_write( "uspjesno zakljucao doks_pf tabelu", 7 )
-else
-    sql_table_update(nil, "ROLLBACK")
-    my_use_semaphore_on()
-    log_write( "nije uspjelo zakljucavanje tabele doks_pf", 2 )
-    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
-    return 
-endif
-    
-// ---end lock ---------------------------------------------
+f18_lock_tables({_tbl, "doks_pf"})
 
 sql_table_update( nil, "BEGIN" )
 
@@ -512,13 +495,8 @@ _rec["kidbr"] := cKIdBroj
 
 update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT", .f. )
 
+f18_free_tables({_tbl, "doks_pf"})
 sql_table_update( nil, "END" )
-
-// oslobodi lock
-lock_semaphore( _tbl, "free" )
-log_write( "uspjesno otkljucao tabelu doks_pf", 7 )
-
-my_use_semaphore_on()
 
 return
 

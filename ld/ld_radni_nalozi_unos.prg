@@ -71,7 +71,7 @@ for i:=1 to 8
         _rec["idradn"] := cIdRadn
         _rec["idrnal"] := cRnal[i]
         _rec["sati"] := nSati[i]
-        update_rec_server_and_dbf( ALIAS(), _rec )
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	endif
 next
 

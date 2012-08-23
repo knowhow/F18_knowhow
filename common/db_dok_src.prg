@@ -300,7 +300,7 @@ do while !EOF()
 	
 	append blank
 	
-	update_rec_server_and_dbf( ALIAS(), _rec )
+	update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL")
 	
 	select p_doksrc
 	

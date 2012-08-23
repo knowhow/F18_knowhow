@@ -820,7 +820,7 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import fakt dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", fakt/" + ALLTRIM(STR( _total_fakt ))
 
-my_use_semaphore_off()
+f18_lock_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF()
@@ -980,8 +980,8 @@ do while !EOF()
 enddo
    
 // zavrsi transakciju
+f18_free_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
@@ -1044,6 +1044,9 @@ set order to tag "1"
 go top
 seek id_firma + id_vd + br_dok
 
+f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+sql_table_update(nil, "BEGIN")
+
 if FOUND()
 
     _del_rec := dbf_get_rec()
@@ -1058,6 +1061,9 @@ if FOUND()
     delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
 
 endif
+
+f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+sql_table_update(nil, "END")
 
 select ( _t_area )
 return _ret

@@ -753,7 +753,7 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
             
             _rec_2 := dbf_get_rec()
             _rec_2["otvst"] := "9"
-            update_rec_server_and_dbf("fin_suban", _rec_2)
+            update_rec_server_and_dbf("fin_suban", _rec_2, 1, "FULL")
             SKIP
 
         enddo
@@ -1189,7 +1189,7 @@ Box(,2,50)
 
 @ m_x + 1, m_y + 2 SAY "Konvertovanje u toku... "
 
-my_use_semaphore_off()
+f18_lock_tables({LOWER(ALIAS())})
 sql_table_update( nil, "BEGIN" )
 
 nCnt := 0
@@ -1212,8 +1212,8 @@ do while !EOF()
 
 enddo
 
+f18_free_tables({LOWER(ALIAS())})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 BoxC()
 

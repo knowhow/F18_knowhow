@@ -252,16 +252,11 @@ do while !EOF()
 				
 				my_use_semaphore_off()
 
-				sql_table_update( nil, "BEGIN" )	
-
 				_app_rec := dbf_get_rec()
 				_app_rec["barkod"] := topska->barkod
 
-				update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
+				update_rec_server_and_dbf( "roba", _app_rec, 1, "FULL" )
 		
-				sql_table_update( nil, "END" )	
-				my_use_semaphore_on()
-
 			endif
 
 	    endif
@@ -307,9 +302,6 @@ hseek topska->idroba
 
 if !FOUND()
 
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    
     append blank
     _rec := dbf_get_rec()
 
@@ -330,11 +322,8 @@ if !FOUND()
         _rec[ _mpc_naz ] := topska->mpc
     endif
 
-    update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
-    
     // dodaj u kontrolnu matricu
     AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc } )
 

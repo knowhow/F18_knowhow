@@ -686,11 +686,7 @@ Box(,15,60)
             if FOUND()
                 _rec := dbf_get_rec()     
                 _rec["nc"] := kalk_pripr->fcj
-                my_use_semaphore_off()
-                sql_table_update( nil, "BEGIN" )
-                update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
-                sql_table_update( nil, "END" )
-                my_use_semaphore_on()
+                update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
             endif
 
             select kalk_pripr

@@ -139,11 +139,7 @@ _DatKurs:=_DatFaktP
             select roba
             _rec := dbf_get_rec()
             _rec["mpc"] := _mpcpom
-			my_use_semaphore_off()
-			sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-			sql_table_update( nil, "END" )
-			my_use_semaphore_on()
+            update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
             select kalk_pripr
      endif
  endif

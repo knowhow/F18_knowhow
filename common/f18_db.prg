@@ -17,7 +17,7 @@
 //
 // mijenja zapis na serveru, pa ako je sve ok onda uradi update dbf-a 
 //
-// update_rec_server_and_dbf( table, values, 1, "FULL") 
+// update_rec_server_and_dbf( table, values, 1, "FULL") - zapocni/zavrsi transakciju unutar funkcije 
 // -----------------------------------------------------------------------------------------------------------
 function update_rec_server_and_dbf(table, values, algoritam, transaction, lock)
 local _ids := {}
@@ -36,7 +36,11 @@ local _ret
 _ret :=.t.
 
 if lock == NIL
-   lock := .t.
+  if transaction == "FULL" 
+     lock := .t.
+  else
+     lock := .f.
+  endif
 endif
 
 // trebamo where str za values rec
@@ -49,7 +53,7 @@ if ALIAS() <> _a_dbf_rec["alias"]
    QUIT
 endif
 
-log_write( "update_rec_server_and_dbf(), poceo", 9 )
+log_write( "START: update_rec_server_and_dbf " + table, 9 )
 
 _values_dbf := dbf_get_rec()
 // trebamo where str za stanje dbf-a
@@ -162,7 +166,7 @@ if lock
     lock_semaphore(table, "free")
 endif
 
-log_write( "update_rec_server_and_dbf(), zavrsio", 9 )
+log_write( "END update_rec_server_and_dbf " + table, 9 )
 
 return _ret
 
@@ -184,7 +188,11 @@ local _alg_tag := ""
 local _ret
 
 if lock == NIL
-    lock := .t.
+  if transaction == "FULL" 
+     lock := .t.
+  else
+     lock := .f.
+  endif
 endif
 
 _ret := .t.

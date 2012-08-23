@@ -102,7 +102,7 @@ local _rec, _predh_sati
 select radsat
 hseek id_radnik
 
-my_use_semaphore_off()
+f18_lock_tables({"ld_radsat"})
 sql_table_update( nil, "BEGIN" )
 
 if Found()
@@ -120,8 +120,8 @@ endif
 
 update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
 
+f18_free_tables({"ld_radsat"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 select ( _t_area )
 
@@ -142,19 +142,13 @@ if Found()
     
     _rec := dbf_get_rec()
     _rec["sati"] := iznos_sati
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )  
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )  
 
 endif
 
 select ( _t_arr )
 
 return
-
-
 
 // -------------------------------------------------
 // ispravka pregled radnih sati
@@ -214,22 +208,14 @@ do case
         else
             _rec := dbf_get_rec()
             _rec["sati"] := nSati
-            my_use_semaphore_off()
-            sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
-            sql_table_update( nil, "END" )
-            my_use_semaphore_on()
+            update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
             return DE_REFRESH
         endif
 
     case CH == K_CTRL_T
         if Pitanje(,"izbrisati stavku ?","N") == "D"
             _rec := dbf_get_rec()
-            my_use_semaphore_off()
-            sql_table_update( nil, "BEGIN" )
-            delete_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
-            sql_table_update( nil, "END" )
-            my_use_semaphore_on()
+            delete_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
             return DE_REFRESH
         endif
     

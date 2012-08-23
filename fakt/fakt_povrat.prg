@@ -133,7 +133,7 @@ endif
 
 GO TOP
 
-my_use_semaphore_off()
+f18_lock_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
 sql_table_update( nil, "BEGIN" )
 
 DO WHILE !EOF()
@@ -212,8 +212,8 @@ DO WHILE !EOF()
 
 enddo 
 
+f18_free_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 close all
 return

@@ -1267,6 +1267,7 @@ sql_table_update( nil, "BEGIN" )
 delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT", .f. )
 
 select pos_doks
+set filter to
 set order to tag "1"
 go top
 seek id_pos + id_vd + DTOS( dat_dok ) + br_dok

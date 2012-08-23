@@ -236,26 +236,10 @@ do case
 
     case Ch == K_CTRL_F9
 
-        O_STRAD
-        select strad
-        hseek gStrad
-        cLevel := prioritet
-        use
-
-        select pos_doks
-        skip -1
-        _rec_no := RECNO()
-        skip 1
-        
         _id_pos := field->idpos
         _id_vd := field->idvd
         _br_dok := field->brdok
         _dat_dok := field->datum
-        
-        if cLevel <> "0"
-            MsgBeep("Nedozvoljena operacija !")
-            return DE_CONT
-        endif
         
         if pitanje(,"Zelite li zaista izbrisati dokument","N") == "D"
            
@@ -264,7 +248,7 @@ do case
             _o_pos_prepis_tbl()
             select ( _t_area )
             set filter to &_tbl_filter
-            go (_rec_no)
+            go top
 
             return DE_REFRESH
             

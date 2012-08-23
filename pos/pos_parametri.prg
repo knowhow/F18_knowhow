@@ -319,53 +319,6 @@ return
 
 
 
-function gVodiOdj(gVodiOdj)
-local _rec
-
-if gVodiOdj=="0"
-
-    if Pitanje(,"Nulirati sifre odjeljenja ","N")=="D"
-
-        Pushwa()
-
-        O_POS
-        set order to 0
-        go top
-
-        do while !eof()
-            _rec := dbf_get_rec()
-            _rec["idodj"] := ""
-            _rec["iddio"] := "0"
-            update_rec_server_and_dbf( ALIAS(), _rec )
-            skip
-        enddo
-
-        use
-        O_ROBA
-
-        set order to 0
-        go top
-        do while !eof()
-            _rec := dbf_get_rec()
-            _rec["idodj"] := ""
-            update_rec_server_and_dbf( ALIAS(), _rec )
-            skip
-        enddo
-        use
-        PopWa()
-    endif
-
-    gVodiOdj:="N"
-
-endif
-
-if gVodiOdj$"DN"
-    return .t.
-endif
-return
-
-
-
 function pos_param_izgled_racuna()
 local aNiz:={}
 local cPom:=""

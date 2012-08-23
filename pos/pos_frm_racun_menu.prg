@@ -541,15 +541,27 @@ Box (, 7, 70)
     else
         cPartner:=""
     endif
+
     // vec je DOKS nastiman u BrowseSRn
     select pos_doks
+
     _rec := dbf_get_rec()
     _rec["idvrstep"] := cIdVrsPla
     _rec["idgost"] := cPartner    
+
     my_use_semaphore_off()
+
+    if !pos_semaphores_lock()
+        close all
+        return
+    endif
+
     sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
     sql_table_update( nil, "END" )
+
+    pos_semaphores_unlock()
+
     my_use_semaphore_on()
 
 BoxC()

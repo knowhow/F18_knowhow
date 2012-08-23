@@ -229,7 +229,7 @@ do case
             endif
 
             sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+            update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
             sql_table_update( nil, "END" )
 
             pos_semaphores_unlock()

@@ -153,20 +153,20 @@ endif
 if !_a_dbf_rec["temp"] 
 
 
-   // tabela je pokrivena semaforom
-   if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
+    // tabela je pokrivena semaforom
+    if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
         dbf_semaphore_synchro(table, check_recno)
-   else
-     // rdd = "SEMAPHORE" poziv is update from sql server procedure
-     // samo otvori tabelu
-     log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 5 )
-     _rdd := "DBFCDX" 
-   endif
+    else
+        // rdd = "SEMAPHORE" poziv is update from sql server procedure
+        // samo otvori tabelu
+        log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 8 )
+        _rdd := "DBFCDX" 
+    endif
 
 endif
 
 if USED()
-   use
+    use
 endif
 
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }

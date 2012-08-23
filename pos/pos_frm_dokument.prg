@@ -248,6 +248,8 @@ do case
         _id_vd := field->idvd
         _br_dok := field->brdok
         _dat_dok := field->datum
+
+        _rec_no := RECNO()
         
         if pitanje(,"Zelite li zaista izbrisati dokument","N") == "D"
            
@@ -256,7 +258,7 @@ do case
             _o_pos_prepis_tbl()
             select ( _t_area )
             set filter to &_tbl_filter
-            go top
+            go (_rec_no)
 
             return DE_REFRESH
             

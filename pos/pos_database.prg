@@ -915,7 +915,7 @@ else
     my_use_semaphore_on()
     log_write( "nisam uspio zakljucati tabele pos_pos i pos_doks", 2 )
     MsgBeep("lock pos tabela neuspjesan, operacija prekinuta")
-    return 
+    return .f.
 endif
 
 return _ok

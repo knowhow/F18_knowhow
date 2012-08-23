@@ -332,7 +332,7 @@ if increment
             " WHERE version > " + STR(_last_ver + 1)
     _ret := _sql_query( _server, _qry )
 
-    log_write( "update semaphore version, increment .t., table: " + _tbl + " update last_ver = " + STR( _last_ver + 1 ), 7 )
+    log_write( "update semaphore version, increment .t., table: " + _tbl + " update last_ver = " + STR( _last_ver + 1 ), 8 )
 
 endif
 

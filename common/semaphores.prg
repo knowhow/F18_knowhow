@@ -12,6 +12,79 @@
 #include "fmk.ch"
 #include "common.ch"
 
+// --------------------------------------------------------------
+// koristenje f18_lock_tables( arr ), f18_free_tables( arr )
+// --------
+//   if !f18_lock_tables( {"pos_doks", "pos_pos"} )
+//       -- prekidamo operaciju
+//   endif
+//   
+//   sql_table_update(nil, "BEGIN")
+//   update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+//   f18_free_tables( {"pos_doks", "pos_pos"} )
+//   sql_table_update(nil, "END")
+//
+//  ako imamo samo jednan zapis, jednu tabelu, transakcija i lockovanje
+//  se desavaju unutar funkcije update_rec_server_and_dbf:
+//
+//   update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+//
+//  na isti nacin se koristi i u kombinaciji sa 
+//      delete_rec_server_and_dbf()
+// --------------------------------------------------------------
+
+// -----------------------------------------------------
+// lokovanje tabela zadatih u matrici a_tables
+// a_tables := {"sifk", "sifv"...}
+// -----------------------------------------------------
+function f18_lock_tables( a_tables )
+local _ok := .t.
+local _i 
+
+if LEN( a_tables ) == NIL
+    return .f.
+endif
+
+if sql_table_update( nil, "BEGIN" )
+
+    for _i := 1 to LEN( a_tables )
+        _ok := _ok .and. lock_semaphore( a_tables[ _i ], "lock" )
+    next
+    
+    if _ok
+        sql_table_update( nil, "END" ) 
+        log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
+    endif
+
+else
+    _ok := .f.
+    log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
+endif
+
+return _ok
+
+
+
+// -----------------------------------------------------
+// unlokovanje tabela zadatih u matrici a_tables
+// a_tables := {"sifk", "sifv"}
+// -----------------------------------------------------
+function f18_free_tables( a_tables )
+local _ok := .t.
+local _i
+
+if LEN( a_tables ) == NIL
+    return .f.
+endif
+
+for _i := 1 to LEN( a_tables )
+    lock_semaphore( a_tables[ _i ], "free" )
+    log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
+next
+
+return _ok
+
+
 // ------------------------------------------
 // status = "lock" (locked_by_me), "free"
 // ------------------------------------------

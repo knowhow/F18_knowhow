@@ -37,6 +37,7 @@ _ret :=.t.
 
 if lock == NIL
   if transaction == "FULL" 
+     my_use_semaphore_off()
      lock := .t.
   else
      lock := .f.
@@ -164,6 +165,7 @@ endif
 
 if lock
     lock_semaphore(table, "free")
+    my_use_semaphore_on()
 endif
 
 log_write( "END update_rec_server_and_dbf " + table, 9 )
@@ -188,7 +190,8 @@ local _alg_tag := ""
 local _ret
 
 if lock == NIL
-  if transaction == "FULL" 
+  if transaction == "FULL"
+     my_use_semaphore_off() 
      lock := .t.
   else
      lock := .f.
@@ -289,6 +292,7 @@ endif
 
 if lock
     lock_semaphore(table, "free")
+    my_use_semaphore_on()
 endif
 
 log_write( "delete rec server, zavrsio", 9 )

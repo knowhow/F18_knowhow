@@ -64,7 +64,7 @@ log_write( "update_dbf_from_server(), poceo", 9 )
 
 if algoritam == "FULL"
 
-    log_write( "update_dbf_from_server(), iniciraj full synchro", 7 )
+    log_write( "update_dbf_from_server(), iniciraj full synchro", 8 )
 
     SELECT (_dbf_wa)
     my_usex (_dbf_alias, table, .f., "SEMAPHORE")
@@ -74,7 +74,7 @@ if algoritam == "FULL"
 
 else
 
-    log_write( "update_dbf_from_server(), iniciraj ids synchro", 7 )
+    log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
 
     if lock_semaphore(table, "lock")
  

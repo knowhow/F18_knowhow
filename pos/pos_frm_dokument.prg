@@ -185,6 +185,7 @@ local nRecNo
 local ctIdPos
 local dtDatum
 local _rec, _id_pos, _id_vd, _dat_dok, _br_dok
+local _t_area := SELECT()
 local _tbl_filter := DbFilter()
 local _rec_no, _ok
 local _tbl_pos := "pos_pos"
@@ -242,7 +243,10 @@ do case
         use
 
         select pos_doks
-
+        skip -1
+        _rec_no := RECNO()
+        skip 1
+        
         _id_pos := field->idpos
         _id_vd := field->idvd
         _br_dok := field->brdok
@@ -256,7 +260,12 @@ do case
         if pitanje(,"Zelite li zaista izbrisati dokument","N") == "D"
            
             pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )    
-            
+
+            _o_pos_prepis_tbl()
+            select ( _t_area )
+            set filter to &_tbl_filter
+            go (_rec_no)
+
             return DE_REFRESH
             
         endif

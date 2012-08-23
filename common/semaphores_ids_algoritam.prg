@@ -189,7 +189,7 @@ for _i := 1 to _num_arr
    AADD(_arr, _tok)
 next
 
-log_write( "get_ids_from_semaphore(), imam ids-ova za osvjezavanje", 7 )
+log_write( "get_ids_from_semaphore(), imam ids-ova za osvjezavanje", 9 )
 
 RETURN _arr
 

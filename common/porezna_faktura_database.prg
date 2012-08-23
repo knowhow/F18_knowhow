@@ -471,9 +471,11 @@ _ok := lock_semaphore( _tbl, "lock" )
 
 if _ok
     sql_table_update(nil, "END")
+    log_write( "uspjesno zakljucao doks_pf tabelu", 7 )
 else
     sql_table_update(nil, "ROLLBACK")
     my_use_semaphore_on()
+    log_write( "nije uspjelo zakljucavanje tabele doks_pf", 2 )
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return 
 endif
@@ -514,6 +516,7 @@ sql_table_update( nil, "END" )
 
 // oslobodi lock
 lock_semaphore( _tbl, "free" )
+log_write( "uspjesno otkljucao tabelu doks_pf", 7 )
 
 my_use_semaphore_on()
 

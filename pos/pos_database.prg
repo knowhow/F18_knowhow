@@ -461,6 +461,10 @@ sql_table_update( nil, "END" )
 // otkljucaj semafore
 pos_semaphores_unlock()
 
+// pos_pos check
+check_recno( "pos_pos", .f. )
+check_recno( "pos_doks", .f. )
+
 my_use_semaphore_on()
 
 log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )
@@ -868,6 +872,10 @@ sql_table_update( nil, "END" )
 // otkljucaj semafore
 pos_semaphores_unlock()
 
+// pos_pos check
+check_recno( "pos_pos", .f. )
+check_recno( "pos_doks", .f. )
+
 my_use_semaphore_on()
 
 log_write( "azuriranje stavki iz priprz u pos/doks, zavrsio", 5 )
@@ -901,9 +909,11 @@ _ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
 
 if _ok
     sql_table_update(nil, "END")
+    log_write( "uspjesno zakljucane tabele pos_pos i pos_doks", 7 )
 else
     sql_table_update(nil, "ROLLBACK")
     my_use_semaphore_on()
+    log_write( "nisam uspio zakljucati tabele pos_pos i pos_doks", 2 )
     MsgBeep("lock pos tabela neuspjesan, operacija prekinuta")
     return 
 endif
@@ -922,6 +932,8 @@ local _ok := .t.
 
 _ok := lock_semaphore( _tbl_pos, "free" )
 _ok := _ok .and. lock_semaphore( _tbl_doks, "free" )
+
+log_write( "otkljucane tabele pos_pos i pos_doks", 7 )
 
 return _ok
 
@@ -1267,6 +1279,10 @@ endif
 sql_table_update( nil, "END" )
 
 pos_semaphores_unlock()
+
+// pos_pos check
+check_recno( "pos_pos", .f. )
+check_recno( "pos_doks", .f. )
 
 my_use_semaphore_on()
 

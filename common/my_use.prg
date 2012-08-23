@@ -255,9 +255,9 @@ do while .t.
 enddo
 
 // sada bi lokalni cache morao biti ok, idemo to provjeriti
-if full_synchro
+//if full_synchro
     check_after_synchro( table, full_synchro )
-endif
+//endif
 
 log_write( "dbf_semaphore_synchro(), zavrsio", 9 )
 

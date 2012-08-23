@@ -41,13 +41,12 @@ _sql_table :=  my_server_params()["schema"] + "." + _a_dbf_rec["table"]
 _cnt_sql := table_count(_sql_table)
 
 begin sequence with { |err| Break(err) }
-  // pozicioniraj se po aliasu, a ne po workarea-i
-  SELECT (_a_dbf_rec["alias"])
-  USE 
+    // pozicioniraj se po aliasu, a ne po workarea-i
+    SELECT (_a_dbf_rec["alias"])
+    USE 
 recover
-  SELECT (_a_dbf_rec["wa"])
+    SELECT (_a_dbf_rec["wa"])
 end sequence
-
 
 if !USED()
     dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .t. , .f.)
@@ -58,6 +57,8 @@ endif
 //_cnt_dbf := RECCOUNT()
 // hoce li ovo usporiti otvaranje za velike tabele ?! 
 COUNT TO _cnt_dbf 
+
+log_write( "broj zapisa dbf " + _a_dbf_rec["alias"] + ": " + ALLTRIM(STR(_cnt_dbf, 10)) + " / sql " + _sql_table + ": " + ALLTRIM(STR(_cnt_sql, 10)), 7 )
 
 if _cnt_sql <> _cnt_dbf
    

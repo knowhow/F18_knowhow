@@ -148,7 +148,7 @@ END CASE
    
 _ret := _sql_query( _server, _qry)
 
-log_write( "sql table update, table: " + IF(table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 7 )
+log_write( "sql table update, table: " + IF(table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8 )
 log_write( "sql table update, VALTYPE(_ret): " + VALTYPE(_ret), 9 )
 log_write( "sql table update, zavrsio", 9 )
 

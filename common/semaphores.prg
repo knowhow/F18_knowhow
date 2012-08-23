@@ -25,7 +25,7 @@ local _user   := f18_user()
 
 // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
 
-log_write( "table: " + table + ", status:" + status + " zapoceo" , 7 )
+log_write( "table: " + table + ", status:" + status + " zapoceo" , 8 )
 
 _i := 0
 
@@ -81,7 +81,7 @@ endif
 
 _ret := _sql_query( _server, _qry )
 
-log_write( "table: " + table + ", status:" + status + " zavrsio" , 7 )
+log_write( "table: " + table + ", status:" + status + " zavrsio" , 8 )
 
 if VALTYPE(_ret) == "L"
     // ERROR

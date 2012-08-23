@@ -11,6 +11,7 @@
 
 #include "fmk.ch"
 
+
 // ----------------------------------------------------------------------------------------------------------
 // update podataka za jedan dbf zapis na serveru
 //
@@ -48,28 +49,30 @@ if ALIAS() <> _a_dbf_rec["alias"]
    QUIT
 endif
 
+log_write( "update_rec_server_and_dbf(), poceo", 9 )
+
 _values_dbf := dbf_get_rec()
 // trebamo where str za stanje dbf-a
 set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
 
 if lock
-   lock_semaphore(table, "lock")
+    lock_semaphore(table, "lock")
 endif
 
 if transaction $ "FULL#BEGIN"
-   sql_table_update(table, "BEGIN")
+    sql_table_update(table, "BEGIN")
 endif
 
 
 // izbrisi sa servera stare vrijednosti za values
 if !sql_table_update(table, "del", nil, _where_str)
  
-   sql_table_update(table, "ROLLBACK")
-   _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
-   log_write( _msg, 1 )
-   Alert(_msg)
+    sql_table_update(table, "ROLLBACK")
+    _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
+    log_write( _msg, 1 )
+    Alert(_msg)
 
-   _ret := .f.
+    _ret := .f.
 endif
 
 if _ret .and.  (_where_str_dbf != _where_str)
@@ -114,7 +117,7 @@ _full_id_mem := get_dbf_rec_primary_key(_alg["dbf_key_fields"], values)
 // stavi id-ove na server
 AADD(_ids, _alg_tag + _full_id_mem)
 if ( _full_id_dbf <> _full_id_mem ) .and. !EMPTY( _full_id_dbf )
-  AADD(_ids, _alg_tag + _full_id_dbf)
+    AADD(_ids, _alg_tag + _full_id_dbf)
 endif
 
 if !push_ids_to_semaphore(table, _ids)
@@ -142,7 +145,7 @@ if _ret
     // na kraju, azuriraj lokalni dbf
     if  dbf_update_rec(values)
         if transaction $ "FULL#END"
-        sql_table_update(table, "END")
+            sql_table_update(table, "END")
         endif
 
         _ret := .t. 
@@ -156,8 +159,10 @@ if _ret
 endif
 
 if lock
-  lock_semaphore(table, "free")
+    lock_semaphore(table, "free")
 endif
+
+log_write( "update_rec_server_and_dbf(), zavrsio", 9 )
 
 return _ret
 
@@ -170,7 +175,7 @@ local _ids := {}
 local _pos
 local _full_id
 local _dbf_pkey_search
-local _field
+local _field, _count
 local _where_str
 local _t_field, _t_field_dec
 local _a_dbf_rec, _alg
@@ -194,12 +199,14 @@ if ALIAS() <> _a_dbf_rec["alias"]
    QUIT
 endif
 
+log_write( "delete_rec_server_and_dbf(), poceo", 9 )
+
 if lock
     lock_semaphore(table, "lock")
 endif
 
 if transaction $ "FULL#BEGIN"
-   sql_table_update(table, "BEGIN")
+    sql_table_update(table, "BEGIN")
 endif
 
 
@@ -224,35 +231,45 @@ if sql_table_update(table, "del", nil, _where_str)
     SET ORDER TO TAG (_alg["dbf_tag"])
 
     if FLOCK()
+        
+        _count := 1
+
         SEEK _full_id
+
         while FOUND()
+            ++ _count
             DELETE
             // sve dok budes nalazio pod ovim kljucem brisi
             SEEK _full_id
         enddo
+
         DBUNLOCKALL() 
 
-       update_semaphore_version(table, .t.)
+        log_write( "delete_rec_server_and_dbf(), pobrisano iz lokalnog dbf-a, count=" + ALLTRIM( STR( _count)), 7 ) 
 
-       if transaction $ "FULL#END"
-          sql_table_update(table, "END")
-       endif
-       _ret := .t.
+        update_semaphore_version(table, .t.)
 
+        if transaction $ "FULL#END"
+            sql_table_update(table, "END")
+        endif
+
+        _ret := .t.
 
     else
-        sql_table_update(table, "ROLLBACK")
 
-        _msg := table + "transakcija neuspjesna ! ROLLBACK"
+        sql_table_update( table, "ROLLBACK" )
+
+        _msg := "delete_rec_server...(), " + table + " nije lockovana !!! ROLLBACK"
         log_write( _msg, 1 )
         Alert(_msg)
 
         _ret := .f.
+
     endif
 
 else
 
-   _msg := table + "transakcija neuspjesna ! ROLLBACK"
+   _msg := "delete_rec_server..(), " + table + " transakcija neuspjesna ! ROLLBACK"
    Alert(_msg)
    log_write(_msg, 1)
 
@@ -265,6 +282,8 @@ endif
 if lock
     lock_semaphore(table, "free")
 endif
+
+log_write( "delete_rec_server_and_dbf(), zavrsio", 9 )
 
 return _ret
 
@@ -317,6 +336,7 @@ endif
 
 lock_semaphore(_tbl_suban, "free")
 return .t.
+
 
 // --------------------------------------------------------------------------------------------------------------
 // inicijalizacija varijabli koje koriste update and delete_from_server_and_dbf  funkcije

@@ -508,7 +508,7 @@ _rec["knaz"] := cKNaziv
 _rec["kadr"] := cKAdres
 _rec["kidbr"] := cKIdBroj
 
-update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT" )
+update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT", .f. )
 
 sql_table_update( nil, "END" )
 

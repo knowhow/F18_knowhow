@@ -12,6 +12,8 @@
 #include "fin.ch"
 #include "common.ch"
 
+
+
 // --------------------------------------------------------
 // sinhronizacija sa servera
 // --------------------------------------------------------
@@ -41,29 +43,28 @@ local _ids_queries
 local _table
 local _a_dbf_rec
 
-
 _a_dbf_rec  := get_a_dbf_rec(table)
-
 _dbf_fields := _a_dbf_rec["dbf_fields"]
 _sql_fields := sql_fields( _dbf_fields )
-
 _sql_order  := _a_dbf_rec["sql_order"]
-
 _dbf_wa     := _a_dbf_rec["wa"]
 _dbf_alias  := _a_dbf_rec["alias"]
-
 _sql_tbl    := "fmk." + table
 
 _x := maxrows() - 15
 _y := maxcols() - 20
 
 if algoritam == NIL
-   algoritam := "FULL"
+    algoritam := "FULL"
 endif
 
 _seconds := SECONDS()
 
+log_write( "update_dbf_from_server(), poceo", 9 )
+
 if algoritam == "FULL"
+
+    log_write( "update_dbf_from_server(), iniciraj full synchro", 7 )
 
     SELECT (_dbf_wa)
     my_usex (_dbf_alias, table, .f., "SEMAPHORE")
@@ -72,6 +73,8 @@ if algoritam == "FULL"
     update_semaphore_version( table, .f., .f. )
 
 else
+
+    log_write( "update_dbf_from_server(), iniciraj ids synchro", 7 )
 
     if lock_semaphore(table, "lock")
  
@@ -96,7 +99,9 @@ endif
 
 USE
 
-log_write( table + " synchro cache: " + STR(SECONDS() - _seconds), 3 )
+log_write( "update_dbf_from_server(), table: " + table + " synchro cache: " + STR(SECONDS() - _seconds), 5 )
+
+log_write( "update_dbf_from_server(), zavrsio", 9 )
 
 return .t. 
 

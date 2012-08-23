@@ -159,7 +159,7 @@ if !_a_dbf_rec["temp"]
    else
      // rdd = "SEMAPHORE" poziv is update from sql server procedure
      // samo otvori tabelu
-     log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 1 )
+     log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 5 )
      _rdd := "DBFCDX" 
    endif
 
@@ -200,6 +200,8 @@ if check_recno == NIL
     check_recno := .f.
 endif
 
+log_write( "dbf_semaphore_synchro(), poceo", 9 )
+
 // uzmimo od tabele stanje svog semafora
 _version :=  get_semaphore_version(table)
 
@@ -211,6 +213,9 @@ do while .t.
         // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
         //sql_table_update(nil, "BEGIN")
         //if lock_semaphore(table, "lock")
+            
+            log_write( "dbf_semaphore_synchro(), full synchro", 7 )
+
             update_dbf_from_server(table, "FULL")
 
             // nemoj nulirati IDS nakon full sync
@@ -228,7 +233,8 @@ do while .t.
             // moramo osvjeziti cache
             if _version < _last_version
 
-                log_write( "my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 3 ) 
+                log_write( "dbf_semaphore_synchro(), my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 5 )
+ 
                 update_dbf_from_server(table, "IDS")
 
             endif
@@ -244,13 +250,16 @@ do while .t.
             exit
       endif
                         
-      log_write( "dbf_semaphore_synchro, _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
+      log_write( "dbf_semaphore_synchro(), _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
+
 enddo
 
 if check_recno
     // sada bi lokalni cache morao biti ok, idemo to provjeriti
     check_after_synchro(table)
 endif
+
+log_write( "dbf_semaphore_synchro(), zavrsio", 9 )
 
 return .t.
 

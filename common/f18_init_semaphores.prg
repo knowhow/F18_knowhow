@@ -87,7 +87,6 @@ local _dbf_pack_algoritam
 
 Box( "#Molimo sacekajte...", 7, 60)
 
-
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)
 
 _msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
@@ -96,7 +95,9 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 1, m_y + 2 SAY _msg_1
 @ m_x + 2, m_y + 2 SAY _msg_2
 
-log_write( "refresh_me(), prije synchro " +  _msg_1 + " " + _msg_2, 5 )
+log_write( "provjera zapisa u tabelama prije i poslije synchro " +  _msg_1, 5 )
+
+log_write( "prije synchro " +  _msg_1 + " " + _msg_2, 8 )
 
 SELECT (_wa)
 my_use( a_dbf_rec["alias"], a_dbf_rec["alias"], NIL, NIL, NIL, NIL, .t. )
@@ -112,24 +113,28 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 4, m_y + 2 SAY _msg_1
 @ m_x + 5, m_y + 2 SAY _msg_2
 
-
-log_write("refresh_me(), nakon synchro " +  _msg_1 + " " + _msg_2, 5 )
+log_write("nakon synchro " +  _msg_1 + " " + _msg_2, 8 )
 
 USE
 
 if hocu_li_pack(_cnt, _del)
+    
     @ m_x + 7, m_y + 2 SAY "Pakujem tabelu radi brzine, molim sacekajte ..."
 
+    SELECT (_wa)
+    my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
 
-   SELECT (_wa)
-   my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
+    PACK
 
-   PACK
-   USE
+    USE
+
+    log_write( "pakujem tabelu " + a_dbf_rec["alias"], 2 )
 
 endif
 
 BoxC()
+
+return
 
 
 // ---------------------------------------------------------------------
@@ -146,7 +151,9 @@ cnt := reccount()
 
 USE
 set deleted on
+
 return
+
 
 
 // ------------------------------------------------------------

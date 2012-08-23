@@ -365,6 +365,8 @@ _ok := .t.
 // iskljuci mi semafore
 my_use_semaphore_off()
 
+log_write( "pos azuriranje racuna, racun: " + cStalRac + " - poceo", 5 )
+
 o_stazur()
 
 // zakljucaj semafore pos-a
@@ -385,7 +387,9 @@ set order to tag "1"
 seek cIdPos + "42" + DTOS( gDatum ) + cRadRac
 
 if !FOUND()
-    MsgBeep( "Problem sa podacima tabele _POS, nema stavi !!!#Azuriranje nije moguce !" )
+    _msg := "Problem sa podacima tabele _POS, nema stavi !!!#Azuriranje nije moguce !" 
+    log_write( _msg, 2 )
+    msgbeep( _msg )
     my_use_semaphore_on()
     return
 endif
@@ -458,6 +462,8 @@ sql_table_update( nil, "END" )
 pos_semaphores_unlock()
 
 my_use_semaphore_on()
+
+log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )
 
 // pobrisi _pos
 select _pos
@@ -776,6 +782,8 @@ lNivel:=.f.
 SELECT (cRsDbf)
 SET ORDER TO TAG "ID"
 
+log_write( "azuriranje stavki iz priprz u pos/doks, poceo", 5 )
+
 MsgO( "Azuriranje priprema -> kumulativ u toku... sacekajte..." )
 
 my_use_semaphore_off()
@@ -862,6 +870,8 @@ pos_semaphores_unlock()
 
 my_use_semaphore_on()
 
+log_write( "azuriranje stavki iz priprz u pos/doks, zavrsio", 5 )
+
 MsgO("brisem pripremu....")
 
 // ostalo je jos da izbrisemo stavke iz pomocne baze
@@ -873,6 +883,8 @@ __dbPack()
 MsgC()
 
 return
+
+
 
 // ------------------------------------------------
 // zakljucaj pos semafore
@@ -1225,6 +1237,8 @@ if !FOUND()
     select ( _t_area )
     return _ret
 endif 
+
+log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " poceo", 5 )
 	           	
 my_use_semaphore_off()
     
@@ -1255,6 +1269,8 @@ sql_table_update( nil, "END" )
 pos_semaphores_unlock()
 
 my_use_semaphore_on()
+
+log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " zavrsio", 5 )
 
 select (_t_area)
 

@@ -11,6 +11,8 @@
 
 #include "fmk.ch"
 
+
+
 // -----------------------------------------------------------------------------------------------------
 // synchro dbf tabele na osnovu id-ova koje su poslali drugi
 // -----------------------------------------------------------------------------------------------------
@@ -24,7 +26,9 @@ _ids_queries := create_queries_from_ids(dbf_table)
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
-log_write("ids_synchro - ids_queries: " + pp(_ids_queries), 5 )
+log_write( "ids_synchro(), poceo", 9 )
+
+log_write( "ids_synchro(), ids_queries: " + pp(_ids_queries), 7 )
 
 do while .t.
 
@@ -53,19 +57,21 @@ enddo
 
 for _i := 1 TO LEN(_ids_queries["ids"])
  
-   log_write("ids_synchro - ids_queries: " + pp( _ids_queries["ids"][_i]  ), 9 )
+    log_write( "ids_synchro(), ids_queries: " + pp( _ids_queries["ids"][_i]  ), 9 )
    
-   // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
-   if _ids_queries["ids"][_i] != NIL
+    // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
+    if _ids_queries["ids"][_i] != NIL
 
-     // pobrisi u dbf-u id-ove koji su u semaforu tabele
-     delete_ids_in_dbf( dbf_table, _ids_queries["ids"][_i], _i)
+        // pobrisi u dbf-u id-ove koji su u semaforu tabele
+        delete_ids_in_dbf( dbf_table, _ids_queries["ids"][_i], _i)
 
-     // dodaj sa servera
-     fill_dbf_from_server( dbf_table, _ids_queries["qry"][_i])
+        // dodaj sa servera
+        fill_dbf_from_server( dbf_table, _ids_queries["qry"][_i])
 
-   endif
+    endif
 next
+
+log_write( "ids_synchro(), zavrsio", 9 )
 
 return _full_sync
 
@@ -89,6 +95,7 @@ if LEN(ids) < 1
    return .f.
 endif
 
+log_write( "push_ids_to_semaphore(), poceo", 9 )
 log_write( "push ids: " + table + " / " + pp(ids), 5 )
 
 _tbl := "fmk.semaphores_" + LOWER(table)
@@ -97,12 +104,13 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 _result := table_count(_tbl, "user_code <> " + _sql_quote(_user)) 
 
 if _result < 1
-   // jedan korisnik
-   return .t.
+    // jedan korisnik
+    log_write( "push_ids_to_semaphore(), samo je jedan korsnik, nista nije pushirano", 7 )
+    return .t.
 endif
 
-
 _qry := ""    
+
 for _i := 1 TO LEN(ids)
 
     _sql_ids := "ARRAY[" + _sql_quote(ids[_i]) + "]"
@@ -124,14 +132,16 @@ for _i := 1 TO LEN(ids)
 next
 
 _qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND ids IS NOT NULL AND array_length(ids,1) > 500"
-
 _ret := _sql_query( _server, _qry )
 
+log_write( "push_ids_to_semaphore(), zavrsio", 9 )
+
 if VALTYPE(_ret) == "O"
-  return .t.
+    return .t.
 else
-  return .f.
+    return .f.
 endif
+
 
 
 //---------------------------------------
@@ -150,6 +160,7 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 
 _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 _tbl_obj := _sql_query( _server, _qry )
+
 IF _tbl_obj == NIL
       MsgBeep( "problem sa:" + _qry)
       QUIT
@@ -177,6 +188,9 @@ for _i := 1 to _num_arr
    endif
    AADD(_arr, _tok)
 next
+
+log_write( "get_ids_from_semaphore(), imam ids-ova za osvjezavanje", 7 )
+
 RETURN _arr
 
 
@@ -212,16 +226,17 @@ _a_dbf_rec := get_a_dbf_rec(dbf_tbl)
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _alg := _a_dbf_rec["algoritam"]
 
-
 _sql_tbl := "fmk." + dbf_tbl
 
 for _i := 1 to LEN(_alg)
-   AADD(_queries, "SELECT " + _sql_fields + " FROM " + _sql_tbl + " WHERE ")
-   AADD(_sql_ids, NIL)
-   AADD(_ids_2, NIL)
+    AADD(_queries, "SELECT " + _sql_fields + " FROM " + _sql_tbl + " WHERE ")
+    AADD(_sql_ids, NIL)
+    AADD(_ids_2, NIL)
 next
  
 _ids := get_ids_from_semaphore( dbf_tbl )
+
+log_write("create_queries..(), poceo", 9 )
 
 // primjer
 // suban 00-11-2222 rbr 1, rbr 2 
@@ -233,31 +248,31 @@ for each _id in _ids
 
     if LEFT(_id, 1) == "#"
 
-       if SUBSTR(_id, 2, 1) == "F"
-           // full sinchro
-           _algoritam := 99
-           _id := "X"
-       else
-           // algoritam "#2" => algoritam 2
-           _algoritam := VAL(SUBSTR( _id, 2, 1))
-           _id := SUBSTR(_id, 3)
+        if SUBSTR(_id, 2, 1) == "F"
+            // full sinchro
+            _algoritam := 99
+            _id := "X"
+        else
+            // algoritam "#2" => algoritam 2
+            _algoritam := VAL(SUBSTR( _id, 2, 1))
+            _id := SUBSTR(_id, 3)
         endif
 
     else
-       _algoritam := 1
+        _algoritam := 1
     endif
 
     if _algoritam == 99
-           AADD(_queries, "UZMI_STANJE_SA_SERVERA")
-           AADD(_sql_ids, NIL)
+        AADD(_queries, "UZMI_STANJE_SA_SERVERA")
+        AADD(_sql_ids, NIL)
     else
         // ne moze biti "#3" a da tabela ima definisana samo dva algoritma
         if _algoritam > LEN(_alg)
-                _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + dbf_tbl
-                Alert(_msg)
-                log_write(_msg, 5 )
-                RaiseError(_msg)
-                QUIT
+            _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + dbf_tbl
+            Alert(_msg)
+            log_write( "create_queries..(), " + _msg, 5 )
+            RaiseError(_msg)
+            QUIT
         endif
 
         if _sql_ids[_algoritam] == NIL
@@ -267,30 +282,33 @@ for each _id in _ids
 
         _sql_ids[_algoritam] += _sql_quote(_id) + ","
         AADD(_ids_2[_algoritam], _id)
+
      endif 
 next
-
 
 for _i := 1 to LEN(_alg)
 
     if _sql_ids[_i] != NIL
-       // odsjeci zarez na kraju
-       _sql_ids[_i] := LEFT(_sql_ids[_i], LEN(_sql_ids[_i]) - 1)
-       _sql_ids[_i] += ")"
-       _queries[_i] +=  "(" + _alg[_i]["sql_in"]  + ") IN " + _sql_ids[_i]
+        // odsjeci zarez na kraju
+        _sql_ids[_i] := LEFT(_sql_ids[_i], LEN(_sql_ids[_i]) - 1)
+        _sql_ids[_i] += ")"
+        _queries[_i] +=  "(" + _alg[_i]["sql_in"]  + ") IN " + _sql_ids[_i]
   
     else
-       _queries[_i] := NIL
+        _queries[_i] := NIL
     endif
 
 next
 
-log_write("ret[qry]=" + pp(_queries), 5 )
-log_write("ret[ids]=" + pp(_ids_2), 5 )
+log_write("create_queries..(), ret[qry]=" + pp(_queries), 9 )
+log_write("create_queries..(), ret[ids]=" + pp(_ids_2), 9 )
+log_write("create_queries..(), zavrsio", 9 )
 _ret["qry"] := _queries
 _ret["ids"] := _ids_2
 
 return _ret
+
+
 
 
 // ------------------------------------------------------
@@ -307,6 +325,8 @@ local _dbf_tag
 local _key_block
 local _i
 
+log_write( "delete_ids_in_dbf(), poceo", 9 )
+
 _a_dbf_rec := get_a_dbf_rec(dbf_table)
 _alg := _a_dbf_rec["algoritam"]
 
@@ -321,26 +341,17 @@ SET ORDER TO TAG (_dbf_tag)
 _counter := 0
 
 if VALTYPE(ids) != "A"
-   Alert("ids type ? " + VALTYPE(ids))
+    Alert("ids type ? " + VALTYPE(ids))
 endif
 
-/*
-for _i := 1 to 3
-    if !FLOCK()
-        _msg := "Ne mogu lock-ovati tabelu " + ALIAS()
-        MsgBeep( _msg )
-        log_write( _msg, 1 )
-    else
-        exit
-    endif
-    sleep(2)
-next
-*/
-
 do while .t.
+    
     _fnd := .f.
+    
     for each _tmp_id in ids
+        
         HSEEK _tmp_id
+        
         do while !EOF() .and. EVAL(_key_block) == _tmp_id
 
             _msg := ToStr(Time()) + " : sync del : " + dbf_table + " : " + _tmp_id
@@ -359,13 +370,13 @@ do while .t.
     next
 
     if !_fnd 
-            exit 
+        exit 
     endif
 enddo
 
-//DBUNLOCK()
+log_write( "delete_ids_in_dbf(), table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + ALLTRIM(STR( _counter )), 5 )
 
-log_write( "delete_ids_in_dbf: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " from local dbf, deleted rec cnt: " + ALLTRIM(STR( _counter )), 5 )
+log_write( "delete_ids_in_dbf(), zavrsio", 9 )
 
 return
 
@@ -401,4 +412,6 @@ for each _field in dbf_key_fields
 next
 
 return _full_id
+
+
 

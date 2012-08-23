@@ -25,14 +25,15 @@ local _a_dbf_rec
 local _sql_order
 local _opened
 
-
 if f18_session()['id'] > 1
-    log_write("full_synchro u child thread se ne radi, preskocena tabela: "  + dbf_table, 3 )  
+    log_write("full_synchro(), u child thread se ne radi, preskocena tabela: "  + dbf_table, 3 )  
     return .f.
 endif
 
+log_write( "full_synchro(), table: " + dbf_table + " poceo", 7 )
+
 if step_size == NIL
-  step_size := 15000
+    step_size := 15000
 endif
 
 // prije fullsync otkljucaj tabelu
@@ -47,37 +48,42 @@ reopen_exclusive(_a_dbf_rec["table"])
 
 Box(, 5, 70)
 
-@ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
+    @ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
 
-_count := table_count( _sql_table, "true" ) 
-_seconds := SECONDS()
+    _count := table_count( _sql_table, "true" ) 
+    _seconds := SECONDS()
 
-ZAP
+    ZAP
 
-if _sql_fields == NIL
-   MsgBeep("sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć")
-   QUIT
-endif
+    if _sql_fields == NIL
+        _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
+        log_write( "full_synchro(), " + _msg, 2 )
+        msgbeep( _msg ) 
+        QUIT
+    endif
 
-@ m_x + 3, m_y + 2 SAY _count
+    @ m_x + 3, m_y + 2 SAY _count
 
-for _offset := 0 to _count STEP step_size
+    for _offset := 0 to _count STEP step_size
 
-  _qry :=  "SELECT " + _sql_fields + " FROM " +	_sql_table
- 
-  _qry += " ORDER BY " + _sql_order
-  _qry += " LIMIT " + STR(step_size) + " OFFSET " + STR(_offset) 
+        _qry :=  "SELECT " + _sql_fields + " FROM " +	_sql_table
+        _qry += " ORDER BY " + _sql_order
+        _qry += " LIMIT " + STR(step_size) + " OFFSET " + STR(_offset) 
 
-  fill_dbf_from_server(dbf_table, _qry)
+        fill_dbf_from_server(dbf_table, _qry)
 
-  @ m_x + 4, m_y + 2 SAY _offset
-  @ row(), col() + 2 SAY "/"
-  @ row(), col() + 2 SAY _count
-next
+        @ m_x + 4, m_y + 2 SAY _offset
+        @ row(), col() + 2 SAY "/"
+        @ row(), col() + 2 SAY _count
+    next
 
 BoxC()
 
+log_write( "full_synchro(), table: " + dbf_table + " zavrsio", 7 )
+
 return .t.
+
+
 
 
 

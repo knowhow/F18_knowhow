@@ -199,7 +199,7 @@ if ALIAS() <> _a_dbf_rec["alias"]
    QUIT
 endif
 
-log_write( "delete_rec_server_and_dbf(), poceo", 9 )
+log_write( "delete rec server, poceo", 9 )
 
 if lock
     lock_semaphore(table, "lock")
@@ -232,7 +232,7 @@ if sql_table_update(table, "del", nil, _where_str)
 
     if FLOCK()
         
-        _count := 1
+        _count := 0
 
         SEEK _full_id
 
@@ -245,7 +245,7 @@ if sql_table_update(table, "del", nil, _where_str)
 
         DBUNLOCKALL() 
 
-        log_write( "delete_rec_server_and_dbf(), pobrisano iz lokalnog dbf-a, count=" + ALLTRIM( STR( _count)), 7 ) 
+        log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + ALLTRIM( STR( _count ) ), 7 ) 
 
         update_semaphore_version(table, .t.)
 
@@ -259,7 +259,7 @@ if sql_table_update(table, "del", nil, _where_str)
 
         sql_table_update( table, "ROLLBACK" )
 
-        _msg := "delete_rec_server...(), " + table + " nije lockovana !!! ROLLBACK"
+        _msg := "delete rec server " + table + " nije lockovana !!! ROLLBACK"
         log_write( _msg, 1 )
         Alert(_msg)
 
@@ -269,7 +269,7 @@ if sql_table_update(table, "del", nil, _where_str)
 
 else
 
-   _msg := "delete_rec_server..(), " + table + " transakcija neuspjesna ! ROLLBACK"
+   _msg := "delete rec server, " + table + " transakcija neuspjesna ! ROLLBACK"
    Alert(_msg)
    log_write(_msg, 1)
 
@@ -283,7 +283,7 @@ if lock
     lock_semaphore(table, "free")
 endif
 
-log_write( "delete_rec_server_and_dbf(), zavrsio", 9 )
+log_write( "delete rec server, zavrsio", 9 )
 
 return _ret
 

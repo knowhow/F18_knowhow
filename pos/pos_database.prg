@@ -1241,6 +1241,7 @@ local _ret := .f.
 local _rec
 
 select pos
+set filter to
 set order to tag "1"
 go top
 seek id_pos + id_vd + DTOS( dat_dok ) + br_dok

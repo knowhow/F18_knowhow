@@ -223,9 +223,17 @@ do case
             _rec["idvrstep"] := cVrPl
 
             my_use_semaphore_off()
+
+            if !pos_semaphores_lock()
+                return DE_CONT
+            endif
+
             sql_table_update( nil, "BEGIN" )
             update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
             sql_table_update( nil, "END" )
+
+            pos_semaphores_unlock()
+
             my_use_semaphore_on()
 
             return DE_REFRESH
@@ -344,39 +352,6 @@ do case
 
         return (DE_CONT)
     
-    case Ch == ASC("I") .or. Ch == ASC("i")
-
-        // samo za racune
-        if field->idvd <> "42"
-            return (DE_CONT)
-        endif
-
-        // ispravka veze fiskalnog racuna
-        nFisc_rn := field->fisc_rn
-        nT_frn := nFisc_rn
-
-        Box(,1,40)          
-            @ m_x+1,m_y+2 SAY "veza fisk.racun broj:" GET nFisc_rn
-            read
-        BoxC()
-
-        if LastKey() <> K_ESC
-
-            if nT_frn <> nFisc_rn
-                _rec := dbf_get_rec()
-                _rec["fisc_rn"] := nFisc_rn
-                my_use_semaphore_off()
-                sql_table_update( nil, "BEGIN" )
-                update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
-                sql_table_update( nil, "END" )
-                my_use_semaphore_on()
-                return (DE_REFRESH)
-            endif
-
-        endif
-
-        return ( DE_CONT )
-
     
     case Ch == K_CTRL_P
 
@@ -409,9 +384,12 @@ do case
             
             // pobrisi dokument sa servera i dbf-a
             pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
-
-            select pos_doks
             
+            _o_pos_prepis_tbl()
+            select pos_doks
+            set filter to &_tbl_filter
+            go top
+
             MsgBeep( "Dokument je vracen u pripremu inventure..." )
 
             return ( DE_REFRESH )

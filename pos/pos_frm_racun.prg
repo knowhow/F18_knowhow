@@ -263,8 +263,8 @@ endif
 // sad moze svako
 if ch == K_CTRL_V
     
-    // ako nema polja ... nista
-    if pos_doks->(FIELDPOS("FISC_RN")) = 0
+    // ako nije racun ... izadji
+    if pos_doks->idvd <> "42"
         return DE_CONT
     endif
     
@@ -281,9 +281,17 @@ if ch == K_CTRL_V
         _rec["fisc_rn"] := nFisc_no
         
         my_use_semaphore_off()
+
+        if !pos_semaphores_lock()
+            return DE_CONT
+        endif
+
         sql_table_update( nil, "BEGIN" )
         update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )   
         sql_table_update( nil, "END" )
+
+        pos_semaphores_unlock()
+
         my_use_semaphore_on()
         
         return DE_REFRESH

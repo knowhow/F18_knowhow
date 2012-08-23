@@ -13,19 +13,27 @@
 
 // -------------------------------------------------
 // -------------------------------------------------
-function check_after_synchro(dbf_alias)
+function check_after_synchro(dbf_alias, full_synchro)
 
-check_recno(dbf_alias)
+if full_synchro == NIL
+    full_synchro := .f.
+endif
+
+check_recno(dbf_alias, full_synchro)
 
 return .t.
 
 // ------------------------------------------
 // ------------------------------------------
-function check_recno(dbf_alias)
+function check_recno(dbf_alias, full_synchro)
 local _cnt_sql, _cnt_dbf
 local _a_dbf_rec
 local _opened := .f.
 local _sql_table
+
+if full_synchro == NIL
+    full_synchro := .f.
+endif
 
 _a_dbf_rec :=  get_a_dbf_rec(dbf_alias)
 _sql_table :=  my_server_params()["schema"] + "." + _a_dbf_rec["table"]
@@ -69,7 +77,9 @@ if _cnt_sql <> _cnt_dbf
         MsgBeep( _msg )
         QUIT
     else
-        full_synchro(_a_dbf_rec["table"], 15000)
+        if full_synchro
+            full_synchro(_a_dbf_rec["table"], 15000)
+        endif
     endif
 
     USE

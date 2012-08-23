@@ -193,11 +193,11 @@ return
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function dbf_semaphore_synchro(table, check_recno)
+function dbf_semaphore_synchro(table, full_synchro)
 local _version, _last_version
 
-if check_recno == NIL
-    check_recno := .f.
+if full_synchro == NIL
+    full_synchro := .f.
 endif
 
 log_write( "dbf_semaphore_synchro(), poceo", 9 )
@@ -254,9 +254,9 @@ do while .t.
 
 enddo
 
-if check_recno
-    // sada bi lokalni cache morao biti ok, idemo to provjeriti
-    check_after_synchro(table)
+// sada bi lokalni cache morao biti ok, idemo to provjeriti
+if full_synchro
+    check_after_synchro( table, full_synchro )
 endif
 
 log_write( "dbf_semaphore_synchro(), zavrsio", 9 )

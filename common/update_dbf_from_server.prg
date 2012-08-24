@@ -30,7 +30,7 @@ local _fnd, _tmp_id
 local _count
 local _sql_tbl, _dbf_tbl
 local _offset
-local _step := 15000
+local _step := 50000
 local _retry := 3
 local _key_blocks := {} 
 local _key_block

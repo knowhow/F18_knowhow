@@ -188,9 +188,6 @@ return
 function dbf_semaphore_synchro(table)
 local _version, _last_version
 
-if full_synchro == NIL
-    full_synchro := .f.
-endif
 
 log_write( "dbf_semaphore_synchro(), poceo", 9 )
 

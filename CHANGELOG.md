@@ -1,3 +1,7 @@
+1.1.7  2002-08-24, hernad
+  
+ - branch 1.1
+
 1.1.6  2012-08-17, vsasa
 
  - fakt, štampa odt faktura od-do [#28910](http://redmine.bring.out.ba/issues/28910)

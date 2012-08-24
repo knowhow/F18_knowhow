@@ -56,6 +56,8 @@ if sql_table_update( nil, "BEGIN" )
         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
     endif
 
+    my_use_semaphore_off()
+
 else
     _ok := .f.
     log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
@@ -82,6 +84,7 @@ for _i := 1 to LEN( a_tables )
     log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
 next
 
+my_use_semaphore_on()
 return _ok
 
 

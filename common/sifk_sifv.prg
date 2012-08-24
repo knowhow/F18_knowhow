@@ -557,7 +557,7 @@ _alias := ALIAS()
 
 for _i := 1 to len(ime_kol)
    if LEFT(ime_kol[_i, 3], 6) == "SIFK->"
-     _field_b :=  MEMVARBLOCK( var_prefix + "Sifk_" + SUBSTR(ime_kol[_i, 3], 7))
+     _field_b :=  MEMVARBLOCK( var_prefix + "SIFK_" + SUBSTR(ime_kol[_i, 3], 7))
 
      if IzSifk( _alias, SUBSTR(ime_kol[_i, 3], 7), (_alias)->id) <> NIL
          USifk( _alias, SUBSTR(ImeKol[_i, 3], 7), (_alias)->id, EVAL(_field_b), transaction)

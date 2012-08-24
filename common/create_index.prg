@@ -692,6 +692,8 @@ function ImeDBFCDX(cIme, ext)
 
 if ext == NIL
   ext := INDEXEXT
+endif
+
 cIme:=trim(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
 if right(cIme,4) <> "." + ext
   cIme := cIme + "." + ext

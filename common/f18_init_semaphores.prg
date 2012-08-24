@@ -87,6 +87,7 @@ local _dbf_pack_algoritam
 
 Box( "#Molimo sacekajte...", 7, 60)
 
+// sracunaj broj aktivnih zapisa u tabeli, koji su izbrisani
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)
 
 _msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
@@ -99,13 +100,10 @@ log_write( "provjera zapisa u tabelama prije i poslije synchro " +  _msg_1, 5 )
 
 log_write( "prije synchro " +  _msg_1 + " " + _msg_2, 8 )
 
-SELECT (_wa)
-my_use( a_dbf_rec["alias"], a_dbf_rec["alias"], NIL, NIL, NIL, NIL, .t. )
+// _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
+// ako se utvrti greska uradi full sync
+check_recno_and_fix(a_dbf_rec["table"], _cnt - _del .t.)
 
-USE
- 
-// ponovo otvori nakon sinhronizacije
-dbf_open_temp(a_dbf_rec, @_cnt, @_del)
 
 _msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
@@ -113,6 +111,8 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 4, m_y + 2 SAY _msg_1
 @ m_x + 5, m_y + 2 SAY _msg_2
 
+
+USE
 log_write("nakon synchro " +  _msg_1 + " " + _msg_2, 8 )
 
 USE

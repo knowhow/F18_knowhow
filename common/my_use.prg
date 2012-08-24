@@ -41,13 +41,13 @@ return __my_use_semaphore
 
 // --------------------------------------------------------------
 // --------------------------------------------------------------
-function my_usex(alias, table, new_area, _rdd, semaphore_param, check_recno)
+function my_usex(alias, table, new_area, _rdd, semaphore_param)
 
 if check_recno == NIL
     check_recno := .f.
 endif
 
-return my_use(alias, table, new_area, _rdd, semaphore_param, .t., check_recno)
+return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 
 
 // ---------------------------------------------------------------
@@ -99,7 +99,7 @@ return
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
-function my_use(alias, table, new_area, _rdd, semaphore_param, excl, check_recno)
+function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
 local _msg
 local _err
 local _pos
@@ -109,10 +109,6 @@ local _force_erase := .f.
 
 if excl == NIL
   excl := .f.
-endif
-
-if check_recno == NIL
-    check_recno := .f.
 endif
 
 if table == NIL
@@ -155,7 +151,7 @@ if !_a_dbf_rec["temp"]
 
     // tabela je pokrivena semaforom
     if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
-        dbf_semaphore_synchro(table, check_recno)
+        dbf_semaphore_synchro(table)
     else
         // rdd = "SEMAPHORE" poziv is update from sql server procedure
         // samo otvori tabelu
@@ -193,7 +189,7 @@ return
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function dbf_semaphore_synchro(table, full_synchro)
+function dbf_semaphore_synchro(table)
 local _version, _last_version
 
 if full_synchro == NIL
@@ -209,23 +205,7 @@ do while .t.
 
     if (_version == -1)
 
-        // semafor je resetovan
-        // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
-        //sql_table_update(nil, "BEGIN")
-        //if lock_semaphore(table, "lock")
-            
-            log_write( "dbf_semaphore_synchro(), full synchro", 7 )
-
-            update_dbf_from_server(table, "FULL")
-
-            // nemoj nulirati IDS nakon full sync
-            update_semaphore_version(table, .f., .f.)
-
-            //lock_semaphore(table, "free")
-            //sql_table_update(nil, "END")
-        //else
-            //sql_table_update(nil, "ROLLBACK")
-        //endif
+        log_write( "full synchro version -1", 7 )
 
      else
 
@@ -254,10 +234,7 @@ do while .t.
 
 enddo
 
-// sada bi lokalni cache morao biti ok, idemo to provjeriti
-//if full_synchro
-    check_after_synchro( table, full_synchro )
-//endif
+check_after_synchro(table)
 
 log_write( "dbf_semaphore_synchro(), zavrsio", 9 )
 

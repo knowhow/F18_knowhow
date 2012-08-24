@@ -19,7 +19,6 @@
 function ids_synchro(dbf_table)
 local _i, _ids_queries
 local _zap
-local _full_sync := .f.
 
 _ids_queries := create_queries_from_ids(dbf_table)
 
@@ -32,14 +31,13 @@ log_write( "ids_synchro(), ids_queries: " + pp(_ids_queries), 7 )
 
 do while .t.
 
+  // ovo je posebni query koji se pojavi ako se nadje ids '#F'
   _zap := ASCAN(_ids_queries["qry"], "UZMI_STANJE_SA_SERVERA")
 
   if _zap <> 0
 
    // postoji zahtjev za full synchro
-   nuliraj_ids(dbf_table)
    full_synchro(dbf_table)   
-   _full_sync := .t.
 
    // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
    reopen_exclusive(dbf_table)
@@ -73,9 +71,7 @@ next
 
 log_write( "ids_synchro(), zavrsio", 9 )
 
-return _full_sync
-
-
+return .t.
 
 //-------------------------------------------------
 // stavi id-ove za dbf tabelu na server
@@ -105,7 +101,7 @@ _result := table_count(_tbl, "user_code <> " + _sql_quote(_user))
 
 if _result < 1
     // jedan korisnik
-    log_write( "push_ids_to_semaphore(), samo je jedan korsnik, nista nije pushirano", 7 )
+    log_write( "push_ids_to_semaphore(), samo je jedan korsnik, nista nije pushirano", 9 )
     return .t.
 endif
 
@@ -131,10 +127,16 @@ for _i := 1 TO LEN(ids)
 
 next
 
-_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND ids IS NOT NULL AND array_length(ids,1) > 500"
+// ako id sadrzi vise od 1000 stavki, korisnik je dugo neaktivan, pokreni full sync
+_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND ids IS NOT NULL AND array_length(ids,1) > 1000"
 _ret := _sql_query( _server, _qry )
 
 log_write( "push_ids_to_semaphore(), zavrsio", 9 )
+
+// na kraju uradi update verzije semafora
+// nema se potrebe proveravati stanje synchronizacije s obzirom da su
+// su kod azuriranja tabele zakljucane
+update_semaphore_version(table, .t., .f.)
 
 if VALTYPE(_ret) == "O"
     return .t.
@@ -210,7 +212,7 @@ RETURN _arr
 // ova util funkcija daje nam id-ove i sql queries potrebne da 
 // sinhroniziramo dbf sa promjenama koje su napravili drugi korisnici
 // -------------------------------------------------------------------------------------------------------------
-function create_queries_from_ids(dbf_tbl)
+function create_queries_from_ids(table)
 local _a_dbf_rec, _msg
 local _qry_1, _qry_2
 local _queries     := {}
@@ -221,20 +223,24 @@ local _ret := hb_hash()
 local _sql_fields
 local _algoritam, _alg
 
-_a_dbf_rec := get_a_dbf_rec(dbf_tbl)
+_a_dbf_rec := get_a_dbf_rec(table)
 
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _alg := _a_dbf_rec["algoritam"]
 
-_sql_tbl := "fmk." + dbf_tbl
+_sql_tbl := "fmk." + table
 
 for _i := 1 to LEN(_alg)
     AADD(_queries, "SELECT " + _sql_fields + " FROM " + _sql_tbl + " WHERE ")
     AADD(_sql_ids, NIL)
     AADD(_ids_2, NIL)
 next
- 
-_ids := get_ids_from_semaphore( dbf_tbl )
+
+lock_semaphore(table, "lock") 
+_ids := get_ids_from_semaphore( table )
+nuliraj_ids(table)
+lock_semaphore(table, "free") 
+
 
 log_write("create_queries..(), poceo", 9 )
 
@@ -263,12 +269,13 @@ for each _id in _ids
     endif
 
     if _algoritam == 99
+        // full sync zahtjev
         AADD(_queries, "UZMI_STANJE_SA_SERVERA")
         AADD(_sql_ids, NIL)
     else
         // ne moze biti "#3" a da tabela ima definisana samo dva algoritma
         if _algoritam > LEN(_alg)
-            _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + dbf_tbl
+            _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + table
             Alert(_msg)
             log_write( "create_queries..(), " + _msg, 5 )
             RaiseError(_msg)

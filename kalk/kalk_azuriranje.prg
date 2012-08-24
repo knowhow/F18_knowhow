@@ -852,6 +852,7 @@ if !_ok
     // transakcija neuspjesna
     // server nije azuriran 
     sql_table_update(nil, "ROLLBACK" )
+    f18_free_tables({_tbl_kalk, _tbl_doks})
 
 else
 
@@ -861,18 +862,14 @@ else
 
     // kalk 
     @ m_x+5, m_y+2 SAY "update semaphore version"
-    update_semaphore_version( _tbl_kalk , .t. )
-    update_semaphore_version( _tbl_doks  , .t. )
 
+    // hernad: todo: !!! treba i gore f18_lock ... uraditi
+    ((()) namjerno greska
+ 
+    f18_free_tables({_tbl_kalk, _tbl_doks})
     sql_table_update(nil, "END")
 
 endif
-
-// otkljucaj sve tabele
-sql_table_update(nil, "BEGIN")
-lock_semaphore(_tbl_kalk, "free")
-lock_semaphore(_tbl_doks,  "free")
-sql_table_update(nil, "END")
 
 BoxC()
 

@@ -327,97 +327,6 @@ log_write( "reset semaphore, table: " + table + ", zavrsio", 9 )
 return _ret:Fieldget(1)
 
 
-// --------------------------------------------------------------------------------------------
-// update_semaphore_version( "konto", .t. - increment version)
-// --------------------------------------------------------------------------------------------
-function update_semaphore_version(table, increment)
-LOCAL _ret
-LOCAL _result
-LOCAL _qry
-LOCAL _tbl
-LOCAL _user := f18_user()
-LOCAL _last
-LOCAL _server := pg_server()
-LOCAL _ver_user, _last_ver, _id_full
-local _versions
-local _a_dbf_rec
-local _full_sync := .f.
-
-log_write( "update semaphore version, poceo", 9 )
-
-_a_dbf_rec := get_a_dbf_rec(table)
-
-_tbl := "fmk.semaphores_" + LOWER(table)
-
-_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
-
-_versions := get_semaphore_version_h(table)
-
-_last_ver := _versions["last_version"]
-_version  := _versions["version"]
-
-// u medjuvremenu je bilo update-a od strane drugih korisnika
-if ( _version > -1 ) .and. ( _last_ver > _version )
-    PushWA()
-    log_write( "update semaphore version, table: " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)) + " bilo je promjena u medjuvremenu", 2 )   
-    SELECT (_a_dbf_rec["wa"])
-    _full_sync := ids_synchro(table)
-    PopWa()
-endif
-
-if increment == NIL
-   increment := .t.
-endif
-
-if _last_ver < 0
-  _last_ver := 1
-endif
-
-_ver_user := _last_ver
-if increment
-   _ver_user++
-endif
-
-if ( _result == 0 )
-
-    _id_full := "ARRAY[" + _sql_quote("#F") + "]"
-
-    _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
-               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
-    _ret := _sql_query( _server, _qry)
-    
-    log_write( "update semaphore version, dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
-
-else
-
-    nuliraj_ids( table, _ver_user )
-
-endif
-
-if increment
-
-    // svim setuj last_trans_version
-    _qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR(_last_ver + 1)  
-    _ret := _sql_query( _server, _qry )
-
-    // kod svih usera verzija ne moze biti veca od nLast + 1
-    _qry := "UPDATE " + _tbl + " SET version=" + STR(_last_ver + 1) + ;
-            " WHERE version > " + STR(_last_ver + 1)
-    _ret := _sql_query( _server, _qry )
-
-    log_write( "update semaphore version, increment .t., table: " + _tbl + " update last_ver = " + STR( _last_ver + 1 ), 8 )
-
-endif
-
-_qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user) 
-_ret := _sql_query( _server, _qry )
-
-log_write( "update semaphore version, table: " + _tbl+ ", select version za " + _user + " version = " + STR(_ret:Fieldget(1)) , 7 )
-log_write( "update semaphore version, zavrsio", 9 )
-
-return _ret:Fieldget(1)
-
-
 
 // --------------------------------------
 // --------------------------------------
@@ -470,6 +379,8 @@ _qry := "UPDATE " + _tbl + ;
 _ret := _sql_query( _server, _qry )
 
 return _ret
+
+
 
 //---------------------------------------
 // vrati date za DATE algoritam
@@ -580,6 +491,104 @@ log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + ALLTRIM
 log_write( "fill_dbf_from_server(), zavrsio", 9 )
 
 return
+
+
+// --------------------------------------------------------------------------------------------
+// update_semaphore_version( "konto", .t. - increment version)
+//
+// prvo se provjerava da li je stanje semafora azurno za ovog korisnika
+// ako nije radi se synchro (id_synchro), pa tek onda setuje nova verzija
+//
+// 
+// --------------------------------------------------------------------------------------------
+function update_semaphore_version(table, increment, check_synchro)
+LOCAL _ret
+LOCAL _result
+LOCAL _qry
+LOCAL _tbl
+LOCAL _user := f18_user()
+LOCAL _last
+LOCAL _server := pg_server()
+LOCAL _ver_user, _last_ver, _id_full
+local _versions
+local _a_dbf_rec
+
+if increment == NIL
+   increment := .t.
+endif
+
+if check_synchro == NIL
+   check_synchro := .f.
+endif
+
+log_write( "update semaphore version, poceo", 9 )
+
+_a_dbf_rec := get_a_dbf_rec(table)
+
+_tbl := "fmk.semaphores_" + LOWER(table)
+
+_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
+
+_versions := get_semaphore_version_h(table)
+
+_last_ver := _versions["last_version"]
+_version  := _versions["version"]
+
+if ( _version > -1 ) .and. ( _last_ver > _version )
+
+    PushWA()
+    // u medjuvremenu je bilo update-a od strane drugih korisnika
+    log_write( "update semaphore version, table: " + table + " ver: " + ALLTRIM(STR(_version))  + "/ last_ver: " +  ALLTRIM(STR(_last_ver)) + " bilo je promjena u medjuvremenu", 2 )   
+
+    SELECT (_a_dbf_rec["wa"])
+    ids_synchro(table)
+    PopWa()
+
+endif
+
+if _last_ver < 0
+  _last_ver := 1
+endif
+
+_ver_user := _last_ver
+if increment
+   _ver_user++
+endif
+
+if ( _result == 0 )
+
+    _id_full := "ARRAY[" + _sql_quote("#F") + "]"
+
+    _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
+               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
+    _ret := _sql_query( _server, _qry)
+    
+    log_write( "update semaphore version, dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
+
+endif
+
+if increment
+
+    // svim setuj last_trans_version
+    _qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR(_last_ver + 1)  
+    _ret := _sql_query( _server, _qry )
+
+    // kod svih usera verzija ne moze biti veca od nLast + 1
+    _qry := "UPDATE " + _tbl + " SET version=" + STR(_last_ver + 1) + ;
+            " WHERE version > " + STR(_last_ver + 1)
+    _ret := _sql_query( _server, _qry )
+
+    log_write( "update semaphore version, increment .t., table: " + _tbl + " update last_ver = " + STR( _last_ver + 1 ), 8 )
+
+endif
+
+_qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user) 
+_ret := _sql_query( _server, _qry )
+
+log_write( "update semaphore version, table: " + _tbl+ ", select version za " + _user + " version = " + STR(_ret:Fieldget(1)) , 7 )
+log_write( "update semaphore version, zavrsio", 9 )
+
+return _ret:Fieldget(1)
 
 
 

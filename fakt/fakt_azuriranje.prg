@@ -533,8 +533,6 @@ _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
 
-my_use_semaphore_off()
-
 Box(, 5, 60)
 _ok := .t.
 
@@ -609,6 +607,9 @@ if !_ok
     // server nije azuriran 
     sql_table_update(nil, "ROLLBACK" )
 
+    // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
+    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+
 else
 
     @ m_x+4, m_y+2 SAY "push ids to semaphore" + _tmp_id
@@ -616,18 +617,11 @@ else
     push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
-    @ m_x+5, m_y+2 SAY "update semaphore version"
-    update_semaphore_version( _tbl_fakt , .t. )
-    update_semaphore_version( _tbl_doks  , .t. )
-    update_semaphore_version( _tbl_doks2  , .t. )
 
+    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
     sql_table_update(nil, "END")
 
 endif
-
-
-my_use_semaphore_on()
-
 
 BoxC()
 
@@ -754,23 +748,7 @@ MsgO( "Azuriranje dokumenata u toku ..." )
 // neka dbf-ovi ne "ganjaju" stanje semafora
 my_use_semaphore_off()
 
-// ------------------------------------------------------
-// lock semaphore
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl_fakt, "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_doks2,  "lock" )
-
-if _ok
-    sql_table_update(nil, "END")
-else
-    sql_table_update(nil, "ROLLBACK")
-    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
-    return _a_fakt_doks
-endif
-
-// ---end lock ---------------------------------------------
-
+_ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
 
 // prodji kroz matricu sa dokumentima i azuriraj ih
 for _i := 1 to LEN( _a_fakt_doks )
@@ -803,13 +781,6 @@ next
 
 MsgC()
 
-// --- unlock -----------------------------------------
-lock_semaphore( _tbl_fakt,  "free" )
-lock_semaphore( _tbl_doks,  "free" )
-lock_semaphore( _tbl_doks2, "free" )
-// -----------------------------------------------------
-
-my_use_semaphore_on()
 
 if !_ok
    return _a_fakt_doks

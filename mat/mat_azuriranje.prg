@@ -328,11 +328,9 @@ else
     push_ids_to_semaphore( _tbl_sint,  _ids_sint  )
     push_ids_to_semaphore( _tbl_nalog, _ids_nalog )
 
-    update_semaphore_version( _tbl_suban, .t.)
-    update_semaphore_version( _tbl_anal,  .t.)
-    update_semaphore_version( _tbl_sint,  .t.)
-    update_semaphore_version( _tbl_nalog, .t.)
-  
+ 
+    ((( hernad: odraditi sa f18_free
+ 
     // otkljucaj sve tabele
     lock_semaphore(_tbl_suban, "free")
     lock_semaphore(_tbl_anal,  "free")

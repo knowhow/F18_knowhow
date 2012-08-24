@@ -125,23 +125,12 @@ if ( _full_id_dbf <> _full_id_mem ) .and. !EMPTY( _full_id_dbf )
     AADD(_ids, _alg_tag + _full_id_dbf)
 endif
 
-if !push_ids_to_semaphore(table, _ids)
+if ! push_ids_to_semaphore(table, _ids)
      
     sql_table_update(table, "ROLLBACK")
     _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " ! ROLLBACK"
     log_write( _msg, 1 )
     Alert( _msg )
-    _ret := .f.
-
-endif
-
-// azuriraj verziju semafora za tabelu
-if _ret .and. update_semaphore_version(table, .t.) < 0
-
-    sql_table_update(table, "ROLLBACK")
-    _msg := "ERR " + RECI_GDJE_SAM0 + "update semaphore " + table +  " ! ROLLBACK"
-    log_write( _msg, 1 )
-    Alert(_msg)
     _ret := .f.
 
 endif
@@ -258,8 +247,6 @@ if sql_table_update(table, "del", nil, _where_str)
 
         log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + ALLTRIM( STR( _count ) ), 7 ) 
 
-        update_semaphore_version(table, .t.)
-
         if transaction $ "FULL#END"
             sql_table_update(table, "END")
         endif
@@ -327,7 +314,6 @@ if sql_table_update( table, "del", _rec, "true")
 
    push_ids_to_semaphore( table, {"#F"} )
 
-   update_semaphore_version( table, .t.)
    sql_table_update( table, "END")
 
    // zapujemo dbf

@@ -162,13 +162,7 @@ Box(, 5, 60 )
 
 _tmp_id := "x"
   
-// ------------------------------------------------------------------
-// lock semaphores
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl_suban, "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_anal,  "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_sint,  "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_nalog, "lock" )
+f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
 if _ok
     sql_table_update(nil, "END")
@@ -286,6 +280,7 @@ if !_ok
     // transakcija neuspjesna
     // server nije azuriran 
     sql_table_update(nil, "ROLLBACK" )
+    f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
 else
 
@@ -294,27 +289,13 @@ else
     push_ids_to_semaphore( _tbl_anal  , _ids_anal  )
     push_ids_to_semaphore( _tbl_nalog , _ids_nalog )
 
-    // suban  
-    update_semaphore_version( _tbl_suban , .t. )
-    update_semaphore_version( _tbl_anal  , .t. )
-    update_semaphore_version( _tbl_sint  , .t. )
-    update_semaphore_version( _tbl_nalog , .t. )
+    f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
     sql_table_update(nil, "END")
 
 endif
 
-// otkljucaj sve tabele
-sql_table_update(nil, "BEGIN")
-lock_semaphore(_tbl_suban, "free")
-lock_semaphore(_tbl_anal,  "free")
-lock_semaphore(_tbl_sint,  "free")
-lock_semaphore(_tbl_nalog, "free")
-sql_table_update(nil, "END")
-
 BoxC()
-
-my_use_semaphore_on()
 
 return _ok
 

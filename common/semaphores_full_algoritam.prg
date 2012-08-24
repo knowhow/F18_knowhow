@@ -36,8 +36,9 @@ if step_size == NIL
     step_size := 15000
 endif
 
-// prije fullsync otkljucaj tabelu
-lock_semaphore( dbf_table, "free" )
+// nuliraj ids polje tako da u toku full sync drugi mogu dodavati id-ove koje mjenjaju
+nuliraj_ids(table )
+
 
 _sql_table  := "fmk." + dbf_table
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 

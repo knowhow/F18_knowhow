@@ -219,7 +219,6 @@ else
  
 	AADD( _ids, _tmp_id )
 
-	update_semaphore_version( _tbl_epdv, .t. )
 	push_ids_to_semaphore( _tbl_epdv, _ids ) 
   	
 	sql_table_update(nil, "END")

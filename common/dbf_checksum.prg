@@ -13,19 +13,16 @@
 
 // -------------------------------------------------
 // -------------------------------------------------
-function check_after_synchro(dbf_alias, full_synchro)
+function check_after_synchro(dbf_alias)
 
-if full_synchro == NIL
-    full_synchro := .f.
-endif
-
-check_recno(dbf_alias, full_synchro)
+// dummy funkcija do daljnjeg
 
 return .t.
 
 // ------------------------------------------
+// param full synchro - uradi full synchro
 // ------------------------------------------
-function check_recno(dbf_alias, full_synchro)
+function check_recno_and_fix(dbf_alias, cnt_dbf, full_synchro)
 local _cnt_sql, _cnt_dbf
 local _a_dbf_rec
 local _opened := .f.
@@ -53,18 +50,20 @@ if !USED()
     _opened := .t.
 endif   
 
-// ovo ne moze prikazuje i deleted zapise
-//_cnt_dbf := RECCOUNT()
-// hoce li ovo usporiti otvaranje za velike tabele ?! 
-COUNT TO _cnt_dbf 
+if cnt_dbf == NIL
+  // reccount() se ne moze iskoristiti jer prikazuje i deleted zapise
+  // count je vremenski skupa operacija za velike tabele !
+  COUNT TO _cnt_dbf 
+else
+  // dobili smo info o broju dbf zapisa
+  _cnt_dbf := cnt_dbf
+endif
 
 log_write( "broj zapisa dbf " + _a_dbf_rec["alias"] + ": " + ALLTRIM(STR(_cnt_dbf, 10)) + " / sql " + _sql_table + ": " + ALLTRIM(STR(_cnt_sql, 10)), 7 )
 
 if _cnt_sql <> _cnt_dbf
    
-    lock_semaphore(_a_dbf_rec["table"], "lock")
-
-    log_write( "ERR check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)), 2 )
+    log_write( "ERROR: check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)), 2 )
     
     // otvori ekskluzivno
     USE
@@ -79,12 +78,11 @@ if _cnt_sql <> _cnt_dbf
         QUIT
     else
         if full_synchro
-            full_synchro(_a_dbf_rec["table"], 15000)
+            full_synchro(_a_dbf_rec["table"], 50000)
         endif
     endif
 
     USE
-    lock_semaphore(_a_dbf_rec["table"], "free")
 endif
 
 if _opened

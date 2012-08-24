@@ -15,7 +15,7 @@
 
 
 // --------------------------------------------------------
-// sinhronizacija sa servera
+// get data from sql server, push to dbf
 // --------------------------------------------------------
 function update_dbf_from_server(table, algoritam)
 local _qry
@@ -68,32 +68,16 @@ if algoritam == "FULL"
 
     SELECT (_dbf_wa)
     my_usex (_dbf_alias, table, .f., "SEMAPHORE")
-    nuliraj_ids(table )
     full_synchro (table, _step)
-    update_semaphore_version( table, .f., .f. )
 
 else
 
     log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
 
-    if lock_semaphore(table, "lock")
- 
-        SELECT (_dbf_wa)
-        my_usex (_dbf_alias, table, .f., "SEMAPHORE")
+    SELECT (_dbf_wa)
+    my_usex (_dbf_alias, table, .f., "SEMAPHORE")
 
-        //mi sa SQL transakcijom nista ne dobijamo
-        // s obzirom da nasa aplikacija koristi nas lock-free mehanizam
-        // cak sta vise transakcija nam smeta da ostali useri "vide" da smo 
-        // zakljucali tabelu
-        //sql_table_update(nil, "BEGIN")
-        
-        ids_synchro  (table)
-        lock_semaphore(table, "free")
-        update_semaphore_version(table, .f.)
-        //sql_table_update(nil, "END")
-    else
-        //sql_table_update(nil, "ROLLBACK")
-    endif
+    ids_synchro  (table)
 
 endif
 

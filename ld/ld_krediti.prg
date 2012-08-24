@@ -78,11 +78,7 @@ do while .t.
                 _vals["idkred"]    := cIdKred
                 _vals["naosnovu"]  := cOsnov
 
-                my_use_semaphore_off()
-                sql_table_update( nil, "BEGIN" )
-                delete_rec_server_and_dbf("ld_radkr", _vals, 1, "CONT" )
-                sql_table_update( nil, "END" )
-                my_use_semaphore_on() 
+                delete_rec_server_and_dbf("ld_radkr", _vals, 1, "FULL" )
         endif
 
     endif
@@ -1127,7 +1123,7 @@ SET ORDER TO TAG "2"
 // idradn+idkred+naosnovu+str(godina)+str(mjesec)
 SEEK cIdRadn+cIdKred+cNaOsnovu
     
-my_use_semaphore_off()
+f18_lock_tables({"ld_radkr"})
 sql_table_update( nil, "BEGIN" )
 
 nStavki := 0
@@ -1143,8 +1139,8 @@ DO WHILE !EOF() .and. idradn+idkred+naosnovu==cIdRadn+cIdKred+cNaOsnovu
     GO (nRec)
 ENDDO
     
+f18_free_tables({"ld_radkr"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 IF nStavki>0
     if lLogBrisiKredit

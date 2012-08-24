@@ -1102,9 +1102,13 @@ MsgC()
 
 if _brisi_kum
     
+    if !f18_lock_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
+         MsgBeep("ne mogu lockovati kalk tabele ?!")
+         return .f.
+    endif
+
     MsgO("Brisem dokument iz KALK-a")
 
-    my_use_semaphore_off()
     sql_table_update( nil, "BEGIN" )
 
     select kalk
@@ -1142,16 +1146,21 @@ if _brisi_kum
 
     endif
 
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    MsgC()
 
-    if !_ok
-        msgbeep("imam veliki problem sa brisanjem ovog dokumenta iz tabele doks !!!!")
+    if _ok
+        f18_free_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
+        sql_table_update( nil, "END" )
+    else
+
+        sql_table_update( nil, "ROLLBACK" )
+        f18_free_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
+
+        msgbeep("Brisanje KALK dokumenta neuspjesno !?")
         close all
         return
     endif
 
-    MsgC()
 
     if Logirati(goModul:oDataBase:cName,"DOK","POVRAT")
         _descr := _id_firma + "-" + _id_vd + "-" + ALLTRIM(_br_dok)
@@ -1245,6 +1254,8 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         skip
     
     enddo
+
+    MsgC()
             
     select kalk
     set order to tag "1"
@@ -1256,9 +1267,11 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         return .f.
     endif
 
+    MsgO("update server kalk")    
     // iskljuci semafore...
-    my_use_semaphore_off()
-
+    if !f18_lock_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
+          return .f.
+    endif
     sql_table_update( nil, "BEGIN" )
 
     // idemo sada na brisanje dokumenata
@@ -1298,9 +1311,10 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
         endif
 
+
         if !_ok
-            msgbeep("Problem sa brisanjem tabele kalk !!!")
-            msgc()
+            MsgC()
+            MsgBeep("Problem sa brisanjem tabele kalk !!!")
             close all
             return .f.
         endif
@@ -1310,10 +1324,11 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
                         
     enddo
 
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    MsgC()
 
-    msgc()
+    f18_free_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
+    sql_table_update( nil, "END" )
+
 
 endif
     
@@ -1629,21 +1644,13 @@ do while !BOF() .and. cIdFirma==IdFirma .and. datdok==dDatDok
 
   		if found()
 			_del_rec := dbf_get_rec()
-			my_use_semaphore_off()
-			sql_table_update( nil, "BEGIN" )
-			delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
-			sql_table_update( nil, "END" )
-			my_use_semaphore_on()
+			delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "FULL" )
     		delete
   		endif
 
   		select kalk
 		_del_rec := dbf_get_rec()
-		my_use_semaphore_off()
-		sql_table_update( nil, "BEGIN" )
-		delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 1, "CONT" )
-		sql_table_update( nil, "END" )
-		my_use_semaphore_on()
+		delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 1, "FULL" )
     
   		go nRec
 

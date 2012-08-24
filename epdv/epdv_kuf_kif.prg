@@ -313,14 +313,8 @@ _ok := .t.
 
 MsgO("del " + cTbl )
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
+_ok := delete_rec_server_and_dbf( _table, _del_rec, 2, "FULL" )
 
-_ok := delete_rec_server_and_dbf( _table, _del_rec, 2, "CONT" )
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-    
 MsgC()
 
 if !_ok

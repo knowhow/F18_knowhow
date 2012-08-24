@@ -262,11 +262,7 @@ local _fakt_doks2_data
 
 close all
 
-my_use_semaphore_off()
-
 o_fakt_edit()
-
-my_use_semaphore_on()
 
 Box("#Proces azuriranja u toku", 3, 60)
 
@@ -704,14 +700,12 @@ if ( lSilent == nil)
     lSilent := .f.
 endif
 
-if ( !lSilent .and. Pitanje( ,"Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
+if ( !lSilent .and. Pitanje( , "Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
     return _a_fakt_doks
 endif
 
 my_use_semaphore_off()
-
 o_fakt_edit()
-
 my_use_semaphore_on()
 
 select fakt_pripr
@@ -745,9 +739,6 @@ _ok := .t.
 
 MsgO( "Azuriranje dokumenata u toku ..." )
  
-// neka dbf-ovi ne "ganjaju" stanje semafora
-my_use_semaphore_off()
-
 _ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
 
 // prodji kroz matricu sa dokumentima i azuriraj ih

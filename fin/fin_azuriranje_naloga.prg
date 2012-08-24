@@ -155,23 +155,14 @@ _tbl_anal  := "fin_anal"
 _tbl_nalog := "fin_nalog"
 _tbl_sint  := "fin_sint"
 
-// -----------------------------------
-my_use_semaphore_off()
-
 Box(, 5, 60 )
 
 _tmp_id := "x"
   
-f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
-
-if _ok
-    sql_table_update(nil, "END")
-else
-    sql_table_update(nil, "ROLLBACK")
+if !f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.
 endif
-// end lock semaphores --------------------------------------------------
 
 sql_table_update( nil, "BEGIN" )
 

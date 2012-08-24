@@ -572,7 +572,7 @@ DO CASE
              				if Pitanje(, "Promjena ce se izvrsiti u " + IIF( EMPTY( _trazi_usl ), "svim ", "" ) + "stavkama" + IIF( !EMPTY( _trazi_usl ), " koje obuhvata uslov","") + ". Zelite nastaviti ?","N")=="D"
 
 								if _has_semaphore
-									my_use_semaphore_off()
+                                    f18_lock_tables({LOWER(ALIAS())})
 									sql_table_update( nil, "BEGIN" )
 								endif
 
@@ -598,8 +598,8 @@ DO CASE
                					enddo
 
 								if _has_semaphore
+                                    f18_free_tables({LOWER(ALIAS())})
 									sql_table_update( nil, "END" )
-									my_use_semaphore_on()
 								endif
 	
              				endif

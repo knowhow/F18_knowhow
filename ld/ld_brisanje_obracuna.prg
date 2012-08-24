@@ -71,14 +71,8 @@ do while .t.
 
             if Pitanje(,"Sigurno zelite izbrisati ovaj zapis D/N","N")=="D"
 
-                my_use_semaphore_off()
-                sql_table_update( nil, "BEGIN" )
-
                 _rec := dbf_get_rec()
-                delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
-
-                sql_table_update( nil, "END" )
-                my_use_semaphore_on()
+                delete_rec_server_and_dbf( "ld_ld", _rec, 1, "FULL" )
 
                 MsgBeep("Izbrisan obracun za radnika: " + cIdRadn + "  !!!")
 
@@ -98,9 +92,9 @@ do while .t.
 
             go top
 
-            Postotak(1, RecCount(),"Ukloni 0 zapise")
+            Postotak(1, RecCount(), "Ukloni 0 zapise")
 
-            my_use_semaphore_off()
+            f18_lock_tables({"ld_ld"})
             sql_table_update( nil, "BEGIN" )
 
             do while !eof()
@@ -126,8 +120,8 @@ do while .t.
 
             Postotak(0)
 
+            f18_free_tables({"ld_ld"})
             sql_table_update( nil, "END" )
-            my_use_semaphore_on()
 
         else
                 MsgBeep("Neko vec koristi datoteku LD !!!")
@@ -196,18 +190,12 @@ do while .t.
 
     select ld
     
-    seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
+    seek STR(cGodina,4) + cIdRj + STR(cMjesec, 2) + BrojObracuna()
 
     if FOUND()
    
-        my_use_semaphore_off()
-        sql_table_update( nil, "BEGIN" ) 
-
         _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "ld_ld", _rec, 2, "CONT" )
-
-        sql_table_update( nil, "END" )
-        my_use_semaphore_on()
+        delete_rec_server_and_dbf( "ld_ld", _rec, 2, "FULL" )
 
     endif
 

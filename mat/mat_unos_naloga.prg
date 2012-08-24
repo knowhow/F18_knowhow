@@ -1125,11 +1125,7 @@ else   // tj. ako se radi o izlazu
   endif
 endif
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( "roba", _vars, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( "roba", _vars, 1, "FULL" )
 
 SELECT (nArr)
 return

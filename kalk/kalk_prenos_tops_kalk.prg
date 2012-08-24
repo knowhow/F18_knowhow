@@ -250,8 +250,6 @@ do while !EOF()
 
 			if _bk_replace == 2 .or. ( _bk_replace == 1 .and. !EMPTY( topska->barkod ) .and. topska->barkod <> _bk_tmp )
 				
-				my_use_semaphore_off()
-
 				_app_rec := dbf_get_rec()
 				_app_rec["barkod"] := topska->barkod
 

@@ -423,10 +423,13 @@ ENDIF
     
 IF ( _brisi_kum == "D" )
 
+    if f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+          return .f.
+    endif
+
     Box(, 5, 70)
 
         _ok := .t.
-        my_use_semaphore_off()
         sql_table_update( nil, "BEGIN" )
 
         _tbl := "fakt_fakt"
@@ -446,8 +449,8 @@ IF ( _brisi_kum == "D" )
         select fakt_doks2
         _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "CONT" )
 
+        f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
         sql_table_update( nil, "END" )
-        my_use_semaphore_on()
 
     BoxC()
 
@@ -471,8 +474,3 @@ ENDIF
 
 close all
 return 1
-
-
-
-
-

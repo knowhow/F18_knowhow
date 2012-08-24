@@ -171,11 +171,7 @@ _rec["int_1"] := aArr[1, 1]
 _rec["int_2"] := aArr[1, 2]
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return
 
@@ -227,11 +223,7 @@ _rec["char_1"] := aArr[1, 3]
 _rec["char_2"] := aArr[1, 4]
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 
 return
@@ -281,12 +273,7 @@ _rec["int_1"] := aArr[1, 1]
 _rec["char_1"] := aArr[1, 2]
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return
 
@@ -337,12 +324,7 @@ _rec["char_1"] := aArr[1, 2]
 _rec["char_2"] := aArr[1, 3]
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return
 
@@ -516,12 +498,7 @@ _rec["char_1"] := cDoc_desc
 _rec["char_2"] := cDoc_sch
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return
 
@@ -552,13 +529,7 @@ _rec["int_2"] := nGlass_no
 _rec["char_1"] := cArt_desc
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
-
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return
 
@@ -587,11 +558,7 @@ _rec["int_2"] := nAop_att_id
 _rec["char_1"] := cDoc_op_desc
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 
 return
@@ -654,13 +621,7 @@ _rec["doc_lit_no"] := nDoc_lit_no
 _rec["int_1"] := nDoc_status
 _rec["doc_lit_ac"] := cAction
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
-
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return
 
@@ -687,12 +648,7 @@ _rec["doc_log_ty"] := cDoc_log_type
 _rec["operater_i"] := nOperId
 _rec["doc_log_de"] := cDesc
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 select (nTArea)
 return

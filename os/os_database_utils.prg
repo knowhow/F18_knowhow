@@ -123,6 +123,8 @@ function PrenosOs()
 local _t_rec
 local _rec, _r_br
 local _sr_id 
+local _table
+local _table_promj
 
 // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
 // otpisana sredstva u protekloj godini
@@ -149,7 +151,11 @@ o_os_sii_promj()
 select_os_sii()
 go top
 
-my_use_semaphore_off()
+_table := get_os_table_name( ALIAS() )
+_table_promj := get_promj_table_name( ALIAS() )
+
+f18_lock_tables({_table, _table_promj})
+
 sql_table_update( nil, "BEGIN" )        
 
 do while !eof()
@@ -176,7 +182,7 @@ do while !eof()
 
         ?? "  brisem, otpisano"
 
-        delete_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
+        delete_rec_server_and_dbf( _table, _rec, 1, "CONT" )
         go _t_rec
         LOOP
 
@@ -198,36 +204,27 @@ do while !eof()
     _rec["revd"] := 0
     _rec["revp"] := 0
 
-    delete_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
+    delete_rec_server_and_dbf( _table, _rec, 1, "CONT" )
 
     go _t_rec
 
 enddo 
-        
-sql_table_update( nil, "END" )        
-my_use_semaphore_on()
-
-
+       
 // pobrisi sve promjene...
 select_promj()
-
-my_use_semaphore_off()
-
-sql_table_update( nil, "BEGIN" )        
 
 do while !EOF()
 
     _rec := dbf_get_rec()
 
-    delete_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "CONT" )
+    delete_rec_server_and_dbf( _table_promj,  _rec, 1, "CONT" )
 
     skip
 
 enddo
 
+f18_free_tables({_table, _table_promj})
 sql_table_update( nil, "END" )        
-
-my_use_semaphore_on()
 
 close all
 

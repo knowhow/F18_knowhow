@@ -190,7 +190,7 @@ SKIP
 // ako ima jos slogova sa zadatim datumom, njih treba izbrisati
 // moze da se desi ako su indeksi bili osteceni
 
-my_use_semaphore_off()
+f18_lock_tables({"pos_promvp"})
 sql_table_update( nil, "BEGIN" )
 
 do while ( !EOF() .and. dDatum == field->datum )  
@@ -227,8 +227,8 @@ _rec["ukupno"] := nUkupno
 
 update_rec_server_and_dbf( "pos_promvp", _rec, 1, "CONT" )
 
+f18_free_tables({"pos_promvp"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on() 
 
 return
 

@@ -912,11 +912,7 @@ if EMPTY(cType) .and. LastKey() == K_ESC .and. lNewRec
 
     _rec := get_dbf_global_memvars()
 
-	my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-	my_use_semaphore_on()
+    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 	return 0
 	
@@ -972,13 +968,9 @@ BoxC()
 
 
 if LastKey() <> K_ESC
-    _rec := get_dbf_global_memvars()
 
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    _rec := get_dbf_global_memvars()
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 endif
 
@@ -1021,11 +1013,7 @@ do while !EOF() .and. field->e_gr_id == __gr_id ;
 
     _rec := get_dbf_global_memvars()
     
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
     select e_gr_att
 	skip
@@ -1093,11 +1081,7 @@ BoxC()
 if LastKey() == K_ESC .and. lNewRec
 	
     _rec := get_dbf_global_memvars()
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 	return 0
 	
@@ -1105,13 +1089,7 @@ endif
 
 _rec := get_dbf_global_memvars()
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
- 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-	
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return 1
 
@@ -1172,22 +1150,14 @@ BoxC()
 if LastKey() == K_ESC .and. lNewRec
     
     _rec := get_dbf_global_memvars()
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-	delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+	delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 	return 0
 	
 endif
 
 _rec := get_dbf_global_memvars()
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 return 1
 
@@ -1205,11 +1175,7 @@ if Pitanje(,"Izbrisati stavku ???", "N") == "N"
 endif
 
 _rec := dbf_get_rec()
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 
 return DE_REFRESH
@@ -1227,11 +1193,7 @@ if Pitanje(,"Izbrisati stavku ???", "N") == "N"
 endif
 
 _rec := dbf_get_rec()
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return DE_REFRESH
 

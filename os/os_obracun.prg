@@ -172,18 +172,10 @@ do while !eof()
     
         private cId := _id
         
-        // sinhronizuj podatke sql/server
         _rec := get_dbf_global_memvars()
 
-        my_use_semaphore_off()
-
-        sql_table_update( nil, "BEGIN" )
-
-        update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
+        update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
         
-        sql_table_update( nil, "END" )
-
-        my_use_semaphore_on()
     
         // amortizacija promjena
         select_promj()
@@ -221,19 +213,10 @@ do while !eof()
                 
             endif
 
-            // sinhronizuj podatke sql/server
             _rec := get_dbf_global_memvars()
     
-            my_use_semaphore_off()
-
-            sql_table_update( nil, "BEGIN" )
-
-            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
+            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
         
-            sql_table_update( nil, "END" )
-    
-            my_use_semaphore_on()
- 
             skip
         enddo  
 
@@ -305,16 +288,8 @@ do while !eof()
             // sinhronizuj podatke sql/server
             _rec := get_dbf_global_memvars()
                         
-            my_use_semaphore_off()
-
-            sql_table_update( nil, "BEGIN" )
-
-            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
+            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
         
-            sql_table_update( nil, "END" )
-    
-            my_use_semaphore_on()
- 
             // amortizacija promjena
             select_promj()
             hseek cId
@@ -360,15 +335,8 @@ do while !eof()
             
                 // sinhronizuj podatke sql/server
                 _rec := get_dbf_global_memvars()
-                my_use_semaphore_off()
 
-                sql_table_update( nil, "BEGIN" )
-
-                update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "CONT" )
-        
-                sql_table_update( nil, "END" )
-    
-                my_use_semaphore_on()
+                update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
     
                 skip
             enddo 

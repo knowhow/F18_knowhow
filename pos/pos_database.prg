@@ -362,13 +362,11 @@ private nIznRn := 0
 
 _ok := .t.
 
-// iskljuci mi semafore
-my_use_semaphore_off()
-
 log_write( "pos azuriranje racuna, racun: " + cStalRac + " - poceo", 5 )
 
+my_use_semaphore_off()
 o_stazur()
-
+my_use_semaphore_on()
 
 if !f18_lock_tables({"pos_pos", "pos_doks"})
   return .f.
@@ -490,8 +488,6 @@ SELECT PRIPRZ
 GO TOP
 
 set_global_memvars_from_dbf()
-
-my_use_semaphore_off()
 
 // zakljucaj semafore pos-a
 if !f18_lock_tables({"pos_pos", "pos_doks"})
@@ -1198,8 +1194,6 @@ endif
 
 log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " poceo", 5 )
 	           	
-my_use_semaphore_off()
-    
 if !f18_lock_tables({"pos_pos", "pos_doks"})
     return
     select ( _t_area )
@@ -1332,7 +1326,7 @@ select tops_roba
 set order to tag "ID"
 go top
 
-my_use_semaphore_off()
+f18_lock_tables({"roba"})
 sql_table_update( nil, "BEGIN" )
 
 Box(,1,60)
@@ -1372,8 +1366,8 @@ enddo
 
 BoxC()
 
+f18_free_tables({"roba"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 select ( F_TMP_1 )
 use
@@ -1384,7 +1378,3 @@ endif
 
 close all
 return
-
-
-
-

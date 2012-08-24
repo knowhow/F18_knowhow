@@ -263,11 +263,7 @@ do while !EOF() .and. field->idpos == cIdPos
 		
 		_rec := get_dbf_global_memvars()
 
-		my_use_semaphore_off()
-		sql_table_update( nil, "BEGIN" )
-		update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
-		sql_table_update( nil, "END" )
-		my_use_semaphore_on()
+		update_rec_server_and_dbf( "pos_pos", _rec, 1, "FULL" )
 
 		++ nCount
 
@@ -301,11 +297,7 @@ if nCount > 0
 
 	_rec := get_dbf_global_memvars()
 	
-	my_use_semaphore_off()
-	sql_table_update( nil, "BEGIN" )
-	update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
-	sql_table_update( nil, "END" )
-	my_use_semaphore_on()
+	update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
 endif
 

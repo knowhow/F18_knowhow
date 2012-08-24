@@ -222,8 +222,6 @@ do case
             _rec := dbf_get_rec()
             _rec["idvrstep"] := cVrPl
 
-            my_use_semaphore_off()
-
             update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
             return DE_REFRESH

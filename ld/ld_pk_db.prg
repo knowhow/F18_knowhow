@@ -46,7 +46,7 @@ nCnt := 0
 
 o_pk_tbl()
 
-my_use_semaphore_off()
+f18_lock_tables({"ld_pk_radn"})
 sql_table_update( nil, "BEGIN" )
 
 // izbrisi pk_radn
@@ -74,8 +74,8 @@ if FOUND()
     delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 2, "CONT" )
 endif
 
+f18_free_tables({"ld_pk_radn"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 if nCnt > 0 
 	msgbeep("Izbrisano " + ALLTRIM(STR(nCnt)) + " zapisa !")

@@ -866,13 +866,7 @@ do while .t.
                     _vars["id"] := NoviID_A()
                 endif
 
-                my_use_semaphore_off()
-
-                if sql_table_update(nil, "BEGIN")
-                    lock_semaphore( "sifv", "lock" )
-                    lock_semaphore( "sifk", "lock" )
-                    sql_table_update(nil, "END")
-                else
+                if !f18_lock_tables({"sifv", "sifk"})
                     log_write( "ERROR: nisam uspio lokovati tabele sifk, sifv", 2 )
                     exit
                 endif
@@ -882,14 +876,11 @@ do while .t.
                 update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
                 sql_table_update(nil, "END")
 
-                lock_semaphore( "sifk", "free" )
-                lock_semaphore( "sifv", "free" )
-
-                my_use_semaphore_on()
+                f18_free_tables({"sifv", "sifk"})
 
                 set_global_vars_from_dbf("w")
 
-                if lastkey()==K_PGUP
+                if lastkey() == K_PGUP
                      skip -1
                 else
                     skip

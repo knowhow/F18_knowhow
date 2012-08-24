@@ -73,7 +73,7 @@ if (RECCOUNT2() == 0)
     
     MsgO("Kreiram ini STRAD")
 
-    my_use_semaphore_off()
+    f18_lock_tables({"pos_strad"})
     sql_table_update( nil, "BEGIN")
 
     select strad
@@ -101,8 +101,8 @@ if (RECCOUNT2() == 0)
 
     update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
 
+    f18_free_tables({"pos_strad"})
     sql_table_update( nil, "END")
-    my_use_semaphore_on()
 
     MsgC()
     
@@ -115,8 +115,8 @@ if (RECCOUNT2() == 0)
     MsgO("Kreiram ini OSOB")
     
     select osob
-   
-    my_use_semaphore_off()
+  
+    f18_lock_tables({"pos_osob"}) 
     sql_table_update( nil, "BEGIN")
     
     append blank
@@ -146,8 +146,8 @@ if (RECCOUNT2() == 0)
 
     update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
     
+    f18_free_tables({"pos_osob"}) 
     sql_table_update( nil, "END")
-    my_use_semaphore_on()
 
     MsgC()
 
@@ -156,7 +156,6 @@ endif
 CLOSE ALL
 
 return
-
 
 
 function UzmiBkIzSez()
@@ -209,11 +208,7 @@ do while !eof()
         _rec := dbf_get_rec()
         _rec["barkod"] := cBKSez
 
-        my_use_semaphore_off()
-        sql_table_update( nil, "BEGIN" )
-        update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
-        sql_table_update( nil, "END" )
-        my_use_semaphore_on()
+        update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
         
         @ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
     endif

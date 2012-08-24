@@ -357,7 +357,11 @@ if LastKey() == K_ESC
     return 7
 endif
 
-my_use_semaphore_off()
+if !f18_lock_tables({"roba", "sast"})
+  MsgBeep("lock roba, sast neuspjeno !")
+  return 7
+endif
+
 sql_table_update( nil, "BEGIN" )
 
 if _d_n $ "12" .and. Pitanje(,"Sigurno zelite izbrisati definisane sastavnice ?","N")=="D"
@@ -393,8 +397,8 @@ if _d_n $ "2" .and. Pitanje(,"Sigurno zelite izbrisati proizvode ?","N")=="D"
 
 endif
 
+f18_free_tables({"roba", "sast"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 return
 

@@ -140,9 +140,14 @@ if !lStorno
 
  _ok := .t.
 
+ if !f18_lock_tables({"fin_suban", "fin_nalog", "fin_sint", "fin_anal", "fin_suban"})
+    MsgBeep("lockovanje FIN tabela neuspjesno !?") 
+    return .f.
+ endif
+
  Box(, 5, 70)
 
-    my_use_semaphore_off()
+
     sql_table_update( nil, "BEGIN" )
 
     _tbl := "fin_suban"
@@ -170,8 +175,10 @@ if !lStorno
     select nalog
     _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 1, "CONT" )
 
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    if _ok
+       f18_free_tables({"fin_suban", "fin_nalog", "fin_sint", "fin_anal", "fin_suban"})
+       sql_table_update( nil, "END" )
+    endif
 
  BoxC()
 
@@ -179,6 +186,9 @@ if !lStorno
 endif
 
 if !_ok
+    sql_table_update( nil, "ROLLBACK" )
+    f18_free_tables({"fin_suban", "fin_nalog", "fin_sint", "fin_anal", "fin_suban"})
+
     MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
 endif
 

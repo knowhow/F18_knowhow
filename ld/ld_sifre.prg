@@ -245,7 +245,7 @@ if (Ch==K_ALT_M)
     select radn
     go top
 
-    my_use_semaphore_off()
+    f18_lock_tables({"ld_radn"}) 
     sql_table_update( nil, "BEGIN" )
 
     do while !eof()
@@ -271,9 +271,9 @@ if (Ch==K_ALT_M)
 
         skip
     enddo
-    
+   
+    f18_free_tables({"ld_radn"}) 
     sql_table_update( nil, "END" )
-    my_use_semaphore_on()
 
    
     MsgC()
@@ -305,11 +305,7 @@ elseif ( UPPER(CHR(Ch)) == "P" )
       if Pitanje(,"Postaviti novi faktor licnog odbitka ?", "D") == "D"
         _rec := dbf_get_rec()
         _rec["klo"] := nFakt
-        my_use_semaphore_off()
-        sql_table_update( nil, "BEGIN" )
-        update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
-        sql_table_update( nil, "END" )
-        my_use_semaphore_on()
+        update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" )
       endif
     endif
     
@@ -986,11 +982,11 @@ Box(,7,75)
         if cSigurno!="D"
             LOOP
         endif
-                
-        my_use_semaphore_off()
+        
+        f18_lock_tables({"ld_radn", "ld_radkr"})        
         sql_table_update( nil, "BEGIN" )
 
-        // brisem ga iz sifrarnika radnika
+        // brisem ga iz sifarnika radnika
         // -------------------------------
         select radn
         set order to tag "1"
@@ -1050,8 +1046,8 @@ Box(,7,75)
         enddo
     enddo
 
+    f18_free_tables({"ld_radn", "ld_radkr"})        
     sql_table_update( nil, "END" )
-    my_use_semaphore_on()
 
     set key K_F5 to
 

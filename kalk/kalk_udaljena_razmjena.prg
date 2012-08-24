@@ -546,8 +546,6 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import kalk dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", kalk/" + ALLTRIM(STR( _total_kalk ))
 
-my_use_semaphore_off()
-
 do while !EOF()
 
     _id_firma := field->idfirma

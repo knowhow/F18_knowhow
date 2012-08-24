@@ -396,13 +396,7 @@ if gZadCij=="D"
       	_rec := dbf_get_rec()
 		_rec["mpc"] := _cijena
 
-		my_use_semaphore_off()
-
-		sql_table_update( nil, "BEGIN" )
-		update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
-		sql_table_update( nil, "END" )
-
-		my_use_semaphore_on()
+		update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
 		select ( _t_area )
     endif

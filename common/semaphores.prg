@@ -106,7 +106,7 @@ while .t.
 
     _i++
 
-    if ALLTRIM(get_semaphore_status(table)) == "lock"
+    if get_semaphore_status(table) == "lock"
 
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
         log_write( _err_msg, 2 )
@@ -182,7 +182,7 @@ if VALTYPE(_ret) == "L"
     QUIT
 endif
 
-return _ret:Fieldget( 1 )
+return ALLTRIM(_ret:Fieldget( 1 ))
 
 
 
@@ -328,30 +328,47 @@ return _ret:Fieldget(1)
 
 
 
-// --------------------------------------
-// --------------------------------------
-function nuliraj_ids(table, ver_user)
+// ----------------------------------------------------------------------
+// nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
+// ------------------------------------------------------------------------
+function nuliraj_ids_and_update_my_semaphore_ver(table)
 local _tbl
 local _ret
 local _user := f18_user()
 local _server := pg_server()
+local _free 
 
-log_write( "nuliraj ids-ove, poceo", 9 )
+// druga varijanta je da je vec "locked_by_me"
+// tabele ne bi smjela biti "lock" (zakljucana od drugog usera) ako se nalazimo ovdje 
+_free := (get_semaphore_status(table) == "free")
+
+if _free
+    // tokom nuliranja semafora ne dozvoli drugima promjene na tabeli
+    lock_semaphore(table, "lock") 
+endif
+
+ 
+log_write( "START: nuliraj ids-ove", 9 )
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 _qry := "UPDATE " + _tbl + " SET " 
-
-if  ver_user <> NIL
-    _qry += " version=" + STR(ver_user) + ","
-endif
 _qry += " ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user) 
  
 _ret := _sql_query( _server, _qry )
 
 log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL", 7)
 
-log_write( "nuliraj ids-ove, zavrsio", 9 )
+log_write( "END: nuliraj ids-ove", 9 )
+
+// na kraju uradi update verzije semafora bez povecanja verzije (.f.)
+// takodje nemoj sinhronizirati podatke da ne udjes u beskonacnu petlju (.f.)
+update_semaphore_version(table, .f., .f.)
+
+if _free
+   // ako je bila slobodna prije nuliranja, neka to bude i sada
+   lock_semaphore(table, "free") 
+endif
 
 return _ret
 
@@ -521,7 +538,7 @@ if check_synchro == NIL
    check_synchro := .f.
 endif
 
-log_write( "update semaphore version, poceo", 9 )
+log_write( "START: update semaphore version", 9 )
 
 _a_dbf_rec := get_a_dbf_rec(table)
 
@@ -534,7 +551,7 @@ _versions := get_semaphore_version_h(table)
 _last_ver := _versions["last_version"]
 _version  := _versions["version"]
 
-if ( _version > -1 ) .and. ( _last_ver > _version )
+if check_synchro .and. ( _version > -1 ) .and. ( _last_ver > _version )
 
     PushWA()
     // u medjuvremenu je bilo update-a od strane drugih korisnika
@@ -565,6 +582,11 @@ if ( _result == 0 )
     
     log_write( "update semaphore version, dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
 
+else
+    _qry := "UPDATE " + _tbl + ;
+                " SET version=" + STR(_ver_user) + ", ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user)
+    _ret := _sql_query( _server, _qry )
+
 endif
 
 if increment
@@ -586,10 +608,6 @@ _qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user)
 _ret := _sql_query( _server, _qry )
 
 log_write( "update semaphore version, table: " + _tbl+ ", select version za " + _user + " version = " + STR(_ret:Fieldget(1)) , 7 )
-log_write( "update semaphore version, zavrsio", 9 )
+log_write( "END: update semaphore version", 9 )
 
 return _ret:Fieldget(1)
-
-
-
-

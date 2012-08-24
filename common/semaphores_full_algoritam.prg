@@ -30,14 +30,14 @@ if f18_session()['id'] > 1
     return .f.
 endif
 
-log_write( "full_synchro(), table: " + dbf_table + " poceo", 7 )
+log_write( "START full_synchro table: " + dbf_table, 7 )
 
 if step_size == NIL
     step_size := 15000
 endif
 
 // nuliraj ids polje tako da u toku full sync drugi mogu dodavati id-ove koje mjenjaju
-nuliraj_ids(table )
+nuliraj_ids_and_update_my_semaphore_ver(table)
 
 
 _sql_table  := "fmk." + dbf_table
@@ -80,11 +80,6 @@ Box(, 5, 70)
 
 BoxC()
 
-log_write( "full_synchro(), table: " + dbf_table + " zavrsio", 7 )
+log_write( "END full_synchro tabela: " + dbf_table, 7 )
 
 return .t.
-
-
-
-
-

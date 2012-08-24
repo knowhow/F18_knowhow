@@ -69,7 +69,12 @@ for _i := 1 TO LEN(_ids_queries["ids"])
     endif
 next
 
-log_write( "ids_synchro(), zavrsio", 9 )
+// na kraju uradi update verzije semafora bez povecanja verzije (.f.)
+// takodje ne pokusavaj sinhronizirati podatke da ne udjes u beskonacnu petlju (.f.)
+update_semaphore_version(dbf_table, .f., .f.)
+
+
+log_write( "END ids_synchro", 9 )
 
 return .t.
 
@@ -236,10 +241,9 @@ for _i := 1 to LEN(_alg)
     AADD(_ids_2, NIL)
 next
 
-lock_semaphore(table, "lock") 
 _ids := get_ids_from_semaphore( table )
-nuliraj_ids(table)
-lock_semaphore(table, "free") 
+
+nuliraj_ids_and_update_my_semaphore_ver(table)
 
 
 log_write("create_queries..(), poceo", 9 )

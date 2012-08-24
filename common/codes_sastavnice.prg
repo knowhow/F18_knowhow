@@ -289,15 +289,17 @@ if Pitanje(, "Kopirati postojece sastavnice u novi proizvod", "N") == "D"
     BoxC()
             
     if ( LastKey() <> K_ESC )
-        select sast
-        set order to tag "idrbr"
-        seek cIdTek
-        nCnt := 0
 
         if !f18_lock_tables( {"sast"} )
              MsgBeep("lock sast neuspjesno !")
              RETURN .f.
         endif
+
+
+        select sast
+        set order to tag "idrbr"
+        seek cIdTek
+        nCnt := 0
 
         sql_table_update( nil, "BEGIN" )
 

@@ -48,7 +48,8 @@ for each _key in _f18_dbfs:Keys
 			_tbl_base := "os"
 		endif
 
-		if !EMPTY( _tbl_base ) .and. f18_use_module( _tbl_base )
+        // EMPTY - sifarnici (roba, tarifa itd)
+		if  EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
 			refresh_me( _f18_dbfs[_key] )
 		endif
 
@@ -87,13 +88,14 @@ local _dbf_pack_algoritam
 
 Box( "#Molimo sacekajte...", 7, 60)
 
+_msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
+@ m_x + 1, m_y + 2 SAY _msg_1
+
 // sracunaj broj aktivnih zapisa u tabeli, koji su izbrisani
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)
 
-_msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 
-@ m_x + 1, m_y + 2 SAY _msg_1
 @ m_x + 2, m_y + 2 SAY _msg_2
 
 log_write( "provjera zapisa u tabelama prije i poslije synchro " +  _msg_1, 5 )

@@ -199,6 +199,7 @@ do while .t.
     if (_version == -1)
 
         log_write( "full synchro version -1", 7 )
+        update_dbf_from_server(table, "FULL")
 
      else
 

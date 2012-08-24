@@ -165,14 +165,18 @@ return .t.
 // ------------------------------------------------------
 function reopen_exclusive(dbf_table)
 local _a_dbf_rec
+local _dbf
 
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 
 SELECT (_a_dbf_rec["wa"])
 USE
 
+_dbf := my_home() + _a_dbf_rec["table"]
+
 // otvori ekskluzivno
-dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)
+dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
+dbSetIndex(ImeDbfCdx(_dbf))
 
 return .t.
 

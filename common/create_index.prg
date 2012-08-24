@@ -34,6 +34,7 @@ local nPos
 local cImeDbf
 local _a_dbf_rec
 local _wa
+local _dbf
 
 private cTag
 private cKljuciz
@@ -69,10 +70,11 @@ fPostoji := .t.
 
 select (_wa)
 
+_dbf := f18_ime_dbf(alias)
 
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-          dbUseArea( .f., "DBFCDX", f18_ime_dbf(alias), NIL, .t. , .f.)
- 
+          dbUseArea( .f., DBFENGINE, _dbf , NIL, .t. , .f.)
+
 recover using _err
 
           _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
@@ -95,8 +97,19 @@ recover using _err
 end sequence
 
 
+// open index
+begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
+     if FILE( ImeDbfCdx(_dbf))
+            dbSetIndex(ImeDbfCdx(_dbf))
+     endif
+recover using _err
+     // ostecen index brisi ga
+     FERASE(ImeDbfCdx(_dbf))
+end sequence
 
-
+if  FILE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
+    FERASE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
+endif
 
 if USED()
 	nOrder := ORDNUMBER( cTag )
@@ -675,11 +688,13 @@ return
  * \endcode
  */
  
-function ImeDBFCDX(cIme)
+function ImeDBFCDX(cIme, ext)
 
-cIme:=trim(strtran(ToUnix(cIme),"."+DBFEXT,"."+INDEXEXT))
-if right(cIme,4)<>"."+INDEXEXT
-  cIme:=cIme+"."+INDEXEXT
+if ext == NIL
+  ext := INDEXEXT
+cIme:=trim(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
+if right(cIme,4) <> "." + ext
+  cIme := cIme + "." + ext
 endif
 return  cIme
 

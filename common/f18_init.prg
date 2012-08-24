@@ -12,6 +12,7 @@
 #include "fmk.ch"
 #include "hbgtinfo.ch"
 #include "hbcompat.ch"
+#include "dbinfo.ch"
 
 static __server := NIL
 static __server_params := NIL
@@ -54,7 +55,9 @@ static __log_level := 3
 // ---------------------------------
 function f18_init_app()
 
-REQUEST DBFCDX
+//REQUEST DBFCDX
+REQUEST DBFNTX
+REQUEST DBFFPT
 
 #ifdef __PLATFORM__WINDOWS
 
@@ -71,6 +74,10 @@ REQUEST DBFCDX
 #endif
 
 RDDSETDEFAULT( RDDENGINE )
+
+Set( _SET_AUTOPEN, .t.  )
+Set( _SET_AUTOSHARE, 0  )
+SET DBFLOCKSCHEME TO DB_DBFLOCK_HB64 
 
 REQUEST HB_CODEPAGE_SL852 
 REQUEST HB_CODEPAGE_SLISO

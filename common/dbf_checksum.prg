@@ -27,6 +27,7 @@ local _cnt_sql, _cnt_dbf
 local _a_dbf_rec
 local _opened := .f.
 local _sql_table
+local _dbf, _udbf
 
 if full_synchro == NIL
     full_synchro := .f.
@@ -45,8 +46,11 @@ recover
     SELECT (_a_dbf_rec["wa"])
 end sequence
 
+_udbf := my_home() + _a_dbf_rec["table"]
+
 if !USED()
-    dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .t. , .f.)
+    dbUseArea( .f., DBFENGINE, _udbf, _a_dbf_rec["alias"], .t. , .f.)
+    dbSetIndex(ImeDbfCdx(_udbf))
     _opened := .t.
 endif   
 
@@ -67,7 +71,9 @@ if _cnt_sql <> _cnt_dbf
     
     // otvori ekskluzivno
     USE
-    dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)
+    _dbf := my_home() + _a_dbf_rec["table"]
+    dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
+    dbSetIndex(ImeDbfCdx(_dbf))
 
     _dbf_fields :=  _a_dbf_rec["dbf_fields"]
 

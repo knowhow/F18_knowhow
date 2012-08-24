@@ -144,7 +144,7 @@ return
  *
  */
 
-function ChangeEXT(cImeF,cExt, cExtNew, fBezAdd)
+function ChangeEXT(cImeF, cExt, cExtNew, fBezAdd)
 
 local cTacka
 

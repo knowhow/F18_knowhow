@@ -12,10 +12,17 @@
 
 #define F18_F18_DEFINED
 
-#define INDEXEXT  "cdx"
+#define INDEXEXT      "ntx"
+#define OLD_INDEXEXT  "cdx"
 #define DBFEXT    "dbf"
 #define MEMOEXT   "fpt"
-#define RDDENGINE "DBFCDX"
+
+#define  INDEXEXTENS "ntx"
+#define  MEMOEXTENS  "fpt"
+
+
+#define RDDENGINE "DBFNTX"
+#define DBFENGINE "DBFNTX"
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1
 #define SEMAPHORE_LOCK_RETRY_NUM 50

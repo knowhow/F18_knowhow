@@ -171,9 +171,7 @@ function GenProIzvKalk()
   SELECT (F_POM)
 #ifdef CAX
   if !used()
-    AX_AutoOpen(.f.)
     usex (PRIVPATH+"pom")
-    AX_AutoOpen(.t.)
   endif
 #else
   usex (PRIVPATH+"pom")

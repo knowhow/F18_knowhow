@@ -293,6 +293,7 @@ function set_dbf_fields_from_struct(rec)
 local _struct, _i
 local _opened := .t.
 local _fields :={}, _fields_len
+local _dbf
 
 if rec["temp"]
    // ovi mi podaci ne trebaju za temp tabele
@@ -303,9 +304,11 @@ SELECT (rec["wa"])
 
 if !used()
 
+    _dbf := my_home() + rec["table"]
     begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-            dbUseArea( .f., "DBFCDX", my_home() + rec["table"], rec["alias"], .t. , .f.)
-    
+            dbUseArea( .f., DBFENGINE, _dbf, rec["alias"], .t. , .f.)
+            dbSetIndex( ImeDbfCdx(_dbf))
+
     recover using _err
 
             _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"

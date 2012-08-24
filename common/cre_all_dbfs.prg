@@ -264,19 +264,5 @@ DBCREATE(ime_dbf, struct_dbf, driver)
 return .t.
 
 
-/*
-function AddOidFields(aDbf)
-*{
-
-AADD(aDbf,{"_OID_", "N", 12, 0})
-AADD(aDbf,{"_SITE_", "N", 2, 0})
-AADD(aDbf,{"_DATAZ_", "D", 8, 0})
-AADD(aDbf,{"_TIMEAZ_", "C", 8, 0})
-AADD(aDbf,{"_COMMIT_", "C", 1, 0})
-AADD(aDbf,{"_USER_", "N", 3, 0})
-
-return
-*}
-*/
 
 

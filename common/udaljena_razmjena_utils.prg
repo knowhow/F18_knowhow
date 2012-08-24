@@ -427,7 +427,7 @@ for each _file in _files
         // pobrisi dbf fajl
         FERASE( _file )
         // cdx takodjer ?
-        _tmp := STRTRAN( _file, ".dbf", ".cdx" )
+        _tmp := ImeDbfCDX(_file)
         FERASE( _tmp )
         // fpt takodjer ?
         _tmp := STRTRAN( _file, ".dbf", ".fpt" )

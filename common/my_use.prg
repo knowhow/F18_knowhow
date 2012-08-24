@@ -68,8 +68,10 @@ if USED()
 endif
 
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-          dbUseArea( new_area, "DBFCDX", table, alias, !excl, .f.)
- 
+
+          dbUseArea( new_area, DBFENGINE, table, alias, !excl, .f.)
+          dbSetIndex(ImeDbfCDX(table))
+
 recover using _err
 
           _msg := "ERR: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
@@ -102,6 +104,7 @@ local _pos
 local _version, _last_version
 local _area
 local _force_erase := .f.
+local _dbf
 
 if excl == NIL
   excl := .f.
@@ -139,7 +142,7 @@ endif
 
 
 if _rdd == NIL
-  _rdd = "DBFCDX"
+  _rdd = DBFENGINE
 endif
 
 if !_a_dbf_rec["temp"] 
@@ -152,7 +155,7 @@ if !_a_dbf_rec["temp"]
         // rdd = "SEMAPHORE" poziv is update from sql server procedure
         // samo otvori tabelu
         log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 8 )
-        _rdd := "DBFCDX" 
+        _rdd := DBFENGINE
     endif
 
 endif
@@ -161,9 +164,11 @@ if USED()
     use
 endif
 
+_dbf := my_home() + table
+
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-          dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
- 
+          dbUseArea( new_area, _rdd, _dbf, alias, !excl, .f.)
+          dbSetIndex(ImeDbfCdx(_dbf)) 
 recover using _err
 
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"

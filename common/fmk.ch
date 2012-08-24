@@ -201,9 +201,6 @@
 
 #define SLASH  HB_OSPATHSEPARATOR()
 
-#DEFINE INDEXEXTENS "cdx"
-#DEFINE  MEMOEXTENS  "fpt"
-
 #DEFINE DRVPATH ":\"
 
 #define NRED chr(13)+chr(10)
@@ -319,5 +316,4 @@
                   <(file)>, { <(fields)> },                             ;
                   <{for}>, <{while}>, <next>, <rec>, <.rest.>, <rdd>    ;
                 )
-
 

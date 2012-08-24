@@ -71,12 +71,16 @@ Box(, 5, 70)
         _qry += " ORDER BY " + _sql_order
         _qry += " LIMIT " + STR(step_size) + " OFFSET " + STR(_offset) 
 
-        fill_dbf_from_server(dbf_table, _qry)
+        log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + ALLTRIM(STR(_offset)) + " / qry: " + _qry, 7 )
 
-        @ m_x + 4, m_y + 2 SAY _offset
+        @ m_x + 4, m_y + 2 SAY "dbf <- qry " + ALLTRIM(STR(_offset))
+        fill_dbf_from_server(dbf_table, _qry)
+        @ m_x + 4, m_y + 2 SAY SPACE(30)
+
+        @ m_x + 4, m_y + 2 SAY _offset + step_size
         @ row(), col() + 2 SAY "/"
         @ row(), col() + 2 SAY _count
-        log_write( "STEP full_synchro tabela: " + dbf_table + " " + ALLTRIM(STR(_offset)) + " / " + ALLTRIM(STR(_count)), 7 )
+        log_write( "STEP full_synchro tabela: " + dbf_table + " " + ALLTRIM(STR(_offset + step_size)) + " / " + ALLTRIM(STR(_count)), 7 )
     next
 
 BoxC()

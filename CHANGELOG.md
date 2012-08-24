@@ -1,3 +1,7 @@
+1.1.8  2012-08-24, vsasa
+
+ - pos, unos računa, loše pozicioniranje šifrarnika robe [#28955](http://redmine.bring.out.ba/issues/28955)
+ 
 1.1.7  2002-08-24, hernad
   
  - branch 1.1

@@ -47,7 +47,7 @@ _sql_order  := _a_dbf_rec["sql_order"]
 
 reopen_exclusive(_a_dbf_rec["table"])
 
-Box(, 5, 70)
+Box(, 6, 70)
 
     @ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
 
@@ -73,11 +73,11 @@ Box(, 5, 70)
 
         log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + ALLTRIM(STR(_offset)) + " / qry: " + _qry, 7 )
 
-        @ m_x + 4, m_y + 2 SAY "dbf <- qry " + ALLTRIM(STR(_offset))
+        @ m_x + 5, m_y + 2 SAY "dbf <- qry " + ALLTRIM(STR(_offset))
         fill_dbf_from_server(dbf_table, _qry)
-        @ m_x + 4, m_y + 2 SAY SPACE(30)
+        @ m_x + 5, m_y + 2 SAY SPACE(30)
 
-        @ m_x + 4, m_y + 2 SAY _offset + step_size
+        @ m_x + 6, m_y + 2 SAY _offset + step_size
         @ row(), col() + 2 SAY "/"
         @ row(), col() + 2 SAY _count
         log_write( "STEP full_synchro tabela: " + dbf_table + " " + ALLTRIM(STR(_offset + step_size)) + " / " + ALLTRIM(STR(_count)), 7 )

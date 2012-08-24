@@ -453,8 +453,9 @@ DO CASE
 							_saved := .f.
 
 							if _has_semaphore
-                                (()(((((()))) hernad: namjerno greska treba f18_lock 
-								my_use_semaphore_off()
+                                if f18_lock_tables({LOWER(alias())})
+                                    return DE_CONT
+                                endif
 								sql_table_update( nil, "BEGIN" )
 							endif
 
@@ -509,8 +510,8 @@ DO CASE
              				enddo
 
 							if _has_semaphore
+                                f18_free_tables({LOWER(alias())})
 								sql_table_update( nil, "END" )
-								my_use_semaphore_on()
 							endif
              				
 							dbsetorder( nOrder )

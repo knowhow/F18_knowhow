@@ -531,13 +531,16 @@ select e_nalog
 set order to tag "1"
 go top
 
+if ! f18_lock_tables({"fin_nalog", "fin_anal", "fin_sint", "fin_suban"})
+    return .f.
+endif
+
+
 Box(, 3, 70 )
 
 @ m_x + 1, m_y + 2 SAY PADR( "... import fin dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa nalog/" + ALLTRIM(STR( _total_nalog )) + ", suban/" + ALLTRIM(STR( _total_suban ))
 
-?? todo: hernad: ??? ((()))))  begin fali ? f18_lock takodje
-my_use_semaphore_off()
 
 do while !EOF()
 
@@ -692,14 +695,13 @@ do while !EOF()
     enddo
 
     // zavrsi transakciju
+    f18_free_tables({"fin_nalog", "fin_anal", "fin_sint", "fin_suban"})
     sql_table_update( nil, "END" )
 
     select e_nalog
     skip
 
 enddo
-
-my_use_semaphore_on()
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0

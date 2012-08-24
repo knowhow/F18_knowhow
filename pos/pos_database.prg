@@ -494,7 +494,7 @@ set_global_memvars_from_dbf()
 my_use_semaphore_off()
 
 // zakljucaj semafore pos-a
-if !pos_semaphores_lock()
+if !f18_lock_tables({"pos_pos", "pos_doks"})
     return
 endif
 
@@ -582,13 +582,8 @@ do while !EOF()
 
 enddo
 
-// zavrsi transakciju
+f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END")
-
-// otkljucaj mi semafore
-pos_semaphores_unlock()
-
-my_use_semaphore_on()
 
 SELECT PRIPRZ
 __dbPack()
@@ -1205,7 +1200,8 @@ log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " p
 	           	
 my_use_semaphore_off()
     
-if !pos_semaphores_lock()
+if !f18_lock_tables({"pos_pos", "pos_doks"})
+    return
     select ( _t_area )
     return _ret
 endif     
@@ -1228,15 +1224,13 @@ if FOUND()
 	delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
 endif
 
+f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
 
-pos_semaphores_unlock()
 
 // pos_pos check
-check_recno( "pos_pos", .f. )
-check_recno( "pos_doks", .f. )
-
-my_use_semaphore_on()
+// check_recno( "pos_pos", nil, .f. )
+// check_recno( "pos_doks", nil, .f. )
 
 log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " zavrsio", 5 )
 

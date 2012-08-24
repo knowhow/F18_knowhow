@@ -224,17 +224,7 @@ do case
 
             my_use_semaphore_off()
 
-            if !pos_semaphores_lock()
-                return DE_CONT
-            endif
-
-            sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
-            sql_table_update( nil, "END" )
-
-            pos_semaphores_unlock()
-
-            my_use_semaphore_on()
+            update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
             return DE_REFRESH
 

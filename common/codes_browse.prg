@@ -939,7 +939,7 @@ _vars := get_dbf_global_memvars("w")
 
 
 // -----------------------------------------------------------------------
-if f18_lock_tabele({"sifv", "sifk"})
+if f18_lock_tables({"sifv", "sifk"})
 
     sql_table_update(nil, "BEGIN")
 
@@ -951,7 +951,7 @@ if f18_lock_tabele({"sifv", "sifk"})
     endif
     update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi, "CONT")
 
-    f18_free_tabele({"sifv", "sifk"})
+    f18_free_tables({"sifv", "sifk"})
     sql_table_update(nil, "END")
     
 endif

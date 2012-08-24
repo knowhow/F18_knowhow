@@ -294,7 +294,11 @@ if Pitanje(, "Kopirati postojece sastavnice u novi proizvod", "N") == "D"
         seek cIdTek
         nCnt := 0
 
-        f18_lock_tabele( {"sast"} )
+        if !f18_lock_tables( {"sast"} )
+             MsgBeep("lock sast neuspjesno !")
+             RETURN .f.
+        endif
+
         sql_table_update( nil, "BEGIN" )
 
         do while !eof() .and. (id == cIdTek)
@@ -310,7 +314,7 @@ if Pitanje(, "Kopirati postojece sastavnice u novi proizvod", "N") == "D"
             skip
         enddo
 
-        f18_free_tabele({"sast"})     
+        f18_free_tables({"sast"})     
         sql_table_update( nil, "END" )
 
         select roba

@@ -734,9 +734,6 @@ local _ids := {}
 local _ids_kalk := {}
 local _ids_doks := {}
 
-// ---------------------------------------------
-my_use_semaphore_off()
-
 _tbl_kalk := "kalk_kalk"
 _tbl_doks := "kalk_doks"
 
@@ -744,17 +741,8 @@ Box(, 5, 60)
 
 _tmp_id := "x"
 
-// ------------------------------------------------------------------
-// lock semaphores
-
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl_kalk, "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
-
-if _ok
-    sql_table_update(nil, "END")
-else
-    sql_table_update(nil, "ROLLBACK")
+ 
+if !f18_lock_tables({_tbl_kalk, _tbl_doks})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.
 endif
@@ -863,9 +851,6 @@ else
     // kalk 
     @ m_x+5, m_y+2 SAY "update semaphore version"
 
-    // hernad: todo: !!! treba i gore f18_lock ... uraditi
-    ((()) namjerno greska
- 
     f18_free_tables({_tbl_kalk, _tbl_doks})
     sql_table_update(nil, "END")
 

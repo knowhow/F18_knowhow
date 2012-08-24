@@ -102,7 +102,7 @@ log_write( "prije synchro " +  _msg_1 + " " + _msg_2, 8 )
 
 // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
 // ako se utvrti greska uradi full sync
-check_recno_and_fix(a_dbf_rec["table"], _cnt - _del .t.)
+check_recno_and_fix(a_dbf_rec["table"], _cnt - _del, .t.)
 
 
 _msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]

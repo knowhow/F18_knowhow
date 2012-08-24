@@ -719,21 +719,11 @@ select pos_doks
 _rec := dbf_get_rec()
 _rec["fisc_rn"] := nFisc_no
 
-my_use_semaphore_off()
-
-if !pos_semaphores_lock()
+if !f18_lock_tables({"pos_pos", "pos_doks"})
     return
 endif
 
-sql_table_update( nil, "BEGIN" )
-
-update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
-
-sql_table_update( nil, "END" )
-
-pos_semaphores_unlock()
-
-my_use_semaphore_on()
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
 return
 

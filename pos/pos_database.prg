@@ -369,10 +369,11 @@ log_write( "pos azuriranje racuna, racun: " + cStalRac + " - poceo", 5 )
 
 o_stazur()
 
-// zakljucaj semafore pos-a
-if !pos_semaphores_lock()
-    return
+
+if !f18_lock_tables({"pos_pos", "pos_doks"})
+  return .f.
 endif
+
 
 if ( cNacPlac == NIL )
     cNacPlac := gGotPlac
@@ -456,16 +457,13 @@ do while !EOF() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos
 
 enddo
 
+f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
 
-// otkljucaj semafore
-pos_semaphores_unlock()
-
 // pos_pos check
-check_recno( "pos_pos", .f. )
-check_recno( "pos_doks", .f. )
+// check_recno( "pos_pos", nil, .f. )
+// check_recno( "pos_doks", nil, .f. )
 
-my_use_semaphore_on()
 
 log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )
 
@@ -790,11 +788,10 @@ log_write( "azuriranje stavki iz priprz u pos/doks, poceo", 5 )
 
 MsgO( "Azuriranje priprema -> kumulativ u toku... sacekajte..." )
 
-my_use_semaphore_off()
 
 // lockuj semafore
-if !pos_semaphores_lock()
-    return
+if !f18_free_tables({"pos_pos", "pos_doks"})
+    return .f.
 endif
 
 sql_table_update( nil, "BEGIN" )
@@ -867,16 +864,13 @@ enddo
 
 MsgC()
 
+f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
 
-// otkljucaj semafore
-pos_semaphores_unlock()
-
 // pos_pos check
-check_recno( "pos_pos", .f. )
-check_recno( "pos_doks", .f. )
+//check_recno( "pos_pos", nil, .f. )
+//check_recno( "pos_doks", nil, .f. )
 
-my_use_semaphore_on()
 
 log_write( "azuriranje stavki iz priprz u pos/doks, zavrsio", 5 )
 
@@ -892,50 +886,6 @@ MsgC()
 
 return
 
-
-
-// ------------------------------------------------
-// zakljucaj pos semafore
-// ------------------------------------------------
-function pos_semaphores_lock()
-local _ok := .t.
-local _tbl_pos := "pos_pos"
-local _tbl_doks := "pos_doks"
-
-// lock semaphore
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl_pos, "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_doks,  "lock" )
-
-if _ok
-    sql_table_update(nil, "END")
-    log_write( "uspjesno zakljucane tabele pos_pos i pos_doks", 7 )
-else
-    sql_table_update(nil, "ROLLBACK")
-    my_use_semaphore_on()
-    log_write( "nisam uspio zakljucati tabele pos_pos i pos_doks", 2 )
-    MsgBeep("lock pos tabela neuspjesan, operacija prekinuta")
-    return .f.
-endif
-
-return _ok
-
-
-
-// ----------------------------------------------------
-// otkljucaj semafore pos-a
-// ----------------------------------------------------
-function pos_semaphores_unlock()
-local _tbl_pos := "pos_pos"
-local _tbl_doks := "pos_doks"
-local _ok := .t.
-
-_ok := lock_semaphore( _tbl_pos, "free" )
-_ok := _ok .and. lock_semaphore( _tbl_doks, "free" )
-
-log_write( "otkljucane tabele pos_pos i pos_doks", 7 )
-
-return _ok
 
 
 // ------------------------------------------

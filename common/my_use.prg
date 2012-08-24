@@ -43,10 +43,6 @@ return __my_use_semaphore
 // --------------------------------------------------------------
 function my_usex(alias, table, new_area, _rdd, semaphore_param)
 
-if check_recno == NIL
-    check_recno := .f.
-endif
-
 return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 
 

@@ -162,9 +162,15 @@ return .t.
 
 
 // ------------------------------------------------------
-// open exclusive, open_index - .t., .f. 
+// open exclusive, open_index - otvoriti index 
 // ------------------------------------------------------
+function reopen_shared(dbf_table, open_index)
+return reopen_dbf(.f., dbf_table, open_index)
+
 function reopen_exclusive(dbf_table, open_index)
+return reopen_dbf(.t., dbf_table, open_index)
+
+function reopen_dbf(excl, dbf_table, open_index)
 local _a_dbf_rec
 local _dbf
 
@@ -180,7 +186,7 @@ USE
 _dbf := my_home() + _a_dbf_rec["table"]
 
 // otvori ekskluzivno
-dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
+dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
 
 if open_index .and. FILE(ImeDbfCdx(_dbf))
         dbSetIndex(ImeDbfCDX(_dbf))
@@ -190,11 +196,13 @@ return .t.
 
 
 // ------------------------------------------------------
-// zap, then open shared, open_index - .t., .f. 
+// zap, then open shared, open_index - otvori index 
 // ------------------------------------------------------
-function zap_then_reopen_shared(dbf_table, open_index)
+function zap_then_reopen_exclusive(dbf_table, open_index)
 local _a_dbf_rec
 local _dbf
+local _idx
+
 
 if open_index == NIL
   open_index := .t.
@@ -206,22 +214,24 @@ SELECT (_a_dbf_rec["wa"])
 USE
 
 _dbf := my_home() + _a_dbf_rec["table"]
+_idx := ImeDbfCdx(_dbf)
 
 // otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
+SET AUTOPEN OFF
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
 // kod prvog otvaranja uvijek otvori index da i njega nuliram 
 
-if FILE(ImeDbfCdx(_dbf))
-  dbSetIndex(ImeDbfCdx(_dbf))
+if FILE(_idx)
+  dbSetIndex(_idx)
 endif
 
 __dbZap()
 
 
-dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .t. , .f.)
+dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
 if open_index
-  if FILE(ImeDbfCdx(_dbf))
-     dbSetIndex(ImeDbfCdx(_dbf))
+  if FILE(_idx)
+     dbSetIndex(_idx)
   endif
 endif
 

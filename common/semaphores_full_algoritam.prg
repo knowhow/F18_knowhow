@@ -14,6 +14,7 @@
 
 // ---------------------------------------------------------
 // napuni tablu sa servera
+// step_size - broj zapisa koji se citaju u jednom query-u
 // ---------------------------------------------------------
 function full_synchro(dbf_table, step_size)
 local _seconds
@@ -53,13 +54,10 @@ _a_dbf_rec  := get_a_dbf_rec(dbf_table)
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _sql_order  := _a_dbf_rec["sql_order"]
 
-/*
-reopen_exclusive(_a_dbf_rec["table"], .f.)
-ZAP
-*/
-
 // zapuj, pa otvori tabelu shared
-zap_then_reopen_shared(_a_dbf_rec["table"], .t.)
+// .t. - brisi indeksni fajl tako da se full sinchro obavlja bez azuriranja indeksa
+// .f. - otvori indeks
+zap_then_reopen_exclusive(_a_dbf_rec["table"], .t., .f.)
 
 Box(, 6, 70)
 
@@ -98,8 +96,14 @@ Box(, 6, 70)
 
 BoxC()
 
+MsgO("Reindex nakon full sync: " + dbf_table)
+    REINDEX
+MsgC()
+
 USE
+
 sql_table_update(nil, "END")
 log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + ALLTRIM(STR(_count)), 3 )
+
 
 return .t.

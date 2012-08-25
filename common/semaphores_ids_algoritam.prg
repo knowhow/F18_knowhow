@@ -37,10 +37,10 @@ do while .t.
   if _zap <> 0
 
    // postoji zahtjev za full synchro
-   full_synchro(dbf_table)   
+   full_synchro(dbf_table, 50000, .f.)   
 
    // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
-   reopen_exclusive(dbf_table, .t.)
+   reopen_shared(dbf_table, .t.)
 
    ADEL(_zap, _ids_queries["qry"])
 

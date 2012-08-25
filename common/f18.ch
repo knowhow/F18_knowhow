@@ -12,13 +12,10 @@
 
 #define F18_F18_DEFINED
 
+/*
 // NTX
 #define NTX_INDICES
 #undef  CDX_INDICES
-
-// CDX
-// #undef CDX_INDICES
-// #define NTX_INDICES
 
 
 #define INDEXEXT      "ntx"
@@ -32,6 +29,24 @@
 
 #define RDDENGINE "DBFNTX"
 #define DBFENGINE "DBFNTX"
+*/
+
+
+// CDX
+#define CDX_INDICES
+#undef NTX_INDICES
+#define INDEXEXT      "cdx"
+#define OLD_INDEXEXT  "ntx"
+#define DBFEXT        "dbf"
+#define MEMOEXT       "fpt"
+
+#define  INDEXEXTENS  "cdx"
+#define  MEMOEXTENS   "fpt"
+
+
+#define RDDENGINE "DBFCDX"
+#define DBFENGINE "DBFCDX"
+// CDX end
 
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1

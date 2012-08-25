@@ -70,7 +70,9 @@ endif
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
 
           dbUseArea( new_area, DBFENGINE, table, alias, !excl, .f.)
-          dbSetIndex(ImeDbfCDX(table))
+          if FILE(ImeDbfCdx(table))
+              dbSetIndex(ImeDbfCDX(table))
+          endif
 
 recover using _err
 
@@ -105,17 +107,21 @@ local _version, _last_version
 local _area
 local _force_erase := .f.
 local _dbf
+local _tmp
 
 if excl == NIL
   excl := .f.
 endif
 
 if table == NIL
-  _a_dbf_rec := get_a_dbf_rec(alias)
+    _tmp := alias
 else
-   // uvijek atribute utvrdjujemo prema table atributu  
-   _a_dbf_rec := get_a_dbf_rec(table)
+    // uvijek atribute utvrdjujemo prema table atributu  
+    _tmp := table
 endif
+
+// trebam samo osnovne parametre
+_a_dbf_rec := get_a_dbf_rec(_tmp, .t.)
 
 
 if new_area == NIL
@@ -168,7 +174,10 @@ _dbf := my_home() + table
 
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
           dbUseArea( new_area, _rdd, _dbf, alias, !excl, .f.)
-          dbSetIndex(ImeDbfCdx(_dbf)) 
+          if FILE(ImeDbfCdx(_dbf))
+              dbSetIndex(ImeDbfCDX(_dbf))
+          endif
+
 recover using _err
 
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"

@@ -307,7 +307,6 @@ if !used()
     _dbf := my_home() + rec["table"]
     begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
             dbUseArea( .f., DBFENGINE, _dbf, rec["alias"], .t. , .f.)
-            dbSetIndex( ImeDbfCdx(_dbf))
 
     recover using _err
 

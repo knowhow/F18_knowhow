@@ -50,7 +50,10 @@ _udbf := my_home() + _a_dbf_rec["table"]
 
 if !USED()
     dbUseArea( .f., DBFENGINE, _udbf, _a_dbf_rec["alias"], .t. , .f.)
-    dbSetIndex(ImeDbfCdx(_udbf))
+    if FILE(ImeDbfCdx(_udbf))
+        dbSetIndex(ImeDbfCDX(_udbf))
+    endif
+
     _opened := .t.
 endif   
 
@@ -73,7 +76,9 @@ if _cnt_sql <> _cnt_dbf
     USE
     _dbf := my_home() + _a_dbf_rec["table"]
     dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
-    dbSetIndex(ImeDbfCdx(_dbf))
+    if FILE(ImeDbfCdx(_dbf))
+        dbSetIndex(ImeDbfCDX(_dbf))
+    endif
 
     _dbf_fields :=  _a_dbf_rec["dbf_fields"]
 

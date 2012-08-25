@@ -251,10 +251,9 @@ function DBCREATE2(ime_dbf, struct_dbf, driver)
 local _pos
 local _ime_cdx
 
-
 ime_dbf := f18_ime_dbf(ime_dbf)
 
-_ime_cdx:= strtran(ime_dbf, "." + DBFEXT, "." + INDEXEXT)
+_ime_cdx:= ImeDbfCdx(ime_dbf)
 
 if right(_ime_cdx, 4) == "." + INDEXEXT
   ferase(_ime_cdx)
@@ -262,7 +261,5 @@ endif
 
 DBCREATE(ime_dbf, struct_dbf, driver)
 return .t.
-
-
 
 

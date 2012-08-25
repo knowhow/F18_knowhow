@@ -98,6 +98,7 @@ Box(, 6, 70)
 
 BoxC()
 
+USE
 sql_table_update(nil, "END")
 log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + ALLTRIM(STR(_count)), 3 )
 

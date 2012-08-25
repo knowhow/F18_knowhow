@@ -182,8 +182,8 @@ _dbf := my_home() + _a_dbf_rec["table"]
 // otvori ekskluzivno
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
 
-if open_index
- dbSetIndex(ImeDbfCdx(_dbf))
+if open_index .and. FILE(ImeDbfCdx(_dbf))
+        dbSetIndex(ImeDbfCDX(_dbf))
 endif
 
 return .t.
@@ -210,13 +210,19 @@ _dbf := my_home() + _a_dbf_rec["table"]
 // otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
 // kod prvog otvaranja uvijek otvori index da i njega nuliram 
-dbSetIndex(ImeDbfCdx(_dbf))
+
+if FILE(ImeDbfCdx(_dbf))
+  dbSetIndex(ImeDbfCdx(_dbf))
+endif
+
 __dbZap()
 
 
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .t. , .f.)
 if open_index
- dbSetIndex(ImeDbfCdx(_dbf))
+  if FILE(ImeDbfCdx(_dbf))
+     dbSetIndex(ImeDbfCdx(_dbf))
+  endif
 endif
 
 return .t.

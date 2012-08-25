@@ -25,6 +25,7 @@ local _sql_table, _sql_fields
 local _a_dbf_rec
 local _sql_order
 local _opened
+local _sec
 
 if f18_session()['id'] > 1
     log_write("full_synchro(), u child thread se ne radi, preskocena tabela: "  + dbf_table, 3 )  
@@ -84,9 +85,10 @@ Box(, 6, 70)
 
         log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + ALLTRIM(STR(_offset)) + " / qry: " + _qry, 7 )
 
-        @ m_x + 5, m_y + 2 SAY "dbf <- qry " + ALLTRIM(STR(_offset))
+        @ m_x + 5, m_y + 2 SAY "dbf <- qry " + ALLTRIM(STR(_offset)) 
+        _sec := SECONDS()
         fill_dbf_from_server(dbf_table, _qry)
-        @ m_x + 5, m_y + 2 SAY SPACE(30)
+        @ row(), col() + 2 SAY "sql fetch time: " + ALLTRIM(SECONDS() - _sec)
 
         @ m_x + 6, m_y + 2 SAY _offset + step_size
         @ row(), col() + 2 SAY "/"

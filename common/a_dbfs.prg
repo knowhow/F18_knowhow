@@ -328,7 +328,22 @@ _fields_len := hb_hash()
 for _i := 1 to LEN(_struct)
    AADD(_fields, LOWER(_struct[_i, 1]))
    // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
-   _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], _struct[_i, 3], _struct[_i, 4]}
+
+   if struct[_i, 2] == "B"
+
+          // double
+          _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], 18, 8}
+
+   elseif struct[_i, 2] == "Y" .or. (struct[_i, 2] == "I" .and. struct[_i, 4]>0)
+
+         // za currency polje stoji I 8 4 - sto znaci currency sa cetiri decimale
+         // mislim da se ovdje radi o tome da se u 4 bajta stavlja integer dio, a u ostala 4 decimalni dio
+        _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], 18, _struct[_i, 4]}
+   
+   else
+         _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], _struct[_i, 3], _struct[_i, 4]}
+   
+   endif
 next
 
 rec["dbf_fields"]     := _fields

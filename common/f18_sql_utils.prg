@@ -124,7 +124,10 @@ DO CASE
             _tmp := _a_dbf_rec["dbf_fields"][_i]
 
             if VALTYPE(record[_tmp]) == "N"
+
                    _tmp_2 := STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
+                   
+
                    if LEFT(_tmp_2, 1) == "*"
                       _msg := "err_num_width - field: " + _tmp + "  value:" + ALLTRIM(STR(record[_tmp])) + " / width: " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][2])) + " : " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][3]))
                       log_write( _msg, 2 )

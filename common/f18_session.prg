@@ -24,7 +24,8 @@ if Pitanje(, "Pokrenuti novu F18 sesiju ?", "N") == "N"
    return 
 endif
 
-hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @start_new_session())
+//hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @start_new_session())
+hb_threadStart(@start_new_session())
 
 return
 

@@ -54,10 +54,10 @@ _a_dbf_rec  := get_a_dbf_rec(dbf_table)
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _sql_order  := _a_dbf_rec["sql_order"]
 
-// zapuj, pa otvori tabelu shared
+
 // .t. - brisi indeksni fajl tako da se full sinchro obavlja bez azuriranja indeksa
 // .f. - otvori indeks
-zap_then_reopen_exclusive(_a_dbf_rec["table"], .t., .f.)
+reopen_exclusive_and_zap(_a_dbf_rec["table"], .t., .f.)
 
 Box(, 6, 70)
 

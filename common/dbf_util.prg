@@ -198,7 +198,7 @@ return .t.
 // ------------------------------------------------------
 // zap, then open shared, open_index - otvori index 
 // ------------------------------------------------------
-function zap_then_reopen_exclusive(dbf_table, open_index)
+function reopen_exclusive_and_zap(dbf_table, open_index)
 local _a_dbf_rec
 local _dbf
 local _idx
@@ -226,14 +226,6 @@ if FILE(_idx)
 endif
 
 __dbZap()
-
-
-dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
-if open_index
-  if FILE(_idx)
-     dbSetIndex(_idx)
-  endif
-endif
 
 return .t.
 

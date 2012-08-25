@@ -148,7 +148,8 @@ my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
 
 set deleted off
 
-count to del for deleted()
+SET ORDER TO TAG "DEL"
+count to del
 cnt := reccount()
 
 USE

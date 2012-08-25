@@ -35,9 +35,15 @@ local cImeDbf
 local _a_dbf_rec
 local _wa
 local _dbf
+local _tag
 
 private cTag
 private cKljuciz
+
+if silent == nil
+    silent := .f.
+endif
+
 
 close all
 
@@ -46,13 +52,10 @@ alias := FILEBASE(alias)
 _a_dbf_rec := get_a_dbf_rec(alias, .t.)
 _wa := _a_dbf_rec["wa"]
 
+
+for each _tag in { cTag, "DEL" }
+
 cImeDbf := f18_ime_dbf(alias)
-
-
-if silent == nil
-    silent := .f.
-endif
-
 cImeCdx := ImeDbfCdx(cImeDbf)
  
 nPom := RAT(SLASH, cImeInd )
@@ -65,6 +68,15 @@ if nPom <> 0
 else
    cTag := cImeInd
 endif
+
+
+if _tag == "DEL"
+     cTag    := "DEL"
+     cKljuc  := "deleted()"
+     cImeInd := cTag
+     altd()
+endif
+
 
 fPostoji := .t.
 
@@ -111,9 +123,10 @@ if  FILE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
     FERASE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
 endif
 
+
 if USED()
 	nOrder := ORDNUMBER( cTag )
-	cOrdKey := ORDKEY( cTag )
+	cOrdKey := ORDKEY(cTag)
 	select (_wa)
 	use
 else
@@ -125,7 +138,7 @@ if !fPostoji
 	return
 endif
 
-if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
+if !FILE(LOWER(cImeCdx)) .or. nOrder==0 .or. ALLTRIM(UPPER( cOrdKey )) <> ALLTRIM(UPPER( cKljuc ))
 
      SELECT(_wa)
      use
@@ -143,11 +156,10 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      private cKljuciz:=cKljuc
     
      if nPom<>0
-       cTag:=substr(cImeInd, nPom)
+         cTag := substr(cImeInd, nPom)
      else
-       cTag:=cImeInd
+         cTag := cImeInd
      endif
-
 
      //  provjeri indeksiranje na nepostojecim poljima ID_J, _M1_
      if  !(LEFT(cTag, 4)=="ID_J" .and. fieldpos("ID_J")==0) .and. !(cTag=="_M1_" .and. FIELDPOS("_M1_")==0)
@@ -155,8 +167,13 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
 
         log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 7 )     
-     	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
+        if _tag == "DEL"
+              INDEX ON deleted() TAG "DEL" TO (cImeCdx) FOR deleted()
+        else
+     	      INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
+        endif
      	USE
+
 
      endif
 
@@ -166,6 +183,8 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      use
 
 endif
+
+next
 
 close all
 return

@@ -66,16 +66,16 @@ if algoritam == "FULL"
 
     log_write( "update_dbf_from_server(), iniciraj full synchro", 8 )
 
-    SELECT (_dbf_wa)
-    my_usex (_dbf_alias, table, .f., "SEMAPHORE")
+    // full synchro ne treba otvorenu tabelu, on je ionako zapuje
     full_synchro (table, _step)
 
 else
 
     log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
 
+    // samo otvori tabelu da je ids_synchro moze napuniti
     SELECT (_dbf_wa)
-    my_usex (_dbf_alias, table, .f., "SEMAPHORE")
+    my_use (_dbf_alias, table, .f., "SEMAPHORE")
 
     ids_synchro  (table)
 

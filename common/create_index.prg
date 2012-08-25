@@ -74,7 +74,6 @@ if _tag == "DEL"
      cTag    := "DEL"
      cKljuc  := "deleted()"
      cImeInd := cTag
-     altd()
 endif
 
 

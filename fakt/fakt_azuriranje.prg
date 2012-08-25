@@ -11,241 +11,253 @@
 
 #include "fakt.ch"
 
+// --------------------------------------------------
+// centralna funkcija za azuriranje fakture
+// --------------------------------------------------
+function azur_fakt( lSilent )
+local _a_fakt_doks := {}
+local _id_firma
+local _br_dok
+local _id_tip_dok
+local _ok
+local _tbl_fakt  := "fakt_fakt"
+local _tbl_doks  := "fakt_doks"
+local _tbl_doks2 := "fakt_doks2"
+local _msg
 
-function o_fakt_edit( _open_pfakt )
+if ( lSilent == nil)
+    lSilent := .f.
+endif
 
+if ( !lSilent .and. Pitanje( , "Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
+    return _a_fakt_doks
+endif
+
+o_fakt_edit()
+
+select fakt_pripr
+use
+
+O_FAKT_PRIPR
+go top
+
+// provjeri redne brojeve dokumenta
+if !provjeri_redni_broj()
+    MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
+    return _a_fakt_doks
+endif
+
+select fakt_pripr
+go top
+
+// ubaci mi matricu sve dokumente iz pripreme
+_a_fakt_doks := _fakt_dokumenti()
+
+if LEN( _a_fakt_doks ) == 0
+    MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
+    return _a_fakt_doks
+endif
+
+// generisi protu dokumente
+// ovo jos treba vidjeti koristi li se ??????????
+// lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
+
+_ok := .t.
+
+MsgO( "Azuriranje dokumenata u toku ..." )
+ 
+_ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+
+if !_ok
+   MsgBeep("ne mogu lockovati fakt tabele")
+   return .f.
+endif
+
+// prodji kroz matricu sa dokumentima i azuriraj ih
+for _i := 1 to LEN( _a_fakt_doks )
+
+    _id_firma   := _a_fakt_doks[ _i, 1 ]
+    _id_tip_dok := _a_fakt_doks[ _i, 2 ]
+    _br_dok     := _a_fakt_doks[ _i, 3 ]
+    
+    // provjeri da li postoji vec identican broj azuriran u bazi ?
+    if fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
+        MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + ALLTRIM(_br_dok) + " vec postoji azuriran u bazi !" )
+        _ok := .f.
+    endif
+   
+    
+    if _ok .and. fakt_azur_sql( _id_firma, _id_tip_dok, _br_dok  )
+    
+        if _ok .and. !fakt_azur_dbf( _id_firma, _id_tip_dok, _br_dok )
+            _msg := "ERROR DBF: Neuspjesno FAKT/DBF azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
+            log_write(_msg, 1)
+            MsgBeep(_msg)
+             
+            _ok := .f.
+        endif
+
+    else
+        _msg := "ERROR SQL: Neuspjesno SQL azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
+        log_write(_msg, 1)
+        MsgBeep(_msg)
+
+        _ok := .f.
+    endif
+
+
+next
+
+MsgC()
+
+
+if !_ok
+   f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+   return _a_fakt_doks
+endif
+
+// prenos podataka fakt
+fakt_prenos_modem()
+
+select fakt_pripr
+
+MsgO("brisem pripremu....")
+
+// provjeri sta treba pobrisati iz pripreme
+if LEN( _a_fakt_doks ) > 1
+    fakt_izbrisi_azurirane( _a_fakt_doks )
+else
+    
+    // izbrisi pripremu
+    select fakt_pripr
+    ZAPP(.t.)
+
+endif
+
+MsgC()
+    
 close all
 
-if _open_pfakt == NIL
-  _open_pfakt := .f.
+return _a_fakt_doks
+
+// --------------------------------------------------------------
+// azuriranje u sql tabele
+// --------------------------------------------------------------
+static function fakt_azur_sql( id_firma, id_tip_dok, br_dok )
+local _ok
+local _tbl_fakt, _tbl_doks, _tbl_doks2
+local _i, _n
+local _tmp_id, _tmp_doc
+local _ids := {}
+local _ids_tmp := {}
+local _ids_doc := {}
+local _fakt_doks_data
+local _fakt_doks2_data
+local _fakt_totals
+local _record
+local _msg
+local _ids_fakt  := {}
+local _ids_doks  := {}
+local _ids_doks2 := {}
+
+
+_tbl_fakt  := "fakt_fakt"
+_tbl_doks  := "fakt_doks"
+_tbl_doks2 := "fakt_doks2"
+
+Box(, 5, 60)
+_ok := .t.
+
+select fakt_pripr
+SET ORDER TO TAG "1"
+
+go top
+HSEEK id_firma + id_tip_dok + br_dok
+
+if !FOUND()
+    Alert("ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
+    return .f.
 endif
 
-if glRadNal
-    select F_RNAL
-    if !used()
-        O_RNAL
-    endif
+// -----------------------------------------------------------------------------------------------------
+sql_table_update(nil, "BEGIN")
+
+_record := dbf_get_rec()
+// algoritam 2 - dokument nivo
+_tmp_id := _record["idfirma"] + _record["idtipdok"] + _record["brdok"]
+AADD( _ids_fakt, "#2" + _tmp_id )
+
+@ m_x+1, m_y+2 SAY "fakt_fakt -> server: " + _tmp_id 
+do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
+     _record := dbf_get_rec()
+     if !sql_table_update("fakt_fakt", "ins", _record )
+       _ok := .f.
+       exit
+     endif
+
+     SKIP
+enddo
+
+if _ok == .t.
+ 
+  @ m_x+2, m_y+2 SAY "fakt_doks -> server: " + _tmp_id 
+   // azuriraj doks...
+  // algoritam 2 - dokument nivo
+  AADD( _ids_doks, _tmp_id )
+  SELECT fakt_doks
+  _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
+  if !sql_table_update("fakt_doks", "ins", _record )
+       _ok := .f.
+  endif
+   
+
 endif
 
-if glDistrib = .t.
-    select F_RELAC
-    if !used()
-        O_RELAC
-        O_VOZILA
-        O_KALPOS
-    endif
+if _ok == .t.
+ 
+  @ m_x+3, m_y+2 SAY "fakt_doks2 -> server: " + _tmp_id 
+   // azuriraj doks...
+  // algoritam 2 - dokument nivo
+  AADD( _ids_doks2, _tmp_id )
+
+  _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+  SELECT fakt_doks2
+  if !sql_table_update("fakt_doks2", "ins", _record )
+       _ok := .f.
+  endif
+   
+
 endif
 
-select F_VRSTEP
-if !used()
-    O_VRSTEP
-endif
+if !_ok
+    _msg := "FAKT azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
 
-select F_OPS
-if !used()
-    O_OPS
-endif
+    log_write( _msg, 2 )
+    MsgBeep(_msg )
+    // transakcija neuspjesna
+    // server nije azuriran 
+    sql_table_update(nil, "ROLLBACK" )
 
-select F_KONTO
-if !used()
-    O_KONTO
-endif
-
-select F_SAST
-if !used()
-    O_SAST
-endif
-
-select F_PARTN
-if !used()
-    O_PARTN
-endif
-
-select F_ROBA
-if !used()
-    O_ROBA
-endif
-
-if _open_pfakt
-
-    // otvori fakt_fakt pod fakt_pripr aliasom
-    select F_FAKT
-    if !used()
-        O_PFAKT
-    endif
+    // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
+    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
 
 else
 
-    select F_FAKT_PRIPR
-    if !used()
-        O_FAKT_PRIPR
-    endif
+    @ m_x+4, m_y+2 SAY "push ids to semaphore" + _tmp_id
+    push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
+    push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
+    push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
-    select F_FAKT
-    if !used()
-        O_FAKT
-    endif
+
+    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+    sql_table_update(nil, "END")
 
 endif
 
-select F_FTXT
-if !used()
-    O_FTXT
-endif
+BoxC()
 
-select F_TARIFA
-if !used()
-    O_TARIFA
-endif
+return _ok
 
-select F_VALUTE
-if !used()
-    O_VALUTE
-endif
-
-select F_FAKT_DOKS2
-if !used()
-    O_FAKT_DOKS2
-endif
-
-select F_FAKT_DOKS
-if !used()
-    O_FAKT_DOKS
-endif
-
-select F_RJ
-if !used()
-    O_RJ
-endif
-
-select F_SIFK
-if !used()
-    O_SIFK
-endif
-
-select F_SIFV
-if !used()
-    O_SIFV
-endif
-
-select fakt_pripr
-set order to tag "1"
-go top
-
-return nil
-
-
-
-// Spajanje duplih artikala unutar jednog dokumenta
-function SpojiDuple()
-local cIdRoba
-local nCnt 
-local nKolicina
-local cSpojiti 
-local nTrec
-
-select fakt_pripr
-
-cSpojiti:="N"
-
-if gOcitBarkod
-    set order to tag "3"
-    go top
-    do while !eof()
-        nCnt:=0
-        cIdRoba:=idroba
-        nKolicina:=0
-        do while !eof() .and. idroba==cIdRoba
-            nKolicina+=kolicina
-            nCnt++
-            skip
-        enddo
-            
-        if (nCnt>1) // imamo duple!!!
-            if cSpojiti=="N"
-                if Pitanje(,"Spojiti duple artikle ?","N")=="D"
-                    cSpojiti:="D"
-                else
-                    cSpojiti:="0"
-                endif
-            endif
-                
-            if cSpojiti=="D"
-                seek _idfirma + cIdRoba // idi na prvu stavku
-                replace kolicina with nKolicina
-                skip
-                do while !eof() .and. idroba==cIdRoba
-                    replace kolicina with 0  
-                    // ostale stavke imaju kolicinu 0
-                    skip
-                enddo
-            endif
-
-        endif
-    enddo
-endif
-
-if cSpojiti="D"
-    select fakt_pripr
-    go top
-    do while !eof()
-        skip
-        nTrec:=RecNo()
-        skip -1
-            
-        // markirano za brisanje
-        if (field->kolicina=0)  
-            delete
-        endif
-        go nTrec
-    enddo
-endif
-
-select fakt_pripr
-set order to tag "1"
-go top
-
-return
-
-
-/*! \fn SrediRbrFakt()
- *  \brief Sredi redni broj
- */
-function SrediRbrFakt()
-local _t_rec, _rec
-local _firma, _broj, _tdok
-local _cnt
-
-O_FAKT_PRIPR
-set order to tag "1"
-go top
-
-do while !eof()
-	
-	_firma := field->idfirma
-	_tdok  := field->idtipdok
-	_broj  := field->brdok
-	_cnt   := 0
-
-	do while !EOF() .and. field->idfirma == _firma .and. field->idtipdok == _tdok .and. field->brdok == _broj
-					
-		skip 1
-		
-		_t_rec := RECNO()
-
-		skip -1
-
-        _rec := dbf_get_rec()
-		_rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt )), 3, 0 )
-	    dbf_update_rec( _rec )
-
-		go ( _t_rec )
-	
-	enddo
-
-enddo
-
-return 0
 
 
 
@@ -503,128 +515,6 @@ return _fakt_total
 
 
 
-
-// --------------------------------------------------------------
-// azuriranje u sql tabele
-// --------------------------------------------------------------
-static function fakt_azur_sql( id_firma, id_tip_dok, br_dok )
-local _ok
-local _tbl_fakt, _tbl_doks, _tbl_doks2
-local _i, _n
-local _tmp_id, _tmp_doc
-local _ids := {}
-local _ids_tmp := {}
-local _ids_doc := {}
-local _fakt_doks_data
-local _fakt_doks2_data
-local _fakt_totals
-local _record
-local _msg
-local _ids_fakt  := {}
-local _ids_doks  := {}
-local _ids_doks2 := {}
-
-
-_tbl_fakt  := "fakt_fakt"
-_tbl_doks  := "fakt_doks"
-_tbl_doks2 := "fakt_doks2"
-
-Box(, 5, 60)
-_ok := .t.
-
-select fakt_pripr
-SET ORDER TO TAG "1"
-
-go top
-HSEEK id_firma + id_tip_dok + br_dok
-
-if !FOUND()
-    my_use_semaphore_on()
-    Alert("ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
-    return
-endif
-
-// -----------------------------------------------------------------------------------------------------
-sql_table_update(nil, "BEGIN")
-
-_record := dbf_get_rec()
-// algoritam 2 - dokument nivo
-_tmp_id := _record["idfirma"] + _record["idtipdok"] + _record["brdok"]
-AADD( _ids_fakt, "#2" + _tmp_id )
-
-@ m_x+1, m_y+2 SAY "fakt_fakt -> server: " + _tmp_id 
-do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
-     _record := dbf_get_rec()
-     if !sql_table_update("fakt_fakt", "ins", _record )
-       _ok := .f.
-       exit
-     endif
-
-     SKIP
-enddo
-
-if _ok == .t.
- 
-  @ m_x+2, m_y+2 SAY "fakt_doks -> server: " + _tmp_id 
-   // azuriraj doks...
-  // algoritam 2 - dokument nivo
-  AADD( _ids_doks, _tmp_id )
-  SELECT fakt_doks
-  _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-  if !sql_table_update("fakt_doks", "ins", _record )
-       _ok := .f.
-  endif
-   
-
-endif
-
-if _ok == .t.
- 
-  @ m_x+3, m_y+2 SAY "fakt_doks2 -> server: " + _tmp_id 
-   // azuriraj doks...
-  // algoritam 2 - dokument nivo
-  AADD( _ids_doks2, _tmp_id )
-
-  _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-  SELECT fakt_doks2
-  if !sql_table_update("fakt_doks2", "ins", _record )
-       _ok := .f.
-  endif
-   
-
-endif
-
-if !_ok
-    _msg := "FAKT azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
-
-    log_write( _msg, 2 )
-    MsgBeep(_msg )
-    // transakcija neuspjesna
-    // server nije azuriran 
-    sql_table_update(nil, "ROLLBACK" )
-
-    // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
-    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-
-else
-
-    @ m_x+4, m_y+2 SAY "push ids to semaphore" + _tmp_id
-    push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
-    push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
-    push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
-
-
-    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-    sql_table_update(nil, "END")
-
-endif
-
-BoxC()
-
-return _ok
-
-
-
 // -----------------------------------------------------------
 // pravi fakt, protudokumente
 // -----------------------------------------------------------
@@ -680,129 +570,6 @@ endif
 
 return lProtu
 
-
-
-
-// --------------------------------------------------
-// centralna funkcija za azuriranje fakture
-// --------------------------------------------------
-function azur_fakt( lSilent )
-local _a_fakt_doks := {}
-local _id_firma
-local _br_dok
-local _id_tip_dok
-local _ok
-local _tbl_fakt  := "fakt_fakt"
-local _tbl_doks  := "fakt_doks"
-local _tbl_doks2 := "fakt_doks2"
-
-if ( lSilent == nil)
-    lSilent := .f.
-endif
-
-if ( !lSilent .and. Pitanje( , "Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
-    return _a_fakt_doks
-endif
-
-my_use_semaphore_off()
-o_fakt_edit()
-my_use_semaphore_on()
-
-select fakt_pripr
-use
-
-O_FAKT_PRIPR
-go top
-
-// provjeri redne brojeve dokumenta
-if !provjeri_redni_broj()
-    MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
-    return _a_fakt_doks
-endif
-
-select fakt_pripr
-go top
-
-// ubaci mi matricu sve dokumente iz pripreme
-_a_fakt_doks := _fakt_dokumenti()
-
-if LEN( _a_fakt_doks ) == 0
-    MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
-    return _a_fakt_doks
-endif
-
-// generisi protu dokumente
-// ovo jos treba vidjeti koristi li se ??????????
-// lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
-
-_ok := .t.
-
-MsgO( "Azuriranje dokumenata u toku ..." )
- 
-_ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-
-// prodji kroz matricu sa dokumentima i azuriraj ih
-for _i := 1 to LEN( _a_fakt_doks )
-
-    _id_firma   := _a_fakt_doks[ _i, 1 ]
-    _id_tip_dok := _a_fakt_doks[ _i, 2 ]
-    _br_dok     := _a_fakt_doks[ _i, 3 ]
-    
-    // provjeri da li postoji vec identican broj azuriran u bazi ?
-    if fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
-        MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + ALLTRIM(_br_dok) + " vec postoji azuriran u bazi !" )
-        _ok := .f.
-    endif
-   
-    
-    if _ok .and. fakt_azur_sql( _id_firma, _id_tip_dok, _br_dok  )
-    
-        if _ok .and. !fakt_azur_dbf( _id_firma, _id_tip_dok, _br_dok )
-            MsgBeep("Neuspjesno FAKT/DBF azuriranje !?")
-            _ok := .f.
-        endif
-
-    else
-        MsgBeep("Neuspjesno FAKT/SQL azuriranje !?")
-        _ok := .f.
-    endif
-
-
-next
-
-MsgC()
-
-
-if !_ok
-   return _a_fakt_doks
-endif
-
-// prenos podataka fakt
-fakt_prenos_modem()
-
-select fakt_pripr
-
-MsgO("brisem pripremu....")
-
-// provjeri sta treba pobrisati iz pripreme
-if LEN( _a_fakt_doks ) > 1
-    fakt_izbrisi_azurirane( _a_fakt_doks )
-else
-    
-    // izbrisi pripremu
-    select fakt_pripr
-    ZAPP(.t.)
-
-endif
-
-MsgC()
-    
-close all
-
-return _a_fakt_doks
-
-
-
 // vise dokumenata u pripremi
 static function _fakt_dokumenti()
 local _fakt_doks := {}
@@ -835,6 +602,246 @@ do while !EOF()
 enddo
 
 return _fakt_doks
+
+// -------------------------------------
+// -------------------------------------
+function o_fakt_edit( _open_pfakt )
+
+close all
+
+if _open_pfakt == NIL
+  _open_pfakt := .f.
+endif
+
+if glRadNal
+    select F_RNAL
+    if !used()
+        O_RNAL
+    endif
+endif
+
+if glDistrib = .t.
+    select F_RELAC
+    if !used()
+        O_RELAC
+        O_VOZILA
+        O_KALPOS
+    endif
+endif
+
+select F_VRSTEP
+if !used()
+    O_VRSTEP
+endif
+
+select F_OPS
+if !used()
+    O_OPS
+endif
+
+select F_KONTO
+if !used()
+    O_KONTO
+endif
+
+select F_SAST
+if !used()
+    O_SAST
+endif
+
+select F_PARTN
+if !used()
+    O_PARTN
+endif
+
+select F_ROBA
+if !used()
+    O_ROBA
+endif
+
+if _open_pfakt
+
+    // otvori fakt_fakt pod fakt_pripr aliasom
+    select F_FAKT
+    if !used()
+        O_PFAKT
+    endif
+
+else
+
+    select F_FAKT_PRIPR
+    if !used()
+        O_FAKT_PRIPR
+    endif
+
+    select F_FAKT
+    if !used()
+        O_FAKT
+    endif
+
+endif
+
+select F_FTXT
+if !used()
+    O_FTXT
+endif
+
+select F_TARIFA
+if !used()
+    O_TARIFA
+endif
+
+select F_VALUTE
+if !used()
+    O_VALUTE
+endif
+
+select F_FAKT_DOKS2
+if !used()
+    O_FAKT_DOKS2
+endif
+
+select F_FAKT_DOKS
+if !used()
+    O_FAKT_DOKS
+endif
+
+select F_RJ
+if !used()
+    O_RJ
+endif
+
+select F_SIFK
+if !used()
+    O_SIFK
+endif
+
+select F_SIFV
+if !used()
+    O_SIFV
+endif
+
+select fakt_pripr
+set order to tag "1"
+go top
+
+return nil
+
+
+
+// Spajanje duplih artikala unutar jednog dokumenta
+function SpojiDuple()
+local cIdRoba
+local nCnt 
+local nKolicina
+local cSpojiti 
+local nTrec
+
+select fakt_pripr
+
+cSpojiti:="N"
+
+if gOcitBarkod
+    set order to tag "3"
+    go top
+    do while !eof()
+        nCnt:=0
+        cIdRoba:=idroba
+        nKolicina:=0
+        do while !eof() .and. idroba==cIdRoba
+            nKolicina+=kolicina
+            nCnt++
+            skip
+        enddo
+            
+        if (nCnt>1) // imamo duple!!!
+            if cSpojiti=="N"
+                if Pitanje(,"Spojiti duple artikle ?","N")=="D"
+                    cSpojiti:="D"
+                else
+                    cSpojiti:="0"
+                endif
+            endif
+                
+            if cSpojiti=="D"
+                seek _idfirma + cIdRoba // idi na prvu stavku
+                replace kolicina with nKolicina
+                skip
+                do while !eof() .and. idroba==cIdRoba
+                    replace kolicina with 0  
+                    // ostale stavke imaju kolicinu 0
+                    skip
+                enddo
+            endif
+
+        endif
+    enddo
+endif
+
+if cSpojiti="D"
+    select fakt_pripr
+    go top
+    do while !eof()
+        skip
+        nTrec:=RecNo()
+        skip -1
+            
+        // markirano za brisanje
+        if (field->kolicina=0)  
+            delete
+        endif
+        go nTrec
+    enddo
+endif
+
+select fakt_pripr
+set order to tag "1"
+go top
+
+return
+
+
+/*! \fn SrediRbrFakt()
+ *  \brief Sredi redni broj
+ */
+function SrediRbrFakt()
+local _t_rec, _rec
+local _firma, _broj, _tdok
+local _cnt
+
+O_FAKT_PRIPR
+set order to tag "1"
+go top
+
+do while !eof()
+	
+	_firma := field->idfirma
+	_tdok  := field->idtipdok
+	_broj  := field->brdok
+	_cnt   := 0
+
+	do while !EOF() .and. field->idfirma == _firma .and. field->idtipdok == _tdok .and. field->brdok == _broj
+					
+		skip 1
+		
+		_t_rec := RECNO()
+
+		skip -1
+
+        _rec := dbf_get_rec()
+		_rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt )), 3, 0 )
+	    dbf_update_rec( _rec )
+
+		go ( _t_rec )
+	
+	enddo
+
+enddo
+
+return 0
+
+
+
 
 
 

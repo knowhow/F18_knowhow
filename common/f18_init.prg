@@ -55,9 +55,13 @@ static __log_level := 3
 // ---------------------------------
 function f18_init_app()
 
-//REQUEST DBFCDX
-REQUEST DBFNTX
-REQUEST DBFFPT
+#ifdef NTX_INDICES
+   REQUEST DBFNTX
+   REQUEST DBFFPT
+#else
+  REQUEST DBFCDX
+  REQUEST DBFFPT
+#endif
 
 #ifdef __PLATFORM__WINDOWS
 

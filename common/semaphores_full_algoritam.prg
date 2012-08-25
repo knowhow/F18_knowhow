@@ -39,6 +39,14 @@ endif
 // nuliraj ids polje tako da u toku full sync drugi mogu dodavati id-ove koje mjenjaju
 nuliraj_ids_and_update_my_semaphore_ver(dbf_table)
 
+// transakcija mi treba da bih sakrio promjene koje prave druge
+// ako nemam transakcije onda se moze desiti ovo:
+// 1) odabarem 100 000 zapisa i pocnem ih uzimati po redu (po dokumentima)
+// 2) drugi korisnik izmijeni neki stari dokument u sredini prenosa i u njega doda 500 stavki
+// 4) ja cu pokupiti 100 000 stavki a necu posljednjih 500
+// 3) ako nema transakcije ja cu pokupiti tu promjenu, sa transakcijom ja tu promjenu neću vidjeti
+
+sql_table_update(nil, "BEGIN")
 
 _sql_table  := "fmk." + dbf_table
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
@@ -85,6 +93,7 @@ Box(, 6, 70)
 
 BoxC()
 
+sql_table_update(nil, "END")
 log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + ALLTRIM(STR(_count)), 3 )
 
 return .t.

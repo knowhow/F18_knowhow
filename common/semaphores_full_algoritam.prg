@@ -87,7 +87,7 @@ Box(, 6, 70)
 
         @ m_x + 5, m_y + 2 SAY "dbf <- qry "
         fill_dbf_from_server(dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time)
-        @ row(), col() + 2 SAY "sql fetch time: " + ALLTRIM(SECONDS() - _sec) + " dbf write time: " + ALLTRIM(STR(_dbf_write_time))
+        @ m_x + 5, m_y + 15 SAY "sql fetch time: " + ALLTRIM(STR(_sql_fetch_time)) + " dbf write time: " + ALLTRIM(STR(_dbf_write_time))
 
         @ m_x + 6, m_y + 2 SAY _offset + step_size
         @ row(), col() + 2 SAY "/"

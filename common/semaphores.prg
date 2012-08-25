@@ -456,11 +456,11 @@ RETURN _result
 
 
 
-// -----------------------------------------------  
+// --------------------------------------------------------------------------------
 // napuni dbf tabelu sa podacima sa servera
 // dbf_tabela mora biti otvorena i u tekucoj WA
-// -----------------------------------------------  
-function fill_dbf_from_server(dbf_table, sql_query)
+// --------------------------------------------------------------------------------
+function fill_dbf_from_server(dbf_table, sql_query, sql_fetch_time, dbf_write_time)
 local _counter := 0
 local _i, _fld
 local _server := pg_server()
@@ -473,7 +473,9 @@ _a_dbf_rec := get_a_dbf_rec(dbf_table)
 _dbf_alias := _a_dbf_rec["alias"]
 _dbf_fields := _a_dbf_rec["dbf_fields"]
 
+sql_fetch_time := SECONDS()
 _qry_obj := run_sql_query(sql_query, _retry ) 
+sql_fetch_time := SECONDS() - sql_fetch_time
 
 if !USED() .or. ( _dbf_alias != ALIAS() )
     Alert(PROCNAME(1) + "(" + ALLTRIM(STR(PROCLINE(1))) + ") " + dbf_table + " dbf mora biti otvoren !")
@@ -482,6 +484,8 @@ if !USED() .or. ( _dbf_alias != ALIAS() )
 endif
 
 log_write( "fill_dbf_from_server(), poceo", 9 )
+
+dbf_write_time := SECONDS()
 
 DO WHILE !_qry_obj:EOF()
 
@@ -510,6 +514,7 @@ log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + ALLTRIM
 
 log_write( "fill_dbf_from_server(), zavrsio", 9 )
 
+dbf_write_time := SECONDS() - dbf_write_time
 return
 
 

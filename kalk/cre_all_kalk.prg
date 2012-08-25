@@ -125,44 +125,45 @@ if !FILE(f18_ime_dbf(_alias))
     _created := .t.
 endif
 
-// 0.4.8
+// 0.7.0
 if ver["current"] < 00700
    modstru( {"*" + _table_name, ;
-   "C KOLICINA N 12 3  KOLICINA B 12 3",;
-   "C GKOLICINA N 12 3 GKOLICINA B 12 3",;
-   "C GKOLICIN2 N 12 3 GKOLICIN2 B 12 3",;
-   "C FCJ N 18 8 FCJ B 18 8",;
-   "C FCJ2 N 18 8 FCJ2 B 18 8",;
-   "C FCJ3 N 18 8 FCJ3 B 18 8",;
-   "C RABAT N 18 8 RABAT B 18 8",;
-   "C PREVOZ N 18 8 PREVOZ B 18 8",;
-   "C PREVOZ2 N 18 8 PREVOZ2 B 18 8",;
-   "C BANKTR N 18 8 BANKTR B 18 8",;
-   "C SPEDTR N 18 8 SPEDTR B 18 8",;
-   "C CARDAZ N 18 8 CARDAZ B 18 8",;
-   "C ZAVTR N 18 8 ZAVTR B 18 8",  ;
-   "C MARZA N 18 8 MARZA2 B 18 8", ;
-   "C RABATV N 18 8 RABATV B 18 8";
+   "C KOLICINA N 12 3  KOLICINA B 8 8",;
+   "C GKOLICINA N 12 3 GKOLICINA B 8 8",;
+   "C GKOLICIN2 N 12 3 GKOLICIN2 B 8 8",;
+   "C FCJ N 18 8 FCJ B 8 8",;
+   "C FCJ2 N 18 8 FCJ2 B 8 8",;
+   "C FCJ3 N 18 8 FCJ3 B 8 8",;
+   "C RABAT N 18 8 RABAT B 8 8",;
+   "C PREVOZ N 18 8 PREVOZ B 8 8",;
+   "C PREVOZ2 N 18 8 PREVOZ2 B 8 8",;
+   "C BANKTR N 18 8 BANKTR B 8 8",;
+   "C SPEDTR N 18 8 SPEDTR B 8 8",;
+   "C CARDAZ N 18 8 CARDAZ B 8 8",;
+   "C ZAVTR N 18 8 ZAVTR B 8 8",  ;
+   "C MARZA N 18 8 MARZA B 8 8", ;
+   "C MARZA2 N 18 8 MARZA2 B 8 8", ;
+   "C RABATV N 18 8 RABATV B 8 8";
 })
 
 else
 
-AADD(aDBf,{ 'KOLICINA'            , 'B' ,  12 ,  3 })
-AADD(aDBf,{ 'GKOLICINA'           , 'B' ,  12 ,  3 })
-AADD(aDBf,{ 'GKOLICIN2'           , 'B' ,  12 ,  3 })
-AADD(aDBf,{ 'FCJ'                 , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'FCJ2'                , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'FCJ3'                , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'RABAT'               , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'PREVOZ'              , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'BANKTR'              , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'SPEDTR'              , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'PREVOZ2'             , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'CARDAZ'              , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'ZAVTR'               , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'MARZA'               , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'MARZA2'              , 'B' ,  18 ,  8 })
-AADD(aDBf,{ 'RABATV'              , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'KOLICINA'            , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'GKOLICINA'           , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'GKOLICIN2'           , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'FCJ'                 , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'FCJ2'                , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'FCJ3'                , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'RABAT'               , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'PREVOZ'              , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'BANKTR'              , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'SPEDTR'              , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'PREVOZ2'             , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'CARDAZ'              , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'ZAVTR'               , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'MARZA'               , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'MARZA2'              , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'RABATV'              , 'B' ,  8 ,  8 })
 
 endif
 

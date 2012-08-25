@@ -105,7 +105,6 @@ local nKolZn
 local nNc1
 local nSredNc
 local dDatNab
-local dRokTr
 
 private _DatDok 
 
@@ -115,10 +114,10 @@ if !used()
 endif
 
 _DatDok = DATE()
-KalkNabP( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab, @dRokTr)
+KalkNabP( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab)
 
 return nSredNc
-*}
+
 
 
 /*

@@ -90,10 +90,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if roba->(fieldpos("KATBR"))<>0
        ?? " KATBR:", roba->katbr
     endif
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
-    IF lPoNarudzbi
-      IspisPoNar()
-    ENDIF
+    
     @ prow()+1,4 SAY IdRoba
     nCol1:=pcol()+1
     @ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM
@@ -338,7 +335,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if roba->(fieldpos("KATBR"))<>0
        ?? " KATBR:", roba->katbr
     endif
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
     IF lPoNarudzbi
       IspisPoNar()
     ENDIF
@@ -536,13 +532,13 @@ select KONTO; HSEEK cIdKonto
 ?  "KONTO zaduzuje :",cIdKonto,"-",naz
 
 
- m:="--- ---------- ----------------------------------- ---"+IF(gRokTr=="D"," --------","")+" ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
+ m:="--- ---------- ----------------------------------- ---"+" ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
 
  ? m
 
- ? "*R.* Sifra    *                                   *Jed*"+IF(gRokTr=="D","  Rok   *","")+"         F A K T U R A          *      R A B A T      *  CARINSKI TROSKOVI  *  OSTALI. ZAV. TROSK.*      M A R Z A      *POREZ NA PROM.PROIZV.*  IZNOS   * VELEPROD.*"
- ? "*br* artikla  *     N A Z I V    A R T I K L A    *mj.*"+IF(gRokTr=="D","trajanja*","")+"--------------------------------*---------------------*---------------------*---------------------*---------------------*---------------------*  VELE-   *  CIJENA  *"
- ? "*  *          *                                   *   *"+IF(gRokTr=="D","        *","")+" Kolicina *  Cijena  *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  * PRODAJE  *          *"
+ ? "*R.* Sifra    *                                   *Jed*"+"         F A K T U R A          *      R A B A T      *  CARINSKI TROSKOVI  *  OSTALI. ZAV. TROSK.*      M A R Z A      *POREZ NA PROM.PROIZV.*  IZNOS   * VELEPROD.*"
+ ? "*br* artikla  *     N A Z I V    A R T I K L A    *mj.*"+"--------------------------------*---------------------*---------------------*---------------------*---------------------*---------------------*  VELE-   *  CIJENA  *"
+ ? "*  *          *                                   *   *" + " Kolicina *  Cijena  *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  * PRODAJE  *          *"
 
  ? m
  nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=0
@@ -605,23 +601,13 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
        ?? " KATBR:", roba->katbr
     endif
 
-    if gRokTr=="D"; ?? " "+DTOC(RokTr); endif
-    IF lPoNarudzbi
-      IspisPoNar()
-    ENDIF
     ?? " "+TRANSFORM(Kolicina,pickol)+" "+TRANSFORM(FCJ,PicCDEM)
     ?? " "+TRANSFORM(nU,PICDEM)+" "+TRANSFORM(rabat,PicProc)
     ?? " "+TRANSFORM(nU2,PICDEM)+" "+TRANSFORM(100*nU6/nU,PicProc)
     ?? " "+TRANSFORM(nU6,PICDEM)+" "+TRANSFORM(100*(nU3+nU4+nU5+nU7)/nU,PicProc)
     ?? " "+TRANSFORM((nU3+nU4+nU5+nU7),PICDEM)+" "+TRANSFORM(100*nMarza/NC,PicProc)
     ?? " "+TRANSFORM(nU9,PICDEM)
-    /*
-    if gVarVP=="1"
-     ?? " "+TRANSFORM(tarifa->vpp,PicProc)+" "+TRANSFORM(nU9*tarifa->vpp/100,PICDEM)
-    else
-     ?? " "+TRANSFORM(100*tarifa->vpp/(100+tarifa->vpp),PicProc)+" "+TRANSFORM(cistaMar*tarifa->vpp/100,PICDEM)
-    endif
-    */
+    
     ?? " "+TRANSFORM(if(!(roba->tip $ "VKX"),0,tarifa->opp),PicProc)+" "+TRANSFORM(nUP,PICDEM)
     ?? " "+TRANSFORM(nUA,PICDEM)+" "+TRANSFORM(VPC,PicCDEM)
   skip
@@ -629,7 +615,7 @@ enddo
 
 DokNovaStrana(230, @nStr, 3)
 ? m
-? "UKUPNO:"+SPACE(70+if(gRokTr=="D",9,0))+TRANSFORM(nTot,PICDEM)
+? "UKUPNO:" + SPACE(70)) + TRANSFORM(nTot,PICDEM)
 ?? SPACE(12)+TRANSFORM(nTot2,PICDEM)+SPACE(12)+TRANSFORM(nTot6,PICDEM)
 ?? SPACE(12)+TRANSFORM((nTot3+nTot4+nTot5+nTot7),PICDEM)+SPACE(12)+TRANSFORM(nTot9,PICDEM)
 ?? SPACE(12)+TRANSFORM(nTotP,PICDEM)

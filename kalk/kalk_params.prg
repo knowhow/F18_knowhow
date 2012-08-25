@@ -224,8 +224,6 @@ Box(, 20, 75, .f., "RAZNO" )
     ++ _x    
     @ m_x + _x,m_y+2 SAY "Potpis na kraju naloga D/N     " GET gPotpis valid gPotpis $ "DN"
     ++ _x
-    @ m_x + _x, m_Y+2 SAY "Rok trajanja D/N               " GET gRokTr pict "@!" valid gRokTr $ "DN"
-    ++ _x
     @ m_x + _x,m_y+2 SAY "Novi korisnicki interfejs D/N/X" GET gNW valid gNW $ "DNX" pict "@!"
     ++ _x
     @ m_x + _x,m_y+2 SAY "Varijanta evidencije (1-sa cijenama, 2-iskljucivo kolicinski)" GET gVarEv valid gVarEv $ "12" pict "9"
@@ -276,7 +274,6 @@ if lastkey() <> K_ESC
 	set_metric("kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
 	set_metric("kalk_brojac_kalkulacija", nil, gBrojac)
     set_metric("kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
-  	set_metric("kalk_rok_trajanja", nil, gRokTr)
   	set_metric("kalk_potpis_na_kraju_naloga", nil, gPotpis)
   	set_metric("kalk_tip_tabele", nil, gTabela)
   	set_metric("kalk_novi_korisnicki_interfejs", nil, gNW)

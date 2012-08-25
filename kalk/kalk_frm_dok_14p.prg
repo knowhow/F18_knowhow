@@ -126,7 +126,7 @@ lGenStavke:=.f.
 if _TBankTr<>"X"   // ako je X onda su stavke vec izgenerisane
     if !empty(gMetodaNC) 
             MsgO("Racunam stanje na skladistu")
-                KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab, @_RokTr)
+                KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab)
             MsgC()
             @ m_x+ 12, m_y+30   SAY "Ukupno na stanju "
         @ m_x+ 12, col()+2 SAY nKols pict pickol

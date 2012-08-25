@@ -96,7 +96,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
    if gKolicFakt=="D"
     KalkNaF(_idroba,@nKolS) // uzmi iz FAKTA
    else
-    KalkNab(_idfirma,_idroba,_mkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+    KalkNab(_idfirma,_idroba,_mkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
    endif
    if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);_ERROR:="1";endif
 

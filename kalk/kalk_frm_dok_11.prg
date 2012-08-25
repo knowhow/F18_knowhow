@@ -169,11 +169,11 @@ if !empty(gMetodaNC) .or. lPoNarudzbi
  else
    if _kolicina>0
     MsgO("Racunam stanje na skladistu")
-      KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+      KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
     MsgC()
    else
     MsgO("Racunam stanje prodavnice")
-      KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,dDatNab,@_RokTr)
+      KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,dDatNab)
     MsgC()
    endif
  endif

@@ -91,15 +91,8 @@ select TARIFA
 hseek _IdTarifa  // postavi TARIFA na pravu poziciju
 select kalk_pripr  // napuni tarifu
 
-@ m_x+13+IF(lPoNarudzbi,1,0),m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
+@ m_x+13, m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
 
-if gRokTr=="D"
-	@ m_x+13+IF(lPoNarudzbi,1,0),col()+1 SAY "Rok trajanja" GET _RokTr
-endif
-
-if IsDomZdr()
-	@ m_x+14+IF(lPoNarudzbi,1,0),m_y+2 SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
-endif
 
 if fNovi
 	select ROBA
@@ -349,7 +342,7 @@ if _kolicina<0  // storno
 nKolS:=0;nKolZN:=0;nc1:=nc2:=0; dDatNab:=ctod("")
  if !empty(gMetodaNC)
   MsgO("Racunam stanje na skladistu")
-  KalkNab(_idfirma,_idroba,_mkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+  KalkNab(_idfirma,_idroba,_mkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
   MsgC()
   @ m_x+12,m_y+30   SAY "Ukupno na stanju "; @ m_x+12,col()+2 SAY nkols pict pickol
  endif

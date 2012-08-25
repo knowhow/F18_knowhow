@@ -116,10 +116,6 @@ AADD(aDBf,{ 'MKONTO'              , 'C' ,   7 ,  0 })
 AADD(aDBf,{ 'PKONTO'              , 'C' ,   7 ,  0 })
 
 
-AADD(aDBf,{ 'RokTr'               , 'D' ,   8 ,  0 })
-AADD(aDBf,{ 'DATKURS'             , 'D' ,   8 ,  0 })
-
-// rok trajanja NIKO ne koristi !!
 AADD(aDBf,{ 'MU_I'                , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'PU_I'                , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'ERROR'               , 'C' ,   1 ,  0 })
@@ -172,7 +168,9 @@ if ver["current"] < 00700
    "C RABATV N 18 8 RABATV B 8 8", ;
    "C VPCSAP N 18 8 VPCSAP B 8 8", ;
    "C VPC N 18 8 VPC Y 8 4",;
-   "C MPCSAPP N 18 8 MPCSAPP Y 8 4";
+   "C MPCSAPP N 18 8 MPCSAPP Y 8 4", ;
+   "D ROKTR D 8 0", ;
+   "D DATKURS D 8 0" ;
 })
 
 endif

@@ -109,7 +109,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
       @  prow(),pcol()+1 SAY  space(7)
     endif
     @ prow(),11 SAY  "";?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
     @ prow()+1,11 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
     nCol1:=pcol()+1

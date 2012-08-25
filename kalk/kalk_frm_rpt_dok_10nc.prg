@@ -95,10 +95,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if roba->(fieldpos("KATBR"))<>0
        ?? " KATBR:", roba->katbr
     endif
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
-    IF lPoNarudzbi
-      IspisPoNar()
-    ENDIF
     @ prow()+1,16 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
     nCol1:=pcol()+1

@@ -133,7 +133,7 @@ if _TBankTr<>"X" .or. lPoNarudzbi   // ako je X onda su stavke vec izgenerisane
      @ row(),col()+2 SAY IspisPoNar(,,.t.)
    else
      MsgO("Racunam stanje na skladistu")
-     KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+     KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
      MsgC()
      @ m_x+12+IF(lPoNarudzbi,1,0),m_y+30   SAY "Ukupno na stanju "; @ m_x+12+IF(lPoNarudzbi,1,0),col()+2 SAY nkols pict pickol
    endif

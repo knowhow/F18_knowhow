@@ -49,7 +49,7 @@ RETURN cV
  */
  
 function KalkNab3m(cIdFirma,cIdRoba,cIdKonto,aNabavke,nKolS)
-*{
+
 select kalk
 set order to tag "3"
 seek cidfirma+cidkonto+cidroba+"X"

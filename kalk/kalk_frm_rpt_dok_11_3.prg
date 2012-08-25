@@ -72,7 +72,7 @@ HSEEK cIdKonto2
 
 select kalk_pripr
 
-m:="--- ---------- ---------------------------------------- ---"+IF(gRokTr=="D"," --------","")+" ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
+m:="--- ---------- ---------------------------------------- ---"+" ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
 ? m
 ? "*R.* Sifra    *                                        *Jed*"+IF(gRokTr=="D","  Rok   *","")+" Kolicina * VELEPROD.*  IZNOS   *  RAZLIKA U CIJENI   *POREZ NA PROM.PROIZV.*POREZ NA PROM.USLUGA *   IZNOS  * MALOPROD.*"
 ? "*br* artikla  *       N A Z I V    A R T I K L A       *mj.*"+IF(gRokTr=="D","trajanja*","")+"          *  CIJENA  *  VELE-   *---------------------*---------------------*---------------------*  MALO-   *  CIJENA  *"
@@ -126,7 +126,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     ?? " "+IdRoba+" "+LEFT(ROBA->naz,40)+" "+ROBA->jmj
-    if gRokTr=="D"; ?? " "+DTOC(RokTr); endif
     ?? " "+TRANSFORM(Kolicina,pickol)+" "+TRANSFORM(VPC,PicCDEM)
     ?? " "+TRANSFORM(vpc*kolicina,picdem)
     ?? " "+TRANSFORM(nmarza2*100/iif(vpc=0,999999999,vpc),picproc)+" "+TRANSFORM(nmarza2*kolicina,picdem)
@@ -141,7 +140,7 @@ enddo
 if prow()>61+gPStranica; FF; @ prow(),180 SAY "Str:"+str(++nStr,3); endif
 
 ? m
-? "UKUPNO:"+SPACE(75+if(gRokTr=="D",9,0))+TRANSFORM(nTot1b,PICDEM)
+? "UKUPNO:"+SPACE(75)+TRANSFORM(nTot1b,PICDEM)
 ?? SPACE(12)+TRANSFORM(nTot4b,PICDEM)+SPACE(12)+TRANSFORM(nTot8,PICDEM)
 ?? SPACE(12)+TRANSFORM(nTot8b,PICDEM)+SPACE(1)+TRANSFORM(nTot7,PICDEM)
 ? m

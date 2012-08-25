@@ -164,7 +164,7 @@ IF gVarEv=="1"
      ELSE
 
        MsgO("Racunam stanje na skladistu")
-        KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab, @_RokTr)
+        KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab)
        MsgC()
 
        @ m_x+12,m_y+30   SAY "Ukupno na stanju "; @ m_x+12,col()+2 SAY nKols pict pickol
@@ -508,7 +508,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if roba->(fieldpos("KATBR"))<>0
        ?? " KATBR:", roba->katbr
     endif
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
     IF lPoNarudzbi
       IspisPoNar()
     ENDIF

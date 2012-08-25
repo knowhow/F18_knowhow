@@ -116,7 +116,7 @@ if nRbr==1
                         // ako je X onda su stavke vec izgenerisane
                         if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
                             MsgO("Racunam stanje na skladistu")
-                            KalkNab(_idfirma,sast->id2,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+                            KalkNab(_idfirma,sast->id2,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
                             MsgC()
                         endif
                         if dDatNab>_DatDok
@@ -185,7 +185,7 @@ if nRbr<>1  // sirovine
         // ako je X onda su stavke vec izgenerisane
         if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
             MsgO("Racunam stanje na skladistu")
-                KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+                KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
             MsgC()
         endif
         if dDatNab>_DatDok

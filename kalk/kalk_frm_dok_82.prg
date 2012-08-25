@@ -15,14 +15,14 @@
 
 
 function Get1_82()
-pIzgSt:=.f.   
+
+pIzgSt:=.f.  
+ 
 // izgenerisane stavke jos ne postoje
 //private cisMarza:=0
 
 set key K_ALT_K to KM2()
-if nRbr==1 .and. fnovi
-  _DatFaktP:=_datdok
-endif
+
 if nRbr==1 .or. !fnovi
  @  m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
@@ -41,7 +41,6 @@ else
  @  m_x+7,m_y+2   SAY "Faktura Broj: "; ?? _BrFaktP
  @  m_x+7,col()+2 SAY "Datum: "; ?? _DatFaktP
  _IdZaduz:=""
- _DatKurs:=_DatFaktP
  _Idkonto2:=""
  @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
  if gNW<>"X"

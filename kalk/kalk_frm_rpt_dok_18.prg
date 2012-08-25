@@ -43,7 +43,8 @@ if cSeek!='IZDOKS'  // stampa se vise dokumenata odjednom
 endif
 
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 B_ON

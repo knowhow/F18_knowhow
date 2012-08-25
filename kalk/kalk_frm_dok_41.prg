@@ -45,7 +45,6 @@ else
 
 endif
 
-_DatKurs:=_DatFaktP
 
 @ m_x+8,m_y+2   SAY "Prodavnicki Konto razduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
 

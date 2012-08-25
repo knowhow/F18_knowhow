@@ -521,7 +521,8 @@ enddo
 
 return .t.
 
-
+// ------------------------------------------------------------
+// ------------------------------------------------------------
 static function kalk_provjera_integriteta( aDoks, lViseDok )
 local nBrDoks
 local cIdFirma

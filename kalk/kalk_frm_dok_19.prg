@@ -15,8 +15,8 @@
 
 
 function Get1_19()
+
 _DatFaktP:=_datdok
-_DatKurs:=_DatFaktP
 private aPorezi:={}
 
 @ m_x+8,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"

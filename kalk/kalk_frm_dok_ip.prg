@@ -432,7 +432,6 @@ local _left := 25
 private aPorezi := {}
 
 _datfaktp := _datdok
-_datkurs := _datfaktp
 
 @ m_x + _x, m_y + 2 SAY "Konto koji zaduzuje" GET _IdKonto ;
     VALID P_Konto( @_IdKonto, _x, 35 ) pict "@!"

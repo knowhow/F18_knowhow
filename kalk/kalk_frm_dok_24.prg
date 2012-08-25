@@ -23,7 +23,6 @@ _DatFaktP:=_datdok
 @  m_x+6,col()+2 SAY "Datum:" get _DatFaktP
 
 _IdZaduz:=""
-_DatKurs:=_DatFaktP
 
 read
 ESC_RETURN K_ESC
@@ -73,7 +72,6 @@ _DatFaktP:=_datdok
 @  m_x+6,col()+2 SAY "Datum:" get _DatFaktP
 
 _IdZaduz:=""
-_DatKurs:=_DatFaktP
 
 read
 ESC_RETURN K_ESC

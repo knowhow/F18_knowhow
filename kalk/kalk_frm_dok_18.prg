@@ -16,7 +16,6 @@
 function Get1_18()
 _DatFaktP:=_datdok
 
-_DatKurs:=_DatFaktP
 
  @ m_x+8,m_y+2   SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
  if gNW<>"X"

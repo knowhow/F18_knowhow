@@ -20,7 +20,8 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_COND2
 ?? "KALK: KALKULACIJA BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
@@ -195,7 +196,8 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 if cidvd=="10".or.cidvd=="70"
@@ -518,7 +520,9 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
 P_COND2
 ?? SPACE(180)+"Str."+str(++nStr,3)     // 220-40
 ? PADC("PRIJEMNI LIST - KALKULACIJA BR."+cIdFirma+"-"+cIdVD+"-"+cBrDok+"     Datum:"+DTOC(DatDok),242)

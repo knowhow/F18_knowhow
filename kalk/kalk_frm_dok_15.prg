@@ -27,8 +27,7 @@ if nRbr==1  .or. !fnovi
    @  m_x+6,m_y+2   SAY "KUPAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,6,18)
    @  m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
    @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-    valid {|| _DatKurs:=_DatFaktP,.t.}
- _DatKurs:=_DatFaktP
+    valid {|| .t.}
 
  @ m_x+8,m_y+2   SAY "Prodavnicki Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
  if gNW<>"X"

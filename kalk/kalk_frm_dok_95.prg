@@ -26,7 +26,7 @@ endif
 if nRbr==1 .or. !fnovi .or. gMagacin=="1"
  @  m_x+5,m_y+2   SAY "Dokument Broj:" get _BrFaktP
  @  m_x+5,col()+1 SAY "Datum:" get _DatFaktP   ;
-    valid {|| _DatKurs:=_DatFaktP,.t.}
+    valid {|| .t.}
  
  if is_uobrada()
     @ m_x+5, col()+1 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
@@ -71,7 +71,6 @@ else
  @  m_x+6,m_y+2   SAY "Dokument Broj: "; ?? _BrFaktP
  @  m_x+6,col()+2 SAY "Datum: "; ?? _DatFaktP
  _IdZaduz:=""
- _DatKurs:=_DatFaktP
  @ m_x+8,m_y+2 SAY "Magacinski konto razduzuje "; ?? _IdKonto2
  @ m_x+9,m_y+2 SAY "Konto zaduzuje "; ?? _IdKonto
  if gNW<>"X"
@@ -351,7 +350,8 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 B_ON; I_ON

@@ -21,7 +21,8 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 B_ON
@@ -306,7 +307,8 @@ Private nPrevoz:=0,nCarDaz:=0,nZavTr:=0,nBankTr:=0,nSpedTr:=0,nMarza:=0,nMarza2:
 // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 P_10CPI
 B_ON
 if cidvd=="14".or.cidvd=="74"

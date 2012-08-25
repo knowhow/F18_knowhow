@@ -29,7 +29,6 @@ if nRbr==1  .or. !fnovi
    @  m_x+6,m_y+2   SAY "Otpremnica - Broj:" get _BrFaktP
    @  m_x+6,col()+2 SAY "Datum:" get _DatFaktP
  endif
- _DatKurs:=_DatFaktP
 
  @ m_x+8,m_y+2   SAY "Prodavnicki Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto, 21, 5) pict "@!"
  if gNW<>"X"

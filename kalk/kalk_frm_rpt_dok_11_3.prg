@@ -46,7 +46,8 @@ Private nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_COND
 ?? SPACE(155)+"Str."+str(++nStr,3)     // 220-40

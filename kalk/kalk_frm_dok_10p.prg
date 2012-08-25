@@ -42,7 +42,6 @@ if nRbr == 1  .or. !fNovi .or. gMagacin == "1"
  	
 	@ m_x + _x, col() + 1 SAY "Datum:" get _DatFaktP
  	
-	_DatKurs := _DatFaktP
  	
     ++ _x
     _kord_x := m_x + _x

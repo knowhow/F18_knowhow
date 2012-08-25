@@ -54,7 +54,6 @@ if nRbr == 1 .or. !fnovi
 
     ESC_RETURN K_ESC
 
-    _DatKurs := _DatFaktP
 
 else
 

@@ -87,38 +87,24 @@ AADD(aDBf,{ 'DATKURS'             , 'D' ,   8 ,  0 })
 // vidjeti za njegovo uklanjanje  (paziti na modul FIN) jer se ovo i tamo
 // koristi
 AADD(aDBf,{ 'RBR'                 , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'KOLICINA'            , 'N' ,  12 ,  3 })
-AADD(aDBf,{ 'GKOLICINA'           , 'N' ,  12 ,  3 })
-AADD(aDBf,{ 'GKOLICIN2'           , 'N' ,  12 ,  3 })
-AADD(aDBf,{ 'FCJ'                 , 'N' ,  18 ,  8 })
-AADD(aDBf,{ 'FCJ2'                , 'N' ,  18 ,  8 })
-AADD(aDBf,{ 'FCJ3'                , 'N' ,  18 ,  8 })
-AADD(aDBf,{ 'TRABAT'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'RABAT'               , 'N' ,  18 ,  8 })
+
+
 AADD(aDBf,{ 'TPREVOZ'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'PREVOZ'              , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'TPREVOZ2'            , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'PREVOZ2'             , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'TBANKTR'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'BANKTR'              , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'TSPEDTR'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'SPEDTR'              , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'TCARDAZ'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'CARDAZ'              , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'TZAVTR'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'ZAVTR'               , 'N' ,  18 ,  8 })
+AADD(aDBf,{ 'TRABAT'              , 'C' ,   1 ,  0 })
 // ovi troskovi pravo uvecavaju bazu, mislim da bi njihovo sklanjanje u
 // drugu bazu zaista pomoglo brzini
 // medjutim i ova su polja viseznacna
 AADD(aDBf,{ 'NC'                  , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'TMARZA'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'MARZA'               , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'VPC'                 , 'N' ,  18 ,  8 })
-AADD(aDBf,{ 'RABATV'              , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'VPCSAP'              , 'N' ,  18 ,  8 })
 // ova vpcsap je u principu skroz bezvezna stvar
 AADD(aDBf,{ 'TMARZA2'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'MARZA2'              , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'MPC'                 , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'MPCSAPP'             , 'N' ,  18 ,  8 })
@@ -138,6 +124,49 @@ if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
     _created := .t.
 endif
+
+// 0.4.8
+if ver["current"] < 00700
+   modstru( {"*" + _table_name, ;
+   "C KOLICINA N 12 3  KOLICINA B 12 3",;
+   "C GKOLICINA N 12 3 GKOLICINA B 12 3",;
+   "C GKOLICIN2 N 12 3 GKOLICIN2 B 12 3",;
+   "C FCJ N 18 8 FCJ B 18 8",;
+   "C FCJ2 N 18 8 FCJ2 B 18 8",;
+   "C FCJ3 N 18 8 FCJ3 B 18 8",;
+   "C RABAT N 18 8 RABAT B 18 8",;
+   "C PREVOZ N 18 8 PREVOZ B 18 8",;
+   "C PREVOZ2 N 18 8 PREVOZ2 B 18 8",;
+   "C BANKTR N 18 8 BANKTR B 18 8",;
+   "C SPEDTR N 18 8 SPEDTR B 18 8",;
+   "C CARDAZ N 18 8 CARDAZ B 18 8",;
+   "C ZAVTR N 18 8 ZAVTR B 18 8",  ;
+   "C MARZA N 18 8 MARZA2 B 18 8", ;
+   "C RABATV N 18 8 RABATV B 18 8";
+})
+
+else
+
+AADD(aDBf,{ 'KOLICINA'            , 'B' ,  12 ,  3 })
+AADD(aDBf,{ 'GKOLICINA'           , 'B' ,  12 ,  3 })
+AADD(aDBf,{ 'GKOLICIN2'           , 'B' ,  12 ,  3 })
+AADD(aDBf,{ 'FCJ'                 , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'FCJ2'                , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'FCJ3'                , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'RABAT'               , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'PREVOZ'              , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'BANKTR'              , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'SPEDTR'              , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'PREVOZ2'             , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'CARDAZ'              , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'ZAVTR'               , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'MARZA'               , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'MARZA2'              , 'B' ,  18 ,  8 })
+AADD(aDBf,{ 'RABATV'              , 'B' ,  18 ,  8 })
+
+endif
+
+
 
 if _created
   reset_semaphore_version(_table_name)

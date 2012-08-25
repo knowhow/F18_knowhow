@@ -45,7 +45,7 @@ _a_dbf_rec  := get_a_dbf_rec(dbf_table)
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _sql_order  := _a_dbf_rec["sql_order"]
 
-reopen_exclusive(_a_dbf_rec["table"])
+reopen_exclusive(_a_dbf_rec["table"], .f.)
 
 Box(, 6, 70)
 

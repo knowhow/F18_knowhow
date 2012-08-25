@@ -40,7 +40,7 @@ do while .t.
    full_synchro(dbf_table)   
 
    // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
-   reopen_exclusive(dbf_table)
+   reopen_exclusive(dbf_table, .t.)
 
    ADEL(_zap, _ids_queries["qry"])
 

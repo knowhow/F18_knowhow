@@ -163,9 +163,13 @@ return .t.
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-function reopen_exclusive(dbf_table)
+function reopen_exclusive(dbf_table, open_index)
 local _a_dbf_rec
 local _dbf
+
+if open_index == NIL
+  open_index := .t.
+endif
 
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 
@@ -176,7 +180,10 @@ _dbf := my_home() + _a_dbf_rec["table"]
 
 // otvori ekskluzivno
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
-dbSetIndex(ImeDbfCdx(_dbf))
+
+if open_index
+ dbSetIndex(ImeDbfCdx(_dbf))
+endif
 
 return .t.
 

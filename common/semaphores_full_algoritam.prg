@@ -59,7 +59,7 @@ ZAP
 */
 
 // zapuj, pa otvori tabelu shared
-zap_then_reopen_shared(_a_dbf_rec["table"], .f.)
+zap_then_reopen_shared(_a_dbf_rec["table"], .t.)
 
 Box(, 6, 70)
 

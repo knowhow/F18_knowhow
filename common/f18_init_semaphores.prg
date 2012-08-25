@@ -106,9 +106,6 @@ log_write( "prije synchro " +  _msg_1 + " " + _msg_2, 8 )
 
 // 2) synchro
 SELECT (_wa)
-if a_dbf_rec["alias"]=="PARTN"
-  altd()
-endif
 my_use(a_dbf_rec["alias"], a_dbf_rec["alias"])
 USE
 

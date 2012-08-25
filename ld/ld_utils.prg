@@ -1111,8 +1111,7 @@ return
 function ld_gen_virm()
 
 O_VIRM_PRIPR
-zap
-__dbPack()
+zapp(.t.)
 
 MsgBeep( "Opcija podrazumjeva da ste prozvali rekapitulaciju plate" )
 

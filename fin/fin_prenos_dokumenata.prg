@@ -596,7 +596,7 @@ endif
 
 my_use_temp( "TEMP77", my_home() + _table, .f., .t. )
 
-ZAP
+ZAPP()
 
 return
 
@@ -992,7 +992,7 @@ ENDDO
 Postotak(-1,,,,,.f.)
 
 select TEMP77  
-ZAP
+ZAPP()
 
 SELECT ANAL
 nZapisa := 0

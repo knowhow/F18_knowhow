@@ -162,6 +162,7 @@ return .t.
 
 
 // ------------------------------------------------------
+// open exclusive, open_index - .t., .f. 
 // ------------------------------------------------------
 function reopen_exclusive(dbf_table, open_index)
 local _a_dbf_rec
@@ -181,6 +182,39 @@ _dbf := my_home() + _a_dbf_rec["table"]
 // otvori ekskluzivno
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
 
+if open_index
+ dbSetIndex(ImeDbfCdx(_dbf))
+endif
+
+return .t.
+
+
+// ------------------------------------------------------
+// zap, then open shared, open_index - .t., .f. 
+// ------------------------------------------------------
+function zap_then_reopen_shared(dbf_table, open_index)
+local _a_dbf_rec
+local _dbf
+
+if open_index == NIL
+  open_index := .t.
+endif
+
+_a_dbf_rec  := get_a_dbf_rec(dbf_table) 
+
+SELECT (_a_dbf_rec["wa"])
+USE
+
+_dbf := my_home() + _a_dbf_rec["table"]
+
+// otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
+dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
+// kod prvog otvaranja uvijek otvori index da i njega nuliram 
+dbSetIndex(ImeDbfCdx(_dbf))
+__dbZap()
+
+
+dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .t. , .f.)
 if open_index
  dbSetIndex(ImeDbfCdx(_dbf))
 endif

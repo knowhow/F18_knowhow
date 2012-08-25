@@ -48,7 +48,8 @@ O_PSUBAN
 __par_len := LEN(partn->id)
 
 select PSUBAN
-ZAP
+ZAPP()
+
 
 select fin_pripr
 set order to tag "1"
@@ -248,11 +249,11 @@ endif
 _o_tables()
 
 select PANAL
-zap
+zapp()
 select PSINT
-zap
+zapp()
 select PNALOG
-zap
+zapp()
 
 select PSUBAN
 set order to tag "2"

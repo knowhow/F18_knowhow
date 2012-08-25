@@ -467,8 +467,7 @@ log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )
 
 // pobrisi _pos
 select _pos
-zap
-__dbPack()
+zapp(.t.)
 
 return
 

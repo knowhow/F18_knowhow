@@ -33,7 +33,8 @@ tmp_damage( @aDbf )
 cre_tmp1( aDbf )
 o_tmp1()
 select _tmp1
-zap
+zapp()
+
 
 select docs
 __doc_no := field->doc_no

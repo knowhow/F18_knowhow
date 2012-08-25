@@ -736,7 +736,8 @@ case Ch==K_ALT_F5
             cOpis, "", "", fin_pripr->datdok, Date(), ;
             "", "Brisanje kompletne pripreme !")
          endif
-         zap
+         zapp()
+
          BrisiPBaze()
     endif
         return DE_REFRESH
@@ -877,13 +878,13 @@ return 0
 function BrisiPBaze()
   PushWA()
   SELECT F_PSUBAN
-  ZAP
+  ZAPP()
   SELECT F_PANAL
-  ZAP
+  ZAPP()
   SELECT F_PSINT
-  ZAP
+  ZAPP()
   SELECT F_PNALOG
-  ZAP
+  ZAPP()
   
   PopWA()
 

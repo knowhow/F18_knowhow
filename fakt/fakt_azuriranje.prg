@@ -791,8 +791,7 @@ else
     
     // izbrisi pripremu
     select fakt_pripr
-    ZAP
-    __dbpack()
+    ZAPP(.t.)
 
 endif
 
@@ -1047,8 +1046,7 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
 
     else
 
-        zap
-
+        zapp()
         // potreba za resetom brojaca ?
         fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
 

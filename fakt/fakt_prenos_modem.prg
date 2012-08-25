@@ -31,7 +31,7 @@ create (PRIVPATH+"_fakt") from struct
 use
 
 O__FAKT
-zap
+zapp()
 
 
 if !fsif // iz pripreme -> fakt

@@ -218,10 +218,11 @@ function NaPrPak2()
   // kalk_pripr -> _KALK
   // --------------
   SELECT _KALK
-  ZAP
+  ZAPP()
+
   APPEND FROM kalk_pripr
   SELECT kalk_pripr
-  ZAP
+  ZAPP()
 
   // utvrdimo broj nove kalkulacije
   // ------------------------------

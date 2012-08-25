@@ -273,7 +273,7 @@ function BrisiError()
 
 O_ERRORS
 select errors
-zap
+zapp()
 
 return
 

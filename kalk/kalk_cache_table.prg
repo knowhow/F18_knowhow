@@ -240,8 +240,7 @@ cre_cache()
 
 O_CACHE
 select cache
-zap
-__dbpack()
+zapp(.t.)
 
 O_CACHE
 O_KALK

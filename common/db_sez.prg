@@ -145,7 +145,7 @@ if fDa .or. !fInverse .and. (!File(cFull) .or. Pitanje( , cPath + cIme + " je ve
   	if (nKopirano<>0 .and. fNuliraj)
      		select 66
      		usex (cPath+cIme)
-     		zap
+     		zapp()
      	use
 	endif
 

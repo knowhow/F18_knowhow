@@ -379,15 +379,15 @@ return
 function drn_empty()
 O_DRN
 select drn
-zap
+zapp()
 
 O_RN
 select rn
-zap
+zapp()
 
 O_DRNTEXT
 select drntext
-zap
+zapp()
 
 return
 

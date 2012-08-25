@@ -265,7 +265,7 @@ O_KONTO
 O_BBKLAS
 
 select BBKLAS
-ZAP
+ZAPP()
 
 private cFilter:=""
 

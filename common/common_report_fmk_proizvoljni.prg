@@ -466,7 +466,9 @@ STATIC FUNCTION KonIzBlok()
 
    CASE Ch==K_ALT_P      // popuni nanovo iz sifrarnika kljucnog polja
      IF cPIKSif!="BEZ" .and. Pitanje(,"Zelite li obrisati bazu i formirati novu na osnovu sifrar.klj.polja?(D/N)","N")=="D"
-       SELECT KONIZ; ZAP
+       SELECT KONIZ
+       ZAPP()
+
        O_KSIF()
        dbGoTop()
        DO WHILE !EOF()

@@ -55,7 +55,8 @@ endif
 // isprazni kalk_pripr2
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
-zap
+zapp()
+
 use
 
 lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
@@ -110,7 +111,8 @@ if lViseDok == .t. .and. LEN( aOstaju ) > 0
 else
     // pobrisi kalk_pripr
     select kalk_pripr
-    zap
+    zapp()
+
 endif
 
 if lGenerisiZavisne = .t.
@@ -204,7 +206,7 @@ if lPrebaci == .t.
     enddo
 
     select kalk_pripr2
-    zap    
+    zapp() 
 
 endif
 
@@ -1005,7 +1007,7 @@ if Logirati(goModul:oDataBase:cName, "DOK", "SMECE")
 endif
 
 select kalk_pripr
-zap
+zapp()
 
 close all
 return

@@ -187,7 +187,7 @@ do case
 
     case Ch = K_CTRL_F9
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-             zap
+             zapp()
         endif
         return DE_REFRESH
 
@@ -423,7 +423,8 @@ bErr := ERRORBLOCK( { |o| MyErrH(o) } )
 
 BEGIN SEQUENCE
     O_IZLAZ
-    ZAP
+    ZAPP()
+
 RECOVER
     MsgBeep("Vec je aktiviran delphirb ?")
     return

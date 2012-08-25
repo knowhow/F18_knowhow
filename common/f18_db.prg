@@ -317,7 +317,7 @@ if sql_table_update( table, "del", _rec, "true")
    sql_table_update( table, "END")
 
    // zapujemo dbf
-   ZAP
+   zapp()
 
    return .t.
 

@@ -95,9 +95,9 @@ endif
 
            USEX (cPath+cDBF, "CLIPB", .f.)
            select (nDBF)
-           if reccount2()<>0
+           if reccount2() <> 0
               if pitanje(,"Sifrarnik nije prazan, izbrisati postojece stavke ?"," ")=="D"
-                   zap
+                   zapp()
               else
                  if pitanje(,"Da li zelite na postojece stavke dodati clipboard ?","N")=="N"
                     loop

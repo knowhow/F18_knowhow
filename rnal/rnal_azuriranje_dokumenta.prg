@@ -112,16 +112,16 @@ endif
 
 // sve je ok brisi pripremu
 select _docs
-zap
+zapp()
 
 select _doc_it
-zap
+zapp()
 
 select _doc_it2
-zap
+zapp()
 
 select _doc_ops
-zap
+zapp()
 
 use
 

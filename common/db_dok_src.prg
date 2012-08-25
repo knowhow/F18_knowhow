@@ -144,7 +144,7 @@ local nTArea := SELECT()
 if is_doksrc()
 	o_p_doksrc(cPath)
 	select p_doksrc
-	zap
+	zapp()
 	select p_doksrc
 	use
 	select (nTArea)
@@ -310,7 +310,7 @@ enddo
 MsgC()
 
 select p_doksrc
-zap
+zapp()
 
 select p_doksrc
 use

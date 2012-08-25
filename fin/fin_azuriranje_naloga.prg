@@ -493,13 +493,13 @@ select fin_pripr
 __dbpack()
 
 select PSUBAN
-zap
+zapp()
 select PANAL
-zap
+zapp()
 select PSINT
-zap
+zapp()
 select PNALOG
-zap
+zapp()
 close all
 
 return .t.

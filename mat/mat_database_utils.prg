@@ -214,7 +214,8 @@ if reccount2()<>0
     return
 endif
 
-zap
+zapp()
+
 set order to
 index on idfirma+idkonto+idpartner+idroba to "PRIPTMP"
 GO TOP

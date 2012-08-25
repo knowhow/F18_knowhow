@@ -27,7 +27,7 @@ if !used()
 	O_BARKOD
 endif
 SELECT BARKOD
-ZAP
+zapp()
 
 SELECT roba
 GO TOP

@@ -290,7 +290,7 @@ if !EMPTY( cPrefix )
 endif
 
 SELECT BARKOD
-ZAP
+zapp()
 
 SELECT FAKT_PRIPR
 GO TOP

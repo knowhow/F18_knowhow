@@ -53,7 +53,13 @@ _a_dbf_rec  := get_a_dbf_rec(dbf_table)
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
 _sql_order  := _a_dbf_rec["sql_order"]
 
+/*
 reopen_exclusive(_a_dbf_rec["table"], .f.)
+ZAP
+*/
+
+// zapuj, pa otvori tabelu shared
+zap_then_reopen_shared(_a_dbf_rec["table"], .f.)
 
 Box(, 6, 70)
 
@@ -62,7 +68,6 @@ Box(, 6, 70)
     _count := table_count( _sql_table, "true" ) 
     _seconds := SECONDS()
 
-    ZAP
 
     if _sql_fields == NIL
         _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"

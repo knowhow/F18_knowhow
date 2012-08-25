@@ -181,7 +181,7 @@ endif
 
 select kalk_pripr9
 go top
-zap
+zapp()
 
 return
 

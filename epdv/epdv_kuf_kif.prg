@@ -131,7 +131,8 @@ use
 
 // sve je ok brisi pripremu
 SELECT (nPArea)
-zap
+zapp()
+
 use
 
 if (cTbl == "KUF")

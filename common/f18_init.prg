@@ -338,6 +338,7 @@ goModul:setgvars()
 return
 
 // ------------------------------------------
+// kreira sve potrbne indekse
 // ------------------------------------------
 function repair_dbfs()
 local _ver

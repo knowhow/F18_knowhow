@@ -188,8 +188,13 @@ _dbf := my_home() + _a_dbf_rec["table"]
 // otvori ekskluzivno
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
 
-if open_index .and. FILE(ImeDbfCdx(_dbf))
-        dbSetIndex(ImeDbfCDX(_dbf))
+if open_index 
+   if FILE(ImeDbfCdx(_dbf))
+       dbSetIndex(ImeDbfCDX(_dbf))
+   else
+       // prolazi kroz sve dbf-ove i kreira indekse
+       repair_dbfs()
+   endif
 endif
 
 return .t.

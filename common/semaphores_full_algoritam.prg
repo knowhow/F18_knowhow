@@ -98,7 +98,9 @@ Box(, 6, 70)
 BoxC()
 
 MsgO("Reindex nakon full sync: " + dbf_table)
-    REINDEX
+   log_write("reopen sa indexom, START reindex " + dbf_table, 3)
+   reopen_exclusive(_a_dbf_rec["table"], .t.)
+   REINDEX
 MsgC()
 
 USE

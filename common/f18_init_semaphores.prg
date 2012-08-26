@@ -19,65 +19,21 @@ static __dbf_pack_v1 := 700
 static __dbf_pack_v2 := 10
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
+
+// -------------------------------
+// -------------------------------
 function f18_init_semaphores()
-local _key
-local _f18_dbf
-local _temp_tbl
-
-_get_dbf_from_config()
-_f18_dbfs := f18_dbfs()
-
 
 if f18_session()['id'] > 1
    // child sesije ne osvjezavaju bazu
    return .t.
 endif
 
-for each _key in _f18_dbfs:Keys
 
-    _temp_tbl := _f18_dbfs[_key]["temp"]
-
-    if !_temp_tbl
-
-		_tbl_base := _table_base( _f18_dbfs[_key] )
-
-		// radi os/sii
-		if _tbl_base == "sii"
-			_tbl_base := "os"
-		endif
-
-        // EMPTY - sifarnici (roba, tarifa itd)
-		if  EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
-			refresh_me( _f18_dbfs[_key] )
-		endif
-
-    endif
-
-next
+// prodji kroz aktivne dbf tabele
+iterate_through_active_tables({|dbf_rec| refresh_me(dbf_rec)})
 
 return .t.
-
-// -----------------------------------------
-// vratice osnovu naziva tabele
-// fakt_fakt -> fakt
-// fakt_doks -> fakt
-// -----------------------------------------
-static function _table_base( a_dbf_rec )
-local _table := ""
-local _sep := "_"
-local _arr
-
-
-if _sep $ a_dbf_rec["table"]
-	_arr := toktoniz( a_dbf_rec["table"], _sep )	
-	if LEN( _arr ) > 1
-		_table := _arr[1]
-	endif
-endif
-
-return _table
 
 
 // ----------------------------------------------------
@@ -178,9 +134,9 @@ return
 
 
 // ------------------------------------------------------------
-// vraca informacije iz inija vezane za screen rezoluciju
+// vraca informacije o dbf parametrima
 // ------------------------------------------------------------
-static function _get_dbf_from_config()
+function get_dbf_params_from_config()
 local _var_name
 local _ini_params := hb_hash()
 

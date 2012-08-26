@@ -78,6 +78,100 @@ next
 
 return _ret
 
+// -----------------------------------------
+// vratice osnovu naziva tabele
+// fakt_fakt -> fakt
+// fakt_doks -> fakt
+// -----------------------------------------
+static function _table_base( a_dbf_rec )
+local _table := ""
+local _sep := "_"
+local _arr
+
+
+if _sep $ a_dbf_rec["table"]
+	_arr := toktoniz( a_dbf_rec["table"], _sep )	
+	if LEN( _arr ) > 1
+		_table := _arr[1]
+	endif
+endif
+
+return _table
+
+// ----------------------------------------------------
+// ----------------------------------------------------
+function iterate_through_active_tables(iterate_block)
+local _key
+local _f18_dbf
+local _temp_tbl
+
+get_dbf_params_from_config()
+_f18_dbfs := f18_dbfs()
+
+for each _key in _f18_dbfs:Keys
+
+    _temp_tbl := _f18_dbfs[_key]["temp"]
+
+    if !_temp_tbl
+
+		_tbl_base := _table_base( _f18_dbfs[_key] )
+
+		// radi os/sii
+		if _tbl_base == "sii"
+			_tbl_base := "os"
+		endif
+
+        // EMPTY - sifarnici (roba, tarifa itd)
+		if  EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
+			EVAL(iterate_block, _f18_dbfs[_key] )
+		endif
+
+    endif
+
+next
+
+return .t.
+
+// ---------------------------------------------------------------
+// utvrdjuje da li se tabela koristi
+//
+// ako je use KALK = N, is_active_dbf_table("kalk_kalk") => .f.
+//
+// ---------------------------------------------------------------
+function is_active_dbf_table(table)
+local _key
+local _f18_dbf
+local _temp_tbl
+
+get_dbf_params_from_config()
+_f18_dbfs := f18_dbfs()
+
+// tabela sa ovakvim imenom uopste ne postoji
+if  !HB_HHASKEY(_f18_dbfs, table)
+  return .f.
+endif
+
+
+_temp_tbl := _f18_dbfs[table]["temp"]
+
+  
+if !_temp_tbl
+
+		_tbl_base := _table_base( _f18_dbfs[table] )
+
+		// radi os/sii
+		if _tbl_base == "sii"
+			_tbl_base := "os"
+		endif
+
+        // EMPTY - sifarnici (roba, tarifa itd)
+		if  EMPTY(_tbl_base) .or. f18_use_module( _tbl_base )
+            return .t.
+		endif
+
+endif
+
+return .f.
 
 
 

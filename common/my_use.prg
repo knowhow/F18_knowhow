@@ -247,6 +247,3 @@ check_after_synchro(table)
 log_write( "dbf_semaphore_synchro(), zavrsio", 9 )
 
 return .t.
-
-
-

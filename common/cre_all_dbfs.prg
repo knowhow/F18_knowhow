@@ -20,50 +20,70 @@ cre_roba(ver)
 cre_partn(ver)
 cre_adres(ver)
 
-cre_all_fin(ver)
-cre_all_kalk(ver)
-cre_all_fakt(ver)
-cre_all_ld(ver)
-cre_all_os(ver)
-cre_all_virm(ver)
-cre_all_epdv(ver)
-cre_all_pos(ver)
-cre_all_rnal(ver)
-cre_all_mat(ver)
+if f18_use_module( "fin" )
+  cre_all_fin(ver)
+  _db := TDbFin():new()
+  _db:kreiraj()
+endif
 
-_db := TDbFin():new()
-_db:kreiraj()
+if f18_use_module( "kalk" )
+  cre_all_kalk(ver)
+  _db := TDbKalk():new()
+ _db:kreiraj()
 
-_db := TDbKalk():new()
-_db:kreiraj()
+endif
 
-_db := TDbFakt():new()
-_db:kreiraj()
+if f18_use_module( "fakt" )
+   cre_all_fakt(ver)
+  _db := TDbFakt():new()
+  _db:kreiraj()
+endif
 
-_db := TDbLd():new()
-_db:kreiraj()
+if f18_use_module( "ld" )
+   cre_all_ld(ver)
+   _db := TDbLd():new()
+   _db:kreiraj()
+endif
 
-_db := TDbPos():new()
-_db:kreiraj()
 
-_db := TDbOs():new()
-_db:kreiraj()
+if f18_use_module( "os" )
+  cre_all_os(ver)
+  _db := TDbOs():new()
+  _db:kreiraj()
 
-_db := TDbVirm():new()
-_db:kreiraj()
+endif
 
-_db := TDbEPdv():new()
-_db:kreiraj()
 
-_db := TDbRnal():new()
-_db:kreiraj()
+if f18_use_module( "virm" )
+   cre_all_virm(ver)
+   _db := TDbVirm():new()
+   _db:kreiraj()
+endif
 
-_db := TDbMat():new()
-_db:kreiraj()
+if f18_use_module( "epdv" )
+   cre_all_epdv(ver)
+endif
+
+if f18_use_module( "pos" )
+   cre_all_pos(ver)
+   _db := TDbPos():new()
+   _db:kreiraj()
+endif
+
+if f18_use_module( "rnal" )
+   cre_all_rnal(ver)
+   _db := TDbRnal():new()
+   _db:kreiraj()
+endif
+
+if f18_use_module( "mat" )
+   cre_all_mat(ver)
+   _db := TDbMat():new()
+   _db:kreiraj()
+endif
 
 log_write("END crea_all_dbfs", 5)
 return
-
 
 
 function CreSystemDb(nArea)

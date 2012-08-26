@@ -170,6 +170,8 @@ return reopen_dbf(.f., dbf_table, open_index)
 function reopen_exclusive(dbf_table, open_index)
 return reopen_dbf(.t., dbf_table, open_index)
 
+// ----------------------------------------------------
+// ----------------------------------------------------
 function reopen_dbf(excl, dbf_table, open_index)
 local _a_dbf_rec
 local _dbf
@@ -185,20 +187,31 @@ USE
 
 _dbf := my_home() + _a_dbf_rec["table"]
 
-// otvori ekskluzivno
+// finalno otvaranje tabele
+SELECT (_a_dbf_rec["wa"])
+USE
 dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
 
 if open_index 
+
    if FILE(ImeDbfCdx(_dbf))
        dbSetIndex(ImeDbfCDX(_dbf))
+       return .t.
    else
+
+       // indeksa nema
        // prolazi kroz sve dbf-ove i kreira indekse
        repair_dbfs()
+
+       // finalno otvaranje tabele
+       SELECT (_a_dbf_rec["wa"])
+       USE
+       dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
+
    endif
 endif
 
 return .t.
-
 
 // ------------------------------------------------------
 // zap, then open shared, open_index - otvori index 

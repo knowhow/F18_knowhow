@@ -712,10 +712,12 @@ if ext == NIL
   ext := INDEXEXT
 endif
 
-cIme:=trim(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
-if right(cIme,4) <> "." + ext
+cIme := TRIM(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
+
+if right (cIme, 4) <> "." + ext
   cIme := cIme + "." + ext
 endif
+
 return  cIme
 
 

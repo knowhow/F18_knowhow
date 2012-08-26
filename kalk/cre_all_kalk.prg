@@ -199,16 +199,6 @@ CREATE_INDEX("PU_I", "pu_i+pkonto+idfirma+idvd+brdok","KALK")
 CREATE_INDEX("PU_I2","pu_i+idfirma+idvd+brdok","KALK")
 CREATE_INDEX("PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)","KALK")
 
-// neka obrada, treba vidjeti treba li
-//CREATE_INDEX("UOBR","idfirma+mkonto+odobr_no+dtos(datdok)","KALK")
-CREATE_INDEX("BRFAKTP","idfirma+brfaktp+idvd+brdok+rbr+dtos(datdok)","KALK")
-// po narudzbama, treba vidjeti treba li
-//CREATE_INDEX("3N","idFirma+mkonto+idnar+idroba+dtos(datdok)+podbr+MU_I+IdVD","KALK")
-//CREATE_INDEX("4N","idFirma+Pkonto+idnar+idroba+dtos(datdok)+podbr+PU_I+IdVD","KALK")
-//CREATE_INDEX("6N","idFirma+IdTarifa+idnar+idroba","KALK")
-//CREATE_INDEX("PTARIFA","idFirma+pkonto+IdTarifa+idroba","KALK")
-
-// koristit ćemo istru strukturu za još par tabela
 // priprema itd...
 
 // kalk_pripr

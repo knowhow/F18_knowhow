@@ -13,7 +13,6 @@
 #include "kalk.ch"
 
 
-
 // -----------------------------------------------------
 // report: specifikacija po sastavnicama
 // -----------------------------------------------------
@@ -131,9 +130,12 @@ local cJmjPrim
 local cJmjSec
 local cSastId
 local cRobaId
+local _idx
 
 aFields := _g_fields()
 t_exp_create( aFields )
+
+_idx := ImeDbfCdx(my_home() + "brfakt_pr")
 
 O_R_EXP
 O_KALK
@@ -142,21 +144,15 @@ O_SIFK
 O_SIFV
 
 select kalk
-set order to tag "BRFAKTP"
-// idfirma + brfaktp + idvd + brdok + DTOS(datdok)
 
 go top
 
-seek gFirma + cBrFakt
+// kreiraj index
+INDEX ON ("brfakt") TO (_idx) FOR (idfirma == gFirma .and. Idv == "PR") 
+dbSetIndex(_idx)
 
+go TOP
 do while !EOF() .and. field->brfaktp == cBrFakt
-
-	// ako nije dokument PR, preskoci
-	// gledaju se samo PR dokumenti
-	if field->idvd <> "PR"
-		skip 
-		loop
-	endif
 
 	// redni broj > 900 su sastavnice
 	// a sve do toga je proizvod
@@ -180,7 +176,6 @@ do while !EOF() .and. field->brfaktp == cBrFakt
 	else
 		
 		// ovo je proizvod, uzmi samo id
-		
 		cRobaId := field->idroba
 		
 		skip
@@ -241,6 +236,9 @@ do while !EOF() .and. field->brfaktp == cBrFakt
 
 enddo
 
+FERASE(_idx)
+
+close all
 
 return
 

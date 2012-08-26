@@ -12,6 +12,8 @@
 
 #define F18_F18_DEFINED
 
+/*
+
 // NTX
 #define NTX_INDICES
 #undef  CDX_INDICES
@@ -29,8 +31,8 @@
 #define RDDENGINE "DBFNTX"
 #define DBFENGINE "DBFNTX"
 
+*/
 
-/*
 // CDX
 #define CDX_INDICES
 #undef NTX_INDICES
@@ -47,7 +49,6 @@
 #define DBFENGINE "DBFCDX"
 // CDX end
 
-*/
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1
 #define SEMAPHORE_LOCK_RETRY_NUM 50

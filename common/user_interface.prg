@@ -1540,7 +1540,7 @@ if fBox
     DISPBox(5 ,0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE + "±", INVERT)
 endif
 
-@ 3,1 SAY PADC(gNaslov + ' Ver.' + gVerzija, MAXCOLS()-8) COLOR NORMAL
+@ 3,1 SAY PADC(gNaslov, MAXCOLS()-8) COLOR NORMAL
 return
 
 
@@ -1553,7 +1553,7 @@ public  Normal
 public  Blink
 public  Nevid
 
-if TYPE("gFKolor")<>"C"
+if TYPE("gFKolor") <> "C"
     gFKolor:="D"
 endif
 

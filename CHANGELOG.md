@@ -1,3 +1,7 @@
+1.3.0  2002-08-26, hernad
+ 
+ - kalk_compress, fakt_compress, novi semaphore engine
+
 1.1.7  2002-08-24, hernad
   
  - branch 1.1

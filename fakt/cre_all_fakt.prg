@@ -38,15 +38,15 @@ AADD(aDBf,{ 'K2'        , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'M1'        , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TXT'       , 'M' ,  10 ,  0 })
 AADD(aDBf,{ 'IDVRSTEP'  , 'C' ,   2 ,  0 })
+
+// hernad??
 AADD(aDBf,{ 'IDPM'      , 'C' ,  15 ,  0 })
-AADD(aDBf,{ 'DOK_VEZA'  , 'C' , 150 ,  0 })
-AADD(aDBf,{ 'FISC_RN'   , 'N' ,  10 ,  0 })
+AADD(aDBf,{ 'FISC_RN'   , 'I' ,   4 ,  0 })
 AADD(aDBf,{ 'C1'        , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'C2'        , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'C3'        , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'N1'        , 'N' ,  10 ,  3 })
 AADD(aDBf,{ 'N2'        , 'N' ,  10 ,  3 })
-AADD(aDBf,{ 'OPIS'      , 'C' , 120 ,  0 })
 
 _created := .f.
 _alias := "FAKT"
@@ -55,6 +55,18 @@ _table_name := "fakt_fakt"
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
     _created := .t.
+endif
+
+// 0.8.0
+if ver["current"] < 00800
+  
+   altd()
+   modstru( {"*" + _table_name, ;
+   "C FISC_RN N 10 0 FISC_RN I 4 0",  ;
+   "D OPIS C 120 0", ;
+   "D DOK_VEZA C 150 0" ;
+  })
+
 endif
 
 if _created
@@ -132,7 +144,10 @@ AADD(aDBf, { 'IDPARTNER'           , 'C' ,   6 ,  0 })
 AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
+
+// hernad: nisam nasao da se igdje koristi ?!
 AADD(aDBf, { 'DOK_VEZA'            , 'C' , 150 ,  0 })
+
 AADD(aDBf, { 'OPER_ID'             , 'N' ,   3 ,  0 })
 AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
 AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })

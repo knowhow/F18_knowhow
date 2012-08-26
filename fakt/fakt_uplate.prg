@@ -21,6 +21,7 @@
 function Uplate()
 
 O_FAKT_DOKS
+
 //"6","IdFirma+idpartner+idtipdok", "DOKS"
 set order to tag "6"
 

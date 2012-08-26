@@ -13,6 +13,8 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
+// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 function fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine, cFilter)
 local i
 local _w1 := 45
@@ -40,10 +42,7 @@ IF FIELDPOS("DATPL")>0
 ENDIF
 
 
-if FIELDPOS("DOK_VEZA") <> 0
-    AADD(ImeKol,{ "Vezni dokumenti", ;
-    {|| PADR( ALLTRIM( g_d_veza(idfirma,idtipdok,brdok,dok_veza)) , 60) + "..." }})
-endif
+AADD(ImeKol,{ "Vezni dokumenti",  {|| PADR( ALLTRIM( g_d_veza(idfirma,idtipdok,brdok)) , 60) + "..." }})
 
 // datum otpremnice, datum isporuke
 if FIELDPOS("DAT_OTPR") <> 0

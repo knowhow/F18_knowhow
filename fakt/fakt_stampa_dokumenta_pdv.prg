@@ -576,11 +576,7 @@ add_drntext("D09", cIdTipDok)
 add_drntext("D10", cIdFirma)
 
 // dokument veza
-if fakt_pripr->(FIELDPOS("dok_veza")) <> 0 .and. !EMPTY( fakt_pripr->dok_veza )
-	cTmp := fakt_pripr->dok_veza
-else
-	cTmp := cM_d_veza
-endif
+cTmp := cM_d_veza
 
 aTmp := SjeciStr( cTmp, 200 )
 nTmp := 30

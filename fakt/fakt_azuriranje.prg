@@ -431,7 +431,8 @@ _fakt_data["brisano"] := SPACE(1)
 _fakt_data["idvrstep"] := field->idvrstep
 _fakt_data["datpl"] := field->datdok
 _fakt_data["idpm"] := field->idpm
-_fakt_data["dok_veza"] := field->dok_veza
+// 26.08.212 hernad: todo mislim da se moze izbrisati, ali necu sada jer ne razumijem logiku i svrhu ovog polja
+//_fakt_data["dok_veza"] := field->dok_veza
 _fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
@@ -1065,8 +1066,7 @@ if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
     
     	cOpis := "dokument: " + _id_firma + "-" + _tip_dok + "-" + ALLTRIM( _br_dok )
 
-    	EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", ;
-        	nil, nil, nil, nil, ;
+    	EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", nil, nil, nil, nil, ;
         	"","", cOpis, DATE(), DATE(), "", ;
        	 	"Brisanje kompletnog dokumenta iz pripreme")
     endif

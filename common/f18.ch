@@ -22,10 +22,10 @@
 #define INDEXEXT      "ntx"
 #define OLD_INDEXEXT  "cdx"
 #define DBFEXT        "dbf"
-#define MEMOEXT       "fpt"
+#define MEMOEXT       "dbt"
 
 #define  INDEXEXTENS  "ntx"
-#define  MEMOEXTENS   "fpt"
+#define  MEMOEXTENS   "dbt"
 
 
 #define RDDENGINE "DBFNTX"

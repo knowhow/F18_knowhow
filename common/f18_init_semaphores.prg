@@ -88,7 +88,7 @@ local _dbf_pack_algoritam
 
 Box( "#Molimo sacekajte...", 7, 60)
 
-_msg_1 := "prije sync: " + a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
+_msg_1 := "START refresh_me: " + a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 @ m_x + 1, m_y + 2 SAY _msg_1
 
 
@@ -100,9 +100,8 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 
 @ m_x + 2, m_y + 2 SAY _msg_2
 
-log_write( "provjera zapisa u tabelama prije i poslije synchro " +  _msg_1, 5 )
 
-log_write( "prije synchro " +  _msg_1 + " " + _msg_2, 8 )
+log_write( "stanje dbf " +  _msg_1 + " " + _msg_2, 8 )
 
 // 2) synchro
 SELECT (_wa)
@@ -119,7 +118,7 @@ _msg_2 := "cnt = " + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 4, m_y + 2 SAY _msg_1
 @ m_x + 5, m_y + 2 SAY _msg_2
 
-log_write("refresh_me(), nakon synchro " + _msg_1 + " " + _msg_2, 8 )
+log_write("stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
 
 
 // 4) uradi check i fix ako treba
@@ -127,6 +126,7 @@ log_write("refresh_me(), nakon synchro " + _msg_1 + " " + _msg_2, 8 )
 // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
 // ako se utvrti greska uradi full sync
 check_recno_and_fix(a_dbf_rec["table"], _cnt - _del, .t.)
+USE
 
 
 _msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
@@ -135,15 +135,12 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 4, m_y + 2 SAY _msg_1
 @ m_x + 5, m_y + 2 SAY _msg_2
 
-
-USE
-log_write("nakon synchro " +  _msg_1 + " " + _msg_2, 8 )
-
-USE
+log_write("END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
 
 if hocu_li_pack(_cnt, _del)
     
     @ m_x + 7, m_y + 2 SAY "Pakujem tabelu radi brzine, molim sacekajte ..."
+    log_write( "PACK table " + a_dbf_rec["alias"], 2 )
 
     SELECT (_wa)
     my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
@@ -152,7 +149,6 @@ if hocu_li_pack(_cnt, _del)
 
     USE
 
-    log_write( "pakujem tabelu " + a_dbf_rec["alias"], 2 )
 
 endif
 

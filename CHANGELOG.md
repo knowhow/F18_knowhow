@@ -1,3 +1,7 @@
+1.3.1  2002-08-26, hernad
+
+ - borba sa indeksima nakon full sync
+
 1.3.0  2002-08-26, hernad
  
  - kalk_compress, fakt_compress, novi semaphore engine

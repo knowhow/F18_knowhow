@@ -135,7 +135,7 @@ local _idx
 aFields := _g_fields()
 t_exp_create( aFields )
 
-_idx := ImeDbfCdx(my_home() + "brfakt_pr")
+_idx := my_home() + "brfakt_pr.idx"
 
 O_R_EXP
 O_KALK

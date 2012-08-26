@@ -355,7 +355,7 @@ do while !eof() .and. cIdFirma+cIdKonto==idFirma+pKonto
         _brdok:=cBrDok
         _rbr:=RedniBroj(++nRbr)
         _kolicina:=nUlaz-nIzlaz
-        _datdok:=_datKurs:=_DatFaktP:=dDatDok
+        _datdok:=_DatFaktP:=dDatDok
         _error:="0"
         _fcj:=UzmiMPCSif()
 
@@ -599,7 +599,6 @@ enddo
               datdok with dDok,;
               idtarifa with roba->idtarifa,;
               datfaktp with dDok,;
-              datkurs with dDok,;
               kolicina with nStanje,;
               idvd with "19", brdok with cBrNiv ,;
               rbr with STR(nRbr,3),;
@@ -904,7 +903,6 @@ function Iz11u412()
       _brfaktp   := cBrFaktP
       _datfaktp  := IF(!EMPTY(dDatFaktP),dDatFaktP,dDatDok)
       _idpartner := cIdPartner
-      _datkurs   := IF(!EMPTY(dDatFaktP),dDatFaktP,dDatDok)
       _rbr       := KALK->rbr
       _kolicina  := KALK->kolicina
       _fcj       := KALK->nc
@@ -998,7 +996,6 @@ function Iz10u11()
       _brfaktp   := cBrFaktP
       _datfaktp  := IF(!EMPTY(dDatFaktP),dDatFaktP,dDatDok)
       _idpartner := cIdPartner
-      _datkurs   := IF(!EMPTY(dDatFaktP),dDatFaktP,dDatDok)
       _rbr       := KALK->rbr
       _kolicina  := KALK->kolicina
       _fcj       := KALK->nc
@@ -1097,7 +1094,6 @@ do while !EOF()
     _tmarza2 := "A"
     _datdok := dDat80
     _datfaktp := dDat80
-    _datkurs := dDat80
     _brdok := cNxt80
     
     Gather()

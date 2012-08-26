@@ -814,7 +814,6 @@ do while !EOF()
 	
 	replace idzaduz2 with ""
 	
-	replace datkurs with temp->datdok
 	replace kolicina with temp->kolicina
 	replace idroba with roba->id
 	

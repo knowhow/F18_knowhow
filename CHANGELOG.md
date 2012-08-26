@@ -1,3 +1,7 @@
+1.3.2  2002-08-26, hernad
+
+ - kalk datkurs -> out
+
 1.3.1  2002-08-26, hernad
 
  - borba sa indeksima nakon full sync

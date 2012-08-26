@@ -15,6 +15,7 @@ function cre_all_kalk(ver)
 local aDbf
 local _alias, _table_name
 local _created
+local _tbl
 
 // -----------------------------------------------
 // kalk_doks
@@ -86,6 +87,7 @@ AADD(aDBf,{ 'BRFAKTP'             , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'DATFAKTP'            , 'D' ,   8 ,  0 })
 
 AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
+
 // ovaj datkurs je sada skroz eliminisan iz upotrebe
 // vidjeti za njegovo uklanjanje  (paziti na modul FIN) jer se ovo i tamo
 // koristi
@@ -147,32 +149,33 @@ if !FILE(f18_ime_dbf(_alias))
     _created := .t.
 endif
 
-// 0.7.0
-if ver["current"] < 00700
-   modstru( {"*" + _table_name, ;
-   "C KOLICINA N 12 3  KOLICINA B 8 8",;
-   "C GKOLICINA N 12 3 GKOLICINA B 8 8",;
-   "C GKOLICIN2 N 12 3 GKOLICIN2 B 8 8",;
-   "C FCJ N 18 8 FCJ B 8 8",;
-   "C FCJ2 N 18 8 FCJ2 B 8 8",;
-   "C FCJ3 N 18 8 FCJ3 B 8 8",;
-   "C RABAT N 18 8 RABAT B 8 8",;
-   "C PREVOZ N 18 8 PREVOZ B 8 8",;
-   "C PREVOZ2 N 18 8 PREVOZ2 B 8 8",;
-   "C BANKTR N 18 8 BANKTR B 8 8",;
-   "C SPEDTR N 18 8 SPEDTR B 8 8",;
-   "C CARDAZ N 18 8 CARDAZ B 8 8",;
-   "C ZAVTR N 18 8 ZAVTR B 8 8",  ;
-   "C MARZA N 18 8 MARZA B 8 8", ;
-   "C MARZA2 N 18 8 MARZA2 B 8 8", ;
-   "C RABATV N 18 8 RABATV B 8 8", ;
-   "C VPCSAP N 18 8 VPCSAP B 8 8", ;
-   "C VPC N 18 8 VPC Y 8 4",;
-   "C MPCSAPP N 18 8 MPCSAPP Y 8 4", ;
-   "D ROKTR D 8 0", ;
-   "D DATKURS D 8 0" ;
-})
-
+// 0.8.3
+if ver["current"] < 00803
+  for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
+    modstru( {"*" + _tbl, ;
+        "C KOLICINA N 12 3  KOLICINA B 8 8",;
+        "C GKOLICINA N 12 3 GKOLICINA B 8 8",;
+        "C GKOLICIN2 N 12 3 GKOLICIN2 B 8 8",;
+        "C FCJ N 18 8 FCJ B 8 8",;
+        "C FCJ2 N 18 8 FCJ2 B 8 8",;
+        "C FCJ3 N 18 8 FCJ3 B 8 8",;
+        "C RABAT N 18 8 RABAT B 8 8",;
+        "C PREVOZ N 18 8 PREVOZ B 8 8",;
+        "C PREVOZ2 N 18 8 PREVOZ2 B 8 8",;
+        "C BANKTR N 18 8 BANKTR B 8 8",;
+        "C SPEDTR N 18 8 SPEDTR B 8 8",;
+        "C CARDAZ N 18 8 CARDAZ B 8 8",;
+        "C ZAVTR N 18 8 ZAVTR B 8 8",  ;
+        "C MARZA N 18 8 MARZA B 8 8", ;
+        "C MARZA2 N 18 8 MARZA2 B 8 8", ;
+        "C RABATV N 18 8 RABATV B 8 8", ;
+        "C VPCSAP N 18 8 VPCSAP B 8 8", ;
+        "C VPC N 18 8 VPC Y 8 4",;
+        "C MPCSAPP N 18 8 MPCSAPP Y 8 4", ;
+        "D ROKTR D 8 0", ;
+        "D DATKURS D 8 0" ;
+    })
+ next
 endif
 
 

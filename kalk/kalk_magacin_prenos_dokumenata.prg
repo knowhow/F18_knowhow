@@ -230,7 +230,6 @@ do while .t.
                idkonto   with cidkonto,;
                idkonto2  with cidkonto2,;
                idzaduz2  with cidzaduz2,;
-               datkurs with fakt->datdok,;
                kolicina with fakt->kolicina,;
                idroba with fakt->idroba,;
                nc  with ROBA->nc,;
@@ -457,7 +456,6 @@ do while .t.
                idkonto   with cidkonto,;
                idkonto2  with cidkonto2,;
                idzaduz2  with cidzaduz2,;
-               datkurs with fakt->datdok,;
                kolicina with fakt->kolicina,;
                idroba with fakt->idroba,;
                nc  with ROBA->nc,;
@@ -646,7 +644,6 @@ DO WHILE .t.
                idkonto   with _id_konto,;
                idkonto2  with _id_konto_2,;
                idzaduz2  with _razduzuje,;
-               datkurs with fakt->datdok,;
                kolicina with fakt->kolicina,;
                idroba with fakt->idroba,;
                nc  with ROBA->nc,;

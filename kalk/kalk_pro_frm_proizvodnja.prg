@@ -94,7 +94,6 @@ if nRbr==1
                         datfaktp with _Datdok,;
                         idkonto   with _idkonto,;
                         idkonto2  with _idkonto2,;
-                        datkurs with _Datdok,;
                         kolicina with _kolicina*sast->kolicina,;
                         idroba with sast->id2,;
                         nc with 0,;
@@ -147,7 +146,6 @@ if nRbr==1
     endif
     select kalk_pripr
     go nTPriPrec
-    _DatKurs:=_DatFaktP
     if gNW<>"X"
         @ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
     endif

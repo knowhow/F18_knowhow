@@ -104,7 +104,6 @@ function Iz12u97()
       _brfaktp   := KALK->(idkonto+brfaktp)
       _datfaktp  := dDatDok
       _idpartner := cIdPartner
-      _datkurs   := dDatDok
 
       _fcj       := KALK->nc
       _fcj2      := KALK->nc
@@ -520,7 +519,6 @@ enddo
               datdok with dDok,;
               idtarifa with roba->idtarifa,;
               datfaktp with dDok,;
-              datkurs with dDok,;
               kolicina with nStanje,;
               idvd with "18", brdok with cBrNiv ,;
               rbr with STR(nRbr,3),;
@@ -716,7 +714,6 @@ function Iz96u16()
       _brfaktp   := KALK->(idkonto+brfaktp)
       _datfaktp  := dDatDok
       _idpartner := cIdPartner
-      _datkurs   := dDatDok
       _fcj       := KALK->nc
       _fcj2      := KALK->nc
       _tprevoz   := "A"
@@ -753,7 +750,6 @@ function Iz16u14()
   cIdPartner  := SPACE(LEN(kalk_pripr->idpartner))
   cBrFaktP    := SPACE(LEN(kalk_pripr->brfaktp))
   dDatFaktP   := CTOD("")
-  dDatKurs    := CTOD("")
 
   cPoMetodiNC := "N"
 
@@ -766,7 +762,6 @@ function Iz16u14()
     @ m_x+4, m_y+2 SAY "Broj fakture" GET cBrFaktP
     @ m_x+5, m_y+2 SAY "Datum fakture" GET dDatFaktP
     @ m_x+6, m_y+2 SAY "Kupac" GET cIdPartner VALID P_Firma(@cIdPartner)
-    @ m_x+7, m_y+2 SAY "Datum valute" GET dDatKurs
     READ; ESC_BCR
   BoxC()
 
@@ -793,7 +788,6 @@ function Iz16u14()
       _brfaktp   := cBrFaktP
       _datfaktp  := dDatFaktP
       _idpartner := cIdPartner
-      _datkurs   := dDatKurs
 
       _fcj       := KALK->nc
       _fcj2      := KALK->nc

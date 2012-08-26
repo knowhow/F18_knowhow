@@ -110,7 +110,6 @@ enddo
               datdok with dDok,;
               idtarifa with roba->idtarifa,;
               datfaktp with dDok,;
-              datkurs with dDok,;
               kolicina with nulaz-nizlaz,;
               idvd with "95", brdok with cBr95 ,;
               rbr with STR(nRbr,3),;
@@ -124,7 +123,6 @@ enddo
               datdok with dDok,;
               idtarifa with roba->idtarifa,;
               datfaktp with dDok,;
-              datkurs with dDok,;
               kolicina with -(nulaz-nizlaz),;
               idvd with "95", brdok with left(cBr95,5)+"/2" ,;
               rbr with STR(nRbr,3),;

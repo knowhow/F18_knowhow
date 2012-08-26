@@ -58,8 +58,8 @@ if !FILE(f18_ime_dbf(_alias))
     _created := .t.
 endif
 
-// 0.8.2
-if ver["current"] < 00802
+// 0.8.3
+if ver["current"] < 00803
   
   for each _tbl in { _table_name, "fakt_pripr" }
    modstru( {"*" + _tbl, ;

@@ -188,7 +188,6 @@ do while .t.
                		replace idzaduz  with cidzaduz
                		replace idkonto2  with cidkonto2
                		replace idzaduz2  with cidzaduz2
-               		replace datkurs with fakt->datdok
               		replace idroba with fakt->idroba
                		replace nc  with ROBA->nc
                		replace vpc with fakt->cijena
@@ -379,7 +378,6 @@ do while .t.
                idzaduz  with cidzaduz,;
                idkonto2  with cidkonto2,;
                idzaduz2  with cidzaduz2,;
-               datkurs with fakt->datdok,;
                kolicina with fakt->kolicina,;
                idroba with fakt->idroba,;
                nc  with ROBA->nc,;
@@ -556,7 +554,7 @@ Box(,15,60)
 					
 					nMPVBP:=MpcBezPor(fakt->(kolicina*cijena),aPorezi)
        					append blank
-					replace idfirma with cIdFirma,rbr with str(++nRbr,3),idvd with "41", brdok with cBrKalk, datdok with dDatKalk, idpartner with cIdPartner, idtarifa with ROBA->idtarifa,	brfaktp with fakt->brdok, datfaktp with fakt->datdok, idkonto with cidkonto, idzaduz with cidzaduz, datkurs with fakt->datdok, kolicina with fakt->kolicina, idroba with fakt->idroba, mpcsapp with fakt->cijena,	tmarza2 with "%"
+					replace idfirma with cIdFirma,rbr with str(++nRbr,3),idvd with "41", brdok with cBrKalk, datdok with dDatKalk, idpartner with cIdPartner, idtarifa with ROBA->idtarifa,	brfaktp with fakt->brdok, datfaktp with fakt->datdok, idkonto with cidkonto, idzaduz with cidzaduz, kolicina with fakt->kolicina, idroba with fakt->idroba, mpcsapp with fakt->cijena,	tmarza2 with "%"
 
 					
 					replace rabatv with ;
@@ -636,7 +634,6 @@ Box(,15,60)
 					replace datfaktp with fakt->datdok
 					replace idkonto with cIdKonto
 					replace idzaduz with cIdZaduz
-					replace datkurs with fakt->datdok
 					replace kolicina with fakt->kolicina
 					replace idroba with fakt->idroba
 					replace mpcsapp with fakt->cijena
@@ -787,7 +784,6 @@ do while .t.
                datfaktp with fakt->datdok,;
                idkonto   with cidkonto,;
                idzaduz  with cidzaduz,;
-               datkurs with fakt->datdok,;
                kolicina with fakt->kolicina,;
                idroba with fakt->idroba,;
                mpcsapp with fakt->cijena,;
@@ -935,7 +931,6 @@ do while .t.
                idzaduz  with cidzaduz2,;
                idkonto2  with cidkonto,;
                idzaduz2  with cidzaduz,;
-               datkurs with fakt->datdok,;
                kolicina with -fakt->kolicina,;
                idroba with fakt->idroba,;
                nc with fakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
@@ -957,7 +952,6 @@ do while .t.
                idzaduz  with cidzaduz,;
                idkonto2  with "XXX",;
                idzaduz2  with "",;
-               datkurs with fakt->datdok,;
                kolicina with fakt->kolicina,;
                idroba with fakt->idroba,;
                nc with fakt->cijena/(1+tarifa->opp/100)/(1+tarifa->ppp/100),;
@@ -1143,7 +1137,6 @@ do while .t.
                 mkonto    with cIdKonto2       ,;
                  mu_i      with "8"             ,;
                idzaduz2  with cidzaduz2       ,;
-               datkurs   with fakt->datdok   ,;
                kolicina  with -fakt->kolicina ,;
                idroba    with fakt->idroba   ,;
                nc        with ROBA->nc        ,;
@@ -1391,7 +1384,6 @@ Box(, 15, 60 )
 					replace datfaktp with fakt->datdok
 					replace idkonto with cidkonto
 					replace idzaduz with cidzaduz
-					replace datkurs with fakt->datdok
 					replace kolicina with fakt->kolicina
 					replace idroba with fakt->idroba
 					replace mpcsapp with fakt->cijena
@@ -1498,7 +1490,6 @@ Box(, 15, 60 )
 						endif
 
 					  	replace idzaduz with cIdZaduz
-					  	replace datkurs with fakt->datdok
 					  	replace kolicina with fakt->kolicina
 					  	replace idroba with fakt->idroba
 					  	replace mpcsapp with fakt->cijena

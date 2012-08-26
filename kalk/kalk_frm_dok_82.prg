@@ -26,7 +26,7 @@ set key K_ALT_K to KM2()
 if nRbr==1 .or. !fnovi
  @  m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-    valid {|| _DatKurs:=_DatFaktP,.t.}
+    valid {|| .t.}
  _IdZaduz:=""
  
  _Idkonto2:=""

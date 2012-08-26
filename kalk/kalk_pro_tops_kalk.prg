@@ -224,7 +224,6 @@ do while !eof() .and. xpos->idpos == cIdPos
 					replace idkonto with cIdkonto
 					replace idkonto2 with cIdkonto2
 					replace idzaduz2 with cIdzaduz2
-					replace datkurs with dDatKalk
 					replace kolicina with xpos->kolicina * sast->kolicina
 					replace idroba with sast->id2
 					replace nc with ROBA->nc

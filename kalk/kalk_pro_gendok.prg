@@ -114,7 +114,6 @@ do while .t.
                       idkonto   with cidkonto,;
                       idkonto2  with cidkonto2,;
                       idzaduz2  with cidzaduz2,;
-                      datkurs with dDatKalk,;
                       kolicina with kalk2->kolicina*sast->kolicina,;
                       idroba with sast->id2,;
                       nc  with ROBA->nc

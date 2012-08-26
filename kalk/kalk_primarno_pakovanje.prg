@@ -132,7 +132,6 @@ function NaPrimPak()
                   idzaduz    with ""             ,;
                   idkonto2   with ""             ,;
                   idzaduz2   with ""             ,;
-                  datkurs    with dDatKalk       ,;
                   nc         with nNC            ,;
                   mpc        with 0              ,;
                   tmarza2    with "A"            ,;
@@ -164,7 +163,6 @@ function NaPrimPak()
                   idzaduz    with ""                   ,;
                   idkonto2   with ""                   ,;
                   idzaduz2   with ""                   ,;
-                  datkurs    with dDatKalk             ,;
                   nc         with nUkNV/(nUlaz-nIzlaz) ,;
                   mpc        with 0                    ,;
                   tmarza2    with "A"                  ,;
@@ -303,7 +301,6 @@ function NaPrPak2()
                   idzaduz    with ""             ,;
                   idkonto2   with ""             ,;
                   idzaduz2   with ""             ,;
-                  datkurs    with dDatKalk       ,;
                   nc         with nNC            ,;
                   mpc        with 0              ,;
                   tmarza2    with "A"            ,;
@@ -335,7 +332,6 @@ function NaPrPak2()
                   idzaduz    with ""                   ,;
                   idkonto2   with ""                   ,;
                   idzaduz2   with ""                   ,;
-                  datkurs    with dDatKalk             ,;
                   nc         with nUkNV/(nUlaz-nIzlaz) ,;
                   mpc        with 0                    ,;
                   tmarza2    with "A"                  ,;

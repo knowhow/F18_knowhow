@@ -1296,7 +1296,6 @@ do while !EOF()
 		endif
 	endif
 	
-	replace datkurs with temp->datdok
 	replace kolicina with temp->kolicina
 	replace idroba with roba->id
 	replace nc with ROBA->nc

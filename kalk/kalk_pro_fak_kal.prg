@@ -241,7 +241,6 @@ do while .t.
                        idkonto   with cidkonto,;
                        idkonto2  with cidkonto2,;
                        idzaduz2  with cidzaduz2,;
-                       datkurs with dDatKalk,;
                        kolicina with fakt->kolicina*sast->kolicina,;
                        idroba with sast->id2,;
                        nc  with ROBA->nc,;
@@ -506,7 +505,6 @@ do while .t.
                                     idkonto   with cidkonto,;
                                     idkonto2  with cidkonto2,;
                                     idzaduz2  with cidzaduz2,;
-                                    datkurs with dDatKalk,;
                                     kolicina with fakt->kolicina*sast->kolicina,;
                                     idroba with sast->id2,;
                                     nc  with ROBA->nc,;
@@ -643,7 +641,6 @@ Box(,15,60)
                                 brfaktp with "",;
                                 datfaktp with dDatKalk,;
                                 idkonto   with cidkonto,;
-                                datkurs with dDatKalk,;
                                 idroba with fakt->idroba,;
                                 vpc with fakt->cijena,;
                                 rabatv with fakt->rabat,;

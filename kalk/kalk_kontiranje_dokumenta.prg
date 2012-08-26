@@ -335,8 +335,6 @@ do while !EOF()
           
                 if lDatFakt
                     dDFDok := finmat->DatFaktP
-                else
-                    dDFDok := finmat->DatKurs
                 endif
       
                 if gBaznaV == "P"
@@ -647,8 +645,7 @@ do while !EOF()
                      Rbr       with str(nRbr2,4),;
                      IdPartner with cIdPartner,;
                      Iznos    with nIz,;
-                     Iznos2   with round(nIz*Kurs(finmat->DatKurs),2),;
-                     DatKurs  with finmat->DatKurs,;
+                     Iznos2   with round(nIz,2),;
                      Cijena   with iif(nKol<>0,Iznos/nKol,0),;
                      U_I      with trmp->u_i,;
                      D_P      with trmp->u_i
@@ -1203,7 +1200,6 @@ do while .t.
         cIdPartner:=IdPartner
         cBrFaktP:=BrFaktP
         dDatFaktP:=DatFaktP
-        dDatKurs:=DatKurs
         cIdKonto:=IdKonto
         cIdKonto2:=IdKonto2
     
@@ -1352,7 +1348,6 @@ do while .t.
                 IdVD      with kalk_pripr->IdVD,;
                 BrDok     with kalk_pripr->BrDok,;
                 DatDok    with kalk_pripr->DatDok,;
-                DatKurs   with kalk_pripr->DatKurs,;
                 GKV       with round(kalk_PRIPR->(GKolicina*FCJ2),gZaokr),;   // vrijednost transp.kala
                 GKV2      with round(kalk_PRIPR->(GKolicin2*FCJ2),gZaokr)   // vrijednost ostalog kala
     

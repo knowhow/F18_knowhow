@@ -123,6 +123,13 @@ DO CASE
 
             _tmp := _a_dbf_rec["dbf_fields"][_i]
 
+            if !HB_HHASKEY(record, _tmp)
+                   _msg := "record " + op + " ne sadrzi " + _tmp + " field !?## pogledaj log !"
+                   log_write(_msg + " " + pp(record), 2)
+                   MsgBeep(_msg)
+                   RaiseError(_msg + " " + pp(record) )
+            endif
+
             if VALTYPE(record[_tmp]) == "N"
 
                    _tmp_2 := STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])

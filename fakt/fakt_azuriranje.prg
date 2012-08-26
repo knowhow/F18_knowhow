@@ -431,8 +431,8 @@ _fakt_data["brisano"] := SPACE(1)
 _fakt_data["idvrstep"] := field->idvrstep
 _fakt_data["datpl"] := field->datdok
 _fakt_data["idpm"] := field->idpm
-// 26.08.212 hernad: todo mislim da se moze izbrisati, ali necu sada jer ne razumijem logiku i svrhu ovog polja
-//_fakt_data["dok_veza"] := field->dok_veza
+
+_fakt_data["dok_veza"] := ""
 _fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )

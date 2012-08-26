@@ -36,11 +36,11 @@ if right(cSif,1)="." .and. len(csif)<=7
    	if lSpecifZips
      		_Txt3a:=TRIM(partn->id)+"- "+TRIM(LEFT(partn->naz,25))+" "+trim(partn->naz2)
    	else
-     		IF IzFMKINI("PoljeZaNazivPartneraUDokumentu","Prosiriti","N",KUMPATH)=="D"
-       			_Txt3a:=padr(partn->naz,60)
-     		ELSE
+     		//IF IzFMKINI("PoljeZaNazivPartneraUDokumentu","Prosiriti","N",KUMPATH)=="D"
+       		//	_Txt3a:=padr(partn->naz,60)
+     		//ELSE
        			_Txt3a:=padr(partn->naz,30)
-     		ENDIF
+     		//ENDIF
    	endif
 
    	_txt3b:=trim(partn->adresa)
@@ -204,7 +204,7 @@ IF USED()
 ENDIF
 select  roba
 
-if _idtipdok=="13" .and. ( gVar13=="2" .or. glCij13Mpc ) .or. _idtipdok=="19" .and. IzFMKIni("FAKT","19KaoRacunParticipacije","N",KUMPATH)=="D"
+if _idtipdok=="13" .and. ( gVar13=="2" .or. glCij13Mpc ) .or. _idtipdok=="19"
   IF g13dcij=="6"
     _cijena:=MPC6
   ELSEIF g13dcij=="5"
@@ -229,6 +229,7 @@ elseif _idtipdok$"11#15#27"
     _Cijena:=MPC
 
   elseif gMP=="2"
+      _Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100), VAL(IzFMKIni("FAKT","ZaokruzenjeMPCuDiskontu","2", KUMPATH)))
       _Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100), VAL(IzFMKIni("FAKT","ZaokruzenjeMPCuDiskontu","2", KUMPATH)))
   elseif gMP=="3"
     _Cijena:=MPC2
@@ -341,7 +342,8 @@ if _podbr<>" ."
       			if gMP=="1"
         			_Cijena:=MPC
       			elseif gMP=="2"
-        			_Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100),VAL(IzFMKIni("FAKT","ZaokruzenjeMPCuDiskontu","1",KUMPATH)))
+        			//_Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100),VAL(IzFMKIni("FAKT","ZaokruzenjeMPCuDiskontu","1",KUMPATH)))
+        			_Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100), 2)
       			elseif gMP=="3"
         			_Cijena:=MPC2
       			elseif gMP=="4"
@@ -1668,11 +1670,12 @@ if !fSilent
     Scatter()
 endif
 
-if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
-  _BrOtp:=space(50)
-else
+//if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
+//  _BrOtp:=space(50)
+//else
   _BrOtp:=space(8)
-endif
+//endif
+
 _DatOtp:=ctod(""); _BrNar:=space(8); _DatPl:=ctod("")
 
 _VezOtpr := ""
@@ -1778,7 +1781,7 @@ endif
  
 cPom := IzFMKINI("FAKT","Doks2opis","dodatnih podataka",KUMPATH)
 
-if Pitanje(,"Zelite li unos/ispravku "+cPom+"? (D/N)","N")=="N"
+if Pitanje( ,"Zelite li unos/ispravku " + cPom + "? (D/N)","N")=="N"
     SELECT(nArr)
     return
 endif

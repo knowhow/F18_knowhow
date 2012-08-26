@@ -24,7 +24,7 @@ function init_gui()
 public m_x := 0
 public m_y := 0
 
-public gNaslov  := "F18 " + F18_VER_DATE + "/ lib: " + FMK_LIB_VER
+public gNaslov  := "F18 " + F18_VER + " " + F18_VER_DATE + "/ lib: " + FMK_LIB_VER
 
 public gModul   := "F18"
 public gVerzija := F18_VER

@@ -15,6 +15,7 @@ function cre_all_fakt( ver )
 local aDbf
 local _alias, _table_name
 local _created
+local _tbl
 
 aDbf:={}
 AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
@@ -57,15 +58,16 @@ if !FILE(f18_ime_dbf(_alias))
     _created := .t.
 endif
 
-// 0.8.0
-if ver["current"] < 00800
+// 0.8.2
+if ver["current"] < 00802
   
-   altd()
-   modstru( {"*" + _table_name, ;
+  for each _tbl in { _table_name, "fakt_pripr" }
+   modstru( {"*" + _tbl, ;
    "C FISC_RN N 10 0 FISC_RN I 4 0",  ;
    "D OPIS C 120 0", ;
    "D DOK_VEZA C 150 0" ;
-  })
+    })
+  next
 
 endif
 

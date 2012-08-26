@@ -149,7 +149,7 @@ DO CASE
 
    CASE op == "D"
 
-          _ime_p :=upper(Rjec(@_lin))
+          _ime_p := upper(Rjec(@lin))
           _pos := ASCAN(new_stru, {|x| x[1]== _ime_p})
           if _pos<>0
                 log_write( "MODSTRU, brisem polje: " + _ime_p, 5 )
@@ -164,10 +164,10 @@ DO CASE
 
     CASE op == "C"
 
-          _ime_p :=upper (Rjec(@lin))
-          _tip := Rjec(@lin)
-          _len := VAL(Rjec(@lin))
-          _dec := VAL(Rjec(@lin))
+          _ime_p := upper (Rjec(@lin))
+          _tip :=   Rjec(@lin)
+          _len :=   VAL(Rjec(@lin))
+          _dec :=   VAL(Rjec(@lin))
            
           _pos := ASCAN(curr_stru, {|x| x[1]== _ime_p .and. x[2]== _tip .and. x[3]== _len .and. x[4]== _dec})
            if _pos ==0

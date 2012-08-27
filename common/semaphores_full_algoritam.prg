@@ -32,7 +32,6 @@ if f18_session()['id'] > 1
     return .f.
 endif
 
-log_write( "START full_synchro table: " + dbf_table, 3)
 
 if step_size == NIL
     step_size := 20000
@@ -48,7 +47,6 @@ nuliraj_ids_and_update_my_semaphore_ver(dbf_table)
 // 4) ja cu pokupiti 100 000 stavki a necu posljednjih 500
 // 3) ako nema transakcije ja cu pokupiti tu promjenu, sa transakcijom ja tu promjenu neću vidjeti
 
-sql_table_update(nil, "BEGIN")
 
 _sql_table  := "fmk." + dbf_table
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
@@ -64,9 +62,12 @@ Box(, 6, 70)
 
     @ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
 
-    _count := table_count( _sql_table, "true" ) 
-    _seconds := SECONDS()
+    sql_table_update(nil, "BEGIN")
+    _count := table_count( _sql_table, "true" )
 
+    log_write( "START full_synchro table: " + dbf_table + "/ sql count: " + ALLTRIM(STR(_count)), 3)
+    
+    _seconds := SECONDS()
 
     if _sql_fields == NIL
         _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
@@ -95,6 +96,18 @@ Box(, 6, 70)
         log_write( "STEP full_synchro tabela: " + dbf_table + " " + ALLTRIM(STR(_offset + step_size)) + " / " + ALLTRIM(STR(_count)), 7 )
     next
 
+    if log_level() > 6
+      _count := table_count( _sql_table, "true" )
+       log_write( "full_synchro sql (END transaction): " + dbf_table + "/ sql count: " + ALLTRIM(STR(_count)), 7)
+    endif
+
+    sql_table_update(nil, "END")
+ 
+    if log_level() > 6
+       _count := table_count( _sql_table, "true" )
+       log_write( "sql count nakon END transaction): " + dbf_table + "/ sql count: " + ALLTRIM(STR(_count)), 7)
+    endif
+
 BoxC()
 
 MsgO("Reindex nakon full sync: " + dbf_table)
@@ -105,7 +118,6 @@ MsgC()
 
 USE
 
-sql_table_update(nil, "END")
 log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + ALLTRIM(STR(_count)), 3 )
 
 

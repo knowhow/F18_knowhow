@@ -344,7 +344,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 		cC1 := fakt_pripr->c1
 		cC2 := fakt_pripr->c2
 		cC3 := fakt_pripr->c3
-		cOpis := fakt_pripr->opis
+		cOpis := ""
 	endif
 
 	// rn Veleprodaje
@@ -473,14 +473,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 
 	++ nCSum
 	
-	// planika treba sumarne kolicine na dokumentu
-	if IsPlanika()
-	  if roba->k2 <> "X"
-	  	nUkkol += nKol
-	  endif
-	else
-		nUkKol += nKol
-	endif
+    nUkKol += nKol
 	
 	
 	add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, cC1, cC2, cC3, cOpis )

@@ -62,7 +62,7 @@ Box(, 6, 70)
 
     @ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
 
-    sql_table_update(nil, "BEGIN")
+    run_sql_query("BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
     _count := table_count( _sql_table, "true" )
 
     log_write( "START full_synchro table: " + dbf_table + "/ sql count: " + ALLTRIM(STR(_count)), 3)
@@ -101,7 +101,7 @@ Box(, 6, 70)
        log_write( "full_synchro sql (END transaction): " + dbf_table + "/ sql count: " + ALLTRIM(STR(_count)), 7)
     endif
 
-    sql_table_update(nil, "END")
+    run_sql_query("COMMIT")
  
     if log_level() > 6
        _count := table_count( _sql_table, "true" )

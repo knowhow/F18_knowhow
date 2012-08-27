@@ -1,5 +1,9 @@
 1.3.3  2002-08-26, hernad
 
+ - full sync SERIABLE transaction
+
+1.3.3  2002-08-26, hernad
+
  - FAKT stampa dokumenta opis out
 
 1.3.2  2002-08-26, hernad

@@ -86,13 +86,13 @@ log_write( "sql table update, poceo", 9 )
 DO CASE
 
     CASE op == "BEGIN"
-        _qry := "BEGIN;"
+        _qry := "BEGIN"
 
-    CASE op == "END"
-        _qry := "COMMIT;" 
+    CASE (op == "END") .or. (op == "COMMIT")
+        _qry := "COMMIT" 
 
     CASE op == "ROLLBACK"
-        _qry := "ROLLBACK;"
+        _qry := "ROLLBACK"
 
     CASE op == "del"
 
@@ -188,12 +188,12 @@ if VALTYPE(qry) != "C"
     quit
 endif
 
-log_write( "run_sql_query(), qry: " + qry, 9 )
+log_write( "QRY OK: run_sql_query: " + qry, 9 )
 
 for _i := 1 to retry
 
     begin sequence with {|err| Break(err)}
-        _qry_obj := _server:Query(qry)
+        _qry_obj := _server:Query(qry + ";")
     recove
         log_write( "run_sql_query(), ajoj ajoj: qry ne radi !?!", 2 )
         my_server_logout()
@@ -232,15 +232,21 @@ return _qry_obj
 function _sql_query( oServer, cQuery )
 local oResult, cMsg
 
-oResult := oServer:Query( cQuery )
+oResult := oServer:Query( cQuery + ";")
+
 IF oResult:NetErr()
+
       cMsg := oResult:ErrorMsg()
-      log_write("_sql_query(), error qry: " + cQuery + "err msg:" + cMsg, 3 )
+      log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 3 )
       MsgBeep( cMsg )
       return .f.
+
 ELSE
-      log_write("_sql_query(), qry: " + cQuery, 9 )
+
+      log_write("QRY OK: _sql_query: " + cQuery, 9 )
+
 ENDIF
+
 RETURN oResult
 
 

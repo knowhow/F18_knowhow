@@ -81,7 +81,7 @@ log_write("stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
 //
 // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
 // ako se utvrti greska uradi full sync
-check_recno_and_fix(a_dbf_rec["table"], _cnt - _del, /*hernad debug*/ .f.)
+check_recno_and_fix(a_dbf_rec["table"], _cnt - _del, .t.)
 USE
 
 

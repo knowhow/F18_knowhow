@@ -25,7 +25,9 @@ function PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
 local cRet, cIdBK
 local _i
-local _komande := {"<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str("<c-T> Briši"), "<c-P> Print", "<F4>  Dupliciraj", _to_str("<c-F9> Briši SVE"), _to_str("<c-F> Traži"), "<a-S> Popuni kol.","<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka"}
+local _komande := {"<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str("<c-T> Briši"), "<c-P> Print", ;
+                   "<F4>  Dupliciraj", _to_str("<c-F9> Briši SVE"), _to_str("<c-F> Traži"), "<a-S> Popuni kol.",;
+                   "<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka"}
 local cUslovSrch :=  ""
 local cNazSrch
 
@@ -133,7 +135,7 @@ else
     // nisam ni ulazio u objdb
     if fID_J
         cId:=(nDBF)->id
-        __A_SIFV__[__PSIF_NIVO__,1]:= (nDBF)->ID_J
+        __A_SIFV__[__PSIF_NIVO__,1] := (nDBF)->ID_J
     endif
 
 endif

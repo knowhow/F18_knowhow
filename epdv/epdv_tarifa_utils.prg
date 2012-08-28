@@ -89,7 +89,8 @@ seek tar_id
 if !FOUND()
 
 	append blank
-	_rec["id"] := tar_id
+	_rec := dbf_get_rec()
+    _rec["id"] := tar_id
 	_rec["naz"] := naziv
 	_rec["opp"] := iznos
     update_rec_server_and_dbf( "tarifa", _rec, 1, "CONT" )

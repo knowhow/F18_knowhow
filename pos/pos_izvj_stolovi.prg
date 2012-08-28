@@ -103,7 +103,7 @@ aPom := {}
 do while !EOF() .and. pos_doks->idpos == gIdPos .and. pos_doks->idvd == "42" .and. pos_doks->zak_br == nZakBr
 	nStoBr := pos_doks->sto_br
 	++ nCnt
-	nTotal += VAL(DokIznos(.f.))
+	nTotal += VAL(pos_iznos_dokumenta(.f.))
 	cBrDok := ALLTRIM(pos_doks->brdok)
 	cDokumenti += cBrDok + ","
 	skip
@@ -392,7 +392,7 @@ aStolovi := {}
 do while !EOF() .and. pos_doks->zak_br == 0
 	nStoBr := pos_doks->sto_br
 	do while !EOF() .and. pos_doks->zak_br == 0 .and. pos_doks->sto_br == nStoBr
-		nTotal += VAL(DokIznos(.f.))
+		nTotal += VAL(pos_iznos_dokumenta(.f.))
 		skip
 	enddo
 	AADD(aStolovi, {nStoBr, nTotal})
@@ -571,7 +571,7 @@ nStanje := 0
 
 do while !EOF() .and. pos_doks->idpos == gIdPos .and. pos_doks->idvd == "42" .and. pos_doks->sto_br == nStoBr
 	if pos_doks->zak_br == 0
-		nStanje += VAL(DokIznos(.f.))
+		nStanje += VAL(pos_iznos_dokumenta(.f.))
 	endif
 	skip
 enddo

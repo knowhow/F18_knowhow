@@ -248,16 +248,10 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
 
     select ld
 
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-
     // obracun snimiti u sql bazu
     _vals := get_dbf_global_memvars()
-    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "FULL" )
     
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
-
     @ m_x+1,m_y+2 SAY ++nLjudi pict "99999"
 
 skip
@@ -414,16 +408,10 @@ for i:=1 to cLDPolja
 next
     select ld
 
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-
     // obracun snimiti u sql bazu
     _vals := get_dbf_global_memvars()
-    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "FULL" )
     
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
-
     @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
     skip
 enddo
@@ -562,16 +550,12 @@ for i:=1 to cLDPolja
 next
 select ld
 
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-
     // obracun snimiti u sql bazu
     _vals := get_dbf_global_memvars()
-    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
-    
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
 
+    // hernad: zadnji do koje sam stigao
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "FULL" )
+   
     @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
     skip
 enddo
@@ -660,20 +644,16 @@ do while !eof() .and.  cGodina==godina .and.  cmjesec=mjesec .and.;
 
 
  _USati:=0
- _UNeto:=0;_UOdbici:=0
- UkRadnik()  // filuje _USati,_UNeto,_UOdbici
+ _UNeto:=0
+ _UOdbici:=0
+
+ // filuje _USati,_UNeto,_UOdbici
+ UkRadnik()  
  _UIznos:=_UNeto+_UOdbici
 
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-
-    // obracun snimiti u sql bazu
     _vals := get_dbf_global_memvars()
-    update_rec_server_and_dbf( "ld_ld", _vals, 1, "CONT" )
+    update_rec_server_and_dbf( "ld_ld", _vals, 1, "FULL" )
     
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
-
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
  skip
 enddo

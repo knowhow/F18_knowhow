@@ -44,8 +44,13 @@ local _lin
 local _stru_changed := .f.
 local _curr_stru, _new_stru
 local _full_name
+local _msg
 
 close all
+
+Box(, 6, 65, .f., "DBF modstru")
+
+@ m_x + 1, m_y + 2 SAY "DBF modifikacija struktura"
 
 SET AUTOPEN OFF
 
@@ -67,11 +72,15 @@ for each _lin in a_commands
        // fin_budzet
        _ime_dbf := ALLTRIM(_lin)
 
-       log_write( "MODSTRU, ime fajla: " + _path + _ime_dbf, 5 )
 
        _full_name := _path + _ime_dbf + "." + DBFEXT       
        if file(_full_name)
            select 1
+
+           _msg := "START modstru: " + _path + _ime_dbf
+           log_write( _msg, 5 )
+           @ m_x + 3, m_y + 2 SAY _msg
+
            USE  (_path + _ime_dbf) ALIAS OLDDBF EXCLUSIVE
        else
            _ime_dbf := "*"
@@ -102,6 +111,9 @@ next
 
 kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
 
+log_write("END modstru ", 2)
+
+BoxC()
 SET AUTOPEN ON 
 close all
 return
@@ -149,13 +161,13 @@ DO CASE
 
    CASE op == "D"
 
-          _ime_p :=upper(Rjec(@_lin))
+          _ime_p := upper(Rjec(@lin))
           _pos := ASCAN(new_stru, {|x| x[1]== _ime_p})
           if _pos<>0
                 log_write( "MODSTRU, brisem polje: " + _ime_p, 5 )
-                ADEL (stru_new, _pos)
+                ADEL (new_stru, _pos)
                 // prepakuj array
-                Prepakuj(@_stru_new)  
+                Prepakuj(@new_stru)  
                 stru_changed := .t.
           else
                 log_write( "MODSTRU, greska: brisanje nepostojeceg polja, linija: " + _l, 5 )
@@ -164,10 +176,10 @@ DO CASE
 
     CASE op == "C"
 
-          _ime_p :=upper (Rjec(@lin))
-          _tip := Rjec(@lin)
-          _len := VAL(Rjec(@lin))
-          _dec := VAL(Rjec(@lin))
+          _ime_p := upper (Rjec(@lin))
+          _tip :=   Rjec(@lin)
+          _len :=   VAL(Rjec(@lin))
+          _dec :=   VAL(Rjec(@lin))
            
           _pos := ASCAN(curr_stru, {|x| x[1]== _ime_p .and. x[2]== _tip .and. x[3]== _len .and. x[4]== _dec})
            if _pos ==0
@@ -240,7 +252,8 @@ local _ext, _ime_old, _ime_new
 local _ime_p, _row, _path_2, _tmp
 local _ime_file, _ime_tmp, _ime_bak
 local _cdx_file
-local _f 
+local _f
+local _cnt 
 
 _f := path + ime_dbf + "."
 if brisi_dbf
@@ -292,11 +305,12 @@ if stru_changed
      
      select OLDDBF 
      
-     msgo("Vrsim modifikaciju, molimo pricekajte...")
 
+     @ m_x + 5, m_y + 2 SAY RECCOUNT()
      set order to 0
      go top
 
+     _cnt := 0
      do while !eof()
 
         select tmp
@@ -331,11 +345,15 @@ if stru_changed
         next
 
         select OLDDBF
+
+        ++ _cnt
+        if (_cnt % 5) == 0
+              @ m_x + 5, m_y + 15 SAY _cnt
+        endif
+
         skip
     
-    enddo 
-
-   msgc()
+    enddo
 
    close all
      

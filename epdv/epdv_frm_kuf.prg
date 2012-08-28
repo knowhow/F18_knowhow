@@ -263,8 +263,7 @@ do case
    case (Ch  == K_CTRL_F9)
    
         if Pitanje( ,"Zelite li izbrisati pripremu !!????","N") == "D"
-            //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nil, nil, nil, nil, "", "", pripr->idfirma+"-"+pripr->idvn+"-"+pripr->brnal, Date(), Date(), "", " KUF Brisanje pripreme ....")
-            zap
+            zapp()
             return DE_REFRESH
     endif
         return DE_CONT

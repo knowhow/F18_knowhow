@@ -34,7 +34,6 @@ nStr:=0
 cIdPartner:=IdPartner
 cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 
@@ -99,11 +98,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
     @ prow(),4 SAY  ""
     ?? idroba, trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
     
-/* niko ne koristi
-    if gRokTr=="D"
-    	?? space(4),"Rok Tr.:",RokTr
-    endif
- */  
  
     @ prow()+1,4 SAY IdTarifa+space(4)
     if cSamoObrazac == "D"

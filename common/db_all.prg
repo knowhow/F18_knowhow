@@ -272,40 +272,53 @@ function seek2(cArg)
 dbseek( cArg)
 return nil
 
-/*
-* markira za brisanje sve zapise u bazi
-*/
+// -------------------------------------------------------------------
+// brise sve zapise - ako jmarkira za brisanje sve zapise u bazi
+// ako je exclusivno otvorena - __dbZap, ako je shared, 
+// markiraj za deleted sve zapise
+//
+// - pack - prepakuj zapise
+// -------------------------------------------------------------------
 
-function zapp()
+function zapp(pack)
 local bErr
 
-if gReadonly 
-  return
+if pack == NIL
+  pack := .f.
 endif
 
-PushWa()
-
-bErr:=ERRORBLOCK({|o| MyErrH(o)})
+bErr := ERRORBLOCK({|o| MyErrH(o)})
 begin sequence
-   __dbzap()
+
+       log_write("ZAP exclusive: " + ALIAS(), 2)
+       __dbzap()
+       if pack
+          __dbpack()
+       endif
+
 recover
+
+       log_write("ZAP shared: " + ALIAS(), 2)
+       PushWa()
        do while .t.
+
           // neophodno, posto je index po kriteriju deleted() !!
           set order to 0 
           go top
           do while !eof()
-            sql_delete()
-            dbdelete2()
+            delete_with_rlock()
             skip
           enddo
 
        exit
        enddo
-end sequence
-bErr:=ERRORBLOCK(bErr)
+       PopWa()
 
-PopWa()
+end sequence
+bErr := ERRORBLOCK(bErr)
+
 return nil
+
 
 function nerr(oe)
 break oe

@@ -13,6 +13,7 @@
 #include "fmk.ch"
 
 static _f18_delphi_exe := "f18_delphirb.exe"
+static _f18_label_exe := "f18_labeliranje.exe"
 
 
 // ------------------------------------------------------------
@@ -23,15 +24,17 @@ static _f18_delphi_exe := "f18_delphirb.exe"
 // - table_index - naziv indeksa koji otvara tabelu
 // - test_mode .t. ili .f., default .f. - testni rezim komande
 // ------------------------------------------------------------
-function f18_rtm_print( rtm_file, table_name, table_index, test_mode )
+function f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
 local _cmd
 local _ok := .f.
 local _delphi_exe := "delphirb.exe"
+local _label_exe := "labeliranje.exe"
 local _util_path
 local _error
 
 #ifdef __PLATFORM__UNIX
 	_f18_delphi_exe := "delphirb"
+	_f18_label_exe := "labeliranje"
 #endif
 
 // provjera uslova
@@ -53,8 +56,12 @@ if ( test_mode == NIL )
     test_mode := .f.
 endif
 
+if ( rtm_mode == NIL )
+    rtm_mode := "drb"
+endif
+
 // provjeri treba li kopirati delphirb.exe ?
-if !copy_delphirb_exe()
+if !copy_delphirb_exe( rtm_mode )
     // sigurno ima neka greska... pa izadji
     return _ok
 endif
@@ -79,7 +86,12 @@ _cmd := ""
 	_cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #endif
 
-_cmd += _f18_delphi_exe
+if rtm_mode == "drb"
+    _cmd += _f18_delphi_exe
+else
+    _cmd += _f18_label_exe
+endif
+
 _cmd += " "
 _cmd += rtm_file
 _cmd += " "
@@ -114,7 +126,7 @@ endif
 // pozicioniraj se na home direktorij tokom izvrsenja
 DirChange( my_home() )
 
-log_write( "delphirb print, cmd: " + _cmd, 7 )
+log_write( "delphirb/label print, cmd: " + _cmd, 7 )
 
 _error := hb_run( _cmd )
     
@@ -133,10 +145,24 @@ return _ok
 // --------------------------------------------------
 // kopira delphirb.exe u home/f18_delphirb.exe
 // --------------------------------------------------
-static function copy_delphirb_exe()
+static function copy_delphirb_exe( mode )
 local _ok := .t.
 local _util_path
 local _drb := "delphirb.exe"
+local _lab := "labeliranje.exe"
+local _exe, _tmp
+
+if mode == NIL
+    mode := "drb"
+endif
+
+if mode == "drb"
+    _exe := _f18_delphi_exe
+    _tmp := _drb
+else
+    _exe := _f18_label_exe
+    _tmp := _lab
+endif
 
 // util path...
 #ifdef __PLATFORM__WINDOWS
@@ -147,13 +173,13 @@ local _drb := "delphirb.exe"
 #endif
 
 // kopiraj delphirb u home path
-if !FILE( my_home() + _f18_delphi_exe )
-    if !FILE( _util_path + _drb )
-        MsgBeep( "Fajl " + _util_path + _drb + " ne postoji !????" )
+if !FILE( my_home() + _exe )
+    if !FILE( _util_path + _tmp )
+        MsgBeep( "Fajl " + _util_path + _tmp + " ne postoji !????" )
         _ok := .f.
         return _ok
     else
-        FILECOPY( _util_path + "delphirb.exe", my_home() + _f18_delphi_exe )
+        FILECOPY( _util_path + "delphirb.exe", my_home() + _exe )
     endif
 endif
 

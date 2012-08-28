@@ -41,8 +41,6 @@ cSeek :=  cId + "09" + cNaz
 
 SEEK cSeek   
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
 if !FOUND()
     APPEND BLANK
     _rec := dbf_get_rec()
@@ -54,12 +52,10 @@ if !FOUND()
     _rec["duzina"] := 1
     _rec["veza"] := "1"
 
-    if !update_rec_server_and_dbf("sifk", _rec, 1, "CONT") 
+    if !update_rec_server_and_dbf("sifk", _rec, 1, "FULL") 
         delete_with_rlock()
     endif
 endif
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 return
 

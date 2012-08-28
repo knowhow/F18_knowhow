@@ -696,11 +696,7 @@ if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
     _rec["art_lab_de"] := cArt_lab_desc
     _rec["match_code"] := cArt_mcode
     
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
     set order to tag "1"
     set filter to &cDBFilter
@@ -837,7 +833,7 @@ if FOUND()
 
     _del_rec := dbf_get_rec()
 
-    my_use_semaphore_off()
+    f18_lock_tables({"articles", "elements", "e_att", "e_aops"})
     sql_table_update( nil, "BEGIN" )
 
     delete_rec_server_and_dbf( ALIAS(), _del_rec, 1, "CONT" )
@@ -886,9 +882,8 @@ if FOUND()
     
     enddo
  
+    f18_free_tables({"articles", "elements", "e_att", "e_aops"})
     sql_table_update( nil, "END" )
-    my_use_semaphore_on()
-
    
 endif
 
@@ -925,7 +920,7 @@ set order to tag "1"
 go top
 seek artid_str( nArt_id ) 
 
-my_use_semaphore_off()
+f18_lock_tables({"elements"})
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. field->art_id == nArt_id
@@ -958,8 +953,8 @@ do while !EOF() .and. field->art_id == nArt_id
     
 enddo
 
+f18_free_tables({"elements"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 return nArtNewid
 
@@ -1588,11 +1583,7 @@ if FOUND()
             _rec["art_full_d"] := cArt_full_desc
             _rec["art_lab_de"] := cArt_lab_desc
         
-            my_use_semaphore_off()
-            sql_table_update( nil, "BEGIN" )    
-            update_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
-            sql_table_update( nil, "END" )
-            my_use_semaphore_on()    
+            update_rec_server_and_dbf( "articles", _rec, 1, "FULL" )
         
             return 1
         
@@ -1663,11 +1654,7 @@ if lChange == .t.
     _rec["match_code"] := cArt_mcode
     _rec["art_full_d"] := cArt_full_desc
 
-    my_use_semaphore_off()            
-    sql_table_update( nil, "BEGIN" )
-    update_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
+    update_rec_server_and_dbf( "articles", _rec, 1, "FULL" )
 
     return 1
         

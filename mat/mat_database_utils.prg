@@ -147,7 +147,8 @@ return
 function brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
 local _del_rec
 
-my_use_semaphore_off()
+
+f18_lock_tables({"mat_suban", "mat_sint", "mat_anal", "mat_nalog"})
 sql_table_update( nil, "BEGIN" )
 
 select mat_suban
@@ -190,8 +191,8 @@ if FOUND()
     delete_rec_server_and_dbf( "mat_nalog", _del_rec, 1, "CONT" )
 endif
 
+f18_free_tables({"mat_suban", "mat_sint", "mat_anal", "mat_nalog"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 return
 
@@ -213,7 +214,8 @@ if reccount2()<>0
     return
 endif
 
-zap
+zapp()
+
 set order to
 index on idfirma+idkonto+idpartner+idroba to "PRIPTMP"
 GO TOP

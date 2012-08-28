@@ -319,11 +319,11 @@ O_PRENHH
 
 cIdKont:="2120   "
 nBrojac:=0
+
 // uvijek ponisti
 select prenhh
 set order to tag "1"
-zap
-__dbpack()
+zapp(.t.)
 
 O_SUBAN
 select suban

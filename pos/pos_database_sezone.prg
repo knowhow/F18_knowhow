@@ -337,15 +337,20 @@ endif
 return .t.
 *}
 
+// ---------------------------------
 //zapuj sav promet
+// ---------------------------------
+
 function zap_all_promet(cSezona)
 brisi_rupe_pdv17(cSezona)
 // zapuj pos
 O_POS
-zap
+zapp()
+
 // zapuj doks
 O_POS_DOKS
-zap
+zapp()
+
 // pakuj robu
 O_ROBA
 __dbpack()

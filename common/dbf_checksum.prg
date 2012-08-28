@@ -15,17 +15,23 @@
 // -------------------------------------------------
 function check_after_synchro(dbf_alias)
 
-check_recno(dbf_alias)
+// dummy funkcija do daljnjeg
 
 return .t.
 
 // ------------------------------------------
+// param full synchro - uradi full synchro
 // ------------------------------------------
-function check_recno(dbf_alias)
+function check_recno_and_fix(dbf_alias, cnt_dbf, full_synchro)
 local _cnt_sql, _cnt_dbf
 local _a_dbf_rec
 local _opened := .f.
 local _sql_table
+local _dbf, _udbf
+
+if full_synchro == NIL
+    full_synchro := .f.
+endif
 
 _a_dbf_rec :=  get_a_dbf_rec(dbf_alias)
 _sql_table :=  my_server_params()["schema"] + "." + _a_dbf_rec["table"]
@@ -33,33 +39,46 @@ _sql_table :=  my_server_params()["schema"] + "." + _a_dbf_rec["table"]
 _cnt_sql := table_count(_sql_table)
 
 begin sequence with { |err| Break(err) }
-  // pozicioniraj se po aliasu, a ne po workarea-i
-  SELECT (_a_dbf_rec["alias"])
-  USE 
+    // pozicioniraj se po aliasu, a ne po workarea-i
+    SELECT (_a_dbf_rec["alias"])
+    USE 
 recover
-  SELECT (_a_dbf_rec["wa"])
+    SELECT (_a_dbf_rec["wa"])
 end sequence
 
+_udbf := my_home() + _a_dbf_rec["table"]
 
 if !USED()
-    dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .t. , .f.)
+    dbUseArea( .f., DBFENGINE, _udbf, _a_dbf_rec["alias"], .t. , .f.)
+    if FILE(ImeDbfCdx(_udbf))
+        dbSetIndex(ImeDbfCDX(_udbf))
+    endif
+
     _opened := .t.
 endif   
 
-// ovo ne moze prikazuje i deleted zapise
-//_cnt_dbf := RECCOUNT()
-// hoce li ovo usporiti otvaranje za velike tabele ?! 
-COUNT TO _cnt_dbf 
+if cnt_dbf == NIL
+  // reccount() se ne moze iskoristiti jer prikazuje i deleted zapise
+  // count je vremenski skupa operacija za velike tabele !
+  COUNT TO _cnt_dbf 
+else
+  // dobili smo info o broju dbf zapisa
+  _cnt_dbf := cnt_dbf
+endif
+
+log_write( "broj zapisa dbf " + _a_dbf_rec["alias"] + ": " + ALLTRIM(STR(_cnt_dbf, 10)) + " / sql " + _sql_table + ": " + ALLTRIM(STR(_cnt_sql, 10)), 7 )
 
 if _cnt_sql <> _cnt_dbf
    
-    lock_semaphore(_a_dbf_rec["table"], "lock")
-
-    log_write( "ERR check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)), 2 )
+    log_write( "ERROR: check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)), 2 )
     
     // otvori ekskluzivno
     USE
-    dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)
+    _dbf := my_home() + _a_dbf_rec["table"]
+    dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
+    if FILE(ImeDbfCdx(_dbf))
+        dbSetIndex(ImeDbfCDX(_dbf))
+    endif
 
     _dbf_fields :=  _a_dbf_rec["dbf_fields"]
 
@@ -69,11 +88,12 @@ if _cnt_sql <> _cnt_dbf
         MsgBeep( _msg )
         QUIT
     else
-        full_synchro(_a_dbf_rec["table"], 15000)
+        if full_synchro
+            full_synchro(_a_dbf_rec["table"], 50000)
+        endif
     endif
 
     USE
-    lock_semaphore(_a_dbf_rec["table"], "free")
 endif
 
 if _opened

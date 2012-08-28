@@ -26,11 +26,8 @@ if gStolovi == "D"
     AADD(_opcexe,{|| g_zak_sto() })
 endif
 
-//AADD(opc,"3. promijeni nacin placanja")
-//AADD(opcexe,{|| PromNacPlac() })
-
 AADD(_opc,"2. pregled azuriranih racuna  ")
-AADD(_opcexe,{|| PrepisRacuna() })
+AADD(_opcexe,{|| pos_pregled_racuna(.f.) })
 
 AADD(_opc,"-------------------------------------------")
 AADD(_opcexe,{|| nil })

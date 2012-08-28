@@ -26,7 +26,7 @@ endif
 if nRbr==1 .or. !fnovi .or. gMagacin=="1"
  @  m_x+5,m_y+2   SAY "Dokument Broj:" get _BrFaktP
  @  m_x+5,col()+1 SAY "Datum:" get _DatFaktP   ;
-    valid {|| _DatKurs:=_DatFaktP,.t.}
+    valid {|| .t.}
  
  if is_uobrada()
     @ m_x+5, col()+1 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
@@ -71,7 +71,6 @@ else
  @  m_x+6,m_y+2   SAY "Dokument Broj: "; ?? _BrFaktP
  @  m_x+6,col()+2 SAY "Datum: "; ?? _DatFaktP
  _IdZaduz:=""
- _DatKurs:=_DatFaktP
  @ m_x+8,m_y+2 SAY "Magacinski konto razduzuje "; ?? _IdKonto2
  @ m_x+9,m_y+2 SAY "Konto zaduzuje "; ?? _IdKonto
  if gNW<>"X"
@@ -165,7 +164,7 @@ IF gVarEv=="1"
      ELSE
 
        MsgO("Racunam stanje na skladistu")
-        KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab, @_RokTr)
+        KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab)
        MsgC()
 
        @ m_x+12,m_y+30   SAY "Ukupno na stanju "; @ m_x+12,col()+2 SAY nKols pict pickol
@@ -195,11 +194,7 @@ IF gVarEv=="1"
           select roba
           _rec := dbf_get_rec()
           _rec["nc"] := _nc
-          my_use_semaphore_off()
-          sql_table_update( nil, "BEGIN" )
-          update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-          sql_table_update( nil, "END" )
-          my_use_semaphore_on()
+          update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
           select kalk_pripr // nafiluj sifrarnik robe sa nc sirovina, robe
          endif
        endif
@@ -355,7 +350,8 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 B_ON; I_ON
@@ -512,7 +508,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if roba->(fieldpos("KATBR"))<>0
        ?? " KATBR:", roba->katbr
     endif
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
     IF lPoNarudzbi
       IspisPoNar()
     ENDIF

@@ -12,10 +12,43 @@
 
 #define F18_F18_DEFINED
 
-#define INDEXEXT  "cdx"
-#define DBFEXT    "dbf"
-#define MEMOEXT   "fpt"
+/*
+
+// NTX
+#define NTX_INDICES
+#undef  CDX_INDICES
+
+
+#define INDEXEXT      "ntx"
+#define OLD_INDEXEXT  "cdx"
+#define DBFEXT        "dbf"
+#define MEMOEXT       "dbt"
+
+#define  INDEXEXTENS  "ntx"
+#define  MEMOEXTENS   "dbt"
+
+
+#define RDDENGINE "DBFNTX"
+#define DBFENGINE "DBFNTX"
+
+*/
+
+// CDX
+#define CDX_INDICES
+#undef NTX_INDICES
+#define INDEXEXT      "cdx"
+#define OLD_INDEXEXT  "ntx"
+#define DBFEXT        "dbf"
+#define MEMOEXT       "fpt"
+
+#define  INDEXEXTENS  "cdx"
+#define  MEMOEXTENS   "fpt"
+
+
 #define RDDENGINE "DBFCDX"
+#define DBFENGINE "DBFCDX"
+// CDX end
+
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1
 #define SEMAPHORE_LOCK_RETRY_NUM 50

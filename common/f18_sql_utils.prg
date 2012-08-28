@@ -17,7 +17,7 @@
 // => "id, naz"
 //
 function sql_fields(fields)
-local  _i, _sql_fields := ""	
+local  _i, _sql_fields := ""    
 
 if fields == NIL
    return NIL
@@ -51,6 +51,7 @@ local _len
 local _a_dbf_rec, _alg
 local _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
 
+
 if op $ "ins#del"
 
     if table == NIL
@@ -72,7 +73,6 @@ if op $ "ins#del"
     // uvijek je algoritam 1 nivo recorda
     _alg := _a_dbf_rec["algoritam"][1]
 
-
     if where_str == NIL
         if record <> NIL
             where_str := sql_where_from_dbf_key_fields(_alg["dbf_key_fields"], record)
@@ -81,17 +81,21 @@ if op $ "ins#del"
 
 endif
 
+log_write( "sql table update, poceo", 9 )
+
 DO CASE
-   CASE op == "BEGIN"
-        _qry := "BEGIN;"
 
-   CASE op == "END"
-        _qry := "COMMIT;" 
+    CASE op == "BEGIN"
+        _qry := "BEGIN"
 
-   CASE op == "ROLLBACK"
-        _qry := "ROLLBACK;"
+    CASE (op == "END") .or. (op == "COMMIT")
+        _qry := "COMMIT" 
 
-   CASE op == "del"
+    CASE op == "ROLLBACK"
+        _qry := "ROLLBACK"
+
+    CASE op == "del"
+
         if (where_str == NIL) .and. (record == NIL .or. (record["id"] == NIL))
             // brisi kompletnu tabel
             _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
@@ -119,8 +123,18 @@ DO CASE
 
             _tmp := _a_dbf_rec["dbf_fields"][_i]
 
+            if !HB_HHASKEY(record, _tmp)
+                   _msg := "record " + op + " ne sadrzi " + _tmp + " field !?## pogledaj log !"
+                   log_write(_msg + " " + pp(record), 2)
+                   MsgBeep(_msg)
+                   RaiseError(_msg + " " + pp(record) )
+            endif
+
             if VALTYPE(record[_tmp]) == "N"
+
                    _tmp_2 := STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
+                   
+
                    if LEFT(_tmp_2, 1) == "*"
                       _msg := "err_num_width - field: " + _tmp + "  value:" + ALLTRIM(STR(record[_tmp])) + " / width: " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][2])) + " : " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][3]))
                       log_write( _msg, 2 )
@@ -140,19 +154,19 @@ DO CASE
         
         _qry += ")"
 
-
 END CASE
    
 _ret := _sql_query( _server, _qry)
 
-log_write( "sql_table_update(), qry: " + _qry, 3 )
-log_write( "sql_table_update(), VALTYPE(_ret): " + VALTYPE(_ret), 3 )
+log_write( "sql table update, table: " + IF(table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8 )
+log_write( "sql table update, VALTYPE(_ret): " + VALTYPE(_ret), 9 )
+log_write( "sql table update, zavrsio", 9 )
 
 if VALTYPE(_ret) == "L"
-   // u slucaju ERROR-a _sql_query vraca  .f.
-   return _ret
+    // u slucaju ERROR-a _sql_query vraca  .f.
+    return _ret
 else
-   return .t.
+    return .t.
 endif
 
 
@@ -168,41 +182,46 @@ if retry == NIL
 endif
 
 if VALTYPE(qry) != "C"
-   _msg := "qry ne valja VALTYPE(qry) =" + VALTYPE(qry)
-   MsgBeep(_msg)
-   quit
+    _msg := "qry ne valja VALTYPE(qry) =" + VALTYPE(qry)
+    log_write( _msg, 2 )
+    MsgBeep(_msg)
+    quit
 endif
+
+log_write( "QRY OK: run_sql_query: " + qry, 9 )
 
 for _i := 1 to retry
 
-   log_write( "run_sql_query(), qry: " + qry, 2 )
-   begin sequence with {|err| Break(err)}
-       _qry_obj := _server:Query(qry)
-   recove
-      log_write( "run_sql_query(), ajoj ajoj: qry ne radi !?!", 2 )
-      my_server_logout()
-      hb_IdleSleep(0.5)
-      if my_server_login()
-         _server := my_server()
-      endif
-   end sequence
-
-   if _qry_obj:NetErr()
-       log_write("run_sql_query(), ajoj: " + _qry_obj:ErrorMsg(), 2 )
-       log_write("run_sql_query(), error na sljedecem upitu: " + qry, 2 )
-       my_server_logout()
-       hb_IdleSleep(0.5)
-       if my_server_login()
+    begin sequence with {|err| Break(err)}
+        _qry_obj := _server:Query(qry + ";")
+    recove
+        log_write( "run_sql_query(), ajoj ajoj: qry ne radi !?!", 2 )
+        my_server_logout()
+        hb_IdleSleep(0.5)
+        if my_server_login()
             _server := my_server()
-       endif
+        endif
+    end sequence
 
-       if _i == retry
-           MsgBeep("neuspjesno nakon " + to_str(retry) + "pokusaja !?")
-           QUIT
-       endif
-     else
-       _i := retry + 1
-     endif
+    if _qry_obj:NetErr()
+
+        log_write( "run_sql_query(), ajoj: " + _qry_obj:ErrorMsg(), 2 )
+        log_write( "run_sql_query(), error na sljedecem upitu: " + qry, 2 )
+
+        my_server_logout()
+        hb_IdleSleep(0.5)
+
+        if my_server_login()
+            _server := my_server()
+        endif
+
+        if _i == retry
+            MsgBeep("neuspjesno nakon " + to_str(retry) + "pokusaja !?")
+            QUIT
+        endif
+    else
+        _i := retry + 1
+    endif
 next
 
 return _qry_obj
@@ -213,15 +232,21 @@ return _qry_obj
 function _sql_query( oServer, cQuery )
 local oResult, cMsg
 
-oResult := oServer:Query( cQuery )
+oResult := oServer:Query( cQuery + ";")
+
 IF oResult:NetErr()
+
       cMsg := oResult:ErrorMsg()
-      log_write("_sql_query(), error qry: " + cQuery + "err msg:" + cMsg, 3 )
+      log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 3 )
       MsgBeep( cMsg )
       return .f.
+
 ELSE
-      log_write("_sql_query(), qry: " + cQuery, 7 )
+
+      log_write("QRY OK: _sql_query: " + cQuery, 9 )
+
 ENDIF
+
 RETURN oResult
 
 
@@ -238,11 +263,13 @@ local _msg
 
 _result := _server:Query( _qry )
 IF _result:NetErr()
-      _msg := _result:ErrorMsg()
-      log_write(_qry, 5)
-      log_write(_msg, 5)
-      MsgBeep( _msg )
-      return .f.
+    _msg := _result:ErrorMsg()
+    log_write( _qry, 2 )
+    log_write( _msg, 2 )
+    MsgBeep( _msg )
+    return .f.
+ELSE
+    log_write( "sql() set search path ok", 9 )
 ENDIF
 
 RETURN _result
@@ -263,7 +290,7 @@ if valtype(xVAR)="C"
      nStat:=0
      for ilok:=1 to len(xVar)
         cChar:=substr(xVar,ilok,1)
-	cChar2:="CHAR("+alltrim(str(asc(cChar)))+")"
+    cChar2:="CHAR("+alltrim(str(asc(cChar)))+")"
         if ASC(cChar)=39 .or. ASC(cChar)>127 // "'"
            if nStat=0
              cPom:=cChar2
@@ -274,21 +301,21 @@ if valtype(xVAR)="C"
            endif
            nStat:=2
         else
-	   // debug NULNULNUL
+       // debug NULNULNUL
            if ASC(cChar) == 0
-	   	cChar := " "
-	   endif
-	   
-	   if nStat=0
+        cChar := " "
+       endif
+       
+       if nStat=0
              cPom := "'" + cChar
            elseif nStat=1
-	     cPom:=cPom+cChar
+         cPom:=cPom+cChar
            else
              cPom:=cPom + "+'" + cChar
            endif
            
-	   nStat:=1
-	   
+       nStat:=1
+       
         endif
      next
      if nStat=0

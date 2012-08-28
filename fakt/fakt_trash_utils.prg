@@ -188,13 +188,13 @@ return
 // -------------------------------------------
 function bris_svo_smece()
 
-if Pitanje(,"Sigurno zelite izbrisati sve zapise?","N")=="N"
+if Pitanje( , "Sigurno zelite izbrisati sve zapise?","N")=="N"
 	return
 endif
 
 select fakt_pripr9
 go top
-zap
+zapp()
 
 nTArea := SELECT()
 
@@ -295,7 +295,7 @@ do while !EOF()
 enddo
 
 select fakt_pripr
-zap
+zapp()
 
 nTArea := SELECT()
 if Logirati(goModul:oDataBase:cName,"DOK","SMECE")

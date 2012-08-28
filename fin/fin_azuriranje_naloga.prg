@@ -155,29 +155,14 @@ _tbl_anal  := "fin_anal"
 _tbl_nalog := "fin_nalog"
 _tbl_sint  := "fin_sint"
 
-// -----------------------------------
-my_use_semaphore_off()
-
 Box(, 5, 60 )
 
 _tmp_id := "x"
   
-// ------------------------------------------------------------------
-// lock semaphores
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl_suban, "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_anal,  "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_sint,  "lock" )
-_ok := _ok .and. lock_semaphore( _tbl_nalog, "lock" )
-
-if _ok
-    sql_table_update(nil, "END")
-else
-    sql_table_update(nil, "ROLLBACK")
+if !f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.
 endif
-// end lock semaphores --------------------------------------------------
 
 sql_table_update( nil, "BEGIN" )
 
@@ -286,6 +271,7 @@ if !_ok
     // transakcija neuspjesna
     // server nije azuriran 
     sql_table_update(nil, "ROLLBACK" )
+    f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
 else
 
@@ -294,27 +280,13 @@ else
     push_ids_to_semaphore( _tbl_anal  , _ids_anal  )
     push_ids_to_semaphore( _tbl_nalog , _ids_nalog )
 
-    // suban  
-    update_semaphore_version( _tbl_suban , .t. )
-    update_semaphore_version( _tbl_anal  , .t. )
-    update_semaphore_version( _tbl_sint  , .t. )
-    update_semaphore_version( _tbl_nalog , .t. )
+    f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
     sql_table_update(nil, "END")
 
 endif
 
-// otkljucaj sve tabele
-sql_table_update(nil, "BEGIN")
-lock_semaphore(_tbl_suban, "free")
-lock_semaphore(_tbl_anal,  "free")
-lock_semaphore(_tbl_sint,  "free")
-lock_semaphore(_tbl_nalog, "free")
-sql_table_update(nil, "END")
-
 BoxC()
-
-my_use_semaphore_on()
 
 return _ok
 
@@ -521,13 +493,13 @@ select fin_pripr
 __dbpack()
 
 select PSUBAN
-zap
+zapp()
 select PANAL
-zap
+zapp()
 select PSINT
-zap
+zapp()
 select PNALOG
-zap
+zapp()
 close all
 
 return .t.
@@ -753,7 +725,7 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
             
             _rec_2 := dbf_get_rec()
             _rec_2["otvst"] := "9"
-            update_rec_server_and_dbf("fin_suban", _rec_2)
+            update_rec_server_and_dbf("fin_suban", _rec_2, 1, "FULL")
             SKIP
 
         enddo
@@ -1189,7 +1161,7 @@ Box(,2,50)
 
 @ m_x + 1, m_y + 2 SAY "Konvertovanje u toku... "
 
-my_use_semaphore_off()
+f18_lock_tables({LOWER(ALIAS())})
 sql_table_update( nil, "BEGIN" )
 
 nCnt := 0
@@ -1212,8 +1184,8 @@ do while !EOF()
 
 enddo
 
+f18_free_tables({LOWER(ALIAS())})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 BoxC()
 

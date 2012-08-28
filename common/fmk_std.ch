@@ -978,24 +978,6 @@
 #command SELECT <f>([<list,...>])       => dbSelectArea( <f>(<list>) )
 
 
-#command USE                            => dbCloseArea()
-
-#command USE <(db)>                                                     ;
-             [VIA <rdd>]                                                ;
-             [ALIAS <a>]                                                ;
-             [<new: NEW>]                                               ;
-             [<ro: READONLY>]                                           ;
-             [INDEX <(index1)> [, <(indexn)>]]                          ;
-                                                                        ;
-      =>  PreUseEvent(<(db)>,!(gInstall),gReadOnly)			;
-         ; dbUseArea(                                                    ;
-                    <.new.>, <rdd>,ToUnix(<(db)>), <(a)>,                      ;
-                     !(gInstall) , gReadOnly       ;
-                  )                                                     ;
-                                                                        ;
-      [; dbSetIndex( <(index1)> )]                                      ;
-      [; dbSetIndex( <(indexn)> )]
-
 #command USEXV <(db)>                                                   ;
              [VIA <rdd>]                                                ;
              [ALIAS <a>]                                                ;
@@ -1054,17 +1036,7 @@
       [; dbSetIndex( <(indexn)> )]
 
 
-
-
-
-
-
-
-
 #command APPEND BLANK    =>  appblank2()
-
-
-
 
 #command PACK            => Msg("PACK nedozvoljen !",15)
 

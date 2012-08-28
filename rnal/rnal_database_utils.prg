@@ -266,11 +266,7 @@ cIdField := "_" + cIdField
 
 _rec := get_dbf_global_memvars()        
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
         
 select (nTArea)
 
@@ -354,14 +350,14 @@ endif
 // - doc_ops
 
 // odmah zamjeni u tabeli docs, jer se na njoj nalazis
+
+f18_lock_tables({"docs", "doc_it", "doc_it2", "doc_ops"})
+sql_table_update( nil, "BEGIN" )
+
 if field->doc_no == old_doc
     _rec := dbf_get_rec()
     _rec["doc_no"] := _new_no
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
 	update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
 else
 	_repl := .t.
 endif
@@ -370,9 +366,6 @@ if _repl == .f.
 	msgbeep("Nisam nista zamjenio !!!")
 	return .f.
 endif
-
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
 
 // doc_it
 select doc_it
@@ -425,10 +418,8 @@ if FOUND()
 	enddo
 endif
 
-
+f18_free_tables({"docs", "doc_it", "doc_it2", "doc_ops"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
-
 
 return .t.
 

@@ -151,8 +151,8 @@ do while !EOF() .and. field->idkonto=cIdKonto .and. field->datdok <= dDatDo .and
 		@ 3+m_x, 2+m_y SAY "Suma += " + ALLTRIM(STR(nIznBhd))
 		
 		skip
-				
-		my_use_semaphore_off()
+		
+        f18_lock_tables({"fin_suban"})		
 		sql_table_update( nil, "BEGIN" )
 		
 		// ako je sljedeci nalog razlicit, updateuj postojeci sa sumom
@@ -183,8 +183,8 @@ do while !EOF() .and. field->idkonto=cIdKonto .and. field->datdok <= dDatDo .and
 
 		endif
 			
+        f18_free_tables({"fin_suban"})		
 		sql_table_update( nil, "END" )
-		my_use_semaphore_on()
 
 	enddo
 

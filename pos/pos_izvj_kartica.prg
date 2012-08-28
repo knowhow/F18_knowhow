@@ -257,27 +257,20 @@ do while !eof() .and. POS->IdOdj==cIdOdj
     endif
 
     if cPocSt=="N"
-	SELECT (cRSdbf)
-	HSEEK cIdRoba
-	nCijena1:=mpc
-	SELECT POS
+	    SELECT (cRSdbf)
+	    HSEEK cIdRoba
+	    nCijena1:=mpc
+	    SELECT POS
     	nStanje:=0
     	nVrijednost:=0
     	seek cIdOdj+cIdRoba+DTOS(cDat0)
     else
-      // stanje do
-      do while !eof() .and. POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba) .and. POS->Datum<cDat0
-      	if pos->idvd == VD_ZAD
-		if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
-			skip
-			loop
-		endif
-	endif	
-      
-	if !empty(cIdDio) .and. POS->IdDio<>cIdDio
-		skip
-		loop
-      	endif
+        // stanje do
+        do while !eof() .and. POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba) .and. POS->Datum<cDat0
+      	   	if !empty(cIdDio) .and. POS->IdDio<>cIdDio
+		        skip
+		        loop
+      	    endif
       	if (Klevel>"0" .and. pos->idpos="X") .or. (!empty(cIdPos) .and. IdPos<>cIdPos)
         	skip
 		loop
@@ -337,12 +330,6 @@ do while !eof() .and. POS->IdOdj==cIdOdj
     endif // cPocSt
 
     do while !eof().and.POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba).and.POS->Datum<=cDat1
-      	if pos->idvd == VD_ZAD
-		if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
-			skip
-			loop
-		endif
-	endif	
       
       if !empty(cIdDio).and.POS->IdDio<>cIdDio
       	skip

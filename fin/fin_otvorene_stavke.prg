@@ -363,7 +363,7 @@ if cPobSt=="D" .and. Pitanje(,"Zelite li zaista pobrisati markere ??","N")=="D"
 
     MsgO("Brisem markere ...")
 
-	my_use_semaphore_off()
+    f18_lock_tables({LOWER(ALIAS())})
 	sql_table_update( nil, "BEGIN" )
 
     DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
@@ -382,8 +382,8 @@ if cPobSt=="D" .and. Pitanje(,"Zelite li zaista pobrisati markere ??","N")=="D"
 
     ENDDO
 
+    f18_free_tables({LOWER(ALIAS())})
 	sql_table_update( nil, "END" )
-	my_use_semaphore_on()
 
     MSgC()
 
@@ -397,7 +397,7 @@ nC:=0
 seek cidfirma+cidkonto
 EOF CRET
 
-my_use_semaphore_off()
+f18_lock_tables({"fin_suban"})
 sql_table_update( nil, "BEGIN" )
 
 DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
@@ -437,8 +437,8 @@ DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
 
 ENDDO
 
+f18_free_tables({"fin_suban"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 if lLogAZat
 	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nDugBHD,nPotBHD,nC,nil,"","","F:"+cIdFirma+"- K:"+cIdKonto,Date(),Date(),"","Automatsko zatvaranje otvorenih stavki")
@@ -632,16 +632,10 @@ do case
             	_otv_st := " "
         	endif
       
-			my_use_semaphore_off()
-			sql_table_update( nil, "BEGIN" )
- 
         	_rec := dbf_get_rec()
         	_rec["otvst"] := _otv_st
-        	update_rec_server_and_dbf("fin_suban", _rec, 1, "CONT" )
+        	update_rec_server_and_dbf("fin_suban", _rec, 1, "FULL" )
 			
-			sql_table_update( nil, "END" )
-			my_use_semaphore_on()
-
         	if lLogRucZat
             	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cMark,"",Date(),Date(),"","Rucno zatvaranje otvorenih stavki")
         	endif
@@ -662,17 +656,11 @@ do case
         	_otv_st := " "
        	endif
 		
-		my_use_semaphore_off()
-		sql_table_update( nil, "BEGIN" )
- 
        	_rec := dbf_get_rec()
        	_rec["m1"] := _otv_st
        	
-		update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+		update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
 		
-		sql_table_update( nil, "END" )
-		my_use_semaphore_on()
-
       	nReti := DE_REFRESH
 
   	case Ch == K_F2
@@ -693,18 +681,13 @@ do case
 
      	if lastkey() <> K_ESC
 
-			my_use_semaphore_off()
-			sql_table_update( nil, "BEGIN" )
- 
         	_rec := dbf_get_rec()
             _rec["brdok"] := cBrDok
             _rec["opis"]  := cOpis
             _rec["datval"] := dDatVal
 
-            update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+            update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
 	
-			sql_table_update( nil, "END" )
-			my_use_semaphore_on()
 
      	endif
 
@@ -726,16 +709,10 @@ do case
      	else
         	if Pitanje(,"Zelite li da vezni broj "+ BrDok + " zamijenite brojem "+cPomBrDok+" ?","D") == "D"
 	
-				my_use_semaphore_off()
-				sql_table_update( nil, "BEGIN" )
- 
             	_rec := dbf_get_rec()
                 _rec["brdok"] := cPomBrDok
-                update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+                update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
 	
-				sql_table_update( nil, "END" )
-				my_use_semaphore_on()
-
             endif
      	endif
 
@@ -2020,11 +1997,7 @@ if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!"
             
 			IF !EOF()
 				_rec := dbf_get_rec()
-				my_use_semaphore_off()
-				sql_table_update( nil, "BEGIN" )
-				delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-				sql_table_update( nil, "END" )
-				my_use_semaphore_on()
+				delete_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
             ENDIF
             
 			select osuban
@@ -2040,11 +2013,7 @@ if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!"
             select suban
 			append blank
 			
-			my_use_semaphore_off()
-			sql_table_update( nil, "BEGIN" )
-			update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-			sql_table_update( nil, "END" )
-			my_use_semaphore_on()
+			update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
     		
 			select osuban
             skip

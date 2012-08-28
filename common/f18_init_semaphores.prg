@@ -19,64 +19,21 @@ static __dbf_pack_v1 := 700
 static __dbf_pack_v2 := 10
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
+
+// -------------------------------
+// -------------------------------
 function f18_init_semaphores()
-local _key
-local _f18_dbf
-local _temp_tbl
-
-_get_dbf_from_config()
-_f18_dbfs := f18_dbfs()
-
 
 if f18_session()['id'] > 1
    // child sesije ne osvjezavaju bazu
    return .t.
 endif
 
-for each _key in _f18_dbfs:Keys
 
-    _temp_tbl := _f18_dbfs[_key]["temp"]
-
-    if !_temp_tbl
-
-		_tbl_base := _table_base( _f18_dbfs[_key] )
-
-		// radi os/sii
-		if _tbl_base == "sii"
-			_tbl_base := "os"
-		endif
-
-		if !EMPTY( _tbl_base ) .and. f18_use_module( _tbl_base )
-			refresh_me( _f18_dbfs[_key] )
-		endif
-
-    endif
-
-next
+// prodji kroz aktivne dbf tabele
+iterate_through_active_tables({|dbf_rec| refresh_me(dbf_rec)})
 
 return .t.
-
-// -----------------------------------------
-// vratice osnovu naziva tabele
-// fakt_fakt -> fakt
-// fakt_doks -> fakt
-// -----------------------------------------
-static function _table_base( a_dbf_rec )
-local _table := ""
-local _sep := "_"
-local _arr
-
-
-if _sep $ a_dbf_rec["table"]
-	_arr := toktoniz( a_dbf_rec["table"], _sep )	
-	if LEN( _arr ) > 1
-		_table := _arr[1]
-	endif
-endif
-
-return _table
 
 
 // ----------------------------------------------------
@@ -87,24 +44,46 @@ local _dbf_pack_algoritam
 
 Box( "#Molimo sacekajte...", 7, 60)
 
+_msg_1 := "START refresh_me: " + a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
+@ m_x + 1, m_y + 2 SAY _msg_1
 
+
+// 1) sracunaj broj aktivnih zapisa u tabeli, koji su izbrisani
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)
+USE
 
-_msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 
-@ m_x + 1, m_y + 2 SAY _msg_1
 @ m_x + 2, m_y + 2 SAY _msg_2
 
-log_write( "refresh_me(), prije synchro " +  _msg_1 + " " + _msg_2, 5 )
 
+log_write( "stanje dbf " +  _msg_1 + " " + _msg_2, 8 )
+
+// 2) synchro
 SELECT (_wa)
-my_use( a_dbf_rec["alias"], a_dbf_rec["alias"], NIL, NIL, NIL, NIL, .t. )
-
+my_use(a_dbf_rec["alias"], a_dbf_rec["alias"])
 USE
- 
-// ponovo otvori nakon sinhronizacije
+
+// 3) ponovo otvori nakon sinhronizacije
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)
+USE
+
+_msg_1 := "nakon sync: " +  a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
+_msg_2 := "cnt = " + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
+
+@ m_x + 4, m_y + 2 SAY _msg_1
+@ m_x + 5, m_y + 2 SAY _msg_2
+
+log_write("stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
+
+
+// 4) uradi check i fix ako treba
+//
+// _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
+// ako se utvrti greska uradi full sync
+check_recno_and_fix(a_dbf_rec["table"], _cnt - _del, .t.)
+USE
+
 
 _msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
@@ -112,24 +91,26 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 @ m_x + 4, m_y + 2 SAY _msg_1
 @ m_x + 5, m_y + 2 SAY _msg_2
 
-
-log_write("refresh_me(), nakon synchro " +  _msg_1 + " " + _msg_2, 5 )
-
-USE
+log_write("END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
 
 if hocu_li_pack(_cnt, _del)
+    
     @ m_x + 7, m_y + 2 SAY "Pakujem tabelu radi brzine, molim sacekajte ..."
+    log_write( "PACK table " + a_dbf_rec["alias"], 2 )
 
+    SELECT (_wa)
+    my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
 
-   SELECT (_wa)
-   my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
+    PACK
 
-   PACK
-   USE
+    USE
+
 
 endif
 
 BoxC()
+
+return
 
 
 // ---------------------------------------------------------------------
@@ -141,18 +122,21 @@ my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
 
 set deleted off
 
-count to del for deleted()
+SET ORDER TO TAG "DEL"
+count to del
 cnt := reccount()
 
 USE
 set deleted on
+
 return
 
 
+
 // ------------------------------------------------------------
-// vraca informacije iz inija vezane za screen rezoluciju
+// vraca informacije o dbf parametrima
 // ------------------------------------------------------------
-static function _get_dbf_from_config()
+function get_dbf_params_from_config()
 local _var_name
 local _ini_params := hb_hash()
 

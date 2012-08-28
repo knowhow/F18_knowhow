@@ -596,7 +596,7 @@ endif
 
 my_use_temp( "TEMP77", my_home() + _table, .f., .t. )
 
-ZAP
+ZAPP()
 
 return
 
@@ -808,7 +808,7 @@ Postotak(1,RECCOUNT2(),"Azuriranje promjena na subanalitici",,,.t.)
   
 GO TOP
   
-my_use_semaphore_off()
+f18_lock_tables({"fin_suban", "fin_anal", "fin_sint"})		
 sql_table_update( nil, "BEGIN" )
 
 DO WHILE !EOF()
@@ -992,7 +992,7 @@ ENDDO
 Postotak(-1,,,,,.f.)
 
 select TEMP77  
-ZAP
+ZAPP()
 
 SELECT ANAL
 nZapisa := 0
@@ -1041,8 +1041,8 @@ ENDDO
   
 Postotak(-1,,,,,.t.)
 
+f18_free_tables({"fin_suban", "fin_anal", "fin_sint"})		
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 select TEMP77
 use

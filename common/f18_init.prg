@@ -12,6 +12,7 @@
 #include "fmk.ch"
 #include "hbgtinfo.ch"
 #include "hbcompat.ch"
+#include "dbinfo.ch"
 
 static __server := NIL
 static __server_params := NIL
@@ -54,7 +55,13 @@ static __log_level := 3
 // ---------------------------------
 function f18_init_app()
 
-REQUEST DBFCDX
+#ifdef NTX_INDICES
+   REQUEST DBFNTX
+   REQUEST DBFFPT
+#else
+  REQUEST DBFCDX
+  REQUEST DBFFPT
+#endif
 
 #ifdef __PLATFORM__WINDOWS
 
@@ -71,6 +78,11 @@ REQUEST DBFCDX
 #endif
 
 RDDSETDEFAULT( RDDENGINE )
+
+Set( _SET_AUTOPEN, .f.  )
+//Set( _SET_AUTOSHARE, 0  )
+//SET DBFLOCKSCHEME TO DB_DBFLOCK_HB32
+//SET DBFLOCKSCHEME TO DB_DBFLOCK_HB64 
 
 REQUEST HB_CODEPAGE_SL852 
 REQUEST HB_CODEPAGE_SLISO
@@ -326,6 +338,7 @@ goModul:setgvars()
 return
 
 // ------------------------------------------
+// kreira sve potrbne indekse
 // ------------------------------------------
 function repair_dbfs()
 local _ver

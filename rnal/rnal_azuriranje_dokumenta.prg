@@ -112,16 +112,16 @@ endif
 
 // sve je ok brisi pripremu
 select _docs
-zap
+zapp()
 
 select _doc_it
-zap
+zapp()
 
 select _doc_it2
-zap
+zapp()
 
 select _doc_ops
-zap
+zapp()
 
 use
 
@@ -156,13 +156,7 @@ if !FOUND()
     append blank
 endif
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-
-update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( "docs", _rec, 1, "FULL" )
         
 set order to tag "1"
 
@@ -185,7 +179,7 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
-my_use_semaphore_off()
+f18_lock_tables({LOWER(ALIAS())})
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. ( field->doc_no == nDoc_no )
@@ -204,8 +198,8 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
 enddo
 
+f18_free_tables({LOWER(ALIAS())})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 
 return
@@ -227,7 +221,7 @@ go top
 seek docno_str( nDoc_no )
 
 
-my_use_semaphore_off()
+f18_lock_tables({LOWER(ALIAS())})
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. ( field->doc_no == nDoc_no )
@@ -246,8 +240,8 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
 
 enddo
 
+f18_free_tables({LOWER(ALIAS())})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 
 return
@@ -270,7 +264,7 @@ go top
 seek docno_str( nDoc_no )
 
 
-my_use_semaphore_off()
+f18_lock_tables({LOWER(ALIAS())})
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. ( field->doc_no == nDoc_no )
@@ -291,8 +285,8 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     skip
 enddo
 
+f18_free_tables({LOWER(ALIAS())})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 
 return
@@ -378,18 +372,11 @@ seek docno_str( nDoc_no )
 
 if FOUND()
     
-    my_use_semaphore_off()
-    sql_table_update( nil, "BEGIN" )
-
     _rec := dbf_get_rec()
     _rec["doc_status"] := nMarker
  
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FREE" )
  
-    sql_table_update( nil, "END" )
-    my_use_semaphore_on()
-
-   
 endif
 
 select (nTArea)
@@ -569,14 +556,15 @@ return
 static function doc_erase( nDoc_no )
 local _del_rec
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-
 // DOCS
 select docs
 set order to tag "1"
 go top
 seek docno_str( nDoc_no )
+
+f18_lock_tables({"docs", "doc_it", "doc_it2", "doc_ops"})
+sql_table_update( nil, "BEGIN" )
+
 
 if FOUND()
     _del_rec := dbf_get_rec()
@@ -616,8 +604,8 @@ if FOUND()
     delete_rec_server_and_dbf( "doc_ops", _del_rec, 2, "CONT" )
 endif
 
+f18_free_tables({"docs", "doc_it", "doc_it2", "doc_ops"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 return
 

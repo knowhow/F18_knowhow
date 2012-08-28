@@ -30,7 +30,7 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2,aPorezi
 aPorezi:={}
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 B_ON
@@ -179,7 +179,7 @@ lVoSaTa := ( IzFmkIni("KALK","VodiSamoTarife","N",PRIVPATH)=="D" )
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 Naslov4x()
@@ -321,7 +321,6 @@ nStr:=0
 cIdPartner:=IdPartner
 cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 

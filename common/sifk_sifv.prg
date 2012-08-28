@@ -443,6 +443,7 @@ for _i := 1 to _numtok
     _sifv_rec["naz"] := get_sifv_naz(_tmp, sifk_rec) 
     _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
 
+    // zakljucavanje se desava u nadfunkciji
     update_rec_server_and_dbf("sifv", _sifv_rec, 1, "CONT")
 
 next
@@ -472,6 +473,7 @@ APPEND BLANK
 _sifv_rec["naz"] := get_sifv_naz(value, sifk_rec)
 _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
 
+// zakljucavanje se desava u nadfunkciji
 update_rec_server_and_dbf("sifv", _sifv_rec, 1, "CONT")
 
 return .t.
@@ -555,7 +557,7 @@ _alias := ALIAS()
 
 for _i := 1 to len(ime_kol)
    if LEFT(ime_kol[_i, 3], 6) == "SIFK->"
-     _field_b :=  MEMVARBLOCK( var_prefix + "Sifk_" + SUBSTR(ime_kol[_i, 3], 7))
+     _field_b :=  MEMVARBLOCK( var_prefix + "SIFK_" + SUBSTR(ime_kol[_i, 3], 7))
 
      if IzSifk( _alias, SUBSTR(ime_kol[_i, 3], 7), (_alias)->id) <> NIL
          USifk( _alias, SUBSTR(ImeKol[_i, 3], 7), (_alias)->id, EVAL(_field_b), transaction)

@@ -91,7 +91,8 @@ cPrefix:=IzFmkIni("Barkod","Prefix","", SIFPATH)
 cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
-ZAP
+zapp()
+
 SELECT KALK_PRIPR
 GO TOP
 
@@ -155,7 +156,6 @@ return
 /*! \fn KaEdPrLBK()
  *  \brief Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
  *  \sa KaLabelBKod()
- *  \todo spojiti KaLabelBKod i FaLabelBkod
  */
 
 function KaEdPrLBK()
@@ -226,7 +226,8 @@ cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
 cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
-ZAP
+zapp()
+
 SELECT fakt_pripr
 GO TOP
 do while !EOF()

@@ -706,6 +706,9 @@ endif
 
 return nErr
 
+
+
+
 // ------------------------------------------------
 // update broj fiskalnog racuna
 static function _update_fisc_rn( nFisc_no )
@@ -716,13 +719,11 @@ select pos_doks
 _rec := dbf_get_rec()
 _rec["fisc_rn"] := nFisc_no
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
+if !f18_lock_tables({"pos_pos", "pos_doks"})
+    return
+endif
 
-update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
 return
 

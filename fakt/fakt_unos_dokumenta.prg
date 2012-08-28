@@ -752,8 +752,6 @@ do while .t.
 
     _c1 := _c2 := _c3 := SPACE(20)
 
-    _opis := space(120)
-
     _n1:= 0
     _n2 := 0
     if edit_fakt_priprema(.t.) == 0

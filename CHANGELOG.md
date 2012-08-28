@@ -1,3 +1,27 @@
+1.3.3  2002-08-26, hernad
+
+ - full sync SERIABLE transaction
+
+1.3.3  2002-08-26, hernad
+
+ - FAKT stampa dokumenta opis out
+
+1.3.2  2002-08-26, hernad
+
+ - kalk datkurs -> out
+
+1.3.1  2002-08-26, hernad
+
+ - borba sa indeksima nakon full sync
+
+1.3.0  2002-08-26, hernad
+ 
+ - kalk_compress, fakt_compress, novi semaphore engine
+
+1.1.7  2002-08-24, hernad
+  
+ - branch 1.1
+
 1.1.6  2012-08-17, vsasa
 
  - fakt, štampa odt faktura od-do [#28910](http://redmine.bring.out.ba/issues/28910)

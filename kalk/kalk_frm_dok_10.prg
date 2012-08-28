@@ -21,7 +21,7 @@
  */
 
 function Get1_10()
-*{
+
 // ovim funkcijama je proslijedjen parametar fnovi kao privatna varijabla
 if nRbr==1 .and. fnovi
 	_DatFaktP:=_datdok
@@ -31,7 +31,6 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
 	@  m_x+6,m_y+2   SAY "DOBAVLJAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,6,22)
  	@  m_x+7,m_y+2   SAY "Faktura dobavljaca - Broj:" get _BrFaktP
  	@  m_x+7,col()+2 SAY "Datum:" get _DatFaktP
- 	_DatKurs:=_DatFaktP
  	@ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
  	if gNW<>"X"
   		@ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
@@ -90,15 +89,8 @@ select TARIFA
 hseek _IdTarifa  // postavi TARIFA na pravu poziciju
 select kalk_pripr  // napuni tarifu
 
-@ m_x+13+IF(lPoNarudzbi,1,0),m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
+@ m_x+13, m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
 
-if gRokTr=="D"
-	@ m_x+13+IF(lPoNarudzbi,1,0),col()+1 SAY "Rok trajanja" GET _RokTr
-endif
-
-if IsDomZdr()
-	@ m_x+14+IF(lPoNarudzbi,1,0),m_y+2 SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
-endif
 
 if fNovi
 	select ROBA
@@ -239,7 +231,6 @@ if nRbr==1  .or. !fnovi
  @  m_x+6,m_y+2   SAY "DOBAVLJAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,6,22)
  @  m_x+7,m_y+2   SAY "Faktura dobavljaca - Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP
- _DatKurs:=_DatFaktP
  @ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,24) pict "@!"
  if gNW<>"X"
   @ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
@@ -249,7 +240,6 @@ else
  @  m_x+6,m_y+2   SAY "DOBAVLJAC: "; ?? _IdPartner
  @  m_x+7,m_y+2   SAY "Faktura dobavljaca - Broj: "; ?? _BrFaktP
  @  m_x+7,col()+2 SAY "Datum: "; ?? _DatFaktP
- // @  m_x+8,m_y+2   SAY "Dat kursa: "; ?? _DatKurs ;
 
  @ m_x+10,m_y+2   SAY "Magacinski Konto zaduzuje ";?? _IdKonto
  if gNW<>"X"
@@ -349,7 +339,7 @@ if _kolicina<0  // storno
 nKolS:=0;nKolZN:=0;nc1:=nc2:=0; dDatNab:=ctod("")
  if !empty(gMetodaNC)
   MsgO("Racunam stanje na skladistu")
-  KalkNab(_idfirma,_idroba,_mkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+  KalkNab(_idfirma,_idroba,_mkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
   MsgC()
   @ m_x+12,m_y+30   SAY "Ukupno na stanju "; @ m_x+12,col()+2 SAY nkols pict pickol
  endif

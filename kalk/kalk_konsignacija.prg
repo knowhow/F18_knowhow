@@ -158,7 +158,6 @@ do while .t.
                idkonto   WITH cidkonto        ,;
                idkonto2  WITH cidkonto2       ,;
                idzaduz2  WITH cidzaduz2       ,;
-               datkurs   WITH fakt->datdok   ,;
                kolicina  WITH fakt->kolicina ,;
                idroba    WITH fakt->idroba   ,;
                fcj       WITH fakt->cijena   ,;

@@ -193,14 +193,13 @@ _tbl_anal  := "mat_anal"
 _tbl_nalog := "mat_nalog"
 _tbl_sint  := "mat_sint"
 
-lock_semaphore( _tbl_suban , "lock" )
-lock_semaphore( _tbl_anal  , "lock" )
-lock_semaphore( _tbl_sint  , "lock" )
-lock_semaphore( _tbl_nalog , "lock" )
-   
-if _ok = .t.
-  
-  MsgO("sql mat_suban")
+
+if !f18_free_tables({_tbl_suban, _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
+  MsgBeep("ERROR lock tabele")
+  return .f.
+endif
+
+MsgO("sql mat_suban")
   
   _record := hb_hash()
 
@@ -226,9 +225,8 @@ if _ok = .t.
   enddo
 
 
-  MsgC()
+MsgC()
 
-endif
 
 // idi dalje, na anal ... ako je ok
 if _ok == .t.
@@ -257,7 +255,7 @@ endif
 
 
 // idi dalje, na sint ... ako je ok
-if _ok = .t.
+if _ok == .t.
   
   MsgO("sql mat_sint")
 
@@ -284,7 +282,7 @@ endif
 
 
 // idi dalje, na nalog ... ako je ok
-if _ok = .t.
+if _ok == .t.
   
   MsgO("sql mat_nalog")
 
@@ -317,6 +315,7 @@ if ! _ok
 
     // vrati sve promjene...    
     sql_table_update(nil, "ROLLBACK" )
+    f18_free_tables({_tbl_suban, _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
 else
 
@@ -328,16 +327,7 @@ else
     push_ids_to_semaphore( _tbl_sint,  _ids_sint  )
     push_ids_to_semaphore( _tbl_nalog, _ids_nalog )
 
-    update_semaphore_version( _tbl_suban, .t.)
-    update_semaphore_version( _tbl_anal,  .t.)
-    update_semaphore_version( _tbl_sint,  .t.)
-    update_semaphore_version( _tbl_nalog, .t.)
-  
-    // otkljucaj sve tabele
-    lock_semaphore(_tbl_suban, "free")
-    lock_semaphore(_tbl_anal,  "free")
-    lock_semaphore(_tbl_sint,  "free")
-    lock_semaphore(_tbl_nalog, "free")
+    f18_free_tables({_tbl_suban, _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
     sql_table_update(nil, "END")
 

@@ -49,7 +49,6 @@ function storno_kalk_dokument()
       _brdok     := cBrDokI
       _datdok    := dDatDok
       _brfaktp   := TRIM(_BrFaktP)+"/STORNO"
-      _datkurs   := dDatDok
       _kolicina  := -_kolicina
       _error     := "0"
     Gather()

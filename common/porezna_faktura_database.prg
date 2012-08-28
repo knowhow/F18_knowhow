@@ -379,15 +379,15 @@ return
 function drn_empty()
 O_DRN
 select drn
-zap
+zapp()
 
 O_RN
 select rn
-zap
+zapp()
 
 O_DRNTEXT
 select drntext
-zap
+zapp()
 
 return
 
@@ -462,23 +462,8 @@ endif
 
 O_DOKSPF
 
-my_use_semaphore_off()
 
-// ------------------------------------------------------
-// lock semaphore
-sql_table_update(nil, "BEGIN")
-_ok := lock_semaphore( _tbl, "lock" )
-
-if _ok
-    sql_table_update(nil, "END")
-else
-    sql_table_update(nil, "ROLLBACK")
-    my_use_semaphore_on()
-    MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
-    return 
-endif
-    
-// ---end lock ---------------------------------------------
+f18_lock_tables({_tbl, "doks_pf"})
 
 sql_table_update( nil, "BEGIN" )
 
@@ -508,14 +493,10 @@ _rec["knaz"] := cKNaziv
 _rec["kadr"] := cKAdres
 _rec["kidbr"] := cKIdBroj
 
-update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT" )
+update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT", .f. )
 
+f18_free_tables({_tbl, "doks_pf"})
 sql_table_update( nil, "END" )
-
-// oslobodi lock
-lock_semaphore( _tbl, "free" )
-
-my_use_semaphore_on()
 
 return
 

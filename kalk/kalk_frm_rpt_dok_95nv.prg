@@ -24,7 +24,6 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs 
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 cIdZaduz2 := IdZaduz2

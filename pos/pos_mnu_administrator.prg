@@ -73,9 +73,6 @@ AADD(opcexe, {|| pos_parametri() })
 AADD(opc,"2. instalacija db-a")
 AADD(opcexe,{|| goModul:oDatabase:install()})
 
-AADD(opc, "3. generisi doks iz POS ")    
-AADD(opcexe, {|| pos_generisi_doks_iz_pos() })
-
 AADD(opc, "5. uzmi BARKOD iz sezone ")
 AADD(opcexe, {|| UzmiBkIzSez()})
 

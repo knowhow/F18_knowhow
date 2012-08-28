@@ -15,18 +15,18 @@
 
 
 function Get1_82()
-pIzgSt:=.f.   
+
+pIzgSt:=.f.  
+ 
 // izgenerisane stavke jos ne postoje
 //private cisMarza:=0
 
 set key K_ALT_K to KM2()
-if nRbr==1 .and. fnovi
-  _DatFaktP:=_datdok
-endif
+
 if nRbr==1 .or. !fnovi
  @  m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-    valid {|| _DatKurs:=_DatFaktP,.t.}
+    valid {|| .t.}
  _IdZaduz:=""
  
  _Idkonto2:=""
@@ -41,7 +41,6 @@ else
  @  m_x+7,m_y+2   SAY "Faktura Broj: "; ?? _BrFaktP
  @  m_x+7,col()+2 SAY "Datum: "; ?? _DatFaktP
  _IdZaduz:=""
- _DatKurs:=_DatFaktP
  _Idkonto2:=""
  @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
  if gNW<>"X"
@@ -123,7 +122,7 @@ if _TBankTr<>"X" .or. lPoNarudzbi   // ako je X onda su stavke vec izgenerisane
  ELSE
    if !empty(gMetodaNC)
     MsgO("Racunam stanje na skladistu")
-    KalkNab(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+    KalkNab(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
     MsgC()
    endif
    if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif

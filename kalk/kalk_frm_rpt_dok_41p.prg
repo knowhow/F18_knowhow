@@ -30,7 +30,7 @@ nStr := 0
 cIdPartner := IdPartner
 cBrFaktP := BrFaktP
 dDatFaktP := DatFaktP
-dDatKurs := DatKurs
+
 cIdKonto := IdKonto
 cIdKonto2 := IdKonto2
 

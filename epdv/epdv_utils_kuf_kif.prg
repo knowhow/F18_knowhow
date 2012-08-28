@@ -180,9 +180,9 @@ if !FLOCK()
 	 close all
 endif	 
 
-Box(,2, 35)
+Box( , 2, 35)
 
-my_use_semaphore_off()
+f18_lock_tables({_table})
 sql_table_update( nil, "BEGIN" )
 
 do while !eof()
@@ -199,8 +199,8 @@ do while !eof()
 
 enddo
 
+f18_free_tables({_table})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 BoxC()
 

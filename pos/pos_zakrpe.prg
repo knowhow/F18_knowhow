@@ -44,8 +44,8 @@ if Pitanje(,"Izbrisati DOKS - radnika '////'","N")=="D"
     set order to
     go top
     nCnt:=0
-    
-    my_use_semaphore_off()
+   
+    f18_lock_tables({"pos_doks"}) 
     sql_table_update( nil, "BEGIN" )
 
     do while !eof()
@@ -57,8 +57,8 @@ if Pitanje(,"Izbrisati DOKS - radnika '////'","N")=="D"
 	    skip
     enddo
 
+    f18_free_tables({"pos_doks"}) 
     sql_table_update( nil, "END" )
-    my_use_semaphore_on()
 
     MsgBeep( "Izbrisano " + STR( nCnt ) + " slogova" )
 

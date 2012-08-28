@@ -162,17 +162,88 @@ return .t.
 
 
 // ------------------------------------------------------
+// open exclusive, open_index - otvoriti index 
 // ------------------------------------------------------
-function reopen_exclusive(dbf_table)
+function reopen_shared(dbf_table, open_index)
+return reopen_dbf(.f., dbf_table, open_index)
+
+function reopen_exclusive(dbf_table, open_index)
+return reopen_dbf(.t., dbf_table, open_index)
+
+// ----------------------------------------------------
+// ----------------------------------------------------
+function reopen_dbf(excl, dbf_table, open_index)
 local _a_dbf_rec
+local _dbf
+
+if open_index == NIL
+  open_index := .t.
+endif
 
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 
 SELECT (_a_dbf_rec["wa"])
 USE
 
-// otvori ekskluzivno
-dbUseArea( .f., "DBFCDX", my_home() + _a_dbf_rec["table"], _a_dbf_rec["alias"], .f. , .f.)
+_dbf := my_home() + _a_dbf_rec["table"]
+
+// finalno otvaranje tabele
+SELECT (_a_dbf_rec["wa"])
+USE
+dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
+
+if open_index 
+
+   if FILE(ImeDbfCdx(_dbf))
+       dbSetIndex(ImeDbfCDX(_dbf))
+       return .t.
+   else
+
+       // indeksa nema
+       // prolazi kroz sve dbf-ove i kreira indekse
+       repair_dbfs()
+
+       // finalno otvaranje tabele
+       SELECT (_a_dbf_rec["wa"])
+       USE
+       dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
+
+   endif
+endif
+
+return .t.
+
+// ------------------------------------------------------
+// zap, then open shared, open_index - otvori index 
+// ------------------------------------------------------
+function reopen_exclusive_and_zap(dbf_table, open_index)
+local _a_dbf_rec
+local _dbf
+local _idx
+
+
+if open_index == NIL
+  open_index := .t.
+endif
+
+_a_dbf_rec  := get_a_dbf_rec(dbf_table) 
+
+SELECT (_a_dbf_rec["wa"])
+USE
+
+_dbf := my_home() + _a_dbf_rec["table"]
+_idx := ImeDbfCdx(_dbf)
+
+// otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
+SET AUTOPEN OFF
+dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
+// kod prvog otvaranja uvijek otvori index da i njega nuliram 
+
+if FILE(_idx)
+  dbSetIndex(_idx)
+endif
+
+__dbZap()
 
 return .t.
 

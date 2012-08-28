@@ -25,7 +25,8 @@ endif
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 ?
@@ -145,14 +146,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 	if lKoristitiBK .and. !EMPTY( roba->barkod )
 		?? ", BK: " + ROBA->barkod 
 	endif
-
-	if gRokTr=="D"
-		?? space(4), "Rok Tr.:", RokTr
-	endif
-    
-	IF lPoNarudzbi
-    	IspisPoNar()
-    ENDIF
 
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+35  SAY Kolicina             PICTURE PicCDEM

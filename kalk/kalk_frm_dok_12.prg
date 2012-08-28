@@ -25,7 +25,6 @@ if nRbr==1 .or. !fnovi
  @ m_x+6,m_y+2   SAY "Otpremnica - Broj:" get _BrFaktP
  @ m_x+6,col()+2 SAY "Datum:" get _DatFaktP
  _DatFaktP:=_datdok
- _DatKurs:=_DatFaktP
 
  @ m_x+8,m_y+2   SAY "Prodavnicki konto razduzuje " GET _IdKonto valid P_Konto(@_IdKonto,21, 5) pict "@!"
 
@@ -134,7 +133,7 @@ if _TBankTr<>"X" .or. lPoNarudzbi   // ako je X onda su stavke vec izgenerisane
       @ row(),col()+2 SAY IspisPoNar(,,.t.)
     else
       MsgO("Racunam stanje na skladistu")
-      KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,dDatNab,@_RokTr)
+      KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,dDatNab)
       MsgC()
       if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
       if gMetodaNC $ "13"; _fcj:=nc1; elseif gMetodaNC=="2"; _fcj:=nc2; endif

@@ -120,11 +120,13 @@ if Pitanje(,"Nulirati datoteke prenosa prije nastavka ?","D")=="D"
   O__PARTN
 
   select _fakt
-  zap
+  zapp()
+
   select _roba
-  zap
+  zapp()
+
   select _partn
-  zap
+  zapp()
 
   close all
   

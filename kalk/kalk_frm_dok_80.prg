@@ -54,7 +54,6 @@ if nRbr == 1 .or. !fnovi
 
     ESC_RETURN K_ESC
 
-    _DatKurs := _DatFaktP
 
 else
 
@@ -391,7 +390,7 @@ if _kolicina < 0
 
     if !EMPTY( gMetodaNC )
         MsgO("Racunam stanje u prodavnici")
-        KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab, @_RokTr ) 
+        KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab) 
         MsgC()
         @ x_kord, m_y + 30 SAY "Ukupno na stanju "
         @ x_kord, col() + 2 SAY nKols PICT pickol

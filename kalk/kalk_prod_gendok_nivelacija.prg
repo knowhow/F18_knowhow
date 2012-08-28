@@ -268,7 +268,6 @@ do while !eof()
  	_kolicina := nUlaz-nIzlaz
  	_datdok := dDatDok
 	_datfaktp := dDatDok
-	_datkurs := dDatDok
 	_MPCSaPP := nNivCijena - nStCijena
 	_MPC := 0
 	_fcj := nStCijena
@@ -599,7 +598,6 @@ do while !EOF() .and. cIdFirma + cPKonto == field->idFirma + field->pkonto
 	_kolicina := nUlaz-nIzlaz
 	_datdok := dDatDok
 	_datfaktp := dDatDok
-	_datkurs := dDatDok
 	//_MPCSaPP := nNivCijena - nStCijena
 	//_MPC := 0
 	_MPCSaPP := nCRazlsp

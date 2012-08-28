@@ -21,7 +21,8 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_10CPI
 B_ON
@@ -186,10 +187,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
-    IF lPoNarudzbi
-      IspisPoNar(.f.)
-    ENDIF
+    
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina*iif(idvd="15",-1,1)  PICTURE PicKol
     nC1:=pcol()+1
@@ -306,7 +304,8 @@ Private nPrevoz:=0,nCarDaz:=0,nZavTr:=0,nBankTr:=0,nSpedTr:=0,nMarza:=0,nMarza2:
 // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 P_10CPI
 B_ON
 if cidvd=="14".or.cidvd=="74"
@@ -345,10 +344,7 @@ aNiz:= { {"R."        , {|| rbr}      , .f., "C",  3, 0, 1, ++i},;
          {"mj."       , {|| "#"}      , .f., "C",  3, 0, 2,   i},;
          {"Tarifa"    , {|| PADC(ALLTRIM(idtarifa)+ROBA->tip,7)},;
                                         .f., "C",  7, 0, 1, ++i}  }
-IF gRokTr=="D"
- AADD(aNiz, {"Rok tr.", {|| roktr}         , .f., "D",  8, 0, 1, ++i} )
-ENDIF
-AADD(aNiz, {"Koli~ina", {|| kolicina}      , .f., "N", 12, 3, 1, ++i} )
+AADD(aNiz, {"Kolicina", {|| kolicina}      , .f., "N", 12, 3, 1, ++i} )
 AADD(aNiz, {"Nabavna" , {|| nc}            , .f., "N",  9, 2, 1, ++i} )
 AADD(aNiz, {"cijena"  , {|| "#"}           , .f., "C",  9, 0, 2,   i} )
 AADD(aNiz, {"Nabavna" , {|| nU4}           , .t., "N",  9, 2, 1, ++i} )

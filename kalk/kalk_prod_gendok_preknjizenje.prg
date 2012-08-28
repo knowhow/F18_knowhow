@@ -533,7 +533,6 @@ do while !eof() .and. cIdFirma+cPKonto==idfirma+pkonto .and. IspitajPrekid()
 				replace error with "0"
 				replace idTarifa with Tarifa(cPKonto, cIdRoba, @aPorezi)
 				replace datfaktp with dDatDo
-				replace datkurs with dDatDo
 				// promjeni predznak kolicine
 				replace kolicina with -(nUlaz-nIzlaz)
 				replace idvd with "80"
@@ -589,7 +588,6 @@ do while !eof() .and. cIdFirma+cPKonto==idfirma+pkonto .and. IspitajPrekid()
 			else
 				replace datdok with dDatDo
 			endif
-			replace datkurs with dDatDo
 			
 			replace idTarifa with Tarifa(cPKonto, cIdRoba, @aPorezi, cPrTarifa)
 			

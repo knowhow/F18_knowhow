@@ -14,7 +14,7 @@
 
 
 
-function KalkNabP(cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dDatNab, dRokTr)
+function KalkNabP(cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dDatNab)
 local npom,fproso
 local nIzlNV
 local nIzlKol
@@ -118,7 +118,6 @@ if gMetodaNc=="3"
              nSkinikol:=0
              dDatNab:=datdok
              nKolZN:=nSkiniKol
-//             dRoktr:=
              exit // uzeta je potrebna nabavka, izadji iz do while
            endif
 
@@ -158,7 +157,6 @@ if gMetodaNc == "1"
              nSkinikol:=0
              dDatNab:=datdok
              nKolZN:=nSkiniKol
-//             dRoktr:=
              exit // uzeta je potrebna nabavka, izadji iz do while
            endif
       endif
@@ -171,7 +169,6 @@ if gMetodaNc == "1"
              nSkinikol:=0
              dDatNab:=datdok
              nKolZN:=nSkiniKol
-//             dRoktr:=
              exit // uzeta je potrebna nabavka, izadji iz do while
            endif
     endif
@@ -477,16 +474,10 @@ endif
 select roba
 _rec := dbf_get_rec()
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-   
 _rec[ LOWER( cPom ) ] := nNovaVrijednost
 
-update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
- 
 select (nArr)
 return .t.
 
@@ -652,11 +643,7 @@ if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
      _vars := dbf_get_rec()
      _vars[cPom] := nNovaVrijednost
 
-	 my_use_semaphore_off()
-	 sql_table_update( nil, "BEGIN" )
-     update_rec_server_and_dbf("roba", _vars, 1, "CONT" )
-	 sql_table_update( nil, "END" )
-	 my_use_semaphore_on()
+     update_rec_server_and_dbf("roba", _vars, 1, "FULL" )
 
      select kalk_pripr
    endif
@@ -815,14 +802,8 @@ if round(nRVPC-_vpc,4)<>0  .and. gMagacin=="2"
       	select roba
 		_rec := dbf_get_rec()
 
-		my_use_semaphore_off()
-		sql_table_update( nil, "BEGIN" )
-
 		_rec[LOWER(cPom)] := _vpc
-		update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
-
-		sql_table_update( nil, "END" )
-		my_use_semaphore_on()
+		update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
       	select kalk_pripr
       	BoxC()
@@ -860,16 +841,15 @@ return .t.
 
 
 
-// KalkNab(cIdFirma,cIdRoba,cIdKonto,nKolicina,nKolZN,nNC,nSNC,dDatNab,dRokTr)
+// KalkNab(cIdFirma,cIdRoba,cIdKonto,nKolicina,nKolZN,nNC,nSNC,dDatNab)
 // param nNC - zadnja nabavna cijena
 // param nSNC - srednja nabavna cijena
 // param nKolZN - kolicina koja je na stanju od zadnje nabavke
 // param dDatNab - datum nabavke
-// param dRokTr - rok trajanja
 //  Racuna nabavnu cijenu i stanje robe u magacinu
 
 
-function KalkNab(cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDatNab, dRokTr)
+function KalkNab(cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDatNab)
 
 local nPom
 local fProso
@@ -995,7 +975,6 @@ if gMetodaNc=="3"
              nSkinikol:=0
              dDatNab:=datdok
              nKolZN:=nSkiniKol
-//             dRoktr:=
              exit // uzeta je potrebna nabavka, izadji iz do while
            endif
       endif

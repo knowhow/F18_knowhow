@@ -45,7 +45,6 @@ else
 
 endif
 
-_DatKurs:=_DatFaktP
 
 @ m_x+8,m_y+2   SAY "Prodavnicki Konto razduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
 
@@ -162,7 +161,7 @@ if ( ( _idvd<>"47" .or. ( IsJerry() .and. _idvd = "4" ) ) .and. roba->tip != "T"
             nc1:=0
             nc2:=0
             MsgO("Racunam stanje u prodavnici")
-            KalkNabP( _idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@_RokTr )
+            KalkNabP( _idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2)
             MsgC()
             if dDatNab > _DatDok
                 Beep(1)

@@ -144,7 +144,7 @@ local nTArea := SELECT()
 if is_doksrc()
 	o_p_doksrc(cPath)
 	select p_doksrc
-	zap
+	zapp()
 	select p_doksrc
 	use
 	select (nTArea)
@@ -300,7 +300,7 @@ do while !EOF()
 	
 	append blank
 	
-	update_rec_server_and_dbf( ALIAS(), _rec )
+	update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL")
 	
 	select p_doksrc
 	
@@ -310,7 +310,7 @@ enddo
 MsgC()
 
 select p_doksrc
-zap
+zapp()
 
 select p_doksrc
 use

@@ -552,8 +552,7 @@ do case
    case Ch == K_CTRL_F9
 
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N") == "D"
-            zap
-            __dbPack()
+            zapp(.t.)
             mat_brisi_pbaze()
         endif
 
@@ -893,11 +892,13 @@ O_MAT_PSINT
 O_MAT_PNALOG
 
 select mat_panal
-zap
+zapp()
+
 select mat_psint
-zap
+zapp()
+
 select mat_pnalog
-zap
+zapp()
 
 select mat_psuban
 set order to tag "2"
@@ -1014,16 +1015,16 @@ function mat_brisi_pbaze()
 PushWA()
   
 SELECT (F_MAT_PSUBAN)
-ZAP
+ZAPP()
   
 SELECT (F_MAT_PANAL)
-ZAP
+ZAPP()
   
 SELECT (F_MAT_PSINT)
-ZAP
+ZAPP()
   
 SELECT (F_MAT_PNALOG)
-ZAP
+ZAPP()
   
 PopWA()
 return nil
@@ -1125,11 +1126,7 @@ else   // tj. ako se radi o izlazu
   endif
 endif
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( "roba", _vars, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( "roba", _vars, 1, "FULL" )
 
 SELECT (nArr)
 return

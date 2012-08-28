@@ -12,8 +12,10 @@
 #include "fin.ch"
 #include "common.ch"
 
+
+
 // --------------------------------------------------------
-// sinhronizacija sa servera
+// get data from sql server, push to dbf
 // --------------------------------------------------------
 function update_dbf_from_server(table, algoritam)
 local _qry
@@ -28,7 +30,7 @@ local _fnd, _tmp_id
 local _count
 local _sql_tbl, _dbf_tbl
 local _offset
-local _step := 15000
+local _step := 50000
 local _retry := 3
 local _key_blocks := {} 
 local _key_block
@@ -41,62 +43,49 @@ local _ids_queries
 local _table
 local _a_dbf_rec
 
-
 _a_dbf_rec  := get_a_dbf_rec(table)
-
 _dbf_fields := _a_dbf_rec["dbf_fields"]
 _sql_fields := sql_fields( _dbf_fields )
-
 _sql_order  := _a_dbf_rec["sql_order"]
-
 _dbf_wa     := _a_dbf_rec["wa"]
 _dbf_alias  := _a_dbf_rec["alias"]
-
 _sql_tbl    := "fmk." + table
 
 _x := maxrows() - 15
 _y := maxcols() - 20
 
 if algoritam == NIL
-   algoritam := "FULL"
+    algoritam := "FULL"
 endif
 
 _seconds := SECONDS()
 
+log_write( "update_dbf_from_server(), poceo", 9 )
+
 if algoritam == "FULL"
 
-    SELECT (_dbf_wa)
-    my_usex (_dbf_alias, table, .f., "SEMAPHORE")
-    nuliraj_ids(table )
+    log_write( "update_dbf_from_server(), iniciraj full synchro", 8 )
+
+    // full synchro ne treba otvorenu tabelu, on je ionako zapuje
     full_synchro (table, _step)
-    update_semaphore_version( table, .f., .f. )
 
 else
 
-    if lock_semaphore(table, "lock")
- 
-        SELECT (_dbf_wa)
-        my_usex (_dbf_alias, table, .f., "SEMAPHORE")
+    log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
 
-        //mi sa SQL transakcijom nista ne dobijamo
-        // s obzirom da nasa aplikacija koristi nas lock-free mehanizam
-        // cak sta vise transakcija nam smeta da ostali useri "vide" da smo 
-        // zakljucali tabelu
-        //sql_table_update(nil, "BEGIN")
-        
-        ids_synchro  (table)
-        lock_semaphore(table, "free")
-        update_semaphore_version(table, .f.)
-        //sql_table_update(nil, "END")
-    else
-        //sql_table_update(nil, "ROLLBACK")
-    endif
+    // samo otvori tabelu da je ids_synchro moze napuniti
+    SELECT (_dbf_wa)
+    my_use (_dbf_alias, table, .f., "SEMAPHORE")
+
+    ids_synchro  (table)
 
 endif
 
 USE
 
-log_write( table + " synchro cache: " + STR(SECONDS() - _seconds), 3 )
+log_write( "update_dbf_from_server(), table: " + table + " synchro cache: " + STR(SECONDS() - _seconds), 5 )
+
+log_write( "update_dbf_from_server(), zavrsio", 9 )
 
 return .t. 
 

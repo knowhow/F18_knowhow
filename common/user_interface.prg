@@ -24,7 +24,7 @@ function init_gui()
 public m_x := 0
 public m_y := 0
 
-public gNaslov  := "F18 " + F18_VER_DATE + "/ lib: " + FMK_LIB_VER
+public gNaslov  := "F18 " + F18_VER + " " + F18_VER_DATE + "/ lib: " + FMK_LIB_VER
 
 public gModul   := "F18"
 public gVerzija := F18_VER
@@ -343,9 +343,7 @@ nLen := Len(cText)
 
 msg_x1:=8
 msg_x2:=14
-// hernad
-//msg_y1:=( MAXCOLS() - 1 - nLen - 7 )/2
-//msg_y2:= MAXCOLS() - 1 - msg_y1
+
 msg_y1:=( MAXCOLS()  - nLen - 7 )/2
 msg_y2:= MAXCOLS() - msg_y1
 
@@ -1542,7 +1540,7 @@ if fBox
     DISPBox(5 ,0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE + "±", INVERT)
 endif
 
-@ 3,1 SAY PADC(gNaslov + ' Ver.' + gVerzija, MAXCOLS()-8) COLOR NORMAL
+@ 3,1 SAY PADC(gNaslov, MAXCOLS()-8) COLOR NORMAL
 return
 
 
@@ -1555,7 +1553,7 @@ public  Normal
 public  Blink
 public  Nevid
 
-if TYPE("gFKolor")<>"C"
+if TYPE("gFKolor") <> "C"
     gFKolor:="D"
 endif
 

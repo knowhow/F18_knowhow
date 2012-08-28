@@ -534,11 +534,7 @@ if isugovori()
         if FOUND() .and. field->idpartner == cPart
             _rec := dbf_get_rec()
             _rec["dat_l_fakt"] := DATE()
-            my_use_semaphore_off()
-            sql_table_update( nil, "BEGIN" )
-            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "CONT" )
-            sql_table_update( nil, "END" )
-            my_use_semaphore_on()
+            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL" )
         endif
         
     endif
@@ -588,52 +584,25 @@ return nSelected
 
 
 // ----------------------------------------------------------------
-// vraca vezu dokumenta
+// vraca vezu dokumenta iz fakt_doks->dok_veza
 // ----------------------------------------------------------------
-function g_d_veza( cIdFirma, cTipDok, cBrDok, cDok_veza, cTxt )
-local _open_fakt := .f.
+function g_d_veza( cIdFirma, cTipDok, cBrDok)
 local cVeza := ""
-local lDok_veza := .f.
+
+if (cIdFirma == NIL) .and. (cTipDok == NIL) .and. (cBrDok == NIL)
+   // pretpostavka je da se vec nalazimo pozicionirani na fakt
+   return fakt->dok_veza
+endif
 
 PushWa()
 
-if cTxt == nil
-    cTxt := ""
-endif
+SELECT fakt_doks
+SET ORDER TO TAG "1"
 
-if fakt_doks->(FIELDPOS("DOK_VEZA")) <> 0
-    lDok_veza := .t.
-endif
+SEEK cIdFirma + cTipDok + cBrDok
 
-if lDok_veza .and. !EMPTY( cDok_veza )
-    // uzmi iz polja dok_veza
-    cVeza := ALLTRIM( cDok_veza )
-else
-    
-    if EMPTY( cTxt )
-
-        // uzmi iz fakt->memo polja broj veze
-        SELECT F_FAKT
-        if !USED()
-            _open_fakt := .t.
-            O_FAKT
-        endif
-
-        SEEK cIdFirma + cTipDok + cBrDok
-        cTxt := field->txt
-
-        if _open_fakt 
-               USE
-        endif
-
-    endif
-
-    aTemp := ParsMemo( cTxt )
-    if LEN( aTemp ) >= 19
-        cVeza := ALLTRIM( aTemp[19] )
-    else
-        cVeza := ""
-    endif
+if FOUND()
+ cVeza := fakt_doks->dok_veza
 endif
 
 PopWa()
@@ -653,8 +622,7 @@ private Opc:={}
 private opcexe:={}
 private Izbor
 
-cTmp := g_d_veza( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, ;
-    doks->dok_veza )
+cTmp := g_d_veza()
 
 if EMPTY( cTmp )
     msgbeep("Nema definisanih veznih dokumenata !")
@@ -801,17 +769,12 @@ do case
     
     if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
 
-        my_use_semaphore_off()
-        sql_table_update( nil, "BEGIN" )
-
         _rec := dbf_get_rec()
         _rec["fisc_rn"] := nFiscal
         _rec["fisc_st"] := nRekl
 
-        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
 
-        sql_table_update( nil, "END" )
-        my_use_semaphore_on()
 
         return DE_REFRESH
     endif

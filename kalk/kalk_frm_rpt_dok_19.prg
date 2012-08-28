@@ -13,14 +13,6 @@
 #include "kalk.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
- 
-
 /*! \file fmk/kalk/prod/dok/1g/rpt_19.prg
  *  \brief Stampa dokumenta tipa 19
  */
@@ -42,7 +34,6 @@ nStr:=0
 cIdPartner:=IdPartner
 cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 
@@ -184,7 +175,6 @@ nStr:=0
 cIdPartner:=IdPartner
 cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 

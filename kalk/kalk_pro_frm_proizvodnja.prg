@@ -94,7 +94,6 @@ if nRbr==1
                         datfaktp with _Datdok,;
                         idkonto   with _idkonto,;
                         idkonto2  with _idkonto2,;
-                        datkurs with _Datdok,;
                         kolicina with _kolicina*sast->kolicina,;
                         idroba with sast->id2,;
                         nc with 0,;
@@ -116,7 +115,7 @@ if nRbr==1
                         // ako je X onda su stavke vec izgenerisane
                         if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
                             MsgO("Racunam stanje na skladistu")
-                            KalkNab(_idfirma,sast->id2,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+                            KalkNab(_idfirma,sast->id2,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
                             MsgC()
                         endif
                         if dDatNab>_DatDok
@@ -128,11 +127,7 @@ if nRbr==1
                                 select roba
                                 _rec := dbf_get_rec()
                                 _rec["nc"] := _nc
-                                my_use_semaphore_off()
-								sql_table_update( nil, "BEGIN" )
-								update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-								sql_table_update( nil, "END" )
-                                my_use_semaphore_on()
+								update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
                                 select kalk_pripr 
                                 // nafiluj sifrarnik robe sa nc sirovina, robe
                             endif
@@ -151,7 +146,6 @@ if nRbr==1
     endif
     select kalk_pripr
     go nTPriPrec
-    _DatKurs:=_DatFaktP
     if gNW<>"X"
         @ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
     endif
@@ -189,7 +183,7 @@ if nRbr<>1  // sirovine
         // ako je X onda su stavke vec izgenerisane
         if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
             MsgO("Racunam stanje na skladistu")
-                KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+                KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
             MsgC()
         endif
         if dDatNab>_DatDok

@@ -484,7 +484,7 @@ msgc()
 
 // pobrisi na kraju kalk_pripremu
 select kalk_pripr
-zap
+zapp()
 
 return
 

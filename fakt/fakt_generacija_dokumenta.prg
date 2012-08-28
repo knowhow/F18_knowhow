@@ -342,7 +342,7 @@ Box(, 20, 75 )
 
     seek _firma + _otpr_tip
 
-    my_use_semaphore_off()
+    f18_lock_tables({LOWER(ALIAS())})
     sql_table_update( nil, "BEGIN" )
 
     do while !EOF() .and. field->idfirma + field->idtipdok = _firma + _otpr_tip
@@ -354,8 +354,8 @@ Box(, 20, 75 )
         skip
     enddo
 
+    f18_free_tables({LOWER(ALIAS())})
     sql_table_update( nil, "END" )
-    my_use_semaphore_on()
 
     seek _firma + _otpr_tip
 
@@ -458,7 +458,8 @@ local nRet := DE_CONT
 
 do case
     case Ch==ASC(" ") .or. Ch==K_ENTER
-        my_use_semaphore_off()
+
+        f18_lock_tables({LOWER(ALIAS())})
         sql_table_update( nil, "BEGIN" )
 
         Beep(1)
@@ -475,8 +476,8 @@ do case
         endif
         @ m_x+1, m_Y + 55 SAY suma pict picdem
         nRet := DE_REFRESH
+        f18_free_tables({LOWER(ALIAS())})
         sql_table_update( nil, "END" )
-        my_use_semaphore_on()
 
 endcase
 
@@ -532,7 +533,7 @@ seek firma + otpr_tip + partn_naz
       
 _dat_max := CTOD("")
 
-my_use_semaphore_off()
+f18_lock_tables({"fakt_doks", "fakt_fakt"})
 sql_table_update( nil, "BEGIN" )
       
 do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
@@ -632,8 +633,8 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
 
 enddo   
     
+f18_free_tables({"fakt_doks", "fakt_fakt"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
  
 if !EMPTY( _veza_otpremnice )
 

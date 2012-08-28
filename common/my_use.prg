@@ -41,13 +41,9 @@ return __my_use_semaphore
 
 // --------------------------------------------------------------
 // --------------------------------------------------------------
-function my_usex(alias, table, new_area, _rdd, semaphore_param, check_recno)
+function my_usex(alias, table, new_area, _rdd, semaphore_param)
 
-if check_recno == NIL
-    check_recno := .f.
-endif
-
-return my_use(alias, table, new_area, _rdd, semaphore_param, .t., check_recno)
+return my_use(alias, table, new_area, _rdd, semaphore_param, .t.)
 
 
 // ---------------------------------------------------------------
@@ -72,8 +68,12 @@ if USED()
 endif
 
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-          dbUseArea( new_area, "DBFCDX", table, alias, !excl, .f.)
- 
+
+          dbUseArea( new_area, DBFENGINE, table, alias, !excl, .f.)
+          if FILE(ImeDbfCdx(table))
+              dbSetIndex(ImeDbfCDX(table))
+          endif
+
 recover using _err
 
           _msg := "ERR: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
@@ -99,28 +99,29 @@ return
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
-function my_use(alias, table, new_area, _rdd, semaphore_param, excl, check_recno)
+function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
 local _msg
 local _err
 local _pos
 local _version, _last_version
 local _area
 local _force_erase := .f.
+local _dbf
+local _tmp
 
 if excl == NIL
   excl := .f.
 endif
 
-if check_recno == NIL
-    check_recno := .f.
+if table == NIL
+    _tmp := alias
+else
+    // uvijek atribute utvrdjujemo prema table atributu  
+    _tmp := table
 endif
 
-if table == NIL
-  _a_dbf_rec := get_a_dbf_rec(alias)
-else
-   // uvijek atribute utvrdjujemo prema table atributu  
-   _a_dbf_rec := get_a_dbf_rec(table)
-endif
+// trebam samo osnovne parametre
+_a_dbf_rec := get_a_dbf_rec(_tmp, .t.)
 
 
 if new_area == NIL
@@ -147,31 +148,36 @@ endif
 
 
 if _rdd == NIL
-  _rdd = "DBFCDX"
+  _rdd = DBFENGINE
 endif
 
 if !_a_dbf_rec["temp"] 
 
 
-   // tabela je pokrivena semaforom
-   if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
-        dbf_semaphore_synchro(table, check_recno)
-   else
-     // rdd = "SEMAPHORE" poziv is update from sql server procedure
-     // samo otvori tabelu
-     log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 1 )
-     _rdd := "DBFCDX" 
-   endif
+    // tabela je pokrivena semaforom
+    if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
+        dbf_semaphore_synchro(table)
+    else
+        // rdd = "SEMAPHORE" poziv is update from sql server procedure
+        // samo otvori tabelu
+        log_write("my_use table:" + table + " / rdd: " +  _rdd + " alias: " + alias + " exclusive: " + hb_ValToStr(excl) + " new: " + hb_ValToStr(new_area), 8 )
+        _rdd := DBFENGINE
+    endif
 
 endif
 
 if USED()
-   use
+    use
 endif
 
+_dbf := my_home() + table
+
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-          dbUseArea( new_area, _rdd, my_home() + table, alias, !excl, .f.)
- 
+          dbUseArea( new_area, _rdd, _dbf, alias, !excl, .f.)
+          if FILE(ImeDbfCdx(_dbf))
+              dbSetIndex(ImeDbfCDX(_dbf))
+          endif
+
 recover using _err
 
           _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
@@ -193,12 +199,11 @@ return
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function dbf_semaphore_synchro(table, check_recno)
+function dbf_semaphore_synchro(table)
 local _version, _last_version
 
-if check_recno == NIL
-    check_recno := .f.
-endif
+
+log_write( "dbf_semaphore_synchro(), poceo", 9 )
 
 // uzmimo od tabele stanje svog semafora
 _version :=  get_semaphore_version(table)
@@ -207,20 +212,8 @@ do while .t.
 
     if (_version == -1)
 
-        // semafor je resetovan
-        // lockuj da drugi korisnici ne bi mijenjali tablelu dok je ucitavam
-        //sql_table_update(nil, "BEGIN")
-        //if lock_semaphore(table, "lock")
-            update_dbf_from_server(table, "FULL")
-
-            // nemoj nulirati IDS nakon full sync
-            update_semaphore_version(table, .f., .f.)
-
-            //lock_semaphore(table, "free")
-            //sql_table_update(nil, "END")
-        //else
-            //sql_table_update(nil, "ROLLBACK")
-        //endif
+        log_write( "full synchro version -1", 7 )
+        update_dbf_from_server(table, "FULL")
 
      else
 
@@ -228,7 +221,8 @@ do while .t.
             // moramo osvjeziti cache
             if _version < _last_version
 
-                log_write( "my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 3 ) 
+                log_write( "dbf_semaphore_synchro(), my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 5 )
+ 
                 update_dbf_from_server(table, "IDS")
 
             endif
@@ -244,15 +238,12 @@ do while .t.
             exit
       endif
                         
-      log_write( "dbf_semaphore_synchro, _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
+      log_write( "dbf_semaphore_synchro(), _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
+
 enddo
 
-if check_recno
-    // sada bi lokalni cache morao biti ok, idemo to provjeriti
-    check_after_synchro(table)
-endif
+check_after_synchro(table)
+
+log_write( "dbf_semaphore_synchro(), zavrsio", 9 )
 
 return .t.
-
-
-

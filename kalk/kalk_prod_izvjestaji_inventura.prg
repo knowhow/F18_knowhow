@@ -26,7 +26,6 @@ nStr:=0
 cIdPartner:=IdPartner
 cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 
@@ -124,9 +123,6 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 	?? field->idroba, TRIM( LEFT( roba->naz, 40 )), "(", roba->jmj, ")"
 
-	if gRokTr == "D"
-		?? SPACE(4), "Rok Tr.:", field->roktr
-	endif
 
 	nPosKol := 30
 	@ prow() + 1, 4 SAY field->idtarifa + SPACE(4)
@@ -258,7 +254,6 @@ nStr:=0
 cIdPartner:=IdPartner
 cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 

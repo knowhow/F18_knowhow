@@ -22,7 +22,11 @@ if !used()
 	O_TARIFA
 endif
 
-my_use_semaphore_off()
+                                
+if !f18_lock_tables({"tarifa"})
+    return .f.
+endif                            
+
 sql_table_update( nil, "BEGIN" )
 
 // nabavka od pdv obveznika, standardna prodaja
@@ -66,8 +70,8 @@ _append_tarifa( cPom, "AVANSNE FAKTURE, PDV 0%", 0 )
 cPom := PADR( "PDV0IZ", 6 )
 _append_tarifa( cPom, "IZVOZ, PDV 0%", 0 )
 
+f18_free_tables({"tarifa"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 return
 
@@ -85,7 +89,6 @@ seek tar_id
 if !FOUND()
 
 	append blank
-    _rec := dbf_get_rec()
 	_rec["id"] := tar_id
 	_rec["naz"] := naziv
 	_rec["opp"] := iznos

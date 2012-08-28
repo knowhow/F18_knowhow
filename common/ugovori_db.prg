@@ -291,11 +291,7 @@ _rec["d_p_prom_d"] := dPPromDob
 _rec["f_iznos"] := nFaktIzn
 _rec["f_iznos_pd"] := nFaktPDV
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( "fakt_gen_ug_p", _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on() 
+update_rec_server_and_dbf( "fakt_gen_ug_p", _rec, 1, "FULL" )
 
 return 
 

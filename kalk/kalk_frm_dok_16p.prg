@@ -31,7 +31,7 @@ if nRbr==1 .or. !fnovi .or. gMagacin=="1"
  endif
  @  m_x+7,m_y+2   SAY "Faktura/Otpremnica Broj:" get _BrFaktP
  @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-    valid {|| _DatKurs:=_DatFaktP,.t.}
+    valid {|| .t.}
  
 
   @ m_x+9,m_y+2 SAY "Magacinski konto zaduzuje"  GET _IdKonto ;
@@ -56,7 +56,6 @@ else
  @  m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
  @  m_x+7,m_y+2   SAY "Faktura Broj: "; ?? _BrFaktP
  @  m_x+7,col()+2 SAY "Datum: "; ?? _DatFaktP
- _DatKurs:=_DatFaktP
  @ m_x+9,m_y+2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
  if gNW<>"X"
   @ m_x+9,m_y+40 SAY "Zaduzuje: "; ?? _IdZaduz
@@ -139,11 +138,7 @@ IF gVarEv=="1"          ///////////////////////////// sa cijenama
                     select roba
                     _rec := dbf_get_rec()
                     _rec["mpc"] := _mpcsapp
-					my_use_semaphore_off()
-					sql_table_update( nil, "BEGIN" )
-                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-					sql_table_update( nil, "END" )
-					my_use_semaphore_on()
+                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
                     select kalk_pripr
                 endif
 

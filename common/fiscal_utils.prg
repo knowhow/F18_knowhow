@@ -72,7 +72,7 @@ if lSilent == .t.
 	lReset := .f.
 endif
 
-my_use_semaphore_off()
+f18_lock_tables({"roba"})
 sql_table_update( nil, "BEGIN" )
 
 O_ROBA
@@ -92,7 +92,7 @@ select roba
 set order to tag "ID"
 go top
 
-Box(,1,50)
+Box(, 1, 50)
 do while !EOF()
 	
 	if lReset == .f.
@@ -109,7 +109,7 @@ do while !EOF()
     
     _rec := dbf_get_rec()
     _rec["fisc_plu"] := nP_PLU
-    update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "roba", _rec, 1, "CONT")
 
 	@ m_x + 1, m_y + 2 SAY PADR( "idroba: " + field->id + ;
 		" -> PLU: " + ALLTRIM( STR( nP_PLU ) ), 30 )
@@ -120,8 +120,8 @@ enddo
 
 BoxC()
 
+f18_free_tables({"roba"})
 sql_table_update( nil, "END" )
-my_use_semaphore_on()
 
 if nPLU > 0
 	if lSilent == .f.

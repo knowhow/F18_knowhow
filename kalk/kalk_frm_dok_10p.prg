@@ -42,7 +42,6 @@ if nRbr == 1  .or. !fNovi .or. gMagacin == "1"
  	
 	@ m_x + _x, col() + 1 SAY "Datum:" get _DatFaktP
  	
-	_DatKurs := _DatFaktP
  	
     ++ _x
     _kord_x := m_x + _x
@@ -348,12 +347,8 @@ if !IsMagSNab()
          		select roba
 			    _rec := dbf_get_rec()
                 _rec["mpc"] := _mpcsapp
-                my_use_semaphore_off()
-                sql_table_update( nil, "BEGIN" )
 
-                update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-                sql_table_update( nil, "END" )
-                my_use_semaphore_on()
+                update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
          		select kalk_pripr
 

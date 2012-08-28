@@ -27,8 +27,7 @@ if nRbr==1  .or. !fnovi
    @  m_x+6,m_y+2   SAY "KUPAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,6,18)
    @  m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
    @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-    valid {|| _DatKurs:=_DatFaktP,.t.}
- _DatKurs:=_DatFaktP
+    valid {|| .t.}
 
  @ m_x+8,m_y+2   SAY "Prodavnicki Konto zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
  if gNW<>"X"
@@ -158,11 +157,11 @@ if !empty(gMetodaNC) .or. lPoNarudzbi
  else
    if _kolicina>0
     MsgO("Racunam stanje na skladistu")
-      KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab,@_RokTr)
+      KalkNab(_idfirma,_idroba,_idkonto2,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
     MsgC()
    else
     MsgO("Racunam stanje prodavnice")
-      KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,dDatNab,@_RokTr)
+      KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,dDatNab)
     MsgC()
    endif
    if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif

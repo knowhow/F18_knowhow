@@ -342,7 +342,7 @@ _rec["tip"]   := "D"
 _rec["kurs1"] := 1
 _rec["kurs2"] := 1
 _rec["kurs3"] := 1
-update_rec_server_and_dbf('valute', _rec)
+update_rec_server_and_dbf('valute', _rec, 1, "FULL")
 
 append blank
 _rec := dbf_get_rec()
@@ -354,7 +354,7 @@ _rec["tip"]   := "P"
 _rec["kurs1"] := 0.512
 _rec["kurs2"] := 0.512
 _rec["kurs3"] := 0.512
-update_rec_server_and_dbf('valute', _rec)
+update_rec_server_and_dbf('valute', _rec, 1, "FULL")
 
 
 CLOSE ALL

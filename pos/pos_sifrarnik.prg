@@ -176,11 +176,7 @@ do case
                     // daj mi iz globalnih varijabli                    
                     _rec := get_dbf_global_memvars()
 
-					my_use_semaphore_off()
-					sql_table_update( nil, "BEGIN" )
-                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-					sql_table_update( nil, "END" )
-					my_use_semaphore_on()
+                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
                     nVrati:=DE_REFRESH
 
@@ -206,11 +202,7 @@ do case
                     // daj mi iz globalnih varijabli                    
                     _rec := get_dbf_global_memvars()
 					
-					my_use_semaphore_off()
-					sql_table_update( nil, "BEGIN" )
-                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-					sql_table_update( nil, "END" )
-					my_use_semaphore_on()
+                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
                     nVrati:=DE_REFRESH
 
@@ -219,22 +211,19 @@ do case
         endif
 
     case Ch == K_CTRL_T
+
         if gSamoProdaja=="D"
             MsgBeep("Nemate ovlastenje za ovu opciju !")
             nVrati:=DE_CONT
         else
             if System
                 if Pitanje(,"Izbrisati korisnika "+ trim(naz) +":"+CryptSC(korsif)+" D/N ?","N")=="D"
-                    SELECT osob
-                    _rec := dbf_get_rec()
-                    
-					my_use_semaphore_off()
-					sql_table_update( nil, "BEGIN" )
-                    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-					sql_table_update( nil, "END" )
-					my_use_semaphore_on()
 
+                    SELECT osob
+                    _rec := dbf_get_rec()                    
+                    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
                     nVrati:=DE_REFRESH
+
                 endif
             endif
         endif

@@ -90,7 +90,6 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
                      error with "0",;
                      datdok with _datdok,;
                      datfaktp with _datdok,;
-                     DATKURS WITH _DATDOK,;
                      idzaduz2 with _idzaduz2,;
                      idkonto with _idkonto, idkonto2 with _idkonto2,;
                      idtarifa with "XXXXXX",;
@@ -132,7 +131,6 @@ if nRbr==1  .or. !fnovi .or. gMagacin=="1"
 
  go  nTPriPrec
  select kalk_pripr
- _DatKurs:=_DatFaktP
  if gNW<>"X"
   @ m_x+10,m_y+42  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,24)
  endif

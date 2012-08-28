@@ -131,7 +131,8 @@ use
 
 // sve je ok brisi pripremu
 SELECT (nPArea)
-zap
+zapp()
+
 use
 
 if (cTbl == "KUF")
@@ -219,7 +220,6 @@ else
  
 	AADD( _ids, _tmp_id )
 
-	update_semaphore_version( _tbl_epdv, .t. )
 	push_ids_to_semaphore( _tbl_epdv, _ids ) 
   	
 	sql_table_update(nil, "END")
@@ -314,14 +314,8 @@ _ok := .t.
 
 MsgO("del " + cTbl )
 
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
+_ok := delete_rec_server_and_dbf( _table, _del_rec, 2, "FULL" )
 
-_ok := delete_rec_server_and_dbf( _table, _del_rec, 2, "CONT" )
-
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
-    
 MsgC()
 
 if !_ok

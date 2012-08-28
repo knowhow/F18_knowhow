@@ -119,12 +119,6 @@ do while .t.
  	@ m_x+12, COL()+2 SAY " generisati kontrolnu tabelu ? " GET cKontrolnaTabela VALID cKontrolnaTabela $ "DN" PICT "@!"
  	@ m_x+13,m_y+2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija pict "@!"
  	@ m_x+14,m_y+2 SAY "Prikaz prethodnog stanja" GET cPredhStanje pict "@!" valid cPredhStanje $ "DN"
- 	if lPoNarudzbi
-   		qqIdNar := SPACE(60)
-   		cPKN    := "N"
-   		@ row()+1,m_y+2 SAY "Uslov po sifri narucioca:" GET qqIdNar pict "@!S30"
-   		@ row()+1,m_y+2 SAY "Prikazati kolonu 'narucilac' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
- 	endif
  
 	if IsPlanika()
  		@ m_x+15,m_y+2 SAY "Prikaz dobavljaca (D/N) ?" GET cPrikazDob pict "@!" valid cPrikazDob $ "DN"
@@ -133,10 +127,6 @@ do while .t.
 		@ m_x+18,m_y+2 SAY "Prikazati K2 = 'X' (D/N)" GET cPrikK2 pict "@!" valid cPrikK2$"DN"
  	endif
 	
-	if IsDomZdr()	
- 		@ m_x+15,m_y+2 SAY "Prikaz po tipu sredstva " GET cKalkTip PICT "@!"
-	endif
-  	
 	if IsVindija()	
 		cGr := SPACE(10)
 		cPSPDN := "N"
@@ -146,10 +136,10 @@ do while .t.
   
 	read
  	ESC_BCR
- 	private aUsl1:=Parsiraj(qqRoba,"IdRoba")
- 	private aUsl2:=Parsiraj(qqTarifa,"IdTarifa")
- 	private aUsl3:=Parsiraj(qqIDVD,"idvd")
-	private aUsl4:=Parsiraj(qqIdPartn, "IdPartner")
+ 	private aUsl1 := Parsiraj(qqRoba,"IdRoba")
+ 	private aUsl2 := Parsiraj(qqTarifa,"IdTarifa")
+ 	private aUsl3 := Parsiraj(qqIDVD,"idvd")
+	private aUsl4 := Parsiraj(qqIdPartn, "IdPartner")
  	if aUsl1<>NIL .and. aUsl2<>NIL .and. aUsl3<>NIL 
    		exit
  	endif
@@ -200,16 +190,16 @@ endif
 private cFilter:=".t."
 
 if aUsl1<>".t."
-  	cFilter+=".and."+aUsl1   // roba
+  	cFilter += ".and." + aUsl1   // roba
 endif
 if aUsl2<>".t."
-  	cFilter+=".and."+aUsl2   // tarifa
+  	cFilter += ".and." + aUsl2   // tarifa
 endif
 if aUsl3<>".t."
-  	cFilter+=".and."+aUsl3   // idvd
+  	cFilter += ".and." + aUsl3   // idvd
 endif
 if aUsl4<>".t."
-	cFilter+=".and."+aUsl4   // partner
+	cFilter += ".and." + aUsl4   // partner
 endif
 // po tipu sredstva
 if IsDomZdr() .and. !Empty(cKalkTip)

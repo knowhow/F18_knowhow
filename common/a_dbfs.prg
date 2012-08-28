@@ -293,6 +293,7 @@ function set_dbf_fields_from_struct(rec)
 local _struct, _i
 local _opened := .t.
 local _fields :={}, _fields_len
+local _dbf
 
 if rec["temp"]
    // ovi mi podaci ne trebaju za temp tabele
@@ -303,9 +304,10 @@ SELECT (rec["wa"])
 
 if !used()
 
+    _dbf := my_home() + rec["table"]
     begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-            dbUseArea( .f., "DBFCDX", my_home() + rec["table"], rec["alias"], .t. , .f.)
-    
+            dbUseArea( .f., DBFENGINE, _dbf, rec["alias"], .t. , .f.)
+
     recover using _err
 
             _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
@@ -326,7 +328,22 @@ _fields_len := hb_hash()
 for _i := 1 to LEN(_struct)
    AADD(_fields, LOWER(_struct[_i, 1]))
    // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
-   _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], _struct[_i, 3], _struct[_i, 4]}
+
+   if _struct[_i, 2] == "B"
+
+          // double
+          _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], 18, 8}
+
+   elseif _struct[_i, 2] == "Y" .or. ( _struct[_i, 2] == "I" .and. _struct[_i, 4] > 0 )
+
+         // za currency polje stoji I 8 4 - sto znaci currency sa cetiri decimale
+         // mislim da se ovdje radi o tome da se u 4 bajta stavlja integer dio, a u ostala 4 decimalni dio
+        _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], 18, _struct[_i, 4]}
+   
+   else
+         _fields_len[LOWER(_struct[_i, 1])] := { _struct[_i, 2], _struct[_i, 3], _struct[_i, 4]}
+   
+   endif
 next
 
 rec["dbf_fields"]     := _fields

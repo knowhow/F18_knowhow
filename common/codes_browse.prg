@@ -861,20 +861,32 @@ do while .t.
               endif
 
                 _vars := get_dbf_global_memvars("w")
-                    
+                
+                /*    
                 if IzFmkIni('Svi','SifAuto','N')=='D'
                     _vars["id"] := NoviID_A()
                 endif
+                */
 
+                if !f18_lock_tables({LOWER(ALIAS()), "sifv", "sifk"})
+                    log_write( "ERROR: nisam uspio lokovati tabele sifk, sifv", 2 )
+                    exit
+                endif
+                
                 sql_table_update(nil, "BEGIN")
-                   update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
-                   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
+
+                  // sifarnik
+                  update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
+
+                  // sifk/sifv
+                  update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
+
+                f18_free_tables({LOWER(ALIAS()), "sifv", "sifk"})
                 sql_table_update(nil, "END")
 
                 set_global_vars_from_dbf("w")
 
-
-                if lastkey()==K_PGUP
+                if lastkey() == K_PGUP
                      skip -1
                 else
                     skip
@@ -923,19 +935,26 @@ endif
 _vars := get_dbf_global_memvars("w")
 
 
-// -----------------------------------------------------------------------
-sql_table_update(nil, "BEGIN")
+if f18_lock_tables({LOWER(ALIAS()), "sifv", "sifk"})
 
-if !update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
-    if lNovi
-        delete_with_rlock()
+    sql_table_update(nil, "BEGIN")
+
+    if !update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
+        if lNovi
+           delete_with_rlock()
+        endif
+        sql_table_update(nil, "ROLLBACK")
+        f18_free_tables({LOWER(ALIAS()), "sifv", "sifk"})
+    else
+        update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi, "CONT")
+
+        f18_free_tables({LOWER(ALIAS()), "sifv", "sifk"})
+        sql_table_update(nil, "END")
+ 
     endif
 else
-   update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", lNovi, "CONT")
+    MsgBeep("ne mogu lockovati " + LOWER(ALIAS()) + " sifk/sifv ?!") 
 endif
-
-sql_table_update(nil, "END")
-// ---------------------------------------------------------------------------
 
 
 set_global_vars_from_dbf("w")

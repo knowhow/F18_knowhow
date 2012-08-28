@@ -28,7 +28,8 @@ aPorezi:={}
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 if fzaTops==NIL
  fzaTops:=.f.
@@ -306,7 +307,6 @@ nStr:=0
 cIdPartner:=IdPartner
 cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
 
@@ -432,12 +432,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 		?? ", BK: " + roba->barkod
 	endif
     
-	if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
-    
-	IF lPoNarudzbi
-      IspisPoNar()
-    ENDIF
-
     @ prow()+1,4 SAY IdRoba
     nCol1:=pcol()+1
     @ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM

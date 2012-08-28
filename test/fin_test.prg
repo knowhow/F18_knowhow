@@ -21,7 +21,7 @@ local _i, _rec
 SELECT F_SUBAN
 my_usex("suban")
 
-ZAP
+ZAPP()
 _sql_query_2( _server, "delete from fmk.fin_suban where idvn='9X'")
 
 

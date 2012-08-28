@@ -104,7 +104,7 @@ if lNepopunjeno
         _fields["adresa"] := cAdresa
         _fields["ptt"]    := cPTT
 
-        update_rec_server_and_dbf(nil, _fields) 
+        update_rec_server_and_dbf(nil, _fields, 1, "FULL") 
 
 		USifK("PARTN", "REGB", gFirma, cIdBroj)
 	else

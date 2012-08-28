@@ -34,9 +34,16 @@ local nPos
 local cImeDbf
 local _a_dbf_rec
 local _wa
+local _dbf
+local _tag
 
 private cTag
 private cKljuciz
+
+if silent == nil
+    silent := .f.
+endif
+
 
 close all
 
@@ -45,13 +52,10 @@ alias := FILEBASE(alias)
 _a_dbf_rec := get_a_dbf_rec(alias, .t.)
 _wa := _a_dbf_rec["wa"]
 
+
+for each _tag in { cTag, "DEL" }
+
 cImeDbf := f18_ime_dbf(alias)
-
-
-if silent == nil
-    silent := .f.
-endif
-
 cImeCdx := ImeDbfCdx(cImeDbf)
  
 nPom := RAT(SLASH, cImeInd )
@@ -65,14 +69,23 @@ else
    cTag := cImeInd
 endif
 
+
+if _tag == "DEL"
+     cTag    := "DEL"
+     cKljuc  := "deleted()"
+     cImeInd := cTag
+endif
+
+
 fPostoji := .t.
 
 select (_wa)
 
+_dbf := f18_ime_dbf(alias)
 
 begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-          dbUseArea( .f., "DBFCDX", f18_ime_dbf(alias), NIL, .t. , .f.)
- 
+          dbUseArea( .f., DBFENGINE, _dbf , NIL, .t. , .f.)
+
 recover using _err
 
           _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
@@ -95,12 +108,24 @@ recover using _err
 end sequence
 
 
+// open index
+begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
+     if FILE( ImeDbfCdx(_dbf))
+            dbSetIndex(ImeDbfCdx(_dbf))
+     endif
+recover using _err
+     // ostecen index brisi ga
+     FERASE(ImeDbfCdx(_dbf))
+end sequence
 
+if  FILE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
+    FERASE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
+endif
 
 
 if USED()
 	nOrder := ORDNUMBER( cTag )
-	cOrdKey := ORDKEY( cTag )
+	cOrdKey := ORDKEY(cTag)
 	select (_wa)
 	use
 else
@@ -112,7 +137,7 @@ if !fPostoji
 	return
 endif
 
-if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc )
+if !FILE(LOWER(cImeCdx)) .or. nOrder==0 .or. ALLTRIM(UPPER( cOrdKey )) <> ALLTRIM(UPPER( cKljuc ))
 
      SELECT(_wa)
      use
@@ -130,11 +155,10 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      private cKljuciz:=cKljuc
     
      if nPom<>0
-       cTag:=substr(cImeInd, nPom)
+         cTag := substr(cImeInd, nPom)
      else
-       cTag:=cImeInd
+         cTag := cImeInd
      endif
-
 
      //  provjeri indeksiranje na nepostojecim poljima ID_J, _M1_
      if  !(LEFT(cTag, 4)=="ID_J" .and. fieldpos("ID_J")==0) .and. !(cTag=="_M1_" .and. FIELDPOS("_M1_")==0)
@@ -142,8 +166,13 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
 
         log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 7 )     
-     	INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
+        if _tag == "DEL"
+              INDEX ON deleted() TAG "DEL" TO (cImeCdx) FOR deleted()
+        else
+     	      INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
+        endif
      	USE
+
 
      endif
 
@@ -153,6 +182,8 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder == 0 .or. UPPER( cOrdKey ) <> UPPER( cKljuc
      use
 
 endif
+
+next
 
 close all
 return
@@ -675,12 +706,18 @@ return
  * \endcode
  */
  
-function ImeDBFCDX(cIme)
+function ImeDBFCDX(cIme, ext)
 
-cIme:=trim(strtran(ToUnix(cIme),"."+DBFEXT,"."+INDEXEXT))
-if right(cIme,4)<>"."+INDEXEXT
-  cIme:=cIme+"."+INDEXEXT
+if ext == NIL
+  ext := INDEXEXT
 endif
+
+cIme := TRIM(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
+
+if right (cIme, 4) <> "." + ext
+  cIme := cIme + "." + ext
+endif
+
 return  cIme
 
 

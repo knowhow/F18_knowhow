@@ -122,7 +122,7 @@ if !file(f18_ime_dbf("sifk"))
    // Valid = "ImeFje()"
    // validacija  mogu biti vrijednosti A,B,C,D
    //             aktiviraj funkciju ImeFje()
-   dbcreate2('SIFK', aDbf)
+   dbcreate2('sifk', aDbf)
    reset_semaphore_version("sifk")
    my_use("sifk")
    close all

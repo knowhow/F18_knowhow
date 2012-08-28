@@ -21,7 +21,7 @@ Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-dDatKurs:=DatKurs; cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_COND
 ?? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
@@ -109,7 +109,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
       @  prow(),pcol()+1 SAY  space(7)
     endif
     @ prow(),11 SAY  "";?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    if gRokTr=="D"; ?? space(4),"Rok Tr.:",RokTr; endif
     @ prow()+1,11 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
     nCol1:=pcol()+1

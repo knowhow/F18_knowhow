@@ -89,7 +89,7 @@ do case
         if Pitanje(,"Izbrisati kompletnu tabelu ?", "N") == "D"
             if Pitanje(,"Sigurni 100% ?", "N") == "D"
                 select _doc_it2
-                zap
+                zapp()
                 nRet := DE_REFRESH
             endif
         endif

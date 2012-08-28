@@ -27,7 +27,7 @@ if nRbr==1 .or. !fnovi
     @ m_x+6,m_y+2   SAY "KUPAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,6,18)
     @ m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
     @ m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-            valid {|| _DatKurs:=_DatFaktP,.t.}
+            valid {|| .t.}
     _IdZaduz:=""
     _Idkonto:="1200"
     private cNBrDok:=_brdok
@@ -41,8 +41,8 @@ else
     @ m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
     @ m_x+7,m_y+2   SAY "Faktura Broj: "; ?? _BrFaktP
     @ m_x+7,col()+2 SAY "Datum: "; ?? _DatFaktP
+    
     _IdZaduz:=""
-    _DatKurs:=_DatFaktP
     _Idkonto:="1200"
     @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje "; ?? _IdKonto2
     if gNW<>"X"
@@ -126,7 +126,7 @@ lGenStavke:=.f.
 if _TBankTr<>"X"   // ako je X onda su stavke vec izgenerisane
     if !empty(gMetodaNC) 
             MsgO("Racunam stanje na skladistu")
-                KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab, @_RokTr)
+                KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab)
             MsgC()
             @ m_x+ 12, m_y+30   SAY "Ukupno na stanju "
         @ m_x+ 12, col()+2 SAY nKols pict pickol

@@ -453,7 +453,7 @@ DO CASE
 							_saved := .f.
 
 							if _has_semaphore
-                                if f18_lock_tables({LOWER(alias())})
+                                if !f18_lock_tables({LOWER(alias())})
                                     return DE_CONT
                                 endif
 								sql_table_update( nil, "BEGIN" )

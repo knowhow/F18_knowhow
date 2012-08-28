@@ -37,15 +37,19 @@ static __max_cols := 120
 #else
 
     #ifdef  __PLATFORM__LINUX
-          static __font_name := "terminus"
+        static __font_name := "terminus"
+
+        static __font_size  := 20
+        static __font_width := 10
+
     #else
-          static __font_name := "fixed"
+        static __font_name  := "ubuntu mono"
+        static __font_size  := 30
+        static __font_width := 15
+
     #endif
 
 #endif
-
-static __font_size  := 20
-static __font_width := 10
 
 static __log_level := 3
 
@@ -167,23 +171,28 @@ do CASE
      maxcols(119)
 
      log_write( _msg + "1")
- 
+
   case _pix_width >= 1280 .and. _pix_height >= 820
 
-     font_size(24)
-     font_width(100)
-     maxrows(35)
-     maxcols(105)
+    #ifdef  __PLATFORM__DARWIN
+       //font_name("Ubuntu Mono")
+       font_name("ubuntu mono")
+       font_size(24)
+       font_width(12)
+       maxrows(36)
+       maxcols(100)
+       log_write( _msg + "2longMac")
+    #else
 
-     /*
-     moguca je opcija ko zeli veci font
-     font_name("ubuntu mono")
-     font_size(26)
-     font_width(13)
-     maxrows(36)
-     maxcols(98)
-     */
-     log_write( _msg + "2long")
+       font_size(24)
+       font_width(100)
+       maxrows(35)
+       maxcols(105)
+
+
+       log_write( _msg + "2long")
+    #endif
+
 
   case _pix_width >= 1280 .and. _pix_height >= 800
 
@@ -200,7 +209,7 @@ do CASE
      font_width(100)
      maxrows(35)
      maxcols(100)
-     
+
      log_write( _msg + "3")
 
   otherwise

@@ -1,10 +1,14 @@
+1.3.3  2002-08-28, hernad
+
+ - alias pretvori u tabelu ako treba
+
 1.3.7  2002-08-28, hernad
 
-- vratio dbf_get_rec() greskom izbrisan bug #28984
+ - vratio dbf_get_rec() greskom izbrisan bug #28984
 
 1.3.6  2002-08-28, hernad
 
-- ostao debug full sync u prosloj verziji
+ - ostao debug full sync u prosloj verziji
  
 1.3.5  2002-08-28, hernad
 

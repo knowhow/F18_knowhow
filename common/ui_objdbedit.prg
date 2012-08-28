@@ -444,6 +444,7 @@ DO CASE
 
                 if LASTKEY() <> K_ESC
 
+<<<<<<< HEAD
                   nRec := recno()
                   nOrder := indexord()
 
@@ -459,6 +460,14 @@ DO CASE
                        endif
                         sql_table_update( nil, "BEGIN" )
                endif
+=======
+							if _has_semaphore
+                                if !f18_lock_tables({LOWER(alias())})
+                                    return DE_CONT
+                                endif
+								sql_table_update( nil, "BEGIN" )
+							endif
+>>>>>>> 9cbc0ce47bf135b4f7257dc59b9ee81adc45256f
 
              				do while !eof()
 

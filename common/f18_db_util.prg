@@ -143,7 +143,6 @@ local _key
 local _f18_dbf
 local _temp_tbl
 
-get_dbf_params_from_config()
 _f18_dbfs := f18_dbfs()
 
 // tabela sa ovakvim imenom uopste ne postoji

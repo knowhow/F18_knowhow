@@ -197,17 +197,6 @@ if open_index
    if FILE(ImeDbfCdx(_dbf))
        dbSetIndex(ImeDbfCDX(_dbf))
        return .t.
-   else
-
-       // indeksa nema
-       // prolazi kroz sve dbf-ove i kreira indekse
-       repair_dbfs()
-
-       // finalno otvaranje tabele
-       SELECT (_a_dbf_rec["wa"])
-       USE
-       dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
-
    endif
 endif
 

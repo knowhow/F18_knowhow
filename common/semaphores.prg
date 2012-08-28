@@ -39,7 +39,7 @@
 // -----------------------------------------------------
 function f18_lock_tables( a_tables )
 local _ok := .t.
-local _i 
+local _i, _tbl 
 
 if LEN( a_tables ) == NIL
     return .f.
@@ -48,7 +48,9 @@ endif
 if sql_table_update( nil, "BEGIN" )
 
     for _i := 1 to LEN( a_tables )
-        _ok := _ok .and. lock_semaphore( a_tables[ _i ], "lock" )
+
+       _tbl := get_a_dbf_rec(a_tables[_i])["table"]
+       _ok := _ok .and. lock_semaphore( _tbl, "lock" )
     next
     
     if _ok
@@ -73,14 +75,15 @@ return _ok
 // -----------------------------------------------------
 function f18_free_tables( a_tables )
 local _ok := .t.
-local _i
+local _i, _tbl
 
 if LEN( a_tables ) == NIL
     return .f.
 endif
 
 for _i := 1 to LEN( a_tables )
-    lock_semaphore( a_tables[ _i ], "free" )
+    _tbl := get_a_dbf_rec(a_tables[_i])["table"]
+    lock_semaphore( _tbl, "free" )
     log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
 next
 

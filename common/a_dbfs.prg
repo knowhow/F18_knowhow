@@ -41,8 +41,9 @@ set_a_dbf_mat()
 
 return
 
-// ----------------------------------
-// ----------------------------------
+// ------------------------------------------------
+// za sve tabele kreiraj dbf_fields strukturu
+// ------------------------------------------------
 function set_a_dbfs_key_fields()
 local _key
 
@@ -310,14 +311,14 @@ if !used()
 
     recover using _err
 
-            _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
-            log_write( _msg, 2 )
-            Alert(_msg)
-                
-            rec["dbf_fields"] := NIL
-            RaiseError(_msg)
-            QUIT
+            // tabele ocigledno nema, tako da se struktura ne moze utvrditi
+            rec["dbf_fields"]     := NIL
+            rec["dbf_fields_len"] := NIL
 
+            _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
+            log_write( _msg, 5 )
+            return .t.
+                
     end sequence
     _opened := .t.
 endif

@@ -83,10 +83,10 @@ for each _lin in a_commands
 
            USE  (_path + _ime_dbf) ALIAS OLDDBF EXCLUSIVE
        else
-           _ime_dbf := "*"
-           MsgBeep( "MODSTRU, greska: " +  _full_name )
-           log_write( "MODSTRU, greska: " +  _full_name, 5 )
-           QUIT
+           _ime_dbf := "*i"
+           BoxC()
+           log_write( "MODSTRU, nepostojeca tabela: " +  _full_name, 2 )
+           return .f.
        endif
 
        _stru_changed := .f.   

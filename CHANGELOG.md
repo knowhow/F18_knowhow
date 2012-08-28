@@ -1,6 +1,6 @@
 1.3.5  2002-08-28, hernad
 
- - init kreiranje tabela - modstru greske (nema tabele) ne ispadaj, nepostojece tabele dbf_stru ne ispadaj  
+ - init kreiranje tabela - modstru greske (nema tabele) ne ispadaj, nepostojece tabele dbf_stru ne ispadaj, repair_dbfs rekurzija off  
 
 1.3.3  2002-08-26, hernad
 

@@ -1,3 +1,7 @@
+1.3.7  2002-08-28, hernad
+
+- vratio dbf_get_rec() greskom izbrisan bug #28984
+
 1.3.6  2002-08-28, hernad
 
 - ostao debug full sync u prosloj verziji

@@ -1,3 +1,7 @@
+1.3.6  2002-08-28, hernad
+
+- ostao debug full sync u prosloj verziji
+ 
 1.3.5  2002-08-28, hernad
 
  - init kreiranje tabela - modstru greske (nema tabele) ne ispadaj, nepostojece tabele dbf_stru ne ispadaj, repair_dbfs rekurzija off  

@@ -1,6 +1,13 @@
 #!/bin/bash
 
-export PATH=$PATH:/opt/harbour/bin
+if [ -d /opt/knowhowERP/hbout ]
+then
+  BASE=/opt/knowhowERP/hbout
+else
+  BASE=/opt/harbour
+fi
+ 
+export PATH=$PATH:$BASE/bin
 
 export HB_WITH_SQLITE3=external
 #export HB_WITH_QT=/usr/local/Trolltech/Qt-4.7.4/include
@@ -10,8 +17,8 @@ export HB_COMPILER=gcc
 #HB_USER_LDFLAGS="-arch x86_64"
 
 
-export HB_INC_INSTALL=/opt/harbour/include/harbour
-export HB_LIB_INSTALL=/opt/harbour/lib/harbour
+export HB_INC_INSTALL=$BASE/include/harbour
+export HB_LIB_INSTALL=$BASE/lib/harbour
 
 
 HB_DBG=`pwd`

@@ -1,4 +1,8 @@
-1.3.3  2002-08-28, hernad
+1.3.9  2002-08-28, hernad
+
+ - fix, refactor alt_r
+
+1.3.8  2002-08-28, hernad
 
  - alias pretvori u tabelu ako treba
 

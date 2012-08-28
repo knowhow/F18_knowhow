@@ -443,7 +443,7 @@ DO CASE
                   RETURN DE_CONT
               endif
 
-              replace_kolona_in_table(cKolona, _trazi_val, _zamijeni_val)
+              replace_kolona_in_table(cKolona, _trazi_val, _zamijeni_val, _last_srch)
               TB:RefreshAll()
 
             	
@@ -568,13 +568,15 @@ return
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function replace_kolona_in_table(cKolona, trazi_val, zamijeni_val)
+function replace_kolona_in_table(cKolona, trazi_val, zamijeni_val, last_search)
 local nRec
 local nOrder
 local _saved
 local _has_semaphore
 local _rec
 local cDio1, cDio2
+local _sect
+
 
 nRec := recno()
 nOrder := indexord()
@@ -608,8 +610,7 @@ do while !eof()
       else
            dbf_update_rec(_rec)
       endif
-
-      if !_saved .and. _last_srch == "D"
+      if !_saved .and. last_search == "D"
            // snimi
            _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
            set_metric( _sect, "<>", trazi_val )

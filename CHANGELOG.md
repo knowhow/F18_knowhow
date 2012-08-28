@@ -1,6 +1,6 @@
 1.3.3  2002-08-28, hernad
 
- - alias pretvori u tabelu ako treba
+ -  alias pretvori u tabelu ako treba
 
 1.3.7  2002-08-28, hernad
 

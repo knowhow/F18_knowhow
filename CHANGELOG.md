@@ -1,3 +1,7 @@
+1.3.10  2002-08-28, hernad
+
+ - workaround za lose imenovanje tabela u ld, virm modulima
+
 1.3.9  2002-08-28, hernad
 
  - fix, refactor alt_r

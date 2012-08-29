@@ -76,25 +76,23 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
 
 recover using _err
 
-          _msg := "ERR: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
+          _msg := "ERR-MYUTMP: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
           Alert(_msg)
-         
+          log_write(_msg, 2)
+
           if _err:description == "Read error"
              _force_erase := .t.
           endif
- 
+
           //ovo trazi a_dbf_rec definisan za tabelu pa iskljucujem
           //ferase_dbf(alias, _force_erase)
 
+          RaiseError(_msg)
           QUIT
 
 end sequence
 
 return
-
-
-
-
 
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
@@ -180,14 +178,14 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
 
 recover using _err
 
-          _msg := "ERR: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
-          log_write( _msg, 1 )
+          _msg := "ERR-MYUSE: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+          log_write( _msg, 2)
           Alert(_msg)
-         
+
           if _err:description == "Read error"
              _force_erase := .t.
           endif
- 
+
           ferase_dbf(alias, _force_erase)
 
           repair_dbfs()

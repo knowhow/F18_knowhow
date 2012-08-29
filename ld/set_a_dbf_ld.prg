@@ -12,6 +12,23 @@
 #include "fmk.ch"
 
 
+// --------------------------------------------------------
+// --------------------------------------------------------
+function set_a_dbf_ld_sif()
+
+set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
+set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
+set_a_dbf_sifarnik("tippr"      , "TIPPR"     , F_TIPPR      )
+set_a_dbf_sifarnik("tippr2"     , "TIPPR2"    , F_TIPPR2     )
+set_a_dbf_sifarnik("kred"       , "KRED"      , F_KRED       )
+set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
+set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
+set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
+set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
+set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
+
+return
+
 // -------------------------------------
 // -------------------------------------
 function set_a_dbf_ld()
@@ -28,22 +45,6 @@ set_a_dbf_ld_radsat()
 set_a_dbf_ld_radsiht()
 set_a_dbf_ld_radn()
 
-// sifrarnici
-set_a_dbf_sifarnik("ld_rj"      , "LD_RJ"     , F_LD_RJ      )
-set_a_dbf_sifarnik("por"        , "POR"       , F_POR        )
-set_a_dbf_sifarnik("tippr"      , "TIPPR"     , F_TIPPR      )
-set_a_dbf_sifarnik("tippr2"     , "TIPPR2"    , F_TIPPR2     )
-set_a_dbf_sifarnik("kred"       , "KRED"      , F_KRED       )
-set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
-set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
-set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
-set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
-set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
-
-
-set_a_dbf_sifarnik("ld_norsiht"  , "NORSIHT" , F_NORSIHT   )
-set_a_dbf_sifarnik("ld_tprsiht"  , "TPRSIHT" , F_TPRSIHT   )
-
 // privatne temp tabele
 set_a_dbf_temp("_ld_radkr"   ,   "_RADKR"        , F__RADKR  )
 set_a_dbf_temp("_ld_ld"      ,   "_LD"           , F__LD  )
@@ -54,6 +55,13 @@ set_a_dbf_temp("ld_opsld"    ,   "OPSLD"         , F_OPSLD  )
 set_a_dbf_temp("ld_rekld"    ,   "REKLD"         , F_REKLD  )
 set_a_dbf_temp("ld_rekldp"   ,   "REKLDP"        , F_REKLDP  )
 set_a_dbf_temp("ldt22"       ,   "LDT22"         , F_LDT22  )
+
+
+// sif - sihtarice
+// stavicu ovdje a ne u ld_sif funkciju jer imaju prefix ld_
+set_a_dbf_sifarnik("ld_norsiht"  , "NORSIHT" , F_NORSIHT   )
+set_a_dbf_sifarnik("ld_tprsiht"  , "TPRSIHT" , F_TPRSIHT   )
+
 
 return
 

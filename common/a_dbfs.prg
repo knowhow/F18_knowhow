@@ -31,7 +31,10 @@ set_a_dbf_temporary()
 set_a_dbf_fin()
 set_a_dbf_kalk()
 set_a_dbf_fakt()
+
 set_a_dbf_ld()
+set_a_dbf_ld_sif()
+
 set_a_dbf_pos()
 set_a_dbf_epdv()
 set_a_dbf_os()
@@ -315,10 +318,10 @@ if !used()
             rec["dbf_fields"]     := NIL
             rec["dbf_fields_len"] := NIL
 
-            _msg := "ERR-1: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
-            log_write( _msg, 5 )
+            _msg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + rec["table"] + " alias:" + rec["alias"] + " se ne moze otvoriti ?!"
+            log_write( _msg, 5)
             return .t.
-                
+
     end sequence
     _opened := .t.
 endif

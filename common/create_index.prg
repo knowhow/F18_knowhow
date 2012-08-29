@@ -89,7 +89,7 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
 recover using _err
 
           _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
-          log_write( _msg, 3 )
+          log_write( _msg, 2)
           Alert(_msg)
          
           // _err:GenCode = 23 

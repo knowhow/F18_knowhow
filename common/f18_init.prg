@@ -179,8 +179,8 @@ do CASE
        font_name("ubuntu mono")
        font_size(24)
        font_width(12)
-       maxrows(36)
-       maxcols(100)
+       maxrows(35)
+       maxcols(110)
        log_write( _msg + "2longMac")
     #else
 

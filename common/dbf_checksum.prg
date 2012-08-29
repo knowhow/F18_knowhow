@@ -69,9 +69,9 @@ endif
 log_write( "broj zapisa dbf " + _a_dbf_rec["alias"] + ": " + ALLTRIM(STR(_cnt_dbf, 10)) + " / sql " + _sql_table + ": " + ALLTRIM(STR(_cnt_sql, 10)), 7 )
 
 if _cnt_sql <> _cnt_dbf
-   
+
     log_write( "ERROR: check_recno " + _a_dbf_rec["alias"] + " cnt: " + ALLTRIM(STR(_cnt_dbf, 10)) + " / " + _sql_table+ " cnt:" + ALLTRIM(STR(_cnt_sql, 10)), 2 )
-    
+
     // otvori ekskluzivno
     USE
     _dbf := my_home() + _a_dbf_rec["table"]

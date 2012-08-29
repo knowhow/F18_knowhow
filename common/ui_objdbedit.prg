@@ -391,10 +391,7 @@ DO CASE
     	IF ( gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS") )
     		Msg("Nemate pravo na koristenje ove opcije",15)
     	ELSE
-			
-			// da li tabela ima semafor ?
-			_has_semaphore := alias_has_semaphore()
-
+		
      		private cKolona
 
      		if LEN( Imekol[ TB:colPos ] ) > 2
@@ -406,7 +403,7 @@ DO CASE
           			if VALTYPE( &cKolona ) $ "CD"
 
       					Box(, 3, 60, .f.)
-             				
+
 							private GetList:={}
              				set cursor on
 
@@ -422,103 +419,34 @@ DO CASE
 								_trazi_val := fetch_metric(_sect, "<>", _trazi_val )
 							endif
 
-                			_zamijeni_val := _trazi_val
-                			_sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
+              _zamijeni_val := _trazi_val
+              _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
 								
 							if _last_srch == "D"
                 				_zamijeni_val := fetch_metric(_sect, "<>", _zamijeni_val)
 							endif
 
-                			_pict := ""
+              _pict := ""
 
-                			if VALTYPE( _trazi_val ) == "C" .and. LEN( _trazi_val ) > 45
-                   				_pict := "@S45"
-                			endif
+              if VALTYPE( _trazi_val ) == "C" .and. LEN( _trazi_val ) > 45
+                   _pict := "@S45"
+              endif
 
-                			@ m_x + 2, m_y+2 SAY PADR( _tr, 12) GET _trazi_val PICT _pict
-                			@ m_x + 3, m_y+2 SAY PADR( _zam, 12) GET _zamijeni_val PICT _pict
-                			
+              @ m_x + 2, m_y+2 SAY PADR( _tr, 12) GET _trazi_val PICT _pict
+              @ m_x + 3, m_y+2 SAY PADR( _zam, 12) GET _zamijeni_val PICT _pict
+
 							read
 
-            			BoxC()
+              BoxC()
 
-            			if LASTKEY() <> K_ESC
-             				
-							nRec := recno()
-             				nOrder := indexord()
-             				
-							set order to 0
-             				go top
-             				
-							_saved := .f.
+              if LASTKEY() == K_ESC
+                  RETURN DE_CONT
+              endif
 
-							if _has_semaphore
-                                if !f18_lock_tables({LOWER(alias())})
-                                    return DE_CONT
-                                endif
-								sql_table_update( nil, "BEGIN" )
-							endif
+              replace_kolona_in_table(cKolona, _trazi_val, _zamijeni_val, _last_srch)
+              TB:RefreshAll()
 
-             				do while !eof()
-
-               					if EVAL(FIELDBLOCK(cKolona)) == _trazi_val
-                   				
-									_rec := dbf_get_rec()
-                   					_rec[ LOWER(cKolona) ] := _zamijeni_val
-                   				
-									if _has_semaphore
-										update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-									else
-										dbf_update_rec(_rec)
-									endif
-
-                   					if !_saved .and. _last_srch == "D"
-                      	 				// snimi
-                       					_sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
-                       					set_metric( _sect, "<>", _trazi_val )
-
-                       					_sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
-                       					set_metric( _sect, "<>", _zamijeni_val )
-                       					_saved := .t.
-                    				endif
-
-               					endif
-
-               					if VALTYPE( _trazi_val ) == "C"
-                   			
-									_rec := dbf_get_rec()
-
-                   					cDio1 := left(_trazi_val, len(trim(_trazi_val)) - 2)
-                   					cDio2 := left(_zamijeni_val, len(trim(_zamijeni_val)) -2)
-
-                   					if right(trim(_trazi_val), 2) == "**" .and. cDio1 $  _rec[LOWER(cKolona)]
-
-                       					_rec[LOWER(cKolona)] := STRTRAN( _rec[LOWER(cKolona)], cDio1, cDio2)
-
-										if _has_semaphore
-											update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-										else
-                       						dbf_update_rec(_rec)
-										endif
-
-                   					endif
-
-               					endif
-
-               					skip
-
-             				enddo
-
-							if _has_semaphore
-                                f18_free_tables({LOWER(alias())})
-								sql_table_update( nil, "END" )
-							endif
-             				
-							dbsetorder( nOrder )
-             				go nRec
-             				TB:RefreshAll()
-
-            			endif
+            	
           			endif
        			endif
      		endif
@@ -636,6 +564,101 @@ DO CASE
 ENDCASE
 
 return
+
+
+// -----------------------------------------------------
+// -----------------------------------------------------
+function replace_kolona_in_table(cKolona, trazi_val, zamijeni_val, last_search)
+local nRec
+local nOrder
+local _saved
+local _has_semaphore
+local _rec
+local cDio1, cDio2
+local _sect
+
+
+nRec := recno()
+nOrder := indexord()
+
+set order to 0
+go top
+
+_saved := .f.
+	
+// da li tabela ima semafor ?
+_has_semaphore := alias_has_semaphore()
+
+
+if _has_semaphore
+   if !f18_lock_tables({LOWER(alias())})
+       MsgBeep("Ne mogu zakljucati " + ALIAS() + "!?")
+       return DE_CONT
+   endif
+   sql_table_update( nil, "BEGIN" )
+endif
+
+do while !eof()
+
+  if EVAL(FIELDBLOCK(cKolona)) == trazi_val
+
+      _rec := dbf_get_rec()
+      _rec[ LOWER(cKolona) ] := zamijeni_val
+
+      if _has_semaphore
+           update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+      else
+           dbf_update_rec(_rec)
+      endif
+      if !_saved .and. last_search == "D"
+           // snimi
+           _sect := "_brow_fld_find_" + ALLTRIM(LOWER(cKolona))
+           set_metric( _sect, "<>", trazi_val )
+
+           _sect := "_brow_fld_repl_" + ALLTRIM(LOWER(cKolona))
+           set_metric( _sect, "<>", zamijeni_val )
+           _saved := .t.
+      endif
+
+  endif
+
+
+  if VALTYPE( trazi_val ) == "C"
+
+        _rec := dbf_get_rec()
+
+        cDio1 := left(trazi_val, len(trim(trazi_val)) - 2)
+        cDio2 := left(zamijeni_val, len(trim(zamijeni_val)) -2)
+
+        if right(trim(trazi_val), 2) == "**" .and. cDio1 $  _rec[LOWER(cKolona)]
+
+             _rec[LOWER(cKolona)] := STRTRAN( _rec[LOWER(cKolona)], cDio1, cDio2)
+
+             if _has_semaphore
+                 update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+             else
+                 dbf_update_rec(_rec)
+             endif
+
+        endif
+
+  endif
+
+  skip
+
+enddo
+
+if _has_semaphore
+   f18_free_tables({LOWER(alias())})
+   sql_table_update( nil, "END" )
+endif
+
+dbsetorder( nOrder )
+go nRec
+
+return .t.
+
+
 
 
 // ---------------------------------------------------------------

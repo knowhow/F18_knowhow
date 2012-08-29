@@ -11,7 +11,169 @@
 
 #include "fmk.ch"
 
-function cre_all_ld( ver )
+function cre_all_ld_sif(ver)
+
+// hernad: ove tabele su trebale dobiti prefix ld_ da bi se znale da pripadaju modulu ld
+// kao workaround cu uvijek kreirati ove tabele kao
+
+// KRED
+aDBf:={}
+
+AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'ZIRO'                , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'ZIROD'               , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'TELEFON'             , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'MJESTO'              , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'ADRESA'              , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
+AADD(aDBf,{ 'FIL'                 , 'C' ,  30 ,  0 })
+
+if !file(f18_ime_dbf("KRED"))
+    DBCREATE2( 'KRED', aDbf )
+    reset_semaphore_version("kred")
+    my_use("KRED")
+endif
+
+if !file(f18_ime_dbf("_KRED"))
+   DBCREATE2( '_KRED',aDbf)
+endif
+
+CREATE_INDEX("ID","id",   "KRED")
+CREATE_INDEX("NAZ","naz", "KRED")
+
+
+// POR
+if !file(f18_ime_dbf("POR"))
+
+    aDBf:={}
+
+    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    add_f_mcode(@aDbf)
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+    AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'POR_TIP'             , 'C' ,   1 ,  0 })
+    // stepenasti porez
+    AADD(aDBf,{ 'ALGORITAM'           , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'S_STO_1'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_1'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_2'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_2'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_3'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_3'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_4'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_4'             , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'S_STO_5'             , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'S_IZN_5'             , 'N' ,  12 ,  2 })
+
+    DBCREATE2( 'POR', aDbf )
+    reset_semaphore_version("por")
+    my_use("POR")
+
+endif
+
+CREATE_INDEX("ID", "id", "POR")
+
+
+// DOPR
+if !file(f18_ime_dbf("DOPR"))
+
+    aDBf:={}
+    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+    add_f_mcode(@aDbf)
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+    AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+    AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+    AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
+    AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+
+    DBCREATE2( 'DOPR', aDbf )
+    reset_semaphore_version("dopr")
+    my_use("dopr")
+endif
+
+CREATE_INDEX("ID","id", "DOPR")
+CREATE_INDEX("1","id+naz+tiprada", "DOPR")
+
+if !file(f18_ime_dbf("STRSPR"))
+    aDbf:={ {"id","C",3,0} ,;
+            {"naz","C",20,0} ,;
+            {"naz2","C",6,0} ;
+                }
+    DBCREATE2( "STRSPR", aDbf )
+    reset_semaphore_version( "strspr" )
+    my_use("STRSPR")
+
+endif
+
+CREATE_INDEX("ID","id", "strspr")
+
+if !file(f18_ime_dbf("KBENEF"))
+
+   aDbf:={ {"id","C",1,0} ,;
+           {"naz","C",8,0} ,;
+           {"iznos","N",5,2} ;
+         }
+    DBCREATE2( "KBENEF", aDbf )
+    reset_semaphore_version( "kbenef" )
+    my_use("KBENEF")
+    
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"KBENEF")
+
+// vrste posla
+if !file(f18_ime_dbf("VPOSLA"))  
+   aDbf:={  {"id","C",2,0}   ,;
+            {"naz","C",20,0} ,;
+            {"idkbenef","C",1,0} ;
+         }
+    DBCREATE2( "VPOSLA", aDbf )
+    reset_semaphore_version( "vposla" )
+    my_use( "VPOSLA" )
+
+endif
+
+CREATE_INDEX("ID","id", "VPOSLA")
+
+aDBf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'Aktivan'             , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'Fiksan'              , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'UFS'                 , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'UNeto'               , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'Koef1'               , 'N' ,   5 ,  2 })
+AADD(aDBf,{ 'Formula'             , 'C' , 200 ,  0 })
+AADD(aDBf,{ 'OPIS'                , 'C' ,   8 ,  0 })
+AADD(aDBf,{ 'TPR_TIP'             , 'C' ,   1 ,  0 })
+
+if !file(f18_ime_dbf("TIPPR"))
+    DBCREATE2( 'TIPPR', aDbf)
+    reset_semaphore_version("tippr")
+    my_use("TIPPR")
+endif
+
+CREATE_INDEX("ID", "id", "TIPPR")
+
+if !file(f18_ime_dbf("TIPPR2"))
+    DBCREATE2( 'TIPPR2', aDbf )
+    reset_semaphore_version("tippr2")
+    my_use("TIPPR2")
+endif
+
+CREATE_INDEX("ID","id", "TIPPR2")
+
+return
+
+// -------------------------------
+// -------------------------------
+function cre_all_ld(ver)
 local aDbf
 local _alias, _table_name
 local _created
@@ -93,35 +255,7 @@ if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
     close all
 endif
-    
 
-aDBf:={}
-AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-AADD(aDBf,{ 'Aktivan'             , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'Fiksan'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'UFS'                 , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'UNeto'               , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'Koef1'               , 'N' ,   5 ,  2 })
-AADD(aDBf,{ 'Formula'             , 'C' , 200 ,  0 })
-AADD(aDBf,{ 'OPIS'                , 'C' ,   8 ,  0 })
-AADD(aDBf,{ 'TPR_TIP'             , 'C' ,   1 ,  0 })
-
-if !file(f18_ime_dbf("TIPPR"))
-    DBCREATE2( 'TIPPR', aDbf)
-    reset_semaphore_version("tippr")
-    my_use("TIPPR")
-endif
-
-CREATE_INDEX("ID", "id", "TIPPR")
-
-if !file(f18_ime_dbf("TIPPR2"))
-    DBCREATE2( 'TIPPR2', aDbf )
-    reset_semaphore_version("tippr2")
-    my_use("TIPPR2")
-endif
-
-CREATE_INDEX("ID","id", "TIPPR2")
 
 // modul LD koristi sopstveni sifrarnik radnih jedinica
 if !file(f18_ime_dbf("ld_rj"))
@@ -136,130 +270,6 @@ if !file(f18_ime_dbf("ld_rj"))
     my_use("ld_rj")
 endif
 CREATE_INDEX("ID","id","LD_RJ")
-
-// KRED
-aDBf:={}
-AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-add_f_mcode(@aDbf)
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
-AADD(aDBf,{ 'ZIRO'                , 'C' ,  20 ,  0 })
-AADD(aDBf,{ 'ZIROD'               , 'C' ,  20 ,  0 })
-AADD(aDBf,{ 'TELEFON'             , 'C' ,  20 ,  0 })
-AADD(aDBf,{ 'MJESTO'              , 'C' ,  20 ,  0 })
-AADD(aDBf,{ 'ADRESA'              , 'C' ,  30 ,  0 })
-AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
-AADD(aDBf,{ 'FIL'                 , 'C' ,  30 ,  0 })
-if !file(f18_ime_dbf("KRED"))
-    DBCREATE2( 'KRED', aDbf )
-    reset_semaphore_version("kred")
-    my_use("KRED")
-endif
-
-if !file(f18_ime_dbf("_KRED"))
-   DBCREATE2( '_KRED',aDbf)
-endif
-
-CREATE_INDEX("ID","id",   "KRED")
-CREATE_INDEX("NAZ","naz", "KRED")
-
-
-// POR
-if !file(f18_ime_dbf("POR"))
-
-    aDBf:={}
-    
-    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-    add_f_mcode(@aDbf)
-    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-    AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
-    AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
-    AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'POR_TIP'             , 'C' ,   1 ,  0 })
-    // stepenasti porez
-    AADD(aDBf,{ 'ALGORITAM'           , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'S_STO_1'             , 'N' ,   5 ,  2 })
-    AADD(aDBf,{ 'S_IZN_1'             , 'N' ,  12 ,  2 })
-    AADD(aDBf,{ 'S_STO_2'             , 'N' ,   5 ,  2 })
-    AADD(aDBf,{ 'S_IZN_2'             , 'N' ,  12 ,  2 })
-    AADD(aDBf,{ 'S_STO_3'             , 'N' ,   5 ,  2 })
-    AADD(aDBf,{ 'S_IZN_3'             , 'N' ,  12 ,  2 })
-    AADD(aDBf,{ 'S_STO_4'             , 'N' ,   5 ,  2 })
-    AADD(aDBf,{ 'S_IZN_4'             , 'N' ,  12 ,  2 })
-    AADD(aDBf,{ 'S_STO_5'             , 'N' ,   5 ,  2 })
-    AADD(aDBf,{ 'S_IZN_5'             , 'N' ,  12 ,  2 })
-   
-    DBCREATE2( 'POR', aDbf )
-    reset_semaphore_version("por")
-    my_use("POR")
-
-endif
-
-CREATE_INDEX("ID","id",SIFPATH+"POR")
-
-
-// DOPR
-if !file(f18_ime_dbf("DOPR"))
-   
-    aDBf:={}
-    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-    add_f_mcode(@aDbf)
-    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-    AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
-    AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
-    AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
-    
-    DBCREATE2( 'DOPR', aDbf )
-    reset_semaphore_version("dopr")
-    my_use("dopr")
-
-endif
-
-CREATE_INDEX("ID","id",SIFPATH+"DOPR")
-CREATE_INDEX("1","id+naz+tiprada",SIFPATH+"DOPR")
-
-if !file(f18_ime_dbf("STRSPR"))
-    aDbf:={ {"id","C",3,0} ,;
-            {"naz","C",20,0} ,;
-            {"naz2","C",6,0} ;
-                }
-    DBCREATE2( "STRSPR", aDbf )
-    reset_semaphore_version( "strspr" )
-    my_use("STRSPR")
-
-endif
-
-
-CREATE_INDEX("ID","id", "strspr")
-
-if !file(f18_ime_dbf("KBENEF"))
-   aDbf:={ {"id","C",1,0} ,;
-           {"naz","C",8,0} ,;
-           {"iznos","N",5,2} ;
-         }
-    DBCREATE2( "KBENEF", aDbf )
-    reset_semaphore_version( "kbenef" )
-    my_use("KBENEF")
-    
-endif
-
-CREATE_INDEX("ID","id",SIFPATH+"KBENEF")
-
-
-if !file(f18_ime_dbf("VPOSLA"))  // vrste posla
-   aDbf:={  {"id","C",2,0}   ,;
-            {"naz","C",20,0} ,;
-            {"idkbenef","C",1,0} ;
-         }
-    DBCREATE2( "VPOSLA", aDbf )
-    reset_semaphore_version( "vposla" )
-    my_use( "VPOSLA" )
-
-endif
-
-CREATE_INDEX("ID","id", "VPOSLA")
 
 
 // RADKR.DBF

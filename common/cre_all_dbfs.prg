@@ -19,6 +19,8 @@ cre_sifrarnici_1(ver)
 cre_roba(ver)
 cre_partn(ver)
 cre_adres(ver)
+cre_all_ld_sif(ver)
+cre_all_virm_sif(ver)
 
 if f18_use_module( "fin" )
   cre_all_fin(ver)

@@ -9,14 +9,12 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "kalk.ch"
 
 
 // privatne varijable: 
 //  - fNovi
 //  - nRbr
-
 
 /*! \fn Get1_10()
  *  \brief Prvi ekran maske za unos dokumenta tipa 10
@@ -337,7 +335,6 @@ return lastkey()
  */
 
 function V_kol10()
-*{
 if _kolicina<0  // storno
 nKolS:=0;nKolZN:=0;nc1:=nc2:=0; dDatNab:=ctod("")
  if !empty(gMetodaNC)
@@ -358,5 +355,5 @@ nKolS:=0;nKolZN:=0;nc1:=nc2:=0; dDatNab:=ctod("")
 select kalk_pripr
 endif
 return .t.
-*}
+
 

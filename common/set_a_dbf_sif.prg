@@ -59,5 +59,3 @@ set_a_dbf_temp     ("strings"    ,  "STRINGS"     , F_STRINGS    )
 return
 
 
-
-

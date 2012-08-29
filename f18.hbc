@@ -1,7 +1,11 @@
 {allwin}incpaths=\devel\git\fmk\fmk_lib\include
 #{allwin}libpaths=${HB_DIR_QT}\lib ${QT_DIR}\lib
 
-{mingw|mingwce|(gcc&(linux|darwin))}libs=supc++
+#10.8 macosc/darvin ne treba ovo
+{mingw|mingwce|(gcc&(linux))}libs=supc++
+
+#{mingw|mingwce|(gcc&(linux|darwin))}libs=supc++
+
 #{allwin&!HB_QT_STATIC}libs=QtCore4 QtGui4 QtNetwork4 QtWebKit4
 #{allwin&HB_QT_STATIC}libs=QtCore QtGui QtNetwork QtWebKit
 

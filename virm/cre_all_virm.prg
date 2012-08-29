@@ -11,6 +11,102 @@
 
 #include "fmk.ch"
 
+// -------------------------------
+// -------------------------------
+function cre_all_virm_sif(ver)
+local aDbf
+local _alias, _table_name
+local _created
+
+aDbf:={}
+AADD(aDBf,{ 'ID'         , 'C' ,   4 ,   0 })
+AADD(aDBf,{ 'NAZ'        , 'C' ,  55 ,   0 })
+AADD(aDBf,{ 'POM_TXT'    , 'C' ,  65 ,   0 })
+AADD(aDBf,{ 'IDKONTO'    , 'C' ,   7 ,   0 })
+AADD(aDBf,{ 'IDPartner'  , 'C' ,   6 ,   0 })
+AADD(aDBf,{ 'NACIN_PL'   , 'C' ,   1 ,   0 })
+AADD(aDBf,{ 'RACUN'      , 'C' ,  16 ,   0 })
+AADD(aDBf,{ 'DOBAV'      , 'C' ,   1 ,   0 })
+
+_alias := "VRPRIM"
+_table_name := "vrprim"
+
+IF !FILE( f18_ime_dbf( _alias ) )
+    DBCREATE2( _alias, aDbf )
+    reset_semaphore_version( _table_name )
+    my_use( _alias )
+    use
+ENDIF
+
+CREATE_INDEX("ID","id", _alias )
+CREATE_INDEX("NAZ","naz", _alias )
+CREATE_INDEX("IDKONTO","idkonto+idpartner", _alias )
+
+_table_name := "vrprim2"
+_alias := "VRPRIM2"
+IF !FILE( f18_ime_dbf( _alias ) )
+	DBCREATE2( _alias, aDbf )
+ENDIF
+CREATE_INDEX("ID","id", _alias )
+CREATE_INDEX("NAZ","naz", _alias )
+CREATE_INDEX("IDKONTO","idkonto+idpartner", _alias )
+
+aDbf:={}
+AADD(aDBf,{ 'ID'         , 'C' ,   4 ,   0 })
+AADD(aDBf,{ 'NAZ'        , 'C' ,  50 ,   0 })
+AADD(aDBf,{ 'FORMULA'    , 'C' ,  70 ,   0 })
+	
+_table_name := "ldvirm"
+_alias := "LDVIRM"
+IF !FILE( f18_ime_dbf( _alias ) )
+	DBCREATE2( _alias, aDbf )
+    reset_semaphore_version( _table_name )
+    my_use( _alias )
+    use
+ENDIF
+CREATE_INDEX("ID","id", _alias)
+
+aDbf:={}
+AADD(aDBf,{ 'ID'         , 'C' ,   4 ,   0 })
+AADD(aDBf,{ 'NAZ'        , 'C' ,  20 ,   0 })
+AADD(aDBf,{ 'FORMULA'    , 'C' ,  70 ,   0 })
+AADD(aDBf,{ 'PNABR'      , 'C' ,  10 ,   0 })
+	
+_table_name := "kalvir"
+_alias := "KALVIR"
+
+IF !FILE( f18_ime_dbf( _alias ) )
+	DBCREATE2( _alias, aDbf )
+    reset_semaphore_version( _table_name )
+    my_use( _alias )
+    use
+ENDIF
+CREATE_INDEX("ID","id", _alias )
+
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'IdN0'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'IdKan'               , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IdOps'               , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'Naz'                 , 'C' ,  40 ,  0 })
+AADD(aDBf,{ 'Racun'               , 'C' ,  16 ,  0 })
+AADD(aDBf,{ 'BudzOrg'             , 'C' ,  7 ,  0 })
+	
+_table_name := "jprih"
+_alias := "JPRIH"
+
+if !file( f18_ime_dbf( _alias ) )
+	DBCREATE2( _alias, aDbf )
+    reset_semaphore_version( _table_name )
+    my_use( _alias )
+    use
+endif
+
+CREATE_INDEX("Id","id+IdOps+IdKan+IdN0+Racun", _alias )
+CREATE_INDEX("Naz","Naz+IdOps", _alias )
+
+// -------------------------------
+// -------------------------------
 function cre_all_virm(ver)
 local aDbf
 local _alias, _table_name
@@ -90,94 +186,6 @@ ENDIF
 
 CREATE_INDEX("1","STR(rbr,3)", _alias )
 
-
-aDbf:={}
-AADD(aDBf,{ 'ID'         , 'C' ,   4 ,   0 })
-AADD(aDBf,{ 'NAZ'        , 'C' ,  55 ,   0 })
-AADD(aDBf,{ 'POM_TXT'    , 'C' ,  65 ,   0 })
-AADD(aDBf,{ 'IDKONTO'    , 'C' ,   7 ,   0 })
-AADD(aDBf,{ 'IDPartner'  , 'C' ,   6 ,   0 })
-AADD(aDBf,{ 'NACIN_PL'   , 'C' ,   1 ,   0 })
-AADD(aDBf,{ 'RACUN'      , 'C' ,  16 ,   0 })
-AADD(aDBf,{ 'DOBAV'      , 'C' ,   1 ,   0 })
-
-_alias := "VRPRIM"
-_table_name := "vrprim"
-
-IF !FILE( f18_ime_dbf( _alias ) )
-    DBCREATE2( _alias, aDbf )
-    reset_semaphore_version( _table_name )
-    my_use( _alias )
-    use
-ENDIF
-
-CREATE_INDEX("ID","id", _alias )
-CREATE_INDEX("NAZ","naz", _alias )
-CREATE_INDEX("IDKONTO","idkonto+idpartner", _alias )
-
-
-_table_name := "vrprim2"
-_alias := "VRPRIM2"
-IF !FILE( f18_ime_dbf( _alias ) )
-	DBCREATE2( _alias, aDbf )
-ENDIF
-CREATE_INDEX("ID","id", _alias )
-CREATE_INDEX("NAZ","naz", _alias )
-CREATE_INDEX("IDKONTO","idkonto+idpartner", _alias )
-
-aDbf:={}
-AADD(aDBf,{ 'ID'         , 'C' ,   4 ,   0 })
-AADD(aDBf,{ 'NAZ'        , 'C' ,  50 ,   0 })
-AADD(aDBf,{ 'FORMULA'    , 'C' ,  70 ,   0 })
-	
-_table_name := "ldvirm"
-_alias := "LDVIRM"
-IF !FILE( f18_ime_dbf( _alias ) )
-	DBCREATE2( _alias, aDbf )
-    reset_semaphore_version( _table_name )
-    my_use( _alias )
-    use
-ENDIF
-CREATE_INDEX("ID","id", _alias)
-
-aDbf:={}
-AADD(aDBf,{ 'ID'         , 'C' ,   4 ,   0 })
-AADD(aDBf,{ 'NAZ'        , 'C' ,  20 ,   0 })
-AADD(aDBf,{ 'FORMULA'    , 'C' ,  70 ,   0 })
-AADD(aDBf,{ 'PNABR'      , 'C' ,  10 ,   0 })
-	
-_table_name := "kalvir"
-_alias := "KALVIR"
-
-IF !FILE( f18_ime_dbf( _alias ) )
-	DBCREATE2( _alias, aDbf )
-    reset_semaphore_version( _table_name )
-    my_use( _alias )
-    use
-ENDIF
-CREATE_INDEX("ID","id", _alias )
-
-aDbf:={}
-AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-AADD(aDBf,{ 'IdN0'                , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'IdKan'               , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'IdOps'               , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'Naz'                 , 'C' ,  40 ,  0 })
-AADD(aDBf,{ 'Racun'               , 'C' ,  16 ,  0 })
-AADD(aDBf,{ 'BudzOrg'             , 'C' ,  7 ,  0 })
-	
-_table_name := "jprih"
-_alias := "JPRIH"
-
-if !file( f18_ime_dbf( _alias ) )
-	DBCREATE2( _alias, aDbf )
-    reset_semaphore_version( _table_name )
-    my_use( _alias )
-    use
-endif
-
-CREATE_INDEX("Id","id+IdOps+IdKan+IdN0+Racun", _alias )
-CREATE_INDEX("Naz","Naz+IdOps", _alias )
 
 return
 

@@ -437,8 +437,9 @@ cRet := RTRIM(opis)
 
 return cRet
 
-
+// ---------------------------------------------
 // azuriranje podataka o kupcu
+// ---------------------------------------------
 function AzurKupData(cIdPos)
 local cKNaziv
 local cKAdres
@@ -463,7 +464,7 @@ endif
 O_DOKSPF
 
 
-f18_lock_tables({_tbl, "doks_pf"})
+f18_lock_tables({_tbl})
 
 sql_table_update( nil, "BEGIN" )
 
@@ -493,14 +494,12 @@ _rec["knaz"] := cKNaziv
 _rec["kadr"] := cKAdres
 _rec["kidbr"] := cKIdBroj
 
-update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT", .f. )
+update_rec_server_and_dbf( _tbl, _rec, 1, "CONT", .f. )
 
-f18_free_tables({_tbl, "doks_pf"})
+f18_free_tables({_tbl})
 sql_table_update( nil, "END" )
 
 return
-
-
 
 // pretrazi tabelu kupaca i napuni matricu
 function fnd_kup_data(cKupac)

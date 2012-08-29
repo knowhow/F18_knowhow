@@ -1,4 +1,8 @@
-1.3.10  2002-08-28, hernad
+1.3.11  2002-08-29, hernad
+
+ - #29009
+
+1.3.10  2002-08-29, hernad
 
  - workaround za lose imenovanje tabela u ld, virm modulima
 

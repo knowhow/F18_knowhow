@@ -333,6 +333,7 @@ do while !EOF()
                     lDatFakt := .t.
                 endif
           
+                dDFDok := CTOD("")
                 if lDatFakt
                     dDFDok := finmat->DatFaktP
                 endif
@@ -340,10 +341,10 @@ do while !EOF()
                 if gBaznaV == "P"
                     nIz := Round7( nIz, RIGHT( TRFP->naz, 2 ))  
                     //DEM - pomocna valuta
-                    nIz2 := Round7(nIz*Kurs(dDFDok,"P","D"),RIGHT(TRFP->naz,2))
+                    nIz2 := Round7( nIz * Kurs( dDFDok, "P", "D" ), RIGHT( TRFP->naz, 2) )
                 else
-                    nIz2:=round7(nIz,RIGHT(TRFP->naz,2))  //DEM - pomocna valuta
-                    nIz:=round7(nIz2*Kurs(dDFDok,"D","P"),RIGHT(TRFP->naz,2))
+                    nIz2 := Round7( nIz, RIGHT( TRFP->naz, 2 ))  //DEM - pomocna valuta
+                    nIz := Round7( nIz2 * Kurs( dDFDok, "D", "P" ), RIGHT( TRFP->naz, 2 ))
                 endif
 
 

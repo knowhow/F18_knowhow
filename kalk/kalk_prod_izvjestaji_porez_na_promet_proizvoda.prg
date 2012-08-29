@@ -1,35 +1,18 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * ERP software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "kalk.ch"
-
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/prod/rpt/1g/rpt_all.prg
- *  \brief Ove funkcije koristi vise izvjestaja (primjer RekTarife)
- */
-
-
-
 
 // porez na promet proizvoda
 function RekTarPPP( lVisak )
-*{
 local aPKonta
 local nIznPRuc
 private aPorezi
@@ -42,8 +25,9 @@ IF prow() > 55+gPStranica
 	FF
 	@ prow(),123 SAY "Str:"+str(++nStr,3)
 endif
+
 nRec:=recno()
-select kalk_kalk_pripr
+select kalk_pripr
 set order to tag "2"
 
 if (cIdVd == "IP")
@@ -116,7 +100,7 @@ for i:=1 to nCntKonto
 
 	  	select tarifa
 		hseek cIdtarifa
-	  	select kalk_kalk_pripr
+	  	select kalk_pripr
   		do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok .and. idTarifa==cIdTarifa
 
 			// IP dokument ima dvije rekapitulacije
@@ -148,14 +132,14 @@ for i:=1 to nCntKonto
 	    		endif
     	
 			select roba
-			hseek kalk_kalk_pripr->idroba
+			hseek kalk_pripr->idroba
 	
-			Tarifa(kalk_kalk_pripr->pkonto, kalk_kalk_pripr->idRoba, @aPorezi, cIdTarifa)
-			select kalk_kalk_pripr
+			Tarifa( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi, cIdTarifa)
+			select kalk_pripr
 		
     			VtPorezi()
 
-			nMpc:=DokMpc(idvd, aPorezi)
+			nMpc := DokMpc(idvd, aPorezi)
 			if idvd=="19"
     				// nova cijena
     				nMpcSaPP1:=field->mpcSaPP+field->fcj
@@ -180,7 +164,7 @@ for i:=1 to nCntKonto
 			nU4+=aIPor[3]*nKolicina
     			nU5+=field->mpcSaPP*nKolicina
 			// ukupna bruto marza
-			nTot6+=(nMpc-kalk_kalk_pripr->nc)*nKolicina
+			nTot6+=(nMpc-kalk_pripr->nc)*nKolicina
     			skip 1
 	  	enddo
 		nTot1+=nU1
@@ -228,5 +212,4 @@ next
 set order to tag "1"
 go nRec
 return
-*}
 

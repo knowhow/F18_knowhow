@@ -15,9 +15,9 @@ MsgC()
 // test bug
 // ? ajoj
 
-MsgO("fin_test")
-fin_test()
-MsgC()
+//MsgO("fin_test")
+//fin_test()
+//MsgC()
 
 MsgO("harbour base")
 harbour_base()
@@ -49,6 +49,8 @@ test_version()
 
 
 //test_semaphores()
+
+i_dodaj_sifru_rj()
 
 
 TEST_END()

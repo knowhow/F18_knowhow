@@ -571,10 +571,14 @@ if (Ch==K_CTRL_N .and.  ImaSlovo("D",cSecur)  )  .or. ;
    return DE_CONT
 endif
 
+#ifndef TEST
+
 if ((Ch==K_CTRL_N .or.Ch==K_CTRL_A .or. Ch==K_F2 .or. Ch==K_CTRL_T .or. Ch==K_F4 .or. Ch==K_CTRL_F9 .or. Ch==K_F10) .and. !ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDSIF")) 
     MsgBeep("Vi nemate pravo na promjenu podataka u sifrarnicima !")
     return DE_CONT
 endif
+
+#endif
 
 do case
 
@@ -639,7 +643,6 @@ do case
     endif
 
     Izlaz("Pregled: " + ALLTRIM(cNaslov) + " na dan " + dtoc(date()) + " g.", "sifrarnik" )
-    set filter to
     PopWa()
 
     return DE_CONT

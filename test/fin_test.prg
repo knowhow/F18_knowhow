@@ -26,8 +26,8 @@ _sql_query_2( _server, "delete from fmk.fin_suban where idvn='9X'")
 
 
 log_disable()
-for _i := 1 to 1000
-    for _j:= 1 to 30
+for _i := 1 to 10
+    for _j:= 1 to 5
 
         APPEND BLANK
         _rec := dbf_get_rec()
@@ -51,7 +51,7 @@ for _i := 1 to 1000
     next
 next
 log_enable()
-TEST_LINE(reccount(), 1000 * 500)
+TEST_LINE(reccount(), 10*5)
 
 return
 

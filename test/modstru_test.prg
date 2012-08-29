@@ -12,27 +12,26 @@
 #include "fmk.ch"
 #include "f18_ver.ch"
 
+static _table_name := "f18_test"
 
 function create_test_f18_dbf()
-local _ime_f := "test_f18"
 local _dbf_struct := {}
 local _i
 
-_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
-if _i == 0
-  AADD(gaDBFs, { 100,  UPPER(_ime_f),  _ime_f  } )
-endif
+// tabele sa strukturom sifarnika (id je primarni ključ)
+set_a_dbf_sifarnik(_table_name   , "F18_TEST"     , 500      )
+
 
 
 AADD(_dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
 AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
        
-DBCREATE2(_ime_f, _dbf_struct)
+DBCREATE2(_table_name, _dbf_struct)
 
-CREATE_INDEX("ID",  "id", _ime_f)  
-CREATE_INDEX("NAZ", "naz", _ime_f)
+CREATE_INDEX("ID",  "id", _table_name)  
+CREATE_INDEX("NAZ", "naz", _table_name)
 
-my_usex(_ime_f)
+my_usex(_table_name)
 
 for _i := 1 to 50
  APPEND BLANK
@@ -48,14 +47,36 @@ local _ini_params
 local _current_dbf_ver, _new_dbf_ver
 local _ini_section := "DBF_version"
 
+create_sql_table_f18_test()
+create_semaphore(_table_name)
 create_test_f18_dbf()
 
-modstru({"*test_f18", "C ID C 2 0  ID C 5 0",  "A NAZ2 C 40 0"})
+modstru({"*" + _table_name, "C ID C 2 0  ID C 5 0",  "A NAZ2 C 40 0"})
 
-my_use( "test_f18", "test_f18", .t.)
+my_use( _table_name, _table_name, .t.)
 
 TEST_LINE( FIELDPOS("NAZ2") > 0 .and. LEN(EVAL(FIELDBLOCK("ID"))) == 5,  .t.)
 use
-
 return
+
+
+// ------------------------------------
+// ------------------------------------
+function create_sql_table_f18_test()
+local _qry, _ret
+
+_qry := "drop table if exists fmk.f18_test;"
+_qry += "create table f18_test ("
+_qry += "id varchar(2), naz varchar(40)"
+_qry += "); " 
+_qry += "GRANT ALL ON TABLE fmk.f18_test TO xtrole;"
+
+_ret := run_sql_query(_qry)
+
+if VALTYPE(_ret)  == "O"
+   return .t.
+else
+   return .f.
+endif
+
 

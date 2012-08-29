@@ -251,7 +251,21 @@ endif
 return
 
 
+#ifdef TEST
 
+function _get_server_params_from_config()
+
+__server_params := hb_hash()
+__server_params["port"] := 5432
+__server_params["database"] := "f18_test"
+__server_params["host"] := "localhost"
+__server_params["user"] := "test1"
+__server_params["schema"] := "fmk"
+__server_params["password"] := __server_params["user"]
+
+return
+
+#else
 // -------------------------------------
 // -------------------------------------
 function _get_server_params_from_config()
@@ -284,6 +298,7 @@ endif
 __server_params["password"] := __server_params["user"]
 
 return 
+#endif
 
 // --------------------------------------------------------
 // --------------------------------------------------------

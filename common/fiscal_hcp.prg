@@ -976,7 +976,7 @@ if cRefund == "N"
 	cCmd := 'CMD="RECEIPT_COPY"'
 else
 	// reklamni racun
-	cCmd := 'CMD="REFOUND_RECEIPT_COPY"'
+	cCmd := 'CMD="REFUND_RECEIPT_COPY"'
 endif
 
 cCmd += _razmak1 + 'NUM="' +  ALLTRIM(cBrRn) + '"'

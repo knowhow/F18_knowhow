@@ -1074,8 +1074,10 @@ LOCAL nVrati:=1,nTipka,i:=0,nOpc:=LEN(aOpc),nRedova:=1,p:=0
      NEXT
     NEXT
 
+#ifndef TEST
     CLEAR TYPEAHEAD
-    nTipka:=INKEY(0)
+#endif
+    nTipka := INKEY(0)
 
     DO CASE
      CASE nTipka==K_UP
@@ -1360,7 +1362,9 @@ if !gAppSrv
     Beep(2) 
 endif
 
-CLEAR TYPEAHEAD
+#ifndef TEST
+  CLEAR TYPEAHEAD
+#endif
 
 /*
 

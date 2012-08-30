@@ -53,7 +53,9 @@ test_version()
 //test_semaphores()
 
 i_dodaj_sifre()
+i_fakt()
 
+ 
 
 TEST_END()
 

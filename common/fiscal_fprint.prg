@@ -1715,8 +1715,12 @@ do while nTime > 0
 		ALLTRIM( STR(nTime) ), 48)
 
 	sleep(1)
-	
+
+#ifdef TEST
+    if .t.
+#else
     if FILE( cF_name )
+#endif
 		// fajl se pojavio - izadji iz petlje !
 		exit
 	endif

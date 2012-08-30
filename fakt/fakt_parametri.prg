@@ -56,7 +56,7 @@ AADD(opcexe,{|| par_fakt_izgled_dokumenta()})
 
 if IsPDV()
     AADD(opc,"4. izgled dokumenata - zaglavlje ")
-    AADD(opcexe,{|| ZaglParams()})
+    AADD(opcexe,{|| fakt_zagl_params()})
 endif
 
 AADD(opc,"5. nazivi dokumenata i teksta na kraju (potpis)")
@@ -273,7 +273,7 @@ return
 
 // ---------------------------------------------
 // ---------------------------------------------
-function ZaglParams()
+function fakt_zagl_params()
 local nSay := 17
 local sPict := "@S55"
 local nX := 1

@@ -28,35 +28,6 @@ SELECT DEST
 SET ORDER TO TAG "1"
 HSEEK cIdTek+cId
 
-/*
-IF FOUND()
-   IF Pitanje(,"Izvrsiti ispravku destinacije "+cId+" ? (D/N)","N")=="D"
-     EdDestBlok(K_F2,cId)
-     CLEAR TYPEAHEAD
-     SET TYPEAHEAD TO 0
-     SET TYPEAHEAD TO 1024
-     KEYBOARD CHR(K_UP)+CHR(K_DOWN)
-     INKEY(0.5)
-     READ
-   ENDIF
-   SELECT (nArr)
-   RETURN .t.
-ELSE 
-   // nova destinacija
-   GO BOTTOM; SKIP 1
-   EdDestBlok(K_CTRL_N,cId)
-   INKEY(0.5)
-   CLEAR TYPEAHEAD
-   SET TYPEAHEAD TO 0
-   SET TYPEAHEAD TO 1024
-   SELECT (nArr)
-   KEYBOARD CHR(K_UP)+CHR(K_DOWN)
-   INKEY(0.5)
-   READ
-   RETURN .t.
-ENDIF
-
-*/
 SET SCOPE TO cIdTek
 ImeKol:={ ;
           { "OZNAKA"  , {|| OZNAKA },  "OZNAKA"  },;

@@ -149,13 +149,17 @@ do while .t.
     private cDn:="N"
 
     Box(, 5, 60)
+#ifndef TEST
         set confirm off
+#endif
         @ m_x+1, m_y+2 SAY "Za radnika "+cIdRadn+" kredit je formiran na "+STR(i,3)+" rata"
         @ m_x+3, m_y+2 SAY "Prikazati pregled kamata:" GET cDN pict "@!"
         read
     BoxC()
 
+#ifndef TEST
     set confirm on
+#endif
 
     close all
 

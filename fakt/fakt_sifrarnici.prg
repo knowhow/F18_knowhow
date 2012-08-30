@@ -942,8 +942,10 @@ FUNC P_IDPM(cId,cIdPartner)
        @ m_x+1, m_y+2 SAY "POSTOJECA PRODAJNA"
        @ m_x+2, m_y+2 SAY "      MJESTA      "
        @ m_x+3, m_y+2 SAY "컴컴컴컴컴컴컴컴컴"
+#ifndef TEST
      CLEAR TYPEAHEAD
-     nPom:=Menu2(m_x+3,m_y+3,aNaz,nPom)
+#endif
+     nPom := Menu2(m_x+3,m_y+3,aNaz,nPom)
     BoxC()
     IF nPom>0
       lVrati:=.t.

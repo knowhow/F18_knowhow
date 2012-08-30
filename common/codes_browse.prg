@@ -1145,6 +1145,7 @@ endif
 
 
 // --------------------------------------------------
+// kod sifarnika partnera se mora potvrditi ma
 // --------------------------------------------------
 static function _chk_sif( cMarker )
 local cFName
@@ -1164,9 +1165,11 @@ xFVal := FIELDGET(i)
 cType := VALTYPE(xFVal)
 cF_Seek := &( cMarker + cFName )
 
+/* ovo nesto se provjerava samo za partnera ?!
+
 if ( cType == "C" ) .and. ( cArea $ "#PARTN##" )
     
-    Box(,1,40)
+    Box(, 1, 40)
         @ m_x + 1, m_y + 2 SAY "Potvrdi sifru sa ENTER: " GET cF_seek
         read
     BoxC()
@@ -1183,7 +1186,7 @@ if ( cType == "C" ) .and. ( cArea $ "#PARTN##" )
         go (nTREC)
     endif
 endif
-    
+*/  
 select (nTArea)
 return nRet
 

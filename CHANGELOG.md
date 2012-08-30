@@ -1,3 +1,7 @@
+1.3.13  2002-08-30, hernad
+
+ - test fakturisanje v1 OK!
+
 1.3.12  2002-08-29, hernad
 
  - #29011 kontiranje nakon izbacivanja kalk->DatKurs ne radi - fix 

@@ -6,6 +6,8 @@ public gDebug := 10
 
 f18_test_init()
 
+post_login()
+
 TEST_BEGIN("")
 
 MsgO("migrate")

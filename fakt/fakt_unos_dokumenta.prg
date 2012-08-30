@@ -254,7 +254,7 @@ do case
             return DE_CONT
         endif
 
-        if gFC_Pitanje == "D" .and. Pitanje( "ST_FISK_PRN", "Odstampati racun na fiskalni printer ?", "D") == "N"
+        if gFC_Pitanje == "D" .and. Pitanje( "ST_FISK_RN", "Odstampati racun na fiskalni printer ?", "D") == "N"
             return DE_CONT
         endif
 

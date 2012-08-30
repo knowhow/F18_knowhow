@@ -44,13 +44,40 @@ if LEN(__test_tags) > 0
 endif
 return
 
+// -----------------------------------------
 // posljednji test tag na stacku
+// -----------------------------------------
 function get_test_tag()
 if LEN(__test_tags) > 0
    return __test_tags[ LEN(__test_tags) ]
 else
    return "XX"
 endif
+
+// -------------------------------------------------
+// stavke['keys'] := { { 'A', '<ENTER>' }, {'B', '<PGDN'}
+// stavke['get'] := { "VAR_A", "VAR_B" }
+// -------------------------------------------------
+function gen_test_keystrokes(stavke)
+local _ret := hb_hash()
+local _kod, _i, _j, _num
+local _keys
+local _a_new
+
+_keys := {}
+for _i := 1 to LEN(stavke['get'])
+   _a_new := { stavke['get'][_i] }
+   to_keystrokes(stavke['keys'][_i], @_a_new)
+
+   //if VALTYPE(_a_new[1] ) != "C"
+   //   Alert(ALLTRIM(STR(_i)) + "/" + pp(_a_new[1]) + " ?!")
+   //endif
+   AADD(_keys, _a_new)
+next
+
+_ret["keys"] := _keys
+
+return _ret
 
 
 // --------------------------------------
@@ -112,57 +139,88 @@ return
 // to_keystrokes({"99", "<ENTER>2"}, @_a_init)
 // ----------------------------------
 function to_keystrokes(a_polja, a_init)
-local _i, _j, _num
+local _i, _j, _num, _key
  
 for _i := 1 to LEN(a_polja)
+
+   if VALTYPE(a_polja[_i]) != "C"
+          _msg := "apolja clanovi moraju biti char" + pp(a_polja[_i])
+          Alert(_msg)
+          log_write(_msg, 2)
+          QUIT
+   endif
+
    DO CASE
-     CASE LEFT(a_polja[_i], 7) == "<ENTER>"
+
+     CASE (LEFT(a_polja[_i], 8) == "<CTRLF9>")
+        _key := LEFT(a_polja[_i], 8)
+        _num := SUBSTR(a_polja[_i], 9)
+
+     CASE (LEFT(a_polja[_i], 7) == "<ENTER>" .or.;
+           LEFT(a_polja[_i], 7) == "<CTRLT>" .or.;
+           LEFT(a_polja[_i], 7) == "<CTRLN>")
+
         // <ENTER5> => 5 x enter
+        _key := LEFT(a_polja[_i], 7)
         _num := SUBSTR(a_polja[_i], 8)
-        if _num == ""
-           _num := "1"
-        endif
 
-        for _j := 1 TO VAL(_num)
-          AADD(a_init, K_ENTER)
-        next
- 
-     CASE LEFT(a_polja[_i], 6) == "<PGDN>"
+     CASE (LEFT(a_polja[_i], 6) == "<DOWN>" .or. ;
+           LEFT(a_polja[_i], 6) == "<PGDN>" .or. ;
+           LEFT(a_polja[_i], 6) == "<HOME>" .or. ;
+           LEFT(a_polja[_i], 6) == "<ALTA>")
+        _key := LEFT(a_polja[_i], 6)
         _num := SUBSTR(a_polja[_i], 7)
-        // <PGDN> => 1 x enter
-        if _num == ""
-             _num := "1"
-        endif
 
-        for _j := 1 TO VAL(_num)
-          AADD(a_init, K_PGDN)
-        next 
- 
-     CASE LEFT(a_polja[_i], 6) == "<HOME>"
-        _num := SUBSTR(a_polja[_i], 7)
-        // <PGDN> => 1 x enter
-        if _num == ""
-             _num := "1"
-        endif
 
-        for _j := 1 TO VAL(_num)
-          AADD(a_init, K_HOME)
-        next 
- 
      CASE LEFT(a_polja[_i], 5) == "<ESC>"
-        _num := SUBSTR(a_polja[_i], 6)
         // <ESC> => 1 x escape
-        if _num == ""
-             _num := "1"
-        endif
-
-        for _j := 1 TO VAL(_num)
-          AADD(a_init, K_ESC)
-        next 
+        _key := LEFT(a_polja[_i], 5)
+        _num := SUBSTR(a_polja[_i], 6)
 
      OTHERWISE
-       AADD(a_init, a_polja[_i]) 
+       AADD(a_init, a_polja[_i])
+       loop
   END CASE
+
+  if _num == ""
+     _num := "1"
+  endif
+
+
+  for _j := 1 TO VAL(_num)
+     do case
+
+         CASE _key == "<CTRLF9>"
+               AADD(a_init, K_CTRL_F9)
+
+         CASE _key == "<ESC>"
+               AADD(a_init, K_ESC)
+
+         CASE _key == "<ENTER>"
+               AADD(a_init, K_ENTER)
+
+         CASE _key == "<ALTA>"
+               AADD(a_init, K_ALT_A)
+
+         CASE _key == "<CTRLN>"
+               AADD(a_init, K_CTRL_N)
+
+         CASE _key == "<CTRLT>"
+               AADD(a_init, K_CTRL_T)
+
+         CASE _key == "<HOME>"
+               AADD(a_init, K_HOME)
+
+         CASE _key == "<PGDN>"
+               AADD(a_init, K_PGDN)
+
+         CASE _key == "<DOWN>"
+               AADD(a_init, K_DOWN)
+
+      end case
+  next
+
+
 next
 
 return a_init
@@ -178,7 +236,6 @@ log_write("START test_keystrokes: " + ALLTRIM(STR(__keystroke_step)), 3)
 
 for _i := 1 to LEN(__keystrokes)
 
-    // ovo ne kontam
     if (__keystroke_step) <> _i
          log_write("test_keystrokes loop" + ALLTRIM(STR(_i)), 3)
 

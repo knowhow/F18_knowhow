@@ -1038,7 +1038,7 @@ if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     return DE_CONT
 endif
 
-if Pitanje("BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
+if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
  
     select fakt_pripr
     go top

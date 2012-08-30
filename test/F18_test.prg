@@ -50,7 +50,7 @@ test_version()
 
 //test_semaphores()
 
-i_dodaj_sifru_rj()
+i_dodaj_sifre()
 
 
 TEST_END()

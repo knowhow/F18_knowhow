@@ -820,8 +820,7 @@ do while !EOF()
 	// posto je cijena u eur-u konvertuj u KM
 	// prema tekucem kursu
 
-	nCijena := ROUND(temp->cijena * ;
-		omjerval( ValDomaca(), ValPomocna(), DATE() ), 5)
+	nCijena := ROUND(temp->cijena, 5)
 
 	replace fcj with nCijena
 	replace nc with nCijena

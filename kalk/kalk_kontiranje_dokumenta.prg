@@ -338,14 +338,8 @@ do while !EOF()
                     dDFDok := finmat->DatFaktP
                 endif
       
-                if gBaznaV == "P"
-                    nIz := Round7( nIz, RIGHT( TRFP->naz, 2 ))  
-                    //DEM - pomocna valuta
-                    nIz2 := Round7( nIz * Kurs( dDFDok, "P", "D" ), RIGHT( TRFP->naz, 2) )
-                else
-                    nIz2 := Round7( nIz, RIGHT( TRFP->naz, 2 ))  //DEM - pomocna valuta
-                    nIz := Round7( nIz2 * Kurs( dDFDok, "D", "P" ), RIGHT( TRFP->naz, 2 ))
-                endif
+                nIz2 := Round7( nIz, RIGHT( TRFP->naz, 2 ))
+                nIz := Round7( nIz2, RIGHT( TRFP->naz, 2 ))
 
 
                 if "IDKONTO"==padr(trfp->IdKonto,7)

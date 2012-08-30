@@ -88,9 +88,6 @@ AADD(aDBf,{ 'DATFAKTP'            , 'D' ,   8 ,  0 })
 
 AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
 
-// ovaj datkurs je sada skroz eliminisan iz upotrebe
-// vidjeti za njegovo uklanjanje  (paziti na modul FIN) jer se ovo i tamo
-// koristi
 AADD(aDBf,{ 'RBR'                 , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
 

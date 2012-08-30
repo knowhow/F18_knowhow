@@ -1,3 +1,7 @@
+1.3.12  2002-08-29, hernad
+
+ - #29011 kontiranje nakon izbacivanja kalk->DatKurs ne radi - fix 
+
 1.3.11  2002-08-29, hernad
 
  - #29009

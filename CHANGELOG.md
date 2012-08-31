@@ -1,3 +1,7 @@
+1.3.16  2002-08-31, hernad
+
+ - FISC logiranje
+
 1.3.15  2002-08-30, hernad
 
  - F18 corelib 3.5.2 - modstru numericka polja

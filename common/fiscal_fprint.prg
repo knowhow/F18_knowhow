@@ -1701,7 +1701,7 @@ local aErr_read
 local aErr_data
 local nTime 
 local cSerial := ALLTRIM(gFc_serial)
-local _o_file, _msg
+local _o_file, _msg, _tmp
 
 if lStorno == nil
     lStorno := .f.
@@ -1780,11 +1780,15 @@ if _o_file:Error()
 	return -9
 endif
 
+_tmp := ""
+
 // prodji kroz svaku liniju i procitaj zapise
 while _o_file:MoreToRead()
 	
 	// uzmi u cErr liniju fajla
 	cErr := hb_strtoutf8( _o_file:ReadLine() )
+
+    _tmp += cErr + " ## "
 
 	// ovo je dodavanje artikla
 	if "107,1," + cSerial $ cErr
@@ -1813,14 +1817,17 @@ enddo
 
 _o_file:Close()
 
-// ako je sve ok, uzmi broj fiskalnog isjecka
-if !EMPTY( cFisc_txt )
-	nFisc_no := _g_fisc_no( cFisc_txt, lStorno )
+log_write("FISC ANSWER fajl sadrzaj: " + _tmp, 5)
+
+if EMPTY(cFisc_txt)
+   log_write("ERR FISC nema komande 56,1," + cSerial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1)
+else
+   // ako je sve ok, uzmi broj fiskalnog isjecka 
+   nFisc_no := _g_fisc_no( cFisc_txt, lStorno )
 endif
-
+ 
+   
 return nErr
-
-
 
 // ------------------------------------------------
 // vraca broj fiskalnog isjecka
@@ -1831,6 +1838,7 @@ local aTmp := {}
 local aFisc := {}
 local cFisc := ""
 local _n_pos := 2
+
 
 if lStorno == nil
     lStorno := .f.

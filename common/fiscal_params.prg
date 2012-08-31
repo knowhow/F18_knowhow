@@ -68,14 +68,18 @@ gFC_device := "P"
 gFc_dev_id := 0
 gFc_use := "N"
 
+// hernad: kod definisanja direktorija kao parametra 
+// logicno je NE navoditi posljednji slash, ali je to u kodu 
+// stalno pretpostavljano pa cu i ja ostaviti
+
 #ifdef __PLATFORM__WINDOWS
-    gFC_path := PADR("c:\fiscal", 150)
+    gFC_path := PADR("c:\fiscal\", 150)
 #else
 
     #ifdef __PLATFORM__DARWIN
-       gFC_path := PADR("/Volumes/fiscal", 150)
+       gFC_path := PADR("/Volumes/fiscal/", 150)
     #else
-       gFC_path := PADR("/var/spool/fiscal", 150)
+       gFC_path := PADR("/var/spool/fiscal/", 150)
     #endif
 #endif
 

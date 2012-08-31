@@ -41,6 +41,10 @@ endif
 AADD(opc, "4. otvorene stavke")
 AADD(opcexe, {|| OStav()})
 
+AADD(opc, "5. obrada kamata ")
+AADD(opcexe, {|| fin_kamate_menu()})
+
+
 Menu_SC("oop")
 
 return

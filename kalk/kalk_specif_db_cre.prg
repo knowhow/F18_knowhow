@@ -18,9 +18,12 @@
 function CreTblPObjekti()
 local cTbl
 local aDbf
+local _rec
 
 CLOSE ALL
+
 cTbl:="pobjekti"
+
 aDbf:={ {"id","C",2,0}   ,;
         {"IdObj","C", 7,0}, ;
         {"zalt","N", 18,5}, ;
@@ -32,33 +35,34 @@ aDbf:={ {"id","C",2,0}   ,;
         {"prodg","N", 18,5}, ;
         {"produ","N", 18,5} ;
        }
+
 // uvijek kreiraj
-DBCREATE2(cTbl, aDbf)
-CREATE_INDEX("ID","id", cTbl)
+DBCREATE2( cTbl, aDbf )
+CREATE_INDEX( "ID", "id", cTbl )
 
 CLOSE ALL
 
 O_POBJEKTI
 O_OBJEKTI
 
-SELECT pobjekti
-Scatter()
-
-SELECT objekti
-Scatter()
-
 MsgO("objekti -> pobjekti")
+
 // napuni PObjekti sa id iz Objekti 
+
+select objekti
 go top 
+
 do while !EOF()
-	Scatter()
-	SELECT pobjekti
+	_rec := dbf_get_rec()
+	
+    SELECT pobjekti
 	APPEND BLANK
-	Gather()
+	dbf_update_rec( _rec )
 
 	SELECT objekti
 	skip
 enddo
+
 MsgC()
 
 CLOSE ALL
@@ -66,6 +70,7 @@ return
 
 
 function CreTblRek1(cVarijanta)
+local _table := "kalk_rekap1"
 
 aDbf:={ {"idroba"  ,"C", 10,0},;
         {"objekat" ,"C", 7 ,0},;
@@ -107,17 +112,15 @@ endif
 // f5 - reklamacije u toku mjeseca, f7 - reklamacije u toku godine
 // f8 -
 
-FERASE(PRIVPATH+"REKAP1.CDX")
-DBCREATE2(PRIVPATH+"REKAP1",aDbf)
+FERASE( my_home() + _table + ".cdx" )
+
+DBCREATE( my_home() + _table + ".dbf", aDbf )
 
 select (F_REKAP1)
-usex (PRIVPATH+"REKAP1")
-delete tag "1"
-delete tag "2"
-delete tag "BRISAN"
-index  on  objekat+idroba  tag "1"
-index  on  g1+idtarifa+idroba+objekat  tag "2"
-index ON BRISANO TAG "BRISAN"
+my_use_temp( "REKAP1", my_home() + _table, .f., .t. )
+
+index on objekat+idroba tag "1"
+index on g1+idtarifa+idroba+objekat tag "2"
 set order to tag "1"
  
 CLOSE ALL
@@ -127,8 +130,8 @@ return
 
 
 function CreTblRek2()
-
 local aDbf
+local _table := "kalk_rekap2"
 
 aDbf:={ {"objekat" ,"C", 7 ,0},;
         {"G1"      ,"C", 4 ,0},;
@@ -155,20 +158,15 @@ aDbf:={ {"objekat" ,"C", 7 ,0},;
         {"SNIZENJE","N",16,2} ;
      }
 
-DBCREATE2(PRIVPATH+"REKAP2.DBF", aDbf)
-FERASE(PRIVPATH+"REKAP2.CDX")
+DBCREATE( my_home() + _table + ".dbf", aDbf)
+FERASE( my_home() + _table + ".cdx" )
 
 SELECT(F_REKAP2)
-USEX (PRIVPATH+"REKAP2")
+my_use_temp( "REKAP2", my_home() + _table + ".dbf", .f., .t. )
 
-delete tag "1"
-delete tag "2"
-delete tag "3"
-delete tag "BRISAN"
 index on str(godina)+str(mjesec)+objekat tag "1"
 index on str(godina)+str(mjesec)+g1+objekat tag "2"
 index on g1+str(godina)+str(mjesec) tag "3"
-index ON BRISANO TAG "BRISAN"   
 set order to tag "2"
 
 
@@ -197,15 +195,15 @@ aDbf:={ {"G1"      ,"C", 4 ,0},;
         {"KOBRDAN","N",16,9}, ;
         {"GKOBR","N",18,9} ;
      }
-DBCREATE2(PRIVPATH+"REKA22.DBF",aDbf)
-ferase(PRIVPATH+"REKA22.CDX")
+
+_table := "kalk_reka22"
+DBCREATE( my_home() + _table + ".dbf", aDbf )
+ferase( my_home() + _table + ".cdx")
 
 SELECT(F_REKA22)
-usex (PRIVPATH+"REKA22")
-delete tag "1"
-delete tag "BRISAN"
+my_use_temp( "REKA22", my_home() + _table + ".dbf", .f., .t. )
+
 index on g1 tag "1"
-index ON BRISANO TAG "BRISAN"
 set order to tag "1"
 
 CLOSE ALL
@@ -224,8 +222,10 @@ function CrePPProd()
 local cTblName
 local aTblCols
 
-cTblName:=ToUnix(PRIVPATH+"PPPROD.DBF")
+cTblName := "kalk_ppprod"
+
 aTblCols:={}
+
 AADD(aTblCols,{"idKonto","C",7,0})
 AADD(aTblCols,{"pari1","N",10,0})
 AADD(aTblCols,{"pari2","N",10,0})
@@ -249,8 +249,12 @@ AADD(aTblCols,{"polog10","N",12,2})
 AADD(aTblCols,{"polog11","N",12,2})
 AADD(aTblCols,{"polog12","N",12,2})
 
-DBCREATE2(cTblName, aTblCols)
-CREATE_INDEX("konto","idKonto", cTblName, .t.)
+DBCREATE( my_home() + cTblName + ".dbf", aTblCols )
+
+select ( F_PPPROD )
+my_use_temp( "PPPROD", my_home() + cTblName + ".dbf", .f., .t. )
+
+index on idkonto to "konto"
 
 return
 

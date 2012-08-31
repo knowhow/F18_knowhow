@@ -623,7 +623,7 @@ if gPrBruto $ "D#X"
 
 	// ostala primanja 
 	? cMainLine
-	? cLMSK + Lokal("8. UKUPNO ODBICI IZ PLATE")
+	? cLMSK + Lokal("8. NEOPOREZIVE NAKNADE I ODBICI")
 
 	@ prow(),60+LEN(cLMSK) SAY nOsnOstalo pict gpici
 
@@ -634,7 +634,7 @@ if gPrBruto $ "D#X"
 	?
 
 	? cMainLine
-	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA ODBICIMA (7+8)")
+	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA NAKNADAMA I ODBICIMA (7+8)")
 	@ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici
 
 	? cMainLine

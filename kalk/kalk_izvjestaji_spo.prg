@@ -237,7 +237,7 @@ endif
 
 FF
 end print
-closeret
+close all
 return
 
 function SetK1K2(cG1, cIdTarifa, cIdRoba, nK1, nK2)

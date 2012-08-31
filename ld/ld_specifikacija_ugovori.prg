@@ -58,8 +58,8 @@ nGodina := gGodina
 
 cObracun:=gObracun
 
-cDopr1:="1X"
-cDopr2:="2X"
+cDopr1 := "1X"
+cDopr2 := "2X"
 
 cFirmNaz:=SPACE(35)
 cFirmAdresa:=SPACE(35)
@@ -80,8 +80,8 @@ cFirmOpc := PADR(cFirmOpc, 35)
 cFirmVD := fetch_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD )
 cFirmVD := PADR(cFirmVD, 50)
 
-cDopr1 := fetch_metric("ld_specifikacija_doprinos_1", nil, cDopr1)
-cDopr2 := fetch_metric("ld_specifikacija_doprinos_2", nil, cDopr2)
+cDopr1 := fetch_metric("ld_spec_ugovori_doprinos_1", nil, cDopr1)
+cDopr2 := fetch_metric("ld_spec_ugovori_doprinos_2", nil, cDopr2)
 
 qqIdRj := fetch_metric("ld_specifikacija_rj", nil, qqIdRJ)
 qqOpSt := fetch_metric("ld_specifikacija_opcine", nil, qqOpSt)
@@ -144,8 +144,8 @@ set_metric("org_naziv", nil, cFirmNaz)
 set_metric("ld_firma_adresa", nil, cFirmAdresa)
 set_metric("ld_firma_opcina", nil, cFirmOpc)
 set_metric("ld_firma_vrsta_djelatnosti", nil, cFirmVD)
-set_metric("ld_specifikacija_doprinos_1", nil, cDopr1)
-set_metric("ld_specifikacija_doprinos_2", nil, cDopr2)
+set_metric("ld_spec_ugovori_doprinos_1", nil, cDopr1)
+set_metric("ld_spec_ugovori_doprinos_2", nil, cDopr2)
 
 qqIdRj := TRIM(qqIdRj)
 qqOpSt := TRIM(qqOpSt)

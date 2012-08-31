@@ -538,7 +538,7 @@ if Pitanje(,"Prenos: SEZONA "+cSezona+" -> RADNO PODRUCJE ?","D")=="D"
      if cSezona=="0000" 
      	// iz backupa vracam, pa cu ja odrediti sezonu
          gSezona:=goModul:oDataBase:cSezona
-         Box(,4,60)
+         Box(, 4, 60)
            set escape off
            set confirm on
            @ m_x+1,m_y+2 SAY "Podaci vraceni iz backup - 0000 sezone"

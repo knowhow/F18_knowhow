@@ -12,10 +12,12 @@
 
 #include "fmk.ch"
 
-
+// ----------------------------------------
 // otvaranje tabele RJ
-function P_RJ(cId,dx,dy)
+// ----------------------------------------
+function P_RJ(cId, dx, dy)
 local nTArea
+
 private ImeKol
 private Kol
 
@@ -42,5 +44,5 @@ for i:=1 to LEN(ImeKol)
 next
 
 select (nTArea)
-return PostojiSifra(F_RJ, 1, MAXROWS()-20, MAXCOLS()-30 ,"Lista radnih jedinica",@cId,dx,dy)
+return PostojiSifra(F_RJ, 1, MAXROWS() - 15, MAXCOLS() - 30 ,"LRJ: Lista radnih jedinica", @cId, dx, dy)
 

@@ -27,7 +27,7 @@ function Pitanje(cId, cPitanje, cOdgDefault, cMogOdg)
 local cPom
 local cOdgovor
 
-IF cMogOdg=NIL
+IF cMogOdg == NIL
   cMogOdg := "YDNL"
 ENDIF
 
@@ -38,35 +38,55 @@ if gAppSrv
 	return cOdgDefault
 endif
 
-cPom:=SET(_SET_DEVICE)
+cPom := SET(_SET_DEVICE)
 SET DEVICE TO SCREEN
 
-if cOdgDefault==NIL .or. !(cOdgDefault $ cMogOdg)
+if cOdgDefault == NIL .or. !(cOdgDefault $ cMogOdg)
   cOdgovor:=" "
 else
-  cOdgovor:=cOdgDefault
+  cOdgovor := cOdgDefault
 endif
 
 set escape off
-set confirm off
+#ifdef TEST
+  push_test_tag(cId)
+#else
+  set confirm off
+#endif
 
-Box(,3,LEN(cPitanje)+6,.f.)
+Box( , 3, LEN(cPitanje) + 6, .f.)
+
  set cursor on
- @ m_x+2,m_y+3 SAY cPitanje GET cOdgovor PICTURE "@!" ; 
- 	VALID ValidSamo(cOdgovor,cMogOdg)
- READ
-BoxC()
-set escape on
-set confirm on
+ @ m_x + 2, m_y + 3 SAY cPitanje GET cOdgovor PICTURE "@!" ; 
+ 	VALID ValidSamo(cOdgovor, cMogOdg)
 
-SET(_SET_DEVICE,cPom)
+ READ
+
+BoxC()
+
+set escape on
+#ifdef TEST
+  pop_test_tag()
+#else
+  set confirm on
+#endif
+
+SET(_SET_DEVICE, cPom)
 return cOdgovor
 
-static function ValidSamo(cOdg,cMogOdg)
+
+// ------------------------------------------------
+// ------------------------------------------------
+static function ValidSamo(cOdg, cMogOdg)
+
 if cOdg $ cMogOdg
   return .t.
 else
-  MsgBeep("Uneseno: "+cOdg+"#Morate unijeti nesto od :"+cMogOdg)
+
+#ifndef TEST
+  MsgBeep("Uneseno: " + cOdg + "#Morate unijeti nesto od :" + cMogOdg)
+#endif
+
   return .f.
 endif
 
@@ -101,8 +121,10 @@ else
   cOdg:=cOdgDefault
 endif
 
-set escape off
-set confirm off
+#ifndef TEST
+ set escape off
+ set confirm off
+#endif
 
 Box("",5,nDuz+4,.f.)
  set cursor on
@@ -111,8 +133,11 @@ Box("",5,nDuz+4,.f.)
  @ m_x+5,m_y+3 SAY PADC("                  N - NE  ,  O - NE sve do kraja",nDuz)
  READ
 BoxC()
-set escape on
-set confirm on
+
+#ifndef TEST
+  set escape on
+  set confirm on
+#endif
 
 SET(_SET_DEVICE,cPom)
 
@@ -131,8 +156,10 @@ if gAppSrv
 	return cDirekt
 endif
 
-set confirm off
-set cursor on
+#ifndef TEST
+  set confirm off
+  set cursor on
+#endif
 
 if !gAppSrv
 	cDirekt := select_print_mode( @cDirekt )

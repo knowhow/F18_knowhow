@@ -11,6 +11,8 @@
 
 #include "inkey.ch"
 
+#ifndef TEST
+
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
@@ -26,6 +28,8 @@ module_menu(p3, p4, p5, p6, p7)
 log_close()
 
 return
+
+#endif
 
 // ----------------------------
 // ----------------------------

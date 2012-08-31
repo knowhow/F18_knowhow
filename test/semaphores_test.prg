@@ -187,7 +187,7 @@ local _i
 local _tbl := "test_sem_1"
 
 lock_semaphore( _tbl, "lock" )
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TEST_SEM_1, {"id", "naz"})
+_result := update_dbf_from_server(_tbl, algoritam)
 lock_semaphore( _tbl, "free" )
 
 return _result
@@ -200,7 +200,7 @@ local _result := .f.
 local _i
 local _tbl := "test_sem_2"
 
-_result := sifrarnik_from_sql_server(_tbl, algoritam, F_TEST_SEM_2, {"id", "naz"}, "IDN" )
+_result := update_dbf_from_server(_tbl, algoritam)
 
 return _result
 

@@ -250,11 +250,11 @@ do case
 
         if fakt_pripr->(reccount()) <> 0
             // priprema nije prazna, nema stampanja racuna
-            msgbeep("Priprema nije prazna, stampa fisk.racuna nije moguca!")
+            MsgBeep("Priprema nije prazna, stampa fisk.racuna nije moguca!")
             return DE_CONT
         endif
 
-        if gFC_Pitanje == "D" .and. Pitanje(,"Odstampati racun na fiskalni printer ?", "D") == "N"
+        if gFC_Pitanje == "D" .and. Pitanje( "ST_FISK_RN", "Odstampati racun na fiskalni printer ?", "D") == "N"
             return DE_CONT
         endif
 

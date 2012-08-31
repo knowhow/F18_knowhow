@@ -29,7 +29,7 @@ if ( lSilent == nil)
     lSilent := .f.
 endif
 
-if ( !lSilent .and. Pitanje( , "Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
+if ( !lSilent .and. Pitanje( "FAKT_AZUR", "Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
     return _a_fakt_doks
 endif
 
@@ -526,7 +526,7 @@ local lProtu := .f.
 
 if ( gProtu13 == "D" .and. ;
     fakt_pripr->idtipdok == "13" .and. ;
-    Pitanje(,"Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
+    Pitanje("AZUR PROD", "Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
     
     if (gVar13 == "2" .and. gVarNum == "1")
         cPRj := RJIzKonta(fakt_pripr->idpartner + " ")
@@ -757,7 +757,7 @@ if gOcitBarkod
             
         if (nCnt>1) // imamo duple!!!
             if cSpojiti=="N"
-                if Pitanje(,"Spojiti duple artikle ?","N")=="D"
+                if Pitanje("DUPLI_SPOJ", "Spojiti duple artikle ?","N")=="D"
                     cSpojiti:="D"
                 else
                     cSpojiti:="0"
@@ -892,7 +892,7 @@ enddo
 // postoje dokumenti dupli
 if lDocExist
     MsgBeep("U pripremi su se pojavili dupli dokumenti!")
-    if Pitanje(,"Pobrisati duple dokumente (D/N)?", "D")=="N"
+    if Pitanje("BRIS-DUP", "Pobrisati duple dokumente (D/N)?", "D")=="N"
         MsgBeep("Dupli dokumenti ostavljeni u tabeli pripreme!#Prekidam operaciju azuriranja!")
         return 1
     else
@@ -1038,7 +1038,7 @@ if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     return DE_CONT
 endif
 
-if Pitanje(, "Zelite li izbrisati pripremu !!????","N")=="D"
+if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
  
     select fakt_pripr
     go top
@@ -1148,7 +1148,7 @@ local _rec
 local _count
 local _fiscal_no
 
-if Pitanje(,"Formirati storno dokument ?","D") == "N"
+if Pitanje("FORM_STORNO", "Formirati storno dokument ?","D") == "N"
     return
 endif
 

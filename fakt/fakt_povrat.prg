@@ -64,7 +64,7 @@ id_firma   := _vars["idfirma"]
 id_tip_dok := _vars["idtipdok"]
 br_dok     := _vars["brdok"]
 
-IF Pitanje("","Dokument " + id_firma + "-" + id_tip_dok + "-" + br_dok + " povuci u pripremu (D/N) ?", "D") == "N"
+IF Pitanje("FAKT_POV_DOK", "Dokument " + id_firma + "-" + id_tip_dok + "-" + br_dok + " povuci u pripremu (D/N) ?", "D") == "N"
     CLOSE ALL
     RETURN 0
 ENDIF
@@ -74,14 +74,15 @@ HSEEK id_firma + id_tip_dok + br_dok
 
 // da li dokument uopste postoji ?
 if !FOUND()
+#ifndef TEST
     MsgBeep( "Trazeni dokument u fakt_fakt ne postoji !" )
+#endif
 endif
-
 
 if ( fakt->m1 == "X" )
     // izgenerisani dokument
     MsgBeep("Radi se o izgenerisanom dokumentu!!!")
-    if Pitanje(,"Zelite li nastaviti?!", "N")=="N"
+    if Pitanje("IZGEN_CONT", "Zelite li nastaviti?!", "N")=="N"
         close all
         return 0
     endif
@@ -108,12 +109,13 @@ ENDDO
 IF test == .t.
     _brisi_kum := "D"
 ELSE
-    _brisi_kum := Pitanje( "", "Zelite li izbrisati dokument iz datoteke kumulativa (D/N)?", "N" )
+    _brisi_kum := Pitanje( "FAKT_POV_KUM", "Zelite li izbrisati dokument iz datoteke kumulativa (D/N)?", "N" )
 ENDIF
     
 IF ( _brisi_kum == "D" )
 
     if !f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+          MsgBeep("Ne mogu lockovati fakt tables !?")
           return .f.
     endif
 
@@ -124,6 +126,7 @@ IF ( _brisi_kum == "D" )
 
         _tbl := "fakt_fakt"
         @ m_x + 1, m_y + 2 SAY "delete " + _tbl
+
         // algoritam 2  - nivo dokumenta
         select fakt
         _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 2, "CONT")
@@ -182,7 +185,7 @@ Box(, 4, 60)
     read
 Boxc()
 
-if Pitanje("","Dokumente sa zadanim kriterijumom vratiti u pripremu ???","N")=="N"
+if Pitanje("FAKT_POV_KRITER" ,"Dokumente sa zadanim kriterijumom vratiti u pripremu ???","N")=="N"
     _ret := .f.
     return _ret
 endif

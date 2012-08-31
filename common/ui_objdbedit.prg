@@ -175,14 +175,20 @@ DO WHILE .T.
 
      CASE Ch==K_LEFT
        TB:left()
+
      CASE Ch==K_RIGHT
        TB:right()
+
      CASE Ch==K_PGUP
        TB:PageUp()
+
      CASE Ch==K_CTRL_PGUP
         Tb:GoTop()
+        Tb:Refreshall()
+
      CASE Ch==K_CTRL_PGDN
         Tb:GoBottom()
+
      CASE Ch==K_PGDN
         TB:PageDown()
 
@@ -345,7 +351,7 @@ DO CASE
        		Box("bFind", 2, 50,.f.)
         		Private GetList:={}
         		set cursor on
-        		cLoc := PADR(cLoc,40)
+        		cLoc := PADR(cLoc, 40)
         		cSmj := "+"
         		@ m_x+1, m_y+2 SAY _tr GET cLoc PICT "@!"
         		@ m_x+2, m_y+2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"

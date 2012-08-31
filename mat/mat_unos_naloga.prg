@@ -675,14 +675,14 @@ DO WHILE !EOF()
     cBrNal := BrNal
 
     Box("",1,50)
-     set cursor on
-     set confirm off
+//     set cursor on
+//     set confirm off
      @ m_x+1,m_y+2 SAY "Nalog broj:" GET cIdFirma
      @ m_x+1,col()+1 SAY "-" GET cIdVn
      @ m_x+1,col()+1 SAY "-" GET cBrNal
      read
      ESC_BCR
-     set confirm on
+//     set confirm on
 
     BoxC()
 

@@ -221,9 +221,6 @@ do while !EOF() .and. field->brfaktp == cBrFakt
 	// cijena sastavnice
 	replace field->cijena with kalk->nc
 
-	if cValuta <> "KM "
-		field->cijena := field->cijena * KURS( DATE(), "D", "P" )	
-	endif
 		
 	// cijena po komadu kg
 	replace field->izn1 with ROUND( field->cijena / nKolSec, 4 ) 

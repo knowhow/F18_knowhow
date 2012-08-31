@@ -571,10 +571,14 @@ if (Ch==K_CTRL_N .and.  ImaSlovo("D",cSecur)  )  .or. ;
    return DE_CONT
 endif
 
+#ifndef TEST
+
 if ((Ch==K_CTRL_N .or.Ch==K_CTRL_A .or. Ch==K_F2 .or. Ch==K_CTRL_T .or. Ch==K_F4 .or. Ch==K_CTRL_F9 .or. Ch==K_F10) .and. !ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDSIF")) 
     MsgBeep("Vi nemate pravo na promjenu podataka u sifrarnicima !")
     return DE_CONT
 endif
+
+#endif
 
 do case
 
@@ -639,7 +643,6 @@ do case
     endif
 
     Izlaz("Pregled: " + ALLTRIM(cNaslov) + " na dan " + dtoc(date()) + " g.", "sifrarnik" )
-    set filter to
     PopWa()
 
     return DE_CONT
@@ -1142,6 +1145,7 @@ endif
 
 
 // --------------------------------------------------
+// kod sifarnika partnera se mora potvrditi ma
 // --------------------------------------------------
 static function _chk_sif( cMarker )
 local cFName
@@ -1161,9 +1165,11 @@ xFVal := FIELDGET(i)
 cType := VALTYPE(xFVal)
 cF_Seek := &( cMarker + cFName )
 
+/* ovo nesto se provjerava samo za partnera ?!
+
 if ( cType == "C" ) .and. ( cArea $ "#PARTN##" )
     
-    Box(,1,40)
+    Box(, 1, 40)
         @ m_x + 1, m_y + 2 SAY "Potvrdi sifru sa ENTER: " GET cF_seek
         read
     BoxC()
@@ -1180,7 +1186,7 @@ if ( cType == "C" ) .and. ( cArea $ "#PARTN##" )
         go (nTREC)
     endif
 endif
-    
+*/  
 select (nTArea)
 return nRet
 

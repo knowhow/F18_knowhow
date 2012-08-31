@@ -79,17 +79,15 @@ if roba->(fieldpos("STRINGS")) <> 0
 endif
 
 // VPC
-if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC"))
+//if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC"))
     AADD(ImeKol, {padc("VPC",10 ), {|| transform(VPC,"999999.999")}, "vpc" , nil, nil, nil, gPicCDEM  })
-endif
+//endif
 
 // VPC2
-if roba->(fieldpos("vpc2"))<>0
-    if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC2"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC2"))
         if IzFMkIni('SifRoba',"VPC2",'D', SIFPATH)=="D"
             AADD(ImeKol, {padc("VPC2",10 ), {|| transform(VPC2,"999999.999")}, "vpc2", NIL, NIL,NIL, gPicCDEM   })
         endif
-    endif
 endif
 
 if roba->(fieldpos("PLC"))<>0  .and. IzFMkIni("SifRoba","PlanC","N", SIFPATH)=="D"

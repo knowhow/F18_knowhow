@@ -156,7 +156,9 @@ if !(lUFajl)
     // transformisi cKom varijablu za portove > 4
     GPPortTransform(@cKom)
 
+#ifndef TEST
 	set confirm on
+#endif
 
 else
 	cDirekt := "V"
@@ -963,7 +965,7 @@ do while .t.
    do case
      case Izbor==0
        if fMain
-         cOdgovor:=Pitanje("", hb_Utf8ToStr('Želite izaći iz programa ?'),'N')
+         cOdgovor := Pitanje("", hb_Utf8ToStr('Želite izaći iz programa ?'),'N')
          if cOdgovor=="D"
             EXIT
          elseif cOdgovor=="L"

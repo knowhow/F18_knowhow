@@ -317,7 +317,7 @@ IF lBlag .and. !LEFT(cId,1)$"0123456789"
 ENDIF
 PopWa()
 
-return PostojiSifra(F_KONTO,1,10,100,"Lista: Konta ",@cId,dx,dy,{|Ch| KontoBlok(Ch)},,,,,{"ID"})
+return PostojiSifra(F_KONTO, 1, MAXROWS() - 17, MAXCOLS() - 10, "LKTF Lista: Konta ", @cId, dx, dy, {|Ch| KontoBlok(Ch)},,,,,{"ID"})
 
 
 
@@ -332,9 +332,10 @@ function KontoBlok(Ch)
 LOCAL nRec:=RECNO(), cId:=""
 LOCAL cSif:=KONTO->id, cSif2:=""
 
-@ m_x+11,45 SAY "<a-P> - stampa k.plana"
+//@ m_x+11,45 SAY "<a-P> - stampa k.plana"
 
 if Ch==K_CTRL_T .and. gSKSif=="D"
+
  // provjerimo da li je sifra dupla
  PushWA()
  SET ORDER TO TAG "ID"
@@ -444,7 +445,7 @@ ImeKol:={ { "ID  ",  {|| id },   "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
         }
 Kol:={1,2}
 
-return PostojiSifra(F_PKONTO,1,10,60,"Lista: Nacin prenosa konta u novu godinu",@cId,dx,dy)
+return PostojiSifra(F_PKONTO, 1, 10, 60, "Lista: Nacin prenosa konta u novu godinu",@cId,dx,dy)
 
 
 

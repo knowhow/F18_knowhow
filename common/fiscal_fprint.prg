@@ -22,6 +22,7 @@ static MIN_PRICE := 0.01
 static MAX_PERC := 99.99
 static MIN_PERC := -99.99
 static ANSW_DIR := "answer"
+static POLOG_LIMIT := 100
 
 // ocekivana matrica
 // aData
@@ -210,6 +211,20 @@ cName := LEFT( ALLTRIM( cName ), 5 ) + " x100"
 
 return
 
+// --------------------------------------------------
+// provjerava unos pologa, maksimalnu vrijednost 
+// --------------------------------------------------
+static function _max_polog( polog )
+local _ok := .t.
+
+if polog > POLOG_LIMIT
+    if Pitanje(, "Polog je > " + ALLTRIM( STR( POLOG_LIMIT) ) + "! Da li je ovo ispravan unos ?", "N" ) == "N"
+        _ok := .f.
+    endif
+endif
+
+return _ok
+
 
 
 // ----------------------------------------------------
@@ -229,7 +244,7 @@ if nPolog = 0
 
    Box(,1,60)
 	@ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
-		PICT "999999.99"
+		PICT "999999.99" VALID _max_polog( nPolog )
 	read
    BoxC()
 
@@ -963,7 +978,7 @@ cTmp += cSep
 // 2 - chek
 // 3 - virman
 
-if cVr_placanja <> "0" .and. !lStorno 
+if ( cVr_placanja <> "0" .and. !lStorno ) .or. ( cVr_placanja == "0" .and. nTotal <> 0 .and. !lStorno )
  	
 	// imamo drugu vrstu placanja...
 	cTmp += cVr_placanja
@@ -1715,8 +1730,12 @@ do while nTime > 0
 		ALLTRIM( STR(nTime) ), 48)
 
 	sleep(1)
-	
+
+#ifdef TEST
+    if .t.
+#else
     if FILE( cF_name )
+#endif
 		// fajl se pojavio - izadji iz petlje !
 		exit
 	endif

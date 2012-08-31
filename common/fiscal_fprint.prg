@@ -1817,7 +1817,7 @@ enddo
 
 _o_file:Close()
 
-log_write("FISC ANSWER sadrzaj": _tmp, 5)
+log_write("FISC ANSWER sadrzaj" + _tmp, 5)
 
 if EMPTY(cFisc_txt)
    log_write("ERR FISC nema komande 56,1 - broj fiskalnog racuna !", 1)

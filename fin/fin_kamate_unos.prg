@@ -14,6 +14,8 @@
 
 static picdem := "9999999999.99"
 static gDatObr
+static gKumKam
+static gPdvObr
 
 // -----------------------------------------------
 // glavni menij za obradu kamata
@@ -23,12 +25,16 @@ local _izbor := 1
 local _opc := {}
 local _opcexe := {}
 
-AADD( _opc, "1. unos/ispravka kamata                      " )
+AADD( _opc, "1. obracun pojedinacnog dokumenta              " )
+AADD( _opcexe, { || kamate_obracun_pojedinacni() } )
+AADD( _opc, "2. unos/ispravka pripreme kamata   " )
 AADD( _opcexe, { || kamate_unos() } )
-AADD( _opc, "2. prenos FIN->kamate         " )
+AADD( _opc, "3. prenos FIN->kamate         " )
 AADD( _opcexe, { || prenos_fin_kam() } )
-AADD( _opc, "3. kontrola cjelovitosti kamatnih stopa   " )
+AADD( _opc, "4. kontrola cjelovitosti kamatnih stopa   " )
 AADD( _opcexe, { || kontrola_cjelovitosti_ks() } )
+AADD( _opc, "5. sifrarnik kamatnih stopa  " )
+AADD( _opcexe, { || p_ks() } )
 
 gDatObr := DATE()
 
@@ -65,9 +71,9 @@ next
 
 Box(, _x, _y )
 	@ m_x + (_x-2), m_y + 2 SAY " <c-N>  Nove Stavke      ณ <ENT> Ispravi stavku   ณ <c-T> Brisi Stavku"
-	@ m_x + (_x-1), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ณ <c-P> Stampa svi KL    ณ <a-A> Az. <a-V> Po"
-	@ m_x + _x, m_y + 2 SAY " <c-F9> Bris.p <a-F9> B.kณ <a-P> Stampa pojedinac.ณ <SPACE> KS 1/2    "
-	ObjDbedit( "PNal", _x , _y ,{|| _key_handler() },"","KAMATE Priprema.....อออออ<c-U> Lista uk.dug+kamata", , , , ,3)
+	@ m_x + (_x-1), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ณ <c-P> Stampa svi KL    ณ <c-U> Lista uk.dug"
+	@ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   ณ <a-P> Stampa pojedinac.ณ                   "
+	ObjDbedit( "PNal", _x , _y ,{|| _key_handler() },"","KAMATE Priprema.....อออออ", , , , ,3)
 BoxC()
 
 close all
@@ -123,7 +129,7 @@ _rec_no := RECNO()
 go top
 
 do while !EOF()
-	if idpartner == idp .and. brdok==brd .and. DTOC(datod)==DTOC(dod) .and. ( RECNO()!=nRec .or. fNovi )
+	if idpartner == idp .and. brdok==brd .and. DTOC(datod)==DTOC(dod) .and. ( RECNO() != _rec_no .or. fNovi )
       	_vrati := .f.
       	Msg("Greska! Vec ste unijeli ovaj podatak!",3)
       	exit
@@ -152,39 +158,26 @@ select kam_pripr
 
 do case
 
+    // brisi stavku
     case Ch == K_CTRL_T
-        if Pitanje("p01","Zelite izbrisati ovu stavku ?","D")=="D"
+
+        if Pitanje("p01","Zelite izbrisati ovu stavku ?", "D" ) == "D"
             delete
             __dbPack()
             return DE_REFRESH
         endif
         return DE_CONT
 
-    // za sada isklucujem ovu opciju 
-    //case Ch == K_ALT_A
-        //azuriranje()
-        //return DE_REFRESH
+    // brisi pripremu
+    case Ch = K_CTRL_F9
 
-    // za sada iskljucujem ovu opciju
-    //case Ch==K_ALT_V
-        //povrat()
-        //return DE_REFRESH
-
-    case Ch == ASC(" ")
-        
-        _seek := EVAL( (TB:getColumn(2)):Block )+EVAL( (TB:getColumn(3)):Block )
-        seek _seek
-        do while !EOF() .and. _seek = idpartner + brdok
-            if EMPTY(m1)
-                replace m1 with "2"
-            else
-                replace m1 with " "
-            endif
-            skip
-        enddo
-
+        if Pitanje(, "Zelite li izbrisati pripremu !!????", "N" ) == "D"
+            zap
+            __dbPack()
+        endif
         return DE_REFRESH
 
+    // ispravka stavke
     case Ch == K_ENTER
         
         Box( "ist", 20, 75, .f. )
@@ -212,9 +205,11 @@ do case
         select kam_pripr
         go top
 
-        Box("anal",13,75,.f.,"Ispravka stavki dokumenta")
+        Box( "anal", 13, 75, .f., "Ispravka stavki dokumenta" )
+
             nDug := 0
             nPot := 0
+
             do while !EOF()
                 skip
 	            nTR2 := RECNO()
@@ -228,13 +223,16 @@ do case
                 Gather()
                 go nTR2
             enddo
+
             PopWA()
+
          BoxC()
+
          return DE_REFRESH
 
+    // unos nove stavke
     case Ch == K_CTRL_N  
         
-        // nove stavke
         nDug := 0
         nPot := 0
         nPrvi := 0
@@ -249,7 +247,6 @@ do case
             if ispravka_unosa(.t.)==0
                 exit
             endif
-            //inkey(10)
             select kam_pripr
             append blank
             Gather()
@@ -258,54 +255,50 @@ do case
         BoxC()
         return DE_REFRESH
 
-    case Ch=K_CTRL_F9
-
-        if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-            zap
-            __dbPack()
-        endif
-        return DE_REFRESH
-
-    // za sada iskljucujem ovo...
-    //case Ch=K_ALT_F9
-        //BrisiKum()
-        //return DE_REFRESH
-    
+    // printanje kamatnog lista
     case Ch == K_CTRL_P
 
         fin_kamate_print()
         return DE_REFRESH
      
+    // lista
     case Ch == K_CTRL_U
         
-        nArr:=SELECT()
-        nUD1:=0
-        nUD2:=0
-        nUD3:=0
+        nArr := SELECT()
+        nUD1 := 0
+        nUD2 := 0
+        nUD3 := 0
 
         if FILE( my_home() + "pom.dbf" )
+        
             select (F_TMP_1)
             use
             my_use_temp( "POM", my_home() + "pom", .f., .t. )
+        
             select pom
             go top
+        
             START PRINT CRET
+        
             ? "PREGLED UKUPNIH DUGOVANJA PO KUPCIMA"
             ? "------------------------------------"
             ?
             ? "      SIFRA I NAZIV KUPCA            DUG         KAMATA       UKUPNO   "
             ? "-------------------------------- ------------ ------------ ------------"
+        
             DO WHILE !EOF()
-                ? IDPARTNER, PADR( Ocitaj(F_PARTN,IDPARTNER,"naz"), 25 ),;
-                    STR(OSNDUG,12,2), STR(KAMATE,12,2), STR(OSNDUG+KAMATE,12,2)
-                nUd1 += osndug
-                nUd2 += kamate
-                nUd3 += (osndug+kamate)
+                ? field->idpartner, PADR( Ocitaj( F_PARTN, field->idpartner, "naz" ), 25 ),;
+                    STR( field->osndug, 12, 2 ), STR( field->kamate, 12, 2 ), STR( field->osndug + field->kamate,12,2)
+                nUd1 += field->osndug
+                nUd2 += field->kamate
+                nUd3 += ( field->osndug + field->kamate )
                 SKIP 1
             ENDDO
+
             ? "-------------------------------- ------------ ------------ ------------"
             ? "UKUPNO SVI KUPCI................",;
                 STR(nUd1,12,2), STR(nUd2,12,2), STR(nUd3,12,2)
+            
             END PRINT
             use
         endif
@@ -318,11 +311,12 @@ do case
 
         select kam_pripr
 
-     	private nKamMala:=0
-     	private nOsnDug:=0
-     	private nSOsnSD:=0
-     	private nKamate:=0
-     	private cVarObrac:="Z"
+     	private nKamMala := 0
+     	private nOsnDug := 0
+     	private nSOsnSD := 0
+     	private nKamate := 0
+     	private cVarObrac := "Z"
+
      	cIdpartner:=EVAL( (TB:getColumn(2)):Block )
 
     	Box(,2,70)
@@ -350,6 +344,7 @@ do case
 endcase
 
 return DE_CONT
+
 
 
 
@@ -442,28 +437,47 @@ return
 static function fin_kamate_print()
 local _mala_kamata := 15
 local _var_obr := "Z"      
+local _kum_kam := "D"
+local _pdv_obr := "D"
 
 if pitanje(, "Rekalkulisati osnovni dug ?", "N" ) == "D"
     rekalkulisi_osnovni_dug()
 endif
             
+// kreiraj pomocnu tabelu
 kreiraj_pomocnu_tabelu()
+    
+Box(, 6, 70 )  
+    
+    @ m_x + 1, m_y + 2 SAY "Ne ispisuj kam.listove za iznos kamata ispod" GET _mala_kamata ;
+        PICT "999999.99"
 
+    @ m_x + 2, m_y + 2 SAY "Varijanta (Z-zatezna kamata,P-prosti kamatni racun)" GET _var_obr ;
+        VALID _var_obr $ "ZP" PICT "@!"
+
+    @ m_x + 4, m_y + 2 SAY "Prikazivati kolonu 'kumulativ kamate' (D/N) ?" GET _kum_kam ;
+        VALID _kum_kam $ "DN" PICT "@!"
+ 
+    @ m_x + 5, m_y + 2 SAY "Dodaj PDV na obracun kamate (D/N) ?" GET _pdv_obr ;
+        VALID _pdv_obr $ "DN" PICT "@!"
+    
+    read
+
+BoxC()
+
+gKumKam := _kum_kam
+gPdvObr := _pdv_obr
+     
+START PRINT CRET
+
+?
+ 
 O_KAM_PRIPR
 select kam_pripr
 go top
      
-Box(,3,70)  
-    @ m_x+1,m_y+2 SAY "Ne ispisuj kam.listove za iznos kamata ispod" GET _mala_kamata PICT "999999.99"
-    @ m_x+2,m_y+2 SAY "Varijanta (Z-zatezna kamata,P-prosti kamatni racun)" GET _var_obr VALID _var_obr $ "ZP" pict "@!"
-    read
-BoxC()
-     
-START PRINT CRET
-?
-     
 do while !EOF()
-      
+
     _id_partner := field->idpartner
       
     private nOsnDug := 0
@@ -477,12 +491,14 @@ do while !EOF()
 
         select pom
         append blank
+        
         replace field->idpartner with _id_partner
         replace field->osndug with nOsnDug 
         replace field->kamate with nKamate 
 		replace field->pdv with nPdvTotal
         
         select kam_pripr
+        
         ObracV( _id_partner, .t., _var_obr )
 
     endif
@@ -502,13 +518,11 @@ return
 
 
 
+// -----------------------------------------------------------
+// obracun kamate
+// -----------------------------------------------------------
 static function ObracV( cIdPartner, fprint, cVarObrac )
-//* ova fja se poziva u dva kruga
-//* u prvom krugu se obracunava
-//* nOsnDug, nKamate
 local nKumKamSD := 0   
-// nKumKamSD - ( kumulativ kamate sa denominacijom )
-// nKumKamBD - ( kumulativ kamate bez denominacije )
 local cTxtPdv
 local cTxtUkupno
 
@@ -575,6 +589,7 @@ select kam_pripr
 seek cIdPartner
 
 if fPrint
+
 	if prow()>40
    		FF
    		? 
@@ -582,11 +597,13 @@ if fPrint
    		?? padc("- Strana "+str(++nStr,4)+"-",80)
    		?
 	endif
+
 	P_10CPI
 	B_ON
-	? space(20),padc("K A M A T N I    L I S T",30)
+	? space(20), PADC( "K A M A T N I    L I S T", 30 )
 	B_OFF
-	IF gKumKam=="N"
+
+	IF gKumKam == "N"
   		P_12CPI
 	ELSE
   		P_COND
@@ -596,7 +613,7 @@ if fPrint
 	?
 	?
 
-	if cVarObrac=="Z"
+	if cVarObrac == "Z"
 		m:=" ---------- -------- -------- --- ------------- ------------- -------- ------- -------------"+IF(gKumKam=="D"," -------------","")
 	else
 		m:=" ---------- -------- -------- --- ------------- ------------- -------- -------------"+IF(gKumKam=="D"," -------------","")
@@ -606,379 +623,305 @@ if fPrint
 
 endif 
 
-nSKumKam:=0
+nSKumKam := 0
 select kam_pripr
-cIdPartner:=idpartner
+cIdPartner := field->idpartner
 
 if !fprint
-	nOsnDug:=osndug
+	nOsnDug := field->osndug
 endif
 
-do while !EOF() .and. idpartner==cIdPartner
+do while !EOF() .and. field->idpartner == cIdPartner
 
-fStampajBr:=.t.
-fPrviBD:=.t.
-nKumKamBD:=0
-nKumKamSD:=0
-//nSGlavn:=0
-cBrDok:=brdok
-cM1:=m1
-////************************ broj dokumenta **************************
-nOsnovSD:=kam_pripr->osnovica
-do while !eof() .and. idpartner==cidpartner .and. brdok==cbrdok
-	dDatOd:=kam_pripr->datod
-	dDatdo:=kam_pripr->datdo
-	nOsnovSD:=kam_pripr->osnovica
-	if fprviBD
-  		nGlavnBD:=kam_pripr->osnovica
-  		fPrviBD:=.f.
-	else
-		//  nGlavnBD:=kam_pripr->osnovica+nKumKamBD
-  		if cVarObrac=="Z"
-	  		nGlavnBD:=kam_pripr->osnovica+nKumKamSD
-  		else
-	  		nGlavnBD:=kam_pripr->osnovica
-  		endif
-	endif
+    fStampajBr := .t.
+    fPrviBD := .t.
+    nKumKamBD := 0
+    nKumKamSD := 0
+    cBrDok := field->brdok
+    cM1 := field->m1
+    nOsnovSD := kam_pripr->osnovica
+
+    do while !EOF() .and. field->idpartner == cIdpartner .and. field->brdok == cBrdok
+
+	    dDatOd := kam_pripr->datod
+	    dDatdo := kam_pripr->datdo
+	    nOsnovSD := kam_pripr->osnovica
+
+	    if fprviBD
+  		    nGlavnBD := kam_pripr->osnovica
+  		    fPrviBD := .f.
+	    else
+  		    
+            if cVarObrac == "Z"
+	  		    nGlavnBD := kam_pripr->osnovica + nKumKamSD
+  		    else
+	  		    nGlavnBD := kam_pripr->osnovica
+  		    endif
+	    endif
 	
-	nGlavn:=nGlavnBD
+	    nGlavn := nGlavnBD
 
- 	select ks
+ 	    select ks
+	    seek dtos(dDatOd)
 
-	// nKumKamSD:=0
+	    if dDatOd < field->DatOd .or. EOF()
+ 		    skip -1
+	    endif
 
-	seek dtos(dDatOd)
-
-	if dDatOd < DatOd .or. eof()
- 		skip -1
-	endif
-
-	do while .t.
+	    do while .t.
 		
-        ddDatDo:=min(DatDO,dDatDo)
-		nPeriod:= ddDatDo-dDatOd+1
+            dDDatDo := min( field->DatDO, dDatDo )
+		    nPeriod := dDDatDo - dDatOd + 1
 		
-        if (cVarObrac=="P")
-			if (Prestupna(YEAR(dDatOd)))
-				nExp:=366
-			else
-				nExp:=365
-			endif
-		else
-			if tip=="G"
-	 			if duz==0
-	  				//if year(dDatOD) % 4 == 0
-	 				//  nExp:=366
-	  				//else
-	   				nExp:=365
-	   				//endif
-	 			else
-	   				nExp:=duz
-	 			endif
-			elseif tip=="M"
-	 			if duz==0
-	  				dExp:= "01."
-	  				if month(ddDatdo)==12
-	   					dExp+="01."+alltrim(str(year(ddDatdo)+1))
-	  				else
-	   					dExp+=alltrim(str(month(ddDatdo)+1))+"."+alltrim(str(year(ddDatdo)))
-	  				endif
-	  				nExp := day(ctod(dExp)-1)
-	 			else
-	  				nExp := duz
-	 			endif
-			elseif tip=="3"
-	 			nExp := duz
-            else
-                nExp := duz
-			endif
-		endif
+            if ( cVarObrac == "P" )
+			    if ( Prestupna( YEAR(dDatOd ) ) )
+				    nExp := 366
+			    else
+				    nExp:=365
+			    endif
+		    else
+			    if field->tip == "G"
+	 			    if field->duz == 0
+	   				    nExp := 365
+	 			    else
+	   				    nExp := field->duz
+	 			    endif
+			    elseif field->tip == "M"
+	 			    if field->duz == 0
+	  				    dExp := "01."
+	  				    if month(ddDatdo)==12
+	   					    dExp += "01." + ALLTRIM( STR( YEAR( dDDatdo) + 1 ) )
+	  				    else
+	   					    dExp += ALLTRIM( STR( MONTH( dDDatdo) + 1 ) ) + "." + ALLTRIM( STR( YEAR( dDDatdo ) ) )
+	  				    endif
+	  				    nExp := DAY( CTOD( dExp ) - 1 )
+	 			    else
+	  				    nExp := field->duz
+	 			    endif
+			    elseif field->tip == "3"
+	 			    nExp := field->duz
+                else
+                    nExp := field->duz
+			    endif
+		    endif
 
-		if den<>0  .and. dDatOd==datod
- 			if fprint
-   				? "********* Izvrsena Denominacija osnovice sa koeficijentom:",den,"****"
- 			endif
- 			nOsnovSD:=round(nOsnovSD*den,2)
- 			nGlavn:=round(nGlavn*den,2)
- 			nKumKamSD:=round(nKumKamSD*den,2)
-		endif
+		    if field->den <> 0 .and. dDatOd == field->datod
+ 			    if fprint
+   				    ? "********* Izvrsena Denominacija osnovice sa koeficijentom:",den,"****"
+ 			    endif
+ 			    nOsnovSD := ROUND( nOsnovSD * field->den, 2 )
+ 			    nGlavn := ROUND( nGlavn * field->den, 2 )
+ 			    nKumKamSD := ROUND( nKumKamSD * field->den, 2 )
+		    endif
 
-		if (cVarObrac == "Z" )
-			nKKam  :=((1+stkam/100)^(nPeriod/nExp) - 1.00000)
-			nIznKam:=nKKam*(nGlavn)
-			nIznKam:=round(nIznKam,2)
-		else
-			nKStopa:=stkam/100
-			cPom777:=IzFmkIni("KAM","FormulaZaProstuKamatu","nGlavn*nKStopa*nPeriod/nExp",KUMPATH)
-			nIznKam:=&(cPom777)
-			nIznKam:=round(nIznKam,2)
-		endif
+		    if ( cVarObrac == "Z" )
+			    nKKam := ( ( 1 + field->stkam / 100 ) ^ ( nPeriod / nExp ) - 1.00000 )
+			    nIznKam := nKKam * nGlavn
+		    else
+			    nKStopa := field->stkam / 100
+			    cPom777 := IzFmkIni( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
+			    nIznKam := &(cPom777)
+		    endif
+			
+            nIznKam := ROUND( nIznKam, 2 )
 
-		if fprint
-  			if prow()>55
-   				FF
-    			Nstrana()
-  			endif
-  			if fstampajbr
-    			? " "+cbrdok+" "
-    			fStampajBr:=.f.
-  			else
-    			? " "+space(10)+" "
-  			endif
-  			?? dDatOd,ddDatDo
-  			@ prow(),pcol()+1 SAY nPeriod pict "999"
-  			@ prow(),pcol()+1 SAY nOsnovSD pict picdem
-			@ prow(),pcol()+1 SAY nGlavn pict picdem
-  			if (cVarObrac=="Z")
-	  			@ prow(),pcol()+1 SAY tip
-	  			@ prow(),pcol()+1 SAY stkam pict "999.99"
-	  			@ prow(),pcol()+1 SAY nKKam*100 pict "9999.99"
-  			else
-	  			@ prow(),pcol()+1 SAY stkam pict "999.99"
-  			endif
-  			nCol1:=pcol()+1
-  			@ prow(),pcol()+1 SAY nIznKam pict picdem
+		    if fprint
+  			    
+                if prow()>55
+   				    FF
+    			    Nstrana()
+  			    endif
+  			    
+                if fStampajbr
+    			    ? " " + cBrdok + " "
+    			    fStampajBr := .f.
+  			    else
+    			    ? " " + SPACE(10) + " "
+  			    endif
+  			    
+                ?? dDatOd, dDDatDo
+  			    
+                @ prow(), pcol() + 1 SAY nPeriod pict "999"
+  			    @ prow(), pcol() + 1 SAY nOsnovSD pict picdem
+			    @ prow(), pcol() + 1 SAY nGlavn pict picdem
+  			    
+                if ( cVarObrac == "Z" ) 
+	  			    @ prow(),pcol()+1 SAY field->tip
+	  			    @ prow(),pcol()+1 SAY field->stkam pict "999.99"
+	  			    @ prow(),pcol()+1 SAY nKKam * 100 pict "9999.99"
+  			    else
+	  			    @ prow(),pcol()+1 SAY field->stkam pict "999.99"
+  			    endif
 
-		endif 
+  			    nCol1 := pcol() + 1
+  			    @ prow(), pcol() + 1 SAY nIznKam pict picdem
 
-        if (cVarObrac=="Z")
-	        nGlavnBD+=nIznKam
-        endif
+		    endif 
 
-        nKumKamBD+=nIznKam
-        nKumKamSD+=nIznKam
+            if ( cVarObrac == "Z" )
+	            nGlavnBD += nIznKam
+            endif
 
-        if (cVarObrac=="Z")
-	        nGlavn+=nIznKam
-        endif
+            nKumKamBD += nIznKam
+            nKumKamSD += nIznKam
 
-        if fprint .and. gKumKam=="D"
-            @ prow(),pcol()+1 SAY nKumKamSD pict picdem  // pitanje
-        endif
+            if ( cVarObrac == "Z" )
+	            nGlavn += nIznKam
+            endif
 
-        if dDatDo<=DatDo // kraj obracuna
-            select kam_pripr
-            exit
-        endif
+            if fprint .and. gKumKam == "D"
+                @ prow(), pcol() + 1 SAY nKumKamSD pict picdem  
+            endif
 
+            if dDatDo <= field->DatDo 
+                select kam_pripr
+                exit
+            endif
+
+            skip
+
+            if EOF()
+                Msg("PARTNER: "+kam_pripr->idpartner+", BR.DOK.: "+kam_pripr->brdok+;
+                    "#GRESKA : Fali datumski interval u kam.stopama!",10)
+                exit
+            endif
+
+            dDatOd := field->DatOd
+
+        enddo 
+
+        select kam_pripr
         skip
-
-        if EOF()
-            Msg("PARTNER: "+kam_pripr->idpartner+", BR.DOK.: "+kam_pripr->brdok+;
-            "#GRESKA : Fali datumski interval u kam.stopama!",10)
-            exit
-        endif
-
-        dDatOd:=DatOd
 
     enddo 
 
+    nKumKamSD := IznosNaDan( nKumKamSD, gDatObr, IF(EMPTY(cM1), KS->datdo, KS2->datdo ), cM1 )
+
+    if fprint
+        if prow()>59
+            FF
+            Nstrana()
+        endif
+        ? m
+        ? " UKUPNO ZA", cBrdok
+        @ prow(),nCol1 SAY nKumKamBD pict picdem
+
+        ? " UKUPNO NA DAN",gDatObr,":"
+        @ prow(),nCol1 SAY nKumKamSD pict picdem
+        ? m
+    endif
+
+    nSKumKam += nKumKamSD
+
     select kam_pripr
-    skip
 
 enddo 
 
-nKumKamSD:=IznosNaDan(nKumKamSD,gDatObr,IF(EMPTY(cM1),KS->datdo,KS2->datdo),cM1)
-
 if fprint
-    if prow()>59
-        FF
-        Nstrana()
-    endif
-    ? m
-    ? " UKUPNO ZA",cbrdok
-    @ prow(),nCol1 SAY nKumKamBD pict picdem
-
-    ? " UKUPNO NA DAN",gDatObr,":"
-    @ prow(),nCol1 SAY nKumKamSD pict picdem
-    ? m
-endif
-
-nSKumKam += nKumKamSD
-
-select kam_pripr
-enddo // cidpartner
-
-if fprint
-	if prow()>54
+    
+    if prow() > 54
   		FF
   		NStrana()
 	endif
 
-? m
-? " SVEUKUPNO KAMATA NA DAN " + DTOC(gDatObr) + ":"
-@ prow(),pcol() SAY nOsnDug pict picdem
-//@ prow(),pcol()+1 SAY nGlavn pict picdem
-@ prow(),ncol1  SAY nSKumKam pict picdem
-? m
+    ? m
+    ? " SVEUKUPNO KAMATA NA DAN " + DTOC(gDatObr) + ":"
+    @ prow(),pcol() SAY nOsnDug pict picdem
+    @ prow(),ncol1  SAY nSKumKam pict picdem
+    ? m
 
-P_10CPI
+    P_10CPI
 
-if prow()<62+gPStranica
-	for i:=1 to 62+gPStranica-prow()
-   		?
- 	next
-endif
-?  PADC("     Obradio:                                 Direktor:    ",80)
-?
-?  PADC("_____________________                    __________________",80)
-?
+    if prow() < 62 + gPStranica
+	    for i := 1 to 62 + gPStranica - prow()
+   		    ?
+ 	    next
+    endif
 
-FF
-endif // fprint
+    _potpis()
+
+    FF
+
+endif 
 
 if !fprint
-	nKamate:=nSKumKam
+	nKamate := nSKumKam
 endif
 
 return nSKumKam
 
 
 
-static function Nstrana(cTip)
-
-if ctip==NIL
-  cTip:=""
-endif
-
-if cTip==""
-   ?
-   P_10CPI
-   ?? padc("- Strana "+str(++nStr,4)+"-",80)
-   ?
-endif
-if ctip=="1" .or. cTip=""
-   IF gKumKam=="N"
-     P_12CPI
-   ELSE
-     P_COND
-   ENDIF
-   ? m
-   if cVarObrac=="Z"
-   	? "   Broj          Period      dana     ostatak       kamatna   Tip kam  Konform.    Iznos    "+IF(gKumKam=="D","   kumulativ   ","")
-   	? "  racuna                              racuna       osnovica   i stopa   koef       kamate   "+IF(gKumKam=="D","    kamate     ","")
-   else
-   	? "   Broj          Period      dana     ostatak       kamatna    Stopa       Iznos    "+IF(gKumKam=="D","   kumulativ   ","") 
-	? "  racuna                              racuna       osnovica                kamate   "+IF(gKumKam=="D","    kamate     ","")
-   endif
-   ? m
-endif
+static function _potpis()
+?  PADC("     Obradio:                                 Direktor:    ",80)
+?
+?  PADC("_____________________                    __________________",80)
+?
 return
 
 
 
-//************************************************************
+static function NStrana( cTip, cVarObrac )
+
+if cTip == NIL
+    cTip := ""
+endif
+
+if cTip == ""
+    ?
+    P_10CPI
+    ?? padc("- Strana "+str(++nStr,4)+"-",80)
+    ?
+endif
+
+if cTip == "1" .or. cTip = ""
+   
+    if gKumKam == "N"
+        P_12CPI
+    else
+        P_COND
+    endif
+
+    ? m
+
+    if cVarObrac == "Z"
+   	    ? "   Broj          Period      dana     ostatak       kamatna   Tip kam  Konform.    Iznos    "+IF(gKumKam=="D","   kumulativ   ","")
+   	    ? "  racuna                              racuna       osnovica   i stopa   koef       kamate   "+IF(gKumKam=="D","    kamate     ","")
+    else
+   	    ? "   Broj          Period      dana     ostatak       kamatna    Stopa       Iznos    "+IF(gKumKam=="D","   kumulativ   ","") 
+	    ? "  racuna                              racuna       osnovica                kamate   "+IF(gKumKam=="D","    kamate     ","")
+    endif
+
+    ? m
+
+endif
+
+return
+
+
+
 static function IznosNaDan(nIznos,dTrazeni,dProsli,cM1)
-//*
 //* dtrazeni = 30.06.98
 //* dprosli  = 15.05.94
 //* znaci: uracunaj sve denominacije od 15.05.94 do 30.06.98
-//************************************************************
-*{
-LOCAL nK:=1
- PushWA()
-   SELECT KS
- GO TOP
- DO WHILE !EOF()
-   IF DTOS(dTrazeni) < DTOS(DatOd)
-     EXIT
-   ELSEIF DTOS(dProsli) >= DTOS(DatOd)
-     SKIP 1
-     LOOP
-   ENDIF
-   IF den<>0
-     nK:=nK*den
-   ENDIF
-   SKIP 1
- ENDDO
- PopWA()
+local nK := 1
+ 
+PushWA()
+SELECT KS
+GO TOP
+DO WHILE !EOF()
+    IF DTOS(dTrazeni) < DTOS(DatOd)
+        EXIT
+    ELSEIF DTOS(dProsli) >= DTOS(DatOd)
+        SKIP 1
+        LOOP
+    ENDIF
+    IF den<>0
+        nK := nK * field->den
+    ENDIF
+    SKIP 1
+ENDDO
+PopWA()
 RETURN nIznos*nK
-
-
-
-static function azuriranje()
-if pitanje(,"Izvrsiti azuriranje","N")=="D"
-   select kam_pripr; go top
-   do while !eof()
-     scatter()
-     select kamat
-     append blank
-     gather()
-     select kam_pripr
-     skip
-   enddo
-   if Pitanje(,"Izbrisati pripremu ?","D")=="D"
-     select kam_pripr
-     zap
-   endif
-
-endif
-
-
-
-static function Povrat()
-Box(,3,60)
- cIdPartner:=space(6)
- @ m_x+1,m_y+2 SAY "Izvrsiti povrat podataka za partnera:" GET cIdPartner  pict "@!" valid P_Firma(@cIdPartner)
- read
-BoxC()
-
-if lastkey()<>K_ESC
-  select kamat; go top
-  do while !eof()
-    scatter()
-    if _idpartner==cidpartner
-       select kam_pripr
-       append blank
-       gather()
-       select kamat
-    endif
-    select kamat
-    skip
-  enddo
-endif
-
-if pitanje(,"Izbrisati u kumulativu podatke za partnera","D")=="D"
-  select kamat; set order to 0; go top
-  do while !eof()
-    if idpartner==cidpartner
-       delete
-    endif
-    skip
-  enddo
-endif
-
-select kam_pripr; go top
-return
-
-
-
-
-static function BrisiKum()
-local nArr:=SELECT()
-Box(,3,60)
- cIdPartner:=space(6)
- @ m_x+1,m_y+2 SAY "Izvrsiti brisanje kumulativa za partnera:" GET cIdPartner  pict "@!" valid P_Firma(@cIdPartner)
- read
- IF LASTKEY()==K_ESC
-   BoxC()
-   SELECT (nArr)
-   RETURN
- ENDIF
-BoxC()
-
-if pitanje(,"Izbrisati u kumulativu podatke za partnera","N")=="D"
-  select kamat; set order to 0; go top
-  do while !eof()
-    if idpartner==cidpartner
-       delete
-    endif
-    skip
-  enddo
-endif
-select kam_pripr
-return
-
-
 
 

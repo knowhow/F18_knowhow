@@ -1,3 +1,8 @@
+1.3.14  2002-08-30, hernad
+
+ F18 corelib 3.5.2 - modstru numericka polja
+ DBF ver 0.8.4 - konvercija NC, MPC  numeric (N)  => float (B) 
+
 1.3.13  2002-08-30, hernad
 
  - test fakturisanje v1 OK!

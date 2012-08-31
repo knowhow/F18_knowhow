@@ -204,15 +204,15 @@ DO CASE
            endif
  
             if ( _tip=="N" .and. _tip_2=="C")   
-               stru_changed:=.t.
+               stru_changed := .t.
             endif
             
             if ( _tip=="C" .and. _tip_2=="N")   
-               stru_changed:=.t.
+               stru_changed := .t.
             endif
             
             if ( _tip=="C" .and. _tip_2=="D")   
-                stru_changed:=.t.
+                stru_changed := .t.
             endif
                 
             if !stru_changed
@@ -326,11 +326,18 @@ if stru_changed
                 _ime_p_new := curr_stru[_i, 5]
                 DO CASE
                     CASE curr_stru[_i, 2] == curr_stru[_i, 6]
+                        EVAL(FIELDBLOCK(_ime_p_new),  EVAL( FIELDWBLOCK(_ime_p, 1) ))
+ 
+                    CASE (curr_stru[_i, 2] $ "BNIY") .and.  (curr_stru[_i, 6] $ "BNYI")
+                        // jedan tip numerika u drugi tip numerika
                         EVAL(FIELDBLOCK(_ime_p_new),  EVAL( FIELDWBLOCK(_ime_p, 1) )) 
-                    CASE curr_stru[_i, 2] == "C" .and. curr_stru[_i, 6] == "N"
-                        EVAL(FIELDBLOCK(_ime_p_new),  VAL(EVAL( FIELDWBLOCK(_ime_p, 1) ))) 
-                    CASE curr_stru[_i, 2] == "N" .and. curr_stru[_i, 6] == "C"
-                        EVAL(FIELDBLOCK(_ime_p_new),  STR(EVAL( FIELDWBLOCK(_ime_p, 1) ))) 
+
+                    CASE curr_stru[_i, 2] == "C" .and. (curr_stru[_i, 6] $ "BNIY")
+                        EVAL(FIELDBLOCK(_ime_p_new),  VAL(EVAL( FIELDWBLOCK(_ime_p, 1) )))
+ 
+                    CASE (curr_stru[_i, 2] $ "BNIY") .and. curr_stru[_i, 6] == "C"
+                        EVAL(FIELDBLOCK(_ime_p_new),  STR(EVAL( FIELDWBLOCK(_ime_p, 1) )))
+ 
                     CASE curr_stru[_i, 2] == "C" .and. curr_stru[_i, 6] == "D"
                         EVAL(FIELDBLOCK(_ime_p_new),  CTOD(EVAL( FIELDWBLOCK(_ime_p, 1) ))) 
                 

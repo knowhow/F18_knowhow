@@ -101,9 +101,8 @@ AADD(aDBf,{ 'TRABAT'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TMARZA'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TMARZA2'             , 'C' ,   1 ,  0 })
 
-// ovo zasad ne diram
-AADD(aDBf,{ 'NC'                  , 'N' ,  18 ,  8 })
-AADD(aDBf,{ 'MPC'                 , 'N' ,  18 ,  8 })
+AADD(aDBf,{ 'NC'                  , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'MPC'                 , 'B' ,  8 ,  8 })
 
 // currency tip
 AADD(aDBf,{ 'VPC'                 , 'Y' ,  8 ,  4 })
@@ -146,8 +145,8 @@ if !FILE(f18_ime_dbf(_alias))
     _created := .t.
 endif
 
-// 0.8.3
-if ver["current"] < 00803
+// 0.8.4
+if ver["current"] < 00804
   for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
     modstru( {"*" + _tbl, ;
         "C KOLICINA N 12 3  KOLICINA B 8 8",;
@@ -169,6 +168,8 @@ if ver["current"] < 00803
         "C VPCSAP N 18 8 VPCSAP B 8 8", ;
         "C VPC N 18 8 VPC Y 8 4",;
         "C MPCSAPP N 18 8 MPCSAPP Y 8 4", ;
+        "C NC N 18 8 NC B 8 8",;
+        "C MPC N 18 8 MPC B 8 8",;
         "D ROKTR D 8 0", ;
         "D DATKURS D 8 0" ;
     })

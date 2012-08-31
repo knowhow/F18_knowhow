@@ -1,6 +1,7 @@
 1.3.14  2002-08-31, vsasa
 
  - fprint polog, limit na 100 [#28930](http://redmine.bring.out.ba/issues/28930)
+ - ld, odvojeni parametri doprinosa na specifikacijama [#29023](http://redmine.bring.out.ba/issues/29023)
 
 1.3.13  2002-08-30, hernad
 

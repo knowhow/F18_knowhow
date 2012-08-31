@@ -462,9 +462,8 @@ endif
 
 O_DOKSPF
 
-if !f18_lock_tables({_tbl, "pos_dokspf"})
-	return
-endif
+
+f18_lock_tables({_tbl, "doks_pf"})
 
 sql_table_update( nil, "BEGIN" )
 
@@ -496,7 +495,7 @@ _rec["kidbr"] := cKIdBroj
 
 update_rec_server_and_dbf( "pos_dokspf", _rec, 1, "CONT", .f. )
 
-f18_free_tables({_tbl, "pos_dokspf"})
+f18_free_tables({_tbl, "doks_pf"})
 sql_table_update( nil, "END" )
 
 return

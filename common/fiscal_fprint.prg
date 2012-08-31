@@ -1817,10 +1817,10 @@ enddo
 
 _o_file:Close()
 
-log_write("FISC ANSWER sadrzaj" + _tmp, 5)
+log_write("FISC ANSWER fajl sadrzaj: " + _tmp, 5)
 
 if EMPTY(cFisc_txt)
-   log_write("ERR FISC nema komande 56,1 - broj fiskalnog racuna !", 1)
+   log_write("ERR FISC nema komande 56,1," + cSerial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1)
 else
    // ako je sve ok, uzmi broj fiskalnog isjecka 
    nFisc_no := _g_fisc_no( cFisc_txt, lStorno )
@@ -1828,8 +1828,6 @@ endif
  
    
 return nErr
-
-
 
 // ------------------------------------------------
 // vraca broj fiskalnog isjecka

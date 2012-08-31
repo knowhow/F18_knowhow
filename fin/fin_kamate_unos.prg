@@ -13,7 +13,7 @@
 #include "fin.ch"
 
 static picdem := "9999999999.99"
-
+static gDatObr
 
 // -----------------------------------------------
 // glavni menij za obradu kamata
@@ -30,6 +30,7 @@ AADD( _opcexe, { || prenos_fin_kam() } )
 AADD( _opc, "3. kontrola cjelovitosti kamatnih stopa   " )
 AADD( _opcexe, { || kontrola_cjelovitosti_ks() } )
 
+gDatObr := DATE()
 
 f18_menu( "kamat", .f., _izbor, _opc, _opcexe )
 
@@ -277,7 +278,6 @@ do case
      
     case Ch == K_CTRL_U
         
-        PushWA()
         nArr:=SELECT()
         nUD1:=0
         nUD2:=0
@@ -285,10 +285,11 @@ do case
 
         if FILE( my_home() + "pom.dbf" )
             select (F_TMP_1)
+            use
             my_use_temp( "POM", my_home() + "pom", .f., .t. )
             select pom
             go top
-            StartPrint()
+            START PRINT CRET
             ? "PREGLED UKUPNIH DUGOVANJA PO KUPCIMA"
             ? "------------------------------------"
             ?
@@ -309,7 +310,7 @@ do case
             use
         endif
         
-        PopWA()
+        O_KAM_PRIPR
         SELECT (nArr)
         return DE_REFRESH
 	
@@ -364,6 +365,8 @@ Box(, 1, 50 )
     read
 BoxC()
             
+gDatObr := _date
+
 select kam_pripr
 go top
       
@@ -491,9 +494,6 @@ enddo
      
 END PRINT
      
-select pom
-use
-
 O_KAM_PRIPR
 select kam_pripr
 go top
@@ -520,8 +520,8 @@ nGlavn := 2892359.28
 dDatOd := CTOD("01.02.92")
 dDatDo := CTOD("30.09.96")
 
-select ks
 O_KS
+select ks
 set order to tag "2"
 
 nStr := 0

@@ -1,3 +1,7 @@
+1.3.14  2002-08-31, vsasa
+
+ - fprint polog, limit na 100 [#28930](http://redmine.bring.out.ba/issues/28930)
+
 1.3.13  2002-08-30, hernad
 
  - test fakturisanje v1 OK!

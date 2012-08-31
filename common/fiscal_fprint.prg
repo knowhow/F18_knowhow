@@ -978,7 +978,7 @@ cTmp += cSep
 // 2 - chek
 // 3 - virman
 
-if cVr_placanja <> "0" .and. !lStorno 
+if ( cVr_placanja <> "0" .and. !lStorno ) .or. ( cVr_placanja == "0" .and. nTotal <> 0 .and. !lStorno )
  	
 	// imamo drugu vrstu placanja...
 	cTmp += cVr_placanja

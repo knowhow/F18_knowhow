@@ -52,6 +52,7 @@ gFc_answ := fetch_metric( "fisk_naziv_fajla_odgovora", my_user(), gfc_answ )
 gFc_nftxt := fetch_metric( "fisk_stampa_broja_veze", my_user(), gfc_nftxt )
 gFc_faktura := fetch_metric( "fisk_stampa_txt_racuna", my_user(), gfc_faktura )
 gFc_fisc_print := fetch_metric( "fisk_stampa_fiskalnih_racuna", my_user(), gfc_fisc_print )
+gFc_kusur := fetch_metric( "fisk_obrada_kusura", my_user(), gfc_kusur )
 
 return
 
@@ -88,6 +89,7 @@ gFc_dlist := "N"
 gFc_pauto := 0
 gFc_serial := PADR("010000", 15)
 gFc_restart := "N"
+gFc_kusur := "N"
 
 return
 
@@ -245,6 +247,7 @@ Box(, _box_x, _box_y )
     ++ _x
     
     @ m_x + _x, m_y + 2 SAY "Stampati A4 racun nakon stampe fiskalnog racuna (D/N) ?" GET gFC_faktura VALID gFC_faktura $ "DNGX" PICT "@!"
+    @ m_x + _x, col() + 2 SAY "Unos kompletne uplate racuna (D/N) ?" GET gFC_kusur VALID gFC_kusur $ "DN" PICT "@!"
     
     ++ _x
 
@@ -292,6 +295,7 @@ if ( LastKey() != K_ESC )
     set_metric( "fisk_stampa_broja_veze", my_user(), gfc_nftxt )
     set_metric( "fisk_stampa_txt_racuna", my_user(), gfc_faktura )
     set_metric( "fisk_stampa_fiskalnih_racuna", my_user(), gfc_fisc_print )
+    set_metric( "fisk_obrada_kusura", my_user(), gfc_kusur )
 
 endif
 

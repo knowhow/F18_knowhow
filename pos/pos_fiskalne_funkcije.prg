@@ -62,6 +62,27 @@ endif
 return nErr
 
 
+
+// -----------------------------------------------
+// box za unos ukupno uplacene sume
+// -----------------------------------------------
+function unesi_ukupno_uplacenu_sumu()
+local _iznos := 0
+private getlist := {}
+
+Box(, 1, 60 )
+    @ m_x + 1, m_y + 2 SAY "Ukupno uplaceno:" GET _iznos PICT "99999999.99"
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    _iznos := 0
+endif
+
+return _iznos
+
+
+
 // -------------------------------------
 // stampa fiskalnog racuna FPRINT
 // -------------------------------------
@@ -95,6 +116,12 @@ cVr_placanja := _get_vr_pl( field->idvrstep )
 if cVr_placanja <> "0"
 	// vrati mi iznos racuna
 	nTotal := pos_iznos_racuna( cIdPos, "42", dDat, cBrRn )
+endif
+
+// unesi ukupno uplacen iznos za racun
+// samo vrijedi kod gotovine
+if cVr_placanja == "0" .and. gFc_kusur == "D"
+    nTotal := unesi_ukupno_uplacenu_sumu()
 endif
 
 if !EMPTY( cPartner )

@@ -35,7 +35,7 @@ static __max_cols := 120
 #ifdef  __PLATFORM__WINDOWS
     static __font_name := "Lucida Console"
     static __font_size := 20
-    static __fond_width := 10
+    static __font_width := 10
 #else
 
     #ifdef  __PLATFORM__LINUX
@@ -124,7 +124,6 @@ SET DATE TO GERMAN
 log_write("== F18 start: " + hb_ValToStr(DATE()) + " / " + hb_ValToStr(TIME()) + " ==")
 SetgaSDbfs()
 set_global_vars_0()
-
 PtxtSekvence()
 
 __my_error_handler := { |objError| GlobalErrorHandler(objError, .f.) }

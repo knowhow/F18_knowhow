@@ -67,7 +67,18 @@ gFC_type := PADR( "FPRINT", 20 )
 gFC_device := "P"
 gFc_dev_id := 0
 gFc_use := "N"
-gFC_path := PADR("c:\fiscal\", 150)
+
+#ifdef __PLATFORM__WINDOWS
+    gFC_path := PADR("c:\fiscal", 150)
+#else
+
+    #ifdef __PLATFORM__DARWIN
+       gFC_path := PADR("/Volumes/fiscal", 150)
+    #else
+       gFC_path := PADR("/var/spool/fiscal", 150)
+    #endif
+#endif
+
 gFC_path2 := PADR("", 150)
 gFC_name := PADR("out.txt", 150 ) 
 gFC_answ := PADR("",40)

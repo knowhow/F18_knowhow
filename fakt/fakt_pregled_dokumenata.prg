@@ -747,12 +747,12 @@ do case
     
     if field->fisc_rn <> 0
         msgbeep("veza: fiskalni racun vec setovana !")
-        if Pitanje(,"Promjeniti postojecu vezu (D/N)?", "N") == "N"
+        if Pitanje("FAKT_PROM_VEZU", "Promjeniti postojecu vezu (D/N)?", "N") == "N"
             return DE_REFRESH
         endif
     endif
     
-    if Pitanje(,"Setovati novu vezu sa fiskalnim racunom (D/N)?") == "N"
+    if Pitanje("FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim racunom (D/N)?") == "N"
         return DE_REFRESH
     endif
     
@@ -795,7 +795,7 @@ do case
         return DE_REFRESH
     endif
 
-  case chr(Ch) $ "rR"
+  case UPPER(chr(Ch)) == "R"
 
 
     refresh_fakt_tbl_dbfs(_filter)
@@ -812,7 +812,7 @@ do case
         
         endif
         
-        if Pitanje(,"Stampati fiskalni racun ?", "D") == "D"
+        if Pitanje( "ST FISK RN5","Stampati fiskalni racun ?", "D") == "D"
 
             fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok )
         

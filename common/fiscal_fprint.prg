@@ -672,7 +672,7 @@ if gFC_acd == "D" .and. _rpt_type == "Z"
 
 endif
 
-// ako se koristi opcija automatskog pologa u ureðaj
+// ako se koristi opcija automatskog pologa u ureÃ°aj
 if gFc_pauto <> 0
 	
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
@@ -837,7 +837,7 @@ return xRet
 
 
 // ----------------------------------------
-// vraca popunjenu matricu za ispis raèuna
+// vraca popunjenu matricu za ispis raÃ¨una
 // FPRINT driver
 // ----------------------------------------
 static function _fp_pos_rn( aData, aKupac, lStorno )
@@ -1701,7 +1701,7 @@ local aErr_read
 local aErr_data
 local nTime 
 local cSerial := ALLTRIM(gFc_serial)
-local _o_file
+local _o_file, _msg
 
 if lStorno == nil
     lStorno := .f.
@@ -1717,7 +1717,7 @@ if EMPTY( ALLTRIM( gFc_answ ) )
 	cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(cFile)
 endif
 
-// ova opcija podrazumjeva da je ukljuèena opcija 
+// ova opcija podrazumjeva da je ukljuÃ¨ena opcija 
 // prikaza greske tipa ER,OK...
 
 Box(,1,50)
@@ -1726,7 +1726,7 @@ do while nTime > 0
 	
 	-- nTime
 
-	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
+	@ m_x + 1, m_y + 2 SAY PADR( hb_Utf8ToStr("ÄŒekam odgovor fiskalnog ureÄ‘aja: ") + ;
 		ALLTRIM( STR(nTime) ), 48)
 
 	sleep(1)
@@ -1737,11 +1737,14 @@ do while nTime > 0
     if FILE( cF_name )
 #endif
 		// fajl se pojavio - izadji iz petlje !
+        log_write("FISC: fajl odgovora se pojavio", 7)
 		exit
 	endif
 
     if nTime == 0 .or. LastKey() == K_ALT_Q
+        log_write("FISC ERR: timeout !", 2)
         BoxC()
+
         nFisc_no := 0
         return -9
     endif
@@ -1750,12 +1753,16 @@ enddo
 
 BoxC()
 
+#ifndef TEST
 if !FILE( cF_name )
+
 	msgbeep("Fajl " + cF_name + " ne postoji !!!")
 	nFisc_no := 0
 	nErr := -9
 	return nErr
+
 endif
+#endif
 
 nFisc_no := 0
 cFisc_txt := ""
@@ -1765,7 +1772,11 @@ _o_file := TFileRead():New( cF_name )
 _o_file:Open()
 
 if _o_file:Error()
-	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	_msg := "FISC ERR: " + _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " )
+
+    log_write(_msg, 2)
+    MsgBeep(_msg)
+ 
 	return -9
 endif
 
@@ -1789,7 +1800,11 @@ while _o_file:MoreToRead()
 
 	// ima neka greska !
 	if "Er;" $ cErr
-		msgbeep( ALLTRIM(cErr) )
+
+		_err := "FISC ERR:" + ALLTRIM(cErr)
+        log_write(_err, 2)
+        MsgBeep(_err)
+
 		nRet := 1
 		return nRet
 	endif
@@ -1831,9 +1846,12 @@ endif
 
 aTmp := toktoniz( cTxt, ";" )
 cFisc := aTmp[2]
+
 aFisc := toktoniz( cFisc, "," )
 
 nFiscNO := VAL( aFisc[ _n_pos ] )
+
+log_write("FISC RN: " + ALLTRIM(STR(nFiscNO)), 3)
 
 return nFiscNO
 
@@ -1863,5 +1881,3 @@ email_send("F", nil, nil, cMessage, nil, cEml_file )
 
 
 return
-
-

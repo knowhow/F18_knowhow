@@ -1,3 +1,8 @@
+1.3.15  2002-08-30, hernad
+
+ - F18 corelib 3.5.2 - modstru numericka polja
+ - DBF ver 0.8.4 - konvercija NC, MPC  numeric (N)  => float (B) 
+
 1.3.14  2002-08-31, vsasa
 
  - fprint polog, limit na 100 [#28930](http://redmine.bring.out.ba/issues/28930)
@@ -6,6 +11,7 @@
  - kalk, formiranje tabela rekap1, rekap2... [#29020](http://redmine.bring.out.ba/issues/29020)
  - kalk, kontvise() bugfix [#29030](http://redmine.bring.out.ba/issues/29030)
  - ld, opis naknada na kartici [#28843](http://redmine.bring.out.ba/issues/28843)
+>>>>>>> 2c896913b74ea89627f954872e0ebf2c90890b28
 
 1.3.13  2002-08-30, hernad
 

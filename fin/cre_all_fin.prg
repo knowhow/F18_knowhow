@@ -379,6 +379,62 @@ if !FILE(f18_ime_dbf("vksg"))
 endif
 CREATE_INDEX("1","id+DESCEND(godina)", "VKSG" )
 
+// -----------------------------------------------------
+// kamate
+
+_alias := "kam_pripr"
+_table_name := "kam_pripr"
+
+aDbf:={}
+AADD(aDBf,{ "IDPARTNER"           , "C" ,   6 ,  0 })
+AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+AADD(aDBf,{ "BRDOK"               , "C" ,  10 ,  0 })
+AADD(aDBf,{ "DATOD"               , "D" ,   8 ,  0 })
+AADD(aDBf,{ "DATDO"               , "D" ,   8 ,  0 })
+AADD(aDBf,{ "OSNOVICA"            , "N" ,  18 ,  2 })
+AADD(aDBf,{ "OSNDUG"              , "N" ,  18 ,  2 })
+AADD(aDBf,{ "M1"                  , "C" ,   1 ,  0 })
+
+if !FILE(f18_ime_dbf(_alias))
+    DBcreate2( _alias, aDbf )
+endif
+            
+CREATE_INDEX("1", "idpartner+brdok+dtos(datod)", _alias)
+
+_alias := "kam_kamat"
+_table_name := "kam_kamat"
+
+if !FILE(f18_ime_dbf(_alias))
+    DBcreate2( _alias, aDbf )
+endif
+            
+CREATE_INDEX("1", "idpartner+brdok+dtos(datod)", _alias)
+
+// kamate - sifrarnik kamata
+aDbf:={}
+AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
+AADD(aDBf,{ "NAZ"       , "C" ,   2 ,  0 })
+AADD(aDBf,{ "DATOD"     , "D" ,   8 ,  0 })
+AADD(aDBf,{ "DATDO"     , "D" ,   8 ,  0 })
+AADD(aDBf,{ "STREV"     , "N" ,   8 ,  4 })
+AADD(aDBf,{ "STKAM"     , "N" ,   8 ,  4 })
+AADD(aDBf,{ "DEN"       , "N" ,  15 ,  6 })
+AADD(aDBf,{ "TIP"       , "C" ,   1 ,  0 })
+AADD(aDBf,{ "DUZ"       , "N" ,   4 ,  0 })
+
+_alias := "KS"
+_table_name := "ks"
+if !FILE(f18_ime_dbf(_alias))
+    DBCREATE2(_alias, aDbf)
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    close all
+endif
+
+CREATE_INDEX("ID", "Id", _alias) 
+CREATE_INDEX("2", "dtos(datod)", _alias) 
+
+
 // kreiraj indexe tabele FMKRULES
 cre_rule_cdx()
 

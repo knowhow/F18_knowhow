@@ -28,6 +28,7 @@ set_a_dbf_sifarnik("fin_funk"      , "FUNK"     ,       F_FUNK       )
 set_a_dbf_sifarnik("fin_fond"      , "FOND"     ,       F_FOND       )
 set_a_dbf_sifarnik("fin_buiz"      , "BUIZ"     ,       F_BUIZ       )
 set_a_dbf_sifarnik("fin_ulimit"    , "ULIMIT"   ,       F_ULIMIT     )
+set_a_dbf_sifarnik("ks"            , "KS"       ,       F_KS         )
 
 // temporary
 set_a_dbf_temp("fin_konto"        , "_KONTO"   ,       F__KONTO   )
@@ -47,6 +48,8 @@ set_a_dbf_temp("fin_ios"         , "IOS"        ,       F_BBKLAS    )
 set_a_dbf_temp("fin_ostav"       , "OSTAV"      ,       F_OSTAV     )
 set_a_dbf_temp("fin_osuban"      , "OSUBAN"     ,       F_OSUBAN    )
 set_a_dbf_temp("vksg"           , "VKSG"        ,       F_VKSG      )
+set_a_dbf_temp("kam_pripr"    , "KAM_PRIPR"     , F_KAMPRIPR  )
+set_a_dbf_temp("kam_kamat"    , "KAM_KAMAT"     , F_KAMAT )
 
 return
 

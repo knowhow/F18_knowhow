@@ -27,6 +27,9 @@ AADD( _opc, "1. unos/ispravka kamata                      " )
 AADD( _opcexe, { || kamate_unos() } )
 AADD( _opc, "2. prenos FIN->kamate         " )
 AADD( _opcexe, { || prenos_fin_kam() } )
+AADD( _opc, "3. kontrola cjelovitosti kamatnih stopa   " )
+AADD( _opcexe, { || kontrola_cjelovitosti_ks() } )
+
 
 f18_menu( "kamat", .f., _izbor, _opc, _opcexe )
 
@@ -229,12 +232,16 @@ do case
          return DE_REFRESH
 
     case Ch == K_CTRL_N  
+        
         // nove stavke
         nDug := 0
         nPot := 0
         nPrvi := 0
+        
         go bottom
+        
         Box("knjn",13,77,.f.,"Unos novih stavki")
+        
         do while .t.
             Scatter()
             @ m_x+1,m_y+1 CLEAR to m_x+12,m_y+76
@@ -243,7 +250,7 @@ do case
             endif
             //inkey(10)
             select kam_pripr
-            APPEND BLANK
+            append blank
             Gather()
         enddo
 
@@ -269,6 +276,8 @@ do case
         return DE_REFRESH
      
     case Ch == K_CTRL_U
+        
+        PushWA()
         nArr:=SELECT()
         nUD1:=0
         nUD2:=0
@@ -299,21 +308,27 @@ do case
             END PRINT
             use
         endif
+        
+        PopWA()
         SELECT (nArr)
         return DE_REFRESH
 	
-    case Ch==K_ALT_P
+    case Ch == K_ALT_P
+
         select kam_pripr
+
      	private nKamMala:=0
      	private nOsnDug:=0
      	private nSOsnSD:=0
      	private nKamate:=0
      	private cVarObrac:="Z"
      	cIdpartner:=EVAL( (TB:getColumn(2)):Block )
+
     	Box(,2,70)
        		@ m_x+1,m_y+2 SAY "Varijanta (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObrac valid cVarObrac$"ZP" pict "@!"
        		read
      	BoxC()
+
         START PRINT CRET
         
 	    if ObracV(cIdPartner, .f., cVarObrac ) > nKamMala
@@ -321,8 +336,11 @@ do case
      	endif
      
      	END PRINT
+
+        O_KAM_PRIPR
         select kam_pripr
      	go top
+
 	    return DE_REFRESH
 
     case Ch == K_ALT_A

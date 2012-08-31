@@ -117,20 +117,23 @@ return STOD(cPom)
 // kontrola cjelovitosti kamatnih stopa
 // -------------------------------------------------
 function kontrola_cjelovitosti_ks()
+local _dat2
 
 O_KS
-GO TOP
+go top
  
-dDat2 := field->DatDo
-SKIP 1
+_dat2 := field->DatDo
+skip 1
  
-DO WHILE !EOF()
-   IF DTOC(DatOd-1) != DTOC(dDat2)
-     Msg('Pogresan "DatOd" na stopi ID='+id+' !',3)
-   ENDIF
-   dDat2:=DatDo
-   SKIP 1
-ENDDO
+do while !EOF()
+   
+    if DTOC( field->DatOd - 1 ) != DTOC( _dat2 )
+        Msg('Pogresan "DatOd" na stopi ID=' + id + ' !', 3 )
+    endif
+    _dat2 := field->DatDo
+    skip 1
+enddo
+
 close all
 return
 

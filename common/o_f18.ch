@@ -88,6 +88,10 @@
 #xcommand O_PANAL        => select (F_PANAL);      my_usex ("panal")     ; set order to tag "1"
 #xcommand O_PSINT        => select (F_PSINT);      my_usex ("psint")     ; set order to tag "1"
 
+#xcommand O_KAM_PRIPR    => select (F_KAMPRIPR);  my_usex ("kam_pripr") ; set order to tag "1"
+#xcommand O_KAM_KAMAT    => select (F_KAMAT);  my_usex ("kam_kamat") ; set order to tag "1"
+#xcommand O_KS           => select (F_KS);    my_use ("ks") ; set order to tag "ID"
+
 #xcommand O_SUBAN     => SELECT (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_ANAL      => SELECT (F_ANAL);     my_use("anal")      ; set order to tag "1"
 #xcommand O_NALOG     => SELECT (F_NALOG);    my_use("nalog")     ; set order to tag "1"

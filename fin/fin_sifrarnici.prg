@@ -12,15 +12,7 @@
 
 #include "fin.ch"
 
-/*! \file fmk/fin/sif/1g/sif.prg
- *  \brief Sifrarnici
- */
 
-
-/*! \fn fin_serv_functions()
- *  \brief Servisne funkcije
- */
- 
 function fin_serv_functions()
 
 Box(,4,60)
@@ -61,45 +53,7 @@ closeret
 return
 
 
-/*!
- * \ingroup ini
- * \var FmkIni_ExePath_FIN_PartnerNaziv2
- * \brief Prikaz polja Naz2 u PARTN tabeli 
- * \param D - prikaz polja Naz2 u tabeli partnera
- * \param N - ne prikaz, default vrijednost
- * \sa P_Firma
- */
-*string FmkIni_ExePath_FIN_PartnerNaziv2;
 
-/*!
- * \ingroup ini
- * \var FmkIni_ExePath_SifPartn_DZIROR
- * \brief Prikaz polja DZIROR - devizni ziro racun 
- * \param D - prikaz polja
- * \param N - ne prikaz, default vrijednost
- * \sa P_Firma
- */
-*string FmkIni_ExePath_SifPartn_DZIROR;
-
-
-/*!
- * \ingroup ini
- * \var FmkIni_ExePath_SifPartn_Fax
- * \brief Prikaz polja Fax
- * \param D - prikaz Ziro racun
- * \param N - ne prikaz, default vrijednost
- * \sa P_Firma
- */
-*string FmkIni_ExePath_SifPartn_Fax;
-
-
-/*! \fn P_Firma(cId,dx,dy)
- *  \brief Otvara sifrarnik partnera 
- *  \param cId
- *  \param dx
- *  \param dy
- */
- 
 function P_dummy(cId,dx,dy)
 *{
 local cN2Fin, i
@@ -490,6 +444,31 @@ ImeKol:={ { padr("Id",5)    , {|| id}  , "id", {|| .t.}, {|| vpsifra(wid)} },;
 Kol:={1,2}
 
 return PostojiSifra(F_FUNK,1,10,70,"Lista funkcionalne klasifikacije",@cId,dx,dy)
+
+
+// -------------------------------------------
+// kamatne stope
+// -------------------------------------------
+function P_KS(cId,dx,dy)
+local _i
+private imekol := {}
+private kol := {}
+
+AADD( imekol, { PADR( "ID", 3 ) , {|| id }  , "id", {|| .t.}, {|| vpsifra(wid)} } )
+AADD( imekol, { PADR( "Tip", 3 ) , {|| PADC( tip, 3 ) }  , "tip" } )
+AADD( imekol, { PADR( "DatOd", 8 ) , {|| datod }  , "datod" } )
+AADD( imekol, { PADR( "DatDo", 8 ) , {|| datdo }  , "datdo" } )
+AADD( imekol, { PADR( "Rev", 6 ) , {|| strev }  , "strev" } )
+AADD( imekol, { PADR( "Kam", 6 ) , {|| stkam }  , "stkam" } )
+AADD( imekol, { PADR( "DENOM", 15 ) , {|| den }  , "den" } )
+AADD( imekol, { PADR( "Duz.", 4 ) , {|| duz }  , "duz" } )
+
+for _i := 1 to LEN( imekol )
+    AADD( kol, _i )
+next
+
+return PostojiSifra( F_KS, 1, MAXROWS()-10, MAXCOLS()-5, "Lista kamatni stopa",@cId,dx,dy)
+
 
 
 

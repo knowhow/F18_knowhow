@@ -1,3 +1,9 @@
+1.3.15  2002-08-30, hernad
+
+ - F18 corelib 3.5.2 - modstru numericka polja
+ - DBF ver 0.8.4 - konvercija NC, MPC  numeric (N)  => float (B) 
+ - FIN, ubačene opcije kamata iz modula KAM
+
 1.3.14  2002-08-31, vsasa
 
  - fprint polog, limit na 100 [#28930](http://redmine.bring.out.ba/issues/28930)

@@ -1605,7 +1605,7 @@ if LASTKEY() == K_ESC
     return
 endif
 
-SELECT F_DOKS
+SELECT F_KALK_DOKS
 if !used()
     O_KALK_DOKS
 endif

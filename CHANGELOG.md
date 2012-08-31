@@ -4,6 +4,7 @@
  - ld, odvojeni parametri doprinosa na specifikacijama [#29023](http://redmine.bring.out.ba/issues/29023)
  - pos, unos ukupno uplaćenog iznosa kod izdavanja računa [#28876](http://redmine.bring.out.ba/issues/28876)
  - kalk, formiranje tabela rekap1, rekap2... [#29020](http://redmine.bring.out.ba/issues/29020)
+ - kalk, kontvise() bugfix [#29030](http://redmine.bring.out.ba/issues/29030)
 
 1.3.13  2002-08-30, hernad
 

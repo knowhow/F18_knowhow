@@ -36,7 +36,7 @@ AADD(_opcexe, {|| MnuImpCSV()} )
 AADD(_opc,"-----------------------------------")
 AADD(_opcexe, nil )
 
-AADD(_opc,"A. kontiraj dokumente za period")
+AADD(_opc,"A. kontiraj dokumente za period - u pripremu")
 AADD(_opcexe, {|| KontVise()} )
 
 AADD(_opc,"B. kontiraj automatski kalkulacije za period")

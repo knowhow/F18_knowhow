@@ -34,6 +34,8 @@ static __max_cols := 120
 
 #ifdef  __PLATFORM__WINDOWS
     static __font_name := "Lucida Console"
+    static __font_size := 20
+    static __fond_width := 10
 #else
 
     #ifdef  __PLATFORM__LINUX

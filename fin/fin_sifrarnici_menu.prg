@@ -48,6 +48,7 @@ local _opcexe:={}
 local _izbor:=1
 
 O_KONTO
+O_KS
 O_TRFP2
 O_TRFP3
 O_PKONTO
@@ -63,6 +64,8 @@ AADD(_opc, "4. limiti po ugovorima")
 AADD(_opcexe, {|| P_ULimit()})
 AADD(_opc, "5. sheme kontiranja obracuna LD")
 AADD(_opcexe, {|| P_TRFP3()})
+AADD(_opc, "6. kamatne stope")
+AADD(_opcexe, {|| P_KS()})
 
 f18_menu("sopc", .f., _izbor, _opc, _opcexe )
 

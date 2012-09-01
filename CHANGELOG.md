@@ -1,14 +1,18 @@
-1.3.16  2002-08-31, hernad
+1.3.17  2012-09-01, hernad
+
+ - test print fakture (txt, odt)
+
+1.3.16  2012-08-31, hernad
 
  - FISC logiranje
 
-1.3.15  2002-08-30, hernad
+1.3.15  2012-08-30, hernad
 
  - F18 corelib 3.5.2 - modstru numericka polja
  - DBF ver 0.8.4 - konvercija NC, MPC  numeric (N)  => float (B) 
  - FIN, ubačene opcije kamata iz modula KAM
 
-1.3.14  2002-08-31, vsasa
+1.3.14  2012-08-31, vsasa
 
  - fprint polog, limit na 100 [#28930](http://redmine.bring.out.ba/issues/28930)
  - ld, odvojeni parametri doprinosa na specifikacijama [#29023](http://redmine.bring.out.ba/issues/29023)
@@ -17,63 +21,63 @@
  - kalk, kontvise() bugfix [#29030](http://redmine.bring.out.ba/issues/29030)
  - ld, opis naknada na kartici [#28843](http://redmine.bring.out.ba/issues/28843)
 
-1.3.13  2002-08-30, hernad
+1.3.13  2012-08-30, hernad
 
  - test fakturisanje v1 OK!
 
-1.3.12  2002-08-29, hernad
+1.3.12  2012-08-29, hernad
 
  - #29011 kontiranje nakon izbacivanja kalk->DatKurs ne radi - fix 
 
-1.3.11  2002-08-29, hernad
+1.3.11  2012-08-29, hernad
 
  - #29009
 
-1.3.10  2002-08-29, hernad
+1.3.10  2012-08-29, hernad
 
  - workaround za lose imenovanje tabela u ld, virm modulima
 
-1.3.9  2002-08-28, hernad
+1.3.9  2012-08-28, hernad
 
  - fix, refactor alt_r
 
-1.3.8  2002-08-28, hernad
+1.3.8  2012-08-28, hernad
 
  - alias pretvori u tabelu ako treba
 
-1.3.7  2002-08-28, hernad
+1.3.7  2012-08-28, hernad
 
  - vratio dbf_get_rec() greskom izbrisan bug #28984
 
-1.3.6  2002-08-28, hernad
+1.3.6  2012-08-28, hernad
 
  - ostao debug full sync u prosloj verziji
  
-1.3.5  2002-08-28, hernad
+1.3.5  2012-08-28, hernad
 
  - init kreiranje tabela - modstru greske (nema tabele) ne ispadaj, nepostojece tabele dbf_stru ne ispadaj, repair_dbfs rekurzija off  
 
-1.3.3  2002-08-26, hernad
+1.3.3  2012-08-26, hernad
 
  - full sync SERIABLE transaction
 
-1.3.3  2002-08-26, hernad
+1.3.3  2012-08-26, hernad
 
  - FAKT stampa dokumenta opis out
 
-1.3.2  2002-08-26, hernad
+1.3.2  2012-08-26, hernad
 
  - kalk datkurs -> out
 
-1.3.1  2002-08-26, hernad
+1.3.1  2012-08-26, hernad
 
  - borba sa indeksima nakon full sync
 
-1.3.0  2002-08-26, hernad
+1.3.0  2012-08-26, hernad
  
  - kalk_compress, fakt_compress, novi semaphore engine
 
-1.1.7  2002-08-24, hernad
+1.1.7  2012-08-24, hernad
   
  - branch 1.1
 

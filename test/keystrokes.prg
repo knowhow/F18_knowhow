@@ -143,7 +143,12 @@ local _i, _j, _num, _key
  
 for _i := 1 to LEN(a_polja)
 
-   if VALTYPE(a_polja[_i]) != "C"
+   if VALTYPE(a_polja[_i]) == "B"
+
+       AADD(a_init, a_polja[_i])
+       loop
+
+   elseif VALTYPE(a_polja[_i]) <> "C"
           _msg := "apolja clanovi moraju biti char" + pp(a_polja[_i])
           Alert(_msg)
           log_write(_msg, 2)
@@ -164,12 +169,13 @@ for _i := 1 to LEN(a_polja)
         // <ENTER5> => 5 x enter
         _key := LEFT(a_polja[_i], 7)
         _num := SUBSTR(a_polja[_i], 8)
-
      CASE LEFT(a_polja[_i], 6) == "<DOWN>" .or. ;
           LEFT(a_polja[_i], 6) == "<PGDN>" .or. ;
           LEFT(a_polja[_i], 6) == "<HOME>" .or. ;
           LEFT(a_polja[_i], 6) == "<ALTA>" .or. ;
-          LEFT(a_polja[_i], 6) == "<ALTP>"
+          LEFT(a_polja[_i], 6) == "<ALTP>" .or. ;
+          LEFT(a_polja[_i], 6) == "<LEFT>"
+
 
         _key := LEFT(a_polja[_i], 6)
         _num := SUBSTR(a_polja[_i], 7)
@@ -201,6 +207,9 @@ for _i := 1 to LEN(a_polja)
 
          CASE _key == "<ENTER>"
                AADD(a_init, K_ENTER)
+
+         CASE _key == "<LEFT>"
+               AADD(a_init, K_LEFT)
 
          CASE _key == "<ALTA>"
                AADD(a_init, K_ALT_A)

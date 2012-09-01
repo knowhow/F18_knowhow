@@ -389,6 +389,7 @@ endif
 
 Preduzece()
 P_12CPI
+
 set century on
 ? "  KALK: REALIZACIJA VELEPRODAJE PO PARTNERIMA    na dan:",DATE()
 ?? space(6),"Strana:",str(++nStrana,3)

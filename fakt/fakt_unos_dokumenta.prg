@@ -356,6 +356,9 @@ do case
 
         lDirty:=.f.
 
+#ifdef TEST
+        push_test_tag("FAKT_CTRLP_END") 
+#endif
         return DE_REFRESH
 
     case Ch==K_ALT_L
@@ -380,7 +383,10 @@ do case
         endif
             
         o_fakt_edit()
-            
+           
+#ifdef TEST
+        push_test_tag("FAKT_ALTP_END") 
+#endif
         return DE_REFRESH
 
     case Ch = K_ALT_A

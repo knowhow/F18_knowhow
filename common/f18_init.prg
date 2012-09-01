@@ -139,6 +139,9 @@ return .t.
 // -------------------------------
 function init_harbour()
 
+SET CENTURY OFF
+// epoha je u stvari 1999, 2000 itd
+SET EPOCH TO 1960  
 SET DATE TO GERMAN
 REQUEST HB_CODEPAGE_SL852 
 REQUEST HB_CODEPAGE_SLISO

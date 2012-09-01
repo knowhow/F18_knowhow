@@ -180,7 +180,7 @@ function f18_odt_print( output_file, from_params, test_mode )
 local _ok := .f.
 local _cmd 
 local _oo_bin, _oo_writer, _oo_line
-local _screen, _error
+local _screen, _error := 0
 
 if ( output_file == NIL )
     __output_odt := my_home() + OUT_ODT_FILE
@@ -245,7 +245,9 @@ CLEAR SCREEN
 // pokreni komandu
 log_write( _cmd, 7 )
 
+#ifndef TEST
 _error := hb_run( _cmd )
+#endif
 
 RESTORE SCREEN FROM _screen
 

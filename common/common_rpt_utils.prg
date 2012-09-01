@@ -9,6 +9,7 @@
 function FormDat1(dUlazni)
 
 LOCAL cVrati
+ 
   SET CENTURY ON
   cVrati:=DTOC(dUlazni)+"."
   SET CENTURY OFF

@@ -1,4 +1,4 @@
-#%INI__##%DOCNA#FAKT_DOK_99-10-77777-999999_3112.12.01_PARTN-99_FAX-
+#%INI__##%DOCNA#FAKT_DOK_99-10-77777-999999_31.12.12_PARTN-99_FAX-
 #%KON17#      #%10CPI##%BON__#========================================================================
 #%KON17#      #%10CPI##%BON__#bring.out test                                                            
 #%KON17#      #%10CPI##%BON__#IT knowhow                                                                
@@ -16,8 +16,8 @@
 #%ION__#
 #%KON17#      #%10CPI##%BON__#Kupac:
 #%KON17#      #%10CPI#-------------------------------#%IOFF_#
-#%KON17#      #%10CPI##%BON__#  PARTN 99                           #%BOFF_#              Sarajevo, 3112.12.01
-#%KON17#      #%10CPI##%BON__#  -                                  #%BOFF_#        Datum isporuke: 3112.12.01
+#%KON17#      #%10CPI##%BON__#  PARTN 99                           #%BOFF_#                Sarajevo, 31.12.12
+#%KON17#      #%10CPI##%BON__#  -                                  #%BOFF_#          Datum isporuke: 31.12.12
 #%KON17#      #%10CPI##%BON__#  -                                  #%BOFF_#
 #%KON17#      #%10CPI#  ID broj: -                         #%10CPI#
 #%KON17#      #%10CPI##%BON__#                                            POREZNA FAKTURA br. 77777#%BOFF_##%KON17#

@@ -149,6 +149,7 @@ return
 function i_napravi_fakturu()
 local _tmp, _a_polja, _stavka_dok
 local _stavke := hb_hash()
+local _fakt_outf
 
 push_test_tag("XX")
 
@@ -236,6 +237,9 @@ AADD(_stavke['keys'],  {;
   })
 AADD(_stavke['get'], 'CDIREKT')
 
+// uporedi test/data/fakt_1.txt sa outf.txt koji je izgenerisan
+_fakt_outf := my_home() + OUTF_FILE
+TEST_LINE(test_diff_between_files("fakt_1.txt", _fakt_outf), 0)
 
 // azuriraj
 AADD(_stavke['keys'],  {; 

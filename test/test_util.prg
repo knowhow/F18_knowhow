@@ -20,3 +20,11 @@ function tmp_dir()
 #endif
 
 
+function test_diff_between_files(test_file, out_file)
+local _ret, _cmd := ""
+
+_cmd := "diff test/data/" + test_file + " " + out_file
+_ret := hb_run(_cmd)
+
+return _ret
+  

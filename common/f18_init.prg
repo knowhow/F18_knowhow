@@ -90,21 +90,7 @@ Set( _SET_AUTOPEN, .f.  )
 //SET DBFLOCKSCHEME TO DB_DBFLOCK_HB32
 //SET DBFLOCKSCHEME TO DB_DBFLOCK_HB64 
 
-REQUEST HB_CODEPAGE_SL852 
-REQUEST HB_CODEPAGE_SLISO
-
-hb_setCodePage("SL852" )
-hb_setTermCP("SLISO")
-hb_CdpSelect("SL852")
-
-
-SET DELETED ON
-
-SETCANCEL(.f.)
-
-
-set( _SET_EVENTMASK, INKEY_ALL )
-mSetCursor( .t. )
+init_harbour()
 
 public gRj         := "N"
 public gReadOnly   := .f.
@@ -118,8 +104,6 @@ public glBrojacPoKontima := .t.
 set_f18_home_root()
 
 log_create()
-
-SET DATE TO GERMAN
 
 log_write("== F18 start: " + hb_ValToStr(DATE()) + " / " + hb_ValToStr(TIME()) + " ==")
 SetgaSDbfs()
@@ -149,6 +133,29 @@ _write_server_params_to_config()
 post_login()
 
 return .t.
+
+// -------------------------------
+// init harbour postavke
+// -------------------------------
+function init_harbour()
+
+SET DATE TO GERMAN
+REQUEST HB_CODEPAGE_SL852 
+REQUEST HB_CODEPAGE_SLISO
+
+hb_setCodePage("SL852" )
+hb_setTermCP("SLISO")
+hb_CdpSelect("SL852")
+
+SET DELETED ON
+
+SETCANCEL(.f.)
+
+set( _SET_EVENTMASK, INKEY_ALL )
+mSetCursor( .t. )
+
+return .t.
+
 
 
 // ---------------------------------------------------------------

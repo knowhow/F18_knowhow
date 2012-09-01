@@ -1,21 +1,19 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "fmk.ch"
 
 /*! \file sclib/base/2g/app.prg
  *  \brief Bazni aplikacijski objekat - TAppMod
  */
-
 function TAppModNew(oParent, cVerzija, cPeriod, cKorisn, cSifra, p3,p4,p5,p6,p7)
 
 local oObj
@@ -106,7 +104,6 @@ method setParent(oParent)
 ::parent:=oParent
 
 return
-
 
 
 /*! \fn *TObject TAppMod::getParent()
@@ -337,7 +334,6 @@ Box(, 20, 70)
    @ m_x+12,m_y+2 SAY "Kodna strana:" GET gKodnaS valid gKodnaS $ "78" pict "9"
    @ m_x+12,col()+2 SAY "Word 97  D/N:" GET gWord97 valid gWord97 $ "DN" pict "@!"
    @ m_x+12,col()+2 SAY "Zaok 50f (5):" GET g50f    valid g50f    $ " 5" pict "9"
-   @ m_x+13,m_y+2 SAY "Prenijeti podatke na lokalni disk (NDCX):" GET gKesiraj    valid gKesiraj $ "NDCX" pict "@!"
    @ m_x+14,m_y+2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor valid gFKolor$"DN" pict "@!"
    @ m_x+15,col()+2 SAY "SQL log ? (D/N)" GET gSql pict "@!"
  
@@ -394,17 +390,8 @@ if lastkey()<>K_ESC
     Wpar("KS", gKodnaS)
     Wpar("W7", gWord97)
     Wpar("5f", g50f)
-  Wpar("pR", gPDFPrint)
-   if gKesiraj $ "CD"
-       if sigmaSif("SKESH")
-          Wpar("kE",gKesiraj)
-       else
-          MsgBeep("Neispravna sifra!")
-       endif
-   else
-        Wpar("kE",gKesiraj)
-   endif
-  WPar("L8", ALLTRIM(gLokal) )
+    Wpar("pR", gPDFPrint)
+    WPar("L8", ALLTRIM(gLokal) )
 endif
 
 KonvTable()

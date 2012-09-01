@@ -22,6 +22,13 @@ static __keystroke_step
 // fakt integracijski testovi
 // ------------------------------------
 function i_fakt()
+local _omodul
+
+_omodul := TFaktMod():new(nil, "FAKT", F18_VER, F18_VER_DATE , "test", "test")
+_omodul:initdb()
+
+goModul := _omodul
+
 
 // setuj zaglavlje fakture
 i_zaglavlje_fakture()
@@ -225,7 +232,7 @@ AADD(_stavke['keys'],  {;
 AADD(_stavke['get'], 'DBEDIT')
 // stampa da
 AADD(_stavke['keys'],  {; 
-  "V", "<ENTER>", ;
+  "V", "<ENTER>" ;
   })
 AADD(_stavke['get'], 'CDIREKT')
 

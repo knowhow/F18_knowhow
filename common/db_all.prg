@@ -422,26 +422,7 @@ cImeCDX:=ToUnix(cImeCDX)
                      .f., .f.        ;
                   )                                                     ;
 
-// podaci na cdu
-if (gReadonly .or. gKesiraj=="X")  
-    cPom:=STRTRAN(PRIVPATH,LEFT(PRIVPATH,3),"C:"+SLASH)
-
-    // dir na c
-    DirMak2(cpom)
-
-    if !file(cPom+cImeDBF) .or. !file(cPom+cImeCDX)
-          COPY FILE (PRIVPATH+cImeDBF)  TO  (cPom+cImeDBF)
-          COPY FILE (PRIVPATH+cImeCDX)  TO  (cPom+cImeCDX)
-          SETFATTR(cPom+cImeDBF, 32)  // normal
-          SETFATTR(cPom+cImeCDX, 32)  // normal
-    endif
-    usexx (cPom+cImeDBF)
-    __dbzap()
-    return
-
-else
-    usex (PRIVPATH+cImeDBF)
-endif
+usex (PRIVPATH+cImeDBF)
 
 return
 

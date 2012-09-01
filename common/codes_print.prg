@@ -330,13 +330,6 @@ private aOBjG,cKolona,Kl
 Kl:=ARRAY(len(Kol))
 ACOPY(Kol,Kl)
 
-#ifdef CAX
- if gKesiraj == "X"
-    cImeF:=strtran(cImeF,LEFT(cImeF,3),"C:\")
- endif
-#endif
-
-
 if FILE(cImef+MEMOEXT)
  RESTORE FROM &cImeF ADDITIVE // u~itavanje string kolona
  for i:=1 to LEN(Kl)

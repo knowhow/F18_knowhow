@@ -79,8 +79,10 @@ function zavrsi_stampu()
 return
 
 
-
+// --------------------------------------------------------
+// --------------------------------------------------------
 function StampTXT(cIdFirma, cIdTipDok, cBrDok, lJFill)
+
 private InPicDEM:=PicDEM
 private InPicCDEM:=PicCDEM  
 
@@ -96,11 +98,10 @@ endif
     
 return
 
-
-
-
+// ------------------------------------------
 // fakt_zagl_firma()
 // Ispis zaglavlja na izvjestajima
+// ------------------------------------------
 function fakt_zagl_firma()
 ?
 

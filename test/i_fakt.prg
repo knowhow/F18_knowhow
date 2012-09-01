@@ -18,11 +18,16 @@ static __test_vars
 // jedan poziv test_keystroke treba samo jednu sekvencu poslati 
 static __keystroke_step 
 
-
+// ------------------------------------
+// fakt integracijski testovi
+// ------------------------------------
 function i_fakt()
 
+// setuj zaglavlje fakture
 i_zaglavlje_fakture()
+// povrat 99-10-77777
 i_povrat_fakture()
+// napravi 99-10-77777 i azuriraj
 i_napravi_fakturu()
 
 
@@ -213,12 +218,23 @@ AADD(_stavke['keys'],  {;
      })
 AADD(_stavke['get'], '_KOLICINA')
 
+// stampa racuna (txt format)
+AADD(_stavke['keys'],  {; 
+  "<CTRLP>" ;
+  })
+AADD(_stavke['get'], 'DBEDIT')
+// stampa da
+AADD(_stavke['keys'],  {; 
+  "V", "<ENTER>", ;
+  })
+AADD(_stavke['get'], 'CDIREKT')
+
+
 // azuriraj
 AADD(_stavke['keys'],  {; 
   "<ALTA>" ;
   })
 AADD(_stavke['get'], 'DBEDIT')
-
 
 // N - pitanje za azuriranje D  (test_tag)
 AADD(_stavke['keys'],  {; 

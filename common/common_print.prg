@@ -132,7 +132,10 @@ DO CASE
             close all
         #endif
 
+// u test rezimu se ne pokrece editor
+#ifndef TEST
         hb_run (_cmd) 
+#endif
 
 END CASE
 

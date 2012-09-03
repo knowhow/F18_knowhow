@@ -1003,19 +1003,17 @@ return
 
 
 function nPodStr(cPod,cStr)
-*{
 local nVrati:=0,nPod:=LEN(cPod)
  for i:=1 to LEN(cStr)+1-nPod
   if SUBSTR(cStr,i,nPod)==cPod; nVrati++; endif
  next
 return nVrati
-*}
+
 
 function PrekSaEsc()
-*{
 Msg("Priprema izvjestaja prekinuta tipkom <Esc>!",2)
 return .f.
-*}
+
 
 function NaSljedStranu(lMozeL,lPrenos,cLM2,cOk,aPom,nKol,nStr,cLM,nDReda,nOdvoji,aPrSum,aKol,nSuma,cTek3,bZagl,cNaslov,aPrZag,cTek1,xTot)
 *{

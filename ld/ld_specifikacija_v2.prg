@@ -906,7 +906,7 @@ if LastKey() != K_ESC
 
     cSpecRtm := "spec"
  
-    if cRepSr == "d"
+    if cRepSr == "D"
         cSpecRtm := cSpecRtm + "rs"
     else
         cSpecRtm := cSpecRtm + "b"

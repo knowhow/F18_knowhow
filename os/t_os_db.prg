@@ -30,6 +30,7 @@ ENDCLASS
 // --------------------------------------------
 method New()
 
+ ::super:new()
  ::cName:="OS"
  ::lAdmin:=.f.
 

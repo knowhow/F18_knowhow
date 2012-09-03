@@ -84,9 +84,6 @@ else
     endif
 endif 
 
-// epoha je u stvari 1999, 2000 itd
-SET EPOCH TO 1960  
-
 IniPrinter()
 
 if (lSezone .and. mpar37("/XN",oApp))

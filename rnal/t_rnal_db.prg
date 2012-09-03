@@ -31,6 +31,7 @@ ENDCLASS
 // --------------------------------------------
 method New()
 
+ ::super:new()
  ::cName:="RNAL"
  ::lAdmin:=.f.
 

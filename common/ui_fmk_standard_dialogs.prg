@@ -174,7 +174,7 @@ local nWidth
 
 nWidth:=35
    
-Tone(400,2)
+Tone(400, 2)
 
 // radi pozicioniranja dijaloga na sredinu ekrana
 m_x := 8

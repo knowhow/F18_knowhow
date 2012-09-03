@@ -12,6 +12,8 @@
 
 #include "fmk.ch"
 
+// ---------------------------------------------------------
+// ---------------------------------------------------------
 function f18_start_print(f_name, print_opt, document_name)
 
 if print_opt == NIL
@@ -83,7 +85,6 @@ endcase
 return
 
 
-
 // ----------------------------------------
 // ----------------------------------------
 function f18_end_print( f_name, print_opt )
@@ -100,6 +101,11 @@ SET DEVICE TO SCREEN
 set printer off
 set printer to
 set console on
+
+// u test rezimu se ne pokrece editor
+#ifdef TEST
+  return
+#endif
 
 Tone(440, 2)
 Tone(440, 2)
@@ -131,7 +137,6 @@ DO CASE
         #ifdef __PLATFORM__UNIX
             close all
         #endif
-
         hb_run (_cmd) 
 
 END CASE

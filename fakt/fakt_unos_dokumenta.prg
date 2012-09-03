@@ -356,6 +356,9 @@ do case
 
         lDirty:=.f.
 
+#ifdef TEST
+        push_test_tag("FAKT_CTRLP_END") 
+#endif
         return DE_REFRESH
 
     case Ch==K_ALT_L
@@ -380,7 +383,10 @@ do case
         endif
             
         o_fakt_edit()
-            
+           
+#ifdef TEST
+        push_test_tag("FAKT_ALTP_END") 
+#endif
         return DE_REFRESH
 
     case Ch = K_ALT_A
@@ -776,7 +782,8 @@ BoxC()
 
 return
 
-
+// ---------------------------------------------------
+// ---------------------------------------------------
 function PrintDok()
 local cPom
 local lJos
@@ -789,21 +796,23 @@ if !CijeneOK("Stampanje")
     return DE_REFRESH
 endif
 
-if IzFMKIni("FAKT", "StampajSveIzPripreme", "N", PRIVPATH) == "D"
-    lSSIP99:=.t.
-else
+// hernad: koristi li ovo neko
+//if IzFMKIni("FAKT", "StampajSveIzPripreme", "N", PRIVPATH) == "D"
+//    lSSIP99:=.t.
+//else
     lSSIP99:=.f.
-endif
+//endif
 
 lJos:=.t.
 
 do while lJos
-    
-    if (IzFMKINI('FAKT','StampaViseDokumenata','N')=="D")
-            lJos := StViseDokMenu()
-    else
+
+    // hernad: komplikacije komplikacije ... sve ovo izbaciti
+    //if (IzFMKINI('FAKT','StampaViseDokumenata','N')=="D")
+    //        lJos := StViseDokMenu()
+    //else
             lJos := .f.
-    endif
+    //endif
 
     cPom := idtipdok
     
@@ -819,16 +828,20 @@ lSSIP99:=.f.
 
 return
 
-
+// -----------------------------------------
+// -----------------------------------------
 function RekZadMpO()
 
 select fakt_pripr
 GO TOP
+
 cSort1:="IzSifK('PARTN','LINI',idpartner,.f.)+idroba"
 cFilt1:="idtipdok=='13'.and.idfirma==" + cm2str(fakt_pripr->idfirma)
 INDEX ON &cSort1 to "TMPPRIPR" for &cFilt1
 GO TOP
+
 StartPrint()
+
 ? "FAKT,",date(),", REKAPITULACIJA ZADUZENJA MALOPRODAJNIH OBJEKATA"
 ? 
 IspisFirme(fakt_pripr->idfirma)

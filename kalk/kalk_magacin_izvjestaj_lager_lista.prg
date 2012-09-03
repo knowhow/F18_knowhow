@@ -1368,14 +1368,6 @@ ENDIF
 
 set century off
 
-if IsPlanika() .and. !EMPTY(cK9)
-	? "Uslov po K9:", cK9
-endif
-
-if IsDomZdr() .and. !Empty(cKalkTip)
-	PrikTipSredstva(cKalkTip)
-endif
-
 ? "Magacin:", cIdkonto, "-", ALLTRIM(konto->naz)
 if !Empty(cRNT1) .and. !EMPTY(cRNalBroj)
 	?? ", uslov radni nalog: " + ALLTRIM(cRNalBroj)
@@ -1444,6 +1436,7 @@ ENDIF
 
 select konto
 hseek cIdKonto
+
 set century on
 
 ?? "KALK: LAGER LISTA  ZA PERIOD",dDatOd,"-",dDatdo,"  na dan", date(), space(12),"Str:",str(++nTStrana,3)
@@ -1455,14 +1448,6 @@ IF lPoNarudzbi .and. !EMPTY(qqIdNar)
 ENDIF
 
 set century off
-
-if IsPlanika() .and. !EMPTY(cK9)
-	? "Uslov po K9:", cK9
-endif
-
-if IsDomZdr() .and. !Empty(cKalkTip)
-	PrikTipSredstva(cKalkTip)
-endif
 
 ? "Magacin:", cIdkonto, "-", ALLTRIM(konto->naz)
 if !Empty(cRNT1) .and. !EMPTY(cRNalBroj)

@@ -78,3 +78,9 @@
       #include "f18_test.ch"
   #endif
 #endif
+
+// F18.log, F18_2.log, F18_3.log ...
+#define F18_LOG_FILE "F18" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".log"
+#define OUTF_FILE "outf" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".txt"
+#define OUT_ODT_FILE "out" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".odt"
+#define DATA_XML_FILE "data" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".xml"

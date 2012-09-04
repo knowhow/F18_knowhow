@@ -135,7 +135,6 @@ if fSve
 
 endif 
 
-public gKesiraj:="N" // ako je mrezni dir kesiraj na C,D
 public gFKolor:="D"
 
 O_GPARAMS
@@ -160,7 +159,6 @@ if fsve
 endif
 
 Rpar("FK",@gFKolor)
-Rpar("kE",@gKesiraj)
 
 select (F_GPARAMS)
 use
@@ -177,20 +175,14 @@ return
 
 
 /*! \fn IniGParam2(lSamoKesiraj)
- *  \brief Ucitava globalne parametre gPTKonv ... gKesiraj
- *  \param lSamoKesiraj - ucitaj samo gKesiraj
+ *  \brief Ucitava globalne parametre gPTKonv
  *  Prvo ucitava "p?" koji je D ako zelimo ucitavati globalne parametre iz PRIVDIR
- *  Nakon toga ucitava iz GPARAMS ( gPTKonv, ... gKesiraj )
  *  \todo Ocigledno da je ovo funkcija za eliminaciju ...
  */
  
-function IniGParam2(lSamoKesiraj)
+function IniGParam2()
 
 local cPosebno:="N"
-
-if (lSamoKesiraj==nil)
-  lSamoKesiraj:=.f.
-endif
 
 O_PARAMS
 public gMeniSif:=.f.
@@ -204,17 +196,12 @@ USE
 
 if (cPosebno=="D")
 
-#ifndef FMK_DEBUG
   bErr := ERRORBLOCK({|o| MyErrH(o)})
-#endif
   O_GPARAMSP
   SEEK "1"
 
-#ifndef FMK_DEBUG
   bErr := ERRORBLOCK(bErr)
-#endif
 
-  if !lSamoKesiraj
     Rpar("pt",@gPTKonv)
     Rpar("pS",@gPicSif)
     Rpar("SK",@gSKSif)
@@ -239,8 +226,6 @@ if (cPosebno=="D")
 	Rpar("oJ",@gJavaPath)
 	Rpar("jS",@gJavaStart)
 	Rpar("jR",@gJODRep)
-  endif
-  Rpar("kE",@gKesiraj)
   SELECT (F_GPARAMSP)
   USE
 endif

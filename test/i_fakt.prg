@@ -18,11 +18,23 @@ static __test_vars
 // jedan poziv test_keystroke treba samo jednu sekvencu poslati 
 static __keystroke_step 
 
-
+// ------------------------------------
+// fakt integracijski testovi
+// ------------------------------------
 function i_fakt()
+local _omodul
 
+_omodul := TFaktMod():new(nil, "FAKT", F18_VER, F18_VER_DATE , "test", "test")
+_omodul:initdb()
+
+goModul := _omodul
+
+
+// setuj zaglavlje fakture
 i_zaglavlje_fakture()
+// povrat 99-10-77777
 i_povrat_fakture()
+// napravi 99-10-77777 i azuriraj
 i_napravi_fakturu()
 
 
@@ -137,6 +149,12 @@ return
 function i_napravi_fakturu()
 local _tmp, _a_polja, _stavka_dok
 local _stavke := hb_hash()
+local _fakt_outf, _fakt_out_odt, _b_print
+
+// uporedi test/data/fakt_1.txt sa outf.txt koji je izgenerisan
+_fakt_outf := my_home() + OUTF_FILE
+_fakt_out_odt := my_home() + OUT_ODT_FILE
+
 
 push_test_tag("XX")
 
@@ -208,17 +226,46 @@ AADD(_stavke['keys'],  {;
              "25.00", "<ENTER>", ; // 20 kom
              "2.00",  "<ENTER>", ; // 2 cijena (ovaj je cijena i u sifarniku)
              "<ENTER>2", ;      // rabat, %rabat nista
-             "<ENTER>", ;
+             "<ENTER>",  ;
              "<ESC>" ;
      })
 AADD(_stavke['get'], '_KOLICINA')
+
+// stampa racuna (txt format)
+AADD(_stavke['keys'],  {; 
+  "<CTRLP>" ;
+  })
+AADD(_stavke['get'], 'DBEDIT')
+
+// prije slanja "V" izbrisi outf.txt
+AADD(_stavke['keys'],  {; 
+  {|| FERASE(_fakt_outf)}, "V", "<ENTER>" ;
+  })
+AADD(_stavke['get'], 'CDIREKT')
+
+AADD(_stavke['keys'],  {; 
+  {|| TEST_LINE(test_diff_between_files("fakt_1.txt", _fakt_outf), 0)};
+  })
+AADD(_stavke['get'], '#FAKT_CTRLP_END')
+
+
+// stampa racuna (odt format)
+AADD(_stavke['keys'],  {; 
+  {|| FERASE(_fakt_out_odt)},   "<ALTP>" ;
+  })
+AADD(_stavke['get'], 'DBEDIT')
+
+// stampa racuna (odt format)
+AADD(_stavke['keys'],  {; 
+  {|| TEST_LINE(test_diff_between_odt_files("fakt_1.odt", _fakt_out_odt), 0) };
+  })
+AADD(_stavke['get'], '#FAKT_ALTP_END')
 
 // azuriraj
 AADD(_stavke['keys'],  {; 
   "<ALTA>" ;
   })
 AADD(_stavke['get'], 'DBEDIT')
-
 
 // N - pitanje za azuriranje D  (test_tag)
 AADD(_stavke['keys'],  {; 

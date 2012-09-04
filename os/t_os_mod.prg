@@ -50,7 +50,7 @@ ENDIF
 PUBLIC gSQL:="N"
 PUBLIC gCentOn:=IzFmkIni("SET","CenturyOn","N",KUMPATH)
 
-IF gCentOn=="D"
+IF gCentOn == "D"
     SET CENTURY ON
 ELSE
     SET CENTURY OFF

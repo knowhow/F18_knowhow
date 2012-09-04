@@ -147,8 +147,8 @@ PROCEDURE TEST_BEGIN( cParam )
 #ifdef __HARBOUR__
    hb_langSelect( "EN" )
 #endif
-   SET DATE ANSI
-   SET CENTURY ON
+   SET DATE GERMAN
+   SET CENTURY OFF
    SET EXACT OFF
 
    FErase( "NOT_HERE.$$$" )

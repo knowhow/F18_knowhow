@@ -39,7 +39,7 @@ if nDevice == nil
     nDevice := list_device( cTipDok )
 endif
 
-if nDevice = -99
+if nDevice == -99
     msgbeep("Ponistena operacija stampe !!!")
     return 0
 endif
@@ -882,6 +882,7 @@ local lPoPNaTeret := .f.
 local n
 local _vr_plac
 local _rn_cnt := 0
+local _msg
 
 O_FAKT_DOKS
 O_FAKT
@@ -1245,8 +1246,7 @@ if nErr = -9
     if Pitanje(,"Da li je nestalo trake ?", "N") == "D"
         if Pitanje(,"Ubacite traku i pritisnite 'D'","D") == "D"
             // procitaj gresku opet !
-            nErr := fp_r_error( ALLTRIM( gFC_path ), ;
-                ALLTRIM( gFC_name ), gFc_tout, @nFisc_no, lStorno )
+            nErr := fp_r_error( ALLTRIM( gFC_path ), ALLTRIM( gFC_name ), gFc_tout, @nFisc_no, lStorno )
         endif
     endif
 endif
@@ -1259,12 +1259,13 @@ if nErr <> 0
 
     // pobrisi izlazni fajl ako je ostao !
     fp_d_out( ALLTRIM(gFc_path) + ALLTRIM(gFc_name) )
-
-    msgbeep("Postoji greska sa stampanjem !!!")
+    _msg := "ERR FISC: stampa racuna err:" + ALLTRIM(STR(nErr)) + "##" + ALLTRIM(gFc_path) + ALLTRIM(gFc_name)
+    log_write(_msg, 2)
+    MsgBeep(_msg)
 
 else
     
-    if gFC_nftxt == "D"
+    if gFC_nFtxt == "D"
         // printaj non-fiscal txt
         // u ovom slucaju broj racuna iz fakt
         fp_nf_txt( ALLTRIM( gFC_path ), ;
@@ -1751,7 +1752,7 @@ if gFc_use == "N"
 endif
 
 select fakt_doks
-seek cFirma+cTipDok+cBrDok
+seek cFirma + cTipDok + cBrDok
 
 // ako je storno racun ...
 if cStPatt $ ALLTRIM(field->brdok)
@@ -1763,7 +1764,7 @@ nTotal := field->iznos
 nNRekRn := 0
 
 if nReklRn <> 0
-    Box(,1,60)
+    Box( , 1, 60)
         @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:" ;
             GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
         read

@@ -198,17 +198,7 @@ else
 	endif
 	set console off
 	
-	if gKesiraj $ "CD"
-		cPom:= strtran(PRIVPATH, LEFT(PRIVPATH,3), gKesiraj+DRVPATH)
-		DirMak2(cpom)
-		cKom := cPom + cFName
-    elseif gKesiraj == "X"
-		cPom:=strtran(PRIVPATH, LEFT(PRIVPATH,3), "C"+DRVPATH)
-		DirMak2(cpom)
-		cKom := cPom + cFName
-	else
-		cKom := PRIVPATH + cFName
-	endif
+    cKom := PRIVPATH + cFName
 
 	if gnDebug>=5
 		MsgBeep("Direktno N, cKom=" + AllTrim(cKom))
@@ -276,20 +266,10 @@ if gPPort>"4"
 	elseif gPPort=="7"
 		cKom:="LPT3"
 	elseif gPPort $ "89"
-		if gKesiraj $ "CD"
-			cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3), gKesiraj+DRVPATH)
-			DirMak2(cpom)
-			cKom:=cPom+cFName
-		elseif gKesiraj == "X"
-			cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3), "C"+DRVPATH)
-			DirMak2(cpom)
-			cKom:=cPom + cFName
-		else
 			cKom:=PRIVPATH+cFName
 			if gnDebug>=5
 				MsgBeep("Inicijalizacija var cKom##var cKom=" + AllTrim(cKom))
 			endif
-		endif
 	endif
 endif
 
@@ -319,7 +299,13 @@ set printer off
 set printer to
 set console on
 
-cOutfTxt:= IzFMKIni('Printeri','DirektnoOUTFTXT','N')
+// u test rezimu se ne pokrece editor
+#ifdef TEST
+  return
+#endif
+
+//cOutfTxt:= IzFMKIni('Printeri','DirektnoOUTFTXT','N')
+cOutfTxt := ""
 
 nSek2:=seconds()
 
@@ -406,17 +392,7 @@ elseif cPrinter=="G"
 else
 	// R - Windowsi
 	Beep(1)
-	if gKesiraj $ "CD"
-		cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3),gKesiraj+DRVPATH)
-		DirMak2(cpom)
-		cKom:=cPom+cFName
-	elseif gKesiraj =="X"
-		cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3),"C"+DRVPATH)
-		DirMak2(cpom)
-		cKom:=cPom+cFName
-	else
-		cKom:=PRIVPATH+cFName
-	endif
+    cKom:=PRIVPATH+cFName
 
 	if gPrinter == "R"
 		if gPDFprint == "X" .and. goModul:oDataBase:cName == "FAKT" 
@@ -501,20 +477,10 @@ do while .t.
     elseif nNport==7
       cKom:="LPT3"
     elseif nNPort>7
-          if gKesiraj $ "CD"
-            cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3),gKesiraj+DRVPATH)
-            DirMak2(cpom)
-            cKom:=cPom+cFName
-          elseif gKesiraj=="X"
-            cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3),"C"+DRVPATH)
-            DirMak2(cpom)
-            cKom:=cPom+cFName
-          else
-            cKom:=PRIVPATH+cFName
-            if gnDebug>=5
+        cKom:=PRIVPATH+cFName
+        if gnDebug>=5
 	    	MsgBeep("SPrint2() var cKom=" + AllTrim(cKom))
 	    endif
-	  endif
     endif
   endif
 
@@ -562,19 +528,9 @@ SET DEVICE TO SCREEN
 set printer to
 
   if gPPort $ "89"
-    if gKesiraj $ "CD"
-      cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3),gKesiraj+DRVPATH)
-      DirMak2(cpom)
-      cKom:=cPom+cFName
-    elseif gKesiraj=="X"
-      cPom:=strtran(PRIVPATH,LEFT(PRIVPATH,3),"C"+DRVPATH)
-      DirMak2(cpom)
-      cKom:=cPom+cFName
-    else
-      cKom:=PRIVPATH+cFName
-      if gnDebug>=5
+    cKom:=PRIVPATH+cFName
+    if gnDebug>=5
       	MsgBeep("EPrint2(), var cKom=" + AllTrim(cKom))
-      endif
     endif
     if gPPort $ "89"
        save screen to cS

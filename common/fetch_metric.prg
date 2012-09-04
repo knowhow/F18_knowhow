@@ -59,7 +59,9 @@ if user != NIL
    endif
 endif
 
+SET CENTURY ON
 _val := hb_ValToStr(value)
+SET CENTURY OFF
 
 _temp_qry := "SELECT fmk.setmetric(" + _sql_quote(sect) + "," + _sql_quote(_val) +  ")"
 _table := _sql_query( _server, _temp_qry )

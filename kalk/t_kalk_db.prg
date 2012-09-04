@@ -32,6 +32,7 @@ ENDCLASS
 // --------------------------------------------
 method New()
 
+ ::super:new()
  ::cName:="KALK"
  ::lAdmin:=.f.
 

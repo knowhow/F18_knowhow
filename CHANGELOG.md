@@ -1,3 +1,7 @@
+1.3.18  2012-09-04, vsasa
+
+ - ld, korekcija stampanja specifkacije
+
 1.3.17  2012-09-01, hernad
 
  - test print fakture (txt, odt)

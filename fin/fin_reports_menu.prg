@@ -11,15 +11,7 @@
 
 #include "fin.ch"
 
-/*! \file fmk/fin/rpt/1g/mnu_rpt.prg
- *  \brief Menij izvjestaja
- */
 
-/*! \fn Izvjestaji()
- *  \brief Glavni menij za izbor izvjestaja
- *  \param 
- */
- 
 function Izvjestaji()
 
 private Izbor:=1

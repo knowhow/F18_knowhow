@@ -130,15 +130,16 @@ endif
 function get_my_firma(cNaziv, cIdBroj, cMjesto, cAdresa, cPtt)
 
 Box (,7, 60)
-@ m_x+1, m_y+2 SAY "Podaci o maticnooj firmi: "
-@ m_x+1, m_y+2 SAY REPLICATE("-", 40)
-@ m_x+3, m_y+2 SAY "Naziv   " GET cNaziv
-@ m_x+4, m_y+2 SAY "Id.broj " GET cIdBroj
-@ m_x+5, m_y+2 SAY "Mjesto  " GET cMjesto
-@ m_x+6, m_y+2 SAY "Adresa  " GET cAdresa
-@ m_x+7, m_y+2 SAY "PTT     " GET cPtt
 
-READ
+    @ m_x+1, m_y+2 SAY "Podaci o maticnooj firmi: "
+    @ m_x+2, m_y+2 SAY REPLICATE("-", 40)
+    @ m_x+3, m_y+2 SAY "Naziv   " GET cNaziv PICT "@S40"
+    @ m_x+4, m_y+2 SAY "Id.broj " GET cIdBroj
+    @ m_x+5, m_y+2 SAY "Mjesto  " GET cMjesto
+    @ m_x+6, m_y+2 SAY "Adresa  " GET cAdresa
+    @ m_x+7, m_y+2 SAY "PTT     " GET cPtt
+
+    READ
 
 BoxC()
 

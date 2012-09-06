@@ -179,7 +179,7 @@ if !FILE( my_home() + _exe )
         _ok := .f.
         return _ok
     else
-        FILECOPY( _util_path + "delphirb.exe", my_home() + _exe )
+        FILECOPY( _util_path + _tmp, my_home() + _exe )
     endif
 endif
 

@@ -465,7 +465,6 @@ return
 // filuje xml fajl sa podacima za export
 // --------------------------------------------
 static function _fill_e_xml(file)
-
 local nTArea := SELECT()
 local nU_dn_pio
 local nU_dn_zdr
@@ -476,6 +475,8 @@ local nU_dopr
 local nU_lodb
 local nU_porez
 local _ima_bol_preko := .f.
+local _id_br, _naziv, _adresa, _mjesto
+local cPredSDJ
 
 // otvori xml za upis
 open_xml(file)
@@ -487,12 +488,18 @@ _xml_head()
 // <paketniuvozobrazaca>
 //xml_subnode("PaketniUvozObrazaca", .f.)
 
+_id_br  := fetch_metric( "org_id_broj", NIL, PADR( "<POPUNI>", 13 ))
+_naziv  := fetch_metric( "org_naziv", NIL, PADR( "<POPUNI naziv>", 100 ))
+_adresa := fetch_metric( "org_adresa", NIL, PADR( "<POPUNI adresu>", 100 ))
+_mjesto   := fetch_metric( "org_mjesto", NIL, PADR( "<POPUNI mjesto>", 100 ))
+cPredSDJ := fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, SPACE(20) )
+
 // <podacioposlodavcu>
 xml_subnode("PodaciOPoslodavcu", .f. )
 
  // naziv firme
- xml_node( "JIBPoslodavca", ALLTRIM(cPredJmb) )
- xml_node( "NazivPoslodavca", to_xml_encoding( ALLTRIM(cPredNaz) ) )
+ xml_node( "JIBPoslodavca", ALLTRIM( _id_br ) )
+ xml_node( "NazivPoslodavca", to_xml_encoding( ALLTRIM( _naziv ) ) )
  xml_node( "BrojZahtjeva", STR( 1 ) )
  xml_node( "DatumPodnosenja", xml_date( dDatPodn ) )
 
@@ -517,8 +524,8 @@ xml_subnode("Obrazac1023", .f.)
 // dio1
 xml_subnode("Dio1", .f.)
     
-  xml_node("JibJmb", ALLTRIM(cPredJmb) )
-  xml_node("Naziv", to_xml_encoding( ALLTRIM(cPredNaz) ) )
+  xml_node("JibJmb", ALLTRIM( _id_br ) )
+  xml_node("Naziv", to_xml_encoding( ALLTRIM( _naziv ) ) )
   xml_node("DatumUpisa", xml_date(dDatPodn) )
   xml_node("BrojUposlenih", STR( nBrZahtjeva ) )
   xml_node("PeriodOd", xml_date( dD_start ) )

@@ -45,17 +45,23 @@ return
 
 
 function FillPObjekti()
+local _rec
 
 SELECT pobjekti    
 GO TOP
 do while !eof()
-	// prodaja tarifa ukupno
-	REPLACE prodtu with 0
-	// prodaja ukupno
-	REPLACE produ  with 0
-	REPLACE zaltu  with 0
-	REPLACE zalu   with 0
-	skip
+
+    _rec := dbf_get_rec()
+
+    _rec["prodtu"] := 0
+    _rec["produ"] := 0
+    _rec["zaltu"] := 0
+    _rec["zalu"] := 0
+	
+    dbf_update_rec( _rec )
+
+    skip
+
 enddo
 
 return

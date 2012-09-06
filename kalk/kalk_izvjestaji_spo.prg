@@ -51,7 +51,7 @@ local n4
 local n5
 local n6
 local n7
-local nRecno
+local nRecno, _rec
 local cPodvuci
 local lMarkiranaRoba
 private dDatOd
@@ -98,8 +98,8 @@ O_K1
 O_OBJEKTI
 O_KALK
 O_REKAP1
-GenRekap1(cUslov1, cUslov2, cUslovRoba, "N", "1", "N", lMarkiranaRoba, nil, cK9)
 
+GenRekap1(cUslov1, cUslov2, cUslovRoba, "N", "1", "N", lMarkiranaRoba, nil, cK9)
 
 SetLinSpo()
 
@@ -130,18 +130,24 @@ select rekap1
 nRbr:=0
 nRecno:=0
 fFilovo:=.f.
+
 do while !eof()
 	
 	cG1:=rekap1->g1
+
 	select pobjekti    
+
 	// inicijalizuj polja
 	go top
 	do while !eof()
+        _rec := dbf_get_rec()
 		// nivo grupe
-		replace prodg with 0   
-		REPLACE zalg  with 0
+		_rec["prodg"] := 0   
+		_rec["zalg"] := 0
+        dbf_update_rec( _rec )
 		skip
 	enddo
+
 	select rekap1
 
 	fFilGr:=.f.
@@ -237,8 +243,11 @@ endif
 
 FF
 end print
+
 close all
 return
+
+
 
 function SetK1K2(cG1, cIdTarifa, cIdRoba, nK1, nK2)
 nK2:=0
@@ -452,22 +461,27 @@ do while (!EOF() .and. pobjekti->id<"99")
 	 select pobjekti
 	 if roba->k2<>"X"   
 		//samo u finansijski zbir
-		replace zalt  with zalt+rekap1->k2,;
-			zalu  with zalu+rekap1->k2 ,;
-			zalg  with zalg+rekap1->k2
-	 endif
+		_rec := dbf_get_rec()
+        _rec["zalt"] := _rec["zalt"]+rekap1->k2
+        _rec["zalu"] := _rec["zalu"]+rekap1->k2
+        _rec["zalg"] := _rec["zalg"]+rekap1->k2
+	    dbf_update_rec( _rec ) 
+    endif
 	 skip
 enddo
 
 // ovo je objekat 99
 if (roba->k2<>"X")   
 	// roba sa oznakom k2=X
-	replace zalt   with zalt+nk2 ,;
-		zalu   with zalu+nk2 ,;
-		zalg   with zalg+nk2
+	_rec := dbf_get_rec()
+    _rec["zalt"] := _rec["zalt"]+nK2
+    _rec["zalu"] := _rec["zalu"]+nK2
+    _rec["zalg"] := _rec["zalg"]+nK2
+	dbf_update_rec( _rec ) 
 endif
 
 return
+
 
 static function PrintProd(cG1, cIdTarifa, cIdRoba, cDUslov )
 local nK1
@@ -510,18 +524,26 @@ do while (!eof() .and. pobjekti->id<"99")
 	
 	select pobjekti
 	if (roba->k2<>"X")
-		REPLACE prodt  with  prodt+rekap1->k1
-		REPLACE	produ  with  produ+rekap1->k1
-		REPLACE	prodg  with  prodg+rekap1->k1
+
+		_rec := dbf_get_rec()
+        _rec["prodt"] := _rec["prodt"]+rekap1->k1
+        _rec["produ"] := _rec["produ"]+rekap1->k1
+        _rec["prodg"] := _rec["prodg"]+rekap1->k1
+	    dbf_update_rec( _rec ) 
+    
 	endif
 	skip
 enddo
 
 // skipuje na polje "99"
 if roba->k2<>"X" 
-	REPLACE prodt with prodt+nK1 
-	REPLACE	produ with produ+nK1 
-	REPLACE	prodg with prodg+nK1
+
+	_rec := dbf_get_rec()
+    _rec["prodt"] := _rec["prodt"]+nK1
+    _rec["produ"] := _rec["produ"]+nK1
+    _rec["prodg"] := _rec["prodg"]+nK1
+	dbf_update_rec( _rec ) 
+  
 endif
 
 return

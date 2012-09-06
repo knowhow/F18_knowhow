@@ -154,26 +154,37 @@ if (nSec>1)
 endif
 
 return
-*}
+
+
 
 function ScanMKonto(dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj)
-*{
 local nGGOrd
 local nGGo
 local nMpc
 local cSeek
+local _rec
 
 if EMPTY(kalk->mKonto)
 	return 0
 endif
 
 hseek kalk->(mKonto+idroba) 
-if !found()
-	APPEND BLANK
-	// radi promjene tarifa promjenio sam kalk->idtarifa u roba->idtarifa
+
+if !FOUND()
+	
+    APPEND BLANK
+   
+    _rec := dbf_get_rec()
+	
+    // radi promjene tarifa promjenio sam kalk->idtarifa u roba->idtarifa
 	//replace objekat with kalk->mKonto, idroba with kalk->idroba, idtarifa with kalk->idtarifa, g1 with roba->k1
-	replace objekat with kalk->mKonto, idroba with kalk->idroba, idtarifa with roba->idtarifa, g1 with roba->k1
-	if (cKartica=="D")  
+	
+    _rec["objekat"] := kalk->mkonto
+    _rec["idroba"] := kalk->idroba
+    _rec["idtarifa"] := roba->idtarifa
+    _rec["g1"] := roba->k1
+	
+    if ( cKartica == "D" )  
 		// ocitaj sa kartica
 		nMpc:=0
 		if (cVarijanta<>"1")
@@ -189,42 +200,52 @@ if !found()
 			FaktVPC(@nmpc,cSeek,dDatDo-1)  
 			dbsetorder(nGGOrd)
 			go nGGo
+
 			SELECT rekap1
-			field->mpc:=nmpc
+            _rec["mpc"] := nMpc
+
 		endif
 	else
-		field->mpc:=roba->mpc
+
+        _rec["mpc"] := roba->mpc
+
 	endif
+
+else
+    _rec := dbf_get_rec()
 endif
 
 if kalk->mu_i=="1"
+
 	if kalk->datdok<=dDatDo  
 		// stanje zalihe
-		field->k2+=kalk->kolicina
-	endif
+	    _rec["k2"] := _rec["k2"] + kalk->kolicina
+    endif
+
 	if cVarijanta<>"1"  
 		// u pregledu kretanja zaliha ovo nam ne treba
 		if (kalk->datdok<dDatOd) 
 			// predhodno stanje
-			field->k0+=kalk->kolicina
+	        _rec["k0"] := _rec["k0"] + kalk->kolicina
 		endif
 		if DInRange(kalk->datdok, dDatOd, dDatDo ) 
 			// tekuci prijem
-			field->k4+=kalk->kolicina
+	        _rec["k4"] := _rec["k4"] + kalk->kolicina
 		endif
 	endif
+
 elseif kalk->mu_i=="5" 
 	// izlaz iz magacina
 	if cVarijanta<>"1"  
 		// u pregledu kretanja zaliha ovo nam ne treba
 		if (kalk->datdok<dDatOd)  
 			// predhodno stanje
-			field->k0-=kalk->kolicina
+	        _rec["k0"] := _rec["k0"] - kalk->kolicina
 		endif
 	endif
 	if kalk->datdok<=dDatDo  
 		// stanje trenutne zalihe
-		field->k2-=kalk->kolicina
+	    _rec["k2"] := _rec["k2"] - kalk->kolicina
 	endif
 
 	if kalk->idvd $ "14#94"
@@ -232,12 +253,12 @@ elseif kalk->mu_i=="5"
 			// u pregledu kretanja zaliha ovo nam ne treba
 			if (kalk->datdok<=dDatDo) 
 				// kumulativna prodaja
-				field->k3+=kalk->kolicina
+	            _rec["k3"] := _rec["k3"] + kalk->kolicina
 			endif
 		endif
 		if DInRange(kalk->datDok, dDatOd, dDatDo ) 
 			// stanje trenutne prodaje
-			field->k1+=kalk->kolicina
+	        _rec["k1"] := _rec["k1"] + kalk->kolicina
 		endif
 	endif
 
@@ -246,15 +267,16 @@ elseif (kalk->mu_i=="3")
 	if (kalk->datDok=dDatDo)  
 		// dokument nivelacije na dan inventure
 		if (cVarijanta<>"1")
-			field->novampc:=kalk->mpcsapp+kalk->vpc
+	        _rec["novampc"] := kalk->mpcsapp + kalk->vpc
 		endif
-		field->mpc:=kalk->mpcsapp 
+	    _rec["mpc"] := kalk->mpcsapp
 	endif
 endif
 
+dbf_update_rec( _rec )
 
 return 1
-*}
+
 
 
 function ScanPKonto(dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj)

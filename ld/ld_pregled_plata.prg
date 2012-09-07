@@ -75,11 +75,7 @@ BoxC()
 
 ParObr( cMjesec, cGodina,IF(lViseObr,cObracun,) )
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 if !empty(ckbenef)
  select kbenef

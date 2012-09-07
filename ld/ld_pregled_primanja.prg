@@ -75,11 +75,7 @@ BoxC()
  SELECT PARAMS
   USE
 
-if lViseObr
- O_TIPPRN
-else
- O_TIPPR
-endif
+tipprn_use()
 
 select tippr
 hseek cTip

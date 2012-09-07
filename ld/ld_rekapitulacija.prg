@@ -450,6 +450,7 @@ return
 
 // Otvara potrebne tabele za kreiranje izvjestaja rekapitulacije
 function ORekap()
+
 O_POR
 O_DOPR
 O_PAROBR
@@ -463,18 +464,7 @@ O_RADKR
 O_KRED
 O_LD
 
-// zatvori prvo tippr i tippr2
-select ( F_TIPPR )
-if USED()
-    use
-endif
-
-select ( F_TIPPR2 )
-if USED()
-    use
-endif
-
-O_TIPPRN
+tipprn_use()
 
 return
 

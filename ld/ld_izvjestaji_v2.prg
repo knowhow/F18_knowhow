@@ -267,11 +267,7 @@ else
 endif
 BoxC()
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 select tippr
 hseek ctip
@@ -494,11 +490,7 @@ WPar("v8",nAp7) ; WPar("v9",nAp8) ; WPar("z0",nAp9)
 WPar("z1",nAp10); WPar("z2",nAp11); WPar("z3",nAp12)
 SELECT PARAMS; USE
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 select ld
 
@@ -723,11 +715,7 @@ BoxC()
  WPar("VS",cVarSort)
  SELECT PARAMS; USE
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 if !empty(ckbenef)
  select kbenef
@@ -1603,11 +1591,7 @@ SELECT PARAMS; USE
 
 BoxC()
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 

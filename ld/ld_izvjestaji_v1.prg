@@ -186,11 +186,7 @@ ENDDO
 
 BoxC()
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 
@@ -253,11 +249,7 @@ Box(,8,75)
  read; clvbox(); ESC_BCR
 BoxC()
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 
@@ -1662,11 +1654,7 @@ Box(,6,77)
     endif
 BoxC()
 
-if lViseObr
-    O_TIPPRN
-else
-    O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 
@@ -1948,11 +1936,7 @@ local nC1:=20,i
    read; clvbox(); ESC_BCR
  BoxC()
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 
@@ -2171,11 +2155,7 @@ WPar("s2",nDo20)
 
 select params; use
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 aRasponi:={ nDo1 , nDo2 , nDo3, nDo4 , nDo5 , nDo6 , nDo7 , nDo8 , nDo9 ,;
             nDo10 , nDo11 , nDo12 , nDo13 , nDo14 , nDo15 , nDo16 , nDo17 ,;

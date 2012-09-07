@@ -640,6 +640,26 @@ return cT
 
 
 
+function tipprn_use()
+
+// zatvori tippr, tippr2
+select (F_TIPPR)
+if USED()
+    use
+endif
+
+select (F_TIPPR2)
+if USED()
+    use
+endif
+
+// otvori sta vec treba
+O_TIPPRN
+
+return
+
+
+
 function NaDiskete()
 
 cIdRj    := gRj

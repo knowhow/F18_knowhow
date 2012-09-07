@@ -107,11 +107,7 @@ if (PCount()<4)
 	WPar("NK",cNKNS)
 	SELECT PARAMS
 	USE
-	if lViseObr
-		O_TIPPRN
-	else
-		O_TIPPR
-	endif
+    tipprn_use()
 endif
 
 PoDoIzSez(cGodina,cMjesec)

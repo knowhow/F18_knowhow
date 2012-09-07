@@ -1,3 +1,9 @@
+1.3.20  2012-09-07, vsasa
+
+ - ld, unos obračuna broj 2 [#29141](http://redmine.bring.out.ba/issues/29141)
+ - ld, ostale korekcije
+ - ks šifranik (kamatne stope) kreiranje prebačeno u dio sa šifranicima
+ 
 1.3.19  2012-09-04, vsasa
 
  - ld, mip korekcija

@@ -410,31 +410,6 @@ endif
             
 CREATE_INDEX("1", "idpartner+brdok+dtos(datod)", _alias)
 
-// kamate - sifrarnik kamata
-aDbf:={}
-AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
-AADD(aDBf,{ "NAZ"       , "C" ,   2 ,  0 })
-AADD(aDBf,{ "DATOD"     , "D" ,   8 ,  0 })
-AADD(aDBf,{ "DATDO"     , "D" ,   8 ,  0 })
-AADD(aDBf,{ "STREV"     , "N" ,   8 ,  4 })
-AADD(aDBf,{ "STKAM"     , "N" ,   8 ,  4 })
-AADD(aDBf,{ "DEN"       , "N" ,  15 ,  6 })
-AADD(aDBf,{ "TIP"       , "C" ,   1 ,  0 })
-AADD(aDBf,{ "DUZ"       , "N" ,   4 ,  0 })
-
-_alias := "KS"
-_table_name := "ks"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    close all
-endif
-
-CREATE_INDEX("ID", "Id", _alias) 
-CREATE_INDEX("2", "dtos(datod)", _alias) 
-
-
 // kreiraj indexe tabele FMKRULES
 cre_rule_cdx()
 

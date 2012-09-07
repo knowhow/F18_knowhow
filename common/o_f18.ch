@@ -267,9 +267,9 @@
 
 #xcommand O_LDT22 => select (F_LDT22)  ; my_use ("LDT22")        ; set order to tag "1"
 
-#xcommand O_TIPPRN  => IF cObracun<>"1".and.!EMPTY(cObracun);
+#xcommand O_TIPPRN  => IF cObracun <> "1" .and. !EMPTY( cObracun );
                       ;  select (F_TIPPR2)                  ;
-                      ;  my_use ("tippr2", .t., "tippr2")   ;
+                      ;  my_use ("tippr", "tippr2")   ;
                       ;  set order to tag "ID"              ;
                       ;ELSE                                 ;
                       ;  select (F_TIPPR)                   ;

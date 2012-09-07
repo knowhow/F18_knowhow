@@ -89,11 +89,7 @@ IF cVarijanta!="3"
 
 ENDIF
 
-if lViseObr
-    O_TIPPRN
-else
-    O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 

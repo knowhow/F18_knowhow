@@ -188,7 +188,7 @@ if ( IsRamaGlas() )
     O_RNAL
 endif
 
-O_TIPPRN
+tipprn_use()
 
 my_use_semaphore_on()
 

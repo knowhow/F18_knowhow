@@ -71,12 +71,7 @@ Box(,3+nDimenzija,50)
     ESC_BCR
 BoxC()
 
-
-if lViseObr
-    O_TIPPRN
-else
-    O_TIPPR
-endif
+tipprn_use()
 
 select ld
 seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
@@ -324,13 +319,7 @@ if cDN=="N"
     return
 endif
 
-SELECT (F_TIPPR) ; USE
-SELECT (F_TIPPR2); USE
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 
@@ -481,13 +470,8 @@ if cDN=="N"
     return
 endif
 
-SELECT (F_TIPPR) ; USE
-SELECT (F_TIPPR2); USE
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
+
 SELECT LD
 
 seek str(cGodina,4)+cidrj+str(cMjesec,2)+IF(lViseObr,cObracun,"")
@@ -617,11 +601,7 @@ Box(,3+IF(lViseObr,1,0),50)
  read; clvbox(); ESC_BCR
 BoxC()
 
-if lViseObr
-  O_TIPPRN
-else
-  O_TIPPR
-endif
+tipprn_use()
 
 SELECT LD
 set order to tag "2"

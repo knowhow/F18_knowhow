@@ -306,6 +306,27 @@ endif
 CREATE_INDEX("ID","shema+Idkonto","TRFP3")
 
 
+// kamate - sifrarnik kamata
+if !FILE( f18_ime_dbf("ks") )
+    aDbf:={}
+    AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
+    AADD(aDBf,{ "NAZ"       , "C" ,   2 ,  0 })
+    AADD(aDBf,{ "DATOD"     , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "DATDO"     , "D" ,   8 ,  0 })
+    AADD(aDBf,{ "STREV"     , "N" ,   8 ,  4 })
+    AADD(aDBf,{ "STKAM"     , "N" ,   8 ,  4 })
+    AADD(aDBf,{ "DEN"       , "N" ,  15 ,  6 })
+    AADD(aDBf,{ "TIP"       , "C" ,   1 ,  0 })
+    AADD(aDBf,{ "DUZ"       , "N" ,   4 ,  0 })
+
+    DBCREATE2( "KS", aDbf)
+    reset_semaphore_version("ks")
+    my_use("ks")
+    close all
+endif
+CREATE_INDEX("ID", "Id", "ks") 
+CREATE_INDEX("2", "dtos(datod)", "ks") 
+
 nArea := nil
 
 // kreiraj lokal tabelu : LOKAL

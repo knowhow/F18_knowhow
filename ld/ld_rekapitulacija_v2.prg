@@ -51,8 +51,8 @@ nBO := 0
 cRTipRada := " "
 nKoefLO := 0
 
-if lSvi==nil
-    lSvi:=.f.
+if lSvi == NIL
+    lSvi := .f.
 endif
 
 ORekap()
@@ -79,7 +79,7 @@ endif
 
 select ld
     
-cObracun:=TRIM(cObracun)
+cObracun := TRIM( cObracun )
 
 if lSvi
     set order to tag (TagVO("2"))
@@ -89,37 +89,42 @@ endif
 
 if lSvi
     
-    cFilt1:=".t." + IF(EMPTY(cStrSpr),"",".and.IDSTRSPR=="+cm2str(cStrSpr))+IF(EMPTY(qqRJ),"",".and."+aUsl1)
+    cFilt1 := ".t." + ;
+        IF( EMPTY( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str(cStrSpr)) + ;
+        IF( EMPTY( qqRJ ), "", ".and." + aUsl1 )
     
-    if cMjesec!=cMjesecDo
-        cFilt1:=cFilt1 + ".and.mjesec>="+cm2str(cMjesec)+".and.mjesec<="+cm2str(cMjesecDo)+".and.godina="+cm2str(cGodina)
+    if cMjesec != cMjesecDo
+        cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str(cMjesec) + ;
+            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str(cGodina)
     endif
     
-    GO TOP
+    go top
 
 else
 
-    cFilt1 := ".t." + IF(EMPTY(cStrSpr),"",".and.IDSTRSPR=="+cm2str(cStrSpr))
-    if cMjesec!=cMjesecDo
-        cFilt1 := cFilt1 + ".and.mjesec>="+cm2str(cMjesec)+".and.mjesec<="+cm2str(cMjesecDo)+".and.godina="+cm2str(cGodina)
+    cFilt1 := ".t." + ;
+        IF( EMPTY( cStrSpr ), "", ".and. IDSTRSPR == " + cm2str(cStrSpr))
+    if cMjesec != cMjesecDo
+        cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
+            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
     endif
 
 endif   
 
-cFilt1 += ".and. OBR="+cm2str(cObracun)
-cFilt1:=STRTRAN(cFilt1,".t..and.","")
+cFilt1 += ".and. obr = " + cm2str( cObracun )
+cFilt1 := STRTRAN( cFilt1, ".t..and.", "" )
 
-if cFilt1==".t."
+if cFilt1 == ".t."
     SET FILTER TO
 else
     SET FILTER TO &cFilt1
 endif
 
 if !lSvi
-    seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+cObracun
+    seek STR(cGodina,4) + cIdRj + STR(cMjesec,2) + cObracun
     EOF CRET
 else
-    seek str(cGodina,4)+STR(cMjesec,2)+cObracun
+    seek STR(cGodina,4) + STR(cMjesec,2) + cObracun
     EOF CRET
 endif
 
@@ -148,7 +153,7 @@ else
 endif
 
 // samo pozicionira bazu PAROBR na odgovarajuci zapis
-ParObr(cmjesec, cGodina, IIF(lViseObr,cObracun,), IIF(!lSvi,cIdRj,))
+ParObr( cMjesec, cGodina, cObracun, IIF( !lSvi, cIdRj, ) )
 
 private aRekap[cLDPolja,2]
 
@@ -192,15 +197,15 @@ select ld
 if cMjesec!=cMjesecDo
     if lSvi
         go top
-        private bUslov:={|| godina==cGodina .and. mjesec>=cMjesec .and. mjesec<=cMjesecDo .and. IF(lViseObr,obr=cObracun,.t.) }
+        private bUslov:={|| godina==cGodina .and. mjesec>=cMjesec .and. mjesec<=cMjesecDo .and. obr = cObracun }
     else
-        private bUslov:={|| godina==cGodina .and. idrj==cIdRj .and. mjesec>=cMjesec .and. mjesec<=cMjesecDo .and. IF(lViseObr,obr=cObracun,.t.) }
+        private bUslov:={|| godina==cGodina .and. idrj==cIdRj .and. mjesec>=cMjesec .and. mjesec<=cMjesecDo .and. obr=cObracun }
     endif
 else
     if lSvi
-        private bUslov:={|| cgodina==godina .and. cmjesec=mjesec .and. IF(lViseObr,obr=cObracun,.t.) }
+        private bUslov:={|| cgodina==godina .and. cmjesec=mjesec .and. obr=cObracun }
     else
-        private bUslov:={|| cgodina==godina .and. cidrj==idrj .and. cmjesec=mjesec .and. IF(lViseObr,obr=cObracun,.t.) }
+        private bUslov:={|| cgodina==godina .and. cidrj==idrj .and. cmjesec=mjesec .and. obr=cObracun }
     endif
 endif
 

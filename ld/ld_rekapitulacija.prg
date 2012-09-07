@@ -446,12 +446,10 @@ replace godina with str(nGodina,4),mjesec with str(nMjesec,2),;
 popwa()
 
 return
-*}
 
 
 // Otvara potrebne tabele za kreiranje izvjestaja rekapitulacije
 function ORekap()
-*{
 O_POR
 O_DOPR
 O_PAROBR
@@ -464,8 +462,19 @@ O_OPS
 O_RADKR
 O_KRED
 O_LD
+
+// zatvori prvo tippr i tippr2
+select ( F_TIPPR )
+if USED()
+    use
+endif
+
+select ( F_TIPPR2 )
+if USED()
+    use
+endif
+
 O_TIPPRN
-O_TIPPR
 
 return
 
@@ -473,7 +482,6 @@ return
 
 
 function BoxRekSvi()
-*{
 local nArr
 
 nArr:=SELECT()

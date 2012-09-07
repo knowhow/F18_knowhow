@@ -1,3 +1,7 @@
+1.3.21  2012-09-07, vsasa
+
+ - ld, otvaranje tabele tippr, tippr2, bugfix [#29141](http://redmine.bring.out.ba/issues/29141)
+ 
 1.3.20  2012-09-07, vsasa
 
  - ld, unos obračuna broj 2 [#29141](http://redmine.bring.out.ba/issues/29141)

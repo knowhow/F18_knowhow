@@ -404,7 +404,7 @@ if gPrBruto $ "D#X"
 		? cLMSK + "1. BRUTO PLATA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
 	endif
 
-	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
+	@ prow(), 60 + LEN(cLMSK) SAY nBo pict gpici
 	
 	? cMainLine
 	

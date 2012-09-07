@@ -25,6 +25,7 @@ CLOSE ALL
 cTbl:="pobjekti"
 
 aDbf:={ {"id","C",2,0}   ,;
+        {"naz","C", 10,0}, ;
         {"IdObj","C", 7,0}, ;
         {"zalt","N", 18,5}, ;
         {"zaltu","N", 18,5}, ;

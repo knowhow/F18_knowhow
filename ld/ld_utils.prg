@@ -327,7 +327,7 @@ do case
 	case cTipRada == "I"
 		cPrn := "((( " + ALLTRIM(STR(nNeto)) + " - " + ;
 			ALLTRIM(STR(nLOdb)) + ")" + ;
-			" / 0.9 ) + " + ALLTRIM(STR(nLOdb)) + " ) / 0.69 = "
+			" / 0.9 ) + " + ALLTRIM(STR(nLOdb)) + " ) / 0.69 ="
 		if ( nNeto < nLOdb ) 
 			cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 				ALLTRIM(STR(parobr->k6)) + " ="

@@ -1233,6 +1233,7 @@ if fTiho
 endif
 
 DBCREATE( _ime_dbf + ".dbf", aDbf )
+use
 
 select ( F_POM )
 my_use_temp( _alias, _ime_dbf, .f., .t. )

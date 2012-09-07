@@ -1,3 +1,9 @@
+1.3.19  2012-09-04, vsasa
+
+ - ld, mip korekcija
+ - fin, kalk, korekcije
+ - fin, kamate, korekcije
+
 1.3.18  2012-09-04, vsasa
 
  - ld, korekcija stampanja specifkacije

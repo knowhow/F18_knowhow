@@ -139,8 +139,7 @@ do while .t.
 		nIznKam:=nKKam*nGlavn
 	else
 		nKStopa:=ks->stkam/100
-		cPom777:=IzFmkIni("KAM","FormulaZaProstuKamatu","nGlavn*nKStopa*nPeriod/nExp",KUMPATH)
-		nIznKam:=&(cPom777)
+		nIznKam := nGlavn * nKStopa * nPeriod/nExp 
 	endif
 
 	nIznKam:=round(nIznKam,2)
@@ -162,12 +161,16 @@ do while .t.
 	if (cVarObracuna=="Z")
 		nGlavn+=nIznKam
 	endif
-	if dDatDo<=ks->DatDo // kraj obracuna
+
+	if dDatDo <= ks->datdo 
+        // kraj obracuna
  		exit
 	endif
 	
 	skip
-	dDatOd:=ks->DatOd
+
+	dDatOd := ks->DatOd
+
 enddo
 
 ? m

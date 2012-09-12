@@ -41,21 +41,23 @@ use
 O_FAKT_PRIPR
 go top
 
-// provjeri redne brojeve dokumenta
-if !provjeri_redni_broj()
-    MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
-    return _a_fakt_doks
-endif
-
-select fakt_pripr
-go top
-
 // ubaci mi matricu sve dokumente iz pripreme
 _a_fakt_doks := _fakt_dokumenti()
 
 if LEN( _a_fakt_doks ) == 0
     MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
     return _a_fakt_doks
+endif
+
+// ako je samo jedan dokument provjeri njegove redne brojeve
+if LEN( _a_fakt_doks ) == 1
+    select fakt_pripr
+    go top
+    // provjeri redne brojeve dokumenta
+    if !provjeri_redni_broj()
+        MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
+        return _a_fakt_doks
+    endif
 endif
 
 // generisi protu dokumente
@@ -243,7 +245,7 @@ if !_ok
 
 else
 
-    @ m_x+4, m_y+2 SAY "push ids to semaphore" + _tmp_id
+    @ m_x+4, m_y+2 SAY "push ids to semaphore: " + _tmp_id
     push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
     push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )

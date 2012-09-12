@@ -16,22 +16,20 @@
 // meni sifrarnik ugovora
 // --------------------------------------
 function SifUgovori()
+local _opc:={}
+local _opcexe:={}
+local _izbor := 1
 
-private Opc:={}
-private opcexe:={}
+AADD(_Opc, "1. ugovori                                    ")
+AADD(_opcexe, {|| P_Ugov() })
+AADD(_Opc, "2. parametri ugovora")
+AADD(_opcexe, {|| DFTParUg(.f.) })
+AADD(_Opc, "3. grupna zamjena cijene artikla u ugovoru")
+AADD(_opcexe, {|| ug_ch_price() })
 
-AADD(Opc, "1. ugovori                                    ")
-AADD(opcexe, {|| P_Ugov() })
-AADD(Opc, "2. parametri ugovora")
-AADD(opcexe, {|| DFTParUg(.f.) })
-AADD(Opc, "3. grupna zamjena cijene artikla u ugovoru")
-AADD(opcexe, {|| ug_ch_price() })
+f18_menu( "mugo", .f., _izbor, _opc, _opcexe )
 
-private Izbor:=1
-
-Menu_SC("mugo")
-
-CLOSERET
+close all
 
 return
 

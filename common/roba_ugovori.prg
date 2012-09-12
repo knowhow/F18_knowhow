@@ -14,7 +14,8 @@
 
 
 static __partn
-
+static _x_pos
+static _y_pos
 
 // --------------------------------------
 // otvara stavke ugovora - robu iz RUGOV
@@ -27,9 +28,12 @@ private GetList:={}
 private ImeKol
 private Kol
 
+_x_pos := MAXROWS() - 15
+_y_pos := MAXCOLS() - 5
+
 cIdUgov := cId
 
-Box(, nLenTbl, nWidthTbl)
+Box(, _x_pos, _y_pos )
 
 select rugov
 
@@ -38,14 +42,14 @@ set_f_tbl( cIdUgov )
 
 set cursor on
 
-@ m_x+1,m_y+1 SAY ""
+@ m_x + 1, m_y + 1 SAY ""
 
 ?? "Ugovor:", ugov->id, ugov->naz, ugov->DatOd
 
 __partn := ugov->idpartner
 
 
-ObjDbedit("", nLenTbl,nWidthTbl,{|| key_handler( cIdUgov )},"","",,,,,2)
+ObjDbedit("", _x_pos, _y_pos,{|| key_handler( cIdUgov )},"","",,,,,2)
 
 // izbacen brkey... bezveze
 
@@ -132,13 +136,10 @@ return nRet
 
 
 
+// prikazuje box sa informacijama o destinaciji...
 static function s_box_dest()
 
-if rugov->(FIELDPOS("dest")) == 0
-	return
-endif
-
-get_dest_binfo( 17, 8 , __partn, rugov->dest )
+get_dest_binfo( _x_pos, _y_pos , __partn, rugov->dest )
 
 return
 

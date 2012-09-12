@@ -17,6 +17,8 @@
 static __partn
 static __ugov
 static __dest_len
+static _x_pos
+static _y_pos
 
 // ----------------------------------
 // pregled destinacije 
@@ -28,6 +30,9 @@ local cFooter := ""
 local xRet
 private ImeKol
 private Kol
+
+_x_pos := MAXROWS() - 15
+_y_pos := MAXCOLS() - 5
 
 cHeader += "Destinacije za: " 
 cHeader += cPartId 
@@ -52,7 +57,7 @@ set_f_tbl( cPartId )
 // setuj kolone
 set_a_kol( @ImeKol, @Kol )
 
-xRet := PostojiSifra(F_DEST, "IDDEST", 16, 70, cHeader, @cId, dx, dy,{|Ch| key_handler(Ch)} )
+xRet := PostojiSifra(F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy,{|Ch| key_handler(Ch)} )
 
 set filter to
 
@@ -293,7 +298,9 @@ return xRet
 function get_dest_binfo( nX, nY, cPartn, cDest )
 local xRet := "---"
 local nTArea := SELECT()
+local _len := 65
 
+nX := nX + 3
 select dest
 set order to tag "ID"
 go top
@@ -304,13 +311,13 @@ if FOUND()
 		
 		cPom := ALLTRIM( field->naziv) + ", " + ALLTRIM(field->naziv2)
 		
-		@ nX, nY SAY SPACE( 65 ) COLOR "I"
-		@ nX, nY SAY PADR( cPom, 65 ) COLOR "I"
+		@ nX, 2 SAY SPACE( _len ) COLOR "I"
+		@ nX, 2 SAY PADR( cPom, _len ) COLOR "I"
 
 		cPom := ALLTRIM(field->adresa) + ", " + ALLTRIM(field->telefon)
 		
-		@ nX + 1, nY SAY SPACE( 65 ) COLOR "I"
-		@ nX + 1, nY SAY PADR( cPom, 65 ) COLOR "I"
+		@ nX + 1, 2 SAY SPACE( _len ) COLOR "I"
+		@ nX + 1, 2 SAY PADR( cPom, _len ) COLOR "I"
 		
 	endif
 endif

@@ -1,5 +1,6 @@
 1.3.22  2012-09-12, vsasa
 
+ - fakt, ažuriranje storno računa, bugfix [#29198](http://redmine.bring.out.ba/issues/29198)
  - razne sitne dorade
  
 1.3.21  2012-09-07, vsasa

@@ -192,7 +192,9 @@ AADD( _ids_fakt, "#2" + _tmp_id )
 @ m_x+1, m_y+2 SAY "fakt_fakt -> server: " + _tmp_id 
 do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
      _record := dbf_get_rec()
-     hb_hdel( _record, "fisc_rn" ) 
+     // fakt inace ne treba da sadrzi ovo polje!
+     // izbacio vsasa radi data_width_error #29198
+     _record["fisc_rn"] := 0
      if !sql_table_update("fakt_fakt", "ins", _record )
        _ok := .f.
        exit

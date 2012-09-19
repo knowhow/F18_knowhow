@@ -534,11 +534,10 @@ do while .t.
 
     if nInd == 0
 
-       
         @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
             PICT PICT_POS_ARTIKAL ;
             WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
-            VALID valid_pos_inv_niv(cIdVd)
+            VALID valid_pos_inv_niv( cIdVd )
 
                    
         nLX ++
@@ -638,7 +637,7 @@ return nVrati
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
-static function valid_pos_inv_niv(cIdVd, get_next)
+static function valid_pos_inv_niv( cIdVd )
 local _area := SELECT()
 
 pos_postoji_roba( @_IdRoba, 1, 31) 
@@ -733,12 +732,12 @@ return _ok
  
 function RacKol( cIdOdj, cIdRoba, nKol )
 
-if cIdVd == VD_INV
-    nKol := 0 
+//if cIdVd == VD_INV
+//    nKol := 0 
     // jer se generise priprema inventure, pa ako dodam novi
     // sigurno nije bilo ovog artikla
-    return .t.  
-endif
+//    return .t.  
+//endif
 
 MsgO( "Racunam kolicinu ..." )
 
@@ -758,20 +757,19 @@ while !EOF() .and. pos->(IdOdj+IdRoba) == (cIdOdj+cIdRoba) .and. pos->Datum <= d
     // ovdje ne gledam DIO objekta, jer nivelaciju uvijek radim za
     // cijeli objekat
 
-    if pos->idvd $ "16#00"   // cUI_x su privatne varijable funkcije
+    if pos->idvd $ "16#00"   
         nKol += pos->Kolicina     
-        // INVENTNIVEL
     elseif POS->idvd $ "42#01#IN#NI"
         do case
-            case POS->IdVd==VD_INV
-                nKol:=POS->Kol2
-            case POS->IdVd==VD_NIV
+            case POS->IdVd == VD_INV
+                nKol := pos->kol2
+            case POS->idvd == VD_NIV
                 // ne utice na kolicinu
             otherwise
-                nKol-=POS->Kolicina
+                nKol -= pos->kolicina
         endcase
     endif
-    SKIP
+    skip
 enddo
 
 MsgC()

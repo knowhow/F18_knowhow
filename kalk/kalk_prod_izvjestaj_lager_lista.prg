@@ -564,13 +564,13 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
  			if cMpcIzSif == "D"
                 @ prow(), pcol() + 1 SAY _mpc pict gpiccdem
-                nTMpv += ( ( nUlaz - nIzlaz ) * _mpc )
+                nTMpv += ( ( nUlaz - nIzlaz + nPKOL ) * _mpc )
             else
                 // mpcsapdv
                 @ prow(), pcol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) pict gpiccdem
 
  			    if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
-   				    ?? " ERR"
+   				    ?? " ERR MPC =", ALLTRIM( STR( _mpc, 12, 2 )  )
  			    endif
             endif
 

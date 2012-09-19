@@ -750,7 +750,7 @@ private aGrupni
 cZakljucen:="N"
 
 select pos_doks
-set order to tag 8
+set order to tag "8"
 go top
 seek gIdPos + cIdRadnik + cZakljucen
 
@@ -812,7 +812,7 @@ START PRINT CRET
 cZaklj:="N"
 
 select pos_doks
-set order to tag 8
+set order to tag "8"
 go top
 
 seek gIdPos + cIdRadnik + cZaklj

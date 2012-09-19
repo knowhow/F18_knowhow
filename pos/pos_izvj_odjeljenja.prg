@@ -111,14 +111,15 @@ endif
   ? "PERIOD     : "+FormDat1(dDat0)+" - "+FormDat1(dDat1)
 
   select pos_doks
-  set order to 2    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
+  set order to tag "2"    
+    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
   OdjIzvuci (VD_PRR)
   OdjIzvuci (VD_RN)
 
   // stampa izvjestaja
   SELECT POM
-  set order to 1
+  set order to tag "1"
   GO TOP
   nTotal := 0
   nTotal2 := 0
@@ -215,7 +216,7 @@ endif
     nTotal2 := 0
     nTotal3 := 0
     SELECT POM
-    set order to 2
+    set order to tag "2"
     go top
     do WHILE !eof()
       _IdOdj := POM->IdOdj
@@ -434,7 +435,8 @@ O_POS_DOKS
 
   // pravljenje izvjestaja
   select pos_doks
-  set order to 2    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
+  set order to tag "2"    
+    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
   EOF CRET
 
@@ -467,7 +469,7 @@ O_POS_DOKS
   nTotal2 := 0
   nTotal3 := 0
   SELECT POM
-  set order to 1
+  set order to tag "1"
   Go Top
   do While !Eof()
     _IdDio := POM->IdDio
@@ -556,7 +558,7 @@ O_POS_DOKS
   nTotal2 := 0
   nTotal3 := 0
   SELECT POM
-  set order to 2
+  set order to tag "2"
   Go Top
   do While !Eof()
     _IdDio := POM->IdDio
@@ -638,7 +640,7 @@ O_POS_DOKS
   nTotal2 := 0
   nTotal3 := 0
   SELECT POM
-  set order to 3
+  set order to tag "3"
   Go Top
   do While !Eof()
     _IdDio := POM->IdDio
@@ -700,7 +702,7 @@ O_POS_DOKS
   ?
   nTotal := 0
   SELECT POM
-  set order to 4
+  set order to tag "4"
   Go Top
   do while !Eof()
     _IdDio := POM->IdDio
@@ -752,7 +754,7 @@ O_POS_DOKS
     ? PADC ("--------------------------", 40)
     ?
     SELECT POM
-    set order to 5
+    set order to tag "5"
     go top
     WHILE ! eof()
       _IdDio := POM->IdDio

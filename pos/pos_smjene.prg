@@ -33,7 +33,7 @@ endif
 
 O__POS
 O_POS_DOKS
-set order to 2  // IdVd+DTOS (Datum)+Smjena
+set order to tag "2"  // IdVd+DTOS (Datum)+Smjena
 Seek VD_RN + Chr (254)
 if eof() .or. pos_doks->IdVd <> VD_RN
 	SKIP -1
@@ -48,7 +48,7 @@ if pos_doks->IdVd == VD_RN
 endif
 
 SELECT _POS
-set order to 2
+set order to tag "2"
 Seek "42"
 if Found()
 	// d_Pos := _POS->Datum
@@ -216,7 +216,7 @@ cVrijeme  := LEFT (TIME (), 5)
 cIdVrsteP := gGotPlac
 
 SELECT _POS
-Set order to 1
+Set order to tag "1"
 SEEK gIdPos
 do while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
 	cRadRac := _POS->BrDok
@@ -280,7 +280,7 @@ enddo
 
 // prvo izvadim sve radnike koji su radili u predmetnoj smjeni
 select pos_doks
-set order to 2
+set order to tag "2"
 Seek VD_RN+DTOS (dPrevDat)
 do while !eof() .and. pos_doks->IdVd=="42" .and. pos_doks->Datum==dPrevDat
 	n:=ASCAN (aRadnici, pos_doks->IdRadnik)

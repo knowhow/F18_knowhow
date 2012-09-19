@@ -609,7 +609,7 @@ if !fZaklj.and.fPrik$"RO"
 	nTotal3:=0
 	
 	SELECT POM
-	set order to 3
+	set order to tag "3"
 	go top
 	do while !eof()
 		nTotPos:=0
@@ -776,7 +776,7 @@ if (fPrik $ "PO")
 	nTotal2:=0
 	nTotal3:=0
 	SELECT POM
-	set order to 2
+	set order to tag "2"
 	go top
 	while !eof()
 		_IdPos:=pom->IdPos
@@ -830,7 +830,7 @@ if (fPrik $ "RO").or.cK1=="D"
 	if cK1=="D"
 		set order to TAG "K1"   // IdPos+IdOdj+IdRoba+IdCijena
 	else
-		set order to 2   // IdPos+IdOdj+IdRoba+IdCijena
+		set order to tag "2"   // IdPos+IdOdj+IdRoba+IdCijena
 	endif
 	go top
 	do while !EOF()

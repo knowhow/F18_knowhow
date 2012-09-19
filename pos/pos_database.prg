@@ -277,6 +277,35 @@ return _total
 
 
 
+// ----------------------------------------
+// pos, stanje robe
+// ----------------------------------------
+function pos_stanje_artikla( id_pos, id_roba )
+local _qry, _qry_ret, _table
+local _server := pg_server()
+local _data := {}
+local _i, oRow
+local _stanje := 0
+
+_qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM fmk.pos_pos " + ;
+        " WHERE idpos = " + _sql_quote( id_pos ) + ;
+        " AND idroba = " + _sql_quote( id_roba )
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+oRow := _table:GetRow( 1 )
+
+_stanje := oRow:FieldGet( oRow:FieldPos("stanje"))
+
+if VALTYPE( _stanje ) == "L"
+    _stanje := 0
+endif
+
+return _stanje
+
+
+
 function pos_iznos_dokumenta( lUI )
 local cRet:=SPACE(13)
 local l_u_i

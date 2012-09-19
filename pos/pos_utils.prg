@@ -523,7 +523,7 @@ do while .t.
     endif
     fIzm:=.f.
     SELECT K2C
-    set order to 1
+    set order to tag "1"
     SEEK STR(nKey1,4)
     if FOUND ()
             Beep(3)
@@ -572,7 +572,7 @@ function NijeDuplo(cIdRoba,nKey)
 
 local lFlag:=.t.
 SELECT K2C
-set order to 2
+set order to tag "2"
 nCurrRec:=RECNO()
 HSEEK cIdRoba
 if FOUND().and.RECNO()<>nCurrRec

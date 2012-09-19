@@ -136,7 +136,7 @@ if gModul=="HOPS"
   	MsgO("Da provjerimo usaglasenost podataka...")
     	O_POS 
 	O_POS_DOKS
-    	SET ORDER TO 4
+    	SET ORDER TO TAG "4"
     	SEEK "42"+OBR_NIJE
   	MsgC()
   	if pos_doks->(FOUND())

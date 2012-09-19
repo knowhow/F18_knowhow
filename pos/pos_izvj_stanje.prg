@@ -33,14 +33,15 @@ private cNule:="N"
 
 
 fZaklj := IIF (pcount()==0, .F., .T.)
+
 IF !fZaklj
-  PRIVATE cDat:=gDatum, cSmjena := " "
+    PRIVATE cDat:=gDatum, cSmjena := " "
 EndIF
 
-cVrstaRs:=gVrstaRs
+cVrstaRs := gVrstaRs
 
 // ovo je zakrpa .... ali da proradi
-if (gModul=="TOPS" .and. cVrstaRs=="S")
+if ( gModul=="TOPS" .and. cVrstaRs=="S" )
 	cVrstaRs:="A"
 endif
 
@@ -55,21 +56,12 @@ O_POS
 cIdPos:=gIdPos
 
 if fZaklj
-  // kod zakljucenja smjene
-  aUsl1 := ".t."
-  if gModul=="HOPS"
-    cIdDio := gIdDio
-  endif 
-
+    // kod zakljucenja smjene
+    aUsl1 := ".t."
+    if gModul=="HOPS"
+        cIdDio := gIdDio
+    endif 
 else
-
-// maska za postavljanje uslova
-///////////////////////////////
-if (gColleg=="D" .and. Klevel=="0")
-	cIdPos:=space(2)
-else
-	cIdPos := gIdPos
-endif
 
 aNiz := {}
 IF cVrstaRs<>"K"
@@ -98,32 +90,34 @@ do while .t.
     IF !VarEdit(aNiz,10,5,21,74,'USLOVI ZA IZVJESTAJ "STANJE ODJELJENJA"',"B1")
       CLOSERET
     ENDIF
-    aUsl1:=Parsiraj(cRoba,"IdRoba","C")
-    if aUsl1<>NIL
-      exit
+    aUsl1 := Parsiraj(cRoba,"IdRoba","C")
+    if aUsl1 <> NIL
+        exit
     else
-      Msg("Kriterij za artikal nije korektno postavljen!")
+        Msg("Kriterij za artikal nije korektno postavljen!")
     endif
 EndDO
 
 EndIF
 
 private cZaduzuje:="R"
+
 IF !Empty (cIdOdj)
-  SELECT ODJ
-  HSEEK cIdOdj
-  IF Zaduzuje == "S"
-    cU := S_U
-    cI := S_I
-    cRSdbf := "SIROV"
-    cZaduzuje:="S"
-  Else
-    cU := R_U
-    cI := R_I
-    cRSdbf := "ROBA"
-    cZaduzuje:="R"
-  EndIF
+    SELECT ODJ
+    HSEEK cIdOdj
+    IF Zaduzuje == "S"
+        cU := S_U
+        cI := S_I
+        cRSdbf := "SIROV"
+        cZaduzuje:="S"
+    Else
+        cU := R_U
+        cI := R_I
+        cRSdbf := "ROBA"
+        cZaduzuje:="R"
+    EndIF
 EndIF
+
 IF cVrstaRs=="S"
   cLM := SPACE (5)
   nSir := 80
@@ -131,41 +125,56 @@ IF cVrstaRs=="S"
 EndIF
 
 // pravljenje izvjestaja
-////////////////////////
-IF ! fZaklj
-  Zagl(cIdOdj, cDat, cVrstaRs)
+IF !fZaklj
+    Zagl(cIdOdj, cDat, cVrstaRs)
 EndIF
-IF !empty(cIdOdj)
-  Podvuci(cVrstaRs)
+
+IF !EMPTY(cIdOdj)
+    Podvuci(cVrstaRs)
 EndIF
 
 SELECT POS
-set order to 2   // ("2", "IdOdj+idroba+DTOS(Datum)", KUMPATH+"POS")
+set order to tag "2"   
+// ("2", "IdOdj+idroba+DTOS(Datum)", KUMPATH+"POS")
+
 IF !(aUsl1==".t.")
-  SET FILTER TO &aUsl1
+    SET FILTER TO &aUsl1
 ENDIF
 
 seek cIdOdj
+
 EOF CRET
 
 xIdOdj := "??"
-do while !eof()
-  IF !empty(cIdOdj) .and. POS->IdOdj<>cIdOdj
+
+do while !EOF()
+  
+  IF !EMPTY(cIdOdj) .and. POS->IdOdj<>cIdOdj
     Exit
   endif
+
   nStanje := 0
   nVrijednost := 0
+
   _IdOdj := POS->IdOdj
+
   IF empty(cIdOdj) .and. _IdOdj<>xIdOdj
+
     IF fZaklj
       Zagl(_IdOdj, nil, cVrstaRs)
     EndIF
+
     Podvuci(cVrstaRs)
+
     xIdOdj := _IdOdj
+
     SELECT ODJ
     HSEEK _IdOdj
-    ? cLM+Id+"-"+Naz
-    Podvuci(cVrstaRs)
+
+    ? cLM + Id + "-" + Naz
+
+    Podvuci( cVrstaRs )
+
     IF Zaduzuje == "S"
       cZaduzuje:="S"
       cU := S_U
@@ -177,100 +186,102 @@ do while !eof()
       cI := R_I
       cRSdbf := "ROBA"
     EndIF
+
     SELECT POS
+
   EndIF
 
-  do while !Eof() .and. POS->IdOdj==_IdOdj
+  do while !EOF() .and. pos->idodj == _idodj
+
     nStanje := 0
     nVrijednost := 0
     nPstanje := 0
     nUlaz := nIzlaz := 0
-    cIdRoba := POS->IdRoba
-    //
-    //pocetno stanje - stanje do
-    //
+    cIdRoba := pos->idroba
     
-    do While !Eof() .and. POS->IdOdj==_IdOdj .and. POS->IdRoba==cIdRoba.and.(POS->Datum < cDat.or.(!Empty (cSmjena) .and. POS->Datum==cDat .and. POS->Smjena<cSmjena))
+    do while !EOF() .and. pos->idodj == _idodj .and. ;
+            pos->idRoba == cIdRoba .and. ;
+            ( pos->datum < cDat .or. ( !Empty (cSmjena) .and. pos->datum == cDat .and. pos->smjena < cSmjena ) )
       
-      IF !Empty (cIdDio) .and. POS->IdDio <> cIdDio
-        SKIP
-	LOOP
-      EndIF
-      IF (Klevel>"0".and.pos->idpos="X").or.(!empty(cIdPos).and.IdPos<>cIdPos)
-//         (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;   // ?MS
-        skip
-	loop
-      EndIF
-      if (cZaduzuje=="R".and.pos->idvd=="96").or.(cZaduzuje=="S".and.pos->idvd $ "42#01")
-         skip
-	 loop  //preskoci
-      endif
-      //
-      if POS->idvd $ "16#00"
-        nPstanje += POS->Kolicina
-        nVrijednost += POS->Kolicina * POS->Cijena
-      elseif POS->idvd $ "IN#NI"+DOK_IZLAZA
-        do case
-          case POS->IdVd == "IN"
-            nPstanje -= (POS->Kolicina-POS->Kol2)
-            nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
-          case POS->IdVd == "NI"
-            // ne mijenja kolicinu
-            nVrijednost := POS->Kolicina * POS->Cijena
-          otherwise
-              nPstanje -= POS->Kolicina
-              nVrijednost -= POS->Kolicina * POS->Cijena
-        endCase
-      endif
-      SKIP
-    EndDO
-    //
-    //utrosak specificiranog datuma/smjene
-    //
-    DO While !eof() .and. POS->IdOdj==_IdOdj .and. POS->IdRoba==cIdRoba .and. (POS->Datum==cDat .or. (!empty(cSmjena) .and. POS->Datum==cDat .and. POS->Smjena<cSmjena))
+        if !EMPTY(cIdDio) .and. POS->IdDio <> cIdDio
+            SKIP
+	        LOOP
+        EndIF
+        IF (Klevel>"0".and.pos->idpos="X").or.(!empty(cIdPos).and.IdPos<>cIdPos)
+            //         (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;   // ?MS
+            skip
+	        loop
+        EndIF
+        if (cZaduzuje=="R".and.pos->idvd=="96").or.(cZaduzuje=="S".and.pos->idvd $ "42#01")
+            skip
+	        loop  
+            //preskoci
+        endif
       
-      IF !empty(cIdDio).and.POS->IdDio<>cIdDio
+        if POS->idvd $ "16#00"
+            nPstanje += POS->Kolicina
+            nVrijednost += POS->Kolicina * POS->Cijena
+        elseif POS->idvd $ "IN#NI"+DOK_IZLAZA
+            do case
+                case POS->IdVd == "IN"
+                    nPstanje -= (POS->Kolicina-POS->Kol2)
+                    nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
+                case POS->IdVd == "NI"
+                    // ne mijenja kolicinu
+                    nVrijednost := POS->Kolicina * POS->Cijena
+                otherwise
+                    nPstanje -= POS->Kolicina
+                    nVrijednost -= POS->Kolicina * POS->Cijena
+            endCase
+        endif
         SKIP
-	LOOP
-      EndIF
-      IF (Klevel>"0".and.pos->idpos="X").or.(!empty(cIdPos).and.IdPos<>cIdPos)
-//         (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
-        skip
-	loop
-      EndIF
-      //
-
-      if cZaduzuje=="S" .and. pos->idvd $ "42#01"
-		skip
-		loop  // racuni za sirovine - zdravo
-      endif
-      if cZaduzuje=="R" .and. pos->idvd=="96"
-		skip
-		loop   // otpremnice za robu - zdravo
-      endif
-
-      IF POS->idvd $ "16#00"
-        nUlaz += POS->Kolicina
-        nVrijednost += POS->Kolicina * POS->Cijena
-      ELSEIF POS->idvd $  "IN#NI#"+DOK_IZLAZA
-        DO Case
-          case POS->IdVd == "IN"
-            nIzlaz += (POS->Kolicina-POS->Kol2)
-            nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
-          case POS->IdVd == "NI"
-            // ne mijenja kolicinu
-            nVrijednost := POS->Kolicina * POS->Cijena
-          otherwise
-            nIzlaz += POS->Kolicina
-            nVrijednost -= POS->Kolicina * POS->Cijena
-        endCase
-      ENDIF
-      SKIP
     enddo
-    //
-    //stampaj
-    //
+    
+    do while !EOF() .and. pos->idodj == _idodj .and. ;
+                pos->idroba == cIdRoba .and. ;
+                ( pos->datum == cDat .or. (!empty(cSmjena) .and. POS->Datum==cDat .and. POS->Smjena<cSmjena))
+      
+        IF !empty(cIdDio).and.POS->IdDio<>cIdDio
+            SKIP
+	        LOOP
+        EndIF
+        IF (Klevel>"0".and.pos->idpos="X").or.(!empty(cIdPos).and.IdPos<>cIdPos)
+            //         (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
+            skip
+	        loop
+        EndIF
+        //
+
+        if cZaduzuje=="S" .and. pos->idvd $ "42#01"
+		    skip
+		    loop  // racuni za sirovine - zdravo
+        endif
+        if cZaduzuje=="R" .and. pos->idvd=="96"
+		    skip
+		    loop   // otpremnice za robu - zdravo
+        endif
+
+        IF POS->idvd $ "16#00"
+            nUlaz += POS->Kolicina
+            nVrijednost += POS->Kolicina * POS->Cijena
+        ELSEIF POS->idvd $  "IN#NI#"+DOK_IZLAZA
+            DO Case
+                case POS->IdVd == "IN"
+                    nIzlaz += (POS->Kolicina-POS->Kol2)
+                    nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
+                case POS->IdVd == "NI"
+                    // ne mijenja kolicinu
+                    nVrijednost := POS->Kolicina * POS->Cijena
+                otherwise
+                    nIzlaz += POS->Kolicina
+                    nVrijednost -= POS->Kolicina * POS->Cijena
+            endCase
+        ENDIF
+        SKIP
+    enddo
+    
     nStanje := nPstanje + nUlaz - nIzlaz
+    
     IF Round(nStanje, 4)<>0 .or. cNule=="D"
       SELECT (cRSdbf)
       HSEEK cIdRoba
@@ -314,10 +325,10 @@ IF !fZaklj
   EndIF
   END PRINT
 EndIF
-CLOSERET
 
+close all
 return
-*}
+
 
 
 /*! \fn Podvuci(cVrstaRs)

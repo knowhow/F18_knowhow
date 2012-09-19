@@ -332,7 +332,7 @@ SELECT PRIPRZ
 if RecCount2() > 0 
 
 	select pos_doks
-  	set order to 1
+  	set order to tag "1"
 
 	if !_from_kalk
 		cBrDok := pos_novi_broj_dokumenta( cIdPos, IIF( cIdvd == "PD", "16", cIdVd ) )
@@ -459,7 +459,7 @@ function ZadProvDuple(cSif)
 local lFlag:=.t.
 
 SELECT PRIPRZ
-SET ORDER TO 1
+SET ORDER TO tag "1"
 nPrevRec:=RECNO()
 Seek cSif
 if FOUND()

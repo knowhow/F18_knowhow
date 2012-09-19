@@ -190,7 +190,7 @@ else
 endif // lTekuci
 
 select pos_doks
-set order to 2       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
+set order to tag "2"       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 IF !(aUsl1==".t.")
   SET FILTER TO &aUsl1
 ENDIF
@@ -207,7 +207,7 @@ IF fPrik $ "PO"
   nTotal2 := 0
   nTotal3 := 0
   SELECT POM
-  set order to 1
+  set order to tag "1"
   GO TOP
   do While !Eof()
     _IdRadnik := POM->IdRadnik
@@ -311,7 +311,7 @@ IF fPrik $ "RO"
   ? PADL ("Set c.", 11), PADC ("Kolicina", 12), PADC ("Iznos", 15)
   ? REPL ("-", 11), REPL ("-", 12), REPL ("-", 15)
   SELECT POM
-  set order to 2
+  set order to tag "2"
   GO TOP
   nTotal := 0
   nTotal2 := 0

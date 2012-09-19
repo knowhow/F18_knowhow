@@ -26,7 +26,6 @@ private bPrevKroz
 private bPrevUp
 private bPrevDn
 
-
 private cRSdbf
 private cRSblok
 private cUI_U
@@ -426,6 +425,12 @@ do case
             lVrati := DE_REFRESH
         endif
 
+    case Ch == K_CTRL_U
+
+        // update knj.kolicina
+        update_knj_kol()
+        lVrati := DE_REFRESH
+
     case Ch == K_CTRL_A
 
         do while !eof()
@@ -532,12 +537,12 @@ do while .t.
     nLX := m_x + 1
 	
 
-    if nInd == 0
+    //if nInd == 0
 
         @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
             PICT PICT_POS_ARTIKAL ;
             WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
-            VALID valid_pos_inv_niv( cIdVd )
+            VALID valid_pos_inv_niv( cIdVd, nInd )
 
                    
         nLX ++
@@ -553,7 +558,7 @@ do while .t.
             
         nLX ++
     
-    endif
+    //endif
 
     if cIdVd == VD_INV
 
@@ -635,16 +640,49 @@ go nRec
 
 return nVrati
 
+
+// -------------------------------------------------
+// update knjiznih kolicina na dokumentu
+// -------------------------------------------------
+static function update_knj_kol()
+
+select priprz
+go top
+
+do while !EOF()
+
+    Scatter()
+    RacKol( _idodj, _idroba, @_kolicina )
+
+    select priprz
+    Gather()
+
+    skip
+enddo
+    
+TB:RefreshAll()
+
+DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
+    Tb:stabilize()
+ENDDO
+
+select priprz
+go top
+
+return .t.
+
+
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
-static function valid_pos_inv_niv( cIdVd )
+static function valid_pos_inv_niv( cIdVd, ind )
 local _area := SELECT()
 
 pos_postoji_roba( @_IdRoba, 1, 31) 
+
 RacKol( _idodj, _idroba, @_kolicina )
 _set_cijena_artikla( cIdVd, _idroba )
 
-if !_postoji_artikal_u_pripremi( _idroba )
+if ind == 0 .and. !_postoji_artikal_u_pripremi( _idroba )
     select ( _area )
     return .f.
 endif

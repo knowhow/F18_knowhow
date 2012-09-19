@@ -654,13 +654,18 @@ return nVrati
 static function update_ip_razlika()
 local _id_odj := SPACE(2)
 local ip_kol, ip_roba
+local _rec2, _rec
 
 if Pitanje(,"Generisati razliku artikala sa stanja ?", "N" ) == "N"
     return 0
 endif
         
 MsgO( "GENERISEM RAZLIKU NA OSNOVU STANJA" )
-        
+       
+select priprz
+go top
+_rec2 := dbf_get_rec()
+ 
 select pos
 set order to tag "2"
 // "2", "IdOdj + idroba + DTOS(Datum)
@@ -679,9 +684,9 @@ do while !EOF() .and. field->idodj == _id_odj
     select priprz
     set order to tag "1"
     go top
-    seek ip_roba
+    seek PADR( ip_roba, 10 )
 
-    if FOUND()
+    if FOUND() .and. field->idroba == PADR( ip_roba, 10 )
         select pos
         skip
         loop
@@ -719,21 +724,32 @@ do while !EOF() .and. field->idodj == _id_odj
     if ROUND( ip_kol, 3 ) <> 0
                     
         select roba
-        hseek ip_roba
+        set order to tag "ID"
+        go top
+        seek ip_roba
 
         select priprz
-        _rec := dbf_get_rec()
-        
         append blank
-        
+
+        _rec := dbf_get_rec()
         _rec["cijena"] := roba->mpc     
-        // postavi tekucu cijenu
-        _rec["ncijena"] := roba->mpc
+        _rec["ncijena"] := 0 
+        _rec["idroba"] := ip_roba
+        _rec["barkod"] := roba->barkod
         _rec["robanaz"] := roba->naz 
         _rec["jmj"] := roba->jmj
         _rec["idtarifa"] := roba->idtarifa
         _rec["kol2"] := 0
         _rec["kolicina"] := ip_kol
+        _rec["brdok"] := _rec2["brdok"]
+        _rec["datum"] := _rec2["datum"]
+        _rec["idcijena"] := _rec2["idcijena"]
+        _rec["idpos"] := _rec2["idpos"]
+        _rec["idradnik"] := _rec2["idradnik"]
+        _rec["idvd"] := _rec2["idvd"]
+        _rec["mu_i"] := _rec2["mu_i"]
+        _rec["prebacen"] := _rec2["prebacen"]
+        _rec["smjena"] := _rec2["smjena"]
                 
         dbf_update_rec( _rec )
                 

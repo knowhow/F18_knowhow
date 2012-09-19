@@ -796,6 +796,7 @@ local _cnt := 0
 local _tbl_pos := "pos_pos"
 local _tbl_doks := "pos_doks"
 local _ok := .t.
+local _t_rec
 
 lNivel:=.f.
 
@@ -840,6 +841,8 @@ SELECT PRIPRZ
 
 do while !eof()
 
+    _t_rec := RECNO()
+
     // dodaj stavku u pos
     SELECT POS  
     APPEND BLANK
@@ -876,6 +879,7 @@ do while !eof()
     azur_sif_roba_row()
 
     SELECT PRIPRZ
+    GO ( _t_rec )
     SKIP
 
 enddo
@@ -884,11 +888,6 @@ MsgC()
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
-
-// pos_pos check
-//check_recno( "pos_pos", nil, .f. )
-//check_recno( "pos_doks", nil, .f. )
-
 
 log_write( "azuriranje stavki iz priprz u pos/doks, zavrsio", 5 )
 
@@ -913,9 +912,7 @@ return
 static function azur_sif_roba_row()
 local _rec
 
-// u jednom dbf-u moze biti vise IdPos
-// ROBA ili SIROV
-select ( cRSDbf )
+select roba
 set order to tag "ID"
 
 // pozicioniran sam na robi

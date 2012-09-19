@@ -425,6 +425,13 @@ do case
             lVrati := DE_REFRESH
         endif
 
+    case Ch == K_CTRL_O
+
+        // update razlika na inventuri
+        if update_ip_razlika() == 1
+            lVrati := DE_REFRESH
+        endif
+
     case Ch == K_CTRL_U
 
         // update knj.kolicina
@@ -639,6 +646,113 @@ enddo
 go nRec
 
 return nVrati
+
+
+// -----------------------------------------------------
+// update razlika artikala na postojecoj inventuri
+// -----------------------------------------------------
+static function update_ip_razlika()
+local _id_odj := SPACE(2)
+local ip_kol, ip_roba
+
+if Pitanje(,"Generisati razliku artikala sa stanja ?", "N" ) == "N"
+    return 0
+endif
+        
+MsgO( "GENERISEM RAZLIKU NA OSNOVU STANJA" )
+        
+select pos
+set order to tag "2"
+// "2", "IdOdj + idroba + DTOS(Datum)
+seek _id_odj
+    
+do while !EOF() .and. field->idodj == _id_odj
+            
+    if pos->datum > dDatRada
+        skip
+        loop
+    endif
+
+    ip_kol := 0
+    ip_roba := pos->idroba
+
+    select priprz
+    set order to tag "1"
+    go top
+    seek ip_roba
+
+    if FOUND()
+        select pos
+        skip
+        loop
+    endif
+
+    select pos
+
+    do while !EOF() .and. pos->( idodj + idroba ) == ( _id_odj + ip_roba ) .and. pos->datum <= dDatRada
+
+        if !EMPTY( cIdDio ) .and. pos->iddio <> cIdDio
+            skip
+            loop
+        endif
+                    
+        if pos->idvd $ "16#00"
+            // na ulazu imam samo VD_ZAD i VD_PCS
+            ip_kol += pos->kolicina
+                    
+        elseif pos->idvd $ "42#96#01#IN#NI"
+            // na izlazu imam i VD_INV i VD_NIV
+            do case
+                case pos->idvd == VD_INV
+                    ip_kol -= pos->kolicina - pos->kol2
+                case pos->idvd == VD_NIV
+                    // ne mijenja kolicinu
+                otherwise
+                    ip_kol -= pos->kolicina
+            endcase
+        endif
+                
+        skip
+
+    enddo
+
+    if ROUND( ip_kol, 3 ) <> 0
+                    
+        select roba
+        hseek ip_roba
+
+        select priprz
+        _rec := dbf_get_rec()
+        
+        append blank
+        
+        _rec["cijena"] := roba->mpc     
+        // postavi tekucu cijenu
+        _rec["ncijena"] := roba->mpc
+        _rec["robanaz"] := roba->naz 
+        _rec["jmj"] := roba->jmj
+        _rec["idtarifa"] := roba->idtarifa
+        _rec["kol2"] := 0
+        _rec["kolicina"] := ip_kol
+                
+        dbf_update_rec( _rec )
+                
+    endif
+
+    select pos
+
+enddo  
+ 
+select priprz
+go top
+
+TB:RefreshAll()
+
+DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
+    Tb:stabilize()
+ENDDO
+
+return 1
 
 
 // -------------------------------------------------

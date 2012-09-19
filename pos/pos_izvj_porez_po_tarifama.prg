@@ -143,7 +143,7 @@ do while .t.
 	endif // fsolo
 
 	SELECT POS
-	SET ORDER TO 1
+	SET ORDER TO TAG "1"
 	
 	private cFilter:=".t."
 	
@@ -160,7 +160,7 @@ do while .t.
 	endif
 
 	select pos_doks
-	set order to 2
+	set order to tag "2"
 
 	nTotOsn:=0
 	nTotPPP:=0

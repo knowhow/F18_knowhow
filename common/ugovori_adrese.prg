@@ -202,6 +202,13 @@ EndPrint()
 // pozovi funkciju stampanja rtm fajla kroz labeliranje.exe
 f18_rtm_print( "labelu", "labelu", _n_sort, NIL, "labeliranje" )
 
+O_UGOV
+O_RUGOV
+O_DEST
+O_ROBA
+O_SIFK
+O_SIFV
+
 PopWA()
 
 return

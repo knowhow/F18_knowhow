@@ -272,6 +272,9 @@ MsgC()
 
 close all
 
+// prikazi report...
+_show_report_roba( _roba_data )
+
 if ( gMultiPM == "D" .and. _count > 0 .and. _auto_razduzenje == "N" )
 	// pobrisi fajlove...
 	FileDelete( _imp_file )
@@ -281,18 +284,53 @@ endif
 return
 
 
+static function _show_report_roba( data )
+local _i
+local _razlika := 0
 
+START PRINT CRET
+?
+P_COND2
+
+? "Razlike u cijenama:"
+? "-------------------"
+? PADR("R.br", 5), PADR( "ID", 10), PADR( "naziv", 40 ), PADR("POS cijena", 12 ), PADR( "KALK cijena", 12 )
+? REPLICATE( "-", 80 )
+
+for _i := 1 to LEN( data )
+
+    ? PADR( ALLTRIM( STR( _i, 4 )) + ".", 5 ), ;
+        data[_i, 1], ;
+        PADR( data[ _i, 2 ], 40 ), ;
+        STR( data[ _i, 3 ], 12, 2 ), ;
+        STR( data[ _i, 4 ], 12, 2 )
+
+    _razlika += data[ _i, 3 ] - data[ _i, 4 ]
+
+next
+
+? REPLICATE( "-", 80 )
+? "Ukupno razlika:", ALLTRIM(STR( _razlika, 12, 2 ))
+
+FF
+END PRINT
+
+return
 
 // --------------------------------------------
 // import robe u sifrarnik robe
 // --------------------------------------------
-static function kalk_import_roba( a_roba, tip_cijene )
+static function kalk_import_roba( a_roba, tip_cijene, update_roba )
 local _t_area := SELECT()
 local _rec, _mpc_naz
 
 // ako nema ovog polja, nista ne radi !
 if topska->(FIELDPOS("robanaz")) == 0
     return
+endif
+
+if update_roba == NIL
+    update_roba := .f.
 endif
 
 select roba
@@ -323,7 +361,30 @@ if !FOUND()
     update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
     // dodaj u kontrolnu matricu
-    AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc } )
+    AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc, 0 } )
+
+else
+    
+    _rec := dbf_get_rec()
+
+    if ALLTRIM( tip_cijene ) == "M1" .or. EMPTY( tip_cijene )
+        _mpc_naz := "mpc"
+    else
+        // M3 -> mpc3
+        _mpc_naz := STRTRAN( tip_cijene, "M", "mpc" )
+    endif
+        
+    if _rec[ _mpc_naz ] <> topska->mpc
+
+        AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc, _rec[ _mpc_naz ] } )
+        
+        _rec[ _mpc_naz ] := topska->mpc
+
+        if update_roba
+            update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+        endif
+
+    endif
 
 endif
 
@@ -359,6 +420,9 @@ if _kolicina == 0
     _nc := ROUND( _mpcsapp * ( _marzap / 100 ), 2 )
 
 endif
+
+// uvijek uzmi iz topska ovu cijenu pri prenosu
+_mpcsapp := topska->mpc
 
 select kalk_pripr
 locate for field->idroba == topska->idroba

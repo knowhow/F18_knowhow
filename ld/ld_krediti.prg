@@ -186,7 +186,7 @@ endif
 OTblKredit()
 
 select radkr
-set order to 2
+set order to tag "2"
 
 Box(,19,77)
     ImeKol:={}
@@ -217,9 +217,10 @@ Box(,19,77)
     cNaOsnovu:=PADR(cNaOsnovu,LEN(radkr->naosnovu))
     
     BrowseKey(m_x+6,m_y+1,m_x+19,m_y+77,ImeKol,{|Ch| EddKred(Ch)},"idradn+idkred+naosnovu=cidradn+cidkred+cnaosnovu",cIdRadn+cIdKred+cNaOsnovu,2,,)
+
 BoxC()
 
-closeret
+close all
 return
 
 
@@ -521,11 +522,11 @@ select (F_RADKR)
 if !used()
     fUsed:=.f.
     O_RADKR
-    set order to 2
+    set order to tag "2"
     //"RADKRi2","idradn+idkred+naosnovu itd..."
 else
     nNTXORD:=indexord()
-    set order to 2
+    set order to tag "2"
 endif
 
 seek _idradn + cIdkred + cNaOsnovu
@@ -639,7 +640,7 @@ else // zadana je radna jedinica ili je prikaz svih rj na jednom spisku
         set relation to idradn into radn
         set filter to radn->idRj==cIdRj
     endif
-    set order to 3
+    set order to tag "3"
     //"RADKRi3","idkred+naosnovu+idradn"
     seek cIdKred+cNaOsnovu
 endif
@@ -875,7 +876,6 @@ return
 
 
 function P_Krediti
-*{
 parameters cIdRadn,cIdkred,cNaOsnovu
 // Ponudi postojece kredite, i napuni cidkred, cnaosnovu
 local i
@@ -884,7 +884,7 @@ private ImeKol
 PushWa()
 
 select radkr
-set order to 2
+set order to tag "2"
 //"2","idradn+idkred+naosnovu+str(godina)+str(mjesec)",KUMPATH+"RADKR")
 set scope to (cIdRadn)
 
@@ -1104,7 +1104,7 @@ endif
 
 OTblKredit()
 
-set order to 2
+set order to tag "2"
 
 Box("#BRISANJE NEOTPLACENIH RATA KREDITA",9,77)
     @ m_x+2,m_y+2 SAY "Radnik:   " GET cIdRadn  valid {|| P_Radn(@cIdRadn),setpos(m_x+2,m_y+20),qqout(trim(radn->naz)+" ("+trim(radn->imerod)+") "+radn->ime),P_Krediti(cIdRadn,@cIdKred,@cNaOsnovu),.t.}

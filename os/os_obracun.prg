@@ -186,12 +186,9 @@ do while !eof()
             set_global_memvars_from_dbf()
             
             // izracunaj za predh.mjesec...
-            nPredAm := izracunaj_os_amortizaciju(_datum, ;
-                iif(!empty(_datotp), min(dDatOBr, _datotp), ;
-                    dDatObr - dana_u_mjesecu(dDatObr) ), ;
-                    nGStopa)
+            nPredAm := izracunaj_os_amortizaciju( _datum, dDatObr - dana_u_mjesecu( dDatObr ), nGStopa )
             
-            izracunaj_os_amortizaciju(_datum, iif(!empty(_datotp), min(dDatOBr, _datotp), dDatObr), ngStopa)
+            izracunaj_os_amortizaciju( _datum, dDatObr, nGStopa)
             
             if cAGrupe == "N"
                     
@@ -218,9 +215,11 @@ do while !eof()
             update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
         
             skip
+
         enddo  
 
         select_os_sii()
+
         skip
 
     enddo

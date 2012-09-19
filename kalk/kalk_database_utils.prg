@@ -408,6 +408,9 @@ local nRabat := 0
 
 select roba
 hseek cIdRoba
+select koncij
+hseek cIdKonto
+
 select kalk
 
 PushWa()
@@ -465,7 +468,13 @@ _fcj := nMpvu - nMpvi
 // stanje mpvsapp
 
 if round( nUlaz - nIzlaz, 4 ) <> 0
-    _mpcsapp := ROUND((nMPVU-nMPVI)/(nUlaz-nIzlaz),3)
+
+    // zasto ovako racuna mpcsapp ??????????????
+    // zar ne bi trebao uzeti iz sifrarnika ?????????
+    //_mpcsapp := ROUND((nMPVU-nMPVI)/(nUlaz-nIzlaz),3)
+    
+    // ubacio sada ovo !!!
+    _mpcsapp := UzmiMPCSif()
     _nc := ROUND((nNvu-nNvi)/(nUlaz-nIzlaz),3)
 else
     _mpcsapp := 0

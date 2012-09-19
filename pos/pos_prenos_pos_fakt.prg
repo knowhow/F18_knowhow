@@ -82,7 +82,7 @@ else
 endif
 
 select pos_doks
-SET ORDER TO 2  // IdVd+DTOS (Datum)+Smjena
+SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
 SEEK VD_RN+DTOS(dDatOd)
 
 if eof()
@@ -261,7 +261,7 @@ PripTOPSFAKT(cIdPartnG)
 SELECT POS
 
 // ("2", "IdOdj+idroba+DTOS(Datum)", KUMPATH+"POS")
-set order to 2   
+set order to tag "2"   
 
 go top
 

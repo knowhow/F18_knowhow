@@ -170,6 +170,9 @@ if roba->tip $ "UI"
     return
 endif
 
+select koncij
+hseek id_konto
+
 select kalk
 set order to tag "4"
 hseek gFirma + id_konto + id_roba 
@@ -212,12 +215,18 @@ do while !EOF() .and. field->idfirma == gFirma .and. field->pkonto == id_konto .
 
 enddo
  
-
 if ROUND( _ulaz - _izlaz, 4 ) <> 0
+
     kolicina := _ulaz - _izlaz
-    fcj := _mpvu - _mpvi 
-    mpcsapp := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 3 )
+    fcj := _mpvu - _mpvi
+
+    // ????????? zar ne bi trebala mpc iz sifrarnika ???????? 
+    //mpcsapp := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 3 )
+    // stavio sada ovo !!!
+    mpcsapp := UzmiMpcSif()    
+
     nc := ROUND( ( _nvu - _nvi ) / ( _ulaz - _izlaz ), 3 )
+
 endif
  
 return
@@ -319,6 +328,9 @@ do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
 	select roba
 	hseek cIdRoba
 
+    select koncij
+    hseek cIdKonto
+
 	select kalk
 
 	do while !EOF() .and. cIdfirma + cIdkonto + cIdroba == idFirma + pkonto + idroba
@@ -394,7 +406,13 @@ do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
         // stanje mpvsapp
 
  		if Round( nUlaz - nIzlaz, 4 ) <> 0
-  			_rec["mpcsapp"] := Round((nMPVU - nMPVI)/(nUlaz - nIzlaz),3)
+
+            // ???????
+            // takodjer treba da uzme stanje iz sifrarnika !!!!!
+      		//_rec["mpcsapp"] := Round((nMPVU - nMPVI)/(nUlaz - nIzlaz),3)
+
+            // postavio ovo !!!!
+            _rec["mpcsapp"] := UzmiMPCSif()
   			_rec["nc"] := round((nNvu - nNvi)/( nUlaz - nIzlaz ),3)
  		else
   			_rec["mpcsapp"] := 0

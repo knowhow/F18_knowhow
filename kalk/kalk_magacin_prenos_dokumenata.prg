@@ -64,9 +64,9 @@ O_PARTN
 O_TARIFA
 O_FAKT
 
-dDatKalk := DATE()
-cIdKonto := PADR("1200",7)
-cIdKonto2 := PADR("1310",7)
+dDatKalk := fetch_metric( "kalk_fakt_prenos_10_14_datum", my_user(), DATE() )
+cIdKonto := fetch_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), PADR("1200",7) )
+cIdKonto2 := fetch_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), PADR("1310",7) )
 cIdZaduz2 := SPACE(6)
 
 if glBrojacPoKontima
@@ -241,6 +241,10 @@ do while .t.
      	enddo
 
      	@ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+    
+        set_metric( "kalk_fakt_prenos_10_14_datum", my_user(), dDatKalk )
+        set_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), cIdKonto )
+        set_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), cIdKonto2 )
 
      	if gBrojac == "D"
       		cBrKalk := UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
@@ -315,6 +319,9 @@ ELSE
     cIdKonto:=padr("",7)
     cIdKonto2:=padr("1310",7)
 ENDIF
+
+cIdKonto := fetch_metric("kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
+cIdKonto2 := fetch_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
 
 cIdZaduz2 := space(6)
 
@@ -479,6 +486,9 @@ do while .t.
      
         @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
      
+        set_metric("kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
+        set_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
+
         if gBrojac=="D"
             cBrKalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
         endif
@@ -527,6 +537,9 @@ _dat_fakt_od := DATE()
 _dat_fakt_do := DATE()
 _br_kalk_dok := GetNextKalkDoc( _id_firma, _tip_kalk )
     
+_id_konto := fetch_metric("kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
+_id_konto_2 := fetch_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
+
 Box(, 15, 70 )
 
 DO WHILE .t.
@@ -664,6 +677,9 @@ DO WHILE .t.
      
     @ m_x + 14, m_y + 2 SAY "Dokument je generisan !!"
      
+    set_metric("kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
+    set_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
+
     inkey(4)
      
     @ m_x + 14, m_y + 2 SAY SPACE(30)

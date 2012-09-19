@@ -571,6 +571,8 @@ if nDevice == nil
 	nDevice := 0
 endif
 
+cType := fetch_metric( "fiscal_fprint_daily_type", my_user(), cType )
+
 // uslovi
 Box(,4,50)
 	@ m_x + 1, m_y + 2 SAY "**** dnevni izvjestaj ****" COLOR "I"
@@ -583,6 +585,9 @@ BoxC()
 if LastKey() == K_ESC
 	return
 endif
+
+// snimi parametar za naredni put
+set_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
 if cType == "2"
     _rpt_type := "X"

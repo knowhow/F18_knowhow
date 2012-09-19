@@ -53,7 +53,7 @@ O_POS
 
 if empty(cSmjena) // za period ponovo izgenerisi
 	select pos_doks
-	set order to 2 // IdVd+DTOS (Datum)+Smjena
+	set order to tag "2" // IdVd+DTOS (Datum)+Smjena
   	// prvo pobrisem stare dokumente razduzenja sirovina
   	Seek "96"+DTOS (dDatOd)
   	do while !eof() .and. pos_doks->IdVd=="96" .and. pos_doks->Datum<=dDatDo
@@ -93,7 +93,7 @@ Zapp()
 Scatter()
 
 select pos_doks
-Set order to 2
+Set order to tag "2"
 
 for i:=1 to 2
 	if i==1
@@ -171,11 +171,11 @@ next // i
 // prebaci dokumente razduzenja u DOKS/POS
 
 select pos_doks
-Set order to 2
+Set order to tag "2"
 select POS
-set order to 1
+set order to tag "1"
 SELECT PRIPRG
-set order to 2
+set order to tag "2"
 GO TOP
 while !eof()
 	cIdPos := PRIPRG->IdPos
@@ -187,12 +187,12 @@ while !eof()
       			select pos_doks
       			Seek "96"+DTOS (xDatum)+xSmjena
       			if !Found()
-        			set order to 1
+        			set order to tag "1"
         			cBrDok := _BrDok := pos_novi_broj_dokumenta( cIdPos, VD_RZS )
         			if (gBrojSto=="D")
 					_zakljucen := "Z"
 				endif
-				Set order to 2
+				Set order to tag "2"
         			Append Blank
         			sql_append()
         			Gather()
@@ -209,12 +209,12 @@ while !eof()
         			enddo
         			if Empty(cBrDok)  
 					// ne postoji RZS za cIdPos
-          				set order to 1
+          				set order to tag "1"
           				cBrDok := _BrDok := pos_novi_broj_dokumenta( cIdPos, VD_RZS )
           				if (gBrojSto=="D")
 						_zakljucen := "Z"
 					endif
-					Set order to 2
+					Set order to tag "2"
           				Append Blank
           				sql_append()
           				Gather()
@@ -265,7 +265,7 @@ for i:=1 to 2
  		cVrsta:="01"
 	endif
 	select pos_doks
-	Set order to 2
+	Set order to tag "2"
 	Seek cVrsta+DTOS (dDatOd)
 	do while !Eof() .and. pos_doks->IdVd==cVrsta .and. pos_doks->Datum <= dDatDo
   		if fTekuci .and. (pos_doks->Smjena<>cSmjena .or. pos_doks->M1==OBR_JEST)

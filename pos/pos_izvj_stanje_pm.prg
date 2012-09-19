@@ -149,15 +149,15 @@ cFilt:=""
 
 if EMPTY(cIdPos)
 	if gModul=="HOPS"
-		SET ORDER TO 5
+		SET ORDER TO TAG "5"
 	else 
 		
 		//"2": "IdOdj+idroba+DTOS(Datum)"
-		SET ORDER TO 2  
+		SET ORDER TO TAG "2"  
 		// 1 artikal, 1 stavka u izvjestaju (samo TOPS)
 	endif 
 else
-	SET ORDER TO 5
+	SET ORDER TO TAG "5"
 	cFilt:="IDPOS=='"+cIdPos+"'"
 endif
 

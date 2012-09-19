@@ -1283,14 +1283,14 @@ else
     
     endif
 
+    // ubaci broj fiskalnog racuna u fakturu
+    fisc_to_fakt( cFirma, cTipDok, cBrDok, nFisc_no, lStorno )
+
     // samo ako se zadaje direktna stampa ispisi
     if __auto = .f.
         msgbeep("Kreiran fiskalni racun broj: " + ;
             ALLTRIM(STR(nFisc_No)))
     endif
-
-    // ubaci broj fiskalnog racuna u fakturu
-    fisc_to_fakt( cFirma, cTipDok, cBrDok, nFisc_no, lStorno )
 
 endif
 

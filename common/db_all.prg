@@ -269,7 +269,7 @@ return reccount()
 
 
 function seek2(cArg)
-dbseek( cArg)
+dbseek(cArg)
 return nil
 
 // -------------------------------------------------------------------

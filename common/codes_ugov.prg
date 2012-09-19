@@ -58,18 +58,13 @@ return PostojiSifra(F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @c
 // setovanje vrijednosti polja ID pri otvaranju
 // ----------------------------------------------
 static function set_fld_id(cVal, cId)
-local lTrznica:=.f.
-
-lTrznica := IzFmkIni("Fakt_Ugovori", "Trznica", "N") == "D"
 
 cVal := "ID"
 
-if lTrznica
-	cVal := "NAZ2"
-elseif ( gVFU == "1" ) .or. ( cId == nil )
-	cVal := "ID"
+if ( gVFU == "1" ) .or. ( cId == nil )
+    cVal := "ID"
 else
-	cVal := "NAZ2"
+    cVal := "NAZ2"
 endif
 
 return
@@ -94,44 +89,44 @@ AADD(aImeKol, { "Vrsta", {|| vrsta}, "Vrsta" })
 
 
 if ugov->(fieldpos("F_NIVO")) <> 0
-	AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
-	AADD(aImeKol, { "P.nivo.dana", {|| f_p_d_nivo}, "f_p_d_nivo" ,,, "99999" })
-	AADD(aImeKol, { "Fakturisano do", {|| fakt_do() }, "zaokr"  })
+    AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
+    AADD(aImeKol, { "P.nivo.dana", {|| f_p_d_nivo}, "f_p_d_nivo" ,,, "99999" })
+    AADD(aImeKol, { "Fakturisano do", {|| fakt_do() }, "zaokr"  })
 
-	AADD(aImeKol, { "Poslj.faktur.", {|| dat_l_fakt }, "dat_l_fakt"  })
+    AADD(aImeKol, { "Poslj.faktur.", {|| dat_l_fakt }, "dat_l_fakt"  })
 endif
 
 AADD(aImeKol, { "TXT 1", {|| IdTxt}, "IdTxt", {|| .t.}, {|| P_FTxt(@wIdTxt)}})
 
 if ugov->(fieldpos("IDDODTXT")) <> 0
-	AADD(aImeKol,{ "TXT 2", {|| IdDodTxt}, "IdDodTxt", {|| .t.}, {|| P_FTxt(@wIdDodTxt) } } )
+    AADD(aImeKol,{ "TXT 2", {|| IdDodTxt}, "IdDodTxt", {|| .t.}, {|| P_FTxt(@wIdDodTxt) } } )
 endif
 
 if ugov->(fieldpos("TXT2")) <> 0
-	AADD(aImeKol,{ "TXT 3", {|| txt2}, "txt2", {|| .t.}, {|| P_FTxt(@wTxt2) } } )
-	AADD(aImeKol,{ "TXT 4", {|| txt3}, "txt3", {|| .t.}, {|| P_FTxt(@wTxt3) } } )
-	AADD(aImeKol,{ "TXT 5", {|| txt4}, "txt4", {|| .t.}, {|| P_FTxt(@wTxt4) } } )
+    AADD(aImeKol,{ "TXT 3", {|| txt2}, "txt2", {|| .t.}, {|| P_FTxt(@wTxt2) } } )
+    AADD(aImeKol,{ "TXT 4", {|| txt3}, "txt3", {|| .t.}, {|| P_FTxt(@wTxt3) } } )
+    AADD(aImeKol,{ "TXT 5", {|| txt4}, "txt4", {|| .t.}, {|| P_FTxt(@wTxt4) } } )
 endif
 
 AADD(aImeKol,{ "KM/EUR" , {|| DINDEM}, "DINDEM" })
 
 if ( ugov->(fieldpos("A1")) <> 0 )
-	if IzFMkIni('Fakt_Ugovori',"A1",'D')=="D"
-    		AADD(aImeKol,{ "A1", {|| A1}, "A1"})
-  	endif
-  	if IzFMkIni('Fakt_Ugovori',"A2",'D')=="D"
-    		AADD(aImeKol,{ "A2", {|| A2}, "A2"})
-  	endif
-  	if IzFMkIni('Fakt_Ugovori',"B1",'D')=="D"
-    		AADD(aImeKol,{ "B1", {|| B1}, "B1"})
-  	endif
-  	if IzFMkIni('Fakt_Ugovori',"B2",'D')=="D"
-    		AADD(aImeKol,{ "B2", {|| B2}, "B2"})
-  	endif
+    if IzFMkIni('Fakt_Ugovori',"A1",'D')=="D"
+            AADD(aImeKol,{ "A1", {|| A1}, "A1"})
+    endif
+    if IzFMkIni('Fakt_Ugovori',"A2",'D')=="D"
+            AADD(aImeKol,{ "A2", {|| A2}, "A2"})
+    endif
+    if IzFMkIni('Fakt_Ugovori',"B1",'D')=="D"
+            AADD(aImeKol,{ "B1", {|| B1}, "B1"})
+    endif
+    if IzFMkIni('Fakt_Ugovori',"B2",'D')=="D"
+            AADD(aImeKol,{ "B2", {|| B2}, "B2"})
+    endif
 endif
 
 for i:=1 TO LEN(aImeKol)
-	AADD(aKol, i)
+    AADD(aKol, i)
 next
 
 return
@@ -146,70 +141,67 @@ local nRec := 0
 local _t_area := SELECT()
 
 do case
-	case ( Ch == K_CTRL_T )
-		// brisi ugovor
-		if br_ugovor() == 1
-			return DE_REFRESH
-		endif
-		return DE_CONT
-		
-	case UPPER(CHR(Ch)) == "R"
-		
-		// setuj datum do kojeg si fakturisao
-		if set_datl_fakt() == 1
-			return DE_REFRESH
-		else
-			return DE_CONT
-		endif
-		
-	case UPPER(CHR(Ch)) == "P"
-	
-		// pregled destinacija
-		if ugov->(FIELDPOS("def_dest")) <> 0
-			p_dest_2( nil, ugov->idpartner )
-		endif
+    case ( Ch == K_CTRL_T )
+        // brisi ugovor
+        if br_ugovor() == 1
+            return DE_REFRESH
+        endif
+        return DE_CONT
+        
+    case UPPER(CHR(Ch)) == "R"
+        
+        // setuj datum do kojeg si fakturisao
+        if set_datl_fakt() == 1
+            return DE_REFRESH
+        else
+            return DE_CONT
+        endif
+        
+    case UPPER(CHR(Ch)) == "P"
+    
+        p_dest_2( nil, ugov->idpartner )
 
-		return DE_CONT
-		
-	case ( Ch == K_CTRL_G )
-	   	
-		// automatsko generisanje novih ugovora 
-		// za sve partnere sa podacima
-		// prethodnog ugovora
-	   	gen_ug_part()
-	
-	case (Ch == K_F2)
-		// ispravka ugovora
-		edit_ugovor(.f.)
-		return 7
-	
-	case (Ch == K_F3)
-		if Pitanje(, "Promjena broja ugovora ?", "N") == "D"
-		        chg_ug_id(id)
-		endif
-		return DE_REFRESH
+        return DE_CONT
+        
+    case ( Ch == K_CTRL_G )
+        
+        // automatsko generisanje novih ugovora 
+        // za sve partnere sa podacima
+        // prethodnog ugovora
+        gen_ug_part()
+    
+    case (Ch == K_F2)
+        // ispravka ugovora
+        edit_ugovor(.f.)
+        return 7
+    
+    case (Ch == K_F3)
+        if Pitanje(, "Promjena broja ugovora ?", "N") == "D"
+                chg_ug_id(id)
+        endif
+        return DE_REFRESH
 
 
-	case (Ch == K_CTRL_N)
-		
-		// novi ugovor
-	   	edit_ugovor(.t.)
-	  	return 7
-	  
-	case ( Ch == K_F5 )
-    		
-		V_RUgov(ugov->id)
- 		return 6 
-		// DE_CONT2
+    case (Ch == K_CTRL_N)
+        
+        // novi ugovor
+        edit_ugovor(.t.)
+        return 7
+      
+    case ( Ch == K_F5 )
+            
+        V_RUgov(ugov->id)
+        return 6 
+        // DE_CONT2
 
-	case ( Ch == K_F6 )
-  		I_ListaUg()
+    case ( Ch == K_F6 )
+        I_ListaUg()
 
-	case ( Ch == K_ALT_L )
+    case ( Ch == K_ALT_L )
 
         nRec := RECNO()
 
-  		kreiraj_adrese_iz_ugovora()
+        kreiraj_adrese_iz_ugovora()
 
         O_RUGOV
         O_DEST
@@ -231,27 +223,27 @@ local cProm := "N"
 private GetList := {}
 
 Box(, 5, 60)
-	
-	@ m_x + 1, m_y + 2 SAY "SETOVANJE DATUMA POSLJEDNJEG FAKTURISANJA:"
-	@ m_x + 3, m_y + 2 SAY "Postavi datum na:" GET dDatL
-	@ m_x + 5, m_y + 2 SAY "Izvrsiti promjenu (D/N)?" GET cProm VALID cProm $ "DN" PICT "@!"
-	
-	read
+    
+    @ m_x + 1, m_y + 2 SAY "SETOVANJE DATUMA POSLJEDNJEG FAKTURISANJA:"
+    @ m_x + 3, m_y + 2 SAY "Postavi datum na:" GET dDatL
+    @ m_x + 5, m_y + 2 SAY "Izvrsiti promjenu (D/N)?" GET cProm VALID cProm $ "DN" PICT "@!"
+    
+    read
 BoxC()
 
 if LastKey() <> K_ESC .and. cProm == "D"
-	
-	select ugov 
-	go top
-	
-	do while !EOF()
-		if ugov->f_nivo == "G"
-			replace dat_l_fakt with dDatL
-		endif
-		skip
-	enddo
-	
-	return 1
+    
+    select ugov 
+    go top
+    
+    do while !EOF()
+        if ugov->f_nivo == "G"
+            replace dat_l_fakt with dDatL
+        endif
+        skip
+    enddo
+    
+    return 1
 endif
 
 return 0
@@ -267,39 +259,39 @@ local cDN
 local nTRec
 
 if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
-	select rugov
-     	cArtikal:=idroba
-     	cArtikalOld:=idroba
-     	cDN:="N"
-	Box(,3,50)
-      	@ m_x+1, m_y+5 SAY "Generisi ugovore za artikal: " GET cArtikal
-      	@ m_x+2, m_y+5 SAY "Preuzmi podatke artikla: " GET cArtikalOld
-      	@ m_x+3, m_y+5 SAY "Zamjenu vrsiti samo za aktivne D/N: " GET cDN valid cDN $ "DN"
-      	read
-     	BoxC()
+    select rugov
+        cArtikal:=idroba
+        cArtikalOld:=idroba
+        cDN:="N"
+    Box(,3,50)
+        @ m_x+1, m_y+5 SAY "Generisi ugovore za artikal: " GET cArtikal
+        @ m_x+2, m_y+5 SAY "Preuzmi podatke artikla: " GET cArtikalOld
+        @ m_x+3, m_y+5 SAY "Zamjenu vrsiti samo za aktivne D/N: " GET cDN valid cDN $ "DN"
+        read
+        BoxC()
 
-     	if LastKey() == K_ESC
-		return DE_CONT
-	endif
+        if LastKey() == K_ESC
+        return DE_CONT
+    endif
 
-	if cDN=="D"
-      		set relation to id into ugov
+    if cDN=="D"
+            set relation to id into ugov
     endif
 
      do while !eof()
-       		skip
-		nTrec:=recno()
-		skip -1
-        	if cDN=="D" .and. ugov->aktivan=="D" .and. cArtikalOld==idroba .or. cDN=="N" .and. cArtikalOld==idroba
-        		Scatter()
-        		append blank
-        		_idroba := cArtikal
-        		Gather()
-        		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
-        		go nTrec
-        	else
-        		go nTrec
-        	endif
+            skip
+        nTrec:=recno()
+        skip -1
+            if cDN=="D" .and. ugov->aktivan=="D" .and. cArtikalOld==idroba .or. cDN=="N" .and. cArtikalOld==idroba
+                Scatter()
+                append blank
+                _idroba := cArtikal
+                Gather()
+                @ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
+                go nTrec
+            else
+                go nTrec
+            endif
      enddo
      set relation to
      select ugov
@@ -316,19 +308,19 @@ function br_ugovor()
 local cId
 local nTRec
 if Pitanje(,"Izbrisati ugovor sa pripadajucim stavkama ?","N")=="D"
-	cId:=id
-    	select rugov
-    	seek cid
-    	do while !eof() .and. cId==id
-       		skip
-		nTrec := RecNo()
-		skip -1
-       		delete
-       		go nTrec
-    	enddo
-    	select ugov
-    	delete
-	return 1
+    cId:=id
+        select rugov
+        seek cid
+        do while !eof() .and. cId==id
+            skip
+        nTrec := RecNo()
+        skip -1
+            delete
+            go nTrec
+        enddo
+        select ugov
+        delete
+    return 1
 endif
 
 return 0
@@ -348,31 +340,31 @@ local _fakt_do_mj := 0
 local _fakt_do_go := 0
 
 if lNovi
-	nRec:=RECNO()
-	GO BOTTOM
-	SKIP 1
+    nRec:=RECNO()
+    GO BOTTOM
+    SKIP 1
 endif
- 	    
+        
 Scatter()
-	   
+       
 if lNovi
 
-	_datod:=DATE()
-   	_datdo:=CTOD("31.12.2059")
-   	_aktivan:="D"
-   	_dindem:=DFTdindem
-   	_idtipdok:=DFTidtipdok
-   	_zaokr:=DFTzaokr
-   	_vrsta:=DFTvrsta
-   	_idtxt:=DFTidtxt
-   	_iddodtxt:=DFTiddodtxt
-	
-	if ugov->(fieldpos("F_NIVO")) <> 0
-		_f_nivo := "M"
-		_f_p_d_nivo := 0
-		_dat_l_fakt := CToD("")
-	endif
-	
+    _datod:=DATE()
+    _datdo:=CTOD("31.12.2059")
+    _aktivan:="D"
+    _dindem:=DFTdindem
+    _idtipdok:=DFTidtipdok
+    _zaokr:=DFTzaokr
+    _vrsta:=DFTvrsta
+    _idtxt:=DFTidtxt
+    _iddodtxt:=DFTiddodtxt
+    
+    if ugov->(fieldpos("F_NIVO")) <> 0
+        _f_nivo := "M"
+        _f_p_d_nivo := 0
+        _dat_l_fakt := CToD("")
+    endif
+    
 endif
 
 Box(, 20,75,.f.)
@@ -386,12 +378,12 @@ Box(, 20,75,.f.)
 @ m_x + nX, m_y + 2 SAY PADL("Partner", nBoxLen) GET _idpartner VALID {|| x:=P_Firma(@_IdPartner), MSAY2(m_x+2,m_y+35, Ocitaj(F_PARTN,_IdPartner,"NazPartn()")) , x } PICT "@!"
 
 if is_dest()
-	
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("Def.dest", nBoxLen) GET _def_dest ;
+    
+    ++ nX
+    
+    @ m_x + nX, m_y + 2 SAY PADL("Def.dest", nBoxLen) GET _def_dest ;
           PICT "@!" VALID {|| EMPTY(_def_dest) .or. p_dest_2( @_def_dest, _idpartner ) }
-	
+    
 endif
 
 ++ nX
@@ -420,27 +412,27 @@ endif
 
 
 if ugov->(fieldpos("F_NIVO")) <> 0
-	
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("Nivo fakt.", nBoxLen) GET _f_nivo PICT "@!" VALID _f_nivo $ "MPG"
+    
+    ++ nX
+    
+    @ m_x + nX, m_y + 2 SAY PADL("Nivo fakt.", nBoxLen) GET _f_nivo PICT "@!" VALID _f_nivo $ "MPG"
 
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("Pr.nivo dana", nBoxLen) GET _f_p_d_nivo PICT "99999" WHEN _f_nivo == "P"
+    ++ nX
+    
+    @ m_x + nX, m_y + 2 SAY PADL("Pr.nivo dana", nBoxLen) GET _f_p_d_nivo PICT "99999" WHEN _f_nivo == "P"
 
-	++ nX
+    ++ nX
 
-	// mjesec 
-	@ m_x + nX, m_y + 2 SAY PADL("Fakturisano do", nBoxLen) GET _fakt_do_mj ;
-		WHEN  { ||  _fakt_do_mj := month(dat_l_fakt), .t. } ;
-	        PICT "99"
-		
-	// godina
-	@ m_x + nX, m_y + 2 + 28  SAY "/" GET _fakt_do_go ;
-		WHEN { ||  _fakt_do_go := year(dat_l_fakt), .t. } ;
-		VALID { ||   _dat_l_fakt := mo_ye(_fakt_do_mj, _fakt_do_go), .t. } ;
-	        PICT "9999"
+    // mjesec 
+    @ m_x + nX, m_y + 2 SAY PADL("Fakturisano do", nBoxLen) GET _fakt_do_mj ;
+        WHEN  { ||  _fakt_do_mj := month(dat_l_fakt), .t. } ;
+            PICT "99"
+        
+    // godina
+    @ m_x + nX, m_y + 2 + 28  SAY "/" GET _fakt_do_go ;
+        WHEN { ||  _fakt_do_go := year(dat_l_fakt), .t. } ;
+        VALID { ||   _dat_l_fakt := mo_ye(_fakt_do_mj, _fakt_do_go), .t. } ;
+            PICT "9999"
 
 endif
 
@@ -453,36 +445,36 @@ endif
 @ m_x + nX, m_y + 2 SAY PADL("Dod.txt 1", nBoxLen) GET _idtxt VALID P_FTxt(@_IdTxt) PICT "@!"
 
 if ugov->(fieldpos("IDDODTXT"))<>0
-	
-	++ nX
+    
+    ++ nX
 
-	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 2", nBoxLen) GET _iddodtxt VALID P_FTxt(@_IdDodTxt) PICT "@!"
+    @ m_x + nX, m_y + 2 SAY PADL("Dod.txt 2", nBoxLen) GET _iddodtxt VALID P_FTxt(@_IdDodTxt) PICT "@!"
 endif
 
 if ugov->(fieldpos("TXT2"))<>0
-	
-	++ nX
+    
+    ++ nX
 
-	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 3", nBoxLen) GET _txt2 VALID P_FTxt(@_Txt2) PICT "@!"
+    @ m_x + nX, m_y + 2 SAY PADL("Dod.txt 3", nBoxLen) GET _txt2 VALID P_FTxt(@_Txt2) PICT "@!"
 
-	++ nX
+    ++ nX
 
-	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 4", nBoxLen) GET _txt3 VALID P_FTxt(@_Txt3) PICT "@!"
-	
-	++ nX
+    @ m_x + nX, m_y + 2 SAY PADL("Dod.txt 4", nBoxLen) GET _txt3 VALID P_FTxt(@_Txt3) PICT "@!"
+    
+    ++ nX
 
-	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 5", nBoxLen) GET _txt4 VALID P_FTxt(@_Txt4) PICT "@!"
+    @ m_x + nX, m_y + 2 SAY PADL("Dod.txt 5", nBoxLen) GET _txt4 VALID P_FTxt(@_Txt4) PICT "@!"
 
 
 endif
 
 if ugov->(fieldpos("A1"))<>0
-	++ nX
-	@ m_x + nX, m_y + 2 SAY PADL("A1", nBoxLen) GET _a1
-	@ m_x + nX, col() + 2 SAY PADL("A2", nBoxLen) GET _a2
+    ++ nX
+    @ m_x + nX, m_y + 2 SAY PADL("A1", nBoxLen) GET _a1
+    @ m_x + nX, col() + 2 SAY PADL("A2", nBoxLen) GET _a2
         ++ nX
-	@ m_x + nX, m_y + 2 SAY PADL("B1", nBoxLen) GET _b1
-	@ m_x + nX, col() + 2 SAY PADL("B2", nBoxLen) GET _b2
+    @ m_x + nX, m_y + 2 SAY PADL("B1", nBoxLen) GET _b1
+    @ m_x + nX, col() + 2 SAY PADL("B2", nBoxLen) GET _b2
 endif
 
 read
@@ -490,11 +482,11 @@ read
 BoxC()
 
 if LastKey() == K_ESC
-	return DE_CONT
+    return DE_CONT
 endif
 
 if lNovi 
-	append blank
+    append blank
 endif
 
 _vars := get_dbf_global_memvars()
@@ -502,9 +494,9 @@ _vars := get_dbf_global_memvars()
 if !update_rec_server_and_dbf(ALIAS(), _vars, 1, "FULL")
    delete_with_rlock()
 else
-	if lNovi
-		GO (nRec)
-	endif
+    if lNovi
+        GO (nRec)
+    endif
 endif
 
 return 7
@@ -522,7 +514,7 @@ Box(,2,50)
 BoxC()
 
 if Lastkey() == K_ESC
-	return DE_CONT
+    return DE_CONT
 endif
     
 nRecno:=RECNO()
@@ -535,16 +527,16 @@ else
   GO nRecno
 endif
   
-     	
+        
 select rugov
 seek cIdOld
-     	
+        
 do while !eof() .and. ( cIdOld == id )
-       		skip
-		nTrec:=recno()
-		skip -1
-       		replace id with cid
-       		go nTrec
+            skip
+        nTrec:=recno()
+        skip -1
+            replace id with cid
+            go nTrec
 enddo
 select ugov
 replace id with cid
@@ -685,8 +677,8 @@ do case
         APPEND BLANK
         Scatter()
          _id:=cIdUg
-	 _idroba:=DFTidroba
-	 _kolicina:=DFTkolicina
+     _idroba:=DFTidroba
+     _kolicina:=DFTkolicina
         Gather()
       ENDIF
       SET FILTER TO ID==cIdUg; GO TOP
@@ -747,8 +739,8 @@ do case
      SELECT UGOV
      SKIP -1
      IF BOF()
-     	SELECT (nArr)
-	RETURN (nRet)
+        SELECT (nArr)
+    RETURN (nRet)
      ENDIF
 
     endif
@@ -775,10 +767,10 @@ do case
     Box(,8,77)
      @ m_x+2, m_y+2 SAY "SIFRA ARTIKLA:" GET _idroba ;
         VALID (glDistrib .and. RIGHT(TRIM(_idroba),1)==";") .or. P_Roba(@_idroba) ;
-	PICT "@!"
+    PICT "@!"
      @ m_x+3, m_y+2 SAY "Kolicina      " GET _Kolicina  ;
         pict "99999999.999"
-	
+    
      if IzFMkIni('Fakt_Ugovori',"Rabat_Porez",'N')=="D"
        @ m_x+4, m_y+2 SAY "Rabat         " GET _Rabat ;
              pict "99.999"
@@ -801,13 +793,13 @@ do case
 
     IF LASTKEY() != K_ESC
 
-      	APPEND BLANK
+        APPEND BLANK
         _vars := get_dbf_global_memvars()
         if !update_rec_server_and_dbf(ALIAS(), _vars, 1, "FULL")
                 delete_with_rlock()
         endif
 
-      	lTrebaOsvUg:=.t.
+        lTrebaOsvUg:=.t.
     ELSE
       GO (nRec)
       RETURN DE_CONT
@@ -853,7 +845,7 @@ local lRefresh:=.f.
 local cEkran:=""
 
 if lNew == nil
-	lNew:=.f.
+    lNew:=.f.
 endif
 
 SELECT UGOV
@@ -879,9 +871,9 @@ if lNew
     SKIP -1
     
     if EMPTY(id)
-    	wid := PADL("1", LEN(id), "0")
+        wid := PADL("1", LEN(id), "0")
     else
-    	wid := PADR(NovaSifra(TRIM(id)), LEN(ID))
+        wid := PADR(NovaSifra(TRIM(id)), LEN(ID))
     endif
     
 else
@@ -892,15 +884,15 @@ endif
 
 cPom:= TempIni('Fakt_Ugovori_Novi','Partner','_NIL',"READ")
 if cPom <> "_NIL_"
-	wIdPartner:=padr(cPom,6)
-    	cPom:= TempIni('Fakt_Ugovori_Novi','Partner','_NIL_',"WRITE")
+    wIdPartner:=padr(cPom,6)
+        cPom:= TempIni('Fakt_Ugovori_Novi','Partner','_NIL_',"WRITE")
 endif
 
 @ m_x+1, m_y+ 1 SAY "Ugovor broj    :" GET wid WHEN lWhen VALID !lWhen .or. !EMPTY(wid) .and. VPSifra(wid)
 @ m_x+1, m_y+30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
 @ m_x+2, m_y+ 1 SAY "PARTNER        :" GET widpartner ;
         WHEN lWhen ;
-	VALID !lWhen .or. P_Firma(@widpartner) .and. MSAY2(m_x+2,30, Ocitaj(F_PARTN,wIdPartner,"NazPartn()")) PICT "@!"
+    VALID !lWhen .or. P_Firma(@widpartner) .and. MSAY2(m_x+2,30, Ocitaj(F_PARTN,wIdPartner,"NazPartn()")) PICT "@!"
 
 @ m_x+3, m_y+ 1 SAY "DATUM UGOVORA  :" GET wdatod ;
          WHEN lWhen
@@ -912,8 +904,8 @@ endif
 @ m_x+4, m_y+30 SAY "TIP DOKUMENTA  :" GET widtipdok WHEN lWhen
 @ m_x+5, m_y+ 1 SAY "AKTIVAN (D/N)  :" GET waktivan ;
          WHEN lWhen ;
-	 VALID !lWhen .or. waktivan$ "DN" ;
-	 PICT "@!"
+     VALID !lWhen .or. waktivan$ "DN" ;
+     PICT "@!"
 @ m_x+5, m_y+30 SAY "VALUTA (KM/DEM):" GET wdindem ;
        WHEN lWhen ;
        PICT "@!"
@@ -925,45 +917,45 @@ endif
 read
 
 IF !lWhen
-	@ m_x+2, m_y+24 SAY "---->("+Ocitaj(F_PARTN,wIdPartner,"NazPartn()")+")"
+    @ m_x+2, m_y+24 SAY "---->("+Ocitaj(F_PARTN,wIdPartner,"NazPartn()")+")"
 ENDIF
 
 IF lNew .and. !LASTKEY()==K_ESC
-	lRefresh:=.t.
-    	APPEND BLANK
+    lRefresh:=.t.
+        APPEND BLANK
 ELSEIF lNew
-	GO (nRecUg)
+    GO (nRecUg)
 ENDIF
 
 IF lWhen .and. !LASTKEY()==K_ESC
-	IF wid!=id
-      		lRefresh:=.t.
-      		SELECT RUGOV
-      		SET FILTER TO
-      		HSEEK UGOV->id
-      		DO WHILE !EOF() .and. id==UGOV->id
-        		SKIP 1
-			nRecRug:=RECNO()
-			SKIP -1
-        		Scatter()
-			_id:=wid
-			Gather()
-        		GO (nRecRug)
-      		ENDDO
-      		cIdUg:=wid
-      		SET FILTER TO ID==cIdUg
-		GO TOP
-      		SELECT UGOV
-    	ENDIF
-    	Gather("w")
+    IF wid!=id
+            lRefresh:=.t.
+            SELECT RUGOV
+            SET FILTER TO
+            HSEEK UGOV->id
+            DO WHILE !EOF() .and. id==UGOV->id
+                SKIP 1
+            nRecRug:=RECNO()
+            SKIP -1
+                Scatter()
+            _id:=wid
+            Gather()
+                GO (nRecRug)
+            ENDDO
+            cIdUg:=wid
+            SET FILTER TO ID==cIdUg
+        GO TOP
+            SELECT UGOV
+        ENDIF
+        Gather("w")
 ENDIF
 
 IF lWhen
-	lTrebaOsvUg:=.t.
+    lTrebaOsvUg:=.t.
 ENDIF
 
 IF lNew
-	RESTSCREEN( m_x+10, m_y+1, m_x+17, m_y+72, cEkran)
+    RESTSCREEN( m_x+10, m_y+1, m_x+17, m_y+72, cEkran)
 ENDIF
 
 SELECT (nArr)
@@ -1167,7 +1159,7 @@ function fakt_do(dDat)
 local cRet:=""
 
 if dDat == nil
-	dDat := dat_l_fakt
+    dDat := dat_l_fakt
 endif
 
 cRet := STR(month(dDat),2) + "/" + STR(year(dDat))

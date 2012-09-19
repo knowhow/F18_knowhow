@@ -164,7 +164,7 @@ return
  
 function UkloniRadne(cIdRadnik)
 SELECT _POS
-Set order to 1
+Set order to tag "1"
 SEEK gIdPos+VD_RN
 while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
     if _POS->IdRadnik==cIdRadnik .and. _POS->M1 == "Z"

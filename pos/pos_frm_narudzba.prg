@@ -268,6 +268,7 @@ if gOcitBarCod
    hb_keyput(K_ENTER)
 endif
 
+
 return _ok
  
 

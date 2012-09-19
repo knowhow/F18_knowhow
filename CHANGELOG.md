@@ -1,3 +1,9 @@
+1.3.23  2012-09-19, vsasa
+
+ - pos, kalk, opcije inventure, bugfix [#29232](http://redmine.bring.out.ba/issues/29232)
+ - pos, štampanje kartice artikla, stanja artikala, bugfix [#29238](http://redmine.bring.out.ba/issues/29238)
+ - pos, ispis stanja artikla pored opisa na unosu računa [#29240](http://redmine.bring.out.ba/issues/29240)
+ 
 1.3.22  2012-09-12, vsasa
 
  - fakt, ažuriranje storno računa, bugfix [#29198](http://redmine.bring.out.ba/issues/29198)

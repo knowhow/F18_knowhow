@@ -42,8 +42,8 @@ O_SIFV
 O_ROBA
 O_POS
 
-cRoba:=SPACE(len(idroba))
-cIdPos:=gIdPos
+cRoba := SPACE(10)
+cIdPos := gIdPos
 
 cDat0 := fetch_metric("pos_kartica_datum_od", my_user(), cDat0 )
 cDat1 := fetch_metric("pos_kartica_datum_do", my_user(), cDat1 )
@@ -82,9 +82,9 @@ endif
 
 read
 
-@ m_x+5,m_y+6 SAY "Sifra artikla (prazno-svi)" GET cRoba valid empty(cRoba) .or. P_Roba(@cRoba) pict "@!"
-@ m_x+7,m_y+2 SAY "za period " GET cDat0
-@ m_x+7,col()+2 SAY "do " GET cDat1
+@ m_x + 5, m_y + 6 SAY "Sifra artikla (prazno-svi)" GET cRoba valid EMPTY(cRoba) .or. P_Roba(@cRoba) PICT "@!"
+@ m_x + 7, m_y + 2 SAY "za period " GET cDat0
+@ m_x + 7, col() + 2 SAY "do " GET cDat1
 @ m_x+9,m_y+2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt valid cpocst $ "DN" pict "@!"
 @ m_x+10,m_y+2 SAY "Prikaz partnera D/N ?" GET cPPar valid cPPar $ "DN" pict "@!"
 @ m_x+11,m_y+2 SAY "Siroki papir    D/N ?" GET cSiroki valid cSiroki $ "DN" pict "@!"
@@ -103,28 +103,14 @@ BoxC()
 SELECT ODJ
 HSEEK cIdOdj
 
-if gModul=="TOPS"
-	cZaduzuje:="R"
-	cU:=R_U
-	cI:=R_I
-	cRSdbf:="ROBA"
-else
-	if Zaduzuje == "S"
-		cZaduzuje:="S"
-		cU:=S_U
-		cI:=S_I
-		cRSdbf:="SIROV"
-	else
-		cZaduzuje:="R"
-		cU:=R_U
-		cI:=R_I
-		cRSdbf:="ROBA"
-	endif
-endif
+cZaduzuje := "R"
+cU := R_U
+cI := R_I
+cRSdbf := "ROBA"
 
-if gVrstaRS=="S"
-  cLM:=SPACE(5)
-  nSir:=80
+if gVrstaRS == "S"
+  cLM := SPACE(5)
+  nSir := 80
 endif
 
 
@@ -135,15 +121,14 @@ if cPPar=="D"
 	SET ORDER TO TAG "1"
 endif
 
-
 SELECT POS
-set order to 2      
+set order to tag "2"      
 // "2", "IdOdj+idroba+DTOS(Datum)", ;
 
-if empty(cRoba)
-	Seek2(cIdOdj)
+if EMPTY( cRoba )
+	Seek2( cIdOdj )
 else
-	Seek2(cIdOdj+cRoba)
+	Seek2( cIdOdj + cRoba )
 	// da li postoji stanje ovog artikla
 	if pos->idroba <> cRoba
 		MsgBeep("Ne postoje trazeni podaci!")
@@ -151,9 +136,7 @@ else
 	endif
 endif
 
-
 EOF CRET
-
 
 START PRINT CRET
 

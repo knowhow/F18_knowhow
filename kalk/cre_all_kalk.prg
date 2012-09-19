@@ -261,20 +261,4 @@ endif
 CREATE_INDEX( "1", "IdFirma+idvd+brdok", "kalk_doks2" )
 
 
-// objekti
-aDbf:={}
-AADD(aDbf, {"id","C",2,0})
-AADD(aDbf, {"naz","C",10,0}) 
-AADD(aDbf, {"IdObj","C", 7,0})
-if !FILE(f18_ime_dbf("objekti"))
-	DBCREATE2("OBJEKTI", aDbf)
-    reset_semaphore_version( "objekti" )
-    my_use( "objekti" )
-    close all
-endif
-CREATE_INDEX("ID", "ID", "OBJEKTI")
-CREATE_INDEX("NAZ", "NAZ", "OBJEKTI")
-CREATE_INDEX("IdObj", "IdObj", "OBJEKTI")
-
-
 return .t.

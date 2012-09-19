@@ -327,6 +327,23 @@ endif
 CREATE_INDEX("ID", "Id", "ks") 
 CREATE_INDEX("2", "dtos(datod)", "ks") 
 
+
+// objekti
+if !FILE(f18_ime_dbf("objekti"))
+    aDbf:={}
+    AADD(aDbf, {"id","C",2,0})
+    AADD(aDbf, {"naz","C",10,0}) 
+    AADD(aDbf, {"IdObj","C", 7,0})
+	DBCREATE2("OBJEKTI", aDbf)
+    reset_semaphore_version( "objekti" )
+    my_use( "objekti" )
+    close all
+endif
+CREATE_INDEX("ID", "ID", "OBJEKTI")
+CREATE_INDEX("NAZ", "NAZ", "OBJEKTI")
+CREATE_INDEX("IdObj", "IdObj", "OBJEKTI")
+
+
 nArea := nil
 
 // kreiraj lokal tabelu : LOKAL
@@ -340,6 +357,11 @@ cre_relation()
 
 // kreiraj pravila : RULES
 cre_fmkrules()
+
+// kreiranje tabela ugovora
+db_cre_ugov()
+
+c_fdevice()
 
 return .t.
 

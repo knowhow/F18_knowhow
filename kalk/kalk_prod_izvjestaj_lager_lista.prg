@@ -30,6 +30,7 @@ local cPicCDEm := gPicCDem
 local cPicDem := gPicDem
 local cSrKolNula := "0"
 local _curr_user := "<>"
+local cMpcIzSif := "N"
 
 gPicCDEM:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM 
 gPicDEM:= REPLICATE("9", VAL(gFPicDem)) + gPicDem
@@ -106,6 +107,7 @@ do while .t.
  	@ m_x+5,m_y+2 SAY "Partneri" GET qqIdPartn pict "@!S50"
  	@ m_x+6,m_y+2 SAY "Vrste dokumenata  " GET qqIDVD pict "@!S30"
  	@ m_x+7,m_y+2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  valid cpnab $ "DN" pict "@!"
+ 	@ m_x+7,col()+1 SAY "MPC iz sifrarnika D/N" GET cMpcIzSif valid cMpcIzSif $ "DN" pict "@!"
  	@ m_x+8,m_y+2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  valid cNula $ "DN" pict "@!"
  	@ m_x+9,m_y+2 SAY "Datum od " GET dDatOd
  	@ m_x+9,col()+2 SAY "do" GET dDatDo
@@ -253,6 +255,7 @@ private bZagl:={|| ZaglLLP()}
 nTUlaz:=0
 nTIzlaz:=0
 nTPKol:=0
+nTMpv := 0
 nTMPVU:=0
 nTMPVI:=0
 nTNVU:=0
@@ -431,13 +434,13 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 	//ne prikazuj stavke 0
 	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 4 ) <> 0 
 		
-        if PROW()>61+gPStranica
+        if PROW() > 61 + gPStranica
 			FF
-			eval(bZagl)
+			EVAL(bZagl)
 		endif
 		
         select roba
-		hseek cidroba
+		hseek cIdRoba
 		
         select kalk
 		aNaz := Sjecistr( roba->naz, 20 )
@@ -545,13 +548,13 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
 		@ prow(), pcol()+1 SAY nMPVU pict gPicDem
 		@ prow(), pcol()+1 SAY nMPVI pict gPicDem
-		@ prow(), pcol()+1 SAY nMPVU - NMPVI + nPMPV pict gPicDem
+		@ prow(), pcol()+1 SAY nMPVU - nMPVI + nPMPV pict gPicDem
 
 		select koncij
 		seek trim(cIdKonto)
 
 		select roba
-		hseek cidroba
+		hseek cIdRoba
 
 		_mpc := UzmiMPCSif()
 
@@ -559,21 +562,25 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
 		if ROUND( nUlaz - nIzlaz + nPKOL, 4 ) <> 0
 
- 			// mpcsapdv
-            @ prow(), pcol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) pict gpiccdem
+ 			if cMpcIzSif == "D"
+                @ prow(), pcol() + 1 SAY _mpc pict gpiccdem
+                nTMpv += ( ( nUlaz - nIzlaz ) * _mpc )
+            else
+                // mpcsapdv
+                @ prow(), pcol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) pict gpiccdem
 
- 			if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
-   				?? " ERR"
- 			endif
+ 			    if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
+   				    ?? " ERR"
+ 			    endif
+            endif
 
 		else
 
             // stanje artikla je 0
-
  			@ prow(), pcol() + 1 SAY 0 pict gpicdem
 
  			if ROUND(( nMPVU - nMPVI + nPMPV ), 4 ) <> 0
-   				?? " ERR"
+   	            ?? " ERR"
    				lImaGresaka := .t.
  			endif
 
@@ -618,14 +625,20 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
 		endif
 
+
 		nTULaz+=nUlaz
 		nTIzlaz+=nIzlaz
+
 		nTPKol+=nPKol
+
 		nTMPVU+=nMPVU
 		nTMPVI+=nMPVI
+
 		nTNVU+=nNVU
 		nTNVI+=nNVI
+
 		nTRabat+=nRabat
+
 		nTPMPV+=nPMPV
 		nTPNV+=nPNV
 
@@ -643,17 +656,24 @@ enddo
 
 ? __line
 ? "UKUPNO:"
+
 @ prow(), nCol0-1 SAY ""
+
 if cPredhStanje=="D"
 	@ prow(),pcol()+1 SAY nTPMPV pict gpickol
 endif
+
 @ prow(),pcol()+1 SAY nTUlaz pict gpickol
 @ prow(),pcol()+1 SAY nTIzlaz pict gpickol
 @ prow(),pcol()+1 SAY nTUlaz-nTIzlaz+nTPKol pict gpickol
+
 nCol1:=pcol()+1
+
 @ prow(),pcol()+1 SAY nTMPVU pict gpicdem
 @ prow(),pcol()+1 SAY nTMPVI pict gpicdem
+
 @ prow(),pcol()+1 SAY nTMPVU-nTMPVI+nTPMPV pict gpicdem
+@ prow(),pcol()+1 SAY nTMpv pict gpicdem
 
 if cPNab=="D"
 	@ prow()+1,nCol0-1 SAY ""

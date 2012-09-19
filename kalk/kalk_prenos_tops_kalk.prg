@@ -360,6 +360,9 @@ if _kolicina == 0
 
 endif
 
+// uvijek uzmi iz topska ovu cijenu pri prenosu
+_mpcsapp := topska->mpc
+
 select kalk_pripr
 locate for field->idroba == topska->idroba
 

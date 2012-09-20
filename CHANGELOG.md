@@ -1,3 +1,7 @@
+1.3.25  2012-09-20, vsasa
+
+ - pos, opcije inventure, dorade, korekcije [#29241](http://redmine.bring.out.ba/issues/29241)
+ 
 1.3.24  2012-09-20, vsasa
 
  - pos, opcije inventure [#29241](http://redmine.bring.out.ba/issues/29241)

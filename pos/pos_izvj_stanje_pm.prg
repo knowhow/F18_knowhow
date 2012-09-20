@@ -297,11 +297,11 @@ do while !eof()
 		elseif POS->idvd $ "IN#NI#"+DOK_IZLAZA
 			do case
 				case POS->IdVd=="IN"
-                    if pos->kolicina <> 0
+                    //if pos->kolicina <> 0
 					    nIzlaz += (pos->kolicina - pos->kol2 )
-                    else
-					    nIzlaz := pos->kol2
-                    endif
+                    //else
+					  //  nIzlaz := pos->kol2
+                    //endif
 				case POS->IdVd=="NI"
 					nIzlaz += 0
 				otherwise  

@@ -32,7 +32,7 @@ private cDat0:=gDatum
 private cDat1:=gDatum
 private cPocSt:="D"
 
-nMDBrDok:=VAL(IzFMKINI("KARTICA","MaxDuzinaBrDok","4",KUMPATH))
+nMDBrDok := 6
 
 O_KASE
 O_ODJ
@@ -226,145 +226,155 @@ endif
 
 
 do while !eof() .and. POS->IdOdj==cIdOdj
-  nStanje:=0
-  nVrijednost:=0
-  fSt:=.t.
-  cIdRoba:=POS->IdRoba
-  nUlaz:=nIzlaz:=0
-  SELECT POS
+    nStanje:=0
+    nVrijednost:=0
+    fSt:=.t.
+    cIdRoba:=POS->IdRoba
+    nUlaz:=nIzlaz:=0
+    SELECT POS
 
-  do while !eof() .and. POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba)
-    if (cZaduzuje=="R" .and. pos->idvd=="96") .or. (cZaduzuje=="S".and.pos->idvd$"42#01")
-    	skip
-	loop
-    endif
+    do while !eof() .and. POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba)
+        if (cZaduzuje=="R" .and. pos->idvd=="96") .or. (cZaduzuje=="S".and.pos->idvd$"42#01")
+    	    skip
+	        loop
+        endif
 
-    if cPocSt=="N"
-	    SELECT (cRSdbf)
-	    HSEEK cIdRoba
-	    nCijena1:=mpc
-	    SELECT POS
-    	nStanje:=0
-    	nVrijednost:=0
-    	seek cIdOdj+cIdRoba+DTOS(cDat0)
-    else
-        // stanje do
-        do while !eof() .and. POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba) .and. POS->Datum<cDat0
-      	   	if !empty(cIdDio) .and. POS->IdDio<>cIdDio
-		        skip
+        if cPocSt=="N"
+	        SELECT (cRSdbf)
+	        HSEEK cIdRoba
+	        nCijena1:=mpc
+	        SELECT POS
+    	    nStanje:=0
+    	    nVrijednost:=0
+        	seek cIdOdj+cIdRoba+DTOS(cDat0)
+        else
+            // stanje do
+            do while !eof() .and. POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba) .and. POS->Datum<cDat0
+      	   	    if !empty(cIdDio) .and. POS->IdDio<>cIdDio
+		            skip
+		            loop
+      	        endif
+      	    if (Klevel>"0" .and. pos->idpos="X") .or. (!empty(cIdPos) .and. IdPos<>cIdPos)
+        	    skip
 		        loop
       	    endif
-      	if (Klevel>"0" .and. pos->idpos="X") .or. (!empty(cIdPos) .and. IdPos<>cIdPos)
-        	skip
-		loop
-      	endif
 	
-      	if (cZaduzuje=="R" .and. pos->idvd=="96") .or. (cZaduzuje=="S".and.pos->idvd$"42#01")
-        	skip
-		loop
-      	endif
+        	if (cZaduzuje=="R" .and. pos->idvd=="96") .or. (cZaduzuje=="S".and.pos->idvd$"42#01")
+        	    skip
+		        loop
+        	endif
 	
-      	if pos->idvd $ DOK_ULAZA
-        	nStanje += POS->Kolicina
+      	    if pos->idvd $ DOK_ULAZA
+        	    nStanje += POS->Kolicina
 		
-      	elseif pos->idvd $ "IN"
-        	nStanje -= (POS->Kolicina - POS->Kol2 )
-        	nVrijednost += (POS->Kol2-POS->Kolicina) * POS->Cijena
+      	    elseif pos->idvd $ "IN"
+
+        	    //nStanje -= ( POS->Kolicina - POS->Kol2 )
+        	    //nVrijednost += (POS->Kol2-POS->Kolicina) * POS->Cijena
+                
+                // ima setovano i knjizna kolicina
+                if pos->kolicina <> 0
+            	    nStanje -= ( POS->Kolicina - POS->Kol2 )
+            	    nVrijednost += (POS->Kol2-POS->Kolicina) * POS->Cijena
+                else
+                    nStanje := pos->kol2
+		            nVrijednost := pos->kol2 * pos->cijena
+                endif
+
+      	    elseif pos->idvd $ DOK_IZLAZA
+        	    nStanje -= POS->Kolicina
 		
-      	elseif pos->idvd $ DOK_IZLAZA
-        	nStanje -= POS->Kolicina
-		
-      	elseif pos->IdVd == "NI"
-        	// ne mijenja kolicinu
-      	endif
+      	    elseif pos->IdVd == "NI"
+        	    // ne mijenja kolicinu
+      	    endif
 	
-      	skip
-      enddo
+      	    skip
+        enddo
       
-      SELECT (cRSdbf)
-      HSEEK cIdRoba
-      nCijena1:=mpc
+        SELECT (cRSdbf)
+        HSEEK cIdRoba
+        nCijena1:=mpc
       
-      if fSt
-        if gVrstaRS=="S" .and. Prow()>63-gPstranica-3
-		FF
+        if fSt
+            if gVrstaRS=="S" .and. Prow()>63-gPstranica-3
+		        FF
+            endif
+            ? m
+            ? cLM
+            if cSiroki=="D"
+		        ?? space(8)+" "
+            endif
+            ?? cIdRoba, PADR (AllTrim (Naz)+" ("+AllTrim (Jmj)+")", 32)
+            ? m
+            nVrijednost:=nStanje * nCijena1
+            if gVrstaRS=="S"
+		        ? cLM
+	        else
+		        ?
+	        endif
+            ?? PADL ("Stanje do "+FormDat1 (cDat0), 29), ""
+            ?? STR (nStanje, 10, 3)
+            if gVrstaRS == "S"
+		        ?? " " + STR (nCijena1*nStanje, 12, 3)
+            endif
+            fSt := .F.
         endif
-        ? m
-        ? cLM
-        if cSiroki=="D"
-		?? space(8)+" "
-        endif
-        ?? cIdRoba, PADR (AllTrim (Naz)+" ("+AllTrim (Jmj)+")", 32)
-        ? m
-        nVrijednost:=nStanje * nCijena1
-        if gVrstaRS=="S"
-		? cLM
-	else
-		?
-	endif
-        ?? PADL ("Stanje do "+FormDat1 (cDat0), 29), ""
-        ?? STR (nStanje, 10, 3)
-        if gVrstaRS == "S"
-		?? " " + STR (nCijena1*nStanje, 12, 3)
-        endif
-        fSt := .F.
-      endif
-      SELECT POS
+        SELECT POS
     endif // cPocSt
 
     do while !eof().and.POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba).and.POS->Datum<=cDat1
       
-      if !empty(cIdDio).and.POS->IdDio<>cIdDio
-      	skip
-	loop
-      endif
+        if !empty(cIdDio).and.POS->IdDio<>cIdDio
+      	    skip
+	        loop
+        endif
       
-      if (Klevel>"0".and.pos->idpos="X").or.(!empty(cIdPos).and.IdPos<>cIdPos)
-	//    (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
-        skip
-	loop
-      endif
+        if (Klevel>"0".and.pos->idpos="X").or.(!empty(cIdPos).and.IdPos<>cIdPos)
+	        //    (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
+            skip
+	        loop
+        endif
       
-      if (cZaduzuje=="R".and.pos->idvd=="96") .or. (cZaduzuje=="S".and.pos->idvd$"42#01")
-      	skip
-      	loop
-      endif
+        if (cZaduzuje=="R".and.pos->idvd=="96") .or. (cZaduzuje=="S".and.pos->idvd$"42#01")
+      	    skip
+      	    loop
+        endif
 
-      if fSt
-        SELECT (cRSdbf)
-	HSEEK cIdRoba
-        if gVrstaRS=="S".and.prow()>63-gPstranica-3
-        	FF
+        if fSt
+            SELECT (cRSdbf)
+	        HSEEK cIdRoba
+            if gVrstaRS=="S".and.prow()>63-gPstranica-3
+        	    FF
+            endif
+            ? m
+            ? cLM+cIdRoba,PADR(ALLTRIM(Naz)+" ("+ALLTRIM(Jmj)+")",32)
+            ? m
+            SELECT POS
+            fSt:=.F.
         endif
-        ? m
-        ? cLM+cIdRoba,PADR(ALLTRIM(Naz)+" ("+ALLTRIM(Jmj)+")",32)
-        ? m
-        SELECT POS
-        fSt:=.F.
-      endif
-      //
+        //
       
-      if POS->idvd $ DOK_ULAZA
+        if POS->idvd $ DOK_ULAZA
       
-        ? cLM
+            ? cLM
 	
-        if cSiroki=="D"
-          ?? dtoc(pos->datum)+" "
-        endif
+            if cSiroki=="D"
+                ?? dtoc(pos->datum)+" "
+            endif
 	
-        ?? POS->IdVd+"-"+PADR(AllTrim(POS->BrDok),nMDBrDok),""
+            ?? POS->IdVd+"-"+PADR(AllTrim(POS->BrDok),nMDBrDok),""
 	
-        ?? STR (POS->Kolicina, 10, 3), SPACE (10), ""
-        nUlaz += POS->Kolicina
+            ?? STR (POS->Kolicina, 10, 3), SPACE (10), ""
+            nUlaz += POS->Kolicina
 	
-        nStanje += POS->Kolicina
-        ?? STR (nStanje, 10, 3)
+            nStanje += POS->Kolicina
+            ?? STR (nStanje, 10, 3)
 	
-        if gVrstaRS == "S"
-          ?? "", STR (nCijena1*nStanje, 12, 3)
-        endif
+            if gVrstaRS == "S"
+                ?? "", STR (nCijena1*nStanje, 12, 3)
+            endif
 	
-      elseif POS->IdVd == "NI"
+        elseif POS->IdVd == "NI"
       
           //nVrijednost := POS->Kolicina * POS->Ncijena
           ? cLM
@@ -382,21 +392,26 @@ do while !eof() .and. POS->IdOdj==cIdOdj
           endif
 	  
           skip
-	  loop  
+	      loop  
 	  
       elseif POS->idvd $ "IN"+DOK_IZLAZA
       
         if pos->idvd $ DOK_IZLAZA
-          nKol := POS->Kolicina
+            nKol := POS->Kolicina
         elseif POS->IdVd == "IN"
-          nKol := (POS->Kolicina - POS->Kol2)
+            nKol := ( POS->Kolicina - POS->Kol2 )
         endif
 	
-        nIzlaz += nKol
-	nStanje -= nKol
-	
-        if gVrstaRS=="S" .and. Prow() > 63-gPstranica-3
-          FF
+        if pos->idvd == "IN" .and. pos->kolicina == 0
+            nIzlaz += nStanje - nKol
+            nStanje -= nStanje - ABS( nKol )
+        else
+            nIzlaz += nKol
+	        nStanje -= nKol
+        endif
+
+        if gVrstaRS == "S" .and. Prow() > 63-gPstranica-3
+            FF
         endif
 	
         ? cLM
@@ -405,7 +420,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
             ?? dtoc(pos->datum)+" "
         endif
 	
-        ?? POS->IdVd+"-"+PADR (AllTrim(POS->BrDok), nMDBrDok), ""
+        ?? POS->IdVd + "-" + PADR(AllTrim(POS->BrDok), nMDBrDok), ""
         ?? SPACE (10), STR (nKol, 10, 3), STR (nStanje, 10, 3)
 	
         if gVrstaRS == "S"

@@ -322,46 +322,45 @@ dDatum:=pos_doks->datum
 
 if ((lUI==NIL) .or. lUI)
     // ovo su ulazi ...
-        if pos_doks->IdVd $ VD_ZAD+"#"+VD_PCS+"#"+VD_REK
-            SELECT pos
-            set order to tag "1"
-            go top
-            SEEK cIdPos+cIdVd+DTOS(dDatum)+cBrDok
-            do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
-                nIznos+=pos->kolicina*pos->cijena
-                SKIP
-            enddo
+    if pos_doks->IdVd $ VD_ZAD+"#"+VD_PCS+"#"+VD_REK
+        SELECT pos
+        set order to tag "1"
+        go top
+        SEEK cIdPos+cIdVd+DTOS(dDatum)+cBrDok
+        do while !EOF() .and. pos->( IdPos + IdVd + DTOS(datum) + BrDok )==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
+            nIznos+=pos->kolicina*pos->cijena
+            SKIP
+        enddo
         if pos_doks->idvd==VD_REK
-            nIznos:=-nIznos
+            nIznos := -nIznos
         endif
-        endif
-    
+    endif
 endif
 
 if ((lUI==NIL) .or. !lUI)
     // ovo su, pak, izlazi ...
-        if pos_doks->IdVd $ VD_RN+"#"+VD_OTP+"#"+VD_RZS+"#"+VD_PRR+"#"+"IN"+"#"+"IN"
+    if pos_doks->IdVd $ VD_RN+"#"+VD_OTP+"#"+VD_RZS+"#"+VD_PRR+"#"+"IN"+"#"+"IN"
 
-            SELECT pos
-            set order to tag "1"
-            go top
-            SEEK cIdPos+cIdVd+DTOS(dDatum)+cBrDok
-            do while !eof() .and. pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
-                do case
-                    case pos_doks->IdVd=="IN"
-                            nIznos+=(pos->kol2-pos->kolicina)*pos->cijena
-                    case pos_doks->IdVd==VD_NIV
-                            nIznos+=pos->kolicina*(pos->nCijena-POS->Cijena)
-                    otherwise
-                            nIznos+=pos->kolicina*pos->cijena
-                endcase
-                SKIP
-            enddo
-        endif
+        select pos
+        set order to tag "1"
+        go top
+        SEEK cIdPos + cIdVd + DTOS(dDatum) + cBrDok
+        do while !EOF() .and. pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
+            do case
+                case pos_doks->idvd == "IN"
+                    nIznos += pos->kol2 * pos->cijena
+                case pos_doks->IdVd==VD_NIV
+                    nIznos += pos->kolicina * ( pos->nCijena - pos->cijena )
+                otherwise
+                    nIznos += pos->kolicina * pos->cijena
+            endcase
+            skip
+        enddo
+    endif
 endif
 
 select pos_doks
-cRet:=STR(nIznos,13,2)
+cRet := STR( nIznos, 13, 2 )
 
 return (cRet)
 
@@ -797,6 +796,7 @@ local _cnt := 0
 local _tbl_pos := "pos_pos"
 local _tbl_doks := "pos_doks"
 local _ok := .t.
+local _t_rec
 
 lNivel:=.f.
 
@@ -841,6 +841,8 @@ SELECT PRIPRZ
 
 do while !eof()
 
+    _t_rec := RECNO()
+
     // dodaj stavku u pos
     SELECT POS  
     APPEND BLANK
@@ -877,6 +879,7 @@ do while !eof()
     azur_sif_roba_row()
 
     SELECT PRIPRZ
+    GO ( _t_rec )
     SKIP
 
 enddo
@@ -885,11 +888,6 @@ MsgC()
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
-
-// pos_pos check
-//check_recno( "pos_pos", nil, .f. )
-//check_recno( "pos_doks", nil, .f. )
-
 
 log_write( "azuriranje stavki iz priprz u pos/doks, zavrsio", 5 )
 
@@ -914,9 +912,7 @@ return
 static function azur_sif_roba_row()
 local _rec
 
-// u jednom dbf-u moze biti vise IdPos
-// ROBA ili SIROV
-select ( cRSDbf )
+select roba
 set order to tag "ID"
 
 // pozicioniran sam na robi

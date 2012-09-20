@@ -238,8 +238,13 @@ do while !eof()
 			//nVrijednost += POS->Kolicina * POS->Cijena
 		elseif POS->idvd $ "IN#NI#"+DOK_IZLAZA
 			do case
-				case POS->IdVd=="IN"
-					nPstanje-=(POS->Kolicina-POS->Kol2)
+				case POS->IdVd == "IN"
+                    if pos->kolicina <> 0					
+                        nPstanje -= ( pos->kolicina - pos->kol2 )
+                    else
+                        nPStanje := pos->kol2
+                    endif
+
 				case POS->IdVd=="NI"
 				
 				otherwise // 42#01
@@ -292,11 +297,15 @@ do while !eof()
 		elseif POS->idvd $ "IN#NI#"+DOK_IZLAZA
 			do case
 				case POS->IdVd=="IN"
-					nIzlaz+=(POS->Kolicina-POS->Kol2)
+                    //if pos->kolicina <> 0
+					    nIzlaz += (pos->kolicina - pos->kol2 )
+                    //else
+					  //  nIzlaz := pos->kol2
+                    //endif
 				case POS->IdVd=="NI"
-					nIzlaz+=0
+					nIzlaz += 0
 				otherwise  
-					nIzlaz+=POS->Kolicina
+					nIzlaz += POS->Kolicina
 			endcase
 		endif
 		skip
@@ -328,7 +337,7 @@ do while !eof()
 			? cLM+cIdRoba, PADR(Naz,nRob)+" "
 			//
 			// VRIJEDNOST = CIJENA U SIFRARNIKU * STANJE KOMADA
-			nVrijednost+=nStanje*nCijena1
+			nVrijednost += nStanje * nCijena1
 			SELECT POS
 			if cVrstaRs<>"S"
 				?

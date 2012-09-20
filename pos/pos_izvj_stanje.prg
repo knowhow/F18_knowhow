@@ -224,8 +224,13 @@ do while !EOF()
         elseif POS->idvd $ "IN#NI"+DOK_IZLAZA
             do case
                 case POS->IdVd == "IN"
-                    nPstanje -= (POS->Kolicina-POS->Kol2)
-                    nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
+                    if pos->kolicina <> 0
+                        nPstanje -= (POS->Kolicina-POS->Kol2)
+                        nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
+                    else
+                        nPstanje := pos->kol2
+                        nVrijednost := pos->kol2 * pos->cijena
+                    endif
                 case POS->IdVd == "NI"
                     // ne mijenja kolicinu
                     nVrijednost := POS->Kolicina * POS->Cijena
@@ -267,8 +272,13 @@ do while !EOF()
         ELSEIF POS->idvd $  "IN#NI#"+DOK_IZLAZA
             DO Case
                 case POS->IdVd == "IN"
-                    nIzlaz += (POS->Kolicina-POS->Kol2)
-                    nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
+                    if pos->kolicina <> 0
+                        nIzlaz += (POS->Kolicina-POS->Kol2)
+                        nVrijednost -= (POS->Kol2-POS->Kolicina) * POS->Cijena
+                    else
+                        nIzlaz := pos->kol2
+                        nVrijednost := pos->kol2 * pos->cijena
+                    endif
                 case POS->IdVd == "NI"
                     // ne mijenja kolicinu
                     nVrijednost := POS->Kolicina * POS->Cijena

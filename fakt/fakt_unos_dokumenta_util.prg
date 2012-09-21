@@ -76,9 +76,8 @@ if right(cSif,1)="." .and. len(csif)<=7
 endif
 
 if gShSld == "D"
-	private gFinKPath := STRTRAN( KUMPATH, "FAKT", "FIN" )
-	// ako je prikaz salda na fakturi = D prikazi box sa podacima fin
-	g_box_stanje( _idpartner, gFinKtoDug, gFinKtoPot )
+    // ako je prikaz salda na fakturi = D prikazi box sa podacima fin
+	g_box_stanje( PADR( _idpartner, 6 ), gFinKtoDug, gFinKtoPot )
 endif
 
 return  .t.

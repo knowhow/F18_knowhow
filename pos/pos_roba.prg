@@ -84,10 +84,7 @@ if LASTKEY() == K_ESC
   	_vrati := .f.
 else
     
-    // utvrdi stanje robe
-    _stanje := pos_stanje_artikla( gIdPos, roba->id )
-
-	@ m_x + dx, m_y + dy SAY PADR( ALLTRIM(roba->naz) + " (" + ALLTRIM( roba->jmj ) + ") stanje: " + ALLTRIM( STR( _stanje, 12, 2 )), 50 )
+	@ m_x + dx, m_y + dy SAY PADR( ALLTRIM(roba->naz) + " (" + ALLTRIM( roba->jmj ) + ")", 50 )
   
 	if _tezina <> 0
 		_kolicina := _tezina

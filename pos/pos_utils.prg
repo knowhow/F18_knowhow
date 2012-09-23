@@ -112,6 +112,19 @@ end
 PopWA()
 return
 
+// --------------------------------------------------------------------
+// ispisi donji dio forme unosa podataka
+// --------------------------------------------------------------------
+function ispisi_donji_dio_forme_unosa( txt, row )
+
+if row == nil
+    row := 1
+endif
+
+@ m_x + ( MAXROWS() - 12 ) + row, 2 SAY PADR( txt, MAXCOLS() / 2 )
+
+return
+
 
 //-----------------------------------------------------
 // ispisuje iznos racuna velikim brojevima

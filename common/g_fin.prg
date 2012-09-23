@@ -118,9 +118,9 @@ local nSaldo := 0
 local nX
 private GetList:={}
 
-nSKup := get_fin_partner_saldo( cPartner, cKKup )
-nSDob := get_fin_partner_saldo( cPartner, cKDob )
-dDate := g_dpupl_part( cPartner, cKKup )
+nSKup := get_fin_partner_saldo( cPartner, cKKup, gFirma )
+nSDob := get_fin_partner_saldo( cPartner, cKDob, gFirma )
+dDate := g_dpupl_part( cPartner, cKKup, gFirma )
 
 nSaldo := nSKup + nSDob
 

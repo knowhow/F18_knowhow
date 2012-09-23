@@ -33,6 +33,8 @@ parameters cBrojRn, cSto
 local _max_cols := MAXCOLS()
 local _max_rows := MAXROWS()
 local _read_barkod
+local _stanje_robe := 0
+local _stanje_art_id, _stanje_art_jmj
 
 private ImeKol := {}
 private Kol := {}
@@ -117,7 +119,6 @@ set order to tag "1"
 
 nIznNar := 0
 nPopust := 0
-
 
 _calc_current_total( @nIznNar, @nPopust )
 
@@ -217,6 +218,10 @@ do while .t.
     // _pos_pripr
     Gather()
 
+    _stanje_robe := pos_stanje_artikla( field->idpos, field->idroba )
+    _stanje_art_id := field->idroba
+    _stanje_art_jmj := field->jmj
+
     // utvrdi stanje racuna
     nIznNar += cijena * kolicina
     nPopust += ncijena * kolicina
@@ -224,6 +229,10 @@ do while .t.
     oBrowse:refreshAll()
     oBrowse:dehilite()
             
+    // prikazi stanje artikla u dnu ekrana
+    _tmp := "STANJE ARTIKLA " + ALLTRIM( _stanje_art_id ) + ": " + ALLTRIM( STR( _stanje_robe, 12, 2 ) ) + " " + _stanje_art_jmj
+    ispisi_donji_dio_forme_unosa( _tmp, 1 )
+
 enddo
 
 CancelKeys( aAutoKeys )

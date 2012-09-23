@@ -1,3 +1,7 @@
+1.3.26  2012-09-23, vsasa
+
+ - kalk, kopiranje seta cijena [#29249](http://redmine.bring.out.ba/issues/29249)
+ 
 1.3.25  2012-09-20, vsasa
 
  - pos, opcije inventure, dorade, korekcije [#29241](http://redmine.bring.out.ba/issues/29241)

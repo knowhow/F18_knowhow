@@ -1170,12 +1170,87 @@ else
     return .f.
 endif
 return
-*}
 
 
+// ---------------------------------------------
+// kopiraj set cijena iz jednog u drugi
+// ---------------------------------------------
+function kopiraj_set_cijena()
+local _set_from := " "
+local _set_to := "1"
+local _tip := "M"
+local _tmp1, _tmp2, _rec
+local _tmp, _count, _i
+
+SET CURSOR ON
+
+Box(, 5, 60 )
+    @ 1 + m_x, 2 + m_y SAY "Kopiranje seta cijena iz - u..."
+    @ 3 + m_x, 3 + m_y SAY "Tip cijene: [V] VPC [M] MPC" GET _tip VALID _tip $ "VM" PICT "@!"
+    @ 4 + m_x, 3 + m_y SAY "Kopiraj iz:" GET _set_from VALID _set_from $ " 123456789"
+    @ 4 + m_x, col() + 1 SAY "u:" GET _set_to VALID _set_to $ " 123456789"
+    READ
+BoxC()
+
+if Lastkey() == K_ESC
+    return
+endif
+
+// odredi sta ce se kopirati...
+do case
+
+    // ako se radi o MPC
+    case _tip == "M"
+ 
+        _tmp1 := "mpc" + ALLTRIM( _set_from )
+        _tmp2 := "mpc" + ALLTRIM( _set_to )
+
+    // ako se radi o VPC
+    case _tip == "V"
+
+        _tmp1 := "vpc" + ALLTRIM( _set_from )
+        _tmp2 := "vpc" + ALLTRIM( _set_to )
+
+endcase
+
+O_ROBA
+_count := RECCOUNT()
+
+select roba
+set order to tag "ID"
+go top
+
+_i := 0
+
+Box(, 1, 60 )
+
+    do while !EOF()
+        
+        ++ _i 
+        _rec := dbf_get_rec()
+        // kopiraj cijenu...
+        _rec[ _tmp2 ] := _rec[ _tmp1 ]
+
+        _tmp := ALLTRIM( STR( _i, 12 )) + "/" + ALLTRIM(STR( _count, 12) )
+
+        @ m_x + 1, m_y + 2 SAY PADR( "odradio: " + _tmp, 60 )
+
+        update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+         
+        skip
+
+    enddo
+
+BoxC()
+
+return
+
+
+
+// ---------------------------------------------
 // set pdv cijene
+// ---------------------------------------------
 function set_pdv_cijene()
-*{
 
 if !SigmaSif("SETPDVC")
    MsgBeep("Ne cackaj!")
@@ -1292,8 +1367,8 @@ BoxC()
 
 MsgBeep("Formirao PDV cijene u sifrarniku Roba tekuca godina")
 
-closeret
-*}
+close all
+return
 
 
 // set pdv cijene

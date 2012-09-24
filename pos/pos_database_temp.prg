@@ -225,7 +225,7 @@ if FOUND()
 
         if Pitanje(, "Poceli ste pripremu! Zelite li nastaviti? (D/N)", "D" ) == "N"
             // brisanje prethodne pripreme
-            do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
+            do while !EOF() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
                 Del_Skip()
             enddo
             MsgBeep ("Priprema je izbrisana ... ")

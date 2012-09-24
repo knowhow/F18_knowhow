@@ -1,3 +1,8 @@
+1.3.27  2012-09-24, vsasa
+
+ - pos, seta cijena za korištenje [#29262](http://redmine.bring.out.ba/issues/29262)
+ - pos, inventura, prikaz trenutnog stanja [#29264](http://redmine.bring.out.ba/issues/29264)
+ 
 1.3.26  2012-09-23, vsasa
 
  - kalk, kopiranje seta cijena [#29249](http://redmine.bring.out.ba/issues/29249)

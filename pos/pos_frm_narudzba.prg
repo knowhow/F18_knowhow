@@ -212,7 +212,8 @@ do while .t.
     _idodj := SPACE(2)
 
     if !( roba->tip == "T" )
-        _cijena := roba->mpc
+        _cijena := pos_get_mpc()
+        // roba->mpc
     endif
             
     // _pos_pripr

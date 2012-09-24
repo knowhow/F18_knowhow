@@ -329,7 +329,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 		replace idRoba WITH cIdRoba
 		replace kolicina WITH nKolicina
 		replace idTarifa WITH roba->idTarifa
-		replace mpc With roba->mpc
+		replace mpc With pos_get_mpc()
 		replace datum WITH dDatDo
 		replace idVd With cIdVd
 		replace idPartner with cIdPartner

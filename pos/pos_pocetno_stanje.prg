@@ -186,7 +186,7 @@ do while !EOF() .and. field->idpos == cIdPos
 	seek cIdRoba
 
 	cNazRoba := ALLTRIM(field->naz)
-	nRCijena := field->mpc
+	nRCijena := pos_get_mpc()
 	cRTarifa := field->idtarifa
 	
 	select pos_sez

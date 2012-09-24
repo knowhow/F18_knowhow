@@ -63,7 +63,7 @@ local nNovaCijena:=0
 if (gPopZCj=="D" .and. roba->tip<>"T")  
 	// u zavisnosti od set-a cijena koji se koristi
 	// &("roba->cijena" + gIdCijena) == roba->cijena1
-	nNovaCijena:=round(&("roba->mpc" + gIdCijena) - nCijena, gPopDec)
+	nNovaCijena:=round( pos_get_mpc() - nCijena, gPopDec)
 	AddToArrRabat(aRabat, roba->id, nNovaCijena)
 endif
 

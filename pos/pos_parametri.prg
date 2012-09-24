@@ -390,7 +390,8 @@ AADD (aNiz, {"Popust zadavanjem nove cijene          " , "gPopZCj" ,"gPopZCj$'DN
 AADD (aNiz, {"Popust zadavanjem procenta             " , "gPopProc","gPopProc$'DN'" , , })
 AADD (aNiz, {"Popust preko odredjenog iznosa (iznos):" , "gPopIzn",,"999999.99" , })
 AADD (aNiz, {"                  procenat popusta (%):" , "gPopIznP",,"999.99" , })
-VarEdit(aNiz,9,2,18,78,"PARAMETRI RADA PROGRAMA - CIJENE","B1")
+AADD (aNiz, {"Koristiti set cijena                  :" , "gSetMPCijena",,"9" , })
+VarEdit(aNiz,9,2,20,78,"PARAMETRI RADA PROGRAMA - CIJENE","B1")
 
 O_PARAMS
 
@@ -403,6 +404,7 @@ if LASTKEY()<>K_ESC
     set_metric("PopustProcenat", nil, gPopProc )
     set_metric("PopustIznos", nil, gPopIzn )
     set_metric("PopustVrijednostProcenta", nil, gPopIznP )
+    set_metric("pos_set_cijena", nil, gSetMPCijena )
     MsgC()
 endif
 

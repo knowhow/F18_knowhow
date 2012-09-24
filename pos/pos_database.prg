@@ -911,14 +911,22 @@ return
 // ------------------------------------------
 static function azur_sif_roba_row()
 local _rec
+local _field_mpc
 
 select roba
 set order to tag "ID"
+
+if gSetMPCijena == "1"
+    _field_mpc := "mpc"
+else
+    _field_mpc := "mpc" + ALLTRIM( gSetMPCijena )
+endif
 
 // pozicioniran sam na robi
 hseek priprz->idroba  
 
 lNovi:=.f.
+
 if ( !FOUND() )
 
     // novi artikal
@@ -941,15 +949,15 @@ if !IsPDV()
     // u ne-pdv rezimu je bilo bitno da preknjizenje na pdv ne pokvari
     // star cijene
     if katops->idtarifa <> "PDV17"
-        _rec["mpc"] := ROUND( priprz->cijena, 3 )        
+        _rec[ _field_mpc ] := ROUND( priprz->cijena, 3 )        
     endif
 else
 
     if cIdVd == "NI"
       // nivelacija - u sifrarnik stavi novu cijenu
-      _rec["mpc"] := ROUND(priprz->ncijena, 3)
+      _rec[ _field_mpc ] := ROUND(priprz->ncijena, 3)
     else
-      _rec["mpc"] := ROUND(priprz->cijena, 3)
+      _rec[ _field_mpc ] := ROUND(priprz->cijena, 3)
     endif
     
 endif

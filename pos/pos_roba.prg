@@ -52,7 +52,7 @@ endif
 AADD( ImeKol, { "Sifra", {|| id }, "" })
 AADD( ImeKol, { PADC( "Naziv", 40 ), {|| PADR( naz, 40 ) }, "" })
 AADD( ImeKol, { PADC( "JMJ", 5 ), {|| PADC( jmj, 5 ) }, "" })
-AADD( ImeKol, { "Cijena", {|| roba->mpc }, "" })
+AADD( ImeKol, { "Cijena set: " + gSetMPCijena, {|| PADL( ALLTRIM(STR( pos_get_mpc(), 12, 3 )), 12 ) }, "" })
 AADD( ImeKol, { "BARKOD", {|| roba->barkod }, "" })
 AADD( ImeKol, { "K7", {|| roba->k7 }, "" })
 
@@ -91,7 +91,8 @@ else
 	endif
 
 	if roba->tip <> "T"
-    	_cijena := roba->mpc
+    	_cijena := pos_get_mpc()
+        // roba->mpc
   	endif
 
 endif

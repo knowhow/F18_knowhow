@@ -173,7 +173,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPLU := auto_plu(nil, nil, __device)
 	endif
 
-	nPLU_price := roba->mpc
+	nPLU_price := pos_get_mpc()
 	cPLU_bk := roba->barkod
 	cPLU_jmj := roba->jmj
 
@@ -500,7 +500,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	seek cArtikal
 
 	nPLU := roba->fisc_plu
-	nPLU_price := roba->mpc
+	nPLU_price := pos_get_mpc()
 	cPLU_bk := roba->barkod
 	cPLU_jmj := roba->jmj
 
@@ -668,7 +668,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPLU := auto_plu( nil, nil, __device )
 	endif
 
-	nPLU_price := roba->mpc
+	nPLU_price := pos_get_mpc()
 	cPLU_bk := roba->barkod
 	cPLU_jmj := roba->jmj
 

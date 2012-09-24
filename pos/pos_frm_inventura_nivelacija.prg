@@ -220,9 +220,9 @@ if fPocInv
                 select (cRSdbf)
                 HSEEK _idroba
 
-                _cijena := _field->mpc     
+                _cijena := pos_get_mpc()
                 // postavi tekucu cijenu
-                _ncijena := _field->mpc
+                _ncijena := pos_get_mpc()
                 _robanaz := _field->naz 
                 _jmj := _field->jmj
                 _idtarifa := _field->idtarifa
@@ -792,7 +792,7 @@ do while !EOF() .and. field->idodj == _id_odj
         append blank
 
         _rec := dbf_get_rec()
-        _rec["cijena"] := roba->mpc     
+        _rec["cijena"] := pos_get_mpc()
         _rec["ncijena"] := 0 
         _rec["idroba"] := ip_roba
         _rec["barkod"] := roba->barkod
@@ -870,6 +870,7 @@ local _area := SELECT()
 pos_postoji_roba( @_IdRoba, 1, 31) 
 
 RacKol( _idodj, _idroba, @_kolicina )
+
 _set_cijena_artikla( cIdVd, _idroba )
 
 if ind == 0 .and. !_postoji_artikal_u_pripremi( _idroba )
@@ -916,7 +917,7 @@ if id_vd == VD_INV
     select roba
     hseek id_roba        
     // setuj cijene
-    _cijena := roba->mpc
+    _cijena := pos_get_mpc()
 
 endif
 

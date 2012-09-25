@@ -1197,9 +1197,9 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                 VALID P_RNal(@_idRNal) PICT "@!"
         endif
 
-        if _idtipdok == "10"
+        if _idtipdok $ "10#11"
 
-            if gDodPar=="1"
+            if gDodPar == "1"
                     
                 @ m_x + 4, m_y + 51 SAY "Otpremnica broj:" ;
                     GET _brotp ;
@@ -1214,7 +1214,7 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                 
             endif
 
-            if (gDodPar=="1" .or. gDatVal=="D")
+            if ( gDodPar == "1" .or. gDatVal == "D" )
                 
                 if fNovi .and. gRokPl > 0
                     // uzmi default vrijednost za rok placanja
@@ -1240,15 +1240,6 @@ if (nRbr==1 .and. VAL(_podbr) < 1)
                     VALID P_VRSTEP( @_idvrstep, 9, 20 )
             endif
        
-		elseif ( _idtipdok == "11" )
-		
-			if _vrste_placanja == "D"
-                @ m_x + 9, m_y + 2  SAY "Nacin placanja" ;
-                    GET _idvrstep ;
-                    PICT "@!" ;
-                    VALID P_VRSTEP( @_idvrstep, 9, 20 )
-            endif
-        
         elseif ( _idtipdok == "06" )
                 
             @ m_x + 5, m_y + 51 SAY "Po ul.fakt.broj:" ;

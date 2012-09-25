@@ -2,6 +2,7 @@
 
  - pos, seta cijena za korištenje [#29262](http://redmine.bring.out.ba/issues/29262)
  - pos, inventura, prikaz trenutnog stanja [#29264](http://redmine.bring.out.ba/issues/29264)
+ - fin, specifikacija otvorenih stavki [#29274](http://redmine.bring.out.ba/issues/29274)
  
 1.3.26  2012-09-23, vsasa
 

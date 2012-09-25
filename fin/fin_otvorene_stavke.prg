@@ -173,13 +173,14 @@ DO WHILESC !EOF() .and. cIDFirma==idfirma .AND. cIdKonto=IdKonto
 
          SELECT PARTN
          HSEEK cIdPartner
-         @ prow(),pcol()+1 SAY PADR( naz, 40 )
-         @ prow(),pcol()+1 SAY naz2 PICTURE 'XXXXXXXXXXXX'
-         @ prow(),pcol()+1 SAY PTT
-         @ prow(),pcol()+1 SAY Mjesto
+
+         @ prow(),pcol()+1 SAY PADR( naz, 37 )
+         @ prow(),pcol()+1 SAY PADR( PTT, 5 )
+         @ prow(),pcol()+1 SAY PADR( Mjesto, 17 )
+
          SELECT SUBAN
 
-         @ prow(),pcol()+1 SAY padr(cBrDok,10)
+         @ prow(),pcol()+1 SAY PADR(cBrDok,10)
 
          if cPrelomljeno=="D"
                  if round(nIznD-nIznP,4)>0

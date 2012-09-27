@@ -1,3 +1,8 @@
+1.3.29  2012-09-27, vsasa
+
+ - inventure, peglanje [#29308](http://redmine.bring.out.ba/issues/29308)
+ - fin, kreiranje pom tabele [#29263](http://redmine.bring.out.ba/issues/29263)
+ 
 1.3.28  2012-09-27, vsasa
 
  - štampanje na lpt1, lpt2 windows, bugfix [#29262](http://redmine.bring.out.ba/issues/29262)

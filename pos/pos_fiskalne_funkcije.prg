@@ -647,8 +647,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	cT_c_1 := ""
 	nPopust := 0
 	nPLU_price := 0
-
-	if pos->(FIELDPOS("C_1")) <> 0
+	
+    if pos->(FIELDPOS("C_1")) <> 0
 		// ovo je broj racuna koji se stornira 
 		cT_c_1 := field->c_1
 	endif

@@ -1058,11 +1058,6 @@ enddo
 return
 
 
-
-
-
-
-
 // -------------------------------------
 // storniranje racuna
 // -------------------------------------
@@ -1183,9 +1178,9 @@ do while !EOF() .and. field->idpos == gIdPos ;
     _rec["datum"] := gDatum
 
     if EMPTY( broj_fiscal )
-        _rec["c_1"] := storno_rn
+        _rec["c_1"] := ALLTRIM( storno_rn )
     else
-        _rec["c_1"] := broj_fiscal
+        _rec["c_1"] := ALLTRIM( broj_fiscal )
     endif
 
     dbf_update_rec( _rec )

@@ -104,7 +104,7 @@ if lStorno = .t.
 	cCmd := _on_storno( cRek_rn )
 	// posalji storno komandu
 	nErr_no := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )	
-	
+    altd()	
 	if nErr_no > 0
 		return nErr_no
 	endif

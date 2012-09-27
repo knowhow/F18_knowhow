@@ -290,7 +290,7 @@ O_PRIPT
 O_KALK
 
 // sljedeci broj kalkulacije IP
-private cBrDok := GetNextKalkDoc( cIdFirma, "IP" )
+private cBrDok := SljBroj( cIdFirma, "IP" )
 
 nRbr := 0
 

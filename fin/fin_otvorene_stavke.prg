@@ -1213,6 +1213,7 @@ endif
 // ------------------------------
 
 FERASE( _ime_dbf + ".dbf" )
+FERASE( _ime_dbf + ".cdx" )
 
 aDbf := {}
 AADD(aDBf,{ 'IDPARTNER'   , 'C' ,  nParLen ,  0 })

@@ -376,7 +376,6 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
             endif
 
         elseif field->pu_i == "I"
-			altd()
             nIzlaz += field->gkolicin2
 
             if field->datdok >= dDatod

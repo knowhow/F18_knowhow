@@ -52,8 +52,9 @@ return
 // -----------------------------------------------
 static function o_tmp( cPath )
 
-select (248)
-use ( cPath + "r_export" ) alias "r_export"
+//select (248)
+//use ( cPath + "r_export" ) alias "r_export"
+O_R_EXP
 index on idkonto + idpartner + idrj tag "1"
 
 return

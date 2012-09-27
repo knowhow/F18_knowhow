@@ -3109,7 +3109,8 @@ else
     	Boxc()
 endif
 
-fin_create_pom_table( nil, __par_len)  // kreiraj pomocnu bazu
+fin_create_pom_table( nil, __par_len)  
+// kreiraj pomocnu bazu
 
 O_TRFP2
 O_SUBAN
@@ -3126,7 +3127,7 @@ ELSE
   	ENDIF
 ENDIF
 
-START PRINT RET
+START PRINT CRET
 
 nUkDugBHD:=0
 nUkPotBHD:=0

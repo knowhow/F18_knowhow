@@ -280,27 +280,33 @@ return 1
 
 
 function ScanPKonto(dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj)
-*{
 local nGGOrd
 local nGGo
 local nMpc
 local cSeek
- 
+local _rec
+
 if EMPTY(kalk->pkonto)     
 	return 0
 endif
 
 HSEEK kalk->(pkonto+idroba)
+
 if !FOUND()
+
 	APPEND BLANK
-	replace objekat with kalk->pkonto
-	REPLACE idroba with kalk->idroba
-	REPLACE idtarifa with roba->idtarifa
-	REPLACE g1 with roba->k1
+
+	_rec := dbf_get_rec()
+
+	_rec["objekat"] := kalk->pkonto
+	_rec["idroba"] := kalk->idroba
+	_rec["idtarifa"] := roba->idtarifa
+	_rec["g1"] := roba->k1
+	
 	if (cKartica=="D")  
 		// ocitaj sa kartica
-		nMpc:=0
-		cSeek:=kalk->(idfirma+pkonto+idroba)
+		nMpc := 0
+		cSeek := kalk->(idfirma+pkonto+idroba)
 		SELECT kalk
 		nGGo:=recno()
 		nGGOrd:=indexord()
@@ -308,39 +314,44 @@ if !FOUND()
 		seek trim(kalk->pkonto)
 		SELECT kalk
 		// dan prije inventure !!!
-		FaktMPC(@nmpc,cSeek,dDatDo-1)  
+		FaktMPC( @nmpc, cSeek, dDatDo - 1 )  
 		dbsetorder(nGGOrd)
 		go nGGo
 		SELECT rekap1
-		field->mpc:=nMpc
+		_rec["mpc"] := nMpc
 	else
-		field->mpc:=roba->mpc
+		_rec["mpc"] := roba->mpc
 	endif
+
+else
+
+	_rec := dbf_get_rec()
+
 endif
 
-if (kalk->pu_i=="1" .and. kalk->kolicina>0)
+if (kalk->pu_i == "1" .and. kalk->kolicina > 0 )
 	
 	// ulaz moze biti po osnovu prijema, 80 - preknjizenja
 	// odnosno internog dokumenta
 
 	if kalk->datdok<=dDatDo  // kumulativno stanje
-		field->k2+=kalk->kolicina  // zalihe
+		_rec["k2"] += kalk->kolicina  // zalihe
 	endif
-	if (cVarijanta<>"1")
+	if (cVarijanta <> "1")
 		if kalk->datdok<dDatOd  
 			// predhodno stanje
-			field->k0+=kalk->kolicina
+			_rec["k0"] += kalk->kolicina
 		endif
-		if DInRange(kalk->datdok,dDatOd,dDatDo ) 
+		if DInRange( kalk->datdok,dDatOd,dDatDo ) 
 			// tekuci prijem
-			field->k4+=kalk->kolicina
+			_rec["k4"] += kalk->kolicina
 		endif
 	else
 		if DInRange(kalk->datdok,dDatOd,dDatDo ) 
 			// tekuci prijem
 			if kalk->idvd=="80" .and. !EMPTY(kalk->idkonto2)
 				// bilo je promjena po osnovu predispozicije
-				field->k4pp+=kalk->kolicina
+				_rec["k4pp"] += kalk->kolicina
 			endif
 		endif
 	endif
@@ -351,10 +362,10 @@ elseif (kalk->pu_i=="3")
 	if kalk->datdok=dDatDo   
 		// dokument nivelacije na dan inventure
 		if cVarijanta<>"1"
-			field->novampc:=kalk->(Fcj+mpcsapp)
+			_rec["novampc"] := kalk->(fcj + mpcsapp)
 		endif
 		// stara cijena
-		field->mpc:=kalk->fcj
+		_rec["mpc"] := kalk->fcj
 
 	endif
 
@@ -370,9 +381,9 @@ elseif kalk->pu_i=="5" .or. (kalk->pu_i=="1" .and. kalk->kolicina<0)
 		if kalk->datdok<dDatOd
 			if kalk->pu_i=="5"    
 				// predhodno stanje
-				field->k0-=kalk->kolicina
+				_rec["k0"] -= kalk->kolicina
 			else
-				field->k0-=abs(kalk->kolicina)
+				_rec["k0"] -= ABS(kalk->kolicina)
 			endif
 		endif
 	endif
@@ -380,9 +391,9 @@ elseif kalk->pu_i=="5" .or. (kalk->pu_i=="1" .and. kalk->kolicina<0)
 	if (kalk->datdok<=dDatDo)
 		if kalk->pu_i=="5"
 			// zaliha
-			field->k2-=kalk->kolicina       
+			_rec["k2"] -= kalk->kolicina       
 		else
-			field->k2-=abs(kalk->kolicina)
+			_rec["k2"] -= ABS(kalk->kolicina)
 		endif
 	endif
 
@@ -390,12 +401,12 @@ elseif kalk->pu_i=="5" .or. (kalk->pu_i=="1" .and. kalk->kolicina<0)
 		//prodaja
 		if DInRange(kalk->datdok,dDatOd,dDatDo ) 
 			// tekuca prodaja
-			field->k1+=kalk->kolicina
+			_rec["k1"] += kalk->kolicina
 		endif
 		if (cVarijanta<>"1")
 			if kalk->datdok<=dDatDo  
 				// kumulativna prodaja
-				field->k3+=kalk->kolicina
+				_rec["k3"] += kalk->kolicina
 			endif
 		endif
 
@@ -409,31 +420,32 @@ elseif kalk->pu_i=="5" .or. (kalk->pu_i=="1" .and. kalk->kolicina<0)
 				if DInRange(kalk->datdok,dDatOd,dDatDo ) 
 					// tekuce reklamacije
 					// reklamacije u mjesecu
-					field->k5+=abs(kalk->kolicina) 
+					_rec["k5"] += abs(kalk->kolicina) 
 				endif
 				if kalk->datdok<=dDatDo
 					// kumulativno reklamacije
-					field->k7+=abs(kalk->kolicina)   
+					_rec["k7"] += abs(kalk->kolicina)   
 				endif
 			else
 				if DInRange(kalk->datdok, dDatOd, dDatDo)
 					// izlaz-otprema po ostalim osnovama
-					field->k6+=abs(kalk->kolicina)  
+					_rec["k6"] += abs(kalk->kolicina)  
 				endif
 			endif
 		else
 			if DInRange(kalk->datdok, dDatOd, dDatDo )
 				if kalk->idvd=="80" .and. !EMPTY(kalk->idkonto2)
 					// bilo je promjena po osnovu predispozicije
-					field->k4pp+=kalk->kolicina
+					_rec["k4pp"] += kalk->kolicina
 				endif
 			endif
 		endif
 	endif
 endif
 
+dbf_update_rec( _rec )
 
 return 1
-*}
+
 
 

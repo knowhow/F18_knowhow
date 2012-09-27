@@ -431,8 +431,8 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 		skip
 	enddo
 	
-	//ne prikazuj stavke 0
-	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 4 ) <> 0 
+	// ne prikazuj stavke 0
+	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 2 ) <> 0 
 		
         if PROW() > 61 + gPStranica
 			FF
@@ -470,7 +470,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
   			
 			select kalk_pripr
   			
-			if round(nUlaz-nIzlaz,4)<>0 .and. cSrKolNula $ "01"
+			if round( nUlaz - nIzlaz, 4 ) <> 0 .and. cSrKolNula $ "01"
      				
 				append blank
      				
@@ -560,19 +560,19 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
 		select kalk
 
-		if ROUND( nUlaz - nIzlaz + nPKOL, 4 ) <> 0
+		if ROUND( nUlaz - nIzlaz + nPKOL, 2 ) <> 0
 
- 			if cMpcIzSif == "D"
-                @ prow(), pcol() + 1 SAY _mpc pict gpiccdem
-                nTMpv += ( ( nUlaz - nIzlaz + nPKOL ) * _mpc )
-            else
+ 			//if cMpcIzSif == "D"
+                //@ prow(), pcol() + 1 SAY _mpc pict gpiccdem
+                //nTMpv += ( ( nUlaz - nIzlaz + nPKOL ) * _mpc )
+            //else
                 // mpcsapdv
                 @ prow(), pcol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) pict gpiccdem
 
- 			    if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
-   				    ?? " ERR MPC =", ALLTRIM( STR( _mpc, 12, 2 )  )
- 			    endif
-            endif
+ 			    //if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
+   				  //  ?? " ERR MPC =", ALLTRIM( STR( _mpc, 12, 2 )  )
+ 			    //endif
+            //endif
 
 		else
 

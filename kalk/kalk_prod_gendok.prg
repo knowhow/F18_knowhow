@@ -478,24 +478,33 @@ return
 
 // Generisanje nivelacije radi korekcije MPC
 function KorekMPC()
- LOCAL dDok:=date(), nPom:=0
- PRIVATE cMagac:="1320   "
- O_KONTO
- cSravnitiD:="D"
- private cUvijekSif:="D"
- Box(,6,50)
-   @ m_x+1,m_y+2 SAY "Konto prodavnice: " GEt cMagac pict "@!" valid P_konto(@cMagac)
-   @ m_x+2,m_y+2 SAY "Sravniti do odredjenog datuma:" GET cSravnitiD valid cSravnitiD $ "DN" pict "@!"
-   @ m_x+4,m_y+2 SAY "Uvijek nivelisati na MPC iz sifrarnika:" GET cUvijekSif valid cUvijekSif $ "DN" pict "@!"
-   read;ESC_BCR
-   @ m_x+6,m_y+2 SAY "Datum do kojeg se sravnjava" GET dDok
-   read;ESC_BCR
- BoxC()
- O_KONCIJ
- SEEK trim(cMagac)
- O_ROBA
- O_KALK_PRIPR
- O_KALK
+local dDok := DATE()
+local nPom := 0
+private cMagac := fetch_metric( "kalk_sredi_karicu_mpc", my_user(), PADR( "1330", 7) )
+ 
+O_KONTO
+ 
+cSravnitiD:="D"
+ 
+private cUvijekSif:="D"
+ 
+Box(,6,50)
+	@ m_x+1,m_y+2 SAY "Konto prodavnice: " GEt cMagac pict "@!" valid P_konto(@cMagac)
+   	@ m_x+2,m_y+2 SAY "Sravniti do odredjenog datuma:" GET cSravnitiD valid cSravnitiD $ "DN" pict "@!"
+   	@ m_x+4,m_y+2 SAY "Uvijek nivelisati na MPC iz sifrarnika:" GET cUvijekSif valid cUvijekSif $ "DN" pict "@!"
+   	read
+	ESC_BCR
+   	@ m_x+6,m_y+2 SAY "Datum do kojeg se sravnjava" GET dDok
+   	read
+	ESC_BCR
+BoxC()
+
+O_KONCIJ
+SEEK trim( cMagac )
+ 
+O_ROBA
+O_KALK_PRIPR
+O_KALK
 
 nTUlaz:=nTIzlaz:=0
 nTVPVU:=nTVPVI:=nTNVU:=nTNVI:=0
@@ -504,9 +513,11 @@ lGenerisao := .f.
 private nRbr:=0
 
 select kalk
-cBrNiv:=kalk_sljedeci(gfirma,"19")
-select kalk; set order to tag "4"
-HSEEK gFirma+cMagac
+cBrNiv := kalk_sljedeci(gfirma,"19")
+
+select kalk
+set order to tag "4"
+HSEEK gFirma + cMagac
 
 Box(,6,65)
 
@@ -514,88 +525,120 @@ Box(,6,65)
 
 do while !eof() .and. idfirma+pkonto=gFirma+cMagac
 
-cIdRoba:=Idroba; nUlaz:=nIzlaz:=0; nVPVU:=nVPVI:=nNVU:=nNVI:=0; nRabat:=0
-select roba; hseek cidroba; select kalk
+	cIdRoba:=Idroba
+	nUlaz:=nIzlaz:=0
+	nVPVU:=nVPVI:=nNVU:=nNVI:=0
+	nRabat:=0
 
-if roba->tip $ "TU"; skip; loop; endif
+	select roba
+	hseek cIdroba
+	select kalk
 
-cIdkonto:=pkonto
+	if roba->tip $ "TU"
+		skip
+		loop
+	endif
 
-nUlazVPC  := UzmiMPCSif()
-nStartMPC := nUlazVPC  // od ove cijene pocinjemo
+	cIdkonto := pkonto
 
-nPosljVPC := nUlazVPC
+	nUlazVPC  := UzmiMPCSif()
+	nStartMPC := nUlazVPC  
+	// od ove cijene pocinjemo
 
-@ 2+m_x, 2+m_y SAY "ID roba: " + cIdRoba
-@ 3+m_x, 2+m_y SAY "Cijena u sifrarniku " + ALLTRIM(STR(nUlazVpc))
+	nPosljVPC := nUlazVPC
 
-do while !eof() .and. gFirma+cidkonto+cidroba==idFirma+pkonto+idroba
+	@ 2+m_x, 2+m_y SAY "ID roba: " + cIdRoba
+	@ 3+m_x, 2+m_y SAY "Cijena u sifrarniku " + ALLTRIM(STR(nUlazVpc))
 
-  if roba->tip $ "TU"
-    skip
-    loop
-  endif
-  if cSravnitiD=="D"
-     if datdok>dDok
-          skip; loop
-     endif
-  endif
+	do while !eof() .and. gFirma+cidkonto+cidroba==idFirma+pkonto+idroba
 
-  if pu_i=="1"
-    nUlaz+=kolicina-gkolicina-gkolicin2
-    nVPVU+=mpcsapp*(kolicina-gkolicina-gkolicin2)
-    nUlazVPC:=mpcsapp
-    if mpcsapp<>0; nPosljVPC:=mpcsapp; endif
-  elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-    nIzlaz+=kolicina
-    nVPVI+=mpcsapp*kolicina
-    if mpcsapp<>0; nPosljVPC:=mpcsapp; endif
-  elseif pu_i=="5"  .and. (idvd $ "12#13#22")    // povrat
-    nUlaz-=kolicina
-    nVPVU-=mpcsapp*kolicina
-    if mpcsapp<>0; nPosljVPC:=mpcsapp; endif
-  elseif pu_i=="3"    // nivelacija
-    nVPVU+=mpcsapp*kolicina
-    if mpcsapp+fcj<>0; nPosljVPC:=mpcsapp+fcj; endif
-  elseif pu_i=="I"
-    nIzlaz+=gkolicin2
-    nVPVI+=mpcsapp*gkolicin2
-    if mpcsapp<>0; nPosljVPC:=mpcsapp; endif
-  endif
-  skip
-enddo
+  		if roba->tip $ "TU"
+    		skip
+    		loop
+  		endif
+  
+		if cSravnitiD=="D"
+     		if datdok>dDok
+          		skip
+				loop
+     		endif
+  		endif
 
-  nRazlika:=0
-  nStanje:=round(nUlaz-nIzlaz,4)
-  nVPV:=round(nVPVU-nVPVI,4)
-  select kalk_pripr
+  		if pu_i=="1"
+    		nUlaz+=kolicina-gkolicina-gkolicin2
+    		nVPVU+=mpcsapp*(kolicina-gkolicina-gkolicin2)
+    		nUlazVPC:=mpcsapp
+    		if mpcsapp<>0
+				nPosljVPC:=mpcsapp
+			endif
+  		elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
+    		nIzlaz+=kolicina
+    		nVPVI+=mpcsapp*kolicina
+    		if mpcsapp<>0
+				nPosljVPC:=mpcsapp
+			endif
+  		elseif pu_i=="5"  .and. (idvd $ "12#13#22")    // povrat
+   	 		nUlaz-=kolicina
+    		nVPVU-=mpcsapp*kolicina
+    		if mpcsapp<>0
+				nPosljVPC:=mpcsapp
+			endif
+  		elseif pu_i=="3"    
+			// nivelacija
+    		nVPVU+=mpcsapp*kolicina
+    		if mpcsapp+fcj<>0
+				nPosljVPC:=mpcsapp+fcj
+			endif
+  		elseif pu_i=="I"
+    		nIzlaz+=gkolicin2
+    		nVPVI+=mpcsapp*gkolicin2
+    		if mpcsapp<>0
+				nPosljVPC:=mpcsapp
+			endif
+  		endif
+  		skip
+	enddo
 
-  if cUvijekSif=="D"
-       nUlazVPC:=nStartMPC
-  endif
+  	nRazlika := 0
+  	//nStanje := ROUND( nUlaz - nIzlaz, 4 )
+  	//nVPV := ROUND( nVPVU - nVPVI, 4 )
+  	
+	nStanje := ( nUlaz - nIzlaz )
+	nVPV := ( nVPVU - nVPVI )
 
-  if nStanje<>0 .or. nVPV<>0
-    if nStanje<>0
-       if cUvijekSif=="D" .and. round(nUlazVPC-nVPV/nStanje,4)<>0
-          nRazlika:=nUlazVPC-nVPV/nStanje
-       else  // samo ako kartica nije ok
-        if round(nPosljVPC-nVPV/nStanje,4)=0  // kartica izgleda ok
-          nRazlika:=0
-        else
-          nRazlika:=nUlazVPC - nVPV/nStanje
-          // nova - stara cjena
-        endif
-       endif // cuvijeksif
-    else
-        nRazlika:= nVPV
-    endif
+	select kalk_pripr
 
-    if round(nRazlika,4) <> 0
-      lGenerisao := .t.
-      ++nRbr
-      @ 4+m_x, 2+m_y SAY "Generisao stavki: " + ALLTRIM(STR(nRbr))
-      append blank
-      replace idfirma with gFirma, idroba with cIdRoba, idkonto with cIdKonto,;
+  	if cUvijekSif == "D"
+    	nUlazVPC := nStartMPC
+  	endif
+
+  	if ROUND( nStanje, 4 ) <> 0 .or. ROUND( nVPV, 4 ) <> 0
+    	if ROUND( nStanje, 4 ) <> 0
+       		if cUvijekSif == "D" .and. ROUND( nUlazVPC - nVPV / nStanje, 4 ) <> 0
+          		nRazlika := nUlazVPC - nVPV / nStanje
+       		else  
+				// samo ako kartica nije ok
+        		if ROUND( nPosljVPC - nVPV / nStanje, 4 ) = 0  
+					// kartica izgleda ok
+          			nRazlika := 0
+        		else
+          			nRazlika := nUlazVPC - nVPV / nStanje
+          			// nova - stara cjena
+        		endif
+       		endif
+    	else
+        	nRazlika := nVPV
+    	endif
+
+    	if ROUND( nRazlika, 4 ) <> 0
+
+      		lGenerisao := .t.
+
+     	 	@ 4 + m_x, 2 + m_y SAY "Generisao stavki: " + ALLTRIM(STR(++nRbr))
+
+      		append blank
+
+      		replace idfirma with gFirma, idroba with cIdRoba, idkonto with cIdKonto,;
               datdok with dDok,;
               idtarifa with roba->idtarifa,;
               datfaktp with dDok,;
@@ -604,40 +647,26 @@ enddo
               rbr with STR(nRbr,3),;
               pkonto with cMagac,;
               pu_i with "3"
-      if nStanje<>0
-           replace   fcj with nVPV/nStanje,;
-                     mpcsapp  with nRazlika
-      else
-           replace   kolicina with 1,;
-                     fcj with nRazlika+nUlazVPC,;
-                     mpcsapp     with -nRazlika,;
-                     Tbanktr with "X"
-      endif
 
-    endif  // nRazlika<>0
-  endif
-  select kalk
+      		if nStanje <> 0
+           		replace fcj with nVPV/nStanje
+                replace mpcsapp with nRazlika
+      		else
+           		replace kolicina with 1
+                replace fcj with nRazlika+nUlazVPC
+                replace mpcsapp with -nRazlika
+                replace Tbanktr with "X"
+      		endif
+
+    	endif
+
+  	endif
+
+  	select kalk
 
 enddo
 
 BoxC()
-
-nTArea := SELECT()
-
-if Logirati(goModul:oDataBase:cName,"DOK","GENERACIJA")
-    
-    select kalk_pripr
-    go top
-    cOpis := kalk_pripr->idfirma + "-" + ;
-        pripr->idvd + "-" + ;
-        pripr->brdok
-
-    EventLog(nUser,goModul:oDataBase:cName,"DOK","GENERACIJA",;
-    nil,nil,nil,nil,;
-    cOpis,"","",pripr->datdok,date(),;
-    "","Opcija korekcije nabanih cijena")
-endif
-select (nTArea)
 
 if lGenerisao
     MsgBeep("Generisana nivelacija u kalk_pripremi - obradite je!")

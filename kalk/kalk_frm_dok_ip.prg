@@ -219,12 +219,7 @@ if ROUND( _ulaz - _izlaz, 4 ) <> 0
 
     kolicina := _ulaz - _izlaz
     fcj := _mpvu - _mpvi
-
-    // ????????? zar ne bi trebala mpc iz sifrarnika ???????? 
-    //mpcsapp := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 3 )
-    // stavio sada ovo !!!
-    mpcsapp := UzmiMpcSif()    
-
+    mpcsapp := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 3 )
     nc := ROUND( ( _nvu - _nvi ) / ( _ulaz - _izlaz ), 3 )
 
 endif
@@ -248,36 +243,41 @@ local nMPVI
 local nNVU
 local nNVI 
 local nRabat
+local _cnt := 0
 
 O_KONTO
 
 Box(, 4, 50 )
+
 	cIdFirma := gFirma
 	cIdkonto := PADR( "1330", 7 )
 	dDatDok := DATE()
 	cOldBrDok := SPACE(8)
 	cIdVd := "IP"
+
 	@ m_x+1, m_y+2 SAY "Prodavnica:" GET cIdKonto valid P_Konto(@cIdKonto)
 	@ m_x+2, m_y+2 SAY "Datum do  :" GET dDatDok
 	@ m_x+3, m_y+2 SAY "Dokument " + cIdFirma + "-" + cIdVd GET cOldBrDok
+
 	read
 	ESC_BCR
+
 BoxC()
 
 if Pitanje(,"Generisati inventuru (D/N)","D") == "N"
 	return
 endif
 
-msgo( "kopiram postojecu inventuru ... " ) 
+MsgO( "kopiram postojecu inventuru ... " ) 
 
 // prvo izvuci postojecu inventuru u PRIPT
 // ona ce sluziti za usporedbu...
 if cp_dok_pript( cIdFirma, cIdVd, cOldBrDok ) == 0
-    msgc()
+    MsgC()
 	return
 endif
 
-msgc()
+MsgC()
 
 // otvori potrebne tabele
 O_TARIFA
@@ -289,12 +289,17 @@ O_KALK_PRIPR
 O_PRIPT
 O_KALK
 
-private cBrDok := SljBroj( cIdFirma, "IP", 8 )
+// sljedeci broj kalkulacije IP
+private cBrDok := GetNextKalkDoc( cIdFirma, "IP" )
 
 nRbr := 0
+
+select kalk
 set order to tag "4"
 
-MsgO("Generacija dokumenta IP - " + cBrDok )
+Box( ,3, 60 )
+
+@ m_x + 1, m_y + 2 SAY "generacija IP-" + ALLTRIM( cBrDok ) + " u toku..."
 
 select koncij
 seek TRIM( cIdKonto )
@@ -384,7 +389,9 @@ do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
 
  		_rec["idfirma"] := cIdfirma
 		_rec["idkonto"] := cIdkonto
+		_rec["mkonto"] := ""
 		_rec["pkonto"] := cIdkonto
+		_rec["mu_i"] := ""
 		_rec["pu_i"] := "I"
  		_rec["idroba"] := cIdroba
 		_rec["idtarifa"] := roba->idtarifa
@@ -402,33 +409,32 @@ do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
         _rec["datfaktp"] := dDatdok
 
 		_rec["error"] := ""
-		_rec["fcj"] := nMpvu-nMpvi 
+		_rec["fcj"] := nMpvu - nMpvi 
+
         // stanje mpvsapp
-
  		if Round( nUlaz - nIzlaz, 4 ) <> 0
-
-            // ???????
-            // takodjer treba da uzme stanje iz sifrarnika !!!!!
-      		//_rec["mpcsapp"] := Round((nMPVU - nMPVI)/(nUlaz - nIzlaz),3)
-
-            // postavio ovo !!!!
-            _rec["mpcsapp"] := UzmiMPCSif()
-  			_rec["nc"] := round((nNvu - nNvi)/( nUlaz - nIzlaz ),3)
+			// treba li ovo zaokruzivati ????
+      		_rec["mpcsapp"] := ROUND( (nMPVU - nMPVI) / (nUlaz - nIzlaz), 3 )
+  			_rec["nc"] := ROUND( (nNvu - nNvi) / ( nUlaz - nIzlaz ), 3 )
  		else
   			_rec["mpcsapp"] := 0
  		endif
 
  		dbf_update_rec( _rec )
 
- 		select kalk
+		@ m_x + 2, m_y + 2 SAY "Broj stavki: " + PADR( ALLTRIM( STR( ++_cnt, 12, 0 ) ), 20 )
+		@ m_x + 3, m_y + 2 SAY "    Artikal: " + PADR( ALLTRIM( cIdroba ), 20 )
+ 		
+		select kalk
 
 	endif
 
 enddo
 
-MsgC()
+BoxC()
 
 select kalk_pripr
+
 if RECCOUNT() > 0
     MsgBeep( "Dokument inventure formiran u pripremi, obradite ga!" )
 endif

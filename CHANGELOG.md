@@ -1,3 +1,7 @@
+1.3.28  2012-09-27, vsasa
+
+ - štampanje na lpt1, lpt2 windows, bugfix [#29262](http://redmine.bring.out.ba/issues/29262)
+ 
 1.3.27  2012-09-27, vsasa
 
  - pos, seta cijena za korištenje [#29262](http://redmine.bring.out.ba/issues/29262)

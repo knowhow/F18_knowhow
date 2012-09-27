@@ -12,6 +12,10 @@
 
 #include "pos.ch"
 
+static _saldo_izn := 0
+static _saldo_kol := 0
+
+
 function InventNivel()
 parameters fInvent, fIzZad, fSadAz, dDatRada, stanje_dn
 
@@ -120,6 +124,9 @@ if !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
     return
 endif
 
+// datum trebam setovati na osnovu dokumenta koji je vracen u priprz
+// ako postoji
+
 select priprz
 
 // pocetak inventure
@@ -127,6 +134,7 @@ if RecCount2() == 0
     fPocInv := .t.
 else
     fPocInv := .f.
+    dDatRada := priprz->datum
 endif
 
 // 1) formiranje pomocne baze sa knjiznim stanjima artikala
@@ -212,9 +220,9 @@ if fPocInv
                 select (cRSdbf)
                 HSEEK _idroba
 
-                _cijena := _field->mpc     
+                _cijena := pos_get_mpc()
                 // postavi tekucu cijenu
-                _ncijena := _field->mpc
+                _ncijena := pos_get_mpc()
                 _robanaz := _field->naz 
                 _jmj := _field->jmj
                 _idtarifa := _field->idtarifa
@@ -420,7 +428,10 @@ do case
         endif
 
     case Ch == K_ENTER
-
+        
+        // kalkulisi stavke u pripremi
+        _calc_priprz()
+        // otvori unos
         if !( EdPrInv(1) == 0 )
             lVrati := DE_REFRESH
         endif
@@ -455,9 +466,14 @@ do case
 
     case Ch == K_CTRL_N  
 
-        EdPrInv( 0, dat_inv_niv )
-        lVrati := DE_REFRESH
+        // kalkulisi stavke iz pripreme
+        _calc_priprz()
 
+        // otvori unos
+        EdPrInv( 0, dat_inv_niv )
+        
+        lVrati := DE_REFRESH
+        
     case Ch == K_CTRL_T
         
         lVrati := DE_CONT
@@ -474,6 +490,41 @@ do case
 endcase
 
 return lVrati
+
+
+
+// ----------------------------------------
+// kalkulisi priprz stavke
+// napuni staticke varijable
+// _saldo_kol, _saldo_izn
+// ----------------------------------------
+static function _calc_priprz()
+local _t_area := SELECT()
+
+select priprz
+go top
+
+_saldo_kol := 0
+_saldo_izn := 0
+
+do while !EOF()
+
+    // inventura treba da gleda kol2
+    if field->idvd == "IN"
+        _saldo_kol += field->kol2
+        _saldo_izn += ( field->kol2 * field->cijena )
+    else
+        _saldo_kol += field->kolicina
+        _saldo_kol += ( field->kolicina * field->cijena )
+    endif
+
+    skip
+
+enddo
+
+select (_t_area)
+return
+
 
 
 
@@ -510,6 +561,11 @@ do while .t.
 
     Scatter()
 
+    @ m_x + 1, m_y + 31 SAY PADR( "", 35 ) 
+    @ m_x + 6, m_y + 2 SAY "... zadnji artikal: " + ALLTRIM( _idroba ) + " - " + PADR( _robanaz, 25 ) + "..." 
+    @ m_x + 7, m_y + 2 SAY "stanje unosa - kol: " + ALLTRIM( STR( _saldo_kol, 12, 2)) + ;
+                                                    " total: " + ALLTRIM( STR( _saldo_izn, 12, 2 ) )
+ 
     select ( cRSdbf )
     hseek _idroba
 
@@ -543,30 +599,25 @@ do while .t.
 
     nLX := m_x + 1
 	
-
-    //if nInd == 0
-
-        @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
+    @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
             PICT PICT_POS_ARTIKAL ;
             WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
             VALID valid_pos_inv_niv( cIdVd, nInd )
 
                    
-        nLX ++
+    nLX ++
         
-        if cIdVd == VD_INV
+    if cIdVd == VD_INV
             // ovo mi treba samo informativno kod inventure...
             @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict ;
                WHEN { || .f. }
-        else
+    else
             @ nLX, m_y + 3 SAY "     Kolicina:" GET _kolicina PICT _pict ;
                WHEN { || .t. }
-        endif
+    endif
             
-        nLX ++
+    nLX ++
     
-    //endif
-
     if cIdVd == VD_INV
 
         @ nLX, m_y + 3 SAY "Pop. kolicina:" GET _kol2 PICT _pict ;
@@ -592,8 +643,16 @@ do while .t.
     READ
 
     if LastKey() == K_ESC
+
         BoxC()
+
+        TB:RefreshAll()
+        DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
+            Tb:stabilize()
+        ENDDO
+
         exit
+
     endif
         
     // priprz
@@ -619,10 +678,10 @@ do while .t.
     _jmj := _r_jmj
 
     Gather()
-   
-    @ m_x + 1, m_y + 31 SAY PADR( "", 35 ) 
-    @ m_x + 7, m_y + 2 SAY "... zadnji artikal: " + ALLTRIM( _idroba ) + " - " + PADR( _robanaz, 25 ) + "..." 
-   
+ 
+    _saldo_kol += priprz->kol2
+    _saldo_izn += ( priprz->kol2 * priprz->cijena )
+ 
     if nInd == 0
         
         TB:RefreshAll()
@@ -632,7 +691,8 @@ do while .t.
         ENDDO
 
     endif
- 
+
+
     if nInd == 1
         nVrati := 1
         BoxC()
@@ -732,7 +792,7 @@ do while !EOF() .and. field->idodj == _id_odj
         append blank
 
         _rec := dbf_get_rec()
-        _rec["cijena"] := roba->mpc     
+        _rec["cijena"] := pos_get_mpc()
         _rec["ncijena"] := 0 
         _rec["idroba"] := ip_roba
         _rec["barkod"] := roba->barkod
@@ -810,6 +870,7 @@ local _area := SELECT()
 pos_postoji_roba( @_IdRoba, 1, 31) 
 
 RacKol( _idodj, _idroba, @_kolicina )
+
 _set_cijena_artikla( cIdVd, _idroba )
 
 if ind == 0 .and. !_postoji_artikal_u_pripremi( _idroba )
@@ -856,7 +917,7 @@ if id_vd == VD_INV
     select roba
     hseek id_roba        
     // setuj cijene
-    _cijena := roba->mpc
+    _cijena := pos_get_mpc()
 
 endif
 
@@ -899,13 +960,6 @@ return _ok
  */
  
 function RacKol( cIdOdj, cIdRoba, nKol )
-
-//if cIdVd == VD_INV
-//    nKol := 0 
-    // jer se generise priprema inventure, pa ako dodam novi
-    // sigurno nije bilo ovog artikla
-//    return .t.  
-//endif
 
 MsgO( "Racunam kolicinu ..." )
 

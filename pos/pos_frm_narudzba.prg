@@ -180,15 +180,15 @@ do while .t.
     @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
    		PICT PICT_POS_ARTIKAL ;
         WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI) ), .t. } ;
-        VALID valid_pos_racun_artikal(@_kolicina) 
+        VALID valid_pos_racun_artikal( @_kolicina ) 
  
     @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  ;
         WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
     @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
       	PICT "999999.999" ;
-        WHEN when_pos_kolicina(@_kolicina) ;
-     	VALID valid_pos_kolicina(@_kolicina)
+        WHEN when_pos_kolicina( @_kolicina ) ;
+     	VALID valid_pos_kolicina( @_kolicina, _cijena )
 
    
     nRowPos := 5
@@ -212,7 +212,8 @@ do while .t.
     _idodj := SPACE(2)
 
     if !( roba->tip == "T" )
-        _cijena := roba->mpc
+        _cijena := pos_get_mpc()
+        // roba->mpc
     endif
             
     // _pos_pripr
@@ -300,9 +301,8 @@ return .t.
 
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
-static function valid_pos_kolicina(kolicina)
-
-return KolicinaOK( kolicina ) .and. pos_check_qtty( @kolicina ) 
+static function valid_pos_kolicina( kolicina, cijena )
+return KolicinaOK( kolicina ) .and. pos_check_qtty( @kolicina ) .and. cijena_ok( cijena ) 
 
  
 // ----------------------------------------------
@@ -450,6 +450,20 @@ if gModul=="HOPS"
 endif
 
 return .f.
+
+
+// --------------------------------------------
+// provjera cijene
+// --------------------------------------------
+static function cijena_ok( cijena )
+local _ret := .t.
+
+if cijena == 0
+    MsgBeep( "Nepravilan unos cijene, cijena mora biti <> 0 !!!" )
+    _ret := .f.
+endif
+
+return _ret
 
 
 // --------------------------------------------------------

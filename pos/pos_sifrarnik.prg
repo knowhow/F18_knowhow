@@ -13,7 +13,30 @@
 #include "pos.ch"
 
 
+// ----------------------------------------------------
+// vraca mpc na osnovu seta cijena koji se koristi
+// ----------------------------------------------------
+function pos_get_mpc()
+local _tmp := ALLTRIM( gSetMPCijena )
+local _cijena := 0
+local _field
+
+if EMPTY( _tmp ) .or. _tmp == "0"
+    MsgBeep("Set cijena nije podesen ispravno !!!")
+    return 0
+endif
+
+if _tmp == "1"
+    _cijena := roba->mpc    
+else
+    _field := "mpc" + _tmp
+    _cijena := roba->&(_field)
+endif
+
+return _cijena
+
  
+
 function P_Kase(cId,dx,dy)
 private ImeKol
 private Kol

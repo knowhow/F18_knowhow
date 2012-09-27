@@ -241,6 +241,7 @@ public gKorIme
 public gSTRAD           
 
 // identifikator seta cijena koji se
+public gSetMPCijena := "1"
 public gIdCijena:="1"   
 public gPopust:=0
 public gPopDec:=1
@@ -350,9 +351,6 @@ SC_Opisi [5] := "5"
 
 gDatum := DATE()
 
-public gIdCijena:= "1"
-public gPopust:= 0
-public gPopDec:= 1
 public gPopVar:= "P"
 public gPopZcj:= "N"
 public gZadCij:= "N"
@@ -494,6 +492,7 @@ grbStId := fetch_metric("RacunStampaIDArtikla", nil, grbStId)
 grbReduk := fetch_metric("RacunRedukcijaTrake", nil, grbReduk)
 
 // cijene
+gSetMPCijena := fetch_metric("pos_set_cijena", nil, gSetMPCijena )
 gIdCijena := fetch_metric("SetCijena", nil, gIdCijena)
 gPopust := fetch_metric("Popust", nil, gPopust)
 gPopDesc := fetch_metric("PopustDecimale", nil, gPopDec)

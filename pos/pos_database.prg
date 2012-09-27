@@ -911,14 +911,22 @@ return
 // ------------------------------------------
 static function azur_sif_roba_row()
 local _rec
+local _field_mpc
 
 select roba
 set order to tag "ID"
+
+if gSetMPCijena == "1"
+    _field_mpc := "mpc"
+else
+    _field_mpc := "mpc" + ALLTRIM( gSetMPCijena )
+endif
 
 // pozicioniran sam na robi
 hseek priprz->idroba  
 
 lNovi:=.f.
+
 if ( !FOUND() )
 
     // novi artikal
@@ -941,15 +949,15 @@ if !IsPDV()
     // u ne-pdv rezimu je bilo bitno da preknjizenje na pdv ne pokvari
     // star cijene
     if katops->idtarifa <> "PDV17"
-        _rec["mpc"] := ROUND( priprz->cijena, 3 )        
+        _rec[ _field_mpc ] := ROUND( priprz->cijena, 3 )        
     endif
 else
 
     if cIdVd == "NI"
       // nivelacija - u sifrarnik stavi novu cijenu
-      _rec["mpc"] := ROUND(priprz->ncijena, 3)
+      _rec[ _field_mpc ] := ROUND(priprz->ncijena, 3)
     else
-      _rec["mpc"] := ROUND(priprz->cijena, 3)
+      _rec[ _field_mpc ] := ROUND(priprz->cijena, 3)
     endif
     
 endif
@@ -1048,11 +1056,6 @@ do while !oBrowse:Stabilize() .and. ( ( Ch := INKEY() ) == 0 )
 enddo
 
 return
-
-
-
-
-
 
 
 // -------------------------------------
@@ -1174,18 +1177,15 @@ do while !EOF() .and. field->idpos == gIdPos ;
     _rec["robanaz"] := roba->naz
     _rec["datum"] := gDatum
 
-    dbf_update_rec( _rec )
-
-    if _pos_pripr->(FIELDPOS("C_1")) <> 0
-        if EMPTY( broj_fiscal )
-            replace field->c_1 with storno_rn
-        else
-            replace field->c_1 with broj_fiscal
-        endif
+    if EMPTY( broj_fiscal )
+        _rec["c_1"] := ALLTRIM( storno_rn )
+    else
+        _rec["c_1"] := ALLTRIM( broj_fiscal )
     endif
 
-    select pos
+    dbf_update_rec( _rec )
     
+    select pos
     skip
 
 enddo

@@ -295,7 +295,7 @@ if !fSadAz
     		_RobaNaz := _field->Naz
 			_Jmj := _field->Jmj
    			_IdTarifa:=_field->IdTarifa
-			_Cijena:=if(EMPTY(_cijena),_field->mpc,_cijena)
+			_Cijena:=if(EMPTY(_cijena),pos_get_mpc(),_cijena)
 			_barkod := _field->barkod
 			_n1 := _field->n1
 			_n2 := _field->n2
@@ -388,18 +388,27 @@ return
 function StUSif()
 local _t_area := SELECT()
 local _rec
+local _tmp
+
+if gSetMPCijena == "1"
+    _tmp := "mpc"
+else
+    _tmp := "mpc" + ALLTRIM( gSetMPCijena )
+endif
 
 if gZadCij=="D"
-	if _cijena <> roba->mpc .and. Pitanje(, "Staviti u sifrarnik novu cijenu? (D/N)", "D" )=="D"
+
+	if _cijena <> pos_get_mpc() .and. Pitanje(, "Staviti u sifrarnik novu cijenu? (D/N)", "D" )=="D"
 
       	SELECT (F_ROBA)
       	_rec := dbf_get_rec()
-		_rec["mpc"] := _cijena
+		_rec[ _tmp ] := _cijena
 
 		update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
 		select ( _t_area )
     endif
+
 endif
 
 return
@@ -411,10 +420,8 @@ return
  */
  
 function SetSpecZad()
-*{
 bPrevZv:=SETKEY(ASC("*"), {|| IspraviZaduzenje()})
 return .t.
-*}
 
 
 /*! \fn UnSetSpecZad()
@@ -422,10 +429,8 @@ return .t.
  */
  
 function UnSetSpecZad()
-*{
 SETKEY(ASC("*"),{|| bPrevZv})
 return .f.
-*}
 
 
 /*! \fn ZadKolOK(nKol)
@@ -435,7 +440,6 @@ return .f.
  */
 
 function ZadKolOK(nKol)
-*{
 
 if LASTKEY()=K_UP
 	return .t.
@@ -445,7 +449,7 @@ if nKol=0
      	return (.f.)
 endif
 return (.t.)
-*}
+
 
 
 /*! \fn ZadProvDuple(cSif)
@@ -454,8 +458,6 @@ return (.t.)
  *  \return
  */
 function ZadProvDuple(cSif)
-*{
-
 local lFlag:=.t.
 
 SELECT PRIPRZ
@@ -469,15 +471,13 @@ endif
 SET ORDER TO
 GO (nPrevRec)
 return (lFlag)
-*}
+
 
 
 /*! \fn IspraviZaduzenje()
  *  \brief Ispravka zaduzenja od strane korisnika
  */
 function IspraviZaduzenje()
-*{
-
 local cGetId
 local nGetKol
 local aConds
@@ -505,7 +505,7 @@ _idroba:=cGetId
 _Kolicina:=nGetKol
 SetSpecZad()
 return
-*}
+
 
 
 /*! \fn BrisStavZaduz()
@@ -513,7 +513,6 @@ return
  */
 
 function BrisStavZaduz()
-*{
 
 SELECT PRIPRZ
 if RecCount2()==0
@@ -524,7 +523,7 @@ Beep(2)
 DELETE
 oBrowse:refreshAll()
 return (DE_CONT)
-*}
+
 
 
 
@@ -532,8 +531,6 @@ return (DE_CONT)
  *  \brief Vrsi editovanje stavke zaduzenja i to samo artikla ili samo kolicine
  */
 function  EditStavZaduz()
-*{
-
 local PrevRoba
 local nARTKOL:=2
 local nKOLKOL:=4

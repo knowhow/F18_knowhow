@@ -333,7 +333,7 @@ do while !eof()
 		
 			
 		if ((cMink<>"D" .and. (cNule=="D".or.round(nStanje,4)<>0)) .or. (cMink=="D" .and. nMink<>0 .and. (nStanje-nMink)<0)) .and. !(cMink=="O" .and. nMink==0 .and. round(nStanje,4)==0)
-			nCijena1:=mpc
+			nCijena1:=pos_get_mpc()
 			? cLM+cIdRoba, PADR(Naz,nRob)+" "
 			//
 			// VRIJEDNOST = CIJENA U SIFRARNIKU * STANJE KOMADA

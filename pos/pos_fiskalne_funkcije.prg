@@ -173,7 +173,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPLU := auto_plu(nil, nil, __device)
 	endif
 
-	nPLU_price := roba->mpc
+	nPLU_price := pos_get_mpc()
 	cPLU_bk := roba->barkod
 	cPLU_jmj := roba->jmj
 
@@ -500,7 +500,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	seek cArtikal
 
 	nPLU := roba->fisc_plu
-	nPLU_price := roba->mpc
+	nPLU_price := pos_get_mpc()
 	cPLU_bk := roba->barkod
 	cPLU_jmj := roba->jmj
 
@@ -647,8 +647,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	cT_c_1 := ""
 	nPopust := 0
 	nPLU_price := 0
-
-	if pos->(FIELDPOS("C_1")) <> 0
+	
+    if pos->(FIELDPOS("C_1")) <> 0
 		// ovo je broj racuna koji se stornira 
 		cT_c_1 := field->c_1
 	endif
@@ -668,7 +668,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPLU := auto_plu( nil, nil, __device )
 	endif
 
-	nPLU_price := roba->mpc
+	nPLU_price := pos_get_mpc()
 	cPLU_bk := roba->barkod
 	cPLU_jmj := roba->jmj
 

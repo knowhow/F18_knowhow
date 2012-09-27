@@ -1183,9 +1183,9 @@ do while !EOF() .and. field->idpos == gIdPos ;
     _rec["datum"] := gDatum
 
     if EMPTY( broj_fiscal )
-        replace _rec["c_1"] := storno_rn
+        _rec["c_1"] := storno_rn
     else
-        replace _rec["c_1"] := broj_fiscal
+        _rec["c_1"] := broj_fiscal
     endif
 
     dbf_update_rec( _rec )

@@ -1182,18 +1182,15 @@ do while !EOF() .and. field->idpos == gIdPos ;
     _rec["robanaz"] := roba->naz
     _rec["datum"] := gDatum
 
-    dbf_update_rec( _rec )
-
-    if _pos_pripr->(FIELDPOS("C_1")) <> 0
-        if EMPTY( broj_fiscal )
-            replace field->c_1 with storno_rn
-        else
-            replace field->c_1 with broj_fiscal
-        endif
+    if EMPTY( broj_fiscal )
+        replace _rec["c_1"] := storno_rn
+    else
+        replace _rec["c_1"] := broj_fiscal
     endif
 
-    select pos
+    dbf_update_rec( _rec )
     
+    select pos
     skip
 
 enddo

@@ -210,7 +210,7 @@ if port_number == NIL
     port_number := "1"
 endif
 
-_cmd := "copy " + f_name + " > LPT" + port_number 
+_cmd := "copy " + f_name + " LPT" + port_number 
 
 _err := hb_run( _cmd )
 

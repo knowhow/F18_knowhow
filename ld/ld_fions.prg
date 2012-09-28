@@ -383,42 +383,42 @@ return &c719
  *  \brief Racuna ukupne sate
  */
 function USati()
-*{
-IF lViseObr
-    c719:=UbaciPrefix(gFUSati,"w")
-ELSE
-    c719:=gFUSati
-ENDIF
+if EMPTY( gFUSati )
+    return 0
+endif
+c719 := UbaciPrefix( gFUSati, "w" ) 
 return &c719
-*}
+
 
 
 /*! \fn URPrim()
  *  \brief Ukupna razna primanja
  */
 function URPrim()
-*{
-IF lViseObr
-    c719:=UbaciPrefix(gFURaz,"w")
-ELSE
-    c719:=gFURaz
-ENDIF
+
+if EMPTY( gFURaz )
+    return 0
+endif
+
+c719 := UbaciPrefix( gFURaz, "w" )
 return &c719
-*}
 
 
-/*! \fn URSati()
- *  \brief Ukupna razna primanja sati
- */
+
+
+// -----------------------------------------------
+// Ukupna razna primanja sati
+// -----------------------------------------------
 function URSati()
-*{
-IF lViseObr
-    c719:=UbaciPrefix(gFURSati,"w")
-ELSE
-    c719:=gFURSati
-ENDIF
+
+if EMPTY( gFURSati )
+    return 0
+endif
+
+c719 := UbaciPrefix( gFURSati, "w" )
+
 return &c719
-*}
+
 
 **********************************************
 function Prosj1(cTip,cTip2,cF0)
@@ -441,94 +441,99 @@ local nMj1:=0,i:=0
 private cFormula
 PushWA()
 
-if cF0=NIL
-   cFormula:="0"
+if cF0 = NIL
+   cFormula := "0"
 else
-   cFormula:=cF0
+   cFormula := cF0
 endif
 
 //CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
 //CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
 set order to tag (TagVO("2","I"))
 
-i:=0
+i := 0
+
 do while .t.
- ++i
- if _Mjesec-i<1
-   seek str(_Godina-1,4)+str(12+_Mjesec-i,2)+_idradn
-   cmj1:=str(12+_mjesec-i,2)+"."+str(_godina-1,4)
- else
-   seek str(_Godina,4)+str(_Mjesec-i,2)+_idradn
-   cmj1:=str(_mjesec-i,2)+"."+str(_godina,4)
- endif
-
- if found()
-   if lViseObr
-     ScatterS(godina,mjesec,idrj,idradn,"w")
-   else
-     wuneto := uneto
-     wusati := usati
-   endif
-   if cTip $ "13"
-     nMj1:= wUNeto
-   elseif cTip $ "678"
-     nMj1:=URPrim()
-   else
-     nMj1:=UPrim()
-   endif
-   if cTip $ "126"
-    if wusati<>0
-      nMj1:=nMj1/wUSati
+    ++i
+    if _mjesec-i<1
+        seek STR(_godina-1,4) + STR(12 + _mjesec-i,2) + _idradn
+        cMj1 := STR( 12 + _mjesec-i,2) + "." + STR(_godina-1,4)
     else
-      nMj1:=0
+        seek STR(_godina,4) + STR( _mjesec-i,2) + _idradn
+        cMj1 := STR( _mjesec-i,2) + "." + STR(_godina,4)
     endif
-   elseif cTip $ "5"
-    if USati()<>0
-      nMj1:=nMj1/USati()
+
+    if found()
+        if lViseObr
+            ScatterS(godina,mjesec,idrj,idradn,"w")
+        else
+            wuneto := uneto
+            wusati := usati
+        endif
+        if cTip $ "13"
+            nMj1 := wUNeto
+        elseif cTip $ "678"
+            nMj1 := URPrim()
+        else
+            nMj1 := UPrim()
+        endif
+        if cTip $ "126"
+            if wusati<>0
+                nMj1:=nMj1/wUSati
+            else
+                nMj1:=0
+            endif
+        elseif cTip $ "5"
+            if USati()<>0
+                nMj1:=nMj1/USati()
+            else
+                nMj1:=0
+            endif
+        elseif cTip $ "7"
+            if URSati()<>0
+                nMj1:=nMj1/URSati()
+            else
+                nMj1:=0
+            endif
+        endif
     else
-      nMj1:=0
+        MsgBeep(Lokal("Prosjek je uzet iz sifrarnika radnika - OSN.BOL. !"))
+        SELECT RADN
+        SET ORDER TO TAG "1"
+        GO TOP
+        HSEEK _IdRadn
+        nMj1 := osnbol
+        SELECT LD
+        exit
     endif
-   elseif cTip $ "7"
-    if URSati()<>0
-      nMj1:=nMj1/URSati()
+
+    if nMj1==0
+        loop
+    endif
+
+    if &cFormula<>0
+        loop
+    endif
+
+    if cTip2=="1"  // gleda se prosli mjesec
+        exit
+    elseif cTip2=="3"
+        if round(wUNeto,2)==round(URPrim(),2)
+            exit
+        endif
     else
-      nMj1:=0
+        if round(wUNeto,2)==round(UPrim(),2)
+            exit
+        endif
     endif
-   endif
- else
-   MsgBeep(Lokal("Prosjek je uzet iz sifrarnika radnika - OSN.BOL. !"))
-   SELECT RADN; SET ORDER TO TAG "1"; GO TOP
-   HSEEK _IdRadn
-   nMj1 := osnbol
-   SELECT LD
-   exit
- endif
-
- if nMj1==0; loop; endif
-
- if &cFormula<>0
-    loop
- endif
-
- if cTip2=="1"  // gleda se prosli mjesec
-   exit
- elseif cTip2=="3"
-   if round(wUNeto,2)==round(URPrim(),2)
-     exit
-   endif
- else
-   if round(wUNeto,2)==round(UPrim(),2)
-     exit
-   endif
- endif
 
 enddo
 
 Box(,4,50)
- @ m_x+1,m_y+2 SAY "PRIMANJE ZA PROSLI MJESEC:"
- @ m_x+2,m_y+2 SAY  cmj1; @ row(),col()+2 SAY nMj1 pict "999999.999"
- @ m_x+4,m_y+2 SAY "Prosjek"; @ row(),col()+2 SAY nMj1 pict "999999.999"
- inkey(0)
+    @ m_x+1,m_y+2 SAY "PRIMANJE ZA PROSLI MJESEC:"
+    @ m_x+2,m_y+2 SAY  cmj1; @ row(),col()+2 SAY nMj1 pict "999999.999"
+    @ m_x+4,m_y+2 SAY "Prosjek"; @ row(),col()+2 SAY nMj1 pict "999999.999"
+    inkey(0)
 BoxC()
 
 PopWa()

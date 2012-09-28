@@ -226,11 +226,11 @@ public gVarSpec:="1"
 public cVarPorOl:="1"
 public gSihtarica := "N"
 public gSihtGroup := "N"
-public gFUPrim:=PADR("UNETO+I24+I25",50)
-public gBFForm:=PADR("",100)
-public gFURaz:=PADR("",60)
-public gFUSati:=PADR("USATI",50)
-public gFURSati:=PADR("",50)
+public gFUPrim := PADR("UNETO+I24+I25",50)
+public gBFForm := PADR("",100)
+public gFURaz := PADR("",60)
+public gFUSati := PADR("USATI",50)
+public gFURSati := PADR("",50)
 public gFUGod:=PADR("I06",40)
 public gUNMjesec:="N"
 public gMRM:=0
@@ -299,7 +299,7 @@ RPar("ps",@gPicS)
 RPar("rk",@gReKrOs)
 Rpar("to",@gTipObr)
 Rpar("vo",@cVarPorOl)
-Rpar("uH",@gFURSati)
+gFURsati := fetch_metric( "ld_formula_ukupni_sati", nil, gFURsati )
 Rpar("uS",@gFUSati)
 Rpar("uB",@gBFForm)
 RPar("um",@gUNMjesec)

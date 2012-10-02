@@ -22,7 +22,7 @@
 // ------------------------------
 // parametri generacije ugovora
 // ------------------------------
-static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, nGenCh, cDestin, cDatLFakt, dLFakt )
+static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, nGenCh, cDestin, cDatLFakt, dLFakt, cAutoAzur )
 local dPom
 local nX := 2
 local nBoxLen := 20
@@ -45,6 +45,7 @@ cIdArt := PADR("", 10)
 cDestin := "N"
 // datum posljednjeg fakturisanja partnera
 cDatLFakt := "N"
+cAutoAzur := "D"
 
 // choice
 nGenCh := 0
@@ -119,6 +120,9 @@ else
     cDestin := nil
 endif
 
+nX += 1    
+@ m_x + nX, m_y + 2 SAY PADL( "Automatski azuriraj fakture (D/N) ?", nBoxLen + 16) GET cAutoAzur ;
+    VALID cAutoAzur $ "DN" PICT "@!"
 
 read
 
@@ -168,6 +172,7 @@ local cDatLFakt
 local dLFakt
 local __where, _rec
 local _count := 0
+local _auto_azur
 
 // otvori tabele
 o_ugov()
@@ -175,7 +180,7 @@ o_ugov()
 // otvori parametre generacije
 lSetParams := .t.
 
-if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt, @dLFakt ) == 0
+if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt, @dLFakt, @_auto_azur ) == 0
     return
 endif
 
@@ -333,8 +338,11 @@ BoxC()
 // prikazi info generacije
 s_gen_info( dDatObr )
 
-// funkcija azuriranja modula FAKT
-azur_fakt( .t. )
+// ako je opcija automatike ukljucena
+if _auto_azur == "D"
+    // funkcija azuriranja modula FAKT
+    azur_fakt( .t. )
+endif
 
 return
 
@@ -531,13 +539,14 @@ if Found()
     cPom += "##"
     cPom += "Broj faktura: " + ALLTRIM(STR(field->fakt_br))
     cPom += "#"
-    cPom += "Saldo: " + ALLTRIM(STR(field->saldo))
+    cPom += "Saldo: " + ALLTRIM(STR(field->saldo, 12, 2 ))
     cPom += "#"
-    cPom += "PDV: " + ALLTRIM(STR(field->saldo_pdv))
+    cPom += "PDV: " + ALLTRIM(STR(field->saldo_pdv, 12, 2 ))
     cPom += "#"
     cPom += "Fakture od: " + ALLTRIM( gen_ug->brdok_od ) + " - " + ALLTRIM( gen_ug->brdok_do )
 
     MsgBeep( cPom )
+
 endif
 
 return

@@ -56,7 +56,7 @@ AADD( _dbf, { "PC", "N", 15, 5 })
 t_exp_create( _dbf )
 
 O_R_EXP
-index on "idroba" tag "1"
+index on idroba tag "roba"
 	
 return
 
@@ -94,7 +94,7 @@ Box(, 10, 70 )
     @ m_x + _x, m_y + 2 SAY "Artikli (prazno-svi):" GET _artikli PICT "@S35"
 
     ++ _x
-    @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa stanje = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
+    @ m_x + _x, m_y + 2 SAY "Prikaz stavki kojima je ulaz = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
 
     read
 
@@ -228,7 +228,7 @@ for _i := 1 to _table:LastRec()
 
     // uzmi iz matrice
     _rec["idkonto"] := oRow:Fieldget( oRow:Fieldpos("pkonto"))
-    _rec["idroba"] := oRow:Fieldget( oRow:Fieldpos("idroba")) 
+    _rec["idroba"] := PADR( oRow:Fieldget( oRow:Fieldpos("idroba")), 10 )
     _rec["naziv"] := oRow:Fieldget( oRow:Fieldpos("robanaz")) 
     _rec["tarifa"] := oRow:Fieldget( oRow:Fieldpos("idtarifa")) 
     _rec["jmj"] := oRow:Fieldget( oRow:Fieldpos("jmj")) 
@@ -286,7 +286,7 @@ if !EMPTY( _date )
     _date := " AND (" + _date + ")"
 endif
 
-// sql upit za ulaze:
+// sql upit za izlaze:
 //
 _qry := "SELECT " + ;
    "kalk.pkonto pkonto, " + ;
@@ -295,6 +295,7 @@ _qry := "SELECT " + ;
        "CASE " + ; 
           "WHEN kalk.pu_i = '5' AND kalk.idvd IN ( " + _sql_quote("12") + "," + _sql_quote("13") + " ) THEN -kalk.kolicina " + ;
           "WHEN kalk.pu_i = '5' AND kalk.idvd NOT IN ( " + _sql_quote("12") + "," + _sql_quote("13") + " ) THEN kalk.kolicina " + ;
+          "WHEN kalk.idvd = '80' AND kalk.kolicina < 0  THEN -kalk.kolicina " + ;
           "ELSE 0 " + ;
        "END " + ; 
    ") as izlaz " + ;
@@ -313,6 +314,8 @@ MsgO( "Prikupljanje podataka o izlazima robe... sacekajte !" )
 _table := _sql_query( _server, _qry )
 _table:Refresh()
 
+log_write( _qry, 7 )
+
 // provrti se kroz matricu i azuriraj rezultat u pomocni dbf
 for _i := 1 to _table:LastRec()
 
@@ -323,8 +326,9 @@ for _i := 1 to _table:LastRec()
     _id_roba := oRow:Fieldget( oRow:Fieldpos("idroba"))
 
     select r_export
+    set order to tag "roba"
     go top
-    seek _id_roba
+    seek PADR( _id_roba, 10 )
 
     if FOUND()
 
@@ -381,17 +385,19 @@ O_PARTN
 seek vars["dobavljac"]
 ?? ALLTRIM( partn->naz )
 
+P_COND
+
 ? _line
 ? _head
 ? _line
 
 select r_export
-set order to tag "1"
+set order to tag "roba"
 go top
 
 do while !EOF()
 
-    if _nule == "N" .and. ROUND( field->stanje, 2 ) == 0
+    if _nule == "N" .and. ROUND( field->ulaz, 2 ) == 0
         skip
         loop
     endif
@@ -443,11 +449,11 @@ _head += PADR( "Naziv", 40 )
 _head += SPACE(1)
 _head += PADR( "Tarifa", 7 )
 _head += SPACE(1)
-_head += PADR( "Ulaz", 12 )
+_head += PADR( "Ulazi", 12 )
 _head += SPACE(1)
-_head += PADR( "Izlaz", 12 )
+_head += PADR( "Izlazi", 12 )
 _head += SPACE(1)
-_head += PADR( "Stanje", 12 )
+_head += PADR( "Razlika", 12 )
 
 return _head
 

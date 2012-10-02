@@ -975,7 +975,6 @@ local _cnt := 0
 
 START PRINT CRET
 
-O_ROBA
 O_PARTN
 
 ?
@@ -988,11 +987,8 @@ P_COND
 
 for _i := 1 to LEN( data )
     
-    select roba
-    hseek data[ _i, 4 ]
-
     select partn
-    hseek data[ _i, 6 ]
+    hseek data[ _i, 4 ]
 
     ? PADL( ALLTRIM( STR( ++_cnt ) ), 4 ) + "."
 

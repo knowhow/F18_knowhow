@@ -956,7 +956,7 @@ static function add_to_generated_data( data, ;
                 id_firma, id_tip_dok, br_dok, ;
                 id_partner, destinacija )
 
-_scan := ASCAN( data, { srch[1] + srch[2] + srch[3] == id_firma + id_tip_dok + br_dok })
+_scan := ASCAN( data, { |srch| srch[1] + srch[2] + srch[3] == id_firma + id_tip_dok + br_dok })
 
 if _scan == 0
     AADD( data, { id_firma, id_tip_dok, br_dok, id_partner, destinacija } )

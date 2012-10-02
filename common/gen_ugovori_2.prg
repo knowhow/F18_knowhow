@@ -693,7 +693,7 @@ do while !EOF() .and. (id == cUId)
             nRbr := 0
             
             // uvecaj broj dokumenta
-            cBrDok := UBrojDok( VAL(LEFT(cBrDok, gNumDio)) + 1, gNumDio, RIGHT(cBrDok, LEN(cBrDok) - gNumDio))
+            cBrDok := fakt_novi_broj_dokumenta( cFirma, cFTipDok )
 
         endif
         
@@ -905,7 +905,6 @@ if Found()
     endif
     _rec["brdok_do"] := cBrDok
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-	my_use_semaphore_on()
 endif
 
 // vrati se na pripremu i pregledaj djokere na _TXT

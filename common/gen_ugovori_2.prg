@@ -980,10 +980,10 @@ O_PARTN
 ?
 ? "Pregled generisanih dokumenata prema kupcima:"
 ? "----------------------------------------------"
-P_COND
+P_COND2
 ? 
-? PADR( "R.br", 5 ), PADR( "dokument", 15 ), PADR( "partner", 34 ), PADR( "destinacija", 80 )
-? REPLICATE( "-", 130 )
+? PADR( "R.br", 5 ), PADR( "dokument", 15 ), PADR( "partner", 34 ), PADR( "destinacija", 100 )
+? REPLICATE( "-", 150 )
 
 for _i := 1 to LEN( data )
     
@@ -994,7 +994,7 @@ for _i := 1 to LEN( data )
 
     @ prow(), pcol() + 1 SAY PADR( data[ _i, 1 ] + "-" + data[ _i, 2 ] + "-" + ALLTRIM( data[ _i, 3 ] ) , 15 )
     @ prow(), pcol() + 1 SAY PADR( data[ _i, 4 ], 6 ) + " - " + PADR( partn->naz, 25 )
-    @ prow(), pcol() + 1 SAY PADR( data[ _i, 5 ], 80 )
+    @ prow(), pcol() + 1 SAY PADR( data[ _i, 5 ], 100 )
 
 next
 

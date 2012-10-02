@@ -173,6 +173,7 @@ static function edit_dest( lNova )
 local nRec
 local nBoxLen := 20
 local nX := 1
+local _rec
 private GetList:={}
 
 if lNova
@@ -180,8 +181,9 @@ if lNova
 	GO BOTTOM
 	SKIP 1
 endif
- 	    
-Scatter()
+
+// bivsi scatter() 	    
+set_global_memvars_from_dbf()
 	   
 if lNova
 
@@ -256,10 +258,12 @@ if lNova
 	append blank
 endif
 
-Gather()
+// bivsi gather()
+_rec := get_dbf_global_memvars()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 if lNova
-	GO (nRec)
+	go (nRec)
 endif
 
 return 7
@@ -332,6 +336,7 @@ return
 function set_as_default( cUgovId, cDest )
 local nTArea := SELECT()
 local nRec
+local _rec
 
 if Pitanje(,"Setovati kao glavnu destinaciju fakturisanja (D/N)?", "D") == "N"
 	return
@@ -343,7 +348,9 @@ nRec := RECNO()
 seek cUgovId
 
 if FOUND()
-	replace def_dest with cDest
+    _rec := dbf_get_rec()
+    _rec["def_dest"] := cDest
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	MsgBeep("Destinacija '" + ALLTRIM(cDest) + "' setovana#za ugovor " + cUgovId + " !!!")
 endif
 

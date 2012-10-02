@@ -23,12 +23,15 @@ set_a_fakt_doks_doks2("fakt_doks2" , "FAKT_DOKS2" , F_FAKT_DOKS2)
 
 set_a_dbf_fakt_ugov()
 set_a_dbf_fakt_rugov()
+set_a_dbf_fakt_dest()
 set_a_dbf_fakt_gen_ug()
 set_a_dbf_fakt_gen_ug_p()
 
 // tabele sa strukturom sifarnika (id je primarni ključ)
 set_a_dbf_sifarnik("fakt_ftxt"  , "FTXT"  , F_FTXT   )
-set_a_dbf_sifarnik("dest"       , "DEST"  , F_DEST   )
+
+// prebaceno u gornju izdvojenu funkciju
+//set_a_dbf_sifarnik("dest"       , "DEST"  , F_DEST   )
 
 // temp fakt tabele - ne idu na server
 set_a_dbf_temp("fakt_relac"   ,   "RELAC"        , F_RELAC   )
@@ -120,6 +123,47 @@ _item["sql_order"] := "id, idroba, dest"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.
+
+
+
+// -----------------------------------------------------------
+// -----------------------------------------------------------
+function set_a_dbf_fakt_dest()
+local _item, _alg, _tbl 
+
+_tbl := "dest"
+
+_item := hb_hash()
+
+_item["alias"] := "DEST"
+_item["table"] := _tbl
+_item["wa"]    := F_DEST
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+
+// funkcija a_dest() definise dbf polja
+_alg["dbf_key_block"]  := {|| field->id + field->idpartner }
+_alg["dbf_key_fields"] := {"id", "idpartner" }
+_alg["sql_in"]         := "rpad(id,6) || rpad(idpartner,6)"
+_alg["dbf_tag"]        := "ID"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "id, idpartner"
+
+f18_dbfs_add(_tbl, @_item)
+return .t.
+
+
+
+
+
 
 // -----------------------------------
 // -----------------------------------

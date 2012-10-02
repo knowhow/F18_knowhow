@@ -64,7 +64,7 @@ nMjesec := MONTH(dPom)
 // godina na koju se odnosi fakturisanje
 nGodina := YEAR(dPom)
 
-Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 20, 70)
+Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 22, 70)
 
 @ m_x + nX, m_y + 2 SAY PADL("Gen. ?/fakt/ponuda (0/1/2)", nBoxLen + 6 ) GET nGenCh ;
     PICT "9"
@@ -173,6 +173,7 @@ local dLFakt
 local __where, _rec
 local _count := 0
 local _auto_azur
+local _doks_generated := {}
 
 // otvori tabele
 o_ugov()
@@ -301,7 +302,7 @@ do while !EOF()
     @ m_x + 2, m_y + 2 SAY "Ug / Partner -> " + cUId + " / " + cUPartner
     
     // generisi ugovor za partnera
-    g_ug_f_partner(cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, @cNBrDok, cIdArt, cIdFirma, cDefDest, cGenTipDok )
+    g_ug_f_partner(cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, @cNBrDok, cIdArt, cIdFirma, cDefDest, cGenTipDok, @_doks_generated )
     
     select ugov
     skip
@@ -343,6 +344,9 @@ if _auto_azur == "D"
     // funkcija azuriranja modula FAKT
     azur_fakt( .t. )
 endif
+
+// prikazi info o generisanim dokumentima
+info_generated_data( _doks_generated )
 
 return
 
@@ -596,10 +600,11 @@ select (nTArr)
 return lRet
 
 
-// --------------------------------------------------
+// ----------------------------------------------------------
 // generacija ugovora za jednog partnera
-// --------------------------------------------------
-static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok, cArtikal, cFirma, cDestin, cFTipDok )
+// aData - sadrzi matricu generisanih faktura sa opisima
+// ----------------------------------------------------------
+static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok, cArtikal, cFirma, cDestin, cFTipDok, aData )
 local dDatGen
 local cIdUgov
 local i
@@ -627,6 +632,7 @@ local nMjesec
 local nGodina
 local lFromDest
 local _rec
+local __destinacija
 
 select gen_ug
 set order to tag "dat_obr"
@@ -653,7 +659,7 @@ select rugov
 nCount := 0
 
 // prodji kroz rugov
-do while !EOF() .and. (id == cUId)
+do while !EOF() .and. ( id == cUId )
     
     lFromDest := .f.
 
@@ -793,6 +799,8 @@ do while !EOF() .and. (id == cUId)
         // aMemo[10]
         a_to_txt(cPom)
 
+        __destinacija := ""
+
         if lFromDest == .t.
             
             // dodaj prazne zapise
@@ -835,6 +843,8 @@ do while !EOF() .and. (id == cUId)
                 cPom += ALLTRIM( dest->fax )
             endif
 
+            __destinacija := cPom
+
             a_to_txt( cPom, .t. )
             
         endif
@@ -874,6 +884,9 @@ do while !EOF() .and. (id == cUId)
     
     nGSaldo += nFaktIzn
     nGSaldoPDV += nFaktPDV
+
+    // dodaj u kontrolnu matricu sta je generisano
+    add_to_generated_data( @aData, _brdok, _idroba, _kolicina, _idpartner, __destinacija )
     
     Gather()
     
@@ -882,6 +895,7 @@ do while !EOF() .and. (id == cUId)
 
     select rugov
     skip
+
 enddo
 
 // saldo kupca
@@ -934,6 +948,64 @@ go (nTRec)
 
 return
 
+
+// ----------------------------------------------------------------------
+// dodaj u kontrolnu matricu sta je generisano
+// ----------------------------------------------------------------------
+static function add_to_generated_data( data, ;
+                id_firma, id_tip_dok, br_dok, ;
+                id_partner, destinacija )
+
+_scan := ASCAN( data, { srch[1] + srch[2] + srch[3] == id_firma + id_tip_dok + br_dok })
+
+if _scan == 0
+    AADD( data, { id_firma, id_tip_dok, br_dok, id_partner, destinacija } )
+endif
+
+return
+
+// ----------------------------------------------------------------------
+// prikaz generisanih podataka
+// 
+// data = [ idfirma, idtipdok, brdok, idpartner, destinacija ]
+// ----------------------------------------------------------------------
+static function info_generated_data( data )
+local _i
+local _cnt := 0
+
+START PRINT CRET
+
+O_ROBA
+O_PARTN
+
+?
+? "Pregled generisanih dokumenata prema kupcima:"
+? "----------------------------------------------"
+P_COND
+? 
+? PADR( "R.br", 5 ), PADR( "dokument", 15 ), PADR( "partner", 34 ), PADR( "destinacija", 50 )
+? REPLICATE( "-", 100 )
+
+for _i := 1 to LEN( data )
+    
+    select roba
+    hseek data[ _i, 4 ]
+
+    select partn
+    hseek data[ _i, 6 ]
+
+    ? PADL( ALLTRIM( STR( ++_cnt ) ), 4 ) + "."
+
+    @ prow(), pcol() + 1 SAY PADR( data[ _i, 1 ] + "-" + data[ _i, 2 ] + "-" + ALLTRIM( data[ _i, 3 ] ) , 15 )
+    @ prow(), pcol() + 1 SAY PADR( data[ _i, 4 ]) + " - " + PADR( partn->naz, 25 )
+    @ prow(), pcol() + 1 SAY PADR( data[ _i, 5 ], 50 )
+
+next
+
+FF
+END PRINT
+
+return
 
 
 

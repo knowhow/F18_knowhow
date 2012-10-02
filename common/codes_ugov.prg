@@ -15,7 +15,7 @@
 // -----------------------------
 // prikaz tabele ugovora
 // -----------------------------
-function P_Ugov(cId,dx,dy)
+function p_ugov(cId,dx,dy)
 local i
 local cHeader:=""
 local cFieldId

@@ -108,7 +108,8 @@ return
 // key handler
 //------------------------------------------------
 static function key_handler( cIdUgov)
-local nRet:=DE_CONT
+local nRet := DE_CONT
+local _rec
 
 // prikazi destinaciju
 s_box_dest()
@@ -125,11 +126,12 @@ do case
 
 	case Ch==K_CTRL_T
 	
-     		if Pitanje(,"Izbrisati stavku ?","N")=="D"
-        		delete
-     		endif
+        if Pitanje(,"Izbrisati stavku ?","N") == "D"
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+     	endif
      		
-		nRet:=DE_REFRESH
+		nRet := DE_REFRESH
 endcase
 
 return nRet
@@ -138,9 +140,7 @@ return nRet
 
 // prikazuje box sa informacijama o destinaciji...
 static function s_box_dest()
-
 get_dest_binfo( _x_pos, _y_pos , __partn, rugov->dest )
-
 return
 
 
@@ -258,7 +258,7 @@ if lK1
 endif
     
 
-if !update_rec_server_and_dbf(nil, _vars, 1, "FULL")
+if !update_rec_server_and_dbf( ALIAS(), _vars, 1, "FULL" )
     delete_with_rlock()
 endif
 

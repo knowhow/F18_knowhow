@@ -69,7 +69,7 @@ do case
 		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,  "UGOV")
 
 	case cTbl == "RUGOV"
-		CREATE_INDEX("ID","id+IdRoba", "RUGOV")
+		CREATE_INDEX("ID","id+idroba+dest", "RUGOV")
 		CREATE_INDEX("IDROBA","IdRoba", "RUGOV")
 
 	case cTbl == "GEN_UG"

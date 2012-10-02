@@ -110,13 +110,13 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 
 // funkcija a_rugov() definise dbf polja
-_alg["dbf_key_block"]  := {|| field->id + field->idroba}
-_alg["dbf_key_fields"] := {"id", "idroba"}
-_alg["sql_in"]         := "rpad(id,10) || rpad(idroba,10)"
+_alg["dbf_key_block"]  := {|| field->id + field->idroba + field->dest }
+_alg["dbf_key_fields"] := {"id", "idroba", "dest" }
+_alg["sql_in"]         := "rpad(id,10) || rpad(idroba,10) || rpad(dest,6)"
 _alg["dbf_tag"]        := "ID"
 AADD(_item["algoritam"], _alg)
 
-_item["sql_order"] := "id, idroba"
+_item["sql_order"] := "id, idroba, dest"
 
 f18_dbfs_add(_tbl, @_item)
 return .t.

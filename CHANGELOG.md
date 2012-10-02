@@ -1,3 +1,8 @@
+1.3.30  2012-10-02, vsasa
+
+ - kalk, pregled asortimana [#29338](http://redmine.bring.out.ba/issues/29338)
+ - fakt, generisanje ugovora, čišćenja
+ 
 1.3.29  2012-09-27, vsasa
 
  - inventure, peglanje [#29308](http://redmine.bring.out.ba/issues/29308)

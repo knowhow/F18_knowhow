@@ -83,10 +83,9 @@ AADD(aImeKol, { "Opis", {|| PADR( trim(naz) + ": " + g_rugov_opis(id) , 30)  }, 
 AADD(aImeKol, { "DatumOd", {|| DatOd}, "DatOd" })
 AADD(aImeKol, { "DatumDo", {|| DatDo}, "DatDo" })
 AADD(aImeKol, { "Aktivan", {|| Aktivan}, "Aktivan", {|| .t.}, {|| wAKtivan $ "DN"}})
-
+AADD(aImeKol, { "Lab.print", {|| lab_prn}, "lab_prn" } )
 AADD(aImeKol, { "TipDok", {|| IdTipdok}, "IdTipDok" })
 AADD(aImeKol, { "Vrsta", {|| vrsta}, "Vrsta" })
-
 
 if ugov->(fieldpos("F_NIVO")) <> 0
     AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
@@ -352,6 +351,7 @@ if lNovi
     _datod:=DATE()
     _datdo:=CTOD("31.12.2059")
     _aktivan:="D"
+    _lab_prn := "D"
     _dindem:=DFTdindem
     _idtipdok:=DFTidtipdok
     _zaokr:=DFTzaokr
@@ -400,7 +400,8 @@ endif
 
 ++ nX
 
-@ m_x + nX, m_y + 2 SAY PADL("Aktivan (D/N)", nBoxLen) GET _aktivan VALID _aktivan $ "DN"  PICT "@!"
+@ m_x + nX, m_y + 2 SAY PADL("Aktivan (D/N)", nBoxLen) GET _aktivan VALID _aktivan $ "DN" PICT "@!"
+@ m_x + nX, col() + 2 SAY PADL("labela print (D/N)", nBoxLen) GET _lab_prn VALID _lab_prn $ "DN" PICT "@!"
 
 ++ nX
 

@@ -362,6 +362,8 @@ set order to tag "3"
 seek cidfirma+cidkonto
 EOF CRET
 
+log_write( "otvorene stavke, automatsko zatvaranje", 5 )
+
 if cPobSt=="D" .and. Pitanje(,"Zelite li zaista pobrisati markere ??","N")=="D"
 
     MsgO("Brisem markere ...")
@@ -634,7 +636,8 @@ do case
 		// asistentu ot.st.
 
      	IF Pitanje(,"Preci u mod direktog unosa podataka u tabelu? (D/N)","D")=="D"
-        	gTBDir := "D"
+        	log_write( "otovrene stavke, mod direktnog unosa = D", 5 )
+            gTBDir := "D"
          	OSt_StatLin()
          	DaTBDirektni() 
      	ENDIF
@@ -663,6 +666,8 @@ do case
         	_rec["otvst"] := _otv_st
         	update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
 			
+            log_write( "otvorene stavke, set marker=" + cMark, 5 )
+
         	if lLogRucZat
             	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cMark,"",Date(),Date(),"","Rucno zatvaranje otvorenih stavki")
         	endif
@@ -682,7 +687,7 @@ do case
        	else
         	_otv_st := " "
        	endif
-		
+		log_write( "otvorene stavke, marker=" + _otv_st, 5 )
        	_rec := dbf_get_rec()
        	_rec["m1"] := _otv_st
        	
@@ -713,9 +718,9 @@ do case
             _rec["brdok"] := cBrDok
             _rec["opis"]  := cOpis
             _rec["datval"] := dDatVal
-
+            log_write( "otvorene stavke, ispravka broja veze, set=" + cBrDok, 5 )
             update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-	
+            	
      	endif
 
      	if lLogRucZat
@@ -738,6 +743,7 @@ do case
 	
             	_rec := dbf_get_rec()
                 _rec["brdok"] := cPomBrDok
+                log_write( "otvorene stavke, zamjena broja veze, set=" + cPomBrDok, 5 )
                 update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
 	
             endif

@@ -67,7 +67,7 @@ endif
 _ok := .t.
 
 MsgO( "Azuriranje dokumenata u toku ..." )
- 
+
 _ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
 
 if !_ok
@@ -87,7 +87,6 @@ for _i := 1 to LEN( _a_fakt_doks )
         MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + ALLTRIM(_br_dok) + " vec postoji azuriran u bazi !" )
         _ok := .f.
     endif
-   
     
     if _ok .and. fakt_azur_sql( _id_firma, _id_tip_dok, _br_dok  )
     
@@ -162,7 +161,6 @@ local _ids_fakt  := {}
 local _ids_doks  := {}
 local _ids_doks2 := {}
 
-
 _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
@@ -180,6 +178,8 @@ if !FOUND()
     Alert("ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
     return .f.
 endif
+
+log_write( "FAKT, azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
 
 // -----------------------------------------------------------------------------------------------------
 sql_table_update(nil, "BEGIN")
@@ -231,7 +231,6 @@ if _ok == .t.
        _ok := .f.
   endif
    
-
 endif
 
 if !_ok
@@ -249,13 +248,15 @@ if !_ok
 else
 
     @ m_x+4, m_y+2 SAY "push ids to semaphore: " + _tmp_id
+
     push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
     push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
-
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
     sql_table_update(nil, "END")
+
+    log_write( "FAKT, azuriranje dokumenta - END", 3 )
 
 endif
 

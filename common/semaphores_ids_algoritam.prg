@@ -136,6 +136,9 @@ next
 _qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND ids IS NOT NULL AND array_length(ids,1) > 1000"
 _ret := _sql_query( _server, _qry )
 
+// ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova
+//log_write( "tabela: " + _tbl + ", ids: " + _sql_ids + ", user: " + _user, 3 )
+
 log_write( "push_ids_to_semaphore(), zavrsio", 9 )
 
 // na kraju uradi update verzije semafora

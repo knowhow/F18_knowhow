@@ -164,6 +164,8 @@ if !f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
     return .f.
 endif
 
+log_write( "FIN, azuriranje naloga: " + _record["idfirma"] + "-" + _record["idvn"] + "-" + _record["brnal"] + " - START", 3 )
+
 sql_table_update( nil, "BEGIN" )
 
 SELECT PSUBAN
@@ -283,6 +285,8 @@ else
     f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
     sql_table_update(nil, "END")
+
+    log_write( "FIN, azuriranje naloga - END", 3 )
 
 endif
 

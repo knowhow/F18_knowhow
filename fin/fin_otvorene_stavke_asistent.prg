@@ -107,6 +107,7 @@ AADD( _dbf, { 'UPLACENO'            , 'N' ,  21 ,  2 })
 AADD( _dbf, { 'M2'                  , 'C' ,  1 , 0 })
 
 DBCREATE( my_home() + _table + ".dbf", _dbf )
+use
 
 select ( F_OSTAV )
 

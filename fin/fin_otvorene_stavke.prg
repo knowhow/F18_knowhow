@@ -490,110 +490,112 @@ function RucnoZat()
 
 _o_ruc_zat()
 
-cIdFirma:=gFirma
-cIdPartner:=space(len(partn->id))
+cIdFirma := gFirma
+cIdPartner := space(len(partn->id))
 
-picD:=FormPicL("9 "+gPicBHD,14)
-picDEM:=FormPicL("9 "+gPicDEM,9)
+picD := FormPicL("9 "+gPicBHD,14)
+picDEM := FormPicL("9 "+gPicDEM,9)
 
-cIdKonto:=space(len(konto->id))
+cIdKonto := SPACE(len(konto->id))
 
 Box(,7,66,)
 
-set cursor on
+    set cursor on
 
- @ m_x+1,m_y+2 SAY "ISPRAVKA BROJA VEZE - OTVORENE STAVKE"
- if gNW=="D"
-  @ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- else
-  @ m_x+3,m_y+2 SAY "Firma  " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- endif
- @ m_x+4,m_y+2 SAY "Konto  " GET cIdKonto  valid  P_KontoFin(@cIdKonto)
- @ m_x+5,m_y+2 SAY "Partner" GET cIdPartner valid empty(cIdPartner) .or. P_Firma(@cIdPartner) pict "@!"
- if gRj=="D"
-   cIdRj:=SPACE(LEN(RJ->id))
-   @ m_x+6,m_y+2 SAY "RJ" GET cidrj pict "@!" valid empty(cidrj) .or. P_Rj(@cidrj)
- endif
- read
- ESC_BCR
-
+    @ m_x+1,m_y+2 SAY "ISPRAVKA BROJA VEZE - OTVORENE STAVKE"
+    if gNW=="D"
+        @ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
+    else
+        @ m_x+3,m_y+2 SAY "Firma  " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+    endif
+    @ m_x+4,m_y+2 SAY "Konto  " GET cIdKonto  valid  P_KontoFin(@cIdKonto)
+    @ m_x+5,m_y+2 SAY "Partner" GET cIdPartner valid empty(cIdPartner) .or. P_Firma(@cIdPartner) pict "@!"
+    if gRj=="D"
+        cIdRj:=SPACE(LEN(RJ->id))
+        @ m_x+6,m_y+2 SAY "RJ" GET cidrj pict "@!" valid empty(cidrj) .or. P_Rj(@cidrj)
+    endif
+    read
+    ESC_BCR
 
 BoxC()
 
-if empty(cIdpartner)
-  cidpartner := ""
+if EMPTY(cIdpartner)
+    cIdPartner := ""
 endif
 
-cIdFirma:=left(cIdFirma,2)
+cIdFirma := LEFT(cIdFirma,2)
 
 select SUBAN
-
 // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
 set order to tag "1" 
 
-IF gRJ=="D" .and. !EMPTY(cIdRJ)
-  SET FILTER TO IDRJ==cIdRj
+IF gRJ == "D" .and. !EMPTY(cIdRJ)
+    SET FILTER TO IDRJ == cIdRj
 ENDIF
 
 Box(, MAXROWS() - 5, MAXCOLS() - 10 )
 
-ImeKol:={}
-AADD(ImeKol,{ "O",          {|| OtvSt}             })
-AADD(ImeKol,{ "Partn.",     {|| IdPartner}         })
-AADD(ImeKol,{ "Br.Veze",    {|| BrDok}             })
-AADD(ImeKol,{ "Dat.Dok.",   {|| DatDok}            })
-AADD(ImeKol,{ "Opis",       {|| PADR(opis,20)}, "opis",  {|| .t.}, {|| .t.}, "V"  })
-AADD(ImeKol,{ PADR("Duguje " + ALLTRIM(ValDomaca()),13), {|| str((iif(D_P=="1",iznosbhd,0)),13,2)}     })
-AADD(ImeKol,{ PADR("Potraz." + ALLTRIM(ValDomaca()),13),   {|| str((iif(D_P=="2",iznosbhd,0)),13,2)}     })
-AADD(ImeKol,{ "M1",         {|| m1}                })
-AADD(ImeKol,{ PADR("Iznos "+ALLTRIM(ValPomocna()), 14),  {|| str(iznosdem,14,2)}                       })
-AADD(ImeKol,{ "nalog",      {|| idvn + "-" + brnal +"/" + rbr}                  })
-Kol:={}
+    ImeKol:={}
+    AADD(ImeKol,{ "O",          {|| OtvSt}             })
+    AADD(ImeKol,{ "Partn.",     {|| IdPartner}         })
+    AADD(ImeKol,{ "Br.Veze",    {|| BrDok}             })
+    AADD(ImeKol,{ "Dat.Dok.",   {|| DatDok}            })
+    AADD(ImeKol,{ "Opis",       {|| PADR(opis,20)}, "opis",  {|| .t.}, {|| .t.}, "V"  })
+    AADD(ImeKol,{ PADR("Duguje " + ALLTRIM(ValDomaca()),13), {|| str((iif(D_P=="1",iznosbhd,0)),13,2)}     })
+    AADD(ImeKol,{ PADR("Potraz." + ALLTRIM(ValDomaca()),13),   {|| str((iif(D_P=="2",iznosbhd,0)),13,2)}     })
+    AADD(ImeKol,{ "M1",         {|| m1}                })
+    AADD(ImeKol,{ PADR("Iznos "+ALLTRIM(ValPomocna()), 14),  {|| str(iznosdem,14,2)}                       })
+    AADD(ImeKol,{ "nalog",      {|| idvn + "-" + brnal +"/" + rbr}                  })
+    Kol:={}
 
-for i := 1 to len(ImeKol)
-	AADD(Kol, i)
-next
+    for i := 1 to len(ImeKol)
+	    AADD(Kol, i)
+    next
 
-Private aPPos:={2,3}  
+    Private aPPos:={2,3}  
 
-// pozicija kolone partner, broj veze
+    // pozicija kolone partner, broj veze
 
-private  bGoreRed:=NIL
-private  bDoleRed:=NIL
-private  bDodajRed:=NIL
-private  fTBNoviRed:=.f. // trenutno smo u novom redu ?
-private  TBCanClose:=.t. // da li se moze zavrsiti unos podataka ?
-private  TBAppend:="N"  // mogu dodavati slogove
-private  bZaglavlje:=NIL
+    private bGoreRed := NIL
+    private bDoleRed := NIL
+    private bDodajRed := NIL
+    private fTBNoviRed := .f. // trenutno smo u novom redu ?
+    private TBCanClose := .t. // da li se moze zavrsiti unos podataka ?
+    private TBAppend := "N"  // mogu dodavati slogove
+    private bZaglavlje := NIL
         // zaglavlje se edituje kada je kursor u prvoj koloni
         // prvog reda
-private  TBSkipBlock:={|nSkip| SkipDBBK(nSkip)}
-private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
-private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
-private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
+    private TBSkipBlock := { |nSkip| SkipDBBK(nSkip) }
+    private nTBLine := 1      // tekuca linija-kod viselinijskog browsa
+    private nTBLastLine := 1  // broj linija kod viselinijskog browsa
+    private TBPomjerise := "" // ako je ">2" pomjeri se lijevo dva
                         // ovo se mo§e setovati u when/valid fjama
-private  TBScatter:="N"  // uzmi samo tekuce polje
-adImeKol:={}
+    private TBScatter := "N"  // uzmi samo tekuce polje
+    adImeKol := {}
 
-for i:=1 TO LEN(ImeKol)
-  AADD(adImeKol,ImeKol[i])
-next
+    for i:=1 TO LEN(ImeKol)
+        AADD(adImeKol,ImeKol[i])
+    next
 
-adKol:={}; for i:=1 to len(adImeKol); AADD(adKol,i); next
+    adKol:={}
+    for i:=1 to LEN( adImeKol )
+        AADD( adKol,i )
+    next
 
-private bBKUslov:= {|| idFirma+idkonto+idpartner=cidFirma+cidkonto+cidpartner}
-private bBkTrazi:= {|| cIdFirma+cIdkonto+cIdPartner}
-// Brows ekey uslova
+    private bBKUslov := {|| idFirma + idkonto + idpartner = cIdFirma + cIdkonto + cIdpartner }
+    private bBkTrazi := {|| cIdFirma + cIdkonto + cIdPartner}
 
+    set cursor on
 
-set cursor on
+    private cPomBrDok := SPACE(10)
 
-private cPomBrDok := SPACE(10)
+    seek EVAL( bBkUslov )  
 
-seek eval(bBkUslov)  // pozicioniraj se na pocetak !!      ? MS 16.11.01 ?
+    // prikazi opcije rucnog zatvaranja
+    OSt_StatLin()
 
-OSt_StatLin()
-ObjDbEdit("Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| EdRos()} ,"","",  .f. , NIL, 1, {|| otvst=="9"}, 6, 0, NIL, {|nSkip| SkipDBBK(nSkip)} )
+    ObjDbEdit( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| EdRos() }, ;
+                "", "", .f., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, { |nSkip| SkipDBBK(nSkip) } )
 
 BoxC()
 
@@ -601,13 +603,10 @@ close all
 return
 
 
-
-
-/*! \fn EdROS()
- *  \brief Rucno zatvaranje otvorenih stavki 
- */
- 
-function EdROS()
+// --------------------------------------------
+// key handler otv.st. rucno zatvaranje
+// -------------------------------------------- 
+function EdROS( l_osuban )
 local _rec
 local cMark
 local cDn  := "N" 
@@ -617,6 +616,10 @@ local _t_rec := RECNO()
 local _tb_filter := DbFilter()
 local _t_area := SELECT()
 
+if l_osuban == NIL
+    l_osuban := .f.
+endif
+
 if Logirati(goModul:oDataBase:cName,"DOK","ASISTENT")
     lLogRucZat:=.t.
 else
@@ -625,19 +628,21 @@ endif
 
 do case
 
-	case Ch == K_ALT_E  .and. fieldpos("_OBRDOK") = 0  
+	case Ch == K_ALT_E .and. FIELDPOS("_OBRDOK") = 0  
+
 		// nema prebacivanja u
 		// asistentu ot.st.
+
      	IF Pitanje(,"Preci u mod direktog unosa podataka u tabelu? (D/N)","D")=="D"
-        	gTBDir:="D"
+        	gTBDir := "D"
          	OSt_StatLin()
          	DaTBDirektni() 
-			// ELIB, promjeni tbrowse na edit rezim
      	ENDIF
      
-  	case Ch==K_ENTER
+  	case Ch == K_ENTER
 
-    	cDn:="N"
+    	cDn := "N"
+
      	Box(, 3, 50)
        		@ m_x+1, m_y + 2 SAY "Ne preporucuje se koristenje ove opcije !"
        		@ m_x+3, m_y + 2 SAY "Zelite li ipak nastaviti D/N" GET cDN pict "@!" valid cDn $ "DN"
@@ -646,7 +651,7 @@ do case
 
      	if cDN=="D"
 
-        	if OtvSt<>"9"
+        	if field->otvst <> "9"
             	cMark   := ""
             	_otv_st := "9" 
         	else
@@ -656,7 +661,7 @@ do case
       
         	_rec := dbf_get_rec()
         	_rec["otvst"] := _otv_st
-        	update_rec_server_and_dbf("fin_suban", _rec, 1, "FULL" )
+        	update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
 			
         	if lLogRucZat
             	EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cMark,"",Date(),Date(),"","Rucno zatvaranje otvorenih stavki")
@@ -672,7 +677,7 @@ do case
 
 	case ( Ch == ASC("K") .or. Ch == ASC("k") )
    
-		if m1 <> "9"
+		if field->m1 <> "9"
         	_otv_st := "9"
        	else
         	_otv_st := " "
@@ -687,10 +692,10 @@ do case
 
   	case Ch == K_F2
  
-    	cBrDok := BrDok
-     	cOpis := opis
-     	dDatDok := datdok
-    	dDatVal := datval
+    	cBrDok := field->BrDok
+     	cOpis := field->opis
+     	dDatDok := field->datdok
+    	dDatVal := field->datval
 
      	Box("eddok", 5, 70, .f.)
        		@ m_x+1, m_y+2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
@@ -704,13 +709,13 @@ do case
      	if lastkey() <> K_ESC
 
         	_rec := dbf_get_rec()
+
             _rec["brdok"] := cBrDok
             _rec["opis"]  := cOpis
             _rec["datval"] := dDatVal
 
             update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
 	
-
      	endif
 
      	if lLogRucZat
@@ -721,7 +726,7 @@ do case
 
   	case Ch == K_F5
 
-    	cPomBrDok := BrDok
+    	cPomBrDok := field->BrDok
 
   	case Ch == K_F6
 
@@ -749,11 +754,12 @@ do case
 	case Ch == K_ALT_P
 
      	StBrVeze()
-     	nRet:=DE_REFRESH
+     	nRet := DE_REFRESH
 
 endcase
 
-_o_ruc_zat( .t. )
+_o_ruc_zat( l_osuban )
+
 select ( _t_area )
 set filter to &(_tb_filter)
 go ( _t_rec )
@@ -762,24 +768,22 @@ return nRet
 
 
 
-
-/*! \fn OSt_StatLin()
- *  \brief 
- */
- 
+// --------------------------------------------
+// --------------------------------------------
 function OSt_StatLin()
 local _x, _y
 
 _x := m_x + MAXROWS() - 15
 _y := m_y + 1
 
- @ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
- @ _x + 1, _y SAY " <K>    Ukljuci/iskljuci racun za kamate         <F5> uzmi broj dok.        "
- @ _x + 2, _y SAY '<ENTER> Postavi/Ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
+@ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
+@ _x + 1, _y SAY " <K>    Ukljuci/iskljuci racun za kamate         <F5> uzmi broj dok.        "
+@ _x + 2, _y SAY '<ENTER> Postavi/Ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
 
- @ _x + 3, _y SAY REPL(BROWSE_PODVUCI, MAXCOLS()-12 )
+@ _x + 3, _y SAY REPL( BROWSE_PODVUCI, MAXCOLS() - 12 )
 
- @ _x + 4, _y SAY "" ; ?? "Konto:", cIdKonto
+@ _x + 4, _y SAY ""
+?? "Konto:", cIdKonto
 
 return
 
@@ -1513,7 +1517,8 @@ local nSaldo
 local nSljRec
 local nOdem
 local _rec, _rec_suban
-
+local _max_rows := MAXROWS() - 5
+local _max_cols := MAXCOLS() - 5
 private cIdKonto
 private cIdFirma
 private cIdPartner
@@ -1904,7 +1909,7 @@ if reccount() = 0
     return
 endif
 
-Box(,21,77)
+Box(, _max_rows, _max_cols )
 
 	ImeKol:={}
 	AADD(ImeKol,{ "O.Brdok",    {|| _OBrDok}                  })
@@ -1957,15 +1962,18 @@ Box(,21,77)
 	private aPPos:={cIdPartner,1}  // pozicija kolone partner, broj veze
 
 	set cursor on
-	@ m_x+16,m_y+1 SAY "****************  REZULTATI ASISTENTA ************"
-	@ m_x+17,m_y+1 SAY REPL("Ä",78)
-	@ m_x+18,m_y+1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
-	@ m_x+19,m_y+1 SAY " <K> Ukljuci/iskljuci racun za kamate "
-	@ m_x+20,m_y+1 SAY ' < F6 > Stampanje izvrsenih promjena  '
+
+	@ m_x + ( _max_rows - 5 ), m_y + 1 SAY "****************  REZULTATI ASISTENTA ************"
+	@ m_x + ( _max_rows - 4 ), m_y + 1 SAY REPL("=", MAXCOLS() - 2 )
+	@ m_x + ( _max_rows - 3 ), m_y + 1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
+	@ m_x + ( _max_rows - 2 ), m_y + 1 SAY " <K> Ukljuci/iskljuci racun za kamate "
+	@ m_x + ( _max_rows - 1 ), m_y + 1 SAY ' < F6 > Stampanje izvrsenih promjena  '
+
 	private cPomBrDok := SPACE(10)
 
 	seek EVAL(bBkTrazi)
-	ObjDbEdit("Ost", 21, 77, {|| EdRos()} , "", "", .f. ,NIL, 1, {|| brdok<>_obrdok}, 6, 0, ;  // zadnji par: nGPrazno
+
+	ObjDbEdit( "Ost", _max_rows, _max_cols, {|| EdRos( .t. ) } , "", "", .f. ,NIL, 1, {|| brdok<>_obrdok}, 6, 0, ;  // zadnji par: nGPrazno
             NIL, {|nSkip| SkipDBBK(nSkip)} )
 
 BoxC()
@@ -2119,41 +2127,48 @@ return .t.
  */
  
 static function SkipDBBK(nRequest)
-
 local nCount
+
 nCount := 0
+
 if LastRec() != 0
-   if .not. eval(bBKUslov)
-      seek eval(bBkTrazi)
-      if .not.  eval(bBKUslov)
+
+   if .not. EVAL(bBKUslov)
+      seek EVAL(bBkTrazi)
+      if .not. EVAL(bBKUslov)
          go bottom
          skip 1
       endif
-      nRequest=0
+      nRequest = 0
    endif
+
    if nRequest>0
-      do while nCount<nRequest .and. eval(bBKUslov)
+      do while nCount<nRequest .and. EVAL(bBKUslov)
          skip 1
-         if Eof() .or. !  eval(bBKUslov)
+         if EOF() .or. !EVAL(bBKUslov)
             skip -1
             exit
          endif
          nCount++
       enddo
+
    elseif nRequest<0
       do while nCount>nRequest .and. eval(bBKUslov)
          skip -1
-         if ( Bof() )
+         if ( BOF() )
             exit
          endif
          nCount--
       enddo
-      if !  eval(bBKUslov)
+      if !EVAL(bBKUslov)
          skip 1
          nCount++
       endif
+
    endif
+
 endif
+
 return (nCount)
 
 

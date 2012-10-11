@@ -1,3 +1,7 @@
+1.3.32  2012-10-11, vsasa
+
+ - fin, ažuriranje naloga, BUGFIX !!!! 
+ 
 1.3.31  2012-10-11, vsasa
 
  - fin, otvorene stavke, korekcije [#29291](http://redmine.bring.out.ba/issues/29291)

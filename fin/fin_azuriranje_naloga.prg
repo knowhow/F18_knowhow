@@ -164,7 +164,6 @@ if !f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
     return .f.
 endif
 
-log_write( "FIN, azuriranje naloga: " + _record["idfirma"] + "-" + _record["idvn"] + "-" + _record["brnal"] + " - START", 3 )
 
 sql_table_update( nil, "BEGIN" )
 
@@ -172,6 +171,7 @@ SELECT PSUBAN
 GO TOP
 
 _record := dbf_get_rec()
+log_write( "FIN, azuriranje naloga: " + _record["idfirma"] + "-" + _record["idvn"] + "-" + _record["brnal"] + " - START", 3 )
 // algoritam 2 - dokument nivo
 _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
 AADD( _ids_suban, "#2" + _tmp_id )

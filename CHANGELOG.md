@@ -1,3 +1,8 @@
+1.3.31  2012-10-11, vsasa
+
+ - fin, otvorene stavke, korekcije [#29291](http://redmine.bring.out.ba/issues/29291)
+ - kalk, izvještaj pregleda po dobavljačima magacin korekcija
+ 
 1.3.30  2012-10-02, vsasa
 
  - kalk, pregled asortimana [#29338](http://redmine.bring.out.ba/issues/29338)

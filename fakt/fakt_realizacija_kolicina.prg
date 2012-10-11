@@ -119,12 +119,12 @@ Box( "#SPECIFIKACIJA PRODAJE PO ARTIKLIMA", 16, 77 )
 	endif
 	cIdRoba := SPACE(20)
 	cImeKup := SPACE(20)
-	cOpcina := SPACE(20)
+	cOpcina := SPACE(200)
 	qqPartn := SPACE(20)
 	RPar("sk", @qqPartn)
 	RPar("td", @qqTipDok)
 	qqPartn := PADR(qqPartn, LEN(partn->id))
-	qqIdRoba := PADR(qqIdRoba, 20)
+	qqIdRoba := PADR(qqIdRoba, 200)
 	qqTipDok := PADR(qqTipDok, 40)
 
 	nX := 2
@@ -155,11 +155,11 @@ Box( "#SPECIFIKACIJA PRODAJE PO ARTIKLIMA", 16, 77 )
  		
 		++nX
 		
-		@ m_x + nX, m_y+2 SAY "Uslov po artiklu (prazno svi) "  get qqIdRoba pict "@!"
+		@ m_x + nX, m_y+2 SAY "Uslov po artiklu (prazno svi) "  get qqIdRoba pict "@S30"
    			
 		++nX
 			
-		@ m_x + nX, m_y + 2 SAY "Uslov po opcini (prazno sve) "  get cOpcina pict "@!"
+		@ m_x + nX, m_y + 2 SAY "Uslov po opcini (prazno sve) "  get cOpcina pict "@S30"
  		
  		
 		if lRelations == .t.

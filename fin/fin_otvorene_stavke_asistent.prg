@@ -107,11 +107,11 @@ AADD( _dbf, { 'UPLACENO'            , 'N' ,  21 ,  2 })
 AADD( _dbf, { 'M2'                  , 'C' ,  1 , 0 })
 
 DBCREATE( my_home() + _table + ".dbf", _dbf )
-use
 
 select ( F_OSTAV )
+use
 
-my_use_temp("OSTAV", my_home() + _table, .f., .t. )
+my_use_temp( "OSTAV", my_home() + _table, .f., .t. )
 
 index on DTOS( DatDok ) + DTOS( iif( EMPTY( datval ), datdok, datval ) ) + brdok tag "1"
 
@@ -171,10 +171,8 @@ cIdKonto := _idkonto
 cIdFirma := LEFT( cIdFirma, 2 )
 
 SELECT (F_SUBAN)
-
-if !USED()
-	O_SUBAN
-endif
+use
+O_SUBAN
 
 select suban
 set order to tag "1" 
@@ -191,7 +189,7 @@ Box(, 20, 77)
 
 	nUkDugBHD := 0
 	nUkPotBHD := 0
-	
+
 	select suban
 	set order to tag "3"
 
@@ -230,7 +228,7 @@ Box(, 20, 77)
 	nUDug := 0
 	nUPot := 0
 
-	fPrviprolaz:=.t.
+	fPrviprolaz := .t.
 	
 	do while !EOF() .and. field->idfirma == cIdFirma .and. cIdKonto == field->idkonto .and. cIdPartner == field->idpartner
 

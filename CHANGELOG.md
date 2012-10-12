@@ -1,3 +1,7 @@
+1.3.34  2012-10-12, vsasa
+
+ - fin, otvorene stavke iz pripreme naloga, BUGFIX !!!
+ 
 1.3.33  2012-10-11, vsasa
 
  - fakt, pregled prodaje, proširenje uslova na izvještaju

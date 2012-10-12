@@ -197,18 +197,18 @@ else
     xml_node("fidp", _id_broj )
 endif 
 
-xml_node("ftel", ALLTRIM(get_dtxt_opis("I10")) )
-xml_node("feml", ALLTRIM(get_dtxt_opis("I11")) )
+xml_node("ftel", to_xml_encoding( ALLTRIM(get_dtxt_opis("I10")) ) )
+xml_node("feml", to_xml_encoding( ALLTRIM(get_dtxt_opis("I11")) ) )
 xml_node("fbnk", to_xml_encoding( ALLTRIM(get_dtxt_opis("I09")) ) )
 
-cTmp := ALLTRIM(get_dtxt_opis("I12"))
-xml_node("fdt1", to_xml_encoding(cTmp))
+cTmp := ALLTRIM( get_dtxt_opis("I12") )
+xml_node("fdt1", to_xml_encoding(cTmp) )
 
-cTmp := ALLTRIM(get_dtxt_opis("I13"))
-xml_node("fdt2", to_xml_encoding(cTmp))
+cTmp := ALLTRIM( get_dtxt_opis("I13") )
+xml_node("fdt2", to_xml_encoding(cTmp) )
 
-cTmp := ALLTRIM(get_dtxt_opis("I14"))
-xml_node("fdt3", to_xml_encoding(cTmp))
+cTmp := ALLTRIM( get_dtxt_opis("I14") )
+xml_node("fdt3", to_xml_encoding(cTmp) )
 
 return
 
@@ -265,7 +265,7 @@ for _n := 1 to LEN( a_racuni )
     xml_node("u_tottp", show_number( field->ukupno - field->ukpoptp, PIC_VRIJEDNOST ) )
 
     // dokument iz tabele
-    xml_node("dbr", ALLTRIM( field->brdok ) )
+    xml_node("dbr", to_xml_encoding( ALLTRIM( field->brdok ) ) )
     xml_node("ddat", if( DTOC( field->datdok ) != DTOC( CTOD( "" ) ), DTOC( field->datdok ), "" ) )
     xml_node("ddval", if( DTOC( field->datval ) != DTOC( CTOD( "" ) ), DTOC( field->datval ), "" ) )
     xml_node("ddisp", if( DTOC( field->datisp ) != DTOC( CTOD( "" ) ), DTOC( field->datisp ), "" ) )
@@ -274,13 +274,16 @@ for _n := 1 to LEN( a_racuni )
     // dokument iz teksta
     cTmp := ALLTRIM(get_dtxt_opis("D01"))
     xml_node("dmj", to_xml_encoding(cTmp))
+
     cTmp := ALLTRIM(get_dtxt_opis("D02"))
     xml_node("ddok", to_xml_encoding(cTmp))
+
     cTmp := ALLTRIM(get_dtxt_opis("D04"))
     xml_node("dslovo", to_xml_encoding(cTmp))
-    xml_node("dotpr", ALLTRIM(get_dtxt_opis("D05")) )
-    xml_node("dnar", ALLTRIM(get_dtxt_opis("D06")) )
-    xml_node("ddin", ALLTRIM(get_dtxt_opis("D07")) )
+
+    xml_node("dotpr", to_xml_encoding( ALLTRIM(get_dtxt_opis("D05")) ) )
+    xml_node("dnar", to_xml_encoding( ALLTRIM(get_dtxt_opis("D06")) ) )
+    xml_node("ddin", to_xml_encoding( ALLTRIM(get_dtxt_opis("D07")) ) )
 
     // destinacija na fakturi
     cTmp := ALLTRIM(get_dtxt_opis("D08"))
@@ -290,9 +293,10 @@ for _n := 1 to LEN( a_racuni )
     endif
 
     xml_node("ddest", to_xml_encoding(cTmp))
-    xml_node("dtdok", ALLTRIM(get_dtxt_opis("D09")) )
-    xml_node("drj", ALLTRIM(get_dtxt_opis("D10")) )
-    xml_node("didpm", ALLTRIM(get_dtxt_opis("D11")) )
+    xml_node("dtdok", to_xml_encoding( ALLTRIM(get_dtxt_opis("D09")) ) )
+    xml_node("drj", to_xml_encoding( ALLTRIM(get_dtxt_opis("D10")) ) )
+    xml_node("didpm", to_xml_encoding( ALLTRIM(get_dtxt_opis("D11")) ) )
+
     // broj fiskalnog racuna
     xml_node("fisc", ALLTRIM(get_dtxt_opis("O10")) )
 
@@ -315,9 +319,8 @@ for _n := 1 to LEN( a_racuni )
     xml_node("kpbr", ALLTRIM(get_dtxt_opis("K05")) )
     xml_node("kmj", to_xml_encoding(ALLTRIM(get_dtxt_opis("K10"))) )
     xml_node("kptt", ALLTRIM(get_dtxt_opis("K11")) )
-    xml_node("ktel", ALLTRIM(get_dtxt_opis("K13")) )
-    xml_node("kfax", ALLTRIM(get_dtxt_opis("K14")) )
-
+    xml_node("ktel", to_xml_encoding( ALLTRIM(get_dtxt_opis("K13")) ) )
+    xml_node("kfax", to_xml_encoding( ALLTRIM(get_dtxt_opis("K14")) ) )
 
     // dodatni tekst na fakturi....
     // koliko ima redova ?

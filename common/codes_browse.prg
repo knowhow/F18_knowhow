@@ -759,7 +759,12 @@ do while .t.
    
     // setuj varijable za tekuci slog
     SetSifVars()
-   
+  
+    if Ch == K_CTRL_N
+        // nastimaj default vrijednosti za sifrarnik robe
+        set_roba_defaults()
+    endif
+ 
     nTrebaredova := LEN(ImeKol)
     for i := 1 to LEN(ImeKol)
         if LEN(ImeKol[i]) >= 10 .and. Imekol[i, 10] <> NIL
@@ -1269,6 +1274,23 @@ for _i := 1 to LEN(_struct)
 next
 
 return
+
+
+// --------------------------------------------------------
+// setuje default vrijednosti tekuceg sloga za sif.roba
+// --------------------------------------------------------
+static function set_roba_defaults()
+
+if ALIAS() <> "ROBA"
+    return
+endif
+
+// set tarifa uvijek PDV17
+widtarifa := PADR( "PDV17", 6 )
+
+return
+
+
 
 //-------------------------------------------------------
 //-------------------------------------------------------

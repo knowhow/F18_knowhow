@@ -31,108 +31,119 @@ nPP:=0
 
 SELECT PRIPRZ   
 
-IF RecCount2()>0
-  nPrevRec := RECNO()
-  Go Top
-  if !SPrint2 (gLocPort)
-     MsgBeep ("Dokument nije odstampan!#Pokusajte ponovo kasnije!", 20)
-     RETURN (.F.)
-  endif
+IF RecCount2() > 0 
 
-  cPom:=""
+    nPrevRec := RECNO()
 
-  NaslovDok(cIdVd)
-  if cIdVD=="16"
-    if !empty(IdDio)
-       cPom+="PREDISPOZICIJA "
-       fPred:=.t.
-    else
-       cPom+="ZADUZENJE "
+    GO TOP
+   
+    START PRINT CRET 
+    ?
+
+    cPom:=""
+
+    NaslovDok(cIdVd)
+
+    if cIdVD=="16"
+        if !empty(IdDio)
+            cPom+="PREDISPOZICIJA "
+            fPred:=.t.
+        else
+            cPom+="ZADUZENJE "
+        endif
     endif
-  endif
-  if cIdvd=="PD"
-    cPom+="PREDISPOZICIJA "
-    fpred:=.t.
-  endif
-  if cIdVd=="98"
-  	cPom+="REKLAMACIJA "
-  endif
 
-  if gVrstaRS<>"S"
-    cPom+= ALLTRIM(PRIPRZ->IdPos)+"-"+ALLTRIM (cBrDok)
-  endif
-  if fpred
-     ? PADC("PRENOS IZ ODJ: "+idodj+"  U ODJ:"+idvrstep,38)
-  endif
-
-  ? PADC(cPom,40)
-  ? PADL (FormDat1 (PRIPRZ->Datum), 39)
-  ?
-  if gZadCij=="D"
-    ? " Sifra      Naziv            JMJ Kolicina"
-    ? "---------- ----------------- --- --------"
-    ? "           Nabav.vr.*   PPP   *    MPC   "
-    ? "           --------- --------- ----------"
-    ? "           MPV-porez*   PPU   *    MPV   "
-    ? "-----------------------------------------"
-  else
-    ? " Sifra      Naziv            JMJ Kolicina"
-    ? "---------- ----------------- --- --------"
-  endif
-
-  nFinZad := 0
-  SELECT PRIPRZ
-  GoTop2()
-  DO WHILE ! EOF()
-
-    nIzn:=cijena*kolicina
-    if !IsPDV()
-    	if priprz->idtarifa = "PDV17"
-		WhilePTarife(IdRoba, IdTarifa, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
-	else
-		WhileaTarife(IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
-	endif
-    else
-    	WhileaTarife(IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
+    if cIdvd=="PD"
+        cPom+="PREDISPOZICIJA "
+        fpred:=.t.
     endif
-    if fpred .and. !empty(IdDio)
-     // ne stampaj nista
-    else
-     ? idroba, PADR (RobaNaz, 17), JMJ, ;
-       TRANSFORM (Kolicina, "99999.99")
-     IF gZadCij=="D"
-       ? SPACE(10), TRANSFORM(ncijena*kolicina,"999999.99"), TRANSFORM (nPPP,"999999.99"), TRANSFORM (cijena,"9999999.99")
-       ? SPACE(10), TRANSFORM(nOsn,"999999.99"),             TRANSFORM (nPPU,"999999.99"), TRANSFORM (cijena*kolicina,"9999999.99")
-       ? "-----------------------------------------"
-     ENDIF
+
+    if cIdVd=="98"
+  	    cPom+="REKLAMACIJA "
     endif
-    nFinZad += PRIPRZ->(Kolicina * Cijena)
 
-    SKIP 1
+    if gVrstaRS<>"S"
+        cPom+= ALLTRIM(PRIPRZ->IdPos)+"-"+ALLTRIM (cBrDok)
+    endif
 
-  ENDDO
-  ? "-------- ----------------- --- --------"
-  ? PADL ("UKUPNO ZADUZENJE (" + TRIM (gDomValuta) + ")", 29), ;
-    TRANS (nFinZad, "999,999.99")
-  ? "-------- ----------------- --- --------"
+    if fpred
+        ? PADC("PRENOS IZ ODJ: "+idodj+"  U ODJ:"+idvrstep,38)
+    endif
 
-  if IsPDV()
-  	PDVpos_rekap_tarifa(aTarife)
-  else
-  	pos_rekap_tarifa(aTarife)
-  endif
+    ? PADC(cPom,40)
+    ? PADL (FormDat1 (PRIPRZ->Datum), 39)
+    ?
 
-  ? " Primio " + PADL ("Predao", 31)
-  ?
-  ? PADL (ALLTRIM (gKorIme), 39)
-  PaperFeed()
+    if gZadCij=="D"
+        ? " Sifra      Naziv            JMJ Kolicina"
+        ? "---------- ----------------- --- --------"
+        ? "           Nabav.vr.*   PPP   *    MPC   "
+        ? "           --------- --------- ----------"
+        ? "           MPV-porez*   PPU   *    MPV   "
+        ? "-----------------------------------------"
+    else
+        ? " Sifra      Naziv            JMJ Kolicina"
+        ? "---------- ----------------- --- --------"
+    endif
 
-  END PRN2
+    nFinZad := 0
+    SELECT PRIPRZ
+    GoTop2()
+    DO WHILE ! EOF()
 
-  GO nPrevRec
+        nIzn:=cijena*kolicina
+        if !IsPDV()
+    	    if priprz->idtarifa = "PDV17"
+		        WhilePTarife(IdRoba, IdTarifa, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
+	        else
+		        WhileaTarife(IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
+	        endif
+        else
+    	    WhileaTarife(IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
+        endif
+        if fpred .and. !empty(IdDio)
+            // ne stampaj nista
+        else
+            ? idroba, PADR (RobaNaz, 17), JMJ, ;
+                TRANSFORM (Kolicina, "99999.99")
+            IF gZadCij=="D"
+                ? SPACE(10), TRANSFORM(ncijena*kolicina,"999999.99"), TRANSFORM (nPPP,"999999.99"), TRANSFORM (cijena,"9999999.99")
+                ? SPACE(10), TRANSFORM(nOsn,"999999.99"),             TRANSFORM (nPPU,"999999.99"), TRANSFORM (cijena*kolicina,"9999999.99")
+                ? "-----------------------------------------"
+            ENDIF
+        endif
+        nFinZad += PRIPRZ->(Kolicina * Cijena)
+
+        SKIP 1
+
+    ENDDO
+
+    ? "-------- ----------------- --- --------"
+    ? PADL ("UKUPNO ZADUZENJE (" + TRIM ( gDomValuta ) + ")", 29), ;
+        TRANS (nFinZad, "999,999.99")
+    ? "-------- ----------------- --- --------"
+
+    if IsPDV()
+  	    PDVpos_rekap_tarifa(aTarife)
+    else
+    	pos_rekap_tarifa(aTarife)
+    endif
+
+    ? " Primio " + PADL ("Predao", 31)
+    ?
+    ? PADL (ALLTRIM (gKorIme), 39)
+  
+    //PaperFeed()
+
+    END PRINT
+
+    O_PRIPRZ
+    GO nPrevRec
+
 ELSE
-  MsgBeep ("Zaduzenje nema nijedne stavke!", 20)
+    MsgBeep ("Zaduzenje nema nijedne stavke!", 20)
 ENDIF
+
 return
 
 

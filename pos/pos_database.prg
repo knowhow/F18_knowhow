@@ -171,10 +171,7 @@ O_PRIPRZ
 return
 
 
-
- 
 function OpenZad()
-
 O_UREDJ
 O_MJTRUR
 O_ODJ  

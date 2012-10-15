@@ -82,34 +82,44 @@ return (PADL(VAL(ALLTRIM(cID))-1,LEN(cID),cPadCh) )
 *}
 
 
-/*! \fn SetNazDVal()
- *  \brief Postavlja naziv domace valute
- *  \brief !!! ovo ipak treba da setuje i stranu valutu !!!
- */
 
+// ------------------------------------------------------
+// Postavlja naziv domace valute
+// ------------------------------------------------------
 function SetNazDVal()
-*{
 local lOpened
+
 SELECT F_VALUTE
+
 PushWA()
-lOpened:=.t.
+
+lOpened := .t.
+
 if !USED() 
     O_VALUTE
-    lOpened:=.f.
+    lOpened := .f.
 endif
-SET ORDER TO TAG "NAZ"       // tip
+
+SET ORDER TO TAG "NAZ"       
 GO TOP
-Seek2("D")   // trazi domacu valutu
-gDomValuta:=ALLTRIM(Naz2)
-// postavi odmah i stranu
-go top
-Seek2("P")
-gStrValuta:=ALLTRIM(Naz2)
+
+// trazi domacu valutu
+Seek2( "D" )   
+
+gDomValuta := ALLTRIM( naz2 )
+
+GO TOP
+
+Seek2( "P" )
+
+gStrValuta := ALLTRIM( naz2 )
 
 if !lOpened
     USE
-end
+endif
+
 PopWA()
+
 return
 
 // --------------------------------------------------------------------

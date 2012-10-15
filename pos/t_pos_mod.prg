@@ -565,11 +565,8 @@ if (!self:oDatabase:lAdmin .and. gVrstaRS<>"S")
     endif
     close all
 endif
-
-//  odredi naziv domace valute
-if (!self:oDatabase:lAdmin) 
-    SetNazDVal()
-endif
+// set valuta
+SetNazDVal()
 
 SetBoje( gVrstaRS )
 

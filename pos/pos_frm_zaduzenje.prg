@@ -160,6 +160,8 @@ if ( cIdVd <> VD_REK ) .and. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
         	elseif cIdVd $ "IN#NI"
           		StampaInv()
         	endif
+            // otvori ponovo tabele
+            openzad()
 
         	if Pitanje(,"Ako je sve u redu, zelite li staviti na stanje dokument ?"," ")=="D"
           		fSadAz := .t.
@@ -344,6 +346,7 @@ if RecCount2() > 0
 
 	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","N")=="D"
        	StampZaduz(cIdVd, cBrDok)
+        OpenZad()
   	endif
 
   	if fSadAz.or.Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D")=="D"

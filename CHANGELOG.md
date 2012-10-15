@@ -1,3 +1,9 @@
+1.3.35  2012-10-15, vsasa
+
+ - fin, štampa sintetičke kartice, bugfix [#29291](http://redmine.bring.out.ba/issues/29291)
+ - fakt, odt štampa, bugfix [#29291](http://redmine.bring.out.ba/issues/29291)
+ - pos, štampa zaduženja nakon unosa, bugfix [#29291](http://redmine.bring.out.ba/issues/29291)
+
 1.3.34  2012-10-12, vsasa
 
  - fin, otvorene stavke iz pripreme naloga, BUGFIX !!!

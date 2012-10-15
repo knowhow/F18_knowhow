@@ -1044,16 +1044,16 @@ if LEN( aKupac ) > 0
 	cTmp += cSep
 
 	// 2. naziv
-	cTmp += ALLTRIM( PADR( to_win1250_encoding( aKupac[ 1, 2 ] ), 36 ) )
+	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 2 ]) ), 36 ) )
 	cTmp += cSep
 
 	// 3. adresa
-	cTmp += ALLTRIM( PADR( to_win1250_encoding( aKupac[ 1, 3 ] ), 36 ) ) 
+	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 3 ]) ), 36 ) ) 
 	cTmp += cSep
 	
 	// 4. ptt, mjesto
-	cTmp += ALLTRIM( to_win1250_encoding( aKupac[ 1, 4 ] ) ) + " " + ;
-		ALLTRIM( to_win1250_encoding( aKupac[ 1, 5 ] ) )
+	cTmp += ALLTRIM( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 4 ]) ) ) + " " + ;
+		ALLTRIM( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 5 ]) ) )
 
 	cTmp += cSep
 	cTmp += cSep
@@ -1589,7 +1589,7 @@ for i:=1 to LEN( aData )
 	cTmp += cSep
 	
 	// plu naziv
-	cTmp += to_win1250_encoding( ALLTRIM( PADR( aData[ i, 4 ], gFC_alen ) ) )
+	cTmp += to_win1250_encoding( ALLTRIM( PADR( hb_utf8tostr(aData[ i, 4 ]), gFC_alen ) ) )
 	cTmp += cSep
 
 	AADD( aArr, { cTmp } )

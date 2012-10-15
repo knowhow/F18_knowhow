@@ -3,6 +3,7 @@
  - fin, štampa sintetičke kartice, bugfix [#29416](http://redmine.bring.out.ba/issues/29416)
  - fakt, odt štampa, bugfix [#29418](http://redmine.bring.out.ba/issues/29418)
  - pos, štampa zaduženja nakon unosa, bugfix [#29417](http://redmine.bring.out.ba/issues/29417)
+ - PDV17 kao default tarifa u unosu novih artikala [#29421](http://redmine.bring.out.ba/issues/29421)
 
 1.3.34  2012-10-12, vsasa
 

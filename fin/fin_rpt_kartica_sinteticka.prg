@@ -11,29 +11,34 @@
 
 #include "fin.ch"
 
+
 function SinKart()
+
 cIdFirma:=gFirma
 qqKonto:=""
 dDatOd:=dDAtDo:=ctod("")
 cBrza:="D"
 
 IF gVar1=="0"
- M:="------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
+    M:="------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
 ELSE
- M:="------- -------- ---- -------- ---------------- ----------------- ------------------"
+    M:="------- -------- ---- -------- ---------------- ----------------- ------------------"
 ENDIF
 
 cPredh:="2"
 
 O_PARTN
 O_PARAMS
+
 private cSection:="1"; cHistory:=" ";aHistory:={}
+
 Params1()
+
 RPar("c1",@cIdFirma);RPar("c2",@qqKonto); RPar("d1",@dDatOD); RPar("d2",@dDatDo)
 RPar("c3",@cBrza)
 RPar("c4",@cPredh)
-if gNW=="D";cIdFirma:=gFirma; endif
 
+if gNW=="D";cIdFirma:=gFirma; endif
 
 Box("",9,75)
 do while .t.
@@ -116,13 +121,10 @@ ELSE
   HSEEK cIdFirma
 ENDIF
 
-#ifndef CAX
 EOF RET
-#else
-EOF CRET
-#endif
 
 nStr:=0
+
 START PRINT CRET
 
 if nStr==0; SinkZagl();endif
@@ -237,11 +239,9 @@ ENDIF
 endif // cbrza=="N"
 
 FF
-EndPrint()
+END PRINT
 
-#ifndef CAX
 closeret
-#endif
 return
 
 

@@ -45,6 +45,7 @@ local _dbf := {}
 AADD( _dbf, { "IDKONTO", "C", 7, 0 })
 AADD( _dbf, { "IDPARTNER", "C", 6, 0 })
 AADD( _dbf, { "IDROBA", "C", 10, 0 })
+AADD( _dbf, { "BARKOD", "C", 13, 0 })
 AADD( _dbf, { "NAZIV", "C", 40, 0 })
 AADD( _dbf, { "TARIFA", "C", 6, 0 })
 AADD( _dbf, { "JMJ", "C", 3, 0 })
@@ -185,6 +186,7 @@ endif
 _qry := "SELECT " + ;
    "kalk.pkonto pkonto, " + ;
    "kalk.idroba idroba, " + ;
+   "roba.barkod barkod, " + ; 
    "roba.naz robanaz, " + ;
    "roba.idtarifa idtarifa, " + ;
    "roba.jmj jmj, " + ;
@@ -203,7 +205,7 @@ _qry := "SELECT " + ;
    " AND kalk.idpartner = " + _sql_quote( _dob ) + ; 
    _date + ;  
    " AND roba.tip NOT IN ( " + _sql_quote("T") + ", " + _sql_quote("U") + " ) " + ;
-"GROUP BY kalk.pkonto, kalk.idroba, roba.naz, roba.idtarifa, roba.jmj " + ;
+"GROUP BY kalk.pkonto, kalk.idroba, roba.barkod, roba.naz, roba.idtarifa, roba.jmj " + ;
 "ORDER BY kalk.idroba" 
 
 MsgO( "Prikupljanje podataka ulaza u maloprodaji... sacekajte !" )
@@ -229,6 +231,7 @@ for _i := 1 to _table:LastRec()
     // uzmi iz matrice
     _rec["idkonto"] := oRow:Fieldget( oRow:Fieldpos("pkonto"))
     _rec["idroba"] := PADR( oRow:Fieldget( oRow:Fieldpos("idroba")), 10 )
+    _rec["barkod"] := PADR( oRow:Fieldget( oRow:Fieldpos("barkod")), 13 )
     _rec["naziv"] := oRow:Fieldget( oRow:Fieldpos("robanaz")) 
     _rec["tarifa"] := oRow:Fieldget( oRow:Fieldpos("idtarifa")) 
     _rec["jmj"] := oRow:Fieldget( oRow:Fieldpos("jmj")) 
@@ -405,6 +408,7 @@ do while !EOF()
     ? PADL( ALLTRIM( STR( ++_cnt ) ), 5 ) + "."
 
     @ prow(), pcol() + 1 SAY field->idroba
+    @ prow(), pcol() + 1 SAY field->barkod
     @ prow(), pcol() + 1 SAY PADR( hb_utf8tostr( field->naziv ), 40 )
     @ prow(), pcol() + 1 SAY field->tarifa
     @ prow(), _n_pos := pcol() + 1 SAY STR( field->ulaz, 12, 2 )
@@ -445,6 +449,8 @@ _head += PADR( "R.br", 6 )
 _head += SPACE(1)
 _head += PADR( "Artikal", 10 )
 _head += SPACE(1)
+_head += PADR( "Barkod", 13 )
+_head += SPACE(1)
 _head += PADR( "Naziv", 40 )
 _head += SPACE(1)
 _head += PADR( "Tarifa", 7 )
@@ -468,6 +474,8 @@ local _line := ""
 _line += REPLICATE("-", 6)
 _line += SPACE(1)
 _line += REPLICATE("-", 10)
+_line += SPACE(1)
+_line += REPLICATE("-", 13)
 _line += SPACE(1)
 _line += REPLICATE("-", 40)
 _line += SPACE(1)

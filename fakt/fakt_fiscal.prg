@@ -1123,7 +1123,7 @@ do while !EOF() .and. field->idfirma == cFirma .and. field->idtipdok == cTipDok 
 
     nF_pprice := roba->mpc
 
-    cF_artnaz := ALLTRIM( to_xml_encoding( fp_f_naz(roba->naz)) )
+    cF_artnaz := ALLTRIM( fp_f_naz(roba->naz) )
     cF_artjmj := ALLTRIM( roba->jmj )
 
     if cTipDok == "10"

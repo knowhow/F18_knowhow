@@ -41,15 +41,19 @@ return _arr
 // -----------------------------------------------------
 // konvertuje nase karaktere u windows-1250 format
 // -----------------------------------------------------
-function to_win1250_encoding( cp852_str )
+function to_win1250_encoding( cp852_str, convert_852 )
 local _win_str
 local _cnt
 local _arr := _get_win_1250_codes_array()
 
+if convert_852 == NIL
+    convert_852 := .t.
+endif
+
 _win_str := cp852_str
 
 for _cnt := 1 to LEN( _arr )
-	_win_str := STRTRAN( _win_str, _arr[ _cnt, 1 ], _arr[ _cnt, 2 ] )
+	_win_str := STRTRAN( _win_str, _arr[ _cnt, 1 ], if( convert_852, _arr[ _cnt, 2 ], _arr[ _cnt, 3 ] ) )
 next
 
 return _win_str
@@ -61,16 +65,16 @@ return _win_str
 static function _get_win_1250_codes_array()
 local _arr := {}
 
-AADD( _arr, { "Č", CHR(200) } ) 
-AADD( _arr, { "č", CHR(232) } ) 
-AADD( _arr, { "Ć", CHR(198) } ) 
-AADD( _arr, { "ć", CHR(230) } ) 
-AADD( _arr, { "Ž", CHR(142) } ) 
-AADD( _arr, { "ž", CHR(158) } ) 
-AADD( _arr, { "Đ", CHR(208) } ) 
-AADD( _arr, { "đ", CHR(240) } ) 
-AADD( _arr, { "Š", CHR(138) } ) 
-AADD( _arr, { "š", CHR(154) } ) 
+AADD( _arr, { "Č", CHR(200), "C" } ) 
+AADD( _arr, { "č", CHR(232), "c" } ) 
+AADD( _arr, { "Ć", CHR(198), "C" } ) 
+AADD( _arr, { "ć", CHR(230), "c" } ) 
+AADD( _arr, { "Ž", CHR(142), "Z" } ) 
+AADD( _arr, { "ž", CHR(158), "z" } ) 
+AADD( _arr, { "Đ", CHR(208), "Dj" } ) 
+AADD( _arr, { "đ", CHR(240), "dj" } ) 
+AADD( _arr, { "Š", CHR(138), "S" } ) 
+AADD( _arr, { "š", CHR(154), "s" } ) 
 
 return _arr
 

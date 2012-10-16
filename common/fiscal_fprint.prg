@@ -858,6 +858,12 @@ local cOperator := "1"
 local cOp_pwd := "000000"
 local nTotal := 0
 local cVr_placanja := "0"
+local _convert_852 := .f.
+
+// konvertovati u 852
+if gFc_convert == "D"
+    _convert_852 := .t.
+endif
 
 // provjeri operatera i lozinku iz podesenja...
 if !EMPTY( ALLTRIM( gFc_operater ) )
@@ -1042,18 +1048,18 @@ if LEN( aKupac ) > 0
 	// 1. id broj
 	cTmp += ALLTRIM( aKupac[ 1, 1 ] )
 	cTmp += cSep
-
-	// 2. naziv
-	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 2 ]) ), 36 ) )
+	
+    // 2. naziv
+	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_strtoutf8( aKupac[ 1, 2 ]), _convert_852 ), 36 ) )
 	cTmp += cSep
 
 	// 3. adresa
-	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 3 ]) ), 36 ) ) 
+	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_strtoutf8(aKupac[ 1, 3 ]), _convert_852 ), 36 ) ) 
 	cTmp += cSep
 	
 	// 4. ptt, mjesto
-	cTmp += ALLTRIM( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 4 ]) ) ) + " " + ;
-		ALLTRIM( to_win1250_encoding( hb_utf8tostr(aKupac[ 1, 5 ]) ) )
+	cTmp += ALLTRIM( to_win1250_encoding( hb_strtoutf8(aKupac[ 1, 4 ]), _convert_852 ) ) + " " + ;
+		ALLTRIM( to_win1250_encoding( hb_strtoutf8(aKupac[ 1, 5 ]), _convert_852 ) )
 
 	cTmp += cSep
 	cTmp += cSep
@@ -1546,6 +1552,12 @@ local cOp_ch := "4"
 local cLogic
 local cLogSep := ","
 local cSep := ";"
+local _convert_852 := .f.
+
+// konverzija u 852 format
+if gFc_convert == "D"
+    _convert_852 := .t.
+endif
 
 // ocekuje se matrica formata
 // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
@@ -1589,7 +1601,7 @@ for i:=1 to LEN( aData )
 	cTmp += cSep
 	
 	// plu naziv
-	cTmp += to_win1250_encoding( ALLTRIM( PADR( hb_utf8tostr(aData[ i, 4 ]), gFC_alen ) ) )
+	cTmp += to_win1250_encoding( ALLTRIM( PADR( hb_strtoutf8(aData[ i, 4 ]), gFC_alen ) ), _convert_852 )
 	cTmp += cSep
 
 	AADD( aArr, { cTmp } )

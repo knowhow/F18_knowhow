@@ -53,6 +53,7 @@ gFc_nftxt := fetch_metric( "fisk_stampa_broja_veze", my_user(), gfc_nftxt )
 gFc_faktura := fetch_metric( "fisk_stampa_txt_racuna", my_user(), gfc_faktura )
 gFc_fisc_print := fetch_metric( "fisk_stampa_fiskalnih_racuna", my_user(), gfc_fisc_print )
 gFc_kusur := fetch_metric( "fisk_obrada_kusura", my_user(), gfc_kusur )
+gFc_convert := fetch_metric( "fisk_konverzija_852", my_user(), gfc_convert )
 
 return
 
@@ -105,6 +106,7 @@ gFc_pauto := 0
 gFc_serial := PADR("010000", 15)
 gFc_restart := "N"
 gFc_kusur := "N"
+gFc_convert := "N"
 
 return
 
@@ -258,6 +260,7 @@ Box(, _box_x, _box_y )
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Stampa broja veze na fiskalnom racunu (D/N) ?" GET gFC_nftxt VALID gFC_nftxt $ "DN" PICT "@!"
+    @ m_x + _x, col() + 2 SAY "Konverzija znakova u 852 (D/N) ?" GET gFC_convert VALID gFC_convert $ "DN" PICT "@!"
     
     ++ _x
     
@@ -311,6 +314,7 @@ if ( LastKey() != K_ESC )
     set_metric( "fisk_stampa_txt_racuna", my_user(), gfc_faktura )
     set_metric( "fisk_stampa_fiskalnih_racuna", my_user(), gfc_fisc_print )
     set_metric( "fisk_obrada_kusura", my_user(), gfc_kusur )
+    set_metric( "fisk_konverzija_852", my_user(), gfc_convert )
 
 endif
 

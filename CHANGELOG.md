@@ -1,3 +1,7 @@
+1.3.36  2012-10-16, vsasa
+
+ - fiskalni račun, štampa latin karatera, bugfix, parametar [#29419](http://redmine.bring.out.ba/issues/29419)
+ 
 1.3.35  2012-10-15, vsasa
 
  - fin, štampa sintetičke kartice, bugfix [#29416](http://redmine.bring.out.ba/issues/29416)

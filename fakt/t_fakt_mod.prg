@@ -366,7 +366,7 @@ public gAzurTimeOut := 150
 public gFc_type, gFc_device, gFc_use, gFc_path, gFc_path2, gFc_name, gFc_answ, gFc_pitanje, gFc_error
 public gFc_fisc_print, gFc_operater, gFc_oper_pwd, gFc_tout, gIosa, gFc_alen, gFc_nftxt, gFc_acd, gFc_pdv
 public gFc_pinit, gFc_chk, gFc_faktura, gFc_zbir, gFc_dlist, gFc_pauto, gFc_serial, gFc_restart
-public gFc_dev_id, gFc_kusur
+public gFc_dev_id, gFc_kusur, gFc_convert
 
 // stmpa na traku
 public gMpPrint := "N"

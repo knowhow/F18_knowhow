@@ -106,7 +106,7 @@ gFc_pauto := 0
 gFc_serial := PADR("010000", 15)
 gFc_restart := "N"
 gFc_kusur := "N"
-gFc_convert := "N"
+gFc_convert := "D"
 
 return
 

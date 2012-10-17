@@ -1,3 +1,8 @@
+1.3.37  2012-10-17, vsasa
+
+ - kalk, import podataka iz FMK, bugfix [#29443](http://redmine.bring.out.ba/issues/29443)
+ - fin, dnevnik naloga, bugfix [#29444](http://redmine.bring.out.ba/issues/29444)
+ 
 1.3.36  2012-10-16, vsasa
 
  - fiskalni račun, štampa latin karatera, bugfix, parametar [#29419](http://redmine.bring.out.ba/issues/29419)

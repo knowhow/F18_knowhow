@@ -210,89 +210,88 @@ END PRINT
 
 return
 
-
-
-/*! \fn DnevnikNaloga()
- *  \brief Dnevnik naloga
- */
- 
+// --------------------------------------------------
+// izvjestaj "Dnevnik naloga"
+// --------------------------------------------------
 function DnevnikNaloga()
+local cMjGod := ""
+local _filter := ""
+private fK1 := fetch_metric("dnevnik_naloga_fk1", my_user(), "N" )
+private fK2 := fetch_metric("dnevnik_naloga_fk2", my_user(), "N" )
+private fK3 := fetch_metric("dnevnik_naloga_fk3", my_user(), "N" )
+private fK4 := fetch_metric("dnevnik_naloga_fk4", my_user(), "N" )
+private gnLOst := fetch_metric( "dnevnik_naloga_otv_stavke", my_user(), 0 )
+private gPotpis := fetch_metric( "dnevnik_naloga_potpis", my_user(), "N" )
+private nColIzn := 20
 
-LOCAL cMjGod:=""
- private fK1:=fk2:=fk3:=fk4:="N",gnLOst:=0,gPotpis:="N"
- private nColIzn:=20
-  O_PARAMS
-  Private cSection:="1",cHistory:=" ",aHistory:={}
-  Params1()
-  RPar("k1",@fk1)
-  RPar("k2",@fk2)
-  RPar("k3",@fk3)
-  RPar("k4",@fk4)
-  RPar("li",@gnLOSt)
-  RPar("po",@gPotpis)
-  select params
-  #ifndef CAX
-  use
-  #endif
+dOd := CTOD( "01.01." + STR(YEAR(DATE()), 4 ))
+dDo := DATE()
 
-  dOd:=CTOD("01.01."+STR(YEAR(DATE()),4))
-  dDo:=DATE()
+SET KEY K_F5 TO VidiNaloge()
 
-  SET KEY K_F5 TO VidiNaloge()
-
-  Box(,3,77)
+Box(,3,77)
     @ m_x+4, m_y+30   SAY "<F5> - sredjivanje datuma naloga"
     @ m_x+2, m_y+2    SAY "Obuhvatiti naloge u periodu od" GET dOd
-    @ m_x+2, col()+2 SAY "do" GET dDo VALID dDo>=dOd
-    READ; ESC_BCR
-  BoxC()
+    @ m_x+2, col()+2 SAY "do" GET dDo VALID dDo >= dOd
+    READ
+    ESC_BCR
+BoxC()
 
-  SET KEY K_F5 TO
+SET KEY K_F5 TO
 
-  IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-    O_VRSTEP
-  ENDIF
-  O_TNAL
-  O_TDOK
-  O_PARTN
-  O_KONTO
-  O_NALOG
-  O_SUBAN
+O_VRSTEP
+O_TNAL
+O_TDOK
+O_PARTN
+O_KONTO
+O_NALOG
+O_SUBAN
 
-  __par_len := LEN(partn->id)
+__par_len := LEN(partn->id)
 
-  SELECT SUBAN; SET ORDER TO TAG "4"
-  SELECT NALOG; SET ORDER TO TAG "3"
+SELECT SUBAN
+SET ORDER TO TAG "4"
+SELECT NALOG
+SET ORDER TO TAG "3"
 
-  IF !EMPTY(dOd) .or. !EMPTY(dDo)
-    SET FILTER TO DATNAL>=dOd .and. DATNAL<=dDo
-  ENDIF
+IF !EMPTY(dOd) .or. !EMPTY(dDo)
 
-  GO TOP
+    _filter := "datnal >= " + _filter_quote( dOd )
+    _filter += " .and. "
+    _filter += "datnal <= " + _filter_quote( dDo )
 
-  START PRINT CRET
+    SET FILTER TO &_filter
 
-  nUkDugBHD:=nUkPotBHD:=nUkDugDEM:=nUkPotDEM:=0  // sve strane ukupno
+ENDIF
 
-  nStr:=0
-  nRbrDN:=0
-  cIdFirma := IDFIRMA; cIdVN := IDVN; cBrNal := BRNAL; dDatNal := DATNAL
-  PicBHD:="@Z "+FormPicL(gPicBHD,15)
-  PicDEM:="@Z "+FormPicL(gPicDEM,10)
+GO TOP
 
-  lJerry := ( IzFMKIni("FIN","JednovalutniNalogJerry","N",KUMPATH) == "D" )
+START PRINT CRET
 
-  IF gNW=="N"
-    M:="------ -------------- --- "+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" -- ------------- ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
-  ELSE
-    M:="------ -------------- --- "+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
-  ENDIF
-  cMjGod:=STR(MONTH(dDatNal),2)+STR(YEAR(dDatNal),4)
-  fin_zagl_11()
+nUkDugBHD:=nUkPotBHD:=nUkDugDEM:=nUkPotDEM:=0  // sve strane ukupno
 
-  nTSDugBHD:=nTSPotBHD:=nTSDugDEM:=nTSPotDEM:=0   // tekuca strana
+nStr:=0
+nRbrDN:=0
+cIdFirma := IDFIRMA; cIdVN := IDVN; cBrNal := BRNAL; dDatNal := DATNAL
 
-  DO WHILE !EOF()
+PicBHD:="@Z "+FormPicL(gPicBHD,15)
+PicDEM:="@Z "+FormPicL(gPicDEM,10)
+
+lJerry := ( IzFMKIni("FIN","JednovalutniNalogJerry","N",KUMPATH) == "D" )
+
+IF gNW=="N"
+    M := "------ -------------- --- "+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" -- ------------- ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
+ELSE
+    M := "------ -------------- --- "+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
+ENDIF
+  
+cMjGod:=STR(MONTH(dDatNal),2)+STR(YEAR(dDatNal),4)
+
+fin_zagl_11() 
+
+nTSDugBHD:=nTSPotBHD:=nTSDugDEM:=nTSPotDEM:=0   // tekuca strana
+
+DO WHILE !EOF()
     IF prow()<6; fin_zagl_11(); endif    // prow()<6 => nije odstampano zaglavlje
     cIdFirma := IDFIRMA
     cIdVN    := IDVN
@@ -308,20 +307,20 @@ LOCAL cMjGod:=""
     SELECT SUBAN
     HSEEK cIdFirma+cIdVN+cBrNal
     
-
     stampa_suban_dokument("3")
+
     SELECT NALOG
 
     SKIP 1
-  ENDDO
+ENDDO
 
-  IF prow()>5  // znaci da je pocela nova stranica tj.odstampano je zaglavlje
+IF prow()>5  // znaci da je pocela nova stranica tj.odstampano je zaglavlje
     PrenosDNal()
-  ENDIF
+ENDIF
 
-  END PRINT
+END PRINT
 
-CLOSERET
+close all
 return
 
 

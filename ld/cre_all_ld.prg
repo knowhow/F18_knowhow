@@ -531,7 +531,7 @@ if !FILE(f18_ime_dbf(_alias))
     close all
 endif
 
-CREATE_INDEX("ID", "id+godina+obr", _alias)
+CREATE_INDEX( "ID", "id + godina + obr", _alias)
 
 
 // ---------------------------------------

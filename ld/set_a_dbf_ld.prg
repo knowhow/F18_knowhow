@@ -162,9 +162,9 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->id + field->godina }
-_alg["dbf_key_fields"] := { "id", "godina" }
-_alg["sql_in"]         := "rpad(id, 2) || rpad(godina, 4)"
+_alg["dbf_key_block"]  := {|| field->id + field->godina + field->obr}
+_alg["dbf_key_fields"] := { "id", "godina", "obr" }
+_alg["sql_in"]         := "rpad(id, 2) || rpad(godina, 4) || rpad(obr, 1)"
 _alg["dbf_tag"]        := "ID"
 AADD(_item["algoritam"], _alg)
  

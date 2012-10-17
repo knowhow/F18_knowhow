@@ -1,3 +1,7 @@
+1.3.38  2012-10-17, vsasa
+
+ - ld, parametri obračuna, loš indeks kod semafora [#29445](http://redmine.bring.out.ba/issues/29445)
+ 
 1.3.37  2012-10-17, vsasa
 
  - kalk, import podataka iz FMK, bugfix [#29443](http://redmine.bring.out.ba/issues/29443)

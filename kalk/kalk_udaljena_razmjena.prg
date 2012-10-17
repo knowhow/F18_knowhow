@@ -622,6 +622,7 @@ do while !EOF()
     _app_rec["podbr"] := ""
 
     f18_lock_tables({"kalk_doks", "kalk_kalk"})
+    
     select kalk_doks
     update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "BEGIN" )
 
@@ -641,7 +642,11 @@ do while !EOF()
     do while !EOF() .and. field->idfirma == _id_firma .and. field->idvd == _id_vd .and. field->brdok == _br_dok
         
         _app_rec := dbf_get_rec()
-
+        
+        // pobrisi, ovo mi ne treba !
+        hb_hdel( _app_rec, "roktr" )
+        hb_hdel( _app_rec, "datkurs" )
+        
         // setuj redni broj automatski...
         _app_rec["rbr"] := PADL( ALLTRIM(STR( ++_redni_broj )), 3 )
         // reset podbroj

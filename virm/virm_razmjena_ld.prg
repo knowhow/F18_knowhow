@@ -81,7 +81,7 @@ local _dod_opis1 := "D"
 local _racun_upl
 local _per_od, _per_do
 local _id_banka, _dod_opis
-local _r_br
+local _r_br, _firma
 
 private _mjesec, _godina, broj_radnika
 
@@ -96,6 +96,7 @@ _godina := fetch_metric( "virm_godina", my_user(), YEAR( DATE() ) )
 _mjesec := fetch_metric( "virm_mjesec", my_user(), MONTH( DATE() ) ) 
 _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
 _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
+_firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
 
 // period od-do
 _per_od := CTOD("")
@@ -107,7 +108,7 @@ Box(, 10, 70 )
 
     _id_banka := PADR( _racun_upl, 3 )
 
-    @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET _id_banka valid OdBanku( gFirma, @_id_banka )
+    @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET _id_banka valid OdBanku( _firma, @_id_banka )
     read
 
     _racun_upl := _id_banka

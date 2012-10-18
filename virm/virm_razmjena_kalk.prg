@@ -13,7 +13,8 @@
 #include "virm.ch"
 
 function virm_prenos_kalk()
-*{
+local _firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
+
 gUVarPP:=IzFmkIni("POREZI","PPUgostKaoPPU","T",KUMPATH)
 cPNaBr:=IzFmkIni("KALKVIRM","PozivNaBr"," ", KUMPATH)
 cPnabr:=padr(cPnabr,10)
@@ -54,7 +55,7 @@ do while .t.
         @ m_x+ 0, m_y+ 2 SAY "P R E N O S   I Z   K A L K"
             cKo_zr:=space(3)
             cIdBanka:=padr(cko_zr,3)
-            @ m_x+2,m_y+2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid  OdBanku(gFirma,@cIdBanka)
+            @ m_x+2,m_y+2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid  OdBanku( _firma, @cIdBanka )
             read
             cKo_zr:=cIdBanka
             select partn

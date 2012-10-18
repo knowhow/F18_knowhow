@@ -14,6 +14,7 @@
 
 
 function virm_prenos_fin()
+local _firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
 
 O_JPRIH
 O_SIFK
@@ -38,7 +39,7 @@ Box(,5,70)
 
  @ m_x+1,m_y+2 SAY "PRENOS FIN NALOGA (koji je trenutno u pripremi) u VIRM"
  cIdBanka:=padr(cko_zr,3)
- @ m_x+2,m_y+2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid  OdBanku(gFirma,@cIdBanka)
+ @ m_x+2,m_y+2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka valid  OdBanku( _firma, @cIdBanka )
  read
  cKo_zr:=cIdBanka
  select partn

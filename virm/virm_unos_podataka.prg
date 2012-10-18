@@ -198,8 +198,10 @@ return DE_CONT
 
 
 static function _virm_edit_pripr( fNovi )
+local _firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
 
 set cursor on
+
 @ m_x + 1, m_y + 2 SAY "Svrha placanja :" GET _svrha_pl pict "@!" valid P_Vrprim(@_svrha_pl)
 
 read
@@ -222,9 +224,8 @@ endif
 
 @ m_x+2, m_y + col() + 2 SAY "R.br:" GET _Rbr pict "999"
 
-
-_IdBanka:=left(_ko_zr,3)
-@ m_x+3,m_y+2 SAY "Posiljaoc (sifra banke):       " GET _IdBanka valid  OdBanku(gFirma,@_IdBanka)
+_IdBanka := LEFT( _ko_zr, 3 )
+@ m_x+3,m_y+2 SAY "Posiljaoc (sifra banke):       " GET _IdBanka valid OdBanku( _firma, @_IdBanka )
 read
 ESC_RETURN 0
 _ko_zr:=_IdBanka

@@ -294,6 +294,7 @@ AADD( _struct, "k8" )
 AADD( _struct, "k9" )
 AADD( _struct, "mink" )
 AADD( _struct, "fisc_plu" )
+AADD( _struct, "match_code" )
 
 for each _no_field in _struct
     if ! HB_HHASKEY( rec, _no_field )

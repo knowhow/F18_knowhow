@@ -1,3 +1,7 @@
+1.3.39  2012-10-19, vsasa
+
+ - kalk, import udaljene lokacije iz FMK, korekcije [#29463](http://redmine.bring.out.ba/issues/29463)
+ 
 1.3.38  2012-10-17, vsasa
 
  - ld, parametri obračuna, loš indeks kod semafora [#29445](http://redmine.bring.out.ba/issues/29445)

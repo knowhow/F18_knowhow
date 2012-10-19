@@ -69,7 +69,7 @@ endif
 
 // 0.4.8
 if ver["current"] < 00408
-   modstru( {"*" + _table_name, "A MPC4 N 18 8", "A MPC5 N 18 8", "A MPC6 N 18 8", "A MPC7 N 18 8", "A MPC8 18 8", "A MPC9 N 18 8"})
+   modstru( {"*" + _table_name, "A MPC4 N 18 8", "A MPC5 N 18 8", "A MPC6 N 18 8", "A MPC7 N 18 8", "A MPC8 N 18 8", "A MPC9 N 18 8"})
 endif
 
 if _created 
@@ -101,9 +101,6 @@ if used()
     CREATE_INDEX("KATBR","KATBR","roba") // roba, artikli
     endif
 endif
-
-// dodaj polja grupe u sifrarnik sifk
-set_sifk_roba_group()
 
 // TARIFA
 if !file(f18_ime_dbf("tarifa"))

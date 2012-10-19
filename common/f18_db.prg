@@ -48,10 +48,10 @@ endif
 set_table_values_algoritam_vars(@table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag)
 
 if ALIAS() <> _a_dbf_rec["alias"]
-   _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
-   log_write( _msg, 2 )
-   Alert(_msg)
-   QUIT
+    _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
+    log_write( _msg, 2 )
+    Alert(_msg)
+    QUIT
 endif
 
 log_write( "START: update_rec_server_and_dbf " + table, 9 )

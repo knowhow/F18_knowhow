@@ -63,6 +63,9 @@ CheckROnly(KUMPATH + "\FAKT.DBF")
 // setuj parametre pri pokretanju modula
 fakt_set_params()
 
+// setuj sifrarnik sifk
+set_sifk_partn_bank()
+
 @ 1,2 SAY padc( gTS + ": "+ gNFirma, 50, "*" )
 
 ::mMenuStandard()

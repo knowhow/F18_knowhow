@@ -739,11 +739,15 @@ seek id_firma + id_vd + br_dok
 if FOUND()
 
     _del_rec := dbf_get_rec()
-
-    delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "BEGIN" )
+    delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "FULL" )
 
     select kalk
-    delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "END" )
+    set order to tag "1"
+    seek id_firma + id_vd + br_dok
+
+    if FOUND()
+        delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "FULL" )
+    endif
 
     _ret := .t.
 

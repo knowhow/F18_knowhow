@@ -237,18 +237,16 @@ local _no_field
 local _struct := {}
 
 // moguca nepostojeca polja tabele roba
-//AADD( _struct, "pozbilu" )
-//AADD( _struct, "pozbils" )
+
+AADD( _struct, "match_code" )
+AADD( _struct, "pozbilu" )
+AADD( _struct, "pozbils" )
 
 for each _no_field in _struct
     if ! HB_HHASKEY( rec, _no_field )
         rec[ _no_field ] := nil
     endif
 next
-
-// pobrisi sljedece clanove...
-hb_hdel( rec, "pozbils" ) 
-hb_hdel( rec, "pozbilu" ) 
 
 return
 
@@ -262,7 +260,7 @@ local _no_field
 local _struct := {}
 
 // moguca nepostojeca polja tabele roba
-// AADD( _struct, "naziv polja" )
+AADD( _struct, "match_code" )
 
 for each _no_field in _struct
     if ! HB_HHASKEY( rec, _no_field )
@@ -295,6 +293,12 @@ AADD( _struct, "k9" )
 AADD( _struct, "mink" )
 AADD( _struct, "fisc_plu" )
 AADD( _struct, "match_code" )
+AADD( _struct, "mpc4" )
+AADD( _struct, "mpc5" )
+AADD( _struct, "mpc6" )
+AADD( _struct, "mpc7" )
+AADD( _struct, "mpc8" )
+AADD( _struct, "mpc9" )
 
 for each _no_field in _struct
     if ! HB_HHASKEY( rec, _no_field )

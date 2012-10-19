@@ -63,8 +63,6 @@ CREATE_INDEX("ID", "id", "_partn")
 
 index_mcode("", "partn")
 
-set_sifk_partn_bank()
-
 return .t.
 
 

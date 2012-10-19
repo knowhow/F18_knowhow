@@ -345,7 +345,6 @@ set_a_dbfs_key_fields()
 
 
 write_dbf_version_to_config()
-
 check_server_db_version()
 
 __server_log := .t.

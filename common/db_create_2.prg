@@ -134,7 +134,7 @@ CREATE_INDEX("ID2", "id + oznaka"     , "sifk")
 CREATE_INDEX("NAZ", "naz"             , "sifk")
 
 
-if !file(f18_ime_dbf("sifv.dbf"))  
+if !file(f18_ime_dbf("sifv"))  
    aDbf:={}
    AADD(aDBf,{ 'id'                  , 'C' ,   8 ,  0 })
    AADD(aDBf,{ 'oznaka'              , 'C' ,   4 ,  0 })

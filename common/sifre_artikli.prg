@@ -344,7 +344,7 @@ local _naziv
 local _id
 local _rec
 
-SELECT (F_SIFK)
+SELECT ( F_SIFK )
 
 if !used()
     O_SIFK
@@ -374,7 +374,7 @@ if !FOUND()
     _rec["duzina"] := 20
     _rec["veza"] := "1"
 
-    if !update_rec_server_and_dbf("sifk", _rec, 1, "FULL") 
+    if !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL" )  
         delete_with_rlock()
     endif
 
@@ -401,7 +401,7 @@ if !FOUND()
     _rec["duzina"] := 20
     _rec["veza"] := "1"
 
-    if !update_rec_server_and_dbf("sifk", _rec, 1, "FULL") 
+    if !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL") 
         delete_with_rlock()
     endif
 

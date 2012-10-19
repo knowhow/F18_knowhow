@@ -47,7 +47,6 @@ Box( "#Molimo sacekajte...", 7, 60)
 _msg_1 := "START refresh_me: " + a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
 @ m_x + 1, m_y + 2 SAY _msg_1
 
-
 // 1) sracunaj broj aktivnih zapisa u tabeli, koji su izbrisani
 dbf_open_temp(a_dbf_rec, @_cnt, @_del)
 USE

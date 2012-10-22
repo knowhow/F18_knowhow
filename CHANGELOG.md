@@ -1,3 +1,8 @@
+1.3.40  2012-10-19, vsasa
+
+ - kalk, modifikacija polja tabele kalk_kalk [#29453](http://redmine.bring.out.ba/issues/29453)
+ - rnal, čišćenje
+ 
 1.3.39  2012-10-19, vsasa
 
  - kalk, import udaljene lokacije iz FMK, korekcije [#29463](http://redmine.bring.out.ba/issues/29463)

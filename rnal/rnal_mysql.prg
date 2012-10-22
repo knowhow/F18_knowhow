@@ -23,6 +23,8 @@ local _server_pwd := "47EDzsqL"
 local _server_db := "redmine"
 local _sql_qry := "SELECT * FROM queries"
 
+#ifdef __PLATFORM__LINUX
+
 oServer := TMySQLServer():New( _server_addr, _server_user, _server_pwd )
 
 if oServer:NetErr()
@@ -35,6 +37,8 @@ oServer:SelectDB( _server_db )
 oQuery := oServer:Query( _sql_qry )
 
 oRow := oQuery:GetRow()
+
+#endif
 
 return
 

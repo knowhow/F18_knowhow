@@ -18,46 +18,50 @@
 // -------------------------------
 
 function m_rpt()
-private izbor:=1
-private opc:={}
-private opcexe:={}
+local _izbor:=1
+local _opc:={}
+local _opcexe:={}
 
-AADD(opc, "1. lista naloga otvorenih na tekuci dan          ")
-AADD(opcexe, {|| lst_tek_dan() })
+AADD(_opc, "1. lista naloga otvorenih na tekuci dan          ")
+AADD(_opcexe, {|| lst_tek_dan() })
 
-AADD(opc, "2. nalozi prispjeli za realizaciju ")
-AADD(opcexe, {|| lst_real_tek_dan() })
+AADD(_opc, "2. nalozi prispjeli za realizaciju ")
+AADD(_opcexe, {|| lst_real_tek_dan() })
 
-AADD(opc, "3. nalozi van roka na tekuci dan ")
-AADD(opcexe, {|| lst_vrok_tek_dan() })
+AADD(_opc, "3. nalozi van roka na tekuci dan ")
+AADD(_opcexe, {|| lst_vrok_tek_dan() })
 
-AADD(opc, "4. lista naloga >= od proizvoljnog datuma ")
-AADD(opcexe, {|| lst_ch_date() })
+AADD(_opc, "4. lista naloga >= od proizvoljnog datuma ")
+AADD(_opcexe, {|| lst_ch_date() })
 
-AADD(opc, "------------------------------------------- ")
-AADD(opcexe, {|| nil })
+AADD(_opc, "------------------------------------------- ")
+AADD(_opcexe, {|| nil })
 
-AADD(opc, "S. specifikacija naloga za poslovodje  ")
-AADD(opcexe, {|| m_get_spec( 1 ) })
+AADD(_opc, "S. specifikacija naloga za poslovodje  ")
+AADD(_opcexe, {|| m_get_spec( 1 ) })
 
-AADD(opc, "R. pregled utroska RAL sirovina  ")
-AADD(opcexe, {|| rpt_ral_calc() })
+AADD(_opc, "R. pregled utroska RAL sirovina  ")
+AADD(_opcexe, {|| rpt_ral_calc() })
 
-AADD(opc, "O. pregled ucinka operatera  ")
-AADD(opcexe, {|| r_op_docs() })
+AADD(_opc, "O. pregled ucinka operatera  ")
+AADD(_opcexe, {|| r_op_docs() })
 
-AADD(opc, "P. pregled ucinka proizvodnje  ")
-AADD(opcexe, {|| m_get_rpro() })
+AADD(_opc, "P. pregled ucinka proizvodnje  ")
+AADD(_opcexe, {|| m_get_rpro() })
 
-AADD(opc, "------------------------------------------- ")
-AADD(opcexe, {|| nil })
+AADD(_opc, "------------------------------------------- ")
+AADD(_opcexe, {|| nil })
 
-AADD(opc, "K. kontrola prebacenih dokumenata  ")
-AADD(opcexe, {|| m_rpt_check() })
-AADD(opc, "Kp. popuni veze RNAL <> FAKT (dok.11) ")
-AADD(opcexe, {|| chk_dok_11() })
+AADD(_opc, "K. kontrola prebacenih dokumenata  ")
+AADD(_opcexe, {|| m_rpt_check() })
+AADD(_opc, "Kp. popuni veze RNAL <> FAKT (dok.11) ")
+AADD(_opcexe, {|| chk_dok_11() })
 
-Menu_SC("rpt_rnal")
+AADD(_opc, "X. mysql test ")
+AADD(_opcexe, {|| rnal_mysql_test() })
+
+
+f18_menu("rpt_rnal", .f., _izbor, _opc, _opcexe )
 
 return
 

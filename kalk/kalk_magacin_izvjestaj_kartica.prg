@@ -663,7 +663,8 @@ do while !eof() .and. iif(fVeci,idfirma+mkonto+idroba>=cIdFirma+cIdKonto+cIdR , 
     endif // cpredh
     
   elseif mu_i=="3"   // nivelacija
-    
+   
+	altd() 
     if datdok>=ddatod
       ? datdok,idvd+"-"+brdok,idtarifa
       IF lPoNarudzbi .and. cPKN=="D"

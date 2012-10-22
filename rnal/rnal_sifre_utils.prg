@@ -95,6 +95,7 @@ return .t.
 // --------------------------------------
 function _inc_id( wid, cFieldName, cIndexTag, lAuto )
 local nTRec
+local _t_rec := RECNO()
 local cTBFilter := DBFILTER()
 
 if cIndexTag == nil
@@ -118,9 +119,8 @@ if ((Ch == K_CTRL_N) .or. (Ch == K_F4)) .or. lAuto == .t.
 	
 	set filter to &cTBFilter
 	set order to tag "1"
-	go bottom
-	
-	
+	go (_t_rec)
+
 	AEVAL(GetList,{|o| o:display()})
 
 endif
@@ -143,6 +143,8 @@ nLast_rec := field->&cFieldName
 
 return nLast_rec
 
+
+
 // --------------------------------------
 // testiraj id u sifrarniku
 // wId - polje id proslijedjeno po ref.
@@ -150,6 +152,7 @@ return nLast_rec
 // --------------------------------------
 function _chk_id( wid, cFieldName, cIndexTag  )
 local nTRec
+local _t_rec := RECNO()
 local cTBFilter := DBFILTER()
 local lSeek := .t.
 local nIndexOrd := INDEXORD()
@@ -170,11 +173,11 @@ endif
 	
 set filter to &cTBFilter
 set order to tag ALLTRIM(STR(nIndexOrd))
-go bottom
+go ( _t_rec )
 
 if lSeek == .f.
 	// dodaj novi id
-	lSeek := _inc_id(@wid, cFieldName )
+	lSeek := _inc_id( @wid, cFieldName )
 endif
 
 return lSeek

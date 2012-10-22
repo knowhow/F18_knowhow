@@ -105,8 +105,8 @@ AADD(aDBf,{ 'NC'                  , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'MPC'                 , 'B' ,  8 ,  8 })
 
 // currency tip
-AADD(aDBf,{ 'VPC'                 , 'Y' ,  8 ,  4 })
-AADD(aDBf,{ 'MPCSAPP'             , 'Y' ,  8 ,  4 })
+AADD(aDBf,{ 'VPC'                 , 'B' ,  8 ,  8 })
+AADD(aDBf,{ 'MPCSAPP'             , 'B' ,  8 ,  8 })
 
 
 AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
@@ -176,6 +176,16 @@ if ver["current"] < 00804
  next
 endif
 
+
+// 0.8.5
+if ver["current"] < 00805
+  for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
+    modstru( {"*" + _tbl, ;
+        "C VPC Y 8 4 VPC B 8 8",;
+        "C MPCSAPP Y 8 4 MPCSAPP B 8 8" ;
+    })
+ next
+endif
 
 
 if _created

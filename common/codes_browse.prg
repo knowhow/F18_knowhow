@@ -873,7 +873,7 @@ do while .t.
             log_write( "ERROR: nisam uspio lokovati tabele sifk, sifv", 2 )
             exit
         endif
-                
+
         sql_table_update(nil, "BEGIN")
 
         // sifarnik
@@ -939,6 +939,11 @@ _vars := get_dbf_global_memvars("w")
 if f18_lock_tables( { LOWER( ALIAS() ), "sifv", "sifk"} )
 
     sql_table_update(nil, "BEGIN")
+	
+	//if Ch == K_F2
+		// idi na zapis na kojem sam i bio
+	//	go (nPrevRecNo)
+	//endif
 
     if !update_rec_server_and_dbf( ALIAS(), _vars, 1, "CONT" )
         if lNovi

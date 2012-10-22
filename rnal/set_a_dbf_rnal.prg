@@ -630,10 +630,10 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 
-_alg["dbf_key_block"]  := {|| STR(field->cont_id, 10) }
-_alg["dbf_key_fields"] := { { "cont_id", 10 } }
-_alg["sql_in"]         := "lpad( cont_id::char(10), 10 )"
-_alg["dbf_tag"]        := "1"
+_alg["dbf_key_block"]  := {|| STR(field->cust_id, 10) + STR(field->cont_id, 10) }
+_alg["dbf_key_fields"] := { { "cust_id", 10 }, { "cont_id", 10 } }
+_alg["sql_in"]         := "lpad( cust_id::char(10), 10 ) | lpad( cont_id::char(10), 10 )"
+_alg["dbf_tag"]        := "2"
 AADD(_item["algoritam"], _alg)
 
 _item["sql_order"] := "cont_id"
@@ -776,7 +776,7 @@ _item["algoritam"] := {}
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
 
-_alg["dbf_key_block"]  := {|| STR(field->id, 5) + STR(field->gl_tick, 2) }
+_alg["dbf_key_block"]  := {|| STR(field->id,5) + STR(field->gl_tick, 2) }
 _alg["dbf_key_fields"] := { { "id", 5 }, { "gl_tick", 2 } }
 _alg["sql_in"]         := "lpad( id::char(5), 5 ) || lpad( gl_tick::char(2), 2 )"
 _alg["dbf_tag"]        := "1"

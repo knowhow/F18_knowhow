@@ -13,6 +13,11 @@
 
 static __output_odt
 static __output_pdf
+static __jod_converter := "jodconverter-cli.jar"
+static __jod_reports := "jodreports-cli.jar"
+static __java_run_cmd := "java -Xmx128m -jar"
+static __util_path
+
 
 // -------------------------------------------------------------------
 // generisanje odt reporta putem jodreports
@@ -27,8 +32,10 @@ function f18_odt_generate( template, xml_file, output_file, test_mode )
 local _ok := .f.
 local _template
 local _screen
-local _cmd, _java_start, _jod_bin
+local _cmd
 local _error
+local _util_path
+local _jod_full_path
 
 // xml fajl
 if ( xml_file == NIL )
@@ -57,25 +64,21 @@ endif
 
 // prije generisanja pobrisi prošli izlazni fajl...
 FERASE( __output_odt )
+
 log_write( "ODT report gen: pobrisao fajl " + __output_odt, 7 )
 
 // ovo ce nam biti template lokcija
 _template := my_home() + template
 
-// uzmi sada parametre...
-_java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
-_jod_bin := ALLTRIM( fetch_metric( "jodreports_bin", my_user(), "" ) )
-
-// provjeri da li postoje ?
-if EMPTY( _java_start ) .or. EMPTY( _jod_bin )
-    MsgBeep( "Nisu podeseni parametri jod-reports... ?!??" )
-    return _ok
-endif
+// vraca util path za operativni sistem
+__util_path := get_util_path()
+// daj mi liniju jod utilitija
+_jod_full_path := __util_path + __jod_reports
 
 // postoji li jodreports-cli.jar ?
-if !FILE( ALLTRIM(_jod_bin) )
-    log_write( "ODT report gen: " + _jod_bin + " ne postoji na lokaciji !", 7 )
-    MsgBeep( "Aplikacija " + _jod_bin + " ne postoji !" )
+if !FILE( ALLTRIM( _jod_full_path ) )
+    log_write( "ODT report gen: " + __jod_reports + " ne postoji na lokaciji !", 7 )
+    MsgBeep( "Aplikacija " + __jod_reports + " ne postoji !" )
     return _ok
 endif
 
@@ -84,11 +87,11 @@ endif
     _template := '"' + _template + '"'
     __xml_file := '"' + __xml_file + '"'
     __output_odt := '"' + __output_odt + '"'
-    _jod_bin := '"' + _jod_bin + '"'
+    _jod_full_path := '"' + _jod_full_path + '"'
 #endif
 
 // slozi mi komandu za generisanje...
-_cmd := _java_start + " " + _jod_bin + " " 
+_cmd := _java_run_cmd + " " + _jod_full_path + " " 
 _cmd += _template + " "
 _cmd += __xml_file + " "
 _cmd += __output_odt
@@ -115,6 +118,23 @@ endif
 _ok := .t.
 
 return _ok
+
+
+
+// ------------------------------------------------------------------
+// vraca util path po operativnom sistemu
+// ------------------------------------------------------------------
+static function get_util_path()
+local _path := ""
+
+#ifdef __PLATFORM__WINDOWS
+	_path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#else
+	_path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#endif
+
+return _path
+
 
 
 // -----------------------------------------------------------------
@@ -179,7 +199,6 @@ return _ret
 function f18_odt_print( output_file, from_params, test_mode )
 local _ok := .f.
 local _cmd 
-local _oo_bin, _oo_writer, _oo_line
 local _screen, _error := 0
 
 if ( output_file == NIL )
@@ -201,14 +220,9 @@ if !FILE( __output_odt )
     return _ok
 endif
 
-_oo_bin := ALLTRIM( fetch_metric( "openoffice_bin", my_user(), "" ) )
-_oo_writer := ALLTRIM( fetch_metric( "openoffice_writer", my_user(), "" ) )
-_oo_line := _oo_bin + _oo_writer
-
 // ako je windows sredi mi sa navodnicima
 #ifdef __PLATFORM__WINDOWS
     __output_odt := '"' + __output_odt + '"'
-    _oo_line := '"' + _oo_line + '"'
 #endif
 
 // slozi mi komadnu za startanje...
@@ -217,23 +231,15 @@ _cmd := ""
 #ifdef __PLATFORM__UNIX
 
     // platforme osx, linux
-    if from_params 
-        _cmd += _oo_line + " " + __output_odt
-    else
-		#ifdef __PLATFORM__DARWIN
-        	_cmd += "open " + __output_odt
-		#else
-			_cmd += "xdg-open " + __output_odt + "&"
-		#endif
-    endif
+	#ifdef __PLATFORM__DARWIN
+    	_cmd += "open " + __output_odt
+	#else
+		_cmd += "xdg-open " + __output_odt + "&"
+	#endif
 
 #else __PLATFORM__WINDOWS
 
-    if from_params
-        _cmd += _oo_line + " " + __output_odt 
-    else
-        _cmd += "c:\knowhowERP\util\start.exe /m "  + __output_odt 
-    endif
+    _cmd += "c:\knowhowERP\util\start.exe /m "  + __output_odt 
 
 #endif
 
@@ -246,7 +252,7 @@ CLEAR SCREEN
 log_write( _cmd, 7 )
 
 #ifndef TEST
-_error := hb_run( _cmd )
+	_error := hb_run( _cmd )
 #endif
 
 RESTORE SCREEN FROM _screen
@@ -302,10 +308,9 @@ return 0
 // ------------------------------------------------------------------
 function f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
 local _ret := .f.
-local _converter := "jodconverter-cli.jar"
-local _conv_util
+local _jod_full_path, _util_path
 local _cmd
-local _java_start, _jod_bin, _screen, _error
+local _screen, _error
 
 // input fajl
 if ( input_file == NIL )
@@ -328,34 +333,25 @@ endif
 
 // konverter
 #ifdef __PLATFORM__WINDOWS
-	_conv_util := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + _converter
 	__output_odt := '"' + __output_odt + '"'
 	__output_pdf := '"' + __output_pdf + '"'
-#else
-	_conv_util := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + _converter
 #endif
 
 // provjeri izlazni fajl
 _ret := _check_out_pdf( @__output_pdf, overwrite_file )
-
 if !_ret
 	return _ret
 endif  
 
-// uzmi sada parametre...
-_java_start := ALLTRIM( fetch_metric( "java_start_cmd", my_user(), "" ) )
-_jod_bin := ALLTRIM( fetch_metric( "jodconverter_bin", my_user(), "" ) )
+// daj mi path do util direktorija
+_util_path := get_util_path()
+// daj mi punu putanju jod-converter-a
+_jod_full_path := _util_path + __jod_converter
 
-// provjeri da li postoje ?
-if EMPTY( _java_start ) .or. EMPTY( _jod_bin )
-    MsgBeep( "Nisu podeseni parametri jod-converter... ?!??" )
-    return _ret
-endif
-
-// postoji li jodreports-cli.jar ?
-if !FILE( ALLTRIM( _jod_bin ) )
-    log_write( "ODT report conv: " + _jod_bin + " ne postoji na lokaciji !", 7 )
-    MsgBeep( "Aplikacija " + _jod_bin + " ne postoji !" )
+// postoji li jodconverter-cli.jar ?
+if !FILE( ALLTRIM( _jod_full_path ) )
+    log_write( "ODT report conv: " + __jod_converter + " ne postoji na lokaciji !", 7 )
+    MsgBeep( "Aplikacija " + __jod_converter + " ne postoji !" )
     return _ret
 endif
 
@@ -363,11 +359,11 @@ log_write( "ODT report convert start", 9 )
 
 // na windows masinama moramo radi DOS-a dodati ove navodnike
 #ifdef __PLATFORM__WINDOWS
-    _jod_bin := '"' + _jod_bin + '"'
+    _jod_full_path := '"' + _jod_full_path + '"'
 #endif
 
 // slozi mi komandu za generisanje...
-_cmd := _java_start + " " + _jod_bin + " " 
+_cmd := _java_run_cmd + " " + _jod_full_path + " " 
 _cmd += __output_odt + " "
 _cmd += __output_pdf
 

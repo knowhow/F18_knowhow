@@ -14,36 +14,14 @@
 
 // parametri aplikacije
 function f18_app_parameters( just_set )
-local _oo_bin, _oo_writer_exe, _oo_calc_exe
-local _java_bin, _java_start
-local _jod_bin, _jod_templates, _jod_convert_bin
 local _x := 1
 local _pos_x
 local _pos_y
 local _left := 20
 local _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat
 local _pos
-
-// fetch parametara
-#IFDEF __PLATFORM__WINDOWS
-	_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
-	_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "swriter", 100 ) )
-	_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "scalc", 100 ) )
-	_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
-	_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
-	_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "c:\knowhowERP\util\jodreports-cli.jar", 200 ) )
-	_jod_convert_bin := fetch_metric( "jodconverter_bin", my_user(), PADR( "c:\knowhowERP\util\jodconverter-cli.jar", 200 ) )
-	_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
-#ELSE
-	_oo_bin := fetch_metric( "openoffice_bin", my_user(), PADR( "", 200 ) )
-	_oo_writer_exe := fetch_metric( "openoffice_writer", my_user(), PADR( "", 100 ) )
-	_oo_calc_exe := fetch_metric( "openoffice_calc", my_user(), PADR( "", 100 ) )
-	_java_bin := fetch_metric( "java_bin", my_user(), PADR("", 200) )
-	_java_start := fetch_metric( "java_start_cmd", my_user(), PADR( "java -Xmx128m -jar", 200 ) )
-	_jod_bin := fetch_metric( "jodreports_bin", my_user(), PADR( "/opt/knowhowERP/util/jodreports-cli.jar", 200 ) )
-	_jod_convert_bin := fetch_metric( "jodconverter_bin", my_user(), PADR( "/opt/knowhowERP/util/jodconverter-cli.jar", 200 ) )
-	_jod_templates := fetch_metric( "jodreports_templates", my_user(), PADR( "", 200 ) )
-#ENDIF
+local _email_server, _email_port, _email_username, _email_userpass, _email_from
+local _email_to, _email_cc
 
 // parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
@@ -59,15 +37,13 @@ _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
 
 
 // email parametri
-/*
-fetch_metric( "email_server", my_user(), "" )
-fetch_metric( "email_port", my_user(), 25 )
-fetch_metric( "email_user_name", my_user(), "" )
-fetch_metric( "email_user_pass", my_user(), "" )
-fetch_metric( "email_from", my_user(), "" )
-fetch_metric( "email_to_default", my_user(), "" )
-fetch_metric( "email_cc_default", my_user(), "" )
-*/
+_email_server := PADR( fetch_metric( "email_server", my_user(), "" ), 100 )
+_email_port := fetch_metric( "email_port", my_user(), 25 )
+_email_username := PADR( fetch_metric( "email_user_name", my_user(), "" ), 100 )
+_email_userpass := PADR( fetch_metric( "email_user_pass", my_user(), "" ), 50 )
+_email_from := PADR( fetch_metric( "email_from", my_user(), "" ), 100 )
+_email_to := PADR( fetch_metric( "email_to_default", my_user(), "" ), 500 )
+_email_cc := PADR( fetch_metric( "email_cc_default", my_user(), "" ), 500 )
 
 if just_set == nil
 	just_set := .f.
@@ -100,21 +76,20 @@ if !just_set
 	++ _x
 	++ _x
 
-	@ _pos_x + _x, _pos_y SAY "Java parametri ***" COLOR "I"
+	@ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR "I"
 	++ _x
-	@ _pos_x + _x, _pos_y SAY PADL( "Java bin:", _left ) GET _java_bin PICT "@S100"
+	@ _pos_x + _x, _pos_y SAY PADL( "email server:", _left ) GET _email_server PICT "@S30"
+	@ _pos_x + _x, col() + 1 SAY "port:" GET _email_port PICT "9999"
+ 	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "username:", _left ) GET _email_username PICT "@S30"
+	@ _pos_x + _x, col() + 1 SAY "password:" GET _email_userpass PICT "@S30" COLOR "BG/BG"
 	++ _x
-	@ _pos_x + _x, _pos_y SAY PADL( "Java start cmd:", _left ) GET _java_start PICT "@S100"
- 
+	@ _pos_x + _x, _pos_y SAY PADL( "moja email adresa:", _left ) GET _email_from PICT "@S40"
 	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "slati postu na adrese:", _left ) GET _email_to PICT "@S70"
 	++ _x
+	@ _pos_x + _x, _pos_y SAY PADL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
-	@ _pos_x + _x, _pos_y SAY "JodReports parametri ***" COLOR "I"
-	++ _x
-	@ _pos_x + _x, _pos_y SAY PADL( "JodReports lokacija:", _left ) GET _jod_bin PICT "@S100"
-	++ _x
-	@ _pos_x + _x, _pos_y SAY PADL( "JodConverter lokacija:", _left ) GET _jod_convert_bin PICT "@S100"
- 
 	read
 
 	if LastKey() == K_ESC
@@ -122,17 +97,6 @@ if !just_set
 	endif
 
 endif
-
-
-// snimi parametre u sql/db
-set_metric( "openoffice_bin", my_user(), _oo_bin )
-set_metric( "openoffice_writer", my_user(), _oo_writer_exe )
-set_metric( "openoffice_calc", my_user(), _oo_calc_exe )
-set_metric( "java_bin", my_user(), _java_bin )
-set_metric( "java_start_cmd", my_user(), _java_start )
-set_metric( "jodreports_bin", my_user(), _jod_bin )
-set_metric( "jodconverter_bin", my_user(), _jod_convert_bin )
-set_metric( "jodreports_templates", my_user(), _jod_templates )
 
 // parametri modula...
 set_metric( "main_menu_fin", my_user(), _fin )
@@ -145,6 +109,15 @@ set_metric( "main_menu_epdv", my_user(), _epdv )
 set_metric( "main_menu_rnal", my_user(), _rnal )
 set_metric( "main_menu_mat", my_user(), _mat )
 set_metric( "main_menu_pos", my_user(), _pos )
+
+// email parametri
+set_metric( "email_server", my_user(), ALLTRIM( _email_server ) )
+set_metric( "email_port", my_user(), _email_port )
+set_metric( "email_user_name", my_user(), ALLTRIM( _email_username ) )
+set_metric( "email_user_pass", my_user(), ALLTRIM( _email_userpass ) ) 
+set_metric( "email_from", my_user(), ALLTRIM( _email_from ) )
+set_metric( "email_to_default", my_user(), ALLTRIM( _email_to ) )
+set_metric( "email_cc_default", my_user(), ALLTRIM( _email_cc ) )
 
 return
 

@@ -17,23 +17,39 @@
 function cre_sifrarnici_1(ver)
 local _created, _table_name, _alias
 
-cIme := "rj.dbf" 
+_table_name := "rj"
+_alias := "RJ"
+_created := .f.
 
-if !file(f18_ime_dbf("rj"))
+if !FILE(f18_ime_dbf( _table_name ))
     aDBf:={}
     AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
     add_f_mcode(@aDbf)
     AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
+    AADD(aDBf,{ 'TIP'                 , 'C' ,   2 ,  0 })
+    AADD(aDBf,{ 'KONTO'               , 'C' ,   7 ,  0 })
 
-    DBCREATE2("rj", aDbf)
-    reset_semaphore_version("rj")
-    my_use("rj")
+    DBCREATE2( "rj", aDbf )
+	_created := .f.
+
+endif
+
+// 0.8.7
+if ver["current"] < 0807
+    modstru( { "*" + _table_name, "A TIP C 2 0", "A KONTO C 7 0" } )
+endif
+
+if _created
+    reset_semaphore_version( _table_name )
+    my_use( _table_name )
     close all 
 endif
 
-CREATE_INDEX("ID","id", "rj")
-CREATE_INDEX("NAZ","NAZ", "rj")
-index_mcode(KUMPATH, "rj")
+CREATE_INDEX( "ID", "id", _table_name )
+CREATE_INDEX( "NAZ", "NAZ", _table_name )
+index_mcode( KUMPATH, _table_name )
+
+
 
 if !file(f18_ime_dbf("konto"))
    aDbf:={}

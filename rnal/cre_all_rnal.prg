@@ -19,14 +19,23 @@ function cre_all_rnal( ver )
 local aDbf
 local _alias, _table_name
 local _created
+local _tbl
 
 aDbf := a_docs()
 _created := .f.
 _alias := "DOCS"
 _table_name := "rnal_docs"
+
 if !FILE(f18_ime_dbf(_alias))
     DBCREATE2( _alias, aDbf )
     _created := .t.
+endif
+
+// 0.8.6
+if ver["current"] < 00806
+	for each _tbl in { _table_name, "rnal__docs", "doc_log" }
+   		modstru({"*" + _tbl, "C OPERATER_I N 3 0 OPERATER_I N 10 0" })
+	next
 endif
 
 if _created
@@ -517,7 +526,7 @@ AADD(aDBf,{ "doc_priori", "N", 4, 0 })
 AADD(aDBf,{ "doc_desc", "C", 200, 0 })
 AADD(aDBf,{ "doc_sh_des", "C", 100, 0 })
 AADD(aDBf,{ "doc_status", "N", 2, 0 })
-AADD(aDBf,{ "operater_i", "N", 3, 0 })
+AADD(aDBf,{ "operater_i", "N", 10, 0 })
 AADD(aDBf,{ "doc_in_fmk", "N", 1, 0 })
 AADD(aDBf,{ "fmk_doc", "C", 150, 0 })
 AADD(aDBf,{ "doc_llog", "N", 10, 0 })
@@ -606,7 +615,7 @@ AADD(aDBf,{ "doc_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_log_no", "N", 10, 0 })
 AADD(aDBf,{ "doc_log_da", "D", 8, 0 })
 AADD(aDBf,{ "doc_log_ti", "C", 8, 0 })
-AADD(aDBf,{ "operater_i", "N", 3,  0 })
+AADD(aDBf,{ "operater_i", "N", 10,  0 })
 AADD(aDBf,{ "doc_log_ty", "C", 3,  0 })
 AADD(aDBf,{ "doc_log_de", "C", 100,  0 })
 

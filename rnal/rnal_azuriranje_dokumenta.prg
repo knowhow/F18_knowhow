@@ -179,7 +179,7 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
-f18_lock_tables({LOWER(ALIAS())})
+f18_lock_tables( { "doc_it" } )
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. ( field->doc_no == nDoc_no )
@@ -190,7 +190,7 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     append blank
     
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
     
     select _doc_it
     
@@ -198,7 +198,7 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
 enddo
 
-f18_free_tables({LOWER(ALIAS())})
+f18_free_tables( { "doc_it" } )
 sql_table_update( nil, "END" )
 
 
@@ -221,7 +221,7 @@ go top
 seek docno_str( nDoc_no )
 
 
-f18_lock_tables({LOWER(ALIAS())})
+f18_lock_tables( { "doc_it2" } )
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. ( field->doc_no == nDoc_no )
@@ -232,7 +232,7 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     append blank
        
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+    update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
     
     select _doc_it2
     
@@ -240,9 +240,8 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
 
 enddo
 
-f18_free_tables({LOWER(ALIAS())})
+f18_free_tables( { "doc_it2" } )
 sql_table_update( nil, "END" )
-
 
 return
 
@@ -264,7 +263,7 @@ go top
 seek docno_str( nDoc_no )
 
 
-f18_lock_tables({LOWER(ALIAS())})
+f18_lock_tables( { "doc_ops" } )
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. ( field->doc_no == nDoc_no )
@@ -277,7 +276,7 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
         select doc_ops
         append blank
  
-        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+        update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
         
     endif
     
@@ -285,7 +284,7 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     skip
 enddo
 
-f18_free_tables({LOWER(ALIAS())})
+f18_free_tables( { "doc_ops" } )
 sql_table_update( nil, "END" )
 
 
@@ -375,7 +374,7 @@ if FOUND()
     _rec := dbf_get_rec()
     _rec["doc_status"] := nMarker
  
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FREE" )
+    update_rec_server_and_dbf( "docs", _rec, 1, "FULL" )
  
 endif
 
@@ -562,9 +561,9 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
-f18_lock_tables({"docs", "doc_it", "doc_it2", "doc_ops"})
-sql_table_update( nil, "BEGIN" )
+f18_lock_tables({ "docs", "doc_it", "doc_it2", "doc_ops" })
 
+sql_table_update( nil, "BEGIN" )
 
 if FOUND()
     _del_rec := dbf_get_rec()

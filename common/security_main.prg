@@ -94,6 +94,8 @@ else
   return oTable:Fieldget(1)
 endif
 
+return
+
 
 // vraca username usera iz sec.systema
 function GetUserName( nUser_id )
@@ -117,6 +119,8 @@ else
   return hb_utf8tostr( oTable:Fieldget(1) )
 endif
 
+return
+
 
 // vraca full username usera iz sec.systema
 function GetFullUserName( nUser_id )
@@ -138,5 +142,7 @@ if oTable:eof()
 else
   return hb_utf8tostr( oTable:Fieldget(1) )
 endif
+
+return
 
 

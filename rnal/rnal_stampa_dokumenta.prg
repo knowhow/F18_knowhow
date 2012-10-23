@@ -851,7 +851,7 @@ add_tpars("N08", ALLTRIM(field->doc_desc) )
 // dokument, kontakt dodatni podaci...
 add_tpars("N09", ALLTRIM(field->cont_add_d) )
 // operater koji je napravio nalog
-add_tpars("N13", ALLTRIM(getfullusername(field->operater_i)) )
+add_tpars("N13", ALLTRIM( getfullusername(field->operater_i)) )
 
 // dokumenti koji su sadrzani 
 if !EMPTY(cDescr)

@@ -29,7 +29,7 @@ O_CONTACTS
 nOperater := GetUserID( f18_user() )
 
 Box( , 1, 60)
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "999"
+	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
 	read
 BoxC()
 
@@ -159,7 +159,7 @@ nOperater := GetUserID( f18_user() )
 
 Box(, 3, 60)
 	
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "999"
+	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
 	
 	@ m_x + 3, m_y + 2 SAY "Listaj naloge >= datum" GET dDate
 	
@@ -251,7 +251,7 @@ O_CONTACTS
 nOperater := GetUserID( f18_user() )
 
 Box(, 3, 60)
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "999" 
+	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999" 
 	@ m_x + 3, m_y + 2 SAY "Nalozi prispjeli samo na tekuci dan ?" GET cCurrent PICT "@!" VALID cCurrent $ "DN"
 	read
 BoxC()
@@ -343,7 +343,7 @@ nOperater := GetUserID( f18_user() )
 
 Box(, 5, 65)
 	
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "999"
+	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
 	
 	@ m_x + 3, m_y + 2 SAY "Uzeti u obzir do br.predh.dana:" GET nDays PICT "99999"
 	

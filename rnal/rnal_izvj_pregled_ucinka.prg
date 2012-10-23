@@ -205,7 +205,7 @@ Box(, nBoxX, nBoxY)
 
 	nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 } PICT "999"
+	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 } PICT "9999999999"
 	
 	read
 BoxC()
@@ -229,10 +229,10 @@ local nDoc_no
 aField := _op_fields()
 
 cre_tmp1( aField )
-O__TMP1
+o_tmp1()
 
 // kreiraj indekse
-index on STR( operater, 3 ) tag "1"
+index on STR( operater, 10 ) tag "1"
 
 // otvori potrebne tabele
 o_tables( .f. )
@@ -303,7 +303,7 @@ select _tmp1
 set order to tag "1"
 go top
 
-seek STR( nOp_id, 3 ) 
+seek STR( nOp_id, 10 ) 
 
 if !FOUND()
 	APPEND BLANK
@@ -335,7 +335,7 @@ return
 static function _op_fields()
 local aDbf := {}
 
-AADD( aDbf, { "operater", "N",   3, 0 })
+AADD( aDbf, { "operater", "N",  10, 0 })
 AADD( aDbf, { "op_desc",  "C",  40, 0 })
 AADD( aDbf, { "o_count",  "N",  10, 0 })
 AADD( aDbf, { "c_count",  "N",  10, 0 })

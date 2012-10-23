@@ -51,7 +51,7 @@ Box(,6,60)
 	
 	@ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
 		VALID {|| nOper == 0  } ;
-		PICT "999"
+		PICT "9999999999"
   	@ m_x + 3, m_y + 2 SAY "(O)tvoreni / (Z)atvoreni / (S)vi" GET cStatus ;
 		VALID cStatus $ "OZS" PICT "@!"
 	read

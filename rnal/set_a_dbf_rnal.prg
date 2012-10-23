@@ -51,8 +51,6 @@ set_a_dbf_temp("t_docit2"      ,   "T_DOCIT2"    , F_T_DOCIT2  )
 set_a_dbf_temp("t_docop"       ,   "T_DOCOP"     , F_T_DOCOP  )
 set_a_dbf_temp("t_pars"        ,   "T_PARS"      , F_T_PARS  )
 
-
-
 return
 
 

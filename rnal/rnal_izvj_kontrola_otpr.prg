@@ -162,15 +162,13 @@ if LastKey() == K_ESC
 	return
 endif
 
-// napravi linkove sa doks-om
-select (240)
-use ( ALLTRIM(gFaKumDir) + "FAKT" ) alias "f_dok"
-set order to tag "1"
+// otvori fakt doks
+O_FAKT_DOKS
 
 // otvori potrebne tabele
 o_tables( .f. )
 
-select f_dok
+select fakt_doks
 go top
 
 msgo("Popunjavam veze ...")
@@ -235,7 +233,7 @@ do while !EOF()
 	
 	endif
 
-	select f_dok
+	select fakt_doks
 	skip
 enddo
 
@@ -269,13 +267,11 @@ local cPTipDok := ""
 aField := _rpt_fields()
 
 cre_tmp1( aField )
-O__TMP1
+o_tmp1()
 index on STR( doc_no, 10) tag "1"
 
-// napravi linkove sa fakt-om i pos-om
-select (240)
-use ( ALLTRIM(gFaKumDir) + "FAKT" ) alias "f_dok"
-set order to tag "1"
+// fakt doks mi otvori
+O_FAKT_DOKS
 
 // otvori potrebne tabele
 o_tables( .f. )
@@ -314,7 +310,7 @@ do while !EOF()
 	cF_doc2 := "?"
 	cP_doc1 := "?"
 
-	select f_dok
+	select fakt_doks
 	seek cFFirma + cFTipDok
 
 	// resetuj memo vrijednost
@@ -368,7 +364,7 @@ static function app_to_tmp1( nDoc_no, cCustomer, dDate, dDel_date, ;
 	cFakt_dok1, cFakt_dok2, cPos_dok1 )
 local nTArea := SELECT()
 
-O__TMP1
+select _tmp1
 go top
 seek docno_str( nDoc_no )
 

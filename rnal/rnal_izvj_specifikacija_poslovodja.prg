@@ -73,7 +73,7 @@ Box(, nBoxX, nBoxY)
 
 	nX += 2
 	
-	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0  } PICT "999"
+	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0  } PICT "9999999999"
 	
 	nX += 2
 	
@@ -130,7 +130,7 @@ local nGr2
 aField := _spec_fields()
 
 cre_tmp1( aField )
-O__TMP1
+o_tmp1()
 
 // otvori potrebne tabele
 o_tables( .f. )
@@ -278,7 +278,7 @@ do while !EOF()
 			cDoc_prior, ;
 			cDoc_div, ;
 			docs->doc_desc, ;
-			docs->doc_sh_de, ;
+			docs->doc_sh_des, ;
 			cDoc_oper, ;
 			nQtty, ;
 			cItem, ;
@@ -305,7 +305,7 @@ do while !EOF()
 			cDoc_prior, ;
 			cDoc_div, ;
 			docs->doc_desc, ;
-			docs->doc_sh_de, ;
+			docs->doc_sh_des, ;
 			cDoc_oper, ;
 			nQtty, ;
 			cItem, ;
@@ -621,7 +621,6 @@ static function _ins_tmp1( nDoc_no, cCust_desc, dDoc_date, dDoc_dvr_d, ;
 
 local nTArea := SELECT()
 
-O__TMP1
 select _tmp1
 APPEND BLANK
 

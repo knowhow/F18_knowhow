@@ -12,18 +12,11 @@
 
 #include "rnal.ch"
 
-/*
-* ----------------------------------------------------------------
-*                                     Copyright Sigma-com software 
-* ----------------------------------------------------------------
-*/
-
 
 // ------------------------------
 // menij pregled naloga
 // ------------------------------
 function m_lst_rnal()
-*{
 private opc:={}
 private opcexe:={}
 private Izbor:=1

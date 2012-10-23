@@ -286,7 +286,7 @@ Box(, nBoxX, nBoxY)
 	
 	nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0  } PICT "999"
+	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0  } PICT "9999999999"
 	
 	nX += 1
  	
@@ -409,7 +409,7 @@ local aErr := {}
 aField := _spec_fields()
 
 cre_tmp1( aField )
-O__TMP1
+o_tmp1()
 
 // kreiraj indekse
 if __nvar2 = 2
@@ -939,7 +939,7 @@ local aErr := {}
 aField := _spec_fields()
 
 cre_tmp1( aField )
-O__TMP1
+o_tmp1()
 
 // kreiraj indekse
 if __nvar2 = 2

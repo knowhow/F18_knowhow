@@ -54,7 +54,7 @@ Box(,6,60)
 	@ m_x + 1, col() + 1 SAY "do:" GET dD_t
 	@ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
 		VALID {|| nOper == 0  } ;
-		PICT "999"
+		PICT "9999999999"
 	@ m_x + 4, m_y + 2 SAY " RAL kodovi (prazno-svi):" GET cRList PICT "@S25"
 	@ m_x + 5, m_y + 2 SAY "boje kodovi (prazno-sve):" GET cColList PICT "@S25"
 	read
@@ -91,7 +91,10 @@ local nElement := 0
 aField := _rpt_fields()
 
 cre_tmp1( aField )
-O__TMP1
+
+// otvori tabelu _tmp1
+o_tmp1()
+
 index on STR(r_color, 8) tag "1"
 
 // otvori potrebne tabele
@@ -109,7 +112,7 @@ do while !EOF()
 
 	nDoc_no := field->doc_no
 	nDoc_it_no := field->doc_it_no
-	nDoc_it_el_no := field->doc_it_el_no
+	nDoc_it_el_no := field->doc_it_el_
 
 	select docs
 	go top
@@ -124,7 +127,7 @@ do while !EOF()
 		loop
 	endif
 
-	if nOper <> 0 .and. ( docs->operater_id <> nOper )
+	if nOper <> 0 .and. ( docs->operater_i <> nOper )
 		select doc_ops
 		skip
 		loop
@@ -217,17 +220,23 @@ return
 // -------------------------------------------------
 static function app_to_tmp1( nColor, nTotal )
 local nTArea := SELECT()
+local _rec
 
-O__TMP1
+select _tmp1
 go top
 seek STR( nColor, 8 )
 
 if !FOUND()
 	append blank
-	replace field->r_color with nColor
+	_rec := dbf_get_rec()
+	_rec["r_color"] := nColor
+else
+	_rec := dbf_get_rec()
 endif
 
-replace field->c_total with ( field->c_total + nTotal )
+_rec["c_total"] := _rec["c_total"] + nTotal
+
+dbf_update_rec( _rec )
 
 select (nTArea)
 return

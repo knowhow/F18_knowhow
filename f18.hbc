@@ -27,6 +27,8 @@ libs=hbpgsql
 libs=hbmzip minizip
 {linux}libs=hbmysql
 
+libs=hbtip
+
 #gt=gtcrs
 {unix}gt=gtxwc
 {darwin}gt=gtxwc

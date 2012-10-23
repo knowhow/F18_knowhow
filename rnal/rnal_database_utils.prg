@@ -185,10 +185,9 @@ return
 // otvori tabelu _TMP1
 // -----------------------------
 function o_tmp1()
-select F__TMP1
-if !used()
-	O__TMP1
-endif
+select (F__TMP1)
+use
+my_use_temp( "_TMP1", my_home() + "_tmp1", .f., .t. )
 return
 
 
@@ -197,11 +196,11 @@ return
 // otvori tabelu _TMP2
 // -----------------------------
 function o_tmp2()
-select F__TMP2
-if !used()
-	O__TMP2
-endif
+select (F__TMP2)
+use
+my_use_temp( "_TMP2", my_home() + "_tmp2", .f., .t. )
 return
+
 
 // -----------------------------------------
 // konvert doc_no -> STR(doc_no, 10)
@@ -285,6 +284,7 @@ if LEN(aFields) == 0
 endif
 
 _del_tmp( my_home() + cTbName + ".dbf" )  
+_del_tmp( my_home() + cTbName + ".cdx" )  
 
 DBcreate( my_home() + cTbName + ".dbf", aFields )
 
@@ -302,6 +302,7 @@ if LEN(aFields) == 0
 endif
 
 _del_tmp( my_home() + cTbName + ".dbf" )  
+_del_tmp( my_home() + cTbName + ".cdx" )  
 
 DBcreate( my_home() + cTbName + ".dbf", aFields )
 

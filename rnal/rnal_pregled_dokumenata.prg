@@ -146,8 +146,8 @@ local cContact := PADR("", 10)
 local cObject := PADR("", 10)
 local nObject := VAL(STR(0, 10))
 local nContact := VAL(STR(0, 10))
-local nOperater := VAL(STR(0, 3))
-local cOperater := PADR("", 3)
+local nOperater := VAL(STR(0, 10))
+local cOperater := PADR("", 10)
 local cShowRejected := "N"
 local nRet := 1
 local cFilter
@@ -156,22 +156,16 @@ local cColor1 := "BG+/B"
 // color help
 local cHelpClr := "GR+/B"
 
-// parametri - iscitaj 
-private cSection:="L"
-private cHistory:=" "
-private aHistory:={}
-O_PARAMS
-
-RPar("d1", @dDateFrom)
-RPar("d2", @dDateTo)
-RPar("d3", @dDvrDFrom)
-RPar("d4", @dDvrDTo)
-RPar("c1", @cCustomer)
-RPar("c2", @cContact)
-RPar("c3", @cObject)
-RPar("o1", @nOperater)
-RPar("s1", @nSort)
-RPar("s2", @cShowRejected)
+dDateFrom := fetch_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
+dDateTo := fetch_metric( "rnal_preg_nalog_datum_do", my_user(), dDateTo )
+dDvrDFrom := fetch_metric( "rnal_preg_nalog_isporuka_od", my_user(), dDvrDFrom )
+dDvrDTo := fetch_metric( "rnal_preg_nalog_isporuka_do", my_user(), dDvrDTo )
+cCustomer := fetch_metric( "rnal_preg_nalog_partner", my_user(), cCustomer )
+cContact := fetch_metric( "rnal_preg_nalog_kontakt", my_user(), cContact )
+cObject := fetch_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
+nOperater := fetch_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
+nSort := fetch_metric( "rnal_preg_nalog_sort", my_user(), nSort )
+cShowRejected := fetch_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
 
 Box( , nBoxX, nBoxY)
 
@@ -243,22 +237,17 @@ endif
 
 _operater := nOperater
 
-// parametri - snimi
-private cSection:="L"
-private cHistory:=" "
-private aHistory:={}
-O_PARAMS
-
-WPar("d1", dDateFrom)
-WPar("d2", dDateTo)
-WPar("d3", dDvrDFrom)
-WPar("d4", dDvrDTo)
-WPar("c1", cCustomer)
-WPar("c2", cContact)
-WPar("c3", cObject)
-WPar("o1", nOperater)
-WPar("s1", nSort)
-WPar("s2", cShowRejected)
+// snimi parametre
+set_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
+set_metric( "rnal_preg_nalog_datum_do", my_user(), dDateTo )
+set_metric( "rnal_preg_nalog_isporuka_od", my_user(), dDvrDFrom )
+set_metric( "rnal_preg_nalog_isporuka_do", my_user(), dDvrDTo )
+set_metric( "rnal_preg_nalog_partner", my_user(), cCustomer )
+set_metric( "rnal_preg_nalog_kontakt", my_user(), cContact )
+set_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
+set_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
+set_metric( "rnal_preg_nalog_sort", my_user(), nSort )
+set_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
 
 // generisi filter
 cFilter := gen_filter(dDateFrom, ;

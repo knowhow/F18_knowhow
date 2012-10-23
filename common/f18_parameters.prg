@@ -57,6 +57,18 @@ _rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
 _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
 _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
 
+
+// email parametri
+/*
+fetch_metric( "email_server", my_user(), "" )
+fetch_metric( "email_port", my_user(), 25 )
+fetch_metric( "email_user_name", my_user(), "" )
+fetch_metric( "email_user_pass", my_user(), "" )
+fetch_metric( "email_from", my_user(), "" )
+fetch_metric( "email_to_default", my_user(), "" )
+fetch_metric( "email_cc_default", my_user(), "" )
+*/
+
 if just_set == nil
 	just_set := .f.
 endif

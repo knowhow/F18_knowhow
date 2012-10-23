@@ -115,8 +115,8 @@ do case
    	 	AADD(opcexe,{|| fp_nf_txt( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
     			"ČčĆćŽžĐđŠš") })
 
-    	AADD(opc,"13. test fisc. email")
-    	AADD(opcexe,{|| _fisc_eml_test() })
+    	AADD(opc,"13. test email")
+    	AADD(opcexe,{|| f18_email_test() })
 
     endif
 

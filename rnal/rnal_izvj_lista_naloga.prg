@@ -486,9 +486,14 @@ if cEmail == "D"
 	
 	// vrati stanje printera
 	gPrinter := cPrinter
+
+	_subject := "Lista naloga van roka na tekuci dan"
+	_body := _subject	
+	_attach := { my_home() + "outf.txt" }
+
+	_mail_params := f18_email_prepare( _subject, _body )
 	
-	// posalji email
-	send_eml()
+	f18_email_send( _mail_params, _attach )
 
 endif
 

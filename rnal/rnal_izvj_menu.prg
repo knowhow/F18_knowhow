@@ -61,7 +61,7 @@ AADD(_opc, "X. mysql test ")
 AADD(_opcexe, {|| rnal_mysql_test() })
 
 AADD(_opc, "Y. send email ")
-AADD(_opcexe, {|| send_email_test() })
+AADD(_opcexe, {|| f18_email_test() })
 
 f18_menu("rpt_rnal", .f., _izbor, _opc, _opcexe )
 

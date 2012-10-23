@@ -161,30 +161,25 @@ local cPartn := "N"
 local cDmg := "N"
 local cZaok := "N"
 private GetList := {}
-private cSection:="R"
-private cHistory:=" "
-private aHistory:={}
 
-O_PARAMS
-
-RPar("o1", @cOp1)
-RPar("o2", @cOp2)
-RPar("o3", @cOp3)
-RPar("o4", @cOp4)
-RPar("o5", @cOp5)
-RPar("o6", @cOp6)
-RPar("o7", @cOp7)
-RPar("o8", @cOp8)
-RPar("o9", @cOp9)
-RPar("o0", @cOp10)
-RPar("p1", @cOp11)
-RPar("p2", @cOp12)
-RPar("d1", @dDatFrom)
-RPar("d2", @dDatTo)
-RPar("v1", @nVar1)
-RPar("v2", @cPartn)
-RPar("v3", @cZaok)
-RPar("v4", @cDmg)
+cOp1 := fetch_metric( "rnal_rpt_pro_op1", my_user(), cOp1 )
+cOp2 := fetch_metric( "rnal_rpt_pro_op2", my_user(), cOp2 )
+cOp3 := fetch_metric( "rnal_rpt_pro_op3", my_user(), cOp3 )
+cOp4 := fetch_metric( "rnal_rpt_pro_op4", my_user(), cOp4 )
+cOp5 := fetch_metric( "rnal_rpt_pro_op5", my_user(), cOp5 )
+cOp6 := fetch_metric( "rnal_rpt_pro_op6", my_user(), cOp6 )
+cOp7 := fetch_metric( "rnal_rpt_pro_op7", my_user(), cOp7 )
+cOp8 := fetch_metric( "rnal_rpt_pro_op8", my_user(), cOp8 )
+cOp9 := fetch_metric( "rnal_rpt_pro_op9", my_user(), cOp9 )
+cOp10 := fetch_metric( "rnal_rpt_pro_op10", my_user(), cOp10 )
+cOp11 := fetch_metric( "rnal_rpt_pro_op11", my_user(), cOp11 )
+cOp12 := fetch_metric( "rnal_rpt_pro_op12", my_user(), cOp12 )
+dDatFrom := fetch_metric( "rnal_rpt_pro_datum_od", my_user(), dDatFrom )
+dDatTo := fetch_metric( "rnal_rpt_pro_datum_do", my_user(), dDatTo )
+nVar1 := fetch_metric( "rnal_rpt_pro_varijanta", my_user(), nVar1 )
+cPartn := fetch_metric( "rnal_rpt_pro_partner", my_user(), cPartn )
+cZaok := fetch_metric( "rnal_rpt_pro_zaokruzenje", my_user(), cZaok )
+cDmg := fetch_metric( "rnal_rpt_pro_lom", my_user(), cDmg )
 
 Box(, nBoxX, nBoxY)
 
@@ -315,27 +310,24 @@ if LastKey() == K_ESC
 	nRet := 0
 endif
 
-select params
-
-// upisi parametre u params
-WPar("o1", cOp1)
-WPar("o2", cOp2)
-WPar("o3", cOp3)
-WPar("o4", cOp4)
-WPar("o5", cOp5)
-WPar("o6", cOp6)
-WPar("o7", cOp7)
-WPar("o8", cOp8)
-WPar("o9", cOp9)
-WPar("o0", cOp10)
-WPar("p1", cOp11)
-WPar("p2", cOp12)
-WPar("d1", dDatFrom)
-WPar("d2", dDatTo)
-WPar("v1", nVar1)
-WPar("v2", cPartn)
-WPar("v3", cZaok)
-WPar("v4", cDmg)
+set_metric( "rnal_rpt_pro_op1", my_user(), cOp1 )
+set_metric( "rnal_rpt_pro_op2", my_user(), cOp2 )
+set_metric( "rnal_rpt_pro_op3", my_user(), cOp3 )
+set_metric( "rnal_rpt_pro_op4", my_user(), cOp4 )
+set_metric( "rnal_rpt_pro_op5", my_user(), cOp5 )
+set_metric( "rnal_rpt_pro_op6", my_user(), cOp6 )
+set_metric( "rnal_rpt_pro_op7", my_user(), cOp7 )
+set_metric( "rnal_rpt_pro_op8", my_user(), cOp8 )
+set_metric( "rnal_rpt_pro_op9", my_user(), cOp9 )
+set_metric( "rnal_rpt_pro_op10", my_user(), cOp10 )
+set_metric( "rnal_rpt_pro_op11", my_user(), cOp11 )
+set_metric( "rnal_rpt_pro_op12", my_user(), cOp12 )
+set_metric( "rnal_rpt_pro_datum_od", my_user(), dDatFrom )
+set_metric( "rnal_rpt_pro_datum_do", my_user(), dDatTo )
+set_metric( "rnal_rpt_pro_varijanta", my_user(), nVar1 )
+set_metric( "rnal_rpt_pro_partner", my_user(), cPartn )
+set_metric( "rnal_rpt_pro_zaokruzenje", my_user(), cZaok )
+set_metric( "rnal_rpt_pro_lom", my_user(), cDmg )
 
 // parametri staticki
 __nvar1 := nVar1

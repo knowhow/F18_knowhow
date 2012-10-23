@@ -294,7 +294,6 @@ public gPdvDokVar := "1"
 
 // artikal sort - cdx
 public gArtCDX := SPACE(20)
-public gEmailInfo := "N"
 
 public gTipF:="2"
 public gVarF:="2"
@@ -452,7 +451,6 @@ gDatVal := fetch_metric( "fakt_datum_placanja_svi_dokumenti", nil, gDatVal )
 gNumDio := fetch_metric( "fakt_numericki_dio_dokumenta", nil, gNumDio )
 gPSamoKol := fetch_metric( "fakt_prikaz_samo_kolicine", nil, gPSamoKol )
 gcF9usmece := fetch_metric( "fakt_povrat_u_smece", nil, gcF9usmece )
-gEmailInfo := fetch_metric( "fakt_email_nakon_racuna", nil, gEmailInfo )
 gERedova := fetch_metric( "fakt_dokument_dodati_redovi_po_listu", nil, gERedova )
 gnLMarg := fetch_metric( "fakt_dokument_lijeva_margina", nil, gnLMarg )
 gnTMarg := fetch_metric( "fakt_dokument_top_margina", nil, gnTMarg )
@@ -707,6 +705,10 @@ gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
 ::cRoba_Rj:=IzFmkIni('CROBA','CROBA_RJ','10#20',KUMPATH)
 
 ::lOpresaStampa:=IzFmkIni('Opresa','Remitenda','N',PRIVPATH)=="D"
+
+// racun slati na email
+param_racun_na_email(.t.)
+
 
 return
 

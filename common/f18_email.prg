@@ -113,16 +113,18 @@ return _ret
 // -----------------------------------------------------------------
 // iscitaj porametre i pripremi za slanje email-a
 // -----------------------------------------------------------------
-function f18_email_prepare( subject, body, m_from, m_to, m_cc )
+function f18_email_prepare( subject, body, m_from, m_to, m_cc, m_bcc, m_reply )
 local _mail_params := hb_hash()
 
 // ucitaj parametre F18
-// sve ostalo setuj default, ako ne postoji
 
 _mail_params["server"] := ALLTRIM( fetch_metric( "email_server", my_user(), "" ) )
 _mail_params["port"] := fetch_metric( "email_port", my_user(), 25 )
 _mail_params["user_name"] := ALLTRIM( fetch_metric( "email_user_name", my_user(), "" ) )
 _mail_params["user_password"] := ALLTRIM( fetch_metric( "email_user_pass", my_user(), "" ) )
+
+// sve ostalo setuj default, ako ne postoji
+// ili proslijedi iz funkcije
 
 if m_from == NIL
 	_mail_params["mail_from"] := ALLTRIM( fetch_metric( "email_from", my_user(), "" ) )
@@ -142,11 +144,29 @@ else
 	_mail_params["mail_cc"] := get_email_array( m_cc )
 endif
 
-_mail_params["mail_bcc"] := ""
-_mail_params["mail_reply_to"] := ""
+if m_bcc == NIL
+	_mail_params["mail_bcc"] := ""
+else
+	_mail_params["mail_bcc"] := get_email_array( m_bcc )
+endif
 
-_mail_params["mail_body"] := body
-_mail_params["mail_subject"] := subject
+if m_reply == NIL
+	_mail_params["mail_reply_to"] := ""
+else
+	_mail_params["mail_reply_to"] := m_reply
+endif
+
+if body == NIL
+	_mail_params["mail_body"] := "empty body"
+else
+	_mail_params["mail_body"] := body
+endif
+
+if subject == NIL
+	_mail_params["mail_subject"] := "empty subject"
+else
+	_mail_params["mail_subject"] := subject
+endif
 
 return _mail_params
 

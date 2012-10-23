@@ -14,6 +14,20 @@
 
 static __device := 0
 static __auto := .f.
+static __racun_na_email := NIL
+
+// --------------------------------------------------------------------------
+// slati racun na email
+// --------------------------------------------------------------------------
+function param_racun_na_email(read_par)
+
+if read_par != NIL
+   __racun_na_email := fetch_metric( "fakt_dokument_na_email", my_user(), "" )
+endif   
+
+return __racun_na_email
+
+
 
 // ---------------------------------------------------------
 // centralna funkcija za poziv stampe fiskalnog racuna
@@ -1272,11 +1286,10 @@ else
             ALLTRIM( gFC_name ), cNF_txt )
     endif
 
-    if gEmailInfo == "D" .and. cTipDok $ "#11#"
+    if !EMPTY( param_racun_na_email() ) .and. cTipDok $ "#11#"
         
         // posalji email...
         // ako se radi o racunu tipa "11"
-        // ramaglas specificno...
 
         _snd_eml( nFisc_no, cTipDok + "-" + ALLTRIM(cBrDok), ;
             ALLTRIM( cKupacInfo ), nil, nTotal )
@@ -1977,6 +1990,7 @@ return ALLTRIM( STR( nFisc_no ) )
 static function _snd_eml( fisc_rn, fakt_dok, kupac, eml_file, u_total )
 local _subject, _body
 local _mail_param
+local _to := ALLTRIM( param_racun_na_email() )
 
 _subject := "Racun: "
 _subject += ALLTRIM(STR(fisc_rn))
@@ -1987,7 +2001,7 @@ _subject += " KM"
 
 _body := "podaci kupca i racuna"
 
-_mail_param := f18_email_prepare( _subject, _body )
+_mail_param := f18_email_prepare( _subject, _body, nil, _to )
 
 f18_email_send( _mail_param, nil )
 

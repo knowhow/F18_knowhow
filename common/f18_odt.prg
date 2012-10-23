@@ -91,7 +91,7 @@ endif
 #endif
 
 // slozi mi komandu za generisanje...
-_cmd := _java_run_cmd + " " + _jod_full_path + " " 
+_cmd := __java_run_cmd + " " + _jod_full_path + " " 
 _cmd += _template + " "
 _cmd += __xml_file + " "
 _cmd += __output_odt
@@ -363,7 +363,7 @@ log_write( "ODT report convert start", 9 )
 #endif
 
 // slozi mi komandu za generisanje...
-_cmd := _java_run_cmd + " " + _jod_full_path + " " 
+_cmd := __java_run_cmd + " " + _jod_full_path + " " 
 _cmd += __output_odt + " "
 _cmd += __output_pdf
 

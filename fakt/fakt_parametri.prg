@@ -98,6 +98,8 @@ local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PADR(""
 local _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
 local _unos_dest := "N"
 local _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
+local _racun_na_email := PADR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
+
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
@@ -179,6 +181,10 @@ nX ++
 
 nX ++
 
+@ m_x + nX, m_y+2 SAY "Racun na email:" GET _racun_na_email PICT "@S50"
+
+nX ++
+
 @ m_x + nX, m_y+2 SAY "ODT fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
 
 nX ++
@@ -227,7 +233,7 @@ endif
 
 BoxC()
 
-gKomLin:=TRIM(gKomLin)
+gKomLin := TRIM(gKomLin)
 
 if (LASTKEY()<>K_ESC)
 
@@ -240,12 +246,14 @@ if (LASTKEY()<>K_ESC)
 	set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
 	set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
     set_metric( "pregled_rabata_kod_izlaza", my_user(), _rabat )
+	set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
 
     if _unos_dest == "D"
         gDest := .t.
     else
         gDest := .f.    
     endif
+
 	set_metric( "fakt_unos_destinacije", nil, gDest )
     
 	Wpar("ff",gFaktFakt)
@@ -466,8 +474,6 @@ Box(, 23, 76, .f., "VARIJANTE OBRADE DOKUMENATA")
     @ m_x+22,m_y+2 SAY "Koristiti rabat iz sif.robe (polje N1) ?" GET gRabIzRobe PICT "@!" VALID gRabIzRobe $ "DN"
     @ m_x+23,m_y+2 SAY "Brisi direktno u smece" GET gcF9usmece PICT "@!" VALID gcF9usmece $ "DN"
     @ m_x+23,col()+2 SAY "Timeout kod azuriranja" GET gAzurTimeout PICT "9999" 
-    @ m_x+23,col()+2 SAY "Email info" GET gEmailInfo ;
-        VALID gEmailInfo $ "DN" PICT "!@" 
     
     read
 
@@ -480,7 +486,6 @@ if (LASTKEY()<>K_ESC)
     set_metric( "fakt_numericki_dio_dokumenta", nil, gNumDio )
     set_metric( "fakt_prikaz_samo_kolicine", nil, gPSamoKol )
     set_metric( "fakt_povrat_u_smece", nil, gcF9usmece )
-    set_metric( "fakt_email_nakon_racuna", nil, gEmailInfo )
     set_metric( "fakt_varijanta_dokumenta_13", nil, gVar13 )
 
     WPar("pd",gProtu13)

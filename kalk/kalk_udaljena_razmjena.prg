@@ -624,6 +624,8 @@ do while !EOF()
     f18_lock_tables({"kalk_doks", "kalk_kalk"})
     
     select kalk_doks
+    append blank
+
     update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "BEGIN" )
 
     ++ _cnt
@@ -658,6 +660,8 @@ do while !EOF()
         @ m_x + 3, m_y + 40 SAY "stavka: " + ALLTRIM(STR( _gl_brojac )) + " / " + _app_rec["rbr"] 
 
         select kalk
+        append blank
+
         update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
 
         select e_kalk

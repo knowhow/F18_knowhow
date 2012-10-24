@@ -2052,86 +2052,102 @@ if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!"
 
     O_SUBAN
 
-    if !flock()
-        MsgBeep("Program ne dozvoljava drugim korisnicima unos podataka !")
-    else
-
-        select osuban
-        go top
+    select osuban
+    go top
             
-        // prvi krug - provjeriti da neko nije slucajno dirao stavke ??!!-drugi korisnik
-        do while !eof()
+    // prvi krug - provjeriti da neko nije slucajno dirao stavke ??!!-drugi korisnik
+    do while !EOF()
             
-            if osuban->_recno == 0
-                // ovo su nove stavke, njih preskoci
-                skip
-                loop
-            endif
+        if osuban->_recno == 0
+            // ovo su nove stavke, njih preskoci
+            skip
+            loop
+        endif
 
-            select suban
-            go osuban->_recno
+        select suban
+        go osuban->_recno
                 
-            if EOF() .or. idfirma<>osuban->idfirma .or. idvn<>osuban->idvn .or. brnal<>osuban->brnal .or. idkonto<>osuban->idkonto .or. idpartner<>osuban->idpartner .or. d_p<>osuban->d_p
+        if EOF() .or. idfirma<>osuban->idfirma .or. idvn<>osuban->idvn .or. brnal<>osuban->brnal .or. idkonto<>osuban->idkonto .or. idpartner<>osuban->idpartner .or. d_p<>osuban->d_p
                 MsgBeep("Izgleda da je drugi korisnik radio na ovom partneru#Prekidam operaciju !!!")
-                close all
-            endif
+            close all
+        endif
                 
-            select osuban
-            skip
-
-        enddo
-            
-        // drugi krug - sve je cisto brisi iz suban!
         select osuban
-        go top
-            
-        do while !eof()
-            
-            if osuban->_recno == 0
-                // ovo je nova stavka, nju preskoci !
-                skip
-                loop
-            endif
+        skip
 
-            select suban
-            go osuban->_recno
-            
-            if !EOF()
-                _rec := dbf_get_rec()
-                delete_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-            endif
-            
-            select osuban
-            skip
-
-        enddo
-            
-        // treci krug - dodaj iz osuban
-        select osuban
-        go top
-
-        do while !eof()
-                
-            _rec := dbf_get_rec()
-            
-            // ukloni viska polja za suban
-            hb_hdel( _rec, "_recno" )
-            hb_hdel( _rec, "_ppk1" )
-            hb_hdel( _rec, "_obrdok" )
-
-            select suban
-            append blank
-            
-            update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-            
-            select osuban
-            skip
-
-        enddo
-        
-        MsgBeep("Promjene su izvrsene - provjerite na kartici")
-
+    enddo
+ 
+    // odradi lokovanje
+    if !f18_lock_tables({ "suban" })
+        Alert( "Prekidam opreraciju, nisam napravio lock !!!")
+        return 
     endif
+
+    sql_table_update( nil, "BEGIN" )
+           
+    // drugi krug - sve je cisto brisi iz suban!
+    select osuban
+    go top
+            
+    do while !EOF()
+            
+        if osuban->_recno == 0
+            // ovo je nova stavka, nju preskoci !
+            skip
+            loop
+        endif
+
+        select suban
+        go osuban->_recno
+            
+        if !EOF()
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+        endif
+            
+        select osuban
+        skip
+
+    enddo
+            
+    f18_free_tables({"suban"})
+    sql_table_update( nil, "END" )
+
+    // treci krug - dodaj iz osuban
+    
+    if !f18_lock_tables({ "suban" })
+        Alert( "Prekidam opreraciju, nisam napravio lock !!!")
+        return 
+    endif
+
+    sql_table_update( nil, "BEGIN" )
+    
+    select osuban
+    go top
+
+    do while !eof()
+                
+        _rec := dbf_get_rec()
+            
+        // ukloni viska polja za suban
+        hb_hdel( _rec, "_recno" )
+        hb_hdel( _rec, "_ppk1" )
+        hb_hdel( _rec, "_obrdok" )
+
+        select suban
+        append blank
+            
+        update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+            
+        select osuban
+        skip
+
+    enddo
+            
+    f18_free_tables({"suban"})
+    sql_table_update( nil, "END" )
+
+    MsgBeep("Promjene su izvrsene - provjerite na kartici")
 
 endif
 

@@ -52,7 +52,7 @@ oRow := _table:GetRow( 1 )
 
 _last := oRow:FieldGet( oRow:FieldPos("last"))
 
-if VALTYPE( _stanje ) == "L"
+if VALTYPE( _last ) == "L"
     _last := ""
 endif
 

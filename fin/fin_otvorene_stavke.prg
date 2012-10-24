@@ -1775,14 +1775,15 @@ do while .t.
                 nUplaceno := field->iznosbhd
 
                 // prvo cemo se rijesiti storno racuna, ako ih ima
-                if nUplaceno>0  .and. ABS(nZatvoriStorno)>0 .and. (dDatDokStorno<=field->datdok)
+                if nUplaceno > 0  .and. ABS( nZatvoriStorno ) > 0 .and. ( dDatDokStorno <= field->datdok )
 
                     skip
-                    nSljRec:=recno()
+                    nSljRec := RECNO()
                     skip -1
-                    nOdem:=field->iznosdem-nZatvoriStorno*field->iznosdem/field->iznosbhd
+                    nOdem := field->iznosdem - nZatvoriStorno * field->iznosdem / field->iznosbhd
                                     
                     _rec := dbf_get_rec()
+
                     // zatvaram storno racun
                     _rec["brdok"] := cZatvoriStorno
                     _rec["_ppk1"] := "1"
@@ -1795,12 +1796,23 @@ do while .t.
                     _rec["iznosbhd"] := nUplaceno - nZatvoriStorno
                     _rec["iznosdem"] := nOdem
 
-                    if round(_rec["iznosbhd"],4)<>0 .and. round(nOdem,4)<>0
+                    if ROUND(_rec["iznosbhd"],4) <> 0 .and. ROUND( nOdem, 4 ) <> 0
+                    
                         // prebacujem ostatak uplate na novu stavku
                         append blank
+
                         _rec["brdok"] := "AVANS"
                         _rec["_ppk1"] := ""
+
+                        // resetuj broj zapisa iz suban tabele !
+                        _rec["_recno"] := 0
+
+                        // sredi mi redni broj stavke
+                        // na osnovu zadnjeg broja unutar naloga
+                        _rec["rbr"] := fin_dok_get_next_rbr( _rec["idfirma"], _rec["idvn"], _rec["brnal"] )
+
                         dbf_update_rec( _rec )
+
                     endif
                               
                     nZatvoriStorno := 0
@@ -1892,7 +1904,7 @@ do while !eof()
     
     cBrDok:=brdok
     nSaldo:=0
-    nsljrec:=recno()
+    nSljRec:=recno()
     
     do while !eof() .and. cidfirma+cidkonto+cidpartner+cbrdok=idfirma+idkonto+idpartner+brdok
         if d_p == "1"

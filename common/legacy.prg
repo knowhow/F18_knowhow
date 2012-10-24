@@ -156,9 +156,7 @@ if !(lUFajl)
     // transformisi cKom varijablu za portove > 4
     GPPortTransform(@cKom)
 
-#ifndef TEST
 	set confirm on
-#endif
 
 else
 	cDirekt := "V"

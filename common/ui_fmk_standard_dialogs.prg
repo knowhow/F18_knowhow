@@ -156,14 +156,14 @@ if gAppSrv
 	return cDirekt
 endif
 
-#ifndef TEST
-  set confirm off
-  set cursor on
-#endif
+set confirm off
+set cursor on
 
 if !gAppSrv
 	cDirekt := select_print_mode( @cDirekt )
 endif
+
+set confirm on
 
 return cDirekt
 

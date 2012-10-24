@@ -2053,20 +2053,28 @@ if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!"
 			select suban
             go osuban->_recno
             
-			IF !EOF()
+			if !EOF()
 				_rec := dbf_get_rec()
 				delete_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-            ENDIF
+            endif
             
 			select osuban
             skip
+
        	enddo
             
 		// treci krug - dodaj iz osuban
+        select osuban
         go top
+
         do while !eof()
                 
 			_rec := dbf_get_rec()
+
+            // ukloni viska polja za suban
+            hb_hdel( _rec, "_recno" )
+            hb_hdel( _rec, "_ppk1" )
+            hb_hdel( _rec, "_obrdok" )
 
             select suban
 			append blank
@@ -2079,6 +2087,7 @@ if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!"
       	enddo
         
 		MsgBeep("Promjene su izvrsene - provjerite na kartici")
+
     endif
 
 endif

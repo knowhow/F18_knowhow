@@ -1,6 +1,7 @@
 1.3.41  2012-10-23, vsasa
 
  - rnal, čišćenje [#29486](http://redmine.bring.out.ba/issues/29486)
+ - set confirm on/off na print dijalogu [#29495](http://redmine.bring.out.ba/issues/29495)
  
 1.3.40  2012-10-19, vsasa
 

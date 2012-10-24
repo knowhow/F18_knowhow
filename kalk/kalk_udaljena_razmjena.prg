@@ -739,15 +739,28 @@ seek id_firma + id_vd + br_dok
 if FOUND()
 
     _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "FULL" )
+
+    if !f18_lock_tables({"kalk_kalk", "kalk_doks"})
+        MsgBeep( "Ne mogu lokovati tabele !!!" )
+        return
+    endif
+
+    sql_table_update( nil, "BEGIN" )
+
+    delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
 
     select kalk
     set order to tag "1"
     seek id_firma + id_vd + br_dok
 
     if FOUND()
-        delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "FULL" )
+        _del_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
     endif
+
+    f18_free_tables({"kalk_kalk", "kalk_doks"})
+
+    sql_table_update( nil, "END" )
 
     _ret := .t.
 

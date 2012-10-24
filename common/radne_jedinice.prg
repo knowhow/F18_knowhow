@@ -30,14 +30,8 @@ O_RJ
 
 AADD(ImeKol, { PADR("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
 AADD(ImeKol, { PADR("Naziv",35), {|| naz}, "naz" })
-
-if gModul == "FAKT" .and. rj->(FIELDPOS("TIP")) <> 0
-	AADD(ImeKol, { PADR("Tip cij.",10), {|| tip}, "tip" })
-	AADD(ImeKol, { PADR("Konto",10), {|| konto}, "konto" })
-	if gMjRJ=="D"
-	  	AADD(ImeKol, { padr("Grad",20), {||  grad}, "grad" } )
-	endif
-endif
+AADD(ImeKol, { PADR("Tip cij.",10), {|| tip}, "tip" })
+AADD(ImeKol, { PADR("Konto",10), {|| konto}, "konto" })
 
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)

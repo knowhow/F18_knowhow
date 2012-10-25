@@ -16,23 +16,22 @@
  
 function VTPOREZI()
 public _ZPP:=0
-
 public _OPP:=tarifa->opp/100
 public _PPP:=tarifa->ppp/100
 public _ZPP:=tarifa->zpp/100
-public _PORVT:=0
+public _PORVT := 0
 public _MPP   := 0
 public _DLRUC := 0
 
 if !IsPdv()
 
-if tarifa->(FIELDPOS("MPP")<>0)
-	public _MPP   := tarifa->mpp/100
-	public _DLRUC := tarifa->dlRuc/100
-else
-	public _MPP   := 0
-	public _DLRUC := 0
-endif
+    if tarifa->(FIELDPOS("MPP")<>0)
+	    public _MPP   := tarifa->mpp/100
+	    public _DLRUC := tarifa->dlRuc/100
+    else
+	    public _MPP   := 0
+	    public _DLRUC := 0
+    endif
 
 endif
 

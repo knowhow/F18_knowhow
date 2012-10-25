@@ -565,11 +565,10 @@ if gFc_error == "D" .and. cContinue <> "2"
 	
 		if nErr = 0 .and. !lStorno .and. nFisc_no > 0
 
+            _update_fisc_rn( nFisc_no )	
 			msgbeep("Kreiran fiskalni racun: " + ;
 				ALLTRIM(STR( nFisc_no )))
 			
-            _update_fisc_rn( nFisc_no )	
-
 		endif
 	
 	endif
@@ -734,10 +733,9 @@ endif
 return nErr
 
 
-
-
 // ------------------------------------------------
 // update broj fiskalnog racuna
+// ------------------------------------------------
 static function _update_fisc_rn( nFisc_no )
 local _rec
 
@@ -745,10 +743,6 @@ select pos_doks
 
 _rec := dbf_get_rec()
 _rec["fisc_rn"] := nFisc_no
-
-if !f18_lock_tables({"pos_pos", "pos_doks"})
-    return
-endif
 
 update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 

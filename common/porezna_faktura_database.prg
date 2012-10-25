@@ -463,8 +463,9 @@ endif
 
 O_DOKSPF
 
-
-f18_lock_tables({_tbl})
+if !f18_lock_tables({_tbl})
+    MsgBeep("Ne mogu lock-ovati dokspf tabelu !!!")
+endif
 
 sql_table_update( nil, "BEGIN" )
 
@@ -494,7 +495,7 @@ _rec["knaz"] := cKNaziv
 _rec["kadr"] := cKAdres
 _rec["kidbr"] := cKIdBroj
 
-update_rec_server_and_dbf( _tbl, _rec, 1, "CONT", .f. )
+update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
 
 f18_free_tables({_tbl})
 sql_table_update( nil, "END" )

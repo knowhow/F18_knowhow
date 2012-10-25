@@ -397,7 +397,6 @@ if !f18_lock_tables({"pos_pos", "pos_doks"})
   return .f.
 endif
 
-
 if ( cNacPlac == NIL )
     cNacPlac := gGotPlac
 endif
@@ -435,7 +434,8 @@ _rec["prebacen"] := OBR_JEST
 _rec["smjena"] := _pos->smjena
 
 sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
+
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
 // azuriranje stavki u POS
 
@@ -473,7 +473,7 @@ do while !EOF() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos
     _rec["c_2"] := _pos->c_2
     _rec["c_3"] := _pos->c_3
 
-    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT", .f. )
+    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
     select _pos
     skip
@@ -482,11 +482,6 @@ enddo
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
-
-// pos_pos check
-// check_recno( "pos_pos", nil, .f. )
-// check_recno( "pos_doks", nil, .f. )
-
 
 log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )
 

@@ -1,3 +1,7 @@
+1.3.42  2012-10-25, vsasa
+
+ - pos, update fiskalni račun broj - bug sa lock-om pos_pos [#29500](http://redmine.bring.out.ba/issues/29500)
+ 
 1.3.41  2012-10-25, vsasa
 
  - rnal, čišćenje [#29486](http://redmine.bring.out.ba/issues/29486)

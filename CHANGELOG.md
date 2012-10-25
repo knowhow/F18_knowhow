@@ -1,9 +1,11 @@
-1.3.41  2012-10-23, vsasa
+1.3.41  2012-10-25, vsasa
 
  - rnal, čišćenje [#29486](http://redmine.bring.out.ba/issues/29486)
  - set confirm on/off na print dijalogu [#29495](http://redmine.bring.out.ba/issues/29495)
  - kalk, udaljena razmjena, bugfix [#29498](http://redmine.bring.out.ba/issues/29498)
- 
+ - rj, ubačena polja tip i konto [#29488](http://redmine.bring.out.ba/issues/29488)
+ - ostale sitne dorade
+
 1.3.40  2012-10-19, vsasa
 
  - kalk, modifikacija polja tabele kalk_kalk [#29453](http://redmine.bring.out.ba/issues/29453)

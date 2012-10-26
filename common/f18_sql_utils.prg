@@ -508,4 +508,37 @@ _ret := RIGHT( _ret, LEN( _ret ) - 5 )
 return _ret
 
 
+// ------------------------------------------------------
+// vraca vrijednost polja po zadatom uslovu
+//
+//  _sql_get_value( "partn", "naz", { "id", "1AL001" } )
+// ------------------------------------------------------
+function _sql_get_value( table_name, field_name, cond )
+local _val 
+local _qry := ""
+local _table
+local _server := pg_server()
+local _data := {}
+local _i, oRow
+
+_qry += "SELECT " + field_name + " FROM fmk." + table_name 
+_qry += " WHERE " + cond[1] + " = " _sql_quote( cond[2] )
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+oRow := _table:GetRow( 1 )
+
+_val := oRow:FieldGet( oRow:FieldPos( field_name ))
+
+// ako nema polja vraca NIL
+if VALTYPE( _val ) == "L"
+    _val := NIL
+endif
+
+return _val
+
+
+
+
 

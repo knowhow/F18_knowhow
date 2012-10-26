@@ -1,23 +1,39 @@
+/* 
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * ERP software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
+
 #include "fin.ch"
 
- 
+
+// ------------------------------------------------------------
+// finansijska kartica 
+// ------------------------------------------------------------
+
 function fin_kartica()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
-private picDEM:=FormPicL(gPicDEM,12)
-private picBHD:=FormPicL(gPicBHD,16)
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc, "1. sintetika                    ")
-AADD(opcexe, {|| SinKart()})
-AADD(opc, "2. sintetika - po mjesecima")
-AADD(opcexe, {|| SinKart2()})
-AADD(opc, "3. analitika")
-AADD(opcexe, {|| AnKart()})
-AADD(opc, "4. subanalitika")
-AADD(opcexe, {|| SubKart()})
+private picDEM := FormPicL( gPicDEM, 12 )
+private picBHD := FormPicL( gPicBHD, 16 )
 
-Menu_SC("kart")
+AADD( _opc, "1. sintetika                              ")
+AADD( _opcexe, {|| SinKart() })
+AADD( _opc, "2. sintetika - po mjesecima")
+AADD( _opcexe, {|| SinKart2() })
+AADD( _opc, "3. analitika")
+AADD( _opcexe, {|| AnKart() })
+AADD( _opc, "4. subanalitika")
+AADD( _opcexe, {|| SubKart() })
+
+f18_menu( "fin_kart", .f., _izbor, _opc, _opcexe )
 
 return
 
@@ -27,6 +43,7 @@ static function o_kart_tbl()
 
 O_KONTO
 O_PARTN
+
 if gRj == "D"
 	O_RJ
 endif
@@ -48,12 +65,13 @@ endif
 return
 
 
+
 // ---------------------------------------------
 // SubKart(lOtvst)
 // Subanaliticka kartica
 // param lOtvst  - .t. otvorene stavke
 // ---------------------------------------------
-function SubKart(lOtvst)
+function SubKart( lOtvst )
 local cBrza:="D"
 local nC1:=37
 local nSirOp:=20
@@ -95,39 +113,31 @@ cKumul:="1"
 cPredh:="1"
 qqKonto:=""
 qqPartner:=""
+qqBrDok := SPACE(40)
+qqNazKonta := SPACE(40)
 
-if PCount()==0
-	fOtvSt:=.f.
+if PCount() == 0
+	fOtvSt := .f.
 endif
 
-O_PARAMS
+fk1 := fetch_metric( "fin_kartica_fk1", my_user(), fk1 )
+fk2 := fetch_metric( "fin_kartica_fk2", my_user(), fk2 )
+fk3 := fetch_metric( "fin_kartica_fk3", my_user(), fk3 )
+fk4 := fetch_metric( "fin_kartica_fk4", my_user(), fk4 )
 
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("k1",@fk1)
-RPar("k2",@fk2)
-RPar("k3",@fk3)
-RPar("k4",@fk4)
-
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
-
-Params1()
-RPar("c1",@cKumul)
-RPar("c2",@cPredh)
-RPar("c3",@cBrza)
-RPar("cS",@cSazeta)
-RPar("c4",@cIdFirma)
-RPar("c5",@qqKonto)
-RPar("c6",@qqPartner)
-RPar("d1",@dDatOd)
-RPar("d2",@dDatDo)
-RPar("c7",@cDinDem)
-RPar("c8",@c1K1Z)
-RPar("14",@cK14)
+cKumul := fetch_metric( "fin_kart_kumul", my_user(), cKumul )
+cPredh := fetch_metric( "fin_kart_predhodno_stanje", my_user(), cPredh )
+cBrza := fetch_metric( "fin_kart_brza", my_user(), cBrza )
+cSazeta := fetch_metric( "fin_kart_sazeta", my_user(), cSazeta )
+cIdFirma := fetch_metric( "fin_kart_org_id", my_user(), cIdFirma )
+qqKonto := fetch_metric( "fin_kart_konto", my_user(), qqKonto )
+qqPartner := fetch_metric( "fin_kart_partner", my_user(), qqPartner )
+qqBrDok := fetch_metric( "fin_kart_broj_dokumenta", my_user(), qqBrDok )
+dDatOd := fetch_metric( "fin_kart_datum_od", my_user(), dDatOd )
+dDatDo := fetch_metric( "fin_kart_datum_do", my_user(), dDatDo )
+cDinDem := fetch_metric( "fin_kart_valuta", my_user(), cDinDem )
+c1K1Z := fetch_metric( "fin_kart_kz", my_user(), c1K1Z )
+cK14 := fetch_metric( "fin_kart_k14", my_user(), cK14 )
 
 if gNW=="D"
 	cIdFirma:=gFirma
@@ -141,22 +151,24 @@ cK4:="99"
 if IzFMKIni("FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH)=="D"
 	cK3:="999"
 endif
+
 if gDUFRJ=="D"
 	cIdRj:=SPACE(60)
 else
   	cIdRj:="999999"
 endif
+
 cFunk:="99999"
 cFond:="9999"
+
 private cRasclaniti:="N"
 private cIdVN:=SPACE(40)
-qqBrDok:=SPACE(40)
-qqNazKonta:=SPACE(40)
 
 cBoxName := "SUBANALITICKA KARTICA"
 if fOtvSt
- cBoxName += " - OTVORENE STAVKE"
+    cBoxName += " - OTVORENE STAVKE"
 endif
+
 Box("#"+ cBoxName, 21, 65)
 	set cursor on
 	@ m_x+2,m_y+2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
@@ -256,23 +268,24 @@ if cSazeta=="D"
 	private picBHD:=FormPicL(gPicBHD,14)
 endif
 
-if Params2()
-	WPar("c1",cKumul)
-	WPar("c2",cPredh)
-	WPar("c3",cBrza)
- 	WPar("cS",cSazeta)
- 	WPar("c4",cIdFirma)
-	WPar("c5",qqKonto)
-	WPar("c6",qqPartner)
- 	WPar("d1",dDatOd)
-	WPar("d2",@dDatDo)
- 	WPar("c7",@cDinDem)
- 	WPar("c8",@c1K1Z)
- 	WPar("14",cK14)
-endif
-
-select params
-use
+// snimi parametre
+set_metric( "fin_kartica_fk1", my_user(), fk1 )
+set_metric( "fin_kartica_fk2", my_user(), fk2 )
+set_metric( "fin_kartica_fk3", my_user(), fk3 )
+set_metric( "fin_kartica_fk4", my_user(), fk4 )
+set_metric( "fin_kart_kumul", my_user(), cKumul )
+set_metric( "fin_kart_predhodno_stanje", my_user(), cPredh )
+set_metric( "fin_kart_brza", my_user(), cBrza )
+set_metric( "fin_kart_sazeta", my_user(), cSazeta )
+set_metric( "fin_kart_org_id", my_user(), cIdFirma )
+set_metric( "fin_kart_konto", my_user(), qqKonto )
+set_metric( "fin_kart_partner", my_user(), qqPartner )
+set_metric( "fin_kart_broj_dokumenta", my_user(), qqBrDok )
+set_metric( "fin_kart_datum_od", my_user(), dDatOd )
+set_metric( "fin_kart_datum_do", my_user(), dDatDo )
+set_metric( "fin_kart_valuta", my_user(), cDinDem )
+set_metric( "fin_kart_kz", my_user(), c1K1Z )
+set_metric( "fin_kart_k14", my_user(), cK14 )
 
 if cExpDbf == "D"
 	// inicijalizuj export
@@ -282,13 +295,6 @@ if cExpDbf == "D"
 endif
 
 cIdFirma:=TRIM(cIdFirma)
-
-cSecur:=SecurR(KLevel,"KartSve")
-
-if cBrza=="N" .and. ImaSlovo("X",cSecur)
-	MsgBeep("Dozvoljena vam je samo brza kartica !")
-    	closeret
-endif
 
 if cDinDem=="3"
 	if cSazeta=="D"

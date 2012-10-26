@@ -1,6 +1,7 @@
 1.3.43  2012-10-26, vsasa
 
  - labele za robu, ubačena varijabla grad [#29494](http://redmine.bring.out.ba/issues/29494)
+ - fin, subanalitička kartica u odt varijanti [#29510](http://redmine.bring.out.ba/issues/29510)
  
 1.3.42  2012-10-25, vsasa
 

@@ -275,85 +275,6 @@ ENDIF
 RETURN _result
 
 
-/*
-
-function SQLValue(xVar, nDec, cKonv)
-local cPom, cChar, cChar2, nStat,ilok
-
-if cKonv=NIL
-  cKonv:="DBF"
-endif
-
-if valtype(xVAR)="C"
-   if cKonv=="DBF"
-     cPom:=""
-     nStat:=0
-     for ilok:=1 to len(xVar)
-        cChar:=substr(xVar,ilok,1)
-    cChar2:="CHAR("+alltrim(str(asc(cChar)))+")"
-        if ASC(cChar)=39 .or. ASC(cChar)>127 // "'"
-           if nStat=0
-             cPom:=cChar2
-           elseif nStat=1
-             cPom:=cPom + "'+" + cChar2
-           elseif nStat=2
-             cPom:=cPom + "+" + cChar2
-           endif
-           nStat:=2
-        else
-       // debug NULNULNUL
-           if ASC(cChar) == 0
-        cChar := " "
-       endif
-       
-       if nStat=0
-             cPom := "'" + cChar
-           elseif nStat=1
-         cPom:=cPom+cChar
-           else
-             cPom:=cPom + "+'" + cChar
-           endif
-           
-       nStat:=1
-       
-        endif
-     next
-     if nStat=0
-        cPom:="''"
-     elseif nStat=1
-        cPom := cPom + "'"
-     elseif nStat=2
-        // nista ... gotovo je
-     endif
-   endif
-   return cPom
-
-elseif valtype(xVAR)="N"
-
-   if nDec<>NIL
-     return alltrim(str(xVar,25,nDec))
-   else
-     return alltrim(str(xVar))
-   endif
-
-elseif valtype(xVar)="D"
-
-   cPom:=dtos(xVar)
-   if empty(cPom)
-     cPom:=replicate('0',8)
-   endif
-   //1234-56-78
-   cPom:="'"+substr(cPom,1,4)+"-"+substr(cPom,5,2)+"-"+substr(cPom,7,2)+"'"
-   return cPom
-
-else
-   return "NULL"
-endif
-
-
-
-*/
-
 // ------------------------
 // ------------------------
 function _sql_quote(xVar)
@@ -534,4 +455,49 @@ next
 _ret += ")"
 
 return _ret
+
+
+// -----------------------------------------------------
+// parsiranje datuma u sql izrazu
+// -----------------------------------------------------
+function _sql_date_parse( field_name, date1, date2 )
+local _ret := ""
+
+// datdok BETWEEN '2012-02-01' AND '2012-05-01'
+
+if PCOUNT() > 2
+    // dva su datuma
+    _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
+else
+    // samo jedan datumski uslov
+    _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date1 )
+endif
+
+return _ret
+
+
+// ---------------------------------------------------
+// sql parsiranje uslova sa ;
+// ---------------------------------------------------
+function _sql_cond_parse( field_name, cond )
+local _ret := ""
+local cond_arr := TokToNiz( cond, ";" ) 
+local _i, _cond
+
+// idkonto LIKE '211%' AND idkonto LIKE '5411%'
+
+if EMPTY( cond )
+    return _ret
+endif
+
+for each _cond in cond_arr
+    _ret += " AND " + field_name + " LIKE " + _sql_quote( ALLTRIM( _cond ) + "%" )
+next
+
+// skini mi prvi AND iz uslova !
+_ret := RIGHT( _ret, LEN( _ret ) - 4 )
+
+return _ret
+
+
 

@@ -60,6 +60,9 @@ AADD(_opcexe, {|| chk_dok_11() })
 AADD(_opc, "X. mysql test ")
 AADD(_opcexe, {|| rnal_mysql_test() })
 
+AADD(_opc, "------------------------------------------- ")
+AADD(_opcexe, {|| nil })
+
 AADD(_opc, "Y. send email ")
 AADD(_opcexe, {|| f18_email_test() })
 

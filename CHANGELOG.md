@@ -1,3 +1,7 @@
+1.3.43  2012-10-26, vsasa
+
+ - labele za robu, ubačena varijabla grad [#29494](http://redmine.bring.out.ba/issues/29494)
+ 
 1.3.42  2012-10-25, vsasa
 
  - pos, update fiskalni račun broj - bug sa lock-om pos_pos [#29500](http://redmine.bring.out.ba/issues/29500)

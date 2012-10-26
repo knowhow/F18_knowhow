@@ -491,11 +491,19 @@ if EMPTY( cond )
 endif
 
 for each _cond in cond_arr
-    _ret += " AND " + field_name + " LIKE " + _sql_quote( ALLTRIM( _cond ) + "%" )
+
+    _ret += " AND " + field_name 
+
+    if LEN( cond_arr ) > 1
+        _ret += " LIKE " + _sql_quote( ALLTRIM( _cond ) + "%" )
+    else
+        _ret += " = " + _sql_quote( _cond )
+    endif
+
 next
 
 // skini mi prvi AND iz uslova !
-_ret := RIGHT( _ret, LEN( _ret ) - 4 )
+_ret := RIGHT( _ret, LEN( _ret ) - 5 )
 
 return _ret
 

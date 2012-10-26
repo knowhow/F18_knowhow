@@ -78,7 +78,7 @@ cIdVd := "XX"
 cVarijanta := "1"
 cKolicina := "N"
 lOpened := .t.
-tkm_no := SPACE(20)
+tkm_no := PADR( fetch_metric("rlabel_tkm_no", my_user(), "" ), 20 )
 
 if ( gModul == "KALK" )
 
@@ -127,6 +127,9 @@ endif
 if (LASTKEY()==K_ESC)
 	return 0
 endif
+
+// snimi parametar
+set_metric("rlabel_tkm_no", my_user(), ALLTRIM( tkm_no ) )
 
 return 1
 
@@ -323,6 +326,7 @@ set order to tag "1"
 go top
 
 xml_node( "pred", to_xml_encoding( ALLTRIM(gNFirma) ) )
+xml_node( "grad", to_xml_encoding( ALLTRIM(gMjStr) ) )
 xml_node( "tkm", to_xml_encoding( ALLTRIM( tkm_no ) ) )
 xml_node( "dok", to_xml_encoding( ALLTRIM( rlabele->evbr ) ) )
 

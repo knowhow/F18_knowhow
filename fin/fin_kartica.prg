@@ -31,9 +31,27 @@ AADD( _opcexe, {|| SinKart2() })
 AADD( _opc, "3. analitika")
 AADD( _opcexe, {|| AnKart() })
 AADD( _opc, "4. subanalitika")
-AADD( _opcexe, {|| SubKart() })
+AADD( _opcexe, {|| SubKartMnu() })
 
 f18_menu( "fin_kart", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+// ------------------------------------------------------------
+// subanaliticka kartica - menu
+// ------------------------------------------------------------
+static function subkartmnu()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+AADD( _opc, "1. subanaliticka kartica (odt)   ")
+AADD( _opcexe, {|| fin_suban_kartica_sql( NIL ) })
+AADD( _opc, "2. subanaliticka kartica (txt) ")
+AADD( _opcexe, {|| SubKart() })
+
+f18_menu( "fin_subkart", .f., _izbor, _opc, _opcexe )
 
 return
 

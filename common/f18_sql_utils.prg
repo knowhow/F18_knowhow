@@ -522,7 +522,7 @@ local _data := {}
 local _i, oRow
 
 _qry += "SELECT " + field_name + " FROM fmk." + table_name 
-_qry += " WHERE " + cond[1] + " = " _sql_quote( cond[2] )
+_qry += " WHERE " + cond[1] + " = " + _sql_quote( cond[2] )
 
 _table := _sql_query( _server, _qry )
 _table:Refresh()

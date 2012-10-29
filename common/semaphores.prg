@@ -84,10 +84,12 @@ endif
 for _i := 1 to LEN( a_tables )
     _tbl := get_a_dbf_rec(a_tables[_i])["table"]
     lock_semaphore( _tbl, "free" )
-    log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
 next
 
+log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
+
 my_use_semaphore_on()
+
 return _ok
 
 

@@ -1,6 +1,6 @@
 1.3.50 2012-10-30, hernad
 
-  - synchro debug - refresh dbfs nakon lockovanja tabela
+  - synchro debug - refresh dbfs nakon lockovanja tabela [#29400](http://redmine.bring.out.ba/issues/29400)
 
 1.3.43  2012-10-26, vsasa
 

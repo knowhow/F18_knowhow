@@ -25,9 +25,9 @@ _ids_queries := create_queries_from_ids(dbf_table)
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
-log_write( "ids_synchro(), poceo", 9 )
+log_write( "START ids_synchro", 9 )
 
-log_write( "ids_synchro(), ids_queries: " + pp(_ids_queries), 7 )
+log_write( "ids_synchro ids_queries: " + pp(_ids_queries), 7 )
 
 do while .t.
 
@@ -55,7 +55,7 @@ enddo
 
 for _i := 1 TO LEN(_ids_queries["ids"])
  
-    log_write( "ids_synchro(), ids_queries: " + pp( _ids_queries["ids"][_i]  ), 9 )
+    log_write( "ids_synchro ids_queries/2: " + pp( _ids_queries["ids"][_i]  ), 9 )
    
     // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
     if _ids_queries["ids"][_i] != NIL
@@ -96,7 +96,7 @@ if LEN(ids) < 1
    return .f.
 endif
 
-log_write( "push_ids_to_semaphore(), poceo", 9 )
+log_write( "START push_ids_to_semaphore", 9 )
 log_write( "push ids: " + table + " / " + pp(ids), 5 )
 
 _tbl := "fmk.semaphores_" + LOWER(table)
@@ -139,7 +139,7 @@ _ret := _sql_query( _server, _qry )
 // ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova
 //log_write( "tabela: " + _tbl + ", ids: " + _sql_ids + ", user: " + _user, 3 )
 
-log_write( "push_ids_to_semaphore(), zavrsio", 9 )
+log_write( "END push_ids_to_semaphore", 9 )
 
 // na kraju uradi update verzije semafora
 // nema se potrebe proveravati stanje synchronizacije s obzirom da su

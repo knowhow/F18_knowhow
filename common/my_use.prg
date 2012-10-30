@@ -149,8 +149,7 @@ if _rdd == NIL
   _rdd = DBFENGINE
 endif
 
-if !_a_dbf_rec["temp"] 
-
+if !(_a_dbf_rec["temp"])
 
     // tabela je pokrivena semaforom
     if (_rdd != "SEMAPHORE") .and. my_use_semaphore()
@@ -201,7 +200,7 @@ function dbf_semaphore_synchro(table)
 local _version, _last_version
 
 
-log_write( "dbf_semaphore_synchro(), poceo", 9 )
+log_write( "START dbf_semaphore_synchro", 9 )
 
 // uzmimo od tabele stanje svog semafora
 _version :=  get_semaphore_version(table)
@@ -209,39 +208,31 @@ _version :=  get_semaphore_version(table)
 do while .t.
 
     if (_version == -1)
-
-        log_write( "full synchro version -1", 7 )
-        update_dbf_from_server(table, "FULL")
-
+           log_write( "full synchro version semaphore version -1", 7 )
+           update_dbf_from_server(table, "FULL")
      else
 
-            _last_version := last_semaphore_version(table)
-            // moramo osvjeziti cache
-            if _version < _last_version
-
-                log_write( "dbf_semaphore_synchro(), my_use " + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 5 )
- 
+           _last_version := last_semaphore_version(table)
+           // moramo osvjeziti cache
+           if (_version < _last_version)
+                log_write( "dbf_semaphore_synchro/1, my_use" + table + " osvjeziti dbf cache: ver: " + ALLTRIM(STR(_version, 10)) + " last_ver: " + ALLTRIM(STR(_last_version, 10)), 5 )
                 update_dbf_from_server(table, "IDS")
-
             endif
-
       endif
 
       // posljednja provjera ... mozda je neko 
       // u medjuvremenu mjenjao semafor
       _last_version := last_semaphore_version(table)
       _version      := get_semaphore_version(table)
-            
+
       if _version >= _last_version
             exit
       endif
-                        
-      log_write( "dbf_semaphore_synchro(), _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
+      log_write( "dbf_semaphore_synchro/2, _last_version: " + STR( _last_version ) + " _version: " + STR( _version ), 5 )
 
 enddo
 
 check_after_synchro(table)
 
-log_write( "dbf_semaphore_synchro(), zavrsio", 9 )
-
+log_write( "END dbf_semaphore_synchro", 9 )
 return .t.

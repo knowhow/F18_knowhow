@@ -48,17 +48,18 @@ endif
 if sql_table_update( nil, "BEGIN" )
 
     for _i := 1 to LEN( a_tables )
-
        _tbl := get_a_dbf_rec(a_tables[_i])["table"]
        _ok := _ok .and. lock_semaphore( _tbl, "lock" )
+       // nakon lockovanja preuzmi promjene od drugih korisnika
+       dbf_semaphore_synchro(_tbl)
     next
-    
+
     if _ok
         sql_table_update( nil, "END" ) 
         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
+        my_use_semaphore_off()
     endif
 
-    my_use_semaphore_off()
 
 else
     _ok := .f.
@@ -114,8 +115,7 @@ while .t.
 
     _i++
 
-    if get_semaphore_status(table) == "lock"
-
+    if (get_semaphore_status(table) == "lock")
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
         log_write( _err_msg, 2 )
         @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
@@ -123,7 +123,6 @@ while .t.
         log_write( "call stack 1 " + PROCNAME(1) + ALLTRIM(STR(PROCLINE(1))), 2 )
         log_write( "call stack 2 " + PROCNAME(2) + ALLTRIM(STR(PROCLINE(2))), 2 )
         MsgC()
-
     else
 
         if _i > 1
@@ -131,7 +130,7 @@ while .t.
             @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
             log_write( _err_msg, 2 )
         endif
-        
+
         exit
 
     endif

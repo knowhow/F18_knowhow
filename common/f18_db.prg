@@ -71,7 +71,7 @@ endif
 
 // izbrisi sa servera stare vrijednosti za values
 if !sql_table_update(table, "del", nil, _where_str)
- 
+
     sql_table_update(table, "ROLLBACK")
     _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
     log_write( _msg, 1 )
@@ -94,7 +94,7 @@ if _ret .and.  (_where_str_dbf != _where_str)
     // to radimo upravo u sljedecoj sekvenci
     // 
     if !sql_table_update(table, "del", nil, _where_str_dbf)
-    
+
         sql_table_update(table, "ROLLBACK")
         _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
         log_write( _msg, 1 )
@@ -126,13 +126,11 @@ if ( _full_id_dbf <> _full_id_mem ) .and. !EMPTY( _full_id_dbf )
 endif
 
 if ! push_ids_to_semaphore(table, _ids)
-     
     sql_table_update(table, "ROLLBACK")
     _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " ! ROLLBACK"
     log_write( _msg, 1 )
     Alert( _msg )
     _ret := .f.
-
 endif
 
 if _ret
@@ -154,7 +152,6 @@ endif
 
 if lock
     lock_semaphore(table, "free")
-    my_use_semaphore_on()
 endif
 
 log_write( "END update_rec_server_and_dbf " + table, 9 )

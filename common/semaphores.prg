@@ -50,13 +50,18 @@ if sql_table_update( nil, "BEGIN" )
     for _i := 1 to LEN( a_tables )
        _tbl := get_a_dbf_rec(a_tables[_i])["table"]
        _ok := _ok .and. lock_semaphore( _tbl, "lock" )
-       // nakon lockovanja preuzmi promjene od drugih korisnika
-       dbf_semaphore_synchro(_tbl)
     next
 
     if _ok
         sql_table_update( nil, "END" ) 
         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
+
+        // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
+        for _i := 1 to LEN( a_tables )
+            _tbl := get_a_dbf_rec(a_tables[_i])["table"]
+            dbf_semaphore_synchro(_tbl)
+        next
+
         my_use_semaphore_off()
     endif
 

@@ -178,6 +178,11 @@ if !FOUND()
     return .f.
 endif
 
+// lokuj prvo tabele
+if !f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+    return .f.
+endif
+
 log_write( "FAKT, azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
 
 // -----------------------------------------------------------------------------------------------------
@@ -233,6 +238,7 @@ if _ok == .t.
 endif
 
 if !_ok
+
     _msg := "FAKT azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
 
     log_write( _msg, 2 )

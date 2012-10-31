@@ -1,3 +1,7 @@
+1.3.52 2012-10-31, vsasa
+
+  - fakt, ažuriranje dokumenta, bugfix
+ 
 1.3.51 2012-10-31, vsasa
 
   - template fakture uvijek treba da počinje sa "f-" 

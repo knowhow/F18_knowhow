@@ -45,7 +45,6 @@ if _cre_xml( _rpt_data, _rpt_vars )
     endif
 endif
 
-
 return
 
 
@@ -62,6 +61,7 @@ local _idvn := fetch_metric( "fin_kart_broj_dokumenta", my_user(), PADR("", 200)
 local _datum_od := fetch_metric( "fin_kart_datum_od", my_user(), CTOD("") )
 local _datum_do := fetch_metric( "fin_kart_datum_do", my_user(), CTOD("") )
 local _opcina := fetch_metric( "fin_kart_opcina", my_user(), PADR("", 200) )
+local _tip_val := fetch_metric( "fin_kart_tip_valute", my_user(), 1 )
 local _box_name := "SUBANALITICKA KARTICA"
 local _box_x := 21
 local _box_y := 65
@@ -109,7 +109,13 @@ Box( "#" + _box_name, _box_x, _box_y )
    		@ m_x + _x, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
 
  	endif
-	 	
+	
+    ++ _x
+    ++ _x
+ 	
+    @ m_x + _x, m_y + 2 SAY "Kartica za domacu/stranu valutu (1/2):" GET _tip_val PICT "9"
+    
+    ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
@@ -141,6 +147,7 @@ set_metric( "fin_kart_broj_dokumenta", my_user(), _brdok )
 set_metric( "fin_kart_broj_dokumenta", my_user(), _idvn )
 set_metric( "fin_kart_datum_od", my_user(), _datum_od )
 set_metric( "fin_kart_datum_do", my_user(), _datum_do )
+set_metric( "fin_kart_tip_valute", my_user(), _tip_val )
 
 // setuj hash matricu koju cu poslije koristiti u izvjestaju
 rpt_vars["brza"] := _brza
@@ -151,6 +158,7 @@ rpt_vars["idvn"] := _idvn
 rpt_vars["datum_od"] := _datum_od
 rpt_vars["datum_do"] := _datum_do
 rpt_vars["opcina"] := _opcina
+rpt_vars["valuta"] := _tip_val
 
 return .t.
 
@@ -160,9 +168,10 @@ return .t.
 // -----------------------------------------------------------------
 static function _cre_rpt( rpt_vars, otv_stavke )
 local _brza, _konto, _partner, _brdok, _idvn
-local _datum_od, _datum_do
+local _datum_od, _datum_do, _tip_valute
 local _qry, _table
 local _server := pg_server()
+local _fld_iznos 
 
 if otv_stavke == NIL
     otv_stavke := .f.
@@ -177,10 +186,18 @@ _idvn := rpt_vars["idvn"]
 _datum_od := rpt_vars["datum_od"]
 _datum_do := rpt_vars["datum_do"]
 _opcina := rpt_vars["opcina"]
+_tip_valute := rpt_vars["valuta"]
+
+_fld_iznos := "s.iznosbhd"
+
+if _tip_valute == 2
+    // strana valuta
+    _fld_iznos := "s.iznosdem"
+endif
 
 _qry := "SELECT s.idvn, s.brnal, s.rbr, s.brdok, s.datdok, s.datval, s.opis, " + ;
-        "( CASE WHEN s.d_p = '1' THEN s.iznosbhd ELSE 0 END ) AS duguje, " + ;
-        "( CASE WHEN s.d_p = '2' THEN s.iznosbhd ELSE 0 END ) AS potrazuje " + ;
+        "( CASE WHEN s.d_p = '1' THEN " + _fld_iznos + " ELSE 0 END ) AS duguje, " + ;
+        "( CASE WHEN s.d_p = '2' THEN " + _fld_iznos + " ELSE 0 END ) AS potrazuje " + ;
         "FROM fmk.fin_suban s " + ;
         "LEFT JOIN fmk.partn p ON s.idpartner = p.id " + ;
         "WHERE idfirma = " + _sql_quote( gfirma ) + ;
@@ -240,6 +257,13 @@ xml_node( "f_mj", to_xml_encoding( gMjStr ) )
 xml_node( "datum", DTOC( DATE() ) )
 xml_node( "date1", DTOC( rpt_vars["datum_od"] ) )
 xml_node( "date2", DTOC( rpt_vars["datum_do"] ) )
+
+// valuta
+if rpt_vars["valuta"] == 1
+    xml_node( "val", "KM" )
+else
+    xml_node( "val", "EUR" )
+endif
 
 xml_node( "kt_id", rpt_vars["konto"] )
 xml_node( "pt_id", to_xml_encoding( rpt_vars["partner"] ) )

@@ -21,6 +21,7 @@ static _my_xml
 function fin_suban_kartica_sql( otv_stavke )
 local _rpt_data := {}
 local _rpt_vars := hb_hash()
+local _exported := .f.
 
 _my_xml := my_home() + "data.xml"
 _template := "fin_kart_std.odt"
@@ -37,12 +38,24 @@ endif
 // kreiraj izvjestaj
 _rpt_data := _cre_rpt( _rpt_vars, otv_stavke )
 
+// eksport kartice u dbf
+if _rpt_vars["export_dbf"] == "D"
+    if _export_dbf( _rpt_data, _rpt_vars )
+        _exported := .t.
+    endif
+endif
+
 if _cre_xml( _rpt_data, _rpt_vars )
     // printaj odt report
     if f18_odt_generate( _template, _my_xml )
 	    // printaj odt
         f18_odt_print()
     endif
+endif
+
+if _exported 
+    // otvori mi eksport dokument
+    f18_open_mime_document( my_home() + "r_export.dbf" )
 endif
 
 return
@@ -62,6 +75,7 @@ local _datum_od := fetch_metric( "fin_kart_datum_od", my_user(), CTOD("") )
 local _datum_do := fetch_metric( "fin_kart_datum_do", my_user(), CTOD("") )
 local _opcina := fetch_metric( "fin_kart_opcina", my_user(), PADR("", 200) )
 local _tip_val := fetch_metric( "fin_kart_tip_valute", my_user(), 1 )
+local _export_dbf := fetch_metric( "fin_kart_export_dbf", my_user(), "N" )
 local _box_name := "SUBANALITICKA KARTICA"
 local _box_x := 21
 local _box_y := 65
@@ -130,7 +144,11 @@ Box( "#" + _box_name, _box_x, _box_y )
 	 
     ++ _x	
     @ m_x + _x, m_y + 2 SAY "Opcina (prazno-sve):" GET _opcina PICT "@!S20"
-		
+	
+    ++ _x
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Eksport kartice u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+	
 	read
 		
 BoxC()
@@ -148,6 +166,7 @@ set_metric( "fin_kart_broj_dokumenta", my_user(), _idvn )
 set_metric( "fin_kart_datum_od", my_user(), _datum_od )
 set_metric( "fin_kart_datum_do", my_user(), _datum_do )
 set_metric( "fin_kart_tip_valute", my_user(), _tip_val )
+set_metric( "fin_kart_export_dbf", my_user(), _export_dbf )
 
 // setuj hash matricu koju cu poslije koristiti u izvjestaju
 rpt_vars["brza"] := _brza
@@ -159,6 +178,7 @@ rpt_vars["datum_od"] := _datum_od
 rpt_vars["datum_do"] := _datum_do
 rpt_vars["opcina"] := _opcina
 rpt_vars["valuta"] := _tip_val
+rpt_vars["export_dbf"] := _export_dbf
 
 return .t.
 
@@ -225,6 +245,97 @@ _table := _sql_query( _server, _qry )
 _table:Refresh()
 
 return _table
+
+
+
+// -----------------------------------------------------------
+// eksport kartice u dbf 
+// -----------------------------------------------------------
+static function _export_dbf( table, rpt_vars )
+local oRow, _struct
+local _konto_id, _konto_naz 
+local _partn_id, _partn_naz
+local _rec
+
+if table:LastRec() == 0
+    return .f.
+endif
+
+// daj mi dbf strukturu kartice
+_struct := fin_kartica_dbf_struct()
+// kreiraj r_export tabelu sa strukturom
+t_exp_create( _struct )
+
+O_R_EXP
+
+_konto_id := rpt_vars["konto"]
+_partn_id := rpt_vars["partner"]
+_konto_naz := ""
+_partn_naz := ""
+	
+// u slučaju brze kartice daj opise konta i partnera
+if rpt_vars["brza"] == "D"
+    _konto_naz := hb_utf8tostr( _sql_get_value( "konto", "naz", { "id", ALLTRIM( rpt_vars["konto"] ) } ) )
+    _partn_naz := hb_utf8tostr( _sql_get_value( "partn", "naz", { "id", ALLTRIM( rpt_vars["partner"] ) } ) )
+endif
+
+for _i := 1 to table:LastRec()
+
+    oRow := table:GetRow( _i )
+
+    select r_export
+    append blank
+
+    _rec := dbf_get_rec()
+
+    _rec["id_konto"] := _konto_id
+    _rec["id_partn"] := _partn_id
+    _rec["naz_partn"] := _partn_naz
+    _rec["naz_konto"] := _konto_naz
+
+    _rec["vrsta_nal"] := hb_utf8tostr( oRow:Fieldget( oRow:Fieldpos("idvn") ) )
+    _rec["broj_nal"] := oRow:Fieldget( oRow:Fieldpos("brnal") )
+    _rec["nal_rbr"] := oRow:Fieldget( oRow:Fieldpos("rbr") )
+    _rec["broj_veze"] := hb_utf8tostr( oRow:Fieldget( oRow:Fieldpos("brdok") ) )
+    _rec["dat_nal"] := oRow:Fieldget( oRow:Fieldpos("datdok") )
+    _rec["dat_val"] := oRow:Fieldget( oRow:Fieldpos("datval") )
+    _rec["opis_nal"] := hb_utf8tostr( oRow:Fieldget( oRow:Fieldpos("opis") ) )
+    _rec["duguje"] := oRow:Fieldget( oRow:Fieldpos("duguje") )
+    _rec["potrazuje"] := oRow:Fieldget( oRow:Fieldpos("potrazuje") )
+    _rec["saldo"] := oRow:Fieldget( oRow:Fieldpos("saldo") )
+
+    dbf_update_rec( _rec )
+
+next
+
+select r_export
+use
+ 
+return .t.
+
+
+// --------------------------------------------------------
+// vraca polja export tabele
+// --------------------------------------------------------
+function fin_kartica_dbf_struct()
+local aDbf := {}
+
+AADD( aDbf, { "id_konto", "C", 7, 0 }  )
+AADD( aDbf, { "naz_konto", "C", 100, 0 }  )
+AADD( aDbf, { "id_partn", "C", 6, 0 }  )
+AADD( aDbf, { "naz_partn", "C", 50, 0 }  )
+AADD( aDbf, { "vrsta_nal", "C", 2, 0 }  )
+AADD( aDbf, { "broj_nal", "C", 8, 0 }  )
+AADD( aDbf, { "nal_rbr", "C", 4, 0 }  )
+AADD( aDbf, { "broj_veze", "C", 10, 0 }  )
+AADD( aDbf, { "dat_nal", "D", 8, 0 }  )
+AADD( aDbf, { "dat_val", "D", 8, 0 }  )
+AADD( aDbf, { "opis_nal", "C", 100, 0 }  )
+AADD( aDbf, { "duguje", "N", 15, 5 }  )
+AADD( aDbf, { "potrazuje", "N", 15, 5 }  )
+AADD( aDbf, { "saldo", "N", 15, 5 }  )
+
+return aDbf
 
 
 

@@ -24,14 +24,14 @@ local _izbor := 1
 private picDEM := FormPicL( gPicDEM, 12 )
 private picBHD := FormPicL( gPicBHD, 16 )
 
-AADD( _opc, "1. sintetika                              ")
-AADD( _opcexe, {|| SinKart() })
-AADD( _opc, "2. sintetika - po mjesecima")
-AADD( _opcexe, {|| SinKart2() })
-AADD( _opc, "3. analitika")
-AADD( _opcexe, {|| AnKart() })
-AADD( _opc, "4. subanalitika")
+AADD( _opc, "1. subanalitika                           ")
 AADD( _opcexe, {|| SubKartMnu() })
+AADD( _opc, "2. analitika")
+AADD( _opcexe, {|| AnKart() })
+AADD( _opc, "3. sintetika")
+AADD( _opcexe, {|| SinKart() })
+AADD( _opc, "4. sintetika - po mjesecima")
+AADD( _opcexe, {|| SinKart2() })
 
 f18_menu( "fin_kart", .f., _izbor, _opc, _opcexe )
 
@@ -46,7 +46,7 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD( _opc, "1. subanaliticka kartica (odt)   ")
+AADD( _opc, "1. subanaliticka kartica (odt)           ")
 AADD( _opcexe, {|| fin_suban_kartica_sql( NIL ) })
 AADD( _opc, "2. subanaliticka kartica (txt) ")
 AADD( _opcexe, {|| SubKart() })
@@ -61,24 +61,9 @@ static function o_kart_tbl()
 
 O_KONTO
 O_PARTN
-
-if gRj == "D"
-	O_RJ
-endif
-
-if IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-	lVrsteP:=.t.
-  	O_VRSTEP
-endif
-
+O_RJ
 O_SUBAN
 O_TDOK
-
-if IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-	O_ULIMIT
-  	SELECT ULIMIT
-  	SET ORDER TO TAG "2"
-endif
 
 return
 

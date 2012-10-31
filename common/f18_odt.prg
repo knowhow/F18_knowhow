@@ -274,6 +274,10 @@ return _ok
 function f18_open_mime_document( document )
 local _cmd := ""
 
+if Pitanje(, "Otvoriti " + ALLTRIM( document ) + " ?", "D" ) == "N"
+    return 0
+endif
+
 #ifdef __PLATFORM__UNIX
 
 	#ifdef __PLATFORM__DARWIN

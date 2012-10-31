@@ -465,17 +465,31 @@ local _ret := ""
 
 // datdok BETWEEN '2012-02-01' AND '2012-05-01'
 
+// dva su datuma
 if PCOUNT() > 2
-    // dva su datuma
-    // ali prvi moze biti i prazan
-    if DTOC(date1) == DTOC(CTOD(""))
+
+    // oba su prazna
+    if DTOC(date1) == DTOC(CTOD("")) .and. DTOC(date2) == DTOC(CTOD(""))
+        _ret := ""
+    // samo prvi je prazan
+    elseif DTOC(date1) == DTOC(CTOD(""))
         _ret := field_name + " <= " + _sql_quote( date2 )
+
+    // imamo dva regularna datuma
     else
         _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
     endif
+
+// imamo samo jedan uslov, field_name ili nista
+elseif PCOUNT() <= 1
+    _ret := ""    
+
+// pcount() je 2
 else
+
     // samo jedan datumski uslov
     _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date1 )
+
 endif
 
 return _ret

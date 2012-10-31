@@ -25,7 +25,7 @@ static PIC_CIJENA := ""
 // ------------------------------------------------
 function stdokodt( cIdf, cIdVd, cBrDok )
 local _t_path := my_home()
-local _filter := "f*.odt"
+local _filter := "f-*.odt"
 local _template := ""
 local _jod_templates_path := F18_TEMPLATE_LOCATION
 local _xml_file := my_home() + "data.xml"

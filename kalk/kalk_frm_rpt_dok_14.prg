@@ -49,8 +49,8 @@ if cidvd=="94"
  ?  "Storno razduzenja KONTA:",cIdKonto,"-",naz
 else
  select konto; hseek cidkonto2
- ?  "KONTO razduzuje:",pripr->mkonto , "-",naz
- if !empty(kalk_pripr->Idzaduz2); ?? " Rad.nalog:",pripr->Idzaduz2; endif
+ ?  "KONTO razduzuje:",kalk_pripr->mkonto , "-",naz
+ if !empty(kalk_pripr->Idzaduz2); ?? " Rad.nalog:",kalk_pripr->Idzaduz2; endif
 endif
 
 select kalk_pripr
@@ -326,7 +326,7 @@ if cidvd=="94"
  ?  "Storno razduzenja KONTA:",cIdKonto,"-",naz
 else
  select konto; hseek cidkonto2
- ?  "KONTO razduzuje:",pripr->mkonto,"-",naz
+ ?  "KONTO razduzuje:",kalk_pripr->mkonto,"-",naz
 endif
 
 select kalk_pripr

@@ -68,12 +68,12 @@ _ok := .t.
 
 MsgO( "Azuriranje dokumenata u toku ..." )
 
-_ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+//_ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
 
-if !_ok
-   MsgBeep("ne mogu lockovati fakt tabele")
-   return .f.
-endif
+//if !_ok
+  // MsgBeep("ne mogu lockovati fakt tabele")
+  // return .f.
+//endif
 
 // prodji kroz matricu sa dokumentima i azuriraj ih
 for _i := 1 to LEN( _a_fakt_doks )
@@ -106,14 +106,13 @@ for _i := 1 to LEN( _a_fakt_doks )
         _ok := .f.
     endif
 
-
 next
 
 MsgC()
 
 
 if !_ok
-   f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+   //f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
    return _a_fakt_doks
 endif
 

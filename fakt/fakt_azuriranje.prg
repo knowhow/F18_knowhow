@@ -209,7 +209,7 @@ if _ok == .t.
    // azuriraj doks...
   // algoritam 2 - dokument nivo
   AADD( _ids_doks, _tmp_id )
-  SELECT fakt_doks
+  SELECT fakt_pripr
   _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
   if !sql_table_update("fakt_doks", "ins", _record )
        _ok := .f.
@@ -226,7 +226,7 @@ if _ok == .t.
   AADD( _ids_doks2, _tmp_id )
 
   _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-  SELECT fakt_doks2
+  SELECT fakt_pripr
   if !sql_table_update("fakt_doks2", "ins", _record )
        _ok := .f.
   endif
@@ -308,9 +308,10 @@ Box("#Proces azuriranja u toku", 3, 60)
   
     select fakt_doks
     set order to tag "1"
+    go top
     HSEEK id_firma + id_tip_dok + br_dok
 
-    if !Found()
+    if !FOUND()
 
         _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
         
@@ -325,7 +326,7 @@ Box("#Proces azuriranja u toku", 3, 60)
 
     else
 
-        _msg := "ERR: " + RECI_GDJE_SAM0 + "  nema zapisa u fakt_doks : " + id_firma + id_tip_dok + br_dok 
+        _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks : " + id_firma + id_tip_dok + br_dok 
         Alert(_msg)
         log_write( _msg, 5 )
 
@@ -336,9 +337,10 @@ Box("#Proces azuriranja u toku", 3, 60)
 
     select fakt_doks2
     set order to tag "1"
+    go top
     HSEEK id_firma + id_tip_dok + br_dok
 
-    if !Found()
+    if !FOUND()
 
         _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
@@ -348,7 +350,7 @@ Box("#Proces azuriranja u toku", 3, 60)
         dbf_update_rec(_rec, .t.)
 
     else
-        _msg := "ERR: " + RECI_GDJE_SAM0 + " nema zapisa u fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
+        _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
         Alert(_msg)
         log_write( _msg, 5 )
     endif
@@ -358,7 +360,6 @@ BoxC()
 
 select fakt_pripr
 seek id_firma + id_tip_dok + br_dok
-
 
 return .t.
 

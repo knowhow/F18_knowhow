@@ -467,7 +467,12 @@ local _ret := ""
 
 if PCOUNT() > 2
     // dva su datuma
-    _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
+    // ali prvi moze biti i prazan
+    if DTOC(date1) == DTOC(CTOD(""))
+        _ret := field_name + " <= " + _sql_quote( date2 )
+    else
+        _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
+    endif
 else
     // samo jedan datumski uslov
     _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date1 )

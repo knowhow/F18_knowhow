@@ -247,11 +247,11 @@ xml_node( "pt_id", to_xml_encoding( rpt_vars["partner"] ) )
 if rpt_vars["brza"] == "D"
     xml_node( "kt_naz", ;
         to_xml_encoding( ;
-                _sql_get_value( "konto", "naz", { "id", ALLTRIM( rpt_vars["konto"] ) } ) ) ;
+                hb_utf8tostr( _sql_get_value( "konto", "naz", { "id", ALLTRIM( rpt_vars["konto"] ) } ) ) ) ;
                        )
     xml_node( "pt_naz", ;
         to_xml_encoding( ;
-                _sql_get_value( "partn", "naz", { "id", ALLTRIM( rpt_vars["partner"] ) } ) ) ;
+                hb_utf8tostr( _sql_get_value( "partn", "naz", { "id", ALLTRIM( rpt_vars["partner"] ) } ) ) ) ;
                        )
 else
     xml_node( "kt_naz", "" )
@@ -266,7 +266,7 @@ for _i := 1 to table:LastRec()
     
     // idvn
     _val := oRow:Fieldget( oRow:Fieldpos("idvn") )
-    xml_node( "vn", _val )
+    xml_node( "vn", to_xml_encoding( hb_utf8tostr( _val ) ) )
 
     // brnal
     _val := oRow:Fieldget( oRow:Fieldpos("brnal") )
@@ -278,7 +278,7 @@ for _i := 1 to table:LastRec()
 
     // brdok
     _val := oRow:Fieldget( oRow:Fieldpos("brdok") )
-    xml_node( "veza", to_xml_encoding( _val ) )
+    xml_node( "veza", to_xml_encoding( hb_utf8tostr( _val ) ) )
 
     // datdok
     _val := oRow:Fieldget( oRow:Fieldpos("datdok") )
@@ -290,7 +290,7 @@ for _i := 1 to table:LastRec()
 
     // opis
     _val := oRow:Fieldget( oRow:Fieldpos("opis") )
-    xml_node( "opis", to_xml_encoding( _val ) )
+    xml_node( "opis", to_xml_encoding( hb_utf8tostr( _val ) ) )
 
     // duguje
     _val := oRow:Fieldget( oRow:Fieldpos("duguje") )

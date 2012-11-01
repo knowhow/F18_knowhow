@@ -52,7 +52,7 @@ Box(, 6, 65, .f., "DBF modstru")
 
 @ m_x + 1, m_y + 2 SAY "DBF modifikacija struktura"
 
-SET AUTOPEN OFF
+//SET AUTOPEN OFF
 
 _ime_dbf:=""
 _path := my_home()
@@ -114,7 +114,7 @@ kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_c
 log_write("END modstru ", 2)
 
 BoxC()
-SET AUTOPEN ON 
+//SET AUTOPEN ON 
 close all
 return
 

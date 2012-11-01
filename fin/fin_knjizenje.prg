@@ -243,16 +243,23 @@ read
 ESC_RETURN 0
 
 if fNovi .and. (_idfirma <> idfirma .or. _idvn<>idvn)
+    
+    // momenat setovanja broja naloga
+    // setujemo sve na 0, ali kada uvedemo globalni brojac
+    //_brnal := PADR( "0", 8 )
+    
     _brnal := nextnal( _idfirma, _idvn )
+
     select  fin_pripr
+
 endif
 
 set key K_ALT_K to DinDem()
 set key K_ALT_O to KonsultOS()
 
-@  m_x+3, m_y + 55  SAY "Broj:"   get _BrNal   valid Dupli(_IdFirma,_IdVN,_BrNal) .and. !empty(_BrNal)
-@  m_x+5, m_y + 2  SAY "Redni broj stavke naloga:" get nRbr picture "9999"
-@  m_x+7, m_y + 2   SAY "DOKUMENT: "
+@  m_x+3, m_y + 55 SAY "Broj:" GET _BrNal VALID Dupli(_IdFirma,_IdVN,_BrNal) .and. !empty(_BrNal)
+@  m_x+5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr picture "9999"
+@  m_x+7, m_y + 2 SAY "DOKUMENT: "
 
 if gNW<>"D"
     @  m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
@@ -341,14 +348,18 @@ _IznosBHD:=round(_iznosbhd,2)
 _IznosDEM:=round(_iznosdem,2)
 
 ESC_RETURN 0
+
 set key K_ALT_K to
 
 _k3:=K3U256(_k3)
 _Rbr:=STR(nRbr, 4)
 
+select fin_pripr
 
-SELECT fin_pripr
 return 1
+
+
+
 
 // provjeri datum dokumenta na osnovu tek.sezona i upozori
 static function chk_sezona()
@@ -386,7 +397,7 @@ return .t.
  *  \param cIdKonto - konto id
  */
 function MinKtoLen(cIdKonto)
-*{
+
 if gKtoLimit=="N"
     return .t.
 endif
@@ -401,7 +412,7 @@ if gKtoLimit=="D" .and. gnKtoLimit > 0
 endif
 
 return
-*}
+
 
 
 /*! \fn CheckMark(cIdKonto)
@@ -412,13 +423,15 @@ return
  */
  
 function CheckMark(cIdKonto, cIdPartner, cNewPartner)
-    if (ChkKtoMark(_idkonto))
-        cIdPartner := cNewPartner
-    else
-        cIdPartner := space(6)
-    endif
+    
+if (ChkKtoMark(_idkonto))
+    cIdPartner := cNewPartner
+else
+    cIdPartner := space(6)
+endif
 
 return .t.
+
 
 /*! \fn Partija(cIdKonto)
  *  \brief
@@ -434,27 +447,32 @@ if right(trim(cIdkonto),1)=="*"
     select fin_pripr
 endif
 return .t.
-*}
+
 
 
 // -----------------------------------------------------
 // Ispis duguje/potrazuje u domacoj i pomocnoj valuti 
 // -----------------------------------------------------
 function V_DP()
+
 SetPos(m_x+16,m_y+30)
+
 if _D_P=="1"
     ?? "   DUGUJE"
 else
     ?? "POTRAZUJE"
 endif
+
 ?? " "+ValDomaca()
 
 SetPos(m_x+17,m_y+30)
+
 if _D_P=="1"
     ?? "   DUGUJE"
 else
     ?? "POTRAZUJE"
 endif
+
 ?? " "+ValPomocna()
 
 return _D_P $ "12"
@@ -468,10 +486,11 @@ return _D_P $ "12"
  *  \param cVar
  */
 function DinDem(p1,p2,cVar)
-*{
+
 local nNaz
 
 nNaz:=Kurs(_datdok)
+
 if cVar=="_IZNOSDEM"
     _IZNOSBHD:=_IZNOSDEM*nnaz
 elseif cVar="_IZNOSBHD"
@@ -481,14 +500,73 @@ elseif cVar="_IZNOSBHD"
     _IZNOSDEM:=_IZNOSBHD/nnaz
   endif
 endif
+
 // select(nArr)
+
 AEVAL(GetList,{|o| o:display()})
-*}
+
 
 
 // poziva je ObjDbedit u KnjNal
 // c-T  -  Brisanje stavke,  F5 - kontrola zbira za jedan nalog
 // F6 -  Suma naloga, ENTER-edit stavke, c-A - ispravka naloga
+
+
+// ---------------------------------------------------
+// setuj datval na osnovu datdok u pripremi
+// ---------------------------------------------------
+static function set_datval_datdok()
+local _ret := .f.
+local _dana, _dat_dok, _id_konto
+        
+if Pitanje(, "Za konto u nalogu postaviti datum val. DATDOK->DATVAL", "N" ) == "N"
+    return _ret
+endif
+
+_id_konto := SPACE(7)
+_dat_dok := DATE()
+_dana := 15
+
+Box(, 5, 60)
+          
+    @ m_x + 1, m_y + 2 SAY "Promjena za konto  " GET _id_konto
+    @ m_x + 3, m_y + 2 SAY "Novi datum dok " GET _dat_dok
+    @ m_x + 5, m_y + 2 SAY "uvecati stari datdok za (dana) " GET _dana pict "99"
+          
+    read
+        
+BoxC()
+
+if LastKey() == K_ESC
+    return _ret
+endif
+
+select fin_pripr
+go top
+          
+do while !EOF()
+             
+    if field->idkonto == _id_konto .and. EMPTY(field->datval)
+
+        // bilo je promjena        
+        _ret := .t.
+
+        _rec := dbf_get_rec()
+        _rec["datval"] := field->datdok + _dana
+        _rec["datdok"] := _dat_dok
+
+        dbf_update_rec( _rec )        
+    
+    endif            
+    skip
+enddo
+          
+go top
+
+return _ret
+
+
+
 
 /*! \fn edit_fin_pripr()
  *  \brief Ostale operacije u ispravki stavke
@@ -502,6 +580,7 @@ local lLogBrisanje := .f.
 if Logirati(goModul:oDataBase:cName,"DOK","UNOS")
     lLogUnos:=.t.
 endif
+
 if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
     lLogBrisanje:=.t.
 endif
@@ -511,89 +590,71 @@ if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
 endif
 
 select fin_pripr
+
 do case
 
-case Ch==K_ALT_F5
-     if pitanje(,"Za konto u nalogu postaviti datum val. DATDOK->DATVAL","N")=="D"
-        cIdKonto:=space(7)
-        dDatDok:=date()
-        nDana:=15
+    // setuj datdok na osnovu datval
+    case Ch == K_ALT_F5
 
-        Box(, 5, 60)
-          @ m_x+1, m_Y+2 SAY "Promjena za konto  " GET cIdKonto
-          @ m_x+3, m_Y+2 SAY "Novi datum dok " GET dDatDok
-          @ m_x+5, m_Y+2 SAY "uvecati stari datdok za (dana) " GET nDana pict "99"
-          read
-        BoxC()
-
-        if lastkey()<>K_ESC
-          select fin_pripr
-          go top
-          do while !eof()
-             if idkonto==cidkonto .and. empty(datval)
-                replace  datval with datdok+ndana,;
-                         datdok with dDatDok
-             endif
-             skip
-          enddo
-          go top
-          return DE_REFRESH
+        if set_datval_datdok()
+            return DE_REFRESH
+        else
+            return DE_CONT
         endif
-     endif
-     return DE_CONT
 
-  case Ch==K_F8
+    case Ch == K_F8
 
-    // brisi stavke u pripremi od - do
-    if br_oddo() = 1
+        // brisi stavke u pripremi od - do
+        if br_oddo() = 1
+            return DE_REFRESH
+        else
+            return DE_CONT
+        endif
+
+    case Ch == K_F9
+
+        SrediRbrFin()
         return DE_REFRESH
-    else
-        return DE_CONT
-    endif
 
+    case Ch == K_CTRL_T
 
-  case Ch==K_F9
-    SrediRbrFin()
-    return DE_REFRESH
+        if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
 
-  case Ch==K_CTRL_T
+            cBDok :=field->idfirma + "-" + field->idvn + "-" + field->brnal
+            cStavka := field->rbr
+            cBKonto := field->idkonto
+            cBDP := field->d_p
+            dBDatnal := field->datdok
+            cBIznos := STR(field->iznosbhd)
 
-    if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-
-        cBDok :=field->idfirma + "-" + field->idvn + "-" + field->brnal
-        cStavka := field->rbr
-        cBKonto := field->idkonto
-        cBDP := field->d_p
-        dBDatnal := field->datdok
-        cBIznos := STR(field->iznosbhd)
-
-        delete
-        _t_rec := RECNO()
-        __dbPack()
-        go ( _t_rec )
+            delete
+            _t_rec := RECNO()
+            __dbPack()
+            go ( _t_rec )
  
-        BrisiPBaze()
+            BrisiPBaze()
       
-        if lLogBrisanje
-            EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE",;
+            if lLogBrisanje
+                EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE",;
                 nil,nil,nil,nil,;
                 cBDok, "konto: " + cBKonto + " dp=" + cBDP +;
                 " iznos=" + cBIznos + " KM", "",;
                 dBDatNal,;
                 Date(),;
                 "", "Obrisana stavka broj " + cStavka + " naloga!")     
+            endif
+            return DE_REFRESH
         endif
+        
+        return DE_CONT
+    
+    case Ch == K_F5 
+
+        // kontrola zbira za jedan nalog
+        KontrZbNal()
         return DE_REFRESH
-    endif
-    return DE_CONT
 
-    case Ch==K_F5 
-
-      // kontrola zbira za jedan nalog
-      KontrZbNal()
-      return DE_REFRESH
-
-   case Ch==K_ENTER
+   case Ch == K_ENTER
 
        Box("ist", MAXROWS()- 5, MAXCOLS() - 8,.f.)
           set_global_vars_from_dbf("_")
@@ -610,12 +671,16 @@ case Ch==K_ALT_F5
               return DE_REFRESH
           endif
 
-   case Ch==K_CTRL_A
+    case Ch == K_CTRL_A
+        
         PushWA()
         select fin_pripr
+        
         Box("anal", MAXROWS() - 4, MAXCOLS() - 5, .f., "Ispravka naloga")
+        
         nDug:=0
         nPot:=0
+        
         do while !eof()
            skip
 
@@ -650,7 +715,7 @@ case Ch==K_ALT_F5
          BoxC()
          return DE_REFRESH
 
-     case Ch==K_CTRL_N  
+    case Ch == K_CTRL_N  
 
         // nove stavke
         select fin_pripr
@@ -659,7 +724,6 @@ case Ch==K_ALT_F5
         nPrvi:=0
         go top
         do while .not. eof() 
-
             // kompletan nalog sumiram
             if D_P='1'
                 nDug+=IznosBHD
@@ -670,131 +734,150 @@ case Ch==K_ALT_F5
         enddo
         go bottom
         
-    Box("knjn", MAXROWS() - 4, MAXCOLS() - 3, .f., "Knjizenje naloga - nove stavke")
-        do while .t.
-           set_global_vars_from_dbf()
+        Box("knjn", MAXROWS() - 4, MAXCOLS() - 3, .f., "Knjizenje naloga - nove stavke")
+            do while .t.
+                set_global_vars_from_dbf()
             
-           if (IsRamaGlas())
-                _idKonto:=SPACE(LEN(_idKonto))
-                _idPartner:=SPACE(LEN(_idPartner))
-                _brDok:=SPACE(LEN(_brDok))
-           endif
+                if (IsRamaGlas())
+                    _idKonto:=SPACE(LEN(_idKonto))
+                    _idPartner:=SPACE(LEN(_idPartner))
+                    _brDok:=SPACE(LEN(_brDok))
+                endif
             
-           nRbr:=VAL(_Rbr) + 1
-           @ m_x + 1, m_y + 1 CLEAR to m_x+19,m_y + 76
-           if edit_fin_priprema(.t.)==0
+                nRbr:=VAL(_Rbr) + 1
+                @ m_x + 1, m_y + 1 CLEAR to m_x+19,m_y + 76
+                if edit_fin_priprema(.t.)==0
                     exit
-           else
+                else
                     BrisiPBaze()
-           endif
+                endif
 
-           if _D_P='1'
-                nDug += _IznosBHD
-           else
-                nPot += _IznosBHD
-           endif
-           @ m_x+19, m_y+1 SAY "ZBIR NALOGA:"
-           @ m_x+19, m_y+14 SAY nDug PICTURE '9 999 999 999.99'
-           @ m_x+19, m_y+35 SAY nPot PICTURE '9 999 999 999.99'
-           @ m_x+19, m_y+56 SAY nDug-nPot PICTURE '9 999 999 999.99'
-           inkey(10)
+                if _D_P='1'
+                    nDug += _IznosBHD
+                else
+                    nPot += _IznosBHD
+                endif
+                @ m_x+19, m_y+1 SAY "ZBIR NALOGA:"
+                @ m_x+19, m_y+14 SAY nDug PICTURE '9 999 999 999.99'
+                @ m_x+19, m_y+35 SAY nPot PICTURE '9 999 999 999.99'
+                @ m_x+19, m_y+56 SAY nDug-nPot PICTURE '9 999 999 999.99'
+           
+                inkey(10)
 
-           select fin_pripr
-           APPEND BLANK
-           dbf_update_rec(get_dbf_global_memvars(), .f.)
+                select fin_pripr
+                APPEND BLANK
+                dbf_update_rec(get_dbf_global_memvars(), .f.)
                 
-            if lLogUnos
-                cOpis := fin_pripr->idfirma + "-" + ;
+                if lLogUnos
+                    cOpis := fin_pripr->idfirma + "-" + ;
                     fin_pripr->idvn + "-" + ;
                     fin_pripr->brnal
 
-                EventLog(nUser, goModul:oDataBase:cName, ;
+                    EventLog(nUser, goModul:oDataBase:cName, ;
                     "DOK", "UNOS", ;
                     nil, nil, nil, nil,;
                     "nalog: " + cOpis, "duguje=" + STR(nDug) +;
                     " potrazuje=" + STR(nPot), "", ;
                     Date(), Date(), ;
                     "", "Unos novih stavki na nalog")
-            endif
+                endif
             
-         enddo
-         BoxC()
-         return DE_REFRESH
+            enddo
+        BoxC()
+            
+        return DE_REFRESH
 
-   case Ch == K_CTRL_F9
+    case Ch == K_CTRL_F9
 
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
              if lLogBrisanje
 
-            cOpis := fin_pripr->idfirma + "-" + ;
-            fin_pripr->idvn + "-" + ;
-            fin_pripr->brnal
+                cOpis := fin_pripr->idfirma + "-" + ;
+                    fin_pripr->idvn + "-" + ;
+                    fin_pripr->brnal
 
-            EventLog(nUser, goModul:oDataBase:cName, ;
-            "DOK", "BRISANJE", ;
-            nil, nil, nil, nil, ;
-            cOpis, "", "", fin_pripr->datdok, Date(), ;
-            "", "Brisanje kompletne pripreme !")
-         endif
-         zapp()
+                EventLog(nUser, goModul:oDataBase:cName, ;
+                    "DOK", "BRISANJE", ;
+                    nil, nil, nil, nil, ;
+                    cOpis, "", "", fin_pripr->datdok, Date(), ;
+                    "", "Brisanje kompletne pripreme !")
+            endif
 
-         BrisiPBaze()
-    endif
+            // ima li potrebe resetovati gl.brojac
+            //fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
+ 
+            // zapuj pripremu
+            zapp()
+           
+            // brisi i pomocne tabele psuban, panal....
+            BrisiPBaze()
+
+        endif
         return DE_REFRESH
 
-   case Ch==K_CTRL_P
+    case Ch == K_CTRL_P
 
-     close all
-     StNal()
-     o_fin_edit()
-     return DE_REFRESH
+        close all
 
+        //fin_set_broj_dokumenta()
+        StNal()
+        o_fin_edit()
 
-   case UPPER(Chr(Ch)) == "X" 
-
-     close all
-     stampa_fin_document(.t.)
-
-     close all
-     fin_azur(.t.)
-     o_fin_edit()
-     return DE_REFRESH
+        return DE_REFRESH
 
 
-   case Ch==K_ALT_A
-     fin_azur()
-     o_fin_edit()
-     return DE_REFRESH
+    case UPPER(Chr(Ch)) == "X" 
 
-   case Ch==K_ALT_B
-     close all
-     Blagajna()
-     o_fin_edit()
-     return DE_REFRESH
+        close all
+        //fin_set_broj_dokumenta()
+        stampa_fin_document(.t.)
 
-   case Ch==K_ALT_I
-     OiNIsplate()
-     return DE_CONT
+        close all
+        fin_azur(.t.)
+        o_fin_edit()
+        return DE_REFRESH
+
+
+    case Ch == K_ALT_A
+        
+        //fin_set_broj_dokumenta()
+        fin_azur()
+        o_fin_edit()
+        return DE_REFRESH
+
+    case Ch == K_ALT_B
+        
+        close all
+        Blagajna()
+        o_fin_edit()
+        return DE_REFRESH
+
+    case Ch==K_ALT_I
+
+        //fin_set_broj_dokumenta()
+        OiNIsplate()
+        return DE_CONT
  
 #ifdef __PLATFORM__DARWIN 
     case Ch == ASC("0")
 #else
-    case Ch==K_F10
+    case Ch == K_F10
 #endif
-         OstaleOpcije()
-         return DE_REFRESH
+        OstaleOpcije()
+        return DE_REFRESH
 
-     case UPPER(Chr(Ch)) == "P"
+    case UPPER(Chr(Ch)) == "P"
 
-         if reccount() != 0
-             MsgBeep("Povrat nedozvoljen, imate stavke u pripremi")
-             RETURN DE_CONT
-         endif
+        if reccount() != 0
+            MsgBeep("Povrat nedozvoljen, imate stavke u pripremi")
+            RETURN DE_CONT
+        endif
 
-         close all
-         povrat_fin_naloga()
-         o_fin_edit()
-         RETURN DE_REFRESH
+        close all
+        povrat_fin_naloga()
+        o_fin_edit()
+         
+        RETURN DE_REFRESH
 
 endcase
 

@@ -29,11 +29,11 @@ if ( lSilent == nil)
     lSilent := .f.
 endif
 
+o_fakt_edit()
+
 if ( !lSilent .and. Pitanje( "FAKT_AZUR", "Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
     return _a_fakt_doks
 endif
-
-o_fakt_edit()
 
 select fakt_pripr
 use
@@ -60,20 +60,9 @@ if LEN( _a_fakt_doks ) == 1
     endif
 endif
 
-// generisi protu dokumente
-// ovo jos treba vidjeti koristi li se ??????????
-// lProtuDokumenti := fakt_protu_dokumenti( @cPrj )
-
 _ok := .t.
 
 MsgO( "Azuriranje dokumenata u toku ..." )
-
-//_ok := f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-
-//if !_ok
-  // MsgBeep("ne mogu lockovati fakt tabele")
-  // return .f.
-//endif
 
 // prodji kroz matricu sa dokumentima i azuriraj ih
 for _i := 1 to LEN( _a_fakt_doks )
@@ -94,7 +83,6 @@ for _i := 1 to LEN( _a_fakt_doks )
             _msg := "ERROR DBF: Neuspjesno FAKT/DBF azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
             log_write(_msg, 1)
             MsgBeep(_msg)
-             
             _ok := .f.
         endif
 
@@ -102,7 +90,6 @@ for _i := 1 to LEN( _a_fakt_doks )
         _msg := "ERROR SQL: Neuspjesno SQL azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
         log_write(_msg, 1)
         MsgBeep(_msg)
-
         _ok := .f.
     endif
 
@@ -112,7 +99,6 @@ MsgC()
 
 
 if !_ok
-   //f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
    return _a_fakt_doks
 endif
 
@@ -140,6 +126,25 @@ close all
 
 return _a_fakt_doks
 
+
+// -----------------------------------------------------------------
+// seek dokumenta u pripremi
+// -----------------------------------------------------------------
+static function _seek_pripr_dok( idfirma, idtipdok, brdok )
+local _ret := .f.
+select fakt_pripr
+set order to tag "1"
+go top
+seek idfirma + idtipdok + brdok
+
+if FOUND()
+    _ret := .t.
+endif
+
+return _ret
+
+
+
 // --------------------------------------------------------------
 // azuriranje u sql tabele
 // --------------------------------------------------------------
@@ -164,23 +169,27 @@ _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
 
-Box(, 5, 60)
+Box(, 5, 60 )
+
 _ok := .t.
 
-select fakt_pripr
-SET ORDER TO TAG "1"
-
-go top
-HSEEK id_firma + id_tip_dok + br_dok
-
-if !FOUND()
-    Alert("ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
+// vidi ima li tog dokumenta u pripremi !
+// svakako mi se nastimaj na taj record
+if !_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
+    Alert( "ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
     return .f.
 endif
 
 // lokuj prvo tabele
-if !f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+if !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
     return .f.
+else
+    // zatvori mi sve tabele
+    close all
+    // otvori ih ponovo
+    o_fakt_edit()
+    // opet se vrati na ovaj slog koji mi treba
+    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 endif
 
 log_write( "FAKT, azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
@@ -188,52 +197,48 @@ log_write( "FAKT, azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + 
 // -----------------------------------------------------------------------------------------------------
 sql_table_update(nil, "BEGIN")
 
+// uzmi potrebni record
 _record := dbf_get_rec()
+
 // algoritam 2 - dokument nivo
 _tmp_id := _record["idfirma"] + _record["idtipdok"] + _record["brdok"]
 AADD( _ids_fakt, "#2" + _tmp_id )
 
-@ m_x+1, m_y+2 SAY "fakt_fakt -> server: " + _tmp_id 
-do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
-     _record := dbf_get_rec()
-     // fakt inace ne treba da sadrzi ovo polje!
-     // izbacio vsasa radi data_width_error #29198
-     _record["fisc_rn"] := 0
-     if !sql_table_update("fakt_fakt", "ins", _record )
-       _ok := .f.
-       exit
-     endif
+@ m_x + 1, m_y + 2 SAY "fakt_fakt -> server: " + _tmp_id 
 
-     SKIP
+do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
+    _record := dbf_get_rec()
+    _record["fisc_rn"] := 0
+    if !sql_table_update("fakt_fakt", "ins", _record )
+        _ok := .f.
+        exit
+    endif
+    skip
 enddo
 
 if _ok == .t.
  
-  @ m_x+2, m_y+2 SAY "fakt_doks -> server: " + _tmp_id 
-   // azuriraj doks...
-  // algoritam 2 - dokument nivo
-  AADD( _ids_doks, _tmp_id )
-  SELECT fakt_pripr
-  _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-  if !sql_table_update("fakt_doks", "ins", _record )
-       _ok := .f.
-  endif
+    @ m_x + 2, m_y + 2 SAY "fakt_doks -> server: " + _tmp_id 
    
-
+    AADD( _ids_doks, _tmp_id )
+    SELECT fakt_pripr
+    _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
+    if !sql_table_update( "fakt_doks", "ins", _record )
+        _ok := .f.
+    endif
+   
 endif
 
 if _ok == .t.
  
-  @ m_x+3, m_y+2 SAY "fakt_doks2 -> server: " + _tmp_id 
-   // azuriraj doks...
-  // algoritam 2 - dokument nivo
-  AADD( _ids_doks2, _tmp_id )
-
-  _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-  SELECT fakt_pripr
-  if !sql_table_update("fakt_doks2", "ins", _record )
-       _ok := .f.
-  endif
+    @ m_x + 3, m_y + 2 SAY "fakt_doks2 -> server: " + _tmp_id 
+    
+    AADD( _ids_doks2, _tmp_id )
+    _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+    SELECT fakt_pripr
+    if !sql_table_update("fakt_doks2", "ins", _record )
+        _ok := .f.
+    endif
    
 endif
 
@@ -259,6 +264,7 @@ else
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+    
     sql_table_update(nil, "END")
 
     log_write( "FAKT, azuriranje dokumenta - END", 3 )

@@ -1,3 +1,7 @@
+1.3.53 2012-11-01, vsasa
+
+  - pos, ručni unos zaduženja - bugfix [#29543](http://redmine.bring.out.ba/issues/29543)
+ 
 1.3.52 2012-10-31, vsasa
 
   - fakt, ažuriranje dokumenta, bugfix

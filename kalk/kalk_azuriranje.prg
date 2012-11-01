@@ -56,12 +56,16 @@ endif
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
 zapp()
-
 use
 
 lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
 
-o_kalk_za_azuriranje()
+// otvori potrebne tabele za azuriranje
+// parametar .t. je radi rasporeda troskova
+// to odradi samo jednom
+
+o_kalk_za_azuriranje( .t. )
+
 select kalk_doks
 
 if fieldpos("ukstavki") <> 0
@@ -88,6 +92,7 @@ if lGenerisiZavisne = .t.
     kalk_zavisni_dokumenti()
 endif
 
+// azuriraj kalk dokument !
 if kalk_azur_sql()
    
     o_kalk_za_azuriranje()
@@ -358,7 +363,7 @@ return
 // azuriranje podataka u dbf
 // ----------------------------------------------------------------------------
 static function kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
-local cIdFirma
+local cIdFirma, _rec
 local cIdVd
 local cBrDok
 local cNPodBr
@@ -371,7 +376,7 @@ local nBrStavki
 
 Tone(360,2)
 
-MsgO("Azuriram pripremu ...")
+MsgO( "Azuriram pripremu u DBF tabele...")
 
 select kalk_pripr
 go top
@@ -416,20 +421,30 @@ do while !eof()
     cIdvd := field->idvd
   
     if lViseDok .and. ASCAN( aOstaju, cIdFirma + cIdVd + cBrDok ) <> 0  
-            // preskoci postojece
-            skip 1
-            loop
+        // preskoci postojece
+        skip 1
+        loop
     endif
     
+    // azuriranje tabele KALK_DOKS.DBF
+
     select kalk_doks
     append blank
-    replace field->idfirma with cIdFirma, field->brdok with cBrdok,;
-            field->datdok with kalk_pripr->datdok, field->idvd with cIdvd,;
-            field->idpartner with kalk_pripr->idpartner, field->mkonto with kalk_pripr->mkonto,;
-            field->pkonto with kalk_pripr->pkonto,;
-            field->idzaduz with kalk_pripr->idzaduz, field->idzaduz2 with kalk_pripr->idzaduz2,;
-            field->brfaktp with kalk_pripr->BrFaktP
-  
+    
+    _rec := dbf_get_rec()
+    _rec["idfirma"] := cIdFirma
+    _rec["idvd"] := cIdVd
+    _rec["brdok"] := cBrDok
+    _rec["datdok"] := kalk_pripr->datdok
+    _rec["idpartner"] := kalk_pripr->idpartner
+    _rec["mkonto"] := kalk_pripr->mkonto
+    _rec["pkonto"] := kalk_pripr->pkonto
+    _rec["idzaduz"] := kalk_pripr->idzaduz
+    _rec["idzaduz2"] := kalk_pripr->idzaduz2
+    _rec["brfaktp"] := kalk_pripr->brfaktp
+
+    dbf_update_rec( _rec, .t. )
+ 
     if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
         
         cOpis := cIDFirma + "-" + cIdVd + "-" + ALLTRIM(cBrDok)
@@ -437,6 +452,8 @@ do while !eof()
         EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,cOpis, "", "", kalk_pripr->datdok, Date(),"","Azuriranje dokumenta")
     
     endif
+
+    // azuriranje tabele KALK_KALK.DBF
 
     select kalk_pripr
     go top
@@ -446,41 +463,57 @@ do while !eof()
     do while !eof() .and. cIdfirma == field->idfirma .and. cBrdok == field->brdok .and. cIdvd == field->idvd
             
         ++ nBrStavki
-        Scatter()
-        _Podbr := cNPodbr
+        _rec := dbf_get_rec()
+        _rec["podbr"] := cNPodbr
+        
         select kalk
         append blank
-        Gather()
+
+        dbf_update_rec( _rec, .t. )
+
         if cIdVd == "97"
+
+            _rec := dbf_get_rec()
             append blank
-            _TBankTr := "X"
-            _mkonto  := _idkonto
-            _mu_i    := "1"
-            _rbr := PADL( STR( 900 + VAL( ALLTRIM( _rbr ) ), 3 ), 3 )
-            Gather()
+
+            _rec["tbanktr"] := "X"
+            _rec["mkonto"] := _idkonto
+            _rec["mu_i"] := "1"
+            _rec["rbr"] := PADL( STR( 900 + VAL( ALLTRIM( _rbr ) ), 3 ), 3 )
+
+            dbf_update_rec( _rec, .t. )
+
         endif
    
         select kalk_pripr
+        
         if !( cIdVd $ "97" )
             // setuj nnv, nmpv ....
             kalk_set_doks_total_fields( @nNv, @nVpv, @nMpv, @nRabat ) 
         endif
+
         skip
     
     enddo
 
     select kalk_doks
-    replace field->nv with nNv, ;
-            field->vpv with nVpv, ;
-            field->rabat with nRabat, ;
-            field->mpv with nMpv, ;
-            field->podbr with cNPodbr
+
+    _rec := dbf_get_rec()
+
+    _rec["nv"] := nNv
+    _rec["vpv"] := nVpv
+    _rec["rabat"] := nRabat
+    _rec["mpv"] := nMpv
+    _rec["podbr"] := cNPodBr
 
     if lBrStDoks
-        replace ukstavki with nBrStavki
+        _rec["ukstavki"] := nBrStavki
     endif
 
+    dbf_update_rec( _rec, .t. )
+
     select kalk_pripr
+
 enddo
 
 MsgC()
@@ -520,6 +553,7 @@ do while !eof()
 enddo 
 
 return .t.
+
 
 // ------------------------------------------------------------
 // ------------------------------------------------------------
@@ -690,15 +724,33 @@ return lViseDok
 // -------------------------------------------------
 // otvori tabele za azuriranje
 // -------------------------------------------------
-static function o_kalk_za_azuriranje()
+static function o_kalk_za_azuriranje( raspored_tr )
 
+if raspored_tr == NIL
+    raspored_tr := .f.
+endif
+
+// prvo zatvori sve tabele
 close all
 
-my_use_semaphore_off()
-
-O_KALK
-O_KALK_DOKS
 O_KALK_PRIPR
+O_KALK
+O_KALK_DOKS2
+O_KALK_DOKS
+
+// vidi treba li rasporediti troskove
+if raspored_tr
+    _raspored_troskova()
+endif
+
+return
+
+
+// ----------------------------------------------------------------
+// raspored troskova
+// ----------------------------------------------------------------
+static function _raspored_troskova()
+select kalk_pripr
 
 if (( field->tprevoz == "R" .or. field->TCarDaz == "R" .or. field->TBankTr == "R" .or. ;
    field->TSpedTr == "R" .or. field->TZavTr == "R" ) .and. field->idvd $ "10#81" )  .or. ;
@@ -709,14 +761,14 @@ if (( field->tprevoz == "R" .or. field->TCarDaz == "R" .or. field->TBankTr == "R
     O_ROBA
     O_TARIFA
     O_KONCIJ
+
     select kalk_pripr
     RaspTrosk( .t. )
 
 endif
 
-my_use_semaphore_on()
-
 return
+
 
 
 
@@ -744,18 +796,17 @@ Box(, 5, 60)
 
 _tmp_id := "x"
 
- 
 if !f18_lock_tables({_tbl_kalk, _tbl_doks})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.
+else
+    o_kalk_za_azuriranje()
 endif
 
 // end lock semaphores --------------------------------------------------
 
 sql_table_update(nil, "BEGIN")
   
-O_KALK_PRIPR
-
 select kalk_pripr
 go top
 
@@ -861,9 +912,6 @@ endif
 
 BoxC()
 
-// --------------------------------------------------
-my_use_semaphore_on()
-
 return _ok
 
 
@@ -880,15 +928,15 @@ go top
 
 do while !EOF()
 
-	_scan := ASCAN( _arr, { | var | var[1] == field->idfirma .and. ;
-									var[2] == field->idvd .and. ;
-									var[3] == field->brdok  } )
+    _scan := ASCAN( _arr, { | var | var[1] == field->idfirma .and. ;
+                                    var[2] == field->idvd .and. ;
+                                    var[3] == field->brdok  } )
 
-	if _scan == 0
-		AADD( _arr, { field->idfirma, field->idvd, field->brdok, 0 } )
-	endif
+    if _scan == 0
+        AADD( _arr, { field->idfirma, field->idvd, field->brdok, 0 } )
+    endif
 
-	skip
+    skip
 
 enddo
 
@@ -904,14 +952,14 @@ local _ctrl
 
 for _i := 1 to LEN( arr )
 
-	_ctrl := arr[ _i, 1 ] + arr[ _i, 2 ] + arr[ _i, 3 ]
+    _ctrl := arr[ _i, 1 ] + arr[ _i, 2 ] + arr[ _i, 3 ]
 
     select kalk_pripr9
     seek _ctrl
     
     if FOUND()
-		// setuj u matrici da ovaj dokument postoji
-		arr[ _i, 4 ] := 1
+        // setuj u matrici da ovaj dokument postoji
+        arr[ _i, 4 ] := 1
     endif
 
 next
@@ -942,7 +990,7 @@ select kalk_pripr
 go top
 
 if kalk_pripr->(RECCOUNT()) == 0
-	return
+    return
 endif
 
 if Pitanje("p1", "Zelite li pripremu prebaciti u smece (D/N) ?", "N" ) == "N"
@@ -963,32 +1011,32 @@ go top
 
 do while !EOF()
 
-	_scan := ASCAN( _a_pripr, { |var| var[1] == field->idfirma .and. ;
-									var[2] == field->idvd .and. ;
-									var[3] == field->brdok } ) 
+    _scan := ASCAN( _a_pripr, { |var| var[1] == field->idfirma .and. ;
+                                    var[2] == field->idvd .and. ;
+                                    var[3] == field->brdok } ) 
 
-	if _scan > 0 .and. _a_pripr[ _scan, 4 ] == 0
-		
-		// treba ga prebaciti !
-		_id_firma := field->idfirma
-		_id_vd := field->idvd
-		_br_dok := field->brdok
+    if _scan > 0 .and. _a_pripr[ _scan, 4 ] == 0
+        
+        // treba ga prebaciti !
+        _id_firma := field->idfirma
+        _id_vd := field->idvd
+        _br_dok := field->brdok
 
-		do while !EOF() .and. field->idfirma + field->idvd + field->brdok == _id_firma + _id_vd + _br_dok
+        do while !EOF() .and. field->idfirma + field->idvd + field->brdok == _id_firma + _id_vd + _br_dok
 
-			_rec := dbf_get_rec()		
+            _rec := dbf_get_rec()       
 
-			select kalk_pripr9
-			append blank
+            select kalk_pripr9
+            append blank
 
-			dbf_update_rec( _rec )
-			
-			select kalk_pripr
-			skip
+            dbf_update_rec( _rec )
+            
+            select kalk_pripr
+            skip
 
-		enddo
+        enddo
 
-	endif
+    endif
 
 enddo
 
@@ -1084,7 +1132,7 @@ EOF CRET
 
 MsgO("Prebacujem u pripremu...")
 
-do while !eof() .and. _id_firma == field->IdFirma .and. _id_vd == field->IdVD .and. _br_dok == field->BrDok
+do while !EOF() .and. _id_firma == field->IdFirma .and. _id_vd == field->IdVD .and. _br_dok == field->BrDok
     
     select kalk
     _rec := dbf_get_rec()
@@ -1108,6 +1156,8 @@ if _brisi_kum
     if !f18_lock_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
          MsgBeep("ne mogu lockovati kalk tabele ?!")
          return .f.
+    else
+        o_kalk_za_azuriranje()
     endif
 
     MsgO("Brisem dokument iz KALK-a")
@@ -1177,6 +1227,7 @@ endif
 
 select kalk_doks
 use
+
 select kalk
 use
 
@@ -1271,10 +1322,11 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
     endif
 
     MsgO("update server kalk")    
-    // iskljuci semafore...
+
     if !f18_lock_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
           return .f.
     endif
+
     sql_table_update( nil, "BEGIN" )
 
     // idemo sada na brisanje dokumenata
@@ -1369,8 +1421,8 @@ if !lSilent
 endif
 
 if !lSilent
-	Box("",1,35)
-    	@ m_x+1,m_y+2 SAY "Dokument:"
+    Box("",1,35)
+        @ m_x+1,m_y+2 SAY "Dokument:"
         if gNW $ "DX"
             @ m_x+1,col()+1 SAY cIdFirma
         else
@@ -1382,61 +1434,61 @@ if !lSilent
         ESC_BCR
     BoxC()
 
-  	if cBrDok="."
-  		private qqBrDok:=qqDatDok:=qqIdvD:=space(80)
-  		qqIdVD:=padr(cidvd+";",80)
- 	 	Box(,3,60)
-   			do while .t.
-    			@ m_x+1,m_y+2 SAY "Vrste dokum.   "  GEt qqIdVD pict "@S40"
-    			@ m_x+2,m_y+2 SAY "Broj dokumenata"  GEt qqBrDok pict "@S40"
-    			@ m_x+3,m_y+2 SAY "Datumi         " GET  qqDatDok pict "@S40"
-    			read
-    			private aUsl1:=Parsiraj(qqBrDok,"BrDok","C")
-    			private aUsl2:=Parsiraj(qqDatDok,"DatDok","D")
-    			private aUsl3:=Parsiraj(qqIdVD,"IdVD","C")
-    			if aUsl1<>NIL .and. aUsl2<>NIL .and. ausl3<>NIL
-      				exit
-    			endif
-   			enddo
-  		Boxc()
+    if cBrDok="."
+        private qqBrDok:=qqDatDok:=qqIdvD:=space(80)
+        qqIdVD:=padr(cidvd+";",80)
+        Box(,3,60)
+            do while .t.
+                @ m_x+1,m_y+2 SAY "Vrste dokum.   "  GEt qqIdVD pict "@S40"
+                @ m_x+2,m_y+2 SAY "Broj dokumenata"  GEt qqBrDok pict "@S40"
+                @ m_x+3,m_y+2 SAY "Datumi         " GET  qqDatDok pict "@S40"
+                read
+                private aUsl1:=Parsiraj(qqBrDok,"BrDok","C")
+                private aUsl2:=Parsiraj(qqDatDok,"DatDok","D")
+                private aUsl3:=Parsiraj(qqIdVD,"IdVD","C")
+                if aUsl1<>NIL .and. aUsl2<>NIL .and. ausl3<>NIL
+                    exit
+                endif
+            enddo
+        Boxc()
 
- 		if Pitanje(,"Povuci u pripremu dokumente sa ovim kriterijom ?","N")=="D"
-    		select kalk_pripr9
-    		PRIVATE cFilt1:=""
-    		cFilt1 := "IDFIRMA=="+cm2str(cIdFirma)+".and."+aUsl1+".and."+aUsl2+".and."+aUsl3
-    		cFilt1 := STRTRAN(cFilt1,".t..and.","")
-    		IF !(cFilt1==".t.")
-     			SET FILTER TO &cFilt1
-    		ENDIF
+        if Pitanje(,"Povuci u pripremu dokumente sa ovim kriterijom ?","N")=="D"
+            select kalk_pripr9
+            PRIVATE cFilt1:=""
+            cFilt1 := "IDFIRMA=="+cm2str(cIdFirma)+".and."+aUsl1+".and."+aUsl2+".and."+aUsl3
+            cFilt1 := STRTRAN(cFilt1,".t..and.","")
+            IF !(cFilt1==".t.")
+                SET FILTER TO &cFilt1
+            ENDIF
 
-    		go top
-    		MsgO("Prolaz kroz SMECE...")
+            go top
+            MsgO("Prolaz kroz SMECE...")
 
-    		do while !eof()
-      			select kalk_pripr9
-				Scatter()
-      			select kalk_pripr
-      			append ncnl
-				_ERROR:=""
-			  	Gather2()
-      			select kalk_pripr9
-      			skip
-				nRec := recno()
-				skip -1
-      			dbDelete2()
-      			go nRec
-    		enddo
-    		MsgC()
-  		endif
-  		close all
-		return
-	endif
+            do while !eof()
+                select kalk_pripr9
+                Scatter()
+                select kalk_pripr
+                append ncnl
+                _ERROR:=""
+                Gather2()
+                select kalk_pripr9
+                skip
+                nRec := recno()
+                skip -1
+                dbDelete2()
+                go nRec
+            enddo
+            MsgC()
+        endif
+        close all
+        return
+    endif
 endif 
 
 if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
     if !lSilent
         close all
-		return
+        return
     else
         return
     endif
@@ -1450,31 +1502,31 @@ EOF CRET
 MsgO("PRIPREMA")
 
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-   	select kalk_pripr9
-	Scatter()
-   	select kalk_pripr
-   	append ncnl
-	_ERROR:=""
-	Gather2()
-   	select kalk_pripr9
-  	skip
+    select kalk_pripr9
+    Scatter()
+    select kalk_pripr
+    append ncnl
+    _ERROR:=""
+    Gather2()
+    select kalk_pripr9
+    skip
 enddo
 
 select kalk_pripr9
 seek cidfirma+cidvd+cBrDok
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-	skip 1
-	nRec:=recno()
-	skip -1
-   	dbdelete2()
-   	go nRec
+    skip 1
+    nRec:=recno()
+    skip -1
+    dbdelete2()
+    go nRec
 enddo
 use
 MsgC()
 
 if !lSilent
     close all
-	return
+    return
 endif
 
 O_KALK_PRIPR9
@@ -1500,8 +1552,8 @@ cIdVD:=space(2)
 cBrDok:=space(8)
 
 if Pitanje(,"Povuci u pripremu najstariji dokument ?","N")=="N"
-	close all
-	return
+    close all
+    return
 endif
 
 select kalk_pripr9
@@ -1514,14 +1566,14 @@ cBrDok:=brdok
 MsgO("PRIPREMA")
 
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-  	select kalk_pripr9
-	Scatter()
-  	select kalk_pripr
-  	append blank
-	_ERROR:=""
-	Gather()
- 	select kalk_pripr9
-  	skip
+    select kalk_pripr9
+    Scatter()
+    select kalk_pripr
+    append blank
+    _ERROR:=""
+    Gather()
+    select kalk_pripr9
+    skip
 enddo
 
 set order to tag "1"
@@ -1529,11 +1581,11 @@ select kalk_pripr9
 seek cidfirma+cidvd+cBrDok
 
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
-   	skip 1
-	nRec:=recno()
-	skip -1
-   	dbdelete2()
-   	go nRec
+    skip 1
+    nRec:=recno()
+    skip -1
+    dbdelete2()
+    go nRec
 enddo
 use
 MsgC()
@@ -1570,14 +1622,14 @@ cIdfirma := idfirma
 dDatDok := datdok
 
 if EOF()
-	Msg("Na stanju nema dokumenata..")
-	close all
-	return
+    Msg("Na stanju nema dokumenata..")
+    close all
+    return
 endif
 
 if Pitanje(,"Vratiti u pripremu dokumente od "+dtoc(dDatDok)+" ?","N")=="N"
-	close all
-	return
+    close all
+    return
 endif
 
 select kalk
@@ -1585,83 +1637,83 @@ select kalk
 MsgO("Povrat dokumenata od "+dtoc(dDatDok)+" u pripremu")
 
 do while !BOF() .and. cIdFirma==IdFirma .and. datdok==dDatDok
-	cIDFirma:=idfirma
-	cIdvd:=idvd
-	cBrDok:=brdok
- 	cBrSm:=""
+    cIDFirma:=idfirma
+    cIdvd:=idvd
+    cBrDok:=brdok
+    cBrSm:=""
 
- 	do while !bof() .and. cIdFirma==IdFirma .and. cidvd==idvd .and. cbrdok==brdok
+    do while !bof() .and. cIdFirma==IdFirma .and. cidvd==idvd .and. cbrdok==brdok
 
-  		select kalk
+        select kalk
 
-		_rec := dbf_get_rec()
-  		
-		if !( _rec["tbanktr"] == "X" )
+        _rec := dbf_get_rec()
+        
+        if !( _rec["tbanktr"] == "X" )
 
-   			select kalk_pripr                           
-   			append blank
+            select kalk_pripr                           
+            append blank
 
-			_rec["error"] := ""
-			dbf_update_rec( _rec )    
+            _rec["error"] := ""
+            dbf_update_rec( _rec )    
 
-   			nVraceno ++
+            nVraceno ++
 
-  		elseif _rec["tbanktr"] == "X" .and. ( _rec["mu_i"] == "5" .or. _rec["pu_i"] == "5" )
+        elseif _rec["tbanktr"] == "X" .and. ( _rec["mu_i"] == "5" .or. _rec["pu_i"] == "5" )
 
-    		select kalk_pripr
+            select kalk_pripr
 
-    		if rbr <> _rec["rbr"] .or. ( idfirma + idvd + brdok) <> _rec["idfirma"] + _rec["idvd"] + _rec["brdok"]
-      			nVraceno++
-      			append blank
-				_rec["error"] := ""
-    		else 
-      			_rec["kolicinai"] += kalk_pripr->kolicina
-    		endif
+            if rbr <> _rec["rbr"] .or. ( idfirma + idvd + brdok) <> _rec["idfirma"] + _rec["idvd"] + _rec["brdok"]
+                nVraceno++
+                append blank
+                _rec["error"] := ""
+            else 
+                _rec["kolicinai"] += kalk_pripr->kolicina
+            endif
 
-			_rec["error"] := ""
-			_rec["tbanktr"] := ""
-			
-			dbf_update_rec( _rec )
+            _rec["error"] := ""
+            _rec["tbanktr"] := ""
+            
+            dbf_update_rec( _rec )
 
-  		elseif _rec["tbanktr"] == "X" .and. ( _rec["mu_i"] == "3" .or. _rec["pu_i"] == "3" )
-   			if cBrSm <> (cBrSm := idfirma + "-" + idvd + "-" + brdok )     
-     			Beep(1)
-     			Msg("Dokument: "+cbrsm+" je izgenerisan,te je izbrisan bespovratno")
-   			endif
-  		endif
+        elseif _rec["tbanktr"] == "X" .and. ( _rec["mu_i"] == "3" .or. _rec["pu_i"] == "3" )
+            if cBrSm <> (cBrSm := idfirma + "-" + idvd + "-" + brdok )     
+                Beep(1)
+                Msg("Dokument: "+cbrsm+" je izgenerisan,te je izbrisan bespovratno")
+            endif
+        endif
   
-  		select kalk
-  		skip -1
+        select kalk
+        skip -1
   
-  		if BOF()
-    		fBof:=.t.
-    		nRec:=0
-  		else
-    		fBof:=.f.
-    		nRec:=recno()
-    		skip 1
-  		endif
+        if BOF()
+            fBof:=.t.
+            nRec:=0
+        else
+            fBof:=.f.
+            nRec:=recno()
+            skip 1
+        endif
 
-  		select kalk_doks
-  		seek kalk->(idfirma+idvd+brdok)
+        select kalk_doks
+        seek kalk->(idfirma+idvd+brdok)
 
-  		if found()
-			_del_rec := dbf_get_rec()
-			delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "FULL" )
-    		delete
-  		endif
+        if found()
+            _del_rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "FULL" )
+            delete
+        endif
 
-  		select kalk
-		_del_rec := dbf_get_rec()
-		delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 1, "FULL" )
+        select kalk
+        _del_rec := dbf_get_rec()
+        delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 1, "FULL" )
     
-  		go nRec
+        go nRec
 
- 	 	if fBof
-    		exit
-  		endif
+        if fBof
+            exit
+        endif
 
- 	enddo
+    enddo
 
 enddo 
 

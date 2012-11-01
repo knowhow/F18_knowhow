@@ -50,22 +50,24 @@ endif
 
 // daj mi sve naloge iz pripreme u matricu...
 // za azuriranje vise naloga od jednom...
-// to-do
 //_nalozi := get_fin_nalozi()
 
-if !fin_azur_check(lAuto)
+if !fin_azur_check( lAuto )
    return .f.
 endif
 
 MsgO( "Azuriranje dokumenta u toku...." )
 
-if fin_azur_sql(oServer)
+if fin_azur_sql( oServer )
+
     o_fin_za_azuriranje()
+
     if !fin_azur_dbf(lAuto)
         msgc()
         MsgBeep("Neuspjesno FIN/DBF azuriranje !?")
         return .f.
    endif
+
 else
     MsgC()
     MsgBeep("Neuspjesno FIN/SQL azuriranje !?")
@@ -106,10 +108,8 @@ return _data
 // -----------------------------
 function o_fin_za_azuriranje()
 
-// otvori tabele
+// prvo ih sve zatvori
 close all
-
-my_use_semaphore_off()
 
 O_KONTO
 O_PARTN
@@ -124,7 +124,6 @@ O_PANAL
 O_PSINT
 O_PNALOG
 
-my_use_semaphore_on()
 return
 
 
@@ -162,21 +161,25 @@ _tmp_id := "x"
 if !f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.
+else
+    // ovo ce zatvoriti i otvoriti ponovo sve tabele
+    o_fin_za_azuriranje()
 endif
-
 
 sql_table_update( nil, "BEGIN" )
 
 SELECT PSUBAN
 GO TOP
 
+// azuriranje FIN_SUBAN
+// -----------------------------------
 _record := dbf_get_rec()
 log_write( "FIN, azuriranje naloga: " + _record["idfirma"] + "-" + _record["idvn"] + "-" + _record["brnal"] + " - START", 3 )
 // algoritam 2 - dokument nivo
 _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
 AADD( _ids_suban, "#2" + _tmp_id )
 
-@ m_x+1, m_y+2 SAY "fin_suban -> server: " + _tmp_id 
+@ m_x + 1, m_y + 2 SAY "fin_suban -> server: " + _tmp_id 
 
 do while !EOF()
 
@@ -190,12 +193,12 @@ do while !EOF()
     SKIP
 enddo
 
+// azuriranje FIN_ANAL
+// -----------------------------------
 
-// idi dalje, na anal ... ako je ok
 if _ok == .t.
 
-    @ m_x+2, m_y+2 SAY "fin_anal -> server" 
-
+    @ m_x + 2, m_y + 2 SAY "fin_anal -> server" 
 
     SELECT PANAL
     GO TOP
@@ -215,11 +218,12 @@ if _ok == .t.
 
 endif
 
+// azuriranje FIN_SINT
+// -----------------------------------
 
-// idi dalje, na sint ... ako je ok
 if _ok == .t.
   
-    @ m_x+3, m_y+2 SAY "fin_sint -> server" 
+    @ m_x + 3, m_y + 2 SAY "fin_sint -> server" 
 
     SELECT PSINT
     GO TOP
@@ -229,7 +233,6 @@ if _ok == .t.
     AADD( _ids_sint, "#2" + _tmp_id )
 
     do while !eof()
- 
         _record := dbf_get_rec()
         if !sql_table_update("fin_sint", "ins", _record )
             _ok := .f.
@@ -240,10 +243,12 @@ if _ok == .t.
 
 endif
 
-// idi dalje, na nalog ... ako je ok
+// azuriranje FIN_NALOG
+// -----------------------------------
+
 if _ok == .t.
   
-    @ m_x+4, m_y+2 SAY "fin_nalog -> server" 
+    @ m_x + 4, m_y + 2 SAY "fin_nalog -> server" 
 
     SELECT PNALOG
     GO TOP
@@ -253,7 +258,6 @@ if _ok == .t.
     AADD( _ids_nalog, _tmp_id )
 
     do while !eof()
- 
         _record := dbf_get_rec()
         if !sql_table_update("fin_nalog", "ins", _record )
             _ok := .f.
@@ -270,9 +274,10 @@ if !_ok
 
     log_write( _msg, 2 )
     MsgBeep(_msg)
+
     // transakcija neuspjesna
     // server nije azuriran 
-    sql_table_update(nil, "ROLLBACK" )
+    sql_table_update( nil, "ROLLBACK" )
     f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
 else
@@ -317,8 +322,6 @@ if LEN( ALLTRIM( field->brnal ) ) < 8
     select ( _t_area )
     return .f.
 endif
-
-go top
 
 // provjera rednih brojeva u nalogu
 if !provjeri_redni_broj() 
@@ -407,20 +410,21 @@ do while !eof()
 
 enddo
 
-
 select PSUBAN
 set order to TAG "1"
 go top
 
 lIzgenerisi:=.f.
+
 if reccount2() > 9999 .and. !lAuto
-  if Pitanje(,"Staviti na stanje bez provjere ?","N")=="D"
-    lIzgenerisi:=.t.
-  endif
+    if Pitanje(,"Staviti na stanje bez provjere ?","N")=="D"
+        lIzgenerisi:=.t.
+    endif
 endif
 
-
 return lAzur
+
+
 
 // ------------------------
 // azuriraj dbf-ove
@@ -432,32 +436,27 @@ local nSaldo
 
 Box("ad", 10, MAXCOLS()-10)
 
-if lLogAzur
-    cOpis := fin_pripr->idfirma + "-" +  fin_pripr->idvn + "-" + fin_pripr->brnal
-
-    EventLog(nUser, goModul:oDataBase:cName, "DOK", "AZUR", nil, nil, nil, nil, cOpis, "", "", fin_pripr->datdok, Date(), ;
-              "", "Azuriranje dokumenta - poceo !")
-endif
+log_write( "FIN, azuriranje DBF tabela - start", 9 )
 
 select PSUBAN
 set order to tag "1"
 go top
 
+log_write( "FIN, azuriranje DBF tabela - dokument: " + field->idfirma + field->idvn + field->brnal, 7 )
 
-SELECT PSUBAN
-GO TOP
-do while !eof()
+do while !EOF()
 
     // prodji kroz PSUBAN i vidi da li je nalog zatvoren
     // samo u tom slucaju proknjizi nalog u odgovarajuce datoteke
-    cNal := IDFirma+IdVn+BrNal
+    cNal := idfirma + idvn + brnal
+
     // ----------------------------------------------------
     // ----------------------------------------------------
-    if preskoci_ako_nalog_ima_tacku_u_nazivu(cNal)
-           LOOP
+    if preskoci_ako_nalog_ima_tacku_u_nazivu( cNal )
+        loop
     endif
 
-    @ m_x+1,m_y+2 SAY "Azuriram nalog: " + IdFirma + "-" + idvn + "-" + ALLTRIM(brnal)
+    @ m_x + 1, m_y + 2 SAY "DBF: azuriram nalog: " + IdFirma + "-" + idvn + "-" + ALLTRIM(brnal)
 
     nSaldo := 0
     cEvIdFirma := idfirma
@@ -465,12 +464,12 @@ do while !eof()
     dDatNaloga := datdok
     dDatValute := datval
 
-    do while !eof() .and. cNal == IdFirma + IdVn + BrNal
+    do while !EOF() .and. cNal == idfirma + idvn + brnal
         select psuban
-        if D_P=="1"
-          nSaldo += IznosBHD
+        if d_p == "1"
+            nSaldo += field->iznosBHD
         else
-           nSaldo -= IznosBHD
+            nSaldo -= field->iznosBHD
         endif
         skip
     enddo
@@ -483,10 +482,11 @@ do while !eof()
     psuban_suban(cNal)
 
     if lLogAzur
-            fin_azur_event_log(nUser, nSaldo, dDatNalog, dDatValute, cEvidFirma, cEvVrBrNal) 
+        fin_azur_event_log(nUser, nSaldo, dDatNalog, dDatValute, cEvidFirma, cEvVrBrNal) 
     endif
 
     fin_pripr_delete(cNal)
+
     select PSUBAN
 
 enddo
@@ -504,72 +504,81 @@ select PSINT
 zapp()
 select PNALOG
 zapp()
+
 close all
 
 return .t.
 
 
+
 // ----------------------------------------
 // ----------------------------------------
 function preskoci_ako_nalog_ima_tacku_u_nazivu(cNal)
+local _ret := .f.
 
-IF "." $ cNal
-        MsgBeep("Nalog " + IdFirma + "-" + idvn + "-" + (brnal) + " sadrzi znak '.' i zato nece biti azuriran!")
-        DO WHILE !EOF() .and. cNal==IDFirma+IdVn+BrNal
-            SKIP 1
-        ENDDO
-        return .t.
-ENDIF
+if "." $ cNal
+    MsgBeep("Nalog " + IdFirma + "-" + idvn + "-" + (brnal) + " sadrzi znak '.' i zato nece biti azuriran!")
+    do while !EOF() .and. cNal == idfirma + idvn + brnal
+        skip 1
+    enddo
+    return .t.
+endif
 
-return .f.
+return _ret
+
+
 
 // --------------------------------
 // --------------------------------
 function nalog_postoji_u_suban( cNal )
-
-select  SUBAN
-SET ORDER TO TAG "4"  
-// "idFirma+IdVN+BrNal+Rbr"
+select suban
+set order to tag "4"  
+go top
 seek cNal
-if found()
-    MsgBeep("Vec postoji u suban ? "+ IdFirma + "-" + IdVn + "-" + ALLTRIM(BrNal) + "  !")
+
+if FOUND()
+    MsgBeep("Vec postoji u suban ? "+ field->idfirma + "-" + field->idvn + "-" + ALLTRIM(field->brnal) + "  !")
     close all
     return .t.
 endif
 
 return .f.
 
+
+
 // -----------------------------
 // -----------------------------
 function psuban_partner_check()
 
-if !empty(psuban->idpartner)
+if !EMPTY( psuban->idpartner )
       
     select partn
     hseek psuban->idpartner
 
-    if !found() .and. !lIzgenerisi
+    if !FOUND() .and. !lIzgenerisi
       
-        MsgBeep("Stavka br." + psuban->rbr + ": Nepostojeca sifra partnera!")
+        MsgBeep( "Stavka br." + psuban->rbr + " : Nepostojeca sifra partnera!#Partner id: " + psuban->idpartner )
 
-        IF PSUBAN->idvn=="00" .and. Pitanje( ,"Preuzeti nepostojecu sifru iz sezone?","N") == 'D'
-          PreuzSezSPK("P")
-        ELSE
-          select PSUBAN
-          zapp()
-          select PANAL
-          zapp()
-          select PSINT
-          zapp()
-          close all
-          return .f.
-        ENDIF
+        select PSUBAN
+        zapp()
+            
+        select PANAL
+        zapp()
+            
+        select PSINT
+        zapp()
+            
+        close all
+        
+        return .f.
 
      endif
 endif
 
-SELECT PSUBAN 
+select psuban 
+
 return .t.
+
 
 
 function fin_azur_event_log(nUser, nSaldo, dDatNalog, dDatValute, cEvidFirma, cEvVrBrNal) 
@@ -589,28 +598,37 @@ return
 // -----------------------------
 function psuban_konto_check()
 
-if !empty(psuban->idkonto)
+if !EMPTY( psuban->idkonto )
     
     select konto
     hseek psuban->idkonto
     
-    if !found() .and. !lIzgenerisi
+    if !FOUND() .and. !lIzgenerisi
         
-        MsgBeep("Stavka br." + psuban->rbr + ": Nepostojeca sifra konta!")
-        IF PSUBAN->idvn=="00" .and. Pitanje( ,"Preuzeti nepostojecu sifru iz sezone?","N") == 'D'
-           PreuzSezSPK("K")
-        ELSE
-          select PSUBAN
-          select PANAL
-          select PSINT
-          close all
-          return .f.
-        ENDIF
+        MsgBeep( "Stavka br." + psuban->rbr + " : Nepostojeca sifra konta!#Konto id: " + psuban->idkonto )
+          
+        select psuban
+        zapp()
+
+        select panal
+        zapp()
+
+        select psint
+        zapp()
+
+        close all
+
+        return .f.
+
     endif
+
 endif
 
-SELECT PSUBAN
+select psuban
+
 return .t. 
+
+
 
 // -------------------
 // -------------------
@@ -618,8 +636,9 @@ function panal_anal(cNal)
 local _rec
 
 @ m_x + 3, m_y+2 SAY "ANALITIKA       "
-select PANAL
+select panal
 seek cNal
+
 do while !eof() .and. cNal==IdFirma+IdVn+BrNal
     
     _rec := dbf_get_rec()
@@ -635,6 +654,7 @@ do while !eof() .and. cNal==IdFirma+IdVn+BrNal
 enddo
 
 return
+
 
 // -------------------
 // -------------------
@@ -666,18 +686,21 @@ return
 function pnalog_nalog(cNal)
 local _rec
 
-select PNALOG
+select pnalog
 seek cNal
-if found()
+
+if FOUND()
+
     _rec := dbf_get_rec()
-    select NALOG
- 
+    select nalog
     APPEND BLANK
     dbf_update_rec(_rec, .f.)
 
 else
+
     Beep(4)
-    Msg("Greska... ponovi stampu naloga ...")
+    Msg( "Greska... ponovi stampu naloga ..." )
+
 endif
 
 return
@@ -739,6 +762,7 @@ do while !eof() .and. cNal == IdFirma + IdVn + BrNal
 
     SELECT SUBAN    
     APPEND BLANK
+
     dbf_update_rec(_rec, .t.)
 
     select PSUBAN
@@ -1078,7 +1102,8 @@ nArr:=SELECT()
 O_NALOG
 select nalog
 
-if gBrojac=="1"
+if gBrojac == "1"
+
     set order to tag "1"
     seek cIdFirma+cIdVN+chr(254)
     skip -1
@@ -1112,6 +1137,7 @@ select (nArr)
 return cBrNal
 
 
+
 // ----------------------------------------------------------------
 // specijalna funkcija regeneracije brojeva naloga u kum tabelama
 // C(4) -> C(8) konverzija
@@ -1135,7 +1161,6 @@ endif
 O_NALOG
 O_ANAL
 O_SINT
-
 
 // pa idemo redom
 select suban
@@ -1166,6 +1191,7 @@ Box(,2,50)
 @ m_x + 1, m_y + 2 SAY "Konvertovanje u toku... "
 
 f18_lock_tables({LOWER(ALIAS())})
+
 sql_table_update( nil, "BEGIN" )
 
 nCnt := 0

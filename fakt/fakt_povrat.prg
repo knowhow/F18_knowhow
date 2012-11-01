@@ -74,9 +74,7 @@ HSEEK id_firma + id_tip_dok + br_dok
 
 // da li dokument uopste postoji ?
 if !FOUND()
-#ifndef TEST
     MsgBeep( "Trazeni dokument u fakt_fakt ne postoji !" )
-#endif
 endif
 
 if ( fakt->m1 == "X" )

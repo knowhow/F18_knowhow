@@ -133,6 +133,8 @@ return _a_fakt_doks
 static function _seek_pripr_dok( idfirma, idtipdok, brdok )
 local _ret := .f.
 
+O_FAKT_PRIPR
+
 select fakt_pripr
 set order to tag "1"
 go top
@@ -399,6 +401,7 @@ function get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 local _fakt_data := hb_hash()
 local _memo 
 
+O_FAKT_PRIPR
 select fakt_pripr
 go top
 seek id_firma + id_tip_dok + br_dok
@@ -433,6 +436,7 @@ _fakt_data["idfirma"]  := id_firma
 _fakt_data["idtipdok"] := id_tip_dok
 _fakt_data["brdok"]    := br_dok
 
+O_FAKT_PRIPR
 // sljedeća polja ću uzeti iz pripreme
 select fakt_pripr
 HSEEK id_firma + id_tip_dok + br_dok

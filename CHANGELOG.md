@@ -1,3 +1,7 @@
+1.3.56 2012-11-01, hernad
+
+  - izolacija funkcija -  dbf tabele [#29547](http://redmine.bring.out.ba/issues/29547)
+
 1.3.55 2012-11-01, hernad
 
   - fin_azur_sql, fakt_azur_sql funkcije moraju biti izolovane sa stanovista stanja otvorenih dbf tabela

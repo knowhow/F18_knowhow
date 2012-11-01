@@ -135,14 +135,15 @@ if select_wa
    SELECT (_a_dbf_rec["wa"])
 endif
 
-table := _a_dbf_rec["table"]
 
-if alias == NIL
+if (alias == NIL) .or. (table == NIL)
    // za specificne primjene kada "varamo" sa aliasom
    // my_use("fakt_pripr", "fakt_fakt")
    // tada ne diramo alias
    alias := _a_dbf_rec["alias"]
 endif
+
+table := _a_dbf_rec["table"]
 
 if valtype(table) != "C"
    _msg := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") table name VALTYPE = " + VALTYPE(type)

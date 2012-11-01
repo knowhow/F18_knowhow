@@ -1,3 +1,7 @@
+1.3.62 2012-11-01, hernad
+
+  - f18_lock_tables - rollback situacija CORE_LIB 3.8.2
+ 
 1.3.61 2012-11-01, hernad
 
   - my_use set alias kako treba F18_CORE_LIB 3.8.1

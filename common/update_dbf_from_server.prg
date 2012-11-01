@@ -60,7 +60,7 @@ endif
 
 _seconds := SECONDS()
 
-log_write( "update_dbf_from_server(), poceo", 9 )
+log_write( "START update_dbf_from_server", 9 )
 
 if algoritam == "FULL"
 
@@ -70,7 +70,6 @@ if algoritam == "FULL"
     full_synchro (table, _step)
 
 else
-
     log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
 
     // samo otvori tabelu da je ids_synchro moze napuniti
@@ -78,14 +77,13 @@ else
     my_use (_dbf_alias, table, .f., "SEMAPHORE")
 
     ids_synchro  (table)
-
 endif
 
 USE
 
-log_write( "update_dbf_from_server(), table: " + table + " synchro cache: " + STR(SECONDS() - _seconds), 5 )
+log_write( "update_dbf_from_server table: " + table + " synchro cache: " + STR(SECONDS() - _seconds), 5 )
 
-log_write( "update_dbf_from_server(), zavrsio", 9 )
+log_write( "END update_dbf_from_server", 9 )
 
 return .t. 
 

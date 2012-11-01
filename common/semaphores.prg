@@ -61,14 +61,15 @@ if sql_table_update( nil, "BEGIN" )
 
         // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
         my_use_semaphore_on()
-        
         for _i := 1 to LEN( a_tables )
             _tbl := get_a_dbf_rec(a_tables[_i])["table"]
             // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
             my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
         next
-
         my_use_semaphore_off()
+
+    else
+        sql_table_update( nil, "ROLLBACK")
     endif
 
 
@@ -81,8 +82,6 @@ endif
 PopWA()
 
 return _ok
-
-
 
 // -----------------------------------------------------
 // unlokovanje tabela zadatih u matrici a_tables
@@ -138,29 +137,22 @@ while .t.
         log_write( "call stack 2 " + PROCNAME(2) + ALLTRIM(STR(PROCLINE(2))), 2 )
         MsgC()
     else
-
         if _i > 1
             _err_msg := ToStr(Time()) + " : table unlocked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
             @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
             log_write( _err_msg, 2 )
         endif
-
         exit
-
     endif
 
     if ( _i >= SEMAPHORE_LOCK_RETRY_NUM )
-         
           _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ##" + ;
                       "nasilno uklanjam lock !"
           MsgBeep(_err_msg)
-            
           log_write( _err_msg, 2 )
-
           exit
 
           return .f.
-
     endif
 
 enddo
@@ -169,7 +161,7 @@ enddo
 // svi useri su lockovani
 _qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) + ", last_trans_user_code=" + _sql_quote(_user) + "; "
 
-if status == "lock"
+if (status == "lock")
     _qry += "UPDATE fmk.semaphores_" + table + " SET algorithm='locked_by_me' WHERE user_code=" + _sql_quote(_user) + ";" 
 endif
 

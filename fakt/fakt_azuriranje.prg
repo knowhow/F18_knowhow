@@ -290,37 +290,35 @@ local _fakt_doks_data
 local _fakt_doks2_data
 
 close all
-
 o_fakt_edit()
 
-Box("#Proces azuriranja u toku", 3, 60)
+Box( "#Proces azuriranja dbf-a u toku", 3, 60 )
 
     @ m_x + 1, m_y + 2 SAY "fakt_pripr -> fakt_fakt"
 
-    select fakt_pripr
-    HSEEK id_firma + id_tip_dok + br_dok
-
+    // seekuj mi dokument u pripremi
+    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
+    
     do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
 
         select fakt_pripr
-        
         _rec := dbf_get_rec()
         
         select fakt
         APPEND BLANK
-        dbf_update_rec(_rec, .t.)
+        dbf_update_rec( _rec, .t. )
 
         select fakt_pripr
         skip
 
     enddo
 
-    @ m_x +2, m_y+2 SAY "fakt_doks " + id_firma + id_tip_dok + br_dok 
+    @ m_x + 2, m_y + 2 SAY "fakt_doks " + id_firma + id_tip_dok + br_dok 
   
     select fakt_doks
     set order to tag "1"
     go top
-    HSEEK id_firma + id_tip_dok + br_dok
+    seek id_firma + id_tip_dok + br_dok
 
     if !FOUND()
 
@@ -330,10 +328,10 @@ Box("#Proces azuriranja u toku", 3, 60)
         hb_hdel( _rec, "brisano" ) 
         hb_hdel( _rec, "sifra" ) 
 
-        SELECT fakt_doks
+        select fakt_doks
         APPEND BLANK
 
-        dbf_update_rec(_rec, .t.)
+        dbf_update_rec( _rec, .t. )
 
     else
 
@@ -344,21 +342,21 @@ Box("#Proces azuriranja u toku", 3, 60)
     endif
 
 
-    @ m_x +3, m_y+2 SAY "fakt_doks2 " + id_firma + id_tip_dok + br_dok
+    @ m_x + 3, m_y + 2 SAY "fakt_doks2 " + id_firma + id_tip_dok + br_dok
 
     select fakt_doks2
     set order to tag "1"
     go top
-    HSEEK id_firma + id_tip_dok + br_dok
+    seek id_firma + id_tip_dok + br_dok
 
     if !FOUND()
 
         _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
-        SELECT fakt_doks2
+        select fakt_doks2
         APPEND BLANK
 
-        dbf_update_rec(_rec, .t.)
+        dbf_update_rec( _rec, .t. )
 
     else
         _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
@@ -366,13 +364,15 @@ Box("#Proces azuriranja u toku", 3, 60)
         log_write( _msg, 5 )
     endif
 
-
 BoxC()
 
-select fakt_pripr
-seek id_firma + id_tip_dok + br_dok
+// opet seekuj pripremu 
+_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
 return .t.
+
+
+
 
 // -----------------------------------------------
 // -----------------------------------------------

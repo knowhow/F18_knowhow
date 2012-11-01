@@ -132,6 +132,7 @@ return _a_fakt_doks
 // -----------------------------------------------------------------
 static function _seek_pripr_dok( idfirma, idtipdok, brdok )
 local _ret := .f.
+
 select fakt_pripr
 set order to tag "1"
 go top
@@ -165,6 +166,8 @@ local _ids_fakt  := {}
 local _ids_doks  := {}
 local _ids_doks2 := {}
 
+close all
+
 _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
 _tbl_doks2 := "fakt_doks2"
@@ -172,6 +175,8 @@ _tbl_doks2 := "fakt_doks2"
 Box(, 5, 60 )
 
 _ok := .t.
+
+O_FAKT_PRIPR
 
 // vidi ima li tog dokumenta u pripremi !
 // svakako mi se nastimaj na taj record
@@ -183,12 +188,11 @@ endif
 // lokuj prvo tabele
 if !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
     return .f.
-else
-    // otvori ih ponovo
-    o_fakt_edit()
-    // opet se vrati na ovaj slog koji mi treba
-    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 endif
+
+o_fakt_edit()
+// opet se vrati na ovaj slog koji mi treba
+_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
 log_write( "FAKT, azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
 

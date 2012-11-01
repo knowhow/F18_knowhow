@@ -1,4 +1,8 @@
-1.3.54 2012-11-01, vsasa
+1.3.55 2012-11-01, hernad
+
+  - fin_azur_sql, fakt_azur_sql funkcije moraju biti izolovane sa stanovista stanja otvorenih dbf tabela
+
+1.3.54 2012-11-01, hernad
 
   - f18_lock tables koristi my_use, tako da su sve tabele koje su lockovane garantovano otvorene
 

@@ -58,6 +58,8 @@ endif
 
 MsgO( "Azuriranje dokumenta u toku...." )
 
+close all
+
 if fin_azur_sql( oServer )
 
     o_fin_za_azuriranje()
@@ -108,7 +110,6 @@ return _data
 // -----------------------------
 function o_fin_za_azuriranje()
 
-// prvo ih sve zatvori
 close all
 
 O_KONTO
@@ -161,10 +162,9 @@ _tmp_id := "x"
 if !f18_lock_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.
-else
-    // ovo ce zatvoriti i otvoriti ponovo sve tabele
-    o_fin_za_azuriranje()
 endif
+
+o_fin_za_azuriranje()
 
 sql_table_update( nil, "BEGIN" )
 

@@ -38,6 +38,11 @@ endif
 // kreiraj izvjestaj
 _rpt_data := _cre_rpt( _rpt_vars, otv_stavke )
 
+if _rpt_data == NIL
+    Msgbeep( "Problem sa generisanjem izvjestaja !!!" )
+    return
+endif
+
 // eksport kartice u dbf
 if _rpt_vars["export_dbf"] == "D"
     if _export_dbf( _rpt_data, _rpt_vars )
@@ -220,13 +225,17 @@ _qry := "SELECT s.idvn, s.brnal, s.rbr, s.brdok, s.datdok, s.datval, s.opis, " +
         "( CASE WHEN s.d_p = '2' THEN " + _fld_iznos + " ELSE 0 END ) AS potrazuje " + ;
         "FROM fmk.fin_suban s " + ;
         "LEFT JOIN fmk.partn p ON s.idpartner = p.id " + ;
-        "WHERE idfirma = " + _sql_quote( gfirma ) + ;
-          " AND " + _sql_cond_parse( "s.idkonto", _konto ) + ;
-          " AND " + _sql_cond_parse( "s.idpartner", _partner ) + ;
-          " AND " + _sql_date_parse( "s.datdok", _datum_od, _datum_do )
+        "WHERE idfirma = " + _sql_quote( gfirma )
 
-// ostali uslovi
+// datumi
+_qry += " AND " + _sql_date_parse( "s.datdok", _datum_od, _datum_do )
 
+// konto
+_qry += " AND " + _sql_cond_parse( "s.idkonto", _konto )
+
+// partner
+_qry += " AND " + _sql_cond_parse( "s.idpartner", _partner )
+          
 if !EMPTY( _brdok )
     _qry += " AND " + _sql_cond_parse( "s.brdok", _brdok )
 endif
@@ -242,6 +251,11 @@ endif
 _qry += " ORDER BY s.datdok"
 
 _table := _sql_query( _server, _qry )
+
+if _table == NIL
+    return NIL
+endif
+
 _table:Refresh()
 
 return _table

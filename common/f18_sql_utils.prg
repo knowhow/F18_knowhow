@@ -505,10 +505,6 @@ local _i, _cond
 
 // idkonto LIKE '211%' AND idkonto LIKE '5411%'
 
-if EMPTY( cond )
-    return _ret
-endif
-
 for each _cond in cond_arr
 
     _ret += " AND " + field_name 

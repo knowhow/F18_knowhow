@@ -1,3 +1,7 @@
+1.3.61 2012-11-01, hernad
+
+  - my_use set alias kako treba F18_CORE_LIB 3.8.1
+
 1.3.60 2012-11-01, hernad
 
   - test test test

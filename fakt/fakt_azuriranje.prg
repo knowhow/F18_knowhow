@@ -184,8 +184,6 @@ endif
 if !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
     return .f.
 else
-    // zatvori mi sve tabele
-    close all
     // otvori ih ponovo
     o_fakt_edit()
     // opet se vrati na ovaj slog koji mi treba

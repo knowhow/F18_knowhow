@@ -1,3 +1,7 @@
+1.3.54 2012-11-01, vsasa
+
+  - f18_lock tables koristi my_use, tako da su sve tabele koje su lockovane garantovano otvorene
+
 1.3.53 2012-11-01, vsasa
 
   - pos, ručni unos zaduženja - bugfix [#29543](http://redmine.bring.out.ba/issues/29543)

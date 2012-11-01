@@ -57,9 +57,12 @@ if sql_table_update( nil, "BEGIN" )
         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
         // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
+        my_use_semaphore_on()
+        
         for _i := 1 to LEN( a_tables )
             _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-            dbf_semaphore_synchro(_tbl)
+            // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
+            my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
         next
 
         my_use_semaphore_off()

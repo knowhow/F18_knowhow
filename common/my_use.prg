@@ -97,7 +97,7 @@ return
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
-function my_use(alias, table, new_area, _rdd, semaphore_param, excl)
+function my_use(alias, table, new_area, _rdd, semaphore_param, excl, select_wa)
 local _msg
 local _err
 local _pos
@@ -109,6 +109,10 @@ local _tmp
 
 if excl == NIL
   excl := .f.
+endif
+
+if select_wa == NIL
+  select_wa = .f.
 endif
 
 if table == NIL
@@ -124,8 +128,11 @@ _a_dbf_rec := get_a_dbf_rec(_tmp, .t.)
 
 if new_area == NIL
    new_area := .f.
-   // pozicioniraj se na WA rezervisanu za ovu tabelu 
-   //SELECT (_a_dbf_rec["wa"])
+endif
+
+// pozicioniraj se na WA rezervisanu za ovu tabelu 
+if select_wa
+   SELECT (_a_dbf_rec["wa"])
 endif
 
 table := _a_dbf_rec["table"]

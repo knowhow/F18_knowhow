@@ -56,6 +56,9 @@ private cIdVd
 private cRobSir:=" "
 private dDatRada:=DATE()
 private cBrDok:=nil
+private bPrevZv
+private bPrevUp
+private bPrevDn
 
 // dodatni podaci o reklamaciji
 if (IsPlanika() .and. cIdVd == VD_REK)
@@ -119,12 +122,14 @@ cRSDbf := "ROBA"
 
 if ODJ->Zaduzuje == "S" .or. cRobSir == "S"
 	cRSdbf:="SIROV"
-	bRSblok:={|x,y| P_Roba(@_IdRoba, x, y)}
+	//bRSblok:={ |x,y| P_Roba( @_IdRoba, x, y ) }
+  	bRSblok := { |x,y| pos_postoji_roba( @_idroba, x, y ), setspeczad() }
   	cUI_I:=S_I 
 	cUI_U:=S_U
 else
   	cRSdbf := "ROBA"
-  	bRSblok := {|x,y| Barkod(@_IdRoba), P_Roba (@_IdRoba, x, y)}
+  	//bRSblok := { |x,y| Barkod(@_IdRoba), P_Roba(@_IdRoba, x, y) }
+  	bRSblok := { |x,y| pos_postoji_roba( @_idroba, x, y ), setspeczad() }
   	cUI_I := R_I
 	cUI_U := R_U
 endif
@@ -212,8 +217,8 @@ if !fSadAz
 	oBrowse := FormBrowse( m_x+6, m_y+1, m_x+19, m_y+77, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
 	oBrowse:autolite:=.f.
 
-	PrevDn:=SETKEY(K_PGDN,{|| DummyProc()})
-	PrevUp:=SETKEY(K_PGUP,{|| DummyProc()})
+	PrevDn := SETKEY( K_PGDN, {|| DummyProc() })
+	PrevUp := SETKEY( K_PGUP, {|| DummyProc() })
 
 	SetSpecZad()
 
@@ -249,35 +254,35 @@ if !fSadAz
 			//Ol_Yield()
   		enddo
 
-  		_idroba:=SPACE (LEN (_idroba))
-  		_Kolicina:= 0
-  		_cijena:=0
-  		_ncijena:=0
-  		_marza2:=0
-  		_TMarza2:="%"
-  		fMarza:=" "
+  		_idroba := SPACE (LEN (_idroba))
+  		_Kolicina := 0
+  		_cijena := 0
+  		_ncijena := 0
+  		_marza2 := 0
+  		_TMarza2 := "%"
+  		fMarza := " "
 
-		@ m_x+2,m_y+25 SAY SPACE(40)
+		@ m_x + 2, m_y + 25 SAY SPACE(40)
 		
 		if gDuzSifre <> nil .and. gDuzSifre > 0
-			cDSFINI := ALLTRIM(STR(gDuzSifre))
+			cDSFINI := ALLTRIM( STR( gDuzSifre ) )
 		else
-			cDSFINI:=IzFMKIni('SifRoba','DuzSifra','10')
+			cDSFINI := IzFMKIni('SifRoba','DuzSifra','10')
 		endif
 
-		@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba pict "@!S" + cDSFINI ;
-					WHEN {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} ;
-					VALID EVAL (bRSblok, 2, 25) .and. (gDupliArt=="D" .or. ZadProvDuple(_idroba))
-		@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICT "999999.999" ;
+		@ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba pict "@!S" + cDSFINI ;
+					WHEN {|| _idroba := PADR( _idroba, VAL(cDSFINI)),.t.} ;
+					VALID EVAL (bRSblok, 2, 25) .and. ( gDupliArt == "D" .or. ZadProvDuple(_idroba))
+		@ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina PICT "999999.999" ;
 					WHEN{|| OsvPrikaz(),ShowGets(),.t.} ;
 					VALID ZadKolOK(_Kolicina)
 		
   		if gZadCij=="D"
-    		@ m_x+ 3,m_y+35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
-    		@ m_x+ 3,m_y+56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
-    		@ m_x+ 3,col()+2 GET _Marza2 PICTURE "9999.99"
-      		@ m_x+3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
-    		@ m_x+ 4,m_y+35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2:=0, marza2(), ShowGets(), .t.}
+    		@ m_x + 3, m_y + 35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
+    		@ m_x + 3, m_y + 56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
+    		@ m_x + 3, col() + 2 GET _Marza2 PICTURE "9999.99"
+      		@ m_x + 3, col() + 1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),marza2(fmarza),_cijena:=iif(_cijena==0,_cijena:=_nCijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),fMarza:=" ",.t.}
+    		@ m_x + 4, m_y + 35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2:=0, marza2(), ShowGets(), .t.}
   		endif
 
   		READ
@@ -286,32 +291,32 @@ if !fSadAz
     			EXIT
   		else
 
-			// stavi u sifranik robe			
+			// setuj MPC u sifranik robe ako je
+            // razlicita !!!
 			StUSif()
 
     		select PRIPRZ
     		append blank
 
-    		SELECT (cRSdbf)
+            // selektuj robu
+    		select roba
 
-    		_RobaNaz := _field->Naz
-			_Jmj := _field->Jmj
-   			_IdTarifa:=_field->IdTarifa
-			_Cijena:=if(EMPTY(_cijena),pos_get_mpc(),_cijena)
-			_barkod := _field->barkod
-			_n1 := _field->n1
-			_n2 := _field->n2
-			_k1 := _field->k1
-			_k2 := _field->k2
-			_k7 := _field->k7
-			_k9 := _field->k9
+            // setuj varijable za append
+    		_robanaz := roba->naz
+			_jmj := roba->jmj
+   			_idtarifa := roba->idtarifa
+			_cijena := if( EMPTY( _cijena ), pos_get_mpc(), _cijena )
+			_barkod := roba->barkod
+			_n1 := roba->n1
+			_n2 := roba->n2
+			_k1 := roba->k1
+			_k2 := roba->k2
+			_k7 := roba->k7
+			_k9 := roba->k9
 			
-			SELECT PRIPRZ
-    		
-			Gather() 
-			// PRIPRZ
+			select priprz
 
-    		// reci mu da ide na kraj
+			Gather() 
 
     		oBrowse:goBottom()
     		oBrowse:refreshAll()
@@ -344,13 +349,13 @@ if RecCount2() > 0
  
  	Beep(4)
 
-	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","N")=="D"
-       	StampZaduz(cIdVd, cBrDok)
+	if !fSadAz .and. Pitanje(, "Zelite li odstampati dokument ?", "N" ) == "D"
+       	StampZaduz( cIdVd, cBrDok )
         OpenZad()
   	endif
 
-  	if fSadAz.or.Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D")=="D"
-    	AzurPriprZ(cBrDok, cIdVD)
+  	if fSadAz .or. Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D" ) == "D"
+    	AzurPriprZ( cBrDok, cIdVD )
 	else
     	SELECT _POS
     	AppFrom("PRIPRZ",.f.)
@@ -388,6 +393,11 @@ endif
 return
 
 
+
+
+// ----------------------------------------------------------
+// setuje u sifranik mpc
+// ----------------------------------------------------------
 function StUSif()
 local _t_area := SELECT()
 local _rec
@@ -418,29 +428,17 @@ return
 
 
 
-/*! \fn SetSpecZad()
- *  \brief pridruzi "*" - ispravka zaduzenja
- */
- 
 function SetSpecZad()
-bPrevZv:=SETKEY(ASC("*"), {|| IspraviZaduzenje()})
+bPrevZv := SETKEY(ASC("*"), {|| IspraviZaduzenje() })
 return .t.
 
 
-/*! \fn UnSetSpecZad()
- *  \brief vrati tipci "*" prijasnje znacenje
- */
- 
+
 function UnSetSpecZad()
 SETKEY(ASC("*"),{|| bPrevZv})
 return .f.
 
 
-/*! \fn ZadKolOK(nKol)
- *  \brief
- *  \param nKol
- *  \return
- */
 
 function ZadKolOK(nKol)
 

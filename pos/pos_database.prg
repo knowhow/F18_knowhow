@@ -509,7 +509,7 @@ GO TOP
 set_global_memvars_from_dbf()
 
 // zakljucaj semafore pos-a
-if !f18_lock_tables({"pos_pos", "pos_doks"})
+if !f18_lock_tables({"pos_pos", "pos_doks", "roba"})
     return
 endif
 
@@ -534,6 +534,7 @@ else
 endif
 
 _app := get_dbf_global_memvars()
+
 update_rec_server_and_dbf( "pos_doks", _app, 1, "CONT", .f. )
 
 SELECT PRIPRZ
@@ -597,7 +598,8 @@ do while !EOF()
 
 enddo
 
-f18_free_tables({"pos_pos", "pos_doks"})
+f18_free_tables({"pos_pos", "pos_doks", "roba"})
+
 sql_table_update( nil, "END")
 
 SELECT PRIPRZ
@@ -904,9 +906,11 @@ return
 static function azur_sif_roba_row()
 local _rec
 local _field_mpc
+local _update := .f.
 
 select roba
 set order to tag "ID"
+go top
 
 if gSetMPCijena == "1"
     _field_mpc := "mpc"
@@ -915,11 +919,11 @@ else
 endif
 
 // pozicioniran sam na robi
-hseek priprz->idroba  
+seek priprz->idroba  
 
-lNovi:=.f.
+lNovi := .f.
 
-if ( !FOUND() )
+if !FOUND()
 
     // novi artikal
     // roba (ili sirov)
@@ -927,6 +931,7 @@ if ( !FOUND() )
 
     _rec := dbf_get_rec()
     _rec["id"] := priprz->idroba
+    _update := .t.
 
 else
 
@@ -947,9 +952,9 @@ else
 
     if cIdVd == "NI"
       // nivelacija - u sifrarnik stavi novu cijenu
-      _rec[ _field_mpc ] := ROUND(priprz->ncijena, 3)
+      _rec[ _field_mpc ] := ROUND( priprz->ncijena, 3 )
     else
-      _rec[ _field_mpc ] := ROUND(priprz->cijena, 3)
+      _rec[ _field_mpc ] := ROUND( priprz->cijena, 3 )
     endif
     
 endif
@@ -964,7 +969,7 @@ _rec["n1"] := priprz->n1
 _rec["n2"] := priprz->n2
 _rec["barkod"] := priprz->barkod
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
 
 return
 

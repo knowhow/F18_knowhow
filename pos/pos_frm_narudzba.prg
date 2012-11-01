@@ -426,29 +426,12 @@ return
 
 
 function SetSpecNar()
-
 bPrevZv := SETKEY( ASC("*"), {|| IspraviNarudzbu() })
-
-if gModul == "HOPS"
-    // provjeriti parametar kako se vode racuni trgovacki ili hotelski
-    if (gRadniRac=="D")
-            bPrevKroz := SETKEY (ASC ("/"), { || PreglRadni (cBrojRn) })
-    endif
-endif
-
 return .t.
 
 
 function UnSetSpecNar()
-
 SETKEY(ASC ("*"), bPrevZv)
-
-if gModul=="HOPS"
-    if gRadniRac=="D"
-            SETKEY (ASC ("/"), bPrevKroz)
-    endif
-endif
-
 return .f.
 
 

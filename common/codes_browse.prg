@@ -695,6 +695,7 @@ return
 function EditSifItem(Ch, nOrder, aZabIsp)
 local i
 local j
+local _alias
 local _jg
 local imin
 local imax
@@ -868,21 +869,22 @@ do while .t.
         endif
              
         _vars := get_dbf_global_memvars("w")
-                
-        if !f18_lock_tables( { LOWER( ALIAS() ), "sifv", "sifk" } )
-            log_write( "ERROR: nisam uspio lokovati tabele sifk, sifv", 2 )
+        
+        _alias := LOWER(ALIAS())        
+        if !f18_lock_tables( { _alias, "sifv", "sifk" } )
+            log_write( "ERROR: nisam uspio lokovati tabele: " + _alias + ", sifk, sifv", 2 )
             exit
         endif
 
         sql_table_update(nil, "BEGIN")
 
         // sifarnik
-        update_rec_server_and_dbf(alias(), _vars, 1, "CONT")
+        update_rec_server_and_dbf(_alias, _vars, 1, "CONT")
 
         // sifk/sifv
         update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
 
-        f18_free_tables( { LOWER( ALIAS() ), "sifv", "sifk" } )
+        f18_free_tables( { _alias, "sifv", "sifk" } )
         sql_table_update(nil, "END")
 
         set_global_vars_from_dbf("w")

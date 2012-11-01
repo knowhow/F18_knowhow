@@ -41,7 +41,10 @@ function f18_lock_tables( a_tables )
 local _ok := .t.
 local _i, _tbl 
 
+PushWa()
+
 if LEN( a_tables ) == NIL
+    PopWA()
     return .f.
 endif
 
@@ -73,6 +76,9 @@ else
     _ok := .f.
     log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
 endif
+
+// pozicioniraj se na dbf prije ulaska u funkciju
+PopWA()
 
 return _ok
 

@@ -214,7 +214,7 @@ if sql_table_update(table, "del", nil, _where_str)
     AADD(_ids, _alg_tag + _full_id)
     push_ids_to_semaphore( table, _ids )
 
-    SELECT (_a_dbf_rec["alias"])
+    SELECT (_a_dbf_rec["wa"])
     
     if ORDNUMBER(_alg["dbf_tag"]) < 1
           _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG" + _alg["dbf_tag"]
@@ -340,13 +340,26 @@ static function set_table_values_algoritam_vars(table, values, algoritam, transa
 local _key
 local _count := 0
 local _use_tag := .f.
+local _alias
 
 if table == NIL
    table := ALIAS()
 endif
 
+a_dbf_rec := get_a_dbf_rec(table)
+
+// ako je alias proslijedjen kao ulazni parametar, prebaci se na dbf_table
+table := a_dbf_rec["table"]
+
+
 if values == NIL
+  _alias := ALIAS()
   values := dbf_get_rec()
+
+  if (a_dbf_rec["alias"] != _alias)
+     RaiseError("values matrica razlicita od tabele ALIAS():" + _alias + " table=" + table)
+  endif
+
 endif
 
 if algoritam == NIL
@@ -359,10 +372,6 @@ if transaction == NIL
    transaction := "FULL"
 endif
 
-a_dbf_rec := get_a_dbf_rec(table)
-
-// ako je alias proslijedjen kao ulazni parametar, prebaci se na dbf_table
-table := a_dbf_rec["table"]
 
 alg := a_dbf_rec["algoritam"][algoritam]
 
@@ -373,8 +382,8 @@ for each _key in alg["dbf_key_fields"]
 
         // ne gledaj numericke kljuceve, koji su array stavke
         if !HB_HHASKEY(values, _key)
-             _msg := RECI_GDJE_SAM + " bug - nepostojeci kljuc u " + _key +  " : " + pp(values)
-             Alert(_msg)
+             _msg := RECI_GDJE_SAM + "# tabela:" + table + "#bug - nepostojeci kljuc:" + _key +  "#values:" + pp(values)
+             MsgBeep(_msg)
              QUIT
         endif
 

@@ -126,7 +126,7 @@ IF ( _brisi_kum == "D" )
         @ m_x + 1, m_y + 2 SAY "delete " + _tbl
 
         // algoritam 2  - nivo dokumenta
-        select fakt
+        select fakt_fakt
         _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 2, "CONT")
         log_write("povrat u pripremu fakt_fakt"  + " : " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
 

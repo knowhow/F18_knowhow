@@ -18,7 +18,7 @@
  */
 function RekOpis()
 if Pitanje(,"Unjeti opis reklamacije?", "D") == "N"
-	return
+    return
 endif
 
 // uzmi podatke o reklamaciji
@@ -39,12 +39,12 @@ cRekOp3:=SPACE(40)
 cRekOp4:="R"
 
 Box(,5, 60)
-	@ 1+m_x, 2+m_y SAY "REKLAMACIJA: DODATNI PODACI" COLOR "I"
-	@ 2+m_x, 2+m_y SAY "Ime kupca  " GET cRekOp1 VALID !Empty(cRekOp1)
-	@ 3+m_x, 2+m_y SAY "Broj cipele" GET cRekOp2 VALID !Empty(cRekOp2)
-	@ 4+m_x, 2+m_y SAY "Opis greske" GET cRekOp3
-	@ 5+m_x, 2+m_y SAY "Rekl. u (P)ripremi/(R)ealizovana" GET cRekOp4 VALID cRekOp4 $ "RP" PICT "@!"
-	read
+    @ 1+m_x, 2+m_y SAY "REKLAMACIJA: DODATNI PODACI" COLOR "I"
+    @ 2+m_x, 2+m_y SAY "Ime kupca  " GET cRekOp1 VALID !Empty(cRekOp1)
+    @ 3+m_x, 2+m_y SAY "Broj cipele" GET cRekOp2 VALID !Empty(cRekOp2)
+    @ 4+m_x, 2+m_y SAY "Opis greske" GET cRekOp3
+    @ 5+m_x, 2+m_y SAY "Rekl. u (P)ripremi/(R)ealizovana" GET cRekOp4 VALID cRekOp4 $ "RP" PICT "@!"
+    read
 BoxC()
 
 return
@@ -59,7 +59,7 @@ function AzurRekOpis(cBrDok, cIdVd)
 
 // pri uslov za ispitivanje
 if !IsPlanika() .and. cIdVd<>VD_REK
-	return
+    return
 endif
 
 return
@@ -75,7 +75,7 @@ local nArr
 nArr:=SELECT()
 
 if (lPregled==nil)
-	lPregled:=.f.
+    lPregled:=.f.
 endif
 
 
@@ -91,30 +91,30 @@ cIdPos:=pos->idpos
 
 // ako nisam nista nasao - izadji
 if (doks->idvd <> pos->idvd .and. pos_doks->brdok <> pos->brdok .and. pos_doks->datum <> pos->datum)
-	set order to tag "1"
-	select (nArr)
-	return
+    set order to tag "1"
+    select (nArr)
+    return
 endif
 
 cROPKupac:=""
 cROPBrCip:=""
 cROPOpis:=""
 do while !EOF() .and. pos->brdok==cBrDok .and. pos->idpos==cIdPos .and. pos->idvd==VD_ROP .and. pos_doks->datum==pos->datum
-	do case
-		case (ALLTRIM(pos->idodj)=="1")
-			cROPKupac:=ALLTRIM(pos->idradnik + pos->idroba + pos->idtarifa)
-			cROPBrCip:=ALLTRIM(STR(pos->cijena, 4, 0))
-		case (ALLTRIM(pos->idodj)=="2")
-			cROPOpis+=(pos->idradnik + pos->idroba + pos->idtarifa)
-	endcase
-	skip
+    do case
+        case (ALLTRIM(pos->idodj)=="1")
+            cROPKupac:=ALLTRIM(pos->idradnik + pos->idroba + pos->idtarifa)
+            cROPBrCip:=ALLTRIM(STR(pos->cijena, 4, 0))
+        case (ALLTRIM(pos->idodj)=="2")
+            cROPOpis+=(pos->idradnik + pos->idroba + pos->idtarifa)
+    endcase
+    skip
 enddo
 
 set order to tag "1"
 select (nArr)
 
 if lPregled
-	START PRINT CRET
+    START PRINT CRET
 endif
 
 ROP_Header(cIdPos, cBrDok)
@@ -123,8 +123,8 @@ ROP_Row("Broj cipele:", cROPBrCip)
 ROP_Row("Opis greske:", cROPOpis)
 
 if lPregled
-	FF
-	END PRINT
+    FF
+    END PRINT
 endif
 
 return
@@ -158,15 +158,14 @@ static function ROP_Row(cOpis, cVrijednost)
 
 aPom := SjeciStr(cVrijednost, 20)
 for i:=1 to len(aPom)
-	if i == 1
-		?? aPom[i]
-	else
-		? SPACE(LEN(cOpis) + 3) + aPom[i]
-	endif
+    if i == 1
+        ?? aPom[i]
+    else
+        ? SPACE(LEN(cOpis) + 3) + aPom[i]
+    endif
 next
-   		
+        
 return
-*}
 
 
 

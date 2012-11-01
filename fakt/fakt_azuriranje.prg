@@ -194,7 +194,7 @@ o_fakt_edit()
 // opet se vrati na ovaj slog koji mi treba
 _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
-log_write( "FAKT, azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
+log_write( "FAKT, sql azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
 
 // -----------------------------------------------------------------------------------------------------
 sql_table_update(nil, "BEGIN")
@@ -246,7 +246,7 @@ endif
 
 if !_ok
 
-    _msg := "FAKT azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
+    _msg := "FAKT sql azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
 
     log_write( _msg, 2 )
     MsgBeep(_msg )

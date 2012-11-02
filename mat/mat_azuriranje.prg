@@ -194,9 +194,9 @@ _tbl_nalog := "mat_nalog"
 _tbl_sint  := "mat_sint"
 
 
-if !f18_free_tables({_tbl_suban, _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
-  MsgBeep("ERROR lock tabele")
-  return .f.
+if !f18_free_tables({ _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
+    MsgBeep("ERROR lock tabele")
+    return .f.
 endif
 
 MsgO("sql mat_suban")
@@ -315,7 +315,7 @@ if ! _ok
 
     // vrati sve promjene...    
     sql_table_update(nil, "ROLLBACK" )
-    f18_free_tables({_tbl_suban, _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
+    f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
 else
 
@@ -327,7 +327,7 @@ else
     push_ids_to_semaphore( _tbl_sint,  _ids_sint  )
     push_ids_to_semaphore( _tbl_nalog, _ids_nalog )
 
-    f18_free_tables({_tbl_suban, _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
+    f18_free_tables({_tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
 
     sql_table_update(nil, "END")
 

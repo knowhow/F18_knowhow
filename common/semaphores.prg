@@ -120,7 +120,7 @@ local _user   := f18_user()
 
 // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
 
-log_write( "table: " + table + ", status:" + status + " zapoceo" , 8 )
+log_write( "table: " + table + ", status:" + status + " START" , 8 )
 
 _i := 0
 
@@ -157,7 +157,6 @@ while .t.
 
 enddo
 
-
 // svi useri su lockovani
 _qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) + ", last_trans_user_code=" + _sql_quote(_user) + "; "
 
@@ -167,7 +166,7 @@ endif
 
 _ret := _sql_query( _server, _qry )
 
-log_write( "table: " + table + ", status:" + status + " zavrsio" , 8 )
+log_write( "table: " + table + ", status:" + status + " - END" , 7 )
 
 if VALTYPE(_ret) == "L"
     // ERROR
@@ -370,17 +369,17 @@ _qry += " ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user)
  
 _ret := _sql_query( _server, _qry )
 
-log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL", 7)
+log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL", 7 )
 
 log_write( "END: nuliraj ids-ove", 9 )
 
 // na kraju uradi update verzije semafora bez povecanja verzije (.f.)
 // takodje nemoj sinhronizirati podatke da ne udjes u beskonacnu petlju (.f.)
-update_semaphore_version(table, .f., .f.)
+update_semaphore_version( table, .f., .f. )
 
 if _free
-   // ako je bila slobodna prije nuliranja, neka to bude i sada
-   lock_semaphore(table, "free") 
+    // ako je bila slobodna prije nuliranja, neka to bude i sada
+    lock_semaphore( table, "free" ) 
 endif
 
 return _ret

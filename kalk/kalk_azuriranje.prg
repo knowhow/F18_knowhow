@@ -799,8 +799,6 @@ _tmp_id := "x"
 if !f18_lock_tables({_tbl_kalk, _tbl_doks})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.
-else
-    o_kalk_za_azuriranje()
 endif
 
 // end lock semaphores --------------------------------------------------

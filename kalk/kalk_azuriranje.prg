@@ -796,6 +796,9 @@ Box(, 5, 60)
 
 _tmp_id := "x"
 
+// otvori tabele
+o_kalk_za_azuriranje()
+
 if !f18_lock_tables({_tbl_kalk, _tbl_doks})
     MsgBeep("lock tabela neuspjesan, azuriranje prekinuto")
     return .f.

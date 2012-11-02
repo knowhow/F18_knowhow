@@ -1,3 +1,7 @@
+1.3.63 2012-11-02, vsasa
+
+  - lock_semaphore, log na levelu 7 [#29539](http://redmine.bring.out.ba/issues/29539)
+ 
 1.3.62 2012-11-01, hernad
 
   - f18_lock_tables - rollback situacija CORE_LIB 3.8.2

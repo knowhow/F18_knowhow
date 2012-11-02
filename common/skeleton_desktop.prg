@@ -154,8 +154,9 @@ endif
 @ 0,2 SAY '<ESC> Izlaz' COLOR INVERT
 @ 0,COL()+2 SAY DATE()  COLOR INVERT
 
-@ MAXROWS()-1, 1 SAY "log level: " + ALLTRIM( STR( log_level() ) )
-@ MAXROWS()-1, MAXCOLS()-16  SAY fmklibver()
+f18_ispisi_status_log_levela()
+f18_ispisi_status_semafora()
+@ MAXROWS()-1, MAXCOLS() - 16  SAY fmklibver()
 
 DispBox(2, 0, 4, MAXCOLS()-1, B_DOUBLE+' ',NORMAL)
 
@@ -166,5 +167,25 @@ endif
 @ 3,1 SAY PADC(gNaslov+' Ver.'+ gVerzija, MAXCOLS()-8) COLOR NORMAL
 
 return
+
+
+function f18_ispisi_status_log_levela()
+@ MAXROWS()-1, 1 SAY "log level: " + ALLTRIM( STR( log_level() ) )
+return
+
+
+
+function f18_ispisi_status_semafora( status )
+local _status := get_my_use_semaphore_status( status )
+local _color := "GR+/B" 
+
+if _status == "OFF"
+    _color := "W/R+"
+endif
+
+@ MAXROWS()-1, 15 SAY "sem: " + PADR( _status, 3 ) COLOR _color
+
+return
+
 
 

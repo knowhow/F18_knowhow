@@ -152,7 +152,7 @@ endif
 
 if lock
     lock_semaphore(table, "free")
-    my_use_semaphores_on()
+    my_use_semaphore_on()
 endif
 
 log_write( "END update_rec_server_and_dbf " + table, 9 )

@@ -30,15 +30,35 @@ thread static __my_use_semaphore := .t.
 function my_use_semaphore_off()
 __my_use_semaphore := .f.
 log_write( "stanje semafora : OFF", 6 )
+f18_ispisi_status_semafora( .f. )
 return
 
 function my_use_semaphore_on()
 __my_use_semaphore := .t.
 log_write( "stanje semafora : ON", 6 )
+f18_ispisi_status_semafora( .t. )
 return
 
 function my_use_semaphore()
 return __my_use_semaphore
+
+
+// vraca status semafora
+function get_my_use_semaphore_status( status )
+local _ret := "ON"
+
+if status == NIL
+    if my_use_semaphore() == .f.
+        _ret := "OFF"
+    endif
+else
+    if status == .f.
+        _ret := "OFF"
+    endif
+endif
+
+return _ret
+
 
 
 // --------------------------------------------------------------

@@ -3,6 +3,8 @@
   - update_rec_server_and_dbf... bugfix [#29566](http://redmine.bring.out.ba/issues/29566)
   - logiranje operacija my_use_semaphore_on i off [#29567](http://redmine.bring.out.ba/issues/29567)
   - indikator stanja my_use_semaphore_on i off [#29570](http://redmine.bring.out.ba/issues/29570)
+  - ld, unos datuma isplate plata - bugfix [#29571](http://redmine.bring.out.ba/issues/29571)
+  - virm, prenos virmana, ukupan broj radnika na virmanu [#29572](http://redmine.bring.out.ba/issues/29572)
  
 1.3.63 2012-11-02, vsasa
 

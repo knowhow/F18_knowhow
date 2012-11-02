@@ -348,11 +348,13 @@ local _tbl
 local _ret
 local _user := f18_user()
 local _server := pg_server()
-local _free 
+local _free
+local _sem_status
 
 // druga varijanta je da je vec "locked_by_me"
 // tabele ne bi smjela biti "lock" (zakljucana od drugog usera) ako se nalazimo ovdje 
-_free := (get_semaphore_status(table) == "free")
+_sem_status := get_semaphore_status( table )
+_free := ( _sem_status == "free")
 
 if _free
     // tokom nuliranja semafora ne dozvoli drugima promjene na tabeli
@@ -369,7 +371,8 @@ _qry += " ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user)
  
 _ret := _sql_query( _server, _qry )
 
-log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL", 7 )
+log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL, stanje tabele: " + ;
+            _sem_status, 7 )
 
 log_write( "END: nuliraj ids-ove", 9 )
 

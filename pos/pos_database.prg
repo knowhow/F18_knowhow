@@ -394,7 +394,7 @@ o_stazur()
 my_use_semaphore_on()
 
 if !f18_lock_tables({"pos_pos", "pos_doks"})
-  return .f.
+    return .f.
 endif
 
 if ( cNacPlac == NIL )
@@ -420,6 +420,7 @@ endif
 // azuriraj racun u POS_DOKS
 select pos_doks
 append blank
+
 _rec := dbf_get_rec()
 _rec["idpos"] := cIdPos
 _rec["idvd"] := VD_RN
@@ -481,6 +482,7 @@ do while !EOF() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos
 enddo
 
 f18_free_tables({"pos_pos", "pos_doks"})
+
 sql_table_update( nil, "END" )
 
 log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )

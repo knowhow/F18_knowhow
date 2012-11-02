@@ -1,3 +1,7 @@
+1.3.65 2012-11-02, vsasa
+
+  - kalk, ažuriranje dokumenta... bugfix [#29573](http://redmine.bring.out.ba/issues/29573)
+ 
 1.3.64 2012-11-02, vsasa
 
   - update_rec_server_and_dbf... bugfix [#29566](http://redmine.bring.out.ba/issues/29566)

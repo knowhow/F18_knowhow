@@ -114,8 +114,6 @@ return
 // ----------------------------------
 function OObracun()
 
-my_use_semaphore_off()
-
 select F_LD
 if !used()
     O_LD
@@ -189,8 +187,6 @@ if ( IsRamaGlas() )
 endif
 
 tipprn_use()
-
-my_use_semaphore_on()
 
 return
 

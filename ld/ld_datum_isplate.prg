@@ -79,10 +79,10 @@ local cRj := "  "
 local nX := 1
 local cOk := "D"
 
-select F_OBRACUNI
-if !used()
-    O_OBRACUNI
-endif
+close all
+
+O_OBRACUNI
+O_LD_RJ
 
 if obracuni->(FIELDPOS("DAT_ISPL")) == 0 .or. obracuni->(FIELDPOS("OBR")) == 0
     MsgBeep("Potrebna modifikacija struktura LD.CHS !!!#Prekidam operaciju")
@@ -278,6 +278,8 @@ if LastKey() <> K_ESC
     s_isp_date( cRJ, nGodina, 12, cObr, dDat12, nMj12, cIsZa12, cVrIs12 )
 
 endif
+
+close all
 
 return
 

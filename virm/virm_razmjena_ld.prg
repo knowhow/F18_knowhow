@@ -222,7 +222,7 @@ do while !EOF() .and. field->id = _oznaka
         do while !EOF() .and. field->id = _oznaka .and. field->idpartner = _sk_sifra
             ++ _kredit
             _total += rekld->iznos1
-            _isplata_opis := ALLTRIM( field->opis2 )
+            _isplata_opis := "obuhvaceno " + ALLTRIM( STR( _kredit ) ) + " radnika"
             skip 1
         enddo
         skip -1

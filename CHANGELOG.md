@@ -1,3 +1,9 @@
+1.3.64 2012-11-02, vsasa
+
+  - update_rec_server_and_dbf... bugfix [#29566](http://redmine.bring.out.ba/issues/29566)
+  - logiranje operacija my_use_semaphore_on i off [#29567](http://redmine.bring.out.ba/issues/29567)
+  - indikator stanja my_use_semaphore_on i off [#29570](http://redmine.bring.out.ba/issues/29570)
+ 
 1.3.63 2012-11-02, vsasa
 
   - lock_semaphore, log na levelu 7 [#29539](http://redmine.bring.out.ba/issues/29539)

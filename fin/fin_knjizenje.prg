@@ -160,6 +160,8 @@ return .t.
 function vrbr()
 return .t.
 
+
+
 function o_fin_edit()
 close all
 
@@ -175,11 +177,9 @@ if (IsRamaGlas())
     O_RNAL
 endif
 
-if gRj=="D"
-    O_FIN_RJ
-endif
+O_RJ
 
-if gTroskovi=="D"
+if gTroskovi == "D"
     O_FOND
     O_FUNK
 endif
@@ -201,6 +201,8 @@ set order to tag "1"
 go top
 
 return
+
+
 
 /*! \fn edit_fin_priprema()
  *  \brief Ispravka stavke u pripremi

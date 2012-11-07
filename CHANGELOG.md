@@ -1,3 +1,7 @@
+1.3.66 2012-11-07, vsasa
+
+  - fin, budžet opcije, korekcije [#29580](http://redmine.bring.out.ba/issues/29580)
+ 
 1.3.65 2012-11-02, vsasa
 
   - kalk, ažuriranje dokumenta... bugfix [#29573](http://redmine.bring.out.ba/issues/29573)

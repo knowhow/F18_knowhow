@@ -168,11 +168,12 @@ private cRasclaniti:="N"
 private cIdVN:=SPACE(40)
 
 cBoxName := "SUBANALITICKA KARTICA"
+
 if fOtvSt
     cBoxName += " - OTVORENE STAVKE"
 endif
 
-Box("#"+ cBoxName, 21, 65)
+Box("#"+ cBoxName, 23, 65 )
 	set cursor on
 	@ m_x+2,m_y+2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
  	@ m_x+3,m_y+2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh

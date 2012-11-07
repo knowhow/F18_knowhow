@@ -24,6 +24,8 @@ IF lAuto = NIL
 	lAuto := .f.
 ENDIF
 
+_vrste_placanja := .f.
+
 O_PARTN
 __par_len := LEN(partn->id)
 select (nArr)

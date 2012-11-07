@@ -264,9 +264,9 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
+    reset_semaphore_version(_table_name)
+    my_usex(_alias)
+    USE
 endif
      
 CREATE_INDEX("ID","id", _alias )
@@ -291,6 +291,8 @@ endif
     
 CREATE_INDEX("1", "IdRj+Idkonto", _alias )
 CREATE_INDEX("2", "Idkonto",      _alias )
+
+
 
 //PAREK (ekontomske kategorije - budzet)
 if !FILE(f18_ime_dbf("parek"))

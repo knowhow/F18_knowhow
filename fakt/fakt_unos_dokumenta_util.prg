@@ -536,7 +536,7 @@ select tarifa
 seek roba->idtarifa
 
 if lPrikTar
-	@ m_X+16,m_y+28 SAY "TBr: "
+	@ m_x + 16, m_y + 28 SAY "TBr: "
 	?? roba->idtarifa, "PDV", str(tarifa->opp,7,2)+"%"
   	if _IdTipdok=="13"
 		if IsPDV()

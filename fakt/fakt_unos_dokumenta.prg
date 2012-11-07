@@ -1331,7 +1331,14 @@ endif
 @ m_x + 15, m_y + 2  SAY "Artikal: " GET _IdRoba ;
     PICT "@!S10" ;
     WHEN {|| _idroba := PADR( _idroba, VAL( gDuzSifIni )), W_Roba() } ;
-    VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), LEFT( _idroba, VAL(gDuzSifIni) ), _idroba ), V_Roba(), artikal_kao_usluga(fnovi), NijeDupla(fNovi), zadnji_izlazi_info( _idpartner, _idroba, "F" ) }
+    VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), ;
+            LEFT( _idroba, VAL(gDuzSifIni) ), _idroba ), ;
+            V_Roba(), ;
+            artikal_kao_usluga(fnovi), ;
+            NijeDupla(fNovi), ;
+            zadnji_izlazi_info( _idpartner, _idroba, "F" ), ; 
+            _trenutno_na_stanju_kalk( _idfirma, _idtipdok, _idroba ) ;
+         }
 
 RKOR2:=0
 
@@ -1579,6 +1586,54 @@ endif
 _Rbr:=RedniBroj(nRbr)
 
 return 1
+
+
+// ------------------------------------------------------------
+// trentno stanje artikla u kalkulacijama
+// ------------------------------------------------------------
+static function _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
+local _stanje := NIL
+local _id_konto := ""
+local _t_area := SELECT()
+local _color := "W/N+"
+
+select rj
+set order to tag "ID"
+go top
+seek id_rj
+
+if EMPTY( field->konto )
+    return .t.
+endif
+
+_id_konto := field->konto
+
+select ( _t_area )
+
+if tip_dok $ "10#12"
+    // izvuci mi stanje artikla iz kalk
+    // magacinski dokumenti
+    _stanje := kalk_kol_stanje_artikla_magacin( _id_konto, id_roba, DATE() )
+elseif tip_dok $ "11#13"
+    // ovo su prodavnicki dokumenti
+    _stanje := kalk_kol_stanje_artikla_prodavnica( _id_konto, id_roba, DATE() )
+endif
+
+// ispisi stanje artikla
+if _stanje <> NIL
+
+    if _stanje <= 0
+        _color := "W/R+"
+    endif
+
+	@ m_x + 17, m_y + 28 SAY PADR( "", 60 )
+	@ m_x + 17, m_y + 28 SAY "Na stanju konta " + ;
+                            ALLTRIM( _id_konto ) + " : "
+    @ m_x + 17, col() + 1 SAY ALLTRIM(STR(_stanje, 12, 3)) + " " + PADR( roba->jmj, 3 ) COLOR _color
+endif
+
+return .t.
+
 
 
 // ------------------------------------------

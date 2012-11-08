@@ -335,7 +335,8 @@ select ( _t_area )
 // provjeri da li se u pripremi nalazi vise dokumenata... razlicitih
 if _is_vise_dok() == .t.
     // provjeri za duple stavke prilikom azuriranja...
-    if prov_duple_stavke() == 1 
+    if prov_duple_stavke() == 1
+		select ( _t_area ) 
         return .f.
     endif
     // nafiluj sve potrebne tabele
@@ -359,13 +360,14 @@ if reccount2()==0
 endif
 
 if !lAzur
-  MsgBeep("Niste izvrsili stampanje naloga ...")
-  close all
-  return .f.
+	MsgBeep("Niste izvrsili stampanje naloga ...")
+  	close all
+  	return .f.
 endif
 
 SELECT PSUBAN
 GO TOP
+
 do while !eof()
 
     // prodji kroz PSUBAN i vidi da li je nalog zatvoren

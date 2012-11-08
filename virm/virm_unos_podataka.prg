@@ -670,70 +670,99 @@ return aSifv
 
 
 
-**************************************
-* po izlasku iz ove funkcije kursor
-* jprih.dbf-a treba biti pozicioniran
-* na trazeni javni prihod
-**************************************
+// ----------------------------------------------------
+// po izlasku iz ove funkcije kursor
+// jprih.dbf-a treba biti pozicioniran
+// na trazeni javni prihod
+// ----------------------------------------------------
 function JPrih(cIdJPrih, cIdOps, cIdKan, cIdEnt)
-local fOk
-if cIdOps==NIL
-  cIdOps:=""
+local fOk := .f.
+
+if cIdOps == NIL
+    cIdOps := ""
 endif
-if cIdKan==NIL
-  cIdkan:=""
+
+if cIdKan == NIL
+    cIdkan := ""
 endif
-if cIdEnt==NIL
-  cIdEnt:=""
+
+if cIdEnt == NIL
+    cIdEnt := ""
 endif
+
 PushWA()
-//      1- racun  2-naziv     3-budzorg
-aRez:={""         , ""         , ""}
+
+// 1 - racun 2 - naziv 3 - budzorg
+aRez := { "", "", "" }
+
 select jprih
-cPom:=cIdJPrih
-for i:=len(cIdJPrih) to 1 step -1
- cPom := left(cIdJPrih,i)
- seek cPom
- if found() .and. len(cPom)==len(cIdJPrih)
-    // analiticki prihod
-    aRez[2]:= naz
- endif
- if found()
-   do while !eof() .and. Id == padr(cPom,len(cIdJPrih))
-      fOk:=.t.
-      if empty(Racun)
-         // nema racuna trazi dalje
-         fOk:=.f.
-         skip; loop
-      endif
-      if !empty(cIdOps) .and. cIdOps!=IdOps
-        if !empty(IdOps)
-           fOk:=.f.
+cPom := cIdJPrih
+
+for i := LEN( cIdJPrih ) to 1 step -1
+
+    cPom := LEFT( cIdJPrih, i )
+    seek cPom
+
+    if FOUND() .and. LEN(cPom) == LEN(cIdJPrih)
+        // analiticki prihod
+        aRez[2] := naz
+    endif
+    
+    if FOUND()
+
+        do while !EOF() .and. Id == PADR( cPom, LEN(cIdJPrih) )
+
+            fOk := .t.
+
+            if EMPTY( racun )
+                // nema racuna trazi dalje
+                fOk := .f.
+                skip
+                loop
+            endif
+
+            if !EMPTY( cIdOps ) .and. cIdOps != idops
+                if !EMPTY( idops )
+                    fOk := .f.
+                endif
+            endif
+
+            if !EMPTY( cIdKan ) .and. cIdKan != idkan
+                if !EMPTY( idkan )
+                    fOk := .f.
+                endif
+            endif
+
+            if !EMPTY( cIdEnt ) .and. cIdEnt != idn0
+                if !EMPTY( idn0 )
+                    fOk := .f.
+                endif
+            endif
+
+            if fOk
+                if EMPTY(aRez[2]) 
+                    // nisam jos nasao naziv
+                    aRez[2] := racun
+                endif
+                aRez[1] := racun
+                aRez[3] := budzorg
+                exit
+            endif
+            
+            skip
+    
+        enddo
+        
+        if fOk
+            exit
         endif
-      endif
-      if !empty(cIdKan) .and. cIdKan!=IdKan
-        if !empty(IdKan)
-          fOk:=.f.
-        endif
-      endif
-      if !empty(cIdEnt) .and. cIdEnt!=IdN0
-        if !empty(IdN0)
-           fOk:=.f.
-        endif
-      endif
-      if fOk
-         if empty(aRez[2]) // nisam jos nasao naziv
-           aRez[2]:=Racun
-         endif
-         aRez[1]:=Racun ; aRez [3]:=BudzOrg
-         exit
-      endif
-      skip
-   enddo
-   if fOk;   exit; endif
- endif
+
+    endif
+
 next
+
 PopWa()
+
 return aRez
 
 

@@ -33,7 +33,7 @@ endif
 
 _params[ __type_str ] := ALLTRIM( fetch_metric( var + "_redmine_server_type", my_user(), "MYSQL" ) )
 _params[ __server_str ] := ALLTRIM( fetch_metric( var + "_redmine_server_addr", my_user(), "" ) )
-_params[ __port_str ] := ALLTRIM( fetch_metric( var + "_redmine_server_port", my_user(), 5432 ) )
+_params[ __port_str ] := fetch_metric( var + "_redmine_server_port", my_user(), 5432 )
 _params[ __usr_str ] := ALLTRIM( fetch_metric( var + "_redmine_user", my_user(), "" ) )
 _params[ __pwd_str ] := ALLTRIM( fetch_metric( var + "_redmine_password", my_user(), "" ) )
 _params[ __db_str ] := ALLTRIM( fetch_metric( var + "_redmine_database", my_user(), "" ) )
@@ -85,7 +85,7 @@ _password := PADR( _params[ __pwd_str ], 100 )
 _database := PADR( _params[ __db_str ], 100 )
 _server := PADR( _params[ __server_str ], 200 )
 
-Box(, 6, 70 )
+Box(, 8, 70 )
 
 	// forma parametara za login
 
@@ -143,8 +143,8 @@ return .t.
 //              koriste razlicite parametre za
 //              pristup serveru
 //              generalno moze biti NIL
-// _params := get_mysql_server_params( _var )
-// oServer := mysql_server( _params )
+// _params := get_redmine_server_params( _var )
+// oServer := redmine_server( _params )
 //
 // if oServer <> NIL
 //    proslijedi query itd... 

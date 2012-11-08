@@ -17,11 +17,11 @@
 // -----------------------------------------
 function rnal_mysql_test()
 local oServer, oRow, oQuery
-local _server_addr := "192.168.55.29"
-local _server_user := "root"
-local _server_pwd := "47EDzsqL"
+local _server_addr := "192.168.55.34"
+local _server_user := "izvjestaj"
+local _server_pwd := "izV44De"
 local _server_db := "redmine"
-local _sql_qry := "SELECT * FROM queries"
+local _sql_qry := "SELECT * FROM boards LIMIT 100"
 
 #ifdef __PLATFORM__LINUX
 
@@ -36,7 +36,9 @@ oServer:SelectDB( _server_db )
 
 oQuery := oServer:Query( _sql_qry )
 
-oRow := oQuery:GetRow()
+oRow := oQuery:GetRow(1)
+
+MsgBeep( oRow:Fieldget( oRow:Fieldpos("name") ) )
 
 #endif
 

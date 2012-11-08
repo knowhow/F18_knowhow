@@ -1602,11 +1602,13 @@ set order to tag "ID"
 go top
 seek id_rj
 
-if EMPTY( field->konto )
+select fakt_pripr
+
+if EMPTY( rj->konto )
     return .t.
 endif
 
-_id_konto := field->konto
+_id_konto := rj->konto
 
 select ( _t_area )
 

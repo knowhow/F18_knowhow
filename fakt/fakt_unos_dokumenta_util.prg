@@ -2213,8 +2213,8 @@ return
 function Part1Stavka()
 local cRet:=""
 
-if alltrim(rbr) == "1"
-  cRet += trim(IdPartner) + ": " 
+if ALLTRIM( rbr ) == "1"
+  cRet += trim( IdPartner ) + ": " 
 endif
 
 return cRet

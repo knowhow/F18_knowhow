@@ -37,6 +37,9 @@ AADD(_opcexe, {|| lst_ch_date() })
 AADD(_opc, "------------------------------------------- ")
 AADD(_opcexe, {|| nil })
 
+AADD(_opc, "M. montaza  ")
+AADD(_opcexe, {|| rnal_rpt_montaza() })
+
 AADD(_opc, "S. specifikacija naloga za poslovodje  ")
 AADD(_opcexe, {|| m_get_spec( 1 ) })
 

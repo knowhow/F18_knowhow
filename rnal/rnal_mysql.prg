@@ -16,31 +16,26 @@
 // test funkcija mysql
 // -----------------------------------------
 function rnal_mysql_test()
-local oServer, oRow, oQuery
-local _server_addr := "192.168.55.34"
-local _server_user := "izvjestaj"
-local _server_pwd := "*****"
-local _server_db := "redmine"
+local oServer, oRow, oTable
+local _server_params
 local _sql_qry := "SELECT * FROM boards LIMIT 100"
 
-#ifdef __PLATFORM__LINUX
-
-oServer := TMySQLServer():New( _server_addr, _server_user, _server_pwd )
-
-if oServer:NetErr()
-	Alert( oServer:Error() )
+#ifndef __PLATFORM__LINUX
 	return
-endif
-
-oServer:SelectDB( _server_db )
-
-oQuery := oServer:Query( _sql_qry )
-
-oRow := oQuery:GetRow(1)
-
-MsgBeep( oRow:Fieldget( oRow:Fieldpos("name") ) )
-
 #endif
+
+// setuj parametre
+mysql_login_form( nil )
+
+_server_params := get_mysql_server_params( nil )
+
+oServer := mysql_server( _server_params )
+
+oTable := oServer:Query( _sql_qry )
+
+oRow := oTable:GetRow(1)
+
+MsgBeep( ALLTRIM( oRow:Fieldget( oRow:Fieldpos("name") ) ) )
 
 return
 

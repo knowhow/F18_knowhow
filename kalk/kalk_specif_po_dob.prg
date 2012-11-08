@@ -146,8 +146,12 @@ if _izdvoji_ulaze( vars ) == 0
     return .f.
 endif
 
-// sada nastiklaj i prodaju na osnovu upita i pomocne tabele
-_izdvoji_prodaju( vars )
+// samo ako se radi izvjestaj
+// ako je narudzba, ovo je nepotrebno
+if vars["narudzba"] == "N"
+    // sada nastiklaj i prodaju na osnovu upita i pomocne tabele
+    _izdvoji_prodaju( vars )
+endif
 
 return .t.
 

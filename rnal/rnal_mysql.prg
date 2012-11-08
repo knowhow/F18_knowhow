@@ -19,7 +19,7 @@ function rnal_mysql_test()
 local oServer, oRow, oQuery
 local _server_addr := "192.168.55.34"
 local _server_user := "izvjestaj"
-local _server_pwd := "izV44De"
+local _server_pwd := "*****"
 local _server_db := "redmine"
 local _sql_qry := "SELECT * FROM boards LIMIT 100"
 

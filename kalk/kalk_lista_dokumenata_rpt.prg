@@ -15,31 +15,36 @@
 
 
 function StDoks()
-local nCol1:=0,cImeKup
+local nCol1 := 0, cImeKup
 local cidfirma
 local nul,nizl,nRbr
 local m
 private qqTipDok
-
 private ddatod,ddatdo
+
 O_KALK_DOKS
-if reccount2()==0
- kalk_gen_doks_iz_kalk()
+
+if reccount2() == 0
+    kalk_gen_doks_iz_kalk()
 endif
+
 close all
+
 SStDoks()
+
 return
 
 
-/*! \fn SStDoks()
- *  \brief Stampa liste dokumenata
- */
+
+
 
 function SStDoks()
 local lImaUkSt := .f.
 local _head
+local _n_col := 20
 local _pkonto, _mkonto
 local _qqmkonto, _qqpkonto
+local _partn_naz := "N"
 
 O_KALK_DOKS
 O_PARTN
@@ -55,7 +60,7 @@ _qqmkonto := ""
 
 qqVD := ""
 
-Box(,9,75)
+Box(, 12, 75 )
 
 	private cStampaj := "N"
 	qqBrDok := ""
@@ -67,6 +72,7 @@ Box(,9,75)
 	dDatDo := fetch_metric( "kalk_lista_dokumenata_datum_do", my_user(), dDatDo )
 	_mkonto := fetch_metric( "kalk_lista_dokumenata_mkonto", my_user(), _mkonto )
 	_pkonto := fetch_metric( "kalk_lista_dokumenata_pkonto", my_user(), _pkonto )
+	_partn_naz := fetch_metric( "kalk_lista_dokumenata_ispis_partnera", my_user(), _partn_naz )
 	
 	qqVD := padr(qqVD,2)
 	qqBrDok := PADR(qqBrDok,60)
@@ -77,31 +83,32 @@ Box(,9,75)
 	do while .t.
 
 	if gNW=="X"
-   		cIdFirma:=padr(cidfirma,2)
-   		@ m_x+1,m_y+2 SAY "Firma - prazno svi" GET cIdFirma valid {|| .t. }
+   		cIdFirma := padr(cidfirma,2)
+   		@ m_x + 1, m_y + 2 SAY "Firma - prazno svi" GET cIdFirma valid {|| .t. }
    		read
  	endif
 
  	if !empty(cidfirma)
-    	@ m_x+2,m_y+2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqVD pict "@!"
+    	@ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqVD pict "@!"
     	qqVD:="  "
  	else
     	cIdfirma:=""
  	endif
 
- 	@ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
- 	@ m_x+3,col()+1 SAY "do"  get dDatDo
- 	@ m_x+5,m_y+2 SAY "Partner" GET cIdPartner pict "@!" valid empty(cidpartner) .or. P_Firma(@cIdPartner)
- 	@ m_x+6,m_y+2 SAY " Magacinska konta:" GET _mkonto pict "@S30"
- 	@ m_x+7,m_y+2 SAY "Prodavnicka konta:" GET _pkonto pict "@S30"
- 	@ m_x+8,m_y+2 SAY "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
- 	@ m_x+9,m_y+2 SAY "Izvrsiti stampanje sadrzaja ovih dokumenata ?"  get cStampaj pict "@!" valid cStampaj$"DN"
+ 	@ m_x + 3, m_y + 2 SAY "Od datuma "  get dDatOd
+ 	@ m_x + 3, col() + 1 SAY "do"  get dDatDo
+ 	@ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner pict "@!" valid empty(cidpartner) .or. P_Firma(@cIdPartner)
+ 	@ m_x + 6, m_y + 2 SAY " Magacinska konta:" GET _mkonto pict "@S30"
+ 	@ m_x + 7, m_y + 2 SAY "Prodavnicka konta:" GET _pkonto pict "@S30"
+ 	@ m_x + 8, m_y + 2 SAY "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
+ 	@ m_x + 10, m_y + 2 SAY "Ispis naziva partnera (D/N)?" GET _partn_naz PICT "@!" VALID _partn_naz $ "DN"
+ 	@ m_x + 12, m_y + 2 SAY "Izvrsiti stampanje sadrzaja ovih dokumenata ?"  get cStampaj pict "@!" valid cStampaj$"DN"
 
  	read
 
  	ESC_BCR
 
-	aUsl1 := Parsiraj(qqBrDok,"BRDOK")
+	aUsl1 := Parsiraj( qqBrDok, "BRDOK" )
 
 	if !EMPTY( _mkonto )
 		_qqmkonto := Parsiraj( _mkonto, "mkonto" )
@@ -110,7 +117,6 @@ Box(,9,75)
 	if !EMPTY( _pkonto )
 		_qqpkonto := Parsiraj( _pkonto, "pkonto" )
 	endif
-
 
 	if aUsl1 <> NIL
 		exit
@@ -128,16 +134,17 @@ Box(,9,75)
 	set_metric( "kalk_lista_dokumenata_datum_do", my_user(), dDatDo )
 	set_metric( "kalk_lista_dokumenata_mkonto", my_user(), _mkonto )
 	set_metric( "kalk_lista_dokumenata_pkonto", my_user(), _pkonto )
+	set_metric( "kalk_lista_dokumenata_ispis_partnera", my_user(), _partn_naz )
 	
 BoxC()
 
 select kalk_doks
 
-if fieldpos("ukstavki") <> 0
-	lImaUkSt:=.t.
+if FieldPos("ukstavki") <> 0
+	lImaUkSt := .t.
 endif
 
-private cFilt:=".t."
+private cFilt := ".t."
 
 if !empty(dDatOd) .or. !empty(dDatDo)
 	cFilt += ".and. DatDok>=" + cm2str(dDatOd) + ".and. DatDok<=" + cm2str(dDatDo)
@@ -165,9 +172,9 @@ endif
 
 set filter to &cFilt
 
-qqVD:=trim(qqVD)
+qqVD := TRIM(qqVD)
 
-seek cIdFirma+qqVD
+seek cIdFirma + qqVD
 
 if cStampaj == "D"
 	kalk_centr_stampa_dokumenta( .t., "IZDOKS" )
@@ -190,71 +197,20 @@ else
  	P_COND
 endif
 
-?? "KALK: Stampa dokumenata na dan:",date(),space(10),"za period",dDatOd,"-",dDatDo
+?? "KALK: Stampa dokumenata na dan:", DATE(), SPACE(10), "za period", dDatOd, "-", dDatDo
 
 if !empty(qqVD)
 	?? space(2),"za tipove dokumenta:",trim(qqVD)
 endif
+
 if !empty(qqBrDok)
 	?? space(2),"za brojeve dokumenta:",trim(qqBrDok)
 endif
 
-m := ""
-m += REPLICATE( "-", 5 )
-m += SPACE(1)
-m += REPLICATE( "-", 8 )
-m += SPACE(1)
-m += REPLICATE( "-", 16 )
-m += SPACE(1)
-m += REPLICATE( "-", 7 )
-m += SPACE(1)
-m += REPLICATE( "-", 7 )
-m += SPACE(1)
-m += REPLICATE( "-", 6 )
-m += SPACE(1)
-m += REPLICATE( "-", 6 )
-m += SPACE(1)
-m += REPLICATE( "-", 6 )
-m += SPACE(1)
-m += REPLICATE( "-", 12 )
-m += SPACE(1)
-m += REPLICATE( "-", 12 )
-m += SPACE(1)
-m += REPLICATE( "-", 12 )
-m += SPACE(1)
-m += REPLICATE( "-", 12 )
-m += SPACE(1)
-m += REPLICATE( "-", 6 )
+m := _get_rpt_line()
+_head := _get_rpt_header()
 
 ? m
-
-_head := ""
-_head += PADC( "Rbr", 5 )
-_head += SPACE(1)
-_head += PADC( "Datum", 8 )
-_head += SPACE(1)
-_head += PADC( "Dokument", 16 )
-_head += SPACE(1)
-_head += PADC( "M-konto", 7 )
-_head += SPACE(1)
-_head += PADC( "P-konto", 7 )
-_head += SPACE(1)
-_head += PADC( "Part.", 6 )
-_head += SPACE(1)
-_head += PADC( "Zad.", 6 )
-_head += SPACE(1)
-_head += PADC( "Zad.2", 6 )
-_head += SPACE(1)
-_head += PADC( "NV", 12 )
-_head += SPACE(1)
-_head += PADC( "VPV", 12 )
-_head += SPACE(1)
-_head += PADC( "RABATV", 12 )
-_head += SPACE(1)
-_head += PADC( "MPV", 12 )
-_head += SPACE(1)
-_head += PADC( "Op.", 6 )
-
 ? _head
 ? m
 
@@ -265,7 +221,12 @@ nUkStavki := 0
 
 do while !EOF() .and. IdFirma = cIdFirma
   
-	? Str( ++nC, 4 ) + "."
+    select partn
+    hseek kalk_doks->idpartner
+
+    select kalk_doks
+
+	? STR( ++nC, 4 ) + "."
 
 	@ prow(), pcol() + 1 SAY field->datdok
 	@ prow(), pcol() + 1 SAY PADR( field->idfirma + "-" + field->idVd + "-" + field->brdok, 16)
@@ -290,7 +251,7 @@ do while !EOF() .and. IdFirma = cIdFirma
 		@ prow(), pcol() + 1 SAY PADR( kalk_doks->pkonto, 7 )
 	endif
 
-	@ prow(), pcol() + 1 SAY PADR( field->idpartner, 6 )
+	@ prow(), _n_col := pcol() + 1 SAY PADR( field->idpartner, 6 )
 	@ prow(), pcol() + 1 SAY PADR( field->idzaduz, 6 )
 	@ prow(), pcol() + 1 SAY PADR( field->idzaduz2, 6 )
   
@@ -305,28 +266,41 @@ do while !EOF() .and. IdFirma = cIdFirma
     	@ prow(),pcol()+1 SAY padr(iif(empty(sifra),space(2),left(CryptSC(sifra),2)),6)
   	endif
 
-  	nNV+=NV
- 	nVPV+=VPV
-  	nRabat+=Rabat
- 	nMPV+=MPV
+    // drugi red
+    if _partn_naz == "D" .and. !EMPTY( field->idpartner )
+        ?
+        @ prow(), _n_col SAY ALLTRIM( partn->naz )
+    endif
+
+  	nNV += NV
+ 	nVPV += VPV
+  	nRabat += Rabat
+ 	nMPV += MPV
 
   	if lImaUkSt
 		if field->ukStavki==0
+
 			nStavki:=0
+
 			select kalk
 			set order to tag "1"
 			seek kalk_doks->(idFirma+idVd+brDok)
+
 			do while !eof() .and. idFirma+idVd+brDok==kalk_doks->(idFirma+idVd+brDok)
 				nStavki:=nStavki+1
 				skip 1
 			enddo
+
 			select kalk_doks
-			Scatter()
-			_ukStavki:=nStavki
-			Gather()	
-		endif
-  		nUkStavki+=field->ukStavki
+			_rec := dbf_get_rec()
+            _rec["ukstavki"] := nStavki
+            update_rec_server_and_dbf( "kalk_doks", _rec, 1, "FULL" )
+		
+        endif
+  		
+        nUkStavki+=field->ukStavki
 		@ prow(),pcol()+1 SAY str(field->ukStavki,6)
+
 	endif
 
   	skip
@@ -355,6 +329,75 @@ END PRINT
 
 close all
 return
+
+
+static function _get_rpt_header()
+local _head := ""
+
+_head += PADC( "Rbr", 5 )
+_head += SPACE(1)
+_head += PADC( "Datum", 8 )
+_head += SPACE(1)
+_head += PADC( "Dokument", 16 )
+_head += SPACE(1)
+_head += PADC( "M-konto", 7 )
+_head += SPACE(1)
+_head += PADC( "P-konto", 7 )
+_head += SPACE(1)
+_head += PADC( "Part.", 6 )
+_head += SPACE(1)
+_head += PADC( "Zad.", 6 )
+_head += SPACE(1)
+_head += PADC( "Zad.2", 6 )
+_head += SPACE(1)
+_head += PADC( "NV", 12 )
+_head += SPACE(1)
+_head += PADC( "VPV", 12 )
+_head += SPACE(1)
+_head += PADC( "RABATV", 12 )
+_head += SPACE(1)
+_head += PADC( "MPV", 12 )
+_head += SPACE(1)
+_head += PADC( "Op.", 6 )
+
+return _head
+
+
+
+// ------------------------------------------------------
+// vraca liniju za report
+// ------------------------------------------------------
+static function _get_rpt_line()
+local _line := ""
+
+_line += REPLICATE( "-", 5 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 8 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 16 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 7 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 7 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 6 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 6 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 6 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 12 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 6 )
+
+return _line
+
 
 
 

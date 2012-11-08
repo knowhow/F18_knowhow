@@ -3,6 +3,7 @@
   - fin, budžet opcije, korekcije [#29584](http://redmine.bring.out.ba/issues/29584)
   - virm, generisanje virmana, bugfix [#29561](http://redmine.bring.out.ba/issues/29561)
   - fakt, količinsko stanje artikla sa kalk konta [#29489](http://redmine.bring.out.ba/issues/29489)
+  - kalk, lista dokumenata, ispis naziva partnera [#29536](http://redmine.bring.out.ba/issues/29536)
  
 1.3.65 2012-11-02, vsasa
 

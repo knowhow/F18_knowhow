@@ -30,8 +30,12 @@ _cre_tmp()
 // generisi report
 gen_rpt( _vars )
 
-// printaj report
-print_report( _vars )
+if _vars["narudzba"] == "D"
+    print_frm_asort_nar( _vars )
+else
+    // printaj report
+    print_report( _vars )
+endif
 
 return
 
@@ -68,6 +72,7 @@ return
 // ----------------------------------------
 static function frm_vars( vars )
 local _dat_od, _dat_do, _p_konto, _artikli, _dob, _prik_nule
+local _narudzba
 local _x := 1
 
 _dat_od := fetch_metric( "kalk_spec_mp_dob_dat_od", my_user(), CTOD("") )
@@ -76,6 +81,7 @@ _p_konto := fetch_metric( "kalk_spec_mp_dob_p_konto", my_user(), PADR( "1330", 7
 _artikli := PADR( fetch_metric( "kalk_spec_mp_dob_artikli", my_user(), "" ), 200 )
 _dob := fetch_metric( "kalk_spec_mp_dob_dobavljac", my_user(), PADR( "", 6 ) )
 _prik_nule := fetch_metric( "kalk_spec_mp_dob_nule", my_user(), "N" )
+_narudzba := fetch_metric( "kalk_spec_mp_dob_narudzba", my_user(), "N" )
 
 // forma uslova #
 Box(, 10, 70 )
@@ -97,6 +103,9 @@ Box(, 10, 70 )
     ++ _x
     @ m_x + _x, m_y + 2 SAY "Prikaz stavki kojima je ulaz = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Stampati formu narudzbe (D/N) ?" GET _narudzba VALID _narudzba $ "DN" PICT "@!"
+
     read
 
 BoxC()
@@ -113,6 +122,7 @@ set_metric( "kalk_spec_mp_dob_p_konto", my_user(), _p_konto )
 set_metric( "kalk_spec_mp_dob_artikli", my_user(), _artikli )
 set_metric( "kalk_spec_mp_dob_dobavljac", my_user(), _dob )
 set_metric( "kalk_spec_mp_dob_nule", my_user(), _prik_nule )
+set_metric( "kalk_spec_mp_dob_narudzba", my_user(), _narudzba )
 
 vars := hb_hash()
 vars["datum_od"] := _dat_od
@@ -121,6 +131,7 @@ vars["p_konto"] := _p_konto
 vars["artikli"] := _artikli
 vars["dobavljac"] := _dob
 vars["nule"] := _prik_nule
+vars["narudzba"] := _narudzba
 
 return .t.
 
@@ -349,6 +360,77 @@ next
 MsgC()
 
 return _cnt
+
+
+
+// ---------------------------------------------------------
+// printanje obrasca narudzbe na osnovu podataka
+// ---------------------------------------------------------
+static function print_frm_asort_nar( vars )
+local _my_xml := my_home() + "data.xml"
+local _template := "kalk_asort_nar.odt"
+local _count := 0
+
+open_xml( _my_xml )
+xml_head()
+
+select r_export
+set order to tag "roba"
+go top
+
+O_PARTN
+select partn
+hseek r_export->idpartner
+
+select r_export
+
+xml_subnode( "nar", .f. )
+
+// podaci matične firme
+xml_node( "firma", to_xml_encoding( gNFirma) )
+xml_node( "f_adr", fetch_metric( "org_adresa", nil, "" ) )
+xml_node( "f_mj", to_xml_encoding( gMjStr ) )
+xml_node( "f_tel", fetch_metric( "fakt_zagl_telefon", nil, "" ) )
+  
+// podaci partnera
+xml_node( "part_id", to_xml_encoding( hb_utf8tostr( field->idpartner ) ) )
+xml_node( "part_naz", to_xml_encoding( hb_utf8tostr( partn->naz ) ) )
+xml_node( "part_adr", to_xml_encoding( hb_utf8tostr( partn->adresa ) ) )
+xml_node( "part_mj", to_xml_encoding( hb_utf8tostr( partn->mjesto ) ) )
+xml_node( "part_ptt", to_xml_encoding( hb_utf8tostr( partn->ptt ) ) )
+xml_node( "part_tel", to_xml_encoding( hb_utf8tostr( partn->telefon ) ) )
+xml_node( "datum", DTOC( DATE() ) )
+
+do while !EOF()
+    
+    ++ _count
+
+    xml_subnode( "item", .f. )
+
+    xml_node( "rbr", ALLTRIM(STR( _count ) ) )
+    xml_node( "idroba", to_xml_encoding( hb_utf8tostr( field->idroba ) ) )
+    xml_node( "barkod", to_xml_encoding( hb_utf8tostr( field->barkod ) ) )
+    xml_node( "naziv", to_xml_encoding( hb_utf8tostr( field->naziv ) )  )
+    xml_node( "jmj", to_xml_encoding( hb_utf8tostr( field->jmj ) ) )
+
+    xml_subnode( "item", .t. )
+
+    skip
+
+enddo
+
+xml_subnode( "nar", .t. )
+close_xml()
+
+if _count > 0
+    // pozovi print odt forme
+    if f18_odt_generate( _template, _my_xml )
+	    // printaj odt
+        f18_odt_print()
+    endif
+endif
+
+return
 
 
 

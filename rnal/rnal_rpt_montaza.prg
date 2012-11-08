@@ -58,10 +58,10 @@ local oTable
 local _query
 
 // daj mi parametre konekcije
-_server_params := get_mysql_server_params( __rpt_var )
+_server_params := get_redmine_server_params( __rpt_var )
 
 // konektuj se na server
-oServer := mysql_server( _server_params )
+oServer := redmine_server( _server_params )
 // da li je server ziv ???
 if oServer == NIL
 	return NIL
@@ -111,7 +111,7 @@ Box(, 10, 70 )
 
 	if _conn == "D"
 		// setuj parametre konekcije
-		mysql_login_form( __rpt_var )
+		redmine_login_form( __rpt_var )
 	endif
 
 	++ _i

@@ -25,11 +25,11 @@ local _sql_qry := "SELECT * FROM boards LIMIT 100"
 #endif
 
 // setuj parametre
-mysql_login_form( nil )
+redmine_login_form( nil )
 
-_server_params := get_mysql_server_params( nil )
+_server_params := get_redmine_server_params( nil )
 
-oServer := mysql_server( _server_params )
+oServer := redmine_server( _server_params )
 
 oTable := oServer:Query( _sql_qry )
 

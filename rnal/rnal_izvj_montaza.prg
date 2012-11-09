@@ -171,10 +171,10 @@ for _i := 1 to oTable:LastRec()
 
 	_rec["priority"] := oRow:FieldGet( oRow:FieldPos( "priority" ) )
 	_rec["issue"] := oRow:FieldGet( oRow:FieldPos( "issue" ) )
-	_rec["author"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "author" ) ) )
-	_rec["subject"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "subject" ) ) )
-	_rec["project"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "project" ) ) )
-	_rec["status"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "status" ) ) )
+	_rec["author"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "author" ) ) ) )
+	_rec["subject"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "subject" ) ) ) )
+	_rec["project"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "project" ) ) ) )
+	_rec["status"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "status" ) ) ) )
 	if oRow:FieldGet( oRow:FieldPos( "due_date" ) ) <> NIL
 		_rec["due_date"] := oRow:FieldGet( oRow:FieldPos( "due_date" ) )
 	endif
@@ -252,7 +252,7 @@ for _i := 1 to oTable:LastRec()
 	_row_value := oRow2:FieldGet( oRow2:FieldPos( "value" ) )
 
 	if hb_hhaskey( rec, _tmp )
-		rec[ _tmp ] := _row_value
+		rec[ _tmp ] := hb_utf8tostr( _row_value )
 	endif
 
 next
@@ -305,19 +305,19 @@ do while !EOF()
     
 	xml_node( "subject", ;
 		to_xml_encoding( ;
-			field->subject ) )
+			hb_utf8tostr( field->subject ) ) )
  
 	xml_node( "author", ;
 		to_xml_encoding( ;
-			field->author ) )
+			hb_utf8tostr( field->author ) ) )
  
 	xml_node( "project", ;
 		to_xml_encoding( ;
-			field->project ) )
+			hb_utf8tostr( field->project ) ) )
  
 	xml_node( "status", ;
 		to_xml_encoding( ;
-			field->status ) )
+			hb_utf8tostr( field->status ) ) )
 
 	xml_node( "due_date", ;
 		DTOC( ;
@@ -330,63 +330,63 @@ do while !EOF()
 	// custom polja
 	xml_node( "cust_1", ;
 		to_xml_encoding( ;
-			field->cust_1 ) )
+			hb_utf8tostr( field->cust_1 ) ) )
  
 	xml_node( "cust_2", ;
 		to_xml_encoding( ;
-			field->cust_2 ) )
+			hb_utf8tostr( field->cust_2 ) ) )
  
 	xml_node( "cust_3", ;
 		to_xml_encoding( ;
-			field->cust_3 ) )
+			hb_utf8tostr( field->cust_3 ) ) )
  
 	xml_node( "cust_4", ;
 		to_xml_encoding( ;
-			field->cust_4 ) )
+			hb_utf8tostr( field->cust_4 ) ) )
  
 	xml_node( "cust_5", ;
 		to_xml_encoding( ;
-			field->cust_5 ) )
+			hb_utf8tostr( field->cust_5 ) ) )
  
 	xml_node( "cust_6", ;
 		to_xml_encoding( ;
-			field->cust_6 ) )
+			hb_utf8tostr( field->cust_6 ) ) )
  
 	xml_node( "cust_7", ;
 		to_xml_encoding( ;
-			field->cust_7 ) )
+			hb_utf8tostr( field->cust_7 ) ) )
  
 	xml_node( "cust_8", ;
 		to_xml_encoding( ;
-			field->cust_8 ) )
+			hb_utf8tostr( field->cust_8 ) ) )
 
  	xml_node( "cust_9", ;
 		to_xml_encoding( ;
-			field->cust_9 ) )
+			hb_utf8tostr( field->cust_9 ) ) )
  
 	xml_node( "cust_10", ;
 		to_xml_encoding( ;
-			field->cust_10 ) )
+			hb_utf8tostr( field->cust_10 ) ) )
  
 	xml_node( "cust_11", ;
 		to_xml_encoding( ;
-			field->cust_11 ) )
+			hb_utf8tostr( field->cust_11 ) ) )
 
  	xml_node( "cust_12", ;
 		to_xml_encoding( ;
-			field->cust_12 ) )
+			hb_utf8tostr( field->cust_12 ) ) )
 
  	xml_node( "cust_13", ;
 		to_xml_encoding( ;
-			field->cust_13 ) )
+			hb_utf8tostr( field->cust_13 ) ) )
  
 	xml_node( "cust_14", ;
 		to_xml_encoding( ;
-			field->cust_14 ) )
+			hb_utf8tostr( field->cust_14 ) ) )
  
 	xml_node( "cust_15", ;
 		to_xml_encoding( ;
-			field->cust_15 ) )
+			hb_utf8tostr( field->cust_15 ) ) )
  
 
 	xml_subnode( "item", .t. )

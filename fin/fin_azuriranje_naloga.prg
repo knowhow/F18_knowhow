@@ -341,6 +341,7 @@ if _is_vise_dok() == .t.
     endif
     // nafiluj sve potrebne tabele
     stnal( .t. )
+	o_fin_za_azuriranje()
 endif
 
 lAzur:=.t.

@@ -16,7 +16,7 @@
 // automatsko formiranje nivelacije na osnovu ulaznog dokumenta
 // ---------------------------------------------------------------------
 function Niv_11()
-local _sufix
+local _sufix, _rec
 
 O_TARIFA
 O_KONCIJ
@@ -35,7 +35,7 @@ private cIdFirma := field->idfirma
 private cIdVD := field->idvd
 private cBrDok := field->brdok
 
-if !( cIdvd $ "11#81" ) .and. !empty( gMetodaNC )
+if !( cIdvd $ "11#81" ) .and. !EMPTY( gMetodaNC )
 	close all
 	return
 endif
@@ -45,10 +45,11 @@ private cBrNiv := "0"
 select kalk
 seek cIdFirma + "19" + CHR(254)
 skip -1
+
 if idvd<>"19"
-     cBrNiv:=space(8)
+     cBrNiv := space(8)
 else
-     cBrNiv:=brdok
+     cBrNiv := brdok
 endif
                 
 _sufix := SufBrKalk( kalk_pripr->idkonto )
@@ -62,86 +63,113 @@ go top
 private nRBr := 0
 cPromjCj := "D"
 fNivelacija := .f.
-do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
-  	scatter()
+
+do while !EOF() .and. cIdFirma == idfirma .and. cIdvd == idvd .and. cBrdok == brdok
+
+    _rec := dbf_get_rec()
+
   	select koncij
-	seek trim(_idkonto)
+	seek TRIM( _rec["idkonto"] )
+
   	select roba
-	hseek _idroba
+	hseek _rec["idroba"]
+
   	select tarifa
 	hseek roba->idtarifa
+
   	select roba
 
-  	private nMPC:=0
-  	nMPC:=UzmiMPCSif()
-  	if gCijene="2"
-   		/////// utvrdjivanje fakticke mpc
-   		faktMPC(@nMPC,_idfirma+_pkonto+_idroba)
+  	private nMPC := 0
+  	nMPC := UzmiMPCSif()
+  	
+    if gCijene = "2"
+   		faktMPC( @nMPC, _rec["idfirma"] + _rec["pkonto"] + _rec["idroba"] )
    		select kalk_pripr
   	endif
 
-  	if _mpcsapp<>nMPC // izvrsiti nivelaciju
+  	if _rec["mpcsapp"] <> nMPC 
+        // izvrsiti nivelaciju
 
-   if !fNivelacija   // prva stavka za nivelaciju
-     cPromCj:=Pitanje(,"Postoje promjene cijena. Staviti nove cijene u sifrarnik ?","D")
-   endif
-   fNivelacija:=.t.
+        if !fNivelacija   
+            // prva stavka za nivelaciju
+            cPromCj := Pitanje(,"Postoje promjene cijena. Staviti nove cijene u sifrarnik ?","D")
+        endif
+        fNivelacija:=.t.
 
-   private nKolZn:=nKols:=nc1:=nc2:=0,dDatNab:=ctod("")
-   KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
-   if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);_ERROR:="1";endif
+        private nKolZn := nKols := nc1 := nc2 := 0
+        private dDatNab := CTOD("")
 
-   select kalk_pripr2
-   //append blank
+        KalkNabP( _rec["idfirma"], _rec["idroba"], _rec["idkonto"], @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+        
+        if dDatNab > _rec["datdok"]
+            Beep(1)
+            Msg( "Datum nabavke je " + DTOC( dDatNab ), 4 )
+            _rec["error"] := "1"
+        endif
 
-   _idpartner:=""
-   _VPC:=0
-   _GKolicina:=_GKolicin2:=0
-   _Marza2:=0; _TMarza2:="A"
-    private cOsn:="2",nStCj:=nNCJ:=0
+        select kalk_pripr2
+        //append blank
 
-    nStCj:=nMPC
+        _rec["idpartner"] := ""
+        _rec["vpc"]:=0
+        _rec["gkolicina"] := 0
+        _rec["gkolicin2"] := 0
+        _rec["marza2"] := 0
+        _rec["tmarza2"] := "A"
+            
+        private cOsn := "2", nStCj := nNCJ := 0
 
-    nNCJ:=kalk_pripr->MPCSaPP
+        nStCj := nMPC
 
-    _MPCSaPP:=nNCj-nStCj
-    _MPC:=0
-    _fcj:=nStCj
+        nNCJ := kalk_pripr->MPCSaPP
 
-    if _mpc<>0
-      _MPCSaPP:=(1+TARIFA->Opp/100)*_MPC*(1+TARIFA->PPP/100)
-    else
-      _mpc:=_mpcsapp/(1+TARIFA->Opp/100)/(1+TARIFA->PPP/100)
+        _rec["mpcsapp"] := nNCj - nStCj
+        _rec["mpc"] := 0
+        _rec["fcj"] := nStCj
+
+        if _rec["mpc"] <> 0
+            _rec["mpcsapp"] := (1 + tarifa->opp/100) * _rec["mpc"] * ( 1 + tarifa->ppp/100 )
+        else
+            _rec["mpc"] := _rec["mpcsapp"] / ( 1 + tarifa->opp/100) / ( 1 + tarifa->ppp/100 )
+        endif
+
+        if cPromCj == "D"
+            select koncij
+            seek TRIM( _rec["idkonto"] ) 
+            select roba
+            StaviMPCSif( _rec["fcj"] + _rec["mpcsapp"] ) 
+        endif
+
+        select kalk_pripr2
+
+        _rec["pkonto"] := _rec["idkonto"]
+        _rec["pu_i"] := "3"     
+        _rec["mkonto"] := ""
+        _rec["mu_i"] := ""
+
+        _rec["kolicina"] := nKolS
+        _rec["brdok"] := cBrniv
+        _rec["idvd"] := "19"
+
+        _rec["tbanktr"] := "X"    
+        _rec["error"] := ""
+    
+        if ROUND( _rec["kolicina"], 3 ) <> 0
+            append ncnl
+            _rec["rbr"] := STR( ++ nRbr, 3 )
+            dbf_update_rec( _rec ) 
+        endif
+  
     endif
 
-    if cPromCj=="D"
-     select koncij; seek trim(_idkonto)
-     select roba
-     StaviMPCSif(_fcj+_mpcsapp)
-    endif
-    select kalk_pripr2
-
-    _PKonto:=_Idkonto;_PU_I:="3"     // nivelacija
-    _MKonto:="";      _MU_I:=""
-
-    _kolicina:=nKolS
-    _brdok:=cBrniv
-    _idvd:="19"
-
-    _TBankTr:="X"    // izgenerisani dokument
-    _ERROR:=""
-    if round(_kolicina,3)<>0
-     append ncnl
-     _rbr:=str(++nRbr,3)
-     gather2()
-    endif
-  endif
-
-  select kalk_pripr;  skip
+    select kalk_pripr
+    skip
 
 enddo
-closeret
+
+close all
 return
-*}
+
+
 
 

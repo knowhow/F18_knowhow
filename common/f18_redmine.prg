@@ -172,6 +172,8 @@ if _server_type == "MYSQL"
 		    return NIL
 	    endif
 
+		oServer:Query( "SET NAMES 'utf8'")
+
 	    oServer:SelectDB( _server_db )
 
 	    return oServer

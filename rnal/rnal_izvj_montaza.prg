@@ -171,10 +171,10 @@ for _i := 1 to oTable:LastRec()
 
 	_rec["priority"] := oRow:FieldGet( oRow:FieldPos( "priority" ) )
 	_rec["issue"] := oRow:FieldGet( oRow:FieldPos( "issue" ) )
-	_rec["author"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "author" ) ) ) )
-	_rec["subject"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "subject" ) ) ) )
-	_rec["project"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "project" ) ) ) )
-	_rec["status"] := ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "status" ) ) ) )
+	_rec["author"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "author" ) ) )
+	_rec["subject"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "subject" ) ) )
+	_rec["project"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "project" ) ) )
+	_rec["status"] := ALLTRIM( oRow:FieldGet( oRow:FieldPos( "status" ) ) )
 	if oRow:FieldGet( oRow:FieldPos( "due_date" ) ) <> NIL
 		_rec["due_date"] := oRow:FieldGet( oRow:FieldPos( "due_date" ) )
 	endif
@@ -252,7 +252,7 @@ for _i := 1 to oTable:LastRec()
 	_row_value := oRow2:FieldGet( oRow2:FieldPos( "value" ) )
 
 	if hb_hhaskey( rec, _tmp )
-		rec[ _tmp ] := hb_utf8tostr( _row_value )
+		rec[ _tmp ] := _row_value
 	endif
 
 next

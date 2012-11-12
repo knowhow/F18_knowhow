@@ -911,7 +911,6 @@ endif
 if EMPTY(cType) .and. LastKey() == K_ESC .and. lNewRec
 
     _rec := get_dbf_global_memvars()
-
     delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 	return 0
@@ -936,12 +935,7 @@ if !EMPTY(cType)
 endif
 
 _rec := get_dbf_global_memvars()
-
-my_use_semaphore_off()
-sql_table_update( nil, "BEGIN" )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-sql_table_update( nil, "END" )
-my_use_semaphore_on()
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 if lNewRec
 	// nafiluj odmah atribute za ovu grupu...
@@ -966,14 +960,12 @@ Box(,1,40)
     
 BoxC()
 
-
 if LastKey() <> K_ESC
 
     _rec := get_dbf_global_memvars()
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 endif
-
 
 return 1
 
@@ -1011,8 +1003,7 @@ do while !EOF() .and. field->e_gr_id == __gr_id ;
 	_e_gr_at_id := e_gr_att->e_gr_at_id
 	_e_gr_vl_id := 0
 
-    _rec := get_dbf_global_memvars()
-    
+    _rec := get_dbf_global_memvars()    
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
     select e_gr_att
@@ -1088,7 +1079,6 @@ if LastKey() == K_ESC .and. lNewRec
 endif
 
 _rec := get_dbf_global_memvars()
-
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 return 1

@@ -105,14 +105,20 @@ return xVal
 // ------------------------------
 function add_to_relation( cFrom, cTo, cFromId, cToId )
 local nTArea := SELECT()
+local _rec
 
 O_RELATION
 select relation
+
 append blank
-replace tfrom with PADR(cFrom, 10)
-replace tto with PADR(cTo, 10)
-replace tfromid with PADR(cFromId, 10)
-replace ttoid with PADR(cToId, 10)
+_rec := dbf_get_rec()
+
+_rec["tfrom"] := PADR(cFrom, 10)
+_rec["tto"] := PADR(cTo, 10)
+_rec["tfromid"] := PADR(cFromId, 10)
+_rec["ttoid"] := PADR(cToId, 10)
+
+update_rec_server_and_dbf( "relation", _rec, 1, "FULL" )
 
 select (nTArea)
 return

@@ -71,6 +71,7 @@ local nCust_id
 local i
 local lSumirati
 local cVpMp := "V"
+local _rec
 
 if lNoGen == nil
     lNoGen := .f.
@@ -197,7 +198,7 @@ if cVpMp == "M"
     cCtrlNo := "23"
 endif
 
-cBrDok := fa_new_doc( cFirma, cCtrlNo )
+cBrDok := fakt_novi_broj_dokumenta( cFirma, cCtrlNo )
 cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
 nRbr := 0
 
@@ -210,7 +211,7 @@ do while !EOF()
     nDoc_no := field->doc_no
     cArt_id := field->art_id
     nQtty := field->doc_it_qtt
-    cDesc := field->descr
+    cDesc := field->desc
 
     if lSumirati == .t.
         
@@ -236,13 +237,12 @@ do while !EOF()
         loop
     endif
 
-    select X_TBL
-    
+    select fakt_pripr    
     go bottom
     skip -1
 
-    if !EMPTY( x_tbl->rbr )
-        nRbr := VAL( x_tbl->rbr )
+    if !EMPTY( fakt_pripr->rbr )
+        nRbr := VAL( fakt_pripr->rbr )
     endif
     
     append blank
@@ -262,7 +262,7 @@ do while !EOF()
     _dindem := "KM "
     _zaokr := 2
 
-    if x_tbl->(FIELDPOS("OPIS")) <> 0
+    if fakt_pripr->(FIELDPOS("OPIS")) <> 0
         _opis := cDesc
     endif
 
@@ -397,13 +397,13 @@ do while !EOF()
     
     endif   
     
-    select X_TBL
+    select fakt_pripr
     
     go bottom
     skip -1
 
-    if !EMPTY( x_tbl->rbr )
-        nRbr := VAL( x_tbl->rbr )
+    if !EMPTY( fakt_pripr->rbr )
+        nRbr := VAL( fakt_pripr->rbr )
     endif
     
     append blank
@@ -423,7 +423,7 @@ do while !EOF()
     _dindem := "KM "
     _zaokr := 2
     
-    if x_tbl->(FIELDPOS("OPIS")) <> 0
+    if fakt_pripr->(FIELDPOS("OPIS")) <> 0
         _opis := cArt_sh
     endif
 
@@ -507,6 +507,7 @@ return
 // --------------------------------------
 static function _ins_veza( nA_doc_it, nA_docs, cBrfakt )
 local nDoc_no
+local _rec
 
 select ( nA_doc_it )
 set order to tag "1"
@@ -526,9 +527,12 @@ do while !EOF()
     select (nA_docs)
     seek docno_str(nDoc_no)
 
-    replace doc_in_fmk with 1   
-    replace fmk_doc with _fmk_doc_upd( ALLTRIM( field->fmk_doc ), ;
+    _rec := dbf_get_rec()
+    _rec["doc_in_fmk"] := 1
+    _rec["fmk_doc"] := _fmk_doc_upd( ALLTRIM( _rec["fmk_doc"] ), ;
         ALLTRIM(cBrfakt) )
+
+    dbf_update_rec( _rec )
 
     select (nA_doc_it)
     skip
@@ -545,7 +549,7 @@ static function _fix_rbr()
 local nRbr
 
 // sredi redne brojeve pripreme
-select x_tbl
+select fakt_pripr
 set order to tag "0"
 go top
 nRbr := 0
@@ -558,7 +562,7 @@ return
 
 
 // -----------------------------------
-// ubaci broj veze u xtbl fakt
+// ubaci broj veze u fakt pripr
 // -----------------------------------
 static function _ins_x_veza( nArea )
 local cTmp := ""
@@ -566,7 +570,7 @@ local nDoc_no
 local cIns_x := ""
 
 // ako polje veze ne postoji, preskoci ovu operaciju
-if x_tbl->(FIELDPOS("DOK_VEZA")) == 0
+if fakt_pripr->(FIELDPOS("DOK_VEZA")) == 0
     return .f.
 endif
 
@@ -592,7 +596,7 @@ do while !EOF()
 enddo
 
 // u ovoj se tabeli pozicioniraj na pocetak
-select x_tbl
+select fakt_pripr
 go top
 
 // skloni zadnji znak ";"
@@ -600,7 +604,10 @@ cTmp := PADR( ALLTRIM( cTmp ), LEN( ALLTRIM( cTmp ) ) - 1 )
 
 // zatim ubaci broj veze
 cIns_x := _fmk_doc_upd( field->dok_veza, cTmp )
-replace x_tbl->dok_veza with cIns_x
+
+_rec := dbf_get_rec()
+_rec["dok_veza"] := cIns_x
+dbf_update_rec( _rec )
 
 // ubaci opis u memo polje...
 _ins_x_txt( cIns_x )
@@ -615,7 +622,7 @@ return .t.
 static function _ins_x_txt( cTxt )
 local aTxt
 
-select x_tbl
+select fakt_pripr
 go top
 
 // treba ubaciti i u memo polje
@@ -907,36 +914,6 @@ endif
 
 select (nTArea)
 return xRet
-
-
-
-
-// ----------------------------------------------
-// novi dokument u fakt-u
-// ----------------------------------------------
-static function fa_new_doc( cFaFirma, cFaTipDok )
-local cDokBr := REPLICATE("9", 8)
-local nTArea := SELECT()
-local cPom
-local nPom
-
-O_FAKT_DOKS
-set order to tag "1"
-go top
-seek cFaFirma + cFaTipDok + CHR(254)
-skip -1
-
-if field->idfirma == cFaFirma .and. field->idtipdok == cFaTipDok
-    cPom := ALLTRIM( field->brdok )
-    nPom := VAL( cPom )
-else
-    nPom := 0
-endif
-
-cDokBr := PADL( ALLTRIM(STR( nPom + 1 )), 5, "0" )
-
-select (nTArea)
-return cDokBr
 
 
 // -----------------------------------

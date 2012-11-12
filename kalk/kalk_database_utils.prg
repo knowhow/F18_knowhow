@@ -374,12 +374,235 @@ return cResult
 
 
 
+// ------------------------------------------------
+// vraca prazan broj dokumenta
+// ------------------------------------------------
+function kalk_prazan_broj_dokumenta()
+return PADR( "0", 5, "0" )
+
+
+// ------------------------------------------------------------
+// resetuje brojac dokumenta ako smo pobrisali dokument
+// ------------------------------------------------------------
+function kalk_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta, konto )
+local _param
+local _broj := 0
+local _sufix := ""
+
+if konto == NIL
+	konto := ""
+endif
+
+if glBrojacPoKontima 
+	_sufix := SufBrKalk( konto )
+endif
+
+// param: kalk/10/10
+_param := "kalk" + "/" + firma + "/" + tip_dokumenta + IIF( !EMPTY( _sufix ), "_" + _sufix, "" )
+_broj := fetch_metric( _param, nil, _broj )
+
+if VAL( broj_dokumenta ) == _broj
+    -- _broj
+    // smanji globalni brojac za 1
+    set_metric( _param, nil, _broj )
+endif
+
+return
+
+
+// ------------------------------------------------------------------
+// kalk, uzimanje novog broja za kalk dokument
+// ------------------------------------------------------------------
+function kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
+local _broj := 0
+local _broj_dok := 0
+local _len_broj := 5
+local _len_brdok, _len_sufix
+local _param
+local _tmp, _rest
+local _ret := ""
+local _t_area := SELECT()
+local _sufix := ""
+
+// ova funkcija se brine i za sufiks
+if konto == NIL
+	konto := ""
+endif
+
+// moramo pronaci sufiks
+if glBrojacPoKontima
+	_sufix := SufBrKalk( konto )
+endif
+
+// param: kalk/10/10
+_param := "kalk" + "/" + firma + "/" + tip_dokumenta + IIF( !EMPTY( _sufix ), "_" + _sufix, "" )
+_broj := fetch_metric( _param, nil, _broj )
+
+// konsultuj i doks uporedo
+O_KALK_DOKS
+
+if glBrojacPoKontima
+	set order to tag "1S"
+else
+	set order to tag "1"
+endif
+
+go top
+
+seek firma + tip_dokumenta + _sufix + "X"
+skip -1
+
+if field->idfirma == firma .and. field->idvd == tip_dokumenta .and. ;
+	IIF( glBrojacPoKontima, RIGHT( ALLTRIM( field->brdok ), LEN( _sufix ) ) == _sufix, .t. )
+
+	if glBrojacPoKontima .and. ( _sufix $ field->brdok )
+		_len_brdok := LEN( ALLTRIM( field->brdok ) )
+		_len_sufix := LEN( _sufix )
+		// odrezi mi sufiks ako postoji
+		_broj_dok := VAL( LEFT( ALLTRIM( field->brdok ), _len_brdok - _len_sufix ) )
+	else
+   		_broj_dok := VAL( field->brdok )
+	endif
+
+else
+    _broj_dok := 0
+endif
+
+// uzmi sta je vece, dokument broj ili globalni brojac
+_broj := MAX( _broj, _broj_dok )
+
+// uvecaj broj
+++ _broj
+
+// ovo ce napraviti string prave duzine...
+// dodaj i sufiks na kraju ako treba
+_ret := PADL( ALLTRIM( STR( _broj ) ), _len_broj, "0" ) + _sufix
+
+// upisi ga u globalni parametar
+set_metric( _param, nil, _broj )
+
+select ( _t_area )
+return _ret
+
+
+
+
+
+// ------------------------------------------------------------
+// setuj broj dokumenta u pripremi ako treba !
+// ------------------------------------------------------------
+function kalk_set_broj_dokumenta()
+local _broj_dokumenta
+local _t_rec, _rec
+local _firma, _td, _null_brdok
+local _konto := ""
+
+PushWa()
+
+select kalk_pripr
+go top
+
+_null_brdok := kalk_prazan_broj_dokumenta()
+        
+if field->brdok <> _null_brdok 
+    // nemam sta raditi, broj je vec setovan
+    PopWa()
+    return .f.
+endif
+
+_firma := field->idfirma
+_td := field->idvd
+_konto := field->idkonto
+
+// daj mi novi broj dokumenta
+_broj_dokumenta := kalk_novi_broj_dokumenta( _firma, _td, _konto )
+
+select kalk_pripr
+set order to tag "1"
+go top
+
+do while !EOF()
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    if field->idfirma == _firma .and. field->idvd == _td .and. field->brdok == _null_brdok
+        _rec := dbf_get_rec()
+        _rec["brdok"] := _broj_dokumenta
+        dbf_update_rec( _rec )
+    endif
+
+    go (_t_rec)
+
+enddo
+
+PopWa()
+ 
+return .t.
+
+
+
+// ------------------------------------------------------------
+// setovanje parametra brojaca na admin meniju
+// ------------------------------------------------------------
+function kalk_set_param_broj_dokumenta()
+local _param
+local _broj := 0
+local _broj_old
+local _firma := gFirma
+local _tip_dok := "10"
+local _sufix := ""
+local _konto := PADR( "1330", 7 )
+
+Box(, 2, 60 )
+
+    @ m_x + 1, m_y + 2 SAY "Dokument:" GET _firma
+    @ m_x + 1, col() + 1 SAY "-" GET _tip_dok
+
+	if glBrojacPoKontima
+    	@ m_x + 1, col() + 1 SAY " konto:" GET _konto
+	endif
+
+    read
+
+    if LastKey() == K_ESC
+        BoxC()
+        return
+    endif
+
+	if glBrojacPoKontima
+		_sufix := SufBrKalk( _konto )
+	endif
+
+    // param: kalk/10/10
+	_param := "kalk" + "/" + firma + "/" + tip_dokumenta + IIF( !EMPTY( _sufix ), "_" + _sufix, "" )
+    _broj := fetch_metric( _param, nil, _broj )
+    _broj_old := _broj
+
+    @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "99999999"
+
+    read
+
+BoxC()
+
+if LastKey() != K_ESC
+    // snimi broj u globalni brojac
+    if _broj <> _broj_old
+        set_metric( _param, nil, _broj )
+    endif
+endif
+
+return
+
+
+
+
 /*! \fn MMarza2()
  *  \brief Daje iznos maloprodajne marze
  */
 
 function MMarza2()
-*{
   if TMarza2=="%".or.EMPTY(tmarza2)
      nMarza2:=kolicina*Marza2/100*VPC
   elseif TMarza2=="A"

@@ -392,9 +392,9 @@ xml_subnode( "nar", .f. )
 
 // podaci matične firme
 xml_node( "firma", to_xml_encoding( gNFirma) )
-xml_node( "f_adr", fetch_metric( "org_adresa", nil, "" ) )
+xml_node( "f_adr", to_xml_encoding( fetch_metric( "org_adresa", nil, "" ) ) )
 xml_node( "f_mj", to_xml_encoding( gMjStr ) )
-xml_node( "f_tel", fetch_metric( "fakt_zagl_telefon", nil, "" ) )
+xml_node( "f_tel", to_xml_encoding( fetch_metric( "fakt_zagl_telefon", nil, "" ) ) )
   
 // podaci partnera
 xml_node( "part_id", to_xml_encoding( hb_utf8tostr( field->idpartner ) ) )

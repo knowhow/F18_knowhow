@@ -1,6 +1,7 @@
 1.3.67 2012-11-09, vsasa
 
   - fin, ažuriranje naloga, bugfix [#29595](http://redmine.bring.out.ba/issues/29595)
+  - kalk, asortiman forma narudžbe
  
 1.3.66 2012-11-08, vsasa
 

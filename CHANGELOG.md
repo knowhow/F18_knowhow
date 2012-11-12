@@ -1,3 +1,7 @@
+1.3.69 2012-11-12, vsasa
+
+  - fin, globalni brojač naloga [#29545](http://redmine.bring.out.ba/issues/29545)
+ 
 1.3.68 2012-11-09, vsasa
 
   - kalk, encoding kod asortimana [#29537](http://redmine.bring.out.ba/issues/29537)

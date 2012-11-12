@@ -22,19 +22,26 @@ private Izbor:=1
 AADD(opc, "1. provjera integriteta tabela - ima u suban nema u nalog ")
 AADD(opcexe, {|| ImaUSubanNemaUNalog()})
 
-AADD(opc, "3. pregled datumskih gresaka u nalozima")
+AADD(opc, "2. pregled datumskih gresaka u nalozima")
 AADD(opcexe, {|| daterr_rpt() })
 
-AADD(opc, "4. regeneracija broja naloga u kumulativu")
+AADD(opc, "3. regeneracija broja naloga u kumulativu")
 AADD(opcexe, {|| regen_tbl() })
 
-AADD(opc, "5. kontrola podataka nakon importa iz FMK")
+AADD(opc, "4. kontrola podataka nakon importa iz FMK")
 AADD(opcexe, {|| f18_test_data() })
 
-if is_fmkrules()
-	AADD(opc, "R. fmk pravila - rules ")
-	AADD(opcexe, {|| p_fmkrules(,,, aRuleCols, bRuleBlock ) })
-endif
+AADD(opc, "------------------------------------------------------")
+AADD(opcexe, {|| NIL })
+
+AADD(opc, "B. podesenje brojaca naloga")
+AADD(opcexe, {|| fin_set_param_broj_dokumenta() })
+
+AADD(opc, "------------------------------------------------------")
+AADD(opcexe, {|| NIL })
+AADD(opc, "R. fmk pravila - rules ")
+AADD(opcexe, {|| p_fmkrules(,,, aRuleCols, bRuleBlock ) })
+
 
 Menu_SC("adm")
 

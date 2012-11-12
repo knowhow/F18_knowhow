@@ -1092,54 +1092,6 @@ return lRet
 
 
 
-// ---------------------------------------------
-// centralna funkcija za odredjivanje
-// novog broja naloga !!!!
-// cIdFirma - firma
-// cIdVn - tip naloga
-// ---------------------------------------------
-function NextNal( cIdFirma, cIdVN )
-local nArr
-nArr:=SELECT()
-
-O_NALOG
-select nalog
-
-if gBrojac == "1"
-
-    set order to tag "1"
-    seek cIdFirma+cIdVN+chr(254)
-    skip -1
-    
-    if ( idfirma + idvn == cIdFirma + cIdVN )
-        
-        // napravi validaciju polja ...
-        do while !BOF()
-
-            if !__val_nalog( field->brnal )
-                skip -1
-                loop
-            else
-                exit
-            endif
-        enddo
-        
-        cBrNal := NovaSifra(brNal)
-    else
-        cBrNal := "00000001"
-    endif
-else
-    set order to tag "2"
-    seek cIdFirma+chr(254)
-    skip -1
-    cBrNal:=padl(alltrim(str(val(brnal)+1)),8,"0")
-endif
-
-select (nArr)
-
-return cBrNal
-
-
 
 // ----------------------------------------------------------------
 // specijalna funkcija regeneracije brojeva naloga u kum tabelama

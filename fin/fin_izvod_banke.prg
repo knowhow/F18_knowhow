@@ -69,7 +69,7 @@ function IzvodBanke()
 
   nH   := fopen(cIme)
   nRBr := 0
-  cBrNal := nextnal( gFirma, cIdvn )
+  cBrNal := fin_novi_broj_dokumenta( gFirma, cIdvn )
   
   StartPrint(.t.)
 

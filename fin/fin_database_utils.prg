@@ -59,6 +59,11 @@ endif
 return _last
 
 
+// ------------------------------------------------
+// vraca prazan broj naloga
+// ------------------------------------------------
+function fin_prazan_broj_naloga()
+return PADR( "0", 8, "0" )
 
 
 // ------------------------------------------------------------
@@ -130,6 +135,9 @@ select ( _t_area )
 return _ret
 
 
+
+
+
 // ------------------------------------------------------------
 // setuj broj dokumenta u pripremi ako treba !
 // ------------------------------------------------------------
@@ -144,7 +152,7 @@ PushWa()
 select fin_pripr
 go top
 
-_null_brdok := PADR( "0", _len_broj )
+_null_brdok := fin_prazan_broj_naloga()
         
 if field->brnal <> _null_brdok 
     // nemam sta raditi, broj je vec setovan
@@ -181,6 +189,9 @@ enddo
 PopWa()
  
 return .t.
+
+
+
 
 
 // ------------------------------------------------------------

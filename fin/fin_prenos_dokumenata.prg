@@ -12,10 +12,12 @@
 #include "fin.ch"
 
 
+// -----------------------------------------------------
+// prenos dokumenata
+// -----------------------------------------------------
 function PrenosFin()
 local cStranaBitna
 local lStranaBitna
-
 private fK1:=fk2:=fk3:=fk4:="N"
 O_PARAMS
 Private cSection:="1"
@@ -34,79 +36,82 @@ private cK1:=cK2:="9"
 private cK3:=cK4:="99"
 
 IF IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-  ck3:="999"
+	ck3:="999"
 ENDIF
 
 O_PKONTO
 P_PKonto()
 
-cStranaBitna:= "N"
-cKlDuguje := "2"
-cKlPotraz := "5"
+cStranaBitna := "N"
+cKlDuguje := fetch_metric( "fin_klasa_duguje", NIL, "2" )
+cKlPotraz := fetch_metric( "fin_klasa_potrazuje", NIL, "5" )
 
 Box(, 12, 60)
-  nMjesta:=3
-  ddatDo:=date()
+	nMjesta := 3
+  	ddatDo := date()
   
-  @ m_x+1,m_y+2 SAY "Navedite koje grupacije konta se isto ponasaju:"
-  @ m_x+3,m_y+2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta pict "9"
-  @ m_x+5,m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+  	@ m_x+1,m_y+2 SAY "Navedite koje grupacije konta se isto ponasaju:"
+  	@ m_x+3,m_y+2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta pict "9"
+  	@ m_x+5,m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
 
-if fk1=="D"; @ m_x+7,m_y+2   SAY "K1 (9 svi) :" GET cK1; endif
-if fk2=="D"; @ m_x+7,col()+2 SAY "K2 (9 svi) :" GET cK2; endif
-if fk3=="D"; @ m_x+8,m_y+2   SAY "K3 ("+ck3+" svi):" GET cK3; endif
-if fk4=="D"; @ m_x+8,col()+1 SAY "K4 (99 svi):" GET cK4; endif
+	if fk1=="D"; @ m_x+7,m_y+2   SAY "K1 (9 svi) :" GET cK1; endif
+	if fk2=="D"; @ m_x+7,col()+2 SAY "K2 (9 svi) :" GET cK2; endif
+	if fk3=="D"; @ m_x+8,m_y+2   SAY "K3 ("+ck3+" svi):" GET cK3; endif
+	if fk4=="D"; @ m_x+8,col()+1 SAY "K4 (99 svi):" GET cK4; endif
 
-  @ m_x+9, m_y+2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
-  @ m_x+10, m_y+2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
+  	@ m_x+9, m_y+2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
+  	@ m_x+10, m_y+2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
   
-  @ m_x+12, m_y+2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
-  	PICT "@!" ;
-	VALID cStranaBitna $ "DN"
+ 	@ m_x+12, m_y+2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
+  		PICT "@!" ;
+		VALID cStranaBitna $ "DN"
   
-  read
-  ESC_BCR
+  	read
+ 	ESC_BCR
   
 BoxC()
 
-lStranaBitna := (cStranaBitna == "D")
+// snimi parametre
+set_metric( "fin_klasa_duguje", NIL, cKlDuguje )
+set_metric( "fin_klasa_potrazuje", NIL, cKlPotraz )
+
+lStranaBitna := ( cStranaBitna == "D" )
 
 if ck1=="9"; ck1:=""; endif
 if ck2=="9"; ck2:=""; endif
 if ck3==REPL("9",LEN(ck3))
-  ck3:=""
+	ck3:=""
 else
-  ck3:=k3u256(ck3)
+  	ck3:=k3u256(ck3)
 endif
 if ck4=="99"; ck4:=""; endif
 
-//select F_SUBAN
-//usex (cDirRad+"\suban") index  (cDirRad+"\subani3")
+lPrenos4 := lPrenos5 := lPrenos6 := .f.
 
-//select F_PKONTO
-//usex (cDirSif+"\pkonto") index (cDirSif+"\pkontoi1")
-
-lPrenos4:=lPrenos5:=lPrenos6:=.f.
 SELECT (F_PKONTO)
 GO TOP
+
 DO WHILE !EOF()
-  IF tip=="4"; lPrenos4:=.t.; ENDIF
-  IF tip=="5"; lPrenos5:=.t.; ENDIF
-  IF tip=="6"; lPrenos6:=.t.; ENDIF
-  SKIP 1
+	IF tip=="4"; lPrenos4:=.t.; ENDIF
+  	IF tip=="5"; lPrenos5:=.t.; ENDIF
+  	IF tip=="6"; lPrenos6:=.t.; ENDIF
+  	SKIP 1
 ENDDO
 
-
 cFilter := ".t."
+
 if fk1=="D" .and. len(ck1)<>0
   cFilter+=" .and. k1='"+ck1+"'"
 endif
+
 if fk2=="D" .and. len(ck2)<>0
   cFilter+=" .and. k2='"+ck2+"'"
 endif
+
 if fk3=="D" .and. len(ck3)<>0
   cFilter+=" .and. k3='"+ck3+"'"
 endif
+
 if fk4=="D" .and. len(ck4)<>0
   cFilter+=" .and. k4='"+ck4+"'"
 endif
@@ -139,34 +144,40 @@ IF lPrenos4 .or. lPrenos5 .or. lPrenos6
     SET ORDER TO TAG "SUBSUB6"
   endif
 ELSE
-  select (F_SUBAN)
-  usex ("suban"); set order to tag "3"
-  //IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
+  	select (F_SUBAN)
+  	usex ("suban")
+	set order to tag "3"
+ 	//IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
 ENDIF
 
 IF !(cFilter==".t.")
-  SELECT (F_SUBAN)
-  SET FILTER TO &(cFilter)
+ 	SELECT (F_SUBAN)
+  	SET FILTER TO &(cFilter)
 ENDIF
 
 select (F_PKONTO)
-usex ("pkonto"); set order to tag "ID"
+usex ("pkonto")
+set order to tag "ID"
 
 O_FIN_PRIPR
-if reccount2()<>0
-  MsgBeep("Priprema mora biti prazna")
-  closeret
+
+if reccount2() <> 0
+	MsgBeep( "Priprema mora biti prazna" )
+  	close all
 endif
-zap; set order to 0
+
+zap
+set order to 0
 
 start print cret
+
 ?
 ? "Prolazim kroz bazu...."
+
 select suban
 go top
 
 lVodeSeRJ := FIELDPOS("IDRJ") > 0
-
 
 Postotak(1,RECCOUNT2(),"Generacija pocetnog stanja")
 nProslo:=0
@@ -315,7 +326,7 @@ do while !eof()
                         idpartner with cidpartner,;
                         brdok  with cBrDok,;
                         datdok with dDatDo+1 ,;
-			datval with dDatVal
+						datval with dDatVal
 			
                if !(cFilter==".t.")
                  REPLACE  k1 WITH cSUBk1,;

@@ -14,10 +14,11 @@
 
 #define DABLAGAS lBlagAsis .and. _IDVN == cBlagIDVN
 
+
+
 // -----------------------------------------------------------------------------
 // Blagajna dnevni izvjestaj
 // -----------------------------------------------------------------------------
- 
 function Blagajna()
 local nRbr, nCOpis:=0, cOpis := ""
 local _idvn
@@ -25,6 +26,7 @@ local _rec
 local _nCol1
 //lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N", PRIVPATH)=="D" )
 lSumiraj := .f.
+
 O_KONTO
 O_ANAL
 O_FIN_PRIPR
@@ -33,94 +35,116 @@ GO TOP
 
 _idvn := field->idvn 
 
-cIdfirma:=idfirma
-cBrdok:=brnal
+cIdfirma := idfirma
+cBrdok := brnal
 
 IF DABLAGAS
 
-  cKontoBlag := PADR(IzFMKINI("BLAGAJNA","Konto","202000",PRIVPATH),7)
-  SET ORDER TO TAG "2"
-  SEEK cidfirma + _idvn + cBrDok + cKontoBlag
-  IF !FOUND() .or. Pitanje(,"Postoji knjizenje na kontu blagajne! Regenerisati knjizenje? (D/N)","N")=="D"
-    IF FOUND()
-      DO WHILE !EOF() .and. cidfirma+_idvn+cBrDok+cKontoBlag == idFirma+IdVN+BrNal+IdKonto
-        SKIP 1; nRec:=RECNO(); SKIP -1
-        MY_DELETE
-        GO (nRec)
-      ENDDO
-    ENDIF
+	cKontoBlag := PADR(IzFMKINI("BLAGAJNA","Konto","202000",PRIVPATH),7)
+  
+	SET ORDER TO TAG "2"
+  	SEEK cidfirma + _idvn + cBrDok + cKontoBlag
+  	IF !FOUND() .or. Pitanje(,"Postoji knjizenje na kontu blagajne! Regenerisati knjizenje? (D/N)","N")=="D"
+    	IF FOUND()
+      		DO WHILE !EOF() .and. cidfirma+_idvn+cBrDok+cKontoBlag == idFirma+IdVN+BrNal+IdKonto
+        		SKIP 1; nRec:=RECNO(); SKIP -1
+        		MY_DELETE
+       		 	GO (nRec)
+      		ENDDO
+   	 	ENDIF
     
-    SET ORDER TO TAG "1"
-    GO TOP
-    lEOF:=.f.
-    DO WHILE !EOF() .and. !lEOF .and. cIdfirma + _idvn + cBrDok == idFirma + IdVN + BrNal
-        SKIP 1
-        lEOF:=EOF()
-        nRec:=RECNO()
-        SKIP -1
+    	SET ORDER TO TAG "1"
+    	GO TOP
+    	lEOF:=.f.
+    	DO WHILE !EOF() .and. !lEOF .and. cIdfirma + _idvn + cBrDok == idFirma + IdVN + BrNal
+        	SKIP 1
+        	lEOF:=EOF()
+        	nRec:=RECNO()
+        	SKIP -1
        
-        _rec := dbf_get_rec()
-        APPEND BLANK
+        	_rec := dbf_get_rec()
+        	APPEND BLANK
 
-        // promijeni konto i predznak, te nuliraj partnera, rj, funk i fond
-        _rec["idkonto"]    := cKontoBlag
-        _rec["id_partner"] := SPACE(LEN( _rec["idpartner"]))
-        _rec["d_p"]        := IIF( _rec["d_p"] =="1", "2", "1")
+        	// promijeni konto i predznak, te nuliraj partnera, rj, funk i fond
+        	_rec["idkonto"]    := cKontoBlag
+        	_rec["id_partner"] := SPACE(LEN( _rec["idpartner"]))
+        	_rec["d_p"]        := IIF( _rec["d_p"] =="1", "2", "1")
 
-        if (gRJ == "D")
-          _rec["idrj"] := SPACE(LEN(_rec["idrj"]))
-        endif
+        	if (gRJ == "D")
+          		_rec["idrj"] := SPACE(LEN(_rec["idrj"]))
+       		endif
 
-        if gTroskovi=="D"
-          _rec["funk"] := SPACE(LEN( _rec["funk"]))
-          _rec["fond"] := SPACE(LEN( _rec["fond"]))
-        endif
+        	if gTroskovi=="D"
+          		_rec["funk"] := SPACE(LEN( _rec["funk"]))
+          		_rec["fond"] := SPACE(LEN( _rec["fond"]))
+       	 	endif
      
-        dbf_update_rec(_rec, .t.) 
-        GO (nRec)
+        	dbf_update_rec(_rec, .t.) 
+        	GO (nRec)
 
-    ENDDO
-  ENDIF
-  SET ORDER TO TAG "1"
-  go top
+    	ENDDO
+  	ENDIF
+  	SET ORDER TO TAG "1"
+  	go top
 ENDIF
 
-cDinDem:="1"
-Box(,3, 60)
- @ m_x+1,m_y+2 SAY ValDomaca()+"/"+ValPomocna()+" blagajnicki izvjestaj (1/2):" GET cDinDem
- read
- if cDinDem=="1"
-   cIdKonto:=padr("2020",7)
-   pici:=FormPicL("9," + gPicBHD, 12)
- else
-   cIdKonto:=padr("2050",7)
- endif
- IF DABLAGAS
-   cIdKonto := cKontoBlag
- ENDIF
+cDinDem := "1"
 
- dDatdok:=datdok
+Box(, 3, 60 )
 
- @ m_x+2,m_Y+2 SAY "Datum:" GET dDatDok
- @ m_x+3,m_Y+2 SAY "Konto blagajne:" GET cIdKonto valid P_Konto(@cIdKonto)
- read
+	@ m_x+1,m_y+2 SAY ValDomaca() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
+
+ 	read
+
+ 	if cDinDem == "1"
+   		cIdKonto := fetch_metric("fin_blagajna_def_konto_km", NIL, PADR( "2050", 7 ))
+   		pici := FormPicL("9," + gPicBHD, 12)
+ 	else
+   		cIdKonto := fetch_metric("fin_blagajna_def_konto_dem", NIL, PADR( "2020", 7 ))
+ 	endif
+
+ 	IF DABLAGAS
+   		cIdKonto := cKontoBlag
+ 	ENDIF
+
+ 	dDatdok := datdok
+
+ 	@ m_x+2,m_Y+2 SAY "Datum:" GET dDatDok
+ 	@ m_x+3,m_Y+2 SAY "Konto blagajne:" GET cIdKonto PICT "@S7" VALID P_Konto( @cIdKonto )
+
+ 	read
+
 BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+// snimi parametre
+if cDinDem == "1"
+   	set_metric("fin_blagajna_def_konto_km", NIL, cIdKonto )
+else
+   	set_metric("fin_blagajna_def_konto_dem", NIL, cIdKonto )
+endif
 
 select fin_pripr
 
-start print cret
+START PRINT CRET
 ?
 F12CPI
 ?? space(12)
+
 if cDinDem=="1"
-  ?? "("+ValDomaca()+")"
+	?? "("+ValDomaca()+")"
 else
-  ?? "DEVIZNI ("+ValPomocna()+")"
+  	?? "DEVIZNI ("+ValPomocna()+")"
 endif
+
 ?? hb_Utf8ToStr(" BLAGAJNIČKI IZVJESTAJ OD "), dDatDok
 ?? space(8), "Broj:", cBrDok
 ?
 ?
+
 nRbr:=0
 nDug:=nPot:=0
 nCol1:=45

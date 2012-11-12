@@ -163,15 +163,11 @@ return .t.
 
 
 function o_fin_edit()
+
 close all
 
-IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-    O_VRSTEP
-ENDIF
-
-IF IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-    O_ULIMIT
-ENDIF
+O_VRSTEP
+O_ULIMIT
 
 if (IsRamaGlas())
     O_RNAL
@@ -180,7 +176,7 @@ endif
 O_RJ
 
 if gTroskovi == "D"
-    O_FOND
+	O_FOND
     O_FUNK
 endif
 
@@ -204,28 +200,25 @@ return
 
 
 
-/*! \fn edit_fin_priprema()
- *  \brief Ispravka stavke u pripremi
- *  \param fNovi .t. - Nova stavka, .f. - Ispravka postojece
- */
- 
-function edit_fin_priprema()
 
+// ---------------------------------------------------------
+// fin priprema, edit key handler
+// ---------------------------------------------------------
+function edit_fin_priprema()
 local _ostav := NIL 
 local _iznos_unesen := .f.
-
 parameters fNovi
 
-if fNovi .and. nRbr==1
-    _IdFirma:=gFirma
+if fNovi .and. nRbr == 1
+    _IdFirma := gFirma
 endif
 
 if fNovi
-    _OtvSt:=" "
+    _OtvSt := " "
 endif
 
-if ((gRj=="D") .and. fNovi)
-    _idRj:=cTekucaRj
+if ( ( gRj == "D" ) .and. fNovi )
+    _idRj := cTekucaRj
 endif
     
 set cursor on
@@ -244,14 +237,12 @@ read
 
 ESC_RETURN 0
 
-if fNovi .and. (_idfirma <> idfirma .or. _idvn<>idvn)
+if fNovi .and. ( _idfirma <> idfirma .or. _idvn <> idvn )
     
     // momenat setovanja broja naloga
     // setujemo sve na 0, ali kada uvedemo globalni brojac
-    //_brnal := PADR( "0", 8 )
-    
-    _brnal := nextnal( _idfirma, _idvn )
-
+    _brnal := fin_prazan_broj_naloga()
+    //_brnal := nextnal( _idfirma, _idvn )
     select  fin_pripr
 
 endif
@@ -259,73 +250,75 @@ endif
 set key K_ALT_K to DinDem()
 set key K_ALT_O to KonsultOS()
 
-@  m_x+3, m_y + 55 SAY "Broj:" GET _BrNal VALID Dupli(_IdFirma,_IdVN,_BrNal) .and. !empty(_BrNal)
-@  m_x+5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr picture "9999"
-@  m_x+7, m_y + 2 SAY "DOKUMENT: "
+@ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID Dupli( _idfirma, _idvn, _brnal ) .and. !EMPTY( _brnal ) 
+@ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr picture "9999"
+@ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
-if gNW<>"D"
-    @  m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
+if gNW <> "D"
+    @ m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
 endif
 
 if (IsRamaGlas())
-    @  m_x+8, m_y+2   SAY "Vezni broj (racun/r.nalog):"  get _BrDok valid BrDokOK()
+    @ m_x+8, m_y+2 SAY "Vezni broj (racun/r.nalog):"  get _BrDok valid BrDokOK()
 else
-    @  m_x+8, m_y+2   SAY "Vezni broj:" GET _BrDok
+    @ m_x+8, m_y+2 SAY "Vezni broj:" GET _brdok
 endif
 
-@  m_x+8, m_y + COL() + 2  SAY "Datum:" GET _DatDok VALID chk_sezona() 
+@ m_x + 8, m_y + COL() + 2  SAY "Datum:" GET _DatDok VALID chk_sezona() 
 
 if gDatVal == "D"
-    @  m_x+8,col()+2 SAY "Valuta" GET _DatVal
+    @ m_x + 8, col() + 2 SAY "Valuta" GET _DatVal
 endif
 
-@ m_x+11, m_y+2  SAY "Opis :" GET _Opis WHEN {|| .t.} VALID {|| .t.} PICT "@S50"
+@ m_x + 11, m_y + 2 SAY "Opis :" GET _opis WHEN {|| .t.} VALID {|| .t.} PICT "@S50"
 
-if fk1=="D"
-    @  m_x+11,col()+2 SAY "K1" GET _k1 pict "@!" 
+if fk1 == "D"
+    @ m_x + 11, col() + 2 SAY "K1" GET _k1 pict "@!" 
 endif
 
-if fk2=="D"
-    @  m_x+11,col()+2 SAY "K2" GET _k2 pict "@!"
+if fk2 == "D"
+    @ m_x + 11, col() + 2 SAY "K2" GET _k2 pict "@!"
 endif
 
-if fk3=="D"
+if fk3 == "D"
     if IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3", "N", SIFPATH)=="D"
-            _k3:=K3Iz256(_k3)
-            @  m_x+11, col() + 2 SAY "K3" GET _k3 VALID EMPTY(_k3).or.P_ULIMIT(@_k3) pict "999"
-        else
-            @  m_x+11, col() + 2 SAY "K3" GET _k3 pict "@!"
-        endif
-endif
-
-if fk4=="D"
-
-    if IzFMKIni("FAKT", "VrstePlacanja", "N", SIFPATH)=="D"
-            @  m_x+11, col()+2 SAY "K4" GET _k4 VALID EMPTY(_k4).or.P_VRSTEP(@_k4) pict "@!"
+    	_k3 := K3Iz256(_k3)
+        @ m_x + 11, col() + 2 SAY "K3" GET _k3 VALID EMPTY(_k3).or.P_ULIMIT(@_k3) pict "999"
     else
-            @  m_x+11, col()+2 SAY "K4" GET _k4 pict "@!"
+        @ m_x + 11, col() + 2 SAY "K3" GET _k3 pict "@!"
     endif
 endif
 
-if gRj=="D" .and. fin_pripr->(FIELDPOS("IDRJ")) <> 0
-    @  m_x + 11, col() + 2 SAY "RJ" GET _idrj valid empty(_idrj) .or. P_Rj(@_idrj) PICT "@!"
+if fk4=="D"
+    if IzFMKIni("FAKT", "VrstePlacanja", "N", SIFPATH)=="D"
+    	@ m_x + 11, col() + 2 SAY "K4" GET _k4 VALID EMPTY(_k4).or.P_VRSTEP(@_k4) pict "@!"
+    else
+        @ m_x + 11, col() + 2 SAY "K4" GET _k4 pict "@!"
+    endif
 endif
 
-if gTroskovi=="D"
-    @ m_x+12,m_y+22 SAY "      Funk." GET _Funk valid empty(_Funk) .or. P_Funk(@_Funk) pict "@!"
-    @  m_x+12,m_y+44 SAY "      Fond." GET _Fond valid empty(_Fond) .or. P_Fond(@_Fond) pict "@!"
+if gRj == "D"
+    @ m_x + 11, col() + 2 SAY "RJ" GET _idrj valid empty(_idrj) .or. P_Rj(@_idrj) PICT "@!"
 endif
 
-    @  m_x+13, m_y+2  SAY "Konto  :" get _IdKonto    pict "@!" valid  Partija(@_IdKonto) .and. P_Konto(@_IdKonto, 13, 20) .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
+if gTroskovi == "D"
+    @ m_x + 12, m_y + 22 SAY "      Funk." GET _Funk valid empty(_Funk) .or. P_Funk(@_Funk) pict "@!"
+    @ m_x + 12, m_y + 44 SAY "      Fond." GET _Fond valid empty(_Fond) .or. P_Fond(@_Fond) pict "@!"
+endif
+
+@ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto ;
+		PICT "@!" ;
+		VALID Partija(@_IdKonto) .and. P_Konto(@_IdKonto, 13, 20) ;
+				.and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
 
 
-@ m_x+14, m_y+2 SAY "Partner:" get _IdPartner pict "@!" valid ;
+@ m_x + 14, m_y + 2 SAY "Partner:" get _IdPartner pict "@!" valid ;
     {|| if( empty(_idpartner), Reci(14, 20, SPACE(25)), ), ;
     ( EMPTY(_IdPartner) .or. P_Firma(@_IdPartner, 14, 20) ) .and. _rule_partn_() } when ;
     {|| iif(ChkKtoMark(_idkonto), .t., .f.)}
 
 
-@ m_x + 16, m_y+2  SAY "Duguje/Potrazuje (1/2):" get _D_P valid V_DP() .and. _rule_d_p_() .and. _rule_veza_()
+@ m_x + 16, m_y + 2  SAY "Duguje/Potrazuje (1/2):" get _D_P valid V_DP() .and. _rule_d_p_() .and. _rule_veza_()
 
 @ m_x + 16, m_y + 65 GET _ostav PUSHBUTTON  CAPTION "<Otvorene stavke>" WHEN { || _iznos_unesen } VALID {|| _iznos_unesen := .f., .t.} ;
                          SIZE X 15 Y 2 STATE {|param| KonsultOs(param)}
@@ -346,15 +339,15 @@ if (gRJ=="D" .and. cTekucaRJ<>_idrj)
     SetTekucaRJ(cTekucaRJ)
 endif
 
-_IznosBHD:=round(_iznosbhd,2)
-_IznosDEM:=round(_iznosdem,2)
+_IznosBHD := round( _iznosbhd, 2 )
+_IznosDEM := round( _iznosdem, 2 )
 
 ESC_RETURN 0
 
 set key K_ALT_K to
 
-_k3:=K3U256(_k3)
-_Rbr:=STR(nRbr, 4)
+_k3 := K3U256(_k3)
+_Rbr := STR(nRbr, 4)
 
 select fin_pripr
 
@@ -394,17 +387,17 @@ endif
 return .t.
 
 
-/*! \fn MinKtoLen(cIdKonto)
- *  \brief Provjerava minimalnu dozvoljenu duzinu konta pri knjizenju
- *  \param cIdKonto - konto id
- */
+
+// -----------------------------------------------------
+// minimalna duzina konta
+// -----------------------------------------------------
 function MinKtoLen(cIdKonto)
 
-if gKtoLimit=="N"
+if gKtoLimit == "N"
     return .t.
 endif
 
-if gKtoLimit=="D" .and. gnKtoLimit > 0
+if gKtoLimit == "D" .and. gnKtoLimit > 0
     if LEN(ALLTRIM(cIdKonto)) > gnKtoLimit
         return .t.
     else
@@ -435,13 +428,13 @@ endif
 return .t.
 
 
+
 /*! \fn Partija(cIdKonto)
  *  \brief
  *  \param cIdKonto - oznaka konta
  */
  
 function Partija(cIdKonto)
-*{
 if right(trim(cIdkonto),1)=="*"
     select parek
     hseek strtran(cIdkonto,"*","")+" "
@@ -459,25 +452,25 @@ function V_DP()
 
 SetPos(m_x+16,m_y+30)
 
-if _D_P=="1"
+if _d_p == "1"
     ?? "   DUGUJE"
 else
     ?? "POTRAZUJE"
 endif
 
-?? " "+ValDomaca()
+?? " " + ValDomaca()
 
-SetPos(m_x+17,m_y+30)
+SetPos( m_x + 17, m_y + 30 )
 
-if _D_P=="1"
+if _d_p == "1"
     ?? "   DUGUJE"
 else
     ?? "POTRAZUJE"
 endif
 
-?? " "+ValPomocna()
+?? " " + ValPomocna()
 
-return _D_P $ "12"
+return _d_p $ "12"
 
 
 
@@ -487,25 +480,24 @@ return _D_P $ "12"
  *  \param p2
  *  \param cVar
  */
-function DinDem(p1,p2,cVar)
+function DinDem( p1, p2, cVar )
+local _kurs
 
-local nNaz
+_kurs := Kurs( _datdok )
 
-nNaz:=Kurs(_datdok)
-
-if cVar=="_IZNOSDEM"
-    _IZNOSBHD:=_IZNOSDEM*nnaz
-elseif cVar="_IZNOSBHD"
-  if round(nNaz,4)==0
-    _IZNOSDEM:=0
+if cVar == "_IZNOSDEM"
+    _iznosbhd := _iznosdem * _kurs
+elseif cVar = "_IZNOSBHD"
+  if ROUND( _kurs, 4 ) == 0
+    _iznosdem := 0
   else
-    _IZNOSDEM:=_IZNOSBHD/nnaz
+    _iznosdem := _iznosbhd / _kurs
   endif
 endif
 
-// select(nArr)
-
 AEVAL(GetList,{|o| o:display()})
+
+return
 
 
 
@@ -580,14 +572,14 @@ local lLogUnos := .f.
 local lLogBrisanje := .f.
 
 if Logirati(goModul:oDataBase:cName,"DOK","UNOS")
-    lLogUnos:=.t.
+    lLogUnos := .t.
 endif
 
 if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
-    lLogBrisanje:=.t.
+    lLogBrisanje := .t.
 endif
 
-if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
+if ( Ch == K_CTRL_T .or. Ch == K_ENTER ) .and. RecCount2() == 0
     return DE_CONT
 endif
 
@@ -663,11 +655,11 @@ do case
 
           nRbr := VAL(_Rbr)
 
-          if edit_fin_priprema(.f.)==0
+          if edit_fin_priprema( .f. ) == 0
               BoxC()
               return DE_CONT
           else
-              dbf_update_rec(get_dbf_global_memvars("_"), .f.)
+              dbf_update_rec( get_dbf_global_memvars("_"), .f. )
               BrisiPBaze()
               BoxC()
               return DE_REFRESH
@@ -721,16 +713,16 @@ do case
 
         // nove stavke
         select fin_pripr
-        nDug:=0
-        nPot:=0
-        nPrvi:=0
+        nDug := 0
+        nPot := 0
+        nPrvi := 0
         go top
         do while .not. eof() 
             // kompletan nalog sumiram
             if D_P='1'
-                nDug+=IznosBHD
+                nDug += IznosBHD
             else
-                nPot+=IznosBHD
+                nPot += IznosBHD
             endif
             skip
         enddo
@@ -768,7 +760,7 @@ do case
 
                 select fin_pripr
                 APPEND BLANK
-                dbf_update_rec(get_dbf_global_memvars(), .f.)
+                dbf_update_rec( get_dbf_global_memvars(), .f. )
                 
                 if lLogUnos
                     cOpis := fin_pripr->idfirma + "-" + ;
@@ -806,7 +798,7 @@ do case
             endif
 
             // ima li potrebe resetovati gl.brojac
-            //fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
+            fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
  
             // zapuj pripremu
             zapp()
@@ -819,10 +811,14 @@ do case
 
     case Ch == K_CTRL_P
 
-        close all
 
-        //fin_set_broj_dokumenta()
+		// setuj mi broj dokumenta
+        fin_set_broj_dokumenta()
+
+        close all
+		// stampaj stavke
         StNal()
+		// otvori ponovo tabele
         o_fin_edit()
 
         return DE_REFRESH
@@ -830,10 +826,13 @@ do case
 
     case UPPER(Chr(Ch)) == "X" 
 
-        close all
-        //fin_set_broj_dokumenta()
+		// setuj fin broj dokumenta ako ima potrebe za tim
+        fin_set_broj_dokumenta()
+        
+		close all
+		
+		// stampaj dokument
         stampa_fin_document(.t.)
-
         close all
         fin_azur(.t.)
         o_fin_edit()
@@ -842,23 +841,32 @@ do case
 
     case Ch == K_ALT_A
         
-        //fin_set_broj_dokumenta()
+		// setuj fin broj dokumenta ako je potrebno
+        fin_set_broj_dokumenta()
+		// azuriraj dokument
         fin_azur()
         o_fin_edit()
         return DE_REFRESH
 
     case Ch == K_ALT_B
         
+		// setuj fin broj dokumenta ako je potrebno
+        fin_set_broj_dokumenta()
+
         close all
+		// blagajnicki izvjestaj	
         Blagajna()
+
         o_fin_edit()
+
         return DE_REFRESH
 
     case Ch==K_ALT_I
 
-        //fin_set_broj_dokumenta()
+        fin_set_broj_dokumenta()
         OiNIsplate()
-        return DE_CONT
+        
+		return DE_CONT
  
 #ifdef __PLATFORM__DARWIN 
     case Ch == ASC("0")
@@ -961,19 +969,21 @@ return 0
  */
  
 function BrisiPBaze()
-  PushWA()
-  SELECT F_PSUBAN
-  ZAPP()
-  SELECT F_PANAL
-  ZAPP()
-  SELECT F_PSINT
-  ZAPP()
-  SELECT F_PNALOG
-  ZAPP()
-  
-  PopWA()
 
-RETURN (NIL)
+PushWA()
+
+SELECT F_PSUBAN
+ZAPP()
+SELECT F_PANAL
+ZAPP()
+SELECT F_PSINT
+ZAPP()
+SELECT F_PNALOG
+ZAPP()
+  
+PopWA()
+
+return (NIL)
 
 
 /*! \fn fin_tek_rec_2()
@@ -981,11 +991,11 @@ RETURN (NIL)
  */
  
 function fin_tek_rec_2()
-*{
- nSlog++
- @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
- @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(0)
-RETURN (NIL)
+nSlog ++
+@ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
+@ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(0)
+return (NIL)
+
 
 
 /*! \fn OstaleOpcije()
@@ -1049,9 +1059,8 @@ local cPomKTO := "9999999"
 local cIdFirma, cIdVN, cBrNal
 
 if !SigmaSif("PVNAPVN")
- return
+	return
 endif
-
 
 O_FIN_PRIPR
 
@@ -1074,11 +1083,12 @@ Box( , 10, 60)
  @ m_x+9, m_y+6 SAY "Datum dokumenta" get dDatDok
 
  read
+
 Boxc()
 
-if lastkey()==K_ESC
-     close all
-     RETURN DE_CONT
+if lastkey() == K_ESC
+	close all
+    return DE_CONT
 endif
 
 
@@ -1090,9 +1100,10 @@ cBrnal   := BRNAL
 
 go top
 MsgO("Prvi krug...")
+
 do while !eof()
 
- if d_p=="1"
+ if d_p == "1"
     nDug += iznosbhd
  else
     nPot += iznosbhd
@@ -1206,17 +1217,10 @@ MsgC()
 
 close all
 return DE_REFRESH
-*}
 
 
 
-
-/*! \fn BrDokOK()
- *  \brief
- */
- 
 function BrDokOK()
-*{
 local nArr
 local lOK
 local nLenBrDok
@@ -1240,17 +1244,11 @@ if field->oznaka="TD"
 endif
 SELECT (nArr)
 return lOK
-*}
 
 
 
-/*! \fn SetTekucaRJ(cRJ)
- *  \brief Setuje tekucu radnu jedinicu 
- *  \param cRJ
- */
- 
+
 function SetTekucaRJ(cRJ)
-*{
 local nArr
 local lUsed
 nArr:=SELECT()
@@ -1273,7 +1271,6 @@ return
 
 
 function GetTekucaRJ()
-
 local nArr
 local lUsed
 local cRJ

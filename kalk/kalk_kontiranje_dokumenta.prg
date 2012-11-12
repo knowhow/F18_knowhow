@@ -156,26 +156,9 @@ if KONCIJ->(FIELDPOS("FN14"))<>0 .and. !EMPTY(KONCIJ->FN14) .and. finmat->IDVD==
 endif
 
 if lAFin .or. lAFin2
-    if EMPTY( cNalog ) 
-        select nalog
-        seek finmat->idfirma+cidvn+chr(254)
-        skip -1
-        if ( idvn <> cidvn )
-            cBrnalF := "00000000"
-        else
-            do while !BOF()
-                if !__val_nalog( field->brnal )
-                    skip -1
-                    loop
-                else
-                    exit
-                endif
-            enddo
-            cBrNalF := brnal
-        endif
-        cBrNalF := NovaSifra( cBrNalF )
-        select nalog
-        use
+
+    if EMPTY( cNalog )
+		cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn ) 
     else
         // ako je zadat broj naloga taj i uzmi...
         cBrNalF := cNalog

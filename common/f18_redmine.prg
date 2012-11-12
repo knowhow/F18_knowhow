@@ -94,7 +94,7 @@ Box(, 8, 70 )
 	++ _i
 	++ _i
 	
-	@ m_x + _i, m_y + 2 SAY PADL( "Tip servera (MYSQL/PGSQL):", _left ) GET _srv_type PICT "@S10"
+	@ m_x + _i, m_y + 2 SAY PADL( "Tip servera (MYSQL/PGSQL):", _left + 10 ) GET _srv_type PICT "@S10"
 	
 	++ _i
 
@@ -180,7 +180,7 @@ if _server_type == "MYSQL"
 
     #else
 
-		MsgBeep( "Redmine konekcija radi samo na linux oper.sistemu !!!" )
+		MsgBeep( "Redmine MYSQL konekcija radi samo na linux oper.sistemu !!!" )
 		return NIL
 
 	#endif

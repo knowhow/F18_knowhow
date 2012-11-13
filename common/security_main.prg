@@ -72,7 +72,9 @@ return _ret
 
 
 
+// ------------------------------------------------------
 // vraca id user-a
+// ------------------------------------------------------
 function GetUserID()
 local cTmpQry
 local cTable := "public.usr"
@@ -97,7 +99,12 @@ endif
 return
 
 
+
+
+
+// ------------------------------------------------------
 // vraca username usera iz sec.systema
+// ------------------------------------------------------
 function GetUserName( nUser_id )
 local cTmpQry
 local cTable := "public.usr"
@@ -144,5 +151,98 @@ else
 endif
 
 return
+
+
+// --------------------------------------------------
+// odabir f18 user-a
+// --------------------------------------------------
+function choose_f18_user_from_list( oper_id )
+local _list
+
+oper_id := 0
+
+// daj mi listu korisnika u array
+_list := _list_f18_users()
+
+// izbaci mi listu ...
+oper_id := array_choice( _list )
+
+return .t.
+
+
+// -------------------------------------------------------
+// array choice
+// -------------------------------------------------------
+static function array_choice( arr, choice )
+local _ret
+local _i, _n
+local _tmp
+private izbor := 1
+private opc := {}
+private opcexe := {}
+private GetList:={}
+
+choice := 1
+
+for _i := 1 to LEN( arr )
+
+    _tmp := ""
+    _tmp += PADL( ALLTRIM(STR( _i )) + ")", 3 )
+    _tmp += " " + PADR( arr[ _i, 2] , 30 )
+
+    AADD( opc, _tmp )
+    AADD( opcexe, {|| choice := izbor, izbor := 0 })
+    
+next
+
+Menu_SC( "izbor", .f. )
+
+if LastKey() == K_ESC
+    choice := 0
+    _ret := 0
+else
+    _ret := arr[ choice, 1 ]
+endif
+
+return _ret
+
+
+// --------------------------------------------------
+// daj mi listu f18 usera u array
+// --------------------------------------------------
+static function _list_f18_users()
+local _qry, _table
+local _server := pg_server()
+local _list := {}
+local _row
+
+_qry := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
+        "FROM public.usr " + ;
+        "WHERE usr_username NOT IN ( 'postgres', 'admin' ) " + ;
+        "ORDER BY usr_username;"
+
+_table := _sql_query( _server, _qry )
+
+if _table == NIL
+    return NIL
+endif
+
+_table:Refresh()
+
+for _i := 1 to _table:LastRec()
+
+    // daj mi row
+    _row := _table:GetRow( _i )
+
+    AADD( _list, { _row:FieldGet( _row:FieldPos("id") ), ;
+                    _row:FieldGet( _row:FieldPos("name") ), ;
+                    _row:FieldGet( _row:FieldPos("fullname") ), ;
+                    _row:FieldGet( _row:FieldPos("email") ) } )
+
+next
+
+return _list
+
+
 
 

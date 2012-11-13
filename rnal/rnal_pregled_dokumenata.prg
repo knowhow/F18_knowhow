@@ -173,11 +173,21 @@ Box( , nBoxX, nBoxY)
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL( "Narucioc (prazno-svi):", 25 ) GET cCustomer VALID {|| EMPTY(cCustomer) .or. s_customers( @cCustomer, cCustomer), set_var(@nCustomer, @cCustomer),  show_it( g_cust_desc(nCustomer) ) } WHEN set_opc_box(nBoxX, 60, "narucioc naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
+@ m_x + nX, m_y + 2 SAY PADL( "Narucioc (prazno-svi):", 25 ) GET cCustomer ;
+    VALID {|| EMPTY(cCustomer) .or. ;
+            s_customers( @cCustomer, cCustomer), ;
+            set_var(@nCustomer, @cCustomer),  ;
+            show_it( g_cust_desc(nCustomer) ) } ;
+    WHEN set_opc_box(nBoxX, 60, "narucioc naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("Kontakt (prazno-svi):", 25) GET cContact VALID {|| EMPTY(cContact) .or. s_contacts( @cContact, nCustomer, cContact ), set_var(@nContact, @cContact), show_it( g_cont_desc( nContact ) ) } WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
+@ m_x + nX, m_y + 2 SAY PADL("Kontakt (prazno-svi):", 25) GET cContact ;
+    VALID {|| EMPTY(cContact) .or. ;
+            s_contacts( @cContact, nCustomer, cContact ), ;
+            set_var(@nContact, @cContact), ;
+            show_it( g_cont_desc( nContact ) ) } ;
+    WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
 
 nX += 1
 
@@ -199,11 +209,18 @@ endif
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater VALID {|| nOperater == 0 , show_it( getusername( nOperater ), 20 ) } WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "99 - otvori sifrarnik", nil, cHelpClr )
+@ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater ;
+    PICT "9999999999" ;
+    VALID {|| nOperater == 0 , IIF( nOperater == -99, choose_f18_user_from_list( @nOperater ), .t. ), ;
+        show_it( getusername( nOperater ), 30 ) } ;
+    WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "-99 : odaberi iz liste", nil, cHelpClr )
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY "***** sort pregleda:" GET nSort VALID _val_sort( nSort ) PICT "9" WHEN set_opc_box( nBoxX, 60, "nacin sortiranja pregleda dokumenata", nil, nil, cHelpClr )
+@ m_x + nX, m_y + 2 SAY "***** sort pregleda:" GET nSort ;
+    VALID _val_sort( nSort ) ;
+    PICT "9" ;
+    WHEN set_opc_box( nBoxX, 60, "nacin sortiranja pregleda dokumenata", nil, nil, cHelpClr )
 
 nX += 1
 
@@ -333,7 +350,7 @@ if nObject <> 0
 endif
 
 if nOper <> 0
-	cFilter += " .and. operater_i == " + str( nOper, 3 )
+	cFilter += " .and. operater_i == " + ALLTRIM( STR( nOper, 10 ) )
 endif
 
 return cFilter

@@ -54,13 +54,6 @@ log_damage( __doc_no, cDesc, "+" )
 beep(2)
 
 select docs
-Scatter()
-
-Gather()
-
-skip
-
-select docs
 go (nTRec)
 
 return

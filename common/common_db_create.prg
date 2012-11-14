@@ -171,7 +171,6 @@ Kol := {}
 
 nTArea := SELECT()
 
-
 O_FDEVICE
 
 AADD(ImeKol, { PADC("id",3), {|| id}, "id", {|| .t. }, {|| .t. } })
@@ -206,6 +205,75 @@ next
 
 select (nTArea)
 
-return PostojiSifra(F_FDEVICE,1,10,65,"Lista fiskalnih uredjaja",@cId,dx,dy)
+return PostojiSifra(F_FDEVICE,1,10,65,"Lista fiskalnih uredjaja",@cId,dx,dy, {|| _fdev_key_handler() } )
+
+
+// -----------------------------------------------
+// f.devices key handler
+// -----------------------------------------------
+function _fdev_key_handler()
+local _rec
+
+do case
+
+    case Ch == K_CTRL_N
+
+        if fdev_edit( .t. )
+            return DE_REFRESH
+        endif
+
+    case Ch == K_F2
+    
+        if fdev_edit( .f. )
+            return DE_REFRESH
+        endif
+
+    case Ch == K_CTRL_T
+
+        if Pitanje(, "izbrisati zapis ?", "N" ) == "D"
+            delete
+            __dbPack()
+            return DE_REFRESH
+        endif
+
+endcase
+
+return DE_CONT
+
+
+static function fdev_edit( nova_stavka )
+local _ret := .t.
+local _rec
+
+if nova_stavka 
+    APPEND BLANK
+endif
+
+Scatter()
+
+Box()
+    @ m_x + 1, m_y + 2 SAY "Podesenje fiskalnog uredjaja:"
+    @ m_x + 2, m_y + 2 SAY "Id podesenja:" GET _id
+    read
+BoxC()
+
+if LastKey() == K_ESC
+
+    if nova_stavka
+        delete
+        __dbPack()
+    endif
+
+    return .f.
+
+endif
+
+Gather()
+
+return _ret
+
+
+
+
 
 

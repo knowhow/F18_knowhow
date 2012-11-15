@@ -12,12 +12,15 @@
 
 #include "fmk.ch"
 
+static __device_id
+static __device_params
+
 
 // ---------------------------------------------------------
 // fiskalni izvjestaji i komande
 // ---------------------------------------------------------
 function fisc_rpt( low_level )
-local nDevice := 0
+local _dev_id := 0
 local _m_x
 local _m_y
 
@@ -29,19 +32,10 @@ if low_level == NIL
 	low_level := .f.
 endif
 
-// ako se koristi lista uredjaja izaberi uredjaj
-if gFc_dlist == "D"
-
-	// listaj mi uredjaje koje imam
-	nDevice := list_device()
-
-	if nDevice > 0
-		// setuj parametre za dati uredjaj
-		fdev_params( nDevice )
-	endif
-
-endif
-
+// vrati mi fiskalni uredjaj....
+__device_id := get_fiscal_device( my_user() )
+// setuj parametre uredjaja
+__device_params := get_fiscal_device_params( __device_id, my_user() )
 
 do case 
 
@@ -69,14 +63,13 @@ do case
     	AADD(opcexe,{|| nil })
 
     	AADD(opc,"1. dnevni izvjestaj  (Z-rep / X-rep)          ")
-    	AADD(opcexe,{|| fp_daily_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    		nDevice ) })
+    	AADD(opcexe,{|| fprint_daily_rpt( __device_params ) })
 
     	AADD(opc,"2. periodicni izvjestaj")
-    	AADD(opcexe,{|| fp_per_rpt( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    	AADD(opcexe,{|| fprint_per_rpt( __device_params ) })
 
     	AADD(opc,"3. pregled artikala ")
-    	AADD(opcexe,{|| fp_sold_plu( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    	AADD(opcexe,{|| fprint_sold_plu( __device_params ) })
    
     endif
     
@@ -84,36 +77,33 @@ do case
     AADD(opcexe,{|| nil })
 
     AADD(opc,"5. unos pologa u uredjaj       ")
-    AADD(opcexe,{|| fp_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opcexe,{|| fprint_polog( __device_params ) })
 
     AADD(opc,"6. stampanje duplikata       ")
-    AADD(opcexe,{|| fp_double( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opcexe,{|| fprint_double( __device_params ) })
 
     AADD(opc,"7. zatvori racun (cmd 56)       ")
-    AADD(opcexe,{|| fp_close( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opcexe,{|| fprint_rn_close( __device_params ) })
 
     AADD(opc,"8. zatvori nasilno racun (cmd 301) ")
-    AADD(opcexe,{|| fp_void( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    AADD(opcexe,{|| fprint_void( __device_params ) })
 
     if !low_level
 
     	AADD(opc,"9. proizvoljna komanda ")
-    	AADD(opcexe,{|| fp_man_cmd( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    	AADD(opcexe,{|| fprint_manual_cmd( __device_params ) })
     
-    	if gFC_device == "P"
+    	if __device_params["type"] == "P"
 
     		AADD(opc,"10. brisanje artikala iz uredjaja (cmd 107)")
-    		AADD(opcexe,{|| ;
-				fp_del_plu( ALLTRIM(gFc_path), ALLTRIM(gFc_name), .f., ;
-					nDevice ) })
+    		AADD(opcexe, {|| fprint_delete_plu( __device_params, .f. ) })
     	endif
 
     	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
+    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params["id"] ) })
 
     	AADD(opc,"12. non-fiscal racun - test")
-   	 	AADD(opcexe,{|| fp_nf_txt( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
-    			"ČčĆćŽžĐđŠš") })
+   	 	AADD(opcexe,{|| fprint_nf_txt( __device_params, "ČčĆćŽžĐđŠš") })
 
     	AADD(opc,"13. test email")
     	AADD(opcexe,{|| f18_email_test() })

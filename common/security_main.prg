@@ -162,7 +162,7 @@ local _list
 oper_id := 0
 
 // daj mi listu korisnika u array
-_list := _list_f18_users()
+_list := get_list_f18_users()
 
 // izbaci mi listu ...
 oper_id := array_choice( _list )
@@ -170,19 +170,21 @@ oper_id := array_choice( _list )
 return .t.
 
 
+
+
 // -------------------------------------------------------
 // array choice
 // -------------------------------------------------------
-static function array_choice( arr, choice )
-local _ret
+static function array_choice( arr )
+local _ret := 0
 local _i, _n
 local _tmp
-private izbor := 1
-private opc := {}
-private opcexe := {}
-private GetList:={}
-
-choice := 1
+local _choice := 0
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
+local _m_x := m_x
+local _m_y := m_y
 
 for _i := 1 to LEN( arr )
 
@@ -190,19 +192,23 @@ for _i := 1 to LEN( arr )
     _tmp += PADL( ALLTRIM(STR( _i )) + ")", 3 )
     _tmp += " " + PADR( arr[ _i, 2] , 30 )
 
-    AADD( opc, _tmp )
-    AADD( opcexe, {|| choice := izbor, izbor := 0 })
+    AADD( _opc, _tmp )
+    AADD( _opcexe, {|| "" })
     
 next
+    
+do while .t. .and. LastKey() != K_ESC
+    _izbor := Menu( "choice", _opc, _izbor, .f. )
+	if _izbor == 0
+        exit
+    else
+        _ret := arr[ _izbor, 1 ]
+        _izbor := 0
+    endif
+enddo
 
-Menu_SC( "izbor", .f. )
-
-if LastKey() == K_ESC
-    choice := 0
-    _ret := 0
-else
-    _ret := arr[ choice, 1 ]
-endif
+m_x := _m_x
+m_y := _m_y
 
 return _ret
 
@@ -210,7 +216,7 @@ return _ret
 // --------------------------------------------------
 // daj mi listu f18 usera u array
 // --------------------------------------------------
-static function _list_f18_users()
+function get_list_f18_users()
 local _qry, _table
 local _server := pg_server()
 local _list := {}

@@ -49,8 +49,7 @@ static _nema_out := -20
 // --------------------------------------------------------------------------
 // stampa fiskalnog racuna tring fiskalizacija
 // --------------------------------------------------------------------------
-function fc_trm_rn( cFPath, cFName, aData, aKupac, lStorno, cError, ;
-	cContinue )
+function tremol_send_file( params, aData, aKupac, lStorno, cContinue )
 local cXML
 local i
 local cBr_zahtjeva 
@@ -87,7 +86,7 @@ endif
 // to je zapravo broj racuna !!!
 cBr_zahtjeva := aData[1, 1]
 
-cFName := trm_filename( cBr_zahtjeva )
+cFName := tremol_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
 cXML := cFPath + cFName
@@ -209,6 +208,9 @@ close_xml()
 return nErr_no
 
 
+
+
+
 // restart tremol fp server
 function trm_restart()
 local cScr
@@ -288,7 +290,7 @@ else
 endif
 
 cBr_zahtjeva := "0"
-cFName := trm_filename( cBr_zahtjeva )
+cFName := tremol_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
 cXML := cFPath + cFName
@@ -326,7 +328,7 @@ if !SigmaSif("RPLU")
 endif
 
 cBr_zahtjeva := "0"
-cFName := trm_filename( cBr_zahtjeva )
+cFName := tremol_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
 cXML := cFPath + cFName
@@ -359,7 +361,7 @@ if cError == "D"
 	if _read_out( cFPath, cFName )
 		
 		// procitaj poruku greske
-		nErr_no := trm_r_error( cFPath, cFName, gFc_tout ) 
+		nErr_no := tremol_read_error( cFPath, cFName, gFc_tout ) 
 
 	endif
 
@@ -378,7 +380,7 @@ local cBr_zahtjeva
 local nErr_no := 0
 
 cBr_zahtjeva := "0"
-cFName := trm_filename( cBr_zahtjeva )
+cFName := tremol_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
 cXML := cFPath + cFName
@@ -399,7 +401,7 @@ if cError == "D"
 	if _read_out( cFPath, cFName )
 		
 		// procitaj poruku greske
-		nErr_no := trm_r_error( cFPath, cFName, gFc_tout ) 
+		nErr_no := tremol_read_error( cFPath, cFName, gFc_tout ) 
 
 	else
 		nErr_no := _nema_out
@@ -481,7 +483,7 @@ return cF_tar
 // ----------------------------------------
 // fajl za pos fiskalni stampac
 // ----------------------------------------
-function trm_filename( cBrRn )
+function tremol_filename( cBrRn )
 local cRet
 local cF_name := ALLTRIM( gFC_name )
 
@@ -676,7 +678,7 @@ return
 // --------------------------------------------------------
 // cekanje na fajl odgovora, poziv za ostale module
 // --------------------------------------------------------
-function trm_read_out( cFPath, cFName, nTimeOut )
+function tremol_read_out( cFPath, cFName, nTimeOut )
 return _read_out( cFPath, cFName, nTimeOut )
 
 
@@ -748,7 +750,7 @@ return lOut
 // nFisc_no - broj fiskalnog isjecka
 //
 // ------------------------------------------------
-function trm_r_error( cFPath, cFName, nTimeOut, nFisc_no )
+function tremol_read_error( cFPath, cFName, nTimeOut, nFisc_no )
 local nErr := 0
 local cF_name
 local i
@@ -912,7 +914,7 @@ return nErr
 // provjera ispravnosti matrice sa podacima
 // kolicine, cijene
 // ----------------------------------------------
-function trm_check( aData )
+function tremol_check_items( aData )
 return hcp_check( @aData )
 
 

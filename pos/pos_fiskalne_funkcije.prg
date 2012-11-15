@@ -13,39 +13,69 @@
 #include "pos.ch"
 
 
-static __device := 0
+static __device_id := 0
+static __device_params
+static __DRV_TREMOL := "TREMOL"
+static __DRV_FPRINT := "FPRINT"
+static __DRV_FLINK := "FLINK"
+static __DRV_HCP := "HCP"
+static __DRV_TRING := "TRING"
+static __DRV_CURRENT
+
 
 // --------------------------------------
 // stampa fiskalnog racuna
 // --------------------------------------
 function pos_fisc_rn( cIdPos, dDat, cBrRn )
-local nErr := 0
+local _err_level := 0
+local _dev_drv
 
-if gFc_use == "N"
-	return
+// koriste li se fiskalne opcije uopste ?
+if !fiscal_opt_active()
+    return _err_level
 endif
 
+// daj mi listu uredjaja na koje mogu stampati
+__device_id := get_fiscal_device( my_user() )
+
+if __device_id == NIL .or. __device_id == 0
+    MsgBeep( "Stampanje fiskalnog racuna onemoguceno !!!#Nema postavljenih fiskalnih uredjaja." )
+    return _err_level
+endif
+
+// setuj parametre za dati uredjaj
+__device_params := get_fiscal_device_params( __device_id, my_user() )
+
+// drajver ??
+_dev_drv := ALLTRIM( __device_params["drv"] )
+__DRV_CURRENT := _dev_drv
+
 do case
-	case ALLTRIM(gFc_type) == "FLINK"
-		nErr := _flink_rn( cIdPos, dDat, cBrRn )
-	case ALLTRIM(gFc_type) == "TRING"
-		nErr := _tring_rn( cIdPos, dDat, cBrRn )
-	case ALLTRIM(gFc_type) == "FPRINT"
-		nErr := _fprint_rn( cIdPos, dDat, cBrRn )
-	case ALLTRIM(gFc_type) == "HCP"
-		nErr := _hcp_rn( cIdPos, dDat, cBrRn )
-	case ALLTRIM(gFc_type) == "TREMOL"
-		nErr := _trm_rn( cIdPos, dDat, cBrRn )
+	
+    case _dev_drv == __DRV_FLINK
+		_err_level := _flink_rn( cIdPos, dDat, cBrRn )
+
+	case _dev_drv == __DRV_TRING
+		_err_level := _tring_rn( cIdPos, dDat, cBrRn )
+
+	case _dev_drv == __DRV_FPRINT
+		_err_level := _fprint_rn( cIdPos, dDat, cBrRn )
+
+	case _dev_drv == __DRV_HCP
+		_err_level := _hcp_rn( cIdPos, dDat, cBrRn )
+
+	case _dev_drv == __DRV_TREMOL
+		_err_level := _trm_rn( cIdPos, dDat, cBrRn )
 
 endcase
 
-if gFC_error == "D" .and. nErr > 0
+if _err_level > 0
 	
-	if ALLTRIM( gFc_type ) == "TREMOL"
+	if _dev_drv == __DRV_TREMOL
 		
-		nErr := _trm_rn( cIdPos, dDat, cBrRn, "2" )
+		_err_level := _trm_rn( cIdPos, dDat, cBrRn, "2" )
 
-		if nErr > 0
+		if _err_level > 0
 			msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
 		endif
 	else
@@ -54,12 +84,7 @@ if gFC_error == "D" .and. nErr > 0
 	endif
 endif
 
-// ako ne provjeravamo greske uvijek vrati 0
-if gFC_error == "N"
-	nErr := 0
-endif
-
-return nErr
+return _err_level
 
 
 
@@ -220,19 +245,19 @@ if nCtrl = 0
 endif
 
 // provjeri stavke racuna, kolicine, cijene
-if fp_check( @aRn ) < 0
+if fiscal_items_check( @aRn ) < 0
 	return 1
 endif
 
 // pobrisi answer fajl
-fp_d_answer( ALLTRIM(gFc_path), ALLTRIM(gFc_name) )
+fprint_delete_answer( ALLTRIM(gFc_path), ALLTRIM(gFc_name) )
 
 // idemo sada na upis rn u fiskalni fajl
-fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
+fprint_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
 	lStorno, gFc_error )
 
 // iscitaj error
-nErr := fp_r_error( ALLTRIM(gFc_path), ;
+nErr := fprint_read_error( ALLTRIM(gFc_path), ;
 		ALLTRIM(gFc_name), gFc_tout, @nFisc_no )
 
 if nErr = -9
@@ -240,7 +265,7 @@ if nErr = -9
 	if Pitanje(,"Da li je nestalo trake ?","N") == "D"
 		if Pitanje(,"Zamjenite traku i pritisnite 'D'","D") == "D"
 			// iscitaj error
-			nErr := fp_r_error( ALLTRIM(gFc_path), ;
+			nErr := fprint_read_error( ALLTRIM(gFc_path), ;
 				ALLTRIM(gFc_path), ;
 				gFc_tout, @nFisc_no )
 		endif
@@ -257,7 +282,7 @@ if nErr <> 0
 	// pobrisati out fajl obavezno
 	// da ne bi otisao greskom na uredjaj kad proradi
 
-	fp_d_out( ALLTRIM(gFc_path) + ALLTRIM(gFc_name) )
+	fprint_delete_out( ALLTRIM(gFc_path) + ALLTRIM(gFc_name) )
 
 	msgbeep("Postoji greska !!!")
 
@@ -266,7 +291,7 @@ else
     if gFC_nftxt == "D"
 		// printaj non-fiscal tekst
 		// u ovom slucaju broj racuna
-		fp_nf_txt( ALLTRIM( gFC_path), ALLTRIM( gFC_name), cNF_txt )
+		fprint_nf_txt( ALLTRIM( gFC_path), ALLTRIM( gFC_name), cNF_txt )
 	endif
 	
     if nFisc_no <> 0
@@ -547,20 +572,18 @@ if nCtrl = 0
 endif
 
 // idemo sada na upis rn u fiskalni fajl
-nErr := fc_trm_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
-	aRn, aKupac, lStorno, gFc_error, cContinue )
+nErr := tremol_send_file( __device_params, aRn, aKupac, lStorno, cContinue )
 
-
-if gFc_error == "D" .and. cContinue <> "2"
+if cContinue <> "2"
 	
 	// naziv fajla
-	cFName := trm_filename( cBrRn )
+	cFName := tremol_filename( cBrRn )
 
-	if trm_read_out( ALLTRIM(gFc_path), cFName )
+	if tremol_read_out( __device_params["out_dir"], cFName )
 		
 		// procitaj poruku greske
-		nErr := trm_r_error( ALLTRIM(gFc_path), ALLTRIM(cFName), ;
-			gFc_tout, @nFisc_no ) 
+		nErr := tremol_read_error( __device_params["out_dir"], ALLTRIM(cFName), ;
+			__device_params["timeout"], @nFisc_no ) 
 
 	
 		if nErr = 0 .and. !lStorno .and. nFisc_no > 0
@@ -576,6 +599,7 @@ if gFc_error == "D" .and. cContinue <> "2"
 	// obrisi fajl
 	// da ne bi ostao kada server proradi ako je greska
 	FERASE( ALLTRIM(gFc_path) + ALLTRIM(cFName) )
+
 endif
 
 return nErr

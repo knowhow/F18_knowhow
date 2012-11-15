@@ -44,54 +44,42 @@ static POLOG_LIMIT := 100
 // 15 - datum racuna
 
 // --------------------------------------------------------
-// fiskalni racun pos (FPRINT)
-// cFPath - putanja do fajla
-// cFName - naziv fajla
+// fiskalni racun (FPRINT)
 // aData - podaci racuna
 // lStorno - da li se stampa storno ili ne (.T. ili .F. )
 // --------------------------------------------------------
-function fp_pos_rn( cFPath, cFName, aData, aKupac, lStorno, cError )
-local cSep := ";"
-local aPosData := {}
-local aStruct := {}
-local nErr := 0
+function fprint_rn( dev_params, items, head, storno )
+local _sep := ";"
+local _data := {}
+local _struct := {}
+local _err := 0
 
-if lStorno == nil
-	lStorno := .f.
+if storno == NIL
+	storno := .f.
 endif
-
-if cError == nil
-	cError := "N"
-endif
-
-// naziv fajla
-cFName := fp_filename( aData[ 1, 1] )
 
 // uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+_struct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aPosData := _fp_pos_rn( aData, aKupac, lStorno )
+_data := _fprint_rn( items, head, storno, dev_params )
 
-_a_to_file( cFPath, cFName, aStruct, aPosData )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], _struct, _data )
 
-return nErr
+return _err
+
 
 
 
 // ---------------------------------------------------
 // ispravi naziv artikla
 // ---------------------------------------------------
-function fp_f_naz( cNaz )
-local xRet := ""
-
-xRet := cNaz
-
+function fp_f_naz( name )
+local _ret := ""
+_ret := name
 // ukini ";"
-xRet := STRTRAN( xRet, ";", "" )
-
-return xRet
-
+_ret := STRTRAN( _ret, ";", "" )
+return _ret
 
 
 
@@ -99,7 +87,7 @@ return xRet
 // ---------------------------------------------------------
 // vrsi provjeru vrijednosti cijena, kolicina itd...
 // ---------------------------------------------------------
-function fp_check( aData, lStorno )
+function fiscal_items_check( aData, lStorno, level )
 local nRet := 0
 local nCijena := 0
 local nPluCijena := 0
@@ -125,7 +113,7 @@ for i:=1 to LEN( aData )
 	if ( !_chk_qtty( nKolicina ) .or. !_chk_price( nCijena ) ) ;
 		.or. !_chk_price( nPluCijena )
 		
-		if gFc_chk > "1"
+		if level > 1
 			
 			// popravi kolicine, cijene
 			_fix_qtty( @nKolicina, @nCijena, @nPluCijena, @cNaziv )
@@ -144,11 +132,11 @@ for i:=1 to LEN( aData )
 
 next
 
-if nFix > 0 .and. gFc_chk > "1"
+if nFix > 0 .and. level > 1
 
 	msgbeep("Pojedini artikli na racunu su prepakovani na 100 kom !")
 
-elseif nFix > 0 .and. gFc_chk == "1"
+elseif nFix > 0 .and. level == "1"
 	
 	nRet := -99
 	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")
@@ -162,6 +150,7 @@ elseif nFix > 0 .and. gFc_chk == "1"
 endif
 
 return nRet
+
 
 
 // -------------------------------------------------
@@ -211,6 +200,8 @@ cName := LEFT( ALLTRIM( cName ), 5 ) + " x100"
 
 return
 
+
+
 // --------------------------------------------------
 // provjerava unos pologa, maksimalnu vrijednost 
 // --------------------------------------------------
@@ -230,7 +221,7 @@ return _ok
 // ----------------------------------------------------
 // fprint: unos pologa u printer
 // ----------------------------------------------------
-function fp_polog( cFPath, cFName, nPolog )
+function fprint_polog( dev_params, nPolog )
 local cSep := ";"
 local aPolog := {}
 local aStruct := {}
@@ -259,16 +250,13 @@ if nPolog = 0
 
 endif
 
-// naziv fajla
-cFName := fp_filename( "0" )
-
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
 aPolog := _fp_polog( nPolog )
 
-_a_to_file( cFPath, cFName, aStruct, aPolog )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aPolog )
 
 return
 
@@ -277,7 +265,7 @@ return
 // ----------------------------------------------------
 // fprint: dupliciranje racuna
 // ----------------------------------------------------
-function fp_double( cFPath, cFName )
+function fprint_double( dev_params )
 local cSep := ";"
 local aDouble := {}
 local aStruct := {}
@@ -326,16 +314,13 @@ endif
 cT_from := cTH_from + cTM_from + "00"
 cT_to := cTH_to + cTM_to + "00"
 
-// naziv fajla
-cFName := fp_filename( "0" )
-
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
 aDouble := _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
 
-_a_to_file( cFPath, cFName, aStruct, aDouble )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDouble )
 
 return
 
@@ -344,13 +329,10 @@ return
 // ----------------------------------------------------
 // zatvori nasilno racun sa 0.0 KM iznosom
 // ----------------------------------------------------
-function fp_void( cFPath, cFName )
+function fprint_void( dev_params )
 local cSep := ";"
 local aVoid := {}
 local aStruct := {}
-
-// naziv fajla
-cFName := fp_filename( "0" )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -358,7 +340,7 @@ aStruct := _g_f_struct( F_POS_RN )
 // iscitaj pos matricu
 aVoid := _fp_void_rn()
 
-_a_to_file( cFPath, cFName, aStruct, aVoid )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aVoid )
 
 return
 
@@ -367,13 +349,10 @@ return
 // ----------------------------------------------------
 // print non-fiscal tekst
 // ----------------------------------------------------
-function fp_nf_txt( cFPath, cFName, cTxt )
+function fprint_nf_txt( dev_params, cTxt )
 local cSep := ";"
 local aTxt := {}
 local aStruct := {}
-
-// naziv fajla
-cFName := fp_filename( "0" )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -381,7 +360,7 @@ aStruct := _g_f_struct( F_POS_RN )
 // iscitaj pos matricu
 aTxt := _fp_nf_txt( to_win1250_encoding( cTxt ) )
 
-_a_to_file( cFPath, cFName, aStruct, aTxt )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aTxt )
 
 return
 
@@ -389,21 +368,17 @@ return
 // ----------------------------------------------------
 // brisanje PLU iz uredjaja
 // ----------------------------------------------------
-function fp_del_plu( cFPath, cFName, lSilent, nDevice )
+function fprint_delete_plu( dev_params, silent )
 local cSep := ";"
 local aDel := {}
 local aStruct := {}
 local nMaxPlu := 0
 
-if lSilent == nil
-	lSilent := .t.
+if silent == NIL
+	silent := .t.
 endif
 
-if nDevice == nil
-	nDevice := 0
-endif
-
-if !lSilent 
+if !silent 
 	
 	if !SIGMASIF("RESET")
 		return
@@ -421,16 +396,13 @@ if !lSilent
 
 endif
 
-// naziv fajla
-cFName := fp_filename( "0" )
-
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aDel := _fp_del_plu( nMaxPlu, nDevice )
+aDel := _fp_del_plu( nMaxPlu, dev_params["id"] )
 
-_a_to_file( cFPath, cFName, aStruct, aDel )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDel )
 
 return
 
@@ -439,13 +411,10 @@ return
 // ----------------------------------------------------
 // zatvori racun
 // ----------------------------------------------------
-function fp_close( cFPath, cFName )
+function fprint_rn_close( dev_params )
 local cSep := ";"
 local aClose := {}
 local aStruct := {}
-
-// naziv fajla
-cFName := fp_filename( "0" )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -453,7 +422,7 @@ aStruct := _g_f_struct( F_POS_RN )
 // iscitaj pos matricu
 aClose := _fp_close_rn()
 
-_a_to_file( cFPath, cFName, aStruct, aClose )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aClose )
 
 return
 
@@ -461,7 +430,7 @@ return
 // ----------------------------------------------------
 // manualno zadavanje komandi
 // ----------------------------------------------------
-function fp_man_cmd( cFPath, cFName )
+function fprint_manual_cmd( dev_params )
 local cSep := ";"
 local aManCmd := {}
 local aStruct := {}
@@ -488,21 +457,18 @@ if LastKey() == K_ESC
 	return
 endif
 
-// naziv fajla
-cFName := fp_filename( "0" )
-
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
 aManCmd := _fp_man_cmd( nCmd, cCond )
 
-_a_to_file( cFPath, cFName, aStruct, aManCmd )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aManCmd )
 
 if cErr == "D"
 	
 	// provjeri gresku
-	nErr := fp_r_error( cFPath, cFName, gFC_tout, 0 )
+	nErr := fprint_read_error( dev_params, 0 )
 
 	if nErr <> 0
 		msgbeep("Postoji greska !!!")
@@ -517,7 +483,7 @@ return
 // ----------------------------------------------------
 // izvjestaj o prodanim PLU
 // ----------------------------------------------------
-function fp_sold_plu( cFPath, cFName )
+function fprint_sold_plu( dev_params )
 local cSep := ";"
 local aPlu := {}
 local aStruct := {}
@@ -537,10 +503,7 @@ if LastKey() == K_ESC
 endif
 
 // pobrisi answer fajl
-fp_d_answer( cFPath, cFName )
-
-// naziv fajla
-cFName := fp_filename( "0" )
+fprint_delete_answer( dev_params )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -548,16 +511,17 @@ aStruct := _g_f_struct( F_POS_RN )
 // iscitaj pos matricu
 aPlu := _fp_sold_plu( cType )
 
-_a_to_file( cFPath, cFName, aStruct, aPlu )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aPlu )
 
 
 return
 
 
+
 // ----------------------------------------------------
 // dnevni fiskalni izvjestaj
 // ----------------------------------------------------
-function fp_daily_rpt( cFPath, cFName, nDevice )
+function fprint_daily_rpt( dev_params )
 local cSep := ";"
 local aDaily := {}
 local aStruct := {}
@@ -566,10 +530,6 @@ local cType := "0"
 local _rpt_type := "Z"
 local _param_date, _param_time
 local _last_date, _last_time
-
-if nDevice == nil
-	nDevice := 0
-endif
 
 cType := fetch_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
@@ -609,10 +569,7 @@ if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
 endif
 
 // pobrisi answer fajl
-fp_d_answer( cFPath, cFName )
-
-// naziv fajla
-cFName := fp_filename( "0" )
+fprint_delete_answer( dev_params )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -620,10 +577,10 @@ aStruct := _g_f_struct( F_POS_RN )
 // iscitaj pos matricu
 aDaily := _fp_daily_rpt( cType )
 
-_a_to_file( cFPath, cFName, aStruct, aDaily )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDaily )
 
 // procitaj error
-nErr := fp_r_error( cFPath, cFName, gFC_tout, 0 )
+nErr := fprint_read_error( dev_params, 0, .f. )
 
 if nErr <> 0
 
@@ -642,26 +599,26 @@ set_metric( _param_time, nil, TIME() )
 // MP55LD ce ignorisati, nece se nista desiti!
 
 // ako je dinamicki PLU i tip izvjestaja "Z"
-if gFC_acd == "D" .and. _rpt_type == "Z"
+if dev_params["plu_type"] == "D" .and. _rpt_type == "Z"
 
 	msgo("Nuliram stanje uredjaja ...")
 
 	// ako je printer onda posalji ovu komandu !
-	if gFC_device == "P"
+	if dev_params["type"] == "P"
 
 		// pobrisi answer fajl
-		fp_d_answer( cFPath, cFName )
+		fprint_delete_answer( dev_params )
 
 		// daj mu malo prostora
 		sleep(10)
 
 		// posalji komandu za reset PLU u uredjaju
-		fp_del_plu( cFPath, cFName, .t., nDevice )
+		fprint_delete_plu( dev_params, .t. )
 
 
 		// prekontrolisi gresku
 		// ovdje cemo koristiti veci timeout
-		nErr := fp_r_error( cFPath, cFName, 500, 0 )
+		nErr := fprint_read_error( dev_params, 500, 0 )
 
 		if nErr <> 0
 			msgbeep("Postoji greska !!!")
@@ -672,13 +629,14 @@ if gFC_acd == "D" .and. _rpt_type == "Z"
 	msgc()
 
 	// setuj brojac PLU na 0 u parametrima !
-	auto_plu( .t., .t., nDevice )
+	auto_plu( .t., .t., dev_params["id"] )
+
 	msgbeep("Stanje fiskalnog uredjaju je nulirano.")
 
 endif
 
 // ako se koristi opcija automatskog pologa u ureðaj
-if gFc_pauto <> 0
+if dev_params["avans"] <> 0
 	
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
 	
@@ -686,7 +644,7 @@ if gFc_pauto <> 0
 	sleep(10)
 	
 	// odmah pozovi i automatski polog
-	fp_polog( cFPath, cFName, gFc_pauto )
+	fprint_polog( dev_params )
 	
 	msgc()
 endif
@@ -697,7 +655,7 @@ return
 // ----------------------------------------------------
 // fiskalni izvjestaj za period
 // ----------------------------------------------------
-function fp_per_rpt( cFPath, cFName  )
+function fprint_per_rpt( dev_params )
 local cSep := ";"
 local aPer := {}
 local aStruct := {}
@@ -716,19 +674,16 @@ if LastKey() == K_ESC
 	return
 endif
 
-// naziv fajla
-cFName := fp_filename( "0" )
-
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
 aPer := _fp_per_rpt( dD_from, dD_to )
 
-_a_to_file( cFPath, cFName, aStruct, aPer )
+_a_to_file( dev_params["out_dir"], dev_parms["out_file"], aStruct, aPer )
 
 // procitaj error
-nErr := fp_r_error( cFPath, cFName, gFC_tout, 0 )
+nErr := fprint_read_error( dev_params, 0, .f. )
 
 if nErr <> 0
 	msgbeep("Postoji greska !!!")
@@ -736,28 +691,6 @@ endif
 
 return
 
-
-
-
-// -----------------------------------------------------
-// fiskalno upisivanje robe (FPRINT)
-// cFPath - putanja do fajla
-// aData - podaci racuna
-// -----------------------------------------------------
-function fp_pos_art( cFPath, cFName, aData )
-local cSep := ";"
-local aPosData := {}
-local aStruct := {}
-
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
-
-// iscitaj pos matricu
-aPosData := _fp_p_art( aData )
-
-_a_to_file( cFPath, cFName, aStruct, aPosData )
-
-return
 
 
 // ------------------------------------------------------
@@ -842,10 +775,10 @@ return xRet
 
 
 // ----------------------------------------
-// vraca popunjenu matricu za ispis raèuna
+// vraca popunjenu matricu za ispis racuna
 // FPRINT driver
 // ----------------------------------------
-static function _fp_pos_rn( aData, aKupac, lStorno )
+static function _fprint_rn( aData, aKupac, lStorno, params )
 local aArr := {}
 local cTmp := ""
 local cLogic
@@ -858,20 +791,15 @@ local cOperator := "1"
 local cOp_pwd := "000000"
 local nTotal := 0
 local cVr_placanja := "0"
-local _convert_852 := .f.
-
-// konvertovati u 852
-if gFc_convert == "D"
-    _convert_852 := .t.
-endif
+local _convert_852 := .t.
 
 // provjeri operatera i lozinku iz podesenja...
-if !EMPTY( ALLTRIM( gFc_operater ) )
-    cOperater := ALLTRIM( gFc_operater )
+if !EMPTY( params["op_id"] )
+    cOperater := params["op_id"]
 endif
 
-if !EMPTY( ALLTRIM( gFc_oper_pwd ) )
-    cOp_pwd := ALLTRIM( gFc_oper_pwd )
+if !EMPTY( params["op_pwd"] )
+    cOp_pwd := params["op_pwd"]
 endif
 
 cVr_placanja := ALLTRIM( aData[1, 13] )
@@ -902,7 +830,7 @@ cTmp += REPLICATE("_", 1)
 cTmp += cLogSep
 cTmp += REPLICATE("_", 2)
 cTmp += cSep
-cTmp += ALLTRIM( gIOSA )
+cTmp += params["iosa"]
 cTmp += cSep
 cTmp += cOperator
 cTmp += cSep
@@ -1552,22 +1480,13 @@ local cOp_ch := "4"
 local cLogic
 local cLogSep := ","
 local cSep := ";"
-local _convert_852 := .f.
-
-// konverzija u 852 format
-if gFc_convert == "D"
-    _convert_852 := .t.
-endif
+local _convert_852 := .t.
 
 // ocekuje se matrica formata
 // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
 //         rek_rn, plu, plu_cijena, popust }
 
 cLogic := "1"
-
-//if lStorno == .t.
-//	return
-//endif
 
 for i:=1 to LEN( aData )
 	
@@ -1601,7 +1520,7 @@ for i:=1 to LEN( aData )
 	cTmp += cSep
 	
 	// plu naziv
-	cTmp += to_win1250_encoding( ALLTRIM( PADR( hb_strtoutf8(aData[ i, 4 ]), gFC_alen ) ), _convert_852 )
+	cTmp += to_win1250_encoding( ALLTRIM( PADR( hb_strtoutf8(aData[ i, 4 ]), 32 ) ), _convert_852 )
 	cTmp += cSep
 
 	AADD( aArr, { cTmp } )
@@ -1638,45 +1557,23 @@ next
 return
 
 
-// ----------------------------------------
-// fajl za pos fiskalni stampac
-// ----------------------------------------
-static function fp_filename( cBrRn )
-local cRet
-local cF_name := ALLTRIM( gFC_name )
-
-do case
-
-	case "$rn" $ cF_name
-		// broj racuna.txt
-		cRN := PADL( ALLTRIM( cBrRn ), 8, "0" )
-		cRet := STRTRAN( cF_name, "$rn", cRN )
-		cRet := UPPER( cRet )
-	otherwise 
-		// ono sta je navedeno u parametrima
-		cRet := cF_name
-
-endcase
-
-return cRet
-
 
 
 // ----------------------------------------------
 // pobrisi answer fajl
 // ----------------------------------------------
-function fp_d_answer( cPath, cFile )
-local cF_name
+function fprint_delete_answer( params )
+local _f_name
 
-cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(gFc_answ)
+_f_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_answer"]
 
-if EMPTY( ALLTRIM( gFc_answ ) )
-	cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(cFile)
+if EMPTY( params["out_answer"] )
+	_f_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_file"]
 endif
 
 // ako postoji fajl obrisi ga
-if FILE( cF_name )
-	if FERASE( cF_name ) = -1
+if FILE( _f_name )
+	if FERASE( _f_name ) = -1
 		msgbeep("Greska sa brisanjem fajla odgovora !")
 	endif
 endif
@@ -1687,10 +1584,10 @@ return
 // ----------------------------------------------
 // pobrisi out fajl
 // ----------------------------------------------
-function fp_d_out( cFile )
+function fprint_delete_out( file_path )
 
-if FILE( cFile )
-    if FERASE( cFile ) = -1
+if FILE( file_path )
+    if FERASE( file_path ) = -1
 	    msgbeep("Greska sa brisanjem izlaznog fajla !")
     endif
 endif
@@ -1704,10 +1601,9 @@ return
 // 0 - sve ok
 // -9 - ne postoji answer fajl
 // 
-// nTimeOut - time out fiskalne operacije
 // nFisc_no - broj fiskalnog isjecka
 // ------------------------------------------------
-function fp_r_error( cPath, cFile, nTimeOut, nFisc_no, lStorno )
+function fprint_read_error( params, nFisc_no, lStorno )
 local nErr := 0
 local cF_name
 local i
@@ -1717,7 +1613,8 @@ local cErr
 local aErr_read
 local aErr_data
 local nTime 
-local cSerial := ALLTRIM(gFc_serial)
+local cSerial := params["serial"]
+local nTimeOut := params["time_out"]
 local _o_file, _msg, _tmp
 
 if lStorno == nil
@@ -1727,11 +1624,11 @@ endif
 nTime := nTimeOut
 
 // primjer: c:\fprint\answer\answer.txt
-cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(gFc_answ)
+cF_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_answer"]
 
 // ako se koristi isti answer kao i input fajl
-if EMPTY( ALLTRIM( gFc_answ ) )
-	cF_name := cPath + ANSW_DIR + SLASH + ALLTRIM(cFile)
+if EMPTY( params["out_answer"] )
+	cF_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_file"]
 endif
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
@@ -1845,6 +1742,9 @@ endif
  
    
 return nErr
+
+
+
 
 // ------------------------------------------------
 // vraca broj fiskalnog isjecka

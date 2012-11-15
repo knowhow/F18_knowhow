@@ -352,6 +352,9 @@ __server_log := .t.
 set_all_gvars()
 
 f18_init_semaphores()
+
+set_init_fiscal_params()
+
 return .t.
 
 

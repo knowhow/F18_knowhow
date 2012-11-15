@@ -204,23 +204,14 @@ return cRet
 // vraca naziv parametra za sql/db
 static function _get_auto_plu_param_name( f_device )
 local _ret := "auto_plu"
-local _dev_param := get_fiscal_device_params( f_device, my_user() )
 
 // parametar moze biti:
 // 
-// "auto_plu" - auto plu bez dodatnih uredjaja
 // "auto_plu_dev_1" - auto plu device 1
 // "auto_plu_dev_2" - auto plu device 2
 
-if f_device == nil
-	f_device := 0
-endif
-
 // ako se ne koriste uredjaji, ali se koristi generalni 
 // broj uredjaja unutar preduzeca
-if f_device == 0 .and. _dev_param["id"] > 0
-	f_device := _dev_param["id"]
-endif
 
 if f_device > 0
 	_ret := _ret + "_dev_" + ALLTRIM( STR( f_device ) )
@@ -235,10 +226,6 @@ return _ret
 function last_plu( f_device )
 local _plu := 0
 local _param_name := _get_auto_plu_param_name( f_device )
-
-if f_device == nil
-	f_device := 0
-endif
 
 _plu := fetch_metric( _param_name, nil, _plu )
 

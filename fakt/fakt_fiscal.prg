@@ -68,7 +68,7 @@ endif
 __device_params := dev_param
 
 // drajver ??
-_dev_drv := ALLTRIM( dev_params["drv"] )
+_dev_drv := ALLTRIM( dev_param["drv"] )
 __DRV_CURRENT := _dev_drv
 
 // priprema podatak za racun....
@@ -78,7 +78,7 @@ _storno := fakt_dok_is_storno( id_firma, tip_dok, br_dok )
 // pripremi matricu sa podacima partnera itd....
 _partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
 
-if _partn_data == .f.
+if VALTYPE( _partn_data ) == "L"
     // nesto nije dobro, zatvaram opciju
     return _err_level
 endif
@@ -207,9 +207,9 @@ _v_plac := "0"
 if partn_arr <> NIL
     // u ovim clanovima matrice su mi podaci 
     // o partneru
-    _v_plac := partn_arr[ 1, 7 ]
-    _partn_ino := partn_arr[ 1, 8 ]
-    _partn_pdv := partn_arr[ 1, 9 ]
+    _v_plac := partn_arr[ 1, 6 ]
+    _partn_ino := partn_arr[ 1, 7 ]
+    _partn_pdv := partn_arr[ 1, 8 ]
 endif
 
 if storno == NIL
@@ -233,7 +233,7 @@ _rn_datum := field->datdok
 _partn_id := field->idpartner
 
 // nastimaj me na fakt_fakt
-select fakt_fakt
+select fakt
 go top
 seek ( id_firma + tip_dok + br_dok )
 
@@ -497,13 +497,23 @@ if LEN( ALLTRIM( _partn_jib ) ) == 12
 endif
 
 // provjeri podatke partnera
-_ok := .f.
-_ok := EMPTY( _partn_jib )
-_ok := _ok .and. EMPTY( partn->naz )
-_ok := _ok .and. EMPTY( partn->adresa )
-_ok := _ok .and. EMPTY( partn->ptt )
-_ok := _ok .and. EMPTY( partn->mjesto )
-          
+_ok := .t.
+if EMPTY( _partn_jib )
+    _ok := .f.
+endif
+if _ok .and. EMPTY( partn->naz )
+    _ok := .f.
+endif
+if _ok .and. EMPTY( partn->adresa )
+    _ok := .f.
+endif
+if _ok .and. EMPTY( partn->ptt )
+    _ok := .f.
+endif
+if _ok .and. EMPTY( partn->mjesto )
+    _ok := .f.
+endif     
+
 if !_ok
     MsgBeep("!!! Podaci partnera nisu kompletirani !!!#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju")
     return .f.

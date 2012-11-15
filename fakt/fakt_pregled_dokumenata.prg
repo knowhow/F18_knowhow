@@ -704,9 +704,9 @@ function fakt_tabela_komande(lOpcine, fakt_doks_filt)
 local nRet:=DE_CONT
 local _rec
 local _filter
+local _dev_id, _dev_params
 
 _filter := fakt_doks_filt
-
 
 cFilter := DBFilter()
 
@@ -814,7 +814,10 @@ do case
         
         if Pitanje( "ST FISK RN5","Stampati fiskalni racun ?", "D") == "D"
 
-            fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok )
+            _dev_id := get_fiscal_device( my_user() )
+            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+            fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )
         
             select fakt_doks
             set filter to &cFilter

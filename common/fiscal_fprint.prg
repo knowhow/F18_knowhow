@@ -754,7 +754,7 @@ return aArr
 // ------------------------------------------
 // vraca tarifu
 // ------------------------------------------
-static function _g_tar( cStopa )
+static function _g_tar( cStopa, pdv )
 local xRet := "2"
 
 do case
@@ -767,7 +767,7 @@ do case
 endcase
 
 // ako nije PDV obveznik onda je stopa "1" uvijek
-if gFC_pdv == "N"
+if pdv == "N"
 	xRet := "1"
 endif
 
@@ -810,7 +810,7 @@ nTotal := aData[1, 14]
 //         rek_rn, plu, plu_cijena, popust, barkod, vrsta plac, total racuna }
 
 // prvo dodaj artikle za prodaju...
-_a_fp_articles( @aArr, aData, lStorno )
+_a_fp_articles( @aArr, aData, lStorno, params )
 
 // broj racuna
 cRnBroj := ALLTRIM( aData[1,1] )
@@ -1468,7 +1468,7 @@ return aArr
 // ----------------------------------------------------
 // dodaj artikle za racun
 // ----------------------------------------------------
-static function _a_fp_articles( aArr, aData, lStorno )
+static function _a_fp_articles( aArr, aData, lStorno, dev_params )
 local i
 local cTmp := ""
 // opcija dodavanja artikla u printer <1|2> 
@@ -1508,7 +1508,7 @@ for i:=1 to LEN( aData )
 	cTmp += cSep
 	
 	// poreska stopa
-	cTmp += _g_tar( aData[ i, 7 ] )
+	cTmp += _g_tar( aData[ i, 7 ], dev_params["pdv"] )
 	cTmp += cSep
 	
 	// plu kod 
@@ -1614,7 +1614,7 @@ local aErr_read
 local aErr_data
 local nTime 
 local cSerial := params["serial"]
-local nTimeOut := params["time_out"]
+local nTimeOut := params["timeout"]
 local _o_file, _msg, _tmp
 
 if lStorno == nil

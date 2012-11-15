@@ -234,6 +234,9 @@ local nTr2
 local cPom
 local cENTER := chr(K_ENTER) + chr(K_ENTER) + chr(K_ENTER)
 local aFakt_dok := {}
+local _dev_id := 0
+local _dev_params
+local _fiscal_use := fiscal_opt_active()
     
 if (Ch==K_ENTER  .and. Empty(BrDok) .and. EMPTY(rbr))
     return DE_CONT
@@ -248,28 +251,37 @@ do case
     
         lFisMark := .f.
 
+        if !_fiscal_use 
+            return DE_CONT
+        endif
+
         if fakt_pripr->(reccount()) <> 0
             // priprema nije prazna, nema stampanja racuna
             MsgBeep("Priprema nije prazna, stampa fisk.racuna nije moguca!")
             return DE_CONT
         endif
 
-        if gFC_Pitanje == "D" .and. Pitanje( "ST_FISK_RN", "Odstampati racun na fiskalni printer ?", "D") == "N"
+        if Pitanje(, "Odstampati racun na fiskalni printer ?", "D" ) == "N"
             return DE_CONT
         endif
 
-        msgo("stampa na fiskalni printer u toku...")
+        // pronadji mi device_id 
+        _dev_id := get_fiscal_device( my_user() )
+        // setuj parametre za stampu
+        _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+        MsgO( "stampa na fiskalni printer u toku..." )
 
         // posalji na fiskalni uredjaj
-        fakt_fisc_rn( cFFirma, cFTipDok, cFBrDok )
+        fakt_fisc_rn( cFFirma, cFTipDok, cFBrDok, .f., _dev_params )
 
         MsgC()
 
         select fakt_pripr
     
-        if gFC_faktura $ "D#G#X"
+        if _dev_params["print_a4"] $ "D#G#X"
             
-            if gFC_faktura $ "D#X" .and. Pitanje(,"Stampati fakturu ?", "N") == "D"
+            if _dev_params["print_a4"] $ "D#X" .and. Pitanje(,"Stampati fakturu ?", "N") == "D"
             
                 // stampaj dokument odmah nakon fiskalnog racuna
                 StampTXT( cFFirma, cFTipDok, cFBrDok )
@@ -279,7 +291,7 @@ do case
     
             endif
         
-            if gFC_faktura $ "G#X" .and. ;
+            if _dev_params["print_a4"] $ "G#X" .and. ;
                 Pitanje(,"Stampati graficku fakturu ?", "N") == "D"
             
                 stdokodt( cFFirma, cFTipDok, cFBrDok )
@@ -412,7 +424,7 @@ do case
             
         o_fakt_edit() 
         
-        if gFc_use == "D" .and. cFTipDok $ "10#11" .and. aFakt_dok <> NIL
+        if _fiscal_use .and. cFTipDok $ "10#11" .and. aFakt_dok <> NIL
             
             if LEN( aFakt_dok ) > 0
 

@@ -394,11 +394,6 @@ public gRnPTxt1 := SPACE(35)
 public gRnPTxt2 := SPACE(35)
 public gRnPTxt3 := SPACE(35)
 public gFirTel := SPACE(20)
-// parametri fiskalnog uredjaja
-public gFc_type, gFc_device, gFc_use, gFc_path, gFc_path2, gFc_name, gFc_answ, gFc_pitanje, gFc_error
-public gFc_fisc_print, gFc_operater, gFc_oper_pwd, gFc_tout, gIosa, gFc_alen, gFc_nftxt, gFc_acd, gFc_pdv
-public gFc_pinit, gFc_chk, gFc_faktura, gFc_zbir, gFc_dlist, gFc_pauto, gFc_serial, gFc_restart
-public gFc_dev_id, gFc_kusur, gFc_convert
 
 // fiskalni parametri
 gVodiTreb:="N"
@@ -410,9 +405,6 @@ gDirZaklj:="D"
 gDupliArt:="D"
 gDupliUpoz:="N"
 gDisplay:="N"
-
-// procitaj fiskalne parametre
-fiscal_params_read()
 
 // citaj parametre iz metric tabele
 gFirNaziv := fetch_metric("pos_header_org_naziv", nil, gFirNaziv)

@@ -364,12 +364,6 @@ public gcF9USmece := "N"
 // time-out kod azuriranja
 public gAzurTimeOut := 150
 
-// parametri fiskalnog uredjaja
-public gFc_type, gFc_device, gFc_use, gFc_path, gFc_path2, gFc_name, gFc_answ, gFc_pitanje, gFc_error
-public gFc_fisc_print, gFc_operater, gFc_oper_pwd, gFc_tout, gIosa, gFc_alen, gFc_nftxt, gFc_acd, gFc_pdv
-public gFc_pinit, gFc_chk, gFc_faktura, gFc_zbir, gFc_dlist, gFc_pauto, gFc_serial, gFc_restart
-public gFc_dev_id, gFc_kusur, gFc_convert
-
 // stmpa na traku
 public gMpPrint := "N"
 public gMPLocPort := "1"
@@ -422,9 +416,6 @@ public gFPicHRow:=0
 public gFPicFRow:=0
 
 // citaj parametre sa db servera
-
-// fiskalni parametri
-fiscal_params_read()
 
 // parametri zaglavlja
 gFNaziv := fetch_metric( "org_naziv", nil, gFNaziv )

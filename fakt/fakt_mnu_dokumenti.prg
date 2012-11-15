@@ -36,9 +36,9 @@ if IsUgovori()
 endif
 
 // ako koristimo fiskalne funkcije
-if gFc_use == "D"
-	AADD(_opc,"F. stampa fiskalnih racuna od-do")
-	AADD(_opcexe, {|| st_fisc_per()})
+if fiscal_opt_active()
+	AADD( _opc,"F. stampa fiskalnih racuna od-do" )
+	AADD( _opcexe, {|| st_fisc_per()})
 endif
 
 f18_menu("stfak", .f., _izbor, _opc, _opcexe )

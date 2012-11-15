@@ -74,9 +74,6 @@ if !IsPDV()
 endif
 
 AADD(opc,"F. fiskalni parametri  ")
-AADD(opcexe,{|| fiscal_params_set() })
-
-AADD(opc,"Fi. fiskalni parametri / novi  ")
 AADD(opcexe,{|| f18_fiscal_params_menu() })
 
 AADD(opc,"L. lista fiskalnih uredjaja  ")

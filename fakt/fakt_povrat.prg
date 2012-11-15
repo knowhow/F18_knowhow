@@ -412,7 +412,7 @@ endif
 // ako je fiskalni racun u vezi, ovo nema potrebe vracati
 // samo uz lozinku
 
-if gFc_use == "D" .and. vars["idtipdok"] $ "10#11"
+if fiscal_opt_active() .and. vars["idtipdok"] $ "10#11"
 
     _area := SELECT()
     

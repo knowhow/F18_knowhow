@@ -304,7 +304,7 @@ if (!EMPTY(cTime))
 	endif
 
 	// fiskalizacija, ispisi racun
-	if gFc_use == "D"
+	if fiscal_opt_active()
 		
 		// stampa fiskalnog racuna, vraca ERR
 		nErr := pos_fisc_rn( cIdPos, gDatum, cStalRac )
@@ -320,7 +320,7 @@ if (!EMPTY(cTime))
 		endif
 
 		// ako postoji ERR vrati racun
-		if nErr > 0 .and. gFC_error == "D"
+		if nErr > 0
 			// vrati racun u pripremu...
 			pos_povrat_rn( cStalRac, gDatum )
 		endif
@@ -332,7 +332,7 @@ endif
 // nema vremena, to je znak da nema racuna
 if EMPTY( cTime )
   	
-	if gFC_use == "N"
+	if fiscal_opt_active()
 		SkloniIznRac()
 	endif
 	

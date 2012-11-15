@@ -190,182 +190,6 @@ MsgBeep("Vrijeme izvrsenja:" + STR( SECONDS()-nSeconds ) )
 return
 
 
-// --------------------------------------------------
-// inicijalizacija fiskalnih tabela - sifrarnika
-// --------------------------------------------------
-function ffisc_init()
-local aRoba := {}
-local aRobaGr := {}
-local aPartn := {}
-local aPor := {}
-local aObj := {}
-local aOper := {}
-
-msgo("inicijalizacija u toku...")
-
-// init - porez
-aPor := _f_por_init()
-
-// init - roba grupe
-aRobaGr := _f_rg_init()
-
-// init - roba
-aRoba := _f_ro_init( .t. )
-
-// init - partneri
-aPartn := _f_pa_init()
-
-// init - objekti
-aObj := _f_ob_init()
-
-// init - operater
-aOper := _f_op_init()
-
-// napravi inicijalizaciju u txt fajlove
-fisc_init( gFC_path, aPor, aRoba, aRobaGr, aPartn, aObj, aOper )
-
-msgc()
-
-return
-
-
-
-// -------------------------------------------
-// operateri, inicijalizacija
-// -------------------------------------------
-function _f_op_init()
-local aRet := {}
-
-AADD( aRet, { 1, "operater 1", "" })
-
-return aRet 
-
-
-
-// -------------------------------------------
-// objekti, inicijalizacija
-// -------------------------------------------
-function _f_ob_init()
-local aRet := {}
-
-AADD( aRet, { 1, "objekat 1", "", "", "", "" })
-
-return aRet 
-
-
-// -------------------------------------------
-// grupe robe, inicijalizacija
-// -------------------------------------------
-function _f_rg_init()
-local aRet := {}
-
-AADD( aRet, { 1, "grupa 1" })
-
-return aRet 
-
-
-// -------------------------------------------
-// poreske stope inicijalizacija
-// -------------------------------------------
-function _f_por_init()
-local aRet := {}
-
-AADD( aRet, { 0, "A", 00.00 })
-AADD( aRet, { 1, "E", 17.00 })
-
-return aRet 
-
-
-// -----------------------------------------
-// roba - inicijalizacija
-// -----------------------------------------
-function _f_ro_init( lSifDob )
-local aRet := {}
-local nTArea := SELECT()
-local nRobaGr := 0
-local nPorSt := 0
-local cNaz
-
-if lSifDob == nil
-	lSifDob := .t.
-endif
-
-O_ROBA
-select roba
-go top
-do while !EOF()
-	
-	if lSifDob == .t. .and. EMPTY(field->sifradob) 
-		skip
-		loop
-	endif
-
-	// ako mpc nije definisana - preskoci
-	if field->mpc = 0
-		skip
-		loop
-	endif
-	
-	nRobaGr := 1
-	nPorSt := 1
-
-	cNaz := to_xml_encoding( field->naz )
-
-	AADD( aRet, { ;
-		VAL(ALLTRIM(field->sifradob)), ;
-		ALLTRIM(cNaz), ;
-		ALLTRIM(field->barkod), ;
-		nRobaGr, ;
-		nPorSt, ;
-		field->mpc } )
-
-	skip
-
-enddo
-
-select (nTArea)
-return aRet 
-
-
-// -----------------------------------------
-// partn - inicijalizacija
-// -----------------------------------------
-function _f_pa_init()
-local aRet := {}
-local nTArea := SELECT()
-local cAdr
-local cNaz
-
-O_PARTN
-select partn
-go top
-
-do while !EOF()
-	
-	cPId := field->id
-
-	cREGB := IzSifK("PARTN", "REGB", cPId )
-
-	select partn
-	
-	cNaz := to_xml_encoding( partn->naz )
-	cAdr := to_xml_encoding( partn->adresa )
-
-	AADD( aRet, { ;
-		VAL(cPid), ;
-		ALLTRIM(cNaz), ;
-		ALLTRIM(cAdr), ;
-		"", ;
-		"", ;
-		cREGB } )
-
-	skip
-
-enddo
-
-select (nTArea)
-return aRet 
-
 
 // ----------------------------------------------
 // napuni sifrarnik sifk  sa poljem za unos 
@@ -400,6 +224,8 @@ cRbr := "09"
 cOznaka := "PROF"
 add_n_found(cId, cNaz, cRbr, cOznaka, 25)
 
+return
+
 
 // -------------------------------------------
 // -------------------------------------------
@@ -421,6 +247,7 @@ if !FOUND()
 		f_decimal with 0
 endif
 
+return
 
 // ------------------------------------------------------------
 // resetuje brojač dokumenta ako smo pobrisali dokument

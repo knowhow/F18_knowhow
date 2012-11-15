@@ -12,6 +12,49 @@
 
 #include "fmk.ch"
 
+
+// ----------------------------------------
+// fajl za fiskalni stampac
+// ----------------------------------------
+function fiscal_out_filename( file_name, rn_broj, trig )
+local _ret, _rn
+local _f_name := ALLTRIM( file_name )
+
+if trig == nil
+	trig := ""
+endif
+
+trig := ALLTRIM( trig )
+
+do case
+
+	case "$rn" $ _f_name
+		// broj racuna.xml
+		_rn := PADL( ALLTRIM( rn_broj ), 8, "0" )
+		_ret := STRTRAN( _f_name, "$rn", _rn )
+		_ret := UPPER( _ret )
+	
+	case "TR$" $ _f_name
+		// odredjuje PLU ili CLI ili RCP na osnovu trigera
+		_ret := STRTRAN( _f_name, "TR$", trig )
+		_ret := UPPER( _ret )
+	
+		if ".XML" $ UPPER( trig )
+			_ret := trig
+		endif
+
+	otherwise 
+		// ono sta je navedeno u parametrima
+		_ret := _f_name
+
+endcase
+
+return _ret
+
+
+
+
+
 // -------------------------------------------------
 // generise novi plu kod za sifru
 // -------------------------------------------------

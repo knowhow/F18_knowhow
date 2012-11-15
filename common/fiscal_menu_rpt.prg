@@ -21,6 +21,7 @@ static __device_params
 // ---------------------------------------------------------
 function fisc_rpt( low_level )
 local _dev_id := 0
+local _dev_drv
 local _m_x
 local _m_y
 
@@ -37,10 +38,12 @@ __device_id := get_fiscal_device( my_user() )
 // setuj parametre uredjaja
 __device_params := get_fiscal_device_params( __device_id, my_user() )
 
+_dev_drv := __device_params["drv"]
+
 do case 
 
   // FLINK opcije
-  case ALLTRIM( gFc_type ) == "FLINK"
+  case _dev_drv == "FLINK"
 
     AADD(opc,"------ izvjestaji ---------------------------------")
     AADD(opcexe,{|| .f. })
@@ -55,7 +58,7 @@ do case
     AADD(opcexe,{|| fl_reset( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
 
   // za FPRINT uredjaje (NSC)
-  case ALLTRIM(gFc_type) == "FPRINT"
+  case _dev_drv == "FPRINT"
 
     if !low_level
 
@@ -111,22 +114,19 @@ do case
     endif
 
   // za HCP uredjaje
-  case ALLTRIM(gFc_type) == "HCP" 
+  case _dev_drv == "HCP" 
    
    	if !low_level 
     	
 		AADD(opc,"------ izvjestaji -----------------------")
     	AADD(opcexe,{|| .f. })
     	AADD(opc,"1. dnevni fiskalni izvjestaj (Z rep.)    ")
-    	AADD(opcexe,{|| hcp_z_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    	AADD(opcexe,{|| hcp_z_rpt( __device_params ) })
     	AADD(opc,"2. presjek stanja (X rep.)    ")
-    	AADD(opcexe,{|| hcp_x_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    	AADD(opcexe,{|| hcp_x_rpt( __device_params ) })
     
     	AADD(opc,"3. periodicni izvjestaj (Z rep.)    ")
-   	 	AADD(opcexe,{|| hcp_s_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+   	 	AADD(opcexe,{|| hcp_s_rpt( __device_params ) })
 
    	endif
   
@@ -134,26 +134,23 @@ do case
     AADD(opcexe,{|| .f. })
     
     AADD(opc,"5. kopija racuna    ")
-    AADD(opcexe,{|| hcp_rn_copy( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    AADD(opcexe,{|| hcp_rn_copy( __dev_params ) })
     AADD(opc,"6. polog u uredjaj    ")
-    AADD(opcexe,{|| hcp_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    AADD(opcexe,{|| hcp_polog( __dev_params ) })
     AADD(opc,"7. posalji cmd.ok    ")
-    AADD(opcexe,{|| hcp_s_cmd( ALLTRIM(gFC_path) ) })
+    AADD(opcexe,{|| hcp_create_cmd_ok( __dev_params ) })
 
    	if !low_level
     
     	AADD(opc,"8. izbaci stanje racuna    ")
-    	AADD(opcexe,{|| hcp_fisc_no( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFC_error ) })
+    	AADD(opcexe,{|| hcp_fisc_no( __device_params ) })
     	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
+    	AADD(opcexe,{|| auto_plu( .t., nil, __device_id ) })
    
    	endif
 
     // za TREMOL uredjaje
-  case ALLTRIM(gFc_type) == "TREMOL" 
+  case _dev_drv == "TREMOL" 
     
 	if !low_level
 
@@ -161,24 +158,19 @@ do case
     	AADD(opcexe,{|| .f. })
     
     	AADD(opc,"1. dnevni fiskalni izvjestaj (Z rep.)    ")
-   	 	AADD(opcexe,{|| trm_z_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+   	 	AADD(opcexe,{|| tremol_z_rpt( __device_params ) })
     
     	AADD(opc,"2. izvjestaj po artiklima (Z rep.)    ")
-   	 	AADD(opcexe,{|| trm_z_item( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+   	 	AADD(opcexe,{|| tremol_z_item( __device_params ) })
    
     	AADD(opc,"3. presjek stanja (X rep.)    ")
-   	 	AADD(opcexe,{|| trm_x_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+   	 	AADD(opcexe,{|| tremol_x_rpt( __device_params ) })
  
    	 	AADD(opc,"4. izvjestaj po artiklima (X rep.)    ")
-    	AADD(opcexe,{|| trm_x_item( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    	AADD(opcexe,{|| tremol_x_item( __device_params ) })
     
     	AADD(opc,"5. periodicni izvjestaj (Z rep.)    ")
-    	AADD(opcexe,{|| trm_p_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    	AADD(opcexe,{|| tremol_per_rpt( __device_params ) })
    
 	endif
 
@@ -186,27 +178,26 @@ do case
     AADD(opcexe,{|| .f. })
 
     AADD(opc,"K. kopija racuna    ")
-    AADD(opcexe,{|| trm_rn_copy( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    AADD(opcexe,{|| tremol_rn_copy( __device_params ) })
 
 	if !low_level
 
     	AADD(opc,"R. reset artikala    ")
-    	AADD(opcexe,{|| fc_trm_rplu( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    	AADD(opcexe,{|| tremol_reset_plu( __device_params ) })
 
 	endif
 
     AADD(opc,"P. polog u uredjaj    ")
-    AADD(opcexe,{|| trm_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFc_error ) })
+    AADD(opcexe,{|| tremol_polog( __device_params ) })
 
 	if !low_level    
     	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
+    	AADD(opcexe,{|| auto_plu( .t., nil, __device_id ) })
 	endif
 
-  case ALLTRIM(gFc_type) == "TRING" 
+
+
+  case _dev_drv == "TRING" 
     
 	if !low_level
     

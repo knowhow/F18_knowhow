@@ -608,7 +608,7 @@ SELECT PRIPRZ
 __dbPack()
 
 // ova opcija ce setovati plu kodove u sifrarniku ako nisu vec setovani
-if gFc_use == "D" .and. gFc_acd == "P" 
+if fiscal_opt_active() .and. .f. 
 
     nTArea := SELECT()
 

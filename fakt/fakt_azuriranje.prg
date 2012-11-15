@@ -1171,6 +1171,7 @@ local _novi_br_dok
 local _rec 
 local _count
 local _fiscal_no
+local _fiscal_use := fiscal_opt_active()
 
 if Pitanje("FORM_STORNO", "Formirati storno dokument ?","D") == "N"
     return
@@ -1207,7 +1208,8 @@ go top
 seek id_firma + id_tip_dok + br_dok
 
 _fiscal_no := 0
-if gFc_use == "D"
+
+if _fiscal_use
     _fiscal_no := field->fisc_rn
 endif
 
@@ -1227,7 +1229,7 @@ do while !EOF() .and. field->idfirma == id_firma  .and. field->idtipdok == id_ti
     _rec["brdok"] := _novi_br_dok
     _rec["datdok"] := DATE()
     
-    if gFc_use == "D"
+    if _fiscal_use
         _rec["fisc_rn"] := _fiscal_no
     endif
 
@@ -1247,3 +1249,5 @@ if _count > 0
 endif
 
 return
+
+

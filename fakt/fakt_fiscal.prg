@@ -40,7 +40,7 @@ return __racun_na_email
 // --------------------------------------------------------------------
 // centralna funkcija za poziv stampe fiskalnog racuna
 // --------------------------------------------------------------------
-function fakt_fisc_rn( id_firma, tip_dok, br_dok, auto_print, dev_id )
+function fakt_fisc_rn( id_firma, tip_dok, br_dok, auto_print, dev_param )
 local _err_level := 0
 local _dev_drv
 local _storno := .f.
@@ -60,21 +60,15 @@ if auto_print
     __auto := .t.
 endif
 
-if dev_id == NIL
-    // daj mi listu uredjaja na koje mogu stampati
-    __device_id := get_fiscal_device( my_user() )
-endif
-
-if __device_id == NIL .or. __device_id == 0
+if dev_param == NIL
     MsgBeep( "Stampanje fiskalnog racuna onemoguceno !!!#Nema postavljenih fiskalnih uredjaja." )
     return _err_level
 endif
 
-// setuj parametre za dati uredjaj
-__device_params := get_fiscal_device_params( __device_id, my_user() )
+__device_params := dev_param
 
 // drajver ??
-_dev_drv := ALLTRIM( __device_params["drv"] )
+_dev_drv := ALLTRIM( dev_params["drv"] )
 __DRV_CURRENT := _dev_drv
 
 // priprema podatak za racun....
@@ -97,17 +91,18 @@ do case
     case _dev_drv == __DRV_FPRINT
         _err_level := fakt_to_fprint( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
 
+    case _dev_drv == __DRV_TREMOL
+        _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
+
+    case _dev_drv == __DRV_HCP
+        _err_level := fakt_to_hcp( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
+
+
     //case _dev_drv == __DRV_TRING
       //  _err_level := fiscal_rn_tring_prepare( id_firma, tip_dok, br_dok )
 
     //case _dev_drv == __DRV_FLINK
       //  _err_level := fiscal_rn_flink_prepare( id_firma, tip_dok, br_dok )
-
-    //case _dev_drv == __DRV_HCP
-      //  _err_level := fiscal_rn_hcp_prepare( id_firma, tip_dok, br_dok )
-
-    //case _dev_drv == __DRV_TREMOL
-      //  _err_level := fiscal_rn_tremol_prepare( id_firma, tip_dok, br_dok )
 
 endcase
 
@@ -204,6 +199,11 @@ local _pop_na_teret_prod := .f.
 local _partn_ino := .f.
 local _partn_pdv := .t.
 
+// 0 - gotovina
+// 3 - ziralno / virman
+
+_v_plac := "0"
+
 if partn_arr <> NIL
     // u ovim clanovima matrice su mi podaci 
     // o partneru
@@ -231,8 +231,6 @@ _rn_iznos := field->iznos
 _rn_rabat := field->rabat
 _rn_datum := field->datdok
 _partn_id := field->idpartner
-
-_vrsta_pl := field->idvrstep
 
 // nastimaj me na fakt_fakt
 select fakt_fakt
@@ -294,6 +292,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
     if tip_dok == "10"
         // moramo uzeti cijenu sa pdv-om
         _cijena := ABS( _uk_sa_pdv( tip_dok, _partn_id, field->cijena ) )
+        _vr_plac := "3"
     else
         _cijena := ABS( field->cijena )
     endif
@@ -364,7 +363,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
             _cijena, ;
             _rn_rabat, ;
             _art_barkod, ;
-            _vr_plac, ;
+            _v_plac, ;
             _rn_total, ;
             _rn_datum, ;
             _art_jmj } )
@@ -407,7 +406,9 @@ return _data
 static function fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
 local _head := {}
 local _partn_id
-local _vr_plac, _partn_clan, _partn_jib
+local _vrsta_p 
+local _v_plac := "0"
+local _partn_clan, _partn_jib
 local _prikazi_partnera := .t.
 local _partn_ino := .f.
 local _partn_pdv := .t.
@@ -417,7 +418,7 @@ go top
 seek ( id_firma + tip_dok + br_dok )
 
 _partn_id := field->idpartner
-_vr_plac := field->idvrstep
+_vrsta_p := field->idvrstep
 
 // head matrica
 // =============================
@@ -430,15 +431,15 @@ _vr_plac := field->idvrstep
 // 7 - ino partner
 // 8 - pdv obveznik
 
-if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) .or. _vr_plac == "G "
+if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) .or. _vrsta_p == "G "
     return NIL
 endif
 
-if tip_dok $ "#10#" .or. ( tip_dok == "11" .and. _vr_plac == "VR" )
+if tip_dok $ "#10#" .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
     // virmansko placanje
     // tip dokumenta: 10
     // tip dokumenta: 11 i vrsta placanja "VR"
-    _vr_plac := "3"
+    _v_plac := "3"
 endif
 
 // podaci partnera
@@ -451,7 +452,7 @@ if tip_dok == "11"
     _partn_ino := .f.
     _partn_pdv := .t.
 
-    if _vr_plac == "3" 
+    if _v_plac == "3" 
         _prikazi_partnera := .t.
     else 
         _prikazi_partnera := .f.
@@ -510,7 +511,7 @@ endif
 
 // ubaci u matricu podatke o partneru
 AADD( _head, { _partn_jib, partn->naz, partn->adresa, ;
-         partn->ptt, partn->mjesto, _vr_plac, _partn_ino, _partn_pdv } )
+         partn->ptt, partn->mjesto, _v_plac, _partn_ino, _partn_pdv } )
 
 return _head
 
@@ -600,296 +601,50 @@ return _err_level
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na TREMOL uredjaj
 // -------------------------------------------------------------
-static function fiscal_rn_tremol_prepare( cFirma, cTipDok, cBrDok, cContinue )
-local cError := ""
-local lStorno := .t.
-local aStavke := {}
-local aKupac := {}
-local nNRekRn := 0
-local cPartnId := ""
-local cVr_placanja := "0"
-local nErr := 0
-local nFisc_no := 0
-local cJibPartn := ""
-local lIno := .f.
-local cPOslob := ""
-local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
+static function fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, cont )
+local _err_level := 0
+local _f_name 
+local _fiscal_no := 0
 
-if cContinue == NIL
-    cContinue := "0"
-endif
-
-O_FAKT_DOKS
-O_FAKT
-O_ROBA
-O_SIFK
-O_SIFV
-
-select fakt_doks
-seek ( cFirma + cTipDok + cBrDok )
-
-nBrDok := VAL(ALLTRIM(field->brdok))
-nTotal := field->iznos
-dDatRn := field->datdok
-nNRekRn := field->fisc_rn
-
-select fakt
-seek ( cFirma + cTipDok + cBrDok )
-
-nTRec := RECNO()
-
-// da li se radi o storno racunu ?
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
-
-    if field->kolicina > 0
-        lStorno := .f.
-        exit
-    endif
-    
-    skip
-enddo
-
-// koji je broj racuna koji storniramo
-if lStorno 
-    nNRekRn := reklamni_rn_box( nNRekRn )
-endif
-
-// kupac
-// 1 - id broj kupca
-// 2 - naziv
-// 3 - adresa
-// 4 - ptt
-// 5 - grad
-
-if cTipDok $ "10#"
-
-    // uzmi kupca i setuj placanje
-
-    // daj mi partnera za ovu fakturu
-    cPartnId := fakt_doks->idpartner
-    cVr_Placanja := "3"
-
-endif
-
-if !EMPTY( cPartnId )
-
-    cJibPartn := ALLTRIM( IzSifK( "PARTN" , "REGB", cPartnId, .f. ) )
-    cPOslob := ALLTRIM( IzSifK( "PARTN" , "PDVO", cPartnId, .f. ) )
-
-    if LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob )
-        
-        lIno := .t.
-    
-    elseif LEN( cJibPartn ) = 12
-
-        // ako je pdv obveznik
-        // dodaj "4" ispred id broja
-        
-        cJibPartn := "4" + ALLTRIM( cJibPartn )
-        
-        lIno := .f.
-
-    endif
-
-    // ako nije INO, onda setuj partnera
-
-    if lIno = .f.
-        
-        nTarea := SELECT()
-    
-        select partn
-        seek cPartnId
-
-        select (nTArea)
-
-        // provjeri podatke partnera
-        lPEmpty := .f.
-        lPEmpty := EMPTY( cJibPartn )
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->naz )
-        endif
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->adresa )
-        endif
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->ptt )
-        endif
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->mjesto )
-        endif
-        if lPEmpty
-            msgbeep("!!! Podaci partnera nisu kompletirani !!!#Prekidam operaciju")
-            return 0
-        endif
-    
-        // ubaci u matricu podatke o partneru
-        AADD( aKupac, { cJibPartn, partn->naz, partn->adresa, ;
-            partn->ptt, partn->mjesto } )
-    
-    endif
-
-endif
-
-// i total sracunaj sa pdv
-// upisat cemo ga u svaku stavku matrice
-nTotal := _uk_sa_pdv( cTipDok, cPartnId, nTotal )
-
-// vrati se opet na pocetak
-go (nTRec)
-select fakt
-
-// upisi u matricu stavke
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
-
-    // nastimaj se na robu ...
-    select roba
-    seek fakt->idroba
-    select fakt
-
-    // storno identifikator
-    nSt_Id := 0
-
-    if ( field->kolicina < 0 ) .and. lStorno == .f.
-        nSt_id := 1
-    endif
-    
-    cF_brrn := fakt->brdok
-    cF_rbr := fakt->rbr
-    
-    cF_idart := fakt->idroba
-    cF_barkod := ALLTRIM( roba->barkod )
-    nF_plu := roba->fisc_plu
-
-    if __device_params["plu_type"] == "D"
-        // generisanje inkrementalnog PLU kod-a
-        nF_plu := auto_plu( nil, nil, __device_id )
-    endif
-
-    nF_pprice := roba->mpc
-
-    cF_artnaz := ALLTRIM( roba->naz )
-    cF_artjmj := ALLTRIM( roba->jmj )
-
-    nF_cijena := ABS ( field->cijena )
-    
-    if cTipDok $ "10#"
-        // moramo uzeti cijenu sa pdv-om
-        nF_cijena := ABS( _uk_sa_pdv( cTipDok, cPartnId, ;
-            field->cijena ) )
-        // vrsta placanja je virman
-        cVr_placanja := "3"
-
-    endif
-    
-    nF_kolicina := ABS ( field->kolicina )
-    nF_rabat := ABS ( field->rabat ) 
-
-    cF_tarifa := ALLTRIM( roba->idtarifa )
-
-    // ako je za ino kupca onda ide nulta stopa
-    // oslobodi ga poreza
-    if lIno = .t.
-        cF_tarifa := "PDV0"
-    endif
-
-    cF_st_rn := ""
-
-    if nNRekRn > 0
-        // ovo ce biti racun koji reklamiramo !
-        cF_st_rn := ALLTRIM( STR( nNRekRn ))
-    endif
-    
-    // 1 - broj racuna
-    // 2 - redni broj
-    // 3 - id roba
-    // 4 - roba naziv
-    // 5 - cijena
-    // 6 - kolicina
-    // 7 - tarifa
-    // 8 - broj racuna za storniranje
-    // 9 - roba plu
-    // 10 - plu cijena
-    // 11 - popust
-    // 12 - barkod
-    // 13 - vrsta placanja
-    // 14 - total racuna
-    // 15 - datum racuna
-    // 16 - roba jmj
-
-    AADD( aStavke, { cF_brrn , ;
-            cF_rbr, ;
-            cF_idart, ;
-            cF_artnaz, ;
-            nF_cijena, ;
-            nF_kolicina, ;
-            cF_tarifa, ;
-            cF_st_rn, ;
-            nF_plu, ;
-            nF_cijena, ;
-            nF_rabat, ;
-            cF_barkod, ;
-            cVr_placanja, ;
-            nTotal, ;
-            dDatRn, ;
-            cF_artjmj } )
-
-    skip
-enddo
-
-if cTipDok $ "10"
-    
-    // tremol, zbirni racun
-    // samo za veleprodaju
-
-    set_fiscal_rn_zbirni( @aStavke )
-
-endif
-
-// provjeri prije stampe stavke kolicina, cijena
-if tremol_check_items( @aStavke ) < 0
-    return 1    
+// identifikator CONTINUE
+// nesto imamo mogucnost ako racun zapne da kazemo drugi identifikator
+// pa on navodno nastavi
+if cont == NIL
+    cont := "0"
 endif
 
 // stampaj racun !
-nErr := tremol_send_file( __device_params, aStavke, aKupac, lStorno, cContinue )
-cFName := tremol_filename( cF_brrn )
+_err_level := tremol_rn( __device_params, items, head, storno, cont )
 
-// provjeri greske...
-if tremol_read_out( __device_params["out_dir"], ALLTRIM( cFName ) )
-    // procitaj poruku greske
-    nErr := tremol_read_error( __device_params["out_dir"], ALLTRIM(cFName), ;
-            __device_params["timeout"], @nFisc_no ) 
+_f_name := ALLTRIM( tremol_filename( br_dok, __device_params["out_file"] ) )
+
+// da li postoji ista na izlazu ?
+if tremol_read_out( __device_params, _f_name, __device_params["timeout"] )
+    // procitaj sada gresku
+    _err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no ) 
         
 else
-    nErr := -99
+    _err_level := -99
 endif
 
-if nErr = 0 .and. lStorno = .f. .and. cContinue <> "2"
-
+if _err_level = 0 .and. !storno .and. cont <> "2"
     // vrati broj fiskalnog racuna
-    if nFisc_no > 0
-        
+    if _fiscal_no > 0
         // prikazi poruku samo u direktnoj stampi
         if __auto = .f. 
-           msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR(nFisc_No)) )
+           msgbeep( "Kreiran fiskalni racun broj: " + ALLTRIM( STR( _fiscal_no ) ) )
         endif
 
         // ubaci broj fiskalnog racuna u fakturu
-        set_fiscal_no_to_fakt_doks( cFirma, cTipDok, cBrDok, nFisc_no )
+        set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
     
     endif
 
-    FERASE( ALLTRIM(gFc_path) + ALLTRIM(cFName) )
+    FERASE( __device_params["out_dir"] + _f_name )
 
 endif
 
-return nErr
-
-
+return _err_level
 
 
 
@@ -897,328 +652,26 @@ return nErr
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na HCP uredjaj
 // -------------------------------------------------------------
-static function rn_to_hcp( cFirma, cTipDok, cBrDok )
-local cError := ""
-local lStorno := .t.
-local aStavke := {}
-local aKupac := {}
-local nNRekRn := 0
-local cPartnId := ""
-local cVr_placanja := "0"
-local nErr := 0
-local nFisc_no := 0
-local cJibPartn := ""
-local lIno := .f.
-local cPOslob := ""
-local cNF_txt := cFirma + "-" + cTipDok + "-" + ALLTRIM( cBrDok )
-local nU_total
-local _cnt := 0
-local lPDVObveznik := .f.
-local _prikazi_partnera := .f.
+static function fakt_to_hcp( id_firma, tip_dok, br_dok, items, head, storno )
+local _err_level := 0
+local _fiscal_no := 0
 
-O_FAKT_DOKS
-O_FAKT
-O_ROBA
-O_SIFK
-O_SIFV
+_err_level := hcp_rn( __device_params, items, head, storno, items[ 1, 14 ] )
 
-// ako se ne koristi opcija fiscal, izadji !
-if gFc_use == "N" .or. gFc_fisc_print == "N"
-    return 0
-endif
+if _err_level = 0
 
-select fakt_doks
-seek ( cFirma + cTipDok + cBrDok )
+    _fiscal_no := hcp_fisc_no( __device_params, storno )
 
-nBrDok := VAL(ALLTRIM(field->brdok))
-nTotal := field->iznos
-dDatRn := field->datdok
-nNRekRn := field->fisc_rn
-
-select fakt
-seek ( cFirma + cTipDok + cBrDok )
-
-nTRec := RECNO()
-
-// da li se radi o storno racunu ?
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
-    
-    ++ _cnt
-
-    if field->kolicina > 0
-        lStorno := .f.
-        exit
-    endif
-    
-    skip
-enddo
-
-if _cnt == 0
-    MsgBeep( "Za ovaj racun ne postoje stavke u tabeli FAKT !#Stampa nije moguca..." )
-    return 0
-endif
-
-// koji je broj racuna koji storniramo
-if lStorno 
-    Box(,1,60)
-        @ m_x + 1, m_y + 2 SAY "Reklamiramo fisk.racun:" ;
-            GET nNRekRn PICT "999999999" VALID ( nNRekRn > 0 )
-        read
-    BoxC()
-endif
-
-// kupac
-// 1 - id broj kupca
-// 2 - naziv
-// 3 - adresa
-// 4 - ptt
-// 5 - grad
-
-if cTipDok $ "10#"
-
-    // uzmi kupca i setuj placanje
-
-    // daj mi partnera za ovu fakturu
-    cPartnId := fakt_doks->idpartner
-    cVr_Placanja := "3"
-
-endif
-
-if !EMPTY( cPartnId )
-
-    cJibPartn := ALLTRIM( IzSifK( "PARTN" , "REGB", cPartnId, .f. ) )
-    cPOslob := ALLTRIM( IzSifK( "PARTN" , "PDVO", cPartnId, .f. ) )
-
-    if cTipDok $ "#11#"
-        
-        // ovo je NN kupac
-        // jednostavno za njega nadji podatke
-        lIno := .f.
-        lPDVObveznik := .t.
-
-        _prikazi_partnera := .f.
-
-    elseif !EMPTY(cJibPartn) .and. ( LEN(cJibPartn) < 12 .or. !EMPTY( cPOslob ) )
-
-        lIno := .t.
-
-        if !EMPTY( cPOslob )
-            _prikazi_partnera := .t.
-        endif
-    
-    elseif LEN( cJibPartn ) = 12
-                
-        lIno := .f.
-        lPDVObveznik := .t.
-        _prikazi_partnera := .t.
-
-    elseif LEN( cJibPartn ) > 12
-
-        lIno := .f.
-        lPDVObveznik := .f.
-        _prikazi_partnera := .t.
-
-    endif
-
-    if _prikazi_partnera
-        
-        nTarea := SELECT()
-    
-        select partn
-        seek cPartnId
-
-        select (nTArea)
-
-        // provjeri podatke partnera
-        lPEmpty := .f.
-        lPEmpty := EMPTY( cJibPartn )
-
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->naz )
-        endif
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->adresa )
-        endif
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->ptt )
-        endif
-        if !lPEmpty
-            lPEmpty := EMPTY( partn->mjesto )
-        endif
-        if lPEmpty
-            msgbeep("!!! Podaci partnera nisu kompletirani !!!#Prekidam operaciju")
-            return 0
-        endif
-    
-        // ubaci u matricu podatke o partneru
-        AADD( aKupac, { cJibPartn, partn->naz, partn->adresa, ;
-            partn->ptt, partn->mjesto } )
-    
-    endif
-
-endif
-
-// vrati se opet na pocetak
-go (nTRec)
-
-// i total sracunaj sa pdv
-// upisat cemo ga u svaku stavku matrice
-nTotal := _uk_sa_pdv( cTipDok, cPartnId, nTotal )
-
-// upisi u matricu stavke
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
-
-    // nastimaj se na robu ...
-    select roba
-    seek fakt->idroba
-
-    if roba->(fieldpos("FISC_PLU")) = 0
-        msgbeep("Odraditi modifikaciju struktura, nema FISC_PLU !")
-        return 0
-    endif
-
-    select fakt
-
-    // storno identifikator
-    nSt_Id := 0
-
-    if ( field->kolicina < 0 ) .and. lStorno == .f.
-        nSt_id := 1
-    endif
-    
-    cF_brrn := fakt->brdok
-    cF_rbr := fakt->rbr
-    
-    cF_idart := fakt->idroba
-    
-    cF_barkod := ""
-    if roba->(fieldpos("BARKOD")) <> 0
-        cF_barkod := ALLTRIM( roba->barkod )
-    endif
-
-    nF_plu := 0
-    
-    if roba->(fieldpos("FISC_PLU")) <> 0
-        nF_plu := roba->fisc_plu
-    endif
-
-    if gFC_acd == "D"
-        // generisanje inkrementalnog PLU kod-a
-        nF_plu := auto_plu( nil, nil,  __device )
-    endif
-
-    nF_pprice := roba->mpc
-
-    cF_artnaz := ALLTRIM( roba->naz )
-    cF_artjmj := ALLTRIM( roba->jmj )
-
-    nF_cijena := ABS ( field->cijena )
-    
-    if cTipDok $ "10#"
-        // moramo uzeti cijenu sa pdv-om
-        nF_cijena := ABS( _uk_sa_pdv( cTipDok, cPartnId, ;
-            field->cijena ) )
-        // vrsta placanja je virman
-        cVr_placanja := "3"
-
-    endif
-    
-    nF_kolicina := ABS ( field->kolicina )
-    nF_rabat := ABS ( field->rabat ) 
-
-    cF_tarifa := ALLTRIM( roba->idtarifa )
-
-    // ako je za ino kupca onda ide nulta stopa
-    // oslobodi ga poreza
-    if lIno = .t.
-        cF_tarifa := "PDV0"
-    endif
-
-    cF_st_rn := ""
-
-    if nNRekRn > 0
-        // ovo ce biti racun koji reklamiramo !
-        cF_st_rn := ALLTRIM( STR( nNRekRn ))
-    endif
-    
-    // 1 - broj racuna
-    // 2 - redni broj
-    // 3 - id roba
-    // 4 - roba naziv
-    // 5 - cijena
-    // 6 - kolicina
-    // 7 - tarifa
-    // 8 - broj racuna za storniranje
-    // 9 - roba plu
-    // 10 - plu cijena
-    // 11 - popust
-    // 12 - barkod
-    // 13 - vrsta placanja
-    // 14 - total racuna
-    // 15 - datum racuna
-    // 16 - roba jmj
-
-    AADD( aStavke, { cF_brrn , ;
-            cF_rbr, ;
-            cF_idart, ;
-            cF_artnaz, ;
-            nF_cijena, ;
-            nF_kolicina, ;
-            cF_tarifa, ;
-            cF_st_rn, ;
-            nF_plu, ;
-            nF_cijena, ;
-            nF_rabat, ;
-            cF_barkod, ;
-            cVr_placanja, ;
-            nTotal, ;
-            dDatRn, ;
-            cF_artjmj } )
-
-    skip
-enddo
-
-if cTipDok $ "10"
-    
-    // hcp, zbirni racun
-    // samo za veleprodaju
-
-    set_fiscal_rn_zbirni( @aStavke )
-
-endif
-
-// provjeri prije stampe stavke kolicina, cijena
-if hcp_check( @aStavke ) < 0
-    return 1    
-endif
-
-// stampaj racun !
-nErr := fc_hcp_rn( ALLTRIM( gFC_path ), ;
-        ALLTRIM(gFC_name), ;
-        aStavke, aKupac, lStorno, ; 
-        gFc_error, nTotal )
-
-if nErr = 0
-
-    // vrati broj fiskalnog racuna
-    
-    nFisc_no := hcp_fisc_no( ALLTRIM(gFc_path), ;
-        ALLTRIM(gFc_name), gFc_error, lStorno )
-
-    if nFisc_no > 0
+    if _fiscal_no > 0
     
         // ubaci broj fiskalnog racuna u fakturu
-        set_fiscal_no_to_fakt_doks( cFirma, cTipDok, cBrDok, nFisc_no )
+        set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
     
     endif
 
 endif
 
-return nErr
+return _err_level
 
 
 

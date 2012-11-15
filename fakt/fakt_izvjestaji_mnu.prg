@@ -42,16 +42,14 @@ AADD(_opcexe,{|| spec_kol_partn()})
 AADD(_opc,"9. realizacija maloprodaje ")
 AADD(_opcexe,{|| fakt_real_maloprodaje()})
 
-if gFc_use == "D"
+if fiscal_opt_active()
     AADD(_opc,"10. fiskalni izvjestaji i komande ")
-    AADD(_opcexe,{|| fisc_rpt()})
+    AADD(_opcexe,{|| fisc_rpt() })
 endif
 
-//if IsRudnik() 
-	AADD(_opc,"R. specificni izvjestaji (rmu)")
-	AADD(_opcexe, {|| mnu_sp_rudnik() })
-//endif
-	
+AADD(_opc,"R. specificni izvjestaji (rmu)")
+AADD(_opcexe, {|| mnu_sp_rudnik() })
+
 if IsStampa()
 	AADD(_opc,"S. stampa")
 	AADD(_opcexe,{|| MnuStampa()})

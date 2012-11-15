@@ -710,7 +710,7 @@ _filter := fakt_doks_filt
 
 cFilter := DBFilter()
 
-if gFC_use == "D"
+if fiscal_opt_active()
     // ispis informacije o fiskalnom racunu
     _veza_fc_rn()
 endif

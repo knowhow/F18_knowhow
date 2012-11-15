@@ -45,7 +45,7 @@ AADD(_opc,"-------------------------------------------")
 AADD(_opcexe,{|| nil })
 
 
-if gFc_use == "D"
+if fiscal_opt_active()
 
 	AADD(_opc,"F. fiskalne opcije za prodavaca")
 	AADD(_opcexe, {|| fisc_rpt( .t. ) })

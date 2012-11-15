@@ -572,7 +572,7 @@ if nCtrl = 0
 endif
 
 // idemo sada na upis rn u fiskalni fajl
-nErr := tremol_send_file( __device_params, aRn, aKupac, lStorno, cContinue )
+nErr := tremol_rn( __device_params, aRn, aKupac, lStorno, cContinue )
 
 if cContinue <> "2"
 	
@@ -738,7 +738,7 @@ if nCtrl = 0
 endif
 
 // idemo sada na upis rn u fiskalni fajl
-nErr := fc_hcp_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
+nErr := hcp_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
 	aRn, aKupac, lStorno, gFc_error, nTotal )
 
 if nErr = 0

@@ -1235,7 +1235,7 @@ if lOnlyFill
 	return 
 endif
 
-if gFc_use == "D" .and. gFc_faktura == "N"
+if fiscal_opt_active()
 	// fiskalni racun - ne stampati !
 else
 	// ispisi racun

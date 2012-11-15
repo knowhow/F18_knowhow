@@ -49,7 +49,7 @@ static _nema_out := -20
 // --------------------------------------------------------------------------
 // stampa fiskalnog racuna tring fiskalizacija
 // --------------------------------------------------------------------------
-function tremol_send_file( params, aData, aKupac, lStorno, cContinue )
+function tremol_rn( params, aData, aKupac, lStorno, cContinue )
 local cXML
 local i
 local cBr_zahtjeva 
@@ -73,7 +73,7 @@ local cC_city
 local nFisc_no := 0
 
 // pobrisi tmp fajlove i ostalo sto je u input direktoriju
-trm_d_tmp()
+tremol_delete_tmp( params )
 
 if cContinue == nil
 	cContinue := "0"
@@ -84,9 +84,9 @@ if aKupac <> nil .and. LEN( aKupac ) > 0
 endif
 
 // to je zapravo broj racuna !!!
-cBr_zahtjeva := aData[1, 1]
+cBr_zahtjeva := aData[ 1, 1 ]
 
-cFName := tremol_filename( cBr_zahtjeva )
+cFName := tremol_filename( cBr_zahtjeva, params["out_file"] )
 
 // putanja do izlaznog xml fajla
 cXML := cFPath + cFName
@@ -141,7 +141,7 @@ nVr_placanja := 0
 	nRoba_plu := aData[i, 9]
 	cRoba_bk := aData[i, 12]
 	cRoba_id := aData[i, 3]
-	cRoba_naz := PADR( aData[i, 4], gFc_alen )
+	cRoba_naz := PADR( aData[i, 4], 32 )
 	cRoba_jmj := _g_jmj( aData[i, 16] )
 	nCijena := aData[i, 5]
 	nKolicina := aData[i, 6]
@@ -212,11 +212,11 @@ return nErr_no
 
 
 // restart tremol fp server
-function trm_restart()
+function tremol_restart( param )
 local cScr
 private cR_scr := ""
 
-if gFc_restart == "N"
+if param["restart_fiscal_service"] == "N"
 	return .f.
 endif
 
@@ -235,15 +235,16 @@ return .f.
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
-function trm_d_tmp()
-local cTmp 
+function tremol_delete_tmp( dev_param )
+local _tmp
+local _f_path
 
 msgo("brisem tmp fajlove...")
 
-cF_path := ALLTRIM( gFc_path )
-cTmp := "*.*"
+_f_path := dev_param["out_dir"]
+_tmp := "*.*"
 
-AEVAL( DIRECTORY(cF_path + cTmp), {|aFile| FERASE( cF_path + ;
+AEVAL( DIRECTORY( _f_path + _tmp ), {| aFile | FERASE( _f_path + ;
 	ALLTRIM( aFile[1]) ) })
 
 sleep(1)
@@ -257,180 +258,173 @@ return
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-function trm_polog( cFPath, cFName, cError, nValue )
-local cXML
-local cBr_zahtjeva 
-local nErr_no := 0
-local cCmd := ""
+function tremol_polog( dev_params, auto )
+local _xml
+local _err := 0
+local _cmd := ""
+local _f_name
+local _value := 0
 
-if nValue == nil
-	nValue := 0
+if auto == NIL
+    auto := .f.
 endif
 
-if nValue = 0
-  // box - daj iznos pologa
-  Box(,1, 60)
-	@ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET nValue ;
-		PICT "99999.99"
-	read
-  BoxC()
+if auto
+    _value := dev_params["avans"]
+endif
 
-  if LastKey() == K_ESC .or. nValue = 0
-	return
-  endif
+if value = 0
+    // box - daj iznos pologa
+    Box(,1, 60)
+	    @ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET value ;
+		    PICT "99999.99"
+	    read
+    BoxC()
+
+    if LastKey() == K_ESC .or. value = 0
+	    return
+    endif
 
 endif
 
-if nValue < 0
+if value < 0
 	// polog komanda
-	cCmd := 'Command="CashOut"'
+	_cmd := 'Command="CashOut"'
 else
 	// polog komanda
-	cCmd := 'Command="CashIn"'
+	_cmd := 'Command="CashIn"'
 endif
 
-cBr_zahtjeva := "0"
-cFName := tremol_filename( cBr_zahtjeva )
+// izlazni fajl
+_f_name := tremol_filename( "0", dev_params["out_file"] )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + cFName
+_xml := dev_params["out_dir"] + _f_name
 
 // otvori xml
-open_xml( cXml )
+open_xml( _xml )
 
 // upisi header
 xml_head()
 
-xml_subnode("TremolFpServer " + cCmd )
+xml_subnode("TremolFpServer " + _cmd )
 
-cCmd := 'Amount="' +  ALLTRIM(STR( ABS(nValue), 12, 2)) + '"'
+_cmd := 'Amount="' +  ALLTRIM(STR( ABS(value), 12, 2)) + '"'
 
-xml_snode("Cash", cCmd )
+xml_snode("Cash", _cmd )
 
 xml_subnode("/TremolFpServer")
 
 close_xml()
 
-return nErr_no
+return _err
+
+
 
 
 // -------------------------------------------------------------------
 // tremol reset artikala
 // -------------------------------------------------------------------
-function fc_trm_rplu( cFPath, cFName, cError )
-local cXML
-local cBr_zahtjeva 
-local nErr_no := 0
-local cCmd := ""
+function tremol_reset_plu( dev_params )
+local _xml
+local _err := 0
+local _cmd := ""
 
 if !SigmaSif("RPLU")
 	return 0
 endif
 
-cBr_zahtjeva := "0"
-cFName := tremol_filename( cBr_zahtjeva )
+_f_name := tremol_filename( "0", dev_params["out_file"] )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + cFName
+_xml := dev_params["out_dir"] + _f_name
 
 // otvori xml
-open_xml( cXml )
+open_xml( _xml )
 
 // upisi header
 xml_head()
 
-cCmd := ""
-cCmd += 'Command="DirectIO"'
+_cmd := 'Command="DirectIO"'
 
-xml_subnode("TremolFpServer " + cCmd )
+xml_subnode("TremolFpServer " + _cmd )
 
-cCmd := ""
-cCmd += 'Command="1"'
-cCmd += _razmak1 + 'Data="0"'
-cCmd += _razmak1 + 'Object="K00000;F142HZ              ;0;$"'
+_cmd := 'Command="1"'
+_cmd += _razmak1 + 'Data="0"'
+_cmd += _razmak1 + 'Object="K00000;F142HZ              ;0;$"'
 
-xml_snode("DirectIO", cCmd )
+xml_snode("DirectIO", _cmd )
 
 xml_subnode("/TremolFpServer")
 
 close_xml()
 
-if cError == "D"
-	// provjeri greske...
-	// nErr_no := ...
-	if _read_out( cFPath, cFName )
-		
-		// procitaj poruku greske
-		nErr_no := tremol_read_error( cFPath, cFName, gFc_tout ) 
-
-	endif
-
+// provjeri greske...
+// nErr_no := ...
+	
+if tremol_read_out( dev_params, _f_name, dev_params["timeout"] )
+	_err := tremol_read_error( dev_params, _f_name ) 
 endif
 
-return nErr_no
+return _err
 
 
 
 // -------------------------------------------------------------------
 // tremol komanda
 // -------------------------------------------------------------------
-function fc_trm_cmd( cFPath, cFName, cCmd, cError )
-local cXML
-local cBr_zahtjeva 
-local nErr_no := 0
+function tremol_cmd( dev_params, cmd )
+local _xml
+local _err := 0
+local _f_name 
 
-cBr_zahtjeva := "0"
-cFName := tremol_filename( cBr_zahtjeva )
+_f_name := tremol_filename( "0", dev_params["out_file"] )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + cFName
+_xml := dev_params["out_dir"] + _f_name
 
 // otvori xml
-open_xml( cXml )
+open_xml( _xml )
 
 // upisi header
 xml_head()
 
-xml_subnode("TremolFpServer " + cCmd )
+xml_subnode("TremolFpServer " + cmd )
 
 close_xml()
 
-if cError == "D"
-	// provjeri greske...
-	// nErr_no := ...
-	if _read_out( cFPath, cFName )
-		
-		// procitaj poruku greske
-		nErr_no := tremol_read_error( cFPath, cFName, gFc_tout ) 
-
-	else
-		nErr_no := _nema_out
-	endif
-
+// provjeri greske...
+if tremol_read_out( dev_params, _f_name, dev_params["timeout"] )
+	// procitaj poruku greske
+	_err := tremol_read_error( dev_params, _f_name ) 
+else
+	_err := _nema_out
 endif
 
-return nErr_no
+return _err
+
+
 
 
 // ------------------------------------------------
 // vraca vrstu placanja na osnovu oznake
 // ------------------------------------------------
-static function _g_v_plac( nID )
-local cRet := "-"
+static function _g_v_plac( v_pl )
+local _ret := "-"
 
 do case 
-	case nId = 0
-		cRet := "Gotovina"
-	case nId = 1
-		cRet := "Cek"		
-	case nId = 2
-		cRet := "Kartica"
-	case nId = 3
-		cRet := "Virman"
+	case v_pl = "0"
+		_ret := "Gotovina"
+	case v_pl = "1"
+		_ret := "Cek"		
+	case v_pl = "2"
+		_ret := "Kartica"
+	case v_pl = "3"
+		_ret := "Virman"
 
 endcase
 
-return cRet 
+return _ret
 
 
 // ------------------------------------------
@@ -483,69 +477,71 @@ return cF_tar
 // ----------------------------------------
 // fajl za pos fiskalni stampac
 // ----------------------------------------
-function tremol_filename( cBrRn )
-local cRet
-local cF_name := ALLTRIM( gFC_name )
+function tremol_filename( broj_rn, file_name )
+local _ret
+local _f_name := ALLTRIM( file_name )
+local _rn
 
 do case
 
-	case "$rn" $ cF_name
+	case "$rn" $ _f_name
 		// broj racuna.xml
-		cRN := PADL( ALLTRIM( cBrRn ), 8, "0" )
+		_rn := PADL( ALLTRIM( broj_rn ), 8, "0" )
 		// ukini znak "/" ako postoji
-		cRN := STRTRAN( cRN, "/", "" )
-		cRet := STRTRAN( cF_name, "$rn", cRN )
-		cRet := UPPER( cRet )
+		_rn := STRTRAN( _rn, "/", "" )
+		_ret := STRTRAN( _f_name, "$rn", _rn )
+		_ret := UPPER( _ret )
 	
 	otherwise 
 		// ono sta je navedeno u parametrima
-		cRet := cF_name
+		_ret := _f_name
 
 endcase
 
-return cRet
+return _ret
 
 
 
 // -----------------------------------------------------
 // ItemZ
 // -----------------------------------------------------
-function trm_z_item( cFPath, cFName, cError )
-local cCmd
+function tremol_z_item( dev_param )
+local _cmd, _err
 
-cCmd := 'Command="Report" Type="ItemZ" /'
-nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+_cmd := 'Command="Report" Type="ItemZ" /'
+_err := tremol_cmd( dev_param, _cmd )
 
-return
+return _err
 
 
 // -----------------------------------------------------
 // ItemX
 // -----------------------------------------------------
-function trm_x_item( cFPath, cFName, cError )
-local cCmd
+function tremol_x_item( dev_param )
+local _cmd
 
-cCmd := 'Command="Report" Type="ItemX" /'
-nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+_cmd := 'Command="Report" Type="ItemX" /'
+_err := tremol_cmd( dev_param, _cmd )
 
-return
+return _err
 
 
 // -----------------------------------------------------
 // dnevni fiskalni izvjestaj
 // -----------------------------------------------------
-function trm_z_rpt( cFPath, cFName, cError )
-local cCmd
+function tremol_z_rpt( dev_param )
+local _cmd
+local _err
 
 if Pitanje(,"Stampati dnevni izvjestaj", "D") == "N"
 	return
 endif
 
-cCmd := 'Command="Report" Type="DailyZ" /'
-nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+_cmd := 'Command="Report" Type="DailyZ" /'
+_err := tremol_cmd( dev_param, _cmd )
 
 // ako se koristi opcija automatskog pologa
-if gFc_pauto > 0
+if dev_param["avans"] > 0
 	
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
 	
@@ -553,23 +549,24 @@ if gFc_pauto > 0
 	sleep(10)
 	
 	// pozovi opciju pologa
-	nErr := trm_polog( cFPath, cFName, cError, gFc_pauto)
+	_err := tremol_polog( dev_param, .t. )
 	
 	msgc()
 
 endif
 
-return
+return _err
 
 
 // -----------------------------------------------------
 // presjek stanja
 // -----------------------------------------------------
-function trm_x_rpt( cFPath, cFName, cError )
-local cCmd
+function tremol_x_rpt( dev_param )
+local _cmd
+local _err
 
-cCmd := 'Command="Report" Type="DailyX" /'
-nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+_cmd := 'Command="Report" Type="DailyX" /'
+_err := tremol_cmd( dev_param, _cmd )
 
 return
 
@@ -577,20 +574,20 @@ return
 // -----------------------------------------------------
 // periodicni izvjestaj
 // -----------------------------------------------------
-function trm_p_rpt( cFPath, cFName, cError )
-local cCmd
-local cStart
-local cEnd
-local dStart := DATE()-30
-local dEnd := DATE()
+function tremol_per_rpt( dev_param )
+local _cmd, _err
+local _start
+local _end
+local _date_start := DATE()-30
+local _date_end := DATE()
 
 if Pitanje(,"Stampati periodicni izvjestaj", "D") == "N"
 	return
 endif
 
 Box(,1,60)
-	@ m_x+1, m_y+2 SAY "Od datuma:" GET dStart
-	@ m_x+1, col()+1 SAY "do datuma:" GET dEnd
+	@ m_x+1, m_y+2 SAY "Od datuma:" GET _date_start
+	@ m_x+1, col()+1 SAY "do datuma:" GET _date_end
 	read
 BoxC()
 
@@ -599,16 +596,15 @@ if LastKey() == K_ESC
 endif
 
 // 2010-10-01 : YYYY-MM-DD je format datuma
-cStart := _tfix_date( dStart )
-cEnd := _tfix_date( dEnd )
+_start := _tfix_date( _date_start )
+_end := _tfix_date( _date_end )
 
-cCmd := 'Command="Report" Type="Date" Start="' + cStart + ;
-	'" End="' + cEnd + '" /'
+_cmd := 'Command="Report" Type="Date" Start="' + _start + ;
+	'" End="' + _end + '" /'
 
-nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+_err := tremol_cmd( dev_param, _cmd )
 
-
-return
+return _err
 
 
 // ------------------------------------------------
@@ -634,10 +630,13 @@ xRet += cTmp
 return xRet
 
 
+
+
+
 // ---------------------------------------------------
 // stampa kopije racuna
 // ---------------------------------------------------
-function trm_rn_copy( cFPath, cFName, cError )
+function tremol_rn_copy( dev_params )
 local cCmd
 local cBrRn := SPACE(10)
 local cRefund := "N"
@@ -669,88 +668,82 @@ endif
 
 cCmd += _razmak1 + 'Document="' +  ALLTRIM(cBrRn) + '" /'
 
-nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+nErr := tremol_cmd( dev_params, cCmd )
 
 return
 
 
-
-// --------------------------------------------------------
-// cekanje na fajl odgovora, poziv za ostale module
-// --------------------------------------------------------
-function tremol_read_out( cFPath, cFName, nTimeOut )
-return _read_out( cFPath, cFName, nTimeOut )
 
 
 
 // --------------------------------------------
 // cekanje na fajl odgovora
 // --------------------------------------------
-static function _read_out( cFPath, cFName, nTimeOut )
-local lOut := .t.
-local cTmp
-local nTime
-local nRCnt := 0
+function tremol_read_out( dev_params, f_name, time_out )
+local _out := .t.
+local _tmp
+local _time
+local _cnt := 0
 
-if nTimeOut == nil
-	nTimeOut := gFC_tout
+if time_out == nil
+	time_out := dev_params["timeout"]
 endif
 
-nTime := nTimeOut
-cTmp := cFPath + STRTRAN( cFName, "xml", "out" )
+_time := time_out
+_tmp := dev_params["out_dir"] + STRTRAN( f_name, "xml", "out" )
 
 Box(,1,50)
 
-do while nTime > 0
+do while _time > 0
 	
-	-- nTime
+	-- _time
 	
 	// provjeri kada bude trecina vremena...
-	if nTime = ( gFc_tout * 0.7 ) .and. nRCnt = 0
+	if _time = ( dev_params["timeout"] * 0.7 ) .and. _cnt = 0
 		if Pitanje(,"Restartovati server", "D") == "D"
 			// pokreni restart proceduru
-			trm_restart()
+			tremol_restart( dev_params )
 			// restartuj vrijeme
-			nTime := gFc_tout
-			++ nRCnt 
+			_time := dev_params["timeout"]
+			++ _cnt
 		endif
 	endif
 
-	if FILE( cTmp )
+	if FILE( _tmp )
 		// fajl se pojavio - izadji iz petlje !
 		exit
 	endif
 
 	@ m_x + 1, m_y + 2 SAY PADR( "Cekam odgovor... " + ;
-		ALLTRIM( STR(nTime) ), 48)
+		ALLTRIM( STR( _time ) ), 48)
 
-    if nTime == 0 .or. LastKey() == K_ALT_Q
+    if _time == 0 .or. LastKey() == K_ALT_Q
         BoxC()
         return .f.
     endif
 
 	sleep(1)
+
 enddo
 
 BoxC()
 
-if !FILE( cTmp )
+if !FILE( _tmp )
 	msgbeep("Ne postoji fajl odgovora (OUT) !!!!")
-	lOut := .f.
+	_out := .f.
 endif
 
-return lOut
+return _out
 
 
 
-// ------------------------------------------------
+// ------------------------------------------------------------
 // citanje gresaka za TREMOL driver
 // 
-// nTimeOut - time out fiskalne operacije
 // nFisc_no - broj fiskalnog isjecka
 //
-// ------------------------------------------------
-function tremol_read_error( cFPath, cFName, nTimeOut, nFisc_no )
+// ------------------------------------------------------------
+function tremol_read_error( dev_params, f_name, fisc_no )
 local nErr := 0
 local cF_name
 local i
@@ -768,15 +761,14 @@ local cErrDesc := ""
 local _o_file
 
 // primjer: c:\fiscal\00001.out
-cF_name := cFPath + STRTRAN( cFName, "xml", "out" )
+f_name := ALLTRIM( dev_params["out_dir"] + STRTRAN( f_name, "xml", "out" ) )
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
 // prikaza greske tipa OUT fajlovi...
 
-nFisc_no := 0
-cF_name := ALLTRIM( cF_name )
+fisc_no := 0
 
-_o_file := TFileRead():New( cF_name )
+_o_file := TFileRead():New( f_name )
 _o_file:Open()
 
 if _o_file:Error()
@@ -849,7 +841,7 @@ if nScan > 0
 		cTmp := ALLTRIM( aTmp2[2] )
 		
 		if !EMPTY( cTmp )
-			nFisc_no := VAL( cTmp )
+			fisc_no := VAL( cTmp )
 		endif
 
 	endif
@@ -904,18 +896,9 @@ if !EMPTY( cTmp )
 endif
 
 // obrisi fajl out na kraju !!!
-FERASE( cF_name )
+FERASE( f_name )
 
 return nErr
-
-
-
-// ----------------------------------------------
-// provjera ispravnosti matrice sa podacima
-// kolicine, cijene
-// ----------------------------------------------
-function tremol_check_items( aData )
-return hcp_check( @aData )
 
 
 

@@ -62,7 +62,6 @@ if auto_print
 endif
 
 if dev_param == NIL
-    MsgBeep( "Stampanje fiskalnog racuna onemoguceno !!!#Nema postavljenih fiskalnih uredjaja." )
     return _err_level
 endif
 

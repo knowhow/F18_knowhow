@@ -859,9 +859,8 @@ if cVr_placanja <> "0" .and. !lStorno
 
 endif
 
-
 // 5. kupac - podaci
-if LEN( aKupac ) > 0
+if aKupac <> NIL .and. LEN( aKupac ) > 0
 
 	// aKupac = { idbroj, naziv, adresa, ptt, mjesto }
 

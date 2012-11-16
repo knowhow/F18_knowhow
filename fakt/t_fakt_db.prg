@@ -395,10 +395,6 @@ if i==F_GEN_UG .or. i==F_G_UG_P
 	lIdiDalje:=.t.
 endif
 
-if i==F_FDEVICE
-	lIdiDalje := .t.
-endif
-
 if lIdiDalje
 	cDbfName:=DBFName(i,.t.)
 	if gAppSrv 

@@ -36,6 +36,10 @@ if uplaceni_iznos == NIL
     uplaceni_iznos := 0
 endif
 
+if dev_params == NIL
+    return _err_level
+endif
+
 // setuj parametre za dati uredjaj
 __device_id := dev_params["id"]
 __device_params := dev_params
@@ -124,8 +128,9 @@ do while !EOF() .and. field->idpos == id_pos ;
 		.and. DTOS(field->datum) == DTOS( datum ) ;
 		.and. field->brdok == rn_broj
 
-	if field->kolicina < 0
+	if !EMPTY( ALLTRIM( field->c_1 ) )
 		_storno := .t.
+        exit
 	endif
 
     skip

@@ -307,7 +307,7 @@ if (!EMPTY(cTime))
 	if fiscal_opt_active()
 	
         // u tops-u uvijek treba da je jedan uredjaj !
-        _dev_id := get_fiscal_device( my_user() )
+        _dev_id := get_fiscal_device( my_user(), NIL, .t. )
         _dev_params := get_fiscal_device_params( _dev_id, my_user() )
 	
 		// stampa fiskalnog racuna, vraca ERR

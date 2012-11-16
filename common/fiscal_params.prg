@@ -181,6 +181,11 @@ Box(, 20, 80 )
 
     read
 
+    if LastKey() == K_ESC
+        BoxC()
+        return .f.
+    endif
+
     ++ _x
     ++ _x
 
@@ -222,6 +227,7 @@ Box(, 20, 80 )
     read
 
     if LastKey() == K_ESC
+        BoxC()
         return .f.
     endif
 
@@ -352,6 +358,11 @@ Box(, 20, 80 )
             show_it( GetFullUserName( _user_id ), 30 ), .t.  }
 
     read
+
+    if LastKey() == K_ESC
+        BoxC()
+        return .f.
+    endif
 
     // korisnik ce biti na osnovu izbora
     _user_name := ALLTRIM( GetUserName( _user_id ) )
@@ -517,13 +528,17 @@ return _ok
 // ---------------------------------------------------------------
 // vraca odabrani fiskalni uredjaj
 // ---------------------------------------------------------------
-function get_fiscal_device( user, tip_dok )
+function get_fiscal_device( user, tip_dok, from_pos )
 local _device_id := 0
 local _dev_arr
 local _pos_default
 
 if !__use_fiscal_opt 
     return _device_id
+endif
+
+if from_pos == NIL
+    from_pos := .f.
 endif
 
 if tip_dok == NIL
@@ -539,10 +554,11 @@ endif
 // default pos fiskalni uredjaj...
 // ako je setovan, uvijek ces njega koristiti
 // nema potrebe da se ulazi u listu uredjaj...
-_pos_default := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
-
-if _pos_default > 0
-    return _pos_default
+if from_pos
+    _pos_default := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
+    if _pos_default > 0
+        return _pos_default
+    endif
 endif
 
 if LEN( _dev_arr ) > 1

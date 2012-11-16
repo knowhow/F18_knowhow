@@ -45,6 +45,7 @@ local _err_level := 0
 local _dev_drv
 local _storno := .f.
 local _items_data, _partn_data
+local _cont := "1"
 
 // koriste li se fiskalne opcije uopste ?
 if !fiscal_opt_active()
@@ -88,10 +89,16 @@ _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _p
 
 do case
 
+    case _dev_drv == "TEST"
+        // test uredjaj, propusta opciju fiskalnog racuna
+        // azurira racun i prakticno ne uradi nista...
+        _err_level := 0
+
     case _dev_drv == __DRV_FPRINT
         _err_level := fakt_to_fprint( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
 
     case _dev_drv == __DRV_TREMOL
+        _cont := "1"
         _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
 
     case _dev_drv == __DRV_HCP
@@ -101,7 +108,7 @@ do case
         _err_level := fakt_to_tring( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
 
     //case _dev_drv == __DRV_FLINK
-      //  _err_level := fiscal_rn_flink_prepare( id_firma, tip_dok, br_dok )
+      //  _err_level := fakt_to_flink( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
 
 endcase
 
@@ -112,12 +119,12 @@ if _err_level > 0
         
         // posalji drugi put za ponistavanje komande racuna
         // parametar continue = 2
+        _cont := "2"
+        _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
 
-        //_err_level := fiscal_rn_tremol_prepare( id_firma, tip_dok, br_dok, "2" )
-
-        //if _err_level > 0
-          //  msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
-        //endif
+        if _err_level > 0
+            msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
+        endif
 
     endif
 
@@ -821,7 +828,7 @@ return _err_level
 // ------------------------------------------------------
 // posalji racun na fiskalni stampac
 // ------------------------------------------------------
-static function rn_to_flink( cFirma, cTipDok, cBrDok )
+static function fakt_to_flink( cFirma, cTipDok, cBrDok )
 local aItems := {}
 local aTxt := {}
 local aPla_data := {}
@@ -832,11 +839,6 @@ local nBrDok
 local nReklRn := 0
 local cStPatt := "/S"
 local GetList := {}
-
-// ako se ne koristi opcija fiscal, izadji !
-if gFc_use == "N"
-    return
-endif
 
 select fakt_doks
 seek cFirma + cTipDok + cBrDok

@@ -15,7 +15,8 @@
 function st_fisc_per( cIdFirma, cIdTipDok, cBrOd, cBrDo )
 local lDirekt := .f.
 local lAutoStampa := .t.
-local nDevice := 0
+local _dev_id := 0
+local _dev_params
 local nTRec
 
 if cIdFirma <> nil
@@ -48,7 +49,8 @@ endif
 close all
 
 // uzmi device iz liste uredjaja
-nDevice := list_device( cIdTipDok )
+_dev_id := get_fiscal_device( my_user() )
+_dev_params := get_fiscal_device_params( _dev_id, my_user() )
 
 O_PARTN
 O_ROBA
@@ -73,7 +75,7 @@ if Found()
 			// pozovi stampu fiskalnog racuna
 			nErr := fakt_fisc_rn( fakt_doks->idfirma, ;
 				doks->idtipdok, ;
-				doks->brdok, lAutoStampa, nDevice )
+				doks->brdok, lAutoStampa, _dev_params )
 		
 			if ( nErr > 0 ) 
 				msgbeep("Prekidam operaciju stampe radi greske!")

@@ -76,9 +76,6 @@ endif
 AADD(opc,"F. fiskalni parametri  ")
 AADD(opcexe,{|| f18_fiscal_params_menu() })
 
-AADD(opc,"L. lista fiskalnih uredjaja  ")
-AADD(opcexe,{|| p_fdevice() })
-
 AADD(opc,"P. parametri labeliranja, barkod stampe  ")
 AADD(opcexe,{|| label_params() })
 

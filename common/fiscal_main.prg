@@ -197,6 +197,14 @@ _a_to_file( cFPath, cPom, aS_semafor, aSem_Data )
 return
 
 
+// ----------------------------------------------------
+// sredjuje naziv fajla za fiskalni stampac
+// ----------------------------------------------------
+static function f_filename( cPattern, nInvoice )
+local cRet := ""
+cRet := STRTRAN( cPattern, "*", ALLTRIM(STR(nInvoice)) )
+return cRet
+
 
 // ---------------------------------
 // nivelacija

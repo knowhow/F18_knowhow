@@ -1144,67 +1144,6 @@ if !EMPTY( cErrCode )
 	FERASE( cF_name )
 endif
 
-
-
 return nErr
-
-
-// ---------------------------------------------------------
-// vrsi provjeru vrijednosti cijena, kolicina itd...
-// ---------------------------------------------------------
-function hcp_check( aData )
-local nRet := 0
-local nCijena := 0
-local nPluCijena := 0
-local nKolicina := 0
-local cNaziv := ""
-local nFix := 0
-
-// aData[4] - naziv
-// aData[5] - cijena
-// aData[10] - plu cijena
-// aData[6] - kolicina
-
-for i:=1 to LEN( aData )
-
-	nCijena := aData[ i, 5 ]	
-	nPluCijena := aData[i, 10 ]
-	nKolicina := aData[ i, 6 ]	
-	cNaziv := aData[i, 4]
-
-	if ( !_chk_qtty( nKolicina ) .or. !_chk_price( nCijena ) ) ;
-		.or. !_chk_price( nPluCijena )
-		
-		if gFc_chk > "1"
-			
-			// popravi kolicine, cijene
-			_fix_qtty( @nKolicina, @nCijena, @nPluCijena, @cNaziv )
-			
-			// promjeni u matrici podatke takodjer
-			aData[i, 5] := nCijena
-			aData[i, 10] := nPluCijena
-			aData[i, 6] := nKolicina
-			aData[i, 4] := cNaziv
-		
-		endif
-
-		++ nFix
-
-	endif
-
-next
-
-if nFix > 0 .and. gFc_chk > "1"
-
-	msgbeep("Pojedini artikli na racunu su prepakovani na 100 kom !")
-
-elseif nFix > 0 .and. gFc_chk == "1"
-	
-	nRet := -99
-	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")
-
-endif
-
-return nRet
 
 

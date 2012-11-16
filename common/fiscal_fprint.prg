@@ -71,19 +71,6 @@ return _err
 
 
 
-// ---------------------------------------------------
-// ispravi naziv artikla
-// ---------------------------------------------------
-function fp_f_naz( name )
-local _ret := ""
-_ret := name
-// ukini ";"
-_ret := STRTRAN( _ret, ";", "" )
-return _ret
-
-
-
-
 // ---------------------------------------------------------
 // vrsi provjeru vrijednosti cijena, kolicina itd...
 // ---------------------------------------------------------

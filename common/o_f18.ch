@@ -30,7 +30,6 @@
 #xcommand O_REFER    => select (F_REFER)   ;  my_use  ("refer")     ; set order to tag "ID"
 #xcommand O_OPS      => select (F_OPS)     ;  my_use  ( "ops")      ; set order to tag "ID"
 #xcommand O_RNAL     => select (F_RNAL)    ;  my_use  ( "rnal")     ; set order to tag "ID"
-#xcommand O_FDEVICE  => select (F_FDEVICE) ;  my_usex ("fdevice")   ; set order to tag "1"
 #xcommand O__ROBA    => select (F__ROBA)   ;  my_use  ("_roba")
 #xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
 #xcommand O_BANKE    => select (F_BANKE)   ;  my_use  ("banke")     ; set order to tag "ID"

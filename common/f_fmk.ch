@@ -22,7 +22,6 @@
 #define F_ADRES     10
 #define F_SIFK      11
 #define F_SIFV      12
-#define F_FDEVICE   13
 #define F_TARIFA    14 
 #define F_PARTN     15
 #define F_TNAL      16

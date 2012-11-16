@@ -113,8 +113,9 @@ function set_global_fiscal_params()
 local _x := 1
 local _fiscal := fetch_metric( "fiscal_opt_active", my_user(), "N" )
 local _fiscal_devices := PADR( fetch_metric( "fiscal_opt_usr_devices", my_user(), "" ), 50 )
+local _pos_def := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
 
-Box(, 3, 60 )
+Box(, 5, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Koristiti fiskalne opcije (D/N) ?" GET _fiscal ;
         PICT "@!" ;
@@ -122,12 +123,16 @@ Box(, 3, 60 )
 
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Korisiti sljedece fiskalne uredjaje:"
+    @ m_x + _x, m_y + 2 SAY "*** Korisiti sljedece fiskalne uredjaje"
 
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "ID" GET _fiscal_devices PICT "@S30"
+    @ m_x + _x, m_y + 2 SAY "ID:" GET _fiscal_devices PICT "@S30"
     
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Default POS uredjaj:" GET _pos_def PICT "99"
+
     read
 
 BoxC()
@@ -139,6 +144,7 @@ endif
 // snimi parametre
 set_metric( "fiscal_opt_active", my_user(), _fiscal )
 set_metric( "fiscal_opt_usr_devices", my_user(), ALLTRIM( _fiscal_devices ) )
+set_metric( "fiscal_opt_usr_pos_default_device", my_user(), _pos_def )
 
 // setuj glavni parametar
 fiscal_opt_active()
@@ -160,6 +166,7 @@ local _dev_tmp
 local _dev_name, _dev_act, _dev_type, _dev_drv
 local _dev_iosa, _dev_serial, _dev_plu, _dev_pdv, _dev_init_plu
 local _dev_avans, _dev_timeout, _dev_vp_sum
+local _dev_restart
 
 if !__use_fiscal_opt 
     MsgBeep( "Fiskalne opcije moraju biti ukljucene !!!" )
@@ -194,6 +201,7 @@ Box(, 20, 80 )
     _dev_avans := fetch_metric( "fiscal_device_" + _dev_tmp + "_auto_avans", NIL, 0 )
     _dev_timeout := fetch_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, 300 )
     _dev_vp_sum := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
+    _dev_restart := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
 
     ++ _x
     
@@ -272,6 +280,13 @@ Box(, 20, 80 )
 
     @ m_x + _x, m_y + 2 SAY "Zbirni racun u VP (0/1/...):" GET _dev_vp_sum PICT "999"
 
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Restart servisa nakon slanja komande (D/N) ?" GET _dev_restart ;
+            PICT "@!" ;
+            VALID _dev_restart $ "DN"
+
+
     read
 
 BoxC()
@@ -293,6 +308,7 @@ set_metric( "fiscal_device_" + _dev_tmp + "_plu_init", NIL, _dev_init_plu )
 set_metric( "fiscal_device_" + _dev_tmp + "_auto_avans", NIL, _dev_avans )
 set_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, _dev_timeout )
 set_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, _dev_vp_sum )
+set_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, _dev_restart )
 
 return .t.
 
@@ -312,6 +328,7 @@ local _x := 1
 local _dev_drv, _dev_tmp
 local _out_dir, _out_file, _ans_file, _print_a4
 local _op_id, _op_pwd, _print_fiscal
+local _op_docs
 
 if !__use_fiscal_opt 
     MsgBeep( "Fiskalne opcije moraju biti ukljucene !!!" )
@@ -362,6 +379,7 @@ Box(, 20, 80 )
     _op_pwd := PADR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, "000000" ), 10 )
     _print_a4 := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, "N" )
     _print_fiscal := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, "D" )
+    _op_docs := PADR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" ), 100 )
     
     @ m_x + _x, m_y + 2 SAY "Direktorij izlaznih fajlova:" GET _out_dir PICT "@S50" VALID _valid_fiscal_path( _out_dir )
 
@@ -386,6 +404,12 @@ Box(, 20, 80 )
         PICT "@!" VALID _print_a4 $ "DNGX"
 
     ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Uredjaj koristiti za slj.tipove dokumenata:" GET _op_docs PICT "@S20" 
+
+    ++ _x
+    ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Korisnik moze printati fiskalne racune (D/N):" GET _print_fiscal ;
         PICT "@!" VALID _print_fiscal $ "DN"
@@ -406,11 +430,9 @@ set_metric( "fiscal_device_" + _dev_tmp + "_op_id", _user_name, ALLTRIM( _op_id 
 set_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, ALLTRIM( _op_pwd ) )
 set_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, _print_a4 )
 set_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, _print_fiscal )
+set_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, ALLTRIM( _op_docs ) )
  
 return .t.
-
-
-
 
 
 
@@ -422,18 +444,23 @@ static function out_dir_op_sys( dev_type )
 local _path := ""
 
 do case
+
     case dev_type == "FPRINT" .or. dev_type == "TREMOL"
+
         #ifdef __PLATFORM__WINDOWS
             _path := "C:" + SLASH + "fiscal" + SLASH
         #else
             _path := SLASH + "home" + SLASH + "bringout" + SLASH + "fiscal"
         #endif
+
     case dev_type == "HCP"
+
         #ifdef __PLATFORM__WINDOWS
             _path := "C:" + SLASH + "hcp" + SLASH
         #else
             _path := SLASH + "home" + SLASH + "bringout" + SLASH + "hcp"
         #endif
+
 endcase
 
 return _path
@@ -449,7 +476,7 @@ do case
     case dev_type == "FPRINT"
         _file := "out.txt"
     case dev_type == "HCP"
-        _file := "tr$01.xml"
+        _file := "TR$01.xml"
     case dev_type == "TREMOL"
         _file := "01.xml"
 endcase
@@ -490,18 +517,32 @@ return _ok
 // ---------------------------------------------------------------
 // vraca odabrani fiskalni uredjaj
 // ---------------------------------------------------------------
-function get_fiscal_device( user )
+function get_fiscal_device( user, tip_dok )
 local _device_id := 0
 local _dev_arr
+local _pos_default
 
 if !__use_fiscal_opt 
     return _device_id
 endif
 
-_dev_arr := get_fiscal_devices_list( user )
+if tip_dok == NIL
+    tip_dok := ""
+endif
+
+_dev_arr := get_fiscal_devices_list( user, tip_dok )
 
 if LEN( _dev_arr ) == 0
     return _device_id
+endif
+
+// default pos fiskalni uredjaj...
+// ako je setovan, uvijek ces njega koristiti
+// nema potrebe da se ulazi u listu uredjaj...
+_pos_default := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
+
+if _pos_default > 0
+    return _pos_default
 endif
 
 if LEN( _dev_arr ) > 1
@@ -519,16 +560,21 @@ return _device_id
 // -----------------------------------------------------
 // vraca listu fiskalnih uredjaja kroz matricu
 // -----------------------------------------------------
-function get_fiscal_devices_list( user )
+function get_fiscal_devices_list( user, tip_dok )
 local _arr := {}
 local _i
 local _dev_max := 10
 local _dev_tmp
 local _usr_dev_list := ""
+local _dev_docs_list := ""
 
 // ako je zadan user, provjeri njegova lokalna podesenja
 if user == NIL
     user := my_user()
+endif
+
+if tip_dok == NIL
+    tip_dok := ""
 endif
 
 // ovo je lista koja se setuje kod korisnika...
@@ -540,8 +586,12 @@ for _i := 1 to _dev_max
 
     _dev_id := fetch_metric( "fiscal_device_" + _dev_tmp + "_id", NIL, 0 )
 
-    if ( _dev_id <> 0 ) .and. ( fetch_metric( "fiscal_device_" + _dev_tmp + "_active", NIL, "N" ) == "D" ) ;
-        .and. IF( !EMPTY( _usr_dev_list ), ALLTRIM(STR( _dev_id ) ) + "," $ _usr_dev_list + ",", .t. ) 
+    _dev_docs_list := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", my_user(), "" )
+
+    if ( _dev_id <> 0 ) ;
+        .and. ( fetch_metric( "fiscal_device_" + _dev_tmp + "_active", NIL, "N" ) == "D" ) ;
+        .and. IF( !EMPTY( _usr_dev_list ), ALLTRIM(STR( _dev_id ) ) + "," $ _usr_dev_list + ",", .t. ) ;
+        .and. IF( !EMPTY( _dev_docs_list), tip_dok $ _dev_docs_list, .t. )
 
         // ubaci u matricu: dev_id, dev_name
         AADD( _arr, { _dev_id, fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ) } )
@@ -646,6 +696,7 @@ _param["plu_init"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_plu_init", N
 _param["auto_avans"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_auto_avans", NIL, 0 )
 _param["timeout"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, 300 )
 _param["vp_sum"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
+_param["restart_service"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
 
 // user parametri
 _out_dir := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
@@ -662,6 +713,7 @@ _param["op_id"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_id", _user_n
 _param["op_pwd"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, "" )
 _param["print_a4"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, "N" )
 _param["print_fiscal"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, "D" )
+_param["op_docs"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" )
  
 return _param
 

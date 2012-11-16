@@ -143,6 +143,15 @@ FERASE(cTmp)
 return
 
 
+// ----------------------------------------
+// fajl za pos fiskalni stampac
+// ----------------------------------------
+static function f_filepos( cBrRn )
+local cRet := PADL( ALLTRIM( cBrRn ), 8, "0" ) + ".inp"
+return cRet
+
+
+
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------

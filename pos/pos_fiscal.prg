@@ -26,46 +26,58 @@ static __DRV_CURRENT
 // --------------------------------------
 // stampa fiskalnog racuna
 // --------------------------------------
-function pos_fisc_rn( cIdPos, dDat, cBrRn )
+function pos_fisc_rn( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
 local _err_level := 0
 local _dev_drv
+local _storno
+local _items, _head, _cont
 
-// koriste li se fiskalne opcije uopste ?
-if !fiscal_opt_active()
-    return _err_level
-endif
-
-// daj mi listu uredjaja na koje mogu stampati
-__device_id := get_fiscal_device( my_user() )
-
-if __device_id == NIL .or. __device_id == 0
-    MsgBeep( "Stampanje fiskalnog racuna onemoguceno !!!#Nema postavljenih fiskalnih uredjaja." )
-    return _err_level
+if uplaceni_iznos == NIL
+    uplaceni_iznos := 0
 endif
 
 // setuj parametre za dati uredjaj
-__device_params := get_fiscal_device_params( __device_id, my_user() )
+__device_id := dev_params["id"]
+__device_params := dev_params
 
 // drajver ??
-_dev_drv := ALLTRIM( __device_params["drv"] )
+_dev_drv := __device_params["drv"]
 __DRV_CURRENT := _dev_drv
 
+_o_tables()
+
+// priprema podataka
+
+// da li je racun storno ?
+_storno := pos_dok_is_storno( id_pos, "42", datum, rn_broj )
+// spremi mi stavke racuna
+_items := pos_items_prepare( id_pos, "42", datum, rn_broj, _storno, uplaceni_iznos )
+
+if _items == NIL
+    return _err_level
+endif
+
 do case
+
+    // TEST uredjaj, prolazi fiskalna operacija
+    case _dev_drv == "TEST"
+        _err_level := 0
 	
+    case _dev_drv == __DRV_FPRINT
+	    _err_level := pos_to_fprint( id_pos, "42", datum, rn_broj, _items, _storno )
+
     case _dev_drv == __DRV_FLINK
-		_err_level := _flink_rn( cIdPos, dDat, cBrRn )
+	    _err_level := pos_to_flink( id_pos, "42", datum, rn_broj, _items, _storno )
 
 	case _dev_drv == __DRV_TRING
-		_err_level := _tring_rn( cIdPos, dDat, cBrRn )
-
-	case _dev_drv == __DRV_FPRINT
-		_err_level := _fprint_rn( cIdPos, dDat, cBrRn )
+	    _err_level := pos_to_tring( id_pos, "42", datum, rn_broj, _items, _storno )
 
 	case _dev_drv == __DRV_HCP
-		_err_level := _hcp_rn( cIdPos, dDat, cBrRn )
+	    _err_level := pos_to_hcp( id_pos, "42", datum, rn_broj, _items, _storno, uplaceni_iznos )
 
 	case _dev_drv == __DRV_TREMOL
-		_err_level := _trm_rn( cIdPos, dDat, cBrRn )
+        _cont := NIL
+	    _err_level := pos_to_tremol( id_pos, "42", datum, rn_broj, _items, _storno, _cont )
 
 endcase
 
@@ -73,7 +85,8 @@ if _err_level > 0
 	
 	if _dev_drv == __DRV_TREMOL
 		
-		_err_level := _trm_rn( cIdPos, dDat, cBrRn, "2" )
+        _cont := "2"
+	    _err_level := pos_to_tremol( id_pos, "42", datum, rn_broj, _items, _storno, _cont )
 
 		if _err_level > 0
 			msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
@@ -87,361 +100,229 @@ endif
 return _err_level
 
 
-
 // -----------------------------------------------
-// box za unos ukupno uplacene sume
+// otvori potrebne tabele
 // -----------------------------------------------
-function unesi_ukupno_uplacenu_sumu()
-local _iznos := 0
-private getlist := {}
+static function _o_tables()
+return
 
-Box(, 1, 60 )
-    @ m_x + 1, m_y + 2 SAY "Ukupno uplaceno:" GET _iznos PICT "99999999.99"
-    read
-BoxC()
 
-if LastKey() == K_ESC
-    _iznos := 0
+
+// ------------------------------------------------------------------
+// da li je racun storno
+// ------------------------------------------------------------------
+static function pos_dok_is_storno( id_pos, tip_dok, datum, rn_broj )
+local _storno := .f.
+
+select pos
+set order to tag "1"
+go top
+seek id_pos + tip_dok + DTOS( datum ) + rn_broj
+
+do while !EOF() .and. field->idpos == id_pos ;
+		.and. field->idvd == tip_dok ;
+		.and. DTOS(field->datum) == DTOS( datum ) ;
+		.and. field->brdok == rn_broj
+
+	if field->kolicina < 0
+		_storno := .t.
+	endif
+
+    skip
+
+enddo
+
+return _storno
+
+
+
+// ------------------------------------------------------------------
+// priprema podataka racuna za ispis na fiskalni uredjaj
+// ------------------------------------------------------------------
+static function pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, uplaceni_iznos )
+local _items := {}
+local _plu
+local _reklamni_racun
+local _rabat, _cijena
+local _art_barkod, _art_id, _art_naz, _art_jmj
+local _rbr := 0
+local _rn_total
+local _vr_plac
+
+if uplaceni_iznos == NIL
+    uplaceni_iznos := 0
 endif
 
-return _iznos
+// pozicioniraj se na pos_doks
+select pos_doks
+set order to tag "1"
+go top
+seek id_pos + tip_dok + DTOS( datum ) + rn_broj
+
+if !FOUND()
+    return NIL
+endif
+
+// vrsta placanja
+_vr_plac := pos_get_vr_plac( field->idvrstep )
+
+// ako je vrsta placanja <> gotovina
+if _vr_plac <> "0"
+	// vrati mi iznos racuna
+	_rn_total := pos_iznos_racuna( id_pos, tip_dok, datum, rn_broj )
+endif
+
+// ako postoji iznos uplate, onda je to total
+// koji ce biti proslijedjen txt fajlu
+if uplaceni_iznos > 0
+    _rn_total := uplaceni_iznos
+endif
+
+// pronadji u bazi racun
+select pos
+set order to tag "1"
+go top
+seek id_pos + tip_dok + DTOS( datum ) + rn_broj
+
+if !FOUND()
+    return NIL
+endif
+
+do while !EOF() .and. field->idpos == id_pos ;
+		.and. field->idvd == tip_dok ;
+		.and. DTOS(field->datum) == DTOS( datum ) ;
+		.and. field->brdok == rn_broj
+
+	_reklamni_racun := ""
+	_rabat := 0
+	_plu := 0
+	_cijena := 0
+	_art_barkod := ""
+
+	// ovo je broj racuna koji se stornira 
+	_reklamni_racun := field->c_1
+
+	_art_id := field->idroba
+
+	select roba
+	seek _art_id
+
+	_plu := roba->fisc_plu
+
+	if __device_params["plu_type"] == "D"
+		// generisi PLU iz parametara
+		_plu := auto_plu(nil, nil, __device_params )
+	endif
+
+	_cijena := pos_get_mpc()
+	_art_barkod := roba->barkod
+	_art_jmj := roba->jmj
+
+	select pos
+
+	if field->ncijena > 0
+		_rabat := ( field->ncijena / field->cijena ) * 100
+	endif
+
+	// kolicina uvijek ide apsolutna vrijednost
+	// storno racun fiskalni stampac tretira kao regularni unos
+
+	_art_naz := fiscal_art_naz_fix( roba->naz )
+
+	AADD( _items, { rn_broj, ;
+		ALLTRIM( STR( ++ _rbr ) ), ;
+		_art_id, ;
+		_art_naz, ;
+		field->cijena, ;
+		ABS( field->kolicina ), ;
+		field->idtarifa, ;
+		_reklamni_racun, ;
+		_plu, ;
+		field->cijena, ;
+		_rabat, ;
+		_art_barkod, ;
+		_vr_plac, ;
+		_rn_total, ;
+		datum, ;
+		_art_jmj } )
+
+	skip
+
+enddo
+
+if LEN( _items ) == 0
+	msgbeep( "fiskal: nema stavki za stampu !!!" )
+	return NIL
+endif
+
+// provjeri stavke racuna, kolicine, cijene
+if fiscal_items_check( @_items ) < 0
+	return NIL
+endif
+
+return _items
+
 
 
 
 // -------------------------------------
 // stampa fiskalnog racuna FPRINT
 // -------------------------------------
-function _fprint_rn( cIdPos, dDat, cBrRn )
-local aRn := {}
-local nTArea := SELECT()
-local nRbr := 1
-local nCtrl := 0
-local lStorno := .t.
-local nErr := 0
-local nPLU := 0
-local nPopust := 0
-local nPLU_price := 0
-local nFisc_no := 0
-local aKupac := {}
-local cPartner := ""
-local nTotal := 0
-local nNF_txt := ALLTRIM( cIdPos ) + "-" + ALLTRIM( cBrRn )
-local cVr_placanja := "0"
-
-select pos_doks
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-
-// ovo je partner
-cPartner := field->idgost
-cVr_placanja := _get_vr_pl( field->idvrstep )
-
-// ako je vrsta placanja <> gotovina
-if cVr_placanja <> "0"
-	// vrati mi iznos racuna
-	nTotal := pos_iznos_racuna( cIdPos, "42", dDat, cBrRn )
-endif
-
-// unesi ukupno uplacen iznos za racun
-// samo vrijedi kod gotovine
-if cVr_placanja == "0" .and. gFc_kusur == "D"
-    nTotal := unesi_ukupno_uplacenu_sumu()
-endif
-
-if !EMPTY( cPartner )
-	
-	// imamo partnera, moramo ga dodati u matricu za racun
-	
-	O_PARTN
-	select partn
-	go top
-	seek cPartner
-
-endif
-
-// pronadji u bazi racun
-select pos
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-
-do while !EOF() .and. field->idpos == cIdPos ;
-		.and. field->idvd == "42" ;
-		.and. DTOS(field->datum) == DTOS(dDat) ;
-		.and. field->brdok == cBrRn
-
-	if field->kolicina > 0
-		lStorno := .f.
-	endif
-
-	cT_c_1 := ""
-	nPopust := 0
-	nPLU := 0
-	nPLU_price := 0
-	cPLU_bk := ""
-
-	if pos->(FIELDPOS("C_1")) <> 0
-		// ovo je broj racuna koji se stornira 
-		cT_c_1 := field->c_1
-	endif
-
-	cArtikal := field->idroba
-
-	select roba
-	seek cArtikal
-
-	nPLU := roba->fisc_plu
-
-	if gFC_acd == "D"
-		// generisi PLU iz parametara
-		nPLU := auto_plu(nil, nil, __device)
-	endif
-
-	nPLU_price := pos_get_mpc()
-	cPLU_bk := roba->barkod
-	cPLU_jmj := roba->jmj
-
-	select pos
-
-	if field->ncijena > 0
-		nPopust := ( field->ncijena / field->cijena ) * 100
-	endif
-
-	++ nCtrl
-
-	// kolicina uvijek ide apsolutna vrijednost
-	// storno racun fiskalni stampac tretira kao regularni unos
-
-	cRobaNaz := fp_f_naz( roba->naz )
-	// _fix_naz( roba->naz, @cRobaNaz )
-
-	AADD( aRn, { cBrRn, ;
-		ALLTRIM(STR(++nRbr)), ;
-		field->idroba, ;
-		cRobaNaz, ;
-		field->cijena, ;
-		ABS( field->kolicina ), ;
-		field->idtarifa, ;
-		cT_c_1, ;
-		nPLU, ;
-		field->cijena, ;
-		nPopust, ;
-		cPLU_bk, ;
-		cVr_placanja, ;
-		nTotal, ;
-		dDat, ;
-		cPlu_JMJ } )
-
-	skip
-enddo
-
-select (nTArea)
-
-if nCtrl = 0
-	msgbeep("fiskal: nema stavki za stampu !!!")
-	nErr := 1
-	return nErr
-endif
-
-// provjeri stavke racuna, kolicine, cijene
-if fiscal_items_check( @aRn ) < 0
-	return 1
-endif
+static function pos_to_fprint( id_pos, tip_dok, datum, rn_broj, items, storno )
+local _err_level := 0
+local _fiscal_no := 0
 
 // pobrisi answer fajl
-fprint_delete_answer( ALLTRIM(gFc_path), ALLTRIM(gFc_name) )
+fprint_delete_answer( __device_params )
 
 // idemo sada na upis rn u fiskalni fajl
-fprint_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
-	lStorno, gFc_error )
+fprint_rn( __device_params, items, NIL, storno )
 
 // iscitaj error
-nErr := fprint_read_error( ALLTRIM(gFc_path), ;
-		ALLTRIM(gFc_name), gFc_tout, @nFisc_no )
+_err_level := fprint_read_error( __device_params, @_fiscal_no )
 
-if nErr = -9
+if _err_level = -9
 	// nema answer fajla, da nije do trake ?
-	if Pitanje(,"Da li je nestalo trake ?","N") == "D"
+	if Pitanje(, "Da li je nestalo trake ?", "N" ) == "D"
 		if Pitanje(,"Zamjenite traku i pritisnite 'D'","D") == "D"
 			// iscitaj error
-			nErr := fprint_read_error( ALLTRIM(gFc_path), ;
-				ALLTRIM(gFc_path), ;
-				gFc_tout, @nFisc_no )
+			_err_level := fprint_read_error( __device_params, @_fiscal_no )
 		endif
 	endif
 endif
 
 // fiskalni racun ne moze biti 0
-if nFisc_no <= 0
-	nErr := 1
+if _fiscal_no <= 0
+	_err_level := 1
 endif
 
-if nErr <> 0
-
+if _err_level <> 0
 	// pobrisati out fajl obavezno
 	// da ne bi otisao greskom na uredjaj kad proradi
-
-	fprint_delete_out( ALLTRIM(gFc_path) + ALLTRIM(gFc_name) )
-
+	fprint_delete_out( __device_params )
 	msgbeep("Postoji greska !!!")
-
 else
-	
-    if gFC_nftxt == "D"
-		// printaj non-fiscal tekst
-		// u ovom slucaju broj racuna
-		fprint_nf_txt( ALLTRIM( gFC_path), ALLTRIM( gFC_name), cNF_txt )
-	endif
-	
-    if nFisc_no <> 0
-		_update_fisc_rn( nFisc_no )
-    	msgo( "Kreiran fiskalni racun broj: " + ALLTRIM( STR( nFisc_no ) ) )
+    if _fiscal_no <> 0
+		pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
+    	msgo( "Kreiran fiskalni racun broj: " + ALLTRIM( STR( _fiscal_no ) ) )
 	    sleep(2)
         msgc()
 	endif
-
 endif
 
-return nErr
+return _err_level
+
+
 
 
 // -------------------------------------
 // stampa fiskalnog racuna FLINK
 // -------------------------------------
-function _flink_rn( cIdPos, dDat, cBrRn )
-local aRn := {}
-local nTArea := SELECT()
-local nRbr := 1
-local nCtrl := 0
-local lStorno := .t.
-local nErr := 0
-local nPLU := 0
-local cVr_placanja := "0"
-local nTotal := 0
-
-// 0 - gotovina
-// 1 - kredit
-// 2 - cek
-// 3 - virman
-
-select pos_doks
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-
-// vrsta placanja
-cVr_placanja := _fl_vr_pl( field->idvrstep )
-
-if cVr_placanja <> "0"
-	// uzmi total
-	nTotal := pos_iznos_racuna( cIdPos, "42", dDat, cBrRn )
-endif
-
-// pronadji u bazi racun
-select pos
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-
-do while !EOF() .and. field->idpos == cIdPos ;
-		.and. field->idvd == "42" ;
-		.and. DTOS(field->datum) == DTOS(dDat) ;
-		.and. field->brdok == cBrRn
-
-	
-	if field->kolicina > 0
-		lStorno := .f.
-	endif
-
-	cT_c_1 := ""
-
-	if pos->(FIELDPOS("C_1")) <> 0
-		// ovo je broj racuna koji se stornira 
-		cT_c_1 := field->c_1
-	endif
-
-	cArtikal := field->idroba
-
-	select roba
-	seek cArtikal
-	
-	nPLU := roba->fisc_plu
-
-	select pos
-
-	++ nCtrl
-
-	// kolicina uvijek ide apsolutna vrijednost
-	// storno racun fiskalni stampac tretira kao regularni unos
-
-	cRobaNaz := ""
-	_fix_naz( roba->naz, @cRobaNaz )
-
-	AADD( aRn, { cBrRn, ;
-		ALLTRIM(STR(++nRbr)), ;
-		field->idroba, ;
-		cRobaNaz, ;
-		field->cijena, ;
-		ABS( field->kolicina ), ;
-		_g_tar(field->idtarifa), ;
-		cT_c_1, ; 
-        nPLU, ;
-        cVr_placanja, ;
-        nTotal } )
-
-	skip
-enddo
-
-select (nTArea)
-
-if nCtrl = 0
-	msgbeep("fiskal: nema stavki za stampu !!!")
-	nErr := 1
-	return nErr
-endif
-
+static function pos_to_flink( id_pos, tip_dok, datum, rn_broj, items, storno )
+local _err_level := 0
 // idemo sada na upis rn u fiskalni fajl
-nErr := fc_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, lStorno, gFc_error )
-
-return nErr
-
-
-
-// --------------------------------------------
-// vrati vrstu placanja
-// --------------------------------------------
-static function _fl_vr_pl( cIdVrsta )
-local cVrsta := "0"
-local nTArea := SELECT()
-local cVrstaNaz := ""
-
-if EMPTY(cIdVrsta) .or. cIdVrsta == "01"
-	// ovo je gotovina
-	return cVrsta
-endif
-
-O_VRSTEP
-select vrstep
-set order to tag "ID"
-seek cIdVrsta
-
-cVrstaNaz := ALLTRIM( vrstep->naz )
-
-do case 
-	case "KARTICA" $ cVrstaNaz
-		cVrsta := "1"
-	case "CEK" $ cVrstaNaz
-		cVrsta := "2"
-	case "VIRMAN" $ cVrstaNaz
-		cVrsta := "3"
-	otherwise
-		cVrsta := "0"
-endcase 
-
-select (nTArea)
-
-return cVrsta
+_err_level := fc_pos_rn( __device_params, items, storno )
+return _err_level
 
 
 
@@ -449,148 +330,33 @@ return cVrsta
 // --------------------------------------------
 // stampa fiskalnog racuna TREMOL 
 // --------------------------------------------
-function _trm_rn( cIdPos, dDat, cBrRn, cContinue )
-local aRn := {}
-local aKupac := nil
-local nTArea := SELECT()
-local nRbr := 1
-local nCtrl := 0
-local lStorno := .t.
-local nErr := 0
-local nPLU := 0
-local nPLU_price := 0
-local nPopust := 0
-local cPLU_bk := ""
-local nTotal := 0
-local cPartner := ""
-local nFisc_no := 0
+static function pos_to_tremol( id_pos, tip_dok, datum, rn_broj, items, storno, cont )
+local _err_level := 0
+local _f_name 
+local _fiscal_no := 0
 
-if cContinue == nil
-	cContinue := "0"
+if cont == NIL
+    cont := "0"
 endif
-
-select pos_doks
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-// ovo je partner
-cPartner := field->idgost
-
-if !EMPTY( cPartner )
 	
-	// imamo partnera, moramo ga dodati u matricu za racun
-	
-	O_PARTN
-	select partn
-	go top
-	seek cPartner
-	
-	aKupac := {}
-
-	//if !EMPTY( partn->jib )
-	  // AADD( aKupac, { partn->jib, partn->naz, ;
-		//partn->adresa, partn->ptt, partn->mjesto } )
-	//endif
-
-endif
-
-
-// pronadji u bazi racun
-select pos
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-
-do while !EOF() .and. field->idpos == cIdPos ;
-		.and. field->idvd == "42" ;
-		.and. DTOS(field->datum) == DTOS(dDat) ;
-		.and. field->brdok == cBrRn
-	
-	if field->kolicina > 0
-		lStorno := .f.
-	endif
-
-	cT_c_1 := ""
-	nPopust := 0
-	nPLU_price := 0
-
-	if pos->(FIELDPOS("C_1")) <> 0
-		// ovo je broj racuna koji se stornira 
-		cT_c_1 := field->c_1
-	endif
-
-	cArtikal := field->idroba
-
-	select roba
-	seek cArtikal
-
-	nPLU := roba->fisc_plu
-	nPLU_price := pos_get_mpc()
-	cPLU_bk := roba->barkod
-	cPLU_jmj := roba->jmj
-
-	select pos
-	
-	if field->ncijena > 0
-		nPopust := ( field->ncijena / field->cijena ) * 100
-	endif
-
-	++ nCtrl
-
-	// kolicina uvijek ide apsolutna vrijednost
-	// storno racun fiskalni stampac tretira kao regularni unos
-
-	cRobaNaz := ""
-	_fix_naz( roba->naz, @cRobaNaz )
-	
-	AADD( aRn, { cBrRn, ;
-		ALLTRIM(STR( ++nRbr )), ;
-		field->idroba, ;
-		cRobaNaz, ;
-		field->cijena, ;
-		ABS( field->kolicina ), ;
-		field->idtarifa, ;
-		cT_c_1, ;
-		nPLU, ;
-		nPLU_price, ;
-		nPopust, ;
-		cPLU_bk, ;
-		"0", ;
-		nTotal, ;
-		dDat, ;
-		cPLU_jmj } )
-
-	skip
-enddo
-
-select (nTArea)
-
-if nCtrl = 0
-	msgbeep("fiskal: nema stavki za stampu !!!")
-	nErr := 1
-	return nErr
-endif
-
 // idemo sada na upis rn u fiskalni fajl
-nErr := tremol_rn( __device_params, aRn, aKupac, lStorno, cContinue )
+_err_level := tremol_rn( __device_params, items, NIL, storno, cont )
 
-if cContinue <> "2"
+if cont <> "2"
 	
-	// naziv fajla
-	cFName := tremol_filename( cBrRn )
+    // naziv fajla
+    _f_name := fiscal_out_filename( __device_params["out_file"], rn_broj )
 
-	if tremol_read_out( __device_params["out_dir"], cFName )
+	if tremol_read_out( __device_params, _f_name )
 		
 		// procitaj poruku greske
-		nErr := tremol_read_error( __device_params["out_dir"], ALLTRIM(cFName), ;
-			__device_params["timeout"], @nFisc_no ) 
+		_err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no ) 
 
-	
-		if nErr = 0 .and. !lStorno .and. nFisc_no > 0
+		if _err_level = 0 .and. !storno .and. _fiscal_no > 0
 
-            _update_fisc_rn( nFisc_no )	
-			msgbeep("Kreiran fiskalni racun: " + ;
-				ALLTRIM(STR( nFisc_no )))
+            pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )	
+
+			msgbeep( "Kreiran fiskalni racun: " + ALLTRIM( STR( _fiscal_no ) ) )
 			
 		endif
 	
@@ -598,11 +364,11 @@ if cContinue <> "2"
 	
 	// obrisi fajl
 	// da ne bi ostao kada server proradi ako je greska
-	FERASE( ALLTRIM(gFc_path) + ALLTRIM(cFName) )
+	FERASE( __device_params["out_dir"] + _f_name )
 
 endif
 
-return nErr
+return _err_level
 
 
 
@@ -610,163 +376,48 @@ return nErr
 // --------------------------------------------
 // stampa fiskalnog racuna HCP
 // --------------------------------------------
-function _hcp_rn( cIdPos, dDat, cBrRn )
-local aRn := {}
-local aKupac := nil
-local nTArea := SELECT()
-local nRbr := 1
-local nCtrl := 0
-local lStorno := .t.
-local nErr := 0
-local nPLU := 0
-local nPLU_price := 0
-local nPopust := 0
-local cPLU_bk := ""
-local nTotal := 0
-local cPartner := ""
-local cVrsta_pl := "0"
+static function pos_to_hcp( id_pos, tip_dok, datum, rn_broj, items, storno, uplaceni_iznos )
+local _err_level := 0
+local _fiscal_no := 0
 
-select pos_doks
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-// ovo je partner
-cPartner := field->idgost
-cVrsta_pl := _get_vr_pl( field->idvrstep )
-
-if !EMPTY( cPartner )
-	
-	// imamo partnera, moramo ga dodati u matricu za racun
-	
-	O_PARTN
-	select partn
-	go top
-	seek cPartner
-
-	aKupac := {}
-
-	//if !EMPTY( partn->jib )
-	  // AADD( aKupac, { partn->jib, partn->naz, ;
-		//partn->adresa, partn->ptt, partn->mjesto } )
-	//endif
-
+if uplaceni_iznos == NIL
+    uplaceni_iznos := 0
 endif
 
-// pronadji u bazi racun
-select pos
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
+_err_level := hcp_rn( __device_params, items, NIL, storno, uplaceni_iznos )
 
-do while !EOF() .and. field->idpos == cIdPos ;
-		.and. field->idvd == "42" ;
-		.and. DTOS(field->datum) == DTOS(dDat) ;
-		.and. field->brdok == cBrRn
-	
-	if field->kolicina > 0
-		lStorno := .f.
-	endif
-
-	cT_c_1 := ""
-	nPopust := 0
-	nPLU_price := 0
-	
-    if pos->(FIELDPOS("C_1")) <> 0
-		// ovo je broj racuna koji se stornira 
-		cT_c_1 := field->c_1
-	endif
-
-	cArtikal := field->idroba
-
-	select roba
-	seek cArtikal
-
-	nPLU := 0
-
-	if roba->(FIELDPOS("BARKOD")) <> 0
-		nPLU := roba->fisc_plu
-	endif
-
-	if gFc_acd == "D"
-		nPLU := auto_plu( nil, nil, __device )
-	endif
-
-	nPLU_price := pos_get_mpc()
-	cPLU_bk := roba->barkod
-	cPLU_jmj := roba->jmj
-
-	select pos
-	
-	if field->ncijena > 0
-		nPopust := ( field->ncijena / field->cijena ) * 100
-	endif
-
-	++ nCtrl
-
-	// kolicina uvijek ide apsolutna vrijednost
-	// storno racun fiskalni stampac tretira kao regularni unos
-
-	cRobaNaz := ""
-	_fix_naz( roba->naz, @cRobaNaz )
-	
-	AADD( aRn, { cBrRn, ;
-		ALLTRIM(STR( ++nRbr )), ;
-		field->idroba, ;
-		cRobaNaz, ;
-		field->cijena, ;
-		ABS( field->kolicina ), ;
-		field->idtarifa, ;
-		cT_c_1, ;
-		nPLU, ;
-		nPLU_price, ;
-		nPopust, ;
-		cPLU_bk, ;
-		cVrsta_pl, ;
-		nTotal, ;
-		dDat, ;
-		cPLU_jmj } )
-
-	skip
-enddo
-
-select (nTArea)
-
-if nCtrl = 0
-	msgbeep("fiskal: nema stavki za stampu !!!")
-	nErr := 1
-	return nErr
-endif
-
-// idemo sada na upis rn u fiskalni fajl
-nErr := hcp_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
-	aRn, aKupac, lStorno, gFc_error, nTotal )
-
-if nErr = 0
+if _err_level = 0
 	
 	// vrati broj racuna
-	nFisc_no := hcp_fisc_no( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
-			gFc_error, lStorno )
+	_fiscal_no := hcp_fisc_no( __device_params, storno )
 	
-    if nFisc_no > 0
-        _update_fisc_rn( nFisc_no )
+    if _fiscal_no > 0
+        pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
     endif
 
 endif
 
-
-return nErr
+return _err_level
 
 
 // ------------------------------------------------
 // update broj fiskalnog racuna
 // ------------------------------------------------
-static function _update_fisc_rn( nFisc_no )
+static function pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, fisc_no )
 local _rec
 
 select pos_doks
+set order to tag "1"
+go top
+
+seek id_pos + tip_dok + DTOS( datum ) + rn_broj
+
+if !FOUND()
+    return
+endif
 
 _rec := dbf_get_rec()
-_rec["fisc_rn"] := nFisc_no
+_rec["fisc_rn"] := fisc_no
 
 update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
@@ -777,34 +428,34 @@ return
 // --------------------------------------------
 // vrati vrstu placanja
 // --------------------------------------------
-static function _get_vr_pl( cIdVrsta )
-local cVrsta := "0"
-local nTArea := SELECT()
-local cVrstaNaz := ""
+static function pos_get_vr_plac( id_vr_pl )
+local _ret := "0"
+local _araa := SELECT()
+local _naz := ""
 
-if EMPTY( cIdVrsta ) .or. cIdVrsta == "01"
+if EMPTY( id_vr_pl ) .or. id_vr_pl == "01"
 	// ovo je gotovina
-	return cVrsta
+	return _naz
 endif
 
 O_VRSTEP
 select vrstep
 set order to tag "ID"
-seek cIdVrsta
+seek id_vr_pl
 
-cVrstaNaz := ALLTRIM( vrstep->naz )
+_naz := ALLTRIM( vrstep->naz )
 
 do case 
-	case "KARTICA" $ cVrstaNaz
-		cVrsta := "1"
-	case "CEK" $ cVrstaNaz
-		cVrsta := "2"
-	case "VAUCER" $ cVrstaNaz
-		cVrsta := "3"
-    case "VIRMAN" $ cVrstaNaz
-        cVrsta := "3"
+	case "KARTICA" $ _naz
+		_ret := "1"
+	case "CEK" $ _naz
+		_ret := "2"
+	case "VAUCER" $ _naz
+		_ret := "3"
+    case "VIRMAN" $ _naz
+        _ret := "3"
 	otherwise
-		cVrsta := "0"
+		_ret := "0"
 endcase 
 
 select (nTArea)
@@ -816,84 +467,10 @@ return cVrsta
 // --------------------------------------------
 // stampa fiskalnog racuna TRING (www.kase.ba)
 // --------------------------------------------
-function _tring_rn( cIdPos, dDat, cBrRn )
-local aRn := {}
-local aKupac := nil
-local nTArea := SELECT()
-local nRbr := 1
-local nCtrl := 0
-local lStorno := .t.
-local nErr := 0
-local nPLU := 0
-
-// pronadji u bazi racun
-select pos
-set order to tag "1"
-go top
-seek cIdPos + "42" + DTOS(dDat) + cBrRn
-
-do while !EOF() .and. field->idpos == cIdPos ;
-		.and. field->idvd == "42" ;
-		.and. DTOS(field->datum) == DTOS(dDat) ;
-		.and. field->brdok == cBrRn
-
-	if field->kolicina > 0
-		lStorno := .f.
-	endif
-
-	cT_c_1 := ""
-
-	if pos->(FIELDPOS("C_1")) <> 0
-		// ovo je broj racuna koji se stornira 
-		cT_c_1 := field->c_1
-	endif
-
-	cArtikal := field->idroba
-
-	select roba
-	seek cArtikal
-
-	nPLU := roba->fisc_plu
-
-	select pos
-
-	++ nCtrl
-
-	// kolicina uvijek ide apsolutna vrijednost
-	// storno racun fiskalni stampac tretira kao regularni unos
-
-	cRobaNaz := ""
-	_fix_naz( roba->naz, @cRobaNaz )
-	
-	AADD( aRn, { cBrRn, ;
-		ALLTRIM(STR( ++nRbr )), ;
-		field->idroba, ;
-		cRobaNaz, ;
-		field->cijena, ;
-		field->ncijena, ;
-		ABS( field->kolicina ), ;
-		_g_tar(field->idtarifa), ;
-		cT_c_1, ;
-		field->datum, ;
-		roba->jmj, ;
-		nPLU } )
-
-	skip
-enddo
-
-select (nTArea)
-
-if nCtrl = 0
-	msgbeep("fiskal: nema stavki za stampu !!!")
-	nErr := 1
-	return nErr
-endif
-
-// idemo sada na upis rn u fiskalni fajl
-nErr := tring_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
-	aRn, aKupac, lStorno, gFc_error )
-
-return nErr
+static function pos_to_tring( id_pos, tip_dok, datum, rn_broj, items, storno )
+local _err_level := 0
+_err_level := tring_rn( __device_params, items, NIL, storno )
+return _err_level
 
 
 
@@ -919,49 +496,12 @@ do case
 
 		// zamjeni sve zareze u nazivu sa tackom
 		cNaziv := STRTRAN( cNaziv, ",", "." )
-
-	case ALLTRIM(gFc_type) == "FPRINT"
-		
-		// napravi konverziju karaktera 852 -> win
-		cNaziv := to_xml_encoding( cNaziv )
-		
+	
 endcase
 
 return
 
 
-// ------------------------------------------
-// vraca tarifu za fiskalni stampac
-// ------------------------------------------
-static function _g_tar( cIdTar )
-cF_tar := "E"
-do case
-	case UPPER(cIdTar) = "PDV17"
-		cF_tar := "E"
-endcase
-return cF_tar
 
-
-
-// ------------------------------------------
-// izvrsi fiskalnu komandu, ako postoji
-// ------------------------------------------
-static function _fc_cmd()
-private cFcCmd := ""
-
-if EMPTY( ALLTRIM( gFc_cmd ) )
-	return
-endif
-
-cFcCmd := ALLTRIM( gFc_cmd )
-cFcCmd := STRTRAN( cFcCmd, "$1", ALLTRIM(gFc_cp1) )
-cFcCmd := STRTRAN( cFcCmd, "$2", ALLTRIM(gFc_cp2) )
-cFcCmd := STRTRAN( cFcCmd, "$3", ALLTRIM(gFc_cp3) )
-cFcCmd := STRTRAN( cFcCmd, "$4", ALLTRIM(gFc_cp4) )
-cFcCmd := STRTRAN( cFcCmd, "$5", ALLTRIM(gFc_cp5) )
-
-run &cFcCmd
-
-return
 
 

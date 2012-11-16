@@ -283,7 +283,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
     
     _art_id := fakt->idroba
     _art_barkod := ALLTRIM( roba->barkod )
-    _art_naz := ALLTRIM( fp_f_naz( roba->naz ) )
+    _art_naz := ALLTRIM( fiscal_art_naz_fix( roba->naz ) )
     _art_jmj := ALLTRIM( roba->jmj )
 
     _art_plu := roba->fisc_plu
@@ -632,7 +632,7 @@ endif
 // stampaj racun !
 _err_level := tremol_rn( __device_params, items, head, storno, cont )
 
-_f_name := ALLTRIM( tremol_filename( br_dok, __device_params["out_file"] ) )
+_f_name := ALLTRIM( fiscal_out_filename( __device_params["out_file"], br_dok ) )
 
 // da li postoji ista na izlazu ?
 if tremol_read_out( __device_params, _f_name, __device_params["timeout"] )

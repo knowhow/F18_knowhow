@@ -264,7 +264,7 @@ return
 // stampa i azuriranje racuna
 // ------------------------------------------------------------------
 function StampAzur( cIdPos, cRadRac )
-local cTime, _rec
+local cTime, _rec, _dev_id, _dev_params
 local nFis_err := 0
 private cPartner
 
@@ -305,9 +305,13 @@ if (!EMPTY(cTime))
 
 	// fiskalizacija, ispisi racun
 	if fiscal_opt_active()
-		
+	
+        // u tops-u uvijek treba da je jedan uredjaj !
+        _dev_id := get_fiscal_device( my_user() )
+        _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+	
 		// stampa fiskalnog racuna, vraca ERR
-		nErr := pos_fisc_rn( cIdPos, gDatum, cStalRac )
+		nErr := pos_fisc_rn( cIdPos, gDatum, cStalRac, _dev_params )
 		
 		// da li je nestalo trake ?
 		// -20 signira na nestanak trake !

@@ -377,8 +377,6 @@ cre_fmkrules()
 // kreiranje tabela ugovora
 db_cre_ugov()
 
-c_fdevice()
-
 return .t.
 
 

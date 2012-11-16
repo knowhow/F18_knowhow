@@ -49,7 +49,7 @@ static _nema_out := -20
 // --------------------------------------------------------------------------
 // stampa fiskalnog racuna tring fiskalizacija
 // --------------------------------------------------------------------------
-function tremol_rn( params, aData, aKupac, lStorno, cContinue )
+function tremol_rn( dev_params, aData, aKupac, lStorno, cContinue )
 local cXML
 local i
 local cBr_zahtjeva 
@@ -73,7 +73,7 @@ local cC_city
 local nFisc_no := 0
 
 // pobrisi tmp fajlove i ostalo sto je u input direktoriju
-tremol_delete_tmp( params )
+tremol_delete_tmp( dev_params )
 
 if cContinue == nil
 	cContinue := "0"
@@ -86,7 +86,7 @@ endif
 // to je zapravo broj racuna !!!
 cBr_zahtjeva := aData[ 1, 1 ]
 
-cFName := tremol_filename( cBr_zahtjeva, params["out_file"] )
+cFName := fiscal_out_filename( dev_params["out_file"], cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
 cXML := cFPath + cFName
@@ -146,7 +146,7 @@ nVr_placanja := 0
 	nCijena := aData[i, 5]
 	nKolicina := aData[i, 6]
 	nRabat := aData[i, 11]
-	cStopa := fiscal_txt_get_tarifa( aData[i, 7], params["pdv"], "TREMOL" )
+	cStopa := fiscal_txt_get_tarifa( aData[i, 7], dev_params["pdv"], "TREMOL" )
 	cDep := "1"
 	cTmp := ""
 
@@ -212,11 +212,11 @@ return nErr_no
 
 
 // restart tremol fp server
-function tremol_restart( param )
+function tremol_restart( dev_params )
 local cScr
 private cR_scr := ""
 
-if param["restart_fiscal_service"] == "N"
+if dev_params["restart_fiscal_service"] == "N"
 	return .f.
 endif
 
@@ -296,7 +296,7 @@ else
 endif
 
 // izlazni fajl
-_f_name := tremol_filename( "0", dev_params["out_file"] )
+_f_name := fiscal_out_filename( dev_params["out_file"], "" )
 
 // putanja do izlaznog xml fajla
 _xml := dev_params["out_dir"] + _f_name
@@ -334,7 +334,7 @@ if !SigmaSif("RPLU")
 	return 0
 endif
 
-_f_name := tremol_filename( "0", dev_params["out_file"] )
+_f_name := fiscal_out_filename( dev_params["out_file"], "" )
 
 // putanja do izlaznog xml fajla
 _xml := dev_params["out_dir"] + _f_name
@@ -378,7 +378,7 @@ local _xml
 local _err := 0
 local _f_name 
 
-_f_name := tremol_filename( "0", dev_params["out_file"] )
+_f_name := fiscal_out_filename( dev_params["out_file"], "" )
 
 // putanja do izlaznog xml fajla
 _xml := dev_params["out_dir"] + _f_name
@@ -426,35 +426,6 @@ do case
 endcase
 
 return cF_jmj
-
-
-
-
-// ----------------------------------------
-// fajl za pos fiskalni stampac
-// ----------------------------------------
-function tremol_filename( broj_rn, file_name )
-local _ret
-local _f_name := ALLTRIM( file_name )
-local _rn
-
-do case
-
-	case "$rn" $ _f_name
-		// broj racuna.xml
-		_rn := PADL( ALLTRIM( broj_rn ), 8, "0" )
-		// ukini znak "/" ako postoji
-		_rn := STRTRAN( _rn, "/", "" )
-		_ret := STRTRAN( _f_name, "$rn", _rn )
-		_ret := UPPER( _ret )
-	
-	otherwise 
-		// ono sta je navedeno u parametrima
-		_ret := _f_name
-
-endcase
-
-return _ret
 
 
 

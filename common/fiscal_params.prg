@@ -507,7 +507,7 @@ local _cre
 fiscal_path := ALLTRIM( fiscal_path )
 
 if EMPTY( fiscal_path )
-    MsgBeep( "Izlazni direktorij mora biti definisan ?!!!" )
+    MsgBeep( "Izlazni direktorij za fiskalne fajlove ne smije biti prazan ?!!!" )
     _ok := .f.
     return _ok
 endif
@@ -516,7 +516,7 @@ if DirChange( fiscal_path ) != 0
     // probaj kreirati direktorij...
     _cre := MakeDir( fiscal_path )
     if _cre != 0
-        MsgBeep( "kreiranje " + fiscal_path + " neuspjesno ?!" )
+        MsgBeep( "Kreiranje " + fiscal_path + " neuspjesno ?!#Provjerite putanju direktorija izlaznih fajlova." )
         _ok := .f.
     endif
 endif
@@ -534,7 +534,7 @@ local _dev_arr
 local _pos_default
 
 if !__use_fiscal_opt 
-    return _device_id
+    return NIL
 endif
 
 if from_pos == NIL
@@ -730,8 +730,36 @@ _param["op_pwd"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user
 _param["print_a4"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, "N" )
 _param["print_fiscal"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, "D" )
 _param["op_docs"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" )
+
+// chekiranje parametara 
+if !post_check( _param )
+    return NIL
+endif
  
 return _param
+
+
+// ---------------------------------------------------------------
+// chekiranje nakon setovanja, da li ima lokacije itd...
+// ---------------------------------------------------------------
+static function post_check( param )
+local _ret := .t.
+
+// provjeri lokaciju 
+_ret := _valid_fiscal_path( param["out_dir"] )
+if !_ret
+    return _ret
+endif
+
+// izlazni fajl
+if EMPTY( param["out_file"] )
+    MsgBeep( "Naziv izlaznog fajla mora biti popunjen ispravno !!!" )
+    _ret := .f.
+    return _ret
+endif
+
+return _ret
+
 
 
 

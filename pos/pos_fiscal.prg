@@ -153,6 +153,7 @@ local _art_barkod, _art_id, _art_naz, _art_jmj
 local _rbr := 0
 local _rn_total
 local _vr_plac
+local _level
 
 if uplaceni_iznos == NIL
     uplaceni_iznos := 0
@@ -260,8 +261,9 @@ if LEN( _items ) == 0
 	return NIL
 endif
 
+_level := 1
 // provjeri stavke racuna, kolicine, cijene
-if fiscal_items_check( @_items ) < 0
+if fiscal_items_check( @_items, storno, _level, __device_params["drv"] ) < 0
 	return NIL
 endif
 

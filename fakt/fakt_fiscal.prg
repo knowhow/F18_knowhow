@@ -394,8 +394,7 @@ endif
 
 // provjeri prije stampe stavke kolicina, cijena
 _item_level_check := 1
-
-if fiscal_items_check( @_data, storno, _item_level_check ) < 0
+if fiscal_items_check( @_data, storno, _item_level_check, __device_params["drv"] ) < 0
     return NIL    
 endif
 

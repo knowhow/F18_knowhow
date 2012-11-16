@@ -286,6 +286,63 @@ return _plu
 
 
 
+
+// ------------------------------------------
+// vraca tarifu za fiskalni stampac
+// po uredjajima...
+// ------------------------------------------
+function fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
+local _tar := ""
+
+do case
+
+	case UPPER( ALLTRIM( tarifa_id ) ) $ "PDV17#PDV7NP#" .and. pdv == "D"
+
+		// PDV je tarifna skupina "E"
+
+        if drv == "TRING"
+		    _tar := "E"
+        elseif drv == "FPRINT"
+            _tar := "2"
+        elseif drv == "HCP"
+            _tar := "1"
+        elseif drv == "TREMOL"
+            _tar := "2"
+        endif
+
+	case UPPER( ALLTRIM( tarifa_id ) ) $"PDV0#PDV0IZ" .and. pdv == "D"
+
+		// bez PDV-a je tarifna skupina "K"
+
+        if drv == "TRING"
+		    _tar := "K"
+        elseif drv == "FPRINT"
+            _tar := "4"
+        elseif drv == "HCP"
+            _tar := "3"
+        elseif drv == "TREMOL"
+            _tar := "1"
+        endif
+
+	case pdv == "N"
+
+		// ne-pdv obveznik, skupina "A"
+        if drv == "TRING"
+		    _tar := "A"
+        elseif drv == "FPRINT"
+            _tar := "1"
+        elseif drv == "HCP"
+            _tar := "0"
+        elseif drv == "TREMOL"
+            _tar := "3"
+        endif
+
+endcase
+
+return _tar
+
+
+
 // ---------------------------------------
 // kreiranje tabele fdevice.dbf
 // ---------------------------------------

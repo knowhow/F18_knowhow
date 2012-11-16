@@ -182,7 +182,7 @@ for _i := 1 to LEN( items )
 	nCijena := items[i, 5]
 	nKolicina := items[i, 6]
 	nRabat := items[i, 11]
-	cStopa := _g_tar ( items[i, 7], dev_params["pdv"] )
+	cStopa := fiscal_txt_get_tarifa( items[i, 7], dev_params["pdv"], "HCP" ) 
 	cDep := "0"
 	cTmp := ""
 
@@ -424,7 +424,7 @@ for _i := 1 to LEN( items )
 	cRoba_naz := PADR( items[ _i, 4 ], 32 )
 	cRoba_jmj := _g_jmj( items[ _i, 16 ] )
 	nCijena := items[ _i, 5 ]
-	cStopa := _g_tar ( items[ _i, 7 ], dev_params["pdv"] )
+	cStopa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_params["pdv"], "HCP" )
 	cDep := "0"
 	nLager := 0
 
@@ -619,45 +619,6 @@ do case
 endcase
 
 return cF_jmj
-
-
-// ------------------------------------------
-// vraca tarifu za fiskalni stampac
-// ------------------------------------------
-static function _g_tar( tarifa_id, pdv )
-local _tar := "1"
-
-if pdv == NIL
-    pdv := "D"
-endif
-
-do case
-	case UPPER( ALLTRIM( tarifa_id ) ) == "PDV17"
-		
-		// PDV je tarifna skupina "1"
-		// u pdv rezimu
-		if pdv == "D"
-			_tar := "1"
-		else
-			// u ne-pdv rezimu je "0"
-			_tar := "0"
-		endif
-	
-	case UPPER( ALLTRIM( tarifa_id ) ) == "PDV0"
-		
-		if pdv == "D"
-			// INO ili oslobodjen je tarifna skupina "3"
-			_tar := "3"
-		else
-			// ako nije u pdv rezimu onda je opet tarifa "0"
-			_tar := "0"
-		endif
-
-endcase
-
-return _tar
-
-
 
 
 // -----------------------------------------------------

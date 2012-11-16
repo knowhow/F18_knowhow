@@ -890,7 +890,7 @@ if nCtrl = 0
 endif
 
 // idemo sada na upis rn u fiskalni fajl
-nErr := fc_trng_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
+nErr := tring_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
 	aRn, aKupac, lStorno, gFc_error )
 
 return nErr

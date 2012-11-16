@@ -146,7 +146,7 @@ nVr_placanja := 0
 	nCijena := aData[i, 5]
 	nKolicina := aData[i, 6]
 	nRabat := aData[i, 11]
-	cStopa := _g_tar ( aData[i, 7] )
+	cStopa := fiscal_txt_get_tarifa( aData[i, 7], params["pdv"], "TREMOL" )
 	cDep := "1"
 	cTmp := ""
 
@@ -449,28 +449,6 @@ endcase
 
 return cF_jmj
 
-
-
-
-// ------------------------------------------
-// vraca tarifu za fiskalni stampac
-// ------------------------------------------
-static function _g_tar( cIdTar )
-cF_tar := "2"
-do case
-	case UPPER(ALLTRIM(cIdTar)) == "PDV17"
-		// PDV je tarifna skupina "2"
-		cF_tar := "2"
-	
-	case UPPER(ALLTRIM(cIdTar)) == "PDV0"
-		// nePDV 
-		cF_tar := "1"
-	// case 
-	// ....
-
-endcase
-
-return cF_tar
 
 
 

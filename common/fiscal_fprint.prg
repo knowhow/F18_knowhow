@@ -693,86 +693,6 @@ return
 
 
 
-// ------------------------------------------------------
-// vraca popunjenu matricu za upis artikla u memoriju
-// (FPRINT)
-// ------------------------------------------------------
-static function _fp_p_art( aData )
-local aArr := {}
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local i
-local cOption := "2"
-
-// ocekivana struktura
-// aData = { idroba, nazroba, cijena, kolicina, porstopa, plu }
-
-cLogic := "1"
-
-for i := 1 to LEN( aData )
-	
-	cTmp := "107"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
-	
-	cTmp += cOption
-	cTmp += cSep
-
-	// poreska grupa artikala 1 - 5
-	cTmp += _g_tar( aData[i, 5] )
-	cTmp += cSep
-	
-	// kod PLU
-	cTmp += ALLTRIM( aData[i, 1] )
-	cTmp += cSep
-	
-	// cjena 0-99999.99
-	cTmp += ALLTRIM(STR( aData[i, 3], 12, 2 ))
-	cTmp += cSep
-
-	// naziv artikla
-	cTmp += PADR( ALLTRIM(aData[i, 2]), 32 )
-	cTmp += cSep
-
-	AADD( aArr, { cTmp } )
-
-next
-
-return aArr
-
-
-
-// ------------------------------------------
-// vraca tarifu
-// ------------------------------------------
-static function _g_tar( cStopa, pdv )
-local xRet := "2"
-
-do case
-	// obracun pdv-a
-	case ALLTRIM( cStopa ) $ "PDV17#PDV7NP#"
-		xRet := "2"
-	// nema pdv-a
-	case ALLTRIM( cStopa ) $ "PDV0#PDV0IZ#"
-		xRet := "4"
-endcase
-
-// ako nije PDV obveznik onda je stopa "1" uvijek
-if pdv == "N"
-	xRet := "1"
-endif
-
-return xRet
-
 
 // ----------------------------------------
 // vraca popunjenu matricu za ispis racuna
@@ -1508,7 +1428,7 @@ for i:=1 to LEN( aData )
 	cTmp += cSep
 	
 	// poreska stopa
-	cTmp += _g_tar( aData[ i, 7 ], dev_params["pdv"] )
+	cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], dev_params["pdv"], "FPRINT" )
 	cTmp += cSep
 	
 	// plu kod 

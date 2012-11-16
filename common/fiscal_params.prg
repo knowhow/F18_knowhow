@@ -41,12 +41,12 @@ local _izbor := 1
 // setuj mi glavnu varijablu
 fiscal_opt_active()
 
-AADD( _opc, "1. globalni parametri fiskalizacije        " )
-AADD( _opc_exe, { || set_global_fiscal_params() })
-AADD( _opc, "2. glavni parametri fiskalnih uredjaja" )
+AADD( _opc, "1. fiskalni uredjaji: globalne postavke        " )
 AADD( _opc_exe, { || set_main_fiscal_params() })
-AADD( _opc, "3. korisnicki parametri fiskalnih uredjaja" )
+AADD( _opc, "2. fiskalni uredjaji: korisnicke postavke " )
 AADD( _opc_exe, { || set_user_fiscal_params() })
+AADD( _opc, "3. korisnicke fiskalne postavke  " )
+AADD( _opc_exe, { || set_global_fiscal_params() })
 AADD( _opc, "4. pregled parametara" )
 AADD( _opc_exe, { || print_fiscal_params() })
 
@@ -706,6 +706,7 @@ for _usr_cnt := 1 to LEN( _usr_arr )
         _dev_id := _dev_arr[ _dev_cnt, 1 ]
         _dev_name := _dev_arr[ _dev_cnt, 2 ]
 
+        ? SPACE(3), REPLICATE( "-", 70 )
         ? SPACE(3), "Uredjaj id:", _dev_id, "naziv:", _dev_name
         ? SPACE(3), REPLICATE( "-", 70 )
 

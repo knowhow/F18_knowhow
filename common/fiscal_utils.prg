@@ -201,6 +201,8 @@ endif
 return cRet
 
 
+
+
 // vraca naziv parametra za sql/db
 static function _get_auto_plu_param_name( f_device )
 local _ret := "auto_plu"
@@ -213,9 +215,7 @@ local _ret := "auto_plu"
 // ako se ne koriste uredjaji, ali se koristi generalni 
 // broj uredjaja unutar preduzeca
 
-if f_device > 0
-	_ret := _ret + "_dev_" + ALLTRIM( STR( f_device ) )
-endif
+_ret := _ret + "_dev_" + ALLTRIM( STR( f_device ) )
 
 return _ret
 
@@ -226,24 +226,17 @@ return _ret
 function last_plu( f_device )
 local _plu := 0
 local _param_name := _get_auto_plu_param_name( f_device )
-
 _plu := fetch_metric( _param_name, nil, _plu )
-
 return _plu
 
 
 // --------------------------------------------------
 // generisanje novog plug kod-a inkrementalno
 // --------------------------------------------------
-function auto_plu( reset_plu, silent_mode, f_device )
+function auto_plu( reset_plu, silent_mode, dev_params )
 local _plu := 0
 local _t_area := SELECT()
-local _param_name := _get_auto_plu_param_name( f_device )
-local _dev_params := get_fiscal_device_params( f_device, my_user() )
-
-if f_device == nil
-	f_device := 0
-endif
+local _param_name := _get_auto_plu_param_name( dev_params["id"] )
 
 if reset_plu == nil
 	reset_plu := .f.
@@ -254,13 +247,20 @@ if silent_mode == nil
 endif
 
 if reset_plu = .t.
+
 	// uzmi inicijalni plu iz parametara
-	_plu := _dev_params["plu_init"]
+	_plu := dev_params["plu_init"]
+
 else
 
     _plu := fetch_metric( _param_name, nil, _plu )
 
-	// uvecaj za 1
+    // prvi put pokrecemo opciju, uzmi init vrijednost !
+	if _plu == 0
+        _plu := dev_params["plu_init"]
+    endif
+
+    // uvecaj za 1
 	++ _plu 
 
 endif
@@ -277,10 +277,10 @@ endif
 set_metric( _param_name, nil, _plu )
 
 if reset_plu = .t. .and. !silent_mode
-	msgbeep("Setovan pocetni PLU na: " + ALLTRIM(STR(_plu)))
+	MsgBeep( "Setovan pocetni PLU na: " + ALLTRIM( STR( _plu ) ) )
 endif
 
-select (_t_area)
+select ( _t_area )
 
 return _plu
 
@@ -340,6 +340,59 @@ do case
 endcase
 
 return _tar
+
+
+// -----------------------------------------------------
+// vraca oznaku vrste placanja za pojedine uredjaje
+// -----------------------------------------------------
+function fiscal_txt_get_vr_plac( id_plac, drv )
+local _ret := ""
+
+do case
+
+    case id_plac == "0"
+
+        if drv == "TRING"
+            _ret := "Gotovina"
+        elseif drv $ "#HCP#FPRINT#"
+            _ret := id_plac
+        elseif drv == "TREMOL"
+            _ret := "Gotovina"
+        endif
+
+    case id_plac == "1"
+
+        if drv == "TRING"
+            _ret := "Cek"
+        elseif drv $ "#HCP#FPRINT#"
+            _ret := id_plac
+        elseif drv == "TREMOL"
+            _ret := "Cek"
+        endif
+
+    case id_plac == "2"
+
+        if drv == "TRING"
+            _ret := "Virman"
+        elseif drv $ "#HCP#FPRINT#"
+            _ret := id_plac
+        elseif drv == "TREMOL"
+            _ret := "Kartica"
+        endif
+
+    case id_plac == "3"
+
+        if drv == "TRING"
+            _ret := "Kartica"
+        elseif drv $ "#HCP#FPRINT#"
+            _ret := id_plac
+        elseif drv == "TREMOL"
+            _ret := "Virman"
+        endif
+
+endcase
+
+return _ret
 
 
 

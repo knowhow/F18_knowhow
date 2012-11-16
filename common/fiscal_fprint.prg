@@ -400,7 +400,7 @@ endif
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aDel := _fp_del_plu( nMaxPlu, dev_params["id"] )
+aDel := _fp_del_plu( nMaxPlu, dev_params )
 
 _a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDel )
 
@@ -580,14 +580,11 @@ aDaily := _fp_daily_rpt( cType )
 _a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDaily )
 
 // procitaj error
-nErr := fprint_read_error( dev_params, 0, .f. )
+nErr := fprint_read_error( dev_params, 0 )
 
 if nErr <> 0
-
 	msgbeep("Postoji greska !!!")
-	
 	return
-
 endif
 
 // upisi u sql/db datum i vrijeme formiranja dnevnog izvjestaja
@@ -615,10 +612,9 @@ if dev_params["plu_type"] == "D" .and. _rpt_type == "Z"
 		// posalji komandu za reset PLU u uredjaju
 		fprint_delete_plu( dev_params, .t. )
 
-
 		// prekontrolisi gresku
 		// ovdje cemo koristiti veci timeout
-		nErr := fprint_read_error( dev_params, 500, 0 )
+		nErr := fprint_read_error( dev_params, 0, NIL, 500 )
 
 		if nErr <> 0
 			msgbeep("Postoji greska !!!")
@@ -629,14 +625,14 @@ if dev_params["plu_type"] == "D" .and. _rpt_type == "Z"
 	msgc()
 
 	// setuj brojac PLU na 0 u parametrima !
-	auto_plu( .t., .t., dev_params["id"] )
+	auto_plu( .t., .t., dev_params )
 
 	msgbeep("Stanje fiskalnog uredjaju je nulirano.")
 
 endif
 
 // ako se koristi opcija automatskog pologa u ureðaj
-if dev_params["avans"] <> 0
+if dev_params["auto_avans"] <> 0
 	
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
 	
@@ -647,6 +643,7 @@ if dev_params["avans"] <> 0
 	fprint_polog( dev_params )
 	
 	msgc()
+
 endif
 
 return
@@ -659,7 +656,7 @@ function fprint_per_rpt( dev_params )
 local cSep := ";"
 local aPer := {}
 local aStruct := {}
-local nErr := 0
+local _err_level := 0
 local dD_from := DATE() - 30
 local dD_to := DATE()
 private GetList:={}
@@ -680,16 +677,16 @@ aStruct := _g_f_struct( F_POS_RN )
 // iscitaj pos matricu
 aPer := _fp_per_rpt( dD_from, dD_to )
 
-_a_to_file( dev_params["out_dir"], dev_parms["out_file"], aStruct, aPer )
+_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aPer )
 
 // procitaj error
-nErr := fprint_read_error( dev_params, 0, .f. )
+_err_level := fprint_read_error( dev_params, 0 )
 
-if nErr <> 0
+if _err_level <> 0
 	msgbeep("Postoji greska !!!")
 endif
 
-return
+return _err_level
 
 
 
@@ -1053,7 +1050,7 @@ return aArr
 // ---------------------------------------------------
 // brisi artikle iz uredjaja
 // ---------------------------------------------------
-static function _fp_del_plu( nMaxPlu, nDevice )
+static function _fp_del_plu( nMaxPlu, dev_params )
 local cTmp := ""
 local cLogic
 local cLogSep := ","
@@ -1070,13 +1067,13 @@ if nMaxPlu <> 0
 	nLastPlu := nMaxPlu
 else
 	// uzmi zadnji PLU iz parametara
-	nLastPlu := last_plu( nDevice )
+	nLastPlu := last_plu( dev_params["id"] )
 endif
 
 select (nTArea)
 
 // brisat ces sve od plu = 1 do zadnji plu
-cCmdType := "1;" + ALLTRIM(STR(nLastPlu))
+cCmdType := "1;" + ALLTRIM( STR( nLastPlu ) )
 
 cLogic := "1"
 
@@ -1523,63 +1520,63 @@ return
 // 
 // nFisc_no - broj fiskalnog isjecka
 // ------------------------------------------------
-function fprint_read_error( params, nFisc_no, lStorno )
-local nErr := 0
-local cF_name
-local i
-local nBrLin
-local nStart
-local cErr
-local aErr_read
-local aErr_data
-local nTime 
-local cSerial := params["serial"]
-local nTimeOut := params["timeout"]
+function fprint_read_error( dev_params, fiscal_no, storno, time_out )
+local _err_level := 0
+local _f_name
+local _i
+local _err_tmp
+local _err_line
+local _time
+local _serial := dev_params["serial"]
 local _o_file, _msg, _tmp
 
-if lStorno == nil
-    lStorno := .f.
+if storno == NIL
+    storno := .f.
 endif
 
-nTime := nTimeOut
+if time_out == NIL
+    time_out := dev_params["timeout"]
+endif
+
+_time := time_out
 
 // primjer: c:\fprint\answer\answer.txt
-cF_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_answer"]
+_f_name := dev_params["out_dir"] + ANSW_DIR + SLASH + dev_params["out_answer"]
 
 // ako se koristi isti answer kao i input fajl
-if EMPTY( params["out_answer"] )
-	cF_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_file"]
+if EMPTY( ALLTRIM( dev_params["out_answer"] ) )
+	_f_name := dev_params["out_dir"] + ANSW_DIR + SLASH + dev_params["out_file"]
 endif
 
-// ova opcija podrazumjeva da je ukljuèena opcija 
-// prikaza greske tipa ER,OK...
+Box( , 3, 60 ) 
 
-Box(,1,50)
+@ m_x + 1, m_y + 2 SAY hb_utf8tostr("Uređaj ID:") + ALLTRIM( STR( dev_params["id"] ) ) + ;
+    " : " + PADR( dev_params["name"], 40 )
 
-do while nTime > 0
+do while _time > 0
 	
-	-- nTime
-
-	@ m_x + 1, m_y + 2 SAY PADR( hb_Utf8ToStr("Čekam odgovor fiskalnog uređaja: ") + ;
-		ALLTRIM( STR(nTime) ), 48)
+	-- _time
+    
+	@ m_x + 3, m_y + 2 SAY PADR( hb_Utf8ToStr("Čekam odgovor fiskalnog uređaja: ") + ;
+		ALLTRIM( STR( _time ) ), 48)
 
 	sleep(1)
 
 #ifdef TEST
     if .t.
 #else
-    if FILE( cF_name )
+    if FILE( _f_name )
 #endif
 		// fajl se pojavio - izadji iz petlje !
         log_write("FISC: fajl odgovora se pojavio", 7)
 		exit
 	endif
 
-    if nTime == 0 .or. LastKey() == K_ALT_Q
+    if _time == 0 .or. LastKey() == K_ALT_Q
         log_write("FISC ERR: timeout !", 2)
         BoxC()
 
-        nFisc_no := 0
+        fiscal_no := 0
         return -9
     endif
 
@@ -1588,30 +1585,32 @@ enddo
 BoxC()
 
 #ifndef TEST
-if !FILE( cF_name )
+if !FILE( _f_name )
 
-	msgbeep("Fajl " + cF_name + " ne postoji !!!")
-	nFisc_no := 0
-	nErr := -9
-	return nErr
+	msgbeep("Fajl " + _f_name + " ne postoji !!!")
+	fiscal_no := 0
+	_err_level := -9
+	return _err_level
 
 endif
 #endif
 
-nFisc_no := 0
-cFisc_txt := ""
+fiscal_no := 0
+_fiscal_txt := ""
 
-cF_name := ALLTRIM( cF_name )
-_o_file := TFileRead():New( cF_name )
+_f_name := ALLTRIM( _f_name )
+
+_o_file := TFileRead():New( _f_name )
 _o_file:Open()
 
 if _o_file:Error()
-	_msg := "FISC ERR: " + _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " )
 
-    log_write(_msg, 2)
-    MsgBeep(_msg)
- 
-	return -9
+	_err_tmp := "FISC ERR: " + _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " )
+    log_write( _err_tmp, 2 )
+    MsgBeep( _err_tmp )
+    _err_level := -9
+	return _err_level
+
 endif
 
 _tmp := ""
@@ -1620,31 +1619,32 @@ _tmp := ""
 while _o_file:MoreToRead()
 	
 	// uzmi u cErr liniju fajla
-	cErr := hb_strtoutf8( _o_file:ReadLine() )
+	_err_line := hb_strtoutf8( _o_file:ReadLine() )
 
-    _tmp += cErr + " ## "
+    _tmp += _err_line + " ## "
 
 	// ovo je dodavanje artikla
-	if "107,1," + cSerial $ cErr
+	if ( "107,1," + _serial ) $ _err_line
 		// preskoci
 		loop
 	endif
 	
 	// ovu liniju zapamti, sadrzi fiskalni racun broj
 	// komanda 56, zatvaranje racuna
-	if "56,1," + cSerial $ cErr
-		cFisc_txt := cErr
+	if ( "56,1," + _serial ) $ _err_line
+		_fiscal_txt := _err_line
 	endif
 
 	// ima neka greska !
-	if "Er;" $ cErr
+	if "Er;" $ _err_line
 
-		_err := "FISC ERR:" + ALLTRIM(cErr)
-        log_write(_err, 2)
-        MsgBeep(_err)
+		_err_tmp := "FISC ERR:" + ALLTRIM( _err_line )
+        log_write( _err_tmp, 2 )
+        MsgBeep( _err_tmp )
 
-		nRet := 1
-		return nRet
+		_err_level := 1
+		return _err_level
+
 	endif
 	
 enddo
@@ -1653,15 +1653,14 @@ _o_file:Close()
 
 log_write("FISC ANSWER fajl sadrzaj: " + _tmp, 5)
 
-if EMPTY(cFisc_txt)
-   log_write("ERR FISC nema komande 56,1," + cSerial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1)
+if EMPTY( _fiscal_txt )
+    log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1)
 else
-   // ako je sve ok, uzmi broj fiskalnog isjecka 
-   nFisc_no := _g_fisc_no( cFisc_txt, lStorno )
+    // ako je sve ok, uzmi broj fiskalnog isjecka 
+    fiscal_no := _g_fisc_no( _fiscal_txt, storno )
 endif
- 
-   
-return nErr
+
+return _err_level
 
 
 
@@ -1669,36 +1668,36 @@ return nErr
 // ------------------------------------------------
 // vraca broj fiskalnog isjecka
 // ------------------------------------------------
-static function _g_fisc_no( cTxt, lStorno )
-local nFiscNO := 0
-local aTmp := {}
-local aFisc := {}
-local cFisc := ""
+static function _g_fisc_no( txt, storno )
+local _fiscal_no := 0
+local _a_tmp := {}
+local _a_fisc := {}
+local _fisc_txt := ""
 local _n_pos := 2
 
 
-if lStorno == nil
-    lStorno := .f.
+if storno == NIL
+    storno := .f.
 endif
 
 // pozicija u odgovoru
 // 3 - regularni racun
 // 4 - storno racun
 
-if lStorno == .t.
+if storno
     _n_pos := 3
 endif
 
-aTmp := toktoniz( cTxt, ";" )
-cFisc := aTmp[2]
+_a_tmp := toktoniz( txt, ";" )
+_fisc_txt := _a_tmp[2]
 
-aFisc := toktoniz( cFisc, "," )
+_a_fisc := toktoniz( _fisc_txt, "," )
 
-nFiscNO := VAL( aFisc[ _n_pos ] )
+_fiscal_no := VAL( _a_fisc[ _n_pos ] )
 
-log_write("FISC RN: " + ALLTRIM(STR(nFiscNO)), 3)
+log_write( "FISC RN: " + ALLTRIM( STR( _fiscal_no ) ), 3 )
 
-return nFiscNO
+return _fiscal_no
 
 
 

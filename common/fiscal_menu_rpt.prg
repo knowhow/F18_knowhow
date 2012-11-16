@@ -103,7 +103,7 @@ do case
     	endif
 
     	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params["id"] ) })
+    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
 
     	AADD(opc,"12. non-fiscal racun - test")
    	 	AADD(opcexe,{|| fprint_nf_txt( __device_params, "ČčĆćŽžĐđŠš") })
@@ -145,7 +145,7 @@ do case
     	AADD(opc,"8. izbaci stanje racuna    ")
     	AADD(opcexe,{|| hcp_fisc_no( __device_params ) })
     	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_id ) })
+    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
    
    	endif
 
@@ -192,7 +192,7 @@ do case
 
 	if !low_level    
     	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_id ) })
+    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
 	endif
 
 
@@ -229,7 +229,7 @@ do case
     	AADD(opcexe,{|| tring_reset( __device_params ) })
      
     	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_id) })
+    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
 
 	endif
 

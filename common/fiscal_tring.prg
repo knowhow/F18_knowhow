@@ -240,9 +240,9 @@ xml_subnode("RacunZahtjev " + __xml_head, .f.)
     cVr_pl := ALLTRIM( aData[1, 13] )
 
     if cVr_pl == "3" .and. lStorno == .f.
-       cVr_placanja := _g_v_plac( 2 )
+       cVr_placanja := fiscal_txt_get_vr_plac( "2", "TRING" )
     else
-       cVr_placanja := _g_v_plac( 0 )
+       cVr_placanja := fiscal_txt_get_vr_plac( "0", "TRING" )
     endif
 
     nVr_placanja := 0
@@ -691,28 +691,6 @@ sleep(1)
 msgc()
 
 return
-
-
-// ------------------------------------------------
-// vraca vrstu placanja na osnovu oznake
-// ------------------------------------------------
-static function _g_v_plac( v_pl )
-local cRet := "-"
-
-do case 
-	case v_pl = "0"
-		cRet := "Gotovina"
-	case v_pl = "1"
-		cRet := "Cek"		
-	case v_pl = "2"
-		cRet := "Virman"
-	case v_pl = "3"
-		cRet := "Kartica"
-
-endcase
-
-return cRet 
-
 
 // ---------------------------------------------
 // fiksiraj datum za xml

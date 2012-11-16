@@ -235,7 +235,7 @@ for _i := 1 to LEN( items )
     // 
     // iznos = 0, ako je 0 onda sve ide tom vrstom placanja
 
-    _v_plac := _g_v_plac( items[ 1, 13 ] )
+    _v_plac := fiscal_txt_get_vr_plac( items[ 1, 13 ], "HCP" )
     _total_placanje := ABS( rn_total )
 
     if storno
@@ -596,12 +596,6 @@ return cCmd
 
 
 
-// ------------------------------------------------
-// vraca vrstu placanja na osnovu oznake
-// ------------------------------------------------
-static function _g_v_plac( v_pl )
-return v_pl
-
 
 // ------------------------------------------
 // vraca jedinicu mjere
@@ -646,14 +640,14 @@ if dev_params["plu_type"] == "D"
 	_err_level := hcp_cmd( dev_params, _cmd, _tr_cmd )
 
 	// resetuj PLU brojac u bazi...
-	auto_plu( .t., .t. )
+	auto_plu( .t., .t., dev_params )
 
 	msgc()
 
 endif
 
 // ako se koristi opcija automatskog pologa
-if dev_params["avans"] > 0
+if dev_params["auto_avans"] > 0
 
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
 

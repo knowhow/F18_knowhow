@@ -184,7 +184,7 @@ nVr_placanja := 0
     // 
     // iznos = 0, ako je 0 onda sve ide tom vrstom placanja
 
-    cVr_placanja := _g_v_plac( VAL( aData[1, 13] ) )
+    cVr_placanja := fiscal_txt_get_vr_plac( aData[1, 13], "TREMOL" )
     nVr_placanja := aData[1, 14]
 
     if aData[1, 13] <> "0" .and. !lStorno
@@ -270,7 +270,7 @@ if auto == NIL
 endif
 
 if auto
-    _value := dev_params["avans"]
+    _value := dev_params["auto_avans"]
 endif
 
 if value = 0
@@ -405,28 +405,6 @@ return _err
 
 
 
-
-// ------------------------------------------------
-// vraca vrstu placanja na osnovu oznake
-// ------------------------------------------------
-static function _g_v_plac( v_pl )
-local _ret := "-"
-
-do case 
-	case v_pl = "0"
-		_ret := "Gotovina"
-	case v_pl = "1"
-		_ret := "Cek"		
-	case v_pl = "2"
-		_ret := "Kartica"
-	case v_pl = "3"
-		_ret := "Virman"
-
-endcase
-
-return _ret
-
-
 // ------------------------------------------
 // vraca jedinicu mjere
 // ------------------------------------------
@@ -519,7 +497,7 @@ _cmd := 'Command="Report" Type="DailyZ" /'
 _err := tremol_cmd( dev_param, _cmd )
 
 // ako se koristi opcija automatskog pologa
-if dev_param["avans"] > 0
+if dev_param["auto_avans"] > 0
 	
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
 	

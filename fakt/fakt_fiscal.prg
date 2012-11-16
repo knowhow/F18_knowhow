@@ -290,7 +290,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
     // generisi automatski plu ako treba
     if __device_params["plu_type"] == "D" .and. ;
         ( __device_params["vp_sum"] <> 1 .or. tip_dok $ "11" )
-        _art_plu := auto_plu( nil, nil,  __device_id )
+        _art_plu := auto_plu( nil, nil,  __device_params )
     endif
 
     _cijena := roba->mpc
@@ -735,7 +735,7 @@ AADD( _tmp, { data[1, 1] , ;
     _kolicina, ;
     data[1, 7], ;
     data[1, 8], ;
-    auto_plu( nil, nil, __device_id ), ;
+    auto_plu( nil, nil, __device_params ), ;
     _total, ;
     0, ;
     "", ;

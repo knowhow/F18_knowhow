@@ -233,7 +233,7 @@ do while !EOF() .and. field->idpos == id_pos ;
 	// kolicina uvijek ide apsolutna vrijednost
 	// storno racun fiskalni stampac tretira kao regularni unos
 
-	_art_naz := fiscal_art_naz_fix( roba->naz )
+	_art_naz := fiscal_art_naz_fix( roba->naz, __device_params["drv"] )
 
 	AADD( _items, { rn_broj, ;
 		ALLTRIM( STR( ++ _rbr ) ), ;

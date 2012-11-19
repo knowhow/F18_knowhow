@@ -66,3 +66,10 @@ if [[ $ret -eq 0 ]]; then
 else
   echo "create user $USER with password '$USER'" | psql -h localhost -U postgres
 fi
+
+#pg_dump -h localhost -U postgres f18_test > f18_test.sql
+echo "CREATE database f18_test" | psql -U postgres 
+
+psql f18_test < test/data/f18_test.sql
+
+./F18_test

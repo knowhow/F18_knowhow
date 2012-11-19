@@ -21,6 +21,7 @@ static __MAX_PERC := 99.99
 static __MIN_PERC := -99.99
 
 
+
 // ----------------------------------------
 // fajl za fiskalni stampac
 // ----------------------------------------
@@ -80,7 +81,8 @@ local _ret := ""
 do case 
     case drv == "FPRINT"
         _ret := STRTRAN( naz, ";", "" )
-
+    otherwise
+        _ret := naz
 endcase
 
 return _ret

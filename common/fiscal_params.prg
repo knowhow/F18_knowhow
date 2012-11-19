@@ -500,9 +500,13 @@ return _file
 // -------------------------------------------------------
 // validacija path-a izlaznih fajlova
 // -------------------------------------------------------
-static function _valid_fiscal_path( fiscal_path )
+static function _valid_fiscal_path( fiscal_path, create_dir )
 local _ok := .t.
 local _cre
+
+if create_dir == NIL
+    create_dir := .t.
+endif
 
 fiscal_path := ALLTRIM( fiscal_path )
 
@@ -514,9 +518,14 @@ endif
 
 if DirChange( fiscal_path ) != 0
     // probaj kreirati direktorij...
-    _cre := MakeDir( fiscal_path )
-    if _cre != 0
-        MsgBeep( "Kreiranje " + fiscal_path + " neuspjesno ?!#Provjerite putanju direktorija izlaznih fajlova." )
+    if create_dir
+        _cre := MakeDir( fiscal_path )
+        if _cre != 0
+            MsgBeep( "Kreiranje " + fiscal_path + " neuspjesno ?!#Provjerite putanju direktorija izlaznih fajlova." )
+            _ok := .f.
+        endif
+    else
+        MsgBeep( "Izlazni direktorij: " + fiscal_path + "#ne postoji !!!" )
         _ok := .f.
     endif
 endif
@@ -746,7 +755,8 @@ static function post_check( param )
 local _ret := .t.
 
 // provjeri lokaciju 
-_ret := _valid_fiscal_path( param["out_dir"] )
+_ret := _valid_fiscal_path( param["out_dir"], .f. )
+
 if !_ret
     return _ret
 endif

@@ -282,7 +282,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
     
     _art_id := fakt->idroba
     _art_barkod := ALLTRIM( roba->barkod )
-    _art_naz := ALLTRIM( fiscal_art_naz_fix( roba->naz ) )
+    _art_naz := ALLTRIM( fiscal_art_naz_fix( roba->naz, __device_params["drv"] ) )
     _art_jmj := ALLTRIM( roba->jmj )
 
     _art_plu := roba->fisc_plu

@@ -53,6 +53,32 @@ PrenosFin()
 return
 
 
+
+
+// ------------------------------------------------------
+// stampa ostatka opisa
+// ------------------------------------------------------
+function OstatakOpisa(cO,nCO,bUslov,nSir)
+
+if nSir == NIL
+    nSir := 20
+endif
+  
+do while LEN(cO) > nSir
+    if bUslov != NIL
+        EVAL(bUslov)
+    endif
+    cO := SUBSTR(cO,nSir+1)
+    if !EMPTY(PADR(cO,nSir))
+        @ prow()+1, nCO SAY PADR(cO,nSir)
+    endif
+enddo
+
+return
+
+
+
+
 function ImaUSubanNemaUNalog()
 local _i
 local _area

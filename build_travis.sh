@@ -91,19 +91,20 @@ echo "CREATE database f18_test" | psql -U postgres
 psql -U postgres f18_test < test/data/f18_test.sql
 }
 
-
-function install_jod_reports {
+function install_jod_reports {
 
 GCODE_URL_ROOT_F18=http://knowhow-erp-f18.googlecode.com/files
 GCODE_URL_ROOT=http://knowhow-erp.googlecode.com/files
 
 D_FILE=jodreports-cli.jar
-wget -q -nc $GCODE_URL_ROOT_F18/$D_FILE
+wget -q -nc $GCODE_URL_ROOT/$D_FILE
 
-DEST=/opt/knowhowERP/util/
+DEST="/opt/knowhowERP/util/"
 
 sudo mkdir -p $DEST
-cp $D_FILE  $DEST
+sudo cp $D_FILE  $DEST
+
+
 }
 
 build_harbour
@@ -115,7 +116,7 @@ create_databases
 
 #Xvfb :1 -screen 1 1024x768x16 &
 
-
+#sudo apt-get install openjdk-6-jre
 install_jod_reports
 
 #export DISPLAY=:1

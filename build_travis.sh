@@ -32,12 +32,15 @@ export HB_WITH_SQLITE3=yes
 
 export PATH=$PATH:$HB_INSTALL_PREFIX/bin
 
+function build_harbour {
 cd harbour/harbour
 make
 make install
-
 cd ../../
+}
 
+
+function build_f18_test {
 export KNOWHOW_ERP_ROOT=$CUR_DIR
 export HARBOUR_ROOT=$KNOWHOW_ERP_ROOT/hbout
 
@@ -56,8 +59,9 @@ export HB_INC_INSTALL=$HARBOUR_ROOT/include
 export HB_LIB_INSTALL=$HARBOUR_ROOT/lib
 
 . ./build_test.sh
+}
 
-
+function create_roles {
 USER="test1"
 ret=`echo "select rolname from pg_roles where rolname='$USER'" | psql -t -h localhost -U postgres | grep -q $USER`
 
@@ -79,15 +83,40 @@ echo $SQL | psql -U postgres
 
 SQL="grant xtrole TO admin GRANTED BY postgres"
 echo $SQL | psql -U postgres
+}
 
+function create_databases {
+#pg_dump -h localhost -U postgres f18_test > f18_test.sql
+echo "CREATE database f18_test" | psql -U postgres
+psql -U postgres f18_test < test/data/f18_test.sql
+}
+
+
+function install_jod_reports {
+
+GCODE_URL_ROOT_F18=http://knowhow-erp-f18.googlecode.com/files
+GCODE_URL_ROOT=http://knowhow-erp.googlecode.com/files
+
+D_FILE=jodreports-cli.jar
+wget -q -nc $GCODE_URL_ROOT_F18/$D_FILE
+
+DEST=/opt/knowhowERP/util/
+
+sudo mkdir -p $DEST
+cp $D_FILE  $DEST
+}
+
+build_harbour
+
+build_f18_test
+
+create_roles
+create_databases
 
 #Xvfb :1 -screen 1 1024x768x16 &
 
 
-#pg_dump -h localhost -U postgres f18_test > f18_test.sql
-echo "CREATE database f18_test" | psql -U postgres
-psql -U postgres f18_test < test/data/f18_test.sql
-
+install_jod_reports
 
 #export DISPLAY=:1
 ./F18_test

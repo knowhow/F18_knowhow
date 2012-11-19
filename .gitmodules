@@ -1,0 +1,3 @@
+[submodule "harbour"]
+	path = harbour
+	url = git://github.com/knowhow/harbour.git

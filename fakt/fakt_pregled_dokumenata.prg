@@ -817,6 +817,12 @@ do case
             _dev_id := get_fiscal_device( my_user() )
             _dev_params := get_fiscal_device_params( _dev_id, my_user() )
 
+            // da li je korisniku dozvoljeno da stampa racune ?
+            if _dev_params["print_fiscal"] == "N"
+                MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
+                return DE_REFRESH
+            endif
+ 
             fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )
         
             select fakt_doks

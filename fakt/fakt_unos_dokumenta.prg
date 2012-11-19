@@ -270,6 +270,12 @@ do case
         // setuj parametre za stampu
         _dev_params := get_fiscal_device_params( _dev_id, my_user() )
 
+        // da li je korisniku dozvoljeno da stampa racune ?
+        if _dev_params["print_fiscal"] == "N"
+            MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
+            return DE_CONT
+        endif
+        
         MsgO( "stampa na fiskalni printer u toku..." )
 
         // posalji na fiskalni uredjaj

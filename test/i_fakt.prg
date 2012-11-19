@@ -275,10 +275,10 @@ AADD(_stavke['get'], '#FAKT_AZUR')
 
 
 // N - pitanje za stampu fiskalnog racuna (test_tag)
-AADD(_stavke['keys'],  {; 
-  "N", "<ENTER>" ;
-  })
-AADD(_stavke['get'], '#ST_FISK_RN')
+//AADD(_stavke['keys'],  {; 
+//  "N", "<ENTER>" ;
+//  })
+//AADD(_stavke['get'], '#ST_FISK_RN')
 
 // ESC iz tabele
 AADD(_stavke['keys'],  {; 

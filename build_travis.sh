@@ -56,3 +56,13 @@ export HB_INC_INSTALL=$HARBOUR_ROOT/include
 export HB_LIB_INSTALL=$HARBOUR_ROOT/lib
 
 . ./build_test.sh
+
+
+USER="test1"
+ret=`echo "select rolname from pg_roles where rolname='$USER'" | psql -t -h localhost -U postgres | grep -q $USER`
+
+if [[ $ret -eq 0 ]]; then
+   echo "$USER postoji"
+else
+  echo "create user $USER with password '$USER'" | psql -h localhost -U postgres
+fi

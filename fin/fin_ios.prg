@@ -21,7 +21,7 @@ static R2
 // -----------------------------------------------
 // izvjestaj otvorenih stavki
 // -----------------------------------------------
-function IOS()
+function ios()
 local _izbor := 1
 local _opc := {}
 local _opcexe := {}
@@ -31,17 +31,18 @@ picDEM := "@Z " + ( R2 := FormPicL( "9 " + gPicDEM, 12 ) )
 R1 := R1 + " " + ValDomaca()
 R2 := R2 + " " + ValPomocna()
 
-// napomena !
-MsgBeep( hb_utf8tostr( "Napomena: prije stampanja iosa potrebno pokrenuti specifikaciju !" ) )
-
-AADD( _opc, "1. specifikacija IOS-a                       " )
-AADD( _opcexe, { || IOS_specifikacija() } )
+AADD( _opc, "1. specifikacija IOS-a (pregled podataka prije stampe) " )
+AADD( _opcexe, { || ios_specifikacija() } )
 AADD( _opc, "2. stampa IOS-a" )
 AADD( _opcexe, { || mnu_ios_print() } )
+AADD( _opc, "3. generisanje podataka za stampu IOS-a" )
+AADD( _opcexe, { || ios_generacija_podataka() } )
+
 
 f18_menu( "ios", .f., _izbor, _opc, _opcexe )
 
 return
+
 
 
 
@@ -86,20 +87,15 @@ return _line
 
 
 
-// -------------------------------------------------------
-// specifikacija IOS-a
-// -------------------------------------------------------
-static function IOS_specifikacija()
-local _datum_do := DATE()
+// ----------------------------------------------------------
+// uslovi izvjestaja IOS specifikacija
+// ----------------------------------------------------------
+static function _ios_spec_vars( params )
 local _id_firma := gFirma
 local _id_konto := fetch_metric( "ios_spec_id_konto", my_user(), SPACE(7) )
-local _line 
 local _saldo_nula := "D"
-local _id_partner, _rbr
+local _datum_do := DATE()
 
-_line := _ios_spec_get_line()
-
-O_PARTN
 O_KONTO
 
 Box( "", 6, 60 )
@@ -108,22 +104,65 @@ Box( "", 6, 60 )
     ?? gFirma, "-", gNFirma
     @ m_x + 4, m_y + 2 SAY "Konto: " GET _id_konto VALID P_Konto( @_id_konto )
     @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET _datum_do
-    @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
-    READ
-    ESC_BCR
+    @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET _saldo_nula ;
+            VALID _saldo_nula $ "DN" PICT "@!"
+    read
 BoxC()
+
+select konto
+use
+
+if LastKey() == K_ESC
+    return .f.
+endif
 
 // snimi parametre
 set_metric( "ios_spec_id_konto", my_user(), _id_konto )
-
 _id_firma := LEFT( _id_firma, 2 )
 
-O_SUBAN
-O_IOS
+// napuni matricu sa parametrima
+params["id_konto"] := _id_konto
+params["id_firma"] := _id_firma
+params["saldo_nula"] := _saldo_nula
+params["datum_do"] := _datum_do
 
-select ios
-zap
-__dbPack()
+return .t.
+
+
+
+
+
+// -------------------------------------------------------
+// specifikacija IOS-a
+// -------------------------------------------------------
+static function ios_specifikacija( params )
+local _datum_do, _id_firma, _id_konto, _saldo_nula
+local _line 
+local _id_partner, _rbr
+local _auto := .f.
+
+if params == NIL
+    params := hb_hash()
+else
+    _auto := .t.
+endif
+
+// uslovi izvjestaja
+if !_auto .and. !_ios_spec_vars( @params )
+    return 
+endif
+
+// iz parametara uzmi uslove...
+_id_firma := params["id_firma"]
+_id_konto := params["id_konto"]
+_datum_do := params["datum_do"]
+_saldo_nula := params["saldo_nula"]
+
+_line := _ios_spec_get_line()
+
+O_PARTN
+O_KONTO
+O_SUBAN
 
 select suban
 set order to tag "1"
@@ -136,10 +175,10 @@ START PRINT CRET
 
 _rbr := 0
 
-nDugBHD:=nUkDugBHD:=nDugDEM:=nUkDugDEM:=0
-nPotBHD:=nUkPotBHD:=nPotDEM:=nUkPotDEM:=0
-nUkBHDDS:=nUkBHDPS:=0
-nUkDEMDS:=nUkDEMPS:=0
+nDugBHD := nUkDugBHD := nDugDEM := nUkDugDEM := 0
+nPotBHD := nUkPotBHD := nPotDEM := nUkPotDEM := 0
+nUkBHDDS := nUkBHDPS := 0
+nUkDEMDS := nUkDEMPS := 0
 
 do while !EOF() .and. _id_firma == field->idfirma .and. _id_konto == field->idkonto
 
@@ -202,19 +241,6 @@ do while !EOF() .and. _id_firma == field->idfirma .and. _id_konto == field->idko
         // BHD
         @ prow(), 73 SAY nDugBHD PICT picBHD
         @ prow(), pcol() + 1 SAY nPotBHD PICT picBHD
-
-        select ios
-        append blank
-
-        _rec := dbf_get_rec()
-
-        _rec["idfirma"] := _id_firma
-        _rec["idkonto"] := _id_konto
-        _rec["idpartner"] := _id_partner
-        _rec["iznosbhd"] := nSaldoBHD
-        _rec["iznosdem"] := nSaldoDEM
-
-        dbf_update_rec( _rec )
 
     endif 
    
@@ -321,6 +347,136 @@ return
 
 
 
+// -------------------------------------------------------
+// specifikacija IOS-a
+// -------------------------------------------------------
+static function ios_generacija_podataka( params )
+local _datum_do, _id_firma, _id_konto, _saldo_nula
+local _id_partner, _rec, _cnt
+local _auto := .f.
+local _dug_1, _dug_2, _u_dug_1, _u_dug_2
+local _pot_1, _pot_2, _u_pot_1, _u_pot_2
+local _saldo_1, _saldo_2
+
+if params == NIL
+    MsgBeep( "Napomena: ova opcija puni pomocnu tabelu na osnovu koje se#stampaju IOS obrasci" )
+    params := hb_hash()
+else
+    _auto := .t.
+endif
+
+// uslovi izvjestaja
+if !_auto .and. !_ios_spec_vars( @params )
+    return 
+endif
+
+// iz parametara uzmi uslove...
+_id_firma := params["id_firma"]
+_id_konto := params["id_konto"]
+_datum_do := params["datum_do"]
+_saldo_nula := params["saldo_nula"]
+
+O_PARTN
+O_KONTO
+O_SUBAN
+O_IOS
+
+// reset tabele IOS
+select ios
+zap
+__dbPack()
+
+select suban
+set order to tag "1"
+
+seek _id_firma + _id_konto 
+
+EOF CRET
+
+_cnt := 0
+
+Box(, 3, 65 )
+
+@ m_x + 1, m_y + 2 SAY "sacekajte trenutak... generisem podatke u pomocnu tabelu"
+
+do while !EOF() .and. _id_firma == field->idfirma .and. _id_konto == field->idkonto
+
+    _id_partner := field->idpartner
+
+    _dug_1 := 0
+    _u_dug_1 := 0
+    _dug_2 := 0
+    _u_dug_2 := 0
+    _pot_1 := 0
+    _u_pot_1 := 0
+    _pot_2 := 0
+    _u_pot_2 := 0
+    _saldo_1 := 0
+    _saldo_2 := 0
+
+    do while !EOF() .and. _id_firma == field->idfirma ;
+                    .and. _id_konto == field->idkonto ;
+                    .and. _id_partner == field->idpartner
+      
+        // ako je datum veci od datuma do kojeg generisem
+        if field->datdok > _datum_do
+            skip
+            loop
+        endif
+      
+        if field->otvst == " "
+            if field->d_p == "1"
+                _dug_1 += field->iznosbhd
+                _u_dug_1 += field->Iznosbhd
+                _dug_2 += field->Iznosdem
+                _u_dug_2 += field->Iznosdem
+            else
+                _pot_1 += field->IznosBHD
+                _u_pot_1 += field->IznosBHD
+                _pot_2 += field->IznosDEM
+                _u_pot_2 += field->IznosDEM
+            endif
+        endif
+
+        skip
+
+    enddo 
+
+    _saldo_1 := _dug_1 - _pot_1
+    _saldo_2 := _dug_2 - _pot_2
+
+    if _saldo_nula == "D" .or. ROUND( _saldo_1, 2 ) <> 0  
+
+        select ios
+        append blank
+
+        _rec := dbf_get_rec()
+
+        _rec["idfirma"] := _id_firma
+        _rec["idkonto"] := _id_konto
+        _rec["idpartner"] := _id_partner
+        _rec["iznosbhd"] := _saldo_1
+        _rec["iznosdem"] := _saldo_2
+
+        dbf_update_rec( _rec )
+
+        @ m_x + 3, m_y + 2 SAY PADR( "Partner: " + _id_partner + ", saldo: " + ALLTRIM(STR( _saldo_1, 12, 2 )), 60 )
+
+        ++ _cnt
+
+    endif 
+   
+    select suban
+
+enddo 
+
+BoxC()
+
+return _cnt
+
+
+
+
 
 // ----------------------------------------------------------------
 // IOS print menu
@@ -328,6 +484,7 @@ return
 static function mnu_ios_print()
 local _datum_do := DATE()
 local _params := hb_hash()
+local _gen_par := hb_hash()
 local _id_firma := gFirma
 local _id_konto := fetch_metric( "ios_print_id_konto", my_user(), SPACE(7) )
 local _id_partner := fetch_metric( "ios_print_id_partner", my_user(), SPACE(6) )
@@ -336,6 +493,7 @@ local _kao_kartica := fetch_metric( "ios_print_kartica", my_user(), "D" )
 local _prelomljeno := fetch_metric( "ios_print_prelom", my_user(), "N" )
 local _export_dbf := "N"
 local _print_tip := fetch_metric( "ios_print_tip", my_user(), "2" )
+local _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
 local _ios_date := DATE()
 local _x := 1
 local _launch, _exp_fields
@@ -398,6 +556,11 @@ Box(, 16, 65, .f. )
     @ m_x + _x, m_y + 2 SAY "Nacin stampe ODT/TXT (1/2) ?" GET _print_tip ;
             VALID _print_tip $ "12"
 
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Generisi podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen ;
+            VALID _auto_gen $ "DN" PICT "@!"
+
 
     read
 
@@ -413,12 +576,28 @@ set_metric( "ios_print_tip", my_user(), _print_tip )
 
 _id_firma := LEFT( _id_firma, 2 )
 
+// generisi podatke u tabelu prije same stampe
+if _auto_gen == "D"
+
+    _gen_par := hb_hash()
+    _gen_par["id_konto"] := _id_konto
+    _gen_par["id_firma"] := _id_firma
+    _gen_par["saldo_nula"] := "D"
+    _gen_par["datum_do"] := _datum_do
+
+    // generisi podatke u IOS tabelu
+    ios_generacija_podataka( _gen_par )
+
+endif
+
+// eksport podataka u dbf tabelu
 if _export_dbf == "D"
     _exp_fields := g_exp_fields()
     t_exp_create( _exp_fields )
     _launch := exp_report()
 endif
 
+// otvori mi tabele
 O_KONTO
 O_PARTN
 O_SUBAN
@@ -437,9 +616,6 @@ NFOUND CRET
 if _print_tip == "2"
     START PRINT CRET
 endif
-
-// ????
-B := 0
 
 select ios
 

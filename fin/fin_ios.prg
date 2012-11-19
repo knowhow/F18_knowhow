@@ -16,6 +16,7 @@ static picBHD
 static picDEM
 static R1
 static R2
+static __ios_clan := ""
 
 
 // -----------------------------------------------
@@ -37,9 +38,49 @@ AADD( _opc, "2. stampa IOS-a" )
 AADD( _opcexe, { || mnu_ios_print() } )
 AADD( _opc, "3. generisanje podataka za stampu IOS-a" )
 AADD( _opcexe, { || ios_generacija_podataka() } )
+AADD( _opc, "4. podesenje clan-a" )
+AADD( _opcexe, { || ios_clan_setup() } )
 
 
 f18_menu( "ios", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+// --------------------------------------------------
+// podesenje clan-a za stampu IOS-a
+// --------------------------------------------------
+static function ios_clan_setup( setup_box )
+local _txt := ""
+local _clan
+
+if setup_box == NIL
+    setup_box := .t.
+endif
+
+// ovo je tekuci defaultni clan
+_txt := "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09) " 
+_txt += "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana. "
+_txt += "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je "
+_txt += "usaglasavanje izvrseno i da je stanje isto."
+
+_clan := PADR( fetch_metric( "ios_clan_txt", NIL, _txt ), 500 )
+
+if setup_box
+    Box(, 2, 70 )
+        @ m_x + 1, m_y + 2 SAY "Definisanje clan-a na IOS-u:"
+        @ m_x + 2, m_y + 2 SAY ":" GET _clan PICT "@S65"
+        read
+    BoxC()
+
+    if LastKey() == K_ESC
+        return
+    endif
+endif
+
+// snimi parametar
+set_metric( "ios_clan_txt", NIL, ALLTRIM( _clan ) )
+__ios_clan := ALLTRIM( _clan )
 
 return
 
@@ -497,6 +538,9 @@ local _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
 local _ios_date := DATE()
 local _x := 1
 local _launch, _exp_fields
+local _xml_file := my_home() + "data.xml"
+local _template := "ios.odt"
+
 
 O_KONTO
 O_PARTN
@@ -576,6 +620,9 @@ set_metric( "ios_print_tip", my_user(), _print_tip )
 
 _id_firma := LEFT( _id_firma, 2 )
 
+// definisi clan i setuj staticku varijablu
+ios_clan_setup( .f. )
+
 // generisi podatke u tabelu prije same stampe
 if _auto_gen == "D"
 
@@ -594,7 +641,6 @@ endif
 if _export_dbf == "D"
     _exp_fields := g_exp_fields()
     t_exp_create( _exp_fields )
-    _launch := exp_report()
 endif
 
 // otvori mi tabele
@@ -614,7 +660,17 @@ NFOUND CRET
 
 // txt forma
 if _print_tip == "2"
+
     START PRINT CRET
+
+else
+
+    // pripremi mi za xml
+    open_xml( _xml_file )
+    // standardni header
+    xml_head()
+    xml_subnode( "ios", .f. )
+
 endif
 
 select ios
@@ -649,6 +705,9 @@ do while !EOF() .and. _id_firma == field->idfirma ;
     if _print_tip == "2"
         // printaj IOS
         print_ios_txt( _params )
+    else
+        // print u xml
+        print_ios_xml( _params )
     endif
 
     skip
@@ -656,16 +715,366 @@ do while !EOF() .and. _id_firma == field->idfirma ;
 enddo
 
 if _print_tip == "2"
+
     END PRINT
+
+else
+
+    // zatvori mi xml node...
+    xml_subnode( "ios", .t. )
+    close_xml()
+
 endif
 
-
 // lansiraj report....
-if _export_dbf == "D"
-    tbl_export( _launch )
+if _print_tip == "2" .and. _export_dbf == "D"
+    f18_open_mime_document( my_home() + "r_export.dbf" )
 endif
 
 close all
+
+if _print_tip == "1"
+    // printaj odt report
+    if f18_odt_generate( _template, _xml_file )
+	    // printaj odt
+        f18_odt_print()
+    endif
+endif
+
+return
+
+
+// ------------------------------------------------------
+// upisi u xml fajl podatke partnera
+// u odredjeni subnode
+// ------------------------------------------------------
+static function _xml_partner( subnode, id_partner )
+local _ret := .t.
+local _jib
+
+select partn
+go top
+seek id_partner
+
+if !FOUND()
+    _ret := .f.
+    return _ret
+endif
+
+// upisi u xml
+xml_subnode( subnode, .f. )
+
+    xml_node( "id", to_xml_encoding( id_partner) )
+    xml_node( "naz", to_xml_encoding( partn->naz ) )
+    xml_node( "naz2", to_xml_encoding( partn->naz2 ) )
+    xml_node( "mjesto", to_xml_encoding( partn->mjesto ) )
+    xml_node( "adresa", to_xml_encoding( partn->adresa ) )
+    xml_node( "ptt", to_xml_encoding( partn->ptt ) )
+    xml_node( "ziror", to_xml_encoding( partn->ziror ) )
+    xml_node( "tel", to_xml_encoding( partn->telefon ) )
+
+    _jib := IzSifK( "PARTN", "REGB", id_partner, .f. )
+
+    xml_node( "jib", _jib )
+
+xml_subnode( subnode, .t. )
+
+return _ret
+
+
+// -----------------------------------------
+// ispivanje stavki IOS-a u XML formatu
+// -----------------------------------------
+static function print_ios_xml( params )
+local _rbr
+local _id_firma := params["id_firma"]
+local _id_konto := params["id_konto"]
+local _id_partner := params["id_partner"]
+local _iznos_bhd := params["iznos_bhd"]
+local _iznos_dem := params["iznos_dem"]
+local _din_dem := params["din_dem"]
+local _datum_do := params["datum_do"]
+local _ios_date := params["ios_datum"]
+local _kao_kartica := params["kartica"]
+local _prelomljeno := params["prelom"]
+local _saldo_1, _saldo_2, __saldo_1, __saldo_2
+local _dug_1, _dug_2, _u_dug_1, _u_dug_2, _u_dug_1z, _u_dug_2z
+local _pot_1, _pot_2, _u_pot_1, _u_pot_2, _u_pot_1z, _u_pot_2z
+
+// <ios_item>
+//
+//    <firma>
+//      <id>10</id>
+//      <naz>...</naz>
+//      .....
+//    </firma>
+//
+//    <partner>
+//       <id>1231</id>
+//       <naz>PARTNER XZX</naz>
+//       .....   
+//    </partner>
+//   
+//    <ios_datum></ios_datum>
+// 
+//
+//
+// </ios_item>
+
+xml_subnode( "ios_item", .f. )
+
+// maticna firma
+if !_xml_partner( "firma", _id_firma )
+endif
+
+// partner
+if !_xml_partner( "partner", _id_partner )
+endif
+
+xml_node( "ios_datum", DTOC( _ios_date ) )
+xml_node( "id_konto", to_xml_encoding( _id_konto ) )
+xml_node( "id_partner", to_xml_encoding( _id_partner ) )
+
+_total_bhd := _iznos_bhd
+_total_dem := _iznos_dem
+
+if _iznos_bhd < 0
+    _total_bhd := -_iznos_bhd
+endif
+if _iznos_dem < 0
+   _total_dem := -_iznos_dem
+endif
+
+if _din_dem == "1"
+    xml_node( "total", ALLTRIM( STR( _total_bhd, 12, 2 ) ) )
+    xml_node( "valuta", to_xml_encoding ( ValDomaca() ) )
+else
+    xml_node( "total", ALLTRIM( STR( _total_dem, 12, 2 ) ) )
+    xml_node( "valuta", to_xml_encoding ( ValPomocna() ) )
+endif
+
+if _iznos_bhd > 0
+    xml_node( "dp", "1" )
+else
+    xml_node( "dp", "2" )
+endif
+
+select suban
+
+if _kao_kartica == "D"
+    set order to tag "1"
+else
+    set order to tag "3"
+endif
+
+seek _id_firma + _id_konto + _id_partner
+
+_u_dug_1 := 0
+_u_dug_2 := 0
+_u_pot_1 := 0
+_u_pot_2 := 0
+_u_dug_1z := 0
+_u_dug_2z := 0
+_u_pot_1z := 0
+_u_pot_2z := 0
+
+// ako je kartica, onda nikad ne prelamaj
+if _kao_kartica == "D"
+    _prelomljeno := "N"
+endif
+
+_rbr := 0
+
+do while !EOF() .and. _id_firma == field->IdFirma ;
+                .and. _id_konto == field->IdKonto ;
+                .and. _id_partner == field->IdPartner
+     
+    __br_dok := field->brdok
+    __dat_dok := field->datdok
+    __opis := ALLTRIM( field->opis )
+    __dat_val := field->datval
+    _dug_1 := 0
+    _pot_1 := 0
+    _dug_2 := 0
+    _pot_2 := 0
+    __otv_st := field->otvst
+ 
+    do while !EOF() .and. _id_firma == field->IdFirma ;
+                    .and. _id_konto == field->IdKonto ;
+                    .and. _id_partner == field->IdPartner ;
+                    .and. ( _kao_kartica == "D" .or. field->brdok == __br_dok )
+         
+        if field->datdok > _datum_do
+            skip
+            loop
+        endif
+        
+        if field->otvst = " "
+            
+            if _kao_kartica == "D"
+               
+                // krece subnode...
+                xml_subnode( "data_kartica", .f. )
+
+                xml_node( "rbr", ALLTRIM( STR( ++ _rbr ) ) )
+                xml_node( "brdok", to_xml_encoding( field->brdok ) )
+                xml_node( "opis", to_xml_encoding( field->opis ) )
+                xml_node( "datdok", DTOC( field->datdok ) )
+                xml_node( "datval", DTOC( field->datval) )
+
+                if _din_dem == "1"
+                    xml_node( "dug", ALLTRIM( STR( IIF( field->d_p == "1", field->iznosbhd, 0 ) , 12, 2 ) ) )
+                    xml_node( "pot", ALLTRIM( STR( IIF( field->d_p == "2", field->iznosbhd, 0 ) , 12, 2 ) ) )
+                else
+                    xml_node( "dug", ALLTRIM( STR( IIF( field->d_p == "1", field->iznosdem, 0 ) , 12, 2 ) ) )
+                    xml_node( "pot", ALLTRIM( STR( IIF( field->d_p == "2", field->iznosdem, 0 ) , 12, 2 ) ) )
+                endif
+
+                // zatvori subnode....
+                xml_subnode( "data_kartica", .t. )
+          
+            endif
+            
+            if field->d_p = "1"
+                _dug_1 += field->IznosBHD
+                _dug_2 += field->IznosDEM
+            else
+                _pot_1 += field->IznosBHD
+                _pot_2 += field->IznosDEM
+            endif
+            
+            __otv_st := " "
+        
+        else
+  
+            // zatvorene stavke
+            if field->d_p == "1"
+                _u_dug_1z += field->IznosBHD
+                _u_dug_2z += field->IznosDEM
+            else
+                _u_pot_1z += field->IznosBHD
+                _u_pot_2z += field->IznosDEM
+            endif
+        
+        endif
+
+        skip
+     
+    enddo
+ 
+    if __otv_st == " "
+      
+        if _kao_kartica == "N"
+      
+            // zapocni mi subnode.... 
+            xml_node( "data_kartica", .f. )
+
+            xml_node( "rbr", ALLTRIM( STR( ++ _rbr ) ) )
+            xml_node( "brdok", to_xml_encoding( __br_dok ) )
+            xml_node( "opis", to_xml_encoding( __opis ) )
+            xml_node( "datdok", DTOC( __dat_dok ) )
+            xml_node( "datval", DTOC( __dat_val ) )
+
+        endif
+      
+        if _prelomljeno == "D"
+                
+            if _din_dem == "1"                 
+                // domaca valuta
+                if ( _dug_1 - _pot_1 ) > 0
+                    _dug_1 := ( _dug_1 - _pot_1 )
+                    _pot_1 := 0
+                else
+                    _pot_1 := ( _pot_1 - _dug_1 )
+                    _dug_1 := 0
+                endif
+            else
+                // strana valuta
+                if ( _dug_2 - _pot_2 ) > 0
+                    _dug_2 := ( _dug_2 - _pot_2 )
+                    _pot_2 := 0
+                else
+                    _pot_2 := ( _pot_2 - _dug_2 )
+                    _dug_2 := 0
+                endif
+ 
+            endif
+                
+        endif
+          
+        if _kao_kartica == "N"
+
+            xml_node( "dug", ALLTRIM( STR( _dug_1 , 12, 2 ) ) )
+            xml_node( "pot", ALLTRIM( STR( _pot_1 , 12, 2 ) ) )
+
+            // zatvori mi subnode
+            xml_subnode( "data_kartica", .t. )
+
+        endif
+
+        _u_dug_1 += _dug_1
+        _u_pot_1 += _pot_1
+        _u_dug_2 += _dug_2
+        _u_pot_2 += _pot_2
+     
+    endif
+     
+enddo
+
+// saldo
+_saldo_1 := ( _u_dug_1 - _u_pot_1 )
+_saldo_2 := ( _u_dug_2 - _u_pot_2 )
+ 
+if _din_dem == "1"
+
+    xml_node( "u_dug", ALLTRIM(STR( _u_dug_1, 12, 2 )) )
+    xml_node( "u_pot", ALLTRIM(STR( _u_pot_1, 12, 2 )) )
+
+    if ROUND( _u_dug_1z - _u_pot_1z, 4 ) <> 0
+        xml_node( "greska", ALLTRIM( STR( _u_dug_1z - _u_pot_1z, 12, 2  ) )  )
+    else
+        xml_node( "greska", ""  )
+    endif
+
+    if _saldo_1 >= 0
+        xml_node( "saldo", ALLTRIM( STR( _saldo_1, 12, 2 ) ) )
+    else
+        _saldo_1 := -_saldo_1
+        xml_node( "saldo", ALLTRIM( STR( _saldo_1, 12, 2 ) ) )
+    endif
+
+else
+
+    xml_node( "u_dug", ALLTRIM(STR( _u_dug_2, 12, 2 )) )
+    xml_node( "u_pot", ALLTRIM(STR( _u_pot_2, 12, 2 )) )
+
+    if ROUND( _u_dug_2z - _u_pot_2z, 4 ) <> 0
+        xml_node( "greska", ALLTRIM( STR( _u_dug_2z - _u_pot_2z, 12, 2  ) )  )
+    else
+        xml_node( "greska", ""  )
+    endif
+
+    if _saldo_2 >= 0
+        xml_node( "saldo", ALLTRIM( STR( _saldo_2, 12, 2 ) ) )
+    else
+        _saldo_2 := -_saldo_2
+        xml_node( "saldo", ALLTRIM( STR( _saldo_2, 12, 2 ) ) )
+    endif
+
+endif
+
+xml_node( "mjesto", to_xml_encoding( ALLTRIM( gMjStr ) ) )
+xml_node( "datum", DTOC( DATE() ) )
+
+// izvuci mi clan
+_clan_txt := __ios_clan 
+  
+xml_node( "clan", to_xml_encoding( _clan_txt ) )
+
+// zatvori mi subnode
+xml_subnode( "ios_item", .t. ) 
+
+select ios
 
 return
 
@@ -674,9 +1083,8 @@ return
 
 
 
-
 // -----------------------------------------
-// zaglavlje IOS-a ispisuje stavke ios-a
+// ispivanje stavki IOS-a u TXT formatu
 // -----------------------------------------
 static function print_ios_txt( params )
 local _rbr

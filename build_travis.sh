@@ -61,22 +61,33 @@ export HB_LIB_INSTALL=$HARBOUR_ROOT/lib
 USER="test1"
 ret=`echo "select rolname from pg_roles where rolname='$USER'" | psql -t -h localhost -U postgres | grep -q $USER`
 
-if [[ $ret -eq 0 ]]; then
+if [[ "$ret" == "0" ]]; then
    echo "$USER postoji"
 else
   echo "create user $USER with password '$USER'" | psql -h localhost -U postgres
 fi
 
-#pg_dump -h localhost -U postgres f18_test > f18_test.sql
-echo "CREATE database f18_test" | psql -U postgres 
+SQL="create role admin"
+echo $SQL | psql -U postgres
 
-
-psql -U postgres f18_test < test/data/f18_test.sql
 
 SQL="create role xtrole"
-echo $SQL | psql -U postgres 
+echo $SQL | psql -U postgres
 
 SQL="grant xtrole TO test1 GRANTED BY postgres"
-echo $SQL | psql -U postgres 
+echo $SQL | psql -U postgres
 
+SQL="grant xtrole TO admin GRANTED BY postgres"
+echo $SQL | psql -U postgres
+
+
+#Xvfb :1 -screen 1 1024x768x16 &
+
+
+#pg_dump -h localhost -U postgres f18_test > f18_test.sql
+echo "CREATE database f18_test" | psql -U postgres
+psql -U postgres f18_test < test/data/f18_test.sql
+
+
+#export DISPLAY=:1
 ./F18_test

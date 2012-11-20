@@ -487,7 +487,13 @@ if PCOUNT() > 2
         _ret := field_name + " >= " + _sql_quote( date1 )
     // imamo dva regularna datuma
     else
-        _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
+        // ako su razliciti datumi
+        if DTOC(date1) <> DTOC(date2)
+            _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
+        // ako su identicni, samo nam jedan treba u LIKE klauzuli
+        else
+            _ret := field_name + "::char(20) LIKE " + _sql_quote( _sql_date_str( date1 ) + "%" )
+        endif
     endif
 
 // imamo samo jedan uslov, field_name ili nista

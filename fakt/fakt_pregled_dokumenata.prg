@@ -710,10 +710,8 @@ _filter := fakt_doks_filt
 
 cFilter := DBFilter()
 
-if fiscal_opt_active()
-    // ispis informacije o fiskalnom racunu
-    _veza_fc_rn()
-endif
+// ispis informacije o fiskalnom racunu
+_veza_fc_rn()
 
 do case
  
@@ -797,6 +795,9 @@ do case
 
   case UPPER(chr(Ch)) == "R"
 
+    if !fiscal_opt_active()
+        return DE_REFRESH
+    endif
 
     refresh_fakt_tbl_dbfs(_filter)
     select fakt_doks

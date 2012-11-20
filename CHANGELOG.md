@@ -1,3 +1,7 @@
+1.3.73 2012-11-20, vsasa
+
+  - fin kartica, ODT template, više kartica [#29510](http://redmine.bring.out.ba/issues/29510)
+ 
 1.3.72 2012-11-20, vsasa
 
   - fiskalne HCP funkcije, bugfix [#29631](http://redmine.bring.out.ba/issues/29631)

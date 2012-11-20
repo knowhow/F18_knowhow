@@ -134,11 +134,11 @@ do case
     AADD(opcexe,{|| .f. })
     
     AADD(opc,"5. kopija racuna    ")
-    AADD(opcexe,{|| hcp_rn_copy( __dev_params ) })
+    AADD(opcexe,{|| hcp_rn_copy( __device_params ) })
     AADD(opc,"6. polog u uredjaj    ")
-    AADD(opcexe,{|| hcp_polog( __dev_params ) })
+    AADD(opcexe,{|| hcp_polog( __device_params ) })
     AADD(opc,"7. posalji cmd.ok    ")
-    AADD(opcexe,{|| hcp_create_cmd_ok( __dev_params ) })
+    AADD(opcexe,{|| hcp_create_cmd_ok( __device_params ) })
 
    	if !low_level
     

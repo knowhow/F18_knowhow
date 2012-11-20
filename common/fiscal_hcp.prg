@@ -164,15 +164,15 @@ _total_placanje := 0
     
 for _i := 1 to LEN( items )
 
-	_art_plu := items[i, 9]
-	_art_barkod := items[i, 12]
-	_art_id := items[i, 3]
-	_art_naz := PADR( items[i, 4], 32 )
-	_art_jmj := _g_jmj( items[i, 16] )
-	_cijena := items[i, 5]
-	_kolicina := items[i, 6]
-	_rabat := items[i, 11]
-	_tarifa := fiscal_txt_get_tarifa( items[i, 7], dev_params["pdv"], "HCP" ) 
+	_art_plu := items[ _i, 9 ]
+	_art_barkod := items[ _i, 12 ]
+	_art_id := items[ _i, 3 ]
+	_art_naz := PADR( items[ _i, 4 ], 32 )
+	_art_jmj := _g_jmj( items[ _i, 16 ] )
+	_cijena := items[ _i, 5 ]
+	_kolicina := items[ _i, 6 ]
+	_rabat := items[ _i, 11 ]
+	_tarifa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_params["pdv"], "HCP" ) 
 	_dep := "0"
 
 	_tmp := ""
@@ -236,7 +236,7 @@ for _i := 1 to LEN( items )
     endif
 
     _tmp := 'PAY="' + _v_plac + '"'
-    _tmp += _razmak1 + 'AMN="' + ALLTRIM( STR( _total_placanja, 12,2 )) + '"'
+    _tmp += _razmak1 + 'AMN="' + ALLTRIM( STR( _total_placanje, 12,2 )) + '"'
 
     xml_snode( "DATA", _tmp )	
 
@@ -520,7 +520,7 @@ xml_subnode("COMMAND")
 if !EMPTY( cmd )
 	
 	_data := "DATA"
-	_tmp := _cmd
+	_tmp := cmd
 	
 	xml_snode( _data, _tmp )
 

@@ -461,15 +461,15 @@ do case
         #ifdef __PLATFORM__WINDOWS
             _path := "C:" + SLASH + "fiscal" + SLASH
         #else
-            _path := SLASH + "home" + SLASH + "bringout" + SLASH + "fiscal"
+            _path := SLASH + "home" + SLASH + "bringout" + SLASH + "fiscal" + SLASH
         #endif
 
     case dev_type == "HCP"
 
         #ifdef __PLATFORM__WINDOWS
-            _path := "C:" + SLASH + "hcp" + SLASH
+            _path := "C:" + SLASH + "HCP" + SLASH
         #else
-            _path := SLASH + "home" + SLASH + "bringout" + SLASH + "hcp"
+            _path := SLASH + "home" + SLASH + "bringout" + SLASH + "HCP" + SLASH
         #endif
 
 endcase
@@ -487,9 +487,9 @@ do case
     case dev_type == "FPRINT"
         _file := "out.txt"
     case dev_type == "HCP"
-        _file := "TR$01.xml"
+        _file := "TR$_01.XML"
     case dev_type == "TREMOL"
-        _file := "01.xml"
+        _file := "01.XML"
 endcase
 
 return _file

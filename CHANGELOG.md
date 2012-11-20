@@ -1,3 +1,7 @@
+1.3.72 2012-11-20, vsasa
+
+  - fiskalne HCP funkcije, bugfix [#29631](http://redmine.bring.out.ba/issues/29631)
+ 
 1.3.71 2012-11-20, vsasa
 
   - fin, IOS, korekcije [#26751](http://redmine.bring.out.ba/issues/26751)

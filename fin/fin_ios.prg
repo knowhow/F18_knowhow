@@ -736,7 +736,7 @@ close all
 if _print_tip == "1"
     
     // vise ios-a
-    if !EMPTY( _id_partner )
+    if EMPTY( _id_partner )
         _template := "ios_2.odt"
     endif
 

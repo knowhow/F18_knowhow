@@ -1,3 +1,7 @@
+1.3.71 2012-11-20, vsasa
+
+  - fin, IOS, korekcije [#26751](http://redmine.bring.out.ba/issues/26751)
+ 
 1.3.70 2012-11-20, vsasa
 
   - fin, IOS, korekcije, print u odt [#26751](http://redmine.bring.out.ba/issues/26751)

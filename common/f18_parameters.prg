@@ -22,6 +22,7 @@ local _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat
 local _pos
 local _email_server, _email_port, _email_username, _email_userpass, _email_from
 local _email_to, _email_cc
+local _proper_name, _params
 
 // parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
@@ -44,6 +45,9 @@ _email_userpass := PADR( fetch_metric( "email_user_pass", my_user(), "" ), 50 )
 _email_from := PADR( fetch_metric( "email_from", my_user(), "" ), 100 )
 _email_to := PADR( fetch_metric( "email_to_default", my_user(), "" ), 500 )
 _email_cc := PADR( fetch_metric( "email_cc_default", my_user(), "" ), 500 )
+
+// maticni podaci
+_proper_name := PADR( fetch_metric( "my_proper_name", my_user(), "" ), 50 )
 
 if just_set == nil
 	just_set := .f.
@@ -76,8 +80,20 @@ if !just_set
 	++ _x
 	++ _x
 
+	@ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR "I"
+
+    ++ _x
+    ++ _x
+
+	@ _pos_x + _x, _pos_y SAY PADL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
+
+    ++ _x
+    ++ _x
+
 	@ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR "I"
+
 	++ _x
+
 	@ _pos_x + _x, _pos_y SAY PADL( "email server:", _left ) GET _email_server PICT "@S30"
 	@ _pos_x + _x, col() + 1 SAY "port:" GET _email_port PICT "9999"
  	++ _x
@@ -118,6 +134,19 @@ set_metric( "email_user_pass", my_user(), ALLTRIM( _email_userpass ) )
 set_metric( "email_from", my_user(), ALLTRIM( _email_from ) )
 set_metric( "email_to_default", my_user(), ALLTRIM( _email_to ) )
 set_metric( "email_cc_default", my_user(), ALLTRIM( _email_cc ) )
+
+// maticni podaci
+set_metric( "my_proper_name", my_user(), ALLTRIM( _proper_name ) )
+
+//if !just_set
+    // setuj podatke i u bazu
+    //_params := hb_hash()
+    //_params["user_name"] := my_user()
+    //_params["email"] := _email_from
+    //_params["proper_name"] := _proper_name
+
+    //f18_set_user_preferences( _params )
+//endif
 
 return
 

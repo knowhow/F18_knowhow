@@ -734,6 +734,12 @@ endif
 close all
 
 if _print_tip == "1"
+    
+    // vise ios-a
+    if !EMPTY( _id_partner )
+        _template := "ios2.odt"
+    endif
+
     // printaj odt report
     if f18_odt_generate( _template, _xml_file )
 	    // printaj odt

@@ -11,10 +11,13 @@
 
 #include "fin.ch"
 
+
 static LEN_VRIJEDNOST := 12
 static PIC_VRIJEDNOST := ""
 static _template
 static _my_xml
+
+
 
 // ---------------------------------------------
 // ---------------------------------------------
@@ -24,7 +27,7 @@ local _rpt_vars := hb_hash()
 local _exported := .f.
 
 _my_xml := my_home() + "data.xml"
-_template := "fin_kart_std.odt"
+_template := "fin_kart_brza.odt"
 
 if otv_stavke == NIL
     otv_stavke := .f.
@@ -51,11 +54,19 @@ if _rpt_vars["export_dbf"] == "D"
 endif
 
 if _cre_xml( _rpt_data, _rpt_vars )
+
+    // ovdje koristi drugi template fajl...
+    // sa prelomom stranice    
+    if _rpt_vars["brza"] == "N"
+        _template := "fin_kart_svi.odt"
+    endif
+
     // printaj odt report
     if f18_odt_generate( _template, _my_xml )
 	    // printaj odt
         f18_odt_print()
     endif
+
 endif
 
 if _exported 
@@ -220,22 +231,41 @@ if _tip_valute == 2
     _fld_iznos := "s.iznosdem"
 endif
 
-_qry := "SELECT s.idvn, s.brnal, s.rbr, s.brdok, s.datdok, s.datval, s.opis, " + ;
+_qry := "SELECT s.idkonto, k.naz as konto_naz, s.idpartner, p.naz as partn_naz, s.idvn, s.brnal, s.rbr, s.brdok, s.datdok, s.datval, s.opis, " + ;
         "( CASE WHEN s.d_p = '1' THEN " + _fld_iznos + " ELSE 0 END ) AS duguje, " + ;
         "( CASE WHEN s.d_p = '2' THEN " + _fld_iznos + " ELSE 0 END ) AS potrazuje " + ;
         "FROM fmk.fin_suban s " + ;
         "LEFT JOIN fmk.partn p ON s.idpartner = p.id " + ;
+        "LEFT JOIN fmk.konto k ON s.idkonto = k.id " + ;
         "WHERE idfirma = " + _sql_quote( gfirma )
 
 // datumi
 _qry += " AND " + _sql_date_parse( "s.datdok", _datum_od, _datum_do )
 
-// konto
-_qry += " AND " + _sql_cond_parse( "s.idkonto", _konto )
+if _brza == "D"
+    
+    // kod brze kartice je bitno da su konta zadana, kao i partner
 
-// partner
-_qry += " AND " + _sql_cond_parse( "s.idpartner", _partner )
-          
+    // konto
+    _qry += " AND " + _sql_cond_parse( "s.idkonto", _konto )
+    _qry += " AND " + _sql_cond_parse( "s.idpartner", _partner )
+ 
+else
+
+    // ako nije brza slobodno provjeri sta je prazno a sta ne !!!
+
+    if !EMPTY( _konto )
+        // konto
+        _qry += " AND " + _sql_cond_parse( "s.idkonto", _konto )
+    endif
+
+    if !EMPTY( _partner )
+        // partner
+        _qry += " AND " + _sql_cond_parse( "s.idpartner", _partner )
+    endif
+
+endif
+
 if !EMPTY( _brdok )
     _qry += " AND " + _sql_cond_parse( "s.brdok", _brdok )
 endif
@@ -248,7 +278,7 @@ if !EMPTY( _opcina )
     _qry += " AND " + _sql_cond_parse( "p.idops", _opcina )
 endif
 
-_qry += " ORDER BY s.datdok"
+_qry += " ORDER BY s.idkonto, s.idpartner, s.datdok, s.brnal"
 
 _table := _sql_query( _server, _qry )
 
@@ -267,8 +297,6 @@ return _table
 // -----------------------------------------------------------
 static function _export_dbf( table, rpt_vars )
 local oRow, _struct
-local _konto_id, _konto_naz 
-local _partn_id, _partn_naz
 local _rec
 
 if table:LastRec() == 0
@@ -282,17 +310,6 @@ t_exp_create( _struct )
 
 O_R_EXP
 
-_konto_id := rpt_vars["konto"]
-_partn_id := rpt_vars["partner"]
-_konto_naz := ""
-_partn_naz := ""
-	
-// u slučaju brze kartice daj opise konta i partnera
-if rpt_vars["brza"] == "D"
-    _konto_naz := hb_utf8tostr( _sql_get_value( "konto", "naz", { "id", ALLTRIM( rpt_vars["konto"] ) } ) )
-    _partn_naz := hb_utf8tostr( _sql_get_value( "partn", "naz", { "id", ALLTRIM( rpt_vars["partner"] ) } ) )
-endif
-
 for _i := 1 to table:LastRec()
 
     oRow := table:GetRow( _i )
@@ -302,11 +319,10 @@ for _i := 1 to table:LastRec()
 
     _rec := dbf_get_rec()
 
-    _rec["id_konto"] := _konto_id
-    _rec["id_partn"] := _partn_id
-    _rec["naz_partn"] := _partn_naz
-    _rec["naz_konto"] := _konto_naz
-
+    _rec["id_konto"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("idkonto") ) )
+    _rec["naz_konto"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("konto_naz") ) )
+    _rec["id_partn"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("idpartner") ) )
+    _rec["naz_partn"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("partn_naz") ) )
     _rec["vrsta_nal"] := hb_utf8tostr( oRow:Fieldget( oRow:Fieldpos("idvn") ) )
     _rec["broj_nal"] := oRow:Fieldget( oRow:Fieldpos("brnal") )
     _rec["nal_rbr"] := oRow:Fieldget( oRow:Fieldpos("rbr") )
@@ -357,12 +373,16 @@ return aDbf
 // generisi stavke reporta u xml
 // ------------------------------------------------------
 static function _cre_xml( table, rpt_vars )
-local _i, oRow
+local _i, oRow, oItem
 local PIC_VRIJEDNOST := PADL( ALLTRIM( RIGHT( PicDem, LEN_VRIJEDNOST)), LEN_VRIJEDNOST, "9" )
 local _u_dug1 := 0
+local _u_dug2 := 0
 local _u_pot1 := 0
+local _u_pot2 := 0
 local _u_saldo1 := 0
+local _u_saldo2 := 0
 local _val
+local _id_konto, _id_partner
 
 if table:LastRec() == 0
     return .f.
@@ -380,8 +400,8 @@ xml_node( "f_naz", to_xml_encoding( gNFirma ) )
 xml_node( "f_mj", to_xml_encoding( gMjStr ) )
 
 xml_node( "datum", DTOC( DATE() ) )
-xml_node( "date1", DTOC( rpt_vars["datum_od"] ) )
-xml_node( "date2", DTOC( rpt_vars["datum_do"] ) )
+xml_node( "datum_od", DTOC( rpt_vars["datum_od"] ) )
+xml_node( "datum_do", DTOC( rpt_vars["datum_do"] ) )
 
 // valuta
 if rpt_vars["valuta"] == 1
@@ -390,80 +410,111 @@ else
     xml_node( "val", "EUR" )
 endif
 
-xml_node( "kt_id", rpt_vars["konto"] )
-xml_node( "pt_id", to_xml_encoding( rpt_vars["partner"] ) )
+do while !table:EOF()
 
-if rpt_vars["brza"] == "D"
-    xml_node( "kt_naz", ;
-        to_xml_encoding( ;
-                hb_utf8tostr( _sql_get_value( "konto", "naz", { "id", ALLTRIM( rpt_vars["konto"] ) } ) ) ) ;
-                       )
-    xml_node( "pt_naz", ;
-        to_xml_encoding( ;
-                hb_utf8tostr( _sql_get_value( "partn", "naz", { "id", ALLTRIM( rpt_vars["partner"] ) } ) ) ) ;
-                       )
-else
-    xml_node( "kt_naz", "" )
-    xml_node( "pt_naz", "" )
-endif
+    oItem := table:GetRow()
 
-for _i := 1 to table:LastRec()
+    // provjeri mi konto + partner
+    _id_konto := oItem:Fieldget( oItem:Fieldpos("idkonto") )
+    _id_partner := oItem:Fieldget( oItem:Fieldpos("idpartner") )
 
-    oRow := table:GetRow( _i )
+    // dodaj novi subnode....
+    xml_subnode( "kartica_item", .f. )
 
-    xml_subnode( "row", .f. )
+    // idkonto
+    xml_node( "konto", to_xml_encoding( hb_utf8tostr( _id_konto ) ) )
     
-    // idvn
-    _val := oRow:Fieldget( oRow:Fieldpos("idvn") )
-    xml_node( "vn", to_xml_encoding( hb_utf8tostr( _val ) ) )
+    // naziv konta 
+    if !EMPTY( _id_konto )
+        _naz_konto := _sql_get_value( "konto", "naz", { "id", ALLTRIM( _id_konto ) } )
+    else
+        _naz_konto := ""
+    endif
 
-    // brnal
-    _val := oRow:Fieldget( oRow:Fieldpos("brnal") )
-    xml_node( "broj", _val )
+    xml_node( "konto_naz", to_xml_encoding( hb_utf8tostr( _naz_konto ) ) )
+
+    // partner 
+    xml_node( "partner", to_xml_encoding( hb_utf8tostr( _id_partner ) ) )
+
+    // naziv partnera
+    if !EMPTY( _id_partner )
+        _naz_partner := _sql_get_value( "partn", "naz", { "id", ALLTRIM( _id_partner ) } )
+    else
+        _naz_partner := ""
+    endif
+
+    xml_node( "partner_naz", to_xml_encoding( hb_utf8tostr( _naz_partner ) ) )
+
+    _u_pot1 := 0
+    _u_dug1 := 0
+    _u_saldo1 := 0
+
+    do while !table:EOF() .and. table:FieldGet( table:FieldPos( "idkonto" ) ) == _id_konto ;
+                .and. table:FieldGet( table:FieldPos( "idpartner" ) ) == _id_partner
+
+        oRow := table:GetRow()
+
+        // sada subnode unutara kartica_item
+        xml_subnode( "row", .f. )
     
-    // rbr
-    _val := oRow:Fieldget( oRow:Fieldpos("rbr") )
-    xml_node( "rbr", _val )
+        // idvn
+        _val := oRow:Fieldget( oRow:Fieldpos("idvn") )
+        xml_node( "vn", to_xml_encoding( hb_utf8tostr( _val ) ) )
 
-    // brdok
-    _val := oRow:Fieldget( oRow:Fieldpos("brdok") )
-    xml_node( "veza", to_xml_encoding( hb_utf8tostr( _val ) ) )
+        // brnal
+        _val := oRow:Fieldget( oRow:Fieldpos("brnal") )
+        xml_node( "broj", _val )
+    
+        // rbr
+        _val := oRow:Fieldget( oRow:Fieldpos("rbr") )
+        xml_node( "rbr", _val )
 
-    // datdok
-    _val := oRow:Fieldget( oRow:Fieldpos("datdok") )
-    xml_node( "datum", DTOC( _val ) )
+        // brdok
+        _val := oRow:Fieldget( oRow:Fieldpos("brdok") )
+        xml_node( "veza", to_xml_encoding( hb_utf8tostr( _val ) ) )
+    
+        // datdok
+        _val := oRow:Fieldget( oRow:Fieldpos("datdok") )
+        xml_node( "datum", DTOC( _val ) )
 
-    // datval
-    _val := oRow:Fieldget( oRow:Fieldpos("datval") )
-    xml_node( "datval", DTOC( _val ) )
+        // datval
+        _val := oRow:Fieldget( oRow:Fieldpos("datval") )
+        xml_node( "datval", DTOC( _val ) )
 
-    // opis
-    _val := oRow:Fieldget( oRow:Fieldpos("opis") )
-    xml_node( "opis", to_xml_encoding( hb_utf8tostr( _val ) ) )
+        // opis
+        _val := oRow:Fieldget( oRow:Fieldpos("opis") )
+        xml_node( "opis", to_xml_encoding( hb_utf8tostr( _val ) ) )
 
-    // duguje
-    _val := oRow:Fieldget( oRow:Fieldpos("duguje") )
-    xml_node("dug", show_number( _val, PIC_VRIJEDNOST ) )
-    _u_dug1 += _val
+        // duguje
+        _val := oRow:Fieldget( oRow:Fieldpos("duguje") )
+        xml_node("dug", show_number( _val, PIC_VRIJEDNOST ) )
+        _u_dug1 += _val
 
-    // potrazuje
-    _val := oRow:Fieldget( oRow:Fieldpos("potrazuje") )
-    xml_node("pot", show_number( _val, PIC_VRIJEDNOST ) )
-    _u_pot1 += _val
+        // potrazuje
+        _val := oRow:Fieldget( oRow:Fieldpos("potrazuje") )
+        xml_node("pot", show_number( _val, PIC_VRIJEDNOST ) )
+        _u_pot1 += _val
 
-    // saldo
-    _val := oRow:Fieldget( oRow:Fieldpos("duguje") ) - oRow:Fieldget( oRow:Fieldpos("potrazuje") )
-    _u_saldo1 += _val
-    xml_node("saldo", show_number( _u_saldo1, PIC_VRIJEDNOST ) )
+        // saldo
+        _val := oRow:Fieldget( oRow:Fieldpos("duguje") ) - oRow:Fieldget( oRow:Fieldpos("potrazuje") )
+        _u_saldo1 += _val
+        xml_node("saldo", show_number( _u_saldo1, PIC_VRIJEDNOST ) )
 
-    xml_subnode( "row", .t. )
+        xml_subnode( "row", .t. )
 
-next
+        table:Skip()
 
-// upisi totale
-xml_node("dug", show_number( _u_dug1, PIC_VRIJEDNOST ) )
-xml_node("pot", show_number( _u_pot1, PIC_VRIJEDNOST ) )
-xml_node("saldo", show_number( _u_saldo1, PIC_VRIJEDNOST ) )
+    enddo
+
+    // dodaj totale
+    xml_node( "dug", show_number( _u_dug1, PIC_VRIJEDNOST ) )
+    xml_node( "pot", show_number( _u_pot1, PIC_VRIJEDNOST ) )
+    xml_node( "saldo", show_number( _u_saldo1, PIC_VRIJEDNOST ) )
+
+    // zatvori item subnode
+    xml_subnode( "kartica_item", .t. )
+
+enddo
 
 xml_subnode( "kartica", .t. )
 

@@ -275,6 +275,17 @@ ENDIF
 RETURN _result
 
 
+// ----------------------------------------
+// sql date
+// ----------------------------------------
+function _sql_date_str( var )
+local _out            
+_out := DTOS( var )
+//1234-56-78
+_out := substr( _out, 1, 4) + "-" + substr( _out, 5, 2) + "-" + substr( _out, 7, 2) 
+return _out
+
+
 // ------------------------
 // ------------------------
 function _sql_quote(xVar)
@@ -285,20 +296,17 @@ if VALTYPE(xVar) == "C"
     cOut := "'" + hb_strtoutf8(cOut) + "'"
 elseif VALTYPE(xVar) == "D"
     if xVar == CTOD("")
-            cOut := "NULL"
+        cOut := "NULL"
     else
-            cOut:=DTOS(xVar)
-            if EMPTY(cOut)
-                cPom:=replicate('0',8)
-            endif
-            //1234-56-78
-            cOut := "'" + substr(cOut, 1, 4) + "-" + substr(cOut, 5, 2) + "-" + substr(cOut, 7, 2) + "'"
+        cOut := "'" + _sql_date_str( xVar ) + "'"
     endif
 else
     cOut := "NULL"
 endif
 
 return cOut
+
+
 
 // ---------------------------------------
 // ---------------------------------------
@@ -470,11 +478,13 @@ if PCOUNT() > 2
 
     // oba su prazna
     if DTOC(date1) == DTOC(CTOD("")) .and. DTOC(date2) == DTOC(CTOD(""))
-        _ret := ""
+        _ret := "TRUE"
     // samo prvi je prazan
     elseif DTOC(date1) == DTOC(CTOD(""))
         _ret := field_name + " <= " + _sql_quote( date2 )
-
+    // drugi je prazan
+    elseif DTOC(date2) == DTOC(CTOD(""))
+        _ret := field_name + " >= " + _sql_quote( date1 )
     // imamo dva regularna datuma
     else
         _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
@@ -482,14 +492,11 @@ if PCOUNT() > 2
 
 // imamo samo jedan uslov, field_name ili nista
 elseif PCOUNT() <= 1
-    _ret := ""    
+    _ret := "TRUE"    
 
-// pcount() je 2
+// samo jedan datumski uslov
 else
-
-    // samo jedan datumski uslov
-    _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date1 )
-
+    _ret := field_name + "::char(20) LIKE " + _sql_quote( _sql_date_str( date1 ) + "%" )
 endif
 
 return _ret

@@ -183,6 +183,9 @@ local cSekcija
 local cVar
 local cVal
 
+// setuj default odt template fakture
+__default_odt_template()
+
 set_global_vars()
 set_roba_global_vars()
 
@@ -192,11 +195,13 @@ public gFiltNov:=""
 public gVarNum:="1"
 public gProtu13:="N"
 
+public gDK1 := "N"
+public gDK2 := "N"
+
 public gFPzag:=0
 public gZnPrec:="="
 public gNovine:="N"        // novine/stampa u asortimanu
 public gnDS:=5             // duzina sifre artikla - sinteticki
-public gFaktFakt:="N"
 public gBaznaV:="D"
 public Kurslis:="1"
 public PicCdem:="99999999.99"
@@ -208,9 +213,6 @@ public gnTMarg:=11 // gornja margina
 public gnTMarg2:=3 // vertik.pomj. stavki u fakturi var.9
 public gnTMarg3:=0 // vertik.pomj. totala fakture var.9
 public gnTMarg4:=0 // vertik.pomj. za donji dio fakture var.9
-public gMjRJ:="N"
-public gDK1:="N"
-public gDK2:="N"
 public gIspPart:="N" // ispravka partnera u unosu novog dokumenta
 public gResetRoba:="D" // resetuj uvijek artikal, pri unosu stavki dokumenta 
 
@@ -301,7 +303,6 @@ public gVarRF:=" "
 public gKriz:=0
 public gKrizA5:=2
 public gERedova:=9 // extra redova
-public gVlZagl:=space(12)   // naziv fajla vlastitog zaglavlja
 public gPratiK:="N"
 public gPratiC:="N"
 public gFZaok:=2
@@ -514,13 +515,9 @@ RPar("dc",@g13dcij)
 // dodatni parametri fakture broj otpremnice itd
 RPar("fp",@gFPzag)
 RPar("if",@gImeF)
-RPar("k1",@gDK1)
-RPar("k2",@gDK2)
 // varijanta maloprodajne cijene
 RPar("mp",@gMP)       
-RPar("mr",@gMjRJ)
 RPar("PR",@gDetPromRj)
-Rpar("ff",@gFaktFakt)
 Rpar("NF",@gFNar)
 Rpar("UF",@gFUgRab)
 Rpar("rR",@gRabIzRobe)
@@ -552,7 +549,6 @@ RPar("vp",@gV12Por)
 RPar("vu",@gVFU)
 RPar("vr",@gVarRF)
 RPar("vn",@gVarNum)
-RPar("vz",@gVlZagl)
 RPar("x1",@g11Str2R)
 RPar("xn",@g15Str2R)
 RPar("x2",@g20Str2R)

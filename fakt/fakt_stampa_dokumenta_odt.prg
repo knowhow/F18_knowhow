@@ -18,6 +18,15 @@ static LEN_VRIJEDNOST := 12
 static PIC_KOLICINA := ""
 static PIC_VRIJEDNOST := ""
 static PIC_CIJENA := ""
+static __default_odt_template := ""
+
+
+// ------------------------------------------------------
+// setuje defaultni odt template
+// ------------------------------------------------------
+function __default_odt_template()
+__default_odt_template := fetch_metric( "fakt_default_odt_template", my_user(), "" )
+return
 
 
 // ------------------------------------------------
@@ -61,9 +70,14 @@ _gen_xml( _xml_file, _racuni )
 
 MsgC()
 
-// uzmi template koji ces koristiti
-if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
-    return
+// ako postoji setovan default template, koristi njega !
+if !EMPTY( __default_odt_template )
+    _template := __default_odt_template
+else
+    // uzmi template koji ces koristiti
+    if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
+        return
+    endif
 endif
 
 close all

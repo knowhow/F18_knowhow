@@ -96,6 +96,8 @@ local _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), 
 local _unos_dest := "N"
 local _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
 local _racun_na_email := PADR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
+local _def_template := PADR( fetch_metric( "fakt_default_odt_template", my_user(), "" ), 20)
+local _x := 1
 
 private cSection:="1"
 private cHistory:=" "
@@ -104,93 +106,78 @@ private GetList:={}
 
 // unos destinacije
 gDest := fetch_metric( "fakt_unos_destinacije", nil, gDest )
+
 if gDest
     _unos_dest := "D"
 endif
 
 O_PARAMS
+
 gKomLin := PADR( gKomLin, 70 )
 
 Box(, 21, 77, .f., "OSTALI PARAMETRI (RAZNO)" )
 
-nX := 2
+_x := 2
 
-if !IsPdv()
+@ m_x + _x, m_y + 2 SAY "Inicijalna meni-opcija (1/2/.../G)" GET gIMenu ;
+            VALID gIMenu $ "123456789ABCDEFG" PICT "@!"
 
-    @ m_x+nX, m_y+2 SAY "Naziv fajla zaglavlja (prazno bez zaglavlja)" GET gVlZagl VALID V_VZagl()
-    nX++
-    @ m_x+nX, m_y+2 SAY "Svaki izlazni fajl ima posebno ime ?" GET gImeF VALID gImeF $ "DN"
-    nX++
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "Default radna jedinica kod unosa dokumenta:" GET _def_rj     
+
+++ _x
     
-endif
+@ m_x + _x, m_y + 2 SAY "Koriste li se artikli koji se vode po sintet.sifri, roba tipa 'S' (D/N) ?" GET gNovine VALID gNovine $ "DN" PICT "@!"
 
-@ m_x+nX, m_y+2 SAY "Inicijalna meni-opcija (1/2/.../G)" GET gIMenu VALID gIMenu $ "123456789ABCDEFG" PICT "@!"
+++ _x
 
-nX := nX + 2
+@ m_x + _x, m_y + 2 SAY "Unos dokumenata pomocu barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
 
-@ m_x + nX, m_y + 2 SAY "Default radna jedinica kod unosa dokumenta:" GET _def_rj     
-
-++ nX
-
-if !IsPdV()
-
-    @ m_x+nX,m_y+2 SAY "Prikaz K1" GET gDk1 PICT "@!" VALID gDk1 $ "DN"
-    @ m_x+nX,col()+2 SAY "Prikaz K2" GET gDk2 PICT "@!" VALID gDk2 $ "DN"
-    nX++
-    @ m_x+nX,m_y+2 SAY "Mjesto uzimati iz RJ (D/N)" GET gMjRJ PICT "@!" VALID gMjRJ $ "DN"
-    nX++
-
-endif
-    
-@ m_x+nX,m_y+2 SAY "Omoguciti poredjenje FAKT sa FAKT druge firme (D/N) ?" GET gFaktFakt VALID gFaktFakt $ "DN" PICT "@!"
-nX++
-    
-@ m_x+nX,m_y+2 SAY "Koriste li se artikli koji se vode po sintet.sifri, roba tipa 'S' (D/N) ?" GET gNovine VALID gNovine $ "DN" PICT "@!"
-nX++
-
-@ m_x+nX,m_y+2 SAY "Unos dokumenata pomocu barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
-nX++
+++ _x
  
-@ m_x+nX,m_y+2 SAY "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
-nX++
+@ m_x + _x, m_y + 2 SAY "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
+
+++ _x
     
-@ m_x+nX, m_y+2 SAY "Duzina sifre artikla sinteticki " GET gnDS VALID gnDS>0 PICT "9"
-nX++
+@ m_x + _x, m_y + 2 SAY "Duzina sifre artikla sinteticki " GET gnDS VALID gnDS > 0 PICT "9"
 
-@ m_x+nX, m_y+2 SAY "Voditi samo kolicine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
-nX++
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "Voditi samo kolicine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
+
+++ _x
     
-@ m_x+nX, m_y+2 SAY "Tekuca vrijednost za rok placanja  " GET gRokPl PICT "999"
-nX++
+@ m_x + _x, m_y + 2 SAY "Tekuca vrijednost za rok placanja  " GET gRokPl PICT "999"
+
+++ _x
     
-if !IsPDV()
- 	@ m_x+nX, m_y+2 SAY "Mogucnost ispravke partnera u novoj stavci (D/N)" GET gIspPart PICT "@!" VALID gIspPart$"DN"
-    nX++
-else
- 	gIspPart := "N"
-endif
-    
-@ m_x + nX, m_y+2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
+@ m_x + _x, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
 
-nX ++
+++ _x
 
-@ m_x + nX, m_y+2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
+@ m_x + _x, m_y + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
 
-nX ++
+++ _x
 
-@ m_x + nX, m_y+2 SAY "Racun na email:" GET _racun_na_email PICT "@S50"
+@ m_x + _x, m_y + 2 SAY "Racun na email:" GET _racun_na_email PICT "@S50"
 
-nX ++
+++ _x
 
-@ m_x + nX, m_y+2 SAY "ODT fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
+@ m_x + _x, m_y + 2 SAY "ODT fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
 
-nX ++
+++ _x
 
-@ m_x + nX, m_y+2 SAY "Unos destinacije na fakturi (D/N) ?" GET _unos_dest VALID _unos_dest $ "DN" PICT "@!"
+@ m_x + _x, m_y + 2 SAY "Default ODT template:" GET _def_template PICT "@S35"
 
-nX ++
+++ _x
 
-@ m_x + nX, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
+@ m_x + _x, m_y + 2 SAY "Unos destinacije na fakturi (D/N) ?" GET _unos_dest VALID _unos_dest $ "DN" PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
         GET gMPPrint ;
         PICT "@!" ;
         VALID gMPPrint $ "DNXT"
@@ -199,27 +186,27 @@ read
 
 if gMPPrint $ "DXT"
 
-	nX ++
+	++ _x
         
-    @ m_x + nX, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" ;
+    @ m_x + _x, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" ;
             GET gMPLocPort ;
             VALID gMPLocPort $ "1234567" PICT "@!"
         
-    nX ++
+    ++ _x
         
-    @ m_x + nX, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
+    @ m_x + _x, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
             GET gMPRedTraka ;
             VALID gMPRedTraka $ "012"
     
-  	nX ++
+  	++ _x
     
-    @ m_x + nX, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
+    @ m_x + _x, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
             GET gMPArtikal ;
             VALID gMPArtikal $ "DN" PICT "@!"
         
-  	nX ++
+  	++ _x
     
-    @ m_x + nX, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
+    @ m_x + _x, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
             GET gMPCjenPDV ;
             VALID gMPCjenPDV $ "12"
     
@@ -230,9 +217,9 @@ endif
 
 BoxC()
 
-gKomLin := TRIM(gKomLin)
+gKomLin := TRIM( gKomLin )
 
-if (LASTKEY()<>K_ESC)
+if LastKey() <> K_ESC
 
     set_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
     set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
@@ -244,6 +231,10 @@ if (LASTKEY()<>K_ESC)
 	set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
     set_metric( "pregled_rabata_kod_izlaza", my_user(), _rabat )
 	set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
+    set_metric( "fakt_default_odt_template", my_user(), ALLTRIM( _def_template ) )
+
+    // setuj mi default odt template ako treba
+    __default_odt_template()
 
     if _unos_dest == "D"
         gDest := .t.
@@ -253,17 +244,12 @@ if (LASTKEY()<>K_ESC)
 
 	set_metric( "fakt_unos_destinacije", nil, gDest )
     
-	Wpar("ff",gFaktFakt)
     Wpar("NF",gFNar)
     Wpar("UF",gFUgRab)
     Wpar("no",gNovine)
     Wpar("ds",gnDS)
-    WPar("vz",gVlZagl)
     WPar("if",gImeF)
     WPar("95",gKomLin)   
-    WPar("k1",@gDk1)
-    WPar("k2",@gDk2)
-    WPar("mr",gMjRJ)
     WPar("Fi",@gIspPart)
     WPar("mP",gMpPrint)
     WPar("mL",gMpLocPort)
@@ -946,51 +932,6 @@ if (LASTKEY()<>K_ESC)
 endif
 
 return 
-
-
-function V_VZagl()
-local _cmd := "gvim " + PRIVPATH + gVlZagl
-
-if Pitanje(,"Zelite li izvrsiti ispravku zaglavlja ?","N")=="D"
-    if !EMPTY(gVlZagl)
-        Box(,25,80)
-            run (_cmd)
-        BoxC()
-    endif
-endif
-return .t.
-
-
-function V_VNar()
-local _cmd := "gvim " + PRIVPATH + gFNar
-
-if Pitanje( , "Zelite li izvrsiti ispravku fajla obrasca narudzbenice ?","N")=="D"
-    if !EMPTY(gFNar)
-        Box(,25,80)
-            run (_cmd)
-        BoxC()
-    endif
-endif
-
-return .t.
-
-
-
-
-/*! \fn V_VUgRab()
- *  \brief Ispravka fajla ugovora o rabatu
- */
-function V_VUgRab()
-local _cmd := "gvim " + PRIVPATH + gFUgRab
-
-if Pitanje(,"Zelite li izvrsiti ispravku fajla-teksta ugovora o rabatu ?","N")=="D"
-    if !EMPTY(gFUgRab)
-        Box(,25,80)
-            run (_cmd)
-        BoxC()
-    endif
-endif
-return .t.
 
 
 

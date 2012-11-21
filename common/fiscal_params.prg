@@ -489,7 +489,7 @@ do case
     case dev_type == "HCP"
         _file := "TR$_01.XML"
     case dev_type == "TREMOL"
-        _file := "01.XML"
+        _file := "01.xml"
 endcase
 
 return _file

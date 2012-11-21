@@ -1,3 +1,7 @@
+1.3.74 2012-11-21, vsasa
+
+  - fiskalne funkcije, tarifa, bugfix [#29663](http://redmine.bring.out.ba/issues/29663)
+ 
 1.3.73 2012-11-20, vsasa
 
   - fin kartica, ODT template, više kartica [#29510](http://redmine.bring.out.ba/issues/29510)

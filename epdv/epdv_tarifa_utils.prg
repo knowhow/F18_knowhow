@@ -22,7 +22,6 @@ if !used()
 	O_TARIFA
 endif
 
-                                
 if !f18_lock_tables({"tarifa"})
     return .f.
 endif                            
@@ -32,6 +31,10 @@ sql_table_update( nil, "BEGIN" )
 // nabavka od pdv obveznika, standardna prodaja
 cPom := PADR( "PDV17" , 6 ) 
 _append_tarifa( cPom, "PDV 17%", 17 )
+
+// zasticene cijene
+cPom := PADR( "PDV17Z" , 6 ) 
+_append_tarifa( cPom, "PDV 17% ZASTICENA CIJENA", 17 )
 
 // stopa 0
 cPom := PADR( "PDV0", 6 ) 

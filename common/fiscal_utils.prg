@@ -295,11 +295,15 @@ return _ret
 // po uredjajima...
 // ------------------------------------------
 function fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
-local _tar := ""
+local _tar := "2"
+local _tmp 
+
+// PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0
+_tmp := LEFT( UPPER( ALLTRIM( tarifa_id ) ), 4 )
 
 do case
 
-	case UPPER( ALLTRIM( tarifa_id ) ) $ "PDV17#PDV7NP#" .and. pdv == "D"
+	case ( _tmp == "PDV1" .or. _tmp == "PDV7" ) .and. pdv == "D"
 
 		// PDV je tarifna skupina "E"
 
@@ -313,7 +317,7 @@ do case
             _tar := "2"
         endif
 
-	case UPPER( ALLTRIM( tarifa_id ) ) $"PDV0#PDV0IZ" .and. pdv == "D"
+	case _tmp == "PDV0" .and. pdv == "D"
 
 		// bez PDV-a je tarifna skupina "K"
 
@@ -339,6 +343,10 @@ do case
         elseif drv == "TREMOL"
             _tar := "3"
         endif
+
+    otherwise
+
+        MsgBeep( "Greska sa tarifom !!!" )
 
 endcase
 

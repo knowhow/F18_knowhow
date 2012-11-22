@@ -54,6 +54,7 @@ export HB_COMPILER=gcc
 export HB_INC_INSTALL=$HARBOUR_ROOT/include
 export HB_LIB_INSTALL=$HARBOUR_ROOT/lib
 
+echo "HB_INC_INSTALL=$HB_INC_INSTALL, $HB_LIB_INSTALL=$HB_LIB_INSTALL"
 . ./build_test.sh
 }
 
@@ -134,15 +135,17 @@ grep -q "Test calls failed:[ ]*0" F18.test.log
 #build_harbour
 install_harbour
 
-build_f18_test
 create_roles
 create_databases
-
 if [[ "$?" != "0" ]]
 then
    echo "problem kod kreiranja baza"
    cat create_databases.log
 fi
+
+
+
+build_f18_test
 
 #sudo apt-get install openjdk-6-jre
 install_jod_reports

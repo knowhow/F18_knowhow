@@ -322,7 +322,7 @@ if ( _result == 0 )
     _qry := "INSERT INTO " + _tbl + "(user_code, last_trans_version, version, algorithm) " + ;
                "VALUES(" + _sql_quote(_user)  + ", 0, -1, 'free')"
 else
-    _qry := "UPDATE " + _tbl + " SET version=-1 WHERE user_code =" + _sql_quote(_user) 
+    _qry := "UPDATE " + _tbl + " SET version=-1, last_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote(_user) 
 endif
 
 log_write( "reset semaphore, set version = 1", 7 )

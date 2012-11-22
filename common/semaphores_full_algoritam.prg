@@ -37,9 +37,6 @@ if step_size == NIL
     step_size := 20000
 endif
 
-// nuliraj ids polje tako da u toku full sync drugi mogu dodavati id-ove koje mjenjaju
-nuliraj_ids_and_update_my_semaphore_ver(dbf_table)
-
 // transakcija mi treba da bih sakrio promjene koje prave druge
 // ako nemam transakcije onda se moze desiti ovo:
 // 1) odabarem 100 000 zapisa i pocnem ih uzimati po redu (po dokumentima)

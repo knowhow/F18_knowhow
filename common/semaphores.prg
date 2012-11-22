@@ -547,6 +547,7 @@ return _ver_user
 // ----------------------------------------------------------------------
 // nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
 // ------------------------------------------------------------------------
+
 function nuliraj_ids_and_update_my_semaphore_ver(table)
 local _tbl
 local _ret

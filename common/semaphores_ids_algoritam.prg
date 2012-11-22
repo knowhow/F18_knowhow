@@ -160,9 +160,16 @@ LOCAL _server := pg_server()
 local _user := f18_user()
 local _tok
 
+log_write( "START get_ids_from_semaphore", 7)
+
 _tbl := "fmk.semaphores_" + LOWER(table)
 
-_qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+_qry := "BEGIN TRANSACTION;"
+_qry += "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+_qry += "; UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
+_qry += " WHERE user_code =" + _sql_quote(_user) 
+_qry += "; END TRANSACTION"
+
 _tbl_obj := _sql_query( _server, _qry )
 
 IF _tbl_obj == NIL
@@ -193,7 +200,7 @@ for _i := 1 to _num_arr
    AADD(_arr, _tok)
 next
 
-log_write( "get_ids_from_semaphore(), imam ids-ova za osvjezavanje", 9 )
+log_write( "END get_ids_from_semaphore", 7)
 
 RETURN _arr
 

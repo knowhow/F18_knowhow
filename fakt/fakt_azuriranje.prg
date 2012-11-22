@@ -258,6 +258,10 @@ else
     push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
+    msgo("Spavam...")
+    sleep(5)
+    msgc()
+
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
     sql_table_update(nil, "END")
 

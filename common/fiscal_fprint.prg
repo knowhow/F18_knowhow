@@ -1405,7 +1405,9 @@ endif
 // TEST rezim
 if dev_params["print_fiscal"] == "T"
     // sacekaj malo, vrati fiskalni broj 100 i izadji...
+    MsgO( "TEST: emulacija stampe na fiskalni uredjaj..." )
     sleep(4)
+    MsgC()
     fiscal_no := 100
     return _err_level
 endif

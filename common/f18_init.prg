@@ -895,10 +895,11 @@ _msg_time += ": "
 // time ide samo u fajl, ne na server
 FWRITE( __log_handle, _msg_time + msg + hb_eol() )
 
+#ifndef TEST
 if __server_log
     server_log_write( msg )
 endif
- 
+#endif
 return
 
 

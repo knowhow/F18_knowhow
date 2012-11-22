@@ -481,8 +481,7 @@ return
 
 
 // --------------------------------------------------------------------------------------------
-// update_semaphore_version( "konto", push_operation )
-// - push_operation - false - samo citamo podatke
+// update_semaphore_version_after_push( "konto")
 //
 // --------------------------------------------------------------------------------------------
 function update_semaphore_version_after_push(table)

@@ -138,7 +138,7 @@ _ret := _sql_query( _server, _qry )
 log_write( "END push_ids_to_semaphore", 9 )
 
 // na kraju uradi update verzije semafora, push operacija
-update_semaphore_version(table, .t.)
+update_semaphore_version_after_push(table)
 
 if VALTYPE(_ret) == "O"
     return .t.

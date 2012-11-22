@@ -71,7 +71,7 @@ Box(, 6, 70)
 
     if _sql_fields == NIL
         _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
-        log_write( "full_synchro(), " + _msg, 2 )
+        log_write( "full_synchro: " + _msg, 2 )
         msgbeep( _msg ) 
         QUIT
     endif

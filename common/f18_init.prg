@@ -511,8 +511,12 @@ function log_level(x)
 if VALTYPE(x) == "N"
   __log_level := x
 endif
-return __log_level
 
+#ifdef TEST
+   return 100
+#else
+   return __log_level
+#endif
 
 // ------------------------------------------
 // ------------------------------------------

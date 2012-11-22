@@ -164,11 +164,14 @@ log_write( "START get_ids_from_semaphore", 7)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
-_qry := "BEGIN TRANSACTION;"
+//http://www.postgresql.org/docs/9.0/static/sql-select.html
+_qry := "BEGIN;"
 _qry += "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
-_qry += "; UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
+_qry += "FOR UPDATE;"
+_qry += "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
 _qry += " WHERE user_code =" + _sql_quote(_user) 
-_qry += "; END TRANSACTION"
+_qry += ";"
+_qry += "COMMIT;"
 
 _tbl_obj := _sql_query( _server, _qry )
 

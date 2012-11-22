@@ -130,7 +130,7 @@ function run_tests {
 #cat F18.test.log
 
 #grep -q "Test calls failed:[ ]*0" F18.test.log
-./F18_test | grep -q "Test calls failed:[ ]*0" F18.test.log
+./F18_test | grep -q "Test calls failed:[ ]*0"
 }
 
 #build_harbour

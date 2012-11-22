@@ -575,24 +575,16 @@ local _user := f18_user()
 local _server := pg_server()
 local _free
 local _sem_status
-local _versions, _last_ver, _version
 
-_versions := get_semaphore_version_h(table)
-_last_ver := _versions["last_version"]
-_version  := _versions["version"]
-
-log_write( "START: nuliraj ids-ove", 7)
+log_write( "START: nuliraj ids-ove - user: " + _user, 7)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 _qry := "UPDATE " + _tbl + " SET " 
-_qry += " ids=NULL , dat=NULL, version=" + STR(_last_ver)  + "  WHERE user_code =" + _sql_quote(_user) 
+_qry += " ids=NULL , dat=NULL, version=last_version  WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
-log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL, version=" +;
-            STR(_version) + ", last_version=" + STR(_last_version), 7 )
-
-log_write( "END: nuliraj ids-ove", 7)
+log_write( "END: nuliraj ids-ove - user: " + _user, 7)
 
 return _ret
 

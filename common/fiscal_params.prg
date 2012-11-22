@@ -422,8 +422,8 @@ Box(, 20, 80 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Korisnik moze printati fiskalne racune (D/N):" GET _print_fiscal ;
-        PICT "@!" VALID _print_fiscal $ "DN"
+    @ m_x + _x, m_y + 2 SAY "Korisnik moze printati fiskalne racune (D/N/T):" GET _print_fiscal ;
+        PICT "@!" VALID _print_fiscal $ "DNT"
     
     read
 

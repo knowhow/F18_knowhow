@@ -540,7 +540,7 @@ _qry += "UPDATE " + _tbl + " SET version=" + STR(_ver_user) + ;
 // dva sql statementa u jedan query provjeriti da li ovo radi pa izbrisati komentar
 _ret := _sql_query( _server, _qry )
 
-log_write( "END: update semaphore version after push " + _user + " last_ver=" + _ver_user, 7)
+log_write( "END: update semaphore version after push " + _user + " last_ver=" + STR( _ver_user ), 7)
 
 return _ver_user
 

@@ -1402,6 +1402,14 @@ if time_out == NIL
     time_out := dev_params["timeout"]
 endif
 
+// TEST rezim
+if dev_params["print_fiscal"] == "T"
+    // sacekaj malo, vrati fiskalni broj 100 i izadji...
+    sleep(4)
+    fiscal_no := 100
+    return _err_level
+endif
+
 _time := time_out
 
 // primjer: c:\fprint\answer\answer.txt

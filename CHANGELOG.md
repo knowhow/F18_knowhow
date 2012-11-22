@@ -1,3 +1,7 @@
+1.3.75 2012-11-22, vsasa
+
+  - semafori, bugfix [#29667](http://redmine.bring.out.ba/issues/29667)
+ 
 1.3.74 2012-11-21, vsasa
 
   - fiskalne funkcije, tarifa, bugfix [#29663](http://redmine.bring.out.ba/issues/29663)

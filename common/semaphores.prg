@@ -485,7 +485,7 @@ return
 // - push_operation - false - samo citamo podatke
 //
 // --------------------------------------------------------------------------------------------
-function update_semaphore_version(table, push_operation)
+function update_semaphore_version_after_push(table)
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -498,14 +498,12 @@ local _versions
 local _a_dbf_rec
 local _ret_ver
 
-log_write( "START: update semaphore version", 9 )
+log_write( "START: update semaphore version after push", 7)
 
 _a_dbf_rec := get_a_dbf_rec(table)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
-
 _result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
-
 _versions := get_semaphore_version_h(table)
 
 _last_ver := _versions["last_version"]
@@ -517,51 +515,33 @@ endif
 
 _ver_user := _last_ver
 
-if push_operation
-   _ver_user++
-endif
+_ver_user++
 
 if ( _result == 0 )
 
     _id_full := "ARRAY[" + _sql_quote("#F") + "]"
-
     // user po prvi put radi sa tabelom semafora, iniciraj full sync
     _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
                "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
     _ret := _sql_query( _server, _qry)
 
-    log_write( "update semaphore version, dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
+    log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
 
 endif
 
-if push_operation
+// svim userima setuj last_trans_version
+_qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR(_ver_user)
+//_ret := _sql_query( _server, _qry )
 
-    // svim userima setuj last_trans_version
-    _qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR(_ver_user)
-    //_ret := _sql_query( _server, _qry )
+// kod svih usera verzija ne moze biti veca od nLast + 1
+_qry += ";"
+_qry += "UPDATE " + _tbl + " SET version=" + STR(_ver_user) + ;
+        " WHERE version > " + STR(_ver_user)
 
-    // kod svih usera verzija ne moze biti veca od nLast + 1
-    _qry += ";"
-    _qry += "UPDATE " + _tbl + " SET version=" + STR(_ver_user) + ;
-            " WHERE version > " + STR(_ver_user)
+// dva sql statementa u jedan query provjeriti da li ovo radi pa izbrisati komentar
+_ret := _sql_query( _server, _qry )
 
-    // dva sql statementa u jedan query provjeriti da li ovo radi pa izbrisati komentar
-    _ret := _sql_query( _server, _qry )
-
-    log_write( "update semaphore PUSH_OP, table: " + _tbl + " update last_ver = " + STR( _last_ver + 1 ), 8 )
-
-else
-
-    // nakon citanja za usera postavi posljednju verziju semafora
-    _qry := "UPDATE " + _tbl
-    _qry += " SET version=" + STR(_ver_user) + ", ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user)
-    _ret := _sql_query( _server, _qry )
-
-    log_write( "update semaphore version READ_OP, table: " + _tbl+ ", select version za " + _user + " version = " + _ver_user , 7 )
-
-endif
-
-log_write( "END: update semaphore version", 9 )
+log_write( "END: update semaphore version after push " + _user + " last_ver=" + _ver_user, 7)
 
 return _ver_user
 

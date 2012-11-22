@@ -17,21 +17,9 @@ F18_INSTALL_ROOT=/opt/knowhowERP
 
 
 
-# export HB_INC_COMPILE=c:\harbour\include
-
-# HB_INC_MYSQL=C:\mysql\5.0\include
-# HB_LIB_MYSQL=c:\mysql\5.0\lib\opt
-
 CUR_USER=`whoami`
 CUR_DIR=`pwd`
 export HB_INSTALL_PREFIX=$CUR_DIR/hbout
-
-# export HB_WITH_CURL=C:\\MinGW\\build\\include
-# export HB_WITH_QT=${QT_DIR}\\include
-
-# export HB_WITH_PGSQL=C:\\PostgreSQL\\9.1\\include
-
-# export HB_WITH_MYSQL=c:\\MySQL\\include
 
 export HB_WITH_SQLITE3=yes
 
@@ -130,7 +118,7 @@ function install_harbour {
 HRB_FILE=harbour_ubuntu_i686_3.1.0.tar.bz2
 
 rm ${HRB_FILE}
-wget $GCODE_URL_ROOT/${HRB_FILE}.tar.bz2
+wget $GCODE_URL_ROOT/${HRB_FILE}
 
 tar -C . -jxf $HRB_FILE
 }

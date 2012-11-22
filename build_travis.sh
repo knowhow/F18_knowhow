@@ -96,7 +96,7 @@ echo $SQL | psql -U postgres
 function create_databases {
 #pg_dump -h localhost -U postgres f18_test > f18_test.sql
 echo "CREATE database f18_test" | psql -U postgres
-psql -U postgres f18_test < test/data/f18_test.sql
+psql -U postgres f18_test < test/data/f18_test.sql > create_databases.log
 }
 
 function install_jod_reports {
@@ -125,6 +125,16 @@ wget $GCODE_URL_ROOT_F18/${TPL_FILE}.tar.bz2
 tar -C $F18_INSTALL_ROOT -jxf ${TPL_FILE}.tar.bz2
 }
 
+function install_harbour {
+
+HRB_FILE=harbour_ubuntu_i686_3.1.0.tar.bz2
+
+rm ${HRB_FILE}
+wget $GCODE_URL_ROOT/${HRB_FILE}.tar.bz2
+
+tar -C . -jxf $HRB_FILE
+}
+
 function run_tests {
 ./F18_test > F18.test.log
 
@@ -133,12 +143,18 @@ cat F18.test.log
 grep -q "Test calls failed:[ ]*0" F18.test.log
 }
 
-build_harbour
+#build_harbour
+install_harbour
 
 build_f18_test
 create_roles
 create_databases
 
+if [[ "$?" != "0" ]]
+then
+   echo "problem kod kreiranja baza"
+   cat create_databases.log
+fi
 
 #sudo apt-get install openjdk-6-jre
 install_jod_reports

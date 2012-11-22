@@ -497,7 +497,7 @@ local _versions
 local _a_dbf_rec
 local _ret_ver
 
-log_write( "START: update semaphore version after push", 7)
+log_write( "START: update semaphore version after push", 7 )
 
 _a_dbf_rec := get_a_dbf_rec(table)
 
@@ -540,7 +540,7 @@ _qry += "UPDATE " + _tbl + " SET version=" + STR(_ver_user) + ;
 // dva sql statementa u jedan query provjeriti da li ovo radi pa izbrisati komentar
 _ret := _sql_query( _server, _qry )
 
-log_write( "END: update semaphore version after push " + _user + " last_ver=" + STR( _ver_user ), 7)
+log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + STR( _ver_user ), 7)
 
 return _ver_user
 

@@ -175,7 +175,7 @@ _qry += " WHERE user_code =" + _sql_quote(_user)
 _update_obj := _sql_query( _server, _qry )
 
 
-IF (_tbl_obj == NIL) .or. (_qry_obj == NIL)
+IF (_tbl_obj == NIL) .or. (_update_obj == NIL)
       MsgBeep( "problem sa:" + _qry)
       sql_table_update(nill, "ROLLBACK")
       QUIT

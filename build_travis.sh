@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+GCODE_URL_ROOT_F18=http://knowhow-erp-f18.googlecode.com/files
+GCODE_URL_ROOT=http://knowhow-erp.googlecode.com/files
+F18_INSTALL_ROOT=/opt/knowhowERP
+
 # export QT_DIR=c:/knowhowERP/Qt
 
 # export QT_DIR=c:\\Qt\\4.7.4
@@ -17,6 +22,7 @@
 # HB_INC_MYSQL=C:\mysql\5.0\include
 # HB_LIB_MYSQL=c:\mysql\5.0\lib\opt
 
+CUR_USER=`whoami`
 CUR_DIR=`pwd`
 export HB_INSTALL_PREFIX=$CUR_DIR/hbout
 
@@ -33,6 +39,8 @@ export HB_WITH_SQLITE3=yes
 export PATH=$PATH:$HB_INSTALL_PREFIX/bin
 
 function build_harbour {
+git submodule init
+git submodule update
 cd harbour/harbour
 make
 make install
@@ -93,31 +101,56 @@ psql -U postgres f18_test < test/data/f18_test.sql
 
 function install_jod_reports {
 
-GCODE_URL_ROOT_F18=http://knowhow-erp-f18.googlecode.com/files
-GCODE_URL_ROOT=http://knowhow-erp.googlecode.com/files
-
 D_FILE=jodreports-cli.jar
 wget -q -nc $GCODE_URL_ROOT/$D_FILE
 
 DEST="/opt/knowhowERP/util/"
-
 sudo mkdir -p $DEST
+sudo chown $CUR_USER $DEST
 sudo cp $D_FILE  $DEST
 
+DEST_TPL="/opt/knowhowERP/template/"
+sudo mkdir -p $DEST_TPL
+sudo chown $CUR_USER $DEST_TPL
 
 }
 
-build_harbour
+function install_template {
+
+	    
+TPL_FILE=F18_template_${TPL_VER}
+
+rm ${TPL_FILE}.tar.bz2
+wget $GCODE_URL_ROOT_F18/${TPL_FILE}.tar.bz2
+
+tar -C $F18_INSTALL_ROOT -jxf ${TPL_FILE}.tar.bz2
+}
+
+function run_tests {
+./F18_test > F18.test.log
+
+cat F18.test.log
+
+grep -q "Test calls failed:[ ]*0" F18.test.log
+}
+
+#build_harbour
 
 build_f18_test
 
-create_roles
-create_databases
+#create_roles
+#create_databases
 
 #Xvfb :1 -screen 1 1024x768x16 &
 
 #sudo apt-get install openjdk-6-jre
 install_jod_reports
 
+TPL_VER="1.2.6"
+install_template
+# trebamo samo f-std.odt
+rm $F18_INSTALL_ROOT/template/f-std?.odt
+rm $F18_INSTALL_ROOT/template/f-std??.odt
+
 #export DISPLAY=:1
-./F18_test
+run_tests

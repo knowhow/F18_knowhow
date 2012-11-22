@@ -25,6 +25,9 @@ set_a_dbf_sifarnik(_table_name   , "F18_TEST"     , 500      )
 
 AADD(_dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
 AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
+
+// moramo inicijalno napuniti semafor
+reset_semaphore_version(_table_name)
        
 DBCREATE2(_table_name, _dbf_struct)
 

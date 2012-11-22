@@ -221,35 +221,27 @@ do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip
 enddo
 
 if _ok == .t.
- 
     @ m_x + 2, m_y + 2 SAY "fakt_doks -> server: " + _tmp_id 
-   
     AADD( _ids_doks, _tmp_id )
     SELECT fakt_pripr
     _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
     if !sql_table_update( "fakt_doks", "ins", _record )
         _ok := .f.
     endif
-   
 endif
 
 if _ok == .t.
- 
     @ m_x + 3, m_y + 2 SAY "fakt_doks2 -> server: " + _tmp_id 
-    
     AADD( _ids_doks2, _tmp_id )
     _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
     SELECT fakt_pripr
     if !sql_table_update("fakt_doks2", "ins", _record )
         _ok := .f.
     endif
-   
 endif
 
 if !_ok
-
     _msg := "FAKT sql azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
-
     log_write( _msg, 2 )
     MsgBeep(_msg )
     // transakcija neuspjesna
@@ -258,7 +250,6 @@ if !_ok
 
     // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-
 else
 
     @ m_x+4, m_y+2 SAY "push ids to semaphore: " + _tmp_id
@@ -268,11 +259,9 @@ else
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-    
     sql_table_update(nil, "END")
 
     log_write( "FAKT, azuriranje dokumenta - END", 3 )
-
 endif
 
 BoxC()

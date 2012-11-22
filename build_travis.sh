@@ -51,8 +51,8 @@ fi
 
 export HB_COMPILER=gcc
 
-export HB_INC_INSTALL=$HARBOUR_ROOT/include
-export HB_LIB_INSTALL=$HARBOUR_ROOT/lib
+export HB_INC_INSTALL=$HARBOUR_ROOT/include/harbour
+export HB_LIB_INSTALL=$HARBOUR_ROOT/lib/harbour
 
 echo "HB_INC_INSTALL=$HB_INC_INSTALL, $HB_LIB_INSTALL=$HB_LIB_INSTALL"
 . ./build_test.sh

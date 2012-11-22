@@ -254,13 +254,17 @@ else
 
     @ m_x+4, m_y+2 SAY "push ids to semaphore: " + _tmp_id
 
+    //msgo("Spavam pred push ids...")
+    //sleep(10)
+    //msgc()
+
     push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
     push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
-    msgo("Spavam...")
-    sleep(5)
-    msgc()
+    //msgo("Spavam nakon push ids")
+    //sleep(10)
+    //msgc()
 
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
     sql_table_update(nil, "END")

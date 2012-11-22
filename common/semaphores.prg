@@ -560,7 +560,7 @@ log_write( "START: nuliraj ids-ove - user: " + _user, 7)
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 _qry := "UPDATE " + _tbl + " SET " 
-_qry += " ids=NULL , dat=NULL, "
+_qry += " ids=NULL , dat=NULL,"
 _qry += " version=last_trans_version"
 _qry += " WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )

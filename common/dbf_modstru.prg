@@ -48,11 +48,12 @@ local _msg
 
 close all
 
+log_write("Modstru cmd: " + pp(a_commands), 7)
+
 Box(, 6, 65, .f., "DBF modstru")
 
 @ m_x + 1, m_y + 2 SAY "DBF modifikacija struktura"
 
-//SET AUTOPEN OFF
 
 _ime_dbf:=""
 _path := my_home()
@@ -69,7 +70,6 @@ for each _lin in a_commands
        
        _lin := substr(_lin, 2, len(trim(_lin))-1)
 
-       // fin_budzet
        _ime_dbf := ALLTRIM(_lin)
 
 
@@ -114,7 +114,6 @@ kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_c
 log_write("END modstru ", 2)
 
 BoxC()
-//SET AUTOPEN ON 
 close all
 return
 

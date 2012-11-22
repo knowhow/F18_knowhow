@@ -117,7 +117,6 @@ sudo chown $CUR_USER $DEST_TPL
 
 function install_template {
 
-	    
 TPL_FILE=F18_template_${TPL_VER}
 
 rm ${TPL_FILE}.tar.bz2
@@ -134,23 +133,28 @@ cat F18.test.log
 grep -q "Test calls failed:[ ]*0" F18.test.log
 }
 
-#build_harbour
+build_harbour
 
 build_f18_test
+create_roles
+create_databases
 
-#create_roles
-#create_databases
-
-#Xvfb :1 -screen 1 1024x768x16 &
 
 #sudo apt-get install openjdk-6-jre
 install_jod_reports
 
 TPL_VER="1.2.6"
 install_template
+
 # trebamo samo f-std.odt
 rm $F18_INSTALL_ROOT/template/f-std?.odt
 rm $F18_INSTALL_ROOT/template/f-std??.odt
 
+#http://about.travis-ci.org/docs/user/gui-and-headless-browsers/
+
 #export DISPLAY=:1
+export DISPLAY=:99.0
+
+#Xvfb :1 -screen 1 1024x768x16 &
+#sh -e /etc/init.d/xvfb start
 run_tests

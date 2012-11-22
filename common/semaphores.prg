@@ -319,8 +319,8 @@ _result := table_count( _tbl, "user_code=" + _sql_quote(_user))
 log_write( "reset semaphore table: " + table + ", poceo", 9 )
 
 if ( _result == 0 )
-    _qry := "INSERT INTO " + _tbl + "(user_code, version) " + ;
-               "VALUES(" + _sql_quote(_user)  + ", -1 )"
+    _qry := "INSERT INTO " + _tbl + "(user_code, last_trans_version, version) " + ;
+               "VALUES(" + _sql_quote(_user)  + ", -1, -1 )"
 else
     _qry := "UPDATE " + _tbl + " SET version=-1 WHERE user_code =" + _sql_quote(_user) 
 endif
@@ -561,7 +561,7 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 
 _qry := "UPDATE " + _tbl + " SET " 
 _qry += " ids=NULL , dat=NULL, "
-_qry += " version=(CASE WHEN last_trans_version IS NULL THEN -1 ELSE last_trans_version END ) "
+_qry += " version=last_trans_version"
 _qry += " WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 

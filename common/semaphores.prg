@@ -561,7 +561,7 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 
 _qry := "UPDATE " + _tbl + " SET " 
 _qry += " ids=NULL , dat=NULL, "
-_qry += " version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END ) "
+_qry += " version=(CASE WHEN last_trans_version IS NULL THEN -1 ELSE last_trans_version END ) "
 _qry += " WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 

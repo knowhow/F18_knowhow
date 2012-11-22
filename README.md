@@ -1,4 +1,7 @@
-# F18
+# F18 knowhowERP
+
+[![Build
+Status](https://secure.travis-ci.org/knowhow/F18_knowhow.png?branch=master)](https://travis-ci.org/knowhow/F18_knowhow)
 
 ## dev environment MAC
 

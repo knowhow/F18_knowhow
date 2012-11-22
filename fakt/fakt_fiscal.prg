@@ -86,6 +86,11 @@ endif
 // pripremi mi matricu sa stavkama racuna
 _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _partn_data )
 
+// da nije slucajno NIL ???
+if VALTYPE( _items_data ) == "L"
+    return _err_level
+endif
+
 do case
 
     case _dev_drv == "TEST"

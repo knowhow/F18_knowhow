@@ -125,11 +125,12 @@ tar -C . -jxf $HRB_FILE
 }
 
 function run_tests {
-./F18_test > F18.test.log
+#./F18_test > F18.test.log
 
-cat F18.test.log
+#cat F18.test.log
 
-grep -q "Test calls failed:[ ]*0" F18.test.log
+#grep -q "Test calls failed:[ ]*0" F18.test.log
+./F18_test | grep -q "Test calls failed:[ ]*0" F18.test.log
 }
 
 #build_harbour

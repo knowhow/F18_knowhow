@@ -513,7 +513,7 @@ if VALTYPE(x) == "N"
 endif
 
 #ifdef TEST
-   return 100
+   return 7
 #else
    return __log_level
 #endif

@@ -21,6 +21,9 @@ local _i, _ids_queries
 local _zap
 
 _ids_queries := create_queries_from_ids(dbf_table)
+// ODMAH uradi update verzije svog bez povecanja verzije (.f.)
+update_semaphore_version(dbf_table, .f.)
+
 
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
 //  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
@@ -68,10 +71,6 @@ for _i := 1 TO LEN(_ids_queries["ids"])
 
     endif
 next
-
-// na kraju uradi update verzije semafora bez povecanja verzije (.f.)
-// takodje ne pokusavaj sinhronizirati podatke da ne udjes u beskonacnu petlju (.f.)
-update_semaphore_version(dbf_table, .f., .f.)
 
 
 log_write( "END ids_synchro", 9 )
@@ -141,10 +140,8 @@ _ret := _sql_query( _server, _qry )
 
 log_write( "END push_ids_to_semaphore", 9 )
 
-// na kraju uradi update verzije semafora
-// nema se potrebe proveravati stanje synchronizacije s obzirom da su
-// su kod azuriranja tabele zakljucane
-update_semaphore_version(table, .t., .f.)
+// na kraju uradi update verzije semafora, push operacija
+update_semaphore_version(table, .t.)
 
 if VALTYPE(_ret) == "O"
     return .t.

@@ -153,7 +153,7 @@ endif
 //---------------------------------------
 function get_ids_from_semaphore( table )
 local _tbl
-local _tbl_obj
+local _tbl_obj, _update_obj
 local _qry
 local _ids, _num_arr, _arr, _i
 LOCAL _server := pg_server()
@@ -164,21 +164,25 @@ log_write( "START get_ids_from_semaphore", 7)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
-//http://www.postgresql.org/docs/9.0/static/sql-select.html
-_qry := "BEGIN;"
-_qry += "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
-_qry += "FOR UPDATE;"
-_qry += "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
-_qry += " WHERE user_code =" + _sql_quote(_user) 
-_qry += ";"
-_qry += "COMMIT;"
+sql_table_update(nil, "BEGIN")
 
+_qry += "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 _tbl_obj := _sql_query( _server, _qry )
 
-IF _tbl_obj == NIL
+
+_qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
+_qry += " WHERE user_code =" + _sql_quote(_user) 
+_update_obj := _sql_query( _server, _qry )
+
+
+IF (_tbl_obj == NIL) .or. (_qry_obj == NIL)
       MsgBeep( "problem sa:" + _qry)
+      sql_table_update(nill, "ROLLBACK")
       QUIT
 ENDIF
+
+sql_table_update(nil, "END")
+
 
 _ids := _tbl_obj:Fieldget(1)
 

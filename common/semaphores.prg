@@ -589,9 +589,8 @@ _qry := "UPDATE " + _tbl + " SET "
 _qry += " ids=NULL , dat=NULL, version=" + STR(_last_ver)  + "  WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
-log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL, " + ;
-           "version=" + STR(_version) + ", last_version=" + (_last_version)
-            _sem_status, 7 )
+log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL, version=" +;
+            STR(_version) + ", last_version=" + STR(_last_version), 7 )
 
 log_write( "END: nuliraj ids-ove", 7)
 

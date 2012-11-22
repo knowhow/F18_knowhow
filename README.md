@@ -16,4 +16,3 @@ rezultat treba biti F18:
 ./F18
 ```
 
-https://travis-ci.org/knowhow/F18_knowhow

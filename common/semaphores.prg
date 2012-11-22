@@ -339,55 +339,6 @@ log_write( "reset semaphore, table: " + table + ", zavrsio", 9 )
 return _ret:Fieldget(1)
 
 
-
-// ----------------------------------------------------------------------
-// nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
-// ------------------------------------------------------------------------
-function nuliraj_ids_and_update_my_semaphore_ver(table)
-local _tbl
-local _ret
-local _user := f18_user()
-local _server := pg_server()
-local _free
-local _sem_status
-
-// druga varijanta je da je vec "locked_by_me"
-// tabele ne bi smjela biti "lock" (zakljucana od drugog usera) ako se nalazimo ovdje 
-_sem_status := get_semaphore_status( table )
-_free := ( _sem_status == "free")
-
-if _free
-    // tokom nuliranja semafora ne dozvoli drugima promjene na tabeli
-    lock_semaphore(table, "lock") 
-endif
-
- 
-log_write( "START: nuliraj ids-ove", 9 )
-
-_tbl := "fmk.semaphores_" + LOWER(table)
-
-_qry := "UPDATE " + _tbl + " SET " 
-_qry += " ids=NULL , dat=NULL WHERE user_code =" + _sql_quote(_user) 
- 
-_ret := _sql_query( _server, _qry )
-
-log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL, stanje tabele: " + ;
-            _sem_status, 7 )
-
-log_write( "END: nuliraj ids-ove", 9 )
-
-// na kraju uradi update svog semafora - read operacija
-update_semaphore_version( table, .f.)
-
-if _free
-    // ako je bila slobodna prije nuliranja, neka to bude i sada
-    lock_semaphore( table, "free" ) 
-endif
-
-return _ret
-
-
-
 //---------------------------------------
 // date algoritam
 //---------------------------------------
@@ -613,3 +564,37 @@ endif
 log_write( "END: update semaphore version", 9 )
 
 return _ver_user
+
+// ----------------------------------------------------------------------
+// nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
+// ------------------------------------------------------------------------
+function nuliraj_ids_and_update_my_semaphore_ver(table)
+local _tbl
+local _ret
+local _user := f18_user()
+local _server := pg_server()
+local _free
+local _sem_status
+local _versions, _last_ver, _version
+
+_versions := get_semaphore_version_h(table)
+_last_ver := _versions["last_version"]
+_version  := _versions["version"]
+
+log_write( "START: nuliraj ids-ove", 7)
+
+_tbl := "fmk.semaphores_" + LOWER(table)
+
+_qry := "UPDATE " + _tbl + " SET " 
+_qry += " ids=NULL , dat=NULL, version=" + STR(_last_ver)  + "  WHERE user_code =" + _sql_quote(_user) 
+_ret := _sql_query( _server, _qry )
+
+log_write( "nuliraj ids-ove, table: " + table + ", user: " + _user + " set ids = NULL, " + ;
+           "version=" + STR(_version) + ", last_version=" + (_last_version)
+            _sem_status, 7 )
+
+log_write( "END: nuliraj ids-ove", 7)
+
+return _ret
+
+

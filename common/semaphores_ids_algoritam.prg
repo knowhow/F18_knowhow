@@ -21,8 +21,6 @@ local _i, _ids_queries
 local _zap
 
 _ids_queries := create_queries_from_ids(dbf_table)
-// ODMAH uradi update verzije svog bez povecanja verzije (.f.)
-update_semaphore_version(dbf_table, .f.)
 
 
 //  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
@@ -57,9 +55,8 @@ do while .t.
 enddo
 
 for _i := 1 TO LEN(_ids_queries["ids"])
- 
+
     log_write( "ids_synchro ids_queries/2: " + pp( _ids_queries["ids"][_i]  ), 9 )
-   
     // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
     if _ids_queries["ids"][_i] != NIL
 
@@ -242,7 +239,6 @@ for _i := 1 to LEN(_alg)
 next
 
 _ids := get_ids_from_semaphore( table )
-
 nuliraj_ids_and_update_my_semaphore_ver(table)
 
 
@@ -304,7 +300,6 @@ for _i := 1 to LEN(_alg)
         _sql_ids[_i] := LEFT(_sql_ids[_i], LEN(_sql_ids[_i]) - 1)
         _sql_ids[_i] += ")"
         _queries[_i] +=  "(" + _alg[_i]["sql_in"]  + ") IN " + _sql_ids[_i]
-  
     else
         _queries[_i] := NIL
     endif

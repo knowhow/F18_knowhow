@@ -166,7 +166,7 @@ _tbl := "fmk.semaphores_" + LOWER(table)
 
 sql_table_update(nil, "BEGIN")
 
-_qry += "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+_qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 _tbl_obj := _sql_query( _server, _qry )
 
 

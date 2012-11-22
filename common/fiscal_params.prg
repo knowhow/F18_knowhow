@@ -723,22 +723,37 @@ _param["timeout"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_time_out", NI
 _param["vp_sum"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
 _param["restart_service"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
 
-// user parametri
-_out_dir := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
+#ifdef TEST
+   _out_dir := "/tmp/"
+#else
+   // user parametri
+  _out_dir := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
+#endif
 
 // ako nema podesen output dir, onda znamo i da user nije setovan...
 if EMPTY( _out_dir )
     return NIL
 endif
 
-_param["out_dir"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
-_param["out_file"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_file", _user_name, "" )
-_param["out_answer"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _user_name, "" )
-_param["op_id"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_id", _user_name, "" ) 
-_param["op_pwd"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, "" )
-_param["print_a4"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, "N" )
-_param["print_fiscal"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, "D" )
-_param["op_docs"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" )
+#ifdef TEST
+   _param["out_dir"]  := "/tmp/"
+   _param["out_file"] := "fiscal.txt"
+   _param["out_answer"] := "answer.txt"
+   _param["op_id"] := "01"
+   _param["op_pwd"] := "00"
+   _param["print_a4"] := "N"
+   _param["print_fiscal"] := "T"
+   _param["op_docs"] := ""
+#else
+  _param["out_dir"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
+  _param["out_file"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_file", _user_name, "" )
+  _param["out_answer"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _user_name, "" )
+  _param["op_id"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_id", _user_name, "" ) 
+  _param["op_pwd"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, "" )
+  _param["print_a4"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, "N" )
+  _param["print_fiscal"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, "D" )
+  _param["op_docs"] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" )
+#endif
 
 // chekiranje parametara 
 if !post_check( _param )

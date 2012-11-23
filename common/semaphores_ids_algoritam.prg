@@ -185,21 +185,21 @@ _tbl_obj := _sql_query( _server, _qry )
 
 _qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
 _qry += " WHERE user_code =" + _sql_quote(_user) 
-_update_obj := _sql_query( _server, _qry )
+_update_obj := _sql_query( _server, _qry, .t. )
 
 
 IF ( _tbl_obj == NIL ) .or. ( _update_obj == NIL ) .or. ( VALTYPE( _update_obj ) == "L" .and. _update_obj == .f. )
       log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !")
-      sql_table_update( nil, "ROLLBACK")
+      sql_table_update( nil, "ROLLBACK", nil, nil, .t. )
       // retry !
-      return get_ids_from_semaphore(table)
+      return get_ids_from_semaphore( table )
       // ne idi dalje - u rekurzivnom pozivu se obavilo sve sto treba
 ENDIF
 
 if _log_level > 6
 
     // uzmi verziju i stanje verzija na kraju transakcije
-    _versions := get_semaphore_version_h( LOWER(table) )
+    _versions := get_semaphore_version_h( LOWER( table ) )
 
     _tmp := "nakon UPDATE, tabela: " + LOWER( table )
     _tmp += " version: " + ALLTRIM( STR( _versions["version"] ) )

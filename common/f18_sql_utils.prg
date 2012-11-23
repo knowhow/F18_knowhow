@@ -36,7 +36,7 @@ return _sql_fields
 
 //-------------------------------------------------
 // -------------------------------------------------
-function sql_table_update(table, op, record, where_str )
+function sql_table_update( table, op, record, where_str, silent )
 local _i, _tmp, _tmp_2, _msg
 LOCAL _ret
 LOCAL _result
@@ -51,6 +51,9 @@ local _len
 local _a_dbf_rec, _alg
 local _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
 
+if silent == NIL
+    silent := .f.
+endif
 
 if op $ "ins#del"
 
@@ -156,7 +159,7 @@ DO CASE
 
 END CASE
    
-_ret := _sql_query( _server, _qry)
+_ret := _sql_query( _server, _qry, silent )
 
 log_write( "sql table update, table: " + IF(table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8 )
 log_write( "sql table update, VALTYPE(_ret): " + VALTYPE(_ret), 9 )
@@ -229,17 +232,25 @@ return _qry_obj
 
 
 // pomoćna funkcija za sql query izvršavanje
-function _sql_query( oServer, cQuery )
+function _sql_query( oServer, cQuery, silent )
 local oResult, cMsg
+
+if silent == NIL
+    silent := .f.
+endif
 
 oResult := oServer:Query( cQuery + ";")
 
 IF oResult:NetErr()
 
-      cMsg := oResult:ErrorMsg()
-      log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 3 )
-      MsgBeep( cMsg )
-      return .f.
+    cMsg := oResult:ErrorMsg()
+    log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 3 )
+
+    if !silent 
+        MsgBeep( cMsg )
+    endif
+    
+    return .f.
 
 ELSE
 

@@ -156,15 +156,28 @@ local _tbl
 local _tbl_obj, _update_obj
 local _qry
 local _ids, _num_arr, _arr, _i
-LOCAL _server := pg_server()
+local _server := pg_server()
 local _user := f18_user()
-local _tok
+local _tok, _versions, _tmp
+local _log_level := log_level()
 
 log_write( "START get_ids_from_semaphore", 7)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 sql_table_update(nil, "BEGIN")
+
+if _log_level > 6
+
+    // uzmi verziju i stanje iz semafora prije pocetka
+    _versions := get_semaphore_version_h( LOWER(table) )
+
+    _tmp := "prije SELECT, version: " + _versions["version"]
+    _tmp += " last version: " + _versions["last_version"] 
+
+    log_write( _tmp  , 7 )
+
+endif
 
 _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 _tbl_obj := _sql_query( _server, _qry )
@@ -181,8 +194,19 @@ IF (_tbl_obj == NIL) .or. (_update_obj == NIL)
       QUIT
 ENDIF
 
-sql_table_update(nil, "END")
+if _log_level > 6
 
+    // uzmi verziju i stanje verzija na kraju transakcije
+    _versions := get_semaphore_version_h( LOWER(table) )
+
+    _tmp := "nakon UPDATE, version: " + _versions["version"]
+    _tmp += " last version: " + _versions["last_version"] 
+
+    log_write( _tmp  , 7 )
+
+endif
+
+sql_table_update(nil, "END")
 
 _ids := _tbl_obj:Fieldget(1)
 

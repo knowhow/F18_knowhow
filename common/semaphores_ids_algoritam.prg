@@ -151,7 +151,7 @@ endif
 //---------------------------------------
 // vrati matricu id-ova za dbf tabelu
 //---------------------------------------
-function get_ids_from_semaphore( table )
+function get_ids_from_semaphore(table)
 local _tbl
 local _tbl_obj, _update_obj
 local _qry
@@ -192,9 +192,10 @@ _update_obj := _sql_query( _server, _qry )
 
 
 IF (_tbl_obj == NIL) .or. (_update_obj == NIL)
-      MsgBeep( "problem sa:" + _qry)
+      log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !")
       sql_table_update(nill, "ROLLBACK")
-      QUIT
+      // retry !
+      get_ids_from_semaphore(table)
 ENDIF
 
 if _log_level > 6

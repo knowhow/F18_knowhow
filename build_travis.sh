@@ -51,8 +51,8 @@ fi
 
 export HB_COMPILER=gcc
 
-export HB_INC_INSTALL=$HARBOUR_ROOT/include/harbour
-export HB_LIB_INSTALL=$HARBOUR_ROOT/lib/harbour
+export HB_INC_INSTALL=$HARBOUR_ROOT/include
+export HB_LIB_INSTALL=$HARBOUR_ROOT/lib
 
 echo "HB_INC_INSTALL=$HB_INC_INSTALL, $HB_LIB_INSTALL=$HB_LIB_INSTALL"
 . ./build_test.sh
@@ -116,7 +116,7 @@ tar -C $F18_INSTALL_ROOT -jxf ${TPL_FILE}.tar.bz2
 
 function install_harbour {
 
-HRB_FILE=harbour_ubuntu_i686_3.1.0.tar.bz2
+HRB_FILE=harbour_travis.tar.bz2
 
 rm ${HRB_FILE}
 wget $GCODE_URL_ROOT/${HRB_FILE}
@@ -161,7 +161,6 @@ rm $F18_INSTALL_ROOT/template/f-std??.odt
 #http://about.travis-ci.org/docs/user/gui-and-headless-browsers/
 
 #export DISPLAY=:1
-export DISPLAY=:99.0
 
 #Xvfb :1 -screen 1 1024x768x16 &
 #sh -e /etc/init.d/xvfb start

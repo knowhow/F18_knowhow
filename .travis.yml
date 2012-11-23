@@ -8,3 +8,4 @@ before_install:
   - sleep 3
   #- sudo apt-get install the packages that you need
   - java -version
+  - export DISPLAY=:99.0

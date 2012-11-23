@@ -166,7 +166,6 @@ log_write( "START get_ids_from_semaphore", 7)
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 run_sql_query("BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
-//sql_table_update(nil, "BEGIN")
 
 if _log_level > 6
 
@@ -196,6 +195,8 @@ IF ( _tbl_obj == NIL ) .or. ( _update_obj == NIL ) .or. ( VALTYPE( _update_obj )
       sql_table_update( nil, "ROLLBACK")
       // retry !
       get_ids_from_semaphore(table)
+      // ne idi dalje - u rekurzivnom pozivu se obavilo sve sto treba
+      return
 ENDIF
 
 if _log_level > 6

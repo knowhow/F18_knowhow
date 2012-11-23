@@ -154,6 +154,10 @@ DO CASE
         
         _qry += ")"
 
+    OTHERWISE
+        // drugi slucajevi
+        _qry := op
+
 END CASE
    
 _ret := _sql_query( _server, _qry)

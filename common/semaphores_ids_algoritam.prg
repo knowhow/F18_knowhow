@@ -165,7 +165,7 @@ log_write( "START get_ids_from_semaphore", 7)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
-sql_table_update(nil, "BEGIN")
+sql_table_update(nil, "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALZABLE")
 
 if _log_level > 6
 

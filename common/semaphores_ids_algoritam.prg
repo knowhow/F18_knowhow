@@ -194,9 +194,8 @@ IF ( _tbl_obj == NIL ) .or. ( _update_obj == NIL ) .or. ( VALTYPE( _update_obj )
       log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !")
       sql_table_update( nil, "ROLLBACK")
       // retry !
-      get_ids_from_semaphore(table)
+      return get_ids_from_semaphore(table)
       // ne idi dalje - u rekurzivnom pozivu se obavilo sve sto treba
-      return
 ENDIF
 
 if _log_level > 6
@@ -283,8 +282,7 @@ for _i := 1 to LEN(_alg)
 next
 
 _ids := get_ids_from_semaphore( table )
-nuliraj_ids_and_update_my_semaphore_ver(table)
-
+//nuliraj_ids_and_update_my_semaphore_ver(table)
 
 log_write("create_queries..(), poceo", 9 )
 

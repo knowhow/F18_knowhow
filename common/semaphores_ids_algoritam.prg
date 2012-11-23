@@ -183,8 +183,6 @@ endif
 _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 _tbl_obj := _sql_query( _server, _qry )
 
-altd()
-
 _qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
 _qry += " WHERE user_code =" + _sql_quote(_user) 
 _update_obj := _sql_query( _server, _qry )

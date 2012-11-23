@@ -2,7 +2,7 @@
 
 function harbour_base()
 
-TEST_LINE( hb_ValToStr( 4 )                     , "         4"    )
+TEST_LINE( hb_ValToStr( 3 )                     , "         4"    )
 TEST_LINE( hb_ValToStr( 4.0 / 2 )               , "         2.00" )
 TEST_LINE( hb_ValToStr( "String" )              , "String"        )
 TEST_LINE( hb_ValToStr( hb_SToD( "20010101" ) ) , "01.01.01"    )

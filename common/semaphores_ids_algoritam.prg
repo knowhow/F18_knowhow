@@ -172,8 +172,8 @@ if _log_level > 6
     // uzmi verziju i stanje iz semafora prije pocetka
     _versions := get_semaphore_version_h( LOWER(table) )
 
-    _tmp := "prije SELECT, version: " + _versions["version"]
-    _tmp += " last version: " + _versions["last_version"] 
+    _tmp := "prije SELECT, version: " + ALLTRIM( STR( _versions["version"] ) )
+    _tmp += " last version: " + ALLTRIM( STR( _versions["last_version"] ) )
 
     log_write( _tmp  , 7 )
 
@@ -199,8 +199,8 @@ if _log_level > 6
     // uzmi verziju i stanje verzija na kraju transakcije
     _versions := get_semaphore_version_h( LOWER(table) )
 
-    _tmp := "nakon UPDATE, version: " + _versions["version"]
-    _tmp += " last version: " + _versions["last_version"] 
+    _tmp := "nakon UPDATE, version: " + ALLTRIM( STR( _versions["version"] ) )
+    _tmp += " last version: " + ALLTRIM( STR( _versions["last_version"] ) )
 
     log_write( _tmp  , 7 )
 

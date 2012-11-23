@@ -17,5 +17,5 @@ cp -av test/*.ch $HB_INC_INSTALL
 
 cp hb_debug.hbm hbmk.hbm
 
-hbmk2 -workdir=.t F18_test.hbp
+hbmk2 -quiet -workdir=.t F18_test.hbp
 

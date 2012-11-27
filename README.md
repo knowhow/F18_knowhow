@@ -3,10 +3,10 @@
 [![Build
 Status](https://secure.travis-ci.org/knowhow/F18_knowhow.png?branch=master)](https://travis-ci.org/knowhow/F18_knowhow)
 
-## dev environment MAC
+## dev environment
 
 <pre>
-$ source scripts/mac_set_envars.sh
+$ source scripts/<ubuntu|mac|win>_set_envars.sh
 $ ./build.sh
 </pre>
 

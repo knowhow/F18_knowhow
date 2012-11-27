@@ -697,6 +697,7 @@ while _o_file:MoreToRead()
 	endif
 
 	// skloni "<" i ">"
+	_err_txt := STRTRAN( _err_txt, '<?xml version="1.0" ?>', "" )
 	_err_txt := STRTRAN( _err_txt, ">", "" )
 	_err_txt := STRTRAN( _err_txt, "<", "" )
 	_err_txt := STRTRAN( _err_txt, "/", "" )
@@ -704,6 +705,12 @@ while _o_file:MoreToRead()
 	_err_txt := STRTRAN( _err_txt, "TremolFpServerOutput", "" )
 	_err_txt := STRTRAN( _err_txt, "Output Change", "OutputChange" )
 	_err_txt := STRTRAN( _err_txt, "Output Total", "OutputTotal" )
+
+    #ifdef __PLATFORM__LINUX
+        // ovo je novi red na linux-u
+	    _err_txt := STRTRAN( _err_txt, CHR(10), "" )
+	    _err_txt := STRTRAN( _err_txt, CHR(9), " " )
+    #endif
 
 	// dobijamo npr.
 	//

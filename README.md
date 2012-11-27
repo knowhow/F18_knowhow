@@ -14,6 +14,7 @@ $ ./F18
 $ 
 $ echo --- build test exe ---
 $ ./build_test.sh
+$ ./F18_test
 $ .
 $ echo --- build release (no debug) exe ---
 $ ./build_release.sh

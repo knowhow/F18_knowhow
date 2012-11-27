@@ -14,7 +14,7 @@ F18_knowhow$ scripts/knowhow_update_test_database
         knowhowERP_package_updater -databaseURL=PSQL7://localhost:5432/f18_test -username=postgres -passwd=admin -debug -file=/home/vagrant/Downloads/f18_db_migrate_package_4.5.2.gz -autorun
 
 
-vagrant@f18-dev-1:~/github/F18_knowhow$ scripts/update_travis_test_database 
+F18_knowhow$ scripts/update_travis_test_database 
 
         brisem fmk.log tabelu
         DELETE 4

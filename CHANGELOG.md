@@ -1,3 +1,11 @@
+1.3.80 2012-11-27, vsasa
+
+  - semafori, izolirane transakcije [#29667](http://redmine.bring.out.ba/issues/29667)
+ 
+1.3.76 2012-11-24, vsasa
+
+  - semafori, promjena logike [#29667](http://redmine.bring.out.ba/issues/29667)
+ 
 1.3.75 2012-11-22, vsasa
 
   - semafori, bugfix [#29667](http://redmine.bring.out.ba/issues/29667)

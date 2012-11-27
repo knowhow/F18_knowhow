@@ -7,14 +7,19 @@ Status](https://secure.travis-ci.org/knowhow/F18_knowhow.png?branch=master)](htt
 
 <pre>
 $ source scripts/(ubuntu | mac | win)_set_envars.sh
+$
+$ echo --- build debug ----
 $ ./build.sh
+$ ./F18
+$ 
+$ echo --- build test exe ---
+$ ./build_test.sh
+$ .
+$ echo --- build release (no debug) exe ---
+$ ./build_release.sh
+$ ./F18
 </pre>
 
-rezultat treba biti F18:
-
-```
-./F18
-```
 
 ## After database upgrade
 

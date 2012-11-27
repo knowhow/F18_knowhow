@@ -16,7 +16,7 @@
   set version to -1
   -------------------------------------------
 */
-function server_log_write(msg)
+function server_log_write( msg, silent )
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -24,24 +24,43 @@ LOCAL _tbl
 LOCAL _user := f18_user()
 LOCAL _server := pg_server()
 
+if silent == NIL
+	silent := .f.
+endif
+
 _tbl := "fmk.log"
 
 msg  := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") : " + msg
 _qry := "INSERT INTO " + _tbl + "(user_code, msg) VALUES(" +  _sql_quote(_user) + "," +  _sql_quote(msg) + ")"
-_ret := _sql_query_no_log( _server, _qry )
+_ret := _sql_query_no_log( _server, _qry, silent )
 
 return .t.
 
 
-static function _sql_query_no_log( srv, qry )
+
+
+static function _sql_query_no_log( srv, qry, silent )
 local _msg, _ret
 
+if silent == NIL
+	silent := .f.
+endif
+
 _ret := srv:Query( qry )
-IF _ret:NetErr()
-      _msg := _ret:ErrorMsg()
-      MsgBeep( _msg )
-      return .f.
-ENDIF
-RETURN _ret
+
+if _ret:NetErr()
+
+	if !silent
+    	_msg := _ret:ErrorMsg()
+      	MsgBeep( _msg )
+	endif
+
+    return .f.
+
+endif
+
+return _ret
+
+
 
 

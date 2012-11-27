@@ -183,13 +183,14 @@ endif
 _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
 _tbl_obj := _sql_query( _server, _qry )
 
+altd()
 _qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
 _qry += " WHERE user_code =" + _sql_quote(_user) 
 _update_obj := _sql_query( _server, _qry, .t. )
 
 
 IF ( _tbl_obj == NIL ) .or. ( _update_obj == NIL ) .or. ( VALTYPE( _update_obj ) == "L" .and. _update_obj == .f. )
-      log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !")
+      log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !", 1, .t. )
       sql_table_update( nil, "ROLLBACK", nil, nil, .t. )
       // retry !
       return get_ids_from_semaphore( table )

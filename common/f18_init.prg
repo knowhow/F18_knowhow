@@ -874,12 +874,16 @@ return .t.
 
 // -------------------------------
 // -------------------------------
-function log_write( msg, level )
+function log_write( msg, level, silent )
 local _msg_time
 
 if level == NIL
     // uzmi defaultni
     level := log_level()
+endif
+
+if silent == NIL
+	silent := .f.
 endif
 
 // treba li logirati ?
@@ -897,7 +901,7 @@ FWRITE( __log_handle, _msg_time + msg + hb_eol() )
 
 #ifndef TEST
 if __server_log
-    server_log_write( msg )
+    server_log_write( msg, silent )
 endif
 #endif
 return

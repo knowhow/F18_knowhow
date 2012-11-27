@@ -84,7 +84,7 @@ if op $ "ins#del"
 
 endif
 
-log_write( "sql table update, poceo", 9 )
+log_write( "sql table update, poceo", 9, silent )
 
 DO CASE
 
@@ -103,7 +103,7 @@ DO CASE
             // brisi kompletnu tabel
             _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
             Alert(_msg)
-            log_write( _msg, 2 )
+            log_write( _msg, 2, silent )
             QUIT
         endif
         _qry := "DELETE FROM " + _sql_tbl + " WHERE " + where_str 
@@ -161,9 +161,9 @@ END CASE
    
 _ret := _sql_query( _server, _qry, silent )
 
-log_write( "sql table update, table: " + IF(table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8 )
-log_write( "sql table update, VALTYPE(_ret): " + VALTYPE(_ret), 9 )
-log_write( "sql table update, zavrsio", 9 )
+log_write( "sql table update, table: " + IF(table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8, silent )
+log_write( "sql table update, VALTYPE(_ret): " + VALTYPE(_ret), 9, silent )
+log_write( "sql table update, zavrsio", 9, silent )
 
 if VALTYPE(_ret) == "L"
     // u slucaju ERROR-a _sql_query vraca  .f.
@@ -244,7 +244,8 @@ oResult := oServer:Query( cQuery + ";")
 IF oResult:NetErr()
 
     cMsg := oResult:ErrorMsg()
-    log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 3 )
+
+    log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 3, silent )
 
     if !silent 
         MsgBeep( cMsg )
@@ -254,11 +255,13 @@ IF oResult:NetErr()
 
 ELSE
 
-      log_write("QRY OK: _sql_query: " + cQuery, 9 )
+    log_write("QRY OK: _sql_query: " + cQuery, 9, silent )
 
 ENDIF
 
 RETURN oResult
+
+
 
 
 // -------------------------------------

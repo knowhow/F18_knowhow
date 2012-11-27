@@ -728,7 +728,11 @@ enddo
 _o_file:Close()
 
 // potrazimo gresku...
-_scan := ASCAN( _a_err, {| val | "OPOS_SUCCESS" $ val } )
+#ifdef __PLATFORM__LINUX
+    _scan := ASCAN( _a_err, {| val | 'ErrorFP="0"' $ val } )
+#else
+    _scan := ASCAN( _a_err, {| val | "OPOS_SUCCESS" $ val } )
+#endif
 
 if _scan > 0
 

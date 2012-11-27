@@ -691,12 +691,7 @@ while _o_file:MoreToRead()
 	// uzmi u cErr liniju fajla
 	_err_txt := hb_strtoutf8( _o_file:ReadLine()  )
 
-	if "?xml" $ _err_txt
-		// prvu liniju preskoci !
-		loop
-	endif
-
-	// skloni "<" i ">"
+	// skloni "<" i ">" itd...
 	_err_txt := STRTRAN( _err_txt, '<?xml version="1.0" ?>', "" )
 	_err_txt := STRTRAN( _err_txt, ">", "" )
 	_err_txt := STRTRAN( _err_txt, "<", "" )
@@ -736,7 +731,7 @@ _o_file:Close()
 
 // potrazimo gresku...
 #ifdef __PLATFORM__LINUX
-    _scan := ASCAN( _a_err, {| val | 'ErrorFP="0"' $ val } )
+    _scan := ASCAN( _a_err, {| val | "ErrorFP=0" $ val } )
 #else
     _scan := ASCAN( _a_err, {| val | "OPOS_SUCCESS" $ val } )
 #endif

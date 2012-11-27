@@ -1,3 +1,8 @@
+1.3.81 2012-11-27, vsasa
+
+  - tremol linux fiskalni drajver, čitanje grešaka [#29690](http://redmine.bring.out.ba/issues/29690)
+  - fakt, atributi stavke [#28966](http://redmine.bring.out.ba/issues/28966)
+ 
 1.3.80 2012-11-27, vsasa
 
   - semafori, izolirane transakcije [#29667](http://redmine.bring.out.ba/issues/29667)

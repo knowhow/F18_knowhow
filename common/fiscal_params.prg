@@ -819,7 +819,7 @@ for _usr_cnt := 1 to LEN( _usr_arr )
     _dev_arr := get_fiscal_devices_list( _user_name )
 
     ? 
-    ? "Korisnik:", GetFullUserName( _user_id )
+    ? "Korisnik:", ALLTRIM( STR( _user_id ) ), "-", GetFullUserName( _user_id )
     ? REPLICATE( "=", 80 ) 
 
     for _dev_cnt := 1 to LEN( _dev_arr )
@@ -828,7 +828,7 @@ for _usr_cnt := 1 to LEN( _usr_arr )
         _dev_name := _dev_arr[ _dev_cnt, 2 ]
 
         ? SPACE(3), REPLICATE( "-", 70 )
-        ? SPACE(3), "Uredjaj id:", _dev_id, "naziv:", _dev_name
+        ? SPACE(3), "Uredjaj id:", ALLTRIM( STR( _dev_id ) ), "-", _dev_name
         ? SPACE(3), REPLICATE( "-", 70 )
 
         // sada imamo parametre za pojedini stampac
@@ -850,15 +850,26 @@ END PRINT
 
 return
 
+
+
 // ------------------------------------------------------
 // printanje parametra
 // ------------------------------------------------------
 static function _print_param( param )
 
-? SPACE(3), "Drajver:", param["drv"], "IOSA:", param["iosa"], "serijski broj:", param["serial"] 
-? SPACE(3), "Izlazni direktorij:", param["out_dir"]
-? SPACE(3), "       naziv fajla:", param["out_file"]
-? SPACE(3), "    naziv odgovora:", param["out_answer"]
+? SPACE(3), "Drajver:", param["drv"], "IOSA:", param["iosa"], "Serijski broj:", param["serial"], "Tip uredjaja:", param["type"] 
+? SPACE(3), "U sistemu PDV-a:", param["pdv"]
+?
+? SPACE(3), "Izlazni direktorij:", ALLTRIM( param["out_dir"] )
+? SPACE(3), "       naziv fajla:", ALLTRIM( param["out_file"] ), "naziv fajla odgovora:", ALLTRIM( param["out_answer"] )
+? SPACE(3), "Operater ID:", param["op_id"], "PWD:", param["op_pwd"]
+?
+? SPACE(3), "Tip PLU kodova:", param["plu_type"], "Inicijalni PLU:", ALLTRIM( STR( param["plu_init"] ) )
+? SPACE(3), "Auto polog:", ALLTRIM( STR( param["auto_avans"], 12, 2 ) ), ;
+	"Timeout fiskalnih operacija:", ALLTRIM( STR( param["timeout"] ) )
+?
+? SPACE(3), "A4 print:", param["print_a4"], " dokumenti za stampu:", param["op_docs"]
+? SPACE(3), "Zbirni VP racun:", ALLTRIM( STR( param["vp_sum"] ) )
 
 return
 

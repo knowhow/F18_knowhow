@@ -16,3 +16,6 @@ rezultat treba biti F18:
 ./F18
 ```
 
+## After database upgrade
+
+[travis](https://github.com/knowhow/F18_knowhow/blob/master/TRAVIS.md)

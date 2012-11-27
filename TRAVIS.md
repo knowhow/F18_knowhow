@@ -5,6 +5,7 @@
 promjena verzije baze
 
 F18_knowhow$ scripts/knowhow_update_test_database 
+
         12.03.2012, 1.0.0, hernad@bring.out.ba
         f18_db_migrate_package 4.5.2 gz,  ver= 4.5.2, ext= gz
         wget -nc http://knowhow-erp-f18.googlecode.com/files/f18_db_migrate_package_4.5.2.gz
@@ -14,6 +15,7 @@ F18_knowhow$ scripts/knowhow_update_test_database
 
 
 vagrant@f18-dev-1:~/github/F18_knowhow$ scripts/update_travis_test_database 
+
         brisem fmk.log tabelu
         DELETE 4
         dump f18_test

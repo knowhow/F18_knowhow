@@ -594,7 +594,7 @@ STATIC FUNCTION BADFNAME()
    RETURN "*BADNAM*.MEM"
 #endif
 
-STATIC PROCEDURE OutMsg( hFile, cMsg )
+PROCEDURE OutMsg( hFile, cMsg )
 
    IF hFile == 1
       OutStd( cMsg )
@@ -604,7 +604,7 @@ STATIC PROCEDURE OutMsg( hFile, cMsg )
       FWrite( hFile, cMsg )
    ENDIF
 
-   RETURN
+RETURN
 
 /* Don't change the position of this #include. */
 //#include "rt_init.ch"

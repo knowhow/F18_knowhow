@@ -17,7 +17,7 @@ static __test_vars
 static __task
 static __test_tags := {}
 
-#define SLOW_TESTS
+//#define SLOW_TESTS
 
 // jedan poziv test_keystroke treba samo jednu sekvencu poslati 
 static __keystroke_step 

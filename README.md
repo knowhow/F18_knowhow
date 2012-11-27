@@ -22,6 +22,22 @@ $ ./F18
 </pre>
 
 
-## After database upgrade
+## Nakon upgrade-a database-e
 
-[travis](https://github.com/knowhow/F18_knowhow/blob/master/TRAVIS.md)
+### knowhow-erp-f18 downloads
+
+postaviti na gcode aktuelnu verziju:
+
+    http://code.google.com/p/knowhow-erp-f18/downloads/detail?name=f18_db_migrate_package_4.5.2.gz
+
+### LASTEST_VERSIONS 
+
+Postaviti aktuelnu verziju
+
+F18_knowhow$ cat LATEST_VERSIONS | grep f18_db_migrate
+    
+     f18_db_migrate_package 4.5.2 gz
+
+
+
+[Update test database for travis](https://github.com/knowhow/F18_knowhow/blob/master/TRAVIS.md)

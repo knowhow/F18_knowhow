@@ -703,10 +703,11 @@ while _o_file:MoreToRead()
 	_err_txt := STRTRAN( _err_txt, '"', "" )
 	_err_txt := STRTRAN( _err_txt, "TremolFpServerOutput", "" )
 	_err_txt := STRTRAN( _err_txt, "Output Change", "OutputChange" )
+	_err_txt := STRTRAN( _err_txt, "Output Total", "OutputTotal" )
 
 	// dobijamo npr.
 	//
-	// ErrorCode=0 ErrorPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
+	// ErrorCode=0 ErrorOPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
 	// Output Change=0.00 ReceiptNumber=00552 Total=51.20
 
 	_linija := TokToNiz( _err_txt, SPACE(1) )
@@ -714,7 +715,7 @@ while _o_file:MoreToRead()
 	// dobit cemo
 	// 
 	// aLinija[1] = "ErrorCode=0"
-	// aLinija[2] = "ErrorPOS=OPOS_SUCCESS"
+	// aLinija[2] = "ErrorOPOS=OPOS_SUCCESS"
 	// ...
 	
 	// dodaj u generalnu matricu _a_err
@@ -775,8 +776,14 @@ if _scan <> 0
 	_err := VAL( _a_tmp2[ 2 ] )
 
 endif
+
+_tmp := "ErrorOPOS"
+
+#ifdef __PLATFORM__LINUX
+    _tmp := "ErrorFP"
+#endif
 	
-_scan := ASCAN( _a_err, {| val | "ErrorOPOS" $ val } )
+_scan := ASCAN( _a_err, {| val | _tmp $ val } )
 
 if _scan <> 0
 		

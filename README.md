@@ -22,15 +22,22 @@ $ ./F18
 </pre>
 
 
-## Nakon upgrade-a database-e
+## Nakon db upgrade-a
 
-### knowhow-erp-f18 downloads
+### 1) Nove verzije [migracijskih skripti](https://github.com/knowhow/fmk/blob/master/publish.sh)
 
-postaviti na gcode aktuelnu verziju:
+    fmk$ git tag 4.5.2
+    fmk$ ./publish.sh  ## -> f18_db_migrate_package_4.5.2.gz
+    fmk$ git push origin master --tags
+ 
+
+### 2) Publish migracijsku skriptu na "knowhow-erp-f18 downloads"
+
+publish na gcode aktuelnu verziju:
 
     http://code.google.com/p/knowhow-erp-f18/downloads/detail?name=f18_db_migrate_package_4.5.2.gz
 
-### LATEST_VERSIONS 
+### 3) Update LATEST_VERSIONS
 
 Postaviti aktuelnu verziju u [LATEST_VERSIONS](https://github.com/knowhow/F18_knowhow/blob/master/LATEST_VERSIONS#L1)
 
@@ -38,6 +45,6 @@ F18_knowhow$ cat LATEST_VERSIONS | grep f18_db_migrate
     
      f18_db_migrate_package 4.5.2 gz
 
-### Travis - test data
+### 4) Travis - update test data
 
 [Update test database for travis](https://github.com/knowhow/F18_knowhow/blob/master/TRAVIS.md)

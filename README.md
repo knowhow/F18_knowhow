@@ -32,7 +32,7 @@ postaviti na gcode aktuelnu verziju:
 
 ### LASTEST_VERSIONS 
 
-Postaviti aktuelnu verziju
+Postaviti aktuelnu verziju u [LATEST_VERSIONS](https://github.com/knowhow/F18_knowhow/blob/master/LATEST_VERSIONS#L1)
 
 F18_knowhow$ cat LATEST_VERSIONS | grep f18_db_migrate
     

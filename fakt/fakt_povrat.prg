@@ -86,7 +86,6 @@ if ( fakt->m1 == "X" )
     endif
 endif
 
-
 // vrati dokument u pripremu    
 DO WHILE !EOF() .and. id_firma == field->idfirma .and. id_tip_dok == field->idtipdok .and. br_dok == field->brdok
 
@@ -104,6 +103,10 @@ DO WHILE !EOF() .and. id_firma == field->idfirma .and. id_tip_dok == field->idti
 
 ENDDO
 
+// fakt atributi....
+fakt_atributi_server_to_dbf( id_firma, id_tip_dok, br_dok )
+
+ 
 IF test == .t.
     _brisi_kum := "D"
 ELSE
@@ -139,6 +142,11 @@ IF ( _brisi_kum == "D" )
         @ m_x + 3, m_y + 2 SAY "delete " + _tbl
         select fakt_doks2
         _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "CONT" )
+
+        // fakt atributi...
+        @ m_x + 4, m_y + 2 SAY "delete fakt_fakt_atributi"
+        // pobrisi ih sa servera...
+        _ok := _ok .and. delete_fakt_atributi_from_server( id_firma, id_tip_dok, br_dok )
 
         f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
         sql_table_update( nil, "END" )

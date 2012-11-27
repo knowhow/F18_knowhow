@@ -126,7 +126,7 @@
 #define F_POMGN     127
 #define F_FAKT_PRIPR2     128
 #define F_FAKT_PRIPR9     129
-
+#define F_FAKT_ATRIB     155
 
 
 // modul POS (wa 130-160)

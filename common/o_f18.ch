@@ -165,6 +165,7 @@
 // fakt tmp
 #xcommand O__FAKT          => select(F__FAKT)      ; my_usex ("_fakt") 
 #xcommand O_FAKT_PRIPR9    => select (F_PRIPR9)    ; my_usex ("fakt_pripr9") ; set order to tag  "1"
+#xcommand O_FAKT_ATRIB     => select (F_FAKT_ATRIB) ; my_usex ("fakt_atrib") ; set order to tag  "1"
 
 #xcommand O__ROBA          => select(F__ROBA)      ; my_usex ("_roba")
 #xcommand O__SDIM          => select(F__SDIM)      ; my_use ("_sdim"); set order to tag "1"

@@ -12,8 +12,27 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
+
 static lDoks2 := .t.
 static lDirty := .t.
+static __unos_opisa_stavke := NIL
+
+// ----------------------------------------------------------------
+// da li se unosi opis po stavkama na unosu dokumenta
+// ----------------------------------------------------------------
+function param_unos_opisa_stavke_na_fakturi( read_par )
+
+if read_par == NIL
+    read_par := .f.
+endif
+
+if read_par
+    __unos_opisa_stavke := fetch_metric( "fakt_unos_opisa", NIL, "N" )
+endif
+
+return __unos_opisa_stavke 
+
+
 
 // -----------------------------------------------------------------
 // Glavna funkcija za poziv pripreme i knjizenje fakture
@@ -237,7 +256,8 @@ local aFakt_dok := {}
 local _dev_id := 0
 local _dev_params
 local _fiscal_use := fiscal_opt_active()
-    
+local _items_atrib := hb_hash()
+ 
 if (Ch==K_ENTER  .and. Empty(BrDok) .and. EMPTY(rbr))
     return DE_CONT
 endif
@@ -332,24 +352,35 @@ do case
 
     case Ch == K_ENTER 
 
-        Box("ist", MAXROWS()-10, MAXCOLS()-10, .f.)
+        Box( "ist", MAXROWS() - 10, MAXCOLS() - 10, .f. )
 
-        set_global_vars_from_dbf("_")
+        set_global_vars_from_dbf( "_" )
 
+        nRbr := RbrUnum( _rbr )
 
-        nRbr := RbrUnum(_Rbr)
+        if __unos_opisa_stavke == "D"
+            _items_atrib["fakt_opis"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_opis" )
+        endif
 
-        if edit_fakt_priprema(.f.) == 0
-                _ret := DE_CONT
+        if edit_fakt_priprema( .f., @_items_atrib ) == 0
+            _ret := DE_CONT
         else
-                _rec := get_dbf_global_memvars("_")
-                dbf_update_rec(_rec, .f.)
-                PrCijSif()  
-                lDirty:=.t.
-                _ret :=DE_REFRESH
+            
+            // ubaci mi atribute u fakt_atribute
+            fakt_atrib_hash_to_dbf( _idfirma, _idtipdok, _brdok, _rbr, _items_atrib )
+            
+            _rec := get_dbf_global_memvars("_")
+            dbf_update_rec( _rec, .f. )
+
+            PrCijSif()  
+            lDirty:=.t.
+
+            _ret :=DE_REFRESH
+
         endif
 
         BoxC()
+
         return _ret
 
     case Ch==K_CTRL_A
@@ -361,7 +392,7 @@ do case
     case Ch==K_CTRL_N
    
         NoveStavke()
-        lDirty:=.t.
+        lDirty := .t.
         return DE_REFRESH
 
     case Ch=K_CTRL_P
@@ -633,6 +664,7 @@ local _log_datum
 local _t_area
 local _rec, _t_rec
 local _tek, _prva
+local _id_tip_dok, _id_firma, _br_dok, _r_br
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     MsgBeep(cZabrana)
@@ -641,13 +673,18 @@ endif
     
 if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
 
+    _id_firma := field->idfirma
+    _id_tip_dok := field->idtipdok
+    _br_dok := field->brdok
+    _r_br := field->rbr
+
     if ( RecCount2() == 1 ) .or. JedinaStavka()
         // potreba za resetom brojaca na prethodnu vrijednost ?
-        fakt_reset_broj_dokumenta( field->idfirma, field->idtipdok, field->brdok )
+        fakt_reset_broj_dokumenta( _id_firma, _id_tip_dok, _br_dok )
     endif
    
     // ako je prva stavka...
-    if field->rbr == PADL( "1", 3 ) .and. ( RECCOUNT() > 1 )
+    if _r_br == PADL( "1", 3 ) .and. ( RECCOUNT() > 1 )
 
         _prva := dbf_get_rec()
 
@@ -663,8 +700,8 @@ if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
     endif 
 
     // uzmi opis dokumenta za logiranje
-    _log_opis := "dokument: " + field->idfirma + "-" + field->idtipdok + "-" + field->brdok
-    _log_stavka := field->rbr
+    _log_opis := "dokument: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
+    _log_stavka := _r_br
     _log_artikal := "artikal: " + field->idroba
     _log_kolicina := field->kolicina
     _log_cijena := field->cijena
@@ -678,7 +715,10 @@ if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
     go ( _t_rec )
 
     _t_area := SELECT()
-
+    
+    // pobrisi i fakt atribute ove stavke...
+    delete_fakt_atribut( _id_firma, _id_tip_dok, _br_dok, _r_br )
+    
     if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
         EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", ;
             _log_kolicina, _log_cijena, nil, nil, ;
@@ -740,6 +780,7 @@ return
 // ---------------------
 // ---------------------
 function NoveStavke()
+local _items_atrib
 
 nDug:=0
 nPrvi:=0
@@ -758,6 +799,7 @@ Box("knjn", MAXROWS() - 10, MAXCOLS() - 10, .f., "Unos novih stavki")
 do while .t.
 
     Scatter()
+
     // podbr treba skroz ugasiti
     _PodBr := SPACE(2)
 
@@ -778,7 +820,10 @@ do while .t.
 
     _n1:= 0
     _n2 := 0
-    if edit_fakt_priprema(.t.) == 0
+
+    _items_atrib := hb_hash()
+
+    if edit_fakt_priprema( .t., @_items_atrib ) == 0
             exit
     endif
 
@@ -793,9 +838,14 @@ do while .t.
 
     Gather()
 
+    // ubaci mi atribute u fakt_atribute
+    fakt_atrib_hash_to_dbf( field->idfirma, field->idtipdok, field->brdok, field->rbr, _items_atrib )
+
     // ako treba, promijeni cijenu u sifrarniku
     PrCijSif()      
+
 enddo
+
 BoxC()
 
 return
@@ -898,7 +948,7 @@ return
 // --------------------------------------------------------
 // hendliranje unosa novih stavki u pripremi
 // --------------------------------------------------------
-function edit_fakt_priprema(fNovi)
+function edit_fakt_priprema( fNovi, items_atrib )
 local nXpom
 local nYpom
 local nRec
@@ -910,8 +960,9 @@ local cAvRacun
 local cListaTxt := ""
 local _vrste_placanja := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
 local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
+local _opis := "" 
 
-lDoks2:=(IzFmkIni("FAKT","Doks2","D", KUMPATH)=="D")
+lDoks2 := ( IzFmkIni( "FAKT", "Doks2", "D", KUMPATH ) == "D" )
 
 private aPom:={}
 
@@ -946,21 +997,27 @@ ASIZE(h, LEN(aPom))
 AFILL(h, "")
 
 private nRokPl := 0
-private cOldKeyDok:=_idfirma+_idtipdok+_brdok
+private cOldKeyDok := _idfirma + _idtipdok + _brdok
 
-_txt1:=_txt2:=_txt3a:=_txt3b:=_txt3c:=""   // txt1  -  naziv robe,usluge
-
-if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
-    _BrOtp:=SPACE(50)
-else
-    _BrOtp:=SPACE(8)
+if __unos_opisa_stavke == "D"
+    // opis fakture
+    if fNovi
+        _opis := PADR( "", 300 )
+    else
+        _opis := PADR( items_atrib["fakt_opis"], 300 )
+    endif
 endif
 
-_DatOtp:=CToD("")
-_BrNar:=SPACE(8)
-_DatPl:=CToD("")
-_VezOtpr:=""
-_Dest:=""
+// txt1  -  naziv robe,usluge
+_txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""   
+
+_BrOtp := SPACE(50)
+
+_DatOtp := CToD("")
+_BrNar := SPACE(8)
+_DatPl := CToD("")
+_VezOtpr := ""
+_Dest := ""
 _m_dveza := ""
 
 if lDoks2
@@ -1036,6 +1093,7 @@ else
     cPretvori := "D"
     
     _serbr:=SPACE(LEN(serbr))
+
     public _DEST := ""
     public _m_dveza := ""
 
@@ -1061,7 +1119,7 @@ _podbr := SPACE(2)
 // prva stavka
 if (fNovi .and. (nRbr == 1 )) 
 
-    nPom:= IIF(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
+    nPom := IIF(VAL(gIMenu)<1,ASC(gIMenu)-55,VAL(gIMenu))
 
     _IdFirma := gFirma
 
@@ -1073,11 +1131,14 @@ if (fNovi .and. (nRbr == 1 ))
     _datdok   := date()
     _zaokr    := 2
     _dindem   :=LEFT(VAlBazna(),3)
+
 else
+
     nPom:=ASCAN(aPom,{|x| _IdTipdok==LEFT(x,2)})
+
 endif
 
-if (nRbr==1 .and. VAL(_podbr) < 1)
+if ( nRbr == 1 .and. VAL( _podbr ) < 1 )
 
     if RecCount2() == 0
        	_idFirma := gFirma
@@ -1342,8 +1403,7 @@ else
 endif
 
 // unos stavki dokumenta
-
-@ m_x + 13, m_y + 2 SAY "R.br: " GET nRbr  PICT "9999"
+@ m_x + 13, m_y + 2 SAY "R.br: " GET nRbr PICT "9999"
 
 // ARTIKAL
 @ m_x + 15, m_y + 2  SAY "Artikal: " GET _IdRoba ;
@@ -1380,9 +1440,14 @@ if (gVarC $ "123" .and. _idtipdok $ "10#12#20#21#25")
     @  m_x + 16 + RKOR2, m_y + 59  SAY "Cijena (1/2/3):" GET cTipVPC
 endif
 
-RKOR:=0
+// unos opisa stavke po fakturama
+if __unos_opisa_stavke == "D"
+    @ m_x + 17, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
+endif
 
-lGenStavke:=.f.
+RKOR := 0
+
+lGenStavke := .f.
 
 // KOLICINA
 if ( _m1=="X" .and.  !fnovi )
@@ -1506,7 +1571,7 @@ if lTxtNaKraju
     UzorTxt2( cListaTxt )
 endif
 
-if (_podbr==" ." .or.  roba->tip="U" .or. (nrbr==1 .and. val(_podbr)<1))
+if ( _podbr == " ." .or.  roba->tip = "U" .or. ( nRbr == 1 .and. val(_podbr)<1))
     
     // odsjeci na kraju prazne linije
     _txt2:=OdsjPLK(_txt2)           
@@ -1601,7 +1666,12 @@ else
     _txt:=""
 endif
 
-_Rbr:=RedniBroj(nRbr)
+_rbr := RedniBroj( nRbr )
+
+// snimi atribute u hash matricu....
+if __unos_opisa_stavke == "D"
+    items_atrib["fakt_opis"] := _opis
+endif
 
 return 1
 

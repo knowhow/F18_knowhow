@@ -189,4 +189,29 @@ CREATE_INDEX("4", "idtipdok", _alias)
 CREATE_INDEX("5", "datdok", _alias)
 CREATE_INDEX("6", "IdFirma+idpartner+idtipdok", _alias)
 
+// fakt atributi
+aDbf:={}
+AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDTIPDOK'  , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'BRDOK'     , 'C' ,   8 ,  0 })
+AADD(aDBf,{ 'RBR'       , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'ATRIBUT'   , 'C' ,  50 ,  0 })
+AADD(aDBf,{ 'VALUE'     , 'C' , 250 ,  0 })
+
+_created := .f.
+_alias := "FAKT_ATRIB"
+_table_name := "fakt_fakt_atributi"
+
+if !FILE( f18_ime_dbf( _alias) )
+    DBCREATE2( _alias, aDbf )
+    _created := .t.
+endif
+
+CREATE_INDEX("1", "IdFirma + idtipdok + brdok + rbr + atribut", _alias )
+
 return .t.
+
+
+
+
+

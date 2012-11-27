@@ -695,7 +695,8 @@ gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
 
 // racun slati na email
 param_racun_na_email(.t.)
-
+// unos opisa na fakturama
+param_unos_opisa_stavke_na_fakturi( .t. )
 
 return
 

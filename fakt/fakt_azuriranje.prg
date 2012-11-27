@@ -97,7 +97,6 @@ next
 
 MsgC()
 
-
 if !_ok
    return _a_fakt_doks
 endif
@@ -113,12 +112,17 @@ MsgO("brisem pripremu....")
 if LEN( _a_fakt_doks ) > 1
     fakt_izbrisi_azurirane( _a_fakt_doks )
 else
-    
     // izbrisi pripremu
     select fakt_pripr
-    ZAPP(.t.)
-
+    ZAPP( .t. )
 endif
+
+// pobrisi mi fakt_atribute takodjer
+select (F_FAKT_ATRIB)
+if !Used()
+    O_FAKT_ATRIB
+endif
+ZAPP( .t. )
 
 MsgC()
     
@@ -240,6 +244,11 @@ if _ok == .t.
     endif
 endif
 
+if _ok == .t.
+    @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
+    _ok := fakt_atributi_dbf_to_server( id_firma, id_tip_dok, br_dok )
+endif
+
 if !_ok
     _msg := "FAKT sql azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
     log_write( _msg, 2 )
@@ -250,32 +259,25 @@ if !_ok
 
     // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+
 else
 
     @ m_x+4, m_y+2 SAY "push ids to semaphore: " + _tmp_id
-
-    //msgo("Spavam pred push ids...")
-    //sleep(10)
-    //msgc()
 
     push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
     push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
     push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
 
-    //msgo("Spavam nakon push ids")
-    //sleep(10)
-    //msgc()
-
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
     sql_table_update(nil, "END")
 
     log_write( "FAKT, azuriranje dokumenta - END", 3 )
+
 endif
 
 BoxC()
 
 return _ok
-
 
 
 
@@ -1049,6 +1051,7 @@ endif
 return .f.
 
 
+
 // ------------------------------------------------
 // ------------------------------------------------
 function fakt_brisanje_pripreme()
@@ -1070,16 +1073,26 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
     
     if gcF9usmece == "D"
 
+        // pobrisi i atribute...
+        delete_fakt_atribut( _id_firma, _tip_dok, _br_dok )
+
+        // azuriraj dokument u smece 
         azuriraj_smece( .t. )    
+
         select fakt_pripr
 
     else
-
+        
+        // ponisti pripremu...
         zapp()
+
+        // pobrisi i atribute...
+        delete_fakt_atribut( _id_firma, _tip_dok, _br_dok )
+ 
         // potreba za resetom brojaca ?
         fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
 
-    endif
+   endif
 
 
     // logiraj ako je potrebno brisanje dokumenta iz pripreme !
@@ -1102,7 +1115,6 @@ return
  */
  
 function KomIznosFakt()
-*{
 local nIznos:=0
 local cIdRoba
 

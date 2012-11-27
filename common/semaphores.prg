@@ -509,45 +509,53 @@ _last_ver := _versions["last_version"]
 _version  := _versions["version"]
 
 if _last_ver < 0
-  _last_ver := 1
+	_last_ver := 1
 endif
 
 _ver_user := _last_ver
 
-_ver_user++
+++ _ver_user
 
 if ( _result == 0 )
 
-    _id_full := "ARRAY[" + _sql_quote("#F") + "]"
     // user po prvi put radi sa tabelom semafora, iniciraj full sync
+    _id_full := "ARRAY[" + _sql_quote("#F") + "]"
+
     _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
                "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
+
     _ret := _sql_query( _server, _qry)
 
     log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
 
+else
+	// setuj moju verziju....
+	_qry := "UPDATE " + _tbl + ;
+			" SET version=" + STR(_ver_user) + " WHERE user_code=" + _sql_quote( _user )
+	_ret := _sql_query( _server, _qry )
 endif
 
+// setuj moju verziju....
+_qry := "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + " WHERE user_code=" + _sql_quote( _user ) + ";"
 // svim userima setuj last_trans_version
-_qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR(_ver_user)
-//_ret := _sql_query( _server, _qry )
-
+_qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR( _ver_user ) + ";"
 // kod svih usera verzija ne moze biti veca od nLast + 1
-_qry += ";"
-_qry += "UPDATE " + _tbl + " SET version=" + STR(_ver_user) + ;
-        " WHERE version > " + STR(_ver_user)
+_qry += "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + ;
+        " WHERE version > " + STR( _ver_user )
 
-// dva sql statementa u jedan query provjeriti da li ovo radi pa izbrisati komentar
 _ret := _sql_query( _server, _qry )
 
 log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + STR( _ver_user ), 7)
 
 return _ver_user
 
+
+
+
+
 // ----------------------------------------------------------------------
 // nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
 // ------------------------------------------------------------------------
-
 function nuliraj_ids_and_update_my_semaphore_ver(table)
 local _tbl
 local _ret
@@ -569,5 +577,8 @@ _ret := _sql_query( _server, _qry )
 log_write( "END: nuliraj ids-ove - user: " + _user, 7)
 
 return _ret
+
+
+
 
 

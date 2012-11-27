@@ -74,6 +74,8 @@ log_write( "END ids_synchro", 9 )
 
 return .t.
 
+
+
 //-------------------------------------------------
 // stavi id-ove za dbf tabelu na server
 //-------------------------------------------------
@@ -114,14 +116,14 @@ for _i := 1 TO LEN(ids)
 
     // full synchro
     if ids[_i] == "#F"
-            // svi raniji id-ovi su nebitni
-            // brisemo kompletnu tabelu - radimo full synchro
-            _set_1 := "set ids = "
-            _set_2 := ""
+    	// svi raniji id-ovi su nebitni
+        // brisemo kompletnu tabelu - radimo full synchro
+        _set_1 := "set ids = "
+        _set_2 := ""
     else
-            // dodajemo postojece
-            _set_1 := "SET ids = ids || "
-            _set_2 := " AND ((ids IS NULL) OR NOT ( (" + _sql_ids + " <@ ids) OR ids = ARRAY['#F'] ) )"
+        // dodajemo postojece
+        _set_1 := "SET ids = ids || "
+        _set_2 := " AND ((ids IS NULL) OR NOT ( (" + _sql_ids + " <@ ids) OR ids = ARRAY['#F'] ) )"
     endif
 
     _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE user_code <> " + _sql_quote(_user) + _set_2 + ";"
@@ -133,7 +135,6 @@ _qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_
 _ret := _sql_query( _server, _qry )
 
 // ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova
-//log_write( "tabela: " + _tbl + ", ids: " + _sql_ids + ", user: " + _user, 3 )
 
 log_write( "END push_ids_to_semaphore", 9 )
 

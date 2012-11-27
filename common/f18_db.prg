@@ -125,7 +125,7 @@ if ( _full_id_dbf <> _full_id_mem ) .and. !EMPTY( _full_id_dbf )
     AADD(_ids, _alg_tag + _full_id_dbf)
 endif
 
-if ! push_ids_to_semaphore(table, _ids)
+if !push_ids_to_semaphore(table, _ids)
     sql_table_update(table, "ROLLBACK")
     _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " ! ROLLBACK"
     log_write( _msg, 1 )

@@ -51,6 +51,7 @@ if (_f18_required_server_num > _server_db_num)
 
    MsgBeep(_msg)
 
+   ErrorLevel(1)
    QUIT
 endif
 

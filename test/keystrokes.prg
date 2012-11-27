@@ -362,9 +362,6 @@ for _i := 1 to LEN(buffer)
 
    if VALTYPE(buffer[_i]) == "C" .or.  VALTYPE(buffer[_i]) == "N"
         HB_KEYPUT(buffer[_i])
-#ifdef SLOW_TESTS
-        hb_IdleSleep(2)
-#endif
    elseif VALTYPE(buffer[_i]) == "B"
         // ako je kodni blok izvrsi ga
         EVAL(buffer[_i])
@@ -372,6 +369,10 @@ for _i := 1 to LEN(buffer)
         Alert("buffer tip: "  + VALTYPE(buffer[_i]) + " ?!")
    endif
 
+   #ifdef SLOW_TESTS
+        hb_IdleSleep(0.2)
+   #endif
+ 
 next
 
 return .t.

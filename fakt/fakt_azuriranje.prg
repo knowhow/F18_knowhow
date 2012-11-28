@@ -375,17 +375,30 @@ return .t.
 
 // -----------------------------------------------
 // -----------------------------------------------
-static function _fakt_partner_memo( a_memo )
+static function _fakt_partner_naziv( id_partner )
 local _return := ""
+local _t_area := SELECT()
     
-// priprema podatke za upis u polje "doks->partner"
-
-if LEN( a_memo ) >= 5
-    _return := TRIM( a_memo[3] ) + " " + TRIM( a_memo[4] ) + "," + TRIM( a_memo[5] )
+select ( F_PARTN )
+if !Used()
+    O_PARTN
 endif
 
+select partn
+hseek id_partner
+
+// priprema podatke za upis u polje "doks->partner"
+_return := ALLTRIM( partn->naz )
+_return += " "
+_return += ALLTRIM( partn->adresa )
+_return += ","
+_return += ALLTRIM( partn->ptt )
+_return += " "
+_return += ALLTRIM( partn->mjesto )
+
 _return := PADR( _return, FAKT_DOKS_PARTNER_LENGTH )
-    
+
+select ( _t_area )    
 return _return
 
 
@@ -443,7 +456,7 @@ _fakt_data["dindem"]  := field->dindem
 _fakt_data["rezerv"] := " "
 _fakt_data["m1"] := field->m1
 _fakt_data["idpartner"] := field->idpartner
-_fakt_data["partner"] := _fakt_partner_memo( _memo )
+_fakt_data["partner"] := _fakt_partner_naziv( field->idpartner )
 _fakt_data["oper_id"] := getUserId()
 _fakt_data["sifra"] := SPACE(6)
 _fakt_data["brisano"] := SPACE(1)

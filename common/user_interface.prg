@@ -586,9 +586,11 @@ return
 function Beep(nPuta)
 local _i
 
+#ifndef TEST
 for _i := 1 to nPuta
     Tone(300, 1)
 next
+#endif
 
 return
 
@@ -1385,7 +1387,11 @@ if LEN(cMsg) > MAXCOLS()-11 .and.  (AT(cMsg, "#") == 0)
   cMsg := SUBSTR(cMsg, 1, MAXCOLS()-11) + "#" + SUBSTR(cMsg, MAXCOLS()-10, MAXCOLS()-11) + "#..." 
 endif
 
-Msg(cMsg, 20)
+#ifdef TEST
+   Msg(cMsg, 1)
+#else
+   Msg(cMsg, 20)
+#endif
 
 set( _SET_EVENTMASK, _set)
 

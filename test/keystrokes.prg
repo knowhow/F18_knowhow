@@ -17,6 +17,8 @@ static __test_vars
 static __task
 static __test_tags := {}
 
+//#define SLOW_TESTS
+
 // jedan poziv test_keystroke treba samo jednu sekvencu poslati 
 static __keystroke_step 
 
@@ -360,7 +362,6 @@ for _i := 1 to LEN(buffer)
 
    if VALTYPE(buffer[_i]) == "C" .or.  VALTYPE(buffer[_i]) == "N"
         HB_KEYPUT(buffer[_i])
-
    elseif VALTYPE(buffer[_i]) == "B"
         // ako je kodni blok izvrsi ga
         EVAL(buffer[_i])
@@ -368,6 +369,10 @@ for _i := 1 to LEN(buffer)
         Alert("buffer tip: "  + VALTYPE(buffer[_i]) + " ?!")
    endif
 
+   #ifdef SLOW_TESTS
+        hb_IdleSleep(0.2)
+   #endif
+ 
 next
 
 return .t.

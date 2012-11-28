@@ -113,6 +113,19 @@ next
 return
 
 
+// -------------------------------------------------------------------------
+// vraca odredjeni atribut sa servera
+// -------------------------------------------------------------------------
+function get_fakt_atribut_from_server( id_firma, tip_dok, br_dok, r_br, attr )
+local _val := ""
+local _attr := get_fakt_atrib_list_from_server( id_firma, tip_dok, br_dok, r_br, attr )
+
+if LEN( _attr ) <> 0
+    _val := _attr[ 1, 3 ]
+endif
+
+return _val
+
 
 // ----------------------------------------------------------------------------
 // vraca listu atributa sa servera za pojedini dokument
@@ -124,7 +137,7 @@ return
 //
 // vraca se matrica { "rbr", "value", "atribut" }
 // ----------------------------------------------------------------------------
-function get_fakt_atribut_from_server( id_firma, tip_dok, br_dok, r_br, atribut )
+function get_fakt_atrib_list_from_server( id_firma, tip_dok, br_dok, r_br, atribut )
 local _atrib := {}
 local _qry, _table, oItem
 local _server := pg_server()
@@ -344,7 +357,7 @@ local _t_area := SELECT()
 local _ok := .t.
 
 // daj mi atribute sa servera... ako postoje !
-_atrib := get_fakt_atribut_from_server( id_firma, tip_dok, br_dok )
+_atrib := get_fakt_atributi_arr_from_server( id_firma, tip_dok, br_dok )
 
 if VALTYPE( _atrib ) == "L"
     // nije se nista napunilo, matrica je NIL
@@ -386,5 +399,9 @@ use
 select ( _t_area )
 
 return _ok
+
+
+
+
 
 

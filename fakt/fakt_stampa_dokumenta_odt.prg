@@ -19,6 +19,8 @@ static PIC_KOLICINA := ""
 static PIC_VRIJEDNOST := ""
 static PIC_CIJENA := ""
 static __default_odt_template := ""
+static _temporary := .f.
+
 
 
 // ------------------------------------------------------
@@ -391,15 +393,7 @@ for _n := 1 to LEN( a_racuni )
         xml_node( "ptp", show_number( field->poptp, PIC_VRIJEDNOST ) )
         xml_node( "vtp", show_number( field->vpoptp, PIC_VRIJEDNOST ) )
 
-        // opis fakture	
-        _a_tmp := get_fakt_atribut_from_server( a_racuni[ _n, 1 ], ;
-                                            a_racuni[ _n, 2 ], ;
-                                            a_racuni[ _n, 3 ], ;
-                                            field->rbr, ;
-                                            "fakt_opis" )
-
-        _tmp := _a_tmp[ 1, 3 ]
-        xml_node( "opis", to_xml_encoding( _tmp ) )
+        xml_node( "opis", to_xml_encoding( field->opis ) )
 
         xml_subnode( "item", .t. )
     

@@ -20,6 +20,8 @@ static __KTO_POT
 static __FIN_KUM
 // show saldo varijanta
 static __SH_SLD_VAR
+// faktura je u pripremi ili ne
+static __temporary := .t.
 
 // ----------------------------------------------------
 // ----------------------------------------------------
@@ -40,10 +42,12 @@ drn_empty()
 
 // otvori tabele
 if PCount() == 4 .and. ( cIdtipdok <> nil )
-	lPrepisDok := .t.
-   o_fakt_edit(.t.)
+    lPrepisDok := .t.
+    _temporary := .f.
+    o_fakt_edit(.t.)
 else
-   o_fakt_edit(.f.)
+    _temporary := .t.
+    o_fakt_edit(.f.)
 endif
 
 // otvori pomocne tabele racuna
@@ -338,14 +342,19 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	
 	cIdPartner = fakt_pripr->IdPartner
 
-    // opis fakture	
-    _a_tmp := get_fakt_atribut_from_server( fakt_pripr->idfirma, ;
+    // ako je faktura u pripremi
+    if _temporary
+        cOpis := get_fakt_atribut( fakt_pripr->idfirma, fakt_pripr->idtipdok, ;
+                        fakt_pripr->brdok, fakt_pripr->rbr, "fakt_opis" )
+    else
+        // opis fakture	
+        cOpis := get_fakt_atribut_from_server( fakt_pripr->idfirma, ;
                                             fakt_pripr->idtipdok, ;
                                             fakt_pripr->brdok, ;
                                             fakt_pripr->rbr, ;
                                             "fakt_opis" )
 
-    cOpis := _a_tmp[ 1, 3 ]
+    endif
 
 	// rn Veleprodaje
 	if cIdTipDok $ "10#20#22"

@@ -61,7 +61,14 @@ set order to tag "1"
 go top
 seek ( id_firma + tip_dok + br_dok + r_br + atribut )
 
-if !FOUND()
+if !FOUND() 
+
+    // ako je prazan vrijednost
+    // nemoj upisivati...
+    if EMPTY( value )
+        select ( _t_area )
+        return _ok
+    endif
 
     // nema zapisa...
 
@@ -80,8 +87,7 @@ if !FOUND()
 
 else
     
-    // postoji zapis, setuj samo value
-
+    // setuj i ako je value empty i ako nije
     _rec := dbf_get_rec()
     _rec["value"] := value
     dbf_update_rec( _rec )
@@ -315,6 +321,12 @@ go top
 // insertuj iz dbf table
 do while !EOF()
 
+    // ako je prazna vrijednost, nemoj nista upisivati...
+    if EMPTY( field->value )
+        skip
+        loop
+    endif
+
     _qry := "INSERT INTO fmk.fakt_fakt_atributi "
     _qry += "( idfirma, idtipdok, brdok, rbr, atribut, value ) "
     _qry += "VALUES (" 
@@ -357,7 +369,7 @@ local _t_area := SELECT()
 local _ok := .t.
 
 // daj mi atribute sa servera... ako postoje !
-_atrib := get_fakt_atributi_arr_from_server( id_firma, tip_dok, br_dok )
+_atrib := get_fakt_atrib_list_from_server( id_firma, tip_dok, br_dok )
 
 if VALTYPE( _atrib ) == "L"
     // nije se nista napunilo, matrica je NIL

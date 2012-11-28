@@ -1306,7 +1306,7 @@ _x := 13
 ++ _x
 ++ _x
 
-// ARTIKAL
+// artikal
 @ m_x + _x, m_y + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
     WHEN {|| _idroba := PADR( _idroba, VAL( gDuzSifIni )), W_Roba() } ;
     VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), ;

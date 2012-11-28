@@ -544,30 +544,37 @@ return .t.
 // validacija rabata
 // ------------------------------------------
 function V_Rabat( tip_rabata )
-_rabat := 0
 
 if tip_rabata $ " U"
 
     if _cijena * _kolicina <> 0
         _rabat := _rabat * 100 / ( _cijena * _kolicina )
+    else
+        _rabat := 0
     endif
 
 elseif tip_rabata = "A"
 
     if _cijena <> 0
         _rabat := _rabat * 100 / _cijena
+    else
+        _rabat := 0
     endif
 
 elseif tip_rabata == "C" 
 
     if _cijena <> 0
         _rabat := ( _cijena - _rabat ) / _cijena * 100
+    else
+        _rabat := 0
     endif
 
 elseif tip_rabata == "I" 
 
     if _kolicina * _cijena <> 0
         _rabat := ( _kolicina * _cijena - _rabat ) / ( _kolicina * _cijena ) * 100
+    else
+        _rabat := 0
     endif
 
 endif

@@ -42,8 +42,6 @@ IF FIELDPOS("DATPL")>0
 ENDIF
 
 
-AADD(ImeKol,{ "Vezni dokumenti",  {|| PADR( ALLTRIM( g_d_veza(idfirma,idtipdok,brdok)) , 60) + "..." }})
-
 // datum otpremnice, datum isporuke
 if FIELDPOS("DAT_OTPR") <> 0
     AADD(ImeKol,{ "Dat.otpr", {|| dat_otpr} })

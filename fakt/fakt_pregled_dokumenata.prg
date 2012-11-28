@@ -582,79 +582,6 @@ Menu_SC("pch")
 return nSelected
 
 
-
-// ----------------------------------------------------------------
-// vraca vezu dokumenta iz fakt_doks->dok_veza
-// ----------------------------------------------------------------
-function g_d_veza( cIdFirma, cTipDok, cBrDok)
-local cVeza := ""
-
-if (cIdFirma == NIL) .and. (cTipDok == NIL) .and. (cBrDok == NIL)
-   // pretpostavka je da se vec nalazimo pozicionirani na fakt
-   return fakt->dok_veza
-endif
-
-PushWa()
-
-SELECT fakt_doks
-SET ORDER TO TAG "1"
-
-SEEK cIdFirma + cTipDok + cBrDok
-
-if FOUND()
- cVeza := fakt_doks->dok_veza
-endif
-
-PopWa()
-return cVeza
-
-// ----------------------------------------------------
-// prikazuje brojeve veze
-// ----------------------------------------------------
-static function box_d_veza()
-local cTmp := ""
-local cPom
-local aTmp := {}
-local i
-local nSelected
-private GetList := {}
-private Opc:={}
-private opcexe:={}
-private Izbor
-
-cTmp := g_d_veza()
-
-if EMPTY( cTmp )
-    msgbeep("Nema definisanih veznih dokumenata !")
-    return
-endif
-
-// zamjeni karaktere ako su drugacije definisani
-cTmp := STRTRAN( cTmp, ";", "," )
-
-// dodaj u matricu vezne brojeve
-aTmp := TokToNiz( cTmp, "," )
-
-for i:=1 to LEN( aTmp )
-
-    cPom := PADR( aTmp[ i ], 10 )
-    
-    AADD(opc, cPom )
-    AADD(opcexe, {|| nSelected := Izbor, Izbor := 0  } )
-next
-
-Izbor := 1
-// 0 - ako se kaze <ESC>
-Menu_SC("o_dvz")
-
-if LastKey() == K_ESC
-    nSelected := 0
-    Izbor := 0
-endif
-
-return nSelected
-
-
 // -------------------------------------------------
 // prikazuje broj fiskalnog racuna
 // -------------------------------------------------
@@ -848,13 +775,6 @@ do case
           nRet := DE_REFRESH
      endif
   
-  case UPPER(chr(Ch)) == "V"
-    
-    refresh_fakt_tbl_dbfs(_filter)
-    box_d_veza()
-
-    return DE_REFRESH
-
   case UPPER(chr(Ch)) == "B"
      refresh_fakt_tbl_dbfs(_filter)
      nRet:=pr_rn()  

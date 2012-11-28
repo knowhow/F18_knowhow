@@ -385,6 +385,7 @@ if !Used()
 endif
 
 select partn
+go top
 hseek id_partner
 
 // priprema podatke za upis u polje "doks->partner"

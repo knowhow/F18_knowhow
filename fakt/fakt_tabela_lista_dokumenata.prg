@@ -33,25 +33,17 @@ AADD(ImeKol,{ "Ukupno-Rab ", {|| iznos} })
 AADD(ImeKol,{ "Rabat",       {|| rabat} })
 AADD(ImeKol,{ "Ukupno",      {|| iznos+rabat} })
 
-IF lVrsteP
+if lVrsteP
     AADD(ImeKol,{ "Nacin placanja", {|| idvrstep} })
-ENDIF
-
-IF FIELDPOS("DATPL")>0
-    AADD(ImeKol,{ "Datum placanja", {|| datpl} })
-ENDIF
-
-
-// datum otpremnice, datum isporuke
-if FIELDPOS("DAT_OTPR") <> 0
-    AADD(ImeKol,{ "Dat.otpr", {|| dat_otpr} })
-    AADD(ImeKol,{ "Dat.val.", {|| dat_val} })
 endif
 
+// datum otpremnice datum valute
+AADD(ImeKol,{ "Datum placanja", {|| datpl} })
+AADD(ImeKol,{ "Dat.otpr", {|| dat_otpr} })
+AADD(ImeKol,{ "Dat.val.", {|| dat_val} })
+
 // prikaz operatera
-IF FIELDPOS("oper_id")>0
-    AADD(ImeKol,{ "Operater", {|| oper_id} })
-ENDIF
+AADD(ImeKol,{ "Operater", {|| GetUserName( oper_id ) } })
 
 Kol:={}
 for i:=1 to len(ImeKol)
@@ -60,8 +52,8 @@ next
 
 _x := MAXROWS() - 4
 _y := MAXCOLS() - 3
-Box( , _x, _y)
 
+Box( , _x, _y)
 
 @ m_x + _x - 4, m_y + 2 SAY PADR(" <ENTER> Stampa dokumenta", _w1) + BROWSE_COL_SEP + PADR(" <P> Povrat dokumenta u pripremu", _w1) + BROWSE_COL_SEP
 @ m_x + _x - 3, m_y + 2 SAY PADR(" <N>     Stampa narudzbenice", _w1) + BROWSE_COL_SEP + PADR(" <B> Stampa radnog naloga", _w1) + BROWSE_COL_SEP

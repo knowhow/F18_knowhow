@@ -13,6 +13,18 @@
 
 #define D_STAROST_DANA   25
 
+PROCEDURE OutMsg( hFile, cMsg )
+   IF hFile == 1
+      OutStd( cMsg )
+   ELSEIF hFile == 2
+      OutErr( cMsg )
+   ELSE
+      FWrite( hFile, cMsg )
+   ENDIF
+RETURN
+
+
+
 // ------------------------------------
 // vraca putanju exe fajlova
 // ------------------------------------

@@ -354,8 +354,8 @@ _broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _td )
 
 select fakt_pripr
 set order to tag "1"
+go top
 
-GO TOP
 do while !EOF()
 
     skip 1
@@ -363,16 +363,46 @@ do while !EOF()
     skip -1
 
     if field->idfirma == _firma .and. field->idtipdok == _td .and. field->brdok == _null_brdok
-       replace field->brdok with _broj_dokumenta
+        replace field->brdok with _broj_dokumenta
     endif
 
     go (_t_rec)
 
 enddo
 
+select ( F_FAKT_ATRIB )
+if !Used()
+    O_FAKT_ATRIB
+endif
+
+// promjeni mi i u fakt_atributi
+select fakt_atrib
+set order to tag "1"
+go top
+
+do while !EOF()
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    if field->idfirma == _firma .and. field->idtipdok == _td .and. field->brdok == _null_brdok
+        replace field->brdok with _broj_dokumenta
+    endif
+
+    go ( _t_rec )
+
+enddo
+
+// zatvori mi atribute
+select ( F_FAKT_ATRIB )
+use
+
 PopWa()
  
 return .t.
+
+
 
 
 

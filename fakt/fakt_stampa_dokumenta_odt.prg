@@ -390,10 +390,16 @@ for _n := 1 to LEN( a_racuni )
             PIC_VRIJEDNOST ) )
         xml_node( "ptp", show_number( field->poptp, PIC_VRIJEDNOST ) )
         xml_node( "vtp", show_number( field->vpoptp, PIC_VRIJEDNOST ) )
-        xml_node( "c1", to_xml_encoding( ALLTRIM( field->c1 )) )
-        xml_node( "c2", to_xml_encoding( ALLTRIM( field->c2 )) )
-        xml_node( "c3", to_xml_encoding( ALLTRIM( field->c3 )) )
-        xml_node( "opis", to_xml_encoding( ALLTRIM( field->opis )) )
+
+        // opis fakture	
+        _a_tmp := get_fakt_atribut_from_server( a_racuni[ _n, 1 ], ;
+                                            a_racuni[ _n, 2 ], ;
+                                            a_racuni[ _n, 3 ], ;
+                                            field->rbr, ;
+                                            "fakt_opis" )
+
+        _tmp := _a_tmp[ 1, 3 ]
+        xml_node( "opis", to_xml_encoding( _tmp ) )
 
         xml_subnode( "item", .t. )
     

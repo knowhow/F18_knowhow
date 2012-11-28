@@ -94,6 +94,7 @@ local _prik_bk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PADR("", 300) )
 local _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
 local _unos_opisa := fetch_metric( "fakt_unos_opisa", NIL, "N" )
+local _unos_ref_lot := fetch_metric( "fakt_unos_ref_lot", NIL, "N" )
 local _unos_dest := "N"
 local _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
 local _racun_na_email := PADR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
@@ -182,6 +183,10 @@ _x := 2
 
 ++ _x
 
+@ m_x + _x, m_y + 2 SAY "Unos REF/LOT brojeva (D/N) ?" GET _unos_ref_lot VALID _unos_ref_lot $ "DN" PICT "@!"
+
+++ _x
+
 @ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
         GET gMPPrint ;
         PICT "@!" ;
@@ -238,9 +243,12 @@ if LastKey() <> K_ESC
 	set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
     set_metric( "fakt_default_odt_template", my_user(), ALLTRIM( _def_template ) )
     set_metric( "fakt_unos_opisa", NIL, _unos_opisa )
+    set_metric( "fakt_unos_ref_lot", NIL, _unos_ref_lot )
 
     // setuj parametar unosa opisa stavke na fakturi...
     param_unos_opisa_stavke_na_fakturi( .t. )
+    // setuj parametar unosa ref/lot brojeva na fakturi....
+    param_unos_ref_lot_na_fakturi( .t. )
 
     // setuj mi default odt template ako treba
     __default_odt_template()

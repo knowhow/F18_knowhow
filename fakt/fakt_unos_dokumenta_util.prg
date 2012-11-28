@@ -453,12 +453,7 @@ local cPom
 local nArr
 private cVarIDROBA
 
-if fID_J
-	cVarIDROBA := "_IDROBA_J"
-else
-  	cVarIDROBA := "_IDROBA"
-endif
-
+cVarIDROBA := "_IDROBA"
 
 if lPrikTar == nil
 	lPrikTar := .t.
@@ -683,7 +678,7 @@ return
 // uzorak teksta na kraju fakture
 // verzija sa listom...
 // -------------------------------------------------
-function UzorTxt2( cList )
+function UzorTxt2( cList, redni_broj )
 local cId := "  "
 local cU_txt
 local aList := {}
@@ -741,7 +736,7 @@ endif
  
 // prva stavka fakture 
 
-if ( nRbr == 1 .and. VAL( _podbr ) < 1 )
+if ( redni_broj == 1 .and. VAL( _podbr ) < 1 )
 
     Box(, 11, 75)
 
@@ -942,50 +937,33 @@ endif
 return .t.
 
 
-/*! \fn Nijedupla(fNovi)
- *  \brief
- *  \param fNovi
- */
- 
+// -------------------------------------------------
+// provjerava duplu stavku na unosu
+// -------------------------------------------------
 function NijeDupla(fNovi)
-*{
 local nEntBK,ibk,uEntBK
 local nPrevRec 
 
-    // ako se radi o stornu fakture -> preuzimamo rabat i porez iz fakture
-    if JeStorno10()
-      RabPor10()
+// ako se radi o stornu fakture -> preuzimamo rabat i porez iz fakture
+if JeStorno10()
+    RabPor10()
+endif
+
+select fakt_pripr
+
+nPrevRec := RECNO()
+
+LOCATE FOR idfirma+idtipdok+brdok+idroba==_idfirma+_idtipdok+_brdok+_idroba .and. (recno()<>nPrevrec .or. fnovi)
+
+IF FOUND ()
+    if !(roba->tip $ "UT")
+        Beep (2)
+        Msg ("Roba se vec nalazi na dokumentu, stavka " + ALLTRIM (fakt_pripr->rbr), 30)
     endif
+ENDIF
 
-    if gOcitBarkod .and. nRbr>1
+GO nPrevRec
 
-        nEntBK := VAL(IzFmkIni("Barkod", "ENTER" + _IdTipdok, "0", SIFPATH))
- 
-       // otiltaj entere ako je barkod ocitan !!
-        cEntBK := ""
-
-        for ibk :=1 to nEntBK
-          cEntBK += Chr(K_ENTER)
-        next
-
-        if nEntBK>0
-          KEYBOARD cEntBK
-        endif
-
-        return .t.
-    endif
-
-    select fakt_pripr
-    nPrevRec:=RECNO()
-    LOCATE FOR idfirma+idtipdok+brdok+idroba==_idfirma+_idtipdok+_brdok+_idroba .and. (recno()<>nPrevrec .or. fnovi)
-    IF FOUND ()
-      if !(roba->tip $ "UT")
-       Beep (2)
-       Msg ("Roba se vec nalazi na dokumentu, stavka " + ALLTRIM (fakt_pripr->rbr), 30)
-      endif
-    ENDIF
-
-    GO nPrevRec
 RETURN (.t.)
 
 
@@ -1562,16 +1540,13 @@ if !fSilent
     Scatter()
 endif
 
-//if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
-//  _BrOtp:=space(50)
-//else
-  _BrOtp:=space(8)
-//endif
-
-_DatOtp:=ctod(""); _BrNar:=space(8); _DatPl:=ctod("")
-
+_BrOtp:=space(50)
+_DatOtp:=ctod("")
+_BrNar:=space(50)
+_DatPl:=ctod("")
 _VezOtpr := ""
-_txt1:=_txt2:=_txt3a:=_txt3b:=_txt3c:=""        // txt1  -  naziv robe,usluge
+_txt1:=_txt2:=_txt3a:=_txt3b:=_txt3c:=""        
+// txt1  -  naziv robe,usluge
 nRbr := RbrUNum(RBr)
 
 if lDoks2
@@ -1628,7 +1603,7 @@ endif
 
 if !fSilent
     cListaTxt := g_txt_tipdok( _idtipdok )
-    UzorTxt2( cListaTxt )
+    UzorTxt2( cListaTxt, nRbr )
 endif
 
 if bFunc <> nil

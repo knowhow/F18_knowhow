@@ -14,12 +14,18 @@
 
 
 static __unos_opisa_stavke := NIL
+static __unos_ref_lot := NIL
+
 static __fiscal_marker := .f.
+
 static __id_firma
 static __tip_dok
 static __br_dok
 static __r_br
+
 static __enter_seq := CHR( K_ENTER ) + CHR( K_ENTER ) + CHR( K_ENTER )
+
+static __redni_broj
 
 
 
@@ -27,29 +33,39 @@ static __enter_seq := CHR( K_ENTER ) + CHR( K_ENTER ) + CHR( K_ENTER )
 // da li se unosi opis po stavkama na unosu dokumenta
 // ----------------------------------------------------------------
 function param_unos_opisa_stavke_na_fakturi( read_par )
-
 if read_par == NIL
     read_par := .f.
 endif
-
 if read_par
     __unos_opisa_stavke := fetch_metric( "fakt_unos_opisa", NIL, "N" )
 endif
-
 return __unos_opisa_stavke 
 
 
 
+// ----------------------------------------------------------------
+// da li se unose ref i lot brojevi
+// ----------------------------------------------------------------
+function param_unos_ref_lot_na_fakturi( read_par )
+if read_par == NIL
+    read_par := .f.
+endif
+if read_par
+    __unos_ref_lot := fetch_metric( "fakt_unos_ref_lot", NIL, "N" )
+endif
+return __unos_ref_lot
+
+
+
+
+
 // -----------------------------------------------------------------
-// Glavna funkcija za poziv pripreme i knjizenje fakture
+// glavna funkcija za poziv pripreme i knjizenje fakture
 // -----------------------------------------------------------------
 function fakt_unos_dokumenta()
-local i, _x_pos, _y_pos, _x, _y
+local _i, _x_pos, _y_pos, _x, _y
 local _sep := BROWSE_COL_SEP
 private ImeKol, Kol
-private gOcitBarkod := .f.
-private fID_J := .f.
-private lOpcine := ( IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D" )
 
 o_fakt_edit()
 
@@ -87,9 +103,8 @@ if fakt_pripr->(fieldpos("idrelac")) <> 0
 endif
 
 Kol := {}
-
-for i := 1 to len(ImeKol)
-    AADD(Kol, i)
+for _i := 1 to LEN( ImeKol )
+    AADD( Kol, _i )
 next
 
 // inicijalizacija staticki varijabli...
@@ -116,7 +131,7 @@ Box( , _x, _y )
 
 	_opt_row := PADR( "<c+A> Ispravka dok.", _opt_d ) + _sep
 	_opt_row += PADR( hb_utf8tostr("<c+P> Štampa (txt)"), _opt_d ) + _sep
-	_opt_row += PADR( "<a+F10> Asistent", _opt_d ) + _sep
+	_opt_row += PADR( "<A> Asistent", _opt_d ) + _sep
 
 	@ m_x + _x - 3, m_y + 2 SAY _opt_row 
 
@@ -130,7 +145,7 @@ Box( , _x, _y )
 	_opt_row := PADR( "<R> Rezervacija", _opt_d ) + _sep
 	_opt_row += PADR( "<X> Prekid rez.", _opt_d ) + _sep
 	_opt_row += PADR( "<F10> Ostale opcije", _opt_d ) + _sep
-	_opt_row += "<F9> Konverzije"
+	_opt_row += "<O> Konverzije"
 
 	@ m_x + _x - 1, m_y + 2 SAY _opt_row
 
@@ -150,7 +165,6 @@ return
 static function fakt_pripr_keyhandler()
 local _rec
 local _ret
-local nTr2
 local cPom
 local _fakt_doks := {}
 local _dev_id := 0
@@ -250,10 +264,15 @@ do case
 
         set_global_vars_from_dbf( "_" )
 
-        nRbr := RbrUnum( _rbr )
+        __redni_broj := RbrUnum( _rbr )
 
         if __unos_opisa_stavke == "D"
             _items_atrib["fakt_opis"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_opis" )
+        endif
+
+        if __unos_ref_lot == "D"
+            _items_atrib["fakt_ref_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_ref_broj" )
+            _items_atrib["fakt_lot_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_lot_broj" )
         endif
 
         if edit_fakt_priprema( .f., @_items_atrib ) == 0
@@ -269,7 +288,7 @@ do case
 
             PrCijSif()  
 
-            _ret :=DE_REFRESH
+            _ret := DE_REFRESH
 
         endif
 
@@ -281,7 +300,7 @@ do case
     // cirkularna ispravka stavki....
     case Ch == K_CTRL_A
 
-        ProdjiKrozStavke()
+        fakt_prodji_kroz_stavke()
         return DE_REFRESH
 
     // unos nove stavke
@@ -295,6 +314,7 @@ do case
        
         // prvo setuj broj dokumenta
         fakt_set_broj_dokumenta()
+
         // printaj dokument
         fakt_print_dokument()
 
@@ -311,7 +331,6 @@ do case
           close all
           label_bkod()
           o_fakt_edit()
-
 
     // stampa graficke fakture
     case Ch == K_ALT_P
@@ -385,7 +404,8 @@ do case
 
     // kontrola zbira podataka
     case Ch == K_F5
-            
+
+        // ovo treba napraviti kako treba !!!!!            
         fakt_kzb()    
         return DE_CONT
         
@@ -396,7 +416,6 @@ do case
         fakt_generisi_racun_iz_otpremnice() 
         return DE_REFRESH
     
-
     // asistent 
     case UPPER( CHR( Ch ) ) == "A"
 
@@ -420,13 +439,14 @@ do case
     case Ch == K_F10
 #endif
 
-        popupfakt_unos_dokumenta()
+        popup_fakt_unos_dokumenta()
         SETLASTKEY(K_CTRL_PGDN)
         return DE_REFRESH
     
 
     // pregled smeca
     case Ch == K_F11
+
         // pregled smeca
         Pripr9View()
         
@@ -557,7 +577,7 @@ return 1
 // --------------------------------------------------
 // prolazak kroz stavke pripreme
 // --------------------------------------------------
-static function ProdjiKrozStavke()
+static function fakt_prodji_kroz_stavke()
 local _dug
 local _rec_no, _rec
 
@@ -579,7 +599,7 @@ do while !EOF()
 
     _podbr := SPACE(2)
 
-    nRbr := RbrUnum( _rbr )
+    __redni_broj := RbrUnum( _rbr )
 
     BoxCLS()
 
@@ -614,8 +634,8 @@ return
 
 
 
-
 // -----------------------------------------------------------
+// unos novih stavki fakture
 // -----------------------------------------------------------
 static function fakt_unos_nove_stavke()
 local _items_atrib
@@ -639,36 +659,37 @@ do while .t.
     set_global_vars_from_dbf( "_" )
 
     // podbr treba skroz ugasiti
-    _PodBr := SPACE(2)
+    _podbr := SPACE(2)
 
-    if ALLTRIM( _podbr ) == "." .and. empty(_idroba)
-        nRbr := RbrUnum( _rbr )
-        _PodBr :=" 1"
+    if ALLTRIM( _podbr ) == "." .and. EMPTY( _idroba )
+
+        __redni_broj := RbrUnum( _rbr )
+        _podbr := " 1"
+
     elseif _podbr >= " 1"
-        nRbr   := RbrUnum( _rbr )
-        _podbr := STR(val( _podbr ) + 1, 2, 0)
+
+        __redni_broj := RbrUnum( _rbr )
+        _podbr := STR( VAL( _podbr ) + 1, 2, 0)
+
     else
-        nRbr := RbrUnum( _rbr ) + 1
-        _PodBr := "  "
+
+        __redni_broj := RbrUnum( _rbr ) + 1
+        _podbr := "  "
+
     endif
 
     BoxCLS()
 
-    _c1 := _c2 := _c3 := SPACE(20)
-
-    _n1 := 0
-    _n2 := 0
-
     _items_atrib := hb_hash()
 
     if edit_fakt_priprema( .t., @_items_atrib ) == 0
-            exit
+        exit
     endif
 
     _total += ROUND( _cijena * _kolicina * PrerCij() * ( 1 - _rabat/100 ) * ( 1 + _porez/100 ), ZAOKRUZENJE )
     
-    @ m_x + 23, m_y + 2 SAY "ZBIR DOKUMENTA:"
-    @ m_x + 23, col() + 2 SAY _total PICT "9 999 999 999.99"
+    @ m_x + MAXROWS() - 11, m_y + 2 SAY "ZBIR DOKUMENTA:"
+    @ m_x + MAXROWS() - 11, col() + 2 SAY _total PICT "9 999 999 999.99"
 
     InkeySc(10)
 
@@ -679,9 +700,13 @@ do while .t.
     dbf_update_rec( _rec, .f. )
 
     // ubaci mi atribute u fakt_atribute
-    fakt_atrib_hash_to_dbf( field->idfirma, field->idtipdok, field->brdok, field->rbr, _items_atrib )
+    fakt_atrib_hash_to_dbf( field->idfirma, ;
+                            field->idtipdok, ;
+                            field->brdok, ;
+                            field->rbr, ;
+                            _items_atrib )
 
-    // ako treba, promijeni cijenu u sifrarniku
+    // promijeni cijenu u sifrarniku ako treba
     PrCijSif()      
 
 enddo
@@ -698,8 +723,6 @@ return
 // printanje dokumenta
 // ---------------------------------------------------
 static function fakt_print_dokument()
-
-SpojiDuple()  
 
 o_fakt_edit() 
 
@@ -933,7 +956,7 @@ local _x := 1
 local _odabir_txt := .f.
 local _lista_uzoraka
 local _x2, _part_x, _part_y, _tip_cijene
-
+local _ref_broj, _lot_broj
 
 // daj mi listu tipova dokumenata
 _a_tipdok := fakt_tip_dok_arr()
@@ -943,16 +966,28 @@ AFILL( _h, "" )
 
 // sredi atribute kod unosa
 if items_atrib <> NIL
+
+    // opis fakture
     if __unos_opisa_stavke == "D"
-        // opis fakture
         if fNovi
             _opis := PADR( "", 300 )
         else
             _opis := PADR( items_atrib["fakt_opis"], 300 )
         endif
     endif
-endif
 
+    // ref/lot brojevi
+    if __unos_ref_lot == "D"
+        if fNovi
+            _ref_broj := PADR( "", 50 )
+            _lot_broj := PADR( "", 50 )
+        else
+            _ref_broj := PADR( items_atrib["fakt_ref_broj"], 50 )
+            _lot_broj := PADR( items_atrib["fakt_lot_broj"], 50 )
+        endif
+    endif
+
+endif
 
 // dodatne varijable koje ce se koristiti kod unosa
 _txt1 := ""
@@ -991,7 +1026,7 @@ if fNovi
         _idRoba := SPACE(10)
     endif
  
-    if nRbr == 1
+    if __redni_broj == 1
 
         _n_menu := IIF( VAL( gIMenu ) < 1, ASC( gIMenu ) - 55, VAL( gIMenu ) )
         _idfirma := gFirma
@@ -1005,8 +1040,6 @@ if fNovi
         _zaokr := 2
         _dindem := LEFT( ValBazna(), 3 )
         _m1 := " "  
-        // marker generacije nuliraj
-        gOcitBarkod := .f.
         // broj dokumenta u pripremi ce biti uvijek 00000
         _brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
 
@@ -1029,7 +1062,7 @@ _tip_rabat := "%"
 // definisanje header-a fakture
 // =================================================
 
-if ( nRbr == 1 .and. VAL( _podbr ) < 1 )
+if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
 
     if RECCOUNT() == 0
        	_idFirma := gFirma
@@ -1268,7 +1301,7 @@ endif
 _x := 13
 
 // unos stavki dokumenta
-@ m_x + _x, m_y + 2 SAY "R.br: " GET nRbr PICT "9999"
+@ m_x + _x, m_y + 2 SAY "R.br: " GET __redni_broj PICT "9999"
 
 ++ _x
 ++ _x
@@ -1300,19 +1333,30 @@ if ( gVarC $ "123" .and. _idtipdok $ "10#12#20#21#25" )
     @ m_x + _x, m_y + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
 endif
 
-++ _x
-
 // unos opisa stavke po fakturama
 if __unos_opisa_stavke == "D"
+    
+    ++ _x
     @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
+
+endif
+
+if __unos_ref_lot == "D"
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
+    @ m_x + _x, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
+
 endif
 
 ++ _x
 ++ _x    
+++ _x
 
 // kolicina
 @ m_x + _x, m_y + 2 SAY "Kolicina "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
     
+
 if gSamokol != "D"
 
     // cijena
@@ -1371,28 +1415,30 @@ if _odabir_txt
     // uzmi odgovarajucu listu
     _lista_uzoraka := g_txt_tipdok( _idtipdok )
     // unesi tekst
-    UzorTxt2( _lista_uzoraka )
+    UzorTxt2( _lista_uzoraka, __redni_broj )
 endif
 
-
-if ( _podbr == " ." .or. roba->tip = "U" .or. ( nRbr == 1 .and. val(_podbr)<1) )
+if ( _podbr == " ." .or. roba->tip = "U" .or. ( __redni_broj == 1 .and. val(_podbr)<1) )
     // setuj memo txt na osnovu varijabli
     _set_memo_txt_from_vars()
 else
     _txt := ""
 endif
 
-_rbr := RedniBroj( nRbr )
+_rbr := RedniBroj( __redni_broj )
 
 // snimi atribute u hash matricu....
+// opis stavke
 if __unos_opisa_stavke == "D"
     items_atrib["fakt_opis"] := _opis
 endif
+// ref/lot brojevi
+if __unos_ref_lot == "D"
+    items_atrib["fakt_ref_broj"] := _ref_broj
+    items_atrib["fakt_lot_broj"] := _lot_broj
+endif
 
 return 1
-
-
-
 
 
 
@@ -1672,7 +1718,10 @@ return
 
 
 
-static function Popupfakt_unos_dokumenta()
+// ---------------------------------------------------------------
+// ostale opcije u pripremi dokumenta
+// ---------------------------------------------------------------
+static function popup_fakt_unos_dokumenta()
 
 private opc[8]
 opc[1]:="1. generacija faktura na osnovu ugovora            "

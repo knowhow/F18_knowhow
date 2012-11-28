@@ -179,6 +179,28 @@ return _atrib
 
 
 
+// ---------------------------------------------------------
+// zapuje fakt atribute
+// ---------------------------------------------------------
+function zapp_fakt_atributi()
+local _t_area := SELECT()
+
+select ( F_FAKT_ATRIB )
+if !Used()
+    O_FAKT_ATRIB
+endif
+
+zap
+__dbPack()
+
+// zatvori ih
+use
+
+select ( _t_area )
+return
+
+
+
 // ---------------------------------------------------------------------------
 // brisanje atributa iz lokalnog dbf-a
 // ---------------------------------------------------------------------------
@@ -274,6 +296,7 @@ if !delete_fakt_atributi_from_server( id_firma, tip_dok, br_dok )
 endif
 
 select fakt_atrib
+set order to tag "1"
 go top
 
 // insertuj iz dbf table

@@ -206,10 +206,8 @@ local nPom2
 local nPom3
 local nPom4
 local nPom5
-local cC1 := "" 
-local cC2 := ""
-local cC3 := ""
 local cOpis := ""
+local _a_tmp, _tmp
 
 // ako je kupac pdv obveznik, ova varijable je .t.
 local lPdvObveznik := .f.
@@ -339,13 +337,15 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	nPPDV := tarifa->opp
 	
 	cIdPartner = fakt_pripr->IdPartner
-	
-	if fakt_pripr->(FIELDPOS("C1")) <> 0
-		cC1 := fakt_pripr->c1
-		cC2 := fakt_pripr->c2
-		cC3 := fakt_pripr->c3
-		cOpis := ""
-	endif
+
+    // opis fakture	
+    _a_tmp := get_fakt_atribut_from_server( fakt_pripr->idfirma, ;
+                                            fakt_pripr->idtipdok, ;
+                                            fakt_pripr->brdok, ;
+                                            fakt_pripr->rbr, ;
+                                            "fakt_opis" )
+
+    cOpis := _a_tmp[ 1, 3 ]
 
 	// rn Veleprodaje
 	if cIdTipDok $ "10#20#22"
@@ -475,8 +475,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	
     nUkKol += nKol
 	
-	
-	add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, cC1, cC2, cC3, cOpis )
+	add_rn( cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
 
 	select fakt_pripr
 	skip

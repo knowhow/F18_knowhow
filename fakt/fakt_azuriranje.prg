@@ -118,11 +118,7 @@ else
 endif
 
 // pobrisi mi fakt_atribute takodjer
-select (F_FAKT_ATRIB)
-if !Used()
-    O_FAKT_ATRIB
-endif
-ZAPP( .t. )
+zapp_fakt_atributi()
 
 MsgC()
     
@@ -753,78 +749,6 @@ return nil
 
 
 
-// Spajanje duplih artikala unutar jednog dokumenta
-function SpojiDuple()
-local cIdRoba
-local nCnt 
-local nKolicina
-local cSpojiti 
-local nTrec
-
-select fakt_pripr
-
-cSpojiti:="N"
-
-if gOcitBarkod
-    set order to tag "3"
-    go top
-    do while !eof()
-        nCnt:=0
-        cIdRoba:=idroba
-        nKolicina:=0
-        do while !eof() .and. idroba==cIdRoba
-            nKolicina+=kolicina
-            nCnt++
-            skip
-        enddo
-            
-        if (nCnt>1) // imamo duple!!!
-            if cSpojiti=="N"
-                if Pitanje("DUPLI_SPOJ", "Spojiti duple artikle ?","N")=="D"
-                    cSpojiti:="D"
-                else
-                    cSpojiti:="0"
-                endif
-            endif
-                
-            if cSpojiti=="D"
-                seek _idfirma + cIdRoba // idi na prvu stavku
-                replace kolicina with nKolicina
-                skip
-                do while !eof() .and. idroba==cIdRoba
-                    replace kolicina with 0  
-                    // ostale stavke imaju kolicinu 0
-                    skip
-                enddo
-            endif
-
-        endif
-    enddo
-endif
-
-if cSpojiti="D"
-    select fakt_pripr
-    go top
-    do while !eof()
-        skip
-        nTrec:=RecNo()
-        skip -1
-            
-        // markirano za brisanje
-        if (field->kolicina=0)  
-            delete
-        endif
-        go nTrec
-    enddo
-endif
-
-select fakt_pripr
-set order to tag "1"
-go top
-
-return
-
-
 /*! \fn SrediRbrFakt()
  *  \brief Sredi redni broj
  */
@@ -1085,9 +1009,7 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
         
         // ponisti pripremu...
         zapp()
-
-        // pobrisi i atribute...
-        delete_fakt_atribut( _id_firma, _tip_dok, _br_dok )
+        zapp_fakt_atributi()
  
         // potreba za resetom brojaca ?
         fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )

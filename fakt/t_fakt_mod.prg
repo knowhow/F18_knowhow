@@ -695,8 +695,12 @@ gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
 
 // racun slati na email
 param_racun_na_email(.t.)
+
 // unos opisa na fakturama
 param_unos_opisa_stavke_na_fakturi( .t. )
+
+// unos ref lot brojeva na fakturi
+param_unos_ref_lot_na_fakturi( .t. )
 
 return
 

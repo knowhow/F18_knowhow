@@ -1143,7 +1143,7 @@ nDug2:=0
 nRab2:=0
 nPor2:=0
 
-KonZbira(.f.)
+//KonZbira(.f.)
 
 go bottom
 

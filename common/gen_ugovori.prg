@@ -395,7 +395,7 @@ do while !eof() .and. id==cidugov
    select roba; hseek _idroba
 
    select fakt_pripr
-   setujcijenu()
+   fakt_setuj_cijenu( "1" ) 
    if ncijena<>0
      _cijena:=nCijena
    endif

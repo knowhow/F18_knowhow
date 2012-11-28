@@ -109,7 +109,7 @@ do while !EOF()
 	_txt := ""
 
 	// ovo setuje cijenu
-	v_kolicina()
+	v_kolicina( "1" )
 	select fakt_pripr
 
 	// 1 roba tip U - nista

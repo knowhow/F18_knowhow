@@ -867,7 +867,7 @@ do while !EOF() .and. ( id == cUId )
     
     // setuj iz sifrarnika
     if _cijena == 0
-        setujcijenu()
+        fakt_setuj_cijenu( "1" ) 
         nCijena := _cijena
     endif
         

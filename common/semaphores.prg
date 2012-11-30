@@ -232,25 +232,24 @@ if last == NIL
 endif
 
 _tbl := "fmk.semaphores_" + LOWER(table)
-_result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
-
-if _result <> 1
-    log_write( RECI_GDJE_SAM0 + " tbl=" + _tbl + " user=" + _user + " table_count = " + STR(_result), 7 )
-    return -1
-endif
 
 _qry := "SELECT "
 if last
-    _qry +=  "MAX(last_trans_version) AS last_version"
+    _qry +=  "MAX(last_trans_version) AS ver"
 else
-    _qry += "version"
+    _qry += "version as ver"
 endif
 _qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+
+_qry += " UNION SELECT -1 ORDER BY ver DESC LIMIT 1"
 
 _tbl_obj := _sql_query( _server, _qry )
 
 if VALTYPE(_tbl_obj) == "L" 
-      MsgBeep( "problem sa:" + _qry)
+      _msg = "problem sa:" + _qry
+      log_write( _msg, 2)
+      MsgBeep(2)
+      ErrorLevel(1)
       QUIT
 endif
 
@@ -271,26 +270,19 @@ local _user := f18_user()
 local _ret := hb_hash()
 
 _tbl := "fmk.semaphores_" + LOWER(table)
-_result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
-
-if _result <> 1
-    log_write( _tbl + " " + _user + "count =" + STR(_result), 7 )
-
-    _ret["version"]      := -1
-    _ret["last_version"] := -1
-
-    return _ret
-endif
 
 _qry := "SELECT version, last_trans_version AS last_version"
 _qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+_qry += " UNION SELECT -1, -1 ORDER BY version DESC LIMIT 1"
 
 _tbl_obj := _sql_query( _server, _qry )
 
 if VALTYPE(_tbl_obj) == "L" 
-    log_write( "problem sa: " + _tbl + " " + _user + " " + _qry )
-    MsgBeep( "problem sa:" + _qry)
-    QUIT
+      _msg = "problem sa:" + _qry
+      log_write( _msg, 2)
+      MsgBeep(2)
+      ErrorLevel(1)
+      QUIT
 endif
 
 _ret["version"]      := _tbl_obj:Fieldget(1)

@@ -543,7 +543,7 @@ else
 	cDestinacija := ""
 endif
 
-// dokument veza
+// dokument_veza
 if LEN(aMemo) >= 19
 	cM_d_veza := aMemo[19]
 else

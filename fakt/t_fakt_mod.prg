@@ -22,7 +22,6 @@ CLASS TFaktMod FROM TAppMod
 	var lId_J
 	var lCRoba
 	var cRoba_Rj
-	var lOpresaStampa
 	method New
 	method setGVars
 	method mMenu
@@ -218,59 +217,45 @@ public gResetRoba:="D" // resetuj uvijek artikal, pri unosu stavki dokumenta
 
 public g10Str:=HB_UTF8TOSTR("POREZNA FAKTURA br.")
 public g10Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g10Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g16Str:=HB_UTF8TOSTR("KONSIGNAC.RAČUN br.")
 public g16Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g16Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g06Str:= HB_UTF8TOSTR("ZADUŽ.KONS.SKLAD.br.")
 public g06Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g06Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g20Str:=HB_UTF8TOSTR("PREDRAČUN br.")
 public g20Str2T:="                                                               Direktor"
-public g20Str2R:="\tab \tab \tab Direktor:"
 
 public g11Str:=HB_UTF8TOSTR("RAČUN MP br.")
 public g11Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g11Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g15Str:=HB_UTF8TOSTR("RAČUN br.")
 public g15Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g15Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g12Str:=HB_UTF8TOSTR("OTPREMNICA br.")
 public g12Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g12Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g13Str:=HB_UTF8TOSTR( "OTPREMNICA U MP br." )
 public g13Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g13Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g21Str:=HB_UTF8TOSTR( "REVERS br." )
 public g21Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g21Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g22Str:=HB_UTF8TOSTR( "ZAKLJ.OTPREMNICA br." )
 public g22Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g22Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g23Str:=HB_UTF8TOSTR( "ZAKLJ.OTPR.MP    br." )
 public g23Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g23Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g25Str:=HB_UTF8TOSTR("KNJIŽNA OBAVIJEST br.")
 public g25Str2T:="              Predao                  Odobrio                  Preuzeo"
-public g25Str2R:="\tab Predao\tab Odobrio\tab Preuzeo"
 
 public g26Str:=HB_UTF8TOSTR("NARUDŽBA SA IZJAVOM br.")
 public g26Str2T:="                                      Potpis:"
-public g26Str2R:="\tab \tab Potpis:"
 
 public g27Str:=HB_UTF8TOSTR("PREDRAČUN MP br.")
 public g27Str2T:="                                                               Direktor"
-public g27Str2R:="\tab \tab \tab Direktor:"
 public gNazPotStr:=SPACE(69)
 
 // lista kod dodatnog teksta
@@ -527,9 +512,6 @@ Rpar("ot",@gOdvT2)
 RPar("pk",@gPratik)
 RPar("pc",@gPratiC)
 RPar("56",@gnLMargA5)
-RPar("r1",@g10Str2R)
-RPar("r2",@g16Str2R)
-RPar("r5",@g06Str2R)
 RPar("r3",@g06Str)
 RPar("xl",@g15Str)
 RPar("r4",@g06Str2T)
@@ -549,27 +531,16 @@ RPar("vp",@gV12Por)
 RPar("vu",@gVFU)
 RPar("vr",@gVarRF)
 RPar("vn",@gVarNum)
-RPar("x1",@g11Str2R)
-RPar("xn",@g15Str2R)
-RPar("x2",@g20Str2R)
-RPar("x5",@g12Str2R)
-RPar("x8",@g13Str2R)
 RPar("x9",@g21Str)
 RPar("xa",@g21Str2T)
-RPar("xb",@g21Str2R)
-RPar("xe",@g22Str2R)
 RPar("xC",@g23Str)
 RPar("xD",@g23Str2T)
-RPar("xE",@g23Str2R)
 RPar("xf",@g25Str)
 RPar("xg",@g25Str2T)
-RPar("xh",@g25Str2R)
 RPar("xi",@g26Str)
 RPar("xj",@g26Str2T)
-RPar("xk",@g26Str2R)
 RPar("xo",@g27Str)
 RPar("xp",@g27Str2T)
-RPar("xr",@g27Str2R)
 
 // lista dodatni tekst
 RPar("ye",@g15ftxt)
@@ -690,8 +661,6 @@ gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
 ::lCRoba:=(IzFmkIni('CROBA','GledajFakt','N',KUMPATH)=='D')
 
 ::cRoba_Rj:=IzFmkIni('CROBA','CROBA_RJ','10#20',KUMPATH)
-
-::lOpresaStampa:=IzFmkIni('Opresa','Remitenda','N',PRIVPATH)=="D"
 
 // racun slati na email
 param_racun_na_email(.t.)

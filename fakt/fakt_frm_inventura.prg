@@ -553,5 +553,4 @@ fakt_unos_dokumenta()
 
 ::lTerminate:=.t.
 return
-*}
 

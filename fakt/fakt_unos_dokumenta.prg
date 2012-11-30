@@ -1148,12 +1148,14 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         // veza dokumenti
         @ m_x + _x, col() + 1 SAY "Veza:" GET _dokument_veza PICT "@S20"
 
-        // destinacija 
-        ++ _x
-        @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
+        if gDest
+          // destinacija 
+          ++ _x
+          @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
+        endif
 
-        // radni nalog
         if glRadNal .and. _idtipdok $ "12"
+            // radni nalog
             @ m_x + _x, col() + 2 SAY "R.nal:" GET _idrnal VALID P_RNal( @_idrnal ) PICT "@!"
         endif
 
@@ -1214,16 +1216,10 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         else
             
             // dodaj i za ostale dokumente
-            if IsPDV()
+            _datotp := _datdok
+            ++ _x2
+            @ m_x + _x2 ,m_y + 51 SAY " datum isporuke:" GET _datotp
 
-                _datotp := _datdok
-
-                ++ _x2
-
-                @ m_x + _x2 ,m_y + 51 SAY " datum isporuke:" GET _datotp
-
-            endif
-        
         endif
 
         // relacije .... ovo treba zamjeniti sa novom funkcijom
@@ -1271,9 +1267,6 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
    
     enddo
    
-    // ????????? sta ovo radi tice znaju ???????????? 
-    //ChSveStavke( fNovi )
-
 else
 
     @ m_x + _x, m_y + 2 SAY PADR( gNFirma, 20 )

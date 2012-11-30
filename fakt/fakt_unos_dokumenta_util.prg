@@ -1276,59 +1276,6 @@ go top
 RETURN
 
 
-
-
-
-// ???????????????? 
-function ChSveStavke(fNovi)
-LOCAL _vrste_pl := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
-LOCAL nRec:=recno()
-  
-set order to
-go top
-  
-do while !eof()
-	IF IDFIRMA+IDTIPDOK+BRDOK == _IDFIRMA+_IDTIPDOK+_BRDOK .or.;
-       !fNovi .and. cOldKeyDok == IDFIRMA+IDTIPDOK+BRDOK
-    	RLOCK()
-      	_field->idfirma   := _IdFirma
-      	_field->datdok    := _DatDok
-      	_field->IdTipDok  := _IdTipDok
-      	_field->brdok     := _BrDok
-      	_field->dindem    := _dindem
-      	_field->zaokr     := _zaokr
-      	_field->idpartner := _idpartner
-      	IF _vrste_pl == "D"
-       		_field->idvrstep:=_idvrstep
-      	ENDIF
-      	IF glDistrib
-       		_field->iddist   := _iddist
-       		_field->idrelac  := _idrelac
-       		_field->idvozila := _idvozila
-       		_field->idpm     := _idpm
-       		_field->marsruta := _marsruta
-       		_field->ambp     := _ambp
-       		_field->ambk     := _ambk
-      	ENDIF
-      	if glRadNal
-      		_field->idRNal:=_idRNal
-      	endif
-      	IF !(_idtipdok="0") .and. lPoNarudzbi
-       		_field->idnar    := _idpartner
-      	ENDIF
-      	DBUNLOCK()
- 	ENDIF
-    skip
-enddo
-  
-set order to tag "1"
-go nRec
-
-RETURN
-
-
-
-
 /*! \fn TarifaR(cRegion, cIdRoba, aPorezi)
  *  \brief Tarifa na osnovu region + roba
  *  \param cRegion
@@ -1905,7 +1852,9 @@ return (lRetFlag)
  */
  
 function renumeracija_fakt_pripr( veza_otpremnica, datum_max )
+
 //poziva se samo pri generaciji otpremnica u fakturu
+
 local dDatDok
 local lSetujDatum:=.f.
 private nRokPl:=0
@@ -2000,26 +1949,27 @@ nRbr:=1
 Box("#PARAMETRI DOKUMENTA:",10,75)
 
   if gDodPar=="1"
-    if IzFmkIni('FAKT','ProsiriPoljeOtpremniceNa50','N',KUMPATH)=='D'
-      @  m_x+1,m_y+2 SAY "Otpremnica broj:" GET _brotp PICT "@S8"
-    else
-      @  m_x+1,m_y+2 SAY "Otpremnica broj:" GET _brotp
-    endif
-   @  m_x+2,m_y+2 SAY "          datum:" GET _Datotp
-   @  m_x+3,m_y+2 SAY "Ugovor/narudzba:" GET _brNar
-   @  m_x+4,m_y+2 SAY "    Destinacija:" GET _dest PICT "@S45"
-   @  m_x+5,m_y+2 SAY "Vezni dokumenti:" GET _m_dveza PICT "@S45"
+    @  m_x+1,m_y+2 SAY "Otpremnica broj:" GET _brotp
+    @  m_x+2,m_y+2 SAY "          datum:" GET _Datotp
+    @  m_x+3,m_y+2 SAY "Ugovor/narudzba:" GET _brNar
+    @  m_x+4,m_y+2 SAY "    Destinacija:" GET _dest PICT "@S45"
+    @  m_x+5,m_y+2 SAY "Vezni dokumenti:" GET _m_dveza PICT "@S45"
   endif
 
-  if gDodPar=="1" .or. gDatVal=="D"
+  if gDodPar == "1" .or. gDatVal == "D"
+
    nRokPl:=gRokPl
+
    @  m_x+6,m_y+2 SAY "Datum fakture  :" GET _DatDok
+
    if datum_max <> NIL
-    @  m_x+6,m_y+35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .f. COLOR "GR+/B"
+      @  m_x+6,m_y+35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .f. COLOR "GR+/B"
    endif
+
    @ m_x+7,m_y+2 SAY "Rok plac.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0",.t.) ;
             VALID valid_rok_placanja( nRokPl, "1",.t.)
    @ m_x+8,m_y+2 SAY "Datum placanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2",.t.)
+
    read
   endif
 

@@ -12,9 +12,7 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
-
-static __unos_opisa_stavke := NIL
-static __unos_ref_lot := NIL
+static __param := NIL
 
 static __fiscal_marker := .f.
 
@@ -28,36 +26,37 @@ static __enter_seq := CHR( K_ENTER ) + CHR( K_ENTER ) + CHR( K_ENTER )
 static __redni_broj
 
 
+// -------------------------------------------------------------
+// postavi parametre unosa fakt_dokumenta
+// -------------------------------------------------------------
+procedure fakt_params(setup)
 
-// ----------------------------------------------------------------
-// da li se unosi opis po stavkama na unosu dokumenta
-// ----------------------------------------------------------------
-function param_unos_opisa_stavke_na_fakturi( read_par )
-if read_par == NIL
-    read_par := .f.
+if setup == NIL
+  setup = .f.
 endif
-if read_par
-    __unos_opisa_stavke := fetch_metric( "fakt_unos_opisa", NIL, "N" )
+
+if setup .or. __param == NIL
+    __param := hb_hash()
+    __param["fakt_opis_stavke"] := fakt_opis_stavke()
+    __param["ref_lot"] := ref_lot()
+
+    // TODO: prebaciti na get_set sistem
+    __param["vrste_placanja"] := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
+    __param["def_rj"] := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
+
+    // TODO: ugasiti ovaj globalni parametar
+    if destinacije() == "D"
+      __param["destinacije"] := .f.
+    else
+      __param["destinacije"] := .t.
+    endif
+
+    // ako se koristi rnal, koriste se veze izmedju fakt dokumenata
+    __param["fakt_dok_veze"] :=  f18_use_module("rnal")
+
 endif
-return __unos_opisa_stavke 
 
-
-
-// ----------------------------------------------------------------
-// da li se unose ref i lot brojevi
-// ----------------------------------------------------------------
-function param_unos_ref_lot_na_fakturi( read_par )
-if read_par == NIL
-    read_par := .f.
-endif
-if read_par
-    __unos_ref_lot := fetch_metric( "fakt_unos_ref_lot", NIL, "N" )
-endif
-return __unos_ref_lot
-
-
-
-
+return __param
 
 // -----------------------------------------------------------------
 // glavna funkcija za poziv pripreme i knjizenje fakture
@@ -66,6 +65,7 @@ function fakt_unos_dokumenta()
 local _i, _x_pos, _y_pos, _x, _y
 local _sep := BROWSE_COL_SEP
 private ImeKol, Kol
+
 
 o_fakt_edit()
 
@@ -171,7 +171,8 @@ local _dev_id := 0
 local _dev_params
 local _fiscal_use := fiscal_opt_active()
 local _items_atrib := hb_hash()
- 
+local _params := fakt_params()
+
 if ( Ch == K_ENTER .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
     return DE_CONT
 endif
@@ -266,11 +267,11 @@ do case
 
         __redni_broj := RbrUnum( _rbr )
 
-        if __unos_opisa_stavke == "D"
+        if _params["fakt_opis_stavke"] == "D"
             _items_atrib["fakt_opis"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_opis" )
         endif
 
-        if __unos_ref_lot == "D"
+        if _params["ref_lot"] == "D"
             _items_atrib["fakt_ref_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_ref_broj" )
             _items_atrib["fakt_lot_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_lot_broj" )
         endif
@@ -456,13 +457,6 @@ do case
         return DE_REFRESH
 
 
-    // ???????
-    case Ch = K_ALT_I
-        RekZadMpO()
-        o_fakt_edit()
-        return DE_REFRESH
-        
-
     // narudzbenica
     case Ch == K_ALT_N
     
@@ -515,63 +509,6 @@ do case
 endcase
 
 return DE_CONT
-
-
-
-// -------------------------------------------
-// brisanje stavke
-// -------------------------------------------
-function fakt_brisi_stavku_pripreme()
-local _secur_code
-local _log_opis
-local _log_stavka
-local _log_artikal, _log_kolicina, _log_cijena
-local _log_datum
-local _t_area
-local _rec, _t_rec
-local _tek, _prva
-local _id_tip_dok, _id_firma, _br_dok, _r_br
-
-   
-if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "N"
-    return 0
-endif
-
-_id_firma := field->idfirma
-_id_tip_dok := field->idtipdok
-_br_dok := field->brdok
-_r_br := field->rbr
-
-if ( RecCount2() == 1 ) .or. JedinaStavka()
-    // potreba za resetom brojaca na prethodnu vrijednost ?
-    fakt_reset_broj_dokumenta( _id_firma, _id_tip_dok, _br_dok )
-endif
-   
-// ako je prva stavka...
-if _r_br == PADL( "1", 3 ) .and. ( RECCOUNT() > 1 )
-    _prva := dbf_get_rec()
-    skip
-    _tek := dbf_get_rec()
-    _tek["txt"] := _prva["txt"]
-    _tek["rbr"] := _prva["rbr"]
-    dbf_update_rec( _tek )
-    skip -1
-endif 
-
-delete
-_t_rec := RECNO()
-__dbPack()
-
-go ( _t_rec )
-
-_t_area := SELECT()
-    
-// pobrisi i fakt atribute ove stavke...
-delete_fakt_atribut( _id_firma, _id_tip_dok, _br_dok, _r_br )
-    
-select ( _t_area )
-
-return 1
 
 
 // --------------------------------------------------
@@ -716,9 +653,6 @@ BoxC()
 return
 
 
-
-
-
 // ---------------------------------------------------
 // printanje dokumenta
 // ---------------------------------------------------
@@ -739,91 +673,13 @@ o_fakt_edit()
 return
 
 
-
-
-// -----------------------------------------
-// -----------------------------------------
-function RekZadMpO()
-
-select fakt_pripr
-GO TOP
-
-cSort1:="IzSifK('PARTN','LINI',idpartner,.f.)+idroba"
-cFilt1:="idtipdok=='13'.and.idfirma==" + cm2str(fakt_pripr->idfirma)
-INDEX ON &cSort1 to "TMPPRIPR" for &cFilt1
-GO TOP
-
-StartPrint()
-
-? "FAKT,",date(),", REKAPITULACIJA ZADUZENJA MALOPRODAJNIH OBJEKATA"
-? 
-IspisFirme(fakt_pripr->idfirma)
-?
-do while !EOF()
-  cLinija:=IzSifK('PARTN','LINI',idpartner,.f.)
-  ? "LINIJA:",cLinija
-  ? "---------- ---------------------------------------- ----------"
-  ? "  SIFRA                NAZIV ARTIKLA                 KOLICINA "
-  ? "---------- ---------------------------------------- ----------"
-  do while !EOF() .and. cLinija==IzSifK('PARTN','LINI',idpartner,.f.)
-    cIdRoba:=idroba; nKol:=0
-    SELECT ROBA; SEEK LEFT(cIdRoba,gnDS); select fakt_pripr
-    do while !EOF() .and.;
-         cLinija==IzSifK('PARTN','LINI',idpartner,.f.) .and.;
-         idroba==cIdRoba
-      nKol += kolicina
-      SKIP 1
-    enddo
-    ? cIdRoba, LEFT(ROBA->naz,40),  STR(nKol, 10, 0)
-  enddo
-  ? "---------- ---------------------------------------- ----------"
-  ?
-  if !EOF()
-    FF
-  endif
-enddo
-
-FF
-
-close all 
-
-EndPrint()
-
-return     
-
-
-
-
-
-// -------------------------------------------------------
-// matrica sa tipovima dokumenata
-// -------------------------------------------------------
-static function fakt_tip_dok_arr()
-local _arr := {}
-
-AADD( _arr, "00 - Pocetno stanje                ")
-AADD( _arr, "01 - Ulaz / Radni nalog ")
-AADD( _arr, "10 - Porezna faktura")
-AADD( _arr, "11 - Porezna faktura gotovina")
-AADD( _arr, "12 - Otpremnica" )
-AADD( _arr, "13 - Otpremnica u maloprodaju")
-AADD( _arr, "19 - Izlaz po ostalim osnovama" )
-AADD( _arr, "20 - Ponuda/Avansna faktura") 
-AADD( _arr, "21 - Revers")
-AADD( _arr, "22 - Realizovane otpremnice   ")
-AADD( _arr, "23 - Realizovane otpremnice MP")
-AADD( _arr, "25 - Knjizna obavijest ")
-AADD( _arr, "26 - Narudzbenica ")
-AADD( _arr, "27 - Ponuda/Avansna faktura gotovina") 
-
-return _arr
-
-
 // ----------------------------------------------------
 // inicijalizuj varijable iz memo polja txt
 // ----------------------------------------------------
 static function _init_vars_from_txt_memo()
-local _memo := ParsMemo( _txt )
+
+local _params := fakt_params()
+local _memo := ParsMemo(_txt)
 local _len := LEN( _memo )
 
 if _len > 0
@@ -873,13 +729,11 @@ if _len >= 17
     d2n2 := _memo[17]
 endif
     
-// destinacija
-if _len >= 18
+if _params["destinacije"] .and. _len >= 18
     _destinacija := PADR( ALLTRIM( _memo[18] ), 500 )
 endif
     
-// dokumenti veza
-if _len >= 19
+if _params["fakt_dok_veze"] .and. _len >= 19
     _dokument_veza := PADR( ALLTRIM( _memo[19] ), 500 )
 endif
 
@@ -891,6 +745,8 @@ return
 // sredji memo txt na osnovnu varijabli
 // ---------------------------------------------------
 static function _set_memo_txt_from_vars()
+local _tmp
+local _params := fakt_params()
 
 // odsjeci na kraju prazne linije
 _txt2 := OdsjPLK( _txt2 )           
@@ -929,14 +785,25 @@ _txt += CHR(16) + d2k5 + CHR(17)
 _txt += CHR(16) + d2n1 + CHR(17) 
 // 17
 _txt += CHR(16) + d2n2 + CHR(17) 
+
+if _params["destinacije"]
+   _tmp := ""
+else
+   _tmp := _destinacija
+endif
 // 18 - Destinacija
-_txt += CHR(16) + ALLTRIM( _destinacija ) + CHR(17) 
+_txt += CHR(16) + ALLTRIM( _tmp ) + CHR(17) 
+
+
 // 19 - vezni dokumenti
+if _params["fakt_dok_veze"]
+   _tmp := ""
+else
+   _tmp := _dokument_veza
+endif
 _txt += CHR(16) + ALLTRIM( _dokument_veza ) + CHR(17)
 
 return
-
-
 
 
 // --------------------------------------------------------
@@ -947,8 +814,6 @@ local _a_tipdok := {}
 local _h
 local _rok_placanja := 0
 local _avansni_racun
-local _vrste_placanja := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
-local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
 local _opis := "" 
 local _n_menu := IIF( VAL( gIMenu ) < 1, ASC( gIMenu ) - 55, VAL( gIMenu ) )
 local _convert := "N"
@@ -957,6 +822,7 @@ local _odabir_txt := .f.
 local _lista_uzoraka
 local _x2, _part_x, _part_y, _tip_cijene
 local _ref_broj, _lot_broj
+local _params := fakt_params() 
 
 // daj mi listu tipova dokumenata
 _a_tipdok := fakt_tip_dok_arr()
@@ -968,7 +834,7 @@ AFILL( _h, "" )
 if items_atrib <> NIL
 
     // opis fakture
-    if __unos_opisa_stavke == "D"
+    if _params["fakt_opis_stavke"] == "D"
         if fNovi
             _opis := PADR( "", 300 )
         else
@@ -977,7 +843,9 @@ if items_atrib <> NIL
     endif
 
     // ref/lot brojevi
-    if __unos_ref_lot == "D"
+    if _params["ref_lot"] == "D"
+
+
         if fNovi
             _ref_broj := PADR( "", 50 )
             _lot_broj := PADR( "", 50 )
@@ -1016,8 +884,15 @@ if fNovi
 
     _convert := "D"
     _serbr := SPACE( LEN( field->serbr ) )
-    _destinacija := PADR( "", 500 )
-    _dokument_veza := PADR( "", 500 )
+
+    if _params["destinacije"]
+       _destinacija := PADR( "", 500 )
+    endif
+
+    if _params["fakt_dok_veze"]
+         _dokument_veza := PADR( "", 500 )
+    endif
+
     _cijena := 0
     _kolicina := 0
 
@@ -1031,8 +906,8 @@ if fNovi
         _n_menu := IIF( VAL( gIMenu ) < 1, ASC( gIMenu ) - 55, VAL( gIMenu ) )
         _idfirma := gFirma
 
-	    if !EMPTY( _def_rj )
-		    _idfirma := _def_rj
+	    if !EMPTY(_params["def_rj"])
+		    _idfirma := _params["def_rj"]
 	    endif
 
         _idtipdok := "10"
@@ -1068,8 +943,8 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
        	_idFirma := gFirma
     endif
 
-	if !EMPTY( _def_rj )
-		_idfirma := _def_rj
+	if !EMPTY(_params["def_rj"])
+		_idfirma := _params["def_rj"]
 	endif
 
     @ m_x + _x, m_y + 2 SAY PADR( gNFirma, 20 )
@@ -1145,10 +1020,12 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm VALID {|| P_IDPM( @_idpm, _idpartner ) } ;
                 PICT "@S10"
     
-        // veza dokumenti
-        @ m_x + _x, col() + 1 SAY "Veza:" GET _dokument_veza PICT "@S20"
+        if _params["fakt_dok_veze"]
+           // veza dokumenti
+           @ m_x + _x, col() + 1 SAY "Veza:" GET _dokument_veza PICT "@S20"
+        endif
 
-        if gDest
+        if _params["destinacije"] 
           // destinacija 
           ++ _x
           @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
@@ -1190,10 +1067,9 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
             @ m_x + _x2, m_y + 51 SAY "Datum placanja :" GET _datpl ;
                     VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
                 
-            if _vrste_placanja == "D"
+            if __param["vrste_placanja"] == "D"
 
                 ++ _x
-
                 @ m_x + _x, m_y + 2  SAY "Nacin placanja" ;
                         GET _idvrstep ;
                         PICT "@!" ;
@@ -1327,19 +1203,15 @@ if ( gVarC $ "123" .and. _idtipdok $ "10#12#20#21#25" )
 endif
 
 // unos opisa stavke po fakturama
-if __unos_opisa_stavke == "D"
-    
+if _params["fakt_opis_stavke"] == "D"
     ++ _x
     @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
-
 endif
 
-if __unos_ref_lot == "D"
-
+if _params["ref_lot"] == "D"
     ++ _x
     @ m_x + _x, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
     @ m_x + _x, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
-
 endif
 
 ++ _x
@@ -1422,11 +1294,11 @@ _rbr := RedniBroj( __redni_broj )
 
 // snimi atribute u hash matricu....
 // opis stavke
-if __unos_opisa_stavke == "D"
+if _params["fakt_opis_stavke"] == "D"
     items_atrib["fakt_opis"] := _opis
 endif
 // ref/lot brojevi
-if __unos_ref_lot == "D"
+if _params["ref_lot"] == "D"
     items_atrib["fakt_ref_broj"] := _ref_broj
     items_atrib["fakt_lot_broj"] := _lot_broj
 endif

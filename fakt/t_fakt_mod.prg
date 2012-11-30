@@ -188,8 +188,9 @@ __default_odt_template()
 set_global_vars()
 set_roba_global_vars()
 
-::nDuzinaSifre:=VAL(IzFMKINI('SifRoba','DuzSifra','10', SIFPATH))
-::cTekVpc:=IzFmkIni("FAKT","TekVpc","1",SIFPATH)
+::nDuzinaSifre:= 10
+::cTekVpc := "1"
+
 public gFiltNov:=""
 public gVarNum:="1"
 public gProtu13:="N"
@@ -199,7 +200,6 @@ public gDK2 := "N"
 
 public gFPzag:=0
 public gZnPrec:="="
-public gNovine:="N"        // novine/stampa u asortimanu
 public gnDS:=5             // duzina sifre artikla - sinteticki
 public gBaznaV:="D"
 public Kurslis:="1"
@@ -360,26 +360,31 @@ public gMPCjenPDV := "2"
 // zaokruzenje 5pf
 public gZ_5pf := "N"
 
-// prebacio iz fakt.ch define komande
 public zaokruzenje := 2
 public i_id := 1
 public nl := hb_eol()
-public gDest := .f.
 
 // firma naziv
 public gFNaziv:=SPACE(250) 
 // firma dodatni opis
+
 public gFPNaziv:=SPACE(250) 
 // firma adresa
+
 public gFAdresa:=SPACE(35) 
+
 // firma id broj
 public gFIdBroj:=SPACE(13)
+
 // telefoni
 public gFTelefon:=SPACE(72) 
+
 // web
 public gFEmailWeb:=SPACE(72)
 // banka 1
+
 public gFBanka1:=SPACE(50)
+
 // banka 2
 public gFBanka2:=SPACE(50)
 // banka 3
@@ -433,7 +438,6 @@ gnLMarg := fetch_metric( "fakt_dokument_lijeva_margina", nil, gnLMarg )
 gnTMarg := fetch_metric( "fakt_dokument_top_margina", nil, gnTMarg )
 gPDVDrb := fetch_metric( "fakt_dokument_delphirb_prikaz", nil, gPDVDrb )
 gPDVDokVar := fetch_metric( "fakt_dokument_txt_prikaz_varijanta", nil, gPDVDokVar )
-gDest := fetch_metric( "fakt_unos_destinacije", nil, gDest )
 
 // obrada dokumenta
 glRGrPrn := fetch_metric( "fakt_ispis_grupacije_na_dokumentu", nil, glRGrPrn )
@@ -506,7 +510,6 @@ RPar("PR",@gDetPromRj)
 Rpar("NF",@gFNar)
 Rpar("UF",@gFUgRab)
 Rpar("rR",@gRabIzRobe)
-Rpar("no",@gNovine)
 Rpar("ds",@gnDS)
 Rpar("ot",@gOdvT2)
 RPar("pk",@gPratik)
@@ -612,26 +615,10 @@ cSekcija:="BarKod"; cVar:="NazRTM"
 IzFmkIni (cSekcija,cVar, IzFMkIni(cSekcija,cVar,'barkod') , SIFPATH)
 
 public glDistrib := .f.
-//(IzFmkIni("FAKT","Distribucija","N",KUMPATH)=="D")
 public gPovDob := "0"
-//IzFmkIni("FAKT_TipDok01","StampaPovrataDobavljacu_DefaultOdgovor","0",KUMPATH)
 
-public gUVarPP := IzFMKINI("POREZI","PPUgostKaoPPU","M")
-cPom := IzFMKINI("POREZI","PPUgostKaoPPU","-",KUMPATH)
-IF cPom <> "-"
-  gUVarPP:=cPom
-ENDIF
+public gUVarPP := "M"
 gSQL:="N"
-
-if IzFmkIni("FAKT","ReadOnly","N", PRIVPATH)=="D"
-   gReadOnly:=.t.
-   @ 22,65 SAY "ReadOnly rezim"
-endif
-
-if IzFmkIni("FMK","TerminalServer","N")=="D"
-   PUBLIC gTerminalServer
-   gTerminalServer:=.t.
-endif
 
 public lPoNarudzbi := .f.
 public lSpecifZips := .f. 
@@ -644,10 +631,8 @@ gPartnBlock:={|Ch| FaPartnBlock(Ch)}
 
 public glCij13Mpc:=(IzFmkIni("FAKT","Cijena13MPC","D", KUMPATH)=="D")
 
-public gNovine:=(IzFmkIni("STAMPA","Opresa","N",KUMPATH))
-
 public glRadNal := .f.
-glRadNal:=(IzFmkIni("FAKT","RadniNalozi","N",KUMPATH)=="D")
+glRadNal := (IzFmkIni("FAKT","RadniNalozi","N",KUMPATH) == "D")
 
 public gKonvZnWin
 gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
@@ -666,11 +651,11 @@ gKonvZnWin:=IzFmkIni("DelphiRB","Konverzija","3",EXEPATH)
 param_racun_na_email(.t.)
 
 // unos opisa na fakturama
-param_unos_opisa_stavke_na_fakturi( .t. )
+fakt_opis_stavke()
+
+destinacije()
 
 // unos ref lot brojeva na fakturi
-param_unos_ref_lot_na_fakturi( .t. )
+ref_lot()
 
 return
-
-

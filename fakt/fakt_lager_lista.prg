@@ -131,11 +131,7 @@ do while .t.
   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
  endif
 @ m_x+2,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-IF gNovine=="D"
-  @ m_x+3,m_y+2 SAY "Uslov po sifri partnera (prazno - svi)"  GET qqPartn   pict "@!"
-ELSE
-  @ m_x+3,m_y+2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   pict "@!"
-ENDIF
+@ m_x+3,m_y+2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   pict "@!"
 @ m_x+4,m_y+2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
 @ m_x+5,m_y+2 SAY "Od datuma "  get dDatOd
 @ m_x+5,col()+1 SAY "do"  get dDatDo
@@ -170,7 +166,6 @@ IF !lBezUlaza
   @ row()+1,m_y+2 SAY "Prikazati realizaciju " GET  cRealizacija pict "@!" valid cRealizacija $ "DN"
 ENDIF
 
-//cSintetika:=gNovine
 cSintetika:=IzFmkIni("FAKT","Sintet","N")
 
 IF !lPocStanje .and. cSintetika=="D"
@@ -185,18 +180,6 @@ ELSE
   cUI:="S"
 ENDIF
 
-IF gNovine=="D"
-  cvOpor := "S"
-  @ row()+1,m_y+2 SAY "Izdvojiti (O-oporezovane,N-neoporezovane,S-sve)" GET cvOpor VALID cvOpor$"ONS" PICT "@!"
-ENDIF
-
-IF lPoNarudzbi
-  qqIdNar := SPACE(60)
-  cPKN    := "N"
-  @ row()+1,m_y+2 SAY "Uslov po sifri narucioca:" GET qqIdNar PICT "@!S30"
-  @ row()+1,m_y+2 SAY "Prikazati kolonu 'narucilac' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
-ENDIF
-
 @ row()+1, m_y+2 SAY "Prikaz stanja po tarifama? (D/N)" GET cPoTar VALID cPoTar$"DN" PICT "@!"
 
 read
@@ -207,14 +190,6 @@ read
  else
    aUsl1:=Parsiraj(qqRoba,"IdRoba")
  endif
-
- IF gNovine=="D"
-   aUsl2:=Parsiraj(qqPartn,"IdPartner")
- ENDIF
-
- IF lPoNarudzbi
-   aUslN := Parsiraj(qqIdNar,"idnar")
- ENDIF
 
  if aUsl1<>NIL 
    exit

@@ -93,9 +93,9 @@ local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2
 local _prik_bk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PADR("", 300) )
 local _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
-local _unos_opisa := fetch_metric( "fakt_unos_opisa", NIL, "N" )
-local _unos_ref_lot := fetch_metric( "fakt_unos_ref_lot", NIL, "N" )
-local _unos_dest := "N"
+local _unos_opisa := fakt_opis_stavke() 
+local _unos_ref_lot := ref_lot()
+local _unos_dest := destinacije()
 local _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
 local _racun_na_email := PADR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
 local _def_template := PADR( fetch_metric( "fakt_default_odt_template", my_user(), "" ), 20)
@@ -105,13 +105,6 @@ private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
 private GetList:={}
-
-// unos destinacije
-gDest := fetch_metric( "fakt_unos_destinacije", nil, gDest )
-
-if gDest
-    _unos_dest := "D"
-endif
 
 O_PARAMS
 
@@ -131,10 +124,6 @@ _x := 2
 
 ++ _x
     
-@ m_x + _x, m_y + 2 SAY "Koriste li se artikli koji se vode po sintet.sifri, roba tipa 'S' (D/N) ?" GET gNovine VALID gNovine $ "DN" PICT "@!"
-
-++ _x
-
 @ m_x + _x, m_y + 2 SAY "Unos dokumenata pomocu barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
 
 ++ _x
@@ -175,7 +164,7 @@ _x := 2
 
 ++ _x
 
-@ m_x + _x, m_y + 2 SAY "Unos destinacije na fakturi (D/N) ?" GET _unos_dest VALID _unos_dest $ "DN" PICT "@!"
+@ m_x + _x, m_y + 2 SAY "Praćenje po destinacijama (D/N) ?" GET _unos_dest VALID _unos_dest $ "DN" PICT "@!"
 
 ++ _x
 
@@ -187,10 +176,7 @@ _x := 2
 
 ++ _x
 
-@ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" ;
-        GET gMPPrint ;
-        PICT "@!" ;
-        VALID gMPPrint $ "DNXT"
+@ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
 
 read
 
@@ -242,28 +228,16 @@ if LastKey() <> K_ESC
     set_metric( "pregled_rabata_kod_izlaza", my_user(), _rabat )
 	set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
     set_metric( "fakt_default_odt_template", my_user(), ALLTRIM( _def_template ) )
-    set_metric( "fakt_unos_opisa", NIL, _unos_opisa )
-    set_metric( "fakt_unos_ref_lot", NIL, _unos_ref_lot )
 
-    // setuj parametar unosa opisa stavke na fakturi...
-    param_unos_opisa_stavke_na_fakturi( .t. )
-    // setuj parametar unosa ref/lot brojeva na fakturi....
-    param_unos_ref_lot_na_fakturi( .t. )
-
+    destinacije(_unos_dest)
+    fakt_opis_stavke(_unos_opisa)
+    ref_lot(_unos_ref_lot)
+    
     // setuj mi default odt template ako treba
     __default_odt_template()
 
-    if _unos_dest == "D"
-        gDest := .t.
-    else
-        gDest := .f.    
-    endif
-
-	set_metric( "fakt_unos_destinacije", nil, gDest )
-    
     Wpar("NF",gFNar)
     Wpar("UF",gFUgRab)
-    Wpar("no",gNovine)
     Wpar("ds",gnDS)
     WPar("if",gImeF)
     WPar("95",gKomLin)   
@@ -554,7 +528,7 @@ RPar("y1", @nSw7)
 cSection := "1"
 
 nX:=2
-Box(,22,76,.f.,"Izgled dokumenata")
+Box( ,22, 76, .f., "Izgled dokumenata")
 
     if !IsPdv()
         
@@ -995,5 +969,22 @@ function is_fakt_ugalj()
 return .f.
 
 
+// ----------------------------------------------------------------
+// dodatni opis na stavke u fakt dokumentu
+// ----------------------------------------------------------------
+function fakt_opis_stavke(value)
+return get_set_global_param("fakt_opis_stavke", value, "N")
 
+
+// ----------------------------------------------------------------
+// koriste se REF/LOT oznake
+// ----------------------------------------------------------------
+function ref_lot(value)
+return get_set_global_param("ref_lot", value, "N")
+
+// ----------------------------------------------------------------
+// prate se destinacije
+// ----------------------------------------------------------------
+function destinacije(value)
+return get_set_global_param("destinacije", value, "N")
 

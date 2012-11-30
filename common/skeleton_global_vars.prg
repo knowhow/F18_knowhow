@@ -142,8 +142,6 @@ gOpSist:=IzFmkIni("Svi","OS","-",EXEPATH)
 
 public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
-public gNovine := "N"
-
 SetPDVBoje()
 
 return

@@ -739,7 +739,9 @@ cIdVd:=get_dtxt_opis("D09")
 cFiscal:=ALLTRIM( get_dtxt_opis("O10") )
  
 nLines := VAL( get_dtxt_opis("D30") )
+
 cDokVeza := ""
+
 nTmp := 30
 for n := 1 to nLines
 	cDokVeza += get_dtxt_opis("D" + ALLTRIM(STR( nTmp + n )))

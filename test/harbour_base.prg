@@ -10,5 +10,6 @@ TEST_LINE( hb_ValToStr( NIL )                   , "NIL"           )
 TEST_LINE( hb_ValToStr( .f. )                   , ".F."           )
 
 TEST_LINE( hb_ValToStr( .t. )                   , ".T."           )
+TEST_LINE( SjeciStr( "1,2,3" )                   , {1, 2, 3}      )
 
 return

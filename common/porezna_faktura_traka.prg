@@ -263,7 +263,6 @@ sjeci_traku(cSjeTraSkv)
 END PRN2 13
 
 return
-*}
 
 
 

@@ -133,7 +133,7 @@ if Pitanje(,"Nulirati datoteke prenosa prije nastavka ?","D")=="D"
 endif
 
 O__FAKT
-IF cSinSFormula!="99"       // bilo:gNovine=="D"
+IF cSinSFormula != "99" 
 	INDEX ON idfirma+idtipdok+brdok+idroba TO "_FAKTTMP"
 ENDIF
 O_FAKT
@@ -214,7 +214,7 @@ if Pitanje(,"Prenijeti u datoteku prenosa fakt sa ovim kriterijom ?","D")=="D"
 		ENDIF
     		Scatter()
     		select _FAKT
-    		IF cSinSFormula!="99" .and. nDuzSintSifre>0 .and. nDuzSintSifre<10   // bilo:gNovine=="D"
+    		IF cSinSFormula!="99" .and. nDuzSintSifre>0 .and. nDuzSintSifre<10
       			_idroba:=LEFT(_idroba,nDuzSintSifre)
       			SEEK _idfirma+_idtipdok+_brdok+_idroba
       			IF FOUND() .and. rabat=_rabat .and. porez=_porez .and. cijena=_cijena

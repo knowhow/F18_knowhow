@@ -316,16 +316,14 @@ do while !eof() .and. id==cidugov
     else
      _txt1:=" "
     endif
-    IF IzFMKINI("Fakt_Ugovori","UNapomenuSamoBrUgovora","D")=="D"
-      cVezaUgovor := "Veza: "+trim(ugov->id)
-    ELSE
-      cVezaUgovor := "Veza: UGOVOR: "+trim(ugov->id)+" od "+dtoc(ugov->datod)
-    ENDIF
-    _txt:=Chr(16)+_txt1 +Chr(17)+;
-         Chr(16)+trim(ftxt->naz)+chr(13)+chr(10)+;
-         IF(gNovine=="D","",cVezaUgovor+chr(13)+chr(10))+;
-         cDodTxt+Chr(17)+Chr(16)+_Txt3a+ Chr(17)+ Chr(16)+_Txt3b+Chr(17)+;
-         Chr(16)+_Txt3c+Chr(17)
+    
+    cVezaUgovor := "Veza: "+trim(ugov->id)
+    
+    _txt := Chr(16)+_txt1 + Chr(17) +;
+            Chr(16)+trim(ftxt->naz)+chr(13)+chr(10) +;
+            cVezaUgovor + chr(13)+chr(10) +;
+            cDodTxt + Chr(17)+Chr(16)+_Txt3a+ Chr(17)+ Chr(16) + _Txt3b + Chr(17)+;
+            Chr(16)+_Txt3c+Chr(17)
 
    endif
 

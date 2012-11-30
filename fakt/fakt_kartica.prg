@@ -112,11 +112,8 @@ endif
 if gVarC $ "12"
  @ m_x+7,m_y+2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  get cTipVpc pict "@!" valid cTipVPC $ "12"
 endif
-IF gNovine=="D"
-  @ m_x+8,m_y+2 SAY "Uslov po sifri partnera (prazno - svi)"  GET qqPartn   pict "@!"
-ELSE
-  @ m_x+8,m_y+2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   pict "@!"
-ENDIF
+
+@ m_x+8,m_y+2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   pict "@!"
 if fakt->(fieldpos("K1"))<>0 .and. gDK1=="D"
  @ m_x+9,m_y+2 SAY "K1" GET  cK1 pict "@!"
  @ m_x+10,m_y+2 SAY "K2" GET  cK2 pict "@!"
@@ -164,9 +161,6 @@ read;ESC_BCR
    else
     aUsl1:=Parsiraj(qqRoba,"IdRoba")
    endif
- endif
- if gNovine=="D"
-   aUsl2:=Parsiraj(qqPartn,"IdPartner")
  endif
 
  IF lPoNarudzbi
@@ -287,11 +281,8 @@ nRezerv:=nRevers:=0
 qqPartn:=trim(qqPartn)
 if !empty(qqPartn)
   ?
-  IF gNovine=="D"
-    ? space(gnlmarg),"- Prikaz za partnere obuhvacene uslovom za sifru:"
-  ELSE
-    ? space(gnlmarg),"- Prikaz za partnere ciji naziv pocinje sa:"
-  ENDIF
+  ? space(gnlmarg),"- Prikaz za partnere ciji naziv pocinje sa:"
+
   ? space(gnlmarg)," ",qqPartn
   ?
 endif
@@ -367,12 +358,8 @@ do while !eof()
        endif
        if !empty(cidfirma); if idfirma<>cidfirma; skip; loop; end; end
        if !empty(qqPartn)
-         IF gNovine=="D"
-           IF !(&aUsl2); SKIP 1; LOOP; ENDIF
-         ELSE
            select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
            select fakt; if !(fakt_doks->partner=qqPartn); skip; loop; endif
-         ENDIF
        endif
 
        if !empty(cIdRoba)
@@ -415,12 +402,8 @@ do while !eof()
     if !empty(cK2); if ck2<>K2; skip; loop; end; end // uslov ck2
 
     if !empty(qqPartn)
-      IF gNovine=="D"
-        IF !(&aUsl2); SKIP 1; LOOP; ENDIF
-      ELSE
         select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
         select fakt; if !(fakt_doks->partner=qqPartn); skip; loop; endif
-      ENDIF
     endif
 
     if !empty(cIdRoba)

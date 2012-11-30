@@ -162,6 +162,7 @@ return
 // puni  pomocne tabele rn drn
 // ----------------------------------------------------------------------
 static function fill_porfakt_data(cIdFirma, cIdTipDok, cBrDok, lBarKod, lSamoKol)
+
 local cTxt1,cTxt2,cTxt3,cTxt4,cTxt5
 local cIdPartner
 local dDatDok
@@ -227,6 +228,8 @@ local nSw4 := 31
 local nSw5 := 1
 local nSw6 := 1
 local nSw7 := 0
+
+local _params := fakt_params()
 
 // radi citanja parametara
 private cSection:="F"

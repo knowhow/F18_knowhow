@@ -16,8 +16,6 @@
 static slChanged := .f.
 
 
-
-
 function IzSifre( silent )
 local _pos
 local _sif := _idpartner
@@ -2082,4 +2080,82 @@ GO nTekRec
 return IIF(nBrStavki == 1, .t., .f.)
 
 
+// -------------------------------------------
+// brisanje stavke
+// -------------------------------------------
+function fakt_brisi_stavku_pripreme()
+local _secur_code
+local _log_opis
+local _log_stavka
+local _log_artikal, _log_kolicina, _log_cijena
+local _log_datum
+local _t_area
+local _rec, _t_rec
+local _tek, _prva
+local _id_tip_dok, _id_firma, _br_dok, _r_br
+
+   
+if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "N"
+    return 0
+endif
+
+_id_firma := field->idfirma
+_id_tip_dok := field->idtipdok
+_br_dok := field->brdok
+_r_br := field->rbr
+
+if ( RecCount2() == 1 ) .or. JedinaStavka()
+    // potreba za resetom brojaca na prethodnu vrijednost ?
+    fakt_reset_broj_dokumenta( _id_firma, _id_tip_dok, _br_dok )
+endif
+   
+// ako je prva stavka...
+if _r_br == PADL( "1", 3 ) .and. ( RECCOUNT() > 1 )
+    _prva := dbf_get_rec()
+    skip
+    _tek := dbf_get_rec()
+    _tek["txt"] := _prva["txt"]
+    _tek["rbr"] := _prva["rbr"]
+    dbf_update_rec( _tek )
+    skip -1
+endif 
+
+delete
+_t_rec := RECNO()
+__dbPack()
+
+go ( _t_rec )
+
+_t_area := SELECT()
+    
+// pobrisi i fakt atribute ove stavke...
+delete_fakt_atribut( _id_firma, _id_tip_dok, _br_dok, _r_br )
+    
+select ( _t_area )
+
+return 1
+
+
+// -------------------------------------------------------
+// matrica sa tipovima dokumenata
+// -------------------------------------------------------
+function fakt_tip_dok_arr()
+local _arr := {}
+
+AADD( _arr, "00 - Pocetno stanje                ")
+AADD( _arr, "01 - Ulaz / Radni nalog ")
+AADD( _arr, "10 - Porezna faktura")
+AADD( _arr, "11 - Porezna faktura gotovina")
+AADD( _arr, "12 - Otpremnica" )
+AADD( _arr, "13 - Otpremnica u maloprodaju")
+AADD( _arr, "19 - Izlaz po ostalim osnovama" )
+AADD( _arr, "20 - Ponuda/Avansna faktura") 
+AADD( _arr, "21 - Revers")
+AADD( _arr, "22 - Realizovane otpremnice   ")
+AADD( _arr, "23 - Realizovane otpremnice MP")
+AADD( _arr, "25 - Knjizna obavijest ")
+AADD( _arr, "26 - Narudzbenica ")
+AADD( _arr, "27 - Ponuda/Avansna faktura gotovina") 
+
+return _arr
 

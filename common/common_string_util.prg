@@ -105,6 +105,7 @@ do while  !empty(cStr)
      cStr:=substr(cStr,nLen)
   endif
 enddo
+
 if len(aRez)==0
 	AADD(aRez,space(nLen))
 endif

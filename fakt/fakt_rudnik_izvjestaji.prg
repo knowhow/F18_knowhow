@@ -1615,13 +1615,8 @@ RETURN (NIL)
  */
 
 function SiSiRo()
-*{
 LOCAL cSR:=FAKT->idroba
-  IF gNovine=="D"
-    cSR := PADR(LEFT(cSR,gnDS),LEN(cSR))
-  ENDIF
 RETURN cSR
-*}
 
 
 

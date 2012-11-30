@@ -94,3 +94,19 @@ end case
 
 return NIL 
 
+
+// ----------------------------------------------------------
+// set/get globalne parametre F18
+// ----------------------------------------------------------
+function get_set_global_param(param_name, value, def_value)
+local _ret
+
+if value == NIL
+   _ret := fetch_metric(param_name, NIL, def_value)
+else
+   set_metric(param_name, NIL, value)
+   _ret := value
+endif
+
+return _ret
+

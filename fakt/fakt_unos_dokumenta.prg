@@ -139,10 +139,12 @@ local _dev_params
 local _fiscal_use := fiscal_opt_active()
 local _items_atrib := hb_hash()
 local _params := fakt_params()
+local _dok := hb_hash()
 
 if ( Ch == K_ENTER .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
     return DE_CONT
 endif
+
 
 select fakt_pripr
 
@@ -231,16 +233,20 @@ do case
         Box( "ist", MAXROWS() - 10, MAXCOLS() - 10, .f. )
 
         set_global_vars_from_dbf( "_" )
+        _dok["idfirma"] := _idfirma
+        _dok["idtipdok"] := _idtipdok
+        _dok["brdok"] := _brdok
+        _dok["rbr"] := _rbr  
 
         __redni_broj := RbrUnum( _rbr )
 
         if _params["fakt_opis_stavke"]
-            _items_atrib["fakt_opis"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_opis" )
+            _items_atrib["opis"] := get_fakt_atribut_opis( _dok, .f.)
         endif
 
         if _params["ref_lot"]
-            _items_atrib["fakt_ref_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_ref_broj" )
-            _items_atrib["fakt_lot_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_lot_broj" )
+            _items_atrib["ref"] := get_fakt_atribut_ref( _dok, .f. )
+            _items_atrib["lot"] := get_fakt_atribut_lot( _dok, .f. )
         endif
 
         if edit_fakt_priprema( .f., @_items_atrib ) == 0
@@ -805,7 +811,7 @@ if items_atrib <> NIL
         if fNovi
             _opis := PADR( "", 300 )
         else
-            _opis := PADR( items_atrib["fakt_opis"], 300 )
+            _opis := PADR( items_atrib["opis"], 300 )
         endif
     endif
 
@@ -816,8 +822,8 @@ if items_atrib <> NIL
             _ref_broj := PADR( "", 50 )
             _lot_broj := PADR( "", 50 )
         else
-            _ref_broj := PADR( items_atrib["fakt_ref_broj"], 50 )
-            _lot_broj := PADR( items_atrib["fakt_lot_broj"], 50 )
+            _ref_broj := PADR( items_atrib["ref"], 50 )
+            _lot_broj := PADR( items_atrib["lot"], 50 )
         endif
     endif
 

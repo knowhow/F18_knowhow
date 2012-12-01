@@ -308,6 +308,7 @@ _cBrDok:=brdok
 close all
 o_fakt_edit()
 StampTXT(_cidfirma, _cIdTipdok, _cbrdok, .t.)
+
 // printaj radni nalog
 rnal_print(.t.)
 select (F_FAKT_DOKS)

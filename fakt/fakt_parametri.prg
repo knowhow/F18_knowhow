@@ -82,6 +82,8 @@ if read .or. __fakt_params == NIL
     // TODO: prebaciti na get_set sistem
     __fakt_params["def_rj"] := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
 
+    __fakt_params["barkod"] := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
+
     // TODO: ugasiti ovaj globalni parametar
     if destinacije() == "D"
       __fakt_params["destinacije"] := .t.

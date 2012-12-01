@@ -22,12 +22,13 @@ static __FIN_KUM
 static __SH_SLD_VAR
 
 // ----------------------------------------------------
+// lJFill - samo se pune rn, drn pomocne tabele
 // ----------------------------------------------------
 function StdokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
 local cFax
 local lPrepisDok := .f.
-local _from_server
- 
+local _dok := hb_hash(), _fill_params := hb_hash()
+local _fakt_params := fakt_params() 
 // samo kolicine
 local lSamoKol:=.f. 
 
@@ -42,10 +43,10 @@ drn_empty()
 // otvori tabele
 if PCount() == 4 .and. ( cIdtipdok <> nil )
     lPrepisDok := .t.
-    _from_server := .t.
+    _fill_params["from_server"] := .t.
     o_fakt_edit(.t.)
 else
-    _from_server := .f.
+    _fill_params["from_server"] := .f.
     o_fakt_edit(.f.)
 endif
 
@@ -55,11 +56,10 @@ o_dracun()
 select fakt_pripr
 
 // barkod artikla
-private cPombk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 private lPBarkod := .f.
 
-if cPombk $ "12"  // pitanje, default "N"
-	lPBarkod := ( Pitanje( ,"Zelite li ispis barkodova ?", IIF( cPombk == "1", "N", "D" ) ) == "D" )
+if _fakt_params["barkod"] $ "12"  // pitanje, default "N"
+	lPBarkod := ( Pitanje( ,"Zelite li ispis barkodova ?", IIF( _fakt_params["barkod"] == "1", "N", "D" ) ) == "D" )
 endif
 
 if PCount() == 0 .or. ( cIdTipDok == nil .and. lJFill == .t. )
@@ -75,12 +75,14 @@ if PCount() <= 1 .or. ( cIdTipDok == nil .and. lJFill == .t.)
 	select fakt_pripr
 endif
 
-cIdFirma:=IdFirma
-cBrDok:=BrDok
-dDatDok:=DatDok
-cIdTipDok:=IdTipDok
+//napuni podatke za stampu
+_dok["idfirma"] := IdFirma
+_dok["idtipdok"] := IdTipDok
+_dok["brdok"] := BrDok 
+_dok["datdok"] := DatDok 
 
-cDocumentName:=doc_name(cIdFirma, cIdTipDok, cBrDok, fakt_pripr->IdPartner)
+
+cDocumentName:=doc_name(_dok, fakt_pripr->IdPartner)
 
 // prikaz samo kolicine
 if cIdTipDok $ "01#00#12#13#19#21#22#23#26"
@@ -99,22 +101,15 @@ endif
 
 __FIN_KUM := STRTRAN( KUMPATH, "FAKT", "FIN" )
 
-//napuni podatke za stampu
-fill_porfakt_data(cIdFirma, cIdTipDok, cBrDok, lPBarKod, lSamoKol)
+_fill_params["barkod"] := lPBarkod
+_fill_params["samo_kolicine"] := lSamoKol
+ 
+fill_porfakt_data(_dok, _fill_params)
 
 if lJFill
 	return
 endif
 
-// logiraj ako se koristi event-loging
-if Logirati(goModul:oDataBase:cName, "DOK", "PRINT")
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "PRINT", ;
-		nil, nil, nil, nil, ;
-		"", "", ;
-		"dokument: " + cIdFirma + "-" + cIdTipDok + "-" + ALLTRIM( cBrDok ), ;
-		DATE(), DATE(), "", ;
-		if(PCount()=0,"Stampanje fakture iz pripreme","Stampanje fakture iz kumulativa") )
-endif
 
 if cIdTipDok $ "13#23"
 	// stampa 13-ke
@@ -158,7 +153,7 @@ return
 // ----------------------------------------------------------------------
 // puni  pomocne tabele rn drn
 // ----------------------------------------------------------------------
-static function fill_porfakt_data(cIdFirma, cIdTipDok, cBrDok, lBarKod, lSamoKol)
+static function fill_porfakt_data(dok, params)
 
 local cTxt1,cTxt2,cTxt3,cTxt4,cTxt5
 local cIdPartner
@@ -226,7 +221,7 @@ local nSw5 := 1
 local nSw6 := 1
 local nSw7 := 0
 
-local _params := fakt_params()
+local _fakt_params := fakt_params()
 
 // radi citanja parametara
 private cSection:="F"
@@ -268,11 +263,12 @@ fill_other()
 select fakt_pripr
 
 // vrati naziv dokumenta
-get_dok_naz(@cDokNaz, idtipdok, idvrstep, lSamoKol)
+get_dok_naz(@cDokNaz, idtipdok, idvrstep, params["samo_kolicine"])
 
 select fakt_pripr
 
-dDatDok := datdok
+dDatDok := dok["datdok"]
+
 dDatVal := dDatDok
 dDatIsp := dDatDok
 cDinDem := dindem
@@ -286,7 +282,7 @@ DEC_CIJENA(ZAO_CIJENA())
 DEC_VRIJEDNOST(ZAO_VRIJEDNOST())
 
 lIno:=.f.
-do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==cBrDok
+do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .and. brdok==dok["brdok"]
 	// Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
 	NSRNPIdRoba()   
 
@@ -305,7 +301,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	else
 		cRobaNaz := ALLTRIM( roba->naz )
 		
-		if lBarKod
+		if params["barkod"]
 			cRobaNaz := cRobaNaz + " (BK: " + roba->barkod + ")"
 		endif
 	endif
@@ -340,16 +336,17 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	// procenat pdv-a
 	nPPDV := tarifa->opp
 	
-	cIdPartner = fakt_pripr->IdPartner
+	cIdPartner = fakt_pripr->idpartner
 
-    if _params["fakt_opis_stavke"] 
-        get_fakt_atribut_opis(_from_server)
+    if _fakt_params["fakt_opis_stavke"]
+        dok["rbr"] := rbr
+        cOpis := get_fakt_atribut_opis( dok, params["from_server"])
     else
         cOpis := ""
     endif
 
 	// rn Veleprodaje
-	if cIdTipDok $ "10#20#22"
+	if dok["idtipdok"] $ "10#20#22"
 		// ino faktura
 		if IsIno(cIdPartner)
 			nPPDV:=0
@@ -364,7 +361,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 		endif
 	endif
 
-	if cIdTipDok == "12"
+	if dok["idtipdok"] == "12"
 		if IsProfil(cIdPartner, "KMS")
 			// radi se o komisionaru
 			lKomisionar := .t.
@@ -380,7 +377,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	if LEFT(fakt_pripr->DINDEM, 3) <> LEFT(ValBazna(), 3) 
 		// preracunaj u EUR
 		// omjer EUR / KM
-      		nRCijen:= nRCijen / OmjerVal( ValBazna(), fakt_pripr->DINDEM, fakt_pripr->datdok)
+      	nRCijen:= nRCijen / OmjerVal( ValBazna(), fakt_pripr->DINDEM, fakt_pripr->datdok)
 		nRCijen:=ROUND(nRCijen, DEC_CIJENA() )
    	endif
 
@@ -476,7 +473,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	
     nUkKol += nKol
 	
-	add_rn( cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
+	add_rn( dok["brdok"], cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
 
 	select fakt_pripr
 	skip
@@ -563,10 +560,10 @@ add_drntext("D07", cDinDem)
 add_drntext("D08", cDestinacija)
 
 // tip dokumenta
-add_drntext("D09", cIdTipDok)
+add_drntext("D09", dok["idtipdok"])
 
 // radna jedinica
-add_drntext("D10", cIdFirma)
+add_drntext("D10", dok["idfirma"])
 
 // dokument veza
 cTmp := cM_d_veza
@@ -584,7 +581,7 @@ next
 fill_dod_text( aMemo[2], fakt_pripr->idpartner )
 
 // potpis na kraju
-fill_potpis(cIdTipDok)
+fill_potpis(dok["idtipdok"])
 
 // parametri generalni za stampu dokuemnta
 // lijeva margina
@@ -607,7 +604,7 @@ add_drntext("P10", gStZagl )
 
 do case
 
- case cIdTipDok == "12" .and. lKomisionar
+ case dok["idtipdok"] == "12" .and. lKomisionar
  	add_drntext("P11", "KOMISION")
 
  case lIno
@@ -664,7 +661,7 @@ endcase
 
 
 // dodaj total u DRN
-add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol)
+add_drn(dok["brdok"], dok["datdok"], dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol)
 
 return
 
@@ -829,9 +826,6 @@ endif
 add_drntext("P03", cSamoKol)
 
 return
-
-
-
 
 // -----------------------------------------------
 // filovanje dodatnog teksta
@@ -1078,7 +1072,6 @@ return
 // filovanje podataka partnera
 // -------------------------------------------
 static function fill_part_data(cId, lPdvObveznik)
-*{
 local cIdBroj:=""
 local cPorBroj:=""
 local cBrRjes:=""
@@ -1167,10 +1160,8 @@ add_drntext("K06", cBrRjes)
 add_drntext("K07", cBrUpisa)
 
 return
-*}
 
 static function fill_firm_data()
-*{
 local i
 local cBanke
 local cPom
@@ -1220,7 +1211,6 @@ add_drntext("I13", ALLTRIM(gFText2))
 add_drntext("I14", ALLTRIM(gFText3))
 
 return
-*}
 
 
 // ------------------------------------
@@ -1264,15 +1254,15 @@ return nLen - nPos
 // -------------------------------------------
 // cDocName
 // -------------------------------------------
-static function doc_name(cIdFirma, cIdTipDok, cBrDok, cIdPartner)
+static function doc_name(dok, partner)
 local cFax
 local cPartner
 local cDocumentName
 
 // primjer cDocumentName = FAKT_DOK_10-10-00050_planika-flex-sarajevo_29.05.06_FAX:032440173
-cDocumentName := gModul + "_DOK_" + cIdFirma  + "-" + cIdTipDok + "-" + TRIM(cBrDok) + "-" + TRIM(cIdPartner) + "_" + DTOC(DatDok)
+cDocumentName := gModul + "_DOK_" + dok["idfirma"]  + "-" + dok["idtipdok"] + "-" + TRIM(dok["brdok"]) + "-" + TRIM(partner) + "_" + DTOC(DatDok)
 
-cPartner := ALLTRIM(g_part_name(cIdPartner))
+cPartner := ALLTRIM(g_part_name(partner))
 
 cPartner := STRTRAN(cPartner, " ","-")
 cPartner := STRTRAN(cPartner, '"',"")
@@ -1282,7 +1272,7 @@ cPartner := STRTRAN(cPartner, '/',"-")
 cDocumentName += "_" + cPartner
 
 // 032/440-170 => 032440170
-cFax := STRTRAN(g_part_fax(cIdPartner), "-", "")
+cFax := STRTRAN(g_part_fax(partner), "-", "")
 cFax := STRTRAN(cFax, "/", "")
 cFax := STRTRAN(cFax, " ", "")
 

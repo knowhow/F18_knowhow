@@ -30,10 +30,14 @@ return get_fakt_atribut(dok, "lot", from_server)
 function get_fakt_atribut(dok, atribut, from_server)
 local _ret
 
+if from_server == NIL
+   from_server := .t.
+endif
+
 if from_server
-        _ret := get_fakt_atribut_from_server( dok["idfirma"], dok["idtipdok"], dok["brdok"], atribut)
+        _ret := get_fakt_atribut_from_server( dok["idfirma"], dok["idtipdok"], dok["brdok"], dok["rbr"], atribut)
 else
-        _ret := get_fakt_atribut_from_dbf( dok["idfirma"], dok["idtipdok"], dok["brdok"], atribut)
+        _ret := get_fakt_atribut_from_dbf( dok["idfirma"], dok["idtipdok"], dok["brdok"], dok["rbr"], atribut)
 endif
 
 return _ret
@@ -353,6 +357,12 @@ do while !EOF()
         loop
     endif
 
+    if (id_firma != field->idfirma) .or. (tip_dok != field->idtipdok) .or. (br_dok != field->brdok)
+        // ogranici se na stavke dokumenta
+        skip
+        loop
+    endif
+
     _qry := "INSERT INTO fmk.fakt_fakt_atributi "
     _qry += "( idfirma, idtipdok, brdok, rbr, atribut, value ) "
     _qry += "VALUES (" 
@@ -437,9 +447,5 @@ use
 select ( _t_area )
 
 return _ok
-
-
-
-
 
 

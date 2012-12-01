@@ -125,6 +125,12 @@ IF ( _brisi_kum == "D" )
         _ok := .t.
         sql_table_update( nil, "BEGIN" )
 
+        // FOREIGN key trazi da se prvo brisu fakt atributi...
+        @ m_x + 4, m_y + 2 SAY "delete fakt_fakt_atributi"
+        // pobrisi ih sa servera...
+        _ok := _ok .and. delete_fakt_atributi_from_server( id_firma, id_tip_dok, br_dok )
+
+
         _tbl := "fakt_fakt"
         @ m_x + 1, m_y + 2 SAY "delete " + _tbl
 
@@ -142,11 +148,6 @@ IF ( _brisi_kum == "D" )
         @ m_x + 3, m_y + 2 SAY "delete " + _tbl
         select fakt_doks2
         _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _vars, 1, "CONT" )
-
-        // fakt atributi...
-        @ m_x + 4, m_y + 2 SAY "delete fakt_fakt_atributi"
-        // pobrisi ih sa servera...
-        _ok := _ok .and. delete_fakt_atributi_from_server( id_firma, id_tip_dok, br_dok )
 
         f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
         sql_table_update( nil, "END" )

@@ -1,3 +1,7 @@
+1.3.42 2012-12-01, hernad
+
+  - opis unos - azuriranje/povrat, ovo tek sada radi
+
 1.3.41 2012-12-01, hernad
  
   - fakt atribut opis: get_fakt_atribut_opis()

@@ -34,7 +34,7 @@ return
 // ------------------------------------------------
 // stampa dokumenta u odt formatu
 // ------------------------------------------------
-function stdokodt( cIdf, cIdVd, cBrDok )
+function StDokOdt( cIdf, cIdVd, cBrDok )
 local _t_path := my_home()
 local _filter := "f-*.odt"
 local _template := ""
@@ -239,7 +239,7 @@ local cTmpTxt := ""
 local _id_broj 
 local _n
 
-PIC_KOLICINA :=  PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA)), LEN_KOLICINA, "9")
+PIC_KOLICINA := PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA)), LEN_KOLICINA, "9")
 PIC_VRIJEDNOST := PADL(ALLTRIM(RIGHT(PicDem, LEN_VRIJEDNOST)), LEN_VRIJEDNOST, "9")
 PIC_CIJENA := PADL(ALLTRIM(RIGHT(PicCDem, LEN_CIJENA)), LEN_CIJENA, "9")
 
@@ -256,7 +256,8 @@ xml_subnode("invoice", .f.)
 for _n := 1 to LEN( a_racuni )
    
     // napuni pomocnu tabelu na osnovu fakture
-    stdokpdv( a_racuni[ _n, 1 ], a_racuni[ _n, 2 ], a_racuni[ _n, 3 ], .t. )
+    // posljednji parametar .t. odredjuje da se samo napune rn i drn tabele
+    StdokPdv( a_racuni[ _n, 1 ], a_racuni[ _n, 2 ], a_racuni[ _n, 3 ], .t. )
 
     // zaglavlje ide samo jednom
     if _n == 1

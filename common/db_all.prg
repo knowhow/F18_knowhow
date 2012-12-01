@@ -653,6 +653,7 @@ if nPos<1
  nPos:=ASCAN(gaSDBFS,{|x| x[2]==cImeDBF})
  if nPos<1
    ? "Ne postoji "+cImeDBF+" u gaDBFs ili gaSDBFs ?"
+   ErrorLevel(1)
    goModul:quit()
  endif
  nArray:=2
@@ -681,10 +682,12 @@ return DbfArea(cBaza,1)
 function F_Baze(cBaza)
 local nPos
 nPos:=nDBF(cBaza)
+
 IF nPos<=0
 	CLOSE ALL
 	QUIT
 ENDIF
+
 return nPos
 
 function Sel_Bazu(cBaza)
@@ -694,7 +697,8 @@ local nPos
  IF nPos>0
    SELECT (gaDBFs[nPos,1])
  ELSE
-   CLOSE ALL; QUIT
+   CLOSE ALL
+   QUIT
  ENDIF
 return
 

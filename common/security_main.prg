@@ -60,7 +60,7 @@ oTable := _sql_query( oServer, _tmp )
 
 if oTable == NIL
 	log_write( PROCLINE(1) + " : " + _tmp )
-    quit
+    quit_1
 endif
 
 if oTable:FieldGet(1) == .t.
@@ -87,7 +87,7 @@ cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + _sql_quot
 oTable := _sql_query( oServer, cTmpQry )
 IF oTable == NIL
       log_write(PROCLINE(1) + " : "  + cTmpQry)
-      QUIT
+      QUIT_1
 ENDIF
 
 if oTable:eof()
@@ -117,7 +117,7 @@ oTable := _sql_query( oServer, cTmpQry )
 
 if oTable == NIL
       log_write(PROCLINE(1) + " : "  + cTmpQry)
-      QUIT
+      QUIT_1
 endif
 
 if oTable:eof()
@@ -141,7 +141,7 @@ oTable := _sql_query( oServer, cTmpQry )
 
 if oTable == NIL
       log_write(PROCLINE(1) + " : "  + cTmpQry)
-      QUIT
+      QUIT_1
 endif
 
 if oTable:eof()

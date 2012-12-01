@@ -658,4 +658,5 @@ destinacije()
 // unos ref lot brojeva na fakturi
 ref_lot()
 
+fakt_params(.t.)
 return

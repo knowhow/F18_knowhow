@@ -929,3 +929,10 @@ local _i
   
 return .t. 
 
+function read_dn_parametar(caption, xpos, ypos, value)
+
+  @ xpos, ypos SAY caption + " (D/N) ?" GET value valid value $ "DN" pict "@!"
+
+return value
+
+

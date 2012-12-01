@@ -22,15 +22,12 @@ local nul,nizl,nRbr
 local m
 local cRadniNalog
 local dDatod, dDatdo
-local _tmp := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
-local _vrste_pl := .f.
+local _params := fakt_params()
+local _vrste_pl := _params["fakt_vrste_placanja"]
 local lOpcine := .t.
 private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 private cFilter := ".t."
 
-if _tmp == "D"
-    _vrste_pl := .t.
-endif
 
 if _vrste_pl
     O_VRSTEP
@@ -225,7 +222,7 @@ if cTabela == "D"
     fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
 else
     gaZagFix := { 3, 3 }
-    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, _vrste_pl,  cImeKup, lOpcine, aUslOpc)
+    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, cImeKup, lOpcine, aUslOpc)
 endif
 
 close all

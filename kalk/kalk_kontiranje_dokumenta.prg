@@ -34,7 +34,10 @@ local lAFin2
 local lAMat2
 local nRecNo
 local lPrvoDzok := ( fetch_metric( "kalk_kontiranje_prioritet_djokera", nil, "N" ) == "D" )
-private lVrsteP := ( fetch_metric( "fakt_unos_vrste_placanja", nil, "N" ) == "D" )
+local _fakt_params := fakt_params()
+
+
+private lVrsteP := _fakt_params["fakt_vrste_placanja"]
 
 if (lAGen == nil)
     lAGen := .f.
@@ -833,7 +836,7 @@ endif
 
 if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
 
-    Box(,3+IF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
+    Box( , 3 + IIF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
         set cursor on
         @ m_x+1,m_y+2 SAY "Datum dokumenta: " 
         ??  finmat->datfaktp

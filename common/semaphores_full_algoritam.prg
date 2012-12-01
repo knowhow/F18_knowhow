@@ -72,7 +72,7 @@ Box(, 6, 70)
         _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
         log_write( "full_synchro: " + _msg, 2 )
         msgbeep( _msg ) 
-        QUIT
+        QUIT_1
     endif
 
     @ m_x + 3, m_y + 2 SAY _count

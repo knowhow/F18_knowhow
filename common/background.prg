@@ -58,7 +58,7 @@ local _used
 
 IF ( _log_db_handle :=  FCREATE("F18_2.log") ) == -1
     ? "Cannot create log file: F18_2.log"
-    QUIT
+    QUIT_1
 ENDIF
 
 

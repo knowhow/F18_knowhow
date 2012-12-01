@@ -104,7 +104,7 @@ DO CASE
             _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
             Alert(_msg)
             log_write( _msg, 2, silent )
-            QUIT
+            QUIT_1
         endif
         _qry := "DELETE FROM " + _sql_tbl + " WHERE " + where_str 
         
@@ -188,7 +188,7 @@ if VALTYPE(qry) != "C"
     _msg := "qry ne valja VALTYPE(qry) =" + VALTYPE(qry)
     log_write( _msg, 2 )
     MsgBeep(_msg)
-    quit
+    quit_1
 endif
 
 log_write( "QRY OK: run_sql_query: " + qry, 9 )
@@ -220,7 +220,7 @@ for _i := 1 to retry
 
         if _i == retry
             MsgBeep("neuspjesno nakon " + to_str(retry) + "pokusaja !?")
-            QUIT
+            QUIT_1
         endif
     else
         _i := retry + 1
@@ -348,7 +348,7 @@ for each _item in dbf_key_fields
  
    else
        MsgBeep(PROCNAME(1) + "valtype _item ?!")
-       QUIT
+       QUIT_1
    endif
 
 next
@@ -369,7 +369,7 @@ _pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
 if _pos == 0
    MsgBeep(PROCLINE(1) + "sql_where_block tbl ne postoji" + table_name)
    log_write("ERR sql_where: " + table_name)
-   QUIT
+   QUIT_1
 endif
 
 // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
@@ -393,7 +393,7 @@ for each _item in _fields
  
    else
        MsgBeep(PROCNAME(1) + "valtype _item ?!")
-       QUIT
+       QUIT_1
    endif
 
 next
@@ -409,7 +409,7 @@ _pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
 
 if _pos == 0
    MsgBeep(PROCLINE(1) + "sql tbl ne postoji in gaDBFs " + table_name)
-   QUIT
+   QUIT_1
 endif
 
 // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
@@ -433,7 +433,7 @@ for each _item in _fields
  
    else
        MsgBeep(PROCNAME(1) + "valtype _item ?!")
-       QUIT
+       QUIT_1
    endif
 
 next
@@ -449,7 +449,7 @@ _pos := ASCAN(gaDBFS, {|x| x[3] == LOWER(table_name) })
 
 if _pos == 0
    MsgBeep(PROCLINE(1) + "sql tbl ne postoji in gaDBFs " + table_name)
-   QUIT
+   QUIT_1
 endif
 
 // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
@@ -469,7 +469,7 @@ for each _item in _fields
  
    else
        MsgBeep(PROCNAME(1) + " valtype _item ?!")
-       QUIT
+       QUIT_1
    endif
 
 next

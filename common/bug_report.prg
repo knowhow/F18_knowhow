@@ -142,7 +142,7 @@ log_write( _log_msg, 1 )
 
 run (_cmd := "f18_editor " + _out_file)
 
-QUIT
+QUIT_1
 RETURN
 
 // ----------------------------------------------------

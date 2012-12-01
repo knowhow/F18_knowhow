@@ -226,10 +226,6 @@ public gKtoLimit := "N"
 public gnKtoLimit := 3
 public gDUFRJ:="N"
 public gBrojac:="1"
-public gK1:="N"
-public gK2:="N"
-public gK3:="N"
-public gK4:="N"
 public gDatVal:="D"
 public gnLOSt:=0
 public gPotpis:="N"
@@ -254,6 +250,8 @@ gTema:="OSN_MENI"
 gGlBaza:="SUBAN.DBF"
 
 public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+
+fin_params(.t.)
 
 return
 

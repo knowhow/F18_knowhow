@@ -11,6 +11,8 @@
 
 #include "fin.ch"
 
+static __fin_params := NIL
+
 // -----------------------------------
 // meni parametara
 // -----------------------------------
@@ -39,6 +41,7 @@ return
 // ---------------------------------------
 static function par_obrada()
 local nX := 1
+local _k1, _k2, _k3, _k4
 
 Box(,23,70)
 
@@ -51,30 +54,22 @@ Box(,23,70)
  	@ m_x + nX, m_y + 2 SAY "Unos datuma naloga? (D/N):" GET gDatNal valid gDatNal $ "DN" pict "@!"
 
 	@ m_x + nX, col() + 2 SAY "Unos datuma valute? (D/N):" GET gDatVal valid gDatVal $ "DN" pict "@!"
-	
 	++ nX
 
 	@ m_x + nX, m_y + 2 SAY "Unos radnih jedinica? (D/N)" GET gRJ valid gRj $ "DN" pict "@!"
-
 	++ nX
 	
  	@ m_x + nX, m_y + 2 SAY "Unos ekonomskih kategorija? (D/N)" GET gTroskovi valid gTroskovi $ "DN" pict "@!"
-
 	++ nX
 
  	@ m_x + nX, m_y + 2 SAY "Unos polja K1 - K4 ? (D/N)"
-
  	++ nX
 	
-	@ m_x + nX, m_y + 2 SAY "K1 (D/N)" GET gK1 ;
-				valid gK1 $ "DN" pict "@!"
- 	@ m_x + nX, col() + 2 SAY "K2 (D/N)" GET gK2 ;
-				valid gK2 $ "DN" pict "@!"
- 	@ m_x + nX, col() + 2 SAY "K3 (D/N)" GET gK3 ;
-				valid gK3 $ "DN" pict "@!"
- 	@ m_x + nX, col() + 2 SAY "K4 (D/N)" GET gK4 ;
-				valid gK4 $ "DN" pict "@!"
- 	
+    read_dn_parametar("K1", m_x + nX, m_y + 2, @_k1)
+    read_dn_parametar("K2", m_x + nX, col() + 2, @_k2)
+    read_dn_parametar("K3", m_x + nX, col() + 2, @_k3)
+    read_dn_parametar("K4", m_x + nX, col() + 2, @_k4)
+
 	nX := nX + 2
 
 	@ m_x + nX, m_y + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojac valid gbrojac $ "12"
@@ -130,6 +125,10 @@ BoxC()
 
 if LastKey() <> K_ESC
 	fin_write_params()
+    fin_k1(_k1)
+    fin_k2(_k2)
+    fin_k3(_k3)
+    fin_k4(_k4)
 endif
 
 return
@@ -198,10 +197,8 @@ return
 function fin_read_params()
 
 // globalni parmetri
-gK1 := fetch_metric( "fin_unos_k1", nil, gK1 )
-gK2 := fetch_metric( "fin_unos_k2", nil, gK2 )
-gK3 := fetch_metric( "fin_unos_k3", nil, gK3 )
-gK4 := fetch_metric( "fin_unos_k4", nil, gK4 )
+
+
 gDatval := fetch_metric( "fin_evidencija_datum_valute", nil, gDatVal )
 gDatnal := fetch_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
 gRj := fetch_metric( "fin_evidencija_radne_jedinice", nil, gRj )
@@ -228,10 +225,7 @@ gnLMONI := fetch_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
 gKtoLimit := fetch_metric("fin_unos_limit_konto", my_user(), gKtoLimit )
 gnKtoLimit := fetch_metric("fin_unos_limit_konto_iznos", my_user(), gnKtoLimit )
 
-gK1 := PADR( gK1, 1 )
-gK2 := PADR( gK2, 1 )
-gK3 := PADR( gK3, 1 )
-gK4 := PADR( gK4, 1 )
+fin_params(.t.)
 
 gVar1 := PADR( gVar1, 1 )
 
@@ -244,10 +238,6 @@ return
 function fin_write_params()
 
 // globalni parametri
-set_metric( "fin_unos_k1", nil, gK1 )
-set_metric( "fin_unos_k2", nil, gK2 )
-set_metric( "fin_unos_k3", nil, gK3 )
-set_metric( "fin_unos_k4", nil, gK4 )
 set_metric( "fin_evidencija_datum_valute", nil, gDatVal )
 set_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
 set_metric( "fin_evidencija_radne_jedinice", nil, gRj )
@@ -276,4 +266,40 @@ set_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
 
 return
 
+// ---------------------------------------
+// ---------------------------------------
+function fin_params(read)
+
+if read == NIL
+  read := .f.
+endif
+
+
+if read .or. __fin_params == NIL
+
+__fin_params := hb_hash()
+__fin_params["fin_k1"] := IIF(fin_k1() == "D", .t., .f.)
+__fin_params["fin_k2"] := IIF(fin_k2() == "D", .t., .f.)
+__fin_params["fin_k3"] := IIF(fin_k3() == "D", .t., .f.)
+__fin_params["fin_k4"] := IIF(fin_k4() == "D", .t., .f.)
+
+endif
+
+return __fin_params
+
+
+// ----------------------------------------------
+// k1, k2, k3, k4
+// ----------------------------------------------
+function fin_k1(value)
+get_set_global_param("fin_unos_k1", value, "N")
+
+function fin_k2(value)
+get_set_global_param("fin_unos_k2", value, "N")
+
+function fin_k3(value)
+get_set_global_param("fin_unos_k3", value, "N")
+
+function fin_k4(value)
+get_set_global_param("fin_unos_k4", value, "N")
 

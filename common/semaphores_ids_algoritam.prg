@@ -323,7 +323,7 @@ for each _id in _ids
             Alert(_msg)
             log_write( "create_queries..(), " + _msg, 5 )
             RaiseError(_msg)
-            QUIT
+            QUIT_1
         endif
 
         if _sql_ids[_algoritam] == NIL

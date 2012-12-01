@@ -51,7 +51,7 @@ if ALIAS() <> _a_dbf_rec["alias"]
     _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
     log_write( _msg, 2 )
     Alert(_msg)
-    QUIT
+    QUIT_1
 endif
 
 log_write( "START: update_rec_server_and_dbf " + table, 9 )
@@ -193,8 +193,8 @@ if ALIAS() <> _a_dbf_rec["alias"]
    _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + ALIAS() + " <> " + _a_dbf_rec["alias"]
    log_write( _msg, 1 )
    Alert(_msg)
-   RaiseError(_msg)
-   QUIT
+   RaiseError(_msg) 
+   QUIT_1
 endif
 
 log_write( "delete rec server, poceo", 9 )
@@ -223,8 +223,7 @@ if sql_table_update(table, "del", nil, _where_str)
           log_write( _msg, 1 )
           RaiseError(_msg)
           lock_semaphore(table, "free")
-
-          QUIT
+          QUIT_1
     endif
     SET ORDER TO TAG (_alg["dbf_tag"])
 
@@ -385,7 +384,7 @@ for each _key in alg["dbf_key_fields"]
         if !HB_HHASKEY(values, _key)
              _msg := RECI_GDJE_SAM + "# tabela:" + table + "#bug - nepostojeci kljuc:" + _key +  "#values:" + pp(values)
              MsgBeep(_msg)
-             QUIT
+             QUIT_1
         endif
 
         if VALTYPE(values[_key]) == "C"

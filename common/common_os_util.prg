@@ -123,9 +123,6 @@ endif
 
 if gModul<>"TOPS"
 	goModul:quit()
-else
-	// nemoj se vracati u RADP
-	//goModul:quit(.f.)
 endif
 
 return

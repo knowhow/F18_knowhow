@@ -51,7 +51,9 @@ local cBrKalk := SPACE(8)
 local cFaktFirma := gFirma
 local dDatPl := CTOD("")
 local fDoks2 := .t.
-private lVrsteP := fetch_metric( "fakt_unos_vrste_placanja", nil, "N" ) == "D"
+local _params := fakt_params()
+
+private lVrsteP := _params["fakt_vrste_placanja"]
 
 O_KONCIJ
 O_KALK_PRIPR

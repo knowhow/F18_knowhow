@@ -495,7 +495,7 @@ if ( nRedukcija < 1 )
 	? cRaz2 + " " + REPLICATE("-", LEN_TRAKA - 11)
 endif
 
-if !EMPTY( cIPM ) .and. cIPM <> "-"
+if !EMPTY(cIPM) .and. cIPM <> "-"
   if ( nRedukcija > 0 )
 	? cRaz2 + "  PM:", cIPM
   else

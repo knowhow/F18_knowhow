@@ -23,21 +23,17 @@ static __par_len
 // Unos fin naloga
 // ---------------------------------------------
 function fin_unos_naloga()
+local _params := fin_params()
+
 private KursLis := "1"
-private fK1:="N"
-private fk2:="N"
-private fk3:="N"
-private fk4:="N"
+
 private gnLOst:=0
 private gPotpis:="N"
 
 O_PARAMS
 Private cSection:="1",cHistory:=" ",aHistory:={}
 Params1()
-RPar("k1",@fk1)
-RPar("k2",@fk2)
-RPar("k3",@fk3)
-RPar("k4",@fk4)
+
 RPar("li",@gnLOSt)
 RPar("po",@gPotpis)
 select params
@@ -205,6 +201,8 @@ return
 // fin priprema, edit key handler
 // ---------------------------------------------------------
 function edit_fin_priprema()
+local _fakt_params := fakt_params()
+local _fin_params := fin_params()
 local _ostav := NIL 
 local _iznos_unesen := .f.
 parameters fNovi
@@ -272,15 +270,15 @@ endif
 
 @ m_x + 11, m_y + 2 SAY "Opis :" GET _opis WHEN {|| .t.} VALID {|| .t.} PICT "@S50"
 
-if fk1 == "D"
+if _fin_params["fin_k1"]
     @ m_x + 11, col() + 2 SAY "K1" GET _k1 pict "@!" 
 endif
 
-if fk2 == "D"
+if _fin_params["fin_k2"]
     @ m_x + 11, col() + 2 SAY "K2" GET _k2 pict "@!"
 endif
 
-if fk3 == "D"
+if _fin_params["fin_k3"]
     if IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3", "N", SIFPATH)=="D"
     	_k3 := K3Iz256(_k3)
         @ m_x + 11, col() + 2 SAY "K3" GET _k3 VALID EMPTY(_k3).or.P_ULIMIT(@_k3) pict "999"
@@ -289,8 +287,8 @@ if fk3 == "D"
     endif
 endif
 
-if fk4=="D"
-    if IzFMKIni("FAKT", "VrstePlacanja", "N", SIFPATH)=="D"
+if _fin_params["fin_k4"]
+    if _fakt_params["fakt_vrste_placanja"]
     	@ m_x + 11, col() + 2 SAY "K4" GET _k4 VALID EMPTY(_k4).or.P_VRSTEP(@_k4) pict "@!"
     else
         @ m_x + 11, col() + 2 SAY "K4" GET _k4 pict "@!"

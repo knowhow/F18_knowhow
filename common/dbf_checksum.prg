@@ -86,7 +86,7 @@ if _cnt_sql <> _cnt_dbf
         _msg := "setuj dbf_fields u gaDBFS za " + _a_dbf_rec["table"] + " !##Ne mogu full synchro uraditi bez toga"
         log_write( _msg, 2 )
         MsgBeep( _msg )
-        QUIT
+        QUIT_1
     else
         if full_synchro
             full_synchro(_a_dbf_rec["table"], 50000)

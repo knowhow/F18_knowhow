@@ -256,7 +256,7 @@ if setmode(maxrows(), maxcols())
    log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
 else
    log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
-   QUIT
+   QUIT_1
 endif
 
 return
@@ -851,7 +851,7 @@ MsgBeep("Neuspješna prijava na server.")
 
 log_close() 
 
-QUIT
+QUIT_1
 
 return
 
@@ -922,7 +922,7 @@ function log_create()
 
 if ( __log_handle := FCREATE(F18_LOG_FILE) ) == -1
     ? "Cannot create log file: " + F18_LOG_FILE
-    QUIT
+    QUIT_1
 endif
 
 return

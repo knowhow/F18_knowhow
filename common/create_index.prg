@@ -104,7 +104,7 @@ recover using _err
           ferase_dbf(alias, _force_erase)
 
           repair_dbfs()
-          QUIT
+          QUIT_1
 end sequence
 
 

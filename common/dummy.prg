@@ -10,16 +10,6 @@
  */
 
 
-function f18_get_metric()
-MsgBeep(PROCNAME(1) + "/" + ToStr(PROCLINE(1)) + " ovo se mora mjenjati f18_get_metric")
-QUIT
-return
-
-function f18_set_metric()
-MsgBeep(PROCNAME(1) + "/" + ToStr(PROCLINE(1)) + " ovo se mora mjenjati f18_set_metric")
-QUIT
-return
-
 function send2comport(cStr)
 
 ? "dummy send2commport"
@@ -136,16 +126,4 @@ return
 
 function OL_YIELD()
 return
-
-
-function f18_gather()
-MsgBeep("f18_gather zamijeniti")
-quit
-return
-
-function f18_scatter_global_vars()
-MsgBeep("f18_scatter_global_vars zamijeniti")
-quit
-return
-
 

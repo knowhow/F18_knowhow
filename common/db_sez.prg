@@ -305,9 +305,11 @@ if (goModul:oDatabase:cRadimUSezona=="RADP")
          		private aFilesS:={}
          		private aFilesK:={}
          		close all
+
 	 		if !PocSkSez()
           			goModul:quit()
-         		endif
+            endif
+
 	 		goModul:oDatabase:skloniSezonu(goModul:oDataBase:cSezona,.f.,.f.,.t.)
 	 		cOldSezona:=goModul:oDataBase:cSezona
          		goModul:oDatabase:cSezona:=STR(YEAR(DATE()),4)
@@ -352,7 +354,6 @@ return
 ****/
 
 function SetOznNoGod()
-*{
 IF OzNoGod() <> goModul:oDataBase:cSezona .and.;
    VAL(OzNoGod()) > VAL(goModul:oDataBase:cSezona) .and. VAL(OzNoGod())>2000
 	if JelSeRadilo()
@@ -382,10 +383,8 @@ IF OzNoGod() <> goModul:oDataBase:cSezona .and.;
 ENDIF
 
 return
-*}
 
 function JelSeRadilo()
-*{
  LOCAL lVrati:=.t.
   IF "U" $ TYPE("gGlBaza") .or. EMPTY(gGlBaza)
     // bolje da se uzme da se radilo
@@ -402,7 +401,6 @@ function JelSeRadilo()
     USE
   ENDIF
 RETURN lVrati
-*}
 
 FUNCTION OzNoGod()
 *{
@@ -479,7 +477,6 @@ return
 *}
 
 function PromOzSez(oDatabase)
-*{
 local cPom
 
 if (oDatabase==nil)
@@ -509,7 +506,6 @@ if LASTKEY()<>K_ESC
 endif
 
 return
-*}
 
 
 /*! \fn BrowseSezone

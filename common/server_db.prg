@@ -52,10 +52,8 @@ if (_f18_required_server_num > _server_db_num)
    MsgBeep(_msg)
 
    OutMsg(1, _msg + hb_osNewLine())
-   ErrorLevel(1)
-   QUIT
+   QUIT_1
 endif
 
 return .t.
-
 

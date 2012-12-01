@@ -15,10 +15,12 @@
 
 // ---------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------
-function stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, lVrsteP,  cImeKup, lOpcine, aUslOpc)
+function stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, cImeKup, lOpcine, aUslOpc)
 local m, cDinDnem, cRezerv, nC, nIznos, nRab, nIznosD, nIznos3, nRabD, nRab3, nOsn_tot, nPDV_tot, nUkPDV_tot
 local gnLMarg := 0
 local nCol1 := 0
+local _params := fakt_params()
+local lVrstep := _params["fakt_vrste_placanja"]
 
 SELECT F_FAKT_DOKS
 if !USED()

@@ -18,17 +18,34 @@ static __test_vars
 // jedan poziv test_keystroke treba samo jednu sekvencu poslati 
 static __keystroke_step 
 
+
+// -----------------------------------------------
+// -----------------------------------------------
+function setup_i_fakt()
+
+// iskljucimo rnal
+get_set_user_param("main_menu_rnal", "N")
+ref_lot("N")
+fakt_opis_stavke("N") 
+fakt_vrste_placanja("N")
+destinacije("N")
+
+// procitaj parametre
+fakt_params(.t.)
+
+
 // ------------------------------------
 // fakt integracijski testovi
 // ------------------------------------
 function i_fakt()
 local _omodul
 
+setup_i_fakt()
+
 _omodul := TFaktMod():new(nil, "FAKT", F18_VER, F18_VER_DATE , "test", "test")
 _omodul:initdb()
 
 goModul := _omodul
-
 
 // setuj zaglavlje fakture
 i_zaglavlje_fakture()
@@ -182,13 +199,19 @@ AADD(_stavke['get'], 'DBEDIT')
 
 AADD(_stavke['keys'],  {;
       "99", "<ENTER>2", "31.12.12", "<ENTER>", ;
-      "77777", "<ENTER>", "999999", "<ENTER>3";
+      "77777", "<ENTER>", "999999", "<ENTER>", ;
+      "OTP-111", "<ENTER>", "10.12.12", "<ENTER>",;
+      "NAR-9852", "<ENTER>", "7", "<ENTER>", "07.01.13", "<ENTER>";
   })
+
+/*
 AADD(_stavke['get'], '_IDFIRMA')
 
 AADD(_stavke['keys'],  {;
      "G ", "<ENTER>";
   })
+*/
+
 AADD(_stavke['get'], '_IDVRSTEP')
 
 AADD(_stavke['keys'],  {;
@@ -214,7 +237,6 @@ AADD(_stavke['keys'],  {;
 AADD(_stavke['get'], '_KOLICINA')
 
 // dodaj stavku 2
-
 AADD(_stavke['keys'],  {; 
     "2", "<ENTER>" ,;       // rbr stavka 2
     "TEST2", "<ENTER>",  ;

@@ -48,12 +48,12 @@ ImeKol:={ ;
         }
 FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
 
-return PostojiSifra(F_RELAC,1,10,75,"Lista: Relacije",@cId,dx,dy)
+return PostojiSifra(F_RELAC, 1, 10, 75, "Lista: Relacije",@cId,dx,dy)
 
 
 
 /*! \fn P_Vozila(cId,dx,dy)
- *  \brief Otvara sifrarnik Volzila
+ *  \brief Otvara sifrarnik Vozila
  *  \param cId
  *  \param dx
  *  \param dy
@@ -69,7 +69,7 @@ ImeKol:={ ;
         }
 FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
 
-return PostojiSifra(F_VOZILA,1,10,75,"Lista: Vozila",@cId,dx,dy)
+return PostojiSifra(F_VOZILA, 1, 10, 75,"Lista: Vozila",@cId,dx,dy)
 
 
 /*! \fn FaPartnBlock(Ch)
@@ -333,7 +333,7 @@ return
 function fakt_box_stanje(aStanje,cIdroba)
 
 local picdem:="9999999.999", nR, nC, nTSta := 0, nTRev := 0, nTRez := 0,;
-      nTOst := 0, npd, cDiv := " ³ ", nLen
+      nTOst := 0, npd, cDiv := " Â³ ", nLen
 
  npd := LEN (picdem)
  nLen := LEN (aStanje)
@@ -389,7 +389,7 @@ local picdem:="9999999.999", nR, nC, nTSta := 0, nTRev := 0, nTRez := 0,;
                    REPL ("-", npd) + cDiv + ;
                    REPL ("-", npd) + cDiv + REPL ("-", npd) + cDiv
     nR ++
-    @ nR,m_y+2 SAY " ³ UK.³ "
+    @ nR,m_y+2 SAY " Â³ UK.Â³ "
     @ nR,col() SAY nTSta pict picdem
     @ nR,col() SAY cDiv
     @ nR,col() SAY nTRev pict picdem
@@ -924,9 +924,15 @@ return
 function SMark(cNazPolja)
 
 // izbor prodajnog mjesta
-FUNC P_IDPM(cId,cIdPartner)
- LOCAL lVrati:=.f., nArr:=SELECT(), aNaz:={}
-  SELECT SIFV; SET ORDER TO TAG "ID"
+function P_IDPM(cId,cIdPartner)
+
+LOCAL lVrati:=.f.
+local nArr:=SELECT()
+local aNaz:={}
+
+  SELECT SIFV
+  SET ORDER TO TAG "ID"
+
   HSEEK "PARTN   "+"PRMJ"+PADR(cIdPartner,15)
   DO WHILE !EOF() .and.;
            id+oznaka+idsif=="PARTN   "+"PRMJ"+PADR(cIdPartner,15)
@@ -941,7 +947,7 @@ FUNC P_IDPM(cId,cIdPartner)
     Box(,LEN(aNaz)+4,18)
        @ m_x+1, m_y+2 SAY "POSTOJECA PRODAJNA"
        @ m_x+2, m_y+2 SAY "      MJESTA      "
-       @ m_x+3, m_y+2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
+       @ m_x+3, m_y+2 SAY "------------------"
 #ifndef TEST
      CLEAR TYPEAHEAD
 #endif
@@ -986,7 +992,7 @@ LOCAL lVrati:=.t., aMogRel:={}, nArr:=SELECT(), aIzb:={}
    SELECT KALPOS
    SEEK RELAC->id+DTOS(dDatum)
    DO WHILE !EOF() .and. idrelac==RELAC->id .and. DTOS(datum)>=DTOS(dDatum)
-     AADD( aMogRel , {DTOC(datum)+"³"+idrelac+"³"+iddist+"³"+idvozila,;
+     AADD( aMogRel , {DTOC(datum)+"Â³"+idrelac+"Â³"+iddist+"Â³"+idvozila,;
                       idrelac,iddist,idvozila,datum,RELAC->naz} )
      SKIP 1
    ENDDO
@@ -1001,7 +1007,7 @@ LOCAL lVrati:=.t., aMogRel:={}, nArr:=SELECT(), aIzb:={}
    Box(,LEN(aIzb)+4,28)
       @ m_x+1, m_y+2 SAY "SLIJEDECE RELACIJE  "
       @ m_x+2, m_y+2 SAY "PO KALENDARU POSJETA"
-      @ m_x+3, m_y+2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
+      @ m_x+3, m_y+2 SAY "Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„"
     nPom:=Menu2(m_x+3,m_y+3,aIzb,nPom)
    BoxC()
    IF nPom>0
@@ -1015,7 +1021,7 @@ LOCAL lVrati:=.t., aMogRel:={}, nArr:=SELECT(), aIzb:={}
    ENDIF
  ELSE
    MsgBeep("Za zadanog kupca i datum ne postoji planirana relacija u kalendaru posjeta!#"+;
-           "Ukoliko se radi npr. o skladiçnoj prodaji, kucajte NN u relaciju!")
+           "Ukoliko se radi npr. o skladiÃ§noj prodaji, kucajte NN u relaciju!")
    lVrati:=.f.
  ENDIF
  SELECT (nArr)

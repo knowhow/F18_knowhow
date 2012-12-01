@@ -12,7 +12,6 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
-static __param := NIL
 
 static __fiscal_marker := .f.
 
@@ -25,38 +24,6 @@ static __enter_seq := CHR( K_ENTER ) + CHR( K_ENTER ) + CHR( K_ENTER )
 
 static __redni_broj
 
-
-// -------------------------------------------------------------
-// postavi parametre unosa fakt_dokumenta
-// -------------------------------------------------------------
-procedure fakt_params(setup)
-
-if setup == NIL
-  setup = .f.
-endif
-
-if setup .or. __param == NIL
-    __param := hb_hash()
-    __param["fakt_opis_stavke"] := fakt_opis_stavke()
-    __param["ref_lot"] := ref_lot()
-
-    // TODO: prebaciti na get_set sistem
-    __param["vrste_placanja"] := fetch_metric("fakt_unos_vrste_placanja", nil, "N" )
-    __param["def_rj"] := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
-
-    // TODO: ugasiti ovaj globalni parametar
-    if destinacije() == "D"
-      __param["destinacije"] := .f.
-    else
-      __param["destinacije"] := .t.
-    endif
-
-    // ako se koristi rnal, koriste se veze izmedju fakt dokumenata
-    __param["fakt_dok_veze"] :=  f18_use_module("rnal")
-
-endif
-
-return __param
 
 // -----------------------------------------------------------------
 // glavna funkcija za poziv pripreme i knjizenje fakture
@@ -267,11 +234,11 @@ do case
 
         __redni_broj := RbrUnum( _rbr )
 
-        if _params["fakt_opis_stavke"] == "D"
+        if _params["fakt_opis_stavke"]
             _items_atrib["fakt_opis"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_opis" )
         endif
 
-        if _params["ref_lot"] == "D"
+        if _params["ref_lot"]
             _items_atrib["fakt_ref_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_ref_broj" )
             _items_atrib["fakt_lot_broj"] := get_fakt_atribut( _idfirma, _idtipdok, _brdok, _rbr, "fakt_lot_broj" )
         endif
@@ -834,7 +801,7 @@ AFILL( _h, "" )
 if items_atrib <> NIL
 
     // opis fakture
-    if _params["fakt_opis_stavke"] == "D"
+    if _params["fakt_opis_stavke"]
         if fNovi
             _opis := PADR( "", 300 )
         else
@@ -843,8 +810,7 @@ if items_atrib <> NIL
     endif
 
     // ref/lot brojevi
-    if _params["ref_lot"] == "D"
-
+    if _params["ref_lot"]
 
         if fNovi
             _ref_broj := PADR( "", 50 )
@@ -1015,11 +981,12 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                             IzSifre(), ;
                             _isp_partn( _idpartner, _part_x, _part_y + 18 ) }
             
-        // prodajno mjesto, PM
-        ++ _x
-        @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm VALID {|| P_IDPM( @_idpm, _idpartner ) } ;
-                PICT "@S10"
-    
+        if _params["fakt_prodajna_mjesta"]
+           // prodajno mjesto, PM
+           ++ _x
+           @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm VALID {|| P_IDPM( @_idpm, _idpartner ) } PICT "@S10"
+        endif
+
         if _params["fakt_dok_veze"]
            // veza dokumenti
            @ m_x + _x, col() + 1 SAY "Veza:" GET _dokument_veza PICT "@S20"
@@ -1067,13 +1034,10 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
             @ m_x + _x2, m_y + 51 SAY "Datum placanja :" GET _datpl ;
                     VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
                 
-            if __param["vrste_placanja"] == "D"
+            if _params["fakt_vrste_placanja"]
 
                 ++ _x
-                @ m_x + _x, m_y + 2  SAY "Nacin placanja" ;
-                        GET _idvrstep ;
-                        PICT "@!" ;
-                        VALID P_VRSTEP( @_idvrstep, 9, 20 )
+                @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" VALID P_VRSTEP( @_idvrstep, 9, 20 )
 
             endif
        
@@ -1203,12 +1167,12 @@ if ( gVarC $ "123" .and. _idtipdok $ "10#12#20#21#25" )
 endif
 
 // unos opisa stavke po fakturama
-if _params["fakt_opis_stavke"] == "D"
+if _params["fakt_opis_stavke"]
     ++ _x
     @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
 endif
 
-if _params["ref_lot"] == "D"
+if _params["ref_lot"]
     ++ _x
     @ m_x + _x, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
     @ m_x + _x, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
@@ -1294,11 +1258,11 @@ _rbr := RedniBroj( __redni_broj )
 
 // snimi atribute u hash matricu....
 // opis stavke
-if _params["fakt_opis_stavke"] == "D"
+if _params["fakt_opis_stavke"]
     items_atrib["fakt_opis"] := _opis
 endif
 // ref/lot brojevi
-if _params["ref_lot"] == "D"
+if _params["ref_lot"]
     items_atrib["fakt_ref_broj"] := _ref_broj
     items_atrib["fakt_lot_broj"] := _lot_broj
 endif
@@ -1381,9 +1345,6 @@ endif
 
 select (nTArea)
 return .t.
-
-
-
 
 
 static function _f_idpm( cIdPm )

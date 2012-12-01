@@ -2763,13 +2763,16 @@ function PrikK1K4(lK)
 
 local fProso:=.f.
 local nArr:=SELECT()
-local lVrsteP:=.f.
+local _fakt_params := fakt_params()
+
+local lVrsteP := _fakt_params["fakt_vrste_placanja"]
+
 IF lK==NIL
 	lK:=.t.
 ENDIF
 
-IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-	lVrsteP:=.t.
+IF lVrsteP
+
   	SELECT (F_VRSTEP)
   	IF !USED()
     		O_VRSTEP

@@ -188,7 +188,7 @@ if !HB_HHASKEY(_rec, "table") .or. _rec["table"] == NIL
    _msg := RECI_GDJE_SAM + " set_a_dbf nije definisan za table= " + tbl
    Alert(_msg)
    log_write( _msg, 2 )
-   QUIT
+   QUIT_1
 endif
 
 

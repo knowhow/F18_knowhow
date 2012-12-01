@@ -35,8 +35,8 @@ if !_silent
     _odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N") 
 
     if _odg == "L"
-       log_write( "ferase_dbf quit: " + tbl_name, 3 ) 
-       QUIT
+       log_write( "ferase_dbf quit: " + tbl_name, 3 )
+       QUIT_1
     endif
 
     if _odg == "N"

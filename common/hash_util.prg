@@ -19,7 +19,7 @@ if !HB_HHASKEY(rec, key)
     Alert(_msg)
     log_write( _msg, 7 )
     RaiseError(_msg)
-    QUIT
+    QUIT_1
 endif
 
 return .t.

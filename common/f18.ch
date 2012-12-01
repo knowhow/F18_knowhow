@@ -84,3 +84,5 @@
 #define OUTF_FILE "outf" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".txt"
 #define OUT_ODT_FILE "out" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".odt"
 #define DATA_XML_FILE "data" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".xml"
+
+#command QUIT_1                    => ErrorLevel(1); __Quit()

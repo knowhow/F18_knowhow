@@ -96,8 +96,13 @@ local __p_naz
 local __k_naz
 local __dug
 local __pot
+local _params := fin_params()
 
-private fK1:=fk2:=fk3:=fk4:="N"
+private fK1 := _params["fin_k1"]
+private fK2 := _params["fin_k2"]
+private fK3 := _params["fin_k3"]
+private fK4 := _params["fin_k4"]
+
 private cIdFirma:=gFirma
 private fOtvSt:=lOtvSt
 private c1k1z:="N"
@@ -122,11 +127,6 @@ qqNazKonta := SPACE(40)
 if PCount() == 0
 	fOtvSt := .f.
 endif
-
-fk1 := fetch_metric( "fin_kartica_fk1", my_user(), fk1 )
-fk2 := fetch_metric( "fin_kartica_fk2", my_user(), fk2 )
-fk3 := fetch_metric( "fin_kartica_fk3", my_user(), fk3 )
-fk4 := fetch_metric( "fin_kartica_fk4", my_user(), fk4 )
 
 cKumul := fetch_metric( "fin_kart_kumul", my_user(), cKumul )
 cPredh := fetch_metric( "fin_kart_predhodno_stanje", my_user(), cPredh )
@@ -273,10 +273,6 @@ if cSazeta=="D"
 endif
 
 // snimi parametre
-set_metric( "fin_kartica_fk1", my_user(), fk1 )
-set_metric( "fin_kartica_fk2", my_user(), fk2 )
-set_metric( "fin_kartica_fk3", my_user(), fk3 )
-set_metric( "fin_kartica_fk4", my_user(), fk4 )
 set_metric( "fin_kart_kumul", my_user(), cKumul )
 set_metric( "fin_kart_predhodno_stanje", my_user(), cPredh )
 set_metric( "fin_kart_brza", my_user(), cBrza )
@@ -336,12 +332,12 @@ else
  	endif
 endif
 
-lVrsteP:=.f.
+lVrsteP := .f.
 
 o_kart_tbl()
 
-if IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-	lVrsteP:=.t.
+if _params["vrste_placanja"]
+	lVrsteP := .t.
   	O_VRSTEP
 endif
 
@@ -353,10 +349,10 @@ cFilter:=".t." +IF(!EMPTY(cIdVN),".and."+aUsl3,"")+;
            IF(cBrza=="N",".and."+aUsl1+".and."+aUsl2,"")+;
            IF(EMPTY(dDatOd).or.cPredh=="2","",".and.DATDOK>="+cm2str(dDatOd))+;
            IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))+;
-           IF(fk1=="D".and.len(ck1)<>0,".and.k1="+cm2str(ck1),"")+;
-           IF(fk2=="D".and.len(ck2)<>0,".and.k2="+cm2str(ck2),"")+;
-           IF(fk3=="D".and.len(ck3)<>0,".and.k3=ck3","")+;
-           IF(fk4=="D".and.len(ck4)<>0,".and.k4="+cm2str(ck4),"")+;
+           IF(fk1 .and. len(ck1)<>0,".and.k1="+cm2str(ck1),"")+;
+           IF(fk2 .and. len(ck2)<>0,".and.k2="+cm2str(ck2),"")+;
+           IF(fk3 .and. len(ck3)<>0,".and.k3=ck3","")+;
+           IF(fk4 .and. len(ck4)<>0,".and.k4="+cm2str(ck4),"")+;
            IF(gRj=="D".and.len(cIdrj)<>0,IF(gDUFRJ=="D",".and."+aUsl5,".and.idrj="+cm2str(cIdRJ)),"")+;
            IF(gTroskovi=="D".and.LEN(cFunk)<>0,".and.funk="+cm2str(cFunk),"")+;
            IF(gTroskovi=="D".and.LEN(cFond)<>0,".and.fond="+cm2str(cFond),"")+;
@@ -1241,8 +1237,8 @@ local cBrza:="D"
 local nSirOp:=20
 local nCOpis:=0
 local cOpis:=""
-local fK1:=fk2:=fk3:=fk4:="N"
 local nC1:=35
+local _params := fin_params()
 
 private fOtvSt:=lOtvSt
 cIdFirma:=gFirma
@@ -1322,22 +1318,26 @@ Box("",18,65)
  		@ m_x+12,m_y+2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)"  GET cK14 valid cK14 $ "123"
 
 
- 		if fk1=="D"
+ 		if _params["fin_k1"]
 			@ m_x+14,m_y+2 SAY "K1 (9 svi) :" GET cK1
 		endif
- 		if fk2=="D"
+ 		
+        if _params["fin_k2"]
 			@ m_x+15,m_y+2 SAY "K2 (9 svi) :" GET cK2
 		endif
- 		if fk3=="D"
+
+        if _params["fin_k3"]
 			@ m_x+16,m_y+2 SAY "K3 ("+cK3+" svi):" GET cK3
 		endif
- 		if fk4=="D"
+
+        if _params["fin_k4"]
 			@ m_x+17,m_y+2 SAY "K4 (99 svi):" GET cK4
 		endif
 
  		@ m_x+18,m_Y+2 SAY "Prikaz kartica sa 0 stanjem " GET cNula valid cNula $ "DN" pict "@!"
  		read
 		ESC_BCR
+
 		if cSazeta=="N"
   			if cDinDem=="3"
    				nC1:=68
@@ -1403,11 +1403,11 @@ else
  endif
 endif
 
-lVrsteP:=.f.
+lVrsteP := .f.
 
-IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
+IF _params["vrste_placanja"]
 
- lVrsteP:=.t.
+ lVrsteP := .t.
   O_VRSTEP
 
 ENDIF
@@ -1444,7 +1444,7 @@ private cFilter
 cFilter := ".t."+IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
            IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))
 
-if ! ( fk1=="N" .and. fk2=="N" .and. fk3=="N" .and. fk4=="N" )
+if ! (_params["fin_k1"] .and. _params["fin_k2"] .and. _params["fin_k3"] .and.  _params["fin_k4"])
   cFilter := cFilter + ".and.k1="+cm2str(ck1)+".and.k2="+cm2str(ck2)+;
                        ".and.k3=ck3.and.k4="+cm2str(ck4)
 endif
@@ -1462,7 +1462,6 @@ if cfilter==".t."
 else
   set filter to &cFilter
 endif
-   //HSEEK cIdFirma+qqKonto+qqPartner
 
 
 nStr:=0

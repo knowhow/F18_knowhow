@@ -362,7 +362,7 @@ for i:=1 to Len(Kl)
    yStep=76
  else
    ? "Preveliki broj kolona ...(izl.prg)"
-   quit
+   QUIT_1
  endif
  aObjG[i]:=GetNew(m_x+j+1,m_y+yStep)
  @ aObjG[i]:row,(aObjG[i]:col)-22 SAY PADR(ALLTRIM(ImeKol[i,1]),20)

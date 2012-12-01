@@ -172,7 +172,7 @@ if VALTYPE(_ret) == "L"
     // ERROR
     log_write("qry error: " + _qry, 7 )
     Alert("error :" + _qry)
-    QUIT
+    QUIT_1
 endif
 
 return .t.
@@ -191,7 +191,7 @@ _ret := _sql_query( _server, _qry )
 
 if VALTYPE(_ret) == "L"
     log_write( "semafor status error: " + _qry, 6 )
-    QUIT
+    QUIT_1
 endif
 
 return ALLTRIM(_ret:Fieldget( 1 ))
@@ -249,8 +249,7 @@ if VALTYPE(_tbl_obj) == "L"
       _msg = "problem sa:" + _qry
       log_write( _msg, 2)
       MsgBeep(2)
-      ErrorLevel(1)
-      QUIT
+      QUIT_1
 endif
 
 _result := _tbl_obj:Fieldget(1)
@@ -281,8 +280,7 @@ if VALTYPE(_tbl_obj) == "L"
       _msg = "problem sa:" + _qry
       log_write( _msg, 2)
       MsgBeep(2)
-      ErrorLevel(1)
-      QUIT
+      QUIT_1
 endif
 
 _ret["version"]      := _tbl_obj:Fieldget(1)
@@ -372,7 +370,7 @@ _qry := "SELECT dat FROM " + _tbl + " WHERE user_code=" + _sql_quote(f18_user())
 _tbl_obj := _sql_query( _server, _qry )
 IF VALTYPE(_tbl_obj) == "L" 
       MsgBeep( "problem sa:" + _qry)
-      QUIT
+      QUIT_1
 ENDIF
 
 _dat := oTable:Fieldget(1)
@@ -401,7 +399,7 @@ log_write( "table: " + table + " count = " + ALLTRIM(STR( _table_obj:Fieldget(1)
 
 IF VALTYPE(_table_obj) == "L" 
     log_write( "table_count(), error: " + _qry, 1 )
-    QUIT
+    QUIT_1
 ENDIF
 
 _result := _table_obj:Fieldget(1)
@@ -434,7 +432,7 @@ sql_fetch_time := SECONDS() - sql_fetch_time
 if !USED() .or. ( _dbf_alias != ALIAS() )
     Alert(PROCNAME(1) + "(" + ALLTRIM(STR(PROCLINE(1))) + ") " + dbf_table + " dbf mora biti otvoren !")
     log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + _dbf_alias, 2 )
-    QUIT 
+    QUIT_1 
 endif
 
 log_write( "fill_dbf_from_server(), poceo", 9 )

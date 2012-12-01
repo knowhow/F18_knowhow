@@ -109,7 +109,7 @@ recover using _err
           //ferase_dbf(alias, _force_erase)
 
           RaiseError(_msg)
-          QUIT
+          QUIT_1
 
 end sequence
 
@@ -170,7 +170,7 @@ if valtype(table) != "C"
    _msg := PROCNAME(2) + "(" + ALLTRIM(STR(PROCLINE(2))) + ") table name VALTYPE = " + VALTYPE(type)
    Alert(_msg)
    log_write( _msg, 5 )
-   QUIT
+   QUIT_1
 endif
 
 
@@ -217,7 +217,7 @@ recover using _err
           ferase_dbf(alias, _force_erase)
 
           repair_dbfs()
-          QUIT
+          QUIT_1
 
 end sequence
 

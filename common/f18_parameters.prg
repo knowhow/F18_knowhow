@@ -138,15 +138,6 @@ set_metric( "email_cc_default", my_user(), ALLTRIM( _email_cc ) )
 // maticni podaci
 set_metric( "my_proper_name", my_user(), ALLTRIM( _proper_name ) )
 
-//if !just_set
-    // setuj podatke i u bazu
-    //_params := hb_hash()
-    //_params["user_name"] := my_user()
-    //_params["email"] := _email_from
-    //_params["proper_name"] := _proper_name
-
-    //f18_set_user_preferences( _params )
-//endif
 
 return
 

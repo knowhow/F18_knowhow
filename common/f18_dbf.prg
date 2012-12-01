@@ -47,7 +47,7 @@ if !used()
    _msg := "dbf_update_rec - nema otvoren dbf"
    log_write( _msg, 1 )
    Alert(_msg)
-   quit
+   quit_1
 endif
 
 if no_lock .or. rlock()

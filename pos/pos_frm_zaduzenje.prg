@@ -99,13 +99,13 @@ Box(, 6, 60)
     SET CURSOR ON
 
     if gVrstaRS=="S"
-        @ m_x+1,m_y+3 SAY "Prodajno mjesto:" GET cIdPos pict "@!" valid cIdPos<="X ".and. !EMPTY(cIdPos)
+        @ m_x+1, m_y+3 SAY "Prodajno mjesto:" GET cIdPos pict "@!" valid cIdPos<="X ".and. !EMPTY(cIdPos)
     endif
 
     if gvodiodj=="D"
-        @ m_x+3,m_y+3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj (@cIdOdj, 3, 28)
+        @ m_x+3, m_y + 3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj (@cIdOdj, 3, 28)
         if cIdVD=="PD"
-            @ m_x+4,m_y+3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj (@cIdOdj2, 4, 28)
+            @ m_x+4, m_y + 3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj (@cIdOdj2, 4, 28)
         endif
     endif
 

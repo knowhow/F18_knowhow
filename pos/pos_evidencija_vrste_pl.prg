@@ -55,7 +55,7 @@ if FOUND()
 	LoadRec(@cIdPos, @dDatum, @aPromet)
 endif
 
-Box(,nMaxLen+4,60)
+Box(, nMaxLen + 4, 60)
 	do while .t.
 		SET CURSOR ON
 		

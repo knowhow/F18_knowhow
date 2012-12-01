@@ -1,35 +1,21 @@
 /* 
  * This file is part of the bring.out FMK, a free and open source 
  * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fakt.ch"
 
-// ------------------------------------------
-// setuju parametre pri pokretanju modula
-// napuni sifrarnike
-// ------------------------------------------
-function fakt_set_params()
+static __fakt_params := NIL
 
-// PTXT 01.50 compatibility switch
-public gPtxtC50 := .t.
-
-fill_part()
-
-return
-
-
-
-/*! \fn mnu_fakt_params()
- *  \brief Otvara glavni menij sa parametrima
- */
+// -----------------------------------------
+// Fakt parametri
+// -----------------------------------------
 function mnu_fakt_params()
 private cSection:="1"
 private cHistory:=" "
@@ -65,24 +51,69 @@ AADD(opcexe,{|| fakt_par_nazivi_dokumenata()})
 AADD(opc,"6. prikaza cijena, iznos ")
 AADD(opcexe,{|| fakt_par_cijene()})
 
-AADD(opc,"7. postaviti parametre - razno                 ")
-AADD(opcexe,{|| fakt_par_razno()})
-
-if !IsPDV()
-    AADD(opc,"W. parametri Win stampe (DelphiRB)             ")
-    AADD(opcexe,{|| P_WinFakt()})
-endif
-
 AADD(opc,"F. fiskalni parametri  ")
 AADD(opcexe,{|| f18_fiscal_params_menu() })
 
 AADD(opc,"P. parametri labeliranja, barkod stampe  ")
 AADD(opcexe,{|| label_params() })
 
+AADD(opc,"R. postaviti parametre - razno                 ")
+AADD(opcexe,{|| fakt_par_razno()})
 
 Menu_SC("parf")
 
+
+fakt_params(.t.)
 return nil 
+
+
+// -------------------------------------------------------------
+// postavi parametre unosa fakt_dokumenta
+// -------------------------------------------------------------
+procedure fakt_params(read)
+
+if read == NIL
+  read = .f.
+endif
+
+if read .or. __fakt_params == NIL
+    __fakt_params := hb_hash()
+
+    // TODO: prebaciti na get_set sistem
+    __fakt_params["def_rj"] := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2) )
+
+    // TODO: ugasiti ovaj globalni parametar
+    if destinacije() == "D"
+      __fakt_params["destinacije"] := .t.
+    else
+      __fakt_params["destinacije"] := .f.
+    endif
+
+    // ako se koristi rnal, koriste se veze izmedju fakt dokumenata
+    __fakt_params["fakt_dok_veze"] :=  f18_use_module("rnal")
+
+    __fakt_params["fakt_opis_stavke"] := IIF(fakt_opis_stavke() == "D", .t., .f.)
+    __fakt_params["fakt_prodajna_mjesta"] := IIF(fakt_prodajna_mjesta() == "D", .t., .f.)
+    __fakt_params["ref_lot"] := IIF(ref_lot() == "D", .t., .f.)
+    __fakt_params["fakt_vrste_placanja"] := IIF(fakt_vrste_placanja() == "D", .t., .f.)
+endif
+
+return __fakt_params
+
+
+
+// ------------------------------------------
+// setuju parametre pri pokretanju modula
+// napuni sifrarnike
+// ------------------------------------------
+function fakt_set_params()
+
+// PTXT 01.50 compatibility switch
+public gPtxtC50 := .t.
+
+fill_part()
+
+return
 
 
 /*! \fn fakt_par_razno()
@@ -93,13 +124,16 @@ local _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), SPACE(2
 local _prik_bk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PADR("", 300) )
 local _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
-local _unos_opisa := fakt_opis_stavke() 
-local _unos_ref_lot := ref_lot()
-local _unos_dest := destinacije()
+local _pm := fakt_prodajna_mjesta()
 local _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
 local _racun_na_email := PADR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
 local _def_template := PADR( fetch_metric( "fakt_default_odt_template", my_user(), "" ), 20)
 local _x := 1
+local _unos_ref_lot := ref_lot()
+local _unos_opisa := fakt_opis_stavke() 
+local _vr_pl := fakt_vrste_placanja()
+local _unos_dest := destinacije()
+
 
 private cSection:="1"
 private cHistory:=" "
@@ -110,7 +144,7 @@ O_PARAMS
 
 gKomLin := PADR( gKomLin, 70 )
 
-Box(, 21, 77, .f., "OSTALI PARAMETRI (RAZNO)" )
+Box(, MAXROWS() - 5, MAXCOLS() - 15, .f., "OSTALI PARAMETRI (RAZNO)" )
 
 _x := 2
 
@@ -161,23 +195,24 @@ _x := 2
 ++ _x
 
 @ m_x + _x, m_y + 2 SAY "Default ODT template:" GET _def_template PICT "@S35"
-
 ++ _x
 
-@ m_x + _x, m_y + 2 SAY "Praćenje po destinacijama (D/N) ?" GET _unos_dest VALID _unos_dest $ "DN" PICT "@!"
-
+read_dn_parametar("Pracenje po destinacijama", m_x + _x, m_y + 2, @_unos_dest)
 ++ _x
 
-@ m_x + _x, m_y + 2 SAY "Unos opisa po stavkama na fakturi (D/N) ?" GET _unos_opisa VALID _unos_opisa $ "DN" PICT "@!"
-
+read_dn_parametar("Fakturisanje po prodajnim mjestima", m_x + _x, m_y + 2, @_pm)
 ++ _x
 
-@ m_x + _x, m_y + 2 SAY "Unos REF/LOT brojeva (D/N) ?" GET _unos_ref_lot VALID _unos_ref_lot $ "DN" PICT "@!"
+read_dn_parametar("Fakturisanje po vrstama placanja", m_x + _x, m_y + 2, @_vr_pl)
+++ _x
 
+read_dn_parametar("Fakt dodatni opis po stavkama", m_x + _x, m_y + 2, @_unos_opisa)
+++ _x
+
+read_dn_parametar("REF/LOT brojevi", m_x + _x, m_y + 2, @_unos_ref_lot)
 ++ _x
 
 @ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
-
 read
 
 if gMPPrint $ "DXT"
@@ -187,19 +222,16 @@ if gMPPrint $ "DXT"
     @ m_x + _x, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" ;
             GET gMPLocPort ;
             VALID gMPLocPort $ "1234567" PICT "@!"
-        
     ++ _x
         
     @ m_x + _x, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
             GET gMPRedTraka ;
             VALID gMPRedTraka $ "012"
-    
   	++ _x
     
     @ m_x + _x, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
             GET gMPArtikal ;
             VALID gMPArtikal $ "DN" PICT "@!"
-        
   	++ _x
     
     @ m_x + _x, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
@@ -232,6 +264,8 @@ if LastKey() <> K_ESC
     destinacije(_unos_dest)
     fakt_opis_stavke(_unos_opisa)
     ref_lot(_unos_ref_lot)
+    fakt_prodajna_mjesta(_pm)
+    fakt_vrste_placanja(_vr_pl)
     
     // setuj mi default odt template ako treba
     __default_odt_template()
@@ -500,7 +534,7 @@ local nSw4 := 31
 local nSw5 := 1
 local nSw6 := 1
 local nSw7 := 0
-local _vr_pl := fetch_metric( "fakt_unos_vrste_placanja", nil, "N" )
+local _params := fakt_params()
 
 private GetList:={}
 private cIzvj:="1"
@@ -652,10 +686,6 @@ Box( ,22, 76, .f., "Izgled dokumenata")
      
         @ m_x+nX, m_y+2 SAY "Varijanta prikaza podataka (1/2)" GET gShSldVar PICT "9" VALID gShSldVar > 0 .and. gShSldVar < 3 WHEN gShSld == "D"
 
-        nX += 1
-
-        @ m_x+nX, m_y+2 SAY "Unos vrste placanja (D/N)" GET _vr_pl PICT "@!" VALID _vr_pl $ "DN"
-    
     endif
 
     read
@@ -703,7 +733,7 @@ if ( LASTKEY() <> K_ESC )
 
     cSection := "1"
     
-    set_metric( "fakt_unos_vrste_placanja", nil, _vr_pl )
+
     set_metric( "fakt_ispis_grupacije_na_dokumentu", nil, glRGrPrn )
     set_metric( "fakt_ispis_salda_kupca_dobavljaca", nil, gShSld )
     set_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", nil, gShSldVar )
@@ -982,9 +1012,22 @@ return get_set_global_param("fakt_opis_stavke", value, "N")
 function ref_lot(value)
 return get_set_global_param("ref_lot", value, "N")
 
+
 // ----------------------------------------------------------------
 // prate se destinacije
 // ----------------------------------------------------------------
 function destinacije(value)
 return get_set_global_param("destinacije", value, "N")
+
+// ----------------------------------------------------------------
+// fakturise se po prodajnim mjestima
+// ----------------------------------------------------------------
+function fakt_prodajna_mjesta(value)
+return get_set_global_param("fakt_prodajna_mjesta", value, "N")
+
+// ----------------------------------------------------------------
+// fakturise se po vrstama placanja
+// ----------------------------------------------------------------
+function fakt_vrste_placanja(value)
+return get_set_global_param("fakt_unos_vrste_placanja", value, "N")
 

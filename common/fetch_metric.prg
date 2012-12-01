@@ -110,3 +110,18 @@ endif
 
 return _ret
 
+// ----------------------------------------------------------
+// set/get user parametre F18
+// ----------------------------------------------------------
+function get_set_user_param(param_name, value, def_value)
+local _ret
+
+if value == NIL
+   _ret := fetch_metric(param_name, my_user(), def_value)
+else
+   set_metric(param_name, my_user(), value)
+   _ret := value
+endif
+
+return _ret
+

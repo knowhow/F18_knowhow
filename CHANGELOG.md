@@ -1,3 +1,7 @@
+1.3.41 2012-12-01, hernad
+ 
+  - fakt atribut opis: get_fakt_atribut_opis()
+
 1.3.40 2012-12-01, hernad
   
   - i_fakt testovi ponovo green nakon promjena na fakt_unos (vsasa)  

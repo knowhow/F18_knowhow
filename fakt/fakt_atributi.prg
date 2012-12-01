@@ -11,11 +11,37 @@
 
 #include "fakt.ch"
 
+// --------------------------------------------------
+// get atribut opis
+// --------------------------------------------------
+function get_fakt_atribut_opis(dok, from_server)
+return get_fakt_atribut(dok, "opis", from_server)
+
+// --------------------------------------------------
+// get atribut ref, lot
+// --------------------------------------------------
+function get_fakt_atribut_ref(dok, from_server)
+return get_fakt_atribut(dok, "ref", from_server)
+
+function get_fakt_atribut_lot(dok, from_server)
+return get_fakt_atribut(dok, "lot", from_server)
+
+
+function get_fakt_atribut(dok, atribut, from_server)
+local _ret
+
+if from_server
+        _ret := get_fakt_atribut_from_server( dok["idfirma"], dok["idtipdok"], dok["brdok"], atribut)
+else
+        _ret := get_fakt_atribut_from_dbf( dok["idfirma"], dok["idtipdok"], dok["brdok"], atribut)
+endif
+
+return _ret
 
 // --------------------------------------------------------------------
 // vraca atribut iz pomocne tabele
 // --------------------------------------------------------------------
-function get_fakt_atribut( id_firma, tip_dok, br_dok, r_br, atribut )
+function get_fakt_atribut_from_dbf( id_firma, tip_dok, br_dok, r_br, atribut )
 local _ret := ""
 local _t_area := SELECT()
 

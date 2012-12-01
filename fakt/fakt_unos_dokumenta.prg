@@ -1259,12 +1259,12 @@ _rbr := RedniBroj( __redni_broj )
 // snimi atribute u hash matricu....
 // opis stavke
 if _params["fakt_opis_stavke"]
-    items_atrib["fakt_opis"] := _opis
+    items_atrib["opis"] := _opis
 endif
 // ref/lot brojevi
 if _params["ref_lot"]
-    items_atrib["fakt_ref_broj"] := _ref_broj
-    items_atrib["fakt_lot_broj"] := _lot_broj
+    items_atrib["ref"] := _ref_broj
+    items_atrib["lot"] := _lot_broj
 endif
 
 return 1

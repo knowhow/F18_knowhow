@@ -20,15 +20,14 @@ static __KTO_POT
 static __FIN_KUM
 // show saldo varijanta
 static __SH_SLD_VAR
-// faktura je u pripremi ili ne
-static __temporary := .t.
 
 // ----------------------------------------------------
 // ----------------------------------------------------
 function StdokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
 local cFax
 local lPrepisDok := .f.
-
+local _from_server
+ 
 // samo kolicine
 local lSamoKol:=.f. 
 
@@ -43,10 +42,10 @@ drn_empty()
 // otvori tabele
 if PCount() == 4 .and. ( cIdtipdok <> nil )
     lPrepisDok := .t.
-    _temporary := .f.
+    _from_server := .t.
     o_fakt_edit(.t.)
 else
-    _temporary := .t.
+    _from_server := .f.
     o_fakt_edit(.f.)
 endif
 
@@ -60,7 +59,7 @@ private cPombk := fetch_metric("fakt_prikaz_barkod", my_user(), "0" )
 private lPBarkod := .f.
 
 if cPombk $ "12"  // pitanje, default "N"
-	lPBarkod := ( Pitanje(,"Zelite li ispis barkodova ?", IIF( cPombk == "1", "N", "D" ) ) == "D" )
+	lPBarkod := ( Pitanje( ,"Zelite li ispis barkodova ?", IIF( cPombk == "1", "N", "D" ) ) == "D" )
 endif
 
 if PCount() == 0 .or. ( cIdTipDok == nil .and. lJFill == .t. )
@@ -152,8 +151,6 @@ else
   endif
 
 endif
-
-//close all
 
 return
 
@@ -298,7 +295,7 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	hseek roba->idtarifa
 	select fakt_pripr
 
-     	aMemo:=ParsMemo(txt)
+    aMemo:=ParsMemo(txt)
 	cIdRoba := field->idroba
 	
 	if roba->tip="U"
@@ -345,18 +342,10 @@ do while !EOF() .and. idfirma==cIdFirma .and. idtipdok==cIdTipDok .and. brdok==c
 	
 	cIdPartner = fakt_pripr->IdPartner
 
-    // ako je faktura u pripremi
-    if _temporary
-        cOpis := get_fakt_atribut( fakt_pripr->idfirma, fakt_pripr->idtipdok, ;
-                        fakt_pripr->brdok, fakt_pripr->rbr, "fakt_opis" )
+    if _params["fakt_opis_stavke"] 
+        get_fakt_atribut_opis(_from_server)
     else
-        // opis fakture	
-        cOpis := get_fakt_atribut_from_server( fakt_pripr->idfirma, ;
-                                            fakt_pripr->idtipdok, ;
-                                            fakt_pripr->brdok, ;
-                                            fakt_pripr->rbr, ;
-                                            "fakt_opis" )
-
+        cOpis := ""
     endif
 
 	// rn Veleprodaje
@@ -858,7 +847,7 @@ local nCnt // counter upisa u DRNTEXT
 _txt_djokeri( @cTxt, cPartn )
 
 // slobodni tekst se upisuje u DRNTEXT od F20 -- F50
-cTxt := STRTRAN(cTxt, "ç" + Chr(10), "")
+cTxt := STRTRAN(cTxt, "¬ç" + Chr(10), "")
 // daj mi matricu sa tekstom line1, line2 itd...
 aLines := TokToNiz(cTxt, Chr(13) + Chr(10)) 
 
@@ -945,7 +934,7 @@ if AT( cStrSlKup, cTxt ) <> 0
 		cPom2 := ""
 		
 		if __SH_SLD_VAR == 2
-			cPom2 := "Vaö posljednji saldo iznosi: "
+			cPom2 := "Va¬ö posljednji saldo iznosi: "
 		endif
 	else
 	
@@ -969,7 +958,7 @@ if AT( cStrSlDob, cTxt ) <> 0
 		cPom2 := ""
 		
 		if __SH_SLD_VAR == 2
-			cPom2 := "Naö posljednji saldo iznosi: "
+			cPom2 := "Na¬ö posljednji saldo iznosi: "
 		endif
 	else
 	

@@ -199,20 +199,24 @@ AADD(_stavke['get'], 'DBEDIT')
 
 AADD(_stavke['keys'],  {;
       "99", "<ENTER>2", "31.12.12", "<ENTER>", ;
-      "77777", "<ENTER>", "999999", "<ENTER>", ;
-      "OTP-111", "<ENTER>", "10.12.12", "<ENTER>",;
-      "NAR-9852", "<ENTER>", "7", "<ENTER>", "07.01.13", "<ENTER>";
-  })
-
-/*
+      "77777", "<ENTER>", "999999", "<ENTER>"  ;
+ })
+// fire keystrokes kada dodjes do _IDFIRMA get polja
 AADD(_stavke['get'], '_IDFIRMA')
 
 AADD(_stavke['keys'],  {;
+      "OTP-111", "<ENTER>", "10.12.12", "<ENTER>",;
+      "NAR-9852", "<ENTER>", "7", "<ENTER>", "07.01.13", "<ENTER>";
+ })
+AADD(_stavke['get'], '_BROTP')
+ 
+
+/*
+AADD(_stavke['keys'],  {;
      "G ", "<ENTER>";
   })
-*/
-
 AADD(_stavke['get'], '_IDVRSTEP')
+*/
 
 AADD(_stavke['keys'],  {;
      "KM", "<ENTER>", ;
@@ -220,12 +224,13 @@ AADD(_stavke['keys'],  {;
   })
 AADD(_stavke['get'], '_DINDEM')
 
+
 AADD(_stavke['keys'],  {;
     "1", "<ENTER>", ;
     "TEST1", "<ENTER>", ;
     "serbr-1","<ENTER>" ;
   })
-AADD(_stavke['get'], 'NRBR')
+AADD(_stavke['get'], '__REDNI_BROJ')
 
 AADD(_stavke['keys'],  {; 
              "10.00", "<ENTER>", ; // 10 kom
@@ -242,7 +247,7 @@ AADD(_stavke['keys'],  {;
     "TEST2", "<ENTER>",  ;
     "serbr-2", "<ENTER>" ;
    })
-AADD(_stavke['get'], 'NRBR')
+AADD(_stavke['get'], '__REDNI_BROJ')
 
 AADD(_stavke['keys'],  {; 
              "25.00", "<ENTER>", ; // 20 kom

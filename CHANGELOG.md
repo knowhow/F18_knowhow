@@ -1,3 +1,7 @@
+1.3.40 2012-12-01, hernad
+  
+  - i_fakt testovi ponovo green nakon promjena na fakt_unos (vsasa)  
+
 1.3.81 2012-11-27, vsasa
 
   - tremol linux fiskalni drajver, čitanje grešaka [#29690](http://redmine.bring.out.ba/issues/29690)

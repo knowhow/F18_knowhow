@@ -17,10 +17,11 @@
 #%KON17#      #%10CPI##%BON__#Kupac:
 #%KON17#      #%10CPI#-------------------------------#%IOFF_#
 #%KON17#      #%10CPI##%BON__#  PARTN 99                           #%BOFF_#                Sarajevo, 31.12.12
-#%KON17#      #%10CPI##%BON__#  -                                  #%BOFF_#          Datum isporuke: 31.12.12
-#%KON17#      #%10CPI##%BON__#  -                                  #%BOFF_#
+#%KON17#      #%10CPI##%BON__#  -                                  #%BOFF_#          Datum isporuke: 10.12.12
+#%KON17#      #%10CPI##%BON__#  -                                  #%BOFF_#            Datum valute: 07.01.13
 #%KON17#      #%10CPI#  ID broj: -                         #%10CPI#
-#%KON17#      #%10CPI##%BON__#                                            POREZNA FAKTURA br. 77777#%BOFF_##%KON17#
+#%KON17#      #%10CPI##%BON__#                                            POREZNA FAKTURA br. 77777#%BOFF_#
+#%KON17#      #%12CPI#Broj otpremnice: OTP-111 , Broj ugov./narudzb: NAR-9852#%KON17#
       ------ ----------------------------------------------------------------------- ------------ ---------- ------------
        R.br  Trgovacki naziv dobra/usluge (sifra, naziv, jmj)                          kolicina    C.b.PDV    Uk.bez.PDV 
       ------ ----------------------------------------------------------------------- ------------ ---------- ------------

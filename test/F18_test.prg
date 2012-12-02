@@ -10,12 +10,11 @@ post_login()
 
 TEST_BEGIN("")
 
+/* na windowsima vrti beskonacno
 MsgO("migrate")
 test_migrate()
 MsgC()
-
-// test bug
-// ? ajoj
+*/
 
 //MsgO("fin_test")
 //fin_test()

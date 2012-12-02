@@ -15,8 +15,10 @@ kreiranje inicijalnih rola (test1, test2, admin):
 
 kreiranje f18_test baze:
 
-    echo "create database f18_test" | psql -h localhost
-    psql -h localhost < test/data/f18_test.sql  
+    export DB=f18_test
+    echo "create database ${DB}" | psql -h localhost
+    psql -h localhost ${DB} < test/data/${DB}.sql 
+    echo "SELECT u2.knowhow_package_version('fmk')" | psql -h localhost ${DB} 
 
 ### build
 

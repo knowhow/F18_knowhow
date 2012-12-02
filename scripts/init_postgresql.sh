@@ -8,6 +8,18 @@ fi
 
 PSQLCMD="psql -t -h localhost -U $SUPERUSER"
 
+function create_postgres {
+ret=`echo "select rolname from pg_roles where rolname='postgres'" | $PSQLCMD | grep -q $USER`
+
+if [[ "$ret" == "0" ]]; then
+   echo "postgres user postoji"
+else
+  echo "create user postgres WITH PASSWORD 'postgres' SUPERUSER" | $PSQLCMD
+fi
+
+}
+
+
 function create_user {
 ret=`echo "select rolname from pg_roles where rolname='$USER'" | $PSQLCMD | grep -q $USER`
 
@@ -43,5 +55,5 @@ SQL="grant xtrole TO admin GRANTED BY $SUPERUSER"
 echo $SQL | $PSQLCMD
 }
 
-
+create_postgres
 create_test_roles

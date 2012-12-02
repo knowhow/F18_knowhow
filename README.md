@@ -5,6 +5,21 @@ Status](https://secure.travis-ci.org/knowhow/F18_knowhow.png?branch=master)](htt
 
 ## dev environment
 
+### database init
+
+#### Mac OSX ([Postgres.app](http://postgresapp.com))
+
+kreiranje inicijalnih rola (test1, test2, admin):
+
+    scripts/init_postgresql.sh `whoami`
+
+kreiranje f18_test baze:
+
+    echo "create database f18_test" | psql -h localhost
+    psql -h localhost < test/data/f18_test.sql  
+
+### build
+
 <pre>
 $ source scripts/(ubuntu | mac | win)_set_envars.sh
 $

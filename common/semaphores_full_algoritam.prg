@@ -32,7 +32,6 @@ if f18_session()['id'] > 1
     return .f.
 endif
 
-
 if step_size == NIL
     step_size := 20000
 endif

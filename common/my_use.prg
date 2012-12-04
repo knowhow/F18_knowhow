@@ -238,8 +238,6 @@ do while .t.
 
     if (_version == -1)
         log_write( "full synchro version semaphore version -1", 7 )
-        // ako je prazna semafor tabela dodat ce se zapis u nju...
-        reset_semaphore_version( table)
         // odradi full sinhro i setuj vesion = last_trans_version
         update_dbf_from_server( table, "FULL" )
     else

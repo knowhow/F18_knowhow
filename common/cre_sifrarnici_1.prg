@@ -30,7 +30,7 @@ if !FILE(f18_ime_dbf( _table_name ))
     AADD(aDBf,{ 'KONTO'               , 'C' ,   7 ,  0 })
 
     DBCREATE2( "rj", aDbf )
-	_created := .f.
+	_created := .t.
 
 endif
 

@@ -200,7 +200,7 @@ AADD(aDBf,{ 'VALUE'     , 'C' , 250 ,  0 })
 
 _created := .f.
 _alias := "FAKT_ATRIB"
-_table_name := "fakt_fakt_atributi"
+_table_name := "fakt_pripr_atributi"
 
 if !FILE( f18_ime_dbf( _alias) )
     DBCREATE2( _alias, aDbf )

@@ -1,3 +1,8 @@
+1.3.43 2012-12-01, vsasa
+
+  - fakt, destinacija, dok_veza, korekcije [#29772](http://redmine.bring.out.ba/issues/29772)
+  - semafori, tabela rj beskonačna petlja [#29698](http://redmine.bring.out.ba/issues/29698)
+
 1.3.42 2012-12-01, hernad
 
   - opis unos - azuriranje/povrat, ovo tek sada radi

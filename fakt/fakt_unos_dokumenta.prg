@@ -988,9 +988,9 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                             IzSifre(), ;
                             _isp_partn( _idpartner, _part_x, _part_y + 18 ) }
             
+        ++ _x
         if _params["fakt_prodajna_mjesta"]
            // prodajno mjesto, PM
-           ++ _x
            @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm VALID {|| P_IDPM( @_idpm, _idpartner ) } PICT "@S10"
         endif
 
@@ -999,9 +999,9 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
            @ m_x + _x, col() + 1 SAY "Veza:" GET _dokument_veza PICT "@S20"
         endif
 
+        ++ _x
         if _params["destinacije"] 
           // destinacija 
-          ++ _x
           @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
         endif
 

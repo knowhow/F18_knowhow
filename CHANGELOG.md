@@ -1,12 +1,18 @@
-1.3.42 2012-12-01, hernad
+1.4.33 2012-12-01, vsasa
+
+  - fakt, destinacija, dok_veza, korekcije [#29772](http://redmine.bring.out.ba/issues/29772)
+  - fakt, atributi, promjena naziva lokalne tabele [#28966](http://redmine.bring.out.ba/issues/28966)
+  - semafori, tabela rj beskonačna petlja [#29698](http://redmine.bring.out.ba/issues/29698)
+
+1.4.32 2012-12-01, hernad
 
   - opis unos - azuriranje/povrat, ovo tek sada radi
 
-1.3.41 2012-12-01, hernad
+1.4.3 2012-12-01, hernad
  
   - fakt atribut opis: get_fakt_atribut_opis()
 
-1.3.40 2012-12-01, hernad
+1.4.00 2012-12-01, hernad
   
   - i_fakt testovi ponovo green nakon promjena na fakt_unos (vsasa)  
 

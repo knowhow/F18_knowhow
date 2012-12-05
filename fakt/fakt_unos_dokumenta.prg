@@ -760,20 +760,21 @@ _txt += CHR(16) + d2n1 + CHR(17)
 _txt += CHR(16) + d2n2 + CHR(17) 
 
 if _params["destinacije"]
-   _tmp := ""
-else
    _tmp := _destinacija
+else
+   _tmp := ""
 endif
+
 // 18 - Destinacija
 _txt += CHR(16) + ALLTRIM( _tmp ) + CHR(17) 
 
-
 // 19 - vezni dokumenti
 if _params["fakt_dok_veze"]
-   _tmp := ""
-else
    _tmp := _dokument_veza
+else
+   _tmp := ""
 endif
+
 _txt += CHR(16) + ALLTRIM( _dokument_veza ) + CHR(17)
 
 return

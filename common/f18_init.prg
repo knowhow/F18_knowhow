@@ -69,7 +69,7 @@ function f18_init_app()
   REQUEST DBFFPT
 #endif
 
-#infdef NODE
+#ifndef NODE
 #ifdef __PLATFORM__WINDOWS
 
  // REQUEST HB_GT_WIN

@@ -299,6 +299,10 @@ local _opened := .t.
 local _fields :={}, _fields_len
 local _dbf
 
+#ifdef NODE
+   return .f.
+#endif
+
 if rec["temp"]
    // ovi mi podaci ne trebaju za temp tabele
    return .f.

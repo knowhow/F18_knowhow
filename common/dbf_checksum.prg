@@ -29,6 +29,10 @@ local _opened := .f.
 local _sql_table
 local _dbf, _udbf
 
+#ifdef NODE
+  return .t.
+#endif
+
 if full_synchro == NIL
     full_synchro := .f.
 endif
@@ -55,7 +59,7 @@ if !USED()
     endif
 
     _opened := .t.
-endif   
+endif
 
 if cnt_dbf == NIL
   // reccount() se ne moze iskoristiti jer prikazuje i deleted zapise
@@ -100,6 +104,6 @@ if _opened
     USE
 endif
 
-return 
+return .t. 
 
 

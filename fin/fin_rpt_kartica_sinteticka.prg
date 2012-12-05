@@ -16,7 +16,8 @@ function SinKart()
 
 cIdFirma:=gFirma
 qqKonto:=""
-dDatOd:=dDAtDo:=ctod("")
+dDatOd := fetch_metric( "fin_kart_datum_od", my_user(), CTOD("") )
+dDatDo := fetch_metric( "fin_kart_datum_do", my_user(), CTOD("") )
 cBrza:="D"
 
 IF gVar1=="0"
@@ -34,7 +35,8 @@ private cSection:="1"; cHistory:=" ";aHistory:={}
 
 Params1()
 
-RPar("c1",@cIdFirma);RPar("c2",@qqKonto); RPar("d1",@dDatOD); RPar("d2",@dDatDo)
+RPar("c1",@cIdFirma)
+RPar("c2",@qqKonto)
 RPar("c3",@cBrza)
 RPar("c4",@cPredh)
 

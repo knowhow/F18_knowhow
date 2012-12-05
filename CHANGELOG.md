@@ -1,3 +1,7 @@
+1.4.34 2012-12-05, vsasa
+
+  - fin, parametri k1, k2, k3... korekcije [#29733](http://redmine.bring.out.ba/issues/29733)
+ 
 1.4.33 2012-12-01, vsasa
 
   - fakt, destinacija, dok_veza, korekcije [#29772](http://redmine.bring.out.ba/issues/29772)

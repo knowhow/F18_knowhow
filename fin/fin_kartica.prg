@@ -25,7 +25,7 @@ private picDEM := FormPicL( gPicDEM, 12 )
 private picBHD := FormPicL( gPicBHD, 16 )
 
 AADD( _opc, "1. subanalitika                           ")
-AADD( _opcexe, {|| SubKartMnu() })
+AADD( _opcexe, {|| subKartMnu() })
 AADD( _opc, "2. analitika")
 AADD( _opcexe, {|| AnKart() })
 AADD( _opc, "3. sintetika")
@@ -96,12 +96,13 @@ local __p_naz
 local __k_naz
 local __dug
 local __pot
-local _params := fin_params()
+local _fin_params := fin_params()
+local _fakt_params := fakt_params()
 
-private fK1 := _params["fin_k1"]
-private fK2 := _params["fin_k2"]
-private fK3 := _params["fin_k3"]
-private fK4 := _params["fin_k4"]
+private fK1 := _fin_params["fin_k1"]
+private fK2 := _fin_params["fin_k2"]
+private fK3 := _fin_params["fin_k3"]
+private fK4 := _fin_params["fin_k4"]
 
 private cIdFirma:=gFirma
 private fOtvSt:=lOtvSt
@@ -336,7 +337,7 @@ lVrsteP := .f.
 
 o_kart_tbl()
 
-if _params["vrste_placanja"]
+if _fakt_params["fakt_vrste_placanja"]
 	lVrsteP := .t.
   	O_VRSTEP
 endif
@@ -899,7 +900,7 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
      nKonD+=nDugBHD;  nKonP+=nPotBHD
      nKonD2+=nDugDEM; nKonP2+=nPotDEM
 
-     if fk3=="D" .and. !len(ck3)=0 .and. cBrza=="D" .and.;
+     if _fin_params["fin_k1"] .and. !len(ck3)=0 .and. cBrza=="D" .and.;
         IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
        nLimit  := ABS( Ocitaj(F_ULIMIT,k3iz256(ck3)+cIdPartner,"f_limit") )
        nSLimit := ABS( nDugBHD-nPotBHD )
@@ -1238,7 +1239,8 @@ local nSirOp:=20
 local nCOpis:=0
 local cOpis:=""
 local nC1:=35
-local _params := fin_params()
+local _fin_params := fin_params()
+local _fakt_params := fakt_params()
 
 private fOtvSt:=lOtvSt
 cIdFirma:=gFirma
@@ -1308,29 +1310,31 @@ Box("",18,65)
    			@ m_x+7,m_y+2 SAY "Konto 2 " GET qqKonto2  valid P_KontoFin(@qqKonto2) .and. qqKonto2>qqkonto
    			@ m_x+8,m_y+2 SAY "Partner (prazno svi)" GET qqPartner valid (";" $ qqpartner) .or. empty(qqPartner) .or. P_Firma(@qqPartner)  pict "@!"
  		endif
+
  		@ m_x+9,m_y+2 SAY "Datum dokumenta od:" GET dDatod
  		@ m_x+9,col()+2 SAY "do" GET dDatDo   valid dDatOd<=dDatDo
+
  		IF gVar1=="0"
    			@ m_x+10,m_y+2 SAY "Kartica za "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+"/"+ALLTRIM(ValDomaca())+"-"+ALLTRIM(ValPomocna())+" (1/2/3)"  GET cDinDem valid cDinDem $ "123"
  		ENDIF
+
  		@ m_x+11,m_y+2 SAY "Sabrati po brojevima veze D/N ?"  GET cPoVezi valid cPoVezi $ "DN" pict "@!"
  		@ m_x+11,col()+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cprelomljeno $ "DN" pict "@!"
  		@ m_x+12,m_y+2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)"  GET cK14 valid cK14 $ "123"
 
-
- 		if _params["fin_k1"]
+ 		if _fin_params["fin_k1"]
 			@ m_x+14,m_y+2 SAY "K1 (9 svi) :" GET cK1
 		endif
  		
-        if _params["fin_k2"]
+        if _fin_params["fin_k2"]
 			@ m_x+15,m_y+2 SAY "K2 (9 svi) :" GET cK2
 		endif
 
-        if _params["fin_k3"]
+        if _fin_params["fin_k3"]
 			@ m_x+16,m_y+2 SAY "K3 ("+cK3+" svi):" GET cK3
 		endif
 
-        if _params["fin_k4"]
+        if _fin_params["fin_k4"]
 			@ m_x+17,m_y+2 SAY "K4 (99 svi):" GET cK4
 		endif
 
@@ -1405,11 +1409,9 @@ endif
 
 lVrsteP := .f.
 
-IF _params["vrste_placanja"]
-
- lVrsteP := .t.
-  O_VRSTEP
-
+IF _fakt_params["fakt_vrste_placanja"]
+    lVrsteP := .t.
+    O_VRSTEP
 ENDIF
 
 O_SUBAN
@@ -1444,7 +1446,7 @@ private cFilter
 cFilter := ".t."+IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
            IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))
 
-if ! (_params["fin_k1"] .and. _params["fin_k2"] .and. _params["fin_k3"] .and.  _params["fin_k4"])
+if ! (_fin_params["fin_k1"] .and. _fin_params["fin_k2"] .and. _fin_params["fin_k3"] .and.  _fin_params["fin_k4"])
   cFilter := cFilter + ".and.k1="+cm2str(ck1)+".and.k2="+cm2str(ck2)+;
                        ".and.k3=ck3.and.k4="+cm2str(ck4)
 endif

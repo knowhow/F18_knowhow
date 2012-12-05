@@ -2689,28 +2689,47 @@ return
  *  \param mxplus
  *  \param lK
  */
-function UpitK1K4(mxplus,lK)
+function UpitK1K4( mxplus, lK )
+local _k1, _k2, _k3, _k4
+local _params := fin_params()
 
-IF lK==NIL; lK:=.t.; ENDIF
+_k1 := _params["fin_k1"]
+_k2 := _params["fin_k2"]
+_k3 := _params["fin_k3"]
+_k4 := _params["fin_k4"]
 
-IF lK
-if fk1=="D"; @ m_x+mxplus,m_y+2   SAY "K1 (9 svi) :" GET cK1; endif
-if fk2=="D"; @ m_x+mxplus,col()+2 SAY "K2 (9 svi) :" GET cK2; endif
-if fk3=="D"; @ m_x+mxplus+1,m_y+2 SAY "K3 ("+cK3+" svi):" GET cK3; endif
-if fk4=="D"; @ m_x+mxplus+1,col()+1 SAY "K4 (99 svi):" GET cK4; endif
-ENDIF
-
-if gRj=="D"
-  IF gDUFRJ=="D" .and. ( PROCNAME(1)=="SPECPOKP" .or. PROCNAME(1)=="SUBKART" )
-     @ m_x+mxplus+2,m_y+2 SAY "RJ:" GET cIdRj PICT "@!S20"
-  ELSE
-     @ m_x+mxplus+2,m_y+2 SAY "RJ:" GET cIdRj
-  ENDIF
+if lK == NIL
+    lK := .t.
 endif
+
+if lK
+    if _k1
+        @ m_x + mxplus, m_y + 2 SAY "K1 (9 svi) :" GET cK1
+    endif
+    if _k2
+        @ m_x + mxplus, col() + 2 SAY "K2 (9 svi) :" GET cK2
+    endif
+    if _k3
+        @ m_x + mxplus + 1, m_y + 2 SAY "K3 ("+cK3+" svi):" GET cK3
+    endif
+    if _k4
+        @ m_x + mxplus + 1, col() + 1 SAY "K4 (99 svi):" GET cK4
+    endif
+endif
+
+if gRj == "D"
+    if gDUFRJ == "D" .and. ( PROCNAME(1) == "SPECPOKP" .or. PROCNAME(1) == "SUBKART" )
+        @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
+    else
+        @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj
+    endif
+endif
+
 if gTroskovi=="D"
-   @ m_x+mxplus+3,m_y+2 SAY "Funk    :" GET cFunk
-   @ m_x+mxplus+4,m_y+2 SAY "Fond    :" GET cFond
+    @ m_x + mxplus + 3, m_y + 2 SAY "Funk    :" GET cFunk
+    @ m_x + mxplus + 4, m_y + 2 SAY "Fond    :" GET cFond
 endif
+
 return
 
 
@@ -2764,6 +2783,7 @@ function PrikK1K4(lK)
 local fProso:=.f.
 local nArr:=SELECT()
 local _fakt_params := fakt_params()
+local _fin_params := fin_params()
 
 local lVrsteP := _fakt_params["fakt_vrste_placanja"]
 
@@ -2805,7 +2825,7 @@ if gRJ=="D" .and. len(cIdRJ)<>0
   ? "Radna jedinica: " + cIdRj + " - " + cRjNaz  
 endif
 IF lK
-  if fk1=="D" .and. !len(ck1)==0
+  if _fin_params["fin_k1"] .and. !len(ck1)==0
     if !fproso
      ? cM
      ? cStr
@@ -2813,7 +2833,7 @@ IF lK
     endif
     ? "K1 =",ck1
   endif
-  if fk2=="D" .and. !len(ck2)=0
+  if _fin_params["fin_k2"] .and. !len(ck2)=0
     if !fproso
      ? cM
      ? cStr
@@ -2821,7 +2841,7 @@ IF lK
     endif
     ? "K2 =",ck2
   endif
-  if fk3=="D" .and. !len(ck3)=0
+  if _fin_params["fin_k3"] .and. !len(ck3)=0
     if !fproso
      ? cM
      ? cStr
@@ -2829,7 +2849,7 @@ IF lK
     endif
     ? "K3 =",k3iz256(ck3)
   endif
-  if fk4=="D"  .and. !len(ck4)=0
+  if _fin_params["fin_k4"] .and. !len(ck4)=0
     if !fproso
      ? cM
      ? cStr

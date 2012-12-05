@@ -69,6 +69,7 @@ function f18_init_app()
   REQUEST DBFFPT
 #endif
 
+#ifndef NODE
 #ifdef __PLATFORM__WINDOWS
 
  // REQUEST HB_GT_WIN
@@ -81,6 +82,7 @@ function f18_init_app()
   //REQUEST HB_GT_CRS_DEFAULT
   REQUEST HB_GT_XWC_DEFAULT
 
+#endif
 #endif
 
 RDDSETDEFAULT( RDDENGINE )

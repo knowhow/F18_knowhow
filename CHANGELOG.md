@@ -1,3 +1,7 @@
+1.4.35 2012-12-06, vsasa
+
+  - fakt, unos dokumenta, bugfix [#29738](http://redmine.bring.out.ba/issues/29738)
+ 
 1.4.34 2012-12-05, vsasa
 
   - fin, parametri k1, k2, k3... korekcije [#29733](http://redmine.bring.out.ba/issues/29733)

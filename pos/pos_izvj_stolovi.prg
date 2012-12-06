@@ -9,13 +9,11 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "pos.ch"
 
 
 // sljedeci broj zakljucenja na nivou baze
 function g_next_zak_br()
-*{
 local nArr
 nArr:=SELECT()
 
@@ -32,7 +30,6 @@ nRet := (field->zak_br) + 1
 select (nArr)
 
 return nRet
-*}
 
 // zakljuci sto broj
 function zak_sto(nStoBr)
@@ -375,7 +372,7 @@ return
 // -------------------------------
 // -------------------------------
 function g_otv_stolovi()
-*{
+
 local nArr
 nArr:=SELECT()
 
@@ -401,7 +398,6 @@ enddo
 
 select (nArr)
 return aStolovi
-*}
 
 // ---------------------------
 // ---------------------------

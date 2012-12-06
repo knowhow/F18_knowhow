@@ -1018,8 +1018,8 @@ for i:=1 to LEN(aRacuni)
 		select dokspf
 		set order to tag "1"
 		hseek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
-		// nadji doks master record
-		select pos_doks
+		
+    select pos_doks
 		Seek2(cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
 		cSto := pos_doks->sto
 		cIdRadnik := pos_doks->idRadnik

@@ -1010,11 +1010,11 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
             @ m_x + _x, col() + 2 SAY "R.nal:" GET _idrnal VALID P_RNal( @_idrnal ) PICT "@!"
         endif
 
+        _x2 := 4
+        
         // sada ide desna strana i podaci isporuke...
         if _idtipdok $ "10#11"
-
-            _x2 := 4
-                    
+            
             @ m_x + _x2, m_y + 51 SAY "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
                 
             ++ _x2

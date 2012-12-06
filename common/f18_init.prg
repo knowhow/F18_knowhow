@@ -173,6 +173,10 @@ local _pix_height := hb_gtInfo( HB_GTI_DESKTOPHEIGHT)
 
 _msg := "screen res: " + ALLTRIM(to_str(_pix_width)) + " " + ALLTRIM(to_str(_pix_height)) + " varijanta: "
 
+#ifdef NODE
+  return .t.
+#endif
+
 do CASE
 
 
@@ -263,8 +267,31 @@ endif
 
 return
 
+#ifdef NODE
 
-#ifdef TEST
+function f18_set_server_params(pars)
+local _ret := hb_hash()
+
+_ret["ret"] := 0
+
+log_write("parametri: " + pp(pars))
+
+__server_params := hb_hash()
+__server_params["port"] := pars["port"]
+__server_params["database"] := pars["database"]
+__server_params["host"] := pars["host"]
+__server_params["user"] := pars["user"]
+__server_params["schema"] := pars["schema"]
+__server_params["password"] := pars["password"]
+
+return hb_jsonDecode(_ret)
+
+function _get_server_params_from_config()
+return
+
+#else
+
+#ifdef TEST 
 
 function _get_server_params_from_config()
 
@@ -313,6 +340,7 @@ __server_params["password"] := __server_params["user"]
 return 
 #endif
 
+#endif
 // --------------------------------------------------------
 // --------------------------------------------------------
 static function _write_server_params_to_config()
@@ -335,18 +363,25 @@ local _ver
 set_f18_home( my_server_params()["database"] )
 log_write("home baze: " + my_home())
 
+#ifndef NODE
 hb_gtInfo( HB_GTI_WINTITLE, "[ "+ my_server_params()["user"] + " ][ "+ my_server_params()["database"] +" ]" )
 
 _ver := read_dbf_version_from_config()
+#endif
 
 set_a_dbfs()
+
+#ifndef NODE
 cre_all_dbfs(_ver)
+#endif
 
 // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
 set_a_dbfs_key_fields()
 
-
+#ifndef NODE
 write_dbf_version_to_config()
+#endif
+
 check_server_db_version()
 
 __server_log := .t.
@@ -388,6 +423,13 @@ cre_all_dbfs(_ver)
 
 return
 
+#ifdef NODE
+ static function _get_log_level_from_config()
+   log_level(7)
+ return .t.
+
+#else
+
 // -----------------------------------------------------------
 // vraca informaciju o nivou logiranja aplikcije
 // -----------------------------------------------------------
@@ -410,6 +452,7 @@ ENDIF
 
 return .t.
 
+#endif
 
 // ------------------------------------------------------------
 // vraca informacije iz inija vezane za screen rezoluciju
@@ -902,10 +945,13 @@ _msg_time += ": "
 FWRITE( __log_handle, _msg_time + msg + hb_eol() )
 
 #ifndef TEST
+#ifndef NODE
 if __server_log
     server_log_write( msg, silent )
 endif
 #endif
+#endif
+
 return
 
 

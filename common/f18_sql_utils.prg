@@ -239,6 +239,10 @@ if silent == NIL
     silent := .f.
 endif
 
+#ifdef NODE
+   log_write(cQuery, 1)
+#endif
+
 oResult := oServer:Query( cQuery + ";")
 
 IF oResult:NetErr()

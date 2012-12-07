@@ -284,7 +284,6 @@ public gFmkSif:=""
 public gRNALSif := ""
 public gRNALKum := ""
 
-public gOperSys := PADR("XP", 10)
 public gDuzSifre := 13
 
 // postavljanje globalnih varijabli
@@ -467,7 +466,6 @@ gRNALSif := fetch_metric("RNALSifrarnik", nil, gRNALSif)
 gRNALKum := fetch_metric("RNALKumulativ", nil, gRNALKum)
 
 gDuzSifre := fetch_metric("DuzinaSifre", nil, gDuzSifre)
-gOperSys := fetch_metric("OperativniSistem", nil, gOperSys)
 
 gUpitNp := fetch_metric("UpitZaNacinPlacanja", nil, gUpitNp)
 

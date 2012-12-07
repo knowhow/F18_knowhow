@@ -311,14 +311,6 @@ endif
 
 return cFileName
 
-// -------------------------------------
-// -------------------------------------
-function ShowOsInfo(gsOsInfo)
-
-@ 24, 2 SAY gsOsInfo
-
-return
-
 // ----------------------------
 // ----------------------------
 function open_folder(folder)

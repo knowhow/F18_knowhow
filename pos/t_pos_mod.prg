@@ -13,7 +13,6 @@
 #include "pos.ch"
 #include "hbclass.ch"
 
-
 // -----------------------------------------------
 // -----------------------------------------------
 CLASS TPosMod FROM TAppMod
@@ -53,9 +52,11 @@ do case
       CASE Ch==K_SH_F5
         self:oDatabase:vratiSez()
       CASE Ch==K_SH_F6
-        IF kLevel <= L_UPRAVN
-      self:oDatabase:logAgain(Godina_2(gDatum)+padl(month(gDatum),2,"0"),.f.,.t.)
-    EndIF
+
+         IF kLevel <= L_UPRAVN
+            self:oDatabase:logAgain(Godina_2(gDatum)+padl(month(gDatum),2,"0"),.f.,.t.)
+         EndIF
+
       CASE Ch==K_SH_F7
         KorLoz()
 end case
@@ -96,17 +97,7 @@ do while (.t.)
         return
     endif
 
-    //if !PPrenosPos()
-      //  self:lTerminate := .t.
-      //  return
-    //endif
-
     SETPOS (Fx, Fy)
-
-    //if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
-    //    Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
-    //    loop
-    //endif
 
     if gVsmjene=="N"
         gSmjena:="1"
@@ -135,9 +126,6 @@ do while (.t.)
     else
         KLevel := PosPrijava(Fx, Fy)
         pos_status_traka()
-        //if !PPrenosPos()
-          //  self:lTerminate := .t.
-        //endif
     endif
 
     SETPOS (Fx, Fy)
@@ -179,32 +167,9 @@ endcase
 return
 
 
-
 // ------------------------------------------------------
 // ------------------------------------------------------
 method srv()
-
-? "Pokrecem POS: Applikacion server"
-
-if (mpar37("/REAL2KALK", goModul))
-
-    if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
-        // automatski prenos real.u KALK
-        // (D1, D2)
-        AutoReal2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
-        goModul:quit()
-    endif
-endif
-
-if (mpar37("/REK2KALK", goModul))
-
-    if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
-        // automatski prenos rekl.u KALK
-        // (D1, D2)
-        AutoRek2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
-        goModul:quit()
-    endif
-endif
 
 return
 
@@ -290,7 +255,7 @@ public gEvidPl          // evidentiranje podataka za vrste placanja CEK, SIND.KR
 
 public gDisplay  // koristiti ispis na COM DISPLAY
 
-public gLocPort:="LPT1" // lokalni port za stampanje racuna
+public gLocPort := "LPT1" // lokalni port za stampanje racuna
 
 public gStamPazSmj      // da li se automatski stampa pazar smjene
                         // na kasi
@@ -319,13 +284,11 @@ public gFmkSif:=""
 public gRNALSif := ""
 public gRNALKum := ""
 
-public gOperSys := PADR("XP", 10)
 public gDuzSifre := 13
 
 // postavljanje globalnih varijabli
 public gLocPort:="LPT1"
 public gIdCijena:="1"
-public gsOsInfo:="win98"
 public gDiskFree:="N"
 public grbCjen:=2
 public grbStId:="D"
@@ -503,7 +466,6 @@ gRNALSif := fetch_metric("RNALSifrarnik", nil, gRNALSif)
 gRNALKum := fetch_metric("RNALKumulativ", nil, gRNALKum)
 
 gDuzSifre := fetch_metric("DuzinaSifre", nil, gDuzSifre)
-gOperSys := fetch_metric("OperativniSistem", nil, gOperSys)
 
 gUpitNp := fetch_metric("UpitZaNacinPlacanja", nil, gUpitNp)
 

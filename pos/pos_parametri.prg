@@ -83,7 +83,6 @@ AADD(aNiz,{"Direktorij kumulativa za pom bazu","gDuploKum",, "@!",})
 AADD(aNiz,{"Direktorij sifrarnika za pom bazu","gDuplosif",, "@!",})
 AADD(aNiz, {"Direktorij sifrarnika FMK        ","gFMKSif",, "@!",})
 AADD(aNiz, {"Duzina sifre artikla u unosu","gDuzSifre",, "99",})
-AADD(aNiz, {"Operativni sistem","gOperSys",, "@!",})
 
 VarEdit(aNiz,2,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
 
@@ -110,7 +109,6 @@ if LASTKEY()<>K_ESC
     set_metric("RNALSifrarnik", nil, trim(gRNALSif) )   // pathove ne diraj
     set_metric("RNALKumulativ", nil, trim(gRNALKum) )   // pathove ne diraj
     set_metric("DuzinaSifre", nil, gDuzSifre )
-    set_metric("OperativniSistem", nil, gOperSys )
     MsgC()
 endif
 

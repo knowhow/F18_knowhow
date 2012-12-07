@@ -242,7 +242,6 @@ if cPromj $ "23"  // prikaz promjena
     _sr_id := field->id
     _sr_id_rj := field->idrj
     _sr_naz := field->naz
-    _sr_kol := field->kol
     _sr_jmj := field->jmj
     _sr_datum := field->datum
     _sr_kol := field->kolicina

@@ -225,12 +225,15 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
 
                     endif
                     
-                    if cPromj $ "23"  
+                    if cPromj $ "23" 
+ 
                         // prikaz promjena
                         _sr_id := field->id
-                        _sr_id_rj := field->id_rj
+                        _sr_id_rj := field->idrj
+
                         select_promj()  
                         hseek _sr_id
+
                         do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                             ? space(5),space(len(id)),space(len( _sr_id_rj )),datum,opis
                             n1:=0; n2:=amp

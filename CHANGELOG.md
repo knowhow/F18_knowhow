@@ -1,3 +1,7 @@
+1.4.36 2012-12-07, vsasa
+
+  - os, izvještaj amortizacija, bugfix [#29603](http://redmine.bring.out.ba/issues/29603)
+ 
 1.4.35 2012-12-06, vsasa
 
   - fakt, unos dokumenta, bugfix [#29738](http://redmine.bring.out.ba/issues/29738)

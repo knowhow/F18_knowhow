@@ -223,7 +223,7 @@ do while !EOF()
 			  endif
 
 			  replace fmk_doc with ;
-				_fmk_doc_upd( ;
+				_add_to_field( ;
 					ALLTRIM( field->fmk_doc ), ;
 					cFaktDok + "M" )
 			
@@ -270,8 +270,8 @@ cre_tmp1( aField )
 o_tmp1()
 index on STR( doc_no, 10) tag "1"
 
-// fakt doks mi otvori
-O_FAKT_DOKS
+// fakt mi otvori
+O_FAKT
 
 // otvori potrebne tabele
 o_tables( .f. )
@@ -298,7 +298,7 @@ do while !EOF()
 	cFmk_doc := ALLTRIM( field->fmk_doc )
 
 	// idi dalje
-	if !EMPTY( cFmk_doc)
+	if !EMPTY( cFmk_doc )
 		skip
 		loop
 	endif
@@ -310,7 +310,7 @@ do while !EOF()
 	cF_doc2 := "?"
 	cP_doc1 := "?"
 
-	select fakt_doks
+	select fakt
 	seek cFFirma + cFTipDok
 
 	// resetuj memo vrijednost
@@ -328,7 +328,7 @@ do while !EOF()
 		// uzmi memo polje
 		aMemo := ParsMemo( field->txt )	
 		
-		if LEN( aMemo ) > 18
+		if LEN( aMemo ) >= 19
 			cMemo := aMemo[ 19 ]
 		else
 			cMemo := ""

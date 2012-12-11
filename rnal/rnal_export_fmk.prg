@@ -96,16 +96,15 @@ endif
 // sumirati stavke da ili ne
 _g_sumbox( @lSumirati )
 
-// select pripreme fakt
-O_FAKT_PRIPR
-
-// provjeri da li je priprema FAKT prazna
-if RECCOUNT2() > 0
-    msgbeep("priprema fakt nije prazna !")
-    select (F_FAKT_PRIPR)
-    use
+// provjeri da li je priprema faktura prazna
+if !fakt_priprema_prazna()
     select (nTArea)
     return
+endif
+
+select ( F_FAKT_PRIPR )
+if !Used()
+    O_FAKT_PRIPR
 endif
 
 if lTemp == .t.
@@ -310,6 +309,8 @@ do while !EOF()
     a_to_txt( "", .t. )
     // 19. 
     a_to_txt( "", .t. )
+    // 20.
+    a_to_txt( "", .t. )
 
     gather()
 
@@ -471,6 +472,8 @@ do while !EOF()
     a_to_txt( "", .t. )
     // 19. 
     a_to_txt( "", .t. )
+    // 20.
+    a_to_txt( "", .t. )
 
     gather()
 
@@ -483,6 +486,8 @@ do while !EOF()
 enddo
 
 // ubaci sada brojeve veze
+// ======================================
+
 // ubaci prvo u fakt
 _ins_x_veza( nADoc_it )
 
@@ -492,7 +497,7 @@ _ins_veza( nADoc_it, nADocs, cBrDok )
 // sredi redne brojeve
 _fix_rbr()
 
-select (245)
+select ( F_FAKT_PRIPR )
 use
 
 msgbeep("export dokumenta zavrsen !")
@@ -500,6 +505,8 @@ msgbeep("export dokumenta zavrsen !")
 select (nTArea)
 
 return
+
+
 
 
 // --------------------------------------
@@ -529,7 +536,7 @@ do while !EOF()
 
     _rec := dbf_get_rec()
     _rec["doc_in_fmk"] := 1
-    _rec["fmk_doc"] := _fmk_doc_upd( ALLTRIM( _rec["fmk_doc"] ), ;
+    _rec["fmk_doc"] := _add_to_field( ALLTRIM( _rec["fmk_doc"] ), ;
         ALLTRIM(cBrfakt) )
 
     dbf_update_rec( _rec )
@@ -569,11 +576,6 @@ local cTmp := ""
 local nDoc_no
 local cIns_x := ""
 
-// ako polje veze ne postoji, preskoci ovu operaciju
-if fakt_pripr->(FIELDPOS("DOK_VEZA")) == 0
-    return .f.
-endif
-
 select ( nArea )
 set order to tag "1"
 go top
@@ -589,126 +591,81 @@ do while !EOF()
     nDoc_no := field->doc_no
 
     // veza, broj naloga
-
-    cTmp := _fmk_doc_upd( cTmp, ALLTRIM(STR( nDoc_No )) )
+    cTmp := _add_to_field( cTmp, ALLTRIM(STR( nDoc_No )) )
 
     skip
 enddo
 
-// u ovoj se tabeli pozicioniraj na pocetak
+// insertuj u veze ovu vezu
+set_fakt_vezni_dokumenti( cTmp )
+
+return .t.
+
+
+// -----------------------------------------------------
+// setuje vezne dokumente za odredjeni dokument
+// -----------------------------------------------------
+static function set_fakt_vezni_dokumenti( value )
+local _ok := .t.
+local _memo, _rec
+local _t_area := SELECT()
+
+if value == NIL 
+    return _ok
+endif
+
 select fakt_pripr
 go top
-
-// skloni zadnji znak ";"
-cTmp := PADR( ALLTRIM( cTmp ), LEN( ALLTRIM( cTmp ) ) - 1 )
-
-// zatim ubaci broj veze
-cIns_x := _fmk_doc_upd( field->dok_veza, cTmp )
 
 _rec := dbf_get_rec()
-_rec["dok_veza"] := cIns_x
+
+_memo := ParsMemo( _rec["txt"] )
+
+// setuj 19-ti clan matrice
+_memo[19] := value 
+
+// konvertuj mi memo field u txt
+// zatim setuj za novu vrijednost polja
+_rec["txt"] := fakt_memo_field_to_txt( _memo )
+
 dbf_update_rec( _rec )
 
-// ubaci opis u memo polje...
-_ins_x_txt( cIns_x )
+select ( _t_area )
 
-return .t.
+return _ok
 
-
-
-// ------------------------------------------
-// ubaci tekst u memo polje x_tbl
-// ------------------------------------------
-static function _ins_x_txt( cTxt )
-local aTxt
-
-select fakt_pripr
-go top
-
-// treba ubaciti i u memo polje
-
-aTxt := parsmemo( field->txt )
-
-scatter()
-
-_txt := ""
-// roba tip U - nista
-a_to_txt( "", .t. )
-// dodatni tekst otpremnice - nista
-a_to_txt( "", .t. )
-// naziv partnera
-a_to_txt( aTxt[3] , .t. )
-// adresa
-a_to_txt( aTxt[4] , .t. )
-// ptt i mjesto
-a_to_txt( aTxt[5] , .t. )
-// broj otpremnice
-a_to_txt( "" , .t. )
-// datum  otpremnice
-a_to_txt( aTxt[7] , .t. )
-// broj ugovora - nista
-a_to_txt( "", .t. )
-// datum isporuke - nista
-a_to_txt( "", .t. )
-// 10. datum valute - nista
-a_to_txt( "", .t. )
-// 11. 
-a_to_txt( "", .t. )
-// 12. 
-a_to_txt( "", .t. )
-// 13. 
-a_to_txt( "", .t. )
-// 14. 
-a_to_txt( "", .t. )
-// 15. 
-a_to_txt( "", .t. )
-// 16. 
-a_to_txt( "", .t. )
-// 17. 
-a_to_txt( "", .t. )
-// 18. 
-a_to_txt( "", .t. )
-// 19. 
-a_to_txt( cTxt, .t. )
-
-gather()
-
-return .t.
 
 
 
 // --------------------------------------------
 // dodaj dokument u listu 
 // --------------------------------------------
-function _fmk_doc_upd( cField, cFmkDok )
-local cLista := ""
-local cSep := ";"
-local cTmp 
-local aTmp
-local cTmpVal := ""
-local nSeek
-local i
+function _add_to_field( field_value, new_value )
+local _ret := ""
+local _sep := ";"
+local _tmp 
+local _a_tmp
+local _seek
+local _i
 
-cTmp := cField
-aTmp := TokToNiz( cTmp, cSep )
-nSeek := ASCAN( aTmp, { |xVal| xVal == cFmkDok } )
+_tmp := ALLTRIM( field_value )
+_a_tmp := TokToNiz( _tmp, _sep )
+_seek := ASCAN( _a_tmp, { | val | val == new_value } )
 
-if nSeek = 0
-    
-    AADD( aTmp, cFmkDok  )
+if _seek = 0
+    AADD( _a_tmp, new_value  )
     // sortiraj
-    ASORT( aTmp )
-
+    ASORT( _a_tmp )
 endif
 
 // zatim daj u listu sve stavke
-for i := 1 to LEN( aTmp )
-    if !EMPTY( aTmp[i] )
-        cLista += aTmp[ i ] + cSep
+for _i := 1 to LEN( _a_tmp )
+    if !EMPTY( _a_tmp[ _i ] )
+        _ret += _a_tmp[ _i ] + _sep
     endif
 next
 
-return cLista
+return _ret
 
 
 

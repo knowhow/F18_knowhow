@@ -19,6 +19,7 @@ function fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine, cFilter)
 local i
 local _w1 := 45
 local _x, _y
+local _params := fakt_params()
 
 ImeKol:={}
 
@@ -44,6 +45,11 @@ AADD(ImeKol,{ "Dat.val.", {|| dat_val} })
 
 // prikaz operatera
 AADD(ImeKol,{ "Operater", {|| GetUserName( oper_id ) } })
+
+// veza sa rnal dokumentima
+if _params["fakt_dok_veze"]
+    AADD(ImeKol,{ "RNAL vezni dokumenti", {|| PADR( get_fakt_vezni_dokumenti(), 50 ) } })
+endif
 
 Kol:={}
 for i:=1 to len(ImeKol)

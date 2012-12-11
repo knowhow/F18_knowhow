@@ -32,3 +32,186 @@ select (nTArea)
 return nRet
 
 
+
+
+// --------------------------------------------------
+// Vraca naziv objekta
+// --------------------------------------------------
+function get_fakt_objekat_naz( id_obj )
+local _t_arr := SELECT()
+local _ret := ""
+
+select (F_FAKT_OBJEKTI)
+if !USED()
+    O_FAKT_OBJEKTI
+endif
+
+select fakt_objekti
+set order to tag "ID"
+seek id_obj
+
+if FOUND()
+    _ret := ALLTRIM( field->naz )
+endif
+
+use
+select ( _t_arr )
+
+return _ret
+
+
+
+// --------------------------------------------------
+// Vraca objekat iz tabele fakt
+// ako se zadaje bez parametara pretpostavlja se da je 
+// napravljena tabela relacije fakt_doks->fakt
+// --------------------------------------------------
+function get_fakt_objekat_id( id_firma, tip_dok, br_dok )
+local _t_arr := SELECT()
+local _ret := ""
+local _memo
+
+if PCOUNT() > 0
+
+    select ( F_FAKT )
+
+    if !Used()
+        O_FAKT
+    endif
+    
+    // pozicioniraj se na stavku broj 1
+    select fakt
+    set order to tag "1"
+    go top
+    seek id_firma + tip_dok + br_dok
+    
+    if !FOUND()
+        return _ret
+    endif
+
+endif
+
+// to se krije kao 20 clan matrice
+_memo := ParsMemo( fakt->txt )
+
+if LEN( _memo ) >= 20
+    _ret := _memo[20]
+endif
+
+select ( _t_arr )
+
+return _ret
+
+
+
+// ----------------------------------------------------------------------
+// setuje pojedinacni clan matrice memo
+// ----------------------------------------------------------------------
+function fakt_memo_field_to_txt( memo_field )
+local _txt := ""
+local _val := ""
+local _i
+
+for _i := 1 to LEN( memo_field )
+
+    _tmp := memo_field[ _i ]
+
+    if VALTYPE( _tmp ) == "D"
+        _val := DTOC( _tmp )
+    elseif VALTYPE( _tmp ) == "N"
+        _val := VAL( _tmp )
+    else
+        _val := _tmp
+    endif
+
+    _txt += CHR(16) + _val + CHR(17)
+
+next
+
+return _txt
+
+
+
+// --------------------------------------------------
+// Vraca vezne dokumente
+// ako se zadaje bez parametara pretpostavlja se da je 
+// napravljena tabela relacije fakt_doks->fakt
+// --------------------------------------------------
+function get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
+local _t_arr := SELECT()
+local _ret := ""
+local _memo
+
+if PCOUNT() > 0
+
+    select ( F_FAKT )
+
+    if !Used()
+        O_FAKT
+    endif
+    
+    // pozicioniraj se na stavku broj 1
+    select fakt
+    set order to tag "1"
+    go top
+    seek id_firma + tip_dok + br_dok
+    
+    if !FOUND()
+        return _ret
+    endif
+
+endif
+
+// to se krije kao 20 clan matrice
+_memo := ParsMemo( fakt->txt )
+
+if LEN( _memo ) >= 19
+    _ret := _memo[19]
+endif
+
+select ( _t_arr )
+
+return _ret
+
+
+
+// ------------------------------------------------------
+// da li je fakt priprema prazna 
+// mogucnost brisanja pripreme
+// ------------------------------------------------------
+function fakt_priprema_prazna()
+local _ret := .t.
+local _t_area := SELECT()
+
+select ( F_FAKT_PRIPR )
+if !Used()
+    O_FAKT_PRIPR
+endif
+
+// prazna je
+if RECCOUNT2() == 0
+    select ( _t_area )
+    return _ret
+endif
+
+_ret := .f.
+
+if Pitanje(, "Priprema modula FAKT nije prazna, izbrisati postojece stavke (D/N) ?", "N" ) == "D"
+
+    // pobrisi pripremu
+    select fakt_pripr
+    zapp()
+    __dbPack()
+    _ret := .t.
+
+endif
+
+select ( _t_area )
+
+return _ret
+
+
+
+
+
+

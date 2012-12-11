@@ -25,10 +25,10 @@ local dDatod, dDatdo
 local _params := fakt_params()
 local _vrste_pl := _params["fakt_vrste_placanja"]
 local _objekti := _params["fakt_objekti"]
+local _vezni_dokumenti := _params["fakt_dok_veze"]
 local lOpcine := .t.
 private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 private cFilter := ".t."
-
 
 if _vrste_pl
     O_VRSTEP
@@ -52,7 +52,7 @@ SET RELATION TO idpartner INTO PARTN
 
 // setuj i relaciju sa fakt-om
 // u njoj se nalaze objekti
-if _objekti
+if _objekti .or. _vezni_dokumenti
     SET RELATION TO idfirma + idtipdok + brdok INTO fakt
 endif
 

@@ -183,7 +183,7 @@ if ( IsRamaGlas() )
     MsgBeep("http://redmine.bring.out.ba/issues/25988")
     QUIT
     O_RADSIHT
-    O_RNAL
+    O_FAKT_OBJEKTI
 endif
 
 tipprn_use()
@@ -669,7 +669,7 @@ return .t.
 
 function ValRNal(cPom,i)
 if !EMPTY(cPom)
-    P_RNal(@cPom)
+    P_fakt_objekti(@cPom)
     cRNal[i]:=cPom
 endif
 return .t.

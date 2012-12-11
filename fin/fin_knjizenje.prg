@@ -166,7 +166,7 @@ O_VRSTEP
 O_ULIMIT
 
 if (IsRamaGlas())
-    O_RNAL
+    O_FAKT_OBJEKTI
 endif
 
 O_RJ
@@ -1235,7 +1235,7 @@ if field->oznaka="TD"
     hseek PADR(_brDok,10)
     if !found() .or. empty(_brDok)
         MsgBeep("Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!")
-        P_Rnal(@_brDok,9,2)
+        P_fakt_objekti(@_brDok,9,2)
         _brDok:=PADR(_brDok,nLenBrDok)
         ShowGets()
     endif

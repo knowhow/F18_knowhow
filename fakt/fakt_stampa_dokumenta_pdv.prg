@@ -730,7 +730,7 @@ if fakt_pripr->(FIELDPOS("idrnal")) <> 0
 	// radni nalog
 	if !EMPTY( fakt_pripr->idrnal )
 		add_drntext("O01", ALLTRIM(fakt_pripr->idrnal) )
-		add_drntext("O02", GetNameRNal( fakt_pripr->idrnal ) )
+		add_drntext("O02", get_fakt_objekt_naz( fakt_pripr->idrnal ) )
 	endif
 endif
 

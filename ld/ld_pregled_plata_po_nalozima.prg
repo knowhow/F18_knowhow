@@ -29,7 +29,7 @@ else
 	set order to tag "2"
 endif
 
-O_RNAL
+O_FAKT_OBJEKTI
 
 cMjesec:=gMjesec
 cGodina:=gGodina
@@ -107,11 +107,11 @@ start print cret
 	? Lokal("Godina:"),cGodina
 	? Lokal("Mjesec:"),cMjesec
 	? 
-	m:=REPL("-",10)+" "+REPL("-",LEN(rnal->naz))+" "+REPL("-",10)
+	m:=REPL("-",10)+" "+REPL("-",LEN(fakt_objekti->naz))+" "+REPL("-",10)
 	? m
-	? PADC(Lokal("Sifra i opis radnog naloga"),11+LEN(rnal->naz))+"    " + Lokal("Iznos") + "  "
+	? PADC(Lokal("Sifra i opis radnog naloga"),11+LEN(fakt_objekti->naz))+"    " + Lokal("Iznos") + "  "
 	? m
-	select rnal
+	select fakt_objekti
 	nUkPlata:=0
 	for i:=1 to len(aRNal)
 		seek aRNal[i,1]
@@ -119,7 +119,7 @@ start print cret
 		nUkPlata+=aRNal[i,2]
 	next
 	? m
-	? Lokal("UKUPNO:") + "   ", SPACE(LEN(rnal->naz)), TRANSFORM(nUkPlata,"9999999.99")
+	? Lokal("UKUPNO:") + "   ", SPACE(LEN(fakt_objekti->naz)), TRANSFORM(nUkPlata,"9999999.99")
 	? m
 	?
 	? p_potpis()
@@ -128,9 +128,9 @@ start print cret
 
 end print
 
-closeret
+close all
 return
-*}
+
 
 
 function RekapLdP(cId,nGodina,nMjesec,nIzn1,nIzn2,cIdPartner,cOpis,cOpis2,lObavDodaj,cRNal)

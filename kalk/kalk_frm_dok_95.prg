@@ -589,7 +589,7 @@ select rnal
 hseek PADR(_idZaduz2,10)
 if !found()
     MsgBeep("Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!")
-    P_Rnal(@_idZaduz2,8,60)
+    P_fakt_objekti(@_idZaduz2,8,60)
     _idZaduz2:=PADR(_idZaduz2,nLenBrDok)
     ShowGets()
 endif

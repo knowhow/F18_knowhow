@@ -60,11 +60,6 @@ private ImeKol := { ;
           {"DatDok",        {|| DATDOK                  } , "DATDOK"    } ;
         }
 
-
-if glRadNal
-    AADD(ImeKol, { "Rad.nalog", {|| idrnal}, "idrnal" })
-endif
-
 if fakt_pripr->(fieldpos("idrelac")) <> 0
     AADD( ImeKol , { "ID relac.", {|| idrelac  }, "IDRELAC"  } )
 endif
@@ -710,6 +705,10 @@ if _params["fakt_dok_veze"] .and. _len >= 19
     _dokument_veza := PADR( ALLTRIM( _memo[19] ), 500 )
 endif
 
+if _params["fakt_objekti"] .and. _len >= 20
+    _objekti := PADR( _memo[20], 10 )
+endif
+
 return
 
 
@@ -777,6 +776,15 @@ endif
 
 _txt += CHR(16) + ALLTRIM( _dokument_veza ) + CHR(17)
 
+// 20 - objekti 
+if _params["fakt_objekti"]
+   _tmp := _objekti
+else
+   _tmp := ""
+endif
+
+_txt += CHR(16) + _tmp + CHR(17)
+
 return
 
 
@@ -840,6 +848,7 @@ _datpl := CTOD("")
 _vezotpr := ""
 _destinacija := ""
 _dokument_veza := ""
+_objekti := ""
 
 // doks2 varijable
 d2k1 := SPACE(15)
@@ -864,6 +873,10 @@ if fNovi
 
     if _params["fakt_dok_veze"]
          _dokument_veza := PADR( "", 500 )
+    endif
+
+    if _params["fakt_objekti"]
+        _objekti := SPACE(10)
     endif
 
     _cijena := 0
@@ -1005,9 +1018,9 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
           @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
         endif
 
-        if glRadNal .and. _idtipdok $ "12"
+        if _params["fakt_objekti"] .and. _idtipdok $ "10#11#12#13"
             // radni nalog
-            @ m_x + _x, col() + 2 SAY "R.nal:" GET _idrnal VALID P_RNal( @_idrnal ) PICT "@!"
+            @ m_x + _x, col() + 2 SAY "Objekat:" GET _objekti VALID p_fakt_objekti( @_objekti ) PICT "@!"
         endif
 
         _x2 := 4

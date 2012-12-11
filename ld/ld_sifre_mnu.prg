@@ -60,8 +60,8 @@ AADD(_opc, lokal("G. sifk"))
 AADD(_opcexe, {|| P_SifK()})
 
 if (IsRamaGlas())
-    AADD(_opc, lokal("H. radni nalozi") )
-    AADD(_opcexe, {|| P_RNal()})
+    AADD(_opc, lokal("H. objekti") )
+    AADD(_opcexe, {|| P_fakt_objekti()})
 endif
 
 gLokal := ALLTRIM( gLokal )
@@ -141,7 +141,7 @@ O_KRED
 O_TIPPR2
 
 if (IsRamaGlas())
-    O_RNAL
+    O_FAKT_OBJEKTI
 endif
 
 return

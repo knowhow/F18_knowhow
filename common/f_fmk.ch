@@ -184,7 +184,7 @@
 #define F_RADSAT   183
 #define F_REKLDP   184
 #define F_IZDANJA  185
-#define F_RNAL     186
+#define F_FAKT_OBJEKTI 186
 #define F_PRIPNO   187
 #define F_LDNO     188
 #define F_RJES     189

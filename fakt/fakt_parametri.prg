@@ -77,6 +77,7 @@ if read == NIL
 endif
 
 if read .or. __fakt_params == NIL
+
     __fakt_params := hb_hash()
 
     // TODO: prebaciti na get_set sistem
@@ -98,6 +99,8 @@ if read .or. __fakt_params == NIL
     __fakt_params["fakt_prodajna_mjesta"] := IIF(fakt_prodajna_mjesta() == "D", .t., .f.)
     __fakt_params["ref_lot"] := IIF(ref_lot() == "D", .t., .f.)
     __fakt_params["fakt_vrste_placanja"] := IIF(fakt_vrste_placanja() == "D", .t., .f.)
+    __fakt_params["fakt_objekti"] := IIF( fakt_objekti() == "D", .t., .f.)
+
 endif
 
 return __fakt_params
@@ -133,6 +136,7 @@ local _def_template := PADR( fetch_metric( "fakt_default_odt_template", my_user(
 local _x := 1
 local _unos_ref_lot := ref_lot()
 local _unos_opisa := fakt_opis_stavke() 
+local _unos_objekta := fakt_objekti()
 local _vr_pl := fakt_vrste_placanja()
 local _unos_dest := destinacije()
 
@@ -205,6 +209,9 @@ read_dn_parametar("Pracenje po destinacijama", m_x + _x, m_y + 2, @_unos_dest)
 read_dn_parametar("Fakturisanje po prodajnim mjestima", m_x + _x, m_y + 2, @_pm)
 ++ _x
 
+read_dn_parametar("Fakturisanje po objektima", m_x + _x, m_y + 2, @_unos_objekta)
+++ _x
+
 read_dn_parametar("Fakturisanje po vrstama placanja", m_x + _x, m_y + 2, @_vr_pl)
 ++ _x
 
@@ -263,8 +270,9 @@ if LastKey() <> K_ESC
 	set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
     set_metric( "fakt_default_odt_template", my_user(), ALLTRIM( _def_template ) )
 
-    destinacije(_unos_dest)
-    fakt_opis_stavke(_unos_opisa)
+    destinacije( _unos_dest )
+    fakt_opis_stavke( _unos_opisa )
+    fakt_objekti( _unos_objekta )
     ref_lot(_unos_ref_lot)
     fakt_prodajna_mjesta(_pm)
     fakt_vrste_placanja(_vr_pl)
@@ -1008,6 +1016,14 @@ function fakt_opis_stavke(value)
 return get_set_global_param("fakt_opis_stavke", value, "N")
 
 
+
+// ----------------------------------------------------------------
+// unos objekata
+// ----------------------------------------------------------------
+function fakt_objekti(value)
+return get_set_global_param("fakt_objekti", value, "N" )
+
+
 // ----------------------------------------------------------------
 // koriste se REF/LOT oznake
 // ----------------------------------------------------------------
@@ -1032,4 +1048,7 @@ return get_set_global_param("fakt_prodajna_mjesta", value, "N")
 // ----------------------------------------------------------------
 function fakt_vrste_placanja(value)
 return get_set_global_param("fakt_unos_vrste_placanja", value, "N")
+
+
+
 

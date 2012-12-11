@@ -59,7 +59,7 @@ BoxC()
 
 cIdFirma:=left(cIdFirma,2)
 
-O_RNAL
+O_FAKT_OBJEKTI
 O_KONTO
 O_SUBAN
 
@@ -98,7 +98,7 @@ aIzvj:={}
 
 do while (!eof())
 	cBrDok:=field->brDok
-	select rnal
+	select fakt_objekti
 	hseek PADR(cBrDok,10)
 	AADD(aIzvj,{cBrDok})
 	nTekRN:=LEN(aIzvj)

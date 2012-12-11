@@ -17,8 +17,8 @@ function fakt_kartica()
 local cIdfirma, nRezerv, nRevers
 local nul, nizl, nRbr, cRR, nCol1:=0, cKolona, cBrza:="D"
 local cPredh:="2"
-
 local lpickol:="@Z "+pickol
+local _params := fakt_params()
 
 private m:=""
 
@@ -28,11 +28,13 @@ O_PARTN
 O_ROBA
 O_TARIFA
 O_RJ
+
+if _params["fakt_objekti"]
+    O_FAKT_OBJEKTI
+endif
+
 O_FAKT_DOKS
 O_FAKT
-if glRadNal
-	O_RNAL
-endif
 
 select fakt
 if fId_J
@@ -49,7 +51,7 @@ PRIVATE dDatOd:=ctod("")
 PRIVATE dDatDo:=date()
 private cPPartn:="N"
 
-if glRadNal
+if _params["fakt_objekti"]
 	cRadniNalog:=SPACE(10)
 endif
 
@@ -128,8 +130,8 @@ else
   cOstran:="N"
 endif
 
-if glRadNal
-  	@ m_x+16,m_y+2 SAY "Uslov po radnom nalogu (prazno-svi)" get cRadniNalog valid EMPTY(cRadniNalog) .or. P_RNal(@cRadniNalog)
+if _params["fakt_objekti"]
+  	@ m_x+16,m_y+2 SAY "Uslov po objektima (prazno-svi)" get cRadniNalog valid EMPTY(cRadniNalog) .or. P_fakt_objekti(@cRadniNalog)
 endif
 
 IF lPoNarudzbi
@@ -215,9 +217,12 @@ cFilt1 := IF(cBrza=="N",aUsl1,".t.")+ ;
           IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
 	  IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))
 
-if glRadNal .and. !EMPTY(cRadniNalog)
-	cFilt1+=".and. idrnal="+Cm2Str(cRadniNalog)
+
+// ???? hendliranje objekata, jos ne znam kako ???? vsasa
+if _params["fakt_objekti"] .and. !EMPTY(cRadniNalog)
+	//cFilt1+=".and. idrnal="+Cm2Str(cRadniNalog)
 endif
+
 
 if lPoNarudzbi .and. aUslN<>".t."
   cFilt1+=".and."+aUslN
@@ -252,9 +257,9 @@ if !empty(qqRoba)
  endif
 endif
 
-if glRadNal .and. !EMPTY(cRadniNalog)
+if _params["fakt_objekti"] .and. !EMPTY(cRadniNalog)
 	? SPACE(gnLMarg)
-	?? "Uslov za radni nalog: ", ALLTRIM(cRadniNalog), GetNameRNal(cRadniNalog)
+	?? "Uslov za objekat: ", ALLTRIM(cRadniNalog), get_fakt_objekt_naz(cRadniNalog)
 endif
 
 ?

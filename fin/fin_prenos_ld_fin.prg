@@ -63,7 +63,7 @@ use
 
 cPath := ALLTRIM(_ldpath)
 
-O_RNAL
+O_FAKT_OBJEKTI
 O_NALOG
 O_FIN_PRIPR
 O_TRFP3

@@ -50,7 +50,6 @@ set_a_dbf_sifarnik("vrstep"     , "VRSTEP"    , F_VRSTEP     )
 set_a_dbf_sifarnik("pkonto"     , "PKONTO"    , F_PKONTO     )
 set_a_dbf_sifarnik("valute"     , "VALUTE"    , F_VALUTE     )
 
-set_a_dbf_temp     ("rnal"       ,  "RNAL"        , F_RNAL       )
 set_a_dbf_temp     ("relation"   ,  "RELATION"    , F_RELATION   )
 set_a_dbf_temp     ("_roba"      ,  "_ROBA"       , F__ROBA      )
 set_a_dbf_temp     ("barkod"     ,  "BARKOD"      , F_BARKOD     )

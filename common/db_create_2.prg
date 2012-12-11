@@ -22,7 +22,7 @@ O_RJ
 O_BANKE
 O_OPS
 
-select(F_SIFK)
+select (F_SIFK)
 
 if !used()
     O_SIFK
@@ -30,7 +30,7 @@ if !used()
 endif
 
 if (IsRamaGlas() .or. gModul=="FAKT" .and. glRadNal)
-    O_RNAL
+    O_FAKT_OBJEKTI
 endif
 
 return

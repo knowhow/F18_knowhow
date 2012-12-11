@@ -43,9 +43,9 @@ IspisFirme(cIdfirma)
 if !empty(qqTipDok)
     ?? SPACE(2), "za tipove dokumenta:", trim(qqTipDok)
 endif
-if glRadNal .and. !Empty(cRadniNalog)
-    ?? SPACE(2), "uslov po radnom nalogu: ", TRIM(cRadniNalog)
-    ? GetNameRNal(cRadniNalog)
+if _params["fakt_objekti"] .and. !Empty(cRadniNalog)
+    ?? SPACE(2), "uslov po objektu: ", TRIM(cRadniNalog)
+    ? get_fakt_objekt_naz(cRadniNalog)
 endif
 
 m := "----- -------- -- -- ---------"

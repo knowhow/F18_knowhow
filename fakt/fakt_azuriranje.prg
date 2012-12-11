@@ -638,6 +638,7 @@ enddo
 
 return _fakt_doks
 
+
 // -------------------------------------
 // -------------------------------------
 function o_fakt_edit( _open_pfakt )
@@ -648,11 +649,9 @@ if _open_pfakt == NIL
   _open_pfakt := .f.
 endif
 
-if glRadNal
-    select F_RNAL
-    if !used()
-        O_RNAL
-    endif
+select ( F_FAKT_OBJEKTI )
+if !used()
+    O_FAKT_OBJEKTI
 endif
 
 if glDistrib = .t.

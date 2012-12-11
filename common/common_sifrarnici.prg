@@ -93,8 +93,8 @@ else
 endif
 
 if (IsRamaGlas() .or.  gModul=="FAKT".and. glRadNal )
-	AADD(opc, "R. radni nalozi")  
-	AADD(opcexe, {|| P_RNal() } )
+	AADD(opc, "R. objekti")  
+	AADD(opcexe, {|| P_fakt_objekti() } )
 endif
 
 // lokalizacija

@@ -58,22 +58,5 @@ Menu_SC("pf")
 return
 
 
-/*! \fn BlagFin()
- *  \brief Prenos blagajne
- */
-function BlagFin()
-
-private opc:={}
-private opcexe:={}
-private Izbor:=1
-
-AADD(opc, "1. kontiranje blagajnickih naloga      ")
-AADD(opcexe, {|| PrenBl2Fin()})
-
-Menu_SC("bf")
-
-return
-
-
 
 

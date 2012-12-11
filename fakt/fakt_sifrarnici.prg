@@ -90,6 +90,56 @@ return DE_CONT
 
 
 
+// otvaranje tabele fakt_objekti
+function P_fakt_objekti(cId,dx,dy)
+local _t_area := SELECT()
+private ImeKol
+private Kol
+
+ImeKol := {}
+Kol := {}
+
+O_FAKT_OBJEKTI
+
+AADD(ImeKol, { PADC("Id",10), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
+AADD(ImeKol, { PADC("Naziv",60), {|| naz}, "naz" })
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
+
+select ( _t_area )
+
+return PostojiSifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20 ,"Lista objekata", @cId, dx, dy )
+
+
+
+// Vraca naziv radnog naloga za trazeni cIdRnal
+function get_fakt_objekt_naz( id_obj )
+local _t_arr := SELECT()
+local _ret := ""
+
+select (F_FAKT_OBJEKTI)
+if !USED()
+    O_FAKT_OBJEKTI
+endif
+
+select fakt_objekti
+set order to tag "ID"
+seek id_obj
+
+if FOUND()
+    _ret := ALLTRIM( field->naz )
+endif
+
+use
+select ( _t_arr )
+
+return _ret
+
+
+
+
 /*! \fn RobaBlok(Ch)
  *  \brief 
  *  \param Ch 

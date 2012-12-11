@@ -169,18 +169,6 @@ CREATE_INDEX("ID","id", cIme)
 CREATE_INDEX("NAZ","naz", cIme)
 index_mcode(SIFPATH, cIme)
 
-cIme:="rnal"
-if !file( f18_ime_dbf(cIme))
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
-   add_f_mcode(@aDbf)
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  60 ,  0 })
-   DBCREATE2('RNAL.DBF', aDbf)
-endif
-CREATE_INDEX("ID","id", cIme)  
-CREATE_INDEX("NAZ","naz", cIme)
-index_mcode(SIFPATH, cIme)
-
 // referenti
 if !file( f18_ime_dbf("refer"))
    aDBf:={}

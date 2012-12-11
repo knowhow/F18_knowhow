@@ -24,6 +24,7 @@ local cRadniNalog
 local dDatod, dDatdo
 local _params := fakt_params()
 local _vrste_pl := _params["fakt_vrste_placanja"]
+local _objekti := _params["fakt_objekti"]
 local lOpcine := .t.
 private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 private cFilter := ".t."
@@ -35,8 +36,8 @@ endif
 
 O_OPS
 
-if glRadNal
-    O_RNAL
+if _objekti
+    O_FAKT_OBJEKTI
 endif
 
 O_FAKT
@@ -49,8 +50,9 @@ endif
 
 SET RELATION TO idpartner INTO PARTN
 
-if glRadNal
-    SET RELATION TO idfirma + idtipdok + brdok INTO FAKT
+// ???? ovo nece ici ovako.... vsasa
+if _objekti
+    //SET RELATION TO idfirma + idtipdok + brdok INTO FAKT
 endif
 
 O_VALUTE
@@ -69,11 +71,11 @@ cBrFakDok := SPACE(40)
 cImeKup := space(20)
 cOpcina := SPACE(30)
 
-if glRadNal
+if _objekti
     cRadniNalog := SPACE(10)
 endif
 
-Box( , 12 + IF( _vrste_pl .or. lOpcine .or. glRadNal, 6, 0 ), 77 )
+Box( , 12 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
 
     cIdFirma := fetch_metric("fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
     qqTipDok := fetch_metric("fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
@@ -122,8 +124,8 @@ Box( , 12 + IF( _vrste_pl .or. lOpcine .or. glRadNal, 6, 0 ), 77 )
 
     @ m_x + 17, m_y + 2 SAY "Opcina (prazno-sve): "  get cOpcina
     
-    if glRadNal
-        @ m_x + 18, m_y + 2 SAY "Radni nalog (prazno-svi): "  get cRadniNalog valid EMPTY(cRadniNalog) .or. P_RNal(@cRadniNalog)
+    if _objekti
+        @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  get cRadniNalog valid EMPTY(cRadniNalog) .or. P_fakt_objekti(@cRadniNalog)
     endif
  
     read
@@ -188,8 +190,9 @@ if !EMPTY( cOpcina )
 endif
 
 // ako je rijec o radnim nalozima postavi filter u tabeli FAKT na polje idrnal
-if glRadNal .and. !Empty(cRadniNalog)
-    cFilter += ".and. fakt->idrnal==" + _filter_quote( cRadniNalog )
+// ????? vidjeti kako ce ovo ici, vsasa
+if _objekti .and. !Empty(cRadniNalog)
+    //cFilter += ".and. fakt->idrnal==" + _filter_quote( cRadniNalog )
 endif
 
 if !EMPTY( cBrFakDok )
@@ -828,7 +831,6 @@ endcase
 return nRet
 
 
-// --------------------------------     
 function refresh_fakt_tbl_dbfs(filter)
 
 PushWa()
@@ -836,11 +838,7 @@ close all
 
 O_VRSTEP
 O_OPS
-
-if glRadNal
-    O_RNAL
-endif
-
+O_FAKT_OBJEKTI
 O_FAKT
 O_PARTN
 O_FAKT_DOKS
@@ -855,10 +853,6 @@ SET RELATION TO idvrstep INTO VRSTEP
 
 SET RELATION TO idpartner INTO PARTN
 
-if glRadNal
-    SET RELATION TO idfirma + idtipdok + brdok INTO FAKT
-endif
-
 O_FAKT_DOKS2
 O_VALUTE
 O_RJ
@@ -867,10 +861,6 @@ PopWa()
 
 return .t.
 
-
-/*! \fn fakt_vt_porezi()
- *  \brief Smjesta poreze iz tarifa u javne varijable
- */
 
 function fakt_vt_porezi()
 public _ZPP:=0

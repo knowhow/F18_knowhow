@@ -13,7 +13,8 @@
 
 function cre_all_dbfs(ver)
 
-log_write("START crea_all_dbfs", 5)
+log_write("START cre_all_dbfs", 5)
+
 cre_sifk_sifv(ver)
 cre_sifrarnici_1(ver)
 cre_roba(ver)

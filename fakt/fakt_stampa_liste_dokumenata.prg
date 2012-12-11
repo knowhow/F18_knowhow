@@ -24,7 +24,7 @@ local lVrstep := _params["fakt_vrste_placanja"]
 
 SELECT F_FAKT_DOKS
 if !USED()
-  O_FAKT_DOKS
+    O_FAKT_DOKS
 endif
 
 START PRINT CRET
@@ -45,7 +45,7 @@ if !empty(qqTipDok)
 endif
 if _params["fakt_objekti"] .and. !Empty(cRadniNalog)
     ?? SPACE(2), "uslov po objektu: ", TRIM(cRadniNalog)
-    ? get_fakt_objekt_naz(cRadniNalog)
+    ? get_fakt_objekat_naz(cRadniNalog)
 endif
 
 m := "----- -------- -- -- ---------"

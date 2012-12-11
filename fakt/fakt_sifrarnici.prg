@@ -89,9 +89,10 @@ return DE_CONT
 
 
 
-
+// -----------------------------------------------
 // otvaranje tabele fakt_objekti
-function P_fakt_objekti(cId,dx,dy)
+// -----------------------------------------------
+function p_fakt_objekti(cId,dx,dy)
 local _t_area := SELECT()
 private ImeKol
 private Kol
@@ -113,9 +114,10 @@ select ( _t_area )
 return PostojiSifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20 ,"Lista objekata", @cId, dx, dy )
 
 
-
-// Vraca naziv radnog naloga za trazeni cIdRnal
-function get_fakt_objekt_naz( id_obj )
+// --------------------------------------------------
+// Vraca naziv objekta
+// --------------------------------------------------
+function get_fakt_objekat_naz( id_obj )
 local _t_arr := SELECT()
 local _ret := ""
 
@@ -136,6 +138,51 @@ use
 select ( _t_arr )
 
 return _ret
+
+
+
+// --------------------------------------------------
+// Vraca objekat iz tabele fakt
+// ako se zadaje bez parametara pretpostavlja se da je 
+// napravljena tabela relacije fakt_doks->fakt
+// --------------------------------------------------
+function get_fakt_objekat_id( id_firma, tip_dok, br_dok )
+local _t_arr := SELECT()
+local _ret := ""
+local _memo
+
+if PCOUNT() > 0
+
+    select ( F_FAKT )
+
+    if !Used()
+        O_FAKT
+    endif
+    
+    // pozicioniraj se na stavku broj 1
+    select fakt
+    set order to tag "1"
+    go top
+    seek id_firma + tip_dok + br_dok
+    
+    if !FOUND()
+        return _ret
+    endif
+
+endif
+
+// to se krije kao 20 clan matrice
+_memo := ParsMemo( fakt->txt )
+
+if LEN( _memo ) >= 20
+    _ret := _memo[20]
+endif
+
+select ( _t_arr )
+
+return _ret
+
+
 
 
 

@@ -539,6 +539,12 @@ else
 	cM_d_veza := ""
 endif
 
+if LEN( aMemo ) >= 20
+    cObjekti := aMemo[20]
+else
+    cObjekti := ""
+endif
+
 // mjesto
 add_drntext("D01", gMjStr)
 // naziv dokumenta
@@ -558,6 +564,12 @@ add_drntext("D07", cDinDem)
 
 // Destinacija
 add_drntext("D08", cDestinacija)
+
+// objekakt
+if !EMPTY( cObjekti )
+    add_drntext("O01", cObjekti )
+    add_drntext("O02", get_fakt_objekat_naz( cObjekti ) )
+endif
 
 // tip dokumenta
 add_drntext("D09", dok["idtipdok"])
@@ -725,14 +737,6 @@ return
 // popunjavanje ostalih podataka fakture
 // -----------------------------------------------
 static function fill_other()
-
-if fakt_pripr->(FIELDPOS("idrnal")) <> 0
-	// radni nalog
-	if !EMPTY( fakt_pripr->idrnal )
-		add_drntext("O01", ALLTRIM(fakt_pripr->idrnal) )
-		add_drntext("O02", get_fakt_objekt_naz( fakt_pripr->idrnal ) )
-	endif
-endif
 
 // broj fiskalnog isjecka
 add_drntext("O10", fisc_isjecak( fakt_pripr->idfirma, fakt_pripr->idtipdok, ;

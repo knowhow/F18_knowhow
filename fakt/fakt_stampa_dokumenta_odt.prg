@@ -314,6 +314,10 @@ for _n := 1 to LEN( a_racuni )
     xml_node("drj", to_xml_encoding( ALLTRIM(get_dtxt_opis("D10")) ) )
     xml_node("didpm", to_xml_encoding( ALLTRIM(get_dtxt_opis("D11")) ) )
 
+    // objekat i naziv
+    xml_node("obj_id", ALLTRIM( to_xml_encoding( get_dtxt_opis("O01") ) ) )
+    xml_node("obj_naz", ALLTRIM( to_xml_encoding( get_dtxt_opis("O02") ) ) )
+
     // broj fiskalnog racuna
     xml_node("fisc", ALLTRIM(get_dtxt_opis("O10")) )
 

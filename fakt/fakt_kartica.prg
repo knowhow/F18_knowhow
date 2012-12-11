@@ -52,7 +52,7 @@ PRIVATE dDatDo:=date()
 private cPPartn:="N"
 
 if _params["fakt_objekti"]
-	cRadniNalog:=SPACE(10)
+	cRadniNalog := SPACE(10)
 endif
 
 _c1:=_c2:=_c3:=SPACE(20)
@@ -213,19 +213,17 @@ select FAKT
 
 PRIVATE cFilt1:=""
 
-cFilt1 := IF(cBrza=="N",aUsl1,".t.")+ ;
-          IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
-	  IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))
+cFilt1 := IF( cBrza == "N", aUsl1, ".t." )
+cFilt1 += IF( EMPTY( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) ) 
+cFilt1 += IF( EMPTY( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
 
-
-// ???? hendliranje objekata, jos ne znam kako ???? vsasa
+// hendliranje objekata
 if _params["fakt_objekti"] .and. !EMPTY(cRadniNalog)
-	//cFilt1+=".and. idrnal="+Cm2Str(cRadniNalog)
+	cFilt1 += ".and. get_fakt_objekat_id() == " + _filter_quote( cRadniNalog )
 endif
 
-
 if lPoNarudzbi .and. aUslN<>".t."
-  cFilt1+=".and."+aUslN
+    cFilt1 += ".and." + aUslN
 endif
 
 cFilt1 := STRTRAN(cFilt1,".t..and.","")
@@ -233,16 +231,16 @@ cFilt1 := STRTRAN(cFilt1,".t..and.","")
 cTMPFAKT:=""
 
 if cFilt1==".t."
-   set filter to
-  else
-   set filter to &cFilt1
+    set filter to
+else
+    set filter to &cFilt1
 endif
 
 IF cBrza=="N"
- go top
- EOF CRET
+    go top
+    EOF CRET
 ELSE
- seek qqRoba
+    seek qqRoba
 ENDIF
 
 START PRINT CRET
@@ -259,7 +257,7 @@ endif
 
 if _params["fakt_objekti"] .and. !EMPTY(cRadniNalog)
 	? SPACE(gnLMarg)
-	?? "Uslov za objekat: ", ALLTRIM(cRadniNalog), get_fakt_objekt_naz(cRadniNalog)
+	?? "Uslov za objekat: ", ALLTRIM(cRadniNalog), get_fakt_objekat_naz(cRadniNalog)
 endif
 
 ?
@@ -384,7 +382,6 @@ do while !eof()
        endif
        SKIP 1
      ENDDO  // za do-while za cPredh="2"
-//     if !(nIzl==0.and.nUl==0.and.nRevers==0.and.nRezerv==0)
          ? space(gnLMarg); ?? str(nRbr,3)+".   "+idfirma+PADR("  PRETHODNO STANJE",23)
          if cppartn=="D"
            @ prow(),pcol()+1 SAY space(20)
@@ -392,11 +389,9 @@ do while !eof()
          @ prow(),pcol()+1 SAY nUl pict lpickol
          @ prow(),pcol()+1 SAY (nIzl+nRevers+nRezerv) pict lpickol
          @ prow(),pcol()+1 SAY nUl-(nIzl+nRevers+nRezerv) pict lpickol
-//     endif
     PopWA()
   ENDIF
 
-  // GLAVNA DO-WHILE
   do while !eof() .and. IF(cSintetika=="D".and.ROBA->tip=="S",;
                            LEFT(cIdRoba,gnDS)==LEFT(IdRoba,gnDS),;
                            cIdRoba==iif(fID_J,IdRoba_J+IdRoba,IdRoba))

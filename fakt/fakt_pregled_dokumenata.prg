@@ -50,9 +50,10 @@ endif
 
 SET RELATION TO idpartner INTO PARTN
 
-// ???? ovo nece ici ovako.... vsasa
+// setuj i relaciju sa fakt-om
+// u njoj se nalaze objekti
 if _objekti
-    //SET RELATION TO idfirma + idtipdok + brdok INTO FAKT
+    SET RELATION TO idfirma + idtipdok + brdok INTO fakt
 endif
 
 O_VALUTE
@@ -192,7 +193,7 @@ endif
 // ako je rijec o radnim nalozima postavi filter u tabeli FAKT na polje idrnal
 // ????? vidjeti kako ce ovo ici, vsasa
 if _objekti .and. !Empty(cRadniNalog)
-    //cFilter += ".and. fakt->idrnal==" + _filter_quote( cRadniNalog )
+    cFilter += ".and. get_fakt_objekat_id() == " + _filter_quote( cRadniNalog )
 endif
 
 if !EMPTY( cBrFakDok )

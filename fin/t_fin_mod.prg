@@ -20,7 +20,6 @@ CLASS TFinMod FROM TAppMod
 	method mMenu
 	method mMenuStandard
 	method initdb
-	method srv
 END CLASS
 
 
@@ -157,44 +156,6 @@ endif
 
 
 f18_menu("gfin", .t., _izbor, _opc, _opcexe )
-
-return
-
-method srv()
-? "Pokrecem FIN aplikacijski server"
-
-// konverzija baza
-if (MPar37("/KONVERT", goModul))
-	if LEFT(self:cP5,3)=="/S="
-		cKonvSez:=SUBSTR(self:cP5,4)
-		? "Radim sezonu: " + cKonvSez
-		if cKonvSez<>"RADP"
-			// prebaci se u sezonu cKonvSez
-			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
-		endif
-	endif
-	goModul:oDataBase:KonvZN()
-	goModul:quit(.f.)
-endif
-
-// modifikacija struktura
-if (MPar37("/MODSTRU", goModul))
-	if LEFT(self:cP5,3)=="/S="
-		cKonvSez:=SUBSTR(self:cP5,4)
-		? "Radim sezonu: " + cKonvSez
-		if cKonvSez<>"RADP"
-			// prebaci se u sezonu cKonvSez
-			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
-		endif
-	endif
-	cMsFile:=goModul:oDataBase:cName
-	if LEFT(self:cP6,3)=="/M="
-		cMSFile:=SUBSTR(self:cP6,4)
-	endif
-	runmods(.t.)
-	goModul:quit(.f.)
-endif
-
 
 return
 

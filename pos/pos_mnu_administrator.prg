@@ -36,8 +36,6 @@ AADD(opc, "K. prenos realizacije u KALK")
 AADD(opcexe, {|| pos_prenos_pos_kalk() })
 AADD(opc, "S. sifrarnici                  ")
 AADD(opcexe, {|| pos_sifrarnici() })
-AADD(opc, "P. prenos POS <-> POS")
-AADD(opcexe, {|| PosDiskete() })
 AADD(opc, "A. administracija pos-a")
 AADD(opcexe, {|| pos_admin_menu() })
 

@@ -72,33 +72,15 @@ enddo
 
 return
 
-// ----------------------------
-// ----------------------------
-function TechInfo()
 
-local cPom
-
-cPom:=""
-aLst:=rddlist()
-for i:=1 to len(aLst)
-       cPom+=aLst[i]+" "
-next
-
-cPom=cPom+"##Glavni modul:" + gVerzija
-cPom=cPom+ "#     fmk_lib:" + fmklibver()
-
-cPom=cPom+ "#     FmkRoba:" + FmkRobaVer()
-
-MsgBeep(cPom)
-
-return
 
 // ----------------------------------------
 // ----------------------------------------
 function NotImp()
 MsgBeep("Not implemented ?")
-
 return
+
+
 
 // ----------------------------------------
 // upisi text u fajl

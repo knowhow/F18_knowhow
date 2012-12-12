@@ -1576,8 +1576,8 @@ opc[3]:="3. ispravka teksta na kraju fakture"
 opc[4]:="4. svedi protustavkom vrijednost dokumenta na 0"
 opc[5]:="5. priprema => smece"
 opc[6]:="6. smece    => priprema"
-opc[7]:="7. FAKT  <->  diskete"
-opc[8]:="8. brisanje dokumenta iz pripreme"
+opc[7]:="7. "
+opc[8]:="8. "
 
 lKonsig := ( IzFMKINI("FAKT","Konsignacija","N",KUMPATH)=="D" )
 
@@ -1673,34 +1673,6 @@ do while .t.
 
         povrat_smece()
 
-    case izbor == 7
-
-          faktprenosdiskete()
-
-    case izbor == 8
-       O_FAKT_S_PRIPR
-       lJos:=.t.
-       do while lJos
-     lJos:=StViseDokMenu("BRISI")
-     if LEN(gFiltNov)==0
-       GO TOP
-       exit
-     endif
-     cPom:=""
-     do while !EOF() .and. idfirma+idtipdok+brdok==gFiltNov
-       SKIP 1
-       nnextRec:=RECNO()
-       SKIP -1
-       cPom:=idfirma+"-"+idtipdok+"-"+brdok
-       DELETE
-       GO (nnextRec)
-     enddo
-     if !EMPTY(cPom)
-       MsgBeep("Dokument "+cPom+" izbrisan iz pripreme!")
-     endif
-       enddo
-       CLOSE ALL
-
     case izbor == 9 .and. lKonsig
        GKRacun()
 
@@ -1713,7 +1685,9 @@ do while .t.
     case izbor == 13
         ug_za_period()
   endcase
+
 enddo
+
 m_x:=am_x
 m_y:=am_y
 

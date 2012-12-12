@@ -23,12 +23,8 @@ endif
 
 O_ROBA
 O_KALK
-if file(SezRad(gDirFakK)+"FAKT.DBF")
   O_FAKT
   fSrediF:=.t.
-else
-  fSrediF:=.f.
-endif
 
 Box(,10,60)
 

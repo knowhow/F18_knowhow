@@ -35,11 +35,6 @@ gVerzija := oApp:cVerzija
 
 gAppSrv := .f.
 
-if mpar37("/APPSRV", oApp)
-    ? "Pokrecem App Serv ..."
-    gAppSrv := .t.
-endif
-
 SetNaslov(oApp)
 
 oApp:oDatabase:lAdmin:=.t.
@@ -57,38 +52,11 @@ if oApp:lTerminate
     return
 endif
 
-oApp:oDatabase:setgaDbfs()
-
 oApp:oDatabase:install()
 
 KonvTable()
 
-if lSezone
-    oApp:oDatabase:loadSezonaRadimUSezona()
-    if gAppSrv
-        ? "Pokrecem App Serv ..."
-        oApp:setGVars()
-        gAppSrv:=.t.
-        oApp:srv()
-    endif
-    oApp:oDatabase:radiUSezonskomPodrucju(mpar37("/XN",oApp))
-    gProcPrenos:="D"
-else
-    if gAppSrv
-        cPars:=mparstring(oApp)
-        cKom:="{|| RunAppSrv("+cPars+")}"
-        ? "Pokrecem App Serv ..."
-        gAppSrv:=.t.
-        oApp:SetGVars()
-        Eval(&cKom)
-    endif
-endif 
-
 IniPrinter()
-
-if (lSezone .and. mpar37("/XN",oApp))
-    SetOznNoGod()
-endif
 
 gReadOnly := .f.
 
@@ -97,147 +65,15 @@ SET EXCLUSIVE OFF
 //Setuj globalne varijable varijable modula 
 oApp:setGVars()
 
-oApp:oDataBase:setSigmaBD( IzFmkIni("Svi","SigmaBD","c:"+SLASH+"sigma",EXEPATH) )
-
-return
-
-/*! \fn ISC_START(oApp, lSezone)
- *  \brief Aktiviranje "install" programskog modula"
- */
-
-function ISC_START(oApp, lSezone)
-
-RDDSETDEFAULT(RDDENGINE)
-
-set exclusive on
-oApp:oDatabase:lAdmin:=.t.
-
-@ 10,30 SAY ""
-
-CreSystemDB()
-    
-set_global_vars_0_nakon_prijave(.f.)
-
-oApp:oDatabase:loadSezonaRadimUSezona()
-oApp:oDatabase:radiUSezonskomPodrucju()
-  
-oApp:setGVars()
-
-@ 10,20 SAY ""
-
-if Pitanje(,"Izvrsiti instalaciju fajlova (D/N) ?","N")=="D"
-    oApp:oDatabase:kreiraj()
-endif
-
-gPrinter := "R"
-
-O_GPARAMS
-O_PARAMS
-
-gMeniSif:=.f.
-gValIz:="280 "
-gValU:="000 "
-gKurs:="1"
-  
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-RPar("px",@gPrinter)
-RPar("vi",@gValIz)
-RPar("vu",@gValU)
-RPar("vk",@gKurs)
-
-select params
-use
-
-select gparams
-private cSection:="P"
-private cHistory:=gPrinter
-private aHistory:={}
-
-RPar_Printer()
-
-gPTKONV:="0"
-gPicSif:="V"
-gcDirekt:="V"
-gSKSif:="D"
-gPFont:="Arial"
-
-private cSection:="1", cHistory:=" "; aHistory:={}
-
-Rpar("pt",@gPTKonv)
-Rpar("pS",@gPicSif)
-Rpar("SK",@gSKSif)
-Rpar("DO",@gcDirekt)
-Rpar("Ad",@gArhDir)
-Rpar("FO",@gPFont)
-
-select gparams
-use
-
-Beep(1)
-
-IBatchRun(oApp)
-
-@ 10,30 SAY ""
-oApp:oDatabase:mInstall()
-
 return
 
 
-
-/*! \fn IBatchRun(oApp)
- *  \brief Batch funkcije za kreiranje baze podataka
- *  \todo Sve batch funkcije prebaciti u appsrv kompomentu 
- */
-
-function IBatchRun(oApp)
-
-
-if mpar37("/XM",oApp)
-      oApp:oDatabase:modstruAll()
-endif
-
-if mpar37("/APPSRV",oApp)
-        cKom:="{|| RunAppSrv() }"
-        ? "Pokrecem App Serv ..."
-        Eval(&cKom)
-endif
-
-if mpar37("/B",oApp)
-       BrisipaK(.t.)
-       CreSystemDb()
-       oApp:oDatabase:kreiraj()
-endif
-
-if mpar37("/I",oApp)
-       oApp:oDatabase:kreiraj()
-endif
-
-if mpar37("/R",oApp)
-       Reindex(.t.)
-endif
-
-if mpar37("/P",oApp)
-       Pakuj(.t.)
-endif
-
-if mpar37("/M",oApp)
-       RunMods(.t.)
-endif
-
-return
 
 
 // --------------------------------------------------------
 // --------------------------------------------------------
 function SetNaslov(oApp)
-
-
-
 gNaslov:= oApp:cName + " F18, " + oApp:cPeriod 
-
 return
 
 

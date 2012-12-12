@@ -101,9 +101,6 @@ if !_ok
    return _a_fakt_doks
 endif
 
-// prenos podataka fakt
-fakt_prenos_modem()
-
 select fakt_pripr
 
 MsgO("brisem pripremu....")

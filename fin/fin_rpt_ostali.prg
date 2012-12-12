@@ -27,12 +27,6 @@ private opcexe:={}
 //private picBHD:=FormPicL(gPicBHD,16)
 //private picDEM:=FormPicL(gPicDEM,12)
 
-cSecur:=SecurR(KLevel,"Ostalo")
-if ImaSlovo("X",cSecur)
-  MsgBeep("Opcija nedostupna !")
-  return
-endif
-
 AADD(opc,"1. pregled promjena na racunu               ")
 AADD(opcexe,{|| PrPromRn()})
 

@@ -179,18 +179,6 @@ set_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
 set_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
 set_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
 
-if lFaktFakt
-
-  //fakt-fakt uporedi
-  cDirFakt:=SezRad(TRIM(cF2F))
-  USE (cDirFakt+"FAKT") ALIAS KALK NEW
-  SET ORDER to TAG "3"
-  if TRIM(cF2FS) != TRIM(goModul:oDataBase:cDirSif)
-    USE (SezRad(TRIM(cF2FS))+"ROBA") ALIAS ROBA2 NEW
-  endif
-  
-endif
-
 select ( F_POM )
 if used()
 	use

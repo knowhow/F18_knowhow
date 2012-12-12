@@ -197,34 +197,6 @@ DirChange(cDirTek)
 return lExists
 
 
-// --------------------------------
-// legacy
-// --------------------------------
-function DirExists(cDir1)
-
-
-local nH
-
-cDir1:=trim(cDir1)
-
-if !IsDirectory(cDir1)
- beep(2)
- Msg("Nepostojeci direktorij ili niste prisutni na mrezi !",0)
- if Pitanje(,"Zelite li kreirati direktorij:"+trim(cDir1)+" ?","N")=="D"
-    if DirMak2(cDir1)
-       return .t.
-    else
-       Msg("Ne mogu kreirati direktorij ?",0)
-       return .f.
-    endif
-  endif
-  return .f.
-else
- return .t.
-endif
-
-
-
 /*! \fn BrisiSFajlove(cDir)
   * \brief Brisi fajlove starije od 45 dana
   *
@@ -257,59 +229,12 @@ enddo
 return NIL
 
 
-function ShowMem()
-
-Box(,3,50)
-           @ m_x+1,m_y+2 SAY "(0) :"
-	   ?? memory()
-           inkey(0)
-BoxC()
-
-RETURN
-
-
 
 // ----------------------------------------------
 // ----------------------------------------------
 function ToUnix(cFileName)
-
-/*
-local nPos
-
-cFileName:= LOWER(cFileName)
-
-
-if HB_OSPATHSEPARATOR() == "/"
-  cFileName:=STRTRAN(cFileName, ".\","")
-  cFileName:=STRTRAN(cFileName, ".korisn", "korisn")
-  cFileName:=STRTRAN(cFileName, ".mparams", "mparams") 
-  
-  if (cFileName == "/gparams")
-    cFileName := GetEnv("HOME") + "/gparams"
-  endif
-
-  cFileName:=STRTRAN(cFileName, ".secur", "secur")
-  cFileName:=STRTRAN(cFileName, "c:", "/c")
-  cFileName:=STRTRAN(cFileName, "d:", "/d")
-  cFileName:=STRTRAN(cFileName, "k:", "/k")
-  cFileName:=STRTRAN(cFileName, "i:", "/i")
-  cFileName:=STRTRAN(cFileName, "t:", "/t")
-  cFileName:=STRTRAN(cFileName, "q:", "/q")
-  cFileName:=STRTRAN(cFileName, "\", "/")
-  
-  if (cFileName=="/params")
-    cFileName:="params"
-  endif
-  
-  if (cFileName=="/kparams")
-    cFileName:="kparams"
-  endif
-
-endif
-
-*/
-
 return cFileName
+
 
 // ----------------------------
 // ----------------------------

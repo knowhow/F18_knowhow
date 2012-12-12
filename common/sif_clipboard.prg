@@ -48,7 +48,7 @@ endif
            cPath:=left(SIFPATH,nP2) +"SIF0\"
            cDBF:=ALIAS()+".DBF"
            // c:\sigma\sif1\trfp.dbf -> c:\sigma\sif0\trfp.dbf
-           DirMak2(cPath)
+           //DirMak2(cPath)
            if file(cPath+cDBF)
                MsgBeep("Tabela "+cPath+cDBF+" vec postoji !")
                if pitanje(,"Zelite li ipak prebaciti podatke u clipboard ?","N")=="N"

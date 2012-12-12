@@ -547,28 +547,9 @@ if bBlok<>NIL
   endif
 endif
 
-cSecur:=SecurR(klevel,"Sifrarnici")
-
-if (Ch==K_CTRL_N .and.  !ImaSlovo("AN", cSecur)  )  .or. ;
-   (Ch==K_CTRL_A .and.  !ImaSlovo("AI", cSecur)  )  .or. ;
-   (Ch==K_F2     .and.  !ImaSlovo("AI", cSecur)  )  .or. ;
-   (Ch==K_CTRL_T .and.  !ImaSlovo("AB", cSecur)  )  .or. ;
-   (Ch==K_F4     .and.  !ImaSlovo("AI", cSecur)  )  .or. ;
-   (Ch==K_CTRL_F9 .and.  !ImaSlovo("A9", cSecur)  ) .or. ;
-   ASCAN(aZabrane, Ch)<>0  
-   MsgBeep("Nivo rada:" + klevel + ":" + cSecur + ": Opcija nedostupna !")
-   return DE_CONT
-endif
-
-cSecur:=SecurR(klevel,"SGLEDAJ")
-if (Ch==K_CTRL_N .and.  ImaSlovo("D",cSecur)  )  .or. ;
-   (Ch==K_CTRL_A .and.  ImaSlovo("D",cSecur)  )  .or. ;
-   (Ch==K_F2     .and.  ImaSlovo("D",cSecur)  )  .or. ;
-   (Ch==K_CTRL_T .and.  ImaSlovo("D",cSecur)  )  .or. ;
-   (Ch==K_F4     .and.  ImaSlovo("D",cSecur)  )  .or. ;
-   (Ch==K_CTRL_F9 .and. ImaSlovo("D",cSecur)  )
-   MsgBeep("Nivo rada:"+klevel+":"+cSecur+": Opcija nedostupna !")
-   return DE_CONT
+if ASCAN( aZabrane, Ch ) <> 0  
+    MsgBeep( "Nivo rada:" + klevel + " : Opcija nedostupna !" )
+    return DE_CONT
 endif
 
 #ifndef TEST

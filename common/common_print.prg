@@ -599,13 +599,6 @@ RPar("p?",@cPosebno)
 select params
 use
  
-if cPosebno=="D" .and. !file( my_home() + "gparams.dbf" )
-    cScr := ""
-    save screen to cscr
-    CopySve( "gpara*.*", SLASH, my_home() )
-    restore screen from cScr
-endif
- 
 if cPosebno=="D"
     select (F_GPARAMSP)
     use

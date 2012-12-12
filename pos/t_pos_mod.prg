@@ -20,9 +20,7 @@ CLASS TPosMod FROM TAppMod
     method setGVars
     method setScreen
     method mMenu
-    method gProc
     method initdb
-    method srv
 END CLASS
 
 // -----------------------------------------------
@@ -38,30 +36,6 @@ method initdb()
 ::oDatabase:=TDbPos():new()
 return nil
 
-
-// -----------------------------------------------
-// -----------------------------------------------
-method gProc(Ch)
-do case
-      CASE Ch==K_SH_F2
-        PPrint()
-      CASE Ch==K_SH_F10
-        self:gParams()
-      CASE Ch==K_SH_F1
-        Calc()
-      CASE Ch==K_SH_F5
-        self:oDatabase:vratiSez()
-      CASE Ch==K_SH_F6
-
-         IF kLevel <= L_UPRAVN
-            self:oDatabase:logAgain(Godina_2(gDatum)+padl(month(gDatum),2,"0"),.f.,.t.)
-         EndIF
-
-      CASE Ch==K_SH_F7
-        KorLoz()
-end case
-clear typeahead
-return nil
 
 
 // -----------------------------------------------
@@ -166,12 +140,6 @@ endcase
 
 return
 
-
-// ------------------------------------------------------
-// ------------------------------------------------------
-method srv()
-
-return
 
 
 // -------------------------------------------

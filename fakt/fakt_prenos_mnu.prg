@@ -12,42 +12,25 @@
 
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
- 
 
-/*! \file fmk/fakt/razdb/1g/mnu_raz.prg
- *  \brief Centralni meni opcija za prenos podataka FAKT<->ostali moduli
- */
-
-
-/*! \fn fakt_razmjena_podataka()
- *  \brief Centralni meni opcija za prenos podataka FAKT<->ostali moduli
- */
 
 function fakt_razmjena_podataka()
-*{
-private Opc:={}
-private opcexe:={}
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc,"1. kalk <-> fakt                  ")
-AADD(opcexe,{|| KaFak()})
-AADD(opc,"2. kalk->fakt (modem)")
-AADD(opcexe,{|| PovModem()})
-AADD(opc,"3. import barkod terminal")
-AADD(opcexe,{|| imp_bterm()})
-AADD(opc,"4. export barkod terminal")
-AADD(opcexe,{|| exp_bterm()})
+AADD( _opc,"1. kalk <-> fakt                  ")
+AADD( _opcexe,{|| KaFak()})
+AADD( _opc,"3. import barkod terminal")
+AADD( _opcexe,{|| imp_bterm()})
+AADD( _opc,"4. export barkod terminal")
+AADD( _opcexe,{|| exp_bterm()})
 
+f18_menu( "rpod", .f., _izbor, _opc, _opcexe )
 
-private Izbor:=1
-Menu_SC("rpod")
-
-CLOSERET
+close all
 
 return
-*}
+
+
+

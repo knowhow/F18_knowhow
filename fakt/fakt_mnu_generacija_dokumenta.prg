@@ -47,9 +47,6 @@ if !EMPTY(goModul:oDataBase:cSezonDir) .and. Pitanje(,"Prebaciti dokument u radn
 	ZAP
         close all
 	GPSUplata()
-	if Pitanje(,"Prebaciti se na rad sa radnim podrucjem ?","D")=="D"
-        	URadPodr()
-        endif
 endif
 close all
 return

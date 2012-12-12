@@ -17,12 +17,8 @@
 // ----------------------------------------------------------
 CLASS TDbOs INHERIT TDB 
 	method New
-    method skloniSezonu	
-	method setgaDBFs	
 	method install	
-	method obaza	
 	method kreiraj	
-	method konvZn
 ENDCLASS
 
 
@@ -37,13 +33,6 @@ method New()
  ::kreiraj()
 
 return self
-
-// -----------------------------------------------
-// -----------------------------------------------
-method setgaDBFs()
-// prebaceno u f18_utils.prg
-return
-
 
 
 // -----------------------------------------------
@@ -84,179 +73,6 @@ if (nArea==-1 .or. nArea==(F_INVENT))
 endif
 
 return
-
-
-
-// -------------------------------------------------
-// -------------------------------------------------
-method obaza(i)
-
-local lIdIDalje
-local cDbfName
-
-lIdiDalje:=.f.
-
-if i==F_PARAMS 
-	lIdiDalje:=.t.
-endif
-
-if i==F_OS .or. i==F_PROMJ .or. i==F_INVENT .or. i==F_REVAL .or. i==F_AMORT
-	lIdiDalje:=.t.
-endif
-
-if i==F_KONTO .or. i==F_PARTN .or. i==F_RJ .or. i==F_K1 .or. i==F_VALUTE
-	lIdiDalje:=.t.
-endif
-
-if lIdiDalje
-	cDbfName:=DBFName(i,.t.)
-	select(i)
-	usex(cDbfName)
-else
-	use
-	return
-endif
-
-return
-
-
-// --------------------------------------------
-// --------------------------------------------
-method konvZn() 
-local cIz:="7"
-local cU:="8"
-local aPriv:={}
-local aKum:={}
-local aSif:={}
-local GetList:={}
-local cSif:="D"
-local cKum:="D"
-local cPriv:="D"
-
-if !SigmaSif("KZ      ")
-	return
-endif
-
-Box(,8,50)
-	@ m_x+2, m_y+2 SAY "Trenutni standard (7/8)        " GET cIz   VALID   cIz$"78"  PICT "9"
-  	@ m_x+3, m_y+2 SAY "Konvertovati u standard (7/8/A)" GET cU    VALID    cU$"78A" PICT "@!"
-  	@ m_x+5, m_y+2 SAY "Konvertovati sifrarnike (D/N)  " GET cSif  VALID  cSif$"DN"  PICT "@!"
-  	@ m_x+6, m_y+2 SAY "Konvertovati radne baze (D/N)  " GET cKum  VALID  cKum$"DN"  PICT "@!"
-  	@ m_x+7, m_y+2 SAY "Konvertovati priv.baze  (D/N)  " GET cPriv VALID cPriv$"DN"  PICT "@!"
-  	read
-  	if LastKey()==K_ESC
-		BoxC()
-		return
-	endif
-  	if Pitanje(,"Jeste li sigurni da zelite izvrsiti konverziju (D/N)","N")=="N"
-    		BoxC()
-		return
-  	endif
-BoxC()
-
-aPriv:= { F_INVENT }
-aKum:= { F_OS, F_PROMJ, F_RJ, F_K1 }
-aSif:={ F_PARTN, F_KONTO, F_AMORT, F_REVAL }
-
-if cSif=="N"
-	aSif:={}
-endif
-
-if cKum=="N"
-	aKum:={}
-endif
-
-if cPriv=="N"
-	aPriv:={}
-endif
-
-KZNbaza(aPriv,aKum,aSif,cIz,cU)
-
-return
-
-
-
-// -------------------------------------------------------------------
-// -------------------------------------------------------------------
-method skloniSezonu(cSezona,finverse,fda,fnulirati, fRS)
-save screen to cScr
-
-if (fda==nil)
-	fDA:=.f.
-endif
-if (finverse==nil)
-	finverse:=.f.
-endif
-if (fNulirati==nil)
-	fnulirati:=.f.
-endif
-if (fRS==nil)
-  // mrezna radna stanica , sezona je otvorena
-  fRS:=.f.
-endif
-
-if fRS // radna stanica
-  if file(PRIVPATH+cSezona+"\INVENT.DBF")
-      // nema se sta raditi ......., pripr.dbf u sezoni postoji !
-      return
-  endif
-  aFilesK:={}
-  aFilesS:={}
-  aFilesP:={}
-endif
-
-cls
-
-if fRS
-   // mrezna radna stanica
-   ? "Formiranje DBF-ova u privatnom direktoriju, RS ...."
-endif
-
-?
-
-if fInverse
-	? "Prenos iz  sezonskih direktorija u radne podatke"
-else
- 	? "Prenos radnih podataka u sezonske direktorije"
-endif
-
-?
-
-fnul:=.f.
-Skloni(PRIVPATH,"PARAMS.DBF",cSezona,finverse,fda,fnul)
-Skloni(PRIVPATH,"INVENT.DBF",cSezona,finverse,fda,fnul)
-if fRS
- // mrezna radna stanica!!! , baci samo privatne direktorije
- ?
- ?
- ?
- Beep(4)
- ? "pritisni nesto za nastavak.."
-
- restore screen from cScr
- return
-endif
-
-
-Skloni(KUMPATH,"OS.DBF",cSezona,finverse,fda,fnul)
-Skloni(KUMPATH,"RJ.DBF",cSezona,finverse,fda,fnul)
-Skloni(KUMPATH,"K1.DBF",cSezona,finverse,fda,fnul)
-Skloni(KUMPATH,"PROMJ.DBF",cSezona,finverse,fda,fnul)
-
-Skloni(SIFPATH,"KONTO.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"AMORT.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"REVAL.DBF",cSezona,finverse,fda,fnul)
-
-?
-?
-?
-Beep(4)
-? "pritisni nesto za nastavak.."
-
-restore screen from cScr
-
-return
-
 
 
 

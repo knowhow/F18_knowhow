@@ -92,12 +92,6 @@ if gRJ=="D" .and. gSAKrIz=="D" .and. "." $ cidrj
   // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
 endif
 
-cSecur:=SecurR(KLevel,"KartSve")
-if cBrza=="N" .and. ImaSlovo("X",cSecur)
-    MsgBeep("Dozvoljena vam je samo brza kartica !")
-    closeret
-endif
-
 IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
   SintFilt(.t.,"IDRJ='"+cIdRJ+"'")
 ELSE
@@ -626,13 +620,6 @@ if Params2()
  WPar("c8",cPTD)
 endif
 select params; use
-
-cSecur:=SecurR(KLevel,"KartSve")
-if cBrza=="N" .and. ImaSlovo("X",cSecur)
-    MsgBeep("Dozvoljena vam je samo brza kartica !")
-    closeret
-endif
-
 
 IF gNW=="N".and.cPTD=="D"
   m:=STUFF(m,30,0," -- ------------- ---------- --------------------")

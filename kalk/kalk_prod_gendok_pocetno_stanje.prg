@@ -22,9 +22,6 @@ if !empty(goModul:oDataBase:cSezonDir) .and. Pitanje(,"Prebaciti dokument u radn
            append from kalk_pripr
            select kalk_pripr; zap
            close all
-           if Pitanje(,"Prebaciti se na rad sa radnim podrucjem ?","D")=="D"
-               URadPodr()
-           endif
           endif
 endif
 close all

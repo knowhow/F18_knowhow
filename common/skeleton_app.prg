@@ -158,15 +158,11 @@ local i
 
 do case
 
-  case (Ch==K_SH_F12)
-    InfoPodrucja()
-
   case (Ch==K_SH_F1)
     Calc()
  
   case (Ch==K_F3)
     new_f18_session_thread()
-
      
   case (Ch==K_SH_F2 .or. Ch==K_CTRL_F2)
     PPrint()
@@ -174,27 +170,9 @@ do case
   case Ch==K_SH_F10
     ::gParams()
     
-  case Ch==K_SH_F5
-    ::oDatabase:vratiSez()
-    
-  case Ch==K_ALT_F6
-    ProcPrenos()
-    
-  case Ch==K_SH_F6
-    ::oDatabase:logAgain()
-    
-  case Ch==K_SH_F7
-    KorLoz()
-      
-  case Ch==K_SH_F8
-    TechInfo()
-    
   case Ch==K_SH_F9
     Adresar()
     
-  case Ch==K_CTRL_F10
-    SetROnly()
-  
   otherwise
     if !("U" $ TYPE("gaKeys"))
       for i:=1 to LEN(gaKeys)
@@ -296,30 +274,21 @@ gArhDir:=padr(gArhDir, 100)
 gPFont:=padr(gPFont, 20)
 
 Box(, 20, 70)
-  set cursor on
-   @ m_x+ 1,m_y+2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno valid cPosebno $ "DN" pict "@!"
-   read
-   WPAr("p?",cPosebno)
-   select params
-  use
-   if cPosebno=="D"
-       if !file(PRIVPATH+"gparams.dbf")
-      cScr:=""
-            save screen to cscr
-            CopySve("gpara*.*", SLASH, PRIVPATH)
-            restore screen from cScr
-
-       endif
-   endif
-   if cPosebno=="D"
+    set cursor on
+    @ m_x+ 1,m_y+2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno valid cPosebno $ "DN" pict "@!"
+    read
+    WPAr("p?",cPosebno)
+    select params
+    use
+    if cPosebno=="D"
        select (F_GPARAMSP)
        use
        O_GPARAMSP
-   else
+    else
        select (F_GPARAMS)
        use
        O_GPARAMS
-   endif
+    endif
 
    gPtkonv := padr(gPtkonv, 2)
   gLokal := PADR(gLokal, 2)

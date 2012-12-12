@@ -90,16 +90,13 @@ if !FOUND()
     _ret := SPACE(10)
 
 else
-
-// to se krije kao 20 clan matrice
-_memo := ParsMemo( fakt->txt )
-
-if LEN( _memo ) >= 20
-    _ret := PADR(_memo[20], 10)
+  _memo := ParsMemo( fakt->txt )
+  if LEN( _memo ) >= 20
+      _ret := PADR(_memo[20], 10)
+  endif
 endif
 
 PopWa()
-
 return _ret
 
 

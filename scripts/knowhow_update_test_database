@@ -19,6 +19,8 @@ DOWNLOAD_DIR=~/Downloads
 mkdir -p $DOWNLOAD_DIR
 
 
+CMD_ARG=$1
+
 ARCH=`uname -m`
 UBUNTU_VER=`lsb_release -a 2> /dev/null | grep Release | awk '{print $2;}'`
 
@@ -42,9 +44,8 @@ URL=https://github.com/knowhow/F18_knowhow/raw/master/LATEST_VERSIONS
 
 
 
-
 # --------------------------------------------------
-install_pkg_exe() {
+function install_pkg_exe {
 
 if [[ ! -f ${KNOWHOW_DIR}/${ART_PKG_EXE} ]]; then
 
@@ -52,7 +53,7 @@ if [[ ! -f ${KNOWHOW_DIR}/${ART_PKG_EXE} ]]; then
   echo nema $KNOWHOW_DIR/$ART_PKG_EXE
 
   ARTIFAKT=$ART_PKG_EXE
-  artifakt_last_version
+  artifakt_last_version $CMD_ARG
 
   PACKAGE=${ART_PKG_EXE}_ubuntu_${UBUNTU_VER}_${ARCH}_${ARTIFAKT_VER}.${ARTIFAKT_EXT}
   CMD="$WGET_CMD $GCODE_URL/${PACKAGE}"
@@ -100,28 +101,31 @@ exit 1
 }
 
 # --------------------------------------------------
-artifakt_last_version() {
+function artifakt_last_version {
 
 #ARTIFAKT_LINE=`wget --no-check-certificate $URL -qO- | grep ^$ARTIFAKT`
 # lokalno
 ARTIFAKT_LINE=`cat LATEST_VERSIONS | grep ^$ARTIFAKT`
 
+if [ "$CMD_ARG" != "" ]; then
+   echo "setujem package ver sa komandne linije"
+   ARTIFAKT_VER=$CMD_ARG
+else
+   ARTIFAKT_VER=`echo $ARTIFAKT_LINE | awk '{print $2;}'`
+fi
 
-ARTIFAKT_VER=`echo $ARTIFAKT_LINE | awk '{print $2;}'`
 ARTIFAKT_EXT=`echo $ARTIFAKT_LINE | awk '{print $3;}'`
 
 echo "$ARTIFAKT_LINE,  ver= $ARTIFAKT_VER, ext= $ARTIFAKT_EXT"
 }
 
 ARTIFAKT=$ART_PKG
-artifakt_last_version
+artifakt_last_version $CMD_ARG
 
 
 # updater package
-cd $DOWNLOAD_DIR
 PKG_FILE="${ARTIFAKT}_${ARTIFAKT_VER}.${ARTIFAKT_EXT}"
 
-#CMD="${WGET_CMD} ${GCODE_URL_F18}/${PKG_FILE}"
 
 #echo $CMD
 #`$CMD`
@@ -130,10 +134,14 @@ PKG_FILE="${ARTIFAKT}_${ARTIFAKT_VER}.${ARTIFAKT_EXT}"
 # u home direktoriju se ocekuje 
 FULL_PKG_FILE="$HOME/${PKG_FILE}"
 
-if [[ ! -f $FULL_PKG_FILE ]]; then
-    echo nedostaje $FULL_PKG_FILE
-    exit 1
+if [ ! -f $FULL_PKG_FILE ]; then
+    cd $DOWNLOAD_DIR
+    CMD="${WGET_CMD} ${GCODE_URL_F18}/${PKG_FILE}"
+    echo "cmd=", $CMD
+    $CMD
+    FULL_PKG_FILE=$PKG_FILE
 fi
+
 install_pkg_exe
 
 

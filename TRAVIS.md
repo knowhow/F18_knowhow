@@ -26,3 +26,7 @@ $ scripts/update_travis_test_database
 
 Nakon ovoga obavit commit/push
 
+## Dijagnoza
+
+        psql -h localhost -U admin -W f18_test # password: admin
+

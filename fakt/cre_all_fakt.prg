@@ -47,6 +47,7 @@ AADD(aDBf,{ 'C3'        , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'N1'        , 'N' ,  10 ,  3 })
 AADD(aDBf,{ 'N2'        , 'N' ,  10 ,  3 })
 AADD(aDBf,{ 'OPIS'      , 'C' , 120 ,  0 })
+AADD(aDBf,{ 'IDRNAL'      , 'C' , 10 ,  0 })
 
 _created := .f.
 _alias := "FAKT"

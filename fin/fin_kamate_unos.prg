@@ -573,16 +573,6 @@ if fprint
     cPom:=padr(cPom,42)
 	dDatPom:=gDatObr
 
-	StZaglavlje( gVlZagl, my_home(), ;
-        DTOC( gDatObr ), ;
-        PADR( cIdPartner + "-" + ALLTRIM( partn->naz ), 42 ),;
-        PADR( mjesto + " - " + ptt, 42 ),;
-        cPom,;
-        STR(nOsnDug,12,2) ,; 
-        STR(nKamate,12,2) ,;
-	    cTxtPdv , ;
-	    cTxtUkupno )
-	
 endif 
 
 select kam_pripr

@@ -1005,11 +1005,7 @@ function OstaleOpcije()
 private opc[4]
   opc[1]:="1. novi datum->datum, stari datum->dat.valute "
   opc[2]:="2. podijeli nalog na vise dijelova"
-  if IzFMKINI("FIN","IzvodBanke","N")=="D"
-    opc[3]:="3. preuzmi izvod iz banke"
-  else
-    opc[3]:="3. -------------------------------"
-  endif
+  opc[3]:="3. -------------------------------"
   opc[4]:="4. konverzija partnera"
 
   h[1] := h[2] := h[3] := h[4] := ""
@@ -1025,10 +1021,6 @@ private opc[4]
            SetDatUPripr()
        case izbor == 2
            PodijeliN()
-       case izbor == 3
-           if IzFMKINI("FIN","IzvodBanke","N")=="D"
-             IzvodBanke()
-           endif
        case izbor == 4
           msgo("konverzija - polje partnera")
           O_FIN_PRIPR

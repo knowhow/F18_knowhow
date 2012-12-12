@@ -925,74 +925,7 @@ nZnak=IF(lA4papir=="4",nZnak*2-1,IF(lA4papir=="L4",nZnak*1.4545-1,nZnak))
 return INT(IF(nZnak<161,160,IF(nZnak<193,192,IF(nZnak<275,274,320)))/IF(lA4papir=="4",2,IF(lA4papir=="L4",1.4545,1)))
 
 return
-*}
 
-
-function StZaglavlje(cImeFajla,cPutanja,cTxt1,cTxt2,cTxt3,cTxt4,cTxt5,cTxt6,cTxt7,cTxt8)
-
-local cZag:="",i:=0,cLin:="",cNLin:=""
-
-if "U" $ TYPE("gnTMarg"); gnTMarg:=0; endif
- if ctxt1==nil
-    cTxt1:=""
- endif
- if ctxt2==nil
-    cTxt2:=""
- endif
- if ctxt3==nil
-    cTxt3:=""
- endif
- if ctxt4==nil
-    cTxt4:=""
- endif
- if ctxt5==nil
-    cTxt5:=""
- endif
- if ctxt6==nil
-    cTxt6:=""
- endif
- if cTxt7==nil
-    cTxt7:=""
- endif
- if cTxt8==nil
-    cTxt8:=""
- endif
-
-if empty(cImeFajla)
-   for i:=1 to gnTMarg
-   	QOUT()
-   next
-else
-  private nHZ:=fopen(cPutanja+cImeFajla)
-  private cBuf:="",nRead:=0
-  do while .t.
-      //nRead:=fread(nHZ,@cBuf,50)
-      cBuf = FReadLn( nHZ, 1, 1000 )
-      // djokeri #1#, #2#, #3#, #4#, #5# #6#
-      if "#1#"$cBuf .and. VALTYPE(cTxt1)=="A"
-        cBuf := strtran(strtran(strtran(strtran(strtran(strtran(strtran(cBuf,"#2#",ctxt2),"#3#",ctxt3),"#4#",ctxt4),"#5#",ctxt5),"#6#",ctxt6), "#7#", cTxt7), "#8#", ctxt8)
-        // koji je to red
-        cLin := DajRed(cBuf,"#1#")
-        // napravimo string cNLin koji treba ubaciti
-        for i:=1 to LEN(cTxt1)
-          cNLin += STRTRAN(cLin,"#1#",cTxt1[i])
-        next
-        // taj red tj.cLin zamijeniti redovima koje treba ubaciti
-        cBuf := strtran(cBuf,cLin,cNLin)
-        QQOUT(cBuf)
-      else
-        QQOUT(strtran(strtran(strtran(strtran(strtran(strtran(strtran(strtran(cBuf,"#1#",ctxt1),"#2#",ctxt2),"#3#",ctxt3),"#4#",ctxt4),"#5#",ctxt5),"#6#",ctxt6),"#7#", ctxt7), "#8#", ctxt8) )
-      endif
-      cZag+=cBuf
-      if cBuf==""
-      	exit
-      endif
-enddo
-setprc(prow()+nPodStr(NRED,cZag),pcol())
-  ?
-  fclose(nHZ)
- endif
-return
 
 
 function nPodStr(cPod,cStr)
@@ -1113,15 +1046,5 @@ return cVrati
 *}
 
 function WhileEvent(nValue, nCnt)
-*{
-
-/*!
-if (nCnt==nil)
-  nCnt:=reccount()
-endif
-ShowKorner(nValue, 5, nCnt)
-*/
-
 return
-*}
 

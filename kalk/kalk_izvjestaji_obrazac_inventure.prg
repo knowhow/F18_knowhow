@@ -719,23 +719,13 @@ return
  */
  
 function kalk_zagl_inventura()
-*{
 P_10CPI
-//; B_ON
 ?? gTS+":",gNFirma,space(40),"Strana:"+str(++nStr,3)
 ?
 ?  "Obrazac obracuna inventure za period:",dDatOd,"-",dDAtDo
 ?
 ?  "NAZIV OBJEKTA ",cNObjekat,space(30),"Kriterij za Objekat:",trim(qqKonto)
 ?
-//B_OFF
-P_COND // ? ne znam hoce li stati na A3
-
-//if gPrinter<>"R"
-// ?? chr(27)+"0"
-//endif
-StZaglavlje("rekinv.txt", KUMPATH)
-
+P_COND 
 return
-*}
 

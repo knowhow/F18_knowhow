@@ -20,7 +20,7 @@ local _curr_user := "<>"
 local nCol1:=0
 local nul,nizl,nRbr
 local m
-local cRadniNalog
+local _objekat_id
 local dDatod, dDatdo
 local _params := fakt_params()
 local _vrste_pl := _params["fakt_vrste_placanja"]
@@ -73,7 +73,7 @@ cImeKup := space(20)
 cOpcina := SPACE(30)
 
 if _objekti
-    cRadniNalog := SPACE(10)
+    _objekat_id := SPACE(10)
 endif
 
 Box( , 12 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
@@ -126,7 +126,7 @@ Box( , 12 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
     @ m_x + 17, m_y + 2 SAY "Opcina (prazno-sve): "  get cOpcina
     
     if _objekti
-        @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  get cRadniNalog valid EMPTY(cRadniNalog) .or. P_fakt_objekti(@cRadniNalog)
+        @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  get _objekat_id valid EMPTY(_objekat_id) .or. P_fakt_objekti(@_objekat_id)
     endif
  
     read
@@ -190,10 +190,8 @@ if !EMPTY( cOpcina )
     cFilter += ".and. PARTN->(" + aUslOpc + ")"
 endif
 
-// ako je rijec o radnim nalozima postavi filter u tabeli FAKT na polje idrnal
-// ????? vidjeti kako ce ovo ici, vsasa
-if _objekti .and. !Empty(cRadniNalog)
-    cFilter += ".and. get_fakt_objekat_id() == " + _filter_quote( cRadniNalog )
+if _objekti .and. !Empty(_objekat_id)
+    cFilter += ".and. get_fakt_objekat_id() == " + _filter_quote( _objekat_id )
 endif
 
 if !EMPTY( cBrFakDok )
@@ -226,7 +224,7 @@ if cTabela == "D"
     fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
 else
     gaZagFix := { 3, 3 }
-    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, cImeKup, lOpcine, aUslOpc)
+    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, aUslOpc)
 endif
 
 close all

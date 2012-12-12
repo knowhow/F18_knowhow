@@ -233,14 +233,14 @@ else
 						
             				IF !EMPTY(aPom[1]) 
               					if !lSjeciStr
-							PrnKod_ON(aPom[1])
+ 							          PrnKod_ON(aPom[1])
 						endif
             				ENDIF
             				IF aPom[1]=="K"
               					cPom:=&(aPom[2])
             				ELSE
               					cPom:=&(aPom[2])
-              					
+
 						if !lSjeciStr
 							?? cPom
             					else

@@ -278,14 +278,6 @@ select (nTArea)
 return 1
 
 
-// -----------------------------------------------
-// vraca novi broj dokumenta
-// -----------------------------------------------
-static function _nBrDok( cFirma, cTip, cBrDok )
-cBrDok := PADR( REPLICATE( "0", gNumDio ), 8 )
-return .t.
-
-
 // -------------------------------------------------
 // vraca tip dokumenta na osnovu tipa importa
 // -------------------------------------------------

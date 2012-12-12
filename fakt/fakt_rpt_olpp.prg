@@ -154,14 +154,14 @@ DO WHILE !EOF() .and. cIdfirma+cIdVd+cBrDok==IDFIRMA+IDTIPDOK+BRDOK
 
    	// 4 red
    	@ prow(),pcol()+1 say kolicina pict pickol
-   
+
    	// 5 red // mpc bez pdv pojedinacno
    	@ prow(),pcol()+1 say nMPC1 pict "99999999.99"
    	nC1:=pcol()+1
 
    	// 6 red // mpc bez pdv ukupno
    	@ prow(),pcol()+1 say nMPC1*kolicina pict picdem
-   
+
    	// 7 red // TB
    	@ prow(),pcol()+1 say cT1
 

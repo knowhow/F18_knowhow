@@ -247,14 +247,12 @@ do case
         if edit_fakt_priprema( .f., @_items_atrib ) == 0
             _ret := DE_CONT
         else
-            
-            // ubaci mi atribute u fakt_atribute
+
             fakt_atrib_hash_to_dbf( _idfirma, _idtipdok, _brdok, _rbr, _items_atrib )
-            
+
             _rec := get_dbf_global_memvars("_")
 
             dbf_update_rec( _rec, .f. )
-
             PrCijSif()  
 
             _ret := DE_REFRESH
@@ -266,21 +264,19 @@ do case
         return _ret
 
 
-    // cirkularna ispravka stavki....
     case Ch == K_CTRL_A
 
         fakt_prodji_kroz_stavke()
         return DE_REFRESH
 
-    // unos nove stavke
     case Ch == K_CTRL_N
-   
+
         fakt_unos_nove_stavke()
         return DE_REFRESH
 
     // stampanje dokumenta
     case Ch == K_CTRL_P
-       
+
         // prvo setuj broj dokumenta
         fakt_set_broj_dokumenta()
 
@@ -290,13 +286,13 @@ do case
         #ifdef TEST
             push_test_tag( "FAKT_CTRLP_END" )  
         #endif
-        
+
         return DE_REFRESH
 
 
     // stampanje labela
     case Ch == K_ALT_L
-  
+
           close all
           label_bkod()
           o_fakt_edit()

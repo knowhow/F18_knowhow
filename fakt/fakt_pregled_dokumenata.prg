@@ -442,13 +442,13 @@ cPart := field->idpartner
 dDatFakt := DATE()
 dDatVal := DATE()
 dDatIsp := DATE()
-cNBrFakt := PADR( "00000", 8 )
+cNBrFakt := fakt_brojac(0)
 
 // uslovi generisanja...
 Box(, 5, 55)
-    
+
     @ m_x + 1, m_y + 2 SAY "*** Parametri fakture "  
-    
+
     @ m_x + 3, m_y + 2 SAY "  Datum fakture: " GET dDatFakt VALID !EMPTY(dDatFakt) 
     @ m_x + 4, m_y + 2 SAY "   Datum valute: " GET dDatVal VALID !EMPTY(dDatVal) 
     @ m_x + 5, m_y + 2 SAY " Datum isporuke: " GET dDatIsp VALID !EMPTY(dDatIsp) 

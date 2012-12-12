@@ -9,3 +9,4 @@
 #define __g10Str g10Str
 
 #define FAKT_DOKS_PARTNER_LENGTH 100
+#define FAKT_BRDOK_LENGTH 12

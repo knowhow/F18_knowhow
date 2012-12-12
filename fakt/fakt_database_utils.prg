@@ -270,60 +270,6 @@ return
 
 
 
-// ------------------------------------------------------------------
-// fakt, uzimanje novog broja za fakt dokument
-// ------------------------------------------------------------------
-function fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
-local _broj := 0
-local _broj_doks := 0
-local _param
-local _tmp, _rest
-local _ret := ""
-local _t_area := SELECT()
-
-if sufiks == nil
-    sufiks := ""
-endif
-
-// param: fakt/10/10
-_param := "fakt" + "/" + firma + "/" + tip_dokumenta 
-
-_broj := fetch_metric( _param, nil, _broj )
-
-// konsultuj i doks uporedo
-O_FAKT_DOKS
-set order to tag "1"
-go top
-seek firma + tip_dokumenta + "Ž"
-skip -1
-
-if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
-    _broj_doks := VAL( PADR( field->brdok, gNumDio ) )
-else
-    _broj_doks := 0
-endif
-
-// uzmi sta je vece, doks broj ili globalni brojac
-_broj := MAX( _broj, _broj_doks )
-
-// uvecaj broj
-++ _broj
-
-// ovo ce napraviti string prave duzine...
-_ret := PADL( ALLTRIM( STR( _broj ) ), gNumDio, "0" )
-
-if !EMPTY( sufiks )
-    _ret := _ret + sufiks
-endif
-
-_ret := PADR( _ret, 8 )
-
-// upisi ga u globalni parametar
-set_metric( _param, nil, _broj )
-
-select ( _t_area )
-return _ret
-
 
 // ------------------------------------------------------------
 // setuj broj dokumenta u pripremi ako treba !
@@ -338,8 +284,8 @@ PushWa()
 select fakt_pripr
 go top
 
-_null_brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
-        
+_null_brdok := fakt_brojac(0) 
+
 if field->brdok <> _null_brdok 
     // nemam sta raditi, broj je vec setovan
     PopWa()

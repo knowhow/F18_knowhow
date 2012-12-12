@@ -22,6 +22,7 @@ local nRezerv
 local nRevers
 local nRbr
 local lFoundUPripremi
+local _dok := hb_hash()
 
 O_FAKT_DOKS
 O_ROBA
@@ -34,7 +35,8 @@ MsgO("scaniram tabelu fakt")
 nRbr:=0
 
 GO TOP
-cBrDok := PADR( REPLICATE( "0", gNumDio ), 8 )
+
+cBrDok := fakt_brojac(0, field->datdok)
 
 do while !EOF()
     if (field->idFirma<>cIdRj)
@@ -42,9 +44,11 @@ do while !EOF()
         loop
     endif
     select fakt_pripr
+
     cIdRoba:=fakt->idRoba
     // vidi imali ovo u pripremi; ako ima stavka je obradjena
     SEEK cIdRj+cIdRoba
+
     lFoundUPripremi:=FOUND()
     SELECT fakt
     PushWa()
@@ -65,8 +69,6 @@ MsgC()
 
 CLOSE ALL
 return
-
-
 
 
 static function ApndInvItem(cIdRj, cIdRoba, cBrDok, nKolicina, cRbr)
@@ -126,11 +128,11 @@ O_FAKT
 O_FAKT_PRIPR
 O_ROBA
 
-cNoviBrDok := PADR( REPLICATE("0", gNumDio), 8 )
+cNoviBrDok := fakt_brojac(0)
 
 SELECT fakt
 SET ORDER TO TAG "1"
-HSEEK cIdRj+"IM"+cBrDok
+HSEEK cIdRj + "IM" + cBrDok
 
 do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
     nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
@@ -214,7 +216,7 @@ O_FAKT
 O_FAKT_PRIPR
 O_ROBA
 
-cNoviBrDok := PADR( REPLICATE( "0", gNumDio ), 8 )
+cNoviBrDok := fakt_brojac(0)
 
 SELECT fakt
 SET ORDER TO TAG "1"
@@ -406,18 +408,18 @@ endif
 if Pitanje(, "Zelite li dokument pretvoriti u " + _novi_tip + " ? (D/N)", "D" ) == "N"
 	return .f.
 endif
-         
+
 Box(, 5, 60 )
-            
-	_tip_dok := field->idtipdok
-    _br_dok := PADR( REPLICATE("0", 5 ), 8 )
-            
+
+	  _tip_dok := field->idtipdok
+    _br_dok := fakt_brojac(0)
+
     select fakt_pripr
-	PushWa()
+  	PushWa()
 
    	go top
     _t_rec := 0
-            
+
 	do while !EOF()
 
     	skip
@@ -511,9 +513,9 @@ local _vp_mp
 local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
-       
-_broj_dokumenta := PADR( REPLICATE( "0", 5 ), 8 )
-         
+
+_broj_dokumenta := fakt_brojac(0, datum_max)
+
 // sumirati stavke ?
 _sumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"
 

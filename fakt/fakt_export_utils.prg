@@ -58,7 +58,7 @@ local aRet := {}
 
 AADD( aRet, { "IDFIRMA", "C", 2, 0 })
 AADD( aRet, { "IDTIPDOK", "C", 2, 0 })
-AADD( aRet, { "BRDOK", "C", 8, 0 })
+AADD( aRet, { "BRDOK", "C", FAKT_BRDOK_LENGTH, 0 })
 AADD( aRet, { "DATDOK", "D", 8, 0 })
 AADD( aRet, { "IDPARTNER", "C", 6, 0 })
 AADD( aRet, { "IDROBA", "C", 10, 0 })

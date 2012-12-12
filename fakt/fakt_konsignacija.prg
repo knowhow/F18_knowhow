@@ -56,7 +56,7 @@ RPar("c2",@dOd     )
       @ m_x+ 5,   m_y+2 SAY "Vrste dokumenata prodaje" GET qqTipDok
 
       @ m_x+ 7,   m_y+2 SAY "Konsignacija se vodi na RJ:" GET cIdRJ // P_RJ(@cIdRJ,7,35)
-      @ m_x+ 8,   m_y+2 SAY "Kome se fakturise (partner):" GET cIdKupac VALID P_Firma(@cIdKupac,8,39)
+      @ m_x+ 8,   m_y+2 SAY "Kome se fakturise (partner):" GET cIdKupac VALID P_Firma(@cIdKupac, 8, 39)
       @ m_x+ 9,   m_y+2 SAY "Datum konsignacionog racuna:" GET dDatDok
       @ m_x+10,   m_y+2 SAY "Napomena na kraju racuna(ID)" GET cFTXT
 

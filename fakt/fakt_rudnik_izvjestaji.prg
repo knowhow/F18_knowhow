@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fakt.ch"
-
 
 // -------------------------------------------------
 // specificne rudnik opcije
@@ -35,7 +33,6 @@ AADD( _opcexe,{|| rpt_sp_pregled_poreza()})
 f18_menu("rizv", .f., _izbor, _opc, _opcexe )
 
 return
-
 
 // -------------------------------------------------
 // isporuceni asortiman po kupcima i asortimanu

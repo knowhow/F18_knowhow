@@ -343,7 +343,7 @@ return nCijena
 static function _set_brdok( cIdRj, cTip, cBroj )
 
 // daj novi broj fakture....
-cBroj := PADR( REPLICATE( "0", gNumDio ), 8 )
+cBroj := fakt_brojac(0)
 
 return .t.
 
@@ -445,7 +445,7 @@ DO WHILE .T.
 		LOOP
 	ENDIF
 
-    	select FAKT
+  select FAKT
 	seek cIdRj + cTipFakt + cBrFakt
     	
 	if Found()

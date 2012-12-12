@@ -116,7 +116,7 @@ return
 static function _g_fields()
 local aDbf := {}
 
-AADD( aDbf, { "brdok", "C", 8, 0 })
+AADD( aDbf, { "brdok", "C", FAKT_BRDOK_LENGTH, 0 })
 AADD( aDbf, { "rbr", "C", 3, 0 })
 AADD( aDbf, { "art_id", "C", 10, 0 })
 AADD( aDbf, { "art_naz", "C", 160, 0 })

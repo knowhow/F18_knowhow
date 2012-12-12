@@ -318,7 +318,7 @@ test_procedure_with_keystrokes({|| fakt_unos_dokumenta()},  gen_test_keystrokes(
 close all
 O_FAKT
 // rec_99 treba da sadrzi broj zapisa
-COUNT FOR (IdFirma == "99" .and. IdTipDok == "10" .and. brdok == PADR("77777", 8) ) TO _tmp
+COUNT FOR (IdFirma == "99" .and. IdTipDok == "10" .and. brdok == PADR("77777", 12) ) TO _tmp
 // setuj test var rec_99 sa _tmp 
 test_var("fakt_77", _tmp)
 

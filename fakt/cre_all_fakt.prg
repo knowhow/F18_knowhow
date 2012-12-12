@@ -11,8 +11,21 @@
 
 #include "fmk.ch"
 
-#command => IF_NOT_FILE_DBF_CREATE _created := .f. ;  if !FILE(f18_ime_dbf(_alias)) ;  DBCREATE2(_alias, aDbf);   _created := .t. ; end
-#command => IF_C_RESET_SEMAPHORE  if _created ; reset_semaphore_version(_table_name) ;  my_use(_alias);  use ; end
+#command IF_NOT_FILE_DBF_CREATE => _created := .f. ; 
+                                   ;if !FILE(f18_ime_dbf(_alias));
+                                   ;  DBCREATE2(_alias, aDbf);
+                                   ;   _created := .t. ;
+                                   ;else;
+                                   ;  my_use_semaphore_off();
+                                   ;  my_use(_alias);
+                                   ;  my_use_semaphore_on();
+                                   ;  if reccount() == 0;
+                                   ;       _created := .t.;
+                                   ;  end;
+                                   ;  use;
+                                   ;end
+
+#command IF_C_RESET_SEMAPHORE  => if _created ; reset_semaphore_version(_table_name) ;  my_use(_alias);  use ; end
 
 /* 
 
@@ -96,6 +109,8 @@ if ver["current"] > 00000 .and. ver["current"] < 00900
     })
   next
 endif
+
+
 
 IF_C_RESET_SEMAPHORE
 
@@ -185,6 +200,14 @@ if ver["current"] < 0500
     modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
 endif
 
+// 0.09.01
+if ver["current"] > 00000 .and. ver["current"] < 00901
+  for each _tbl in { "fakt_doks" }
+   modstru( {"*" + _tbl, ;
+       "D DOK_VEZA C 150 0"  ;
+  })
+  next
+endif
 
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok", _alias)
 CREATE_INDEX("2", "IdFirma+idtipdok+partner", _alias)
@@ -223,8 +246,6 @@ _alias := "FAKT_PRIPR_ATRIB"
 _table_name := "fakt_pripr_atributi"
 
 IF_NOT_FILE_DBF_CREATE
-
-IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1", "idfirma + idtipdok + brdok + rbr + atribut", _alias )
 

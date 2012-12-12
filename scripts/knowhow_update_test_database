@@ -50,7 +50,7 @@ function install_pkg_exe {
 if [[ ! -f ${KNOWHOW_DIR}/${ART_PKG_EXE} ]]; then
 
 
-  echo nema $KNOWHOW_DIR/$ART_PKG_EXE
+  echo "nema $KNOWHOW_DIR/$ART_PKG_EXE"
 
   ARTIFAKT=$ART_PKG_EXE
   artifakt_last_version $CMD_ARG
@@ -66,8 +66,6 @@ if [[ ! -f ${KNOWHOW_DIR}/${ART_PKG_EXE} ]]; then
     ERR="WGET1"
     ne_valja 
   fi
-
-
 
   cd $TMP/
   cp $DOWNLOAD_DIR/$PACKAGE .
@@ -134,7 +132,8 @@ PKG_FILE="${ARTIFAKT}_${ARTIFAKT_VER}.${ARTIFAKT_EXT}"
 # u home direktoriju se ocekuje 
 FULL_PKG_FILE="$HOME/${PKG_FILE}"
 
-if [ ! -f $FULL_PKG_FILE ]; then
+if [ ! -f "$FULL_PKG_FILE" ]; then
+    echo "vrsim download ne postoji $FULL_PKG_FILE"
     cd $DOWNLOAD_DIR
     CMD="${WGET_CMD} ${GCODE_URL_F18}/${PKG_FILE}"
     echo "cmd=", $CMD
@@ -142,7 +141,7 @@ if [ ! -f $FULL_PKG_FILE ]; then
     FULL_PKG_FILE=$PKG_FILE
 fi
 
-install_pkg_exe
+#install_pkg_exe
 
 
 CMD="$ART_PKG_EXE -databaseURL=PSQL7://${HOST}:${PORT}/${TEST_DB}  -username=${USER} -passwd=${PGPASSWORD} -debug -file=${FULL_PKG_FILE} -autorun"

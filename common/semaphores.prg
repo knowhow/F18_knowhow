@@ -391,13 +391,12 @@ endif
 
 _table_obj := _sql_query( _server, _qry )
 
-log_write( "table: " + table + " count = " + ALLTRIM(STR( _table_obj:Fieldget(1))) , 8 )
-
 IF VALTYPE(_table_obj) == "L" 
     log_write( "table_count(), error: " + _qry, 1 )
     QUIT_1
 ENDIF
 
+log_write( "table: " + table + " count = " + ALLTRIM(STR( _table_obj:Fieldget(1))) , 8 )
 _result := _table_obj:Fieldget(1)
 
 RETURN _result

@@ -50,7 +50,7 @@ $ ./F18
 
 ### 2) Publish migracijsku skriptu na "knowhow-erp-f18 downloads"
 
-publish na (google code](http://code.google.com/p/knowhow-erp-f18/downloads/list?can=2&q=db+migrate) aktuelnu verziju:
+publish na [google code f18 db migrate](http://code.google.com/p/knowhow-erp-f18/downloads/list?can=2&q=db+migrate) aktuelnu verziju:
 
     http://code.google.com/p/knowhow-erp-f18/downloads/detail?name=f18_db_migrate_package_4.5.2.gz
 

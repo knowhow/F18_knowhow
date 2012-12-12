@@ -1,3 +1,7 @@
+1.4.38 2012-12-11, hernad
+
+ - fakt objekti, idrnal ciscenje
+
 1.4.37 2012-12-11, vsasa
 
   - fakt, objekti [#29724](http://redmine.bring.out.ba/issues/29724)

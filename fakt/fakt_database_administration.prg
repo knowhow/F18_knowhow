@@ -357,16 +357,11 @@ do while !EOF()
     endif
 
     if _regen_objekat_id == "D"
-        // setuj 20-ti clan matrice...
-        if fakt_fakt->idrnal <> 0
-
             _update_fakt := .t.
 
             _memo[20] := PADR( fakt_fakt->idrnal, 10 )
             // pripremi mi sada txt polje
             _rec_fakt["txt"] := fakt_memo_field_to_txt( _memo )
-
-        endif
     endif
 
     // napravi update zapisa fakt_doks

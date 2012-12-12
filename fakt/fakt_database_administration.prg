@@ -254,7 +254,7 @@ return
 
 // --------------------------------------------------
 // generisanje podataka za polja dat_isp, dat_otpr
-// konverzija polja idradnal -> memo
+// konverzija polja idrnal -> memo (objekat_id)
 // --------------------------------------------------
 static function fakt_konvert_doks_fakt()
 local _r_br, _id_rad_nal
@@ -263,7 +263,7 @@ local _count, _id_firma, _tip_dok, _br_dok
 local _rec_fakt, _rec_doks
 local _x := 1
 local _regen_dat := "N"
-local _regen_radnal := "N"
+local _regen_objekat_id := "N"
 
 if !SigmaSif("REGEN")
     return 
@@ -277,12 +277,12 @@ Box(, 5, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Regeneracija datuma otpreme (D/N) ?" GET _regen_dat ;
             VALID _regen_dat $ "DN" PICT "@!"
-    
+
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Konverzija polja idradnal (D/N) ?" GET _regen_radnal ;
-            VALID _regen_radnal $ "DN" PICT "@!"
-    
+    @ m_x + _x, m_y + 2 SAY "Postavljanje polja objekat_id iz idrnal (D/N) ?" GET _regen_objekat_id ;
+            VALID _regen_objekat_id $ "DN" PICT "@!"
+
     read
 
 BoxC()
@@ -323,7 +323,7 @@ Box(, 3, 60 )
 @ m_x + 1, m_y + 2 SAY "konverzija u toku..."
 
 do while !EOF()
-    
+
     _update_doks := .f.
     _update_fakt := .f.
 
@@ -334,57 +334,49 @@ do while !EOF()
     select fakt
     set order to tag "1"
     go top
-    seek ( _id_firma + _tip_dok + _br_dok )
-    
-    if !FOUND()
+    seek ( _id_firma + _tip_dok + _br_dok + "  1" )
 
-        // nisam pronasao zapis...
+    if !FOUND()
         select fakt_doks
         skip
         loop
-
     endif
 
     _rec_fakt := dbf_get_rec()
     _memo := ParsMemo( field->txt )
-    
+
     select fakt_doks
     _rec_doks := dbf_get_rec()
 
     if _regen_dat == "D"
-
         _update_doks := .t.
-
         _rec_doks["dat_otpr"] := IF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
         _rec_doks["dat_isp"] := IF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
         _rec_doks["dat_val"] := IF( LEN( _memo ) >= 9, CTOD( _memo[9] ), CTOD("") )
 
     endif
 
-    if _regen_radnal == "D"
-        
+    if _regen_objekat_id == "D"
         // setuj 20-ti clan matrice...
-        if fakt_doks->(FieldPOS("idradnal")) <> 0
+        if fakt_fakt->idrnal <> 0
 
             _update_fakt := .t.
 
-            _memo[20] := PADR( fakt_doks->idradnal, 10 )
-
+            _memo[20] := PADR( fakt_fakt->idrnal, 10 )
             // pripremi mi sada txt polje
             _rec_fakt["txt"] := fakt_memo_field_to_txt( _memo )
 
         endif
-
     endif
 
     // napravi update zapisa fakt_doks
     if _update_doks
-        update_rec_server_and_dbf( "fakt_doks", 1, _rec_doks, "CONT" )
+        update_rec_server_and_dbf( "fakt_doks", _rec_doks, 1, "CONT" )
     endif
 
     // napravi update zapisa fakt_fakt
     if _update_fakt
-        update_rec_server_and_dbf( "fakt_fakt", 1, _rec_fakt, "CONT" )
+        update_rec_server_and_dbf( "fakt_fakt", _rec_fakt, 1, "CONT" )
     endif
 
     ++ _count
@@ -402,8 +394,6 @@ sql_table_update( nil, "END" )
 BoxC()
 
 return
-
-
 
 
 // ---------------------------------------

@@ -8,7 +8,7 @@ Nakon upgrade-a db-a potrebno je osvježiti test/data/f18_test.sql
 
 (na osnovu LATEST_VERSIONS)
 
-$ scripts/knowhow_update_test_database
+$ `scripts/knowhow_update_test_database` # moze se kao argument skript navesti verzija npr. `4.5.9`
 
         12.03.2012, 1.0.0, hernad@bring.out.ba
         f18_db_migrate_package 4.5.2 gz,  ver= 4.5.2, ext= gz

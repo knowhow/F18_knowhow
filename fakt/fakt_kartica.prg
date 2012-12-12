@@ -52,7 +52,7 @@ PRIVATE dDatDo:=date()
 private cPPartn:="N"
 
 if _params["fakt_objekti"]
-	cRadniNalog := SPACE(10)
+	_objekat_id := SPACE(10)
 endif
 
 _c1:=_c2:=_c3:=SPACE(20)
@@ -131,7 +131,7 @@ else
 endif
 
 if _params["fakt_objekti"]
-  	@ m_x+16,m_y+2 SAY "Uslov po objektima (prazno-svi)" get cRadniNalog valid EMPTY(cRadniNalog) .or. P_fakt_objekti(@cRadniNalog)
+  	@ m_x+16,m_y+2 SAY "Uslov po objektima (prazno-svi)" get _objekat_id valid EMPTY(_objekat_id) .or. P_fakt_objekti(@_objekat_id)
 endif
 
 IF lPoNarudzbi
@@ -218,8 +218,8 @@ cFilt1 += IF( EMPTY( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) 
 cFilt1 += IF( EMPTY( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
 
 // hendliranje objekata
-if _params["fakt_objekti"] .and. !EMPTY(cRadniNalog)
-	cFilt1 += ".and. get_fakt_objekat_id() == " + _filter_quote( cRadniNalog )
+if _params["fakt_objekti"] .and. !EMPTY(_objekat_id)
+	cFilt1 += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
 endif
 
 if lPoNarudzbi .and. aUslN<>".t."
@@ -255,14 +255,14 @@ if !empty(qqRoba)
  endif
 endif
 
-if _params["fakt_objekti"] .and. !EMPTY(cRadniNalog)
+if _params["fakt_objekti"] .and. !EMPTY(_objekat_id)
 	? SPACE(gnLMarg)
-	?? "Uslov za objekat: ", ALLTRIM(cRadniNalog), get_fakt_objekat_naz(cRadniNalog)
+	?? "Uslov za objekat: ", ALLTRIM(_objekat_id), fakt_objekat_naz(_objekat_id)
 endif
 
 ?
 if cTipVPC=="2" .and.  roba->(fieldpos("vpc2")<>0)
-  ? space(gnlmarg); ?? "U CJENOVNIKU SU PRIKAZANE CIJENE: "+cTipVPC
+  ? space(gnlmarg); ?? "U CJENOVNIKU SU PRIKAZANE CIJENE: " + cTipVPC
 endif
 if !empty(cK1)
   ?

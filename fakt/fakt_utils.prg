@@ -37,14 +37,12 @@ return nRet
 // --------------------------------------------------
 // Vraca naziv objekta
 // --------------------------------------------------
-function get_fakt_objekat_naz( id_obj )
-local _t_arr := SELECT()
+function fakt_objekat_naz( id_obj )
 local _ret := ""
 
-select (F_FAKT_OBJEKTI)
-if !USED()
-    O_FAKT_OBJEKTI
-endif
+PushWa()
+
+O_FAKT_OBJEKTI
 
 select fakt_objekti
 set order to tag "ID"
@@ -54,9 +52,7 @@ if FOUND()
     _ret := ALLTRIM( field->naz )
 endif
 
-use
-select ( _t_arr )
-
+PopWa()
 return _ret
 
 
@@ -66,39 +62,43 @@ return _ret
 // ako se zadaje bez parametara pretpostavlja se da je 
 // napravljena tabela relacije fakt_doks->fakt
 // --------------------------------------------------
-function get_fakt_objekat_id( id_firma, tip_dok, br_dok )
-local _t_arr := SELECT()
+function fakt_objekat_id( idfirma, idtipdok, brdok )
 local _ret := ""
 local _memo
 
-if PCOUNT() > 0
+PushWa()
 
-    select ( F_FAKT )
-
-    if !Used()
-        O_FAKT
-    endif
-    
-    // pozicioniraj se na stavku broj 1
-    select fakt
-    set order to tag "1"
-    go top
-    seek id_firma + tip_dok + br_dok
-    
-    if !FOUND()
-        return _ret
-    endif
-
+if idfirma == NIL
+  idfirma = field->idfirma
+  idtipdok = field->idtipdok
+  brdok = field->brdok
 endif
+
+
+select ( F_FAKT )
+
+if !Used()
+   O_FAKT
+endif
+
+select fakt
+set order to tag "1"
+go top
+seek idfirma + idtipdok + brdok + "  1"
+
+if !FOUND()
+    _ret := SPACE(10)
+
+else
 
 // to se krije kao 20 clan matrice
 _memo := ParsMemo( fakt->txt )
 
 if LEN( _memo ) >= 20
-    _ret := _memo[20]
+    _ret := PADR(_memo[20], 10)
 endif
 
-select ( _t_arr )
+PopWa()
 
 return _ret
 

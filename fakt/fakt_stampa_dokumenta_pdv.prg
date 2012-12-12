@@ -568,7 +568,7 @@ add_drntext("D08", cDestinacija)
 // objekakt
 if !EMPTY( cObjekti )
     add_drntext("O01", cObjekti )
-    add_drntext("O02", get_fakt_objekat_naz( cObjekti ) )
+    add_drntext("O02", fakt_objekat_naz( cObjekti ) )
 endif
 
 // tip dokumenta

@@ -15,7 +15,7 @@
 
 // ---------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------
-function stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, cRadniNalog, cImeKup, lOpcine, aUslOpc)
+function stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id, cImeKup, lOpcine, aUslOpc)
 local m, cDinDnem, cRezerv, nC, nIznos, nRab, nIznosD, nIznos3, nRabD, nRab3, nOsn_tot, nPDV_tot, nUkPDV_tot
 local gnLMarg := 0
 local nCol1 := 0
@@ -43,9 +43,9 @@ IspisFirme(cIdfirma)
 if !empty(qqTipDok)
     ?? SPACE(2), "za tipove dokumenta:", trim(qqTipDok)
 endif
-if _params["fakt_objekti"] .and. !Empty(cRadniNalog)
-    ?? SPACE(2), "uslov po objektu: ", TRIM(cRadniNalog)
-    ? get_fakt_objekat_naz(cRadniNalog)
+if _params["fakt_objekti"] .and. !Empty(objekat_id)
+    ?? SPACE(2), "uslov po objektu: ", TRIM(objekat_id)
+    ? fakt_objekat_naz(objekat_id)
 endif
 
 m := "----- -------- -- -- ---------"

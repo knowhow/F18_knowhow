@@ -191,7 +191,7 @@ if !EMPTY( cOpcina )
 endif
 
 if _objekti .and. !Empty(_objekat_id)
-    cFilter += ".and. get_fakt_objekat_id() == " + _filter_quote( _objekat_id )
+    cFilter += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
 endif
 
 if !EMPTY( cBrFakDok )

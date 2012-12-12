@@ -18,13 +18,13 @@ $ `scripts/knowhow_update_test_database` # moze se kao argument skript navesti v
 
 ### 2) update travis f81_test.sql
 
-$ scripts/update_travis_test_database 
+$ `scripts/update_travis_test_database` 
 
         brisem fmk.log tabelu
         DELETE 4
         dump f18_test
 
-Nakon ovoga obavit commit/push
+Nakon ovoga obaviti git commit/push F18_knowhow repozitorija.
 
 ## Dijagnoza
 

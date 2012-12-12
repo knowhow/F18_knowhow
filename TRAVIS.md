@@ -8,7 +8,7 @@ Nakon upgrade-a db-a potrebno je osvježiti test/data/f18_test.sql
 
 (na osnovu LATEST_VERSIONS)
 
-$ scripts/knowhow_update_test_database
+$ `scripts/knowhow_update_test_database` # moze se kao argument skript navesti verzija npr. `4.5.9`
 
         12.03.2012, 1.0.0, hernad@bring.out.ba
         f18_db_migrate_package 4.5.2 gz,  ver= 4.5.2, ext= gz
@@ -18,11 +18,15 @@ $ scripts/knowhow_update_test_database
 
 ### 2) update travis f81_test.sql
 
-$ scripts/update_travis_test_database 
+$ `scripts/update_travis_test_database` 
 
         brisem fmk.log tabelu
         DELETE 4
         dump f18_test
 
-Nakon ovoga obavit commit/push
+Nakon ovoga obaviti git commit/push F18_knowhow repozitorija.
+
+## Dijagnoza
+
+        psql -h localhost -U admin -W f18_test # password: admin
 

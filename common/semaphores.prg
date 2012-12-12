@@ -306,25 +306,21 @@ LOCAL _server := pg_server()
 _tbl := "fmk.semaphores_" + LOWER(table)
 _result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
 
-log_write( "reset semaphore table: " + table + ", poceo", 9 )
-
 if ( _result == 0 )
+    log_write( "reset semaphore " + _tbl + " insert ", 1 )
     _qry := "INSERT INTO " + _tbl + "(user_code, last_trans_version, version, algorithm) " + ;
                "VALUES(" + _sql_quote(_user)  + ", 0, -1, 'free')"
 else
+     log_write( "reset semaphore " + _tbl + " update ", 1 )
     _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote(_user) 
 endif
 
-log_write( "reset semaphore, set version = 1", 7 )
 _ret := _sql_query( _server, _qry )
 
-_qry := "SELECT version from " + _tbl + ;
-           " WHERE user_code =" + _sql_quote(_user) 
-
+_qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user) 
 _ret := _sql_query( _server, _qry )
 
 log_write( "reset semaphore, select version" + STR( _ret:Fieldget(1) ) , 7 )
-log_write( "reset semaphore, table: " + table + ", zavrsio", 9 )
 
 return _ret:Fieldget(1)
 

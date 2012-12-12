@@ -62,9 +62,11 @@ AADD(_opcexe,{|| if(SigmaSif(), Povrat_fakt_po_kriteriju(), nil)})
 AADD(_opc,"3. prekid rezervacije")
 AADD(_opcexe,{|| Povrat_fakt_dokumenta(.t.)})
 
+AADD( _opc, "A. administrativne opcije ")
+AADD( _opcexe, { || fakt_admin_menu() } )
+
 AADD(_opc,"B. podesenje brojaca dokumenta")
 AADD(_opcexe,{|| fakt_set_param_broj_dokumenta()})
-
 
 f18_menu("ostop", .f., _izbor, _opc, _opcexe )
 

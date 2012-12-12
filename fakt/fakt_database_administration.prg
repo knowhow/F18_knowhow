@@ -13,50 +13,45 @@
 #include "fakt.ch"
 
 function fakt_admin_menu()
-private opc
-private opcexe
-private Izbor
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-opc:={}
-opcexe:={}
-Izbor:=1
+AADD( _opc, "1. regeneracija fakt memo polja                     ")
+AADD( _opcexe, {|| fa_memo_regen() } )
+AADD( _opc, "2. regeneracija polja fakt->rbr")
+AADD( _opcexe, {|| fa_rbr_regen() } )
+AADD( _opc, "3. konverzija fakt_fakt/fakt_doks polja" )
+AADD( _opcexe, {|| fakt_konvert_doks_fakt() } )
+AADD( _opc, "4. regeneracija doks iznos ukupno")
+AADD( _opcexe, {|| do_uk_regen() } )
+AADD( _opc, "5. kontrola duplih partnera")
+AADD( _opcexe, {|| chk_dpartn() } )
+AADD( _opc, "6. podesavanje brojaca dokumenta ")
+AADD( _opcexe, {|| fakt_set_param_broj_dokumenta() } )
+AADD( _opc, "E. fakt export (r_exp) ")
+AADD( _opcexe, {|| fkt_export() } )
 
-AADD(opc, "1. skip speed db-a                              ")
-AADD(opcexe, {|| SpeedSkip()}) 
-AADD(opc, "2. regeneracija fakt memo polja")
-AADD(opcexe, {|| fa_memo_regen()})
-AADD(opc, "3. regeneracija polja fakt->rbr")
-AADD(opcexe, {|| fa_rbr_regen()})
-AADD(opc, "4. regeneracija polja idpartner")
-AADD(opcexe, {|| fa_part_regen()})
-AADD(opc, "5. generisanja datuma otpr. isp.")
-AADD(opcexe, {|| gen_dotpr()})
-AADD(opc, "6. regeneracija doks iznos ukupno")
-AADD(opcexe, {|| do_uk_regen()})
-AADD(opc, "7. kontrola duplih partnera")
-AADD(opcexe, {|| chk_dpartn()})
-AADD(opc, "B. podesavanje brojaca dokumenta ")
-AADD(opcexe, {|| fakt_set_param_broj_dokumenta()})
-AADD(opc, "E. fakt export (r_exp) ")
-AADD(opcexe, {|| fkt_export()})
-
-Menu_SC("fain")
+f18_menu("fain", .f., _izbor, _opc, _opcexe )
 
 return
 
+
+
 // regeneracija rednih brojeva u tabeli fakt
-function fa_rbr_regen()
+static function fa_rbr_regen()
 local nCounter
 local cOldRbr
 local cNewRbr
 local nTotRecord
+local _rec
 
 if !SigmaSif("RBRREG")
-	return
+    return
 endif
 
 if Pitanje(,"Izvrsiti regeneraciju rednih brojeva (D/N)","N") == "N"
-	return
+    return
 endif
 
 O_FAKT
@@ -74,18 +69,19 @@ nTotRecord := RecCount()
 
 do while !EOF()
 
-	cOldRbr := field->rbr
-	cNewRbr := PADL(ALLTRIM(cOldRbr), 3)
+    cOldRbr := field->rbr
+    cNewRbr := PADL(ALLTRIM(cOldRbr), 3)
 
-	Scatter()
-	_rbr := cNewRbr
-	Gather()
+    _rec := dbf_get_rec()
+    _rec["rbr"] := cNewRbr
 
-	++nCounter
+    update_rec_server_and_dbf( "fakt_fakt", 1, _rec, "FULL")
 
-	@ m_x+3, m_y+2 SAY "obradjeno zapisa: " + ALLTRIM(STR(nCounter))
-	
-	skip
+    ++nCounter
+
+    @ m_x+3, m_y+2 SAY "obradjeno zapisa: " + ALLTRIM(STR(nCounter))
+    
+    skip
 enddo
 
 BoxC()
@@ -96,7 +92,7 @@ return
 // --------------------------------------------------
 // regeneracija polja ukupno u tabeli doks
 // --------------------------------------------------
-function do_uk_regen()
+static function do_uk_regen()
 local cD_firma
 local cD_tdok
 local cD_brdok
@@ -109,16 +105,17 @@ local nRabat
 local nStavka
 local nStRabat
 local nStPorez
+local _rec
 
 O_FAKT
 O_FAKT_DOKS
 
 if !SigmaSif("REGEN")
-	return 
+    return 
 endif
 
 if Pitanje(,"Izvrsiti regeneraciju (D/N)?","N") == "N"
-	return
+    return
 endif
 
 select fakt_doks
@@ -132,121 +129,123 @@ Box(,3, 60)
 @ 1 + m_x, 2 + m_y SAY "popunjavanje polja u toku..."
 
 do while !EOF()
-	
-	cD_firma := field->idfirma
-	cD_tdok := field->idtipdok
-	cD_brdok := field->brdok
+    
+    cD_firma := field->idfirma
+    cD_tdok := field->idtipdok
+    cD_brdok := field->brdok
 
-	// trenutno nam treba samo za dokumente "20"
-	if cD_tdok <> "20" .and. cD_tdok <> "10"
-		skip
-		loop
-	endif
+    // trenutno nam treba samo za dokumente "20"
+    if cD_tdok <> "20" .and. cD_tdok <> "10"
+        skip
+        loop
+    endif
 
-	select fakt
-	set order to tag "1"
-	go top
-	seek ( cD_firma + cD_tdok + cD_brdok )
+    select fakt
+    set order to tag "1"
+    go top
+    seek ( cD_firma + cD_tdok + cD_brdok )
 
-	nTotal := 0
-	nRabat := 0
-	nStavka := 0
-	nStPorez := 0
-	nStRabat := 0
+    nTotal := 0
+    nRabat := 0
+    nStavka := 0
+    nStPorez := 0
+    nStRabat := 0
 
-	do while !EOF() .and. field->idfirma + field->idtipdok + ;
-		field->brdok == cD_firma + cD_tdok + cD_brdok
-	
-		// ukini polje poreza
-		if field->porez <> 0
-			replace field->porez with 0
-		endif
+    do while !EOF() .and. field->idfirma + field->idtipdok + ;
+        field->brdok == cD_firma + cD_tdok + cD_brdok
+    
+        // ukini polje poreza
+        if field->porez <> 0
+            replace field->porez with 0
+        endif
 
-    		if field->dindem == LEFT(ValBazna(), 3)
-        		
-			nStavka := Round( field->kolicina * ;
-				field->cijena * PrerCij() * ;
-				(1 - field->Rabat/100), ZAOKRUZENJE )
-        	
-			// rabat
-        		nStRabat := ROUND( field->kolicina * ;
-				field->cijena * PrerCij() * ;
-				(field->rabat / 100), ZAOKRUZENJE)
-        		
-			// porez
-        		nStPorez := ROUND( nStavka * (field->porez / 100), ;
-				ZAOKRUZENJE )
+            if field->dindem == LEFT(ValBazna(), 3)
+                
+            nStavka := Round( field->kolicina * ;
+                field->cijena * PrerCij() * ;
+                (1 - field->Rabat/100), ZAOKRUZENJE )
+            
+            // rabat
+                nStRabat := ROUND( field->kolicina * ;
+                field->cijena * PrerCij() * ;
+                (field->rabat / 100), ZAOKRUZENJE)
+                
+            // porez
+                nStPorez := ROUND( nStavka * (field->porez / 100), ;
+                ZAOKRUZENJE )
 
-			nTotal += nStavka + nStPorez
-			nRabat += nStRabat
-    		else
-        		
-			nStavka := round( field->kolicina * ;
-				field->cijena * ;
-				(PrerCij() / UBaznuValutu(datdok)) * ;
-				(1-field->Rabat/100), ZAOKRUZENJE)
-        		
-			// rabat
-        		nStRabat := ROUND( field->kolicina * ;
-				field->cijena * ;
-				( PrerCij() / UBaznuValutu(datdok)) * ;
-				(field->Rabat/100), ZAOKRUZENJE)
-        		// porez
-        		nStPorez := ROUND(nStavka * ;
-				(field->porez/100), ZAOKRUZENJE)
-        		
-			nTotal += nStavka + nStPorez
-        		nRabat += nStRabat
+            nTotal += nStavka + nStPorez
+            nRabat += nStRabat
+            else
+                
+            nStavka := round( field->kolicina * ;
+                field->cijena * ;
+                (PrerCij() / UBaznuValutu(datdok)) * ;
+                (1-field->Rabat/100), ZAOKRUZENJE)
+                
+            // rabat
+                nStRabat := ROUND( field->kolicina * ;
+                field->cijena * ;
+                ( PrerCij() / UBaznuValutu(datdok)) * ;
+                (field->Rabat/100), ZAOKRUZENJE)
+                // porez
+                nStPorez := ROUND(nStavka * ;
+                (field->porez/100), ZAOKRUZENJE)
+                
+            nTotal += nStavka + nStPorez
+                nRabat += nStRabat
 
-    		endif
-    		skip
-  	enddo
+            endif
+            skip
+    enddo
   
-	select fakt_doks
+    select fakt_doks
 
-	// ubaci u tabelu doks ako je iznos razlicit
-	if ROUND(field->iznos, ZAOKRUZENJE) <> ROUND(nTotal, ZAOKRUZENJE)
-		// dodaj u kontrolnu matricu
-		AADD( aTest, { field->idfirma + "-" + ;
-				field->idtipdok + "-" + ;
-				ALLTRIM(field->brdok), ;
-				field->iznos, ;
-				nTotal } )
+    // ubaci u tabelu doks ako je iznos razlicit
+    if ROUND(field->iznos, ZAOKRUZENJE) <> ROUND(nTotal, ZAOKRUZENJE)
+        // dodaj u kontrolnu matricu
+        AADD( aTest, { field->idfirma + "-" + ;
+                field->idtipdok + "-" + ;
+                ALLTRIM(field->brdok), ;
+                field->iznos, ;
+                nTotal } )
 
-		replace field->iznos with nTotal
-		replace field->rabat with nRabat
-	endif
+        _rec := dbf_get_rec()
+        _rec["iznos"] := nTotal
+        _rec["rabat"] := nRabat
+        update_rec_server_and_dbf( "fakt_doks", 1, _rec, "FULL")
+    endif
 
-	++nCounter
+    ++nCounter
 
-	@ 3+m_x, 2+m_y SAY "odradjeno zapisa " + ALLTRIM(STR(nCounter)) 
+    @ 3+m_x, 2+m_y SAY "odradjeno zapisa " + ALLTRIM(STR(nCounter)) 
 
-	skip
+    skip
 
 enddo
 
 BoxC()
 
 if LEN( aTest ) > 0
-	// daj mi info o zamjenjenim iznosima
-	START PRINT CRET
-	
-	? "Iznosi zamjenjeni na sljedecim dokumentima:"
-	? "--------------------------------------------------------"
-	
-	nCnt := 1
+    // daj mi info o zamjenjenim iznosima
+    START PRINT CRET
+    
+    ? "Iznosi zamjenjeni na sljedecim dokumentima:"
+    ? "--------------------------------------------------------"
+    
+    nCnt := 1
 
-	for i := 1 to LEN( aTest )
-		? PADL( ALLTRIM( STR(nCnt) ), 5) + ".", ;
-			aTest[i, 1], ;
-			ROUND( aTest[i, 2], ZAOKRUZENJE), ;
-			"=>", ;
-			ROUND( aTest[i, 3], ZAOKRUZENJE)
-		++ nCnt
-	next
+    for i := 1 to LEN( aTest )
+        ? PADL( ALLTRIM( STR(nCnt) ), 5) + ".", ;
+            aTest[i, 1], ;
+            ROUND( aTest[i, 2], ZAOKRUZENJE), ;
+            "=>", ;
+            ROUND( aTest[i, 3], ZAOKRUZENJE)
+        ++ nCnt
+    next
 
-	FF
-	END PRINT
+    FF
+    END PRINT
 endif
 
 return
@@ -255,67 +254,150 @@ return
 
 // --------------------------------------------------
 // generisanje podataka za polja dat_isp, dat_otpr
+// konverzija polja idradnal -> memo
 // --------------------------------------------------
-function gen_dotpr()
-local cRbr
-local aMemo
-local cD_firma
-local cD_tdok
-local cD_brdok
-local nCounter
+static function fakt_konvert_doks_fakt()
+local _r_br, _id_rad_nal
+local _memo, _update_doks, _update_fakt
+local _count, _id_firma, _tip_dok, _br_dok
+local _rec_fakt, _rec_doks
+local _x := 1
+local _regen_dat := "N"
+local _regen_radnal := "N"
+
+if !SigmaSif("REGEN")
+    return 
+endif
+
+Box(, 5, 60 )
+
+    @ m_x + _x, m_y + 2 SAY "Regeneracija fakt podataka *****" 
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Regeneracija datuma otpreme (D/N) ?" GET _regen_dat ;
+            VALID _regen_dat $ "DN" PICT "@!"
+    
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Konverzija polja idradnal (D/N) ?" GET _regen_radnal ;
+            VALID _regen_radnal $ "DN" PICT "@!"
+    
+    read
+
+BoxC()
+
+// zadnja sansa za izlazak iz opcije
+if LastKey() == K_ESC .or. Pitanje(, "Izvrsiti regeneraciju/konverziju podataka (D/N) ?","N" ) == "N"
+    return
+endif
 
 O_FAKT
 O_FAKT_DOKS
-
-if fakt_doks->(FIELDPOS("dat_isp")) = 0
-	msgbeep("potrebna modifikacija struktura !")
-	return
-endif
-
-if !SigmaSif("REGEN")
-	return 
-endif
-
-if Pitanje(,"Izvrsiti regeneraciju (D/N)?","N") == "N"
-	return
-endif
 
 select fakt_doks
 set order to tag "1"
 go top
 
-nCounter := 0
+_count := 0
 
-Box(,3, 60)
+if !f18_lock_tables( { "fakt_fakt", "fakt_doks" } )
 
-@ 1 + m_x, 2 + m_y SAY "popunjavanje polja u toku..."
+    // neko je zauzeo...
+
+    select ( F_FAKT )
+    use
+
+    select ( F_FAKT_DOKS )
+    use
+
+    return
+
+endif
+   
+//--------
+sql_table_update( nil, "BEGIN" )
+
+Box(, 3, 60 )
+
+@ m_x + 1, m_y + 2 SAY "konverzija u toku..."
 
 do while !EOF()
-	
-	cD_firma := field->idfirma
-	cD_tdok := field->idtipdok
-	cD_brdok := field->brdok
+    
+    _update_doks := .f.
+    _update_fakt := .f.
 
-	select fakt
-	set order to tag "1"
-	go top
-	seek ( cD_firma + cD_tdok + cD_brdok )
- 	
-	aMemo := ParsMemo( field->txt )
-	
-	select fakt_doks
-	
-	replace field->dat_otpr with IF(LEN(aMemo)>=7, CTOD(aMemo[7]), CTOD(""))
-	replace field->dat_isp with IF(LEN(aMemo)>=7, CTOD(aMemo[7]), CTOD(""))
-	replace field->dat_val with IF(LEN(aMemo)>=9, CTOD(aMemo[9]), CTOD(""))
+    _id_firma := field->idfirma
+    _tip_dok := field->idtipdok
+    _br_dok := field->brdok
 
-	++nCounter
+    select fakt
+    set order to tag "1"
+    go top
+    seek ( _id_firma + _tip_dok + _br_dok )
+    
+    if !FOUND()
 
-	@ 3+m_x, 2+m_y SAY "odradjeno zapisa " + ALLTRIM(STR(nCounter)) 
+        // nisam pronasao zapis...
+        select fakt_doks
+        skip
+        loop
 
-	skip
+    endif
+
+    _rec_fakt := dbf_get_rec()
+    _memo := ParsMemo( field->txt )
+    
+    select fakt_doks
+    _rec_doks := dbf_get_rec()
+
+    if _regen_dat == "D"
+
+        _update_doks := .t.
+
+        _rec_doks["dat_otpr"] := IF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
+        _rec_doks["dat_isp"] := IF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
+        _rec_doks["dat_val"] := IF( LEN( _memo ) >= 9, CTOD( _memo[9] ), CTOD("") )
+
+    endif
+
+    if _regen_radnal == "D"
+        
+        // setuj 20-ti clan matrice...
+        if fakt_doks->(FieldPOS("idradnal")) <> 0
+
+            _update_fakt := .t.
+
+            _memo[20] := PADR( fakt_doks->idradnal, 10 )
+
+            // pripremi mi sada txt polje
+            _rec_fakt["txt"] := fakt_memo_field_to_txt( _memo )
+
+        endif
+
+    endif
+
+    // napravi update zapisa fakt_doks
+    if _update_doks
+        update_rec_server_and_dbf( "fakt_doks", 1, _rec_doks, "CONT" )
+    endif
+
+    // napravi update zapisa fakt_fakt
+    if _update_fakt
+        update_rec_server_and_dbf( "fakt_fakt", 1, _rec_fakt, "CONT" )
+    endif
+
+    ++ _count
+
+    @ m_x + 3, m_y + 2 SAY "odradjeno zapisa " + ALLTRIM( STR( _count ) ) 
+
+    skip
 
 enddo
+
+f18_free_tables( { "fakt_fakt", "fakt_doks" } )
+
+sql_table_update( nil, "END" )
 
 BoxC()
 
@@ -327,17 +409,17 @@ return
 // ---------------------------------------
 // regeneracija polja FAKT-TXT
 // ---------------------------------------
-function fa_memo_regen()
+static function fa_memo_regen()
 local cRbr
 local cPartn
 local dDatPl
 
 if !SigmaSif("MEMREG")
-	return 
+    return 
 endif
 
 if Pitanje(,"Izvrsiti regeneraciju (D/N)?","N") == "N"
-	return
+    return
 endif
 
 O_FAKT
@@ -356,68 +438,71 @@ Box(,3, 60)
 @ 1+m_x, 2+m_y SAY "regeneracija memo polja u toku..."
 
 do while !EOF()
-	
-	// provjeri prvo polje rbr
-	if ( field->rbr <> cRbr )
-		skip
-		loop
-	endif
-	
-	// provjeri i LEN txt polja, ako je > 10 onda je ok
-	if LEN(field->txt) > 10
-		skip
-		loop
-	endif
-	
-	cPartn := fakt->idpartner
-	dDatDok := fakt->datdok
-	
-	// pozicioniraj se na partnera
-	select partn
-	hseek cPartn
+    
+    // provjeri prvo polje rbr
+    if ( field->rbr <> cRbr )
+        skip
+        loop
+    endif
+    
+    // provjeri i LEN txt polja, ako je > 10 onda je ok
+    if LEN(field->txt) > 10
+        skip
+        loop
+    endif
+    
+    cPartn := fakt->idpartner
+    dDatDok := fakt->datdok
+    
+    // pozicioniraj se na partnera
+    select partn
+    hseek cPartn
 
-	// prebaci se na doks radi datuma placanja
-	select fakt_doks
-	set order to tag "1"
-	hseek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	dDatPl := fakt_doks->datpl
-	
-	select fakt
-	
-	// odradi regeneraciju polja
-	Scatter()
+    // prebaci se na doks radi datuma placanja
+    select fakt_doks
+    set order to tag "1"
+    hseek fakt->idfirma + fakt->idtipdok + fakt->brdok
+    dDatPl := fakt_doks->datpl
+    
+    select fakt
+    
+    // odradi regeneraciju polja
+    _rec := dbf_get_rec()
 
-	// roba // ovo je za roba U
-	_txt := Chr(16) + Chr(17)
+    // roba // ovo je za roba U
+    _txt := Chr(16) + Chr(17)
         // dodatni tekst fakture // nemamo ga
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + ALLTRIM(partn->naz) + Chr(17)
-	_txt += Chr(16) + ALLTRIM(partn->adresa) + ", Tel:" + ALLTRIM(partn->telefon) + Chr(17) 
-	_txt += Chr(16) + ALLTRIM(partn->ptt) + " " + ALLTRIM(partn->mjesto) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + ALLTRIM(partn->naz) + Chr(17)
+    _txt += Chr(16) + ALLTRIM(partn->adresa) + ", Tel:" + ALLTRIM(partn->telefon) + Chr(17) 
+    _txt += Chr(16) + ALLTRIM(partn->ptt) + " " + ALLTRIM(partn->mjesto) + Chr(17)
         // broj otpremnice - nemamo ga
-	_txt += Chr(16) + Chr(17) 
+    _txt += Chr(16) + Chr(17) 
         // datum otpremnice
-	_txt += Chr(16) + DToC(dDatDok) + Chr(17)
+    _txt += Chr(16) + DToC(dDatDok) + Chr(17)
         // broj narudzbenice - nemamo ga
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + DToC(dDatPl) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	_txt += Chr(16) + Chr(17)
-	
-	Gather()
-	
-	++nCounter
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + DToC(dDatPl) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    _txt += Chr(16) + Chr(17)
+    
+    _rec["txt"] := _txt
 
-	@ 3+m_x, 2+m_y SAY "odradjeno zapisa " + ALLTRIM(STR(nCounter)) 
+    update_rec_server_and_dbf( "fakt_fakt", 1, _rec, "FULL" )
+    
+    ++nCounter
 
-	skip
+    @ 3+m_x, 2+m_y SAY "odradjeno zapisa " + ALLTRIM(STR(nCounter)) 
+
+    skip
 
 enddo
 
@@ -429,7 +514,7 @@ return
 // ------------------------------------------------------------
 // regeneracija / popunjavanje polja idpartner u tabeli fakt
 // ------------------------------------------------------------
-function fa_part_regen()
+static function fa_part_regen()
 local nCount
 local cIdFirma
 local cIdTipDok
@@ -439,7 +524,7 @@ local cMsg
 local lFaktOverwrite := .f.
 
 if !SigmaSif("PARREG")
-	return
+    return
 endif
 
 cMsg := "Prije pokretanja ove opcije#!!! OBAVEZNO !!! napraviti backup podataka"
@@ -447,12 +532,12 @@ cMsg := "Prije pokretanja ove opcije#!!! OBAVEZNO !!! napraviti backup podataka"
 msgbeep(cMsg)
 
 if Pitanje(,"Izvrsiti popunjavanje partnera u dokumentima (D/N)","N") == "N"
-	return
+    return
 endif
 
 
 if Pitanje(,"Prepisati vrijednosti u tabeli FAKT (D/N)", "N") == "D"
-	lFaktOverwrite := .t.
+    lFaktOverwrite := .t.
 endif
 
 O_FAKT_DOKS
@@ -469,137 +554,61 @@ Box(,3,60)
 nCount := 0
 
 do while !EOF()
-	
-	cIdFirma := field->idfirma
-	cIdTipDok := field->idtipdok
-	cBrDok := field->brdok
-	cPartn := field->idpartner
+    
+    cIdFirma := field->idfirma
+    cIdTipDok := field->idtipdok
+    cBrDok := field->brdok
+    cPartn := field->idpartner
 
-	if lFaktOverwrite == .t. .or. EMPTY( cPartn )
-		
-		// pokusaj naci u DOKS
-		select fakt_doks
-		set order to tag "1"
-		seek cIdFirma + cIdTipDok + cBrDok
+    if lFaktOverwrite == .t. .or. EMPTY( cPartn )
+        
+        // pokusaj naci u DOKS
+        select fakt_doks
+        set order to tag "1"
+        seek cIdFirma + cIdTipDok + cBrDok
 
-		if FOUND()
-			if !EMPTY( field->idpartner )
-				
-				cPartn := field->idpartner
-			
-				@ m_x+2, m_y+2 SAY "*** uzeo iz DOKS -> " + cPartn
-	
-			endif
-		endif
-			
-		select fakt
-			
-	endif
+        if FOUND()
+            if !EMPTY( field->idpartner )
+                
+                cPartn := field->idpartner
+            
+                @ m_x+2, m_y+2 SAY "*** uzeo iz DOKS -> " + cPartn
+    
+            endif
+        endif
+            
+        select fakt
+            
+    endif
 
-	do while !EOF() .and. field->idfirma == cIdFirma ;
-			.and. field->idtipdok == cIdTipDok ;
-			.and. field->brdok == cBrDok
-	
-		
-		if (lFaktOverwrite == .t. .or. EMPTY( field->idpartner )) .and. !EMPTY( cPartn )
-		
-			++ nCount
-			
-			// upisi partnera
-			replace idpartner with cPartn
+    do while !EOF() .and. field->idfirma == cIdFirma ;
+            .and. field->idtipdok == cIdTipDok ;
+            .and. field->brdok == cBrDok
+    
+        
+        if (lFaktOverwrite == .t. .or. EMPTY( field->idpartner )) .and. !EMPTY( cPartn )
+        
+            ++ nCount
+        
+            _rec := dbf_get_rec()
+            _rec["idpartner"] := cPartn
+            update_rec_server_and_dbf( "fakt_fakt", 1, _rec, "FULL" )   
 
-			@ m_x+3, m_y+2 SAY "dok-> " + cIdFirma + "-" + ;
-				cIdTipDok + "-" + ALLTRIM(cBrDok)
-	
-		endif
-		
-		skip
-	enddo
-	
+            @ m_x+3, m_y+2 SAY "dok-> " + cIdFirma + "-" + ;
+                cIdTipDok + "-" + ALLTRIM(cBrDok)
+    
+        endif
+        
+        skip
+    enddo
+    
 enddo
 
 BoxC()
 
 if nCount > 0
-	msgbeep("Odradjeno " + ALLTRIM(STR(nCount)) + " zapisa !")
+    msgbeep("Odradjeno " + ALLTRIM(STR(nCount)) + " zapisa !")
 endif
-
-return
-
-
-// ----------------------------------------
-// regeneracija partnera
-// ----------------------------------------
-function fa_p_regen()
-local nPrefiks := 2
-local nLenMod := 4
-local cInsChar := "0"
-local lSilent := .t. 
-
-/*
-msgo("konverzija - tabela PARTN...")
-O_PARTN
-mod_f_val( "ID", "0", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-
-msgo("konverzija - tabela UGOV...")
-O_UGOV
-mod_f_val( "ID", "0", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-msgo("konverzija - tabela UGOV...")
-mod_f_val( "IDPARTNER", "0", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-
-msgo("konverzija - tabela RUGOV...")
-O_RUGOV
-mod_f_val( "ID", "0", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-
-msgo("konverzija - tabela GEN_UG_P...")
-O_G_UG_P
-mod_f_val( "ID_UGOV", "0", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-
-msgo("konverzija - tabela GEN_UG_P...")
-O_G_UG_P
-mod_f_val( "IDPARTNER", "0", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-
-msgo("konverzija - tabela DOKS...")
-O_FAKT_DOKS
-mod_f_val( "IDPARTNER", "1", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-
-msgo("konverzija - tabela FAKT...")
-O_FAKT
-mod_f_val( "IDPARTNER", "1", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-*/
-
-if pitanje(,"konvertovati partnere", "N") == "N"
-	return
-endif
-
-/*
-msgo("konverzija - tabela DEST...")
-O_DEST
-mod_f_val( "IDPARTNER", "1", cInsChar, nLenMod, nPrefiks, lSilent )
-msgc()
-
-msgo("konverzija - tabela SIFV...")
-
-O_SIFV
-cFilter := "ALLTRIM(id) == 'PARTN'"
-set filter to &cFilter
-go top
-
-mod_f_val( "IDSIF", "0", cInsChar, nLenMod, nPrefiks, lSilent )
-
-set filter to
-msgc()
-
-msgbeep("konverzija zavrsena !!!")
-*/
 
 return
 
@@ -620,43 +629,43 @@ go top
 Box(,1,50)
 
 do while !EOF()
-		
-	cId := field->id
-	cPNaz := field->naz
-	nCnt := 0
-	
-	@ m_x + 1, m_y + 2 SAY "partner: " + cId + " " + ;
-		PADR( cPNaz, 15 ) + " ..."
+        
+    cId := field->id
+    cPNaz := field->naz
+    nCnt := 0
+    
+    @ m_x + 1, m_y + 2 SAY "partner: " + cId + " " + ;
+        PADR( cPNaz, 15 ) + " ..."
 
-	do while !EOF() .and. field->id == cId
-		++ nCnt
-		skip
-	enddo
-	
-	if nCnt > 1
-		
-		select fakt_doks
-		go top
-		
-		do while !EOF()
-			
-			if field->idpartner == cId
-				
-				AADD( aPartn, { cId, PADR( cPNaz, 25), ;
-					fakt_doks->idfirma + ;
-					"-" + fakt_doks->idtipdok + ;
-					"-" + fakt_doks->brdok } )
-			endif
-			
-			skip
-		
-		enddo
+    do while !EOF() .and. field->id == cId
+        ++ nCnt
+        skip
+    enddo
+    
+    if nCnt > 1
+        
+        select fakt_doks
+        go top
+        
+        do while !EOF()
+            
+            if field->idpartner == cId
+                
+                AADD( aPartn, { cId, PADR( cPNaz, 25), ;
+                    fakt_doks->idfirma + ;
+                    "-" + fakt_doks->idtipdok + ;
+                    "-" + fakt_doks->brdok } )
+            endif
+            
+            skip
+        
+        enddo
 
-		select partn
-	else
-		select partn
-		skip
-	endif
+        select partn
+    else
+        select partn
+        skip
+    endif
 
 enddo
 
@@ -664,26 +673,26 @@ BoxC()
 
 if LEN( aPartn ) > 0
 
-	START PRINT CRET
-	P_COND
+    START PRINT CRET
+    P_COND
 
-	?
-	? "-------------------------------------------------"
-	? " partner (id/naz)                   dokument "
-	? "-------------------------------------------------"
-	?
+    ?
+    ? "-------------------------------------------------"
+    ? " partner (id/naz)                   dokument "
+    ? "-------------------------------------------------"
+    ?
 
-	for i:=1 to LEN( aPartn )
-		
-		// id partnera
-		? aPartn[i, 1]
-		// naziv partnera
-		@ prow(), pcol()+1 SAY aPartn[i, 2]
-		// dokument na kojem se pojavljuje
-		@ prow(), pcol()+1 SAY aPartn[i, 3]
-	next
+    for i:=1 to LEN( aPartn )
+        
+        // id partnera
+        ? aPartn[i, 1]
+        // naziv partnera
+        @ prow(), pcol()+1 SAY aPartn[i, 2]
+        // dokument na kojem se pojavljuje
+        @ prow(), pcol()+1 SAY aPartn[i, 3]
+    next
 
-	END PRINT
+    END PRINT
 endif
 
 return
@@ -725,38 +734,38 @@ __dat_otpr := CTOD( aTxt[7] )
 __dat_pl := CTOD( aTxt[9] )
 
 Box(, 10, 65 )
-	
-	@ m_x + nX, m_y + 2 SAY "*** korekcija podataka dokumenta"
+    
+    @ m_x + nX, m_y + 2 SAY "*** korekcija podataka dokumenta"
 
-	++ nX
-	++ nX
+    ++ nX
+    ++ nX
 
-	@ m_x + nX, m_y + 2 SAY "Partner:" GET __idpartn ;
-		VALID p_firma(@__idpartn)
+    @ m_x + nX, m_y + 2 SAY "Partner:" GET __idpartn ;
+        VALID p_firma(@__idpartn)
 
-	++ nX
-	@ m_x + nX, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr 
+    ++ nX
+    @ m_x + nX, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr 
 
-	++ nX
-	@ m_x + nX, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr 
-	
-	++ nX
-	@ m_x + nX, m_y + 2 SAY "  Datum placanja:" GET __dat_pl
-	
-	++ nX
-	@ m_x + nX, m_y + 2 SAY "        Narudzba:" GET __br_nar 
+    ++ nX
+    @ m_x + nX, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr 
+    
+    ++ nX
+    @ m_x + nX, m_y + 2 SAY "  Datum placanja:" GET __dat_pl
+    
+    ++ nX
+    @ m_x + nX, m_y + 2 SAY "        Narudzba:" GET __br_nar 
 
-	read
+    read
 BoxC()
 
 if LastKey() == K_ESC
-	select (nTArea)
-	return lRet
+    select (nTArea)
+    return lRet
 endif
 
 if Pitanje(,"Izvrsiti zamjenu podataka ? (D/N)", "D") == "N"
-	select (nTArea)
-	return lRet
+    select (nTArea)
+    return lRet
 endif
 
 // mjenjamo podatke
@@ -766,16 +775,16 @@ lRet := .t.
 select partn
 seek __idpartn
 __p_tmp := ALLTRIM( field->naz ) + ;
-	"," + ALLTRIM( field->ptt ) + ;
-	" " + ALLTRIM( field->mjesto )
+    "," + ALLTRIM( field->ptt ) + ;
+    " " + ALLTRIM( field->mjesto )
 
 // vrati se na doks
 select fakt_doks
 seek cFirma + cTipDok + cBrDok
 
 if !FOUND()
-	msgbeep("Nisam nista promjenio !!!")
-	return .f.
+    msgbeep("Nisam nista promjenio !!!")
+    return .f.
 endif
 
 // napravi zamjenu u doks tabeli 
@@ -790,45 +799,45 @@ seek cFirma + cTipDok + cBrDok
 nCnt := 1
 
 do while !EOF() .and. field->idfirma == cFirma ;
-		.and. field->idtipdok == cTipDok ;
-		.and. field->brdok == cBrDok
+        .and. field->idtipdok == cTipDok ;
+        .and. field->brdok == cBrDok
 
-	replace field->idpartner with __idpartn	
+    replace field->idpartner with __idpartn 
 
-	if nCnt = 1
-		
-		// roba tip U
-		__txt := Chr(16) + aTxt[1] + Chr(17)
-       		// dodatni tekst fakture
-		__txt += Chr(16) + aTxt[2] + Chr(17)
-		// naziv partnera
-		__txt += Chr(16) + ALLTRIM(partn->naz) + Chr(17)
-		// partner 2 podaci
-		__txt += Chr(16) + ALLTRIM(partn->adresa) + ", Tel:" + ALLTRIM(partn->telefon) + Chr(17) 
-		// partner 3 podaci
-		__txt += Chr(16) + ALLTRIM(partn->ptt) + " " + ALLTRIM(partn->mjesto) + Chr(17)
-        	// broj otpremnice
-		__txt += Chr(16) + __br_otpr + Chr(17) 
-        	// datum otpremnice
-		__txt += Chr(16) + DToC(__dat_otpr) + Chr(17)
-        	// broj narudzbenice
-		__txt += Chr(16) + __br_nar + Chr(17)
-		// datum placanja
-		__txt += Chr(16) + DToC(__dat_pl) + Chr(17)
-		
-		if LEN( aTxt ) > 9
-			for i := 10 to LEN( aTxt )
-				__txt += Chr(16) + aTxt[i] + Chr(17)
-			next
-		endif
+    if nCnt = 1
+        
+        // roba tip U
+        __txt := Chr(16) + aTxt[1] + Chr(17)
+            // dodatni tekst fakture
+        __txt += Chr(16) + aTxt[2] + Chr(17)
+        // naziv partnera
+        __txt += Chr(16) + ALLTRIM(partn->naz) + Chr(17)
+        // partner 2 podaci
+        __txt += Chr(16) + ALLTRIM(partn->adresa) + ", Tel:" + ALLTRIM(partn->telefon) + Chr(17) 
+        // partner 3 podaci
+        __txt += Chr(16) + ALLTRIM(partn->ptt) + " " + ALLTRIM(partn->mjesto) + Chr(17)
+            // broj otpremnice
+        __txt += Chr(16) + __br_otpr + Chr(17) 
+            // datum otpremnice
+        __txt += Chr(16) + DToC(__dat_otpr) + Chr(17)
+            // broj narudzbenice
+        __txt += Chr(16) + __br_nar + Chr(17)
+        // datum placanja
+        __txt += Chr(16) + DToC(__dat_pl) + Chr(17)
+        
+        if LEN( aTxt ) > 9
+            for i := 10 to LEN( aTxt )
+                __txt += Chr(16) + aTxt[i] + Chr(17)
+            next
+        endif
 
-		replace field->txt with __txt
+        replace field->txt with __txt
 
-	endif
+    endif
 
-	++ nCnt
+    ++ nCnt
 
-	skip
+    skip
 enddo
 
 select (nTArea)

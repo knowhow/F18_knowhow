@@ -167,3 +167,11 @@ rm $F18_INSTALL_ROOT/template/f-std??.odt
 #sh -e /etc/init.d/xvfb start
 
 run_tests
+
+if [ ! $? -eq 0 ] ; then
+    echo "---- F18 log ----------------"
+    tail -n 30 F18.log
+    echo "---- F18 log end ------------"
+    exit 1
+fi
+

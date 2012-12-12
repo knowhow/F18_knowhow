@@ -1,6 +1,8 @@
 1.4.37 2012-12-11, vsasa
 
   - fakt, objekti [#29724](http://redmine.bring.out.ba/issues/29724)
+  - fakt, rnal->fakt veza [#29725](http://redmine.bring.out.ba/issues/29725)
+  - fakt, administrativne opcije [#29724](http://redmine.bring.out.ba/issues/29724)
  
 1.4.36 2012-12-07, vsasa
 

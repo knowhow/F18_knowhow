@@ -370,10 +370,7 @@ do while !EOF()
 
 enddo
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+O_FAKT_PRIPR_ATRIB
 
 // promjeni mi i u fakt_atributi
 select fakt_atrib
@@ -394,8 +391,7 @@ do while !EOF()
 
 enddo
 
-// zatvori mi atribute
-select ( F_FAKT_ATRIB )
+select ( F_FAKT_PRIPR_ATRIB )
 use
 
 PopWa()

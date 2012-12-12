@@ -51,7 +51,7 @@ set_a_dbf_temp("fakt_upl"     ,   "UPL"          , F_UPL     )
 set_a_dbf_temp("fakt_s_pripr" ,   "FAKT_S_PRIPR" , F_FAKT    )
 set_a_dbf_temp("_fakt_fakt"   ,   "_FAKT"        , F__FAKT   )
 set_a_dbf_temp("fakt_fapripr" ,   "FAKT_FAPRIPR" , F_FAKT_PRIPR )
-set_a_dbf_temp("fakt_pripr_atributi" , "FAKT_ATRIB" , F_FAKT_ATRIB )
+set_a_dbf_temp("fakt_pripr_atributi" , "FAKT_PRIPR_ATRIB" , F_FAKT_PRIPR_ATRIB )
 
 
 return

@@ -119,14 +119,14 @@
 #define F_RELAC     120
 #define F_VOZILA    121
 #define F_POR       122
-#define F_UGOV     123
-#define F_RUGOV    124
-#define F_GEN_UG   125
-#define F_G_UG_P   126
+#define F_UGOV      123
+#define F_RUGOV     124
+#define F_GEN_UG    125
+#define F_G_UG_P    126
 #define F_POMGN     127
-#define F_FAKT_PRIPR2     128
-#define F_FAKT_PRIPR9     129
-#define F_FAKT_ATRIB     155
+#define F_FAKT_PRIPR2          128
+#define F_FAKT_PRIPR9          129
+#define F_FAKT_PRIPR_ATRIB     155
 
 
 // modul POS (wa 130-160)

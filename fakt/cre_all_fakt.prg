@@ -18,10 +18,10 @@ local _created
 local _tbl
 
 aDbf:={}
-AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'IdTIPDok'  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'BRDOK'     , 'C' ,   8 ,  0 })
-AADD(aDBf,{ 'DATDOK'    , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'idfirma'   , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'idtipdok'  , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'brdok'     , 'C' ,  12 ,  0 })
+AADD(aDBf,{ 'datdok'    , 'D' ,   8 ,  0 })
 AADD(aDBf,{ 'IDPARTNER' , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'DINDEM'    , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'zaokr'     , 'N' ,   1 ,  0 })
@@ -40,7 +40,7 @@ AADD(aDBf,{ 'M1'        , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TXT'       , 'M' ,  10 ,  0 })
 AADD(aDBf,{ 'IDVRSTEP'  , 'C' ,   2 ,  0 })
 
-// hernad??
+// TODO: #29781
 AADD(aDBf,{ 'IDPM'      , 'C' ,  15 ,  0 })
 AADD(aDBf,{ 'FISC_RN'   , 'I' ,   4 ,  0 })
 AADD(aDBf,{ 'C1'        , 'C' ,  20 ,  0 })
@@ -70,6 +70,18 @@ if ver["current"] < 00803
   next
 
 endif
+
+// 0.09.00
+if ver["current"] < 00900
+  
+  for each _tbl in { _table_name, "fakt_pripr" }
+   modstru( {"*" + _tbl, ;
+   "C BRDOK C 8 0 BRDOK C 12 0"  ;
+    })
+  next
+
+endif
+
 
 if _created
     reset_semaphore_version(_table_name)
@@ -132,9 +144,9 @@ CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
     
 
 aDbf:={}
-AADD(aDBf, { 'IDFIRMA'             , 'C' ,   2 ,  0 })
-AADD(aDBf, { 'IdTIPDok'            , 'C' ,   2 ,  0 })
-AADD(aDBf, { 'BRDOK'               , 'C' ,   8 ,  0 })
+AADD(aDBf, { 'idfirma'             , 'C' ,   2 ,  0 })
+AADD(aDBf, { 'idtipdok'            , 'C' ,   2 ,  0 })
+AADD(aDBf, { 'brdok'               , 'C' ,   8 ,  0 })
 AADD(aDBf, { 'PARTNER'             , 'C' ,  30 ,  0 })
 AADD(aDBf, { 'DATDOK'              , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DINDEM'              , 'C' ,   3 ,  0 })
@@ -146,9 +158,6 @@ AADD(aDBf, { 'IDPARTNER'           , 'C' ,   6 ,  0 })
 AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
-
-// hernad: nisam nasao da se igdje koristi ?!
-AADD(aDBf, { 'DOK_VEZA'            , 'C' , 150 ,  0 })
 
 AADD(aDBf, { 'OPER_ID'             , 'N' ,   3 ,  0 })
 AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
@@ -214,7 +223,7 @@ CREATE_INDEX( "ID", "ID", _alias )
 CREATE_INDEX( "NAZ", "NAZ", _alias )
 
 
-// fakt atributi
+// fakt pripr atributi
 aDbf:={}
 AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDTIPDOK'  , 'C' ,   2 ,  0 })
@@ -224,7 +233,7 @@ AADD(aDBf,{ 'ATRIBUT'   , 'C' ,  50 ,  0 })
 AADD(aDBf,{ 'VALUE'     , 'C' , 250 ,  0 })
 
 _created := .f.
-_alias := "FAKT_ATRIB"
+_alias := "FAKT_PRIPR_ATRIB"
 _table_name := "fakt_pripr_atributi"
 
 if !FILE( f18_ime_dbf( _alias) )
@@ -232,11 +241,6 @@ if !FILE( f18_ime_dbf( _alias) )
     _created := .t.
 endif
 
-CREATE_INDEX("1", "IdFirma + idtipdok + brdok + rbr + atribut", _alias )
+CREATE_INDEX("1", "idfirma + idtipdok + brdok + rbr + atribut", _alias )
 
 return .t.
-
-
-
-
-

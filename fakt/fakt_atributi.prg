@@ -49,10 +49,7 @@ function get_fakt_atribut_from_dbf( id_firma, tip_dok, br_dok, r_br, atribut )
 local _ret := ""
 local _t_area := SELECT()
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+O_FAKT_PRIPR_ATRIB
 
 set order to tag "1"
 go top
@@ -82,10 +79,7 @@ local _rec, _t_area
 
 _t_area := SELECT()
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+O_FAKT_PRIPR_ATRIB
 
 set order to tag "1"
 go top
@@ -125,7 +119,7 @@ else
 endif
 
 // zatvori fakt atribute
-select (F_FAKT_ATRIB)
+select (F_FAKT_PRIPR_ATRIB)
 use
 
 // vrati se gdje si bio !
@@ -234,10 +228,7 @@ return _atrib
 function zapp_fakt_atributi()
 local _t_area := SELECT()
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+O_FAKT_PRIPR_ATRIB
 
 zap
 __dbPack()
@@ -265,10 +256,8 @@ if atribut == NIL
     atribut := ""
 endif
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+O_FAKT_PRIPR_ATRIB
+
 go top
 seek ( id_firma + tip_dok + br_dok + r_br + atribut ) 
 
@@ -284,8 +273,7 @@ enddo
 
 __dbPack()
 
-// zatvori mi fakt atribute
-select ( F_FAKT_ATRIB )
+select ( F_FAKT_PRIPR_ATRIB )
 use
 
 select ( _t_area )
@@ -327,10 +315,7 @@ local _qry, _table
 local _server := pg_server()
 local _res
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+O_FAKT_PRIPR_ATRIB
 
 // nema zapisa, nemam sta raditi....
 if RECCOUNT() == 0
@@ -418,10 +403,7 @@ if LEN( _atrib ) == 0
     return _ok
 endif
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+O_FAKT_PRIPR_ATRIB
 go top
 
 for _i := 1 to LEN( _atrib )
@@ -440,8 +422,7 @@ for _i := 1 to LEN( _atrib )
 
 next
 
-// zatvori mi fakt atribute
-select ( F_FAKT_ATRIB )
+select ( F_FAKT_PRIPR_ATRIB )
 use
 
 select ( _t_area )

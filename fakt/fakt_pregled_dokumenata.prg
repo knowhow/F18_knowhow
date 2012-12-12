@@ -202,7 +202,7 @@ if !EMPTY( qqPartn )
     cFilter += ".and." + aUslSK
 endif
 
-if cFilter == ".t..and."
+if cFilter == ".t. .and."
     cFilter := SUBSTR( cFilter, 9 ) 
 endif
 

@@ -672,31 +672,31 @@ endif
 if _len >= 12
     d2k2 := _memo[12]
 endif
-            
+
 if _len >= 13
     d2k3 := _memo[13]
 endif
-            
+
 if _len >= 14
     d2k4 := _memo[14]
 endif
-            
+
 if _len >= 15
     d2k5 := _memo[15]
 endif
-            
+
 if _len >= 16
     d2n1 := _memo[16]
 endif
-            
+
 if _len >= 17
     d2n2 := _memo[17]
 endif
-    
+
 if _params["destinacije"] .and. _len >= 18
     _destinacija := PADR( ALLTRIM( _memo[18] ), 500 )
 endif
-    
+
 if _params["fakt_dok_veze"] .and. _len >= 19
     _dokument_veza := PADR( ALLTRIM( _memo[19] ), 500 )
 endif

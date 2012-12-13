@@ -68,7 +68,7 @@ ImeKol:={ {"IdRoba",{|| IdRoba}}, {"Kolicina",{|| transform(Kolicina,picv)}} ,{"
 
 Kol:={}
 for i:=1 to len(ImeKol)
-	AADD(Kol,i)
+	AADD(Kol, i)
 next
 
 Box(,20,50)

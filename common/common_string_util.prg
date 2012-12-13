@@ -239,24 +239,31 @@ function ParsMemo(cTxt)
 
 * Struktura cTxt-a je: Chr(16) txt1 Chr(17)  Chr(16) txt2 Chr(17) ...
 local aMemo:={}
-local i,cPom,fPoc
+local i, cPom, fPoc, _len
 
- fPoc:=.f.
- cPom:=""
- for i:=1 to len(cTxt)
+fPoc:=.f.
+cPom:=""
+
+for i := 1 to LEN(cTxt)
+
    if  substr(cTxt, i, 1) == Chr(16)
-
      fPoc:=.t.
    elseif  substr(cTxt,i,1) == Chr(17)
-
      fPoc:=.f.
      AADD(aMemo,cPom)
      cPom:=""
    elseif fPoc
-
-      cPom:=cPom+substr(cTxt,i,1)
+      cPom := cPom+substr(cTxt,i,1)
    endif
- next
+next
+
+_len := LEN(aMemo) 
+
+// uvijek neka vrati polje od 20 elemenata
+
+for i := 1 TO (20 - _len)
+  AADD(aMemo, "")
+next
 
 return aMemo
 
@@ -267,7 +274,7 @@ local nTxt2
 
 nLTxt2:=1
 for i:=1 to len(cTxt2)
-  if substr(cTxt2,i,1)=chr(13)
+  if substr(cTxt2, i, 1)=chr(13)
    ++nLTxt2
   endif
 next

@@ -101,7 +101,7 @@ if read .or. __fakt_params == NIL
     __fakt_params["fakt_vrste_placanja"] := IIF(fakt_vrste_placanja() == "D", .t., .f.)
     __fakt_params["fakt_objekti"] := IIF( fakt_objekti() == "D", .t., .f.)
 
-    __fakt_params["brojac_numericki_dio"] := 
+    __fakt_params["brojac_numericki_dio"] :=  ??
 endif
 
 return __fakt_params

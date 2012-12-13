@@ -60,7 +60,7 @@ _broj := MAX( _broj, _broj_doks )
 ++ _broj
 
 // ovo ce napraviti string prave duzine...
-_ret := fakt_brojac(_broj, ??? ??? )
+_ret := fakt_brojac(_broj, field->datdok )
 
 if !EMPTY( sufiks )
     _ret := _ret + sufiks
@@ -83,4 +83,5 @@ if num == 0
    return  PADR( REPLICATE( "0", _param["brojac_numericki_dio"]), FAKT_BRDOK_LENGTH )
 else
    return 999
+endif
 

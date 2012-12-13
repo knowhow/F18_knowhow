@@ -10,38 +10,7 @@
  */
 
 #include "fmk.ch"
-
-#command IF_NOT_FILE_DBF_CREATE => _created := .f. ; 
-                                   ;if !FILE(f18_ime_dbf(_alias));
-                                   ;  DBCREATE2(_alias, aDbf);
-                                   ;   _created := .t. ;
-                                   ;else;
-                                   ;  my_use_semaphore_off();
-                                   ;  my_use(_alias);
-                                   ;  my_use_semaphore_on();
-                                   ;  if reccount() == 0;
-                                   ;       _created := .t.;
-                                   ;  end;
-                                   ;  use;
-                                   ;end
-
-#command IF_C_RESET_SEMAPHORE  => if _created ; reset_semaphore_version(_table_name) ;  my_use(_alias);  use ; end
-
-/* 
-
-_table_name := "fakt_alll"
-_alias := "ALLL"
-
-aDbf := { ... definisi polja ...}
-
-IF_NOT_FILE_DBF_CREATE
-
-... sekvence migracije
-
-IF_C_RESET_SEMAPHORE
-
-... kreiraj indekse
-*/
+#include "cre_all.ch"
 
 // ---------------------------
 // ---------------------------

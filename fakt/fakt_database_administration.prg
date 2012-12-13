@@ -350,9 +350,9 @@ do while !EOF()
 
     if _regen_dat == "D"
         _update_doks := .t.
-        _rec_doks["dat_otpr"] := IF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
-        _rec_doks["dat_isp"] := IF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
-        _rec_doks["dat_val"] := IF( LEN( _memo ) >= 9, CTOD( _memo[9] ), CTOD("") )
+        _rec_doks["dat_otpr"] := IIF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
+        _rec_doks["dat_isp"] := IIF( LEN( _memo ) >= 7, CTOD( _memo[7] ), CTOD("") )
+        _rec_doks["dat_val"] := IIF( LEN( _memo ) >= 9, CTOD( _memo[9] ), CTOD("") )
 
     endif
 

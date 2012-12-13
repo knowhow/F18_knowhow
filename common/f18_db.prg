@@ -383,6 +383,7 @@ for each _key in alg["dbf_key_fields"]
         // ne gledaj numericke kljuceve, koji su array stavke
         if !HB_HHASKEY(values, _key)
              _msg := RECI_GDJE_SAM + "# tabela:" + table + "#bug - nepostojeci kljuc:" + _key +  "#values:" + pp(values)
+             log_write(_msg, 1)
              MsgBeep(_msg)
              QUIT_1
         endif
@@ -392,7 +393,6 @@ for each _key in alg["dbf_key_fields"]
             // karakterna polja se moraju PADR-ovati
             // values['id'] = '0' => '0     '
             values[_key] := PADR(values[_key], a_dbf_rec["dbf_fields_len"][_key][2])
-        
             // provjeri prvi dio kljuca
             // ako je # onda obavezno setuj tag
             if _count == 1

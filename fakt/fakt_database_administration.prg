@@ -264,26 +264,25 @@ local _rec_fakt, _rec_doks
 local _x := 1
 local _regen_dat := "N"
 local _regen_objekat_id := "N"
+local _regen_dok_veze := "N"
 
 if !SigmaSif("REGEN")
     return 
 endif
 
-Box(, 5, 60 )
+Box(, 7, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Regeneracija fakt podataka *****" 
-
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Regeneracija datuma otpreme (D/N) ?" GET _regen_dat ;
-            VALID _regen_dat $ "DN" PICT "@!"
+     read_dn_parametar("Regeneracija datuma otpreme", m_x + _x, m_y + 2, @_regen_dat)
+     ++ _x
 
-    ++ _x
+     read_dn_parametar("fakt.idrnal -> fakt.txt (objekat id)", m_x + _x, m_y + 2, @_regen_objekat_id)
+     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Postavljanje polja objekat_id iz idrnal (D/N) ?" GET _regen_objekat_id ;
-            VALID _regen_objekat_id $ "DN" PICT "@!"
-
-    read
+     read_dn_parametar("fakt_doks.dok_veza -> fakt.txt (fakt_dok_veze)", m_x + _x, m_y + 2, @_regen_dok_veze)
+     read
 
 BoxC()
 
@@ -358,11 +357,18 @@ do while !EOF()
 
     if _regen_objekat_id == "D"
             _update_fakt := .t.
-
             _memo[20] := PADR( fakt->idrnal, 10 )
             // pripremi mi sada txt polje
             _rec_fakt["txt"] := fakt_memo_field_to_txt( _memo )
     endif
+
+    if _regen_dok_veze == "D"
+            _update_fakt := .t.
+            _memo[19] := PADR( fakt_doks->dok_veza, 150)
+            // pripremi mi sada txt polje
+            _rec_fakt["txt"] := fakt_memo_field_to_txt( _memo )
+    endif
+
 
     // napravi update zapisa fakt_doks
     if _update_doks

@@ -181,23 +181,18 @@ _x := 2
 ++ _x
     
 @ m_x + _x, m_y + 2 SAY "Tekuca vrijednost za rok placanja  " GET gRokPl PICT "999"
-
 ++ _x
     
 @ m_x + _x, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
-
 ++ _x
 
 @ m_x + _x, m_y + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
-
 ++ _x
 
 @ m_x + _x, m_y + 2 SAY "Racun na email:" GET _racun_na_email PICT "@S50"
-
 ++ _x
 
 @ m_x + _x, m_y + 2 SAY "ODT fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
-
 ++ _x
 
 @ m_x + _x, m_y + 2 SAY "Default ODT template:" GET _def_template PICT "@S35"
@@ -227,12 +222,12 @@ read
 if gMPPrint $ "DXT"
 
 	++ _x
-        
+
     @ m_x + _x, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" ;
             GET gMPLocPort ;
             VALID gMPLocPort $ "1234567" PICT "@!"
     ++ _x
-        
+
     @ m_x + _x, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
             GET gMPRedTraka ;
             VALID gMPRedTraka $ "012"

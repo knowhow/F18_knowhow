@@ -62,18 +62,17 @@ return _ret
 // ako se zadaje bez parametara pretpostavlja se da je 
 // napravljena tabela relacije fakt_doks->fakt
 // --------------------------------------------------
-function fakt_objekat_id( idfirma, idtipdok, brdok )
+function fakt_objekat_id( id_firma, id_tipdok, br_dok )
 local _ret := ""
 local _memo
 
 PushWa()
 
 if idfirma == NIL
-  idfirma = field->idfirma
-  idtipdok = field->idtipdok
-  brdok = field->brdok
+  id_firma = fakt->idfirma
+  id_tipdok = fakt->idtipdok
+  br_dok = fakt->brdok
 endif
-
 
 select ( F_FAKT )
 
@@ -84,11 +83,10 @@ endif
 select fakt
 set order to tag "1"
 go top
-seek idfirma + idtipdok + brdok + "  1"
+seek id_firma + id_tipdok + br_dok + "  1"
 
 if !FOUND()
     _ret := SPACE(10)
-
 else
   _memo := ParsMemo( fakt->txt )
   if LEN( _memo ) >= 20
@@ -98,8 +96,6 @@ endif
 
 PopWa()
 return _ret
-
-
 
 // ----------------------------------------------------------------------
 // setuje pojedinacni clan matrice memo

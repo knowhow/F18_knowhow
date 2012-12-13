@@ -371,7 +371,9 @@ do while !EOF()
 
     // napravi update zapisa fakt_fakt
     if _update_fakt
+        select fakt
         update_rec_server_and_dbf( "fakt_fakt", _rec_fakt, 1, "CONT" )
+        select fakt_doks
     endif
 
     ++ _count

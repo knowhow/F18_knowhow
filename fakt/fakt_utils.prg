@@ -67,8 +67,7 @@ local _ret := ""
 local _memo
 
 PushWa()
-
-if idfirma == NIL
+if id_firma == NIL
   id_firma = fakt->idfirma
   id_tipdok = fakt->idtipdok
   br_dok = fakt->brdok
@@ -81,8 +80,11 @@ if !Used()
 endif
 
 select fakt
+
+// filter se mora iskljuciti inace se ova funkcija rekurzivno poziva
+// PopWa ce uraditi restore filtera
+set filter to
 set order to tag "1"
-go top
 seek id_firma + id_tipdok + br_dok + "  1"
 
 if !FOUND()

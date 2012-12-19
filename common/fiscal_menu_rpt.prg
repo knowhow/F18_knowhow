@@ -35,6 +35,11 @@ endif
 
 // vrati mi fiskalni uredjaj....
 __device_id := get_fiscal_device( my_user() )
+
+if __device_id == 0
+    return
+endif
+
 // setuj parametre uredjaja
 __device_params := get_fiscal_device_params( __device_id, my_user() )
 

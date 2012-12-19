@@ -1,3 +1,7 @@
+1.4.39 2012-12-19, vsasa
+
+ - pos, fiskalni računi, vrsta plaćanja
+
 1.4.38 2012-12-11, hernad
 
  - fakt objekti, idrnal ciscenje

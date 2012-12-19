@@ -437,7 +437,7 @@ return
 // --------------------------------------------
 static function pos_get_vr_plac( id_vr_pl )
 local _ret := "0"
-local _araa := SELECT()
+local _t_area := SELECT()
 local _naz := ""
 
 if EMPTY( id_vr_pl ) .or. id_vr_pl == "01"
@@ -465,9 +465,9 @@ do case
 		_ret := "0"
 endcase 
 
-select (nTArea)
+select ( _t_area )
 
-return cVrsta
+return _ret
 
 
 

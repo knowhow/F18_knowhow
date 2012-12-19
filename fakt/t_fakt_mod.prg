@@ -659,4 +659,7 @@ destinacije()
 ref_lot()
 
 fakt_params(.t.)
+
+fiscal_opt_active()
+
 return

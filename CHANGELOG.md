@@ -1,3 +1,7 @@
+1.4.40 2012-12-19, vsasa
+
+ - pos, fiskalni opcije, default pos uređaj
+
 1.4.39 2012-12-19, vsasa
 
  - pos, fiskalni računi, vrsta plaćanja

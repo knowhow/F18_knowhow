@@ -75,7 +75,7 @@ endif
 
 if fiscal_opt_active()
     AADD(opc,"F. fiskalni izvjestaji i komande")
-    AADD(opcexe,{|| fisc_rpt() })
+    AADD(opcexe,{|| fisc_rpt( NIL, .t. ) })
 endif
 
 Menu_SC("izvt")

@@ -30,33 +30,19 @@ local lOpcine := .t.
 private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 private cFilter := ".t."
 
-if _vrste_pl
-    O_VRSTEP
-endif
-
+O_VRSTEP
 O_OPS
 O_VALUTE
 O_RJ
-
-if _objekti
-    O_FAKT_OBJEKTI
-endif
-
+O_FAKT_OBJEKTI
 O_FAKT
 O_PARTN
 O_FAKT_DOKS
 
-// setuj i relaciju sa fakt-om
-// u njoj se nalaze objekti
-if _objekti .or. _vezni_dokumenti
-    SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt
-endif
-
-if _vrste_pl
-    SET RELATION TO fakt_doks->idvrstep INTO VRSTEP
-endif
-
-SET RELATION TO fakt_doks->idpartner INTO PARTN
+// setuj relacije 
+SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
+            TO fakt_doks->idvrstep INTO vrstep, ;
+            TO fakt_doks->idpartner INTO partn
 
 qqVrsteP := SPACE(20)
 dDatVal0 := dDatVal1 := CTOD("")
@@ -318,8 +304,8 @@ use
 O_FAKT_DOKS
 if lOpcine
     O_PARTN
-        select fakt_doks
-        set relation to idpartner into PARTN
+    select fakt_doks
+    set relation to idpartner into PARTN
 endif
 if cFilter==".t."
     set Filter to
@@ -354,8 +340,8 @@ use
 O_FAKT_DOKS
 if lOpcine
     O_PARTN
-        select fakt_doks
-        set relation to idpartner into PARTN
+    select fakt_doks
+    set relation to idpartner into PARTN
 endif
 if cFilter == ".t."
     set Filter to
@@ -386,8 +372,8 @@ use
 O_FAKT_DOKS
 if lOpcine
     O_PARTN
-        select fakt_doks
-        set relation to idpartner into PARTN
+    select fakt_doks
+    set relation to idpartner into PARTN
 endif
 if cFilter==".t."
     set Filter to

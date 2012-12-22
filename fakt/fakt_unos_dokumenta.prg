@@ -1009,7 +1009,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
 
         if _params["fakt_dok_veze"]
            // veza dokumenti
-           @ m_x + _x, col() + 1 SAY "RNAL veza:" GET _dokument_veza PICT "@S20"
+           @ m_x + _x, col() + 1 SAY "Vezni dok.:" GET _dokument_veza PICT "@S20"
         endif
 
         ++ _x

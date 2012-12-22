@@ -46,9 +46,9 @@ AADD(ImeKol,{ "Dat.val.", {|| dat_val} })
 // prikaz operatera
 AADD(ImeKol,{ "Operater", {|| GetUserName( oper_id ) } })
 
-// veza sa rnal dokumentima
+// veza sa dokumentima
 if _params["fakt_dok_veze"]
-    AADD(ImeKol,{ "RNAL vezni dokumenti", {|| PADR( get_fakt_vezni_dokumenti(), 50 ) } })
+    AADD(ImeKol,{ "Vezni dokumenti", {|| PADR( get_fakt_vezni_dokumenti(), 50 ) } })
 endif
 
 Kol:={}

@@ -92,9 +92,7 @@ if read .or. __fakt_params == NIL
       __fakt_params["destinacije"] := .f.
     endif
 
-    // ako se koristi rnal, koriste se veze izmedju fakt dokumenata
-    __fakt_params["fakt_dok_veze"] :=  f18_use_module("rnal")
-
+    __fakt_params["fakt_dok_veze"] := IIF(fakt_dok_veze() == "D", .t., .f.)
     __fakt_params["fakt_opis_stavke"] := IIF(fakt_opis_stavke() == "D", .t., .f.)
     __fakt_params["fakt_prodajna_mjesta"] := IIF(fakt_prodajna_mjesta() == "D", .t., .f.)
     __fakt_params["ref_lot"] := IIF(ref_lot() == "D", .t., .f.)
@@ -139,7 +137,7 @@ local _unos_opisa := fakt_opis_stavke()
 local _unos_objekta := fakt_objekti()
 local _vr_pl := fakt_vrste_placanja()
 local _unos_dest := destinacije()
-
+local _unos_br_veza := fakt_dok_veze()
 
 private cSection:="1"
 private cHistory:=" "
@@ -199,6 +197,9 @@ _x := 2
 ++ _x
 
 read_dn_parametar("Pracenje po destinacijama", m_x + _x, m_y + 2, @_unos_dest)
+++ _x
+
+read_dn_parametar("Unos brojeva veze", m_x + _x, m_y + 2, @_unos_br_veza)
 ++ _x
 
 read_dn_parametar("Fakturisanje po prodajnim mjestima", m_x + _x, m_y + 2, @_pm)
@@ -271,7 +272,8 @@ if LastKey() <> K_ESC
     ref_lot(_unos_ref_lot)
     fakt_prodajna_mjesta(_pm)
     fakt_vrste_placanja(_vr_pl)
-    
+    fakt_dok_veze( _unos_br_veza )
+
     // setuj mi default odt template ako treba
     __default_odt_template()
 
@@ -1037,6 +1039,14 @@ return get_set_global_param("destinacije", value, "N")
 // ----------------------------------------------------------------
 function fakt_prodajna_mjesta(value)
 return get_set_global_param("fakt_prodajna_mjesta", value, "N")
+
+
+// ----------------------------------------------------------------
+// fakturise se po prodajnim mjestima
+// ----------------------------------------------------------------
+function fakt_dok_veze(value)
+return get_set_global_param( "fakt_dok_veze", value, "N" )
+
 
 // ----------------------------------------------------------------
 // fakturise se po vrstama placanja

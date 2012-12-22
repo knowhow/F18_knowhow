@@ -35,6 +35,8 @@ if _vrste_pl
 endif
 
 O_OPS
+O_VALUTE
+O_RJ
 
 if _objekti
     O_FAKT_OBJEKTI
@@ -44,20 +46,17 @@ O_FAKT
 O_PARTN
 O_FAKT_DOKS
 
-if _vrste_pl
-    SET RELATION TO idvrstep INTO VRSTEP
-endif
-
-SET RELATION TO idpartner INTO PARTN
-
 // setuj i relaciju sa fakt-om
 // u njoj se nalaze objekti
 if _objekti .or. _vezni_dokumenti
-    SET RELATION TO idfirma + idtipdok + brdok INTO fakt
+    SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt
 endif
 
-O_VALUTE
-O_RJ
+if _vrste_pl
+    SET RELATION TO fakt_doks->idvrstep INTO VRSTEP
+endif
+
+SET RELATION TO fakt_doks->idpartner INTO PARTN
 
 qqVrsteP := SPACE(20)
 dDatVal0 := dDatVal1 := CTOD("")

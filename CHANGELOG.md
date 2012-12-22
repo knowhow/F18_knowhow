@@ -1,3 +1,7 @@
+1.4.41 2012-12-22, vsasa
+
+ - fakt, fakt_doks/fakt_fakt relacije, parametar dok veze umjesto provjere RNAL modula
+
 1.4.40 2012-12-19, vsasa
 
  - pos, fiskalni opcije, default pos uređaj

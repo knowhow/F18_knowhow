@@ -441,9 +441,7 @@ if !EMPTY(cFiltK1)
     ? "Filter grupacija K1 pravljen po uslovu: '" + TRIM(cFiltK1) + "'"
 endif
 
-//if cVarPrik == "D"
 P_COND
-//endif
 
 ?
 ? cLine

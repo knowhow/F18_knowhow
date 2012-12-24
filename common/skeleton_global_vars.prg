@@ -134,11 +134,7 @@ gPartnBlock := nil
 
 public gSecurity := "D"
 public gnDebug := 0
-
-gnDebug:=VAL(IzFmkIni("Svi","Debug","0",EXEPATH))
-
 public gOpSist := "-"
-gOpSist:=IzFmkIni("Svi","OS","-",EXEPATH)
 
 public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 

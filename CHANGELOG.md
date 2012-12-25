@@ -1,7 +1,8 @@
 1.4.42 2012-12-22, vsasa
 
  - P_Sast IDNUN_ROBAPRO bugfix
-
+ - IOS [#29945](http://redmine.bring.out.ba/issues/29845)
+ 
 1.4.41 2012-12-22, vsasa
 
  - fakt, fakt_doks/fakt_fakt relacije, parametar dok veze umjesto provjere RNAL modula

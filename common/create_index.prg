@@ -22,7 +22,7 @@ static nSlogova:=0
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function create_index(cImeInd, cKljuc, alias, silent)
+function create_index(cImeInd, xKljuc, alias, silent)
 local _force_erase := .f.
 local bErr
 local cFulDbf
@@ -36,14 +36,23 @@ local _a_dbf_rec
 local _wa
 local _dbf
 local _tag
+local cKljuc
 
 private cTag
 private cKljuciz
+private cFilter
 
 if silent == nil
     silent := .f.
 endif
 
+if VALTYPE(xKljuc) == "C"
+   cKljuc := xKljuc
+   cFilter := NIL
+else
+   cKljuc := xKljuc[1]
+   cFilter := xKljuc[2]
+endif
 
 close all
 
@@ -151,8 +160,8 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder==0 .or. ALLTRIM(UPPER( cOrdKey )) <> ALLTRI
 
      nPom:=RAT( SLASH, cImeInd)
     
-     private cTag:=""
-     private cKljuciz:=cKljuc
+     private cTag :=""
+     private cKljuciz := cKljuc
     
      if nPom<>0
          cTag := substr(cImeInd, nPom)
@@ -165,11 +174,15 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder==0 .or. ALLTRIM(UPPER( cOrdKey )) <> ALLTRI
 
      	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
 
-        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 7 )     
+        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " FILTER: " + IIF(cFilter != NIL, cFilter, "-") + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 2 ) 
         if _tag == "DEL"
               INDEX ON deleted() TAG "DEL" TO (cImeCdx) FOR deleted()
         else
-     	      INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) 
+            if cFilter != NIL
+     	      INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter
+     	    else
+              INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx)
+            endif 
         endif
      	USE
 

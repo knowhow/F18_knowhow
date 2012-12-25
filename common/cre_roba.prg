@@ -82,14 +82,15 @@ if !file(f18_ime_dbf("_roba"))
 	dbcreate2('_roba.dbf',aDbf)
 endif
 
-CREATE_INDEX("ID", "ID", "roba") 
-index_mcode(SIFPATH, "roba")
-CREATE_INDEX("NAZ","LEFT(naz,40)", "roba")
+CREATE_INDEX("ID", "ID", _alias) 
+index_mcode(SIFPATH, _alias)
+CREATE_INDEX("NAZ","LEFT(naz,40)", _alias)
 CREATE_INDEX("ID","id", "_roba") 
-CREATE_INDEX("BARKOD","BARKOD", "roba") // roba, artikli
-CREATE_INDEX("SIFRADOB","SIFRADOB","roba") // roba, artikli
-CREATE_INDEX("ID_VSD","SIFRADOB",  "roba") // sifra dobavljaca
-CREATE_INDEX("PLU","str(fisc_plu, 10)",  "roba") // sifra dobavljaca
+CREATE_INDEX("BARKOD","BARKOD", _alias) 
+CREATE_INDEX("SIFRADOB","SIFRADOB",_alias) 
+CREATE_INDEX("ID_VSD","SIFRADOB",  _alias) 
+CREATE_INDEX("PLU","str(fisc_plu, 10)",  _alias)
+CREATE_INDEX("IDP", {"id+tip", 'tip=="P"'},  _alias)
 
 close all
 O_ROBA

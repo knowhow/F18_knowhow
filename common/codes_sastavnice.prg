@@ -24,14 +24,9 @@ select roba
 
 set_a_kol(@ImeKol, @Kol)
 
-select roba
-index on id + tip tag "IDUN" to (my_home() + "robapro") for tip="P"  
-
-// samo lista robe
-set order to tag "idun"
 go top
 
-return PostojiSifra(F_ROBA, "IDUN", MAXROWS()-15, MAXCOLS()-3, "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", @cId, dx, dy, {|Ch| key_handler(Ch)})
+return PostojiSifra(F_ROBA, "IDP", MAXROWS()-15, MAXCOLS()-3, "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", @cId, dx, dy, {|Ch| key_handler(Ch)})
 
 
 // ---------------------------------
@@ -132,10 +127,7 @@ do case
 
 endcase
 
-select roba
-index on id+tip tag "IDUN" to robapro for tip="P"  
-// samo lista robe
-set order to tag "idun"
+set order to tag "IDP"
 go (nTRec)
 
 

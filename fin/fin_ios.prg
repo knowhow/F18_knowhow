@@ -972,10 +972,9 @@ do while !EOF() .and. _id_firma == field->IdFirma ;
       
         if _kao_kartica == "N"
       
-            // zapocni mi subnode.... 
-            xml_node( "data_kartica", .f. )
+            xml_subnode( "data_kartica", .f. )
 
-            xml_node( "rbr", ALLTRIM( STR( ++ _rbr ) ) )
+            xml_node( "rbr", ALLTRIM( STR( ++_rbr ) ) )
             xml_node( "brdok", to_xml_encoding( __br_dok ) )
             xml_node( "opis", to_xml_encoding( __opis ) )
             xml_node( "datdok", DTOC( __dat_dok ) )

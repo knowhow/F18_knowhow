@@ -31,7 +31,7 @@ index on id + tip tag "IDUN" to (my_home() + "robapro") for tip="P"
 set order to tag "idun"
 go top
 
-return PostojiSifra(F_ROBA, "IDUN_ROBAPRO", MAXROWS()-15, MAXCOLS()-3, "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", @cId, dx, dy, {|Ch| key_handler(Ch)})
+return PostojiSifra(F_ROBA, "IDUN", MAXROWS()-15, MAXCOLS()-3, "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", @cId, dx, dy, {|Ch| key_handler(Ch)})
 
 
 // ---------------------------------

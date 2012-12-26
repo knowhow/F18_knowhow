@@ -970,18 +970,6 @@ do while !EOF() .and. _id_firma == field->IdFirma ;
  
     if __otv_st == " "
       
-        if _kao_kartica == "N"
-      
-            xml_subnode( "data_kartica", .f. )
-
-            xml_node( "rbr", ALLTRIM( STR( ++_rbr ) ) )
-            xml_node( "brdok", to_xml_encoding( __br_dok ) )
-            xml_node( "opis", to_xml_encoding( __opis ) )
-            xml_node( "datdok", DTOC( __dat_dok ) )
-            xml_node( "datval", DTOC( __dat_val ) )
-
-        endif
-      
         if _prelomljeno == "D"
                 
             if _din_dem == "1"                 
@@ -1009,11 +997,22 @@ do while !EOF() .and. _id_firma == field->IdFirma ;
           
         if _kao_kartica == "N"
 
-            xml_node( "dug", ALLTRIM( STR( _dug_1 , 12, 2 ) ) )
-            xml_node( "pot", ALLTRIM( STR( _pot_1 , 12, 2 ) ) )
+            if !( _dug_1 == 0 .and. _pot_1 == 0 )
 
-            // zatvori mi subnode
-            xml_subnode( "data_kartica", .t. )
+                xml_subnode( "data_kartica", .f. )
+
+                xml_node( "rbr", ALLTRIM( STR( ++_rbr ) ) )
+                xml_node( "brdok", to_xml_encoding( __br_dok ) )
+                xml_node( "opis", to_xml_encoding( __opis ) )
+                xml_node( "datdok", DTOC( __dat_dok ) )
+                xml_node( "datval", DTOC( __dat_val ) )
+                xml_node( "dug", ALLTRIM( STR( _dug_1 , 12, 2 ) ) )
+                xml_node( "pot", ALLTRIM( STR( _pot_1 , 12, 2 ) ) )
+
+                // zatvori mi subnode
+                xml_subnode( "data_kartica", .t. )
+
+            endif
 
         endif
 

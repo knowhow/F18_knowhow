@@ -1,6 +1,9 @@
 1.4.44 2012-12-26, vsasa
 
  - fiskalne funkcije, provjera direktorija izlaznih fajlova [#29854](http://redmine.bring.out.ba/issues/29854)
+ - fakt, ispravi prvu stavku i koriguj sve ostale automatski [#29859](http://redmine.bring.out.ba/issues/29859)
+ - fiskalne funkcije, niz bugfix-ova 
+ - fakt, stanje robe, proširenje kolona na izvještaju
  
 1.4.43 2012-12-26, vsasa
 

@@ -1583,6 +1583,7 @@ return
 static function popup_fakt_unos_dokumenta()
 
 private opc[8]
+
 opc[1]:="1. generacija faktura na osnovu ugovora            "
 opc[2]:="2. sredjivanje rednih br.stavki dokumenta"
 opc[3]:="3. ispravka teksta na kraju fakture"
@@ -1592,12 +1593,12 @@ opc[6]:="6. smece    => priprema"
 opc[7]:="7. "
 opc[8]:="8. "
 
-lKonsig := ( IzFMKINI("FAKT","Konsignacija","N",KUMPATH)=="D" )
+lKonsig := .f.
 
 if lKonsig
- AADD(opc,"9. generisi konsignacioni racun")
+    AADD(opc,"9. generisi konsignacioni racun")
 else
- AADD(opc,"-----------------------------------------------")
+    AADD(opc,"-----------------------------------------------")
 endif
 
 AADD(opc,"A. kompletiranje iznosa fakture pomocu usluga")
@@ -1605,12 +1606,16 @@ AADD(opc,"-----------------------------------------------")
 AADD(opc, "C. import txt-a")
 AADD(opc, "U. stampa ugovora od do ")
 
-h[1]:=h[2]:=""
+h[1] := h[2] := ""
+
 close all
 private am_x:=m_x,am_y:=m_y
 private Izbor:=1
+
 do while .t.
+
   Izbor:=menu("prip",opc,Izbor,.f.)
+
   do case
     case Izbor==0
     exit
@@ -1685,6 +1690,9 @@ do while .t.
     case izbor == 6
 
         povrat_smece()
+
+    case izbor == 7 .or. izbor == 8
+        return DE_CONT
 
     case izbor == 9 .and. lKonsig
        GKRacun()

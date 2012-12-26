@@ -165,8 +165,21 @@ do case
 
         // pronadji mi device_id 
         _dev_id := get_fiscal_device( my_user() )
-        // setuj parametre za stampu
-        _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+        if _dev_id > 0
+
+            // setuj parametre za stampu
+            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+            
+            // nesto nije ok sa parametrima
+            if _dev_params == NIL
+                return DE_CONT
+            endif
+
+        else
+            MsgBeep( "Problem sa citanjem fiskalnih parametara !!!" )
+            return DE_CONT
+        endif
 
         // da li je korisniku dozvoljeno da stampa racune ?
         if _dev_params["print_fiscal"] == "N"

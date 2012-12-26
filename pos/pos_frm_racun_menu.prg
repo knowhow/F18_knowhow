@@ -308,8 +308,15 @@ if (!EMPTY(cTime))
 	
         // u tops-u uvijek treba da je jedan uredjaj !
         _dev_id := get_fiscal_device( my_user(), NIL, .t. )
-        _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-	
+        if _dev_id > 0
+            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+	        if _dev_params == NIL
+                return
+            endif
+        else
+            return
+        endif
+
 		// stampa fiskalnog racuna, vraca ERR
 		nErr := pos_fisc_rn( cIdPos, gDatum, cStalRac, _dev_params )
 		

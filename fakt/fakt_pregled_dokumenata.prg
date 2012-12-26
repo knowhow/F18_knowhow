@@ -728,12 +728,24 @@ do case
         if Pitanje( "ST FISK RN5","Stampati fiskalni racun ?", "D") == "D"
 
             _dev_id := get_fiscal_device( my_user() )
-            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+            if _dev_id > 0
+
+                _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+                if _dev_params == NIL
+                    return DE_CONT
+                endif
+
+            else
+                MsgBeep("Problem sa fiskalnim parametrima !!!")
+                return DE_CONT
+            endif
 
             // da li je korisniku dozvoljeno da stampa racune ?
             if _dev_params["print_fiscal"] == "N"
                 MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
-                return DE_REFRESH
+                return DE_CONT
             endif
  
             fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )

@@ -1,3 +1,7 @@
+1.4.44 2012-12-26, vsasa
+
+ - fiskalne funkcije, provjera direktorija izlaznih fajlova [#29854](http://redmine.bring.out.ba/issues/29854)
+ 
 1.4.43 2012-12-26, vsasa
 
  - KALK, IP(), IM() prikaz barkod-a [#29825](http://redmine.bring.out.ba/issues/29825)

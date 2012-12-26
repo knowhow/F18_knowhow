@@ -270,6 +270,12 @@ do case
 
             PrCijSif()  
 
+            // izmjeni sve stavke dokumenta na osnovu prve stavke        
+            if __redni_broj == 1
+                // todo: cim prije i ovo zavrsiti, za sada gasim opciju
+                //izmjeni_sve_stavke_dokumenta( _dok )
+            endif
+
             _ret := DE_REFRESH
 
         endif
@@ -1720,6 +1726,55 @@ go bottom
 return
 
 
+
+// --------------------------------------------------------
+// izmjeni sve stavke dokumenta prema tekucoj stavci
+// ovo treba da radi samo na stavci broj 1
+// --------------------------------------------------------
+static function izmjeni_sve_stavke_dokumenta( old_param )
+local _old_firma := old_param["idfirma"]
+local _old_brdok := old_param["brdok"]
+local _old_tipdok := old_param["idtipdok"]
+local _rec
+local _tek_param 
+
+// treba da imam podatke koja je stavka bila prije korekcije
+// kao i koja je nova 
+// misli se na "idfirma + tipdok + brdok"
+
+select fakt_pripr
+go top
+
+// uzmi podatke sa prve stavke
+_tek_param := dbf_get_rec()
+
+seek _old_firma + _old_tipdok + _old_brdok
+
+if !FOUND()
+    return
+endif
+
+do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
+        _old_firma + _old_tipdok + _old_brdok 
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1 
+
+    // napravi zamjenu podataka
+    _rec := dbf_get_rec()
+    _rec["idfirma"] := _tek_param["idfirma"]
+    _rec["idtipdok"] := _tek_param["idtipdok"]
+    _rec["brdok"] := _tek_param["brdok"]
+    _rec["datdok"] := _tek_param["datdok"]
+
+    dbf_update_rec( _rec )
+
+    go _t_rec
+
+enddo
+
+return
 
 
 

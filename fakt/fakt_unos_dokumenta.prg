@@ -273,7 +273,8 @@ do case
             // izmjeni sve stavke dokumenta na osnovu prve stavke        
             if __redni_broj == 1
                 // todo: cim prije i ovo zavrsiti, za sada gasim opciju
-                //izmjeni_sve_stavke_dokumenta( _dok )
+                _new_dok := dbf_get_rec()
+                izmjeni_sve_stavke_dokumenta( _dok, _new_dok )
             endif
 
             _ret := DE_REFRESH
@@ -1727,16 +1728,18 @@ return
 
 
 
-// --------------------------------------------------------
+// --------------------------------------------------------------------
 // izmjeni sve stavke dokumenta prema tekucoj stavci
 // ovo treba da radi samo na stavci broj 1
-// --------------------------------------------------------
-static function izmjeni_sve_stavke_dokumenta( old_param )
-local _old_firma := old_param["idfirma"]
-local _old_brdok := old_param["brdok"]
-local _old_tipdok := old_param["idtipdok"]
-local _rec
-local _tek_param 
+// --------------------------------------------------------------------
+static function izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
+local _old_firma := old_dok["idfirma"]
+local _old_brdok := old_dok["brdok"]
+local _old_tipdok := old_dok["idtipdok"]
+local _rec, _tek_dok, _t_rec
+local _new_firma := new_dok["idfirma"]
+local _new_brdok := new_dok["brdok"]
+local _new_tipdok := new_dok["idtipdok"]
 
 // treba da imam podatke koja je stavka bila prije korekcije
 // kao i koja je nova 
@@ -1745,9 +1748,17 @@ local _tek_param
 select fakt_pripr
 go top
 
-// uzmi podatke sa prve stavke
-_tek_param := dbf_get_rec()
+// uzmi podatke sa izmjenjene stavke
+seek _new_firma + _new_tipdok + _new_brdok
 
+if !FOUND()
+    return
+endif
+
+_tek_dok := dbf_get_rec()
+
+// zatim mi pronadji ostale stavke bivseg dokumenta
+go top
 seek _old_firma + _old_tipdok + _old_brdok
 
 if !FOUND()
@@ -1763,16 +1774,19 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
 
     // napravi zamjenu podataka
     _rec := dbf_get_rec()
-    _rec["idfirma"] := _tek_param["idfirma"]
-    _rec["idtipdok"] := _tek_param["idtipdok"]
-    _rec["brdok"] := _tek_param["brdok"]
-    _rec["datdok"] := _tek_param["datdok"]
+    _rec["idfirma"] := _tek_dok["idfirma"]
+    _rec["idtipdok"] := _tek_dok["idtipdok"]
+    _rec["brdok"] := _tek_dok["brdok"]
+    _rec["datdok"] := _tek_dok["datdok"]
+    _rec["idpartner"] := _tek_dok["idpartner"]
 
     dbf_update_rec( _rec )
 
-    go _t_rec
+    go ( _t_rec )
 
 enddo
+
+go top
 
 return
 

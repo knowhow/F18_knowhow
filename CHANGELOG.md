@@ -4,6 +4,8 @@
  - fakt, ispravi prvu stavku i koriguj sve ostale automatski [#29859](http://redmine.bring.out.ba/issues/29859)
  - fiskalne funkcije, niz bugfix-ova 
  - fakt, stanje robe, proširenje kolona na izvještaju
+ - IOS-i, ne prikazuj stavke ako je dug + pot = 0 u režimu prebijanja stavki  
+        [#29873](http://redmine.bring.out.ba/issues/29873)
  
 1.4.43 2012-12-26, vsasa
 

@@ -13,21 +13,12 @@
 #include "fakt.ch"
 
 
-// -------------------------------------------------------
-// izvjestaj stanje robe
-// -------------------------------------------------------
-function fakt_stanje_robe()
-local fSaberiKol, nKU, nKI
-local cDDokOtpr 
-private cIdFirma
-private qqroba,ddatod,ddatdo,nRezerv,nRevers
-private nul,nizl,nRbr,cRR,nCol1:=0,nCol0:=50
-private m:=""
-private nStr:=0
-private cProred:="N"
+static __PIC_KOL := "9999999999.999"
+static __PIC_DEM := "99999.999"
+static __PIC_IZN := "999999999.99"
 
-lBezUlaza := ( IzFMKINI("IZVJESTAJI","BezUlaza","N",KUMPATH)=="D" )
 
+static function _o_tables()
 O_FAKT_DOKS
 O_TARIFA
 O_PARTN
@@ -36,19 +27,40 @@ O_SIFV
 O_ROBA
 O_RJ
 O_FAKT
-// idroba
 set order to tag "3" 
+return
 
-cIdfirma=gFirma
-qqRoba:=""
-dDatOd:=ctod("")
-dDatDo:=date()
-cSaldo0:="N"
+
+
+
+// -------------------------------------------------------
+// izvjestaj stanje robe
+// -------------------------------------------------------
+function fakt_stanje_robe()
+local fSaberiKol, nKU, nKI
+local cDDokOtpr 
+private cIdFirma
+private qqroba,ddatod,ddatdo,nRezerv,nRevers
+private nUl, nIzl, nRbr, cRR, nCol1 := 0, nCol0 := 50
+private m := ""
+private nStr := 0
+private cProred := "N"
+private qqTipdok := "  "
+
+lBezUlaza := .f. 
+
+_o_tables()
+
+cIdfirma := gFirma
+qqRoba := ""
+dDatOd := CTOD("")
+dDatDo := DATE()
+cSaldo0 := "N"
 cDDokOtpr := "D"
-qqPartn:=space(20)
-private qqTipdok:="  "
+qqPartn := SPACE(20)
 
-Box (,13+IIF(lPoNarudzbi,2,0),66)
+Box(, 13, 66 )
+
 O_PARAMS
 private cSection:="5",cHistory:=" "; aHistory:={}
 Params1()
@@ -58,11 +70,7 @@ RPar("d1",@dDatOd)
 RPar("d2",@dDatDo)
 RPar("d3",@cDDokOtpr)
 
-fSaberikol:=(IzFMKIni('Svi','SaberiKol','N')=='D')
-
-if gNW$"DR"
- //cIdfirma:=gFirma
-endif
+fSaberikol := .f. 
 qqRoba:=padr(qqRoba,60)
 qqPartn:=padr(qqPartn,20)
 qqTipDok:=padr(qqTipDok,2)
@@ -124,9 +132,10 @@ if cMink=="O"
 endif
 
 if lBezUlaza
-   m:="---- ---------- ----------------------------------------"+IF(lPoNarudzbi.and.cPKN=="D"," ------","")+" ----------- ---"
+   m := "---- ---------- ----------------------------------------"+IF(lPoNarudzbi.and.cPKN=="D"," ------","")+" ----------- ---"
 else
-   m:="---- ---------- ----------------------------------------"+IF(lPoNarudzbi.and.cPKN=="D"," ------","")+" ----------- --- --------- -----------"
+   m := "---- ---------- ----------------------------------------"+IF(lPoNarudzbi.and.cPKN=="D"," ------","") + " " + ;
+        REPLICATE( "-", LEN(__PIC_KOL) ) + " --- " + REPLICATE( "-", LEN( __PIC_DEM ) ) + " " + REPLICATE("-", LEN( __PIC_IZN ))
 endif
 // endif
 
@@ -159,22 +168,22 @@ endif
 select FAKT
 
 if lPoNarudzbi .and. cPKN=="D"
-  SET ORDER TO TAG "3N"
+    SET ORDER TO TAG "3N"
 endif
 
 private cFilt:=".t."
 
 
-if aUsl1<>".t."
-  cFilt+=".and."+aUsl1
+if aUsl1 <> ".t."
+    cFilt += ".and." + aUsl1
 endif
 
 if !empty(dDatOd) .or. !empty(dDatDo)
  
  // sort po datumu dokumenta
  if cDDokOtpr == "D"
-	cFilt+= ".and. DatDok>="+cm2str(dDatOd)+;
-		".and. DatDok<="+cm2str(dDatDo)
+	cFilt+= ".and. DatDok>=" + _filter_quote(dDatOd)+;
+		".and. DatDok<=" + _filter_quote(dDatDo)
  endif
 
 endif
@@ -212,210 +221,231 @@ cidfirma:=trim(cidfirma)
 
 nH:=0
 
-do while !eof()
+do while !EOF()
     
     // provjeri datumski valutu, otpremnicu
     if cDDokOtpr == "O"
     	select fakt_doks
-	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
-		select fakt
-		skip
-		loop
-	endif
-	select fakt
+	    seek fakt->idfirma + fakt->idtipdok + fakt->brdok
+	    if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
+		    select fakt
+		    skip
+		    loop
+	    endif
+	    select fakt
     endif
     
     if cDDokOtpr == "V"
     	select fakt_doks
-	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
-		select fakt
-		skip
-		loop
-	endif
-	select fakt
-    endif
-
-  // skip & loop gdje je roba->_M1_ != "*"
-  if fSMark .and. SkLoNMark("ROBA",SiSiRo()) 
-    skip; loop
-  endif
-
-  cIdRoba := IdRoba
-
-  if lPoNarudzbi .and. cPKN=="D"
-    cIdNar:=idnar
-  endif
-
-  nStanjeCR := nUl := nIzl := 0
-  nRezerv := nRevers := 0
-
-  do while !eof()  .and. cIdRoba==IdRoba 
-
-    // provjeri datumski valutu, otpremnicu
-    if cDDokOtpr == "O"
-    	select fakt_doks
-	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
-		select fakt
-		skip
-		loop
-	endif
-	select fakt
-    endif
-    
-    if cDDokOtpr == "V"
-    	select fakt_doks
-	seek fakt->idfirma + fakt->idtipdok + fakt->brdok
-	if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
-		select fakt
-		skip
-		loop
-	endif
-	select fakt
+	    seek fakt->idfirma + fakt->idtipdok + fakt->brdok
+	    if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
+	    	select fakt
+		    skip
+		    loop
+	    endif
+	    select fakt
     endif
 
     // skip & loop gdje je roba->_M1_ != "*"
     if fSMark .and. SkLoNMark("ROBA",SiSiRo()) 
-      skip; loop
-    endif
-
-    if !empty(qqTipDok)
-      if idtipdok<>qqTipDok
-        skip; loop
-      endif
-    endif
-
-    if !empty(cidfirma)
-     if idfirma<>cidfirma; skip; loop; endif
-    endif
-
-    if !empty(qqPartn)
-     select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
-     select fakt
-     if !(fakt_doks->partner=qqPartn)
         skip
-	loop
-      endif
+        loop
     endif
 
-    // atributi!!!!!!!!!!!!!
-    if !empty(cK1)
-       if ck1<>K1
-           skip; loop
-       endif
-    endif
-    if !empty(cK2)
-       if ck2<>K2
-           skip; loop
-       endif
+    cIdRoba := IdRoba
+
+    if lPoNarudzbi .and. cPKN=="D"
+        cIdNar:=idnar
     endif
 
-    if !empty(cIdRoba)
-    if cRR<>"F"
-     if idtipdok="0"  // ulaz
-        nUl+=kolicina
-        if fSaberikol .and. !( roba->K2 = 'X')
-             nKU+=kolicina
+    nStanjeCR := nUl := nIzl := 0
+    nRezerv := nRevers := 0
+
+    do while !eof()  .and. cIdRoba==IdRoba 
+
+        // provjeri datumski valutu, otpremnicu
+        if cDDokOtpr == "O"
+    	    select fakt_doks
+	        seek fakt->idfirma + fakt->idtipdok + fakt->brdok
+	        if fakt_doks->dat_otpr < dDatOd .or. fakt_doks->dat_otpr > dDatDo
+		        select fakt
+		        skip
+	        	loop
+	        endif
+	        select fakt
         endif
-     elseif idtipdok="1"   // izlaz faktura
-       // za fakture na osnovu optpremince ne ra~unaj izlaz
-       if !(serbr="*" .and. idtipdok=="10") 
-         nIzl+=kolicina
-         if fSaberikol .and. !( roba->K2 = 'X')
-           nKI+=kolicina
-         endif
-       endif
-     elseif idtipdok $ "20#27"
-        if serbr="*"
-          nRezerv+=kolicina
-          if fSaberikol .and. !( roba->K2 = 'X')
-             nKI+=kolicina
-          endif
+    
+        if cDDokOtpr == "V"
+    	    select fakt_doks
+	        seek fakt->idfirma + fakt->idtipdok + fakt->brdok
+	        if fakt_doks->dat_val < dDatOd .or. fakt_doks->dat_val > dDatDo
+		        select fakt
+		        skip
+		        loop
+	        endif
+	        select fakt
         endif
-     elseif idtipdok=="21"
-        nRevers+=kolicina
-        if fSaberikol .and. !( roba->K2 = 'X')
-             nKI+=kolicina
+
+        // skip & loop gdje je roba->_M1_ != "*"
+        if fSMark .and. SkLoNMark("ROBA",SiSiRo()) 
+            skip; loop
         endif
-     endif
-    else
-     // za fakture na osnovu otpremince ne ra~unaj izlaz
-     if (serbr="*" .and. idtipdok=="10") 
-       nIzl+=kolicina
-       if fSaberikol .and. !( roba->K2 = 'X')
-         nKI+=kolicina
-       endif
-     endif
-    endif // crr=="F"
+
+        if !empty(qqTipDok)
+            if idtipdok<>qqTipDok
+                skip; loop
+            endif
+        endif
+
+        if !empty(cidfirma)
+            if idfirma<>cidfirma; skip; loop; endif
+        endif
+
+        if !empty(qqPartn)
+            select fakt_doks
+            hseek fakt->(IdFirma+idtipdok+brdok)
+            select fakt
+            if !(fakt_doks->partner=qqPartn)
+                skip
+	            loop
+            endif
+        endif
+
+        // atributi!!!!!!!!!!!!!
+        if !empty(cK1)
+            if ck1<>K1
+                skip
+                loop
+            endif
+        endif
+        if !empty(cK2)
+            if ck2<>K2
+                skip    
+                loop
+            endif
+        endif
+
+        if !empty(cIdRoba)
+            if cRR<>"F"
+                if idtipdok="0"  
+                    // ulaz
+                    nUl+=kolicina
+                    if fSaberikol .and. !( roba->K2 = 'X')
+                        nKU+=kolicina
+                    endif
+                elseif idtipdok="1"   
+                    // izlaz faktura
+                    // za fakture na osnovu optpremince ne ra~unaj izlaz
+                    if !(serbr="*" .and. idtipdok=="10") 
+                        nIzl+=kolicina
+                        if fSaberikol .and. !( roba->K2 = 'X')
+                            nKI+=kolicina
+                        endif
+                    endif
+                elseif idtipdok $ "20#27"
+                    if serbr="*"
+                        nRezerv+=kolicina
+                        if fSaberikol .and. !( roba->K2 = 'X')
+                            nKI+=kolicina
+                        endif
+                    endif
+                elseif idtipdok=="21"
+                    nRevers+=kolicina
+                    if fSaberikol .and. !( roba->K2 = 'X')
+                        nKI+=kolicina
+                    endif
+                endif
+            else
+                // za fakture na osnovu otpremince ne ra~unaj izlaz
+                if (serbr="*" .and. idtipdok=="10") 
+                    nIzl+=kolicina
+                    if fSaberikol .and. !( roba->K2 = 'X')
+                        nKI+=kolicina
+                    endif
+            endif
+        endif // crr=="F"
     endif  // empty(
     skip
-  enddo
+enddo
 
-  if !empty(cIdRoba)
-   NSRNPIdRoba(cIdRoba, cSintetika=="D" )
-   SELECT ROBA
-   if (fieldpos("MINK"))<>0
-      nMink:=roba->mink
-   else
-      nMink:=0
-   endif
-   SELECT FAKT
-   if prow()>61-iif(cProred="D",1,0); ZaglSRobe(); endif
+if !EMPTY(cIdRoba)
+    
+    NSRNPIdRoba(cIdRoba, cSintetika=="D" )
+    
+    SELECT ROBA
+    
+    if (fieldpos("MINK"))<>0
+        nMink:=roba->mink
+    else
+        nMink:=0
+    endif
+    
+    SELECT FAKT
+    
+    if prow() > 61 - iif(cProred="D",1,0)
+        ZaglSRobe()
+    endif
 
-   if (cMink<>"D" .and. (cSaldo0=="D" .or. round(nUl-nIzl,4)<>0)) .or. ; //ne prikazuj stavke 0
-      (cMink=="D" .and. nMink<>0 .and. (nUl-nIzl-nMink)<0)
+    if (cMink<>"D" .and. (cSaldo0=="D" .or. round(nUl-nIzl,4)<>0)) .or. ; //ne prikazuj stavke 0
+        (cMink=="D" .and. nMink<>0 .and. (nUl-nIzl-nMink)<0)
 
-     if cMink=="O" .and. nMink==0 .and. round(nUl-nIzl,4)==0
-       loop
-     endif
+        if cMink=="O" .and. nMink==0 .and. round(nUl-nIzl,4)==0
+            loop
+        endif
 
-     if cProred=="D"
-       ? space(gnLMarg); ?? m
-     endif
-     if cMink=="O" .and. nMink<>0 .and. (nUl-nIzl-nMink)<0
-        B_ON
-     endif
-     ? space(gnLMarg); ?? str(++nRbr,4),cidroba,PADR(ROBA->naz,40)
+        if cProred=="D"
+            ? space(gnLMarg)
+            ?? m
+        endif
+     
+        if cMink=="O" .and. nMink<>0 .and. (nUl-nIzl-nMink)<0
+            B_ON
+        endif  
+    
+        //
+        // pocetak reda...
+        // 
+        ? space(gnLMarg); ?? str(++nRbr,4),cidroba,PADR(ROBA->naz,40)
 
-     if lPoNarudzbi .and. cPKN=="D"
-       ?? "", cIdNar
-     endif
+        if lPoNarudzbi .and. cPKN=="D"
+            ?? "", cIdNar
+        endif
 
-     nCol0:=pcol()-11
+        nCol0:=pcol()-11
 
-     if fSaberiKol .and. lBezUlaza
-       nCol1:=pcol()+1
-     endif
-     @ prow(),pcol()+1 SAY nUl-nIzl pict pickol
-     @ prow(),pcol()+1 SAY roba->jmj
-     if cTipVPC=="2" .and.  roba->(fieldpos("vpc2")<>0)
-       _cijena:=roba->vpc2
-     else
-       _cijena := if ( !EMPTY(cIdFirma) , fakt_mpc_iz_sifrarnika(), roba->vpc )
-     endif
+        if fSaberiKol .and. lBezUlaza
+            nCol1:=pcol()+1
+        endif
+     
+        @ prow(),pcol() + 1 SAY nUl-nIzl pict __PIC_KOL
+        @ prow(),pcol() + 1 SAY roba->jmj
+     
+        if cTipVPC=="2" .and.  roba->(fieldpos("vpc2")<>0)
+            _cijena:=roba->vpc2
+        else
+            _cijena := if ( !EMPTY(cIdFirma) , fakt_mpc_iz_sifrarnika(), roba->vpc )
+        endif
 
-     if !lBezUlaza
-       @ prow(),pcol()+1 SAY _cijena  pict "99999.999"
-       nCol1:=pcol()+1
-       @ prow(),nCol1 SAY (nUl-nIzl)*_cijena   pict picdem
-     endif
+        if !lBezUlaza
+            @ prow(), pcol()+1 SAY _cijena PICT __PIC_DEM
+            nCol1 := pcol()+1
+            @ prow(), nCol1 SAY ( nUl - nIzl ) * _cijena PICT __PIC_IZN
+        endif
 
-     nIzn+=(nUl-nIzl)*_cijena
+        nIzn += (nUl-nIzl) * _cijena
 
-     if cMink<>"N" .and. nMink>0
-      ?
-      @ prow(),ncol0    SAY padr("min.kolic:",len(pickol))
-      @ prow(),pcol()+1 SAY nMink  pict pickol
-     endif
+        if cMink<>"N" .and. nMink>0
+            ?
+            @ prow(),ncol0    SAY padr("min.kolic:",len(pickol))
+            @ prow(),pcol()+1 SAY nMink  pict __PIC_KOL
+        endif
 
-     if cMink=="O" .and. nMink<>0 .and. (nUl-nIzl-nMink)<0
-        B_OFF
-     endif
-   endif
+        if cMink=="O" .and. nMink<>0 .and. (nUl-nIzl-nMink)<0
+            B_OFF
+        endif
+    endif
 
-  endif
+ endif
 
 enddo
 
@@ -441,14 +471,10 @@ CLOSE ALL
 MyFERASE(cTMPFAKT)
 
 
-CLOSERET
+close all
 return
-*}
 
 
-/*! \fn ZaglSRobe()
- *  \brief Zaglavlje izvjestaja stanje robe
- */
 function ZaglSRobe()
 local _rj_tip := ""
 
@@ -507,15 +533,15 @@ endif
 ?? m
 ? space(gnLMarg)
 if lBezUlaza
-   ?? "R.br  Sifra       Naziv                                 "+IF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"   Stanje    jmj     "
+   ?? "R.br  Sifra       Naziv                                 "+IF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"   Stanje      jmj     "
 else
-   ?? "R.br  Sifra       Naziv                                 "+IF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"   Stanje    jmj     "+IF(_rj_tip$"M1#M2".and.!EMPTY(cIdFirma),"Cij.",if(IsPDV()," PC ","VPC "))+"      Iznos"
+   ?? "R.br  Sifra       Naziv                                 "+IF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+"   Stanje      jmj     "+IF(_rj_tip$"M1#M2".and.!EMPTY(cIdFirma),"Cij.",if(IsPDV()," PC ","VPC "))+"      Iznos"
 endif
 // endif
 
 ? space(gnLMarg)
 ?? m
 return
-*}
+
 
 

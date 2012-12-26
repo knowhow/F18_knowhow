@@ -138,17 +138,23 @@ return _err_level
 
 
 
-
 // ---------------------------------------------------------------
 // box reklamni racun
 // ---------------------------------------------------------------
 function reklamni_rn_box( rekl_rn )
+
 Box(, 1, 60 )
     @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni racun broj:" ;
             GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
     read
 BoxC()
+
+if LastKey() == K_ESC .and. rekl_rn == 0
+    rekl_rn := -1
+endif
+
 return rekl_rn
+
 
 
 // --------------------------------------------------------------------
@@ -256,6 +262,12 @@ endif
 // koji je broj racuna koji storniramo
 if storno 
     _rekl_rn_broj := reklamni_rn_box( _rekl_rn_broj )
+endif
+
+// ESC na unosu veze racuna
+if _rekl_rn_broj == -1
+    MsgBeep( "Broj veze racuna mora biti setovan" )
+    return NIL
 endif
 
 // i total sracunaj sa pdv

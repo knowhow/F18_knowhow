@@ -47,6 +47,12 @@ endif
 // setuj parametre uredjaja
 __device_params := get_fiscal_device_params( __device_id, my_user() )
 
+// nesto nije uredu, nema parametara !!!
+if __device_params == NIL
+    MsgBeep( "Nesto nije uredu sa ocitanjem parametara !!!" )
+    return
+endif
+
 _dev_drv := __device_params["drv"]
 
 do case 

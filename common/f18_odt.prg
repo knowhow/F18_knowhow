@@ -10,6 +10,7 @@
  */
 
 #include "fmk.ch"
+#include "fileio.ch"
 
 static __output_odt
 static __output_pdf
@@ -17,7 +18,7 @@ static __jod_converter := "jodconverter-cli.jar"
 static __jod_reports := "jodreports-cli.jar"
 static __java_run_cmd := "java -Xmx128m -jar"
 static __util_path
-
+static __current_odt
 
 // -------------------------------------------------------------------
 // generisanje odt reporta putem jodreports
@@ -46,10 +47,13 @@ endif
 
 // output fajl
 if ( output_file == NIL )
-    __output_odt := my_home() + OUT_ODT_FILE
+    __output_odt := my_home() + gen_random_odt_name()
 else
     __output_odt := output_file
 endif
+
+// tekuci odt koji je generisan
+__current_odt := __output_odt
 
 // testni rezim
 if ( test_mode == NIL )
@@ -58,12 +62,13 @@ endif
 
 // kopiranje template fajla...
 _ok := _copy_odt_template( template )
+
 if !_ok
 	return _ok
 endif
 
 // prije generisanja pobrisi prošli izlazni fajl...
-FERASE( __output_odt )
+delete_odt_files()
 
 log_write( "ODT report gen: pobrisao fajl " + __output_odt, 7 )
 
@@ -101,7 +106,7 @@ log_write( "ODT report gen, cmd: " + _cmd, 7 )
 SAVE SCREEN TO _screen
 CLEAR SCREEN
 
-? "Generisanje ODT reporta u toku..."
+? "Generisanje ODT reporta u toku ...  fajl: ..." + RIGHT( __current_odt, 20 )
 
 // pokreni generisanje reporta
 _error := hb_run( _cmd )
@@ -118,6 +123,53 @@ endif
 _ok := .t.
 
 return _ok
+
+
+
+// ---------------------------------------------------------
+// generise random odt out file name
+// ---------------------------------------------------------
+static function gen_random_odt_name()
+local _i
+local _tmp := "out.odt"
+
+for _i := 1 to 1000
+    _tmp := "out_" + PADL( ALLTRIM( STR( _i ) ), 4, "0" ) + ".odt"
+    if !FILE( my_home() + _tmp )
+        exit
+    endif
+next
+
+return _tmp
+
+
+
+
+// -----------------------------------------------------------------
+// brise odt fajlove 
+// -----------------------------------------------------------------
+static function delete_odt_files()
+local _tmp
+local _f_path
+
+_f_path := my_home()
+_tmp := "out_*.odt"
+
+// lock fajl izgleda ovako
+//.~lock.out_0001.odt#
+
+AEVAL( DIRECTORY( _f_path + _tmp ), { | aFile | ;
+        if( ;
+            FILE( _f_path + ".~lock." + ALLTRIM( aFile[1]) + "#" ), ;
+            .t., ;
+            FERASE( _f_path + ALLTRIM( aFile[1]) ) ;
+        ) ;
+    })
+
+sleep(1)
+
+return
+
 
 
 
@@ -202,7 +254,7 @@ local _cmd
 local _screen, _error := 0
 
 if ( output_file == NIL )
-    __output_odt := my_home() + OUT_ODT_FILE
+    __output_odt := __current_odt
 else
     __output_odt := output_file
 endif
@@ -246,7 +298,7 @@ _cmd := ""
 SAVE SCREEN TO _screen
 CLEAR SCREEN
 
-? "Prikaz odt fajla u toku..."
+? "Prikaz odt fajla u toku ...   fajl: ..." + RIGHT( __current_odt, 20 )
 
 // pokreni komandu
 log_write( _cmd, 7 )
@@ -318,14 +370,14 @@ local _screen, _error
 
 // input fajl
 if ( input_file == NIL )
-    __output_odt := my_home() + OUT_ODT_FILE
+    __output_odt := __current_odt
 else
     __output_odt := input_file
 endif
 
 // output fajl
 if ( output_file == NIL )
-	__output_pdf := my_home() + STRTRAN(OUT_ODT_FILE, ".odt", ".pdf" )
+	__output_pdf := STRTRAN( __current_odt, ".odt", ".pdf" )
 else
 	__output_pdf := output_file
 endif

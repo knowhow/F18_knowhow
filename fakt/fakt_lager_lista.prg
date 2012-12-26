@@ -376,10 +376,10 @@ do while !eof()
         hseek fakt->(IdFirma+idtipdok+brdok)
         select fakt
 
-	if !(doks->partner=qqPartn)
-          skip
-	  loop
-        endif
+	  if !(fakt_doks->partner = qqPartn)
+        skip
+	    loop
+      endif
     endif
 
     // atributi

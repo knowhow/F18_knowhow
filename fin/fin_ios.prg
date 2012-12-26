@@ -997,7 +997,8 @@ do while !EOF() .and. _id_firma == field->IdFirma ;
           
         if _kao_kartica == "N"
 
-            if !( _dug_1 == 0 .and. _pot_1 == 0 )
+            // ispisi mi ove stavke ako dug i pot <> 0
+            if !( ROUND( _dug_1, 2 ) == 0 .and. ROUND( _pot_1, 2 ) == 0 )
 
                 xml_subnode( "data_kartica", .f. )
 

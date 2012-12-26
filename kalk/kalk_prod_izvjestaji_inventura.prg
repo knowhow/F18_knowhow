@@ -61,19 +61,13 @@ P_COND
 
 select kalk_pripr
 
-if (IsJerry())
-	m:="--- -------------------------------------------- ------ ---------- ---------- ---------- ---------- ----------- ----------- -----------"
-	? m
-	? "*R *                                            *      *  Popisana*  Knjizna *  Knjizna * Popisana *  Razlika * Cijena  *  +VISAK  *"
-	? "*BR*               R O B A                      *Tarifa*  Kolicina*  Kolicina*vrijednost*vrijednost*  (kol)   *         *  -MANJAK *"
-else
-	m:="--- --------------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
-	? m
-	? "*R * ROBA                                  *  Popisana*  Knjizna *  Knjizna * Popisana *  Razlika * Cijena  *  +VISAK  * -MANJAK  *"
-	? "*BR* TARIFA                                *  Kolicina*  Kolicina*vrijednost*vrijednost*  (kol)   *         *          *          *"
-endif
+m:="--- --------------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
 ? m
+? "*R * ROBA                                  *  Popisana*  Knjizna *  Knjizna * Popisana *  Razlika * Cijena  *  +VISAK  * -MANJAK  *"
+? "*BR* TARIFA                                *  Kolicina*  Kolicina*vrijednost*vrijednost*  (kol)   *         *          *          *"
+? m
+
 nTot4:=0
 nTot5:=0
 nTot6:=0
@@ -123,6 +117,9 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 	?? field->idroba, TRIM( LEFT( roba->naz, 40 )), "(", roba->jmj, ")"
 
+	if lKoristitiBK .and. !EMPTY( roba->barkod )
+		?? ", BK: " + roba->barkod 
+	endif
 
 	nPosKol := 30
 	@ prow() + 1, 4 SAY field->idtarifa + SPACE(4)

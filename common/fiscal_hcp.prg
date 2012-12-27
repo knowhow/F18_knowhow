@@ -608,7 +608,6 @@ local _cmd, _err_level
 _cmd := 'CMD="Z_REPORT"'
 _err_level := hcp_cmd( dev_params, _cmd, _tr_cmd )
 
-
 // ako se koriste dinamicki plu kodovi resetuj prodaju
 // pobrisi artikle
 if dev_params["plu_type"] == "D"
@@ -638,8 +637,8 @@ if dev_params["auto_avans"] > 0
 	// daj malo prostora
 	sleep(5)
 
-	// unesi polog
-	_err_level := hcp_polog( dev_params, .t. )
+	// unesi polog vrijednosti iz parametra
+	_err_level := hcp_polog( dev_params, dev_params["auto_avans"] )
 
 	msgc()
 

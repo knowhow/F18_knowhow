@@ -244,6 +244,11 @@ xml_subnode("RECEIPT", .t.)
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err_level
+endif
+
 // kreiraj cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -326,6 +331,11 @@ xml_subnode("FOOTER", .t. )
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err
+endif
+
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -375,6 +385,11 @@ next
 xml_subnode( "CLIENTS", .t. )
 
 close_xml()
+
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err
+endif
 
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
@@ -436,6 +451,11 @@ xml_subnode( "PLU", .t.)
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err
+endif
+
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -484,6 +504,11 @@ xml_subnode("USER_TEXT", .t.)
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err_level
+endif
+
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -529,6 +554,11 @@ endif
 xml_subnode("COMMAND", .t.)
 
 close_xml()
+
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err_level
+endif
 
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
@@ -705,6 +735,11 @@ local _f_state := "BILL_S~1.XML"
 // posalji komandu za stanje fiskalnog racuna
 _cmd := 'CMD="RECEIPT_STATE"'
 _err := hcp_cmd( dev_params, _cmd, _tr_cmd )
+
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _fiscal_no := 999
+endif
 
 // ako nema gresaka, iscitaj broj racuna
 if _err = 0

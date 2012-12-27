@@ -400,6 +400,7 @@ if _err_level = 0
 	
     if _fiscal_no > 0
         pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
+	    msgbeep( "Kreiran fiskalni racun: " + ALLTRIM( STR( _fiscal_no ) ) )
     endif
 
 endif

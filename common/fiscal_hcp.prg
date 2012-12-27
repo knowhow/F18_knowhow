@@ -1061,8 +1061,8 @@ _f_name := dev_params["out_dir"] + _answ_dir + SLASH + STRTRAN( f_name, "XML", "
 
 Box(, 3, 60 )
 
-@ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + ALLTRIM( STR( dev_param["id"] ) ) + ;
-                        " : " + PADR( dev_param["name"], 40 ) 
+@ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + ALLTRIM( STR( dev_params["id"] ) ) + ;
+                        " : " + PADR( dev_params["name"], 40 ) 
 
 do while _time > 0
 	

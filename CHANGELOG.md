@@ -1,3 +1,10 @@
+1.4.46 2012-12-27, vsasa
+
+ - hcp fiskalne funkcije, test režim štampe [#29881](http://redmine.bring.out.ba/issues/29881)
+ - pos, inventura, korekcije [#29882](http://redmine.bring.out.ba/issues/29882)
+ - os, obračun amortizacije - bugfix [#29879](http://redmine.bring.out.ba/issues/29879)
+ - hcp, sitni bugfix-ovi
+ 
 1.4.45 2012-12-26, vsasa
 
  - odt print, više izlaznih fajlova istovremeno

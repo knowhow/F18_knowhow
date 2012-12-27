@@ -131,6 +131,7 @@ Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
             @ m_x+3, m_y+38 SAY "Datum otpisa: "
             ?? field->datotp
         endif
+
         @ m_x+4, m_y + 2 SAY "Nabavna vr.:"
         ?? transform( field->nabvr, gPicI )
         @ m_x+4, col() + 2 SAY "Ispravka vr.:"
@@ -200,45 +201,56 @@ local _t_rec
 local _novi
 
 do case
+
     case (Ch==K_ENTER .and. !(EOF() .or. BOF())) .or. Ch==K_CTRL_N
+
         IF Ch==K_CTRL_N
             GO BOTTOM
             SKIP 1
         ENDIF
+
         set_global_memvars_from_dbf()
+
         Box(,5,50)
-            @ m_x+1,m_y+2 SAY "Datum:"  get _datum valid os_validate_date()
-            @ m_x+2,m_y+2 SAY "Opis:"  get _opis
-            @ m_x+4,m_y+2 SAY "nab vr" get _nabvr
-            @ m_x+5,m_y+2 SAY "OTP vr" get _otpvr
+            @ m_x + 1, m_y + 2 SAY "Datum:" GET _datum valid os_validate_date()
+            @ m_x + 2, m_y + 2 SAY "Opis:"  GET _opis
+            @ m_x + 4, m_y + 2 SAY "nab vr" GET _nabvr PICT "9999999.99"
+            @ m_x + 5, m_y + 2 SAY "OTP vr" GET _otpvr PICT "9999999.99"
             read
         BoxC()
+
         IF LASTKEY()==K_ESC
             GO (nRec0)
             nRet:=DE_CONT
         ELSE
+
             IF CH==K_CTRL_N
                 APPEND BLANK
             ENDIF
-            _ID := cId
+
+            _id := cId
             // sinhronizuj podatke sql/server
             _rec := get_dbf_global_memvars()
-            update_rec_server_and_dbf( ALIAS(), _rec )
+
+            update_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "FULL" )
     
             ShowSadVr()
+
             nRet:=DE_REFRESH
+
         ENDIF
 
     case Ch==K_CTRL_T
         
         IF pitanje(,"Sigurno zelite izbrisati promjenu ?","N")=="D"
             _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( ALIAS(), _rec )
+            delete_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "FULL" )
             ShowSadVr()
         ENDIF
+
         return DE_REFRESH
 
-    case Ch==K_CTRL_O
+    case Ch == K_CTRL_O
         
         select_os_sii()
         nKolotp := field->kolicina
@@ -274,7 +286,7 @@ do case
             _rec["nabvr"] := nNabVrj * _rec["kolicina"]
             _rec["otpvr"] := nOtpVrj * _rec["kolicina"]
             
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
 
             // dodaj novi zapis...
             _rec := hb_hash()
@@ -286,7 +298,7 @@ do case
             _rec["datotp"] := dDatotp
             _rec["opisotp"] := cOpisOtp
             
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
 
             fRastavljeno := .t.
 
@@ -298,7 +310,7 @@ do case
             _rec["datotp"] := dDatOtp
             _rec["opisotp"] := cOpisOtp
 
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
 
         endif
 
@@ -331,21 +343,26 @@ do case
         ESC_RETURN DE_CONT
 
         select_os_sii()
+
         seek _novi
+
         if FOUND()
             Beep(1)
             Msg("Vec postoji sredstvo sa istim inventurnim brojem !")
         else
+
             select_promj()
             seek cId
+
             _t_rec := 0
+
             do while !eof() .and. cId == field->id
                 skip
                 _t_rec := recno()
                 skip -1
                 _rec := dbf_get_rec()
                 _rec["id"] := _novi
-                update_rec_server_and_dbf( ALIAS(), _rec )
+                update_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "FULL" )
                 go ( _t_rec )
             enddo
             seek _novi
@@ -354,7 +371,7 @@ do case
             seek cId
             _rec := dbf_get_rec()
             _rec["id"] := _novi
-            update_rec_server_and_dbf( ALIAS(), _rec )
+            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
             cId := _novi
         endif
 

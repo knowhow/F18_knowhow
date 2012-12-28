@@ -87,7 +87,7 @@ endif
 _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _partn_data )
 
 // da nije slucajno NIL ???
-if VALTYPE( _items_data ) == "L"
+if VALTYPE( _items_data ) == "L" .or. _items_data == NIL
     return _err_level
 endif
 
@@ -411,6 +411,7 @@ endif
 
 // provjeri prije stampe stavke kolicina, cijena
 _item_level_check := 1
+
 if fiscal_items_check( @_data, storno, _item_level_check, __device_params["drv"] ) < 0
     return NIL    
 endif

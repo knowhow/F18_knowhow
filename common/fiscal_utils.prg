@@ -463,7 +463,7 @@ if _fix > 0 .and. level > 1
 
 	msgbeep("Pojedini artikli na racunu su prepakovani na 100 kom !")
 
-elseif _fix > 0 .and. level == "1"
+elseif _fix > 0 .and. level == 1
 	
 	_ret := -99
 	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")

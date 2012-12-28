@@ -1,6 +1,7 @@
 1.4.49 2012-12-28, vsasa
 
  - fiskalne opcije, čekiranje stavki računa - novi bugfix
+ - fakt, fiskalni računi, roba tip "U" hendliranje
  
 1.4.48 2012-12-28, vsasa
 

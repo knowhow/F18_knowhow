@@ -437,8 +437,6 @@ for _i := 1 to LEN( items )
 	_kolicina := items[ _i, 6 ]	
 	_naziv := items[ _i, 4 ]
 
-    altd()
-
 	if ( !_chk_qtty( _kolicina ) .or. !_chk_price( _cijena ) ) ;
 		.or. !_chk_price( _plu_cijena )
 		

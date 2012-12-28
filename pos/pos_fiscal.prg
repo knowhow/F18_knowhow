@@ -443,7 +443,7 @@ local _naz := ""
 
 if EMPTY( id_vr_pl ) .or. id_vr_pl == "01"
 	// ovo je gotovina
-	return _naz
+	return _ret
 endif
 
 O_VRSTEP

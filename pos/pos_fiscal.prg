@@ -151,7 +151,7 @@ local _reklamni_racun
 local _rabat, _cijena
 local _art_barkod, _art_id, _art_naz, _art_jmj
 local _rbr := 0
-local _rn_total
+local _rn_total := 0
 local _vr_plac
 local _level
 
@@ -176,6 +176,8 @@ _vr_plac := pos_get_vr_plac( field->idvrstep )
 if _vr_plac <> "0"
 	// vrati mi iznos racuna
 	_rn_total := pos_iznos_racuna( id_pos, tip_dok, datum, rn_broj )
+else
+    _rn_total := 0
 endif
 
 // ako postoji iznos uplate, onda je to total

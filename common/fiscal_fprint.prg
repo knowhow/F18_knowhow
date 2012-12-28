@@ -587,6 +587,10 @@ endif
 cVr_placanja := ALLTRIM( aData[1, 13] )
 nTotal := aData[1, 14]
 
+if nTotal == NIL
+    nTotal := 0
+endif
+
 // ocekuje se matrica formata
 // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
 //         rek_rn, plu, plu_cijena, popust, barkod, vrsta plac, total racuna }

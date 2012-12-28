@@ -1,3 +1,8 @@
+1.4.48 2012-12-28, vsasa
+
+ - fakt fiskalne opcije, ino bugfix
+ - fiskalne opcije, čekiranje stavki računa - bugfix
+ 
 1.4.47 2012-12-28, vsasa
 
  - hcp pos, filovanje vrste plaćanja [#29881](http://redmine.bring.out.ba/issues/29881)

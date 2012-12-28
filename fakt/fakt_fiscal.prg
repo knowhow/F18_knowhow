@@ -481,8 +481,11 @@ if tip_dok == "11"
 
 elseif !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
 
+    // kod info faktura ne prikazuj partnera
     _partn_ino := .t.
+    _prikazi_partnera := .f.
 
+    // ako je samo oslobadjanje po clanu onda prikazi
     if !EMPTY( _partn_clan )
         _prikazi_partnera := .t.
     endif

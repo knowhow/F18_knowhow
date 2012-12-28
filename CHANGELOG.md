@@ -1,3 +1,7 @@
+1.4.49 2012-12-28, vsasa
+
+ - fiskalne opcije, čekiranje stavki računa - novi bugfix
+ 
 1.4.48 2012-12-28, vsasa
 
  - fakt fiskalne opcije, ino bugfix

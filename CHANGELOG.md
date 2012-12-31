@@ -1,3 +1,8 @@
+1.4.50 2012-12-31, vsasa
+
+ - rnal, parametri zaokruženja naloga [#29852](http://redmine.bring.out.ba/issues/29852)
+ - fakt, kod ispravke prve stavke izmjeni i fakt atribute
+ 
 1.4.49 2012-12-28, vsasa
 
  - fiskalne opcije, čekiranje stavki računa - novi bugfix

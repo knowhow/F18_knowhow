@@ -52,8 +52,10 @@ if fakt_lager_lista_vars( @_param, _ps ) == 0
     return
 endif
 
+MsgO( "Formiranje lager liste sql query u toku..." )
 // napuni mi podatke...
 _data := fakt_lager_lista_sql( _param, _ps )
+MsgC()
 
 // dobio sam data... sada mogu provrtiti u tekucoj bazi i azurirati tekuci dokument
 O_ROBA
@@ -63,6 +65,8 @@ O_SIFV
 O_FAKT_PRIPR
 
 _n_br_dok := PADR( "00000", 8 )
+
+MsgO( "Formiranje dokumenta pocetnog stanja u toku... " )
 
 do while !_data:EOF()
 
@@ -117,6 +121,8 @@ do while !_data:EOF()
     _data:Skip()
 
 enddo
+
+MsgC()
 
 if _count > 0
     MsgBeep( "Formiran dokument pocetnog stanja i nalazi se u pripremi !!!" )

@@ -885,6 +885,98 @@ return _ret
 
 
 
+// -----------------------------------------------------------------
+// generisanje xml fajla za lager listu
+// -----------------------------------------------------------------
+static function lager_lista_xml( table, params )
+local _ret := .t.
+local _row
+local _id_roba, _ulaz, _izlaz, _stanje
+local _count := 0
+local _t_ulaz := 0
+local _t_izlaz := 0
+local _t_stanje := 0
+
+O_ROBA
+O_PARTN
+
+// ima li zapisa...
+if table:LastRec() == 0
+    return .f.
+endif
+
+open_xml( _xml )
+xml_subnode( "lager", .f. )
+
+// podaci zaglavlja...
+// xml_node( "firma", gFirma )
+// xml_node( "datum_od", gFirma )
+// xml_node( "datum_do", gFirma )
+// xml_node( "roba", gFirma )
+
+
+do while !table:EOF()
+
+    _row := table:GetRow()
+
+    _id_roba := _row:FieldGet( _row:FieldPos("idroba") ) 
+    _ulaz := _row:FieldGet( _row:FieldPos("ulaz") ) 
+    _izlaz := _row:FieldGet( _row:FieldPos("izlaz") )
+
+    if params["tip_prikaza"] == "U"
+        _izlaz := 0
+    elseif params["tip_prikaza"] == "I"
+        _ulaz := 0
+    endif
+
+    _stanje := ( _ulaz - _izlaz ) 
+
+    _t_stanje += _stanje
+    _t_ulaz += _ulaz
+    _t_izlaz += _izlaz
+
+    select roba
+    hseek _id_roba
+
+    _cijena := roba->vpc
+
+    // sta sa uslugama ???
+    if roba->tip == "U"
+    endif
+    
+    if params["stavke_nula"] == "N" .and. ROUND( _stanje, 2 ) == 0
+        table:Skip()
+        loop
+    endif
+
+    xml_subnode( "item", .f. )
+    
+    xml_node( "rbr", ALLTRIM( STR( ++_count ) ) )
+    xml_node( "id", to_xml_encoding( _id_roba ) )
+    xml_node( "naz", to_xml_encoding( roba->naz ) )
+    xml_node( "jmj", to_xml_encoding( roba->jmj ) )
+    xml_node( "ulaz", STR( _ulaz, 12, 2 ) )
+    xml_node( "izlaz", STR( _izlaz, 12, 2 ) )
+    xml_node( "stanje", STR( _stanje, 12, 2 ) )
+    xml_node( "cijena", STR( _cijena, 12, 2 ) )
+
+    xml_subnode( "item", .t. )
+    
+    table:Skip()
+    
+enddo
+ 
+// totali lagerice
+xml_node( "t_ulaz", STR( _t_ulaz, 12, 2 ) )
+xml_node( "t_izlaz", STR( _t_izlaz, 12, 2 ) )
+xml_node( "t_stanje", STR( _t_stanje, 12, 2 ) )
+
+xml_subnode( "lager", .t. )
+close_xml()
+
+return _ret
+
+
 
 // ------------------------------------------------------------------
 // lager lista sql

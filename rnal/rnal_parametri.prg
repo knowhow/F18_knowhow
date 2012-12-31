@@ -283,7 +283,7 @@ function ed_ost_params()
 local nLeft := 50
 local nX := 1
 
-Box(, 15, 70)
+Box(, 20, 70)
 
 set cursor on
 
@@ -317,6 +317,15 @@ nX += 2
 nX += 2
 
 @ m_x + nX, m_y+2 SAY PADL("Nadmorska visina (nv.m)", nLeft - 10) GET gDefNVM PICT "99999.99"
+
+nX += 1
+
+@ m_x + nX, m_y+2 SAY PADL("3mm zaokruzenja ?", nLeft - 20) GET g3mmZaokUse ;
+	PICT "@!" VALID g3mmZaokUse $ "DN"
+
+@ m_x + nX, col() + 1 SAY "PROFILIT zaokruzenja ?" GET gProfZaokUse ;
+	PICT "@!" VALID gProfZaokUse $ "DN"
+
 
 nX += 1
 
@@ -501,6 +510,9 @@ gDefNVM := fetch_metric("rnal_default_nadmorska_visina", nil, gDefNVM )
 
 gInsTimeOut := fetch_metric("rnal_ins_timeout", nil, gInsTimeOut )
 
+gProfZaokUse := fetch_metric( "rnal_profilit_zaokruzenje", nil, gProfZaokUse )
+g3mmZaokUse := fetch_metric( "rnal_3mm_zaokruzenje", nil, g3mmZaokUse )
+
 gGnUse := fetch_metric( "rnal_gn_tabela", nil, gGnUse )
 gGnMin := fetch_metric( "rnal_gn_min", nil, gGnMin )
 gGnMax := fetch_metric( "rnal_gn_max", nil, gGnMax )
@@ -519,6 +531,8 @@ set_metric( "rnal_maksimalna_sirina_stakla", nil, gMaxWidth )
 set_metric("rnal_maksimalna_visina_stakla", nil, gMaxHeigh )
 set_metric("rnal_default_nadmorska_visina", nil, gDefNVM )
 set_metric("rnal_ins_timeout", nil, gInsTimeOut )
+set_metric( "rnal_3mm_zaokruzenje", nil, g3mmZaokUse )
+set_metric( "rnal_profilit_zaokruzenje", nil, gProfZaokUse )
 set_metric( "rnal_gn_tabela", nil, gGnUse )
 set_metric( "rnal_gn_min", nil, gGnMin )
 set_metric( "rnal_gn_max", nil, gGnMax )

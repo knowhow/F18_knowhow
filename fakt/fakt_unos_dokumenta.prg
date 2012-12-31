@@ -1788,6 +1788,36 @@ enddo
 
 go top
 
+select ( F_FAKT_ATRIB )
+if !Used()
+    O_FAKT_ATRIB
+endif
+
+go top
+
+do while !EOF()
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    _rec := dbf_get_rec()
+
+    _rec["idfirma"] := _tek_dok["idfirma"]
+    _rec["idtipdok"] := _tek_dok["idtipdok"]
+    _rec["brdok"] := _tek_dok["brdok"]
+
+    dbf_update_rec( _rec )
+ 
+    go ( _t_rec )
+
+enddo
+
+// zatvori atribute
+use
+
+select fakt_pripr
+
 return
 
 

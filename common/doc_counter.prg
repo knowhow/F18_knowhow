@@ -16,7 +16,8 @@ CLASS DocCounter
 
     METHOD     to_str()
 
-    ACCESS counter()   INLINE ::count
+    ASSIGN     counter     METHOD   set_counter
+    ACCESS     counter     METHOD   get_counter
 ENDCLASS
 
 
@@ -50,11 +51,17 @@ METHOD DocCounter:dec()
   ::count--
 return ::count
 
+METHOD DocCounter:set_counter(cnt)
+  ::count := cnt
+return ::count
+
+
+METHOD DocCounter:get_counter()
+return ::count
+
 
 METHOD DocCounter:to_str()
 return  ::prefix + PADL(ALLTRIM(STR(::count, ::width)), ::width, ::fill) + ::suffix
-
-
 
 
 RETURN

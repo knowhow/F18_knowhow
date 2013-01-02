@@ -1,0 +1,4 @@
+
+fakt_parametri.prg
+
+    __fakt_params["brojac_numericki_dio"] :=  ??

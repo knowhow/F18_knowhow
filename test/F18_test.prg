@@ -10,6 +10,12 @@ post_login()
 
 TEST_BEGIN("")
 
+test_doc_counters()
+
+
+TEST_END()
+return
+
 /* na windowsima vrti beskonacno
 MsgO("migrate")
 test_migrate()
@@ -54,10 +60,7 @@ test_version()
 i_dodaj_sifre()
 i_fakt()
 
- 
-
 TEST_END()
-
-? "kraj"
+return
 
 

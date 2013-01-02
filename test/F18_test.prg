@@ -10,7 +10,7 @@ post_login()
 
 TEST_BEGIN("")
 
-test_doc_counters()
+t_doc_counters()
 
 
 TEST_END()

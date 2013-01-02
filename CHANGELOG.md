@@ -1,3 +1,68 @@
+1.4.51 2012-12-31, vsasa
+
+ - fakt, početno stanje [#29908](http://redmine.bring.out.ba/issues/29908)
+ 
+1.4.50 2012-12-31, vsasa
+
+ - rnal, parametri zaokruženja naloga [#29852](http://redmine.bring.out.ba/issues/29852)
+ - fakt, kod ispravke prve stavke izmjeni i fakt atribute
+ - pos, formiranje dokumenta početnog stanja [#29899](http://redmine.bring.out.ba/issues/29899)
+ 
+1.4.49 2012-12-28, vsasa
+
+ - fiskalne opcije, čekiranje stavki računa - novi bugfix
+ - fakt, fiskalni računi, roba tip "U" hendliranje
+ 
+1.4.48 2012-12-28, vsasa
+
+ - fakt fiskalne opcije, ino bugfix
+ - fiskalne opcije, čekiranje stavki računa - bugfix
+ 
+1.4.47 2012-12-28, vsasa
+
+ - hcp pos, filovanje vrste plaćanja [#29881](http://redmine.bring.out.ba/issues/29881)
+ 
+1.4.46 2012-12-27, vsasa
+
+ - hcp fiskalne funkcije, test režim štampe [#29881](http://redmine.bring.out.ba/issues/29881)
+ - pos, inventura, korekcije [#29882](http://redmine.bring.out.ba/issues/29882)
+ - os, obračun amortizacije - bugfix [#29879](http://redmine.bring.out.ba/issues/29879)
+ - hcp, sitni bugfix-ovi
+ 
+1.4.45 2012-12-26, vsasa
+
+ - odt print, više izlaznih fajlova istovremeno
+ 
+1.4.44 2012-12-26, vsasa
+
+ - fiskalne funkcije, provjera direktorija izlaznih fajlova [#29854](http://redmine.bring.out.ba/issues/29854)
+ - fakt, ispravi prvu stavku i koriguj sve ostale automatski [#29859](http://redmine.bring.out.ba/issues/29859)
+ - fiskalne funkcije, niz bugfix-ova 
+ - fakt, stanje robe, proširenje kolona na izvještaju
+ - IOS-i, ne prikazuj stavke ako je dug + pot = 0 u režimu prebijanja stavki  
+        [#29873](http://redmine.bring.out.ba/issues/29873)
+ 
+1.4.43 2012-12-26, vsasa
+
+ - KALK, IP(), IM() prikaz barkod-a [#29825](http://redmine.bring.out.ba/issues/29825)
+ 
+1.4.42 2012-12-22, vsasa
+
+ - P_Sast IDNUN_ROBAPRO bugfix
+ - IOS [#29945](http://redmine.bring.out.ba/issues/29845)
+ 
+1.4.41 2012-12-22, vsasa
+
+ - fakt, fakt_doks/fakt_fakt relacije, parametar dok veze umjesto provjere RNAL modula
+
+1.4.40 2012-12-19, vsasa
+
+ - pos, fiskalni opcije, default pos uređaj
+
+1.4.39 2012-12-19, vsasa
+
+ - pos, fiskalni računi, vrsta plaćanja
+
 1.4.38 2012-12-11, hernad
 
  - fakt objekti, idrnal ciscenje

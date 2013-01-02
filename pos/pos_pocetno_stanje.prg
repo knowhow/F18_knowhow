@@ -21,105 +21,71 @@ static __dok_br
 // prenos pocetnog stanja....
 // --------------------------------------------
 function p_poc_stanje()
-local dPrenOd
-local dPrenDo
-local dDatPs
-local cIdPos
-local nPren := 0
-local cMsg := ""
-local nPadr := 60
-
-// provjeri da li je sve preneseno u ng
-// da li je nova sezona
-if _chk_ng( ) == .f.
-	return 
-endif
-
-// uzmi parametre...
-if _get_vars( @dPrenOd, @dPrenDo, @dDatPs, @cIdPos ) == 0
-
-	MsgBeep("Operacija prekinuta...")
-	return
-	
-endif
+local _params := hb_hash()
+local _cnt := 0
+local _padr := 80
 
 __stanje := 0
 __vrijednost := 0
 __dok_br := ""
 
-nPren := _pren_pst( dPrenOd, dPrenDo, dDatPs, cIdPos )
-
-if nPren > 0
-	cMsg := "!" + PADC("Izvrsen prenos pocetnog stanja", nPadr) + "!"
-	cMsg += "##"
-	cMsg += PADR("broj stavki dokumenta: " + ALLTRIM(STR(nPren)), nPadr)
-	cMsg += "#"
-	cMsg += PADR("stanje: " + ALLTRIM(STR(__stanje, 12, 2)), nPadr/2 )
-	cMsg += PADR(", vrijednost: " + ALLTRIM(STR( __vrijednost, 12, 2 )), nPadr/2)
-	cMsg += "##"
-	cMsg += PADR("broj dokumenta: " + VD_ZAD + "-" + ALLTRIM( __dok_br ), nPadr)
-else
-	cMsg := "Nema dokumenata za prenos !!!"
+// parametri prenosa...
+if _get_vars( @_params ) == 0
+    return
 endif
 
-MsgBeep(cMsg)
+// prenesi pocetno stanje...
+_cnt := pocetno_stanje_sql( _params )
+
+if _cnt > 0
+	_txt := "!" + PADC("Izvrsen prenos pocetnog stanja", _padr ) + "!"
+	_txt += "##"
+	_txt += PADR("broj stavki dokumenta: " + ALLTRIM( STR( _cnt ) ), _padr/2 )
+	_txt += "#"
+	_txt += PADR("stanje: " + ALLTRIM(STR(__stanje, 12, 2)), _padr/2 )
+	_txt += PADR(", vrijednost: " + ALLTRIM(STR( __vrijednost, 12, 2 )), _padr/2 )
+else
+	_txt := "Nema dokumenata za prenos !!!"
+endif
+
+MsgBeep(_txt)
 
 return
 
 
 // --------------------------------------------
-// provjeri da li je sezona prenesena
-// --------------------------------------------
-static function _chk_ng()
-local lRet := .t.
-
-// provjeri da li je razdvojena sezona....
-if goModul:oDataBase:cSezona <> PADR( ALLTRIM( STR( YEAR(DATE()) ) ), 4 ) ;
-	.and. goModul:oDataBase:cRadimUSezona == "RADP"
-
-	MsgBeep("Ova opcija dostupna samo u novoj godini !!!")
-	
-	lRet := .f.
-
-endif
-
-return lRet
-
-
-
-// --------------------------------------------
 // parametri prenosa
 // --------------------------------------------
-static function _get_vars(dDatOd, dDatDo, dDatPs, cIdPos)
-local nX := 1
-local nBoxX := 8
-local nBoxY := 60
+static function _get_vars( params )
+local _x := 1
+local _box_x := 8
+local _box_y := 60
+local _dat_od, _dat_do, _id_pos, _dat_ps
 private GetList:={}
 
-dDatOd := CToD( "01.01." + ALLTRIM(STR(YEAR(DATE())-1)) )
-dDatDo := CToD( "31.12." + ALLTRIM(STR(YEAR(DATE())-1)) )
-dDatPs := CToD( "01.01." + ALLTRIM(STR(YEAR(DATE()))) )
+_dat_od := CTOD( "01.01." + ALLTRIM(STR(YEAR(DATE())-1)) )
+_dat_do := CTOD( "31.12." + ALLTRIM(STR(YEAR(DATE())-1)) )
+_dat_ps := CTOD( "01.01." + ALLTRIM(STR(YEAR(DATE()))) )
+_id_pos := gIdPos
 
-cIdPos := gIdPos
-
-Box(, nBoxX, nBoxY )
+Box(, _box_x, _box_y )
 
 	set cursor on
 	
-	@ m_x + nX, m_y + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
+	@ m_x + _x, m_y + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
 	
-	nX += 2
+	_x += 2
 	
-	@ m_x + nX, m_y + 2 SAY "pos ID" GET cIdPos VALID !EMPTY(cIdPos)
+	@ m_x + _x, m_y + 2 SAY "pos ID" GET _id_pos VALID !EMPTY( _id_pos )
 	
-	nX += 2
+	_x += 2
 	
-	@ m_x + nX, m_y + 2 SAY "Datum prenosa od:" GET dDatOd VALID !EMPTY(dDatOd)
-	@ m_x + nX, col() + 1 SAY "do:" GET dDatDo VALID !EMPTY(dDatDo)
+	@ m_x + _x, m_y + 2 SAY "Datum prenosa od:" GET _dat_od VALID !EMPTY(_dat_od)
+	@ m_x + _x, col() + 1 SAY "do:" GET _dat_do VALID !EMPTY(_dat_do)
 	
- 	nX += 2
+ 	_x += 2
 	
-	@ m_x + nX, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET dDatPs VALID !EMPTY(dDatPs)
+	@ m_x + _x, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps VALID !EMPTY( _dat_ps )
 	
 	read
 	
@@ -129,181 +95,209 @@ if LastKey() == K_ESC
 	return 0
 endif
 
+// snimi parametre
+params["datum_od"] := _dat_od
+params["datum_do"] := _dat_do
+params["id_pos"] := _id_pos
+params["datum_ps"] := _dat_ps
+
 return 1
 
 
-// --------------------------------------------
-// prenesi pocetno stanje....
-// --------------------------------------------
-static function _pren_pst( dDateFrom, dDateTo, dDatPs, cIdPos )
-local cPredSez := ""
-local cDokBr := "999999"
-local cNDokBr := ""
-local nCount := 0
-local nRCijena := 0
-local cRTarifa := ""
-local cNazRoba := ""
+// ----------------------------------------------------------
+// prebaci se na rad sa sezonskim podrucjem
+// ----------------------------------------------------------
+static function prebaci_se_u_bazu( db_params, database, year )
 
-// otvori tabele u prethodnoj sezoni
+if year == NIL
+    year := YEAR( DATE() )
+endif
 
-// prethodna sezona je...
-cPredSez := ALLTRIM( STR(  VAL(goModul:oDataBase:cSezona) - 1 ) )
+// 1) odjavi mi se iz tekuce sezone
+my_server_logout()
 
-close all
+if year <> YEAR( DATE() )
+    // 2) xxxx_2013 => xxxx_2012
+    db_params["database"] := LEFT( database, LEN( database ) - 4 ) + ALLTRIM( STR( year ) )
+else
+    db_params["database"] := database
+endif
 
-// POS_SEZ
-select (245)
-use ( KUMPATH + cPredSez + SLASH + "POS" ) ALIAS POS_SEZ
+// 3) setuj parametre
+my_server_params( db_params )
+// 4) napravi login
+my_server_login( db_params )
 
+return 
+
+
+
+// -----------------------------------------------------
+// pocetno stanje POS na osnovu sql upita...
+// -----------------------------------------------------
+static function pocetno_stanje_sql( param )
+local _db_params := my_server_params()
+local _tek_database := my_server_params()["database"]
+local _date_from := param["datum_od"]
+local _date_to := param["datum_do"]
+local _date_ps := param["datum_ps"]
+local _year_sez := YEAR( _date_to )
+local _year_tek := YEAR( _date_ps )
+local _id_pos := param["id_pos"]
+local _server := pg_server()
+local _qry, _table, _row
+local _count := 0
+local _rec, _id_roba, _kolicina, _vrijednost
+local _n_br_dok 
+
+// 1) predji u sezonsko podrucje
+// ------------------------------------------------------------
+// prebaci se u sezonu
+prebaci_se_u_bazu( _db_params, _tek_database, _year_sez )
+// setuj server
+_server := pg_server()
+
+// 2) izvuci podatke u matricu...
+// ------------------------------------------------------------
+
+// select
+_qry := "SELECT " + ;
+            "idroba, " + ;
+            "SUM( CASE " + ;
+            "WHEN idvd IN ('16', '00') THEN kolicina " + ;
+            "WHEN idvd IN ('IN') THEN -(kolicina - kol2) " + ;
+            "WHEN idvd IN ('42') THEN -kolicina " + ;
+            "END ) as kolicina, " + ;
+        "SUM( CASE  " + ;
+            "WHEN idvd IN ('16', '00') THEN kolicina * cijena " + ;
+            "WHEN idvd IN ('IN') THEN -(kolicina - kol2) * cijena " + ;
+            "WHEN idvd IN ('42') THEN -kolicina * cijena " + ;
+            "END ) as vrijednost " + ;
+        "FROM fmk.pos_pos "
+        
+// where cond ...
+_qry += " WHERE "
+_qry += _sql_cond_parse( "idpos", _id_pos )
+_qry += " AND " + _sql_date_parse( "datum", _date_from, _date_to )
+_qry += " GROUP BY idroba "
+_qry += " ORDER BY idroba "
+
+msgO( "pocetno stanje sql query u toku..." )
+
+// podaci pocetnog stanja su ovdje....
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+msgC()
+
+// 3) vrati se u tekucu bazu...
+// ------------------------------------------------------------
+prebaci_se_u_bazu( _db_params, _tek_database, _year_tek )
+_server := pg_server()
+
+// otvori potrebne tabele
 O_POS
 O_POS_DOKS
 O_ROBA
-O_TARIFA
 
-select pos_doks
 
-cNDokBr := pos_novi_broj_dokumenta( cIdPos, VD_ZAD )
-__dok_br := cNDokBr
+// 4) daj mi novi broj dokumenta zaduzenja
+// ------------------------------------------------------------
+_n_br_dok := pos_novi_broj_dokumenta( _id_pos, "16", _date_ps )
 
-select pos_sez
-set order to tag "5"
-// idpos + idroba + DTOS(datum)
-go top
 
-seek cIdPos
+// 5) napravi push podataka u tekucem podrucju...
+// ------------------------------------------------------------
 
-Box(, 3, 65 )
+// zakljucaj semafore pos-a
+if !f18_lock_tables( {"pos_pos", "pos_doks" })
+    return
+endif
+sql_table_update( nil, "BEGIN")
 
-@ m_x + 1, m_y + 2 SAY "generacija dokumenta u toku..." COLOR "BG+/B"
+MsgO( "Formiranje dokumenta pocetnog stanja u toku... ")
 
-do while !EOF() .and. field->idpos == cIdPos
+do while !_table:EOF()
 
-	cIdRoba := field->idroba
+    _row := _table:GetRow()
 
-	select roba
-	set order to tag "ID"
-	go top
-	seek cIdRoba
+    _id_roba := _row:Fieldget( _row:Fieldpos("idroba") )
 
-	cNazRoba := ALLTRIM(field->naz)
-	nRCijena := pos_get_mpc()
-	cRTarifa := field->idtarifa
-	
-	select pos_sez
+    _kolicina := _row:Fieldget( _row:Fieldpos("kolicina") )
+    __stanje += _kolicina
 
-	nStanje := 0
-	nVrijednost := 0
+    _vrijednost := _row:Fieldget( _row:Fieldpos("vrijednost") )
+    __vrijednost += _vrijednost
 
-	do while !EOF() .and. field->idpos == cIdPos ;
-			.and. field->idroba == cIdRoba
+    select roba
+    hseek _id_roba
 
-		if field->datum < dDateFrom .and. field->datum > dDateTo
+    if ROUND( _kolicina, 2 ) <> 0
+
+        select pos
+        append blank
+
+        _rec := dbf_get_rec()
+
+		_rec["idpos"] := _id_pos
+		_rec["idvd"] := "16"
+		_rec["brdok"] := _n_br_dok
+        _rec["rbr"] := PADL( ALLTRIM(STR( ++ _count ) ) , 5 ) 
+		_rec["idroba"] := _id_roba
+		_rec["kolicina"] := _kolicina
+		_rec["cijena"] := pos_get_mpc() 
+		_rec["datum"] := _date_ps
+		_rec["idradnik"] := "XXXX"
+		_rec["idtarifa"] := roba->idtarifa
+		_rec["prebacen"] := "1"
+		_rec["smjena"] := "1"
+		_rec["mu_i"] := "1"
 		
-			skip
-			loop
-		
-		endif
+	    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
-		cIdVd := field->idvd
-		
-		if cIdVd $ "16#00"
-				
-			nStanje += field->kolicina 
-			nVrijednost += field->kolicina * field->cijena
-				
-		elseif cIdVd $ "IN#NI" + DOK_IZLAZA
-			
-		   do case
-		       case cIdvd == "IN"
-					
-		         nStanje -= (field->kolicina) - (field->kol2)
-			 nVrijednost -= (field->kolicina - field->kol2) * ;
-			 		field->cijena
-			
-		       case cIdVd == "NI"
-			 
-			 // kolicina ne utice
-			 nVrijednost := field->kolicina * field->cijena
+    endif
 
-		       otherwise
-		         
-			 nStanje -= field->kolicina
-			 nVrijednost -= field->kolicina * field->cijena
-		       
-		       endcase
-		
-		endif
-		
-		select pos_sez
-		skip
-
-	enddo
-
-	// zavrsio sa artiklom upisi ga u dokument 16... u novoj sezoni
-
-	if ROUND(nStanje, 4) <> 0
-	
-		select pos
-		append blank
-		
-		set_global_memvars_from_dbf()
-		
-		_idpos := cIdPos
-		_idvd := "16"
-		_brdok := cNDokBr
-		_idroba := cIdRoba
-		_kolicina := nStanje
-		_cijena := nRCijena
-		_datum := dDatPs
-		_idradnik := "XXXX"
-		_idtarifa := cRTarifa
-		_prebacen := "1"
-		_smjena := "1"
-		_mu_i := "1"
-		
-		_rec := get_dbf_global_memvars()
-
-		update_rec_server_and_dbf( "pos_pos", _rec, 1, "FULL" )
-
-		++ nCount
-
-		__stanje += nStanje
-		__vrijednost += nVrijednost
-		
-		@ m_x + 3, m_y + 2 SAY PADR("", 65)
-		@ m_x + 3, m_y + 2 SAY "artikal: " + ALLTRIM(cIdRoba) + ;
-				" " + PADR(cNazRoba, 30)
-		
-		select pos_sez
-		
-	endif
+    _table:Skip()
 
 enddo
 
-if nCount > 0
-	
-	select pos_doks
-	append blank
+// ima li za DOKS ?
+if _count > 0
 
-	set_global_memvars_from_dbf()
+    select pos_doks
+    append blank
 
-	_idpos := cIdPos
-	_idvd := VD_ZAD
-	_brdok := cNDokBr
-	_datum := dDatPs
-	_idradnik := "XXXX"
-	_prebacen := "1"
-	_smjena := "1"
+    _rec := dbf_get_rec()
 
-	_rec := get_dbf_global_memvars()
-	
-	update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
+	_rec["idpos"] := _id_pos
+	_rec["idvd"] := "16"
+	_rec["brdok"] := _n_br_dok
+	_rec["datum"] := _date_ps
+	_rec["idradnik"] := "XXXX"
+	_rec["prebacen"] := "1"
+	_rec["smjena"] := "1"
+
+    update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
 endif
 
-BoxC()
 
-return nCount
+f18_free_tables( { "pos_pos", "pos_doks" } )
+sql_table_update( nil, "END" )
+
+MsgC()
+
+select ( F_ROBA )
+use
+select ( F_POS_DOKS )
+use
+select ( F_POS )
+use
+
+return _count
+
+
+
 
 
 

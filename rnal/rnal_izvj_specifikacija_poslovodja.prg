@@ -340,20 +340,17 @@ static function _main_filter( dDFrom, dDTo, nOper )
 local cFilter := ""
 
 cFilter += "(doc_status == 0 .or. doc_status > 2)"
-cFilter += " .and. DTOS(doc_date) >= " + cm2str(DTOS(dDFrom))
-cFilter += " .and. DTOS(doc_date) <= " + cm2str(DTOS(dDTo))
+cFilter += " .and. DTOS(doc_date) >= " + _filter_quote( DTOS( dDFrom ) )
+cFilter += " .and. DTOS(doc_date) <= " + _filter_quote( DTOS( dDTo ) )
 
 if nOper <> 0
-	
-	cFilter += ".and. ALLTRIM(STR(operater_i)) == " + cm2str( ALLTRIM( STR( nOper ) ) )
-	
+	cFilter += " .and. ALLTRIM(STR(operater_i)) == " + cm2str( ALLTRIM( STR( nOper ) ) )
 endif
 
 select docs
 set filter to &cFilter
 go top
 	
-
 return
 
 

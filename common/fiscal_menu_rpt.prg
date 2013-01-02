@@ -19,7 +19,7 @@ static __device_params
 // ---------------------------------------------------------
 // fiskalni izvjestaji i komande
 // ---------------------------------------------------------
-function fisc_rpt( low_level )
+function fisc_rpt( low_level, from_pos )
 local _dev_id := 0
 local _dev_drv
 local _m_x
@@ -33,10 +33,25 @@ if low_level == NIL
 	low_level := .f.
 endif
 
+if from_pos == NIL
+    from_pos := .f.
+endif
+
 // vrati mi fiskalni uredjaj....
-__device_id := get_fiscal_device( my_user() )
+__device_id := get_fiscal_device( my_user(), NIL, from_pos )
+
+if __device_id == 0
+    return
+endif
+
 // setuj parametre uredjaja
 __device_params := get_fiscal_device_params( __device_id, my_user() )
+
+// nesto nije uredu, nema parametara !!!
+if __device_params == NIL
+    MsgBeep( "Nesto nije uredu sa ocitanjem parametara !!!" )
+    return
+endif
 
 _dev_drv := __device_params["drv"]
 

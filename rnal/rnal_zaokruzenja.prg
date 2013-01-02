@@ -233,7 +233,7 @@ return xRet
 // -------------------------------------
 // zaokruzi xVal po GN tabeli
 // -------------------------------------
-function dim_zaokruzi(xVal, nDebljina, nTipZaok)
+function dim_zaokruzi( xVal, nDebljina, nTipZaok )
 
 // ako je bez zaokruzenja
 if nTipZaok == BEZ_ZAOKR
@@ -268,7 +268,13 @@ return
 static function z_prof_staklo(nDimenzija)
 local nPom
 local xRet
+
+if gProfZaokUse == "N"
+    return nDimenzija
+endif
+
 nPom := nDimenzija
+
 do while .t.
 	if nPom % 260 == 0
 		xRet := nPom
@@ -276,6 +282,7 @@ do while .t.
 	endif
 	++ nPom
 enddo
+
 return xRet
 
 
@@ -285,7 +292,13 @@ return xRet
 static function z_3mm_staklo(nDimenzija)
 local nPom
 local xRet
+
+if g3mmZaokUse == "N"
+    return nDimenzija
+endif
+
 nPom := nDimenzija
+
 do while .t.
 	++ nPom
 	if nPom%20 == 0
@@ -293,6 +306,7 @@ do while .t.
 		exit
 	endif
 enddo
+
 return xRet
 
 

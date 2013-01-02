@@ -249,6 +249,9 @@ public gGnMax := 6000
 public gGnStep := 30
 public gGnUse := "D"
 
+public g3mmZaokUse := "D"
+public gProfZaokUse := "D"
+
 rnal_set_params()
 
 ::super:setTGVars()

@@ -87,7 +87,7 @@ endif
 _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _partn_data )
 
 // da nije slucajno NIL ???
-if VALTYPE( _items_data ) == "L"
+if VALTYPE( _items_data ) == "L" .or. _items_data == NIL
     return _err_level
 endif
 
@@ -138,17 +138,23 @@ return _err_level
 
 
 
-
 // ---------------------------------------------------------------
 // box reklamni racun
 // ---------------------------------------------------------------
 function reklamni_rn_box( rekl_rn )
+
 Box(, 1, 60 )
     @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni racun broj:" ;
             GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
     read
 BoxC()
+
+if LastKey() == K_ESC .and. rekl_rn == 0
+    rekl_rn := -1
+endif
+
 return rekl_rn
+
 
 
 // --------------------------------------------------------------------
@@ -204,7 +210,7 @@ local _data := {}
 local _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, _rekl_rn_broj
 local _vrsta_pl, _partn_id, _rn_total, _rn_f_total
 local _art_id, _art_plu, _art_naz, _art_jmj, _v_plac
-local _art_barkod, _rn_rbr
+local _art_barkod, _rn_rbr, _memo
 local _pop_na_teret_prod := .f.
 local _partn_ino := .f.
 local _partn_pdv := .t.
@@ -258,6 +264,12 @@ if storno
     _rekl_rn_broj := reklamni_rn_box( _rekl_rn_broj )
 endif
 
+// ESC na unosu veze racuna
+if _rekl_rn_broj == -1
+    MsgBeep( "Broj veze racuna mora biti setovan" )
+    return NIL
+endif
+
 // i total sracunaj sa pdv
 // upisat cemo ga u svaku stavku matrice
 // to je total koji je bitan kod regularnih racuna
@@ -273,6 +285,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
 
     select roba
     seek fakt->idroba
+   
     select fakt
 
     // storno identifikator
@@ -284,10 +297,26 @@ do while !EOF() .and. field->idfirma == id_firma ;
     
     _rn_broj := fakt->brdok
     _rn_rbr := fakt->rbr
-    
+
+    // memo polje    
+    _memo := ParsMemo( fakt->txt )
+
     _art_id := fakt->idroba
     _art_barkod := ALLTRIM( roba->barkod )
-    _art_naz := ALLTRIM( fiscal_art_naz_fix( roba->naz, __device_params["drv"] ) )
+
+    if roba->tip == "U" .and. EMPTY( ALLTRIM( roba->naz ) )
+
+        _memo_opis := ALLTRIM( _memo[1] )
+
+        if EMPTY( _memo_opis )
+            _memo_opis := "artikal bez naziva"
+        endif
+
+        _art_naz := ALLTRIM( fiscal_art_naz_fix( _memo_opis, __device_params["drv"] ) )
+    else
+        _art_naz := ALLTRIM( fiscal_art_naz_fix( roba->naz, __device_params["drv"] ) )
+    endif
+
     _art_jmj := ALLTRIM( roba->jmj )
 
     _art_plu := roba->fisc_plu
@@ -399,6 +428,7 @@ endif
 
 // provjeri prije stampe stavke kolicina, cijena
 _item_level_check := 1
+
 if fiscal_items_check( @_data, storno, _item_level_check, __device_params["drv"] ) < 0
     return NIL    
 endif
@@ -469,8 +499,11 @@ if tip_dok == "11"
 
 elseif !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
 
+    // kod info faktura ne prikazuj partnera
     _partn_ino := .t.
+    _prikazi_partnera := .f.
 
+    // ako je samo oslobadjanje po clanu onda prikazi
     if !EMPTY( _partn_clan )
         _prikazi_partnera := .t.
     endif

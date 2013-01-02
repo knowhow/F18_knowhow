@@ -773,6 +773,7 @@ local _ret := .t.
 _ret := _valid_fiscal_path( param["out_dir"], .f. )
 
 if !_ret
+    MsgBeep( "Izlazni direktorij " + ALLTRIM( param["out_dir"] ) + " nije ispravan !!!#Prekidam operaciju!" )
     return _ret
 endif
 

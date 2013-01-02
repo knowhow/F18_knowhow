@@ -1715,6 +1715,13 @@ if cTag == NIL
    cTag := "ID"
 endif
 
+if ORDNUMBER(cTag) == 0
+   _msg := "alias: " + ALIAS() + ", tag ne postoji :" + cTag
+   log_write(_msg)
+   MsgBeep(_msg)
+   QUIT_1
+endif
+
 // ako nije tag = ID, dozvoli i dupli unos, moze biti barkod polje
 if cTag <> "ID" .and. EMPTY( wId )
     return nRet

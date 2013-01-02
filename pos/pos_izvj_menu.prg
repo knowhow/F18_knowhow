@@ -73,8 +73,10 @@ if gPVrsteP
   AADD(opcexe,{|| PrometVPl()})
 endif
 
-AADD(opc,"F. fiskalni izvjestaji i komande")
-AADD(opcexe,{|| fisc_rpt() })
+if fiscal_opt_active()
+    AADD(opc,"F. fiskalni izvjestaji i komande")
+    AADD(opcexe,{|| fisc_rpt( NIL, .t. ) })
+endif
 
 Menu_SC("izvt")
 return .f.

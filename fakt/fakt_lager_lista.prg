@@ -34,7 +34,6 @@ gCnt1:=0
 
 lBezUlaza := ( IzFMKINI("IZVJESTAJI","BezUlaza","N",KUMPATH)=="D" )
 
-
 if lPocStanje==NIL
    lPocStanje:=.f.
 else
@@ -376,10 +375,10 @@ do while !eof()
         hseek fakt->(IdFirma+idtipdok+brdok)
         select fakt
 
-	if !(doks->partner=qqPartn)
-          skip
-	  loop
-        endif
+	  if !(fakt_doks->partner = qqPartn)
+        skip
+	    loop
+      endif
     endif
 
     // atributi
@@ -797,6 +796,294 @@ ENDIF
 ShowKorner(nStr,1,16)
 
 return
+
+
+
+
+
+// -----------------------------------------------------------------
+// uslovi izvjestaja lager lista
+// -----------------------------------------------------------------
+function fakt_lager_lista_vars( param, ps )
+local _ret := 1
+local _x := 1
+local _id_firma, _usl_roba, _usl_partn, _usl_tip_dok
+local _date_from, _date_to
+local _stavke_nula, _tip_prikaza
+local _date_ps 
+
+if ps == NIL
+    _date_ps := NIL
+    ps := .f.
+else
+    _date_ps := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) ) ) )
+endif
+
+_date_from := fetch_metric( "fakt_lager_lista_datum_od", my_user(), DATE() )
+_date_to := fetch_metric( "fakt_lager_lista_datum_do", my_user(), DATE() )
+_stavke_nula := "N"
+_tip_prikaza := "S"
+_usl_roba := SPACE(300)
+_usl_partn := SPACE(300)
+_usl_tip_dok := SPACE(200)
+_id_firma := gFirma
+
+Box(, 10, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "RJ (prazno-sve): " GET _id_firma VALID {|| EMPTY( _id_firma), P_RJ( @_id_firma ), _id_firma := LEFT( _id_firma, 2 ), .t. }
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Datum od:" GET _date_from
+    @ m_x + _x, col() + 1 SAY "do:" GET _date_to
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Roba   " GET _usl_roba PICT "@S40"
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Naziv partnera (prazno - svi)" GET _usl_partn PICT "@S40"
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Tip dokumenta (prazno - svi)" GET _usl_tip_dok PICT "@S40" 
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    " GET _stavke_nula PICT "@!" VALID _stavke_nula $ "DN"
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Prikaz kolicina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
+
+    if ps
+        ++ _x
+        ++ _x
+        @ m_x + _x, m_y + 2 SAY "Datum pocetnog stanja:" GET _date_ps 
+    endif
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    _ret := 0
+endif
+
+// snimi db parametre
+set_metric( "fakt_lager_lista_datum_od", my_user(), _date_from )
+set_metric( "fakt_lager_lista_datum_do", my_user(), _date_to )
+
+// snimi parametre
+param["datum_od"] := _date_from
+param["datum_do"] := _date_to
+param["datum_ps"] := _date_ps
+param["artikli"] := _usl_roba
+param["partneri"] := _usl_partn
+param["dokumenti"] := _usl_tip_dok
+param["stavke_nula"] := _stavke_nula
+param["tip_prikaza"] := _tip_prikaza
+param["id_firma"] := _id_firma
+
+return _ret
+
+
+
+
+// -----------------------------------------------------------------
+// generisanje xml fajla za lager listu
+// -----------------------------------------------------------------
+static function lager_lista_xml( table, params )
+local _ret := .t.
+local _row
+local _id_roba, _ulaz, _izlaz, _stanje
+local _count := 0
+local _t_ulaz := 0
+local _t_izlaz := 0
+local _t_stanje := 0
+
+O_ROBA
+O_PARTN
+
+// ima li zapisa...
+if table:LastRec() == 0
+    return .f.
+endif
+
+open_xml( _xml )
+xml_subnode( "lager", .f. )
+
+// podaci zaglavlja...
+// xml_node( "firma", gFirma )
+// xml_node( "datum_od", gFirma )
+// xml_node( "datum_do", gFirma )
+// xml_node( "roba", gFirma )
+
+
+do while !table:EOF()
+
+    _row := table:GetRow()
+
+    _id_roba := _row:FieldGet( _row:FieldPos("idroba") ) 
+    _ulaz := _row:FieldGet( _row:FieldPos("ulaz") ) 
+    _izlaz := _row:FieldGet( _row:FieldPos("izlaz") )
+
+    if params["tip_prikaza"] == "U"
+        _izlaz := 0
+    elseif params["tip_prikaza"] == "I"
+        _ulaz := 0
+    endif
+
+    _stanje := ( _ulaz - _izlaz ) 
+
+    _t_stanje += _stanje
+    _t_ulaz += _ulaz
+    _t_izlaz += _izlaz
+
+    select roba
+    hseek _id_roba
+
+    _cijena := roba->vpc
+
+    // sta sa uslugama ???
+    if roba->tip == "U"
+    endif
+    
+    if params["stavke_nula"] == "N" .and. ROUND( _stanje, 2 ) == 0
+        table:Skip()
+        loop
+    endif
+
+    xml_subnode( "item", .f. )
+    
+    xml_node( "rbr", ALLTRIM( STR( ++_count ) ) )
+    xml_node( "id", to_xml_encoding( _id_roba ) )
+    xml_node( "naz", to_xml_encoding( roba->naz ) )
+    xml_node( "jmj", to_xml_encoding( roba->jmj ) )
+    xml_node( "ulaz", STR( _ulaz, 12, 2 ) )
+    xml_node( "izlaz", STR( _izlaz, 12, 2 ) )
+    xml_node( "stanje", STR( _stanje, 12, 2 ) )
+    xml_node( "cijena", STR( _cijena, 12, 2 ) )
+
+    xml_subnode( "item", .t. )
+    
+    table:Skip()
+    
+enddo
+ 
+// totali lagerice
+xml_node( "t_ulaz", STR( _t_ulaz, 12, 2 ) )
+xml_node( "t_izlaz", STR( _t_izlaz, 12, 2 ) )
+xml_node( "t_stanje", STR( _t_stanje, 12, 2 ) )
+
+xml_subnode( "lager", .t. )
+close_xml()
+
+return _ret
+
+
+
+// ------------------------------------------------------------------
+// lager lista sql
+// ------------------------------------------------------------------
+function fakt_lager_lista_sql( param, ps )
+local _table
+local _tek_database := my_server_params()["database"]
+local _db_params := my_server_params()
+
+// ako nema parametara setuj mi ih...
+if param == NIL
+    if fakt_lager_lista_vars( @param ) == 0
+        return
+    endif
+endif
+
+if ps == NIL
+    ps := .f.
+endif
+
+// formiranje sql upita za lager listu
+_table := fakt_lager_lista_get_data( param, ps )
+
+return _table
+
+
+
+// -----------------------------------------------------------------
+// daj mi podatke za lager listu...
+// -----------------------------------------------------------------
+static function fakt_lager_lista_get_data( params, ps )
+local _tek_database := my_server_params()["database"]
+local _db_params := my_server_params()
+local _table, _qry, _server
+local _date_from, _date_to, _data_ps
+local _id_firma, _usl_roba, _usl_partn, _usl_tip_dok
+
+_date_from := params["datum_od"]
+_date_to := params["datum_do"]
+_id_firma := params["id_firma"]
+_usl_roba := params["artikli"]
+_usl_partn := params["partneri"]
+_usl_tip_dok := params["dokumenti"]
+_date_ps := params["datum_ps"]
+
+// pocetno stanje
+if ps == NIL
+    ps := .f.
+endif
+
+if ps    
+    my_server_logout()
+    _db_params["database"] := LEFT( _tek_database, LEN( _tek_database ) - 4 ) + ALLTRIM( STR( YEAR( _date_from ) ) )
+    my_server_params( _db_params )
+    my_server_login( _db_params )
+endif
+
+_server := pg_server()
+
+_qry := "SELECT " + ; 
+            "f.idroba, r.naz, " + ;
+            "SUM( CASE " + ;
+                "WHEN idtipdok LIKE '0%' THEN kolicina  " + ; 
+            "END ) as ulaz, " + ;
+            "SUM( CASE " + ;
+                "WHEN idtipdok LIKE '1%' THEN kolicina " + ;
+            "END ) as izlaz, " + ;
+            "r.jmj, " + ;
+            "r.vpc " + ;
+        "FROM fmk.fakt_fakt f " + ;
+        "LEFT JOIN fmk.roba r ON f.idroba = r.id "
+
+// where cond ...
+_qry += " WHERE "
+_qry += _sql_cond_parse( "idfirma", _id_firma )
+_qry += " AND " + _sql_date_parse( "datdok", _date_from, _date_to )
+
+if !EMPTY( _usl_roba )
+    _qry += " AND " + _sql_cond_parse( "idroba", _usl_roba )
+endif
+
+if !EMPTY( _usl_partn )
+    _qry += " AND " + _sql_cond_parse( "idpartner", _usl_partn )
+endif
+
+if !EMPTY( _usl_tip_dok )
+    _qry += " AND " + _sql_cond_parse( "idtipdok", _usl_tip_dok )
+endif
+
+_qry += " GROUP BY f.idroba, r.naz, r.jmj, r.vpc "
+_qry += " ORDER BY f.idroba "
+
+// podaci pocetnog stanja su ovdje....
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+// vrni se na tekuce podrucje
+if ps
+    my_server_logout()
+    _db_params["database"] := LEFT( _tek_database, LEN( _tek_database ) - 4 ) + ALLTRIM( STR( YEAR( _date_ps ) ) )
+    my_server_params( _db_params )
+    my_server_login( _db_params )
+    _server := pg_server()
+endif
+
+return _table
+
 
 
 

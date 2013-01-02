@@ -151,7 +151,7 @@ local _reklamni_racun
 local _rabat, _cijena
 local _art_barkod, _art_id, _art_naz, _art_jmj
 local _rbr := 0
-local _rn_total
+local _rn_total := 0
 local _vr_plac
 local _level
 
@@ -176,6 +176,8 @@ _vr_plac := pos_get_vr_plac( field->idvrstep )
 if _vr_plac <> "0"
 	// vrati mi iznos racuna
 	_rn_total := pos_iznos_racuna( id_pos, tip_dok, datum, rn_broj )
+else
+    _rn_total := 0
 endif
 
 // ako postoji iznos uplate, onda je to total
@@ -400,6 +402,7 @@ if _err_level = 0
 	
     if _fiscal_no > 0
         pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
+	    msgbeep( "Kreiran fiskalni racun: " + ALLTRIM( STR( _fiscal_no ) ) )
     endif
 
 endif
@@ -437,12 +440,12 @@ return
 // --------------------------------------------
 static function pos_get_vr_plac( id_vr_pl )
 local _ret := "0"
-local _araa := SELECT()
+local _t_area := SELECT()
 local _naz := ""
 
 if EMPTY( id_vr_pl ) .or. id_vr_pl == "01"
 	// ovo je gotovina
-	return _naz
+	return _ret
 endif
 
 O_VRSTEP
@@ -465,9 +468,9 @@ do case
 		_ret := "0"
 endcase 
 
-select (nTArea)
+select ( _t_area )
 
-return cVrsta
+return _ret
 
 
 

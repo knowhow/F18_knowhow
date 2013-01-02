@@ -45,6 +45,7 @@ local nMjesOd
 local nMjesDo
 local cLine := ""
 local _rec
+local _datum_otpisa
 private nGStopa:=100
 
 O_AMORT
@@ -102,6 +103,7 @@ private nUkupno := 0
 do while !eof()
     
     cIdam := field->idam
+
     select amort
     hseek cIdAm
     
@@ -126,12 +128,16 @@ do while !eof()
     do while !eof() .and. field->idam == cIdAm
         
         set_global_memvars_from_dbf()
+
+        // setuj datum otpisa ako postoji
+        _datum_otpisa := _datotp
         
         select amort
         hseek _idam
+
         select_os_sii()
         
-        if !empty(_datotp) .and. YEAR(_datotp) < YEAR(dDatObr)    
+        if !empty( _datotp ) .and. YEAR( _datotp ) < YEAR( dDatObr )    
             // otpisano sredstvo, ne amortizuj
             skip
             loop
@@ -174,14 +180,17 @@ do while !eof()
         
         _rec := get_dbf_global_memvars()
 
+        set device to screen
+
         update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
-        
+
+        set device to printer
     
         // amortizacija promjena
         select_promj()
         hseek cId
         
-        do while !eof() .and. field->id == cId .and. field->datum <= dDatObr
+        do while !EOF() .and. field->id == cId .and. field->datum <= dDatObr
                 
             set_global_memvars_from_dbf()
             
@@ -204,16 +213,20 @@ do while !eof()
                 endif
                 
                 @ prow(),pcol()+1 SAY _amp*nBBK pict gpici
-                @ prow(),pcol()+1 SAY _datotp pict gpici
+                @ prow(),pcol()+1 SAY _datum_otpisa pict gpici
                     
-                nUkupno+=round(_amp,2)
+                nUkupno += ROUND( _amp, 2 )
                 
             endif
 
             _rec := get_dbf_global_memvars()
-    
-            update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
-        
+   
+            set device to screen
+
+            update_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "FULL" )
+
+            set device to printer
+
             skip
 
         enddo  
@@ -233,7 +246,10 @@ do while !eof()
         do while !eof() .and. field->idam == cIdAm
                 
             set_global_memvars_from_dbf()
-                
+
+            // setuj datum otpisa                
+            _datum_otpisa := _datotp
+
             if !Empty(_datotp) .and. YEAR(_datotp) < YEAR(dDatobr)    
                 // otpisano sredstvo, ne amortizuj
                 skip
@@ -286,9 +302,13 @@ do while !eof()
             
             // sinhronizuj podatke sql/server
             _rec := get_dbf_global_memvars()
-                        
+            
+            set device to screen
+            
             update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
-        
+
+            set device to printer  
+
             // amortizacija promjena
             select_promj()
             hseek cId
@@ -335,13 +355,19 @@ do while !eof()
                 // sinhronizuj podatke sql/server
                 _rec := get_dbf_global_memvars()
 
-                update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
+                set device to screen
+
+                update_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "FULL" )
+
+                set device to printer
     
                 skip
+
             enddo 
         
             select_os_sii()
             skip
+
         enddo
     
         ? cLine
@@ -441,9 +467,7 @@ if !EMPTY(cFiltK1)
     ? "Filter grupacija K1 pravljen po uslovu: '" + TRIM(cFiltK1) + "'"
 endif
 
-//if cVarPrik == "D"
 P_COND
-//endif
 
 ?
 ? cLine

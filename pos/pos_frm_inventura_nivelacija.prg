@@ -657,7 +657,15 @@ do while .t.
         
     // priprz
     if nInd == 0
-        append blank 
+
+        select priprz
+        go top
+        seek _idroba
+
+        if !FOUND()
+            append blank
+        endif 
+
     endif
     
     // pronadji tarifu i barkod za ovaj artikal
@@ -676,6 +684,10 @@ do while .t.
     _barkod := _r_barkod
     _robanaz := _r_naz
     _jmj := _r_jmj
+
+    // nadodaj vrijednost sa postojecom iz pripreme
+    // radi se o appendu na postojeci artikal
+    _kol2 := ( priprz->kol2 + _kol2 )
 
     Gather()
  
@@ -873,9 +885,10 @@ RacKol( _idodj, _idroba, @_kolicina )
 
 _set_cijena_artikla( cIdVd, _idroba )
 
+// kod unosa duplih artikala dodaji na postojeci artikal
+// ali napravi obavjestenje
 if ind == 0 .and. !_postoji_artikal_u_pripremi( _idroba )
     select ( _area )
-    return .f.
 endif
 
 if cIdVD == VD_INV
@@ -941,7 +954,7 @@ seek id_roba
 
 if FOUND()
     _ok := .f.
-    MsgBeep( "Artikal " + id_roba + " se vec nalazi u pripremi !")
+    MsgBeep( "Artikal " + ALLTRIM( id_roba ) + " se vec nalazi u pripremi! Ako nastavite sa unosom #dodat ce se vrijednost na postojecu stavku...")
 endif
 
 select ( _t_area )

@@ -244,6 +244,11 @@ xml_subnode("RECEIPT", .t.)
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err_level
+endif
+
 // kreiraj cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -326,6 +331,11 @@ xml_subnode("FOOTER", .t. )
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err
+endif
+
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -376,6 +386,11 @@ xml_subnode( "CLIENTS", .t. )
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err
+endif
+
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -424,7 +439,7 @@ for _i := 1 to LEN( items )
 	_tmp += _razmak1 + 'VAT="' + _art_tarifa + '"'
 	_tmp += _razmak1 + 'MES="' + _art_jmj + '"'
 	_tmp += _razmak1 + 'DEP="' + _dep + '"'
-	_tmp += _razmak1 + 'DSC="' + ALLTRIM( to_xml_encoding( _art_naz ) ) + '"'
+	_tmp += _razmak1 + 'DSC="' + to_xml_encoding( _art_naz ) + '"'
 	_tmp += _razmak1 + 'PRC="' + ALLTRIM( STR( _art_cijena , 12, 2)) + '"'
 	_tmp += _razmak1 + 'LGR="' + ALLTRIM( STR( _lager, 12, 2)) + '"'
 	
@@ -435,6 +450,11 @@ next
 xml_subnode( "PLU", .t.)
 
 close_xml()
+
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err
+endif
 
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
@@ -484,6 +504,11 @@ xml_subnode("USER_TEXT", .t.)
 
 close_xml()
 
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err_level
+endif
+
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
 
@@ -529,6 +554,11 @@ endif
 xml_subnode("COMMAND", .t.)
 
 close_xml()
+
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _err_level
+endif
 
 // kreiraj triger cmd.ok
 hcp_create_cmd_ok( dev_params )
@@ -608,7 +638,6 @@ local _cmd, _err_level
 _cmd := 'CMD="Z_REPORT"'
 _err_level := hcp_cmd( dev_params, _cmd, _tr_cmd )
 
-
 // ako se koriste dinamicki plu kodovi resetuj prodaju
 // pobrisi artikle
 if dev_params["plu_type"] == "D"
@@ -638,8 +667,8 @@ if dev_params["auto_avans"] > 0
 	// daj malo prostora
 	sleep(5)
 
-	// unesi polog
-	_err_level := hcp_polog( dev_params, .t. )
+	// unesi polog vrijednosti iz parametra
+	_err_level := hcp_polog( dev_params, dev_params["auto_avans"] )
 
 	msgc()
 
@@ -706,6 +735,11 @@ local _f_state := "BILL_S~1.XML"
 // posalji komandu za stanje fiskalnog racuna
 _cmd := 'CMD="RECEIPT_STATE"'
 _err := hcp_cmd( dev_params, _cmd, _tr_cmd )
+
+// testni rezim uredjaja
+if dev_params["print_fiscal"] == "T"
+    return _fiscal_no := 999
+endif
 
 // ako nema gresaka, iscitaj broj racuna
 if _err = 0
@@ -1062,8 +1096,8 @@ _f_name := dev_params["out_dir"] + _answ_dir + SLASH + STRTRAN( f_name, "XML", "
 
 Box(, 3, 60 )
 
-@ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + ALLTRIM( STR( dev_param["id"] ) ) + ;
-                        " : " + PADR( dev_param["name"], 40 ) 
+@ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + ALLTRIM( STR( dev_params["id"] ) ) + ;
+                        " : " + PADR( dev_params["name"], 40 ) 
 
 do while _time > 0
 	

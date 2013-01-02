@@ -98,7 +98,7 @@ SETKEY( K_F6, {|| f7_pf_traka() })
 // storno racuna
 SETKEY( K_F7, {|| pos_storno_fisc_no(), _refresh_total() })
 SETKEY( K_F8, {|| pos_storno_rn(), _refresh_total() })
-SETKEY( K_F9, {|| fisc_rpt(.t.) })
+SETKEY( K_F9, {|| fisc_rpt( .t., .t.  ) })
 
 // <*> - ispravka tekuce narudzbe
 //       (ukljucujuci brisanje i ispravku vrijednosti)

@@ -48,7 +48,7 @@ AADD(_opcexe,{|| nil })
 if fiscal_opt_active()
 
 	AADD(_opc,"F. fiskalne opcije za prodavaca")
-	AADD(_opcexe, {|| fisc_rpt( .t. ) })
+	AADD(_opcexe, {|| fisc_rpt( .t., .t. ) })
 
 endif	 
 

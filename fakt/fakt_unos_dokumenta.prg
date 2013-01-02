@@ -165,8 +165,21 @@ do case
 
         // pronadji mi device_id 
         _dev_id := get_fiscal_device( my_user() )
-        // setuj parametre za stampu
-        _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+        if _dev_id > 0
+
+            // setuj parametre za stampu
+            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+            
+            // nesto nije ok sa parametrima
+            if _dev_params == NIL
+                return DE_CONT
+            endif
+
+        else
+            MsgBeep( "Problem sa citanjem fiskalnih parametara !!!" )
+            return DE_CONT
+        endif
 
         // da li je korisniku dozvoljeno da stampa racune ?
         if _dev_params["print_fiscal"] == "N"
@@ -254,6 +267,13 @@ do case
 
             dbf_update_rec( _rec, .f. )
             PrCijSif()  
+
+            // izmjeni sve stavke dokumenta na osnovu prve stavke        
+            if __redni_broj == 1
+                // todo: cim prije i ovo zavrsiti, za sada gasim opciju
+                _new_dok := dbf_get_rec()
+                izmjeni_sve_stavke_dokumenta( _dok, _new_dok )
+            endif
 
             _ret := DE_REFRESH
 
@@ -1005,7 +1025,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
 
         if _params["fakt_dok_veze"]
            // veza dokumenti
-           @ m_x + _x, col() + 1 SAY "RNAL veza:" GET _dokument_veza PICT "@S20"
+           @ m_x + _x, col() + 1 SAY "Vezni dok.:" GET _dokument_veza PICT "@S20"
         endif
 
         ++ _x
@@ -1566,6 +1586,7 @@ return
 static function popup_fakt_unos_dokumenta()
 
 private opc[8]
+
 opc[1]:="1. generacija faktura na osnovu ugovora            "
 opc[2]:="2. sredjivanje rednih br.stavki dokumenta"
 opc[3]:="3. ispravka teksta na kraju fakture"
@@ -1575,12 +1596,12 @@ opc[6]:="6. smece    => priprema"
 opc[7]:="7. "
 opc[8]:="8. "
 
-lKonsig := ( IzFMKINI("FAKT","Konsignacija","N",KUMPATH)=="D" )
+lKonsig := .f.
 
 if lKonsig
- AADD(opc,"9. generisi konsignacioni racun")
+    AADD(opc,"9. generisi konsignacioni racun")
 else
- AADD(opc,"-----------------------------------------------")
+    AADD(opc,"-----------------------------------------------")
 endif
 
 AADD(opc,"A. kompletiranje iznosa fakture pomocu usluga")
@@ -1588,12 +1609,16 @@ AADD(opc,"-----------------------------------------------")
 AADD(opc, "C. import txt-a")
 AADD(opc, "U. stampa ugovora od do ")
 
-h[1]:=h[2]:=""
+h[1] := h[2] := ""
+
 close all
 private am_x:=m_x,am_y:=m_y
 private Izbor:=1
+
 do while .t.
+
   Izbor:=menu("prip",opc,Izbor,.f.)
+
   do case
     case Izbor==0
     exit
@@ -1669,6 +1694,9 @@ do while .t.
 
         povrat_smece()
 
+    case izbor == 7 .or. izbor == 8
+        return DE_CONT
+
     case izbor == 9 .and. lKonsig
        GKRacun()
 
@@ -1695,6 +1723,98 @@ go bottom
 return
 
 
+
+// --------------------------------------------------------------------
+// izmjeni sve stavke dokumenta prema tekucoj stavci
+// ovo treba da radi samo na stavci broj 1
+// --------------------------------------------------------------------
+static function izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
+local _old_firma := old_dok["idfirma"]
+local _old_brdok := old_dok["brdok"]
+local _old_tipdok := old_dok["idtipdok"]
+local _rec, _tek_dok, _t_rec
+local _new_firma := new_dok["idfirma"]
+local _new_brdok := new_dok["brdok"]
+local _new_tipdok := new_dok["idtipdok"]
+
+// treba da imam podatke koja je stavka bila prije korekcije
+// kao i koja je nova 
+// misli se na "idfirma + tipdok + brdok"
+
+select fakt_pripr
+go top
+
+// uzmi podatke sa izmjenjene stavke
+seek _new_firma + _new_tipdok + _new_brdok
+
+if !FOUND()
+    return
+endif
+
+_tek_dok := dbf_get_rec()
+
+// zatim mi pronadji ostale stavke bivseg dokumenta
+go top
+seek _old_firma + _old_tipdok + _old_brdok
+
+if !FOUND()
+    return
+endif
+
+do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
+        _old_firma + _old_tipdok + _old_brdok 
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1 
+
+    // napravi zamjenu podataka
+    _rec := dbf_get_rec()
+    _rec["idfirma"] := _tek_dok["idfirma"]
+    _rec["idtipdok"] := _tek_dok["idtipdok"]
+    _rec["brdok"] := _tek_dok["brdok"]
+    _rec["datdok"] := _tek_dok["datdok"]
+    _rec["idpartner"] := _tek_dok["idpartner"]
+
+    dbf_update_rec( _rec )
+
+    go ( _t_rec )
+
+enddo
+
+go top
+
+select ( F_FAKT_ATRIB )
+if !Used()
+    O_FAKT_ATRIB
+endif
+
+go top
+
+do while !EOF()
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    _rec := dbf_get_rec()
+
+    _rec["idfirma"] := _tek_dok["idfirma"]
+    _rec["idtipdok"] := _tek_dok["idtipdok"]
+    _rec["brdok"] := _tek_dok["brdok"]
+
+    dbf_update_rec( _rec )
+ 
+    go ( _t_rec )
+
+enddo
+
+// zatvori atribute
+use
+
+select fakt_pripr
+
+return
 
 
 

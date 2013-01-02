@@ -30,34 +30,19 @@ local lOpcine := .t.
 private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 private cFilter := ".t."
 
-if _vrste_pl
-    O_VRSTEP
-endif
-
+O_VRSTEP
 O_OPS
-
-if _objekti
-    O_FAKT_OBJEKTI
-endif
-
+O_VALUTE
+O_RJ
+O_FAKT_OBJEKTI
 O_FAKT
 O_PARTN
 O_FAKT_DOKS
 
-if _vrste_pl
-    SET RELATION TO idvrstep INTO VRSTEP
-endif
-
-SET RELATION TO idpartner INTO PARTN
-
-// setuj i relaciju sa fakt-om
-// u njoj se nalaze objekti
-if _objekti .or. _vezni_dokumenti
-    SET RELATION TO idfirma + idtipdok + brdok INTO fakt
-endif
-
-O_VALUTE
-O_RJ
+// setuj relacije 
+SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
+            TO fakt_doks->idvrstep INTO vrstep, ;
+            TO fakt_doks->idpartner INTO partn
 
 qqVrsteP := SPACE(20)
 dDatVal0 := dDatVal1 := CTOD("")
@@ -319,8 +304,8 @@ use
 O_FAKT_DOKS
 if lOpcine
     O_PARTN
-        select fakt_doks
-        set relation to idpartner into PARTN
+    select fakt_doks
+    set relation to idpartner into PARTN
 endif
 if cFilter==".t."
     set Filter to
@@ -355,8 +340,8 @@ use
 O_FAKT_DOKS
 if lOpcine
     O_PARTN
-        select fakt_doks
-        set relation to idpartner into PARTN
+    select fakt_doks
+    set relation to idpartner into PARTN
 endif
 if cFilter == ".t."
     set Filter to
@@ -387,8 +372,8 @@ use
 O_FAKT_DOKS
 if lOpcine
     O_PARTN
-        select fakt_doks
-        set relation to idpartner into PARTN
+    select fakt_doks
+    set relation to idpartner into PARTN
 endif
 if cFilter==".t."
     set Filter to
@@ -743,12 +728,24 @@ do case
         if Pitanje( "ST FISK RN5","Stampati fiskalni racun ?", "D") == "D"
 
             _dev_id := get_fiscal_device( my_user() )
-            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+            if _dev_id > 0
+
+                _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+                if _dev_params == NIL
+                    return DE_CONT
+                endif
+
+            else
+                MsgBeep("Problem sa fiskalnim parametrima !!!")
+                return DE_CONT
+            endif
 
             // da li je korisniku dozvoljeno da stampa racune ?
             if _dev_params["print_fiscal"] == "N"
                 MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
-                return DE_REFRESH
+                return DE_CONT
             endif
  
             fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )

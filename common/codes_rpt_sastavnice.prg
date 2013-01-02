@@ -28,7 +28,7 @@ do while .t.
      @ m_x+1,m_y+2 SAY "Proizvodi :" GET qqProiz  pict "@!S30"
      @ m_x+3,m_y+2 SAY "Brisanje prekinutih sastavnica ? (D/N)" GET cBrisi  pict "@!" valid cBrisi $ "DN"
      @ m_x+5,m_y+2 SAY "Prikazati samo proizvode bez sastavnica ? (D/N)" GET cSamoBezSast  pict "@!" valid cSamoBezSast $ "DN"
-     @ m_x+7,m_y+2 SAY "Prikazati NC i VPC ? (D/N)" GET cNCVPC VALID cNCVPC$"DN" PICT "@!"
+     @ m_x+7,m_y+2 SAY "Prikazati NC i VPC ? (D/N)" GET cNCVPC VALID cNCVPC $ "DN" PICT "@!"
      read
   BoxC()
 

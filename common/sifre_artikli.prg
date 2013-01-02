@@ -219,7 +219,7 @@ bRoba:=gRobaBlock
 if !EMPTY(cSeek)
     cPomTag := cSeek
 else
-    cPomTag := IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
+    cPomTag := "ID" 
 endif
 
 cRet := PostojiSifra(F_ROBA, (cPomTag), 15, MAXCOLS() - 5 , "Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})

@@ -10,10 +10,10 @@ CLASS DocCounter
 
     DATA       count    INIT 0
     DATA       width    INIT 10
-    DATA       prefix0  INIT ""
     DATA       prefix   INIT ""
     DATA       suffix   INIT "/13"
     DATA       fill     INIT "0"
+    DATA       prefix0  INIT ""
     DATA       suffix0  INIT ""
 
     METHOD     New()
@@ -25,13 +25,12 @@ CLASS DocCounter
 
     ACCESS     decoded_before_num   INLINE  ::prefix0
     ACCESS     decoded_after_num    INLINE  ::suffix0
-    ASSIGN     counter      METHOD  set_counter
-    ACCESS     counter      METHOD  get_counter
+    ASSIGN     counter              METHOD  set_counter
+    ACCESS     counter              METHOD  get_counter
 
-    ACCESS     decoded        INLINE   ::decode_success
-    ACCESS     error_message  INLINE   ::decode_error
+    ACCESS     decoded             INLINE   ::decode_success
+    ACCESS     error_message       INLINE   ::decode_error
 
-    
   PROTECTED:
     DATA       decode_success INIT .t.
     DATA       decode_str INIT ""
@@ -85,14 +84,10 @@ str := STRTRAN(str, "/", "\/")
 return str 
 
 METHOD DocCounter:to_str()
-return  ::prefix + PADL(ALLTRIM(STR(::count, ::width)), ::width, ::fill) + ::suffix
+local _w := ::width - LEN(::prefix0) - LEN(::suffix0)
+return  ::prefix + ::prefix0 + PADL(ALLTRIM(STR(::count, _w)), _w, ::fill) + ::suffix0 + ::suffix
 
 METHOD DocCounter:decode(str)
-
-// X-(.*)0*([0-9]+)(.*)\/13
-// X-000123/P1/13
-// =>  123, P1
-
 local _a
 //local _sep := "[#\/\\-]*"
 local _re_str := str_regex(::prefix) + "(.*?)([" + ::fill + "]*)" +  "([0-9]{4," + ALLTRIM(STR(::width)) +"})(.*)" + str_regex(::suffix)

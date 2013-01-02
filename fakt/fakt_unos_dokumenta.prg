@@ -1784,9 +1784,9 @@ enddo
 
 go top
 
-select ( F_FAKT_ATRIB )
+select ( F_FAKT_PRIPR_ATRIB )
 if !Used()
-    O_FAKT_ATRIB
+    O_FAKT_PRIPR_ATRIB
 endif
 
 go top

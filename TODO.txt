@@ -1,3 +1,10 @@
+fakt_brojac
+
+
+function _nBrDok( cFirma, cTip, cBrDok )
+cBrDok := fakt_brojac(0)
+return .t.
+
 
 fakt_parametri.prg
 

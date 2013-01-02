@@ -67,12 +67,8 @@ local _ret := ""
 local _memo
 
 PushWa()
-<<<<<<< HEAD
 
-if idfirma == NIL
-=======
 if id_firma == NIL
->>>>>>> master
   id_firma = fakt->idfirma
   id_tipdok = fakt->idtipdok
   br_dok = fakt->brdok
@@ -90,10 +86,6 @@ select fakt
 // PopWa ce uraditi restore filtera
 set filter to
 set order to tag "1"
-<<<<<<< HEAD
-go top
-=======
->>>>>>> master
 seek id_firma + id_tipdok + br_dok + "  1"
 
 if !FOUND()

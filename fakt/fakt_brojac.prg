@@ -15,7 +15,7 @@
 // -----------------------------------------------
 // vraca novi broj dokumenta
 // -----------------------------------------------
-static function _nBrDok( cFirma, cTip, cBrDok )
+function _nBrDok( cFirma, cTip, cBrDok )
 cBrDok := fakt_brojac(0)
 return .t.
 

@@ -114,6 +114,10 @@ function _inc_id( wid, cFieldName, cIndexTag, lAuto )
 local nTRec
 local _t_rec := RECNO()
 local cTBFilter := DBFILTER()
+local _alias := ALLTRIM( LOWER( ALIAS() ) )
+local _param := "rnal_" + _alias + "_no" 
+local _t_area := SELECT()
+local _value := 0
 
 if cIndexTag == nil
 	cIndexTag := "1"
@@ -132,8 +136,17 @@ if ((Ch == K_CTRL_N) .or. (Ch == K_F4)) .or. lAuto == .t.
 	set filter to
 	set order to tag &cIndexTag
 	
+    // daj mi zadnju vrijednosti i uvecaj za 1
+    _value := ( fetch_metric( _param, NIL, 0 ) + 1 )
+
 	wid := _last_id( cFieldName ) + 1
+
+    // odabrat ce vecu vrijednost
+    wid := MAX( _value, wid )
 	
+    // snimi parametar u sql
+    set_metric( _param, NIL, wid ) 
+
 	set filter to &cTBFilter
 	set order to tag "1"
 	go (_t_rec)

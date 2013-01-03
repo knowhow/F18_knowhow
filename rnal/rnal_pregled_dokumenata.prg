@@ -1252,6 +1252,7 @@ return
 static function _sh_doc_status( doc_status, nX, nY )
 local cTmp
 local cDoc_stat
+local cColor := "GR+/B"
 
 if nX == nil
 	nX := 5
@@ -1289,6 +1290,7 @@ do case
 	case doc_status == 5
 		
 		cColor := "W/G+"
+
 endcase
 
 @ nX, nY SAY PADR( cTmp , 20 ) COLOR cColor

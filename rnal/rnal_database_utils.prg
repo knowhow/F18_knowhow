@@ -253,6 +253,13 @@ else
 	cIndex := "2"
 endif
 
+if !f18_lock_tables({ LOWER(ALIAS() ) })
+    MsgBeep("Problem sa lockovanjem tabele !!!!")
+    return 0
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 _inc_id( @nId, cIdField, cIndex, lAuto )
 
 set_global_memvars_from_dbf()
@@ -265,7 +272,10 @@ cIdField := "_" + cIdField
 
 _rec := get_dbf_global_memvars()        
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+f18_free_tables({ LOWER(ALIAS() ) })
+sql_table_update( nil, "END" )
         
 select (nTArea)
 

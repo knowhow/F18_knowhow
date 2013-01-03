@@ -53,7 +53,7 @@ if !EMPTY(cTRule)
 	return
 endif
 	
-cModul := g_rulemod( goModul:oDataBase:cName )
+cModul := g_rulemod( "RNAL" )
 cRuleObj := g_ruleobj("ARTICLES")
 cErrMsg := "-"
 cRuleC3 := g_rule_c3("CODE_GEN")
@@ -140,7 +140,7 @@ local cRuleType
 local cObj
 local nTArea := SELECT()
 
-cModul := g_rulemod( goModul:oDataBase:cName )
+cModul := g_rulemod( "RNAL" )
 cObj := g_ruleobj( "ARTICLES" )
 cRuleType := g_rule_c3( "CODE_GEN" )
 cElCond := g_rule_c4( cElCond )
@@ -195,7 +195,7 @@ local aTmp
 
 local cObj := g_ruleobj( "ARTICLES" )
 local cCond := g_rule_c3( "AUTO_ELEM" )
-local cMod := g_rulemod( goModul:oDataBase:cName )
+local cMod := g_rulemod( "RNAL" )
 
 // default schema
 aSchema := {}
@@ -270,7 +270,7 @@ local nTArea := SELECT()
 
 local cObj := "FMK_OTPREMNICA"
 local cCond := ALLTRIM(cField)
-local cMod := goModul:oDataBase:cName
+local cMod := "RNAL"
 
 local aTTick := {}
 
@@ -410,7 +410,7 @@ local nTArea := SELECT()
 
 local cObj := "ITEMS"
 local cCond := "DOC_IT_AOP"
-local cMod := goModul:oDataBase:cName
+local cMod := "RNAL"
 
 local nErrLevel
 local cKtoList
@@ -502,7 +502,7 @@ local nTArea := SELECT()
 
 local cObj := "ITEMS"
 local cCond := ALLTRIM(cField)
-local cMod := goModul:oDataBase:cName
+local cMod := "RNAL"
 
 local nErrLevel
 local cKtoList
@@ -611,7 +611,7 @@ local nTArea := SELECT()
 
 local cObj := "ARTICLES"
 local cCond := "ART_NEW"
-local cMod := goModul:oDataBase:cName
+local cMod := "RNAL"
 
 local nErrLevel
 local cKtoList

@@ -17,7 +17,7 @@ CLASS DocCounter
 
     //         numeric_with <= width
     //         eg: 000921/13___ - numeric_width = 6, width = 10, sufix = "<G2>"
-    DATA       width         INIT 10
+    DATA       width         INIT 12
     DATA       numeric_width INIT  6
 
     METHOD     New()
@@ -76,7 +76,7 @@ return
 // --------------------------------
 METHOD DocCounter:New(cnt, width, numeric_width, pref, suf, fill)
 
-DEFAULT width TO 10
+DEFAULT width TO 12
 DEFAULT cnt   TO 0
 DEFAULT pref  TO ""
 DEFAULT suf   TO ""
@@ -136,7 +136,7 @@ return str
 // --------------------------------
 METHOD DocCounter:to_str()
 local _w := ::numeric_width
-return  ::prefix + ::prefix0 + PADL(ALLTRIM(STR(::count, _w)), _w, ::fill) + ::suffix0 + ::suffix
+return  PADR(::prefix + ::prefix0 + PADL(ALLTRIM(STR(::count, _w)), _w, ::fill) + ::suffix0 + ::suffix, ::width)
 
 // --------------------------------
 // --------------------------------
@@ -147,6 +147,8 @@ local _re_str := str_regex(::prefix) + "(.*?)([" + ::fill + "]*)" +  "([0-9]{4,"
 local _re_brdok := hb_regexComp( _re_str)
 
 ::decode_str := str
+
+str := TRIM(str)
 
 if !hb_isRegex(_re_brdok)
   ::decode_success := .f.

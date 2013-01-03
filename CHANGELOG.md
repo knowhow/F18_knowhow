@@ -1,3 +1,8 @@
+1.4.59 2013-01-03, vsasa
+
+ - šifranici, F4 - bugfix
+ - rnal, zatvarnje naloga, logiranje... 
+ 
 1.4.58 2013-01-03, vsasa
 
  - rnal, semafor tabele "customs" - bugfix

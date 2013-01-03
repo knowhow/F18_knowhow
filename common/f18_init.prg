@@ -388,13 +388,7 @@ __server_log := .t.
 
 set_all_gvars()
 
-#ifdef TEST
-   if ! _TEST_NO_DATABASE
-      f18_init_semaphores()
-   endif
-#else
-   f18_init_semaphores()
-#endif
+f18_init_semaphores()
 
 set_init_fiscal_params()
 

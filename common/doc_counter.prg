@@ -17,8 +17,8 @@ CLASS DocCounter
 
     //         numeric_with <= width
     //         eg: 000921/13___ - numeric_width = 6, width = 10, sufix = "<G2>"
-    DATA       width         INIT 12
-    DATA       numeric_width INIT  6
+    DATA       width            INIT 12
+    DATA       numeric_width    INIT  6
 
     METHOD     New()
     
@@ -26,12 +26,12 @@ CLASS DocCounter
     ACCESS     server_counter          METHOD get_server_counter
     ASSIGN     server_counter          METHOD set_server_counter
  
-    
-    METHOD     get_document_counter
     METHOD     inc()
     METHOD     dec()
     ASSIGN     counter              METHOD  set_counter
     ACCESS     counter              METHOD  get_counter
+
+    ACCESS     document_counter     METHOD  get_counter_from_documents
 
     METHOD     to_str()
     METHOD     decode(str, change_counter)
@@ -50,23 +50,24 @@ CLASS DocCounter
     DATA       doc_date         INIT DATE()    
     DATA       count            INIT 0
     DATA       server_count     INIT 0
-    DATA       document_count   INIT 0
     DATA       c_document_count INIT ""
+    DATA       document_count   
 
     DATA       decode_prefix0 
     DATA       decode_suffix0
     DATA       decode_count 
 
     // fakt/10/20 - RJ=10, TipDokumenta=00 
-    DATA       a_s_param        INIT { "fakt", "10", "00" }
+    DATA       a_s_param        
  
     DATA       decode_success  INIT .t.
     DATA       decode_str      INIT ""
     DATA       decode_error    INIT ""
     DATA       c_server_param
 
-    DATA       sql_get    
+    DATA       c_sql_get    
     METHOD     set_c_server_param
+    METHOD     set_sql_get
    
     METHOD     transfer_decode_to_main_counter()
 ENDCLASS
@@ -118,29 +119,30 @@ return ::c_server_param
 // --------------------------------------
 METHOD DocCounter:set_a_server_param(a_val)
 
-ACLONE(::a_s_param, a_val)
+::a_s_param := ACLONE(a_val)
 ::set_c_server_param()
 
 return ::a_s_param
 
 // --------------------------------------
 // --------------------------------------
-METHOD DocCounter:get_document_counter()
-local _qry, _c_cnt
+METHOD DocCounter:get_counter_from_documents()
+local _qry, _c_qry, _c_cnt
 
 // setuj na osnovu ::a_s_param
 ::set_sql_get()
 
-_qry := run_sql_query(::sql_get)
-
+_c_qry := ::c_sql_get
+_qry := run_sql_query(_c_qry)
 _c_cnt := _qry:FieldGet(1)
  
-if !hb_isChar(_cnt)
+if hb_isChar(_c_cnt)
    ::c_document_count := _c_cnt
 
    // dekodiraj dobijeni string, ali nemoj prebacivati u ::count rezultat
    // neka stoji u ::decode_count
    ::decode(_c_cnt, .f.)
+   ::document_count   := ::decode_count
 else
    ::c_document_count := ""
    ::document_count   := 0
@@ -164,10 +166,10 @@ return .t.
 METHOD DocCounter:set_sql_get()
 
 // uzmi brdok iz fakt_doks za zadatu firmu, tip dokumenta, i dokumente iz zadane godine
-::sql_get := "select brdok from fmk.fakt_doks where idfirma=" + _sql_quote(::a_s_param[2]) + ;
-             " AND idtipdok=" + _sql_quote(::a_s_param[3]) + ;
-             " AND EXTRACT(YEAR FROM datdok)=" + ALLTRIM(STR(::year)) + ;
-             " ORDER BY brdok LIMIT 1 DESC"
+::c_sql_get := "select brdok from fmk.fakt_doks where idfirma=" + _sql_quote(::a_s_param[2]) + ;
+               " AND idtipdok=" + _sql_quote(::a_s_param[3]) + ;
+               " AND EXTRACT(YEAR FROM datdok)=" + ALLTRIM(STR(::year)) + ;
+               " ORDER BY (datdok, brdok) DESC LIMIT 1"
 
 return .t.
 
@@ -262,8 +264,8 @@ METHOD DocCounter:to_str()
 local _w := ::numeric_width
 return  PADR(::prefix + ::prefix0 + PADL(ALLTRIM(STR(::count, _w)), _w, ::fill) + ::suffix0 + ::suffix, ::width)
 
-// --------------------------------
-// --------------------------------
+// -------------------------------------------
+// -------------------------------------------
 METHOD DocCounter:decode(str, change_counter)
 local _a
 //local _sep := "[#\/\\-]*"

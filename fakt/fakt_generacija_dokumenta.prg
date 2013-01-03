@@ -342,7 +342,11 @@ Box(, 20, 75 )
 
     seek _firma + _otpr_tip
 
-    f18_lock_tables({LOWER(ALIAS())})
+    if !f18_lock_tables({LOWER(ALIAS())})
+        MsgBeep( "Neuspjesno lokovanje tabele !!!" )
+        return .t.
+    endif
+
     sql_table_update( nil, "BEGIN" )
 
     do while !EOF() .and. field->idfirma + field->idtipdok = _firma + _otpr_tip
@@ -362,6 +366,7 @@ Box(, 20, 75 )
     BrowseKey( m_x + 5, m_y + 1, m_x + 19, m_y+ 73, ImeKol, ;
                 {|Ch| EdOtpr(Ch, @_suma)}, "idfirma+idtipdok = _firma + _otpr_tip",;
                 _firma + _otpr_tip, 2, , , {|| partner = _partn_naz } )
+
 BoxC()
 
 if Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
@@ -533,7 +538,11 @@ seek firma + otpr_tip + partn_naz
       
 _dat_max := CTOD("")
 
-f18_lock_tables({"fakt_doks", "fakt_fakt"})
+if !f18_lock_tables( {"fakt_doks", "fakt_fakt" })
+    MsgBeep("Neuspjesno lokovanje tabela !!!!")
+    return
+endif
+
 sql_table_update( nil, "BEGIN" )
       
 do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
@@ -582,7 +591,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         seek dxIdFirma + "12" + dxBrDok
             
         do while !EOF() .and. (dxIdFirma + otpr_tip + dxBrDok) == ;
-                (idfirma+idtipdok+brdok)
+                ( idfirma + idtipdok + brdok )
                
             skip
             _t_fakt_rec := recno()
@@ -609,12 +618,9 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             locate for idroba == fakt->idroba
 
             if FOUND() .and. _sumirati == .t. .and. ROUND( fakt_pripr->cijena, 2 ) = ROUND( fakt->cijena, 2 )
-
                 _fakt_rec["kolicina"] := fakt_pripr->kolicina + fakt->kolicina
-
             else
-                // append blank
-                appblank2( .t., .f. )
+                append blank
             endif
                
             dbf_update_rec( _fakt_rec )

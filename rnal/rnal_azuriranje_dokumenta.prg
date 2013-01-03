@@ -28,7 +28,7 @@ if cDesc == nil
     cDesc := ""
 endif
 
-o_tables(.t.)
+o_tables( .t. )
 
 // skloni filtere
 select _docs
@@ -76,15 +76,22 @@ endif
 // azuriranje naloga u toku...
 // lokuj sve tabele
 
+// probaj prvo docs lokovati....
+if !f18_lock_tables( { "docs" } )
+    MsgBeep("Tabele zauzete... ponovite ponovo.... lock docs !!!")
+    return 0
+endif
+
 // ----- pocetak transakcije
-if !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+// lock ostalih tabela....
+if !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
     MsgBeep( "Ne mogu lock-ovati tabele !!!!")
     return 0
 endif
 
 sql_table_update( nil, "BEGIN" )
 
-MsgO("Azuriranje naloga u toku...")
+MsgO( "Azuriranje naloga u toku..." )
 
 Beep(1)
 
@@ -92,11 +99,16 @@ Beep(1)
 if __doc_stat == 3
     
     // napravi deltu dokumenta
-    doc_delta( __doc_no, __doc_desc )
-    
+    doc_delta( __doc_no, __doc_desc ) 
     // brisi dokument iz kumulativa
     doc_erase( __doc_no )
-
+    
+    // zavrsi trenutnu transakciju
+    sql_table_update( nil, "END" )
+    // zapocni novu transakciju
+    // kako bi ovo sto je i izbrisano bilo vidljivo
+    sql_table_update( nil, "BEGIN" )
+ 
     O_DOCS
     
 endif

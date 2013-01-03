@@ -1,3 +1,7 @@
+1.4.57 2013-01-03, vsasa
+
+ - rnal, ažuriranje naloga - bugfix
+ 
 1.4.56 2013-01-03, vsasa
 
  - rnal, ažuriranje naloga - bugfix

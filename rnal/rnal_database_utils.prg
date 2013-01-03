@@ -255,7 +255,7 @@ return STR(nId, 4)
 // nId - id sifrarnika
 // cIdField - naziv id polja....
 // -------------------------------------------
-function _set_sif_id(nId, cIdField, lAuto )
+function _set_sif_id( nId, cIdField, lAuto, cont )
 local nTArea := SELECT()
 local nTime
 local cIndex
@@ -272,12 +272,9 @@ else
 	cIndex := "2"
 endif
 
-if !f18_lock_tables({ LOWER(ALIAS() ) })
-    MsgBeep("Problem sa lockovanjem tabele !!!!")
-    return 0
+if cont == NIL
+    cont := "CONT"
 endif
-
-sql_table_update( nil, "BEGIN" )
 
 _inc_id( @nId, cIdField, cIndex, lAuto )
 
@@ -291,11 +288,8 @@ cIdField := "_" + cIdField
 
 _rec := get_dbf_global_memvars()        
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, cont )
 
-f18_free_tables({ LOWER(ALIAS() ) })
-sql_table_update( nil, "END" )
-        
 select (nTArea)
 
 return 1

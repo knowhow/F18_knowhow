@@ -220,11 +220,26 @@ do case
         select articles
         set filter to
         set relation to
-        
-        if _set_sif_id( @nArt_id, "ART_ID" ) == 0
+       
+        if !f18_lock_tables( {"articles"} )
+            MsgBeep("Problem sa lockovanjem tabele articles !!!")
             return DE_CONT
         endif
-        
+
+        sql_table_update( nil, "BEGIN" )
+ 
+        if _set_sif_id( @nArt_id, "ART_ID" ) == 0
+
+            f18_free_tables( {"articles"} )
+            sql_table_update( nil, "END" )
+
+            return DE_CONT
+
+        endif
+             
+        f18_free_tables( {"articles"} )
+        sql_table_update( nil, "END" )
+       
         // prvo mi reci koji artikal zelis praviti...
         _g_art_type( @nArt_type, @cSchema )
         
@@ -235,7 +250,6 @@ do case
             select articles
             go (nTRec)
         endif
-        
         
         return DE_REFRESH
         
@@ -904,6 +918,8 @@ select articles
 
 return 1
 
+
+
 // ----------------------------------------------
 // kloniranje artikla
 // ----------------------------------------------
@@ -923,6 +939,12 @@ select articles
 set filter to
 set relation to
 
+if !f18_lock_tables({ "articles", "elements" })
+    return -1
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 if _set_sif_id( @nArtNewid, "ART_ID" ) == 0
     return -1
 endif
@@ -932,12 +954,6 @@ select elements
 set order to tag "1"
 go top
 seek artid_str( nArt_id ) 
-
-if !f18_lock_tables({"elements"})
-    return -1
-endif
-
-sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. field->art_id == nArt_id
 
@@ -969,7 +985,7 @@ do while !EOF() .and. field->art_id == nArt_id
     
 enddo
 
-f18_free_tables({"elements"})
+f18_free_tables({"articles", "elements"})
 sql_table_update( nil, "END" )
 
 return nArtNewid

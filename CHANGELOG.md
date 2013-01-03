@@ -3,6 +3,7 @@
  - šifranici, F4 - bugfix
  - rnal, zatvarnje naloga, logiranje... 
  - rnal, štampanje rekapitulacije repromaterijala, unos repromaterijala
+ - rnal, unos naloga, korekcije sa unosom elemenata
  
 1.4.58 2013-01-03, vsasa
 

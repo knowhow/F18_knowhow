@@ -54,7 +54,7 @@ local cCn_addr
 local cCity
 local _template
 local _data_xml
-local _jod_templates := ALLTRIM( fetch_metric( "jodreports_templates", my_user(), "" ) )
+local _t_path := F18_TEMPLATE_LOCATION
 
 _data_xml := my_home() + "data.xml"
 
@@ -238,24 +238,15 @@ close_xml()
 _template := ""
 
 // izaberi sablon
-if get_file_list_array( _jod_templates, "_rg*.odt", @_template ) = 0
+if get_file_list_array( _t_path, "_rg*.odt", @_template ) = 0
     return
 endif
 
-// pokreni generisanje template fajla i pokreni oo3
-_run_j_reports( _template, _data_xml )
-
-return
-
-
-// ---------------------------------------------------------
-// startanje jod reports
-// ---------------------------------------------------------
-static function _run_j_reports( template_file, xml_file )
-
-if f18_odt_generate( template_file, xml_file )
+// pokreni odt stampu
+if f18_odt_generate( _template, _data_xml )
     f18_odt_print()
 endif
 
 return
+
 

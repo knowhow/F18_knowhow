@@ -630,7 +630,7 @@ _alg := hb_hash()
 
 _alg["dbf_key_block"]  := {|| STR(field->cust_id, 10) + STR(field->cont_id, 10) }
 _alg["dbf_key_fields"] := { { "cust_id", 10 }, { "cont_id", 10 } }
-_alg["sql_in"]         := "lpad( cust_id::char(10), 10 ) | lpad( cont_id::char(10), 10 )"
+_alg["sql_in"]         := "lpad( cust_id::char(10), 10 ) || lpad( cont_id::char(10), 10 )"
 _alg["dbf_tag"]        := "2"
 AADD(_item["algoritam"], _alg)
 

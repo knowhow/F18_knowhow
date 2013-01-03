@@ -1,3 +1,7 @@
+1.4.54 2013-01-03, vsasa
+
+ - rnal, ažuriranje naloga u mrežnom radu
+ 
 1.4.53 2013-01-03, vsasa
 
  - fprint dnevni izvještaj, automatski polog - bugfix

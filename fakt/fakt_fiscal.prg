@@ -625,13 +625,7 @@ if !EMPTY( param_racun_na_email() ) .and. tip_dok $ "#11#"
         
     // posalji email...
     // ako se radi o racunu tipa "11"
-
-    _partn_naz := ""
-
-    if head <> NIL
-        _partn_naz := head[ 1, 2 ]
-    endif
-
+    _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
     _snd_eml( _fiscal_no, tip_dok + "-" + ALLTRIM( br_dok ), _partn_naz, nil, _total )
     
 endif
@@ -647,6 +641,29 @@ endif
 return _err_level
 
 
+// -----------------------------------------------------------------------
+// vrati partnera za email
+// -----------------------------------------------------------------------
+static function _get_partner_for_email( id_firma, tip_dok, br_dok )
+local _ret := ""
+local _t_area := SELECT()
+local _partn
+
+select fakt_doks
+go top
+seek id_firma + tip_dok + br_dok
+
+_partn := field->idpartner
+
+select partn
+hseek _partn
+
+if FOUND()
+    _ret := ALLTRIM( field->naz )
+endif
+
+select ( _t_area )
+return _ret
 
 
 

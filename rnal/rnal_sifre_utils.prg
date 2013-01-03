@@ -88,6 +88,23 @@ endif
 
 return .t.
 
+
+
+// ---------------------------------------------
+// increase id sql
+// ---------------------------------------------
+function _inc_id_sql( value )
+local _alias := LOWER( ALIAS() )
+local _param := "rnal_" + _alias + "_no" 
+local _t_area := SELECT()
+
+// daj mi zadnju vrijednosti i uvecaj za 1
+value := ( fetch_metric( _param, NIL, 0 ) + 1 )
+
+return .t.
+
+
+
 // --------------------------------------
 // increment id u sifrarniku
 // wId - polje id proslijedjeno po ref.

@@ -77,7 +77,6 @@ endif
 // lokuj sve tabele
 
 // ----- pocetak transakcije
-
 if !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
     MsgBeep( "Ne mogu lock-ovati tabele !!!!")
     return 0
@@ -284,6 +283,7 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     select _doc_ops
     skip
+
 enddo
 
 return

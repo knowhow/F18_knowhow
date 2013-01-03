@@ -147,13 +147,13 @@ do while !EOF() .and. field->doc_no == nDoc_no ;
     
     skip -1
     
-    Scatter()
+    _rec := dbf_get_rec()
     
     append blank
     
-    _doc_it_no := nDoc_it_no
+    _rec["doc_it_no"] := nDoc_it_no
     
-    Gather()
+    dbf_update_rec( _rec )
     
     ++ nCnt
     

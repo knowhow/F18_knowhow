@@ -148,16 +148,17 @@ return
 // setuje polje required
 // ------------------------------------
 static function set_required()
+local _rec
 
-Scatter()
+_rec := dbf_get_rec()
 	
-if _e_gr_at_re == "*"
-	_e_gr_at_re := " "
+if _rec["e_gr_at_re"] == "*"
+	_rec["e_gr_at_re"] := " "
 else
-	_e_gr_at_re := "*"
+	_rec["e_gr_at_re"] := "*"
 endif
 
-Gather()	
+dbf_update_rec( _rec )
 	
 return
 

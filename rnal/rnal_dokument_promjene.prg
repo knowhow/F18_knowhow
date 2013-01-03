@@ -147,11 +147,11 @@ endif
 
 // logiraj isporuku
 aArr := a_log_ship( nObj_id, dDvrDate, cDvrTime, cShipPlace )
-log_ship(__doc_no, cDesc, "E", aArr)
+log_ship( __doc_no, cDesc, "E", aArr )
 
 select docs
 
-Scatter()
+set_global_memvars_from_dbf()
 
 if _doc_ship_p <> cShipPlace
 	_doc_ship_p := cShipPlace
@@ -169,7 +169,8 @@ if _obj_id <> nObj_id
 	_obj_id := nObj_id
 endif
 
-Gather()
+_rec := get_dbf_global_memvars()    
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 select docs
 go (nTRec)
@@ -232,7 +233,7 @@ log_pay(__doc_no, cDesc, "E", aArr)
 
 select docs
 
-Scatter()
+set_global_memvars_from_dbf()
 
 if _doc_paid <> cDoc_paid
 	_doc_paid := cDoc_paid
@@ -246,10 +247,10 @@ if _doc_pay_id <> nDoc_pay_id
 	_doc_pay_id := nDoc_pay_id
 endif
 
-Gather()
+_rec := get_dbf_global_memvars()    
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 select docs
-//go (nTRec)
 
 return
 
@@ -315,7 +316,7 @@ log_cont(__doc_no, cDesc, cType, aArr)
 
 select docs
 	
-Scatter()
+set_global_memvars_from_dbf()
 
 if _cont_id <> nCont_id
 	_cont_id := nCont_id
@@ -324,7 +325,8 @@ if _cont_add_d <> cCont_desc
 	_cont_add_d := cCont_desc
 endif
 
-Gather()
+_rec := get_dbf_global_memvars()    
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 select docs
 go (nTRec)

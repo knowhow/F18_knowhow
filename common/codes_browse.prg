@@ -970,8 +970,9 @@ else
 
 endif
 
-// ovo ne treba ?????
-//set_global_vars_from_dbf("w")
+// ovo je potrebno radi nekih sifrarnika koji nakon ove opcije opet koriste
+// globalne memoriske varijable w....
+set_global_vars_from_dbf("w")
 
 if Ch == K_F4 .and. Pitanje( , "Vrati se na predhodni zapis", "D" ) == "D"
     go (nPrevRecNo)

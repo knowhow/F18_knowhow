@@ -170,9 +170,9 @@ AADD(aArr,{ "doc_it_no"  , "N" ,   4 ,  0 })
 AADD(aArr,{ "it_no"      , "N" ,   4 ,  0 })
 AADD(aArr,{ "art_id"     , "C" ,  10 ,  0 })
 AADD(aArr,{ "art_desc"   , "C" , 250 ,  0 })
-AADD(aArr,{ "doc_it_qtt", "N" ,  15 ,  5 })
-AADD(aArr,{ "doc_it_pri", "N" ,  15 ,  5 })
-AADD(aArr,{ "desc", 	    "C" ,  200 ,  5 })
+AADD(aArr,{ "doc_it_qtt" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_pri" , "N" ,  15 ,  5 })
+AADD(aArr,{ "descr"      , "C" , 200 ,  5 })
 return
 
 
@@ -272,7 +272,9 @@ function a_t_docit2( nDoc_no, nDoc_it_no, nIt_no, cArt_id, cArt_desc, ;
 
 O_T_DOCIT2
 select t_docit2
+
 append blank
+
 replace doc_no with nDoc_no
 replace doc_it_no with nDoc_it_no
 replace it_no with nIt_no
@@ -280,7 +282,7 @@ replace art_id with cArt_id
 replace art_desc with cArt_desc
 replace doc_it_qtt with nDoc_it_qtty
 replace doc_it_pri with nDoc_it_price
-replace desc with nDescr
+replace descr with nDescr
 
 return
 

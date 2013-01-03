@@ -1,3 +1,7 @@
+1.4.60 2013-01-03, vsasa
+
+ - rnal, štampa labela
+ 
 1.4.59 2013-01-03, vsasa
 
  - šifranici, F4 - bugfix

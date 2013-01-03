@@ -15,10 +15,10 @@
 // ------------------------------------------------------
 // glavna funkcija za poziv stampe labele
 // -----------------------------------------------------
-function lab_print( lTemporary )
+function lab_print( temp )
 
-if lTemporary == nil
-    lTemporary := .f.
+if temp == nil
+    temp := .f.
 endif
 
 t_rpt_open()
@@ -26,7 +26,7 @@ t_rpt_open()
 select t_docit
 go top
 
-_lab_print( lTemporary )
+_lab_print( temp )
 
 return
 
@@ -34,7 +34,7 @@ return
 // -----------------------------------
 // stampa labele...
 // -----------------------------------
-static function _lab_print( lTemporary, lDirectPrint )
+static function _lab_print( temp, direct_print )
 local lCheckErr := .f.
 // default vrijednost pozicije
 local cL_pos_def := "Unutra"
@@ -53,17 +53,11 @@ local cCn_tel
 local cCn_addr
 local cCity
 local _template
-local _data_xml
+local _data_xml := my_home() + "data.xml"
 local _t_path := F18_TEMPLATE_LOCATION
 
-_data_xml := my_home() + "data.xml"
-
-#ifdef __PLATFORM__WINDOWS
-    _data_xml := '"' + _data_xml + '"'
-#endif
-
-if lDirectPrint == nil
-    lDirectPrint := .f.
+if direct_print == nil
+    direct_print := .f.
 endif
 
 // daj mi osnovne podatke o dokumentu

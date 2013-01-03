@@ -56,9 +56,6 @@ endif
 if !just_set
 
 	clear screen
-
-	?
-
 	_pos_x := 2
 	_pos_y := 3
 

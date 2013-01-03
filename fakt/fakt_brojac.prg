@@ -10,7 +10,16 @@
  */
 
 #include "fakt.ch"
+#include "hbclass.ch"
+#include "common.ch"
 
+CLASS FaktCounter  INHERIT  DocCounter
+    METHOD   New()
+ENDCLASS
+
+METHOD FaktCounter:New()	
+  ::Super:New(0, 12, 6, "", "<G2>")
+return SELF
 
 // -----------------------------------------------
 // vraca novi broj dokumenta

@@ -13,6 +13,13 @@
 
 function cre_all_dbfs(ver)
 
+#ifdef TEST
+   if _TEST_NO_DATABASE
+       // bez kreiranja F18 tabela
+       return .t.
+   endif
+#endif
+
 log_write("START cre_all_dbfs", 5)
 
 cre_sifk_sifv(ver)

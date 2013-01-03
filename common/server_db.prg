@@ -36,6 +36,12 @@ function check_server_db_version()
 local _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_server_num
 local _msg
 
+#ifdef TEST
+   if _TEST_NO_DATABASE
+      return .t.
+   endif
+#endif
+
 _f18_required_server_num := get_version_num(SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH)
 
 _server_db_num := server_db_version()

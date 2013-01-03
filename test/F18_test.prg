@@ -1,8 +1,17 @@
 #include "f18.ch"
 
 procedure Main(...)
-
+local _param
 public gDebug := 10
+
+
+public _TEST_NO_DATABASE := .f.
+
+FOR EACH _param IN hb_AParams()
+    if _param == "--no-database"
+       _TEST_NO_DATABASE := .t.
+    endif
+NEXT
 
 f18_test_init()
 

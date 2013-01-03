@@ -164,7 +164,7 @@ do while !EOF()
     go (_t_rec)
 enddo
 
-O_FAKT_PRIPR_ATRIB
+O_FAKT_ATRIB
 
 // promjeni mi i u fakt_atributi
 select fakt_atrib
@@ -182,11 +182,9 @@ do while !EOF()
     go ( _t_rec )
 enddo
 
-select ( F_FAKT_PRIPR_ATRIB )
+select ( F_FAKT_ATRIB )
 use
 
 PopWa()
  
 return .t.
-
-

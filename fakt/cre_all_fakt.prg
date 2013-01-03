@@ -211,7 +211,7 @@ AADD(aDBf,{ 'RBR'       , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'ATRIBUT'   , 'C' ,  50 ,  0 })
 AADD(aDBf,{ 'VALUE'     , 'C' , 250 ,  0 })
 
-_alias := "FAKT_PRIPR_ATRIB"
+_alias := "FAKT_ATRIB"
 _table_name := "fakt_pripr_atributi"
 
 IF_NOT_FILE_DBF_CREATE

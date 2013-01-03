@@ -1,3 +1,7 @@
+1.4.53 2013-01-03, vsasa
+
+ - fprint dnevni izvještaj, automatski polog - bugfix
+ 
 1.4.52 2013-01-03, vsasa
 
  - fiskalni parametri, fiskalni računi po tipu dokumenta 

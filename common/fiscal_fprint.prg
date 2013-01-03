@@ -505,7 +505,7 @@ if dev_params["auto_avans"] <> 0
 	sleep(10)
 	
 	// odmah pozovi i automatski polog
-	fprint_polog( dev_params )
+	fprint_polog( dev_params, dev_params["auto_avans"] )
 	
 	msgc()
 

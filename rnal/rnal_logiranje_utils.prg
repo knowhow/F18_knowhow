@@ -605,10 +605,20 @@ do case
 
 endcase
 
+if !f18_lock_tables({"doc_log", "doc_lit"})
+    MsgBeep("Problem sa logiranjem tabela !!!")
+    return
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 nDoc_log_no := _inc_log_no( nDoc_no )
 
 _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 _lit_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
+
+f18_free_tables({"doc_log", "doc_lit"})
+sql_table_update( nil, "END" )
 
 return
 

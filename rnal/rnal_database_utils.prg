@@ -262,7 +262,7 @@ local cIndex
 local _rec
 private GetList:={}
 
-if lAuto == nil
+if lAuto == NIL
 	lAuto := .f.
 endif
 

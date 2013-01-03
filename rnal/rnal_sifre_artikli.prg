@@ -221,25 +221,10 @@ do case
         set filter to
         set relation to
        
-        if !f18_lock_tables( {"articles"} )
-            MsgBeep("Problem sa lockovanjem tabele articles !!!")
+        if _set_sif_id( @nArt_id, "ART_ID", NIL, "FULL" ) == 0
             return DE_CONT
-        endif
-
-        sql_table_update( nil, "BEGIN" )
- 
-        if _set_sif_id( @nArt_id, "ART_ID" ) == 0
-
-            f18_free_tables( {"articles"} )
-            sql_table_update( nil, "END" )
-
-            return DE_CONT
-
         endif
              
-        f18_free_tables( {"articles"} )
-        sql_table_update( nil, "END" )
-       
         // prvo mi reci koji artikal zelis praviti...
         _g_art_type( @nArt_type, @cSchema )
         
@@ -939,7 +924,7 @@ select articles
 set filter to
 set relation to
 
-if !f18_lock_tables({ "articles", "elements" })
+if !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" } )
     return -1
 endif
 
@@ -985,7 +970,7 @@ do while !EOF() .and. field->art_id == nArt_id
     
 enddo
 
-f18_free_tables({"articles", "elements"})
+f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
 sql_table_update( nil, "END" )
 
 return nArtNewid

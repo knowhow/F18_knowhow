@@ -1034,7 +1034,7 @@ if !lNewRec .and. field->el_id == 0
 endif
 
 if lNewRec
-	if _set_sif_id(@nEl_att_id, "EL_ATT_ID", "FULL" ) == 0
+	if _set_sif_id(@nEl_att_id, "EL_ATT_ID", NIL, "FULL" ) == 0
 		return 0
 	endif
 endif
@@ -1065,11 +1065,9 @@ Box(,6,65)
 BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
-	
     _rec := get_dbf_global_memvars()
     delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	return 0
-	
 endif
 
 _rec := get_dbf_global_memvars()
@@ -1092,18 +1090,14 @@ local _rec
 private GetList:={}
 
 if !lNewRec .and. field->el_id == 0
-
 	Msgbeep("Stavka ne postoji !!!#Koristite c-N da bi dodali novu!")
 	return DE_REFRESH
-	
 endif
 
 if lNewRec
-
-	if _set_sif_id( @nEl_op_id, "EL_OP_ID", "FULL" ) == 0
+	if _set_sif_id( @nEl_op_id, "EL_OP_ID", NIL, "FULL" ) == 0
 		return 0
 	endif
-
 endif
 
 set_global_memvars_from_dbf()

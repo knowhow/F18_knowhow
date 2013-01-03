@@ -63,64 +63,6 @@ _counter:rewind(brdok)
 return .t.
 
 
-/*
-
-// ------------------------------------------------------------------
-// fakt, uzimanje novog broja za fakt dokument
-// ------------------------------------------------------------------
-function fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
-local _broj := 0
-local _broj_doks := 0
-local _param
-local _tmp, _rest
-local _ret := ""
-local _t_area := SELECT()
-
-if sufiks == nil
-    sufiks := ""
-endif
-
-// param: fakt/10/10
-_param := "fakt" + "/" + firma + "/" + tip_dokumenta 
-
-_broj := fetch_metric( _param, nil, _broj )
-
-// konsultuj i doks uporedo
-O_FAKT_DOKS
-set order to tag "1"
-go top
-seek firma + tip_dokumenta + "Ž"
-skip -1
-
-if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
-    _broj_doks := VAL( PADR( field->brdok, gNumDio ) )
-else
-    _broj_doks := 0
-endif
-
-// uzmi sta je vece, doks broj ili globalni brojac
-_broj := MAX( _broj, _broj_doks )
-
-// uvecaj broj
-++ _broj
-
-// ovo ce napraviti string prave duzine...
-_ret := fakt_brojac(_broj, field->datdok )
-
-if !EMPTY( sufiks )
-    _ret := _ret + sufiks
-endif
-
-_ret := PADR( _ret, FAKT_BRDOK_LENGTH )
-
-// upisi ga u globalni parametar
-set_metric( _param, nil, _broj )
-
-select ( _t_area )
-return _ret
-
-*/
-
 // ------------------------------------------------------------
 // setuj broj dokumenta
 // ------------------------------------------------------------
@@ -160,7 +102,6 @@ do while !EOF()
     skip 1
     _t_rec := RECNO()
     skip -1
-
     if (field->idfirma == _firma) .and. (field->idtipdok == _td) .and. (field->brdok == _null_brdok)
         replace field->brdok with _broj_dokumenta
     endif

@@ -366,7 +366,7 @@ gFBanka4 := fetch_metric( "fakt_zagl_banka_4", nil, gFBanka4 )
 gFBanka5 := fetch_metric( "fakt_zagl_banka_5", nil, gFBanka5 )
     
 gFTelefon := fetch_metric( "fakt_zagl_telefon", nil, gFTelefon )
-gFEmail := set_metric( "fakt_zagl_email", nil, gFEmail )
+gFEmail := fetch_metric( "fakt_zagl_email", nil, gFEmail )
 
 gFPrRed1 := fetch_metric( "fakt_zagl_dtxt_1", nil, gFPrRed1 )
 gFPrRed2 := fetch_metric( "fakt_zagl_dtxt_2", nil, gFPrRed2 )

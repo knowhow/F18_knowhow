@@ -13,6 +13,7 @@
 #include "fmk.ch"
 
 function OFmkSvi()
+
 O_KONTO
 O_PARTN
 O_TNAL
@@ -23,15 +24,16 @@ O_BANKE
 O_OPS
 
 select (F_SIFK)
-
 if !used()
     O_SIFK
+endif
+
+select (F_SIFV)
+if !used()
     O_SIFV
 endif
 
-if (IsRamaGlas() .or. gModul=="FAKT" .and. glRadNal)
-    O_FAKT_OBJEKTI
-endif
+O_FAKT_OBJEKTI
 
 return
 
@@ -51,11 +53,7 @@ return
 function OSifUgov()
 O_UGOV
 O_RUGOV
-
-if (rugov->(FIELDPOS("DESTIN"))<>0)
-    O_DEST
-endif
-
+O_DEST
 O_PARTN
 O_ROBA
 O_SIFK
@@ -135,6 +133,7 @@ CREATE_INDEX("NAZ", "naz"             , "sifk")
 
 
 if !file(f18_ime_dbf("sifv"))  
+
    aDbf:={}
    AADD(aDBf,{ 'id'                  , 'C' ,   8 ,  0 })
    AADD(aDBf,{ 'oznaka'              , 'C' ,   4 ,  0 })
@@ -150,7 +149,9 @@ if !file(f18_ime_dbf("sifv"))
    dbcreate2('sifv', aDbf)
    reset_semaphore_version("sifv")
    my_use("sifv")
+
    close all
+
 endif
 
 CREATE_INDEX("ID"      , "id + oznaka + idsif + naz", "sifv")

@@ -57,8 +57,6 @@ set_hot_keys()
 
 Izbor:=1
 
-CheckROnly(KUMPATH + "\FAKT.DBF")
-
 // setuj parametre pri pokretanju modula
 fakt_set_params()
 

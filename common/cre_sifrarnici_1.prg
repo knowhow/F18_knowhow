@@ -89,6 +89,7 @@ if !file(cIme)
         my_use("valute")
         close all
     
+        // upisi default valute ako ne postoje
         fill_tbl_valute()
 
 endif
@@ -372,37 +373,49 @@ return .t.
 // ----------------------------------------
 function fill_tbl_valute()
 local _rec
+local _id
 
 close all
 my_use ('valute')
 
+_id := "000"
+hseek _id
 
-append blank
-_rec := dbf_get_rec()
-_rec["id"]    := "000" 
-_rec["naz"]   := "KONVERTIBILNA MARKA"
-_rec["naz2"]  := "KM"
-_rec["datum"] := CTOD("01.01.04")
-_rec["tip"]   := "D"
-_rec["kurs1"] := 1
-_rec["kurs2"] := 1
-_rec["kurs3"] := 1
-update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+if !FOUND()
+    append blank
+    _rec := dbf_get_rec()
+    _rec["id"]    := "000" 
+    _rec["naz"]   := "KONVERTIBILNA MARKA"
+    _rec["naz2"]  := "KM"
+    _rec["datum"] := CTOD("01.01.04")
+    _rec["tip"]   := "D"
+    _rec["kurs1"] := 1
+    _rec["kurs2"] := 1
+    _rec["kurs3"] := 1
+    update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+endif
 
-append blank
-_rec := dbf_get_rec()
-_rec["id"]    := "978" 
-_rec["naz"]   := "EURO"
-_rec["naz2"]  := "EUR"
-_rec["datum"] := CTOD("01.01.04")
-_rec["tip"]   := "P"
-_rec["kurs1"] := 0.512
-_rec["kurs2"] := 0.512
-_rec["kurs3"] := 0.512
-update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+select valute 
+go top
+_id := "978"
+hseek _id
 
+if !FOUND()
+    append blank
+    _rec := dbf_get_rec()
+    _rec["id"]    := "978" 
+    _rec["naz"]   := "EURO"
+    _rec["naz2"]  := "EUR"
+    _rec["datum"] := CTOD("01.01.04")
+    _rec["tip"]   := "P"
+    _rec["kurs1"] := 0.51128
+    _rec["kurs2"] := 0.51128
+    _rec["kurs3"] := 0.51128
+    update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+endif
 
-CLOSE ALL
+close all
 
 return .t.
+
 

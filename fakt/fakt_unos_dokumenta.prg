@@ -1001,8 +1001,8 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         _x := 2
         
         // datum, broj dokumenta
-        @  m_x + _x, m_y + 45 SAY "Datum:" GET _datdok
-        @  m_x + _x, col() + 1 SAY "Broj:" GET _brdok VALID !EMPTY( _brdok ) 
+        @  m_x + _x, m_y + 45  SAY "Datum:" GET _datdok
+        @  m_x + _x, col() + 2 SAY "Broj:" GET _brdok VALID !EMPTY( _brdok ) 
         
         ++ _x
         ++ _x

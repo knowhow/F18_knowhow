@@ -17,9 +17,7 @@
 // box za upit sumiranja
 // -----------------------------------------
 static function _g_sumbox( lReturn )
-
 lReturn := Pitanje( , "Sumirati stavke sa naloga (D/N)","D") = "D"
-
 return
 
 // ------------------------------------------
@@ -131,7 +129,6 @@ if ALLTRIM( cCust_desc ) == "NN"
     cPartn := PADR( g_rel_val("1", "CONTACTS", "PARTN", ALLTRIM(STR(nCont_id)) ), 6 )
 
 else
-
     // dodaj kao customs
     cPartn := PADR( g_rel_val("1", "CUSTOMS", "PARTN", ALLTRIM(STR(nCust_id)) ), 6 )
 endif

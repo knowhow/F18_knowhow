@@ -724,16 +724,18 @@ if Ch==K_CTRL_N .or. Ch==K_F2
 
 endif
 
+//
+// odrednica za novi zapis....
+//
 
-if Ch==K_CTRL_N
-    lNovi:=.t.
+if Ch == K_CTRL_N
+    lNovi := .t.
     go bottom
     skip 1
 endif
 
-
-if Ch==K_F4
-    lNovi:=.t.
+if Ch == K_F4
+    lNovi := .t.
 endif
 
 
@@ -748,6 +750,7 @@ do while .t.
     endif
  
     nTrebaredova := LEN(ImeKol)
+
     for i := 1 to LEN(ImeKol)
         if LEN(ImeKol[i]) >= 10 .and. Imekol[i, 10] <> NIL
             nTrebaRedova--
@@ -769,13 +772,14 @@ do while .t.
         set cursor on
         private Getlist:={}
 
-
         // brojac get-ova
         nGet := 1 
+
         // broj redova koji se ne prikazuju (_?_)
         nNestampati := 0  
 
         nTekRed := 1
+
         do while .t. 
            
             lShowPGroup := .f.
@@ -789,6 +793,7 @@ do while .t.
             endif
 
             cPic := ""
+
             // samo varijable koje mozes direktno mjenjati
             if !empty(cPom) 
                 sif_getlist(cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed)
@@ -845,6 +850,9 @@ do while .t.
     if Ch <> K_CTRL_A
         exit
     else
+
+        // ovo vazi samo za CTRL + A opciju !!!!!
+
         if LastKey() == K_ESC
             exit
         endif
@@ -852,21 +860,22 @@ do while .t.
         _vars := get_dbf_global_memvars("w")
         
         _alias := LOWER(ALIAS())        
+
         if !f18_lock_tables( { _alias, "sifv", "sifk" } )
             log_write( "ERROR: nisam uspio lokovati tabele: " + _alias + ", sifk, sifv", 2 )
             exit
         endif
 
-        sql_table_update(nil, "BEGIN")
+        sql_table_update( nil, "BEGIN" )
 
         // sifarnik
-        update_rec_server_and_dbf(_alias, _vars, 1, "CONT")
+        update_rec_server_and_dbf( _alias, _vars, 1, "CONT" )
 
         // sifk/sifv
         update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
 
         f18_free_tables( { _alias, "sifv", "sifk" } )
-        sql_table_update(nil, "END")
+        sql_table_update( nil, "END" )
 
         set_global_vars_from_dbf("w")
 
@@ -880,21 +889,29 @@ do while .t.
             skip -1
             exit
         endif
+
     endif
+
 enddo
 
-// glavni enddo
 
-if Ch==K_CTRL_N .or. Ch==K_F2
-    ordsetfocus(nOrder)
+if Ch == K_CTRL_N .or. Ch == K_F2
+    ordsetfocus( nOrder )
 endif
 
-if lastkey()==K_ESC
+if lastkey() == K_ESC
+    
     if lNovi
         go (nPrevRecNo)
     endif
+
     return 0
+
 endif
+
+//
+// ako je novi zapis napravi APPEND BLANK
+//
 
 if lNovi
 
@@ -910,75 +927,58 @@ if lNovi
 
     append blank
 
-    if _LOG_PROMJENE == .t. 
-        // ako je novi zapis .. ovo su stare vrijednosti (prazno)
-        cOldDesc := _g_fld_desc("w")
-    endif
-
 endif
+
+//
+// uzmi mi varijable sa unosne maske
+//
 
 _vars := get_dbf_global_memvars("w")
 
-if f18_lock_tables( { LOWER( ALIAS() ), "sifv", "sifk"} )
+//
+// lokuj tabele i napravi update zapisa....
+//
 
-    sql_table_update(nil, "BEGIN")
+if f18_lock_tables( { LOWER( ALIAS() ), "sifv", "sifk" } )
+
+    sql_table_update( nil, "BEGIN" )
 	
-	//if Ch == K_F2
-		// idi na zapis na kojem sam i bio
-	//	go (nPrevRecNo)
-	//endif
-
     if !update_rec_server_and_dbf( ALIAS(), _vars, 1, "CONT" )
+
         if lNovi
             delete_with_rlock()
         endif
-        sql_table_update( nil, "ROLLBACK")
-        f18_free_tables( { LOWER( ALIAS() ), "sifv", "sifk" })
-    else
-        update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
 
-        f18_free_tables({LOWER(ALIAS()), "sifv", "sifk"})
-        sql_table_update(nil, "END")
+        f18_free_tables( { LOWER( ALIAS() ), "sifv", "sifk" })
+        sql_table_update( nil, "ROLLBACK" )
+
+    else
+
+        update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
+        f18_free_tables( { LOWER( ALIAS() ), "sifv", "sifk" } )
+        sql_table_update( nil, "END" )
  
     endif
 else
-    MsgBeep("ne mogu lockovati " + LOWER(ALIAS()) + " sifk/sifv ?!") 
-endif
 
-
-set_global_vars_from_dbf("w")
-
-if _LOG_PROMJENE == .t.
-    // daj nove vrijednosti
-    cNewDesc := _g_fld_desc("w") 
-endif
-
-nTArea := SELECT()
-
-// logiraj promjenu sifrarnika...
-if _LOG_PROMJENE == .t.
-
-    cChanges := _g_fld_changes(cOldDesc, cNewDesc)
-
-    if LEN(cChanges) > 250
-        cCh1 := SUBSTR(cChanges, 1, 250)
-        cCh2 := SUBSTR(cChanges, 251, LEN(cChanges))
-    else
-        cCh1 := cChanges
-        cCh2 := ""
+    if lNovi
+        // izbrisi ovaj append koji si dodao....
+        delete_with_rlock()
     endif
 
-    EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, "promjena na sifri: " + to_str( FIELDGET(1) ), cCh1, cCh2,  DATE(), DATE(), "", ;
-    "promjene u tabeli " +  ALIAS() + " : " + IIF(Ch==K_F2, "ispravka", IIF(Ch==K_F4, "dupliciranje", "nova stavka")))
+    MsgBeep("ne mogu lockovati " + LOWER(ALIAS()) + " sifk/sifv ?!") 
+
 endif
 
-select (nTArea)
+// ovo ne treba ?????
+//set_global_vars_from_dbf("w")
 
-if Ch==K_F4 .and. Pitanje( , "Vrati se na predhodni zapis","D")=="D"
+if Ch == K_F4 .and. Pitanje( , "Vrati se na predhodni zapis", "D" ) == "D"
     go (nPrevRecNo)
 endif
     
 return 1
+
 
 
 static function set_w_var(ImeKol, _i, show_grup)
@@ -1149,29 +1149,20 @@ xFVal := FIELDGET(i)
 cType := VALTYPE(xFVal)
 cF_Seek := &( cMarker + cFName )
 
-/* ovo nesto se provjerava samo za partnera ?!
-
-if ( cType == "C" ) .and. ( cArea $ "#PARTN##" )
-    
-    Box(, 1, 40)
-        @ m_x + 1, m_y + 2 SAY "Potvrdi sifru sa ENTER: " GET cF_seek
-        read
-    BoxC()
-    
-    if LastKey() == K_ESC
-        nRet := -1
-        return nRet
-    endif
+if ( cType == "C" ) .and. ( cArea $ "#PARTN#ROBA#" )
     
     go top
     seek cF_seek
+
     if FOUND()
         nRet := 1
-        go (nTREC)
+        go (nTRec )
     endif
+
 endif
-*/  
+
 select (nTArea)
+
 return nRet
 
 
@@ -1734,7 +1725,8 @@ PushWa()
 SET ORDER TO TAG (cTag)
 seek wId
 
-if ( FOUND() .and. Ch == K_CTRL_N )
+if ( FOUND() .and. ( Ch == K_CTRL_N .or. Ch == K_F4 ) ) 
+    
     MsgBeep( cUpozorenje )
     nRet := .f.
 

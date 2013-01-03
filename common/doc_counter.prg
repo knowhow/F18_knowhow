@@ -23,6 +23,7 @@ CLASS DocCounter
     METHOD     New()
     
     ASSIGN     a_server_param(a_val)   METHOD set_a_server_param
+    ACCESS     a_server_param          INLINE ::a_s_param
     ACCESS     server_counter          METHOD get_server_counter
     ASSIGN     server_counter          METHOD set_server_counter
  
@@ -37,6 +38,7 @@ CLASS DocCounter
 
     METHOD     to_str()
     METHOD     decode(str, change_counter)
+    METHOD     rewind(dok_str)
 
     ACCESS     decoded_before_num   INLINE  ::decode_prefix0
     ACCESS     decoded_after_num    INLINE  ::decode_suffix0
@@ -107,8 +109,8 @@ local _doc_cnt, _s_cnt
 _doc_cnt := ::document_counter
 _s_cnt   := ::server_counter   
 
-altd()
 ::count :=  MAX(_doc_cnt, _s_cnt)
+::inc()
 return ::count
 
 
@@ -167,16 +169,20 @@ local _qry, _c_qry, _c_cnt
 ::set_sql_get()
 
 _c_qry := ::c_sql_get
-_qry := run_sql_query(_c_qry)
+_qry   := run_sql_query(_c_qry)
 _c_cnt := _qry:FieldGet(1)
- 
+
 if hb_isChar(_c_cnt)
    ::c_document_count := _c_cnt
 
    // dekodiraj dobijeni string, ali nemoj prebacivati u ::count rezultat
    // neka stoji u ::decode_count
    ::decode(_c_cnt, .f.)
-   ::document_count   := ::decode_count
+   if ::decoded
+      ::document_count   := ::decode_count
+   else
+      ::document_count   := 0
+   endif
 else
    ::c_document_count := ""
    ::document_count   := 0
@@ -313,6 +319,8 @@ endif
 ::decode_str := str
 
 str := TRIM(str)
+
+::decode_count := 0
 
 if !hb_isRegex(_re_brdok)
   ::decode_success := .f.

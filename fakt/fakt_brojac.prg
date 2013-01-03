@@ -14,7 +14,7 @@
 #include "common.ch"
 
 CLASS FaktCounter  INHERIT  DocCounter
-    METHOD   New()
+    METHOD New
 ENDCLASS
 
 METHOD FaktCounter:New(idfirma, idtipdok, datdok, new_number)	
@@ -22,14 +22,14 @@ local _param := fakt_params()
 
 // return  PADR( REPLICATE( "0", _param["brojac_numericki_dio"]), FAKT_BRDOK_LENGTH )
 
-::Super:New(0, 12, 6, "", "<G2>", "0", {"fakt", idfirma, idtipdok},  datdok)
+::super:New(0, 12, 6, "", "<G2>", "0", {"fakt", idfirma, idtipdok},  datdok)
 
 if new_number == NIL
      new_number := .f.
 endif
 
 if new_number
-   ::self:new_number()
+   ::new_document_number()
 endif
 
 return SELF
@@ -38,7 +38,7 @@ return SELF
 // generisi nov broj dokumenta uzevsi serverski brojac
 // --------------------------------------------------------
 function fakt_novi_broj_dokumenta(idfirma, idtipdok, datdok)
-local _counter := FaktCounter(idfirma, idtipdok, datdok, .t.)
+local _counter := FaktCounter():New(idfirma, idtipdok, datdok, .t.)
 
 return _counter:to_str()
 
@@ -46,7 +46,7 @@ return _counter:to_str()
 // brdok nula
 // --------------------------------------------------------
 function fakt_brdok_0(idfirma, idtipdok, datdok)
-local _counter := FaktCounter(idfirma, idtipdok, datdok)
+local _counter := FaktCounter():New(idfirma, idtipdok, datdok)
 
 return _counter:to_str()
 
@@ -56,8 +56,11 @@ return _counter:to_str()
 // brdok nula
 // --------------------------------------------------------
 function fakt_rewind(idfirma, idtipdok, datdok, brdok)
-local _counter := FaktCounter(idfirma, idtipdok, datdok)
+local _counter := FaktCounter():New(idfirma, idtipdok, datdok)
+
 _counter:rewind(brdok)
+
+return .t.
 
 
 /*

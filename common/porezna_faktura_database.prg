@@ -55,7 +55,6 @@ if del_rndbf() == 0
 	return
 endif
 
-// provjeri da li postoji fajl DRN.DBF
 if !FILE(f18_ime_dbf(cDRnName))
 	// drn specifikacija polja
 	get_drn_fields(@aDRnField)
@@ -63,7 +62,6 @@ if !FILE(f18_ime_dbf(cDRnName))
 	dbcreate2(cDRnName, aDRnField)
 endif
 
-// provjeri da li postoji fajl RN.DBF
 if !FILE(f18_ime_dbf(cRnName))
 	// rn specifikacija polja
 	get_rn_fields(@aRnField)
@@ -71,7 +69,6 @@ if !FILE(f18_ime_dbf(cRnName))
 	dbcreate2(cRnName, aRnField)
 endif
 
-// provjeri da li postoji fajl DRNTEXT.DBF
 if !FILE(f18_ime_dbf(cDRTxtName))
 	// rn specifikacija polja
 	get_dtxt_fields(@aDRTxtField)
@@ -80,21 +77,22 @@ if !FILE(f18_ime_dbf(cDRTxtName))
 endif
 
 // kreiraj indexe
-CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "drn")
+CREATE_INDEX("1", "brdok+DToS(datdok)", "drn")
 
-CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "rn")
-CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "rn")
+CREATE_INDEX("1", "brdok+rbr+podbr", "rn")
+CREATE_INDEX("IDROBA", "idroba", "rn")
 
-CREATE_INDEX("1", "tip", PRIVPATH + "drntext")
+CREATE_INDEX("1", "tip", "drntext")
 
 return
 
 
 function get_drn_fields(aArr)
+
 if goModul:oDatabase:cName == "TOPS"
-	AADD(aArr, {"BRDOK",   "C",  6, 0})
+	AADD(aArr, {"BRDOK",   "C",  12, 0})
 else
-	AADD(aArr, {"BRDOK",   "C",  8, 0})
+	AADD(aArr, {"BRDOK",   "C",  12, 0})
 endif
 AADD(aArr, {"DATDOK",  "D",  8, 0})
 AADD(aArr, {"DATVAL",  "D",  8, 0})

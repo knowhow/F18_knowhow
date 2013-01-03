@@ -160,7 +160,6 @@ do while !EOF() .and. field->idfirma == _id_firma .and. field->idtipdok == _id_t
     endif
 
     AADD( _racuni, { field->idfirma, field->idtipdok, field->brdok  } )
-    
     skip
 
 enddo
@@ -188,7 +187,6 @@ if f18_odt_generate( _template, _xml_file )
 endif
 
 return
-
 
 // ------------------------------------------------
 // upisi zaglavlje u xml fajl

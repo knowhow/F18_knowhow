@@ -1,3 +1,7 @@
+1.4.58 2013-01-03, vsasa
+
+ - rnal, semafor tabele "customs" - bugfix
+ 
 1.4.57 2013-01-03, vsasa
 
  - rnal, ažuriranje naloga - bugfix

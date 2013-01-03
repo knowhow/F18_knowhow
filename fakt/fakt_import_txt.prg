@@ -199,9 +199,9 @@ Box(, 15, 67 )
 	cTipDok := _gtdok( cVpMp )
 
 	@ m_x + nX, m_y + 2 SAY "Dokument broj:" GET cFirma
-	@ m_x + nX, col()+1 SAY "-" GET cTipDok ;
-		VALID _nBrDok( cFirma, cTipDok, @cBrDok )
-	@ m_x + nX, col()+1 SAY "-" GET cBrDok 
+	@ m_x + nX, col() + 1 SAY "-" GET cTipDok ;
+		VALID {|| cBrDok := fakt_brdok_0(cFirma, cTipDok, dDatDok), .t.}
+	@ m_x + nX, col() + 1 SAY "-" GET cBrDok 
 	
 	++nX
 	++nX

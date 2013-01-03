@@ -117,7 +117,7 @@ do while .t.
   	@ m_x+3,col()+1 GET cIdRJ pict "@!"
   	@ m_x+3,col()+2 SAY "-" GET cTipFakt
   	@ m_x+3,col()+2 SAY "-" GET cBrFakt ;
-		WHEN _set_brdok( cIdRj, cTipFakt, @cBrFakt )
+		WHEN {|| cBrFakt := fakt_brdok_0(cIdRj, cTipFakt, DATE()), .t. }
 	
 	read
 	
@@ -335,18 +335,6 @@ else
 endif
 
 return nCijena
-
-
-// --------------------------------------------------
-// setuje broj fakture
-// --------------------------------------------------
-static function _set_brdok( cIdRj, cTip, cBroj )
-
-// daj novi broj fakture....
-cBroj := fakt_brojac(0)
-
-return .t.
-
 
 
 // ----------------------------------------------------

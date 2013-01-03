@@ -633,6 +633,7 @@ local nGodina
 local lFromDest
 local _rec
 local __destinacija
+local _counter
 
 select gen_ug
 set order to tag "dat_obr"
@@ -706,9 +707,8 @@ do while !EOF() .and. ( id == cUId )
 
             // resetuj brojac stavki na 0
             nRbr := 0
-            
-            // uvecaj broj dokumenta
-            cBrDok := fakt_novi_broj_dokumenta( cFirma, cFTipDok )
+           
+           cBrDok   := fakt_novi_broj_dokumenta(cIdFirma, cFTipDok, dDatGen) 
 
         endif
         

@@ -344,7 +344,6 @@ do case
     // azuriranje dokumenta
     case Ch == K_ALT_A
 
-        // setuj prvo broj dokumenta u pripremi...
         fakt_set_broj_dokumenta()
 
         // setuj podatke za fiskalni racun
@@ -904,7 +903,6 @@ if fNovi
     endif
  
     if __redni_broj == 1
-
         _n_menu := IIF( VAL( gIMenu ) < 1, ASC( gIMenu ) - 55, VAL( gIMenu ) )
         _idfirma := gFirma
 
@@ -918,8 +916,7 @@ if fNovi
         _dindem := LEFT( ValBazna(), 3 )
         _m1 := " "  
         // broj dokumenta u pripremi ce biti uvijek 00000
-        _brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
-
+        _brdok :=  fakt_brdok_0(_idfirma, _idtipdok, _datdok)
     endif
 
 else

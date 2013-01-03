@@ -988,7 +988,7 @@ return .f.
 // ------------------------------------------------
 // ------------------------------------------------
 function fakt_brisanje_pripreme()
-local _id_firma, _tip_dok, _br_dok
+local _id_firma, _tip_dok, _br_dok, _datdok
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     MsgBeep(cZabrana)
@@ -1003,9 +1003,9 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
     _id_firma := IdFirma
     _tip_dok := IdTipDok
     _br_dok := BrDok
+    _datdok := DatDok
     
     if gcF9usmece == "D"
-
         // pobrisi i atribute...
         delete_fakt_atribut( _id_firma, _tip_dok, _br_dok )
 
@@ -1013,28 +1013,13 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
         azuriraj_smece( .t. )    
 
         select fakt_pripr
-
     else
-        
         // ponisti pripremu...
         zapp()
         zapp_fakt_atributi()
  
-        // potreba za resetom brojaca ?
-        fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
-
+        fakt_rewind( _id_firma, _tip_dok, _datdok, _br_dok )
    endif
-
-
-    // logiraj ako je potrebno brisanje dokumenta iz pripreme !
-    if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
-    
-    	cOpis := "dokument: " + _id_firma + "-" + _tip_dok + "-" + ALLTRIM( _br_dok )
-
-    	EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", nil, nil, nil, nil, ;
-        	"","", cOpis, DATE(), DATE(), "", ;
-       	 	"Brisanje kompletnog dokumenta iz pripreme")
-    endif
 
 endif
 

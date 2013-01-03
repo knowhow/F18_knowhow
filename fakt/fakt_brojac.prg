@@ -17,17 +17,50 @@ CLASS FaktCounter  INHERIT  DocCounter
     METHOD   New()
 ENDCLASS
 
-METHOD FaktCounter:New()	
-  ::Super:New(0, 12, 6, "", "<G2>")
+METHOD FaktCounter:New(idfirma, idtipdok, datdok, new_number)	
+local _param := fakt_params()
+
+// return  PADR( REPLICATE( "0", _param["brojac_numericki_dio"]), FAKT_BRDOK_LENGTH )
+
+::Super:New(0, 12, 6, "", "<G2>", "0", {"fakt", idfirma, idtipdok},  datdok)
+
+if new_number == NIL
+     new_number := .f.
+endif
+
+if new_number
+   ::self:new_number()
+endif
+
 return SELF
 
-// -----------------------------------------------
-// vraca novi broj dokumenta
-// -----------------------------------------------
-function _nBrDok( cFirma, cTip, cBrDok )
-cBrDok := fakt_brojac(0)
-return .t.
+// --------------------------------------------------------
+// generisi nov broj dokumenta uzevsi serverski brojac
+// --------------------------------------------------------
+function fakt_novi_broj_dokumenta(idfirma, idtipdok, datdok)
+local _counter := FaktCounter(idfirma, idtipdok, datdok, .t.)
 
+return _counter:to_str()
+
+// --------------------------------------------------------
+// brdok nula
+// --------------------------------------------------------
+function fakt_brdok_0(idfirma, idtipdok, datdok)
+local _counter := FaktCounter(idfirma, idtipdok, datdok)
+
+return _counter:to_str()
+
+
+
+// --------------------------------------------------------
+// brdok nula
+// --------------------------------------------------------
+function fakt_rewind(idfirma, idtipdok, datdok, brdok)
+local _counter := FaktCounter(idfirma, idtipdok, datdok)
+_counter:rewind(brdok)
+
+
+/*
 
 // ------------------------------------------------------------------
 // fakt, uzimanje novog broja za fakt dokument
@@ -83,14 +116,77 @@ set_metric( _param, nil, _broj )
 select ( _t_area )
 return _ret
 
-// -------------------------------------
-// -------------------------------------
-function fakt_brojac(num)
-local _param := fakt_params()
+*/
 
-if num == 0 
-   return  PADR( REPLICATE( "0", _param["brojac_numericki_dio"]), FAKT_BRDOK_LENGTH )
-else
-   return 999
+// ------------------------------------------------------------
+// setuj broj dokumenta
+// ------------------------------------------------------------
+function fakt_set_broj_dokumenta()
+local _broj_dokumenta
+local _t_rec
+local _firma, _td, _datdok, _cnt, _null_brdok
+
+PushWa()
+
+select fakt_pripr
+go top
+
+_cnt := FaktCounter(_firma, _td, _datdok)
+_cnt:decode(field->brdok) 
+
+if _cnt:counter > 0
+    // nemam sta raditi, broj je vec setovan
+    PopWa()
+    return .f.
 endif
+
+_null_brdok := _cnt:to_str()
+
+_firma := field->idfirma
+_td    := field->idtipdok
+_datdok := field->datdok
+
+// daj mi novi broj dokumenta
+_broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _td, _datdok )
+
+select fakt_pripr
+set order to tag "1"
+go top
+
+do while !EOF()
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    if (field->idfirma == _firma) .and. (field->idtipdok == _td) .and. (field->brdok == _null_brdok)
+        replace field->brdok with _broj_dokumenta
+    endif
+    go (_t_rec)
+enddo
+
+O_FAKT_PRIPR_ATRIB
+
+// promjeni mi i u fakt_atributi
+select fakt_atrib
+set order to tag "1"
+go top
+
+do while !EOF()
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    if (field->idfirma == _firma) .and. (field->idtipdok == _td) .and. (field->brdok == _null_brdok)
+        replace field->brdok with _broj_dokumenta
+    endif
+    go ( _t_rec )
+enddo
+
+select ( F_FAKT_PRIPR_ATRIB )
+use
+
+PopWa()
+ 
+return .t.
+
 

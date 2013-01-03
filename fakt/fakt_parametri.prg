@@ -16,6 +16,7 @@ static __fakt_params := NIL
 // -----------------------------------------
 // Fakt parametri
 // -----------------------------------------
+
 function mnu_fakt_params()
 private cSection:="1"
 private cHistory:=" "
@@ -29,7 +30,6 @@ O_PARAMS
 
 SELECT params
 USE
-
 
 AADD(opc,"1. postaviti osnovne podatke o firmi           ")
 AADD(opcexe,{|| org_params() })
@@ -259,12 +259,12 @@ if LastKey() <> K_ESC
     set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
     set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
     set_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
-	set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
-	set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
-	set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
-	set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
+    set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
+    set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
+    set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
+    set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
     set_metric( "pregled_rabata_kod_izlaza", my_user(), _rabat )
-	set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
+    set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
     set_metric( "fakt_default_odt_template", my_user(), ALLTRIM( _def_template ) )
 
     destinacije( _unos_dest )

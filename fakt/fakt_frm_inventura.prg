@@ -14,59 +14,25 @@
 #include "hbclass.ch"
 #include "f18_separator.ch"
 
- 
-*string tbl_fakt_serBr
-/*! \var tbl_fakt_serBr
- *  \brief predvidjeno za evidenciju serijskog broja artikla
- *
- * \note koliko mi je poznato NIKO ovu mogucnost ne koristi
- *  
- *  Za dokument inventure cemo ga koristiti na SPECIFICAN nacin:
- *  "serBr"    -> pohranicemo vijednost Knjizne kolicine
- *
- *  \code
- *  nKKolicina:=VAL(field->serBr)
- *  ..
- *  REPLACE serBr WITH STR(nKKolicina,15,4)
- *  \endcode
- *
- *  "kolicina" -> pohranicemo vrijednost Popisane kolicine
- *  Razlog: promjena strukture fakt-a bi jos uvecala (a time i usporila bazu)
- *  Vrijednost knjizne kolicine nije nesto po cemu trebamo ptretrazivati pa
- *  stoga nema nikakve potrebe za otvaranjem novog polja
- *
- * \todo takodje se koristi kod reklamacije za ... ali ne znam za sta
- * \sa tbl_fakt
- */
- 
 function TFrmInvNew()
-*{
 local oObj
 
-#ifdef CLIP
-
-#else
-	oObj:=TFrmInv():new()
-#endif
+oObj:=TFrmInv():new()
 
 oObj:self:=oObj
 oObj:lTerminate:=.f.
 return oObj
-*}
 
 /*! \fn FaUnosInv()
  *  \brief Poziva se unos dokumenta inventure
  */
  
 function FaUnosInv()
-*{
 local oMainFrm
 oMainFrm:=TFrmInvNew()
 oMainFrm:open()
 oMainFrm:close()
 return
-*}
-
 
 
 CREATE CLASS TFrmInv 
@@ -99,8 +65,6 @@ CREATE CLASS TFrmInv
 	method sayKomande
 	
 	method genDok
-	method genDokManjak
-	method genDokVisak
 
 END CLASS
 
@@ -209,7 +173,6 @@ endcase
 
 	
 return DE_CONT
-*}
 
 /*! \fn TFrmInv::walk()
  *  \brief Prodji kroz sve stavke dokumenta
@@ -341,7 +304,6 @@ method print()
 RptInv()
 
 return
-*}
 
 /*! \fn TFrmInv::printOPop()
  *  \brief Stampa obrasca Popisa
@@ -359,29 +321,21 @@ return
  *  
  *  \sa PrnClanoviKomisije, DokNovaStrana
  */
-*void TFrmInv::printOPop()
-*{
 method printOPop()
 
 RptInvObrPopisa()
 
 return
-*}
 
 *void TFrmInv::close()
-*{
 method close
 BoxC()
 CLOSERET
 return
-*}
 
 /*! \fn TFrmInv::itemsCount()
  *  \brief Prodji kroz sve stavke dokumenta
  */
-
-*{ TFrmInv::itemsCount()
-*{
 method itemsCount()
 local nCnt
 
@@ -394,33 +348,25 @@ do while !EOF()
 enddo
 PopWa()
 return nCnt
-*}
 
 
 *void TFrmInv::deleteAll()
-*{
 method deleteAll()
 
 if Pitanje(,"Zelite li zaista izbrisati cijeli dokument?","N")=="D"
 	ZAP
 endif
 return
-*}
 
 *void TFrmInv::deleteItem()
-*{
 method deleteItem()
 DELETE
 return 1
-*}
 
 /*! \fn *void TFrmInv::popup()
  *  \brief PopupMeni forme Inventure
  *
  */
- 
-*void TFrmInv::popup()
-*{
 method popup
 private opc
 private opcexe
@@ -432,125 +378,26 @@ Izbor:=1
 AADD(opc,"1. generacija dokumenta inventure      ")
 AADD(opcexe, {|| ::genDok() })
 
-AADD(opc,"2. generisi otpremu za kolicinu manjka")
-AADD(opcexe, {|| ::genDokManjak() })
-AADD(opc,"3. generisi dopremu za kolicinu viska")
-AADD(opcexe, {|| ::genDokVisak() })
-
 Menu_SC("ppin")
 
 return nil
-*}
 
 /*! \fn TFrmInv::genDok()
  */
-
-*void TFrmInv::genDok()
-*{
 method genDok()
 local cIdRj
 
 cIdRj:=gFirma
-Box(,2,40)
+Box(, 2, 40)
 	@ m_x+1,m_y+2 SAY "RJ:" GET cIdRj
 	READ
 BoxC()
 
-if Pitanje(,"Generisati dokument inventure za RJ "+cIdRj,"N")=="D"
+if Pitanje( , "Generisati dokument inventure za RJ " + cIdRj , "N") == "D"
 	CLOSE ALL
 	GDokInv(cIdRj)
 	o_fakt_edit()
 endif
 
-return
-*}
-
-/*! \fn TFrmInv::genDokManjak()
- */
-
-*void TFrmInv::genDokManjak()
-*{
-method genDokManjak()
-local cIdRj
-local cBrDok
-
-cIdRj:=gFirma
-cBrDok:=SPACE(LEN(field->brDok))
-do while .t.
-	Box(,4,60)
-	@ m_x+1, m_y+2 SAY "Broj (azuriranog) dokumenta za koji generisete"
-	@ m_x+2, m_y+2 SAY "otpremu po osnovu manjka"
-
-	@ m_x+4, m_y+2 SAY "RJ:" GET cIdRJ
-	@ m_x+4, COL()+2 SAY "- IM -" GET cBrDok
-
-	READ
-	BoxC()
-	if LASTKEY()==K_ESC
-		return
-	endif
-
-	if !IsDocExists(cIdRj, "IM", cBrDok)
-		MsgBeep("Dokument ne postoji ?!")
-	else
-		exit
-	endif
-enddo
-
-MsgBeep("Not imp: GDokInvManjak")
-
-// generisem dokumenat 19 - izlaz po ostalim osnovama
-GDokInvManjak(cIdRj, cBrDok)
-
-// obrada "obicnih" dokumenata
-fakt_unos_dokumenta()
-
-::lTerminate:=.t.
-
-return
-*}
-
-
-/*! \fn TFrmInv::genDokVisak()
- */
-
-*void TFrmInv::genDokVisak()
-*{
-method genDokVisak 
-local cIdRj
-local cBrDok
-
-cIdRj:=gFirma
-cBrDok:=SPACE(LEN(field->brDok))
-
-do while .t.
-	Box(,4,60)
-	@ m_x+1, m_y+2 SAY "Broj (azuriranog) dokumenta za koji generisete"
-	@ m_x+2, m_y+2 SAY "prijem po osnovu viska"
-
-	@ m_x+4, m_y+2 SAY "RJ:" GET cIdRJ
-	@ m_x+4, COL()+2 SAY "- IM -" GET cBrDok
-
-	READ
-	BoxC()
-	if LASTKEY()==K_ESC
-		return
-	endif
-
-	if !IsDocExists(cIdRj, "IM", cBrDok)
-		MsgBeep("Dokument "+cIdRj+"-IM-"+cBrDok+"ne postoji ?!")
-	else
-		exit
-	endif
-enddo
-
-MsgBeep("Not imp: GDokInvVisak")
-// generisem dokumenat 01 - prijem
-GDokInvVisak(cIdRj, cBrDok)
-
-// obrada "obicnih" dokumenata
-fakt_unos_dokumenta()
-
-::lTerminate:=.t.
 return
 

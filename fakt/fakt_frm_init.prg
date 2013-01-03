@@ -13,41 +13,6 @@
 #include "fakt.ch"
 #include "hbclass.ch"
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/fakt/dok/2g/frm_init.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.7 $
- * $Log: frm_init.prg,v $
- * Revision 1.7  2002/09/13 11:51:52  mirsad
- * dokumentovanje INI parametara
- *
- * Revision 1.6  2002/07/04 08:34:19  mirsad
- * dokumentovanje ini parametara
- *
- * Revision 1.5  2002/06/28 09:56:27  ernad
- * nadogradnja objekat TFrmInv, prepravka funkcije IsDocExists
- *
- * Revision 1.4  2002/06/28 06:34:16  ernad
- *
- * dokument inventure skeleton funkcija Generacija dokumenta viska, manjka
- *
- * Revision 1.3  2002/06/27 17:20:33  ernad
- *
- * dokument inventure, razrada, uvedena generacija dokumenta
- *
- * Revision 1.2  2002/06/27 15:43:26  ernad
- *
- *
- * debug dokument inventure
- *
- * Revision 1.1  2002/06/27 14:03:05  ernad
- *
- *
- * dok/2g init
- *
- *
- */
-
 /*! \ingroup ini
   * \var *string FmkIni_ExePath_FAKT_NaslovPartnTelefon
   * \brief Da li se uz naziv kupca upisuje i telefon?
@@ -58,14 +23,9 @@
 
 
 function TFrmInvItNew(oOwner)
-*{
 local oObj
 
-#ifdef CLIP
-
-#else
-	oObj:=TFrmInvIt():new()
-#endif
+oObj:=TFrmInvIt():new()
 
 oObj:oOwner:=oOwner
 oObj:self:=oObj
@@ -74,7 +34,6 @@ oObj:lNovaStavka:=.f.
 
 oObj:oOwner:lPartnerLoaded:=.f.
 return oObj
-*}
 
 
 
@@ -144,7 +103,6 @@ END CLASS
  */
 
 *void TFrmInvIt::open()
-*{
 method open()
 
 Box(,20,77)
@@ -156,7 +114,7 @@ else
 	::loadFromTbl()
 endif	
  
-@ m_x+1,col()+2   SAY " RJ:" GET ::cIdRj  pict "@!" VALID ::vldRj()
+@ m_x+1, col() + 2   SAY " RJ:" GET ::cIdRj  pict "@!" VALID ::vldRj()
 READ
 
 do while .t.
@@ -195,15 +153,12 @@ endif
 ::saveToTbl()
  
 return 1
-*}
 
  
 *void TFrmInvIt::close()
-*{
 method close
 BoxC()
 return
-*}
 
 
 /*! \fn TFrmInvIt::newItem()
@@ -235,7 +190,6 @@ if ::nRbr<2
 endif
 
 return
-*}
 
 
 /*! \fn TFrmInvIt::deleteItem()
@@ -244,7 +198,6 @@ return
 method deleteItem()
 DELETE
 return
-*}
 
 
 /*! \fn TFrmInvIt::nextItem()
@@ -252,7 +205,6 @@ return
  */
 
 *int TFrmInvIt::nextItem()
-*{
 method nextItem()
 
 SELECT pripr
@@ -265,11 +217,9 @@ endif
 ::loadFromTbl()
 
 return 1
-*}
 
 
 *void TFrmInvIt::loadFromTbl()
-*{
 method loadFromTbl()
 local aMemo
 
@@ -307,7 +257,6 @@ if !::oOwner:lPartnerLoaded
 	endif
 endif
 return
-*}
 
 
 /*! \fn TFrmInvIt::saveToTbl()
@@ -532,34 +481,13 @@ local nRezerv
 local nRevers
 
 
-/*
-if ::nPKolicina==0
-	MsgBeep("Kolicina mora biti <> 0")
-	return .f.
-endif
-
-FaStanje(::cIdRj, ::cIdRoba, @nUl, @nIzl, @nRezerv, @nRevers)
-
-::nNaStanju:=nUl-nIzl-nRevers-nRezerv  
-
-SELECT pripr
-
-::showArtikal()
-
-if ((::nNaStanju - ::nKolicina)<0)
-	BoxStanje({{::cIdRj, nUl, nIzl, nRevers, nRezerv}},::cIdRoba)
-endif
-*/
-
 return .t.
-*}
 
 
 /*! \fn TFrmInvIt::vldKKolicina()
  *  \brief Validacija Knjizne Kolicine
  */
 method vldKKolicina()
-*{
 
 if ::nKKolPrijeEdita<>::nKKolicina
 	MsgBeep("Zasto mjenjate knjiznu kolicinu ??")
@@ -568,17 +496,14 @@ if ::nKKolPrijeEdita<>::nKKolicina
 	endif
 endif
 return .t.
-*}
 
 
 /*! \fn TFrmInvIt::wheKKolicina()
  *  \brief Prije ulaska u polje Knjizne Kolicine
  */
 method wheKKolicina()
-*{
 ::nKKolPrijeEdita:=::nKKolicina
 return .t.
-*}
 
 /*! \fn TFrmInvIt::showArtikal()
  *  \brief Pokazi podatke o artiklu na formi ItemInventure
@@ -598,6 +523,5 @@ method showArtikal()
 
 
 return
-*}
 
 

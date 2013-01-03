@@ -36,7 +36,7 @@ nRbr:=0
 
 GO TOP
 
-cBrDok := fakt_brojac(0, field->datdok)
+cBrDok := fakt_brdok_0(cIdRj, "00", DATE())
 
 do while !EOF()
     if (field->idFirma<>cIdRj)
@@ -108,9 +108,6 @@ cTxt:=cTxt+Chr(16)+cStr+Chr(17)
 return nil
 
 
-
-
-
 /*! \fn GDokInvManjak(cIdRj, cBrDok)
  *  \param cIdRj - oznaka firme dokumenta IM na osnovu kojeg se generise dok.19
  *  \param cBrDok - broj dokumenta IM na osnovu kojeg se generise dok.19
@@ -128,14 +125,16 @@ O_FAKT
 O_FAKT_PRIPR
 O_ROBA
 
-cNoviBrDok := fakt_brojac(0)
+cNoviBrDok := fakt_brdok_0( cIDRj, "IM", DATE())
 
 SELECT fakt
 SET ORDER TO TAG "1"
 HSEEK cIdRj + "IM" + cBrDok
 
-do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
+do while !eof() .and.  ((cIdRj + "IM" + cBrDok) == fakt->(idFirma+idTipDok+brDok))
+
     nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
+
     if (ROUND(nRazlikaKol,5)>0)
             SELECT roba
         HSEEK fakt->idRoba
@@ -196,9 +195,6 @@ REPLACE cijena WITH roba->vpc
 return
 
 
-
-
-
 /*! \fn GDokInvVisak(cIdRj, cBrDok)
  *  \param cIdRj - oznaka firme dokumenta IM na osnovu kojeg se generise dok.19
  *  \param cBrDok - broj dokumenta IM na osnovu kojeg se generise dok.19
@@ -216,11 +212,11 @@ O_FAKT
 O_FAKT_PRIPR
 O_ROBA
 
-cNoviBrDok := fakt_brojac(0)
+cNoviBrDok := fakt_brdok_0(cIdRj, "IM", DATE())
 
 SELECT fakt
 SET ORDER TO TAG "1"
-HSEEK cIdRj+"IM"+cBrDok
+HSEEK cIdRj + "IM" + cBrDok
 do while (!eof() .and. cIdRj+"IM"+cBrDok==fakt->(idFirma+idTipDok+brDok))
     nRazlikaKol:=VAL(fakt->serBr)-fakt->kolicina
     if (ROUND(nRazlikaKol,5)<0)
@@ -411,20 +407,20 @@ endif
 
 Box(, 5, 60 )
 
-	  _tip_dok := field->idtipdok
-    _br_dok := fakt_brojac(0)
+    _tip_dok := field->idtipdok
+    _br_dok := fakt_brdok_0(field->idfirma, _novi_tip, field->datdok)
 
     select fakt_pripr
-  	PushWa()
+    PushWa()
 
-   	go top
+    go top
     _t_rec := 0
 
-	do while !EOF()
+    do while !EOF()
 
     	skip
-		_t_rec := RECNO()
-		skip -1
+	_t_rec := RECNO()
+	skip -1
 
        	replace field->brdok with _br_dok
 		replace field->idtipdok with _novi_tip
@@ -435,15 +431,15 @@ Box(, 5, 60 )
             replace serbr with "*"
       	endif
                 
-		if _tip_dok == "13"  
+	if _tip_dok == "13"  
         	replace kolicina with -kolicina
         endif
                 
-		go ( _t_rec )
+	go ( _t_rec )
    	
-	enddo
+    enddo
             
-	PopWa()
+    PopWa()
                     
 BoxC()
 
@@ -514,10 +510,10 @@ local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
 
-_broj_dokumenta := fakt_brojac(0, datum_max)
+_broj_dokumenta := fakt_brdok_0(firma, "10", DATE())
 
 // sumirati stavke ?
-_sumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"
+_sumirati := Pitanje( , "Sumirati stavke fakture (D/N)", "D") == "D"
 
 // koju vrsta racuna da napravim ? 
 _vp_mp := _formiraj_tip_racuna()
@@ -538,8 +534,7 @@ _dat_max := CTOD("")
 f18_lock_tables({"fakt_doks", "fakt_fakt"})
 sql_table_update( nil, "BEGIN" )
       
-do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
-               .and. fakt_doks->partner = partn_naz
+do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip .and. fakt_doks->partner = partn_naz
          
     skip
     _t_rec := RECNO()

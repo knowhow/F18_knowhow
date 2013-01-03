@@ -31,6 +31,8 @@ CLASS DocCounter
     ASSIGN     counter              METHOD  set_counter
     ACCESS     counter              METHOD  get_counter
 
+    METHOD     new_document_number()
+
     ACCESS     document_counter     METHOD  get_counter_from_documents
 
     METHOD     to_str()
@@ -97,6 +99,38 @@ return
 function year_2str(year)
      return RIGHT(ALLTRIM(STR(year)), 2)
 return
+
+
+METHOD DocCounter:new_document_number()
+local _doc_cnt, _s_cnt
+ 
+_doc_cnt := ::document_counter
+_s_cnt   := ::server_counter   
+
+altd()
+::count :=  MAX(_doc_cnt, _s_cnt)
+return ::count
+
+
+// -----------------------------------
+// -----------------------------------
+METHOD DocCounter:rewind(dok_str)
+local _doc_cnt, _s_cnt, _msg
+
+if ::decode(dok_str, .t.)
+   _doc_cnt := ::document_counter
+   _s_cnt   := ::server_counter
+else
+    _msg := "DOC_CNT decode ERR: " + dok_str 
+    log_write(_msg, 2)
+    MsgBeep(_msg)
+endif
+
+// server counter > document counter AND tekuci counter == server counter
+if (_s_cnt > _doc_cnt) .and. (::count == _s_cnt)
+    ::dec()
+    ::server_counter := ::count 
+endif
 
 // --------------------------------------
 // c_server_param = fakt/10/20/13

@@ -427,7 +427,8 @@ cPart := field->idpartner
 dDatFakt := DATE()
 dDatVal := DATE()
 dDatIsp := DATE()
-cNBrFakt := fakt_brojac(0)
+
+cNBrFakt := fakt_brdok_0(cFirma, cTipDok, dDatFakt)
 
 // uslovi generisanja...
 Box(, 5, 55)

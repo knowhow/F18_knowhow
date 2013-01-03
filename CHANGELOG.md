@@ -1,3 +1,7 @@
+1.4.61 2013-01-03, vsasa
+
+ - rnal, čišćenje koda
+ 
 1.4.60 2013-01-03, vsasa
 
  - rnal, štampa labela

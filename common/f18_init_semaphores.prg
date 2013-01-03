@@ -24,6 +24,12 @@ static __dbf_pack_v2 := 10
 // -------------------------------
 function f18_init_semaphores()
 
+#ifdef TEST
+   if _TEST_NO_DATABASE
+      return .t.
+   endif
+#endif
+
 if f18_session()['id'] > 1
    // child sesije ne osvjezavaju bazu
    return .t.

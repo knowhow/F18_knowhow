@@ -56,26 +56,32 @@ if sql_table_update( nil, "BEGIN" )
     next
 
     if _ok
+
         sql_table_update( nil, "END" ) 
         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
         // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
         my_use_semaphore_on()
+
         for _i := 1 to LEN( a_tables )
             _tbl := get_a_dbf_rec(a_tables[_i])["table"]
             // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
             my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
         next
+
         my_use_semaphore_off()
 
     else
+        log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
         sql_table_update( nil, "ROLLBACK")
+        _ok := .f.
     endif
 
-
 else
+
     _ok := .f.
     log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
+
 endif
 
 // pozicioniraj se na dbf prije ulaska u funkciju

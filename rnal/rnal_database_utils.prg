@@ -13,6 +13,25 @@
 #include "rnal.ch"
 
 
+
+// -------------------------------------------
+// -------------------------------------------
+function m_adm()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+if is_fmkrules()
+	AADD( _opc, "1. FMK rules")
+	AADD( _opcexe, {|| p_fmkrules( , , , aRuleSpec, bRuleBlock ) })
+endif
+
+f18_menu( "adm", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+
 // ------------------------------------------------
 // otvori tabele potrebne za rad sa RNAL
 // lTemporary - .t. i pripremne tabele

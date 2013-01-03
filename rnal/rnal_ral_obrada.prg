@@ -22,7 +22,10 @@ local cHeader := "RAL"
 private ImeKol
 private Kol
 
-O_RAL
+select (F_RAL)
+if !Used()
+    O_RAL
+endif
 
 // setuj kolone tabele
 set_a_kol( @ImeKol, @Kol )
@@ -82,7 +85,10 @@ if nTick == nil
 	nTick := 0
 endif
 
-O_RAL
+select (F_RAL)
+if !Used()
+    O_RAL
+endif
 
 Box(,2,40)
 
@@ -175,7 +181,11 @@ return nVal
 function g_ral_value( nRal, nTick, nRoller )
 local xRet := ""
 local nTArea := SELECT()
-O_RAL
+
+select (F_RAL)
+if !Used()
+    O_RAL
+endif
 
 if nTick == nil
 	nTick := 0
@@ -288,7 +298,11 @@ local nColor3 := 0.00000000000
 local nColor4 := 0.00000000000
 local aColor := {}
 
-O_RAL
+select (F_RAL)
+if !Used()
+    O_RAL
+endif
+
 go top
 seek STR(nRal, 5) + STR(nTick, 2)
 

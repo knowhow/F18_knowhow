@@ -680,6 +680,13 @@ local nTRec := RECNO()
 local nRet := 0
 local _rec
 
+if !f18_lock_tables({ "articles" })
+    MsgBeep("Ne mogu lockovati tabelu !!!")
+    return nRet
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
         @cArt_mcode ) == 1
     
@@ -696,7 +703,7 @@ if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
     _rec["art_lab_de"] := cArt_lab_desc
     _rec["match_code"] := cArt_mcode
     
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
     set order to tag "1"
     set filter to &cDBFilter
@@ -704,6 +711,9 @@ if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
     
     nRet := 1
 endif
+
+f18_free_tables({ "articles" })
+sql_table_update( nil, "END" )
 
 return nRet
 
@@ -833,7 +843,10 @@ if FOUND()
 
     _del_rec := dbf_get_rec()
 
-    f18_lock_tables({"articles", "elements", "e_att", "e_aops"})
+    if !f18_lock_tables({"articles", "elements", "e_att", "e_aops"})
+        return 0
+    endif
+
     sql_table_update( nil, "BEGIN" )
 
     delete_rec_server_and_dbf( ALIAS(), _del_rec, 1, "CONT" )
@@ -920,7 +933,10 @@ set order to tag "1"
 go top
 seek artid_str( nArt_id ) 
 
-f18_lock_tables({"elements"})
+if !f18_lock_tables({"elements"})
+    return -1
+endif
+
 sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. field->art_id == nArt_id

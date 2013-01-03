@@ -961,10 +961,8 @@ Box(,1,40)
 BoxC()
 
 if LastKey() <> K_ESC
-
     _rec := get_dbf_global_memvars()
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-
 endif
 
 return 1

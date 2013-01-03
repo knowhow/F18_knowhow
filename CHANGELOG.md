@@ -1,3 +1,7 @@
+1.4.52 2013-01-03, vsasa
+
+ - fiskalni parametri, fiskalni računi po tipu dokumenta 
+ 
 1.4.51 2012-12-31, vsasa
 
  - fakt, početno stanje [#29908](http://redmine.bring.out.ba/issues/29908)

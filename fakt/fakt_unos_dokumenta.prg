@@ -164,7 +164,7 @@ do case
         endif
 
         // pronadji mi device_id 
-        _dev_id := get_fiscal_device( my_user() )
+        _dev_id := get_fiscal_device( my_user(), __tip_dok )
 
         if _dev_id > 0
 

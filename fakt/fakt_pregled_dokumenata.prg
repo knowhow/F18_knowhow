@@ -727,7 +727,7 @@ do case
         
         if Pitanje( "ST FISK RN5","Stampati fiskalni racun ?", "D") == "D"
 
-            _dev_id := get_fiscal_device( my_user() )
+            _dev_id := get_fiscal_device( my_user(), field->idtipdok )
 
             if _dev_id > 0
 

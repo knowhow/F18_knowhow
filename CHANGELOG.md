@@ -1,3 +1,7 @@
+1.4.56 2013-01-03, vsasa
+
+ - rnal, ažuriranje naloga - bugfix
+ 
 1.4.55 2013-01-03, vsasa
 
  - rnal, dodjeljivanje novih šifri u šifrarniku sql parametar kao i brojač naloga

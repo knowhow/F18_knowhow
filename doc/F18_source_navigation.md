@@ -3,11 +3,15 @@
 ## Podešenja developerskog okruženja
 
 - podesiti `vim`
-   - [.vimrc](.vimrc)
+   - [~/.vimrc](.vimrc)
    - instalirati pluginove definisane u  `:BundleInstall`
+- instalirati ctags
+   - na mac-u izbrisati /usr/bin/ctags
+   - `brew install ctags`
+   - podešenja za harbour - [~/.ctags](.ctags)
+   - u `F18_knowhow` pokrenuti `ctags -R .`
 - instalirati cscope (`brew install cscope`)
-   - u `F18_knowhow` pokrenuti `scripts/update_cscope.sh`
-   
+   - u `F18_knowhow` pokrenuti `scripts/update_cscope.sh`   
    
 ## Konvencije i napomene
 
@@ -22,7 +26,7 @@
    
 ## FMK, Clipper, F18, harbour
 
-[harbor](http://en.wikipedia.org/wiki/Harbour_compiler) je programski jezik F18.
+[harbour](http://en.wikipedia.org/wiki/Harbour_compiler) je programski jezik F18.
 
 Aplikativni kod [F18](https://github.com/knowhow/F18_knowhow) je u oktobru 2011 portiran iz [FMK](https://github.com/bringout-fmk)[1^]. Programski jezik FMK je [Clipper 5.2e za DOS](http://en.wikipedia.org/wiki/Clipper_(programming_language). Dva glavna problema FMK su:
 
@@ -49,9 +53,9 @@ Standardna sekvenca korištenja dbf-a (HRB)
 
 `use dbf ALIAS dbf_alias`
  
-je u F18 zamjenjen sa `my_use`.
+je u F18 zamjenjen sa `my_use`. Izvorni kod funkcije ćete naći sa
 
-`:tjump myuse`
+`:tjump my_use`
 
 ## alias, ime dbf
 
@@ -77,7 +81,7 @@ rezultat (`common/set_a_dbf_temporary.prg`) pretrage:
 
 => `set_a_dbf_temp("dracun"     ,  "DRN"         , F_DRN        )`
 
-U set_a_dbf, i set_a_dbf_temp[1^] funkcijama su definisana mapiranja dbf-ova
+U set_a_dbf, i set_a_dbf_temp[2] funkcijama su definisana mapiranja dbf-ova
 
 ----
 

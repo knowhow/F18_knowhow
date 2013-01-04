@@ -178,6 +178,7 @@ endif
 return .t.
 
 
+
 // -----------------------------------
 // -----------------------------------
 function get_semaphore_status(table)

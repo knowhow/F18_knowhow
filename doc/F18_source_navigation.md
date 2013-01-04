@@ -26,7 +26,7 @@
    
 ## FMK, Clipper, F18, harbour
 
-F18 je posan u programskom jeziku [harbour](http://en.wikipedia.org/wiki/Harbour_compiler).
+F18 je pisan u programskom jeziku [harbour](http://en.wikipedia.org/wiki/Harbour_compiler).
 
 Aplikativni kod [F18](https://github.com/knowhow/F18_knowhow) je u oktobru 2011 portiran iz [FMK](https://github.com/bringout-fmk)[1].FMK je napisan u programskom jeziku [Clipper (ver 5.2e za DOS)](http://en.wikipedia.org/wiki/Clipper_(programming_language). Glavni problemi FMK su:
 
@@ -47,8 +47,11 @@ Binarna verzija updatera nalazi se na [google code download](http://code.google.
 
 ## Sinhronizacija dbf<-> sql putem "semafora"
 
-Sinhronizacija lokalnih i sql tabela obavlja se logikom semafora.
+Sinhronizacija lokalnih i sql tabela obavlja se logikom semafora. Odgovarajuće lokacije u source kodu:
 
+  - `:tjump /get_semaphore_status`
+  - `:tj ids_synchro`
+  - `:tj push_ids_to_semaphore`
 
 Standardna sekvenca korištenja dbf-a (HRB)
 

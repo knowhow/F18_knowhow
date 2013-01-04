@@ -215,27 +215,12 @@ do while !data:EOF()
     _rec["opis"] := "POCETNO STANJE"
     _rec["brdok"] := "PS"
 
-    if _tip_prenosa == "2"
-
-        // dugovna ili potrazna strana
-        if LEFT( _id_konto, 1 ) == _kl_dug
-            _rec["d_p"] := "1"
-            _rec["iznosbhd"] := ABS( _i_saldo )
-        elseif LEFT( _id_konto, 1 ) == _kl_pot
-            _rec["d_p"] := "2"
-            _rec["iznosbhd"] := ABS( _i_saldo )
-        endif
-
+    if ROUND( _i_saldo, 2 ) >= 0
+        _rec["d_p"] := "1"
+        _rec["iznosbhd"] := ABS( _i_saldo )
     else
-
-        if ROUND( _i_saldo, 2 ) >= 0
-            _rec["d_p"] := "1"
-            _rec["iznosbhd"] := ABS( _i_saldo )
-        else
-            _rec["d_p"] := "2"
-            _rec["iznosbhd"] := ABS( _i_saldo )
-        endif
-
+        _rec["d_p"] := "2"
+        _rec["iznosbhd"] := ABS( _i_saldo )
     endif
 
     dbf_update_rec( _rec )

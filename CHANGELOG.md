@@ -1,3 +1,7 @@
+1.4.64 2013-01-04, vsasa
+
+ - fakt, kreiranje računa za INO kupce - bugfix 
+ 
 1.4.63 2013-01-04, vsasa
 
  - fakt, kreiranje računa u EUR - bugfix 

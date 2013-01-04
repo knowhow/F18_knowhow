@@ -318,3 +318,5 @@ autocmd BufReadPost fugitive://*
 nmap _p <Plug>(fakeclip-p)
 nmap _y <Plug>(fakeclip-y)
 
+autocmd FileType c,cpp,clipper nested :TagbarOpen
+" autocmd VimEnter * nested :call tagbar#autoopen(1)

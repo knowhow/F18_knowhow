@@ -9,9 +9,9 @@
    - na mac-u izbrisati /usr/bin/ctags
    - `brew install ctags`
    - podešenja za harbour - [~/.ctags](.ctags)
-   - u `F18_knowhow` pokrenuti `ctags -R .`
+
 - instalirati cscope (`brew install cscope`)
-   - u `F18_knowhow` pokrenuti `scripts/update_cscope.sh`   
+- u `F18_knowhow` pokrenuti `scripts/update_cscope_ctags.sh`   
    
 ## Konvencije i napomene
 
@@ -26,9 +26,9 @@
    
 ## FMK, Clipper, F18, harbour
 
-[harbour](http://en.wikipedia.org/wiki/Harbour_compiler) je programski jezik F18.
+F18 je posan u programskom jeziku [harbour](http://en.wikipedia.org/wiki/Harbour_compiler).
 
-Aplikativni kod [F18](https://github.com/knowhow/F18_knowhow) je u oktobru 2011 portiran iz [FMK](https://github.com/bringout-fmk)[1^]. Programski jezik FMK je [Clipper 5.2e za DOS](http://en.wikipedia.org/wiki/Clipper_(programming_language). Dva glavna problema FMK su:
+Aplikativni kod [F18](https://github.com/knowhow/F18_knowhow) je u oktobru 2011 portiran iz [FMK](https://github.com/bringout-fmk)[1].FMK je napisan u programskom jeziku [Clipper (ver 5.2e za DOS)](http://en.wikipedia.org/wiki/Clipper_(programming_language). Glavni problemi FMK su:
 
   - Aplikacije se izvršavaju DOS protected mod 16-bit
   - Problemi sa integritetom i brzinom u mrežnom radu, ograničenja veličine pojedinačne tabele 1GB (u varijanti mrežnog rada, ponovo)
@@ -45,9 +45,10 @@ Sa ovim server sql update skriptama se rukuje uz pomoć [updater](https://github
 
 Binarna verzija updatera nalazi se na [google code download](http://code.google.com/p/knowhow-erp/downloads/list?can=2&q=package+updater) sekciji projekta.
 
-## Semafori dbf-sql
+## Sinhronizacija dbf<-> sql putem "semafora"
 
 Sinhronizacija lokalnih i sql tabela obavlja se logikom semafora.
+
 
 Standardna sekvenca korištenja dbf-a (HRB)
 

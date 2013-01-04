@@ -192,7 +192,6 @@ do while !data:EOF()
 
     // ako je saldo 0 - preskoci...
     if ROUND( _i_saldo, 2 ) == 0
-        data:Skip()
         loop
     endif
 
@@ -222,14 +221,14 @@ do while !data:EOF()
         _rec["iznosbhd"] := _i_saldo
     elseif LEFT( _id_konto, 1 ) == _kl_pot
         _rec["d_p"] := "2"
-        _rec["iznosbhd"] := _i_saldo
+        _rec["iznosbhd"] := -_i_saldo
     else
         if ROUND( _i_saldo, 2 ) >= 0
             _rec["d_p"] := "1"
             _rec["iznosbhd"] := _i_saldo
         else
             _rec["d_p"] := "2"
-            _rec["iznosbhd"] := _i_saldo
+            _rec["iznosbhd"] := -_i_saldo
         endif
     endif
 

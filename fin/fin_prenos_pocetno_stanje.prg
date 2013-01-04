@@ -144,7 +144,7 @@ local _kl_dug := param["klasa_duguje"]
 local _kl_pot := param["klasa_potrazuje"]
 local _ret := .f.
 local _row, _duguje, _potrazuje, _id_konto, _id_partner
-local _rec, _naz_partner, _naz_konto
+local _rec, _i_saldo
 local _rbr := 0
 
 // otvori potrebne tabele
@@ -157,12 +157,14 @@ endif
 
 MsgO( "Formiram dokument pocetnog stanja u pripremi ..." )
 
+_i_saldo := 0
+
 do while !data:EOF()
 
     _row := data:GetRow()
 
-    _id_konto := _row:FieldGet( _row:FieldPos( "idkonto" ) )
-    _id_partner := _row:FieldGet( _row:FieldPos( "idpartner" ) )
+    _id_konto := PADR( _row:FieldGet( _row:FieldPos( "idkonto" ) ), 7 )
+    _id_partner := PADR( _row:FieldGet( _row:FieldPos( "idpartner" ) ), 6 )
 
     // vidi ima li ove stavke u semama prenosa...
     select pkonto
@@ -177,10 +179,14 @@ do while !data:EOF()
 
     _i_saldo := 0
 
+    if LEFT( _id_konto, 4 ) == "0229"
+        altd()
+    endif
+
     // provrti razlicite nacine prenosa...
-    do while !data:EOF() .and. data:FieldGet( data:FieldPos( "idkonto" ) ) == _id_konto ;
+    do while !data:EOF() .and. PADR( data:FieldGet( data:FieldPos( "idkonto" ) ), 7 ) == _id_konto ;
                         .and. IF( _tip_prenosa == "2", ;
-                            data:FieldGet( data:FieldPos("idpartner") ) == _id_partner, .t. ) ;
+                            PADR( data:FieldGet( data:FieldPos("idpartner") ), 6 ) == _id_partner, .t. ) ;
     
         _row2 := data:GetRow()
 
@@ -215,7 +221,7 @@ do while !data:EOF()
     _rec["opis"] := "POCETNO STANJE"
     _rec["brdok"] := "PS"
 
-    if ROUND( _i_saldo, 2 ) >= 0
+    if ROUND( _i_saldo, 2 ) > 0
         _rec["d_p"] := "1"
         _rec["iznosbhd"] := ABS( _i_saldo )
     else
@@ -278,14 +284,14 @@ local _year_tek := YEAR( _dat_ps )
 // where uslov
 _where := " WHERE "
 _where += _sql_date_parse( "sub.datdok", _dat_od, _dat_do )
+_where += " AND " + _sql_cond_parse( "sub.idfirma", gFirma )
+
 // query
 _qry := " SELECT " + ;
             "sub.idkonto, " + ;
             "sub.idpartner, " + ;
             "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ; 
-        " FROM fmk.fin_suban sub " + ;
-        " LEFT JOIN fmk.partn part ON sub.idpartner = part.id " + ;
-        " LEFT JOIN fmk.konto kto ON sub.idkonto = kto.id "
+        " FROM fmk.fin_suban sub "
 
 _qry += _where
 

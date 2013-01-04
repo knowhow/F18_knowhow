@@ -1,3 +1,7 @@
+1.4.62 2013-01-04, vsasa
+
+ - kreiranje valuta u šifrarniku kod prazne instance - bugfix
+ 
 1.4.61 2013-01-03, vsasa
 
  - rnal, čišćenje koda

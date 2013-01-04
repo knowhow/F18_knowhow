@@ -2,7 +2,7 @@
 
 ## vim podešenje
 
-podesiti vim za cscope, ctags [.vimrc](file:///./.vimrc)
+podesiti vim za cscope, ctags [.vimrc](.vimrc)
 
 ## Napomene
 

@@ -224,7 +224,7 @@ do while !data:EOF()
         elseif LEFT( _id_konto, 1 ) == _kl_pot
             _rec["d_p"] := "2"
             _rec["iznosbhd"] := ABS( _i_saldo )
-        else
+        endif
 
     else
 

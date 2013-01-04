@@ -89,15 +89,16 @@ if !file(cIme)
         my_use("valute")
         close all
     
-        // upisi default valute ako ne postoje
-        fill_tbl_valute()
-
 endif
 
 CREATE_INDEX("ID","id", "valute")
 CREATE_INDEX("NAZ","tip+id+dtos(datum)", "valute")
 CREATE_INDEX("ID2","id+dtos(datum)", "valute")
 index_mcode(cIme)
+
+// upisi default valute ako ne postoje
+fill_tbl_valute()
+
 
 // TNAL
 if !file(f18_ime_dbf("tnal"))

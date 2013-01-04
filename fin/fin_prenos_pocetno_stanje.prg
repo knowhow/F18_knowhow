@@ -140,11 +140,12 @@ local _fin_vn := "00"
 local _fin_broj := fin_prazan_broj_naloga()
 local _dat_ps := param["datum_ps"]
 local _sint := param["sintetika"]
+local _kl_dug := param["klasa_duguje"]
+local _kl_pot := param["klasa_potrazuje"]
 local _ret := .f.
 local _row, _duguje, _potrazuje, _id_konto, _id_partner
 local _rec, _naz_partner, _naz_konto
 local _rbr := 0
-local _i_dug, _i_pot
 
 // otvori potrebne tabele
 _o_tables()
@@ -174,8 +175,7 @@ do while !data:EOF()
         _tip_prenosa := pkonto->tip
     endif
 
-    _i_dug := 0
-    _i_pot := 0
+    _i_saldo := 0
 
     // provrti razlicite nacine prenosa...
     do while !data:EOF() .and. data:FieldGet( data:FieldPos( "idkonto" ) ) == _id_konto ;
@@ -184,12 +184,17 @@ do while !data:EOF()
     
         _row2 := data:GetRow()
 
-        _i_dug += _row2:FieldGet( _row2:FieldPos("duguje") )
-        _i_pot += _row2:FieldGet( _row2:FieldPos("potrazuje") )
+        _i_saldo += _row2:FieldGet( _row2:FieldPos("saldo") )
 
         data:Skip()
         
     enddo
+
+    // ako je saldo 0 - preskoci...
+    if ROUND( _i_saldo, 2 ) == 0
+        data:Skip()
+        loop
+    endif
 
     // postavke pojedinih polja...
     if _tip_prenosa == "0"
@@ -212,12 +217,20 @@ do while !data:EOF()
     _rec["brdok"] := "PS"
 
     // dugovna ili potrazna strana
-    if ROUND( _i_dug, 2 ) == 0
-        _rec["d_p"] := "2"
-        _rec["iznosbhd"] := _i_pot
-    else
+    if LEFT( _id_konto, 1 ) == _kl_dug
         _rec["d_p"] := "1"
-        _rec["iznosbhd"] := _i_dug
+        _rec["iznosbhd"] := _i_saldo
+    elseif LEFT( _id_konto, 1 ) == _kl_pot
+        _rec["d_p"] := "2"
+        _rec["iznosbhd"] := _i_saldo
+    else
+        if ROUND( _i_saldo, 2 ) >= 0
+            _rec["d_p"] := "1"
+            _rec["iznosbhd"] := _i_saldo
+        else
+            _rec["d_p"] := "2"
+            _rec["iznosbhd"] := _i_saldo
+        endif
     endif
 
     dbf_update_rec( _rec )
@@ -279,8 +292,7 @@ _where += _sql_date_parse( "sub.datdok", _dat_od, _dat_do )
 _qry := " SELECT " + ;
             "sub.idkonto, " + ;
             "sub.idpartner, " + ;
-            "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd END ) AS duguje, " + ; 
-            "SUM( CASE WHEN sub.d_p = '2' THEN sub.iznosbhd END ) AS potrazuje " + ;
+            "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ; 
         " FROM fmk.fin_suban sub " + ;
         " LEFT JOIN fmk.partn part ON sub.idpartner = part.id " + ;
         " LEFT JOIN fmk.konto kto ON sub.idkonto = kto.id "

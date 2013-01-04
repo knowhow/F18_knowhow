@@ -1,6 +1,7 @@
 1.4.61 2013-01-03, vsasa
 
  - rnal, čišćenje koda
+ - kalk, prenos fakt->kalk, prenos objekta, ispis dokumenta 95,96 sređen
  
 1.4.60 2013-01-03, vsasa
 

@@ -2,7 +2,7 @@
 
 ## vim podešenje
 
-TODO: podesiti vim za cscope, ctags
+podesiti vim za cscope, ctags [.vimrc](file:///./.vimrc)
 
 ## Napomene
 
@@ -31,8 +31,13 @@ Locirajmo set_a_dbf_funkciju u kojoj se definiše dracun:
 
 `:cs find e set_a_dbf.*racun`
 
-rezultat:
+rezultat (u `common/set_a_dbf_temporary.prg`):
 
 `set_a_dbf_temp("dracun"     ,  "DRN"         , F_DRN        )`
 
-U set_a_dbf, i set_a_dbf_temp (temp tabele - kojih nema na server) funkcijama su definisana mapiranja dbf-ova
+U set_a_dbf, i set_a_dbf_temp[1^] funkcijama su definisana mapiranja dbf-ova
+
+----
+
+[1^]: temp tabele - koje ne "idu" na server
+ 

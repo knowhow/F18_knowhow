@@ -334,7 +334,6 @@ c24T6 := fetch_metric("kalk_dokument_24_trosak_6", nil, c24T6)
 c24T7 := fetch_metric("kalk_dokument_24_trosak_7", nil, c24T7)
 c24T8 := fetch_metric("kalk_dokument_24_trosak_8", nil, c24T8)
 
-gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
 gAFin := fetch_metric("kalk_kontiranje_fin", f18_user(), gAFin)
 gAMat := fetch_metric("kalk_kontiranje_mat", f18_user(), gAMat)
 gAFakt := fetch_metric("kalk_kontiranje_fakt", f18_user(), gAFakt)

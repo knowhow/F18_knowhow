@@ -290,7 +290,7 @@ _qry := " SELECT " + ;
 _qry += _where
 
 _qry += " GROUP BY sub.idkonto, sub.idpartner "
-_qry += " ORDER BY sub.idkonto "
+_qry += " ORDER BY sub.idkonto, sub.idpartner "
 
 
 // 1) predji u sezonsko podrucje

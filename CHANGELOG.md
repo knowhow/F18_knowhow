@@ -1,3 +1,7 @@
+1.4.63 2013-01-04, vsasa
+
+ - fakt, kreiranje računa u EUR - bugfix 
+ 
 1.4.62 2013-01-04, vsasa
 
  - kreiranje valuta u šifrarniku kod prazne instance - bugfix

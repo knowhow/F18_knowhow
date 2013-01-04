@@ -13,6 +13,8 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
+
+
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 function fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine, cFilter)

@@ -248,19 +248,20 @@ LOCAL lIma:=.f., nArr:=SELECT()
 RETURN lIma
 
 
+
+
 // -------------------------------------
 // pretvori u baznu valutu
 // -------------------------------------
 function UBaznuValutu(dDatdok)
 local  cIz
-
 if gBaznaV == "P"
     cIz := "D"
 else
     cIz := "P"
 endif
-Kurs(dDatdok, cIz, gBaznaV)
-return
+return Kurs(dDatdok, cIz, gBaznaV)
+
 
 
 

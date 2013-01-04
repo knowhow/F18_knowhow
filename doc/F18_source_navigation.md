@@ -87,5 +87,5 @@ U set_a_dbf, i set_a_dbf_temp[2] funkcijama su definisana mapiranja dbf-ova
 ----
 
  - [1^]: kao svojevrsni eksperiment tokom migracije podataka FMK u knowhowERP (xTuple klijent)
- - [2^]: temp tabele - koje ne "idu" na server
+ - [2^]: temp tabele - privremene tabele, tabele čiji se podaci sinhronizacijom ne šalju na server
  

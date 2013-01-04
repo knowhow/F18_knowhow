@@ -18,6 +18,9 @@ static __device_id := 0
 static __device_params
 static __auto := .f.
 static __racun_na_email := NIL
+static __partn_ino
+static __partn_pdv
+static __prikazi_partnera
 static __DRV_TREMOL := "TREMOL"
 static __DRV_FPRINT := "FPRINT"
 static __DRV_FLINK := "FLINK"
@@ -226,6 +229,10 @@ if partn_arr <> NIL
     _v_plac := partn_arr[ 1, 6 ]
     _partn_ino := partn_arr[ 1, 7 ]
     _partn_pdv := partn_arr[ 1, 8 ]
+else
+    // uzmi na osnovu statickih varijabli
+    _partn_ino := __partn_ino
+    _partn_pdv := __partn_pdv
 endif
 
 if storno == NIL
@@ -521,6 +528,11 @@ elseif LEN( _partn_jib ) > 12
     _prikazi_partnera := .t.
 
 endif
+
+// setuj staticke
+__partn_ino := _partn_ino
+__partn_pdv := _partn_pdv
+__prikazi_partnera := _prikazi_partnera
 
 // ako ga ne treba prikazivti 
 // nista nemoj vracati...

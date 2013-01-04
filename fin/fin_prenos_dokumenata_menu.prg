@@ -11,37 +11,20 @@
 
 #include "fin.ch"
  
-/*! \file fmk/fin/gendok/1g/mnu_gdok.prg
- *  \brief Generacija dokumenata - menij
- */
-
-/*! \fn MnuGenDok()
- *  \brief Menij generacije dokumenata
- */
-
 
 function MnuGenDok()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+AADD( _opc, "1. generacija dokumenta pocetnog stanja                    ")
+AADD( _opcexe, {|| fin_pocetno_stanje_sql() })
+AADD( _opc, "2. generacija dokumenta pocetnog stanja - LEGECY")
+AADD( _opcexe, {|| GenPocStanja() })
+AADD( _opc, "3. generisanje storna naloga " )
+AADD( _opcexe, {|| StornoNaloga() })
 
-AADD(opc, "1. generacija dokumenta poc.stanja   ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","GENPOCSTANJA"))
-	AADD(opcexe, {|| GenPocStanja()})
-else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
-
-AADD(opc, "2. generisanje storna naloga ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","STORNONALOGA"))
-	AADD(opcexe, {|| StornoNaloga()})
-else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
-
-
-Menu_SC("gdk")
+f18_menu( "gdk", .f., _izbor, _opc, _opcexe )
 
 return
 

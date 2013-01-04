@@ -2,6 +2,7 @@
 
  - rnal, čišćenje koda
  - kalk, prenos fakt->kalk, prenos objekta, ispis dokumenta 95,96 sređen
+ - fin, početno stanje sql
  
 1.4.60 2013-01-03, vsasa
 

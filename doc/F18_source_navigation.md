@@ -1,17 +1,59 @@
 # F18 source
 
-## vim podešenje
+## Podešenja developerskog okruženja
 
-podesiti vim za cscope, ctags [.vimrc](.vimrc)
-
-## Napomene
+- podesiti `vim`
+   - [.vimrc](.vimrc)
+   - instalirati pluginove definisane u  `:BundleInstall`
+- instalirati cscope (`brew install cscope`)
+   - u `F18_knowhow` pokrenuti `scripts/update_cscope.sh`
+   
+   
+## Konvencije i napomene
 
   - U primjerima se koristi baza `f18_test`
   - HRB - karakteristika programskog jezika harbour
+  - Linije koje počinju sa `:` su `vim` komande
+  - `vim` editor je pokrenut unutar `F18_knowhow` direktorija čije je stablo:
+     - `common/`
+     - `fakt/`
+     - `fin/`
+     - `…`   
+   
+## FMK, Clipper, F18, harbour
 
-## dbf navigacija
+[harbor](http://en.wikipedia.org/wiki/Harbour_compiler) je programski jezik F18.
 
-## dbf tabela - alias, ime tabele
+Aplikativni kod [F18](https://github.com/knowhow/F18_knowhow) je u oktobru 2011 portiran iz [FMK](https://github.com/bringout-fmk)[1^]. Programski jezik FMK je [Clipper 5.2e za DOS](http://en.wikipedia.org/wiki/Clipper_(programming_language). Dva glavna problema FMK su:
+
+  - Aplikacije se izvršavaju DOS protected mod 16-bit
+  - Problemi sa integritetom i brzinom u mrežnom radu, ograničenja veličine pojedinačne tabele 1GB (u varijanti mrežnog rada, ponovo)
+  - TUI (Text User interfejs)
+  
+ 
+## DBF, PostgreSQL
+
+DBF fajlovi su ne-relacijske baze podataka. U F18 praktično služe kao lokalni keš koji F18 klijent koristi za prikaz.
+
+F18 podaci su smješteni na PostgreSQL server. SQL DDL komande se nalaze unutar repozitorija krajnje neintuitivnog imena [fmk](https://github.com/knowhow/fmk/tree/master/database/misc). 
+
+Sa ovim server sql update skriptama se rukuje uz pomoć [updater](https://github.com/knowhow/updater) projekta koji je "uzet" iz [xTuple](http://www.xtuple.org) projekta.
+
+Binarna verzija updatera nalazi se na [google code download](http://code.google.com/p/knowhow-erp/downloads/list?can=2&q=package+updater) sekciji projekta.
+
+## Semafori dbf-sql
+
+Sinhronizacija lokalnih i sql tabela obavlja se logikom semafora.
+
+Standardna sekvenca korištenja dbf-a (HRB)
+
+`use dbf ALIAS dbf_alias`
+ 
+je u F18 zamjenjen sa `my_use`.
+
+`:tjump myuse`
+
+## alias, ime dbf
 
 Termini:
 
@@ -27,17 +69,18 @@ U ~/.f18/f18_test nalazi se `dracun.dbf`, `dracun.cdx`:
 
 Kako je ova tabela definsana u okviru F18 ?
 
-Locirajmo set_a_dbf_funkciju u kojoj se definiše dracun: 
+Locirajmo set_a_dbf_funkciju u kojoj se definiše "dracun" dbf: 
 
-`:cs find e set_a_dbf.*racun`
+`:cs find e set_a_dbf.*dracun`
 
-rezultat (u `common/set_a_dbf_temporary.prg`):
+rezultat (`common/set_a_dbf_temporary.prg`) pretrage:
 
-`set_a_dbf_temp("dracun"     ,  "DRN"         , F_DRN        )`
+=> `set_a_dbf_temp("dracun"     ,  "DRN"         , F_DRN        )`
 
 U set_a_dbf, i set_a_dbf_temp[1^] funkcijama su definisana mapiranja dbf-ova
 
 ----
 
-[1^]: temp tabele - koje ne "idu" na server
+ - [1^]: kao svojevrsni eksperiment tokom migracije podataka FMK u knowhowERP (xTuple klijent)
+ - [2^]: temp tabele - koje ne "idu" na server
  

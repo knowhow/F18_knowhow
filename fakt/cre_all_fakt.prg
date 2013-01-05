@@ -79,13 +79,11 @@ if ver["current"] > 00000 .and. ver["current"] < 00900
   next
 endif
 
-
-
 IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2", "IdFirma+dtos(datDok)+idtipdok+brdok+rbr", _alias)
-CREATE_INDEX("3","idroba+dtos(datDok)", _alias)
+CREATE_INDEX("3", "idroba+dtos(datDok)", _alias)
 CREATE_INDEX("6", "idfirma+idpartner+idroba+idtipdok+dtos(datdok)", _alias)
 CREATE_INDEX("7", "idfirma+idpartner+idroba+dtos(datdok)", _alias)
 CREATE_INDEX("8", "datdok", _alias)
@@ -130,7 +128,6 @@ CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 // fakt_doks
 // ----------------------------------------------------------------------------
     
-
 aDbf:={}
 AADD(aDBf, { 'idfirma'             , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'idtipdok'            , 'C' ,   2 ,  0 })
@@ -178,12 +175,13 @@ if ver["current"] > 00000 .and. ver["current"] < 00901
   next
 endif
 
-CREATE_INDEX("1", "IdFirma+idtipdok+brdok", _alias)
-CREATE_INDEX("2", "IdFirma+idtipdok+partner", _alias)
-CREATE_INDEX("3", "partner", _alias)
-CREATE_INDEX("4", "idtipdok", _alias)
-CREATE_INDEX("5", "datdok", _alias)
-CREATE_INDEX("6", "IdFirma+idpartner+idtipdok", _alias)
+create_index("1",  "IdFirma+idtipdok+brdok", _alias)
+create_index("1D", "IdFirma+idtipdok+brdok", _alias)
+create_index("2", "IdFirma+idtipdok+partner", _alias)
+create_index("3", "partner", _alias)
+create_index("4", "idtipdok", _alias)
+create_index("5", "datdok", _alias)
+create_index("6", "IdFirma+idpartner+idtipdok", _alias)
 
 
 // fakt objekti

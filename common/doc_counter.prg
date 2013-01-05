@@ -1,5 +1,6 @@
 #include "common.ch"
 #include "hbclass.ch"
+#include "f18.ch"
 
 CLASS DocCounter
 
@@ -8,7 +9,7 @@ CLASS DocCounter
     //  ------------------ 
     //  width=18
 
-    DATA       year     INIT 2013
+    DATA       year
     DATA       prefix   INIT ""
     DATA       suffix   INIT "/13"
     DATA       prefix0  INIT ""
@@ -20,9 +21,9 @@ CLASS DocCounter
     DATA       width            INIT 12
     DATA       numeric_width    INIT  6
 
-    METHOD     New()
+    METHOD     New
     
-    ASSIGN     a_server_param(a_val)   METHOD set_a_server_param
+    ASSIGN     a_server_param          METHOD set_a_server_param
     ACCESS     a_server_param          INLINE ::a_s_param
     ACCESS     server_counter          METHOD get_server_counter
     ASSIGN     server_counter          METHOD set_server_counter
@@ -43,11 +44,13 @@ CLASS DocCounter
     ACCESS     decoded_before_num   INLINE  ::decode_prefix0
     ACCESS     decoded_after_num    INLINE  ::decode_suffix0
     
-    ACCESS     decoded             INLINE   ::decode_success
-    ACCESS     error_message       INLINE   ::decode_error
+    ACCESS     is_decoded          INLINE   ::decode_success
+    ACCESS     error_message       INLINE   ::error_msg
 
     ACCESS     document_date       INLINE   ::doc_date
     ASSIGN     document_date       METHOD   set_document_date
+
+    METHOD     validate
 
   PROTECTED:
 
@@ -63,11 +66,12 @@ CLASS DocCounter
 
     // fakt/10/20 - RJ=10, TipDokumenta=00 
     DATA       a_s_param        
+    DATA       c_s_param
  
     DATA       decode_success  INIT .t.
     DATA       decode_str      INIT ""
     DATA       decode_error    INIT ""
-    DATA       c_server_param
+    DATA       error_msg       INIT "err"
 
     DATA       c_sql_get    
     METHOD     set_c_server_param
@@ -102,6 +106,29 @@ function year_2str(year)
      return RIGHT(ALLTRIM(STR(year)), 2)
 return
 
+METHOD DocCounter:validate(str)
+local _msg
+
+if ::year == NIL
+   Alert("Klasa nije inicijalizirana kako treba! Npr: FactCounter() umjesto sa FaktCounter():New(..)")
+   QUIT_1
+endif
+
+if ::year < 2013
+    // svaki format je prihvatljiv
+   return .t.
+endif
+
+::decode(str)
+
+if (! ::is_decoded())
+    _msg := "ERR validate DocNum: " + ::c_s_param + ", decode_str:" + ::decode_str + " error" + ::decode_error
+    log_write(_msg, 3)
+    ::error_msg := _msg
+    return .f.
+endif
+
+return .t.
 
 METHOD DocCounter:new_document_number()
 local _doc_cnt, _s_cnt
@@ -135,21 +162,21 @@ if (_s_cnt > _doc_cnt) .and. (::count == _s_cnt)
 endif
 
 // --------------------------------------
-// c_server_param = fakt/10/20/13
+// c_s_param = fakt/10/20/13
 // --------------------------------------
 METHOD DocCounter:set_c_server_param()
 local _i
 
-::c_server_param := "" 
+::c_s_param := "" 
 FOR _i := 1 TO LEN(::a_s_param)
    if _i > 1
-      ::c_server_param += "/"
+      ::c_s_param += "/"
    endif
-   ::c_server_param += ::a_s_param[_i]
+   ::c_s_param += ::a_s_param[_i]
 NEXT
-::c_server_param += ::prefix
+::c_s_param += ::suffix
 
-return ::c_server_param
+return ::c_s_param
 
 // --------------------------------------
 // --------------------------------------
@@ -178,7 +205,7 @@ if hb_isChar(_c_cnt)
    // dekodiraj dobijeni string, ali nemoj prebacivati u ::count rezultat
    // neka stoji u ::decode_count
    ::decode(_c_cnt, .f.)
-   if ::decoded
+   if ::is_decoded
       ::document_count   := ::decode_count
    else
       ::document_count   := 0
@@ -214,12 +241,12 @@ METHOD DocCounter:set_sql_get()
 return .t.
 
 METHOD DocCounter:get_server_counter()
-::server_count := fetch_metric(::c_server_param, NIL, ::server_count)
+::server_count := fetch_metric(::c_s_param, NIL, ::server_count)
 return ::server_count
 
 METHOD DocCounter:set_server_counter(cnt)
 ::server_count := cnt
-set_metric(::c_server_param, NIL, cnt)
+set_metric(::c_s_param, NIL, cnt)
 return 
 
 
@@ -317,6 +344,13 @@ if change_counter == NIL
 endif
 
 ::decode_str := str
+
+if !hb_isString(str)
+   ::decode_success := .f.
+   ::decode_str := to_str(str)
+   ::decode_error := "decode arg is not string ?!"
+   return .f.
+endif
 
 str := TRIM(str)
 

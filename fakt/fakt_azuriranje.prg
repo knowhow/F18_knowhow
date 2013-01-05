@@ -11,6 +11,9 @@
 
 #include "fakt.ch"
 
+static __error_msg := NIL
+
+
 // --------------------------------------------------
 // centralna funkcija za azuriranje fakture
 // --------------------------------------------------
@@ -24,6 +27,7 @@ local _tbl_fakt  := "fakt_fakt"
 local _tbl_doks  := "fakt_doks"
 local _tbl_doks2 := "fakt_doks2"
 local _msg
+local _datdok, _cnt
 
 if ( lSilent == nil)
     lSilent := .f.
@@ -64,16 +68,25 @@ _ok := .t.
 
 MsgO( "Azuriranje dokumenata u toku ..." )
 
+__error_msg := "FAKT Azur ERRORS:"
+
 // prodji kroz matricu sa dokumentima i azuriraj ih
 for _i := 1 to LEN( _a_fakt_doks )
 
     _id_firma   := _a_fakt_doks[ _i, 1 ]
     _id_tip_dok := _a_fakt_doks[ _i, 2 ]
     _br_dok     := _a_fakt_doks[ _i, 3 ]
-    
+    _datdok     := _a_fakt_doks[ _i, 4 ]
+  
+    _cnt := FaktCounter():New(_id_firma, _id_tip_dok, _datdok)
+    if !_cnt:validate(_br_dok)
+        __error_msg += "##" + _cnt:error_message
+        _ok := .f.
+    endif
+
     // provjeri da li postoji vec identican broj azuriran u bazi ?
     if fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
-        MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + ALLTRIM(_br_dok) + " vec postoji azuriran u bazi !" )
+        __error_msg +=  "##FAKT dok " + _id_firma + "-" + _id_tip_dok + "-" + ALLTRIM(_br_dok) + " vec postoji !" 
         _ok := .f.
     endif
     
@@ -82,14 +95,14 @@ for _i := 1 to LEN( _a_fakt_doks )
         if _ok .and. !fakt_azur_dbf( _id_firma, _id_tip_dok, _br_dok )
             _msg := "ERROR DBF: Neuspjesno FAKT/DBF azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
             log_write(_msg, 1)
-            MsgBeep(_msg)
+            __error_msg += "##" + _msg
             _ok := .f.
         endif
 
     else
         _msg := "ERROR SQL: Neuspjesno SQL azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
         log_write(_msg, 1)
-        MsgBeep(_msg)
+        _msg += "##" + _msg
         _ok := .f.
     endif
 
@@ -98,7 +111,8 @@ next
 MsgC()
 
 if !_ok
-   return _a_fakt_doks
+   MsgBeep(__error_msg)
+   return NIL
 endif
 
 select fakt_pripr
@@ -606,6 +620,7 @@ local _fakt_doks := {}
 local _id_firma
 local _id_tip_dok
 local _br_dok
+local _datdok
 
 select fakt_pripr
 go top
@@ -615,16 +630,16 @@ do while !EOF()
     _id_firma := field->idfirma
     _id_tip_dok := field->idtipdok
     _br_dok := field->brdok
+    _datdok := field->datdok
     
-    do while !EOF() .and. ( field->idfirma + field->idtipdok + field->brdok ) == ;
-            ( _id_firma + _id_tip_dok + _br_dok )
+    do while !EOF() .and. ( field->idfirma + field->idtipdok + field->brdok ) == ( _id_firma + _id_tip_dok + _br_dok )
         // preskoci sve stavke
         skip
     enddo
     
     // provjeri da li postoji vec identican broj azuriran u bazi ?
     if !fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
-        AADD( _fakt_doks, { _id_firma, _id_tip_dok, _br_dok } )
+        AADD(_fakt_doks, { _id_firma, _id_tip_dok, _br_dok, _datdok } )
     endif
 
     select fakt_pripr

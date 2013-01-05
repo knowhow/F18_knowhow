@@ -96,13 +96,13 @@ TEST_LINE(_cnt:decoded_after_num, "-66")
 
 _cnt := DocCounter():New(0, 12, 5, "BR/", "/15", ".")
 _cnt:decode("BR/PP-.....-SS/15")
-TEST_LINE(_cnt:decoded, .f.)
+TEST_LINE(_cnt:is_decoded, .f.)
 TEST_LINE(_cnt:error_message, "no match")
 
 // mora biti cetverocifren broj
 _cnt := DocCounter():New(0, 20, 5, "BR/", "/15", "0")
 _cnt:decode("BR/PP-.....111-SS/15")
-TEST_LINE(_cnt:decoded, .f.)
+TEST_LINE(_cnt:is_decoded, .f.)
 TEST_LINE(_cnt:error_message, "no match")
 
 
@@ -110,13 +110,13 @@ _cnt := DocCounter():New(0, 16, 5, "BR/", "/15", "0")
 _cnt:decode("BR/PP-0000-SS/15")
 TEST_LINE(_cnt:decoded_before_num, "PP-")
 TEST_LINE(_cnt:decoded_after_num, "-SS")
-TEST_LINE(_cnt:decoded, .t.)
+TEST_LINE(_cnt:is_decoded, .t.)
 TEST_LINE(_cnt:counter, 0)
 
 
 _cnt := DocCounter():New(0, 16, 5, "BR/", "/55", "0")
 _cnt:decode("BR/PP-0000-SS/15")
-TEST_LINE(_cnt:decoded, .f.)
+TEST_LINE(_cnt:is_decoded, .f.)
 TEST_LINE(_cnt:error_message, "no match")
 
 _cnt := DocCounter():New(0, 25, 6, "11/", "/33", "0")

@@ -365,13 +365,10 @@ do case
         if _fiscal_use .and. __tip_dok $ "10#11" .and. _fakt_doks <> NIL
             
             if LEN( _fakt_doks ) > 0
-
                 __id_firma := _fakt_doks[ 1, 1 ] 
                 __tip_dok := _fakt_doks[ 1, 2 ] 
                 __br_dok := _fakt_doks[ 1, 3 ] 
-      
                 __fiscal_marker := .t.         
-            
             endif
       
         endif

@@ -159,9 +159,7 @@ local cVezRacuni
 
 nArr:=SELECT()
 
-drn_create()
-drn_open()
-drn_empty()
+drn_create_open_empty()
 
 o_pregled()
 

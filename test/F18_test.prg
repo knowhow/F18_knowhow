@@ -22,9 +22,6 @@ TEST_BEGIN("")
 t_doc_counters()
 
 
-TEST_END()
-return
-
 /* na windowsima vrti beskonacno
 MsgO("migrate")
 test_migrate()
@@ -39,11 +36,13 @@ MsgO("harbour base")
 harbour_base()
 MsgC()
 
-/*
 MsgO("dbf_test")
 dbf_test()
 MsgC()
-*/
+
+TEST_END()
+return
+
 
 MsgO("modstru")
 modstru_test()

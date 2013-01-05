@@ -97,7 +97,7 @@ fill_rpt()
 show_rpt(  .f.,  .f.)
 
 close all
-*}
+
 
 // ----------------------------------------------
 // ----------------------------------------------
@@ -131,13 +131,11 @@ dbcreate2(cTbl, aArr)
 CREATE_INDEX("br_dok", "br_dok", cTbl, .t.)
 
 return
-*}
 
 // --------------------------------------------------------
 // napuni r_kuf
 // --------------------------------------------------------
 static function fill_rpt()
-*{
 
 // + stavka preknjizenja = pdv
 // - stavka = ppp
@@ -147,7 +145,6 @@ cre_r_tbl()
 
 if (nRArea == F_R_KUF)
 	O_R_KUF
-	
 	SELECT (F_KUF)
 	if !used()
 		O_KUF
@@ -156,7 +153,6 @@ if (nRArea == F_R_KUF)
 
 else
 	O_R_KIF
-
 	SELECT (F_KIF)
 	if !used()
 		O_KIF
@@ -164,8 +160,6 @@ else
 	SET ORDER TO TAG "br_dok"
 
 endif
-
-
 
 SELECT (nKArea)
 // datum azuriranja
@@ -237,11 +231,10 @@ SET FILTER TO
 
 
 return
-*}
 
 
 static function show_rpt()
-*{
+
 
 nCurrLine := 0
 
@@ -340,7 +333,7 @@ r_linija()
 FF
 END PRINT
 return
-*}
+
 
 // ----------------------------
 // ----------------------------
@@ -391,7 +384,7 @@ return
 // -------------------------------
 // --------------------------------
 static function r_linija()
-*{
+
 ++nCurrLine
 ?
 for i=1 to LEN(aZaglLen)
@@ -400,5 +393,5 @@ for i=1 to LEN(aZaglLen)
 next
 
 return
-*}
+
 

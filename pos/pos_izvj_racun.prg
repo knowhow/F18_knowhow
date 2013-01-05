@@ -944,9 +944,7 @@ local cBrStola
 local nZakBr:=0
 local nFZaokr := 0
 
-drn_create()
-drn_open()
-drn_empty()
+drn_create_open_empty()
 
 o_pos_narudzba()
 

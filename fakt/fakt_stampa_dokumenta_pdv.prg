@@ -36,9 +36,7 @@ if lJFill == nil
 	lJFill := .f.
 endif
 
-drn_create()
-drn_open()
-drn_empty()
+drn_create_open_empty()
 
 // otvori tabele
 if PCount() == 4 .and. ( cIdtipdok <> nil )

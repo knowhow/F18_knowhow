@@ -168,7 +168,7 @@ if !file(f18_ime_dbf(_table_name))
    AADD(aDBf,{ 'L3'                  , 'C' ,   40 ,  0})
    AADD(aDBf,{ 'VPC'                 , 'N' ,   12 ,  2 })
    AADD(aDBf,{ 'MPC'                 , 'N' ,   12 ,  2 })
-   dbcreate2( _table_name, aDbf)
+   dbcreate2(_table_name, aDbf)
 endif
 
 CREATE_INDEX("1","barkod+id", _table_name)

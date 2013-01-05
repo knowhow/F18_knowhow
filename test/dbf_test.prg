@@ -14,21 +14,23 @@
 function dbf_test()
 local _i
 local _plaho_dugacko_polje
-local _ime_f
+local _ime_f, _alias, _wa
 local _dbf_struct := {}
 local _field_10
 
 _ime_f := "test_dbf_1"
-
+_alias := "TEST1"
+_wa := 400
 
 _i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
 if _i == 0
   AADD(gaDBFs, { 400,  UPPER(_ime_f),  _ime_f  } )
 endif
+set_a_dbf_temp( _ime_f , _alias, _wa )
+
 _plaho_dugacko_polje := "ja_sam_plaho_dugacko_polje"
 
-ferase_dbf(_ime_f)
-
+ferase_dbf(_ime_f, .t.)
 
 AADD(_dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
 AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
@@ -36,9 +38,9 @@ AADD(_dbf_struct,      { _plaho_dugacko_polje , 'C' ,  20 ,  0 })
        
 DBCREATE2(_ime_f, _dbf_struct)
 
-CREATE_INDEX("ID",  "id", _ime_f)  
-CREATE_INDEX("NAZ", "naz", _ime_f)
-CREATE_INDEX("NAZ2", LEFT(_plaho_dugacko_polje, 10) , _ime_f)
+CREATE_INDEX("ID",  "id", _alias)  
+CREATE_INDEX("NAZ", "naz", _alias)
+CREATE_INDEX("NAZ2", LEFT(_plaho_dugacko_polje, 10) , _alias)
 
 my_usex(_ime_f)
 
@@ -53,5 +55,24 @@ TEST_LINE( FIELDPOS(_plaho_dugacko_polje), 0)
 TEST_LINE( FIELDPOS(_field_10), 3)
 TEST_LINE( field->ja_sam_pla, PADR("test", 20) )
 
+
+_alias := "RN"
+_ime_f := "racun"
+
+drn_create_open_empty()
+TEST_LINE(FILE(my_home() + _ime_f + "." + DBFEXT), .t.)
+TEST_LINE(FILE(my_home() + _ime_f + "." + INDEXEXT), .t.)
+
+// brisi po imenu
+ferase_dbf(_ime_f, .t.)
+TEST_LINE(FILE(my_home() + _ime_f + "." + DBFEXT), .f.)
+TEST_LINE(FILE(my_home() + _ime_f + "." + INDEXEXT), .f.)
+
+_alias := "DRNTEXT"
+_ime_f := "dracuntext"
+// brisi po aliasu
+ferase_dbf(_alias, .t.) 
+TEST_LINE(FILE(my_home() + _ime_f + "." + DBFEXT), .f.)
+TEST_LINE(FILE(my_home() + _ime_f + "." + INDEXEXT), .f.)
 
 return .t.

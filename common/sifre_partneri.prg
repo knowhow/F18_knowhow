@@ -37,7 +37,7 @@ _alias := "PARTN"
 _table_name := "partn"
 
 IF !FILE(f18_ime_dbf("partn"))
-    dbcreate2( _table_name, aDbf )
+    dbcreate2(_table_name, aDbf)
     _created := .t.
 ENDIF
 

@@ -12,7 +12,6 @@
 
 #include "fmk.ch"
 
-
 // otvori tabele za stampu racuna
 function o_dracun()
 O_DRN
@@ -20,72 +19,59 @@ O_RN
 O_DRNTEXT
 return
 
-
+// --------------------------------
 // delete rn dbf's
-function del_rndbf()
+// --------------------------------
+function drn_erase()
 
 close all
 
-// drn.dbf
-FErase( my_home() + "drn.dbf" )
-FErase( my_home() + "drn.cdx" )
-
-// rn.dbf
-FErase( my_home() + "rn.dbf" )
-FErase( my_home() + "rn.cdx" )
-
-// drntext.dbf
-FErase( my_home() + "drntext.dbf" )
-FErase( my_home() + "drntext.cdx" )
+ferase_dbf("racun", .t.)
+ferase_dbf("dracun", .t.)
+ferase_dbf("dracuntext", .t.)
 
 return 1
 
-
+// --------------------------------
+// --------------------------------
 function drn_create()
 
-local cDRnName := "drn"
-local cRnName := "rn"
-local cDRTxtName := "drntext"
+local cDRnName := "dracun"
+local cRnName := "racun"
+local cDRTxtName := "dracuntext"
 local aDRnField:={}
 local aRnField:={}
 local aDRTxtField:={}
 
-if del_rndbf() == 0
-	MsgBeep("Greska: brisanje pomocnih tabela !!!")
-	return
-endif
-
 if !FILE(f18_ime_dbf(cDRnName))
-	// drn specifikacija polja
-	get_drn_fields(@aDRnField)
-        // kreiraj tabelu
-	dbcreate2(cDRnName, aDRnField)
+    get_drn_fields(@aDRnField)
+    dbcreate2(cDRnName, aDRnField)
 endif
 
 if !FILE(f18_ime_dbf(cRnName))
-	// rn specifikacija polja
-	get_rn_fields(@aRnField)
-        // kreiraj tabelu
-	dbcreate2(cRnName, aRnField)
+    get_rn_fields(@aRnField)
+    dbcreate2(cRnName, aRnField)
 endif
 
 if !FILE(f18_ime_dbf(cDRTxtName))
-	// rn specifikacija polja
-	get_dtxt_fields(@aDRTxtField)
-        // kreiraj tabelu
-	dbcreate2(cDRTxtName, aDRTxtField)
+     get_dtxt_fields(@aDRTxtField)
+     dbcreate2(cDRTxtName, aDRTxtField)
 endif
 
-// kreiraj indexe
-CREATE_INDEX("1", "brdok+DToS(datdok)", "drn")
-
-CREATE_INDEX("1", "brdok+rbr+podbr", "rn")
-CREATE_INDEX("IDROBA", "idroba", "rn")
-
-CREATE_INDEX("1", "tip", "drntext")
+CREATE_INDEX("1", "brdok+DToS(datdok)", "DRN", .t.)
+CREATE_INDEX("1", "tip", "DRNTEXT", .t.)
+CREATE_INDEX("1", "brdok+rbr+podbr", "RN", .t.)
+CREATE_INDEX("IDROBA", "idroba", "RN", .t.)
 
 return
 
+
+function drn_create_open_empty()
+drn_erase()
+drn_create()
+drn_open()
+drn_empty()
+return 
 
 function get_drn_fields(aArr)
 
@@ -128,27 +114,27 @@ return
 
 function get_rn_fields(aArr)
 
-AADD(aArr, {"BRDOK",   "C",  12, 0})
-AADD(aArr, {"RBR",     "C",  3, 0})
-AADD(aArr, {"PODBR",   "C",  2, 0})
-AADD(aArr, {"IDROBA",  "C", 10, 0})
-AADD(aArr, {"ROBANAZ", "C", 200, 0})
-AADD(aArr, {"JMJ",     "C",  3, 0})
-AADD(aArr, {"KOLICINA","N", 15, 5})
-AADD(aArr, {"CJENPDV", "N", 15, 5})
-AADD(aArr, {"CJENBPDV", "N", 15, 5})
-AADD(aArr, {"CJEN2PDV", "N", 15, 5})
-AADD(aArr, {"CJEN2BPDV", "N", 15, 5})
-AADD(aArr, {"POPUST",   "N", 8, 3})
-AADD(aArr, {"PPDV",     "N", 8, 3})
-AADD(aArr, {"VPDV",     "N", 15, 5})
-AADD(aArr, {"UKUPNO",    "N", 15, 5})
-AADD(aArr, {"POPTP",   "N", 8, 3})
-AADD(aArr, {"VPOPTP",   "N", 15, 5})
-AADD(aArr, {"C1",   "C", 100, 0})
-AADD(aArr, {"C2",   "C", 100, 0})
-AADD(aArr, {"C3",   "C", 100, 0})
-AADD(aArr, {"OPIS",   "C", 200, 0})
+AADD(aArr, {"BRDOK",    "C",  12, 0})
+AADD(aArr, {"RBR",      "C",   3, 0})
+AADD(aArr, {"PODBR",    "C",   2, 0})
+AADD(aArr, {"IDROBA",   "C",  10, 0})
+AADD(aArr, {"ROBANAZ",  "C", 200, 0})
+AADD(aArr, {"JMJ",      "C",   3, 0})
+AADD(aArr, {"KOLICINA", "N",  15, 5})
+AADD(aArr, {"CJENPDV",  "N",  15, 5})
+AADD(aArr, {"CJENBPDV", "N",  15, 5})
+AADD(aArr, {"CJEN2PDV", "N",  15, 5})
+AADD(aArr, {"CJEN2BPDV","N",  15, 5})
+AADD(aArr, {"POPUST",   "N",   8, 3})
+AADD(aArr, {"PPDV",     "N",   8, 3})
+AADD(aArr, {"VPDV",     "N",  15, 5})
+AADD(aArr, {"UKUPNO",   "N",  15, 5})
+AADD(aArr, {"POPTP",    "N",   8, 3})
+AADD(aArr, {"VPOPTP",   "N",  15, 5})
+AADD(aArr, {"C1",       "C", 100, 0})
+AADD(aArr, {"C2",       "C", 100, 0})
+AADD(aArr, {"C3",       "C", 100, 0})
+AADD(aArr, {"OPIS",     "C", 200, 0})
 
 return
 
@@ -162,6 +148,7 @@ return
 
 function add_drntext(cTip, cOpis)
 local lFound
+
 if !USED(F_DRNTEXT)
 	O_DRNTEXT
 	SET ORDER TO TAG "ID"

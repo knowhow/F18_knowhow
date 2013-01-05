@@ -66,6 +66,33 @@ __dbPack()
 return
 
 
+// ------------------------------------------
+// odabir opcija za povrat pripremu
+// ------------------------------------------
+static function pripr_choice()
+local _ch := "1"
+
+// brisati
+// spojiti
+
+Box(, 3, 50 )
+    @ m_x + 1, m_y + 2 SAY "Priprema nije prazna, sta dalje ? "
+    @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
+    @ m_x + 3, m_y + 2 SAY " (2) spojiti na postojeci dokument " GET _ch VALID _ch $ "12"
+    read
+BoxC()
+
+// na ESC
+if LastKey() == K_ESC
+    // marker "0" za nista odabrano
+    _ch := "0"
+    return _ch
+endif
+
+return _ch
+
+
+
 
 // -------------------------------------------
 // pos -> priprz
@@ -73,17 +100,31 @@ return
 function pos_2_priprz()
 local _rec
 local _t_area := SELECT()
+local _oper := "1"
 
 O_PRIPRZ
 select priprz
 
-Zapp()
-__dbPack()
+if RECCOUNT() <> 0
+    _oper := pripr_choice()
+endif
+
+// brisat cemo pripremu....
+if _oper == "1"
+    Zapp()
+    __dbPack()
+endif
+
+if _oper == "2"
+    // postojeci zapis... u priprz
+    _rec2 := dbf_get_rec()
+endif
 
 select pos
 seek pos_doks->( IdPos + IdVd + DTOS(datum) + BrDok )
 
-do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+do while !EOF() .and. pos->( IdPos + IdVd + DTOS( datum ) + BrDok ) == ;
+                    pos_doks->( IdPos + IdVd + DTOS( datum ) + BrDok )
 
     _rec := dbf_get_rec()
 
@@ -96,8 +137,34 @@ do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd
     _rec["jmj"] := roba->jmj
     _rec["barkod"] := roba->barkod
 
+    // ako je operacija spajanja
+    // spoji dokumente sa postojecim u pripremi....
+    if _oper == "2"
+        _rec["idpos"] := _rec2["idpos"]
+        _rec["idvd"] := _rec2["idvd"]
+        _rec["brdok"] := _rec2["brdok"]
+    endif
+
     select priprz
-    append blank 
+    
+    if _oper <> "2"
+        append blank 
+    endif
+
+    if _oper == "2"
+
+        // pronadji postojeci artikal...
+        set order to tag "1"
+        hseek _rec["idroba"]
+
+        if !FOUND()
+            append blank
+        else
+            // dodaj na postojecu kolicinu kolicinu sa novog dokumenta
+            _rec["kol2"] := _rec["kol2"] + _rec2["kol2"]
+        endif
+
+    endif
 
     dbf_update_rec( _rec )
 

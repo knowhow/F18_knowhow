@@ -388,7 +388,11 @@ if !fSadAz
         endif
 
     enddo  
+
 endif 
+
+// posljednje chekiranje pred azuriranje
+check_before_azur( dDatRada )
 
 // azuriraj pripremu u POS
 Priprz2Pos()
@@ -396,6 +400,37 @@ Priprz2Pos()
 close all
 
 return
+
+
+// ---------------------------------------------------------------
+// checkiranje tabele priprz prije azuriranja
+// ---------------------------------------------------------------
+static function check_before_azur( dDatRada )
+local _ret := .t.
+local _rec
+
+MsgO( "Provjera unesenih podataka prije azuriranja u toku ..." )
+
+select priprz
+go top
+do while !EOF()
+
+    if field->datum <> dDatRada
+
+        _rec := dbf_get_rec()
+        _rec["datum"] := dDatRada
+        dbf_update_rec( _rec )
+    
+    endif
+
+    skip
+
+enddo
+
+MsgC()
+
+return _ret
+
 
 
 // ---------------------------------------------

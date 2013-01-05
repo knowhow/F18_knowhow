@@ -1,3 +1,8 @@
+1.4.67 2013-01-05, vsasa
+
+ - pos, spajanje dokumenata kod povrata u pripremu
+ - fakt, čišćenje
+ 
 1.4.66 2013-01-05, vsasa
 
  - fakt, prikaz DINDEM u pripremi dokumenta

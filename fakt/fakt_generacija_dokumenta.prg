@@ -464,11 +464,16 @@ local nRet := DE_CONT
 do case
     case Ch==ASC(" ") .or. Ch==K_ENTER
 
-        f18_lock_tables({LOWER(ALIAS())})
+        if !f18_lock_tables({LOWER(ALIAS())})
+            return DE_CONT
+        endif
+
         sql_table_update( nil, "BEGIN" )
 
         Beep(1)
+
         _rec := dbf_get_rec()
+
         if field->m1 = " "    
             // iz DOKS
             _rec["m1"] := "*"
@@ -479,8 +484,11 @@ do case
             update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
             suma -= field->iznos
         endif
+
         @ m_x+1, m_Y + 55 SAY suma pict picdem
+
         nRet := DE_REFRESH
+
         f18_free_tables({LOWER(ALIAS())})
         sql_table_update( nil, "END" )
 

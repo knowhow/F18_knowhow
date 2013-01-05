@@ -74,16 +74,18 @@ do while .t.
             append blank
         endif
         
-        _rec := hb_hash()
         _rec := get_dbf_global_memvars()
-        
+        // update zapisa... 
         dbf_update_rec( _rec )
         
+        // ponovo mi napuni globalne varijable
+        set_global_memvars_from_dbf()
+      
         if cGetDOper == "D"
             
             lCopyAop := .f.
             
-            // operacije moguæe kopirati samo ako je isti 
+            // operacije moguce kopirati samo ako je isti 
             // artikal i ako je redni broj <> 1
 
             if _doc_it->doc_it_no <> 1

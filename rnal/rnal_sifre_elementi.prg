@@ -927,6 +927,8 @@ endif
 
 _rec := get_dbf_global_memvars()
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+// ponovo mi napuni globalne varijable
+set_global_memvars_from_dbf()
 
 if lNewRec
 	// nafiluj odmah atribute za ovu grupu...
@@ -952,8 +954,13 @@ Box(,1,40)
 BoxC()
 
 if LastKey() <> K_ESC
+    
     _rec := get_dbf_global_memvars()
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+    
+    // ponovo mi napuni gl.varijable
+    set_global_memvars_from_dbf()
+ 
 endif
 
 return 1
@@ -1071,7 +1078,11 @@ if LastKey() == K_ESC .and. lNewRec
 endif
 
 _rec := get_dbf_global_memvars()
+// update zapisa
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+// ponovo mi napuni matricu...
+set_global_memvars_from_dbf()
+
 
 return 1
 

@@ -666,7 +666,7 @@ lNivel:=.f.
 SELECT (cRsDbf)
 SET ORDER TO TAG "ID"
 
-log_write( "azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( priprz->RECCOUNT() )) , 2 )
+log_write( "azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( priprz->(RECCOUNT()) )) , 2 )
 
 MsgO( "Azuriranje priprema -> kumulativ u toku... sacekajte..." )
 

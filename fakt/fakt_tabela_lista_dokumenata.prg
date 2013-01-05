@@ -24,19 +24,15 @@ local _params := fakt_params()
 ImeKol:={}
 
 AADD(ImeKol,{ " ", {|| g_fiscal_info( fisc_rn, fisc_st )} })
+AADD(ImeKol,{ "Datum",       {|| Datdok } })
 AADD(ImeKol,{ "RJ",          {|| idfirma}  })
 AADD(ImeKol,{ "VD",          {|| idtipdok} })
 AADD(ImeKol,{ "Brdok",       {|| brdok+rezerv} })
 AADD(ImeKol,{ "VP",          {|| idvrstep } })
-AADD(ImeKol,{ "Datum",       {|| Datdok } })
 AADD(ImeKol,{ "Partner",     {|| PADR(partner, 45) } })
 AADD(ImeKol,{ "Ukupno-Rab ", {|| iznos} })
 AADD(ImeKol,{ "Rabat",       {|| rabat} })
 AADD(ImeKol,{ "Ukupno",      {|| iznos+rabat} })
-
-if lVrsteP
-    AADD(ImeKol,{ "Nacin placanja", {|| idvrstep} })
-endif
 
 // datum otpremnice datum valute
 AADD(ImeKol,{ "Datum placanja", {|| datpl} })

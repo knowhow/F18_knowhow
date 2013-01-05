@@ -144,7 +144,7 @@ Box( , 12 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
 BoxC()
 
 select fakt_doks
-set order to tag "1"
+set order to tag "1D"
 go top
 
 IF !EMPTY( dDatVal0 ) .or. !EMPTY( dDatVal1 )
@@ -544,9 +544,6 @@ endif
 go nTrec
    
 return DE_REFRESH
-
-
-
 
 
 function pr_choice()

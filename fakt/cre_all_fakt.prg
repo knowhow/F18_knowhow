@@ -176,12 +176,12 @@ if ver["current"] > 00000 .and. ver["current"] < 00901
 endif
 
 create_index("1",  "IdFirma+idtipdok+brdok", _alias)
-create_index("1D", "IdFirma+idtipdok+brdok", _alias)
-create_index("2", "IdFirma+idtipdok+partner", _alias)
-create_index("3", "partner", _alias)
-create_index("4", "idtipdok", _alias)
-create_index("5", "datdok", _alias)
-create_index("6", "IdFirma+idpartner+idtipdok", _alias)
+create_index("1D", "DTOS(DatDok)+IdFirma+idtipdok+brdok", _alias)
+create_index("2",  "IdFirma+idtipdok+partner", _alias)
+create_index("3",  "partner", _alias)
+create_index("4",  "idtipdok", _alias)
+create_index("5",  "datdok", _alias)
+create_index("6",  "IdFirma+idpartner+idtipdok", _alias)
 
 
 // fakt objekti

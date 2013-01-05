@@ -288,13 +288,14 @@ if !fSadAz
         AADD( ImeKol, { "Kolicina" , {|| STR( kolicina, 9, 3 ) } })
     endif
 
-    AADD(ImeKol, { "Cijena "    , {|| STR( cijena, 7, 2 ) }})
+    AADD( ImeKol, { "Cijena "    , {|| STR( cijena, 7, 2 ) }})
 
     if cIdVd == VD_NIV
-        AADD(ImeKol, { "Nova C.",     {|| STR( ncijena, 7, 2 ) } })
+        AADD( ImeKol, { "Nova C.",     {|| STR( ncijena, 7, 2 ) } })
     endif
         
-    AADD(ImeKol, { "Tarifa "    , {|| idtarifa }})
+    AADD( ImeKol, { "Tarifa "    , {|| idtarifa }})
+    AADD( ImeKol, { "Datum "     , {|| datum }})
 
     Kol := {}
         
@@ -852,13 +853,10 @@ select priprz
 go top
 
 do while !EOF()
-
     Scatter()
     RacKol( _idodj, _idroba, @_kolicina )
-
     select priprz
     Gather()
-
     skip
 enddo
     

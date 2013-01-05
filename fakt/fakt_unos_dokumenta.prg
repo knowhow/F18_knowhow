@@ -1115,10 +1115,10 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         ++ _x
 
         // valuta
-        if _idTipDok $ "10#11#19#20#25#26#27"
+        if _idTipDok $ "10#11#12#19#20#25#26#27"
             @ m_x + _x, m_y + 2 SAY "Valuta ?" GET _dindem PICT "@!" 
         else
-            @ m_x + _x, m_y + 1 SAY " "
+            @ m_x + _x, m_y + 2 SAY " "
         endif
         
         // avansni racun
@@ -1781,6 +1781,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
     _rec["brdok"] := _tek_dok["brdok"]
     _rec["datdok"] := _tek_dok["datdok"]
     _rec["idpartner"] := _tek_dok["idpartner"]
+    _rec["dindem"] := _tek_dok["dindem"]
 
     dbf_update_rec( _rec )
 

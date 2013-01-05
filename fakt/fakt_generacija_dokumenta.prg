@@ -525,7 +525,7 @@ local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
        
-_broj_dokumenta := PADR( REPLICATE( "0", 5 ), 8 )
+_broj_dokumenta := fakt_prazan_broj_dokumenta()
          
 // sumirati stavke ?
 _sumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"

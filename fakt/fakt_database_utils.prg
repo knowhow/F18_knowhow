@@ -269,6 +269,13 @@ endif
 return
 
 
+// ---------------------------------------------------------------
+// vraca prazan broj dokumenta
+// ---------------------------------------------------------------
+function fakt_prazan_broj_dokumenta()
+return PADR( PADL( ALLTRIM( STR( 0 ) ), gNumDio, "0" ), 8 )
+
+
 
 // ------------------------------------------------------------------
 // fakt, uzimanje novog broja za fakt dokument

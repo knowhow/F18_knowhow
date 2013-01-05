@@ -1833,20 +1833,25 @@ local _x, _y
 local __x := 1
 local _left := 20
 local _doc_total := hb_hash()
+local _doc_total2 := 0
 local _t_area := SELECT()
+local _din_dem 
 
-if fakt_pripr->( RECCOUNT() ) == 0 .or. ! ( fakt_pripr->idtipdok $ "10#11#20" )
+if fakt_pripr->( RECCOUNT() ) == 0 .or. ! ( fakt_pripr->idtipdok $ "10#11#12#20" )
 	return
 endif
 
 _x := MAXROWS() - 20
 _y := MAXCOLS() - 50
 
+// valuta ?
+_din_dem := fakt_pripr->dindem
+
 // izvuci mi dokument u temp tabele
 stdokpdv( nil, nil, nil, .t. )
 
 // sracunaj totale...
-_calc_totals( @_doc_total )
+_calc_totals( @_doc_total, _din_dem )
 
 // prikazi box
 Box(, _x, _y )
@@ -1876,7 +1881,12 @@ Box(, _x, _y )
 	
 	++ __x
 	
-	@ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV: ", _left ) + STR( _doc_total["total"], 12, 2 )
+	@ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV (" + ALLTRIM( _din_dem ) + "): ", _left ) + STR( _doc_total["total"], 12, 2 )
+
+    if LEFT( _din_dem, 3 ) <> ValBazna()
+        ++ __x
+	    @ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV (" + ALLTRIM( ValBazna() ) + "): ", _left ) + STR( _doc_total["total2"], 12, 2 )
+    endif
 
 	while Inkey(0.1) != K_ESC
    	end
@@ -1890,7 +1900,7 @@ return
 // ------------------------------------------------
 // sracunaj total na osnovu stampe dokumenta
 // ------------------------------------------------
-static function _calc_totals( hash )
+static function _calc_totals( hash, din_dem )
 local _t_area := SELECT()
 
 hash["osn"] := 0
@@ -1898,6 +1908,7 @@ hash["pop"] := 0
 hash["osn_pop"] := 0
 hash["pdv"] := 0
 hash["total"] := 0
+hash["total2"] := 0
 
 select drn
 go top
@@ -1909,6 +1920,10 @@ if RECCOUNT() <> 0
 	hash["osn_pop"] := field->ukbpdvpop
 	hash["pdv"] := field->ukpdv
 	hash["total"] := field->ukupno
+
+    if LEFT( din_dem, 3 ) <> ValBazna()
+        hash["total2"] := field->ukupno * OmjerVal( ValBazna(), din_dem, field->datdok )
+    endif
 
 endif
 

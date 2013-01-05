@@ -315,7 +315,7 @@ if !fSadAz
         SET CURSOR ON
 
         ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
-                "Broj dokumenta: " + cBrDok , ;
+                "Broj dokumenta: " + ALLTRIM( cBrDok ) + " datum: " + DTOC( dDatRada ) , ;
                 "PRIPREMA " + cNazDok + "E", nil, ;
                 { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka" }, 2, , , )
 

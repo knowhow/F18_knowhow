@@ -404,7 +404,7 @@ endif
 
 _app := get_dbf_global_memvars()
 
-update_rec_server_and_dbf( "pos_doks", _app, 1, "CONT", .f. )
+update_rec_server_and_dbf( "pos_doks", _app, 1, "CONT" )
 
 SELECT PRIPRZ
 
@@ -441,7 +441,7 @@ do while !EOF()
 
     _app := get_dbf_global_memvars()
 
-    update_rec_server_and_dbf( "pos_pos", _app, 1, "CONT", .f. )
+    update_rec_server_and_dbf( "pos_pos", _app, 1, "CONT" )
 
     if cIdVD == "PD"  
         
@@ -457,7 +457,7 @@ do while !EOF()
         _rec["kolicina"] := - _rec["kolicina"]
         _rec["rbr"] := PADL( ALLTRIM( STR( ++ _cnt ) ), 5 )
 
-        update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT", .f. )
+        update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
     
     endif
 
@@ -468,7 +468,6 @@ do while !EOF()
 enddo
 
 f18_free_tables({"pos_pos", "pos_doks", "roba"})
-
 sql_table_update( nil, "END")
 
 SELECT PRIPRZ
@@ -660,19 +659,21 @@ local _tbl_pos := "pos_pos"
 local _tbl_doks := "pos_doks"
 local _ok := .t.
 local _t_rec
+local _cnt_no 
 
 lNivel:=.f.
 
 SELECT (cRsDbf)
 SET ORDER TO TAG "ID"
 
-log_write( "azuriranje stavki iz priprz u pos/doks, poceo", 5 )
+log_write( "azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( priprz->RECCOUNT() )) , 2 )
 
 MsgO( "Azuriranje priprema -> kumulativ u toku... sacekajte..." )
 
 
 // lockuj semafore
 if !f18_free_tables({"pos_pos", "pos_doks"})
+    MsgC()
     return .f.
 endif
 
@@ -697,12 +698,12 @@ _rec["m1"] := priprz->m1
 _rec["prebacen"] := priprz->prebacen
 _rec["smjena"] := priprz->smjena
 
-update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
+update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
 // upis inventure/nivelacije
 SELECT PRIPRZ  
 
-do while !eof()
+do while !EOF()
 
     _t_rec := RECNO()
 
@@ -734,7 +735,7 @@ do while !eof()
     _rec["c_3"] := priprz->c_3
     _rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt ) ) , 5 ) 
 
-    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT", .f. )
+    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
     
     SELECT PRIPRZ
 
@@ -1082,10 +1083,9 @@ if !FOUND()
     return _ret
 endif 
 
-log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " poceo", 5 )
+log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok), 2 )
 	           	
 if !f18_lock_tables({"pos_pos", "pos_doks"})
-    return
     select ( _t_area )
     return _ret
 endif     
@@ -1095,7 +1095,7 @@ _rec := dbf_get_rec()
 
 sql_table_update( nil, "BEGIN" )
 	
-delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT", .f. )
+delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
 
 select pos_doks
 set filter to
@@ -1105,16 +1105,11 @@ seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
 
 if FOUND() 
     _rec := dbf_get_rec()		
-	delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT", .f. )
+	delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 endif
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
-
-
-// pos_pos check
-// check_recno( "pos_pos", nil, .f. )
-// check_recno( "pos_doks", nil, .f. )
 
 log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " zavrsio", 5 )
 
@@ -1268,3 +1263,5 @@ endif
 
 close all
 return
+
+

@@ -349,6 +349,7 @@ if !hb_isString(str)
    ::decode_success := .f.
    ::decode_str := to_str(str)
    ::decode_error := "decode arg is not string ?!"
+   ::error_msg := ::decode_error
    return .f.
 endif
 
@@ -359,12 +360,14 @@ str := TRIM(str)
 if !hb_isRegex(_re_brdok)
   ::decode_success := .f.
   ::decode_error := "cannot compile: " + _re_str
+  ::error_msg := ::decode_error
   return .f.
 endif
 
 if !hb_regexMatch(_re_brdok, str)
   ::decode_success := .f.
   ::decode_error := "no match"
+   ::error_msg := ::decode_error
   return .f.
 endif
 
@@ -372,7 +375,8 @@ _a := hb_regex(_re_brdok, str)
 
 IF !hb_isArray(_a)
    ::decode_success := .f.
-   ::decode_error := "no match ?!"
+   ::decode_error := "no match/2"
+   ::error_msg := ::decode_error
    return .f.
 endif
 
@@ -382,6 +386,7 @@ endif
 if EMPTY(_a[4])
    ::decode_success := .f.
    ::decode_error := "no number ?!"
+   ::error_msg := ::decode_error
    return .f.
 else
    ::decode_count := VAL(_a[4])

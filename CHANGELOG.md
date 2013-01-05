@@ -1,3 +1,8 @@
+1.4.65 2013-01-05, vsasa
+
+ - rnal, unos dokuemnta - bugfix
+ - pos, čišćenje
+ 
 1.4.64 2013-01-04, vsasa
 
  - fakt, kreiranje računa za INO kupce - bugfix 

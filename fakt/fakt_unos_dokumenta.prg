@@ -46,16 +46,17 @@ if field->idtipdok == "IM"
 endif
 
 private ImeKol := { ;
-          {"Red.br"      ,  {|| Rbr()                   } } ,;
-          {"Partner/Roba",  {|| Part1Stavka() + Roba()  } } ,;
-          {"Kolicina"    ,  {|| kolicina                } } ,;
-          {"Cijena"      ,  {|| Cijena                  } , "cijena"    } ,;
-          {"Rabat"       ,  {|| Rabat                   } , "Rabat"     } ,;
-          {"Porez"       ,  {|| Porez                   } , "porez"     } ,;
+          {"Red.br"      ,  {|| Rbr()                   } }, ;
+          {"Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
+          {"Kolicina"    ,  {|| kolicina                } }, ;
+          {"Cijena"      ,  {|| Cijena                  } , "cijena"    }, ;
+          {"Rabat"       ,  {|| Rabat                   } , "Rabat"     }, ;
+          {"Porez"       ,  {|| Porez                   } , "porez"     }, ;
           {"RJ"          ,  {|| idfirma                 } , "idfirma"   }, ;
           {"Serbr",         {|| SerBr                   } , "serbr"     }, ;
           {"Partn",         {|| IdPartner               } , "IdPartner" }, ;
           {"IdTipDok",      {|| IdTipDok                } , "Idtipdok"  }, ;
+          {"DinDem",        {|| dindem                  } , "dindem"    }, ;
           {"Brdok",         {|| Brdok                   } , "Brdok"     }, ;
           {"DatDok",        {|| DATDOK                  } , "DATDOK"    } ;
         }
@@ -72,6 +73,7 @@ next
 // inicijalizacija staticki varijabli...
 // marker fiskalnih racuna
 __fiscal_marker := .f.
+
 // podaci dokumenta
 __id_firma  := field->idfirma
 __tip_dok := field->idtipdok

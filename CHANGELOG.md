@@ -1,3 +1,7 @@
+1.4.66 2013-01-05, vsasa
+
+ - fakt, prikaz DINDEM u pripremi dokumenta
+ 
 1.4.65 2013-01-05, vsasa
 
  - rnal, unos dokuemnta - bugfix

@@ -344,7 +344,11 @@ if ( ( lUI == NIL ) .or. !lUI )
         do while !EOF() .and. pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
             do case
                 case pos_doks->idvd == "IN"
-                    nIznos += pos->kol2 * pos->cijena
+                    // samo ako je razlicit iznos od 0
+                    // ako je 0 onda ne treba mnoziti sa cijenom
+                    if pos->kol2 <> 0           
+                        nIznos += pos->kol2 * pos->cijena
+                    endif
                 case pos_doks->IdVd == VD_NIV
                     nIznos += pos->kolicina * ( pos->ncijena - pos->cijena )
                 otherwise
@@ -660,16 +664,19 @@ local _tbl_doks := "pos_doks"
 local _ok := .t.
 local _t_rec
 local _cnt_no 
+local _id_tip_dok
+local _dok_count
 
 lNivel:=.f.
 
 SELECT (cRsDbf)
 SET ORDER TO TAG "ID"
 
-log_write( "azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( priprz->(RECCOUNT()) )) , 2 )
+_dok_count := priprz->(RECCOUNT())
 
-MsgO( "Azuriranje priprema -> kumulativ u toku... sacekajte..." )
+log_write( "azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( _dok_count ) ) , 2 )
 
+Box(, 3, 60 )
 
 // lockuj semafore
 if !f18_free_tables({"pos_pos", "pos_doks"})
@@ -697,6 +704,13 @@ _rec["idradnik"] := priprz->idradnik
 _rec["m1"] := priprz->m1
 _rec["prebacen"] := priprz->prebacen
 _rec["smjena"] := priprz->smjena
+
+// tip dokumenta
+_id_tip_dok := _rec["idvd"]
+
+@ m_x + 1, m_y + 2 SAY "    AZURIRANJE DOKUMENTA U TOKU ..."
+@ m_x + 2, m_y + 2 SAY "Formiran dokument: " + ALLTRIM( _rec["idvd"]) + "-" + _rec["brdok"] + " / zap: " + ;
+        ALLTRIM( STR( _dok_count ) )
 
 update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
@@ -735,12 +749,17 @@ do while !EOF()
     _rec["c_3"] := priprz->c_3
     _rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt ) ) , 5 ) 
 
+    @ m_x + 3, m_y + 2 SAY "Stavka " + ALLTRIM( STR( _cnt ) ) + " roba: " + _rec["idroba"]
+
     update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
     
     SELECT PRIPRZ
 
-    // azur sifrarnik robe na osnovu priprz
-    azur_sif_roba_row()
+    // ako je inventura ne treba nista dirati u sifrarniku...
+    if _id_tip_dok <> "IN"
+        // azur sifrarnik robe na osnovu priprz
+        azur_sif_roba_row()
+    endif
 
     SELECT PRIPRZ
     GO ( _t_rec )
@@ -748,7 +767,7 @@ do while !EOF()
 
 enddo
 
-MsgC()
+BoxC()
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
@@ -1093,6 +1112,8 @@ endif
 _ret := .t.          				
 _rec := dbf_get_rec()
 
+MsgO("Brisanje dokumenta iz glavne tabele u toku ...")
+
 sql_table_update( nil, "BEGIN" )
 	
 delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
@@ -1110,6 +1131,8 @@ endif
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
+
+MsgC()
 
 log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " zavrsio", 5 )
 
@@ -1138,6 +1161,8 @@ cSt_rn := PADL( ALLTRIM(cSt_rn), 6 )
 select pos
 seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
 
+msgo("Povrat dokumenta u pripremu ... ")
+
 do while !EOF() .and. field->idpos == gIdPos ;
     .and. field->brdok == cSt_rn ;
     .and. field->idvd == "42"
@@ -1163,6 +1188,8 @@ do while !EOF() .and. field->idpos == gIdPos ;
     skip
 
 enddo
+
+msgC()
 
 // pos brisi dokument iz baze...
 pos_brisi_dokument( gIdPos, VD_RN, dSt_date, cSt_rn )

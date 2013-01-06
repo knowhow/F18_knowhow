@@ -59,30 +59,11 @@ AADD(opc, "W. administracija pos-a")
 AADD(opcexe, {|| pos_admin_menu() })
 AADD(opc, "P. promjena seta cijena")
 AADD(opcexe, {|| PromIDCijena()})
-AADD(opc, "T. postavi datum i vrijeme kase")
-AADD(opcexe, {|| PDatMMenu()})
 
 Menu_SC("upra")
 
 closeret
 return .f.
-
-
-
-function PDatMMenu()
-local lPostavljeno
-
-if !SigmaSif("SSAT")
-	MsgBeep("&S& pogresna lozinka ! &SAT&")
-	return 0
-endif
-lPostavljeno:=pos_postavi_datum()
-if lPostavljeno
-	goModul:run()
-	return 0
-endif
-return 0
-
 
 
 

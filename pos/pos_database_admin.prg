@@ -50,6 +50,7 @@ function ChkTblPromVp()
 local cTbl
 
 cTbl:=DbfName(F_PROMVP,.t.)+'.'+DBFEXT
+
 if (FILE(cTbl))
     O_PROMVP
     if (FIELDPOS("polog01")==0 .or. FIELDPOS("_SITE_")==0)
@@ -156,73 +157,5 @@ endif
 CLOSE ALL
 
 return
-
-
-function UzmiBkIzSez()
-local _rec
-
-if !SigmaSif("BKIZSEZ")
-    MsgBeep("Ne cackaj!")
-    return
-endif
-
-Box(,5,60)
-    cUvijekUzmi := "N"
-    @ 1+m_x, 2+m_y SAY "Uvijek uzmi BARKOD iz sezone (D/N)?" GET cUvijekUzmi PICT "@!" VALID cUvijekUzmi $ "DN"
-    
-    read
-BoxC()
-
-O_ROBA
-O_ROBASEZ
-
-select roba
-
-set order to tag "ID"
-go top
-
-Box(,3,60)
-
-do while !eof()
-    
-    cIdRoba := roba->id
-    
-    select robasez
-    set order to tag "ID"
-    hseek cIdRoba
-    
-    if !Found()
-        select roba
-        skip
-        loop
-    endif
-    
-    cBkSez := robasez->barkod
-    
-    @ m_x+1,m_y+2 SAY "Roba : " + cIdRoba
-    
-    if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ((cUvijekUzmi == "D") .and. !empty(cBkSez))
-        
-        select roba
-
-        _rec := dbf_get_rec()
-        _rec["barkod"] := cBKSez
-
-        update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
-        
-        @ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
-    endif
-    
-    select roba
-    skip
-    
-enddo       
-
-BoxC()
-
-MsgBeep("Setovao barkodove iz sezonskog podrucja")
-
-return
-
 
 

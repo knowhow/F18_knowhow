@@ -467,8 +467,9 @@ do case
         
         // kalkulisi stavke u pripremi
         _calc_priprz()
+
         // otvori unos
-        if !( EdPrInv(1) == 0 )
+        if !( EdPrInv( 1, dat_inv_niv ) == 0 )
             lVrati := DE_REFRESH
         endif
 
@@ -488,7 +489,7 @@ do case
     case Ch == K_CTRL_A
 
         do while !eof()
-            if EdPrInv(1) == 0
+            if EdPrInv( 1, dat_inv_niv ) == 0
                 exit
             endif
             skip
@@ -536,6 +537,7 @@ return lVrati
 // ----------------------------------------
 static function _calc_priprz()
 local _t_area := SELECT()
+local _t_rec := RECNO()
 
 select priprz
 go top
@@ -559,6 +561,8 @@ do while !EOF()
 enddo
 
 select (_t_area)
+go ( _t_rec )
+
 return
 
 

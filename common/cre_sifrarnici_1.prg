@@ -71,34 +71,48 @@ CREATE_INDEX("NAZ","naz", "konto")
 index_mcode(SIFPATH, "KONTO")
 
 
-cIme := f18_ime_dbf("valute")
-if !file(cIme)
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
-        add_f_mcode(@aDbf)
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
-        AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
-        AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
-        AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  5 })
-        AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  5 })
-        AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
-        AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
-        dbcreate2("valute", aDbf)
+_created := .f.
+_table_name := "valute"
+_alias := "VALUTE"
 
-        reset_semaphore_version("valute")
-        my_use("valute")
-        close all
-    
+if !FILE( f18_ime_dbf( _table_name ) )
+    aDbf:={}
+    AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
+    add_f_mcode(@aDbf)
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
+    AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
+    AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
+    AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  5 })
+    AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  5 })
+    AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
+    AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
+    dbcreate2( _table_name , aDbf)
+
+    _created := .t.
+
 endif
 
-CREATE_INDEX("ID","id", "valute")
-CREATE_INDEX("NAZ","tip+id+dtos(datum)", "valute")
-CREATE_INDEX("ID2","id+dtos(datum)", "valute")
-index_mcode(cIme)
+// 0.8.8
+if ver["current"] < 0808
+    modstru( { "*" + _table_name, ;
+        "C KURS1 N 10 5 KURS1 N 10 6", ;
+        "C KURS2 N 10 5 KURS2 N 10 6", ;
+        "C KURS3 N 10 5 KURS3 N 10 6" } )
+endif
+
+if _created
+    reset_semaphore_version( _table_name )
+    my_use( _table_name )
+    close all 
+endif
+
+CREATE_INDEX( "ID", "id", _table_name )
+CREATE_INDEX( "NAZ", "tip+id+dtos(datum)", _table_name )
+CREATE_INDEX( "ID2", "id+dtos(datum)", _table_name )
+index_mcode( f18_ime_dbf( _table_name ) )
 
 // upisi default valute ako ne postoje
 fill_tbl_valute()
-
 
 // TNAL
 if !file(f18_ime_dbf("tnal"))

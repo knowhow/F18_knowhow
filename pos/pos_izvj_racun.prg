@@ -14,7 +14,6 @@
 
 
 function pos_stampa_racuna(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani)
-
 local cDbf
 local cIdRadnik
 local aPom:={}
@@ -49,10 +48,7 @@ endif
 
 SELECT &cPosDB
 
-//
 cCmnBrDok := cBrDok
-
-
 nIznos:=0
 nNeplaca:=0
 
@@ -84,14 +80,6 @@ endif
 
 do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
 	
-	if (gRadniRac="D" .and. gVodiTreb=="D" .and. GT=OBR_NIJE)
-      		// vodi se po trebovanjima, a za ovu stavku trebovanje 
-		// nije izgenerisano
-      		// s obzirom da se nalazimo u procesu zakljucenja, 
-		//nuliramo kolicinu
-      		replace kolicina with 0 // nuliraj kolicinu
-  	endif
-	
 	nIznos += Kolicina*Cijena
 	
 	select odj
@@ -121,16 +109,6 @@ enddo
 next
 //
 
-if gDisplay=="D"
-	Send2ComPort(CHR(10)+CHR(13))
-	Send2ComPort(CHR(10)+CHR(13))
-	Send2ComPort(CHR(30) + "UKUPAN IZNOS RN:")
-	//Send2ComPort(CHR(30))
-	Send2ComPort(CHR(22))
-	Send2ComPort(CHR(13))
-	Send2ComPort(ALLTRIM(STR(nIznos-nNeplaca, 10, 2)))
-endif
-
 // Ispisi iznos racuna velikim slovima
 ispisi_iznos_racuna_box( nIznos - nNeplaca )
 
@@ -150,9 +128,6 @@ seek cIdPos+"42"+dtos(dDatumRn)+cBrDok
 
 aPorezi:={}
 aRekPor:={}
-
-//do while !eof().and.(IdPos+IdVd+DTOS(datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
-
 
 do while !eof().and.(IdPos+IdVd+DTOS(datum))==(cIdPos+VD_RN+dtos(dDatumRn))
 	if ASCAN(aVezani, {|aVal| aVal[2] == &cPosDB->brdok}) == 0

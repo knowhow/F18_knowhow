@@ -127,7 +127,6 @@ do while !EOF() .and. _POS->( IdPos + IdVd + DTOS( Datum ) + BrDok ) == ( cIdPos
 enddo
 
 f18_free_tables({"pos_pos", "pos_doks"})
-
 sql_table_update( nil, "END" )
 
 log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )
@@ -137,3 +136,4 @@ select _pos
 zapp(.t.)
 
 return
+

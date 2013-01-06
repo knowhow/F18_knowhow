@@ -140,9 +140,6 @@ if klevel < L_UPRAVN
     AADD(opcexe, {|| P_Osob() })
 endif
 
-AADD(opc,"Z. promjena sifre PR")
-AADD(opcexe, {|| KL_PRacuna() })
-
 o_pos_sifre()
 
 Izbor:=1

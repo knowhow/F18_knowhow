@@ -25,7 +25,7 @@ private Izbor:=1
 AADD(opc, "1. izvjestaji                       ")
 AADD(opcexe, {|| pos_izvjestaji() })
 AADD(opc, "2. pregled racuna")   
-AADD(opcexe, {|| PromjeniID() })
+AADD(opcexe, {|| pos_pregled_racuna_tabela() })
 AADD(opc, "L. lista azuriranih dokumenata")
 AADD(opcexe, {|| pos_prepis_dokumenta()})
 AADD(opc, "R. robno-materijalno poslovanje")

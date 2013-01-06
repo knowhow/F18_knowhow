@@ -49,6 +49,7 @@ set_a_dbf_sifarnik("koncij"     , "KONCIJ"    , F_KONCIJ     )
 set_a_dbf_sifarnik("vrstep"     , "VRSTEP"    , F_VRSTEP     )
 set_a_dbf_sifarnik("pkonto"     , "PKONTO"    , F_PKONTO     )
 set_a_dbf_sifarnik("valute"     , "VALUTE"    , F_VALUTE     )
+set_a_dbf_sifarnik("fakt_objekti"  , "FAKT_OBJEKTI"  , F_FAKT_OBJEKTI   )
 
 set_a_dbf_temp     ("relation"   ,  "RELATION"    , F_RELATION   )
 set_a_dbf_temp     ("_roba"      ,  "_ROBA"       , F__ROBA      )

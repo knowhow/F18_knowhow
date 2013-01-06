@@ -273,13 +273,13 @@ do while !eof() .and. POS->IdOdj==cIdOdj
         	    //nVrijednost += (POS->Kol2-POS->Kolicina) * POS->Cijena
                 
                 // ima setovano i knjizna kolicina
-                if pos->kolicina <> 0
+                //if pos->kolicina <> 0
             	    nStanje -= ( POS->Kolicina - POS->Kol2 )
             	    nVrijednost += (POS->Kol2-POS->Kolicina) * POS->Cijena
-                else
-                    nStanje := pos->kol2
-		            nVrijednost := pos->kol2 * pos->cijena
-                endif
+                //else
+                  //  nStanje := pos->kol2
+		          //  nVrijednost := pos->kol2 * pos->cijena
+                //endif
 
       	    elseif pos->idvd $ DOK_IZLAZA
         	    nStanje -= POS->Kolicina

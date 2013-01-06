@@ -304,50 +304,49 @@ return _stanje
 
 
 function pos_iznos_dokumenta( lUI )
-local cRet:=SPACE(13)
+local cRet := SPACE(13)
 local l_u_i
-local nIznos:=0
+local nIznos := 0
 local cIdPos, cIdVd, cBrDok
 local dDatum
 
 select pos_doks
 
-cIdPos:=pos_doks->idPos
-cIdVd:=pos_doks->idVd
-cBrDok:=pos_doks->brDok
-dDatum:=pos_doks->datum
+cIdPos := pos_doks->idPos
+cIdVd := pos_doks->idVd
+cBrDok := pos_doks->brDok
+dDatum := pos_doks->datum
 
-if ((lUI==NIL) .or. lUI)
+if ( ( lUI == NIL ) .or. lUI )
     // ovo su ulazi ...
-    if pos_doks->IdVd $ VD_ZAD+"#"+VD_PCS+"#"+VD_REK
-        SELECT pos
+    if pos_doks->IdVd $ VD_ZAD + "#" + VD_PCS + "#" + VD_REK
+        select pos
         set order to tag "1"
         go top
-        SEEK cIdPos+cIdVd+DTOS(dDatum)+cBrDok
+        seek cIdPos + cIdVd + DTOS( dDatum ) + cBrDok
         do while !EOF() .and. pos->( IdPos + IdVd + DTOS(datum) + BrDok )==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
-            nIznos+=pos->kolicina*pos->cijena
+            nIznos += pos->kolicina * pos->cijena
             SKIP
         enddo
-        if pos_doks->idvd==VD_REK
+        if pos_doks->idvd == VD_REK
             nIznos := -nIznos
         endif
     endif
 endif
 
-if ((lUI==NIL) .or. !lUI)
+if ( ( lUI == NIL ) .or. !lUI )
     // ovo su, pak, izlazi ...
-    if pos_doks->IdVd $ VD_RN+"#"+VD_OTP+"#"+VD_RZS+"#"+VD_PRR+"#"+"IN"+"#"+"IN"
-
+    if pos_doks->idvd $ VD_RN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
         select pos
         set order to tag "1"
         go top
-        SEEK cIdPos + cIdVd + DTOS(dDatum) + cBrDok
+        seek cIdPos + cIdVd + DTOS(dDatum) + cBrDok
         do while !EOF() .and. pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
             do case
                 case pos_doks->idvd == "IN"
                     nIznos += pos->kol2 * pos->cijena
-                case pos_doks->IdVd==VD_NIV
-                    nIznos += pos->kolicina * ( pos->nCijena - pos->cijena )
+                case pos_doks->IdVd == VD_NIV
+                    nIznos += pos->kolicina * ( pos->ncijena - pos->cijena )
                 otherwise
                     nIznos += pos->kolicina * pos->cijena
             endcase
@@ -360,6 +359,7 @@ select pos_doks
 cRet := STR( nIznos, 13, 2 )
 
 return (cRet)
+
 
 
 // ---------------------------------------------------------

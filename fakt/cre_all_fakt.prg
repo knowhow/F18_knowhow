@@ -190,29 +190,6 @@ CREATE_INDEX("5", "datdok", _alias)
 CREATE_INDEX("6", "IdFirma+idpartner+idtipdok", _alias)
 
 
-// fakt objekti
-aDbf:={}
-AADD(aDBf,{ 'ID'   , 'C' ,   10 ,  0 })
-AADD(aDBf,{ 'NAZ'  , 'C' ,  100 ,  0 })
-
-_created := .f.
-_alias := "FAKT_OBJEKTI"
-_table_name := "fakt_objekti"
-
-if !FILE( f18_ime_dbf( _alias) )
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
-
-if _created 
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
-
-CREATE_INDEX( "ID", "ID", _alias )
-CREATE_INDEX( "NAZ", "NAZ", _alias )
-
 
 // fakt atributi
 aDbf:={}

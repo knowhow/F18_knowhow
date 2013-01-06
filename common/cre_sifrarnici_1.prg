@@ -349,6 +349,28 @@ CREATE_INDEX("ID", "ID", "OBJEKTI")
 CREATE_INDEX("NAZ", "NAZ", "OBJEKTI")
 CREATE_INDEX("IdObj", "IdObj", "OBJEKTI")
 
+// fakt objekti
+aDbf := {}
+AADD( aDBf,{ 'ID'   , 'C' ,   10 ,  0 } )
+AADD( aDBf,{ 'NAZ'  , 'C' ,  100 ,  0 } )
+
+_created := .f.
+_alias := "FAKT_OBJEKTI"
+_table_name := "fakt_objekti"
+
+if !FILE( f18_ime_dbf( _alias) )
+    DBCREATE2( _alias, aDbf )
+    _created := .t.
+endif
+
+if _created 
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    use
+endif
+
+CREATE_INDEX( "ID", "ID", _alias )
+CREATE_INDEX( "NAZ", "NAZ", _alias )
 
 nArea := nil
 
@@ -370,50 +392,55 @@ db_cre_ugov()
 return .t.
 
 
+
 // ----------------------------------------
+// dodaj defaut valute u sifrarnik valuta
 // ----------------------------------------
 function fill_tbl_valute()
 local _rec
-local _id
 
 close all
 my_use ('valute')
 
-_id := "000"
-hseek _id
-
-if !FOUND()
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"]    := "000" 
-    _rec["naz"]   := "KONVERTIBILNA MARKA"
-    _rec["naz2"]  := "KM"
-    _rec["datum"] := CTOD("01.01.04")
-    _rec["tip"]   := "D"
-    _rec["kurs1"] := 1
-    _rec["kurs2"] := 1
-    _rec["kurs3"] := 1
-    update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+if RECCOUNT() <> 0
+    close all
+    return .t.
 endif
 
-select valute 
-go top
-_id := "978"
-hseek _id
-
-if !FOUND()
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"]    := "978" 
-    _rec["naz"]   := "EURO"
-    _rec["naz2"]  := "EUR"
-    _rec["datum"] := CTOD("01.01.04")
-    _rec["tip"]   := "P"
-    _rec["kurs1"] := 0.51128
-    _rec["kurs2"] := 0.51128
-    _rec["kurs3"] := 0.51128
-    update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+if !f18_lock_tables({"valute"})
+    close all
+    return .t.
 endif
+
+sql_table_update( nil, "BEGIN" )
+
+append blank
+_rec := dbf_get_rec()
+_rec["id"]    := "000" 
+_rec["naz"]   := "KONVERTIBILNA MARKA"
+_rec["naz2"]  := "KM"
+_rec["datum"] := CTOD("01.01.04")
+_rec["tip"]   := "D"
+_rec["kurs1"] := 1
+_rec["kurs2"] := 1
+_rec["kurs3"] := 1
+update_rec_server_and_dbf( 'valute', _rec, 1, "CONT")
+
+append blank
+_rec := dbf_get_rec()
+_rec["id"]    := "978" 
+_rec["naz"]   := "EURO"
+_rec["naz2"]  := "EUR"
+_rec["datum"] := CTOD("01.01.04")
+_rec["tip"]   := "P"
+_rec["kurs1"] := 0.51128
+_rec["kurs2"] := 0.51128
+_rec["kurs3"] := 0.51128
+update_rec_server_and_dbf( 'valute', _rec, 1, "CONT" )
+
+
+f18_free_tables({"valute"})
+sql_table_update( nil, "END" )
 
 close all
 

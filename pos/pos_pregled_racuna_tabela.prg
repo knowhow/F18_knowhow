@@ -46,6 +46,11 @@ Box(,2,60)
     read
 BoxC()
 
+if LastKey() == K_ESC
+    close all
+    return
+endif
+
 cFil0 := ""
 
 if !EMPTY(dDatOd).and.!EMPTY(dDatDo)

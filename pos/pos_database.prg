@@ -1098,8 +1098,20 @@ go top
 seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
 
 if !FOUND()
-    select ( _t_area )
-    return _ret
+
+    // potrazi i u doks
+    select pos_doks
+    set filter to
+    set order to tag "1"
+    go top
+    seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
+    
+    // nema ga stvarno !!!
+    if !FOUND()    
+        select ( _t_area )
+        return _ret
+    endif
+
 endif 
 
 log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok), 2 )
@@ -1109,18 +1121,22 @@ if !f18_lock_tables({"pos_pos", "pos_doks"})
     return _ret
 endif     
 
+sql_table_update( nil, "BEGIN" )
+
 _ret := .t.          				
-_rec := dbf_get_rec()
 
 MsgO("Brisanje dokumenta iz glavne tabele u toku ...")
 
-sql_table_update( nil, "BEGIN" )
-	
-delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+select pos
+go top
+seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
+
+if FOUND()
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+endif
 
 select pos_doks
-set filter to
-set order to tag "1"
 go top
 seek id_pos + id_vd + DTOS( dat_dok ) + br_dok
 

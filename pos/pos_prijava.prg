@@ -28,48 +28,52 @@ nSifLen:=6
 
 do while .t.
 
-  SETPOS (Fx+4, Fy+15)
-  cKorSif:=UPPER(GetLozinka(nSifLen))
+    SETPOS (Fx+4, Fy+15)
   
-	if (cKorSif == "SIGMAX")
+    cKorSif := UPPER( GetLozinka( nSifLen ) )
+  
+	if ( ALLTRIM( cKorSif ) == "ADMIN" )
 		gIdRadnik := "XXXX" 
-		gKorIme   := "bring.out servis"
+		gKorIme   := "bring.out servis / ADMIN mode"
 		gSTRAD  := "A"      
 		cLevel := L_SYSTEM
 		EXIT
 	endif
 
-  // obradi specijalne sifre
-  HSpecSifre(cKorSif)
-  if (goModul:lTerminate)
-  	return
-  endif
-  SET CURSOR OFF
-  SETCOLOR (Normal)
+    // obradi specijalne sifre
+    HSpecSifre( cKorSif )
 
-  if SetUser(cKorSif, nSifLen, @cLevel) == 0
-  	loop
-  else
-  	exit
-  endif
+    if ( goModul:lTerminate )
+  	    return
+    endif
+
+    SET CURSOR OFF
+    SETCOLOR (Normal)
+
+    if SetUser(cKorSif, nSifLen, @cLevel) == 0
+  	    loop
+    else
+  	    exit
+    endif
 
 ENDDO
+
 pos_status_traka()
+
 CLOSE ALL
+
 return (cLevel)
 
 
 
-function HSpecSifre(cKorSif)
-  if trim(upper(cKorsif)) $ "X"
-    	goModul:lTerminate := .t.
-		//UgasitiR()
-  elseif trim(upper(cKorsif)) = "I"
-       	InstallOps(cKorSif)
-  elseif trim(upper(cKorsif)) = "M"
-     //errorlevel(57)
-     goModul:quit()
-  endif
+// obrada specijalnih sifara...
+function HSpecSifre( sifra )
+  
+if TRIM( UPPER( sifra )) $ "X"
+    goModul:lTerminate := .t.
+elseif TRIM( UPPER( sifra )) = "M"
+    goModul:quit()
+endif
 
 return
 

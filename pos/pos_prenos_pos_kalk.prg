@@ -423,6 +423,8 @@ if !FOUND()
     return
 endif
 
+MsgO( "Eksport dokumenta u toku ..." )
+
 do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
                     field->datum == dat_dok .and. field->brdok == br_dok 
    
@@ -458,6 +460,8 @@ do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
     skip
 
 enddo
+
+MsgC()
 
 if _r_br == 0
     MsgBeep( "Ne postoji niti jedna stavka u eksport tabeli !" )

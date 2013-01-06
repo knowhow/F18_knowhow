@@ -120,6 +120,8 @@ if _oper == "2"
     _rec2 := dbf_get_rec()
 endif
 
+MsgO( "Vrsim povrat dokumenta u pripremu ..." )
+
 select pos
 seek pos_doks->( IdPos + IdVd + DTOS(datum) + BrDok )
 
@@ -172,6 +174,8 @@ do while !EOF() .and. pos->( IdPos + IdVd + DTOS( datum ) + BrDok ) == ;
     skip
 
 enddo
+
+MsgC()
 
 select ( _t_area )
 return

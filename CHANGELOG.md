@@ -1,3 +1,9 @@
+1.4.68 2013-01-06, vsasa
+
+ - pos, sređivanje opcija unosa / povrata itd...
+ - valute, prošireno polje kurs na 6 decimala
+ - fakt, korekcije
+ 
 1.4.67 2013-01-05, vsasa
 
  - pos, spajanje dokumenata kod povrata u pripremu

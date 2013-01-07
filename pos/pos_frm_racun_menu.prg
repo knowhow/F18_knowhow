@@ -460,7 +460,7 @@ Box(, 8, 67 )
 BoxC()
 
 if LastKey() == K_ESC
-    _ok := "N"
+    _ok := "D"
 endif
 
 params["zakljuci"] := _ok

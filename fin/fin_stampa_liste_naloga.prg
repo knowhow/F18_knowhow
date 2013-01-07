@@ -20,16 +20,18 @@ local nPot := 0.00
 local nPos := 15
 
 cInteg := "N"
-nSort := 1
+nSort := 3
 
 cIdVN:="  "
 
-Box(,7,60)
-	@ m_x+1,m_Y+2 SAY "Provjeriti integritet podataka"
- 	@ m_x+2,m_Y+2 SAY "u odnosu na datoteku naloga D/N ?"  GET cInteg  pict "@!" valid cinteg $ "DN"
- 	@ m_x+4,m_Y+2 SAY "Sortiranje dokumenata po:  1-(firma,vn,brnal) "
- 	@ m_x+5,m_Y+2 SAY "2-(firma,brnal,vn),    3-(datnal,firma,vn,brnal) " GET nSort pict "9"
- 	@ m_x+7,m_Y+2 SAY "Vrsta naloga (prazno-svi) " GET cIDVN pict "@!"
+Box(, 9, 62)
+	@ m_x + 1 , m_Y + 2 SAY "Provjeriti integritet podataka"
+ 	@ m_x + 2 , m_Y + 2 SAY "u odnosu na datoteku naloga D/N ?"  GET cInteg  pict "@!" valid cinteg $ "DN"
+ 	@ m_x + 4 , m_Y + 2 SAY "Sortiranje dokumenata po:"
+ 	@ m_x + 5 , m_Y + 2 SAY " 1 - (firma,vn,brnal) "
+ 	@ m_x + 6 , m_Y + 2 SAY " 2 - (firma, brnal, vn)"
+ 	@ m_x + 7 , m_Y + 2 SAY " 3 - (datnal, firma, vn, brnal) " GET nSort pict "9"
+ 	@ m_x + 9 , m_Y + 2 SAY "Vrsta naloga (prazno-svi) " GET cIDVN pict "@!"
  	read
 	ESC_BCR
 BoxC()
@@ -48,7 +50,7 @@ if cinteg=="D"
 endif
 
 SELECT NALOG
-set order to nSort
+set order to TAG (ALLTRIM(to_str(nSort)))
 GO TOP
 
 nBrNalLen := LEN(field->brnal)

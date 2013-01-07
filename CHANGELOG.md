@@ -1,3 +1,7 @@
+1.4.69 2013-01-07, vsasa
+
+ - fakt, fiskalni INO računi, problem sa plaćanjem - BUGFIX
+ 
 1.4.68 2013-01-06, vsasa
 
  - pos, sređivanje opcija unosa / povrata itd...

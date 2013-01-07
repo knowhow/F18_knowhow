@@ -20,6 +20,7 @@ static __auto := .f.
 static __racun_na_email := NIL
 static __partn_ino
 static __partn_pdv
+static __vrsta_pl
 static __prikazi_partnera
 static __DRV_TREMOL := "TREMOL"
 static __DRV_FPRINT := "FPRINT"
@@ -231,6 +232,7 @@ if partn_arr <> NIL
     _partn_pdv := partn_arr[ 1, 8 ]
 else
     // uzmi na osnovu statickih varijabli
+    _v_plac := __vrsta_pl
     _partn_ino := __partn_ino
     _partn_pdv := __partn_pdv
 endif
@@ -530,6 +532,7 @@ elseif LEN( _partn_jib ) > 12
 endif
 
 // setuj staticke
+__vrsta_pl := _v_plac
 __partn_ino := _partn_ino
 __partn_pdv := _partn_pdv
 __prikazi_partnera := _prikazi_partnera

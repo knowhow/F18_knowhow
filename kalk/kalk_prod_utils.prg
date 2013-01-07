@@ -411,10 +411,6 @@ do case
       cMpc := "mpc"
 endcase
 
-//if roba->(fieldpos(cMpc)) == 0
-//	return .f.
-//endif
-
 lIsteCijene := (ROUND(roba->(&cMpc), 4) == ROUND(nCijena, 4))
 	
 if lIsteCijene

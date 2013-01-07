@@ -101,6 +101,7 @@ function pos_2_priprz()
 local _rec
 local _t_area := SELECT()
 local _oper := "1"
+local _exist, _rec2
 
 O_PRIPRZ
 select priprz
@@ -162,8 +163,10 @@ do while !EOF() .and. pos->( IdPos + IdVd + DTOS( datum ) + BrDok ) == ;
         if !FOUND()
             append blank
         else
+            // uzmi postojeci zapis iz pripreme
+            _exist := dbf_get_rec()
             // dodaj na postojecu kolicinu kolicinu sa novog dokumenta
-            _rec["kol2"] := _rec["kol2"] + _rec2["kol2"]
+            _rec["kol2"] := _rec["kol2"] + _exist["kol2"]
         endif
 
     endif

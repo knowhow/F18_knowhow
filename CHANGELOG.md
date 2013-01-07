@@ -1,3 +1,7 @@
+1.4.70 2013-01-07, vsasa
+
+ - pos, povrat inventure sa spajanjem - BUGFIX 
+ 
 1.4.69 2013-01-07, vsasa
 
  - fakt, fiskalni INO računi, problem sa plaćanjem - BUGFIX

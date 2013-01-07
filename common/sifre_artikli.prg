@@ -413,7 +413,6 @@ return .t.
 //---------------------------------------------------
 //---------------------------------------------------
 function OFmkRoba()
-
 O_SIFK
 O_SIFV
 O_KONTO
@@ -423,5 +422,173 @@ O_TARIFA
 O_ROBA
 O_SAST
 return
+
+
+
+// ----------------------------------------------------
+// provjera cijena u sifrarniku artikala
+// ----------------------------------------------------
+function sifre_artikli_provjera_mp_cijena()
+local _check := {}
+local _i, _n, _x, _mpc
+local _line
+local _decimal := 2
+
+select ( F_ROBA )
+if !Used()
+    O_ROBA
+endif
+
+MsgO( "Provjera sifrarnika artikala u toku ..." )
+go top
+do while !EOF()
+
+    // prodji kroz MPC setove    
+    for _n := 1 to 9
+           
+        // MPC, MPC2, MPC3...
+
+        _tmp := "mpc"
+
+        if _n > 1
+            _tmp += ALLTRIM(STR( _n ))
+        endif
+
+        _mpc := field->&_tmp
+
+        if ABS( _mpc ) - ABS( VAL( STR( _mpc, 12, _decimal ) ) ) <> 0
+
+            _n_scan := ASCAN( _check, { | val | val[1] == field->id  })
+
+            if _n_scan == 0
+                // dodaj u matricu...
+                AADD( _check, { field->id, field->barkod, field->naz, ;
+                            IF( _n == 1, _mpc, 0 ), ;
+                            IF( _n == 2, _mpc, 0 ), ;
+                            IF( _n == 3, _mpc, 0 ), ;
+                            IF( _n == 4, _mpc, 0 ), ;
+                            IF( _n == 5, _mpc, 0 ), ;
+                            IF( _n == 6, _mpc, 0 ), ;
+                            IF( _n == 7, _mpc, 0 ), ;
+                            IF( _n == 8, _mpc, 0 ), ;
+                            IF( _n == 9, _mpc, 0 ) } )
+            else
+                // dodaj u postojecu matricu
+                _check[ _n_scan, 2 + _n ] := _mpc
+            endif
+
+        endif
+
+    next
+
+    skip
+
+enddo
+
+MsgC()
+
+// nema gresaka
+if LEN( _check ) == 0
+    close all
+    return
+endif
+
+START PRINT CRET
+
+?
+
+P_COND2
+
+_count := 0
+_line := _get_check_line()
+
+? _line
+
+? "Lista artikala sa nepravilnom MPC"
+
+? _line
+
+? PADR( "R.br.", 6 ), PADR( "Artikal ID", 10 ), PADR( "Barkod", 13 ), ;
+    PADR( "Naziv artikla", 30 ), ;
+    PADC( "MPC1", 15 ), ;
+    PADC( "MPC2", 15 ), ;
+    PADC( "MPC3", 15 ), ;
+    PADC( "MPC4", 15 ), ;
+    PADC( "MPC5", 15 ), ;
+    PADC( "MPC6", 15 ), ;
+    PADC( "MPC7", 15 ), ;
+    PADC( "MPC8", 15 ), ;
+    PADC( "MPC9", 15 )
+ 
+? _line
+
+for _i := 1 to LEN( _check )
+
+    ? PADL( ALLTRIM(STR( ++ _count )) + ".", 6 )
+    // id
+    @ prow(), pcol() + 1 SAY _check[ _i, 1 ]
+    // barkod
+    @ prow(), pcol() + 1 SAY _check[ _i, 2 ]
+    // naziv
+    @ prow(), pcol() + 1 SAY PADR( _check[ _i, 3 ], 30 )
+
+    // setovi cijena...
+    for _x := 1 to 9
+
+        // mpc, mpc2, mpc3...
+        _cijena := _check[ _i, 3 + _x ]
+
+        if ROUND( _cijena, 4 ) == 0
+            _tmp := PADR( "", 15 )
+        else
+            _tmp := STR( _cijena, 15, 4 )
+        endif
+
+        @ prow(), pcol() + 1 SAY _tmp
+
+    next
+next
+
+? _line
+
+FF
+
+close all
+
+END PRINT
+
+return
+
+
+static function _get_check_line()
+local _line := ""
+
+_line += REPLICATE( "-", 6 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 10 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 13 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 30 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+_line += SPACE(1)
+_line += REPLICATE( "-", 15 )
+
+return _line
 
 

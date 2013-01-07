@@ -14,41 +14,33 @@
 
 
 function MAdminKALK()
-private Opc:={}
-private opcexe:={}
-AADD(Opc,"1. instalacija db-a                               ")
-AADD(opcexe, {|| goModul:oDatabase:install()})
-AADD(Opc,"3. markiraj polje roba/sez - sifk")
-AADD(opcexe, {|| MPSifK()})
-AADD(Opc,"4. ubaci partnera iz dokumenata u sifrarnik robe")
-AADD(opcexe, {|| DobUSifK()})
-AADD(opc,"5. sredjivanje kartica")
-AADD(opcexe, {|| MenuSK() })
-AADD(opc,"6. generacija kumulativne baze")
-AADD(opcexe, {|| Gen9999()})
-AADD(opc,"7. setmarza10")
-AADD(opcexe, {|| SetMarza10()})
-AADD(opc,"8. brisanje artikala koji se ne koriste")
-AADD(opcexe, {|| Mnu_BrisiSifre()})
-AADD(opc,"9. konverzija polja SIFRADOB")
-AADD(opcexe, {|| c_sifradob()})
-AADD(opc,"A. Set pdv cijene mpc/mpc2 u sifrarniku artikala")
-AADD(opcexe, {|| set_pdv_cijene()})
-AADD(opc,"K. kopiraj set cijena iz/u")
-AADD(opcexe, {|| kopiraj_set_cijena()})
-AADD(opc,"B. Pomnozi sa faktorom mpc/mpc2 u sifrarniku artikala")
-AADD(opcexe, {|| SetPomnoziCijene()})
-AADD(opc,"D. Brisi dokumente za period")
-AADD(opcexe, {|| del_docs()})
-AADD(opc,"T. export kalk baza podataka")
-AADD(opcexe, {|| kalk_export()})
-AADD(opc,"U. spajanje kalk baza podataka iz sezona")
-AADD(opcexe, {|| kalk_join()})
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-private Izbor:=1
-Menu_SC("admk")
+AADD( _opc,"1. sredjivanje kartica                                            ")
+AADD( _opcexe, {|| MenuSK() })
+AADD( _opc,"2. ubaci partnera iz dokumenata u sifrarnik robe")
+AADD( _opcexe, {|| DobUSifK()})
+AADD( _opc,"3. brisanje artikala koji se ne koriste")
+AADD( _opcexe, {|| Mnu_BrisiSifre()})
+AADD( _opc,"4. konverzija polja SIFRADOB")
+AADD( _opcexe, {|| c_sifradob()})
+AADD( _opc,"5. kopiraj set cijena iz/u")
+AADD( _opcexe, {|| kopiraj_set_cijena()})
+AADD( _opc,"6. Pomnozi sa faktorom mpc/mpc2 u sifrarniku artikala")
+AADD( _opcexe, {|| SetPomnoziCijene()})
+AADD( _opc,"7. export kalk baza podataka")
+AADD( _opcexe, {|| kalk_export()})
+AADD( _opc,"8. kontrola maloprodajnih cijena ")
+AADD( _opcexe, {|| sifre_artikli_provjera_mp_cijena() })
+
+f18_menu("admk", .f., _izbor, _opc, _opcexe )
+
 close all
 return
+
+
 
 
 function MenuSK()

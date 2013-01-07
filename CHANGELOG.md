@@ -1,6 +1,7 @@
 1.4.70 2013-01-07, vsasa
 
  - pos, povrat inventure sa spajanjem - BUGFIX 
+ - kalk, provjera maloprodajnih cijena sa decimalama većim od 2 
  
 1.4.69 2013-01-07, vsasa
 

@@ -32,6 +32,7 @@ if (lAuto==NIL)
     lAuto:=.f.
 endif
 
+fin_set_broja_naloga()
 o_fin_za_azuriranje()
 
 if fin_pripr->( RECCOUNT() == 0 ) .or. ( !lAuto .and. Pitanje("pAz", "Izvrsiti azuriranje fin naloga ? (D/N)?", "N") == "N" )
@@ -374,7 +375,7 @@ do while !eof()
     // prodji kroz PSUBAN i vidi da li je nalog zatvoren
     // samo u tom slucaju proknjizi nalog u odgovarajuce datoteke
     cNal := IDFirma+IdVn+BrNal
-    nSaldo:=0
+    nSaldo := 0
     do while !eof() .and. cNal == IdFirma + IdVn + BrNal
 
         if !psuban_partner_check()

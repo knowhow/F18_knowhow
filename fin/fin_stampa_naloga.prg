@@ -241,6 +241,7 @@ return
  */
  
 function SintStav(lAuto)
+local _datnal
 
 if lAuto == NIL
 	lAuto := .f.
@@ -271,28 +272,34 @@ DO WHILE !EOF()
 
    nStr:=0
    nD1:=nD2:=nP1:=nP2:=0
-   cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
-
-   DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal     // jedan nalog
+   cIdFirma:=IdFirma
+   cIDVn=IdVN 
+   cBrNal:=BrNal
+   _datnal := CTOD("")
+   DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal
 
          cIdkonto:=idkonto
 
          nDugBHD:=nDugDEM:=0
          nPotBHD:=nPotDEM:=0
+
          IF D_P="1"
-               nDugBHD:=IznosBHD; nDugDEM:=IznosDEM
+               nDugBHD:=IznosBHD
+               nDugDEM:=IznosDEM
          ELSE
-               nPotBHD:=IznosBHD; nPotDEM:=IznosDEM
+               nPotBHD:=IznosBHD
+               nPotDEM:=IznosDEM
          ENDIF
+
+         _datnal := MAX(_datnal, datdok)
 
          SELECT PANAL     // analitika
 
          seek cidfirma+cidvn+cbrnal+cidkonto
          fNasao:=.f.
 
-         DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal ;
-                    .and. IdKonto==cIdKonto
-           if gDatNal=="N"
+         DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal  .and. IdKonto==cIdKonto
+           if gDatNal == "N"
               if month(psuban->datdok)==month(datnal)
                 fNasao:=.t.
                 exit
@@ -313,18 +320,17 @@ DO WHILE !EOF()
          REPLACE IdFirma WITH cIdFirma,IdKonto WITH cIdKonto,IdVN WITH cIdVN,;
                  BrNal with cBrNal,;
                  DatNal WITH iif(gDatNal=="D",dDatNal,max(psuban->datdok,datnal)),;
-                 DugBHD WITH DugBHD+nDugBHD,PotBHD WITH PotBHD+nPotBHD,;
+                 DugBHD WITH DugBHD+nDugBHD, PotBHD WITH PotBHD+nPotBHD,;
                  DugDEM WITH DugDEM+nDugDEM, PotDEM WITH PotDEM+nPotDEM
 
 
          SELECT PSINT
-         seek cidfirma+cidvn+cbrnal+left(cidkonto,3)
+         seek cidfirma + cidvn + cbrnal + LEFT(cidkonto,3)
 
          fNasao:=.f.
 
-         DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal ;
-                   .and. left(cidkonto,3)==idkonto
-           if gDatNal=="N"
+         DO WHILE !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal .and. left(cidkonto,3)==idkonto
+           if gDatNal == "N"
             if  month(psuban->datdok)==month(datnal)
               fNasao:=.t.
               exit
@@ -358,18 +364,19 @@ DO WHILE !EOF()
 
    SELECT PNALOG    // datoteka naloga
    APPEND BLANK
-   REPLACE IdFirma WITH cIdFirma,IdVN WITH cIdVN,BrNal WITH cBrNal,;
-           DatNal WITH iif(gDatNal=="D",dDatNal,date()),;
+   REPLACE IdFirma WITH cIdFirma,IdVN WITH cIdVN, ;
+           BrNal  WITH cBrNal,;
+           DatNal WITH _datnal, ;
            DugBHD WITH nD1,PotBHD WITH nP1,;
            DugDEM WITH nD2,PotDEM WITH nP2
 
    private cDN := "N"
 
     if !lAuto
-        Box(, 2, 58)
+        Box(, 2, 65)
             @ m_x+1, m_y+2 SAY "Stampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN pict "@!" valid cDN $ "DN"
             if gDatNal == "D"
-                @ m_x+2,m_y+2 SAY "Datum naloga:" GET dDatNal
+                @ m_x+2, m_y + 2 SAY "Datum naloga:" GET dDatNal
             endif
             read
         BoxC()
@@ -397,7 +404,7 @@ do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
    do while !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal     // jedan nalog
-     replace rbr with str(++nRbr,3)
+     replace rbr with str(++nRbr, 3)
      skip
    enddo
 enddo
@@ -408,7 +415,7 @@ do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
    do while !eof() .and. cIdFirma==IdFirma .AND. cIdVN==IdVN .AND. cBrNal==BrNal     // jedan nalog
-     replace rbr with str(++nRbr,3)
+     replace rbr with str(++nRbr, 3)
      skip
    enddo
 enddo

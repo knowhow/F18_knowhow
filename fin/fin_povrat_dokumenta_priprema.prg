@@ -49,7 +49,7 @@ set order to tag "4"
 cIdFirma         :=gFirma
 cIdFirma2        :=gFirma
 cIdVN := cIdVN2  := space(2)
-cBrNal:= cBrNal2 := space(8)
+cBrNal:= cBrNal2 := space(12)
 
 Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
 

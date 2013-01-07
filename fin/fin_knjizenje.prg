@@ -14,6 +14,7 @@
 
 static cTekucaRj := ""
 static __par_len
+static __datnal    := NIL
 
 // FmkIni_KumPath_TekucaRj - Tekuca radna jedinica
 // Koristi se u slucaju da u Db unosimo podatke za odredjenu radnu jedinicu
@@ -69,7 +70,7 @@ ImeKol:={ ;
           {"Konto",         {|| IdKonto }, "IdKonto", {|| .t.}, {|| P_Konto(@_IdKonto),.t. } } ,;
           {"Partner",       {|| IdPartner }, "IdPartner" } ,;
           {"Br.veze ",      {|| BrDok   }, "BrDok" } ,;
-          {"Datum",         {|| DatDok  }, "DatDok" } ,;
+          {"DatDok",        {|| DatDok  }, "DatDok" } ,;
           {"D/P",           {|| D_P     }, "D_P" } ,;
           {ValDomaca(),     {|| transform(IznosBHD,FormPicL(gPicBHD, 15)) }, "iznos "+ALLTRIM(ValDomaca()) } ,;
           {ValPomocna(),    {|| transform(IznosDEM,FormPicL(gPicDEM, 10)) }, "iznos "+ALLTRIM(ValPomocna()) } ,;
@@ -196,14 +197,13 @@ return
 
 
 
-
 // ---------------------------------------------------------
 // fin priprema, edit key handler
 // ---------------------------------------------------------
 function edit_fin_priprema()
 local _fakt_params := fakt_params()
 local _fin_params := fin_params()
-local _ostav := NIL 
+local _ostav := NIL
 local _iznos_unesen := .f.
 parameters fNovi
 
@@ -222,14 +222,14 @@ endif
 set cursor on
 
 if gNW=="D"
-    @  m_x+1,m_y+2 SAY "Firma: "
-        ?? gFirma,"-",gNFirma
-        @  m_x+3,m_y+2 SAY "NALOG: "
-        @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26) PICT "@!"
+    @  m_x + 1, m_y + 2 SAY "Firma: "
+        ?? gFirma,"-", gNFirma
+        @  m_x + 3,m_y+2 SAY "NALOG: "
+        @  m_x + 3, m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26) PICT "@!"
 else
-    @  m_x+1,m_y+2 SAY "Firma:" GET _idfirma VALID {|| P_Firma(@_IdFirma,1,20), _idfirma:=left(_idfirma,2),.t.}
+    @  m_x + 1, m_y + 2 SAY "Firma:" GET _idfirma VALID {|| P_Firma(@_IdFirma,1,20), _idfirma := left(_idfirma, 2), .t. }
         @  m_x+3,m_y+2 SAY "NALOG: "
-        @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26)
+        @  m_x + 3, m_y + 14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26)
 endif
 read
 
@@ -237,11 +237,7 @@ ESC_RETURN 0
 
 if fNovi .and. ( _idfirma <> idfirma .or. _idvn <> idvn )
     
-    // momenat setovanja broja naloga
-    // setujemo sve na 0, ali kada uvedemo globalni brojac
-    _brnal := fin_prazan_broj_naloga()
-    //_brnal := nextnal( _idfirma, _idvn )
-    select  fin_pripr
+    @ m_x + 3, m_y + 35 SAY "Datum:" GET __datnal WHEN init_datnal(_idfirma, _idvn) VALID {|| _brnal := fin_brnal_0(_idfirma, _idvn, __datnal), .t. }
 
 endif
 
@@ -253,7 +249,7 @@ set key K_ALT_O to KonsultOS()
 @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
 if gNW <> "D"
-    @ m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
+    @ m_x+7, m_y + 14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
 endif
 
 if (IsRamaGlas())
@@ -351,8 +347,18 @@ select fin_pripr
 
 return 1
 
+// -----------------------------------------
+// inicijaliziraj datum naloga
+// -----------------------------------------
+static function init_datnal(_idfirma, _idvn)
 
+if YEAR(fin_pripr->datdok) > 1990
+   __datnal := fin_pripr->datdok
+else
+   __datnal := DATE()
+endif
 
+return .t.
 
 // provjeri datum dokumenta na osnovu tek.sezona i upozori
 static function chk_sezona()
@@ -795,8 +801,7 @@ do case
                     "", "Brisanje kompletne pripreme !")
             endif
 
-            // ima li potrebe resetovati gl.brojac
-            fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
+            fin_rewind(fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->datdok, fin_pripr->brnal)
  
             // zapuj pripremu
             zapp()
@@ -809,9 +814,7 @@ do case
 
     case Ch == K_CTRL_P
 
-
-		// setuj mi broj dokumenta
-        fin_set_broj_dokumenta()
+        fin_set_broja_naloga()
 
         close all
 		// stampaj stavke
@@ -824,12 +827,8 @@ do case
 
     case UPPER(Chr(Ch)) == "X" 
 
-		// setuj fin broj dokumenta ako ima potrebe za tim
-        fin_set_broj_dokumenta()
-        
-		close all
-		
-		// stampaj dokument
+        fin_set_broja_naloga()
+        close all
         stampa_fin_document(.t.)
         close all
         fin_azur(.t.)
@@ -839,20 +838,16 @@ do case
 
     case Ch == K_ALT_A
         
-		// setuj fin broj dokumenta ako je potrebno
-        fin_set_broj_dokumenta()
-		// azuriraj dokument
         fin_azur()
         o_fin_edit()
         return DE_REFRESH
 
     case Ch == K_ALT_B
         
-		// setuj fin broj dokumenta ako je potrebno
-        fin_set_broj_dokumenta()
+        fin_set_broja_naloga()
 
         close all
-		// blagajnicki izvjestaj	
+        // blagajnicki izvjestaj	
         Blagajna()
 
         o_fin_edit()
@@ -861,7 +856,7 @@ do case
 
     case Ch==K_ALT_I
 
-        fin_set_broj_dokumenta()
+        fin_set_broja_naloga()
         OiNIsplate()
         
 		return DE_CONT

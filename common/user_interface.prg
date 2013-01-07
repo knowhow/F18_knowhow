@@ -265,7 +265,9 @@ return cAction
 */
 
 function Msg(text, sec, xPos)
-local l, msg_x1, msg_x2, msg_y1, msg_y2, cPom:=SET(_SET_DEVICE)
+
+local l, msg_x1, msg_x2, msg_y1, msg_y2, cPom := SET(_SET_DEVICE)
+local _align, _out
 
 LOCAL nLen, nHashPos, aText := {}, nCnt, nBrRed := 0
 
@@ -274,6 +276,13 @@ if gAppSrv
     return
 endif
 
+IF(LEFT(text, 2)) == "L#"
+  _align := "L"
+  text := SUBSTR(text, 3)
+else
+  _align := "C"
+endif
+  
 SET DEVICE TO SCREEN
 
 WHILE (nHashPos := AT ("#", Text)) > 0
@@ -297,7 +306,7 @@ NEXT
 // l:=Len(Text)
 IF xPos == NIL
    msg_x1:= 8 - INT (nBrRed / 2)
-   msg_x2:= 13 + nBrRed - INT (nBrRed / 2)             // nBrRed >= 1
+   msg_x2:= 13 + nBrRed - INT (nBrRed / 2) // nBrRed >= 1
 ELSE
    msg_x1 := xPos
    msg_x2 := xPos + 5 + nBrRed
@@ -313,8 +322,14 @@ StackPush(aMsgStack, { if(setcursor()==0, 0, iif(readinsert(),2,1)), setcolor(In
 @ msg_x1+1,msg_y1+2 TO msg_x2-1,msg_y2-2 DOUBLE
 
 FOR nCnt := 1 TO nBrRed
-   @ msg_x1+2+nCnt,msg_y1+4 SAY PADC (aText [nCnt], l)
+   if _align == "C"
+      _out := PADC(aText[nCnt], l)
+   else
+      _out := PADR(aText[nCnt], l)
+   endif
+   @ msg_x1 + 2 + nCnt, msg_y1+4 SAY _out
 NEXT
+
 Inkey(Sec)
 
 MsgC(msg_x1,msg_y1,msg_x2,msg_y2)
@@ -1356,7 +1371,7 @@ return VAL(SUBSTR(cPicture,nPozS+1))
 
 // ------------------------
 // ------------------------
-function MsgBeep(cMsg)
+function MsgBeep(cMsg, align)
 local _set
 cMsg := hb_Utf8ToStr(cMsg)
 
@@ -1382,9 +1397,17 @@ INKEY_MOVE          Mouse motion events are allowed
 */
 
 _set := set( _SET_EVENTMASK, INKEY_KEYBOARD )
+/*
 // poruke koje su duze od 70 znakova
 if LEN(cMsg) > MAXCOLS()-11 .and.  (AT(cMsg, "#") == 0) 
   cMsg := SUBSTR(cMsg, 1, MAXCOLS()-11) + "#" + SUBSTR(cMsg, MAXCOLS()-10, MAXCOLS()-11) + "#..." 
+endif
+*/
+
+if align <> NIL
+   if UPPER(align) == "L"
+      cMsg := "L#" + cMsg
+   endif
 endif
 
 #ifdef TEST

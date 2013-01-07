@@ -41,7 +41,7 @@ return
 // ---------------------------------------
 static function par_obrada()
 local nX := 1
-local _k1, _k2, _k3, _k4
+local _k1 := "N", _k2 := "N", _k3 := "N", _k4 := "N"
 
 Box(,23,70)
 
@@ -65,10 +65,10 @@ Box(,23,70)
  	@ m_x + nX, m_y + 2 SAY "Unos polja K1 - K4 ? (D/N)"
  	++ nX
 	
-    read_dn_parametar("K1", m_x + nX, m_y + 2, @_k1)
-    read_dn_parametar("K2", m_x + nX, col() + 2, @_k2)
-    read_dn_parametar("K3", m_x + nX, col() + 2, @_k3)
-    read_dn_parametar("K4", m_x + nX, col() + 2, @_k4)
+        read_dn_parametar("K1", m_x + nX, m_y + 2, @_k1)
+        read_dn_parametar("K2", m_x + nX, col() + 2, @_k2)
+        read_dn_parametar("K3", m_x + nX, col() + 2, @_k3)
+        read_dn_parametar("K4", m_x + nX, col() + 2, @_k4)
 
 	nX := nX + 2
 

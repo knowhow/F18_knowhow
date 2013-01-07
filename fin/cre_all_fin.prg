@@ -10,21 +10,24 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
+#include "cre_all.ch"
 
 function cre_all_fin(ver)
 local aDbf
 local _alias, _table_name
 local _created
+local _tbl
 
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
 AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
 AADD(aDBf,{ "IDPARTNER"           , "C" ,   6 ,  0 })
 AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-AADD(aDBf,{ "BRNAL"               , "C" ,   8 ,  0 })
+AADD(aDBf,{ "BRNAL"               , "C" ,  12 ,  0 })
 AADD(aDBf,{ "RBR"                 , "C" ,   4 ,  0 })
 AADD(aDBf,{ "IDTIPDOK"            , "C" ,   2 ,  0 })
-AADD(aDBf,{ "BRDOK"               , "C" ,   10 ,  0 })
+AADD(aDBf,{ "BRDOK"               , "C" ,  10,  0 })
 AADD(aDBf,{ "DATDOK"              , "D" ,   8 ,  0 })
 AADD(aDBf,{ "DatVal"              , "D" ,   8 ,  0 })
 AADD(aDBf,{ "OTVST"               , "C" ,   1 ,  0 })
@@ -45,22 +48,23 @@ AADD(aDBf,{ "FOND"                , "C" ,   4 ,  0 })
 _created := .f.
 _alias := "SUBAN"
 _table_name := "fin_suban"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
 
+IF_NOT_FILE_DBF_CREATE
+ 
 // 0.3.0
-if ver["current"] < 00300
+if ver["current"] > 00000 .and. ver["current"] < 00300
    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
+// 0.10.00
+if ver["current"] > 00000 .and. ver["current"] < 01000
+ for each _tbl in { "fin_suban", "fin_anal", "fin_sint", "fin_nalog", "fin_pripr", "fin_psuban", "fin_panal", "fin_psint", "fin_pnalog" }
+    modstru({"*" + _tbl, ; 
+        "C BRNAL C 8 0 BRNAL C 12 0"  ;
+    })
+ next
 endif
- 
+
 CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias) 
 CREATE_INDEX( "2", "IdFirma+IdPartner+IdKonto", _alias)
 CREATE_INDEX( "3", "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)", _alias)
@@ -95,9 +99,8 @@ CREATE_INDEX("2", "idFirma+IdVN+BrNal+IdKonto", _alias)
 // ----------------------------------------------------------------------------
 _alias := "FIN_PRIPR"
 _table_name := "fin_pripr"
-if !FILE(f18_ime_dbf(_alias))
-    DBcreate2(_alias, aDbf)
-endif
+
+IF_NOT_FILE_DBF_CREATE
 
 // 0.4.1
 if ver["current"] < 00401
@@ -115,7 +118,7 @@ aDbf:={}
 AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
 AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
 AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-AADD(aDBf,{ "BRNAL"               , "C" ,   8 ,  0 })
+AADD(aDBf,{ "BRNAL"               , "C" ,  12 ,  0 })
 AADD(aDBf,{ "RBR"                 , "C" ,   3 ,  0 })
 AADD(aDBf,{ "DATNAL"              , "D" ,   8 ,  0 })
 AADD(aDBf,{ "DUGBHD"              , "N" ,  17 ,  2 })
@@ -123,12 +126,8 @@ AADD(aDBf,{ "POTBHD"              , "N" ,  17 ,  2 })
 AADD(aDBf,{ "DUGDEM"              , "N" ,  15 ,  2 })
 AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 
-if !FILE(f18_ime_dbf(_alias))
-        DBcreate2( _alias, aDbf )
-        reset_semaphore_version(_table_name)
-        my_use(_alias)
-        close all
-endif
+
+IF_NOT_FILE_DBF_CREATE
             
 CREATE_INDEX("1", "IdFirma+IdKonto+dtos(DatNal)", _alias)
 CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", _alias)
@@ -155,7 +154,7 @@ aDbf:={}
 AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
 AADD(aDBf,{ "IDKONTO"             , "C" ,   3 ,  0 })
 AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-AADD(aDBf,{ "BRNAL"               , "C" ,   8 ,  0 })
+AADD(aDBf,{ "BRNAL"               , "C" ,  12 ,  0 })
 AADD(aDBf,{ "RBR"                 , "C" ,   3 ,  0 })
 AADD(aDBf,{ "DATNAL"              , "D" ,   8 ,  0 })
 AADD(aDBf,{ "DUGBHD"              , "N" ,  17 ,  2 })
@@ -165,13 +164,9 @@ AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 
 _alias := "SINT"
 _table_name := "fin_sint"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    close all
-endif
- 
+
+IF_NOT_FILE_DBF_CREATE
+
 CREATE_INDEX("1", "IdFirma+IdKonto+dtos(DatNal)", _alias)
 CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", _alias)
 CREATE_INDEX("3", "datnal", _alias)
@@ -195,7 +190,7 @@ CREATE_INDEX("1", "IdFirma+IdVn+BrNal+idkonto", _alias)
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
 AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-AADD(aDBf,{ "BRNAL"               , "C" ,   8 ,  0 })
+AADD(aDBf,{ "BRNAL"               , "C" ,  12 ,  0 })
 AADD(aDBf,{ "DATNAL"              , "D" ,   8 ,  0 })
 AADD(aDBf,{ "DUGBHD"              , "N" ,  17 ,  2 })
 AADD(aDBf,{ "POTBHD"              , "N" ,  17 ,  2 })
@@ -205,12 +200,8 @@ AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
 
 _alias := "NALOG"
 _table_name := "fin_nalog"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    close all
-endif
+
+IF_NOT_FILE_DBF_CREATE
 
 CREATE_INDEX("1", "IdFirma+IdVn+BrNal", _alias) 
 CREATE_INDEX("2", "IdFirma+str(val(BrNal),8)+idvn", _alias) 
@@ -226,8 +217,6 @@ endif
 
 CREATE_INDEX("1","IdFirma+IdVn+BrNal", _alias)
 
-
-
 aDbf:={}
 AADD(aDBf,{ "ID"      , "C" ,   5 ,  0 })
 AADD(aDBf,{ "NAZ"     , "C" ,  35 ,  0 })
@@ -236,17 +225,8 @@ _created := .f.
 _alias := "FUNK"
 _table_name := "fin_funk"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
-
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
-     
+IF_NOT_FILE_DBF_CREATE
+ 
 CREATE_INDEX("ID","id", _alias )
 CREATE_INDEX("NAZ","NAZ", _alias )
 
@@ -258,17 +238,8 @@ _created := .f.
 _alias := "FOND"
 _table_name := "fin_fond"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
-
-if _created
-    reset_semaphore_version(_table_name)
-    my_usex(_alias)
-    USE
-endif
-     
+IF_NOT_FILE_DBF_CREATE
+ 
 CREATE_INDEX("ID","id", _alias )
 CREATE_INDEX("NAZ","NAZ", _alias )
 
@@ -293,31 +264,29 @@ CREATE_INDEX("1", "IdRj+Idkonto", _alias )
 CREATE_INDEX("2", "Idkonto",      _alias )
 
 
+aDBf:={}
+AADD(aDBf,{ "IDPARTIJA"           , "C" ,   6 ,  0 })
+AADD(aDBf,{ "Idkonto"             , "C" ,   7 ,  0 })
+ 
+_alias := "PAREK"
+_table_name := "fin_parek"
 
-//PAREK (ekontomske kategorije - budzet)
-if !FILE(f18_ime_dbf("parek"))
-    aDBf:={}
-    AADD(aDBf,{ "IDPARTIJA"           , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "Idkonto"             , "C" ,   7 ,  0 })
-    DBcreate2("PAREK",aDbf)
-    reset_semaphore_version("fin_parek")
-    my_use("parek")
-    close all
-endif
-CREATE_INDEX("1","IdPartija","PAREK")
+IF_NOT_FILE_DBF_CREATE
 
-//BUIZ
-if !FILE(f18_ime_dbf("buiz"))
-    aDBf:={}
-    AADD(aDBf,{ "ID"        , "C" ,   7 ,  0 })
-    AADD(aDBf,{ "NAZ"       , "C" ,  10 ,  0 })
-    DBcreate2("BUIZ",aDbf)
-    reset_semaphore_version("fin_buiz")
-    my_use("buiz")
-    close all
-endif
-CREATE_INDEX( "ID"  , "ID"  , "BUIZ" )
-CREATE_INDEX( "NAZ" , "NAZ" , "BUIZ" )
+CREATE_INDEX("1","IdPartija", _alias)
+
+
+aDBf := {}
+AADD(aDBf,{ "ID"        , "C" ,   7 ,  0 })
+AADD(aDBf,{ "NAZ"       , "C" ,  10 ,  0 })
+ 
+_alias := "BUIZ"
+_table_name := "fin_buiz"
+
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX( "ID"  , "ID"  , _alias)
+CREATE_INDEX( "NAZ" , "NAZ" , _alias)
 
 //ULIMIT
 if !FILE(f18_ime_dbf("ulimit"))
@@ -416,6 +385,3 @@ CREATE_INDEX("1", "idpartner+brdok+dtos(datod)", _alias)
 cre_rule_cdx()
 
 return
-
-
-

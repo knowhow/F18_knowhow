@@ -15,6 +15,7 @@
 
 CLASS FaktCounter  INHERIT  DocCounter
     METHOD New
+    METHOD set_sql_get
 ENDCLASS
 
 METHOD FaktCounter:New(idfirma, idtipdok, datdok, new_number)	
@@ -33,6 +34,20 @@ if new_number
 endif
 
 return SELF
+
+// --------------------------------------
+// --------------------------------------
+METHOD FaktCounter:set_sql_get()
+
+// uzmi brdok iz fakt_doks za zadatu firmu, tip dokumenta, i dokumente iz zadane godine
+::c_sql_get := "select brdok from fmk.fakt_doks where idfirma=" + _sql_quote(::a_s_param[2]) + ;
+               " AND idtipdok=" + _sql_quote(::a_s_param[3]) + ;
+               " AND EXTRACT(YEAR FROM datdok)=" + ALLTRIM(STR(::year)) + ;
+               " ORDER BY (datdok, brdok) DESC LIMIT 1"
+
+return .t.
+
+
 
 // --------------------------------------------------------
 // generisi nov broj dokumenta uzevsi serverski brojac
@@ -53,7 +68,8 @@ return _counter:to_str()
 
 
 // --------------------------------------------------------
-// brdok nula
+// vrati brojac unazad, ako treba 
+// nakon brisanja dokumenta koji je vec dobio broj
 // --------------------------------------------------------
 function fakt_rewind(idfirma, idtipdok, datdok, brdok)
 local _counter := FaktCounter():New(idfirma, idtipdok, datdok)
@@ -76,20 +92,21 @@ PushWa()
 select fakt_pripr
 go top
 
-_cnt := FaktCounter(_firma, _td, _datdok)
+_firma := field->idfirma
+_td    := field->idtipdok
+_datdok := field->datdok
+
+
+_cnt := FaktCounter():New(_firma, _td, _datdok)
 _cnt:decode(field->brdok) 
 
 if _cnt:counter > 0
-    // nemam sta raditi, broj je vec setovan
+    _cnt:update_server_counter_if_counter_greater()
     PopWa()
     return .f.
 endif
 
 _null_brdok := _cnt:to_str()
-
-_firma := field->idfirma
-_td    := field->idtipdok
-_datdok := field->datdok
 
 // daj mi novi broj dokumenta
 _broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _td, _datdok )

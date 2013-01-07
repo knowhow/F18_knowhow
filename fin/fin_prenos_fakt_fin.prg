@@ -332,7 +332,7 @@ cIdVN:=IdVN   // uzmi vrstu naloga koja ce se uzeti u odnosu na prvu kalkulaciju
              //  koja se kontira
 
 if lAFin
-    cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn )
+    cBrNalF := fin_novi_broj_naloga(finmat->idfirma, cIdVN, dDatNal)
     select nalog
     use
 endif

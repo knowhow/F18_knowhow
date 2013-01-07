@@ -42,7 +42,7 @@ return
  
 function StOANal()
 
-private fK1:=fk2:=fk3:=fk4:="N",gnLOst:=0,gPotpis:="N"
+private fK1:=fk2:=fk3:=fk4:="N",gnLOst:=0, gPotpis:="N"
 O_PARAMS
 
 Private cSection:="1",cHistory:=" ",aHistory:={}
@@ -72,10 +72,10 @@ O_TDOK
 SELECT SUBAN
 set order to tag "4"
 cIdVN:=space(2)
-cIdFirma:=gFirma
-cBrNal:=space(8)
+cIdFirma := gFirma
+cBrNal := space(12)
 
-Box("",2,35)
+Box("", 2, 35)
  set cursor on
  @ m_x+1,m_y+2 SAY "Nalog:"
  if gNW=="D"
@@ -142,9 +142,9 @@ if fkum  // stampa starog naloga - naloga iz kumulativa - datoteka anal
 
  cIdVN := space(2)
  cIdFirma := gFirma
- cBrNal := space(8)
+ cBrNal := space(12)
 
- Box("",1,35)
+ Box("", 1, 35)
   @ m_x+1, m_y+2 SAY "Nalog:"
   if gNW=="D"
     @ m_x+1, col()+1 SAY cIdFirma

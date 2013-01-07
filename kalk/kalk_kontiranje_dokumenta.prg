@@ -150,7 +150,7 @@ endif
 select trfp
 seek finmat->IdVD+koncij->shema
 
-cIdVN := IdVN   
+cIdVN := trfp->IdVN   
 // uzmi vrstu naloga koja ce se uzeti u odnosu na prvu kalkulaciju
 //  koja se kontira
 
@@ -161,7 +161,8 @@ endif
 if lAFin .or. lAFin2
 
     if EMPTY( cNalog )
-		cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn ) 
+                cBrNalF := fin_novi_broj_naloga(finmat->idfirma, cIdVn, finmat->datdok)
+
     else
         // ako je zadat broj naloga taj i uzmi...
         cBrNalF := cNalog

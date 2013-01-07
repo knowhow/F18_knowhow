@@ -86,7 +86,7 @@ select trfp3
 set filter to shema=cShema
 go top
 
-cBrNal := fin_novi_broj_dokumenta( gFirma, trfp3->idvn )
+cBrNal := fin_novi_broj_naloga(gFirma, trfp3->idvn, dDatum)
 
 select trfp3
 

@@ -93,7 +93,7 @@ endif
 // predji na shemu kontiranja
 select trfp2
 // selektuj shemu "P" - polog pazara
-set filter to idvd=cTipNal .and. shema=cShema
+set filter to idvd == cTipNal .and. shema == cShema
 go top
 
 if (trfp2->idvd <> cTipNal)
@@ -102,8 +102,10 @@ if (trfp2->idvd <> cTipNal)
 endif
 
 MsgO("Kontiram nalog ...")
+
 // daj naredni broj naloga
-private cBrNal:=fin_novi_broj_dokumenta( gFirma, cTipNal )
+private cBrNal := fin_novi_broj_naloga(gFirma, cTipNal, dDatDo)
+
 private nRBr:=0
 private nIznos:=0
 private nIznDEM:=0

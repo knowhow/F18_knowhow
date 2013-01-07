@@ -33,6 +33,9 @@ CLASS DocCounter
     ASSIGN     counter              METHOD  set_counter
     ACCESS     counter              METHOD  get_counter
 
+    METHOD     update_server_counter_if_counter_greater
+
+
     METHOD     new_document_number()
 
     ACCESS     document_counter     METHOD  get_counter_from_documents
@@ -132,12 +135,14 @@ return .t.
 
 METHOD DocCounter:new_document_number()
 local _doc_cnt, _s_cnt
- 
+
 _doc_cnt := ::document_counter
 _s_cnt   := ::server_counter   
 
 ::count :=  MAX(_doc_cnt, _s_cnt)
 ::inc()
+
+::server_counter := ::count
 return ::count
 
 
@@ -190,7 +195,7 @@ return ::a_s_param
 // --------------------------------------
 // --------------------------------------
 METHOD DocCounter:get_counter_from_documents()
-local _qry, _c_qry, _c_cnt
+local _qry, _c_qry, _c_cnt, _msg
 
 // setuj na osnovu ::a_s_param
 ::set_sql_get()
@@ -198,6 +203,13 @@ local _qry, _c_qry, _c_cnt
 _c_qry := ::c_sql_get
 _qry   := run_sql_query(_c_qry)
 _c_cnt := _qry:FieldGet(1)
+
+if _qry:NetErr()
+    _msg := _qry:ErrorMsg()
+    log_write(_msg, 2)
+    Alert(_msg)
+    ::error_msg := _msg
+endif
 
 if hb_isChar(_c_cnt)
    ::c_document_count := _c_cnt
@@ -228,25 +240,21 @@ METHOD DocCounter:transfer_decode_to_main_counter()
 
 return .t.
 
-// --------------------------------------
-// --------------------------------------
 METHOD DocCounter:set_sql_get()
 
-// uzmi brdok iz fakt_doks za zadatu firmu, tip dokumenta, i dokumente iz zadane godine
-::c_sql_get := "select brdok from fmk.fakt_doks where idfirma=" + _sql_quote(::a_s_param[2]) + ;
-               " AND idtipdok=" + _sql_quote(::a_s_param[3]) + ;
-               " AND EXTRACT(YEAR FROM datdok)=" + ALLTRIM(STR(::year)) + ;
-               " ORDER BY (datdok, brdok) DESC LIMIT 1"
-
+::c_sql_get := "DUMMY"
 return .t.
+
 
 METHOD DocCounter:get_server_counter()
 ::server_count := fetch_metric(::c_s_param, NIL, ::server_count)
 return ::server_count
 
 METHOD DocCounter:set_server_counter(cnt)
+
 ::server_count := cnt
-set_metric(::c_s_param, NIL, cnt)
+
+set_metric(::c_s_param, NIL, ::server_count)
 return 
 
 
@@ -255,6 +263,9 @@ METHOD DocCounter:set_document_date(date)
 ::doc_date := date
 ::year     := YEAR(date) 
 ::suffix := "/" + year_2str(::year)
+
+// azuriraj c_s_param
+::set_c_server_param()
 
 return .t.
  
@@ -339,6 +350,12 @@ local _a
 local _re_str := str_regex(::prefix) + "(.*?)([" + ::fill + "]*)" +  "([0-9]{4," + ALLTRIM(STR(::width)) +"})(.*)" + str_regex(::suffix)
 local _re_brdok := hb_regexComp( _re_str)
 
+if ::year == NIL
+   MsgBeep("Klasa nije inicijalizirana# Negdje je navedeno FactCounter(..) umjesto FaktCounter():New(..)", "L")
+   QUIT_1
+endif
+
+
 if change_counter == NIL
    change_counter := .t.
 endif
@@ -398,3 +415,16 @@ endif
 
 ::decode_success := .t.
 return .t.
+
+
+METHOD   DocCounter:update_server_counter_if_counter_greater
+
+// ako je broj naloga veci od serverskog countera
+// radimo update serverskog countera
+if ::counter > ::server_counter
+   ::server_counter := ::counter
+   return .t.
+endif
+
+return .f.
+

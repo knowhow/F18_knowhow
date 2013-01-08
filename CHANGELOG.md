@@ -1,3 +1,9 @@
+1.4.71 2013-01-08, vsasa
+
+ - fin, specifikacija dobavljača po telefonima - BUGFIX
+ - os, unos promjena na sredstvima - BUGFIX
+ - ispis informacije o sezonskom području na glavnom meniju modula
+ 
 1.4.70 2013-01-07, vsasa
 
  - pos, povrat inventure sa spajanjem - BUGFIX 

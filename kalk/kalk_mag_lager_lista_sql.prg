@@ -16,19 +16,20 @@
 // ------------------------------------------------------------
 // lager lista sql varijanata
 // ------------------------------------------------------------
-function kalk_prod_lager_lista_sql( params, ps )
+function kalk_mag_lager_lista_sql( params, ps )
 local _data, _server
 local _qry, _where
-local _dat_od, _dat_do, _dat_ps, _p_konto
+local _dat_od, _dat_do, _dat_ps, _m_konto
 local _art_filter, _dok_filter, _tar_filter, _part_filter
 local _db_params := my_server_params()
 local _tek_database := my_server_params()["database"]
 local _year_sez, _year_tek
+local _zaokr := ALLTRIM( STR( gZaokr ) )
 
 // pozovi uslove ako nisu zadati kod poziva funkcije
 if params == NIL
     params := hb_hash()
-    if !kalk_prod_lager_lista_vars( @params, ps )
+    if !kalk_mag_lager_lista_vars( @params, ps )
         return NIL
     endif
 endif
@@ -36,7 +37,7 @@ endif
 _dat_od := params["datum_od"]
 _dat_do := params["datum_do"]
 _dat_ps := params["datum_ps"]
-_p_konto := params["p_konto"]
+_m_konto := params["m_konto"]
 _year_sez := YEAR( _dat_do )
 _year_tek := YEAR( _dat_ps )
 
@@ -46,36 +47,33 @@ _year_tek := YEAR( _dat_ps )
 _where := " WHERE "
 _where += _sql_date_parse( "k.datdok", _dat_od, _dat_do )
 _where += " AND " + _sql_cond_parse( "k.idfirma", gFirma )
-_where += " AND " + _sql_cond_parse( "k.pkonto", _p_konto )
+_where += " AND " + _sql_cond_parse( "k.mkonto", _m_konto )
 
 _qry := " SELECT " + ;
             " k.idroba, " + ;
             " SUM( CASE " + ;
-                    "WHEN k.pu_i = '1' THEN k.kolicina " + ;
-                    "WHEN k.pu_i = '5' AND k.idvd IN ('12', '13') THEN -k.kolicina " + ;
+                    "WHEN k.mu_i = '1' AND k.idvd NOT IN ('12', '22', '94') THEN k.kolicina ELSE 0 " + ;
                 "END ) AS ulaz, " + ;
-            " SUM( CASE " + ;
-                    "WHEN k.pu_i = '1' THEN k.kolicina * k.nc " + ;
-                    "WHEN k.pu_i = '5' AND k.idvd IN ('12', '13') THEN -( k.kolicina * k.nc ) " + ;
-                "END ) AS nvu, " + ;
-            " SUM( CASE " + ;
-                    "WHEN k.pu_i = '3' THEN k.kolicina * k.mpcsapp " + ;
-                    "WHEN k.pu_i = '1' THEN k.kolicina * k.mpcsapp " + ;
-                    "WHEN k.pu_i = '5' AND k.idvd IN ('12', '13') THEN -( k.kolicina * k.mpcsapp ) " + ;
-                "END ) AS mpvu, " + ; 
-            " SUM( CASE " + ;
-                    "WHEN k.pu_i = '5' AND k.idvd NOT IN ('12', '13') THEN k.kolicina " + ;
-                    "WHEN k.pu_i = 'I' THEN k.gkolicin2 " + ;
+            "ROUND( SUM( CASE " + ;
+                    "WHEN k.mu_i = '1' AND k.idvd NOT IN ('12', '22', '94') THEN k.nc * k.kolicina ELSE 0 " + ;
+                "END ), " + _zaokr + " ) AS nvu, " + ;
+            "ROUND( SUM( CASE " + ;
+                    "WHEN k.mu_i = '1' AND k.idvd NOT IN ('12', '22', '94') THEN r.vpc * k.kolicina ELSE 0 " + ;
+                "END ), " + _zaokr + " ) AS vpvu, " + ;
+            "SUM( CASE " + ;
+                    "WHEN k.mu_i = '1' AND k.idvd IN ('12', '22', '94') THEN k.kolicina " + ;
+                    "WHEN k.mu_i = '5' THEN k.kolicina ELSE 0 " + ;
                 "END ) AS izlaz, " + ;
-            " SUM( CASE " + ;
-                    "WHEN k.pu_i = '5' AND k.idvd NOT IN ('12', '13') THEN k.kolicina * k.nc " + ;
-                    "WHEN k.pu_i = 'I' THEN k.gkolicin2 * k.nc " + ;
-                "END ) AS nvi, " + ;
-            " SUM( CASE " + ;
-                    "WHEN k.pu_i = '5' AND k.idvd NOT IN ('12', '13') THEN k.kolicina * k.mpcsapp " + ;
-                    "WHEN k.pu_i = 'I' THEN k.gkolicin2 * k.mpcsapp " + ;
-                "END ) AS mpvi " + ;
-        " FROM fmk.kalk_kalk k "
+            "ROUND( SUM( CASE " + ;
+                    "WHEN k.mu_i = '1' AND k.idvd IN ('12', '22', '94') THEN -( k.nc * k.kolicina ) " + ;
+                    "WHEN k.mu_i = '5' THEN k.nc * k.kolicina ELSE 0 " + ;
+                "END ), " + _zaokr + " ) AS nvi, " + ;
+            "ROUND( SUM( CASE " + ;
+                    "WHEN k.mu_i = '1' AND k.idvd IN ('12', '22', '94') THEN -( r.vpc * k.kolicina ) " + ;
+                    "WHEN k.mu_i = '5' THEN r.vpc * k.kolicina ELSE 0 " + ;
+                "END ), " + _zaokr + " ) AS vpvi " + ;
+        " FROM fmk.kalk_kalk k " + ;
+        " RIGHT JOIN fmk.roba r ON r.id = k.idroba "
 
 _qry += _where
 
@@ -117,16 +115,17 @@ return _data
 
 
 // ------------------------------------------------------------
-// lager lista prodavnice, uslovi izvjestaja
+// lager lista magacina, uslovi izvjestaja
 // ------------------------------------------------------------
-function kalk_prod_lager_lista_vars( params, ps )
+function kalk_mag_lager_lista_vars( params, ps )
 local _ret := .t.
-local _p_konto, _dat_od, _dat_do, _nule, _pr_nab, _roba_tip_tu, _dat_ps
+local _m_konto, _dat_od, _dat_do, _nule, _pr_nab, _roba_tip_tu, _dat_ps, _do_nab
 local _x := 1
 local _art_filter := SPACE(300)
 local _tar_filter := SPACE(300)
 local _part_filter := SPACE(300)
 local _dok_filter := SPACE(300)
+local _brfakt_filter := SPACE(300)
 local _curr_user := my_user()
 
 // pocetno stanje parametar
@@ -134,11 +133,13 @@ if ps == NIL
     ps := .f.
 endif
 
-_p_konto := fetch_metric("kalk_lager_lista_prod_id_konto", _curr_user, PADR( "1330", 7 ) )
-_pr_nab := fetch_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, "D" )
-_nule := fetch_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, "N" )
-_dat_od := fetch_metric("kalk_lager_lista_prod_datum_od", _curr_user, DATE() - 30 )
-_dat_do := fetch_metric("kalk_lager_lista_prod_datum_do", _curr_user, DATE() )
+_min_kol := fetch_metric("kalk_lager_lista_mag_minimalne_kolicine", _curr_user, "N" )
+_do_nab := fetch_metric("kalk_lager_Lista_mag_prikaz_do_nabavne", _curr_user, "N" )
+_m_konto := fetch_metric("kalk_lager_lista_mag_id_konto", _curr_user, PADR( "1320", 7 ) )
+_pr_nab := fetch_metric("kalk_lager_lista_mag_po_nabavnoj", _curr_user, "D" )
+_nule := fetch_metric("kalk_lager_lista_mag_prikaz_nula", _curr_user, "N" )
+_dat_od := fetch_metric("kalk_lager_lista_mag_datum_od", _curr_user, DATE() - 30 )
+_dat_do := fetch_metric("kalk_lager_lista_mag_datum_do", _curr_user, DATE() )
 _dat_ps := NIL
 _roba_tip_tu := "N"
 
@@ -149,7 +150,7 @@ if ps
     _dat_ps := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) ) ) )
 endif
 
-Box( "# LAGER LISTA PRODAVNICE" + if( ps, " / POCETNO STANJE", "" ), 15, MAXCOLS() - 5 )
+Box( "# LAGER LISTA MAGACINA" + if( ps, " / POCETNO STANJE", "" ), 15, MAXCOLS() - 5 )
 
     @ m_x + _x, m_y + 2 SAY "Firma "
 		
@@ -157,7 +158,7 @@ Box( "# LAGER LISTA PRODAVNICE" + if( ps, " / POCETNO STANJE", "" ), 15, MAXCOLS
  
     ++ _x	
     ++ _x
-    @ m_x + _x, m_y + 2 SAY "Prodavnicki konto:" GET _p_konto VALID P_Konto( @_p_konto )
+    @ m_x + _x, m_y + 2 SAY "Magacinski konto:" GET _m_konto VALID P_Konto( @_m_konto )
 
     ++ _x
  	@ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
@@ -178,12 +179,18 @@ Box( "# LAGER LISTA PRODAVNICE" + if( ps, " / POCETNO STANJE", "" ), 15, MAXCOLS
  	@ m_x + _x, m_y + 2 SAY "Filter po partnerima:" GET _part_filter PICT "@S50"
     ++ _x
  	@ m_x + _x, m_y + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
+    ++ _x
+ 	@ m_x + _x, m_y + 2 SAY "Filter po broju.fakt:" GET _brfakt_filter PICT "@S50"
+
 
     // ostali uslovi...
     ++ _x
     ++ _x
  	@ m_x + _x, m_y + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
- 	@ m_x + _x, col() + 1 SAY "Prikaz stavki kojima je MPV=0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
+ 	@ m_x + _x, col() + 1 SAY "Prikaz stavki kojima je NV = 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
+
+    ++ _x
+ 	@ m_x + _x, m_y + 2 SAY "Prikaz samo kriticnih zaliha (D/N)" GET _min_kol VALID _min_kol $ "DN" PICT "@!"
 
     ++ _x
 	@ m_x + _x, m_y + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
@@ -198,40 +205,45 @@ if LastKey() == K_ESC
 endif
 
 // setuj parametre sql/par
-set_metric("kalk_lager_lista_prod_id_konto", _curr_user, _p_konto )
-set_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, _pr_nab )
-set_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, _nule )
-set_metric("kalk_lager_lista_prod_datum_od", _curr_user, _dat_od )
-set_metric("kalk_lager_lista_prod_datum_do", _curr_user, _dat_do )
+set_metric("kalk_lager_Lista_mag_prikaz_do_nabavne", _curr_user, _do_nab )
+set_metric("kalk_lager_lista_mag_id_konto", _curr_user, _m_konto )
+set_metric("kalk_lager_lista_mag_po_nabavnoj", _curr_user, _pr_nab )
+set_metric("kalk_lager_lista_mag_prikaz_nula", _curr_user, _nule )
+set_metric("kalk_lager_lista_mag_datum_od", _curr_user, _dat_od )
+set_metric("kalk_lager_lista_mag_datum_do", _curr_user, _dat_do )
+set_metric("kalk_lager_lista_mag_minimalne_kolicine", _curr_user, _min_kol )
 
 // setuj matricu parametara
 params["datum_od"] := _dat_od
 params["datum_do"] := _dat_do
 params["datum_ps"] := _dat_ps
-params["p_konto"] := _p_konto
+params["m_konto"] := _m_konto
 params["nule"] := _nule
 params["roba_tip_tu"] := _roba_tip_tu
 params["pr_nab"] := _pr_nab
+params["do_nab"] := _do_nab
+params["min_kol"] := _min_kol
 params["filter_dok"] := _dok_filter
 params["filter_roba"] := _art_filter
 params["filter_partner"] := _part_filter
 params["filter_tarifa"] := _tar_filter
+params["filter_brfakt"] := _brfakt_filter
 
 return _ret
 
 
 
 // ------------------------------------------------------------
-// prodavnicko pocetno stanje...
+// magacinsko pocetno stanje...
 // ------------------------------------------------------------
-function kalk_prod_pocetno_stanje()
+function kalk_mag_pocetno_stanje()
 local _ps := .t.
 local _param := NIL
 local _data
 local _count := 0
 
 // pozovi lager listu ali kao pocetno stanje...
-_data := kalk_prod_lager_lista_sql( @_param, _ps )
+_data := kalk_mag_lager_lista_sql( @_param, _ps )
 
 if _data == NIL .or. VALTYPE( _data ) == "L"
     return
@@ -239,7 +251,7 @@ endif
 
 // sada imam podatke
 // trebam napraviti insert podataka u pripremu...
-_count := kalk_prod_insert_ps_into_pripr( _data, _param )
+_count := kalk_mag_insert_ps_into_pripr( _data, _param )
 
 if _count > 0
     MsgBeep( "Formiran dokument pocetnog stanja, nalazi se u pripremi !" )
@@ -253,17 +265,16 @@ return
 // ----------------------------------------------------------------
 // ubacuje podatke pocetnog stanja u pripremu...
 // ----------------------------------------------------------------
-static function kalk_prod_insert_ps_into_pripr( data, params )
+static function kalk_mag_insert_ps_into_pripr( data, params )
 local _count := 0
 local _kalk_broj := ""
-local _kalk_tip := "80"
+local _kalk_tip := "16"
 local _kalk_datum := params["datum_ps"]
-local _p_konto := params["p_konto"]
+local _m_konto := params["m_konto"]
 local _roba_tip_tu := params["roba_tip_tu"]
 local _row, _sufix
-local _ulaz, _izlaz, _nvu, _nvi, _mpvu, _mpvi, _id_roba
-
-private aPorezi := {}
+local _ulaz, _izlaz, _nvu, _nvi, _id_roba, _vpvu, _vpvi
+local _magacin_po_nabavnoj := IsMagPNab()
 
 O_KALK_PRIPR
 O_KALK_DOKS
@@ -273,7 +284,7 @@ O_TARIFA
 
 // nadji mi novi broj dokumenta za ps
 if glBrojacPoKontima
-    _sufix := SufBrKalk( _p_konto )
+    _sufix := SufBrKalk( _m_konto )
     _kalk_broj := SljBrKalk( _kalk_tip, gFirma, _sufix )
 else
     _kalk_broj := GetNextKalkDoc( gFirma, _kalk_tip )
@@ -282,7 +293,7 @@ endif
 // pronadji konto u konta tipovi cijena...
 select koncij
 go top
-seek _p_konto
+seek _m_konto
 
 MsgO( "Punjenje pripreme podacima pocetnog stanja u toku, dok: " + _kalk_tip + "-" + ALLTRIM( _kalk_broj ) )
 
@@ -296,8 +307,8 @@ do while !data:EOF()
     _izlaz := _row:FieldGet( _row:FieldPos("izlaz") )
     _nvu := _row:FieldGet( _row:FieldPos("nvu") )
     _nvi := _row:FieldGet( _row:FieldPos("nvi") )
-    _mpvu := _row:FieldGet( _row:FieldPos("mpvu") )
-    _mpvi := _row:FieldGet( _row:FieldPos("mpvi") )
+    _vpvu := _row:FieldGet( _row:FieldPos("vpvu") )
+    _vpvi := _row:FieldGet( _row:FieldPos("vpvi") )
 
     // roba tip T ili U
     if _roba_tip_tu == "N" .and. roba->tip $ "TU"
@@ -325,32 +336,21 @@ do while !data:EOF()
     _rec["idvd"] := _kalk_tip
     _rec["brdok"] := _kalk_broj
     _rec["rbr"] := STR( ++ _count, 3 )
-
     _rec["datdok"] := _kalk_datum
     _rec["idroba"] := _id_roba
-    _rec["idkonto"] := _p_konto
-    _rec["pkonto"] := _p_konto
-
-    _rec["idtarifa"] := Tarifa( _p_konto, _id_roba, @aPorezi )
-
-    VTPorezi()
-
-    _rec["tcardaz"] := "%"
-    _rec["pu_i"] := "1"
+    _rec["idkonto"] := _m_konto
+    _rec["mkonto"] := _m_konto
+    _rec["idtarifa"] := roba->idtarifa
+    _rec["mu_i"] := "1"
     _rec["brfaktp"] := PADR( "PS", LEN( _rec["brfaktp"] ) )
     _rec["datfaktp"] := _kalk_datum
-    _rec["tmarza2"] := "A"
-
     _rec["kolicina"] := ( _ulaz - _izlaz )
     _rec["nc"] := ( _nvu - _nvi ) / ( _ulaz - _izlaz )
-    _rec["mpcsapp"] := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 2 )
-	_rec["fcj"] := _rec["nc"]
-	_rec["vpc"] := _rec["nc"]
-	_rec["error"] := "0"
+    _rec["vpc"] := ( _vpvu - _vpvi ) / ( _ulaz - _izlaz )
+    _rec["error"] := "0"
     
-    if _rec["mpcsapp"] <> 0
-        _rec["mpc"] := MpcBezPor( _rec["mpcsapp"], aPorezi, NIL, _rec["nc"] ) 
-        _rec["marza2"] := _rec["mpc"] - _rec["nc"]
+    if _magacin_po_nabavnoj
+        _rec["vpc"] := _rec["nc"]
     endif
 
     dbf_update_rec( _rec )

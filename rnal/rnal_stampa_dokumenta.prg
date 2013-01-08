@@ -1429,7 +1429,7 @@ replace field->doc_it_zw2 with ;
     obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr )
         
 // ako se zaokruzuje onda total ide po zaokr.vrijednostima
-replace field->doc_it_total with ROUND( c_ukvadrat( field->doc_it_qtt, ;
+replace field->doc_it_tot with ROUND( c_ukvadrat( field->doc_it_qtt, ;
     field->doc_it_zhe, ;
     field->doc_it_zwi, ;
     field->doc_it_zh2, ;

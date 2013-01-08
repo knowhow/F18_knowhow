@@ -12,7 +12,6 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
-
 static __fiscal_marker := .f.
 
 static __id_firma
@@ -23,7 +22,7 @@ static __r_br
 static __enter_seq := CHR( K_ENTER ) + CHR( K_ENTER ) + CHR( K_ENTER )
 
 static __redni_broj
-
+static __nove_stavke := .f.
 
 // -----------------------------------------------------------------
 // glavna funkcija za poziv pripreme i knjizenje fakture
@@ -220,11 +219,11 @@ do case
         return DE_CONT
    
     // Total dokumenta
-	case UPPER( CHR( Ch ) ) == "T"
+    case UPPER( CHR( Ch ) ) == "T"
 
-		// total dokumenta box
-		_total_dokumenta()
-		return DE_REFRESH
+         // total dokumenta box
+        _total_dokumenta()
+        return DE_REFRESH
  
     // brisi stavku iz pripreme
     case ( Ch == K_CTRL_T )
@@ -270,7 +269,6 @@ do case
 
             // izmjeni sve stavke dokumenta na osnovu prve stavke        
             if __redni_broj == 1
-                // todo: cim prije i ovo zavrsiti, za sada gasim opciju
                 _new_dok := dbf_get_rec()
                 izmjeni_sve_stavke_dokumenta( _dok, _new_dok )
             endif
@@ -285,12 +283,10 @@ do case
 
 
     case Ch == K_CTRL_A
-
         fakt_prodji_kroz_stavke()
         return DE_REFRESH
 
     case Ch == K_CTRL_N
-
         fakt_unos_nove_stavke()
         return DE_REFRESH
 
@@ -299,8 +295,6 @@ do case
 
         // prvo setuj broj dokumenta
         fakt_set_broj_dokumenta()
-
-        // printaj dokument
         fakt_print_dokument()
 
         #ifdef TEST
@@ -498,6 +492,8 @@ static function fakt_prodji_kroz_stavke()
 local _dug
 local _rec_no, _rec
 
+__nove_stavke := .f.
+
 PushWA()
 
 select fakt_pripr
@@ -559,6 +555,7 @@ local _items_atrib
 local _rec
 local _total := 0
 
+__nove_stavke := .t.
 go top
 
 do while !EOF() 
@@ -579,20 +576,14 @@ do while .t.
     _podbr := SPACE(2)
 
     if ALLTRIM( _podbr ) == "." .and. EMPTY( _idroba )
-
         __redni_broj := RbrUnum( _rbr )
         _podbr := " 1"
-
     elseif _podbr >= " 1"
-
         __redni_broj := RbrUnum( _rbr )
         _podbr := STR( VAL( _podbr ) + 1, 2, 0)
-
     else
-
         __redni_broj := RbrUnum( _rbr ) + 1
         _podbr := "  "
-
     endif
 
     BoxCLS()
@@ -803,7 +794,7 @@ return
 // --------------------------------------------------------
 // hendliranje unosa novih stavki u pripremi
 // --------------------------------------------------------
-static function edit_fakt_priprema( fNovi, items_atrib )
+static function edit_fakt_priprema(novi, items_atrib)
 local _a_tipdok := {}
 local _h
 local _rok_placanja := 0
@@ -824,12 +815,14 @@ _h := {}
 ASIZE( _h, LEN( _a_tipdok ))
 AFILL( _h, "" )
 
+__nove_stavke := novi
+
 // sredi atribute kod unosa
 if items_atrib <> NIL
 
     // opis fakture
     if _params["fakt_opis_stavke"]
-        if fNovi
+        if __nove_stavke
             _opis := PADR( "", 300 )
         else
             _opis := PADR( items_atrib["opis"], 300 )
@@ -839,7 +832,7 @@ if items_atrib <> NIL
     // ref/lot brojevi
     if _params["ref_lot"]
 
-        if fNovi
+        if __nove_stavke
             _ref_broj := PADR( "", 50 )
             _lot_broj := PADR( "", 50 )
         else
@@ -874,7 +867,7 @@ d2n2 := SPACE(12)
 set cursor on
  
 // prva stavka
-if fNovi 
+if __nove_stavke 
 
     _convert := "D"
     _serbr := SPACE( LEN( field->serbr ) )
@@ -903,17 +896,15 @@ if fNovi
         _n_menu := IIF( VAL( gIMenu ) < 1, ASC( gIMenu ) - 55, VAL( gIMenu ) )
         _idfirma := gFirma
 
-	    if !EMPTY(_params["def_rj"])
+	if !EMPTY(_params["def_rj"])
 		    _idfirma := _params["def_rj"]
-	    endif
+	endif
 
         _idtipdok := "10"
-        _datdok := DATE()
         _zaokr := 2
         _dindem := LEFT( ValBazna(), 3 )
         _m1 := " "  
-        // broj dokumenta u pripremi ce biti uvijek 00000
-        _brdok :=  fakt_brdok_0(_idfirma, _idtipdok, _datdok)
+        _datdok := DATE()
     endif
 
 else
@@ -998,11 +989,11 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         _x := 2
         
         // datum, broj dokumenta
-        @  m_x + _x, m_y + 45  SAY "Datum:" GET _datdok
-        @  m_x + _x, col() + 2 SAY "Broj:" GET _brdok VALID !EMPTY( _brdok ) 
-        
-        ++ _x
-        ++ _x
+        @  m_x + _x, m_y + 45  SAY "Datum:" GET _datdok 
+        @  m_x + _x, col() + 2 SAY "Broj:" GET _brdok  WHEN init_brdok(_idfirma, _idtipdok, _datdok, @_brdok) ;
+               VALID init_brdok(_idfirma, _idtipdok, _datdok, @_brdok)
+
+        _x += 2
 
         // partner
         @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
@@ -1038,7 +1029,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         // sada ide desna strana i podaci isporuke...
         if _idtipdok $ "10#11"
             
-            @ m_x + _x2, m_y + 51 SAY "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
+            @ m_x + _x2, m_y + 51 SAY "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp(__nove_stavke)
                 
             ++ _x2
 
@@ -1048,7 +1039,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                
             @ m_x + _x2, m_y + 51 SAY "Ugovor/narudzba:" GET _brnar PICT "@S20"
                 
-            if fNovi .and. gRokPl > 0
+            if __nove_stavke .and. gRokPl > 0
                 // uzmi default vrijednost za rok placanja
                 _rok_placanja := gRokPl    
             endif
@@ -1056,13 +1047,13 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
             ++ _x2    
 
             @ m_x + _x2, m_y + 51 SAY "Rok plac.(dana):" GET _rok_placanja PICT "999" ;
-                    WHEN valid_rok_placanja( @_rok_placanja, "0", fNovi ) ;
-                    VALID valid_rok_placanja( _rok_placanja, "1", fNovi )
+                    WHEN valid_rok_placanja( @_rok_placanja, "0", __nove_stavke) ;
+                    VALID valid_rok_placanja( _rok_placanja, "1", __nove_stavke)
 
             ++ _x2
 
             @ m_x + _x2, m_y + 51 SAY "Datum placanja :" GET _datpl ;
-                    VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
+                    VALID valid_rok_placanja( _rok_placanja, "2", __nove_stavke)
                 
             if _params["fakt_vrste_placanja"]
 
@@ -1077,7 +1068,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                 
             ++ _x2
 
-            @ m_x + _x2, m_y + 51 SAY "Po ul.fakt.broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
+            @ m_x + _x2, m_y + 51 SAY "Po ul.fakt.broj:" GET _brotp PICT "@S20" WHEN W_BrOtp(__nove_stavke)
 
             ++ _x2
 
@@ -1113,7 +1104,6 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         if _idtipdok $ "10"
         
             _avansni_racun := "N"
-
             if _idvrstep == "AV"
                 _avansni_racun := "D"
             endif
@@ -1175,8 +1165,8 @@ _x := 13
     VALID {|| _idroba := IIF( LEN( TRIM( _idroba )) < VAL( gDuzSifIni), ;
             LEFT( _idroba, VAL(gDuzSifIni) ), _idroba ), ;
             V_Roba(), ;
-            artikal_kao_usluga(fnovi), ;
-            NijeDupla(fNovi), ;
+            artikal_kao_usluga(__nove_stavke), ;
+            NijeDupla(__nove_stavke), ;
             zadnji_izlazi_info( _idpartner, _idroba, "F" ), ; 
             _trenutno_na_stanju_kalk( _idfirma, _idtipdok, _idroba ) ;
          }
@@ -1223,7 +1213,7 @@ if gSamokol != "D"
                 "MPC.s.PDV", "Cijena (" + ALLTRIM( ValDomaca() ) + ")" ) GET _cijena ;
                 PICT piccdem ;
                 WHEN  _podbr <> " ." ;
-                VALID c_cijena( _cijena, _idtipdok, fNovi )
+                VALID c_cijena( _cijena, _idtipdok, __nove_stavke)
 
 
     // preracunavanje valute
@@ -1299,8 +1289,15 @@ endif
 
 return 1
 
+// --------------------------------
+// --------------------------------
+static function init_brdok(idfirma, idtipdok, datdok, brdok)
 
+if (__redni_broj == 1 .and. __nove_stavke) .or. empty(brdok)
+   brdok :=  fakt_brdok_0(idfirma, idtipdok, datdok)
+endif
 
+return .t.
 
 
 // ------------------------------------------------------------
@@ -1755,8 +1752,7 @@ if !FOUND()
     return
 endif
 
-do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
-        _old_firma + _old_tipdok + _old_brdok 
+do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == _old_firma + _old_tipdok + _old_brdok 
 
     skip 1
     _t_rec := RECNO()
@@ -1771,7 +1767,6 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
     _rec["idpartner"] := _tek_dok["idpartner"]
 
     dbf_update_rec( _rec )
-
     go ( _t_rec )
 
 enddo
@@ -1963,8 +1958,4 @@ Box(, 12, MAXCOLS() - 5 )
 BoxC()
     
 return
-
-
-
-
 

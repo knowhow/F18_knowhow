@@ -96,7 +96,6 @@ _firma := field->idfirma
 _td    := field->idtipdok
 _datdok := field->datdok
 
-
 _cnt := FaktCounter():New(_firma, _td, _datdok)
 _cnt:decode(field->brdok) 
 

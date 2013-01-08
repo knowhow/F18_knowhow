@@ -158,13 +158,17 @@ else
     _msg := "DOC_CNT decode ERR: " + dok_str 
     log_write(_msg, 2)
     MsgBeep(_msg)
+    return .f.
 endif
 
 // server counter > document counter AND tekuci counter == server counter
 if (_s_cnt > _doc_cnt) .and. (::count == _s_cnt)
     ::dec()
     ::server_counter := ::count 
+    return .t.
 endif
+
+return .f.
 
 // --------------------------------------
 // c_s_param = fakt/10/20/13

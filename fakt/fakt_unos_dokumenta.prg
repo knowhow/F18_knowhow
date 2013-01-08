@@ -1491,7 +1491,6 @@ return _ret
 function StUgRabKup()
 lUgRab:=.t.
 lSSIP99:=.f.
-//StDok2()
 lUgRab:=.f.
 return
 

@@ -57,7 +57,8 @@ Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
 
             select ( _t_area )
     
-            @ m_x + 2, m_y + 2 SAY "Radna jedinica: " GET cIdRj VALID P_RJ( @cIdRj, 2, 35 )
+            @ m_x + 2, m_y + 2 SAY "Radna jedinica: " GET cIdRj VALID {|| P_RJ( @cIdRj, 2, 35 ), cIdRj := PADR( cIdRj, 4 ), .t. }
+
             READ
 
             ESC_BCR

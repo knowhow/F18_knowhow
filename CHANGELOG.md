@@ -3,6 +3,8 @@
  - fin, specifikacija dobavljača po telefonima - BUGFIX
  - os, unos promjena na sredstvima - BUGFIX
  - ispis informacije o sezonskom području na glavnom meniju modula
+ - kalk, formiranje početnog stanja magacina - sql varijanta
+ - os, radna jedinica je dužine 4, korekcija na izvještajima i unosu...
  
 1.4.70 2013-01-07, vsasa
 

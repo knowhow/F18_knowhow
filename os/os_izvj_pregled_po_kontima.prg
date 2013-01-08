@@ -41,7 +41,7 @@ O_RJ
 o_os_sii_promj()
 o_os_sii()
 
-cIdrj := SPACE( LEN(field->idrj) )
+cIdrj := SPACE(4)
 cAmoGr:="N"
 cON:="N"
 cPromj:="2"
@@ -58,7 +58,8 @@ cRekapKonta:="N"
 
 Box(,20,77)
   DO WHILE .t.
-    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno - svi):" get cidrj valid empty(cIdRj) .or. p_rj(@cIdrj)
+    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+        VALID {|| EMPTY(cIdRj) .or. P_RJ( @cIdrj ), if( !EMPTY(cIdRj), cIdRj := PADR( cIdRj, 4 ), .t. ), .t. }
     @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
     @ m_x+2,m_y+2 SAY "Konto (prazno - svi):" get qIdKonto pict "@!" valid empty(qidkonto) .or. P_Konto(@qIdKonto)
     @ m_x+2,col()+2 SAY "grupisati konto na broj mjesta" get nKontoLen pict "9" valid (nKontoLen > 0 .and. nKontoLen < 8)
@@ -101,7 +102,10 @@ Box(,20,77)
   ENDDO
 BoxC()
 
-if cDatPer=="D"
+// rj na 4 mjesta
+cIdRj := PADR( cIdRj, 4 )
+
+if cDatPer == "D"
     select_promj()
     PRIVATE cFilt1 := "DATUM>="+cm2str(dDatOd)+".and.DATUM<="+cm2str(dDatDo)
     set filter to &cFilt1

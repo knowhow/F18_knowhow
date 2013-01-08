@@ -30,7 +30,7 @@ O_RJ
 o_os_sii_promj()
 o_os_sii()
 
-cIdrj:=SPACE( LEN(field->idrj) )
+cIdrj:=SPACE(4)
 cPromj:="2"
 cPocinju:="N"
 cKPocinju:="N"
@@ -45,7 +45,9 @@ cPotpis:="N"
 
 Box(,13,77)
  DO WHILE .t.
-  @ m_x+1,m_y+2 SAY "Radna jedinica (prazno - svi):" get cidrj valid empty(cIdRj) .or. p_rj(@cIdrj)
+  @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+        VALID {|| EMPTY(cIdRj) .or. P_RJ( @cIdrj ), if( !EMPTY(cIdRj), cIdRj := PADR( cIdRj, 4 ), .t. ), .t. }
+ 
   @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
   @ m_x+2,m_y+2 SAY "Konto (prazno - svi):" get qIdKonto pict "@!" valid empty(qidkonto) .or. P_Konto(@qIdKonto)
   @ m_x+2,col()+2 SAY "sva koja pocinju " get cKpocinju valid cKpocinju $ "DN" pict "@!"
@@ -67,6 +69,8 @@ Box(,13,77)
   if aUsl1<>NIL; exit; endif
  ENDDO
 BoxC()
+
+cIdRj := PADR( cIdRj, 4 )
 
 if empty(qidkonto); qidkonto:=""; endif
 IF cKPocinju=="D"

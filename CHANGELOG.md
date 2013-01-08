@@ -4,7 +4,7 @@
  - os, unos promjena na sredstvima - BUGFIX
  - ispis informacije o sezonskom području na glavnom meniju modula
  - kalk, formiranje početnog stanja magacina - sql varijanta
- - os, radna jedinica je dužine 4, korekcija na izvještajima i unosu...
+ - os, radna jedinica je dužine 4, korekcija na izvještajima i unosu... [#29972](http://redmine.bring.out.ba/issues/29972)
  
 1.4.70 2013-01-07, vsasa
 

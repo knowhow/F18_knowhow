@@ -2,6 +2,7 @@
 
  - pos, povrat inventure sa spajanjem - BUGFIX 
  - kalk, provjera maloprodajnih cijena sa decimalama većim od 2 
+ - rnal, štampa specifikacije sa promjenom isporuke - BUGFIX
  
 1.4.69 2013-01-07, vsasa
 

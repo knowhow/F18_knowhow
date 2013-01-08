@@ -336,7 +336,7 @@ return _data
 // ----------------------------------------------------------
 // prebaci se na rad sa sezonskim podrucjem
 // ----------------------------------------------------------
-static function switch_to_database( db_params, database, year )
+function switch_to_database( db_params, database, year )
 
 if year == NIL
     year := YEAR( DATE() )

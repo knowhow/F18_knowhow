@@ -19,34 +19,21 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD(_opc, "1. pocetno stanje                                ")
-AADD(_opcexe, {|| PocStProd()})
-AADD(_opc, "2. inventure    ")
+AADD(_opc, "1. pocetno stanje - LEGACY                               ")
+AADD(_opcexe, {|| PocStProd() } )
+AADD(_opc, "2. pocetno stanje SQL ")
+AADD(_opcexe, {|| kalk_prod_pocetno_stanje() } )
+AADD(_opc, "3. inventure    ")
 AADD(_opcexe, {|| MnuPInv()})
-AADD(_opc, "3. nivelacije")
+AADD(_opc, "4. nivelacije")
 AADD(_opcexe, {|| MnuPNivel()})
-AADD(_opc, "-----------------------------------------------")
-AADD(_opcexe, {|| nil})
-
-if IsPDV()
-    AADD(_opc, "4. generisi poc.stanja PPP->PDV17")
-    AADD(_opcexe, {|| GetPstPDV()})
-endif
-
-AADD(_opc, "5. preknjizenje stanja na drugi konto")
-AADD(_opcexe, {|| GetPreknj()})
-
-if IsPDV()
-    AADD(_opc, "6. set roba tarifa PPP->PDV17")
-    AADD(_opcexe, {|| roba_pdv17()})
-endif
-
-AADD(_opc, "7. setuj mpc po uzoru na postojecu za % ")
+AADD(_opc, "5. setuj mpc po uzoru na postojecu za % ")
 AADD(_opcexe, {|| set_mpc_2()})
 
 f18_menu( "gdpr", nil, _izbor, _opc, _opcexe )
 
 return
+
 
 
 static function MnuPNivel()

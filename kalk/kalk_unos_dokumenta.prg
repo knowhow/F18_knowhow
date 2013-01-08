@@ -1732,10 +1732,10 @@ DO WHILE !EOF()
  IF EMPTY(error)
    OpisStavke(@lGreska)
    ? "STAVKA PRIPADA AUTOMATSKI FORMIRANOM DOKUMENTU !!!"
-   ? "Pokrenite opciju <Alt-F10> - asistent ako zelite da program sam prodje"
+   ? "Pokrenite opciju <A> - asistent ako zelite da program sam prodje"
    ? "kroz sve stavke ili udjite sa <Enter> u ispravku samo ove stavke."
    IF idvd=="11"
-     ? "Kada pokrenete <Alt-F10> za ovu kalkulaciju (11), veleprodajna"
+     ? "Kada pokrenete <A> za ovu kalkulaciju (11), veleprodajna"
      ? "cijena ce biti preuzeta: 1) Ako program omogucava azuriranje"
      ? "sumnjivih dokumenata, VPC ce ostati nepromijenjena; 2) Ako program"
      ? "radi tako da ne omogucava azuriranje sumnjivih dokumenata, VPC ce"
@@ -1914,7 +1914,7 @@ function UzmiTarIzSif()
     Gather()
     SKIP 1
   ENDDO
-  Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
+  Msg("Automatski pokrecem asistenta (opcija A)!",1)
   lAutoAsist:=.t.
   KEYBOARD CHR(K_ESC)
 CLOSERET
@@ -1949,7 +1949,7 @@ DO WHILE !EOF()
     Gather()
     SKIP 1
 ENDDO
-Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
+Msg("Automatski pokrecem asistenta (opcija A)!",1)
 lAutoAsist:=.t.
 KEYBOARD CHR(K_ESC)
 CLOSERET
@@ -2047,7 +2047,7 @@ function VPCSifUDok()
     Gather()
     SKIP 1
   ENDDO
-  Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
+  Msg("Automatski pokrecem asistenta (opcija A)!",1)
   lAutoAsist:=.t.
   KEYBOARD CHR(K_ESC)
 CLOSERET

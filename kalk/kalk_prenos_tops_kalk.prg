@@ -374,7 +374,7 @@ else
         _mpc_naz := STRTRAN( tip_cijene, "M", "mpc" )
     endif
         
-    if _rec[ _mpc_naz ] <> topska->mpc
+    if ROUND( _rec[ _mpc_naz ], 2 ) <> ROUND( topska->mpc, 2 )
 
         AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc, _rec[ _mpc_naz ] } )
         

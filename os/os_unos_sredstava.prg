@@ -112,7 +112,7 @@ Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
             IF Pitanje(,"Jeste li sigurni da zelite promijeniti radnu jedinicu ovom sredstvu? (D/N)"," ")=="D"
                 _rec := dbf_get_rec()
                 _rec["idrj"] := cIdRj
-                update_rec_server_and_dbf( ALIAS(), _rec )
+                update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
             ELSE
                 cIdRj := field->idrj
                 SELECT RJ
@@ -256,13 +256,17 @@ do case
         nKolotp := field->kolicina
         
         Box(,5,50)
+
             @ m_x+1,m_y+2 SAY "Otpis sredstva"
             @ m_x+3,m_y+2 SAY "Datum: " GET dDatOtp VALID dDatOtp>dDatNab .or. empty(dDatOtp)
             @ m_x+4,m_y+2 SAY "Opis : " GET cOpisOtp
+
             IF field->kolicina > 1
                 @ m_x+5,m_y+2 SAY "Kolicina koja se otpisuje:" GET nKolotp PICT "999999.99" VALID ( nKolotp <= field->kolicina .and. nKolotp >= 1 )
             ENDIF
+
             READ
+
         BoxC()
 
         IF LASTKEY() == K_ESC
@@ -289,8 +293,10 @@ do case
             update_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
 
             // dodaj novi zapis...
-            _rec := hb_hash()
-            
+            _rec := dbf_get_rec()
+           
+            APPEND BLANK
+ 
             _rec["kolicina"] := nKolOtp
             _rec["nabvr"] := nNabvrj * nKolotp
             _rec["otpvr"] := nOtpvrj * nKolotp

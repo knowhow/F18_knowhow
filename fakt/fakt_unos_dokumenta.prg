@@ -992,7 +992,6 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         @  m_x + _x, m_y + 45  SAY "Datum:" GET _datdok 
         @  m_x + _x, col() + 2 SAY "Broj:" GET _brdok  WHEN init_brdok(_idfirma, _idtipdok, _datdok, @_brdok) ;
                VALID init_brdok(_idfirma, _idtipdok, _datdok, @_brdok)
-
         _x += 2
 
         // partner
@@ -1001,8 +1000,8 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                 VALID {|| P_Firma( @_idpartner ), ;
                             IzSifre(), ;
                             _isp_partn( _idpartner, _part_x, _part_y + 18 ) }
-            
         ++ _x
+
         if _params["fakt_prodajna_mjesta"]
            // prodajno mjesto, PM
            @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm VALID {|| P_IDPM( @_idpm, _idpartner ) } PICT "@S10"
@@ -1012,8 +1011,8 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
            // veza dokumenti
            @ m_x + _x, col() + 1 SAY "Vezni dok.:" GET _dokument_veza PICT "@S20"
         endif
-
         ++ _x
+
         if _params["destinacije"] 
           // destinacija 
           @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
@@ -1023,18 +1022,15 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
             // radni nalog
             @ m_x + _x, col() + 2 SAY "Objekat:" GET _objekti VALID p_fakt_objekti( @_objekti ) PICT "@!"
         endif
-
         _x2 := 4
         
         // sada ide desna strana i podaci isporuke...
         if _idtipdok $ "10#11"
             
             @ m_x + _x2, m_y + 51 SAY "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp(__nove_stavke)
-                
             ++ _x2
 
             @ m_x + _x2, m_y + 51 SAY "          datum:" GET _datotp
-
             ++ _x2     
                
             @ m_x + _x2, m_y + 51 SAY "Ugovor/narudzba:" GET _brnar PICT "@S20"
@@ -1043,39 +1039,32 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                 // uzmi default vrijednost za rok placanja
                 _rok_placanja := gRokPl    
             endif
-
             ++ _x2    
 
             @ m_x + _x2, m_y + 51 SAY "Rok plac.(dana):" GET _rok_placanja PICT "999" ;
                     WHEN valid_rok_placanja( @_rok_placanja, "0", __nove_stavke) ;
                     VALID valid_rok_placanja( _rok_placanja, "1", __nove_stavke)
-
             ++ _x2
 
             @ m_x + _x2, m_y + 51 SAY "Datum placanja :" GET _datpl ;
                     VALID valid_rok_placanja( _rok_placanja, "2", __nove_stavke)
                 
             if _params["fakt_vrste_placanja"]
-
                 ++ _x
                 @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" VALID P_VRSTEP( @_idvrstep, 9, 20 )
-
             endif
        
 
         // za dokument tipa "06"
         elseif ( _idtipdok == "06" )
-                
             ++ _x2
 
             @ m_x + _x2, m_y + 51 SAY "Po ul.fakt.broj:" GET _brotp PICT "@S20" WHEN W_BrOtp(__nove_stavke)
-
             ++ _x2
 
             @ m_x + _x2, m_y + 51 SAY "       i UCD-u :" GET _brnar PICT "@S20"
         
         else
-            
             // dodaj i za ostale dokumente
             _datotp := _datdok
             ++ _x2

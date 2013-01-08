@@ -1112,6 +1112,7 @@ local _rec
 local _count
 local _fiscal_no
 local _fiscal_use := fiscal_opt_active()
+local _cnt
 
 if Pitanje("FORM_STORNO", "Formirati storno dokument ?","D") == "N"
     return
@@ -1130,15 +1131,9 @@ O_FAKT_DOKS
 O_ROBA
 O_PARTN
 
-_novi_br_dok := ALLTRIM( br_dok ) + "/S"
-
-if LEN( ALLTRIM( _novi_br_dok ) ) > 8
-    
-    // otkini prva dva karaktera
-    // da moze stati "/S"
-    _novi_br_dok := RIGHT( ALLTRIM( br_dok ), 6 ) + "/S"
-
-endif
+_cnt := FaktCounter():New("00", "00", DATE())
+_cnt:decode(br_dok)
+_novi_br_dok := _cnt:insert_suffix0("/S")
 
 _count := 0
 

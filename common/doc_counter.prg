@@ -44,6 +44,8 @@ CLASS DocCounter
     METHOD     decode(str, change_counter)
     METHOD     rewind(dok_str)
 
+    METHOD     insert_suffix0(suffix0)
+
     ACCESS     decoded_before_num   INLINE  ::decode_prefix0
     ACCESS     decoded_after_num    INLINE  ::decode_suffix0
     
@@ -132,6 +134,13 @@ if (! ::is_decoded())
 endif
 
 return .t.
+
+METHOD DocCounter:insert_suffix0(suffix0)
+local _tmp
+
+::suffix0 += suffix0
+
+return ::to_str()
 
 METHOD DocCounter:new_document_number()
 local _doc_cnt, _s_cnt
@@ -343,8 +352,21 @@ return str
 // --------------------------------
 // --------------------------------
 METHOD DocCounter:to_str()
+local _tmp, _msg
 local _w := ::numeric_width
-return  PADR(::prefix + ::prefix0 + PADL(ALLTRIM(STR(::count, _w)), _w, ::fill) + ::suffix0 + ::suffix, ::width)
+
+_tmp := ::prefix + ::prefix0 + PADL(ALLTRIM(STR(::count, _w)), _w, ::fill) + ::suffix0 + ::suffix
+
+
+if LEN(_tmp) > ::width
+    _msg := "DocCounter ERR: LEN(" + _tmp + ") > " + ALLTRIM(STR(::width)) 
+    ::error_msg := _msg
+    log_write(_msg, 2)
+    MsgBeep(_msg)
+endif
+
+return PADR(_tmp, ::width)
+
 
 // -------------------------------------------
 // -------------------------------------------

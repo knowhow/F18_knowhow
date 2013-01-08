@@ -1429,118 +1429,147 @@ return
  */
  
 function SpecSubPro()
+local _fin_params := fin_params()
+local _fakt_params := fakt_params()
 
-PRIVATE fK1:=fk2:=fk3:=fk4:="N",cSK:="N", cSkVar:="N"
+private fK1 := _fin_params["fin_k1"]
+private fK2 := _fin_params["fin_k2"]
+private fK3 := _fin_params["fin_k3"]
+private fK4 := _fin_params["fin_k4"]
 
-O_PARAMS
-Private cSection:="1",cHistory:=" ",aHistory:={}
-RPar("k1",@fk1)
-RPar("k2",@fk2)
-RPar("k3",@fk3)
-RPar("k4",@fk4)
-select params; use
+private cSk := "N"
+private cSkVar := "N"
 
-cIdFirma:=gFirma
-picBHD:=FormPicL("9 "+gPicBHD,20)
+cIdFirma := gFirma
+picBHD := FormPicL("9 "+gPicBHD,20)
 
 O_KONTO
 O_PARTN
 __par_len := LEN(partn->id)
 
-dDatOd:=dDatDo:=ctod("")
-qqkonto:=space(7)
-qqPartner:=space(60)
-qqTel:=space(60)
-cTip:="1"
-qqBrDok:=""
-Box("",20,65)
+dDatOd := dDatDo := CTOD("")
+qqkonto := space(7)
+qqPartner := space(60)
+qqTel := space(60)
+cTip := "1"
+qqBrDok := ""
+
+Box( "", 20, 65 )
+
 set cursor on
 
-private cSort:="1"
-cK1:=cK2:="9"; cK3:=cK4:="99"
+private cSort := "1"
 
-IF IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-  ck3:="999"
-endif
-
+cK1:=cK2:="9"
+cK3:=cK4:="99"
 cIdRj:="999999"
 cFunk:="99999"
 cFond:="9999"
+
 private nC:=65
+
 do while .t.
- @ m_x+1,m_y+6 SAY "SPECIFIKACIJA SUBANALITIKA - PROIZV.SORT."
- if gNW=="D"
-   @ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- else
-  @ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- endif
- @ m_x+4,m_y+2 SAY "Konto   " GET qqkonto  pict "@!" valid P_KontoFin(@qqkonto)
- @ m_x+5,m_y+2 SAY "Partner " GET qqPartner pict "@!S50"
- @ m_x+6,m_y+2 SAY "Datum dokumenta od" GET dDatOd
- @ m_x+6,col()+2 SAY "do" GET dDatDo
- IF gVar1=="0"
-  @ m_x+7,m_y+2 SAY "Obracun za "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+"/"+ALLTRIM(ValDomaca())+"-"+ALLTRIM(ValPomocna())+" (1/2/3):" GET cTip valid ctip $ "123"
- ENDIF
- @ m_x+9,m_y+2 SAY "Kriterij za telefon" get qqTel pict "@!S30"
- @ m_x+11,m_y+2 SAY "Sortirati po: konto+telefon+partn (1)" get cSort valid csort $ "12"
+    @ m_x+1,m_y+6 SAY "SPECIFIKACIJA SUBANALITIKA - PROIZV.SORT."
+    if gNW=="D"
+        @ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
+    else
+        @ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+    endif
+    @ m_x+4,m_y+2 SAY "Konto   " GET qqkonto  pict "@!" valid P_KontoFin(@qqkonto)
+    @ m_x+5,m_y+2 SAY "Partner " GET qqPartner pict "@!S50"
+    @ m_x+6,m_y+2 SAY "Datum dokumenta od" GET dDatOd
+    @ m_x+6,col()+2 SAY "do" GET dDatDo
+    IF gVar1=="0"
+        @ m_x+7,m_y+2 SAY "Obracun za "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+"/"+ALLTRIM(ValDomaca())+"-"+ALLTRIM(ValPomocna())+" (1/2/3):" GET cTip valid ctip $ "123"
+    ENDIF
 
- @ m_x+15,m_y+2 SAY ""
- if fk1=="D"; @ m_x+15,m_y+2 SAY "K1 (9 svi) :" GET cK1; endif
- if fk2=="D"; @ m_x+15,col()+2 SAY "K2 (9 svi) :" GET cK2; endif
- if fk3=="D"; @ m_x+15,col()+2 SAY "K3 ("+cK3+" svi):" GET cK3; endif
- if fk4=="D"; @ m_x+15,col()+2 SAY "K4 (99 svi):" GET cK4; endif
- READ; ESC_BCR
- aUsl2:=Parsiraj(qqPartner,"IdPartner")
+    @ m_x+9,m_y+2 SAY "Kriterij za telefon" get qqTel pict "@!S30"
+    @ m_x+11,m_y+2 SAY "Sortirati po: konto+telefon+partn (1)" get cSort valid csort $ "12"
 
- aUsl5:=Parsiraj(qqTel,"partn->telefon")
- if ausl5<>NIL .and. aUsl2<>NIL; exit; endif
+    @ m_x+15,m_y+2 SAY ""
+
+    if fk1
+        @ m_x+15,m_y+2 SAY "K1 (9 svi) :" GET cK1
+    endif
+    if fk2
+        @ m_x+15,col()+2 SAY "K2 (9 svi) :" GET cK2
+    endif
+    if fk3
+        @ m_x+15,col()+2 SAY "K3 ("+cK3+" svi):" GET cK3
+    endif
+    if fk4 
+        @ m_x+15,col()+2 SAY "K4 (99 svi):" GET cK4
+    endif
+    
+    READ
+    ESC_BCR
+ 
+    aUsl2 := Parsiraj( qqPartner, "IdPartner" )
+    aUsl5 := Parsiraj( qqTel, "partn->telefon" ) 
+
+    if aUsl5 <> NIL .and. aUsl2 <> NIL
+        exit
+    endif
+
 enddo
+
 BoxC()
 
-cIdFirma:=left(cIdFirma,2)
+cIdFirma := LEFT( cIdFirma, 2 )
 
-nTmpArr:=0;nArr:=0;cImeTmp:=""
+nTmpArr := 0
+nArr := 0
+cImeTmp := ""
 
 O_SUBAN
-set relation to suban->idpartner into partn
+SET RELATION TO suban->idpartner INTO partn
 
-if ck1=="9"; ck1:=""; endif
-if ck2=="9"; ck2:=""; endif
-if ck3==REPL("9",LEN(ck3))
-  ck3:=""
+if cK1 == "9"
+    cK1 := ""
+endif
+if cK2 == "9"
+    cK2 := ""
+endif
+if cK3 == REPL("9",LEN(cK3))
+    cK3 := ""
 else
-  ck3:=k3u256(ck3)
+    cK3 := k3u256(cK3)
 endif
-if ck4=="99"; ck4:=""; endif
-
-select SUBAN; set order to tag "1"
-
-if cSort=="1"
-  cSort1:= "idfirma+idkonto+partn->telefon+idpartner"
+if cK4 == "99"
+    cK4 := ""
 endif
 
-private cFilt1:="idfirma=='"+cIdfirma+"'.and. idkonto=='"+qqkonto+"'"
+select SUBAN
+set order to tag "1"
+
+if cSort == "1"
+    cSort1 := "idfirma + idkonto + partn->telefon + idpartner"
+endif
+
+private cFilt1 := "idfirma == " + _filter_quote( cIdFirma ) + " .and. idkonto == '" + qqkonto + "'"
 
 if !(empty(dDatOd) .and. empty(dDatDo))
- cFilt1+= iif(empty(cFilt1),"",".and.")+ ;
-          "dDatOd<=DatDok  .and. dDatDo>=DatDok"
+    cFilt1 += iif(empty(cFilt1),"",".and.")+ ;
+            "dDatOd<=DatDok  .and. dDatDo>=DatDok"
 endif
-if !( fk1=="N" .and. fk2=="N" .and. fk3=="N" .and. fk4=="N" )
-  cFilt1+= iif(empty(cFilt1),"",".and.")+ ;
+
+if ( fk1 .and. fk2 .and. fk3 .and. fk4 )
+    cFilt1+= if( empty(cFilt1), "", ".and." ) + ;
            "(k1=ck1 .and. k2=ck2 .and. k3=ck3 .and. k4=ck4)"
 endif
 
-if aUsl2<>".t."
-  cFilt1+= ".and.(" + aUsl2 +")"
+if aUsl2 <> ".t."
+    cFilt1 += ".and.(" + aUsl2 +")"
 endif
 if aUsl5<>".t."
-  cFilt1+= ".and.(" + aUsl5 +")"
+    cFilt1+= ".and.(" + aUsl5 +")"
 endif
 
 Box(,1,30)
-index on &cSort1 to "TMPSP2" for &cFilt1 eval(TekRec()) every 10
-BoxC()
 
+INDEX ON &cSort1 to "TMPSP2" FOR &cFilt1 
+
+BoxC()
 
 Pic:=PicBhd
 

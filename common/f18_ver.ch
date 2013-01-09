@@ -22,5 +22,5 @@
 
 #define SERVER_DB_VER_MAJOR  4
 #define SERVER_DB_VER_MINOR  7
-#define SERVER_DB_VER_PATCH  1
+#define SERVER_DB_VER_PATCH  2
 

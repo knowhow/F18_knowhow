@@ -37,6 +37,7 @@ local _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_se
 local _msg
 
 #ifdef TEST
+   altd()
    if _TEST_NO_DATABASE
       return .t.
    endif

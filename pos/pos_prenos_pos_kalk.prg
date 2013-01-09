@@ -76,6 +76,8 @@ my_use_temp( "KATOPS", _imp_table )
 
 // daj mi vrstu dokumenta koju cu importovati
 _id_tip_dok := _get_vd( katops->idvd )
+// setuj varijablu tipa dokumenta
+tip_dok := _id_tip_dok
    
 select pos_doks
 set order to tag "1"

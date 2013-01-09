@@ -1,3 +1,7 @@
+1.4.73 2013-01-09, vsasa
+
+ - rnal, štampa specifikacije, problem sa zaokruženjem kada je isključeno
+ 
 1.4.72 2013-01-09, vsasa
 
  - pos, import nivelacija iz modula KALK - BUGFIX

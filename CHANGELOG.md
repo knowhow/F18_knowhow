@@ -1,3 +1,7 @@
+1.4.72 2013-01-09, vsasa
+
+ - pos, import nivelacija iz modula KALK - BUGFIX
+ 
 1.4.71 2013-01-08, vsasa
 
  - fin, specifikacija dobavljača po telefonima - BUGFIX

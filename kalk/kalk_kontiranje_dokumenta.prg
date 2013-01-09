@@ -1178,8 +1178,6 @@ do while .t.
 
     do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
         
-        altd()
-
         cBrDok:=BrDok
         cIdPartner:=IdPartner
         cBrFaktP:=BrFaktP

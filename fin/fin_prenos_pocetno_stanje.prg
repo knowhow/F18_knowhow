@@ -179,10 +179,6 @@ do while !data:EOF()
 
     _i_saldo := 0
 
-    if LEFT( _id_konto, 4 ) == "0229"
-        altd()
-    endif
-
     // provrti razlicite nacine prenosa...
     do while !data:EOF() .and. PADR( data:FieldGet( data:FieldPos( "idkonto" ) ), 7 ) == _id_konto ;
                         .and. IF( _tip_prenosa == "2", ;

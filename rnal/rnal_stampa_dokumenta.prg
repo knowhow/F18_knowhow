@@ -73,6 +73,10 @@ local ii
 local cDocs := ""
 local cFlag := "N"
 
+if gGnUse == "N"
+    lGn := .f.
+endif
+
 if aOlDocs == nil .or. LEN( aOlDocs ) == 0
     // dodaj onda ovaj nalog koji treba da se stampa
     aOlDocs := {}
@@ -293,11 +297,17 @@ if nVar == nil
     nVar := 1
 endif
 
-if lZpoGN == nil
+if lZpoGN == NIL
     lZPoGN := .f.
 endif
 
-if !lZpoGN .and. Pitanje(,"Razdijeliti nalog po grupama ?", "D" ) == "D"
+// iskljucen parametar zaokruzenja
+if gGnUse == "N"
+    lZPoGn := .f.
+endif
+
+// samo kod naloga se vrsi dijeljenje po grupama...
+if nVar == 1 .and. Pitanje(,"Razdijeliti nalog po grupama ?", "D" ) == "D"
     lGroups := .t.
 endif
 

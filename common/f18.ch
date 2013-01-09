@@ -86,3 +86,5 @@
 #define DATA_XML_FILE "data" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".xml"
 
 #command QUIT_1                    => ErrorLevel(1); __Quit()
+
+#define PROCNAME_LINE( x )        (PROCNAME ( x ) + " / " + ALLTRIM(STR(PROCLINE(x))) )

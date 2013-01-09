@@ -185,6 +185,11 @@ return .f.
 METHOD DocCounter:set_c_server_param()
 local _i
 
+if ::a_s_param[1] == NIL
+   ::c_s_param := NIL
+   return ::c_s_param
+endif
+
 ::c_s_param := "" 
 FOR _i := 1 TO LEN(::a_s_param)
    if _i > 1
@@ -214,6 +219,12 @@ local _qry, _c_qry, _c_cnt, _msg
 ::set_sql_get()
 
 _c_qry := ::c_sql_get
+
+if _c_qry == "DUMMY"
+  ::c_document_count := -1
+  return ::c_document_count
+endif
+
 _qry   := run_sql_query(_c_qry)
 _c_cnt := _qry:FieldGet(1)
 
@@ -260,7 +271,13 @@ return .t.
 
 
 METHOD DocCounter:get_server_counter()
-::server_count := fetch_metric(::c_s_param, NIL, ::server_count)
+
+if ::c_s_param == NIL
+   ::server_count := -1
+else
+   ::server_count := fetch_metric(::c_s_param, NIL, ::server_count)
+endif
+
 return ::server_count
 
 METHOD DocCounter:set_server_counter(cnt)
@@ -272,6 +289,12 @@ return
 
 
 METHOD DocCounter:set_document_date(date)
+
+if date == NIL
+   ::doc_date := CTOD("")
+   ::year := 0
+   return .f.
+endif
 
 ::doc_date := date
 ::year     := YEAR(date) 
@@ -310,10 +333,14 @@ endif
 
 if (a_s_param != NIL)
    ::a_server_param := a_s_param
+else
+   ::a_server_param := { NIL, "00", "00" }
 endif
 
 if (doc_date != NIL)
    ::document_date := doc_date
+else
+   ::document_date := NIL
 endif
   
 return SELF
@@ -373,14 +400,15 @@ return PADR(_tmp, ::width)
 METHOD DocCounter:decode(str, change_counter)
 local _a
 //local _sep := "[#\/\\-]*"
-local _re_str := str_regex(::prefix) + "(.*?)([" + ::fill + "]*)" +  "([0-9]{4," + ALLTRIM(STR(::width)) +"})(.*)" + str_regex(::suffix)
+local _re_str := str_regex(::prefix) + "(.*?)([" + ::fill + "]*)" +  "([0-9]{4," + ALLTRIM(STR(::width)) +"})(.*)" + str_regex(::suffix) + "\s*"
 local _re_brdok := hb_regexComp( _re_str)
 
 if ::year == NIL
-   MsgBeep("Klasa nije inicijalizirana# Negdje je navedeno FactCounter(..) umjesto FaktCounter():New(..)", "L")
+   _msg := "Klasa nije inicijalizirana# Negdje je navedeno FactCounter(..) umjesto FaktCounter():New(..)"
+   log_write(PROCNAME_LINE(1) + " " + _msg, 2)
+   MsgBeep(_msg, "L")
    QUIT_1
 endif
-
 
 if change_counter == NIL
    change_counter := .t.

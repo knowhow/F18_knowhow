@@ -195,7 +195,7 @@ if lOk = .t.
    		record["src_pm"] := field->src_pm
    endif
                
-   _tmp_id := PADR( ALLTRIM( STR( record["br_dok"], 6 ) ), 6 ) 
+   _tmp_id := PADL( ALLTRIM( STR( record["br_dok"], 6 ) ), 6 ) 
    
    if !sql_table_update(_tbl_epdv, "ins", record )
        		lOk := .f.

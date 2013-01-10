@@ -1,6 +1,8 @@
 1.4.74 2013-01-10, vsasa
 
  - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)
+ - fakt, izvještaj realizacija maloprodaje - bugfix
+ - ld, prenos podataka ld->fin, korekcije
  
 1.4.73 2013-01-09, vsasa
 

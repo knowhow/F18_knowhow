@@ -1024,25 +1024,33 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                             _isp_partn( _idpartner, _part_x, _part_y + 18 ) }
             
         ++ _x
+        ++ _x
+      
         if _params["fakt_prodajna_mjesta"]
-           // prodajno mjesto, PM
-           @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm VALID {|| P_IDPM( @_idpm, _idpartner ) } PICT "@S10"
+            // prodajno mjesto, PM
+            @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm ;
+                    VALID {|| P_IDPM( @_idpm, _idpartner ) } ;
+                    PICT "@S10"
         endif
 
         if _params["fakt_dok_veze"]
-           // veza dokumenti
-           @ m_x + _x, col() + 1 SAY "Vezni dok.:" GET _dokument_veza PICT "@S20"
+            // veza dokumenti
+            @ m_x + _x, col() + 1 SAY "Vezni dok.:" GET _dokument_veza ;
+                    PICT "@S20"
         endif
 
         ++ _x
-        if _params["destinacije"] 
-          // destinacija 
-          @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
+        if _params["destinacije"]
+            // destinacija 
+            @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija ;
+                    PICT "@S20"
         endif
 
-        if _params["fakt_objekti"] .and. _idtipdok $ "10#11#12#13"
+        if ( _params["fakt_objekti"] .and. _idtipdok $ "10#11#12#13" )
             // radni nalog
-            @ m_x + _x, col() + 2 SAY "Objekat:" GET _objekti VALID p_fakt_objekti( @_objekti ) PICT "@!"
+            @ m_x + _x, col() + 1 SAY "Objekat:" GET _objekti ;
+                    VALID p_fakt_objekti( @_objekti ) ;
+                    PICT "@!"
         endif
 
         _x2 := 4

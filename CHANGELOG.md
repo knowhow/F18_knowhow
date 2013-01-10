@@ -1,6 +1,7 @@
 1.4.73 2013-01-09, vsasa
 
  - rnal, štampa specifikacije, problem sa zaokruženjem kada je isključeno
+ - kalk, prenos dokumenata fakt->kalk, korekcija 
  
 1.4.72 2013-01-09, vsasa
 

@@ -292,6 +292,7 @@ local _id_partner
 local _suma := 0
 local _veza_otpr := ""
 local _datum_max := DATE()
+local _ok
 
 select fakt_pripr
 use
@@ -371,10 +372,12 @@ BoxC()
 
 if Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
      
-    _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
+    _ok := _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
     
-    select fakt_pripr
-    renumeracija_fakt_pripr( _veza_otpr, _datum_max )
+    if _ok
+        select fakt_pripr
+        renumeracija_fakt_pripr( _veza_otpr, _datum_max )
+    endif
 
     select fakt_doks
     set order to tag "1"
@@ -524,7 +527,8 @@ local _vp_mp
 local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
-       
+local _ok := .t.
+  
 _broj_dokumenta := fakt_prazan_broj_dokumenta()
          
 // sumirati stavke ?
@@ -587,7 +591,12 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
           //  go ( __t_rec )
         //endif
 
-        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+        if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+            f18_free_tables({"fakt_doks", "fakt_fakt"})
+            sql_table_update( nil, "ROLLBACK" )
+            MsgBeep( "Nisam uspio zavrsiti operaciju, pokusajte ponovo !!!" )
+            return .f. 
+        endif
 
         dxIdFirma := fakt_doks->idfirma    
         dxBrDok   := fakt_doks->brdok
@@ -609,7 +618,12 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             _fakt_rec["idtipdok"] := "22"
             _fakt_rec["brdok"] := dxBrDok
 
-            update_rec_server_and_dbf( "fakt_fakt", _fakt_rec, 1, "CONT" )
+            if !update_rec_server_and_dbf( "fakt_fakt", _fakt_rec, 1, "CONT" )
+                f18_free_tables({"fakt_doks", "fakt_fakt"})
+                sql_table_update( nil, "ROLLBACK" )
+                MsgBeep( "Nisam uspio zavrsiti operaciju !!! pokusajte ponovo !!!" )
+                return .f.
+            endif
 
             _fakt_rec := dbf_get_rec()
             _fakt_rec["brdok"] := _broj_dokumenta
@@ -638,6 +652,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             go ( _t_fakt_rec )
             
         enddo
+
     endif
         
     select fakt_doks
@@ -660,7 +675,7 @@ if !EMPTY( _veza_otpremnice )
 
 endif
     
-return
+return _ok
 
 
 

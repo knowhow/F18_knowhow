@@ -1,3 +1,8 @@
+1.4.77 2013-01-10, vsasa
+
+ - mat, azuriranje/povrat naloga - korekcije
+ - fakt, formiranje računa na osnovu otpremnice, transakcija i obrada transakcije
+ 
 1.4.76 2013-01-10, vsasa
 
  - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)

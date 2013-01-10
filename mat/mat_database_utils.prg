@@ -134,7 +134,9 @@ if !lBrisi
 endif
 
 if !lStorno
-    brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
+    if !brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
+        MsgBeep( "Problem sa brisanjem naloga ..." )
+    endif
 endif
 
 close all
@@ -146,9 +148,12 @@ return
 // ---------------------------------------------------------
 function brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
 local _del_rec
+local _ok := .t.
 
+if !f18_lock_tables({"mat_suban", "mat_sint", "mat_anal", "mat_nalog"})
+    return .f.
+endif
 
-f18_lock_tables({"mat_suban", "mat_sint", "mat_anal", "mat_nalog"})
 sql_table_update( nil, "BEGIN" )
 
 select mat_suban
@@ -194,7 +199,7 @@ endif
 f18_free_tables({"mat_suban", "mat_sint", "mat_anal", "mat_nalog"})
 sql_table_update( nil, "END" )
 
-return
+return _ok
 
 
 

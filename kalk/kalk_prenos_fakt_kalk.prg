@@ -40,8 +40,12 @@ return
  */
 
 function ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor,lTest)
-LOCAL lVrati:=.t., nArr:=SELECT(), nRec:=RECNO(), lStartPrint:=.f., cPom3:=""
-LOCAL nR:=0
+local lVrati := .t.
+local nArr := SELECT()
+local nRec := RECNO()
+local lStartPrint := .f.
+local cPom3 := ""
+LOCAL nR := 0
 
 if lTest == nil
 	lTest := .f.
@@ -51,51 +55,59 @@ IF clFor == NIL
 	clFor:=".t."
 ENDIF
 
-PRIVATE cPom := clDok, cPom2 := cImePoljaID, cPom4:=clFor
+private cPom := clDok
+private cPom2 := cImePoljaID
+private cPom4 := clFor
 
-DO WHILE &cPom
-  IF &cPom4
-    SELECT (nOblSif)
-    cPom3 := (nArr)->(&cPom2)
-    SEEK cPom3
-    IF !FOUND()  .and.  !(  xFakt->(alltrim(podbr)==".")  .and. empty(xfakt->idroba))
-                        // ovo je kada se ide 1.  1.1 1.2
-      ++nR
-      lVrati:=.f.
-      if lTest == .f.
-       IF !lStartPrint
-        lStartPrint:=.t.
-        StartPrint()
-        ? "NEPOSTOJECE SIFRE:"
-        ? "------------------"
-       ENDIF
-       ? STR(nR)+") SIFRA '"+cPom3+"'"
-      else
+do while &cPom
+    if &cPom4
+        SELECT (nOblSif)
+        cPom3 := (nArr)->(&cPom2)
+        SEEK cPom3
+        if !FOUND()  .and.  !(  fakt->(alltrim(podbr)==".")  .and. empty(fakt->idroba))
+            // ovo je kada se ide 1.  1.1 1.2
+            ++nR
+            lVrati:=.f.
+            if lTest == .f.
+                if !lStartPrint
+                    lStartPrint:=.t.
+                    StartPrint()
+                    ? "NEPOSTOJECE SIFRE:"
+                    ? "------------------"
+                ENDIF
+                ? STR(nR)+") SIFRA '"+cPom3+"'"
+            else
 
-      	nTArea := SELECT()
-	select roba
-	go top
-	seek xfakt->idroba
-	if !FOUND()
-	  append blank
-	  replace id with xfakt->idroba
-	  replace naz with "!!! KONTROLOM UTVRDJENO"
-	endif
-	select (nTArea)
+      	        nTArea := SELECT()
 
-      endif
+	            select roba
+	            go top
+	            seek fakt->idroba
+
+	            if !FOUND()
+	                append blank
+                    _rec := dbf_get_rec()
+	                _rec["id"] := fakt->idroba
+	                _rec["naz"] :=  "!!! KONTROLOM UTVRDJENO"
+                    update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+	            endif
+	            select (nTArea)
+
+            endif
+        ENDIF
     ENDIF
-  ENDIF
-  SELECT (nArr)
-  SKIP 1
+    SELECT (nArr)
+    SKIP 1
 ENDDO
+
 GO (nRec)
 IF lStartPrint
-  ?
-  EndPrint()
+    ?
+    EndPrint()
 ENDIF
+
 return lVrati
-*}
+
 
 
 

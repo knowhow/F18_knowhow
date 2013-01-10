@@ -169,7 +169,7 @@ endif
 _tbl_epdv := "epdv_" + LOWER( tbl )
 
 // lokuj prvo tabele
-if !f18_lock_tables( { _tmp_epdv } )
+if !f18_lock_tables( { _tbl_epdv } )
     return .f.
 endif
 

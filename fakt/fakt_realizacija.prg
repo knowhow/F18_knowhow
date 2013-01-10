@@ -137,7 +137,8 @@ Box( , 10, 66)
 	++ nX
 
 	@ m_x + nX, m_y + 2 SAY "Operater (0-svi):" GET nOperater ;
-		PICT "999" VALID nOperater = 0
+		PICT "9999999999" ;
+        VALID {|| nOperater == 0 , IIF( nOperater == -99, choose_f18_user_from_list( @nOperater ), .t. ) }
 
 	++ nX
 	++ nX
@@ -358,7 +359,7 @@ AADD( aDbf, { "idfirma", "C", 2, 0 } )
 AADD( aDbf, { "idtipdok", "C", 2, 0 } )
 AADD( aDbf, { "brdok", "C", 10, 0 } )
 AADD( aDbf, { "datdok", "D", 8, 0 } )
-AADD( aDbf, { "operater", "N", 3, 0 } )
+AADD( aDbf, { "operater", "N", 10, 0 } )
 AADD( aDbf, { "part_id", "C", 6, 0 } )
 AADD( aDbf, { "part_naz", "C", 100, 0 } )
 AADD( aDbf, { "roba_id", "C", 10, 0 } )
@@ -376,7 +377,7 @@ O_R_EXP
 
 index on idfirma + idtipdok + brdok tag "1"
 index on roba_id tag "2"
-index on STR( operater, 3 ) + idfirma + idtipdok + brdok tag "3"
+index on STR( operater, 10 ) + idfirma + idtipdok + brdok tag "3"
 
 return
 

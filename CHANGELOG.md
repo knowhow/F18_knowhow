@@ -1,3 +1,7 @@
+1.4.74 2013-01-10, vsasa
+
+ - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)
+ 
 1.4.73 2013-01-09, vsasa
 
  - rnal, štampa specifikacije, problem sa zaokruženjem kada je isključeno

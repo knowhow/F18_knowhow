@@ -1,3 +1,8 @@
+1.4.76 2013-01-10, vsasa
+
+ - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)
+ - fin, prenos LD->VIRM
+ 
 1.4.75 2013-01-10, vsasa
 
  - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)

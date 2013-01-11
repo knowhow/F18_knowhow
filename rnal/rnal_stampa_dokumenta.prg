@@ -474,14 +474,13 @@ do while !EOF() .and. field->doc_no == __doc_no
     cDoc_it_schema := field->doc_it_sch
     // na napomene dodaj i poziciju ako postoji...
     cDoc_it_desc := cPosition + ALLTRIM( field->doc_it_des )
+         
+    aZpoGN := {}
+    // setuje se matrica sa elementima artikla
+    _art_set_descr( nArt_id, .f., nil, @aZpoGN, .t. )
     
     if lZpoGN == .t.
 
-        aZpoGN := {}
-        
-        // zaokruzi vrijednosti....
-        _art_set_descr( nArt_id, nil, nil, @aZpoGN, lZpoGN )
-    
         lBezZaokr := .f.
 
         if lBezZaokr == .f.
@@ -512,16 +511,13 @@ do while !EOF() .and. field->doc_no == __doc_no
         
         // ako se zaokruzuje onda total ide po zaokr.vrijednostima
         nTotal := ROUND( c_ukvadrat( nQtty, nZHeigh, nZWidth, nZH2, nZW2 ), 2)
-        
-        // ovo ne treba da uzima po GN zaokruzenju
-        // duzinski
-        //nTot_m := ROUND( c_duzinski( nQtty, nZHeigh, nZWidth, nZH2, nZW2 ), 2)
-        // izracunaj neto
-        nNeto := ROUND( obrl_neto( nTotal, aZpoGN ), 2)
-        
-        nBruto := 0
-        
+           
     endif
+         
+        
+    // izracunaj neto
+    nNeto := ROUND( obrl_neto( nTotal, aZpoGN ), 2)
+    nBruto := 0
     
     // prva grupa
     nGr1 := VAL( SUBSTR(cDoc_gr_no, 1, 1) )

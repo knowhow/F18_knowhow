@@ -1,3 +1,7 @@
+1.4.78 2013-01-11, vsasa
+
+ - rnal, ispis težine na specifikaciji... 
+ 
 1.4.77 2013-01-10, vsasa
 
  - mat, azuriranje/povrat naloga - korekcije

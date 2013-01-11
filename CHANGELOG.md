@@ -1,3 +1,8 @@
+1.4.79 2013-01-11, vsasa
+
+ - rnal, unos naloga bez brisanja memvars
+ - fakt, generisanje računa iz otpremnica - lock
+ 
 1.4.78 2013-01-11, vsasa
 
  - rnal, ispis težine na specifikaciji... 

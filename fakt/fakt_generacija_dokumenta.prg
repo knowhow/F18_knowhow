@@ -293,6 +293,7 @@ local _suma := 0
 local _veza_otpr := ""
 local _datum_max := DATE()
 local _ok
+local _lock := .f.
 
 select fakt_pripr
 use
@@ -306,6 +307,19 @@ if RecCount2() <> 0
     select fakt_pripr
     return .t.
 endif
+
+// mogu li koristiti opciju ?
+// radi problema u mrežnom radu... #29996 problem
+_lock := fetch_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+
+if _lock
+    MsgBeep( "Opciju pretvaranja vec koristi neko od korisnika... pokusajte ponovo !!!" )
+    select fakt_pripr
+    return .t.
+endif
+
+// setuj parametar da se opcija koristi
+set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .t. )
 
 select fakt_doks
 set order to tag "2"  
@@ -344,6 +358,8 @@ Box(, 20, 75 )
     seek _firma + _otpr_tip
 
     if !f18_lock_tables({LOWER(ALIAS())})
+        // ukini lock opcije
+        set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
         MsgBeep( "Neuspjesno lokovanje tabele !!!" )
         return .t.
     endif
@@ -383,6 +399,9 @@ if Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
     set order to tag "1"
 
 endif 
+
+// ukini lock opcije
+set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
 
 close all
 o_fakt_edit()

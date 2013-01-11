@@ -31,10 +31,21 @@ AADD( _opc, "6. podesavanje brojaca dokumenta ")
 AADD( _opcexe, {|| fakt_set_param_broj_dokumenta() } )
 AADD( _opc, "E. fakt export (r_exp) ")
 AADD( _opcexe, {|| fkt_export() } )
+AADD( _opc, "U. pretvaranje otpremnica - unlock ")
+AADD( _opcexe, {|| fakt_otpremnice_pretvaranje_unlock() } )
 
 f18_menu("fain", .f., _izbor, _opc, _opcexe )
 
 return
+
+
+
+static function fakt_otpremnice_pretvaranje_unlock()
+// ukini lock funkcije pretvaranja...
+if fetch_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+    set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+endif
+return .t.
 
 
 

@@ -95,7 +95,7 @@ do while .t.
             append blank
         endif
        
-        _rec := get_dbf_global_memvars()
+        _rec := get_dbf_global_memvars( NIL, .f. )
         
         dbf_update_rec( _rec )
             

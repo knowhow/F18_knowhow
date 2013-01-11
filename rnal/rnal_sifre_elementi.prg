@@ -903,7 +903,7 @@ endif
 
 if EMPTY(cType) .and. LastKey() == K_ESC .and. lNewRec
 
-    _rec := get_dbf_global_memvars()
+    _rec := get_dbf_global_memvars( NIL, .f. )
     delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 	return 0
@@ -925,10 +925,8 @@ if !EMPTY(cType)
 
 endif
 
-_rec := get_dbf_global_memvars()
+_rec := get_dbf_global_memvars( NIL, .f. )
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-// ponovo mi napuni globalne varijable
-set_global_memvars_from_dbf()
 
 if lNewRec
 	// nafiluj odmah atribute za ovu grupu...
@@ -955,12 +953,9 @@ BoxC()
 
 if LastKey() <> K_ESC
     
-    _rec := get_dbf_global_memvars()
+    _rec := get_dbf_global_memvars( NIL, .f. )
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
     
-    // ponovo mi napuni gl.varijable
-    set_global_memvars_from_dbf()
- 
 endif
 
 return 1
@@ -1072,16 +1067,14 @@ Box(,6,65)
 BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
-    _rec := get_dbf_global_memvars()
+    _rec := get_dbf_global_memvars( NIL, .f. )
     delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	return 0
 endif
 
-_rec := get_dbf_global_memvars()
+_rec := get_dbf_global_memvars( NIL, .f. )
 // update zapisa
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-// ponovo mi napuni matricu...
-set_global_memvars_from_dbf()
 
 
 return 1
@@ -1137,12 +1130,12 @@ Box(,6,65)
 BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
-    _rec := get_dbf_global_memvars()
+    _rec := get_dbf_global_memvars( NIL, .f. )
 	delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	return 0
 endif
 
-_rec := get_dbf_global_memvars()
+_rec := get_dbf_global_memvars( NIL, .f. )
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 return 1

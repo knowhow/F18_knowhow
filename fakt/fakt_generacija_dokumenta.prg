@@ -361,7 +361,7 @@ Box(, 20, 75 )
 
     seek _firma + _otpr_tip
 
-    if !f18_lock_tables({LOWER(ALIAS())})
+    if !f18_lock_tables( {"fakt_doks"}, .f. )
         // ukini lock opcije
         set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
         MsgBeep( "Neuspjesno lokovanje tabele !!!" )
@@ -388,7 +388,7 @@ Box(, 20, 75 )
 
     enddo
 
-    f18_free_tables({LOWER(ALIAS())})
+    f18_free_tables({ "fakt_doks" })
     sql_table_update( nil, "END" )
 
     seek _firma + _otpr_tip
@@ -502,7 +502,7 @@ do case
 
     case Ch==ASC(" ") .or. Ch==K_ENTER
 
-        if !f18_lock_tables( { "fakt_doks" } )
+        if !f18_lock_tables( { "fakt_doks" }, .f. )
             MsgBeep( "Ne mogu postaviti lock, neko drugi koristi opciju..." )
             return DE_CONT
         endif
@@ -630,7 +630,7 @@ seek firma + otpr_tip + partn_naz
       
 _dat_max := CTOD("")
 
-if !f18_lock_tables( {"fakt_doks", "fakt_fakt" })
+if !f18_lock_tables( {"fakt_doks", "fakt_fakt" }, .f. )
     MsgBeep("Neuspjesno lokovanje tabela !!!!")
     return .f.
 endif

@@ -197,7 +197,7 @@ log_write( "FAKT, sql azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-
 
 // -----------------------------------------------------------------------------------------------------
 sql_table_update(nil, "BEGIN")
-
+altd()
 // uzmi potrebni record
 _record := dbf_get_rec()
 

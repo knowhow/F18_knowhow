@@ -1,3 +1,7 @@
+1.4.80 2013-01-12, vsasa
+
+ - fakt, generisanje računa na osnovu otpremnice, sređivanje opcije, više poruka za korisnika
+ 
 1.4.79 2013-01-11, vsasa
 
  - rnal, unos naloga bez brisanja memvars

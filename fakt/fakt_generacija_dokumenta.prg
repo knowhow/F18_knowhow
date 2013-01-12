@@ -369,6 +369,8 @@ Box(, 20, 75 )
         close all
         o_fakt_edit()
         select fakt_pripr
+        BoxC()
+
         MsgBeep( "Neuspjesno lokovanje tabele !!!" )
 
         return .t.
@@ -391,7 +393,7 @@ Box(, 20, 75 )
                 close all
                 o_fakt_edit()
                 select fakt_pripr
-    
+                BoxC()    
                 MsgBeep( "Ne mogu setovati markere za otpremnice !!!" )
                 return .t.
 
@@ -416,8 +418,13 @@ BoxC()
 if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
      
     _ok := _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
-    
+ 
+    // ovdje vec smijem ukinuti lock opciju... racun je formiran i nalazi se u priremi
+    set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+   
     if _ok
+        // ovdje ce se setovati jos i parametri dokumenta...
+        // datum otpremnice, datum valute... destinacija itd...
         select fakt_pripr
         renumeracija_fakt_pripr( _veza_otpr, _datum_max )
     endif
@@ -425,10 +432,11 @@ if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica 
     select fakt_doks
     set order to tag "1"
 
+else
+    // ukini lock opcije
+    // korisnik je odabrao da nece koristi opcije pretvaranja
+    set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
 endif 
-
-// ukini lock opcije
-set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
 
 close all
 o_fakt_edit()

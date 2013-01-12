@@ -369,7 +369,7 @@ Box(, 20, 75 )
     endif
 
     sql_table_update( nil, "BEGIN" )
-
+    
     do while !EOF() .and. field->idfirma + field->idtipdok = _firma + _otpr_tip
         if field->m1 <> "Z"
 
@@ -564,6 +564,7 @@ local _ok := .t.
 local _sumiraj := "N"
 local _tip_rn := 1
 
+params := hb_hash()
 
 Box(, 6, 65 )
 

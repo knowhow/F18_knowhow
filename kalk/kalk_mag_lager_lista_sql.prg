@@ -254,7 +254,12 @@ endif
 _count := kalk_mag_insert_ps_into_pripr( _data, _param )
 
 if _count > 0
+    
+    // renumerisi brojeve u pripremi...
+    renumeracija_kalk_pripr( nil, nil, .t. )
+
     MsgBeep( "Formiran dokument pocetnog stanja, nalazi se u pripremi !" )
+
 endif
 
 return

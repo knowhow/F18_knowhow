@@ -12,6 +12,10 @@
 
 #include "fakt.ch"
 
+// staticke varijable
+static __generisati := .f.
+
+
 
 function GDokInv(cIdRj)
 local cIdRoba
@@ -368,11 +372,20 @@ Box(, 20, 75 )
 
     do while !EOF() .and. field->idfirma + field->idtipdok = _firma + _otpr_tip
         if field->m1 <> "Z"
+
             _rec := dbf_get_rec()
             _rec["m1"] := " "
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+            if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+                f18_free_tables( { "fakt_doks" } )
+                sql_table_update( nil, "ROLLBACK" )
+                MsgBeep( "Ne mogu setovati markere za otpremnice !!!" )
+                return .t.
+            endif
+
         endif
         skip
+
     enddo
 
     f18_free_tables({LOWER(ALIAS())})
@@ -381,12 +394,12 @@ Box(, 20, 75 )
     seek _firma + _otpr_tip
 
     BrowseKey( m_x + 5, m_y + 1, m_x + 19, m_y+ 73, ImeKol, ;
-                {|Ch| EdOtpr(Ch, @_suma)}, "idfirma+idtipdok = _firma + _otpr_tip",;
+                {|ch| EdOtpr( ch, @_suma) }, "idfirma+idtipdok = _firma + _otpr_tip",;
                 _firma + _otpr_tip, 2, , , {|| partner = _partn_naz } )
 
 BoxC()
 
-if Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
+if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
      
     _ok := _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
     
@@ -408,6 +421,8 @@ o_fakt_edit()
 select fakt_pripr
 
 return .t.
+
+
 
 
 // -----------------------------------------------------------
@@ -484,9 +499,11 @@ local cDn := "N"
 local nRet := DE_CONT
 
 do case
+
     case Ch==ASC(" ") .or. Ch==K_ENTER
 
-        if !f18_lock_tables({LOWER(ALIAS())})
+        if !f18_lock_tables( { "fakt_doks" } )
+            MsgBeep( "Ne mogu postaviti lock, neko drugi koristi opciju..." )
             return DE_CONT
         endif
 
@@ -497,21 +514,40 @@ do case
         _rec := dbf_get_rec()
 
         if field->m1 = " "    
-            // iz DOKS
+
+            __generisati := .t.
+            
             _rec["m1"] := "*"
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+            
+            if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+                f18_free_tables( { "fakt_doks" } )
+                sql_table_update( nil, "ROLLBACK" )
+                MsgBeep( "Nisam uspio setovati marker, neko vec koristi opciju..." )
+                return DE_CONT
+            endif
+
             suma += field->iznos
+
         else
+
             _rec["m1"] := " "
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+            if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+                f18_free_tables( { "fakt_doks" } )
+                sql_table_update( nil, "ROLLBACK" )
+                MsgBeep( "Nisam uspio setovati marker, neko vec koristi opciju..." )
+                return DE_CONT
+            endif
+
             suma -= field->iznos
+
         endif
 
         @ m_x+1, m_Y + 55 SAY suma pict picdem
 
         nRet := DE_REFRESH
 
-        f18_free_tables({LOWER(ALIAS())})
+        f18_free_tables( { "fakt_doks" } )
         sql_table_update( nil, "END" )
 
 endcase
@@ -520,41 +556,65 @@ return nRet
 
 
 
-// ---------------------------------------------------------
-// vrati tip racuna koji zelis formirati
-// ---------------------------------------------------------
-static function _formiraj_tip_racuna()
-local _vp_mp := 1
-    
-Box(, 5, 50 )
-    @ m_x + 1, m_y + 2 SAY "Formirati:"
-    @ m_x + 3, m_y + 2 SAY " (1) racun veleprodaje"
-    @ m_x + 4, m_y + 2 SAY " (2) racun maloprodaje"
-    @ m_x + 5, m_y + 2 SAY "                     ===>" GET _vp_mp PICT "9" VALID _vp_mp > 0 .AND. _vp_mp < 3
+// ------------------------------------------------------
+// generacija podataka, forma parametara
+// ------------------------------------------------------
+static function gen_vars( params )
+local _ok := .t.
+local _sumiraj := "N"
+local _tip_rn := 1
+
+
+Box(, 6, 65 )
+
+    @ m_x + 1, m_y + 2 SAY "Sumirati stavke otpremnica (D/N) ?" GET _sumiraj ;
+                    VALID _sumiraj $ "DN" ;
+                    PICT "@!"
+
+    @ m_x + 3, m_y + 2 SAY "Formirati tip racuna: 1 (veleprodaja)" 
+    @ m_x + 4, m_y + 2 SAY "                      2 (veleprodaja)" GET _tip_rn ;
+                    VALID ( _tip_rn > 0 .and. _tip_rn < 3 ) ;
+                    PICT "9"
+
     read
+
 BoxC()
-    
-return _vp_mp
+
+if LastKey() == K_ESC
+    _ok := .f.
+    return _ok
+endif
+
+// snimi mi u matricu parametre
+params["tip_racuna"] := _tip_rn
+params["sumiraj"] := _sumiraj
+
+return _ok
+
 
 
 // --------------------------------------------------------------
 // formiranje racuna
 // --------------------------------------------------------------
 static function _formiraj_racun( firma, otpr_tip, partn_naz, veza_otpr, datum_max )
-local _sumirati
-local _vp_mp
+local _sumirati := .f.
+local _vp_mp := 1
 local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
 local _ok := .t.
-  
-_broj_dokumenta := fakt_prazan_broj_dokumenta()
-         
-// sumirati stavke ?
-_sumirati := Pitanje(,"Sumirati stavke fakture (D/N)","D") == "D"
+local _gen_params  
 
-// koju vrsta racuna da napravim ? 
-_vp_mp := _formiraj_tip_racuna()
+_broj_dokumenta := fakt_prazan_broj_dokumenta()
+
+// parametri generisanja...
+if !gen_vars( @_gen_params )
+    return .f.
+endif
+         
+// uzmi parametre matrice...
+_sumirati := _gen_params["sumiraj"] == "D"
+_vp_mp := _gen_params["tip_racuna"]
 
 if _vp_mp == 1
     _n_tip_dok := "10"
@@ -571,7 +631,7 @@ _dat_max := CTOD("")
 
 if !f18_lock_tables( {"fakt_doks", "fakt_fakt" })
     MsgBeep("Neuspjesno lokovanje tabela !!!!")
-    return
+    return .f.
 endif
 
 sql_table_update( nil, "BEGIN" )

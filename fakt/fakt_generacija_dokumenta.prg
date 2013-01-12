@@ -297,7 +297,8 @@ local _suma := 0
 local _veza_otpr := ""
 local _datum_max := DATE()
 local _ok
-local _lock := .f.
+local _lock_user := ""
+local _lock_param := "fakt_otpremnice_lock_user"
 
 select fakt_pripr
 use
@@ -314,16 +315,16 @@ endif
 
 // mogu li koristiti opciju ?
 // radi problema u mrežnom radu... #29996 problem
-_lock := fetch_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+_lock_user := ALLTRIM( fetch_metric( _lock_param, NIL, "" ) )
 
-if _lock
-    MsgBeep( "Opciju pretvaranja vec koristi neko od korisnika... pokusajte ponovo !!!" )
+if !EMPTY( _lock_user )
+    MsgBeep( "Opciju pretvaranja koristi (" + _lock_user + "), pokusajte ponovo !!!" )
     select fakt_pripr
     return .t.
 endif
 
 // setuj parametar da se opcija koristi
-set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .t. )
+set_metric( _lock_param, NIL, f18_user() )
 
 select fakt_doks
 set order to tag "2"  
@@ -364,7 +365,7 @@ Box(, 20, 75 )
     if !f18_lock_tables( {"fakt_doks"}, .f. )
 
         // ukini lock opcije
-        set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+        set_metric( _lock_param, NIL, "" )
         
         close all
         o_fakt_edit()
@@ -390,11 +391,16 @@ Box(, 20, 75 )
                 f18_free_tables( { "fakt_doks" } )
                 sql_table_update( nil, "ROLLBACK" )
                 
+                set_metric( _lock_param, NIL, "" )
+
                 close all
                 o_fakt_edit()
                 select fakt_pripr
+
                 BoxC()    
+
                 MsgBeep( "Ne mogu setovati markere za otpremnice !!!" )
+
                 return .t.
 
             endif
@@ -420,7 +426,7 @@ if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica 
     _ok := _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
  
     // ovdje vec smijem ukinuti lock opciju... racun je formiran i nalazi se u priremi
-    set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+    set_metric( _lock_param, NIL, "" )
    
     if _ok
         // ovdje ce se setovati jos i parametri dokumenta...
@@ -435,7 +441,7 @@ if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica 
 else
     // ukini lock opcije
     // korisnik je odabrao da nece koristi opcije pretvaranja
-    set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+    set_metric( _lock_param, NIL, "" )
 endif 
 
 close all

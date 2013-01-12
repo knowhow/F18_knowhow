@@ -1,3 +1,7 @@
+1.4.81 2013-01-12, vsasa
+
+ - fakt, generisanje računa na osnovu otpremnice, ispis ko trenutno koristi opciju
+ 
 1.4.80 2013-01-12, vsasa
 
  - fakt, generisanje računa na osnovu otpremnice, sređivanje opcije, više poruka za korisnika

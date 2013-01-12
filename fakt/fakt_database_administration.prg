@@ -41,10 +41,16 @@ return
 
 
 static function fakt_otpremnice_pretvaranje_unlock()
+local _param := "fakt_otpremnice_lock_user"
+
 // ukini lock funkcije pretvaranja...
-if fetch_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
-    set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+if !EMPTY( ALLTRIM( fetch_metric( _param, NIL, "" ) ) )
+    set_metric( _param, NIL, "" )
+    MsgBeep( "Napravio unlock opcije pretvaranja otpremnica !!!" )
+else
+    MsgBeep( "Opcija se slobodno moze koristiti !!!" )
 endif
+
 return .t.
 
 

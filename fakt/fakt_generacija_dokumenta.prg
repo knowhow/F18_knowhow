@@ -362,10 +362,17 @@ Box(, 20, 75 )
     seek _firma + _otpr_tip
 
     if !f18_lock_tables( {"fakt_doks"}, .f. )
+
         // ukini lock opcije
         set_metric("fakt_otpremnice_pretvaranje_lock", NIL, .f. )
+        
+        close all
+        o_fakt_edit()
+        select fakt_pripr
         MsgBeep( "Neuspjesno lokovanje tabele !!!" )
+
         return .t.
+
     endif
 
     sql_table_update( nil, "BEGIN" )
@@ -377,10 +384,17 @@ Box(, 20, 75 )
             _rec["m1"] := " "
 
             if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+                
                 f18_free_tables( { "fakt_doks" } )
                 sql_table_update( nil, "ROLLBACK" )
+                
+                close all
+                o_fakt_edit()
+                select fakt_pripr
+    
                 MsgBeep( "Ne mogu setovati markere za otpremnice !!!" )
                 return .t.
+
             endif
 
         endif

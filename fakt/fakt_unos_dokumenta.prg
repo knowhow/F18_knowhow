@@ -404,7 +404,9 @@ do case
     // generisanje racuna na osnovu otpremnice      
     case UPPER( CHR( Ch ) ) == "O"
 
+        _t_area := SELECT()
         fakt_generisi_racun_iz_otpremnice() 
+        select (_t_area )
         return DE_REFRESH
     
     // asistent 

@@ -686,17 +686,30 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         // promijeni naslov
         // skini zvjezdicu iz browsa
         _rec := dbf_get_rec()
+
+        // postojeci podaci dokumenta
+        __post_tip_dok := _rec["idtipdok"]
+        __post_id_firma := _rec["idfirma"]
+        __post_broj := _rec["brdok"]  
+
+        // mjenjamo ih u realizovanu otpremnicu
         _rec["idtipdok"] := "22"
         _rec["m1"] := " "
-          
+
+        // novi tip dokumenta
+        __novi_tip_dok := _rec["idtipdok"]
+
         __t_rec := RECNO()
 
         // vidi za broj dokumenta da li je ok ?
-        if fakt_doks_exist( _rec["idfirma"], _rec["idtipdok"], _rec["brdok"] )
-            _rec["brdok"] := fakt_novi_broj_dokumenta( _rec["idfirma"], _rec["idtipdok"], "" )
+        if fakt_doks_exist( __post_id_firma, __novi_tip_dok, __post_broj )
+            
+            _rec["brdok"] := fakt_novi_broj_dokumenta( __post_id_firma, __novi_tip_dok, "" )
+            
             select fakt_doks
             set order to tag "2"  
             go ( __t_rec )
+
         endif
 
         if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
@@ -705,7 +718,8 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             MsgBeep( "Nisam uspio zavrsiti operaciju, pokusajte ponovo !!!" )
             return .f. 
         endif
-
+        
+        // ovo je novi broj dokumenta
         dxIdFirma := fakt_doks->idfirma    
         dxBrDok   := fakt_doks->brdok
             
@@ -713,10 +727,10 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         set order to tag "1"
                
         select fakt
-        seek dxIdFirma + "12" + dxBrDok
+        seek dxIdFirma + "12" + __post_broj
             
-        do while !EOF() .and. (dxIdFirma + otpr_tip + dxBrDok) == ;
-                ( idfirma + idtipdok + brdok )
+        do while !EOF() .and. ( dxIdFirma + "12" + __post_broj ) == ;
+                ( field->idfirma + field->idtipdok + field->brdok )
                
             skip
             _t_fakt_rec := recno()

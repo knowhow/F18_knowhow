@@ -688,16 +688,16 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         _rec := dbf_get_rec()
         _rec["idtipdok"] := "22"
         _rec["m1"] := " "
-        
+          
         __t_rec := RECNO()
 
         // vidi za broj dokumenta da li je ok ?
-        //if fakt_doks_exist( _rec["idfirma"], _rec["idtipdok"], _rec["brdok"] )
-          //  _rec["brdok"] := fakt_novi_broj_dokumenta( _rec["idfirma"], _rec["idtipdok"], "" )
-          //  select fakt_doks
-          //  set order to tag "2"  
-          //  go ( __t_rec )
-        //endif
+        if fakt_doks_exist( _rec["idfirma"], _rec["idtipdok"], _rec["brdok"] )
+            _rec["brdok"] := fakt_novi_broj_dokumenta( _rec["idfirma"], _rec["idtipdok"], "" )
+            select fakt_doks
+            set order to tag "2"  
+            go ( __t_rec )
+        endif
 
         if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
             f18_free_tables({"fakt_doks", "fakt_fakt"})

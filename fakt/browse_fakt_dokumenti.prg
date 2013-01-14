@@ -30,10 +30,10 @@ CREATE CLASS BrowseFaktDokumenti FROM TBrowse
 
    DATA     fakt_dokumenti
    DATA     tekuci_item
-   DATA     tekuci_red  DEFAULT 1
+   DATA     tekuci_red
    
    METHOD   New(top, left, bottom, right, fakt_dokumenti) 
-   METHOD   EditField()             
+   //METHOD   EditField()             
    METHOD   browse()
 
    METHOD   default_keyboard_hook(key)      
@@ -44,7 +44,7 @@ CREATE CLASS BrowseFaktDokumenti FROM TBrowse
 ENDCLASS
 
 
-METHOD FaktDokumentColumn:New(col_name, browse, block) CLASS TBColumnSQL
+METHOD FaktDokumentColumn:New(col_name, browse, block)
 local _header, _width
 
 SWITCH col_name
@@ -61,7 +61,7 @@ SWITCH col_name
       _header := "M"
       _width := 1
  
-    DEFAULT
+    OTHERWISE
        _header := ""
        _width  := 1
 
@@ -70,8 +70,8 @@ END
 ::col_name := col_name
 
 super:New(_header, block)
-::browse   := browse
-
+::browse     := browse
+::tekuci_red := 1
 RETURN Self
 
 
@@ -86,10 +86,10 @@ SWITCH (::col_name)
         _val := ::item:info["datdok"]
 
    CASE  "neto"
-        _val ::item:info["neto_vrijednost"]
+        _val := ::item:info["neto_vrijednost"]
 
    CASE  "broj"
-        _val ::item:broj()
+        _val := ::item:broj()
 
 END
 
@@ -187,7 +187,7 @@ SWITCH (key)
         CASE K_RIGHT
              ::right()
 
-        CASE nKey == K_LEFT
+        CASE K_LEFT
              ::left()
 
         CASE  K_HOME

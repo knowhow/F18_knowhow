@@ -43,7 +43,7 @@ CLASS FaktDokument
     DATA       _brdok
     DATA       _h_info
  
-    DATA       err_msg        DEFAULT ""
+    DATA       err_msg        INIT ""
     DATA       _sql_where
     METHOD     set_sql_where()
 
@@ -58,8 +58,7 @@ CLASS FaktDokumenti
     
     METHOD  New()
     METHOD  za_partnera(idfirma, idtipdok, idpartner)
-
-    METHOD  Browse()
+    METHOD  pretvori_otpremnice_u_racun()
 
     PROTECTED:
        DATA  _sql_where
@@ -79,7 +78,7 @@ return self
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-METHOD FaktDokument:za_partnera(idfirma, idtipdok, idpartner)
+METHOD FaktDokumenti:za_partnera(idfirma, idtipdok, idpartner)
 local _qry_str
 local _idfirma, _idtipdok, _brdok 
 local _cnt
@@ -198,3 +197,67 @@ _ret["idpartner"] := _qry:FieldGet(2)
 ::_h_info := _ret
 
 return _ret
+
+
+// ----------------------------------------------
+// ----------------------------------------------
+METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
+local _idpartner
+local _suma := 0
+local _veza_otpr := ""
+local _datum_max := DATE()
+local _ok
+local _lock_user := ""
+local _fakt_browse
+
+O_FAKT_PRIPR
+go top
+
+// ako je priprema prazna
+if RecCount2() <> 0
+    select fakt_pripr
+    return .f.
+endif
+
+_otpr_tip := "12"
+_firma    := gFirma
+_suma      := 0
+_idpartner := SPACE(6)
+   
+Box(, 20, 75 )
+
+    @ m_x + 1, m_y + 2 SAY "PREGLED OTPREMNICA:"
+    @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _firma pict "@!"
+    @ m_x + 3, col() + 2 SAY "Partner:" GET _idpartner pict "@!"
+
+    read
+
+    ::za_partnera(_firma, _otpr_tip, _idpartner)
+
+    _fakt_browse := BrowseFaktDokumenti():New(m_x + 5, m_y +1, m_x + 19, m_y + 73, self) 
+    _fakt_browse:browse()
+    //BrowseKey( m_x + 5, m_y + 1, m_x + 19, m_y+ 73, ImeKol, ;
+    //            {|ch| EdOtpr( ch, @_suma) }, "idfirma+idtipdok = _firma + _otpr_tip",;
+    //            _firma + _otpr_tip, 2, , , {|| partner = _partn_naz } )
+
+BoxC()
+
+/*
+if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
+     
+    _ok := _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
+ 
+    if _ok
+        // ovdje ce se setovati jos i parametri dokumenta...
+        // datum otpremnice, datum valute... destinacija itd...
+        select fakt_pripr
+        renumeracija_fakt_pripr( _veza_otpr, _datum_max )
+    endif
+
+    select fakt_doks
+    set order to tag "1"
+
+endif 
+*/
+
+return .t.

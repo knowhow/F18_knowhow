@@ -405,7 +405,11 @@ do case
     case UPPER( CHR( Ch ) ) == "O"
 
         _t_area := SELECT()
-        fakt_generisi_racun_iz_otpremnice() 
+
+        //fakt_generisi_racun_iz_otpremnice() 
+        _fakt_doks := FaktDokumenti():New()
+        _fakt_doks:pretvori_otpremnice_u_racun()
+
         select (_t_area )
         return DE_REFRESH
     

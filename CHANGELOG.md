@@ -1,3 +1,8 @@
+1.4.84 2013-01-15, vsasa
+
+ - fakt, pregled dokumenata, pravilno računanje osnovice/pdv/ukupne vrijednosti
+ - fakt, opcija "T" u unosu dokumenta, ispravljena greška sa valutom
+ 
 1.4.83 2013-01-15, vsasa
 
  - fin/kalk/fakt/pos, pocetna stanja, ispravka sa karaktrima hb_utf8tostr 

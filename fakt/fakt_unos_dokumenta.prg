@@ -1893,7 +1893,7 @@ Box(, _x, _y )
 	
 	@ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV (" + ALLTRIM( _din_dem ) + "): ", _left ) + STR( _doc_total["total"], 12, 2 )
 
-    if LEFT( _din_dem, 3 ) <> ValBazna()
+    if LEFT( _din_dem, 3 ) <> LEFT( ValBazna(), 3 )
         ++ __x
 	    @ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV (" + ALLTRIM( ValBazna() ) + "): ", _left ) + STR( _doc_total["total2"], 12, 2 )
     endif
@@ -1931,7 +1931,7 @@ if RECCOUNT() <> 0
 	hash["pdv"] := field->ukpdv
 	hash["total"] := field->ukupno
 
-    if LEFT( din_dem, 3 ) <> ValBazna()
+    if LEFT( din_dem, 3 ) <> LEFT( ValBazna(), 3 )
         hash["total2"] := field->ukupno * OmjerVal( ValBazna(), din_dem, field->datdok )
     endif
 

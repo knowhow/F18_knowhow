@@ -14,7 +14,7 @@
 #include "hbclass.ch"
 #include "common.ch"
 
-CREATE CLASS FaktDokumentColumn FROM TBColumn
+CREATE CLASS FaktColumn INHERIT TBColumn
 
    DATA   browse
    DATA   col_name
@@ -26,25 +26,7 @@ CREATE CLASS FaktDokumentColumn FROM TBColumn
 
 ENDCLASS
 
-CREATE CLASS BrowseFaktDokumenti FROM TBrowse
-
-   DATA     fakt_dokumenti
-   DATA     tekuci_item
-   DATA     tekuci_red
-   
-   METHOD   New(top, left, bottom, right, fakt_dokumenti) 
-   //METHOD   EditField()             
-   METHOD   browse()
-
-   METHOD   default_keyboard_hook(key)      
-   METHOD   keyboard_hook(key)      
-
-  PROTECTED:
-    METHOD   skipper(s)
-ENDCLASS
-
-
-METHOD FaktDokumentColumn:New(col_name, browse, block)
+METHOD FaktColumn:New(col_name, browse, block)
 local _header, _width
 
 SWITCH col_name
@@ -71,32 +53,56 @@ END
 
 super:New(_header, block)
 ::browse     := browse
-::tekuci_red := 1
 RETURN Self
 
 
-METHOD FaktDokumentColumn:Block()
+METHOD FaktColumn:Block()
 local _val, _item
 
-_item := ::browse:fakt_dokumenti[::browse:tekuci_red]
+_item  := ::browse:tekuci_item
 
-SWITCH (::col_name)
+if _item == NIL
+   _val = ""
+else
+   SWITCH (::col_name)
 
-   CASE  "datdok"
-        _val := ::item:info["datdok"]
+	   CASE  "datdok"
+		_val := _item:info["datdok"]
 
-   CASE  "neto"
-        _val := ::item:info["neto_vrijednost"]
+	   CASE  "neto"
+		_val := _item:info["neto_vrijednost"]
 
-   CASE  "broj"
-        _val := ::item:broj()
+	   CASE  "broj"
+		_val := _item:broj()
 
-END
+   END
+endif
 
 // chr(34) je dupli navodnik
 _val := Chr(34) + StrTran(_val, Chr(34), Chr(34) + "+Chr(34)+" + Chr(34) ) + Chr(34)
 
 RETURN hb_macroBlock(_val)
+
+
+// ---------------------------------------
+// ---------------------------------------
+
+CREATE CLASS BrowseFaktDokumenti INHERIT TBrowse
+
+   DATA     fakt_dokumenti
+   DATA     tekuci_item
+   DATA     tekuci_red   INIT 1
+   
+   METHOD   New(top, left, bottom, right, fakt_dokumenti) 
+   //METHOD   EditField()             
+   METHOD   browse()
+
+   METHOD   default_keyboard_hook(key)      
+   METHOD   keyboard_hook(key)      
+
+  PROTECTED:
+    METHOD   skipper(s)
+ENDCLASS
 
 
 METHOD BrowseFaktDokumenti:New(top, left, bottom, right, fakt_dokumenti) 
@@ -108,16 +114,16 @@ super:New( top, left, bottom, right )
 ::fakt_dokumenti := fakt_dokumenti
 
 ::SkipBlock     := {|n| ::tekuci_item := ::skipper(@n), n }
-::GoBottomBlock := {||  ::tekuci_item := ::fakt_dokumenti[::fakt_dokumenti:count], 1 }
-::GoTopBlock    := {||  ::tekuci_item := ::fakt_dokumenti[1], 1 }
+::GoBottomBlock := {||  ::tekuci_item := IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[::fakt_dokumenti:count]), 1 }
+::GoTopBlock    := {||  ::tekuci_item := IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[1]), 1 }
 
-_col := FaktDokumentColumn():New("datdok", self, NIL)
+_col := FaktColumn():New("datdok", self, NIL)
 ::AddColumn(_col)
 
-_col := FaktDokumentColumn():New("broj", self, NIL)
+_col := FaktColumn():New("broj", self, NIL)
 ::AddColumn(_col)
 
-_col := FaktDokumentColumn():New("neto", self, NIL)
+_col := FaktColumn():New("neto", self, NIL)
 ::AddColumn(_col)
 
 RETURN Self
@@ -126,14 +132,15 @@ RETURN Self
 METHOD BrowseFaktDokumenti:skipper(s)
 
 if (s > 0) .and. (s + ::tekuci_red) > ::fakt_dokumenti:count
-    s := fakt_dokumenti:count
+    s := ::fakt_dokumenti:count
 endif
 
 if (s < 0) .and. (s + ::tekuci_red) <  1
     s := 1 - ::tekuci_red  
 endif
 
-RETURN ::fakt_dokumenti[s]
+RETURN IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[s])
+
 
 // --------------------------------------------
 // --------------------------------------------
@@ -218,6 +225,4 @@ RETURN self
 METHOD BrowseFaktDokumenti:keyboard_hook(key)
    HB_SYMBOL_UNUSED(key)
 RETURN Self
-
-
 

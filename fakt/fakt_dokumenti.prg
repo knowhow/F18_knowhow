@@ -63,7 +63,7 @@ CLASS FaktDokumenti
     PROTECTED:
        DATA  _sql_where
        DATA  _idfirma
-       DATA  _idtidpok
+       DATA  _idtipdok
        DATA  _idpartner
 ENDCLASS
 
@@ -83,15 +83,18 @@ local _qry_str
 local _idfirma, _idtipdok, _brdok 
 local _cnt
 
-_qry_str := "SELECT idfirma, idtipdok, brdok FROM fmk.fakt_fakt " 
+::_idfirma := idfirma
+::_idtipdok := idtipdok
+::_idpartner := idpartner
+
+_qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM fmk.fakt_fakt " 
 _qry_str += "LEFT JOIN fmk.fakt_doks "
 _qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
 _qry_str += "WHERE "
 
-::_sql_where := "idfirma=" + _sql_quote(::_idfirma) +  " idtipdok=" + _sql_quote(::_idtipdok) + " fakt_doks.idpartner=" + _sql_quote(::_idpartner)
+::_sql_where := "fakt_doks.idfirma=" + _sql_quote(::_idfirma) +  " AND fakt_doks.idtipdok=" + _sql_quote(::_idtipdok) + " AND fakt_doks.idpartner=" + _sql_quote(::_idpartner)
 
 _qry_str += ::_sql_where
-
 _qry := run_sql_query(_qry_str)
 
 _cnt := 0
@@ -202,7 +205,7 @@ return _ret
 // ----------------------------------------------
 // ----------------------------------------------
 METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
-local _idpartner
+local _idfirma, _idtipdok, _idpartner
 local _suma := 0
 local _veza_otpr := ""
 local _datum_max := DATE()
@@ -215,24 +218,25 @@ go top
 
 // ako je priprema prazna
 if RecCount2() <> 0
-    select fakt_pripr
+    MsgBeep("FAKT priprema nije prazna")
     return .f.
 endif
 
-_otpr_tip := "12"
-_firma    := gFirma
-_suma      := 0
+_idfirma   := gFirma
+_idtipdok  := "12"
 _idpartner := SPACE(6)
+_suma      := 0
    
 Box(, 20, 75 )
 
     @ m_x + 1, m_y + 2 SAY "PREGLED OTPREMNICA:"
-    @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _firma pict "@!"
-    @ m_x + 3, col() + 2 SAY "Partner:" GET _idpartner pict "@!"
+    @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _idfirma pict "@!"
+    @ m_x + 3, col() + 1 SAY " - " + _idtipdok + " / " pict "@!"
+    @ m_x + 3, col() + 1 SAY "Partner ID:" GET _idpartner pict "@!"
 
     read
 
-    ::za_partnera(_firma, _otpr_tip, _idpartner)
+    ::za_partnera(_idfirma, _idtipdok, _idpartner)
 
     _fakt_browse := BrowseFaktDokumenti():New(m_x + 5, m_y +1, m_x + 19, m_y + 73, self) 
     _fakt_browse:browse()

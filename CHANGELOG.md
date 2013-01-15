@@ -1,3 +1,7 @@
+1.4.85 2013-01-15, vsasa
+
+ - hcp uređaji, minimalna količina kod izdavanja računa
+ 
 1.4.84 2013-01-15, vsasa
 
  - fakt, pregled dokumenata, pravilno računanje osnovice/pdv/ukupne vrijednosti

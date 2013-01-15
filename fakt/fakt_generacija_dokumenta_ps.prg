@@ -72,7 +72,7 @@ do while !_data:EOF()
 
     _row := _data:GetRow()
 
-    _id_roba := _row:FieldGet( _row:FieldPos("idroba") ) 
+    _id_roba := hb_utf8tostr( _row:FieldGet( _row:FieldPos("idroba") ) )
     _ulaz := _row:FieldGet( _row:FieldPos("ulaz") ) 
     _izlaz := _row:FieldGet( _row:FieldPos("izlaz") )
     _stanje := ( _ulaz - _izlaz ) 

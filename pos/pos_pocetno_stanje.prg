@@ -216,7 +216,7 @@ do while !_table:EOF()
 
     _row := _table:GetRow()
 
-    _id_roba := _row:Fieldget( _row:Fieldpos("idroba") )
+    _id_roba := hb_utf8tostr( _row:Fieldget( _row:Fieldpos("idroba") ) )
 
     _kolicina := _row:Fieldget( _row:Fieldpos("kolicina") )
     __stanje += _kolicina

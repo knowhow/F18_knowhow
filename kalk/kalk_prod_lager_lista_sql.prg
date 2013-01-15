@@ -293,7 +293,7 @@ do while !data:EOF()
     _row := data:GetRow()
     
     // zapisi....
-    _id_roba := _row:FieldGet( _row:FieldPos("idroba") )
+    _id_roba := hb_utf8tostr( _row:FieldGet( _row:FieldPos("idroba") ) )
     _ulaz := _row:FieldGet( _row:FieldPos("ulaz") )
     _izlaz := _row:FieldGet( _row:FieldPos("izlaz") )
     _nvu := _row:FieldGet( _row:FieldPos("nvu") )

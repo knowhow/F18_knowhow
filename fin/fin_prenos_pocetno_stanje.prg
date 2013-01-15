@@ -164,7 +164,7 @@ do while !data:EOF()
     _row := data:GetRow()
 
     _id_konto := PADR( _row:FieldGet( _row:FieldPos( "idkonto" ) ), 7 )
-    _id_partner := PADR( _row:FieldGet( _row:FieldPos( "idpartner" ) ), 6 )
+    _id_partner := PADR( hb_utf8tostr( _row:FieldGet( _row:FieldPos( "idpartner" ) ) ), 6 )
 
     // vidi ima li ove stavke u semama prenosa...
     select pkonto
@@ -182,7 +182,7 @@ do while !data:EOF()
     // provrti razlicite nacine prenosa...
     do while !data:EOF() .and. PADR( data:FieldGet( data:FieldPos( "idkonto" ) ), 7 ) == _id_konto ;
                         .and. IF( _tip_prenosa == "2", ;
-                            PADR( data:FieldGet( data:FieldPos("idpartner") ), 6 ) == _id_partner, .t. ) ;
+                            PADR( hb_utf8tostr( data:FieldGet( data:FieldPos("idpartner") ) ), 6 ) == _id_partner, .t. ) ;
     
         _row2 := data:GetRow()
 

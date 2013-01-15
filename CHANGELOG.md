@@ -1,3 +1,7 @@
+1.4.83 2013-01-15, vsasa
+
+ - fin/kalk/fakt/pos, pocetna stanja, ispravka sa karaktrima hb_utf8tostr 
+ 
 1.4.82 2013-01-14, vsasa
 
  - fakt, generisanje računa na osnovu otpremnice, bugfix

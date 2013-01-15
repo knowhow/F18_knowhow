@@ -216,41 +216,6 @@ close all
 return
 
 
-// ------------------------------------------------------
-// vraca osnovicu dokumenta
-// ------------------------------------------------------
-function _osnovica( cIdTipDok, cPartner, nIznos )
-local nRet := 0
-local nTArea := SELECT()
-
-if cIdTipDok $ "11#13#23"
-    nRet := ( nIznos / 1.17 )
-else
-    nRet := nIznos
-endif
-
-select (nTArea)
-return nRet
-
-
-
-// -----------------------------------------------------
-// vraca pdv dokumenta
-// -----------------------------------------------------
-function _pdv( cIdTipDok, cPartner, nIznos )
-local nRet := 0
-local nTArea := SELECT()
-
-if cIdTipDok $ "11#13#23"
-    nRet := ( nIznos / 1.17 ) * 0.17
-else
-    nRet := nIznos * 0.17
-endif
-
-select (nTArea)
-
-return nRet
-
 
 // printaj narudzbenicu
 function pr_nar(lOpcine)

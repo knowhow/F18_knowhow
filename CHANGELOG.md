@@ -1,3 +1,7 @@
+1.4.86 2013-01-15, vsasa
+
+ - rnal, unos naloga i dodavanje nove šifre - bugfix 
+ 
 1.4.85 2013-01-15, vsasa
 
  - hcp uređaji, minimalna količina kod izdavanja računa

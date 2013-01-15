@@ -286,7 +286,7 @@ cIdField := "_" + cIdField
 
 &cIdField := nId
 
-_rec := get_dbf_global_memvars()        
+_rec := get_dbf_global_memvars( NIL, .f. )        
 
 update_rec_server_and_dbf( ALIAS(), _rec, 1, cont )
 

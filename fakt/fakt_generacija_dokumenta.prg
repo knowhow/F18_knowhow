@@ -691,6 +691,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         __post_tip_dok := _rec["idtipdok"]
         __post_id_firma := _rec["idfirma"]
         __post_broj := _rec["brdok"]  
+        __novi_broj := __post_broj
 
         // mjenjamo ih u realizovanu otpremnicu
         _rec["idtipdok"] := "22"
@@ -701,16 +702,23 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
 
         __t_rec := RECNO()
 
-        // vidi za broj dokumenta da li je ok ?
-        if fakt_doks_exist( __post_id_firma, __novi_tip_dok, __post_broj )
-            
-            _rec["brdok"] := fakt_novi_broj_dokumenta( __post_id_firma, __novi_tip_dok, "" )
-            
-            select fakt_doks
-            set order to tag "2"  
-            go ( __t_rec )
+        _postoji := .t.
 
-        endif
+        do while _postoji
+            // vidi za broj dokumenta da li je ok ?
+            if fakt_doks_exist( __post_id_firma, __novi_tip_dok, __novi_broj )
+                __novi_broj := fakt_novi_broj_dokumenta( __post_id_firma, __novi_tip_dok, "" )
+            else
+                _postoji := .f.
+                exit
+            endif
+        enddo
+
+        _rec["brdok"] := __novi_broj
+
+        select fakt_doks
+        set order to tag "2"  
+        go ( __t_rec )
 
         if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
             f18_free_tables({"fakt_doks", "fakt_fakt"})

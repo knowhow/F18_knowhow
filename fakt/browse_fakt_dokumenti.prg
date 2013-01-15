@@ -49,6 +49,9 @@ SWITCH col_name
 
 END
 
+altd()
+super:width := width
+
 ::col_name := col_name
 
 super:New(_header, block)
@@ -108,6 +111,7 @@ ENDCLASS
 METHOD BrowseFaktDokumenti:New(top, left, bottom, right, fakt_dokumenti) 
 LOCAL _i, _item, _col
 
+altd()
 
 super:New( top, left, bottom, right )
 
@@ -154,11 +158,11 @@ ENDIF
 DO WHILE _vrti
 
    DO WHILE !::Stabilize() .AND. NextKey() == 0
+          altd()
    ENDDO
 
    _k := Inkey(0)
-
-    IF AScan(exit_keys, _k) > 0
+    IF ASCAN(exit_keys, _k) > 0
        _vrti := .f.
        LOOP
     ENDIF
@@ -225,4 +229,3 @@ RETURN self
 METHOD BrowseFaktDokumenti:keyboard_hook(key)
    HB_SYMBOL_UNUSED(key)
 RETURN Self
-

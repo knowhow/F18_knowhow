@@ -46,73 +46,9 @@ CLASS FaktDokument
     DATA       err_msg        INIT ""
     DATA       _sql_where
     METHOD     set_sql_where()
+    DATA       _server
 
 ENDCLASS
-
-// ------------------------------------------------
-// ------------------------------------------------
-CLASS FaktDokumenti
-
-    DATA    items
-    DATA    count
-    
-    METHOD  New()
-    METHOD  za_partnera(idfirma, idtipdok, idpartner)
-    METHOD  pretvori_otpremnice_u_racun()
-
-    PROTECTED:
-       DATA  _sql_where
-       DATA  _idfirma
-       DATA  _idtipdok
-       DATA  _idpartner
-ENDCLASS
-
-
-// ---------------------------------
-// ---------------------------------
-METHOD FaktDokumenti:New()
-::items := {}
-::count := 0
-
-return self
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-METHOD FaktDokumenti:za_partnera(idfirma, idtipdok, idpartner)
-local _qry_str
-local _idfirma, _idtipdok, _brdok 
-local _cnt
-
-::_idfirma := idfirma
-::_idtipdok := idtipdok
-::_idpartner := idpartner
-
-_qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM fmk.fakt_fakt " 
-_qry_str += "LEFT JOIN fmk.fakt_doks "
-_qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
-_qry_str += "WHERE "
-
-::_sql_where := "fakt_doks.idfirma=" + _sql_quote(::_idfirma) +  " AND fakt_doks.idtipdok=" + _sql_quote(::_idtipdok) + " AND fakt_doks.idpartner=" + _sql_quote(::_idpartner)
-
-_qry_str += ::_sql_where
-_qry := run_sql_query(_qry_str)
-
-_cnt := 0
-do while !_qry:eof()
-   _idfirma := qry:FieldGet(1)
-   _idtipdok := qry:FieldGet(2)
-   _brdok := qry:FieldGet(3)
-
-   // napunicemo items matricom FaktDokument objekata
-   _item := FaktDokument():New(_idfirma, _idtipdok, _brdok)
-   _item:refresh_info()
-   _cnt ++
-   _qry:skip()
-enddo
-
-::count := _cnt
-return _cnt
-
 
 
 METHOD FaktDokument:New(idfirma, idtipdok, brdok, server)
@@ -122,7 +58,9 @@ METHOD FaktDokument:New(idfirma, idtipdok, brdok, server)
    ::_brdok := brdok
      
    if server == NIL
-      ::server := my_server()
+      ::_server := my_server()
+   else
+      ::_server := server
    endif
 
    ::set_sql_where()
@@ -144,7 +82,7 @@ METHOD FaktDokument:set_brdok(val)
 
 
 METHOD FaktDokument:set_sql_where()
-::_sql_where := "idfirma=" + _sql_quote(::_idfirma) +  " idtipdok=" + _sql_quote(::_idtipdok) + " brdok=" + _sql_quote(::_brdok)
+::_sql_where := "idfirma=" + _sql_quote(::_idfirma) +  " AND idtipdok=" + _sql_quote(::_idtipdok) + " AND brdok=" + _sql_quote(::_brdok)
 
 METHOD FaktDokument:exists()
 local _ret
@@ -226,23 +164,22 @@ _idfirma   := gFirma
 _idtipdok  := "12"
 _idpartner := SPACE(6)
 _suma      := 0
-   
-Box(, 20, 75 )
+  
+SET CURSOR ON 
+Box(, MAXROWS()-10, MAXCOLS()-10 )
 
     @ m_x + 1, m_y + 2 SAY "PREGLED OTPREMNICA:"
     @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _idfirma pict "@!"
     @ m_x + 3, col() + 1 SAY " - " + _idtipdok + " / " pict "@!"
-    @ m_x + 3, col() + 1 SAY "Partner ID:" GET _idpartner pict "@!"
-
+    @ m_x + 3, col() + 1 SAY "Partner ID:" GET _idpartner pict "@!" ;
+         VALID {|| P_Firma( @_idpartner ),  ispisi_partn( _idpartner, MAXROWS()-12, m_y + 18 ) }
+        
     read
 
     ::za_partnera(_idfirma, _idtipdok, _idpartner)
 
-    _fakt_browse := BrowseFaktDokumenti():New(m_x + 5, m_y +1, m_x + 19, m_y + 73, self) 
+    _fakt_browse := BrowseFaktDokumenti():New(m_x + 5, m_y +1, m_x + MAXROWS() - 13, MAXCOLS()-11, self) 
     _fakt_browse:browse()
-    //BrowseKey( m_x + 5, m_y + 1, m_x + 19, m_y+ 73, ImeKol, ;
-    //            {|ch| EdOtpr( ch, @_suma) }, "idfirma+idtipdok = _firma + _otpr_tip",;
-    //            _firma + _otpr_tip, 2, , , {|| partner = _partn_naz } )
 
 BoxC()
 
@@ -265,3 +202,70 @@ endif
 */
 
 return .t.
+
+// ------------------------------------------------
+// ------------------------------------------------
+CLASS FaktDokumenti
+
+    DATA    items
+    DATA    count
+    
+    METHOD  New()
+    METHOD  za_partnera(idfirma, idtipdok, idpartner)
+    METHOD  pretvori_otpremnice_u_racun()
+
+    PROTECTED:
+       DATA  _sql_where
+       DATA  _idfirma
+       DATA  _idtipdok
+       DATA  _idpartner
+ENDCLASS
+
+
+// ---------------------------------
+// ---------------------------------
+METHOD FaktDokumenti:New()
+::items := {}
+::count := 0
+
+return self
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+METHOD FaktDokumenti:za_partnera(idfirma, idtipdok, idpartner)
+local _qry_str
+local _idfirma, _idtipdok, _brdok 
+local _cnt
+
+::_idfirma := idfirma
+::_idtipdok := idtipdok
+::_idpartner := idpartner
+
+_qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM fmk.fakt_fakt " 
+_qry_str += "LEFT JOIN fmk.fakt_doks "
+_qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
+_qry_str += "WHERE "
+
+::_sql_where := "fakt_doks.idfirma=" + _sql_quote(::_idfirma) +  " AND fakt_doks.idtipdok=" + _sql_quote(::_idtipdok) + " AND fakt_doks.idpartner=" + _sql_quote(::_idpartner)
+
+_qry_str += ::_sql_where
+_qry := run_sql_query(_qry_str)
+
+_cnt := 0
+do while !_qry:eof()
+   //_idfirma := _qry:FieldGet(1)
+   //_idtipdok := _qry:FieldGet(2)
+   _brdok := _qry:FieldGet(3)
+
+   // napunicemo items matricom FaktDokument objekata
+   _item := FaktDokument():New(::_idfirma, ::_idtipdok, _brdok)
+   _item:refresh_info()
+   _cnt ++
+   _qry:skip()
+enddo
+
+::count := _cnt
+return _cnt
+
+
+

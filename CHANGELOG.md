@@ -1,3 +1,7 @@
+1.4.87 2013-01-16, vsasa
+
+ - unos šifrarnika artikala, može i bez "idkonto"
+ 
 1.4.86 2013-01-15, vsasa
 
  - rnal, unos naloga i dodavanje nove šifre - bugfix 

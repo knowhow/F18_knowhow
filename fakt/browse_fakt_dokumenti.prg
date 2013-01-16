@@ -70,6 +70,7 @@ if (s < 0) .and. (s + ::tekuci_red) <  1
     s := 1 - ::tekuci_red  
 endif
 
+::tekuci_red := s
 RETURN IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[s])
 
 
@@ -85,7 +86,6 @@ ENDIF
 DO WHILE _vrti
 
    DO WHILE !::Stabilize() .AND. NextKey() == 0
-          altd()
    ENDDO
 
    _k := Inkey(0)

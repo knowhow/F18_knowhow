@@ -35,7 +35,6 @@ ENDCLASS
 // ---------------------------------
 METHOD FaktDokumenti:New()
 
-altd()
 ::items := {}
 ::count := 0
 
@@ -71,6 +70,7 @@ do while !_qry:eof()
    // napunicemo items matricom FaktDokument objekata
    _item := FaktDokument():New(::_idfirma, ::_idtipdok, _brdok)
    _item:refresh_info()
+   AADD(::items, _item)
    _cnt ++
    _qry:skip()
 enddo

@@ -723,7 +723,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
             f18_free_tables({"fakt_doks", "fakt_fakt"})
             sql_table_update( nil, "ROLLBACK" )
-            MsgBeep( "Nisam uspio zavrsiti operaciju, pokusajte ponovo !!!" )
+            MsgBeep( "Nisam uspio zavrsiti promjenu na tabeli fakt_doks !!!" )
             return .f. 
         endif
         
@@ -733,7 +733,22 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             
         select fakt_doks 
         set order to tag "1"
-               
+ 
+        _params := hb_hash()
+        _params["old_firma"] := dxIdFirma
+        _params["old_tipdok"] := "12"
+        _params["old_brdok"] := __post_broj
+        _params["new_firma"] := dxIdFirma
+        _params["new_tipdok"] := "22"
+        _params["new_brdok"] := __novi_broj
+
+        if !update_fakt_atributi_from_server( _params )
+            f18_free_tables({"fakt_doks", "fakt_fakt"})
+            sql_table_update( nil, "ROLLBACK" )
+            MsgBeep( "Nisam uspio napraviti promjene na tabeli fakt_fakt_atributi !!!" )
+            return .f. 
+        endif
+
         select fakt
         seek dxIdFirma + "12" + __post_broj
             
@@ -751,7 +766,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
             if !update_rec_server_and_dbf( "fakt_fakt", _fakt_rec, 1, "CONT" )
                 f18_free_tables({"fakt_doks", "fakt_fakt"})
                 sql_table_update( nil, "ROLLBACK" )
-                MsgBeep( "Nisam uspio zavrsiti operaciju !!! pokusajte ponovo !!!" )
+                MsgBeep( "Nisam uspio zavrsiti promjenu na tabeli fakt_fakt !!!" )
                 return .f.
             endif
 
@@ -794,7 +809,10 @@ enddo
     
 f18_free_tables({"fakt_doks", "fakt_fakt"})
 sql_table_update( nil, "END" )
- 
+
+// obradi i atribute...
+//fakt_atributi_server_to_dbf( _params["new_firma"], _params["new_tipdok"], _params["new_brdok"] )
+
 if !EMPTY( _veza_otpremnice )
 
     _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + ;

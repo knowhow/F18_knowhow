@@ -294,6 +294,41 @@ return _ok
 
 
 // ------------------------------------------------------------------------
+// update atributa na serveru
+// ------------------------------------------------------------------------
+function update_fakt_atributi_from_server( params )
+local _ok := .t.
+local _qry
+local _server := pg_server()
+local _old_firma := params["old_firma"]
+local _old_tipdok := params["old_tipdok"]
+local _old_brdok := params["old_brdok"]
+local _new_firma := params["new_firma"]
+local _new_tipdok := params["new_tipdok"]
+local _new_brdok := params["new_brdok"]
+
+// prvo pobrisi sa servera
+_qry := "UPDATE fmk.fakt_fakt_atributi "
+_qry += "SET "
+_qry += "idfirma = " + _sql_quote( _new_firma ) 
+_qry += ", idtipdok = " + _sql_quote( _new_tipdok )
+_qry += ", brdok = " + _sql_quote( _new_brdok )
+_qry += " WHERE "
+_qry += " idfirma = " + _sql_quote( _old_firma ) 
+_qry += " AND idtipdok = " + _sql_quote( _old_tipdok ) 
+_qry += " AND brdok = " + _sql_quote( _old_brdok ) 
+
+_ret := _sql_query( _server, _qry )
+
+if VALTYPE( _ret ) == "L"
+    _ok := .f.
+endif
+
+return _ok
+
+
+
+// ------------------------------------------------------------------------
 // brisanje atributa sa servera
 // ------------------------------------------------------------------------
 function delete_fakt_atributi_from_server( id_firma, tip_dok, br_dok )

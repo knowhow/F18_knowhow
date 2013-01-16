@@ -1,6 +1,7 @@
 1.4.87 2013-01-16, vsasa
 
  - unos šifrarnika artikala, može i bez "idkonto"
+ - fakt, generacija računa na osnovu otpremnica - privremeno ukinut foreign ključ sa fakt_fakt_atributi
  
 1.4.86 2013-01-15, vsasa
 

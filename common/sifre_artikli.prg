@@ -165,7 +165,7 @@ if roba->(fieldpos("ZANIV2"))<>0
 endif
 
 if roba->(fieldpos("IDKONTO"))<>0
-    AADD (ImeKol,{ "Id konto",{|| idkonto}, "idkonto", {|| .t. }, {|| P_Konto(@widkonto) }   })
+    AADD (ImeKol,{ "Id konto",{|| idkonto}, "idkonto", {|| .t. }, {|| EMPTY( widkonto ) .or. P_Konto( @widkonto ) }   })
 endif
 
 if roba->(fieldpos("IDTARIFA2"))<>0

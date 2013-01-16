@@ -1026,6 +1026,7 @@ _ini["run"] := ""
 
 f18_ini_read("run" + IIF(test_mode(), "_test", ""), @_ini, .f.)
 
+altd()
 SWITCH (_ini["run"])
    CASE "fakt_pretvori_otpremnice_u_racun"
         _fakt_doks := FaktDokumenti():New()

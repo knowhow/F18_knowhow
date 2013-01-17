@@ -25,7 +25,8 @@ CREATE CLASS BrowseFaktDokumenti INHERIT TBrowse
    DATA     tekuci_red   INIT 1
    
    METHOD   New(top, left, bottom, right, fakt_dokumenti) 
-   //METHOD   EditField()             
+   METHOD   set_kolone_markiraj_otpremnice()
+
    METHOD   browse()
 
    METHOD   default_keyboard_hook(key)      
@@ -39,8 +40,6 @@ ENDCLASS
 METHOD BrowseFaktDokumenti:New(top, left, bottom, right, fakt_dokumenti) 
 LOCAL _i, _item, _col
 
-altd()
-
 super:New( top, left, bottom, right )
 
 ::fakt_dokumenti := fakt_dokumenti
@@ -48,6 +47,15 @@ super:New( top, left, bottom, right )
 ::SkipBlock     := {|n| ::tekuci_item := ::skipper(@n), n }
 ::GoBottomBlock := {||  ::tekuci_item := IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[::fakt_dokumenti:count]), 1 }
 ::GoTopBlock    := {||  ::tekuci_item := IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[1]), 1 }
+
+::headSep := BROWSE_HEAD_SEP 
+::colsep :=  BROWSE_COL_SEP
+  
+RETURN Self
+
+
+METHOD BrowseFaktDokumenti:set_kolone_markiraj_otpremnice()
+local _col
 
 _col := FaktColumn():New("datdok", self, NIL)
 ::AddColumn(_col)
@@ -58,11 +66,10 @@ _col := FaktColumn():New("broj", self, NIL)
 _col := FaktColumn():New("neto", self, NIL)
 ::AddColumn(_col)
 
-::headSep := BROWSE_HEAD_SEP 
-::colsep :=  BROWSE_COL_SEP
-  
-RETURN Self
+_col := FaktColumn():New("mark", self, NIL)
+::AddColumn(_col)
 
+return .t.
 
 METHOD BrowseFaktDokumenti:skipper(s)
 
@@ -78,7 +85,7 @@ if ::tekuci_red < 1
    ::tekuci_red := 1
 endif
 
-RETURN IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[::tekuci_red])
+return IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[::tekuci_red])
 
 
 // --------------------------------------------
@@ -161,5 +168,19 @@ RETURN self
 
 
 METHOD BrowseFaktDokumenti:keyboard_hook(key)
-   HB_SYMBOL_UNUSED(key)
-RETURN Self
+   
+   if Chr(key) == " "
+      Beep(1)
+      if ::tekuci_item == NIL
+         return self
+      endif
+
+      if ::tekuci_item:mark
+         ::tekuci_item:mark := .f.
+      else
+         ::tekuci_item:mark := .t.
+      endif
+      ::RefreshAll()
+   endif
+     
+RETURN self

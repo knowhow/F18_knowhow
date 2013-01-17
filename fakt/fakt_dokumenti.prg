@@ -105,21 +105,28 @@ _idtipdok  := "12"
 _idpartner := SPACE(6)
 _suma      := 0
   
-SET CURSOR ON 
+SET CURSOR ON
+
 Box(, MAXROWS()-10, MAXCOLS()-10 )
 
     @ m_x + 1, m_y + 2 SAY "PREGLED OTPREMNICA:"
     @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _idfirma pict "@!"
     @ m_x + 3, col() + 1 SAY " - " + _idtipdok + " / " pict "@!"
     @ m_x + 3, col() + 1 SAY "Partner ID:" GET _idpartner pict "@!" ;
-         VALID {|| P_Firma( @_idpartner ),  ispisi_partn( _idpartner, MAXROWS()-12, m_y + 18 ) }
+         VALID {|| P_Firma( @_idpartner ),  ispisi_partn( _idpartner, m_x + MAXROWS()-12, m_y + 18 ) }
         
     read
+
+    @ m_x + MAXROWS()-12, m_y + 2 SAY "Partner:" 
+    @ m_x + MAXROWS()-10, m_y + 2 SAY "Komande: <SPACE> markiraj otpremnicu"
+
 
     ::za_partnera(_idfirma, _idtipdok, _idpartner)
 
     _fakt_browse := BrowseFaktDokumenti():New(m_x + 5, m_y +1, m_x + MAXROWS() - 13, MAXCOLS()-11, self) 
+    _fakt_browse:set_kolone_markiraj_otpremnice()
     _fakt_browse:browse()
+
 
 BoxC()
 

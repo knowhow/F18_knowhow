@@ -29,6 +29,13 @@ if !get_vars( @_params )
     return 
 endif
 
+// reset sifre radnika u parametrima
+if _params["sif_reset"] == "D"
+    // ovo ce setovati globalni brojac na 0...
+    // tako da import moze ici iz pocetka
+    nova_sifra_radnika( "", .t. )
+endif
+
 // provjeri zapise sifrarnika RADN... 
 _ok := __check_import_radn( _params )
 
@@ -66,8 +73,9 @@ local _tip_pr := PADR( fetch_metric( "ld_import_tippr_matrix", NIL, "" ), 500 )
 local _dat_od := fetch_metric( "ld_import_datum_od", NIL, CTOD("") )
 local _dat_do := fetch_metric( "ld_import_datum_do", NIL, DATE() )
 local _prefix := fetch_metric( "ld_import_radn_prefix", NIL, SPACE(3) )
-local _imp_kred := "D"
-local _imp_obr := "D"
+local _imp_kred := "N"
+local _imp_obr := "N"
+local _sif_reset := "N"
 
 Box(, 15, 70 )
 
@@ -92,8 +100,12 @@ Box(, 15, 70 )
     @ m_x + _x, m_y + 2 SAY "Tip pr:" GET _tip_pr PICT "@S50"
 
     ++ _x
+    ++ _x
     @ m_x + _x, m_y + 2 SAY "Import obracuna (D/N):" GET _imp_obr PICT "@!" VALID _imp_obr $ "DN"
     @ m_x + _x, col() + 1 SAY "Import kredita (D/N):" GET _imp_kred PICT "@!" VALID _imp_kred $ "DN"
+   
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Reset sifre radnika (D/N):" GET _sif_reset PICT "@!" VALID _sif_reset $ "DN"
     
     ++ _x
     ++ _x
@@ -125,6 +137,7 @@ params["rj_fmk"] := _fmk_rj
 params["rj_f18"] := _f18_rj
 params["radn_prefix"] := _prefix
 params["tip_pr"] := _tip_pr
+params["radn_reset"] := _sif_reset
 params["datum_od"] := _dat_od
 params["datum_do"] := _dat_do
 params["import_kredit"] := _imp_kred
@@ -536,13 +549,23 @@ return
 // -----------------------------------------------------------------------
 // odredjuje novu sifru radnika
 // -----------------------------------------------------------------------
-static function nova_sifra_radnika( prefix )
+static function nova_sifra_radnika( prefix, reset )
 local _last_num := fetch_metric( "ld_import_fmk_zadnja_sifra", NIL, 0 )
 local _sifra := ""
-local _tmp := _last_num + 1
+local _tmp
 
 if prefix == NIL
     prefix := ""
+endif
+
+if reset == NIL
+    reset := .f.
+endif
+
+_tmp := _last_num + 1
+
+if reset
+    _tmp := 0
 endif
 
 // sifra ce da bude "00001", "000002", "000003" itd...

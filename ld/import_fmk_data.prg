@@ -21,24 +21,32 @@ local _count
 local _params
 local _ok
 
+if !SigmaSif( "IMPORT" )
+    return
+endif
+
 if !get_vars( @_params )
     return 
+endif
+
+// provjeri zapise sifrarnika RADN... 
+_ok := __check_import_radn( _params )
+
+if !_ok .and. Pitanje(, "Nastaviti dalje ?", "D") == "N"
+    return
 endif
 
 // kreira se pomocna tabela za sifre radnika
 _create_tmp_tbl()
 
 // importuj mi prvo radnike
-if __import_radn( _params )
-    // provjeri zapise ... 
-    _ok := __check_import_radn( _params )
-
+if !__import_radn( _params ) .and. Pitanje(, "Nastaviti dalje ?", "N" ) == "N"
     // sta ako je ovo ok ?????? a sta ako nije....
-
+    return
 endif
 
 // importuju se podaci....
-_ok := __import_data( _params )
+__import_data( _params )
 
 return
 
@@ -55,9 +63,11 @@ local _f18_rj := SPACE(2)
 local _kum_path := PADR( fetch_metric( "ld_import_fmk_kum_path", NIL, "c:\sigma\ld\kum1\" ), 300 )
 local _sif_path := PADR( fetch_metric( "ld_import_fmk_sif_path", NIL, "c:\sigma\sif1\" ), 300 )
 local _tip_pr := PADR( fetch_metric( "ld_import_tippr_matrix", NIL, "" ), 500 )
-local _dat_od := CTOD("")
-local _dat_do := DATE()
-local _prefix := SPACE(3)
+local _dat_od := fetch_metric( "ld_import_datum_od", NIL, CTOD("") )
+local _dat_do := fetch_metric( "ld_import_datum_do", NIL, DATE() )
+local _prefix := fetch_metric( "ld_import_radn_prefix", NIL, SPACE(3) )
+local _imp_kred := "D"
+local _imp_obr := "D"
 
 Box(, 15, 70 )
 
@@ -80,11 +90,16 @@ Box(, 15, 70 )
 
     ++ _x
     @ m_x + _x, m_y + 2 SAY "Tip pr:" GET _tip_pr PICT "@S50"
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Import obracuna (D/N):" GET _imp_obr PICT "@!" VALID _imp_obr $ "DN"
+    @ m_x + _x, col() + 1 SAY "Import kredita (D/N):" GET _imp_kred PICT "@!" VALID _imp_kred $ "DN"
     
     ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Kumulativ LD:" GET _kum_path PICT "@S50"
+    ++ _x
     @ m_x + _x, m_y + 2 SAY "Sifrarnik LD:" GET _sif_path PICT "@S50"
 
     read
@@ -99,6 +114,9 @@ endif
 set_metric( "ld_import_fmk_kum_path", NIL, ALLTRIM( _kum_path ) )
 set_metric( "ld_import_fmk_sif_path", NIL, ALLTRIM( _sif_path ) )
 set_metric( "ld_import_tippr_matrix", NIL, ALLTRIM( _tip_pr ) )
+set_metric( "ld_import_datum_od", NIL, _dat_od )
+set_metric( "ld_import_datum_do", NIL, _dat_do )
+set_metric( "ld_import_radn_prefix", NIL, _prefix )
 
 // snimi mi hash matricu
 _ok := .t.
@@ -109,6 +127,8 @@ params["radn_prefix"] := _prefix
 params["tip_pr"] := _tip_pr
 params["datum_od"] := _dat_od
 params["datum_do"] := _dat_do
+params["import_kredit"] := _imp_kred
+params["import_obracun"] := _imp_obr
 params["kum_path"] := ALLTRIM( _kum_path )
 params["sif_path"] := ALLTRIM( _sif_path )
 
@@ -136,9 +156,9 @@ endif
 _use_tmp_table()
 
 // indeksi...
-index on ( "id" ) tag "1"
-index on ( "id2" ) tag "2"
-index on ( "jmbg" ) tag "3"
+index on ( id ) tag "1"
+index on ( id2 ) tag "2"
+index on ( jmbg ) tag "3"
 
 return
 
@@ -166,13 +186,20 @@ return
 // import podataka u tekucu bazu LD-a
 // -----------------------------------------------
 static function __import_data( params )
-local _ok
+local _ok := .f.
 
-// importuj zapise ld tabele
-_ok := __import_ld_data( params )
+// import sifrarnika
+__import_general_data( params )
 
-// importuj zapise ld kredita
-_ok := __import_kred_data( params ) 
+if params["import_obracun"] == "D"
+    // importuj zapise ld tabele
+    _ok := __import_ld_data( params )
+endif
+
+if params["import_kredit"] == "D"
+    // importuj zapise ld kredita
+    _ok := __import_kred_data( params )
+endif 
 
 return _ok
 
@@ -186,21 +213,25 @@ static function __check_import_radn( params )
 local _a_tmp := {}
 local _mat_br
 local _ok := .t.
+local _kumpath := params["kum_path"]
+local _err := {}
 
-_use_tmp_table()
-set order to tag "3"
+// zakaci mi se na radnike iz FMK
+// to ce biti alias FMK_RADN
+select ( F_TMP_2 )
+use
+my_use_temp( "FMK_RADN", _kumpath + "RADN.DBF", .f., .t. )
+set order to tag "ID"
 go top
 
 // provjera po maticnim brojevima...
 // ima li duplih
 do while !EOF()
 
-    skip 1
-    _mat_br := field->jmbg
-    skip -1
+    _mat_br := field->matbr
     
-    if field->jmbg == _mat_br
-        AADD( _a_tmp, { field->id, field->id2, field->jmbg } )
+    if LEN( ALLTRIM( _mat_br ) ) < 13
+        dodaj_u_err( @_err, field->id, "maticni broj kratak ili ga nema! " + field->matbr )
     endif
 
     skip
@@ -208,30 +239,14 @@ do while !EOF()
 enddo
 
 // zatvori tmp table
-select ( F_TMP_1 )
+select ( F_TMP_2 )
 use
 
-if LEN( _a_tmp ) > 0
-
+if LEN( _err ) > 0
     _ok := .f.
-
-    // imamo gresaka...
-    START PRINT CRET
-
-    ? 
-    ? "Radnici sa identicnim maticnim brojem:"
-    ? "--------------------------------------------------------------"
-    ? "FMK    F18    JMBG"
-    ? "------ ------ -------------"
-
-    for _i := 1 to LEN( _a_tmp )
-        ? _a_tmp[ _i, 1 ], _a_tmp[ _i, 2 ], _a_tmp[ _i, 3 ]
-    next
-
-    FF
-    END PRINT
-
 endif
+
+prikazi_err( _err )
 
 return _ok
 
@@ -260,14 +275,43 @@ if !Used()
     O_RADN
 endif
 
+select ( F_PK_RADN )
+if !Used()
+    O_PK_RADN
+endif
+
+select ( F_PK_DATA )
+if !Used()
+    O_PK_DATA
+endif
+
+
 // zakaci mi se na radnike iz FMK
 // to ce biti alias FMK_RADN
 select ( F_TMP_2 )
 use
 my_use_temp( "FMK_RADN", _kumpath + "RADN.DBF", .f., .t. )
+set order to tag "1"
 
 // broj zapisa u sifrarniku radnika
 _fmk_count := RECCOUN()
+
+// zakaci mi se na pk_radn iz FMK
+// to ce biti alias FMK_PK
+select ( F_TMP_4 )
+use
+my_use_temp( "FMK_PK", _kumpath + "PK_RADN.DBF", .f., .t. )
+index on ( idradn ) TAG "1" TO ( _kumpath + "ld_pk_tag")
+set order to tag "1"
+
+// zakaci mi se na pk_data iz FMK
+// to ce biti alias FMK_PKDATA
+select ( F_TMP_5 )
+use
+my_use_temp( "FMK_PKDATA", _kumpath + "PK_DATA.DBF", .f., .t. )
+index on ( idradn ) TAG "1" TO ( _kumpath + "ld_pkd_tag")
+set order to tag "1"
+
 
 // otvori pomocnu tabelu za upis radnika...
 _use_tmp_table()
@@ -280,7 +324,7 @@ set order to tag "3"
 // kod punjenja pregledaj ima li u pomocnoj tabeli, ako nema dodaj
 
 select fmk_radn
-set order to tag "ID"
+set order to tag "1"
 go top
 
 _ok := .t.
@@ -296,6 +340,12 @@ do while !EOF()
     _fmk_id_radn := field->id
     // maticni broj radnika u FMK
     _fmk_jmbg := field->matbr
+
+    // ako nema maticnog broja - vozdra !!!
+    if EMPTY( _fmk_jmbg )
+        skip
+        loop
+    endif
 
     // uslovi za preskakanje...
     if EMPTY( _fmk_id_radn )
@@ -342,7 +392,19 @@ do while !EOF()
             select fmk_radn
             _rec2 := dbf_get_rec()
             _rec2["id"] := _nova_f18_sifra
-        
+
+            // polja koja fale
+            _rec2["match_code"] := ""
+            _rec2["s1"] := ""
+            _rec2["s2"] := ""
+            _rec2["s3"] := ""
+            _rec2["s4"] := ""
+            _rec2["s5"] := ""
+            _rec2["s6"] := ""
+            _rec2["s7"] := ""
+            _rec2["s8"] := ""
+            _rec2["s9"] := ""
+     
             // bit ce sigurno nekih zapisa za izbaciti i slicno ?!???? sa hb_hdel()
             @ m_x + 2, m_y + 2 SAY "import zapisa: " + ALLTRIM( STR( _count ) ) + "/" + ALLTRIM( STR( _fmk_count ) )
 
@@ -351,6 +413,9 @@ do while !EOF()
             update_rec_server_and_dbf( "radn", _rec2, 1, "FULL" )
 
         endif
+
+        // podaci poreznih kartica...
+        prebaci_pk_data( _fmk_id_radn, _nova_f18_sifra )
 
     endif
 
@@ -365,11 +430,18 @@ BoxC()
 select ( F_TMP_1 )
 use
 
-// zatvori tmp tabelu
 select ( F_TMP_2 )
 use
 
-// zatvori radnike
+select ( F_TMP_3 )
+use
+
+select ( F_TMP_4 )
+use
+
+select ( F_TMP_5 )
+use
+
 select radn
 _f18_count := RECCOUNT()
 use
@@ -381,6 +453,81 @@ else
 endif
 
 return _ok
+
+
+// ------------------------------------------------------------
+// kopiranje podataka poreznih kartica...
+// ------------------------------------------------------------
+static function prebaci_pk_data( sifra, nova_sifra )
+local _rec
+local _t_area := SELECT()
+
+// ova funkcija podrazumjeva otvorene tabele:
+//   fmk_pk i fmk_pkdata
+// kao i:
+//   ld_pkradn i ld_pkdata
+
+select pk_radn
+set order to tag "1"
+go top
+seek nova_sifra
+
+if !FOUND()
+
+    // nema podataka za ovog radnika
+
+    select fmk_pk
+    set order to tag "1"
+    go top
+    seek sifra
+    
+    if !FOUND()
+        // nema poreznih podataka radnika
+        select ( _t_area )
+        return
+    endif
+    
+    do while !EOF() .and. field->idradn == sifra
+
+        _rec := dbf_get_rec()
+        _rec["idradn"] := nova_sifra
+
+        select pk_radn
+        append blank
+        
+        update_rec_server_and_dbf( "ld_pk_radn", _rec, 1, "CONT" )
+
+        select fmk_pk
+        skip
+
+    enddo
+
+    select fmk_pkdata
+    set order to tag "1"
+    go top
+    seek sifra
+
+    do while !EOF() .and. field->idradn == sifra
+
+        _rec := dbf_get_rec()
+        _rec["idradn"] := nova_sifra
+
+        select pk_data
+        append blank
+        
+        update_rec_server_and_dbf( "ld_pk_data", _rec, 1, "CONT" )
+
+        select fmk_pkdata
+        skip
+
+    enddo
+
+endif
+
+select ( _t_area )
+
+return
+
 
 
 
@@ -427,6 +574,16 @@ local _rec, _rec2, _fmk_id_radn, _f18_id_radn
 local _count := 0
 local _fmk_count
 local _a_tippr := {}
+local _mj_od, _mj_do
+local _god_od, _god_do
+local _err := {}
+
+// mjeseci....
+_mj_od := MONTH( _dat_od )
+_mj_do := MONTH( _dat_do )
+// godine...
+_god_od := YEAR( _dat_od )
+_god_do := YEAR( _dat_do )
 
 // koristi temp tabelu radnika...
 // alias: LD_RADN_TMP
@@ -445,10 +602,11 @@ _fmk_count := RECCOUNT()
 
 // otvori FMK tabelu radnika 
 // alias: FMK_LDRADN
-select ( 350 )
+select ( F_TMP_3 )
 use
 my_use_temp( "FMK_LDRADN", _kumpath + "RADN.DBF", .f., .t. )
-set order to tag "ID"
+index on ( id ) TAG "1" TO ( _kumpath + "ldradn_imp_tag")
+set order to tag "1"
 
 
 // zakaci mi se na LD F18
@@ -479,7 +637,7 @@ endif
 
 Box(, 2, 66 )
 
-@ m_x + 1, m_y + 2 SAY "Import podataka za radnu jedinicu: " + _fmk_rj + " u toku..." 
+@ m_x + 1, m_y + 2 SAY "Import podataka obracuna za radnu jedinicu: " + _fmk_rj + " u toku..." 
 
 // glavna petlja...
 do while !EOF() .and. field->idrj == _fmk_rj
@@ -487,14 +645,30 @@ do while !EOF() .and. field->idrj == _fmk_rj
     // fmk radnik
     _fmk_id_radn := field->idradn
 
+    // preskakanje...
+    if EMPTY( _fmk_id_radn )
+        skip
+        loop
+    endif
+
     select fmk_ldradn
-    hseek _fmk_id_radn
+    set order to tag "1"
+    go top
+    seek _fmk_id_radn
     
     if FOUND()
-        _fmk_jmbg := field->jmbg
+
+        _fmk_jmbg := field->matbr
+
     else
-        Msgbeep( "nesto je ovdje problematicno !!!!" )
-        return .f.
+        // dodaj u err matricu...
+        dodaj_u_err( @_err, _fmk_id_radn, "nesto je ovdje problematicno !!!! radnik: " + _fmk_id_radn  )
+
+        select fmk_ld
+
+        skip
+        loop
+
     endif
 
     // pronadji ga u temp tabeli - novu sifru
@@ -504,8 +678,10 @@ do while !EOF() .and. field->idrj == _fmk_rj
     seek _fmk_jmbg
 
     if !FOUND()
-        MsgBeep( "Nemoguce !!! radnika nema u pomocnoj tabeli !!!!" )
-        return _ok 
+        dodaj_u_err( @_err, _fmk_id_radn, "Nemoguce !!! radnika " + _fmk_jmbg + " / " + _fmk_id_radn + " nema u pomocnoj tabeli !!!!" )
+        select fmk_ld
+        skip
+        loop
     endif
 
     // ovo mu je prava sifra...
@@ -516,12 +692,30 @@ do while !EOF() .and. field->idrj == _fmk_rj
     // sada prodji i ubaci zapise po radniku...
     do while !EOF() .and. field->idrj == _fmk_rj .and. field->idradn == _fmk_id_radn
 
+        // uslovi za preskakanje...
+
+        // prazan zapis...
+        if EMPTY( STR( field->godina, 4 ) )
+            skip
+            loop
+        endif
+
+        // datumski uslov ...
+        if ( STR( field->godina, 4 ) + STR( field->mjesec, 2 ) < STR( _god_od, 4 ) + STR( _mj_od, 2 ) ) .or. ; 
+            ( STR( field->godina, 4 ) + STR( field->mjesec, 2 ) > STR( _god_do, 4 ) + STR( _mj_do, 2 ) )
+            skip
+            loop
+        endif
+
         // uzmi zapis....
         _rec := dbf_get_rec()
 
         // ubacimo ga u f18 LD, ali pod novom radnom jedinicom
         _rec["idradn"] := _f18_id_radn
         _rec["idrj"] := _f18_rj
+
+        // nepostojeca polja
+        dodaj_nepostojeca_polja_ld( @_rec )
 
         // zamjeni tipove primanja na osnovu matrice
         change_tippr_from_matrix( @_rec, _a_tippr )
@@ -554,16 +748,76 @@ select ( F_TMP_1 )
 use
 select ( F_LD )
 use
-select ( 350 )
+select ( F_TMP_3 )
 use
 
 // prenos ok
 _ok := .t.
 
+// prikazi errore
+prikazi_err( _err )
+
 // imamo counter koji mozemo iskoristiti za nesto
 // _count
 
 return _ok
+
+
+// ----------------------------------------------------------
+// importuj u ld nepostojeca polja
+// ----------------------------------------------------------
+static function dodaj_nepostojeca_polja_ld( rec )
+local _i
+
+rec["obr"] := "1"
+rec["radsat"] := 0
+
+for _i := 41 to 60
+    rec[ "s" + ALLTRIM(STR( _i )) ] := 0
+    rec[ "i" + ALLTRIM(STR( _i )) ] := 0
+next
+
+return
+
+
+// -----------------------------------------------------------
+// dodaj u matricu gresaka
+// -----------------------------------------------------------
+static function dodaj_u_err( data, key, err )
+local _scan
+
+_scan := ASCAN( data, {|var| var[1] == key } )
+
+if _scan == 0
+    AADD( data, { key, err } )
+endif
+
+return
+
+
+static function prikazi_err( data )
+local _i
+
+if LEN( data ) == 0
+    return
+endif
+
+START PRINT CRET
+
+? 
+? "GRESKE PRILIKOM IMPORTA !!!!"
+? REPLICATE( "-", 100 )
+? "Kljuc   Greska"
+? REPLICATE( "-", 100 )
+
+for _i := 1 to LEN( data )
+    ? PADL( ALLTRIM(STR( _i )), 5 ) + ")", data[ _i, 1 ], data[ _i, 2 ]
+next
+
+FF
+END PRINT
+
+return
 
 
 
@@ -615,10 +869,17 @@ for _i := 1 to LEN( matrix )
 
     if !EMPTY( _found )
 
-        // zamjeni vrijednost
-        rec[ _found ] := _rec[ _search ]
+        // zamjeni vrijednosti
+
+        // sati...
+        rec[ "s" + _found ] := _rec[ "s" + _search ]
         // original setuj na 0
-        rec[ _search ] := 0
+        rec[ "s" + _search ] := 0
+
+        // iznos ... 
+        rec[ "i" + _found ] := _rec[ "i" + _search ]
+        // original setuj na 0
+        rec[ "i" + _search ] := 0
     
     endif
 
@@ -658,6 +919,7 @@ local _dat_do := params["datum_do"]
 local _rec, _rec2, _fmk_id_radn, _f18_id_radn
 local _count := 0
 local _fmk_count
+local _err := {}
 
 // koristi temp tabelu radnika...
 // alias: LD_RADN_TMP
@@ -668,17 +930,18 @@ set order to tag "1"
 // alias: FMK_KRED
 select ( F_TMP_2 )
 use
-my_use_temp( "FMK_KRED", _kumpath + "LDKRED.DBF", .f., .t. )
+my_use_temp( "FMK_KRED", _kumpath + "RADKR.DBF", .f., .t. )
 // napravi mi indeks za ovu potrebu...
-index on ( idrj + idradn + STR( godina ) + STR( mjesec ) ) TAG "IMP" TO ( _kumpath + "kred_imp_tag")
+index on ( idradn + STR( godina ) + STR( mjesec ) ) TAG "IMP" TO ( _kumpath + "kred_imp_tag")
 _fmk_count := RECCOUNT()
 
 // otvori FMK tabelu radnika 
 // alias: FMK_LDRADN
-select ( 350 )
+select ( F_TMP_3 )
 use
 my_use_temp( "FMK_LDRADN", _kumpath + "RADN.DBF", .f., .t. )
-set order to tag "ID"
+index on ( id ) TAG "1" TO ( _kumpath + "ldradn_imp_tag")
+set order to tag "1"
 
 
 // zakaci mi se na LDKRED F18
@@ -701,37 +964,42 @@ select fmk_kred
 set order to tag "IMP"
 go top
 
-seek _fmk_rj 
-
 Box(, 2, 66 )
 
-@ m_x + 1, m_y + 2 SAY "Import podataka za radnu jedinicu: " + _fmk_rj + " u toku..." 
+@ m_x + 1, m_y + 2 SAY "Import podataka kredita za radnu jedinicu: " + _fmk_rj + " u toku..." 
 
 // glavna petlja...
-do while !EOF() .and. field->idrj == _fmk_rj
+do while !EOF()
 
     // fmk radnik
     _fmk_id_radn := field->idradn
 
     // nadji ga u tabeli ldradn
     select fmk_ldradn
-    hseek _fmk_id_radn
+    set order to tag "1"
+    go top
+    seek _fmk_id_radn
     
     if FOUND()
-        _fmk_jmbg := field->jmbg
+        _fmk_jmbg := field->matbr
     else
-        Msgbeep( "nesto je ovdje problematicno !!!!" )
-        return .f.
+        dodaj_u_err( @_err, _fmk_id_radn, "nesto je ovdje problematicno !!!!, radnika " + _fmk_id_radn + " nema u tabeli radnika !!! " )
+        select fmk_kred
+        skip
+        loop
     endif
 
     // pronadji ga u temp tabeli - novu sifru
     select ld_radn_tmp
+    set order to tag "3"
     go top
     seek _fmk_jmbg
 
     if !FOUND()
-        MsgBeep( "Nemoguce !!! radnika nema u pomocnoj tabeli !!!!" )
-        return _ok 
+        dodaj_u_err( @_err, _fmk_id_radn, "Nemoguce !!! radnika nema u pomocnoj tabeli !!!! radnik " + _fmk_id_radn )
+        select fmk_kred
+        skip
+        loop
     endif
 
     // ovo mu je prava sifra...
@@ -739,14 +1007,15 @@ do while !EOF() .and. field->idrj == _fmk_rj
 
     select fmk_kred
 
-    do while !EOF() .and. field->idrj == _fmk_rj .and. field->idradn == _fmk_id_radn
+    do while !EOF() .and. field->idradn == _fmk_id_radn
 
         _rec := dbf_get_rec()
         // ubacimo ga u f18 LD, ali pod novom radnom jedinicom
         _rec["idradn"] := _f18_id_radn
-        _rec["idrj"] := _f18_rj
+
         select radkr
         APPEND BLANK
+
         update_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
     
         ++ _count
@@ -773,11 +1042,14 @@ select ( F_TMP_1 )
 use
 select ( F_RADKR )
 use
-select ( 350 )
+select ( F_TMP_3 )
 use
 
 // prenos ok
 _ok := .t.
+
+// prikazi greske
+prikazi_err( _err )
 
 // imamo counter koji mozemo iskoristiti za nesto
 // _count
@@ -795,6 +1067,135 @@ return _ok
 // -----------------------------------------------------
 static function __import_general_data( params )
 local _ok := .f.
+local _sifpath := params["sif_path"]
+local _kumpath := params["kum_path"]
+local _rec
+
+// porezi
+O_POR
+if RECCOUNT() == 0
+    // porezi...
+    select ( F_TMP_4 )
+    use
+    my_use_temp( "FMK_POR", _sifpath + "POR.DBF", .f., .t. )
+    go top
+    do while !EOF()
+
+        _rec := dbf_get_rec()
+        _rec["match_code"] := ""
+
+        select por
+        append blank
+        update_rec_server_and_dbf( "por", _rec, 1, "FULL" )
+
+        select fmk_por
+        skip
+
+    enddo
+endif
+select ( F_POR )
+use
+
+// doprinosi
+O_DOPR
+if RECCOUNT() == 0
+    // porezi...
+    select ( F_TMP_4 )
+    use
+    my_use_temp( "FMK_DOPR", _sifpath + "DOPR.DBF", .f., .t. )
+    go top
+    do while !EOF()
+
+        _rec := dbf_get_rec()
+        _rec["match_code"] := ""
+
+        select dopr
+        append blank
+        update_rec_server_and_dbf( "dopr", _rec, 1, "FULL" )
+
+        select fmk_dopr
+        skip
+
+    enddo
+endif
+select ( F_DOPR )
+use
+
+// porezi
+O_TIPPR
+if RECCOUNT() == 0
+    // porezi...
+    select ( F_TMP_4 )
+    use
+    my_use_temp( "FMK_TIPPR", _sifpath + "TIPPR.DBF", .f., .t. )
+    go top
+    do while !EOF()
+
+        _rec := dbf_get_rec()
+
+        select tippr
+        append blank
+        update_rec_server_and_dbf( "tippr", _rec, 1, "FULL" )
+
+        select fmk_tippr
+        skip
+
+    enddo
+endif
+select ( F_TIPPR )
+use
+
+// parametri obracuna
+O_PAROBR
+if RECCOUNT() == 0
+    // porezi...
+    select ( F_TMP_4 )
+    use
+    my_use_temp( "FMK_PAROBR", _sifpath + "PAROBR.DBF", .f., .t. )
+    go top
+    do while !EOF()
+
+        _rec := dbf_get_rec()
+        _rec["obr"] := "1"
+
+        select parobr
+        append blank
+        update_rec_server_and_dbf( "parobr", _rec, 1, "FULL" )
+
+        select fmk_parobr
+        skip
+
+    enddo
+endif
+select ( F_PAROBR )
+use
+
+// krediti
+O_KRED
+if RECCOUNT() == 0
+    // porezi...
+    select ( F_TMP_4 )
+    use
+    my_use_temp( "FMK_KRED", _sifpath + "KRED.DBF", .f., .t. )
+    go top
+    do while !EOF()
+
+        _rec := dbf_get_rec()
+        _rec["match_code"] := ""
+        _rec["telefon"] := ""
+
+        select kred
+        append blank
+        update_rec_server_and_dbf( "kred", _rec, 1, "FULL" )
+
+        select fmk_kred
+        skip
+
+    enddo
+endif
+select ( F_KRED )
+use
+
 
 
 

@@ -414,7 +414,7 @@ function fill_tbl_valute()
 local _rec
 
 close all
-my_use ('valute')
+O_VALUTE
 
 if RECCOUNT() <> 0
     close all

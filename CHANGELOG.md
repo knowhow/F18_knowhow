@@ -1,3 +1,7 @@
+1.4.88 2013-01-17, vsasa
+
+ - unos šifrarnika artikala, unos opisa artikla, pregled opisa na opciju "D" u šifrarniku
+ 
 1.4.87 2013-01-16, vsasa
 
  - unos šifrarnika artikala, može i bez "idkonto"

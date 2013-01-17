@@ -130,17 +130,19 @@ LOCAL nArr:=SELECT()
 
 
 if UPPER(Chr(Ch)) == "K"
-    //PushWa()
-    //BrowseKart(roba->id)
-    //PopWa()
-    return 6  // DE_CONT2
+    return 6  
+
+elseif upper(Chr(Ch)) == "D"
+    // prikaz detalja sifre
+    roba_opis_edit( .t. )
+    return 6  
 
 elseif upper(Chr(Ch))=="S"
-    TB:Stabilize()  // problem sa "S" - exlusive, htc
+    TB:Stabilize()  
     PushWa()
     FaktStanje(roba->id)
     PopWa()
-    return 6  // DE_CONT2
+    return 6  
 
 elseif upper(Chr(Ch))=="O"
     if roba->(fieldpos("strings")) == 0

@@ -117,7 +117,7 @@ if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWNC"))
     AADD(ImeKol, {padc("NC",10 ), {|| transform(NC,gPicCDEM)}, "NC", NIL, NIL, NIL, gPicCDEM  })
 endif
 
-AADD(ImeKol, {"Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa) }   })
+AADD(ImeKol, {"Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), roba_opis_edit()  }   })
 AADD(ImeKol, {"Tip",{|| " "+Tip+" "}, "Tip", {|| .t.}, {|| wTip $ " TUCKVPSXY" } ,NIL,NIL,NIL,NIL, 27 } )
 
 // BARKOD
@@ -173,8 +173,6 @@ if roba->(fieldpos("IDTARIFA2"))<>0
     AADD (ImeKol,{ "Tarifa R3",{|| IdTarifa3}, "IdTarifa3", {|| .t. }, {|| set_tar_rs(@wIdTarifa3, wIdTarifa) .or. P_Tarifa(@wIdTarifa3) }   })
 endif
 
-
-
 Kol := {}
 
 FOR i:=1 TO LEN(ImeKol)
@@ -227,6 +225,44 @@ cRet := PostojiSifra(F_ROBA, (cPomTag), 15, MAXCOLS() - 5 , "Lista artikala - ro
 PopWa()
 
 return cRet
+
+
+
+
+// ---------------------------------------------------
+// definisanje opisa artikla u sifrarniku
+// ---------------------------------------------------
+function roba_opis_edit( view )
+local _op := "N"
+private getList := {}
+
+if view == NIL
+    view := .f.
+endif
+
+if !view
+
+    @ m_x + 7, m_y + 43 SAY "Definisati opis artikla (D/N) ?" GET _op PICT "@!" VALID _op $ "DN"
+
+    read
+
+    if _op == "N"
+        return .t.
+    endif
+
+endif
+
+Box(, 14, 55 )
+
+    @ m_x + 1, m_y + 2 SAY "OPIS ARTIKLA # " + if( !view, "<c-W> za kraj unosa...", "" )
+
+    // otvori memo edit
+    wopis := MemoEdit( field->opis, m_x + 3, m_y + 1, m_x + 14, m_y + 55 )
+
+BoxC()
+
+return .t.
+
 
 
 

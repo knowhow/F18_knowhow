@@ -30,7 +30,7 @@ if !get_vars( @_params )
 endif
 
 // reset sifre radnika u parametrima
-if _params["sif_reset"] == "D"
+if _params["radn_reset"] == "D"
     // ovo ce setovati globalni brojac na 0...
     // tako da import moze ici iz pocetka
     nova_sifra_radnika( "", .t. )

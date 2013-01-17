@@ -13,6 +13,7 @@
 
 #include "hbclass.ch"
 #include "common.ch"
+#include "f18_separator.ch"
 
 // ---------------------------------------
 // ---------------------------------------
@@ -57,21 +58,27 @@ _col := FaktColumn():New("broj", self, NIL)
 _col := FaktColumn():New("neto", self, NIL)
 ::AddColumn(_col)
 
+::headSep := BROWSE_HEAD_SEP 
+::colsep :=  BROWSE_COL_SEP
+  
 RETURN Self
 
 
 METHOD BrowseFaktDokumenti:skipper(s)
 
-if (s > 0) .and. (s + ::tekuci_red) > ::fakt_dokumenti:count
-    s := ::fakt_dokumenti:count
+::tekuci_red += s
+
+if ::tekuci_red > ::fakt_dokumenti:count 
+   s -= ::tekuci_red - ::fakt_dokumenti:count
+   ::tekuci_red := ::fakt_dokumenti:count
 endif
 
-if (s < 0) .and. (s + ::tekuci_red) <  1
-    s := 1 - ::tekuci_red  
+if ::tekuci_red < 1
+   s +=  1 - ::tekuci_red
+   ::tekuci_red := 1
 endif
 
-::tekuci_red := s
-RETURN IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[s])
+RETURN IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[::tekuci_red])
 
 
 // --------------------------------------------
@@ -106,46 +113,46 @@ METHOD BrowseFaktDokumenti:default_keyboard_hook(key)
 SWITCH (key)
         CASE K_DOWN
            ::down()
-
+           exit
         CASE K_PGDN
            ::pageDown()
-
+           exit
         CASE K_CTRL_PGDN
            ::goBottom()
-
+           exit
         CASE K_UP
             ::up()
-
+            exit
         CASE K_PGUP
             ::pageUp()
-
+            exit
         CASE K_CTRL_PGUP
             ::goTop()
-
+            exit
         CASE K_RIGHT
              ::right()
-
+             exit
         CASE K_LEFT
              ::left()
-
+             exit
         CASE  K_HOME
              ::home()
-
+             exit
         CASE K_END
              ::end()
-
+             exit
         CASE K_CTRL_LEFT
             ::panLeft()
-
+            exit
         CASE K_CTRL_RIGHT
             ::panRight()
-
+            exit
         CASE K_CTRL_HOME
             ::panHome()
-
+            exit
         CASE K_CTRL_END
              ::panEnd()
-
+             exit
         OTHERWISE
              ::keyboard_hook(key)
 END

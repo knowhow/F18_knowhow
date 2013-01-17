@@ -51,9 +51,9 @@ local _cnt
 ::_idtipdok := idtipdok
 ::_idpartner := idpartner
 
-_qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM fmk.fakt_fakt " 
-_qry_str += "LEFT JOIN fmk.fakt_doks "
-_qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
+_qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM fmk.fakt_doks " 
+//_qry_str += "LEFT JOIN fmk.fakt_fakt "
+//_qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
 _qry_str += "WHERE "
 
 ::_sql_where := "fakt_doks.idfirma=" + _sql_quote(::_idfirma) +  " AND fakt_doks.idtipdok=" + _sql_quote(::_idtipdok) + " AND fakt_doks.idpartner=" + _sql_quote(::_idpartner)

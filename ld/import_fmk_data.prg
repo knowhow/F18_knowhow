@@ -54,6 +54,7 @@ local _fmk_rj := SPACE(2)
 local _f18_rj := SPACE(2)
 local _kum_path := PADR( fetch_metric( "ld_import_fmk_kum_path", NIL, "c:\sigma\ld\kum1\" ), 300 )
 local _sif_path := PADR( fetch_metric( "ld_import_fmk_sif_path", NIL, "c:\sigma\sif1\" ), 300 )
+local _tip_pr := PADR( fetch_metric( "ld_import_tippr_matrix", NIL, "" ), 500 )
 local _dat_od := CTOD("")
 local _dat_do := DATE()
 local _prefix := SPACE(3)
@@ -76,6 +77,9 @@ Box(, 15, 70 )
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Prefiks za sifru partnera:" GET _prefix
+
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Tip pr:" GET _tip_pr PICT "@S50"
     
     ++ _x
     ++ _x
@@ -94,6 +98,7 @@ endif
 // snimi sql parametre
 set_metric( "ld_import_fmk_kum_path", NIL, ALLTRIM( _kum_path ) )
 set_metric( "ld_import_fmk_sif_path", NIL, ALLTRIM( _sif_path ) )
+set_metric( "ld_import_tippr_matrix", NIL, ALLTRIM( _tip_pr ) )
 
 // snimi mi hash matricu
 _ok := .t.
@@ -101,12 +106,15 @@ params := hb_hash()
 params["rj_fmk"] := _fmk_rj
 params["rj_f18"] := _f18_rj
 params["radn_prefix"] := _prefix
+params["tip_pr"] := _tip_pr
 params["datum_od"] := _dat_od
 params["datum_do"] := _dat_do
 params["kum_path"] := ALLTRIM( _kum_path )
 params["sif_path"] := ALLTRIM( _sif_path )
 
 return _ok
+
+
 
 
 
@@ -136,6 +144,8 @@ return
 
 
 
+
+
 // -----------------------------------------------
 // use 
 // -----------------------------------------------
@@ -144,9 +154,11 @@ static function _use_tmp_table()
 select ( F_TMP_1 )
 use
 my_use_temp( "LD_RADN_TMP", my_home() + "ld_radn_tmp.dbf", .f., .t. )
-set order to tag "1"
+set order to tag "3"
 
 return
+
+
 
 
 
@@ -163,6 +175,8 @@ _ok := __import_ld_data( params )
 _ok := __import_kred_data( params ) 
 
 return _ok
+
+
 
 
 // ----------------------------------------------------
@@ -257,7 +271,7 @@ _fmk_count := RECCOUN()
 
 // otvori pomocnu tabelu za upis radnika...
 _use_tmp_table()
-set order to tag "1"
+set order to tag "3"
 
 
 // ideja je sljedeca... 
@@ -292,9 +306,11 @@ do while !EOF()
     // sve je ok, idemo dalje...
 
     // vidimo ima li radnika u tmp tabeli...
+    // trazit cemo po JMBG
     select ld_radn_tmp
+    set order to tag "3"
     go top
-    seek _fmk_id_radn
+    seek _fmk_jmbg
 
     if !FOUND()
 
@@ -367,6 +383,9 @@ endif
 return _ok
 
 
+
+
+
 // -----------------------------------------------------------------------
 // odredjuje novu sifru radnika
 // -----------------------------------------------------------------------
@@ -400,17 +419,19 @@ static function __import_ld_data( params )
 local _ok := .f.
 local _kumpath := params["kum_path"]
 local _fmk_rj := params["rj_fmk"]
+local _tip_pr := params["tip_pr"]
 local _f18_rj := params["rj_f18"]
 local _dat_od := params["datum_od"]
 local _dat_do := params["datum_do"]
 local _rec, _rec2, _fmk_id_radn, _f18_id_radn
 local _count := 0
 local _fmk_count
+local _a_tippr := {}
 
 // koristi temp tabelu radnika...
 // alias: LD_RADN_TMP
 _use_tmp_table()
-set order to tag "1"
+set order to tag "3"
 
 // zakaci mi se na obracun iz FMK
 // alias: FMK_LD
@@ -420,6 +441,14 @@ my_use_temp( "FMK_LD", _kumpath + "LD.DBF", .f., .t. )
 // napravi mi indeks za ovu potrebu...
 index on ( idrj + idradn + STR( godina ) + STR( mjesec ) ) TAG "IMP" TO ( _kumpath + "ld_imp_tag")
 _fmk_count := RECCOUNT()
+
+
+// otvori FMK tabelu radnika 
+// alias: FMK_LDRADN
+select ( 350 )
+use
+my_use_temp( "FMK_LDRADN", _kumpath + "RADN.DBF", .f., .t. )
+set order to tag "ID"
 
 
 // zakaci mi se na LD F18
@@ -443,6 +472,11 @@ endif
 sql_table_update( nil, "BEGIN" )
 
 
+// tipovi primanja matrica
+if !EMPTY( _tip_pr )
+    _a_tippr := set_tippr_matrix( _tip_pr )
+endif
+
 Box(, 2, 66 )
 
 @ m_x + 1, m_y + 2 SAY "Import podataka za radnu jedinicu: " + _fmk_rj + " u toku..." 
@@ -453,10 +487,21 @@ do while !EOF() .and. field->idrj == _fmk_rj
     // fmk radnik
     _fmk_id_radn := field->idradn
 
+    select fmk_ldradn
+    hseek _fmk_id_radn
+    
+    if FOUND()
+        _fmk_jmbg := field->jmbg
+    else
+        Msgbeep( "nesto je ovdje problematicno !!!!" )
+        return .f.
+    endif
+
     // pronadji ga u temp tabeli - novu sifru
     select ld_radn_tmp
+    set order to tag "3"
     go top
-    seek _fmk_id_radn 
+    seek _fmk_jmbg
 
     if !FOUND()
         MsgBeep( "Nemoguce !!! radnika nema u pomocnoj tabeli !!!!" )
@@ -477,6 +522,10 @@ do while !EOF() .and. field->idrj == _fmk_rj
         // ubacimo ga u f18 LD, ali pod novom radnom jedinicom
         _rec["idradn"] := _f18_id_radn
         _rec["idrj"] := _f18_rj
+
+        // zamjeni tipove primanja na osnovu matrice
+        change_tippr_from_matrix( @_rec, _a_tippr )
+
         select ld
         APPEND BLANK
         update_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
@@ -505,6 +554,8 @@ select ( F_TMP_1 )
 use
 select ( F_LD )
 use
+select ( 350 )
+use
 
 // prenos ok
 _ok := .t.
@@ -516,6 +567,81 @@ return _ok
 
 
 
+
+// ----------------------------------------------------
+// vraca matricu zamjena tipova primanja...
+// ----------------------------------------------------
+static function set_tippr_matrix( data )
+local _matrix := {}
+local _i
+local _a_tmp_1, _a_tmp_2
+local _tmp, _scan
+
+// 12->13;02->04;...
+
+_a_tmp_1 := TokToNiz( data, ";" )
+
+// rastavi mi 12-13 i 02->04
+for _i := 1 to LEN( _a_tmp_1 )
+
+    // rastavi mi: 12->13
+    _a_tmp_2 := TokToNiz( _a_tmp_1[ _i ], "->" )
+
+    _scan := ASCAN( _matrix, { |val| val[1] == _a_tmp_2[1] } )
+
+    if _scan == 0
+        // dodaj u ovu matricu kao [ 12, 13 ]
+        AADD( _matrix, { _a_tmp_2[1], _a_tmp_2[2] } )
+    endif
+next
+
+return _matrix
+
+// --------------------------------------------------------------
+// vrsi zamjenu podataka tipova primanja na osnovu matrice
+// --------------------------------------------------------------
+static function change_tippr_from_matrix( rec, matrix )
+local _i
+local _search := ""
+local _found := "" 
+
+for _i := 1 to LEN( matrix )
+
+    // ovo trazimo u matrici
+    _search := matrix[ _i, 1 ]
+    
+    // postoji kandidat za zamjenu...
+    _found := get_tippr_from_matrix( matrix, _search )
+
+    if !EMPTY( _found )
+
+        // zamjeni vrijednost
+        rec[ _found ] := _rec[ _search ]
+        // original setuj na 0
+        rec[ _search ] := 0
+    
+    endif
+
+next
+
+return .t.
+
+
+
+// ----------------------------------------------------
+// vraca vrijednost iz matrice tipova primanja
+// ----------------------------------------------------
+static function get_tippr_from_matrix( matrix, search )
+local _val := ""
+local _scan
+
+_scan := ASCAN( matrix, { |val| val[1] == search } )
+
+if _scan <> 0
+    _val := matrix[ _scan, 2 ]
+endif
+
+return _val
 
 
 
@@ -546,6 +672,14 @@ my_use_temp( "FMK_KRED", _kumpath + "LDKRED.DBF", .f., .t. )
 // napravi mi indeks za ovu potrebu...
 index on ( idrj + idradn + STR( godina ) + STR( mjesec ) ) TAG "IMP" TO ( _kumpath + "kred_imp_tag")
 _fmk_count := RECCOUNT()
+
+// otvori FMK tabelu radnika 
+// alias: FMK_LDRADN
+select ( 350 )
+use
+my_use_temp( "FMK_LDRADN", _kumpath + "RADN.DBF", .f., .t. )
+set order to tag "ID"
+
 
 // zakaci mi se na LDKRED F18
 // alias: RADKR
@@ -579,10 +713,21 @@ do while !EOF() .and. field->idrj == _fmk_rj
     // fmk radnik
     _fmk_id_radn := field->idradn
 
+    // nadji ga u tabeli ldradn
+    select fmk_ldradn
+    hseek _fmk_id_radn
+    
+    if FOUND()
+        _fmk_jmbg := field->jmbg
+    else
+        Msgbeep( "nesto je ovdje problematicno !!!!" )
+        return .f.
+    endif
+
     // pronadji ga u temp tabeli - novu sifru
     select ld_radn_tmp
     go top
-    seek _fmk_id_radn 
+    seek _fmk_jmbg
 
     if !FOUND()
         MsgBeep( "Nemoguce !!! radnika nema u pomocnoj tabeli !!!!" )
@@ -627,6 +772,8 @@ use
 select ( F_TMP_1 )
 use
 select ( F_RADKR )
+use
+select ( 350 )
 use
 
 // prenos ok

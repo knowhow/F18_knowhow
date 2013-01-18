@@ -405,7 +405,11 @@ do case
     case UPPER( CHR( Ch ) ) == "O"
 
         _t_area := SELECT()
-        fakt_generisi_racun_iz_otpremnice() 
+
+        //fakt_generisi_racun_iz_otpremnice() 
+        _fakt_doks := FaktDokumenti():New()
+        _fakt_doks:pretvori_otpremnice_u_racun()
+
         select (_t_area )
         return DE_REFRESH
     
@@ -1023,7 +1027,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                 PICT "@!" ;
                 VALID {|| P_Firma( @_idpartner ), ;
                             IzSifre(), ;
-                            _isp_partn( _idpartner, _part_x, _part_y + 18 ) }
+                            ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
             
         ++ _x
         ++ _x
@@ -1380,7 +1384,7 @@ return .t.
 // ------------------------------------------
 // ispisi partnera 
 // ------------------------------------------
-static function _isp_partn( cPartn, nX, nY )
+function ispisi_partn( cPartn, nX, nY )
 local nTArea := SELECT()
 local cDesc := "..."
 select partn

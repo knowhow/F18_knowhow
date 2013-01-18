@@ -37,7 +37,7 @@
  \param - [ 5] kodni blok Valid
  \param - [ 6] -
  \param - [ 7] picture
- \param - [ 8] - ima jos getova ????
+ \param - [ 8] - ima jos getova
  \param - [ 9] -
  \param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
 */
@@ -62,10 +62,9 @@ private  TBCanClose:=.t.
 
 private  TBAppend:="N"
 private  bZaglavlje:=NIL
-           // zaglavlje se edituje kada je kursor u prvoj koloni
-           // prvog reda
-private  TBScatter:="N"  // uzmi samo tekuce polje
-private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
+           // zaglavlje se edituje kada je kursor u prvoj koloni prvog reda
+private  TBScatter := "N"  // uzmi samo tekuce polje
+private  nTBLine   :=1      // tekuca linija-kod viselinijskog browsa
 private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
 private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
                            // ovo se moze setovati u when/valid fjama
@@ -155,7 +154,6 @@ DO WHILE .T.
 
    if bUserF <> NIL
      
-     // potpuna stabilizacija 
      DO While !TB:stabilize()
      END
    
@@ -246,11 +244,8 @@ if params["prazno"]==0
  IF !lIzOBJDB
     BoxC()
  ENDIF
-
   Box(params["ime"], _rows, _width, params["invert"], params["msgs"])
-
 else
-
   @ m_x + params["xw"] - params["prazno"], m_y + 1 SAY replicate( BROWSE_PODVUCI, params["yw"])
 
 endif
@@ -274,7 +269,7 @@ if TBSkipBlock<>NIL
 endif
 
   // Dodavanje kolona  za stampanje
-  FOR k:=1 TO Len(Kol)
+  FOR k := 1 TO Len(Kol)
 
     i := ASCAN(Kol, k)
     IF i <>0  .and. (ImeKol[i,2] <> NIL)     // kodni blok <> 0

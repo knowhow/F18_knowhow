@@ -392,6 +392,7 @@ f18_init_semaphores()
 
 set_init_fiscal_params()
 
+run_on_startup()
 return .t.
 
 
@@ -1011,3 +1012,24 @@ function set_hot_keys()
 
 SETKEY(K_SH_F1,{|| Calc()})
 SETKEY(K_F3, {|| new_f18_session_thread()})
+
+
+
+// ---------------------------------------------
+// pokreni odredjenu funkciju odmah na pocetku
+// ---------------------------------------------
+function run_on_startup()
+local _ini, _fakt_doks
+
+_ini := hb_hash()
+_ini["run"] := ""
+
+f18_ini_read("run" + IIF(test_mode(), "_test", ""), @_ini, .f.)
+
+SWITCH (_ini["run"])
+   CASE "fakt_pretvori_otpremnice_u_racun"
+        _fakt_doks := FaktDokumenti():New()
+        _fakt_doks:pretvori_otpremnice_u_racun()
+
+END
+

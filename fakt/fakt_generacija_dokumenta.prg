@@ -336,7 +336,7 @@ AADD( ImeKol, { "TD",     {|| idtipdok }   })
 AADD( ImeKol, { "Broj",   {|| brdok }  })
 AADD( ImeKol, { "Datdok",  {|| datdok  }  })
 AADD( ImeKol, { "Partner", {|| LEFT( partner, 20 )}  })
-AADD( ImeKol, { "Iznos",  {|| STR( iznos, 11, 2 )}  })
+AADD( ImeKol, { "Iznos",   {|| STR( iznos, 11, 2 )}  })
 AADD( ImeKol, { "Marker",  {|| m1 }  })
    
 Kol:={}
@@ -619,7 +619,6 @@ params["tip_racuna"] := _tip_rn
 params["sumiraj"] := _sumiraj
 
 return _ok
-
 
 
 // --------------------------------------------------------------

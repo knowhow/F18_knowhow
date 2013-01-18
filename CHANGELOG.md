@@ -1,3 +1,7 @@
+1.4.93 2013-01-18, vsasa
+
+ - štampa txt dokumenta, samo sa starim buildom
+
 1.4.92 2013-01-18, vsasa
 
  - fakt, unos nove otpremnice, brojač gledati po tip-u dokumenta "22"

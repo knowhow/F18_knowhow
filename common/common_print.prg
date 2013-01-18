@@ -131,13 +131,18 @@ DO CASE
     OTHERWISE
 
         // TODO: treba li f18_editor parametrizirati ?!   
+        //#ifdef __PLATFORM__WINDOWS
+        //    f_name := '"' + f_name + '"'
+        //#endif
+
         _cmd := "f18_editor " + f_name
 
         // #27234
         #ifdef __PLATFORM__UNIX
             close all
         #endif
-        hb_run (_cmd) 
+       
+        hb_run( _cmd ) 
 
 END CASE
 
@@ -224,16 +229,21 @@ return
 
 
 static function set_print_f_name(f_name)
+local _root
 
 if f_name == NIL
+
     f_name := OUTF_FILE
 
     // jos nije setovan my_home()
     if my_home() == NIL
-        f_name := my_home_root() + f_name
+        _root := my_home_root() + f_name
     else
-        f_name := my_home() + f_name
+        _root := my_home() + f_name
     endif
+
+    f_name := _root
+
 endif
 
 return f_name

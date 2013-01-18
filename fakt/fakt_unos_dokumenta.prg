@@ -407,7 +407,8 @@ do case
     case UPPER( CHR( Ch ) ) == "O"
 
         _t_area := SELECT()
-        
+       
+ 
         // stari parametar...
         if !_params["fakt_otpr_gen"]
             fakt_generisi_racun_iz_otpremnice() 

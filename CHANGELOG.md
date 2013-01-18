@@ -1,3 +1,7 @@
+1.4.90 2013-01-18, hernad
+
+ - sql_fakt [#30053](http://redmine.bring.out.ba/issues/30053)
+
 1.4.88 2013-01-17, vsasa
 
  - unos šifrarnika artikala, unos opisa artikla, pregled opisa na opciju "D" u šifrarniku

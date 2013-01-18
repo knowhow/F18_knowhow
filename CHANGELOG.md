@@ -1,3 +1,7 @@
+1.4.91 2013-01-18, hernad
+
+ - hbmysql windows
+
 1.4.90 2013-01-18, hernad
 
  - sql_fakt [#30053](http://redmine.bring.out.ba/issues/30053)

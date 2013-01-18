@@ -16,19 +16,28 @@
 // ------------------------------------------------
 // ------------------------------------------------
 CLASS FaktDokumenti
-
     DATA    items
     DATA    count
-    
+
+    METHOD  count_markirani    
     METHOD  New()
     METHOD  za_partnera(idfirma, idtipdok, idpartner)
     METHOD  pretvori_otpremnice_u_racun()
+    METHOD  change_idtipdok_markirani(new_idtipdok)
+
+    ASSIGN  locked   INLINE ::p_locked
+    METHOD  lock()
+    METHOD  unlock()
 
     PROTECTED:
+       METHOD generisi_fakt_pripr_vars()
+       METHOD  generisi_fakt_pripr()
        DATA  _sql_where
-       DATA  _idfirma
-       DATA  _idtipdok
-       DATA  _idpartner
+       DATA  p_idfirma
+       DATA  p_idtipdok
+       DATA  p_idpartner
+       DATA  p_locked  INIT .f.
+       DATA  p_lock_tables INIT {"fakt_fakt", "fakt_doks", "fakt_doks2"}
 ENDCLASS
 
 // ---------------------------------
@@ -40,35 +49,54 @@ METHOD FaktDokumenti:New()
 
 return self
 
+
+// -------------------------------------------
+// lokuj - zabrani promjene drugih
+//         logika semafora ovo zahtjeva
+// -------------------------------------------
+METHOD FaktDokumenti:lock()
+
+if f18_lock_tables(::p_lock_tables)
+   ::p_locked := .t.
+else   
+   ::p_locked := .f.
+endif
+return ::p_locked
+
+// ----------------------------------------------------------
+// unlock - oslobodi tabele za update od strane drugih
+// ----------------------------------------------------------
+METHOD FaktDokumenti:unlock()
+f18_free_tables(::p_lock_tables)
+return .t.
+
+
 //------------------------------------------------------------
 //------------------------------------------------------------
 METHOD FaktDokumenti:za_partnera(idfirma, idtipdok, idpartner)
 local _qry_str
-local _idfirma, _idtipdok, _brdok 
 local _cnt
+local _brdok
 
-::_idfirma := idfirma
-::_idtipdok := idtipdok
-::_idpartner := idpartner
+::p_idfirma := idfirma
+::p_idtipdok := idtipdok
+::p_idpartner := idpartner
 
 _qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM fmk.fakt_doks " 
 //_qry_str += "LEFT JOIN fmk.fakt_fakt "
 //_qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
 _qry_str += "WHERE "
 
-::_sql_where := "fakt_doks.idfirma=" + _sql_quote(::_idfirma) +  " AND fakt_doks.idtipdok=" + _sql_quote(::_idtipdok) + " AND fakt_doks.idpartner=" + _sql_quote(::_idpartner)
+::_sql_where := "fakt_doks.idfirma=" + _sql_quote(::p_idfirma) +  " AND fakt_doks.idtipdok=" + _sql_quote(::p_idtipdok) + " AND fakt_doks.idpartner=" + _sql_quote(::p_idpartner)
 
 _qry_str += ::_sql_where
 _qry := run_sql_query(_qry_str)
 
 _cnt := 0
 do while !_qry:eof()
-   //_idfirma := _qry:FieldGet(1)
-   //_idtipdok := _qry:FieldGet(2)
    _brdok := _qry:FieldGet(3)
-
    // napunicemo items matricom FaktDokument objekata
-   _item := FaktDokument():New(::_idfirma, ::_idtipdok, _brdok)
+   _item := FaktDokument():New(::p_idfirma, ::p_idtipdok, _brdok)
    _item:refresh_info()
    AADD(::items, _item)
    _cnt ++
@@ -130,23 +158,194 @@ Box(, MAXROWS()-10, MAXCOLS()-10 )
 
 BoxC()
 
-/*
-if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
-     
-    _ok := _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
- 
-    if _ok
-        // ovdje ce se setovati jos i parametri dokumenta...
-        // datum otpremnice, datum valute... destinacija itd...
-        select fakt_pripr
-        renumeracija_fakt_pripr( _veza_otpr, _datum_max )
-    endif
-
-    select fakt_doks
-    set order to tag "1"
-
-endif 
-*/
+if ::count_markirani > 0
+  if ::change_idtipdok_markirani("22")
+     ::generisi_fakt_pripr()
+  endif
+else
+  MsgBeep("Nije odabrana nijedna odtpremnica ! caos ...")
+endif
 
 return .t.
+
+
+METHOD FaktDokumenti:generisi_fakt_pripr_vars(params)
+local _ok := .t.
+local _sumiraj := "N"
+local _tip_rn := 1
+
+params := hb_hash()
+
+Box(, 6, 65 )
+
+    @ m_x + 1, m_y + 2 SAY "Sumirati stavke otpremnica (D/N) ?" GET _sumiraj ;
+                    VALID _sumiraj $ "DN" ;
+                    PICT "@!"
+
+    @ m_x + 3, m_y + 2 SAY "Formirati tip racuna: 1 (veleprodaja)" 
+    @ m_x + 4, m_y + 2 SAY "                      2 (veleprodaja)" GET _tip_rn ;
+                    VALID ( _tip_rn > 0 .and. _tip_rn < 3 ) ;
+                    PICT "9"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    _ok := .f.
+    return _ok
+endif
+
+// snimi mi u matricu parametre
+params["tip_racuna"] := _tip_rn
+params["sumiraj"] := _sumiraj
+
+return _ok
+
+METHOD FaktDokumenti:count_markirani()
+local _item, _cnt
+_cnt := 0
+FOR EACH _item IN ::items
+    if _item:mark
+       _cnt ++
+    endif
+NEXT
+return _cnt
+
+
+METHOD FaktDokumenti:change_idtipdok_markirani(new_idtipdok)
+local _srv := my_server(), _err, _item, _broj, _ok := .t.
+
+if !::lock
+    MsgBeep("Zakljucavanje neuspjesno operacija " + ::p_idtipdok + "=>" + new_idtipdok + " otkazana !")
+    return .f.
+endif
+
+begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break(err) }
+	_sql_query(_srv, "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+	FOR EACH _item IN ::items
+	    if _item:mark
+               _broj := _item:broj
+	       if !_item:change_idtipdok(new_idtipdok)
+		     _sql_query(_srv, "ROLLBACK")
+                     ::unlock()
+		     _ok := .f.
+                     BREAK
+	       endif
+	    endif
+	NEXT
+	_sql_query(_srv, "COMMIT")
+        ::unlock()
+        _ok := .t.
+recover
+    MsgBeep("neuspjesna konverzija " + _broj + " idtpdok => " + new_idtipdok + " !")
+    _ok := .f.
+end sequence
+
+// forsiraj refresh dbf-ova
+close all
+o_fakt_edit()
+
+::p_idtipdok := new_idtipdok
+
+return _ok
+
+
+METHOD FaktDokumenti:generisi_fakt_pripr()
+local _sumirati := .f.
+local _vp_mp := 1
+local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
+local _veza_otpremnice, _broj_dokumenta
+local _id_partner, _rec
+local _ok := .t.
+local _item, _msg
+local _gen_params 
+local _first
+local _qry
+local _datum_max
+
+// parametri generisanja...
+if !::generisi_fakt_pripr_vars( @_gen_params )
+    return .f.
+endif
+         
+// uzmi parametre matrice...
+_sumirati := _gen_params["sumiraj"] == "D"
+_vp_mp := _gen_params["tip_racuna"]
+
+if _vp_mp == 1
+    _n_tip_dok := "10"
+else
+    _n_tip_dok := "11"
+endif
+
+if _sumirati
+   _sql := "SELECT idroba, sum(kolicina), max(cijena), max(datdok)"
+
+else
+   _sql := "SELECT idroba, kolicina, cijena, datdok"
+endif
+_sql += " FROM fmk.fakt_fakt where "
+_sql += "idfirma=" + _sql_quote(::p_idfirma) + " AND  idtipdok="+ _sql_quote(::p_idtipdok)
+_sql += " AND brdok IN (" 
+
+_veza_otpremnice := ""
+_first := .t.
+FOR EACH _item IN ::items
+    if _item:mark
+       if _first
+           _first := .f.
+       else
+           _sql += ","
+           _veza_otpremnice += ","
+       endif
+       _sql += _sql_quote(_item:brdok)
+       _veza_otpremnice += TRIM(_item:brdok)
+    endif
+NEXT
+
+_sql += ")"
+
+if _sumirati
+  _sql += " group by idroba order by idroba"
+else
+  _sql += " order by idroba"
+endif
+
+_qry := run_sql_query(_sql)
+
+SELECT fakt_pripr
+_fakt_rec := dbf_get_rec()
+
+_fakt_rec["idfirma"]   := ::p_idfirma
+_fakt_rec["idpartner"] := ::p_idpartner
+_fakt_rec["brdok"]     := fakt_prazan_broj_dokumenta()
+_fakt_rec["datdok"]    := DATE()
+_fakt_rec["idtipdok"]  := _n_tip_dok
+_fakt_rec["dindem"]    := LEFT(ValBazna(), 3)
+_datum_max := DATE()
+
+do while !_qry:eof()
+    _fakt_rec["idroba"]   := _qry:FieldGet(1)
+    _fakt_rec["kolicina"] := _qry:FieldGet(2)
+    _fakt_rec["cijena"]   := _qry:FieldGet(3)
+    _fakt_rec["datdok"]   := _qry:FieldGet(4)
+
+    if _fakt_rec["datdok"] > _datum_max
+        _datum_max := _fakt_rec["datdok"]
+    endif
+    if _vp_mp == 2
+         // radi se o mp racunu, izracunaj cijenu sa pdv
+        _fakt_rec["cijena"] := ROUND( _uk_sa_pdv( ::p_idtipdok, ::p_idpartner, _fakt_rec["cijena"]), 2 )
+    endif
+    APPEND BLANK
+    dbf_update_rec(_fakt_rec)
+    _qry:skip()
+enddo
+ 
+_veza_otpremnice := "Racun formiran na osnovu otpremnica: " + _veza_otpremnice
+  
+renumeracija_fakt_pripr( _veza_otpremnice, _datum_max )
+
+return _ok
 

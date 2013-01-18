@@ -489,7 +489,7 @@ return
 // update_semaphore_version_after_push( "konto")
 //
 // --------------------------------------------------------------------------------------------
-function update_semaphore_version_after_push(table)
+function update_semaphore_version_after_push(table, to_myself)
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -501,6 +501,10 @@ LOCAL _ver_user, _last_ver, _id_full
 local _versions
 local _a_dbf_rec
 local _ret_ver
+
+if to_myself == NIL
+   to_myself := .f.
+endif
 
 log_write( "START: update semaphore version after push", 7 )
 
@@ -533,15 +537,13 @@ if ( _result == 0 )
 
     log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
 
-else
-	// setuj moju verziju....
-	_qry := "UPDATE " + _tbl + ;
-			" SET version=" + STR(_ver_user) + " WHERE user_code=" + _sql_quote( _user )
-	_ret := _sql_query( _server, _qry )
 endif
 
-// setuj moju verziju....
-_qry := "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + " WHERE user_code=" + _sql_quote( _user ) + ";"
+if !to_myself
+  // setuj moju verziju ako ne zelim sebe refreshirati
+  _qry := "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + " WHERE user_code=" + _sql_quote( _user ) + ";"
+endif
+
 // svim userima setuj last_trans_version
 _qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR( _ver_user ) + ";"
 // kod svih usera verzija ne moze biti veca od nLast + 1

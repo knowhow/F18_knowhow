@@ -1,3 +1,8 @@
+1.4.92 2013-01-18, vsasa
+
+ - fakt, unos nove otpremnice, brojač gledati po tip-u dokumenta "22"
+ - fakt, parametrizirana opcija generisanja računa na osnovu otpremnice
+
 1.4.91 2013-01-18, hernad
 
  - hbmysql windows

@@ -20,9 +20,6 @@ local oServer, oRow, oTable
 local _server_params
 local _sql_qry := "SELECT * FROM boards LIMIT 100"
 
-#ifndef __PLATFORM__LINUX
-	return
-#endif
 
 // setuj parametre
 redmine_login_form( nil )

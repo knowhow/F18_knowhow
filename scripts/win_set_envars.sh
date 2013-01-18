@@ -8,8 +8,9 @@ export TMP=/c/tmp
 export HB_ARCHITECTURE=win
 export HB_COMPILER=mingw
 
+HB_ROOT=/c/knowhowERP/hbout
 
-HB_ROOT=/c/hbout
+#HB_ROOT=/c/hbout
 
 export PATH=$HB_ROOT/bin:/c/MinGW/bin:/c/PostgreSQL/9.1/bin:$PATH
 export HB_INC_INSTALL=$HB_ROOT/include

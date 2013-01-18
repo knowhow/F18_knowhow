@@ -305,6 +305,7 @@ do case
        
         // prvo setuj broj dokumenta
         fakt_set_broj_dokumenta()
+        otpremnica_22_brojac()
 
         // printaj dokument
         fakt_print_dokument()
@@ -328,7 +329,8 @@ do case
         
         // setuj broj dokumenta u pripremi ako vec nije
         fakt_set_broj_dokumenta()
-    
+        otpremnica_22_brojac()
+
         if !CijeneOK( "Stampanje" )
             return DE_REFRESH
         endif
@@ -352,7 +354,7 @@ do case
 
         // setuj prvo broj dokumenta u pripremi...
         fakt_set_broj_dokumenta()
-
+        otpremnica_22_brojac()
         // setuj podatke za fiskalni racun
         __id_firma  := field->idfirma
         __tip_dok := field->idtipdok
@@ -405,10 +407,14 @@ do case
     case UPPER( CHR( Ch ) ) == "O"
 
         _t_area := SELECT()
-
-        //fakt_generisi_racun_iz_otpremnice() 
-        _fakt_doks := FaktDokumenti():New()
-        _fakt_doks:pretvori_otpremnice_u_racun()
+        
+        // stari parametar...
+        if !_params["fakt_otpr_gen"]
+            fakt_generisi_racun_iz_otpremnice() 
+        else
+            _fakt_doks := FaktDokumenti():New()
+            _fakt_doks:pretvori_otpremnice_u_racun()
+        endif
 
         select (_t_area )
         return DE_REFRESH
@@ -505,6 +511,29 @@ do case
 endcase
 
 return DE_CONT
+
+
+// -----------------------------------------------------------------
+// promjeni brojac dokumenta za dokumente tip-a 12
+// -----------------------------------------------------------------
+static function otpremnica_22_brojac()
+local _fakt_params := fakt_params()
+
+if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"]
+
+    _novi_broj := fakt_novi_broj_dokumenta( field->idfirma, "22" )
+
+    do while !EOF()
+        _rec := dbf_get_rec()
+        _rec["brdok"] := _novi_broj
+        dbf_update_rec( _rec )
+        skip
+    enddo
+
+endif
+
+return .t.
+
 
 
 // --------------------------------------------------

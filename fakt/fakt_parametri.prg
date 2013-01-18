@@ -73,7 +73,7 @@ return nil
 procedure fakt_params(read)
 
 if read == NIL
-  read = .f.
+    read = .f.
 endif
 
 if read .or. __fakt_params == NIL
@@ -98,6 +98,8 @@ if read .or. __fakt_params == NIL
     __fakt_params["ref_lot"] := IIF(ref_lot() == "D", .t., .f.)
     __fakt_params["fakt_vrste_placanja"] := IIF(fakt_vrste_placanja() == "D", .t., .f.)
     __fakt_params["fakt_objekti"] := IIF( fakt_objekti() == "D", .t., .f.)
+    __fakt_params["fakt_otpr_22_brojac"] := IIF( fakt_otpr_22_brojac() == "D", .t., .f.)
+    __fakt_params["fakt_otpr_gen"] := IIF( fakt_otpr_gen() == "D", .t., .f.)
 
 endif
 
@@ -138,7 +140,8 @@ local _unos_objekta := fakt_objekti()
 local _vr_pl := fakt_vrste_placanja()
 local _unos_dest := destinacije()
 local _unos_br_veza := fakt_dok_veze()
-
+local _otpr_brojac_22 := fakt_otpr_22_brojac()
+local _otpr_gen := fakt_otpr_gen()
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
@@ -217,6 +220,14 @@ read_dn_parametar("Fakt dodatni opis po stavkama", m_x + _x, m_y + 2, @_unos_opi
 read_dn_parametar("REF/LOT brojevi", m_x + _x, m_y + 2, @_unos_ref_lot)
 ++ _x
 
+read_dn_parametar("Brojac otpremnica po dokumentu 22 (D/N)", m_x + _x, m_y + 2, @_otpr_brojac_22 )
+++ _x
+
+read_dn_parametar("Generacija otpremnica ver.2 (D/N)", m_x + _x, m_y + 2, @_otpr_gen )
+++ _x
+
+
+
 @ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
 read
 
@@ -273,6 +284,8 @@ if LastKey() <> K_ESC
     fakt_prodajna_mjesta(_pm)
     fakt_vrste_placanja(_vr_pl)
     fakt_dok_veze( _unos_br_veza )
+    fakt_otpr_22_brojac( _otpr_brojac_22 )
+    fakt_otpr_gen( _otpr_gen )
 
     // setuj mi default odt template ako treba
     __default_odt_template()
@@ -1053,6 +1066,20 @@ return get_set_global_param( "fakt_dok_veze", value, "N" )
 // ----------------------------------------------------------------
 function fakt_vrste_placanja(value)
 return get_set_global_param("fakt_unos_vrste_placanja", value, "N")
+
+
+// ----------------------------------------------------------------
+// kada pravis otpremnicu pravi je po brojacu tip-a 22
+// ----------------------------------------------------------------
+function fakt_otpr_22_brojac(value)
+return get_set_global_param("fakt_otpremnice_22_brojac", value, "D" )
+
+
+// ----------------------------------------------------------------
+// nova vrsta generisanja otpremnica...
+// ----------------------------------------------------------------
+function fakt_otpr_gen(value)
+return get_set_global_param("fakt_otpremnice_gen_v2", value, "D" )
 
 
 

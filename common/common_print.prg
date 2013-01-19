@@ -88,6 +88,7 @@ return
 // ----------------------------------------
 // ----------------------------------------
 function f18_end_print( f_name, print_opt )
+local _ret
 local _cmd := ""
 local _port := get_printer_port( print_opt )
 
@@ -130,20 +131,24 @@ DO CASE
 
     OTHERWISE
 
-        // TODO: treba li f18_editor parametrizirati ?!   
-        //#ifdef __PLATFORM__WINDOWS
-        //    f_name := '"' + f_name + '"'
-        //#endif
+        #ifdef __PLATFORM__WINDOWS
+            _cmd := "start "
+	    #else
+		    _cmd := ""
+        #endif
 
-        _cmd := "f18_editor " + f_name
+        _cmd += "f18_editor " + f_name
 
         // #27234
         #ifdef __PLATFORM__UNIX
             close all
         #endif
        
-        hb_run(_cmd) 
+        _ret := hb_run(_cmd)
 
+	if _ret <> 0
+	  MsgBeep ("f18_edit nije u pathu ?!##" + "cmd:" + _cmd)
+        endif
 END CASE
 
 return

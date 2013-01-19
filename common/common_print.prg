@@ -91,6 +91,7 @@ function f18_end_print( f_name, print_opt )
 local _ret
 local _cmd := ""
 local _port := get_printer_port( print_opt )
+local _stdout, _stderr
 
 if print_opt == NIL
     print_opt := "V"
@@ -131,20 +132,20 @@ DO CASE
 
     OTHERWISE
 
-        #ifdef __PLATFORM__WINDOWS
-            _cmd := "start "
-	    #else
-		    _cmd := ""
-        #endif
+        //#ifdef __PLATFORM__WINDOWS
+        //    _cmd := "start "
+	    //#else
+		//    _cmd := ""
+        //#endif
 
-        _cmd += "f18_editor " + f_name
+        _cmd := "f18_editor " + f_name
 
         // #27234
         #ifdef __PLATFORM__UNIX
             close all
         #endif
        
-        _ret := hb_run(_cmd)
+        _ret := hb_ProcessRun(_cmd, @_stdout, @_stderr)
 
 	if _ret <> 0
 	  MsgBeep ("f18_edit nije u pathu ?!##" + "cmd:" + _cmd)

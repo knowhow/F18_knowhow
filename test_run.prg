@@ -7,6 +7,9 @@ _cmd := "java -version"
 
 ? "run" 
 
-hb_run(_cmd)
+_ret := hb_run(_cmd)
+
+? _cmd
+? _ret
 
 inkey(0)

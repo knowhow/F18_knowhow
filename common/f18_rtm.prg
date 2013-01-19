@@ -128,7 +128,7 @@ DirChange( my_home() )
 
 log_write( "delphirb/label print, cmd: " + _cmd, 7 )
 
-_error := hb_run( _cmd )
+_error := f18_run( _cmd )
     
 if _error <> 0
     MsgBeep("Postoji problem sa stampom#Greska: " + ALLTRIM(STR( _error )) )

@@ -453,7 +453,7 @@ return
 function IspraviSpec(cKomLin)
 if !EMPTY(gFSpec)
     Box(,25,80)
-        hb_run(cKomLin)
+        f18_run(cKomLin)
     BoxC()
 endif
 

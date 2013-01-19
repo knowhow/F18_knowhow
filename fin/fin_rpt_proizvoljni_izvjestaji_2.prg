@@ -904,7 +904,7 @@ close all
 KZNbazaWin(PRIVPATH+"pom")
 
 private cKomLin:="DelphiRB "+cNazRTM+" "+PRIVPATH+"  pom  "+cTag
-hb_run(cKomLin)
+f18_run(cKomLin)
 
 endif
 

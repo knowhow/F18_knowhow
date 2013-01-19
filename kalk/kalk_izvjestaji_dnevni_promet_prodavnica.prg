@@ -416,7 +416,7 @@ cDirDest:=ToUnix("C:"+SLASH+"SIGMA"+SLASH+"SALJI"+SLASH)
 cLokS:=IzFMKIni("FMK", "LokacijaZaSlanje", cDirDest , EXEPATH)
 cPom:="copy "+PRIVPATH+"OUTF.TXT "+cLokS+cNf
 
-hb_run(cPom)
+f18_run(cPom)
 
 
 RESTORE SCREEN FROM cS

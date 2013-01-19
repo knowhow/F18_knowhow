@@ -360,25 +360,11 @@ elseif cPrinter=="V"
 	
 	//VidiFajl(cKom, gaZagFix, gaKolFix)
 
-    /*
-    #ifdef __PLATFORM__WINDOWS
-        hb_run("gvim " + '"' + PRIVPATH + cFName + '"') 
-	#endif
-	
-	#ifdef __PLATFORM__UNIX
-        hb_run("gvim " + PRIVPATH + cFName) 
-	#endif
-
-	#ifdef __PLATFORM__DARWIN
-        hb_run("mvim " + PRIVPATH + cFName) 
-	#endif
-    */
-
     /* TODO treba li f18_editor parametrizirati ?! */   
     
     _f_path := "f18_editor " + my_home() + cFName 
 
-    hb_run(_f_path)
+        f18_run(_f_path)
 	
 	gaZagFix:=NIL
 	gaKolFix:=NIL

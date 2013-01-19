@@ -67,7 +67,7 @@ if !lPriprema
 	cComArgs+=cDokArgs 
 endif
 
-hb_run(cComArgs)
+f18_run(cComArgs)
 
 return
 *}

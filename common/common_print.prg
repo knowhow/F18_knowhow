@@ -190,7 +190,7 @@ _printer_name := _printer + "_" + port_number
 // lpq -P epson_1 | grep epson_1 
 _cmd := "lpq -P " + _printer_name + " | grep " + _printer_name
 
-_err := hb_run( _cmd )
+_err := f18_run( _cmd )
 if _err <> 0
     MsgBeep( "Printer " + _printer_name + " nije podesen !!!" )
     return
@@ -201,7 +201,7 @@ _cmd := "lpr -P "
 _cmd += _printer_name + " "
 _cmd += f_name
 
-_err := hb_run( _cmd )
+_err := f18_run( _cmd )
 
 if _err <> 0
     MsgBeep( "Greska sa direktnom stampom !!!" )
@@ -225,7 +225,7 @@ f_name := '"' + f_name + '"'
 
 _cmd := "copy " + f_name + " LPT" + port_number 
 
-_err := hb_run( _cmd )
+_err := f18_run( _cmd )
 
 if _err <> 0
     MsgBeep( "Greska sa direktnom stampom !!!" )

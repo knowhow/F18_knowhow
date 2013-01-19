@@ -59,7 +59,7 @@ MsgBeep("Tabela " + my_home() + __table + ".dbf" + "je formirana##" +;
     
 if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"    
     DirChange( my_home() )
-    if hb_run( _cmd ) <> 0
+    if f18_run( _cmd ) <> 0
         MsgBeep( "Problem sa pokretanjem ?!!!" )
     endif
 endif

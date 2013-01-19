@@ -109,7 +109,7 @@ CLEAR SCREEN
 ? "Generisanje ODT reporta u toku ...  fajl: ..." + RIGHT( __current_odt, 20 )
 
 // pokreni generisanje reporta
-_error := hb_run( _cmd )
+_error := f18_run( _cmd )
 
 RESTORE SCREEN FROM _screen
 
@@ -304,7 +304,7 @@ CLEAR SCREEN
 log_write( _cmd, 7 )
 
 #ifndef TEST
-	_error := hb_run( _cmd )
+	_error := f18_run( _cmd )
 #endif
 
 RESTORE SCREEN FROM _screen
@@ -345,7 +345,7 @@ endif
 
 #endif
 
-_error := hb_run( _cmd )
+_error := f18_run( _cmd )
 
 if _error <> 0
     MsgBeep( "Problem sa otvaranjem dokumenta !!!!#Greska: " + ALLTRIM(STR( _error )) )
@@ -431,7 +431,7 @@ CLEAR SCREEN
 ? "Konvertovanje ODT dokumenta u toku..."
 
 // pokreni generisanje reporta
-_error := hb_run( _cmd )
+_error := f18_run( _cmd )
 
 RESTORE SCREEN FROM _screen
  

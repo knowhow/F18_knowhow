@@ -185,7 +185,7 @@ DO WHILE .T.
       CASE izbor==10
         private cKom:="q "+EXEPATH+"PROIZVJ.INI"
         Box(,25,80)
-        hb_run(ckom)
+        f18_run(ckom)
         BoxC()
         IniRefresh() // izbrisi iz cache-a
 

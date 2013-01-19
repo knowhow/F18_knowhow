@@ -241,7 +241,7 @@ clear screen
 
 ? "err2mail send..."
 // pokreni komandu
-hb_run(cKom)
+f18_run(cKom)
 
 Sleep(3)
 // vrati staro stanje ekrana

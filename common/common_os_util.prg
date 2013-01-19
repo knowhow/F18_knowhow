@@ -305,10 +305,12 @@ if _ret <> 0
 
 #ifdef __PLATFORM__WINDOWS
    _prefix := "start "
-#elseif __PLATFORM__DARWIN
-  _prefix := "open "
 #else
-  _prefix := ""
+   #ifdef __PLATFORM__DARWIN
+      _prefix := "open "
+   #else
+      _prefix := ""
+   #endif
 #endif
 
    _ret :=hb_processRun(_prefix + cmd, @_stdout, @_stderr)

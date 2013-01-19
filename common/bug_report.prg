@@ -141,7 +141,7 @@ close all
 log_write( _log_msg, 1 )
 _cmd := "f18_editor " + _out_file
 
-hb_run(cmd)
+hb_run(_cmd)
 
 QUIT_1
 RETURN

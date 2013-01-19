@@ -142,7 +142,7 @@ DO CASE
             close all
         #endif
        
-        hb_run( _cmd ) 
+        hb_run(_cmd) 
 
 END CASE
 

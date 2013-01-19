@@ -140,7 +140,7 @@ close all
 
 log_write( _log_msg, 1 )
 
-run (_cmd := "f18_editor " + _out_file)
+hb_run(_cmd := "f18_editor " + _out_file)
 
 QUIT_1
 RETURN

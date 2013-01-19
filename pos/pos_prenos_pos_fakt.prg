@@ -168,9 +168,9 @@ Box("#DEFINISANJE LOKACIJE ZA PRENOS DATOTEKE TOPSFAKT",5,70)
 	if LASTKEY()<>K_ESC
 		SAVE SCREEN TO cS
 		cPom:="copy "+PRIVPATH+"TOPSFAKT.DBF "+TRIM(cLokacija)+"TOPSFAKT.DBF"
-		run &cPom
+		hb_run(cPom)
 		cPom:="copy "+PRIVPATH+"TOPSFAKT.CDX "+TRIM(cLokacija)+"TOPSFAKT.CDX"
-		run &cPom
+		hb_run(cPom)
 		RESTORE SCREEN FROM cS
 	endif
 BoxC()
@@ -352,9 +352,9 @@ Box("#DEFINISANJE LOKACIJE ZA PRENOS DATOTEKE TOPSFAKT",5,70)
 	if LASTKEY()<>K_ESC
 		SAVE SCREEN TO cS
 		cPom:="copy "+PRIVPATH+"TOPSFAKT.DBF "+TRIM(cLokacija)+"TOPSFAKT.DBF"
-		run &cPom
+		hb_run(cPom)
 		cPom:="copy "+PRIVPATH+"TOPSFAKT.CDX "+TRIM(cLokacija)+"TOPSFAKT.CDX"
-		run &cPom
+		hb_run(cPom)
 		RESTORE SCREEN FROM cS
 	endif
 BoxC()

@@ -362,15 +362,15 @@ elseif cPrinter=="V"
 
     /*
     #ifdef __PLATFORM__WINDOWS
-        run ("gvim " + '"' + PRIVPATH + cFName + '"' ) 
+        hb_run("gvim " + '"' + PRIVPATH + cFName + '"') 
 	#endif
 	
 	#ifdef __PLATFORM__UNIX
-        run ("gvim " + PRIVPATH + cFName) 
+        hb_run("gvim " + PRIVPATH + cFName) 
 	#endif
 
 	#ifdef __PLATFORM__DARWIN
-        run ("mvim " + PRIVPATH + cFName) 
+        hb_run("mvim " + PRIVPATH + cFName) 
 	#endif
     */
 
@@ -378,7 +378,7 @@ elseif cPrinter=="V"
     
     _f_path := "f18_editor " + my_home() + cFName 
 
-    run ( _f_path )
+    hb_run(_f_path)
 	
 	gaZagFix:=NIL
 	gaKolFix:=NIL

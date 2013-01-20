@@ -244,7 +244,7 @@ o_tables( __temp )
 // osnovni podaci naloga
 _fill_main()
 // stavke naloga
-_fill_items( lGn )
+_fill_items( lGn, 2 )
 // operacije
 _fill_aops()
 
@@ -293,7 +293,7 @@ local cIt_lab_pos
 local xx
 local nScan
 
-if nVar == nil
+if nVar == NIL
     nVar := 1
 endif
 

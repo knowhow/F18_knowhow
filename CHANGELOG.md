@@ -1,3 +1,8 @@
+1.4.94 2013-01-21, vsasa
+
+ - fakt, brojač po otpremnicama tip-a "22" - bugfix
+ - rnal, export naloga u fakt - opisi
+
 1.4.93 2013-01-18, vsasa
 
  - štampa txt dokumenta, samo sa starim buildom

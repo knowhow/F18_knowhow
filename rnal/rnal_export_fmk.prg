@@ -260,9 +260,18 @@ do while !EOF()
     _dindem := "KM "
     _zaokr := 2
 
-    if fakt_pripr->(FIELDPOS("OPIS")) <> 0
-        _opis := cDesc
-    endif
+    // ubaci mi atribute u fakt_atribute
+    _t_area := SELECT()
+
+    _items_atrib := hb_hash()
+    _items_atrib["opis"] := cDesc
+    fakt_atrib_hash_to_dbf( _idfirma, _idtipdok, _brdok, _rbr, _items_atrib )
+
+    select ( _t_area )
+            
+    //if fakt_pripr->(FIELDPOS("OPIS")) <> 0
+      //  _opis := cDesc
+    //endif
 
     _txt := ""
 
@@ -422,10 +431,19 @@ do while !EOF()
     _kolicina := nM2
     _dindem := "KM "
     _zaokr := 2
-    
-    if fakt_pripr->(FIELDPOS("OPIS")) <> 0
-        _opis := cArt_sh
-    endif
+        
+    // ubaci mi atribute u fakt_atribute
+    _t_area := SELECT()
+
+    _items_atrib := hb_hash()
+    _items_atrib["opis"] := cArt_sh
+    fakt_atrib_hash_to_dbf( _idfirma, _idtipdok, _brdok, _rbr, _items_atrib )
+
+    select ( _t_area )
+ 
+    //if fakt_pripr->(FIELDPOS("OPIS")) <> 0
+      //  _opis := cArt_sh
+    //endif
 
     _txt := ""
 

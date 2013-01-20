@@ -2,6 +2,7 @@
 
  - fakt, brojač po otpremnicama tip-a "22" - bugfix
  - rnal, export naloga u fakt - opisi
+ - rnal, pregled naloga - bugfix
 
 1.4.93 2013-01-18, vsasa
 

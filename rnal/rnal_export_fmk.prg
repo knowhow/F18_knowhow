@@ -195,6 +195,8 @@ if cVpMp == "M"
 endif
 
 cBrDok := fakt_novi_broj_dokumenta( cFirma, cCtrlNo )
+//cBrDok := fakt_prazan_broj_dokumenta()
+
 cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
 nRbr := 0
 

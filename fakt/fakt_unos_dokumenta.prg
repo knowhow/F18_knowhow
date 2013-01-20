@@ -519,17 +519,59 @@ return DE_CONT
 // -----------------------------------------------------------------
 static function otpremnica_22_brojac()
 local _fakt_params := fakt_params()
+local _rec, _t_rec
 
-if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"]
+if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"] ;
+        .and. field->brdok == fakt_prazan_broj_dokumenta()
 
     _novi_broj := fakt_novi_broj_dokumenta( field->idfirma, "22" )
 
+    select fakt_pripr
+    set order to tag "1"
+    go top
+
     do while !EOF()
+
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
         _rec := dbf_get_rec()
         _rec["brdok"] := _novi_broj
         dbf_update_rec( _rec )
-        skip
+
+        go ( _t_rec )
+
     enddo
+    
+    go top
+
+    select ( FAKT_ATRIB )
+    if !Used()
+        O_FAKT_ATRIB
+    endif
+    select fakt_atrib
+    set order to tag "1"
+    go top
+
+    do while !EOF()
+
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
+        _rec := dbf_get_rec()
+        _rec["brdok"] := _novi_broj
+        dbf_update_rec( _rec )
+
+        go ( _t_rec )
+
+    enddo
+ 
+    select fakt_atrib
+    use
+
+    select fakt_pripr
 
 endif
 

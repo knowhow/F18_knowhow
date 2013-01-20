@@ -16,7 +16,8 @@
 // automatsko formiranje nivelacije na osnovu ulaznog dokumenta
 // ---------------------------------------------------------------------
 function Niv_11()
-local _sufix, _rec
+local _h_dok
+local _rec
 
 O_TARIFA
 O_KONCIJ
@@ -51,12 +52,15 @@ if idvd<>"19"
 else
      cBrNiv := brdok
 endif
-                
-_sufix := SufBrKalk( kalk_pripr->idkonto )
+           
+  
 select kalk_pripr
 
-cBrNiv := SljBrKalk( "19", gFirma, _sufix )
-// cBrNiv := UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
+_h_dok["idfirma"] := gFirma
+_h_dok["idvd"]   := "19"
+_h_dok["brdok"]  := ""
+_h_dok["datdok"] := DATE()
+cBrNiv := kalk_novi_broj_dokumenta(_h_dok, kalk_pripr->idkonto) 
 
 select kalk_pripr
 go top

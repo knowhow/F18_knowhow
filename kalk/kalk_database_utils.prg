@@ -54,7 +54,7 @@ return
  */
 
 function KalkNaF(cidroba,nKols)
-*{
+
 select (F_FAKT)
 if !used(); O_FAKT; endif
 
@@ -73,7 +73,7 @@ do while !eof() .and. cidroba==idroba
 enddo
 select kalk_pripr
 return
-*}
+
 
 
 // ako nije razduzeno kako bi trebalo po metodi NC
@@ -84,7 +84,7 @@ return
  */
 
 function MsgNCRazd()
-*{
+
 //ne moze raditi
 //if round(nab-> kalk->kolicina) .and. round(nab->nc-kalk->nc,3)<>0;  Msg("U dokumentu "+kalk->(idfirma+"-"+idvd+"-"+brdok)+" nije dobra NC po metodi razduzenja !"); endif
 return
@@ -114,8 +114,9 @@ return _exist
  *  \brief Ispituje postojanje zadanog dokumenta medju azuriranim
  */
 
-function P_Kalk(cIdFirma,cIdVD,cBrDok)
-*{
+function P_Kalk(cIdFirma, cIdVD, cBrDok)
+
+
 local nRez:=.f.
 local nArr:=SELECT()
 //PushWa()
@@ -132,7 +133,6 @@ endif
 //PopWa()
 SELECT (nArr)
 return nRez
-*}
 
 
 /*! \fn VVT()
@@ -140,7 +140,7 @@ return nRez
  */
 
 function VVT()
-*{
+
 @ m_x+13,m_y+2 SAY "PPP:"
 @ m_x+13,col()+2 SAY tarifa->opp pict "99.99%"
 if roba->tip="X"
@@ -152,7 +152,7 @@ else
 endif
 _tmarza:="A"
 return .t.
-*}
+
 
 
 
@@ -162,7 +162,7 @@ return .t.
  */
 
 function DuplRoba()
-*{
+
 local nRREC,fdupli:=.f.,dkolicina:=0,dfcj:=0
 private GetList:={}
  // pojava robe vise puta unutar kalkulacije!!!
@@ -198,7 +198,7 @@ private GetList:={}
  select kalk_pripr
  set order to tag "1"
 return .t.
-*}
+
 
 
 
@@ -207,7 +207,7 @@ return .t.
  */
 
 function DatPosljK()
-*{
+
 select kalk
 set order to tag "3"
 seek _idfirma+_mkonto+_idroba+chr(254)
@@ -219,7 +219,7 @@ if _idfirma+_idkonto+_idroba==idfirma+mkonto+idroba .and. _datdok<datdok
 endif
 select kalk_pripr
 return
-*}
+
 
 
 /*! \fn DatPosljP()
@@ -227,7 +227,7 @@ return
  */
 
 function DatPosljP()
-*{
+
 select kalk
 set order to tag "4"
 
@@ -248,7 +248,7 @@ else
 endif
 select kalk_pripr
 return
-*}
+
 
 
 
@@ -277,46 +277,6 @@ endif
 return cReturn
 
 
-
-// ------------------------------------------------
-// ------------------------------------------------
-function SljBrKalk(cTipKalk, cIdFirma, cSufiks)
-*{
-local cBrKalk:=space(8)
-if cSufiks==nil
-    cSufiks:=SPACE(3)
-endif
-if gBrojac=="D"
-    if glBrojacPoKontima
-        select kalk_doks
-        set order to tag "1S"
-        seek cIdFirma+cTipKalk+cSufiks+"X"
-    else
-        select kalk
-        set order to tag "1"
-        seek cIdFirma+cTipKalk+"X"
-    endif
-    skip -1
-    
-    if cTipKalk<>field->idVD .or. glBrojacPoKontima .and. right(field->brDok,3)<>cSufiks
-        cBrKalk:=SPACE(gLenBrKalk)+cSufiks
-    else
-        cBrKalk:=field->brDok
-    endif
-    
-    if cTipKalk=="16" .and. glEvidOtpis
-        cBrKalk:=STRTRAN(cBrKalk,"-X","  ")
-    endif
-    
-    if ALLTRIM( cBrKalk ) >= "99999"
-        cBrKalk := PADR( novasifra( ALLTRIM(cBrKalk) ), 5 ) + ;
-            right( cBrKalk, 3 )
-    else
-        cBrKalk:=UBrojDok(val(left(cBrKalk,5)) + 1, ;
-            5, right(cBrKalk,3) )
-    endif
-endif
-return cBrKalk
 
 
 
@@ -372,13 +332,6 @@ return cResult
 
 
 
-// ------------------------------------------------
-// vraca prazan broj dokumenta
-// ------------------------------------------------
-function kalk_prazan_broj_dokumenta()
-return PADR( "0", 5, "0" )
-
-
 // ------------------------------------------------------------
 // resetuje brojac dokumenta ako smo pobrisali dokument
 // ------------------------------------------------------------
@@ -421,7 +374,7 @@ function MMarza2()
      nMarza2:=Marza2
   endif
 return nMarza2
-*}
+
 
 
 
@@ -657,7 +610,7 @@ return nc2
  */
 
 function KalkTrUvoz()
-*{
+
  LOCAL nT1:=0 , nT2:=0 , nT3:=0 , nT4:=0 , nT5:=0, CP:="999999999.999999999"
   Box("#Unos troskova",7,75)
     @ m_x+2, m_y+2 SAY c10T1 GET nT1 PICT CP
@@ -669,7 +622,7 @@ function KalkTrUvoz()
   BoxC()
   MsgBeep("Opcija jos nije u funkciji jer je dorada u toku!")
 CLOSERET
-*}
+
 
 
 /*! \fn ObracunPorezaUvoz()
@@ -677,7 +630,7 @@ CLOSERET
  */
 
 function ObracunPorezaUvoz()
-*{
+
 local nTP, qqT1, qqT2, aUT1, aUT2
 
 O_KALK_PRIPR
@@ -736,15 +689,15 @@ endif
 
 CLOSERET
 return
-*}
+
 
 
 function ImePoljaTroska(n)
-*{
+
 local aTros
 aTros:={"Prevoz","BankTr","SpedTr","CarDaz","ZavTr"}
 return aTros[n]
-*}
+
 
 
 /*! \fn KTroskovi()
@@ -752,7 +705,7 @@ return aTros[n]
  */
 
 function KTroskovi()
-*{
+
 local Skol:=0,nPPP:=0
 
 if gKalo=="1"
@@ -873,7 +826,7 @@ else
     nMarza2:=MPC-VPC
 endif
 return
-*}
+
 
 
 
@@ -885,7 +838,7 @@ return
  */
 
 function ima_u_kalk_kumulativ(cKljuc,cTag)
-*{
+
  local lVrati:=.f.
  local lUsed:=.t.
  local nArr:=SELECT()
@@ -908,7 +861,7 @@ function ima_u_kalk_kumulativ(cKljuc,cTag)
   ENDIF
   select (nArr)
 return lVrati
-*}
+
 
 
 
@@ -928,7 +881,7 @@ return lVrati
  */
  
 function UkupnoKolP(nTotalUlaz, nTotalIzlaz)
-*{
+
 local cIdRoba
 local lUsedRoba
 
@@ -964,14 +917,14 @@ endif
 
 
 return
-*}
+
 
 /*! \fn UkupnoKolM(nTotalUlaz, nTotalIzlaz)
  *  \sa UkupnoKolP
  */
  
 function UkupnoKolM(nTotalUlaz, nTotalIzlaz)
-*{
+
 local cIdRoba
 local lUsedRoba
 
@@ -1009,11 +962,11 @@ elseif field->mu_i=="8"
 endif
 
 return
-*}
+
 
 
 function RptSeekRT()
-*{
+
 local nArea
 
 nArea:=SELECT()
@@ -1024,7 +977,7 @@ HSEEK (nArea)->IdTarifa
 SELECT (nArea)
 
 return
-*}
+
 
 
 /*! \fn UzmiIzP(cSta)
@@ -1032,7 +985,7 @@ return
  *  \param cSta - "KOL", "NV", "MPV", MPVBP"...
  */
 function UzmiIzP(cSta)  
-*{
+
 LOCAL nVrati:=0, nArr:=0
   IF cSta=="KOL"
     if pu_i=="1"
@@ -1085,11 +1038,11 @@ LOCAL nVrati:=0, nArr:=0
     endif
   ENDIF
 RETURN nVrati
-*}
+
 
 
 function Generisi11ku_iz10ke(cBrDok)
-*{
+
 local nArr
 nArr:=SELECT()
 O_TARIFA
@@ -1150,11 +1103,11 @@ select (nArr)
 
 MsgBeep("Formirao dokument " + ALLTRIM(gFirma) + "-11-" + ALLTRIM(cBrDok))
 return
-*}
+
 
 
 function Get11FromSmece(cBrDok)
-*{
+
 local nArr
 nArr:=SELECT()
 
@@ -1178,11 +1131,11 @@ enddo
 select (nArr)
 MsgBeep("Asistentom obraditi dokument !")
 return
-*}
+
 
 
 function Generisati11_ku()
-*{
+
 // daj mi vrstu dokumenta kalk_pripreme
 nTRecNo:=RECNO()
 go top
@@ -1192,11 +1145,12 @@ go (nTRecNo)
 if (cIdVD <> "10")
     return .f.
 endif
-if IzFmkIni("KALK","AutoGen11","N",KUMPATH)=="D" .and. Pitanje(,"Formirati 11-ku (D/N)?","D")=="D"
-    return .t.
-else
+
+//if IzFmkIni("KALK","AutoGen11","N",KUMPATH)=="D" .and. Pitanje(,"Formirati 11-ku (D/N)?","D")=="D"
+//    return .t.
+//else
     return .f.
-endif
+//endif
 return
 
 
@@ -1401,7 +1355,7 @@ return
 
 // set pdv cijene
 function SetPomnoziCijene()
-*{
+
 
 local cIdTarifa:=SPACE(6)
 local cZaTarifu:=SPACE(6)

@@ -46,11 +46,12 @@ function mag_fa_ka_prenos_10_14()
 local nRabat := 0
 local cIdFirma := gFirma
 local cIdTipDok := "10"
-local cBrDok := SPACE(8)
-local cBrKalk := SPACE(8)
+local cBrDok := SPACE(12)
+local cBrKalk := SPACE(12)
 local cFaktFirma := gFirma
 local dDatPl := CTOD("")
 local fDoks2 := .t.
+local _h_brdok
 local _params := fakt_params()
 
 private lVrsteP := _params["fakt_vrste_placanja"]
@@ -71,22 +72,27 @@ cIdKonto := fetch_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), PADR("120
 cIdKonto2 := fetch_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), PADR("1310",7) )
 cIdZaduz2 := SPACE(6)
 
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"] := "14"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+
 if glBrojacPoKontima
     Box("#FAKT->KALK",3,70)
         @ m_x+2, m_y+2 SAY "Konto razduzuje" GET cIdKonto2 pict "@!" valid P_Konto(@cIdKonto2)
         read
     BoxC()
-    cSufiks:=SufBrKalk(cIdKonto2)
-    cBrKalk:=SljBrKalk("14", cIdFirma, cSufiks)
+    cBrKalk := kalk_novi_broj_dokumenta(_h_brdok, cIdKonto2)
+     
 else
-    cBrKalk:=GetNextKalkDoc(cIdFirma, "14")
+    cBrKalk := kalk_novi_broj_dokumenta(_h_brdok, NIL)
 endif
 
 Box(,15,60)
 
 do while .t.
-
-	nRBr:=0
+	nRBr := 0
   	@ m_x+1,m_y+2   SAY "Broj kalkulacije 14 -" GET cBrKalk pict "@!"
   	@ m_x+1,col()+2 SAY "Datum:" GET dDatKalk
   	@ m_x+4,m_y+2   SAY "Konto razduzuje:" GET cIdKonto2 pict "@!" when !glBrojacPoKontima valid P_Konto(@cIdKonto2)
@@ -291,6 +297,7 @@ local cTipKalk := "96"
 local cFaktDob := SPACE(10)
 local dDatKalk, cIdZaduz2, cIdKonto, cIdKonto2
 local cSufix
+local _h_dok
 
 IF cIndik != nil .and. cIndik == "19"
     cIdTipDok := "19"
@@ -327,20 +334,22 @@ cIdKonto2 := fetch_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 
 
 cIdZaduz2 := space(6)
 
+_h_dok := hb_hash()
+_h_dok["idfirma"] := cIdFirma
+_h_dok["idvd"] := cTipKalk
+_h_dok["brdok"] = ""
+_h_dok["datdok"] := dDatKalk
+
 IF glBrojacPoKontima
     
     Box("#FAKT->KALK",3,70)
-        @ m_x+2, m_y+2 SAY "Konto zaduzuje" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
+        @ m_x+2, m_y + 2 SAY "Konto zaduzuje" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
         read
     BoxC()
     
-    cSufiks := SufBrKalk( cIdKonto )
-    cBrKalk := SljBrKalk( cTipKalk, cIdFirma, cSufiks )
-
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dok, cIdKonto)
 ELSE
-    
-    cBrKalk := GetNextKalkDoc( cIdFirma, cTipKalk )
-    
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dok)
 ENDIF
 
 Box(,15,60)

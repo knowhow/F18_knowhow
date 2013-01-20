@@ -509,7 +509,7 @@ if hb_regexMatch(_re_with_prefix, _str)
   _a := hb_regex(_re_with_prefix, _str)
   _br := VAL(_a[2])
   _dat := CTOD("31.12." + _a[3])
-  _cnt:set_document_date(_dat)
+  _cnt:document_date := _dat
   _cnt:counter := _br
   broj := _cnt:to_str()
   return .t.
@@ -520,7 +520,7 @@ if hb_regexMatch(_re_old_format, _str)
   _a := hb_regex(_re_old_format, _str)
   _br := VAL(_a[2])
   _dat := DATE()
-  _cnt:set_document_date(_dat)
+  _cnt:document_date := _dat
   _cnt:suffix := ""
   _cnt:width := 12
   _cnt:numeric_width := 8
@@ -535,7 +535,7 @@ if hb_regexMatch(_re_only_num, _str)
   _a := hb_regex(_re_only_num, _str)
   _br := VAL(_a[2])
   _dat := DATE()
-  _cnt:set_document_date(_dat)
+  _cnt:document_date := _dat
   _cnt:counter := _br
   broj := _cnt:to_str()
   return .t.

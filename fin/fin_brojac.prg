@@ -75,7 +75,7 @@ return .t.
 // ------------------------------------------------------------
 // setuj broj dokumenta
 // ------------------------------------------------------------
-function fin_set_broja_naloga()
+function fin_set_broj_naloga()
 local _broj_naloga
 local _t_rec
 local _firma, _td, _datnal, _cnt, _null_brnal
@@ -180,7 +180,7 @@ local _cnt
 _cnt := FinCounter():New("99", "99", DATE())
 _cnt:fix(@brnal)
 
-return _cnt
+return .f.
 
 
 

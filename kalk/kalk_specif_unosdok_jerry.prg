@@ -13,15 +13,6 @@
 #include "kalk.ch"
 
 
-
-// ingroup Jerry
-// var *string FmkIni_KumPath_KALK_Jerry_KALK4x_SvediDatum
-// brief Koji se datum svodi na datum posljednje stavke
-// param F - datum fakture, default vrijednost
-// param K - datum kalkulacije
-// FmkIni_KumPath_KALK_Jerry_KALK4x_SvediDatum;
-
-
 function StKalk19J()
 local nCol1:=nCol2:=0,npom:=0
 

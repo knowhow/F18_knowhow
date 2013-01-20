@@ -759,6 +759,7 @@ local cBrojKalk
 local cTipDok
 local cIdKonto
 local cIdKonto2
+local _h_dok := hb_hash()
 
 O_KALK_PRIPR
 O_KALK
@@ -775,7 +776,12 @@ nUvecaj:=1
 // osnovni podaci ove kalkulacije
 cFakt := ALLTRIM(temp->brdok)
 cTDok := GetKTipDok( ALLTRIM(temp->idtipdok) )
-cBrojKalk := SljBrKalk( cTDok, gFirma )
+
+_h_dok["idfirma"] := temp->idfirma
+_h_dok["idvd"]   := cTDok
+_h_dok["brdok"]  := ""
+_h_dok["datdok"] := DATE()
+cBrojKalk := kalk_novi_broj_dokumenta(_h_dok) 
 
 do while !EOF()
 

@@ -32,8 +32,8 @@ if (lAuto==NIL)
     lAuto:=.f.
 endif
 
-fin_set_broja_naloga()
 o_fin_za_azuriranje()
+fin_set_broj_naloga()
 
 if fin_pripr->( RECCOUNT() == 0 ) .or. ( !lAuto .and. Pitanje("pAz", "Izvrsiti azuriranje fin naloga ? (D/N)?", "N") == "N" )
     return

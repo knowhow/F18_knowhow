@@ -478,22 +478,7 @@ do case
         RaspTrosk()
         return DE_REFRESH
     case Ch==K_CTRL_F9
-        if Pitanje(,"Zelite Izbrisati cijelu pripremu ??","N")=="D"
-            
-            cOpis := kalk_pripr->idfirma + "-" + ;
-                kalk_pripr->idvd + "-" + ;
-                kalk_pripr->brdok 
-
-            if Logirati(goModul:oDataBase:cName,"DOK","BRISIDOK")
-                    EventLog(nUser,goModul:oDataBase:cName,;
-                "DOK","BRISIDOK",;
-                nil,nil,nil,nil,;
-                cOpis,"","", ;
-                kalk_pripr->datdok,;
-                Date(),;
-                "",;
-                "Brisanje kompletne kalk_pripreme")
-            endif
+        if Pitanje( , "Zelite Izbrisati cijelu pripremu ??","N")=="D"
             
             zapp()
             select p_doksrc
@@ -1348,7 +1333,18 @@ return K_ESC
 
 
 
+static function init_hdok(idfirma, idvd, datdok, h_dok)
+
+h_dok["idfirma"] := idfirma
+h_dok["idvd"]    := idvd
+h_dok["brdok"]  := ""
+h_dok["datdok"] := datdok
+
+return .t.
+
+
 function Get1Header()
+local _konto, _h_dok := hb_hash()
 
 if fnovi
     _idfirma := gFirma
@@ -1370,32 +1366,31 @@ endif
 @  m_x + 2, m_y + 2 SAY "KALKULACIJA: "
 @  m_x + 2, col() SAY "Vrsta:" get _idvd valid P_TipDok( @_idvd, 2, 25 ) PICT "@!"
 
+@ m_x + 2, COL() + 2 SAY "Datum:" GET _DatDok VALID init_hdok(_idfirma, _idvd, _datdok, @_h_dok)
 read
 
 ESC_RETURN 0
 
 if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
 
-    if glBrojacPoKontima
+
+     if glBrojacPoKontima
 
         Box( "#Glavni konto", 3, 70 )
             if _idvd $ "10#16#18#IM#"
                 @ m_x+2, m_y+2 SAY "Magacinski konto zaduzuje" GET _idKonto VALID P_Konto(@_idKonto) PICT "@!"
                 read
-                cSufiks := SufBrKalk( _idKonto )
+                _konto := _idKonto
             else
                 @ m_x+2, m_y+2 SAY "Magacinski konto razduzuje" GET _idKonto2 VALID P_Konto(@_idKonto2) PICT "@!"
                 read
-                cSufiks := SufBrKalk( _idKonto2 )
+                _konto = _idKonto2
             endif
         BoxC()
-
-        _brDok := SljBrKalk( _idvd, _idfirma, cSufiks )
+        _brDok := kalk_novi_broj_dokumenta(_h_dok, _konto)
 
     else
-
-        _brDok := SljBrKalk( _idvd, _idfirma )
-
+        _brDok := kalk_novi_broj_dokumenta(_h_dok)
     endif
 
     select kalk_pripr
@@ -1404,7 +1399,6 @@ endif
 
 @ m_x + 2, m_y + 40  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }
 
-@ m_x + 2, COL() + 2 SAY "Datum:" GET _DatDok
 
 @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
 
@@ -1840,7 +1834,8 @@ do while .t.
     endif
 
     if empty(cidvd+cbrdok+cidfirma) .or. ! (cIdVd $ "11#19#81#80")
-        skip; loop
+        skip
+        loop
     endif
 
     Box("",2,50)
@@ -2151,7 +2146,7 @@ do while .t.
                 @ m_x+1,col()+2 GET cIdFirma
             endif
             @ m_x+1,col()+1 SAY "-" GET cIdVD  pict "@!"
-            @ m_x+1,col()+1 SAY "-" GET cBrDok
+            @ m_x+1,col()+1 SAY "-" GET cBrDok valid kalk_fix_brdok(@cBrDok)
             read
             ESC_BCR
         BoxC()

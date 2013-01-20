@@ -814,7 +814,7 @@ do case
 
     case Ch == K_CTRL_P
 
-        fin_set_broja_naloga()
+        fin_set_broj_naloga()
 
         close all
 		// stampaj stavke
@@ -827,7 +827,7 @@ do case
 
     case UPPER(Chr(Ch)) == "X" 
 
-        fin_set_broja_naloga()
+        fin_set_broj_naloga()
         close all
         stampa_fin_document(.t.)
         close all
@@ -844,7 +844,7 @@ do case
 
     case Ch == K_ALT_B
         
-        fin_set_broja_naloga()
+        fin_set_broj_naloga()
 
         close all
         // blagajnicki izvjestaj	
@@ -856,7 +856,7 @@ do case
 
     case Ch==K_ALT_I
 
-        fin_set_broja_naloga()
+        fin_set_broj_naloga()
         OiNIsplate()
         
 		return DE_CONT

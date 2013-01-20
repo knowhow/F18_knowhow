@@ -129,8 +129,6 @@ close all
 
 return
 
-
-
 // ---------------------------------------------------------------------
 // vraca iz tabele kalk_pripr2 sve sto je generisano
 // da bi se moglo naknadno obraditi
@@ -228,13 +226,20 @@ local cNext11 := ""
 local cOdg := "D"
 local lgAFin := gAFin
 local lgAMat := gAMat
+local _h_dokument := hb_hash()
 
 o_kalk_za_azuriranje()
 
 // generisanje 11-ke iz 10-ke
 if Generisati11_ku()
     lForm11 := .t.
-    cNext11 := SljBrKalk("11", gFirma)
+
+    _h_dokument["idfirma"] := gFirma
+    _h_dokument["idvd"] := "11"
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cNext11 := kalk_novi_broj_dokumenta(_h_dokument)
+
     Generisi11ku_iz10ke( cNext11 )
 endif
 

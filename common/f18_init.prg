@@ -1002,7 +1002,8 @@ local _cmd
 _out_file := my_home() + "F18.log.txt"
 
 FILECOPY( F18_LOG_FILE, _out_file)
-run (_cmd := "f18_editor " + _out_file)
+_cmd := "f18_editor " + _out_file
+f18_run(_cmd)
 
 return .t.
 

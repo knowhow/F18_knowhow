@@ -139,8 +139,9 @@ set console on
 close all
 
 log_write( _log_msg, 1 )
+_cmd := "f18_editor " + _out_file
 
-run (_cmd := "f18_editor " + _out_file)
+f18_run(_cmd)
 
 QUIT_1
 RETURN

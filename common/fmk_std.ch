@@ -949,13 +949,6 @@
 #command CANCEL                 => __Quit()
 #command QUIT                   => __Quit()
 
-#command RUN <*cmd*>            => swpruncmd(#<cmd>,0,"","")
-#command RUN ( <c> )            => swpruncmd( <c>  ,0,"","")
-#command ! <*cmd*>              => RUN <cmd>
-#command RUN = <xpr>            => ( run := <xpr> )
-#command RUN := <xpr>           => ( run := <xpr> )
-
-
 
 ****
 *  DB SETs

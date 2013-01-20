@@ -84,7 +84,7 @@ Box("", 2, 35)
   @ m_x+1,col()+1 GET cIdFirma
  endif
  @ m_x+1,col()+1 SAY "-" GET cIdVN PICT "@!"
- @ m_x+1,col()+1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+ @ m_x+1,col()+1 SAY "-" GET cBrNal VALID fix_brnal( @cBrNal )
 
  if gDatNal=="D"
     @ m_x+2, m_y+2 SAY "Datum naloga:" GET dDatNal
@@ -152,7 +152,7 @@ if fkum  // stampa starog naloga - naloga iz kumulativa - datoteka anal
     @ m_x+1, col()+1 GET cIdFirma
   endif
   @ m_x+1, col()+1 SAY "-" GET cIdVN PICT "@!"
-  @ m_x+1, col()+1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+  @ m_x+1, col()+1 SAY "-" GET cBrNal VALID fix_brnal( @cBrNal )
   read
   ESC_BCR
  BoxC()

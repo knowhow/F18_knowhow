@@ -1,14 +1,13 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "kalk.ch"
 #include "f18_separator.ch"
@@ -16,7 +15,6 @@
 static cENTER := CHR(K_ENTER) + CHR(K_ENTER) + CHR(K_ENTER)
 static __box_x
 static __box_y
-
 
 
 function kalk_unos_dokumenta()
@@ -1519,7 +1517,7 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
        if TSpedTr=="R"; RTSpedTr:=.t.;RSpedTr:=SpedTr; endif
        if TZavTr =="R"; RTZavTr :=.t.;RZavTr :=ZavTr ; endif
 
-       UBankTr:=0   // do sada utroçeno na bank tr itd, radi "sitniça"
+       UBankTr:=0   // do sada utroÃ§eno na bank tr itd, radi "sitniÃ§a"
        UPrevoz:=0
        UZavTr:=0
        USpedTr:=0
@@ -1538,7 +1536,7 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
              else
               _Prevoz:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RPrevoz ,gZaokr)
               UPrevoz+=_Prevoz
-              if abs(RPrevoz-UPrevoz)< 0.1 // sitniç, baci ga na zadnju st.
+              if abs(RPrevoz-UPrevoz)< 0.1 // sitniÃ§, baci ga na zadnju st.
                    skip
                    if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
                      _Prevoz+=(RPrevoz-UPrevoz)
@@ -1554,7 +1552,7 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
              else
               _CarDaz:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RCarDaz ,gZaokr)
               UCardaz+=_Cardaz
-              if abs(RCardaz-UCardaz)< 0.1 // sitniç, baci ga na zadnju st.
+              if abs(RCardaz-UCardaz)< 0.1 // sitniÃ§, baci ga na zadnju st.
                    skip
                    if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
                      _Cardaz+=(RCardaz-UCardaz)
@@ -1570,7 +1568,7 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
              else
               _BankTr:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RBankTr ,gZaokr)
               UBankTr+=_BankTr
-              if abs(RBankTr-UBankTr)< 0.1 // sitniç, baci ga na zadnju st.
+              if abs(RBankTr-UBankTr)< 0.1 // sitniÃ§, baci ga na zadnju st.
                    skip
                    if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
                      _BankTr+=(RBankTr-UBankTr)
@@ -1586,7 +1584,7 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
              else
               _SpedTr:=round(_fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RSpedTr,gZaokr)
               USpedTr+=_SpedTr
-              if abs(RSpedTr-USpedTr)< 0.1 // sitniç, baci ga na zadnju st.
+              if abs(RSpedTr-USpedTr)< 0.1 // sitniÃ§, baci ga na zadnju st.
                    skip
                    if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
                      _SpedTr+=(RSpedTr-USpedTr)
@@ -1602,7 +1600,7 @@ if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
              else
               _ZavTr:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RZavTr ,gZaokr)
               UZavTR+=_ZavTR
-              if abs(RZavTR-UZavTR)< 0.1 // sitniç, baci ga na zadnju st.
+              if abs(RZavTR-UZavTR)< 0.1 // sitniÃ§, baci ga na zadnju st.
                    skip
                    if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
                      _ZavTR+=(RZavTR-UZavTR)

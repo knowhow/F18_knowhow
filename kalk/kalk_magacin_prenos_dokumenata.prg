@@ -696,25 +696,6 @@ return
 
 
 
-// ---------------------------------------------
-// odredjuje sufiks broja dokumenta
-// ---------------------------------------------
-function SufBrKalk( cIdKonto )
-local nArr := SELECT()
-local cSufiks := SPACE(3)
-
-select koncij
-seek cIdKonto
-
-if FOUND() 
-    if FIELDPOS( "sufiks" ) <> 0
-        cSufiks := field->sufiks
-    endif
-endif
-select (nArr)
-
-return cSufiks
-
 
 // --------------------------
 // --------------------------

@@ -62,7 +62,7 @@ Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
     endif
 
     @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
-    @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID _f_brnal(@cBrNal)
+    @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID fix_brnal(@cBrNal)
 
     IF lStorno
 

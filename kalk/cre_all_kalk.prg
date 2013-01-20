@@ -10,63 +10,13 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
 
 function cre_all_kalk(ver)
 local aDbf
 local _alias, _table_name
 local _created
 local _tbl
-
-// -----------------------------------------------
-// kalk_doks
-// -----------------------------------------------
-	
-aDbf:={}
-AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'BRDOK'               , 'C' ,   8 ,  0 })
-AADD(aDBf,{ 'DATDOK'              , 'D' ,   8 ,  0 })
-
-AADD(aDBf,{ 'BRFAKTP'             , 'C' ,  10 ,  0 })
-
-AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
-AADD(aDBf,{ 'IdZADUZ'             , 'C' ,   6 ,  0 })
-AADD(aDBf,{ 'IdZADUZ2'            , 'C' ,   6 ,  0 })
-AADD(aDBf,{ 'PKONTO'              , 'C' ,   7 ,  0 })
-AADD(aDBf,{ 'MKONTO'              , 'C' ,   7 ,  0 })
-AADD(aDBf,{ 'NV'                  , 'N' ,  12 ,  2 })
-AADD(aDBf,{ 'VPV'                 , 'N' ,  12 ,  2 })
-AADD(aDBf,{ 'RABAT'               , 'N' ,  12 ,  2 })
-AADD(aDBf,{ 'MPV'                 , 'N' ,  12 ,  2 })
-AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
-
-_created := .f.
-_alias := "KALK_DOKS"
-_table_name := "kalk_doks"
-
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
-
-// 0.4.0
-if ver["current"] < 0400
-   modstru({"*" + _table_name, "A SIFRA C 6 0"})
-endif
-
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
-
-CREATE_INDEX("1"      , "IdFirma+idvd+brdok", _alias)
-CREATE_INDEX("2"      , "IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias)
-CREATE_INDEX("3"      , "IdFirma+dtos(datdok)+podbr+idvd+brdok", _alias)
-CREATE_INDEX("DAT"    ,"datdok", _alias)
-CREATE_INDEX("1S"     , "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)", _alias)
-CREATE_INDEX("V_BRF"  , "brfaktp+idvd", _alias)
-CREATE_INDEX("V_BRF2" , "idvd+brfaktp", _alias)
 
 
 aDbf:={}
@@ -80,7 +30,7 @@ AADD(aDBf,{ 'IDZADUZ2'            , 'C' ,   6 ,  0 })
 // istina, ona su ponegdje iskoristena za neke sasvim druge stvari
 // pa zato treba biti pazljiv sa njihovim diranjem
 AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'BRDOK'               , 'C' ,   8 ,  0 })
+AADD(aDBf,{ 'BRDOK'               , 'C' ,  12 ,  0 })
 AADD(aDBf,{ 'DATDOK'              , 'D' ,   8 ,  0 })
 
 AADD(aDBf,{ 'BRFAKTP'             , 'C' ,  10 ,  0 })
@@ -140,13 +90,11 @@ AADD(aDBf,{ 'VPCSAP'              , 'B' ,  8 ,  8 })
 _created := .f.
 _alias := "KALK"
 _table_name := "kalk_kalk"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+
+IF_NOT_FILE_DBF_CREATE
 
 // 0.8.4
-if ver["current"] < 00804
+if ver["current"] > 0 .and. ver["current"] < 00804
   for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
     modstru( {"*" + _tbl, ;
         "C KOLICINA N 12 3  KOLICINA B 8 8",;
@@ -176,7 +124,6 @@ if ver["current"] < 00804
  next
 endif
 
-
 // 0.8.5
 if ver["current"] < 00805
   for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
@@ -187,30 +134,32 @@ if ver["current"] < 00805
  next
 endif
 
-
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
+// 0.10.00
+if ver["current"] > 00000 .and. ver["current"] < 01000
+  for each _tbl in { _table_name, "kalk_pripr", "kalk_pripr2", "kalk_pripr9", "_kalk", "kalk_doks", "kalk_doks2" }
+   modstru( {"*" + _tbl, ;
+   "C BRDOK C 8 0 BRDOK C 12 0"  ;
+    })
+  next
 endif
 
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", "KALK")
-CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa","KALK")
-CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD", "KALK")
-CREATE_INDEX("4","idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD" ,"KALK")
-CREATE_INDEX("5","idFirma+dtos(datdok)+podbr+idvd+brdok","KALK")
-CREATE_INDEX("6","idFirma+IdTarifa+idroba","KALK")
-CREATE_INDEX("7","idroba+idvd", "KALK")
-CREATE_INDEX("8","mkonto", "KALK")
-CREATE_INDEX("9","pkonto","KALK")
-CREATE_INDEX("DAT","datdok", "KALK")
-CREATE_INDEX("MU_I", "mu_i+mkonto+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("MU_I2","mu_i+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("PU_I", "pu_i+pkonto+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("PU_I2","pu_i+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)","KALK")
+IF_C_RESET_SEMAPHORE
 
-// priprema itd...
+CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", _alias)
+CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa",_alias)
+CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD", _alias)
+CREATE_INDEX("4","idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD" ,_alias)
+CREATE_INDEX("5","idFirma+dtos(datdok)+podbr+idvd+brdok",_alias)
+CREATE_INDEX("6","idFirma+IdTarifa+idroba",_alias)
+CREATE_INDEX("7","idroba+idvd", _alias)
+CREATE_INDEX("8","mkonto", _alias)
+CREATE_INDEX("9","pkonto",_alias)
+CREATE_INDEX("DAT","datdok", _alias)
+CREATE_INDEX("MU_I", "mu_i+mkonto+idfirma+idvd+brdok",_alias)
+CREATE_INDEX("MU_I2","mu_i+idfirma+idvd+brdok",_alias)
+CREATE_INDEX("PU_I", "pu_i+pkonto+idfirma+idvd+brdok",_alias)
+CREATE_INDEX("PU_I2","pu_i+idfirma+idvd+brdok",_alias)
+CREATE_INDEX("PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)",_alias)
 
 // kalk_pripr
 _alias := "KALK_PRIPR"
@@ -252,23 +201,66 @@ endif
 CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr","_KALK")
 
 
-// kalk_doks2
+// -----------------------------------------------
+// kalk_doks
+// -----------------------------------------------
+	
 aDbf:={}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'IDvd'                , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'BRDOK'               , 'C' ,   8 ,  0 })
+AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'BRDOK'               , 'C' ,  12 ,  0 })
+AADD(aDBf,{ 'DATDOK'              , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'BRFAKTP'             , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'IdZADUZ'             , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'IdZADUZ2'            , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'SIFRA'               , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'PKONTO'              , 'C' ,   7 ,  0 })
+AADD(aDBf,{ 'MKONTO'              , 'C' ,   7 ,  0 })
+AADD(aDBf,{ 'NV'                  , 'N' ,  12 ,  2 })
+AADD(aDBf,{ 'VPV'                 , 'N' ,  12 ,  2 })
+AADD(aDBf,{ 'RABAT'               , 'N' ,  12 ,  2 })
+AADD(aDBf,{ 'MPV'                 , 'N' ,  12 ,  2 })
+AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
+
+_created := .f.
+_alias := "KALK_DOKS"
+_table_name := "kalk_doks"
+
+IF_NOT_FILE_DBF_CREATE
+
+// 0.4.0
+if ver["current"] > 0 .and. ver["current"] < 0400
+   modstru({"*" + _table_name, "A SIFRA C 6 0"})
+endif
+
+IF_C_RESET_SEMAPHORE
+CREATE_INDEX("1"      , "IdFirma+idvd+brdok", _alias)
+CREATE_INDEX("2"      , "IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias)
+CREATE_INDEX("3"      , "IdFirma+dtos(datdok)+podbr+idvd+brdok", _alias)
+CREATE_INDEX("DAT"    ,"datdok", _alias)
+CREATE_INDEX("1S"     , "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)", _alias)
+CREATE_INDEX("V_BRF"  , "brfaktp+idvd", _alias)
+CREATE_INDEX("V_BRF2" , "idvd+brfaktp", _alias)
+
+// -----------------------------------------------
+// kalk_doks2
+// -----------------------------------------------
+aDbf:={}
+AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'BRDOK'               , 'C' ,  12 ,  0 })
 AADD(aDBf,{ 'DATVAL'              , 'D' ,   8 ,  0 })
 AADD(aDBf,{ 'Opis'                , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'K1'                , 'C' ,  1 ,  0 })
 AADD(aDBf,{ 'K2'                , 'C' ,  2 ,  0 })
 AADD(aDBf,{ 'K3'                , 'C' ,  3 ,  0 })
-if !FILE(f18_ime_dbf( "kalk_doks2" ))
-    DBcreate2( "kalk_doks2", aDbf )
-    reset_semaphore_version( "kalk_doks2" )
-	my_use( "kalk_doks2" )
-    close all
-endif
-CREATE_INDEX( "1", "IdFirma+idvd+brdok", "kalk_doks2" )
 
+_alias := "KALK_DOKS2"
+_table_name := "kalk_doks2"
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
 
 return .t.

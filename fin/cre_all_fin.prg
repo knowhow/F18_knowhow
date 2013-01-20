@@ -65,6 +65,8 @@ if ver["current"] > 00000 .and. ver["current"] < 01000
  next
 endif
 
+IF_C_RESET_SEMAPHORE
+
 CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias) 
 CREATE_INDEX( "2", "IdFirma+IdPartner+IdKonto", _alias)
 CREATE_INDEX( "3", "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)", _alias)
@@ -86,13 +88,14 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 // 0.4.1
-if ver["current"] < 00401
+if ver["current"] > 0 .and. ver["current"] < 00401
    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
+IF_C_RESET_SEMAPHORE
+
 CREATE_INDEX("1", "IdFirma+IdVn+BrNal", _alias)
 CREATE_INDEX("2", "idFirma+IdVN+BrNal+IdKonto", _alias)
-
 
 // ----------------------------------------------------------------------------
 // FIN_PRIPR
@@ -103,16 +106,13 @@ _table_name := "fin_pripr"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.4.1
-if ver["current"] < 00401
+if ver["current"] > 0 .and. ver["current"] < 00401
    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
 CREATE_INDEX("1", "idFirma+IdVN+BrNal+Rbr", _alias)
 CREATE_INDEX("2", "idFirma+IdVN+BrNal+IdKonto", _alias)
 
-
-_alias := "ANAL"
-_table_name := "fin_anal"
 
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"             , "C" ,   2 ,  0 })
@@ -125,10 +125,13 @@ AADD(aDBf,{ "DUGBHD"              , "N" ,  17 ,  2 })
 AADD(aDBf,{ "POTBHD"              , "N" ,  17 ,  2 })
 AADD(aDBf,{ "DUGDEM"              , "N" ,  15 ,  2 })
 AADD(aDBf,{ "POTDEM"              , "N" ,  15 ,  2 })
-
+_alias := "ANAL"
+_table_name := "fin_anal"
 
 IF_NOT_FILE_DBF_CREATE
             
+IF_C_RESET_SEMAPHORE
+
 CREATE_INDEX("1", "IdFirma+IdKonto+dtos(DatNal)", _alias)
 CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", _alias)
 CREATE_INDEX("3", "idFirma+dtos(DatNal)", _alias) 
@@ -140,10 +143,8 @@ CREATE_INDEX("5", "DatNal", _alias)
 // ----------------------------------------------------------------------------
 _alias := "PANAL"
 _table_name := "fin_panal"
-if !FILE(f18_ime_dbf(_alias))
-    DBcreate2(_alias, aDbf)
-endif
 
+IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX("1", "IdFirma+IdVn+BrNal+idkonto", _alias)
 
 // ----------------------------------------------------------------------------
@@ -166,6 +167,7 @@ _alias := "SINT"
 _table_name := "fin_sint"
 
 IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1", "IdFirma+IdKonto+dtos(DatNal)", _alias)
 CREATE_INDEX("2", "idFirma+IdVN+BrNal+Rbr", _alias)
@@ -202,6 +204,7 @@ _alias := "NALOG"
 _table_name := "fin_nalog"
 
 IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1", "IdFirma+IdVn+BrNal", _alias) 
 CREATE_INDEX("2", "IdFirma+str(val(BrNal),8)+idvn", _alias) 
@@ -211,9 +214,7 @@ CREATE_INDEX("4", "datnal", _alias)
 
 _alias := "PNALOG"
 _table_name := "fin_pnalog"
-if !FILE(f18_ime_dbf(_alias))
-    DBcreate2(_alias, aDbf)
-endif
+IF_NOT_FILE_DBF_CREATE
 
 CREATE_INDEX("1","IdFirma+IdVn+BrNal", _alias)
 
@@ -226,7 +227,7 @@ _alias := "FUNK"
 _table_name := "fin_funk"
 
 IF_NOT_FILE_DBF_CREATE
- 
+IF_C_RESET_SEMAPHORE
 CREATE_INDEX("ID","id", _alias )
 CREATE_INDEX("NAZ","NAZ", _alias )
 
@@ -239,6 +240,7 @@ _alias := "FOND"
 _table_name := "fin_fond"
 
 IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
  
 CREATE_INDEX("ID","id", _alias )
 CREATE_INDEX("NAZ","NAZ", _alias )
@@ -272,6 +274,7 @@ _alias := "PAREK"
 _table_name := "fin_parek"
 
 IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1","IdPartija", _alias)
 
@@ -284,21 +287,23 @@ _alias := "BUIZ"
 _table_name := "fin_buiz"
 
 IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX( "ID"  , "ID"  , _alias)
 CREATE_INDEX( "NAZ" , "NAZ" , _alias)
 
-//ULIMIT
-if !FILE(f18_ime_dbf("ulimit"))
-    aDBf:={}
-    AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
-    AADD(aDBf,{ "IDPARTNER" , "C" ,   6 ,  0 })
-    AADD(aDBf,{ "F_LIMIT"   , "N" ,  15 ,  2 })
-    DBcreate2( "ULIMIT", aDbf )
-    reset_semaphore_version("fin_ulimit")
-    my_use("ulimit")
-    close all
-endif
+
+aDBf:={}
+AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
+AADD(aDBf,{ "IDPARTNER" , "C" ,   6 ,  0 })
+AADD(aDBf,{ "F_LIMIT"   , "N" ,  15 ,  2 })
+DBcreate2( "ULIMIT", aDbf )
+_alias := "ULIMIT"
+_table_name := "fin_ulimit"
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
 CREATE_INDEX("ID","Id"          , "ULIMIT")
 CREATE_INDEX("2" ,"Id+idpartner", "ULIMIT")
 
@@ -377,8 +382,7 @@ _table_name := "kam_kamat"
 
 if !FILE(f18_ime_dbf(_alias))
     DBcreate2( _alias, aDbf )
-endif
-            
+endif            
 CREATE_INDEX("1", "idpartner+brdok+dtos(datod)", _alias)
 
 // kreiraj indexe tabele FMKRULES

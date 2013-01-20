@@ -58,7 +58,7 @@ _table_name := "fakt_fakt"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.8.3
-if ver["current"] < 00803
+if ver["current"] > 0 .and. ver["current"] < 00803
   
   for each _tbl in { _table_name, "fakt_pripr" }
    modstru( {"*" + _tbl, ;

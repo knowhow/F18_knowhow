@@ -172,79 +172,15 @@ endif
 
 return
 
-// ----------------------------------
-// fix brnal
-// ----------------------------------
-function _f_brnal(brnal)
-local _a, _br, _cnt, _dat
-local _str
-local _re_old_format := hb_regexComp("([0-9]+)/")
-local _re_only_num := hb_regexComp("([0-9]+)")
-local _re_with_prefix := hb_regexComp("([0-9]+)/([0-9]{2})")
-local _msg
 
-_a := hb_regex(_re_only_num, brnal) 
-
-_str := ALLTRIM(brnal)
-
-
+// ---------------------------------------
+// ---------------------------------------
+function fix_brnal(brnal)
+local _cnt
 _cnt := FinCounter():New("99", "99", DATE())
+_cnt:fix(@brnal)
 
-if _cnt:validate(brnal)
-    brnal := _cnt:to_str()
-    return .t.
-endif
+return _cnt
 
 
-
-// 959/12 => 000959/12
-if hb_regexMatch(_re_with_prefix, _str)
-  _a := hb_regex(_re_with_prefix, _str)
-  _br := VAL(_a[2])
-  _dat := CTOD("31.12." + _a[3])
-
-  _cnt := FinCounter():New("99", "99", _dat)
-  _cnt:counter := _br
-  brnal := _cnt:to_str()
-  return .t.
-endif
-
-// 959/ => stari format 00000959
-if hb_regexMatch(_re_old_format, _str)
-  _a := hb_regex(_re_old_format, _str)
-  _br := VAL(_a[2])
-  _dat := DATE()
-  _cnt := FinCounter():New("99", "99", _dat)
-  _cnt:suffix := ""
-  _cnt:width := 12
-  _cnt:numeric_width := 8
-  _cnt:counter := _br
-  brnal := _cnt:to_str()
-  return .t.
-endif
-
-// "959" => 0000959/13, ako je godina 2013
-// -------------------
-if hb_regexMatch(_re_only_num, _str)
-  _a := hb_regex(_re_only_num, _str)
-  _br := VAL(_a[2])
-  _dat := DATE()
-
-  _cnt := FinCounter():New("99", "99", _dat)
-  _cnt:counter := _br
-
-  brnal := _cnt:to_str()
-  return .t.
-endif
-
-_msg := "Broj naloga dozvoljeni format##"
-_msg += "1) Za stare brojeve naloga (bez prefixa) navesti '/'#"
-_msg += "   primjer: '55/'    => '00000055''##"
-_msg += "2) Može se navesti samo broj za tekuću godinu#"
-_msg += "   primjer: '55'     => '000055/13' (ako je godina 2013)##"
-_msg += "3) Navesti sufix godine#"
-_msg += "   primjer: '175/13' => '000175/13'"
- 
-MsgBeep(_msg, "L")
-return .f.
 

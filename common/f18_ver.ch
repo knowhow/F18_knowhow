@@ -17,7 +17,7 @@
 #define FMK_LIB_VER   "4.2.0"
 
 #define F18_DBF_VER_MAJOR  0
-#define F18_DBF_VER_MINOR  10
+#define F18_DBF_VER_MINOR 10
 #define F18_DBF_VER_PATCH  0
 
 #define SERVER_DB_VER_MAJOR  4

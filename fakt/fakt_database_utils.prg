@@ -339,6 +339,7 @@ function fakt_set_broj_dokumenta()
 local _broj_dokumenta
 local _t_rec
 local _firma, _td, _null_brdok
+local _fakt_params := fakt_params()
 
 PushWa()
 
@@ -356,8 +357,15 @@ endif
 _firma := field->idfirma
 _td := field->idtipdok
 
+// brojaci otpremnica po tip-u "22"
+if _td == "12" .and. _fakt_params["fakt_otpr_22_brojac"]
+    _tip_srch := "22"
+else    
+    _tip_srch := _td
+endif
+
 // daj mi novi broj dokumenta
-_broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _td )
+_broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _tip_srch )
 
 select fakt_pripr
 set order to tag "1"

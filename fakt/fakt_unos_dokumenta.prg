@@ -305,7 +305,6 @@ do case
        
         // prvo setuj broj dokumenta
         fakt_set_broj_dokumenta()
-        otpremnica_22_brojac()
 
         // printaj dokument
         fakt_print_dokument()
@@ -329,7 +328,6 @@ do case
         
         // setuj broj dokumenta u pripremi ako vec nije
         fakt_set_broj_dokumenta()
-        otpremnica_22_brojac()
 
         if !CijeneOK( "Stampanje" )
             return DE_REFRESH
@@ -354,7 +352,7 @@ do case
 
         // setuj prvo broj dokumenta u pripremi...
         fakt_set_broj_dokumenta()
-        otpremnica_22_brojac()
+        
         // setuj podatke za fiskalni racun
         __id_firma  := field->idfirma
         __tip_dok := field->idtipdok

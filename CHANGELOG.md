@@ -1,3 +1,7 @@
+1.4.97 2013-01-21, vsasa
+
+ - fakt, brojač otpremnica po tipu dokumenta 22 - ispravka drito na brojaču fakt dokumenata
+ 
 1.4.96 2013-01-21, vsasa
 
  - fakt, brojač otpremnica po tipu dokumenta 22 - bugfix

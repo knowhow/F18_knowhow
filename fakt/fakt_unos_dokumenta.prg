@@ -521,8 +521,7 @@ static function otpremnica_22_brojac()
 local _fakt_params := fakt_params()
 local _rec, _t_rec
 
-if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"] ;
-        .and. field->brdok == fakt_prazan_broj_dokumenta()
+if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"]
 
     _novi_broj := fakt_novi_broj_dokumenta( field->idfirma, "22" )
 
@@ -546,11 +545,10 @@ if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"] ;
     
     go top
 
-    select ( FAKT_ATRIB )
+    select ( F_FAKT_ATRIB )
     if !Used()
         O_FAKT_ATRIB
     endif
-    select fakt_atrib
     set order to tag "1"
     go top
 
@@ -567,11 +565,11 @@ if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"] ;
         go ( _t_rec )
 
     enddo
- 
-    select fakt_atrib
+    
     use
 
     select fakt_pripr
+    go top
 
 endif
 
@@ -1906,6 +1904,7 @@ enddo
 use
 
 select fakt_pripr
+go top
 
 return
 

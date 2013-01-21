@@ -1,3 +1,7 @@
+1.4.95 2013-01-21, hernad
+
+ - fakt, sumiranje usluga kod pretvaranja otpremnica u račun
+ 
 1.4.94 2013-01-21, vsasa
 
  - fakt, brojač po otpremnicama tip-a "22" - bugfix

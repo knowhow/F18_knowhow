@@ -42,7 +42,7 @@ libs=hbtip
 
 {linux}libs=mysqlclient
 #{darwin}libpaths=/opt/local/lib/mysql5/mysql
-#{win|dos}libs=libmysql
+{win|dos}libs=libmysql
 #{os2}libs=mysqlclient
 
 mt=yes

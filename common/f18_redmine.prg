@@ -163,7 +163,7 @@ local _server_db := params[ __db_str ]
 // MYSQL konekcija....
 if _server_type == "MYSQL"
 
-	#ifdef __PLATFORM__LINUX
+	#ifdef __PLATFORM__WINDOWS
 	    
         oServer := TMySQLServer():New( _server_addr, _server_user, _server_pwd )
     

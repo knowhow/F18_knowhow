@@ -163,28 +163,25 @@ local _server_db := params[ __db_str ]
 // MYSQL konekcija....
 if _server_type == "MYSQL"
 
-	#ifdef __PLATFORM__WINDOWS
-	    
-        oServer := TMySQLServer():New( _server_addr, _server_user, _server_pwd )
-    
-	    if oServer:NetErr()
-		    Alert( oServer:Error() )
-		    return NIL
-	    endif
-
-		oServer:Query( "SET NAMES 'utf8'")
-
-	    oServer:SelectDB( _server_db )
-
-	    return oServer
-
-    #else
-
-		MsgBeep( "Redmine MYSQL konekcija radi samo na linux oper.sistemu !!!" )
+	#ifdef __PLATFORM__DARWIN 
+	    MsgBeep( "Redmine MYSQL konekcija radi samo na windows/linux oper.sistemima !!!" )
 		return NIL
+    #endif 
+        
+    oServer := TMySQLServer():New( _server_addr, _server_user, _server_pwd )
+    
+	if oServer:NetErr()
+        Alert( oServer:Error() )
+		return NIL
+    endif
 
-	#endif
+	oServer:Query( "SET NAMES 'utf8'")
 
+	oServer:SelectDB( _server_db )
+
+	return oServer
+
+		
 // PGSQL konekcija
 elseif _server_type == "PGSQL"
 

@@ -33,8 +33,8 @@ local _data := NIL
 local _template := "rnal_montaza.odt"
 local _my_xml := my_home() + "data.xml"
 
-#ifndef __PLATFORM__LINUX
-	MsgBeep("Izvjestaj radi samo na linux oper.sistemu !!!")
+#ifdef __PLATFORM__DARWIN
+	MsgBeep("Izvjestaj radi samo na linux/windows oper.sistemu !!!")
 	return
 #endif
 

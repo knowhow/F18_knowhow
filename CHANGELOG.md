@@ -1,3 +1,8 @@
+1.4.99 2013-01-22, vsasa
+
+ - f18_run, korekcije (hernad)
+ - bildanje mysql librarija pod win os-om sada radi, opcije redmine/RNAL
+
 1.4.98 2013-01-22, vsasa
 
  - fakt/fin/kalk, import/eksport podataka udaljene lokacije - korekcije 

@@ -137,7 +137,7 @@ return
 // --------------------------------------------------------------------
 static function _insert_into_fin_priprema( data, param )
 local _fin_vn := "00"
-local _fin_broj := fin_prazan_broj_naloga()
+local _fin_broj
 local _dat_ps := param["datum_ps"]
 local _sint := param["sintetika"]
 local _kl_dug := param["klasa_duguje"]
@@ -146,6 +146,8 @@ local _ret := .f.
 local _row, _duguje, _potrazuje, _id_konto, _id_partner
 local _rec, _i_saldo
 local _rbr := 0
+
+_fin_broj := fin_brnal_0(gFirma, _fin_vn, DATE())
 
 // otvori potrebne tabele
 _o_tables()

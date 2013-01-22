@@ -194,8 +194,8 @@ if cVpMp == "M"
     cCtrlNo := "23"
 endif
 
-//cBrDok := fakt_novi_broj_dokumenta( cFirma, cCtrlNo )
-cBrDok := fakt_prazan_broj_dokumenta()
+cBrDok := fakt_brdok_0(cfirma, cIdVd, DATE())
+
 
 cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
 nRbr := 0
@@ -214,7 +214,6 @@ do while !EOF()
     if lSumirati == .t.
         
         nQtty := 0
-
         do while !EOF() .and. field->art_id == cArt_id
             
             nQtty += field->doc_it_qtt

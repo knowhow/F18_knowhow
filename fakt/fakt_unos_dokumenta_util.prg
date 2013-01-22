@@ -2095,7 +2095,7 @@ local _log_datum
 local _t_area
 local _rec, _t_rec
 local _tek, _prva
-local _id_tip_dok, _id_firma, _br_dok, _r_br
+local _id_tip_dok, _id_firma, _datdok, _br_dok, _r_br
 
    
 if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "N"
@@ -2106,10 +2106,11 @@ _id_firma := field->idfirma
 _id_tip_dok := field->idtipdok
 _br_dok := field->brdok
 _r_br := field->rbr
+_datdok := field->datdok
 
 if ( RecCount2() == 1 ) .or. JedinaStavka()
     // potreba za resetom brojaca na prethodnu vrijednost ?
-    fakt_reset_broj_dokumenta( _id_firma, _id_tip_dok, _br_dok )
+    fakt_rewind( _id_firma, _id_tip_dok, _datdok, _br_dok )
 endif
    
 // ako je prva stavka...

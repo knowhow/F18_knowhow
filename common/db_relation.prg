@@ -100,27 +100,33 @@ endif
 select ( nTArea )
 return xVal
 
+
+
 // ------------------------------
 // dodaj u relacije
 // ------------------------------
-function add_to_relation( cFrom, cTo, cFromId, cToId )
-local nTArea := SELECT()
+function add_to_relation( f_from, f_to, f_from_id, f_to_id )
+local _t_area := SELECT()
 local _rec
 
-O_RELATION
+select ( F_RELATION )
+if !Used()
+    O_RELATION
+endif
+
 select relation
 
 append blank
 _rec := dbf_get_rec()
 
-_rec["tfrom"] := PADR(cFrom, 10)
-_rec["tto"] := PADR(cTo, 10)
-_rec["tfromid"] := PADR(cFromId, 10)
-_rec["ttoid"] := PADR(cToId, 10)
+_rec["tfrom"] := PADR( f_from, 10 )
+_rec["tto"] := PADR( f_to, 10 )
+_rec["tfromid"] := PADR( f_from_id, 10 )
+_rec["ttoid"] := PADR( f_to_id, 10 )
 
 update_rec_server_and_dbf( "relation", _rec, 1, "FULL" )
 
-select (nTArea)
+select ( _t_area )
 return
 
 
@@ -136,7 +142,10 @@ local bTo
 private ImeKol
 private Kol
 
-O_RELATION
+select ( F_RELATION )
+if !Used()
+    O_RELATION
+endif
 
 ImeKol:={}
 Kol:={}
@@ -151,7 +160,8 @@ for i:=1 to LEN(ImeKol)
 next
 
 select (nTArea)
-return PostojiSifra(F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy)
+return PostojiSifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy )
+
 
 
 
@@ -166,7 +176,11 @@ if cPriceType == nil
 	cPriceType := "VPC1"
 endif
 
-O_ROBA
+select ( F_ROBA )
+if !Used()
+    O_ROBA
+endif
+
 select roba
 seek cId
 

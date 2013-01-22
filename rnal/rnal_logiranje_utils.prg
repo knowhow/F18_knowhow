@@ -171,7 +171,7 @@ _rec["int_1"] := aArr[1, 1]
 _rec["int_2"] := aArr[1, 2]
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 return
 
@@ -223,7 +223,7 @@ _rec["char_1"] := aArr[1, 3]
 _rec["char_2"] := aArr[1, 4]
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 
 return
@@ -273,7 +273,7 @@ _rec["int_1"] := aArr[1, 1]
 _rec["char_1"] := aArr[1, 2]
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 return
 
@@ -324,7 +324,7 @@ _rec["char_1"] := aArr[1, 2]
 _rec["char_2"] := aArr[1, 3]
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 return
 
@@ -349,6 +349,13 @@ endif
 if ( cAction == nil)
 	cAction := "+"
 endif
+
+if !f18_lock_tables( { "doc_log", "doc_lit" } )
+    return 
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 
 cDoc_log_type := "21"
 nDoc_log_no := _inc_log_no( nDoc_no )
@@ -377,6 +384,12 @@ do while !EOF()
 	skip
 	
 enddo
+
+
+f18_free_tables( { "doc_log", "doc_lit" } )
+sql_table_update( nil, "END" )
+
+// ------ kraj transakcije
 
 return
 
@@ -498,7 +511,7 @@ _rec["char_1"] := cDoc_desc
 _rec["char_2"] := cDoc_sch
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 return
 
@@ -529,7 +542,7 @@ _rec["int_2"] := nGlass_no
 _rec["char_1"] := cArt_desc
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 return
 
@@ -558,7 +571,7 @@ _rec["int_2"] := nAop_att_id
 _rec["char_1"] := cDoc_op_desc
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 
 return
@@ -592,10 +605,20 @@ do case
 
 endcase
 
+if !f18_lock_tables({"doc_log", "doc_lit"})
+    MsgBeep("Problem sa logiranjem tabela !!!")
+    return
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 nDoc_log_no := _inc_log_no( nDoc_no )
 
 _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 _lit_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
+
+f18_free_tables({"doc_log", "doc_lit"})
+sql_table_update( nil, "END" )
 
 return
 
@@ -621,7 +644,7 @@ _rec["doc_lit_no"] := nDoc_lit_no
 _rec["int_1"] := nDoc_status
 _rec["doc_lit_ac"] := cAction
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 return
 
@@ -648,7 +671,7 @@ _rec["doc_log_ty"] := cDoc_log_type
 _rec["operater_i"] := nOperId
 _rec["doc_log_de"] := cDesc
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
 select (nTArea)
 return
@@ -659,7 +682,7 @@ return
 // vraca sljedeci redni broj dokumenta u DOC_LOG tabeli
 //-------------------------------------------------------
 function _inc_log_no( nDoc_no )
-local nLastNo:=0
+local nLastNo := 0
 
 PushWa()
 
@@ -669,7 +692,7 @@ go top
 
 seek docno_str( nDoc_no )
 
-do while !EOF() .and. (field->doc_no == nDoc_no)
+do while !EOF() .and. ( field->doc_no == nDoc_no )
 	nLastNo := field->doc_log_no
 	skip
 enddo
@@ -744,7 +767,7 @@ _doc_op_delta( nDoc_no, cDesc )
 
 select (nTArea)
 
-return
+return 0
 
 
 // -------------------------------------------------

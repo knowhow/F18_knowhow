@@ -500,7 +500,7 @@ do case
     case drv $ "HCP#TREMOL"
 
         __MAX_QT := 99999.999
-        __MIN_QT := 1.000
+        __MIN_QT := 0.001
         __MAX_PRICE := 999999.99
         __MIN_PRICE := 0.01
         __MAX_PERC := 99.99

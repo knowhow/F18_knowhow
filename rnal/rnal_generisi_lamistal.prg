@@ -25,6 +25,7 @@ local nLastNo
 local cTmp
 local cSchema
 local lLast := .t.
+local _rec
 
 do while !EOF() .and. field->art_id == nArt_id
 	lLast := .f.
@@ -48,9 +49,11 @@ if lLast == .f.
 			exit
 		endif
 		
-		replace field->el_no with nNewNo
-	
-		nNewNo -= 1
+        _rec := dbf_get_rec()
+        _rec["el_no"] := nNewNo
+        dbf_update_rec( _rec )
+		
+        nNewNo -= 1
 
 		skip -1
 
@@ -77,7 +80,6 @@ next
 // generisi auto elemente...
 auto_el_gen( nArt_id, nil, cSchema, nEl_nr )
 
-
 return DE_REFRESH 
 
 
@@ -86,8 +88,6 @@ return DE_REFRESH
 // vraæanje lami stakla u prvobitni polozaj, obièno staklo
 // -------------------------------------------------------------
 function undo_lami_gen()
-
-
 return
 
 

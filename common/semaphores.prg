@@ -37,7 +37,7 @@
 // lokovanje tabela zadatih u matrici a_tables
 // a_tables := {"sifk", "sifv"...}
 // -----------------------------------------------------
-function f18_lock_tables( a_tables )
+function f18_lock_tables( a_tables, unlock_table )
 local _ok := .t.
 local _i, _tbl 
 
@@ -52,30 +52,36 @@ if sql_table_update( nil, "BEGIN" )
 
     for _i := 1 to LEN( a_tables )
        _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-       _ok := _ok .and. lock_semaphore( _tbl, "lock" )
+       _ok := _ok .and. lock_semaphore( _tbl, "lock", unlock_table )
     next
 
     if _ok
+
         sql_table_update( nil, "END" ) 
         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
         // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
         my_use_semaphore_on()
+
         for _i := 1 to LEN( a_tables )
             _tbl := get_a_dbf_rec(a_tables[_i])["table"]
             // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
             my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
         next
+
         my_use_semaphore_off()
 
     else
+        log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
         sql_table_update( nil, "ROLLBACK")
+        _ok := .f.
     endif
 
-
 else
+
     _ok := .f.
     log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
+
 endif
 
 // pozicioniraj se na dbf prije ulaska u funkciju
@@ -110,13 +116,18 @@ return _ok
 // ------------------------------------------
 // status = "lock" (locked_by_me), "free"
 // ------------------------------------------
-function lock_semaphore(table, status)
+function lock_semaphore( table, status, unlock_table )
 local _qry
 local _ret
 local _i
 local _err_msg, _msg
 local _server := pg_server()
 local _user   := f18_user()
+local _get_status
+
+if unlock_table == NIL
+    unlock_table := .t.
+endif
 
 // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
 
@@ -128,7 +139,15 @@ while .t.
 
     _i++
 
-    if (get_semaphore_status(table) == "lock")
+    // daj mi status semafora
+    _get_status := get_semaphore_status( table )
+
+    if !unlock_table .and. _get_status == "lock"
+        // tabela je lokovana i ja bjezim odavdje
+        return .f.
+    endif
+
+    if _get_status == "lock" 
         _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
         log_write( _err_msg, 2 )
         @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
@@ -470,7 +489,7 @@ return
 // update_semaphore_version_after_push( "konto")
 //
 // --------------------------------------------------------------------------------------------
-function update_semaphore_version_after_push(table)
+function update_semaphore_version_after_push(table, to_myself)
 LOCAL _ret
 LOCAL _result
 LOCAL _qry
@@ -482,6 +501,10 @@ LOCAL _ver_user, _last_ver, _id_full
 local _versions
 local _a_dbf_rec
 local _ret_ver
+
+if to_myself == NIL
+   to_myself := .f.
+endif
 
 log_write( "START: update semaphore version after push", 7 )
 
@@ -514,15 +537,13 @@ if ( _result == 0 )
 
     log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
 
-else
-	// setuj moju verziju....
-	_qry := "UPDATE " + _tbl + ;
-			" SET version=" + STR(_ver_user) + " WHERE user_code=" + _sql_quote( _user )
-	_ret := _sql_query( _server, _qry )
 endif
 
-// setuj moju verziju....
-_qry := "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + " WHERE user_code=" + _sql_quote( _user ) + ";"
+if !to_myself
+  // setuj moju verziju ako ne zelim sebe refreshirati
+  _qry := "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + " WHERE user_code=" + _sql_quote( _user ) + ";"
+endif
+
 // svim userima setuj last_trans_version
 _qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR( _ver_user ) + ";"
 // kod svih usera verzija ne moze biti veca od nLast + 1

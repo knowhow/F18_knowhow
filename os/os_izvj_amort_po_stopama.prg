@@ -44,7 +44,9 @@ cExpDbf := "N"
 
 Box(,12,77)
  DO WHILE .t.
-  @ m_x+1,m_y+2 SAY "Radna jedinica (prazno - svi):" get cidrj valid empty(cIdRj) .or. p_rj(@cIdrj)
+  @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+        VALID {|| EMPTY(cIdRj) .or. P_RJ( @cIdrj ), if( !EMPTY(cIdRj), cIdRj := PADR( cIdRj, 4 ), .t. ), .t. }
+ 
   @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
   @ m_x+2,m_y+2 SAY "Grupa amort.stope (prazno - sve):" get qIdAm pict "@!" valid empty(qidAm) .or. P_Amort(@qIdAm)
   @ m_x+4,m_y+2 SAY "Za sredstvo prikazati vrijednost:"
@@ -62,6 +64,8 @@ Box(,12,77)
   if aUsl1<>NIL; exit; endif
  ENDDO
 BoxC()
+
+cIdRj := PADR( cIdRj, 4 )
 
 lExpRpt := (cExpDbf == "D")
 

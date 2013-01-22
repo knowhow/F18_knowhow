@@ -14,26 +14,31 @@
 
 
 function GenMag()
-private Opc:={}
-private opcexe:={}
-AADD(opc,"1. pocetno stanje                                ")
-AADD(opcexe, {|| PocStMag()})
-AADD(Opc,"2. inventure")
-AADD(opcexe, {|| MnuMInv()})
-AADD(Opc,"3. nivelacija po zadatom %")
-AADD(opcexe, {|| MNivPoProc()})
-AADD(Opc,"4. preknjizenje tarifa")
-AADD(opcexe, {|| GetPreknM() })
-AADD(Opc,"5. pocetno stanje na osnovu preknjizenja tarifa")
-AADD(opcexe, {|| GetPstPreknj()})
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-private Izbor:=1
-Menu_SC("mmg")
+AADD( _opc,"1. pocetno stanje SQL                                            ")
+AADD( _opcexe, {|| kalk_mag_pocetno_stanje() })
+AADD( _opc,"1. pocetno stanje - LEGACY")
+AADD( _opcexe, {|| PocStMag()})
+AADD( _opc,"2. inventure")
+AADD( _opcexe, {|| MnuMInv()})
+AADD( _opc,"3. nivelacija po zadatom %")
+AADD( _opcexe, {|| MNivPoProc()})
+AADD( _opc,"4. preknjizenje tarifa")
+AADD( _opcexe, {|| GetPreknM() })
+AADD( _opc,"5. pocetno stanje na osnovu preknjizenja tarifa")
+AADD( _opcexe, {|| GetPstPreknj()})
+
+f18_menu( "mmg", .f., _izbor, _opc, _opcexe )
+
 return
+
+
 
 // menij sa inventurama
 function MnuMInv()
-*{
 private Opc:={}
 private opcexe:={}
 

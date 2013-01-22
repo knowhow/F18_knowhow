@@ -39,7 +39,7 @@ cOpis:="N"
 
 Box(, 12, 77 )
     DO WHILE .t.
-        @ m_x+1,m_y+2 SAY "Radna jedinica:" get cidrj valid p_rj(@cIdrj)
+        @ m_x + 1, m_y + 2 SAY "Radna jedinica:" GET cIdRj VALID {|| P_RJ( @cIdrj ), if ( !EMPTY(cIdRj), cIdRj := PADR( cIdRj, 4), .t. ), .t. }
         @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
         @ m_x+2,m_y+2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
         @ m_x+3,m_y+2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   get cON pict "@!" valid con $ "ONBG"
@@ -70,6 +70,8 @@ Box(, 12, 77 )
 
     ENDDO
 BoxC()
+
+cIdRj := PADR( cIdRj, 4 )
 
 if _export_dn == "D"
 

@@ -76,6 +76,8 @@ my_use_temp( "KATOPS", _imp_table )
 
 // daj mi vrstu dokumenta koju cu importovati
 _id_tip_dok := _get_vd( katops->idvd )
+// setuj varijablu tipa dokumenta
+tip_dok := _id_tip_dok
    
 select pos_doks
 set order to tag "1"
@@ -423,6 +425,8 @@ if !FOUND()
     return
 endif
 
+MsgO( "Eksport dokumenta u toku ..." )
+
 do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
                     field->datum == dat_dok .and. field->brdok == br_dok 
    
@@ -458,6 +462,8 @@ do while !EOF() .and. field->idpos == id_pos .and. field->idvd == id_vd .and. ;
     skip
 
 enddo
+
+MsgC()
 
 if _r_br == 0
     MsgBeep( "Ne postoji niti jedna stavka u eksport tabeli !" )

@@ -521,7 +521,7 @@ seek id_firma + id_tipdok + br_dok
     
 _din_dem := field->dindem
 
-do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tipdok .and. field->brdok == br_dok
+do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tipdok .and. field->brdok == br_dok
         
     if _din_dem == LEFT( ValBazna(), 3 )
         
@@ -534,12 +534,10 @@ do while !eof() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip
     else
         
         _cij_sa_por := ROUND( field->kolicina * field->cijena * ;
-                        PrerCij() / UBaznuValutu(field->datdok) * ;
-                        ( 1 - field->Rabat / 100), ZAOKRUZENJE ) 
+                        PrerCij() * ( 1 - field->Rabat / 100), ZAOKRUZENJE ) 
         
         _rabat := ROUND( field->kolicina * field->cijena * ;
-                        PrerCij() / UBaznuValutu( field->datdok ) * ;
-                        field->rabat / 100 , ZAOKRUZENJE )
+                        PrerCij() * field->rabat / 100 , ZAOKRUZENJE )
         
         _dod_por := ROUND( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
         

@@ -95,8 +95,7 @@ do while .t.
             append blank
         endif
        
-         _rec := hb_hash()
-        _rec := get_dbf_global_memvars()
+        _rec := get_dbf_global_memvars( NIL, .f. )
         
         dbf_update_rec( _rec )
             
@@ -147,13 +146,13 @@ do while !EOF() .and. field->doc_no == nDoc_no ;
     
     skip -1
     
-    Scatter()
+    _rec := dbf_get_rec()
     
     append blank
     
-    _doc_it_no := nDoc_it_no
+    _rec["doc_it_no"] := nDoc_it_no
     
-    Gather()
+    dbf_update_rec( _rec )
     
     ++ nCnt
     
@@ -189,7 +188,7 @@ if l_new_ops
 
     _doc_no := _doc
     _doc_op_no := inc_docop( _doc )
-    _doc_it_el_no := 0
+    _doc_it_el_ := 0
     _aop_id := 0
     _aop_att_id := 0
     _doc_op_des := PADR("", LEN( field->doc_op_des ))
@@ -209,41 +208,64 @@ endif
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("r.br operacije (*):", nLeft) GET _doc_op_no WHEN {|| set_opc_box( nBoxX, 50 ), _doc_op_no == 0 }
+@ m_x + nX, m_y + 2 SAY PADL("r.br operacije (*):", nLeft) GET _doc_op_no ;
+    WHEN {|| set_opc_box( nBoxX, 50 ), _doc_op_no == 0 }
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("odnosi se na stavku (*):", nLeft) GET _doc_it_no VALID {|| _item_range( _doc_it_no ) .and. show_it( g_item_desc( _doc_it_no ), 26 )} WHEN {|| set_opc_box( nBoxX, 50, "ova operacija ce se odnositi", "eksplicitno na unesenu stavku"), _from_article == .f. }
+@ m_x + nX, m_y + 2 SAY PADL("odnosi se na stavku (*):", nLeft) GET _doc_it_no ;
+    VALID {|| _item_range( _doc_it_no ) .and. ;
+            show_it( g_item_desc( _doc_it_no ), 26 )} ;
+    WHEN {|| set_opc_box( nBoxX, 50, "ova operacija ce se odnositi", "eksplicitno na unesenu stavku"), ;
+        _from_article == .f. }
     
 nX += 1
     
-@ m_x + nX, m_y + 2 SAY PADL(" -> element stavke (*):", nLeft) GET _doc_it_el_ VALID {|| get_it_element( @_doc_it_el_, @nElement ), show_it( get_elem_desc( _a_elem, _doc_it_el_ ), 26 ) } WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no) ), set_opc_box( nBoxX, 50, "odnosi se na odredjeni element stavke", "") }
+@ m_x + nX, m_y + 2 SAY PADL(" -> element stavke (*):", nLeft) GET _doc_it_el_ ;
+    VALID {|| get_it_element( @_doc_it_el_, @nElement ), ;
+        show_it( get_elem_desc( _a_elem, _doc_it_el_ ), 26 ) } ;
+    WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no ) ), ;
+        set_opc_box( nBoxX, 50, "odnosi se na odredjeni element stavke", "" ) }
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("dodatna operacija (*):", nLeft) GET cAop VALID {|| s_aops( @cAop, cAop ), set_var(@_aop_id, @cAop) , show_it( g_aop_desc( _aop_id ), 20), rule_aop(g_aop_joker(_aop_id), _a_arr ) } WHEN set_opc_box( nBoxX, 50, "odaberi dodatnu operaciju", "0 - otvori sifrarnik")
+@ m_x + nX, m_y + 2 SAY PADL("dodatna operacija (*):", nLeft) GET cAop ;
+    VALID {|| s_aops( @cAop, cAop ), ;
+        set_var( @_aop_id, @cAop ) , ;
+        show_it( g_aop_desc( _aop_id ), 20 ), ;
+        rule_aop(g_aop_joker(_aop_id), _a_arr ) } ;
+    WHEN set_opc_box( nBoxX, 50, "odaberi dodatnu operaciju", "0 - otvori sifrarnik" )
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("atribut dod. operacije:", nLeft) GET cAopAtt VALID {|| s_aops_att(@cAopAtt, _aop_id, cAopAtt ), set_var(@_aop_att_id, @cAopAtt), show_it(g_aop_att_desc( _aop_att_id ), 20), rule_aop( g_aatt_joker(_aop_att_id), _a_arr ) } WHEN set_opc_box( nBoxX, 50, "odaberi atribut dodatne operacije", "99 - otvori sifrarnik")
+@ m_x + nX, m_y + 2 SAY PADL("atribut dod. operacije:", nLeft) GET cAopAtt ;
+    VALID {|| s_aops_att( @cAopAtt, _aop_id, cAopAtt ), ;
+        set_var( @_aop_att_id, @cAopAtt ), ;
+        show_it( g_aop_att_desc( _aop_att_id ), 20 ), ;
+        rule_aop( g_aatt_joker( _aop_att_id ), _a_arr ) } ;
+    WHEN set_opc_box( nBoxX, 50, "odaberi atribut dodatne operacije", "99 - otvori sifrarnik")
 
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL( "vrijednost:", nLeft ) GET _aop_value ;
-    VALID {|| _g_dim_it_no(_doc_it_no, nElement, @nH, @nW, @nTick) .and. is_g_config( @_aop_value, _aop_att_id, nH, nW, nTick )} ;
+    VALID {|| _g_dim_it_no( _doc_it_no, nElement, @nH, @nW, @nTick ) .and. ;
+        is_g_config( @_aop_value, _aop_att_id, nH, nW, nTick ) } ;
     PICT "@S40" ;
     WHEN set_opc_box( nBoxX, 50, "vrijednost operacije ako postoji", "kod brusenja, poliranja..." )
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("dodatni opis:", nLeft) GET _doc_op_des PICT "@S40" WHEN set_opc_box( nBoxX, 50, "dodatni opis vezan uz navedene", "operacije" )
-
+@ m_x + nX, m_y + 2 SAY PADL("dodatni opis:", nLeft) GET _doc_op_des ;
+    PICT "@S40" ;
+    WHEN set_opc_box( nBoxX, 50, "dodatni opis vezan uz navedene", "operacije" )
 
 read
 
 ESC_RETURN 0
 
 return 1
+
+
 
 // --------------------------------------------
 // vraca opis iz matrice - opis elementa
@@ -266,6 +288,8 @@ xRet := PADR(xRet, nLen)
 
 return xRet
 
+
+
 // --------------------------------------------------
 // vraca arr sa elementima artikla...
 // --------------------------------------------------
@@ -286,11 +310,14 @@ m_y := nYY
 
 return .t.
 
+
+
 // ------------------------------------------------
 // vraca element iz matrice
 // ------------------------------------------------
 static function _get_a_element( aElem, nEl_no )
 local nTmp 
+local nElement := 0
 
 nTmp := ASCAN( aElem, { |xVal| xVal[1] = nEl_no })
 
@@ -299,6 +326,8 @@ if nTmp <> 0
 endif
 
 return nElement
+
+
 
 
 // -----------------------------------------
@@ -328,13 +357,15 @@ Menu_sc("izbor")
 
 if LastKey() == K_ESC
     nChoice := 0
-    nRet := 0
-    
+    nRet := 0    
 else
     nRet := aElem[ nChoice, 1 ]
 endif
 
 return nRet
+
+
+
 
 // ---------------------------------------------
 // da li je stavka u rangu stavki tabele

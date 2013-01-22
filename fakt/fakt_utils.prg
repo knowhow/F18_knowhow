@@ -11,6 +11,12 @@
 
 #include "fakt.ch"
 
+
+// -----------------------------------------------------------------------------
+// sljedece funkcije su bezveze, jer gledaju po kompletnom iznosu racuna
+// ako imamo miksani rezim ili slicno... to nece raditi
+// -----------------------------------------------------------------------------
+
 // ------------------------------------------------------
 // vraca ukupno sa pdv
 // ------------------------------------------------------
@@ -29,6 +35,47 @@ else
 endif
 
 select (nTArea)
+return nRet
+
+
+
+// ------------------------------------------------------
+// vraca osnovicu dokumenta
+// ------------------------------------------------------
+function _osnovica( cIdTipDok, cPartner, nIznos )
+local nRet := 0
+local nTArea := SELECT()
+
+if cIdTipDok $ "11#13#23"
+    nRet := ( nIznos / 1.17 )
+else
+    nRet := nIznos
+endif
+
+select (nTArea)
+return nRet
+
+
+
+// -----------------------------------------------------
+// vraca pdv dokumenta
+// -----------------------------------------------------
+function _pdv( cIdTipDok, cPartner, nIznos )
+local nRet := 0
+local nTArea := SELECT()
+
+if cIdTipDok $ "11#13#23"
+    nRet := ( nIznos / 1.17 ) * 0.17
+else
+    if !IsIno( cPartner ) .and. !IsOslClan( cPartner )
+        nRet := ( nIznos * 0.17 )
+    else
+        nRet := 0
+    endif
+endif
+
+select (nTArea)
+
 return nRet
 
 

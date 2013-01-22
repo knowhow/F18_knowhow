@@ -142,6 +142,7 @@ return
 
 *void showMainScreen(bool lClear)
 method showMainScreen(lClear)
+local _ver_pos := 3
 
 if lClear==NIL
 	lClear:=.f.
@@ -151,30 +152,63 @@ if lClear
 	clear
 endif
 
-@ 0,2 SAY '<ESC> Izlaz' COLOR INVERT
-@ 0,COL()+2 SAY DATE()  COLOR INVERT
+@ 0, 2 SAY '<ESC> Izlaz' COLOR INVERT
+@ 0, COL() + 2 SAY DATE()  COLOR INVERT
 
-f18_ispisi_status_log_levela()
-f18_ispisi_status_semafora()
-@ MAXROWS()-1, MAXCOLS() - 16  SAY fmklibver()
+@ MAXROWS() - 1, MAXCOLS() - 16  SAY fmklibver()
 
-DispBox(2, 0, 4, MAXCOLS()-1, B_DOUBLE+' ',NORMAL)
+DispBox( 2, 0, 4, MAXCOLS()-1, B_DOUBLE+' ',NORMAL)
 
 if lClear
-	DispBox(5,0,MAXROWS()-1, MAXCOLS()-1, B_DOUBLE+"±", INVERT)
+	DispBox( 5, 0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE+"±", INVERT)
 endif
 
-@ 3,1 SAY PADC(gNaslov+' Ver.'+ gVerzija, MAXCOLS()-8) COLOR NORMAL
+@ _ver_pos, 1 SAY PADC( gNaslov + ' Ver.' + gVerzija, MAXCOLS() - 8 ) COLOR NORMAL
+
+// dodatni ispisi na glavnoj formi
+// LOG level
+f18_ispisi_status_log_levela()
+// statu semafora
+f18_ispisi_status_semafora()
+// podrucje
+f18_ispisi_status_podrucja( _ver_pos )
 
 return
 
 
+// --------------------------------------------------------------
+// --------------------------------------------------------------
 function f18_ispisi_status_log_levela()
 @ MAXROWS()-1, 1 SAY "log level: " + ALLTRIM( STR( log_level() ) )
 return
 
 
+// --------------------------------------------------------------
+// ispisuje status podrucja
+// --------------------------------------------------------------
+function f18_ispisi_status_podrucja( position )
+local _database := my_server_params()["database"]
+local _color := "GR+/B" 
+local _txt := ""
+local _c_tek_year := ALLTRIM( STR( YEAR( DATE() ) ) )
+local _show := .f.
 
+if !( _c_tek_year $ _database )
+    _show := .t.
+    _txt := "! SEZONSKO PODRUCJE: " + RIGHT( ALLTRIM( _database ), 4 ) + " !!!"
+    _color := "W/R+"
+endif
+
+if _show
+    @ position, MAXCOLS() - 35 SAY PADC( _txt, 30 ) COLOR _color
+endif
+
+return
+
+
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
 function f18_ispisi_status_semafora( status )
 local _status := get_my_use_semaphore_status( status )
 local _color := "GR+/B" 

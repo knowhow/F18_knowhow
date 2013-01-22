@@ -586,7 +586,7 @@ return
 // RLD, funkcija koju zadajemo 
 // kao formulu pri prenosu...
 // --------------------------------------------
-function RLD( cId, nIz12, qqPartn )
+function RLD( cId, nIz12, qqPartn, br_dok )
 local nPom1 := 0
 local nPom2 := 0
 
@@ -597,7 +597,7 @@ endif
 // prolazim kroz rekld i trazim npr DOPR1XSA01
 rekapld( cId, _godina, _mjesec, @nPom1, @nPom2, , @broj_radnika, qqPartn )
 
-if nIz12 == 1
+if VALTYPE(nIz12) == "N" .and. nIz12 == 1
     return nPom1
 else
     return nPom2

@@ -616,7 +616,7 @@ for _i := 1 to _dev_max
     if ( _dev_id <> 0 ) ;
         .and. ( fetch_metric( "fiscal_device_" + _dev_tmp + "_active", NIL, "N" ) == "D" ) ;
         .and. IF( !EMPTY( _usr_dev_list ), ALLTRIM(STR( _dev_id ) ) + "," $ _usr_dev_list + ",", .t. ) ;
-        .and. IF( !EMPTY( _dev_docs_list), tip_dok $ _dev_docs_list, .t. )
+        .and. IF( !EMPTY( _dev_docs_list ) .and. !EMPTY( ALLTRIM( tip_dok ) ), tip_dok $ _dev_docs_list, .t. )
 
         // ubaci u matricu: dev_id, dev_name
         AADD( _arr, { _dev_id, fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ) } )

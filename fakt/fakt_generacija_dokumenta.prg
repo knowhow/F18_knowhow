@@ -12,6 +12,10 @@
 
 #include "fakt.ch"
 
+// staticke varijable
+static __generisati := .f.
+
+
 
 function GDokInv(cIdRj)
 local cIdRoba
@@ -290,6 +294,9 @@ local _id_partner
 local _suma := 0
 local _veza_otpr := ""
 local _datum_max := DATE()
+local _ok
+local _lock_user := ""
+local _lock_param := "fakt_otpremnice_lock_user"
 
 select fakt_pripr
 use
@@ -304,6 +311,19 @@ if RecCount2() <> 0
     return .t.
 endif
 
+// mogu li koristiti opciju ?
+// radi problema u mrežnom radu... #29996 problem
+_lock_user := ALLTRIM( fetch_metric( _lock_param, NIL, "" ) )
+
+if !EMPTY( _lock_user )
+    MsgBeep( "Opciju pretvaranja koristi (" + _lock_user + "), pokusajte ponovo !!!" )
+    select fakt_pripr
+    return .t.
+endif
+
+// setuj parametar da se opcija koristi
+set_metric( _lock_param, NIL, f18_user() )
+
 select fakt_doks
 set order to tag "2"  
 // idfirma+idtipdok+partner
@@ -314,7 +334,7 @@ AADD( ImeKol, { "TD",     {|| idtipdok }   })
 AADD( ImeKol, { "Broj",   {|| brdok }  })
 AADD( ImeKol, { "Datdok",  {|| datdok  }  })
 AADD( ImeKol, { "Partner", {|| LEFT( partner, 20 )}  })
-AADD( ImeKol, { "Iznos",  {|| STR( iznos, 11, 2 )}  })
+AADD( ImeKol, { "Iznos",   {|| STR( iznos, 11, 2 )}  })
 AADD( ImeKol, { "Marker",  {|| m1 }  })
    
 Kol:={}
@@ -340,38 +360,86 @@ Box(, 20, 75 )
 
     seek _firma + _otpr_tip
 
-    f18_lock_tables({LOWER(ALIAS())})
-    sql_table_update( nil, "BEGIN" )
+    if !f18_lock_tables( {"fakt_doks"}, .f. )
 
+        // ukini lock opcije
+        set_metric( _lock_param, NIL, "" )
+        
+        close all
+        o_fakt_edit()
+        select fakt_pripr
+        BoxC()
+
+        MsgBeep( "Neuspjesno lokovanje tabele !!!" )
+
+        return .t.
+
+    endif
+
+    sql_table_update( nil, "BEGIN" )
+    
     do while !EOF() .and. field->idfirma + field->idtipdok = _firma + _otpr_tip
         if field->m1 <> "Z"
+
             _rec := dbf_get_rec()
             _rec["m1"] := " "
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+            if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+                
+                f18_free_tables( { "fakt_doks" } )
+                sql_table_update( nil, "ROLLBACK" )
+                
+                set_metric( _lock_param, NIL, "" )
+
+                close all
+                o_fakt_edit()
+                select fakt_pripr
+
+                BoxC()    
+
+                MsgBeep( "Ne mogu setovati markere za otpremnice !!!" )
+
+                return .t.
+
+            endif
+
         endif
         skip
+
     enddo
 
-    f18_free_tables({LOWER(ALIAS())})
+    f18_free_tables({ "fakt_doks" })
     sql_table_update( nil, "END" )
 
     seek _firma + _otpr_tip
 
     BrowseKey( m_x + 5, m_y + 1, m_x + 19, m_y+ 73, ImeKol, ;
-                {|Ch| EdOtpr(Ch, @_suma)}, "idfirma+idtipdok = _firma + _otpr_tip",;
+                {|ch| EdOtpr( ch, @_suma) }, "idfirma+idtipdok = _firma + _otpr_tip",;
                 _firma + _otpr_tip, 2, , , {|| partner = _partn_naz } )
+
 BoxC()
 
-if Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
+if __generisati .and. Pitanje(, "Formirati fakturu na osnovu gornjih otpremnica ?", "N" ) == "D"
      
-    _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
-    
-    select fakt_pripr
-    renumeracija_fakt_pripr( _veza_otpr, _datum_max )
+    _ok := _formiraj_racun( _firma, _otpr_tip, _partn_naz, @_veza_otpr, @_datum_max )
+ 
+    // ovdje vec smijem ukinuti lock opciju... racun je formiran i nalazi se u priremi
+    set_metric( _lock_param, NIL, "" )
+   
+    if _ok
+        // ovdje ce se setovati jos i parametri dokumenta...
+        // datum otpremnice, datum valute... destinacija itd...
+        select fakt_pripr
+        renumeracija_fakt_pripr( _veza_otpr, _datum_max )
+    endif
 
     select fakt_doks
     set order to tag "1"
 
+else
+    // ukini lock opcije
+    // korisnik je odabrao da nece koristi opcije pretvaranja
+    set_metric( _lock_param, NIL, "" )
 endif 
 
 close all
@@ -379,6 +447,8 @@ o_fakt_edit()
 select fakt_pripr
 
 return .t.
+
+
 
 
 // -----------------------------------------------------------
@@ -455,26 +525,55 @@ local cDn := "N"
 local nRet := DE_CONT
 
 do case
+
     case Ch==ASC(" ") .or. Ch==K_ENTER
 
-        f18_lock_tables({LOWER(ALIAS())})
+        if !f18_lock_tables( { "fakt_doks" }, .f. )
+            MsgBeep( "Ne mogu postaviti lock, neko drugi koristi opciju..." )
+            return DE_CONT
+        endif
+
         sql_table_update( nil, "BEGIN" )
 
         Beep(1)
+
         _rec := dbf_get_rec()
+
         if field->m1 = " "    
-            // iz DOKS
+
+            __generisati := .t.
+            
             _rec["m1"] := "*"
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+            
+            if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+                f18_free_tables( { "fakt_doks" } )
+                sql_table_update( nil, "ROLLBACK" )
+                MsgBeep( "Nisam uspio setovati marker, neko vec koristi opciju..." )
+                return DE_CONT
+            endif
+
             suma += field->iznos
+
         else
+
             _rec["m1"] := " "
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+            if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+                f18_free_tables( { "fakt_doks" } )
+                sql_table_update( nil, "ROLLBACK" )
+                MsgBeep( "Nisam uspio setovati marker, neko vec koristi opciju..." )
+                return DE_CONT
+            endif
+
             suma -= field->iznos
+
         endif
+
         @ m_x+1, m_Y + 55 SAY suma pict picdem
+
         nRet := DE_REFRESH
-        f18_free_tables({LOWER(ALIAS())})
+
+        f18_free_tables( { "fakt_doks" } )
         sql_table_update( nil, "END" )
 
 endcase
@@ -483,40 +582,65 @@ return nRet
 
 
 
-// ---------------------------------------------------------
-// vrati tip racuna koji zelis formirati
-// ---------------------------------------------------------
-static function _formiraj_tip_racuna()
-local _vp_mp := 1
-    
-Box(, 5, 50 )
-    @ m_x + 1, m_y + 2 SAY "Formirati:"
-    @ m_x + 3, m_y + 2 SAY " (1) racun veleprodaje"
-    @ m_x + 4, m_y + 2 SAY " (2) racun maloprodaje"
-    @ m_x + 5, m_y + 2 SAY "                     ===>" GET _vp_mp PICT "9" VALID _vp_mp > 0 .AND. _vp_mp < 3
+// ------------------------------------------------------
+// generacija podataka, forma parametara
+// ------------------------------------------------------
+static function gen_vars( params )
+local _ok := .t.
+local _sumiraj := "N"
+local _tip_rn := 1
+
+params := hb_hash()
+
+Box(, 6, 65 )
+
+    @ m_x + 1, m_y + 2 SAY "Sumirati stavke otpremnica (D/N) ?" GET _sumiraj ;
+                    VALID _sumiraj $ "DN" ;
+                    PICT "@!"
+
+    @ m_x + 3, m_y + 2 SAY "Formirati tip racuna: 1 (veleprodaja)" 
+    @ m_x + 4, m_y + 2 SAY "                      2 (veleprodaja)" GET _tip_rn ;
+                    VALID ( _tip_rn > 0 .and. _tip_rn < 3 ) ;
+                    PICT "9"
+
     read
+
 BoxC()
-    
-return _vp_mp
+
+if LastKey() == K_ESC
+    _ok := .f.
+    return _ok
+endif
+
+// snimi mi u matricu parametre
+params["tip_racuna"] := _tip_rn
+params["sumiraj"] := _sumiraj
+
+return _ok
 
 
 // --------------------------------------------------------------
 // formiranje racuna
 // --------------------------------------------------------------
 static function _formiraj_racun( firma, otpr_tip, partn_naz, veza_otpr, datum_max )
-local _sumirati
-local _vp_mp
+local _sumirati := .f.
+local _vp_mp := 1
 local _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
 local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
+local _ok := .t.
+local _gen_params  
 
-_broj_dokumenta := fakt_brdok_0(firma, "10", DATE())
+_broj_dokumenta := fakt_prazan_broj_dokumenta()
 
-// sumirati stavke ?
-_sumirati := Pitanje( , "Sumirati stavke fakture (D/N)", "D") == "D"
-
-// koju vrsta racuna da napravim ? 
-_vp_mp := _formiraj_tip_racuna()
+// parametri generisanja...
+if !gen_vars( @_gen_params )
+    return .f.
+endif
+         
+// uzmi parametre matrice...
+_sumirati := _gen_params["sumiraj"] == "D"
+_vp_mp := _gen_params["tip_racuna"]
 
 if _vp_mp == 1
     _n_tip_dok := "10"
@@ -531,7 +655,11 @@ seek firma + otpr_tip + partn_naz
       
 _dat_max := CTOD("")
 
-f18_lock_tables({"fakt_doks", "fakt_fakt"})
+if !f18_lock_tables( {"fakt_doks", "fakt_fakt" }, .f. )
+    MsgBeep("Neuspjesno lokovanje tabela !!!!")
+    return .f.
+endif
+
 sql_table_update( nil, "BEGIN" )
       
 do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip .and. fakt_doks->partner = partn_naz
@@ -554,32 +682,74 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip .and. 
         // promijeni naslov
         // skini zvjezdicu iz browsa
         _rec := dbf_get_rec()
+
+        // postojeci podaci dokumenta
+        __post_tip_dok := _rec["idtipdok"]
+        __post_id_firma := _rec["idfirma"]
+        __post_broj := _rec["brdok"]  
+        __novi_broj := __post_broj
+
+        // mjenjamo ih u realizovanu otpremnicu
         _rec["idtipdok"] := "22"
         _rec["m1"] := " "
-        
+
+        // novi tip dokumenta
+        __novi_tip_dok := _rec["idtipdok"]
+
         __t_rec := RECNO()
 
-        // vidi za broj dokumenta da li je ok ?
-        //if fakt_doks_exist( _rec["idfirma"], _rec["idtipdok"], _rec["brdok"] )
-          //  _rec["brdok"] := fakt_novi_broj_dokumenta( _rec["idfirma"], _rec["idtipdok"], "" )
-          //  select fakt_doks
-          //  set order to tag "2"  
-          //  go ( __t_rec )
-        //endif
+        _postoji := .t.
 
-        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+        do while _postoji
+            // vidi za broj dokumenta da li je ok ?
+            if fakt_doks_exist( __post_id_firma, __novi_tip_dok, __novi_broj )
+                __novi_broj := fakt_novi_broj_dokumenta( __post_id_firma, __novi_tip_dok, "" )
+            else
+                _postoji := .f.
+                exit
+            endif
+        enddo
 
+        _rec["brdok"] := __novi_broj
+
+        select fakt_doks
+        set order to tag "2"  
+        go ( __t_rec )
+
+        if !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+            f18_free_tables({"fakt_doks", "fakt_fakt"})
+            sql_table_update( nil, "ROLLBACK" )
+            MsgBeep( "Nisam uspio zavrsiti promjenu na tabeli fakt_doks !!!" )
+            return .f. 
+        endif
+        
+        // ovo je novi broj dokumenta
         dxIdFirma := fakt_doks->idfirma    
         dxBrDok   := fakt_doks->brdok
             
         select fakt_doks 
         set order to tag "1"
-               
+ 
+        _params := hb_hash()
+        _params["old_firma"] := dxIdFirma
+        _params["old_tipdok"] := "12"
+        _params["old_brdok"] := __post_broj
+        _params["new_firma"] := dxIdFirma
+        _params["new_tipdok"] := "22"
+        _params["new_brdok"] := __novi_broj
+
+        if !update_fakt_atributi_from_server( _params )
+            f18_free_tables({"fakt_doks", "fakt_fakt"})
+            sql_table_update( nil, "ROLLBACK" )
+            MsgBeep( "Nisam uspio napraviti promjene na tabeli fakt_fakt_atributi !!!" )
+            return .f. 
+        endif
+
         select fakt
-        seek dxIdFirma + "12" + dxBrDok
+        seek dxIdFirma + "12" + __post_broj
             
-        do while !EOF() .and. (dxIdFirma + otpr_tip + dxBrDok) == ;
-                (idfirma+idtipdok+brdok)
+        do while !EOF() .and. ( dxIdFirma + "12" + __post_broj ) == ;
+                ( field->idfirma + field->idtipdok + field->brdok )
                
             skip
             _t_fakt_rec := recno()
@@ -589,7 +759,12 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip .and. 
             _fakt_rec["idtipdok"] := "22"
             _fakt_rec["brdok"] := dxBrDok
 
-            update_rec_server_and_dbf( "fakt_fakt", _fakt_rec, 1, "CONT" )
+            if !update_rec_server_and_dbf( "fakt_fakt", _fakt_rec, 1, "CONT" )
+                f18_free_tables({"fakt_doks", "fakt_fakt"})
+                sql_table_update( nil, "ROLLBACK" )
+                MsgBeep( "Nisam uspio zavrsiti promjenu na tabeli fakt_fakt !!!" )
+                return .f.
+            endif
 
             _fakt_rec := dbf_get_rec()
             _fakt_rec["brdok"] := _broj_dokumenta
@@ -606,12 +781,9 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip .and. 
             locate for idroba == fakt->idroba
 
             if FOUND() .and. _sumirati == .t. .and. ROUND( fakt_pripr->cijena, 2 ) = ROUND( fakt->cijena, 2 )
-
                 _fakt_rec["kolicina"] := fakt_pripr->kolicina + fakt->kolicina
-
             else
-                // append blank
-                appblank2( .t., .f. )
+                append blank
             endif
                
             dbf_update_rec( _fakt_rec )
@@ -621,6 +793,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip .and. 
             go ( _t_fakt_rec )
             
         enddo
+
     endif
         
     select fakt_doks
@@ -632,7 +805,10 @@ enddo
     
 f18_free_tables({"fakt_doks", "fakt_fakt"})
 sql_table_update( nil, "END" )
- 
+
+// obradi i atribute...
+//fakt_atributi_server_to_dbf( _params["new_firma"], _params["new_tipdok"], _params["new_brdok"] )
+
 if !EMPTY( _veza_otpremnice )
 
     _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + ;
@@ -643,7 +819,7 @@ if !EMPTY( _veza_otpremnice )
 
 endif
     
-return
+return _ok
 
 
 

@@ -18,6 +18,10 @@ static __device_id := 0
 static __device_params
 static __auto := .f.
 static __racun_na_email := NIL
+static __partn_ino
+static __partn_pdv
+static __vrsta_pl
+static __prikazi_partnera
 static __DRV_TREMOL := "TREMOL"
 static __DRV_FPRINT := "FPRINT"
 static __DRV_FLINK := "FLINK"
@@ -226,6 +230,11 @@ if partn_arr <> NIL
     _v_plac := partn_arr[ 1, 6 ]
     _partn_ino := partn_arr[ 1, 7 ]
     _partn_pdv := partn_arr[ 1, 8 ]
+else
+    // uzmi na osnovu statickih varijabli
+    _v_plac := __vrsta_pl
+    _partn_ino := __partn_ino
+    _partn_pdv := __partn_pdv
 endif
 
 if storno == NIL
@@ -522,6 +531,12 @@ elseif LEN( _partn_jib ) > 12
 
 endif
 
+// setuj staticke
+__vrsta_pl := _v_plac
+__partn_ino := _partn_ino
+__partn_pdv := _partn_pdv
+__prikazi_partnera := _prikazi_partnera
+
 // ako ga ne treba prikazivti 
 // nista nemoj vracati...
 if !_prikazi_partnera
@@ -625,13 +640,7 @@ if !EMPTY( param_racun_na_email() ) .and. tip_dok $ "#11#"
         
     // posalji email...
     // ako se radi o racunu tipa "11"
-
-    _partn_naz := ""
-
-    if head <> NIL
-        _partn_naz := head[ 1, 2 ]
-    endif
-
+    _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
     _snd_eml( _fiscal_no, tip_dok + "-" + ALLTRIM( br_dok ), _partn_naz, nil, _total )
     
 endif
@@ -647,6 +656,29 @@ endif
 return _err_level
 
 
+// -----------------------------------------------------------------------
+// vrati partnera za email
+// -----------------------------------------------------------------------
+static function _get_partner_for_email( id_firma, tip_dok, br_dok )
+local _ret := ""
+local _t_area := SELECT()
+local _partn
+
+select fakt_doks
+go top
+seek id_firma + tip_dok + br_dok
+
+_partn := field->idpartner
+
+select partn
+hseek _partn
+
+if FOUND()
+    _ret := ALLTRIM( field->naz )
+endif
+
+select ( _t_area )
+return _ret
 
 
 

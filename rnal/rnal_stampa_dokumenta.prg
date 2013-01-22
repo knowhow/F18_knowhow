@@ -73,6 +73,10 @@ local ii
 local cDocs := ""
 local cFlag := "N"
 
+if gGnUse == "N"
+    lGn := .f.
+endif
+
 if aOlDocs == nil .or. LEN( aOlDocs ) == 0
     // dodaj onda ovaj nalog koji treba da se stampa
     aOlDocs := {}
@@ -240,7 +244,7 @@ o_tables( __temp )
 // osnovni podaci naloga
 _fill_main()
 // stavke naloga
-_fill_items( lGn )
+_fill_items( lGn, 2 )
 // operacije
 _fill_aops()
 
@@ -289,15 +293,21 @@ local cIt_lab_pos
 local xx
 local nScan
 
-if nVar == nil
+if nVar == NIL
     nVar := 1
 endif
 
-if lZpoGN == nil
+if lZpoGN == NIL
     lZPoGN := .f.
 endif
 
-if !lZpoGN .and. Pitanje(,"Razdijeliti nalog po grupama ?", "D" ) == "D"
+// iskljucen parametar zaokruzenja
+if gGnUse == "N"
+    lZPoGn := .f.
+endif
+
+// samo kod naloga se vrsi dijeljenje po grupama...
+if nVar == 1 .and. Pitanje(,"Razdijeliti nalog po grupama ?", "D" ) == "D"
     lGroups := .t.
 endif
 
@@ -464,14 +474,13 @@ do while !EOF() .and. field->doc_no == __doc_no
     cDoc_it_schema := field->doc_it_sch
     // na napomene dodaj i poziciju ako postoji...
     cDoc_it_desc := cPosition + ALLTRIM( field->doc_it_des )
+         
+    aZpoGN := {}
+    // setuje se matrica sa elementima artikla
+    _art_set_descr( nArt_id, .f., nil, @aZpoGN, .t. )
     
     if lZpoGN == .t.
 
-        aZpoGN := {}
-        
-        // zaokruzi vrijednosti....
-        _art_set_descr( nArt_id, nil, nil, @aZpoGN, lZpoGN )
-    
         lBezZaokr := .f.
 
         if lBezZaokr == .f.
@@ -502,16 +511,13 @@ do while !EOF() .and. field->doc_no == __doc_no
         
         // ako se zaokruzuje onda total ide po zaokr.vrijednostima
         nTotal := ROUND( c_ukvadrat( nQtty, nZHeigh, nZWidth, nZH2, nZW2 ), 2)
-        
-        // ovo ne treba da uzima po GN zaokruzenju
-        // duzinski
-        //nTot_m := ROUND( c_duzinski( nQtty, nZHeigh, nZWidth, nZH2, nZW2 ), 2)
-        // izracunaj neto
-        nNeto := ROUND( obrl_neto( nTotal, aZpoGN ), 2)
-        
-        nBruto := 0
-        
+           
     endif
+         
+        
+    // izracunaj neto
+    nNeto := ROUND( obrl_neto( nTotal, aZpoGN ), 2)
+    nBruto := 0
     
     // prva grupa
     nGr1 := VAL( SUBSTR(cDoc_gr_no, 1, 1) )
@@ -1429,7 +1435,7 @@ replace field->doc_it_zw2 with ;
     obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr )
         
 // ako se zaokruzuje onda total ide po zaokr.vrijednostima
-replace field->doc_it_total with ROUND( c_ukvadrat( field->doc_it_qtt, ;
+replace field->doc_it_tot with ROUND( c_ukvadrat( field->doc_it_qtt, ;
     field->doc_it_zhe, ;
     field->doc_it_zwi, ;
     field->doc_it_zh2, ;

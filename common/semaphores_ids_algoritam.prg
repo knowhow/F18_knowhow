@@ -79,7 +79,7 @@ return .t.
 //-------------------------------------------------
 // stavi id-ove za dbf tabelu na server
 //-------------------------------------------------
-function push_ids_to_semaphore( table, ids )
+function push_ids_to_semaphore( table, ids, to_myself )
 local _tbl
 local _result
 local _user := f18_user()
@@ -94,13 +94,18 @@ if LEN(ids) < 1
    return .f.
 endif
 
+// stavi semafor i samom sebi
+if to_myself == NIL
+   to_myself := .f.
+endif
+
 log_write( "START push_ids_to_semaphore", 9 )
 log_write( "push ids: " + table + " / " + pp(ids), 5 )
 
 _tbl := "fmk.semaphores_" + LOWER(table)
 
 // treba dodati id za sve DRUGE korisnike
-_result := table_count(_tbl, "user_code <> " + _sql_quote(_user)) 
+_result := table_count(_tbl, IIF(to_myself, NIL, "user_code <> " + _sql_quote(_user))) 
 
 if _result < 1
     // jedan korisnik
@@ -126,12 +131,22 @@ for _i := 1 TO LEN(ids)
         _set_2 := " AND ((ids IS NULL) OR NOT ( (" + _sql_ids + " <@ ids) OR ids = ARRAY['#F'] ) )"
     endif
 
-    _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE user_code <> " + _sql_quote(_user) + _set_2 + ";"
+    _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE " 
+    if !to_myself
+      _qry += "user_code <> " + _sql_quote(_user) 
+    else
+      _qry += "true"
+    endif
+    _qry +=  _set_2 + ";"
 
 next
 
 // ako id sadrzi vise od 1000 stavki, korisnik je dugo neaktivan, pokreni full sync
-_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE user_code <> " + _sql_quote(_user) + " AND ids IS NOT NULL AND array_length(ids,1) > 1000"
+_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE "
+if !to_myself
+ _qry += "user_code <> " + _sql_quote(_user) + " AND "
+endif
+_qry += "ids IS NOT NULL AND array_length(ids,1) > 1000"
 _ret := _sql_query( _server, _qry )
 
 // ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova
@@ -139,7 +154,7 @@ _ret := _sql_query( _server, _qry )
 log_write( "END push_ids_to_semaphore", 9 )
 
 // na kraju uradi update verzije semafora, push operacija
-update_semaphore_version_after_push(table)
+update_semaphore_version_after_push(table, to_myself)
 
 if VALTYPE(_ret) == "O"
     return .t.

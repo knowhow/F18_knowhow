@@ -90,6 +90,11 @@ local nTickness
 local nSeek
 local xNeto
 
+// nema elemenata na artiklu !
+if LEN( aArr ) == 0 .or. aArr == NIL
+    return 0
+endif
+
 // uzmi broj elemenata stakla
 nElCount := aArr[ LEN(aArr), 1 ]
 

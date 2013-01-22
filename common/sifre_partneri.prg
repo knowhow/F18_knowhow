@@ -131,9 +131,7 @@ if partn->(fieldpos("ID2")) <> 0
     AADD (ImeKol,{ padr("Id2", 6 ), {|| id2}, "id2" })
 endif
 
-if partn->(fieldpos("idops")) <> 0
-    AADD (ImeKol,{ padr("Opstina", 6 ), {|| idops}, "idops", {|| .t.}, {|| p_ops(@widops)} })
-endif
+AADD (ImeKol,{ padr("Opstina", 6 ), {|| idops}, "idops", {|| .t.}, {|| p_ops(@widops)} })
 
 if !_standard_prof
     AADD (ImeKol,{ padr("Referent", 10 ), {|| idrefer}, "idrefer", {|| .t.}, {|| p_refer(@widrefer)} })
@@ -480,7 +478,6 @@ local cId
 
 
 SELECT (F_SIFK)
-
 if !used()
 	O_SIFK
 endif
@@ -488,14 +485,16 @@ endif
 SET ORDER TO TAG "ID"
 // id + SORT + naz
 
-cId := PADR("PARTN", SIFK_LEN_DBF) 
-cNaz := PADR("Banke", LEN(naz))
+cId := PADR( "PARTN", SIFK_LEN_DBF )  
+cNaz := PADR( "Banke", LEN(field->naz) )
 cSeek :=  cId + "05" + cNaz
 
 SEEK cSeek   
 
 if !FOUND()
+    
     APPEND BLANK
+    
     _rec := dbf_get_rec()
     _rec["id"] := cId
     _rec["naz"] := cNaz
@@ -505,9 +504,12 @@ if !FOUND()
     _rec["duzina"] := 16
     _rec["veza"] := "N"
 
-    if !update_rec_server_and_dbf("sifk", _rec, 1, "FULL") 
+    if !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL" )  
         delete_with_rlock()
     endif
+
 endif
 
 return .t.
+
+

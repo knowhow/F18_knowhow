@@ -90,21 +90,33 @@ return
 // -------------------------------------------
 function pos_prepis_dokumenta()
 local aOpc
-private cFilter:=".t."
+local _prikaz_partnera := .f.
+private cFilter := ".t."
 private ImeKol := {}
 private Kol := {}
 
-_o_pos_prepis_tbl()
+cVrste := "  "
+dDatOd := DATE() - 1
+dDatDo := DATE()
 
-if !EMPTY(gRNALKum)
-    o_doksrc( KUMPATH )
+Box(, 3, 60 )
+    @ m_x + 1, m_y + 2 SAY "Datumski period:" GET dDatOd
+    @ m_x + 1, col() + 2 SAY "-" GET dDatDo
+    @ m_x + 3, m_y + 2 SAY "Vrste (prazno svi)" GET cVrste pict "@!"
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    return
 endif
+
+_o_pos_prepis_tbl()
 
 AADD(ImeKol, {"Vrsta", {|| IdVd}})
 AADD(ImeKol, {"Broj ",{||PADR(IF(!Empty(IdPos),trim(IdPos)+"-","")+alltrim(BrDok),9)}} )
 AADD(ImeKol, {"Fisk.rn", {|| fisc_rn}})
 
-if IzFMKIni("TOPS","StAzurDok_PrikazKolonePartnera","N",EXEPATH)=="D"
+if _prikaz_partnera
     select pos_doks
     SET RELATION TO idgost INTO partn
     AADD(ImeKol,{PADR("Partner",25),{||PADR(TRIM(idgost)+"-"+TRIM(partn->naz),25)}})
@@ -120,13 +132,6 @@ else
 endif
 
 AADD(ImeKol,{PADC("Iznos",10),{|| pos_iznos_dokumenta(NIL)}})
-
-if IsPlanika()
-  // reklamacije (R)ealizovane, (P)riprema
-  AADD(ImeKol,{"Rekl",{||if(idvd == VD_REK, sto, "   ")}})
-  AADD(ImeKol,{"Na stanju",{||if(idvd == VD_ZAD, if(EMPTY(sto), "da ", "NE "), "   ")}})
-endif
-
 AADD(ImeKol,{"Radnik",{||IdRadnik}})
 
 if gStolovi == "D"
@@ -139,17 +144,6 @@ next
 
 select pos_doks
 set cursor on
-
-cVrste:="  "
-dDatOd:=DATE()-1
-dDatDo:=DATE()
-
-Box(,3,60)
-    @ m_x+1,m_y+2 SAY "Datumski period:" GET dDatOd
-    @ m_x+1,col()+2 SAY "-" GET dDatDo
-    @ m_x+3,m_y+2 SAY "Vrste (prazno svi)" GET cVrste pict "@!"
-    read
-BoxC()
 
 if !empty(dDatOd).or.!empty(dDatDo)
     cFilter+=".and. Datum>="+cm2str(dDatOD)+".and. Datum<="+cm2str(dDatDo)
@@ -213,7 +207,7 @@ do case
 
         if pitanje(,"Zelite li promijeniti vrstu placanja?","N")=="D"
 
-            cVrPl:=idvrstep
+            cVrPl := field->idvrstep
 
             if !VarEdit({{"Nova vrsta placanja","cVrPl","Empty (cVrPl).or.P_VrsteP(@cVrPl)","@!",}},10,5,14,74,'PROMJENA VRSTE PLACANJA, DOKUMENT:'+idvd+"/"+idpos+"-"+brdok+" OD "+DTOC(datum),"B1")
                 return DE_CONT
@@ -239,11 +233,12 @@ do case
 
         _rec_no := RECNO()
         
-        if pitanje(,"Zelite li zaista izbrisati dokument","N") == "D"
+        if Pitanje(, "Zelite li zaista izbrisati dokument", "N" ) == "D"
            
             pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )    
 
             _o_pos_prepis_tbl()
+
             select ( _t_area )
             set filter to &_tbl_filter
             go (_rec_no)
@@ -349,9 +344,13 @@ do case
             
     case Ch == ASC("E") .or. Ch == ASC("e")
         
-        if Pitanje(, "Eksportovati dokument (D/N) ?", "N" ) == "D"
-            // export dokumenta
-            pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
+        if field->idvd == "IN"
+            if Pitanje(, "Eksportovati dokument (D/N) ?", "N" ) == "D"
+                // export dokumenta
+                pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
+            endif
+        else
+            MsgBeep( "Ne postoji metoda eksporta za ovu vrstu dokumenta !!!" )
         endif
 
         return (DE_CONT)
@@ -362,6 +361,11 @@ do case
         _id_vd := field->idvd
         _br_dok := field->brdok
         _dat_dok := field->datum
+
+        if field->idvd <> VD_INV
+            MsgBeep( "Ne postoji metoda povrata za ovu vrstu dokumenta !!!" )
+            return ( DE_CONT )
+        endif
 
         if Pitanje(, "Dokument " + _id_pos + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "N" ) == "N"
             return ( DE_CONT )

@@ -92,8 +92,8 @@ ImeKol:={ { PADR("Inv.Broj",15),{|| id },     "id"   , {|| .t.}, {|| vpsifra(wId
           { PADR("Konto",7), {|| idkonto},    "idkonto", {|| .t.}, {|| P_Konto(@wIdKonto)}     },;
           { PADR("StAm",8),  {|| IdAm},  "IdAm", {|| .t.}, {|| P_Amort(@wIdAm)} },;
           { PADR("StRev",5), {|| IdRev+" "},  "IdRev",{|| .t.}, {|| P_Reval(@wIdRev)}   },;
-          { PADR("NabVr",15),{|| nabvr},  "nabvr" , {|| .t.}, {|| os_validate_vrijednost(wnabvr,wotpvr)} },;
-          { PADR("OtpVr",15),{|| otpvr},  "otpvr", {|| .t.},  {|| os_validate_vrijednost(wnabvr,wotpvr)}  };
+          { PADR("NabVr",15),{|| nabvr},  "nabvr" , {|| .t.}, {|| os_validate_vrijednost( wnabvr, wotpvr )} },;
+          { PADR("OtpVr",15),{|| otpvr},  "otpvr", {|| .t.},  {|| os_validate_vrijednost( wnabvr, wotpvr )}  };
         }
 
 if os_postoji_polje("K1")
@@ -122,8 +122,8 @@ return PostojiSifra( _n_area, 1, MAXROWS()-15, MAXCOLS()-15, "Lista stalnih sred
 
 
 
-function os_validate_vrijednost(wNabVr, wOtpVr)
-@ m_x+11,m_y+50 say wNabvr-wOtpvr
+function os_validate_vrijednost( wNabVr, wOtpVr )
+@ m_x + 11, m_y + 50 say ( wNabvr - wOtpvr )
 return .t.
 
 
@@ -163,7 +163,7 @@ do case
             select_os_sii()
             if Pitanje(,"Sigurno zelite izbrisati ovo sredstvo ?","N")=="D"
                 _rec := dbf_get_rec()
-                delete_rec_server_and_dbf( ALIAS(), _rec )
+                delete_rec_server_and_dbf( get_os_table_name( ALIAS() ), _rec, 1, "FULL" )
             endif
         endif
         IF !lUsedPromj

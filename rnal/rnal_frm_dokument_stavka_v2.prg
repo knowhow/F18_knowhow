@@ -114,7 +114,7 @@ AADD(aImeKol, {"Kol.", {|| doc_it_qtt }, "doc_it_qtt" })
 AADD(aImeKol, {"Kol.2", {|| doc_it_q2 }, "doc_it_q2" })
 AADD(aImeKol, {"Cijena", {|| doc_it_pri }, "doc_it_pri" })
 AADD(aImeKol, {"Opis", {|| sh_desc }, "sh_desc" })
-AADD(aImeKol, {"Napomene", {|| desc }, "desc" })
+AADD(aImeKol, {"Napomene", {|| descr }, "descr" })
 
 for i:=1 to LEN(aImeKol)
     AADD(aKol,i)
@@ -162,10 +162,10 @@ set_opc_box(nGetBoxX, 50)
 @ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz , nGetBoxY - 2)
 @ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
 
-set_global_memvars_from_dbf()
-
 do while .t.
 
+    set_global_memvars_from_dbf()
+    
     nFuncRet := _e_box_it2( nGetBoxX, nGetBoxY )
     
     if nFuncRet == 1
@@ -176,8 +176,7 @@ do while .t.
             append blank
         endif
  
-         _rec := hb_hash()
-        _rec := get_dbf_global_memvars()
+        _rec := get_dbf_global_memvars( NIL, .f. )
         
         dbf_update_rec( _rec )
                
@@ -231,7 +230,11 @@ nX += 1
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("FMK ARTIKAL (*):", nLeft) GET _art_id VALID {|| p_roba( @_art_id ), _doc_it_pri := g_roba_price( _art_id ), show_it( g_roba_desc( _art_id ) + ".." , 35 ) } WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz FMK sifrarnika" )
+@ m_x + nX, m_y + 2 SAY PADL("FMK ARTIKAL (*):", nLeft) GET _art_id ;
+    VALID {|| p_roba( @_art_id ), ;
+            _doc_it_pri := g_roba_price( _art_id ), ;
+            show_it( g_roba_desc( _art_id ) + ".." , 35 ) } ;
+    WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz FMK sifrarnika" )
 
 nX += 2
     
@@ -250,11 +253,15 @@ nX += 1
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("opis:", nLeft) GET _sh_desc PICT "@S40" WHEN set_opc_box( nBoxX, 50, "opis vezan za samu stavku")
+@ m_x + nX, m_y + 2 SAY PADL("opis:", nLeft) GET _sh_desc ;
+    PICT "@S40" ;
+    WHEN set_opc_box( nBoxX, 50, "opis vezan za samu stavku")
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("napomena:", nLeft) GET _desc PICT "@S40" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
+@ m_x + nX, m_y + 2 SAY PADL("napomena:", nLeft) GET _descr ;
+    PICT "@S40" ;
+    WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
 
 
 read
@@ -262,6 +269,8 @@ read
 ESC_RETURN 0
 
 return 1
+
+
 
 
 // -------------------------------------------
@@ -291,6 +300,9 @@ go (nTRec)
 return nRet
 
 
+
+
+
 // ----------------------------------------------
 // vraca opis robe
 // ----------------------------------------------
@@ -298,7 +310,11 @@ function g_roba_desc( cId )
 local cDescr := ""
 local nTArea := SELECT()
 
-O_ROBA
+select ( F_ROBA )
+if !Used()
+    O_ROBA
+endif
+
 select roba
 seek cId
 
@@ -310,6 +326,8 @@ select (nTArea)
 return cDescr
 
 
+
+
 // ----------------------------------------------
 // vraca cijenu robe
 // ----------------------------------------------
@@ -317,7 +335,11 @@ function g_roba_price( cId )
 local nPrice
 local nTArea := SELECT()
 
-O_ROBA
+select ( F_ROBA )
+if !Used()
+    O_ROBA
+endif
+
 select roba
 seek cId
 
@@ -327,4 +349,6 @@ endif
 
 select (nTArea)
 return nPrice
+
+
 

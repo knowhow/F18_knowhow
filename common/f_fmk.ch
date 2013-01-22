@@ -334,6 +334,9 @@
 #define F_TMP_TOPSKA    324
 #define F_TMP_1         325
 #define F_TMP_2         326
+#define F_TMP_3         327
+#define F_TMP_4         328
+#define F_TMP_5         329
 #define D_S_TABELE 
 
 

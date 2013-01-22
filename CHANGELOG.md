@@ -1,3 +1,213 @@
+1.4.98 2013-01-22, vsasa
+
+ - fakt/fin/kalk, import/eksport podataka udaljene lokacije - korekcije 
+ 
+1.4.97 2013-01-21, vsasa
+
+ - fakt, brojač otpremnica po tipu dokumenta 22 - ispravka drito na brojaču fakt dokumenata
+ 
+1.4.96 2013-01-21, vsasa
+
+ - fakt, brojač otpremnica po tipu dokumenta 22 - bugfix
+ 
+1.4.95 2013-01-21, hernad
+
+ - fakt, sumiranje usluga kod pretvaranja otpremnica u račun
+ 
+1.4.94 2013-01-21, vsasa
+
+ - fakt, brojač po otpremnicama tip-a "22" - bugfix
+ - rnal, export naloga u fakt - opisi
+ - rnal, pregled naloga - bugfix
+
+1.4.93 2013-01-18, vsasa
+
+ - štampa txt dokumenta, samo sa starim buildom
+
+1.4.92 2013-01-18, vsasa
+
+ - fakt, unos nove otpremnice, brojač gledati po tip-u dokumenta "22"
+ - fakt, parametrizirana opcija generisanja računa na osnovu otpremnice
+
+1.4.91 2013-01-18, hernad
+
+ - hbmysql windows
+
+1.4.90 2013-01-18, hernad
+
+ - sql_fakt [#30053](http://redmine.bring.out.ba/issues/30053)
+
+1.4.88 2013-01-17, vsasa
+
+ - unos šifrarnika artikala, unos opisa artikla, pregled opisa na opciju "D" u šifrarniku
+ 
+1.4.87 2013-01-16, vsasa
+
+ - unos šifrarnika artikala, može i bez "idkonto"
+ - fakt, generacija računa na osnovu otpremnica - privremeno ukinut foreign ključ sa fakt_fakt_atributi
+ 
+1.4.86 2013-01-15, vsasa
+
+ - rnal, unos naloga i dodavanje nove šifre - bugfix 
+ 
+1.4.85 2013-01-15, vsasa
+
+ - hcp uređaji, minimalna količina kod izdavanja računa
+ 
+1.4.84 2013-01-15, vsasa
+
+ - fakt, pregled dokumenata, pravilno računanje osnovice/pdv/ukupne vrijednosti
+ - fakt, opcija "T" u unosu dokumenta, ispravljena greška sa valutom
+ 
+1.4.83 2013-01-15, vsasa
+
+ - fin/kalk/fakt/pos, pocetna stanja, ispravka sa karaktrima hb_utf8tostr 
+ 
+1.4.82 2013-01-14, vsasa
+
+ - fakt, generisanje računa na osnovu otpremnice, bugfix
+ 
+1.4.81 2013-01-12, vsasa
+
+ - fakt, generisanje računa na osnovu otpremnice, ispis ko trenutno koristi opciju
+ 
+1.4.80 2013-01-12, vsasa
+
+ - fakt, generisanje računa na osnovu otpremnice, sređivanje opcije, više poruka za korisnika
+ 
+1.4.79 2013-01-11, vsasa
+
+ - rnal, unos naloga bez brisanja memvars
+ - fakt, generisanje računa iz otpremnica - lock
+ 
+1.4.78 2013-01-11, vsasa
+
+ - rnal, ispis težine na specifikaciji... 
+ 
+1.4.77 2013-01-10, vsasa
+
+ - mat, azuriranje/povrat naloga - korekcije
+ - fakt, formiranje računa na osnovu otpremnice, transakcija i obrada transakcije
+ 
+1.4.76 2013-01-10, vsasa
+
+ - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)
+ - fin, prenos LD->VIRM
+ 
+1.4.75 2013-01-10, vsasa
+
+ - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)
+ 
+1.4.74 2013-01-10, vsasa
+
+ - epdv, semafori korekcije... [#29989](http://redmine.bring.out.ba/issues/29989)
+ - fakt, izvještaj realizacija maloprodaje - bugfix
+ - ld, prenos podataka ld->fin, korekcije
+ 
+1.4.73 2013-01-09, vsasa
+
+ - rnal, štampa specifikacije, problem sa zaokruženjem kada je isključeno
+ - kalk, prenos dokumenata fakt->kalk, korekcija 
+ 
+1.4.72 2013-01-09, vsasa
+
+ - pos, import nivelacija iz modula KALK - BUGFIX
+ 
+1.4.71 2013-01-08, vsasa
+
+ - fin, specifikacija dobavljača po telefonima - BUGFIX
+ - os, unos promjena na sredstvima - BUGFIX
+ - ispis informacije o sezonskom području na glavnom meniju modula
+ - kalk, formiranje početnog stanja magacina - sql varijanta
+ - os, radna jedinica je dužine 4, korekcija na izvještajima i unosu... [#29972](http://redmine.bring.out.ba/issues/29972)
+ 
+1.4.70 2013-01-07, vsasa
+
+ - pos, povrat inventure sa spajanjem - BUGFIX 
+ - kalk, provjera maloprodajnih cijena sa decimalama većim od 2 
+ - rnal, štampa specifikacije sa promjenom isporuke - BUGFIX
+ 
+1.4.69 2013-01-07, vsasa
+
+ - fakt, fiskalni INO računi, problem sa plaćanjem - BUGFIX
+ 
+1.4.68 2013-01-06, vsasa
+
+ - pos, sređivanje opcija unosa / povrata itd...
+ - valute, prošireno polje kurs na 6 decimala
+ - fakt, korekcije
+ 
+1.4.67 2013-01-05, vsasa
+
+ - pos, spajanje dokumenata kod povrata u pripremu
+ - fakt, čišćenje
+ 
+1.4.66 2013-01-05, vsasa
+
+ - fakt, prikaz DINDEM u pripremi dokumenta
+ 
+1.4.65 2013-01-05, vsasa
+
+ - rnal, unos dokuemnta - bugfix
+ - pos, čišćenje
+ 
+1.4.64 2013-01-04, vsasa
+
+ - fakt, kreiranje računa za INO kupce - bugfix 
+ 
+1.4.63 2013-01-04, vsasa
+
+ - fakt, kreiranje računa u EUR - bugfix 
+ 
+1.4.62 2013-01-04, vsasa
+
+ - kreiranje valuta u šifrarniku kod prazne instance - bugfix
+ 
+1.4.61 2013-01-03, vsasa
+
+ - rnal, čišćenje koda
+ - kalk, prenos fakt->kalk, prenos objekta, ispis dokumenta 95,96 sređen
+ - fin, početno stanje sql
+ 
+1.4.60 2013-01-03, vsasa
+
+ - rnal, štampa labela
+ 
+1.4.59 2013-01-03, vsasa
+
+ - šifranici, F4 - bugfix
+ - rnal, zatvarnje naloga, logiranje... 
+ - rnal, štampanje rekapitulacije repromaterijala, unos repromaterijala
+ - rnal, unos naloga, korekcije sa unosom elemenata
+ 
+1.4.58 2013-01-03, vsasa
+
+ - rnal, semafor tabele "customs" - bugfix
+ 
+1.4.57 2013-01-03, vsasa
+
+ - rnal, ažuriranje naloga - bugfix
+ 
+1.4.56 2013-01-03, vsasa
+
+ - rnal, ažuriranje naloga - bugfix
+ 
+1.4.55 2013-01-03, vsasa
+
+ - rnal, dodjeljivanje novih šifri u šifrarniku sql parametar kao i brojač naloga
+ 
+1.4.54 2013-01-03, vsasa
+
+ - rnal, ažuriranje naloga u mrežnom radu
+ 
+1.4.53 2013-01-03, vsasa
+
+ - fprint dnevni izvještaj, automatski polog - bugfix
+ 
+1.4.52 2013-01-03, vsasa
+
+ - fiskalni parametri, fiskalni računi po tipu dokumenta 
+ 
 1.4.51 2012-12-31, vsasa
 
  - fakt, početno stanje [#29908](http://redmine.bring.out.ba/issues/29908)

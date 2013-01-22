@@ -11,40 +11,25 @@
 
 #include "fin.ch"
 
-/*! \file fmk/fin/razdb/1g/ldfin.prg
- *  \brief Prenos podataka LD->FIN
- */
- 
-/*! \fn LdFin() 
- *  \brief Prenos podataka LD->FIN
- */
 
+
+// ------------------------------------------------------
+// prenos podataka LD->FIN
+// ------------------------------------------------------
 function LdFin()
 local cPath
 local nIznos
-private cShema:="1"
-private dDatum:=DATE()
-private _godina:=YEAR(DATE())
-private _mjesec:=MONTH(DATE())
-private _ldpath:=PADR( STRTRAN(KUMPATH, SLASH + "FIN", SLASH + "LD"), 60)
-private cSection:="L"
-private cHistory:=" "
-private aHistory:={}
-
-O_PARAMS
-
-RPar("lk", @_ldpath)
-RPar("sh", @cShema)
+private cShema := fetch_metric( "fin_prenos_ld_shema", my_user(), "1" )
+private dDatum := DATE()
+private _godina := fetch_metric( "fin_prenos_ld_godina", my_user(), YEAR(DATE()) )
+private _mjesec := fetch_metric( "fin_prenos_ld_mjesec", my_user(), MONTH(DATE()) )
+private broj_radnika := 0
 
 Box("#KONTIRANJE OBRACUNA PLATE", 10, 75)
-	
-	@ m_x+2, m_y+2 SAY "GODINA:" GET _godina PICT "9999"
-	@ m_x+3, m_y+2 SAY "MJESEC:" GET _mjesec PICT "99"
-	@ m_x+5, m_y+2 SAY "Shema kontiranja:" GET cShema PICT "@!"
-	@ m_x+6, m_y+2 SAY "Datum knjizenja :" GET dDatum
-	
-	@ m_x+8, m_y+2 SAY "LD kumulativ:" GET _ldpath VALID !EMPTY(_ldpath)
-	
+	@ m_x + 2, m_y + 2 SAY "GODINA:" GET _godina PICT "9999"
+	@ m_x + 3, m_y + 2 SAY "MJESEC:" GET _mjesec PICT "99"
+	@ m_x + 5, m_y + 2 SAY "Shema kontiranja:" GET cShema PICT "@!"
+	@ m_x + 6, m_y + 2 SAY "Datum knjizenja :" GET dDatum
 	READ
 BoxC()
 
@@ -53,40 +38,32 @@ if LASTKEY() == K_ESC
 	return
 endif
 
-select params
-
-WPar("lk", _ldpath)
-WPar("sh", cShema)
-
-select params
-use
-
-cPath := ALLTRIM(_ldpath)
+// snimi parametre
+set_metric( "fin_prenos_ld_shema", my_user(), cShema )
+set_metric( "fin_prenos_ld_godina", my_user(), _godina )
+set_metric( "fin_prenos_ld_mjesec", my_user(), _mjesec )
 
 O_FAKT_OBJEKTI
 O_NALOG
 O_FIN_PRIPR
 O_TRFP3
+O_REKLD
 
-if file( cPath + "REKLD.DBF")
-	use (cPath + "REKLD.DBF") new
-	set order to tag "1"
-else
-	MsgBeep("Niste pokrenuli rekapitulaciju LD-a!")
-	close all
-	return
-endif
-
-if file(cPath + "REKLDP.DBF")
-	use (cPath + "REKLDP.DBF") new
-	set order to tag "1"
+if RECCOUNT() == 0
+    MsgBeep("Potrebno pokrenuti specifikaciju u modulu LD !")
+    close all
+    return
 endif
 
 select trfp3
-set filter to shema=cShema
+set filter to shema = cShema
 go top
 
+<<<<<<< HEAD
 cBrNal := fin_novi_broj_naloga(gFirma, trfp3->idvn, dDatum)
+=======
+cBrNal := fin_prazan_broj_naloga()
+>>>>>>> master
 
 select trfp3
 
@@ -99,13 +76,13 @@ do while !eof()
 	
 	if "#RN#"$cPom
 		
-		select rnal
+		select fakt_objekti
 		go top
 		
-		do while !eof()
-			cPom:=trfp3->id
-			cBrDok:=rnal->id
-			cPom:=STRTRAN(cPom,"#RN#",cBrDok)
+		do while !EOF()
+			cPom := trfp3->id
+			cBrDok := fakt_objekti->id
+			cPom := STRTRAN(cPom,"#RN#",cBrDok)
 			nIznos:=&cPom
 			if round(nIznos,2)<>0
 				select fin_pripr
@@ -120,20 +97,16 @@ do while !eof()
 				replace	iznosbhd with nIznos
 				replace	brdok    with cBrDok
 				replace	opis     with TRIM(trfp3->naz)+" "+STR(_mjesec,2)+"/"+STR(_godina,4)
-				select rnal
+				select fakt_objekti
 			endif
 			skip 1
 		enddo
 		select trfp3
 	
 	elseif "#AH#" $ cPom
-
 		cPom := STRTRAN(cPom, "#AH#", "")
-		
 		cIznos := &cPom
-		
 		select trfp3
-		
 	else
 		
 		nIznos := &cPom
@@ -248,7 +221,6 @@ enddo
 
 select (nTArea)
 return
-
 
 
 

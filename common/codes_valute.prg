@@ -98,9 +98,12 @@ SEEK cValU
 IF !FOUND()
   	Msg("Nepostojeca valuta u koju se pretvara iznos:## '"+cValU+"' !")
   	nPom2:=1
+        nPom1:=1
+
 ELSEIF DTOS(dDat) < DTOS(valute->datum)
   	Msg("Nepostojeci kurs valute u koju se pretvara iznos:## '"+cValU+"'. Provjeriti datum !")
   	nPom2:=1
+        nPom1:=1
 ELSE
   	cPom:=id
   	DO WHILE DTOS(dDat)>=DTOS(valute->datum) .and. cPom==valute->id
@@ -248,19 +251,20 @@ LOCAL lIma:=.f., nArr:=SELECT()
 RETURN lIma
 
 
+
+
 // -------------------------------------
 // pretvori u baznu valutu
 // -------------------------------------
 function UBaznuValutu(dDatdok)
 local  cIz
-
 if gBaznaV == "P"
     cIz := "D"
 else
     cIz := "P"
 endif
-Kurs(dDatdok, cIz, gBaznaV)
-return
+return Kurs(dDatdok, cIz, gBaznaV)
+
 
 
 

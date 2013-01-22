@@ -157,7 +157,7 @@ if _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
 endif
 
 #ifdef __PLATFORM__UNIX
-    //set_file_access()
+	set_file_access( __import_dbf_path )
 #endif
 
 // import procedura
@@ -449,7 +449,7 @@ Box(, 15, 70 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Zamjeniti nove dokumente postojecim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+    @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
     ++ _x
 
@@ -784,6 +784,14 @@ local _total_fakt := 0
 local _gl_brojac := 0
 local _brojevi_dok
 
+// lokuj potrebne tabele
+if !f18_lock_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
+	return _cnt
+endif
+
+sql_table_update( nil, "BEGIN" )
+
+
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
 _dat_do := vars["datum_do"]
@@ -820,8 +828,6 @@ Box(, 3, 70 )
 @ m_x + 1, m_y + 2 SAY PADR( "... import fakt dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + ALLTRIM(STR( _total_doks )) + ", fakt/" + ALLTRIM(STR( _total_fakt ))
 
-f18_lock_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
-sql_table_update( nil, "BEGIN" )
 
 do while !EOF()
 
@@ -1044,26 +1050,32 @@ set order to tag "1"
 go top
 seek id_firma + id_vd + br_dok
 
-f18_lock_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-sql_table_update(nil, "BEGIN")
-
 if FOUND()
-
+	_ret := .t.
+	// brisi fakt_fakt
     _del_rec := dbf_get_rec()
-
-    // pobrisi zapise...
     delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
-
-    select fakt_doks
-    delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
-    
-    select fakt_doks2
-    delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
-
 endif
 
-f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-sql_table_update(nil, "END")
+// brisi fakt_doks
+select fakt_doks
+set order to tag "1"
+go top
+seek id_firma + id_vd + br_dok
+if FOUND()
+	_del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
+endif
+    
+// doks2
+select fakt_doks2
+set order to tag "1"
+go top
+seek id_firma + id_vd + br_dok
+if FOUND()
+	_del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
+endif
 
 select ( _t_area )
 return _ret

@@ -126,7 +126,7 @@ if _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
 endif
 
 #ifdef __PLATFORM__UNIX
-    set_file_access()
+    set_file_access( __import_dbf_path )
 #endif
 
 // import procedura
@@ -254,7 +254,7 @@ Box(, 12, 70 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Zamjeniti nove dokumente postojecim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+    @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
     ++ _x
 
@@ -501,6 +501,12 @@ local _total_sint := 0
 local _total_nalog := 0
 local _gl_brojac := 0
 
+// lokuj potrebne fajlove
+if !f18_lock_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" } )
+    return _cnt
+endif
+sql_table_update( nil, "BEGIN" )
+
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
 _dat_do := vars["datum_do"]
@@ -531,16 +537,10 @@ select e_nalog
 set order to tag "1"
 go top
 
-if ! f18_lock_tables({"fin_nalog", "fin_anal", "fin_sint", "fin_suban"})
-    return .f.
-endif
-
-
 Box(, 3, 70 )
 
 @ m_x + 1, m_y + 2 SAY PADR( "... import fin dokumenata u toku ", 69 ) COLOR "I"
 @ m_x + 2, m_y + 2 SAY "broj zapisa nalog/" + ALLTRIM(STR( _total_nalog )) + ", suban/" + ALLTRIM(STR( _total_suban ))
-
 
 do while !EOF()
 
@@ -596,7 +596,7 @@ do while !EOF()
 
     select nalog
 	append blank
-    update_rec_server_and_dbf( "fin_nalog", _app_rec, 1, "BEGIN" )
+    update_rec_server_and_dbf( "fin_nalog", _app_rec, 1, "CONT" )
 
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -694,14 +694,14 @@ do while !EOF()
 
     enddo
 
-    // zavrsi transakciju
-    f18_free_tables({"fin_nalog", "fin_anal", "fin_sint", "fin_suban"})
-    sql_table_update( nil, "END" )
-
     select e_nalog
     skip
 
 enddo
+
+// zavrsi transakciju
+sql_table_update( nil, "END" )
+f18_free_tables({"fin_nalog", "fin_anal", "fin_sint", "fin_suban"})
 
 // ako je sve ok, predji na import tabela sifrarnika
 if _cnt > 0
@@ -758,32 +758,50 @@ local _t_area := SELECT()
 local _del_rec, _t_rec 
 local _ret := .f.
 
+// suban brisi
 select suban
-set order to tag "1"
+set order to tag "4"
 go top
 seek id_firma + id_vd + br_dok
-
 if FOUND()
-    
+	_ret := .t.
     _del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "fin_suban", _del_rec, 2, "CONT" )
+endif
 
-    delete_rec_server_and_dbf( "fin_suban", _del_rec, 2, "BEGIN" )
-
-    select nalog
+// nalog brisi
+select nalog
+set order to tag "2"
+go top
+seek id_firma + id_vd + br_dok
+if FOUND()
+	_del_rec := dbf_get_rec()
     delete_rec_server_and_dbf( "fin_nalog", _del_rec, 1, "CONT" )
+endif
 
-    select anal
+// anal brisi
+select anal
+set order to tag "2"
+go top
+seek id_firma + id_vd + br_dok
+if FOUND()
+	_del_rec := dbf_get_rec()	
     delete_rec_server_and_dbf( "fin_anal", _del_rec, 2, "CONT" )
+endif
 
-    select sint
-    delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "END" )
-
-    _ret := .t.
-
+select sint
+set order to tag "2"
+go top
+seek id_firma + id_vd + br_dok
+if FOUND()
+	_del_rec := dbf_get_rec()	
+    delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "CONT" )
 endif
 
 select ( _t_area )
 return _ret
+
+
 
 
 // ----------------------------------------

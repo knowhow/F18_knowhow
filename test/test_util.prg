@@ -28,7 +28,7 @@ function test_diff_between_files(test_file, out_file)
 local _ret, _cmd := ""
 
 _cmd := "diff test/data/" + test_file + " " + out_file
-_ret := hb_run(_cmd)
+_ret := f18_run(_cmd)
 
 return _ret
 
@@ -54,14 +54,14 @@ MAKEDIR("/tmp" + _dir_1)
 MAKEDIR("/tmp" + _dir_2)
 
 _cmd := "unzip -q -o test/data/" + test_file  + " -d /tmp/" + _dir_1
-if hb_run(_cmd) > 0
+if f18_run(_cmd) > 0
   MsgBeep("ERR: " + _cmd)
   QUIT
 endif
 
 
 _cmd := "unzip -q -o " + out_file + " -d /tmp/" + _dir_2
-if hb_run(_cmd) > 0
+if f18_run(_cmd) > 0
   MsgBeep("ERR: " + _cmd)
   QUIT
 endif
@@ -69,19 +69,19 @@ endif
 
 // u odt-u nas interesuje content xml
 _cmd := "xmllint /tmp/" + _dir_1 + "/content.xml --format > /tmp/" + _dir_1 + "/test.xml"
-if hb_run(_cmd) > 0
+if f18_run(_cmd) > 0
   MsgBeep("ERR: " + _cmd)
   QUIT
 endif
 
 _cmd := "xmllint /tmp/" + _dir_2 + "/content.xml --format > /tmp/" + _dir_2 + "/test.xml"
-if hb_run(_cmd) > 0
+if f18_run(_cmd) > 0
   MsgBeep("ERR: " + _cmd)
   QUIT
 endif
 
 
 _cmd := "diff /tmp/" + _dir_1 + "/test.xml  /tmp/" + _dir_2 + "/test.xml"
-_ret := hb_run(_cmd)
+_ret := f18_run(_cmd)
 
 return _ret 

@@ -57,8 +57,6 @@ set_hot_keys()
 
 Izbor:=1
 
-CheckROnly(KUMPATH + "\FAKT.DBF")
-
 // setuj parametre pri pokretanju modula
 fakt_set_params()
 
@@ -184,7 +182,6 @@ public gDK2 := "N"
 public gFPzag:=0
 public gZnPrec:="="
 public gnDS:=5             // duzina sifre artikla - sinteticki
-public gBaznaV:="D"
 public Kurslis:="1"
 public PicCdem:="99999999.99"
 public Picdem:="99999999.99"

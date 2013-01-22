@@ -124,66 +124,6 @@ IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 
 
-// ----------------------------------------------------------------------------
-// fakt_doks
-// ----------------------------------------------------------------------------
-    
-aDbf:={}
-AADD(aDBf, { 'idfirma'             , 'C' ,   2 ,  0 })
-AADD(aDBf, { 'idtipdok'            , 'C' ,   2 ,  0 })
-AADD(aDBf, { 'brdok'               , 'C' ,  12 ,  0 })
-AADD(aDBf, { 'PARTNER'             , 'C' ,  30 ,  0 })
-AADD(aDBf, { 'DATDOK'              , 'D' ,   8 ,  0 })
-AADD(aDBf, { 'DINDEM'              , 'C' ,   3 ,  0 })
-AADD(aDBf, { 'Iznos'               , 'N' ,  12 ,  3 })
-AADD(aDBf, { 'Rabat'               , 'N' ,  12 ,  3 })
-AADD(aDBf, { 'Rezerv'              , 'C' ,   1 ,  0 })
-AADD(aDBf, { 'M1'                  , 'C' ,   1 ,  0 })
-AADD(aDBf, { 'IDPARTNER'           , 'C' ,   6 ,  0 })
-AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
-AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
-AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
-
-AADD(aDBf, { 'OPER_ID'             , 'N' ,   3 ,  0 })
-AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
-AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })
-AADD(aDBf, { 'DAT_VAL'             , 'D' ,   8 ,  0 })
-AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })
-
-_alias := "FAKT_DOKS"
-_table_name := "fakt_doks"
-
-IF_NOT_FILE_DBF_CREATE
-
-// 0.4.3
-if ver["current"] < 0403
-    modstru({"*" + _table_name, "A FISC_ST N 10 0"})
-endif
-
-// 0.5.0
-if ver["current"] < 0500
-    modstru({"*" + _table_name, "C PARTNER C 30 0 PARTNER C 100 0"})
-    modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
-endif
-
-// 0.09.01
-if ver["current"] > 00000 .and. ver["current"] < 00901
-  for each _tbl in { "fakt_doks" }
-   modstru( {"*" + _tbl, ;
-       "D DOK_VEZA C 150 0"  ;
-  })
-  next
-endif
-
-create_index("1",  "IdFirma+idtipdok+brdok", _alias)
-create_index("1D", "DTOS(DatDok)+IdFirma+idtipdok+brdok", _alias)
-create_index("2",  "IdFirma+idtipdok+partner", _alias)
-create_index("3",  "partner", _alias)
-create_index("4",  "idtipdok", _alias)
-create_index("5",  "datdok", _alias)
-create_index("6",  "IdFirma+idpartner+idtipdok", _alias)
-
-
 // fakt objekti
 aDbf:={}
 AADD(aDBf,{ 'ID'   , 'C' ,   10 ,  0 })
@@ -198,7 +138,6 @@ IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX( "ID", "ID", _alias )
 CREATE_INDEX( "NAZ", "NAZ", _alias )
-
 
 // fakt pripr atributi
 aDbf:={}
@@ -249,7 +188,69 @@ IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("ID","ID", _alias)
 
-// -----------------------------------------------
+
+// -------------- fakt_doks --------------------------
+
+aDbf:={}
+AADD(aDBf, { 'idfirma'             , 'C' ,   2 ,  0 })
+AADD(aDBf, { 'idtipdok'            , 'C' ,   2 ,  0 })
+AADD(aDBf, { 'brdok'               , 'C' ,  12 ,  0 })
+AADD(aDBf, { 'PARTNER'             , 'C' ,  30 ,  0 })
+AADD(aDBf, { 'DATDOK'              , 'D' ,   8 ,  0 })
+AADD(aDBf, { 'DINDEM'              , 'C' ,   3 ,  0 })
+AADD(aDBf, { 'Iznos'               , 'N' ,  12 ,  3 })
+AADD(aDBf, { 'Rabat'               , 'N' ,  12 ,  3 })
+AADD(aDBf, { 'Rezerv'              , 'C' ,   1 ,  0 })
+AADD(aDBf, { 'M1'                  , 'C' ,   1 ,  0 })
+AADD(aDBf, { 'IDPARTNER'           , 'C' ,   6 ,  0 })
+AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
+AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
+AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
+
+AADD(aDBf, { 'OPER_ID'             , 'N' ,   3 ,  0 })
+AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
+AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })
+AADD(aDBf, { 'DAT_VAL'             , 'D' ,   8 ,  0 })
+AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })
+
+_alias := "FAKT_DOKS"
+_table_name := "fakt_doks"
+
+IF_NOT_FILE_DBF_CREATE
+
+// 0.4.3
+if ver["current"] > 0 .and. ver["current"] < 0403
+    modstru({"*" + _table_name, "A FISC_ST N 10 0"})
+endif
+
+// 0.5.0
+if ver["current"] > 0 .and. ver["current"] < 0500
+    modstru({"*" + _table_name, "C PARTNER C 30 0 PARTNER C 100 0"})
+    modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
+endif
+
+// 0.09.01
+if ver["current"] > 00000 .and. ver["current"] < 00901
+  for each _tbl in { "fakt_doks" }
+   modstru( {"*" + _tbl, ;
+       "D DOK_VEZA C 150 0"  ;
+  })
+  next
+endif
+
+IF_C_RESET_SEMAPHORE
+
+create_index("1",  "IdFirma+idtipdok+brdok", _alias)
+create_index("1D", "DTOS(DatDok)+IdFirma+idtipdok+brdok", _alias)
+create_index("2",  "IdFirma+idtipdok+partner", _alias)
+create_index("3",  "partner", _alias)
+create_index("4",  "idtipdok", _alias)
+create_index("5",  "datdok", _alias)
+create_index("6",  "IdFirma+idpartner+idtipdok", _alias)
+
+
+
+// ---------------- fakt_doks2 -------------------
 
 _alias := "FAKT_DOKS2"
 _table_name := "fakt_doks2"

@@ -81,7 +81,7 @@ if !found()
 	APPEND BLANK
     _fields := dbf_get_rec()
     _fields["id"] := gFirma
-    update_rec_server_and_dbf(nil, _fields) 
+    update_rec_server_and_dbf( "partn", _fields, 1, "FULL") 
 endif
 
 cNaziv := naz
@@ -96,7 +96,7 @@ endif
 
 
 if lNepopunjeno
-	if get_my_firma(@cNaziv, @cIdBroj, @cMjesto, @cAdresa,  @cPtt)
+	if get_my_firma( @cNaziv, @cIdBroj, @cMjesto, @cAdresa, @cPtt )
 
         _fields           := dbf_get_rec()
         _fields["naz"]    := cNaziv
@@ -104,9 +104,10 @@ if lNepopunjeno
         _fields["adresa"] := cAdresa
         _fields["ptt"]    := cPTT
 
-        update_rec_server_and_dbf(nil, _fields, 1, "FULL") 
+        update_rec_server_and_dbf( nil, _fields, 1, "FULL" ) 
 
 		USifK("PARTN", "REGB", gFirma, cIdBroj)
+
 	else
 		MsgBeep("Nepopunjeni podaci o maticnoj firmi !")
 	endif

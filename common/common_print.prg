@@ -88,6 +88,7 @@ return
 // ----------------------------------------
 // ----------------------------------------
 function f18_end_print( f_name, print_opt )
+local _ret
 local _cmd := ""
 local _port := get_printer_port( print_opt )
 
@@ -130,15 +131,18 @@ DO CASE
 
     OTHERWISE
 
-        // TODO: treba li f18_editor parametrizirati ?!   
         _cmd := "f18_editor " + f_name
 
         // #27234
         #ifdef __PLATFORM__UNIX
             close all
         #endif
-        hb_run (_cmd) 
+       
+        _ret := f18_run(_cmd)
 
+	if _ret <> 0
+	  MsgBeep ("f18_edit nije u pathu ?!##" + "cmd:" + _cmd)
+        endif
 END CASE
 
 return
@@ -179,7 +183,7 @@ _printer_name := _printer + "_" + port_number
 // lpq -P epson_1 | grep epson_1 
 _cmd := "lpq -P " + _printer_name + " | grep " + _printer_name
 
-_err := hb_run( _cmd )
+_err := f18_run( _cmd )
 if _err <> 0
     MsgBeep( "Printer " + _printer_name + " nije podesen !!!" )
     return
@@ -190,7 +194,7 @@ _cmd := "lpr -P "
 _cmd += _printer_name + " "
 _cmd += f_name
 
-_err := hb_run( _cmd )
+_err := f18_run( _cmd )
 
 if _err <> 0
     MsgBeep( "Greska sa direktnom stampom !!!" )
@@ -214,7 +218,7 @@ f_name := '"' + f_name + '"'
 
 _cmd := "copy " + f_name + " LPT" + port_number 
 
-_err := hb_run( _cmd )
+_err := f18_run( _cmd )
 
 if _err <> 0
     MsgBeep( "Greska sa direktnom stampom !!!" )
@@ -224,16 +228,21 @@ return
 
 
 static function set_print_f_name(f_name)
+local _root
 
 if f_name == NIL
+
     f_name := OUTF_FILE
 
     // jos nije setovan my_home()
     if my_home() == NIL
-        f_name := my_home_root() + f_name
+        _root := my_home_root() + f_name
     else
-        f_name := my_home() + f_name
+        _root := my_home() + f_name
     endif
+
+    f_name := _root
+
 endif
 
 return f_name

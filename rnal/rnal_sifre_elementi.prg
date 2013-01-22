@@ -842,10 +842,8 @@ if cType == nil
 endif
 
 if !lNewRec .and. field->el_id == 0
-
 	MsgBeep("Stavka ne postoji !!!#Koristite c-N da dodate novu!")
 	return DE_REFRESH
-	
 endif
 
 if lNewRec
@@ -854,7 +852,7 @@ if lNewRec
 		lAuto := .t.
 	endif
 	
-	if _set_sif_id( @nEl_id, "EL_ID", lAuto ) == 0
+	if _set_sif_id( @nEl_id, "EL_ID", lAuto, "FULL" ) == 0
 		return 0
 	endif
 
@@ -867,19 +865,14 @@ if lNewRec
 	_art_id := nArt_id
 
 	if EMPTY( cType )
-	
-		// uvecaj redni broj elementa... klasicni brojac
-		// brojac iz baze
+		// uvecaj redni broj elementa...
+		// brojac dbf + sql/par
 		_inc_el_no( @_el_no, nArt_id )
-		
 	else
-		
 		// auto kreiranje zna za brojac
 		// necemo koristiti iz baze, da ne opterecujemo rad
 		// radi filtera
-		
 		_el_no := nEl_no
-		
 	endif
 	
 	_e_gr_id := 0
@@ -910,7 +903,7 @@ endif
 
 if EMPTY(cType) .and. LastKey() == K_ESC .and. lNewRec
 
-    _rec := get_dbf_global_memvars()
+    _rec := get_dbf_global_memvars( NIL, .f. )
     delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 	return 0
@@ -921,9 +914,7 @@ if !EMPTY(cType)
 
 	// coating postoji... obrati na to paznju
 	if "*" $ cType
-	
 		lCoat := .t.
-	
 	endif
 
 	// ukloni "*" ako postoji...
@@ -934,7 +925,7 @@ if !EMPTY(cType)
 
 endif
 
-_rec := get_dbf_global_memvars()
+_rec := get_dbf_global_memvars( NIL, .f. )
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
 if lNewRec
@@ -961,10 +952,10 @@ Box(,1,40)
 BoxC()
 
 if LastKey() <> K_ESC
-
-    _rec := get_dbf_global_memvars()
+    
+    _rec := get_dbf_global_memvars( NIL, .f. )
     update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-
+    
 endif
 
 return 1
@@ -980,6 +971,13 @@ local nTArea := SELECT()
 local nEl_att_id := 0
 local _rec 
 
+if !f18_lock_tables( { "e_att" } )
+    MsgBeep("Problem sa lockom tabele e_att !!!!")
+    return
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 select e_gr_att
 set order to tag "2"
 go top
@@ -988,28 +986,29 @@ seek e_gr_id_str( __gr_id ) + "*"
 do while !EOF() .and. field->e_gr_id == __gr_id ;	
 		.and. field->e_gr_at_re == "*"
 
-	
 	select e_att
 	
-	if _set_sif_id(@nEl_att_id, "EL_ATT_ID") == 0
+	if _set_sif_id( @nEl_att_id, "EL_ATT_ID" ) == 0
 		select e_gr_att
 		loop
 	endif
 
-    set_global_memvars_from_dbf()
-	
-    _el_id := __el_id
-	_el_att_id := nEl_att_id
-	_e_gr_at_id := e_gr_att->e_gr_at_id
-	_e_gr_vl_id := 0
+    _rec := dbf_get_rec()	
 
-    _rec := get_dbf_global_memvars()    
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+    _rec["el_id"] := __el_id
+	_rec["el_att_id"] := nEl_att_id
+	_rec["e_gr_at_id"] := e_gr_att->e_gr_at_id
+	_rec["e_gr_vl_id"] := 0
+
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 	
     select e_gr_att
 	skip
 
 enddo
+
+f18_free_tables( { "e_att" } )
+sql_table_update( nil, "END" )
 
 select (nTArea)
 return
@@ -1037,11 +1036,9 @@ if !lNewRec .and. field->el_id == 0
 endif
 
 if lNewRec
-
-	if _set_sif_id(@nEl_att_id, "EL_ATT_ID") == 0
+	if _set_sif_id(@nEl_att_id, "EL_ATT_ID", NIL, "FULL" ) == 0
 		return 0
 	endif
-
 endif
 
 set_global_memvars_from_dbf()
@@ -1070,16 +1067,15 @@ Box(,6,65)
 BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
-	
-    _rec := get_dbf_global_memvars()
+    _rec := get_dbf_global_memvars( NIL, .f. )
     delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-	
 	return 0
-	
 endif
 
-_rec := get_dbf_global_memvars()
+_rec := get_dbf_global_memvars( NIL, .f. )
+// update zapisa
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+
 
 return 1
 
@@ -1098,18 +1094,14 @@ local _rec
 private GetList:={}
 
 if !lNewRec .and. field->el_id == 0
-
 	Msgbeep("Stavka ne postoji !!!#Koristite c-N da bi dodali novu!")
 	return DE_REFRESH
-	
 endif
 
 if lNewRec
-
-	if _set_sif_id(@nEl_op_id, "EL_OP_ID") == 0
+	if _set_sif_id( @nEl_op_id, "EL_OP_ID", NIL, "FULL" ) == 0
 		return 0
 	endif
-
 endif
 
 set_global_memvars_from_dbf()
@@ -1138,15 +1130,12 @@ Box(,6,65)
 BoxC()
 
 if LastKey() == K_ESC .and. lNewRec
-    
-    _rec := get_dbf_global_memvars()
+    _rec := get_dbf_global_memvars( NIL, .f. )
 	delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-	
 	return 0
-	
 endif
 
-_rec := get_dbf_global_memvars()
+_rec := get_dbf_global_memvars( NIL, .f. )
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 	
 return 1
@@ -1166,7 +1155,6 @@ endif
 
 _rec := dbf_get_rec()
 delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-
 
 return DE_REFRESH
 

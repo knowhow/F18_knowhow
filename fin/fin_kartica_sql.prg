@@ -235,8 +235,8 @@ _qry := "SELECT s.idkonto, k.naz as konto_naz, s.idpartner, p.naz as partn_naz, 
         "( CASE WHEN s.d_p = '1' THEN " + _fld_iznos + " ELSE 0 END ) AS duguje, " + ;
         "( CASE WHEN s.d_p = '2' THEN " + _fld_iznos + " ELSE 0 END ) AS potrazuje " + ;
         "FROM fmk.fin_suban s " + ;
-        "LEFT JOIN fmk.partn p ON s.idpartner = p.id " + ;
-        "LEFT JOIN fmk.konto k ON s.idkonto = k.id " + ;
+        "JOIN fmk.partn p ON s.idpartner = p.id " + ;
+        "JOIN fmk.konto k ON s.idkonto = k.id " + ;
         "WHERE idfirma = " + _sql_quote( gfirma )
 
 // datumi

@@ -220,11 +220,11 @@ do case
         select articles
         set filter to
         set relation to
-        
-        if _set_sif_id( @nArt_id, "ART_ID" ) == 0
+       
+        if _set_sif_id( @nArt_id, "ART_ID", NIL, "FULL" ) == 0
             return DE_CONT
         endif
-        
+             
         // prvo mi reci koji artikal zelis praviti...
         _g_art_type( @nArt_type, @cSchema )
         
@@ -235,7 +235,6 @@ do case
             select articles
             go (nTRec)
         endif
-        
         
         return DE_REFRESH
         
@@ -680,6 +679,13 @@ local nTRec := RECNO()
 local nRet := 0
 local _rec
 
+if !f18_lock_tables({ "articles" })
+    MsgBeep("Ne mogu lockovati tabelu !!!")
+    return nRet
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
         @cArt_mcode ) == 1
     
@@ -696,7 +702,7 @@ if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
     _rec["art_lab_de"] := cArt_lab_desc
     _rec["match_code"] := cArt_mcode
     
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
 
     set order to tag "1"
     set filter to &cDBFilter
@@ -704,6 +710,9 @@ if _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
     
     nRet := 1
 endif
+
+f18_free_tables({ "articles" })
+sql_table_update( nil, "END" )
 
 return nRet
 
@@ -833,7 +842,10 @@ if FOUND()
 
     _del_rec := dbf_get_rec()
 
-    f18_lock_tables({"articles", "elements", "e_att", "e_aops"})
+    if !f18_lock_tables({"articles", "elements", "e_att", "e_aops"})
+        return 0
+    endif
+
     sql_table_update( nil, "BEGIN" )
 
     delete_rec_server_and_dbf( ALIAS(), _del_rec, 1, "CONT" )
@@ -891,6 +903,8 @@ select articles
 
 return 1
 
+
+
 // ----------------------------------------------
 // kloniranje artikla
 // ----------------------------------------------
@@ -910,6 +924,12 @@ select articles
 set filter to
 set relation to
 
+if !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" } )
+    return -1
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 if _set_sif_id( @nArtNewid, "ART_ID" ) == 0
     return -1
 endif
@@ -919,9 +939,6 @@ select elements
 set order to tag "1"
 go top
 seek artid_str( nArt_id ) 
-
-f18_lock_tables({"elements"})
-sql_table_update( nil, "BEGIN" )
 
 do while !EOF() .and. field->art_id == nArt_id
 
@@ -953,7 +970,7 @@ do while !EOF() .and. field->art_id == nArt_id
     
 enddo
 
-f18_free_tables({"elements"})
+f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
 sql_table_update( nil, "END" )
 
 return nArtNewid

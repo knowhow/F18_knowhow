@@ -248,7 +248,7 @@ local _cmd
 
 log_write( "open folder cmd line: " + _cmd, 9 )
 
-hb_run(_cmd)
+f18_run(_cmd)
 
 return .t.
 
@@ -290,3 +290,43 @@ HB_FUNC( FILEEXT )
 }
 
 #pragma ENDDUMP
+
+function f18_run(cmd, output, always_ok)
+local _ret, _stdout, _stderr, _prefix
+local _msg
+
+if always_ok == NIL
+  always_ok := .f.
+endif
+
+_ret := hb_ProcessRun(cmd, @_stdout, @_stderr)
+
+if _ret <> 0
+
+#ifdef __PLATFORM__WINDOWS
+   _prefix := "start "
+#else
+   #ifdef __PLATFORM__DARWIN
+      _prefix := "open "
+   #else
+      _prefix := ""
+   #endif
+#endif
+
+   _ret :=hb_processRun(_prefix + cmd, @_stdout, @_stderr)
+ 
+   if _ret <> 0 .and. !always_ok 
+        _msg := "ERR run cmd:"  + cmd
+        log_write(_msg, 2)
+        MsgBeep(_msg)
+   endif
+
+endif
+
+if VALTYPE(output) == "H"
+    // hash matrica
+    output["stdout"] := _stdout
+    output["stderr"] := _stderr
+endif
+
+return _ret

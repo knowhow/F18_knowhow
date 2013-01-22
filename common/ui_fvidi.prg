@@ -15,7 +15,7 @@
 
 function VidiFajl(cImeF, aLinFiks, aKolFiks)
 
-run "gedit" + cImeF
+f18_run("gedit" + cImeF)
 
 
 

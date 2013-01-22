@@ -50,7 +50,6 @@ else
 	cTag := "3"
 endif
 
-
 set_a_kol(@ImeKol, @Kol, nCust_id)
 
 if VALTYPE(cId) == "C"
@@ -92,7 +91,6 @@ do case
 	case Ch == K_F3
 		nRet := wid_edit( "CONT_ID" )
 endcase
-
 
 return nRet
 

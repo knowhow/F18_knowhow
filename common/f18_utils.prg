@@ -225,7 +225,7 @@ endif
 
 _cmd := 'nmcli con ' + _up_dn + ' id "' + ALLTRIM( conn_name ) + '"' 
 
-_err := hb_run( _cmd )
+_err := f18_run( _cmd )
 
 if _err <> 0
     msgbeep( "Problem sa vpn konekcijom:#" + ALLTRIM( conn_name ) + " !???" )

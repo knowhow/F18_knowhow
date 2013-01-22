@@ -21,7 +21,7 @@ local cScreen
 save screen to cScreen
 
 cKLin := "copy " + PRIVPATH + cFile + " " + cDest
-run &cKLin
+f18_run(cKLin)
 
 restore screen from cScreen
 

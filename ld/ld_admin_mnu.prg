@@ -12,16 +12,18 @@
 
 #include "ld.ch"
 
+// ---------------------------------------------------------
+// ld administracioni menij
+// ---------------------------------------------------------
 function ld_administracija()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+AADD( _opc, "1. import podataka iz FMK               ")
+AADD( _opcexe, {|| import_data_from_fmk() })
 
-AADD(opc, "1. instalacija db-a ")
-AADD(opcexe, {|| goModul:oDataBase:install()})
-
-Menu_SC("adm")
+f18_menu("adm", .f., _izbor, _opc, _opcexe )
 
 return
 

@@ -25,7 +25,7 @@ libs=hbct
 libs=hbpgsql
 #libs=hbdebug
 libs=hbmzip minizip
-{linux}libs=hbmysql
+{!darwin}libs=hbmysql
 
 libs=hbtip
 

@@ -385,12 +385,12 @@ if _status == 1
 	if doc_status == 5
 		// daj info o isporuci, ako je realizovan
 		// TODO: uzeti datum zatvaranja iz LOG-a ili ???
-		_sh_dvr_info( 0 )
+		_sh_dvr_info( 0, 5 )
 	else
-	
 		// daj info o kasnjenju
 		_sh_dvr_warr( _chk_date( doc_dvr_da ), _chk_time( doc_dvr_ti ), 5 )
-	endif		
+	endif
+		
 endif
 
 // prikazi status dokumenta na pregledu
@@ -1227,20 +1227,22 @@ local cColOk := "GR+/B"
 local cColor
 local cTmp := ""
 
-if nX == nil
+if nX == NIL
 	nX := 2
 endif
 
-if nLen == nil
-	nLen := 30 
+if nLen == NIL
+	nLen := 20 
 endif
 
 if nDays > 0
-	cTmp := ALLTRIM(STR(nDays)) + " dana"
+	cTmp := ALLTRIM( STR( nDays ) ) + " dana"
 	cColor := cColOk
+    @ nX, m_y + 1 SAY PADR( cTmp, nLen ) COLOR cColor
+else
+    @ nX, m_y + 1 SAY SPACE( nLen )
 endif
 
-@ nX, m_y + 1 SAY PADR(cTmp, nLen) COLOR cColor
 
 return
 
@@ -1252,6 +1254,7 @@ return
 static function _sh_doc_status( doc_status, nX, nY )
 local cTmp
 local cDoc_stat
+local cColor := "GR+/B"
 
 if nX == nil
 	nX := 5
@@ -1289,6 +1292,7 @@ do case
 	case doc_status == 5
 		
 		cColor := "W/G+"
+
 endcase
 
 @ nX, nY SAY PADR( cTmp , 20 ) COLOR cColor

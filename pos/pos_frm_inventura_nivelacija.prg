@@ -288,13 +288,14 @@ if !fSadAz
         AADD( ImeKol, { "Kolicina" , {|| STR( kolicina, 9, 3 ) } })
     endif
 
-    AADD(ImeKol, { "Cijena "    , {|| STR( cijena, 7, 2 ) }})
+    AADD( ImeKol, { "Cijena "    , {|| STR( cijena, 7, 2 ) }})
 
     if cIdVd == VD_NIV
-        AADD(ImeKol, { "Nova C.",     {|| STR( ncijena, 7, 2 ) } })
+        AADD( ImeKol, { "Nova C.",     {|| STR( ncijena, 7, 2 ) } })
     endif
         
-    AADD(ImeKol, { "Tarifa "    , {|| idtarifa }})
+    AADD( ImeKol, { "Tarifa "    , {|| idtarifa }})
+    AADD( ImeKol, { "Datum "     , {|| datum }})
 
     Kol := {}
         
@@ -315,7 +316,7 @@ if !fSadAz
         SET CURSOR ON
 
         ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
-                "Broj dokumenta: " + cBrDok , ;
+                "Broj dokumenta: " + ALLTRIM( cBrDok ) + " datum: " + DTOC( dDatRada ) , ;
                 "PRIPREMA " + cNazDok + "E", nil, ;
                 { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka" }, 2, , , )
 
@@ -387,7 +388,11 @@ if !fSadAz
         endif
 
     enddo  
+
 endif 
+
+// posljednje chekiranje pred azuriranje
+check_before_azur( dDatRada )
 
 // azuriraj pripremu u POS
 Priprz2Pos()
@@ -395,6 +400,37 @@ Priprz2Pos()
 close all
 
 return
+
+
+// ---------------------------------------------------------------
+// checkiranje tabele priprz prije azuriranja
+// ---------------------------------------------------------------
+static function check_before_azur( dDatRada )
+local _ret := .t.
+local _rec
+
+MsgO( "Provjera unesenih podataka prije azuriranja u toku ..." )
+
+select priprz
+go top
+do while !EOF()
+
+    if field->datum <> dDatRada
+
+        _rec := dbf_get_rec()
+        _rec["datum"] := dDatRada
+        dbf_update_rec( _rec )
+    
+    endif
+
+    skip
+
+enddo
+
+MsgC()
+
+return _ret
+
 
 
 // ---------------------------------------------
@@ -431,8 +467,9 @@ do case
         
         // kalkulisi stavke u pripremi
         _calc_priprz()
+
         // otvori unos
-        if !( EdPrInv(1) == 0 )
+        if !( EdPrInv( 1, dat_inv_niv ) == 0 )
             lVrati := DE_REFRESH
         endif
 
@@ -452,7 +489,7 @@ do case
     case Ch == K_CTRL_A
 
         do while !eof()
-            if EdPrInv(1) == 0
+            if EdPrInv( 1, dat_inv_niv ) == 0
                 exit
             endif
             skip
@@ -500,6 +537,7 @@ return lVrati
 // ----------------------------------------
 static function _calc_priprz()
 local _t_area := SELECT()
+local _t_rec := RECNO()
 
 select priprz
 go top
@@ -523,6 +561,8 @@ do while !EOF()
 enddo
 
 select (_t_area)
+go ( _t_rec )
+
 return
 
 
@@ -852,13 +892,10 @@ select priprz
 go top
 
 do while !EOF()
-
     Scatter()
     RacKol( _idodj, _idroba, @_kolicina )
-
     select priprz
     Gather()
-
     skip
 enddo
     

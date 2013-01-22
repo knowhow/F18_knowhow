@@ -25,7 +25,7 @@ private Izbor:=1
 AADD(opc, "1. izvjestaji                       ")
 AADD(opcexe, {|| pos_izvjestaji() })
 AADD(opc, "2. pregled racuna")   
-AADD(opcexe, {|| PromjeniID() })
+AADD(opcexe, {|| pos_pregled_racuna_tabela() })
 AADD(opc, "L. lista azuriranih dokumenata")
 AADD(opcexe, {|| pos_prepis_dokumenta()})
 AADD(opc, "R. robno-materijalno poslovanje")
@@ -64,18 +64,8 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-
 AADD(opc,"1. parametri rada programa                        ")
 AADD(opcexe, {|| pos_parametri() })
-
-AADD(opc,"2. instalacija db-a")
-AADD(opcexe,{|| goModul:oDatabase:install()})
-
-AADD(opc, "5. uzmi BARKOD iz sezone ")
-AADD(opcexe, {|| UzmiBkIzSez()})
-
-AADD(opc, "6. set pdv cijene na osnovu tarifa iz sezone ")
-AADD(opcexe, {|| set_pdv_cijene()})
 
 AADD(opc, "R. setovanje brojaca dokumenata")
 AADD(opcexe, {|| pos_set_param_broj_dokumenta() })
@@ -85,17 +75,15 @@ if gStolovi == "D"
 	AADD(opcexe, {|| zak_sve_stolove()})
 endif
 
-if KLevel<L_UPRAVN
-	AADD(opc,"T. programiranje tastature ")
-	AADD(opcexe,{|| ProgKeyboard() } )
-endif
-
-if (KLevel<L_UPRAVN)
-	AADD(opc, "---------------------------")
+if ( KLevel < L_UPRAVN )
+	
+    AADD(opc, "---------------------------")
 	AADD(opcexe, nil)
-	AADD(opc, "P. prodajno mjesto: "+gIdPos)
+	
+    AADD(opc, "P. prodajno mjesto: "+gIdPos)
 	nPosSetPM:=LEN(opc)
 	AADD(opcexe, { || SetPm (nPosSetPM) })
+
 endif
 
 Menu_SC("aadm")

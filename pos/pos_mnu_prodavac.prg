@@ -19,7 +19,7 @@ local _opcexe := {}
 local _izbor := 1
 
 AADD(_opc,"1. priprema racuna                        ")
-AADD(_opcexe, {|| pos_narudzba(), zakljuciracun(), .t. } )
+AADD(_opcexe, {|| _pos_prodavac_racun() } )
 	
 if gStolovi == "D"
 	AADD(_opc,"2. zakljucenje - placanje stola ")
@@ -58,6 +58,13 @@ close all
 return
 
 
+// ----------------------------------------------
+// izdavanje racuna za prodavca
+// ----------------------------------------------
+static function _pos_prodavac_racun()
+pos_narudzba()
+zakljuciracun()
+return .t.
 
 
 

@@ -1178,6 +1178,7 @@ do while .t.
     nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTota:=nTotb:=nTotC:=0
 
     do whilesc !eof() .and. cIdFirma==idfirma .and. cidvd==idvd
+        
         cBrDok:=BrDok
         cIdPartner:=IdPartner
         cBrFaktP:=BrFaktP
@@ -1313,7 +1314,7 @@ do while .t.
 
             VtPorezi()
     
-            aIPor:=RacPorezeMP(aPorezi, mpc, mpcSaPP, nc)
+            aIPor := RacPorezeMP( aPorezi, mpc, mpcSaPP, nc )
 
             select finmat
             append blank

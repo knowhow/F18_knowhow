@@ -198,10 +198,10 @@ do while .t.
     @ m_x + 4, m_y + 25 SAY space (11)
 
     // zakljuci racun
-    if LASTKEY() == K_ESC
-        EXIT
+    if LastKey() == K_ESC
+        exit
     endif
-    
+   
     // dodaj stavku racuna
     select _pos_pripr
     append blank

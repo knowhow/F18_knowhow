@@ -74,16 +74,15 @@ do while .t.
             append blank
         endif
         
-        _rec := hb_hash()
-        _rec := get_dbf_global_memvars()
-        
+        _rec := get_dbf_global_memvars( NIL, .f. )
+        // update zapisa... 
         dbf_update_rec( _rec )
         
         if cGetDOper == "D"
             
             lCopyAop := .f.
             
-            // operacije moguæe kopirati samo ako je isti 
+            // operacije moguce kopirati samo ako je isti 
             // artikal i ako je redni broj <> 1
 
             if _doc_it->doc_it_no <> 1
@@ -189,7 +188,12 @@ nX += 2
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("ARTIKAL (*):", nLeft) GET _art_id VALID {|| s_articles( @_art_id, .f., .t. ), show_it( g_art_desc( _art_id, nil, .f. ) + ".." , 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik i pretrazi" )
+@ m_x + nX, m_y + 2 SAY PADL("ARTIKAL (*):", nLeft) GET _art_id ;
+        VALID {|| _old_x := m_x, _old_y := m_y, ;
+                    s_articles( @_art_id, .f., .t. ), ;
+                    m_x := _old_x, _old_y := m_y, ;
+                    show_it( g_art_desc( _art_id, nil, .f. ) + ".." , 35 ) } ;
+        WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik i pretrazi" )
 
 nX += 1
 

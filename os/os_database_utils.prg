@@ -415,7 +415,7 @@ do while !eof()
                 go nTSRec
                 _rec := dbf_get_rec()
                 _rec["id"] := cNovi
-                update_rec_server_and_dbf( ALIAS(), _rec ) 
+                update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" ) 
             endif
             go nTrec
         enddo

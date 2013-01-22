@@ -38,17 +38,12 @@ endif
 _cnt := pocetno_stanje_sql( _params )
 
 if _cnt > 0
-	_txt := "!" + PADC("Izvrsen prenos pocetnog stanja", _padr ) + "!"
-	_txt += "##"
-	_txt += PADR("broj stavki dokumenta: " + ALLTRIM( STR( _cnt ) ), _padr/2 )
-	_txt += "#"
-	_txt += PADR("stanje: " + ALLTRIM(STR(__stanje, 12, 2)), _padr/2 )
-	_txt += PADR(", vrijednost: " + ALLTRIM(STR( __vrijednost, 12, 2 )), _padr/2 )
+    _txt := "Izvrsen prenos pocetnog stanja, dokument 16-1 !"
 else
 	_txt := "Nema dokumenata za prenos !!!"
 endif
 
-MsgBeep(_txt)
+MsgBeep( _txt )
 
 return
 
@@ -221,7 +216,7 @@ do while !_table:EOF()
 
     _row := _table:GetRow()
 
-    _id_roba := _row:Fieldget( _row:Fieldpos("idroba") )
+    _id_roba := hb_utf8tostr( _row:Fieldget( _row:Fieldpos("idroba") ) )
 
     _kolicina := _row:Fieldget( _row:Fieldpos("kolicina") )
     __stanje += _kolicina

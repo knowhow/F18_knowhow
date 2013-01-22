@@ -29,7 +29,6 @@ set_a_dbf_fakt_gen_ug_p()
 
 // tabele sa strukturom sifarnika (id je primarni ključ)
 set_a_dbf_sifarnik("fakt_ftxt"  , "FTXT"  , F_FTXT   )
-set_a_dbf_sifarnik("fakt_objekti"  , "FAKT_OBJEKTI"  , F_FAKT_OBJEKTI   )
 
 // prebaceno u gornju izdvojenu funkciju
 //set_a_dbf_sifarnik("dest"       , "DEST"  , F_DEST   )

@@ -28,7 +28,7 @@ if cDesc == nil
     cDesc := ""
 endif
 
-o_tables(.t.)
+o_tables( .t. )
 
 // skloni filtere
 select _docs
@@ -72,7 +72,26 @@ if __doc_stat < 3 .and. !rnal_doc_no_exist( __doc_no )
     
 endif
 
-MsgO("Azuriranje naloga u toku...")
+
+// azuriranje naloga u toku...
+// lokuj sve tabele
+
+// probaj prvo docs lokovati....
+if !f18_lock_tables( { "docs" } )
+    MsgBeep("Tabele zauzete... ponovite ponovo.... lock docs !!!")
+    return 0
+endif
+
+// ----- pocetak transakcije
+// lock ostalih tabela....
+if !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+    MsgBeep( "Ne mogu lock-ovati tabele !!!!")
+    return 0
+endif
+
+sql_table_update( nil, "BEGIN" )
+
+MsgO( "Azuriranje naloga u toku..." )
 
 Beep(1)
 
@@ -80,11 +99,16 @@ Beep(1)
 if __doc_stat == 3
     
     // napravi deltu dokumenta
-    doc_delta( __doc_no, __doc_desc )
-    
+    doc_delta( __doc_no, __doc_desc ) 
     // brisi dokument iz kumulativa
     doc_erase( __doc_no )
-
+    
+    // zavrsi trenutnu transakciju
+    sql_table_update( nil, "END" )
+    // zapocni novu transakciju
+    // kako bi ovo sto je i izbrisano bilo vidljivo
+    sql_table_update( nil, "BEGIN" )
+ 
     O_DOCS
     
 endif
@@ -101,14 +125,18 @@ _doc_it2_insert( __doc_no )
 // azuriranje tabele _DOC_OPS
 _doc_op_insert( __doc_no )
 
-set_doc_marker( __doc_no, 0 )
+// setuj marker dokumenta
+set_doc_marker( __doc_no, 0, "CONT" )
 
 if __doc_stat <> 3
-
     // logiraj promjene na dokumentu
     doc_logit( __doc_no )
-    
 endif
+
+f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+sql_table_update( nil, "END" )
+
+// ------ kraj transakcije
 
 // sve je ok brisi pripremu
 select _docs
@@ -156,7 +184,7 @@ if !FOUND()
     append blank
 endif
 
-update_rec_server_and_dbf( "docs", _rec, 1, "FULL" )
+update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
         
 set order to tag "1"
 
@@ -179,9 +207,6 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
-f18_lock_tables( { "doc_it" } )
-sql_table_update( nil, "BEGIN" )
-
 do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     _rec := dbf_get_rec()
@@ -197,10 +222,6 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     skip
     
 enddo
-
-f18_free_tables( { "doc_it" } )
-sql_table_update( nil, "END" )
-
 
 return
 
@@ -220,10 +241,6 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
-
-f18_lock_tables( { "doc_it2" } )
-sql_table_update( nil, "BEGIN" )
-
 do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     _rec := dbf_get_rec()
@@ -240,10 +257,10 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
 
 enddo
 
-f18_free_tables( { "doc_it2" } )
-sql_table_update( nil, "END" )
-
 return
+
+
+
 
 
 // ------------------------------------------
@@ -262,10 +279,6 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
-
-f18_lock_tables( { "doc_ops" } )
-sql_table_update( nil, "BEGIN" )
-
 do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     // ako ima operacija...
@@ -282,11 +295,8 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     select _doc_ops
     skip
+
 enddo
-
-f18_free_tables( { "doc_ops" } )
-sql_table_update( nil, "END" )
-
 
 return
 
@@ -359,10 +369,14 @@ return 1
 // nDoc_no - dokument broj
 // nMarker - 0, 1, 2, 3, 4, 5
 // ----------------------------------------
-function set_doc_marker( nDoc_no, nMarker )
+function set_doc_marker( nDoc_no, nMarker, cont )
 local _rec, _id_fields, _where_bl
 local nTArea
 nTArea := SELECT()
+
+if cont == NIL
+    cont := "FULL"
+endif
 
 select docs
 set order to tag "1"
@@ -374,7 +388,7 @@ if FOUND()
     _rec := dbf_get_rec()
     _rec["doc_status"] := nMarker
  
-    update_rec_server_and_dbf( "docs", _rec, 1, "FULL" )
+    update_rec_server_and_dbf( "docs", _rec, 1, cont )
  
 endif
 
@@ -561,10 +575,6 @@ set order to tag "1"
 go top
 seek docno_str( nDoc_no )
 
-f18_lock_tables({ "docs", "doc_it", "doc_it2", "doc_ops" })
-
-sql_table_update( nil, "BEGIN" )
-
 if FOUND()
     _del_rec := dbf_get_rec()
     delete_rec_server_and_dbf( "docs", _del_rec, 1, "CONT" )
@@ -603,10 +613,7 @@ if FOUND()
     delete_rec_server_and_dbf( "doc_ops", _del_rec, 2, "CONT" )
 endif
 
-f18_free_tables({"docs", "doc_it", "doc_it2", "doc_ops"})
-sql_table_update( nil, "END" )
-
-return
+return 1
 
 
 

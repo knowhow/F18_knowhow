@@ -13,6 +13,25 @@
 #include "rnal.ch"
 
 
+
+// -------------------------------------------
+// -------------------------------------------
+function m_adm()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+if is_fmkrules()
+	AADD( _opc, "1. FMK rules")
+	AADD( _opcexe, {|| p_fmkrules( , , , aRuleSpec, bRuleBlock ) })
+endif
+
+f18_menu( "adm", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+
 // ------------------------------------------------
 // otvori tabele potrebne za rad sa RNAL
 // lTemporary - .t. i pripremne tabele
@@ -236,14 +255,14 @@ return STR(nId, 4)
 // nId - id sifrarnika
 // cIdField - naziv id polja....
 // -------------------------------------------
-function _set_sif_id(nId, cIdField, lAuto )
+function _set_sif_id( nId, cIdField, lAuto, cont )
 local nTArea := SELECT()
 local nTime
 local cIndex
 local _rec
 private GetList:={}
 
-if lAuto == nil
+if lAuto == NIL
 	lAuto := .f.
 endif
 
@@ -251,6 +270,10 @@ if cIdField == "ART_ID"
 	cIndex := "1"
 else
 	cIndex := "2"
+endif
+
+if cont == NIL
+    cont := "CONT"
 endif
 
 _inc_id( @nId, cIdField, cIndex, lAuto )
@@ -263,10 +286,10 @@ cIdField := "_" + cIdField
 
 &cIdField := nId
 
-_rec := get_dbf_global_memvars()        
+_rec := get_dbf_global_memvars( NIL, .f. )        
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-        
+update_rec_server_and_dbf( ALIAS(), _rec, 1, cont )
+
 select (nTArea)
 
 return 1

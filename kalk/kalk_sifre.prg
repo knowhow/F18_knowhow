@@ -125,6 +125,11 @@ elseif upper(Chr(Ch)) == "S"
     return 6  
     // DE_CONT2
 
+elseif upper(Chr(Ch)) == "D"
+    // pregled detalja artikla
+    roba_opis_edit( .t. )
+    return 6  
+ 
 endif
 
 return DE_CONT

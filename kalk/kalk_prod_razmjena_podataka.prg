@@ -652,7 +652,7 @@ Box(,15,60)
      		endif	
 		
 		@ m_x+10,m_y+2 SAY "Dokument je prenesen !!"
-		@ m_x+11,m_y+2 SAY "Obavezno pokrenuti asistenta <a+F10>!!!"
+		@ m_x+11,m_y+2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
      		
 		if gBrojac=="D"
       			cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
@@ -1516,7 +1516,7 @@ Box(, 15, 60 )
      	endif	
 		
 		@ m_x+10,m_y+2 SAY "Dokument je prenesen !!"
-		@ m_x+11,m_y+2 SAY "Obavezno pokrenuti asistenta <a+F10>!!!"
+		@ m_x+11,m_y+2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
      		
 		if gBrojac=="D"
       		cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))

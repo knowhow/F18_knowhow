@@ -68,55 +68,69 @@ return 1
 // key handler nad tabelom
 // ------------------------------------------
 static function key_handler()
-local nTRec := RECNO()
-local nRet := DE_CONT
+local _t_rec := RECNO()
+local _ret := DE_CONT
+local _rec
 
 do case
-	case (Ch == ASC(' '))
+
+	case ( Ch == ASC(' ') )
+
 		Beep(0.5)
-		if field->print == "D"
-			replace field->print with "N"
+        
+        _rec := dbf_get_rec()
+
+		if _rec["print"] == "D"
+            _rec["print"] := "N"
 		else
-			replace field->print with "D"
+            _rec["print"] := "D"
 		endif
+        
+        dbf_update_rec( _rec )
+
 		return DE_REFRESH
-	case (UPPER(CHR(Ch))) == "I"
+
+	case ( UPPER( CHR( Ch ) ) ) == "I"
+
 		// unos isporuke
 		if set_deliver() = 0
 			return DE_CONT
 		else
 			return DE_REFRESH
 		endif
+
 endcase
 
-
-return nRet
+return _ret
 
 
 // ------------------------------------
 // unos isporuke
 // ------------------------------------
 static function set_deliver()
-local nRet := 1
+local _ret := 1
 local GetList := {}
-local nDeliver := field->doc_it_qtt
+local _deliver := field->doc_it_qtt
+local _rec
 
 Box(, 1, 25)
-	@ m_x + 1, m_y + 2 SAY "isporuceno ?" GET nDeliver PICT "9999999.99"
+	@ m_x + 1, m_y + 2 SAY "isporuceno ?" GET _deliver PICT "9999999.99"
 	read
 BoxC()
 
 if LastKey() == K_ESC
-	nRet := 0
-	return nRet
+	_ret := 0
+	return _ret
 endif
 
-replace field->doc_it_qtt with nDeliver
+_rec := dbf_get_rec()
+_rec["doc_it_qtt"] := _deliver
+dbf_update_rec( _rec )
 
 // rekalkulisi podatke 
 recalc_pr()
 
-return nRet
+return _ret
 
 
 // -------------------------------------------------------
@@ -144,29 +158,29 @@ return
 // -------------------------------------------------
 // vraca ispis status polja
 // -------------------------------------------------
-static function _g_st( cVal )
-local cRet := ""
+static function _g_st( value )
+local _ret := ""
 
-cRet := ">"
-cRet += cVal
-cRet += "<"
+_ret := ">"
+_ret += value
+_ret += "<"
 
-return cRet
+return _ret
 
 
 // ---------------------------------------------------
 // ispisuje opis dimenzija
 // ---------------------------------------------------
-static function _g_dim( nQtty, nH, nW )
-local cRet := ""
+static function _g_dim( qtty, height, width )
+local _ret := ""
 
-cRet += ALLTRIM(STR(nQtty,12,0))
-cRet += "x"
-cRet += ALLTRIM(STR(nH,12,2))
-cRet += "x"
-cRet += ALLTRIM(STR(nW,12,2))
+_ret += ALLTRIM(STR( qtty , 12, 0 ))
+_ret += "x"
+_ret += ALLTRIM(STR( height, 12, 2 ))
+_ret += "x"
+_ret += ALLTRIM(STR( width , 12, 2 ))
 
-return cRet
+return _ret
 
 
 

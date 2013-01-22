@@ -71,32 +71,48 @@ CREATE_INDEX("NAZ","naz", "konto")
 index_mcode(SIFPATH, "KONTO")
 
 
-cIme := f18_ime_dbf("valute")
-if !file(cIme)
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
-        add_f_mcode(@aDbf)
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
-        AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
-        AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
-        AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  5 })
-        AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  5 })
-        AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
-        AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
-        dbcreate2("valute", aDbf)
+_created := .f.
+_table_name := "valute"
+_alias := "VALUTE"
 
-        reset_semaphore_version("valute")
-        my_use("valute")
-        close all
-    
-        fill_tbl_valute()
+if !FILE( f18_ime_dbf( _table_name ) )
+    aDbf:={}
+    AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
+    add_f_mcode(@aDbf)
+    AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
+    AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
+    AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
+    AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  5 })
+    AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  5 })
+    AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
+    AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
+    dbcreate2( _table_name , aDbf)
+
+    _created := .t.
 
 endif
 
-CREATE_INDEX("ID","id", "valute")
-CREATE_INDEX("NAZ","tip+id+dtos(datum)", "valute")
-CREATE_INDEX("ID2","id+dtos(datum)", "valute")
-index_mcode(cIme)
+// 0.8.8
+if ver["current"] < 0808
+    modstru( { "*" + _table_name, ;
+        "C KURS1 N 10 5 KURS1 N 10 6", ;
+        "C KURS2 N 10 5 KURS2 N 10 6", ;
+        "C KURS3 N 10 5 KURS3 N 10 6" } )
+endif
+
+if _created
+    reset_semaphore_version( _table_name )
+    my_use( _table_name )
+    close all 
+endif
+
+CREATE_INDEX( "ID", "id", _table_name )
+CREATE_INDEX( "NAZ", "tip+id+dtos(datum)", _table_name )
+CREATE_INDEX( "ID2", "id+dtos(datum)", _table_name )
+index_mcode( f18_ime_dbf( _table_name ) )
+
+// upisi default valute ako ne postoje
+fill_tbl_valute()
 
 // TNAL
 if !file(f18_ime_dbf("tnal"))
@@ -347,6 +363,28 @@ CREATE_INDEX("ID", "ID", "OBJEKTI")
 CREATE_INDEX("NAZ", "NAZ", "OBJEKTI")
 CREATE_INDEX("IdObj", "IdObj", "OBJEKTI")
 
+// fakt objekti
+aDbf := {}
+AADD( aDBf,{ 'ID'   , 'C' ,   10 ,  0 } )
+AADD( aDBf,{ 'NAZ'  , 'C' ,  100 ,  0 } )
+
+_created := .f.
+_alias := "FAKT_OBJEKTI"
+_table_name := "fakt_objekti"
+
+if !FILE( f18_ime_dbf( _alias) )
+    DBCREATE2( _alias, aDbf )
+    _created := .t.
+endif
+
+if _created 
+    reset_semaphore_version(_table_name)
+    my_use(_alias)
+    use
+endif
+
+CREATE_INDEX( "ID", "ID", _alias )
+CREATE_INDEX( "NAZ", "NAZ", _alias )
 
 nArea := nil
 
@@ -368,14 +406,27 @@ db_cre_ugov()
 return .t.
 
 
+
 // ----------------------------------------
+// dodaj defaut valute u sifrarnik valuta
 // ----------------------------------------
 function fill_tbl_valute()
 local _rec
 
 close all
-my_use ('valute')
+O_VALUTE
 
+if RECCOUNT() <> 0
+    close all
+    return .t.
+endif
+
+if !f18_lock_tables({"valute"})
+    close all
+    return .t.
+endif
+
+sql_table_update( nil, "BEGIN" )
 
 append blank
 _rec := dbf_get_rec()
@@ -387,7 +438,7 @@ _rec["tip"]   := "D"
 _rec["kurs1"] := 1
 _rec["kurs2"] := 1
 _rec["kurs3"] := 1
-update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+update_rec_server_and_dbf( 'valute', _rec, 1, "CONT")
 
 append blank
 _rec := dbf_get_rec()
@@ -396,13 +447,17 @@ _rec["naz"]   := "EURO"
 _rec["naz2"]  := "EUR"
 _rec["datum"] := CTOD("01.01.04")
 _rec["tip"]   := "P"
-_rec["kurs1"] := 0.512
-_rec["kurs2"] := 0.512
-_rec["kurs3"] := 0.512
-update_rec_server_and_dbf('valute', _rec, 1, "FULL")
+_rec["kurs1"] := 0.51128
+_rec["kurs2"] := 0.51128
+_rec["kurs3"] := 0.51128
+update_rec_server_and_dbf( 'valute', _rec, 1, "CONT" )
 
 
-CLOSE ALL
+f18_free_tables({"valute"})
+sql_table_update( nil, "END" )
+
+close all
 
 return .t.
+
 

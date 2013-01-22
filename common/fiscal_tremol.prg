@@ -213,7 +213,7 @@ save screen to _scr
 clear screen
 
 ? "Restartujem server..."
-_err := hb_run( _scrtip )
+_err := f18_run( _scrtip )
 
 restore screen from _scr
 return .f.

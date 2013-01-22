@@ -12,27 +12,9 @@
 
 #include "fmk.ch"
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/sifk.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.2 $
- * $Log: sifk.prg,v $
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
- *
- */
  
-
-/*! \fn SifkFill(cSifk,cSifv,cSifrarnik,cIDSif)
-  * \brief  SifkFill Napuni pomocne tabele (radi prenosa) sifk, sifv
-  * \param cSIFK ime sifk tabele (npr PRIVPATH+"_SIFK")
-  * \param cSifV ime sifv tabele
-  * \param cSifrarnik sifrarnik (npr "ROBA")
-  */
-  
 function SifkFill(cSifk,cSifv,cSifrarnik,cIDSif)
-*{
+
 PushWa()
 
 use (cSifK) new   alias _SIFK

@@ -339,7 +339,7 @@ if cFMKIni $ "DSPKM"
       endif
 
      Box(,25,80)
-       run &ckom
+       f18_run(ckom)
      BoxC()
      IniRefresh() // izbrisi iz cache-a
 endif

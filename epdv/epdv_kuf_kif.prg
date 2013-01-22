@@ -168,19 +168,21 @@ endif
 // npr. LOWER( "KUF" )
 _tbl_epdv := "epdv_" + LOWER( tbl )
 
-lock_semaphore( _tbl_epdv, "lock" )
+// lokuj prvo tabele
+if !f18_lock_tables( { _tbl_epdv } )
+    return .f.
+endif
 
 lOk := .t.
+  
+// azuriraj kuf
+MsgO( "sql " + _tbl_epdv )
+sql_table_update( nil, "BEGIN")
 
 if lOk = .t.
 
-  // azuriraj kuf
-  MsgO( "sql " + _tbl_epdv )
-
   select ( __area )
   go top
-
-  sql_table_update( nil, "BEGIN")
 
   do while !eof()
 
@@ -193,7 +195,7 @@ if lOk = .t.
    		record["src_pm"] := field->src_pm
    endif
                
-   _tmp_id := PADR( ALLTRIM( STR( record["br_dok"], 6 ) ), 6 ) 
+   _tmp_id := "#2" + PADL( ALLTRIM( STR( record["br_dok"], 6 ) ), 6 ) 
    
    if !sql_table_update(_tbl_epdv, "ins", record )
        		lOk := .f.
@@ -209,24 +211,17 @@ if lOk = .t.
 endif
 
 if !lOk
-
 	// vrati sve nazad...  	
 	sql_table_update(nil, "ROLLBACK")
-
 else
-	
 	// napravi update-e
 	// zavrsi transakcije 
- 
 	AADD( _ids, _tmp_id )
-
 	push_ids_to_semaphore( _tbl_epdv, _ids ) 
-  	
 	sql_table_update(nil, "END")
-
 endif
 
-lock_semaphore( _tbl_epdv, "free" )
+f18_free_tables( { _tbl_epdv } )
 
 return lOk
 

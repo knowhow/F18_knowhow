@@ -45,16 +45,17 @@ if field->idtipdok == "IM"
 endif
 
 private ImeKol := { ;
-          {"Red.br"      ,  {|| Rbr()                   } } ,;
-          {"Partner/Roba",  {|| Part1Stavka() + Roba()  } } ,;
-          {"Kolicina"    ,  {|| kolicina                } } ,;
-          {"Cijena"      ,  {|| Cijena                  } , "cijena"    } ,;
-          {"Rabat"       ,  {|| Rabat                   } , "Rabat"     } ,;
-          {"Porez"       ,  {|| Porez                   } , "porez"     } ,;
+          {"Red.br"      ,  {|| Rbr()                   } }, ;
+          {"Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
+          {"Kolicina"    ,  {|| kolicina                } }, ;
+          {"Cijena"      ,  {|| Cijena                  } , "cijena"    }, ;
+          {"Rabat"       ,  {|| Rabat                   } , "Rabat"     }, ;
+          {"Porez"       ,  {|| Porez                   } , "porez"     }, ;
           {"RJ"          ,  {|| idfirma                 } , "idfirma"   }, ;
           {"Serbr",         {|| SerBr                   } , "serbr"     }, ;
           {"Partn",         {|| IdPartner               } , "IdPartner" }, ;
           {"IdTipDok",      {|| IdTipDok                } , "Idtipdok"  }, ;
+          {"DinDem",        {|| dindem                  } , "dindem"    }, ;
           {"Brdok",         {|| Brdok                   } , "Brdok"     }, ;
           {"DatDok",        {|| DATDOK                  } , "DATDOK"    } ;
         }
@@ -71,6 +72,7 @@ next
 // inicijalizacija staticki varijabli...
 // marker fiskalnih racuna
 __fiscal_marker := .f.
+
 // podaci dokumenta
 __id_firma  := field->idfirma
 __tip_dok := field->idtipdok
@@ -163,7 +165,7 @@ do case
         endif
 
         // pronadji mi device_id 
-        _dev_id := get_fiscal_device( my_user() )
+        _dev_id := get_fiscal_device( my_user(), __tip_dok )
 
         if _dev_id > 0
 
@@ -316,7 +318,7 @@ do case
         
         // setuj broj dokumenta u pripremi ako vec nije
         fakt_set_broj_dokumenta()
-    
+
         if !CijeneOK( "Stampanje" )
             return DE_REFRESH
         endif
@@ -339,7 +341,7 @@ do case
     case Ch == K_ALT_A
 
         fakt_set_broj_dokumenta()
-
+        
         // setuj podatke za fiskalni racun
         __id_firma  := field->idfirma
         __tip_dok := field->idtipdok
@@ -388,7 +390,18 @@ do case
     // generisanje racuna na osnovu otpremnice      
     case UPPER( CHR( Ch ) ) == "O"
 
-        fakt_generisi_racun_iz_otpremnice() 
+        _t_area := SELECT()
+       
+ 
+        // stari parametar...
+        if !_params["fakt_otpr_gen"]
+            fakt_generisi_racun_iz_otpremnice() 
+        else
+            _fakt_doks := FaktDokumenti():New()
+            _fakt_doks:pretvori_otpremnice_u_racun()
+        endif
+
+        select (_t_area )
         return DE_REFRESH
     
     // asistent 
@@ -483,6 +496,69 @@ do case
 endcase
 
 return DE_CONT
+
+
+// -----------------------------------------------------------------
+// promjeni brojac dokumenta za dokumente tip-a 12
+// -----------------------------------------------------------------
+static function otpremnica_22_brojac()
+local _fakt_params := fakt_params()
+local _rec, _t_rec
+
+if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"]
+
+    _novi_broj := fakt_novi_broj_dokumenta( field->idfirma, "22" )
+
+    select fakt_pripr
+    set order to tag "1"
+    go top
+
+    do while !EOF()
+
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
+        _rec := dbf_get_rec()
+        _rec["brdok"] := _novi_broj
+        dbf_update_rec( _rec )
+
+        go ( _t_rec )
+
+    enddo
+    
+    go top
+
+    select ( F_FAKT_ATRIB )
+    if !Used()
+        O_FAKT_ATRIB
+    endif
+    set order to tag "1"
+    go top
+
+    do while !EOF()
+
+        skip 1
+        _t_rec := RECNO()
+        skip -1
+
+        _rec := dbf_get_rec()
+        _rec["brdok"] := _novi_broj
+        dbf_update_rec( _rec )
+
+        go ( _t_rec )
+
+    enddo
+    
+    use
+
+    select fakt_pripr
+    go top
+
+endif
+
+return .t.
+
 
 
 // --------------------------------------------------
@@ -999,17 +1075,21 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                 PICT "@!" ;
                 VALID {|| P_Firma( @_idpartner ), ;
                             IzSifre(), ;
-                            _isp_partn( _idpartner, _part_x, _part_y + 18 ) }
-        ++ _x
-
+                            ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
+            
+        _x += 2
+      
         if _params["fakt_prodajna_mjesta"]
-           // prodajno mjesto, PM
-           @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm VALID {|| P_IDPM( @_idpm, _idpartner ) } PICT "@S10"
+            // prodajno mjesto, PM
+            @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm ;
+                    VALID {|| P_IDPM( @_idpm, _idpartner ) } ;
+                    PICT "@S10"
         endif
 
         if _params["fakt_dok_veze"]
-           // veza dokumenti
-           @ m_x + _x, col() + 1 SAY "Vezni dok.:" GET _dokument_veza PICT "@S20"
+            // veza dokumenti
+            @ m_x + _x, col() + 1 SAY "Vezni dok.:" GET _dokument_veza ;
+                    PICT "@S20"
         endif
         ++ _x
 
@@ -1018,9 +1098,11 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
           @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija PICT "@S20"
         endif
 
-        if _params["fakt_objekti"] .and. _idtipdok $ "10#11#12#13"
+        if ( _params["fakt_objekti"] .and. _idtipdok $ "10#11#12#13" )
             // radni nalog
-            @ m_x + _x, col() + 2 SAY "Objekat:" GET _objekti VALID p_fakt_objekti( @_objekti ) PICT "@!"
+            @ m_x + _x, col() + 1 SAY "Objekat:" GET _objekti ;
+                    VALID p_fakt_objekti( @_objekti ) ;
+                    PICT "@!"
         endif
         _x2 := 4
         
@@ -1083,10 +1165,10 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         ++ _x
 
         // valuta
-        if _idTipDok $ "10#11#19#20#25#26#27"
+        if _idTipDok $ "10#11#12#19#20#25#26#27"
             @ m_x + _x, m_y + 2 SAY "Valuta ?" GET _dindem PICT "@!" 
         else
-            @ m_x + _x, m_y + 1 SAY " "
+            @ m_x + _x, m_y + 2 SAY " "
         endif
         
         // avansni racun
@@ -1344,7 +1426,7 @@ return .t.
 // ------------------------------------------
 // ispisi partnera 
 // ------------------------------------------
-static function _isp_partn( cPartn, nX, nY )
+function ispisi_partn( cPartn, nX, nY )
 local nTArea := SELECT()
 local cDesc := "..."
 select partn
@@ -1753,6 +1835,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == _old_fi
     _rec["brdok"] := _tek_dok["brdok"]
     _rec["datdok"] := _tek_dok["datdok"]
     _rec["idpartner"] := _tek_dok["idpartner"]
+    _rec["dindem"] := _tek_dok["dindem"]
 
     dbf_update_rec( _rec )
     go ( _t_rec )
@@ -1790,6 +1873,7 @@ enddo
 use
 
 select fakt_pripr
+go top
 
 return
 
@@ -1803,20 +1887,25 @@ local _x, _y
 local __x := 1
 local _left := 20
 local _doc_total := hb_hash()
+local _doc_total2 := 0
 local _t_area := SELECT()
+local _din_dem 
 
-if fakt_pripr->( RECCOUNT() ) == 0 .or. ! ( fakt_pripr->idtipdok $ "10#11#20" )
+if fakt_pripr->( RECCOUNT() ) == 0 .or. ! ( fakt_pripr->idtipdok $ "10#11#12#20" )
 	return
 endif
 
 _x := MAXROWS() - 20
 _y := MAXCOLS() - 50
 
+// valuta ?
+_din_dem := fakt_pripr->dindem
+
 // izvuci mi dokument u temp tabele
 stdokpdv( nil, nil, nil, .t. )
 
 // sracunaj totale...
-_calc_totals( @_doc_total )
+_calc_totals( @_doc_total, _din_dem )
 
 // prikazi box
 Box(, _x, _y )
@@ -1846,7 +1935,12 @@ Box(, _x, _y )
 	
 	++ __x
 	
-	@ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV: ", _left ) + STR( _doc_total["total"], 12, 2 )
+	@ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV (" + ALLTRIM( _din_dem ) + "): ", _left ) + STR( _doc_total["total"], 12, 2 )
+
+    if LEFT( _din_dem, 3 ) <> LEFT( ValBazna(), 3 )
+        ++ __x
+	    @ m_x + __x, m_y + 2 SAY PADL( "Ukupno sa PDV (" + ALLTRIM( ValBazna() ) + "): ", _left ) + STR( _doc_total["total2"], 12, 2 )
+    endif
 
 	while Inkey(0.1) != K_ESC
    	end
@@ -1860,7 +1954,7 @@ return
 // ------------------------------------------------
 // sracunaj total na osnovu stampe dokumenta
 // ------------------------------------------------
-static function _calc_totals( hash )
+static function _calc_totals( hash, din_dem )
 local _t_area := SELECT()
 
 hash["osn"] := 0
@@ -1868,6 +1962,7 @@ hash["pop"] := 0
 hash["osn_pop"] := 0
 hash["pdv"] := 0
 hash["total"] := 0
+hash["total2"] := 0
 
 select drn
 go top
@@ -1879,6 +1974,10 @@ if RECCOUNT() <> 0
 	hash["osn_pop"] := field->ukbpdvpop
 	hash["pdv"] := field->ukpdv
 	hash["total"] := field->ukupno
+
+    if LEFT( din_dem, 3 ) <> LEFT( ValBazna(), 3 )
+        hash["total2"] := field->ukupno * OmjerVal( ValBazna(), din_dem, field->datdok )
+    endif
 
 endif
 

@@ -187,17 +187,27 @@ if !fZaklj
 endif
 
 Podvuci(cVrstaRs)
+
 nVrijednost:=0
+_n_rbr := 0
+_total_pst := 0
+_total_ulaz := 0
+_total_izlaz := 0
+_total_stanje := 0
 
 do while !eof()
+
 	nStanje:=0
 	nPstanje:=0
 	nUlaz:=nIzlaz:=0
 	cIdRoba:=POS->IdRoba
+
 	//
 	//pocetno stanje - stanje do
 	//
+
 	nSlogova:=0
+
 	do while !eof() .and. POS->IdRoba==cIdRoba .and. (POS->Datum<cDat .or. (!Empty(cSmjena) .and. POS->Datum==cDat .and. POS->Smjena<cSmjena))
 		
 		SELECT (cRSdbf)
@@ -235,16 +245,10 @@ do while !eof()
 		
 		if POS->idvd$"16#00"
 			nPstanje+=POS->Kolicina
-			//nVrijednost += POS->Kolicina * POS->Cijena
 		elseif POS->idvd $ "IN#NI#"+DOK_IZLAZA
 			do case
 				case POS->IdVd == "IN"
-                    if pos->kolicina <> 0					
-                        nPstanje -= ( pos->kolicina - pos->kol2 )
-                    else
-                        nPStanje := pos->kol2
-                    endif
-
+                    nPstanje -= ( pos->kolicina - pos->kol2 )
 				case POS->IdVd=="NI"
 				
 				otherwise // 42#01
@@ -293,15 +297,10 @@ do while !eof()
 		++nSlogova
 		if POS->idvd $ DOK_ULAZA
 			nUlaz+=POS->Kolicina
-			//nVrijednost += POS->Kolicina * POS->Cijena
 		elseif POS->idvd $ "IN#NI#"+DOK_IZLAZA
 			do case
 				case POS->IdVd=="IN"
-                    //if pos->kolicina <> 0
-					    nIzlaz += (pos->kolicina - pos->kol2 )
-                    //else
-					  //  nIzlaz := pos->kol2
-                    //endif
+			        nIzlaz += ( pos->kolicina - pos->kol2 )
 				case POS->IdVd=="NI"
 					nIzlaz += 0
 				otherwise  
@@ -310,10 +309,13 @@ do while !eof()
 		endif
 		skip
 	enddo
+
 	//
 	//stampaj
 	//
-	nStanje:=nPstanje+nUlaz-nIzlaz
+
+	nStanje := nPstanje + ( nUlaz - nIzlaz )
+
 	IF Round(nStanje,4)<>0 .or. cNule=="D" .and. !(nPstanje==0.and.nUlaz==0.and.nIzlaz==0)
 		SELECT (cRSdbf)
 		HSEEK cIdRoba
@@ -333,52 +335,74 @@ do while !eof()
 		
 			
 		if ((cMink<>"D" .and. (cNule=="D".or.round(nStanje,4)<>0)) .or. (cMink=="D" .and. nMink<>0 .and. (nStanje-nMink)<0)) .and. !(cMink=="O" .and. nMink==0 .and. round(nStanje,4)==0)
-			nCijena1:=pos_get_mpc()
-			? cLM+cIdRoba, PADR(Naz,nRob)+" "
+
+			nCijena1 := pos_get_mpc()
+
+            ? cLM + PADL( ALLTRIM( STR( ++ _n_rbr, 5 ) ), 5 ) + "."
+			?? " " + cIdRoba, PADR( Naz, nRob ) + " "
+
 			//
 			// VRIJEDNOST = CIJENA U SIFRARNIKU * STANJE KOMADA
 			nVrijednost += nStanje * nCijena1
+
 			SELECT POS
-			if cVrstaRs<>"S"
-				?
-			endif
-			?? STR(nPstanje,9,3)
-			if round(nUlaz,4)<>0
+		
+			? cLM + SPACE(6)
+		
+        	?? STR(nPstanje,9,3)
+		
+        	if round(nUlaz,4)<>0
 				?? " "+STR(nUlaz,9,3)
 			else
 				?? SPACE(10)
 			endif
-			if Round(nIzlaz,4)<>0
+		
+        	if Round(nIzlaz,4)<>0
 				?? " "+STR(nIzlaz,9,3)
 			else
 				?? SPACE(10)
 			endif
-			?? " "+STR(nStanje,10,3)
-			if cVrstaRs=="S".or.cUkupno=="D"
-				?? " "+STR(nStanje*nCijena1,15,3)
-			endif
-			if cMink<>"N".and.nMink>0
+		
+        	?? " " + STR( nStanje, 10, 3 )
+	
+            ?? " " + STR( nCijena1, 10, 3 )
+	
+            ?? " " + STR( nStanje * nCijena1, 10, 3 )
+
+        	if cMink<>"N".and.nMink>0
 				? PADR(IF(cMink=="O".and.nMink<>0.and.(nStanje-nMink)<0,"*KRITICNO STANJE !*",""),19)
 				?? "  min.kolic:"+STR(nMink,9,3)
 			endif
 
-			if (cKontrolisi=="D")
-				AnalizirajKontrolnuTabelu(cIdRoba, nStanje, nStanje*nCijena1)
-			endif
+            _total_pst += nPStanje
+            _total_ulaz += nUlaz
+            _total_izlaz += nIzlaz
+            _total_stanje += nStanje
+
 		endif
 	endif
 
 	SELECT POS
 	// preko zadanog datuma
-	do while !eof() .and. POS->IdRoba==cIdRoba
+	do while !eof() .and. POS->IdRoba == cIdRoba
 		skip
 	enddo
+
 enddo
 
 if cVrstaRs<>"S"
 
 	Podvuci(cVrstaRs)
-	? "Ukupno stanje zaduzenja:", STR(nVrijednost,15,3)
+
+	? "Ukupno stanje zaduzenja: "
+    ? cLM + SPACE(5), ;
+        STR( _total_pst, 10, 2 ), ;
+        STR( _total_ulaz, 10, 2 ), ;
+        STR( _total_izlaz, 10, 2 ), ;
+        STR( _total_stanje, 10, 2 ), ;
+        STR( 0, 10, 2 ), ;
+        STR( nVrijednost, 10, 2 )
+
 	Podvuci(cVrstaRs)
 	
 endif
@@ -396,15 +420,8 @@ return
  */
  
 function Podvuci(cVrstaRs)
-IF cVrstaRs=="S"
-  ? cLM+REPL ("-", 10), REPL ("-", nRob) + " "
-Else
-  ?
-EndIF
-?? REPL ("-",9), REPL ("-",9), REPL ("-",9), REPL ("-",10)
-IF cVrstaRs == "S"
-  ?? " "+REPLICATE ("-", 15)
-ENDIF
+?
+?? REPL("-", 6), REPL ("-",9), REPL ("-",9), REPL ("-",9), REPL ("-",10), REPL("-", 10), REPL("-", 10)
 return
 
 
@@ -436,21 +453,13 @@ if gModul=="HOPS"
     ? cLM+"Dio objekta: "+ IIF (Empty(cIdDio), "SVI", cIdDio+"-"+RTRIM(Ocitaj(F_DIO, cIdDio,"naz")))
   EndIF
 endif 
-? cLM+"Artikal    : "+IF(EMPTY(cRoba),"SVI",RTRIM(cRoba))
+
+? cLM + "Artikal    : "+IF(EMPTY(cRoba),"SVI",RTRIM(cRoba))
 ?
-IF cVrstaRs=="S"
-  P_COND
-EndIF
-? cLM+PADR ("Sifra", 10), PADR ("Naziv artikla", nRob) + " "
-IF cVrstaRs<>"S"
-  ? cLM
-EndIF
-?? "P.stanje ", PADC ("Ulaz", 9), PADC ("Izlaz", 9), PADC ("Stanje", 10)
-IF cVrstaRs == "S"
-   ?? " " + PADC ("Vrijednost", 15)
-Else
-   ? cLM
-ENDIF
+? cLM + SPACE(6) + PADR ("Sifra", 10), PADR ("Naziv artikla", nRob) + " "
+? cLM
+?? "R.broj", "P.stanje ", PADC ("Ulaz", 9), PADC ("Izlaz", 9), PADC ("Stanje", 10), PADC("Cijena", 10), PADC("Total", 10)
+? cLM
 
 return
 

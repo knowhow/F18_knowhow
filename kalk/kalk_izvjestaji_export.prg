@@ -348,7 +348,7 @@ MsgBeep("Tabela " + PRIVPATH + "R_EXPORT.DBF je formirana, i ima:"+ STR(nRbr, 5)
 	"prema svojim potrebama ...")
 	
 if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"	
- RUN &cKom
+ f18_run(cKom)
 endif
 
 return

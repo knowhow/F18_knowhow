@@ -25,11 +25,11 @@ O_FMKRULES
 
 // element CODE_GEN, staklo
 in_elcode_rule("G", "<GL_TICK>#<GL_TYPE>", ;
-	"Sifra stakla, glass code")
+    "Sifra stakla, glass code")
 
 // element CODE_GEN, distancer
 in_elcode_rule("F", "<FR_TYPE>#<FR_TICK>#<FR_GAS>", ;
-	"Sifra distancera, frame code")
+    "Sifra distancera, frame code")
 
 select (nTArea)
 return
@@ -50,10 +50,10 @@ local cRuleC7
 cTRule := r_elem_code( cElCond )
 
 if !EMPTY(cTRule)
-	return
+    return
 endif
-	
-cModul := g_rulemod( goModul:oDataBase:cName )
+    
+cModul := g_rulemod( "RNAL" )
 cRuleObj := g_ruleobj("ARTICLES")
 cErrMsg := "-"
 cRuleC3 := g_rule_c3("CODE_GEN")
@@ -65,9 +65,17 @@ go bottom
 
 nNrec := field->rule_id + 1
 
+if !f18_lock_tables({"f18_rules"})
+    MsgBeep("Problem sa lockovanjem tabela .... !!!! f18_rules")
+    return
+endif
+
+sql_table_update( nil, "BEGIN" )
+
 append blank
 
 _rec := dbf_get_rec()
+
 _rec["rule_id"] := nNrec
 _rec["modul_name"] := cModul
 _rec["rule_obj"] := cRuleObj
@@ -79,7 +87,10 @@ _rec["rule_c3"] := cRuleC3
 _rec["rule_c4"] := cRuleC4
 _rec["rule_c7"] := cRule
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+
+f18_free_tables( { "f18_rules" } )
+sql_table_update( nil, "END" )
 
 return
 
@@ -106,11 +117,7 @@ return aCols
 // vraca block za pregled sifrarnika
 // ------------------------------------------
 function g_rule_block_rnal()
-local bBlock 
-
-bBlock := {|| ed_rules() }
-
-return bBlock
+return {|| ed_rules() }
 
 
 // ------------------------------------------
@@ -140,7 +147,7 @@ local cRuleType
 local cObj
 local nTArea := SELECT()
 
-cModul := g_rulemod( goModul:oDataBase:cName )
+cModul := g_rulemod( "RNAL" )
 cObj := g_ruleobj( "ARTICLES" )
 cRuleType := g_rule_c3( "CODE_GEN" )
 cElCond := g_rule_c4( cElCond )
@@ -153,12 +160,14 @@ go top
 seek cModul + cObj + cRuleType + cElCond
 
 if FOUND()
-	cCode := ALLTRIM( field->rule_c7 )
+    cCode := ALLTRIM( field->rule_c7 )
 endif
 
 select (nTArea)
 
 return cCode
+
+
 
 // ----------------------------------------------
 // validacija errora - pravila
@@ -167,17 +176,11 @@ static function err_validate( nLevel )
 local lRet := .f.
 
 if nLevel <= 3
-
-	lRet := .t.
-	
+    lRet := .t.
 elseif nLevel == 4
-	
-	if Pitanje(, "Zelite zanemariti ovo pravilo (D/N) ?", "N" ) == "D"
-	
-		lRet := .t.
-	
-	endif
-
+    if Pitanje(, "Zelite zanemariti ovo pravilo (D/N) ?", "N" ) == "D"
+        lRet := .t.
+    endif
 endif
 
 return lRet
@@ -195,7 +198,7 @@ local aTmp
 
 local cObj := g_ruleobj( "ARTICLES" )
 local cCond := g_rule_c3( "AUTO_ELEM" )
-local cMod := g_rulemod( goModul:oDataBase:cName )
+local cMod := g_rulemod( "RNAL" )
 
 // default schema
 aSchema := {}
@@ -208,29 +211,29 @@ go top
 seek cMod + cObj + cCond
 
 do while !EOF() .and. field->modul_name == cMod ;
-		.and. field->rule_obj == cObj ;
-		.and. field->rule_c3 == cCond
-	
-	if !EMPTY( field->rule_c4 ) 
-		
-		aTmp := TokToNiz( ALLTRIM(field->rule_c4), "-" )
-		
-		// val = 1-SH1
-		// aTmp = ['1', 'SH1']
-		
-		nTmp := VAL( aTmp[1] )
-		
-		if nTmp == nType
-			
-			// ubaci pravilo...
-			AADD( aSchema, { ALLTRIM( field->rule_c7 ) } )
-		
-		endif
-	
-	endif
-	
-	skip
-	
+        .and. field->rule_obj == cObj ;
+        .and. field->rule_c3 == cCond
+    
+    if !EMPTY( field->rule_c4 ) 
+        
+        aTmp := TokToNiz( ALLTRIM(field->rule_c4), "-" )
+        
+        // val = 1-SH1
+        // aTmp = ['1', 'SH1']
+        
+        nTmp := VAL( aTmp[1] )
+        
+        if nTmp == nType
+            
+            // ubaci pravilo...
+            AADD( aSchema, { ALLTRIM( field->rule_c7 ) } )
+        
+        endif
+    
+    endif
+    
+    skip
+    
 enddo
 
 select (nTArea)
@@ -250,8 +253,8 @@ local cReturn := ""
 
 // ako se koriste pravila ? uopste
 if is_fmkrules()
-	
-	cReturn := _rule_s_fmk( cField, nTickness, cType, cKind, @cQttyType )
+    
+    cReturn := _rule_s_fmk( cField, nTickness, cType, cKind, @cQttyType )
 
 endif
 
@@ -270,7 +273,7 @@ local nTArea := SELECT()
 
 local cObj := "FMK_OTPREMNICA"
 local cCond := ALLTRIM(cField)
-local cMod := goModul:oDataBase:cName
+local cMod := "RNAL"
 
 local aTTick := {}
 
@@ -287,87 +290,87 @@ go top
 seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
 
 do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-		.and. field->rule_obj == g_ruleobj( cObj ) ;
-		.and. field->rule_c5 == g_rule_c5( cCond )
-	
-	// specificni tip stakla... npr: samo "F"
-	if !EMPTY( cType )
-		
-		if ALLTRIM( field->rule_c6 ) == "ALL" 
-			// to je to......
-		elseif ALLTRIM( field->rule_c6 ) <> ALLTRIM( cType )
-			// idi dalje
-			skip
-			loop
-		endif
-		
-	endif
+        .and. field->rule_obj == g_ruleobj( cObj ) ;
+        .and. field->rule_c5 == g_rule_c5( cCond )
+    
+    // specificni tip stakla... npr: samo "F"
+    if !EMPTY( cType )
+        
+        if ALLTRIM( field->rule_c6 ) == "ALL" 
+            // to je to......
+        elseif ALLTRIM( field->rule_c6 ) <> ALLTRIM( cType )
+            // idi dalje
+            skip
+            loop
+        endif
+        
+    endif
 
-	// vrsta stakla RG ili naruèioc
-	if !EMPTY( cKind )
-		// ako nije ta vrsta preskoci...
-		if ALLTRIM( field->rule_c4 ) <> ALLTRIM( cKind )
-			skip
-			loop
-		endif
-	endif
+    // vrsta stakla RG ili naruèioc
+    if !EMPTY( cKind )
+        // ako nije ta vrsta preskoci...
+        if ALLTRIM( field->rule_c4 ) <> ALLTRIM( cKind )
+            skip
+            loop
+        endif
+    endif
 
-	// setuj vrijednost u kojoj æe se obraèunati kolièina
-	cQttyType := ALLTRIM( field->rule_c3 )
-	
-	// to je rule -> debljina rang 0-20, uzmi u matricu
-	// medjutim moze biti i prazno, onda su sve dimenzije stakla
-	// u igri...
-	// tada je aTTick[1] == "     "
-	
-	aTTick := TokToNiz( field->rule_c2, "-" )
-	
-	lRange := .f.
-	
-	if LEN(aTTick) > 1
-		lRange := .t.
-	endif
-	
-	// ispitaj debljinu
-	
-	// ako se koristi rangovi
-	if lRange == .t.
-		
-		// trazi se vrijednost recimo od 0-20
-		if nTickness >= VAL( aTTick[1] ) .and. ;
-			nTickness <= VAL( aTTick[2] )
-			
-			cReturn := ALLTRIM( field->rule_c7 )
-			
-			// nasao sam izadji iz petlje
-		
-			exit
-			
-		endif
+    // setuj vrijednost u kojoj æe se obraèunati kolièina
+    cQttyType := ALLTRIM( field->rule_c3 )
+    
+    // to je rule -> debljina rang 0-20, uzmi u matricu
+    // medjutim moze biti i prazno, onda su sve dimenzije stakla
+    // u igri...
+    // tada je aTTick[1] == "     "
+    
+    aTTick := TokToNiz( field->rule_c2, "-" )
+    
+    lRange := .f.
+    
+    if LEN(aTTick) > 1
+        lRange := .t.
+    endif
+    
+    // ispitaj debljinu
+    
+    // ako se koristi rangovi
+    if lRange == .t.
+        
+        // trazi se vrijednost recimo od 0-20
+        if nTickness >= VAL( aTTick[1] ) .and. ;
+            nTickness <= VAL( aTTick[2] )
+            
+            cReturn := ALLTRIM( field->rule_c7 )
+            
+            // nasao sam izadji iz petlje
+        
+            exit
+            
+        endif
 
-	else
+    else
 
-		// sve dimenzije stakla, ako je prazno
-		if EMPTY( ALLTRIM( aTTick[1] ) )
-			
-			cReturn := ALLTRIM( field->rule_c7 )
-			exit
-			
-		endif
-		
-		// trazi se odredjena vrijendost, npr 20
-		if nTickness = VAL( aTTick[1] )
-			
-			cReturn := ALLTRIM( field->rule_c7 )
+        // sve dimenzije stakla, ako je prazno
+        if EMPTY( ALLTRIM( aTTick[1] ) )
+            
+            cReturn := ALLTRIM( field->rule_c7 )
+            exit
+            
+        endif
+        
+        // trazi se odredjena vrijendost, npr 20
+        if nTickness = VAL( aTTick[1] )
+            
+            cReturn := ALLTRIM( field->rule_c7 )
 
-			// nasao sam izadji iz petlje
-			exit
-		
-		endif
-	endif
-	
-	skip
-	
+            // nasao sam izadji iz petlje
+            exit
+        
+        endif
+    endif
+    
+    skip
+    
 enddo
 
 select (nTArea)
@@ -384,13 +387,13 @@ function rule_aop( xVal, aArr, lShErr )
 local nErrLevel := 0
 
 if lShErr == nil
-	lShErr := .t.
+    lShErr := .t.
 endif
 
 // ako se koriste pravila ? uopste
 if is_fmkrules()
-	
-	nErrLevel := _rule_aop_( xVal, aArr, lShErr )
+    
+    nErrLevel := _rule_aop_( xVal, aArr, lShErr )
 
 endif
 
@@ -410,7 +413,7 @@ local nTArea := SELECT()
 
 local cObj := "ITEMS"
 local cCond := "DOC_IT_AOP"
-local cMod := goModul:oDataBase:cName
+local cMod := "RNAL"
 
 local nErrLevel
 local cKtoList
@@ -424,45 +427,43 @@ go top
 seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
 
 do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-		.and. field->rule_obj == g_ruleobj( cObj ) ;
-		.and. field->rule_c5 == g_rule_c5( cCond )
-	
-	// pravilo: koja operacija <A_KSR> recimo
-	cAopCond := ALLTRIM( fmkrules->rule_c7 )
-	
-	// operator, < > = <> itd...
-	xOperCond := ALLTRIM( fmkrules->rule_c2 )
-	
-	// vrijednost koja se provjerava
-	xValue := ALLTRIM( fmkrules->rule_c3 )
-	
-	// tip elementa
-	xType := ALLTRIM( fmkrules->rule_c4 )
+        .and. field->rule_obj == g_ruleobj( cObj ) ;
+        .and. field->rule_c5 == g_rule_c5( cCond )
+    
+    // pravilo: koja operacija <A_KSR> recimo
+    cAopCond := ALLTRIM( fmkrules->rule_c7 )
+    
+    // operator, < > = <> itd...
+    xOperCond := ALLTRIM( fmkrules->rule_c2 )
+    
+    // vrijednost koja se provjerava
+    xValue := ALLTRIM( fmkrules->rule_c3 )
+    
+    // tip elementa
+    xType := ALLTRIM( fmkrules->rule_c4 )
 
-	// atribut elementa
-	xAttType := ALLTRIM( fmkrules->rule_c6 )
+    // atribut elementa
+    xAttType := ALLTRIM( fmkrules->rule_c6 )
 
-	nErrLevel := fmkrules->rule_level
+    nErrLevel := fmkrules->rule_level
 
-	// da li postoji artikal koji zadovoljava ovo ???
-	if nErrLevel <> 0 .and. cAopCond == xVal .and. ;
-		_r_aop_cond( xVal, xValue, xType, ;
-			xAttType, xOperCond, aArr )
-		
-		nReturn := nErrLevel
-		
-		if lShErr == .t.
-			sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
-		endif
-		
-		
-
-		exit
-	
-	endif
-	
-	skip
-	
+    // da li postoji artikal koji zadovoljava ovo ???
+    if nErrLevel <> 0 .and. cAopCond == xVal .and. ;
+        _r_aop_cond( xVal, xValue, xType, ;
+            xAttType, xOperCond, aArr )
+        
+        nReturn := nErrLevel
+        
+        if lShErr == .t.
+            sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
+        endif
+        
+        exit
+    
+    endif
+    
+    skip
+    
 enddo
 
 select (nTArea)
@@ -477,14 +478,12 @@ function rule_items( cField, xVal, aArr, lShErr )
 local nErrLevel := 0
 
 if lShErr == nil
-	lShErr := .t.
+    lShErr := .t.
 endif
 
 // ako se koriste pravila ? uopste
 if is_fmkrules()
-	
-	nErrLevel := _rule_item_( cField, xVal, aArr, lShErr )
-
+    nErrLevel := _rule_item_( cField, xVal, aArr, lShErr )
 endif
 
 return err_validate( nErrLevel )
@@ -502,7 +501,7 @@ local nTArea := SELECT()
 
 local cObj := "ITEMS"
 local cCond := ALLTRIM(cField)
-local cMod := goModul:oDataBase:cName
+local cMod := "RNAL"
 
 local nErrLevel
 local cKtoList
@@ -516,33 +515,33 @@ go top
 seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
 
 do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-		.and. field->rule_obj == g_ruleobj( cObj ) ;
-		.and. field->rule_c5 == g_rule_c5( cCond )
-	
-	cArtCond := ALLTRIM( fmkrules->rule_c7 )
-	xRCond := ALLTRIM( fmkrules->rule_c2 )
-	xRVal1 := ALLTRIM( fmkrules->rule_c3 )
-	xRVal2 := ALLTRIM( fmkrules->rule_c4 )
+        .and. field->rule_obj == g_ruleobj( cObj ) ;
+        .and. field->rule_c5 == g_rule_c5( cCond )
+    
+    cArtCond := ALLTRIM( fmkrules->rule_c7 )
+    xRCond := ALLTRIM( fmkrules->rule_c2 )
+    xRVal1 := ALLTRIM( fmkrules->rule_c3 )
+    xRVal2 := ALLTRIM( fmkrules->rule_c4 )
 
-	nErrLevel := fmkrules->rule_level
+    nErrLevel := fmkrules->rule_level
 
-	// da li postoji artikal koji zadovoljava ovo ???
-	if nErrLevel <> 0 .and. ;
-		_r_item_cond( xVal, xRCond, xRVal1, xRVal2 ) .and. ;
-		_r_art_cond( aArr, cArtCond ) 
-		
-		nReturn := nErrLevel
-		
-		if lShErr == .t.
-			sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
-		endif
-		
-		exit
-	
-	endif
-	
-	skip
-	
+    // da li postoji artikal koji zadovoljava ovo ???
+    if nErrLevel <> 0 .and. ;
+        _r_item_cond( xVal, xRCond, xRVal1, xRVal2 ) .and. ;
+        _r_art_cond( aArr, cArtCond ) 
+        
+        nReturn := nErrLevel
+        
+        if lShErr == .t.
+            sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
+        endif
+        
+        exit
+    
+    endif
+    
+    skip
+    
 enddo
 
 select (nTArea)
@@ -559,21 +558,20 @@ local lRet := .t.
 xCond := ALLTRIM(xCond)
 
 do case
-	
-	// provjera minimalne i maximalne vrijednosti
-	case xCond == "MIN" 
-		
-		if xVal >= VAL(xRVal1) 
-			lRet := .f.
-		endif
-	
-	case xCond == "MAX"
-		
-		if xVal <= VAL(xRVal2)
-			lRet := .f.
-		endif
-	
-
+    
+    // provjera minimalne i maximalne vrijednosti
+    case xCond == "MIN" 
+        
+        if xVal >= VAL(xRVal1) 
+            lRet := .f.
+        endif
+    
+    case xCond == "MAX"
+        
+        if xVal <= VAL(xRVal2)
+            lRet := .f.
+        endif
+    
 endcase
 
 return lRet
@@ -589,8 +587,8 @@ local nErrLevel := 0
 
 // ako se koriste pravila ? uopste
 if is_fmkrules()
-	
-	nErrLevel := _rule_art1( aArr )
+    
+    nErrLevel := _rule_art1( aArr )
 
 endif
 
@@ -605,14 +603,11 @@ return err_validate( nErrLevel )
 //   aArr -> matrica sa definicijom artikla...
 // ---------------------------------------------
 static function _rule_art1( aArr )
-
 local nReturn := 0
 local nTArea := SELECT()
-
 local cObj := "ARTICLES"
 local cCond := "ART_NEW"
-local cMod := goModul:oDataBase:cName
-
+local cMod := "RNAL"
 local nErrLevel
 local cKtoList
 local cNalog
@@ -625,27 +620,27 @@ go top
 seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c3( cCond )
 
 do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-		.and. field->rule_obj == g_ruleobj( cObj ) ;
-		.and. field->rule_c3 == g_rule_c3( cCond )
-	
-	cArtcond := ALLTRIM( fmkrules->rule_c7 )
+        .and. field->rule_obj == g_ruleobj( cObj ) ;
+        .and. field->rule_c3 == g_rule_c3( cCond )
+    
+    cArtcond := ALLTRIM( fmkrules->rule_c7 )
 
-	nErrLevel := fmkrules->rule_level
+    nErrLevel := fmkrules->rule_level
 
-	// postoji li pravilo koje ne-zadovoljava ???
-	if nErrLevel <> 0 .and. ;
-		_r_art_cond( aArr, cArtCond ) 
-		
-		nReturn := nErrLevel
-		
-		sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
-		
-		exit
-	
-	endif
-	
-	skip
-	
+    // postoji li pravilo koje ne-zadovoljava ???
+    if nErrLevel <> 0 .and. ;
+        _r_art_cond( aArr, cArtCond ) 
+        
+        nReturn := nErrLevel
+        
+        sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
+        
+        exit
+    
+    endif
+    
+    skip
+    
 enddo
 
 select (nTArea)
@@ -657,7 +652,7 @@ return nReturn
 // uslov za provjeru operacija i artikala
 // ---------------------------------------------------------
 static function _r_aop_cond( cSearch, cVal, cEl_type, ;
-	cEl_att, cOper, aArr )
+    cEl_att, cOper, aArr )
 
 local lReturn := .f.
 local nScan
@@ -666,32 +661,32 @@ nScan := 0
 
 if cOper == "="
 
-	nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-		.and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-		.and. ALLTRIM(xV[5]) == ALLTRIM(cVal) } )
+    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
+        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
+        .and. ALLTRIM(xV[5]) == ALLTRIM(cVal) } )
 
 elseif cOper == ">"
-	
-	nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-		.and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-		.and. ALLTRIM(xV[5]) > ALLTRIM(cVal) } )
+    
+    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
+        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
+        .and. ALLTRIM(xV[5]) > ALLTRIM(cVal) } )
 
 elseif cOper == "<"
-	
-	nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-		.and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-		.and. ALLTRIM(xV[5]) < ALLTRIM(cVal) } )
+    
+    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
+        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
+        .and. ALLTRIM(xV[5]) < ALLTRIM(cVal) } )
 
 elseif cOper == "<>"
-	
-	nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-		.and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-		.and. ALLTRIM(xV[5]) <> ALLTRIM(cVal) } )
+    
+    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
+        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
+        .and. ALLTRIM(xV[5]) <> ALLTRIM(cVal) } )
 
 endif
 
 if nScan <> 0
-	lReturn := .t.
+    lReturn := .t.
 endif
 
 return lReturn
@@ -724,52 +719,52 @@ aTmp := TokToNiz( cArtCond, "#" )
 
 for i := 1 to LEN( aTmp )
 
-	// "1:<GL_TYPE>=FL;<GL_TICK>=4"
-	cTmp := ALLTRIM( aTmp[ i ] )
+    // "1:<GL_TYPE>=FL;<GL_TICK>=4"
+    cTmp := ALLTRIM( aTmp[ i ] )
 
-	// zatim rastavi broj elementa od uslova..... sa ":"
-	aTmp2 := TokToNiz( cTmp, ":" )
-	
-	// i dobit ces sljedece:
-	//
-	// aTmp2[1] = "1"
-	// aTmp2[2] = "<GL_TYPE>=FL;<GL_TICK>=4"
-	
-	// broj elementa = 1
-	nElem := VAL( ALLTRIM( aTmp2[1] ) )
-	
-	// uslov je = <GL_TYPE>=FL;<GL_TICK>=4
-	cElCond := ALLTRIM( aTmp2[2] )
+    // zatim rastavi broj elementa od uslova..... sa ":"
+    aTmp2 := TokToNiz( cTmp, ":" )
+    
+    // i dobit ces sljedece:
+    //
+    // aTmp2[1] = "1"
+    // aTmp2[2] = "<GL_TYPE>=FL;<GL_TICK>=4"
+    
+    // broj elementa = 1
+    nElem := VAL( ALLTRIM( aTmp2[1] ) )
+    
+    // uslov je = <GL_TYPE>=FL;<GL_TICK>=4
+    cElCond := ALLTRIM( aTmp2[2] )
 
-	// sada razdvoji uslove, moze ih biti vise, sa ";"
-	aElConds := TokToNiz( cElCond, ";" )
-	
-	// dodaj ih u nasu novu matricu....
+    // sada razdvoji uslove, moze ih biti vise, sa ";"
+    aElConds := TokToNiz( cElCond, ";" )
+    
+    // dodaj ih u nasu novu matricu....
 
-	for i2 := 1 to LEN( aElConds )
-		
-		// dobije se:
-		// 
-		// aElConds[1] = "<GL_TYPE>=FL"
-		// aElConds[2] = "<GL_TICK>=4"
-		
-		cECond := ALLTRIM( aElConds[ i2 ] )
+    for i2 := 1 to LEN( aElConds )
+        
+        // dobije se:
+        // 
+        // aElConds[1] = "<GL_TYPE>=FL"
+        // aElConds[2] = "<GL_TICK>=4"
+        
+        cECond := ALLTRIM( aElConds[ i2 ] )
 
-		// rastavi sada uslov na djoker i vrijednost sa "="
+        // rastavi sada uslov na djoker i vrijednost sa "="
 
-		aECnds := TokToNiz( cECond, "=" )
-		
-		// i ubaci u novu matricu koja ce sluziti za usporedbu
-		// .....
-		// format matrice ce biti ovakav:
-		//
-		// aArtArr[1] = { 1, "<GL_TYPE>", "FL" }
-		// aArtArr[2] = { 1, "<GL_TICK>",  "4" }
-		// aArtArr[3] = { 3, "<GL_TYPE>", "LO" }
-		
-		AADD( aArtArr, { nElem, aECnds[1], aECnds[2] } )
-	
-	next
+        aECnds := TokToNiz( cECond, "=" )
+        
+        // i ubaci u novu matricu koja ce sluziti za usporedbu
+        // .....
+        // format matrice ce biti ovakav:
+        //
+        // aArtArr[1] = { 1, "<GL_TYPE>", "FL" }
+        // aArtArr[2] = { 1, "<GL_TICK>",  "4" }
+        // aArtArr[3] = { 3, "<GL_TYPE>", "LO" }
+        
+        AADD( aArtArr, { nElem, aECnds[1], aECnds[2] } )
+    
+    next
 
 next
 
@@ -791,56 +786,56 @@ next
 
 
 for nCond := 1 to LEN( aArtArr )
-	
-	// element = 1
-	nElement := aArtArr[ nCond, 1 ]
-	
-	// djoker atributa = "<GL_TYPE>"
-	cCondAtt := aArtArr[ nCond, 2 ]
-	
-	// vrijednost atributa = "4"
-	cCondVal := aArtArr[ nCond, 3 ]
+    
+    // element = 1
+    nElement := aArtArr[ nCond, 1 ]
+    
+    // djoker atributa = "<GL_TYPE>"
+    cCondAtt := aArtArr[ nCond, 2 ]
+    
+    // vrijednost atributa = "4"
+    cCondVal := aArtArr[ nCond, 3 ]
 
-	
-	// ako postoji upitnik... onda je to "like"...
-	// pr: S?, moze biti: "S", "SC", "SG" ....
-	
-	if LEN(cCondVal) > 1 .and. "?" $ cCondVal 
-	
-		// ponisti upitnik ....
-		cCondVal := STRTRAN( cCondVal, "?", "" )
-		
-		// pronadji da li postoji takav zapis... u matrici aArr
-		nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
-					ALLTRIM(xVal[4]) == cCondAtt .and. ;
-					ALLTRIM(xVal[5]) = cCondVal } )
-	
-	// rijec je o bilo kojem uslovu...
-	// na poziciji nElement
-	
-	elseif LEN(cCondVal) == 1 .and. cCondVal == "?"
-	
-		// pronadji da li postoji takav zapis... u matrici aArr
-		nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
-					ALLTRIM(xVal[4]) == cCondAtt } )
-	
-	// trazi se striktni uslov
-	// npr: "L"
-	
-	else
-		// pronadji da li postoji takav zapis... u matrici aArr
-		nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
-					ALLTRIM(xVal[4]) == cCondAtt .and. ;
-					ALLTRIM(xVal[5]) == cCondVal } )
+    
+    // ako postoji upitnik... onda je to "like"...
+    // pr: S?, moze biti: "S", "SC", "SG" ....
+    
+    if LEN(cCondVal) > 1 .and. "?" $ cCondVal 
+    
+        // ponisti upitnik ....
+        cCondVal := STRTRAN( cCondVal, "?", "" )
+        
+        // pronadji da li postoji takav zapis... u matrici aArr
+        nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
+                    ALLTRIM(xVal[4]) == cCondAtt .and. ;
+                    ALLTRIM(xVal[5]) = cCondVal } )
+    
+    // rijec je o bilo kojem uslovu...
+    // na poziciji nElement
+    
+    elseif LEN(cCondVal) == 1 .and. cCondVal == "?"
+    
+        // pronadji da li postoji takav zapis... u matrici aArr
+        nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
+                    ALLTRIM(xVal[4]) == cCondAtt } )
+    
+    // trazi se striktni uslov
+    // npr: "L"
+    
+    else
+        // pronadji da li postoji takav zapis... u matrici aArr
+        nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
+                    ALLTRIM(xVal[4]) == cCondAtt .and. ;
+                    ALLTRIM(xVal[5]) == cCondVal } )
 
-	endif
-	
-	if nSeek == 0
-	
-		lExist := .f.
-		exit
-		
-	endif
+    endif
+    
+    if nSeek == 0
+    
+        lExist := .f.
+        exit
+        
+    endif
 
 next
 

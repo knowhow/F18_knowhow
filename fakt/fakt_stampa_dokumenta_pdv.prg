@@ -371,7 +371,6 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
 	nKol := field->kolicina
 	nRCijen := field->cijena
 
-	
 	if LEFT(fakt_pripr->DINDEM, 3) <> LEFT(ValBazna(), 3) 
 		// preracunaj u EUR
 		// omjer EUR / KM

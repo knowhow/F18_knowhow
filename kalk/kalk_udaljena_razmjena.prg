@@ -125,7 +125,7 @@ if _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
 endif
 
 #ifdef __PLATFORM__UNIX
-    set_file_access()
+    set_file_access( __import_dbf_path )
 #endif
 
 // import procedura
@@ -253,7 +253,7 @@ Box(, 12, 70 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Zamjeniti nove dokumente postojecim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+    @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
     ++ _x
 
@@ -536,6 +536,12 @@ _total_doks := RECCOUNT2()
 select e_kalk
 _total_kalk := RECCOUNT2()
 
+// zakljucaj mi tabele bitne za prenos !!!
+if !f18_lock_tables( { "kalk_kalk", "kalk_doks" } )
+	return _cnt
+endif
+sql_table_update( nil, "BEGIN" )
+
 select e_doks
 set order to tag "1"
 go top
@@ -621,12 +627,10 @@ do while !EOF()
     // cisti podbroj
     _app_rec["podbr"] := ""
 
-    f18_lock_tables({"kalk_doks", "kalk_kalk"})
-    
     select kalk_doks
     append blank
 
-    update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "BEGIN" )
+    update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "CONT" )
 
     ++ _cnt
     @ m_x + 3, m_y + 2 SAY PADR( PADL( ALLTRIM( STR(_cnt) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -669,14 +673,14 @@ do while !EOF()
 
     enddo
 
-    // zavrsi transakciju
-    f18_free_tables({"kalk_doks", "kalk_kalk"})
-    sql_table_update( nil, "END" )
-
     select e_doks
     skip
 
 enddo
+
+// zavrsi transakciju
+sql_table_update( nil, "END" )
+f18_free_tables( { "kalk_doks", "kalk_kalk" } )
 
 
 // ako je sve ok, predji na import tabela sifrarnika
@@ -741,33 +745,19 @@ go top
 seek id_firma + id_vd + br_dok
 
 if FOUND()
-
+	_ret := .t.
     _del_rec := dbf_get_rec()
-
-    if !f18_lock_tables({"kalk_kalk", "kalk_doks"})
-        MsgBeep( "Ne mogu lokovati tabele !!!" )
-        return
-    endif
-
-    sql_table_update( nil, "BEGIN" )
-
     delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
+endif
 
-    select kalk
-    set order to tag "1"
-    seek id_firma + id_vd + br_dok
+select kalk
+set order to tag "1"
+go top
+seek id_firma + id_vd + br_dok
 
-    if FOUND()
-        _del_rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
-    endif
-
-    f18_free_tables({"kalk_kalk", "kalk_doks"})
-
-    sql_table_update( nil, "END" )
-
-    _ret := .t.
-
+if FOUND()
+	_del_rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
 endif
 
 select ( _t_area )

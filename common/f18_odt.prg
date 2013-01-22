@@ -286,7 +286,7 @@ _cmd := ""
 	#ifdef __PLATFORM__DARWIN
     	_cmd += "open " + __output_odt
 	#else
-		_cmd += "xdg-open " + __output_odt + "&"
+		_cmd += "xdg-open " + __output_odt
 	#endif
 
 #else __PLATFORM__WINDOWS

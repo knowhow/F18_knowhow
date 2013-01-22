@@ -1,3 +1,7 @@
+1.4.98 2013-01-22, vsasa
+
+ - fakt/fin/kalk, import/eksport podataka udaljene lokacije - korekcije 
+ 
 1.4.97 2013-01-21, vsasa
 
  - fakt, brojač otpremnica po tipu dokumenta 22 - ispravka drito na brojaču fakt dokumenata

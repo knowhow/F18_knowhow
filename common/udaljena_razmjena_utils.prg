@@ -17,14 +17,20 @@
 // --------------------------------------------
 // promjena privilegija fajlova
 // --------------------------------------------
-function set_file_access()
-local _cmd 
+function set_file_access( file_path, mask )
+private _cmd 
 
-_cmd := "chmod ugo+w *.*"
-
-if f18_run( _cmd ) <> 0 
-    MsgBeep( "Problem sa setovanjem privilegija fajla !????" )
+if file_path == NIL
+	file_path := ""
 endif
+
+if mask == NIL
+	mask := ""
+endif
+
+_cmd := "sudo chmod ugo+w " + file_path + mask + "*.*"
+
+run &_cmd
 
 return
 
@@ -61,6 +67,9 @@ if fmk_import == NIL
     fmk_import := .f.
 endif
 
+f18_lock_tables( { "konto" } )
+sql_table_update( nil, "BEGIN" )
+
 select e_konto
 set order to tag "ID"
 go top
@@ -92,7 +101,7 @@ do while !EOF()
             append blank
         endif
 
-        update_rec_server_and_dbf( "konto", _app_rec, 1, "FULL" )
+        update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
 
     endif
 
@@ -100,6 +109,9 @@ do while !EOF()
     skip
 
 enddo
+
+sql_table_update( nil, "END" )
+f18_free_tables( { "konto" } )
 
 return
 
@@ -115,6 +127,9 @@ local _sif_exist := .t.
 if fmk_import == NIL
     fmk_import := .f.
 endif
+
+f18_lock_tables( { "partn" } )
+sql_table_update( nil, "BEGIN" )
 
 select e_partn
 set order to tag "ID"
@@ -147,13 +162,16 @@ do while !EOF()
             append blank
         endif
 
-        update_rec_server_and_dbf( "partn", _app_rec, 1, "FULL" )
+        update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
     endif
 
     select e_partn
     skip
 
 enddo
+
+sql_table_update( nil, "END" )
+f18_free_tables( { "partn" } )
 
 return
 
@@ -167,6 +185,9 @@ local _sif_exist := .t.
 if fmk_import == NIL
     fmk_import := .f.
 endif
+
+f18_lock_tables( { "roba" } )
+sql_table_update( nil, "BEGIN" )
 
 // moramo ziknuti i robu ako fali !
 select e_roba
@@ -200,7 +221,7 @@ do while !EOF()
             append blank
         endif
         
-        update_rec_server_and_dbf( "roba", _app_rec, 1, "FULL" )
+        update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
 
     endif
 
@@ -208,6 +229,9 @@ do while !EOF()
     skip
 
 enddo
+
+sql_table_update( nil, "END" )
+f18_free_tables( { "roba" } )
 
 return
 

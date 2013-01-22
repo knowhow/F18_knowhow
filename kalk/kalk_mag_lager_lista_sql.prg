@@ -280,6 +280,7 @@ local _roba_tip_tu := params["roba_tip_tu"]
 local _row, _sufix
 local _ulaz, _izlaz, _nvu, _nvi, _id_roba, _vpvu, _vpvi
 local _magacin_po_nabavnoj := IsMagPNab()
+local _h_dok
 
 O_KALK_PRIPR
 O_KALK_DOKS
@@ -288,12 +289,20 @@ O_ROBA
 O_TARIFA
 
 // nadji mi novi broj dokumenta za ps
+
+_h_dok := hb_hash()
+_h_dok["idfirma"] := gFirma
+_h_dok["idvd"] := _kalk_tip
+_h_dok["brdok"] := ""
+_h_dok["datdok"] := DATE()
 if glBrojacPoKontima
-    _sufix := SufBrKalk( _m_konto )
-    _kalk_broj := SljBrKalk( _kalk_tip, gFirma, _sufix )
+     _kalk_broj := kalk_novi_broj_dokumenta(_h_dok, _m_konto)
 else
-    _kalk_broj := GetNextKalkDoc( gFirma, _kalk_tip )
+     _kalk_broj := kalk_novi_broj_dokumenta(_h_dok)
 endif
+
+
+
 
 // pronadji konto u konta tipovi cijena...
 select koncij

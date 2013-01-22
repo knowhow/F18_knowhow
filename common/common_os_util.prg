@@ -291,7 +291,7 @@ HB_FUNC( FILEEXT )
 
 #pragma ENDDUMP
 
-function f18_run(cmd, output, always_ok)
+function f18_run(cmd, output, always_ok, async)
 local _ret, _stdout, _stderr, _prefix
 local _msg
 
@@ -299,21 +299,28 @@ if always_ok == NIL
   always_ok := .f.
 endif
 
-_ret := hb_ProcessRun(cmd, @_stdout, @_stderr)
+if async == NIL
+  // najcesce mi zelimo da okinemo exkternu komandu i nastavimo rad
+  async := .t.
+endif
+
+_ret := hb_ProcessRun(cmd, NIL, NIL, NIL, async)
 
 if _ret <> 0
 
 #ifdef __PLATFORM__WINDOWS
-   _prefix := "start "
+   //_prefix := "start "
+   _prefix := "c:\knowhowERP\util\start.exe /m "
+
 #else
    #ifdef __PLATFORM__DARWIN
       _prefix := "open "
    #else
-      _prefix := ""
+      _prefix := "xdg-open "
    #endif
 #endif
 
-   _ret :=hb_processRun(_prefix + cmd, @_stdout, @_stderr)
+   _ret := hb_processRun(_prefix + cmd, NIL, NIL, NIL, async)
  
    if _ret <> 0 .and. !always_ok 
         _msg := "ERR run cmd:"  + cmd

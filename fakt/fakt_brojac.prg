@@ -148,3 +148,13 @@ use
 PopWa()
  
 return .t.
+
+
+function SljedBrFakt(cIdRj,cIdVd,dDo,cIdPartner)
+local nArr:=SELECT()
+local cBrFakt
+_datdok:=dDo
+_idpartner:=cIdPartner
+cBrFakt:= fakt_novi_broj_dokumenta( cIdRJ, cIdVd )
+select (nArr)
+return cBrFakt

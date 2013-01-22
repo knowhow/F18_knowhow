@@ -393,13 +393,8 @@ do case
         _t_area := SELECT()
        
  
-        // stari parametar...
-        if !_params["fakt_otpr_gen"]
-            fakt_generisi_racun_iz_otpremnice() 
-        else
-            _fakt_doks := FaktDokumenti():New()
-            _fakt_doks:pretvori_otpremnice_u_racun()
-        endif
+        _fakt_doks := FaktDokumenti():New()
+        _fakt_doks:pretvori_otpremnice_u_racun()
 
         select (_t_area )
         return DE_REFRESH

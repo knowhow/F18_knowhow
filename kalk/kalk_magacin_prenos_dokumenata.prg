@@ -1,17 +1,15 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "kalk.ch"
-
 
 function prenos_fakt_kalk_magacin()
 local _opc := {}
@@ -89,7 +87,7 @@ else
     cBrKalk := kalk_novi_broj_dokumenta(_h_brdok, NIL)
 endif
 
-Box(,15,60)
+Box( , 15, 60)
 
 do while .t.
 	nRBr := 0
@@ -101,7 +99,7 @@ do while .t.
   		@ m_x+4,col()+2 SAY "Razduzuje:" GET cIdZaduz2  pict "@!"      valid empty(cidzaduz2) .or. P_Firma(@cIdZaduz2)
   	endif
 
-  	cFaktFirma := IF( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
+  	cFaktFirma := IIF( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
   	@ m_x+6,m_y+2 SAY "Broj fakture: " GET cFaktFirma
   	@ m_x+6,col()+2 SAY "- "+cidtipdok
   	@ m_x+6,col()+2 SAY "-" GET cBrDok
@@ -272,19 +270,6 @@ close all
 return
 
 
-
-static function _o_prenos_tbls()
-O_KONCIJ
-O_KALK_PRIPR
-O_KALK
-O_KALK_DOKS
-O_ROBA
-O_KONTO
-O_PARTN
-O_TARIFA
-O_FAKT
-return
-
 // ----------------------------------------------------------
 // magacin: fakt->kalk prenos otpremnica
 // ----------------------------------------------------------
@@ -318,25 +303,27 @@ _o_prenos_tbls()
 
 dDatKalk := date()
 
-if cIdTipDok == "01"
+SWITCH (cIdTipDok)
+  
+   CASE  "01"
     cIdKonto := PADR( "1310", 7 )
     cIdKonto2 := PADR( "", 7 )
-elseif cIdTipDok == "0x"
+    exit
+   CASE "0x"
     cIdKonto := PADR( "1310", 7 )
     cIdKonto2 := PADR( "", 7 )
-else
+    exit
+   OTHERWISE
     cIdKonto := PADR( "", 7 )
     cIdKonto2 :=PADR( "1310", 7 )
-endif
+
+END
 
 cIdKonto := fetch_metric("kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
 cIdKonto2 := fetch_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
 
 cIdZaduz2 := SPACE(6)
 
-if glBrojacPoKontima
-
-<<<<<<< HEAD
 _h_dok := hb_hash()
 _h_dok["idfirma"] := cIdFirma
 _h_dok["idvd"] := cTipKalk
@@ -344,31 +331,14 @@ _h_dok["brdok"] = ""
 _h_dok["datdok"] := dDatKalk
 
 IF glBrojacPoKontima
-    
     Box("#FAKT->KALK",3,70)
         @ m_x+2, m_y + 2 SAY "Konto zaduzuje" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
         read
     BoxC()
-    
     cBrKalk := kalk_novi_broj_dokumenta(_h_dok, cIdKonto)
 ELSE
     cBrKalk := kalk_novi_broj_dokumenta(_h_dok)
 ENDIF
-=======
-    Box( "#FAKT->KALK", 3, 70 )
-        @ m_x + 2, m_y + 2 SAY "Konto zaduzuje" GET cIdKonto ;
-                PICT "@!" ;
-                VALID P_Konto( @cIdKonto )
-        read
-    BoxC()
-
-    cSufiks := SufBrKalk( cIdKonto )
-    cBrKalk := SljBrKalk( cTipKalk, cIdFirma, cSufiks )
-
-else
-    cBrKalk := GetNextKalkDoc( cIdFirma, cTipKalk )
-endif
->>>>>>> master
 
 Box(, 15, 60 )
 
@@ -753,4 +723,14 @@ endif
 
 return lResult
 
-
+static function _o_prenos_tbls()
+O_KONCIJ
+O_KALK_PRIPR
+O_KALK
+O_KALK_DOKS
+O_ROBA
+O_KONTO
+O_PARTN
+O_TARIFA
+O_FAKT
+return

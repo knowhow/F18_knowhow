@@ -322,7 +322,9 @@ _fakt_rec := dbf_get_rec()
 
 _fakt_rec["idfirma"]   := ::p_idfirma
 _fakt_rec["idpartner"] := ::p_idpartner
-_fakt_rec["brdok"]     := fakt_prazan_broj_dokumenta()
+_fakt_rec["brdok"]     := fakt_brdok_0(::p_idfirma, _n_tip_dok,  DATE())
+
+
 _fakt_rec["datdok"]    := DATE()
 _fakt_rec["idtipdok"]  := _n_tip_dok
 _fakt_rec["dindem"]    := LEFT(ValBazna(), 3)

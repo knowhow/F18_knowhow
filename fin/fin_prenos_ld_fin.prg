@@ -59,11 +59,7 @@ select trfp3
 set filter to shema = cShema
 go top
 
-<<<<<<< HEAD
-cBrNal := fin_novi_broj_naloga(gFirma, trfp3->idvn, dDatum)
-=======
-cBrNal := fin_prazan_broj_naloga()
->>>>>>> master
+cBrNal := fin_brnal_0(gFirma, trfp->idvn, dDatum)
 
 select trfp3
 

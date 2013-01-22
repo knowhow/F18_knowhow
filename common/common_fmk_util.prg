@@ -15,18 +15,6 @@
 #include "fileio.ch"
 
  
-/*! \fn UBrojDok(nBroj,nNumDio,cOstatak)
- * \brief Pretvara Broj podbroj u string format "Broj dokumenta"
- * \code
- * UBrojDok ( 123,  5, "/99" )   =>   00123/99
- * \encode
- */
- 
-function UBrojDok(nBroj,nNumdio,cOstatak)
-
-return padl( alltrim(str(nBroj)), nNumDio, "0")+cOstatak
-
-
 /*! \fn Calc()
  *  \brief Kalkulator
  */

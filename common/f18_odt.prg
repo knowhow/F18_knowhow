@@ -278,15 +278,16 @@ endif
 #endif
 
 // slozi mi komadnu za startanje...
-_cmd := ""
 
+/*
+_cmd := ""
 #ifdef __PLATFORM__UNIX
 
     // platforme osx, linux
 	#ifdef __PLATFORM__DARWIN
     	_cmd += "open " + __output_odt
 	#else
-		_cmd += "xdg-open " + __output_odt + "&"
+		_cmd += "xdg-open " + __output_odt
 	#endif
 
 #else __PLATFORM__WINDOWS
@@ -294,6 +295,9 @@ _cmd := ""
     _cmd += "c:\knowhowERP\util\start.exe /m "  + __output_odt 
 
 #endif
+*/
+
+_cmd := __output_odt
 
 SAVE SCREEN TO _screen
 CLEAR SCREEN
@@ -304,7 +308,7 @@ CLEAR SCREEN
 log_write( _cmd, 7 )
 
 #ifndef TEST
-	_error := f18_run( _cmd )
+	_error := f18_run(_cmd, .f., .t.)
 #endif
 
 RESTORE SCREEN FROM _screen

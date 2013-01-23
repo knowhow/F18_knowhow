@@ -1,3 +1,7 @@
+1.4.105 2013-01-23, vsasa
+
+  - rnal, štampa naloga/otpremnice - korekcije na izvještajima
+
 1.4.104 2013-01-23, vsasa
 
   - fin, ručno zatvaranje o.stavki - vraćanje filtera samo kod štampe

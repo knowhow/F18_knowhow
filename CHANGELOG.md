@@ -1,8 +1,12 @@
+1.4.103 2013-01-23, hernad
+
+  - #30139 iskljucujem FWRITE u log 
+
 1.4.102 2013-01-23, hernad, vsasa
 
  - promjena verzije
 
-1.4.50 2013-01-23, vsasa
+1.4.100 2013-01-23, vsasa
 
  - fin, štampanje fin naloga bez veze konto/partner - nema ih u šifrarniku
  - fakt, unos dokumenta - refresh stavki

@@ -943,7 +943,9 @@ _msg_time += PADR( TIME(), 8 )
 _msg_time += ": " 
  
 // time ide samo u fajl, ne na server
-FWRITE( __log_handle, _msg_time + msg + hb_eol() )
+// ovdje ima neki problem #30139 iskljucujem dok ne skontamo
+// baca mi ove poruke u outf.txt
+// FWRITE( __log_handle, _msg_time + msg + hb_eol() )
 
 #ifndef TEST
 #ifndef NODE

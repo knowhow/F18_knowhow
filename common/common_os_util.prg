@@ -301,7 +301,7 @@ endif
 
 if async == NIL
   // najcesce mi zelimo da okinemo exkternu komandu i nastavimo rad
-  async := .t.
+  async := .f.
 endif
 
 _ret := hb_ProcessRun(cmd, NIL, NIL, NIL, async)

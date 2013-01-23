@@ -109,7 +109,7 @@ CLEAR SCREEN
 ? "Generisanje ODT reporta u toku ...  fajl: ..." + RIGHT( __current_odt, 20 )
 
 // pokreni generisanje reporta
-_error := f18_run( _cmd )
+_error := f18_run( _cmd, NIL, .f., .t.)
 
 RESTORE SCREEN FROM _screen
 

@@ -1,3 +1,7 @@
+1.4.102 2013-01-23, hernad, vsasa
+
+ - promjena verzije
+
 1.4.50 2013-01-23, vsasa
 
  - fin, štampanje fin naloga bez veze konto/partner - nema ih u šifrarniku

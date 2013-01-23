@@ -1,3 +1,8 @@
+1.4.50 2013-01-23, vsasa
+
+ - fin, štampanje fin naloga bez veze konto/partner - nema ih u šifrarniku
+ - fakt, unos dokumenta - refresh stavki
+
 1.4.99 2013-01-22, vsasa
 
  - f18_run, korekcije (hernad)

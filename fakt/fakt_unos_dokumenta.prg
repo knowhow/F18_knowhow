@@ -281,6 +281,11 @@ do case
 
         BoxC()
 
+        TB:RefreshAll()
+        DO WHILE !TB:stable
+            Tb:stabilize()
+        ENDDO
+
         return _ret
 
 
@@ -491,68 +496,6 @@ do case
 endcase
 
 return DE_CONT
-
-
-// -----------------------------------------------------------------
-// promjeni brojac dokumenta za dokumente tip-a 12
-// -----------------------------------------------------------------
-static function otpremnica_22_brojac()
-local _fakt_params := fakt_params()
-local _rec, _t_rec
-
-if field->idtipdok == "12" .and. _fakt_params["fakt_otpr_22_brojac"]
-
-    _novi_broj := fakt_novi_broj_dokumenta( field->idfirma, "22" )
-
-    select fakt_pripr
-    set order to tag "1"
-    go top
-
-    do while !EOF()
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-
-        _rec := dbf_get_rec()
-        _rec["brdok"] := _novi_broj
-        dbf_update_rec( _rec )
-
-        go ( _t_rec )
-
-    enddo
-    
-    go top
-
-    select ( F_FAKT_ATRIB )
-    if !Used()
-        O_FAKT_ATRIB
-    endif
-    set order to tag "1"
-    go top
-
-    do while !EOF()
-
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-
-        _rec := dbf_get_rec()
-        _rec["brdok"] := _novi_broj
-        dbf_update_rec( _rec )
-
-        go ( _t_rec )
-
-    enddo
-    
-    use
-
-    select fakt_pripr
-    go top
-
-endif
-
-return .t.
 
 
 
@@ -1804,7 +1747,7 @@ go top
 seek _new_firma + _new_tipdok + _new_brdok
 
 if !FOUND()
-    return
+    return .f.
 endif
 
 _tek_dok := dbf_get_rec()
@@ -1814,7 +1757,7 @@ go top
 seek _old_firma + _old_tipdok + _old_brdok
 
 if !FOUND()
-    return
+    return .f.
 endif
 
 do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == _old_firma + _old_tipdok + _old_brdok 
@@ -1836,14 +1779,12 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == _old_fi
     go ( _t_rec )
 
 enddo
-
 go top
 
 select ( F_FAKT_ATRIB )
 if !Used()
     O_FAKT_ATRIB
 endif
-
 go top
 
 do while !EOF()
@@ -1863,14 +1804,13 @@ do while !EOF()
     go ( _t_rec )
 
 enddo
-
 // zatvori atribute
 use
 
 select fakt_pripr
 go top
 
-return
+return .t.
 
 
 

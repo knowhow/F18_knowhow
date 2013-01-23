@@ -76,45 +76,80 @@ DO WHILE !eof() .and. eval(b2)
          @ prow(),0 SAY RBr
        ENDIF
 
-       @ prow(),pcol()+1 SAY IdKonto
+        @ prow(), pcol() + 1 SAY IdKonto
 
-       if !empty(IdPartner)
-         if gVSubOp=="D"
-           select KONTO; hseek (nArr)->idkonto
-           select PARTN; hseek (nArr)->idpartner
-           cStr:=TRIM(KONTO->naz)+" ("+TRIM(trim(naz)+" "+trim(naz2))+")"
-         else
-           select PARTN; hseek (nArr)->idpartner
-           cStr:=trim(naz)+" "+trim(naz2)
-         endif
-       else
-         select KONTO;  hseek (nArr)->idkonto
-         cStr:=naz
-       endif
-       select (nArr)
+        _kto_naz := ""
+        _part_naz := ""
+        _part_naz2 := ""
 
-       IF gVar1=="1" .and. lJerry
-         aRez := {PADR(cStr,30)}
-         cStr := opis
-         aOpis := SjeciStr( cStr, 20 )
-       ELSE
-         aRez := SjeciStr( cStr, 28 )
-         cStr := opis
-         aOpis := SjeciStr( cStr, 20 )
-       ENDIF
+        if !EMPTY( IdPartner )
 
-       @ prow(),pcol()+1 SAY Idpartner(idpartner)
+            if gVSubOp == "D"
 
-       nColStr:=PCOL()+1
+                select KONTO
+                hseek (nArr)->idkonto
+                if FOUND()
+                    _kto_naz := konto->naz
+                endif
 
-       @  prow(),pcol()+1 SAY padr(aRez[1],28+IF(gVar1=="1".and.lJerry,2,0))
-       //-DifIdP(idpartner)) // dole cu nastaviti
+                select PARTN
+                hseek (nArr)->idpartner
+                if FOUND()
+                    _part_naz := partn->naz
+                    _part_naz2 := partn->naz2
+                endif
 
-       nColDok:=PCOL()+1
+                cStr := TRIM( _kto_naz ) + " (" + TRIM( TRIM( _part_naz ) + " " + TRIM( _part_naz2 ) ) + ")"
 
-       IF gVar1=="1" .and. lJerry
-         @ prow(),pcol()+1 SAY aOpis[1]
-       ENDIF
+            else
+
+                select PARTN
+                hseek (nArr)->idpartner
+                if FOUND()
+                    _part_naz := partn->naz
+                    _part_naz2 := partn->naz2
+                endif
+
+                cStr := TRIM( _part_naz ) + " " + TRIM( _part_naz2 )
+
+            endif
+        else
+
+            select KONTO
+            hseek (nArr)->idkonto
+
+            if FOUND()
+                _kto_naz := konto->naz
+            endif
+
+            cStr := _kto_naz
+
+        endif
+        
+        select (nArr)
+
+        IF gVar1=="1" .and. lJerry
+            aRez := {PADR(cStr,30)}
+            cStr := opis
+            aOpis := SjeciStr( cStr, 20 )
+        ELSE
+            aRez := SjeciStr( cStr, 28 )
+            cStr := opis
+            aOpis := SjeciStr( cStr, 20 )
+        ENDIF
+
+        @ prow(),pcol()+1 SAY Idpartner(idpartner)
+
+        nColStr:=PCOL()+1
+
+        @  prow(),pcol()+1 SAY padr(aRez[1],28+IF(gVar1=="1".and.lJerry,2,0))
+        //-DifIdP(idpartner)) // dole cu nastaviti
+
+        nColDok:=PCOL()+1
+
+        IF gVar1=="1" .and. lJerry
+            @ prow(),pcol()+1 SAY aOpis[1]
+        ENDIF
 
        if gNW=="N"
          @ prow(),pcol()+1 SAY IdTipDok

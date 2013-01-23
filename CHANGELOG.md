@@ -1,3 +1,7 @@
+1.4.104 2013-01-23, vsasa
+
+  - fin, ručno zatvaranje o.stavki - vraćanje filtera samo kod štampe
+
 1.4.103 2013-01-23, hernad
 
   - #30139 iskljucujem FWRITE u log 

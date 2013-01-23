@@ -622,12 +622,6 @@ if l_osuban == NIL
     l_osuban := .f.
 endif
 
-if Logirati(goModul:oDataBase:cName,"DOK","ASISTENT")
-    lLogRucZat:=.t.
-else
-    lLogRucZat:=.f.
-endif
-
 do case
 
     case Ch == K_ALT_E .and. FIELDPOS("_OBRDOK") = 0  
@@ -667,10 +661,6 @@ do case
             update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
             
             log_write( "otvorene stavke, set marker=" + cMark, 5 )
-
-            if lLogRucZat
-                EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cMark,"",Date(),Date(),"","Rucno zatvaranje otvorenih stavki")
-            endif
 
             nRet := DE_REFRESH
 
@@ -723,10 +713,6 @@ do case
                 
         endif
 
-        if lLogRucZat
-            EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nil,nil,nil,nil,"",cBrDok,"Ispravka br.veze",dDatDok,dDatVal,cOpis,"Rucno zatvaranje otvorenih stavki")
-        endif
-
         nRet := DE_REFRESH
 
     case Ch == K_F5
@@ -738,6 +724,13 @@ do case
         if fieldpos("_OBRDOK") <> 0  
             // nalazimo se u asistentu
             StAz()
+            
+            _o_ruc_zat( l_osuban )
+            select ( _t_area )
+            set filter to &(_tb_filter)
+            go ( _t_rec )
+
+
         else
             if Pitanje(,"Zelite li da vezni broj "+ BrDok + " zamijenite brojem "+cPomBrDok+" ?","D") == "D"
     
@@ -754,21 +747,27 @@ do case
     case Ch == K_CTRL_P
 
         StKart()
-        
+         
+        _o_ruc_zat( l_osuban )
+        select ( _t_area )
+        set filter to &(_tb_filter)
+        go ( _t_rec )
+
+       
         nRet := DE_REFRESH
 
     case Ch == K_ALT_P
 
         StBrVeze()
+        
+        _o_ruc_zat( l_osuban )
+        select ( _t_area )
+        set filter to &(_tb_filter)
+        go ( _t_rec )
+
         nRet := DE_REFRESH
 
 endcase
-
-_o_ruc_zat( l_osuban )
-
-select ( _t_area )
-set filter to &(_tb_filter)
-go ( _t_rec )
 
 return nRet
 

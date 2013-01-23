@@ -2,6 +2,7 @@
 
  - fin, štampanje fin naloga bez veze konto/partner - nema ih u šifrarniku
  - fakt, unos dokumenta - refresh stavki
+ - rnal, export naloga u otpremnicu - bugfix sa opisima
 
 1.4.99 2013-01-22, vsasa
 

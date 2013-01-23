@@ -61,7 +61,7 @@ END
 
 ::col_name := col_name
 
-super:New(_header, block)
+::super:New(_header, block)
 ::browse     := browse
 RETURN Self
 

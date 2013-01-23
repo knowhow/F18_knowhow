@@ -73,11 +73,14 @@ cLine := SPACE( COL_ITEM )
 cLine += REPLICATE("-", LEN_QTTY)
 cLine += " " + REPLICATE("-", LEN_DIMENSION)
 cLine += " " + REPLICATE("-", LEN_DIMENSION)
+
 if gGnUse == "D"
     cLine += " " + REPLICATE("-", LEN_DIMENSION)
     cLine += " " + REPLICATE("-", LEN_DIMENSION)
 endif
-cLine += " " + REPLICATE("-", LEN_VALUE)
+
+// ukidam liniju koja je sluzila za bruto
+//cLine += " " + REPLICATE("-", LEN_VALUE)
 cLine += " " + REPLICATE("-", LEN_VALUE)
 cLine += " " + REPLICATE("-", LEN_VALUE)
 cLine += " " + REPLICATE("-", LEN_VALUE)
@@ -390,9 +393,10 @@ do while !EOF()
             ?? show_number(nNeto, nil, -10 )
             ?? " "
 
+            // bruto nije potreban na nalogu....
             // bruto
-            ?? PADR( "_", 10 , "_")
-            ?? " "
+            //?? PADR( "_", 10 , "_")
+            //?? " "
 
             // ukupno m2
             ?? show_number(nTotal, nil, -10 )
@@ -439,12 +443,14 @@ do while !EOF()
         ?? show_number(nUQty, nil, -10 )
         ?? " "
      
-        // sirina
-        ?? show_number(nUWidt, nil, -10 )
+        // sirina - ne treba
+        ?? SPACE(10)
+        //?? show_number(nUWidt, nil, -10 )
         ?? " "
 
-        // visina
-        ?? show_number(nUHeig, nil, -10 )
+        // visina - ne treba
+        //?? show_number(nUHeig, nil, -10 )
+        ?? SPACE(10)
         ?? " "
 
         // zaokruzenja po GN-u
@@ -464,8 +470,8 @@ do while !EOF()
         ?? " "
 
         // bruto
-        ?? PADR( "", 10  )
-        ?? " "
+        //?? PADR( "", 10  )
+        //?? " "
 
         // ukupno m2
         ?? show_number(nUTotal, nil, -10 )
@@ -525,11 +531,13 @@ endif
 ?? " "
     
 // sirina
-?? show_number(nTWidt, nil, -10 )
+//?? show_number(nTWidt, nil, -10 )
+?? SPACE(10)
 ?? " "
 
 // visina
-?? show_number(nTHeig, nil, -10 )
+//?? show_number(nTHeig, nil, -10 )
+?? SPACE(10)
 ?? " "
 
 // zaokruzenja po GN-u
@@ -551,8 +559,8 @@ endif
 ?? " "
 
 // bruto
-?? PADR( "_", 10 , "_" )
-?? " "
+//?? PADR( "_", 10 , "_" )
+//?? " "
 
 // ukupno m2
 ?? show_number(nTTotal, nil, -10 )
@@ -635,9 +643,14 @@ return
 static function s_obrl_footer()
 local cPom 
 
+cPom := "UKUPNO BRUTO: ________________________________"
+? 
+? RAZMAK + SPACE(5) + cPom
+
 cPom := "Izdao: _________________"
 cPom += SPACE(10)
 cPom += "Primio: _________________"
+
 ?
 ? RAZMAK + SPACE(5) + cPom
 
@@ -675,9 +688,10 @@ if gGnUse == "D"
 endif
 
 cRow2 += " " + PADC("Neto (kg)", LEN_VALUE)
-cRow2 += " " + PADC("Bruto (kg)", LEN_VALUE)
-cRow2 += " " + PADC("Total (m2)", LEN_VALUE)
-cRow2 += " " + PADC("Total (m)", LEN_VALUE)
+// bruto ukidamo kao kolonu
+//cRow2 += " " + PADC("Bruto (kg)", LEN_VALUE)
+cRow2 += " " + PADC("Povrsina (m2)", LEN_VALUE)
+cRow2 += " " + PADC("Obim (m)", LEN_VALUE)
 
 ? cRow1
 ? cLine2

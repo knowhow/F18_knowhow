@@ -17,9 +17,9 @@
 // --------------------------------------------
 // promjena privilegija fajlova
 // --------------------------------------------
-function set_file_access( file_path, mask )
-local _cmd 
-local _ret := .f.
+function set_file_access( file_path, mask ) 
+local _ret := .t.
+private _cmd
 
 if file_path == NIL
 	file_path := ""
@@ -31,12 +31,8 @@ endif
 
 _cmd := "chmod ugo+w " + file_path + mask + "*.*"
 
-_ret := f18_run( _cmd )
+run &_cmd
     
-if _ret <> 0
-    MsgBeep( "Problem sa setovanjem privilegija !" )
-endif
-
 return _ret
 
 

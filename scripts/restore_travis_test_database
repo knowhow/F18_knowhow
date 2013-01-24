@@ -10,6 +10,7 @@ DATABASE=f18_test
 echo "DROP DATABASE f18_test; CREATE database f18_test" | psql -h $HOST -U $USER
 
 echo "restore from $SQL"
+echo psql -h $HOST -U $USER $DATABASE \< $SQL 
 psql -h $HOST -U $USER $DATABASE < $SQL 
 
 echo "select count(*) from fmk.konto" | psql -h $HOST -U $USER $DATABASE

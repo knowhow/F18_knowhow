@@ -1072,7 +1072,7 @@ return get_set_global_param("fakt_unos_vrste_placanja", value, "N")
 // kada pravis otpremnicu pravi je po brojacu tip-a 22
 // ----------------------------------------------------------------
 function fakt_otpr_22_brojac(value)
-return get_set_global_param("fakt_otpremnice_22_brojac", value, "D" )
+return get_set_global_param("fakt_otpremnice_22_brojac", value, "N" )
 
 
 // ----------------------------------------------------------------

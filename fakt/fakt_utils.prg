@@ -184,25 +184,20 @@ function get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
 local _t_arr := SELECT()
 local _ret := ""
 local _memo
-
-if PCOUNT() > 0
-
-    select ( F_FAKT )
-
-    if !Used()
-        O_FAKT
-    endif
     
-    // pozicioniraj se na stavku broj 1
-    select fakt
-    set order to tag "1"
-    go top
-    seek id_firma + tip_dok + br_dok
-    
-    if !FOUND()
-        return _ret
-    endif
+select ( F_FAKT )
+if !Used()
+    O_FAKT
+endif
 
+// pozicioniraj se na stavku broj 1
+select fakt
+set order to tag "1"
+go top
+seek id_firma + tip_dok + br_dok
+    
+if !FOUND()
+    return _ret
 endif
 
 // to se krije kao 20 clan matrice

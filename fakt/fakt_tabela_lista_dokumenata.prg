@@ -46,7 +46,7 @@ AADD(ImeKol,{ "Operater", {|| GetUserName( oper_id ) } })
 
 // veza sa dokumentima
 if _params["fakt_dok_veze"]
-    AADD(ImeKol,{ "Vezni dokumenti", {|| PADR( get_fakt_vezni_dokumenti(), 50 ) } })
+    AADD(ImeKol,{ "Vezni dokumenti", {|| PADR( get_fakt_vezni_dokumenti( idfirma, idtipdok, brdok ), 50 ) } })
 endif
 
 Kol:={}

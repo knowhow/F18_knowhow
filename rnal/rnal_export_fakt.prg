@@ -70,6 +70,7 @@ local i
 local lSumirati
 local cVpMp := "V"
 local _rec
+local _redni_broj
 
 if lNoGen == nil
     lNoGen := .f.
@@ -198,7 +199,7 @@ cBrDok := fakt_brdok_0(cfirma, cIdVd, DATE())
 
 
 cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
-nRbr := 0
+_redni_broj := 0
 
 select (nADOC_IT2)
 set order to tag "2"
@@ -209,7 +210,7 @@ do while !EOF()
     nDoc_no := field->doc_no
     cArt_id := field->art_id
     nQtty := field->doc_it_qtt
-    cDesc := field->desc
+    cDesc := field->descr
 
     if lSumirati == .t.
         
@@ -235,19 +236,19 @@ do while !EOF()
     endif
 
     select fakt_pripr    
-    go bottom
-    skip -1
+    //go bottom
+    //skip -1
 
-    if !EMPTY( fakt_pripr->rbr )
-        nRbr := VAL( fakt_pripr->rbr )
-    endif
+    //if !EMPTY( fakt_pripr->rbr )
+      //  nRbr := VAL( fakt_pripr->rbr )
+    //endif
     
     append blank
     
     scatter()
 
     _txt := ""
-    _rbr := STR( ++nRbr, 3 )
+    _rbr := STR( ++_redni_broj, 3 )
     _idpartner := cPartn
     _idfirma := "10"
     _brdok := cBrDok
@@ -258,16 +259,7 @@ do while !EOF()
     _kolicina := nQtty
     _dindem := "KM "
     _zaokr := 2
-
-    // ubaci mi atribute u fakt_atribute
-    _t_area := SELECT()
-
-    _items_atrib := hb_hash()
-    _items_atrib["opis"] := cDesc
-    fakt_atrib_hash_to_dbf( _idfirma, _idtipdok, _brdok, _rbr, _items_atrib )
-
-    select ( _t_area )
-            
+ 
     //if fakt_pripr->(FIELDPOS("OPIS")) <> 0
       //  _opis := cDesc
     //endif
@@ -321,6 +313,20 @@ do while !EOF()
 
     gather()
 
+    // ubaci mi atribute u fakt_atribute
+    if !EMPTY( cDesc ) 
+
+        _t_area := SELECT()
+
+        _items_atrib := hb_hash()
+        _items_atrib["opis"] := cDesc
+
+        fakt_atrib_hash_to_dbf( field->idfirma, field->idtipdok, field->brdok, field->rbr, _items_atrib )
+
+        select ( _t_area )
+
+    endif
+ 
     select (nADOC_IT2)
 
     if lSumirati == .f.
@@ -338,8 +344,6 @@ select (nADOC_IT)
 set order to tag "5"
 // index: art_sh_desc
 go top
-
-nRbr := 0
 
 do while !EOF() 
 
@@ -407,19 +411,19 @@ do while !EOF()
     
     select fakt_pripr
     
-    go bottom
-    skip -1
+    //go bottom
+    //skip -1
 
-    if !EMPTY( fakt_pripr->rbr )
-        nRbr := VAL( fakt_pripr->rbr )
-    endif
+    //if !EMPTY( fakt_pripr->rbr )
+      //  nRbr := VAL( fakt_pripr->rbr )
+    //endif
     
     append blank
     
     scatter()
 
     _txt := ""
-    _rbr := STR( ++nRbr, 3 )
+    _rbr := STR( ++_redni_broj, 3 )
     _idpartner := cPartn
     _idfirma := "10"
     _brdok := cBrDok
@@ -431,15 +435,6 @@ do while !EOF()
     _dindem := "KM "
     _zaokr := 2
         
-    // ubaci mi atribute u fakt_atribute
-    _t_area := SELECT()
-
-    _items_atrib := hb_hash()
-    _items_atrib["opis"] := cArt_sh
-    fakt_atrib_hash_to_dbf( _idfirma, _idtipdok, _brdok, _rbr, _items_atrib )
-
-    select ( _t_area )
- 
     //if fakt_pripr->(FIELDPOS("OPIS")) <> 0
       //  _opis := cArt_sh
     //endif
@@ -493,6 +488,19 @@ do while !EOF()
 
     gather()
 
+    // ubaci mi atribute u fakt_atribute
+    if !EMPTY( cArt_sh )
+
+        _t_area := SELECT()
+
+        _items_atrib := hb_hash()
+        _items_atrib["opis"] := cArt_sh
+        fakt_atrib_hash_to_dbf( field->idfirma, field->idtipdok, field->brdok, field->rbr, _items_atrib )
+
+        select ( _t_area )
+
+    endif
+ 
     select (nADOC_IT)
 
     if lSumirati == .f.

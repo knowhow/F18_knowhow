@@ -1,7 +1,24 @@
-1.4.50 2013-01-23, vsasa
+1.4.105 2013-01-23, vsasa
+
+  - rnal, štampa naloga/otpremnice - korekcije na izvještajima
+
+1.4.104 2013-01-23, vsasa
+
+  - fin, ručno zatvaranje o.stavki - vraćanje filtera samo kod štampe
+
+1.4.103 2013-01-23, hernad
+
+  - #30139 iskljucujem FWRITE u log 
+
+1.4.102 2013-01-23, hernad, vsasa
+
+ - promjena verzije
+
+1.4.100 2013-01-23, vsasa
 
  - fin, štampanje fin naloga bez veze konto/partner - nema ih u šifrarniku
  - fakt, unos dokumenta - refresh stavki
+ - rnal, export naloga u otpremnicu - bugfix sa opisima
 
 1.4.99 2013-01-22, vsasa
 

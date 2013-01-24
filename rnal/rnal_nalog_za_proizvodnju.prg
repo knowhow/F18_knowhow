@@ -128,6 +128,7 @@ local nCount := 0
 local cDoc_it_type := ""
 local cRekPrint
 local lRekPrint := .f.
+local _qtty_total := 0
 
 nDuzStrKorekcija := 0
 lPrintedTotal := .f.
@@ -219,6 +220,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 	cDoc_no := docno_str( field->doc_no )
 	cDoc_it_no := docit_str( field->doc_it_no )
 	cDoc_It_type := field->doc_it_typ
+
 	
 	// prikazuj naziv artikla
 	if !EMPTY( field->art_desc )     //lSh_art_desc == .t.
@@ -464,6 +466,7 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 	// kolicina
 	?? show_number(field->doc_it_qtt, nil, -10 )
 
+    _qtty_total += field->doc_it_qtt
 	
 	// napomene za item:
 	// - napomene
@@ -545,7 +548,9 @@ if prow() > LEN_PAGE - DSTR_KOREKCIJA()
 	Nstr_a4(nPage, .t.)
 endif	
 
-//? cLine
+? cLine
+? RAZMAK + PADR( "UKUPNA KOLICINA:", 90 ), show_number( _qtty_total, nil, -10 )
+? cLine
 
 B_OFF
 

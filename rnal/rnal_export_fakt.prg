@@ -195,8 +195,10 @@ if cVpMp == "M"
     cCtrlNo := "23"
 endif
 
-//cBrDok := fakt_novi_broj_dokumenta( cFirma, cCtrlNo )
-cBrDok := fakt_prazan_broj_dokumenta()
+// ova funkcija ce vratiti novi broj dokumenta "22"
+cBrDok := fakt_novi_broj_dokumenta( cFirma, cCtrlNo )
+
+//cBrDok := fakt_prazan_broj_dokumenta()
 
 cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
 _redni_broj := 0

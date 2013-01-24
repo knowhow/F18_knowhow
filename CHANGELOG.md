@@ -1,6 +1,8 @@
-1.4.105 2013-01-23, vsasa
+1.4.105 2013-01-24, vsasa
 
   - rnal, štampa naloga/otpremnice - korekcije na izvještajima
+  - rnal, export otpremnice na osnovu naloga, broj otpremnice "22"
+  - rnal, izvještaj "pregled prebačenih otpremnica", korekcije
 
 1.4.104 2013-01-23, vsasa
 

@@ -18,7 +18,8 @@
 // promjena privilegija fajlova
 // --------------------------------------------
 function set_file_access( file_path, mask )
-private _cmd 
+local _cmd 
+local _ret := .f.
 
 if file_path == NIL
 	file_path := ""
@@ -28,11 +29,15 @@ if mask == NIL
 	mask := ""
 endif
 
-_cmd := "sudo chmod ugo+w " + file_path + mask + "*.*"
+_cmd := "chmod ugo+w " + file_path + mask + "*.*"
 
-run &_cmd
+_ret := f18_run( _cmd )
+    
+if _ret <> 0
+    MsgBeep( "Problem sa setovanjem privilegija !" )
+endif
 
-return
+return _ret
 
 
 // -----------------------------------------

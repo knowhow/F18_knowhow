@@ -131,6 +131,9 @@ cTxt += PADR("FAKT", 10)
 
 return
 
+
+
+
 // --------------------------------------------------------------
 // provjeri linkove sa maloprodajnim racunima
 // --------------------------------------------------------------
@@ -215,18 +218,21 @@ do while !EOF()
 			go top
 			seek docno_str( nNalog )
 
+            _rec := dbf_get_rec()
+
 			if FOUND()
 				
-			  if cReset == "D"
-			  	// resetuj polje fmk_doc prije svega
-				replace fmk_doc with ""
-			  endif
+			    if cReset == "D"
+			  	    // resetuj polje fmk_doc prije svega
+                    _rec["fmk_doc"] := ""
+			    endif
 
-			  replace fmk_doc with ;
-				_add_to_field( ;
+                _rec["fmk_doc"] := _add_to_field( ;
 					ALLTRIM( field->fmk_doc ), ;
 					cFaktDok + "M" )
-			
+
+			    update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+
 			endif
 
 		next
@@ -240,7 +246,7 @@ enddo
 msgc()
 
 // prekini vezu sa doks
-select (240)
+select ( F_FAKT_DOKS )
 use
 
 return
@@ -415,7 +421,7 @@ cFilter += " .and. DTOS(doc_date) >= " + cm2str(DTOS(dDFrom))
 cFilter += " .and. DTOS(doc_date) <= " + cm2str(DTOS(dDTo))
 
 if nOper <> 0
-	cFilter += ".and. operater_i = " + STR( nOper, 3 )
+	cFilter += ".and. operater_i = " + STR( nOper, 10 )
 endif
 
 set filter to &cFilter

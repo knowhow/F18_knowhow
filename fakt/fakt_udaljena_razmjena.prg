@@ -114,22 +114,18 @@ local _imp_file
 local _imp_path := fetch_metric( "fakt_import_path", my_user(), PADR("", 300) )
 local _a_data := {}
 
-if EMPTY( __import_dbf_path )
-
-	Box(, 1, 70)
-		@ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
-		read 
-	BoxC()
+Box(, 1, 70)
+	@ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
+	read 
+BoxC()
 	
-	if LastKey() == K_ESC
-		return
-	endif	
+if LastKey() == K_ESC
+	return
+endif	
 
-	// snimi u parametre
-	__import_dbf_path := ALLTRIM( _imp_path )
-	set_metric( "fakt_import_path", my_user(), _imp_path )
-
-endif
+// snimi u parametre
+__import_dbf_path := ALLTRIM( _imp_path )
+set_metric( "fakt_import_path", my_user(), _imp_path )
 
 // import fajl iz liste
 _imp_file := get_import_file( "fakt", __import_dbf_path )
@@ -202,9 +198,10 @@ local _descr
 // data[1] = opis
 // data[2] = broj dokumenta
 // data[3] = idpartner
-// data[4] = opis partner
-// data[5] = iznos
-// data[6] = datum dokumenta
+// data[4] = idkonto
+// data[5] = opis partner
+// data[6] = iznos
+// data[7] = datum dokumenta
 
 START PRINT CRET
 
@@ -263,13 +260,13 @@ for _i := 1 to LEN( data )
 	@ prow(), pcol() + 1 SAY PADR( data[ _i, 2 ], 16 )
 
 	// datum
-	@ prow(), pcol() + 1 SAY DTOC( data[ _i, 6 ] )
+	@ prow(), pcol() + 1 SAY DTOC( data[ _i, 7 ] )
 
 	// partner
-	@ prow(), pcol() + 1 SAY PADR( data[ _i, 4 ], 27 ) + "..."
+	@ prow(), pcol() + 1 SAY PADR( data[ _i, 5 ], 27 ) + "..."
 
 	// iznos
-	@ prow(), pcol() + 1 SAY STR( data[ _i, 5 ], 12, 2 )
+	@ prow(), pcol() + 1 SAY STR( data[ _i, 6 ], 12, 2 )
 
 
 next
@@ -517,6 +514,7 @@ local _id_roba
 local _prim_sif
 local _rj_src, _rj_dest, _brojevi_dok
 local _change_rj := .f.
+local _detail_rec
 
 // uslovi za export ce biti...
 _dat_od := vars["datum_od"]
@@ -613,8 +611,17 @@ do while !EOF()
 		endif
 	endif
 
+    _detail_rec := hb_hash()
+    _detail_rec["dokument"] := _app_rec["idfirma"] + "-" + _app_rec["idtipdok"] + "-" + _app_rec["brdok"]
+    _detail_rec["idpartner"] := _app_rec["idpartner"]
+    _detail_rec["idkonto"] := ""
+    _detail_rec["partner"] := _app_rec["partner"]
+    _detail_rec["iznos"] := _app_rec["iznos"]
+    _detail_rec["datum"] := _app_rec["datdok"]
+    _detail_rec["tip"] := "export"
+
 	// dodaj u detalje
-	add_to_details( @a_details, _app_rec, "export" )
+	add_to_details( @a_details, _detail_rec )
 
     select e_doks
     append blank
@@ -753,14 +760,15 @@ return _ret
 // ----------------------------------------------------------------
 // dodaj u matricu sa detaljima
 // ----------------------------------------------------------------
-static function add_to_details( details, rec, descr )
+function add_to_details( details, rec )
 
-AADD( details, { descr, ;
-				rec["idfirma"] + "-" + rec["idtipdok"] + "-" + rec["brdok"], ;
-				rec["idpartner"], ;
-				rec["partner"], ;
-				rec["iznos"], ;
-				rec["datdok"] } )
+AADD( details, { rec["tip"], ;
+                rec["dokument"], ;
+                rec["idpartner"], ;
+                rec["idkonto"], ;
+	            rec["partner"], ;
+	            rec["iznos"], ;
+	            rec["datum"] } )
 
 return
 
@@ -783,6 +791,7 @@ local _total_doks := 0
 local _total_fakt := 0
 local _gl_brojac := 0
 local _brojevi_dok
+local _detail_rec
 
 // lokuj potrebne tabele
 if !f18_lock_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
@@ -790,7 +799,6 @@ if !f18_lock_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
 endif
 
 sql_table_update( nil, "BEGIN" )
-
 
 // ovo su nam uslovi za import...
 _dat_od := vars["datum_od"]
@@ -888,25 +896,31 @@ do while !EOF()
     // da li postoji u prometu vec ?
     if _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok )
 
+		select e_doks
+		_app_rec := dbf_get_rec()
+    
+        _detail_rec := hb_hash()
+        _detail_rec["dokument"] := _app_rec["idfirma"] + "-" + _app_rec["idtipdok"] + "-" + _app_rec["brdok"]
+        _detail_rec["idpartner"] := _app_rec["idpartner"]
+        _detail_rec["idkonto"] := ""
+        _detail_rec["partner"] := _app_rec["partner"]
+        _detail_rec["iznos"] := _app_rec["iznos"]
+        _detail_rec["datum"] := _app_rec["datdok"]
+
         if _zamjeniti_dok == "D"
 
             // dokumente iz fakt, fakt_doks brisi !
-
-			select e_doks
-			_app_rec := dbf_get_rec()
-
-			add_to_details( @a_details, _app_rec, "delete" )
+            _detail_rec["tip"] := "delete"
+			add_to_details( @a_details, _detail_rec )
 
             _ok := .t.
             _ok := del_fakt_doc( _id_firma, _id_vd, _br_dok )
 
         else
 
-            select e_doks
+            _detail_rec["tip"] := "x"
+			add_to_details( @a_details, _detail_rec )
 
-			_app_rec := dbf_get_rec()
-           	add_to_details( @a_details, _app_rec, "x" )
- 
 			skip
             loop
 
@@ -918,8 +932,17 @@ do while !EOF()
     select e_doks
     _app_rec := dbf_get_rec()
 
+    _detail_rec := hb_hash()
+    _detail_rec["dokument"] := _app_rec["idfirma"] + "-" + _app_rec["idtipdok"] + "-" + _app_rec["brdok"]
+    _detail_rec["idpartner"] := _app_rec["idpartner"]
+    _detail_rec["idkonto"] := ""
+    _detail_rec["partner"] := _app_rec["partner"]
+    _detail_rec["iznos"] := _app_rec["iznos"]
+    _detail_rec["datum"] := _app_rec["datdok"]
+    _detail_rec["tip"] := "import"
+
 	// dodaj u detalje
-	add_to_details( @a_details, _app_rec, "import" )
+	add_to_details( @a_details, _detail_rec )
 
     select fakt_doks
 	append blank

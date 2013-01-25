@@ -28,6 +28,9 @@ __export_dbf_path := my_home() + "export_dbf" + SLASH
 __import_zip_name := "fin_exp.zip"
 __export_zip_name := "fin_exp.zip"
 
+// kreiraj ove direktorije odmah
+_dir_create( __export_dbf_path )
+
 AADD(_opc,"1. => export podataka               ")
 AADD(_opcexe, {|| _fin_export() })
 AADD(_opc,"2. <= import podataka    ")
@@ -46,6 +49,7 @@ static function _fin_export()
 local _vars := hb_hash()
 local _exported_rec
 local _error
+local _a_data := {}
 
 // uslovi exporta
 if !_vars_export( @_vars )
@@ -56,7 +60,7 @@ endif
 delete_exp_files( __export_dbf_path, "fin" )
 
 // exportuj podatake
-_exported_rec := __export( _vars )
+_exported_rec := __export( _vars, @_a_data )
 
 // zatvori sve tabele prije operacije pakovanja
 close all
@@ -84,7 +88,12 @@ endif
 DirChange( my_home() )
 
 if ( _exported_rec > 0 )
+
     MsgBeep( "Exportovao " + ALLTRIM(STR( _exported_rec )) + " dokumenta." )
+
+	// printaj izvjestaj
+	print_imp_exp_report( _a_data )
+
 endif
 
 close all
@@ -99,6 +108,22 @@ static function _fin_import()
 local _imported_rec
 local _vars := hb_hash()
 local _imp_file 
+local _a_data := {}
+local _imp_path := fetch_metric( "fin_import_path", my_user(), PADR("", 300) )
+
+// zapravo, uvijek pokazi import lokaciju
+Box(, 1, 70)
+	@ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
+	read 
+BoxC()
+	
+if LastKey() == K_ESC
+	return
+endif	
+
+// snimi u parametre
+__import_dbf_path := ALLTRIM( _imp_path )
+set_metric( "fin_import_path", my_user(), _imp_path )
 
 // import fajl iz liste
 _imp_file := get_import_file( "fin", __import_dbf_path )
@@ -130,7 +155,7 @@ endif
 #endif
 
 // import procedura
-_imported_rec := __import( _vars )
+_imported_rec := __import( _vars, @_a_data )
 
 // zatvori sve
 close all
@@ -147,12 +172,16 @@ if ( _imported_rec > 0 )
 
     MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
 
+	// printaj izvjestaj
+	print_imp_exp_report( _a_data )
+
 endif
 
 // vrati se na home direktorij nakon svega
 DirChange( my_home() )
 
 return
+
 
 
 // -------------------------------------------
@@ -165,9 +194,14 @@ local _dat_do := fetch_metric( "fin_export_datum_do", my_user(), DATE() )
 local _konta := fetch_metric( "fin_export_lista_konta", my_user(), PADR( "1320;", 200 ) )
 local _vrste_dok := fetch_metric( "fin_export_vrste_dokumenata", my_user(), PADR( "10;11;", 200 ) )
 local _exp_sif := fetch_metric( "fin_export_sifrarnik", my_user(), "D" )
+local _exp_path := fetch_metric( "fin_export_path", my_user(), PADR("", 300) )
 local _x := 1
 
-Box(, 9, 70 )
+if EMPTY( ALLTRIM( _exp_path ) )
+	_exp_path := PADR( __export_dbf_path, 300 )
+endif
+
+Box(, 15, 70 )
 
     @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
 
@@ -191,6 +225,10 @@ Box(, 9, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
+
     read
 
 BoxC()
@@ -205,6 +243,10 @@ if LastKey() <> K_ESC
     set_metric( "fin_export_lista_konta", my_user(), _konta )
     set_metric( "fin_export_vrste_dokumenata", my_user(), _vrste_dok )
     set_metric( "fin_export_sifrarnik", my_user(), _exp_sif )
+    set_metric( "fin_export_path", my_user(), _exp_path )
+
+	// export path, set static var
+	__export_dbf_path := ALLTRIM( _exp_path )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
@@ -230,9 +272,15 @@ local _vrste_dok := fetch_metric( "fin_import_vrste_dokumenata", my_user(), PADR
 local _zamjeniti_dok := fetch_metric( "fin_import_zamjeniti_dokumente", my_user(), "N" )
 local _zamjeniti_sif := fetch_metric( "fin_import_zamjeniti_sifre", my_user(), "N" )
 local _iz_fmk := fetch_metric( "fin_import_iz_fmk", my_user(), "N" )
+local _imp_path := fetch_metric( "fin_import_path", my_user(), PADR("", 300) )
 local _x := 1
 
-Box(, 12, 70 )
+if EMPTY( ALLTRIM( _imp_path) )
+	_imp_path := PADR( __import_dbf_path, 300 )
+endif
+
+
+Box(, 15, 70 )
 
     @ m_x + _x, m_y + 2 SAY "*** Uslovi importa dokumenata"
 
@@ -265,6 +313,12 @@ Box(, 12, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
 
+	++ _x
+	++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
+
+
     read
 
 BoxC()
@@ -281,6 +335,10 @@ if LastKey() <> K_ESC
     set_metric( "fin_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
     set_metric( "fin_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
     set_metric( "fin_import_iz_fmk", my_user(), _iz_fmk )
+    set_metric( "fin_import_path", my_user(), _imp_path )
+
+	// set static var
+	__import_dbf_path := ALLTRIM( _imp_path )
 
     vars["datum_od"] := _dat_od
     vars["datum_do"] := _dat_do
@@ -299,7 +357,7 @@ return _ret
 // -------------------------------------------
 // export podataka
 // -------------------------------------------
-static function __export( vars )
+static function __export( vars, a_details )
 local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
@@ -307,6 +365,7 @@ local _cnt := 0
 local _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
 local _usl_konto, _id_konto
 local _id_partn
+local _detail_rec
 
 // uslovi za export ce biti...
 _dat_od := vars["datum_od"]
@@ -366,6 +425,18 @@ do while !EOF()
     // ako je sve zadovoljeno !
     // dodaj zapis u tabelu e_nalog
     _app_rec := dbf_get_rec()
+
+    _detail_rec := hb_hash()
+    _detail_rec["dokument"] := _app_rec["idfirma"] + "-" + _app_rec["idvn"] + "-" + _app_rec["brnal"]
+    _detail_rec["idpartner"] := ""
+    _detail_rec["idkonto"] := ""
+    _detail_rec["partner"] := ""
+    _detail_rec["iznos"] := 0
+    _detail_rec["datum"] := _app_rec["datnal"]
+    _detail_rec["tip"] := "export"
+
+	// dodaj u detalje
+	add_to_details( @a_details, _detail_rec )
 
     select e_nalog
     append blank
@@ -485,7 +556,7 @@ return _ret
 // ----------------------------------------
 // import podataka
 // ----------------------------------------
-static function __import( vars )
+static function __import( vars, a_details )
 local _ret := 0
 local _id_firma, _id_vd, _br_dok
 local _app_rec
@@ -500,11 +571,13 @@ local _total_anal := 0
 local _total_sint := 0
 local _total_nalog := 0
 local _gl_brojac := 0
+local _detail_rec
 
 // lokuj potrebne fajlove
 if !f18_lock_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" } )
     return _cnt
 endif
+
 sql_table_update( nil, "BEGIN" )
 
 // ovo su nam uslovi za import...
@@ -547,6 +620,7 @@ do while !EOF()
     _id_firma := field->idfirma
     _id_vd := field->idvn
     _br_dok := field->brnal
+    _dat_dok := field->datnal
 
     // uslovi, provjera...
 
@@ -576,16 +650,32 @@ do while !EOF()
     // da li postoji u prometu vec ?
     if _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok )
 
+        _detail_rec := hb_hash()
+        _detail_rec["dokument"] := _id_firma + "-" + _id_vd + "-" + _br_dok
+        _detail_rec["datum"] := _dat_dok
+        _detail_rec["idpartner"] := ""
+        _detail_rec["partner"] := ""
+        _detail_rec["idkonto"] := ""
+        _detail_rec["iznos"] := 0
+
         if _zamjeniti_dok == "D"
+
+            _detail_rec["tip"] := "delete"
+            add_to_details( @a_details, _detail_rec )
 
             // dokumente iz fin brisi !
             _ok := .t.
             _ok := del_fin_doc( _id_firma, _id_vd, _br_dok )
 
         else
+
+            _detail_rec["tip"] := "x"
+            add_to_details( @a_details, _detail_rec )
+
             select e_nalog
             skip
             loop
+
         endif
 
     endif
@@ -593,6 +683,17 @@ do while !EOF()
     // zikni je u nasu tabelu doks
     select e_nalog
     _app_rec := dbf_get_rec()
+
+    _detail_rec := hb_hash()
+    _detail_rec["dokument"] := _app_rec["idfirma"] + "-" + _app_rec["idvn"] + "-" + _app_rec["brnal"]
+    _detail_rec["datum"] := _app_rec["datnal"]
+    _detail_rec["idpartner"] := ""
+    _detail_rec["partner"] := ""
+    _detail_rec["idkonto"] := ""
+    _detail_rec["iznos"] := 0
+    _detail_rec["tip"] := "import"
+
+    add_to_details( @a_details, _detail_rec )
 
     select nalog
 	append blank
@@ -771,7 +872,7 @@ endif
 
 // nalog brisi
 select nalog
-set order to tag "2"
+set order to tag "1"
 go top
 seek id_firma + id_vd + br_dok
 if FOUND()

@@ -161,9 +161,10 @@ delete_exp_files( __import_dbf_path, "kalk" )
 if ( _imported_rec > 0 )
 
     // nakon uspjesnog importa...
-
-    // brisi zip fajl...
-    delete_zip_files( _imp_file )
+    if Pitanje(, "Pobrisati fajl razmjne ?", "D" ) == "D"
+        // brisi zip fajl...
+        delete_zip_files( _imp_file )
+    endif
 
     MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
 

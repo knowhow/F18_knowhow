@@ -166,9 +166,11 @@ delete_exp_files( __import_dbf_path, "fin" )
 if ( _imported_rec > 0 )
 
     // nakon uspjesnog importa...
+    if Pitanje(, "Pobrisati fajl razmjne ?", "D" ) == "D"
+        // brisi zip fajl...
+        delete_zip_files( _imp_file )
+    endif
 
-    // brisi zip fajl...
-    delete_zip_files( _imp_file )
 
     MsgBeep( "Importovao " + ALLTRIM( STR( _imported_rec ) ) + " dokumenta." )
 

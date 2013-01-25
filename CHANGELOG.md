@@ -1,3 +1,7 @@
+1.4.106 2013-01-25, vsasa
+
+  - fin/kalk/fakt - udaljene lokacije razmjena podataka - korekcije
+ 
 1.4.105 2013-01-24, vsasa
 
   - rnal, štampa naloga/otpremnice - korekcije na izvještajima

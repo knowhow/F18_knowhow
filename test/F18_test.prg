@@ -4,11 +4,19 @@ procedure Main(...)
 
 public gDebug := 10
 
+set_f18_params(...)
+
+
 f18_test_init()
 
-post_login()
+if !no_sql_mode()
+   post_login()
+endif
 
 TEST_BEGIN("")
+
+
+test_external_run()
 
 /* na windowsima vrti beskonacno
 MsgO("migrate")

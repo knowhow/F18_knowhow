@@ -291,6 +291,48 @@ HB_FUNC( FILEEXT )
 
 #pragma ENDDUMP
 
+
+#pragma BEGINDUMP
+
+#include "hbapi.h"
+#include "hbapierr.h"
+#include "hbapigt.h"
+#include "hbapiitm.h"
+#include "hbapifs.h"
+
+/* TOFIX: The screen buffer handling is not right for all platforms (Windows)
+          The output of the launched (MS-DOS?) app is not visible. */
+
+HB_FUNC( __RUN_SYSTEM )
+{
+   const char * pszCommand = hb_parc( 1 );
+   int iResult;
+
+   if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
+   {
+      char * pszFree = NULL;
+
+      iResult = system( hb_osEncodeCP( pszCommand, &pszFree, NULL ) );
+
+      hb_retni(iResult);
+
+      if( pszFree )
+         hb_xfree( pszFree );
+
+      if( hb_gtResume() != HB_SUCCESS )
+      {
+         /* an error should be generated here !! Something like */
+         /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
+      }
+
+
+   }
+}
+
+#pragma ENDDUMP
+
+
+
 function f18_run(cmd, output, always_ok, async)
 local _ret, _stdout, _stderr, _prefix
 local _msg
@@ -320,14 +362,19 @@ if _ret <> 0
    #endif
 #endif
 
-   _ret := hb_processRun(_prefix + cmd, NIL, NIL, NIL, async)
- 
+   _ret := hb_processRun(_prefix + cmd, NIL, NIL, NIL, async) 
+#ifdef __PLATFORM__WINDOWS
+   // copy komanda trazi system run a ne hbprocess run 
+   if _ret <> 0
+       _ret := __run_system(cmd)
+   endif
+#endif
    if _ret <> 0 .and. !always_ok 
         _msg := "ERR run cmd:"  + cmd
         log_write(_msg, 2)
         MsgBeep(_msg)
    endif
-
+   
 endif
 
 if VALTYPE(output) == "H"

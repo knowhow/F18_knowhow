@@ -106,12 +106,12 @@ nN1:=0
 nN2:=0
 nN3:=0
 O_PARAMS
-private cSection:="U"
-private cHistory:=" "
-private aHistory:={}
-private cUPartner:=space(IF(gVFU=="1",16,20))
-private dDatDok:=ctod(""), cFUArtikal:=SPACE(LEN(ROBA->id))
-private cSamoAktivni:="D"
+private cSection :="U"
+private cHistory :=" "
+private aHistory :={}
+private cUPartner:=space(IIF(gVFU=="1",16,20))
+private dDatDok  :=ctod(""), cFUArtikal:=SPACE(LEN(ROBA->id))
+private cSamoAktivni := "D"
 
 RPar("uP",@cUPartner)
 RPar("dU",@dDatDok)
@@ -122,7 +122,10 @@ RPar("P4",@cFUArtikal)
 RPar("P5",@cSamoAktivni)
 use
 
-nDokGen:=val(IzFMkIni('Fakt_Ugovori',"Dokumenata_Izgenerisati",'1'))
+MsgBeep("Opcija nije testirana (novi brojaci)")
+
+// nDokGen:=val(IzFMkIni('Fakt_Ugovori',"Dokumenata_Izgenerisati",'1'))
+nDokGen := 1
 
 if nDokgen=0
   nDokGen:=1
@@ -159,16 +162,18 @@ if lSamoAktivni
 endif
 GO TOP
 
-for nTekUg:=1 to nDokGen
+for nTekUg := 1 to nDokGen
 
 SELECT UGOV
 
-if nTekug=1
-  cUPartner:=lefT(cUPartner,IF(gVFU=="1",15,19))+chr(254)
+if nTekug == 1
+  cUPartner := lefT(cUPartner, IIF(gVFU=="1",15,19))+chr(254)
 else
   // ne browsaj
   skip 1 // saltaj ugovore
-  IF EOF(); EXIT; ENDIF
+  IF EOF()
+     EXIT
+  ENDIF
 endif
 
 if empty(cUPartner) // eof()
@@ -207,41 +212,16 @@ use
 select fakt_pripr
 //******** utvrdjivanje broja dokumenta **************
 
-    cIdTipdok:=ugov->idtipdok
+cIdTipdok:=ugov->idtipdok
 
-   if lSpecifZips
-      if nn3=1 .and. ugov->idtipdok="20" // konverzija 20->10
+if lSpecifZips
+    if nn3=1 .and. ugov->idtipdok == "20" 
+         // konverzija 20->10
          cIdTipDok:="10"
-      endif
-   endif
+    endif
+endif
 
-   select fakt_pripr
-   seek gFirma+cidtipdok+"È"
-   skip -1
-   if idtipdok <> cIdTipdok
-     seek "È" // idi na kraj, nema zeljenih dokumenata
-   endif
-
-   select fakt
-   seek gFirma+cidtipdok+"È"
-   skip -1
-
-   if idtipdok <> cIdTipdok
-     seek "È" // idi na kraj, nema zeljenih  dokumenata
-   endif
-
-   if fakt_pripr->brdok > fakt->brdok
-     select fakt_pripr  // odaberi tabelu u kojoj ima vise dokumenata
-   endif
-
-
-   if cidtipdok<>idtipdok
-      cBrDok:=UBrojDok(1, gNumDio,"")
-   else
-      cBrDok:=UBrojDok( val(left(brdok, gNumDio))+1, ;
-                        gNumDio, right(brdok,len(brdok)-gNumDio) )
-   endif
-
+cBrDok := fakt_novi_broj_dokumenta(gfirma, cidtipdok, DATE())
 
 select ugov
 if lSamoAktivni .and. aktivan!="D"
@@ -262,7 +242,8 @@ nRbr:=0
 seek cidugov
 
 // prvi krug odredjuje glavnicu
-nGlavnica:=0  // jedna stavka mo§e biti glavnica za ostale
+nGlavnica:=0  
+// jedna stavka moze biti glavnica za ostale
 do while !eof() .and. id==cidugov
    select roba; hseek rugov->idroba
    select rugov
@@ -287,15 +268,15 @@ do while !eof() .and. id==cidugov
 
    select fakt_pripr
 
-   IF IzFMKIni('FAKT_Ugovori',"SumirajIstuSifru",'D')=="D" .and.;
-      IdFirma+idtipdok+brdok+idroba==gFirma+cIDTipDok+PADR(cBrDok,LEN(brdok))+RUGOV->idroba
+   IF  IdFirma+idtipdok+brdok+idroba==gFirma+cIDTipDok+PADR(cBrDok,LEN(brdok))+RUGOV->idroba
      Scatter()
      _kolicina += RUGOV->kolicina
      // tag "1": "IdFirma+idtipdok+brdok+rbr+podbr"
      Gather()
      SELECT RUGOV; SKIP 1; LOOP
    ELSE
-     append blank; Scatter()
+     append blank
+     Scatter()
    ENDIF
 
    if nRbr==0

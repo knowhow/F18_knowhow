@@ -30,8 +30,8 @@
  */
  
 function TopsFakt()
-*{
-local cLokacija:=PADR("A:\",40)
+
+local cLokacija:=PADR("A:\", 40)
 local cTopsFakt
 local nRBr
 local cIdRj:=gFirma
@@ -62,22 +62,19 @@ O_PARTN
 O_FAKT_DOKS
 O_FAKT_PRIPR
 
-use (trim(cLokacija)+"TOPSFAKT.DBF") new
+use (trim(cLokacija) + "TOPSFAKT.DBF") new
 set order to tag "1"
 go top
 
-cBrFakt:=SPACE(8)
-cIdVdLast:="  "
+cBrFakt   := SPACE(8)
+cIdVdLast := "  "
 
 do while !eof()
 	cIdVd:=idVd
 	cIdPartner:=idPartner
 	nRBr:=1
-	if empty(cBrFakt) .or. cIdVdLast<>cIdVd
-		cBrFakt:=SljedBrFakt(cIdRj,cIdVd,datum,cIdPartner)
-	else
-		cBrFakt:=UBrojDok( val(left(cBrFakt,gNumDio))+1, gNumDio, right(cBrFakt,len(cBrFakt)-gNumDio))
-	endif
+        cBrDok := fakt_brdok_0(cIdRj, cIdVD, DATE())
+
 	cIdVdLast:=cIdVd
 	do while !eof() .and. idVd==cIdVd .and. idPartner==cIdPartner
 

@@ -85,21 +85,3 @@ enddo //.t.
 BoxC()
 closeret
 
-
-function kalk_sljedeci(cIdFirma,cVrsta)
-local cBrKalk
-if gBrojac=="D"
- select kalk
- set order to tag "1"
- seek cIdFirma+cVrsta+"X"
- skip -1
- if idvd<>cVrsta
-   cBrKalk:=space(8)
- else
-   cBrKalk:=brdok
- endif
- cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-endif
-return cBrKalk
-
-

@@ -50,6 +50,7 @@ local cBrDok := SPACE(8)
 local cBrKalk := SPACE(8)
 local dFaktOd := DATE() - 10
 local dFaktDo := DATE()
+local _h_brdok
 
 O_KALK_PRIPR
 O_KONCIJ
@@ -74,26 +75,16 @@ cIdZaduz := SPACE(6)
 cSabirati := gAutoCjen
 cCjenSif := "N"
 
-if gBrojac=="D"
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "11"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
 
- 	select kalk
-	set order to tag "1"
-	seek cIdFirma + "11X"
- 	skip -1
- 
- 	if idvd<>"11"
-   		cBrKalk := SPACE(8)
- 	else
-   		cBrKalk:=brdok
- 	endif
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
-endif
 
 Box(,15,60)
-
-if gBrojac=="D"
-	cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-endif
 
 do while .t.
 
@@ -231,14 +222,12 @@ do while .t.
      
      	@ m_x+10,m_y+2 SAY "Dokument je prenesen !!"
      	
-	if gBrojac=="D"
-      		cBrKalk := UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-     	endif
+        cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
      	
 	inkey(4)
 	
-     	@ m_x+8,m_y+2 SAY space(30)
-     	@ m_x+10,m_y+2 SAY space(40)
+     	@ m_x+8, m_y+2 SAY space(30)
+     	@ m_x+10, m_y+2 SAY space(40)
 	
 enddo
 
@@ -257,6 +246,7 @@ local cIdFirma:=gFirma
 local cIdTipDok:="13"
 local cBrDok:=SPACE(8)
 local cBrKalk:=SPACE(8)
+local _h_brdok
 
 O_KALK_PRIPR
 O_KONCIJ
@@ -273,22 +263,15 @@ cIdKonto:=padr("1320",7)
 cIdKonto2:=padr("1310",7)
 cIdZaduz2:=cIdZaduz:=space(6)
 
-cBrkalk:=space(8)
-if gBrojac=="D"
- select kalk
- select kalk; set order to tag "1";seek cidfirma+"11X"
- skip -1
- if idvd<>"11"
-   cbrkalk:=space(8)
- else
-   cbrkalk:=brdok
- endif
-endif
-Box(,15,60)
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "11"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
 
-if gBrojac=="D"
- cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-endif
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
+
+
 
 do while .t.
 
@@ -399,9 +382,7 @@ do while .t.
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
-     if gBrojac=="D"
-      cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-     endif
+     cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
      inkey(4)
      @ m_x+8,m_y+2 SAY space(30)
      @ m_x+10,m_y+2 SAY space(40)
@@ -419,6 +400,8 @@ return
  */
 
 function FaKaPrenosRacunMP()
+
+local _h_brdok
 
 private cIdFirma:=gFirma
 private cIdTipDok:="11"
@@ -442,23 +425,15 @@ cBrkalk:=space(8)
 cZbirno:="N"
 cNac_rab := "P"
 
-if gBrojac=="D"
-	select kalk
- 	select kalk
-	set order to tag "1"
-	seek cIdFirma+"41X"
- 	skip -1
- 	if idvd<>"41"
-   		cBrkalk:=SPACE(8)
- 	else
-   		cBrKalk:=brdok
- 	endif
-endif
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "41"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
+
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
 Box(,15,60)
-	if gBrojac=="D"
- 		cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-	endif
 
 	do while .t.
 		nRBr:=0
@@ -654,9 +629,7 @@ Box(,15,60)
 		@ m_x+10,m_y+2 SAY "Dokument je prenesen !!"
 		@ m_x+11,m_y+2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
      		
-		if gBrojac=="D"
-      			cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-     		endif
+                cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
      		Inkey(0)
      		
@@ -676,7 +649,11 @@ return
 
 function FaKaPrenos_01_doprema()
 *{
-local cIdFirma:=gFirma,cIdTipDok:="01",cBrDok:=cBrKalk:=space(8)
+local cIdFirma := gFirma
+local cIdTipDok:="01"
+local cBrDok:=cBrKalk:=space(8)
+local _h_brdok
+
 O_KALK_PRIPR
 O_KALK
 O_ROBA
@@ -690,22 +667,13 @@ dDatKalk:=date()
 cIdKonto:=padr("1320",7)
 cIdZaduz:=space(6)
 
-cBrkalk:=space(8)
-if gBrojac=="D"
- select kalk
- select kalk; set order to tag "1";seek cidfirma+"81X"
- skip -1
- if idvd<>"81"
-   cbrkalk:=space(8)
- else
-   cbrkalk:=brdok
- endif
-endif
-Box(,15,60)
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "81"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
 
-if gBrojac=="D"
- cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-endif
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
 do while .t.
 
@@ -794,9 +762,7 @@ do while .t.
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
-     if gBrojac=="D"
-      cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-     endif
+     cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
      inkey(4)
      @ m_x+8,m_y+2 SAY space(30)
   endif
@@ -816,8 +782,9 @@ return
  */
 
 function FaKaPrenos_cm_u_prodavnicu()
-*{
+
 local cIdFirma:=gFirma,cIdTipDok:="13",cBrDok:=cBrKalk:=space(8)
+local _h_brdok
 
 O_KALK_PRIPR
 O_KONCIJ
@@ -834,22 +801,13 @@ cIdKonto:=padr("1320999",7)
 cIdKonto2:=padr("1320",7)
 cIdZaduz2:=cIdZaduz:=space(6)
 
-cBrkalk:=space(8)
-if gBrojac=="D"
- select kalk
- select kalk; set order to tag "1";seek cidfirma+"80X"
- skip -1
- if idvd<>"80"
-   cbrkalk:=space(8)
- else
-   cbrkalk:=brdok
- endif
-endif
-Box(,15,60)
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "80"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
 
-if gBrojac=="D"
- cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-endif
+Box(,15,60)
 
 do while .t.
 
@@ -965,9 +923,8 @@ do while .t.
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
-     if gBrojac=="D"
-      cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-     endif
+     cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
+
      inkey(4)
      @ m_x+8,m_y+2 SAY space(30)
      @ m_x+10,m_y+2 SAY space(40)
@@ -977,7 +934,6 @@ enddo
 Boxc()
 closeret
 return
-*}
 
 
 
@@ -987,10 +943,11 @@ return
  */
 
 function FaKaPrenos_izlaz_putem_vp()
-*{
+
 local cIdFirma:=gFirma,cIdTipDok:="15",cBrDok:=cBrKalk:=space(8)
 local dDatPl:=ctod("")
 local fDoks2:=.f.
+local _h_brdok
 
 O_KALK_PRIPR
 O_KONCIJ
@@ -1008,22 +965,12 @@ cIdKonto:=padr("1320",7)
 cIdKonto2:=padr("1310",7)
 cIdZaduz2:=cIdZaduz:=space(6)
 
-cBrkalk:=space(8)
-if gBrojac=="D"
- select kalk
- select kalk; set order to tag "1";seek cidfirma+"15X"
- skip -1
- if idvd<>"15"
-   cbrkalk:=space(8)
- else
-   cbrkalk:=brdok
- endif
-endif
-Box(,15,60)
-
-if gBrojac=="D"
- cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-endif
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "15"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
 do while .t.
 
@@ -1152,10 +1099,9 @@ do while .t.
        skip
      enddo
      @ m_x+8,m_y+2 SAY "Dokument je prenesen !!"
-     if gBrojac=="D"
-       cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-     endif
+     cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
      inkey(4)
+
      @ m_x+8,m_y+2 SAY space(30)
      @ m_x+10,m_y+2 SAY space(40)
   endif
@@ -1191,7 +1137,7 @@ local _x := 1
 local _x_dok_info := 16
 local _zbirni_prenos := "D"
 local _dat_kalk := DATE()
-
+local _h_brdok
 private cIdFirma := gFirma
 private cIdTipDok := "11"
 private cBrDok := SPACE(8)
@@ -1224,25 +1170,14 @@ Box(, 15, 60 )
 			_kalk_tip_dok := "42"
 		endif
 
-		if gBrojac == "D"
+		_h_brdok := hb_hash()
+		_h_brdok["idfirma"] := cIdFirma
+		_h_brdok["idvd"]    := _kalk_tip_dok
+		_h_brdok["brdok"]   := ""
+		_h_brdok["datdok"]  := _dat_kalk 
+		cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
- 			select kalk
-			set order to tag "1"
-			seek cIdFirma + _kalk_tip_dok + "X"
- 			skip -1
- 	
-			if field->idvd <> _kalk_tip_dok
-   				cBrkalk := SPACE(8)
- 			else
-   				cBrKalk := field->brdok
- 			endif
-
- 			cBrKalk := UBrojDok( VAL( LEFT( cBrKalk, 5 )) + 1, 5, RIGHT( cBrKalk, 3 ) )
-	
-		endif
-
-		++ _x
-		++ _x
+		_x += 2
 
 		@ m_x + _x, m_y + 2 SAY "Broj kalkulacije " + _kalk_tip_dok + " -" GET cBrKalk pict "@!"
   		@ m_x + _x, col() + 2 SAY "Datum:" GET _dat_kalk
@@ -1517,10 +1452,8 @@ Box(, 15, 60 )
 		
 		@ m_x+10,m_y+2 SAY "Dokument je prenesen !!"
 		@ m_x+11,m_y+2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
-     		
-		if gBrojac=="D"
-      		cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-     	endif
+     	
+                cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
      		
 		Inkey(4)
      	

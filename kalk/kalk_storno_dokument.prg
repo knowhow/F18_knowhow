@@ -14,7 +14,7 @@
 
 
 function storno_kalk_dokument()
-*{
+
   o_kalk_edit()
   cIdFirma := gFirma
   cIdVdU   := "  "
@@ -27,17 +27,17 @@ function storno_kalk_dokument()
     @ row(),col() GET cIdVdU
     @ row(),col() SAY "-" GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
     @ m_x+4, m_y+2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !EMPTY(dDatDok)
-    READ; ESC_BCR
+    READ
+    ESC_BCR
   BoxC()
 
-  // utvrdimo broj nove kalkulacije
-  SELECT kalk_doks; SEEK cIdFirma+cIdVdU+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdU == IDFIRMA+IDVD
-     cBrDokI := brdok
-  ELSE
-     cBrDokI := space(8)
-  ENDIF
-  cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
+  _h_brdok := hb_hash()
+  _h_brdok["idfirma"] := cIdFirma
+  _h_brdok["idvd"]    := cIdVDU
+  _h_brdok["brdok"]   := ""
+  _h_brdok["datdok"]  := dDatDok 
+
+  cBrDokI := kalk_novi_broj_dokumenta(_h_brdok)
 
   // pocnimo sa generacijom dokumenta
   SELECT KALK

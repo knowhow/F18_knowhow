@@ -43,16 +43,7 @@ if koncij->naz $ "N1#P1#P2"
 endif
 
 private cBrNiv:="0"
-select kalk
-seek cidfirma+"18ä"
-skip -1
-if idvd<>"18"
-     cBrNiv:=space(8)
-else
-     cBrNiv:=brdok
-endif
-cBrNiv:=UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
-
+cBrDokI := kalk_brdok_0(cIdFirma, "18", DATE())
 
 select kalk_pripr
 go top

@@ -1,18 +1,15 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "kalk.ch"
-
-
 
 // ---------------------------------------------
 // meni za razmjenu dokumenata proizvodnje
@@ -37,8 +34,7 @@ return
 // -------------------------------------------------------
 // prenos po normativima za period
 // -------------------------------------------------------
-function PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
-    cRobaIncl, cSezona, cSirovina )
+function PrenosNo(dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, cRobaIncl, cSezona, cSirovina )
 
 local lTest := .f.
 local cBrDok := SPACE(8)
@@ -46,14 +42,15 @@ local cBrKalk := SPACE(8)
 local cIdFirma := gFirma
 local cIdKonto:=padr("",7)
 local cIdZaduz2:=space(6)
+local _h_brdok
 
 if pcount() == 0
-    cIdTipDok:="10;11;12;      "
-    cRobaUsl:=SPACE(100)
-    cRobaIncl:="I"
-    dDatKalk := date()
+    cIdTipDok := "10;11;12;      "
+    cRobaUsl  := SPACE(100)
+    cRobaIncl := "I"
+    dDatKalk  := date()
     cIdKonto2 := padr("1310",7)
-    cSezona := ""
+    cSezona   := ""
     cSirovina := ""
 else
     lTest := .t.
@@ -67,27 +64,15 @@ if !EMPTY( cSirovina )
     O_R_EXP
 endif
 
-if gBrojac=="D" .and. lTest == .f.
-    select kalk
-    set order to tag "1"
-    seek cidfirma+"96X"
-    skip -1
-    if idvd<>"96"
-        cbrkalk:=space(8)
-    else
-        cbrkalk:=brdok
-    endif
-endif
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "96"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
 
-if lTest == .t.
-    cBrKalk := "99999"
-endif
+cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
 
 Box(,15,60)
-
-if gBrojac=="D" .and. lTest == .f.
-    cbrkalk := UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-endif
 
 do while .t.
 
@@ -103,16 +88,17 @@ do while .t.
   endif
   @ m_x+4,m_y+2   SAY "Konto zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
 
-  cFaktFirma:=cIdFirma
-  dDatFOd:=ctod("")
-  dDatFDo:=date()
-  @ m_x+6,m_y+2 SAY "RJ u FAKT: " GET  cFaktFirma
-  @ m_x+7,m_Y+2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
-  @ m_x+8,m_y+2 SAY "period od" GET dDAtFOd
-  @ m_x+8,col()+2 SAY "do" GET dDAtFDo
+  cFaktFirma := cIdFirma
+  dDatFOd := ctod("")
+  dDatFDo := date()
+
+  @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+  @ m_x + 7, m_y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
+  @ m_x + 8, m_y + 2 SAY "period od" GET dDAtFOd
+  @ m_x + 8, col() + 2 SAY "do" GET dDAtFDo
   
-  @ m_x+10,m_y+2 SAY "Uslov za robu:" GET cRobaUsl PICT "@S40"
-  @ m_x+11,m_y+2 SAY "Navedeni uslov [U]kljuciti / [I]skljuciti" GET cRobaIncl VALID cRobaIncl$"UI" PICT "@!"
+  @ m_x + 10, m_y + 2 SAY "Uslov za robu:" GET cRobaUsl PICT "@S40"
+  @ m_x + 11, m_y + 2 SAY "Navedeni uslov [U]kljuciti / [I]skljuciti" GET cRobaIncl VALID cRobaIncl$"UI" PICT "@!"
   
   read
   
@@ -142,7 +128,7 @@ do while .t.
   
   do while !eof() .and. cFaktFirma==IdFirma
 
-    if idtipdok $ cIdTipdok .and. dDatFOd<=datdok .and. dDatFDo>=datdok 
+    if idtipdok $ cIdTipdok .and. dDatFOd <= datdok .and. dDatFDo>=datdok 
         // pripada odabranom intervalu
 
        cFBrDok := fakt->brdok
@@ -181,28 +167,25 @@ do while .t.
        
        // provjeri prije svega uslov za robu...
        if !EMPTY( cRobaUsl )
-       
-        cTmp := Parsiraj( cRobaUsl, "idroba" )
-       
-            if &cTmp
-            if cRobaIncl == "I"
+          cTmp := Parsiraj( cRobaUsl, "idroba" )
+          if &cTmp
+              if cRobaIncl == "I"
                 select fakt
                 skip
                 loop
-            endif
-        else
+              endif
+          else
                 if cRobaIncl == "U"
                     select fakt
                     skip
                     loop
-            endif
-        endif
-       
+                endif
+          endif
        endif
        
-       if roba->tip = "P"  
+       if roba->tip == "P"
           
-      // radi se o proizvodu
+          // radi se o proizvodu
 
           select sast
           hseek  fakt->idroba
@@ -289,9 +272,7 @@ do while .t.
 
     @ m_x+10,m_y+2 SAY "Dokumenti su preneseni !!"
   
-    if gBrojac=="D"
-    cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-    endif
+    cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
   
     inkey(4)
     @ m_x+8,m_y+2 SAY space(30)
@@ -402,11 +383,13 @@ return
 // prenos po normativima po broju faktura
 // -------------------------------------------------------
 function PrenosNoFakt()
+
 local cIdFirma := gFirma
 local cIdTipDok := "10"
 local cBrDok := space(8)
-local cBrKalk := space(8)
+local cBrKalk
 local cFaBrDok := space(8)
+local _h_brdok
 // otvori tabele prenosa
 o_tables()
 
@@ -417,46 +400,38 @@ cIdZaduz2 := space(6)
 
 cBrkalk:=space(8)
 
-if gBrojac=="D"
-    select kalk
-    set order to tag "1"
-    seek cIdFirma + "96X"
-    skip -1
-    if idvd<>"96"
-        cBrKalk:=space(8)
-    else
-        cBrKalk:=brdok
-    endif
-endif
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "96"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
+
+MsgBeep("Nije testirano sa novim brojacima ! Garant ne radi !")
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
 Box(,15,60)
-
-if gBrojac=="D"
-    cBrKalk := UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-endif
 
 do while .t.
 
     nRBr:=0
   
-    @ m_x+1,m_y+2   SAY "Broj kalkulacije 96 -" GET cBrKalk pict "@!"
-    @ m_x+1,col()+2 SAY "Datum:" GET dDatKalk
-    @ m_x+3,m_y+2   SAY "Konto razduzuje:" GET cIdKonto2 pict "@!" valid P_Konto(@cIdKonto2)
+    @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk pict "@!"
+    @ m_x + 1, col() + 2 SAY "Datum:" GET dDatKalk
+    @ m_x + 3, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 pict "@!" valid P_Konto(@cIdKonto2)
   
     if gNW<>"X"
-            @ m_x+3,col()+2 SAY "Razduzuje:" GET cIdZaduz2  pict "@!"      valid empty(cidzaduz2) .or. P_Firma(@cIdZaduz2)
+            @ m_x + 3, col()+2 SAY "Razduzuje:" GET cIdZaduz2  pict "@!"      valid empty(cidzaduz2) .or. P_Firma(@cIdZaduz2)
     endif
   
-    @ m_x+4,m_y+2   SAY "Konto zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
+    @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
 
-    cFaktFirma:=cIdFirma
+    cFaktFirma := cIdFirma
     
-    @ m_x+6,m_y+2 SAY "RJ u FAKT: " GET  cFaktFirma
-    @ m_x+7,m_Y+2 SAY "Dokument tipa u fakt:" GET cIdTipDok
+    @ m_x+6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+    @ m_x+7, m_y + 2 SAY "Dokument tipa u fakt:" GET cIdTipDok
     
-    @ m_x+8,m_Y+2 SAY "Broj dokumenta u fakt:" GET cFaBrDok
+    @ m_x+8, m_y + 2 SAY "Broj dokumenta u fakt:" GET cFaBrDok
 
-    
     read
   
     if lastkey()==K_ESC
@@ -474,10 +449,10 @@ do while .t.
   
     do while !eof() .and. cFaktFirma==IdFirma
 
-            if idtipdok = cIdTipdok .and. cFaBrDok = brdok 
+            if idtipdok == cIdTipdok .and. cFaBrDok == brdok 
 
                 select ROBA
-            hseek fakt->idroba
+                hseek fakt->idroba
                 if roba->tip="P"  
                 // radi se o proizvodu
                 select sast
@@ -494,13 +469,13 @@ do while .t.
                                 select kalk_pripr
                                 append blank
                                 replace idfirma with cIdFirma,;
-                                    rbr     with str(++nRbr,3),;
+                                    rbr  with str(++nRbr,3),;
                                     idvd with "96",;   
                                     brdok with cBrKalk,;
                                     datdok with dDatKalk,;
                                     idtarifa with ROBA->idtarifa,;
                                     brfaktp with fakt->brdok,;
-                        idpartner with fakt->idpartner,;
+                                    idpartner with fakt->idpartner,;
                                     datfaktp with dDatKalk,;
                                     idkonto   with cidkonto,;
                                     idkonto2  with cidkonto2,;
@@ -526,11 +501,10 @@ do while .t.
 
     @ m_x+10,m_y+2 SAY "Dokumenti su preneseni !!"
     
-    if gBrojac=="D"
-        cBrKalk:=UBrojDok(val(left(cBrKalk,5)) +1, 5, right(cBrKalk,3))
-    endif
-  
-    cFaBrDok := UBrojDok(val(left(cFaBrDok, 5)) + 1, 5, right(cFaBrDok,3))
+    cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
+ 
+    // ? ne kontam (hernad) 
+    cFaBrDok := fakt_novi_broj_dokumenta(cidfirma, cidtipdok, dDatKalk)
   
     inkey(4)
     
@@ -579,7 +553,9 @@ if gBrojac=="D"
     endif
 endif
 
-Box(,15,60)
+cBrKalk := 
+
+Box(, 15, 60)
 
     if gBrojac == "D"
         cBrKalk := UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
@@ -692,11 +668,21 @@ Box(,15,60)
         enddo
         
         @ m_x+10,m_y+2 SAY "Dokumenti su preneseni !!"
-        
+       
+??? 
         if gBrojac=="D"
             cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
         endif
         
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "96"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
+
+cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
+
         inkey(4)
         @ m_x+8,m_y+2 SAY space(30)
 

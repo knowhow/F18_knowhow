@@ -31,6 +31,8 @@ return
 
 function Iz47u96Norm()
 local cIdFirma:=gFirma, cBrDok:=cBrKalk:=space(8)
+local _h_brdok
+
 O_KALK_PRIPR
 O_KALK
 O_ROBA
@@ -47,23 +49,16 @@ cIdKonto2:=padr("1010",7)
 cIdZaduz2:=space(6)
 
 cBrkalk:=space(8)
-if gBrojac=="D"
-    select kalk
-    set order to tag "1"
-    seek cidfirma+"96X"
-    skip -1
-    if idvd<>"96"
-        cbrkalk:=space(8)
-    else
-        cbrkalk:=brdok
-    endif
-endif
+
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "96"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
+
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
 Box(,15,60)
-
-if gBrojac=="D"
-    cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-endif
 
 do while .t.
 
@@ -126,10 +121,11 @@ do while .t.
     skip
   enddo
 
+
   @ m_x+10,m_y+2 SAY "Dokument je prenesen !!"
-  if gBrojac=="D"
-   cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-  endif
+  cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
+
+
   inkey(4)
   @ m_x+8,m_y+2 SAY space(30)
 

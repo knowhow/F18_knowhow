@@ -312,7 +312,7 @@ return fret
  */
 
 function KM2()
-*{
+
  local nR1,nR2,nR3
   private GetList:={}
   select  roba
@@ -332,37 +332,9 @@ function KM2()
   go nR3
   select kalk_pripr
 return nil
-*}
 
 
 
 
-/*! \fn MarkBrDok(fNovi)
- *  \brief Odredjuje sljedeci broj dokumenta uzimajuci u obzir marker definisan u polju koncij->m1
- */
 
-function MarkBrDok(fNovi)
-*{
- LOCAL nArr:=SELECT()
-  _brdok:=cNBrDok
-  IF fNovi .and. KONCIJ->(FIELDPOS("M1"))<>0
-    SELECT KONCIJ; HSEEK _idkonto2
-    IF !EMPTY(m1)
-      select kalk; set order to tag "1"; seek _idfirma+_idvd+"X"
-      skip -1
-      _brdok:=space(8)
-      do while !bof() .and. idvd==_idvd
-        if UPPER(right(brdok,3))==UPPER(KONCIJ->m1)
-          _brdok:=brdok
-          exit
-        endif
-        skip -1
-      enddo
-      _Brdok:=UBrojDok(val(left(_brdok,5))+1,5,KONCIJ->m1)
-    ENDIF
-    SELECT (nArr)
-  ENDIF
-  @  m_x+2,m_y+46  SAY _BrDok COLOR INVERT
-return .t.
-*}
 

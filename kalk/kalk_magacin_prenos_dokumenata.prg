@@ -100,14 +100,14 @@ do while .t.
   	endif
 
   	cFaktFirma := IIF( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
-  	@ m_x+6,m_y+2 SAY "Broj fakture: " GET cFaktFirma
-  	@ m_x+6,col()+2 SAY "- "+cidtipdok
-  	@ m_x+6,col()+2 SAY "-" GET cBrDok
+  	@ m_x+6, m_y+2 SAY "Broj fakture: " GET cFaktFirma
+  	@ m_x+6, col()+2 SAY "- "+cidtipdok
+  	@ m_x+6, col()+2 SAY "-" GET cBrDok
   	
 	read
   	
 	if lastkey()==K_ESC
-    	exit
+    	  exit
   	endif
 
   	select fakt
@@ -115,9 +115,9 @@ do while .t.
 
   	if !found()
     	Beep(4)
-     	@ m_x+14,m_y+2 SAY "Ne postoji ovaj dokument !!"
+     	@ m_x + 14, m_y+2 SAY "Ne postoji ovaj dokument !!"
      	inkey(4)
-     	@ m_x+14,m_y+2 SAY space(30)
+     	@ m_x + 14, m_y+2 SAY space(30)
      	loop
   	else
 
@@ -146,11 +146,11 @@ do while .t.
 
      	private cBeze:=" "
 
-     	@ m_x+14,m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid P_Firma(@cIdPartner)
-     	@ m_x+15,m_y+2 SAY "<ENTER> - prenos" GET cBeze
+     	@ m_x + 14, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid P_Firma(@cIdPartner)
+     	@ m_x + 15, m_y + 2 SAY "<ENTER> - prenos" GET cBeze
 
     	read
-		ESC_BCR
+	ESC_BCR
 
      	select kalk_pripr
      	locate for BrFaktP = cBrDok 
@@ -179,7 +179,7 @@ do while .t.
 			hseek cidfirma + "14" + cbrkalk
         	
             if !found()
-           		append blank
+           	append blank
                 _rec := dbf_get_rec()
                 _rec["idvd"] := "14"
                 _rec["idfirma"] := cIdFirma
@@ -200,7 +200,7 @@ do while .t.
 
      	endif
 
-     	do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
+     	do while !eof() .and. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
        		select ROBA
        		hseek fakt->idroba
@@ -222,11 +222,12 @@ do while .t.
       			loop
        		endif
 
-       		select kalk_pripr
-       		APPEND BLANK
-       		replace idfirma with cIdFirma,;
-               rbr     with str(++nRbr,3),;
-               idvd with "14",;   // izlazna faktura
+       	       select kalk_pripr
+       	       APPEND BLANK
+       	       replace idfirma with cIdFirma,;
+               rbr     with str(++nRbr, 3),;
+               // izlazna faktura
+               idvd with "14",;   
                brdok with cBrKalk,;
                datdok with dDatKalk,;
                idpartner with cIdPartner,;
@@ -242,8 +243,8 @@ do while .t.
                vpc with fakt->cijena,;
                rabatv with nRabat,;
                mpc with fakt->porez
-       		select fakt
-       		skip
+       	       select fakt
+       	       skip
      	enddo
 
      	@ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
@@ -252,9 +253,8 @@ do while .t.
         set_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), cIdKonto )
         set_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), cIdKonto2 )
 
-     	if gBrojac == "D"
-      		cBrKalk := UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-     	endif
+    
+        cBrKalk := kalk_novi_broj_dokumenta(_h_brdok, cIdKonto2)
 
      	inkey(4)
 
@@ -505,9 +505,7 @@ do while .t.
         set_metric("kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
         set_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
 
-        if gBrojac == "D"
-            cBrKalk := UBrojDok( VAL( LEFT( cBrKalk, 5 )) + 1, 5, RIGHT( cBrKalk, 3 ) )
-        endif
+        cBrKalk := kalk_novi_broj_dokumenta(_h_brdok, cIdKonto2)
      
         inkey(4)
      

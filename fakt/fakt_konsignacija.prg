@@ -108,20 +108,9 @@ RPar("c2",@dOd     )
   SET FILTER TO
   SET ORDER TO TAG "1"
 
-  // odredimo novi broj racuna
-  // ----------------------------
-   select fakt
-   seek cIdRJ+"16"+"È"
-   skip -1
+  select fakt
+  fakt_brdok_0(cIdRj, "16", DATE())
 
-   if idfirma+idtipdok <> cIdRJ+"16"
-      cBrDok:=UBrojDok(1,gNumDio,"")
-   else
-      cBrDok:=UBrojDok( VAL(left(brdok,gNumDio))+1, ;
-                        gNumDio, ;
-                        right(brdok,len(brdok)-gNumDio) ;
-                      )
-   endif
   // ----------------------------
 
   SET ORDER TO TAG "3"

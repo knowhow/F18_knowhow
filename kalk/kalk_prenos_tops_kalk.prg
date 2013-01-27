@@ -171,7 +171,7 @@ if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" )
     	_br_kalk := field->brdok
   	endif
 
-  	_br_kalk := UBrojDok( VAL( LEFT ( _br_kalk, 5 ) ) + 1, 5, RIGHT( _br_kalk, 3 ) )
+  	_br_kalk := kalk_novi_broj_dokumenta(gFirma, "11", ??)  UBrojDok( VAL( LEFT ( _br_kalk, 5 ) ) + 1, 5, RIGHT( _br_kalk, 3 ) )
 
 else
 

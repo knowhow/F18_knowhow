@@ -1,26 +1,16 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "kalk.ch"
-
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/razdb/1g/ka_ka.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.2 $
- * $Log: ka_ka.prg,v $
- * Revision 1.2  2002/06/24 09:19:02  mirsad
- * dokumentovanje
- */
- 
 
 /*! \file fmk/kalk/razdb/1g/ka_ka.prg
  *  \brief Preuzimanje kalkulacije iz druge firme
@@ -32,12 +22,8 @@
  */
 
 function IzKalk2f()
-*{
  LOCAL cDir:=KUMPATH, cF
- cDir := IzFMKIni( "KALK"                                            ,;
-                   "PutanjaKumulativaDrugeFirmeKaoIzvoraKalkulacija" ,;
-                   cDir                                              ,;
-                   KUMPATH )
+ cDir := ""
  IF RIGHT(cDir,1)!="\"; cDir+="\"; ENDIF
  cDir:=UPPER(cDir)
  cF:=RIGHT(cDir,3); cF:=LEFT(cF,2); cF:=IF(cF="M",RIGHT(cF,1),cF)
@@ -54,7 +40,7 @@ function IzKalk2f()
 
  // otvorimo DOKS
  // -------------
- MY_USE (cDir+"KALK_DOKS", .t., "NEW")
+ MY_USE ("KALK_DOKS", .t., "NEW")
 
  Box("#PRENOS KALK DOKUMENTA IZ FIRME "+cF,10,75)
   DO WHILE .t.
@@ -65,7 +51,7 @@ function IzKalk2f()
     READ
     IF LASTKEY()==K_ESC; EXIT; ENDIF
 
-    // naÐi najstariju KALK koja nikad nije prenoçena (marker<>"PP")
+    // nadi najstariju KALK koja nikad nije prenoçena (marker<>"PP")
     // -------------------------------------------------------------
     SELECT KALK_DOKS
     SET ORDER TO TAG "3" // IdFirma+dtos(datdok)+podbr+idvd+brdok
@@ -93,7 +79,7 @@ function IzKalk2f()
     READ
     IF LASTKEY()==K_ESC; EXIT; ENDIF
 
-    // provjeri ima li takva kalkulacija i ako je ve† prenoçena daj upozorenje
+    // provjeri ima li takva kalkulacija i ako je vec prenosena daj upozorenje
     // -----------------------------------------------------------------------
     SET ORDER TO TAG "1"  // IdFirma+idvd+brdok
     HSEEK cFirma+cIdVd+cBrDok
@@ -130,25 +116,19 @@ function IzKalk2f()
       SKIP 1
     ENDDO
 
-    // u DOKS stavimo marker "PP" da je kalkulacija ve† jednom prenoçena
+    // u DOKS stavimo marker "PP" da je kalkulacija vec jednom prenoçena
     // -----------------------------------------------------------------
     SELECT KALK
      USE
     SELECT KALK_DOKS
-     Scatter(); _podbr:="PP"; Gather()
+     Scatter()
+     _podbr:="PP"
+     Gather()
      USE
 
     // utvrdimo broj nove kalkulacije
     // ------------------------------
-    O_KALK_DOKS
-    SET ORDER TO TAG "1"
-    SEEK gFirma+cIdVd+CHR(255); SKIP -1
-    IF gFirma+cIdVd == IDFIRMA+IDVD
-       cBrDokI := brdok
-    ELSE
-       cBrDokI := space(8)
-    ENDIF
-    cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
+    cBrDokI := kalk_brdok_0(gFirma, cIdVD, DATE())
 
     SELECT KALK_PRIPR; SET ORDER TO
     GO TOP
@@ -156,16 +136,19 @@ function IzKalk2f()
       Scatter()
        _idfirma   := gFirma
        _brdok     := cBrDokI
+
        IF _idkonto==_mkonto
          _idkonto := cMKONTO
        ELSEIF _idkonto==_pkonto
          _idkonto := cPKONTO
        ENDIF
+
        IF _idkonto2==_mkonto
          _idkonto2 := cMKONTO
        ELSEIF _idkonto2==_pkonto
          _idkonto2 := cPKONTO
        ENDIF
+
        _mkonto    := cMKONTO
        _pkonto    := cPKONTO
        _idpartner := cIDPARTNER

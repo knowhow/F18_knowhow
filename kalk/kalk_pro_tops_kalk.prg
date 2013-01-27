@@ -23,6 +23,7 @@ local cTSifPath
 local cTKumPath 
 local cBrDok := SPACE(8)
 local cBrKalk := SPACE(8)
+local _h_brdok
 
 if pcount() == 0
 	cIdFirma:=gFirma
@@ -79,28 +80,15 @@ O_KONTO
 O_PARTN
 O_TARIFA
 
-if lTest == .f. .and. gBrojac=="D"
-	select kalk
- 	set order to tag "1"
-	seek cIdFirma + "96X"
- 	skip -1
- 	if idvd<>"96"
-   		cBrKalk:=SPACE(8)
- 	else
-   		cBrKalk:=brdok
- 	endif
-endif
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "96"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
 
-if lTest == .t.
-	cBrKalk := "99999"
-endif
-
-if lTest == .f.
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
   Box(,10,60)
-	if gBrojac=="D"
-		cBrKalk:=UBrojDok(VAL(LEFT(cBrKalk,5))+1,5,right(cBrKalk,3))
-	endif
 	
   	@ m_x+1,m_y+2 SAY "Broj kalkulacije 96 -" GET cBrKalk pict "@!"
 	@ m_x+1,col()+2 SAY "Datum:" GET dDatKalk
@@ -125,7 +113,6 @@ if lTest == .f.
 	return
   endif
 
-endif
 
 // uzmi iz koncija sve potrebne varijable
 select koncij

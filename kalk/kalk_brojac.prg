@@ -452,7 +452,7 @@ if gBrojac=="D"
     if cTipKalk=="16" .and. glEvidOtpis
         cBrKalk:=STRTRAN(cBrKalk,"-X","  ")
     endif
-    
+/*  
     if ALLTRIM( cBrKalk ) >= "99999"
         cBrKalk := PADR( novasifra( ALLTRIM(cBrKalk) ), 5 ) + ;
             right( cBrKalk, 3 )
@@ -460,6 +460,7 @@ if gBrojac=="D"
         cBrKalk:=UBrojDok(val(left(cBrKalk,5)) + 1, ;
             5, right(cBrKalk,3) )
     endif
+*/
 endif
 return cBrKalk
 
@@ -475,15 +476,15 @@ return .t.
 
 
 
-/*! \fn UBrojDok(nBroj,nNumDio,cOstatak)
- * \brief Pretvara Broj podbroj u string format "Broj dokumenta"
- * \code
+/*! 
+ * UBrojDok(nBroj,nNumDio,cOstatak)
+ * Pretvara Broj podbroj u string format "Broj dokumenta"
+ * 
  * UBrojDok ( 123,  5, "/99" )   =>   00123/99
  * \encode
  */
  
-function UBrojDok(nBroj, nNumdio, cOstatak)
-
+function UBrojDok_old(nBroj, nNumdio, cOstatak)
 return padl( alltrim(str(nBroj)), nNumDio, "0")+cOstatak
 
 
@@ -491,7 +492,7 @@ return padl( alltrim(str(nBroj)), nNumDio, "0")+cOstatak
  *  \brief Sljedeci slobodan broj dokumenta za zadanu firmu i vrstu dokumenta
  */
 
-function SljBroj(cidfirma,cIdvD,nMjesta)
+function SljBroj_old(cidfirma,cIdvD,nMjesta)
 private cReturn:="0"
 select kalk
 seek cidfirma+cidvd+"ä"
@@ -502,13 +503,14 @@ else
      cReturn:=brdok
 endif
 
+/*
 if ALLTRIM(cReturn) >= "99999"
     cReturn := PADR( novasifra( ALLTRIM(cReturn) ), 5 )
 else
     cReturn := UBrojDok( VAL( LEFT(cReturn, 5) ) + 1, ;
         5, RIGHT(cReturn) )
 endif
-
+*/
 return cReturn
 
 
@@ -607,5 +609,47 @@ function MMarza2()
 return nMarza2
 
 
+/*! \fn MarkBrDok(fNovi)
+ *  \brief Odredjuje sljedeci broj dokumenta uzimajuci u obzir marker definisan u polju koncij->m1
+ */
+
+function MarkBrDok_old(fNovi)
+ LOCAL nArr:=SELECT()
+  _brdok:=cNBrDok
+  IF fNovi .and. KONCIJ->(FIELDPOS("M1"))<>0
+    SELECT KONCIJ; HSEEK _idkonto2
+    IF !EMPTY(m1)
+      select kalk; set order to tag "1"; seek _idfirma+_idvd+"X"
+      skip -1
+      _brdok:=space(8)
+      do while !bof() .and. idvd==_idvd
+        if UPPER(right(brdok,3))==UPPER(KONCIJ->m1)
+          _brdok:=brdok
+          exit
+        endif
+        skip -1
+      enddo
+     // _Brdok:=UBrojDok(val(left(_brdok,5))+1,5,KONCIJ->m1)
+    ENDIF
+    SELECT (nArr)
+  ENDIF
+  @  m_x+2,m_y+46  SAY _BrDok COLOR INVERT
+return .t.
+
+function kalk_sljedeci_old(cIdFirma,cVrsta)
+local cBrKalk
+if gBrojac=="D"
+ select kalk
+ set order to tag "1"
+ seek cIdFirma+cVrsta+"X"
+ skip -1
+ if idvd<>cVrsta
+   cBrKalk:=space(8)
+ else
+   cBrKalk:=brdok
+ endif
+ //cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
+endif
+return cBrKalk
 
 

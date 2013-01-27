@@ -75,7 +75,7 @@ function Iz12u97()
   cPoMetodiNC := "N"
   cKontoSklad := "13103  "
 
-  Box(,9,75)
+  Box(, 9, 75 )
     @ m_x+0, m_y+5 SAY "FORMIRANJE DOKUMENTA 96/97 NA OSNOVU DOKUMENTA 11/12"
     @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"
     @ row(), col() GET cIdVdU VALID cIdVdU $ "11#12"
@@ -83,23 +83,22 @@ function Iz12u97()
     @ m_x+4, m_y+2 SAY "Dokument koji se formira (96/97)" GET cIdVdI VALID cIdVdI $ "96#97"
     @ m_x+5, m_y+2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !EMPTY(dDatDok)
     @ m_x+7, m_y+2 SAY "Prenijeti na konto (prazno-ne prenositi)" GET cKontoSklad
-    READ; ESC_BCR
+    READ
+    ESC_BCR
   BoxC()
 
   // utvrdimo broj nove kalkulacije
-  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdI == IDFIRMA+IDVD
-     cBrDokI := brdok
-  ELSE
-     cBrDokI := space(8)
-  ENDIF
-  cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
+  cBrDokI := kalk_brdok_0(cIdFirma, cIdVD, DATE())
 
   // pocnimo sa generacijom dokumenta
   SELECT KALK
   SEEK cIdFirma+cIdVDU+cBrDokU
   DO WHILE !EOF() .and. cIdFirma+cIdVDU+cBrDokU == IDFIRMA+IDVD+BRDOK
-    SELECT kalk_pripr; APPEND BLANK; Scatter()
+    SELECT kalk_pripr
+
+      APPEND BLANK
+      Scatter()
+
       _idfirma   := cIdFirma
       _idkonto2  := KALK->idkonto2
       _idkonto   := cKontoSklad
@@ -117,7 +116,7 @@ function Iz12u97()
       _mkonto    := _idkonto2
       _mu_i      := "5"
       _error     := "0"
-      _kolicina  := KALK->kolicina*IF(cIdVdU=="12",1,-1)
+      _kolicina  := KALK->kolicina * IIF(cIdVdU=="12",1,-1)
       _rbr       := KALK->rbr
       _idtarifa  := KALK->idtarifa
       _idroba    := KALK->idroba
@@ -132,7 +131,6 @@ function Iz12u97()
 
 CLOSERET
 return
-*}
 
 
 
@@ -589,20 +587,9 @@ if !(cidvd $ "96#95")  .or. empty(idkonto)
     closeret
 endif
 
-private cBrUlaz:="0"
-select kalk
-seek cidfirma+"16"+CHR(254)   // doprema
-skip -1
-if idvd<>"16"
-     cBrUlaz:=space(8)
-else
-     cBrUlaz:=brdok
-endif
+private cBrUlaz
 
-IF IzFMKIni("KALKSI","EvidentirajOtpis","N",KUMPATH)=="D"
-  cBrUlaz:=STRTRAN(cBrUlaz,"-X","  ")
-ENDIF
-cBrUlaz:=UBrojDok(val(left(cBrUlaz,5))+1,5,right(cBrUlaz,3))
+cBrUlaz:=kalk_brdok_0(cIdFirma, "16", DATE())
 
 select kalk_pripr
 go top
@@ -696,13 +683,7 @@ function Iz96u16()
   BoxC()
 
   // utvrdimo broj nove kalkulacije
-  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdI == IDFIRMA+IDVD
-     cBrDokI := brdok
-  ELSE
-     cBrDokI := space(8)
-  ENDIF
-  cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
+  cBrDokI := kalk_brdok_0(cIdFirma, cIdVdI, DATE())
 
   // pocnimo sa generacijom dokumenta
   SELECT KALK

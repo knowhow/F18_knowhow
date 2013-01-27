@@ -665,6 +665,7 @@ return
 
 // Generisanje dokumenta tipa 11 na osnovu 13-ke
 function Iz13u11()
+local _h_brdok
 
 O_KONTO
 O_KALK_PRIPR
@@ -686,15 +687,14 @@ Box(,3,35)
  read
 BoxC()
 private cBrUlaz:="0"
-select kalk
-seek cidfirma+"11ä"
-skip -1
-if idvd<>"11"
-     cBrUlaz:=space(8)
-else
-     cBrUlaz:=brdok
-endif
-cBrUlaz:=UBrojDok(val(left(cBrUlaz,5))+1,5,right(cBrUlaz,3))
+
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := "11"
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
+cBrUlaz := kalk_novi_broj_dokumenta(_h_brdok)
+
 
 select kalk_pripr
 go top
@@ -829,8 +829,8 @@ DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. Pkonto==cPKonto
      endif
    endif
 
-   if nMPVSAppReal<0  // ako se radi o uneçenom stornu obraŸunate realizacije
-     nMPVSapp:=0      // onda ne mo§e biti storna avansa
+   if nMPVSAppReal<0  // ako se radi o uneÃ§enom stornu obraÂŸunate realizacije
+     nMPVSapp:=0      // onda ne moÂ§e biti storna avansa
      nMPV:=0
    elseif nMPVSAPP>nMPVSAppREal   // akontacije su vece od realizovanog poreza
      nMPVSapp:=nMPVSappReal // poreska uplata ne moze biti negativna
@@ -857,6 +857,7 @@ return .t.
 
 // Generisanje dokumenta tipa 41 ili 42 na osnovu 11-ke
 function Iz11u412()
+local _h_brdok
 
   o_kalk_edit()
   cIdFirma := gFirma
@@ -896,13 +897,14 @@ function Iz11u412()
   ENDIF
 
   // utvrdimo broj nove kalkulacije
-  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdI == IDFIRMA+IDVD
-     cBrDokI := brdok
-  ELSE
-     cBrDokI := space(8)
-  ENDIF
-  cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
+  _h_brdok := hb_hash()
+  _h_brdok["idfirma"] := cIdFirma
+  _h_brdok["idvd"]    := cIdVdI
+  _h_brdok["brdok"]   := ""
+  _h_brdok["datdok"]  := DATE() 
+
+  cBrDokI := kalk_novi_broj_dokumenta(_h_brdok)
+
 
   // pocnimo sa generacijom dokumenta
   SELECT KALK
@@ -958,6 +960,7 @@ return
 
 // Generisanje dokumenta tipa 11 na osnovu 10-ke
 function Iz10u11()
+local _h_brdok
 
   o_kalk_edit()
   cIdFirma := gFirma
@@ -985,14 +988,15 @@ function Iz10u11()
   BoxC()
 
 
-  // utvrdimo broj nove kalkulacije
-  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdI == IDFIRMA+IDVD
-     cBrDokI := brdok
-  ELSE
-     cBrDokI := space(8)
-  ENDIF
-  cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
+// utvrdimo broj nove kalkulacije
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"]    := cIdVdI
+_h_brdok["brdok"]   := ""
+_h_brdok["datdok"]  := DATE() 
+
+cBrDokI := kalk_novi_broj_dokumenta(_h_brdok)
+
 
   // pocnimo sa generacijom dokumenta
   SELECT KALK

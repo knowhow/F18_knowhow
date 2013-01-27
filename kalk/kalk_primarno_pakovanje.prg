@@ -15,18 +15,18 @@
 
 
 function NaPrimPak()
- LOCAL nStavki:=0, nKolicina:=0, nUlaz:=0, nIzlaz:=0, dDatKalk, cBrDok
-  IF IzFMKIni("Svi","Sifk")<>"D"
-    MsgBeep("Sifrarnik dodatnih karakteristika nedostupan! (Sifk<>'D')")
-    RETURN
-  ENDIF
+
+local _h_brdok
+local nStavki:=0
+local nKolicina:=0, nUlaz:=0, nIzlaz:=0, dDatKalk, cBrDok
 
   O_KONCIJ
   O_ROBA
   O_KALK_PRIPR
   O_KALK_DOKS
   O_KALK
-  O_SIFK; O_SIFV
+  O_SIFK
+  O_SIFV
 
   dDatKalk:=DATE()
   qqProd:=PADR("132;",80)
@@ -49,13 +49,14 @@ function NaPrimPak()
   // ------------------------------
   cIdVdI:="80"
   cIdFirma:=gFirma
-  SELECT kalk_doks; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdI == IDFIRMA+IDVD
-     cBrDok := brdok
-  ELSE
-     cBrDok := space(8)
-  ENDIF
-  cBrDok := UBrojDok(val(left(cBrDok,5))+1,5,right(cBrDok,3))
+  _h_brdok := hb_hash()
+  _h_brdok["idfirma"] := cIdFirma
+  _h_brdok["idvd"] := cIdVdI
+  _h_brdok["brdok"] := ""
+  _h_brdok["datdok"] := DATE() 
+
+  cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
   nRBr:=0
 
   // postavimo odgovarajuci indeks i filter na KALK
@@ -174,14 +175,13 @@ function NaPrimPak()
       endif
       SELECT KALK
     ENDDO
-    cBrDok := UBrojDok(val(left(cBrDok,5))+1,5,right(cBrDok,3))
+    cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
     nRBr:=0
   ENDDO
   Postotak(-1)
   MsgBeep("Obradite izgenerisane dokumente u kalk_pripremi!")
 CLOSERET
 return
-*}
 
 
 
@@ -191,12 +191,8 @@ return
  */
 
 function NaPrPak2()
-*{
- LOCAL nStavki:=0, nKolicina:=0, nUlaz:=0, nIzlaz:=0, dDatKalk, cBrDok
-  IF IzFMKIni("Svi","Sifk")<>"D"
-    MsgBeep("Sifrarnik dodatnih karakteristika nedostupan! (Sifk<>'D')")
-    RETURN
-  ENDIF
+local _h_brdok
+LOCAL nStavki:=0, nKolicina:=0, nUlaz:=0, nIzlaz:=0, dDatKalk, cBrDok
 
   O__KALK
   O_KONCIJ
@@ -204,7 +200,8 @@ function NaPrPak2()
   O_KALK_PRIPR
   O_KALK_DOKS
   O_KALK
-  O_SIFK; O_SIFV
+  O_SIFK
+  O_SIFV
 
   dDatKalk:=kalk_pripr->datdok
 
@@ -226,13 +223,17 @@ function NaPrPak2()
   // ------------------------------
   cIdVdI:="80"
   cIdFirma:=gFirma
-  SELECT kalk_doks; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdI == IDFIRMA+IDVD
-     cBrDok := brdok
-  ELSE
-     cBrDok := space(8)
-  ENDIF
-  cBrDok := UBrojDok(val(left(cBrDok,5))+1,5,right(cBrDok,3))
+  
+  _h_brdok := hb_hash()
+  _h_brdok["idfirma"] := cIdFirma
+  _h_brdok["idvd"] := cIdVdI
+  _h_brdok["brdok"] := ""
+  _h_brdok["datdok"] := DATE() 
+
+  cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
+
+
   nRBr:=0
 
   // postavimo odgovarajuci indeks i filter na KALK
@@ -343,7 +344,7 @@ function NaPrPak2()
       endif
       SELECT _KALK
     ENDDO
-    cBrDok := UBrojDok(val(left(cBrDok,5))+1,5,right(cBrDok,3))
+    cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
     nRBr:=0
   ENDDO
   Postotak(-1)

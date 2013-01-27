@@ -49,7 +49,12 @@ private nRbr:=0
 
 select kalk
 
-cBr95 := kalk_sljedeci( gFirma, "95" )
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "95"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+cBr95 := kalk_novi_broj_dokumenta(_h_brdok)
 
 select koncij
 seek trim(cMagac)

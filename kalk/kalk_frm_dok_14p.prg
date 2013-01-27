@@ -1,14 +1,13 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "kalk.ch"
 
@@ -31,9 +30,8 @@ if nRbr==1 .or. !fnovi
     _IdZaduz:=""
     _Idkonto:="1200"
     private cNBrDok:=_brdok
-    @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
-            valid ( empty(_IdKonto2) .or. P_Konto(@_IdKonto2, 21, 5) ) .and.;
-                  MarkBrDok(fNovi)
+    @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 VALID valid_mag_konto_14(@_idkonto2, @_brdok)
+    
     if gNW<>"X"
         @ m_x+9,m_y+40 SAY "Razduzuje:" GET _IdZaduz2   pict "@!"  valid empty(_idZaduz2) .or. P_Firma(@_IdZaduz2, 21, 5)
     endif

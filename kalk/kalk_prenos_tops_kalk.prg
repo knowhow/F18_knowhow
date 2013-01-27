@@ -122,6 +122,7 @@ local _app_rec
 local _imp_file := ""
 local _roba_data := {}
 local _count := 0
+local _h_brdok
 
 // opcija za automatko svodjeje prodavnice na 0
 // ---------------------------------------------
@@ -162,16 +163,12 @@ select kalk
 
 if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" )
 
-	seek gFirma + "11" + "X"
-  	skip -1
-  	
-	if field->idvd <> "11"
-    	_br_kalk := SPACE( 8 )
-  	else
-    	_br_kalk := field->brdok
-  	endif
-
-  	_br_kalk := kalk_novi_broj_dokumenta(gFirma, "11", ??)  UBrojDok( VAL( LEFT ( _br_kalk, 5 ) ) + 1, 5, RIGHT( _br_kalk, 3 ) )
+        _h_brdok := hb_hash()
+        _h_brdok["idfirma"] := gFirma
+        _h_brdok["idvd"] := "11"
+        _h_brdok["brdok"] := ""
+        _h_brdok["datdok"] := DATE()
+  	_br_kalk := kalk_novi_broj_dokumenta(_h_brdok) 
 
 else
 

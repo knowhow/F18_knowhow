@@ -92,6 +92,7 @@ return
 
 
 function GenNivP()
+local _h_brdok
 
 O_KONTO
 O_TARIFA
@@ -121,13 +122,19 @@ BoxC()
 O_KONCIJ
 O_KALK_PRIPR
 O_KALK
-private cBrDok:=SljBroj(cidfirma,"19",8)
+
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"] := "19"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
 
 nRbr:=0
 set order to tag "1"
-//"KALKi1","idFirma+IdVD+BrDok+RBr","KALK")
 
-select koncij; seek trim(cidkonto)
+select koncij
+seek trim(cidkonto)
 select kalk
 hseek cidfirma+cidvd+colddok
 do while !eof() .and. cidfirma+cidvd+colddok==idfirma+idvd+brdok
@@ -214,6 +221,7 @@ return
 
 // Generisanje dokumenta tipa 19 tj. nivelacije na osnovu zadanog %
 function NivPoProc()
+local _h_brdok
 local nStopa:=0.0
 local nZaokr:=1
 
@@ -250,7 +258,15 @@ BoxC()
 O_KONCIJ
 O_KALK_PRIPR
 O_KALK
-private cBrDok:=SljBroj(cidfirma,"19",8)
+
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "19"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
+
 
 nRbr:=0
 set order to tag "4"
@@ -375,6 +391,7 @@ return
 
 // Generise novu 19-ku tj.nivelaciju na osnovu vec azurirane
 function VratiZadNiv()
+local _h_brdok
 local nSlog:=0,nPom:=0,cStBrDok:=""
 
 O_KONTO
@@ -421,7 +438,14 @@ endif
 
 O_KALK_PRIPR
 O_KALK
-private cBrDok:=SljBroj(cIdFirma,"19",8)
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "19"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
+
 
 nRbr:=0
 select KALK
@@ -467,6 +491,7 @@ return
 function KorekMPC()
 local dDok := DATE()
 local nPom := 0
+local _h_brdok
 private cMagac := fetch_metric( "kalk_sredi_karicu_mpc", my_user(), PADR( "1330", 7) )
  
 O_KONTO
@@ -499,8 +524,15 @@ nTRabat:=0
 lGenerisao := .f.
 private nRbr:=0
 
-select kalk
-cBrNiv := kalk_sljedeci(gfirma,"19")
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "19"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+cBrNiv := kalk_novi_broj_dokumenta(_h_brdok)
+
+
+
 
 select kalk
 set order to tag "4"

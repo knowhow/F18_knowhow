@@ -16,6 +16,7 @@
 // generisanje dokumenta tipa IM
 function IM()
 local cNule := "N"
+local _h_brdok
 
 lOsvjezi := .f.
 O_KALK_PRIPR
@@ -71,7 +72,14 @@ O_KALK
 IF lOsvjezi
 	private cBrDok:=kalk_pripr->brdok
 ELSE
-  	private cBrDok:=SljBroj(cIdFirma,"IM",8)
+
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdirma
+_h_brdok["idvd"] := "IM"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
 ENDIF
 
 nRbr:=0
@@ -189,21 +197,21 @@ MsgC()
 closeret
 
 return
-*}
 
 
 // generisanje dokumenta tipa IM razlike na osnovu postojece inventure
 function gen_im_razlika()
-*{
+local _h_brdok
+
 O_KONTO
 
 Box(,8,70)
-	cIdFirma:=gFirma
- 	cIdKonto:=padr("1310",gDuzKonto)
- 	dDatDok:=date()
-	cArtikli:=SPACE(30)
-	cPosition:="2"
-	cCijenaTIP:="1"
+	cIdFirma := gFirma
+ 	cIdKonto := padr("1310",gDuzKonto)
+ 	dDatDok  := date()
+	cArtikli := SPACE(30)
+	cPosition:= "2"
+	cCijenaTIP:= "1"
 	cOldBrDok:=SPACE(8)
  	@ m_x+1,m_Y+2 SAY "Magacin:" GET  cIdKonto valid P_Konto(@cIdKonto)
  	@ m_x+2,m_Y+2 SAY "Datum:  " GET  dDatDok
@@ -237,7 +245,12 @@ O_KONCIJ
 O_KALK_DOKS
 O_KALK
 
-private cBrDok:=SljBroj(cIdFirma, "IM", 8)
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "IM"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
 
 select kalk
 set order to tag "3"

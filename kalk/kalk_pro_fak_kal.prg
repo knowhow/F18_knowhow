@@ -527,6 +527,7 @@ local cIdFirma := gFirma
 local cIdTipDok := "10;11;12;      "
 local cBrDok := SPACE(8)
 local cBrKalk := SPACE(8)
+local _h_brdok
 
 O_KALK_PRIPR
 O_KALK
@@ -541,25 +542,14 @@ dDatKalk := DATE()
 cIdKonto := PADR( "5100", 7 )
 cIdZaduz2 := SPACE(6)
 
-if gBrojac=="D"
-    select kalk
-    set order to tag "1"
-    seek cIdFirma + "10X"
-    skip -1
-    if idvd<>"10"
-        cBrKalk := space(8)
-    else
-        cBrKalk := brdok
-    endif
-endif
-
-cBrKalk := 
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"] := "10"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE()
+cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
 Box(, 15, 60)
-
-    if gBrojac == "D"
-        cBrKalk := UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-    endif
 
     do while .t.
 
@@ -577,7 +567,8 @@ Box(, 15, 60)
         @ m_x+8,m_y+2 SAY "period od" GET dDAtFOd
         @ m_x+8,col()+2 SAY "do" GET dDAtFDo
         read
-        
+
+       
         if lastkey() == K_ESC
             exit
         endif
@@ -669,19 +660,7 @@ Box(, 15, 60)
         
         @ m_x+10,m_y+2 SAY "Dokumenti su preneseni !!"
        
-??? 
-        if gBrojac=="D"
-            cbrkalk:=UBrojDok(val(left(cbrkalk,5))+1,5,right(cBrKalk,3))
-        endif
-        
-_h_brdok := hb_hash()
-_h_brdok["idfirma"] := cIdFirma
-_h_brdok["idvd"]    := "96"
-_h_brdok["brdok"]   := ""
-_h_brdok["datdok"]  := DATE() 
-
-cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
-
+        cBrKalk := kalk_novi_broj_dokumenta(_h_brdok)
 
         inkey(4)
         @ m_x+8,m_y+2 SAY space(30)

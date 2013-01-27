@@ -14,6 +14,7 @@
 
 
 function IP()
+local _h_brdok
 
 O_KONTO
 O_TARIFA
@@ -41,7 +42,14 @@ O_KONCIJ
 O_KALK_PRIPR
 O_KALK
 
-private cBrDok := SljBroj( cidfirma, "IP", 8 )
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "IP"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
+
 
 nRbr := 0
 
@@ -244,6 +252,7 @@ local nNVU
 local nNVI 
 local nRabat
 local _cnt := 0
+local _h_brdok
 
 O_KONTO
 
@@ -289,8 +298,13 @@ O_KALK_PRIPR
 O_PRIPT
 O_KALK
 
-// sljedeci broj kalkulacije IP
-private cBrDok := SljBroj( cIdFirma, "IP" )
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "IP"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
+
 
 nRbr := 0
 

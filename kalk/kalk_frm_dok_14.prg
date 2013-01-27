@@ -17,9 +17,9 @@
  */
 
 function Get1_14()
-*{
-pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
-//private cisMarza:=0
+
+// izgenerisane stavke jos ne postoje
+pIzgSt:=.f.   
 
 set key K_ALT_K to KM2()
 if nRbr==1 .and. fnovi
@@ -28,15 +28,13 @@ endif
 if nRbr==1 .or. !fnovi
  @  m_x+6,m_y+2   SAY "KUPAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,6,18)
  @  m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
- @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-    valid {|| .t.}
+ @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP  valid {|| .t.}
  _IdZaduz:=""
  
  _Idkonto:="1200"
- private cNBrDok:=_brdok
- @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
-            valid ( empty(_IdKonto2) .or. P_Konto(@_IdKonto2,24) ) .and.;
-                  MarkBrDok(fNovi)
+ private cNBrDok := _brdok
+ @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 valid valid_mag_konto_14(@_IdKonto2, @_BrDok) 
+
  if gNW<>"X"
   @ m_x+9,m_y+40 SAY "Razduzuje:" GET _IdZaduz2   pict "@!"  valid empty(_idZaduz2) .or. P_Firma(@_IdZaduz2,24)
  endif
@@ -280,9 +278,28 @@ endif
 
 set key K_ALT_K to
 return lastkey()
-*}
 
 
+// ------------------------------------------
+// ------------------------------------------
+function valid_mag_konto_14(idkonto, brdok)
+local _h_brdok
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "14"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := _datdok
+
+
+if !empty(idkonto)
+   P_Konto(@IdKonto, 24)
+endif
+
+brdok := kalk_novi_broj_dokumenta(_h_brdok, IdKonto)
+
+@  m_x+2, m_y + 46  SAY BrDok COLOR INVERT
+
+return .t.
 
 
 /*! \fn PPP14(fret)

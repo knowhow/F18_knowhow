@@ -140,7 +140,7 @@ return
  */
  
 function InvManj()
-*{
+local _h_brdok
 local nFaktVPC:=0, lOdvojiVisak:=.f., nBrSl:=0
 
 O_KONCIJ
@@ -160,10 +160,18 @@ select koncij; seek trim(kalk_pripr->idkonto)
 
 lOdvojiVisak := Pitanje(,"Napraviti poseban dokument za visak?","N")=="D"
 
-private cBrOtp:=SljBroj(cidfirma,"95",8)
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "95"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+private cBrOtp := kalk_novi_broj_dokumenta(_h_brdok)
+
 IF lOdvojiVisak
   O_KALK_PRIPR9
-  private cBrDop:=SljBroj(cidfirma,"16",8)
+  _h_brdok["idvd"] := "16"
+  private cBrDop := kalk_novi_broj_dokumenta(_h_brdok)
+  
   DO WHILE .t.
    select kalk_pripr9
    seek cidFirma+"16"+cBrDop
@@ -264,7 +272,7 @@ return
  */
 
 function MNivPoProc()
-*{
+local _h_brdok
 LOCAL nStopa:=0.0, nZaokr:=1
 
 O_KONTO
@@ -295,7 +303,13 @@ BoxC()
 O_KONCIJ
 O_KALK_PRIPR
 O_KALK
-private cBrDok:=SljBroj(cidfirma,"18",8)
+
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "18"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+cBrDok := kalk_novi_broj_dokumenta(_h_brdok)
 
 nRbr:=0
 set order to tag "3"  //"3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
@@ -400,21 +414,25 @@ return
  */
  
 function KorekPC()
-*{
- LOCAL dDok:=date(), nPom:=0, nRobaVPC:=0
- PRIVATE cMagac:=padr("1310   ",gDuzKonto)
- O_KONCIJ
- O_KONTO
- private cSravnitiD:="D"
- private cUvijekSif:="D"
+
+LOCAL dDok:=date(), nPom:=0, nRobaVPC:=0
+local _h_brdok
+
+PRIVATE cMagac:=padr("1310   ",gDuzKonto)
+O_KONCIJ
+O_KONTO
+
+private cSravnitiD:="D"
+private cUvijekSif:="D"
 
  Box(,6,50)
    @ m_x+1,m_y+2 SAY "Magacinski konto" GEt cMagac pict "@!" valid P_konto(@cMagac)
    @ m_x+2,m_y+2 SAY "Sravniti do odredjenog datuma:" GET cSravnitiD valid cSravnitiD $ "DN" pict "@!"
    @ m_x+4,m_y+2 SAY "Uvijek nivelisati na VPC iz sifrarnika:" GET cUvijekSif valid cUvijekSif $ "DN" pict "@!"
    read;ESC_BCR
-   @ m_x+6,m_y+2 SAY "Datum do kojeg se sravnjava" GET dDok
-   read;ESC_BCR
+   @ m_x+6, m_y+2 SAY "Datum do kojeg se sravnjava" GET dDok
+   read
+   ESC_BCR
  BoxC()
  O_ROBA
  O_KALK_PRIPR
@@ -426,8 +444,19 @@ nTRabat:=0
 private nRbr:=0
 
 select kalk
-cBrNiv:=kalk_sljedeci(gfirma,"18")
-select kalk; set order to tag "3"
+
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := gFirma
+_h_brdok["idvd"] := "18"
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+cBrNiv := kalk_novi_broj_dokumenta(_h_brdok)
+
+
+
+select kalk
+set order to tag "3"
+
 HSEEK gFirma+cMagac
 do while !eof() .and. idfirma+mkonto=gFirma+cMagac
 
@@ -723,7 +752,8 @@ return
  */
  
 function Iz16u14()
-*{
+local _h_brdok
+
   o_kalk_edit()
 
   cIdFirma    := gFirma
@@ -751,14 +781,14 @@ function Iz16u14()
     READ; ESC_BCR
   BoxC()
 
-  // utvrdimo broj nove kalkulacije
-  SELECT KALK_DOKS; SEEK cIdFirma+cIdVdI+CHR(255); SKIP -1
-  IF cIdFirma+cIdVdI == IDFIRMA+IDVD
-     cBrDokI := brdok
-  ELSE
-     cBrDokI := space(8)
-  ENDIF
-  cBrDokI := UBrojDok(val(left(cBrDokI,5))+1,5,right(cBrDokI,3))
+_h_brdok := hb_hash()
+_h_brdok["idfirma"] := cIdFirma
+_h_brdok["idvd"] := cIdVdI
+_h_brdok["brdok"] := ""
+_h_brdok["datdok"] := DATE() 
+cBrDokI := kalk_novi_broj_dokumenta(_h_brdok)
+
+
 
   // pocnimo sa generacijom dokumenta
   SELECT KALK

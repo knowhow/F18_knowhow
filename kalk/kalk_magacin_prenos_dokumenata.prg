@@ -226,7 +226,6 @@ do while .t.
        	       APPEND BLANK
        	       replace idfirma with cIdFirma,;
                rbr     with str(++nRbr, 3),;
-               // izlazna faktura
                idvd with "14",;   
                brdok with cBrKalk,;
                datdok with dDatKalk,;

@@ -41,14 +41,20 @@ set printer on
 P_12CPI
 
 ? REPLICATE("=", 84) 
-? "F18 bug report (v3.2) :", DATE(), TIME()
+? "F18 bug report (v3.3) :", DATE(), TIME()
 ? REPLICATE("=", 84) 
 
 
-_msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER
-? _msg
+_msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER 
 
 _log_msg += _msg
+? _msg
+
+_msg := " comp: " + HB_COMPILER() + " " + HB_VERSION()
+
+? _msg
+_log_msg += " ; " + _msg
+ 
 
 ?
 

@@ -1375,8 +1375,10 @@ function MsgBeep(cMsg, align)
 local _set
 cMsg := hb_Utf8ToStr(cMsg)
 
-if !gAppSrv
-    Beep(2) 
+Beep(2) 
+
+if align == NIL
+  align := "C"
 endif
 
 #ifndef TEST

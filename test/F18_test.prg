@@ -38,30 +38,33 @@ dbf_test()
 MsgC()
 */
 
-MsgO("modstru")
-modstru_test()
-MsgC()
+if !no_sql_mode()
 
-/*
-MsgO("sifk/sifv")
-sifk_sifv_test()
-MsgC()
-*/
+	MsgO("modstru")
+	modstru_test()
+	MsgC()
 
-MsgO("fetch")
-fetch_set_metric()
-MsgC()
-
-test_version()
-
-//test_thread()
+	/*
+	MsgO("sifk/sifv")
+	sifk_sifv_test()
+	MsgC()
+	*/
 
 
-//test_semaphores()
+	MsgO("fetch")
+	fetch_set_metric()
+	MsgC()
 
-i_dodaj_sifre()
-i_fakt()
+	test_version()
 
+	//test_thread()
+
+
+	//test_semaphores()
+
+	i_dodaj_sifre()
+	i_fakt()
+endif
  
 
 TEST_END()

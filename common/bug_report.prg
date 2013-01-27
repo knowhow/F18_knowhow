@@ -97,11 +97,11 @@ next
 ? "---", REPLICATE("-", 80)
 ?
 
-server_connection_info()
-
-server_db_version_info()
-
-server_info()
+if ! no_sql_mode()
+  server_connection_info()
+  server_db_version_info()
+  server_info()
+endif
 
 if USED() 
    current_dbf_info()

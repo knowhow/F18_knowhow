@@ -14,14 +14,31 @@
 function test_external_run()
 
 local _src := my_home() + "_test_mozes_brisati_.txt"
+local _dest := _src + ".dest.txt"
+ 
+#ifdef __PLATFORM__WINDOWS
 local _cmd := "echo test_f18 > " + '"' + _src + '"'
-//local _dest := my_home() + "test_dest.txt"
-
+#else
+local _cmd := "bash  -c " + '"' + "echo test_f18 > " + _src + '"'
+#endif
 
 FERASE(_src)
+FERASE(_dest)
 
 _ret := f18_run(_cmd)
 
 TEST_LINE(_ret, 0)
-TEST_LINE(FILE(_src), .t.)
+TEST_LINE(to_str(FILE(_src)) + _src, ".t." + _src)
+
+
+#ifdef __PLATFORM__WINDOWS
+_cmd := "copy " + '"' + _src + '"' + " " + '"' + _dest + '"' 
+#else
+_cmd := "cp " + '"' + _src + '"' + " " + '"' + _dest + '"' 
+#endif
+
+_ret := f18_run(_cmd)
+TEST_LINE(_ret, 0)
+TEST_LINE(to_str(FILE(_dest)) + _dest, ".t." + _dest)
+
 return .t.

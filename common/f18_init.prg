@@ -28,6 +28,7 @@ thread static __log_handle := NIL
 static __my_error_handler := NIL
 static __global_error_handler := NIL
 static __test_mode := .f.
+static __no_sql_mode := .f.
 
 static __max_rows := 35
 static __max_cols := 120
@@ -121,6 +122,11 @@ set_screen_dimensions()
 _get_log_level_from_config()
 
 init_gui()
+
+if no_sql_mode()
+   set_f18_home("f18_test")
+   return .t.
+endif
 
 _get_server_params_from_config()
 
@@ -877,12 +883,21 @@ return  __global_error_handler
 function dummy_error_handler()
 return {|err| BREAK(err) }
 
-function  test_mode(tm)
+function test_mode(tm)
 if tm != nil
   __test_mode := tm
 endif
 
 return __test_mode
+
+function no_sql_mode(val)
+if val != nil
+  __no_sql_mode := val
+endif
+
+return __no_sql_mode
+
+
 
 static function f18_no_login_quit()
 

@@ -17,8 +17,9 @@
 // --------------------------------------------
 // promjena privilegija fajlova
 // --------------------------------------------
-function set_file_access( file_path, mask )
-private _cmd 
+function set_file_access( file_path, mask ) 
+local _ret := .t.
+private _cmd
 
 if file_path == NIL
 	file_path := ""
@@ -28,11 +29,11 @@ if mask == NIL
 	mask := ""
 endif
 
-_cmd := "sudo chmod ugo+w " + file_path + mask + "*.*"
+_cmd := "chmod ugo+w " + file_path + mask + "*.*"
 
 run &_cmd
-
-return
+    
+return _ret
 
 
 // -----------------------------------------

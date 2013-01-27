@@ -72,6 +72,9 @@ local cVpMp := "V"
 local _rec
 local _redni_broj
 
+MsgBeep("Novi brojaci - ovo ne radi !")
+QUIT_1
+
 if lNoGen == nil
     lNoGen := .f.
 endif
@@ -195,8 +198,8 @@ if cVpMp == "M"
     cCtrlNo := "23"
 endif
 
-cBrDok := fakt_brdok_0(cfirma, cIdVd, DATE())
 
+cBrDok := fakt_brdok_0(cfirma, cIdVd, DATE())
 
 cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
 _redni_broj := 0

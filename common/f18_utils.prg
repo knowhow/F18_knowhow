@@ -90,6 +90,9 @@ DO WHILE _i <= PCount()
     
     DO CASE
 
+      CASE cTok == "--no-sql"
+	       no_sql_mode(.t.)
+
       CASE cTok == "--test"
            test_mode(.t.)
            

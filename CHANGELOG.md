@@ -2,6 +2,7 @@
 
   - kalk, provjera duplih barkod-ova unutar šifranika artikala
   - os, generacija podataka za novu sezonu
+  - kalk, kontiranje naloga ručno, bez generisanja broja naloga
  
 1.4.106 2013-01-25, vsasa, hernad
 

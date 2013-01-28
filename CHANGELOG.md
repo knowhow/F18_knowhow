@@ -1,3 +1,8 @@
+1.4.107 2013-01-28, vsasa
+
+  - kalk, provjera duplih barkod-ova unutar šifranika artikala
+  - os, generacija podataka za novu sezonu
+ 
 1.4.106 2013-01-25, vsasa, hernad
 
   - fin/kalk/fakt - udaljene lokacije razmjena podataka - korekcije

@@ -1,6 +1,8 @@
-1.4.106 2013-01-25, vsasa
+1.4.106 2013-01-25, vsasa, hernad
 
   - fin/kalk/fakt - udaljene lokacije razmjena podataka - korekcije
+  - fakt - evidentiranje uplata
+  - direktna štampa na lpt
  
 1.4.105 2013-01-24, vsasa
 

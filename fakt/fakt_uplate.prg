@@ -132,11 +132,14 @@ do case
 
 	case Ch==K_CTRL_T
 
-		if Pitanje(,"Izbrisati stavku ?","N")=="D"
-			delete
-			nUkUplata:=UkUplata()
+		if Pitanje(,"Izbrisati stavku ?","N") == "D"
+
+			delete_with_rlock()
+            __dbPack()
+			nUkUplata := UkUplata()
 			DajStanjeKupca()
-			nRet:=DE_REFRESH
+			nRet := DE_REFRESH
+
 		endif
 
 	case Ch==K_CTRL_P

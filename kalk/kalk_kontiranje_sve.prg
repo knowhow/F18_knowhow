@@ -117,20 +117,22 @@ do while !EOF()
 	RekapK( .t., cD_firma, cD_tipd, cD_brdok, .t. )
 	
 	// uzmi drugi broj naloga
-	_br_nal( cChBrNal, cD_brdok, @cNalog )
+	//_br_nal( cChBrNal, cD_brdok, @cNalog )
 
 	// kontiraj
-	kalk_kontiranje_naloga( .t., .t., .f., cNalog )
+	kalk_kontiranje_naloga( .t., .t., .f., NIL, .f. )
 
 	// azuriraj nalog
-	p_fin( .t. )
+	//p_fin( .t. )
 
 	++ nCount
 
 	O_KALK_DOKS
+
 	select kalk_doks
 	go (nTNRec)
 	skip
+
 enddo
 
 if nCount > 0

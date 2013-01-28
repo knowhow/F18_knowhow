@@ -24,7 +24,7 @@ static dDatMax
 // lViseKalk - vise kalkulacija
 // cNalog - broj naloga koji ce se uzeti, ako je EMPTY() ne uzima se !
 // -----------------------------------------------------------------------
-function kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog )
+function kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 local cIdFirma
 local cIdVd
 local cBrDok
@@ -35,20 +35,26 @@ local lAMat2
 local nRecNo
 local lPrvoDzok := ( fetch_metric( "kalk_kontiranje_prioritet_djokera", nil, "N" ) == "D" )
 local _fakt_params := fakt_params()
-
-
 private lVrsteP := _fakt_params["fakt_vrste_placanja"]
 
-if (lAGen == nil)
+if ( lAGen == NIL )
     lAGen := .f.
 endif
 
-if (lViseKalk == nil)
+if ( lViseKalk == NIL )
     lViseKalk :=.f.
 endif
 
-if (dDatMax == nil)
+if ( dDatMax == NIL )
     dDatMax := CTOD("")
+endif
+
+if ( cNalog == NIL )
+    cNalog := ""
+endif
+
+if ( auto_brojac == NIL )
+    auto_brojac := .t.
 endif
 
 SELECT F_SIFK
@@ -161,11 +167,18 @@ endif
 if lAFin .or. lAFin2
 
     if EMPTY( cNalog )
-		cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn ) 
+        
+        if auto_brojac
+		    cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn ) 
+        else
+            cBrNalF := fin_prazan_broj_naloga()
+        endif
+
     else
         // ako je zadat broj naloga taj i uzmi...
         cBrNalF := cNalog
     endif
+
 endif
 
 select finmat
@@ -1031,6 +1044,7 @@ local fprvi
 local n1:=n2:=n3:=n4:=n5:=n6:=n7:=n8:=n9:=na:=nb:=0
 local nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTota:=nTotb:=0
 local nCol1:=nCol2:=nCol3:=0
+local _fin_auto_broj := "N"
 // kontira se vise kalkulacija
 local lViseKalk := .f.
 private aPorezi
@@ -1048,7 +1062,6 @@ endif
 lVoSaTa := .f.
 
 // prvi prolaz
-
 fprvi := .t.  
 
 do while .t.
@@ -1132,7 +1145,7 @@ do while .t.
     if fStara .and. lAuto == .f.
     
         // - info o izabranom dokumentu -
-        Box("#DOKUMENT "+cIdFirma+"-"+cIdVd+"-"+cBrDok,8,77)
+        Box( "#DOKUMENT " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 9, 77 )
 
             cDalje:="D"
             cAutoRav := gAutoRavn
@@ -1155,8 +1168,10 @@ do while .t.
             @ m_x+5, col()+1 SAY PKONTO+"-"+PADR(KONTO->naz,49) COLOR "N/W"
             @ m_x+7, m_y+2 SAY "Automatski uravnotezi dokument? (D/N)" GET cAutoRav VALID cAutoRav$"DN" PICT "@!"
             @ m_x+8, m_y+2 SAY "Zelite li kontirati dokument? (D/N)" GET cDalje VALID cDalje$"DN" PICT "@!"
+            @ m_x+9, m_y+2 SAY "Automatski broj fin.naloga? (D/N)" GET _fin_auto_broj VALID _fin_auto_broj $ "DN" PICT "@!"
     
             READ
+
         BoxC()
         
         IF LASTKEY()==K_ESC .or. cDalje<>"D"
@@ -1505,15 +1520,16 @@ do while .t.
         exit
     else
 
-        cIdFirma:=idfirma
-        cIdVd:=idvd
-        cBrdok:=brdok
+        cIdFirma := idfirma
+        cIdVd := idvd
+        cBrdok := brdok
 
         if !lViseKalk
             close all
         endif
 
-        kalk_kontiranje_naloga(.f., nil, lViseKalk)
+        // kontiranje dokumenta...
+        kalk_kontiranje_naloga( .f., NIL, lViseKalk, NIL, _fin_auto_broj == "D" )
     
         // automatska ravnoteza naloga
         if cAutoRav == "D"

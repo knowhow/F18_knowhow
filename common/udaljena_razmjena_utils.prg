@@ -243,8 +243,13 @@ static function update_rec_sifk_struct( rec )
 local _no_field
 local _struct := {}
 
-rec["f_unique"] := rec["unique"]
-rec["f_decimal"] := rec["decimal"]
+if hb_hhaskey( rec, "unique")
+    rec["f_unique"] := rec["unique"]
+endif
+
+if hb_hhaskey( rec, "decimal" )
+    rec["f_decimal"] := rec["decimal"]
+endif
 
 // pobrisi sljedece clanove...
 hb_hdel( rec, "unique" ) 

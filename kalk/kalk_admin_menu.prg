@@ -28,12 +28,15 @@ AADD( _opc,"4. konverzija polja SIFRADOB")
 AADD( _opcexe, {|| c_sifradob()})
 AADD( _opc,"5. kopiraj set cijena iz/u")
 AADD( _opcexe, {|| kopiraj_set_cijena()})
-AADD( _opc,"6. Pomnozi sa faktorom mpc/mpc2 u sifrarniku artikala")
+AADD( _opc,"6. pomnozi sa faktorom mpc/mpc2 u sifrarniku artikala")
 AADD( _opcexe, {|| SetPomnoziCijene()})
 AADD( _opc,"7. export kalk baza podataka")
 AADD( _opcexe, {|| kalk_export()})
 AADD( _opc,"8. kontrola maloprodajnih cijena ")
 AADD( _opcexe, {|| sifre_artikli_provjera_mp_cijena() })
+AADD( _opc,"9. kontrola duplih barkodova ")
+AADD( _opcexe, {|| rpt_dupli_barkod() })
+
 
 f18_menu("admk", .f., _izbor, _opc, _opcexe )
 

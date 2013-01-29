@@ -1,3 +1,7 @@
+1.5.6 2013-01-29, hernad
+
+   - stampa azuriranih dokumenata
+
 1.4.106 2013-01-25, vsasa
 
   - fin/kalk/fakt - udaljene lokacije razmjena podataka - korekcije

@@ -17,13 +17,13 @@ private cIdFirma, cIdTipDok, cBrDok
 
 cIdFirma:=gFirma
 cIdTipDok:="10"
-cBrdok:=space(8)
+cBrdok:=space(12)
 
-Box("", 2, 35)
+Box("", 2, 40)
         @ m_x+1, m_y+2 SAY "Dokument:"
         @ m_x+2, m_y+2 SAY " RJ-tip-broj:" GET cIdFirma
         @ m_x+2, col()+1 SAY "-" GET cIdTipDok
-        @ m_x+2, col()+1 SAY "-" GET cBrDok
+        @ m_x+2, col()+1 SAY "-" GET cBrDok VALID fakt_fix_brdok(@cBrDok)
         read
 BoxC()
 
@@ -114,5 +114,15 @@ endif
 select fakt_doks
 use
 return
+
+
+// ---------------------------------------
+// ---------------------------------------
+function fakt_fix_brdok(brdok)
+local _cnt
+_cnt := FaktCounter():New("99", "99", DATE())
+_cnt:fix(@brdok)
+
+return .t.
 
 

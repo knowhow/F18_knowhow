@@ -23,7 +23,7 @@ local nOper
 local cStatus
 local nVar := 0
 local _export
-local _rpt_file := my_home() + "r_export.dbf"
+local _rpt_file := my_home() + "_tmp1.dbf"
 
 // uslovi izvjestaja
 if std_vars( @dD_from, @dD_to, @nOper, @cStatus, @_export ) = 0
@@ -366,6 +366,9 @@ do while !EOF()
 enddo
 
 BoxC()
+
+select _tmp1
+use
 
 return
 

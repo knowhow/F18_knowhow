@@ -161,8 +161,7 @@ endif
 if lAFin .or. lAFin2
 
     if EMPTY( cNalog )
-                cBrNalF := fin_novi_broj_naloga(finmat->idfirma, cIdVn, finmat->datdok)
-
+           cBrNalF := fin_novi_broj_naloga(finmat->idfirma, cIdVn, finmat->datdok)
     else
         // ako je zadat broj naloga taj i uzmi...
         cBrNalF := cNalog

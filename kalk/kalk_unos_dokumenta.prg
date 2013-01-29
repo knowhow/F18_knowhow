@@ -304,6 +304,7 @@ local nTr2
 local cSekv
 local nKekk
 local iSekv
+local _rec
 
 if ( Ch == K_CTRL_T .or. Ch == K_ENTER ) .and. EOF()
     return DE_CONT
@@ -385,8 +386,7 @@ do case
         azur_kalk()
         o_kalk_edit()
 
-        if kalk_pripr->(RECCOUNT())==0 .and. IzFMKINI("Indikatori","ImaU_KALK","N",PRIVPATH) == "D"
-
+        if kalk_pripr->(RECCOUNT())==0 
             O__KALK
 
             select _kalk
@@ -431,33 +431,16 @@ do case
             nNc := kalk_pripr->nc
             nVpc := kalk_pripr->vpc
 
+            _rec := dbf_get_rec()
             delete
 
             _t_rec := RECNO()
             __dbPack()
-            go ( _t_rec )
 
-            if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
-                    
-                cOpis := kalk_pripr->idfirma + "-" + ;
-                    kalk_pripr->idvd + "-" + ;
-                    kalk_pripr->brdok
-
-                EventLog(nUser,goModul:oDataBase:cName,;
-                    "DOK","BRISANJE",;
-                    nKolicina,;
-                    nNc,;
-                    nVpc,;
-                    nil,;
-                    cOpis,;
-                    "artikal: " + cArtikal,;
-                    "",;
-                    kalk_pripr->datdok,;
-                    Date(),;
-                    "",;
-                    "Brisanje stavke " + cStavka + " iz kalk_pripreme")
-                
+            if (reccount() == 0) .and. !empty(_rec["idfirma"])
+                kalk_rewind(_rec["idfirma"], _rec["idvd"], _rec["datdok"], _rec["brdok"])
             endif
+            go ( _t_rec )
 
             return DE_REFRESH
 
@@ -479,13 +462,17 @@ do case
         return DE_REFRESH
     case Ch==K_CTRL_F9
         if Pitanje( , "Zelite Izbrisati cijelu pripremu ??","N")=="D"
-            
+            select kalk_pripr
+            go top            
+            _rec := dbf_get_rec()
+            if !empty(_rec["idfirma"])
+                kalk_rewind(_rec["idfirma"], _rec["idvd"], _rec["datdok"], _rec["brdok"])
+            endif
             zapp()
             select p_doksrc
             zapp()
             select kalk_pripr
             return DE_REFRESH
-
         endif
         return DE_CONT
     case UPPER( CHR(Ch) ) == "A" .or. lAutoAsist
@@ -1371,7 +1358,7 @@ read
 
 ESC_RETURN 0
 
-if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
+if fNovi .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
 
 
      if glBrojacPoKontima
@@ -1397,12 +1384,16 @@ if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
 
 endif
 
-@ m_x + 2, m_y + 40  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }
+@ m_x + 2, m_y + 42  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma, _IdVD, _BrDok) }
 
 
 @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
 
 read
+
+if fNovi .and. LastKey()==K_ESC
+   kalk_rewind(_idfirma, _idvd, _datdok, _brdok)
+endif
 
 ESC_RETURN 0
 

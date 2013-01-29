@@ -180,7 +180,7 @@ local _cnt
 _cnt := FinCounter():New("99", "99", DATE())
 _cnt:fix(@brnal)
 
-return .f.
+return .t.
 
 
 

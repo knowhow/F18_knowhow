@@ -485,3 +485,123 @@ select ( _t_area )
 return _ok
 
 
+// -----------------------------------------------------
+// ova funkcija treba da uradi:
+// - provjeri ima li viska atributa
+// - provjeri ima li duplih atributa 
+// -----------------------------------------------------
+function fakt_atributi_fix( dok_arr )
+
+// pobrisi duple zapise
+fakt_atributi_brisi_duple( dok_arr )
+// brisi visak atributa ako postoji
+fakt_atributi_brisi_visak( dok_arr )
+
+return
+
+// -----------------------------------------------------
+// brisi visak atributa ako postoji 
+// -----------------------------------------------------
+static function fakt_atributi_brisi_visak( dok_arr )
+local _id_firma, _tip_dok, _br_dok
+local _tmp
+local _t_area := SELECT()
+local _ok := .t.
+
+if LEN( dok_arr ) > 1
+    return _ok
+endif
+
+_id_firma := dok_arr[ 1, 1 ]
+_tip_dok := dok_arr[ 1, 2 ]
+_br_dok := dok_arr[ 1, 3 ]
+_tmp := _id_firma + _tip_dok + _br_dok
+
+select ( F_FAKT_ATRIB )
+if !used()
+    O_FAKT_ATRIB
+endif
+
+set order to tag "1"
+go top
+
+do while !EOF()
+    
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    if field->idfirma + field->idtipdok + field->brdok <> _tmp
+        delete
+        __dbPack()
+    endif
+
+    go ( _t_rec )
+
+enddo
+
+// zatvori atribute
+use
+
+select ( _t_area )
+
+return _ok
+
+
+
+
+
+// -----------------------------------------------------
+// provjera ispravnosti atributa za dokument 
+// -----------------------------------------------------
+static function fakt_atributi_brisi_duple( dok_arr )
+local _id_firma, _tip_dok, _br_dok
+local _t_area := SELECT()
+local _ok := .t.
+
+if LEN( dok_arr ) > 1
+    return _ok
+endif
+
+_id_firma := dok_arr[ 1, 1 ]
+_tip_dok := dok_arr[ 1, 2 ]
+_br_dok := dok_arr[ 1, 3 ]
+
+select ( F_FAKT_ATRIB )
+if !used()
+    O_FAKT_ATRIB
+endif
+
+set order to tag "1"
+go top
+
+do while !EOF() .and. field->idfirma == _id_firma .and. ;
+        field->idtipdok == _tip_dok .and. ;
+        field->brdok == _br_dok
+    
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    _r_br := field->rbr
+
+    skip 1
+    
+    if field->rbr == _r_br
+        delete
+        __dbPack()
+    endif
+
+    go ( _t_rec )
+
+enddo
+
+// zatvori atribute
+use
+
+select ( _t_area )
+
+return _ok
+
+
+

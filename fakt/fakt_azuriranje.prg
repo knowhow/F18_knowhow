@@ -60,6 +60,9 @@ if LEN( _a_fakt_doks ) == 1
     endif
 endif
 
+// fiksiranje tabele atributa
+fakt_atributi_fix( _a_fakt_doks )
+
 _ok := .t.
 
 MsgO( "Azuriranje dokumenata u toku ..." )

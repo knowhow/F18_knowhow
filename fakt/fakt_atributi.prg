@@ -593,22 +593,22 @@ do while !EOF() .and. field->idfirma == _id_firma .and. ;
         field->idtipdok == _tip_dok .and. ;
         field->brdok == _br_dok
     
-    _r_br := field->rbr
-    _atrib := field->atribut
-    
-    skip 1
-
-    // zapamti narednu poziciju nakon brisanja
     skip 1
     _t_rec := RECNO()
     skip -1
 
+    _r_br := field->rbr
+    _atrib := field->atribut
+    
+    skip 1
+        
     // kljuc je redni broj + atribut
     if field->rbr == _r_br .and. field->atribut == _atrib
         delete
         _deleted := .t.
-        go ( _t_rec )
     endif
+
+    go ( _t_rec )
 
 enddo
 

@@ -1,3 +1,7 @@
+1.5.7 2013-01-29, hernad
+
+   - numericki dio parametriziran, sada radi stampa azuriranih dokumenata FAKT/FIN/KALK
+
 1.5.6 2013-01-29, hernad
 
    - stampa azuriranih dokumenata

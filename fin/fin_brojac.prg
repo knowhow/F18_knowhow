@@ -21,7 +21,7 @@ ENDCLASS
 METHOD FinCounter:New(idfirma, idvn, datnal, new_number)	
 local _param := fakt_params()
 
-::super:New(0, 12, 6, "", "<G2>", "0", {"fin", idfirma, idvn},  datnal)
+::super:New(0, 12, 8, "", "<G2>", "0", {"fin", idfirma, idvn},  datnal)
 
 if new_number == NIL
      new_number := .f.

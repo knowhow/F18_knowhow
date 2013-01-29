@@ -23,7 +23,11 @@ local _param := fakt_params()
 
 // return  PADR( REPLICATE( "0", _param["brojac_numericki_dio"]), FAKT_BRDOK_LENGTH )
 
-::super:New(0, 12, 6, "", "<G2>", "0", {"fakt", idfirma, idtipdok},  datdok)
+//    @ m_x+15,m_y+2 SAY "Numericki dio broja dokumenta:" GET gNumDio PICT "99"
+//    ovo treba proglasiti za legacy
+
+
+::super:New(0, 12, gNumDio, "", "<G2>", "0", {"fakt", idfirma, idtipdok},  datdok)
 
 if new_number == NIL
      new_number := .f.
@@ -32,6 +36,7 @@ endif
 if new_number
    ::new_document_number()
 endif
+
 
 return SELF
 
@@ -158,3 +163,13 @@ _idpartner:=cIdPartner
 cBrFakt:= fakt_novi_broj_dokumenta( cIdRJ, cIdVd )
 select (nArr)
 return cBrFakt
+
+
+// ---------------------------------------
+// ---------------------------------------
+function fakt_fix_brdok(brdok)
+local _cnt
+_cnt := FaktCounter():New("99", "99", DATE())
+_cnt:fix(@brdok)
+
+return .t.

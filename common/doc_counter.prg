@@ -19,7 +19,7 @@ CLASS DocCounter
     //         numeric_with <= width
     //         eg: 000921/13___ - numeric_width = 6, width = 10, sufix = "<G2>"
     DATA       width            INIT 12
-    DATA       numeric_width    INIT  6
+    DATA       numeric_width    INIT  8
 
     METHOD     New
     
@@ -523,7 +523,6 @@ if hb_regexMatch(_re_old_format, _str)
   _cnt:document_date := _dat
   _cnt:suffix := ""
   _cnt:width := 12
-  _cnt:numeric_width := 8
   _cnt:counter := _br
   broj := _cnt:to_str()
   return .t.

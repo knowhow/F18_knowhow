@@ -23,7 +23,7 @@ ENDCLASS
 METHOD KalkCounter:New(idfirma, idvd, datdok, new_number, konto)	
 local _param := fakt_params()
 
-::super:New(0, 12, 6, "", "<G2>", "0", {"kalk", idfirma, idvd},  datdok)
+::super:New(0, 12,  gLenBrKalk, "", "<G2>", "0", {"kalk", idfirma, idvd},  datdok)
 
 
 if new_number == NIL

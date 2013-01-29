@@ -116,13 +116,4 @@ use
 return
 
 
-// ---------------------------------------
-// ---------------------------------------
-function fakt_fix_brdok(brdok)
-local _cnt
-_cnt := FaktCounter():New("99", "99", DATE())
-_cnt:fix(@brdok)
-
-return .t.
-
 

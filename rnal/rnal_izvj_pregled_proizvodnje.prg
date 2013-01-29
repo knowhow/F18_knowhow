@@ -55,11 +55,13 @@ local dD_to := DATE()
 local nOper := 0
 local cArticle := SPACE(100)
 local aError 
+local _export
+local _rpt_file := my_home() + "_tmp1.dbf"
 
 o_sif_tables()
 
 // daj uslove izvjestaja
-if _g_vars( @dD_From, @dD_To, @nOper, @cArticle ) == 0
+if _g_vars( @dD_From, @dD_To, @nOper, @cArticle, @_export ) == 0
  	return 
 endif
 
@@ -87,9 +89,14 @@ if LEN( aError ) > 0
 
 endif
 
-if lPrint == .t.
+if lPrint == .t. .and. _export == "N"
 	// printaj specifikaciju
 	_p_rpt_spec( dD_from, dD_to )
+endif
+
+if _export == "D"
+    close all
+    f18_run( _rpt_file )
 endif
 
 return
@@ -145,7 +152,7 @@ return
 // ------------------------------------------------------------------------
 // uslovi izvjestaja specifikacije
 // ------------------------------------------------------------------------
-static function _g_vars( dDatFrom, dDatTo, nOperater, cArticle )
+static function _g_vars( dDatFrom, dDatTo, nOperater, cArticle, cExport )
 
 local nRet := 1
 local nBoxX := 20
@@ -180,6 +187,7 @@ nVar1 := fetch_metric( "rnal_rpt_pro_varijanta", my_user(), nVar1 )
 cPartn := fetch_metric( "rnal_rpt_pro_partner", my_user(), cPartn )
 cZaok := fetch_metric( "rnal_rpt_pro_zaokruzenje", my_user(), cZaok )
 cDmg := fetch_metric( "rnal_rpt_pro_lom", my_user(), cDmg )
+cExport := "N"
 
 Box(, nBoxX, nBoxY)
 
@@ -204,37 +212,37 @@ Box(, nBoxX, nBoxY)
 	// prvi red operacija
 
 	@ m_x + nX, m_y + 2 SAY "op. 1:" GET cOp1 ;
-		VALID {|| s_aops(@cOp1, cOp1), set_var(@nOp1, @cOp1), ;
+		VALID {|| ALLTRIM( cOp1 ) == "0" .or. s_aops(@cOp1, cOp1), set_var(@nOp1, @cOp1), ;
 			show_it( g_aop_desc( nOp1 ), 10 )}
 	
 	nX += 1
 
 	@ m_x + nX, m_y + 2 SAY "op. 2:" GET cOp2 ;
-		VALID {|| s_aops(@cOp2, cOp2), set_var(@nOp2, @cOp2), ;
+		VALID {|| ALLTRIM(cOp2) == "0" .or. s_aops(@cOp2, cOp2), set_var(@nOp2, @cOp2), ;
 			show_it( g_aop_desc( nOp2 ), 10 )}
 	
 	nX += 1
 
 	@ m_x + nX, m_y + 2 SAY "op. 3:" GET cOp3 ;
-		VALID {|| s_aops(@cOp3, cOp3), set_var(@nOp3, @cOp3), ;
+		VALID {|| ALLTRIM(cOp3) == "0" .or. s_aops(@cOp3, cOp3), set_var(@nOp3, @cOp3), ;
 			show_it( g_aop_desc( nOp3 ), 10 )}
 
 	nX += 1
 
 	@ m_x + nX, m_y + 2 SAY "op. 4:" GET cOp4 ;
-		VALID {|| s_aops(@cOp4, cOp4), set_var(@nOp4, @cOp4), ;
+		VALID {|| ALLTRIM( cOp4) == "0" .or. s_aops(@cOp4, cOp4), set_var(@nOp4, @cOp4), ;
 			show_it( g_aop_desc( nOp4 ), 10 )}
 
 	nX += 1
 
 	@ m_x + nX, m_y + 2 SAY "op. 5:" GET cOp5 ;
-		VALID {|| s_aops(@cOp5, cOp5), set_var(@nOp5, @cOp5), ;
+		VALID {|| ALLTRIM(cOp5) == "0" .or. s_aops(@cOp5, cOp5), set_var(@nOp5, @cOp5), ;
 			show_it( g_aop_desc( nOp5 ), 10 )}
 	
 	nX += 1
 
 	@ m_x + nX, m_y + 2 SAY "op. 6:" GET cOp6 ;
-		VALID {|| s_aops(@cOp6, cOp6), set_var(@nOp6, @cOp6), ;
+		VALID {|| ALLTRIM( cOp6 ) == "0" .or. s_aops(@cOp6, cOp6), set_var(@nOp6, @cOp6), ;
 			show_it( g_aop_desc( nOp6 ), 10 )}
 
 	// drugi red operacija
@@ -242,37 +250,37 @@ Box(, nBoxX, nBoxY)
 	nTmp2 := col() + 15
 
 	@ m_x + nTmp, nTmp2 SAY "op. 7:" GET cOp7 ;
-		VALID {|| s_aops(@cOp7, cOp7), set_var(@nOp7, @cOp7), ;
+		VALID {|| ALLTRIM(cOp7) == "0" .or. s_aops(@cOp7, cOp7), set_var(@nOp7, @cOp7), ;
 			show_it( g_aop_desc( nOp7 ), 10 )}
 
 	nTmp += 1
 	
 	@ m_x + nTmp, nTmp2 SAY "op. 8:" GET cOp8 ;
-		VALID {|| s_aops(@cOp8, cOp8), set_var(@nOp8, @cOp8), ;
+		VALID {|| ALLTRIM(cOp8) == "0" .or. s_aops(@cOp8, cOp8), set_var(@nOp8, @cOp8), ;
 			show_it( g_aop_desc( nOp8 ), 10 )}
 	
 	nTmp += 1
 
 	@ m_x + nTmp, nTmp2 SAY "op. 9:" GET cOp9 ;
-		VALID {|| s_aops(@cOp9, cOp9), set_var(@nOp9, @cOp9), ;
+		VALID {|| ALLTRIM(cOp9) == "0" .or. s_aops(@cOp9, cOp9), set_var(@nOp9, @cOp9), ;
 			show_it( g_aop_desc( nOp9 ), 10 )}
 	
 	nTmp += 1
 
 	@ m_x + nTmp, nTmp2 SAY "op.10:" GET cOp10 ;
-		VALID {|| s_aops(@cOp10, cOp10), set_var(@nOp10, @cOp10), ;
+		VALID {|| ALLTRIM(cOp10) == "0" .or. s_aops(@cOp10, cOp10), set_var(@nOp10, @cOp10), ;
 			show_it( g_aop_desc( nOp10 ), 10 )}
 	
 	nTmp += 1
 
 	@ m_x + nTmp, nTmp2 SAY "op.11:" GET cOp11 ;
-		VALID {|| s_aops(@cOp11, cOp11), set_var(@nOp11, @cOp11), ;
+		VALID {|| ALLTRIM(cOp11) == "0" .or. s_aops(@cOp11, cOp11), set_var(@nOp11, @cOp11), ;
 			show_it( g_aop_desc( nOp11 ), 10 )}
 	
 	nTmp += 1
 
 	@ m_x + nTmp, nTmp2 SAY "op.12:" GET cOp12 ;
-		VALID {|| s_aops(@cOp12, cOp12), set_var(@nOp12, @cOp12), ;
+		VALID {|| ALLTRIM( cOp12 ) == "0" .or. s_aops(@cOp12, cOp12), set_var(@nOp12, @cOp12), ;
 			show_it( g_aop_desc( nOp12 ), 10 )}
 
 	nX += 2
@@ -302,6 +310,12 @@ Box(, nBoxX, nBoxY)
  	
 	@ m_x + nX, m_y + 2 SAY "Kontrolisati lom (D/N)?" ;
 		GET cDmg VALID cDmg $ "DN" PICT "@!"
+
+	nX += 1
+ 	
+	@ m_x + nX, m_y + 2 SAY "Eksport izvjestaja (D/N)?" ;
+		GET cExport VALID cExport $ "DN" PICT "@!"
+
 
 	read
 BoxC()
@@ -500,13 +514,27 @@ do while !EOF()
 		// artikal razlozi na elemente
 		_art_set_descr( nArt_id, nil, nil, @aArt, .t. )
 
+        // ovaj artikal nema elemenata ?!????
+        if LEN( aArt ) == 0
+    		
+            // dodaj u greske
+            _scan := ASCAN( aErr, { |val| val[1] == "artikal " + ALLTRIM(STR( nArt_id )) } )
+            if _scan == 0
+			    AADD( aErr, { "artikal " + ALLTRIM(STR( nArt_id )), nDoc_no, nDoc_it_no } )
+            endif
+	        
+            select doc_it		
+			skip
+			loop
+	        
+        endif
+
 		// napuni elemente artikla
 		_g_art_elements( @aElem, nArt_id )
 	
-
 		// prodji kroz elemente artikla i obradi svaki
 		for nEl_cnt := 1 to LEN( aElem )
-			
+		
 			// element identifikator artikla 
 			nEl_no := aElem[ nEl_cnt, 1 ]
 
@@ -905,6 +933,9 @@ do while !EOF()
 enddo
 
 BoxC()
+
+select _tmp1
+use
 
 return aErr
 
@@ -1415,6 +1446,9 @@ enddo
 
 BoxC()
 
+select _tmp1
+use
+
 return aErr
 
 
@@ -1525,6 +1559,7 @@ __rpt_info()
 // header
 _rpt_head( @cLine )
 
+o_tmp1()
 select _tmp1
 set order to tag "1"
 go top

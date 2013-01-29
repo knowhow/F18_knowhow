@@ -22,9 +22,11 @@ local dD_to
 local nOper
 local cStatus
 local nVar := 0
+local _export
+local _rpt_file := my_home() + "r_export.dbf"
 
 // uslovi izvjestaja
-if std_vars( @dD_from, @dD_to, @nOper, @cStatus ) = 0
+if std_vars( @dD_from, @dD_to, @nOper, @cStatus, @_export ) = 0
 	return
 endif
 
@@ -35,8 +37,13 @@ endif
 // napravi report
 _cre_report( dD_from, dD_to, nOper, cStatus )
 
-// rpt
-_gen_rpt( dD_from, dD_to, nOper, nVar )
+if _export == "N"
+    // rpt
+    _gen_rpt( dD_from, dD_to, nOper, nVar )
+else
+    // lansiraj dbf...
+    f18_run( _rpt_file )
+endif
 
 return
 

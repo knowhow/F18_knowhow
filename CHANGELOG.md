@@ -3,6 +3,7 @@
   - rnal, export izvještaja u oo3
   - rnal, pregled izvještaja "efekat proizvodnje" - bugfix
   - fakt, kontrola atributa kod ažuriranja dokumenta
+  - prikaz tekućeg usera i baze na glavnom meniju
  
 1.4.107 2013-01-28, vsasa
 

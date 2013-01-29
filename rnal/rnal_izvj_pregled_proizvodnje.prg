@@ -58,6 +58,10 @@ local aError
 local _export
 local _rpt_file := my_home() + "_tmp1.dbf"
 
+#ifdef __PLATFORM__WINDOWS
+    _rpt_file := '"' + _rpt_file + '"'
+#endif
+
 o_sif_tables()
 
 // daj uslove izvjestaja

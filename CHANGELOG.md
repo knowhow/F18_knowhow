@@ -1,3 +1,9 @@
+1.4.108 2013-01-29, vsasa
+
+  - rnal, export izvještaja u oo3
+  - rnal, pregled izvještaja "efekat proizvodnje" - bugfix
+  - fakt, kontrola atributa kod ažuriranja dokumenta
+ 
 1.4.107 2013-01-28, vsasa
 
   - kalk, provjera duplih barkod-ova unutar šifranika artikala

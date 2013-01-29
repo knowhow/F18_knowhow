@@ -600,8 +600,6 @@ do while !EOF() .and. field->idfirma == _id_firma .and. ;
     _r_br := field->rbr
     _atrib := field->atribut
 
-    skip 1
-    
     // kljuc je redni broj + atribut
     if field->rbr == _r_br .and. field->atribut == _atrib
         delete

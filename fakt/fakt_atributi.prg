@@ -491,31 +491,36 @@ return _ok
 // - provjeri ima li duplih atributa 
 // -----------------------------------------------------
 function fakt_atributi_fix( dok_arr )
+local _dok_params
+local _i
 
-// pobrisi duple zapise
-fakt_atributi_brisi_duple( dok_arr )
+for _i := 1 to LEN( dok_arr )
+
+    _dok_params := hb_hash()
+    _dok_params["idfirma"] := dok_arr[ _i, 1 ]
+    _dok_params["idtipdok"] := dok_arr[ _i, 2 ]
+    _dok_params["brdok"] := dok_arr[ _i, 3 ]
+    
+    // pobrisi duple zapise
+    fakt_atributi_brisi_duple( _dok_params )
+
+next
+    
 // brisi visak atributa ako postoji
 fakt_atributi_brisi_visak( dok_arr )
 
 return
+
 
 // -----------------------------------------------------
 // brisi visak atributa ako postoji 
 // -----------------------------------------------------
 static function fakt_atributi_brisi_visak( dok_arr )
 local _id_firma, _tip_dok, _br_dok
-local _tmp
 local _t_area := SELECT()
 local _ok := .t.
-
-if LEN( dok_arr ) > 1
-    return _ok
-endif
-
-_id_firma := dok_arr[ 1, 1 ]
-_tip_dok := dok_arr[ 1, 2 ]
-_br_dok := dok_arr[ 1, 3 ]
-_tmp := _id_firma + _tip_dok + _br_dok
+local _deleted := .f.
+local _scan
 
 select ( F_FAKT_ATRIB )
 if !used()
@@ -531,14 +536,24 @@ do while !EOF()
     _t_rec := RECNO()
     skip -1
 
-    if field->idfirma + field->idtipdok + field->brdok <> _tmp
+    _scan := ASCAN( dok_arr, { |val| val[1] == field->idfirma .and. ;
+                                    val[2] == field->idtipdok .and. ;
+                                    val[3] == field->brdok } )
+
+    // ovaj zapis ne postoji u matrici dokumenata
+    // moze se brisati
+    if _scan == 0
         delete
-        __dbPack()
+        _deleted := .t.
     endif
 
     go ( _t_rec )
 
 enddo
+
+if _deleted
+    __dbPack()
+endif
 
 // zatvori atribute
 use
@@ -554,18 +569,16 @@ return _ok
 // -----------------------------------------------------
 // provjera ispravnosti atributa za dokument 
 // -----------------------------------------------------
-static function fakt_atributi_brisi_duple( dok_arr )
+static function fakt_atributi_brisi_duple( param )
 local _id_firma, _tip_dok, _br_dok
 local _t_area := SELECT()
 local _ok := .t.
+local _r_br, _atrib
+local _deleted := .f.
 
-if LEN( dok_arr ) > 1
-    return _ok
-endif
-
-_id_firma := dok_arr[ 1, 1 ]
-_tip_dok := dok_arr[ 1, 2 ]
-_br_dok := dok_arr[ 1, 3 ]
+_id_firma := param["idfirma"]
+_tip_dok := param["idtipdok"]
+_br_dok := param["brdok"]
 
 select ( F_FAKT_ATRIB )
 if !used()
@@ -574,6 +587,7 @@ endif
 
 set order to tag "1"
 go top
+seek _id_firma + _tip_dok + _br_dok
 
 do while !EOF() .and. field->idfirma == _id_firma .and. ;
         field->idtipdok == _tip_dok .and. ;
@@ -584,17 +598,23 @@ do while !EOF() .and. field->idfirma == _id_firma .and. ;
     skip -1
 
     _r_br := field->rbr
+    _atrib := field->atribut
 
     skip 1
     
-    if field->rbr == _r_br
+    // kljuc je redni broj + atribut
+    if field->rbr == _r_br .and. field->atribut == _atrib
         delete
-        __dbPack()
+        _deleted := .t.
     endif
 
     go ( _t_rec )
 
 enddo
+
+if _deleted
+    __dbPack()
+endif
 
 // zatvori atribute
 use

@@ -1,3 +1,7 @@
+1.4.111 2013-01-30, vsasa
+
+  - fakt, prikaz txt pregleda dokumenata u KM/EUR i sabiranje iznosa
+
 1.4.110 2013-01-30, vsasa
 
   - rnal, kontrola cjelovitosti artikala/elemenata - izvještaj

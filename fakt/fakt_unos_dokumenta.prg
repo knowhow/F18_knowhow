@@ -308,9 +308,6 @@ do case
     // stampanje dokumenta
     case Ch == K_CTRL_P
        
-        // prvo setuj broj dokumenta
-        fakt_set_broj_dokumenta()
-
         // printaj dokument
         fakt_print_dokument()
 
@@ -664,6 +661,19 @@ return
 // printanje dokumenta
 // ---------------------------------------------------
 static function fakt_print_dokument()
+local _a_fakt_doks
+        
+// prvo setuj broj dokumenta
+fakt_set_broj_dokumenta()
+
+_a_fakt_doks := fakt_dokumenti_u_pripremi()
+if LEN( _a_fakt_doks ) == 0
+    MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
+endif
+
+// fiksiranje tabele atributa
+fakt_atributi_fix( _a_fakt_doks )
+
 
 o_fakt_edit() 
 

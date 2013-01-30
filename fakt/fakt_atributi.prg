@@ -507,7 +507,7 @@ for _i := 1 to LEN( dok_arr )
 next
     
 // brisi visak atributa ako postoji
-fakt_atributi_brisi_visak( dok_arr )
+fakt_atributi_brisi_visak()
 
 return
 
@@ -515,12 +515,14 @@ return
 // -----------------------------------------------------
 // brisi visak atributa ako postoji 
 // -----------------------------------------------------
-static function fakt_atributi_brisi_visak( dok_arr )
+static function fakt_atributi_brisi_visak()
 local _id_firma, _tip_dok, _br_dok
 local _t_area := SELECT()
 local _ok := .t.
 local _deleted := .f.
-local _scan
+
+select fakt_pripr
+set order to tag "1"
 
 select ( F_FAKT_ATRIB )
 if !used()
@@ -536,13 +538,12 @@ do while !EOF()
     _t_rec := RECNO()
     skip -1
 
-    _scan := ASCAN( dok_arr, { |val| val[1] == field->idfirma .and. ;
-                                    val[2] == field->idtipdok .and. ;
-                                    val[3] == field->brdok } )
 
-    // ovaj zapis ne postoji u matrici dokumenata
-    // moze se brisati
-    if _scan == 0
+    select fakt_pripr
+    seek fakt_atrib->idfirma + fakt_atrib->idtipdok + fakt_atrib->brdok + fakt_atrib->rbr
+    select fakt_atrib
+    
+    if !(fakt_pripr->(FOUND()))
         delete
         _deleted := .t.
     endif
@@ -570,10 +571,10 @@ return _ok
 // provjera ispravnosti atributa za dokument 
 // -----------------------------------------------------
 static function fakt_atributi_brisi_duple( param )
-local _id_firma, _tip_dok, _br_dok
+local _id_firma, _tip_dok, _br_dok, _b1
 local _t_area := SELECT()
 local _ok := .t.
-local _r_br, _atrib
+local _r_br, _atrib, _r_br_2, _atrib_2, _eof := .f.
 local _deleted := .f.
 
 _id_firma := param["idfirma"]
@@ -589,27 +590,40 @@ set order to tag "1"
 go top
 seek _id_firma + _tip_dok + _br_dok
 
-do while !EOF() .and. field->idfirma == _id_firma .and. ;
-        field->idtipdok == _tip_dok .and. ;
-        field->brdok == _br_dok
-    
-    skip 1
-    _t_rec := RECNO()
-    skip -1
 
+_b1 := {|| field->idfirma == _id_firma .and. field->idtipdok == _tip_dok .and. field->brdok == _br_dok }
+
+do while !eof() .and. EVAL(_b1)
+
+    // prvi zapis
     _r_br := field->rbr
     _atrib := field->atribut
-    
-    skip 1
 
+
+    // sljedeci zapis  
+    skip 1
+    _t_rec := RECNO()
+    _r_br_2 := field->rbr
+    _atrib_2 := field->atribut
+
+    if EOF()
+       _eof := .t.
+    else
+       _eof := .f.
+    endif
+
+    
     // kljuc je redni broj + atribut
-    if field->rbr == _r_br .and. field->atribut == _atrib
+    if !_eof .and. EVAL(_b1) .and. (_r_br_2 == _r_br) .and. (_atrib_2 == _atrib)
         delete
         _deleted := .t.
     endif
 
-    go ( _t_rec )
-
+    if _eof
+        exit
+    endif
+    
+    go _t_rec
 enddo
 
 if _deleted

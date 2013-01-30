@@ -1,3 +1,7 @@
+1.4.108 2013-01-30, hernad
+
+  - fakt_atributi - create_index(UNIQUE), brisanje svih sirocica
+
 1.4.107 2013-01-28, vsasa
 
   - kalk, provjera duplih barkod-ova unutar šifranika artikala

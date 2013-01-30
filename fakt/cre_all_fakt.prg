@@ -209,7 +209,8 @@ if !FILE( f18_ime_dbf( _alias) )
     _created := .t.
 endif
 
-CREATE_INDEX("1", "IdFirma + idtipdok + brdok + rbr + atribut", _alias )
+// unique index
+CREATE_INDEX("1", {"idfirma+idtipdok+brdok+rbr+atribut", ".t.", .t.}, _alias )
 
 return .t.
 

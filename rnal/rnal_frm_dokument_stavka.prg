@@ -192,7 +192,8 @@ nX += 2
         VALID {|| _old_x := m_x, _old_y := m_y, ;
                     s_articles( @_art_id, .f., .t. ), ;
                     m_x := _old_x, _old_y := m_y, ;
-                    show_it( g_art_desc( _art_id, nil, .f. ) + ".." , 35 ) } ;
+                    show_it( g_art_desc( _art_id, nil, .f. ) + ".." , 35 ), ;
+                    check_article_valid( @_art_id ) } ;
         WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik i pretrazi" )
 
 nX += 1

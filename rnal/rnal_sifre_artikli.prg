@@ -1880,6 +1880,29 @@ return
 
 
 // ---------------------------------------------------
+// provjerava ispravnost artikla
+// ---------------------------------------------------
+function check_article_valid( art_id )
+local _t_area := SELECT()
+local _valid := .t.
+local _elem := {}
+
+// razlozi artikal na elemente
+_art_set_descr( art_id, nil, nil, @_elem, .t. )
+    
+if LEN( _elem ) == 0
+    MsgBeep( "Artikal nema pripadajuce elemente !!!" )
+    _valid := .f.
+endif
+
+select ( _t_area )
+
+return _valid
+
+
+
+
+// ---------------------------------------------------
 // prikaz artikala bez elemenata...
 // ---------------------------------------------------
 function rpt_artikli_bez_elemenata()

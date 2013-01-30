@@ -602,7 +602,6 @@ do while !eof() .and. EVAL(_b1)
 
     // sljedeci zapis  
     skip 1
-<<<<<<< HEAD
     _t_rec := RECNO()
     _r_br_2 := field->rbr
     _atrib_2 := field->atribut
@@ -613,11 +612,6 @@ do while !eof() .and. EVAL(_b1)
        _eof := .f.
     endif
 
-    
-=======
-        
->>>>>>> 02735a879731da838fa5af5e7f3627ab4dd27cd2
-    // kljuc je redni broj + atribut
     if !_eof .and. EVAL(_b1) .and. (_r_br_2 == _r_br) .and. (_atrib_2 == _atrib)
         delete
         _deleted := .t.
@@ -640,6 +634,4 @@ use
 select ( _t_area )
 
 return _ok
-
-
 

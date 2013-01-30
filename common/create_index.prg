@@ -37,6 +37,7 @@ local _wa
 local _dbf
 local _tag
 local cKljuc
+local _unique := .f.
 
 private cTag
 private cKljuciz
@@ -52,6 +53,9 @@ if VALTYPE(xKljuc) == "C"
 else
    cKljuc := xKljuc[1]
    cFilter := xKljuc[2]
+   if LEN(xKljuc) == 3
+      _unique := xKljuc[3]
+   endif   
 endif
 
 close all
@@ -179,7 +183,11 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder==0 .or. ALLTRIM(UPPER( cOrdKey )) <> ALLTRI
               INDEX ON deleted() TAG "DEL" TO (cImeCdx) FOR deleted()
         else
             if cFilter != NIL
-     	      INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter
+              if _unique
+     	         INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter UNIQUE
+              else
+     	         INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter
+              endif
      	    else
               INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx)
             endif 

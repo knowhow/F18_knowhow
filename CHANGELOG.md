@@ -1,3 +1,8 @@
+1.4.109 2013-01-30, hernad
+
+  - fakt_atributi - create_index(UNIQUE), brisanje svih sirocica
+  - linux odt stampa linux/xdg-open trazi "&" i __run_system
+
 1.4.108 2013-01-29, vsasa
 
   - rnal, export izvještaja u oo3
@@ -5,6 +10,7 @@
   - fakt, kontrola atributa kod ažuriranja dokumenta
   - prikaz tekućeg usera i baze na glavnom meniju
  
+>>>>>>> 02735a879731da838fa5af5e7f3627ab4dd27cd2
 1.4.107 2013-01-28, vsasa
 
   - kalk, provjera duplih barkod-ova unutar šifranika artikala

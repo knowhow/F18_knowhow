@@ -108,9 +108,8 @@ CLEAR SCREEN
 
 ? "Generisanje ODT reporta u toku ...  fajl: ..." + RIGHT( __current_odt, 20 )
 
-// pokreni generisanje reporta
-_error := f18_run( _cmd )
-
+// pokreni generisanje reporta, async = .f.
+_error := f18_run(_cmd, NIL, NIL, .f.)
 RESTORE SCREEN FROM _screen
 
 if _error <> 0
@@ -278,25 +277,6 @@ endif
 #endif
 
 // slozi mi komadnu za startanje...
-
-/*
-_cmd := ""
-#ifdef __PLATFORM__UNIX
-
-    // platforme osx, linux
-	#ifdef __PLATFORM__DARWIN
-    	_cmd += "open " + __output_odt
-	#else
-		_cmd += "xdg-open " + __output_odt
-	#endif
-
-#else __PLATFORM__WINDOWS
-
-    _cmd += "c:\knowhowERP\util\start.exe /m "  + __output_odt 
-
-#endif
-*/
-
 _cmd := __output_odt
 
 SAVE SCREEN TO _screen
@@ -308,7 +288,7 @@ CLEAR SCREEN
 log_write( _cmd, 7 )
 
 #ifndef TEST
-	_error := f18_run(_cmd, .f., .t.)
+	_error := f18_run(_cmd, NIL, NIL, .t.)
 #endif
 
 RESTORE SCREEN FROM _screen

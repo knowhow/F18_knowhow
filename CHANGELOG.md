@@ -2,6 +2,7 @@
 
   - rnal, kontrola cjelovitosti artikala/elemenata - izvještaj
   - rnal, unos artikla - bugfix
+  - rnal, unos naloga, da li je artikal ispravan !!! provjera
 
 1.4.109 2013-01-30, hernad
 

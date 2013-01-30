@@ -15,12 +15,16 @@
 
 // ---------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------
-function stampa_liste_dokumenata(dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id, cImeKup, lOpcine, aUslOpc)
+function stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id, cImeKup, lOpcine, aUslOpc, valute ) 
 local m, cDinDnem, cRezerv, nC, nIznos, nRab, nIznosD, nIznos3, nRabD, nRab3, nOsn_tot, nPDV_tot, nUkPDV_tot
 local gnLMarg := 0
 local nCol1 := 0
 local _params := fakt_params()
 local lVrstep := _params["fakt_vrste_placanja"]
+
+if valute == NIL
+    valute := SPACE(3)
+endif
 
 SELECT F_FAKT_DOKS
 if !USED()
@@ -40,9 +44,14 @@ P_COND
 
 IspisFirme(cIdfirma)
 
-if !empty(qqTipDok)
+if !EMPTY(qqTipDok)
     ?? SPACE(2), "za tipove dokumenta:", trim(qqTipDok)
 endif
+
+if !EMPTY( valute )
+    ?? SPACE(2), "za valute:", valute
+endif
+
 if _params["fakt_objekti"] .and. !Empty(objekat_id)
     ?? SPACE(2), "uslov po objektu: ", TRIM(objekat_id)
     ? fakt_objekat_naz(objekat_id)
@@ -89,56 +98,64 @@ endif
 ?? m
 
 nC       := 0
+// domaca valuta
 nIznos   := 0
 nRab     := 0
+// strana valuta
 nIznosD  := 0
 nRabD    := 0
+// ukupno domaca i strana
 nIznos3  := 0
 nRab3    := 0
+// domaca valuta
 nOsn_tot := 0
 nPdv_tot := 0
 nUkPDV_tot := 0
+// strana valuta
+nOsn_tot_s := 0
+nPdv_tot_s := 0
+nUkPDV_tot_s := 0
 
 cRezerv := " "
 
-cImeKup:=trim(cimekup)
+cImeKup := TRIM( cImeKup )
 
-do while !eof() .and. if( !EMPTY( cIdFirma ), IdFirma == cIdFirma, .t. )
+do while !EOF() .and. if( !EMPTY( cIdFirma ), IdFirma == cIdFirma, .t. )
 
-  cDinDem := fakt_doks->dindem
+    cDinDem := fakt_doks->dindem
 
-  if !empty( ALLTRIM( cImekup ) ) 
-     if !( field->partner = ALLTRIM( cImeKup ) )
-        skip 
-        loop
-     endif
-  endif
+    if !empty( ALLTRIM( cImekup ) ) 
+        if !( field->partner = ALLTRIM( cImeKup ) )
+            skip 
+            loop
+        endif
+    endif
 
-  if lOpcine
-      SELECT PARTN
+    if lOpcine
+        SELECT PARTN
         HSEEK fakt_doks->idpartner
         select fakt_doks
         if !(PARTN->(&aUslOpc))
             skip
             loop
         endif
-  endif
+    endif
 
-  select fakt_doks
+    select fakt_doks
 
-  ? space(gnLMarg)
+    ? space(gnLMarg)
 
-  ?? Str(++nC, 4) + ".", datdok, idfirma, idtipdok, brdok + Rezerv + " "
+    ?? Str(++nC, 4) + ".", datdok, idfirma, idtipdok, brdok + Rezerv + " "
 
-  IF m1 <> "Z"
-     ?? PADR( fakt_doks->partner, PARTNER_LEN )
-  ELSE
-     ?? PADC ("<<dokument u pripremi>>", PARTNER_LEN)
-  ENDIF
+    IF m1 <> "Z"
+        ?? PADR( fakt_doks->partner, PARTNER_LEN )
+    ELSE
+        ?? PADC ("<<dokument u pripremi>>", PARTNER_LEN)
+    ENDIF
 
-  nCol1 := pcol()+1
+    nCol1 := pcol()+1
 
-  if cDinDem == LEFT(ValBazna(), 3)
+    if cDinDem == LEFT(ValBazna(), 3)
 
         @ prow(), pcol()+1 SAY str(iznos + rabat, 12, 2)
         @ prow(), pcol()+1 SAY str(Rabat, 12, 2)
@@ -151,52 +168,64 @@ do while !eof() .and. if( !EMPTY( cIdFirma ), IdFirma == cIdFirma, .t. )
         
         nIznos     += ROUND(fakt_doks->iznos, gFZaok)
         nRab       += fakt_doks->rabat
+        
+        // iznos obje valute... u KM
         nIznos3    += ROUND(fakt_doks->iznos,  gFZaok)
         nRab3      += fakt_doks->rabat
+        
         nOsn_tot   += nOsn_izn
         nPdv_tot   += nPdv_izn
         nUkPDV_tot += nUkPDV_izn
 
-  else
+    else
 
-        @ prow(),pcol()+1 SAY str(iznos + rabat,12,2)
-        @ prow(),pcol()+1 SAY str(Rabat, 12, 2)
-        @ prow(),pcol()+1 SAY str(ROUND(iznos,gFZaok),12,2)
+        @ prow(),pcol()+1 SAY STR( ( fakt_doks->iznos / UBaznuValutu( fakt_doks->datdok ) ) + ;
+                                fakt_doks->rabat, 12, 2 )
+        @ prow(),pcol()+1 SAY STR( fakt_doks->rabat, 12, 2 )
+        @ prow(),pcol()+1 SAY STR( ROUND( fakt_doks->iznos / UBaznuValutu( fakt_doks->datdok), gFZaok ), 12, 2 )
         
         // osnovica i pdv na prikazu
-        @ prow(),pcol()+1 SAY STR( nOsn_izn := ROUND(_osnovica( idtipdok, idpartner, iznos ),gFZaok),  12, 2)
-        @ prow(),pcol()+1 SAY STR( nPDV_izn := ROUND(_pdv( idtipdok, idpartner, iznos ),gFZaok),  12, 2)
-        @ prow(),pcol()+1 SAY STR( nUkPdv_izn := ROUND(_uk_sa_pdv( idtipdok, idpartner, iznos ), gFZaok), 12, 2 )
+        @ prow(),pcol()+1 SAY STR( nOsn_izn := ROUND( _osnovica( idtipdok, idpartner, iznos / UBaznuValutu( datdok ) ),gFZaok),  12, 2)
+        @ prow(),pcol()+1 SAY STR( nPDV_izn := ROUND( _pdv( idtipdok, idpartner, iznos / UBaznuValutu( datdok ) ),gFZaok),  12, 2)
+        @ prow(),pcol()+1 SAY STR( nUkPdv_izn := ROUND( _uk_sa_pdv( idtipdok, idpartner, iznos / UBaznuValutu( datdok ) ), gFZaok), 12, 2 )
 
-        nIznosD   += ROUND(iznos,gFZaok)
-        nRabD     += rabat
-        nIznos3   += ROUND(iznos*UBaznuValutu(datdok),gFZaok)
-        nRab3     += rabat * UBaznuValutu(datdok)
-        nOsn_tot  += nOsn_izn * UBaznuValutu(datdok)
-        nPdv_tot  += nPdv_izn * UBaznuValutu(datdok)
-        nUkPdv_tot+= nUkPdv_izn * UBaznuValutu(datdok)
+        nIznosD   += ROUND( fakt_doks->iznos / UBaznuValutu( datdok ), gFZaok )
+        nRabD     += fakt_doks->rabat
+  
+        // total obje valute... ovu preracunaj u KM
+        nIznos3   += ROUND( fakt_doks->iznos, gFZaok ) 
+        nRab3     += fakt_doks->rabat
+        
+        nOsn_tot_s  += nOsn_izn
+        nPdv_tot_s  += nPdv_izn
+        nUkPdv_tot_s += nUkPdv_izn
 
-  endif
+    endif
 
-  @ prow(), pcol() + 1 SAY cDinDEM
+    @ prow(), pcol() + 1 SAY cDinDEM
 
-  if fieldpos("SIFRA")<>0
-      @ prow(),pcol()+1 SAY iif(empty(sifra), space(2), left(CryptSC(sifra),2))
-  endif
+    if fieldpos("SIFRA") <> 0
+        @ prow(),pcol()+1 SAY iif(empty(sifra), space(2), left(CryptSC(sifra),2))
+    endif
 
-  if lVrsteP
-      @ prow(),pcol()+1 SAY idvrstep + "-" + LEFT(VRSTEP->naz,4)
-  endif
+    if lVrsteP
+        @ prow(),pcol()+1 SAY idvrstep + "-" + LEFT(VRSTEP->naz,4)
+    endif
 
-  if fieldpos("DATPL") <> 0
-    @ prow(), pcol() + 1 SAY datpl
-  endif
-  skip
+    if fieldpos("DATPL") <> 0
+        @ prow(), pcol() + 1 SAY datpl
+    endif
+
+    skip
 
 enddo
 
-? space(gnLMarg);?? m
-? space(gnLMarg);?? "UKUPNO "+ValBazna()+":"
+? space(gnLMarg)
+?? m
+? space(gnLMarg)
+
+// domaca valuta
+?? "UKUPNO " + ValBazna() + ":"
 @ prow(),nCol1    SAY  STR(nIznos+nRab,12,2)
 @ prow(),pcol()+1 SAY  STR(nRab,12,2)
 @ prow(),pcol()+1 SAY  STR(nIznos,12,2)
@@ -204,21 +233,36 @@ enddo
 @ prow(),pcol()+1 SAY  STR(nPDV_tot,12,2)
 @ prow(),pcol()+1 SAY  STR(nUkPDV_tot,12,2)
 @ prow(),pcol()+1 SAY  LEFT(ValBazna(),3)
-? space(gnLMarg);?? m
-? space(gnLMarg);?? "UKUPNO "+ValSekund()+":"
+
+? space(gnLMarg)
+?? m
+? space(gnLMarg)
+
+// strana valuta
+?? "UKUPNO " + ValSekund() + ":"
 @ prow(),nCol1    SAY  STR(nIznosD+nRabD,12,2)
 @ prow(),pcol()+1 SAY  STR(nRabD,12,2)
 @ prow(),pcol()+1 SAY  STR(nIznosD,12,2)
+@ prow(),pcol()+1 SAY  STR(nOsn_tot_s,12,2)
+@ prow(),pcol()+1 SAY  STR(nPDV_tot_s,12,2)
+@ prow(),pcol()+1 SAY  STR(nUkPDV_tot_s,12,2)
 @ prow(),pcol()+1 SAY  LEFT(ValSekund(),3)
 
-? space(gnLMarg);?? m
-? space(gnLMarg);?? m
-? space(gnLMarg);?? "UKUPNO "+valbazna()+"+"+valsekund()+":"
-@ prow(),nCol1    SAY  STR(nIznos3+nRab3,12,2)
-@ prow(),pcol()+1 SAY  STR(nRab3,12,2)
-@ prow(),pcol()+1 SAY  STR(nIznos3,12,2)
-@ prow(),pcol()+1 SAY  LEFT(VAlBazna(),3)
-? space(gnLMarg);?? m
+? space(gnLMarg)
+?? m
+? space(gnLMarg)
+?? m
+? space(gnLMarg)
+
+// zbirno...
+?? "UKUPNO " + ALLTRIM( valbazna() ) + " + " + ALLTRIM( valsekund() ) + ":"
+@ prow(),nCol1    SAY  STR( nIznos3 + nRab3, 12, 2 )
+@ prow(),pcol()+1 SAY  STR( nRab3, 12, 2 )
+@ prow(),pcol()+1 SAY  STR( nIznos3,12, 2 )
+@ prow(),pcol()+1 SAY  LEFT( VAlBazna(), 3 )
+
+? space(gnLMarg)
+?? m
 
 FF
 END PRINT

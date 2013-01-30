@@ -27,6 +27,7 @@ local _vrste_pl := _params["fakt_vrste_placanja"]
 local _objekti := _params["fakt_objekti"]
 local _vezni_dokumenti := _params["fakt_dok_veze"]
 local lOpcine := .t.
+local valute := SPACE(3)
 private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 private cFilter := ".t."
 
@@ -61,7 +62,7 @@ if _objekti
     _objekat_id := SPACE(10)
 endif
 
-Box( , 12 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
+Box( , 13 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
 
     cIdFirma := fetch_metric("fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
     qqTipDok := fetch_metric("fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
@@ -113,6 +114,8 @@ Box( , 12 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
     if _objekti
         @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  get _objekat_id valid EMPTY(_objekat_id) .or. P_fakt_objekti(@_objekat_id)
     endif
+        
+    @ m_x + 19, m_y + 2 SAY "Valute ( /KM/EUR)"  GET valute 
  
     read
 
@@ -187,6 +190,10 @@ if !EMPTY( qqPartn )
     cFilter += ".and." + aUslSK
 endif
 
+if !EMPTY( valute )
+    cFilter += ".and. dindem = " + _filter_quote( valute )
+endif
+
 if cFilter == ".t. .and."
     cFilter := SUBSTR( cFilter, 9 ) 
 endif
@@ -209,7 +216,7 @@ if cTabela == "D"
     fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
 else
     gaZagFix := { 3, 3 }
-    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, aUslOpc)
+    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, aUslOpc, valute )
 endif
 
 close all

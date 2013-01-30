@@ -22,7 +22,7 @@ local dD_From := CTOD("")
 local dD_to := DATE()
 local nOper := 0
 
-//o_sif_tables()
+//rnal_o_sif_tables()
 
 // daj uslove izvjestaja
 if _g_vars( @dD_From, @dD_To, @nOper ) == 0

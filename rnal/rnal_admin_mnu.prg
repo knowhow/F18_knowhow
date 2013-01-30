@@ -43,7 +43,7 @@ if !SigmaSif("ARTGEN")
 	return
 endif
 
-o_sif_tables()
+rnal_o_sif_tables()
 
 // obradi sifrarnik...
 nCnt := auto_gen_art()

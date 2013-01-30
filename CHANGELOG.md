@@ -1,3 +1,8 @@
+1.4.110 2013-01-30, vsasa
+
+  - rnal, kontrola cjelovitosti artikala/elemenata - izvještaj
+  - rnal, unos artikla - bugfix
+
 1.4.109 2013-01-30, hernad
 
   - fakt_atributi - create_index(UNIQUE), brisanje svih sirocica

@@ -20,12 +20,14 @@ local _opc:={}
 local _opcexe:={}
 local _izbor := 1
 
-AADD(_Opc, "1. ugovori                                    ")
-AADD(_opcexe, {|| P_Ugov() })
-AADD(_Opc, "2. parametri ugovora")
-AADD(_opcexe, {|| DFTParUg(.f.) })
-AADD(_Opc, "3. grupna zamjena cijene artikla u ugovoru")
-AADD(_opcexe, {|| ug_ch_price() })
+AADD( _opc, "1. ugovori                                    ")
+AADD( _opcexe, {|| P_Ugov() })
+AADD( _opc, "2. stampa naljepnica iz ugovora ")
+AADD( _opcexe, {|| kreiraj_adrese_iz_ugovora() })
+AADD( _opc, "3. parametri ugovora")
+AADD( _opcexe, {|| DFTParUg(.f.) })
+AADD( _opc, "4. grupna zamjena cijene artikla u ugovoru")
+AADD( _opcexe, {|| ug_ch_price() })
 
 f18_menu( "mugo", .f., _izbor, _opc, _opcexe )
 

@@ -1,5 +1,6 @@
-1.5.10 2013-01-31, hernad
+1.5.11 2013-01-31, hernad
 
+   - odt linux stampa
    - patchirani harbour 
 
 1.5.7 2013-01-29, hernad
@@ -9,6 +10,14 @@
 1.5.6 2013-01-29, hernad
 
    - stampa azuriranih dokumenata
+
+1.4.114 2013-01-31, hernad
+
+  - ludara sa f18_run uvodim f18_open_document
+
+1.4.113 2013-01-31, hernad
+  
+  - build with patchirani harbour (bold fontovi)
 
 1.4.112 2013-01-31, hernad
 

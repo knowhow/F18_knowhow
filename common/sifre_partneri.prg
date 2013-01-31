@@ -513,3 +513,50 @@ endif
 return .t.
 
 
+
+
+// ----------------------------
+// ----------------------------
+function set_sifk_id_broj()
+local lFound
+local cSeek
+local cNaz
+local cId
+
+SELECT (F_SIFK)
+if !used()
+	O_SIFK
+endif
+
+SET ORDER TO TAG "ID"
+// id + SORT + naz
+
+cId := PADR( "PARTN", SIFK_LEN_DBF )  
+cNaz := PADR( "ID broj", LEN(field->naz) )
+cSeek :=  cId + "01" + cNaz
+
+SEEK cSeek   
+
+if !FOUND()
+    
+    APPEND BLANK
+    
+    _rec := dbf_get_rec()
+    _rec["id"] := cId
+    _rec["naz"] := cNaz
+    _rec["oznaka"] := "REGB"
+    _rec["sort"] := "01"
+    _rec["tip"] := "C"
+    _rec["duzina"] := 13
+    _rec["veza"] := "1"
+
+    if !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL" )  
+        delete_with_rlock()
+    endif
+
+endif
+
+return .t.
+
+
+

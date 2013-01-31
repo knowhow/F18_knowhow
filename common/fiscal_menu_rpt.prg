@@ -113,17 +113,17 @@ do case
     
     	if __device_params["type"] == "P"
 
-    		AADD(opc,"10. brisanje artikala iz uredjaja (cmd 107)")
+    		AADD(opc,"A. brisanje artikala iz uredjaja (cmd 107)")
     		AADD(opcexe, {|| fprint_delete_plu( __device_params, .f. ) })
     	endif
 
-    	AADD(opc,"11. reset PLU ")
+    	AADD(opc,"B. reset PLU ")
     	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
 
-    	AADD(opc,"12. non-fiscal racun - test")
+    	AADD(opc,"C. non-fiscal racun - test")
    	 	AADD(opcexe,{|| fprint_nf_txt( __device_params, "ČčĆćŽžĐđŠš") })
 
-    	AADD(opc,"13. test email")
+    	AADD(opc,"D. test email")
     	AADD(opcexe,{|| f18_email_test() })
 
     endif
@@ -159,7 +159,7 @@ do case
     
     	AADD(opc,"8. izbaci stanje racuna    ")
     	AADD(opcexe,{|| hcp_fisc_no( __device_params ) })
-    	AADD(opc,"11. reset PLU ")
+    	AADD(opc,"B. reset PLU ")
     	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
    
    	endif
@@ -240,10 +240,10 @@ do case
 
     	AADD(opc,"8. inicijalizacija ")
     	AADD(opcexe,{|| tring_init( __device_params, "1", "" ) })
-    	AADD(opc,"10. reset zahtjeva na PU serveru ")
+    	AADD(opc,"A. reset zahtjeva na PU serveru ")
     	AADD(opcexe,{|| tring_reset( __device_params ) })
      
-    	AADD(opc,"11. reset PLU ")
+    	AADD(opc,"B. reset PLU ")
     	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
 
 	endif

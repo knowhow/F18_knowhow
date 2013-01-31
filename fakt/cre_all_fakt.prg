@@ -153,7 +153,9 @@ _table_name := "fakt_pripr_atributi"
 
 IF_NOT_FILE_DBF_CREATE
 
-CREATE_INDEX("1", "idfirma + idtipdok + brdok + rbr + atribut", _alias )
+// unique index
+CREATE_INDEX("1", {"idfirma+idtipdok+brdok+rbr+atribut", ".t.", .t.}, _alias )
+
 
 // -------------------------------------------
 

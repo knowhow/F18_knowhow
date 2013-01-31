@@ -38,13 +38,29 @@ local menuop := {}
 local menuexec := {}
 local mnu_choice
 local mnu_left := 2
-local mnu_top := 2
+local mnu_top := 5
 local mnu_bottom := 23
 local mnu_right := 65
+local _x := 1
+local _db_params
 
 do while .t.
 
 	clear screen
+
+    _db_params := my_server_params()
+
+    _x := 1
+
+    @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] )
+    
+    ++ _x
+
+    @ _x, mnu_left + 1 SAY "   Korisnik: " + ALLTRIM( _db_params["user"] )
+
+    ++ _x
+
+    @ _x, mnu_left + 1 SAY REPLICATE( "-", 50 )
 
 	// resetuj...
 	menuop := {}

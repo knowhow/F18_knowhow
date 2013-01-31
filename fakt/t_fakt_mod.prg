@@ -63,6 +63,9 @@ fakt_set_params()
 // setuj sifrarnik sifk
 set_sifk_partn_bank()
 
+// setuj sifrarnik idbroj itd...
+//set_sifk_id_broj()
+
 @ 1,2 SAY padc( gTS + ": "+ gNFirma, 50, "*" )
 
 ::mMenuStandard()

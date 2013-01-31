@@ -6,9 +6,29 @@
 
    - stampa azuriranih dokumenata
 
-1.4.106 2013-01-25, vsasa
+1.4.109 2013-01-30, hernad
+
+  - fakt_atributi - create_index(UNIQUE), brisanje svih sirocica
+  - linux odt stampa linux/xdg-open trazi "&" i __run_system
+
+1.4.108 2013-01-29, vsasa
+
+  - rnal, export izvještaja u oo3
+  - rnal, pregled izvještaja "efekat proizvodnje" - bugfix
+  - fakt, kontrola atributa kod ažuriranja dokumenta
+  - prikaz tekućeg usera i baze na glavnom meniju
+ 
+1.4.107 2013-01-28, vsasa
+
+  - kalk, provjera duplih barkod-ova unutar šifranika artikala
+  - os, generacija podataka za novu sezonu
+  - kalk, kontiranje naloga ručno, bez generisanja broja naloga
+ 
+1.4.106 2013-01-25, vsasa, hernad
 
   - fin/kalk/fakt - udaljene lokacije razmjena podataka - korekcije
+  - fakt - evidentiranje uplata
+  - direktna štampa na lpt
  
 1.4.105 2013-01-24, vsasa
 

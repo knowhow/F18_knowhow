@@ -362,7 +362,17 @@ if _ret <> 0
    #endif
 #endif
 
+#ifdef __PLATFORM__LINUX
+   if async
+       _ret := __run_system(_prefix + cmd + "&")
+   else
+       _ret := hb_processRun(_prefix + cmd, NIL, NIL, NIL, async) 
+   endif 
+#else
    _ret := hb_processRun(_prefix + cmd, NIL, NIL, NIL, async) 
+#endif
+
+
 #ifdef __PLATFORM__WINDOWS
    // copy komanda trazi system run a ne hbprocess run 
    if _ret <> 0

@@ -628,3 +628,89 @@ _line += REPLICATE( "-", 15 )
 return _line
 
 
+
+
+
+// --------------------------------------------------
+// prikaz izvjestaja duplih barkodova
+// --------------------------------------------------
+function rpt_dupli_barkod()
+local _data
+
+MsgO( "Formiram sql upit ..." )
+_data := __dupli_bk_sql()
+MsgC()
+
+__dupli_bk_rpt( _data )
+
+return
+
+
+// -----------------------------------------------
+// sql upit
+// -----------------------------------------------
+static function __dupli_bk_sql()
+local _qry, _table
+local _server := pg_server()
+
+_qry := "SELECT id, naz, barkod " + ;
+        "FROM fmk.roba r1 " + ;
+        "WHERE barkod <> '' AND barkod IN ( " + ;
+            "SELECT barkod " + ;
+            "FROM fmk.roba r2 " + ;
+            "GROUP BY barkod " + ;
+            "HAVING COUNT(*) > 1 " + ;
+        ") " + ;
+        "ORDER BY barkod"
+
+_table := _sql_query( _server, _qry )
+
+if _table == NIL
+    return NIL
+endif
+
+_table:Refresh()
+
+return _table
+
+
+
+// -----------------------------------------------
+// prikaz duplih barkodova iz sifrarnika
+// -----------------------------------------------
+static function __dupli_bk_rpt( data )
+local _i
+
+if VALTYPE( data ) == "L" .or. LEN( data ) == 0
+    MsgBeep( "Nema podataka za prikaz !!!" )
+    return
+endif
+
+START PRINT CRET
+
+?
+
+? "Dupli barkodovi unutar sifrarnika artikala:"
+? "----------------------------------------------------------------------------------"
+? "ID             NAZIV                                    BARKOD"
+? "----------------------------------------------------------------------------------"
+
+do while !data:EOF()
+
+    _row := data:GetRow()
+
+    ? _row:FieldGet( _row:FieldPos("id") ), ;
+        PADR( hb_utf8tostr( _row:FieldGet( _row:FieldPos("naz") ) ), 40 ), ;
+        _row:FieldGet( _row:FieldPos("barkod") )
+
+    data:Skip()
+
+enddo
+
+FF
+END PRINT
+
+return
+
+
+

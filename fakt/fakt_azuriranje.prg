@@ -46,7 +46,7 @@ O_FAKT_PRIPR
 go top
 
 // ubaci mi matricu sve dokumente iz pripreme
-_a_fakt_doks := _fakt_dokumenti()
+_a_fakt_doks := fakt_dokumenti_u_pripremi()
 
 if LEN( _a_fakt_doks ) == 0
     MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
@@ -63,6 +63,9 @@ if LEN( _a_fakt_doks ) == 1
         return _a_fakt_doks
     endif
 endif
+
+// fiksiranje tabele atributa
+fakt_atributi_fix( _a_fakt_doks )
 
 _ok := .t.
 
@@ -612,8 +615,10 @@ endif
 
 return lProtu
 
+// -----------------------------------
 // vise dokumenata u pripremi
-static function _fakt_dokumenti()
+// ----------------------------------
+function fakt_dokumenti_u_pripremi()
 local _fakt_doks := {}
 local _id_firma
 local _id_tip_dok

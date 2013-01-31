@@ -125,6 +125,8 @@ local _rec, _r_br
 local _sr_id 
 local _table
 local _table_promj
+local _data := {}
+local _i, _count, _count_otpis
 
 // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
 // otpisana sredstva u protekloj godini
@@ -141,12 +143,8 @@ if !sigmaSif("OSGEN")
     return
 endif
 
-START PRINT CRET
-
 o_os_sii()
 o_os_sii_promj()
-
-? "Prolazim kroz bazu OS...."
 
 select_os_sii()
 go top
@@ -154,44 +152,45 @@ go top
 _table := get_os_table_name( ALIAS() )
 _table_promj := get_promj_table_name( ALIAS() )
 
-f18_lock_tables({_table, _table_promj})
+if !f18_lock_tables({_table, _table_promj})
+    MsgBeep( "Problem sa lokovanjem OS tabela !!!" )
+    return 
+endif
 
 sql_table_update( nil, "BEGIN" )        
 
 do while !eof()
 
     _sr_id := field->id
-
     _r_br := 0
+    
     skip
-
     _t_rec := recno()
     skip -1
 
+    // uzmi zapis...
     _rec := dbf_get_rec()    
 
-    // ispisi id, naz
-    ? _rec["id"], _rec["naz"]
-    
     _rec["nabvr"] := _rec["nabvr"] + _rec["revd"]
     _rec["otpvr"] := _rec["otpvr"] + _rec["revp"] + _rec["amp"]
     
     // brisi sta je otpisano
     // ali samo osnovna sredstva, sitan inventar ostaje u bazi...
-    IF !EMPTY( _rec["datotp"] ) .and. gOsSii == "O"
+    if !EMPTY( _rec["datotp"] ) .and. gOsSii == "O"
 
-        ?? "  brisem, otpisano"
+        AADD( _data, { _rec["id"], _rec["naz"], "OTPIS" } )
 
         delete_rec_server_and_dbf( _table, _rec, 1, "CONT" )
-        go _t_rec
-        LOOP
 
-    ENDIF
+        go _t_rec
+        loop
+
+    endif
 
     select_promj()
     hseek _sr_id
 
-    do while !eof() .and. field->id == _sr_id
+    do while !EOF() .and. field->id == _sr_id
         _rec["nabvr"] += field->nabvr + field->revd
         _rec["otpvr"] += field->otpvr + field->revp + field->amp
         skip
@@ -204,7 +203,10 @@ do while !eof()
     _rec["revd"] := 0
     _rec["revp"] := 0
 
-    delete_rec_server_and_dbf( _table, _rec, 1, "CONT" )
+    AADD( _data, { _rec["id"], _rec["naz"], "" } )
+    
+    // update zapisa...
+    update_rec_server_and_dbf( _table, _rec, 1, "CONT" )
 
     go _t_rec
 
@@ -214,23 +216,55 @@ enddo
 select_promj()
 
 do while !EOF()
-
     _rec := dbf_get_rec()
-
     delete_rec_server_and_dbf( _table_promj,  _rec, 1, "CONT" )
-
     skip
-
 enddo
 
-f18_free_tables({_table, _table_promj})
+f18_free_tables( { _table, _table_promj } )
 sql_table_update( nil, "END" )        
 
 close all
 
+if LEN( _data ) == 0
+    return
+endif 
+
+START PRINT CRET
+
+?
+? "Efekat opcije generisanja podataka ...."
+?
+? "R.br   Sredstvo/naziv                           operacija"
+
+? REPLICATE( "-", 70 )
+
+_count := 0
+_count_otpis := 0
+
+for _i := 1 to LEN( _data )
+
+    if !EMPTY( _data[ _i, 3 ] )
+        ++ _count_otpis
+    endif
+
+    ? PADL( ALLTRIM( STR( ++_count ) ), 5 ) + ".", ;
+        _data[ _i, 1 ], ;
+        PADR( _data[ _i, 2 ], 40 ), ;
+        PADR( _data[ _i, 3 ], 10 )
+
+next
+
+? REPLICATE( "-", 70 )
+? "Ukupno otpisanih sredstava: ", ALLTRIM( STR( _count_otpis ) )
+? REPLICATE( "-", 70 )
+
+FF
 END PRINT
 
 return
+
+
 
 
 // -------------------------------------------

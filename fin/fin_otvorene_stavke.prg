@@ -19,7 +19,7 @@ private opc:={}
 private opcexe:={}
 private gnLost:=0
 
-AADD(opc, "1. ručno zatvaranje                    ")
+AADD(opc, "1. ručno zatvaranje                                 ")
 AADD(opcexe, {|| RucnoZat()})
 AADD(opc, "2. automatsko zatvaranje")
 AADD(opcexe, {|| AutoZat()})
@@ -37,6 +37,8 @@ AADD(opc, "8. kompenzacija")
 AADD(opcexe, {|| Kompenzacija()})
 AADD(opc, "9. asistent otvorenih stavki")
 AADD(opcexe, {|| fin_asistent_otv_st()})
+AADD(opc, "B. brisanje svih markera otvorenih stavki" ) 
+AADD(opcexe, {|| brisanje_markera_otvorenih_stavki() })
 AADD(opc, "U. OASIST - undo")
 AADD(opcexe, {|| OStUndo()})
 
@@ -454,6 +456,56 @@ BoxC()
 
 close all
 return
+
+
+
+function brisanje_markera_otvorenih_stavki()
+
+if Pitanje(, "Pobrisati sve markere otvorenih stavki (D/N) ?", "N" ) == "N"
+    return
+endif
+
+if !f18_lock_tables( { "fin_suban" } )
+    MsgBeep( "Problem sa lokovanjem tabele fin_suban !!!")
+    return 
+endif
+
+sql_table_update( nil, "BEGIN" )
+
+select ( F_SUBAN )
+if !Used()
+    O_SUBAN
+endif
+
+set order to tag "1"
+go top
+
+MsgO( "Brisem markere... molimo sacekajte trenutak..." )
+
+do while !EOF()
+
+    _rec := dbf_get_rec()
+
+    if _rec["otvst"] <> ""
+        _rec["otvst"] := ""
+        update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+    endif
+
+    skip
+
+enddo
+
+f18_free_tables({ "fin_suban" })
+sql_table_update( nil, "END" )
+
+MsgC()
+
+select (F_SUBAN)
+use
+
+return
+
+
 
 
 static function _o_ruc_zat( lOsuban )

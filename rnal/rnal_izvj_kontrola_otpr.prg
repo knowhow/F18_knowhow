@@ -22,9 +22,15 @@ local dD_to
 local nOper
 local cStatus
 local nVar := 0
+local _export
+local _rpt_file := my_home() + "_tmp1.dbf"
+
+#ifdef __PLATFORM__WINDOWS
+    _rpt_file := '"' + _rpt_file + '"'
+#endif
 
 // uslovi izvjestaja
-if std_vars( @dD_from, @dD_to, @nOper, @cStatus ) = 0
+if std_vars( @dD_from, @dD_to, @nOper, @cStatus, @_export ) = 0
 	return
 endif
 
@@ -35,8 +41,13 @@ endif
 // napravi report
 _cre_report( dD_from, dD_to, nOper, cStatus )
 
-// rpt
-_gen_rpt( dD_from, dD_to, nOper, nVar )
+if _export == "N"
+    // rpt
+    _gen_rpt( dD_from, dD_to, nOper, nVar )
+else
+    // lansiraj dbf...
+    f18_run( _rpt_file )
+endif
 
 return
 
@@ -359,6 +370,9 @@ do while !EOF()
 enddo
 
 BoxC()
+
+select _tmp1
+use
 
 return
 

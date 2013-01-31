@@ -236,23 +236,6 @@ function ToUnix(cFileName)
 return cFileName
 
 
-// ----------------------------
-// ----------------------------
-function open_folder(folder)
-local _cmd
-#ifdef __PLATFORM__WINDOWS
-   _cmd := "explorer " + _path_quote(folder)   
-#else
-   _cmd := "open " + folder
-#endif
-
-log_write( "open folder cmd line: " + _cmd, 9 )
-
-f18_run(_cmd)
-
-return .t.
-
-
 #pragma BEGINDUMP
 
 #include "hbapi.h"
@@ -426,3 +409,14 @@ local _msg
 #endif
 
 return _ret
+
+
+// ----------------------------
+// ----------------------------
+function open_folder(folder)
+local _cmd
+#ifdef __PLATFORM__WINDOWS
+   folder := _path_quote(folder)   
+#endif
+
+return f18_open_document(folder)

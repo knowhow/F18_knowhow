@@ -1,3 +1,7 @@
+1.5.12 2013-01-31, hernad
+
+   - merge sa 1.4.116
+
 1.5.11 2013-01-31, hernad
 
    - odt linux stampa
@@ -10,6 +14,15 @@
 1.5.6 2013-01-29, hernad
 
    - stampa azuriranih dokumenata
+
+1.4.116 2013-01-31, vsasa
+
+  - fakt, labelu.dbf, problem sa indeksima 
+
+1.4.115 2013-01-31, hernad, vsasa
+
+  - open_folder = f18_open_document
+  - fakt, štampanje naljepnica za ugovore - korekcije u kodu
 
 1.4.114 2013-01-31, hernad
 

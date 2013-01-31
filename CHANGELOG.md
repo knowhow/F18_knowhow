@@ -1,3 +1,7 @@
+1.4.115 2013-01-31, vsasa
+
+  - fakt, štampanje naljepnica za ugovore - korekcije u kodu
+
 1.4.114 2013-01-31, hernad
 
   - ludara sa f18_run uvodim f18_open_document

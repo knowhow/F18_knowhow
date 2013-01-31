@@ -1,3 +1,7 @@
+1.5.10 2013-01-29, hernad
+
+   - patchirani harbour 
+
 1.5.7 2013-01-29, hernad
 
    - numericki dio parametriziran, sada radi stampa azuriranih dokumenata FAKT/FIN/KALK
@@ -5,6 +9,20 @@
 1.5.6 2013-01-29, hernad
 
    - stampa azuriranih dokumenata
+
+1.4.112 2013-01-31, hernad
+
+  - delphirb zaglavljuje: linux f18_run je primarno system a ne hb_runprocess
+
+1.4.111 2013-01-30, vsasa
+
+  - fakt, prikaz txt pregleda dokumenata u KM/EUR i sabiranje iznosa
+
+1.4.110 2013-01-30, vsasa
+
+  - rnal, kontrola cjelovitosti artikala/elemenata - izvještaj
+  - rnal, unos artikla - bugfix
+  - rnal, unos naloga, da li je artikal ispravan !!! provjera
 
 1.4.109 2013-01-30, hernad
 

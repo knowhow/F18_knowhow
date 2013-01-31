@@ -501,7 +501,7 @@ do case
 				nRet := DE_CONT
 				
 			else
-			
+
 				_say_tbl_desc( m_x + 1, ;
 					m_y + 1, ;
 					nil, ;
@@ -526,6 +526,7 @@ do case
 				20 )
 		
 			select elements
+
 			nRet := DE_ABORT
 			
 		endif
@@ -539,17 +540,13 @@ do case
 		if ALIAS() == "ELEMENTS"
 			
 			nRet := DE_REFRESH
-			
-			if elem_edit( art_id , .t. ) == 1
-			
-				l_auto_tab := .t.
-				//set filter to &cTBFilter
-				
-			else
 		
-				//set filter to &cTBFilter
+            go bottom
+	
+			if elem_edit( art_id , .t. ) == 1
+				l_auto_tab := .t.
+			else
 				go top
-			
 			endif
 			 
 		elseif ALIAS() == "E_ATT"
@@ -557,9 +554,8 @@ do case
 			nRet := DE_REFRESH
 			
 			if e_att_edit( nEl_id, .t. ) == 1
-				//set filter to &cTBFilter
-			else
-				//set filter to &cTBFilter
+			    //
+            else
 				go top
 			endif
 		
@@ -568,9 +564,8 @@ do case
 			nRet := DE_REFRESH
 		
 			if e_aops_edit( nEl_id, .t. ) == 1
-				//set filter to &cTBFilter
+				//
 			else
-				//set filter to &cTBFilter
 				go top
 			endif
 	

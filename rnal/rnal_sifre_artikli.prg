@@ -1879,8 +1879,93 @@ endif
 return
 
 
+// ---------------------------------------------------
+// provjerava ispravnost artikla
+// ---------------------------------------------------
+function check_article_valid( art_id )
+local _t_area := SELECT()
+local _valid := .t.
+local _elem := {}
+
+// razlozi artikal na elemente
+_art_set_descr( art_id, nil, nil, @_elem, .t. )
+    
+if LEN( _elem ) == 0
+    MsgBeep( "Artikal nema pripadajuce elemente !!!" )
+    _valid := .f.
+endif
+
+select ( _t_area )
+
+return _valid
 
 
+
+
+// ---------------------------------------------------
+// prikaz artikala bez elemenata...
+// ---------------------------------------------------
+function rpt_artikli_bez_elemenata()
+local _elem, _art_id
+local _error := {}
+local _count
+
+// otvori mi sifrarnike
+rnal_o_sif_tables()
+
+select articles
+go top
+
+Box(, 1, 50 )
+
+do while !EOF()
+    
+    _elem := {}
+    _art_id := field->art_id
+
+    @ m_x + 1, m_y + 2 SAY "Artikal: " + ALLTRIM( STR ( _art_id ) )
+
+	// razlozi artikal na elemente
+	_art_set_descr( _art_id, nil, nil, @_elem, .t. )
+    
+    select articles
+
+    if LEN( _elem ) == 0
+        // ovaj nema ...
+        AADD( _error, { field->art_id, field->art_desc } )
+    endif
+
+    skip
+
+enddo
+
+BoxC()
+
+close all
+
+if LEN( _error ) == 0
+    return
+endif
+
+START PRINT CRET
+
+?
+
+? "Lista artikala bez elemenata..."
+? REPLICATE( "-", 70 )
+? "R.br  Artikal / Opis"
+? REPLICATE( "-", 70 )
+
+_count := 0
+
+for _i := 1 to LEN( _error )
+    ? PADL( ALLTRIM( STR( ++_count ) ), 4 ) + ".", _error[ _i, 1 ], _error[ _i, 2 ]
+next
+
+FF
+END PRINT
+
+return
 
 
 

@@ -62,7 +62,7 @@ local _rpt_file := my_home() + "_tmp1.dbf"
     _rpt_file := '"' + _rpt_file + '"'
 #endif
 
-o_sif_tables()
+rnal_o_sif_tables()
 
 // daj uslove izvjestaja
 if _g_vars( @dD_From, @dD_To, @nOper, @cArticle, @_export ) == 0

@@ -21,11 +21,15 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
+
+AADD( _opc, "1. pregled artikala bez definisanih elemenata  ")
+AADD( _opcexe, {|| rpt_artikli_bez_elemenata() })
+
 if is_fmkrules()
-	AADD( _opc, "1. FMK rules")
+	AADD( _opc, "2. FMK rules")
 	AADD( _opcexe, {|| p_fmkrules( , , , aRuleSpec, bRuleBlock ) })
 endif
-
+	
 f18_menu( "adm", .f., _izbor, _opc, _opcexe )
 
 return
@@ -43,7 +47,7 @@ if lTemporary == nil
 endif
 
 // otvori sifrarnike
-o_sif_tables()
+rnal_o_sif_tables()
 
 select F_FMKRULES
 if !used()
@@ -114,7 +118,7 @@ return
 // -----------------------------------------
 // otvara tabele sifrarnika 
 // -----------------------------------------
-function o_sif_tables()
+function rnal_o_sif_tables()
 
 select F_E_GROUPS
 if !used()

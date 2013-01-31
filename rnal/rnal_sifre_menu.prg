@@ -21,7 +21,7 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-o_sif_tables()
+rnal_o_sif_tables()
 
 AADD(opc, "1. narucioci                      ")
 if ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "CUSTOMERS")

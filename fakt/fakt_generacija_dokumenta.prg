@@ -422,7 +422,7 @@ endif
 Box(, 5, 60 )
             
 	_tip_dok := field->idtipdok
-    _br_dok := fakt_brdok_0(gFirma, _novi_tip, DATE())
+    _br_dok := fakt_brdok_0(field->idfirma, _novi_tip, DATE())
             
     select fakt_pripr
 	PushWa()
@@ -460,4 +460,7 @@ BoxC()
 IsprUzorTxt()
 
 return .t.
+
+
+
 

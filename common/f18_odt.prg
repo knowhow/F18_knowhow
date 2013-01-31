@@ -250,7 +250,6 @@ return _ret
 // -------------------------------------------------------------------
 function f18_odt_print( output_file, from_params, test_mode )
 local _ok := .f.
-local _cmd 
 local _screen, _error := 0
 
 if ( output_file == NIL )
@@ -277,19 +276,13 @@ endif
     __output_odt := '"' + __output_odt + '"'
 #endif
 
-// slozi mi komadnu za startanje...
-_cmd := __output_odt
-
 SAVE SCREEN TO _screen
 CLEAR SCREEN
 
 ? "Prikaz odt fajla u toku ...   fajl: ..." + RIGHT( __current_odt, 20 )
 
-// pokreni komandu
-log_write( _cmd, 7 )
-
 #ifndef TEST
-	_error := f18_run(_cmd, NIL, NIL, .t.)
+	_error := f18_open_document(__output_odt)
 #endif
 
 RESTORE SCREEN FROM _screen

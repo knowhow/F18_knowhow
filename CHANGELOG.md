@@ -1,3 +1,7 @@
+1.4.116 2013-01-31, vsasa
+
+  - fakt, labelu.dbf, problem sa indeksima 
+
 1.4.115 2013-01-31, vsasa
 
   - fakt, štampanje naljepnica za ugovore - korekcije u kodu

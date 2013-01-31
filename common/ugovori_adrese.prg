@@ -197,7 +197,6 @@ do while !EOF()
     _rec["idpartner"] := ugov->idpartner
     _rec["kolicina"] := rugov->kolicina
     _rec["idroba"] := rugov->idroba
-    _rec["c_kol"] := PADL( ALLTRIM( STR( rugov->kolicina, 12, 0 ) ) , 12 )
 
     _total_kolicina += rugov->kolicina
 
@@ -383,7 +382,6 @@ AADD (aDBf, {"MJESTO" , 'C' ,  16 ,  0 })
 AADD (aDBf, {"ADRESA" , 'C' ,  40 ,  0 })
 AADD (aDBf, {"TELEFON", 'C' ,  12 ,  0 })
 AADD (aDBf, {"FAX"    , 'C' ,  12 ,  0 })
-AADD (aDbf, {"c_kol", "C",  12, 0 })
 
 Dbcreate( my_home() + _table + ".dbf", aDbf )
 

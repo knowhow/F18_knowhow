@@ -392,11 +392,11 @@ use
 
 my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
 
-index on c_kol + mjesto + naz tag "1"
-index on mjesto + naz + c_kol tag "2"
-index on ptt + mjesto + naz + c_kol tag "3"
-index on c_kol + ptt + mjesto + naz tag "4"
-index on idpartner tag "5"
+index on "STR(kolicina,12,2) + mjesto + naz" tag "1"
+index on "mjesto + naz + c_kol" tag "2"
+index on "ptt + mjesto + naz + STR(kolicina,12,2)" tag "3"
+index on "STR(kolicina,12,2) + ptt + mjesto + naz" tag "4"
+index on "idpartner" tag "5"
 
 return
 

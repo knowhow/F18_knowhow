@@ -340,7 +340,7 @@ if _ret <> 0
 
 #ifdef __PLATFORM__WINDOWS
    //_prefix := "start "
-   _prefix := "c:\knowhowERP\util\start.exe /m "
+   _prefix := "c:\knowhowERP\util\start.exe "
 
 #else
    #ifdef __PLATFORM__DARWIN

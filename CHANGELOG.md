@@ -1,3 +1,7 @@
+1.4.115 2013-01-31, hernad
+
+  - open_folder = f18_open_document
+
 1.4.114 2013-01-31, hernad
 
   - ludara sa f18_run uvodim f18_open_document
@@ -32,7 +36,6 @@
   - fakt, kontrola atributa kod ažuriranja dokumenta
   - prikaz tekućeg usera i baze na glavnom meniju
  
->>>>>>> 02735a879731da838fa5af5e7f3627ab4dd27cd2
 1.4.107 2013-01-28, vsasa
 
   - kalk, provjera duplih barkod-ova unutar šifranika artikala

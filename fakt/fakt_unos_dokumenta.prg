@@ -395,10 +395,13 @@ do case
 
         _t_area := SELECT()
        
+        if reccount2()<>0
+              fakt_generisi_racun_iz_pripreme()
+        else 
+              _fakt_doks := FaktDokumenti():New()
+              _fakt_doks:pretvori_otpremnice_u_racun()
+        endif
  
-        _fakt_doks := FaktDokumenti():New()
-        _fakt_doks:pretvori_otpremnice_u_racun()
-
         select (_t_area )
         return DE_REFRESH
     

@@ -308,7 +308,7 @@ go top
 
 // ako je priprema prazna
 if RecCount2() <> 0
-    _generisi_racun_iz_pripreme()
+    fakt_generisi_racun_iz_pripreme()
     select fakt_pripr
     return .t.
 endif
@@ -456,7 +456,7 @@ return .t.
 // -----------------------------------------------------------
 // generise racun na osnovu podataka iz pripreme
 // -----------------------------------------------------------
-static function _generisi_racun_iz_pripreme()
+function fakt_generisi_racun_iz_pripreme()
 local _novi_tip, _tip_dok, _br_dok 
 local _t_rec
 

@@ -25,10 +25,12 @@ private cIdTek:=cPartId
 private nArr:=SELECT()
 
 SELECT DEST
-SET ORDER TO TAG "1"
-HSEEK cIdTek+cId
+SET ORDER TO TAG "ID"
+
+HSEEK cIdTek + cId
 
 SET SCOPE TO cIdTek
+
 ImeKol:={ ;
           { "OZNAKA"  , {|| OZNAKA },  "OZNAKA"  },;
           { "NAZIV"   , {|| NAZ    },  "NAZ"     },;
@@ -42,7 +44,7 @@ ImeKol:={ ;
          }
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 
-PostojiSifra(F_DEST,"1",10,70,"Destinacije za:"+cIdTek+"-"+Ocitaj(F_PARTN,cIdTek,"naz"), , , , {|Ch| EdDestBlok(Ch)},,,,.f.)
+PostojiSifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + Ocitaj( F_PARTN, cIdTek,"naz"), , , , {|Ch| EdDestBlok(Ch)},,,,.f.)
 
 cId := cLastOznaka
 set scope to

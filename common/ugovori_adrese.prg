@@ -197,6 +197,7 @@ do while !EOF()
     _rec["idpartner"] := ugov->idpartner
     _rec["kolicina"] := rugov->kolicina
     _rec["idroba"] := rugov->idroba
+    _rec["c_kol"] := PADL( ALLTRIM( STR( rugov->kolicina, 12, 0 ) ) , 12 )
 
     _total_kolicina += rugov->kolicina
 
@@ -210,7 +211,7 @@ do while !EOF()
         select dest
         set order to tag "ID"
         go top
-        seek ugov->idpartner + rugov->dest
+        seek ( ugov->idpartner + rugov->dest )
 
         if FOUND()
             _ima_destinacija := .t.
@@ -314,8 +315,7 @@ AADD( aKol, { "Fax"          , {|| FAX          }, .f., "C", 12, 0, 1,11} )
 
 StartPrint()
 
-StampaTabele(aKol,{|| BlokSLU()},,gTabela,,;
-              ,"PREGLED BAZE PRIPREMLJENIH LABELA",,,,,)
+StampaTabele( aKol, {|| BlokSLU() }, , gTabela, , , "PREGLED BAZE PRIPREMLJENIH LABELA", , , , , )
 
 close all
 
@@ -383,16 +383,19 @@ AADD (aDBf, {"MJESTO" , 'C' ,  16 ,  0 })
 AADD (aDBf, {"ADRESA" , 'C' ,  40 ,  0 })
 AADD (aDBf, {"TELEFON", 'C' ,  12 ,  0 })
 AADD (aDBf, {"FAX"    , 'C' ,  12 ,  0 })
+AADD (aDbf, {"c_kol", "C",  12, 0 })
 
 Dbcreate( my_home() + _table + ".dbf", aDbf )
 
 select (F_LABELU)
+use
+
 my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
 
-index on STR( kolicina, 12, 2 ) + mjesto + naz tag "1"
-index on mjesto + naz + STR( kolicina, 12, 2 ) tag "2"
-index on ptt + mjesto + naz + STR(kolicina, 12, 2 ) tag "3"
-index on STR( kolicina, 12, 2 ) + ptt + mjesto + naz tag "4"
+index on c_kol + mjesto + naz tag "1"
+index on mjesto + naz + c_kol tag "2"
+index on ptt + mjesto + naz + c_kol tag "3"
+index on c_kol + ptt + mjesto + naz tag "4"
 index on idpartner tag "5"
 
 return

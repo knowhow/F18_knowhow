@@ -79,8 +79,8 @@ do case
 	case cTbl == "GEN_UG_P"
 		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)+ID_UGOV+IDPARTNER", cPath+"GEN_UG_P")
 	case cTbl == "DEST"
-		CREATE_INDEX("ID","IDPARTNER+ID", cPath+"DEST")
-		CREATE_INDEX("IDDEST","ID", cPath+"DEST")
+		CREATE_INDEX("ID", "IDPARTNER + ID", cPath+"DEST")
+		CREATE_INDEX("IDDEST", "ID", cPath+"DEST")
 endcase 
 
 return

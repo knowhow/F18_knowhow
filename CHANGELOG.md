@@ -1,3 +1,7 @@
+1.4.117 2013-01-31, vsasa
+
+  - fin, prenos početnog stanja - po otvorenim stavkama, opcija "1"
+
 1.4.116 2013-01-31, vsasa
 
   - fakt, labelu.dbf, problem sa indeksima 

@@ -413,8 +413,12 @@ do case
         if !_params["fakt_otpr_gen"]
             fakt_generisi_racun_iz_otpremnice() 
         else
-            _fakt_doks := FaktDokumenti():New()
-            _fakt_doks:pretvori_otpremnice_u_racun()
+            if reccount2()<>0
+                 fakt_generisi_racun_iz_pripreme()
+            else 
+                 _fakt_doks := FaktDokumenti():New()
+                 _fakt_doks:pretvori_otpremnice_u_racun()
+            endif
         endif
 
         select (_t_area )

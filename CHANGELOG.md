@@ -1,3 +1,15 @@
+1.4.114 2013-01-31, hernad
+
+  - ludara sa f18_run uvodim f18_open_document
+
+1.4.113 2013-01-31, hernad
+  
+  - build with patchirani harbour (bold fontovi)
+
+1.4.112 2013-01-31, hernad
+
+  - delphirb zaglavljuje: linux f18_run je primarno system a ne hb_runprocess
+
 1.4.111 2013-01-30, vsasa
 
   - fakt, prikaz txt pregleda dokumenata u KM/EUR i sabiranje iznosa

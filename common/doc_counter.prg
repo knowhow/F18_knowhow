@@ -149,7 +149,14 @@ local _doc_cnt, _s_cnt
 _doc_cnt := ::document_counter
 _s_cnt   := ::server_counter   
 
-::count :=  MAX(_doc_cnt, _s_cnt)
+if (_s_cnt - _doc_cnt) > 20
+   // brojac je poludio
+   // referenciraj se na posljednji broj dokumenta
+   ::count := _doc_cnt   
+else
+   ::count :=  MAX(_doc_cnt, _s_cnt)
+endif
+
 ::inc()
 
 ::server_counter := ::count

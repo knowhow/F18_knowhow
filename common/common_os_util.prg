@@ -346,7 +346,12 @@ if async == NIL
   async := .f.
 endif
 
-_ret := hb_ProcessRun(cmd, NIL, NIL, NIL, async)
+
+#ifdef __PLATFORM__LINUX
+   _ret := __run_system(cmd + IIF(async, "&", ""))
+#else
+   _ret := hb_ProcessRun(cmd, NIL, NIL, NIL, async)
+#endif
 
 if _ret <> 0
 

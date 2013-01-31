@@ -1,3 +1,7 @@
+1.4.112 2013-01-31, hernad
+
+  - delphirb zaglavljuje: linux f18_run je primarno system a ne hb_runprocess
+
 1.4.111 2013-01-30, vsasa
 
   - fakt, prikaz txt pregleda dokumenata u KM/EUR i sabiranje iznosa

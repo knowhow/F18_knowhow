@@ -399,3 +399,30 @@ if VALTYPE(output) == "H"
 endif
 
 return _ret
+
+// -------------------------------------------
+// -------------------------------------------
+function f18_open_document(document)
+local _ret, _prefix
+local _msg
+
+
+#ifdef __PLATFORM__WINDOWS
+   //_prefix := "start "
+   _prefix := "c:\knowhowERP\util\start.exe /m "
+
+#else
+   #ifdef __PLATFORM__DARWIN
+      _prefix := "open "
+   #else
+      _prefix := "xdg-open "
+   #endif
+#endif
+
+#ifdef __PLATFORM__LINUX
+   _ret := __run_system(_prefix + document + "&")
+#else
+   _ret := hb_processRun(_prefix + document, NIL, NIL, NIL, .t.) 
+#endif
+
+return _ret

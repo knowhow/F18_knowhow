@@ -1,3 +1,7 @@
+1.4.114 2013-01-31, hernad
+
+  - ludara sa f18_run uvodim f18_open_document
+
 1.4.113 2013-01-31, hernad
   
   - build with patchirani harbour (bold fontovi)

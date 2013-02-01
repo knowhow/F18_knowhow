@@ -43,7 +43,7 @@ local _ok := .f.
 local _limit := 0
 local _datum_od := DATE()
 local _datum_do := DATE()
-local _user := PADR( f18_user(), 20 )
+local _user := PADR( f18_user(), 200 )
 local _x := 1
 local _conds := SPACE(600)
 
@@ -59,7 +59,7 @@ Box(, 10, 70 )
 
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Korisnik:" GET _user 
+    @ m_x + _x, m_y + 2 SAY "Korisnik (prazno svi):" GET _user PICT "@S40"
 
     ++ _x
     ++ _x

@@ -3,6 +3,7 @@
   - fin, prenos početnog stanja - po otvorenim stavkama, opcija "1"
   - rnal, export naloga u otpremnicu - uslovi exporta
   - fakt, formiranje računa na osnovu otpremnica - set valuta
+  - os, generisanje početnog stanja i generisanje podataka za novu sezonu
 
 1.4.116 2013-01-31, vsasa
 

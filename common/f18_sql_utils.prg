@@ -538,6 +538,11 @@ local _i, _cond
 
 for each _cond in cond_arr
 
+    // prazan uslov... preskacem
+    if EMPTY( _cond )
+        loop
+    endif
+
     _ret += " AND " + field_name 
 
     if LEN( cond_arr ) > 1

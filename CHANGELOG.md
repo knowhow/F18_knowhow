@@ -4,6 +4,7 @@
   - rnal, export naloga u otpremnicu - uslovi exporta
   - fakt, formiranje računa na osnovu otpremnica - set valuta
   - os, generisanje početnog stanja i generisanje podataka za novu sezonu
+  - f18 pregled loga sa glavnog menija
 
 1.4.116 2013-01-31, vsasa
 

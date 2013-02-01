@@ -97,11 +97,8 @@ AADD(_opcexe, {|| os_parametri()})
 AADD(_opc, "------------------------------------------------------------")
 AADD(_opcexe, {|| nil })
 
-AADD(_opc, "8. generacija podataka za novu sezonu")
-AADD(_opcexe, {|| GenerisanjePodatakaZaNovuSezonu()})
-
-AADD(_opc, "9. regeneracija poc.stanja (nabavna i otpisana vrijednost)")
-AADD(_opcexe, {|| RegenerisanjePocStanja()})
+AADD(_opc, "8. prenos pocetnog stanja ")
+AADD(_opcexe, {|| os_generacija_pocetnog_stanja() })
 
 f18_menu( "gos", .f., _izbor, _opc, _opcexe )
 

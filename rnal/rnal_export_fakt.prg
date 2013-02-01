@@ -117,6 +117,10 @@ cVpMp := _exp_params["exp_tip"]
 _isporuka := _exp_params["exp_isporuka"] == "D"
 _valuta := _exp_params["exp_valuta"]
 
+if EMPTY( _valuta )
+    _valuta := PADR( ValDomaca(), 3 )
+endif
+
 if _isporuka
     // selektuj stavke
     sel_items()

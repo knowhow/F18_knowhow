@@ -16,12 +16,21 @@ static __table_promj
 static __table_os_alias
 static __table_promj_alias
 
+
+
 // -----------------------------------------------------
 // generisanje pocetnog stanja
 // -----------------------------------------------------
 function os_generacija_pocetnog_stanja()
 local _info := {} 
+local _ok
+local _pos_x, _pos_y
 
+if Pitanje(, "Generisati pocetno stanje (D/N) ?", "N" ) == "N"
+    return
+endif
+
+// sifra za koristenje...
 if !SigmaSif("OSGEN")
     MsgBeep( "Opcija onemogucena !!!" )
     return
@@ -32,24 +41,42 @@ endif
 // __table_os, __table_promj
 _set_os_promj_tables()
 
-// 1) pobrisati tekucu godinu
-if !_os_brisi_tekucu_godinu( @_info )
-    return
-endif
+Box(, 10, 60 )
 
-// prebaciti iz prethodne godine tabele os/promj
-if !_os_prebaci_iz_prethodne( @_info )
-    return
-endif
+    @ _pos_x := m_x + 1, _pos_y := m_y + 2 SAY "... prenos pocetnog stanja u toku" COLOR "I"
 
-// napraviti generaciju podataka
-if !_os_generacija_nakon_ps( @_info )
-    return
-endif
+    // 1) pobrisati tekucu godinu
+    _ok := _os_brisi_tekucu_godinu( @_info )
 
-// pakuj tabele...
-_pakuj_tabelu( __table_os_alias, __table_os )
-_pakuj_tabelu( __table_promj_alias, __table_promj )
+    // prebaciti iz prethodne godine tabele os/promj
+    if _ok
+        _ok := _os_prebaci_iz_prethodne( @_info )
+    endif
+
+    // napraviti generaciju podataka
+    if _ok 
+        _ok := _os_generacija_nakon_ps( @_info )
+    endif
+
+    // pakuj tabele...
+    if _ok
+        _pakuj_tabelu( __table_os_alias, __table_os )
+        _pakuj_tabelu( __table_promj_alias, __table_promj )
+    endif
+
+    if _ok 
+        @ _pos_x + 8, m_y + 2 SAY "... operacija uspjesna"
+    else
+        @ _pos_x + 8, m_y + 2 SAY "... operacija NEUSPJESNA !!!"
+    endif
+
+    @ _pos_x + 9, m_y + 2 SAY "Pritisnite <ESC> za izlazak i pregled rezulatata."
+    
+    // cekam ESC
+    while Inkey(0.1) != K_ESC
+    end
+
+BoxC()
 
 close all
 
@@ -120,6 +147,7 @@ local _table, _table_promj
 local _count := 0
 local _count_promj := 0
 local _t_rec
+local _pos_x, _pos_y
 
 close all
 
@@ -137,16 +165,21 @@ select_os_sii()
 set order to tag "1"
 go top
 
-MsgO( "Brisem sredstva iz tekuce godine ..." )
+@ _pos_x := m_x + 2, _pos_y := m_y + 2 SAY PADR( "1) Brisem podatke tekuce godine ", 40, "." )
 
 do while !EOF()
+
     skip
     _t_rec := RECNO()
     skip -1
+
     _rec := dbf_get_rec()
     delete_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
+
     ++ _count
+
     go ( _t_rec )
+
 enddo
 
 select_promj()
@@ -154,19 +187,25 @@ set order to tag "1"
 go top
 
 do while !EOF()
+
     skip
     _t_rec := RECNO()
     skip -1
-    _rec := dbf_get_rec()
-    delete_rec_server_and_dbf( __table_promj, _rec, 1, "CONT" )
-    ++ _count_promj
-    go ( _t_rec )
-enddo
 
-MsgC()
+    _rec := dbf_get_rec()
+
+    delete_rec_server_and_dbf( __table_promj, _rec, 1, "CONT" )
+
+    ++ _count_promj
+
+    go ( _t_rec )
+
+enddo
 
 f18_free_tables( { __table_os, __table_promj } )
 sql_table_update( nil, "END" )
+
+@ _pos_x, 55 SAY "OK"
 
 AADD( info, { "1) izbrisano sredstava:", _count, ""  } )
 AADD( info, { "2) izbrisano promjena:", _count_promj, ""  } )
@@ -193,6 +232,7 @@ local _tek_database := my_server_params()["database"]
 local _year_tek := YEAR( _dat_ps )
 local _year_sez := _year_tek - 1
 local _table, _table_promj
+local _pos_x, _pos_y
 
 if ALLTRIM(STR( _year_sez )) $ _tek_database
     // ne moze se raditi razdvajanje u 2012
@@ -211,13 +251,14 @@ switch_to_database( _db_params, _tek_database, _year_sez )
 // setuj server
 _server := pg_server()
 
-MsgO( "pocetno stanje - sql query u toku..." )
+
+@ _pos_x := m_x + 3, _pos_y := m_y + 2 SAY PADR( "2) vrsim sql upit ", 40, "." )
 
 // podaci pocetnog stanja su ovdje....
 _data_os := _sql_query( _server, _qry_os )
 _data_promj := _sql_query( _server, _qry_promj )
 
-MsgC()
+@ _pos_x, 55 SAY "OK"
 
 // 3) vrati se u tekucu bazu...
 // ------------------------------------------------------------
@@ -238,15 +279,15 @@ endif
  
 sql_table_update( nil, "BEGIN" )
 
-Box(, 2, 60 )
+@ _pos_x := m_x + 4, _pos_y := m_y + 2 SAY PADR( "3) insert podataka u novoj sezoni ", 40, "." )
 
 _insert_into_os( _data_os )
 _insert_into_promj( _data_promj )
 
-BoxC()
-
 f18_free_tables( { __table_os, __table_promj } )
 sql_table_update( nil, "END" )
+
+@ _pos_x, 55 SAY "OK"
 
 AADD( info, { "3) prebacio iz prethodne godine sredstva", _data_os:LastRec() , "" } )
 AADD( info, { "4) prebacio iz prethodne godine promjene", _data_promj:LastRec(), "" } )
@@ -310,7 +351,7 @@ do while !data:EOF()
 
     update_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
 
-    @ m_x + 1, m_y + 2 SAY "sredstvo: " + _rec["id"] + ", " + _rec["naz"]
+    @ m_x + 5, m_y + 2 SAY "  " + __table_os + "/ sredstvo: " + _rec["id"]
 
     data:Skip()
 
@@ -344,7 +385,7 @@ do while !data:EOF()
 
     update_rec_server_and_dbf( __table_promj, _rec, 1, "CONT" )
 
-    @ m_x + 1, m_y + 2 SAY "promjena za sredstvo: " + _rec["id"]
+    @ m_x + 5, m_y + 2 SAY __table_promj + "/ promjena za sredstvo: " + _rec["id"]
     
     data:Skip()
 
@@ -369,6 +410,7 @@ local _ok := .f.
 local _table_promj
 local _data := {}
 local _i, _count, _otpis_count
+local _pos_x, _pos_y
 
 // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
 // otpisana sredstva u protekloj godini
@@ -389,7 +431,7 @@ sql_table_update( nil, "BEGIN" )
 
 _otpis_count := 0
 
-MsgO( "Generisem podatke za novu sezonu ..." )
+@ _pos_x := m_x + 6, _pos_y := m_y + 2 SAY PADR( "4) generacija podataka za novu sezonu ", 40, "." )
 
 do while !eof()
 
@@ -444,7 +486,7 @@ do while !eof()
 
 enddo 
 
-MsgC()
+@ _pos_x, 55 SAY "OK"
  
 AADD( info, { "5) broj otpisanih sredstava u novoj godini", _otpis_count, "" } )
 
@@ -453,18 +495,22 @@ select_promj()
 set order to tag "1"
 go top
 
-MsgO( "Brisem promjene u novoj godini ..." )
+@ _pos_x := m_x + 7, _pos_y := m_y + 2 SAY PADR( "5) brisem promjene u novoj sezoni ", 40, "." )
 
 do while !EOF()
+
     skip 1
     _t_rec := RECNO()
     skip -1
+
     _rec := dbf_get_rec()
     delete_rec_server_and_dbf( __table_promj,  _rec, 1, "CONT" )
+
     go ( _t_rec )
+
 enddo
 
-MsgC()
+@ _pos_x, 55 SAY "OK"
 
 f18_free_tables( { __table_os, __table_promj } )
 sql_table_update( nil, "END" )        

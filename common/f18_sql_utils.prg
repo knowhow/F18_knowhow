@@ -529,10 +529,14 @@ return _ret
 // ---------------------------------------------------
 // sql parsiranje uslova sa ;
 // ---------------------------------------------------
-function _sql_cond_parse( field_name, cond )
+function _sql_cond_parse( field_name, cond, not )
 local _ret := ""
 local cond_arr := TokToNiz( cond, ";" ) 
 local _i, _cond
+
+if not == NIL
+    not := .f.
+endif
 
 // idkonto LIKE '211%' AND idkonto LIKE '5411%'
 
@@ -543,17 +547,31 @@ for each _cond in cond_arr
         loop
     endif
 
-    _ret += " AND " + field_name 
+    _ret += "  OR " + field_name 
 
     if LEN( cond_arr ) > 1
+        // ubaci NOT po potrebi...
+        if not
+            _ret += " NOT "
+        endif
+
         _ret += " LIKE " + _sql_quote( ALLTRIM( _cond ) + "%" )
+
     else
-        _ret += " = " + _sql_quote( _cond )
+
+        if not
+            _ret += " <> "
+        else
+            _ret += " = "
+        endif
+
+        _ret += _sql_quote( _cond )
+
     endif
 
 next
 
-// skini mi prvi AND iz uslova !
+// skini mi prvi OR iz uslova !
 _ret := RIGHT( _ret, LEN( _ret ) - 5 )
 
 return _ret

@@ -45,7 +45,8 @@ local _datum_od := DATE()
 local _datum_do := DATE()
 local _user := PADR( f18_user(), 200 )
 local _x := 1
-local _conds := SPACE(600)
+local _conds_true := SPACE(600)
+local _conds_false := SPACE(600)
 
 Box(, 10, 70 )
 
@@ -64,7 +65,15 @@ Box(, 10, 70 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Dodatni uslovi (LIKE):" GET _conds PICT "@S40"
+    @ m_x + _x, m_y + 2 SAY "LIKE uslovi:" 
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "  sadrzi:" GET _conds_true PICT "@S40"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "nesadrzi:" GET _conds_false PICT "@S40"
 
     ++ _x
     ++ _x
@@ -81,13 +90,26 @@ endif
 
 _ok := .t.
 
+if !EMPTY( _conds_true )
+    _conds_true := ALLTRIM( _conds_true ) + SPACE(1)
+else
+    _conds_true := ""
+endif
+
+if !EMPTY( _conds_false )
+    _conds_false := ALLTRIM( _conds_false ) + SPACE(1)
+else
+    _conds_false := ""
+endif
+
 // snimi parametre...
 params := hb_hash()
 params["date_from"] := _datum_od
 params["date_to"] := _datum_do
 params["user"] := ALLTRIM( _user )
 params["limit"] := _limit
-params["conds"] := ALLTRIM( _conds )
+params["conds_true"] := _conds_true
+params["conds_false"] := _conds_false
 
 return _ok
 
@@ -103,7 +125,8 @@ local _user := params["user"]
 local _dat_from := params["date_from"]
 local _dat_to := params["date_to"]
 local _limit := params["limit"]
-local _conds := params["conds"]
+local _conds_true := params["conds_true"]
+local _conds_false := params["conds_false"]
 local _qry, _where
 local _server := pg_server()
 local _data
@@ -119,10 +142,16 @@ if !EMPTY( _user )
     _where += " AND " + _sql_cond_parse( "user_code", _user )
 endif
 
-// dodatni uslovi
-if !EMPTY( _conds )
-    _where += " AND " + _sql_cond_parse( "msg", _conds )
+// dodatni uslovi, sadrzi
+if !EMPTY( _conds_true )
+    _where += " AND (" + _sql_cond_parse( "msg", _conds_true ) + ")"
 endif
+
+// dodatni uslovi, ne-sadrzi
+if !EMPTY( _conds_false )
+    _where += " AND (" + _sql_cond_parse( "msg", _conds_false, .t. ) + ")"
+endif
+
 
 // GLAVNI UPIT
 // ==========================
@@ -143,6 +172,8 @@ endif
 
 // izvrsi upit
 MsgO( "Vrsim upit prema serveru..." )
+
+msgbeep( _qry )
 
 _data := _sql_query( _server, _qry )
 

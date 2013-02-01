@@ -1,6 +1,7 @@
 1.4.117 2013-01-31, vsasa
 
   - fin, prenos početnog stanja - po otvorenim stavkama, opcija "1"
+  - rnal, export naloga u otpremnicu - uslovi exporta
 
 1.4.116 2013-01-31, vsasa
 

@@ -1,6 +1,7 @@
 1.4.118 2013-02-04, hernad
 
   - delphirb stampa virmana tabele se zakljucaju
+  - kolicina HCP 12,3 kao i neosoft
 
 1.4.117 2013-01-31, vsasa
 

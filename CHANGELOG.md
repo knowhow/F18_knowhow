@@ -1,3 +1,7 @@
+1.4.118 2013-02-04, hernad
+
+  - delphirb stampa virmana tabele se zakljucaju
+
 1.4.117 2013-01-31, vsasa
 
   - fin, prenos početnog stanja - po otvorenim stavkama, opcija "1"

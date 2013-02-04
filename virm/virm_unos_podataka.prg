@@ -515,12 +515,15 @@ use
 select izlaz
 use
 
+close all
+
 // ovdje treba kod za filovanje datoteke IZLAZ.DBF
 if LastKey() != K_ESC 
     f18_rtm_print( _rtm_file, "izlaz", "1" )
 endif
 
-O_VIRM_PRIPR
+_o_virm_edit()
+select virm_pripr
 go ( _t_rec )
 
 return

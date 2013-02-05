@@ -11,10 +11,48 @@
 
 #include "fin.ch"
 
-function MnuSpecif()
+
+// ------------------------------------------------------
+// meni specifikacija
+// ------------------------------------------------------
+function fin_menu_specifikacije()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
+
+AADD( _opc, "1. specifikacije (txt)          " )
+AADD( _opcexe, { || _txt_specif_mnu() } )
+AADD( _opc, "2. specifikacije (odt)          " )
+AADD( _opcexe, { || _sql_specif_mnu() } )
+
+f18_menu( "sp", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+// ------------------------------------------------------
+// meni specifikacija sql
+// ------------------------------------------------------
+static function _sql_specif_mnu()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
+
+AADD( _opc, "1. specifikacija po subanalitickim kontima          " )
+AADD( _opcexe, { || fin_suban_specifikacija_sql() } )
+
+f18_menu( "spsql", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+
+
+static function _txt_specif_mnu()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
+
 AADD(opc, "1. partnera na kontu                                        ")
 AADD(opcexe, {|| SpecDPK()})
 AADD(opc, "2. otvorene stavke preko-do odredjenog broja dana za konto")
@@ -53,6 +91,7 @@ AADD(opc, "S. specifikacija troskova po gradilistima ")
 AADD(opcexe, {|| r_spec_tr()})
 
 Menu_SC("spc")
+
 return
 
 

@@ -303,7 +303,7 @@ endif
 
 AADD( aKol, { "Partner"      , {|| IdPartner    }, .f., "C",  6, 0, 1, 2} )
 AADD( aKol, { "Dest."        , {|| Destin       }, .f., "C",  6, 0, 1, 3} )
-AADD( aKol, { "Kolicina"     , {|| Kolicina     }, .t., "N", 12, 2, 1, 4} )
+AADD( aKol, { "Kolicina"     , {|| Kolicina     }, .t., "N", 12, 0, 1, 4} )
 AADD( aKol, { "Naziv"        , {|| Naz          }, .f., "C", 60, 0, 1, 5} )
 AADD( aKol, { "Naziv2"       , {|| Naz2         }, .f., "C", 60, 0, 1, 6} )
 AADD( aKol, { "PTT"          , {|| PTT          }, .f., "C",  5, 0, 1, 7} )
@@ -368,33 +368,33 @@ return
 
 
 static function _create_labelu_dbf()
-local aDbf := {}
+local _dbf := {}
 local _table := "labelu"
 
-AADD (aDbf, {"IDROBA", "C",  10, 0})
-AADD (aDbf, {"IdPartner", "C",  6, 0})
-AADD (aDbf, {"Destin"  , "C", 6, 0})
-AADD (aDbf, {"Kolicina", "N",  12, 2})
-AADD (aDbf, {"Naz" , "C", 60, 0})
-AADD (aDbf, {"Naz2", "C", 60, 0})
-AADD (aDBf, {"PTT" , 'C' ,   5 ,  0 })
-AADD (aDBf, {"MJESTO" , 'C' ,  16 ,  0 })
-AADD (aDBf, {"ADRESA" , 'C' ,  40 ,  0 })
-AADD (aDBf, {"TELEFON", 'C' ,  12 ,  0 })
-AADD (aDBf, {"FAX"    , 'C' ,  12 ,  0 })
+AADD ( _dbf, {"IDROBA", "C",  10, 0 })
+AADD ( _dbf, {"IdPartner", "C",  6, 0 })
+AADD ( _dbf, {"Destin"  , "C", 6, 0 })
+AADD ( _dbf, {"Kolicina", "N",  12, 0 })
+AADD ( _dbf, {"Naz" , "C", 60, 0 })
+AADD ( _dbf, {"Naz2", "C", 60, 0 })
+AADD ( _dbf, {"PTT" , 'C' ,   5 ,  0 })
+AADD ( _dbf, {"MJESTO" , 'C' ,  16 ,  0 })
+AADD ( _dbf, {"ADRESA" , 'C' ,  40 ,  0 })
+AADD ( _dbf, {"TELEFON", 'C' ,  12 ,  0 })
+AADD ( _dbf, {"FAX"    , 'C' ,  12 ,  0 })
 
-Dbcreate( my_home() + _table + ".dbf", aDbf )
+Dbcreate( my_home() + _table + ".dbf", _dbf )
 
 select (F_LABELU)
 use
 
 my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
 
-index on "STR(kolicina,12,2) + mjesto + naz" tag "1"
-index on "mjesto + naz + c_kol" tag "2"
-index on "ptt + mjesto + naz + STR(kolicina,12,2)" tag "3"
-index on "STR(kolicina,12,2) + ptt + mjesto + naz" tag "4"
-index on "idpartner" tag "5"
+index on ( STR( kolicina, 12, 0 ) + mjesto + naz ) tag "1"
+index on ( mjesto + naz + STR( kolicina, 12, 0 ) ) tag "2"
+index on ( ptt + mjesto + naz + STR( kolicina, 12, 0 ) ) tag "3"
+index on ( STR( kolicina, 12, 0 ) + ptt + mjesto + naz ) tag "4"
+index on ( idpartner ) tag "5"
 
 return
 

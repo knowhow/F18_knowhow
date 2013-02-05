@@ -261,7 +261,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idfirma + field->idtipdok + field->brdok + field->rbr }
 _alg["dbf_key_fields"] := {"idfirma", "idtipdok", "brdok", "rbr"}
-_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8) || lpad(rbr,3)"
+_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,12) || lpad(rbr,3)"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -270,7 +270,7 @@ AADD(_item["algoritam"], _alg)
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idfirma + field->idtipdok + field->brdok }
 _alg["dbf_key_fields"] := {"idfirma", "idtipdok", "brdok"}
-_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
+_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,12)"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
@@ -301,7 +301,7 @@ _item["algoritam"] := {}
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idfirma + field->idtipdok + field->brdok}
 _alg["dbf_key_fields"] := {"idfirma", "idtipdok", "brdok"}
-_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
+_alg["sql_in"]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,12)"
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 

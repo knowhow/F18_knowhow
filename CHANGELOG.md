@@ -1,3 +1,7 @@
+1.5.14 2013-02-05, vsasa
+
+   - fakt/kalk/fin, semafor tabele korekcija dužine brdok
+
 1.5.13 2013-02-05, hernad
 
    - kalk 14 brojac, kalk povrat

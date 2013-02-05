@@ -25,7 +25,7 @@ AADD( _opcexe, { || _txt_specif_mnu() } )
 AADD( _opc, "2. specifikacije (odt)          " )
 AADD( _opcexe, { || _sql_specif_mnu() } )
 
-f18_menu( "sp", .f., _izbor, _opc, _opcexe )
+f18_menu( "spec", .f., _izbor, _opc, _opcexe )
 
 return
 
@@ -49,48 +49,48 @@ return
 
 
 static function _txt_specif_mnu()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
 
-AADD(opc, "1. partnera na kontu                                        ")
-AADD(opcexe, {|| SpecDPK()})
-AADD(opc, "2. otvorene stavke preko-do odredjenog broja dana za konto")
-AADD(opcexe, {|| SpecBrDan()})
-AADD(opc, "3. konta za partnera")
-AADD(opcexe, {|| SpecPop()})
-AADD(opc, "4. po analitickim kontima")
-AADD(opcexe, {|| SpecPoK()})
-AADD(opc, "5. po subanalitickim kontima")
-AADD(opcexe, {|| SpecPoKP()})
-AADD(opc, "6. za subanaliticki konto / 2")
-AADD(opcexe, {|| SpecSubPro()})
-AADD(opc, "7. za subanaliticki konto/konto2")
-AADD(opcexe, {|| SpecKK2()})
-AADD(opc, "8. pregled novih dugovanja/potrazivanja")
-AADD(opcexe, {|| PregNDP()})
-AADD(opc, "9. pregled partnera bez prometa")
-AADD(opcexe, {|| PartVanProm()})
+AADD( _opc, "1. partnera na kontu                                        ")
+AADD( _opcexe, {|| SpecDPK()} )
+AADD( _opc, "2. otvorene stavke preko-do odredjenog broja dana za konto")
+AADD( _opcexe, {|| SpecBrDan()} )
+AADD( _opc, "3. konta za partnera")
+AADD( _opcexe, {|| SpecPop()} )
+AADD( _opc, "4. po analitickim kontima")
+AADD( _opcexe, {|| SpecPoK()} )
+AADD( _opc, "5. po subanalitickim kontima")
+AADD( _opcexe, {|| SpecPoKP()} )
+AADD( _opc, "6. za subanaliticki konto / 2")
+AADD( _opcexe, {|| SpecSubPro()} )
+AADD( _opc, "7. za subanaliticki konto/konto2")
+AADD( _opcexe, {|| SpecKK2()} )
+AADD( _opc, "8. pregled novih dugovanja/potrazivanja")
+AADD( _opcexe, {|| PregNDP()} ) 
+AADD( _opc, "9. pregled partnera bez prometa")
+AADD( _opcexe, {|| PartVanProm()} )
 
 if gRJ=="D" .or. gTroskovi=="D"
-	AADD(opc, "A. izvrsenje budzeta/pregled rashoda")
-	AADD(opcexe, {|| IzvrsBudz()})
-	AADD(opc, "B. pregled prihoda")
-	AADD(opcexe, {|| Prihodi()})
+	AADD( _opc, "A. izvrsenje budzeta/pregled rashoda")
+	AADD( _opcexe, {|| IzvrsBudz()} )
+	AADD( _opc, "B. pregled prihoda" )
+	AADD( _opcexe, {|| Prihodi()})
 endif
 
-AADD(opc, "C. otvorene stavke po dospijecu - po racunima (kao kartica)")
-AADD(opcexe, {|| SpecPoDosp(.t.)})
-AADD(opc, "D. otvorene stavke po dospijecu - specifikacija partnera")
-AADD(opcexe, {|| SpecPoDosp(.f.)})
-AADD(opc, "E. rekapitulacija partnera po poslovnim godinama")
-AADD(opcexe, {|| RPPG()})
-AADD(opc, "F. pregled dugovanja partnera po rocnim intervalima ")
-AADD(opcexe, {|| SpecDugPartnera()})
-AADD(opc, "S. specifikacija troskova po gradilistima ")
-AADD(opcexe, {|| r_spec_tr()})
+AADD( _opc, "C. otvorene stavke po dospijecu - po racunima (kao kartica)")
+AADD( _opcexe, {|| SpecPoDosp(.t.)})
+AADD( _opc, "D. otvorene stavke po dospijecu - specifikacija partnera")
+AADD( _opcexe, {|| SpecPoDosp(.f.)})
+AADD( _opc, "E. rekapitulacija partnera po poslovnim godinama")
+AADD( _opcexe, {|| RPPG()})
+AADD( _opc, "F. pregled dugovanja partnera po rocnim intervalima ")
+AADD( _opcexe, {|| SpecDugPartnera() } )
+AADD( _opc, "S. specifikacija troskova po gradilistima ")
+AADD( _opcexe, {|| r_spec_tr() } )
 
-Menu_SC("spc")
+f18_menu( "spct", .f., _izbor, _opc, _opcexe )
 
 return
 

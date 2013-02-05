@@ -1,3 +1,9 @@
+1.4.119 2013-02-05, vsasa
+
+  - fin, subanalitička specifikacija sql [#29508](http://redmine.bring.out.ba/issues/29508)
+  - fin, subanalitička kartica - bugfix 
+  - 
+
 1.4.118 2013-02-04, hernad
 
   - delphirb stampa virmana tabele se zakljucaju

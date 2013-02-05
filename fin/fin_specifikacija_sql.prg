@@ -194,6 +194,10 @@ local _datum_od, _datum_do, _tip_valute
 local _qry, _table
 local _server := pg_server()
 local _fld_iznos 
+local _rj_fond_funk := ""
+local _where_cond := ""
+local _order_cond := ""
+local _group_cond := ""
 
 // init varijable
 _konto := rpt_vars["konto"]
@@ -204,9 +208,11 @@ _datum_od := rpt_vars["datum_od"]
 _datum_do := rpt_vars["datum_do"]
 _opcina := rpt_vars["opcina"]
 _tip_valute := rpt_vars["valuta"]
-_nule := rpt_vars["nule"]
-_sintetika := rpt_vars["sintetika"]
-_rasclan := rpt_vars["rasclaniti_rj"]
+
+// logicke varijable
+_nule := rpt_vars["nule"] == "D"
+_sintetika := rpt_vars["sintetika"] == "D"
+_rasclan := rpt_vars["rasclaniti_rj"] == "D"
 
 _fld_iznos := "sub.iznosbhd"
 
@@ -215,45 +221,68 @@ if _tip_valute == 2
     _fld_iznos := "sub.iznosdem"
 endif
 
+// rasclaniti po RJ/FOND/FUNK
+// ========================================
+if _rasclan
+    _rj_fond_funk := " sub.idrj, sub.fond, sub.funk, "
+endif
+
+// WHERE cond...
+// ========================================
+_where_cond := "WHERE sub.idfirma = " + _sql_quote( gfirma )
+_where_cond += " AND " + _sql_date_parse( "sub.datdok", _datum_od, _datum_do )
+if !EMPTY( _konto )
+    _where_cond += " AND " + _sql_cond_parse( "sub.idkonto", _konto )
+endif
+if !EMPTY( _partner )
+    _where_cond += " AND " + _sql_cond_parse( "sub.idpartner", _partner )
+endif
+if !EMPTY( _brdok )
+    _where_cond += " AND " + _sql_cond_parse( "sub.brdok", _brdok )
+endif
+if !EMPTY( _idvn )
+    _where_cond += " AND " + _sql_cond_parse( "sub.idvn", _idvn )
+endif
+if !EMPTY( _opcina )
+    _where_cond += " AND " + _sql_cond_parse( "part.idops", _opcina )
+endif
+
+
+// GROUP cond
+// ========================================
+_group_cond := " GROUP BY sub.idkonto, kto.naz, sub.idpartner, part.naz"
+
+if _rasclan
+    _group_cond += ", sub.idrj, sub.fond, sub.funk "
+endif
+
+// ORDER cond...
+// ========================================
+_order_cond := " ORDER BY sub.idkonto, kto.naz, sub.idpartner, part.naz"
+
+if _rasclan
+    _order_cond += ", sub.idrj, sub.fond, sub.funk "
+endif
+
+// glavni select
+// ========================================
 _qry := "SELECT " + ;
         " sub.idkonto as konto_id, " + ;
         " kto.naz as konto_naz, " + ; 
         " sub.idpartner as partner_id, " + ;
         " part.naz as partner_naz, " + ;
+        _rj_fond_funk + ;
         " SUM( CASE WHEN sub.d_p = '1' THEN " + _fld_iznos + " ELSE 0 END ) AS duguje, " + ;
         " SUM( CASE WHEN sub.d_p = '2' THEN " + _fld_iznos + " ELSE 0 END ) AS potrazuje " + ;
         "FROM fmk.fin_suban sub " + ;
         "LEFT JOIN fmk.partn part ON sub.idpartner = part.id " + ;
-        "LEFT JOIN fmk.konto kto ON sub.idkonto = kto.id " + ;
-        "WHERE sub.idfirma = " + _sql_quote( gfirma )
-
-// datumi
-_qry += " AND " + _sql_date_parse( "sub.datdok", _datum_od, _datum_do )
-
-if !EMPTY( _konto )
-    // konto
-    _qry += " AND " + _sql_cond_parse( "sub.idkonto", _konto )
-endif
-
-if !EMPTY( _partner )
-    // partner
-    _qry += " AND " + _sql_cond_parse( "sub.idpartner", _partner )
-endif
-
-if !EMPTY( _brdok )
-    _qry += " AND " + _sql_cond_parse( "sub.brdok", _brdok )
-endif
-
-if !EMPTY( _idvn )
-    _qry += " AND " + _sql_cond_parse( "sub.idvn", _idvn )
-endif
-
-if !EMPTY( _opcina )
-    _qry += " AND " + _sql_cond_parse( "part.idops", _opcina )
-endif
-
-_qry += " GROUP BY sub.idkonto, kto.naz, sub.idpartner, part.naz"
-_qry += " ORDER BY sub.idkonto, kto.naz, sub.idpartner, part.naz"
+        "LEFT JOIN fmk.konto kto ON sub.idkonto = kto.id "
+// where
+_qry += _where_cond
+// group by
+_qry += _group_cond
+// order
+_qry += _order_cond
 
 _table := _sql_query( _server, _qry )
 
@@ -272,6 +301,8 @@ return _table
 // -----------------------------------------------------------
 static function _export_dbf( table, rpt_vars )
 local oRow, _struct
+local _rasclan := rpt_vars["rasclaniti_rj"] == "D"
+local _nule := rpt_vars["nule"] == "D"
 local _rec
 
 if table:LastRec() == 0
@@ -303,9 +334,21 @@ for _i := 1 to table:LastRec()
         _rec["naziv"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("konto_naz") ) )
     endif
 
+    // rasclaniti... po RJ/FOND/FUNK
+    if _rasclan
+        _rec["rj"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("idrj") ) )
+        _rec["fond"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("fond") ) )
+        _rec["funk"] := hb_utf8tostr( oRow:FieldGet( oRow:Fieldpos("funk") ) )
+    endif
+
     _rec["duguje"] := oRow:Fieldget( oRow:Fieldpos("duguje") )
     _rec["potrazuje"] := oRow:Fieldget( oRow:Fieldpos("potrazuje") )
     _rec["saldo"] := _rec["duguje"] - _rec["potrazuje"]
+
+    // nule ne prikazuj
+    if ROUND( _rec["saldo"], 2 ) == 0 .and. !_nule
+        loop
+    endif
 
     dbf_update_rec( _rec )
 
@@ -325,6 +368,9 @@ local aDbf := {}
 
 AADD( aDbf, { "id_konto", "C", 7, 0 }  )
 AADD( aDbf, { "id_partn", "C", 6, 0 }  )
+AADD( aDbf, { "rj", "C", 6, 0 }  )
+AADD( aDbf, { "fond", "C", 6, 0 }  )
+AADD( aDbf, { "funk", "C", 6, 0 }  )
 AADD( aDbf, { "naziv", "C", 200, 0 }  )
 AADD( aDbf, { "duguje", "N", 15, 5 }  )
 AADD( aDbf, { "potrazuje", "N", 15, 5 }  )
@@ -349,8 +395,14 @@ local _u_pot1 := 0
 local _u_pot2 := 0
 local _u_saldo1 := 0
 local _u_saldo2 := 0
-local _val
+local _u_sint_dug := 0
+local _u_sint_pot := 0
+local _u_sint_saldo := 0
+local _val, _sint_kto
 local _id_konto, _id_partner
+local _sintetika := rpt_vars["sintetika"] == "D"
+local _nule := rpt_vars["nule"] == "D"
+local _rasclan := rpt_vars["rasclaniti_rj"] == "D"
 
 if table:LastRec() == 0
     return .f.
@@ -382,6 +434,8 @@ _u_pot1 := 0
 _u_dug1 := 0
 _u_saldo1 := 0
 
+_sint_kto := "X"
+
 do while !table:EOF()
 
     oItem := table:GetRow()
@@ -392,13 +446,23 @@ do while !table:EOF()
     _id_partner := oItem:Fieldget( oItem:Fieldpos("partner_id") )
     _naz_partner := oItem:Fieldget( oItem:Fieldpos("partner_naz") )
 
+    // sinteticki konto...
+    _sint_kto := PADR( _id_konto, 3 )
+
+    // rasclaniti po RJ
+    if _rasclan    
+        _rj := oItem:Fieldget( oItem:Fieldpos("idrj") )
+        _fond := oItem:Fieldget( oItem:Fieldpos("fond") )
+        _funk := oItem:Fieldget( oItem:Fieldpos("funk") )
+    endif
+
     // iznosi...
     _dug := oItem:Fieldget( oItem:Fieldpos("duguje") )
     _pot := oItem:Fieldget( oItem:Fieldpos("potrazuje") )
     _saldo := oItem:Fieldget( oItem:Fieldpos("duguje") ) - oItem:Fieldget( oItem:Fieldpos("potrazuje") )
 
     // preskakanje iznosa 0
-    if ROUND( _saldo, 2 ) == 0 .and. rpt_vars["nule"] == "N"
+    if ROUND( _saldo, 2 ) == 0 .and. !_nule
         table:Skip()
         loop
     endif 
@@ -417,6 +481,13 @@ do while !table:EOF()
     else
         // naziv konta 
         xml_node( "naziv", to_xml_encoding( hb_utf8tostr( _naz_konto ) ) )
+    endif
+
+    // rasclaniti po RJ/FOND/FUNK
+    if _rasclan
+        xml_node( "rj", to_xml_encoding( hb_utf8tostr( _rj ) ) )
+        xml_node( "fond", to_xml_encoding( hb_utf8tostr( _fond ) ) )
+        xml_node( "funk", to_xml_encoding( hb_utf8tostr( _funk ) ) )
     endif
 
     // duguje
